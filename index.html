@@ -4,19 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1D9E75">
-<title>English Progress Tracker</title>
+<title>Öğrenci Takip Sistemi</title>
 <link rel="manifest" href="manifest.json">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a1a1a; min-height: 100vh; }
-  .header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
-  .logo { font-size: 17px; font-weight: 600; color: #1a1a1a; }
-  .logo span { color: #1D9E75; }
-  .student-tabs { display: flex; gap: 8px; padding: 1rem 1.5rem 0; overflow-x: auto; }
-  .tab { padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background: #fff; color: #555; white-space: nowrap; transition: all 0.15s; }
+
+  /* ANA SAYFA */
+  .home { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+  .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
+  .home-logo span { color: #1D9E75; }
+  .home-sub { font-size: 14px; color: #888; margin-bottom: 3rem; text-align: center; }
+  .home-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 480px; }
+  .home-card { background: #fff; border: 1px solid #e8eaed; border-radius: 18px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.18s; }
+  .home-card:hover { border-color: #1D9E75; box-shadow: 0 4px 20px rgba(29,158,117,0.12); transform: translateY(-2px); }
+  .home-card:active { transform: scale(0.97); }
+  .home-card .icon { font-size: 36px; margin-bottom: 0.8rem; }
+  .home-card h2 { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 0.4rem; line-height: 1.3; }
+  .home-card p { font-size: 12px; color: #aaa; }
+  @media (max-width: 400px) { .home-cards { grid-template-columns: 1fr; } }
+
+  /* TRACKER */
+  .tracker { display: none; }
+  .header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 0.9rem 1.25rem; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; }
+  .back-btn { background: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: #555; cursor: pointer; white-space: nowrap; }
+  .back-btn:hover { background: #f4f6f8; }
+  .header-title { font-size: 15px; font-weight: 600; flex: 1; }
+  .header-title span { color: #1D9E75; }
+  .last-updated { font-size: 11px; color: #aaa; }
+  .student-tabs { display: flex; gap: 8px; padding: 1rem 1.25rem 0; overflow-x: auto; }
+  .tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background: #fff; color: #555; white-space: nowrap; transition: all 0.15s; }
   .tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
-  .content { padding: 1.25rem 1.5rem; max-width: 720px; margin: 0 auto; }
+  .content { padding: 1.25rem; max-width: 720px; margin: 0 auto; }
+
+  /* KİLİT */
   .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin-top: 1rem; }
   .lock-icon { font-size: 40px; margin-bottom: 1rem; }
   .lock-screen h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
@@ -25,6 +47,8 @@
   .lock-screen input:focus { border-color: #1D9E75; }
   .lock-screen button { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: 10px 32px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; max-width: 260px; }
   .lock-error { color: #c0392b; font-size: 13px; margin-top: 10px; min-height: 18px; }
+
+  /* ÖĞRENCİ */
   .student-header { background: #fff; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 14px; border: 1px solid #e8eaed; }
   .avatar { width: 48px; height: 48px; border-radius: 50%; background: #9FE1CB; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #085041; flex-shrink: 0; }
   .student-info h2 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
@@ -56,39 +80,59 @@
   .empty { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
   .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
   canvas { max-height: 180px; }
-  @media (max-width: 500px) {
-    .header { padding: 0.9rem 1rem; }
-    .content { padding: 1rem; }
-    .student-tabs { padding: 1rem 1rem 0; }
-  }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">English<span>Progress</span></div>
-  <div style="font-size:12px;color:#aaa;" id="last-updated"></div>
+<!-- ANA SAYFA -->
+<div class="home" id="home">
+  <div class="home-logo">Öğrenci<span>Takip</span></div>
+  <div class="home-sub">Hizmet seçin</div>
+  <div class="home-cards">
+    <div class="home-card" onclick="openSection('ingilizce')">
+      <div class="icon">📚</div>
+      <h2>İngilizce Özel Ders Takip</h2>
+      <p>Haftalık gelişim & deneme sonuçları</p>
+    </div>
+    <div class="home-card" onclick="openSection('kocluk')">
+      <div class="icon">🎯</div>
+      <h2>Eğitim Koçum</h2>
+      <p>Koçluk süreci takibi</p>
+    </div>
+  </div>
 </div>
-<div class="student-tabs" id="tabs"></div>
-<div class="content" id="content">
-  <div class="loading">Veriler yükleniyor...</div>
+
+<!-- TRACKER -->
+<div class="tracker" id="tracker">
+  <div class="header">
+    <button class="back-btn" onclick="goHome()">← Geri</button>
+    <div class="header-title" id="header-title"></div>
+    <div class="last-updated" id="last-updated"></div>
+  </div>
+  <div class="student-tabs" id="tabs"></div>
+  <div class="content" id="content">
+    <div class="loading">Veriler yükleniyor...</div>
+  </div>
 </div>
 
 <script>
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+const SECTIONS = {
+  ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
+  kocluk:    { gid: "770963286", label: "🎯 Eğitim Koçum" }
+};
 
 const SKILL_COLORS = {
   vocabulary: "#1D9E75", konusma: "#378ADD",
   okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30"
 };
 
+let currentSection = null;
 let allData = [];
 let students = [];
 let passwords = {};
 let unlockedStudents = {};
 let activeStudent = null;
-let dataLoaded = false;
 
 function parseCSV(text) {
   const lines = text.trim().split("\n");
@@ -106,15 +150,32 @@ function parseCSV(text) {
   });
 }
 
+function openSection(section) {
+  currentSection = section;
+  allData = []; students = []; passwords = {}; unlockedStudents = {}; activeStudent = null;
+  document.getElementById("home").style.display = "none";
+  document.getElementById("tracker").style.display = "block";
+  document.getElementById("header-title").innerHTML = SECTIONS[section].label;
+  document.getElementById("tabs").innerHTML = "";
+  document.getElementById("content").innerHTML = '<div class="loading">Veriler yükleniyor...</div>';
+  loadData();
+}
+
+function goHome() {
+  document.getElementById("home").style.display = "flex";
+  document.getElementById("tracker").style.display = "none";
+  currentSection = null;
+}
+
 async function loadData() {
+  const gid = SECTIONS[currentSection].gid;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
   try {
-    const res = await fetch(SHEET_URL + "&t=" + Date.now());
+    const res = await fetch(url);
     if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
     const rows = parseCSV(text);
 
-    // Sütun sırası: tarih(0) ogrenci(1) seviye(2) genel(3)
-    // vocabulary(4) konusma(5) okuma(6) yazma(7) grammar(8) deneme(9) sifre(10)
     allData = rows.slice(1).map(r => ({
       tarih:      r[0] || "",
       ogrenci:    r[1] || "",
@@ -129,35 +190,28 @@ async function loadData() {
       sifre:      r[10] ? r[10].trim() : ""
     })).filter(r => r.ogrenci);
 
-    // Her öğrencinin şifresini topla
     passwords = {};
-    allData.forEach(r => {
-      if (r.sifre) passwords[r.ogrenci] = r.sifre;
-    });
-
+    allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
     students = [...new Set(allData.map(r => r.ogrenci))];
+
     document.getElementById("last-updated").textContent =
-      "Güncellendi: " + new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+      new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
 
     renderTabs();
-
-    // İlk yüklemede: şifreli öğrenci varsa kilit ekranı, yoksa direkt aç
-    if (!dataLoaded) {
-      dataLoaded = true;
-      if (students.length) selectStudent(students[0]);
+    if (students.length && !activeStudent) selectStudent(students[0]);
+    else if (!students.length) {
+      document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
     }
   } catch(e) {
-    console.error("loadData error:", e);
+    console.error(e);
     document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
   }
 }
 
 function renderTabs() {
-  const el = document.getElementById("tabs");
-  el.innerHTML = students.map(s =>
+  document.getElementById("tabs").innerHTML = students.map(s =>
     `<div class="tab${s===activeStudent?' active':''}" onclick="selectStudent('${s.replace(/'/g,"\\'")}')">
-      ${s.split(" ")[0]}
-      ${passwords[s] ? ' 🔒' : ''}
+      ${s.split(" ")[0]}${passwords[s] ? ' 🔒' : ''}
     </div>`
   ).join("");
 }
@@ -173,24 +227,23 @@ function selectStudent(name) {
 }
 
 function showLockScreen(name) {
+  const safeName = name.replace(/'/g, "\\'");
   document.getElementById("content").innerHTML = `
     <div class="lock-screen">
       <div class="lock-icon">🔒</div>
       <h3>${name.split(" ")[0]} adlı öğrencinin sayfası</h3>
       <p>Bu sayfayı görüntülemek için şifre gereklidir.</p>
       <input type="password" id="pwd-input" placeholder="Şifrenizi girin"
-        onkeydown="if(event.key==='Enter') checkPassword('${name.replace(/'/g,"\\'")}')">
-      <button onclick="checkPassword('${name.replace(/'/g,"\\'")}')">Giriş Yap</button>
+        onkeydown="if(event.key==='Enter') checkPassword('${safeName}')">
+      <button onclick="checkPassword('${safeName}')">Giriş Yap</button>
       <div class="lock-error" id="lock-error"></div>
-    </div>
-  `;
+    </div>`;
   setTimeout(() => document.getElementById("pwd-input")?.focus(), 100);
 }
 
 function checkPassword(name) {
   const input = document.getElementById("pwd-input").value.trim();
   const correct = (passwords[name] || "").trim();
-  console.log("Girilen:", JSON.stringify(input), "Doğru:", JSON.stringify(correct));
   if (input === correct) {
     unlockedStudents[name] = true;
     showStudentData(name);
@@ -208,10 +261,7 @@ function logout(name) {
 
 function showStudentData(name) {
   const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => a.tarih > b.tarih ? 1 : -1);
-  if (!rows.length) {
-    document.getElementById("content").innerHTML = '<div class="empty">Bu öğrenciye ait veri yok.</div>';
-    return;
-  }
+  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
 
   const latest = rows[rows.length - 1];
   const prev   = rows.length > 1 ? rows[rows.length - 2] : null;
@@ -231,6 +281,7 @@ function showStudentData(name) {
   }
 
   const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+  const safeName = name.replace(/'/g, "\\'");
 
   const examRows = rows.filter(r => r.deneme > 0).slice(-5).reverse().map(r =>
     `<tr><td>${r.tarih}</td><td>Deneme</td><td><strong>${r.deneme}</strong></td><td>${examTag(r.deneme)}</td></tr>`
@@ -238,7 +289,6 @@ function showStudentData(name) {
 
   const skills = ["vocabulary","konusma","okuma","yazma","grammar"];
   const skillLabels = {vocabulary:"Vocabulary",konusma:"Konuşma",okuma:"Okuma",yazma:"Yazma",grammar:"Grammar"};
-
   const skillRows = skills.map(s => `
     <div class="skill-row">
       <div class="skill-header"><span class="skill-name">${skillLabels[s]}</span><span class="skill-score">${latest[s]}/100</span></div>
@@ -257,7 +307,7 @@ function showStudentData(name) {
         <p>Son güncelleme: ${latest.tarih}</p>
       </div>
       <div class="level-badge">${latest.seviye}</div>
-      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${name.replace(/'/g,"\\'")}')">🔒 Çıkış</button>` : ""}
+      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${safeName}')">🔒 Çıkış</button>` : ""}
     </div>
 
     <div class="metrics-grid">
@@ -306,9 +356,6 @@ function showStudentData(name) {
     }
   });
 }
-
-loadData();
-setInterval(loadData, 5 * 60 * 1000);
 </script>
 </body>
 </html>
