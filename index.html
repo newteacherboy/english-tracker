@@ -10,53 +10,42 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a1a1a; min-height: 100vh; }
-
   .header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
   .logo { font-size: 17px; font-weight: 600; color: #1a1a1a; }
   .logo span { color: #1D9E75; }
-
   .student-tabs { display: flex; gap: 8px; padding: 1rem 1.5rem 0; overflow-x: auto; }
   .tab { padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background: #fff; color: #555; white-space: nowrap; transition: all 0.15s; }
   .tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
-
   .content { padding: 1.25rem 1.5rem; max-width: 720px; margin: 0 auto; }
-
-  /* Şifre ekranı */
-  .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2rem 1.5rem; text-align: center; margin-top: 1rem; }
+  .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin-top: 1rem; }
   .lock-icon { font-size: 40px; margin-bottom: 1rem; }
   .lock-screen h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
   .lock-screen p { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
   .lock-screen input { width: 100%; max-width: 260px; padding: 10px 14px; border: 1.5px solid #e8eaed; border-radius: 10px; font-size: 15px; text-align: center; outline: none; letter-spacing: 2px; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
   .lock-screen input:focus { border-color: #1D9E75; }
   .lock-screen button { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: 10px 32px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; max-width: 260px; }
-  .lock-screen button:active { opacity: 0.85; }
-  .lock-error { color: #c0392b; font-size: 13px; margin-top: 8px; min-height: 18px; }
-
+  .lock-error { color: #c0392b; font-size: 13px; margin-top: 10px; min-height: 18px; }
   .student-header { background: #fff; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 14px; border: 1px solid #e8eaed; }
   .avatar { width: 48px; height: 48px; border-radius: 50%; background: #9FE1CB; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #085041; flex-shrink: 0; }
   .student-info h2 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
   .student-info p { font-size: 13px; color: #666; }
   .level-badge { margin-left: auto; background: #E1F5EE; color: #0F6E56; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
-  .logout-btn { margin-left: 8px; background: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 4px 10px; font-size: 11px; color: #888; cursor: pointer; }
+  .logout-btn { margin-left: 8px; background: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 4px 10px; font-size: 11px; color: #888; cursor: pointer; white-space: nowrap; }
   .logout-btn:hover { background: #f4f6f8; }
-
   .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1rem; }
   .metric-card { background: #fff; border-radius: 12px; padding: 14px; border: 1px solid #e8eaed; }
   .metric-label { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
   .metric-value { font-size: 26px; font-weight: 700; color: #1a1a1a; line-height: 1; }
   .metric-delta { font-size: 12px; margin-top: 4px; }
   .up { color: #0F6E56; } .down { color: #c0392b; } .same { color: #888; }
-
   .card { background: #fff; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #e8eaed; }
   .card-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 1rem; }
-
   .skill-row { margin-bottom: 12px; }
   .skill-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
   .skill-name { font-size: 13px; color: #555; }
   .skill-score { font-size: 13px; font-weight: 600; color: #1a1a1a; }
   .progress-bar { height: 7px; background: #f0f0f0; border-radius: 999px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 999px; transition: width 0.6s ease; }
-
   .exam-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .exam-table th { color: #888; font-weight: 500; text-align: left; padding: 6px 8px; border-bottom: 1px solid #f0f0f0; font-size: 11px; text-transform: uppercase; }
   .exam-table td { padding: 9px 8px; border-bottom: 1px solid #f8f8f8; color: #333; }
@@ -64,15 +53,9 @@
   .tag-green { background: #E1F5EE; color: #0F6E56; }
   .tag-amber { background: #FAEEDA; color: #854F0B; }
   .tag-blue  { background: #E6F1FB; color: #185FA5; }
-
-  .note-box { background: #f8fffe; border-left: 3px solid #1D9E75; border-radius: 0 10px 10px 0; padding: 12px 16px; font-size: 13px; color: #444; line-height: 1.6; }
-  .note-box strong { color: #1a1a1a; }
-
   .empty { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
   .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
-
   canvas { max-height: 180px; }
-
   @media (max-width: 500px) {
     .header { padding: 0.9rem 1rem; }
     .content { padding: 1rem; }
@@ -86,7 +69,6 @@
   <div class="logo">English<span>Progress</span></div>
   <div style="font-size:12px;color:#aaa;" id="last-updated"></div>
 </div>
-
 <div class="student-tabs" id="tabs"></div>
 <div class="content" id="content">
   <div class="loading">Veriler yükleniyor...</div>
@@ -103,9 +85,10 @@ const SKILL_COLORS = {
 
 let allData = [];
 let students = [];
-let passwords = {};        // { "MERT URAS ÜNAL": "mert2024" }
-let unlockedStudents = {}; // { "MERT URAS ÜNAL": true }
+let passwords = {};
+let unlockedStudents = {};
 let activeStudent = null;
+let dataLoaded = false;
 
 function parseCSV(text) {
   const lines = text.trim().split("\n");
@@ -125,11 +108,13 @@ function parseCSV(text) {
 
 async function loadData() {
   try {
-    const res = await fetch(SHEET_URL);
+    const res = await fetch(SHEET_URL + "&t=" + Date.now());
     if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
     const rows = parseCSV(text);
 
+    // Sütun sırası: tarih(0) ogrenci(1) seviye(2) genel(3)
+    // vocabulary(4) konusma(5) okuma(6) yazma(7) grammar(8) deneme(9) sifre(10)
     allData = rows.slice(1).map(r => ({
       tarih:      r[0] || "",
       ogrenci:    r[1] || "",
@@ -141,19 +126,26 @@ async function loadData() {
       yazma:      Number(r[7]) || 0,
       grammar:    Number(r[8]) || 0,
       deneme:     Number(r[9]) || 0,
-      not:        r[10] || "",
-      sifre:      r[11] || ""
+      sifre:      r[10] ? r[10].trim() : ""
     })).filter(r => r.ogrenci);
 
-    // Her öğrencinin şifresini al (son satırdaki şifre geçerli)
+    // Her öğrencinin şifresini topla
     passwords = {};
-    allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
+    allData.forEach(r => {
+      if (r.sifre) passwords[r.ogrenci] = r.sifre;
+    });
 
     students = [...new Set(allData.map(r => r.ogrenci))];
     document.getElementById("last-updated").textContent =
       "Güncellendi: " + new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+
     renderTabs();
-    if (students.length && !activeStudent) selectStudent(students[0]);
+
+    // İlk yüklemede: şifreli öğrenci varsa kilit ekranı, yoksa direkt aç
+    if (!dataLoaded) {
+      dataLoaded = true;
+      if (students.length) selectStudent(students[0]);
+    }
   } catch(e) {
     console.error("loadData error:", e);
     document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
@@ -163,31 +155,32 @@ async function loadData() {
 function renderTabs() {
   const el = document.getElementById("tabs");
   el.innerHTML = students.map(s =>
-    `<div class="tab${s===activeStudent?' active':''}" onclick="selectStudent('${s}')">${s.split(" ")[0]}</div>`
+    `<div class="tab${s===activeStudent?' active':''}" onclick="selectStudent('${s.replace(/'/g,"\\'")}')">
+      ${s.split(" ")[0]}
+      ${passwords[s] ? ' 🔒' : ''}
+    </div>`
   ).join("");
 }
 
 function selectStudent(name) {
   activeStudent = name;
   renderTabs();
-
-  // Şifre kontrolü
   if (passwords[name] && !unlockedStudents[name]) {
     showLockScreen(name);
-    return;
+  } else {
+    showStudentData(name);
   }
-  showStudentData(name);
 }
 
 function showLockScreen(name) {
-  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
   document.getElementById("content").innerHTML = `
     <div class="lock-screen">
       <div class="lock-icon">🔒</div>
       <h3>${name.split(" ")[0]} adlı öğrencinin sayfası</h3>
       <p>Bu sayfayı görüntülemek için şifre gereklidir.</p>
-      <input type="password" id="pwd-input" placeholder="Şifrenizi girin" onkeydown="if(event.key==='Enter') checkPassword('${name}')">
-      <button onclick="checkPassword('${name}')">Giriş Yap</button>
+      <input type="password" id="pwd-input" placeholder="Şifrenizi girin"
+        onkeydown="if(event.key==='Enter') checkPassword('${name.replace(/'/g,"\\'")}')">
+      <button onclick="checkPassword('${name.replace(/'/g,"\\'")}')">Giriş Yap</button>
       <div class="lock-error" id="lock-error"></div>
     </div>
   `;
@@ -195,8 +188,10 @@ function showLockScreen(name) {
 }
 
 function checkPassword(name) {
-  const input = document.getElementById("pwd-input").value;
-  if (input === passwords[name]) {
+  const input = document.getElementById("pwd-input").value.trim();
+  const correct = (passwords[name] || "").trim();
+  console.log("Girilen:", JSON.stringify(input), "Doğru:", JSON.stringify(correct));
+  if (input === correct) {
     unlockedStudents[name] = true;
     showStudentData(name);
   } else {
@@ -206,9 +201,17 @@ function checkPassword(name) {
   }
 }
 
+function logout(name) {
+  delete unlockedStudents[name];
+  showLockScreen(name);
+}
+
 function showStudentData(name) {
   const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => a.tarih > b.tarih ? 1 : -1);
-  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Bu öğrenciye ait veri yok.</div>'; return; }
+  if (!rows.length) {
+    document.getElementById("content").innerHTML = '<div class="empty">Bu öğrenciye ait veri yok.</div>';
+    return;
+  }
 
   const latest = rows[rows.length - 1];
   const prev   = rows.length > 1 ? rows[rows.length - 2] : null;
@@ -221,9 +224,9 @@ function showStudentData(name) {
     return '<span class="same">→ sabit</span>';
   }
 
-  function examTag(score) {
-    if (score >= 80) return '<span class="tag tag-green">İyi</span>';
-    if (score >= 65) return '<span class="tag tag-amber">Gelişiyor</span>';
+  function examTag(s) {
+    if (s >= 80) return '<span class="tag tag-green">İyi</span>';
+    if (s >= 65) return '<span class="tag tag-amber">Gelişiyor</span>';
     return '<span class="tag tag-blue">Başlangıç</span>';
   }
 
@@ -254,7 +257,7 @@ function showStudentData(name) {
         <p>Son güncelleme: ${latest.tarih}</p>
       </div>
       <div class="level-badge">${latest.seviye}</div>
-      <button class="logout-btn" onclick="logout('${name}')">Çıkış</button>
+      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${name.replace(/'/g,"\\'")}')">🔒 Çıkış</button>` : ""}
     </div>
 
     <div class="metrics-grid">
@@ -281,8 +284,6 @@ function showStudentData(name) {
         <tbody>${examRows}</tbody>
       </table>
     </div>
-
-    ${latest.not ? `<div class="note-box"><strong>Öğretmen notu:</strong> ${latest.not}</div>` : ""}
   `;
 
   const ctx = document.getElementById("progressChart").getContext("2d");
@@ -304,11 +305,6 @@ function showStudentData(name) {
       }
     }
   });
-}
-
-function logout(name) {
-  delete unlockedStudents[name];
-  showLockScreen(name);
 }
 
 loadData();
