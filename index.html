@@ -264,17 +264,19 @@ async function loadData() {
     const text = await res.text();
     const rows = parseCSV(text);
 
+    function toNum(v) { return parseFloat((v||"").toString().replace(",",".")) || 0; }
+
     allData = rows.slice(1).map(r => ({
       tarih:        r[0] || "",
       ogrenci:      r[1] || "",
       seviye:       r[2] || "",
-      genel:        Number(r[3]) || 0,
-      vocabulary:   Number(r[4]) || 0,
-      konusma:      Number(r[5]) || 0,
-      okuma:        Number(r[6]) || 0,
-      yazma:        Number(r[7]) || 0,
-      grammar:      Number(r[8]) || 0,
-      deneme:       Number(r[9]) || 0,
+      genel:        toNum(r[3]),
+      vocabulary:   toNum(r[4]),
+      konusma:      toNum(r[5]),
+      okuma:        toNum(r[6]),
+      yazma:        toNum(r[7]),
+      grammar:      toNum(r[8]),
+      deneme:       toNum(r[9]),
       sifre:        r[10] ? r[10].trim() : "",
       ders_tarihi:  r[11] || "",
       ders_durumu:  r[12] ? r[12].trim().toLowerCase() : "",
