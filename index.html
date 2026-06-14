@@ -135,6 +135,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .empty { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
 .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
 canvas { max-height: 200px; }
+/* ROZET BİLDİRİMİ */
+.badge-notif { border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 14px; }
+.badge-notif.gained { background: linear-gradient(135deg, #e8f8ef, #d0f0e0); border: 1px solid #a8dfc0; }
+.badge-notif.lost   { background: linear-gradient(135deg, #fdecea, #fad4d1); border: 1px solid #f5b4b0; }
+.badge-notif-emoji  { font-size: 36px; flex-shrink: 0; }
+.badge-notif-text h3 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.badge-notif.gained h3 { color: #0a5c38; }
+.badge-notif.lost   h3 { color: #8b1a14; }
+.badge-notif-text p { font-size: 12px; color: #555; line-height: 1.4; }
+
+/* ROZETLER */
+.badges-card { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; padding: 1.25rem; margin-bottom: 1rem; }
+.badges-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 1rem; }
+.badges-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.badge-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 10px; }
+.badge-item.earned { background: #f8fffe; border: 1px solid #c8edd8; }
+.badge-item.locked { opacity: 0.25; filter: grayscale(1); }
+.badge-emoji { font-size: 24px; line-height: 1; }
+.badge-label { font-size: 9px; font-weight: 600; color: #555; text-align: center; }
+.badge-score { font-size: 9px; color: #aaa; }
+.badges-progress { margin-top: 12px; display: flex; align-items: center; gap: 10px; }
+.badges-progress-bar { flex: 1; height: 6px; background: #f0f0f0; border-radius: 999px; overflow: hidden; }
+.badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
+.badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
+
 </style>
 </head>
 <body>
@@ -350,6 +375,91 @@ function switchPageTab(name, tab) {
   showStudentPage(name);
 }
 
+
+/* ── ROZETLER ── */
+const BADGES = [
+  { score:5,  emoji:"🌱", label:"Tohum Attı" },
+  { score:10, emoji:"🐣", label:"Kabuğu Kırdı" },
+  { score:15, emoji:"🔦", label:"Işığı Gördü" },
+  { score:20, emoji:"🧩", label:"Parçaları Buldu" },
+  { score:25, emoji:"🎒", label:"Yola Çıktı" },
+  { score:30, emoji:"🧭", label:"Yönünü Buldu" },
+  { score:35, emoji:"⚙️", label:"Motoru Çalıştı" },
+  { score:40, emoji:"🌊", label:"Dalgayı Aştı" },
+  { score:45, emoji:"🦋", label:"Kanat Çırptı" },
+  { score:50, emoji:"🏕️", label:"Yarı Yolda" },
+  { score:55, emoji:"🔭", label:"Ufku Gördü" },
+  { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
+  { score:65, emoji:"🦅", label:"Süzülüyor" },
+  { score:70, emoji:"🌋", label:"Zirveye Yakın" },
+  { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
+  { score:80, emoji:"💫", label:"Yörüngede" },
+  { score:85, emoji:"🌠", label:"Kayan Yıldız" },
+  { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
+  { score:95, emoji:"🔱", label:"Efsaneler Kulübü" },
+  { score:100,emoji:"🎓", label:"Dili Fethetti" }
+];
+
+function buildBadges(genel, prevGenel) {
+  const earned = BADGES.filter(b => genel >= b.score);
+  const earnedCount = earned.length;
+  const total = BADGES.length;
+  const pct = Math.round(earnedCount / total * 100);
+
+  // Önceki haftayla rozet karşılaştırması
+  let notifHtml = "";
+  if (prevGenel !== null && prevGenel !== undefined) {
+    const prevEarned = BADGES.filter(b => prevGenel >= b.score);
+    // Yeni kazanılan rozetler
+    const newBadges = BADGES.filter(b => genel >= b.score && prevGenel < b.score);
+    // Kaybedilen rozetler (puan düşmüşse)
+    const lostBadges = BADGES.filter(b => genel < b.score && prevGenel >= b.score);
+
+    if (newBadges.length > 0) {
+      const names = newBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
+      notifHtml = `
+        <div class="badge-notif gained">
+          <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
+          <div class="badge-notif-text">
+            <h3>🎉 Yeni rozet kazandın!</h3>
+            <p>Bu hafta harika bir performans! <strong>${names}</strong> rozeti ${newBadges.length > 1 ? 'rozetleri' : 'rozeti'} senin oldu. Böyle devam et!</p>
+          </div>
+        </div>`;
+    } else if (lostBadges.length > 0) {
+      const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
+      notifHtml = `
+        <div class="badge-notif lost">
+          <div class="badge-notif-emoji">😔</div>
+          <div class="badge-notif-text">
+            <h3>Bu hafta biraz düşüş yaşandı</h3>
+            <p>Maalesef <strong>${names}</strong> rozeti ${lostBadges.length > 1 ? 'rozetleri' : 'rozeti'} bu hafta elden gitti. Ama endişelenme, bir sonraki haftada geri alabilirsin!</p>
+          </div>
+        </div>`;
+    }
+  }
+
+  const grid = BADGES.map(b => {
+    const isEarned = genel >= b.score;
+    return `
+      <div class="badge-item ${isEarned ? 'earned' : 'locked'}">
+        <div class="badge-emoji">${b.emoji}</div>
+        <div class="badge-label">${b.label}</div>
+        <div class="badge-score">${b.score} puan</div>
+      </div>`;
+  }).join("");
+
+  return `
+    ${notifHtml}
+    <div class="badges-card">
+      <div class="badges-title">🏅 Kazanılan Rozetler — ${earnedCount}/${total}</div>
+      <div class="badges-grid">${grid}</div>
+      <div class="badges-progress">
+        <div class="badges-progress-bar"><div class="badges-progress-fill" style="width:${pct}%"></div></div>
+        <div class="badges-progress-text">%${pct} tamamlandı</div>
+      </div>
+    </div>`;
+}
+
 /* ── ÖZET ── */
 function buildOzet(rows, latest) {
   const prev = rows.length > 1 ? rows[rows.length-2] : null;
@@ -382,7 +492,10 @@ function buildOzet(rows, latest) {
   const yapilmadi = dersler.filter(r=>r.ders_durumu==="yapilmadi").length;
   const ertelendi = dersler.filter(r=>r.ders_durumu==="ertelendi").length;
 
+  const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null);
+
   return `
+    ${badgesHtml}
     <div class="metrics-grid">
       <div class="metric-card"><div class="metric-label">Genel puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
       <div class="metric-card"><div class="metric-label">Son deneme</div><div class="metric-value">${latest.deneme||"—"}</div><div class="metric-delta">${latest.deneme?delta("deneme"):""}</div></div>
