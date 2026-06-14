@@ -21,11 +21,24 @@
 
   .content { padding: 1.25rem 1.5rem; max-width: 720px; margin: 0 auto; }
 
+  /* Şifre ekranı */
+  .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2rem 1.5rem; text-align: center; margin-top: 1rem; }
+  .lock-icon { font-size: 40px; margin-bottom: 1rem; }
+  .lock-screen h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
+  .lock-screen p { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+  .lock-screen input { width: 100%; max-width: 260px; padding: 10px 14px; border: 1.5px solid #e8eaed; border-radius: 10px; font-size: 15px; text-align: center; outline: none; letter-spacing: 2px; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
+  .lock-screen input:focus { border-color: #1D9E75; }
+  .lock-screen button { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: 10px 32px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; max-width: 260px; }
+  .lock-screen button:active { opacity: 0.85; }
+  .lock-error { color: #c0392b; font-size: 13px; margin-top: 8px; min-height: 18px; }
+
   .student-header { background: #fff; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 14px; border: 1px solid #e8eaed; }
   .avatar { width: 48px; height: 48px; border-radius: 50%; background: #9FE1CB; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #085041; flex-shrink: 0; }
   .student-info h2 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
   .student-info p { font-size: 13px; color: #666; }
   .level-badge { margin-left: auto; background: #E1F5EE; color: #0F6E56; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
+  .logout-btn { margin-left: 8px; background: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 4px 10px; font-size: 11px; color: #888; cursor: pointer; }
+  .logout-btn:hover { background: #f4f6f8; }
 
   .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1rem; }
   .metric-card { background: #fff; border-radius: 12px; padding: 14px; border: 1px solid #e8eaed; }
@@ -75,7 +88,6 @@
 </div>
 
 <div class="student-tabs" id="tabs"></div>
-
 <div class="content" id="content">
   <div class="loading">Veriler yükleniyor...</div>
 </div>
@@ -85,15 +97,14 @@ const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
 const SKILL_COLORS = {
-  vocabulary: "#1D9E75",
-  konusma:    "#378ADD",
-  okuma:      "#7F77DD",
-  yazma:      "#EF9F27",
-  grammar:    "#D85A30"
+  vocabulary: "#1D9E75", konusma: "#378ADD",
+  okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30"
 };
 
 let allData = [];
 let students = [];
+let passwords = {};        // { "MERT URAS ÜNAL": "mert2024" }
+let unlockedStudents = {}; // { "MERT URAS ÜNAL": true }
 let activeStudent = null;
 
 function parseCSV(text) {
@@ -118,6 +129,7 @@ async function loadData() {
     if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
     const rows = parseCSV(text);
+
     allData = rows.slice(1).map(r => ({
       tarih:      r[0] || "",
       ogrenci:    r[1] || "",
@@ -129,12 +141,19 @@ async function loadData() {
       yazma:      Number(r[7]) || 0,
       grammar:    Number(r[8]) || 0,
       deneme:     Number(r[9]) || 0,
-      not:        r[10] || ""
+      not:        r[10] || "",
+      sifre:      r[11] || ""
     })).filter(r => r.ogrenci);
+
+    // Her öğrencinin şifresini al (son satırdaki şifre geçerli)
+    passwords = {};
+    allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
+
     students = [...new Set(allData.map(r => r.ogrenci))];
-    document.getElementById("last-updated").textContent = "Güncellendi: " + new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+    document.getElementById("last-updated").textContent =
+      "Güncellendi: " + new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     renderTabs();
-    if (students.length) selectStudent(students[0]);
+    if (students.length && !activeStudent) selectStudent(students[0]);
   } catch(e) {
     console.error("loadData error:", e);
     document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
@@ -151,6 +170,43 @@ function renderTabs() {
 function selectStudent(name) {
   activeStudent = name;
   renderTabs();
+
+  // Şifre kontrolü
+  if (passwords[name] && !unlockedStudents[name]) {
+    showLockScreen(name);
+    return;
+  }
+  showStudentData(name);
+}
+
+function showLockScreen(name) {
+  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+  document.getElementById("content").innerHTML = `
+    <div class="lock-screen">
+      <div class="lock-icon">🔒</div>
+      <h3>${name.split(" ")[0]} adlı öğrencinin sayfası</h3>
+      <p>Bu sayfayı görüntülemek için şifre gereklidir.</p>
+      <input type="password" id="pwd-input" placeholder="Şifrenizi girin" onkeydown="if(event.key==='Enter') checkPassword('${name}')">
+      <button onclick="checkPassword('${name}')">Giriş Yap</button>
+      <div class="lock-error" id="lock-error"></div>
+    </div>
+  `;
+  setTimeout(() => document.getElementById("pwd-input")?.focus(), 100);
+}
+
+function checkPassword(name) {
+  const input = document.getElementById("pwd-input").value;
+  if (input === passwords[name]) {
+    unlockedStudents[name] = true;
+    showStudentData(name);
+  } else {
+    document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
+    document.getElementById("pwd-input").value = "";
+    document.getElementById("pwd-input").focus();
+  }
+}
+
+function showStudentData(name) {
   const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => a.tarih > b.tarih ? 1 : -1);
   if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Bu öğrenciye ait veri yok.</div>'; return; }
 
@@ -198,6 +254,7 @@ function selectStudent(name) {
         <p>Son güncelleme: ${latest.tarih}</p>
       </div>
       <div class="level-badge">${latest.seviye}</div>
+      <button class="logout-btn" onclick="logout('${name}')">Çıkış</button>
     </div>
 
     <div class="metrics-grid">
@@ -228,7 +285,6 @@ function selectStudent(name) {
     ${latest.not ? `<div class="note-box"><strong>Öğretmen notu:</strong> ${latest.not}</div>` : ""}
   `;
 
-  // Chart
   const ctx = document.getElementById("progressChart").getContext("2d");
   new Chart(ctx, {
     type: "line",
@@ -250,9 +306,13 @@ function selectStudent(name) {
   });
 }
 
+function logout(name) {
+  delete unlockedStudents[name];
+  showLockScreen(name);
+}
+
 loadData();
-setInterval(loadData, 5 * 60 * 1000); // 5 dakikada bir otomatik yenile
+setInterval(loadData, 5 * 60 * 1000);
 </script>
 </body>
 </html>
-ENDOFFILE
