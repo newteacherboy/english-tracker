@@ -464,7 +464,13 @@ function buildBadges(genel, prevGenel) {
 
 /* ── ÖZET ── */
 function buildOzet(rows, latest) {
-  const prev = rows.length > 1 ? rows[rows.length-2] : null;
+  // Puan içeren satırları bul (genel > 0 veya herhangi bir beceri puanı > 0)
+  const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
+  const latestScored = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : latest;
+  const prevScored   = scoredRows.length > 1 ? scoredRows[scoredRows.length-2] : null;
+  // Özet için puanlı satırı kullan
+  latest = latestScored;
+  const prev = prevScored;
   function delta(key) {
     if (!prev) return '<span class="same">—</span>';
     const d = latest[key]-prev[key];
