@@ -82,7 +82,7 @@
 
 <script>
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
 const SKILL_COLORS = {
   vocabulary: "#1D9E75",
@@ -96,46 +96,48 @@ let allData = [];
 let students = [];
 let activeStudent = null;
 
+function parseCSV(text) {
+  const lines = text.trim().split("\n");
+  return lines.map(line => {
+    const cols = [];
+    let cur = "", inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ""; }
+      else { cur += ch; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
 async function loadData() {
   try {
     const res = await fetch(SHEET_URL);
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
-    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S\w]+)\)/)[1]);
-    const rows = json.table.rows;
-
-    allData = rows.slice(1).map(r => {
-      const c = r.c;
-      // Tarih: "Date(2026,5,14)" → "2026-06-14" (ay 0'dan başlar)
-      let tarih = "";
-      const raw = c[0]?.v || "";
-      const dm = raw.match(/Date\((\d+),(\d+),(\d+)\)/);
-      if (dm) {
-        const y = dm[1], m = String(Number(dm[2])+1).padStart(2,"0"), d = String(dm[3]).padStart(2,"0");
-        tarih = `${y}-${m}-${d}`;
-      } else {
-        tarih = c[0]?.f || raw;
-      }
-      return {
-        tarih,
-        ogrenci:    c[1]?.v || "",
-        seviye:     c[2]?.v || "",
-        genel:      Number(c[3]?.v) || 0,
-        vocabulary: Number(c[4]?.v) || 0,
-        konusma:    Number(c[5]?.v) || 0,
-        okuma:      Number(c[6]?.v) || 0,
-        yazma:      Number(c[7]?.v) || 0,
-        grammar:    Number(c[8]?.v) || 0,
-        deneme:     Number(c[9]?.v) || 0,
-        not:        c[10]?.v || ""
-      };
-    }).filter(r => r.ogrenci);
-
+    const rows = parseCSV(text);
+    allData = rows.slice(1).map(r => ({
+      tarih:      r[0] || "",
+      ogrenci:    r[1] || "",
+      seviye:     r[2] || "",
+      genel:      Number(r[3]) || 0,
+      vocabulary: Number(r[4]) || 0,
+      konusma:    Number(r[5]) || 0,
+      okuma:      Number(r[6]) || 0,
+      yazma:      Number(r[7]) || 0,
+      grammar:    Number(r[8]) || 0,
+      deneme:     Number(r[9]) || 0,
+      not:        r[10] || ""
+    })).filter(r => r.ogrenci);
     students = [...new Set(allData.map(r => r.ogrenci))];
     document.getElementById("last-updated").textContent = "Güncellendi: " + new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     renderTabs();
     if (students.length) selectStudent(students[0]);
   } catch(e) {
-    document.getElementById("content").innerHTML = '<div class="empty">Veri yüklenemedi. Sheets paylaşım ayarını kontrol et.</div>';
+    console.error("loadData error:", e);
+    document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
   }
 }
 
