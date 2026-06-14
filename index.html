@@ -13,9 +13,18 @@
 
   /* ANA SAYFA */
   .home { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
-  .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
+  .home-logo { font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.2rem; text-align: center; }
   .home-logo span { color: #1D9E75; }
-  .home-sub { font-size: 14px; color: #888; margin-bottom: 3rem; text-align: center; }
+  .home-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; text-align: center; }
+  
+  /* İletişim Butonları */
+  .contact-btns { display: flex; gap: 12px; margin-bottom: 3rem; }
+  .contact-btn { display: flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; border: none; transition: all 0.2s ease; }
+  .contact-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .contact-btn:active { transform: scale(0.97); opacity: 0.8; }
+  .contact-btn.mail { background: #f0f4ff; color: #2952cc; }
+  .contact-btn.whatsapp { background: #e8f8ef; color: #128C7E; }
+
   .home-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 480px; }
   .home-card { background: #fff; border: 1px solid #e8eaed; border-radius: 18px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.18s; }
   .home-card:hover { border-color: #1D9E75; box-shadow: 0 4px 20px rgba(29,158,117,0.12); transform: translateY(-2px); }
@@ -87,7 +96,14 @@
 <!-- ANA SAYFA -->
 <div class="home" id="home">
   <div class="home-logo">Öğrenci<span>Takip</span></div>
-  <div class="home-sub">Hizmet seçin</div>
+  <div class="home-sub">Lütfen bir hizmet seçerek giriş yapın</div>
+  
+  <!-- İletişim Butonları (Başlık Altında) -->
+  <div class="contact-btns">
+    <a class="contact-btn mail" href="mailto:official.ogretmencocuk@gmail.com">✉️ E-posta</a>
+    <a class="contact-btn whatsapp" href="https://wa.me/905369937089" target="_blank">💬 WhatsApp</a>
+  </div>
+
   <div class="home-cards">
     <div class="home-card" onclick="openSection('ingilizce')">
       <div class="icon">📚</div>
@@ -186,7 +202,7 @@ async function loadData() {
       okuma:      Number(r[6]) || 0,
       yazma:      Number(r[7]) || 0,
       grammar:    Number(r[8]) || 0,
-      deneme:     Number(r[9]) || 0,
+      deneme:      Number(r[9]) || 0,
       sifre:      r[10] ? r[10].trim() : ""
     })).filter(r => r.ogrenci);
 
