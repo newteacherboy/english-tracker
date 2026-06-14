@@ -128,6 +128,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .exam-table td { padding: 9px 8px; border-bottom: 1px solid #f8f8f8; color: #333; }
 .tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
 .tag-green { background: #E1F5EE; color: #0F6E56; }
+.tag-teal  { background: #d0f0e8; color: #0a5c45; }
 .tag-amber { background: #FAEEDA; color: #854F0B; }
 .tag-blue  { background: #E6F1FB; color: #185FA5; }
 
@@ -223,6 +224,14 @@ let activeStudent = null;
 let activePageTab = "ozet"; // ozet | takvim | haftalar
 let activeWeekIndex = 0;
 let denemelerData = [];
+
+
+function examTag(puan) {
+  if (puan > 85) return { cls: 'tag-green',  lbl: 'Muhteşemsin!' };
+  if (puan > 70) return { cls: 'tag-teal',   lbl: 'Böyle Devam' };
+  if (puan > 50) return { cls: 'tag-amber',  lbl: 'Yükselişte' };
+  return              { cls: 'tag-blue',   lbl: 'Gelişiyor' };
+}
 
 function parseCSV(text) {
   const lines = text.trim().split("\n");
@@ -761,9 +770,8 @@ function buildDenemeler(name) {
   if (!rows.length) return '<div class="empty">Henüz deneme sonucu girilmemiş.</div>';
 
   const tableRows = rows.slice().reverse().map(r => {
-    const tag = r.puan>=80?'tag-green':r.puan>=65?'tag-amber':'tag-blue';
-    const lbl = r.puan>=80?'İyi':r.puan>=65?'Gelişiyor':'Başlangıç';
-    return `<tr><td>${r.tarih}</td><td>${r.deneme_adi||"—"}</td><td><strong>${r.puan}</strong></td><td><span class="tag ${tag}">${lbl}</span></td></tr>`;
+    const et = examTag(r.puan);
+    return `<tr><td>${r.tarih}</td><td>${r.deneme_adi||"—"}</td><td><strong>${r.puan}</strong></td><td><span class="tag ${et.cls}">${et.lbl}</span></td></tr>`;
   }).join("");
 
   const avg = Math.round(rows.reduce((s,r)=>s+r.puan,0)/rows.length);
@@ -804,7 +812,7 @@ function drawDenemeChart(name) {
         borderColor: "#378ADD",
         backgroundColor: "rgba(55,138,221,0.08)",
         tension: 0.3, pointRadius: 5, fill: true,
-        pointBackgroundColor: rows.map(r => r.puan>=80?"#1D9E75":r.puan>=65?"#f39c12":"#e74c3c")
+        pointBackgroundColor: rows.map(r => r.puan>85?"#1D9E75":r.puan>70?"#0a5c45":r.puan>50?"#f39c12":"#185FA5")
       }]
     },
     options: {
