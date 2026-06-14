@@ -13,18 +13,9 @@
 
   /* ANA SAYFA */
   .home { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
-  .home-logo { font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.2rem; text-align: center; }
+  .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
   .home-logo span { color: #1D9E75; }
-  .home-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; text-align: center; }
-  
-  /* İletişim Butonları */
-  .contact-btns { display: flex; gap: 12px; margin-bottom: 3rem; }
-  .contact-btn { display: flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; border: none; transition: all 0.2s ease; }
-  .contact-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-  .contact-btn:active { transform: scale(0.97); opacity: 0.8; }
-  .contact-btn.mail { background: #f0f4ff; color: #2952cc; }
-  .contact-btn.whatsapp { background: #e8f8ef; color: #128C7E; }
-
+  .home-sub { font-size: 14px; color: #888; margin-bottom: 3rem; text-align: center; }
   .home-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 480px; }
   .home-card { background: #fff; border: 1px solid #e8eaed; border-radius: 18px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.18s; }
   .home-card:hover { border-color: #1D9E75; box-shadow: 0 4px 20px rgba(29,158,117,0.12); transform: translateY(-2px); }
@@ -82,14 +73,10 @@
   .exam-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .exam-table th { color: #888; font-weight: 500; text-align: left; padding: 6px 8px; border-bottom: 1px solid #f0f0f0; font-size: 11px; text-transform: uppercase; }
   .exam-table td { padding: 9px 8px; border-bottom: 1px solid #f8f8f8; color: #333; }
-  
-  /* Rozet ve Statü Renkleri */
   .tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
   .tag-green { background: #E1F5EE; color: #0F6E56; }
   .tag-amber { background: #FAEEDA; color: #854F0B; }
   .tag-blue  { background: #E6F1FB; color: #185FA5; }
-  .tag-red   { background: #FCE8E6; color: #C5221F; }
-  
   .empty { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
   .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
   canvas { max-height: 180px; }
@@ -97,15 +84,10 @@
 </head>
 <body>
 
+<!-- ANA SAYFA -->
 <div class="home" id="home">
   <div class="home-logo">Öğrenci<span>Takip</span></div>
-  <div class="home-sub">Lütfen bir hizmet seçerek giriş yapın</div>
-  
-  <div class="contact-btns">
-    <a class="contact-btn mail" href="mailto:official.ogretmencocuk@gmail.com">✉️ E-posta</a>
-    <a class="contact-btn whatsapp" href="https://wa.me/905369937089" target="_blank">💬 WhatsApp</a>
-  </div>
-
+  <div class="home-sub">Hizmet seçin</div>
   <div class="home-cards">
     <div class="home-card" onclick="openSection('ingilizce')">
       <div class="icon">📚</div>
@@ -120,6 +102,7 @@
   </div>
 </div>
 
+<!-- TRACKER -->
 <div class="tracker" id="tracker">
   <div class="header">
     <button class="back-btn" onclick="goHome()">← Geri</button>
@@ -159,4 +142,220 @@ function parseCSV(text) {
     for (let i = 0; i < line.length; i++) {
       const ch = line[i];
       if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) {
+      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ""; }
+      else { cur += ch; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+function openSection(section) {
+  currentSection = section;
+  allData = []; students = []; passwords = {}; unlockedStudents = {}; activeStudent = null;
+  document.getElementById("home").style.display = "none";
+  document.getElementById("tracker").style.display = "block";
+  document.getElementById("header-title").innerHTML = SECTIONS[section].label;
+  document.getElementById("tabs").innerHTML = "";
+  document.getElementById("content").innerHTML = '<div class="loading">Veriler yükleniyor...</div>';
+  loadData();
+}
+
+function goHome() {
+  document.getElementById("home").style.display = "flex";
+  document.getElementById("tracker").style.display = "none";
+  currentSection = null;
+}
+
+async function loadData() {
+  const gid = SECTIONS[currentSection].gid;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+
+    allData = rows.slice(1).map(r => ({
+      tarih:      r[0] || "",
+      ogrenci:    r[1] || "",
+      seviye:     r[2] || "",
+      genel:      Number(r[3]) || 0,
+      vocabulary: Number(r[4]) || 0,
+      konusma:    Number(r[5]) || 0,
+      okuma:      Number(r[6]) || 0,
+      yazma:      Number(r[7]) || 0,
+      grammar:    Number(r[8]) || 0,
+      deneme:     Number(r[9]) || 0,
+      sifre:      r[10] ? r[10].trim() : ""
+    })).filter(r => r.ogrenci);
+
+    passwords = {};
+    allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
+    students = [...new Set(allData.map(r => r.ogrenci))];
+
+    document.getElementById("last-updated").textContent =
+      new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+
+    renderTabs();
+    if (students.length && !activeStudent) selectStudent(students[0]);
+    else if (!students.length) {
+      document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
+    }
+  } catch(e) {
+    console.error(e);
+    document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
+  }
+}
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = students.map(s =>
+    `<div class="tab${s===activeStudent?' active':''}" onclick="selectStudent('${s.replace(/'/g,"\\'")}')">
+      ${s.split(" ")[0]}${passwords[s] ? ' 🔒' : ''}
+    </div>`
+  ).join("");
+}
+
+function selectStudent(name) {
+  activeStudent = name;
+  renderTabs();
+  if (passwords[name] && !unlockedStudents[name]) {
+    showLockScreen(name);
+  } else {
+    showStudentData(name);
+  }
+}
+
+function showLockScreen(name) {
+  const safeName = name.replace(/'/g, "\\'");
+  document.getElementById("content").innerHTML = `
+    <div class="lock-screen">
+      <div class="lock-icon">🔒</div>
+      <h3>${name.split(" ")[0]} adlı öğrencinin sayfası</h3>
+      <p>Bu sayfayı görüntülemek için şifre gereklidir.</p>
+      <input type="password" id="pwd-input" placeholder="Şifrenizi girin"
+        onkeydown="if(event.key==='Enter') checkPassword('${safeName}')">
+      <button onclick="checkPassword('${safeName}')">Giriş Yap</button>
+      <div class="lock-error" id="lock-error"></div>
+    </div>`;
+  setTimeout(() => document.getElementById("pwd-input")?.focus(), 100);
+}
+
+function checkPassword(name) {
+  const input = document.getElementById("pwd-input").value.trim();
+  const correct = (passwords[name] || "").trim();
+  if (input === correct) {
+    unlockedStudents[name] = true;
+    showStudentData(name);
+  } else {
+    document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
+    document.getElementById("pwd-input").value = "";
+    document.getElementById("pwd-input").focus();
+  }
+}
+
+function logout(name) {
+  delete unlockedStudents[name];
+  showLockScreen(name);
+}
+
+function showStudentData(name) {
+  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => a.tarih > b.tarih ? 1 : -1);
+  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
+
+  const latest = rows[rows.length - 1];
+  const prev   = rows.length > 1 ? rows[rows.length - 2] : null;
+
+  function delta(key) {
+    if (!prev) return '<span class="same">—</span>';
+    const d = latest[key] - prev[key];
+    if (d > 0) return `<span class="up">↑ ${d}</span>`;
+    if (d < 0) return `<span class="down">↓ ${Math.abs(d)}</span>`;
+    return '<span class="same">→ sabit</span>';
+  }
+
+  function examTag(s) {
+    if (s >= 80) return '<span class="tag tag-green">İyi</span>';
+    if (s >= 65) return '<span class="tag tag-amber">Gelişiyor</span>';
+    return '<span class="tag tag-blue">Başlangıç</span>';
+  }
+
+  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+  const safeName = name.replace(/'/g, "\\'");
+
+  const examRows = rows.filter(r => r.deneme > 0).slice(-5).reverse().map(r =>
+    `<tr><td>${r.tarih}</td><td>Deneme</td><td><strong>${r.deneme}</strong></td><td>${examTag(r.deneme)}</td></tr>`
+  ).join("") || `<tr><td colspan="4" style="color:#aaa;text-align:center;padding:1rem">Henüz deneme sonucu yok</td></tr>`;
+
+  const skills = ["vocabulary","konusma","okuma","yazma","grammar"];
+  const skillLabels = {vocabulary:"Vocabulary",konusma:"Konuşma",okuma:"Okuma",yazma:"Yazma",grammar:"Grammar"};
+  const skillRows = skills.map(s => `
+    <div class="skill-row">
+      <div class="skill-header"><span class="skill-name">${skillLabels[s]}</span><span class="skill-score">${latest[s]}/100</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${latest[s]}%;background:${SKILL_COLORS[s]}"></div></div>
+    </div>`).join("");
+
+  const chartLabels = rows.slice(-8).map(r => r.tarih);
+  const chartGenel  = rows.slice(-8).map(r => r.genel);
+  const chartDeneme = rows.slice(-8).map(r => r.deneme || null);
+
+  document.getElementById("content").innerHTML = `
+    <div class="student-header">
+      <div class="avatar">${initials}</div>
+      <div class="student-info">
+        <h2>${name}</h2>
+        <p>Son güncelleme: ${latest.tarih}</p>
+      </div>
+      <div class="level-badge">${latest.seviye}</div>
+      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${safeName}')">🔒 Çıkış</button>` : ""}
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-label">Genel puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
+      <div class="metric-card"><div class="metric-label">Vocabulary</div><div class="metric-value">${latest.vocabulary}</div><div class="metric-delta">${delta("vocabulary")}</div></div>
+      <div class="metric-card"><div class="metric-label">Grammar</div><div class="metric-value">${latest.grammar}</div><div class="metric-delta">${delta("grammar")}</div></div>
+      <div class="metric-card"><div class="metric-label">Son deneme</div><div class="metric-value">${latest.deneme || "—"}</div><div class="metric-delta">${latest.deneme ? delta("deneme") : ""}</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Son 8 hafta gelişim</div>
+      <canvas id="progressChart"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Beceri alanları — son hafta</div>
+      ${skillRows}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Deneme sonuçları</div>
+      <table class="exam-table">
+        <thead><tr><th>Tarih</th><th>Tür</th><th>Puan</th><th>Durum</th></tr></thead>
+        <tbody>${examRows}</tbody>
+      </table>
+    </div>
+  `;
+
+  const ctx = document.getElementById("progressChart").getContext("2d");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: chartLabels,
+      datasets: [
+        { label: "Genel puan", data: chartGenel, borderColor: "#1D9E75", backgroundColor: "rgba(29,158,117,0.08)", tension: 0.3, pointRadius: 4, fill: true },
+        { label: "Deneme", data: chartDeneme, borderColor: "#378ADD", backgroundColor: "transparent", tension: 0.3, pointRadius: 4, borderDash: [5,3] }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { font: { size: 12 }, boxWidth: 12 } } },
+      scales: {
+        y: { min: 0, max: 100, ticks: { font: { size: 11 } }, grid: { color: "#f0f0f0" } },
+        x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
