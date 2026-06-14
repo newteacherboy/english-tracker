@@ -205,6 +205,7 @@ const SECTIONS = {
   ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
   kocluk:    { gid: "770963286", label: "🎯 Eğitim Koçum" }
 };
+const DENEMELER_GID = "969516335";
 const SKILL_COLORS = {
   vocabulary: "#1D9E75", konusma: "#378ADD",
   okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30"
@@ -221,6 +222,7 @@ let unlockedStudents = {};
 let activeStudent = null;
 let activePageTab = "ozet"; // ozet | takvim | haftalar
 let activeWeekIndex = 0;
+let denemelerData = [];
 
 function parseCSV(text) {
   const lines = text.trim().split("\n");
@@ -287,6 +289,21 @@ async function loadData() {
     passwords = {};
     allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
     students = [...new Set(allData.map(r => r.ogrenci))];
+
+    // Denemeler sekmesini yükle
+    try {
+      const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
+      const dRes = await fetch(dUrl);
+      const dText = await dRes.text();
+      const dRows = parseCSV(dText);
+      denemelerData = dRows.slice(1).map(r => ({
+        tarih:       r[0] || "",
+        ogrenci:     r[1] || "",
+        deneme_adi:  r[2] || "",
+        puan:        toNum(r[3])
+      })).filter(r => r.ogrenci && r.puan > 0);
+    } catch(e) { denemelerData = []; }
+
     document.getElementById("last-updated").textContent =
       new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     renderTabs();
@@ -353,6 +370,7 @@ function showStudentPage(name) {
   if (activePageTab === "ozet") pageContent = buildOzet(rows, latest);
   else if (activePageTab === "takvim") pageContent = buildTakvim(rows);
   else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
+  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
 
   document.getElementById("content").innerHTML = `
     <div class="student-header">
@@ -365,11 +383,13 @@ function showStudentPage(name) {
       <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
       <div class="page-tab${activePageTab==='takvim'?' active':''}" onclick="switchPageTab('${s}','takvim')">📅 Takvim</div>
       <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Haftalar</div>
+      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
     </div>
     ${pageContent}
   `;
 
   if (activePageTab === "ozet") drawCharts(rows);
+  if (activePageTab === "denemeler") drawDenemeChart(name);
 }
 
 function switchPageTab(name, tab) {
@@ -488,12 +508,6 @@ function buildOzet(rows, latest) {
       <div class="progress-bar"><div class="progress-fill" style="width:${latest[sk]}%;background:${SKILL_COLORS[sk]}"></div></div>
     </div>`).join("");
 
-  const examRows = rows.filter(r=>r.deneme>0).slice(-5).reverse().map(r => {
-    const tag = r.deneme>=80?'tag-green':r.deneme>=65?'tag-amber':'tag-blue';
-    const lbl = r.deneme>=80?'İyi':r.deneme>=65?'Gelişiyor':'Başlangıç';
-    return `<tr><td>${r.tarih}</td><td><strong>${r.deneme}</strong></td><td><span class="tag ${tag}">${lbl}</span></td></tr>`;
-  }).join("") || `<tr><td colspan="3" style="color:#aaa;text-align:center;padding:1rem">Henüz deneme sonucu yok</td></tr>`;
-
   // Devamsızlık özeti
   const dersler = rows.filter(r=>r.ders_durumu);
   const yapildi = dersler.filter(r=>r.ders_durumu==="yapildi").length;
@@ -506,7 +520,7 @@ function buildOzet(rows, latest) {
     ${badgesHtml}
     <div class="metrics-grid">
       <div class="metric-card"><div class="metric-label">Genel puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
-      <div class="metric-card"><div class="metric-label">Son deneme</div><div class="metric-value">${latest.deneme||"—"}</div><div class="metric-delta">${latest.deneme?delta("deneme"):""}</div></div>
+      <div class="metric-card"><div class="metric-label">Son deneme</div><div class="metric-value" id="son-deneme-val">—</div><div class="metric-delta" id="son-deneme-delta"></div></div>
       <div class="metric-card"><div class="metric-label">Toplam ders</div><div class="metric-value">${yapildi}</div><div class="metric-delta" style="color:#888">${dersler.length} planlı</div></div>
       <div class="metric-card"><div class="metric-label">Devam oranı</div><div class="metric-value">${dersler.length?Math.round(yapildi/dersler.length*100):0}%</div><div class="metric-delta"><span style="color:#e74c3c">${yapilmadi} kaçırıldı</span></div></div>
     </div>
@@ -526,13 +540,6 @@ function buildOzet(rows, latest) {
       ${skillRows}
     </div>
 
-    <div class="card">
-      <div class="card-title">Deneme sonuçları</div>
-      <table class="exam-table">
-        <thead><tr><th>Tarih</th><th>Puan</th><th>Durum</th></tr></thead>
-        <tbody>${examRows}</tbody>
-      </table>
-    </div>
   `;
 }
 
@@ -745,6 +752,73 @@ function buildHaftalar(rows) {
     <div style="font-size:12px;color:#888;margin-bottom:12px">${fmt(weekStart)} – ${fmt(weekEnd)}</div>
     ${weekCardsHtml}
   `;
+}
+
+
+/* ── DENEMELER ── */
+function buildDenemeler(name) {
+  const rows = denemelerData.filter(r => r.ogrenci === name).sort((a,b) => a.tarih > b.tarih ? 1:-1);
+  if (!rows.length) return '<div class="empty">Henüz deneme sonucu girilmemiş.</div>';
+
+  const tableRows = rows.slice().reverse().map(r => {
+    const tag = r.puan>=80?'tag-green':r.puan>=65?'tag-amber':'tag-blue';
+    const lbl = r.puan>=80?'İyi':r.puan>=65?'Gelişiyor':'Başlangıç';
+    return `<tr><td>${r.tarih}</td><td>${r.deneme_adi||"—"}</td><td><strong>${r.puan}</strong></td><td><span class="tag ${tag}">${lbl}</span></td></tr>`;
+  }).join("");
+
+  const avg = Math.round(rows.reduce((s,r)=>s+r.puan,0)/rows.length);
+  const best = Math.max(...rows.map(r=>r.puan));
+  const last = rows[rows.length-1].puan;
+
+  return `
+    <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="metric-card"><div class="metric-label">Son puan</div><div class="metric-value">${last}</div></div>
+      <div class="metric-card"><div class="metric-label">En yüksek</div><div class="metric-value" style="color:#1D9E75">${best}</div></div>
+      <div class="metric-card"><div class="metric-label">Ortalama</div><div class="metric-value">${avg}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Deneme gelişim grafiği</div>
+      <canvas id="chartDeneme"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Tüm denemeler</div>
+      <table class="exam-table">
+        <thead><tr><th>Tarih</th><th>Sınav</th><th>Puan</th><th>Durum</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>`;
+}
+
+function drawDenemeChart(name) {
+  const rows = denemelerData.filter(r => r.ogrenci === name).sort((a,b) => a.tarih > b.tarih ? 1:-1);
+  const ctx = document.getElementById("chartDeneme");
+  if (!ctx || !rows.length) return;
+  if (Chart.getChart) { const ex = Chart.getChart("chartDeneme"); if (ex) ex.destroy(); }
+  new Chart(ctx.getContext("2d"), {
+    type: "line",
+    data: {
+      labels: rows.map(r => r.tarih),
+      datasets: [{
+        label: "Deneme puanı",
+        data: rows.map(r => r.puan),
+        borderColor: "#378ADD",
+        backgroundColor: "rgba(55,138,221,0.08)",
+        tension: 0.3, pointRadius: 5, fill: true,
+        pointBackgroundColor: rows.map(r => r.puan>=80?"#1D9E75":r.puan>=65?"#f39c12":"#e74c3c")
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.raw} puan` } }
+      },
+      scales: {
+        y: { min: 0, max: 100, grid: { color: "#f0f0f0" }, ticks: { font: { size: 10 } } },
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } }
+      }
+    }
+  });
 }
 
 function switchWeek(index) {
