@@ -1,0 +1,20 @@
+{
+  "name": "English Progress Tracker",
+  "short_name": "EnglishTracker",
+  "start_url": "/english-tracker/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1D9E75",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/1D9E75/ffffff?text=EP",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/1D9E75/ffffff?text=EP",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
