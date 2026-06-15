@@ -496,61 +496,6 @@ function switchPageTab(name, tab) {
   showStudentPage(name);
 }
 
-/* ── ROZETLER ── */
-const BADGES = [
-  { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
-  { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
-  { score:35, emoji:"⚙️", label:"Motoru Çalıştı" }, { score:40, emoji:"🌊", label:"Dalgayı Aştı" }, { score:45, emoji:"🦋", label:"Kanat Çırptı" },
-  { score:50, emoji:"🏕️", label:"Yarı Yolda" }, { score:55, emoji:"🔭", label:"Ufku Gördü" }, { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
-  { score:65, emoji:"🦅", label:"Süzülüyor" }, { score:70, emoji:"🌋", label:"Zirveye Yakın" }, { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
-  { score:80, emoji:"💫", label:"Yörüngede" }, { score:85, emoji:"🌠", label:"Kayan Yıldız" }, { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
-  { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
-];
-
-function buildBadges(genel, prevGenel) {
-  const earned = BADGES.filter(b => genel >= b.score);
-  const earnedCount = earned.length;
-  const total = BADGES.length;
-  const pct = Math.round(earnedCount / total * 100);
-
-  let notifHtml = "";
-  if (prevGenel !== null && prevGenel !== undefined) {
-    const newBadges = BADGES.filter(b => genel >= b.score && prevGenel < b.score);
-    const lostBadges = BADGES.filter(b => genel < b.score && prevGenel >= b.score);
-
-    if (newBadges.length > 0) {
-      const names = newBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
-      notifHtml = `
-        <div class="badge-notif gained">
-          <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
-          <div class="badge-notif-text"><h3>🎉 Yeni rozet kazandın!</h3><p>Bu hafta harika bir performans! <strong>${names}</strong> rozeti senin oldu.</p></div>
-        </div>`;
-    } else if (lostBadges.length > 0) {
-      const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
-      notifHtml = `
-        <div class="badge-notif lost">
-          <div class="badge-notif-emoji">😔</div><div class="badge-notif-text"><h3>Bu hafta biraz düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> rozeti bu hafta elden gitti. Haftaya geri alabilirsin!</p></div>
-        </div>`;
-    }
-  }
-
-  const grid = BADGES.map(b => {
-    const isEarned = genel >= b.score;
-    return `<div class="badge-item ${isEarned ? 'earned' : 'locked'}"><div class="badge-emoji">${b.emoji}</div><div class="badge-label">${b.label}</div><div class="badge-score">${b.score} p</div></div>`;
-  }).join("");
-
-  return `
-    ${notifHtml}
-    <div class="badges-card">
-      <div class="badges-title">🏅 Kazanılan Rozetler — ${earnedCount}/${total}</div>
-      <div class="badges-grid">${grid}</div>
-      <div class="badges-progress">
-        <div class="badges-progress-bar"><div class="badges-progress-fill" style="width:${pct}%"></div></div>
-        <div class="badges-progress-text">%${pct} tamamlandı</div>
-      </div>
-    </div>`;
-}
-
 /* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
 function buildLessonStatusBox(rows) {
   // Sadece ders tarihi girilmiş olan satırları filtrele ve kronolojik sırala
@@ -611,6 +556,63 @@ function buildLessonStatusBox(rows) {
     </div>
   `;
 }
+  
+/* ── ROZETLER ── */
+const BADGES = [
+  { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
+  { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
+  { score:35, emoji:"⚙️", label:"Motoru Çalıştı" }, { score:40, emoji:"🌊", label:"Dalgayı Aştı" }, { score:45, emoji:"🦋", label:"Kanat Çırptı" },
+  { score:50, emoji:"🏕️", label:"Yarı Yolda" }, { score:55, emoji:"🔭", label:"Ufku Gördü" }, { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
+  { score:65, emoji:"🦅", label:"Süzülüyor" }, { score:70, emoji:"🌋", label:"Zirveye Yakın" }, { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
+  { score:80, emoji:"💫", label:"Yörüngede" }, { score:85, emoji:"🌠", label:"Kayan Yıldız" }, { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
+  { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
+];
+
+function buildBadges(genel, prevGenel) {
+  const earned = BADGES.filter(b => genel >= b.score);
+  const earnedCount = earned.length;
+  const total = BADGES.length;
+  const pct = Math.round(earnedCount / total * 100);
+
+  let notifHtml = "";
+  if (prevGenel !== null && prevGenel !== undefined) {
+    const newBadges = BADGES.filter(b => genel >= b.score && prevGenel < b.score);
+    const lostBadges = BADGES.filter(b => genel < b.score && prevGenel >= b.score);
+
+    if (newBadges.length > 0) {
+      const names = newBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
+      notifHtml = `
+        <div class="badge-notif gained">
+          <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
+          <div class="badge-notif-text"><h3>🎉 Yeni rozet kazandın!</h3><p>Bu hafta harika bir performans! <strong>${names}</strong> rozeti senin oldu.</p></div>
+        </div>`;
+    } else if (lostBadges.length > 0) {
+      const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
+      notifHtml = `
+        <div class="badge-notif lost">
+          <div class="badge-notif-emoji">😔</div><div class="badge-notif-text"><h3>Bu hafta biraz düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> rozeti bu hafta elden gitti. Haftaya geri alabilirsin!</p></div>
+        </div>`;
+    }
+  }
+
+  const grid = BADGES.map(b => {
+    const isEarned = genel >= b.score;
+    return `<div class="badge-item ${isEarned ? 'earned' : 'locked'}"><div class="badge-emoji">${b.emoji}</div><div class="badge-label">${b.label}</div><div class="badge-score">${b.score} p</div></div>`;
+  }).join("");
+
+  return `
+    ${notifHtml}
+    <div class="badges-card">
+      <div class="badges-title">🏅 Kazanılan Rozetler — ${earnedCount}/${total}</div>
+      <div class="badges-grid">${grid}</div>
+      <div class="badges-progress">
+        <div class="badges-progress-bar"><div class="badges-progress-fill" style="width:${pct}%"></div></div>
+        <div class="badges-progress-text">%${pct} tamamlandı</div>
+      </div>
+    </div>`;
+}
+
+
 
 /* ── ÖZET ── */
 function buildOzet(rows, latest, studentName, allRows) {
