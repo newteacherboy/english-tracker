@@ -28,7 +28,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .contact-btn.whatsapp { background: #e8f8ef; color: #128C7E; }
 @media (max-width: 400px) { .home-cards { grid-template-columns: 1fr; } }
 
-/* YENİ ORTALANMIŞ YUVARLAK ÖĞRENCİ SEÇİM ALANI */
+/* YENİ ÜÇERLİ RENKLİ DİKDÖRTGEN ÖĞRENCİ SEÇİM ALANI */
 .student-selection-container {
   display: flex;
   flex-direction: column;
@@ -40,57 +40,65 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 }
 .student-grid-centered {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  justify-items: center;
-  align-items: center;
+  grid-template-columns: repeat(3, 1fr); /* Yan yana 3 adet */
+  gap: 12px; /* Kutular arası boşluk */
   width: 100%;
-  max-width: 320px;
+  max-width: 520px; /* 3'lü dizilim için genişletilmiş alan */
   margin: 0 auto;
 }
-.student-circle-btn {
+.student-rect-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  background: white;
-  border: 2px solid #e8eaed;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  height: 95px; /* Dikdörtgen formu için ideal yükseklik */
+  border-radius: 14px; /* Şık hafif oval köşeler */
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: all 0.22s ease;
   text-align: center;
-  padding: 10px;
+  padding: 12px 6px;
   position: relative;
+  color: white; /* Renkli zemin üzerinde yazıların net okunması için */
 }
-.student-circle-btn:hover {
-  transform: translateY(-4px);
-  border-color: #1D9E75;
-  box-shadow: 0 8px 16px rgba(29, 158, 117, 0.12);
+.student-rect-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-.student-circle-avatar {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1D9E75;
-  margin-bottom: 2px;
+.student-rect-avatar {
+  font-size: 18px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.25); /* Beyaz transparan şık arka plan mikro-daire */
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
   text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-.student-circle-name {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #334155;
+.student-rect-name {
+  font-size: 12px;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 90px;
+  width: 100%;
+  padding: 0 4px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
 }
 .lock-badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  right: 8px;
   font-size: 12px;
+  background: rgba(0,0,0,0.15);
+  padding: 2px;
+  border-radius: 50%;
+  line-height: 1;
 }
 
 /* TRACKER */
@@ -275,6 +283,19 @@ const DENEMELER_GID = "969516335";
 const SKILL_COLORS = { vocabulary: "#1D9E75", konusma: "#378ADD", okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30" };
 const SKILL_LABELS = { vocabulary:"Vocabulary", konusma:"Konuşma", okuma:"Okuma", yazma:"Yazma", grammar:"Grammar" };
 
+// Dikkat çekici kutucuklar için renk paleti havuzu
+const BRIGHT_COLORS = [
+  "linear-gradient(135deg, #FF512F, #DD2476)", // Canlı Kırmızı-Pembe
+  "linear-gradient(135deg, #1D9E75, #11694E)", // Derin Yeşil
+  "linear-gradient(135deg, #00c6ff, #0072ff)", // Parlak Mavi
+  "linear-gradient(135deg, #f857a6, #ff5858)", // Mercan Pembe
+  "linear-gradient(135deg, #f12711, #f5af19)", // Günbatımı Turuncu
+  "linear-gradient(135deg, #4776E6, #8E54E9)", // Asil Mor
+  "linear-gradient(135deg, #11998e, #38ef7d)", // Neon Yeşil
+  "linear-gradient(135deg, #FF416C, #FF4B2B)", // Ateş Kırmızısı
+  "linear-gradient(135deg, #3a7bd5, #3a6073)"  // Çelik Mavi
+];
+
 let currentSection = null;
 let allData = [];
 let students = [];
@@ -284,7 +305,6 @@ let activeStudent = null;
 let activePageTab = "ozet";
 let denemelerData = [];
 
-// Tarih dizilim yardımcısı
 const parseDateStr = (dStr) => {
   if (!dStr) return new Date(0);
   const parts = dStr.split(".");
@@ -359,7 +379,7 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
     const basariHavuzu = [
       ` Sürecimizi daha da yukarı taşımak adına şu stratejik taktiği uygulamalıyız: Her akşam yatmadan önce mutlaka 10 dakikalık bir "kelime tekrarı" rutini oturtalım. Görsel hafızayı canlı tutmak, denemelerdeki yeni nesil soruları çok daha hızlı analiz etmesini sağlayacaktır.`,
       ` Yakaladığımız bu güzel ritmi korumak adına yeni taktiğimiz şu olmalı: Öğrencimiz çözdüğü testlerde sadece doğrularına odaklanmamalı; boş bıraktığı veya yanlış yaptığı soruları kesip bir "hata defteri" yapmalı. Gerçek gelişim, yapamadığımız soruları çözebildiğimiz an başlar.`,
-      ` Sürecin daha sağlıklı ilerlemesi için bir sonraki adımımız ders sonrası mini özet çıkarma alışkanlığı olmalı. Konu anlatımı biter bitmez kendi cümleleriyle tutacağı küçük notlar Extracted ve ardından gelecek soru çözümleri, bilgiyi zihninde tamamen kilitleyecektir.`
+      ` Sürecin daha sağlıklı ilerlemesi için bir sonraki adımımız ders sonrası mini özet çıkarma alışkanlığı olmalı. Konu anlatımı biter bitmez kendi cümleleriyle tutacağı küçük notlar ve ardından gelecek soru çözümleri, bilgiyi zihninde tamamen kilitleyecektir.`
     ];
     taktikNotu = r(basariHavuzu);
   }
@@ -406,9 +426,10 @@ function goHome() {
   currentSection = null; activeStudent = null;
 }
 
+// DÜZELTME: Değiştir butonuna basıldığında listenin kendisi değil en başa (Hizmet Seçimi / Ana Ekran) dönmesi sağlandı
 function backToSelection() {
   activeStudent = null;
-  renderCenteredStudentSelection();
+  goHome();
 }
 
 async function loadData() {
@@ -441,7 +462,6 @@ async function loadData() {
 
     document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     
-    // Öğrencileri listeleme ekranını bas
     if (students.length) {
       renderCenteredStudentSelection();
     } else {
@@ -453,19 +473,22 @@ async function loadData() {
   }
 }
 
-// YENİ EKLEME: Giriş yaptıktan sonra ikişerli alt alta yuvarlak daire çıkaran seçim ekranı
+// GÜNCELLEME: İsimleri yan yana 3 adet yapan, renkli ve dikkat çeken dikdörtgen kutu sistemi
 function renderCenteredStudentSelection() {
   document.getElementById("tabs").style.display = "none"; 
   document.getElementById("header-title").innerHTML = SECTIONS[currentSection].label;
   
-  const listHtml = students.map(name => {
+  const listHtml = students.map((name, index) => {
     const initials = name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
     const lockIcon = passwords[name] ? '<span class="lock-badge">🔒</span>' : '';
+    // Renk havuzundan sırayla rengarenk ve dikkat çekici gradyanları atıyoruz
+    const bgGradient = BRIGHT_COLORS[index % BRIGHT_COLORS.length];
+    
     return `
-      <div class="student-circle-btn" onclick="selectStudent('${esc(name)}')">
+      <div class="student-rect-btn" style="background: ${bgGradient};" onclick="selectStudent('${esc(name)}')">
         ${lockIcon}
-        <div class="student-circle-avatar">${initials}</div>
-        <div class="student-circle-name">${name}</div>
+        <div class="student-rect-avatar">${initials}</div>
+        <div class="student-rect-name">${name}</div>
       </div>
     `;
   }).join("");
@@ -524,7 +547,6 @@ function checkPassword(name) {
 }
 
 function showStudentData(name) {
-  // Veri ekranında üst başlığı güncel tut
   document.getElementById("header-title").innerHTML = `${SECTIONS[currentSection].label} ❯ <span>${name}</span>`;
   renderPage(name);
 }
@@ -550,7 +572,7 @@ function renderPage(name) {
         <p>${latest.tarih} itibarıyla</p>
       </div>
       ${latest.seviye ? `<div class="level-badge">${latest.seviye}</div>` : ''}
-      ${passwords[name] ? `<button class="logout-btn" onclick="delete unlockedStudents['${esc(name)}']; backToSelection();">🔒 Kilitle</button>` : ''}
+      ${passwords[name] ? `<button class="logout-btn" onclick="delete unlockedStudents['${esc(name)}']; loadData();">🔒 Kilitle</button>` : ''}
     </div>
     
     <div class="page-tabs">
@@ -593,7 +615,6 @@ function buildOzetTab(latest, sData, studentName) {
     else deltaHtml = `<span class="metric-delta same">→ sabit</span>`;
   } else { deltaHtml = `<span class="metric-delta same">—</span>`; }
 
-  // Ders durum kutusu hazırlığı
   let statusGridHtml = "";
   const validStatusRows = sData.filter(r => r.ders_tarihi && r.ders_durumu);
   if(validStatusRows.length > 0) {
@@ -606,7 +627,6 @@ function buildOzetTab(latest, sData, studentName) {
     statusGridHtml = `<div class="status-empty">Henüz ders takvimi kaydı bulunmuyor.</div>`;
   }
 
-  // Rozet motoru
   const currentBadges = [];
   const achievedInLatest = [];
   const lostInLatest = [];
