@@ -493,7 +493,40 @@ function showStudentPage(name) {
 
 function switchPageTab(name, tab) {
   activePageTab = tab;
-  showStudentPage(name);
+  showStudentPage(name); function showStudentPage(name) {
+  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
+  const latest = rows[rows.length-1];
+  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+  const s = esc(name);
+
+  let pageContent = "";
+  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
+  else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
+  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
+
+  document.getElementById("content").innerHTML = `
+    <div class="student-header">
+      <div class="avatar">${initials}</div>
+      <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
+      <div class="level-badge">${latest.seviye}</div>
+      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
+    </div>
+    <div class="page-tabs">
+      <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
+      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
+      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
+    </div>
+    ${pageContent}
+  `;
+
+  if (activePageTab === "ozet") {
+    drawCharts(rows);
+    // Özet yüklendiği an gecikmesiz olarak son deneme verisini de kutucuğa yazdırıyoruz
+    updateSonDenemeKutusu(name, rows);
+  }
+  if (activePageTab === "denemeler") drawDenemeChart(name);
+}
 }
 
 /* ── ROZETLER ── */
