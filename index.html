@@ -498,26 +498,13 @@ function switchPageTab(name, tab) {
 
 /* ── ROZETLER ── */
 const BADGES = [
-  { score: 5,   emoji: "🇲🇲", label: "Young Boys" },
-  { score: 10,  emoji: "🇭🇷", label: "Dinamo Zagreb" },
-  { score: 15,  emoji: "🇬🇷", label: "PAOK" },
-  { score: 20,  emoji: "🇷🇸", label: "Kızıl Yıldız" },
-  { score: 25,  emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", label: "Celtic" },
-  { score: 30,  emoji: "🇵🇹", label: "Sporting CP" },
-  { score: 35,  emoji: "🇵🇹", label: "Benfica" },
-  { score: 40,  emoji: "🇳🇱", label: "Feyenoord" },
-  { score: 45,  emoji: "🇳🇱", label: "PSV Eindhoven" },
-  { score: 50,  emoji: "🇮🇹", label: "AC Milan" },
-  { score: 55,  emoji: "🇬🇧", label: "Aston Villa" },
-  { score: 60,  emoji: "🇮🇹", label: "Juventus" },
-  { score: 65,  emoji: "🇪🇸", label: "Atletico Madrid" },
-  { score: 70,  emoji: "🇮🇹", label: "Inter Milan" },
-  { score: 75,  emoji: "🇩🇪", label: "B. Dortmund" },
-  { score: 80,  emoji: "🇫🇷", label: "Paris SG" },
-  { score: 85,  emoji: "🇩🇪", label: "Bayern Münih" },
-  { score: 90,  emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", label: "Manchester City" },
-  { score: 95,  emoji: "🇪🇸", label: "Real Madrid" },
-  { score: 100, emoji: "🦁", label: "GALATASARAY" }
+  { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
+  { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
+  { score:35, emoji:"⚙️", label:"Motoru Çalıştı" }, { score:40, emoji:"🌊", label:"Dalgayı Aştı" }, { score:45, emoji:"🦋", label:"Kanat Çırptı" },
+  { score:50, emoji:"🏕️", label:"Yarı Yolda" }, { score:55, emoji:"🔭", label:"Ufku Gördü" }, { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
+  { score:65, emoji:"🦅", label:"Süzülüyor" }, { score:70, emoji:"🌋", label:"Zirveye Yakın" }, { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
+  { score:80, emoji:"💫", label:"Yörüngede" }, { score:85, emoji:"🌠", label:"Kayan Yıldız" }, { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
+  { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
 ];
 
 function buildBadges(genel, prevGenel) {
@@ -536,33 +523,15 @@ function buildBadges(genel, prevGenel) {
       notifHtml = `
         <div class="badge-notif gained">
           <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
-          <div class="badge-notif-text"><h3>🎉 Yeni takım seviyesi açıldı!</h3><p>Barış bu hafta harika bir performans! <strong>${names}</strong> kulübünün seviyesine ulaştın.</p></div>
+          <div class="badge-notif-text"><h3>🎉 Yeni rozet kazandın!</h3><p>Bu hafta harika bir performans! <strong>${names}</strong> rozeti senin oldu.</p></div>
         </div>`;
     } else if (lostBadges.length > 0) {
       const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
       notifHtml = `
         <div class="badge-notif lost">
-          <div class="badge-notif-emoji">📉</div><div class="badge-notif-text"><h3>Bu hafta puanlarda düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> takım seviyesi bu hafta elden gitti. Haftaya daha güçlü dönüp geri alabilirsin Barış!</p></div>
+          <div class="badge-notif-emoji">😔</div><div class="badge-notif-text"><h3>Bu hafta biraz düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> rozeti bu hafta elden gitti. Haftaya geri alabilirsin!</p></div>
         </div>`;
     }
-  }
-
-  const grid = BADGES.map(b => {
-    const isEarned = genel >= b.score;
-    return `<div class="badge-item ${isEarned ? 'earned' : 'locked'}"><div class="badge-emoji">${b.emoji}</div><div class="badge-label">${b.label}</div><div class="badge-score">${b.score} p</div></div>`;
-  }).join("");
-
-  return `
-    ${notifHtml}
-    <div class="badges-card">
-      <div class="badges-title">🏆 Barış'ın Şampiyonlar Ligi Yolculuğu — ${earnedCount}/${total}</div>
-      <div class="badges-grid">${grid}</div>
-      <div class="badges-progress">
-        <div class="badges-progress-bar"><div class="badges-progress-fill" style="width:${pct}%"></div></div>
-        <div class="badges-progress-text">%${pct} Şampiyonluğa Yakın</div>
-      </div>
-    </div>`;
-}
   }
 
   const grid = BADGES.map(b => {
@@ -591,22 +560,19 @@ function buildLessonStatusBox(rows) {
     return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
   }
 
+  // Geçen hafta (en son işlenen/biten ders), Güncel ders ve Sonraki ders tespiti
   let pastLesson = null;
   let currentLesson = null;
   let nextLesson = null;
 
-  // Durumu tamamlandi, yapılmadı veya ertelendi olan geçmiş/yapılmış tüm dersleri ayır
+  // Durumu tamamlandi, yapılmadı veya ertelendi olan en son dersleri bulalım
   const pastAndCurrent = lessonRows.filter(r => ["tamamlandi", "yapilmedi", "yapilmadi", "ertelendi"].includes(r.ders_durumu.toLowerCase().trim()));
   const incoming = lessonRows.filter(r => ["sonraki", "sonraki ders", "planlandi", ""].includes(r.ders_durumu.toLowerCase().trim()));
 
   if (pastAndCurrent.length > 0) {
-    // Güncel Ders: Durumu girilen en son eklenmiş ders satırıdır.
-    currentLesson = pastAndCurrent[pastAndCurrent.length - 1];
-    
-    // Geçen Ders: "En son yapılan dersin tarihi" istendiği için, durumu spesifik olarak "tamamlandi" olan en güncel dersi buluyoruz.
-    const completedLessons = pastAndCurrent.filter(r => r.ders_durumu.toLowerCase().trim() === "tamamlandi");
-    if (completedLessons.length > 0) {
-      pastLesson = completedLessons[completedLessons.length - 1];
+    currentLesson = pastAndCurrent[pastAndCurrent.length - 1]; // En güncel işlenen/durumu girilen ders
+    if (pastAndCurrent.length > 1) {
+      pastLesson = pastAndCurrent[pastAndCurrent.length - 2]; // Ondan bir önceki ders (Geçen haftaki ders)
     }
   }
 
@@ -674,7 +640,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   const yapilmadi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="yapilmadi" || r.ders_durumu.toLowerCase().trim()==="yapilmedi").length;
 
   const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null);
-  const lessonStatusBoxHtml = buildLessonStatusBox(rows);
+  const lessonStatusBoxHtml = buildLessonStatusBox(rows); // Yeni oluşturduğumuz kutucuk motoru çağrılıyor
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
   return `
