@@ -532,8 +532,7 @@ function switchPageTab(name, tab) {
 /* ── ROZETLER ── */
 
 
-function buildBadges(genel, prevGenel) {
-  function buildBadges(genel, prevGenel) {
+function buildBadges(genel, prevGenel, currentStudentName) {
   // 1. Orijinal Genel Rozet Listesi (Diğer öğrenciler için)
   const ORIGINAL_BADGES = [
     { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
@@ -569,13 +568,15 @@ function buildBadges(genel, prevGenel) {
     { score: 100, emoji: "🦁", label: "GALATASARAY" }
   ];
 
-  // Aktif öğrencinin adında "barış" geçip geçmediğini kontrol ediyoruz
-  const isBaris = (activeStudent || "").toLowerCase().includes("barış");
+  // İsmi küçük harfe çevirip Türkçe karakterleri arındırarak kontrol etme
+  const checkName = (currentStudentName || "").toLowerCase().trim()
+    .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
+    .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
+
+  // Eğer isimde "baris" geçiyorsa futbol modunu aç
+  const isBaris = checkName.includes("baris");
   
-  // Eğer Barış ise onun listesini, değilse orijinal listeyi seçiyoruz
   const currentBadgesList = isBaris ? BARIS_BADGES : ORIGINAL_BADGES;
-  
-  // Başlık metni ve ilerleme durumu metnini dinamik yapıyoruz
   const cardTitle = isBaris ? "🏆 Barış'ın Şampiyonlar Ligi Yolculuğu" : "🏅 Kazanılan Rozetler";
   const progressTextSuffix = isBaris ? "Şampiyonluğa Yakın" : "tamamlandı";
   const gainedText = isBaris ? "kulübünün seviyesine ulaştın." : "rozeti senin oldu.";
@@ -623,6 +624,7 @@ function buildBadges(genel, prevGenel) {
       </div>
     </div>`;
 }
+
 
 /* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
 function buildLessonStatusBox(rows) {
@@ -712,7 +714,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   const yapildi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="tamamlandi").length;
   const yapilmadi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="yapilmadi" || r.ders_durumu.toLowerCase().trim()==="yapilmedi").length;
 
-  const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null);
+  const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null, studentName);
   const lessonStatusBoxHtml = buildLessonStatusBox(rows); // Yeni oluşturduğumuz kutucuk motoru çağrılıyor
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
