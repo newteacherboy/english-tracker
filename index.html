@@ -530,57 +530,84 @@ function switchPageTab(name, tab) {
 }
 
 /* ── ROZETLER ── */
-const BADGES = [
-  { score: 5,   emoji: "🐝", label: "Young Boys" },       // Arılar (Kulüp Takma Adı)
-  { score: 10,  emoji: "🦈", label: "Dinamo Zagreb" },    // Hırvatistan'ın yırtıcıları
-  { score: 15,  emoji: "🦅", label: "PAOK" },             // Çift Başlı Kartal (Kulüp Amblemi)
-  { score: 20,  emoji: "🐺", label: "Kızıl Yıldız" },     // Balkanların sert kurtları
-  { score: 25,  emoji: "🍀", label: "Celtic" },            // Yonca (Kelt kültüründen ama bitki yerine alternatif yeşillik) -> İstersen İskoç geyiği için "🦌" de yapabilirsin.
-  { score: 30,  emoji: "🦁", label: "Sporting CP" },      // Yeşil Aslanlar (Kulüp Amblemi)
-  { score: 35,  emoji: "🦅", label: "Benfica" },          // Kara Kartal (Stadyumda uçurulan meşhur kartal)
-  { score: 40,  emoji: "🐘", label: "Feyenoord" },        // Rotterdam'ın güçlü fili
-  { score: 45,  emoji: "🐎", label: "PSV Eindhoven" },    // Hollanda'nın hızlı atları
-  { score: 50,  emoji: "😈", label: "AC Milan" },         // Kırmızı Şeytanlar (Lakabı) -> Hayvan alternatifi istersen İtalya kurdu için "🐺"
-  { score: 55,  emoji: "🦁", label: "Aston Villa" },      // İngiliz Aslanı (Amblemindeki aslan)
-  { score: 60,  emoji: "🦓", label: "Juventus" },         // Zebralar (Siyah-Beyaz çubuklu formadan dolayı lakabı)
-  { score: 65,  emoji: "🐻", label: "Atletico Madrid" },  // Madrid'in simgesi olan Ayı (Ambleminde var)
-  { score: 70,  emoji: "🐍", label: "Inter Milan" },      // Il Biscione / Büyük Yılan (Milano'nun ve Inter'in tarihi simgesi)
-  { score: 75,  emoji: "🐝", label: "B. Dortmund" },      // Sarı Duvarın Arıları (Renklerden dolayı lakabı)
-  { score: 80,  emoji: "🦅", label: "Paris SG" },         // Paris'in yüksek uçanları
-  { score: 85,  emoji: "🐻", label: "Bayern Münih" },     // Bavyera Ayısı
-  { score: 90,  emoji: "🦈", label: "Manchester City" },  // Premier Lig'in büyük köpekbalığı
-  { score: 95,  emoji: "👑", label: "Real Madrid" },      // Krallar (Lakabı) -> Hayvan alternatifi istersen İspanya boğası için "🐂"
-  { score: 100, emoji: "🦁", label: "GALATASARAY" }       // Kükreyen Aslan (Zirve!)
-];
+
 
 function buildBadges(genel, prevGenel) {
-  const earned = BADGES.filter(b => genel >= b.score);
+  function buildBadges(genel, prevGenel) {
+  // 1. Orijinal Genel Rozet Listesi (Diğer öğrenciler için)
+  const ORIGINAL_BADGES = [
+    { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
+    { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
+    { score:35, emoji:"⚙️", label:"Motoru Çalıştı" }, { score:40, emoji:"🌊", label:"Dalgayı Aştı" }, { score:45, emoji:"🦋", label:"Kanat Çırptı" },
+    { score:50, emoji:"🏕️", label:"Yarı Yolda" }, { score:55, emoji:"🔭", label:"Ufku Gördü" }, { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
+    { score:65, emoji:"🦅", label:"Süzülüyor" }, { score:70, emoji:"🌋", label:"Zirveye Yakın" }, { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
+    { score:80, emoji:"💫", label:"Yörüngede" }, { score:85, emoji:"🌠", label:"Kayan Yıldız" }, { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
+    { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
+  ];
+
+  // 2. Sadece Barış için geçerli olacak Şampiyonlar Ligi Listesi
+  const BARIS_BADGES = [
+    { score: 5,   emoji: "🐝", label: "Young Boys" },
+    { score: 10,  emoji: "🦈", label: "Dinamo Zagreb" },
+    { score: 15,  emoji: "🦅", label: "PAOK" },
+    { score: 20,  emoji: "🐺", label: "Kızıl Yıldız" },
+    { score: 25,  emoji: "🍀", label: "Celtic" },
+    { score: 30,  emoji: "🦁", label: "Sporting CP" },
+    { score: 35,  emoji: "🦅", label: "Benfica" },
+    { score: 40,  emoji: "🐘", label: "Feyenoord" },
+    { score: 45,  emoji: "🐎", label: "PSV Eindhoven" },
+    { score: 50,  emoji: "😈", label: "AC Milan" },
+    { score: 55,  emoji: "🦁", label: "Aston Villa" },
+    { score: 60,  emoji: "🦓", label: "Juventus" },
+    { score: 65,  emoji: "🐻", label: "Atletico Madrid" },
+    { score: 70,  emoji: "🐍", label: "Inter Milan" },
+    { score: 75,  emoji: "🐝", label: "B. Dortmund" },
+    { score: 80,  emoji: "🦅", label: "Paris SG" },
+    { score: 85,  emoji: "🐻", label: "Bayern Münih" },
+    { score: 90,  emoji: "🦈", label: "Manchester City" },
+    { score: 95,  emoji: "👑", label: "Real Madrid" },
+    { score: 100, emoji: "🦁", label: "GALATASARAY" }
+  ];
+
+  // Aktif öğrencinin adında "barış" geçip geçmediğini kontrol ediyoruz
+  const isBaris = (activeStudent || "").toLowerCase().includes("barış");
+  
+  // Eğer Barış ise onun listesini, değilse orijinal listeyi seçiyoruz
+  const currentBadgesList = isBaris ? BARIS_BADGES : ORIGINAL_BADGES;
+  
+  // Başlık metni ve ilerleme durumu metnini dinamik yapıyoruz
+  const cardTitle = isBaris ? "🏆 Barış'ın Şampiyonlar Ligi Yolculuğu" : "🏅 Kazanılan Rozetler";
+  const progressTextSuffix = isBaris ? "Şampiyonluğa Yakın" : "tamamlandı";
+  const gainedText = isBaris ? "kulübünün seviyesine ulaştın." : "rozeti senin oldu.";
+  const lostText = isBaris ? "takım seviyesi bu hafta elden gitti. Haftaya daha güçlü dönüp geri alabilirsin Barış!" : "rozeti bu hafta elden gitti. Haftaya geri alabilirsin!";
+
+  const earned = currentBadgesList.filter(b => genel >= b.score);
   const earnedCount = earned.length;
-  const total = BADGES.length;
+  const total = currentBadgesList.length;
   const pct = Math.round(earnedCount / total * 100);
 
   let notifHtml = "";
   if (prevGenel !== null && prevGenel !== undefined) {
-    const newBadges = BADGES.filter(b => genel >= b.score && prevGenel < b.score);
-    const lostBadges = BADGES.filter(b => genel < b.score && prevGenel >= b.score);
+    const newBadges = currentBadgesList.filter(b => genel >= b.score && prevGenel < b.score);
+    const lostBadges = currentBadgesList.filter(b => genel < b.score && prevGenel >= b.score);
 
     if (newBadges.length > 0) {
       const names = newBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
       notifHtml = `
         <div class="badge-notif gained">
           <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
-          <div class="badge-notif-text"><h3>🎉 Yeni takım seviyesi açıldı!</h3><p>Barış bu hafta harika bir performans! <strong>${names}</strong> kulübünün seviyesine ulaştın.</p></div>
+          <div class="badge-notif-text"><h3>🎉 Yeni başarı kilidi açıldı!</h3><p>${isBaris ? 'Barış bu hafta harika bir performans! ' : 'Bu hafta harika bir performans! '}<strong>${names}</strong> ${gainedText}</p></div>
         </div>`;
     } else if (lostBadges.length > 0) {
       const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
       notifHtml = `
         <div class="badge-notif lost">
-          <div class="badge-notif-emoji">📉</div><div class="badge-notif-text"><h3>Bu hafta puanlarda düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> takım seviyesi bu hafta elden gitti. Haftaya daha güçlü dönüp geri alabilirsin Barış!</p></div>
+          <div class="badge-notif-emoji">😔</div><div class="badge-notif-text"><h3>Bu hafta biraz düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> ${lostText}</p></div>
         </div>`;
     }
   }
 
-  const grid = BADGES.map(b => {
+  const grid = currentBadgesList.map(b => {
     const isEarned = genel >= b.score;
     return `<div class="badge-item ${isEarned ? 'earned' : 'locked'}"><div class="badge-emoji">${b.emoji}</div><div class="badge-label">${b.label}</div><div class="badge-score">${b.score} p</div></div>`;
   }).join("");
@@ -588,11 +615,11 @@ function buildBadges(genel, prevGenel) {
   return `
     ${notifHtml}
     <div class="badges-card">
-      <div class="badges-title">🏆 Barış'ın Şampiyonlar Ligi Yolculuğu — ${earnedCount}/${total}</div>
+      <div class="badges-title">${cardTitle} — ${earnedCount}/${total}</div>
       <div class="badges-grid">${grid}</div>
       <div class="badges-progress">
         <div class="badges-progress-bar"><div class="badges-progress-fill" style="width:${pct}%"></div></div>
-        <div class="badges-progress-text">%${pct} Şampiyonluğa Yakın</div>
+        <div class="badges-progress-text">%${pct} ${progressTextSuffix}</div>
       </div>
     </div>`;
 }
