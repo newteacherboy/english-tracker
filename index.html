@@ -496,67 +496,6 @@ function switchPageTab(name, tab) {
   showStudentPage(name);
 }
 
-/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
-function buildLessonStatusBox(rows) {
-  // Sadece ders tarihi girilmiş olan satırları filtrele ve kronolojik sırala
-  const lessonRows = rows.filter(r => r.ders_tarihi.trim() !== "").sort((a,b) => parseDateStr(a.ders_tarihi) - parseDateStr(b.ders_tarihi));
-  
-  if (!lessonRows.length) {
-    return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
-  }
-
-  // Geçen hafta (en son işlenen/biten ders), Güncel ders ve Sonraki ders tespiti
-  let pastLesson = null;
-  let currentLesson = null;
-  let nextLesson = null;
-
-  // Durumu tamamlandi, yapılmadı veya ertelendi olan en son dersleri bulalım
-  const pastAndCurrent = lessonRows.filter(r => ["tamamlandi", "yapilmedi", "yapilmadi", "ertelendi"].includes(r.ders_durumu.toLowerCase().trim()));
-  const incoming = lessonRows.filter(r => ["sonraki", "sonraki ders", "planlandi", ""].includes(r.ders_durumu.toLowerCase().trim()));
-
-  if (pastAndCurrent.length > 0) {
-    currentLesson = pastAndCurrent[pastAndCurrent.length - 1]; // En güncel işlenen/durumu girilen ders
-    if (pastAndCurrent.length > 1) {
-      pastLesson = pastAndCurrent[pastAndCurrent.length - 2]; // Ondan bir önceki ders (Geçen haftaki ders)
-    }
-  }
-
-  if (incoming.length > 0) {
-    nextLesson = incoming[0]; // Gelecek ilk planlı ders
-  }
-
-  function getStatusBadge(status) {
-    const st = (status || "").toLowerCase().trim();
-    if (st === "tamamlandi") return `<span class="status-badge badge-tamamlandi">Tamamlandı</span>`;
-    if (st === "yapilmadi" || st === "yapilmedi") return `<span class="status-badge badge-yapilmadi">Yapılmadı</span>`;
-    if (st === "ertelendi") return `<span class="status-badge badge-ertelendi">Ertelendi</span>`;
-    return `<span class="status-badge badge-sonraki">Sonraki Ders</span>`;
-  }
-
-  return `
-    <div class="lesson-status-box">
-      <div class="status-box-title">📅 Ders Zaman Çizelgesi ve Durumu</div>
-      <div class="status-grid">
-        <div class="status-element">
-          <span class="lbl">Geçen Ders</span>
-          <span class="date">${pastLesson ? pastLesson.ders_tarihi : "—"}</span>
-          ${pastLesson ? getStatusBadge(pastLesson.ders_durumu) : '<span class="status-empty">Veri Yok</span>'}
-        </div>
-        <div class="status-element" style="background: #f0fdf4; border-color: #bbf7d0;">
-          <span class="lbl" style="color: #15803d;">Güncel Ders</span>
-          <span class="date" style="color: #166534;">${currentLesson ? currentLesson.ders_tarihi : "—"}</span>
-          ${currentLesson ? getStatusBadge(currentLesson.ders_durumu) : '<span class="status-empty">Veri Yok</span>'}
-        </div>
-        <div class="status-element">
-          <span class="lbl">Gelecek Ders</span>
-          <span class="date">${nextLesson ? nextLesson.ders_tarihi : "—"}</span>
-          ${nextLesson ? getStatusBadge("sonraki") : '<span class="status-empty">Plan Yok</span>'}
-        </div>
-      </div>
-    </div>
-  `;
-}
-  
 /* ── ROZETLER ── */
 const BADGES = [
   { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
@@ -612,7 +551,69 @@ function buildBadges(genel, prevGenel) {
     </div>`;
 }
 
+/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
+function buildLessonStatusBox(rows) {
+  // Sadece ders tarihi girilmiş olan satırları filtrele ve kronolojik sırala
+  const lessonRows = rows.filter(r => r.ders_tarihi.trim() !== "").sort((a,b) => parseDateStr(a.ders_tarihi) - parseDateStr(b.ders_tarihi));
+  
+  if (!lessonRows.length) {
+    return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
+  }
 
+  let pastLesson = null;
+  let currentLesson = null;
+  let nextLesson = null;
+
+  // Durumu tamamlandi, yapılmadı veya ertelendi olan geçmiş/yapılmış tüm dersleri ayır
+  const pastAndCurrent = lessonRows.filter(r => ["tamamlandi", "yapilmedi", "yapilmadi", "ertelendi"].includes(r.ders_durumu.toLowerCase().trim()));
+  const incoming = lessonRows.filter(r => ["sonraki", "sonraki ders", "planlandi", ""].includes(r.ders_durumu.toLowerCase().trim()));
+
+  if (pastAndCurrent.length > 0) {
+    // Güncel Ders: Durumu girilen en son eklenmiş ders satırıdır.
+    currentLesson = pastAndCurrent[pastAndCurrent.length - 1];
+    
+    // Geçen Ders: "En son yapılan dersin tarihi" istendiği için, durumu spesifik olarak "tamamlandi" olan en güncel dersi buluyoruz.
+    const completedLessons = pastAndCurrent.filter(r => r.ders_durumu.toLowerCase().trim() === "tamamlandi");
+    if (completedLessons.length > 0) {
+      pastLesson = completedLessons[completedLessons.length - 1];
+    }
+  }
+
+  if (incoming.length > 0) {
+    nextLesson = incoming[0]; // Gelecek ilk planlı ders
+  }
+
+  function getStatusBadge(status) {
+    const st = (status || "").toLowerCase().trim();
+    if (st === "tamamlandi") return `<span class="status-badge badge-tamamlandi">Tamamlandı</span>`;
+    if (st === "yapilmadi" || st === "yapilmedi") return `<span class="status-badge badge-yapilmadi">Yapılmadı</span>`;
+    if (st === "ertelendi") return `<span class="status-badge badge-ertelendi">Ertelendi</span>`;
+    return `<span class="status-badge badge-sonraki">Sonraki Ders</span>`;
+  }
+
+  return `
+    <div class="lesson-status-box">
+      <div class="status-box-title">📅 Ders Zaman Çizelgesi ve Durumu</div>
+      <div class="status-grid">
+        <div class="status-element">
+          <span class="lbl">Geçen Ders</span>
+          <span class="date">${pastLesson ? pastLesson.ders_tarihi : "—"}</span>
+          ${pastLesson ? getStatusBadge(pastLesson.ders_durumu) : '<span class="status-empty">Veri Yok</span>'}
+        </div>
+        <div class="status-element" style="background: #f0fdf4; border-color: #bbf7d0;">
+          <span class="lbl" style="color: #15803d;">Güncel Ders</span>
+          <span class="date" style="color: #166534;">${currentLesson ? currentLesson.ders_tarihi : "—"}</span>
+          ${currentLesson ? getStatusBadge(currentLesson.ders_durumu) : '<span class="status-empty">Veri Yok</span>'}
+        </div>
+        <div class="status-element">
+          <span class="lbl">Gelecek Ders</span>
+          <span class="date">${nextLesson ? nextLesson.ders_tarihi : "—"}</span>
+          ${nextLesson ? getStatusBadge("sonraki") : '<span class="status-empty">Plan Yok</span>'}
+        </div>
+      </div>
+    </div>
+  `;
+}
 
 /* ── ÖZET ── */
 function buildOzet(rows, latest, studentName, allRows) {
@@ -642,7 +643,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   const yapilmadi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="yapilmadi" || r.ders_durumu.toLowerCase().trim()==="yapilmedi").length;
 
   const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null);
-  const lessonStatusBoxHtml = buildLessonStatusBox(rows); // Yeni oluşturduğumuz kutucuk motoru çağrılıyor
+  const lessonStatusBoxHtml = buildLessonStatusBox(rows);
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
   return `
