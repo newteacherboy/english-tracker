@@ -105,27 +105,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #666; }
 .cal-legend-dot { width: 12px; height: 12px; border-radius: 50%; }
 
-/* HAFTALIK SEKMELER */
-.week-tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 2px; }
-.week-tab { padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background: #fff; color: #555; white-space: nowrap; flex-shrink: 0; }
-.week-tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
-.week-card { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; overflow: hidden; margin-bottom: 1rem; }
-.week-card-header { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
-.week-card-title { font-size: 14px; font-weight: 600; }
-.week-date { font-size: 12px; color: #888; }
-.week-status { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
-.week-status.yapildi { background: #E1F5EE; color: #0F6E56; }
-.week-status.yapilmadi { background: #fdecea; color: #c0392b; }
-.week-status.ertelendi { background: #fef8e7; color: #9a6700; }
-.week-status.sonraki { background: #e8f1fb; color: #185FA5; }
-.week-body { padding: 14px 16px; }
-.week-row { display: flex; margin-bottom: 10px; gap: 10px; }
-.week-row-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 0.04em; min-width: 80px; padding-top: 2px; }
-.week-row-value { font-size: 13px; color: #333; flex: 1; }
-.week-scores { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-.week-score-item { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border-radius: 10px; padding: 10px 14px; }
-.week-score-label { font-size: 12px; color: #666; }
-.week-score-val { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+/* DERS SEKMELERİ (AKORDEON ARAYÜZÜ) */
+.lesson-accordion-item { background: #fff; border: 1px solid #e8eaed; border-radius: 12px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s; }
+.lesson-accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #fff; border: none; font-size: 14px; font-weight: 600; color: #1a1a1a; cursor: pointer; text-align: left; outline: none; }
+.lesson-accordion-header:hover { background: #f8f9fa; }
+.lesson-header-left { display: flex; align-items: center; gap: 10px; }
+.lesson-header-right { display: flex; align-items: center; gap: 12px; }
+.lesson-accordion-arrow { font-size: 11px; color: #aaa; transition: transform 0.2s; }
+.lesson-accordion-item.open .lesson-accordion-arrow { transform: rotate(180deg); }
+.lesson-accordion-content { display: none; padding: 16px; background: #fff; border-top: 1px solid #f0f0f0; }
+.lesson-accordion-item.open .lesson-accordion-content { display: block; }
 
 /* DENEME */
 .exam-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -167,7 +156,7 @@ canvas { max-height: 200px; }
 .badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
-/* 🌟 CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI 🌟 */
+/* CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI */
 .teacher-feedback-card {
   position: relative;
   background: #fff;
@@ -186,45 +175,16 @@ canvas { max-height: 200px; }
   background-size: 300% 100%;
   animation: borderGlow 6s linear infinite;
 }
-.feedback-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.feedback-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: 0.02em;
-}
-.feedback-text {
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: #334155;
-  font-style: italic;
-  position: relative;
-  z-index: 2;
-  padding-left: 5px;
-}
-.feedback-animated-icon {
-  font-size: 18px;
-  animation: writeAnimation 1.5s ease-in-out infinite alternate;
-  display: inline-block;
-}
-@keyframes borderGlow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-@keyframes writeAnimation {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  100% { transform: translate(3px, -3px) rotate(15deg); }
-}
+.feedback-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.feedback-title { font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: 0.02em; }
+.feedback-text { font-size: 13.5px; line-height: 1.6; color: #334155; font-style: italic; position: relative; z-index: 2; padding-left: 5px; }
+.feedback-animated-icon { font-size: 18px; animation: writeAnimation 1.5s ease-in-out infinite alternate; display: inline-block; }
+@keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+@keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
 </style>
 </head>
 <body>
 
-<!-- ANA SAYFA -->
 <div class="home" id="home">
   <div class="home-logo">Öğrenci<span>Takip</span></div>
   <div class="home-sub">Hizmet seçin</div>
@@ -246,7 +206,6 @@ canvas { max-height: 200px; }
   </div>
 </div>
 
-<!-- TRACKER -->
 <div class="tracker" id="tracker">
   <div class="header">
     <button class="back-btn" onclick="goHome()">← Geri</button>
@@ -266,10 +225,7 @@ const SECTIONS = {
   kocluk:    { gid: "770963286", label: "🎯 Eğitim Koçum" }
 };
 const DENEMELER_GID = "969516335";
-const SKILL_COLORS = {
-  vocabulary: "#1D9E75", konusma: "#378ADD",
-  okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30"
-};
+const SKILL_COLORS = { vocabulary: "#1D9E75", konusma: "#378ADD", okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30" };
 const SKILL_LABELS = { vocabulary:"Vocabulary", konusma:"Konuşma", okuma:"Okuma", yazma:"Yazma", grammar:"Grammar" };
 const TR_MONTHS = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const TR_DAYS   = ["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"];
@@ -281,18 +237,22 @@ let passwords = {};
 let unlockedStudents = {};
 let activeStudent = null;
 let activePageTab = "ozet"; 
-let activeWeekIndex = 0;
 let denemelerData = [];
 
-/* 🧠 GEÇMİŞ HAFTA VE AY HAFIZALI GELİŞMİŞ ÖĞRETMEN YORUM MOTORU (DÜZELTİLMİŞ) 🧠 */
+// Tarih dizilim yardımcısı
+const parseDateStr = (dStr) => {
+  if (!dStr) return new Date(0);
+  const parts = dStr.split(".");
+  return new Date(parts[2], parts[1] - 1, parts[0]);
+};
+
+/* 🧠 GEÇMİŞ HAFTA VE AY HAFIZALI GELİŞMİŞ ÖĞRETMEN YORUM MOTORU 🧠 */
 function generateUniqueComment(puan, studentName, latestRow, allRows) {
   const firstName = studentName.split(" ")[0];
   const odev = (latestRow.odev_durumu || "").toLowerCase();
   const r = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-  // 1. ADIM: AKTÜEL PUAN ARALIĞINA GÖRE GİRİŞ CÜMLELERİ (0-100)
   let girisCumlesi = "";
-  
   if (puan >= 0 && puan <= 25) {
     const havuz = [
       `Bu hafta ${firstName} ile henüz motorları ısıtma ve birbirimizi tanıma evresindeyiz. Mevcut puanımız yanıltıcı olmasın; amacımız eksikleri görüp tam da buradan yukarı fırlamak! 🚀`,
@@ -300,7 +260,6 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
       `İlk adımlar her zaman sabır ister. ${firstName} bu hafta enerjisini topladı diyebiliriz; önümüzdeki günlerde bu temelin üzerine koyacağımız tuğlaları planladık, veli olarak hiç endişeniz olmasın. ✨`
     ];
     girisCumlesi = r(havuz);
-    
   } else if (puan > 25 && puan <= 50) {
     const havuz = [
       `${firstName} bu hafta çarkları döndürmeye ve gelişim sinyalleri vermeye başladı. Taşlar yerine oturuyor, gayretini çok net görebiliyorum. 📈`,
@@ -308,56 +267,42 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
       `Yetersiz kaldığımız noktalar elbette mevcut ancak ${firstName}'deki o öğrenme isteği ve tatlı gelişim kıvılcımı bu hafta kendini hissettirdi. ⚡`
     ];
     girisCumlesi = r(havuz);
-    
   } else if (puan > 50 && puan <= 75) {
     const havuz = [
       `Gayet iyi, dengeli ve bizi mutlu eden bir haftayı geride bıraktık. ${firstName} standardını koruyor ama bizim gözümüz çok daha yükseklerde! 🌟`,
       `${firstName} bu hafta sorumluluklarını güzel yerine getirdi ve iyi bir düzey yakaladı. Şimdi hedefimiz bu başarıyı 'en iyisi' yapmak için cilalamak. 💎`,
-      `Çok net bir 'iyi düzey' performansı izledik. ${firstName} potansiyelinin büyük kısmını sahaya yansıttı, ufak dokunuşlarla zirveye oynayacağız. 🎯`
+      `Çok net bir 'iyi düzey' performance eseri izledik. ${firstName} potansiyelinin büyük kısmını sahaya yansıttı, ufak dokunuşlarla zirveye oynayacağız. 🎯`
     ];
     girisCumlesi = r(havuz);
-    
   } else if (puan > 75 && puan <= 100) {
     const havuz = [
       `Kelimelerin tam anlamıyla harika, muazzam bir hafta! ${firstName} bu hafta adeta sınıfta devleşti, gurur duymamak elde değil! 🔥`,
-      `Muhteşem bir disiplin ve kusursuz bir performance tablosu! ${firstName} çıtayı öyle bir yere koydu ki, ders yaparken keyif almamak imkansız. 👑`,
+      `Muhteşem bir disiplin ve kusursuz bir performans tablosu! ${firstName} çıtayı öyle bir yere koydu ki, ders yaparken keyif almamak imkansız. 👑`,
       `Harika iş çıkardık! ${firstName} bu haftanın yıldızı olmayı sonuna kadar hak etti. Emeklerinin karşılığını böyle almak paha biçilemez. 🌠`
     ];
     girisCumlesi = r(havuz);
   }
 
-  // 2. ADIM: HAFTALIK KIYASLAMA ANALİZİ (TARİH SIRALAMASI VE KÜSURAT DÜZELTİLDİ)
   let haftalikKiyaslama = "";
-  
-  // Tarihleri GG.AA.YYYY formatından karşılaştırılabilir Date objesine çeviren yardımcı fonksiyon
-  const parseDateStr = (dStr) => {
-    if (!dStr) return new Date(0);
-    const parts = dStr.split(".");
-    return new Date(parts[2], parts[1] - 1, parts[0]);
-  };
-
-  // Öğrencinin tüm verilerini al ve eskidikten yeniye doğru kronolojik olarak DOĞRU sırala
   const studentRows = allRows
     .filter(r => r.ogrenci === studentName && (r.genel > 0 || r.vocabulary > 0))
     .sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
   
-  // Eğer sistemde en az 2 haftalık veri varsa kıyaslama yap
   if (studentRows.length > 1) {
-    const prevRow = studentRows[studentRows.length - 2]; 
-    
-    // Farkı bul ve küsuratları Math.round ile temizle
-    const fark = Math.round(puan - prevRow.genel); 
-    
-    if (fark > 0) {
-      haftalikKiyaslama = ` Geçen haftaki puanına göre genel performansını **+${fark} puan** daha artırarak yukarı yönlü harika bir sıçrama gerçekleştirdi; bu yükseliş grafiği inancımızı tazeledi. 🚀`;
-    } else if (fark < 0) {
-      haftalikKiyaslama = ` Geçen haftaki puanına oranla bu hafta **${fark} puanlık** ufak bir durulma/gerileme söz konusu. Ancak bu düşüşü bir geri çekilme değil, önümüzdeki hafta daha güçlü zıplamak için bir yaylanma hareketi olarak görüyoruz. 🔋`;
-    } else {
-      haftalikKiyaslama = ` Geçen haftaki çizgimizi ve istikrarımızı tam puanı puanına koruduk. Mevcut durumu sabitlemek güzel ama bir sonraki hafta hedefimiz bu çizgiyi yukarı kırmak olacak. 🎯`;
+    const currentIdx = studentRows.findIndex(r => r.tarih === latestRow.tarih);
+    if (currentIdx > 0) {
+      const prevRow = studentRows[currentIdx - 1];
+      const fark = Math.round(puan - prevRow.genel);
+      if (fark > 0) {
+        haftalikKiyaslama = ` Geçen haftaki puanına göre genel performansını **+${fark} puan** daha artırarak yukarı yönlü harika bir sıçrama gerçekleştirdi; bu yükseliş grafiği inancımızı tazeledi. 🚀`;
+      } else if (fark < 0) {
+        haftalikKiyaslama = ` Geçen haftaki puanına oranla bu hafta **${fark} puanlık** ufak bir durulma/gerileme söz konusu. Ancak bu düşüşü bir geri çekilme değil, önümüzdeki hafta daha güçlü zıplamak için bir yaylanma hareketi olarak görüyoruz. 🔋`;
+      } else {
+        haftalikKiyaslama = ` Geçen haftaki çizgimizi ve istikrarımızı tam puanı puanına koruduk. Mevcut durumu sabitlemek güzel ama bir sonraki hafta hedefimiz bu çizgiyi yukarı kırmak olacak. 🎯`;
+      }
     }
   }
 
-  // 3. ADIM: AYLIK KIYASLAMA ANALİZİ
   let aylikKiyaslama = "";
   if (studentRows.length > 4) { 
     const getMonthFromStr = (dStr) => parseInt((dStr || "").split(".")[1], 10);
@@ -371,7 +316,6 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
       const thisMonthAvg = thisMonthScores.reduce((a,b)=>a+b, 0) / thisMonthScores.length;
       const prevMonthAvg = prevMonthScores.reduce((a,b)=>a+b, 0) / prevMonthScores.length;
       const ayFarki = Math.round(thisMonthAvg - prevMonthAvg);
-      
       if (ayFarki > 2) {
         aylikKiyaslama = ` Ayrıca genel aylık gidişata baktığımda, bu ay geçen aya göre ortalamamızı **${ayFarki} puan** yukarı taşıdık. Aylık bazda büyüyor olmak kalıcı başarının en net kanıtıdır.`;
       } else if (ayFarki < -2) {
@@ -382,10 +326,7 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
     }
   }
 
-  // 4. ADIM: EĞİTİM VE STRATEJİ TAKTİKLERİ (TEŞEKKÜR YERİNE TAVSİYE MOTORU)
   let taktikNotu = "";
-  
-  // Ödevlerin eksik/yapılmadı olma durumu
   if (odev.includes("yapılmadı") || odev.includes("yok")) {
     const eksikHavuzu = [
       ` Önümüzdeki süreçte ivme yakalayabilmemiz için ödev disiplinini acilen birinci sıraya koymalıyız. Unutmayalım ki derste öğrenilenler sadece birer tohumdur; onları kalıcı başarıya dönüştürecek olan şey evde yapılacak düzenli test çözümleri ve soru avcılığıdır.`,
@@ -393,9 +334,7 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
       ` Önümüzdeki hafta tempomuzu artırmak adına ödev sorumluluklarına sıkı sıkıya sarılmalıyız. Sadece ders saatiyle sınırlı kalmayıp, her gün mutlaka en az 15-20 dakikalık odaklanmış test çözümü ve hatalı soru analizi rutini oluşturmasını tavsiye ediyorum.`
     ];
     taktikNotu = r(eksikHavuzu);
-  } 
-  // Ödevlerin yapılmış olması durumu (Teşekkür yerine yeni taktikler)
-  else {
+  } else {
     const basariHavuzu = [
       ` Sürecimizi daha da yukarı taşımak adına şu stratejik taktiği uygulamalıyız: Her akşam yatmadan önce mutlaka 10 dakikalık bir "kelime tekrarı" rutini oturtalım. Görsel hafızayı canlı tutmak, denemelerdeki yeni nesil soruları çok daha hızlı analiz etmesini sağlayacaktır.`,
       ` Yakaladığımız bu güzel ritmi korumak adına yeni taktiğimiz şu olmalı: Öğrencimiz çözdüğü testlerde sadece doğrularına odaklanmamalı; boş bıraktığı veya yanlış yaptığı soruları kesip bir "hata defteri" yapmalı. Gerçek gelişim, yapamadığımız soruları çözebildiğimiz an başlar.`,
@@ -515,7 +454,7 @@ function renderTabs() {
 function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
 
 function selectStudent(name) {
-  activeStudent = name; activePageTab = "ozet"; activeWeekIndex = 0;
+  activeStudent = name; activePageTab = "ozet";
   renderTabs();
   if (passwords[name] && !unlockedStudents[name]) { showLockScreen(name); return; }
   showStudentPage(name);
@@ -549,7 +488,7 @@ function checkPassword(name) {
 function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
 
 function showStudentPage(name) {
-  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => a.tarih > b.tarih ? 1:-1);
+  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
   if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
   const latest = rows[rows.length-1];
   const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
@@ -571,7 +510,7 @@ function showStudentPage(name) {
     <div class="page-tabs">
       <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
       <div class="page-tab${activePageTab==='takvim'?' active':''}" onclick="switchPageTab('${s}','takvim')">📅 Takvim</div>
-      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Haftalar</div>
+      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
       <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
     </div>
     ${pageContent}
@@ -588,26 +527,13 @@ function switchPageTab(name, tab) {
 
 /* ── ROZETLER ── */
 const BADGES = [
-  { score:5,  emoji:"🌱", label:"Tohum Attı" },
-  { score:10, emoji:"🐣", label:"Kabuğu Kırdı" },
-  { score:15, emoji:"🔦", label:"Işığı Gördü" },
-  { score:20, emoji:"🧩", label:"Parçaları Buldu" },
-  { score:25, emoji:"🎒", label:"Yola Çıktı" },
-  { score:30, emoji:"🧭", label:"Yönünü Buldu" },
-  { score:35, emoji:"⚙️", label:"Motoru Çalıştı" },
-  { score:40, emoji:"🌊", label:"Dalgayı Aştı" },
-  { score:45, emoji:"🦋", label:"Kanat Çırptı" },
-  { score:50, emoji:"🏕️", label:"Yarı Yolda" },
-  { score:55, emoji:"🔭", label:"Ufku Gördü" },
-  { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
-  { score:65, emoji:"🦅", label:"Süzülüyor" },
-  { score:70, emoji:"🌋", label:"Zirveye Yakın" },
-  { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
-  { score:80, emoji:"💫", label:"Yörüngede" },
-  { score:85, emoji:"🌠", label:"Kayan Yıldız" },
-  { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
-  { score:95, emoji:"🔱", label:"Efsaneler Kulübü" },
-  { score:100,emoji:"🎓", label:"Dili Fethetti" }
+  { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
+  { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
+  { score:35, emoji:"⚙️", label:"Motoru Çalıştı" }, { score:40, emoji:"🌊", label:"Dalgayı Aştı" }, { score:45, emoji:"🦋", label:"Kanat Çırptı" },
+  { score:50, emoji:"🏕️", label:"Yarı Yolda" }, { score:55, emoji:"🔭", label:"Ufku Gördü" }, { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
+  { score:65, emoji:"🦅", label:"Süzülüyor" }, { score:70, emoji:"🌋", label:"Zirveye Yakın" }, { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
+  { score:80, emoji:"💫", label:"Yörüngede" }, { score:85, emoji:"🌠", label:"Kayan Yıldız" }, { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
+  { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
 ];
 
 function buildBadges(genel, prevGenel) {
@@ -618,7 +544,6 @@ function buildBadges(genel, prevGenel) {
 
   let notifHtml = "";
   if (prevGenel !== null && prevGenel !== undefined) {
-    const prevEarned = BADGES.filter(b => prevGenel >= b.score);
     const newBadges = BADGES.filter(b => genel >= b.score && prevGenel < b.score);
     const lostBadges = BADGES.filter(b => genel < b.score && prevGenel >= b.score);
 
@@ -627,32 +552,20 @@ function buildBadges(genel, prevGenel) {
       notifHtml = `
         <div class="badge-notif gained">
           <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
-          <div class="badge-notif-text">
-            <h3>🎉 Yeni rozet kazandın!</h3>
-            <p>Bu hafta harika bir performans! <strong>${names}</strong> rozeti senin oldu. Böyle devam et!</p>
-          </div>
+          <div class="badge-notif-text"><h3>🎉 Yeni rozet kazandın!</h3><p>Bu hafta harika bir performans! <strong>${names}</strong> rozeti senin oldu.</p></div>
         </div>`;
     } else if (lostBadges.length > 0) {
       const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
       notifHtml = `
         <div class="badge-notif lost">
-          <div class="badge-notif-emoji">😔</div>
-          <div class="badge-notif-text">
-            <h3>Bu hafta biraz düşüş yaşandı</h3>
-            <p>Maalesef <strong>${names}</strong> rozeti bu hafta elden gitti. Ama endişelenme, bir sonraki haftada geri alabilirsin!</p>
-          </div>
+          <div class="badge-notif-emoji">😔</div><div class="badge-notif-text"><h3>Bu hafta biraz düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> rozeti bu hafta elden gitti. Haftaya geri alabilirsin!</p></div>
         </div>`;
     }
   }
 
   const grid = BADGES.map(b => {
     const isEarned = genel >= b.score;
-    return `
-      <div class="badge-item ${isEarned ? 'earned' : 'locked'}">
-        <div class="badge-emoji">${b.emoji}</div>
-        <div class="badge-label">${b.label}</div>
-        <div class="badge-score">${b.score} puan</div>
-      </div>`;
+    return `<div class="badge-item ${isEarned ? 'earned' : 'locked'}"><div class="badge-emoji">${b.emoji}</div><div class="badge-label">${b.label}</div><div class="badge-score">${b.score} p</div></div>`;
   }).join("");
 
   return `
@@ -678,7 +591,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   
   function delta(key) {
     if (!prev) return '<span class="same">—</span>';
-    const d = latest[key]-prev[key];
+    const d = Math.round(latest[key]-prev[key]);
     if (d>0) return `<span class="up">↑ ${d}</span>`;
     if (d<0) return `<span class="down">↓ ${Math.abs(d)}</span>`;
     return '<span class="same">→ sabit</span>';
@@ -686,32 +599,22 @@ function buildOzet(rows, latest, studentName, allRows) {
   const skills = ["vocabulary","konusma","okuma","yazma","grammar"];
   const skillRows = skills.map(sk => `
     <div class="skill-row">
-      <div class="skill-header">
-        <span class="skill-name">${SKILL_LABELS[sk]}</span>
-        <span class="skill-score" style="color:${SKILL_COLORS[sk]}">${latest[sk]}/100</span>
-      </div>
+      <div class="skill-header"><span class="skill-name">${SKILL_LABELS[sk]}</span><span class="skill-score" style="color:${SKILL_COLORS[sk]}">${latest[sk]}/100</span></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${latest[sk]}%;background:${SKILL_COLORS[sk]}"></div></div>
     </div>`).join("");
 
   const dersler = rows.filter(r=>r.ders_durumu);
   const yapildi = dersler.filter(r=>r.ders_durumu==="yapildi").length;
   const yapilmadi = dersler.filter(r=>r.ders_durumu==="yapilmadi").length;
-  const ertelendi = dersler.filter(r=>r.ders_durumu==="ertelendi").length;
 
   const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null);
-
-  // Akıllı Hafızalı Öğretmen Yorumu Üretimi
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
   return `
     ${badgesHtml}
     
-    <!-- 🌟 ANIMASYONLU ÖĞRETMEN NOTU ALANI 🌟 -->
     <div class="teacher-feedback-card">
-      <div class="feedback-header">
-        <span class="feedback-animated-icon">✍️</span>
-        <h4 class="feedback-title">Öğretmenin Haftalık Notu</h4>
-      </div>
+      <div class="feedback-header"><span class="feedback-animated-icon">✍️</span><h4 class="feedback-title">Öğretmenin Haftalık Notu</h4></div>
       <p class="feedback-text">"${teacherComment}"</p>
     </div>
 
@@ -722,20 +625,9 @@ function buildOzet(rows, latest, studentName, allRows) {
       <div class="metric-card"><div class="metric-label">Devam oranı</div><div class="metric-value">${dersler.length?Math.round(yapildi/dersler.length*100):0}%</div><div class="metric-delta"><span style="color:#e74c3c">${yapilmadi} kaçırıldı</span></div></div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Genel gelişim grafiği</div>
-      <canvas id="chartGenel"></canvas>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Beceri radar grafiği</div>
-      <canvas id="chartRadar"></canvas>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Beceri alanları</div>
-      ${skillRows}
-    </div>
+    <div class="card"><div class="card-title">Genel gelişim grafiği</div><canvas id="chartGenel"></canvas></div>
+    <div class="card"><div class="card-title">Beceri radar grafiği</div><canvas id="chartRadar"></canvas></div>
+    <div class="card"><div class="card-title">Beceri alanları</div>${skillRows}</div>
   `;
 }
 
@@ -743,9 +635,7 @@ function drawCharts(rows) {
   const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
   const latest = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : null;
 
-  Object.keys(Chart.instances || {}).forEach(key => {
-    try { Chart.instances[key].destroy(); } catch(e) {}
-  });
+  Object.keys(Chart.instances || {}).forEach(key => { try { Chart.instances[key].destroy(); } catch(e) {} });
   if (Chart.getChart) {
     ["chartGenel","chartRadar"].forEach(id => {
       const existing = Chart.getChart(id);
@@ -760,21 +650,8 @@ function drawCharts(rows) {
       data: {
         labels: scoredRows.map(r => r.tarih),
         datasets: [
-          {
-            label: "Genel",
-            data: scoredRows.map(r => r.genel),
-            borderColor: "#1D9E75",
-            backgroundColor: "rgba(29,158,117,0.08)",
-            tension: 0.3, pointRadius: 4, fill: true
-          },
-          {
-            label: "Deneme",
-            data: scoredRows.map(r => r.deneme > 0 ? r.deneme : null),
-            borderColor: "#378ADD",
-            backgroundColor: "transparent",
-            tension: 0.3, pointRadius: 4, borderDash: [5,3],
-            spanGaps: false
-          }
+          { label: "Genel", data: scoredRows.map(r => r.genel), borderColor: "#1D9E75", backgroundColor: "rgba(29,158,117,0.08)", tension: 0.3, pointRadius: 4, fill: true },
+          { label: "Deneme", data: scoredRows.map(r => r.deneme > 0 ? r.deneme : null), borderColor: "#378ADD", backgroundColor: "transparent", tension: 0.3, pointRadius: 4, borderDash: [5,3], spanGaps: false }
         ]
       },
       options: {
@@ -794,14 +671,7 @@ function drawCharts(rows) {
       type: "radar",
       data: {
         labels: ["Vocabulary","Konuşma","Okuma","Yazma","Grammar"],
-        datasets: [{
-          label: "Beceriler",
-          data: [latest.vocabulary, latest.konusma, latest.okuma, latest.yazma, latest.grammar],
-          borderColor: "#1D9E75",
-          backgroundColor: "rgba(29,158,117,0.15)",
-          pointBackgroundColor: "#1D9E75",
-          pointRadius: 4
-        }]
+        datasets: [{ label: "Beceriler", data: [latest.vocabulary, latest.konusma, latest.okuma, latest.yazma, latest.grammar], borderColor: "#1D9E75", backgroundColor: "rgba(29,158,117,0.15)", pointBackgroundColor: "#1D9E75", pointRadius: 4 }]
       },
       options: {
         responsive: true,
@@ -815,9 +685,7 @@ function drawCharts(rows) {
 /* ── TAKVİM ── */
 function buildTakvim(rows) {
   const dersMap = {};
-  rows.forEach(r => {
-    if (r.ders_tarihi) dersMap[r.ders_tarihi] = { durum: r.ders_durumu, konu: r.konu };
-  });
+  rows.forEach(r => { if (r.ders_tarihi) dersMap[r.ders_tarihi] = { durum: r.ders_durumu, konu: r.konu }; });
 
   const monthsMap = {};
   Object.keys(dersMap).forEach(dtStr => {
@@ -833,16 +701,12 @@ function buildTakvim(rows) {
 
   let keys = Object.keys(monthsMap).sort();
   if (!keys.length) {
-    const d = new Date();
-    const k = d.getFullYear() + "-" + d.getMonth();
-    monthsMap[k] = { year: d.getFullYear(), mIdx: d.getMonth(), dates: [] };
-    keys = [k];
+    const d = new Date(); const k = d.getFullYear() + "-" + d.getMonth();
+    monthsMap[k] = { year: d.getFullYear(), mIdx: d.getMonth(), dates: [] }; keys = [k];
   }
 
   return '<div class="calendar-wrap">' + keys.map((k, idx) => {
-    const m = monthsMap[k];
-    const isOpen = idx === keys.length - 1;
-    
+    const m = monthsMap[k]; const isOpen = idx === keys.length - 1;
     const firstDay = new Date(m.year, m.mIdx, 1).getDay();
     const startDay = firstDay === 0 ? 6 : firstDay - 1;
     const daysInMonth = new Date(m.year, m.mIdx + 1, 0).getDate();
@@ -850,32 +714,21 @@ function buildTakvim(rows) {
     let daysHtml = "";
     for (let i = 0; i < startDay; i++) daysHtml += '<div class="cal-day empty"></div>';
     
-    const today = new Date();
-    const isThisMonth = today.getFullYear() === m.year && today.getMonth() === m.mIdx;
+    const today = new Date(); const isThisMonth = today.getFullYear() === m.year && today.getMonth() === m.mIdx;
     
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = d.toString().padStart(2, '0') + "." + (m.mIdx + 1).toString().padStart(2, '0') + "." + m.year;
-      const hasDers = dersMap[dateStr];
-      let cls = "";
+      const hasDers = dersMap[dateStr]; let cls = "";
       if (hasDers) cls = " " + hasDers.durum;
       if (isThisMonth && today.getDate() === d) cls += " today";
-      
-      daysHtml += `
-        <div class="cal-day${cls}" title="${hasDers ? hasDers.konu : ''}">
-          <div class="day-num">${d}</div>
-        </div>`;
+      daysHtml += `<div class="cal-day${cls}" title="${hasDers ? hasDers.konu : ''}"><div class="day-num">${d}</div></div>`;
     }
     
     return `
       <div class="cal-month">
-        <div class="cal-month-title${isOpen?' open':''}" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
-          <span>${TR_MONTHS[m.mIdx]} ${m.year}</span>
-          <span class="cal-arrow">▼</span>
-        </div>
+        <div class="cal-month-title${isOpen?' open':''}" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')"><span>${TR_MONTHS[m.mIdx]} ${m.year}</span><span class="cal-arrow">▼</span></div>
         <div class="cal-month-body${isOpen?' open':''}">
-          <div class="cal-grid" style="background:#fff; border-bottom:1px solid #f0f0f0;">
-            ${TR_DAYS.map(dName => `<div class="cal-day-name">${dName}</div>`).join("")}
-          </div>
+          <div class="cal-grid" style="background:#fff; border-bottom:1px solid #f0f0f0;">${TR_DAYS.map(dName => `<div class="cal-day-name">${dName}</div>`).join("")}</div>
           <div class="cal-grid">${daysHtml}</div>
           <div class="cal-legend">
             <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#1D9E75"></div>Yapıldı</div>
@@ -888,42 +741,63 @@ function buildTakvim(rows) {
   }).join("") + '</div>';
 }
 
-/* ── HAFTALAR ── */
+/* ── HAFTALAR (YENİ AKORDEON DERS SİSTEMİ) ── */
 function buildHaftalar(rows) {
-  const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
-  if (!scoredRows.length) return '<div class="empty">Haftalık detay bulunamadı.</div>';
-  
-  if (activeWeekIndex >= scoredRows.length) activeWeekIndex = scoredRows.length - 1;
-  const currentWeek = scoredRows[scoredRows.length - 1 - activeWeekIndex];
-  
-  const tabsHtml = scoredRows.map((r, idx) => {
-    const revIdx = scoredRows.length - 1 - idx;
-    return `<div class="week-tab${revIdx === activeWeekIndex ? ' active' : ''}" onclick="activeWeekIndex=${revIdx}; showStudentPage('${esc(activeStudent)}')">${r.tarih}</div>`;
-  }).reverse().join("");
+  // Puanlama veya kelime girişi yapılmış geçerli dersleri kronolojik olarak sırala (Eskiden Yeniye)
+  const sortedRows = rows
+    .filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0)
+    .sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
 
-  const st = currentWeek.ders_durumu || "sonraki";
+  if (!sortedRows.length) return '<div class="empty">Ders raporu bulunamadı.</div>';
+
   const statusLabels = { yapildi: "Yapıldı", yapilmadi: "Yapılmadı", ertelendi: "Ertelendi", sonraki: "Planlandı" };
 
-  return `
-    <div class="week-tabs">${tabsHtml}</div>
-    <div class="week-card">
-      <div class="week-card-header">
-        <div class="week-card-title">${currentWeek.tarih} Raporu</div>
-        <div class="week-status ${st}">${statusLabels[st] || st}</div>
-      </div>
-      <div class="week-body">
-        <div class="week-row"><div class="week-row-label">İşlenen Konu</div><div class="week-row-value">${currentWeek.konu || "Belirtilmemiş"}</div></div>
-        <div class="week-row"><div class="week-row-label">Ödev Durumu</div><div class="week-row-value">${currentWeek.odev_durumu || "Belirtilmemiş"}</div></div>
-        <div class="week-scores">
-          <div class="week-score-item"><span class="week-score-label">Genel Başarı Puanı</span><span class="week-score-val" style="color:#1D9E75">${currentWeek.genel}</span></div>
-          <div class="week-score-item"><span class="week-score-label">Vocabulary</span><span class="week-score-val">${currentWeek.vocabulary}</span></div>
-          <div class="week-score-item"><span class="week-score-label">Konuşma</span><span class="week-score-val">${currentWeek.konusma}</span></div>
-          <div class="week-score-item"><span class="week-score-label">Okuma</span><span class="week-score-val">${currentWeek.okuma}</span></div>
-          <div class="week-score-item"><span class="week-score-label">Yazma</span><span class="week-score-val">${currentWeek.yazma}</span></div>
-          <div class="week-score-item"><span class="week-score-label">Grammar</span><span class="week-score-val">${currentWeek.grammar}</span></div>
+  // VELİ İÇİN TERSTEN LİSTELEME: En son ders en üstte olacak şekilde HTML'i oluşturuyoruz
+  let htmlResult = `<div style="margin-bottom: 1rem; font-size: 13px; color: #666; font-weight: 500;">Ders raporunu incelemek için üzerine tıklayabilirsiniz.</div>`;
+  
+  // Döngüyü tersten (en yeni dersten en eski derse) çalıştırıyoruz
+  for (let i = sortedRows.length - 1; i >= 0; i--) {
+    const currentWeek = sortedRows[i];
+    const lessonNumber = i + 1; // Dizideki 0. eleman -> 1. Ders olur.
+    const st = currentWeek.ders_durumu || "sonraki";
+    
+    // Her derse özel dinamik eğitim tavsiyesi notu üretimi
+    const weekComment = generateUniqueComment(currentWeek.genel, currentWeek.ogrenci, currentWeek, allData);
+
+    htmlResult += `
+      <div class="lesson-accordion-item">
+        <button class="lesson-accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="lesson-header-left">
+            <span>📚 <strong>${lessonNumber}. Ders</strong></span>
+            <span style="font-size: 12px; color: #888; font-weight: normal;">(${currentWeek.tarih})</span>
+          </div>
+          <div class="lesson-header-right">
+            <span class="week-status ${st}" style="font-size:11px; padding:2px 8px; border-radius:999px;">${statusLabels[st] || st}</span>
+            <span style="font-weight:700; color:#1D9E75; font-size:13px;">${currentWeek.genel} Puan</span>
+            <span class="lesson-accordion-arrow">▼</span>
+          </div>
+        </button>
+        <div class="lesson-accordion-content">
+          <div class="week-row"><div class="week-row-label">İşlenen Konu</div><div class="week-row-value"><strong>${currentWeek.konu || "Belirtilmemiş"}</strong></div></div>
+          <div class="week-row"><div class="week-row-label">Ödev Durumu</div><div class="week-row-value">${currentWeek.odev_durumu || "Belirtilmemiş"}</div></div>
+          
+          <div style="background: #f8f9fa; border-left: 4px solid #1D9E75; padding: 12px; margin: 15px 0 10px 0; border-radius: 0 8px 8px 0;">
+            <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">🎯 Haftalık Eğitim Stratejisi & Tavsiye:</div>
+            <div style="font-size: 13px; line-height: 1.5; color: #334155; font-style: italic;">"${weekComment}"</div>
+          </div>
+
+          <div class="week-scores" style="margin-top:15px;">
+            <div class="week-score-item"><span class="week-score-label">Vocabulary</span><span class="week-score-val">${currentWeek.vocabulary}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Konuşma</span><span class="week-score-val">${currentWeek.konusma}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Okuma</span><span class="week-score-val">${currentWeek.okuma}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Yazma</span><span class="week-score-val">${currentWeek.yazma}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Grammar</span><span class="week-score-val">${currentWeek.grammar}</span></div>
+          </div>
         </div>
-      </div>
-    </div>`;
+      </div>`;
+  }
+
+  return htmlResult;
 }
 
 /* ── DENEMELER ── */
@@ -932,7 +806,7 @@ function buildDenemeler(name) {
   if (!sData.length) return '<div class="empty">Henüz deneme sınavı verisi girilmemiş.</div>';
   
   setTimeout(() => {
-    const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => a.tarih > b.tarih ? 1:-1);
+    const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
     const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
     const latest = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : rows[rows.length-1];
     const prev = scoredRows.length > 1 ? scoredRows[scoredRows.length-2] : null;
@@ -970,22 +844,9 @@ function drawDenemeChart(name) {
     type: "line",
     data: {
       labels: sData.map(r => r.tarih),
-      datasets: [{
-        label: "Deneme Puanı",
-        data: sData.map(r => r.puan),
-        borderColor: "#378ADD",
-        backgroundColor: "rgba(55,140,221,0.08)",
-        tension: 0.2, pointRadius: 5, fill: true, pointBackgroundColor: "#378ADD"
-      }]
+      datasets: [{ label: "Deneme Puanı", data: sData.map(r => r.puan), borderColor: "#378ADD", backgroundColor: "rgba(55,140,221,0.08)", tension: 0.2, pointRadius: 5, fill: true, pointBackgroundColor: "#378ADD" }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { min: 0, max: 100, grid: { color: "#f0f0f0" } },
-        x: { grid: { display: false } }
-      }
-    }
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 0, max: 100, grid: { color: "#f0f0f0" } }, x: { grid: { display: false } } } }
   });
 }
 </script>
