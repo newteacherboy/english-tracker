@@ -498,26 +498,26 @@ function switchPageTab(name, tab) {
 
 /* ── ROZETLER ── */
 const BADGES = [
-  { score: 5,   emoji: "🇲🇲", label: "Young Boys" },
-  { score: 10,  emoji: "🇭🇷", label: "Dinamo Zagreb" },
-  { score: 15,  emoji: "🇬🇷", label: "PAOK" },
-  { score: 20,  emoji: "🇷🇸", label: "Kızıl Yıldız" },
-  { score: 25,  emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", label: "Celtic" },
-  { score: 30,  emoji: "🇵🇹", label: "Sporting CP" },
-  { score: 35,  emoji: "🇵🇹", label: "Benfica" },
-  { score: 40,  emoji: "🇳🇱", label: "Feyenoord" },
-  { score: 45,  emoji: "🇳🇱", label: "PSV Eindhoven" },
-  { score: 50,  emoji: "🇮🇹", label: "AC Milan" },
-  { score: 55,  emoji: "🇬🇧", label: "Aston Villa" },
-  { score: 60,  emoji: "🇮🇹", label: "Juventus" },
-  { score: 65,  emoji: "🇪🇸", label: "Atletico Madrid" },
-  { score: 70,  emoji: "🇮🇹", label: "Inter Milan" },
-  { score: 75,  emoji: "🇩🇪", label: "B. Dortmund" },
-  { score: 80,  emoji: "🇫🇷", label: "Paris SG" },
-  { score: 85,  emoji: "🇩🇪", label: "Bayern Münih" },
-  { score: 90,  emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", label: "Manchester City" },
-  { score: 95,  emoji: "🇪🇸", label: "Real Madrid" },
-  { score: 100, emoji: "🦁", label: "GALATASARAY" }
+  { score: 5,   emoji: "🐝", label: "Young Boys" },       // Arılar (Kulüp Takma Adı)
+  { score: 10,  emoji: "🦈", label: "Dinamo Zagreb" },    // Hırvatistan'ın yırtıcıları
+  { score: 15,  emoji: "🦅", label: "PAOK" },             // Çift Başlı Kartal (Kulüp Amblemi)
+  { score: 20,  emoji: "🐺", label: "Kızıl Yıldız" },     // Balkanların sert kurtları
+  { score: 25,  emoji: "🍀", label: "Celtic" },            // Yonca (Kelt kültüründen ama bitki yerine alternatif yeşillik) -> İstersen İskoç geyiği için "🦌" de yapabilirsin.
+  { score: 30,  emoji: "🦁", label: "Sporting CP" },      // Yeşil Aslanlar (Kulüp Amblemi)
+  { score: 35,  emoji: "🦅", label: "Benfica" },          // Kara Kartal (Stadyumda uçurulan meşhur kartal)
+  { score: 40,  emoji: "🐘", label: "Feyenoord" },        // Rotterdam'ın güçlü fili
+  { score: 45,  emoji: "🐎", label: "PSV Eindhoven" },    // Hollanda'nın hızlı atları
+  { score: 50,  emoji: "😈", label: "AC Milan" },         // Kırmızı Şeytanlar (Lakabı) -> Hayvan alternatifi istersen İtalya kurdu için "🐺"
+  { score: 55,  emoji: "🦁", label: "Aston Villa" },      // İngiliz Aslanı (Amblemindeki aslan)
+  { score: 60,  emoji: "🦓", label: "Juventus" },         // Zebralar (Siyah-Beyaz çubuklu formadan dolayı lakabı)
+  { score: 65,  emoji: "🐻", label: "Atletico Madrid" },  // Madrid'in simgesi olan Ayı (Ambleminde var)
+  { score: 70,  emoji: "🐍", label: "Inter Milan" },      // Il Biscione / Büyük Yılan (Milano'nun ve Inter'in tarihi simgesi)
+  { score: 75,  emoji: "🐝", label: "B. Dortmund" },      // Sarı Duvarın Arıları (Renklerden dolayı lakabı)
+  { score: 80,  emoji: "🦅", label: "Paris SG" },         // Paris'in yüksek uçanları
+  { score: 85,  emoji: "🐻", label: "Bayern Münih" },     // Bavyera Ayısı
+  { score: 90,  emoji: "🦈", label: "Manchester City" },  // Premier Lig'in büyük köpekbalığı
+  { score: 95,  emoji: "👑", label: "Real Madrid" },      // Krallar (Lakabı) -> Hayvan alternatifi istersen İspanya boğası için "🐂"
+  { score: 100, emoji: "🦁", label: "GALATASARAY" }       // Kükreyen Aslan (Zirve!)
 ];
 
 function buildBadges(genel, prevGenel) {
