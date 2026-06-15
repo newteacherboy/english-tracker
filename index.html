@@ -284,7 +284,7 @@ let activePageTab = "ozet";
 let activeWeekIndex = 0;
 let denemelerData = [];
 
-/* 🧠 GEÇMİŞ HAFTA VE AY HAFIZALI GELİŞMİŞ ÖĞRETMEN YORUM MOTORU 🧠 */
+/* 🧠 GEÇMİŞ HAFTA VE AY HAFIZALI GELİŞMİŞ ÖĞRETMEN YORUM MOTORU (DÜZELTİLMİŞ) 🧠 */
 function generateUniqueComment(puan, studentName, latestRow, allRows) {
   const firstName = studentName.split(" ")[0];
   const odev = (latestRow.odev_durumu || "").toLowerCase();
@@ -320,30 +320,44 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
   } else if (puan > 75 && puan <= 100) {
     const havuz = [
       `Kelimelerin tam anlamıyla harika, muazzam bir hafta! ${firstName} bu hafta adeta sınıfta devleşti, gurur duymamak elde değil! 🔥`,
-      `Muhteşem bir disiplin ve kusursuz bir performans tablosu! ${firstName} çıtayı öyle bir yere koydu ki, ders yaparken keyif almamak imkansız. 👑`,
+      `Muhteşem bir disiplin ve kusursuz bir performance tablosu! ${firstName} çıtayı öyle bir yere koydu ki, ders yaparken keyif almamak imkansız. 👑`,
       `Harika iş çıkardık! ${firstName} bu haftanın yıldızı olmayı sonuna kadar hak etti. Emeklerinin karşılığını böyle almak paha biçilemez. 🌠`
     ];
     girisCumlesi = r(havuz);
   }
 
-  // 2. ADIM: HAFTALIK KIYASLAMA ANALİZİ (ÖNCEKİ HAFTAYA GÖRE)
+  // 2. ADIM: HAFTALIK KIYASLAMA ANALİZİ (TARİH SIRALAMASI VE KÜSURAT DÜZELTİLDİ)
   let haftalikKiyaslama = "";
-  const studentRows = allRows.filter(r => r.ogrenci === studentName).sort((a,b) => a.tarih > b.tarih ? 1 : -1);
   
+  // Tarihleri GG.AA.YYYY formatından karşılaştırılabilir Date objesine çeviren yardımcı fonksiyon
+  const parseDateStr = (dStr) => {
+    if (!dStr) return new Date(0);
+    const parts = dStr.split(".");
+    return new Date(parts[2], parts[1] - 1, parts[0]);
+  };
+
+  // Öğrencinin tüm verilerini al ve eskidikten yeniye doğru kronolojik olarak DOĞRU sırala
+  const studentRows = allRows
+    .filter(r => r.ogrenci === studentName && (r.genel > 0 || r.vocabulary > 0))
+    .sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  
+  // Eğer sistemde en az 2 haftalık veri varsa kıyaslama yap
   if (studentRows.length > 1) {
-    const prevRow = studentRows[studentRows.length - 2];
-    const fark = puan - prevRow.genel;
+    const prevRow = studentRows[studentRows.length - 2]; 
+    
+    // Farkı bul ve küsuratları Math.round ile temizle
+    const fark = Math.round(puan - prevRow.genel); 
     
     if (fark > 0) {
-      haftalikKiyaslama = ` Geçen haftaya göre genel puanımıza **+${fark} puan** daha ekleyerek yukarı yönlü harika bir sıçrama gerçekleştirdik; bu yükseliş grafiği inancımızı tazeledi. 🚀`;
+      haftalikKiyaslama = ` Geçen haftaki puanına göre genel performansını **+${fark} puan** daha artırarak yukarı yönlü harika bir sıçrama gerçekleştirdi; bu yükseliş grafiği inancımızı tazeledi. 🚀`;
     } else if (fark < 0) {
-      haftalikKiyaslama = ` Geçen haftaki puanımıza oranla ufak bir durulma/gerileme söz konusu. Ancak bu düşüşü bir geri çekilme değil, önümüzdeki hafta daha güçlü zıplamak için bir yaylanma hareketi olarak görüyoruz. 🔋`;
+      haftalikKiyaslama = ` Geçen haftaki puanına oranla bu hafta **${fark} puanlık** ufak bir durulma/gerileme söz konusu. Ancak bu düşüşü bir geri çekilme değil, önümüzdeki hafta daha güçlü zıplamak için bir yaylanma hareketi olarak görüyoruz. 🔋`;
     } else {
       haftalikKiyaslama = ` Geçen haftaki çizgimizi ve istikrarımızı tam puanı puanına koruduk. Mevcut durumu sabitlemek güzel ama bir sonraki hafta hedefimiz bu çizgiyi yukarı kırmak olacak. 🎯`;
     }
   }
 
-  // 3. ADIM: AYLIK KIYASLAMA ANALİZİ (AYLAR ARASI DEĞERLENDİRME)
+  // 3. ADIM: AYLIK KIYASLAMA ANALİZİ
   let aylikKiyaslama = "";
   if (studentRows.length > 4) { 
     const getMonthFromStr = (dStr) => parseInt((dStr || "").split(".")[1], 10);
