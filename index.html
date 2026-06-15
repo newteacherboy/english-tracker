@@ -700,7 +700,7 @@ function buildOzet(rows, latest, studentName, allRows) {
 
     <div class="metrics-grid">
       <div class="metric-card"><div class="metric-label">Genel puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
-      <div class="metric-card"><div class="metric-label">Son deneme</div><div class="metric-value" id="son-deneme-val">—</div><div class="metric-delta" id="son-deneme-delta"></div></div>
+      <div class="metric-card"><div class="metric-label">Son deneme</div><div class="metric-value">${latest.deneme > 0 ? latest.deneme : "—"}</div><div class="metric-delta">${delta("deneme")}</div></div>
       <div class="metric-card"><div class="metric-label">Toplam Başarılı Ders</div><div class="metric-value">${yapildi}</div><div class="metric-delta" style="color:#888">${dersler.length} planlı kayıt</div></div>
       <div class="metric-card"><div class="metric-label">Devam oranı</div><div class="metric-value">${dersler.length?Math.round(yapildi/dersler.length*100):0}%</div><div class="metric-delta"><span style="color:#e74c3c">${yapilmadi} kaçırıldı</span></div></div>
     </div>
