@@ -36,9 +36,42 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .header-title { font-size: 15px; font-weight: 600; flex: 1; }
 .header-title span { color: #1D9E75; }
 .last-updated { font-size: 11px; color: #aaa; }
-.student-tabs { display: flex; gap: 8px; padding: 1rem 1.25rem 0; overflow-x: auto; background: #fff; border-bottom: 1px solid #e8eaed; padding-bottom: 1rem; }
-.tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
-.tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+
+/* ÖĞRENCİ SEKMELERİ - DİKKAT ÇEKİCİ DİKDÖRTGEN TASARIM */
+.student-tabs { 
+  display: flex; 
+  gap: 12px; 
+  padding: 1.25rem; 
+  overflow-x: auto; 
+  background: #fff; 
+  border-bottom: 1px solid #e8eaed; 
+  scrollbar-width: none; /* Düzenli görünüm için kaydırma çubuğunu gizler */
+}
+.student-tabs::-webkit-scrollbar {
+  display: none;
+}
+.tab { 
+  padding: 14px 24px; 
+  border-radius: 10px; /* Tam yuvarlaktan keskin hatlı modern bir dikdörtgene geçiş */
+  font-size: 15px; /* İsimler daha rahat okunsun diye yazı büyütüldü */
+  font-weight: 600; 
+  cursor: pointer; 
+  border: 2px solid #e8eaed; 
+  background: #f8f9fa; 
+  color: #444; 
+  white-space: nowrap; 
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  min-width: 120px; /* Dikdörtgen formu belirginleştirmek için minimum genişlik */
+  text-align: center;
+}
+.tab.active { 
+  background: #1D9E75; 
+  color: #fff; 
+  border-color: #1D9E75; 
+  box-shadow: 0 4px 12px rgba(29,158,117,0.25); /* Aktif öğrenciyi parlatarak dikkat çeker */
+  transform: translateY(-1px);
+}
 
 /* KİLİT */
 .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem; }
@@ -232,7 +265,7 @@ let students = [];
 let passwords = {};
 let unlockedStudents = {};
 let activeStudent = null;
-let activePageTab = "ozet"; 
+let activePageTab = "ozet";
 let denemelerData = [];
 
 // Tarih dizilim yardımcısı
@@ -283,7 +316,6 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
   const studentRows = allRows
     .filter(r => r.ogrenci === studentName && (r.genel > 0 || r.vocabulary > 0))
     .sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-  
   if (studentRows.length > 1) {
     const currentIdx = studentRows.findIndex(r => r.tarih === latestRow.tarih);
     if (currentIdx > 0) {
@@ -398,15 +430,16 @@ async function loadData() {
       const dText = await dRes.text();
       const dRows = parseCSV(dText);
       denemelerData = dRows.slice(1).map(r => ({
-        tarih:       r[0] || "",
-        ogrenci:     r[1] || "",
-        deneme_adi:  r[2] || "",
-        puan:        toNum(r[3])
+        tarih: r[0] || "",
+        ogrenci: r[1] || "",
+        deneme_adi: r[2] || "",
+        puan: toNum(r[3])
       })).filter(r => r.ogrenci && r.puan > 0);
-    } catch(e) { denemelerData = []; }
+    } catch(e) {
+      denemelerData = [];
+    }
 
-    document.getElementById("last-updated").textContent =
-      new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+    document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     renderTabs();
     if (students.length && !activeStudent) selectStudent(students[0]);
     else if (!students.length) {
@@ -419,7 +452,7 @@ async function loadData() {
 }
 
 function renderTabs() {
-  document.getElementById("tabs").innerHTML = students.map(s =>
+  document.getElementById("tabs").innerHTML = students.map(s => 
     `<div class="tab${s===activeStudent?' active':''}" onclick="selectStudent('${esc(s)}')">${s.split(" ")[0]}${passwords[s]?' 🔒':''}</div>`
   ).join("");
 }
@@ -427,9 +460,13 @@ function renderTabs() {
 function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
 
 function selectStudent(name) {
-  activeStudent = name; activePageTab = "ozet";
+  activeStudent = name;
+  activePageTab = "ozet";
   renderTabs();
-  if (passwords[name] && !unlockedStudents[name]) { showLockScreen(name); return; }
+  if (passwords[name] && !unlockedStudents[name]) {
+    showLockScreen(name);
+    return;
+  }
   showStudentPage(name);
 }
 
@@ -450,7 +487,8 @@ function showLockScreen(name) {
 function checkPassword(name) {
   const input = document.getElementById("pwd-input").value.trim();
   if (input === (passwords[name]||"").trim()) {
-    unlockedStudents[name] = true; showStudentPage(name);
+    unlockedStudents[name] = true;
+    showStudentPage(name);
   } else {
     document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
     document.getElementById("pwd-input").value = "";
@@ -458,413 +496,271 @@ function checkPassword(name) {
   }
 }
 
-function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
+function logout(name) {
+  delete unlockedStudents[name];
+  showLockScreen(name);
+}
 
 function showStudentPage(name) {
-  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
-  const latest = rows[rows.length-1];
-  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-  const s = esc(name);
+  const rows = allData.filter(r => r.ogrenci === name && (r.genel > 0 || r.vocabulary > 0));
+  if (!rows.length) {
+    document.getElementById("content").innerHTML = '<div class="empty">Bu öğrenciye ait veri bulunamadı.</div>';
+    return;
+  }
+  
+  // En son tarihi bulma
+  const sData = [...rows].sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  const latestRow = sData[sData.length - 1];
 
-  let pageContent = "";
-  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
-  else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
-  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
-
-  document.getElementById("content").innerHTML = `
+  let tabsHtml = `
     <div class="student-header">
-      <div class="avatar">${initials}</div>
-      <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
-      <div class="level-badge">${latest.seviye}</div>
-      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
+      <div class="avatar">${name.charAt(0)}</div>
+      <div class="student-info"><h2>${name}</h2><p>${latestRow.seviye || "Seviye Yok"}</p></div>
+      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${esc(name)}')">🔒 Çıkış</button>` : ''}
+      <div class="level-badge">${latestRow.tarih}</div>
     </div>
     <div class="page-tabs">
-      <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
-      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
-      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
+      <div class="page-tab ${activePageTab==='ozet'?'active':''}" onclick="switchPageTab('ozet')">Özet Gelişim</div>
+      <div class="page-tab ${activePageTab==='dersler'?'active':''}" onclick="switchPageTab('dersler')">Ders Takibi</div>
+      <div class="page-tab ${activePageTab==='denemeler'?'active':''}" onclick="switchPageTab('denemeler')">Denemeler</div>
     </div>
-    ${pageContent}
-  `;
+    <div id="page-content"></div>`;
 
-  if (activePageTab === "ozet") drawCharts(rows);
-  if (activePageTab === "denemeler") drawDenemeChart(name);
+  document.getElementById("content").innerHTML = tabsHtml;
+  renderPageContent(name, latestRow, sData);
 }
 
-function switchPageTab(name, tab) {
-  activePageTab = tab;
-  showStudentPage(name); function showStudentPage(name) {
-  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
-  const latest = rows[rows.length-1];
-  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-  const s = esc(name);
+function switchPageTab(tabName) {
+  activePageTab = tabName;
+  const tabs = document.querySelectorAll(".page-tab");
+  tabs.forEach(t => t.classList.remove("active"));
+  event.target.classList.add("active");
+  
+  const name = activeStudent;
+  const rows = allData.filter(r => r.ogrenci === name && (r.genel > 0 || r.vocabulary > 0));
+  const sData = [...rows].sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  const latestRow = sData[sData.length - 1];
+  renderPageContent(name, latestRow, sData);
+}
 
-  let pageContent = "";
-  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
-  else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
-  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
-
-  document.getElementById("content").innerHTML = `
-    <div class="student-header">
-      <div class="avatar">${initials}</div>
-      <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
-      <div class="level-badge">${latest.seviye}</div>
-      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
-    </div>
-    <div class="page-tabs">
-      <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
-      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
-      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
-    </div>
-    ${pageContent}
-  `;
-
+function renderPageContent(name, latestRow, sData) {
+  const container = document.getElementById("page-content");
   if (activePageTab === "ozet") {
-    drawCharts(rows);
-    // Özet yüklendiği an gecikmesiz olarak son deneme verisini de kutucuğa yazdırıyoruz
-    updateSonDenemeKutusu(name, rows);
+    container.innerHTML = buildOzetView(name, latestRow, sData);
+    setTimeout(() => { drawOzetChart(sData); drawBadgesProgress(latestRow); }, 50);
+  } else if (activePageTab === "dersler") {
+    container.innerHTML = buildDerslerView(name);
+  } else if (activePageTab === "denemeler") {
+    container.innerHTML = buildDenemelerView(name);
+    setTimeout(() => drawDenemeChart(name), 50);
   }
-  if (activePageTab === "denemeler") drawDenemeChart(name);
-}
 }
 
-/* ── ROZETLER ── */
+function buildOzetView(name, latestRow, sData) {
+  let deltaHtml = "";
+  if (sData.length > 1) {
+    const prev = sData[sData.length - 2].genel;
+    const diff = Math.round(latestRow.genel - prev);
+    if (diff > 0) deltaHtml = `<span class="metric-delta up">▲ +${diff} puan</span>`;
+    else if (diff < 0) deltaHtml = `<span class="metric-delta down">▼ ${diff} puan</span>`;
+    else deltaHtml = `<span class="metric-delta same">→ değişim yok</span>`;
+  } else { deltaHtml = `<span class="metric-delta same">—</span>`; }
 
-
-function buildBadges(genel, prevGenel, currentStudentName) {
-  // 1. Orijinal Genel Rozet Listesi (Diğer öğrenciler için)
-  const ORIGINAL_BADGES = [
-    { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
-    { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
-    { score:35, emoji:"⚙️", label:"Motoru Çalıştı" }, { score:40, emoji:"🌊", label:"Dalgayı Aştı" }, { score:45, emoji:"🦋", label:"Kanat Çırptı" },
-    { score:50, emoji:"🏕️", label:"Yarı Yolda" }, { score:55, emoji:"🔭", label:"Ufku Gördü" }, { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
-    { score:65, emoji:"🦅", label:"Süzülüyor" }, { score:70, emoji:"🌋", label:"Zirveye Yakın" }, { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
-    { score:80, emoji:"💫", label:"Yörüngede" }, { score:85, emoji:"🌠", label:"Kayan Yıldız" }, { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
-    { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
-  ];
-
-  // 2. Sadece Barış için geçerli olacak Şampiyonlar Ligi Listesi
-  const BARIS_BADGES = [
-    { score: 5,   emoji: "🐝", label: "Young Boys" },
-    { score: 10,  emoji: "🦈", label: "Dinamo Zagreb" },
-    { score: 15,  emoji: "🦅", label: "PAOK" },
-    { score: 20,  emoji: "🐺", label: "Kızıl Yıldız" },
-    { score: 25,  emoji: "🍀", label: "Celtic" },
-    { score: 30,  emoji: "🦁", label: "Sporting CP" },
-    { score: 35,  emoji: "🦅", label: "Benfica" },
-    { score: 40,  emoji: "🐘", label: "Feyenoord" },
-    { score: 45,  emoji: "🐎", label: "PSV Eindhoven" },
-    { score: 50,  emoji: "😈", label: "AC Milan" },
-    { score: 55,  emoji: "🦁", label: "Aston Villa" },
-    { score: 60,  emoji: "🦓", label: "Juventus" },
-    { score: 65,  emoji: "🐻", label: "Atletico Madrid" },
-    { score: 70,  emoji: "🐍", label: "Inter Milan" },
-    { score: 75,  emoji: "🐝", label: "B. Dortmund" },
-    { score: 80,  emoji: "🦅", label: "Paris SG" },
-    { score: 85,  emoji: "🐻", label: "Bayern Münih" },
-    { score: 90,  emoji: "🦈", label: "Manchester City" },
-    { score: 95,  emoji: "👑", label: "Real Madrid" },
-    { score: 100, emoji: "🦁", label: "GALATASARAY" }
-  ];
-
-  // İsmi küçük harfe çevirip Türkçe karakterleri arındırarak kontrol etme
-  const checkName = (currentStudentName || "").toLowerCase().trim()
-    .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
-    .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
-
-  // Eğer isimde "baris" geçiyorsa futbol modunu aç
-  const isBaris = checkName.includes("baris");
-  
-  const currentBadgesList = isBaris ? BARIS_BADGES : ORIGINAL_BADGES;
-  const cardTitle = isBaris ? "🏆 Barış'ın Şampiyonlar Ligi Yolculuğu" : "🏅 Kazanılan Rozetler";
-  const progressTextSuffix = isBaris ? "Şampiyonluğa Yakın" : "tamamlandı";
-  const gainedText = isBaris ? "kulübünün seviyesine ulaştın." : "rozeti senin oldu.";
-  const lostText = isBaris ? "takım seviyesi bu hafta elden gitti. Haftaya daha güçlü dönüp geri alabilirsin Barış!" : "rozeti bu hafta elden gitti. Haftaya geri alabilirsin!";
-
-  const earned = currentBadgesList.filter(b => genel >= b.score);
-  const earnedCount = earned.length;
-  const total = currentBadgesList.length;
-  const pct = Math.round(earnedCount / total * 100);
-
-  let notifHtml = "";
-  if (prevGenel !== null && prevGenel !== undefined) {
-    const newBadges = currentBadgesList.filter(b => genel >= b.score && prevGenel < b.score);
-    const lostBadges = currentBadgesList.filter(b => genel < b.score && prevGenel >= b.score);
-
-    if (newBadges.length > 0) {
-      const names = newBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
-      notifHtml = `
-        <div class="badge-notif gained">
-          <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
-          <div class="badge-notif-text"><h3>🎉 Yeni başarı kilidi açıldı!</h3><p>${isBaris ? 'Barış bu hafta harika bir performans! ' : 'Bu hafta harika bir performans! '}<strong>${names}</strong> ${gainedText}</p></div>
-        </div>`;
-    } else if (lostBadges.length > 0) {
-      const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
-      notifHtml = `
-        <div class="badge-notif lost">
-          <div class="badge-notif-emoji">😔</div><div class="badge-notif-text"><h3>Bu hafta biraz düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> ${lostText}</p></div>
-        </div>`;
+  // Rozet Değişim Analizi
+  let badgeNotifHtml = "";
+  if (sData.length > 1) {
+    const prevRow = sData[sData.length - 2];
+    const curB = calcBadges(latestRow);
+    const prevB = calcBadges(prevRow);
+    const gained = curB.filter(x => !prevB.includes(x));
+    const lost = prevB.filter(x => !curB.includes(x));
+    if (gained.length) {
+      badgeNotifHtml = `<div class="badge-notif gained"><div class="badge-notif-emoji">🎉</div><div class="badge-notif-text"><h3>Yeni Rozet Kazanıldı!</h3><p>Tebrikler, bu hafta gösterdiğin üstün başarı ile <b>"${gained.join(', ')}"</b> rozetini duvarına astın!</p></div></div>`;
+    } else if (lost.length) {
+      badgeNotifHtml = `<div class="badge-notif lost"><div class="badge-notif-emoji">⚠️</div><div class="badge-notif-text"><h3>Rozet Kaybı</h3><p>Bu haftaki küçük yavaşlama sebebiyle <b>"${lost.join(', ')}"</b> rozeti kilitlendi. Önümüzdeki hafta geri alacağına eminim!</p></div></div>`;
     }
   }
 
-  const grid = currentBadgesList.map(b => {
-    const isEarned = genel >= b.score;
-    return `<div class="badge-item ${isEarned ? 'earned' : 'locked'}"><div class="badge-emoji">${b.emoji}</div><div class="badge-label">${b.label}</div><div class="badge-score">${b.score} p</div></div>`;
-  }).join("");
+  // Dinamik Öğretmen Yorumu Motoru Çağrısı
+  const dynamicComment = generateUniqueComment(latestRow.genel, name, latestRow, allData);
 
-  return `
-    ${notifHtml}
-    <div class="badges-card">
-      <div class="badges-title">${cardTitle} — ${earnedCount}/${total}</div>
-      <div class="badges-grid">${grid}</div>
-      <div class="badges-progress">
-        <div class="badges-progress-bar"><div class="badges-progress-fill" style="width:${pct}%"></div></div>
-        <div class="badges-progress-text">%${pct} ${progressTextSuffix}</div>
-      </div>
-    </div>`;
-}
-
-
-/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
-function buildLessonStatusBox(rows) {
-  // Sadece ders tarihi girilmiş olan satırları filtrele ve kronolojik sırala
-  const lessonRows = rows.filter(r => r.ders_tarihi.trim() !== "").sort((a,b) => parseDateStr(a.ders_tarihi) - parseDateStr(b.ders_tarihi));
-  
-  if (!lessonRows.length) {
-    return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
-  }
-
-  // Geçen hafta (en son işlenen/biten ders), Güncel ders ve Sonraki ders tespiti
-  let pastLesson = null;
-  let currentLesson = null;
-  let nextLesson = null;
-
-  // Durumu tamamlandi, yapılmadı veya ertelendi olan en son dersleri bulalım
-  const pastAndCurrent = lessonRows.filter(r => ["tamamlandi", "yapilmedi", "yapilmadi", "ertelendi"].includes(r.ders_durumu.toLowerCase().trim()));
-  const incoming = lessonRows.filter(r => ["sonraki", "sonraki ders", "planlandi", ""].includes(r.ders_durumu.toLowerCase().trim()));
-
-  if (pastAndCurrent.length > 0) {
-    currentLesson = pastAndCurrent[pastAndCurrent.length - 1]; // En güncel işlenen/durumu girilen ders
-    if (pastAndCurrent.length > 1) {
-      pastLesson = pastAndCurrent[pastAndCurrent.length - 2]; // Ondan bir önceki ders (Geçen haftaki ders)
-    }
-  }
-
-  if (incoming.length > 0) {
-    nextLesson = incoming[0]; // Gelecek ilk planlı ders
-  }
-
-  function getStatusBadge(status) {
-    const st = (status || "").toLowerCase().trim();
-    if (st === "tamamlandi") return `<span class="status-badge badge-tamamlandi">Tamamlandı</span>`;
-    if (st === "yapilmadi" || st === "yapilmedi") return `<span class="status-badge badge-yapilmadi">Yapılmadı</span>`;
-    if (st === "ertelendi") return `<span class="status-badge badge-ertelendi">Ertelendi</span>`;
-    return `<span class="status-badge badge-sonraki">Sonraki Ders</span>`;
-  }
-
-  return `
-    <div class="lesson-status-box">
-      <div class="status-box-title">📅 Ders Zaman Çizelgesi ve Durumu</div>
-      <div class="status-grid">
-        <div class="status-element">
-          <span class="lbl">Geçen Ders</span>
-          <span class="date">${pastLesson ? pastLesson.ders_tarihi : "—"}</span>
-          ${pastLesson ? getStatusBadge(pastLesson.ders_durumu) : '<span class="status-empty">Veri Yok</span>'}
-        </div>
-        <div class="status-element" style="background: #f0fdf4; border-color: #bbf7d0;">
-          <span class="lbl" style="color: #15803d;">Güncel Ders</span>
-          <span class="date" style="color: #166534;">${currentLesson ? currentLesson.ders_tarihi : "—"}</span>
-          ${currentLesson ? getStatusBadge(currentLesson.ders_durumu) : '<span class="status-empty">Veri Yok</span>'}
-        </div>
-        <div class="status-element">
-          <span class="lbl">Gelecek Ders</span>
-          <span class="date">${nextLesson ? nextLesson.ders_tarihi : "—"}</span>
-          ${nextLesson ? getStatusBadge("sonraki") : '<span class="status-empty">Plan Yok</span>'}
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-/* ── ÖZET ── */
-function buildOzet(rows, latest, studentName, allRows) {
-  const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
-  const latestScored = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : latest;
-  const prevScored   = scoredRows.length > 1 ? scoredRows[scoredRows.length-2] : null;
-  
-  latest = latestScored;
-  const prev = prevScored;
-  
-  function delta(key) {
-    if (!prev) return '<span class="same">—</span>';
-    const d = Math.round(latest[key]-prev[key]);
-    if (d>0) return `<span class="up">↑ ${d}</span>`;
-    if (d<0) return `<span class="down">↓ ${Math.abs(d)}</span>`;
-    return '<span class="same">→ sabit</span>';
-  }
-  const skills = ["vocabulary","konusma","okuma","yazma","grammar"];
-  const skillRows = skills.map(sk => `
-    <div class="skill-row">
-      <div class="skill-header"><span class="skill-name">${SKILL_LABELS[sk]}</span><span class="skill-score" style="color:${SKILL_COLORS[sk]}">${latest[sk]}/100</span></div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${latest[sk]}%;background:${SKILL_COLORS[sk]}"></div></div>
-    </div>`).join("");
-
-  const dersler = rows.filter(r=>r.ders_durumu);
-  const yapildi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="tamamlandi").length;
-  const yapilmadi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="yapilmadi" || r.ders_durumu.toLowerCase().trim()==="yapilmedi").length;
-
-  const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null, studentName);
-  const lessonStatusBoxHtml = buildLessonStatusBox(rows); // Yeni oluşturduğumuz kutucuk motoru çağrılıyor
-  const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
-
-  return `
-    ${badgesHtml}
-    ${lessonStatusBoxHtml} 
+  // Ders Durumu Bilgisi Kutusu
+  let statusBoxHtml = "";
+  const filteredStatus = allData.filter(r => r.ogrenci === name && r.ders_tarihi);
+  if (filteredStatus.length) {
+    const sortedStatus = filteredStatus.sort((a,b) => parseDateStr(b.tarih) - parseDateStr(a.tarih));
+    const latestStatus = sortedStatus[0];
     
-    <div class="teacher-feedback-card">
-      <div class="feedback-header"><span class="feedback-animated-icon">✍️</span><h4 class="feedback-title">Öğretmenin Haftalık Notu</h4></div>
-      <p class="feedback-text">"${teacherComment}"</p>
-    </div>
+    let cls = "badge-yapilmadi";
+    let dDurum = latestStatus.ders_durumu || "YAPILMADI";
+    if (dDurum.toLowerCase().includes("tamam")) cls = "badge-tamamlandi";
+    else if (dDurum.toLowerCase().includes("ertel")) cls = "badge-ertelendi";
+    else if (dDurum.toLowerCase().includes("sonraki") || dDurum.toLowerCase().includes("gelecek")) cls = "badge-sonraki";
 
-    <div class="metrics-grid">
-      <div class="metric-card"><div class="metric-label">Genel puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
-      <div class="metric-card"><div class="metric-label">Son deneme</div><div class="metric-value">${latest.deneme > 0 ? latest.deneme : "—"}</div><div class="metric-delta">${delta("deneme")}</div></div>
-      <div class="metric-card"><div class="metric-label">Toplam Başarılı Ders</div><div class="metric-value">${yapildi}</div><div class="metric-delta" style="color:#888">${dersler.length} planlı kayıt</div></div>
-      <div class="metric-card"><div class="metric-label">Devam oranı</div><div class="metric-value">${dersler.length?Math.round(yapildi/dersler.length*100):0}%</div><div class="metric-delta"><span style="color:#e74c3c">${yapilmadi} kaçırıldı</span></div></div>
-    </div>
-
-    <div class="card"><div class="card-title">Genel gelişim grafiği</div><canvas id="chartGenel"></canvas></div>
-    <div class="card"><div class="card-title">Beceri radar grafiği</div><canvas id="chartRadar"></canvas></div>
-    <div class="card"><div class="card-title">Beceri alanları</div>${skillRows}</div>
-  `;
-}
-
-function drawCharts(rows) {
-  const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
-  const latest = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : null;
-
-  Object.keys(Chart.instances || {}).forEach(key => { try { Chart.instances[key].destroy(); } catch(e) {} });
-  if (Chart.getChart) {
-    ["chartGenel","chartRadar"].forEach(id => {
-      const existing = Chart.getChart(id);
-      if (existing) existing.destroy();
-    });
-  }
-
-  const ctx1 = document.getElementById("chartGenel");
-  if (ctx1 && scoredRows.length > 0) {
-    new Chart(ctx1.getContext("2d"), {
-      type: "line",
-      data: {
-        labels: scoredRows.map(r => r.tarih),
-        datasets: [
-          { label: "Genel", data: scoredRows.map(r => r.genel), borderColor: "#1D9E75", backgroundColor: "rgba(29,158,117,0.08)", tension: 0.3, pointRadius: 4, fill: true },
-          { label: "Deneme", data: scoredRows.map(r => r.deneme > 0 ? r.deneme : null), borderColor: "#378ADD", backgroundColor: "transparent", tension: 0.3, pointRadius: 4, borderDash: [5,3], spanGaps: false }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { labels: { font: { size: 11 }, boxWidth: 10 } } },
-        scales: {
-          y: { min: 0, max: 100, grid: { color: "#f0f0f0" }, ticks: { font: { size: 10 } } },
-          x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } }
-        }
-      }
-    });
-  }
-
-  const ctx2 = document.getElementById("chartRadar");
-  if (ctx2 && latest) {
-    new Chart(ctx2.getContext("2d"), {
-      type: "radar",
-      data: {
-        labels: ["Vocabulary","Konuşma","Okuma","Yazma","Grammar"],
-        datasets: [{ label: "Beceriler", data: [latest.vocabulary, latest.konusma, latest.okuma, latest.yazma, latest.grammar], borderColor: "#1D9E75", backgroundColor: "rgba(29,158,117,0.15)", pointBackgroundColor: "#1D9E75", pointRadius: 4 }]
-      },
-      options: {
-        responsive: true,
-        scales: { r: { min: 0, max: 100, ticks: { stepSize: 25, font: { size: 10 } }, grid: { color: "#f0f0f0" }, pointLabels: { font: { size: 11 } } } },
-        plugins: { legend: { display: false } }
-      }
-    });
-  }
-}
-
-/* ── HAFTALAR ── */
-function buildHaftalar(rows) {
-  const sortedRows = rows
-    .filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0)
-    .sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-
-  if (!sortedRows.length) return '<div class="empty">Ders raporu bulunamadı.</div>';
-
-  const statusLabels = { tamamlandi: "Tamamlandı", yapilmadi: "Yapılmadı", yapilmedi: "Yapılmadı", ertelendi: "Ertelendi", sonraki: "Planlandı" };
-
-  let htmlResult = `<div style="margin-bottom: 1rem; font-size: 13px; color: #666; font-weight: 500;">Ders raporunu incelemek için üzerine tıklayabilirsiniz.</div>`;
-  
-  for (let i = sortedRows.length - 1; i >= 0; i--) {
-    const currentWeek = sortedRows[i];
-    const lessonNumber = i + 1;
-    const st = (currentWeek.ders_durumu || "sonraki").toLowerCase().trim();
-    const weekComment = generateUniqueComment(currentWeek.genel, currentWeek.ogrenci, currentWeek, allData);
-
-    htmlResult += `
-      <div class="lesson-accordion-item">
-        <button class="lesson-accordion-header" onclick="this.parentElement.classList.toggle('open')">
-          <div class="lesson-header-left">
-            <span>📚 <strong>${lessonNumber}. Ders</strong></span>
-            <span style="font-size: 12px; color: #888; font-weight: normal;">(${currentWeek.tarih})</span>
-          </div>
-          <div class="lesson-header-right">
-            <span class="status-badge badge-${st}" style="font-size:10px;">${statusLabels[st] || st}</span>
-            <span style="font-weight:700; color:#1D9E75; font-size:13px; margin-left:8px;">${currentWeek.genel} Puan</span>
-            <span class="lesson-accordion-arrow" style="margin-left:6px;">▼</span>
-          </div>
-        </button>
-        <div class="lesson-accordion-content">
-          <div class="week-row"><div class="week-row-label">İşlenen Konu</div><div class="week-row-value"><strong>${currentWeek.konu || "Belirtilmemiş"}</strong></div></div>
-          <div class="week-row"><div class="week-row-label">Ödev Durumu</div><div class="week-row-value">${currentWeek.odev_durumu || "Belirtilmemiş"}</div></div>
-          
-          <div style="background: #f8f9fa; border-left: 4px solid #1D9E75; padding: 12px; margin: 15px 0 10px 0; border-radius: 0 8px 8px 0;">
-            <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">🎯 Haftalık Eğitim Stratejisi & Tavsiye:</div>
-            <div style="font-size: 13px; line-height: 1.5; color: #334155; font-style: italic;">"${weekComment}"</div>
-          </div>
-
-          <div class="week-scores" style="margin-top:15px;">
-            <div class="week-score-item"><span class="week-score-label">Vocabulary</span><span class="week-score-val">${currentWeek.vocabulary}</span></div>
-            <div class="week-score-item"><span class="week-score-label">Konuşma</span><span class="week-score-val">${currentWeek.konusma}</span></div>
-            <div class="week-score-item"><span class="week-score-label">Okuma</span><span class="week-score-val">${currentWeek.okuma}</span></div>
-            <div class="week-score-item"><span class="week-score-label">Yazma</span><span class="week-score-val">${currentWeek.yazma}</span></div>
-            <div class="week-score-item"><span class="week-score-label">Grammar</span><span class="week-score-val">${currentWeek.grammar}</span></div>
-          </div>
+    statusBoxHtml = `
+      <div class="lesson-status-box">
+        <div class="status-box-title">📅 Güncel Ders Durum Paneli</div>
+        <div class="status-grid">
+          <div class="status-element"><span class="lbl">Ders Tarihi</span><span class="date">${latestStatus.ders_tarihi}</span></div>
+          <div class="status-element"><span class="lbl">Ders Durumu</span><span class="status-badge ${cls}">${dDurum}</span></div>
+          <div class="status-element"><span class="lbl">Ödev Kontrol</span><span class="status-badge ${latestStatus.odev_durumu.toLowerCase().includes('yapıldı')?'badge-tamamlandi':'badge-yapilmadi'}">${latestStatus.odev_durumu || 'YOK'}</span></div>
         </div>
       </div>`;
   }
 
-  return htmlResult;
+  const skills = ["vocabulary", "konusma", "okuma", "yazma", "grammar"];
+  const skillsHtml = skills.map(sk => {
+    const val = latestRow[sk] || 0;
+    const col = SKILL_COLORS[sk];
+    const lbl = SKILL_LABELS[sk];
+    return `
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">${lbl}</span><span class="skill-score">${val}/100</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${val}%; background:${col};"></div></div>
+      </div>`;
+  }).join("");
+
+  // Rozetler Duvarı html oluşturma
+  const bList = [
+    { n: "Kelime Avcısı", e: "🦁", d: "Vocabulary ≥ 85" },
+    { n: "Konuşma Ustası", e: "🗣️", d: "Konuşma ≥ 85" },
+    { n: "Süper Okuyucu", e: "📖", d: "Okuma ≥ 85" },
+    { n: "Yazar Profesör", e: "✍️", d: "Yazma ≥ 85" },
+    { n: "Dil Bilimci", e: "🧠", d: "Grammar ≥ 85" }
+  ];
+  const activeBadges = calcBadges(latestRow);
+  const badgesGridHtml = bList.map(b => {
+    const isEarned = activeBadges.includes(b.n);
+    return `<div class="badge-item ${isEarned?'earned':'locked'}"><div class="badge-emoji">${b.e}</div><div class="badge-label">${b.n}</div></div>`;
+  }).join("");
+
+  return `
+    ${badgeNotifHtml}
+    ${statusBoxHtml}
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-label">Haftalık Performans</div><div class="metric-value">${Math.round(latestRow.genel)}</div>${deltaHtml}</div>
+      <div class="metric-card"><div class="metric-label">Son Deneme Puanı</div><div class="metric-value">${latestRow.deneme ? Math.round(latestRow.deneme) : '—'}</div><span class="metric-delta same">LGS Formatı</span></div>
+    </div>
+    <div class="teacher-feedback-card">
+      <div class="feedback-header"><span class="feedback-animated-icon">✍️</span><span class="feedback-title">ÖĞRETMENİN HAFTALIK NOTU</span></div>
+      <div class="feedback-text">"${dynamicComment}"</div>
+    </div>
+    <div class="card"><div class="card-title">Yetenek Dağılım Analizi</div>${skillsHtml}</div>
+    <div class="badges-card">
+      <div class="badges-title">🏆 Başarı Rozetleri Duvarı</div>
+      <div class="badges-grid">${badgesGridHtml}</div>
+      <div class="badges-progress">
+        <div class="badges-progress-bar"><div class="badges-progress-fill" id="b-fill"></div></div>
+        <div class="badges-progress-text" id="b-text">0/5 Rozet</div>
+      </div>
+    </div>
+    <div class="card"><div class="card-title">Performans Gelişim Grafiği (Zaman Serisi)</div><canvas id="ozetChart"></canvas></div>`;
 }
 
-/* ── DENEMELER ── */
-function buildDenemeler(name) {
-  const sData = denemelerData.filter(r => r.ogrenci === name);
-  if (!sData.length) return '<div class="empty">Henüz deneme sınavı verisi girilmemiş.</div>';
-  
-  setTimeout(() => {
-    const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-    const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
-    const latest = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : rows[rows.length-1];
-    const prev = scoredRows.length > 1 ? scoredRows[scoredRows.length-2] : null;
+function calcBadges(row) {
+  const b = [];
+  if ((row.vocabulary||0) >= 85) b.push("Kelime Avcısı");
+  if ((row.konusma||0) >= 85) b.push("Konuşma Ustası");
+  if ((row.okuma||0) >= 85) b.push("Süper Okuyucu");
+  if ((row.yazma||0) >= 85) b.push("Yazar Profesör");
+  if ((row.grammar||0) >= 85) b.push("Dil Bilimci");
+  return b;
+}
 
-    const el = document.getElementById("son-deneme-val");
-    const dl = document.getElementById("son-deneme-delta");
-    if (el) el.textContent = sData[sData.length-1].puan;
-    if (dl && prev) {
-      const pD = denemelerData.filter(r => r.ogrenci === name && r.tarih === prev.tarih);
-      if (pD.length) {
-        const d = sData[sData.length-1].puan - pD[pD.length-1].puan;
-        if (d>0) dl.innerHTML = `<span class="up">↑ ${d}</span>`;
-        else if (d<0) dl.innerHTML = `<span class="down">↓ ${Math.abs(d)}</span>`;
+function drawBadgesProgress(row) {
+  const earnedCount = calcBadges(row).length;
+  const pct = (earnedCount / 5) * 100;
+  const fill = document.getElementById("b-fill");
+  const txt = document.getElementById("b-text");
+  if (fill && txt) { fill.style.width = pct + "%"; txt.textContent = earnedCount + "/5 Rozet"; }
+}
+
+function drawOzetChart(sData) {
+  const ctx = document.getElementById("ozetChart");
+  if (!ctx) return;
+  new Chart(ctx.getContext("2d"), {
+    type: "line",
+    data: {
+      labels: sData.map(r => r.tarih),
+      datasets: [{
+        label: "Haftalık Performans İvmesi",
+        data: sData.map(r => r.genel),
+        borderColor: "#1D9E75",
+        backgroundColor: "rgba(29,158,117,0.05)",
+        borderWidth: 3,
+        tension: 0.25,
+        fill: true,
+        pointBackgroundColor: "#1D9E75",
+        pointRadius: 4
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 0, max: 100 } } }
+  });
+}
+
+function buildDerslerView(name) {
+  const rows = allData.filter(r => r.ogrenci === name && r.ders_tarihi).sort((a,b) => parseDateStr(b.tarih) - parseDateStr(a.tarih));
+  if (!rows.length) return '<div class="empty">Bu öğrenciye ait kayıtlı ders bulunamadı.</div>';
+
+  const accordionItems = rows.map((r, idx) => {
+    let cls = "badge-yapilmadi";
+    let dDurum = r.ders_durumu || "YAPILMADI";
+    if (dDurum.toLowerCase().includes("tamam")) cls = "badge-tamamlandi";
+    else if (dDurum.toLowerCase().includes("ertel")) cls = "badge-ertelendi";
+    else if (dDurum.toLowerCase().includes("sonraki") || dDurum.toLowerCase().includes("gelecek")) cls = "badge-sonraki";
+
+    const isOpen = idx === 0 ? "open" : "";
+
+    return `
+      <div class="lesson-accordion-item ${isOpen}" id="acc-item-${idx}">
+        <button class="lesson-accordion-header" onclick="toggleAccordion(${idx})">
+          <div class="lesson-header-left">
+            <span>📅 <b>${r.ders_tarihi}</b></span>
+          </div>
+          <div class="lesson-header-right">
+            <span class="status-badge ${cls}">${dDurum}</span>
+            <span class="lesson-accordion-arrow">▼</span>
+          </div>
+        </button>
+        <div class="lesson-accordion-content">
+          <div class="week-row"><span class="week-row-label">İşlenen Konu / Görev:</span><span class="week-row-value"><b>${r.konu || 'Belirtilmedi'}</b></span></div>
+          <div class="week-row"><span class="week-row-label">Ödev Durumu:</span><span class="week-row-value"><span class="status-badge ${r.odev_durumu.toLowerCase().includes('yapıldı')?'badge-tamamlandi':'badge-yapilmadi'}">${r.odev_durumu || 'YOK'}</span></span></div>
+          <div style="margin-top:12px; margin-bottom:6px; font-weight:700; font-size:11px; color:#888; text-transform:uppercase;">Bu Haftanın Puanları:</div>
+          <div class="week-scores">
+            <div class="week-score-item"><span class="week-score-label">Genel Performans:</span><span class="week-score-val">${r.genel}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Vocabulary:</span><span class="week-score-val">${r.vocabulary}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Konuşma:</span><span class="week-score-val">${r.konusma}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Okuma:</span><span class="week-score-val">${r.okuma}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Yazma:</span><span class="week-score-val">${r.yazma}</span></div>
+            <div class="week-score-item"><span class="week-score-label">Grammar:</span><span class="week-score-val">${r.grammar}</span></div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+
+  return `<div style="padding:2px;">${accordionItems}</div>`;
+}
+
+function toggleAccordion(idx) {
+  const item = document.getElementById(`acc-item-${idx}`);
+  if (!item) return;
+  const isOpen = item.classList.contains("open");
+  
+  // Tüm akordeonları kapatmak istemiyorsanız alttaki 2 satırı silebilirsiniz. (Sadece tıklananı aç/kapat yapar)
+  document.querySelectorAll(".lesson-accordion-item").forEach(el => el.classList.remove("open"));
+  
+  if (!isOpen) { item.classList.add("open"); } else { item.classList.remove("open"); }
+}
+
+function buildDenemelerView(name) {
+  const sData = denemelerData.filter(r => r.ogrenci === name);
+  setTimeout(() => {
+    const dl = document.getElementById("deneme-last-delta");
+    if (dl && sData.length) {
+      if (sData.length > 1) {
+        const diff = Math.round(sData[sData.length - 1].puan - sData[sData.length - 2].puan);
+        if (diff > 0) dl.innerHTML = `<span class="up">▲ +${diff} net</span>`;
+        else if (diff < 0) dl.innerHTML = `<span class="down">▼ ${diff} net</span>`;
         else dl.innerHTML = '<span class="same">→ sabit</span>';
       } else { dl.innerHTML = '<span class="same">—</span>'; }
     }
@@ -872,12 +768,12 @@ function buildDenemeler(name) {
 
   const tableRows = sData.map((r, idx) => {
     const t = examTag(r.puan);
-    return `<tr><td>${r.tarih}</td><td><b>${r.deneme_adi}</b></td><td>${r.puan}</td><td><span class="tag ${t.cls}">${t.lbl}</span></td></tr>`;
+    return `<tr><td>${r.tarih}</td><td><b>${r.deneme_adi}</b></td><td>${r.puan}</td><td><span class=\"tag ${t.cls}\">${t.lbl}</span></td></tr>`;
   }).reverse().join("");
 
   return `
     <div class="card"><div class="card-title">Deneme Sınavları Grafik İvmesi</div><canvas id="chartDenemelerTab"></canvas></div>
-    <div class="card" style="padding:10px;"><table class="exam-table"><thead><tr><th>Tarih</th><th>Deneme Adı</th><th>Puan</th><th>Durum</th></tr></thead><tbody>${tableRows}</tbody></table></div>`;
+    <div class="card" style="padding:10px;"><table class=\"exam-table\"><thead><tr><th>Tarih</th><th>Deneme Adı</th><th>Puan</th><th>Durum</th></tr></thead><tbody>${tableRows}</tbody></table></div>`;
 }
 
 function drawDenemeChart(name) {
@@ -889,11 +785,22 @@ function drawDenemeChart(name) {
     type: "line",
     data: {
       labels: sData.map(r => r.tarih),
-      datasets: [{ label: "Deneme Puanı", data: sData.map(r => r.puan), borderColor: "#378ADD", backgroundColor: "rgba(55,140,221,0.08)", tension: 0.2, pointRadius: 5, fill: true, pointBackgroundColor: "#378ADD" }]
+      datasets: [{
+        label: "Deneme Net Değişimi",
+        data: sData.map(r => r.puan),
+        borderColor: "#378ADD",
+        backgroundColor: "rgba(55,141,221,0.05)",
+        borderWidth: 3,
+        tension: 0.2,
+        fill: true,
+        pointBackgroundColor: "#378ADD",
+        pointRadius: 4
+      }]
     },
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 0, max: 100, grid: { color: "#f0f0f0" } }, x: { grid: { display: false } } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
   });
 }
 </script>
+
 </body>
 </html>
