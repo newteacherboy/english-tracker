@@ -682,63 +682,94 @@ function drawCharts(rows) {
   }
 }
 
-/* ── TAKVİM ── */
-function buildTakvim(rows) {
-  const dersMap = {};
-  rows.forEach(r => { if (r.ders_tarihi) dersMap[r.ders_tarihi] = { durum: r.ders_durumu, konu: r.konu }; });
-
-  const monthsMap = {};
-  Object.keys(dersMap).forEach(dtStr => {
-    const parts = dtStr.split(".");
-    if (parts.length === 3) {
-      const mIdx = parseInt(parts[1], 10) - 1;
-      const year = parseInt(parts[2], 10);
-      const k = year + "-" + mIdx;
-      if (!monthsMap[k]) monthsMap[k] = { year, mIdx, dates: [] };
-      monthsMap[k].dates.push(dtStr);
+function onEdit(e) {
+  var sheet = e.source.getActiveSheet();
+  // Ana sayfa adı "Sayfa1" ve düzenlenen sütun M (13. sütun - ders_durumu) ise çalışır
+  if (sheet.getName() == "Sayfa1") {
+    var range = e.range;
+    if (range.getColumn() == 13) { 
+      takvimiYenidenBoyaveGuncelle();
     }
-  });
-
-  let keys = Object.keys(monthsMap).sort();
-  if (!keys.length) {
-    const d = new Date(); const k = d.getFullYear() + "-" + d.getMonth();
-    monthsMap[k] = { year: d.getFullYear(), mIdx: d.getMonth(), dates: [] }; keys = [k];
   }
+}
 
-  return '<div class="calendar-wrap">' + keys.map((k, idx) => {
-    const m = monthsMap[k]; const isOpen = idx === keys.length - 1;
-    const firstDay = new Date(m.year, m.mIdx, 1).getDay();
-    const startDay = firstDay === 0 ? 6 : firstDay - 1;
-    const daysInMonth = new Date(m.year, m.mIdx + 1, 0).getDate();
+function takvimiYenidenBoyaveGuncelle() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var anaSayfa = ss.getSheetByName("Sayfa1");
+  var takvimSayfasi = ss.getSheetByName("Takvim"); // Takvim sayfasının adı "Takvim" olmalı
+  
+  if (!takvimSayfasi) {
+    takvimSayfasi = ss.insertSheet("Takvim");
+  }
+  
+  var sonSatir = anaSayfa.getLastRow();
+  if (sonSatir < 2) return; 
+  
+  // L sütunundan (12. sütun - Tarih) M sütununa (13. sütun - Durum) kadar olan aralığı alıyoruz
+  var veriAraligi = anaSayfa.getRange(2, 12, sonSatir - 1, 2).getValues();
+  
+  // Takvimdeki seçili ayı bulalım (A1 hücresi)
+  var ayHucresi = takvimSayfasi.getRange("A1").getValue();
+  var aylar = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+  var secilenAyIndeksi = aylar.indexOf(ayHucresi);
+  
+  if (secilenAyIndeksi == -1) {
+    secilenAyIndeksi = new Date().getMonth(); // Ay seçili değilse şu anki ayı otomatik alır
+    takvimSayfasi.getRange("A1").setValue(aylar[secilenAyIndeksi]);
+  }
+  
+  var yil = 2026; 
+  
+  // Takvim alanını temizle ve sıfırla
+  takvimSayfasi.getRange("A2:G2").setValues([["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]]);
+  takvimSayfasi.getRange("A3:G8").clearContent().setBackground("#ffffff").setFontColor("#000000").setBorder(false, false, false, false, false, false);
+  
+  var ilkGun = new Date(yil, secilenAyIndeksi, 1);
+  var sonGun = new Date(yil, secilenAyIndeksi + 1, 0).getDate();
+  var baslangicHaftaGunu = ilkGun.getDay(); 
+  if (baslangicHaftaGunu == 0) baslangicHaftaGunu = 7; // Pazar gününü haftanın son günü yapar
+  
+  var satir = 3;
+  var sutun = baslangicHaftaGunu;
+  
+  // Takvimi gün gün oluştur ve renklendir
+  for (var gun = 1; gun <= sonGun; gun++) {
+    var mevcutTarih = new Date(yil, secilenAyIndeksi, gun);
+    var hucre = takvimSayfasi.getRange(satir, sutun);
+    hucre.setValue(gun);
     
-    let daysHtml = "";
-    for (let i = 0; i < startDay; i++) daysHtml += '<div class="cal-day empty"></div>';
-    
-    const today = new Date(); const isThisMonth = today.getFullYear() === m.year && today.getMonth() === m.mIdx;
-    
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dateStr = d.toString().padStart(2, '0') + "." + (m.mIdx + 1).toString().padStart(2, '0') + "." + m.year;
-      const hasDers = dersMap[dateStr]; let cls = "";
-      if (hasDers) cls = " " + hasDers.durum;
-      if (isThisMonth && today.getDate() === d) cls += " today";
-      daysHtml += `<div class="cal-day${cls}" title="${hasDers ? hasDers.konu : ''}"><div class="day-num">${d}</div></div>`;
+    // Bugünün tarihini kırmızı çerçeveye al
+    var bugun = new Date();
+    if (mevcutTarih.toDateString() === bugun.toDateString()) {
+      hucre.setBorder(true, true, true, true, null, null, "#ff0000", SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
     }
     
-    return `
-      <div class="cal-month">
-        <div class="cal-month-title${isOpen?' open':''}" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')"><span>${TR_MONTHS[m.mIdx]} ${m.year}</span><span class="cal-arrow">▼</span></div>
-        <div class="cal-month-body${isOpen?' open':''}">
-          <div class="cal-grid" style="background:#fff; border-bottom:1px solid #f0f0f0;">${TR_DAYS.map(dName => `<div class="cal-day-name">${dName}</div>`).join("")}</div>
-          <div class="cal-grid">${daysHtml}</div>
-          <div class="cal-legend">
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#1D9E75"></div>Yapıldı</div>
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#e74c3c"></div>Yapılmadı</div>
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#f39c12"></div>Ertelendi</div>
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#378ADD"></div>Sonraki Ders</div>
-          </div>
-        </div>
-      </div>`;
-  }).join("") + '</div>';
+    // Satır satır L ve M sütunlarını kontrol et
+    for (var i = 0; i < veriAraligi.length; i++) {
+      var dersTarihiVerisi = veriAraligi[i][0]; // L sütunundaki tarih (Dizideki 0. eleman)
+      var durum = veriAraligi[i][1];             // M sütunundaki durum (Dizideki 1. eleman)
+      
+      if (dersTarihiVerisi instanceof Date) {
+        if (mevcutTarih.toDateString() === dersTarihiVerisi.toDateString()) {
+          if (durum == "yapildi") {
+            hucre.setBackground("#b7e1cd").setFontColor("#0f5132"); // Yeşil
+          } else if (durum == "yapilmadi") {
+            hucre.setBackground("#f8d7da").setFontColor("#842029"); // Kırmızı
+          } else if (durum == "ertelendi") {
+            hucre.setBackground("#fff3cd").setFontColor("#664d03"); // Turuncu
+          } else if (durum == "sonraki ders") {
+            hucre.setBackground("#cff4fc").setFontColor("#055160"); // Mavi
+          }
+        }
+      }
+    }
+    
+    sutun++;
+    if (sutun > 7) {
+      sutun = 1;
+      satir++;
+    }
+  }
 }
 
 /* ── HAFTALAR (YENİ AKORDEON DERS SİSTEMİ) ── */
