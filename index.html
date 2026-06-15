@@ -93,4 +93,769 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .cal-month-body.open { display: block; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
 .cal-day-name { text-align: center; font-size: 10px; color: #aaa; padding: 8px 0; font-weight: 500; }
-.cal-day { text-align: center; padding: 6px 2px; font-size: 12
+.cal-day { text-align: center; padding: 6px 2px; font-size: 12px; min-height: 36px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: default; }
+.cal-day.empty { }
+.cal-day .day-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; }
+.cal-day.yapildi .day-num { background: #1D9E75; color: #fff; }
+.cal-day.yapilmadi .day-num { background: #e74c3c; color: #fff; }
+.cal-day.ertelendi .day-num { background: #f39c12; color: #fff; }
+.cal-day.today .day-num { border: 2px solid #1D9E75; color: #1D9E75; font-weight: 700; }
+.cal-day.sonraki .day-num { background: #378ADD; color: #fff; }
+.cal-legend { display: flex; gap: 16px; padding: 10px 16px; border-top: 1px solid #f0f0f0; flex-wrap: wrap; }
+.cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #666; }
+.cal-legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+/* DERS SEKMELERİ (AKORDEON ARAYÜZÜ) */
+.lesson-accordion-item { background: #fff; border: 1px solid #e8eaed; border-radius: 12px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s; }
+.lesson-accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #fff; border: none; font-size: 14px; font-weight: 600; color: #1a1a1a; cursor: pointer; text-align: left; outline: none; }
+.lesson-accordion-header:hover { background: #f8f9fa; }
+.lesson-header-left { display: flex; align-items: center; gap: 10px; }
+.lesson-header-right { display: flex; align-items: center; gap: 12px; }
+.lesson-accordion-arrow { font-size: 11px; color: #aaa; transition: transform 0.2s; }
+.lesson-accordion-item.open .lesson-accordion-arrow { transform: rotate(180deg); }
+.lesson-accordion-content { display: none; padding: 16px; background: #fff; border-top: 1px solid #f0f0f0; }
+.lesson-accordion-item.open .lesson-accordion-content { display: block; }
+
+/* DENEME */
+.exam-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.exam-table th { color: #888; font-weight: 500; text-align: left; padding: 6px 8px; border-bottom: 1px solid #f0f0f0; font-size: 11px; text-transform: uppercase; }
+.exam-table td { padding: 9px 8px; border-bottom: 1px solid #f8f8f8; color: #333; }
+.tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+.tag-green { background: #E1F5EE; color: #0F6E56; }
+.tag-teal { background: #d0f0e8; color: #0a5c45; }
+.tag-amber { background: #FAEEDA; color: #854F0B; }
+.tag-blue { background: #E6F1FB; color: #185FA5; }
+
+.content { padding: 1.25rem; max-width: 720px; margin: 0 auto; }
+.empty { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
+.loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
+canvas { max-height: 200px; }
+
+/* ROZET BİLDİRİMİ */
+.badge-notif { border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 14px; }
+.badge-notif.gained { background: linear-gradient(135deg, #e8f8ef, #d0f0e0); border: 1px solid #a8dfc0; }
+.badge-notif.lost { background: linear-gradient(135deg, #fdecea, #fad4d1); border: 1px solid #f5b4b0; }
+.badge-notif-emoji { font-size: 36px; flex-shrink: 0; }
+.badge-notif-text h3 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.badge-notif.gained h3 { color: #0a5c38; }
+.badge-notif.lost h3 { color: #8b1a14; }
+.badge-notif-text p { font-size: 12px; color: #555; line-height: 1.4; }
+
+/* ROZETLER */
+.badges-card { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; padding: 1.25rem; margin-bottom: 1rem; }
+.badges-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 1rem; }
+.badges-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.badge-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 10px; }
+.badge-item.earned { background: #f8fffe; border: 1px solid #c8edd8; }
+.badge-item.locked { opacity: 0.25; filter: grayscale(1); }
+.badge-emoji { font-size: 24px; line-height: 1; }
+.badge-label { font-size: 9px; font-weight: 600; color: #555; text-align: center; }
+.badge-score { font-size: 9px; color: #aaa; }
+.badges-progress { margin-top: 12px; display: flex; align-items: center; gap: 10px; }
+.badges-progress-bar { flex: 1; height: 6px; background: #f0f0f0; border-radius: 999px; overflow: hidden; }
+.badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
+.badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
+
+/* CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI */
+.teacher-feedback-card {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+.teacher-feedback-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 5px;
+  background: linear-gradient(90deg, #1D9E75, #378ADD, #f39c12, #1D9E75);
+  background-size: 300% 100%;
+  animation: borderGlow 6s linear infinite;
+}
+.feedback-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.feedback-title { font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: 0.02em; }
+.feedback-text { font-size: 13.5px; line-height: 1.6; color: #334155; font-style: italic; position: relative; z-index: 2; padding-left: 5px; }
+.feedback-animated-icon { font-size: 18px; animation: writeAnimation 1.5s ease-in-out infinite alternate; display: inline-block; }
+@keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+@keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
+</style>
+</head>
+<body>
+
+<div class="home" id="home">
+  <div class="home-logo">Öğrenci<span>Takip</span></div>
+  <div class="home-sub">Hizmet seçin</div>
+  <div class="home-cards">
+    <div class="home-card" onclick="openSection('ingilizce')">
+      <div class="icon">📚</div>
+      <h2>İngilizce Özel Ders Takip</h2>
+      <p>Haftalık gelişim & deneme sonuçları</p>
+    </div>
+    <div class="home-card" onclick="openSection('kocluk')">
+      <div class="icon">🎯</div>
+      <h2>Eğitim Koçum</h2>
+      <p>Koçluk süreci takibi</p>
+    </div>
+  </div>
+  <div class="contact-btns">
+    <a class="contact-btn mail" href="mailto:official.ogretmencochem@gmail.com">✉️ E-posta</a>
+    <a class="contact-btn whatsapp" href="https://wa.me/905369937089" target="_blank">💬 WhatsApp</a>
+  </div>
+</div>
+
+<div class="tracker" id="tracker">
+  <div class="header">
+    <button class="back-btn" onclick="goHome()">← Geri</button>
+    <div class="header-title" id="header-title"></div>
+    <div class="last-updated" id="last-updated"></div>
+  </div>
+  <div class="student-tabs" id="tabs"></div>
+  <div class="content" id="content">
+    <div class="loading">Veriler yükleniyor...</div>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
+const SECTIONS = {
+  ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
+  kocluk:    { gid: "770963286", label: "🎯 Eğitim Koçum" }
+};
+const DENEMELER_GID = "969516335";
+const SKILL_COLORS = { vocabulary: "#1D9E75", konusma: "#378ADD", okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30" };
+const SKILL_LABELS = { vocabulary:"Vocabulary", konusma:"Konuşma", okuma:"Okuma", yazma:"Yazma", grammar:"Grammar" };
+const TR_MONTHS = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const TR_DAYS   = ["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"];
+
+let currentSection = null;
+let allData = [];
+let students = [];
+let passwords = {};
+let unlockedStudents = {};
+let activeStudent = null;
+let activePageTab = "ozet"; 
+let denemelerData = [];
+
+// Tarih dizilim yardımcısı
+const parseDateStr = (dStr) => {
+  if (!dStr) return new Date(0);
+  const parts = dStr.split(".");
+  return new Date(parts[2], parts[1] - 1, parts[0]);
+};
+
+/* 🧠 GEÇMİŞ HAFTA VE AY HAFIZALI GELİŞMİŞ ÖĞRETMEN YORUM MOTORU 🧠 */
+function generateUniqueComment(puan, studentName, latestRow, allRows) {
+  const firstName = studentName.split(" ")[0];
+  const odev = (latestRow.odev_durumu || "").toLowerCase();
+  const r = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  let girisCumlesi = "";
+  if (puan >= 0 && puan <= 25) {
+    const havuz = [
+      `Bu hafta ${firstName} ile henüz motorları ısıtma ve birbirimizi tanıma evresindeyiz. Mevcut puanımız yanıltıcı olmasın; amacımız eksikleri görüp tam da buradan yukarı fırlamak! 🚀`,
+      `${firstName} için bu haftaki tablo, gerçek potansiyelimizin sadece küçük bir uykuda olma hali. Biz bu filmin sonunu biliyoruz, eksiklerimizi tek tek avlayıp çok yakında harika bir ivme yakalayacağız. 💪`,
+      `İlk adımlar her zaman sabır ister. ${firstName} bu hafta enerjisini topladı diyebiliriz; önümüzdeki günlerde bu temelin üzerine koyacağımız tuğlaları planladık, veli olarak hiç endişeniz olmasın. ✨`
+    ];
+    girisCumlesi = r(havuz);
+  } else if (puan > 25 && puan <= 50) {
+    const havuz = [
+      `${firstName} bu hafta çarkları döndürmeye ve gelişim sinyalleri vermeye başladı. Taşlar yerine oturuyor, gayretini çok net görebiliyorum. 📈`,
+      `Güzel bir kımıldanma ve çaba haftasındayız! ${firstName} bazı duvarları yıkmaya başladı. Eksiklerimiz var ama yürüyüşümüz kararlı. 👣`,
+      `Yetersiz kaldığımız noktalar elbette mevcut ancak ${firstName}'deki o öğrenme isteği ve tatlı gelişim kıvılcımı bu hafta kendini hissettirdi. ⚡`
+    ];
+    girisCumlesi = r(havuz);
+  } else if (puan > 50 && puan <= 75) {
+    const havuz = [
+      `Gayet iyi, dengeli ve bizi mutlu eden bir haftayı geride bıraktık. ${firstName} standardını koruyor ama bizim gözümüz çok daha yükseklerde! 🌟`,
+      `${firstName} bu hafta sorumluluklarını güzel yerine getirdi ve iyi bir düzey yakaladı. Şimdi hedefimiz bu başarıyı 'en iyisi' yapmak için cilalamak. 💎`,
+      `Çok net bir 'iyi düzey' performance eseri izledik. ${firstName} potansiyelinin büyük kısmını sahaya yansıttı, ufak dokunuşlarla zirveye oynayacağız. 🎯`
+    ];
+    girisCumlesi = r(havuz);
+  } else if (puan > 75 && puan <= 100) {
+    const havuz = [
+      `Kelimelerin tam anlamıyla harika, muazzam bir hafta! ${firstName} bu hafta adeta sınıfta devleşti, gurur duymamak elde değil! 🔥`,
+      `Muhteşem bir disiplin ve kusursuz bir performans tablosu! ${firstName} çıtayı öyle bir yere koydu ki, ders yaparken keyif almamak imkansız. 👑`,
+      `Harika iş çıkardık! ${firstName} bu haftanın yıldızı olmayı sonuna kadar hak etti. Emeklerinin karşılığını böyle almak paha biçilemez. 🌠`
+    ];
+    girisCumlesi = r(havuz);
+  }
+
+  let haftalikKiyaslama = "";
+  const studentRows = allRows
+    .filter(r => r.ogrenci === studentName && (r.genel > 0 || r.vocabulary > 0))
+    .sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  
+  if (studentRows.length > 1) {
+    const currentIdx = studentRows.findIndex(r => r.tarih === latestRow.tarih);
+    if (currentIdx > 0) {
+      const prevRow = studentRows[currentIdx - 1];
+      const fark = Math.round(puan - prevRow.genel);
+      if (fark > 0) {
+        haftalikKiyaslama = ` Geçen haftaki puanına göre genel performansını **+${fark} puan** daha artırarak yukarı yönlü harika bir sıçrama gerçekleştirdi; bu yükseliş grafiği inancımızı tazeledi. 🚀`;
+      } else if (fark < 0) {
+        haftalikKiyaslama = ` Geçen haftaki puanına oranla bu hafta **${fark} puanlık** ufak bir durulma/gerileme söz konusu. Ancak bu düşüşü bir geri çekilme değil, önümüzdeki hafta daha güçlü zıplamak için bir yaylanma hareketi olarak görüyoruz. 🔋`;
+      } else {
+        haftalikKiyaslama = ` Geçen haftaki çizgimizi ve istikrarımızı tam puanı puanına koruduk. Mevcut durumu sabitlemek güzel ama bir sonraki hafta hedefimiz bu çizgiyi yukarı kırmak olacak. 🎯`;
+      }
+    }
+  }
+
+  let aylikKiyaslama = "";
+  if (studentRows.length > 4) { 
+    const getMonthFromStr = (dStr) => parseInt((dStr || "").split(".")[1], 10);
+    const currentMonthNum = getMonthFromStr(latestRow.tarih);
+    const prevMonthNum = currentMonthNum === 1 ? 12 : currentMonthNum - 1;
+    
+    const thisMonthScores = studentRows.filter(r => getMonthFromStr(r.tarih) === currentMonthNum).map(r => r.genel);
+    const prevMonthScores = studentRows.filter(r => getMonthFromStr(r.tarih) === prevMonthNum).map(r => r.genel);
+    
+    if (thisMonthScores.length > 0 && prevMonthScores.length > 0) {
+      const thisMonthAvg = thisMonthScores.reduce((a,b)=>a+b, 0) / thisMonthScores.length;
+      const prevMonthAvg = prevMonthScores.reduce((a,b)=>a+b, 0) / prevMonthScores.length;
+      const ayFarki = Math.round(thisMonthAvg - prevMonthAvg);
+      if (ayFarki > 2) {
+        aylikKiyaslama = ` Ayrıca genel aylık gidişata baktığımda, bu ay geçen aya göre ortalamamızı **${ayFarki} puan** yukarı taşıdık. Aylık bazda büyüyor olmak kalıcı başarının en net kanıtıdır.`;
+      } else if (ayFarki < -2) {
+        aylikKiyaslama = ` Aylık genel performans ortalamasında geçen aya göre hafif bir rehavet göze çarpıyor. Önümüzdeki haftalarda tempoyu sıkılaştırarak aylık ortalamamızı yeniden eski gücüne kavuşturacağız.`;
+      } else {
+        aylikKiyaslama = ` Aylık bazda baktığımızda geçen ayki genel başarı ortalamamızı tam anlamıyla korumayı başardık, sistemli ilerliyoruz.`;
+      }
+    }
+  }
+
+  let taktikNotu = "";
+  if (odev.includes("yapılmadı") || odev.includes("yok")) {
+    const eksikHavuzu = [
+      ` Önümüzdeki süreçte ivme yakalayabilmemiz için ödev disiplinini acilen birinci sıraya koymalıyız. Unutmayalım ki derste öğrenilenler sadece birer tohumdur; onları kalıcı başarıya dönüştürecek olan şey evde yapılacak düzenli test çözümleri ve soru avcılığıdır.`,
+      ` Bu performansın kalıcı bir başarı hikayesine dönüşmesi için ödevlerin eksiksiz yapılması şart. Velimiz olarak sizden ricam, evde ders sonrası mini tekrarlar yapmasını teşvik etmeniz; zira sıcağı sıcağına yapılmayan tekrarlar bilginin hızla uçup gitmesine neden olur.`,
+      ` Önümüzdeki hafta tempomuzu artırmak adına ödev sorumluluklarına sıkı sıkıya sarılmalıyız. Sadece ders saatiyle sınırlı kalmayıp, her gün mutlaka en az 15-20 dakikalık odaklanmış test çözümü ve hatalı soru analizi rutini oluşturmasını tavsiye ediyorum.`
+    ];
+    taktikNotu = r(eksikHavuzu);
+  } else {
+    const basariHavuzu = [
+      ` Sürecimizi daha da yukarı taşımak adına şu stratejik taktiği uygulamalıyız: Her akşam yatmadan önce mutlaka 10 dakikalık bir "kelime tekrarı" rutini oturtalım. Görsel hafızayı canlı tutmak, denemelerdeki yeni nesil soruları çok daha hızlı analiz etmesini sağlayacaktır.`,
+      ` Yakaladığımız bu güzel ritmi korumak adına yeni taktiğimiz şu olmalı: Öğrencimiz çözdüğü testlerde sadece doğrularına odaklanmamalı; boş bıraktığı veya yanlış yaptığı soruları kesip bir "hata defteri" yapmalı. Gerçek gelişim, yapamadığımız soruları çözebildiğimiz an başlar.`,
+      ` Sürecin daha sağlıklı ilerlemesi için bir sonraki adımımız ders sonrası mini özet çıkarma alışkanlığı olmalı. Konu anlatımı biter bitmez kendi cümleleriyle tutacağı küçük notlar ve ardından gelecek soru çözümleri, bilgiyi zihninde tamamen kilitleyecektir.`
+    ];
+    taktikNotu = r(basariHavuzu);
+  }
+
+  return `${girisCumlesi}${haftalikKiyaslama}${aylikKiyaslama}${taktikNotu}`;
+}
+
+function examTag(puan) {
+  if (puan > 85) return { cls: 'tag-green',  lbl: 'Muhteşemsin!' };
+  if (puan > 70) return { cls: 'tag-teal',   lbl: 'Böyle Devam' };
+  if (puan > 50) return { cls: 'tag-amber',  lbl: 'Yükselişte' };
+  return              { cls: 'tag-blue',   lbl: 'Gelişiyor' };
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split("\n");
+  return lines.map(line => {
+    const cols = []; let cur = "", inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ""; }
+      else { cur += ch; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+function openSection(section) {
+  currentSection = section;
+  allData = []; students = []; passwords = {}; unlockedStudents = {}; activeStudent = null;
+  document.getElementById("home").style.display = "none";
+  const tracker = document.getElementById("tracker");
+  tracker.style.display = "flex";
+  document.getElementById("header-title").innerHTML = SECTIONS[section].label;
+  document.getElementById("tabs").innerHTML = "";
+  document.getElementById("content").innerHTML = '<div class="loading">Veriler yükleniyor...</div>';
+  loadData();
+}
+
+function goHome() {
+  document.getElementById("home").style.display = "flex";
+  document.getElementById("tracker").style.display = "none";
+  currentSection = null; activeStudent = null;
+}
+
+async function loadData() {
+  const gid = SECTIONS[currentSection].gid;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+
+    function toNum(v) { return parseFloat((v||"").toString().replace(",",".")) || 0; }
+
+    allData = rows.slice(1).map(r => ({
+      tarih:        r[0] || "",
+      ogrenci:      r[1] || "",
+      seviye:       r[2] || "",
+      genel:        toNum(r[3]),
+      vocabulary:   toNum(r[4]),
+      konusma:      toNum(r[5]),
+      okuma:        toNum(r[6]),
+      yazma:        toNum(r[7]),
+      grammar:      toNum(r[8]),
+      deneme:       toNum(r[9]),
+      sifre:        r[10] ? r[10].trim() : "",
+      ders_tarihi:  r[11] || "",
+      ders_durumu:  r[12] ? r[12].trim().toLowerCase() : "",
+      odev_durumu:  r[13] ? r[13].trim() : "",
+      konu:         r[14] || ""
+    })).filter(r => r.ogrenci);
+
+    passwords = {};
+    allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
+    students = [...new Set(allData.map(r => r.ogrenci))];
+
+    try {
+      const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
+      const dRes = await fetch(dUrl);
+      const dText = await dRes.text();
+      const dRows = parseCSV(dText);
+      denemelerData = dRows.slice(1).map(r => ({
+        tarih:       r[0] || "",
+        ogrenci:     r[1] || "",
+        deneme_adi:  r[2] || "",
+        puan:        toNum(r[3])
+      })).filter(r => r.ogrenci && r.puan > 0);
+    } catch(e) { denemelerData = []; }
+
+    document.getElementById("last-updated").textContent =
+      new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+    renderTabs();
+    if (students.length && !activeStudent) selectStudent(students[0]);
+    else if (!students.length) {
+      document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
+    }
+  } catch(e) {
+    console.error(e);
+    document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
+  }
+}
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = students.map(s =>
+    `<div class="tab${s===activeStudent?' active':''}" onclick="selectStudent('${esc(s)}')">${s.split(" ")[0]}${passwords[s]?' 🔒':''}</div>`
+  ).join("");
+}
+
+function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+
+function selectStudent(name) {
+  activeStudent = name; activePageTab = "ozet";
+  renderTabs();
+  if (passwords[name] && !unlockedStudents[name]) { showLockScreen(name); return; }
+  showStudentPage(name);
+}
+
+function showLockScreen(name) {
+  const s = esc(name);
+  document.getElementById("content").innerHTML = `
+    <div class="lock-screen">
+      <div class="lock-icon">🔒</div>
+      <h3>${name.split(" ")[0]} adlı öğrencinin sayfası</h3>
+      <p>Bu sayfayı görüntülemek için şifre gereklidir.</p>
+      <input class="lock-input" type="password" id="pwd-input" placeholder="Şifrenizi girin" onkeydown="if(event.key==='Enter')checkPassword('${s}')">
+      <button class="lock-btn" onclick="checkPassword('${s}')">Giriş Yap</button>
+      <div class="lock-error" id="lock-error"></div>
+    </div>`;
+  setTimeout(() => document.getElementById("pwd-input")?.focus(), 100);
+}
+
+function checkPassword(name) {
+  const input = document.getElementById("pwd-input").value.trim();
+  if (input === (passwords[name]||"").trim()) {
+    unlockedStudents[name] = true; showStudentPage(name);
+  } else {
+    document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
+    document.getElementById("pwd-input").value = "";
+    document.getElementById("pwd-input").focus();
+  }
+}
+
+function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
+
+function showStudentPage(name) {
+  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
+  const latest = rows[rows.length-1];
+  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+  const s = esc(name);
+
+  let pageContent = "";
+  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
+  else if (activePageTab === "takvim") pageContent = buildTakvim(rows);
+  else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
+  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
+
+  document.getElementById("content").innerHTML = `
+    <div class="student-header">
+      <div class="avatar">${initials}</div>
+      <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
+      <div class="level-badge">${latest.seviye}</div>
+      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
+    </div>
+    <div class="page-tabs">
+      <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
+      <div class="page-tab${activePageTab==='takvim'?' active':''}" onclick="switchPageTab('${s}','takvim')">📅 Takvim</div>
+      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
+      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
+    </div>
+    ${pageContent}
+  `;
+
+  if (activePageTab === "ozet") drawCharts(rows);
+  if (activePageTab === "denemeler") drawDenemeChart(name);
+}
+
+function switchPageTab(name, tab) {
+  activePageTab = tab;
+  showStudentPage(name);
+}
+
+/* ── ROZETLER ── */
+const BADGES = [
+  { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
+  { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
+  { score:35, emoji:"⚙️", label:"Motoru Çalıştı" }, { score:40, emoji:"🌊", label:"Dalgayı Aştı" }, { score:45, emoji:"🦋", label:"Kanat Çırptı" },
+  { score:50, emoji:"🏕️", label:"Yarı Yolda" }, { score:55, emoji:"🔭", label:"Ufku Gördü" }, { score:60, emoji:"⚡", label:"Voltaj Yükseldi" },
+  { score:65, emoji:"🦅", label:"Süzülüyor" }, { score:70, emoji:"🌋", label:"Zirveye Yakın" }, { score:75, emoji:"🛸", label:"Atmosfer Dışı" },
+  { score:80, emoji:"💫", label:"Yörüngede" }, { score:85, emoji:"🌠", label:"Kayan Yıldız" }, { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
+  { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
+];
+
+function buildBadges(genel, prevGenel) {
+  const earned = BADGES.filter(b => genel >= b.score);
+  const earnedCount = earned.length;
+  const total = BADGES.length;
+  const pct = Math.round(earnedCount / total * 100);
+
+  let notifHtml = "";
+  if (prevGenel !== null && prevGenel !== undefined) {
+    const newBadges = BADGES.filter(b => genel >= b.score && prevGenel < b.score);
+    const lostBadges = BADGES.filter(b => genel < b.score && prevGenel >= b.score);
+
+    if (newBadges.length > 0) {
+      const names = newBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
+      notifHtml = `
+        <div class="badge-notif gained">
+          <div class="badge-notif-emoji">🎉</div>
+          <div class="badge-notif-text">
+            <h3>Yeni Başarı Kilidi Açıldı!</h3>
+            <p>Tebrikler! Şu yeni rozetleri kazandınız: <strong>${names}</strong></p>
+          </div>
+        </div>`;
+    } else if (lostBadges.length > 0) {
+      const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
+      notifHtml = `
+        <div class="badge-notif lost">
+          <div class="badge-notif-emoji">📉</div>
+          <div class="badge-notif-text">
+            <h3>Bazı Rozetler Kilitlendi</h3>
+            <p>Puan durumundaki gerileme sebebiyle şu rozetler geçici olarak kilitlendi: ${names}. Yeniden kazanmak için çalışmaya devam!</p>
+          </div>
+        </div>`;
+    }
+  }
+
+  const gridHtml = BADGES.map(b => {
+    const isEarned = genel >= b.score;
+    return `
+      <div class="badge-item ${isEarned ? 'earned' : 'locked'}">
+        <div class="badge-emoji">${b.emoji}</div>
+        <div class="badge-label">${b.label}</div>
+        <div class="badge-score">${b.score} Puan</div>
+      </div>`;
+  }).join("");
+
+  return `
+    ${notifHtml}
+    <div class="badges-card">
+      <div class="badges-title">🏆 Gelişim Rozetleri Gidişatı</div>
+      <div class="badges-grid">${gridHtml}</div>
+      <div class="badges-progress">
+        <div class="badges-progress-bar"><div class="badges-progress-fill" style="width: ${pct}%"></div></div>
+        <div class="badges-progress-text">%${pct} Tamamlandı</div>
+      </div>
+    </div>`;
+}
+
+function buildOzet(rows, latest, studentName, allRows) {
+  let deltaClass = "same", deltaTxt = "Değişim yok";
+  if (rows.length > 1) {
+    const prev = rows[rows.length - 2].genel;
+    const diff = Math.round(latest.genel - prev);
+    if (diff > 0) { deltaClass = "up"; deltaTxt = `+${diff} puan arttı`; }
+    else if (diff < 0) { deltaClass = "down"; deltaTxt = `${diff} puan düştü`; }
+  }
+
+  const comment = generateUniqueComment(latest.genel, studentName, latest, allRows);
+  const prevGenel = rows.length > 1 ? rows[rows.length - 2].genel : null;
+  const badgesHtml = buildBadges(latest.genel, prevGenel);
+
+  return `
+    <div class="teacher-feedback-card">
+      <div class="feedback-header">
+        <span class="feedback-animated-icon">✍️</span>
+        <div class="feedback-title">ÖĞRETMENİN HAFTALIK DEĞERLENDİRME NOTU</div>
+      </div>
+      <div class="feedback-text">"${comment}"</div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Genel Performans</div>
+        <div class="metric-value">${Math.round(latest.genel)}</div>
+        <div class="metric-delta ${deltaClass}">${deltaTxt}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Deneme Ortalaması</div>
+        <div class="metric-value">${Math.round(latest.deneme)}</div>
+        <div class="metric-delta same">Son sınav odaklı</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Beceri Dağılım Analizi</div>
+      ${Object.keys(SKILL_LABELS).map(key => {
+        const val = latest[key] || 0;
+        return `
+          <div class="skill-row">
+            <div class="skill-header">
+              <span class="skill-name">${SKILL_LABELS[key]}</span>
+              <span class="skill-score">${Math.round(val)}/100</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${val}%; background:${SKILL_COLORS[key]}"></div></div>
+          </div>`;
+      }).join("")}
+    </div>
+
+    ${badgesHtml}
+
+    <div class="card">
+      <div class="card-title">Zaman İçinde Başarı Grafiği</div>
+      <canvas id="perfChart"></canvas>
+    </div>
+  `;
+}
+
+function toggleCalendarMonth(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+function buildTakvim(rows) {
+  // Aylık ders kayıtlarını L (ders_tarihi) ve M (ders_durumu) sütunlarına göre gruplayalım
+  const dersTakvimi = {};
+  rows.forEach(r => {
+    if (r.ders_tarihi) {
+      // "gg.aa.yyyy" formatını ayrıştırıp ISO anahtarı üretiyoruz (yyyy-mm-dd)
+      const parts = r.ders_tarihi.split(".");
+      if(parts.length === 3) {
+        const key = `${parts[2]}-${String(parts[1]).padStart(2,'0')}-${String(parts[0]).padStart(2,'0')}`;
+        dersTakvimi[key] = r.ders_durumu || "";
+      }
+    }
+  });
+
+  const bugun = new Date();
+  const currentYear = 2026;
+  let html = '<div class="calendar-wrap">';
+
+  // 12 Ayı Tersten Çizelim (En güncel ay üstte görünsün)
+  for (let m = 11; m >= 0; m--) {
+    const isCurrentMonth = (bugun.getMonth() === m && bugun.getFullYear() === currentYear);
+    const monthFirstDay = new Date(currentYear, m, 1);
+    const totalDays = new Date(currentYear, m + 1, 0).getDate();
+    
+    // Pazartesi=0, Salı=1... Pazar=6 düzenine hizalama
+    let startDayIdx = monthFirstDay.getDay() - 1;
+    if (startDayIdx < 0) startDayIdx = 6; 
+
+    html += `
+      <div class="cal-month">
+        <div class="cal-month-title ${isCurrentMonth ? 'open' : ''}" onclick="toggleCalendarMonth(this)">
+          <span>${TR_MONTHS[m]} ${currentYear}</span>
+          <span class="cal-arrow">▼</span>
+        </div>
+        <div class="cal-month-body ${isCurrentMonth ? 'open' : ''}">
+          <div class="cal-grid">
+            ${TR_DAYS.map(d => `<div class="cal-day-name">${d}</div>`).join("")}
+    `;
+
+    // Boş Günler
+    for (let i = 0; i < startDayIdx; i++) {
+      html += `<div class="cal-day empty"></div>`;
+    }
+
+    // Günleri Yaz ve Renklendir
+    for (let d = 1; d <= totalDays; d++) {
+      const dateKey = `${currentYear}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const durum = dersTakvimi[dateKey] || "";
+      
+      let cls = "";
+      if (durum === "yapildi") cls = "yapildi";
+      else if (durum === "yapilmadi") cls = "yapilmadi";
+      else if (durum === "ertelendi") cls = "ertelendi";
+      else if (durum === "sonraki ders") cls = "sonraki";
+
+      const isToday = (bugun.getDate() === d && bugun.getMonth() === m && bugun.getFullYear() === currentYear);
+      if (isToday) cls += " today";
+
+      html += `
+        <div class="cal-day ${cls}">
+          <span class="day-num">${d}</span>
+        </div>`;
+    }
+
+    html += `
+          </div>
+          <div class="cal-legend">
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#1D9E75"></div>Yapıldı</div>
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#e74c3c"></div>Yapılmadı</div>
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#f39c12"></div>Ertelendi</div>
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#378ADD"></div>Sonraki Ders</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function toggleAccordion(button) {
+  const item = button.parentElement;
+  item.classList.toggle('open');
+}
+
+function buildHaftalar(rows) {
+  const reversed = [...rows].reverse();
+  return `
+    <div class="lesson-accordion-wrap">
+      ${reversed.map((r, idx) => {
+        let badgeColor = "#888";
+        if(r.ders_durumu === "yapildi") badgeColor = "#1D9E75";
+        else if(r.ders_durumu === "yapilmadi") badgeColor = "#e74c3c";
+        else if(r.ders_durumu === "ertelendi") badgeColor = "#f39c12";
+        else if(r.ders_durumu === "sonraki ders") badgeColor = "#378ADD";
+
+        return `
+          <div class="lesson-accordion-item ${idx===0?'open':''}">
+            <button class="lesson-accordion-header" onclick="toggleAccordion(this)">
+              <div class="lesson-header-left">
+                <span>🗓️ ${r.tarih} Raporu</span>
+              </div>
+              <div class="lesson-header-right">
+                <span class="tag" style="background:${badgeColor}; color:#fff">${r.ders_durumu.toUpperCase() || "BELİRTİLMEDİ"}</span>
+                <span class="lesson-accordion-arrow">▼</span>
+              </div>
+            </button>
+            <div class="lesson-accordion-content">
+              <p style="font-size:13px; color:#666; margin-bottom:8px;"><strong>İşlenen Konu:</strong> ${r.konu || "Belirtilmedi"}</p>
+              <p style="font-size:13px; color:#666; margin-bottom:8px;"><strong>Ödev Durumu:</strong> ${r.odev_durumu || "Belirtilmedi"}</p>
+              <p style="font-size:13px; color:#666; margin-bottom:12px;"><strong>Haftalık Başarı Puanı:</strong> %${Math.round(r.genel)}</p>
+              <div style="border-top:1px dashed #eee; padding-top:8px; font-size:12.5px; color:#554; font-style:italic;">
+                ${generateUniqueComment(r.genel, r.ogrenci, r, rows)}
+              </div>
+            </div>
+          </div>`;
+      }).join("")}
+    </div>`;
+}
+
+function buildDenemeler(studentName) {
+  const list = denemelerData.filter(d => d.ogrenci === studentName).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  if (!list.length) return '<div class="empty">Kayıtlı deneme sınavı sonucu bulunamadı.</div>';
+
+  return `
+    <div class="card">
+      <div class="card-title">Deneme Sınavları Başarı Grafiği</div>
+      <canvas id="denemeChart"></canvas>
+    </div>
+    <div class="card" style="padding:0.75rem;">
+      <table class="exam-table">
+        <thead><tr><th>Tarih</th><th>Sınav Adı</th><th>Doğru/Puan</th><th>Durum</th></tr></thead>
+        <tbody>
+          ${[...list].reverse().map(d => {
+            const t = examTag(d.puan);
+            return `<tr><td>${d.tarih}</td><td>${d.deneme_adi}</td><td><strong>${d.puan}</strong></td><td><span class="tag ${t.cls}">${t.lbl}</span></td></tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function drawCharts(rows) {
+  const ctx = document.getElementById("perfChart")?.getContext("2d");
+  if (!ctx) return;
+  const labels = rows.map(r => r.tarih.slice(0,5));
+  const data = rows.map(r => r.genel);
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Genel Puan",
+        data: data,
+        borderColor: "#1D9E75",
+        backgroundColor: "rgba(29,158,117,0.05)",
+        borderWidth: 2.5,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { min: 0, max: 100, grid: { color: "#f0f0f0" } }, x: { grid: { display: false } } }
+    }
+  });
+}
+
+function drawDenemeChart(studentName) {
+  const ctx = document.getElementById("denemeChart")?.getContext("2d");
+  if (!ctx) return;
+  const list = denemelerData.filter(d => d.ogrenci === studentName).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  const labels = list.map(d => d.tarih.slice(0,5));
+  const data = list.map(d => d.puan);
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: "rgba(55,138,221,0.75)",
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { min: 0, max: 100, grid: { color: "#f0f0f0" } }, x: { grid: { display: false } } }
+    }
+  });
+}
+
+// İlk açılışta ana sayfayı yükle
+window.addEventListener("DOMContentLoaded", () => {
+  goHome();
+});
+</script>
+</body>
+</html>
