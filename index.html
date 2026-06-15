@@ -458,6 +458,8 @@ function showStudentPage(name) {
   const s = esc(name);
   // En son fotoğraf linkini bul
   const studentFoto = allData.filter(r => r.ogrenci === name && r.foto).slice(-1)[0]?.foto || null;
+  const avatarStyle = studentFoto ? 'background-image:url(' + studentFoto + ');background-size:cover;background-position:center;' : '';
+  const avatarContent = studentFoto ? '' : initials;
 
   let pageContent = "";
   if (activePageTab === "ozet") pageContent = buildOzet(rows, latest);
@@ -467,7 +469,7 @@ function showStudentPage(name) {
 
   document.getElementById("content").innerHTML = `
     <div class="student-header">
-      <div class="avatar" style="${studentFoto ? `background-image:url('${studentFoto}');background-size:cover;background-position:center;` : ``}">${studentFoto ? '' : initials}</div>
+      <div class="avatar" style="${avatarStyle}">${avatarContent}</div>
       <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
       <div class="level-badge">${latest.seviye}</div>
       ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
