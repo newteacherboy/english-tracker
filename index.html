@@ -167,7 +167,7 @@ canvas { max-height: 200px; }
 .badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
-/* 🌟 DİKKAT ÇEKEN ANİMASYONLU ÖĞRETMEN DEĞERLENDİRME KARTI 🌟 */
+/* 🌟 CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI 🌟 */
 .teacher-feedback-card {
   position: relative;
   background: #fff;
@@ -177,7 +177,6 @@ canvas { max-height: 200px; }
   overflow: hidden;
   border: 1px solid #e2e8f0;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-  transition: transform 0.3s ease;
 }
 .teacher-feedback-card::before {
   content: '';
@@ -225,6 +224,7 @@ canvas { max-height: 200px; }
 </head>
 <body>
 
+<!-- ANA SAYFA -->
 <div class="home" id="home">
   <div class="home-logo">Öğrenci<span>Takip</span></div>
   <div class="home-sub">Hizmet seçin</div>
@@ -241,11 +241,12 @@ canvas { max-height: 200px; }
     </div>
   </div>
   <div class="contact-btns">
-    <a class="contact-btn mail" href="mailto:official.ogretmencocuk@gmail.com">✉️ E-posta</a>
+    <a class="contact-btn mail" href="mailto:official.ogretmencochem@gmail.com">✉️ E-posta</a>
     <a class="contact-btn whatsapp" href="https://wa.me/905369937089" target="_blank">💬 WhatsApp</a>
   </div>
 </div>
 
+<!-- TRACKER -->
 <div class="tracker" id="tracker">
   <div class="header">
     <button class="back-btn" onclick="goHome()">← Geri</button>
@@ -279,90 +280,103 @@ let students = [];
 let passwords = {};
 let unlockedStudents = {};
 let activeStudent = null;
-let activePageTab = "ozet"; // ozet | takvim | haftalar
+let activePageTab = "ozet"; 
 let activeWeekIndex = 0;
 let denemelerData = [];
 
-/* 🧠 GELİŞMİŞ VE ÖZGÜN ÖĞRETMEN YORUM MOTORU 🧠 */
-function generateUniqueComment(puan, studentName, latestRow) {
+/* 🧠 GEÇMİŞ HAFTA VE AY HAFIZALI GELİŞMİŞ ÖĞRETMEN YORUM MOTORU 🧠 */
+function generateUniqueComment(puan, studentName, latestRow, allRows) {
   const firstName = studentName.split(" ")[0];
   const odev = (latestRow.odev_durumu || "").toLowerCase();
-  
-  // Havuz kelimeleri (Her çalıştığında farklı kombinasyon oluşturması için)
-  const girisHarika = [
-    `Bu hafta ${firstName} kelimenin tam anlamıyla harikalar yarattı! 🌟`,
-    `${firstName} bu haftaki enerjisi ve odaklanmasıyla beni büyüledi. 🚀`,
-    `Muazzam bir haftayı geride bıraktık, ${firstName} çıtayı çok yukarı taşıdı! 💎`,
-    `Gözlerindeki o başarma ışığını bu hafta çok net gördüm ${firstName}! 💪`
-  ];
-  const girisIyi = [
-    `Güzel ve istikrarlı bir haftayı geride bıraktık, tebrikler ${firstName}. 👍`,
-    `${firstName} bu hafta hedeflerine bir adım daha yaklaştı, gayet başarılıydı. ✨`,
-    `Haftalık performansımız oldukça doyurucu ve umut verici görünüyor. 🌟`,
-    `${firstName} adımlarını sağlam atarak gelişimini sürdürmeye devam ediyor. 👣`
-  ];
-  const girisOrta = [
-    `${firstName} için potansiyelini tam yansıtmadığı, sakin bir hafta oldu. 📈`,
-    `Fena olmayan bir performans fakat ${firstName} çok daha iyisini yapabilir, biliyorum. ⚡`,
-    `Bu hafta odaklanma konusunda küçük dalgalanmalar yaşasak da fena değildik. 🔎`,
-    `Adım adım ilerliyoruz ancak tempoyu biraz daha artırmamız gerekiyor ${firstName}. 🚀`
-  ];
-  const girisDusuk = [
-    `Bu hafta biraz yorgun veya enerjimiz düşüktü, bunu telafi edeceğiz. 🔋`,
-    `${firstName} için adaptasyon ve toparlanma gerektiren bir haftayı geride bıraktık. 🛑`,
-    `Bu haftaki sonuçlar bizi yıldırmayacak, eksikleri görüp daha sıkı sarılacağız! 🎯`,
-    `Potansiyelinin farkında olmalı ve önümüzdeki haftaya daha dinamik başlamalıyız. ⚡`
-  ];
-
-  const baglacDinamik = [
-    `Özellikle beceri analizlerindeki detaylar incelendiğinde,`,
-    `Grafiklerdeki ivmeye ve ders içi katılımına baktığımda,`,
-    `Haftalık olarak sergilenen bu performans tablosu gösteriyor ki,`,
-    `Süreç içerisindeki genel adımları değerlendirdiğimizde,`
-  ];
-
-  const odevOlumlu = [
-    ` ödev bilincinin tam olması ve sorumluluk alması başarıyı doğrudan tetikliyor.`,
-    ` verilen görevleri eksiksiz ve titizlikle tamamlaması takdire şayan.`,
-    ` düzenli konu tekrarları ve ödev disiplini sayesinde süreç çok sağlıklı ilerliyor.`
-  ];
-  const odevOlumsuz = [
-    ` eksik kalan ödevleri ve konu tekrarlarını tamamladığında her şey çok daha netleşecektir.`,
-    ` küçük planlama hataları ve aksayan görevler olmasa puanımız çok daha yukarıda olabilirdi.`,
-    ` önümüzdeki süreçte ödev takibine biraz daha ağırlık vererek bu açığı hızla kapatacağız.`
-  ];
-
-  const sonucHarika = [
-    " Yolumuz açık, bu motivasyonla hedefe ulaşmamak imkansız! Aynen devam!",
-    " Seninle gurur duyuyorum, sınırları zorlamaya devam edeceğiz!",
-    " Bu disiplin bizi en tepeye taşıyacak. Harika iş çıkardın!"
-  ];
-  const sonucIyi = [
-    " Eksikleri ufak dokunuşlarla kapatıp haftaya daha da yükseleceğiz.",
-    " İstikrarı bozmadan, kararlılıkla yürümeye devam.",
-    " Önümüzdeki hafta küçük bir vites artırımıyla çok daha tatlı sonuçlar alacağız."
-  ];
-  const sonucGelistirilebilir = [
-    " Unutma, başarı bir maratondur; pes etmeden, eksiklerin üzerine gitme zamanı!",
-    " Gelecek hafta daha keskin bir odaklanma ile bu puanları ikiye katlayabiliriz.",
-    " Kendine güven, potansiyelini sahaya yansıtma sırası sende!"
-  ];
-
-  // Rastgele eleman seçici fonksiyon
   const r = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-  // Puan aralıklarına göre mektubu inşa etme
-  let yorum = "";
-  if (puan >= 85) {
-    yorum = r(girisHarika) + r(baglacDinamik) + (odev.includes("yapılmadı") || odev.includes("yok") ? r(odevOlumsuz) : r(odevOlumlu)) + r(sonucHarika);
-  } else if (puan >= 70) {
-    yorum = r(girisIyi) + r(baglacDinamik) + (odev.includes("yapılmadı") || odev.includes("yok") ? r(odevOlumsuz) : r(odevOlumlu)) + r(sonucIyi);
-  } else if (puan >= 50) {
-    yorum = r(girisOrta) + r(baglacDinamik) + (odev.includes("yapılmadı") || odev.includes("yok") ? r(odevOlumsuz) : r(odevOlumlu)) + r(sonucGelistirilebilir);
-  } else {
-    yorum = r(girisDusuk) + r(baglacDinamik) + (odev.includes("yapılmadı") || odev.includes("yok") ? r(odevOlumsuz) : r(odevOlumlu)) + r(sonucGelistirilebilir);
+  // 1. ADIM: AKTÜEL PUAN ARALIĞINA GÖRE GİRİŞ CÜMLELERİ (0-100)
+  let girisCumlesi = "";
+  
+  if (puan >= 0 && puan <= 25) {
+    const havuz = [
+      `Bu hafta ${firstName} ile henüz motorları ısıtma ve birbirimizi tanıma evresindeyiz. Mevcut puanımız yanıltıcı olmasın; amacımız eksikleri görüp tam da buradan yukarı fırlamak! 🚀`,
+      `${firstName} için bu haftaki tablo, gerçek potansiyelimizin sadece küçük bir uykuda olma hali. Biz bu filmin sonunu biliyoruz, eksiklerimizi tek tek avlayıp çok yakında harika bir ivme yakalayacağız. 💪`,
+      `İlk adımlar her zaman sabır ister. ${firstName} bu hafta enerjisini topladı diyebiliriz; önümüzdeki günlerde bu temelin üzerine koyacağımız tuğlaları planladık, veli olarak hiç endişeniz olmasın. ✨`
+    ];
+    girisCumlesi = r(havuz);
+    
+  } else if (puan > 25 && puan <= 50) {
+    const havuz = [
+      `${firstName} bu hafta çarkları döndürmeye ve gelişim sinyalleri vermeye başladı. Taşlar yerine oturuyor, gayretini çok net görebiliyorum. 📈`,
+      `Güzel bir kımıldanma ve çaba haftasındayız! ${firstName} bazı duvarları yıkmaya başladı. Eksiklerimiz var ama yürüyüşümüz kararlı. 👣`,
+      `Yetersiz kaldığımız noktalar elbette mevcut ancak ${firstName}'deki o öğrenme isteği ve tatlı gelişim kıvılcımı bu hafta kendini hissettirdi. ⚡`
+    ];
+    girisCumlesi = r(havuz);
+    
+  } else if (puan > 50 && puan <= 75) {
+    const havuz = [
+      `Gayet iyi, dengeli ve bizi mutlu eden bir haftayı geride bıraktık. ${firstName} standardını koruyor ama bizim gözümüz çok daha yükseklerde! 🌟`,
+      `${firstName} bu hafta sorumluluklarını güzel yerine getirdi ve iyi bir düzey yakaladı. Şimdi hedefimiz bu başarıyı 'en iyisi' yapmak için cilalamak. 💎`,
+      `Çok net bir 'iyi düzey' performansı izledik. ${firstName} potansiyelinin büyük kısmını sahaya yansıttı, ufak dokunuşlarla zirveye oynayacağız. 🎯`
+    ];
+    girisCumlesi = r(havuz);
+    
+  } else if (puan > 75 && puan <= 100) {
+    const havuz = [
+      `Kelimelerin tam anlamıyla harika, muazzam bir hafta! ${firstName} bu hafta adeta sınıfta devleşti, gurur duymamak elde değil! 🔥`,
+      `Muhteşem bir disiplin ve kusursuz bir performans tablosu! ${firstName} çıtayı öyle bir yere koydu ki, ders yaparken keyif almamak imkansız. 👑`,
+      `Harika iş çıkardık! ${firstName} bu haftanın yıldızı olmayı sonuna kadar hak etti. Emeklerinin karşılığını böyle almak paha biçilemez. 🌠`
+    ];
+    girisCumlesi = r(havuz);
   }
-  return yorum;
+
+  // 2. ADIM: HAFTALIK KIYASLAMA ANALİZİ (ÖNCEKİ HAFTAYA GÖRE)
+  let haftalikKiyaslama = "";
+  const studentRows = allRows.filter(r => r.ogrenci === studentName).sort((a,b) => a.tarih > b.tarih ? 1 : -1);
+  
+  if (studentRows.length > 1) {
+    const prevRow = studentRows[studentRows.length - 2];
+    const fark = puan - prevRow.genel;
+    
+    if (fark > 0) {
+      haftalikKiyaslama = ` Geçen haftaya göre genel puanımıza **+${fark} puan** daha ekleyerek yukarı yönlü harika bir sıçrama gerçekleştirdik; bu yükseliş grafiği inancımızı tazeledi. 🚀`;
+    } else if (fark < 0) {
+      haftalikKiyaslama = ` Geçen haftaki puanımıza oranla ufak bir durulma/gerileme söz konusu. Ancak bu düşüşü bir geri çekilme değil, önümüzdeki hafta daha güçlü zıplamak için bir yaylanma hareketi olarak görüyoruz. 🔋`;
+    } else {
+      haftalikKiyaslama = ` Geçen haftaki çizgimizi ve istikrarımızı tam puanı puanına koruduk. Mevcut durumu sabitlemek güzel ama bir sonraki hafta hedefimiz bu çizgiyi yukarı kırmak olacak. 🎯`;
+    }
+  }
+
+  // 3. ADIM: AYLIK KIYASLAMA ANALİZİ (AYLAR ARASI DEĞERLENDİRME)
+  let aylikKiyaslama = "";
+  if (studentRows.length > 4) { 
+    const getMonthFromStr = (dStr) => parseInt((dStr || "").split(".")[1], 10);
+    const currentMonthNum = getMonthFromStr(latestRow.tarih);
+    const prevMonthNum = currentMonthNum === 1 ? 12 : currentMonthNum - 1;
+    
+    const thisMonthScores = studentRows.filter(r => getMonthFromStr(r.tarih) === currentMonthNum).map(r => r.genel);
+    const prevMonthScores = studentRows.filter(r => getMonthFromStr(r.tarih) === prevMonthNum).map(r => r.genel);
+    
+    if (thisMonthScores.length > 0 && prevMonthScores.length > 0) {
+      const thisMonthAvg = thisMonthScores.reduce((a,b)=>a+b, 0) / thisMonthScores.length;
+      const prevMonthAvg = prevMonthScores.reduce((a,b)=>a+b, 0) / prevMonthScores.length;
+      const ayFarki = Math.round(thisMonthAvg - prevMonthAvg);
+      
+      if (ayFarki > 2) {
+        aylikKiyaslama = ` Ayrıca genel aylık gidişata baktığımda, bu ay geçen aya göre ortalamamızı **${ayFarki} puan** yukarı taşıdık. Aylık bazda büyüyor olmak kalıcı başarının en net kanıtıdır.`;
+      } else if (ayFarki < -2) {
+        aylikKiyaslama = ` Aylık genel performans ortalamasında geçen aya göre hafif bir rehavet göze çarpıyor. Önümüzdeki haftalarda tempoyu sıkılaştırarak aylık ortalamamızı yeniden eski gücüne kavuşturacağız.`;
+      } else {
+        aylikKiyaslama = ` Aylık bazda baktığımızda geçen ayki genel başarı ortalamamızı tam anlamıyla korumayı başardık, sistemli ilerliyoruz.`;
+      }
+    }
+  }
+
+  // 4. ADIM: ÖDEV VE KAPANIŞ CÜMLESİ
+  let odevNotu = "";
+  if (odev.includes("yapılmadı") || odev.includes("yok")) {
+    odevNotu = ` Önümüzdeki hafta ödev ve kelime çalışmalarına biraz daha sıkı sarılarak bu performansı taçlandırmak bizim elimizde.`;
+  } else {
+    odevNotu = ` Ödev sorumluluklarını yerine getirmesi sürecimizi inanılmaz kolaylaştırıyor, teşekkürler!`;
+  }
+
+  return `${girisCumlesi}${haftalikKiyaslama}${aylikKiyaslama}${odevNotu}`;
 }
 
 function examTag(puan) {
@@ -514,7 +528,7 @@ function showStudentPage(name) {
   const s = esc(name);
 
   let pageContent = "";
-  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name);
+  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
   else if (activePageTab === "takvim") pageContent = buildTakvim(rows);
   else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
   else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
@@ -587,7 +601,7 @@ function buildBadges(genel, prevGenel) {
           <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
           <div class="badge-notif-text">
             <h3>🎉 Yeni rozet kazandın!</h3>
-            <p>Bu hafta harika bir performans! <strong>${names}</strong> rozeti ${newBadges.length > 1 ? 'rozetleri' : 'rozeti'} senin oldu. Böyle devam et!</p>
+            <p>Bu hafta harika bir performans! <strong>${names}</strong> rozeti senin oldu. Böyle devam et!</p>
           </div>
         </div>`;
     } else if (lostBadges.length > 0) {
@@ -597,7 +611,7 @@ function buildBadges(genel, prevGenel) {
           <div class="badge-notif-emoji">😔</div>
           <div class="badge-notif-text">
             <h3>Bu hafta biraz düşüş yaşandı</h3>
-            <p>Maalesef <strong>${names}</strong> rozeti ${lostBadges.length > 1 ? 'rozetleri' : 'rozeti'} bu hafta elden gitti. Ama endişelenme, bir sonraki haftada geri alabilirsin!</p>
+            <p>Maalesef <strong>${names}</strong> rozeti bu hafta elden gitti. Ama endişelenme, bir sonraki haftada geri alabilirsin!</p>
           </div>
         </div>`;
     }
@@ -626,7 +640,7 @@ function buildBadges(genel, prevGenel) {
 }
 
 /* ── ÖZET ── */
-function buildOzet(rows, latest, studentName) {
+function buildOzet(rows, latest, studentName, allRows) {
   const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
   const latestScored = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : latest;
   const prevScored   = scoredRows.length > 1 ? scoredRows[scoredRows.length-2] : null;
@@ -658,12 +672,13 @@ function buildOzet(rows, latest, studentName) {
 
   const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null);
 
-  // Dinamik Öğretmen Yorumu Üretimi
-  const teacherComment = generateUniqueComment(latest.genel, studentName, latest);
+  // Akıllı Hafızalı Öğretmen Yorumu Üretimi
+  const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
   return `
     ${badgesHtml}
     
+    <!-- 🌟 ANIMASYONLU ÖĞRETMEN NOTU ALANI 🌟 -->
     <div class="teacher-feedback-card">
       <div class="feedback-header">
         <span class="feedback-animated-icon">✍️</span>
