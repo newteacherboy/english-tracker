@@ -382,15 +382,29 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
     }
   }
 
-  // 4. ADIM: ÖDEV VE KAPANIŞ CÜMLESİ
-  let odevNotu = "";
+  // 4. ADIM: EĞİTİM VE STRATEJİ TAKTİKLERİ (TEŞEKKÜR YERİNE TAVSİYE MOTORU)
+  let taktikNotu = "";
+  
+  // Ödevlerin eksik/yapılmadı olma durumu
   if (odev.includes("yapılmadı") || odev.includes("yok")) {
-    odevNotu = ` Önümüzdeki hafta ödev ve kelime çalışmalarına biraz daha sıkı sarılarak bu performansı taçlandırmak bizim elimizde.`;
-  } else {
-    odevNotu = ` Ödev sorumluluklarını yerine getirmesi sürecimizi inanılmaz kolaylaştırıyor, teşekkürler!`;
+    const eksikHavuzu = [
+      ` Önümüzdeki süreçte ivme yakalayabilmemiz için ödev disiplinini acilen birinci sıraya koymalıyız. Unutmayalım ki derste öğrenilenler sadece birer tohumdur; onları kalıcı başarıya dönüştürecek olan şey evde yapılacak düzenli test çözümleri ve soru avcılığıdır.`,
+      ` Bu performansın kalıcı bir başarı hikayesine dönüşmesi için ödevlerin eksiksiz yapılması şart. Velimiz olarak sizden ricam, evde ders sonrası mini tekrarlar yapmasını teşvik etmeniz; zira sıcağı sıcağına yapılmayan tekrarlar bilginin hızla uçup gitmesine neden olur.`,
+      ` Önümüzdeki hafta tempomuzu artırmak adına ödev sorumluluklarına sıkı sıkıya sarılmalıyız. Sadece ders saatiyle sınırlı kalmayıp, her gün mutlaka en az 15-20 dakikalık odaklanmış test çözümü ve hatalı soru analizi rutini oluşturmasını tavsiye ediyorum.`
+    ];
+    taktikNotu = r(eksikHavuzu);
+  } 
+  // Ödevlerin yapılmış olması durumu (Teşekkür yerine yeni taktikler)
+  else {
+    const basariHavuzu = [
+      ` Sürecimizi daha da yukarı taşımak adına şu stratejik taktiği uygulamalıyız: Her akşam yatmadan önce mutlaka 10 dakikalık bir "kelime tekrarı" rutini oturtalım. Görsel hafızayı canlı tutmak, denemelerdeki yeni nesil soruları çok daha hızlı analiz etmesini sağlayacaktır.`,
+      ` Yakaladığımız bu güzel ritmi korumak adına yeni taktiğimiz şu olmalı: Öğrencimiz çözdüğü testlerde sadece doğrularına odaklanmamalı; boş bıraktığı veya yanlış yaptığı soruları kesip bir "hata defteri" yapmalı. Gerçek gelişim, yapamadığımız soruları çözebildiğimiz an başlar.`,
+      ` Sürecin daha sağlıklı ilerlemesi için bir sonraki adımımız ders sonrası mini özet çıkarma alışkanlığı olmalı. Konu anlatımı biter bitmez kendi cümleleriyle tutacağı küçük notlar ve ardından gelecek soru çözümleri, bilgiyi zihninde tamamen kilitleyecektir.`
+    ];
+    taktikNotu = r(basariHavuzu);
   }
 
-  return `${girisCumlesi}${haftalikKiyaslama}${aylikKiyaslama}${odevNotu}`;
+  return `${girisCumlesi}${haftalikKiyaslama}${aylikKiyaslama}${taktikNotu}`;
 }
 
 function examTag(puan) {
