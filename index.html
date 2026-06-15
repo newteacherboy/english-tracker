@@ -206,7 +206,7 @@ canvas { max-height: 200px; }
 
 <div class="tracker" id="tracker">
   <div class="header">
-    <button class="back-btn" onclick="goHome()">← Geri</button>
+    <button class="back-btn" onclick="backToMainMenu()">← Değiştir</button>
     <div class="header-title" id="header-title"></div>
     <div class="last-updated" id="last-updated"></div>
   </div>
@@ -217,6 +217,14 @@ canvas { max-height: 200px; }
 </div>
 
 <script>
+
+  // ANA SİSTEME DIREKT GERİ DÖNÜŞ TETİKLEYİCİSİ
+function backToMainMenu() {
+  activeStudent = null;
+  currentSection = null;
+  document.getElementById("tracker").style.display = "none";
+  document.getElementById("home").style.display = "flex";
+}
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
 const SECTIONS = {
   ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
@@ -405,13 +413,14 @@ async function loadData() {
       })).filter(r => r.ogrenci && r.puan > 0);
     } catch(e) { denemelerData = []; }
 
-    document.getElementById("last-updated").textContent =
-      new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
-    renderTabs();
-    if (students.length && !activeStudent) selectStudent(students[0]);
-    else if (!students.length) {
-      document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
-    }
+    document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+
+// Eski öğrenci listeleme mantığı yerine doğrudan 3'lü buton yapısını çağırıyoruz:
+if (students.length) {
+  renderCenteredStudentSelection();
+} else {
+  document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
+}
   } catch(e) {
     console.error(e);
     document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
