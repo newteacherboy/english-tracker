@@ -28,78 +28,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .contact-btn.whatsapp { background: #e8f8ef; color: #128C7E; }
 @media (max-width: 400px) { .home-cards { grid-template-columns: 1fr; } }
 
-/* YENİ ÜÇERLİ RENKLİ DİKDÖRTGEN ÖĞRENCİ SEÇİM ALANI */
-.student-selection-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 55vh;
-  width: 100%;
-  padding: 1rem;
+/* YENİ ÜÇERLİ RENKLİ DİKDÖRTGEN ÖĞRENCİ ALANI */
+.student-selection-container { display: flex; flex-direction: column; align-items: center; width: 100%; padding: 1rem 0; }
+.student-grid-centered { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 500px; margin: 0 auto; }
+.student-rect-btn { 
+  display: flex; flex-direction: column; align-items: center; justify-content: center; 
+  height: 90px; border-radius: 12px; border: none; cursor: pointer; 
+  transition: all 0.2s ease; text-align: center; padding: 10px 4px; position: relative; color: white; 
 }
-.student-grid-centered {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Yan yana 3 adet */
-  gap: 12px; /* Kutular arası boşluk */
-  width: 100%;
-  max-width: 520px; /* 3'lü dizilim için genişletilmiş alan */
-  margin: 0 auto;
+.student-rect-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+.student-rect-avatar { 
+  font-size: 16px; font-weight: 800; background: rgba(255, 255, 255, 0.25); 
+  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+  margin-bottom: 6px; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.1); 
 }
-.student-rect-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 95px; /* Dikdörtgen formu için ideal yükseklik */
-  border-radius: 14px; /* Şık hafif oval köşeler */
-  border: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  cursor: pointer;
-  transition: all 0.22s ease;
-  text-align: center;
-  padding: 12px 6px;
-  position: relative;
-  color: white; /* Renkli zemin üzerinde yazıların net okunması için */
-}
-.student-rect-btn:hover {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-.student-rect-avatar {
-  font-size: 18px;
-  font-weight: 800;
-  background: rgba(255, 255, 255, 0.25); /* Beyaz transparan şık arka plan mikro-daire */
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-.student-rect-name {
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-  padding: 0 4px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
-}
-.lock-badge {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  font-size: 12px;
-  background: rgba(0,0,0,0.15);
-  padding: 2px;
-  border-radius: 50%;
-  line-height: 1;
-}
+.student-rect-name { font-size: 11.5px; font-weight: 700; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px; text-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+.lock-badge { position: absolute; top: 5px; right: 6px; font-size: 11px; background: rgba(0,0,0,0.15); padding: 2px; border-radius: 50%; line-height: 1; }
 
 /* TRACKER */
 .tracker { display: none; flex-direction: column; min-height: 100vh; }
@@ -110,11 +54,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .header-title span { color: #1D9E75; }
 .last-updated { font-size: 11px; color: #aaa; }
 .student-tabs { display: none; gap: 8px; padding: 1rem 1.25rem 0; overflow-x: auto; background: #fff; border-bottom: 1px solid #e8eaed; padding-bottom: 1rem; }
-.tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
-.tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
 
 /* KİLİT */
-.lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem; }
+.lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem auto; max-width: 400px; width: 100%; }
 .lock-icon { font-size: 40px; margin-bottom: 1rem; }
 .lock-screen h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
 .lock-screen p { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
@@ -123,9 +65,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .lock-btn { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: 10px 32px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; max-width: 260px; }
 .lock-error { color: #c0392b; font-size: 13px; margin-top: 10px; min-height: 18px; }
 
-/* ÖĞRENCİ DETAY */
-.student-page { display: none; }
-.student-page.active { display: block; }
+/* ÖĞRENCİ DETAY SİSTEMİ */
 .student-header { background: #fff; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 14px; border: 1px solid #e8eaed; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; background: #9FE1CB; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #085041; flex-shrink: 0; }
 .student-info h2 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
@@ -263,7 +203,8 @@ canvas { max-height: 200px; }
 
 <div class="tracker" id="tracker">
   <div class="header">
-    <button class="back-btn" onclick="backToSelection()">← Değiştir</button>
+    <!-- DÜZELTME: Bu buton artık alt listeyi tetiklemiyor, direkt ana ekrana (Hizmet seçimi) uçuruyor -->
+    <button class="back-btn" onclick="backToMainMenu()">← Değiştir</button>
     <div class="header-title" id="header-title"></div>
     <div class="last-updated" id="last-updated"></div>
   </div>
@@ -283,17 +224,17 @@ const DENEMELER_GID = "969516335";
 const SKILL_COLORS = { vocabulary: "#1D9E75", konusma: "#378ADD", okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30" };
 const SKILL_LABELS = { vocabulary:"Vocabulary", konusma:"Konuşma", okuma:"Okuma", yazma:"Yazma", grammar:"Grammar" };
 
-// Dikkat çekici kutucuklar için renk paleti havuzu
+// Göz alıcı ve dikkat çeken canlı kutucuk renkleri havuzu
 const BRIGHT_COLORS = [
-  "linear-gradient(135deg, #FF512F, #DD2476)", // Canlı Kırmızı-Pembe
-  "linear-gradient(135deg, #1D9E75, #11694E)", // Derin Yeşil
-  "linear-gradient(135deg, #00c6ff, #0072ff)", // Parlak Mavi
-  "linear-gradient(135deg, #f857a6, #ff5858)", // Mercan Pembe
-  "linear-gradient(135deg, #f12711, #f5af19)", // Günbatımı Turuncu
-  "linear-gradient(135deg, #4776E6, #8E54E9)", // Asil Mor
-  "linear-gradient(135deg, #11998e, #38ef7d)", // Neon Yeşil
-  "linear-gradient(135deg, #FF416C, #FF4B2B)", // Ateş Kırmızısı
-  "linear-gradient(135deg, #3a7bd5, #3a6073)"  // Çelik Mavi
+  "linear-gradient(135deg, #FF512F, #DD2476)", 
+  "linear-gradient(135deg, #1D9E75, #11694E)", 
+  "linear-gradient(135deg, #00c6ff, #0072ff)", 
+  "linear-gradient(135deg, #f857a6, #ff5858)", 
+  "linear-gradient(135deg, #f12711, #f5af19)", 
+  "linear-gradient(135deg, #4776E6, #8E54E9)", 
+  "linear-gradient(135deg, #11998e, #38ef7d)", 
+  "linear-gradient(135deg, #FF416C, #FF4B2B)", 
+  "linear-gradient(135deg, #3a7bd5, #3a6073)"
 ];
 
 let currentSection = null;
@@ -420,16 +361,12 @@ function openSection(section) {
   loadData();
 }
 
-function goHome() {
-  document.getElementById("home").style.display = "flex";
-  document.getElementById("tracker").style.display = "none";
-  currentSection = null; activeStudent = null;
-}
-
-// DÜZELTME: Değiştir butonuna basıldığında listenin kendisi değil en başa (Hizmet Seçimi / Ana Ekran) dönmesi sağlandı
-function backToSelection() {
+// ANA SİSTEME GERİ DÖNÜŞ TETİKLEYİCİSİ
+function backToMainMenu() {
   activeStudent = null;
-  goHome();
+  currentSection = null;
+  document.getElementById("tracker").style.display = "none";
+  document.getElementById("home").style.display = "flex";
 }
 
 async function loadData() {
@@ -473,7 +410,7 @@ async function loadData() {
   }
 }
 
-// GÜNCELLEME: İsimleri yan yana 3 adet yapan, renkli ve dikkat çeken dikdörtgen kutu sistemi
+// İSİMLERİ YAN YANA 3'LÜ DİKDÖRTGEN RENKLİ KUTUCUK YAPAR
 function renderCenteredStudentSelection() {
   document.getElementById("tabs").style.display = "none"; 
   document.getElementById("header-title").innerHTML = SECTIONS[currentSection].label;
@@ -481,7 +418,6 @@ function renderCenteredStudentSelection() {
   const listHtml = students.map((name, index) => {
     const initials = name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
     const lockIcon = passwords[name] ? '<span class="lock-badge">🔒</span>' : '';
-    // Renk havuzundan sırayla rengarenk ve dikkat çekici gradyanları atıyoruz
     const bgGradient = BRIGHT_COLORS[index % BRIGHT_COLORS.length];
     
     return `
@@ -639,7 +575,7 @@ function buildOzetTab(latest, sData, studentName) {
     { id:"g2", emoji:"🏛️", label:"Grammar Profesörü", desc:"Grammar puanı 92'yi geçti!", check: r => r.grammar >= 92 },
     { id:"d1", emoji:"📈", label:"İlk Başarı", desc:"Genel performans puanı 60'ı geçti!", check: r => r.genel >= 60 },
     { id:"d2", emoji:"🚀", label:"Zirve Yolcusu", desc:"Genel performans puanı 80'i geçti!", check: r => r.genel >= 80 },
-    { id:"d3", emoji:"👑", label:"Efsane", desc:"Genel performans puanı 95 ve üzeri!", check: r => r.genel >= 95 },
+    { id:"d3", emoji:"👑", label:"Efsane", desc:"Genel performans puanı 95 and üzeri!", check: r => r.genel >= 95 },
     { id:"ex", emoji:"💯", label:"Sınav Canavarı", desc:"Deneme sınavlarından 85 ve üzeri!", check: r => r.deneme >= 85 }
   ];
 
@@ -777,7 +713,7 @@ function buildDenemelerTab(name) {
 
   return `
     <div class="card">
-      <div class="card-title" style="display:flex; justify-between; align-items:center;">
+      <div class="card-title" style="display:flex; justify-content: space-between; align-items:center;">
         <span>Deneme Sınavları Grafik İvmesi</span>
         <span id="deneme-trend-lbl" style="font-size:11px; font-weight:normal; margin-left:auto;"></span>
       </div>
