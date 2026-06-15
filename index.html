@@ -9,16 +9,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a1a1a; min-height: 100vh; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafb; color: #1a1a1a; min-height: 100vh; }
 
+
+/* BUBBLE ANİMASYON */
+.bubbles-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.bubble { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 6px; animation: floatUp linear infinite; pointer-events: none; opacity: 0; }
+.bubble-avatar { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.9); background-size: cover; background-position: center; filter: blur(2.5px) saturate(0.5) brightness(1.1); border: 2px solid rgba(255,255,255,0.5); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.bubble-info { background: rgba(255,255,255,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(200,210,220,0.4); border-radius: 999px; padding: 3px 10px; font-size: 10px; font-weight: 500; color: #555; white-space: nowrap; }
+.bubble-score { color: #1D9E75; font-weight: 700; }
+@keyframes floatUp {
+  0%   { transform: translateY(108vh) translateX(0px); opacity: 0; }
+  6%   { opacity: 0.55; }
+  50%  { transform: translateY(50vh) translateX(12px); }
+  94%  { opacity: 0.4; }
+  100% { transform: translateY(-15vh) translateX(-8px); opacity: 0; }
+}
+.fade-top { position: fixed; top: 0; left: 0; right: 0; height: 180px; background: linear-gradient(to bottom, #f8fafb, transparent); z-index: 2; pointer-events: none; }
+.fade-bottom { position: fixed; bottom: 0; left: 0; right: 0; height: 180px; background: linear-gradient(to top, #f8fafb, transparent); z-index: 2; pointer-events: none; }
+.student-counter { position: fixed; top: 1.1rem; right: 1.1rem; z-index: 10; background: rgba(255,255,255,0.8); backdrop-filter: blur(8px); border-radius: 999px; padding: 5px 14px; font-size: 11px; color: #888; border: 1px solid rgba(0,0,0,0.07); }
+.student-counter span { color: #1D9E75; font-weight: 700; }
 /* ANA SAYFA */
-.home { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+.home { position: relative; z-index: 5; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
 .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
 .home-logo span { color: #1D9E75; }
 .home-sub { font-size: 14px; color: #888; margin-bottom: 3rem; text-align: center; }
 .home-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 480px; }
-.home-card { background: #fff; border: 1px solid #e8eaed; border-radius: 18px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.18s; }
-.home-card:hover { border-color: #1D9E75; box-shadow: 0 4px 20px rgba(29,158,117,0.12); transform: translateY(-2px); }
+.home-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border: 1px solid rgba(220,228,235,0.8); border-radius: 18px; padding: 1.75rem 1.25rem; text-align: center; cursor: pointer; transition: all 0.22s ease; box-shadow: 0 2px 16px rgba(0,0,0,0.05); }
+.home-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(29,158,117,0.13); border-color: rgba(29,158,117,0.35); }
 .home-card .icon { font-size: 36px; margin-bottom: 0.8rem; }
 .home-card h2 { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 0.4rem; line-height: 1.3; }
 .home-card p { font-size: 12px; color: #aaa; }
@@ -171,6 +189,10 @@ canvas { max-height: 200px; }
 <body>
 
 <!-- ANA SAYFA -->
+<div class="fade-top"></div>
+<div class="fade-bottom"></div>
+<div class="bubbles-bg" id="bubblesContainer"></div>
+<div class="student-counter"><span id="studentCount">0</span> aktif öğrenci</div>
 <div class="home" id="home">
   <div class="home-logo">Öğrenci<span>Takip</span></div>
   <div class="home-sub">Hizmet seçin</div>
@@ -253,9 +275,61 @@ function parseCSV(text) {
   });
 }
 
+
+const BUBBLE_COLORS = ["#7aada0","#8eacc4","#a49ec4","#7fb89e","#c4a08e","#9eadb4","#b4a09e","#8eb4b0"];
+
+function renderBubbles() {
+  const container = document.getElementById("bubblesContainer");
+  if (!container) return;
+  container.innerHTML = "";
+
+  // Saydaç
+  const counter = document.getElementById("studentCount");
+  if (counter) counter.textContent = students.length;
+
+  // Her öğrenci için en son fotoğraf linkini bul
+  const studentPhotos = {};
+  const studentScores = {};
+  allData.forEach(r => {
+    if (r.foto) studentPhotos[r.ogrenci] = r.foto;
+    if (r.genel > 0) studentScores[r.ogrenci] = r.genel;
+  });
+
+  students.forEach((name, idx) => {
+    const foto  = studentPhotos[name] || null;
+    const score = studentScores[name] || 0;
+    const color = BUBBLE_COLORS[idx % BUBBLE_COLORS.length];
+    const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+    const shortName = name.split(" ")[0];
+    const count = 2 + Math.floor(Math.random() * 2);
+
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement("div");
+      el.className = "bubble";
+      const duration = 12 + Math.random() * 10;
+      const delay    = Math.random() * 16;
+      const left     = 4 + Math.random() * 88;
+      const scale    = 0.72 + Math.random() * 0.5;
+      el.style.cssText = `left:${left}%;animation-duration:${duration}s;animation-delay:-${delay}s;transform-origin:center bottom;`;
+
+      const avatarStyle = foto
+        ? `background-image:url('${foto}');background-color:${color};`
+        : `background-color:${color};`;
+
+      el.innerHTML = `
+        <div class="bubble-avatar" style="${avatarStyle}">${foto ? '' : initials}</div>
+        <div class="bubble-info">${shortName} <span class="bubble-score">%${score}</span></div>
+      `;
+      el.style.transform = `scale(${scale})`;
+      container.appendChild(el);
+    }
+  });
+}
+
 function openSection(section) {
   currentSection = section;
   allData = []; students = []; passwords = {}; unlockedStudents = {}; activeStudent = null;
+  document.getElementById("bubblesContainer").innerHTML = "";
   document.getElementById("home").style.display = "none";
   const tracker = document.getElementById("tracker");
   tracker.style.display = "flex";
@@ -269,6 +343,7 @@ function goHome() {
   document.getElementById("home").style.display = "flex";
   document.getElementById("tracker").style.display = "none";
   currentSection = null; activeStudent = null;
+  renderBubbles();
 }
 
 async function loadData() {
@@ -294,6 +369,7 @@ async function loadData() {
       grammar:      toNum(r[8]),
       deneme:       toNum(r[9]),
       sifre:        r[10] ? r[10].trim() : "",
+      foto:         r[15] ? r[15].trim() : "",
       ders_tarihi:  r[11] || "",
       ders_durumu:  r[12] ? r[12].trim().toLowerCase() : "",
       odev_durumu:  r[13] ? r[13].trim() : "",
@@ -322,6 +398,7 @@ async function loadData() {
       new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     renderTabs();
     if (students.length && !activeStudent) selectStudent(students[0]);
+    renderBubbles();
     else if (!students.length) {
       document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
     }
@@ -379,6 +456,8 @@ function showStudentPage(name) {
   const latest = rows[rows.length-1];
   const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
   const s = esc(name);
+  // En son fotoğraf linkini bul
+  const studentFoto = allData.filter(r => r.ogrenci === name && r.foto).slice(-1)[0]?.foto || null;
 
   let pageContent = "";
   if (activePageTab === "ozet") pageContent = buildOzet(rows, latest);
@@ -388,7 +467,7 @@ function showStudentPage(name) {
 
   document.getElementById("content").innerHTML = `
     <div class="student-header">
-      <div class="avatar">${initials}</div>
+      <div class="avatar" style="${studentFoto ? `background-image:url('${studentFoto}');background-size:cover;background-position:center;` : ``}">${studentFoto ? '' : initials}</div>
       <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
       <div class="level-badge">${latest.seviye}</div>
       ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
