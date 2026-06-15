@@ -296,6 +296,7 @@ function goHome() {
 }
 
 async function loadData() {
+  if (!currentSection) return;
   const gid = SECTIONS[currentSection].gid;
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
   try {
@@ -922,8 +923,6 @@ async function loadFloatingAvatars() {
   }
 }
 loadFloatingAvatars();
-
-loadData();
 setInterval(loadData, 5*60*1000);
 </script>
 </body>
