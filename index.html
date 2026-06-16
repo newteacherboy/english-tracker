@@ -263,6 +263,8 @@ function showTeacherRubricPanel() {
     studentOptions += '<option value="Mert">Mert</option><option value="Barış">Barış</option>';
   }
 
+  
+
   modal.innerHTML = `
     <div style="max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); font-family: sans-serif; position: relative; box-sizing: border-box;">
       
@@ -388,6 +390,8 @@ function showTeacherRubricPanel() {
   </div>
 </div>
 
+
+  
 <script>
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
 const SECTIONS = {
@@ -1110,6 +1114,58 @@ function drawDenemeChart(name) {
     options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 0, max: 100, grid: { color: "#f0f0f0" } }, x: { grid: { display: false } } } }
   });
 }
+
+   // ... (Sayfanın en altındaki mevcut kodların bittiği yer) ...
+
+// 🎯 İŞTE 3. ADIMDAKİ BU KODU DOSYANIN EN ALTINA GELİP DOĞRUDAN YAPIŞTIRIYORSUN:
+function saveRubricToSheets() {
+  const student = document.getElementById("rb-target-student").value;
+  if (!student) { alert("Lütfen önce bir öğrenci seçiniz hocam!"); return; }
+
+  const vocab = document.getElementById('rb-vocab').value;
+  const speaking = document.getElementById('rb-speaking').value;
+  const reading = document.getElementById('rb-reading').value;
+  const writing = document.getElementById('rb-writing').value;
+  const grammar = document.getElementById('rb-grammar').value;
+  
+  const homework = parseFloat(document.getElementById('rb-homework').value);
+  const revision = parseFloat(document.getElementById('rb-revision').value);
+  const material = parseFloat(document.getElementById('rb-material').value);
+  const participation = parseFloat(document.getElementById('rb-participation').value) * 20;
+  const focus = parseFloat(document.getElementById('rb-focus').value) * 20;
+  const average = Math.round((homework + revision + material + parseFloat(vocab) + parseFloat(speaking) + parseFloat(reading) + parseFloat(writing) + parseFloat(grammar) + participation + focus) / 10);
+
+  const payload = { student, vocab, speaking, reading, writing, grammar, average };
+  
+  // 2. Adımdaki kendi Google Script linkini buraya tırnak içine yaz hocam:
+  const webAppUrl = "BURAYA_GOOGLE_SHEETS_LINKINI_YAPIŞTIR";
+
+  const btn = event.target;
+  btn.innerText = "⏳ Veriler Gönderiliyor...";
+  btn.disabled = true;
+
+  fetch(webAppUrl, {
+    method: "POST",
+    mode: "no-cors",
+    cache: "no-cache",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    alert(`🎉 Rapor Başarıyla Gönderildi!\n${student} için bugünkü ders ortalaması: %${average}`);
+    document.getElementById('rubric-modal').remove();
+    if (typeof activeStudent !== 'undefined' && activeStudent === student) {
+       showStudentPage(student); 
+    }
+  })
+  .catch(err => {
+    alert("Bir hata oluştu hocam: " + err);
+    btn.innerText = "🚀 Raporu Gönder ve Verileri İşle";
+    btn.disabled = false;
+  });
+}
+
+// Dosyanın tam olarak bittiği yer (en alt satır)
 </script>
 </body>
 </html>
