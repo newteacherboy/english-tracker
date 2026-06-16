@@ -435,6 +435,20 @@ async function loadData() {
 
 function renderTabs() {
   let optionsHtml = '<option value="">— Öğrenci seçiniz —</option>';
+
+  function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+
+function selectStudent(name) {
+  activeStudent = name; 
+  activePageTab = "ozet";
+  renderTabs();
+  
+  if (passwords[name] && !unlockedStudents[name]) { 
+    showLockScreen(name); 
+    return; 
+  }
+  showStudentPage(name);
+}
   
   students.forEach(s => {
     // Şifreli ve kilitli olan öğrencilerin yanına kilit sembolü ekleyelim
