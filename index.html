@@ -179,6 +179,28 @@ canvas { max-height: 200px; }
 .feedback-animated-icon { font-size: 18px; animation: writeAnimation 1.5s ease-in-out infinite alternate; display: inline-block; }
 @keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 @keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
+
+  /* Barış'ın uzun takım isimlerinin mobilde ekranı taşırmasını engeller */
+.badge-item {
+    min-width: 0 !important; /* Esneklik sağlar */
+    word-wrap: break-word;   /* Uzun kelimeleri böler */
+    overflow: hidden;
+}
+
+.badge-label {
+    font-size: 11px !important;    /* Mobilde yazı boyutunu hafifçe dengeler */
+    line-height: 1.2;
+    white-space: normal !important; /* Yazının alt satıra geçmesine izin verir */
+    word-break: break-word;        /* Taşmayı kesin olarak engeller */
+    padding: 0 4px;
+}
+
+/* Şampiyonlar Ligi logolarının kutuyu sıkıştırmasını önler */
+.badge-emoji img {
+    max-width: 100%;
+    height: auto;
+}
+  
 </style>
 </head>
 <body>
