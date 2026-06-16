@@ -569,6 +569,32 @@ function buildBadges(genel, prevGenel, currentStudentName) {
 
   ];
 
+    // MERT için Genel Puana Göre Her 5 Puanda Bir Tetiklenen 20 Özel Çizgi Film Rozeti
+  const badgeConfig = name === 'MERT' ? [
+    { id:"m1",  emoji:"🐌", label:"Gary (Salyangoz)", desc:"Genel puan en az 5!", check: r => r.genel >= 5 },
+    { id:"m2",  emoji:"🐷", label:"Porky Pig", desc:"Genel puan en az 10!", check: r => r.genel >= 10 },
+    { id:"m3",  emoji:"🦀", label:"Bay Yengeç", desc:"Genel puan en az 15!", check: r => r.genel >= 15 },
+    { id:"m4",  emoji:" plankton", emoji:"🦠", label:"Plankton", desc:"Genel puan en az 20!", check: r => r.genel >= 20 },
+    { id:"m5",  emoji:"🦆", label:"Daffy Duck", desc:"Genel puan en az 25!", check: r => r.genel >= 25 },
+    { id:"m6",  emoji:"🐱", label:"Tom", desc:"Genel puan en az 30!", check: r => r.genel >= 30 },
+    { id:"m7",  emoji:"🐭", label:"Jerry", desc:"Genel puan en az 35!", check: r => r.genel >= 35 },
+    { id:"m8",  emoji:"🐕", label:"Scooby-Doo", desc:"Genel puan en az 40!", check: r => r.genel >= 40 },
+    { id:"m9",  emoji:"🦁", label:"Simba", desc:"Genel puan en az 45!", check: r => r.genel >= 45 },
+    { id:"m10", emoji:"🐢", label:"Ninja Kaplumbağa", desc:"Genel puan en az 50!", check: r => r.genel >= 50 },
+    { id:"m11", emoji:"🐼", label:"Kung Fu Panda", desc:"Genel puan en az 55!", check: r => r.genel >= 55 },
+    { id:"m12", emoji:"🤠", label:"Sheriff Woody", desc:"Genel puan en az 60!", check: r => r.genel >= 60 },
+    { id:"m13", emoji:"🤖", label:"Buzz Lightyear", desc:"Genel puan en az 65!", check: r => r.genel >= 65 },
+    { id:"m14", emoji:"⚡", label:"Pikachu", desc:"Genel puan en az 70!", check: r => r.genel >= 70 },
+    { id:"m15", emoji:"🧪", label:"Profesör Utanyum", desc:"Genel puan en az 75!", check: r => r.genel >= 75 },
+    { id:"m16", emoji:"🔬", label:"Dexter", desc:"Genel puan en az 80!", check: r => r.genel >= 80 },
+    { id:"m17", emoji:"🔥", label:"Charizard", desc:"Genel puan en az 85!", check: r => r.genel >= 85 },
+    { id:"m18", emoji:"🧽", label:"Sünger Bob", desc:"Genel puan en az 90!", check: r => r.genel >= 90 },
+    { id:"m19", emoji:"👽", label:"Ben 10 (Uzaylı X)", desc:"Genel puan en az 95!", check: r => r.genel >= 95 },
+    { id:"m20", emoji:"👑", label:"Kral Şakir", desc:"Genel puan 100 Tam Skor!", check: r => r.genel >= 100 }
+   
+  ];
+
+
   // İsmi küçük harfe çevirip Türkçe karakterleri arındırarak kontrol etme
   const checkName = (currentStudentName || "").toLowerCase().trim()
     .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
