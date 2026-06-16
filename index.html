@@ -543,29 +543,29 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
   ];
 
-  // 2. Barış için Şampiyonlar Ligi Listesi (20 Adet)
-  const BADGES = [
-  { score: 5,   emoji: "⚽", label: "Young Boys" },
-  { score: 10,  emoji: "⚽", label: "Dinamo Zagreb" },
-  { score: 15,  emoji: "⚽", label: "PAOK" },
-  { score: 20,  emoji: "⚽", label: "Kızıl Yıldız" },
-  { score: 25,  emoji: "⚽", label: "Celtic" },
-  { score: 30,  emoji: "⚽", label: "Sporting CP" },
-  { score: 35,  emoji: "⚽", label: "Benfica" },
-  { score: 40,  emoji: "⚽", label: "Feyenoord" },
-  { score: 45,  emoji: "⚽", label: "PSV Eindhoven" },
-  { score: 50,  emoji: "⚽", label: "AC Milan" },
-  { score: 55,  emoji: "⚽", label: "Aston Villa" },
-  { score: 60,  emoji: "⚽", label: "Juventus" },
-  { score: 65,  emoji: "⚽", label: "Atletico Madrid" },
-  { score: 70,  emoji: "⚽", label: "Inter Milan" },
-  { score: 75,  emoji: "⚽", label: "B. Dortmund" },
-  { score: 80,  emoji: "⚽", label: "Paris SG" },
-  { score: 85,  emoji: "⚽", label: "Bayern Münih" },
-  { score: 90,  emoji: "⚽", label: "Manchester City" },
-  { score: 95,  emoji: "🏆", label: "Real Madrid" },
-  { score: 100, emoji: "🦁", label: "GALATASARAY" }
-];
+  // 2. Barış için Şampiyonlar Ligi Listesi (20 Adet - Ülke Bayraklı)
+  const BARIS_BADGES = [
+    { score: 5,   emoji: "🇨🇭", label: "Young Boys" },
+    { score: 10,  emoji: "🇭🇷", label: "Dinamo Zagreb" },
+    { score: 15,  emoji: "🇬🇷", label: "PAOK" },
+    { score: 20,  emoji: "🇷🇸", label: "Kızıl Yıldız" },
+    { score: 25,  emoji: "🏴%F0%9F%8F%B4%F0%9F%81%A7%F0%9F%81%A2%F0%9F%81%B3%F0%9F%81%B4%F0%9F%81%B7%F0%9F%81%BF", label: "Celtic" },
+    { score: 30,  emoji: "🇵🇹", label: "Sporting CP" },
+    { score: 35,  emoji: "🇵🇹", label: "Benfica" },
+    { score: 40,  emoji: "🇳🇱", label: "Feyenoord" },
+    { score: 45,  emoji: "🇳🇱", label: "PSV Eindhoven" },
+    { score: 50,  emoji: "🇮🇹", label: "AC Milan" },
+    { score: 55,  emoji: "🏴%F0%9F%8F%B4%F0%9F%81%A7%F0%9F%81%A2%F0%9F%81%A5%F0%9F%81%AE%F0%9F%81%A7%F0%9F%81%BF", label: "Aston Villa" },
+    { score: 60,  emoji: "🇮🇹", label: "Juventus" },
+    { score: 65,  emoji: "🇪🇸", label: "Atletico Madrid" },
+    { score: 70,  emoji: "🇮🇹", label: "Inter Milan" },
+    { score: 75,  emoji: "🇩🇪", label: "B. Dortmund" },
+    { score: 80,  emoji: "🇫🇷", label: "Paris SG" },
+    { score: 85,  emoji: "🇩🇪", label: "Bayern Münih" },
+    { score: 90,  emoji: "🏴%F0%9F%8F%B4%F0%9F%81%A7%F0%9F%81%A2%F0%9F%81%A5%F0%9F%81%AE%F0%9F%81%A7%F0%9F%81%BF", label: "Manchester City" },
+    { score: 95,  emoji: "🇪🇸", label: "Real Madrid" },
+    { score: 100, emoji: "🇹🇷 🦁", label: "GALATASARAY" }
+  ];
 
   // 3. Mert için Çizgi Film Listesi (20 Adet)
   const MERT_BADGES = [
@@ -587,7 +587,7 @@ function buildBadges(genel, prevGenel, currentStudentName) {
   const isBaris = checkName.includes("baris");
   const isMert = checkName.includes("mert");
   
-  // Listeyi profile göre eşleme
+  // Listeyi profile göre eşleme (Hatalı değişken adı BARIS_BADGES ile eşitlendi)
   let currentBadgesList = ORIGINAL_BADGES;
   if (isBaris) currentBadgesList = BARIS_BADGES;
   else if (isMert) currentBadgesList = MERT_BADGES;
@@ -652,8 +652,6 @@ function buildBadges(genel, prevGenel, currentStudentName) {
       </div>
     </div>`;
 }
-
-
 
 /* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
 function buildLessonStatusBox(rows) {
