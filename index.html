@@ -180,33 +180,6 @@ canvas { max-height: 200px; }
 @keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 @keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
 
-  /* Barış'ın rozet alanının ana kapsayıcısını mobilde taşmaya karşı korur */
-.badges-container, .badge-list, #badges-section {
-    display: flex !important;
-    flex-wrap: nowrap !important; /* Rozetlerin alt satıra düşmesini engeller, yan yana tutar */
-    overflow-x: auto !important;  /* Taşma olunca sağa doğru kaydırma çubuğu açar */
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch; /* Mobilde kaydırmanın yağ gibi akmasını sağlar */
-    padding: 10px 5px !important;
-    gap: 12px !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-/* Rozet kutularının orijinal formunu korur, sıkışıp yamulmalarını engeller */
-.badge-item {
-    flex: 0 0 auto !important; /* Kutunun genişliğini sabit tutar, daraltmaz */
-    width: auto !important;
-    min-width: 105px !important; /* Rozetlerin ideal genişliği */
-}
-
-/* Yazıların orijinal ve düzgün kalmasını sağlar */
-.badge-label {
-    white-space: nowrap !important; /* Kelimeleri asla bölmez */
-    font-size: 12px !important;
-    font-weight: 600;
-}
-  
 </style>
 </head>
 <body>
