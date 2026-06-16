@@ -385,7 +385,8 @@ async function loadData() {
       ders_tarihi:  r[11] || "",
       odev_durumu:  r[13] ? r[13].trim() : "",
       konu:         r[14] || "",
-      profil_resmi: r[15] ? r[15].trim() : "" // Google Sheet'teki P sütununa denk gelir
+      profil_resmi: (r[15] && typeof r[15] === 'string') ? r[15].trim() : ""
+
 
     })).filter(r => r.ogrenci);
 
