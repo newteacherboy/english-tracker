@@ -36,14 +36,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .header-title { font-size: 15px; font-weight: 600; flex: 1; }
 .header-title span { color: #1D9E75; }
 .last-updated { font-size: 11px; color: #aaa; }
-#tabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
+.student-tabs { display: flex; gap: 8px; padding: 1rem 1.25rem 0; overflow-x: auto; background: #fff; border-bottom: 1px solid #e8eaed; padding-bottom: 1rem; }
 .tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
 .tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
 
@@ -186,14 +179,6 @@ canvas { max-height: 200px; }
 .feedback-animated-icon { font-size: 18px; animation: writeAnimation 1.5s ease-in-out infinite alternate; display: inline-block; }
 @keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 @keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
-
-/* ÖĞRENCİ SEÇ DROPDOWN */
-.student-select-wrap { padding: 1rem 1.25rem 0; background: #fff; }
-.student-select-label { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
-.student-select-dropdown { width: 100%; padding: 10px 14px; border: 1.5px solid #e8eaed; border-radius: 10px; font-size: 14px; font-weight: 500; color: #1a1a1a; background: #f8f9fa; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 36px; }
-.student-select-dropdown:focus { border-color: #1D9E75; outline: none; }
-
- 
 </style>
 </head>
 <body>
@@ -434,101 +419,18 @@ async function loadData() {
 }
 
 function renderTabs() {
-  // İlk sayfada (hizmet seçme ekranında) #tabs div'i henüz yüklenmediği için 
-  // kodun çökmesini engellemek adına kontrol koyuyoruz.
-  const tabsDiv = document.getElementById("tabs");
-  if (!tabsDiv) return; // Eğer #tabs yoksa (ilk sayfadaysak) fonksiyonu burada sessizce durdur, kodu kilitleme.
-
-  let optionsHtml = '<option value="">— Öğrenci seçiniz —</option>';
-  
-  students.forEach(s => {
-    const isLocked = passwords[s] && !unlockedStudents[s] ? " 🔒" : "";
-    const isSelected = s === activeStudent ? ' selected' : '';
-    optionsHtml += `<option value="${s.replace(/"/g,'&quot;')}"${isSelected}>${s}${isLocked}</option>`;
-  });
-
-  // Eğer #tabs div'i sayfada mevcutsa (Öğrenci Listesi butonuna basıldıysa) dropdown'ı içine bas
-  tabsDiv.innerHTML = `
-    <div style="width: 100%; max-width: 400px; margin: 15px auto; padding: 0 15px; box-sizing: border-box;">
-      <label for="student-select" style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
-        📌 ÖĞRENCİ SEÇ
-      </label>
-      <select id="student-select" onchange="if(this.value) selectStudent(this.value)" style="width: 100%; padding: 12px 16px; font-size: 15px; font-weight: 600; color: #334155; border: 2px solid #3b82f6; border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); cursor: pointer; outline: none;">
-        ${optionsHtml}
-      </select>
-    </div>
-  `;
-}
-
-function selectStudent(name) {
-  activeStudent = name; 
-  activePageTab = "ozet";
-  renderTabs();
-  
-  if (passwords[name] && !unlockedStudents[name]) { 
-    showLockScreen(name); 
-    return; 
-  }
-  showStudentPage(name);
-}
-    // Şifreli ve kilitli olan öğrencilerin yanına kilit sembolü ekleyelim
-    const isLocked = passwords[s] && !unlockedStudents[s] ? " 🔒" : "";
-    const isSelected = s === activeStudent ? ' selected' : '';
-    optionsHtml += `<option value="${s.replace(/"/g,'&quot;')}"${isSelected}>${s}${isLocked}</option>`;
-  });
-
-  // Kısa isim sekmelerini tamamen kaldırıp, sadece temiz bir Dropdown basıyoruz
-  document.getElementById("tabs").innerHTML = `
-    <div style="width: 100%; max-width: 400px; margin: 15px auto; padding: 0 15px; box-sizing: border-box;">
-      <label for="student-select" style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
-        📌 ÖĞRENCİ SEÇ
-      </label>
-      <select id="student-select" onchange="if(this.value) selectStudent(this.value)" style="width: 100%; padding: 12px 16px; font-size: 15px; font-weight: 600; color: #334155; border: 2px solid #3b82f6; border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); cursor: pointer; outline: none;">
-        ${optionsHtml}
-      </select>
-    </div>
-  `;
+  document.getElementById("tabs").innerHTML = students.map(s =>
+    `<div class="tab${s===activeStudent?' active':''}" onclick="selectStudent('${esc(s)}')">${s.split(" ")[0]}${passwords[s]?' 🔒':''}</div>`
+  ).join("");
 }
 
 function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
 
-function showStudentPage(name) {
-  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
-  const latest = rows[rows.length-1];
-  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-  const s = esc(name);
-
-  // FOTOĞRAF KONTROLÜ: Yüklediğin img klasöründeki resmi çağırır. Bulamazsa harfli logoya döner.
-  const photoPath = `img/${name}.jpg`;
-  const avatarHtml = `
-    <div class="avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
-      <img src="${photoPath}" onerror="this.outerHTML='${initials}'" style="width: 100%; height: 100%; object-fit: cover;">
-    </div>
-  `;
-
-  let pageContent = "";
-  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
-  else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
-  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
-
-  document.getElementById("content").innerHTML = `
-    <div class="student-header">
-      ${avatarHtml}
-      <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
-      <div class="level-badge">${latest.seviye}</div>
-      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
-    </div>
-    <div class="page-tabs">
-      <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
-      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
-      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
-    </div>
-    ${pageContent}
-  `;
-
-  if (activePageTab === "ozet") drawCharts(rows);
-  if (activePageTab === "denemeler") drawDenemeChart(name);
+function selectStudent(name) {
+  activeStudent = name; activePageTab = "ozet";
+  renderTabs();
+  if (passwords[name] && !unlockedStudents[name]) { showLockScreen(name); return; }
+  showStudentPage(name);
 }
 
 function showLockScreen(name) {
@@ -591,11 +493,46 @@ function showStudentPage(name) {
 
 function switchPageTab(name, tab) {
   activePageTab = tab;
-  showStudentPage(name);
+  showStudentPage(name); function showStudentPage(name) {
+  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
+  const latest = rows[rows.length-1];
+  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+  const s = esc(name);
+
+  let pageContent = "";
+  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
+  else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
+  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
+
+  document.getElementById("content").innerHTML = `
+    <div class="student-header">
+      <div class="avatar">${initials}</div>
+      <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
+      <div class="level-badge">${latest.seviye}</div>
+      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
+    </div>
+    <div class="page-tabs">
+      <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
+      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
+      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
+    </div>
+    ${pageContent}
+  `;
+
+  if (activePageTab === "ozet") {
+    drawCharts(rows);
+    // Özet yüklendiği an gecikmesiz olarak son deneme verisini de kutucuğa yazdırıyoruz
+    updateSonDenemeKutusu(name, rows);
+  }
+  if (activePageTab === "denemeler") drawDenemeChart(name);
+}
 }
 
-/* ── ROZETLER ── */
+/* ── /* ── ROZETLER ── */
+
 function buildBadges(genel, prevGenel, currentStudentName) {
+  // 1. Orijinal Genel Rozet Listesi (Diğer öğrenciler için - 20 Adet)
   const ORIGINAL_BADGES = [
     { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
     { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
@@ -606,6 +543,7 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
   ];
 
+// 2. Barış için Şampiyonlar Ligi Listesi (Cihaz uyumlu takım renkleri)
   const BARIS_BADGES = [
     { score: 5,   emoji: "🟡⚫", label: "Young Boys" },
     { score: 10,  emoji: "🔵⚪", label: "Dinamo Zagreb" },
@@ -629,6 +567,7 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     { score: 100, emoji: "🦁🔴🟡", label: "GALATASARAY" }
   ];
 
+  // 3. Mert için Çizgi Film Listesi (20 Adet)
   const MERT_BADGES = [
     { score: 5,   emoji:"🐌", label:"Gary" }, { score: 10,  emoji:"🐷", label:"Porky Pig" }, { score: 15,  emoji:"🦀", label:"Bay Yengeç" },
     { score: 20,  emoji:"🦠", label:"Plankton" }, { score: 25,  emoji:"🦆", label:"Daffy Duck" }, { score: 30,  emoji:"🐱", label:"Tom" },
@@ -639,17 +578,21 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     { score: 95,  emoji:"👽", label:"Ben 10" }, { score: 100, emoji:"👑", label:"Kral Şakir" }
   ];
 
+  // İsmi küçük harfe çevirip Türkçe karakterleri arındırarak kontrol etme
   const checkName = (currentStudentName || "").toLowerCase().trim()
     .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
     .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
 
+  // Öğrenci filtreleme kontrolleri
   const isBaris = checkName.includes("baris");
   const isMert = checkName.includes("mert");
   
+  // Listeyi profile göre eşleme (Hatalı değişken adı BARIS_BADGES ile eşitlendi)
   let currentBadgesList = ORIGINAL_BADGES;
   if (isBaris) currentBadgesList = BARIS_BADGES;
   else if (isMert) currentBadgesList = MERT_BADGES;
 
+  // Başlıklar ve metinler
   let cardTitle = "🏅 Kazanılan Rozetler";
   let progressTextSuffix = "tamamlandı";
   let gainedText = "rozeti senin oldu.";
@@ -712,28 +655,31 @@ function buildBadges(genel, prevGenel, currentStudentName) {
 
 /* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
 function buildLessonStatusBox(rows) {
+  // Sadece ders tarihi girilmiş olan satırları filtrele ve kronolojik sırala
   const lessonRows = rows.filter(r => r.ders_tarihi.trim() !== "").sort((a,b) => parseDateStr(a.ders_tarihi) - parseDateStr(b.ders_tarihi));
   
   if (!lessonRows.length) {
     return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
   }
 
+  // Geçen hafta (en son işlenen/biten ders), Güncel ders ve Sonraki ders tespiti
   let pastLesson = null;
   let currentLesson = null;
   let nextLesson = null;
 
+  // Durumu tamamlandi, yapılmadı veya ertelendi olan en son dersleri bulalım
   const pastAndCurrent = lessonRows.filter(r => ["tamamlandi", "yapilmedi", "yapilmadi", "ertelendi"].includes(r.ders_durumu.toLowerCase().trim()));
   const incoming = lessonRows.filter(r => ["sonraki", "sonraki ders", "planlandi", ""].includes(r.ders_durumu.toLowerCase().trim()));
 
   if (pastAndCurrent.length > 0) {
-    currentLesson = pastAndCurrent[pastAndCurrent.length - 1];
+    currentLesson = pastAndCurrent[pastAndCurrent.length - 1]; // En güncel işlenen/durumu girilen ders
     if (pastAndCurrent.length > 1) {
-      pastLesson = pastAndCurrent[pastAndCurrent.length - 2];
+      pastLesson = pastAndCurrent[pastAndCurrent.length - 2]; // Ondan bir önceki ders (Geçen haftaki ders)
     }
   }
 
   if (incoming.length > 0) {
-    nextLesson = incoming[0];
+    nextLesson = incoming[0]; // Gelecek ilk planlı ders
   }
 
   function getStatusBadge(status) {
@@ -796,7 +742,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   const yapilmadi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="yapilmadi" || r.ders_durumu.toLowerCase().trim()==="yapilmedi").length;
 
   const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null, studentName);
-  const lessonStatusBoxHtml = buildLessonStatusBox(rows);
+  const lessonStatusBoxHtml = buildLessonStatusBox(rows); // Yeni oluşturduğumuz kutucuk motoru çağrılıyor
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
   return `
