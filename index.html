@@ -208,7 +208,7 @@ canvas { max-height: 200px; }
 <button onclick="showTeacherRubricPanel()" style="padding: 15px; font-size: 16px; font-weight: 600; border-radius: 12px; border: none; background: #0284c7; color: white; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top:10px; width: 100%; max-width: 350px;">
   📋 Ders İçi Rubrik Hesapla
 </button>
-  <script>
+ <script>
 // Seçilen tiklere göre 100 üzerinden puan hesaplayan fonksiyon
 function calculateRubricScore() {
   const homework = parseFloat(document.getElementById('rb-homework')?.value || 0);
@@ -230,43 +230,63 @@ function calculateRubricScore() {
   if (resultDiv) {
     resultDiv.innerHTML = `Genel Ders Performansı: <strong>%${Math.round(totalAverage)}</strong>`;
   }
-  
-  return Math.round(totalAverage);
 }
 
-// Değerlendirme Formunun Şık Tasarımını Ekrana Basan Fonksiyon
+// Pop-up olarak paneli ekrana getiren fonksiyon
 function showTeacherRubricPanel() {
-  const contentDiv = document.getElementById("content");
-  if (!contentDiv) return;
+  // Eğer daha önceden açılmış bir pencere varsa önce onu temizle
+  const oldModal = document.getElementById("rubric-modal");
+  if (oldModal) oldModal.remove();
 
-  contentDiv.innerHTML = `
-    <div style="max-width: 600px; margin: 20px auto; padding: 20px; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); font-family: sans-serif;">
-      <h2 style="color: #1e293b; text-align: center; margin-bottom: 20px; font-size: 20px; font-weight: 700;">🇬🇧 İngilizce Ders İçi Rubrik</h2>
+  // Yeni bir pop-up katmanı oluşturuyoruz
+  const modal = document.createElement("div");
+  modal.id = "rubric-modal";
+  modal.style.position = "fixed";
+  modal.style.top = "0";
+  modal.style.left = "0";
+  modal.style.width = "100%";
+  modal.style.height = "100%";
+  modal.style.backgroundColor = "rgba(0,0,0,0.5)";
+  modal.style.zIndex = "99999";
+  modal.style.display = "flex";
+  modal.style.alignItems = "center";
+  modal.style.justifyContent = "center";
+  modal.style.padding = "15px";
+  modal.style.boxSizing = "border-box";
+
+  modal.innerHTML = `
+    <div style="max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); font-family: sans-serif; position: relative; box-sizing: border-box;">
       
-      <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
-        <h3 style="margin: 0 0 12px 0; font-size: 14px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">1. Ön Hazırlık & Rutinler</h3>
+      <!-- Kapatma Butonu -->
+      <button onclick="document.getElementById('rubric-modal').remove()" style="position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;">✕</button>
+
+      <h2 style="color: #1e293b; text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 700;">🇬🇧 İngilizce Ders İçi Rubrik</h2>
+      
+      <!-- 1. BÖLÜM: RUTİNLER -->
+      <div style="margin-bottom: 15px; padding: 12px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <h3 style="margin: 0 0 10px 0; font-size: 12px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">1. Ön Hazırlık & Rutinler</h3>
         
-        <div style="margin-bottom: 10px;">
-          <label style="display:block; font-size: 13px; font-weight:600; margin-bottom:4px; color:#334155;">Ödev Kontrolü:</label>
-          <select id="rb-homework" onchange="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background: #fff; font-weight:600;">
+        <div style="margin-bottom: 8px;">
+          <label style="display:block; font-size: 12px; font-weight:600; margin-bottom:4px;">Ödev Kontrolü:</label>
+          <select id="rb-homework" onchange="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; background: #fff; font-size:13px;">
             <option value="100">Evet (Eksiksiz) - 100 Puan</option>
             <option value="50">Kısmen (Eksik/Geç) - 50 Puan</option>
             <option value="0">Hayır (Yapılmamış) - 0 Puan</option>
           </select>
         </div>
 
-        <div style="margin-bottom: 10px;">
-          <label style="display:block; font-size: 13px; font-weight:600; margin-bottom:4px; color:#334155;">Tekrar Durumu:</label>
-          <select id="rb-revision" onchange="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background: #fff; font-weight:600;">
+        <div style="margin-bottom: 8px;">
+          <label style="display:block; font-size: 12px; font-weight:600; margin-bottom:4px;">Tekrar Durumu:</label>
+          <select id="rb-revision" onchange="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; background: #fff; font-size:13px;">
             <option value="100">Hazır (Tekrar Yapılmış) - 100 Puan</option>
             <option value="50">Hatırlamakta Zorlanıyor - 50 Puan</option>
             <option value="0">Hiç Bakmamış - 0 Puan</option>
           </select>
         </div>
 
-        <div style="margin-bottom: 10px;">
-          <label style="display:block; font-size: 13px; font-weight:600; margin-bottom:4px; color:#334155;">Materyal Hazırlığı:</label>
-          <select id="rb-material" onchange="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background: #fff; font-weight:600;">
+        <div>
+          <label style="display:block; font-size: 12px; font-weight:600; margin-bottom:4px;">Materyal Hazırlığı:</label>
+          <select id="rb-material" onchange="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; background: #fff; font-size:13px;">
             <option value="100">Eksiksiz Hazır - 100 Puan</option>
             <option value="50">Materyal Eksik - 50 Puan</option>
             <option value="0">Hiç Getirmemiş - 0 Puan</option>
@@ -274,64 +294,67 @@ function showTeacherRubricPanel() {
         </div>
       </div>
 
-      <div style="margin-bottom: 20px; padding: 15px; background: #f0f9ff; border-radius: 12px; border: 1px solid #bae6fd;">
-        <h3 style="margin: 0 0 12px 0; font-size: 14px; color: #0369a1; text-transform: uppercase; letter-spacing: 0.5px;">2. 5 Temel Beceri Puanı (0-100)</h3>
+      <!-- 2. BÖLÜM: 5 TEMEL BECERİ -->
+      <div style="margin-bottom: 15px; padding: 12px; background: #f0f9ff; border-radius: 12px; border: 1px solid #bae6fd;">
+        <h3 style="margin: 0 0 10px 0; font-size: 12px; color: #0369a1; text-transform: uppercase; letter-spacing: 0.5px;">2. 5 Temel Beceri Puanı (0-100)</h3>
         
-        <div style="display: grid; display: block; gap: 12px;">
-          <div style="margin-bottom: 8px;">
-            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#0369a1;">📚 Kelime Bilgisi (Vocabulary):</label>
-            <input type="number" id="rb-vocab" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-weight:600;">
-          </div>
-          <div style="margin-bottom: 8px;">
-            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#0369a1;">🗣️ Konuşma (Speaking):</label>
-            <input type="number" id="rb-speaking" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-weight:600;">
-          </div>
-          <div style="margin-bottom: 8px;">
-            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#0369a1;">📖 Okuma Anlama (Reading):</label>
-            <input type="number" id="rb-reading" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-weight:600;">
-          </div>
-          <div style="margin-bottom: 8px;">
-            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#0369a1;">✍️ Yazılı Anlatım (Writing):</label>
-            <input type="number" id="rb-writing" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-weight:600;">
-          </div>
-          <div style="margin-bottom: 8px;">
-            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#0369a1;">🧠 Dil Bilgisi (Grammar):</label>
-            <input type="number" id="rb-grammar" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-weight:600;">
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
-        <h3 style="margin: 0 0 12px 0; font-size: 14px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">3. Katılım & Odak (1-5 Puan)</h3>
-        <div style="display:block; gap:10px;">
-          <div style="margin-bottom:10px;">
-            <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Derse Katılım / İsteklilik:</label>
-            <select id="rb-participation" onchange="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
-              <option value="5">5 - Mükemmel</option>
-              <option value="4">4 - İyi</option>
-              <option value="3">3 - Orta</option>
-              <option value="2">2 - Geliştirilmeli</option>
-              <option value="1">1 - Zayıf</option>
-            </select>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#0369a1;">📚 Kelime Bilgisi (Vocabulary):</label>
+            <input type="number" id="rb-vocab" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;">
           </div>
           <div>
-            <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Odaklanma Süresi:</label>
-            <select id="rb-focus" onchange="calculateRubricScore()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
-              <option value="5">5 - Mükemmel</option>
-              <option value="4">4 - İyi</option>
-              <option value="3">3 - Orta</option>
-              <option value="2">2 - Geliştirilmeli</option>
-              <option value="1">1 - Zayıf</option>
-            </select>
+            <label style="display:block; font-size:12px; font-weight:600; color:#0369a1;">🗣️ Konuşma (Speaking):</label>
+            <input type="number" id="rb-speaking" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#0369a1;">📖 Okuma Anlama (Reading):</label>
+            <input type="number" id="rb-reading" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#0369a1;">✍️ Yazılı Anlatım (Writing):</label>
+            <input type="number" id="rb-writing" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#0369a1;">🧠 Dil Bilgisi (Grammar):</label>
+            <input type="number" id="rb-grammar" value="100" min="0" max="100" oninput="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;">
           </div>
         </div>
       </div>
 
-      <div id="rubric-result" style="text-align:center; margin-top:20px; padding:15px; background:#10b981; color:white; border-radius:12px; font-size:16px; font-weight:600; box-shadow: 0 4px 6px rgba(16,185,129,0.2);">
+      <!-- 3. BÖLÜM: FOCUS -->
+      <div style="margin-bottom: 15px; padding: 12px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <h3 style="margin: 0 0 10px 0; font-size: 12px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">3. Katılım & Odak (1-5 Puan)</h3>
+        <div style="margin-bottom:8px;">
+          <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Derse Katılım:</label>
+          <select id="rb-participation" onchange="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
+            <option value="5">5 - Mükemmel</option>
+            <option value="4">4 - İyi</option>
+            <option value="3">3 - Orta</option>
+            <option value="2">2 - Geliştirilmeli</option>
+            <option value="1">1 - Zayıf</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Odaklanma Süresi:</label>
+          <select id="rb-focus" onchange="calculateRubricScore()" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
+            <option value="5">5 - Mükemmel</option>
+            <option value="4">4 - İyi</option>
+            <option value="3">3 - Orta</option>
+            <option value="2">2 - Geliştirilmeli</option>
+              <option value="1">1 - Zayıf</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CANLI SONUÇ EKRANI -->
+      <div id="rubric-result" style="text-align:center; padding:12px; background:#10b981; color:white; border-radius:12px; font-size:15px; font-weight:600;">
         Genel Ders Performansı: <strong>%100</strong>
       </div>
     </div>
   `;
+  
+  document.body.appendChild(modal);
   calculateRubricScore();
 }
 </script>
