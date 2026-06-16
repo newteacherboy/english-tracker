@@ -476,8 +476,8 @@ function showStudentPage(name) {
 
   document.getElementById("content").innerHTML = `
     <div class="student-header">
-      <div class="avatar" style="${latest.profil_resmi ? `background: url('${latest.profil_resmi}') center/cover no-repeat; color: transparent;` : ''}">
-  ${latest.profil_resmi ? '' : name[0]}
+      <div class="avatar" style="${(typeof latest !== 'undefined' && latest && latest.profil_resmi) ? `background: url('${latest.profil_resmi}') center/cover no-repeat; color: transparent;` : ''}">
+  ${(typeof latest !== 'undefined' && latest && latest.profil_resmi) ? '' : name[0]}
 </div>
       <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
       <div class="level-badge">${latest.seviye}</div>
