@@ -529,11 +529,10 @@ function switchPageTab(name, tab) {
 }
 }
 
-/* ── ROZETLER ── */
-
+/* ── /* ── ROZETLER ── */
 
 function buildBadges(genel, prevGenel, currentStudentName) {
-  // 1. Orijinal Genel Rozet Listesi (Diğer öğrenciler için)
+  // 1. Orijinal Genel Rozet Listesi (Diğer öğrenciler için - 20 Adet)
   const ORIGINAL_BADGES = [
     { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
     { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
@@ -544,70 +543,59 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
   ];
 
-  // 2. Sadece Barış için geçerli olacak Şampiyonlar Ligi Listesi
+  // 2. Barış için Şampiyonlar Ligi Listesi (20 Adet)
   const BARIS_BADGES = [
-  { score: 5,   emoji: "🇲🇲", label: "Young Boys" },
-  { score: 10,  emoji: "🇭🇷", label: "Dinamo Zagreb" },
-  { score: 15,  emoji: "🇬🇷", label: "PAOK" },
-  { score: 20,  emoji: "🇷🇸", label: "Kızıl Yıldız" },
-  { score: 25,  emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", label: "Celtic" },
-  { score: 30,  emoji: "🇵🇹", label: "Sporting CP" },
-  { score: 35,  emoji: "🇵🇹", label: "Benfica" },
-  { score: 40,  emoji: "🇳🇱", label: "Feyenoord" },
-  { score: 45,  emoji: "🇳🇱", label: "PSV Eindhoven" },
-  { score: 50,  emoji: "🇮🇹", label: "AC Milan" },
-  { score: 55,  emoji: "🇬🇧", label: "Aston Villa" },
-  { score: 60,  emoji: "🇮🇹", label: "Juventus" },
-  { score: 65,  emoji: "🇪🇸", label: "Atletico Madrid" },
-  { score: 70,  emoji: "🇮🇹", label: "Inter Milan" },
-  { score: 75,  emoji: "🇩🇪", label: "B. Dortmund" },
-  { score: 80,  emoji: "🇫🇷", label: "Paris SG" },
-  { score: 85,  emoji: "🇩🇪", label: "Bayern Münih" },
-  { score: 90,  emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", label: "Manchester City" },
-  { score: 95,  emoji: "🇪🇸", label: "Real Madrid" },
-  { score: 100, emoji: "🦁", label: "GALATASARAY" }
-
+    { score: 5,   emoji: "🇲🇲", label: "Young Boys" }, { score: 10,  emoji: "🇭🇷", label: "Dinamo Zagreb" }, { score: 15,  emoji: "🇬🇷", label: "PAOK" },
+    { score: 20,  emoji: "🇷🇸", label: "Kızıl Yıldız" }, { score: 25,  emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", label: "Celtic" }, { score: 30,  emoji: "🇵🇹", label: "Sporting CP" },
+    { score: 35,  emoji: "🇵🇹", label: "Benfica" }, { score: 40,  emoji: "🇳🇱", label: "Feyenoord" }, { score: 45,  emoji: "🇳🇱", label: "PSV Eindhoven" },
+    { score: 50,  emoji: "🇮🇹", label: "AC Milan" }, { score: 55,  emoji: "🇬🇧", label: "Aston Villa" }, { score: 60,  emoji: "🇮🇹", label: "Juventus" },
+    { score: 65,  emoji: "🇪🇸", label: "Atletico Madrid" }, { score: 70,  emoji: "🇮🇹", label: "Inter Milan" }, { score: 75,  emoji: "🇩🇪", label: "B. Dortmund" },
+    { score: 80,  emoji: "🇫🇷", label: "Paris SG" }, { score: 85,  emoji: "🇩🇪", label: "Bayern Münih" }, { score: 90,  emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", label: "Manchester City" },
+    { score: 95,  emoji: "🇪🇸", label: "Real Madrid" }, { score: 100, emoji: "🦁", label: "GALATASARAY" }
   ];
 
-    // MERT için Genel Puana Göre Her 5 Puanda Bir Tetiklenen 20 Özel Çizgi Film Rozeti
-  const badgeConfig = name === 'MERT' ? [
-    { id:"m1",  emoji:"🐌", label:"Gary (Salyangoz)", desc:"Genel puan en az 5!", check: r => r.genel >= 5 },
-    { id:"m2",  emoji:"🐷", label:"Porky Pig", desc:"Genel puan en az 10!", check: r => r.genel >= 10 },
-    { id:"m3",  emoji:"🦀", label:"Bay Yengeç", desc:"Genel puan en az 15!", check: r => r.genel >= 15 },
-    { id:"m4",  emoji:" plankton", emoji:"🦠", label:"Plankton", desc:"Genel puan en az 20!", check: r => r.genel >= 20 },
-    { id:"m5",  emoji:"🦆", label:"Daffy Duck", desc:"Genel puan en az 25!", check: r => r.genel >= 25 },
-    { id:"m6",  emoji:"🐱", label:"Tom", desc:"Genel puan en az 30!", check: r => r.genel >= 30 },
-    { id:"m7",  emoji:"🐭", label:"Jerry", desc:"Genel puan en az 35!", check: r => r.genel >= 35 },
-    { id:"m8",  emoji:"🐕", label:"Scooby-Doo", desc:"Genel puan en az 40!", check: r => r.genel >= 40 },
-    { id:"m9",  emoji:"🦁", label:"Simba", desc:"Genel puan en az 45!", check: r => r.genel >= 45 },
-    { id:"m10", emoji:"🐢", label:"Ninja Kaplumbağa", desc:"Genel puan en az 50!", check: r => r.genel >= 50 },
-    { id:"m11", emoji:"🐼", label:"Kung Fu Panda", desc:"Genel puan en az 55!", check: r => r.genel >= 55 },
-    { id:"m12", emoji:"🤠", label:"Sheriff Woody", desc:"Genel puan en az 60!", check: r => r.genel >= 60 },
-    { id:"m13", emoji:"🤖", label:"Buzz Lightyear", desc:"Genel puan en az 65!", check: r => r.genel >= 65 },
-    { id:"m14", emoji:"⚡", label:"Pikachu", desc:"Genel puan en az 70!", check: r => r.genel >= 70 },
-    { id:"m15", emoji:"🧪", label:"Profesör Utanyum", desc:"Genel puan en az 75!", check: r => r.genel >= 75 },
-    { id:"m16", emoji:"🔬", label:"Dexter", desc:"Genel puan en az 80!", check: r => r.genel >= 80 },
-    { id:"m17", emoji:"🔥", label:"Charizard", desc:"Genel puan en az 85!", check: r => r.genel >= 85 },
-    { id:"m18", emoji:"🧽", label:"Sünger Bob", desc:"Genel puan en az 90!", check: r => r.genel >= 90 },
-    { id:"m19", emoji:"👽", label:"Ben 10 (Uzaylı X)", desc:"Genel puan en az 95!", check: r => r.genel >= 95 },
-    { id:"m20", emoji:"👑", label:"Kral Şakir", desc:"Genel puan 100 Tam Skor!", check: r => r.genel >= 100 }
-   
+  // 3. Mert için Çizgi Film Listesi (20 Adet)
+  const MERT_BADGES = [
+    { score: 5,   emoji:"🐌", label:"Gary" }, { score: 10,  emoji:"🐷", label:"Porky Pig" }, { score: 15,  emoji:"🦀", label:"Bay Yengeç" },
+    { score: 20,  emoji:"🦠", label:"Plankton" }, { score: 25,  emoji:"🦆", label:"Daffy Duck" }, { score: 30,  emoji:"🐱", label:"Tom" },
+    { score: 35,  emoji:"🐭", label:"Jerry" }, { score: 40,  emoji:"🐕", label:"Scooby-Doo" }, { score: 45,  emoji:"🦁", label:"Simba" },
+    { score: 50,  emoji:"🐢", label:"Ninja Kaplumbağa" }, { score: 55,  emoji:"🐼", label:"Kung Fu Panda" }, { score: 60,  emoji:"🤠", label:"Sheriff Woody" },
+    { score: 65,  emoji:"🤖", label:"Buzz Lightyear" }, { score: 70,  emoji:"⚡", label:"Pikachu" }, { score: 75,  emoji:"🧪", label:"Prof. Utanyum" },
+    { score: 80,  emoji:"🔬", label:"Dexter" }, { score: 85,  emoji:"🔥", label:"Charizard" }, { score: 90,  emoji:"🧽", label:"Sünger Bob" },
+    { score: 95,  emoji:"👽", label:"Ben 10" }, { score: 100, emoji:"👑", label:"Kral Şakir" }
   ];
-
 
   // İsmi küçük harfe çevirip Türkçe karakterleri arındırarak kontrol etme
   const checkName = (currentStudentName || "").toLowerCase().trim()
     .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
     .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
 
-  // Eğer isimde "baris" geçiyorsa futbol modunu aç
+  // Öğrenci filtreleme kontrolleri
   const isBaris = checkName.includes("baris");
+  const isMert = checkName.includes("mert");
   
-  const currentBadgesList = isBaris ? BARIS_BADGES : ORIGINAL_BADGES;
-  const cardTitle = isBaris ? "🏆 Barış'ın Şampiyonlar Ligi Yolculuğu" : "🏅 Kazanılan Rozetler";
-  const progressTextSuffix = isBaris ? "Şampiyonluğa Yakın" : "tamamlandı";
-  const gainedText = isBaris ? "kulübünün seviyesine ulaştın." : "rozeti senin oldu.";
-  const lostText = isBaris ? "takım seviyesi bu hafta elden gitti. Haftaya daha güçlü dönüp geri alabilirsin Barış!" : "rozeti bu hafta elden gitti. Haftaya geri alabilirsin!";
+  // Listeyi profile göre eşleme
+  let currentBadgesList = ORIGINAL_BADGES;
+  if (isBaris) currentBadgesList = BARIS_BADGES;
+  else if (isMert) currentBadgesList = MERT_BADGES;
+
+  // Başlıklar ve metinler
+  let cardTitle = "🏅 Kazanılan Rozetler";
+  let progressTextSuffix = "tamamlandı";
+  let gainedText = "rozeti senin oldu.";
+  let lostText = "rozeti bu hafta elden gitti. Haftaya geri alabilirsin!";
+
+  if (isBaris) {
+    cardTitle = "🏆 Barış'ın Şampiyonlar Ligi Yolculuğu";
+    progressTextSuffix = "Şampiyonluğa Yakın";
+    gainedText = "kulübünün seviyesine ulaştın.";
+    lostText = "takım seviyesi bu hafta elden gitti. Haftaya daha güçlü dönüp geri alabilirsin Barış!";
+  } else if (isMert) {
+    cardTitle = "🎬 Mert'in Çizgi Film Dünyası";
+    progressTextSuffix = "Gelişim Seviyesi";
+    gainedText = "karakterinin gücünü açtın!";
+    lostText = "karakterinin kilidi bu hafta puan düşüşü nedeniyle tekrar kapandı Mert!";
+  }
 
   const earned = currentBadgesList.filter(b => genel >= b.score);
   const earnedCount = earned.length;
@@ -624,7 +612,7 @@ function buildBadges(genel, prevGenel, currentStudentName) {
       notifHtml = `
         <div class="badge-notif gained">
           <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
-          <div class="badge-notif-text"><h3>🎉 Yeni başarı kilidi açıldı!</h3><p>${isBaris ? 'Barış bu hafta harika bir performans! ' : 'Bu hafta harika bir performans! '}<strong>${names}</strong> ${gainedText}</p></div>
+          <div class="badge-notif-text"><h3>🎉 Yeni başarı kilidi açıldı!</h3><p><strong>${names}</strong> ${gainedText}</p></div>
         </div>`;
     } else if (lostBadges.length > 0) {
       const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
@@ -651,6 +639,7 @@ function buildBadges(genel, prevGenel, currentStudentName) {
       </div>
     </div>`;
 }
+
 
 
 /* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
