@@ -434,33 +434,30 @@ async function loadData() {
 }
 
 function renderTabs() {
+  // İlk sayfada (hizmet seçme ekranında) #tabs div'i henüz yüklenmediği için 
+  // kodun çökmesini engellemek adına kontrol koyuyoruz.
+  const tabsDiv = document.getElementById("tabs");
+  if (!tabsDiv) return; // Eğer #tabs yoksa (ilk sayfadaysak) fonksiyonu burada sessizce durdur, kodu kilitleme.
+
   let optionsHtml = '<option value="">— Öğrenci seçiniz —</option>';
   
   students.forEach(s => {
-    // Şifreli ve kilitli olan öğrencilerin yanına kilit sembolü ekleyelim
     const isLocked = passwords[s] && !unlockedStudents[s] ? " 🔒" : "";
     const isSelected = s === activeStudent ? ' selected' : '';
     optionsHtml += `<option value="${s.replace(/"/g,'&quot;')}"${isSelected}>${s}${isLocked}</option>`;
   });
 
-  // #tabs div'inin içine temiz ve tek bir Dropdown basıyoruz
-  const tabsDiv = document.getElementById("tabs");
-  if (tabsDiv) {
-    tabsDiv.innerHTML = `
-      <div style="width: 100%; max-width: 400px; margin: 15px auto; padding: 0 15px; box-sizing: border-box;">
-        <label for="student-select" style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
-          📌 ÖĞRENCİ SEÇ
-        </label>
-        <select id="student-select" onchange="if(this.value) selectStudent(this.value)" style="width: 100%; padding: 12px 16px; font-size: 15px; font-weight: 600; color: #334155; border: 2px solid #3b82f6; border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); cursor: pointer; outline: none;">
-          ${optionsHtml}
-        </select>
-      </div>
-    `;
-  }
-}
-
-function esc(s) { 
-  return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); 
+  // Eğer #tabs div'i sayfada mevcutsa (Öğrenci Listesi butonuna basıldıysa) dropdown'ı içine bas
+  tabsDiv.innerHTML = `
+    <div style="width: 100%; max-width: 400px; margin: 15px auto; padding: 0 15px; box-sizing: border-box;">
+      <label for="student-select" style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+        📌 ÖĞRENCİ SEÇ
+      </label>
+      <select id="student-select" onchange="if(this.value) selectStudent(this.value)" style="width: 100%; padding: 12px 16px; font-size: 15px; font-weight: 600; color: #334155; border: 2px solid #3b82f6; border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); cursor: pointer; outline: none;">
+        ${optionsHtml}
+      </select>
+    </div>
+  `;
 }
 
 function selectStudent(name) {
