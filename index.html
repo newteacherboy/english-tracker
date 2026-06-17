@@ -1211,7 +1211,14 @@ document.addEventListener("DOMContentLoaded", function() {
             konu: document.getElementById("lessonTopic").value.trim() || "Belirtilmedi" // O Sütunu
         };
 
+        // ... (payload tanımından hemen sonraki try-catch alanını burayla değiştirin)
         try {
+            // 1. ADIM: TAMAMLANAN DERS VERİSİNİ GÖNDER (M sütununa "tamamlandı" yazar)
+            payload.ders_durumu = "tamamlandı";
+            payload.ders_tarihi = document.getElementById("completedLessonDate").value 
+                ? new Date(document.getElementById("completedLessonDate").value).toLocaleDateString("tr-TR") 
+                : tarihFormat;
+
             await fetch(url, {
                 method: "POST",
                 mode: "no-cors",
@@ -1219,16 +1226,42 @@ document.addEventListener("DOMContentLoaded", function() {
                 body: JSON.stringify(payload)
             });
 
+            // 2. ADIM: EĞER BİR SONRAKİ DERS TARİHİ SEÇİLDİYSE, GELECEK DERS SATIRINI GÖNDER
+            const nextDateInput = document.getElementById("nextLessonDate").value;
+            if (nextDateInput) {
+                // Sadece gelecek ders için gerekli minimum bilgileri içeren yeni bir paket oluşturuyoruz
+                const nextPayload = {
+                    tarih: tarihFormat, // A sütunu
+                    ogrenci: payload.ogrenci, // B sütunu
+                    seviye: payload.seviye, // C sütunu
+                    genel: "", // Gelecek dersin henüz puanı olmadığı için boş geçiyoruz
+                    vocabulary: "", konusma: "", okuma: "", yazma: "", grammar: "", deneme: "", sifre: "",
+                    ders_tarihi: new Date(nextDateInput).toLocaleDateString("tr-TR"), // L Sütunu (Seçilen Gelecek Ders Tarihi)
+                    ders_durumu: "sonraki", // M Sütunu (Sitenizin tetiklenmesi için kritik kelime)
+                    odev_durumu: "Gelecek Ders Planlaması", // N Sütunu
+                    konu: "Planlanan Ders" // O Sütunu
+                };
+
+                // İkinci satır olarak Sheets'e gönderiyoruz
+                await fetch(url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(nextPayload)
+                });
+            }
+
             statusMsg.style.display = "block";
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
-            statusMsg.innerText = "Başarıyla en alta eklendi ve veriler gönderildi!";
+            statusMsg.innerText = "Ders başarıyla tamamlandı ve gelecek ders planı takvime işlendi!";
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
+            
         } catch (error) {
             statusMsg.style.display = "block";
             statusMsg.style.background = "#FCE8E6";
             statusMsg.style.color = "#C5221F";
-            statusMsg.innerText = "Hata oluştu! Tabloya bağlanılamadı.";
+            statusMsg.innerText = "Hata oluştu! Veriler gönderilemedi.";
         } finally {
             saveBtn.disabled = false;
             saveBtn.innerText = "Formu Kaydet (Yeni Satır)";
