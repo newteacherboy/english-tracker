@@ -165,7 +165,7 @@
   // ============================================
   // ŞİFRE: Burayı kendi şifrenizle değiştirin
   // ============================================
-  const SITE_PASSWORD = "ders2026";
+  const SITE_PASSWORD = "1";
 
   const TRACKS = [
     {id:'general', label:'Genel İngilizce'},
@@ -214,20 +214,11 @@
     if (val === SITE_PASSWORD){
       document.getElementById('lockScreen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
-      try { sessionStorage.setItem('rubrik_unlocked', '1'); } catch(e){}
       init();
     } else {
       document.getElementById('passError').style.display = 'block';
     }
   }
-
-  try {
-    if (sessionStorage.getItem('rubrik_unlocked') === '1'){
-      document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      init();
-    }
-  } catch(e){}
 
   // ---------- Uygulama ----------
   function init(){
