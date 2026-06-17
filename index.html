@@ -1225,30 +1225,43 @@ document.addEventListener("DOMContentLoaded", function() {
             konu: document.getElementById("lessonTopic").value.trim() || "Belirtilmedi" // O Sütunu
         };
 
-        // ... (payload tanımından hemen sonraki try-catch alanını burayla değiştirin)
         try {
-            // 1. ADIM: TAMAMLANAN DERS VERİSİNİ GÖNDER (M sütununa "tamamlandı" yazar)
-            payload.ders_durumu = "tamamlandı";
-            payload.ders_tarihi = document.getElementById("completedLessonDate").value 
-                ? new Date(document.getElementById("completedLessonDate").value).toLocaleDateString("tr-TR") 
-                : tarihFormat;
+            // FORMDA HERHANGİ BİR DERS İŞLENDİ Mİ? (Puanlardan en az biri 0'dan büyük mü?)
+            const hasLessonScores = (
+                parseInt(document.getElementById("scVocabulary").value) > 0 ||
+                parseInt(document.getElementById("scKonusma").value) > 0 ||
+                parseInt(document.getElementById("scOkuma").value) > 0 ||
+                parseInt(document.getElementById("scYazma").value) > 0 ||
+                parseInt(document.getElementById("scGrammar").value) > 0 ||
+                document.getElementById("lessonTopic").value.trim() !== ""
+            );
 
-            await fetch(url, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+            let firstStepSuccess = false;
+
+            // 1. ADIM: EĞER BİR DERS İŞLENDİYSE VE PUAN GİRİLDİYSE TAMAMLANAN DERS SATIRINI GÖNDER
+            if (hasLessonScores) {
+                payload.ders_durumu = "tamamlandı";
+                payload.ders_tarihi = document.getElementById("completedLessonDate").value 
+                    ? new Date(document.getElementById("completedLessonDate").value).toLocaleDateString("tr-TR") 
+                    : tarihFormat;
+
+                await fetch(url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                firstStepSuccess = true;
+            }
 
             // 2. ADIM: EĞER BİR SONRAKİ DERS TARİHİ SEÇİLDİYSE, GELECEK DERS SATIRINI GÖNDER
             const nextDateInput = document.getElementById("nextLessonDate").value;
             if (nextDateInput) {
-                // Sadece gelecek ders için gerekli minimum bilgileri içeren yeni bir paket oluşturuyoruz
                 const nextPayload = {
                     tarih: tarihFormat, // A sütunu
-                    ogrenci: payload.ogrenci, // B sütunu
-                    seviye: payload.seviye, // C sütunu
-                    genel: "", // Gelecek dersin henüz puanı olmadığı için boş geçiyoruz
+                    ogrenci: name, // B sütunu
+                    seviye: document.getElementById("studentLevel").value.trim() || "Genel", // C sütunu
+                    genel: "", // Puan yok
                     vocabulary: "", konusma: "", okuma: "", yazma: "", grammar: "", deneme: "", sifre: "",
                     ders_tarihi: new Date(nextDateInput).toLocaleDateString("tr-TR"), // L Sütunu (Seçilen Gelecek Ders Tarihi)
                     ders_durumu: "sonraki", // M Sütunu (Sitenizin tetiklenmesi için kritik kelime)
@@ -1256,7 +1269,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     konu: "Planlanan Ders" // O Sütunu
                 };
 
-                // İkinci satır olarak Sheets'e gönderiyoruz
                 await fetch(url, {
                     method: "POST",
                     mode: "no-cors",
@@ -1265,10 +1277,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             }
 
+            // BİLGİLENDİRME MESAJINI DURUMA GÖRE ÖZELLEŞTİRİYORUZ
             statusMsg.style.display = "block";
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
-            statusMsg.innerText = "Ders başarıyla tamamlandı ve gelecek ders planı takvime işlendi!";
+            
+            if (hasLessonScores && nextDateInput) {
+                statusMsg.innerText = "Ders başarıyla tamamlandı ve gelecek ders planı takvime işlendi!";
+            } else if (nextDateInput) {
+                statusMsg.innerText = "Gelecek ders planlaması başarıyla takvime eklendi (Tamamlanan ders açılmadı).";
+            } else {
+                statusMsg.innerText = "Ders değerlendirmesi başarıyla sisteme işlendi.";
+            }
+            
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
             
         } catch (error) {
@@ -1280,9 +1301,6 @@ document.addEventListener("DOMContentLoaded", function() {
             saveBtn.disabled = false;
             saveBtn.innerText = "Formu Kaydet (Yeni Satır)";
         }
-    });
-});
-</script>
   
 </body>
 </html>
