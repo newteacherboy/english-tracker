@@ -217,9 +217,508 @@ canvas { max-height: 200px; }
   </div>
 </div>
 
-  
-  <iframe src="ingilizce-rubrik.html" style="width:100%; height:1400px; border:none;"></iframe>
+<!-- ============================================================
+     ÖĞRENCİ DEĞERLENDİR — Buton + Pop-up Form
+     Bu bloğu sitenizdeki HTML dosyasında istediğiniz yere
+     (örn. menüye veya ana içeriğin içine) yapıştırın.
+     ============================================================ -->
+
+<button id="rubrikOpenBtn" style="padding:12px 22px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;font-family:'IBM Plex Sans',-apple-system,sans-serif;cursor:pointer;">
+  Öğrenci Değerlendir
+</button>
+
+<div id="rubrikOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div id="rubrikModal" style="background:#F6F4EF;border-radius:14px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;position:relative;font-family:'IBM Plex Sans',-apple-system,sans-serif;color:#262320;">
+
+    <button id="rubrikCloseBtn" aria-label="Kapat" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:none;background:#fff;color:#5A554C;font-size:18px;cursor:pointer;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,0.15);">×</button>
+
+    <!-- ŞİFRE EKRANI -->
+    <div id="lockScreen" style="min-height:340px;display:flex;align-items:center;justify-content:center;padding:30px 20px;">
+      <div id="lockBox" style="text-align:center;width:100%;max-width:300px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:10px;">Özel Ders Değerlendirme</div>
+        <h2 style="font-size:18px;margin-bottom:16px;">Devam etmek için şifre girin</h2>
+        <input type="password" id="passInput" placeholder="Şifre" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #E2DDD2;font-size:15px;text-align:center;margin-bottom:10px;font-family:inherit;">
+        <button id="unlockBtn" style="width:100%;padding:11px;border-radius:8px;border:none;background:#9B5435;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Giriş</button>
+        <div id="passError" style="display:none;color:#A33B22;font-size:12.5px;margin-top:8px;">Şifre yanlış.</div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div id="rubrikApp" style="display:none;">
+      <div style="padding:20px 20px 30px;">
+
+        <header style="margin-bottom:18px;padding-right:30px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:4px;">Özel Ders Değerlendirme</div>
+          <h1 style="font-size:20px;font-weight:700;line-height:1.25;margin:0;">İngilizce Ders Rubriği</h1>
+        </header>
+
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;" id="tracks"></div>
+
+        <div class="r-card">
+          <label class="r-label-sm">ÖĞRENCİ ADI</label>
+          <input type="text" id="studentName" placeholder="Örn. Ayşe Yılmaz" style="margin-bottom:10px;">
+          <label class="r-label-sm">DERS KONUSU (opsiyonel)</label>
+          <input type="text" id="lessonTopic" placeholder="Örn. Present Perfect">
+        </div>
+
+        <div style="background:linear-gradient(135deg,#9B5435,#B56A47);border-radius:12px;padding:16px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:11.5px;font-weight:600;color:#FBEFE7;letter-spacing:0.06em;text-transform:uppercase;">Genel Puan</div>
+            <div id="weightInfo" style="font-size:11px;color:#F3D9C7;margin-top:2px;"></div>
+          </div>
+          <div id="overallScore" style="font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:700;color:#fff;">0</div>
+        </div>
+
+        <div class="r-card">
+          <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Başı</div>
+          <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">Önceki ders / hazır oluş kontrolü</div>
+          <div id="startItems"></div>
+          <label class="r-label-sm" style="margin-top:10px;">YORUM</label>
+          <textarea id="startComment" rows="2" placeholder="Ders başına dair serbest not..."></textarea>
+        </div>
+
+        <div class="r-card">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
+            <div>
+              <div style="font-size:15.5px;font-weight:700;">Ders İçi</div>
+              <div style="font-size:12px;color:#8A8478;">5 dil becerisi (0-100)</div>
+            </div>
+            <div id="midAvg" style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:#9B5435;">0</div>
+          </div>
+          <div id="skillSliders"></div>
+          <div style="border-top:1px solid #F0EBE0;margin-top:12px;padding-top:12px;">
+            <label class="r-label-sm">DENEME SONUCU (opsiyonel ad / kaynak)</label>
+            <input type="text" id="examLabel" placeholder="Örn. LGS Deneme 3, Unit 5 Quiz" style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px;">
+              <span>Deneme Puanı</span>
+              <span id="examScoreOut" style="font-family:'IBM Plex Mono',monospace;font-weight:600;">0/100</span>
+            </div>
+            <input type="range" class="r-slider" id="examScore" min="0" max="100" value="0" step="1">
+          </div>
+        </div>
+
+        <div class="r-card">
+          <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Sonu</div>
+          <div style="font-size:12px;color:#8A8478;margin-bottom:8px;">Çıkış kontrolü</div>
+          <div id="endItems"></div>
+          <label class="r-label-sm" style="margin-top:12px;">YORUM</label>
+          <textarea id="endComment" rows="2" placeholder="Ders sonuna dair serbest not..."></textarea>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <button id="webhookToggle" style="font-size:12.5px;color:#8A8478;background:none;border:none;text-decoration:underline;padding:0;cursor:pointer;font-family:inherit;">Google Sheets bağlantısını ayarla</button>
+          <div id="webhookForm" class="r-card" style="display:none;margin-top:8px;">
+            <div style="font-size:12.5px;font-weight:600;margin-bottom:6px;">Apps Script Web App URL'i yapıştırın:</div>
+            <input type="text" id="webhookUrl" placeholder="https://script.google.com/macros/s/.../exec" style="margin-bottom:8px;font-size:13px;">
+            <button id="saveWebhook" style="width:100%;padding:9px;border-radius:8px;border:none;background:#262320;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Bağlantıyı Kaydet</button>
+          </div>
+        </div>
+
+        <div id="statusMsg" style="display:none;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-size:13px;"></div>
+
+        <div style="display:flex;gap:8px;">
+          <button id="saveBtn" style="flex:2;padding:13px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Kaydet → Google Sheets</button>
+          <button id="resetBtn" style="flex:1;padding:13px;border-radius:10px;border:1.5px solid #E2DDD2;background:#fff;color:#5A554C;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Temizle</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+  #rubrikModal input, #rubrikModal textarea { font-family: inherit; box-sizing: border-box; }
+  #rubrikModal input[type=text] {
+    width: 100%; padding: 10px 12px; border-radius: 8px;
+    border: 1px solid #E2DDD2; font-size: 15px;
+  }
+  #rubrikModal textarea {
+    width: 100%; padding: 8px 10px; border-radius: 8px;
+    border: 1px solid #E2DDD2; font-size: 13.5px; resize: vertical;
+  }
+  #rubrikModal button { font-family: inherit; }
+  #rubrikModal button:active { transform: scale(0.97); }
+  .r-slider {
+    -webkit-appearance: none; appearance: none; height: 6px;
+    border-radius: 3px; background: #E2DDD2; outline: none; width: 100%;
+  }
+  .r-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
+    border-radius: 50%; background: #9B5435; cursor: pointer;
+    border: 3px solid #F6F4EF; box-shadow: 0 0 0 1px #9B5435;
+  }
+  .r-slider::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%; background: #9B5435;
+    cursor: pointer; border: 3px solid #F6F4EF; box-shadow: 0 0 0 1px #9B5435;
+  }
+  .r-card {
+    background: #fff; border-radius: 12px; padding: 14px;
+    margin-bottom: 14px; border: 1px solid #E9E4D9; box-sizing: border-box;
+  }
+  .r-track-btn, .r-status-btn {
+    flex: 1 1 auto; font-weight: 600; border-radius: 8px;
+    border: 1.5px solid #E2DDD2; background: #fff; color: #5A554C;
+    cursor: pointer;
+  }
+  .r-track-btn.active, .r-status-btn.active {
+    border-color: #9B5435; background: #FBEFE7; color: #9B5435;
+  }
+  .r-check-row {
+    display: flex; align-items: center; gap: 10px; padding: 9px 0;
+    cursor: pointer; border-bottom: 1px solid #F0EBE0;
+  }
+  .r-check-row input { width: 19px; height: 19px; accent-color: #9B5435; flex-shrink: 0; }
+  .r-label-sm {
+    display: block; font-size: 11.5px; font-weight: 600;
+    color: #8A8478; margin-bottom: 4px;
+  }
+</style>
+
 <script>
+(function(){
+  // ============================================
+  // ŞİFRE: Burayı kendi şifrenizle değiştirin
+  // ============================================
+  const SITE_PASSWORD = "1";
+
+  const TRACKS = [
+    {id:'general', label:'Genel İngilizce'},
+    {id:'lgs', label:'LGS Hazırlık'},
+    {id:'university', label:'Üniversite Sınavı (YDS/YÖKDİL)'},
+    {id:'primary', label:'İlkokul'}
+  ];
+  const START_ITEMS = [
+    {id:'odev', label:'Geçen dersin ödevi'},
+    {id:'tekrar', label:'Geçen konuyu tekrar etti mi'},
+    {id:'hazirlik', label:'Derse hazırlıklı geldi mi'},
+    {id:'materyal', label:'Materyal / kitap / defter getirdi mi'}
+  ];
+  const SKILLS = [
+    {id:'speaking', label:'Speaking'},
+    {id:'listening', label:'Listening'},
+    {id:'reading', label:'Reading'},
+    {id:'writing', label:'Writing'},
+    {id:'grammar', label:'Grammar'}
+  ];
+  const END_ITEMS = [
+    {id:'odev_verildi', label:'Yeni ödev verildi mi'},
+    {id:'konu_anlasildi', label:'Konu anlaşıldı mı'},
+    {id:'tekrar_gerekli', label:'Konu tekrarı gerekiyor mu'},
+    {id:'hedef_tamamlandi', label:'Ders hedefi tamamlandı mı'}
+  ];
+  const STATUS_OPTIONS = ['Yaptı','Yapmadı','Eksik','Tekrar Yaptı'];
+  const STATUS_SCORE = {'Yaptı':100,'Tekrar Yaptı':100,'Eksik':50,'Yapmadı':0};
+  const WEBHOOK_STORAGE_KEY = 'rubrik_webhook_url';
+
+  let track = 'general';
+  let startStatus = {};
+  let midScores = {};
+  let examScore = 0;
+  let endChecks = {};
+  let webhookUrl = '';
+  let initialized = false;
+
+  // ---------- Buton / Modal aç-kapa ----------
+  document.getElementById('rubrikOpenBtn').onclick = function(){
+    document.getElementById('rubrikOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  };
+
+  document.getElementById('rubrikCloseBtn').onclick = closeModal;
+  document.getElementById('rubrikOverlay').addEventListener('click', function(e){
+    if (e.target.id === 'rubrikOverlay') closeModal();
+  });
+
+  function closeModal(){
+    document.getElementById('rubrikOverlay').style.display = 'none';
+    document.body.style.overflow = '';
+    // Pop-up her kapandığında şifre ekranına dön ve formu sıfırla
+    document.getElementById('lockScreen').style.display = 'flex';
+    document.getElementById('rubrikApp').style.display = 'none';
+    document.getElementById('passInput').value = '';
+    document.getElementById('passError').style.display = 'none';
+  }
+
+  // ---------- Şifre ekranı ----------
+  document.getElementById('unlockBtn').onclick = checkPassword;
+  document.getElementById('passInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  function checkPassword(){
+    const val = document.getElementById('passInput').value;
+    if (val === SITE_PASSWORD){
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('rubrikApp').style.display = 'block';
+      if (!initialized){ init(); initialized = true; }
+    } else {
+      document.getElementById('passError').style.display = 'block';
+    }
+  }
+
+  // ---------- Uygulama ----------
+  function init(){
+    try {
+      const saved = localStorage.getItem(WEBHOOK_STORAGE_KEY);
+      if (saved) webhookUrl = saved;
+    } catch(e){}
+
+    renderTracks();
+    renderStartItems();
+    renderSkillSliders();
+    renderEndItems();
+    updateScore();
+
+    document.getElementById('examScore').oninput = function(e){
+      examScore = Number(e.target.value);
+      document.getElementById('examScoreOut').textContent = examScore + '/100';
+      updateScore();
+    };
+    document.getElementById('examLabel').oninput = updateScore;
+
+    document.getElementById('webhookToggle').onclick = function(){
+      const form = document.getElementById('webhookForm');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+      if (webhookUrl) document.getElementById('webhookUrl').value = webhookUrl;
+    };
+
+    document.getElementById('saveWebhook').onclick = function(){
+      const val = document.getElementById('webhookUrl').value.trim();
+      if (!val){ showStatus('err','URL boş olamaz.'); return; }
+      webhookUrl = val;
+      try { localStorage.setItem(WEBHOOK_STORAGE_KEY, webhookUrl); } catch(e){}
+      showStatus('ok','Webhook adresi kaydedildi.');
+      document.getElementById('webhookForm').style.display = 'none';
+    };
+
+    document.getElementById('saveBtn').onclick = handleSave;
+    document.getElementById('resetBtn').onclick = resetForm;
+  }
+
+  function renderTracks(){
+    const el = document.getElementById('tracks');
+    el.innerHTML = '';
+    TRACKS.forEach(function(t){
+      const btn = document.createElement('button');
+      btn.textContent = t.label;
+      btn.className = 'r-track-btn' + (track === t.id ? ' active' : '');
+      btn.style.padding = '9px 10px';
+      btn.style.fontSize = '12.5px';
+      btn.onclick = function(){ track = t.id; renderTracks(); };
+      el.appendChild(btn);
+    });
+  }
+
+  function renderStartItems(){
+    const el = document.getElementById('startItems');
+    el.innerHTML = '';
+    START_ITEMS.forEach(function(item){
+      const wrap = document.createElement('div');
+      wrap.style.marginBottom = '12px';
+      const label = document.createElement('div');
+      label.textContent = item.label;
+      label.style.fontSize = '13.5px';
+      label.style.marginBottom = '6px';
+      wrap.appendChild(label);
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.gap = '5px';
+      row.style.flexWrap = 'wrap';
+      STATUS_OPTIONS.forEach(function(opt){
+        const b = document.createElement('button');
+        b.textContent = opt;
+        b.className = 'r-status-btn' + (startStatus[item.id] === opt ? ' active' : '');
+        b.style.padding = '7px 9px';
+        b.style.fontSize = '12px';
+        b.style.whiteSpace = 'nowrap';
+        b.onclick = function(){ startStatus[item.id] = opt; renderStartItems(); updateScore(); };
+        row.appendChild(b);
+      });
+      wrap.appendChild(row);
+      el.appendChild(wrap);
+    });
+  }
+
+  function renderSkillSliders(){
+    const el = document.getElementById('skillSliders');
+    el.innerHTML = '';
+    SKILLS.forEach(function(s){
+      const wrap = document.createElement('div');
+      wrap.style.marginBottom = '10px';
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.justifyContent = 'space-between';
+      row.style.fontSize = '13.5px';
+      row.style.marginBottom = '4px';
+      const left = document.createElement('span');
+      left.textContent = s.label;
+      const right = document.createElement('span');
+      right.style.fontFamily = "'IBM Plex Mono',monospace";
+      right.style.fontWeight = '600';
+      right.id = 'skillval-' + s.id;
+      right.textContent = (midScores[s.id]||0) + '/100';
+      row.appendChild(left); row.appendChild(right);
+      wrap.appendChild(row);
+      const slider = document.createElement('input');
+      slider.type = 'range';
+      slider.className = 'r-slider';
+      slider.min = 0; slider.max = 100; slider.step = 1;
+      slider.value = midScores[s.id] || 0;
+      slider.oninput = function(e){
+        midScores[s.id] = Number(e.target.value);
+        right.textContent = midScores[s.id] + '/100';
+        updateScore();
+      };
+      wrap.appendChild(slider);
+      el.appendChild(wrap);
+    });
+  }
+
+  function renderEndItems(){
+    const el = document.getElementById('endItems');
+    el.innerHTML = '';
+    END_ITEMS.forEach(function(item){
+      const row = document.createElement('label');
+      row.className = 'r-check-row';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = !!endChecks[item.id];
+      cb.onchange = function(e){ endChecks[item.id] = e.target.checked; };
+      const span = document.createElement('span');
+      span.textContent = item.label;
+      span.style.fontSize = '14px';
+      row.appendChild(cb); row.appendChild(span);
+      el.appendChild(row);
+    });
+  }
+
+  function midTotal(){
+    const vals = SKILLS.map(function(s){ return Number(midScores[s.id]) || 0; });
+    const sum = vals.reduce(function(a,b){ return a+b; }, 0);
+    return Math.round(sum / SKILLS.length);
+  }
+
+  function startTotal(){
+    const answered = START_ITEMS.map(function(i){ return startStatus[i.id]; }).filter(Boolean);
+    if (answered.length === 0) return null;
+    const sum = answered.reduce(function(a,s){ return a + (STATUS_SCORE[s]||0); }, 0);
+    return Math.round(sum / answered.length);
+  }
+
+  function hasExam(){
+    const label = document.getElementById('examLabel').value.trim();
+    return label !== '' || examScore > 0;
+  }
+
+  function overallScore(){
+    const mid = midTotal();
+    const start = startTotal();
+    const startVal = start === null ? 0 : start;
+    if (hasExam()){
+      const examWeight = 0.20;
+      const startWeight = start === null ? 0 : 0.20;
+      const midWeight = 1 - examWeight - startWeight;
+      return Math.round(mid*midWeight + startVal*startWeight + examScore*examWeight);
+    } else {
+      const startWeight = start === null ? 0 : 0.20;
+      const midWeight = 1 - startWeight;
+      return Math.round(mid*midWeight + startVal*startWeight);
+    }
+  }
+
+  function updateScore(){
+    document.getElementById('midAvg').textContent = midTotal();
+    document.getElementById('overallScore').textContent = overallScore();
+    const start = startTotal();
+    const exam = hasExam();
+    let parts = [];
+    parts.push('Ders İçi ' + (exam ? (start===null?'%80':'%60') : (start===null?'%100':'%80')));
+    if (start !== null) parts.push('Ders Başı %20');
+    if (exam) parts.push('Deneme %20');
+    document.getElementById('weightInfo').textContent = parts.join(' · ');
+  }
+
+  function showStatus(type, msg){
+    const el = document.getElementById('statusMsg');
+    el.style.display = 'block';
+    el.textContent = msg;
+    if (type === 'ok'){
+      el.style.background = '#E9F2E5';
+      el.style.color = '#3E6B2A';
+    } else {
+      el.style.background = '#FBE8E3';
+      el.style.color = '#A33B22';
+    }
+  }
+
+  async function handleSave(){
+    const studentName = document.getElementById('studentName').value.trim();
+    if (!studentName){ showStatus('err','Önce öğrenci adını girin.'); return; }
+    if (!webhookUrl){
+      document.getElementById('webhookForm').style.display = 'block';
+      showStatus('err','Önce Google Sheets bağlantısını (webhook) kurun.');
+      return;
+    }
+    const now = new Date();
+    const row = {
+      'Tarih': now.toLocaleDateString('tr-TR'),
+      'Saat': now.toLocaleTimeString('tr-TR'),
+      'Öğrenci': studentName,
+      'Program': TRACKS.find(function(t){ return t.id===track; }).label,
+      'Konu': document.getElementById('lessonTopic').value.trim()
+    };
+    START_ITEMS.forEach(function(i){ row['Ders Başı - '+i.label] = startStatus[i.id] || ''; });
+    row['Ders Başı - Yorum'] = document.getElementById('startComment').value;
+    SKILLS.forEach(function(s){ row['Ders İçi - '+s.label] = midScores[s.id] !== undefined ? midScores[s.id] : ''; });
+    row['Ders İçi - Ortalama'] = midTotal();
+    row['Deneme Sonucu Adı'] = document.getElementById('examLabel').value;
+    row['Deneme Sonucu (0-100)'] = examScore;
+    END_ITEMS.forEach(function(i){ row['Ders Sonu - '+i.label] = endChecks[i.id] ? 'Evet' : 'Hayır'; });
+    row['Ders Sonu - Yorum'] = document.getElementById('endComment').value;
+    row['GENEL PUAN'] = overallScore();
+
+    const btn = document.getElementById('saveBtn');
+    btn.textContent = 'Gönderiliyor...';
+    btn.disabled = true;
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(row)
+      });
+      showStatus('ok','Gönderildi! Pop-up kapanıyor...');
+      setTimeout(function(){
+        resetForm();
+        closeModal();
+      }, 1200);
+    } catch(e){
+      showStatus('err','Gönderim hatası: ' + e.message);
+    } finally {
+      btn.textContent = 'Kaydet → Google Sheets';
+      btn.disabled = false;
+    }
+  }
+
+  function resetForm(){
+    track = 'general';
+    startStatus = {}; midScores = {}; examScore = 0; endChecks = {};
+    document.getElementById('studentName').value = '';
+    document.getElementById('lessonTopic').value = '';
+    document.getElementById('startComment').value = '';
+    document.getElementById('endComment').value = '';
+    document.getElementById('examLabel').value = '';
+    document.getElementById('examScore').value = 0;
+    document.getElementById('examScoreOut').textContent = '0/100';
+    renderTracks(); renderStartItems(); renderSkillSliders(); renderEndItems(); updateScore();
+    document.getElementById('statusMsg').style.display = 'none';
+  }
+})();
+</script>
+
+  
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
 const SECTIONS = {
   ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
