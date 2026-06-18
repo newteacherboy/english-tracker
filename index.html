@@ -1321,60 +1321,82 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 <script>
-<script>
-// PDF Üreten Ana Fonksiyon
-function haftalikVeliKarnesiUret(veri) {
-    const karneTasarimi = `
-    <div style="font-family:Arial,sans-serif; padding:20px; color:#2d3748;">
-        <div style="border-bottom:3px solid #1a365d; padding-bottom:10px; margin-bottom:20px;">
-            <h1 style="color:#1a365d; margin:0; font-size:22px;">ÖĞRETMENÇOCUK</h1>
-            <p style="margin:4px 0; color:#4a5568; font-size:12px;">İngilizce Özel Ders & Eğitim Koçluğu Takip Sistemi</p>
-        </div>
-        <div style="background-color:#f8fafc; border-left:5px solid #2b6cb0; padding:12px; margin-bottom:20px;">
-            <p style="margin:5px 0;"><strong>Öğrenci Adı:</strong> ${veri.isim}</p>
-            <p style="margin:5px 0;"><strong>Rapor Tarihi:</strong> ${new Date().toLocaleDateString('tr-TR')}</p>
-        </div>
-        <h2 style="font-size:14px; color:#1a365d; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">HAFTALIK DEĞERLENDİRME</h2>
-        <div style="background-color:#ebf8ff; border:1px solid #bee3f8; border-radius:6px; padding:12px; font-style:italic; color:#2c5282; font-size:13px;">
-            "${veri.haftalikYorum}"
-        </div>
-        <div style="margin-top:40px; font-size:13px;">
-            <div style="float:right; text-align:right;"><strong>Mert Akkayaoğlu</strong><br><span style="font-size:11px; color:#718096;">İngilizce Öğretmeni & Eğitim Koçu</span></div>
-        </div>
-    </div>`;
-
-    const ayarlar = {
-        margin: 15,
-        filename: (veri.isim || 'Ogrenci') + '_Veli_Karnesi.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    
-    // Kütüphaneyi çalıştır ve PDF indir
-    html2pdf().from(karneTasarimi).set(ayarlar).save();
-}
-
-// Butonun tıklama olayını kesin olarak dinleyen fonksiyon
 document.addEventListener("click", function(event) {
-    // Eğer tıklanan element bizim pdfIndirBtn id'li butonumuzsa
     if (event.target && event.target.id === "pdfIndirBtn") {
         
-        // Sitenizin ekranındaki güncel isim verisini canlı olarak kapıyoruz
-        // Eğer h1, h2 veya h3 etiketlerinde öğrencinin adı yazıyorsa onu çeker
+        // 1. Ekrandaki öğrenci ismini canlı yakala
         let ogrenciIsmi = "Öğrenci Girişi";
         let isimAlani = document.querySelector('.info-section h3') || document.querySelector('.student-name') || document.querySelector('h1') || document.querySelector('h2');
         if (isimAlani) {
             ogrenciIsmi = isimAlani.innerText;
         }
 
-        let toplananVeri = {
-            isim: ogrenciIsmi, 
-            haftalikYorum: "Haftalık gelişim raporu ve eğitim koçluğu ders detayları başarıyla güncellenmiştir. Süreci sistemimizden takip etmeye devam edebilirsiniz."
-        };
+        // 2. Boş bir yazdırma penceresi aç
+        let yazdirmaPenceresi = window.open('', '', 'height=700,width=900');
         
-        // PDF motorunu ateşle!
-        haftalikVeliKarnesiUret(toplananVeri);
+        // 3. İçine şık Veli Karnesi tasarımımızı ve CSS'leri bas
+        yazdirmaPenceresi.document.write(`
+        <html>
+        <head>
+            <title>${ogrenciIsmi} - Haftalık Veli Karnesi</title>
+            <style>
+                body { font-family: Arial, sans-serif; color: #2d3748; padding: 40px; background: #ffffff; }
+                .header { border-bottom: 3px solid #1a365d; padding-bottom: 15px; margin-bottom: 30px; }
+                .title { font-size: 26px; font-weight: bold; color: #1a365d; margin: 0; text-transform: uppercase; }
+                .subtitle { font-size: 13px; color: #4a5568; margin: 5px 0 0 0; }
+                .box { background-color: #f8fafc; border-left: 5px solid #2b6cb0; padding: 15px; margin-bottom: 30px; border-radius: 4px; }
+                .box p { margin: 6px 0; font-size: 15px; }
+                h2 { font-size: 16px; color: #1a365d; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-top: 30px; text-transform: uppercase; }
+                .comment { background-color: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; font-style: italic; color: #2c5282; font-size: 14px; line-height: 1.6; }
+                .footer { margin-top: 60px; font-size: 14px; }
+                .signature { float: right; text-align: right; }
+                @media print { button { display: none; } }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <table style="width:100%;">
+                    <tr>
+                        <td>
+                            <div class="title">ÖĞRETMENÇOCUK</div>
+                            <div class="subtitle">İngilizce Özel Ders & Eğitim Koçluğu Takip Sistemi</div>
+                        </td>
+                        <td style="text-align: right; font-weight: bold; color: #c53030; font-size: 16px;">
+                            HAFTALIK VELİ KARNESİ
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="box">
+                <p><strong>Öğrenci Adı:</strong> ${ogrenciIsmi}</p>
+                <p><strong>Eğitim Dönemi:</strong> ${new Date().toLocaleDateString('tr-TR')} Haftalık Raporu</p>
+                <p><strong>Eğitim Danışmanı:</strong> Mert Akkayaoğlu</p>
+            </div>
+
+            <h2>Haftalık Değerlendirme ve Koçluk Notu</h2>
+            <div class="comment">
+                "Öğrencimizin haftalık gelişim durumu, kelime ezber takibi ve deneme gidişatı sistemimize başarıyla işlenmiştir. LGS hazırlık sürecinde gösterdiği istikrardan ötürü öğrencimizi tebrik eder, başarılarının devamını dileriz. Güncel ödev ve konu takibine öğrenci panelimizden her an ulaşabilirsiniz."
+            </div>
+
+            <div class="footer">
+                <div style="float:left; width:200px; border-top:1px dashed #a0aec0; margin-top:40px; text-align:center; padding-top:5px;">Veli İmza / Görüşü</div>
+                <div class="signature">
+                    <strong>Mert Akkayaoğlu</strong><br>
+                    <span style="font-size:12px; color:#718096;">İngilizce Öğretmeni & Eğitim Koçu</span>
+                    <div style="border-top:1px dashed #a0aec0; margin-top:25px; width:180px; display:inline-block;"></div>
+                </div>
+            </div>
+        </body>
+        </html>
+        `);
+        
+        yazdirmaPenceresi.document.close();
+        
+        // 4. Pencere tamamen dolunca tarayıcının kendi PDF/Yazdır menüsünü tetikle
+        setTimeout(() => {
+            yazdirmaPenceresi.print();
+        }, 500);
     }
 });
 </script>
