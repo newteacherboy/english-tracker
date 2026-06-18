@@ -520,20 +520,7 @@ function showStudentPage(name) {
   if (activePageTab === "denemeler") drawDenemeChart(name);
 }
 
-<!-- Başlangıçta Gizli Olan Veli Karnesi Butonu -->
-<button id="pdfIndirBtn" style="
-    display: none; /* İlk başta tamamen gizli */
-    background: #1a365d; 
-    color: white; 
-    padding: 10px 20px; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    margin: 10px auto;
-">
-    📄 Haftalık Veli Karnesini İndir (PDF)
-</button>
+
   
 function switchPageTab(name, tab) {
   activePageTab = tab;
@@ -572,6 +559,21 @@ function switchPageTab(name, tab) {
   if (activePageTab === "denemeler") drawDenemeChart(name);
 }
 }
+
+  <!-- Başlangıçta Gizli Olan Veli Karnesi Butonu -->
+<button id="pdfIndirBtn" style="
+    display: none; /* İlk başta tamamen gizli */
+    background: #1a365d; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    margin: 10px auto;
+">
+    📄 Haftalık Veli Karnesini İndir (PDF)
+</button>
 
 /* ── /* ── ROZETLER ── */
 
