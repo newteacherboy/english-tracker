@@ -786,6 +786,20 @@ function buildOzet(rows, latest, studentName, allRows) {
   return `
     ${badgesHtml}
     ${lessonStatusBoxHtml} 
+
+     <button id="pdfIndirBtn" style="
+    display: inline-block; /* Her zaman açık, ama sadece bu panel açılınca görünecek */
+    background: #1a365d; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    margin: 15px auto;
+">
+    📄 Haftalık Veli Karnesini İndir (PDF)
+</button>
     
     <div class="teacher-feedback-card">
       <div class="feedback-header"><span class="feedback-animated-icon">✍️</span><h4 class="feedback-title">Öğretmenin Haftalık Notu</h4></div>
@@ -961,19 +975,7 @@ function drawDenemeChart(name) {
 }
 </script>
 
-  <button id="pdfIndirBtn" style="
-    display: inline-block; /* Her zaman açık, ama sadece bu panel açılınca görünecek */
-    background: #1a365d; 
-    color: white; 
-    padding: 10px 20px; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    margin: 15px auto;
-">
-    📄 Haftalık Veli Karnesini İndir (PDF)
-</button>
+ 
 
 <button id="rubrikOpenBtn" style="display: block; margin: 30px auto; padding: 12px 22px; border-radius: 10px; border: none; background: #9B5435; color: #fff; font-size: 15px; font-weight: 700; font-family: 'IBM Plex Sans',-apple-system,sans-serif; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
   Öğrenci Değerlendir
