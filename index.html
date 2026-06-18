@@ -223,6 +223,13 @@ canvas { max-height: 200px; }
 </div>
 
 <script>
+  
+<!-- Veli Karnesi İndirme Butonu -->
+<button id="pdfIndirBtn" style="background:#1a365d; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; margin:10px 0; display:none;">
+    📄 Haftalık Veli Karnesini İndir (PDF)
+</button>
+
+  
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
 const SECTIONS = {
   ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
@@ -449,10 +456,6 @@ function renderTabs() {
 
 function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
 
-<!-- Veli Karnesi İndirme Butonu -->
-<button id="pdfIndirBtn" style="background:#1a365d; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; margin:10px 0; display:none;">
-    📄 Haftalık Veli Karnesini İndir (PDF)
-</button>
   
 function selectStudent(name) {
   activeStudent = name; activePageTab = "ozet";
