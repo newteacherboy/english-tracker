@@ -158,6 +158,22 @@ canvas { max-height: 200px; }
 .badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
+
+<!-- Başlangıçta Gizli Olan Veli Karnesi Butonu -->
+<button id="pdfIndirBtn" style="
+    display: none; /* İlk başta tamamen gizli */
+    background: #1a365d; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    margin: 10px auto;
+">
+    📄 Haftalık Veli Karnesini İndir (PDF)
+</button>
+  
 /* CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI */
 .teacher-feedback-card {
   position: relative;
@@ -560,20 +576,7 @@ function switchPageTab(name, tab) {
 }
 }
 
-  <!-- Başlangıçta Gizli Olan Veli Karnesi Butonu -->
-<button id="pdfIndirBtn" style="
-    display: none; /* İlk başta tamamen gizli */
-    background: #1a365d; 
-    color: white; 
-    padding: 10px 20px; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    margin: 10px auto;
-">
-    📄 Haftalık Veli Karnesini İndir (PDF)
-</button>
+  
 
 /* ── /* ── ROZETLER ── */
 
