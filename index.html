@@ -1324,42 +1324,64 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("click", function(event) {
     if (event.target && event.target.id === "pdfIndirBtn") {
         
-        // 1. SİTEDEN CANLI VERİ ÇEKME ALANI
-        // Bu kod sitenin neresinde h1, h2 veya h3 varsa (Barış, Erva vb.) o ismi canlı yakalar.
-        let canlıOgrenciIsmi = "Öğrenci Girişi";
-        let isimAlani = document.querySelector('.info-section h3') || document.querySelector('.student-name') || document.querySelector('h1') || document.querySelector('h2');
-        if (isimAlani) {
-            canlıOgrenciIsmi = isimAlani.innerText;
-        }
-
-        // Sitenizde haftalık yorumun veya rubrik notunun yazdığı bir alan varsa tarayıcıdan onu çeker.
-        // Eğer bulamazsa aşağıdaki varsayılan öğretmen mesajını yazar.
-        let canlıOgretmenNotu = "Öğrencimizin haftalık gelişim durumu, kelime ezber takibi ve LGS deneme gidişatı sistemimize başarıyla işlenmiştir. Süreçteki kararlılığından ötürü öğrencimizi tebrik ederiz.";
-        let yorumAlani = document.querySelector('.ogretmen-notu') || document.querySelector('#yorumAlani') || document.querySelector('.comment-box');
-        if (yorumAlani && yorumAlani.innerText.trim() !== "") {
-            canlıOgretmenNotu = yorumAlani.innerText;
-        }
-
-        // 2. BOŞ YAZDIRMA PENCERESİ AÇMA
-        let yazdirmaPenceresi = window.open('', '', 'height=700,width=900');
+        // 1. Sitenizdeki Google Apps Script'ten dönen ham veriyi otomatik yakalama köprüsü
+        let sitemizdekiVeri = typeof mevcutOgrenci !== 'undefined' ? mevcutOgrenci : (typeof data !== 'undefined' ? data : null);
         
-        // 3. İÇİNE ÖĞRENCİYE ÖZEL VERİLERİ BASMA
+        // Eğer global değişken boşsa, ekrandaki tablolardan genel bir tarama yapalım
+        if (!sitemizdekiVeri) {
+            sitemizdekiVeri = {};
+        }
+
+        // 2. Sizin belirttiğiniz A-O sütun sırasına göre verileri haritalandırıyoruz
+        let v = {
+            tarih: sitemizdekiVeri.tarih || sitemizdekiVeri.Tarih || new Date().toLocaleDateString('tr-TR'),
+            ogrenci: sitemizdekiVeri.ogrenci || sitemizdekiVeri.Ogrenci || document.querySelector('h1')?.innerText || document.querySelector('h2')?.innerText || "Öğrenci",
+            seviye: sitemizdekiVeri.seviye || sitemizdekiVeri.Seviye || "LGS Hazırlık",
+            genel: sitemizdekiVeri.genel || sitemizdekiVeri.Genel || "Değerlendirilmedi",
+            vocabulary: sitemizdekiVeri.vocabulary || sitemizdekiVeri.Kelime || sitemizdekiVeri.kelime || "-",
+            konusma: sitemizdekiVeri.konusma || sitemizdekiVeri.Konuşma || "-",
+            okuma: sitemizdekiVeri.okuma || sitemizdekiVeri.Okuma || "-",
+            yazma: sitemizdekiVeri.yazma || sitemizdekiVeri.Yazma || "-",
+            grammar: sitemizdekiVeri.grammar || sitemizdekiVeri.Grammar || "-",
+            deneme: sitemizdekiVeri.deneme || sitemizdekiVeri.Deneme || "-",
+            ders_tarihi: sitemizdekiVeri.ders_tarihi || sitemizdekiVeri.Ders_Tarihi || "-",
+            ders_durumu: sitemizdekiVeri.ders_durumu || sitemizdekiVeri.Ders_Durumu || "Tamamlandı",
+            odev_durumu: sitemizdekiVeri.odev_durumu || sitemizdekiVeri.Ödev_Durumu || "-",
+            konu: sitemizdekiVeri.konu || sitemizdekiVeri.Konu || "-"
+        };
+
+        // 3. Yazdırma Penceresini Açma
+        let yazdirmaPenceresi = window.open('', '', 'height=850,width=900');
+        
+        // 4. Sizin Sütun Verilerinizle Matbaa Düzeninde HTML Rapor Oluşturma
         yazdirmaPenceresi.document.write(`
         <html>
         <head>
-            <title>${canlıOgrenciIsmi} - Haftalık Veli Karnesi</title>
+            <title>${v.ogrenci} - Haftalık Gelişim Raporu</title>
             <style>
-                body { font-family: Arial, sans-serif; color: #2d3748; padding: 40px; background: #ffffff; }
-                .header { border-bottom: 3px solid #1a365d; padding-bottom: 15px; margin-bottom: 30px; }
-                .title { font-size: 26px; font-weight: bold; color: #1a365d; margin: 0; text-transform: uppercase; }
-                .subtitle { font-size: 13px; color: #4a5568; margin: 5px 0 0 0; }
-                .box { background-color: #f8fafc; border-left: 5px solid #2b6cb0; padding: 15px; margin-bottom: 30px; border-radius: 4px; }
-                .box p { margin: 6px 0; font-size: 15px; }
-                h2 { font-size: 16px; color: #1a365d; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-top: 30px; text-transform: uppercase; }
-                .comment { background-color: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; font-style: italic; color: #2c5282; font-size: 14px; line-height: 1.6; }
-                .footer { margin-top: 60px; font-size: 14px; }
+                body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2d3748; padding: 30px; background: #ffffff; line-height: 1.4; }
+                .header { border-bottom: 3px solid #1a365d; padding-bottom: 10px; margin-bottom: 20px; }
+                .title { font-size: 24px; font-weight: bold; color: #1a365d; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+                .subtitle { font-size: 11px; color: #4a5568; margin: 3px 0 0 0; }
+                
+                .info-table { width: 100%; border-collapse: collapse; background: #f8fafc; border-left: 5px solid #2b6cb0; margin-bottom: 25px; }
+                .info-table td { padding: 8px 12px; font-size: 13px; }
+                .info-label { font-weight: bold; color: #4a5568; width: 20%; }
+                
+                h2 { font-size: 14px; color: #1a365d; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; }
+                
+                .stats-grid { width: 100%; border-collapse: separate; border-spacing: 10px 0; margin: 0 -10px 20px -10px; }
+                .stat-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; text-align: center; width: 33%; }
+                .stat-val { font-size: 18px; font-weight: bold; color: #2b6cb0; }
+                .stat-lbl { font-size: 9px; color: #718096; text-transform: uppercase; font-weight: 600; }
+                
+                .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                .data-table th { background: #2d3748; color: #ffffff; font-size: 11px; padding: 8px 10px; text-align: left; text-transform: uppercase; }
+                .data-table td { padding: 8px 10px; font-size: 12px; border: 1px solid #e2e8f0; }
+                .data-table tr:nth-child(even) { background: #f7fafc; }
+                
+                .footer { margin-top: 50px; font-size: 13px; }
                 .signature { float: right; text-align: right; }
-                @media print { button { display: none; } }
             </style>
         </head>
         <body>
@@ -1370,30 +1392,91 @@ document.addEventListener("click", function(event) {
                             <div class="title">ÖĞRETMENÇOCUK</div>
                             <div class="subtitle">İngilizce Özel Ders & Eğitim Koçluğu Takip Sistemi</div>
                         </td>
-                        <td style="text-align: right; font-weight: bold; color: #c53030; font-size: 16px;">
+                        <td style="text-align: right; font-weight: bold; color: #c53030; font-size: 14px;">
                             HAFTALIK VELİ KARNESİ
                         </td>
                     </tr>
                 </table>
             </div>
 
-            <div class="box">
-                <p><strong>Öğrenci Adı:</strong> ${canlıOgrenciIsmi}</p>
-                <p><strong>Rapor Tarihi:</strong> ${new Date().toLocaleDateString('tr-TR')}</p>
-                <p><strong>Eğitim Danışmanı:</strong> Mert Akkayaoğlu (Uzman İngilizce Öğretmeni)</p>
-            </div>
+            <table class="info-table">
+                <tr>
+                    <td class="info-label">Öğrenci Adı:</td>
+                    <td><strong>${v.ogrenci}</strong></td>
+                    <td class="info-label">Sınıf / Seviye:</td>
+                    <td>${v.seviye} (8. Sınıf LGS)</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Rapor Tarihi:</td>
+                    <td>${v.tarih}</td>
+                    <td class="info-label">Danışman:</td>
+                    <td>Mert Akkayaoğlu</td>
+                </tr>
+            </table>
 
-            <h2>Haftalık Değerlendirme ve Koçluk Notu</h2>
-            <div class="comment">
-                "${canlıOgretmenNotu}"
-            </div>
+            <h2>Genel Performans Göstergeleri</h2>
+            <table class="stats-grid">
+                <tr>
+                    <td class="stat-box"><div class="stat-val">${v.genel} / 100</div><div class="stat-lbl">Genel Başarı Puanı</div></td>
+                    <td class="stat-box"><div class="stat-val">${v.deneme}</div><div class="stat-lbl">Son LGS Deneme Skoru</div></td>
+                    <td class="stat-box"><div class="stat-val">${v.odev_durumu}</div><div class="stat-lbl">Ödev Tamamlama</div></td>
+                </tr>
+            </table>
+
+            <h2>Dil Becerileri Başarı Analizi</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Beceri Alanı</th>
+                        <th>Gelişim Skoru</th>
+                        <th>Beceri Alanı</th>
+                        <th>Gelişim Skoru</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Vocabulary (Kelime Bilgisi)</strong></td>
+                        <td>${v.vocabulary} / 100</td>
+                        <td><strong>Konuşma (Speaking)</strong></td>
+                        <td>${v.konusma} / 100</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Okuma (Reading)</strong></td>
+                        <td>${v.okuma} / 100</td>
+                        <td><strong>Yazma (Writing)</strong></td>
+                        <td>${v.yazma} / 100</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Grammar (Dil Bilgisi)</strong></td>
+                        <td colspan="3">${v.grammar} / 100</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Son İşlenen Ders ve Takip Çizelgesi</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Ders Tarihi</th>
+                        <th>İşlenen Konu / Ünite</th>
+                        <th>Ders Durumu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>${v.ders_tarihi}</td>
+                        <td><strong>${v.konu}</strong></td>
+                        <td><span style="color:#22543d; font-weight:bold;">${v.ders_durumu}</span></td>
+                    </tr>
+                </tbody>
+            </table>
 
             <div class="footer">
-                <div style="float:left; width:200px; border-top:1px dashed #a0aec0; margin-top:40px; text-align:center; padding-top:5px;">Veli İmza / Görüşü</div>
+                <div style="float:left; width:180px; border-top:1px dashed #a0aec0; margin-top:35px; text-align:center; padding-top:5px; font-size:11px; color:#718096;">Veli İmza / Görüşü</div>
                 <div class="signature">
                     <strong>Mert Akkayaoğlu</strong><br>
-                    <span style="font-size:12px; color:#718096;">İngilizce Öğretmeni & Eğitim Koçu</span>
-                    <div style="border-top:1px dashed #a0aec0; margin-top:25px; width:180px; display:inline-block;"></div>
+                    <span style="font-size:11px; color:#718096;">İngilizce Öğretmeni & Eğitim Koçu</span>
+                    <div style="border-top:1px dashed #a0aec0; margin-top:20px; width:150px; display:inline-block;"></div>
                 </div>
             </div>
         </body>
@@ -1402,10 +1485,10 @@ document.addEventListener("click", function(event) {
         
         yazdirmaPenceresi.document.close();
         
-        // 4. EKRANA yazdırma penceresini fırlat
+        // Pencere hazır olunca otomatik baskı/pdf ekranını tetikle
         setTimeout(() => {
             yazdirmaPenceresi.print();
-        }, 500);
+        }, 400);
     }
 });
 </script>
