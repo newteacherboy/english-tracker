@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#1D9E75">
 <title>Öğrenci Takip Sistemi</title>
 <link rel="manifest" href="manifest.json">
+  <!-- PDF Üretici Kütüphane -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -215,6 +217,12 @@ canvas { max-height: 200px; }
   <div class="content" id="content">
     <div class="loading">Veriler yükleniyor...</div>
   </div>
+
+<!-- Veli Karnesi İndirme Butonu -->
+<button id="pdfIndirBtn" style="background:#1a365d; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; margin:10px 0; display:none;">
+    📄 Haftalık Veli Karnesini İndir (PDF)
+</button>
+  
 </div>
 
 <script>
