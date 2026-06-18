@@ -1324,62 +1324,79 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("click", function(event) {
     if (event.target && event.target.id === "pdfIndirBtn") {
         
-        // 1. Sitenizdeki Google Apps Script'ten dönen ham veriyi otomatik yakalama köprüsü
-        let sitemizdekiVeri = typeof mevcutOgrenci !== 'undefined' ? mevcutOgrenci : (typeof data !== 'undefined' ? data : null);
-        
-        // Eğer global değişken boşsa, ekrandaki tablolardan genel bir tarama yapalım
-        if (!sitemizdekiVeri) {
-            sitemizdekiVeri = {};
+        // 1. Sitenizin hafızasındaki Apps Script verilerini (data veya mevcutOgrenci) yakalama
+        // JavaScript'teki tüm olası değişken isimlerini tarıyoruz
+        let hamVeri = null;
+        try { if (typeof data !== 'undefined') hamVeri = data; } catch(e){}
+        try { if (!hamVeri && typeof mevcutOgrenci !== 'undefined') hamVeri = mevcutOgrenci; } catch(e){}
+        try { if (!hamVeri && typeof secilenOgrenci !== 'undefined') hamVeri = secilenOgrenci; } catch(e){}
+        try { if (!hamVeri && typeof ogrenciVerisi !== 'undefined') hamVeri = ogrenciVerisi; } catch(e){}
+
+        // EĞER VERİ HALA BULUNAMADIYSA: Sitenin ekranındaki kutulardan (input/select) veya tablodan cımbızla çekelim
+        let ekrandakiIsim = "Öğrenci";
+        let isimSecici = document.querySelector('#studentSelect') || document.querySelector('#ogrenciSecimi') || document.querySelector('select');
+        if (isimSecici && isimSecici.value) {
+            ekrandakiIsim = isimSecici.options[isimSecici.selectedIndex].text;
+        } else {
+            // Ekrandaki tablolarda geçen isimleri tara (Başlığı elemek için filtre koyduk)
+            let tumBasliklar = document.querySelectorAll('h1, h2, h3, .student-name');
+            for(let b of tumBasliklar) {
+                if(!b.innerText.includes("Rubrik") && !b.innerText.includes("Giriş") && b.innerText.trim() !== "") {
+                    ekrandakiIsim = b.innerText;
+                    break;
+                }
+            }
         }
 
-        // 2. Sizin belirttiğiniz A-O sütun sırasına göre verileri haritalandırıyoruz
+        // 2. Senin Sheets Sütunlarına Göre Güvenli Eşleştirme (Boşsa ekrandan veya varsayılan değer atar)
+        if (!hamVeri) hamVeri = {};
+        
         let v = {
-            tarih: sitemizdekiVeri.tarih || sitemizdekiVeri.Tarih || new Date().toLocaleDateString('tr-TR'),
-            ogrenci: sitemizdekiVeri.ogrenci || sitemizdekiVeri.Ogrenci || document.querySelector('h1')?.innerText || document.querySelector('h2')?.innerText || "Öğrenci",
-            seviye: sitemizdekiVeri.seviye || sitemizdekiVeri.Seviye || "LGS Hazırlık",
-            genel: sitemizdekiVeri.genel || sitemizdekiVeri.Genel || "Değerlendirilmedi",
-            vocabulary: sitemizdekiVeri.vocabulary || sitemizdekiVeri.Kelime || sitemizdekiVeri.kelime || "-",
-            konusma: sitemizdekiVeri.konusma || sitemizdekiVeri.Konuşma || "-",
-            okuma: sitemizdekiVeri.okuma || sitemizdekiVeri.Okuma || "-",
-            yazma: sitemizdekiVeri.yazma || sitemizdekiVeri.Yazma || "-",
-            grammar: sitemizdekiVeri.grammar || sitemizdekiVeri.Grammar || "-",
-            deneme: sitemizdekiVeri.deneme || sitemizdekiVeri.Deneme || "-",
-            ders_tarihi: sitemizdekiVeri.ders_tarihi || sitemizdekiVeri.Ders_Tarihi || "-",
-            ders_durumu: sitemizdekiVeri.ders_durumu || sitemizdekiVeri.Ders_Durumu || "Tamamlandı",
-            odev_durumu: sitemizdekiVeri.odev_durumu || sitemizdekiVeri.Ödev_Durumu || "-",
-            konu: sitemizdekiVeri.konu || sitemizdekiVeri.Konu || "-"
+            tarih: hamVeri.tarih || hamVeri.Tarih || new Date().toLocaleDateString('tr-TR'),
+            ogrenci: hamVeri.ogrenci || hamVeri.Ogrenci || hamVeri.ogrenci_adi || ekrandakiIsim,
+            seviye: hamVeri.seviye || hamVeri.Seviye || "8. Sınıf LGS",
+            genel: hamVeri.genel || hamVeri.Genel || document.querySelector('#genelPuan')?.innerText || "Değerlendirilmedi",
+            vocabulary: hamVeri.vocabulary || hamVeri.Kelime || hamVeri.kelime || "-",
+            konusma: hamVeri.konusma || hamVeri.Konuşma || hamVeri.konuşma || "-",
+            okuma: hamVeri.okuma || hamVeri.Okuma || hamVeri.okuma || "-",
+            yazma: hamVeri.yazma || hamVeri.Yazma || hamVeri.yazma || "-",
+            grammar: hamVeri.grammar || hamVeri.Grammar || hamVeri.grammar || "-",
+            deneme: hamVeri.deneme || hamVeri.Deneme || document.querySelector('#denemePuan')?.innerText || "-",
+            ders_tarihi: hamVeri.ders_tarihi || hamVeri.Ders_Tarihi || "-",
+            ders_durumu: hamVeri.ders_durumu || hamVeri.Ders_Durumu || "Tamamlandı",
+            odev_durumu: hamVeri.odev_durumu || hamVeri.Ödev_Durumu || hamVeri.odev || "-",
+            konu: hamVeri.konu || hamVeri.Konu || "-"
         };
 
-        // 3. Yazdırma Penceresini Açma
+        // Eğer isim hala temizlenemediyse sitenin başlığını zorla düzeltiyoruz
+        if (v.ogrenci.includes("İngilizce Ders Rubriği")) {
+            v.ogrenci = ekrandakiIsim !== "Öğrenci" ? ekrandakiIsim : "Öğrenci Raporu";
+        }
+
+        // 3. Yazdırma Penceresi Kurulumu
         let yazdirmaPenceresi = window.open('', '', 'height=850,width=900');
         
-        // 4. Sizin Sütun Verilerinizle Matbaa Düzeninde HTML Rapor Oluşturma
         yazdirmaPenceresi.document.write(`
         <html>
         <head>
-            <title>${v.ogrenci} - Haftalık Gelişim Raporu</title>
+            <title>${v.ogrenci} - Gelişim Raporu</title>
             <style>
-                body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2d3748; padding: 30px; background: #ffffff; line-height: 1.4; }
+                body { font-family: Arial, sans-serif; color: #2d3748; padding: 30px; background: #ffffff; line-height: 1.4; }
                 .header { border-bottom: 3px solid #1a365d; padding-bottom: 10px; margin-bottom: 20px; }
-                .title { font-size: 24px; font-weight: bold; color: #1a365d; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+                .title { font-size: 24px; font-weight: bold; color: #1a365d; margin: 0; text-transform: uppercase; }
                 .subtitle { font-size: 11px; color: #4a5568; margin: 3px 0 0 0; }
-                
                 .info-table { width: 100%; border-collapse: collapse; background: #f8fafc; border-left: 5px solid #2b6cb0; margin-bottom: 25px; }
                 .info-table td { padding: 8px 12px; font-size: 13px; }
                 .info-label { font-weight: bold; color: #4a5568; width: 20%; }
-                
                 h2 { font-size: 14px; color: #1a365d; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; }
-                
-                .stats-grid { width: 100%; border-collapse: separate; border-spacing: 10px 0; margin: 0 -10px 20px -10px; }
-                .stat-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; text-align: center; width: 33%; }
+                .stats-grid { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                .stat-box { border: 1px solid #e2e8f0; padding: 10px; text-align: center; width: 33%; background: #ffffff; }
                 .stat-val { font-size: 18px; font-weight: bold; color: #2b6cb0; }
                 .stat-lbl { font-size: 9px; color: #718096; text-transform: uppercase; font-weight: 600; }
-                
                 .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
                 .data-table th { background: #2d3748; color: #ffffff; font-size: 11px; padding: 8px 10px; text-align: left; text-transform: uppercase; }
                 .data-table td { padding: 8px 10px; font-size: 12px; border: 1px solid #e2e8f0; }
                 .data-table tr:nth-child(even) { background: #f7fafc; }
-                
                 .footer { margin-top: 50px; font-size: 13px; }
                 .signature { float: right; text-align: right; }
             </style>
@@ -1404,7 +1421,7 @@ document.addEventListener("click", function(event) {
                     <td class="info-label">Öğrenci Adı:</td>
                     <td><strong>${v.ogrenci}</strong></td>
                     <td class="info-label">Sınıf / Seviye:</td>
-                    <td>${v.seviye} (8. Sınıf LGS)</td>
+                    <td>${v.seviye}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Rapor Tarihi:</td>
@@ -1417,7 +1434,7 @@ document.addEventListener("click", function(event) {
             <h2>Genel Performans Göstergeleri</h2>
             <table class="stats-grid">
                 <tr>
-                    <td class="stat-box"><div class="stat-val">${v.genel} / 100</div><div class="stat-lbl">Genel Başarı Puanı</div></td>
+                    <td class="stat-box"><div class="stat-val">${v.genel}</div><div class="stat-lbl">Genel Başarı Puanı</div></td>
                     <td class="stat-box"><div class="stat-val">${v.deneme}</div><div class="stat-lbl">Son LGS Deneme Skoru</div></td>
                     <td class="stat-box"><div class="stat-val">${v.odev_durumu}</div><div class="stat-lbl">Ödev Tamamlama</div></td>
                 </tr>
@@ -1426,48 +1443,22 @@ document.addEventListener("click", function(event) {
             <h2>Dil Becerileri Başarı Analizi</h2>
             <table class="data-table">
                 <thead>
-                    <tr>
-                        <th>Beceri Alanı</th>
-                        <th>Gelişim Skoru</th>
-                        <th>Beceri Alanı</th>
-                        <th>Gelişim Skoru</th>
-                    </tr>
+                    <tr><th>Beceri Alanı</th><th>Gelişim Skoru</th><th>Beceri Alanı</th><th>Gelişim Skoru</th></tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>Vocabulary (Kelime Bilgisi)</strong></td>
-                        <td>${v.vocabulary} / 100</td>
-                        <td><strong>Konuşma (Speaking)</strong></td>
-                        <td>${v.konusma} / 100</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Okuma (Reading)</strong></td>
-                        <td>${v.okuma} / 100</td>
-                        <td><strong>Yazma (Writing)</strong></td>
-                        <td>${v.yazma} / 100</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Grammar (Dil Bilgisi)</strong></td>
-                        <td colspan="3">${v.grammar} / 100</td>
-                    </tr>
+                    <tr><td><strong>Vocabulary (Kelime Bilgisi)</strong></td><td>${v.vocabulary}</td><td><strong>Konuşma (Speaking)</strong></td><td>${v.konusma}</td></tr>
+                    <tr><td><strong>Okuma (Reading)</strong></td><td>${v.okuma}</td><td><strong>Yazma (Writing)</strong></td><td>${v.yazma}</td></tr>
+                    <tr><td><strong>Grammar (Dil Bilgisi)</strong></td><td colspan="3">${v.grammar}</td></tr>
                 </tbody>
             </table>
 
             <h2>Son İşlenen Ders ve Takip Çizelgesi</h2>
             <table class="data-table">
                 <thead>
-                    <tr>
-                        <th>Ders Tarihi</th>
-                        <th>İşlenen Konu / Ünite</th>
-                        <th>Ders Durumu</th>
-                    </tr>
+                    <tr><th>Ders Tarihi</th><th>İşlenen Konu / Ünite</th><th>Ders Durumu</th></tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>${v.ders_tarihi}</td>
-                        <td><strong>${v.konu}</strong></td>
-                        <td><span style="color:#22543d; font-weight:bold;">${v.ders_durumu}</span></td>
-                    </tr>
+                    <tr><td>${v.ders_tarihi}</td><td><strong>${v.konu}</strong></td><td><span style="color:#22543d; font-weight:bold;">${v.ders_durumu}</span></td></tr>
                 </tbody>
             </table>
 
@@ -1484,11 +1475,7 @@ document.addEventListener("click", function(event) {
         `);
         
         yazdirmaPenceresi.document.close();
-        
-        // Pencere hazır olunca otomatik baskı/pdf ekranını tetikle
-        setTimeout(() => {
-            yazdirmaPenceresi.print();
-        }, 400);
+        setTimeout(() => { yazdirmaPenceresi.print(); }, 400);
     }
 });
 </script>
