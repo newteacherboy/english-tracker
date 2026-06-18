@@ -11,9 +11,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a1a1a; min-height: 100vh; }
 
-<!-- PDF Üretici Kütüphane (html2pdf.js) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  
 /* ANA SAYFA */
 .home { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
 .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
@@ -63,19 +60,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .level-badge { margin-left: auto; background: #E1F5EE; color: #0F6E56; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .logout-btn { margin-left: 8px; background: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 4px 10px; font-size: 11px; color: #888; cursor: pointer; white-space: nowrap; }
 
-<button id="pdfIndirBtn" style="
-    background: #1a365d; 
-    color: white; 
-    padding: 10px 20px; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    font-weight: bold;
-    margin-bottom: 15px;
-">
-    📄 Haftalık Veli Karnesini İndir (PDF)
-</button>
-  
 /* SAYFA SEKMELERİ */
 .page-tabs { display: flex; gap: 0; margin-bottom: 1.25rem; background: #fff; border-radius: 12px; border: 1px solid #e8eaed; overflow: hidden; }
 .page-tab { flex: 1; padding: 10px 8px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; color: #888; border-right: 1px solid #e8eaed; transition: all 0.15s; }
@@ -252,153 +236,6 @@ let activeStudent = null;
 let activePageTab = "ozet"; 
 let denemelerData = [];
 
-// html2pdf.js kütüphanesini tetikleyen ve şablonu PDF yapan ana fonksiyon
-function haftalikVeliKarnesiUret(aktifOgrenciVerisi) {
-    
-    // NOT: aktifOgrenciVerisi, senin Apps Script'ten çektiğin nesnedir (object).
-    // Aşağıdaki ${aktifOgrenciVerisi.sutun_adi} kısımlarını kendi Sheets sütun isimlerine göre revize edebilirsin.
-
-    const karneTasarimi = `
-    <!DOCTYPE html>
-    <html lang="tr">
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2d3748; line-height: 1.5; padding: 10px; background-color: #ffffff; }
-            .header-container { border-bottom: 3px solid #1a365d; padding-bottom: 10px; margin-bottom: 20px; }
-            .brand-title { font-size: 22pt; font-weight: bold; color: #1a365d; text-transform: uppercase; margin: 0; }
-            .brand-subtitle { font-size: 10pt; color: #4a5568; margin: 2px 0 0 0; }
-            .info-section { background-color: #f8fafc; border-left: 5px solid #2b6cb0; border-radius: 4px; padding: 12px; margin-bottom: 20px; }
-            .info-table { width: 100%; border-collapse: collapse; }
-            .info-table td { padding: 4px; font-size: 11pt; }
-            .info-label { font-weight: bold; color: #4a5568; width: 20%; }
-            h2 { font-size: 13pt; color: #1a365d; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-top: 20px; margin-bottom: 10px; text-transform: uppercase; }
-            .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            .stat-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; text-align: center; width: 25%; }
-            .stat-val { font-size: 16pt; font-weight: bold; color: #2b6cb0; }
-            .stat-lbl { font-size: 8pt; color: #718096; text-transform: uppercase; }
-            .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            .data-table th { background-color: #2d3748; color: #ffffff; font-size: 9pt; text-align: left; padding: 8px; text-transform: uppercase; }
-            .data-table td { padding: 8px; font-size: 10pt; border: 1px solid #e2e8f0; }
-            .data-table tr:nth-child(even) { background-color: #f7fafc; }
-            .comment-box { background-color: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 12px; font-style: italic; color: #2c5282; font-size: 10.5pt; }
-            .signature-table { width: 100%; margin-top: 30px; }
-            .sig-line { margin-top: 35px; border-top: 1px dashed #a0aec0; width: 150px; display: inline-block; }
-        </style>
-    </head>
-    <body>
-
-        <!-- Başlık Bölümü -->
-        <div class="header-container">
-            <table style="width:100%;">
-                <tr>
-                    <td>
-                        <div class="brand-title">ÖĞRETMENÇOCUK</div>
-                        <div class="brand-subtitle">İngilizce Özel Ders & Eğitim Koçluğu Takip Sistemi</div>
-                    </td>
-                    <td style="text-align: right;">
-                        <span style="font-weight:bold; color:#c53030; font-size:12pt;">HAFTALIK VELİ KARNESİ</span>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Öğrenci Künyesi -->
-        <div class="info-section">
-            <table class="info-table">
-                <tr>
-                    <td class="info-label">Öğrenci Adı:</td>
-                    <td style="color: #1a202c;">${aktifOgrenciVerisi.isim || 'Öğrenci Adı'}</td>
-                    <td class="info-label">Dil Seviyesi:</td>
-                    <td style="color: #1a202c;">${aktifOgrenciVerisi.dilSeviyesi || 'Belirlenmedi'}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">Danışman:</td>
-                    <td style="color: #1a202c;">Mert Akkayaoğlu</td>
-                    <td class="info-label">Tarih:</td>
-                    <td style="color: #1a202c;">${new Date().toLocaleDateString('tr-TR')}</td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Özet Kutuları -->
-        <h2>Genel Performans Göstergeleri</h2>
-        <table class="stats-table" style="width:100%;">
-            <tr>
-                <td class="stat-card"><div class="stat-val">${aktifOgrenciVerisi.genelPuan || '-'}</div><div class="stat-lbl">Genel Puan</div></td>
-                <td style="width:10px;"></td>
-                <td class="stat-card"><div class="stat-val">${aktifOgrenciVerisi.sonDenemePuanı || '-'}</div><div class="stat-lbl">Son Deneme</div></td>
-                <td style="width:10px;"></td>
-                <td class="stat-card"><div class="stat-val">${aktifOgrenciVerisi.toplamDers || '-'}</div><div class="stat-lbl">Başarılı Ders</div></td>
-                <td style="width:10px;"></td>
-                <td class="stat-card"><div class="stat-val">%${aktifOgrenciVerisi.devamsizlik || '0'}</div><div class="stat-lbl">Devamsızlık</div></td>
-            </tr>
-        </table>
-
-        <!-- Son Ders Raporu -->
-        <h2>Son İşlenen Ders ve Ödev Durumu</h2>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Son Ders Tarihi</th>
-                    <th>İşlenen Konu / Ünite</th>
-                    <th>Ödev Durumu</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>${aktifOgrenciVerisi.sonDersTarihi || '-'}</td>
-                    <td>${aktifOgrenciVerisi.islenenKonu || 'Konu Verisi Yok'}</td>
-                    <td style="font-weight:bold; color:#2f855a;">${aktifOgrenciVerisi.odevDurumu || '-'}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Öğretmen Yorum Alanı -->
-        <h2>Öğretmen Değerlendirmesi ve Koçluk Tavsiyeleri</h2>
-        <div class="comment-box">
-            "${aktifOgrenciVerisi.haftalikYorum || 'Bu haftaya ait öğretmen yorumu henüz girilmemiştir.'}"
-        </div>
-
-        <!-- İmza Alanı -->
-        <table class="signature-table" style="width:100%;">
-            <tr>
-                <td>
-                    <div style="font-size:10pt; font-weight:bold;">Veli İmza / Görüşü</div>
-                    <div class="sig-line"></div>
-                </td>
-                <td style="text-align: right;">
-                    <div style="font-size:10pt; font-weight:bold;">Mert Akkayaoğlu</div>
-                    <div style="font-size:8.5pt; color:#718096;">İngilizce Öğretmeni & Eğitim Koçu</div>
-                    <div class="sig-line"></div>
-                </td>
-            </tr>
-        </table>
-
-    </body>
-    </html>
-    `;
-
-    // html2pdf kütüphane ayarları
-    const ayarlar = {
-        margin:       15,
-        filename:     (aktifOgrenciVerisi.isim || 'Ogrenci') + '_Veli_Karnesi.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    // PDF oluşturma tetikleyicisi
-    html2pdf().from(karneTasarimi).set(ayarlar).save();
-}
-
-  // Velinin tıkladığı butonun tetikleyicisi
-document.getElementById("pdfIndirBtn").addEventListener("click", function() {
-    // Burada 'mevcutOgrenci' değişkeni, senin Apps Script'ten o an dönen öğrenci objendir.
-    // Uygulamandaki değişken adı neyse parantez içine onu yazmalısın.
-    haftalikVeliKarnesiUret(mevcutOgrenci); 
-});
-  
 // Tarih dizilim yardımcısı
 const parseDateStr = (dStr) => {
   if (!dStr) return new Date(0);
@@ -1446,8 +1283,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-
-
   
 </body>
 </html>
