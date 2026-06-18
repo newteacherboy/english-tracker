@@ -1321,6 +1321,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 <script>
+<script>
 // PDF Üreten Ana Fonksiyon
 function haftalikVeliKarnesiUret(veri) {
     const karneTasarimi = `
@@ -1344,23 +1345,38 @@ function haftalikVeliKarnesiUret(veri) {
 
     const ayarlar = {
         margin: 15,
-        filename: 'Haftalik_Veli_Karnesi.pdf',
+        filename: (veri.isim || 'Ogrenci') + '_Veli_Karnesi.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
+    
+    // Kütüphaneyi çalıştır ve PDF indir
     html2pdf().from(karneTasarimi).set(ayarlar).save();
 }
 
-// Butona tıklandığında ekrandaki verileri toplayıp PDF fonksiyonuna gönderen tetikleyici
-document.getElementById("pdfIndirBtn").onclick = function() {
-    let toplananVeri = {
-        // Ekrandaki öğrenci ismini yazan etiketin sınıfını veya id'sini sitene göre revize edebilirsin
-        isim: document.querySelector('h1')?.innerText || "Öğrenci Girişi", 
-        haftalikYorum: "Haftalık gelişim raporu ve ders detayları başarıyla güncellenmiştir."
-    };
-    haftalikVeliKarnesiUret(toplananVeri);
-};
+// Butonun tıklama olayını kesin olarak dinleyen fonksiyon
+document.addEventListener("click", function(event) {
+    // Eğer tıklanan element bizim pdfIndirBtn id'li butonumuzsa
+    if (event.target && event.target.id === "pdfIndirBtn") {
+        
+        // Sitenizin ekranındaki güncel isim verisini canlı olarak kapıyoruz
+        // Eğer h1, h2 veya h3 etiketlerinde öğrencinin adı yazıyorsa onu çeker
+        let ogrenciIsmi = "Öğrenci Girişi";
+        let isimAlani = document.querySelector('.info-section h3') || document.querySelector('.student-name') || document.querySelector('h1') || document.querySelector('h2');
+        if (isimAlani) {
+            ogrenciIsmi = isimAlani.innerText;
+        }
+
+        let toplananVeri = {
+            isim: ogrenciIsmi, 
+            haftalikYorum: "Haftalık gelişim raporu ve eğitim koçluğu ders detayları başarıyla güncellenmiştir. Süreci sistemimizden takip etmeye devam edebilirsiniz."
+        };
+        
+        // PDF motorunu ateşle!
+        haftalikVeliKarnesiUret(toplananVeri);
+    }
+});
 </script>
   
 </body>
