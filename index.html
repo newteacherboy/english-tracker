@@ -43,10 +43,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
 
    
-<!-- Veli Karnesi İndirme Butonu -->
-<button id="pdfIndirBtn" style="background:#1a365d; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; margin:10px 0; display:block;">
-    📄 Haftalık Veli Karnesini İndir (PDF)
-</button>
 
 /* KİLİT */
 .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem; }
@@ -191,6 +187,24 @@ canvas { max-height: 200px; }
 </style>
 </head>
 <body>
+
+  <!-- TEST İÇİN HER YERDE GÖRÜNEN BUTON -->
+<button id="pdfIndirBtn" style="
+    display: block !important; 
+    position: relative; 
+    z-index: 999999; 
+    background: #1a365d; 
+    color: white; 
+    padding: 12px 25px; 
+    border: 3px solid #ffbb00; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    margin: 20px auto; 
+    text-align: center;
+">
+    📄 Haftalık Veli Karnesini İndir (PDF)
+</button>
 
 <div class="home" id="home">
   <div class="home-logo">Öğrenci<span>Takip</span></div>
