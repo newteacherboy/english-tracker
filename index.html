@@ -941,9 +941,6 @@ function drawDenemeChart(name) {
 }
 </script>
 
-<!-- ============================================================
-     SABİT BAŞLIKLI ÖĞRENCİ DEĞERLENDİRME RUBRİĞİ (YENİ SATIR EKLEME)
-     ============================================================ -->
 <button id="rubrikOpenBtn" style="display: block; margin: 30px auto; padding: 12px 22px; border-radius: 10px; border: none; background: #9B5435; color: #fff; font-size: 15px; font-weight: 700; font-family: 'IBM Plex Sans',-apple-system,sans-serif; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
   Öğrenci Değerlendir
 </button>
@@ -953,7 +950,6 @@ function drawDenemeChart(name) {
 
     <button id="rubrikCloseBtn" aria-label="Kapat" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:none;background:#fff;color:#5A554C;font-size:18px;cursor:pointer;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,0.15);">×</button>
 
-    <!-- ŞİFRE EKRANI -->
     <div id="lockScreen" style="min-height:340px;display:flex;align-items:center;justify-content:center;padding:30px 20px;">
       <div id="lockBox" style="text-align:center;width:100%;max-width:300px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:10px;">Özel Ders Değerlendirme</div>
@@ -964,7 +960,6 @@ function drawDenemeChart(name) {
       </div>
     </div>
 
-    <!-- FORM -->
     <div id="rubrikApp" style="display:none;">
       <div style="padding:20px 20px 30px;">
 
@@ -973,7 +968,6 @@ function drawDenemeChart(name) {
           <h1 style="font-size:20px;font-weight:700;line-height:1.25;margin:0;">İngilizce Ders Rubriği</h1>
         </header>
 
-        <!-- KİMLİK / GENEL BİLGİLER -->
         <div class="r-card">
           <label class="r-label-sm">ÖĞRENCİ ADI (B Sütunu)</label>
           <input type="text" id="studentName" placeholder="Örn. Ayşe Yılmaz" style="margin-bottom:10px;">
@@ -985,8 +979,6 @@ function drawDenemeChart(name) {
           <input type="text" id="studentLevel" placeholder="Örn. A2, LGS, Intermediate" value="Genel">
         </div>
 
-        </div> 
-
         <div class="r-card">
           <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">📅 Ders Zaman Çizelgesi</div>
           <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">Ders durumlarını ve sonraki ders planını seçin</div>
@@ -997,9 +989,7 @@ function drawDenemeChart(name) {
           <label class="r-label-sm">BİR SONRAKİ DERSİN TARİHİ (L Sütunu - "sonraki")</label>
           <input type="date" id="nextLessonDate" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #E2DDD2; font-size:15px; font-family:inherit;">
         </div>
-        <div style="background:linear-gradient(135deg,#9B5435,#B56A47);border-radius:12px; ...
 
-        <!-- GENEL ORTALAMA PUAN (D Sütunu) -->
         <div style="background:linear-gradient(135deg,#9B5435,#B56A47);border-radius:12px;padding:16px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-size:11.5px;font-weight:600;color:#FBEFE7;letter-spacing:0.06em;text-transform:uppercase;">Genel Puan (Ortalama)</div>
@@ -1008,7 +998,6 @@ function drawDenemeChart(name) {
           <div id="overallScore" style="font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:700;color:#fff;">0</div>
         </div>
 
-        <!-- DERS BAŞI SÜREÇLERİ -->
         <div class="r-card">
           <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Başı Durumu</div>
           <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">Hazırlık Kontrolleri</div>
@@ -1026,7 +1015,6 @@ function drawDenemeChart(name) {
           <textarea id="startComment" rows="2" placeholder="Hazır bulunuşluk hakkında not..."></textarea>
         </div>
 
-        <!-- 5 DİL BECERİSİ SKORLARI (E, F, G, H, I Sütunları) -->
         <div class="r-card">
           <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders İçi Gelişim</div>
           <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">5 Temel Beceri Seviyesi (0-100)</div>
@@ -1037,7 +1025,6 @@ function drawDenemeChart(name) {
           <div class="skill-row"><span>Yazma</span> <input type="range" class="r-slider skill-input" id="scYazma" value="0"><span class="score-val">0</span></div>
           <div class="skill-row"><span>Grammar</span> <input type="range" class="r-slider skill-input" id="scGrammar" value="0"><span class="score-val">0</span></div>
 
-          <!-- DENEME PUANI (J Sütunu) -->
           <div style="border-top:1px solid #F0EBE0;margin-top:12px;padding-top:12px;">
             <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px;">
               <span style="font-weight: 500;">Deneme / Sınav Sonucu</span>
@@ -1047,7 +1034,6 @@ function drawDenemeChart(name) {
           </div>
         </div>
 
-        <!-- DERS SONU KONTROLLERİ -->
         <div class="r-card">
           <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Sonu & Çıkış</div>
           <div style="font-size:12px;color:#8A8478;margin-bottom:8px;">Kapanış Değerlendirmesi</div>
@@ -1059,7 +1045,6 @@ function drawDenemeChart(name) {
           <textarea id="endComment" rows="2" placeholder="Ders sonu kapanış notları..."></textarea>
         </div>
 
-        <!-- CONFIG & STATUS -->
         <div style="margin-bottom:14px;">
           <button id="webhookToggle" style="font-size:12.5px;color:#8A8478;background:none;border:none;text-decoration:underline;padding:0;cursor:pointer;font-family:inherit;">Google Sheets bağlantısını ayarla</button>
           <div id="webhookForm" class="r-card" style="display:none;margin-top:8px;">
@@ -1070,7 +1055,6 @@ function drawDenemeChart(name) {
 
         <div id="statusMsg" style="display:none;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-size:13px;"></div>
 
-        <!-- EYLEMLER -->
         <div style="display:flex;gap:8px;">
           <button id="saveBtn" style="flex:2;padding:13px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Formu Kaydet (Yeni Satır)</button>
           <button id="resetBtn" style="flex:1;padding:13px;border-radius:10px;border:1.5px solid #E2DDD2;background:#fff;color:#5A554C;font-size:14px;font-weight:600;cursor:pointer;">Temizle</button>
@@ -1207,56 +1191,62 @@ document.addEventListener("DOMContentLoaded", function() {
         const yil = bugun.getFullYear();
         const tarihFormat = gun + "." + ay + "." + yil;
 
-        // TABLO SÜTUN BAŞLIKLARINA GÖRE VERİ PAKETİ
+        // FORM ALANLARINDAKİ DEĞERLERİ GÜVENLİCE OKUYALIM
+        const vocabVal = parseInt(document.getElementById("scVocabulary").value) || 0;
+        const konusmaVal = parseInt(document.getElementById("scKonusma").value) || 0;
+        const okumaVal = parseInt(document.getElementById("scOkuma").value) || 0;
+        const yazmaVal = parseInt(document.getElementById("scYazma").value) || 0;
+        const grammarVal = parseInt(document.getElementById("scGrammar").value) || 0;
+        const topicVal = document.getElementById("lessonTopic").value.trim();
+
+        // TAMAMLANAN DERS İÇİN ANA VERİ PAKETİ
         const payload = {
             tarih: tarihFormat, // A Sütunu
             ogrenci: name, // B Sütunu
             seviye: document.getElementById("studentLevel").value.trim() || "Genel", // C Sütunu
             genel: overallScoreEl.innerText, // D Sütunu
-            vocabulary: document.getElementById("scVocabulary").value, // E Sütunu
-            konusma: document.getElementById("scKonusma").value, // F Sütunu
-            okuma: document.getElementById("scOkuma").value, // G Sütunu
-            yazma: document.getElementById("scYazma").value, // H Sütunu
-            grammar: document.getElementById("scGrammar").value, // I Sütunu
+            vocabulary: vocabVal, // E Sütunu
+            konusma: konusmaVal, // F Sütunu
+            okuma: okumaVal, // G Sütunu
+            yazma: yazmaVal, // H Sütunu
+            grammar: grammarVal, // I Sütunu
             deneme: examScore.value, // J Sütunu
-            ders_tarihi: tarihFormat, // L Sütunu
-            ders_durumu: document.getElementById("startComment").value.trim() || "Giriş Yapıldı", // M Sütunu
+            ders_tarihi: document.getElementById("completedLessonDate").value 
+                ? new Date(document.getElementById("completedLessonDate").value).toLocaleDateString("tr-TR") 
+                : tarihFormat, // L Sütunu
+            ders_durumu: "tamamlandı", // M Sütunu
             odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("chkAnlasildi").checked ? "Evet" : "Hayır"), // N Sütunu
-            konu: document.getElementById("lessonTopic").value.trim() || "Belirtilmedi" // O Sütunu
+            konu: topicVal || "Belirtilmedi" // O Sütunu
         };
 
-        // ... (payload tanımından hemen sonraki try-catch alanını burayla değiştirin)
         try {
-            // 1. ADIM: TAMAMLANAN DERS VERİSİNİ GÖNDER (M sütununa "tamamlandı" yazar)
-            payload.ders_durumu = "tamamlandı";
-            payload.ders_tarihi = document.getElementById("completedLessonDate").value 
-                ? new Date(document.getElementById("completedLessonDate").value).toLocaleDateString("tr-TR") 
-                : tarihFormat;
+            // AKILLI KONTROL: Eğer becerilerin hepsi 0 ise ve konu başlığı girilmemişse ders işlenmemiş sayılır
+            const hasLessonScores = (vocabVal > 0 || konusmaVal > 0 || okumaVal > 0 || yazmaVal > 0 || grammarVal > 0 || topicVal !== "");
 
-            await fetch(url, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+            // 1. ADIM: EĞER BİR DERS İŞLENDİYSE TAMAMLANAN DERSİ GÖNDER
+            if (hasLessonScores) {
+                await fetch(url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            }
 
             // 2. ADIM: EĞER BİR SONRAKİ DERS TARİHİ SEÇİLDİYSE, GELECEK DERS SATIRINI GÖNDER
             const nextDateInput = document.getElementById("nextLessonDate").value;
             if (nextDateInput) {
-                // Sadece gelecek ders için gerekli minimum bilgileri içeren yeni bir paket oluşturuyoruz
                 const nextPayload = {
                     tarih: tarihFormat, // A sütunu
                     ogrenci: payload.ogrenci, // B sütunu
                     seviye: payload.seviye, // C sütunu
-                    genel: "", // Gelecek dersin henüz puanı olmadığı için boş geçiyoruz
-                    vocabulary: "", konusma: "", okuma: "", yazma: "", grammar: "", deneme: "", sifre: "",
+                    genel: "", vocabulary: "", konusma: "", okuma: "", yazma: "", grammar: "", deneme: "", sifre: "",
                     ders_tarihi: new Date(nextDateInput).toLocaleDateString("tr-TR"), // L Sütunu (Seçilen Gelecek Ders Tarihi)
-                    ders_durumu: "sonraki", // M Sütunu (Sitenizin tetiklenmesi için kritik kelime)
+                    ders_durumu: "sonraki", // M Sütunu
                     odev_durumu: "Gelecek Ders Planlaması", // N Sütunu
                     konu: "Planlanan Ders" // O Sütunu
                 };
 
-                // İkinci satır olarak Sheets'e gönderiyoruz
                 await fetch(url, {
                     method: "POST",
                     mode: "no-cors",
@@ -1265,10 +1255,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             }
 
+            // DURUMA GÖRE KULLANICI BİLGİLENDİRME MESAJLARI
             statusMsg.style.display = "block";
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
-            statusMsg.innerText = "Ders başarıyla tamamlandı ve gelecek ders planı takvime işlendi!";
+            
+            if (hasLessonScores && nextDateInput) {
+                statusMsg.innerText = "Ders tamamlandı ve gelecek ders planı takvime işlendi!";
+            } else if (nextDateInput) {
+                statusMsg.innerText = "Gelecek ders planlaması başarıyla eklendi (Tamamlanan ders açılmadı).";
+            } else {
+                statusMsg.innerText = "Ders değerlendirmesi başarıyla sisteme işlendi.";
+            }
+
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
             
         } catch (error) {
@@ -1277,6 +1276,7 @@ document.addEventListener("DOMContentLoaded", function() {
             statusMsg.style.color = "#C5221F";
             statusMsg.innerText = "Hata oluştu! Veriler gönderilemedi.";
         } finally {
+            // BUTON HER KOŞULDA KESİNLİKLE AKTİF HALE GERİ DÖNER
             saveBtn.disabled = false;
             saveBtn.innerText = "Formu Kaydet (Yeni Satır)";
         }
