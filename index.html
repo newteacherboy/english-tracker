@@ -1200,66 +1200,63 @@ document.addEventListener("DOMContentLoaded", function() {
         const activeStartBtn = document.querySelector("#startStatusGroup .r-status-btn.active");
         const startStatusVal = activeStartBtn ? activeStartBtn.getAttribute("data-val") : "Belirtilmedi";
 
-        // GÜNCEL TARİH OLUŞTURULUYOR (DD.MM.YYYY Formatı)
+        // GÜNCEL TARİH OLUŞTURULUYOR (A ve L Sütunları İçin DD.MM.YYYY Formatı)
         const bugun = new Date();
         const gun = String(bugun.getDate()).padStart(2, '0');
         const ay = String(bugun.getMonth() + 1).padStart(2, '0');
         const yil = bugun.getFullYear();
         const tarihFormat = gun + "." + ay + "." + yil;
 
-        // TAMAMLANAN DERS İÇİN ANA VERİ PAKETİ
+        // TABLO SÜTUN BAŞLIKLARINA GÖRE VERİ PAKETİ
         const payload = {
-            tarih: tarihFormat,
-            ogrenci: name,
-            seviye: document.getElementById("studentLevel").value.trim() || "Genel",
-            genel: overallScoreEl.innerText,
-            vocabulary: document.getElementById("scVocabulary").value,
-            konusma: document.getElementById("scKonusma").value,
-            okuma: document.getElementById("scOkuma").value,
-            yazma: document.getElementById("scYazma").value,
-            grammar: document.getElementById("scGrammar").value,
-            deneme: examScore.value,
-            ders_tarihi: document.getElementById("completedLessonDate").value ? new Date(document.getElementById("completedLessonDate").value).toLocaleDateString("tr-TR") : tarihFormat,
-            ders_durumu: "tamamlandı",
-            odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("chkAnlasildi").checked ? "Evet" : "Hayır"),
-            konu: document.getElementById("lessonTopic").value.trim() || "Belirtilmedi"
+            tarih: tarihFormat, // A Sütunu
+            ogrenci: name, // B Sütunu
+            seviye: document.getElementById("studentLevel").value.trim() || "Genel", // C Sütunu
+            genel: overallScoreEl.innerText, // D Sütunu
+            vocabulary: document.getElementById("scVocabulary").value, // E Sütunu
+            konusma: document.getElementById("scKonusma").value, // F Sütunu
+            okuma: document.getElementById("scOkuma").value, // G Sütunu
+            yazma: document.getElementById("scYazma").value, // H Sütunu
+            grammar: document.getElementById("scGrammar").value, // I Sütunu
+            deneme: examScore.value, // J Sütunu
+            ders_tarihi: tarihFormat, // L Sütunu
+            ders_durumu: document.getElementById("startComment").value.trim() || "Giriş Yapıldı", // M Sütunu
+            odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("chkAnlasildi").checked ? "Evet" : "Hayır"), // N Sütunu
+            konu: document.getElementById("lessonTopic").value.trim() || "Belirtilmedi" // O Sütunu
         };
 
+        // ... (payload tanımından hemen sonraki try-catch alanını burayla değiştirin)
         try {
-            // AKILLI KONTROL: Formda puan girilmiş mi yoksa konu başlığı yazılmış mı?
-            const hasLessonScores = (
-                parseInt(document.getElementById("scVocabulary").value) > 0 ||
-                parseInt(document.getElementById("scKonusma").value) > 0 ||
-                parseInt(document.getElementById("scOkuma").value) > 0 ||
-                parseInt(document.getElementById("scYazma").value) > 0 ||
-                parseInt(document.getElementById("scGrammar").value) > 0 ||
-                document.getElementById("lessonTopic").value.trim() !== ""
-            );
+            // 1. ADIM: TAMAMLANAN DERS VERİSİNİ GÖNDER (M sütununa "tamamlandı" yazar)
+            payload.ders_durumu = "tamamlandı";
+            payload.ders_tarihi = document.getElementById("completedLessonDate").value 
+                ? new Date(document.getElementById("completedLessonDate").value).toLocaleDateString("tr-TR") 
+                : tarihFormat;
 
-            // 1. ADIM: EĞER DERS İŞLENDİYSE TAMAMLANAN DERSİ GÖNDER
-            if (hasLessonScores) {
-                await fetch(url, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            }
+            await fetch(url, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
 
             // 2. ADIM: EĞER BİR SONRAKİ DERS TARİHİ SEÇİLDİYSE, GELECEK DERS SATIRINI GÖNDER
             const nextDateInput = document.getElementById("nextLessonDate").value;
             if (nextDateInput) {
+                // Sadece gelecek ders için gerekli minimum bilgileri içeren yeni bir paket oluşturuyoruz
                 const nextPayload = {
-                    tarih: tarihFormat,
-                    ogrenci: name,
-                    seviye: payload.seviye,
-                    genel: "", vocabulary: "", konusma: "", okuma: "", yazma: "", grammar: "", deneme: "", sifre: "",
-                    ders_tarihi: new Date(nextDateInput).toLocaleDateString("tr-TR"),
-                    ders_durumu: "sonraki",
-                    odev_durumu: "Gelecek Ders Planlaması",
-                    konu: "Planlanan Ders"
+                    tarih: tarihFormat, // A sütunu
+                    ogrenci: payload.ogrenci, // B sütunu
+                    seviye: payload.seviye, // C sütunu
+                    genel: "", // Gelecek dersin henüz puanı olmadığı için boş geçiyoruz
+                    vocabulary: "", konusma: "", okuma: "", yazma: "", grammar: "", deneme: "", sifre: "",
+                    ders_tarihi: new Date(nextDateInput).toLocaleDateString("tr-TR"), // L Sütunu (Seçilen Gelecek Ders Tarihi)
+                    ders_durumu: "sonraki", // M Sütunu (Sitenizin tetiklenmesi için kritik kelime)
+                    odev_durumu: "Gelecek Ders Planlaması", // N Sütunu
+                    konu: "Planlanan Ders" // O Sütunu
                 };
 
+                // İkinci satır olarak Sheets'e gönderiyoruz
                 await fetch(url, {
                     method: "POST",
                     mode: "no-cors",
@@ -1268,19 +1265,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             }
 
-            // Geri bildirim mesajları
             statusMsg.style.display = "block";
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
-            
-            if (hasLessonScores && nextDateInput) {
-                statusMsg.innerText = "Ders tamamlandı ve gelecek ders planı takvime işlendi!";
-            } else if (nextDateInput) {
-                statusMsg.innerText = "Gelecek ders planlaması başarıyla takvime eklendi.";
-            } else {
-                statusMsg.innerText = "Ders değerlendirmesi başarıyla sisteme işlendi.";
-            }
-            
+            statusMsg.innerText = "Ders başarıyla tamamlandı ve gelecek ders planı takvime işlendi!";
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
             
         } catch (error) {
@@ -1289,10 +1277,12 @@ document.addEventListener("DOMContentLoaded", function() {
             statusMsg.style.color = "#C5221F";
             statusMsg.innerText = "Hata oluştu! Veriler gönderilemedi.";
         } finally {
-            // BUTONU YENİDEN AKTİF EDİYORUZ
             saveBtn.disabled = false;
             saveBtn.innerText = "Formu Kaydet (Yeni Satır)";
         }
     });
+});
+</script>
+  
 </body>
 </html>
