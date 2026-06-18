@@ -1214,7 +1214,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ders_tarihi: document.getElementById("completedLessonDate").value 
                 ? new Date(document.getElementById("completedLessonDate").value).toLocaleDateString("tr-TR") 
                 : tarihFormat, // L Sütunu
-            ders_durumu: "tamamlandı", // M Sütunu
+            ders_durumu: "tamamlandi", // M Sütunu
             odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("chkAnlasildi").checked ? "Evet" : "Hayır"), // N Sütunu
             konu: topicVal || "Belirtilmedi" // O Sütunu
         };
