@@ -1298,6 +1298,62 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
+<!-- ÖĞRETMENÇOCUK PDF MOTORU BAŞLANGICI -->
+<script>
+function haftalikVeliKarnesiUret(veri) {
+    const karneTasarimi = `
+    <div style="font-family:Arial,sans-serif; padding:20px; color:#2d3748;">
+        <div style="border-bottom:3px solid #1a365d; padding-bottom:10px; margin-bottom:20px;">
+            <h1 style="color:#1a365d; margin:0; font-size:22px;">ÖĞRETMENÇOCUK</h1>
+            <p style="margin:4px 0; color:#4a5568; font-size:12px;">İngilizce Özel Ders & Eğitim Koçluğu Takip Sistemi</p>
+        </div>
+        <div style="background-color:#f8fafc; border-left:5px solid #2b6cb0; padding:12px; margin-bottom:20px;">
+            <p style="margin:5px 0;"><strong>Öğrenci Adı:</strong> ${veri.isim || 'Öğrenci'}</p>
+            <p style="margin:5px 0;"><strong>Dil Seviyesi:</strong> ${veri.dilSeviyesi || 'Belirlenmedi'}</p>
+            <p style="margin:5px 0;"><strong>Rapor Tarihi:</strong> ${new Date().toLocaleDateString('tr-TR')}</p>
+        </div>
+        <h2 style="font-size:14px; color:#1a365d; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">PERFORMANS GÖSTERGELERİ</h2>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:13px;">
+            <tr style="background:#2d3748; color:white;"><th style="padding:8px; text-align:left;">Kriter</th><th style="padding:8px; text-align:center;">Skor</th></tr>
+            <tr><td style="padding:8px; border:1px solid #e2e8f0;">Genel Başarı Puanı</td><td style="padding:8px; border:1px solid #e2e8f0; text-align:center; font-weight:bold;">${veri.genelPuan || '-'}</td></tr>
+            <tr><td style="padding:8px; border:1px solid #e2e8f0;">Son Deneme Puanı</td><td style="padding:8px; border:1px solid #e2e8f0; text-align:center; font-weight:bold;">${veri.sonDenemePuanı || '-'}</td></tr>
+        </table>
+        <h2 style="font-size:14px; color:#1a365d; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">ÖĞRETMEN DEĞERLENDİRMESİ</h2>
+        <div style="background-color:#ebf8ff; border:1px solid #bee3f8; border-radius:6px; padding:12px; font-style:italic; color:#2c5282; font-size:13px;">
+            "${veri.haftalikYorum || 'Bu haftaya ait öğretmen yorumu sisteme yüklendi.'}"
+        </div>
+        <div style="margin-top:40px; font-size:13px;">
+            <div style="float:right; text-align:right;"><strong>Mert Akkayaoğlu</strong><br><span style="font-size:11px; color:#718096;">İngilizce Öğretmeni & Eğitim Koçu</span></div>
+        </div>
+    </div>`;
+
+    const ayarlar = {
+        margin: 15,
+        filename: (veri.isim || 'Ogrenci') + '_Veli_Karnesi.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().from(karneTasarimi).set(ayarlar).save();
+}
+
+// Sizin mevcut sistemdeki verileri otomatik yakalayan akıllı dinleyici
+// Kodunuzdaki veriyi tetikleyen herhangi bir global değişkene bağlanır.
+setInterval(() => {
+    // Sitenizde veriyi tutan nesne (mevcutOgrenci veya data) aktif olduğunda butonu açar
+    let aktifVeri = typeof mevcutOgrenci !== 'undefined' ? mevcutOgrenci : (typeof data !== 'undefined' ? data : null);
+    let btn = document.getElementById("pdfIndirBtn");
+    
+    if(aktifVeri && btn) {
+        btn.style.display = "inline-block"; // Giriş yapılınca butonu görünür yap
+        btn.onclick = function() {
+            haftalikVeliKarnesiUret(aktifVeri);
+        };
+    }
+}, 1000); // Her saniye arka planda kontrol et (parantez bozma derdi yok)
+</script>
+<!-- ÖĞRETMENÇOCUK PDF MOTORU BİTİŞİ -->
   
 </body>
 </html>
