@@ -159,20 +159,7 @@ canvas { max-height: 200px; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
 
-<!-- Başlangıçta Gizli Olan Veli Karnesi Butonu -->
-<button id="pdfIndirBtn" style="
-    display: none; /* İlk başta tamamen gizli */
-    background: #1a365d; 
-    color: white; 
-    padding: 10px 20px; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    margin: 10px auto;
-">
-    📄 Haftalık Veli Karnesini İndir (PDF)
-</button>
+
   
 /* CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI */
 .teacher-feedback-card {
@@ -261,6 +248,8 @@ let unlockedStudents = {};
 let activeStudent = null;
 let activePageTab = "ozet"; 
 let denemelerData = [];
+
+  
 
 // Tarih dizilim yardımcısı
 const parseDateStr = (dStr) => {
@@ -972,6 +961,20 @@ function drawDenemeChart(name) {
 }
 </script>
 
+  <button id="pdfIndirBtn" style="
+    display: inline-block; /* Her zaman açık, ama sadece bu panel açılınca görünecek */
+    background: #1a365d; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    margin: 15px auto;
+">
+    📄 Haftalık Veli Karnesini İndir (PDF)
+</button>
+
 <button id="rubrikOpenBtn" style="display: block; margin: 30px auto; padding: 12px 22px; border-radius: 10px; border: none; background: #9B5435; color: #fff; font-size: 15px; font-weight: 700; font-family: 'IBM Plex Sans',-apple-system,sans-serif; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
   Öğrenci Değerlendir
 </button>
@@ -1315,8 +1318,8 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-<!-- ÖĞRETMENÇOCUK PDF MOTORU BAŞLANGICI -->
 <script>
+// PDF Üreten Ana Fonksiyon
 function haftalikVeliKarnesiUret(veri) {
     const karneTasarimi = `
     <div style="font-family:Arial,sans-serif; padding:20px; color:#2d3748;">
@@ -1325,19 +1328,12 @@ function haftalikVeliKarnesiUret(veri) {
             <p style="margin:4px 0; color:#4a5568; font-size:12px;">İngilizce Özel Ders & Eğitim Koçluğu Takip Sistemi</p>
         </div>
         <div style="background-color:#f8fafc; border-left:5px solid #2b6cb0; padding:12px; margin-bottom:20px;">
-            <p style="margin:5px 0;"><strong>Öğrenci Adı:</strong> ${veri.isim || 'Öğrenci'}</p>
-            <p style="margin:5px 0;"><strong>Dil Seviyesi:</strong> ${veri.dilSeviyesi || 'Belirlenmedi'}</p>
+            <p style="margin:5px 0;"><strong>Öğrenci Adı:</strong> ${veri.isim}</p>
             <p style="margin:5px 0;"><strong>Rapor Tarihi:</strong> ${new Date().toLocaleDateString('tr-TR')}</p>
         </div>
-        <h2 style="font-size:14px; color:#1a365d; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">PERFORMANS GÖSTERGELERİ</h2>
-        <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:13px;">
-            <tr style="background:#2d3748; color:white;"><th style="padding:8px; text-align:left;">Kriter</th><th style="padding:8px; text-align:center;">Skor</th></tr>
-            <tr><td style="padding:8px; border:1px solid #e2e8f0;">Genel Başarı Puanı</td><td style="padding:8px; border:1px solid #e2e8f0; text-align:center; font-weight:bold;">${veri.genelPuan || '-'}</td></tr>
-            <tr><td style="padding:8px; border:1px solid #e2e8f0;">Son Deneme Puanı</td><td style="padding:8px; border:1px solid #e2e8f0; text-align:center; font-weight:bold;">${veri.sonDenemePuanı || '-'}</td></tr>
-        </table>
-        <h2 style="font-size:14px; color:#1a365d; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">ÖĞRETMEN DEĞERLENDİRMESİ</h2>
+        <h2 style="font-size:14px; color:#1a365d; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">HAFTALIK DEĞERLENDİRME</h2>
         <div style="background-color:#ebf8ff; border:1px solid #bee3f8; border-radius:6px; padding:12px; font-style:italic; color:#2c5282; font-size:13px;">
-            "${veri.haftalikYorum || 'Bu haftaya ait öğretmen yorumu sisteme yüklendi.'}"
+            "${veri.haftalikYorum}"
         </div>
         <div style="margin-top:40px; font-size:13px;">
             <div style="float:right; text-align:right;"><strong>Mert Akkayaoğlu</strong><br><span style="font-size:11px; color:#718096;">İngilizce Öğretmeni & Eğitim Koçu</span></div>
@@ -1346,7 +1342,7 @@ function haftalikVeliKarnesiUret(veri) {
 
     const ayarlar = {
         margin: 15,
-        filename: (veri.isim || 'Ogrenci') + '_Veli_Karnesi.pdf',
+        filename: 'Haftalik_Veli_Karnesi.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -1354,41 +1350,16 @@ function haftalikVeliKarnesiUret(veri) {
     html2pdf().from(karneTasarimi).set(ayarlar).save();
 }
 
-// Sizin mevcut sistemdeki verileri otomatik yakalayan akıllı dinleyici
-// Kodunuzdaki veriyi tetikleyen herhangi bir global değişkene bağlanır.
-// Sayfada arka planda sürekli çalışan akıllı dedektör
-setInterval(() => {
-    // 1. İhtimal: Şifre girilince sitende görünür olan rapor panelini yakala
-    // Aşağıdaki '.info-section', '#ozet', '.report-container' gibi yaygın isimlerden biri senin sitemde varsa onu bulur
-    let raporPaneli = document.querySelector('.info-section') || document.querySelector('#ozet') || document.querySelector('.tabs');
-    
-    // 2. İhtimal: Şifre girilince ekrandan kaybolan giriş kutusunu kontrol et
-    let girisKutusu = document.getElementById('login-box') || document.getElementById('auth-container');
-
-    let btn = document.getElementById("pdfIndirBtn");
-
-    if (btn) {
-        // Eğer rapor paneli ekranda açıldıysa VEYA giriş kutusu artık gizlendiyse (yani şifre doğru girildiyse)
-        if ((raporPaneli && window.getComputedStyle(raporPaneli).display !== 'none') || (girisKutusu && window.getComputedStyle(girisKutusu).display === 'none')) {
-            
-            btn.style.display = "block"; // Butonu artık veliye göster!
-
-            btn.onclick = function() {
-                // Ekrandaki güncel öğrenci verilerini HTML'den canlı topla
-                let dinamikVeri = {
-                    isim: document.querySelector('h1')?.innerText || document.querySelector('.student-name')?.innerText || "Öğrenci",
-                    dilSeviyesi: "LGS İngilizce Hazırlık",
-                    genelPuan: document.querySelector('.genel-skor')?.innerText || "Veri Alınamadı",
-                    sonDenemePuanı: document.querySelector('.deneme-skor')?.innerText || "-",
-                    haftalikYorum: document.querySelector('.ogretmen-notu')?.innerText || "Haftalık gelişim raporu başarıyla yüklendi."
-                };
-                haftalikVeliKarnesiUret(dinamikVeri);
-            };
-        }
-    }
-}, 800); // Her 0.8 saniyede bir kontrol et, şifre girildiği an buton pat diye çıksın
+// Butona tıklandığında ekrandaki verileri toplayıp PDF fonksiyonuna gönderen tetikleyici
+document.getElementById("pdfIndirBtn").onclick = function() {
+    let toplananVeri = {
+        // Ekrandaki öğrenci ismini yazan etiketin sınıfını veya id'sini sitene göre revize edebilirsin
+        isim: document.querySelector('h1')?.innerText || "Öğrenci Girişi", 
+        haftalikYorum: "Haftalık gelişim raporu ve ders detayları başarıyla güncellenmiştir."
+    };
+    haftalikVeliKarnesiUret(toplananVeri);
+};
 </script>
-<!-- ÖĞRETMENÇOCUK PDF MOTORU BİTİŞİ -->
   
 </body>
 </html>
