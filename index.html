@@ -1324,21 +1324,30 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("click", function(event) {
     if (event.target && event.target.id === "pdfIndirBtn") {
         
-        // 1. Ekrandaki öğrenci ismini canlı yakala
-        let ogrenciIsmi = "Öğrenci Girişi";
+        // 1. SİTEDEN CANLI VERİ ÇEKME ALANI
+        // Bu kod sitenin neresinde h1, h2 veya h3 varsa (Barış, Erva vb.) o ismi canlı yakalar.
+        let canlıOgrenciIsmi = "Öğrenci Girişi";
         let isimAlani = document.querySelector('.info-section h3') || document.querySelector('.student-name') || document.querySelector('h1') || document.querySelector('h2');
         if (isimAlani) {
-            ogrenciIsmi = isimAlani.innerText;
+            canlıOgrenciIsmi = isimAlani.innerText;
         }
 
-        // 2. Boş bir yazdırma penceresi aç
+        // Sitenizde haftalık yorumun veya rubrik notunun yazdığı bir alan varsa tarayıcıdan onu çeker.
+        // Eğer bulamazsa aşağıdaki varsayılan öğretmen mesajını yazar.
+        let canlıOgretmenNotu = "Öğrencimizin haftalık gelişim durumu, kelime ezber takibi ve LGS deneme gidişatı sistemimize başarıyla işlenmiştir. Süreçteki kararlılığından ötürü öğrencimizi tebrik ederiz.";
+        let yorumAlani = document.querySelector('.ogretmen-notu') || document.querySelector('#yorumAlani') || document.querySelector('.comment-box');
+        if (yorumAlani && yorumAlani.innerText.trim() !== "") {
+            canlıOgretmenNotu = yorumAlani.innerText;
+        }
+
+        // 2. BOŞ YAZDIRMA PENCERESİ AÇMA
         let yazdirmaPenceresi = window.open('', '', 'height=700,width=900');
         
-        // 3. İçine şık Veli Karnesi tasarımımızı ve CSS'leri bas
+        // 3. İÇİNE ÖĞRENCİYE ÖZEL VERİLERİ BASMA
         yazdirmaPenceresi.document.write(`
         <html>
         <head>
-            <title>${ogrenciIsmi} - Haftalık Veli Karnesi</title>
+            <title>${canlıOgrenciIsmi} - Haftalık Veli Karnesi</title>
             <style>
                 body { font-family: Arial, sans-serif; color: #2d3748; padding: 40px; background: #ffffff; }
                 .header { border-bottom: 3px solid #1a365d; padding-bottom: 15px; margin-bottom: 30px; }
@@ -1369,14 +1378,14 @@ document.addEventListener("click", function(event) {
             </div>
 
             <div class="box">
-                <p><strong>Öğrenci Adı:</strong> ${ogrenciIsmi}</p>
-                <p><strong>Eğitim Dönemi:</strong> ${new Date().toLocaleDateString('tr-TR')} Haftalık Raporu</p>
-                <p><strong>Eğitim Danışmanı:</strong> Mert Akkayaoğlu</p>
+                <p><strong>Öğrenci Adı:</strong> ${canlıOgrenciIsmi}</p>
+                <p><strong>Rapor Tarihi:</strong> ${new Date().toLocaleDateString('tr-TR')}</p>
+                <p><strong>Eğitim Danışmanı:</strong> Mert Akkayaoğlu (Uzman İngilizce Öğretmeni)</p>
             </div>
 
             <h2>Haftalık Değerlendirme ve Koçluk Notu</h2>
             <div class="comment">
-                "Öğrencimizin haftalık gelişim durumu, kelime ezber takibi ve deneme gidişatı sistemimize başarıyla işlenmiştir. LGS hazırlık sürecinde gösterdiği istikrardan ötürü öğrencimizi tebrik eder, başarılarının devamını dileriz. Güncel ödev ve konu takibine öğrenci panelimizden her an ulaşabilirsiniz."
+                "${canlıOgretmenNotu}"
             </div>
 
             <div class="footer">
@@ -1393,7 +1402,7 @@ document.addEventListener("click", function(event) {
         
         yazdirmaPenceresi.document.close();
         
-        // 4. Pencere tamamen dolunca tarayıcının kendi PDF/Yazdır menüsünü tetikle
+        // 4. EKRANA yazdırma penceresini fırlat
         setTimeout(() => {
             yazdirmaPenceresi.print();
         }, 500);
