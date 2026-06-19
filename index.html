@@ -564,26 +564,26 @@ function buildBadges(genel, prevGenel, currentStudentName) {
 
 // 2. Barış için Şampiyonlar Ligi Listesi (Cihaz uyumlu takım renkleri)
   const BARIS_BADGES = [
-    { score: 5,   emoji: "🟡", label: "Young Boys" },
-    { score: 10,  emoji: "🔵", label: "Dinamo Zagreb" },
-    { score: 15,  emoji: "⚫", label: "PAOK" },
-    { score: 20,  emoji: "🔴", label: "Kızıl Yıldız" },
-    { score: 25,  emoji: "🟢", label: "Celtic" },
-    { score: 30,  emoji: "🟢", label: "Sporting CP" },
-    { score: 35,  emoji: "🔴", label: "Benfica" },
-    { score: 40,  emoji: "🔴", label: "Feyenoord" },
-    { score: 45,  emoji: "🔴", label: "PSV Eindhoven" },
-    { score: 50,  emoji: "🔴", label: "AC Milan" },
-    { score: 55,  emoji: "🍇", label: "Aston Villa" },
-    { score: 60,  emoji: "⚫", label: "Juventus" },
-    { score: 65,  emoji: "🔴", label: "Atletico Madrid" },
-    { score: 70,  emoji: "🔵", label: "Inter Milan" },
-    { score: 75,  emoji: "🟡", label: "B. Dortmund" },
-    { score: 80,  emoji: "🔴", label: "Paris SG" },
-    { score: 85,  emoji: "⚪", label: "Bayern Münih" },
-    { score: 90,  emoji: "🩵", label: "Manchester City" },
-    { score: 95,  emoji: "👑", label: "Real Madrid" },
-    { score: 100, emoji: "🦁", label: "GALATASARAY" }
+    { score: 5,   emoji: "🟡⚫", label: "Young Boys" },
+    { score: 10,  emoji: "🔵⚪", label: "Dinamo Zagreb" },
+    { score: 15,  emoji: "⚫⚪", label: "PAOK" },
+    { score: 20,  emoji: "🔴⚪", label: "Kızıl Yıldız" },
+    { score: 25,  emoji: "🟢⚪", label: "Celtic" },
+    { score: 30,  emoji: "🟢⚪", label: "Sporting CP" },
+    { score: 35,  emoji: "🔴⚪", label: "Benfica" },
+    { score: 40,  emoji: "🔴⚪", label: "Feyenoord" },
+    { score: 45,  emoji: "🔴⚪", label: "PSV Eindhoven" },
+    { score: 50,  emoji: "🔴⚫", label: "AC Milan" },
+    { score: 55,  emoji: "🍇🩵", label: "Aston Villa" },
+    { score: 60,  emoji: "⚫⚪", label: "Juventus" },
+    { score: 65,  emoji: "🔴⚪", label: "Atletico Madrid" },
+    { score: 70,  emoji: "🔵⚫", label: "Inter Milan" },
+    { score: 75,  emoji: "🟡⚫", label: "B. Dortmund" },
+    { score: 80,  emoji: "🔴🔵", label: "Paris SG" },
+    { score: 85,  emoji: "🔴⚪", label: "Bayern Münih" },
+    { score: 90,  emoji: "🩵⚪", label: "Manchester City" },
+    { score: 95,  emoji: "⚪👑", label: "Real Madrid" },
+    { score: 100, emoji: "🦁🔴🟡", label: "GALATASARAY" }
   ];
 
   // 3. Mert için Çizgi Film Listesi (20 Adet)
@@ -942,6 +942,132 @@ function drawDenemeChart(name) {
 }
 </script>
 
+<!-- ============================================================
+     SABİT BAŞLIKLI ÖĞRENCİ DEĞERLENDİRME RUBRİĞİ (YENİ SATIR EKLEME)
+     ============================================================ -->
+<button id="rubrikOpenBtn" style="display: block; margin: 30px auto; padding: 12px 22px; border-radius: 10px; border: none; background: #9B5435; color: #fff; font-size: 15px; font-weight: 700; font-family: 'IBM Plex Sans',-apple-system,sans-serif; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+  Öğrenci Değerlendir
+</button>
+
+<div id="rubrikOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div id="rubrikModal" style="background:#F6F4EF;border-radius:14px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;position:relative;font-family:'IBM Plex Sans',-apple-system,sans-serif;color:#262320;">
+
+    <button id="rubrikCloseBtn" aria-label="Kapat" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:none;background:#fff;color:#5A554C;font-size:18px;cursor:pointer;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,0.15);">×</button>
+
+    <!-- ŞİFRE EKRANI -->
+    <div id="lockScreen" style="min-height:340px;display:flex;align-items:center;justify-content:center;padding:30px 20px;">
+      <div id="lockBox" style="text-align:center;width:100%;max-width:300px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:10px;">Özel Ders Değerlendirme</div>
+        <h2 style="font-size:18px;margin-bottom:16px;">Devam etmek için şifre girin</h2>
+        <input type="password" id="passInput" placeholder="Şifre" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #E2DDD2;font-size:15px;text-align:center;margin-bottom:10px;font-family:inherit;">
+        <button id="unlockBtn" style="width:100%;padding:11px;border-radius:8px;border:none;background:#9B5435;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Giriş</button>
+        <div id="passError" style="display:none;color:#A33B22;font-size:12.5px;margin-top:8px;">Şifre yanlış.</div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div id="rubrikApp" style="display:none;">
+      <div style="padding:20px 20px 30px;">
+
+        <header style="margin-bottom:18px;padding-right:30px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:4px;">Özel Ders Değerlendirme</div>
+          <h1 style="font-size:20px;font-weight:700;line-height:1.25;margin:0;">İngilizce Ders Rubriği</h1>
+        </header>
+
+        <!-- KİMLİK / GENEL BİLGİLER -->
+        <div class="r-card">
+          <label class="r-label-sm">ÖĞRENCİ ADI (B Sütunu)</label>
+          <input type="text" id="studentName" placeholder="Örn. Ayşe Yılmaz" style="margin-bottom:10px;">
+          
+          <label class="r-label-sm">DERS KONUSU (O Sütunu)</label>
+          <input type="text" id="lessonTopic" placeholder="Örn. Present Perfect" style="margin-bottom:10px;">
+
+          <label class="r-label-sm">ÖĞRENCİ SEVİYESİ (C Sütunu)</label>
+          <input type="text" id="studentLevel" placeholder="Örn. A2, LGS, Intermediate" value="Genel">
+        </div>
+
+        <!-- GENEL ORTALAMA PUAN (D Sütunu) -->
+        <div style="background:linear-gradient(135deg,#9B5435,#B56A47);border-radius:12px;padding:16px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:11.5px;font-weight:600;color:#FBEFE7;letter-spacing:0.06em;text-transform:uppercase;">Genel Puan (Ortalama)</div>
+            <div style="font-size:11px;color:#F3D9C7;margin-top:2px;">5 Becerinin Matematiksel Ortalaması</div>
+          </div>
+          <div id="overallScore" style="font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:700;color:#fff;">0</div>
+        </div>
+
+        <!-- DERS BAŞI SÜREÇLERİ -->
+        <div class="r-card">
+          <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Başı Durumu</div>
+          <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">Hazırlık Kontrolleri</div>
+          
+          <div style="margin-bottom:10px;">
+            <div style="font-size:13px; font-weight:500; margin-bottom:4px;">Ödev, Tekrar, Hazırlık Kontrolü:</div>
+            <div class="r-btn-group" id="startStatusGroup">
+              <button type="button" class="r-status-btn" data-val="Yaptı">Yaptı</button>
+              <button type="button" class="r-status-btn" data-val="Yapmadı">Yapmadı</button>
+              <button type="button" class="r-status-btn" data-val="Eksik">Eksik</button>
+              <button type="button" class="r-status-btn" data-val="Tekrar Yaptı">Tekrar</button>
+            </div>
+          </div>
+          <label class="r-label-sm">DERS BAŞI NOTU</label>
+          <textarea id="startComment" rows="2" placeholder="Hazır bulunuşluk hakkında not..."></textarea>
+        </div>
+
+        <!-- 5 DİL BECERİSİ SKORLARI (E, F, G, H, I Sütunları) -->
+        <div class="r-card">
+          <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders İçi Gelişim</div>
+          <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">5 Temel Beceri Seviyesi (0-100)</div>
+          
+          <div class="skill-row"><span>Vocabulary</span> <input type="range" class="r-slider skill-input" id="scVocabulary" value="0"><span class="score-val">0</span></div>
+          <div class="skill-row"><span>Konuşma</span> <input type="range" class="r-slider skill-input" id="scKonusma" value="0"><span class="score-val">0</span></div>
+          <div class="skill-row"><span>Okuma</span> <input type="range" class="r-slider skill-input" id="scOkuma" value="0"><span class="score-val">0</span></div>
+          <div class="skill-row"><span>Yazma</span> <input type="range" class="r-slider skill-input" id="scYazma" value="0"><span class="score-val">0</span></div>
+          <div class="skill-row"><span>Grammar</span> <input type="range" class="r-slider skill-input" id="scGrammar" value="0"><span class="score-val">0</span></div>
+
+          <!-- DENEME PUANI (J Sütunu) -->
+          <div style="border-top:1px solid #F0EBE0;margin-top:12px;padding-top:12px;">
+            <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px;">
+              <span style="font-weight: 500;">Deneme / Sınav Sonucu</span>
+              <span id="examScoreOut" style="font-family:'IBM Plex Mono',monospace;font-weight:600;color:#9B5435;">0/100</span>
+            </div>
+            <input type="range" class="r-slider" id="examScore" min="0" max="100" value="0" step="1">
+          </div>
+        </div>
+
+        <!-- DERS SONU KONTROLLERİ -->
+        <div class="r-card">
+          <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Sonu & Çıkış</div>
+          <div style="font-size:12px;color:#8A8478;margin-bottom:8px;">Kapanış Değerlendirmesi</div>
+          
+          <label class="r-check-row"><input type="checkbox" id="chkOdev"> <span>Yeni ödev verildi mi?</span></label>
+          <label class="r-check-row"><input type="checkbox" id="chkAnlasildi"> <span>Hedefler tamamlandı/Anlaşıldı mı?</span></label>
+
+          <label class="r-label-sm" style="margin-top:12px;">DERS SONU YORUMU</label>
+          <textarea id="endComment" rows="2" placeholder="Ders sonu kapanış notları..."></textarea>
+        </div>
+
+        <!-- CONFIG & STATUS -->
+        <div style="margin-bottom:14px;">
+          <button id="webhookToggle" style="font-size:12.5px;color:#8A8478;background:none;border:none;text-decoration:underline;padding:0;cursor:pointer;font-family:inherit;">Google Sheets bağlantısını ayarla</button>
+          <div id="webhookForm" class="r-card" style="display:none;margin-top:8px;">
+            <input type="text" id="webhookUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:13px;">
+            <button id="saveWebhook" style="width:100%;padding:9px;border-radius:8px;border:none;background:#262320;color:#fff;font-size:13px;font-weight:600;margin-top:6px;cursor:pointer;">Bağlantıyı Kaydet</button>
+          </div>
+        </div>
+
+        <div id="statusMsg" style="display:none;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-size:13px;"></div>
+
+        <!-- EYLEMLER -->
+        <div style="display:flex;gap:8px;">
+          <button id="saveBtn" style="flex:2;padding:13px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Formu Kaydet (Yeni Satır)</button>
+          <button id="resetBtn" style="flex:1;padding:13px;border-radius:10px;border:1.5px solid #E2DDD2;background:#fff;color:#5A554C;font-size:14px;font-weight:600;cursor:pointer;">Temizle</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
@@ -966,33 +1092,6 @@ function drawDenemeChart(name) {
   .r-check-row input { width: 18px; height: 18px; accent-color: #9B5435; flex-shrink: 0; }
   .r-label-sm { display: block; font-size: 11.5px; font-weight: 600; color: #8A8478; margin-bottom: 4px; }
 </style>
-
-            
-
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
-  #rubrikModal input, #rubrikModal textarea { font-family: inherit; box-sizing: border-box; }
-  #rubrikModal input[type=text] { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #E2DDD2; font-size: 15px; }
-  #rubrikModal textarea { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #E2DDD2; font-size: 13.5px; resize: vertical; }
-  
-  .r-slider { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: #E2DDD2; outline: none; width: 100%; }
-  .r-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #9B5435; cursor: pointer; border: 3px solid #F6F4EF; box-shadow: 0 0 0 1px #9B5435; }
-  .r-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #9B5435; cursor: pointer; border: 3px solid #F6F4EF; box-shadow: 0 0 0 1px #9B5435; }
-  
-  .r-card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 14px; border: 1px solid #E9E4D9; box-sizing: border-box; }
-  .r-btn-group { display: flex; gap: 4px; width: 100%; }
-  .r-status-btn { flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 600; border-radius: 6px; border: 1.5px solid #E2DDD2; background: #fff; color: #5A554C; cursor: pointer; }
-  .r-status-btn.active { border-color: #9B5435; background: #FBEFE7; color: #9B5435; }
-  
-  .skill-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13.5px; }
-  .skill-row span:first-child { width: 85px; font-weight: 500; }
-  .score-val { font-family: 'IBM Plex Mono', monospace; width: 30px; text-align: right; font-weight: 600; color: #9B5435; }
-  
-  .r-check-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid #F0EBE0; font-size: 14px; }
-  .r-check-row input { width: 18px; height: 18px; accent-color: #9B5435; flex-shrink: 0; }
-  .r-label-sm { display: block; font-size: 11.5px; font-weight: 600; color: #8A8478; margin-bottom: 4px; }
-</style>
-
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -1014,10 +1113,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const statusMsg = document.getElementById("statusMsg");
     const saveBtn = document.getElementById("saveBtn");
     const resetBtn = document.getElementById("resetBtn");
-
-    const bugunTarihInput = new Date().toISOString().split('T')[0];
-    document.getElementById("completedLessonDate").value = bugunTarihInput;
-    document.getElementById("nextLessonDate").value = bugunTarihInput;
 
     if(localStorage.getItem("rubrik_webhook")) {
         webhookUrlInput.value = localStorage.getItem("rubrik_webhook");
@@ -1070,8 +1165,6 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("lessonTopic").value = "";
             document.getElementById("startComment").value = "";
             document.getElementById("endComment").value = "";
-            document.getElementById("completedLessonDate").value = bugunTarihInput;
-            document.getElementById("nextLessonDate").value = bugunTarihInput;
             examScore.value = 0;
             examScoreOut.innerText = "0/100";
             document.querySelectorAll(".r-status-btn").forEach(b => b.classList.remove("active"));
@@ -1081,21 +1174,12 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    function formatTarih(dateString) {
-        if(!dateString) return "";
-        const parts = dateString.split("-");
-        return parts[2] + "." + parts[1] + "." + parts[0];
-    }
-
     saveBtn.addEventListener("click", async () => {
         const url = webhookUrlInput.value;
         const name = document.getElementById("studentName").value.trim();
-        const compDateRaw = document.getElementById("completedLessonDate").value;
-        const nextDateRaw = document.getElementById("nextLessonDate").value;
         
         if(!url) { alert("Lütfen önce Google Sheets bağlantısını ayarlayın."); return; }
         if(!name) { alert("Lütfen Öğrenci Adı alanını doldurun."); return; }
-        if(!compDateRaw || !nextDateRaw) { alert("Lütfen iki tarih alanını da doldurun."); return; }
 
         saveBtn.disabled = true;
         saveBtn.innerText = "Kaydediliyor...";
@@ -1103,47 +1187,29 @@ document.addEventListener("DOMContentLoaded", function() {
         const activeStartBtn = document.querySelector("#startStatusGroup .r-status-btn.active");
         const startStatusVal = activeStartBtn ? activeStartBtn.getAttribute("data-val") : "Belirtilmedi";
 
+        // GÜNCEL TARİH OLUŞTURULUYOR (A ve L Sütunları İçin DD.MM.YYYY Formatı)
         const bugun = new Date();
-        const tarihFormat = String(bugun.getDate()).padStart(2, '0') + "." + String(bugun.getMonth() + 1).padStart(2, '0') + "." + bugun.getFullYear();
+        const gun = String(bugun.getDate()).padStart(2, '0');
+        const ay = String(bugun.getMonth() + 1).padStart(2, '0');
+        const yil = bugun.getFullYear();
+        const tarihFormat = gun + "." + ay + "." + yil;
 
-        const tamamlananDersTarihi = formatTarih(compDateRaw);
-        const sonrakiDersTarihi = formatTarih(nextDateRaw);
-
-        const startCommentVal = document.getElementById("startComment").value.trim() || "Yok";
-        const endCommentVal = document.getElementById("endComment").value.trim() || "Yok";
-
-        const payloadTamamlandi = {
-            tarih: tarihFormat, 
-            ogrenci: name, 
-            seviye: document.getElementById("studentLevel").value.trim() || "Genel", 
-            genel: overallScoreEl.innerText, 
-            vocabulary: document.getElementById("scVocabulary").value, 
-            konusma: document.getElementById("scKonusma").value, 
-            okuma: document.getElementById("scOkuma").value, 
-            yazma: document.getElementById("scYazma").value, 
-            grammar: document.getElementById("scGrammar").value, 
-            deneme: examScore.value, 
-            ders_tarihi: tamamlananDersTarihi, 
-            ders_durumu: "tamamlandi", 
-            odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("chkAnlasildi").checked ? "Evet" : "Hayır"), 
-            konu: document.getElementById("lessonTopic").value.trim() || "Belirtilmedi" 
-        };
-
-        const payloadSonraki = {
-            tarih: tarihFormat, 
-            ogrenci: name, 
-            seviye: document.getElementById("studentLevel").value.trim() || "Genel", 
-            genel: "0", 
-            vocabulary: "0", 
-            konusma: "0", 
-            okuma: "0", 
-            yazma: "0", 
-            grammar: "0", 
-            deneme: "0", 
-            ders_tarihi: sonrakiDersTarihi, 
-            ders_durumu: "sonraki", 
-            odev_durumu: "Gelecek Ders Planı", 
-            konu: "Planlanan Sonraki Ders"
+        // TABLO SÜTUN BAŞLIKLARINA GÖRE VERİ PAKETİ
+        const payload = {
+            tarih: tarihFormat, // A Sütunu
+            ogrenci: name, // B Sütunu
+            seviye: document.getElementById("studentLevel").value.trim() || "Genel", // C Sütunu
+            genel: overallScoreEl.innerText, // D Sütunu
+            vocabulary: document.getElementById("scVocabulary").value, // E Sütunu
+            konusma: document.getElementById("scKonusma").value, // F Sütunu
+            okuma: document.getElementById("scOkuma").value, // G Sütunu
+            yazma: document.getElementById("scYazma").value, // H Sütunu
+            grammar: document.getElementById("scGrammar").value, // I Sütunu
+            deneme: examScore.value, // J Sütunu
+            ders_tarihi: tarihFormat, // L Sütunu
+            ders_durumu: document.getElementById("startComment").value.trim() || "Giriş Yapıldı", // M Sütunu
+            odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("chkAnlasildi").checked ? "Evet" : "Hayır"), // N Sütunu
+            konu: document.getElementById("lessonTopic").value.trim() || "Belirtilmedi" // O Sütunu
         };
 
         try {
@@ -1151,66 +1217,57 @@ document.addEventListener("DOMContentLoaded", function() {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payloadTamamlandi)
-            });
-
-            await fetch(url, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payloadSonraki)
+                body: JSON.stringify(payload)
             });
 
             statusMsg.style.display = "block";
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
-            statusMsg.innerText = "Başarıyla iki satır halinde (tamamlandı ve sonraki) eklendi!";
-
+            statusMsg.innerText = "Başarıyla en alta eklendi ve veriler gönderildi!";
+            
             // -----------------------------------------------------------------
-            // 🚀 GELİŞMİŞ WHATSAPP MESAJ MOTORU
+            // 🚀 ÖĞRETMENÇOCUK ANLIK WHATSAPP MESAJ MOTORU
             // -----------------------------------------------------------------
             try {
                 let veliTel = "";
-                
-                // Eğer allData array'i sistemde tanımlıysa öğrencinin telefonunu P sütunundan eşleştirir
+                // Mevcut allData dizisinden bu öğrencinin kayıtlı eski telefonunu çekmeye çalışıyoruz
                 if (typeof allData !== 'undefined' && Array.isArray(allData)) {
-                    let row = allData.find(r => r.ogrenci === payloadTamamlandi.ogrenci);
-                    if (row) veliTel = row.telefon || row.veli_telefon || "";
+                    let row = allData.find(r => r.ogrenci === payload.ogrenci);
+                    if (row) veliTel = row.veli_telefon || row.telefon || "";
                 }
                 
-                // Telefon bulunamadıysa öğretmenimize sorsun
+                // Eğer sistemde daha önce kayıtlı numarası yoksa panik yok, öğretmenimize soralım
                 if (!veliTel) {
-                    veliTel = prompt(payloadTamamlandi.ogrenci + " velisinin WhatsApp numarası (Örn: 905xxxxxxxxx):", "90");
+                    veliTel = prompt(payload.ogrenci + " velisinin WhatsApp numarası (Başında ülke koduyla, Örn: 905xxxxxxxxx):", "90");
                 }
 
                 if (veliTel && veliTel !== "90") {
+                    // Temiz bir WhatsApp metin şablonu oluşturuyoruz
                     let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\n` +
                                   `Sayın Velimiz, \n` +
-                                  `*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir. \n\n` +
-                                  `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n` +
-                                  `📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
-                                  `📝 *Öğretmen Notları:* \n` +
-                                  `• Ders Başı Durumu: ${startCommentVal}\n` +
-                                  `• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
-                                  `📊 *Dil Becerileri Rubrik Analizi (%):* \n` +
-                                  `• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n` +
-                                  `• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n` +
-                                  `• Okuma (Reading): %${payloadTamamlandi.okuma}\n` +
-                                  `• Yazma (Writing): %${payloadTamamlandi.yazma}\n` +
-                                  `• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n` +
-                                  `📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
+                                  `*${payload.ogrenci}* ile bugün gerçekleştirdiğimiz dersimizin verileri sisteme işlenmiştir. \n\n` +
+                                  `📖 *Bugünkü Konu:* ${payload.konu}\n` +
+                                  `📝 *Ders Durumu / Ödev:* ${payload.ders_durumu}\n`;
 
-                    if (parseInt(payloadTamamlandi.deneme) > 0) {
-                        wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
+                    // Eğer o gün sıfırdan büyük bir deneme skoru girildiyse rapora ekle
+                    if (payload.deneme && payload.deneme > 0) {
+                        wpMesaj += `🎯 *Son Deneme Skoru:* ${payload.deneme}\n`;
                     }
 
-                    wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\n` +
-                               `Gelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n` +
-                               `*İngilizce Öğretmeni & Eğitim Koçu*`;
+                    // Dil becerileri (Rubrik) gelişim puanları
+                    wpMesaj += `\n📊 *Güncel Dil Becerileri Rubrik Analizi:* \n` +
+                               `• Kelime Bilgisi (Vocabulary): %${payload.vocabulary}\n` +
+                               `• Konuşma (Speaking): %${payload.konusma}\n` +
+                               `• Okuma (Reading): %${payload.okuma}\n` +
+                               `• Yazma (Writing): %${payload.yazma}\n` +
+                               `• Dil Bilgisi (Grammar): %${payload.grammar}\n\n` +
+                               `📈 *Genel Başarı Ortalaması:* %${payload.genel}\n\n` +
+                               `Gelişimin detaylı takibi ve haftalık karneler için web sistemimizi ziyaret edebilirsiniz. Diğer dersimizde görüşmek üzere. İyi günler dilerim. \n\n` +
+                               `*İngilizce Öğretmeni & Eğitim Koçu* \n` +
+                               `*Diji Muallim*`;
 
-                    // Telefon numarasındaki boşlukları temizleyip linki oluşturuyoruz
-                    let temizTel = veliTel.replace(/\s+/g, '');
-                    let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
+                    // Linki güvenli internet formatına çevirip yeni sekmede fırlatıyoruz
+                    let wpUrl = `https://api.whatsapp.com/send?phone=${veliTel.replace(/\s+/g, '')}&text=${encodeURIComponent(wpMesaj)}`;
                     window.open(wpUrl, '_blank');
                 }
             } catch (wpError) {
@@ -1218,9 +1275,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             // -----------------------------------------------------------------
 
-            resetBtn.click();
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
-
         } catch (error) {
             statusMsg.style.display = "block";
             statusMsg.style.background = "#FCE8E6";
@@ -1233,5 +1288,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+  
 </body>
 </html>
