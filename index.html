@@ -504,31 +504,27 @@ function showLockScreen(name) {
   setTimeout(() => document.getElementById("pwd-input")?.focus(), 100);
 }
 
-async function checkPassword(name) {
+function checkPassword(name) {
     const input = document.getElementById("pwd-input").value.trim();
-    const inputHash = await sha256(input);
-    const correctHash = (passwords[name] || "").trim();
+    const correctPassword = (passwords[name] || "").trim();
 
-    // 📌 AKILLI KONTROL: Sheets'teki şifre uzun mu (hash mi) yoksa kısa düz metin mi?
-    if (correctHash.length === 64) {
-        // Eğer Sheets'e uzun kod yapıştırdıysan burası çalışır:
-        if (inputHash === correctHash) {
-            unlockedStudents[name] = true; 
-            showStudentPage(name);
-        } else {
-            hataGoster();
-        }
+    // Eğer Sheets'te şifre hücresi boşsa, şifresiz girmesinler diye güvenlik kilidi:
+    if (!correctPassword) {
+        document.getElementById("lock-error").textContent = "Sistemde şifreniz tanımlı değil, öğretmeninize danışın.";
+        return;
+    }
+
+    // Düz metin karşılaştırması (Hızlı ve Hatasız)
+    if (input === correctPassword) {
+        unlockedStudents[name] = true; 
+        showStudentPage(name);
     } else {
-        // 🔥 MUCİZE KISIM: Sheets'e direkt "202755" yazdıysan burası çalışır!
-        // Kod tarafını değiştirmeden düz metin şifreleri de anında kabul eder.
-        if (input === correctHash) {
-            unlockedStudents[name] = true; 
-            showStudentPage(name);
-        } else {
-            hataGoster();
-        }
+        document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
+        document.getElementById("pwd-input").value = "";
+        document.getElementById("pwd-input").focus();
     }
 }
+  
 
 function hataGoster() {
     document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
@@ -1187,19 +1183,15 @@ document.addEventListener("DOMContentLoaded", function() {
     openBtn.addEventListener("click", () => overlay.style.display = "flex");
     closeBtn.addEventListener("click", () => overlay.style.display = "none");
 
-    unlockBtn.addEventListener("click", async () => {
+    unlockBtn.addEventListener("click", () => {
         const girilenSifre = passInput.value.trim();
         
-        // Senin girdiğin şifreyi koda çevirir
-        const girilenHash = await sha256(girilenSifre);
-        // Mert şifresinin (552027) gizli kodu:
-        const ogretmenSifreHash = "18a6669894459d57a9168aa4a282f122fc2d74116035f1ffb858f9672eb0f171"; 
-        
-        if(girilenHash === ogretmenSifreHash) { 
+        // Şifreleme motoruna girmeden direkt senin parolanı kontrol eder:
+        if(girilenSifre === "552027") { 
             lockScreen.style.display = "none";
             rubrikApp.style.display = "block";
             passError.style.display = "none";
-            passInput.value = ""; // Güvenlik için kutuyu temizle
+            passInput.value = ""; 
         } else { 
             passError.style.display = "block"; 
             passInput.value = "";
