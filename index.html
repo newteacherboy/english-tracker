@@ -1319,12 +1319,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-
 <script>
 document.addEventListener("click", function(event) {
     if (event.target && event.target.id === "pdfIndirBtn") {
         
-        // 1. Sizin kodunuzdaki aktif öğrenci adını ve tüm verileri yakalıyoruz
+        // 1. Aktif öğrenci ismini doğrudan sistemden alıyoruz
         let aktifOgrenciIsmi = "";
         try {
             if (typeof activeStudent !== 'undefined' && activeStudent) {
@@ -1332,28 +1331,34 @@ document.addEventListener("click", function(event) {
             }
         } catch(e){}
 
-        // Eğer aktif öğrenci adını bulamazsa ekrandan seçilen ismi dener
         if (!aktifOgrenciIsmi) {
-            let selectBox = document.querySelector('select');
+            let selectBox = document.getElementById('student-select');
             if (selectBox && selectBox.value) aktifOgrenciIsmi = selectBox.value;
         }
 
-        // 2. Senin kodundaki 'allData' içinden bu öğrenciye ait EN SON satırı buluyoruz
+        // 2. Senin showStudentPage fonksiyonundaki tarih sıralama mantığının birebir aynısı
         let ogrenciSatiri = null;
         try {
-            if (typeof allData !== 'undefined' && Array.isArray(allData)) {
-                // Öğrencinin adına göre filtreleyip en güncel (son) veriyi alıyoruz
-                let filtreli = allData.filter(r => r.ogrenci === aktifOgrenciIsmi);
-                if (filtreli.length > 0) {
-                    ogrenciSatiri = filtreli[filtreli.length - 1]; // En son yüklenen veri
+            if (typeof allData !== 'undefined' && Array.isArray(allData) && aktifOgrenciIsmi) {
+                
+                // Öğrenciye ait satırları filtrele
+                let rows = allData.filter(r => r.ogrenci === aktifOgrenciIsmi);
+                
+                if (rows.length > 0) {
+                    // Eğer senin sistemindeki parseDateStr fonksiyonu aktifse ona göre sırala, yoksa düz sırala
+                    if (typeof parseDateStr === 'function') {
+                        rows.sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+                    }
+                    // Sıralanmış listedeki EN SON (en güncel) satırı alıyoruz
+                    ogrenciSatiri = rows[rows.length - 1]; 
                 }
             }
         } catch(e){}
 
-        // 3. Verileri senin tam sütun sırasına göre eşleştiriyoruz (Eğer veri yoksa '-' yazar)
+        // 3. Verileri senin tam sütun yapına göre eşleştiriyoruz
         let v = {
-            tarih: ogrenciSatiri ? ogrenciSatiri.tarih : new Date().toLocaleDateString('tr-TR'),
-            ogrenci: aktifOgrenciIsmi || "Öğrenci Girişi",
+            tarih: ogrenciSatiri ? (ogrenciSatiri.tarih || new Date().toLocaleDateString('tr-TR')) : new Date().toLocaleDateString('tr-TR'),
+            ogrenci: aktifOgrenciIsmi || "Öğrenci",
             seviye: (ogrenciSatiri && ogrenciSatiri.seviye) ? ogrenciSatiri.seviye : "8. Sınıf LGS",
             genel: ogrenciSatiri ? ogrenciSatiri.genel : "-",
             vocabulary: ogrenciSatiri ? ogrenciSatiri.vocabulary : "-",
