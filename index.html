@@ -1223,6 +1223,57 @@ document.addEventListener("DOMContentLoaded", function() {
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
             statusMsg.innerText = "Başarıyla en alta eklendi ve veriler gönderildi!";
+            
+            // -----------------------------------------------------------------
+            // 🚀 ÖĞRETMENÇOCUK ANLIK WHATSAPP MESAJ MOTORU
+            // -----------------------------------------------------------------
+            try {
+                let veliTel = "";
+                // Mevcut allData dizisinden bu öğrencinin kayıtlı eski telefonunu çekmeye çalışıyoruz
+                if (typeof allData !== 'undefined' && Array.isArray(allData)) {
+                    let row = allData.find(r => r.ogrenci === payload.ogrenci);
+                    if (row) veliTel = row.veli_telefon || row.telefon || "";
+                }
+                
+                // Eğer sistemde daha önce kayıtlı numarası yoksa panik yok, öğretmenimize soralım
+                if (!veliTel) {
+                    veliTel = prompt(payload.ogrenci + " velisinin WhatsApp numarası (Başında ülke koduyla, Örn: 905xxxxxxxxx):", "90");
+                }
+
+                if (veliTel && veliTel !== "90") {
+                    // Temiz bir WhatsApp metin şablonu oluşturuyoruz
+                    let wpMesaj = `🤖 *ÖĞRETMENÇOCUK - DERS SONU BİLGİLENDİRME* \n\n` +
+                                  `Sayın Velimiz, \n` +
+                                  `*${payload.ogrenci}* ile bugün gerçekleştirdiğimiz İngilizce dersimizin verileri sisteme işlenmiştir. \n\n` +
+                                  `📖 *Bugünkü Konu:* ${payload.konu}\n` +
+                                  `📝 *Ders Durumu / Ödev:* ${payload.ders_durumu}\n`;
+
+                    // Eğer o gün sıfırdan büyük bir deneme skoru girildiyse rapora ekle
+                    if (payload.deneme && payload.deneme > 0) {
+                        wpMesaj += `🎯 *Son LGS Deneme Skoru:* ${payload.deneme}\n`;
+                    }
+
+                    // Dil becerileri (Rubrik) gelişim puanları
+                    wpMesaj += `\n📊 *Güncel Dil Becerileri Rubrik Analizi:* \n` +
+                               `• Kelime Bilgisi (Vocabulary): %${payload.vocabulary}\n` +
+                               `• Konuşma (Speaking): %${payload.konusma}\n` +
+                               `• Okuma (Reading): %${payload.okuma}\n` +
+                               `• Yazma (Writing): %${payload.yazma}\n` +
+                               `• Dil Bilgisi (Grammar): %${payload.grammar}\n\n` +
+                               `📈 *Genel Başarı Ortalaması:* %${payload.genel}\n\n` +
+                               `Gelişimin detaylı takibi ve haftalık karneler için web sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n` +
+                               `*İngilizce Öğretmeni & Eğitim Koçu* \n` +
+                               `*Mert Akkayaoğlu*`;
+
+                    // Linki güvenli internet formatına çevirip yeni sekmede fırlatıyoruz
+                    let wpUrl = `https://api.whatsapp.com/send?phone=${veliTel.replace(/\s+/g, '')}&text=${encodeURIComponent(wpMesaj)}`;
+                    window.open(wpUrl, '_blank');
+                }
+            } catch (wpError) {
+                console.error("WhatsApp motoru çalışırken bir hata oluştu:", wpError);
+            }
+            // -----------------------------------------------------------------
+
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
         } catch (error) {
             statusMsg.style.display = "block";
