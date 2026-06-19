@@ -1196,6 +1196,13 @@ document.addEventListener("DOMContentLoaded", function() {
             passError.style.display = "block"; 
             passInput.value = "";
         }
+    // 📌 UYANIK ÖĞRENCİ SAVAR: Konsoldan şifrelerin okunmasını engeller
+    setTimeout(() => {
+        if (typeof passwords !== 'undefined') {
+            window.passwords = undefined; // Konsoldan erişimi tamamen engeller
+        }
+    }, 2000); // Sayfa yüklendikten 2 saniye sonra şifre listesini konsola kapatır
+    
     });
 
     // Otomatik Telefon Bulma Mekanizması (allData yüklüyse)
