@@ -1232,6 +1232,42 @@ function drawDenemeChart(name) {
 </style>
 
 <script>
+
+<!-- ================================================================= -->
+<!-- 📅 DİJİMUALLİM KURUMSAL RANDEVU ALANI (RUBRİK ÜSTÜ SABİT)        -->
+<!-- ================================================================= -->
+<div id="kurumsalRandevuAlani" style="background: #F4EFE6; border: 1px solid #DCD5C5; padding: 18px; border-radius: 12px; margin-bottom: 15px; box-sizing: border-box;">
+  <h4 style="color: #634731; margin-top: 0; margin-bottom: 5px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+    📅 Online Ders Randevu Talebi
+  </h4>
+  <p style="font-size: 12px; color: #7A7263; margin-bottom: 12px; margin-top: 0;">Lütfen online ders için uygun gün ve saati seçip hocanıza iletiniz.</p>
+  
+  <div style="display: flex; gap: 10px; margin-bottom: 12px;" class="flex-row">
+    <div style="flex: 1;">
+      <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS TARİHİ</label>
+      <input type="date" id="veliDersTarihi" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box;">
+    </div>
+    <div style="flex: 1;">
+      <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS SAATİ</label>
+      <select id="veliDersSaati" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box;">
+        <option value="10:00">10:00</option>
+        <option value="11:30">11:30</option>
+        <option value="14:00">14:00</option>
+        <option value="16:30">16:30</option>
+        <option value="20:00">20:00</option>
+      </select>
+    </div>
+  </div>
+  
+  <button id="randevuAlBtn" style="background: #7D6451; color: white; width: 100%; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.2s;">
+    Randevu Talebini  Hocaya İlet
+  </button>
+  
+  <div id="randevuDurumMsg" style="margin-top: 10px; display: none;"></div>
+</div>
+<!-- ================================================================= -->
+
+  
 document.addEventListener("DOMContentLoaded", function() {
     const overlay = document.getElementById("yeni_rubrikOverlay");
     const openBtn = document.getElementById("yeni_rubrikOpenBtn");
@@ -1254,74 +1290,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const studentNameInput = document.getElementById("yeni_studentName");
     const studentPhoneInput = document.getElementById("yeni_studentPhone");
 
-  // -----------------------------------------------------------------
-// 📅 DİJİMUALLİM POP-UP RANDEVU MOTORU
-// -----------------------------------------------------------------
-const rModal = document.getElementById("randevuModal");
-const rAcBtn = document.getElementById("randevuAcBtn");
-const rKapatBtn = document.getElementById("randevuKapatBtn");
-
-// Pop-up'ı Açma
-if(rAcBtn) {
-    rAcBtn.addEventListener("click", () => {
-        rModal.style.display = "flex";
-        document.getElementById("randevuDurumMsg").style.display = "none";
-        document.getElementById("randevuAlBtn").style.display = "block";
-    });
-}
-
-// Pop-up'ı Kapatma (Çarpı işaretiyle)
-if(rKapatBtn) {
-    rKapatBtn.addEventListener("click", () => { rModal.style.display = "none"; });
-}
-
-// Dışarı tıklayınca kapatma
-window.addEventListener("click", (e) => { if (e.target == rModal) { rModal.style.display = "none"; } });
-
-// Google Sheets'e Veri Gönderme İşlemi
-document.getElementById("randevuAlBtn").addEventListener("click", async () => {
-    const secilenTarih = document.getElementById("veliDersTarihi").value;
-    const secilenSaat = document.getElementById("veliDersSaati").value;
-    const btn = document.getElementById("randevuAlBtn");
-    const msgDiv = document.getElementById("randevuDurumMsg");
-
-    if(!secilenTarih) { alert("Lütfen bir ders tarihi seçiniz."); return; }
-
-    btn.disabled = true;
-    btn.innerText = "Talep İletiliyor...";
-
-    // Aktif öğrenci ismini güvenli çekme
-    const ogrenciAdi = typeof activeStudent !== 'undefined' ? activeStudent : "Belirlenemedi";
-
-    const randevuPayload = {
-        aksiyon: "randevuAl",
-        ogrenci: ogrenciAdi,
-        tarih: secilenTarih,
-        saat: secilenSaat
-    };
-
-    try {
-        // Sistemindeki mevcut Google Script ana bağlantı değişkenini (scriptUrl veya url) buraya yazıyoruz
-        const urlHedef = typeof scriptUrl !== 'undefined' ? scriptUrl : (typeof url !== 'undefined' ? url : "");
-        
-        await fetch(urlHedef, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(randevuPayload)
-        });
-        
-        btn.style.display = "none";
-        msgDiv.style.display = "block";
-        msgDiv.innerHTML = "<div style='color:#2E5A44; background:#EBF5EE; padding:12px; border-radius:8px; text-align:center; font-weight:600; font-size:13px;'>✅ Talebiniz Mert Hocaya iletildi. Onaylandığında WhatsApp'tan link gönderilecektir.</div>";
-        
-        // 1.5 saniye sonra pencereyi otomatik kapat
-        setTimeout(() => { rModal.style.display = "none"; btn.disabled = false; btn.innerText = "Randevu Talebi Gönder"; }, 1500);
-    } catch (e) {
-        alert("Bağlantı hatası oluştu, lütfen tekrar deneyin.");
-        btn.disabled = false;
-        btn.innerText = "Randevu Talebi Gönder";
-    }
 });
 
     const bugunTarihInput = new Date().toISOString().split('T')[0];
@@ -1578,50 +1546,7 @@ function onlineDersOnaylaVeGonder(ogrenciAdi, dersTarihi, dersSaati, veliTel, ca
   
 </script>
 
-<button id="randevuAcBtn" 
-        onclick="document.getElementById('randevuModal').style.display = 'flex'; document.getElementById('randevuDurumMsg').style.display = 'none'; document.getElementById('randevuAlBtn').style.display = 'block';" 
-        style="position: fixed; bottom: 15px; left: 15px; background: #9B5435; color: white; border: none; padding: 8px 14px; border-radius: 30px; font-weight: 600; font-size: 12px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.2); z-index: 9999; display: flex; align-items: center; gap: 4px;">
-  📅 Randevu
-</button>
 
-<div id="randevuModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; box-sizing: border-box; padding: 10px;">
-  <div style="background: #FAF8F5; padding: 20px; border-radius: 12px; width: 100%; max-width: 350px; box-sizing: border-box; border: 1px solid #E2DDD2; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
-    
-    <span onclick="document.getElementById('randevuModal').style.display = 'none';" 
-          style="position: absolute; top: 8px; right: 12px; font-size: 22px; color: #7A7467; cursor: pointer; font-weight: bold;">&times;</span>
-    
-    <h3 style="color: #9B5435; margin-top: 0; margin-bottom: 5px; font-size: 16px; font-weight: 700;">📅 Online Ders Randevusu</h3>
-    <p style="font-size: 12px; color: #5A554C; margin-bottom: 15px;">Lütfen ders için gün ve saat seçiniz:</p>
-    
-    <div style="margin-bottom: 12px;">
-      <label style="display: block; font-size: 11px; font-weight: 700; color: #7A7467; margin-bottom: 4px;">DERS TARİHİ</label>
-      <input type="date" id="veliDersTarihi" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #E2DDD2; box-sizing: border-box; font-size: 13px;">
-    </div>
-    
-    <div style="margin-bottom: 15px;">
-      <label style="display: block; font-size: 11px; font-weight: 700; color: #7A7467; margin-bottom: 4px;">DERS SAATİ</label>
-      <select id="veliDersSaati" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #E2DDD2; box-sizing: border-box; background: white; font-size: 13px;">
-        <option value="10:00">10:00</option>
-        <option value="11:30">11:30</option>
-        <option value="14:00">14:00</option>
-        <option value="16:30">16:30</option>
-        <option value="20:00">20:00</option>
-      </select>
-    </div>
-    
-    <button id="randevuAlBtn" style="background:#9B5435; color:#fff; width:100%; border:none; padding:10px; border-radius:6px; font-weight:600; cursor:pointer; font-size: 13px;">Randevu Talebi Gönder</button>
-    
-    <div id="randevuDurumMsg" style="margin-top: 12px; display: none;"></div>
-  </div>
-</div>
-
-<script>
-// Dışarıya tıklayınca pop-up'ı kapatma emniyeti
-window.addEventListener("click", (e) => { 
-    const modal = document.getElementById("randevuModal");
-    if (e.target == modal) { modal.style.display = "none"; } 
-});
-</script>
   
 </body>
 </html>
