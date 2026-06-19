@@ -272,6 +272,11 @@ canvas { max-height: 200px; }
       <h2>Eğitim Koçum</h2>
       <p>Koçluk süreci takibi</p>
     </div>
+
+  </div>
+  <button id="randevuAlBtn" class="lock-btn" style="background:#9B5435; color:#fff; width:100%; border:none; padding:10px; border-radius:6px; font-weight:600; cursor:pointer;">Randevu Talebi Gönder</button>
+</div>
+    
   </div>
   <div class="contact-btns">
     <a class="contact-btn mail" href="mailto:official.ogretmencocuk@gmail.com">✉️ E-posta</a>
@@ -289,6 +294,27 @@ canvas { max-height: 200px; }
   <div class="content" id="content">
     <div class="loading">Veriler yükleniyor...</div>
   </div>
+
+<div class="r-card" id="randevuKutusu" style="margin-top: 15px;">
+  <h3 style="color: #9B5435; margin-top: 0;">📅 Online Ders Randevusu</h3>
+  <p style="font-size: 13px; color: #5A554C;">Lütfen hocamızla yapacağınız online ders için gün ve saat seçiniz:</p>
+  
+  <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+    <div style="flex: 1;">
+      <label class="r-label-sm">DERS TARİHİ</label>
+      <input type="date" id="veliDersTarihi" style="width:100%; padding: 8px; border-radius:6px; border:1px solid #E2DDD2;">
+    </div>
+    <div style="flex: 1;">
+      <label class="r-label-sm">DERS SAATİ</label>
+      <select id="veliDersSaati" style="width:100%; padding: 8px; border-radius:6px; border:1px solid #E2DDD2;">
+        <option value="10:00">10:00</option>
+        <option value="11:30">11:30</option>
+        <option value="14:00">14:00</option>
+        <option value="16:30">16:30</option>
+        <option value="20:00">20:00</option>
+      </select>
+    </div>
+  
 </div>
 
 <script>
@@ -1179,43 +1205,6 @@ function drawDenemeChart(name) {
               <button type="button" class="r-status-btn" data-val="Yapmadı">Yapmadı</button>
               <button type="button" class="r-status-btn" data-val="Eksik">Eksik</button>
               <button type="button" class="r-status-btn" data-val="Tekrar Yaptı">Tekrar</button>
-              <!-- 🔥 YENİ EKLEYECEĞİN 3. BUTON (TAM BURAYA YAPIŞTIR) -->
-  <button id="randevuAcBtn" class="lock-btn" style="background: #9B5435; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1;">
-    📅 Online Ders Randevusu
-  </button>
-</div>
-
-<!-- 🔥 TAŞMAYI ENGELLEYEN ŞIK POP-UP (MODAL) FORM -->
-<!-- Bunu yukarıdaki buton grubunun hemen altına yapıştırabilirsin -->
-<div id="randevuModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
-  <div style="background: #FAF8F5; padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; box-sizing: border-box; border: 1px solid #E2DDD2; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-    
-    <span id="randevuKapatBtn" style="position: absolute; top: 12px; right: 15px; font-size: 20px; color: #7A7467; cursor: pointer; font-weight: bold;">&times;</span>
-    
-    <h3 style="color: #9B5435; margin-top: 0; margin-bottom: 8px; font-size: 18px; font-weight: 700;">📅 Online Ders Randevusu</h3>
-    <p style="font-size: 13px; color: #5A554C; margin-bottom: 20px; line-height: 1.4;">Lütfen online ders için uygun bir gün ve saat seçiniz:</p>
-    
-    <div style="margin-bottom: 15px;">
-      <label style="display: block; font-size: 11px; font-weight: 700; color: #7A7467; margin-bottom: 5px;">DERS TARİHİ</label>
-      <input type="date" id="veliDersTarihi" style="width:100%; padding: 12px; border-radius:8px; border:1px solid #E2DDD2; box-sizing: border-box; font-size: 14px;">
-    </div>
-    
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; font-size: 11px; font-weight: 700; color: #7A7467; margin-bottom: 5px;">DERS SAATİ</label>
-      <select id="veliDersSaati" style="width:100%; padding: 12px; border-radius:8px; border:1px solid #E2DDD2; box-sizing: border-box; background: white; font-size: 14px;">
-        <option value="10:00">10:00</option>
-        <option value="11:30">11:30</option>
-        <option value="13:30">13:30</option>
-        <option value="15:30">15:30</option>
-        <option value="17:00">17:00</option>
-        <option value="20:00">20:00</option>
-      </select>
-    </div>
-    
-    <button id="randevuAlBtn" class="lock-btn" style="background:#9B5435; color:#fff; width:100%; border:none; padding:12px; border-radius:8px; font-weight:600; cursor:pointer; font-size: 14px;">Randevu Talebi Gönder</button>
-    <div id="randevuDurumMsg" style="margin-top: 15px; display: none;"></div>
-  </div>
-</div>
             </div>
           </div>
           <label class="r-label-sm">DERS BAŞI NOTU</label>
@@ -1298,42 +1287,6 @@ function drawDenemeChart(name) {
 </style>
 
 <script>
-
-<!-- ================================================================= -->
-<!-- 📅 DİJİMUALLİM KURUMSAL RANDEVU ALANI (RUBRİK ÜSTÜ SABİT)        -->
-<!-- ================================================================= -->
-<div id="kurumsalRandevuAlani" style="background: #F4EFE6; border: 1px solid #DCD5C5; padding: 18px; border-radius: 12px; margin-bottom: 15px; box-sizing: border-box;">
-  <h4 style="color: #634731; margin-top: 0; margin-bottom: 5px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-    📅 Online Ders Randevu Talebi
-  </h4>
-  <p style="font-size: 12px; color: #7A7263; margin-bottom: 12px; margin-top: 0;">Lütfen online ders için uygun gün ve saati seçip hocanıza iletiniz.</p>
-  
-  <div style="display: flex; gap: 10px; margin-bottom: 12px;" class="flex-row">
-    <div style="flex: 1;">
-      <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS TARİHİ</label>
-      <input type="date" id="veliDersTarihi" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box;">
-    </div>
-    <div style="flex: 1;">
-      <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS SAATİ</label>
-      <select id="veliDersSaati" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box;">
-        <option value="10:00">10:00</option>
-        <option value="11:30">11:30</option>
-        <option value="14:00">14:00</option>
-        <option value="16:30">16:30</option>
-        <option value="20:00">20:00</option>
-      </select>
-    </div>
-  </div>
-  
-  <button id="randevuAlBtn" style="background: #7D6451; color: white; width: 100%; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.2s;">
-    Randevu Talebini  Hocaya İlet
-  </button>
-  
-  <div id="randevuDurumMsg" style="margin-top: 10px; display: none;"></div>
-</div>
-<!-- ================================================================= -->
-
-  
 document.addEventListener("DOMContentLoaded", function() {
     const overlay = document.getElementById("yeni_rubrikOverlay");
     const openBtn = document.getElementById("yeni_rubrikOpenBtn");
@@ -1355,8 +1308,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const resetBtn = document.getElementById("yeni_resetBtn");
     const studentNameInput = document.getElementById("yeni_studentName");
     const studentPhoneInput = document.getElementById("yeni_studentPhone");
-
-});
 
     const bugunTarihInput = new Date().toISOString().split('T')[0];
     document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
@@ -1588,31 +1539,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
-
-// 📌 VELİYE ONLİNE DERS LİNKİNİ UÇURAN WHATSAPP MOTORU
-function onlineDersOnaylaVeGonder(ogrenciAdi, dersTarihi, dersSaati, veliTel, canliDersLinki) {
-    let formatliTarih = dersTarihi;
-    if(dersTarihi.includes("-")) {
-        const [y, m, d] = dersTarihi.split("-");
-        formatliTarih = `${d}.${m}.${y}`;
-    }
-
-    let wpMesaj = `🤖 *DİJİMUALLİM - ONLİNE DERS ONAYI* \n\n` +
-                  `Sayın Velimiz, \n` +
-                  `*${ogrenciAdi}* için oluşturduğunuz online ders talebi Mert Hocamız tarafından onaylanmıştır. \n\n` +
-                  `📅 *Ders Tarihi:* ${formatliTarih}\n` +
-                  `⏰ *Ders Saati:* ${dersSaati}\n` +
-                  `💻 *Canlı Ders Bağlantısı:* ${canliDersLinki}\n\n` +
-                  `Ders saatinde yukarıdaki bağlantıya tıklayarak derse katılabilirsiniz. İyi çalışmalar dileriz. \n\n` +
-                  `*DijiMuallim*`;
-
-    let wpUrl = `https://api.whatsapp.com/send?phone=${veliTel.replace(/\s+/g, '')}&text=${encodeURIComponent(wpMesaj)}`;
-    window.open(wpUrl, '_blank');
-}
-  
 </script>
 
-
-  
 </body>
 </html>
