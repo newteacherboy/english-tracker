@@ -209,6 +209,51 @@ canvas { max-height: 200px; }
   }
 }
 
+/* -----------------------------------------------------------------
+   🚀 DİJİMUALLİM MOBİL UYUMLULUK MOTORU
+   ----------------------------------------------------------------- */
+@media screen and (max-width: 768px) {
+  
+  /* 1. Genel Kartlar ve Grafik Kutuları Genişliği */
+  .r-card, .chart-container, #content, .stats-grid, .main-container {
+    padding: 10px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* 2. Yan Yana Duran Elemanları Alt Alta Al */
+  .r-btn-group, .flex-row, .grid-2-col {
+    flex-direction: column !important;
+    display: flex !important;
+    gap: 8px !important;
+  }
+  
+  /* 3. Baş Parmak Dostu Butonlar (Minimum 44px Yükseklik) */
+  .r-status-btn, .lock-btn, #pdfIndirBtn, #saveBtn, .nav-button {
+    padding: 12px 16px !important;
+    font-size: 14.5px !important;
+    min-height: 44px !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  /* 4. Grafiklerin İç İçe Geçmesini Engelleme */
+  canvas, .chart-el {
+    max-height: 260px !important;
+    width: 100% !important;
+  }
+  
+  /* 5. Tablolar Ekranı Patlatmasın (Sağa Kaydırılabilir Alan) */
+  .data-table, table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch; /* Mobilde yumuşak kaydırma */
+  }
+}
+  
 </style>
 </head>
 <body>
