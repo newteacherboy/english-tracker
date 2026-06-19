@@ -280,10 +280,10 @@ canvas { max-height: 200px; }
   
   </div>
 
-  <div style="margin-bottom: 15px; box-sizing: border-box;">
+<div style="margin-bottom: 15px; box-sizing: border-box;">
   
   <button id="randevuMenuBtn" onclick="randevuFormuKapatAcl()" style="background: #7D6451; color: white; width: 100%; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-    📅 Online Ders Randevu Al
+    📅 Online / Yüz Yüze Randevu Al
   </button>
 
   <div id="kurumsalRandevuAlani" style="display: none; background: #F4EFE6; border: 1px solid #DCD5C5; padding: 18px; border-radius: 0 0 12px 12px; border-top: none; box-sizing: border-box; margin-top: -4px;">
@@ -292,6 +292,23 @@ canvas { max-height: 200px; }
     <div style="margin-bottom: 12px;">
       <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">ÖĞRENCİ ADI SOYADI</label>
       <input type="text" id="veliDersOgrenciAdi" placeholder="Öğrencinin adını ve soyadını giriniz" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box;">
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+      <div style="flex: 1;">
+        <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS TÜRÜ</label>
+        <select id="veliDersTuru" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box;">
+          <option value="İngilizce Özel Ders">İngilizce Özel Ders</option>
+          <option value="Eğitim Koçluğu">Eğitim Koçluğu</option>
+        </select>
+      </div>
+      <div style="flex: 1;">
+        <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS MODELİ</label>
+        <select id="veliDersModeli" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box;">
+          <option value="Online (Uzaktan)">Online (Uzaktan)</option>
+          <option value="Yüz Yüze">Yüz Yüze</option>
+        </select>
+      </div>
     </div>
 
     <div style="display: flex; gap: 10px; margin-bottom: 12px;">
@@ -325,30 +342,31 @@ canvas { max-height: 200px; }
 </div>
 
 <script>
-// Form Alanını Açıp Kapatan Sihirbaz
+// Menü Açma/Kapatma fonksiyonu
 function randevuFormuKapatAcl() {
     const formAlani = document.getElementById("kurumsalRandevuAlani");
     const anaBtn = document.getElementById("randevuMenuBtn");
-    
     if (formAlani.style.display === "none" || formAlani.style.display === "") {
         formAlani.style.display = "block";
-        anaBtn.style.borderRadius = "8px 8px 0 0"; // Form açılınca butonun alt köşelerini düzleştirir
+        anaBtn.style.borderRadius = "8px 8px 0 0";
     } else {
         formAlani.style.display = "none";
-        anaBtn.style.borderRadius = "8px"; // Kapanınca eski şık haline döner
+        anaBtn.style.borderRadius = "8px";
     }
 }
 
-// Formu Sheets ve WhatsApp'a Gönderen Ana Motor
+// Ana Tetikleyici Motor
 async function randevuSisteminiTetikle() {
     const ogrenciAdi = document.getElementById("veliDersOgrenciAdi").value.trim();
+    const dersTuru = document.getElementById("veliDersTuru").value;
+    const dersModeli = document.getElementById("veliDersModeli").value;
     const secilenTarih = document.getElementById("veliDersTarihi").value;
     const secilenSaat = document.getElementById("veliDersSaati").value;
     const veliTel = document.getElementById("veliDersTelefon").value.trim();
     const btn = document.getElementById("randevuGonderBtn");
 
     if(!ogrenciAdi || !secilenTarih || !veliTel) { 
-        alert("Lütfen tüm alanları (Ad Soyadı, Tarih ve Telefon) eksiksiz doldurunuz."); 
+        alert("Lütfen tüm alanları (Ad Soyadı, Tarih ve Telefon) eksiksiz doldurunuz hoca hanım/bey."); 
         return; 
     }
 
@@ -358,10 +376,14 @@ async function randevuSisteminiTetikle() {
     const [y, m, d] = secilenTarih.split("-");
     const formatliTarih = `${d}.${m}.${y}`;
 
-    // 1. ADIM: GOOGLE SHEETS KAYDI
+    // 1. ADIM: GOOGLE SHEETS DÜZENİ
+    // Sheets'teki "Öğrenci Adı" sütununa dersin türünü ve modelini de ekleyerek gönderiyoruz 
+    // Böylece Sheets kodunu değiştirmeden tek sütunda tüm detayı görebilirsin hoca! (Örn: "Mert Akkaya (İngilizce Özel Ders - Yüz Yüze)")
+    const tamOgrenciDetay = `${ogrenciAdi} (${dersTuru} - ${dersModeli})`;
+
     const randevuPayload = {
         aksiyon: "randevuAl",
-        ogrenci: ogrenciAdi,
+        ogrenci: tamOgrenciDetay,
         tarih: formatliTarih,
         saat: secilenSaat,
         telefon: veliTel
@@ -378,20 +400,23 @@ async function randevuSisteminiTetikle() {
             });
         }
     } catch (e) {
-        console.log("Sheets kaydında arka plan uyarısı...");
+        console.log("Sheets arka plan uyarısı...");
     }
 
-    // 2. ADIM: WHATSAPP BİLDİRİMİ
+    // 2. ADIM: MERT HOCANIN YENİ NUMARASINA WHATSAPP MESAJI
     const mesaj = `🤖 *DİJİMUALLİM - YENİ RANDEVU TALEBİ* \n\n` +
-                  `Mert Hocam Merhaba,\n` +
-                  `Yaz dönemi dersi için yeni bir randevu talebi var.\n\n` +
+                  `Hocam Merhaba,\n` +
+                  `Eğitim dönemi için yeni bir ders talebi oluşturuldu.\n\n` +
                   `👤 *Öğrenci:* ${ogrenciAdi}\n` +
+                  `📚 *Ders Türü:* ${dersTuru}\n` +
+                  `💻 *Ders Modeli:* ${dersModeli}\n` +
                   `📅 *Tarih:* ${formatliTarih}\n` +
                   `⏰ *Saat:* ${secilenSaat}\n` +
                   `📞 *Veli Tel:* ${veliTel}\n\n` +
-                  `Sistem verileri Google Sheets'e "Bekliyor" olarak kaydedilmiştir. Onay durumunda canlı ders linkini iletebilirsiniz.`;
+                  `Sistem verileri Google Sheets sayfasına kaydedilmiştir. İyi çalışmalar dileriz.`;
 
-    const hocamizinNumarasi = "905520275555"; 
+    // 📌 Güncellenen Yeni Numaran hoca!
+    const hocamizinNumarasi = "905369937089"; 
     const wpUrl = `https://api.whatsapp.com/send?phone=${hocamizinNumarasi}&text=${encodeURIComponent(mesaj)}`;
     
     window.open(wpUrl, '_blank');
@@ -403,11 +428,10 @@ async function randevuSisteminiTetikle() {
         document.getElementById("veliDersTarihi").value = "";
         document.getElementById("veliDersTelefon").value = "";
         
-        // Formu otomatik gizle ve butonu eski haline getir
         document.getElementById("kurumsalRandevuAlani").style.display = "none";
         document.getElementById("randevuMenuBtn").style.borderRadius = "8px";
         
-        alert("Randevu verileri Sheets tablonuza işlendi ve WhatsApp aktarımı tetiklendi!");
+        alert("Harika! Talebiniz hem Google Sheets'e işlendi hem de Mert Hocanın WhatsApp hattına iletildi.");
     }, 1000);
 }
 </script>  
