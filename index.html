@@ -180,6 +180,35 @@ canvas { max-height: 200px; }
 @keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 @keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
 
+  @media screen and (max-width: 768px) {
+  .r-card, .chart-container, #content, .stats-grid {
+    padding: 10px !important;
+    margin-bottom: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  .r-btn-group {
+    flex-direction: column;
+    gap: 8px !important;
+  }
+  .r-status-btn, .lock-btn, #pdfIndirBtn, #saveBtn {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    min-height: 44px;
+    width: 100% !important;
+  }
+  canvas {
+    max-height: 280px !important;
+    width: 100% !important;
+  }
+  .data-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -218,6 +247,15 @@ canvas { max-height: 200px; }
 </div>
 
 <script>
+  
+// 📌 Girilen şifreyi anında güvenli koda (SHA-256) çeviren fonksiyon
+async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+  
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
 const SECTIONS = {
   ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
@@ -466,15 +504,25 @@ function showLockScreen(name) {
   setTimeout(() => document.getElementById("pwd-input")?.focus(), 100);
 }
 
-function checkPassword(name) {
-  const input = document.getElementById("pwd-input").value.trim();
-  if (input === (passwords[name]||"").trim()) {
-    unlockedStudents[name] = true; showStudentPage(name);
-  } else {
-    document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
-    document.getElementById("pwd-input").value = "";
-    document.getElementById("pwd-input").focus();
-  }
+async function checkPassword(name) {
+    // 1. Öğrencinin kutuya yazdığı şifreyi (Örn: 202755) okur
+    const input = document.getElementById("pwd-input").value.trim();
+    
+    // 2. Kutuya yazılan şifreyi, A'da kurduğumuz motoru (sha256) kullanarak gizli koda çevirir
+    const inputHash = await sha256(input);
+    
+    // 3. Google Sheets'ten gelen o uzun şifreli kodu (`2da9f9dc...`) hafızadan çeker
+    const correctHash = (passwords[name] || "").trim();
+
+    // 4. İki gizli kodu karşılaştırır. Eşleşirse sayfayı açar.
+    if (inputHash === correctHash) {
+        unlockedStudents[name] = true; 
+        showStudentPage(name);
+    } else {
+        document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
+        document.getElementById("pwd-input").value = "";
+        document.getElementById("pwd-input").focus();
+    }
 }
 
 function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
@@ -1128,12 +1176,23 @@ document.addEventListener("DOMContentLoaded", function() {
     openBtn.addEventListener("click", () => overlay.style.display = "flex");
     closeBtn.addEventListener("click", () => overlay.style.display = "none");
 
-    unlockBtn.addEventListener("click", () => {
-        if(passInput.value === "1234") { 
+    unlockBtn.addEventListener("click", async () => {
+        const girilenSifre = passInput.value.trim();
+        
+        // Senin girdiğin şifreyi koda çevirir
+        const girilenHash = await sha256(girilenSifre);
+        // Mert şifresinin (552027) gizli kodu:
+        const ogretmenSifreHash = "18a6669894459d57a9168aa4a282f122fc2d74116035f1ffb858f9672eb0f171"; 
+        
+        if(girilenHash === ogretmenSifreHash) { 
             lockScreen.style.display = "none";
             rubrikApp.style.display = "block";
             passError.style.display = "none";
-        } else { passError.style.display = "block"; }
+            passInput.value = ""; // Güvenlik için kutuyu temizle
+        } else { 
+            passError.style.display = "block"; 
+            passInput.value = "";
+        }
     });
 
     // Otomatik Telefon Bulma Mekanizması (allData yüklüyse)
