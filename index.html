@@ -409,25 +409,8 @@ async function loadData() {
     document.getElementById("last-updated").textContent =
       new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     renderTabs();
-
-// 📌 Sayfa ilk açıldığında veya yenilendiğinde hafızayı kontrol et:
-const hafizadakiOgrenci = localStorage.getItem("sonAktifOgrenci");
-const hafizadakiSekme = localStorage.getItem("sonAktifSekme");
-
-if (hafizadakiOgrenci && students.includes(hafizadakiOgrenci)) {
-  activeStudent = hafizadakiOgrenci;
-  if (hafizadakiSekme) activePageTab = hafizadakiSekme;
-  
-  // Eğer şifresi daha önce girildiyse direkt sayfayı göster, girilmediyse kilit ekranını aç
-  if (passwords[activeStudent] && !unlockedStudents[activeStudent]) {
-    showLockScreen(activeStudent);
-  } else {
-    showStudentPage(activeStudent);
-  }
-} else if (students.length && !activeStudent) {
-  // Hafızada bir şey yoksa orjinal düzenindeki gibi ilk öğrenciyi seçer
-  selectStudent(students[0]);
-}
+    if (students.length && !activeStudent) selectStudent(students[0]);
+    else if (!students.length) {
       document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
     }
   } catch(e) {
@@ -463,9 +446,6 @@ function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
 
 function selectStudent(name) {
   activeStudent = name; activePageTab = "ozet";
-  // 📌 Seçilen öğrenciyi ve sekmeyi tarayıcı hafızasına kilitle:
-  localStorage.setItem("sonAktifOgrenci", name);
-  localStorage.setItem("sonAktifSekme", "ozet");
   renderTabs();
   if (passwords[name] && !unlockedStudents[name]) { showLockScreen(name); return; }
   showStudentPage(name);
