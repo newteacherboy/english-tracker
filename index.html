@@ -1323,57 +1323,42 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("click", function(event) {
     if (event.target && event.target.id === "pdfIndirBtn") {
         
-        // 1. Aktif öğrenci ismini doğrudan sistemden alıyoruz
-        let aktifOgrenciIsmi = "";
-        try {
-            if (typeof activeStudent !== 'undefined' && activeStudent) {
-                aktifOgrenciIsmi = activeStudent;
-            }
-        } catch(e){}
-
-        if (!aktifOgrenciIsmi) {
-            let selectBox = document.getElementById('student-select');
-            if (selectBox && selectBox.value) aktifOgrenciIsmi = selectBox.value;
+        // 1. Ekrandaki tüm metni tek bir büyük yazı olarak alıyoruz
+        let sayfaMetni = document.body.innerText || "";
+        
+        // 2. Aktif öğrenci adını senin Dropdown'dan (seçim kutusundan) canlı çekiyoruz
+        let selectBox = document.getElementById('student-select') || document.querySelector('select');
+        let ogrenciIsmi = "Öğrenci";
+        if (selectBox && selectBox.value) {
+            ogrenciIsmi = selectBox.options[selectBox.selectedIndex].text.replace("🔒", "").trim();
         }
 
-        // 2. Senin showStudentPage fonksiyonundaki tarih sıralama mantığının birebir aynısı
-        let ogrenciSatiri = null;
-        try {
-            if (typeof allData !== 'undefined' && Array.isArray(allData) && aktifOgrenciIsmi) {
-                
-                // Öğrenciye ait satırları filtrele
-                let rows = allData.filter(r => r.ogrenci === aktifOgrenciIsmi);
-                
-                if (rows.length > 0) {
-                    // Eğer senin sistemindeki parseDateStr fonksiyonu aktifse ona göre sırala, yoksa düz sırala
-                    if (typeof parseDateStr === 'function') {
-                        rows.sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-                    }
-                    // Sıralanmış listedeki EN SON (en güncel) satırı alıyoruz
-                    ogrenciSatiri = rows[rows.length - 1]; 
-                }
-            }
-        } catch(e){}
+        // 3. Ekrandaki sayıları ve verileri bulmak için akıllı kelime avcısı fonksiyon
+        function veriyiAra(kelime, varsayilan = "-") {
+            let regex = new RegExp(kelime + "\\s*[:\\-]?\\s*([^\\n]+)", "i");
+            let sonuc = sayfaMetni.match(regex);
+            return sonuc ? sonuc[1].trim() : varsayilan;
+        }
 
-        // 3. Verileri senin tam sütun yapına göre eşleştiriyoruz
+        // 4. Ekrandaki yazılardan senin sütunlarına denk gelen verileri cımbızlıyoruz
         let v = {
-            tarih: ogrenciSatiri ? (ogrenciSatiri.tarih || new Date().toLocaleDateString('tr-TR')) : new Date().toLocaleDateString('tr-TR'),
-            ogrenci: aktifOgrenciIsmi || "Öğrenci",
-            seviye: (ogrenciSatiri && ogrenciSatiri.seviye) ? ogrenciSatiri.seviye : "8. Sınıf LGS",
-            genel: ogrenciSatiri ? ogrenciSatiri.genel : "-",
-            vocabulary: ogrenciSatiri ? ogrenciSatiri.vocabulary : "-",
-            konusma: ogrenciSatiri ? ogrenciSatiri.konusma : "-",
-            okuma: ogrenciSatiri ? ogrenciSatiri.okuma : "-",
-            yazma: ogrenciSatiri ? ogrenciSatiri.yazma : "-",
-            grammar: ogrenciSatiri ? ogrenciSatiri.grammar : "-",
-            deneme: ogrenciSatiri ? ogrenciSatiri.deneme : "-",
-            ders_tarihi: ogrenciSatiri ? ogrenciSatiri.ders_tarihi : "-",
-            ders_durumu: ogrenciSatiri ? ogrenciSatiri.ders_durumu : "-",
-            odev_durumu: ogrenciSatiri ? ogrenciSatiri.odev_durumu : "-",
-            konu: ogrenciSatiri ? ogrenciSatiri.konu : "-"
+            tarih: new Date().toLocaleDateString('tr-TR'),
+            ogrenci: ogrenciIsmi,
+            seviye: "8. Sınıf LGS",
+            genel: veriyiAra("Genel", "-"),
+            vocabulary: veriyiAra("Vocabulary") !== "-" ? veriyiAra("Vocabulary") : veriyiAra("Kelime"),
+            konusma: veriyiAra("Konuşma") !== "-" ? veriyiAra("Konuşma") : veriyiAra("Speaking"),
+            okuma: veriyiAra("Okuma") !== "-" ? veriyiAra("Okuma") : veriyiAra("Reading"),
+            yazma: veriyiAra("Yazma") !== "-" ? veriyiAra("Yazma") : veriyiAra("Writing"),
+            grammar: veriyiAra("Grammar") !== "-" ? veriyiAra("Grammar") : veriyiAra("Dil Bilgisi"),
+            deneme: veriyiAra("Deneme") !== "-" ? veriyiAra("Deneme") : veriyiAra("Puan"),
+            ders_tarihi: veriyiAra("Ders Tarihi", "-"),
+            ders_durumu: veriyiAra("Ders Durumu", "Tamamlandı"),
+            odev_durumu: veriyiAra("Ödev", "-"),
+            konu: veriyiAra("Konu", "-")
         };
 
-        // 4. Yazdırma Penceresini Açma ve Tasarımı Basma
+        // 5. Yazdırma Penceresini Açma ve Tasarımı Basma
         let yazdirmaPenceresi = window.open('', '', 'height=850,width=900');
         
         yazdirmaPenceresi.document.write(`
@@ -1434,7 +1419,7 @@ document.addEventListener("click", function(event) {
             <h2>Genel Performans Göstergeleri</h2>
             <table class="stats-grid">
                 <tr>
-                    <td class="stat-box"><div class="stat-val">${v.genel} / 100</div><div class="stat-lbl">Genel Başarı Puanı</div></td>
+                    <td class="stat-box"><div class="stat-val">${v.genel}</div><div class="stat-lbl">Genel Başarı Puanı</div></td>
                     <td class="stat-box"><div class="stat-val">${v.deneme}</div><div class="stat-lbl">Son LGS Deneme Skoru</div></td>
                     <td class="stat-box"><div class="stat-val">${v.odev_durumu}</div><div class="stat-lbl">Ödev Tamamlama</div></td>
                 </tr>
@@ -1446,9 +1431,9 @@ document.addEventListener("click", function(event) {
                     <tr><th>Beceri Alanı</th><th>Gelişim Skoru</th><th>Beceri Alanı</th><th>Gelişim Skoru</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td><strong>Vocabulary (Kelime Bilgisi)</strong></td><td>${v.vocabulary} / 100</td><td><strong>Konuşma (Speaking)</strong></td><td>${v.konusma} / 100</td></tr>
-                    <tr><td><strong>Okuma (Reading)</strong></td><td>${v.okuma} / 100</td><td><strong>Yazma (Writing)</strong></td><td>${v.yazma} / 100</td></tr>
-                    <tr><td><strong>Grammar (Dil Bilgisi)</strong></td><td colspan="3">${v.grammar} / 100</td></tr>
+                    <tr><td><strong>Vocabulary (Kelime Bilgisi)</strong></td><td>${v.vocabulary}</td><td><strong>Konuşma (Speaking)</strong></td><td>${v.konusma}</td></tr>
+                    <tr><td><strong>Okuma (Reading)</strong></td><td>${v.okuma}</td><td><strong>Yazma (Writing)</strong></td><td>${v.yazma}</td></tr>
+                    <tr><td><strong>Grammar (Dil Bilgisi)</strong></td><td colspan="3">${v.grammar}</td></tr>
                 </tbody>
             </table>
 
