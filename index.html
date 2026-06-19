@@ -180,80 +180,6 @@ canvas { max-height: 200px; }
 @keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 @keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
 
-  @media screen and (max-width: 768px) {
-  .r-card, .chart-container, #content, .stats-grid {
-    padding: 10px !important;
-    margin-bottom: 10px !important;
-    width: 100% !important;
-    box-sizing: border-box;
-  }
-  .r-btn-group {
-    flex-direction: column;
-    gap: 8px !important;
-  }
-  .r-status-btn, .lock-btn, #pdfIndirBtn, #saveBtn {
-    padding: 12px 16px !important;
-    font-size: 14px !important;
-    min-height: 44px;
-    width: 100% !important;
-  }
-  canvas {
-    max-height: 280px !important;
-    width: 100% !important;
-  }
-  .data-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-}
-
-/* -----------------------------------------------------------------
-   🚀 DİJİMUALLİM MOBİL UYUMLULUK MOTORU
-   ----------------------------------------------------------------- */
-@media screen and (max-width: 768px) {
-  
-  /* 1. Genel Kartlar ve Grafik Kutuları Genişliği */
-  .r-card, .chart-container, #content, .stats-grid, .main-container {
-    padding: 10px !important;
-    margin-bottom: 12px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  
-  /* 2. Yan Yana Duran Elemanları Alt Alta Al */
-  .r-btn-group, .flex-row, .grid-2-col {
-    flex-direction: column !important;
-    display: flex !important;
-    gap: 8px !important;
-  }
-  
-  /* 3. Baş Parmak Dostu Butonlar (Minimum 44px Yükseklik) */
-  .r-status-btn, .lock-btn, #pdfIndirBtn, #saveBtn, .nav-button {
-    padding: 12px 16px !important;
-    font-size: 14.5px !important;
-    min-height: 44px !important;
-    width: 100% !important;
-    box-sizing: border-box;
-  }
-  
-  /* 4. Grafiklerin İç İçe Geçmesini Engelleme */
-  canvas, .chart-el {
-    max-height: 260px !important;
-    width: 100% !important;
-  }
-  
-  /* 5. Tablolar Ekranı Patlatmasın (Sağa Kaydırılabilir Alan) */
-  .data-table, table {
-    display: block !important;
-    width: 100% !important;
-    overflow-x: auto !important;
-    white-space: nowrap !important;
-    -webkit-overflow-scrolling: touch; /* Mobilde yumuşak kaydırma */
-  }
-}
-  
 </style>
 </head>
 <body>
@@ -272,11 +198,6 @@ canvas { max-height: 200px; }
       <h2>Eğitim Koçum</h2>
       <p>Koçluk süreci takibi</p>
     </div>
-
-  </div>
-  <button id="randevuAlBtn" class="lock-btn" style="background:#9B5435; color:#fff; width:100%; border:none; padding:10px; border-radius:6px; font-weight:600; cursor:pointer;">Randevu Talebi Gönder</button>
-</div>
-    
   </div>
   <div class="contact-btns">
     <a class="contact-btn mail" href="mailto:official.ogretmencocuk@gmail.com">✉️ E-posta</a>
@@ -294,39 +215,9 @@ canvas { max-height: 200px; }
   <div class="content" id="content">
     <div class="loading">Veriler yükleniyor...</div>
   </div>
-
-<div class="r-card" id="randevuKutusu" style="margin-top: 15px;">
-  <h3 style="color: #9B5435; margin-top: 0;">📅 Online Ders Randevusu</h3>
-  <p style="font-size: 13px; color: #5A554C;">Lütfen hocamızla yapacağınız online ders için gün ve saat seçiniz:</p>
-  
-  <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-    <div style="flex: 1;">
-      <label class="r-label-sm">DERS TARİHİ</label>
-      <input type="date" id="veliDersTarihi" style="width:100%; padding: 8px; border-radius:6px; border:1px solid #E2DDD2;">
-    </div>
-    <div style="flex: 1;">
-      <label class="r-label-sm">DERS SAATİ</label>
-      <select id="veliDersSaati" style="width:100%; padding: 8px; border-radius:6px; border:1px solid #E2DDD2;">
-        <option value="10:00">10:00</option>
-        <option value="11:30">11:30</option>
-        <option value="14:00">14:00</option>
-        <option value="16:30">16:30</option>
-        <option value="20:00">20:00</option>
-      </select>
-    </div>
-  
 </div>
 
 <script>
-  
-// 📌 Girilen şifreyi anında güvenli koda (SHA-256) çeviren fonksiyon
-async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-  
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
 const SECTIONS = {
   ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
@@ -561,72 +452,6 @@ function selectStudent(name) {
   showStudentPage(name);
 }
 
-<div id="kurumsalRandevuAlani" style="background: #F4EFE6; border: 1px solid #DCD5C5; padding: 18px; border-radius: 12px; margin-bottom: 15px; box-sizing: border-box;">
-  <h4 style="color: #634731; margin-top: 0; margin-bottom: 5px; font-size: 15px; font-weight: 700;">
-    📅 Online Ders Randevu Talebi
-  </h4>
-  <p style="font-size: 12px; color: #7A7263; margin-bottom: 12px; margin-top: 0;">Lütfen online ders için uygun gün ve saati seçip Mert Hocanıza iletiniz.</p>
-  
-  <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-    <div style="flex: 1;">
-      <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS TARİHİ</label>
-      <input type="date" id="veliDersTarihi" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box;">
-    </div>
-    <div style="flex: 1;">
-      <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS SAATİ</label>
-      <select id="veliDersSaati" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box;">
-        <option value="10:00">10:00</option>
-        <option value="11:30">11:30</option>
-        <option value="14:00">14:00</option>
-        <option value="16:30">16:30</option>
-        <option value="20:00">20:00</option>
-      </select>
-    </div>
-  </div>
-  
-  <button onclick="wpRandevuGonder()" style="background: #7D6451; color: white; width: 100%; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;">
-    Randevu Talebini WhatsApp ile İlet
-  </button>
-</div>
-
-<script>
-function wpRandevuGonder() {
-    const secilenTarih = document.getElementById("veliDersTarihi").value;
-    const secilenSaat = document.getElementById("veliDersSaati").value;
-
-    if(!secilenTarih) { 
-        alert("Lütfen bir ders tarihi seçiniz."); 
-        return; 
-    }
-
-    // Tarihi GG.AA.YYYY formatına çeviriyoruz
-    const [y, m, d] = secilenTarih.split("-");
-    const formatliTarih = `${d}.${m}.${y}`;
-
-    // Sitede o an açık olan öğrencinin ismini çeken emniyet kilidi
-    let ogrenciAdi = "Öğrenciniz";
-    if (typeof activeStudent !== 'undefined' && activeStudent) {
-        ogrenciAdi = activeStudent;
-    } else if (document.getElementById("student-name")) {
-        ogrenciAdi = document.getElementById("student-name").innerText || "Öğrenciniz";
-    }
-
-    // Senin WhatsApp hattına gelecek olan mesaj şablonu
-    const mesaj = `🤖 *DİJİMUALLİM - ONLİNE DERS TALEBİ* \n\n` +
-                  `Mert Hocam Merhaba,\n` +
-                  `*${ogrenciAdi}* için yaz dönemi online ders randevusu oluşturmak istiyoruz.\n\n` +
-                  `📅 *Talep Edilen Tarih:* ${formatliTarih}\n` +
-                  `⏰ *Talep Edilen Saat:* ${secilenSaat}\n\n` +
-                  `Uygunsanız ders bağlantısını bekliyoruz, iyi çalışmalar dileriz.`;
-
-    // Kendi telefon numaranı buraya yazdım hocam (Boşluksuz/Uluslararası format)
-    const hocamizinNumarasi = "905520275555"; // Kendi numaran farklıysa burayı güncelleyebilirsin hoca
-    
-    const wpUrl = `https://api.whatsapp.com/send?phone=${hocamizinNumarasi}&text=${encodeURIComponent(mesaj)}`;
-    window.open(wpUrl, '_blank');
-}
-</script>
-  
 function showLockScreen(name) {
   const s = esc(name);
   document.getElementById("content").innerHTML = `
@@ -642,31 +467,14 @@ function showLockScreen(name) {
 }
 
 function checkPassword(name) {
-    const input = document.getElementById("pwd-input").value.trim();
-    const correctPassword = (passwords[name] || "").trim();
-
-    // Eğer Sheets'te şifre hücresi boşsa, şifresiz girmesinler diye güvenlik kilidi:
-    if (!correctPassword) {
-        document.getElementById("lock-error").textContent = "Sistemde şifreniz tanımlı değil, öğretmeninize danışın.";
-        return;
-    }
-
-    // Düz metin karşılaştırması (Hızlı ve Hatasız)
-    if (input === correctPassword) {
-        unlockedStudents[name] = true; 
-        showStudentPage(name);
-    } else {
-        document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
-        document.getElementById("pwd-input").value = "";
-        document.getElementById("pwd-input").focus();
-    }
-}
-  
-
-function hataGoster() {
+  const input = document.getElementById("pwd-input").value.trim();
+  if (input === (passwords[name]||"").trim()) {
+    unlockedStudents[name] = true; showStudentPage(name);
+  } else {
     document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
     document.getElementById("pwd-input").value = "";
     document.getElementById("pwd-input").focus();
+  }
 }
 
 function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
@@ -1165,9 +973,6 @@ function drawDenemeChart(name) {
           <label class="r-label-sm">ÖĞRENCİ ADI (B Sütunu)</label>
           <input type="text" id="yeni_studentName" placeholder="Örn. Ayşe Yılmaz" style="margin-bottom:10px;">
           
-          <label class="r-label-sm">VELİ WHATSAPP TELEFONU (P Sütunu)</label>
-          <input type="text" id="yeni_studentPhone" placeholder="905xxxxxxxx" value="90" style="margin-bottom:10px; font-weight:600; color:#9B5435;">
-          
           <label class="r-label-sm">DERS KONUSU (O Sütunu)</label>
           <input type="text" id="yeni_lessonTopic" placeholder="Örn. Present Perfect" style="margin-bottom:10px;">
 
@@ -1306,8 +1111,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const statusMsg = document.getElementById("yeni_statusMsg");
     const saveBtn = document.getElementById("yeni_saveBtn");
     const resetBtn = document.getElementById("yeni_resetBtn");
-    const studentNameInput = document.getElementById("yeni_studentName");
-    const studentPhoneInput = document.getElementById("yeni_studentPhone");
 
     const bugunTarihInput = new Date().toISOString().split('T')[0];
     document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
@@ -1321,40 +1124,11 @@ document.addEventListener("DOMContentLoaded", function() {
     closeBtn.addEventListener("click", () => overlay.style.display = "none");
 
     unlockBtn.addEventListener("click", () => {
-        const girilenSifre = passInput.value.trim();
-        
-        // Şifreleme motoruna girmeden direkt senin parolanı kontrol eder:
-        if(girilenSifre === "315269") { 
+        if(passInput.value === "1234") { 
             lockScreen.style.display = "none";
             rubrikApp.style.display = "block";
             passError.style.display = "none";
-            passInput.value = ""; 
-        } else { 
-            passError.style.display = "block"; 
-            passInput.value = "";
-        }
-    // 📌 UYANIK ÖĞRENCİ SAVAR: Konsoldan şifrelerin okunmasını engeller
-    setTimeout(() => {
-        if (typeof passwords !== 'undefined') {
-            window.passwords = undefined; // Konsoldan erişimi tamamen engeller
-        }
-    }, 2000); // Sayfa yüklendikten 2 saniye sonra şifre listesini konsola kapatır
-    
-    });
-
-    // Otomatik Telefon Bulma Mekanizması (allData yüklüyse)
-    studentNameInput.addEventListener("input", function() {
-        const girilenIsim = studentNameInput.value.trim();
-        if (girilenIsim && typeof allData !== 'undefined' && Array.isArray(allData)) {
-            let row = allData.find(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
-            if (row) {
-                // Sitedeki nesnede hangi isimle kayıtlıysa onu çekmeye çalışır
-                let telNo = row.telefon || row.veli_telefon || row.p || row.telefon_numarasi || "";
-                if(telNo) {
-                    studentPhoneInput.value = telNo;
-                }
-            }
-        }
+        } else { passError.style.display = "block"; }
     });
 
     document.querySelectorAll(".r-btn-group .r-status-btn").forEach(btn => {
@@ -1389,8 +1163,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     resetBtn.addEventListener("click", () => {
         if(confirm("Tüm formu temizlemek istediğinize emin misiniz?")) {
-            studentNameInput.value = "";
-            studentPhoneInput.value = "90";
+            document.getElementById("yeni_studentName").value = "";
             document.getElementById("yeni_lessonTopic").value = "";
             document.getElementById("yeni_startComment").value = "";
             document.getElementById("yeni_endComment").value = "";
@@ -1413,14 +1186,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     saveBtn.addEventListener("click", async () => {
         const url = webhookUrlInput.value;
-        const name = studentNameInput.value.trim();
+        const name = document.getElementById("yeni_studentName").value.trim();
         const compDateRaw = document.getElementById("yeni_completedLessonDate").value;
         const nextDateRaw = document.getElementById("yeni_nextLessonDate").value;
-        const veliTel = studentPhoneInput.value.trim();
         
         if(!url) { alert("Lütfen önce Google Sheets bağlantısını ayarlayın."); return; }
         if(!name) { alert("Lütfen Öğrenci Adı alanını doldurun."); return; }
-        if(!veliTel || veliTel === "90") { alert("Lütfen veli telefon numarasını girin."); return; }
         if(!compDateRaw || !nextDateRaw) { alert("Lütfen iki tarih alanını da doldurun."); return; }
 
         saveBtn.disabled = true;
@@ -1490,37 +1261,48 @@ document.addEventListener("DOMContentLoaded", function() {
             statusMsg.style.display = "block";
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
-            statusMsg.innerText = "Başarıyla iki satır halinde eklendi!";
+            statusMsg.innerText = "Başarıyla iki satır halinde (tamamlandı ve sonraki) eklendi!";
 
             // WhatsApp Motoru
             try {
-                let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\n` +
-                              `Sayın Velimiz, \n` +
-                              `*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir. \n\n` +
-                              `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n` +
-                              `📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
-                              `📝 *Öğretmen Notları:* \n` +
-                              `• Ders Başı Durumu: ${startCommentVal}\n` +
-                              `• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
-                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n` +
-                              `• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n` +
-                              `• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n` +
-                              `• Okuma (Reading): %${payloadTamamlandi.okuma}\n` +
-                              `• Yazma (Writing): %${payloadTamamlandi.yazma}\n` +
-                              `• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n` +
-                              `📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
-
-                if (parseInt(payloadTamamlandi.deneme) > 0) {
-                    wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
+                let veliTel = "";
+                if (typeof allData !== 'undefined' && Array.isArray(allData)) {
+                    let row = allData.find(r => r.ogrenci === payloadTamamlandi.ogrenci);
+                    if (row) veliTel = row.telefon || row.veli_telefon || "";
+                }
+                if (!veliTel) {
+                    veliTel = prompt(payloadTamamlandi.ogrenci + " velisinin WhatsApp numarası (Örn: 905xxxxxxxxx):", "90");
                 }
 
-                wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\n` +
-                           `Gelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n` +
-                           `*İngilizce Öğretmeni & Eğitim Koçu*`;
+                if (veliTel && veliTel !== "90") {
+                    let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\n` +
+                                  `Sayın Velimiz, \n` +
+                                  `*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir. \n\n` +
+                                  `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n` +
+                                  `📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
+                                  `📝 *Öğretmen Notları:* \n` +
+                                  `• Ders Başı Durumu: ${startCommentVal}\n` +
+                                  `• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
+                                  `📊 *Dil Becerileri Rubrik Analizi (%):* \n` +
+                                  `• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n` +
+                                  `• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n` +
+                                  `• Okuma (Reading): %${payloadTamamlandi.okuma}\n` +
+                                  `• Yazma (Writing): %${payloadTamamlandi.yazma}\n` +
+                                  `• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n` +
+                                  `📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
 
-                let temizTel = veliTel.replace(/\s+/g, '');
-                let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
-                window.open(wpUrl, '_blank');
+                    if (parseInt(payloadTamamlandi.deneme) > 0) {
+                        wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
+                    }
+
+                    wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\n` +
+                               `Gelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n` +
+                               `*İngilizce Öğretmeni & Eğitim Koçu*`;
+
+                    let temizTel = veliTel.replace(/\s+/g, '');
+                    let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
+                    window.open(wpUrl, '_blank');
+                }
             } catch (wpError) {
                 console.error("WhatsApp motoru hatası:", wpError);
             }
@@ -1540,6 +1322,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-
+  
 </body>
 </html>
