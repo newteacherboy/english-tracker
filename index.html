@@ -386,7 +386,8 @@ async function loadData() {
       ders_tarihi:  r[11] || "",
       ders_durumu:  r[12] ? r[12].trim() : "",
       odev_durumu:  r[13] ? r[13].trim() : "",
-      konu:         r[14] || ""
+      konu:         r[14] || "",
+      telefon: r[15] || ""
     })).filter(r => r.ogrenci);
 
     passwords = {};
