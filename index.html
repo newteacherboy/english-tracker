@@ -1249,6 +1249,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if(localStorage.getItem("rubrik_webhook_yeni")) {
         webhookUrlInput.value = localStorage.getItem("rubrik_webhook_yeni");
+
+      // 📌 UYANIK ÖĞRENCİ SAVAR: Konsoldan şifrelerin okunmasını engeller
+    setTimeout(() => {
+        if (typeof passwords !== 'undefined') {
+            window.passwords = undefined; // Konsoldan erişimi tamamen engeller
+        }
+    }, 2000); // Sayfa yüklendikten 2 saniye sonra şifre listesini konsola kapatır
     }
 
     openBtn.addEventListener("click", () => overlay.style.display = "flex");
