@@ -501,6 +501,138 @@ function showStudentPage(name) {
   const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
   const s = esc(name);
 
+  // ---------------------------------------------------------------
+  // ÖĞRETMENÇOCUK %100 GARANTİLİ YERLİ MOTOR ENJEKSİYONU
+  // ---------------------------------------------------------------
+  
+  // Geriye dönük boş olmayan en son deneme puanını bulalım
+  let sonGecerliDeneme = "-";
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (rows[i].deneme && rows[i].deneme > 0) {
+      sonGecerliDeneme = Math.round(rows[i].deneme);
+      break;
+    }
+  }
+
+  // Sayfada bir yerlerde PDF İndir butonu varsa, ona tıklandığında doğrudan bu verileri basacak
+  window.orjinalPdfIndir = function() {
+    let yazdirmaPenceresi = window.open('', '', 'height=850,width=900');
+    
+    // Ondalık puanları yuvarlama fonksiyonu
+    let rnd = (val) => (val === undefined || val === null || val === "" || val === 0) ? "-" : (typeof val === 'number' ? Math.round(val) : val);
+
+    yazdirmaPenceresi.document.write(`
+    <html>
+    <head>
+        <title>${name} - Haftalık Veli Karnesi</title>
+        <style>
+            body { font-family: Arial, sans-serif; color: #2d3748; padding: 30px; background: #ffffff; line-height: 1.4; }
+            .header { border-bottom: 3px solid #1a365d; padding-bottom: 10px; margin-bottom: 20px; }
+            .title { font-size: 24px; font-weight: bold; color: #1a365d; margin: 0; text-transform: uppercase; }
+            .subtitle { font-size: 11px; color: #4a5568; margin: 3px 0 0 0; }
+            .info-table { width: 100%; border-collapse: collapse; background: #f8fafc; border-left: 5px solid #2b6cb0; margin-bottom: 25px; }
+            .info-table td { padding: 8px 12px; font-size: 13px; }
+            .info-label { font-weight: bold; color: #4a5568; width: 20%; }
+            h2 { font-size: 14px; color: #1a365d; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; }
+            .stats-grid { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            .stat-box { border: 1px solid #e2e8f0; padding: 12px; text-align: center; width: 33%; background: #ffffff; }
+            .stat-val { font-size: 20px; font-weight: bold; color: #2b6cb0; }
+            .stat-lbl { font-size: 9px; color: #718096; text-transform: uppercase; font-weight: 600; margin-top: 4px; }
+            .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            .data-table th { background: #2d3748; color: #ffffff; font-size: 11px; padding: 8px 10px; text-align: left; text-transform: uppercase; }
+            .data-table td { padding: 8px 10px; font-size: 12px; border: 1px solid #e2e8f0; }
+            .data-table tr:nth-child(even) { background: #f7fafc; }
+            .footer { margin-top: 50px; font-size: 13px; }
+            .signature { float: right; text-align: right; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <table style="width:100%;">
+                <tr>
+                    <td>
+                        <div class="title">ÖĞRETMENÇOCUK</div>
+                        <div class="subtitle">İngilizce Özel Ders & Eğitim Koçluğu Takip Sistemi</div>
+                    </td>
+                    <td style="text-align: right; font-weight: bold; color: #c53030; font-size: 14px;">HAFTALIK VELİ KARNESİ</td>
+                </tr>
+            </table>
+        </div>
+
+        <table class="info-table">
+            <tr>
+                <td class="info-label">Öğrenci Adı:</td>
+                <td><strong>${name}</strong></td>
+                <td class="info-label">Sınıf / Seviye:</td>
+                <td>${latest.seviye || "A1"} (8. Sınıf LGS)</td>
+            </tr>
+            <tr>
+                <td class="info-label">Son Güncelleme:</td>
+                <td>${latest.tarih}</td>
+                <td class="info-label">Danışman:</td>
+                <td>Mert Akkayaoğlu</td>
+            </tr>
+        </table>
+
+        <h2>Genel Performans Göstergeleri</h2>
+        <table class="stats-grid">
+            <tr>
+                <td class="stat-box"><div class="stat-val">${rnd(latest.genel)} / 100</div><div class="stat-lbl">Genel Başarı Ortalaması</div></td>
+                <td class="stat-box"><div class="stat-val">${sonGecerliDeneme}</div><div class="stat-lbl">Son LGS Deneme Skoru</div></td>
+                <td class="stat-box"><div class="stat-val" style="text-transform: capitalize;">${latest.odev_durumu || "-"}</div><div class="stat-lbl">Ödev Takip Durumu</div></td>
+            </tr>
+        </table>
+
+        <h2>Dil Becerileri Başarı Analizi</h2>
+        <table class="data-table">
+            <thead>
+                <tr><th>Beceri Alanı</th><th>Gelişim Skoru</th><th>Beceri Alanı</th><th>Gelişim Skoru</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Vocabulary (Kelime Bilgisi)</strong></td><td>${rnd(latest.vocabulary)} / 100</td><td><strong>Konuşma (Speaking)</strong></td><td>${rnd(latest.konusma)} / 100</td></tr>
+                <tr><td><strong>Okuma (Reading)</strong></td><td>${rnd(latest.okuma)} / 100</td><td><strong>Yazma (Writing)</strong></td><td>${rnd(latest.yazma)} / 100</td></tr>
+                <tr><td><strong>Grammar (Dil Bilgisi)</strong></td><td colspan="3">${rnd(latest.grammar)} / 100</td></tr>
+            </tbody>
+        </table>
+
+        <h2>Son İşlenen Ders ve Takip Çizelgesi</h2>
+        <table class="data-table">
+            <thead>
+                <tr><th>Ders Tarihi</th><th>İşlenen Konu / Ünite</th><th>Ders Durumu</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>${latest.ders_tarihi || "-"}</td><td><strong>${latest.konu || "-"}</strong></td><td><span style="color:#22543d; font-weight:bold; text-transform: uppercase;">${latest.ders_durumu || "-"}</span></td></tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <div style="float:left; width:180px; border-top:1px dashed #a0aec0; margin-top:35px; text-align:center; padding-top:5px; font-size:11px; color:#718096;">Veli İmza / Görüşü</div>
+            <div class="signature">
+                <strong>Mert Akkayaoğlu</strong><br>
+                <span style="font-size:11px; color:#718096;">İngilizce Öğretmeni & Eğitim Koçu</span>
+                <div style="border-top:1px dashed #a0aec0; margin-top:20px; width:150px; display:inline-block;"></div>
+            </div>
+        </div>
+    </body>
+    </html>
+    `);
+    
+    yazdirmaPenceresi.document.close();
+    setTimeout(() => { yazdirmaPenceresi.print(); }, 400);
+  };
+
+  // Sayfanın en altına eklediğimiz o eski click event dinleyicilerini unutturmak için butona doğrudan tetikleyici veriyoruz
+  setTimeout(() => {
+     let btn = document.getElementById("pdfIndirBtn");
+     if(btn) {
+         btn.setAttribute("onclick", "window.orjinalPdfIndir()");
+     }
+  }, 300);
+
+  // ---------------------------------------------------------------
+  // SİZİN ORJİNAL KODUNUZUN DEVAMI (Eski tasarım kodlarınız buraya gelecek)
+  // ---------------------------------------------------------------
+
   let pageContent = "";
   if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
   else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
