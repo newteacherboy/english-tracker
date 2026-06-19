@@ -1243,15 +1243,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 if (veliTel && veliTel !== "90") {
                     // Temiz bir WhatsApp metin şablonu oluşturuyoruz
-                    let wpMesaj = `🤖 *ÖĞRETMENÇOCUK - DERS SONU BİLGİLENDİRME* \n\n` +
+                    let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\n` +
                                   `Sayın Velimiz, \n` +
-                                  `*${payload.ogrenci}* ile bugün gerçekleştirdiğimiz İngilizce dersimizin verileri sisteme işlenmiştir. \n\n` +
+                                  `*${payload.ogrenci}* ile bugün gerçekleştirdiğimiz dersimizin verileri sisteme işlenmiştir. \n\n` +
                                   `📖 *Bugünkü Konu:* ${payload.konu}\n` +
                                   `📝 *Ders Durumu / Ödev:* ${payload.ders_durumu}\n`;
 
                     // Eğer o gün sıfırdan büyük bir deneme skoru girildiyse rapora ekle
                     if (payload.deneme && payload.deneme > 0) {
-                        wpMesaj += `🎯 *Son LGS Deneme Skoru:* ${payload.deneme}\n`;
+                        wpMesaj += `🎯 *Son Deneme Skoru:* ${payload.deneme}\n`;
                     }
 
                     // Dil becerileri (Rubrik) gelişim puanları
@@ -1262,9 +1262,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                `• Yazma (Writing): %${payload.yazma}\n` +
                                `• Dil Bilgisi (Grammar): %${payload.grammar}\n\n` +
                                `📈 *Genel Başarı Ortalaması:* %${payload.genel}\n\n` +
-                               `Gelişimin detaylı takibi ve haftalık karneler için web sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n` +
+                               `Gelişimin detaylı takibi ve haftalık karneler için web sistemimizi ziyaret edebilirsiniz. Diğer dersimizde görüşmek üzere. İyi günler dilerim. \n\n` +
                                `*İngilizce Öğretmeni & Eğitim Koçu* \n` +
-                               `*Mert Akkayaoğlu*`;
+                               `*Diji Muallim*`;
 
                     // Linki güvenli internet formatına çevirip yeni sekmede fırlatıyoruz
                     let wpUrl = `https://api.whatsapp.com/send?phone=${veliTel.replace(/\s+/g, '')}&text=${encodeURIComponent(wpMesaj)}`;
