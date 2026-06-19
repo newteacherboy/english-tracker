@@ -973,6 +973,9 @@ function drawDenemeChart(name) {
           <label class="r-label-sm">ÖĞRENCİ ADI (B Sütunu)</label>
           <input type="text" id="yeni_studentName" placeholder="Örn. Ayşe Yılmaz" style="margin-bottom:10px;">
           
+          <label class="r-label-sm">VELİ WHATSAPP TELEFONU (P Sütunu)</label>
+          <input type="text" id="yeni_studentPhone" placeholder="905xxxxxxxx" value="90" style="margin-bottom:10px; font-weight:600; color:#9B5435;">
+          
           <label class="r-label-sm">DERS KONUSU (O Sütunu)</label>
           <input type="text" id="yeni_lessonTopic" placeholder="Örn. Present Perfect" style="margin-bottom:10px;">
 
@@ -1111,6 +1114,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const statusMsg = document.getElementById("yeni_statusMsg");
     const saveBtn = document.getElementById("yeni_saveBtn");
     const resetBtn = document.getElementById("yeni_resetBtn");
+    const studentNameInput = document.getElementById("yeni_studentName");
+    const studentPhoneInput = document.getElementById("yeni_studentPhone");
 
     const bugunTarihInput = new Date().toISOString().split('T')[0];
     document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
@@ -1129,6 +1134,21 @@ document.addEventListener("DOMContentLoaded", function() {
             rubrikApp.style.display = "block";
             passError.style.display = "none";
         } else { passError.style.display = "block"; }
+    });
+
+    // Otomatik Telefon Bulma Mekanizması (allData yüklüyse)
+    studentNameInput.addEventListener("input", function() {
+        const girilenIsim = studentNameInput.value.trim();
+        if (girilenIsim && typeof allData !== 'undefined' && Array.isArray(allData)) {
+            let row = allData.find(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
+            if (row) {
+                // Sitedeki nesnede hangi isimle kayıtlıysa onu çekmeye çalışır
+                let telNo = row.telefon || row.veli_telefon || row.p || row.telefon_numarasi || "";
+                if(telNo) {
+                    studentPhoneInput.value = telNo;
+                }
+            }
+        }
     });
 
     document.querySelectorAll(".r-btn-group .r-status-btn").forEach(btn => {
@@ -1163,7 +1183,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     resetBtn.addEventListener("click", () => {
         if(confirm("Tüm formu temizlemek istediğinize emin misiniz?")) {
-            document.getElementById("yeni_studentName").value = "";
+            studentNameInput.value = "";
+            studentPhoneInput.value = "90";
             document.getElementById("yeni_lessonTopic").value = "";
             document.getElementById("yeni_startComment").value = "";
             document.getElementById("yeni_endComment").value = "";
@@ -1186,12 +1207,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     saveBtn.addEventListener("click", async () => {
         const url = webhookUrlInput.value;
-        const name = document.getElementById("yeni_studentName").value.trim();
+        const name = studentNameInput.value.trim();
         const compDateRaw = document.getElementById("yeni_completedLessonDate").value;
         const nextDateRaw = document.getElementById("yeni_nextLessonDate").value;
+        const veliTel = studentPhoneInput.value.trim();
         
         if(!url) { alert("Lütfen önce Google Sheets bağlantısını ayarlayın."); return; }
         if(!name) { alert("Lütfen Öğrenci Adı alanını doldurun."); return; }
+        if(!veliTel || veliTel === "90") { alert("Lütfen veli telefon numarasını girin."); return; }
         if(!compDateRaw || !nextDateRaw) { alert("Lütfen iki tarih alanını da doldurun."); return; }
 
         saveBtn.disabled = true;
@@ -1261,48 +1284,37 @@ document.addEventListener("DOMContentLoaded", function() {
             statusMsg.style.display = "block";
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
-            statusMsg.innerText = "Başarıyla iki satır halinde (tamamlandı ve sonraki) eklendi!";
+            statusMsg.innerText = "Başarıyla iki satır halinde eklendi!";
 
             // WhatsApp Motoru
             try {
-                let veliTel = "";
-                if (typeof allData !== 'undefined' && Array.isArray(allData)) {
-                    let row = allData.find(r => r.ogrenci === payloadTamamlandi.ogrenci);
-                    if (row) veliTel = row.telefon || row.veli_telefon || "";
+                let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\n` +
+                              `Sayın Velimiz, \n` +
+                              `*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir. \n\n` +
+                              `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n` +
+                              `📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
+                              `📝 *Öğretmen Notları:* \n` +
+                              `• Ders Başı Durumu: ${startCommentVal}\n` +
+                              `• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
+                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n` +
+                              `• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n` +
+                              `• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n` +
+                              `• Okuma (Reading): %${payloadTamamlandi.okuma}\n` +
+                              `• Yazma (Writing): %${payloadTamamlandi.yazma}\n` +
+                              `• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n` +
+                              `📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
+
+                if (parseInt(payloadTamamlandi.deneme) > 0) {
+                    wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
                 }
-                if (!veliTel) {
-                    veliTel = prompt(payloadTamamlandi.ogrenci + " velisinin WhatsApp numarası (Örn: 905xxxxxxxxx):", "90");
-                }
 
-                if (veliTel && veliTel !== "90") {
-                    let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\n` +
-                                  `Sayın Velimiz, \n` +
-                                  `*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir. \n\n` +
-                                  `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n` +
-                                  `📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
-                                  `📝 *Öğretmen Notları:* \n` +
-                                  `• Ders Başı Durumu: ${startCommentVal}\n` +
-                                  `• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
-                                  `📊 *Dil Becerileri Rubrik Analizi (%):* \n` +
-                                  `• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n` +
-                                  `• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n` +
-                                  `• Okuma (Reading): %${payloadTamamlandi.okuma}\n` +
-                                  `• Yazma (Writing): %${payloadTamamlandi.yazma}\n` +
-                                  `• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n` +
-                                  `📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
+                wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\n` +
+                           `Gelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n` +
+                           `*İngilizce Öğretmeni & Eğitim Koçu*`;
 
-                    if (parseInt(payloadTamamlandi.deneme) > 0) {
-                        wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
-                    }
-
-                    wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\n` +
-                               `Gelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n` +
-                               `*İngilizce Öğretmeni & Eğitim Koçu*`;
-
-                    let temizTel = veliTel.replace(/\s+/g, '');
-                    let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
-                    window.open(wpUrl, '_blank');
-                }
+                let temizTel = veliTel.replace(/\s+/g, '');
+                let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
+                window.open(wpUrl, '_blank');
             } catch (wpError) {
                 console.error("WhatsApp motoru hatası:", wpError);
             }
@@ -1322,6 +1334,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-  
+
 </body>
 </html>
