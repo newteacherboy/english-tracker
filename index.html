@@ -505,24 +505,35 @@ function showLockScreen(name) {
 }
 
 async function checkPassword(name) {
-    // 1. Öğrencinin kutuya yazdığı şifreyi (Örn: 202755) okur
     const input = document.getElementById("pwd-input").value.trim();
-    
-    // 2. Kutuya yazılan şifreyi, A'da kurduğumuz motoru (sha256) kullanarak gizli koda çevirir
     const inputHash = await sha256(input);
-    
-    // 3. Google Sheets'ten gelen o uzun şifreli kodu (`2da9f9dc...`) hafızadan çeker
     const correctHash = (passwords[name] || "").trim();
 
-    // 4. İki gizli kodu karşılaştırır. Eşleşirse sayfayı açar.
-    if (inputHash === correctHash) {
-        unlockedStudents[name] = true; 
-        showStudentPage(name);
+    // 📌 AKILLI KONTROL: Sheets'teki şifre uzun mu (hash mi) yoksa kısa düz metin mi?
+    if (correctHash.length === 64) {
+        // Eğer Sheets'e uzun kod yapıştırdıysan burası çalışır:
+        if (inputHash === correctHash) {
+            unlockedStudents[name] = true; 
+            showStudentPage(name);
+        } else {
+            hataGoster();
+        }
     } else {
-        document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
-        document.getElementById("pwd-input").value = "";
-        document.getElementById("pwd-input").focus();
+        // 🔥 MUCİZE KISIM: Sheets'e direkt "202755" yazdıysan burası çalışır!
+        // Kod tarafını değiştirmeden düz metin şifreleri de anında kabul eder.
+        if (input === correctHash) {
+            unlockedStudents[name] = true; 
+            showStudentPage(name);
+        } else {
+            hataGoster();
+        }
     }
+}
+
+function hataGoster() {
+    document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
+    document.getElementById("pwd-input").value = "";
+    document.getElementById("pwd-input").focus();
 }
 
 function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
