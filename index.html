@@ -272,30 +272,6 @@ canvas { max-height: 200px; }
       <h2>Eğitim Koçum</h2>
       <p>Koçluk süreci takibi</p>
     </div>
-    
-<div class="r-card" id="randevuKutusu" style="margin-top: 15px;">
-  <h3 style="color: #9B5435; margin-top: 0;">📅 Online Ders Randevusu</h3>
-  <p style="font-size: 13px; color: #5A554C;">Lütfen hocamızla yapacağınız online ders için gün ve saat seçiniz:</p>
-  
-  <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-    <div style="flex: 1;">
-      <label class="r-label-sm">DERS TARİHİ</label>
-      <input type="date" id="veliDersTarihi" style="width:100%; padding: 8px; border-radius:6px; border:1px solid #E2DDD2;">
-    </div>
-    <div style="flex: 1;">
-      <label class="r-label-sm">DERS SAATİ</label>
-      <select id="veliDersSaati" style="width:100%; padding: 8px; border-radius:6px; border:1px solid #E2DDD2;">
-        <option value="10:00">10:00</option>
-        <option value="11:30">11:30</option>
-        <option value="14:00">14:00</option>
-        <option value="16:30">16:30</option>
-        <option value="20:00">20:00</option>
-      </select>
-    </div>
-  </div>
-  <button id="randevuAlBtn" class="lock-btn" style="background:#9B5435; color:#fff; width:100%; border:none; padding:10px; border-radius:6px; font-weight:600; cursor:pointer;">Randevu Talebi Gönder</button>
-</div>
-    
   </div>
   <div class="contact-btns">
     <a class="contact-btn mail" href="mailto:official.ogretmencocuk@gmail.com">✉️ E-posta</a>
@@ -313,9 +289,6 @@ canvas { max-height: 200px; }
   <div class="content" id="content">
     <div class="loading">Veriler yükleniyor...</div>
   </div>
-
-
-  
 </div>
 
 <script>
@@ -1406,54 +1379,6 @@ document.addEventListener("DOMContentLoaded", function() {
             odev_durumu: "Gelecek Ders Planı", 
             konu: "Planlanan Sonraki Ders"
         };
-
-      // -----------------------------------------------------------------
-// 📅 DİJİMUALLİM VELİ RANDEVU GÖNDERME SİSTEMİ
-// -----------------------------------------------------------------
-document.getElementById("randevuAlBtn").addEventListener("click", async () => {
-    const secilenTarih = document.getElementById("veliDersTarihi").value;
-    const secilenSaat = document.getElementById("veliDersSaati").value;
-    const btn = document.getElementById("randevuAlBtn");
-
-    // Emniyet kilidi: Tarih seçilmemişse uyar
-    if(!secilenTarih) { 
-        alert("Lütfen bir ders tarihi seçiniz hoca hanım/bey."); 
-        return; 
-    }
-
-    btn.disabled = true;
-    btn.innerText = "Talep İletiliyor...";
-
-    // Akıllı doğrulamada o an aktif olan öğrencinin adını çekiyoruz
-    // (Not: Sistemindeki aktif öğrenci değişkeninin adı 'activeStudent' veya 'secilenOgrenci' ise ona göre revize edebilirsin)
-    const ogrenciAdi = typeof activeStudent !== 'undefined' ? activeStudent : "Belirlenemedi";
-
-    const randevuPayload = {
-        aksiyon: "randevuAl",
-        ogrenci: ogrenciAdi,
-        tarih: secilenTarih,
-        saat: secilenSaat
-    };
-
-    try {
-        // Sitede zaten tanımlı olan Google Web App (GAS) URL'ini kullanan fetch yapısı
-        // scriptUrl senin ana bağlantı değişkenindir
-        await fetch(scriptUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(randevuPayload)
-        });
-        
-        alert("Ders talebiniz Mert Hocamıza başarıyla iletilmiştir!");
-        document.getElementById("randevuKutusu").innerHTML = "<div style='color:#2E5A44; background:#EBF5EE; padding:15px; border-radius:8px; text-align:center; font-weight:600;'>✅ Ders talebiniz Mert Hocaya iletildi. Onaylandığında tarafınıza canlı ders linki gönderilecektir.</div>";
-    } catch (e) {
-        console.error("Randevu gönderilirken hata oluştu:", e);
-        alert("Sistemsel bir hata oluştu, lütfen daha sonra tekrar deneyin.");
-        btn.disabled = false;
-        btn.innerText = "Randevu Talebi Gönder";
-    }
-});
 
         try {
             await fetch(url, {
