@@ -312,7 +312,7 @@ canvas { max-height: 200px; }
 <div style="margin-top: 15px; margin-bottom: 25px; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;">
   
   <button id="seviyeTestBtn" onclick="seviyeTestiKutusuAc()" style="background: #2C3E50; color: white; width: 100%; border: none; padding: 15px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-  🔍 İngilizce Seviye Tespit Sınavı (Görsel & Dinleme Gelişmiş Mod)
+  🔍 İngilizce'de Hangi Seviyedesin? Şimdi Ölç
 </button>
 
   <div id="seviyeTestAlani" style="display: none; background: #FAF6F0; border: 1px solid #DCD5C5; padding: 25px; border-radius: 0 0 12px 12px; box-sizing: border-box; margin-top: -4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
@@ -540,13 +540,53 @@ async function nihaiSorguKapat() {
     });
 
     let seviyeUnvani = "A1 (Beginner / Başlangıç)";
-    if (dSayi >= 14) seviyeUnvani = "B2+ (Upper-Intermediate Mastery)";
-    else if (dSayi >= 11) seviyeUnvani = "B2 (Vantage / İleri Orta Seviye)";
-    else if (dSayi >= 8) seviyeUnvani = "B1 (Threshold / Orta Seviye)";
-    else if (dSayi >= 5) seviyeUnvani = "A2 (Waystage / Temel Üstü Seviye)";
+    let dinamikMesaj = "";
+
+    if (dSayi >= 14) {
+        seviyeUnvani = "B2+ (Upper-Intermediate Mastery)";
+        dinamikMesaj = `
+            🎯 <strong>Mevcut Durumun:</strong> İngilizce altyapın oldukça güçlü. Karmaşık cümleleri, akademik veya profesyonel düzeydeki metinleri büyük oranda anlayabiliyor, akıcı konuşma potansiyeli taşıyorsun.<br><br>
+            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Bu seviyedeki en büyük tuzak "akademik körlüktür". Dil bilgisini bilsen de LGS, okul sınavları veya ileri düzey mülakatlarda hedefimiz sadece "anlamak" değil, <strong>sıfır hata ile lider olmak</strong>. İleri düzey kelime kombinasyonlarında (collocations), devrik cümle yapılarında ve zaman yönetiminde nokta atışı profesyonel koçluk almazsan, sınavlarda en seçici 1-2 soruda hata yaparak zirveden uzaklaşabilirsin. Potansiyelini şansa bırakmamalı, onu tam profesyonel bir dereceye dönüştürmeliyiz.
+        `;
+    } else if (dSayi >= 11) {
+        seviyeUnvani = "B2 (Vantage / İleri Orta Seviye)";
+        dinamikMesaj = `
+            🎯 <strong>Mevcut Durumun:</strong> Günlük dili aşmış, dinlediğini ve okuduğunu rahatça analiz edebilen bir seviyedesin. Temel ve orta düzey yapıların tamamına hakimsin.<br><br>
+            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B2 seviyesi, öğrencilerin "İngilizceyi biliyorum" diyerek rehavete kapıldığı ve sınavlarda en çok elendiği yerdir. Okuduğunu anlarsın ama seçeneklerdeki çeldiriciler (distractors) seni çok rahat düşürebilir. LGS ve yeni nesil MEB sınavları doğrudan analiz ve mantık muhakemesi ister. Bu seviyeden yukarı çıkıp hatasız kulvara geçmek; ancak soru analiz stratejileri, bağlamsal kelime okumaları ve profesyonel bir sınav koçunun rehberliğinde düzenli takiple mümkündür. Eksik kalan o %20'lik dilimi kapatıp şampiyonluk kulvarına geçmek için kesinlikle sistemli ders almalısın.
+        `;
+    } else if (dSayi >= 8) {
+        seviyeUnvani = "B1 (Threshold / Orta Seviye)";
+        dinamikMesaj = `
+            🎯 <strong>Mevcut Durumun:</strong> Kendini ifade edebiliyor, standart diyalogları ve paragrafları çözebiliyorsun. Kelime haznen var ancak karmaşık yapılarda kafan karışıyor.<br><br>
+            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B1 seviyesi tam bir "arafta kalma" dönemidir. Kendi kendine çalışarak bu seviyeyi tek başına aşman çok ciddi zaman kaybettirir. Sınavlarda zamanla yarışırken cümleleri kafanda Türkçeye çevirmeye çalışır, yorulur ve süreyi yetiştiremezsin. Bağlaçlar, koşul cümleleri ve ileri düzey okuma becerilerinde <strong>kesinlikle profesyonel bir ders altyapısına ihtiyacın var</strong>. Doğru bir koçlukla çok hızlı şekilde B2 and üzerine zıplayabilecek bir potansiyelin var; bunu kendi başına deneme-yanılma yoluyla harcamamalısın.
+        `;
+    } else if (dSayi >= 5) {
+        seviyeUnvani = "A2 (Waystage / Temel Üstü Seviye)";
+        dinamikMesaj = `
+            🎯 <strong>Mevcut Durumun:</strong> Basit cümleleri kurabiliyor, temel kelimeleri (renkler, meslekler, rutinler) anlıyor ve kısa dinleme parçalarını takip edebiliyorsun.<br><br>
+            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> A2 seviyesindeki bilgi, maalesef okul sınavlarında ve LGS gibi yeni nesil sistemlerde <strong>barajı geçmeye yetmez</strong>. Sorular artık sadece kelime bilgisi değil, o kelimeleri bir paragraf içinde yorumlamanı istiyor. Gramer altyapında ciddi boşluklar var ve tek başına çalışırken hangi konuya öncelik vermen gerektiğini bilemezsin. Yanlış çalışma alışkanlıkları edinmemek ve zaman kaybetmeden "orta ve ileri seviyeye" pürüzsüz geçiş yapmak için <strong>kesinlikle rehberlik ve birebir ders takviyesi almalısın</strong>. Temeli sağlam atmazsak, ilerideki konular tamamen bir yük haline gelecektir.
+        `;
+    } else {
+        seviyeUnvani = "A1 (Beginner / Başlangıç)";
+        dinamikMesaj = `
+            🎯 <strong>Mevcut Durumun:</strong> İngilizce dünyasına yeni adım atıyorsun. Çok temel kelimeleri ve selamlaşma kalıplarını tanıyorsun ancak cümle kurma ve anlama aşamasında desteğe ihtiyacın var.<br><br>
+            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Yolun henüz çok başında olduğun için tek başına kuralları ezberlemeye çalışmak sende "İngilizce çok zor, yapamıyorum" algısı yaratabilir ve dilden soğumana neden olur. Bu aşamada kendi kendine çalışmak yerine, <strong>doğru bir mentor eşliğinde, sıfırdan ve sistemli bir ders programıyla başlamak KESİNLİKLE zorunludur</strong>. Doğru yöntemle çalışırsan bu seviyeyi tahmin ettiğinden çok daha kısa sürede aşarsın. Kulvarı baştan profesyonel tutmalı, temelini bir uzmanla birlikte en sağlam şekilde inşa etmeliyiz.
+        `;
+    }
 
     document.getElementById("testSonucSeviye").innerText = seviyeUnvani;
     document.getElementById("testSkorMetni").innerText = `15 Soru Üzerinden -> Doğru: ${dSayi} | Yanlış: ${ySayi}`;
+
+    // Dinamik gaza getiren hoca mesajını sonuç alanına enjekte ediyoruz
+    const hocaNotuAlani = document.querySelector("#testSonucEkrani div[style*='border: 2px dashed']");
+    if (hocaNotuAlani) {
+        hocaNotuAlani.innerHTML = `
+            🔥 <strong style="color: #2E5A44; font-size: 15px;">Mert Hocadan Seviye Analizi ve Yol Haritası:</strong><br><br>
+            ${dinamikMesaj}
+            <br>
+            🎯 <strong>Şimdi Sıra Sende:</strong> Skorun ve detaylı beceri analizin doğrudan benim sistemime düştü. Zaman kaybetmeden **benimle iletişime geç**, hemen sana özel profesyonel yol haritamızı ve koçluk planımızı hazırlayalım. Başarıya giden yolda liderliği kimseye bırakmıyoruz!
+        `;
+    }
 
     const apiPayload = {
         aksiyon: "seviyeKaydet",
@@ -557,7 +597,7 @@ async function nihaiSorguKapat() {
     };
 
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "BURAYA_GOOGLE_APPS_SCRIPT_LINKINI_YAPISTIR") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbzp7hNMz5XlTlvED5eNxAO5nwW8_VpLkqR4pS_HlEFrouBfqYrVULMIF-mINhp6VWy5/exec") {
             await fetch(sınavScriptUrl, {
                 method: "POST",
                 mode: "no-cors",
@@ -568,8 +608,7 @@ async function nihaiSorguKapat() {
     } catch(e) {
         console.log("Senkronizasyon tamamlandı.");
     }
-}
-</script>
+}</script>
 <!-- ================================================================= -->
 	
  <br>
