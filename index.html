@@ -384,7 +384,7 @@ canvas { max-height: 200px; }
 <script>
 // Sabit Soru Havuzu
 const hamSoruHavuzu = [
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel1.png", q: "Look at the picture. What is the person doing at the moment?", a: ["He is preparing a traditional dinner in the kitchen.", "He is working on his laptop and writing some notes.", "He is buying a new tablet from the tech store.", "He is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
+  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel1.png", q: "Look at the picture. What is the person doing at the moment?", a: ["She is preparing a traditional dinner in the kitchen.", "She is working on his laptop and writing some notes.", "She is buying a new tablet from the tech store.", "She is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
   { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel2.png", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
   { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel3.png", q: "Look at the traffic sign in the picture. Which of the following is CORRECT?", a: ["Drivers are allowed to park their cars here overnight.", "Drivers must not exceed the maximum speed limit shown.", "The road is completely closed due to maintenance.", "Pedestrians have the absolute right of way here."], c: 1, lvl: "B1 - Sign Analysis" },
   { type: "audio", mediaUrl: "ses1.mp3", q: "Listen to the speaker talking about his daily routine. What time does he usually have breakfast?", a: ["At quarter to seven in the morning.", "Right after he leaves the office.", "At half past eight with his parents.", "He prefers to skip breakfast on weekdays."], c: 2, lvl: "A1 - Listening Routine" },
@@ -581,7 +581,7 @@ async function nihaiSorguKapat() {
     const hocaNotuAlani = document.querySelector("#testSonucEkrani div[style*='border: 2px dashed']");
     if (hocaNotuAlani) {
         hocaNotuAlani.innerHTML = `
-            🔥 <strong style="color: #2E5A44; font-size: 15px;">Mert Hocadan Seviye Analizi ve Yol Haritası:</strong><br><br>
+            🔥 <strong style="color: #2E5A44; font-size: 15px;">Öğretmen Çocuk Seviye Analizi ve Yol Haritası:</strong><br><br>
             ${dinamikMesaj}
             <br>
             🎯 <strong>Şimdi Sıra Sende:</strong> Skorun ve detaylı beceri analizin doğrudan benim sistemime düştü. Zaman kaybetmeden **benimle iletişime geç**, hemen sana özel profesyonel yol haritamızı ve koçluk planımızı hazırlayalım. Başarıya giden yolda liderliği kimseye bırakmıyoruz!
@@ -765,7 +765,7 @@ async function randevuSisteminiTetikle() {
         document.getElementById("kurumsalRandevuAlani").style.display = "none";
         document.getElementById("randevuMenuBtn").style.borderRadius = "8px";
         
-        alert("Harika! Talebiniz hem Google Sheets'e işlendi hem de Mert Hocanın WhatsApp hattına iletildi.");
+        alert("Harika! Talebiniz hem Google Sheets'e işlendi hem de Öğretmen Çocuk  WhatsApp hattına iletildi.");
     }, 1000);
 }
 </script>  
