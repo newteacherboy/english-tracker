@@ -9,7 +9,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a1a1a; min-height: 100vh; }
+body {
+    /* Sitenin ana zemin rengi (Krem) */
+    background-color: #FAF8F5; 
+    
+    /* Arkaya derinlik katan şık ve hafif geometrik çizgisel desen */
+    background-image: 
+        radial-gradient(#7D6451 0.65px, transparent 0.65px), 
+        radial-gradient(#7D6451 0.65px, #FAF8F5 0.65px);
+    background-size: 26px 26px;
+    background-position: 0 0, 13px 13px;
+    
+    /* Sayfa kaydırıldıkça desenin sabit kalması için emniyet kilidi */
+    background-attachment: fixed; 
+    
+    /* Üstüne binen yazıların okunmasını kolaylaştırmak için hafif şeffaflık efekti */
+    opacity: 0.98; 
+}
 
 /* ANA SAYFA */
 .home { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
@@ -30,15 +46,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 /* TRACKER */
 .tracker { display: none; flex-direction: column; min-height: 100vh; }
-.header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 0.9rem 1.25rem; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 20; }
-.back-btn { background: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: #555; cursor: pointer; white-space: nowrap; }
-.back-btn:hover { background: #f4f6f8; }
+.header { round: #fff; border-bottom: 1px solid #e8eaed; padding: 0.9rem 1.25rem; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 20; }
+.back-btn { round: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: #555; cursor: pointer; white-space: nowrap; }
+.back-btn:hover { round: #f4f6f8; }
 .header-title { font-size: 15px; font-weight: 600; flex: 1; }
 .header-title span { color: #1D9E75; }
 .last-updated { font-size: 11px; color: #aaa; }
-.student-tabs { display: flex; gap: 8px; padding: 1rem 1.25rem 0; overflow-x: auto; background: #fff; border-bottom: 1px solid #e8eaed; padding-bottom: 1rem; }
-.tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
-.tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+.student-tabs { display: flex; gap: 8px; padding: 1rem 1.25rem 0; overflow-x: auto; round: #fff; border-bottom: 1px solid #e8eaed; padding-bottom: 1rem; }
+.tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; round: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
+.tab.active { round: #1D9E75; color: #fff; border-color: #1D9E75; }
 
 /* KİLİT */
 .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem; }
