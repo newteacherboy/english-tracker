@@ -10,21 +10,35 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-    /* Sitenin ana zemin rengi (Krem) */
-    background-color: #FAF8F5; 
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    color: #4A4235;
     
-    /* Arkaya derinlik katan şık ve hafif geometrik çizgisel desen */
+    /* 🌟 PREMIUM MESH GRADIENT: Kurumsal renklerin arkadan gelen lüks ışık süzmesi */
+    background-color: #FAF8F5;
     background-image: 
-        radial-gradient(#7D6451 0.65px, transparent 0.65px), 
-        radial-gradient(#7D6451 0.65px, #FAF8F5 0.65px);
-    background-size: 26px 26px;
-    background-position: 0 0, 13px 13px;
+        radial-gradient(at 0% 0%, rgba(218, 203, 182, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(125, 100, 81, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(244, 239, 230, 0.8) 0px, transparent 70%),
+        radial-gradient(at 100% 100%, rgba(191, 172, 150, 0.25) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(125, 100, 81, 0.1) 0px, transparent 50%);
+        
+    background-attachment: fixed;
+    background-size: cover;
     
-    /* Sayfa kaydırıldıkça desenin sabit kalması için emniyet kilidi */
-    background-attachment: fixed; 
-    
-    /* Üstüne binen yazıların okunmasını kolaylaştırmak için hafif şeffaflık efekti */
-    opacity: 0.98; 
+    /* Sayfadaki kutuların arkasında derinlik hissi yaratmak için yumuşak kontrast dengesi */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 📱 BONUS: Sayfadaki beyaz panellerin/kutuların arkasını hafif cam efekti (Glassmorphism) yapmak istersen */
+.container, .box, .card, #kurumsalRandevuAlani {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow: 0 8px 32px 0 rgba(125, 100, 81, 0.06) !important;
 }
 
 /* ANA SAYFA */
