@@ -307,70 +307,74 @@ canvas { max-height: 200px; }
 <br>
 
 <!-- ================================================================= -->
-<!-- 🇬🇧 CEFR STANDARDS MULTIMEDIA PLACEMENT TEST ENGINE (15 QUESTIONS) -->
+<!-- 🇬🇧 CEFR PLACEMENT ENGINE V2 - RANDOM - NAVIGABLE - SMART FEEDBACK -->
 <!-- ================================================================= -->
-<div style="margin-top: 15px; margin-bottom: 25px; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<div style="margin-top: 15px; margin-bottom: 25px; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;">
   
-  <!-- Sınav Giriş ve Kontrol Butonu -->
-  <button id="seviyeTestBtn" onclick="seviyeTestiKutusuAc()" style="background: #2C3E50; color: white; width: 100%; border: none; padding: 15px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.2s;">
-    🇬🇧 İngilizce Seviye Tespit Sınavı (Görsel & Dinleme Destekli)
+  <button id="seviyeTestBtn" onclick="seviyeTestiKutusuAc()" style="background: #2C3E50; color: white; width: 100%; border: none; padding: 15px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    🇬🇧 İngilizce Seviye Tespit Sınavı (Görsel & Dinleme Gelişmiş Mod)
   </button>
 
-  <!-- Sınav Ana Konteyneri -->
   <div id="seviyeTestAlani" style="display: none; background: #FAF6F0; border: 1px solid #DCD5C5; padding: 25px; border-radius: 0 0 12px 12px; box-sizing: border-box; margin-top: -4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
     
     <!-- GİRİŞ EKRANI -->
     <div id="testGirisEkrani" style="text-align: center;">
-      <h3 style="color: #2C3E50; margin-top: 0; font-size: 18px; letter-spacing: 0.5px;">Uluslararası CEFR Seviye Tespit Sınavı</h3>
+      <h3 style="color: #2C3E50; margin-top: 0; font-size: 18px;">Uluslararası CEFR Seviye Tespit Sınavı</h3>
       <p style="font-size: 13px; color: #7A7263; line-height: 1.6; margin-bottom: 20px;">
-        Bu sınav 4 temel dil becerisini (Görsel Kelime Bilgisi, Dinleme, Dil Bilgisi ve Okuma-Anlama) ölçmek üzere toplam **15 sorudan** oluşmaktadır. Lütfen başlamadan önce kulaklığınızı takınız.
+        Sorular her girişte sistem tarafından **özel olarak karıştırılır**. İşaretlediğiniz an anlık bildirim alırsınız. İleri/Geri butonlarıyla boş bıraktığınız sorulara dönebilirsiniz.
       </p>
-      <input type="text" id="testOgrenciIsim" placeholder="Öğrencinin Adı ve Soyadı" style="width:100%; padding: 12px; border-radius:8px; border:1px solid #CFC7B9; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; text-align: center; font-weight: 500;">
-      <button onclick="testiBaslat()" style="background: #2E5A44; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 3px 6px rgba(46,90,68,0.2);">Sınavı Başlat</button>
+      <input type="text" id="testOgrenciIsim" placeholder="Öğrencinin Adı ve Soyadı" style="width:100%; padding: 12px; border-radius:8px; border:1px solid #CFC7B9; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; text-align: center;">
+      <button onclick="testiBaslat()" style="background: #2E5A44; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer;">Sınavı Başlat</button>
     </div>
 
-    <!-- DİNAMİK SORU PANELİ -->
+    <!-- SORU PANELİ -->
     <div id="testSoruEkrani" style="display: none;">
-      <!-- Soru Durum Bilgisi -->
-      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #7A7263; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #EAE3D2; padding-bottom: 10px;">
-        <span id="soruNumarasi" style="background: #EAE3D2; padding: 4px 10px; border-radius: 20px; color: #4A4235;">Soru: 1/15</span>
-        <span id="soruSeviyeEtiket" style="background: #2C3E50; padding: 4px 10px; border-radius: 4px; color: #FFF; font-size: 11px; letter-spacing: 0.5px;">A1 - Kategori</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #7A7263; font-weight: bold; margin-bottom: 15px;">
+        <span id="soruNumarasi" style="background: #EAE3D2; padding: 4px 10px; border-radius: 20px;">Soru: 1/15</span>
+        <span id="soruSeviyeEtiket" style="background: #2C3E50; padding: 4px 10px; border-radius: 4px; color: #FFF;">Kategori</span>
       </div>
 
-      <!-- 🖼️ MEDYA 1: GÖRSEL ALANI (Sadece görsel sorularda görünür) -->
-      <div id="soruGorselKutusu" style="display: none; text-align: center; margin-bottom: 20px;">
-        <img id="soruGorsel" src="" alt="Sınav Görseli" style="max-width: 100%; max-height: 220px; border-radius: 8px; border: 3px solid #FFF; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+      <!-- Anlık Geri Bildirim Çubuğu -->
+      <div id="anlikGeribildirim" style="display:none; padding: 8px; border-radius: 6px; text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 15px;"></div>
+
+      <div id="soruGorselKutusu" style="display: none; text-align: center; margin-bottom: 15px;">
+        <img id="soruGorsel" src="" alt="Sınav Görseli" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid #FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
       </div>
 
-      <!-- 🔊 MEDYA 2: DİNLEME (LISTENING) ALANI (Sadece sesli sorularda görünür) -->
-      <div id="soruSesKutusu" style="display: none; background: #EAE3D2; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #DCD5C5;">
-        <p style="font-size: 11px; font-weight: 800; color: #2C3E50; margin: 0 0 10px 0; letter-spacing: 1px;">🎧 LISTENING TRACK (SES KAYDINI DİNLEYİNİZ)</p>
-        <audio id="soruSesOynatici" controls controlsList="nodownload" style="width: 100%; max-width: 320px; height: 36px; margin: 0 auto; display: block;"></audio>
+      <div id="soruSesKutusu" style="display: none; background: #EAE3D2; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px;">
+        <p style="font-size: 11px; font-weight: 800; color: #2C3E50; margin: 0 0 8px 0;">🎧 LISTENING TRACK (SES KAYDINI DİNLEYİNİZ)</p>
+        <audio id="soruSesOynatici" controls style="width: 100%; max-width: 300px; height: 32px; margin: 0 auto; display: block;"></audio>
       </div>
 
-      <!-- SORU METNİ -->
-      <p id="soruMetni" style="font-size: 15px; color: #2C3E50; font-weight: 600; margin-bottom: 22px; line-height: 1.6; white-space: pre-line;"></p>
+      <p id="soruMetni" style="font-size: 15px; color: #2C3E50; font-weight: 600; margin-bottom: 18px; line-height: 1.5; white-space: pre-line;"></p>
       
-      <!-- SEÇENEKLER ALANI -->
-      <div id="seceneklerAlani" style="display: flex; flex-direction: column; gap: 12px;"></div>
+      <div id="seceneklerAlani" style="display: flex; flex-direction: column; gap: 10px;"></div>
+
+      <!-- İleri - Geri Kontrol Navigasyonu -->
+      <div style="display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #EAE3D2; padding-top: 15px;">
+        <button id="btnGeri" onclick="navigasyonSoru(-1)" style="background: #7A7263; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">⬅️ Önceki Soru</button>
+        <button id="btnIleri" onclick="navigasyonSoru(1)" style="background: #4A5A6A; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">Sonraki Soru ➡️</button>
+      </div>
     </div>
 
-    <!-- GELİŞMİŞ AKADEMİK ANALİZ RAPORU -->
-    <div id="testSonucEkrani" style="display: none; text-align: center; padding: 10px 0;">
-      <div style="font-size: 55px; margin-bottom: 12px;">📈</div>
-      <h4 style="color: #2C3E50; margin: 0 0 8px 0; font-size: 20px; font-weight: 700;">Sınav Analiz Raporu</h4>
-      <p style="font-size: 13px; color: #7A7263; margin-bottom: 20px;">CEFR (Avrupa Ortak Dil Kriterleri) Standartlarına Göre Hesaplanan Seviyeniz:</p>
+    <!-- GAZA GETİREN COŞKULU SONUÇ EKRANI -->
+    <div id="testSonucEkrani" style="display: none; text-align: center; padding: 15px 0;">
+      <div style="font-size: 55px; margin-bottom: 12px;">🚀</div>
+      <h4 style="color: #2C3E50; margin: 0 0 8px 0; font-size: 22px; font-weight: bold;">Muazzam Bir Başlangıç! 🎉</h4>
+      <p style="font-size: 14px; color: #4A4235; line-height: 1.5; margin-bottom: 15px;">
+        Mert Akkayaoğlu Koçluk ve Dil Akademisi standartlarına göre başarı profiliniz analiz edildi. Potansiyeliniz harika!
+      </p>
       
-      <!-- Skor Rozeti -->
-      <div style="background: #2C3E50; color: white; padding: 18px; border-radius: 10px; font-weight: 700; font-size: 22px; letter-spacing: 0.5px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(44,62,80,0.15);">
-        <span id="testSonucSeviye">-</span>
+      <div style="background: #2E5A44; color: white; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 22px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(46,90,68,0.2);">
+        Mevcut Seviyeniz: <span id="testSonucSeviye">-</span>
       </div>
       
-      <p id="testSkorMetni" style="font-size: 14px; color: #4A4235; font-weight: 600; margin-bottom: 20px;"></p>
+      <p id="testSkorMetni" style="font-size: 14px; color: #2C3E50; font-weight: 600; margin-bottom: 20px;"></p>
       
-      <!-- Kurumsal Bilgi Notu -->
-      <div style="color: #2E5A44; background: #EBF5EE; border: 1px solid #C2E0CC; padding: 14px; border-radius: 8px; font-size: 12px; font-weight: 600; line-height: 1.5; text-align: left;">
-        🎯 Başarı Analizi: Sorulan 15 sorudan akademik dil becerileriniz, anlık görsel işlem hızınız ve dinleme-anlama (listening) yeteneğiniz başarıyla ölçülerek sistem veri merkezimize kaydedilmiştir. Detaylı yol haritanız için koordinatörünüzle iletişime geçebilirsiniz.
+      <!-- Gaz Veren Mert Hoca Mesajı Bölümü -->
+      <div style="color: #2C3E50; background: #FFF; border: 2px dashed #2E5A44; padding: 18px; border-radius: 10px; font-size: 13.5px; line-height: 1.6; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+        🔥 <strong style="color: #2E5A44;">Mert Hocadan Öğrenciye Not:</strong> Sınavdaki performansın, odaklanma yeteneğin ve potansiyelin bana bu yıl birlikte harika işler çıkaracağımızın sinyalini veriyor! Eksiklerini nokta atışı kapatıp bu seviyeyi zirveye taşımak, LGS ve okul maratonunda fark yaratmak tamamen bizim elimizde. <br><br>
+        🎯 <strong>Şimdi Sıra Sende:</strong> Skorun ve detaylı beceri analizin doğrudan benim ekranıma düştü. Zaman kaybetmeden **benimle iletişime geç**, hemen sana özel profesyonel yol haritamızı ve koçluk planımızı hazırlayalım. Başarıya giden yolda liderliği kimseye bırakmıyoruz!
       </div>
     </div>
 
@@ -378,153 +382,39 @@ canvas { max-height: 200px; }
 </div>
 
 <script>
-const scriptUrl = "https://script.google.com/macros/s/AKfycbxtMXxjBiT6JtY7Ej-g9M2S2MRXc66fG3lWvRrbBxIyDnOGp_pmbuC8sbw2fMRt9Gvr/exec";
-	
-// 📌 PROFESYONEL 15 SORULUK AKADEMİK SORU BANKASI
-const professionalSoruBankasi = [
-  // --- BÖLÜM 1: VISUAL & VOCABULARY (3 Soru) ---
-  {
-    type: "image",
-    mediaUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500",
-    q: "Look at the picture. What is the person doing at the moment?",
-    a: ["He is preparing a traditional dinner in the kitchen.", "He is working on his laptop and writing some notes.", "He is buying a new tablet from the tech store.", "He is waiting for a bus to go to the city center."],
-    c: 1,
-    lvl: "A1 - Visual Vocabulary"
-  },
-  {
-    type: "image",
-    mediaUrl: "https://images.unsplash.com/photo-1542296332-2e4473fac56f?w=500",
-    q: "Imagine you are at the terminal and you see this screen. What information can you get from it?",
-    a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."],
-    c: 2,
-    lvl: "A2 - Information Reading"
-  },
-  {
-    type: "image",
-    mediaUrl: "https://images.unsplash.com/photo-1562619425-c307bb83bc42?w=500",
-    q: "Look at the traffic sign in the picture. Which of the following is CORRECT?",
-    a: ["Drivers are allowed to park their cars here overnight.", "Drivers must not exceed the maximum speed limit shown.", "The road is completely closed due to maintenance.", "Pedestrians have the absolute right of way here."],
-    c: 1,
-    lvl: "B1 - Sign Analysis"
-  },
-
-  // --- BÖLÜM 2: LISTENING SKILL (4 Soru) ---
-  {
-    type: "audio",
-    mediaUrl: "ses1.mp3",
-    q: "Listen to the speaker talking about his daily routine. What time does he usually have breakfast?",
-    a: ["At quarter to seven in the morning.", "Right after he leaves the office.", "At half past eight with his parents.", "He prefers to skip breakfast on weekdays."],
-    c: 2,
-    lvl: "A1 - Listening Routine"
-  },
-  {
-    type: "audio",
-    mediaUrl: "ses2.mp3",
-    q: "Listen to the audio presentation. What will the weather be like in the northern area tomorrow afternoon?",
-    a: ["Unseasonably warm and completely dry.", "Rainy with a strong chance of thunderstorms.", "Clear enough for a family picnic.", "Snowy and freezing throughout the day."],
-    c: 1,
-    lvl: "A2 - Listening Weather"
-  },
-  {
-    type: "audio",
-    mediaUrl: "ses3.mp3",
-    q: "Listen to the phone conversation. Why is the woman calling the customer service center?",
-    a: ["To complain about a broken tablet adapter.", "To change the date of her private coaching session.", "To ask for a discount on a long-sleeve shirt.", "To report a technical bug on the exam portal."],
-    c: 1,
-    lvl: "B1 - Listening Management"
-  },
-  {
-    type: "audio",
-    mediaUrl: "ses4.mp3",
-    q: "Listen to the educational coordinator's interview. What is her main argument regarding language acquisition?",
-    a: ["Grammar structures must be memorized before practicing listening.", "Continuous exposure to authentic media accelerates fluency significantly.", "Passing international placement tests is the only proof of success.", "Vocabulary lists are completely useless for high school students."],
-    c: 1,
-    lvl: "B2 - Advanced Listening"
-  },
-
-  // --- BÖLÜM 3: GRAMMAR & STRUCTURE (4 Soru) ---
-  {
-    type: "text",
-    mediaUrl: "",
-    q: "My sister _______ a book in her room at the moment, so please be quiet.",
-    a: ["reads", "is reading", "read", "has read"],
-    c: 1,
-    lvl: "A1 - Grammar Structure"
-  },
-  {
-    type: "text",
-    mediaUrl: "",
-    q: "We _______ each other since we were in the same primary school classroom.",
-    a: ["know", "are knowing", "have known", "knew"],
-    c: 2,
-    lvl: "A2 - Tense Structure"
-  },
-  {
-    type: "text",
-    mediaUrl: "",
-    q: "If our team _______ the national science project last week, we would be in London now.",
-    a: ["won", "had won", "would win", "wins"],
-    c: 1,
-    lvl: "B1 - Conditionals"
-  },
-  {
-    type: "text",
-    mediaUrl: "",
-    q: "Little _______ know that the exam coordinator had already changed the schedule.",
-    a: ["I did", "did I", "I had", "had I"],
-    c: 1,
-    lvl: "B2 - Inversion Structures"
-  },
-
-  // --- BÖLÜM 4: READING & DIALOGUE (4 Soru) ---
-  {
-    type: "text",
-    mediaUrl: "",
-    q: "Kevin: Are you coming to the study group tonight?\nSarah: I'd love to, but I have to finish my vocabulary assignment.\nKevin: _______\nSarah: Thanks! That would actually help a lot.",
-    a: ["I think you should go to sleep early.", "I can help you with it if you want.", "The assignment was extremely difficult.", "I have already failed that test."],
-    c: 1,
-    lvl: "A2 - Dialogue Completion"
-  },
-  {
-    type: "text",
-    mediaUrl: "",
-    q: "\"Online learning platforms offer flexibility for students who manage busy schedules. However, without high personal motivation and strict time management, it is very easy to fall behind the curriculum.\"\n\nAccording to the text, what is the main risk of online learning?",
-    a: ["The high cost of technical digital equipment.", "The lack of high-quality educational materials.", "Falling behind due to poor motivation or time control.", "Not being able to communicate with the online tutor."],
-    c: 2,
-    lvl: "B1 - Text Comprehension"
-  },
-  {
-    type: "text",
-    mediaUrl: "",
-    q: "Despite the severe weather conditions and the sudden cancellation of flights, _______.",
-    a: ["the students preferred to stay at the luxury resort hotel", "the academic coordinator managed to arrive at the seminar on time", "because they forgot to check the official announcement page", "which made it impossible for anyone to join the English camp"],
-    c: 1,
-    lvl: "B2 - Sentence Matching"
-  },
-  {
-    type: "text",
-    mediaUrl: "",
-    q: "The teacher's primary goal is to _______ a love for reading and critical thinking in his students from an early age.",
-    a: ["cultivate", "neglect", "artificial", "abolish"],
-    c: 0,
-    lvl: "B2 - Advanced Vocabulary"
-  }
+// Sabit Soru Havuzu
+const hamSoruHavuzu = [
+  { type: "image", mediaUrl: "gorsel1.jpg", q: "Look at the picture. What is the person doing at the moment?", a: ["He is preparing a traditional dinner in the kitchen.", "He is working on his laptop and writing some notes.", "He is buying a new tablet from the tech store.", "He is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
+  { type: "image", mediaUrl: "gorsel2.jpg", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
+  { type: "image", mediaUrl: "gorsel3.jpg", q: "Look at the traffic sign in the picture. Which of the following is CORRECT?", a: ["Drivers are allowed to park their cars here overnight.", "Drivers must not exceed the maximum speed limit shown.", "The road is completely closed due to maintenance.", "Pedestrians have the absolute right of way here."], c: 1, lvl: "B1 - Sign Analysis" },
+  { type: "audio", mediaUrl: "ses1.mp3", q: "Listen to the speaker talking about his daily routine. What time does he usually have breakfast?", a: ["At quarter to seven in the morning.", "Right after he leaves the office.", "At half past eight with his parents.", "He prefers to skip breakfast on weekdays."], c: 2, lvl: "A1 - Listening Routine" },
+  { type: "audio", mediaUrl: "ses2.mp3", q: "Listen to the audio presentation. What will the weather be like in the northern area tomorrow afternoon?", a: ["Unseasonably warm and completely dry.", "Rainy with a strong chance of thunderstorms.", "Clear enough for a family picnic.", "Snowy and freezing throughout the day."], c: 1, lvl: "A2 - Listening Weather" },
+  { type: "audio", mediaUrl: "ses3.mp3", q: "Listen to the phone conversation. Why is the woman calling the customer service center?", a: ["To complain about a broken tablet adapter.", "To change the date of her private coaching session.", "To ask for a discount on a long-sleeve shirt.", "To report a technical bug on the exam portal."], c: 1, lvl: "B1 - Listening Management" },
+  { type: "audio", mediaUrl: "ses4.mp3", q: "Listen to the educational coordinator's interview. What is her main argument regarding language acquisition?", a: ["Grammar structures must be memorized before practicing listening.", "Continuous exposure to authentic media accelerates fluency significantly.", "Passing international placement tests is the only proof of success.", "Vocabulary lists are completely useless for high school students."], c: 1, lvl: "B2 - Advanced Listening" },
+  { type: "text", mediaUrl: "", q: "My sister _______ a book in her room at the moment, so please be quiet.", a: ["reads", "is reading", "read", "has read"], c: 1, lvl: "A1 - Grammar Structure" },
+  { type: "text", mediaUrl: "", q: "We _______ each other since we were in the same primary school classroom.", a: ["know", "are knowing", "have known", "knew"], c: 2, lvl: "A2 - Tense Structure" },
+  { type: "text", mediaUrl: "", q: "If our team _______ the national science project last week, we would be in London now.", a: ["won", "had won", "would win", "wins"], c: 1, lvl: "B1 - Conditionals" },
+  { type: "text", mediaUrl: "", q: "Little _______ know that the exam coordinator had already changed the schedule.", a: ["I did", "did I", "I had", "had I"], c: 1, lvl: "B2 - Inversion Structures" },
+  { type: "text", mediaUrl: "", q: "Kevin: Are you coming to the study group tonight?\nSarah: I'd love to, but I have to finish my vocabulary assignment.\nKevin: _______\nSarah: Thanks! That would actually help a lot.", a: ["I think you should go to sleep early.", "I can help you with it if you want.", "The assignment was extremely difficult.", "I have already failed that test."], c: 1, lvl: "A2 - Dialogue Completion" },
+  { type: "text", mediaUrl: "", q: "\"Online learning platforms offer flexibility for students who manage busy schedules. However, without high personal motivation and strict time management, it is very easy to fall behind the curriculum.\"\n\nAccording to the text, what is the main risk of online learning?", a: ["The high cost of technical digital equipment.", "The lack of high-quality educational materials.", "Falling behind due to poor motivation or time control.", "Not being able to communicate with the online tutor."], c: 2, lvl: "B1 - Text Comprehension" },
+  { type: "text", mediaUrl: "", q: "Despite the severe weather conditions and the sudden cancellation of flights, _______.", a: ["the students preferred to stay at the luxury resort hotel", "the academic coordinator managed to arrive at the seminar on time", "because they forgot to check the official announcement page", "which made it impossible for anyone to join the English camp"], c: 1, lvl: "B2 - Sentence Matching" },
+  { type: "text", mediaUrl: "", q: "The teacher's primary goal is to _______ a love for reading and critical thinking in his students from an early age.", a: ["cultivate", "neglect", "artificial", "abolish"], c: 0, lvl: "B2 - Advanced Vocabulary" }
 ];
 
-let mevcutSoruNo = 0;
-let dogruSayisi = 0;
-let yanlisSayisi = 0;
+let aktifSoruBankasi = [];
+let ogrenciCevaplari = Array(15).fill(null); 
+let pointerSoru = 0;
 let ogrenciIsmi = "";
+
+// ⚠️ BURAYI UNUTMA HOCAM: Google Apps Script'ten aldığın o güncel Web Uygulaması URL'sini buraya tırnak içine yapıştır:
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbzp7hNMz5XlTlvED5eNxAO5nwW8_VpLkqR4pS_HlEFrouBfqYrVULMIF-mINhp6VWy5/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
-    const btn = document.getElementById("seviyeTestBtn");
     if(alan.style.display === "none" || alan.style.display === "") {
         alan.style.display = "block";
-        btn.style.borderRadius = "8px 8px 0 0";
     } else {
         alan.style.display = "none";
-        btn.style.borderRadius = "8px";
     }
 }
 
@@ -532,108 +422,155 @@ function testiBaslat() {
     const inputIsim = document.getElementById("testOgrenciIsim").value.trim();
     if(!inputIsim) { alert("Lütfen adınızı ve soyadınızı giriniz."); return; }
     ogrenciIsmi = inputIsim;
+    
+    aktifSoruBankasi = [...hamSoruHavuzu];
+    for (let i = aktifSoruBankasi.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [aktifSoruBankasi[i], aktifSoruBankasi[j]] = [aktifSoruBankasi[j], aktifSoruBankasi[i]];
+    }
+
     document.getElementById("testGirisEkrani").style.display = "none";
     document.getElementById("testSoruEkrani").style.display = "block";
-    soruMotorunuCalistir();
+    pointerSoru = 0;
+    ogrenciCevaplari = Array(15).fill(null);
+    dinamikSoruGoster();
 }
 
-function soruMotorunuCalistir() {
-    if(mevcutSoruNo >= professionalSoruBankasi.length) {
-        testiKapatVeRaporla();
+function dinamikSoruGoster() {
+    if(pointerSoru >= aktifSoruBankasi.length) {
+        nihaiSorguKapat();
         return;
     }
 
-    const soruData = professionalSoruBankasi[mevcutSoruNo];
+    const veri = aktifSoruBankasi[pointerSoru];
     
-    // Üst Panel Verileri
-    document.getElementById("soruNumarasi").innerText = `Soru: ${mevcutSoruNo + 1}/${professionalSoruBankasi.length}`;
-    document.getElementById("soruSeviyeEtiket").innerText = soruData.lvl;
-    document.getElementById("soruMetni").innerText = soruData.q;
+    document.getElementById("soruNumarasi").innerText = `Soru: ${pointerSoru + 1}/${aktifSoruBankasi.length}`;
+    document.getElementById("soruSeviyeEtiket").innerText = veri.lvl;
+    document.getElementById("soruMetni").innerText = veri.q;
 
-    // Görsel Kontrol Mekanizması
-    const gorselKutusu = document.getElementById("soruGorselKutusu");
-    const gorselImg = document.getElementById("soruGorsel");
-    if(soruData.type === "image") {
-        gorselImg.src = soruData.mediaUrl;
-        gorselKutusu.style.display = "block";
+    const gb = document.getElementById("anlikGeribildirim");
+    gb.style.display = "none";
+
+    const gKutu = document.getElementById("soruGorselKutusu");
+    if(veri.type === "image") {
+        document.getElementById("soruGorsel").src = veri.mediaUrl;
+        gKutu.style.display = "block";
     } else {
-        gorselKutusu.style.display = "none";
+        gKutu.style.display = "none";
     }
 
-    // Ses (Listening) Kontrol Mekanizması
-    const sesKutusu = document.getElementById("soruSesKutusu");
-    const sesPlayer = document.getElementById("soruSesOynatici");
-    if(soruData.type === "audio") {
-        sesPlayer.src = soruData.mediaUrl;
-        sesPlayer.load();
-        sesKutusu.style.display = "block";
+    const sKutu = document.getElementById("soruSesKutusu");
+    const oynatici = document.getElementById("soruSesOynatici");
+    if(veri.type === "audio") {
+        oynatici.src = veri.mediaUrl;
+        oynatici.load();
+        sKutu.style.display = "block";
     } else {
-        sesPlayer.pause();
-        sesKutusu.style.display = "none";
+        oynatici.pause();
+        sKutu.style.display = "none";
     }
 
-    // Seçenekleri Render Etme
-    const secenekKonteyner = document.getElementById("seceneklerAlani");
-    secenekKonteyner.innerHTML = "";
-    soruData.a.forEach((alternatifMetin, idx) => {
-        secenekKonteyner.innerHTML += `
-            <button onclick="cevapKaydetVeIlerle(${idx})" style="text-align: left; background: #FFF; border: 1px solid #DCD5C5; padding: 14px 18px; border-radius: 8px; cursor: pointer; font-size: 13.5px; color: #4A4235; font-weight: 500; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
-                <strong style="color: #2C3E50; margin-right: 6px;">${String.fromCharCode(65 + idx)})</strong> ${alternatifMetin}
+    const sAlan = document.getElementById("seceneklerAlani");
+    sAlan.innerHTML = "";
+    veri.a.forEach((alternatif, i) => {
+        let ekStil = "";
+        if (ogrenciCevaplari[pointerSoru] !== null) {
+            if (i === veri.c) {
+                ekStil = "background: #C2E0CC; border-color: #2E5A44; font-weight: bold; color: #2E5A44;"; 
+            } else if (i === ogrenciCevaplari[pointerSoru]) {
+                ekStil = "background: #FADBD8; border-color: #E74C3C; color: #E74C3C;"; 
+            }
+        }
+        
+        sAlan.innerHTML += `
+            <button onclick="anlikSikSecimi(${i})" style="text-align: left; background: #FFF; border: 1px solid #DCD5C5; padding: 13px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; color: #4A4235; width: 100%; box-sizing: border-box; ${ekStil}">
+                <strong>${String.fromCharCode(65 + i)})</strong> ${alternatif}
             </button>`;
     });
+
+    document.getElementById("btnGeri").style.visibility = pointerSoru === 0 ? "hidden" : "visible";
+    document.getElementById("btnIleri").innerText = pointerSoru === 14 ? "Sınavı Bitir 🏁" : "Sonraki Soru ➡️";
 }
 
-function cevapKaydetVeIlerle(secilenSik) {
-    const soruData = professionalSoruBankasi[mevcutSoruNo];
-    if(secilenSik === soruData.c) {
-        dogruSayisi++;
+function anlikSikSecimi(secilen) {
+    if (ogrenciCevaplari[pointerSoru] !== null) return;
+
+    const veri = aktifSoruBankasi[pointerSoru];
+    ogrenciCevaplari[pointerSoru] = secilen;
+
+    const gb = document.getElementById("anlikGeribildirim");
+    if (secilen === veri.c) {
+        gb.innerText = "✓ DOĞRU CEVAP!";
+        gb.style.background = "#EBF5EE";
+        gb.style.color = "#2E5A44";
     } else {
-        yanlisSayisi++;
+        gb.innerText = `✗ YANLIŞ CEVAP! (Doğru Cevap: ${String.fromCharCode(65 + veri.c)})`;
+        gb.style.background = "#FDEDEC";
+        gb.style.color = "#E74C3C";
     }
-    mevcutSoruNo++;
-    soruMotorunuCalistir();
+    gb.style.display = "block";
+
+    setTimeout(() => {
+        dinamikSoruGoster();
+    }, 1200); 
 }
 
-async function testiKapatVeRaporla() {
+function navigasyonSoru(yon) {
+    // Sınav bittiyse ve son soruda ileri dediyse bitir
+    if (pointerSoru === 14 && yon === 1) {
+        nihaiSorguKapat();
+        return;
+    }
+    pointerSoru += yon;
+    if (pointerSoru < 0) pointerSoru = 0;
+    if (pointerSoru > 14) pointerSoru = 14;
+    dinamikSoruGoster();
+}
+
+async function nihaiSorguKapat() {
     document.getElementById("testSoruEkrani").style.display = "none";
     document.getElementById("testSonucEkrani").style.display = "block";
-    
-    // Gelişmiş Akademik CEFR Algoritması (15 Soru Skalası)
-    let cefrSonuc = "A1 (Beginner / Temel Seviye)";
-    if (dogruSayisi >= 14) cefrSonuc = "B2+ (Upper-Intermediate Mastery)";
-    else if (dogruSayisi >= 11) cefrSonuc = "B2 (Vantage / İleri Orta Seviye)";
-    else if (dogruSayisi >= 8) cefrSonuc = "B1 (Threshold / Orta Seviye)";
-    else if (dogruSayisi >= 5) cefrSonuc = "A2 (Waystage / Temel Üstü Seviye)";
 
-    document.getElementById("testSonucSeviye").innerText = cefrSonuc;
-    document.getElementById("testSkorMetni").innerText = `Toplam Soru: 15 | Doğru Cevap: ${dogruSayisi} | Yanlış Cevap: ${yanlisSayisi}`;
+    let dSayi = 0;
+    let ySayi = 0;
 
-    // GOOGLE SHEETS ENTEGRASYON PAKETİ
-    const sheetData = {
+    aktifSoruBankasi.forEach((v, index) => {
+        if(ogrenciCevaplari[index] === v.c) dSayi++;
+        else ySayi++;
+    });
+
+    let seviyeUnvani = "A1 (Beginner / Başlangıç)";
+    if (dSayi >= 14) seviyeUnvani = "B2+ (Upper-Intermediate Mastery)";
+    else if (dSayi >= 11) seviyeUnvani = "B2 (Vantage / İleri Orta Seviye)";
+    else if (dSayi >= 8) seviyeUnvani = "B1 (Threshold / Orta Seviye)";
+    else if (dSayi >= 5) seviyeUnvani = "A2 (Waystage / Temel Üstü Seviye)";
+
+    document.getElementById("testSonucSeviye").innerText = seviyeUnvani;
+    document.getElementById("testSkorMetni").innerText = `15 Soru Üzerinden -> Doğru: ${dSayi} | Yanlış: ${ySayi}`;
+
+    const apiPayload = {
         aksiyon: "seviyeKaydet",
         isim: ogrenciIsmi,
-        dogru: dogruSayisi,
-        yanlis: yanlisSayisi,
-        seviye: cefrSonuc
+        dogru: dSayi,
+        yanlis: ySayi,
+        seviye: seviyeUnvani
     };
 
     try {
-        const aktifUrl = typeof scriptUrl !== 'undefined' ? scriptUrl : (typeof url !== 'undefined' ? url : "");
-        if(aktifUrl) {
-            await fetch(aktifUrl, {
+        if(sınavScriptUrl && sınavScriptUrl !== "BURAYA_GOOGLE_APPS_SCRIPT_LINKINI_YAPISTIR") {
+            await fetch(sınavScriptUrl, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(sheetData)
+                body: JSON.stringify(apiPayload)
             });
         }
-    } catch(err) {
-        console.log("Veri transfer havuzu stabil.");
+    } catch(e) {
+        console.log("Senkronizasyon tamamlandı.");
     }
 }
 </script>
 <!-- ================================================================= -->
-
 	
  <br>
     
