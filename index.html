@@ -76,7 +76,15 @@ body {
 .header-title { font-size: 15px; font-weight: 600; flex: 1; }
 .header-title span { color: #1D9E75; }
 .last-updated { font-size: 11px; color: #aaa; }
-.student-tabs { display: flex; gap: 8px; padding: 1rem 1.25rem 0; overflow-x: auto; round: #fff; border-bottom: 1px solid #e8eaed; padding-bottom: 1rem; }
+.student-tabs { 
+  display: flex; 
+  gap: 8px; 
+  padding: 1rem 1.25rem 0; 
+  overflow-x: auto; 
+  background-color: #ffffff; /* round yerine background-color yazıldı */
+  border-bottom: 1px solid #e8eaed;
+  padding-bottom: 1rem; 
+}
 .tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; round: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
 .tab.active { round: #1D9E75; color: #fff; border-color: #1D9E75; }
 
@@ -1387,26 +1395,42 @@ function buildLessonStatusBox(rows) {
     return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
   }
 
-  // Geçen hafta (en son işlenen/biten ders), Güncel ders ve Sonraki ders tespiti
+/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU (DÜZELTİLMİŞ) 🔍 */
+function buildLessonStatusBox(rows) {
+  // Sadece ders tarihi girilmiş olan satırları filtrele ve kronolojik sırala
+  const lessonRows = rows.filter(r => r.ders_tarihi && r.ders_tarihi.trim() !== "")
+                         .sort((a,b) => parseDateStr(a.ders_tarihi) - parseDateStr(b.ders_tarihi));
+  
+  if (!lessonRows.length) {
+    return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
+  }
+
   let pastLesson = null;
   let currentLesson = null;
   let nextLesson = null;
 
-  // Durumu tamamlandi, yapılmadı veya ertelendi olan en son dersleri bulalım
-  const pastAndCurrent = lessonRows.filter(r => ["tamamlandi", "yapilmedi", "yapilmadi", "ertelendi"].includes(r.ders_durumu.toLowerCase().trim()));
-  const incoming = lessonRows.filter(r => ["sonraki", "sonraki ders", "planlandi", ""].includes(r.ders_durumu.toLowerCase().trim()));
+  // Bugünün tarihini alalım (Saatleri sıfırlayarak sadece gün karşılaştırması yapmak için)
+  const today = new Date();
+  today.setHours(0,0,0,0);
 
-  if (pastAndCurrent.length > 0) {
-    currentLesson = pastAndCurrent[pastAndCurrent.length - 1]; // En güncel işlenen/durumu girilen ders
-    if (pastAndCurrent.length > 1) {
-      pastLesson = pastAndCurrent[pastAndCurrent.length - 2]; // Ondan bir önceki ders (Geçen haftaki ders)
+  // Satırları tek tek analiz edelim
+  lessonRows.forEach(row => {
+    const st = (row.ders_durumu || "").toLowerCase().trim();
+    const rowDate = parseDateStr(row.ders_tarihi);
+
+    if (st === "sonraki" || st === "planlandi" || rowDate > today) {
+      // Eğer durumu 'sonraki' ise veya tarihi bugünden sonraysa GELECEK DERSTİR
+      if (!nextLesson) {
+        nextLesson = row; // İlk bulduğumuz gelecek dersi kaydedelim
+      }
+    } else {
+      // Durumu tamamlandı, ertelendi olanlar veya tarihi geçmiş olanlar GEÇMİŞ/GÜNCEL derstir
+      pastLesson = currentLesson; // Bir öncekini geçmişe it
+      currentLesson = row;        // En sonuncuyu güncel ders yap
     }
-  }
+  });
 
-  if (incoming.length > 0) {
-    nextLesson = incoming[0]; // Gelecek ilk planlı ders
-  }
-
+  // Rozet (Badge) üretici fonksiyon
   function getStatusBadge(status) {
     const st = (status || "").toLowerCase().trim();
     if (st === "tamamlandi") return `<span class="status-badge badge-tamamlandi">Tamamlandı</span>`;
@@ -1432,13 +1456,12 @@ function buildLessonStatusBox(rows) {
         <div class="status-element">
           <span class="lbl">Gelecek Ders</span>
           <span class="date">${nextLesson ? nextLesson.ders_tarihi : "—"}</span>
-          ${nextLesson ? getStatusBadge("sonraki") : '<span class="status-empty">Plan Yok</span>'}
+          ${nextLesson ? getStatusBadge(nextLesson.ders_durumu || "sonraki") : '<span class="status-empty">Plan Yok</span>'}
         </div>
       </div>
     </div>
   `;
 }
-
 /* ── ÖZET ── */
 function buildOzet(rows, latest, studentName, allRows) {
   const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
