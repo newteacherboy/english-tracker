@@ -966,7 +966,13 @@ async function loadData() {
       ders_durumu:  r[12] ? r[12].trim() : "",
       odev_durumu:  r[13] ? r[13].trim() : "",
       konu:         r[14] || "",
-      telefon: r[15] || ""
+      telefon:      r[15] || "",
+      
+      // 📚 YENİ EKLENEN KİTAP TAKİP VERİLERİ (Sırasıyla r[16], r[17], r[18], r[19])
+      kitap:        r[16] || "Bu hafta henüz kitap tanımlanmadı.",
+      okunan_sayfa: toNum(r[17]),
+      hedef_sayfa:  toNum(r[18]),
+      toplam_kitap: toNum(r[19])
     })).filter(r => r.ogrenci);
 
     passwords = {};
