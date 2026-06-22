@@ -610,47 +610,6 @@ async function nihaiSorguKapat() {
     }
 }
 
-function ogrenciKitapGrafiginiGuncelle(kitapAdi, okunanSayfa, hedefSayfa, toplamKitap) {
-    kitapAdi = kitapAdi || "Bu hafta henüz kitap tanımlanmadı.";
-    okunanSayfa = parseInt(okunanSayfa) || 0;
-    hedefSayfa = parseInt(hedefSayfa) || 100;
-    toplamKitap = parseInt(toplamKitap) || 0;
-
-    // Yüzde Hesaplama
-    let yuzde = Math.round((okunanSayfa / hedefSayfa) * 100);
-    if (yuzde > 100) yuzde = 100;
-    if (yuzde < 0) yuzde = 0;
-
-    // Alanları e-tablodan gelen taze verilerle dolduruyoruz
-    document.getElementById("panelKitapAdi").innerText = kitapAdi;
-    document.getElementById("panelOkunanSayfa").innerText = okunanSayfa;
-    document.getElementById("panelHedefSayfa").innerText = hedefSayfa;
-    document.getElementById("panelSayfaYuzdesi").innerText = `%${yuzde}`;
-    document.getElementById("panelToplamKitap").innerText = toplamKitap;
-    
-    // Barı yavaşça kaydırarak canlandırıyoruz
-    document.getElementById("panelGrafikBar").style.width = `${yuzde}%`;
-
-    // TOPLAM KİTAP SAYISINA GÖRE MERT HOCA UNVANLARI (Gamification)
-    const rozet = document.getElementById("okumaRozeti");
-    if (toplamKitap >= 15) {
-        rozet.innerText = "👑 AKADEMİ ELÇİSİ / BİLGİN";
-        rozet.style.background = "#8E44AD"; // Şık bir mor
-    } else if (toplamKitap >= 10) {
-        rozet.innerText = "🏆 LGS ŞAMPİYON OKURU";
-        rozet.style.background = "#2E5A44"; // Koyu yeşil
-    } else if (toplamKitap >= 5) {
-        rozet.innerText = "⚡ HIZLI OKUMA YOLCUSU";
-        rozet.style.background = "#2980B9"; // Mavi
-    } else if (toplamKitap >= 1) {
-        rozet.innerText = "📖 KİTAP DOSTU";
-        rozet.style.background = "#E67E22"; // Turuncu
-    } else {
-        rozet.innerText = "🌱 YENİ FİLİZLENEN OKUR";
-        rozet.style.background = "#7A7263"; // Gri
-    }
-}
-
 </script>
 <!-- ================================================================= -->
 	
@@ -1118,52 +1077,7 @@ function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
 
 
 
-	<div id="kitapOkumaPaneli" style="display: none; background: #FFF; border: 1px solid #EAE3D2; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; font-family: 'Segoe UI', sans-serif;">
-	  
-	  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #F5EFE6; padding-bottom: 10px;">
-	    <div style="display: flex; align-items: center; gap: 10px;">
-	      <span style="font-size: 24px;">📚</span>
-	      <div>
-	        <h4 style="margin: 0; color: #2C3E50; font-size: 16px; font-weight: bold;">Okuma Kültürü & Gelişim Takibi</h4>
-	        <p style="margin: 2px 0 0 0; font-size: 11px; color: #7A7263;">Düzenli okuma, LGS ve yeni nesil sorularda en büyük gücündür!</p>
-	      </div>
-	    </div>
-	    <span id="okumaRozeti" style="background: #7A7263; color: white; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 0.5px;">YENİ OKUR</span>
-	  </div>
 	
-	  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-	    
-	    <div style="flex: 2; min-width: 250px; display: flex; flex-direction: column; gap: 12px;">
-	      <div style="background: #FAF6F0; border-left: 4px solid #2E5A44; padding: 10px 12px; border-radius: 0 8px 8px 0;">
-	        <span style="font-size: 9px; text-transform: uppercase; color: #7A7263; font-weight: bold; letter-spacing: 0.5px;">Şu An Okunan Kitap</span>
-	        <h5 id="panelKitapAdi" style="margin: 2px 0 0 0; color: #2C3E50; font-size: 14px; font-weight: 700;">-</h5>
-	      </div>
-	
-	      <div>
-	        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px; font-weight: 600; color: #4A4235;">
-	          <span>Haftalık Sayfa İlerlemesi</span>
-	          <span id="panelSayfaYuzdesi" style="color: #2E5A44; font-weight: bold;">%0</span>
-	        </div>
-	        <div style="background: #EAE3D2; width: 100%; height: 10px; border-radius: 10px; overflow: hidden;">
-	          <div id="panelGrafikBar" style="background: linear-gradient(90deg, #2E5A44, #41835C); width: 0%; height: 100%; border-radius: 10px; transition: width 1.5s ease-in-out;"></div>
-	        </div>
-	        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #7A7263; margin-top: 4px;">
-	          <span>Okunan: <strong id="panelOkunanSayfa" style="color: #2C3E50;">0</strong> s.</span>
-	          <span>Hedef: <strong id="panelHedefSayfa" style="color: #2C3E50;">100</strong> s.</span>
-	        </div>
-	      </div>
-	    </div>
-	
-	    <div style="flex: 1; min-width: 120px; background: linear-gradient(135deg, #FAF6F0, #EAE3D2); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; border: 1px solid #DCD5C5;">
-	      <span style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">🏆</span>
-	      <span style="font-size: 9px; font-weight: bold; color: #7A7263; text-transform: uppercase; margin-top: 5px; letter-spacing: 0.5px;">Toplam Bitirilen</span>
-	      <div style="font-size: 26px; font-weight: 800; color: #2C3E50; margin: 2px 0;"><span id="panelToplamKitap">0</span></div>
-	      <span style="font-size: 10px; font-weight: 600; color: #2E5A44;">KİTAP</span>
-	    </div>
-	
-	  </div>
-</div>
-
 function showStudentPage(name) {
   const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
   if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
@@ -1814,10 +1728,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if(localStorage.getItem("rubrik_webhook_yeni")) {
         webhookUrlInput.value = localStorage.getItem("rubrik_webhook_yeni");
 
-			// Şifre onaylanınca senin mevcut ders raporu doldurma kodlarının hemen altına bunu yapıştır hocam:
-ogrenciKitapGrafiginiGuncelle(data.kitap, data.okunan_sayfa, data.hedef_sayfa, data.toplam_kitap);
-document.getElementById("kitapOkumaPaneli").style.display = "block";
-
+			
       // 📌 UYANIK ÖĞRENCİ SAVAR: Konsoldan şifrelerin okunmasını engeller
     setTimeout(() => {
         if (typeof passwords !== 'undefined') {
