@@ -1656,7 +1656,7 @@ function showStudentPage(name) {
   let vRozetMetni = "🌱 YENİ FİLİZLENEN OKUR";
   let vRozetRenk = "#7A7263";
   if (vToplam >= 15) { vRozetMetni = "👑 AKADEMİ ELÇİSİ / BİLGİN"; vRozetRenk = "#8E44AD"; }
-  else if (vToplam >= 10) { vRozetMetni = "🏆 LGS ŞAMPİYON OKURU"; vRozetRenk = "#2E5A44"; }
+  else if (vToplam >= 10) { vRozetMetni = "🏆ŞAMPİYON OKUR"; vRozetRenk = "#2E5A44"; }
   else if (vToplam >= 5) { vRozetMetni = "⚡ HIZLI OKUMA YOLCUSU"; vRozetRenk = "#2980B9"; }
   else if (vToplam >= 1) { vRozetMetni = "📖 KİTAP DOSTU"; vRozetRenk = "#E67E22"; }
 
@@ -1675,7 +1675,7 @@ function showStudentPage(name) {
           <span style="font-size: 24px;">📚</span>
           <div>
             <h4 style="margin: 0; color: #2C3E50; font-size: 16px; font-weight: bold;">Okuma Kültürü & Gelişim Takibi</h4>
-            <p style="margin: 2px 0 0 0; font-size: 11px; color: #7A7263;">Düzenli okuma, LGS ve yeni nesil sorularda en büyük gücündür!</p>
+            <p style="margin: 2px 0 0 0; font-size: 11px; color: #7A7263;">Düzenli okuma, günlük hayatında ve yeni nesil sorularda en büyük gücündür!</p>
           </div>
         </div>
         <span id="okumaRozeti" style="background: ${vRozetRenk}; color: white; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 0.5px;">${vRozetMetni}</span>
@@ -1684,7 +1684,7 @@ function showStudentPage(name) {
       <div style="display: flex; gap: 15px; flex-wrap: wrap;">
         <div style="flex: 2; min-width: 250px; display: flex; flex-direction: column; gap: 12px;">
           <div style="background: #FAF6F0; border-left: 4px solid #2E5A44; padding: 10px 12px; border-radius: 0 8px 8px 0;">
-            <span style="font-size: 9px; text-transform: uppercase; color: #7A7263; font-weight: bold; letter-spacing: 0.5px;">Şu An Okunan Kitak</span>
+            <span style="font-size: 9px; text-transform: uppercase; color: #7A7263; font-weight: bold; letter-spacing: 0.5px;">Şu An Okunan Kitap</span>
             <h5 id="panelKitapAdi" style="margin: 2px 0 0 0; color: #2C3E50; font-size: 14px; font-weight: 700;">${vKitapAdi}</h5>
           </div>
           <div>
