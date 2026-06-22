@@ -942,12 +942,7 @@ function goHome() {
 async function loadData() {
   const gid = SECTIONS[currentSection].gid;
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
-  
-  // 🔗 BURAYA KENDİ APPS SCRIPT WEB UYGULAMA LINKINIZI YAPIŞTIRIN HOCAM:
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-PAMWlqANzoR3A-y577Kd5iPrpaGWPBIA0-i7yI38U6cxSYxD7aJlnRcf6mQ6v1Ye/exec"; 
-
   try {
-    // 1. Ana Ders Verilerini Google'dan Çekiyoruz
     const res = await fetch(url);
     if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
@@ -955,8 +950,7 @@ async function loadData() {
 
     function toNum(v) { return parseFloat((v||"").toString().replace(",",".")) || 0; }
 
-    // Ders Raporlarını Listeliyoruz
-    let dersData = rows.slice(1).map(r => ({
+    allData = rows.slice(1).map(r => ({
       tarih:        r[0] || "",
       ogrenci:      r[1] || "",
       seviye:       r[2] || "",
@@ -972,52 +966,19 @@ async function loadData() {
       ders_durumu:  r[12] ? r[12].trim() : "",
       odev_durumu:  r[13] ? r[13].trim() : "",
       konu:         r[14] || "",
-      telefon:      r[15] || ""
+      telefon:      r[15] || "",
+      
+      // 📚 ARTIK VERİLER DOĞRUDAN ANA SAYFADAKİ SÜTUNLARDAN (Q, R, S, T) AKIYOR:
+      kitap:        r[16] || "Bu hafta henüz kitap tanımlanmadı.",
+      okunan_sayfa: toNum(r[17]),
+      hedef_sayfa:  toNum(r[18]),
+      toplam_kitap: toNum(r[19])
     })).filter(r => r.ogrenci);
 
-    // 2. Apps Script API'miz Üzerinden Kitap Verilerini Çekiyoruz (Giriş Şifresiyle Eş zamanlı)
-    // Öğrencileri döngüye alıp her birinin şifresiyle arka planda API sorgusu yapıyoruz
-    allData = await Promise.all(dersData.map(async (d) => {
-      let kitapSorgu = {
-        kitap: "Bu hafta henüz kitap tanımlanmadı.",
-        okunan_sayfa: 0,
-        hedef_sayfa: 100,
-        toplam_kitap: 0
-      };
-
-      if (d.sifre && APPS_SCRIPT_URL !== "AYARLANACAK_APPS_SCRIPT_URL_ADRESINIZ") {
-        try {
-          // Doğrudan hazırladığımız doGet fonksiyonuna şifreyi fırlatıyoruz
-          const apiRes = await fetch(`${APPS_SCRIPT_URL}?sifre=${encodeURIComponent(d.sifre)}`);
-          if (apiRes.ok) {
-            const apiData = await apiRes.json();
-            if (apiData.durum === "basarili") {
-              kitapSorgu.kitap = apiData.kitap;
-              kitapSorgu.okunan_sayfa = toNum(apiData.okunan_sayfa);
-              kitapSorgu.hedef_sayfa = toNum(apiData.hedef_sayfa);
-              kitapSorgu.toplam_kitap = toNum(apiData.toplam_kitap);
-            }
-          }
-        } catch (apiErr) {
-          console.error("API'den kitap verisi alınırken hata:", apiErr);
-        }
-      }
-
-      return {
-        ...d,
-        kitap:        kitapSorgu.kitap,
-        okunan_sayfa: kitapSorgu.okunan_sayfa,
-        hedef_sayfa:  kitapSorgu.hedef_sayfa,
-        toplam_kitap: kitapSorgu.toplam_kitap
-      };
-    }));
-
-    // Şifreler ve Öğrenci Listesi Oluşturma
     passwords = {};
     allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
     students = [...new Set(allData.map(r => r.ogrenci))];
 
-    // Denemeler Verisini Çekme (Mevcut Orijinal Kodun)
     try {
       const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
       const dRes = await fetch(dUrl);
@@ -1123,71 +1084,82 @@ function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
 
 
 	
-async function loadData() {
-  const gid = SECTIONS[currentSection].gid;
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const text = await res.text();
-    const rows = parseCSV(text);
+function showStudentPage(name) {
+  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
+  const latest = rows[rows.length-1];
+  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+  const s = esc(name);
 
-    function toNum(v) { return parseFloat((v||"").toString().replace(",",".")) || 0; }
+  let pageContent = "";
+  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
+  else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
+  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
 
-    allData = rows.slice(1).map(r => ({
-      tarih:        r[0] || "",
-      ogrenci:      r[1] || "",
-      seviye:       r[2] || "",
-      genel:        toNum(r[3]),
-      vocabulary:   toNum(r[4]),
-      konusma:      toNum(r[5]),
-      okuma:        toNum(r[6]),
-      yazma:        toNum(r[7]),
-      grammar:      toNum(r[8]),
-      deneme:       toNum(r[9]),
-      sifre:        r[10] ? r[10].trim() : "",
-      ders_tarihi:  r[11] || "",
-      ders_durumu:  r[12] ? r[12].trim() : "",
-      odev_durumu:  r[13] ? r[13].trim() : "",
-      konu:         r[14] || "",
-      telefon:      r[15] || "",
-      
-      // 📚 ARTIK VERİLER DOĞRUDAN ANA SAYFADAKİ SÜTUNLARDAN (Q, R, S, T) AKIYOR:
-      kitap:        r[16] || "Bu hafta henüz kitap tanımlanmadı.",
-      okunan_sayfa: toNum(r[17]),
-      hedef_sayfa:  toNum(r[18]),
-      toplam_kitap: toNum(r[19])
-    })).filter(r => r.ogrenci);
+  // Verileri eşliyoruz
+  const vKitapAdi = latest.kitap || "Bu hafta henüz kitap tanımlanmadı.";
+  const vOkunan = parseInt(latest.okunan_sayfa) || 0;
+  const vHedef = parseInt(latest.hedef_sayfa) || 100;
+  const vToplam = parseInt(latest.toplam_kitap) || 0;
 
-    passwords = {};
-    allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
-    students = [...new Set(allData.map(r => r.ogrenci))];
+  let vYuzde = Math.round((vOkunan / vHedef) * 100);
+  if (vYuzde > 100) vYuzde = 100;
+  if (vYuzde < 0) vYuzde = 0;
 
-    try {
-      const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
-      const dRes = await fetch(dUrl);
-      const dText = await dRes.text();
-      const dRows = parseCSV(dText);
-      denemelerData = dRows.slice(1).map(r => ({
-        tarih:       r[0] || "",
-        ogrenci:     r[1] || "",
-        deneme_adi:  r[2] || "",
-        puan:        toNum(r[3])
-      })).filter(r => r.ogrenci && r.puan > 0);
-    } catch(e) { denemelerData = []; }
+  let vRozetMetni = "🌱 YENİ FİLİZLENEN OKUR";
+  let vRozetRenk = "#7A7263";
+  if (vToplam >= 15) { vRozetMetni = "👑 AKADEMİ ELÇİSİ / BİLGİN"; vRozetRenk = "#8E44AD"; }
+  else if (vToplam >= 10) { vRozetMetni = "🏆 LGS ŞAMPİYON OKURU"; vRozetRenk = "#2E5A44"; }
+  else if (vToplam >= 5) { vRozetMetni = "⚡ HIZLI OKUMA YOLCUSU"; vRozetRenk = "#2980B9"; }
+  else if (vToplam >= 1) { vRozetMetni = "📖 KİTAP DOSTU"; vRozetRenk = "#E67E22"; }
 
-    document.getElementById("last-updated").textContent =
-      new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
-    renderTabs();
-    if (students.length && !activeStudent) selectStudent(students[0]);
-    else if (!students.length) {
-      document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
-    }
-  } catch(e) {
-    console.error(e);
-    document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
-  }
-}
+  document.getElementById("content").innerHTML = `
+    <div class="student-header">
+      <div class="avatar">${initials}</div>
+      <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
+      <div class="level-badge">${latest.seviye}</div>
+      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
+    </div>
+
+    <div id="kitapOkumaPaneli" style="display: block; background: #FFF; border: 1px solid #EAE3D2; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; font-family: 'Segoe UI', sans-serif;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #F5EFE6; padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">📚</span>
+          <div>
+            <h4 style="margin: 0; color: #2C3E50; font-size: 16px; font-weight: bold;">Okuma Kültürü & Gelişim Takibi</h4>
+            <p style="margin: 2px 0 0 0; font-size: 11px; color: #7A7263;">Düzenli okuma, LGS ve yeni nesil sorularda en büyük gücündür!</p>
+          </div>
+        </div>
+        <span id="okumaRozeti" style="background: ${vRozetRenk}; color: white; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 0.5px;">${vRozetMetni}</span>
+      </div>
+
+      <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 2; min-width: 250px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="background: #FAF6F0; border-left: 4px solid #2E5A44; padding: 10px 12px; border-radius: 0 8px 8px 0;">
+            <span style="font-size: 9px; text-transform: uppercase; color: #7A7263; font-weight: bold; letter-spacing: 0.5px;">Şu An Okunan Kitap</span>
+            <h5 id="panelKitapAdi" style="margin: 2px 0 0 0; color: #2C3E50; font-size: 14px; font-weight: 700;">${vKitapAdi}</h5>
+          </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px; font-weight: 600; color: #4A4235;">
+              <span>Haftalık Sayfa İlerlemesi</span>
+              <span id="panelSayfaYuzdesi" style="color: #2E5A44; font-weight: bold;">%${vYuzde}</span>
+            </div>
+            <div style="background: #EAE3D2; width: 100%; height: 10px; border-radius: 10px; overflow: hidden;">
+              <div id="panelGrafikBar" style="background: linear-gradient(90deg, #2E5A44, #41835C); width: ${vYuzde}%; height: 100%; border-radius: 10px; transition: width 1.5s ease-in-out;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #7A7263; margin-top: 4px;">
+              <span>Okunan: <strong id="panelOkunanSayfa" style="color: #2C3E50;">${vOkunan}</strong> s.</span>
+              <span>Hedef: <strong id="panelHedefSayfa" style="color: #2C3E50;">${vHedef}</strong> s.</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex: 1; min-width: 120px; background: linear-gradient(135deg, #FAF6F0, #EAE3D2); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; border: 1px solid #DCD5C5;">
+          <span style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">🏆</span>
+          <span style="font-size: 9px; font-weight: bold; color: #7A7263; text-transform: uppercase; margin-top: 5px; letter-spacing: 0.5px;">Toplam Bitirilen</span>
+          <div style="font-size: 26px; font-weight: 800; color: #2C3E50; margin: 2px 0;"><span id="panelToplamKitap">${vToplam}</span></div>
+          <span style="font-size: 10px; font-weight: 600; color: #2E5A44;">KİTAP</span>
+        </div>
+      </div>
     </div>
 
     <div class="page-tabs">
@@ -1198,7 +1170,6 @@ async function loadData() {
     ${pageContent}
   `;
 }
-
 function switchPageTab(name, tab) {
   activePageTab = tab;
   showStudentPage(name); function showStudentPage(name) {
