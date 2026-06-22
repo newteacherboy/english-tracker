@@ -1985,7 +1985,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   const yapilmadi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="yapilmadi" || r.ders_durumu.toLowerCase().trim()==="yapilmedi").length;
 
   const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null, studentName);
-  const lessonStatusBoxHtml = buildLessonStatusBox(rows); // Yeni oluşturduğumuz kutucuk motoru çağrılıyor
+  const lessonStatusBoxHtml = buildLessonStatusBox(rows); 
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
   return `
@@ -2004,11 +2004,25 @@ function buildOzet(rows, latest, studentName, allRows) {
       <div class="metric-card"><div class="metric-label">Devam oranı</div><div class="metric-value">${dersler.length?Math.round(yapildi/dersler.length*100):0}%</div><div class="metric-delta"><span style="color:#e74c3c">${yapilmadi} kaçırıldı</span></div></div>
     </div>
 
-    <div class="card"><div class="card-title">Genel gelişim grafiği</div><canvas id="chartGenel"></canvas></div>
-    <div class="card"><div class="card-title">Beceri radar grafiği</div><canvas id="chartRadar"></canvas></div>
-    <div class="card"><div class="card-title">Beceri alanları</div>${skillRows}</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
+      <div class="card" style="margin-bottom: 0;">
+        <div class="card-title">Genel Gelişim Grafiği</div>
+        <div style="position: relative; height: 220px; width: 100%;">
+          <canvas id="canvasGenel"></canvas>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom: 0;">
+        <div class="card-title">Beceri Radar Grafiği</div>
+        <div style="position: relative; height: 220px; width: 100%;">
+          <canvas id="canvasRadar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card"><div class="card-title">Beceri Alanları Seviyeleri</div>${skillRows}</div>
   `;
 }
+
 
 function drawCharts(rows) {
   const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
@@ -2581,6 +2595,84 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+// =================================================================
+// 📊 GRAFİK ÇİZİM MOTORU (createCharts)
+// =================================================================
+function createCharts(rows, latest) {
+  const sortedRows = [...rows].sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  const last5 = sortedRows.slice(-5);
+  const labels = last5.map(r => r.tarih);
+
+  // 1. Genel Gelişim Çizgi Grafiği (canvasGenel)
+  const canvasGenel = document.getElementById("canvasGenel");
+  if (canvasGenel) {
+    const ctxGenel = canvasGenel.getContext("2d");
+    if (window.chartInstances && window.chartInstances["genel"]) { 
+      window.chartInstances["genel"].destroy(); 
+    }
+    if (!window.chartInstances) window.chartInstances = {};
+
+    window.chartInstances["genel"] = new Chart(ctxGenel, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Genel Performans",
+          data: last5.map(r => r.genel),
+          borderColor: "#1D9E75",
+          backgroundColor: "rgba(29, 158, 117, 0.1)",
+          borderWidth: 3,
+          pointBackgroundColor: "#1D9E75",
+          pointRadius: 4,
+          tension: 0.2,
+          fill: true
+        }]
+      },
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false, 
+        plugins: { legend: { display: false } } 
+      }
+    });
+  }
+
+  // 2. Dil Becerileri Radar Grafiği (canvasRadar)
+  const canvasRadar = document.getElementById("canvasRadar");
+  if (canvasRadar) {
+    const ctxRadar = canvasRadar.getContext("2d");
+    if (window.chartInstances && window.chartInstances["radar"]) { 
+      window.chartInstances["radar"].destroy(); 
+    }
+
+    window.chartInstances["radar"] = new Chart(ctxRadar, {
+      type: "radar",
+      data: {
+        labels: ["Vocabulary", "Speaking", "Reading", "Writing", "Grammar"],
+        datasets: [{
+          data: [
+            latest.vocabulary || 0, 
+            latest.konusma || 0, 
+            latest.okuma || 0, 
+            latest.yazma || 0, 
+            latest.grammar || 0
+          ],
+          backgroundColor: "rgba(55, 138, 221, 0.15)",
+          borderColor: "#378ADD",
+          borderWidth: 2,
+          pointBackgroundColor: "#378ADD"
+        }]
+      },
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false, 
+        plugins: { legend: { display: false } } 
+      }
+    });
+  }
+}
+
+
 </script>
 
 </body>
