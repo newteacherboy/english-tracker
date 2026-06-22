@@ -1386,20 +1386,14 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     </div>`;
 }
 
-/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU 🔍 */
+/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU (GÜVENLİ VE KİLİTLENMEZ SÜRÜM) 🔍 */
 function buildLessonStatusBox(rows) {
-  // Sadece ders tarihi girilmiş olan satırları filtrele ve kronolojik sırala
-  const lessonRows = rows.filter(r => r.ders_tarihi.trim() !== "").sort((a,b) => parseDateStr(a.ders_tarihi) - parseDateStr(b.ders_tarihi));
-  
-  if (!lessonRows.length) {
+  if (!rows || !rows.length) {
     return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
   }
 
-/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU (DÜZELTİLMİŞ) 🔍 */
-function buildLessonStatusBox(rows) {
-  // Sadece ders tarihi girilmiş olan satırları filtrele ve kronolojik sırala
-  const lessonRows = rows.filter(r => r.ders_tarihi && r.ders_tarihi.trim() !== "")
-                         .sort((a,b) => parseDateStr(a.ders_tarihi) - parseDateStr(b.ders_tarihi));
+  // Sadece ders tarihi girilmiş olan satırları filtrele
+  const lessonRows = rows.filter(r => r && r.ders_tarihi && r.ders_tarihi.trim() !== "");
   
   if (!lessonRows.length) {
     return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
@@ -1409,24 +1403,31 @@ function buildLessonStatusBox(rows) {
   let currentLesson = null;
   let nextLesson = null;
 
-  // Bugünün tarihini alalım (Saatleri sıfırlayarak sadece gün karşılaştırması yapmak için)
+  // Bugünün tarihini alalım
   const today = new Date();
   today.setHours(0,0,0,0);
 
-  // Satırları tek tek analiz edelim
+  // Güvenli ayırma döngüsü
   lessonRows.forEach(row => {
     const st = (row.ders_durumu || "").toLowerCase().trim();
-    const rowDate = parseDateStr(row.ders_tarihi);
+    
+    // Tarih metnini (GG.AA.YYYY) JavaScript tarih nesnesine güvenli dönüştürme
+    let isFuture = false;
+    if (row.ders_tarihi) {
+      const parts = row.ders_tarihi.split('.');
+      if (parts.length === 3) {
+        const dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+        if (dateObj > today) isFuture = true;
+      }
+    }
 
-    if (st === "sonraki" || st === "planlandi" || rowDate > today) {
-      // Eğer durumu 'sonraki' ise veya tarihi bugünden sonraysa GELECEK DERSTİR
+    if (st === "sonraki" || st === "planlandi" || isFuture) {
       if (!nextLesson) {
-        nextLesson = row; // İlk bulduğumuz gelecek dersi kaydedelim
+        nextLesson = row; 
       }
     } else {
-      // Durumu tamamlandı, ertelendi olanlar veya tarihi geçmiş olanlar GEÇMİŞ/GÜNCEL derstir
-      pastLesson = currentLesson; // Bir öncekini geçmişe it
-      currentLesson = row;        // En sonuncuyu güncel ders yap
+      pastLesson = currentLesson; 
+      currentLesson = row;        
     }
   });
 
