@@ -60,7 +60,17 @@ body {
 
 /* TRACKER */
 .tracker { display: none; flex-direction: column; min-height: 100vh; }
-.header { round: #fff; border-bottom: 1px solid #e8eaed; padding: 0.9rem 1.25rem; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 20; }
+.header { 
+  background-color: #ffffff !important; /* round yerine geçerli arka plan rengi yazıldı */
+  border-bottom: 1px solid #e8eaed;
+  padding: 0.9rem 1.25rem; 
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+  position: sticky; 
+  top: 0; 
+  z-index: 9999 !important; /* Diğer elementlerin kesinlikle arkasında kalması için z-index yükseltildi */
+}
 .back-btn { round: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: #555; cursor: pointer; white-space: nowrap; }
 .back-btn:hover { round: #f4f6f8; }
 .header-title { font-size: 15px; font-weight: 600; flex: 1; }
@@ -767,7 +777,7 @@ async function randevuSisteminiTetikle() {
         document.getElementById("kurumsalRandevuAlani").style.display = "none";
         document.getElementById("randevuMenuBtn").style.borderRadius = "8px";
         
-        alert("Harika! Talebiniz hem Google Sheets'e işlendi hem de Öğretmen Çocuk  WhatsApp hattına iletildi.");
+        alert("Harika! Talebiniz Öğretmen Çocuk  WhatsApp hattına iletildi.");
     }, 1000);
 }
 </script>  
