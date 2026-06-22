@@ -1091,12 +1091,13 @@ function showStudentPage(name) {
   const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
   const s = esc(name);
 
+  // Sekme içerik motoru
   let pageContent = "";
   if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
   else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
   else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
 
-  // Verileri eşliyoruz
+  // Kitap verilerini çekiyoruz ve güvenli hale getiriyoruz
   const vKitapAdi = latest.kitap || "Bu hafta henüz kitap tanımlanmadı.";
   const vOkunan = parseInt(latest.okunan_sayfa) || 0;
   const vHedef = parseInt(latest.hedef_sayfa) || 100;
@@ -1113,6 +1114,8 @@ function showStudentPage(name) {
   else if (vToplam >= 5) { vRozetMetni = "⚡ HIZLI OKUMA YOLCUSU"; vRozetRenk = "#2980B9"; }
   else if (vToplam >= 1) { vRozetMetni = "📖 KİTAP DOSTU"; vRozetRenk = "#E67E22"; }
 
+  // Sayfa yapısını oluştururken Kitap Panelini ve Sekme Butonlarını tamamen BAĞIMSIZ üste sabitliyoruz.
+  // Alttaki ${pageContent} ise sadece seçilen sekmenin içeriğini (Özet, Rapor veya Deneme) kendi havuzunda değiştirir.
   document.getElementById("content").innerHTML = `
     <div class="student-header">
       <div class="avatar">${initials}</div>
@@ -1167,10 +1170,12 @@ function showStudentPage(name) {
       <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
       <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
     </div>
-    ${pageContent}
+
+    <div id="sekmeIcerikAlani">
+      ${pageContent}
+    </div>
   `;
-}
-function switchPageTab(name, tab) {
+}function switchPageTab(name, tab) {
   activePageTab = tab;
   showStudentPage(name); function showStudentPage(name) {
   const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
