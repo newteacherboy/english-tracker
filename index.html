@@ -1175,9 +1175,40 @@ function showStudentPage(name) {
       ${pageContent}
     </div>
   `;
-}function switchPageTab(name, tab) {
+}
+	
+	// 🔄 1. SEKMELER ARASI GEÇİŞ FONKSİYONU (Sadece alt içeriği değiştirir, kitap paneline dokunmaz)
+function switchPageTab(name, tab) {
   activePageTab = tab;
-  showStudentPage(name); function showStudentPage(name) {
+  
+  // Sekme butonlarının aktiflik (renk) sınıflarını güncelliyoruz
+  document.querySelectorAll('.page-tab').forEach(el => el.classList.remove('active'));
+  
+  const currentTabName = tab === 'ozet' ? 'Özet' : tab === 'haftalar' ? 'Ders Raporları' : 'Denemeler';
+  const clickedTabEl = Array.from(document.querySelectorAll('.page-tab')).find(el => el.textContent.includes(currentTabName));
+  if (clickedTabEl) clickedTabEl.classList.add('active');
+
+  // Verileri süzüyoruz
+  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
+  const latest = rows[rows.length-1];
+
+  // Hangi sekme seçildiyse sadece onun içeriğini hazırlıyoruz
+  let pageContent = "";
+  if (tab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
+  else if (tab === "haftalar") pageContent = buildHaftalar(rows);
+  else if (tab === "denemeler") pageContent = buildDenemeler(name);
+
+  // Üstteki kitap paneline hiç dokunmadan sadece alt havuzu güncelliyoruz
+  const container = document.getElementById("sekmeIcerikAlani");
+  if (container) {
+    container.innerHTML = pageContent;
+  } else {
+    showStudentPage(name);
+  }
+}
+
+// 👑 2. ÖĞRENCİ PANELİNİ İLK ÇİZEN ANA FONKSİYON (Kitap Paneli Buraya Sabitlendi)
+function showStudentPage(name) {
   const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
   if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
   const latest = rows[rows.length-1];
@@ -1189,6 +1220,24 @@ function showStudentPage(name) {
   else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
   else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
 
+  // Kitap verileri ve yüzde hesapları
+  const vKitapAdi = latest.kitap || "Bu hafta henüz kitap tanımlanmadı.";
+  const vOkunan = parseInt(latest.okunan_sayfa) || 0;
+  const vHedef = parseInt(latest.hedef_sayfa) || 100;
+  const vToplam = parseInt(latest.toplam_kitap) || 0;
+
+  let vYuzde = Math.round((vOkunan / vHedef) * 100);
+  if (vYuzde > 100) vYuzde = 100;
+  if (vYuzde < 0) vYuzde = 0;
+
+  let vRozetMetni = "🌱 YENİ FİLİZLENEN OKUR";
+  let vRozetRenk = "#7A7263";
+  if (vToplam >= 15) { vRozetMetni = "👑 AKADEMİ ELÇİSİ / BİLGİN"; vRozetRenk = "#8E44AD"; }
+  else if (vToplam >= 10) { vRozetMetni = "🏆 LGS ŞAMPİYON OKURU"; vRozetRenk = "#2E5A44"; }
+  else if (vToplam >= 5) { vRozetMetni = "⚡ HIZLI OKUMA YOLCUSU"; vRozetRenk = "#2980B9"; }
+  else if (vToplam >= 1) { vRozetMetni = "📖 KİTAP DOSTU"; vRozetRenk = "#E67E22"; }
+
+  // Tüm iskeleti basıyoruz, alt sekmeleri #sekmeIcerikAlani içine hapsediyoruz
   document.getElementById("content").innerHTML = `
     <div class="student-header">
       <div class="avatar">${initials}</div>
@@ -1196,14 +1245,13 @@ function showStudentPage(name) {
       <div class="level-badge">${latest.seviye}</div>
       ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
     </div>
-    <div class="page-tabs">
-      <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
-      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
-      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
-    </div>
-    ${pageContent}
-  `;
 
+    <div id="kitapOkumaPaneli" style="display: block; background: #FFF; border: 1px solid #EAE3D2; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; font-family: 'Segoe UI', sans-serif;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #F5EFE6; padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">📚</span>
+          <div>
+            <h4 style="margin: 0; color: #2C3E50; font-size: 16px; font-weight: bold;">Okuma Kültürü & Gelişim
 
   if (activePageTab === "ozet") {
     drawCharts(rows);
