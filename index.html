@@ -943,11 +943,11 @@ async function loadData() {
   const gid = SECTIONS[currentSection].gid;
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
   
-  // 📚 KİTAP OKUMA TAKİBİ SEKMENİZİN GID KODU (E-tabloda o sekmeye tıkladığında tarayıcı adres çubuğundaki gid=XXXX değeridir. Eğer farklıysa burayı değiştirebilirsin hocam)
-  const KITAP_GID = "0"; 
+  // 🔗 BURAYA KENDİ APPS SCRIPT WEB UYGULAMA LINKINIZI YAPIŞTIRIN HOCAM:
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-PAMWlqANzoR3A-y577Kd5iPrpaGWPBIA0-i7yI38U6cxSYxD7aJlnRcf6mQ6v1Ye/exec"; 
 
   try {
-    // 1. Ana Ders Verilerini Çekiyoruz
+    // 1. Ana Ders Verilerini Google'dan Çekiyoruz
     const res = await fetch(url);
     if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
@@ -955,7 +955,7 @@ async function loadData() {
 
     function toNum(v) { return parseFloat((v||"").toString().replace(",",".")) || 0; }
 
-    // Ders Raporlarını Hafızaya Alıyoruz
+    // Ders Raporlarını Listeliyoruz
     let dersData = rows.slice(1).map(r => ({
       tarih:        r[0] || "",
       ogrenci:      r[1] || "",
@@ -975,57 +975,49 @@ async function loadData() {
       telefon:      r[15] || ""
     })).filter(r => r.ogrenci);
 
-    // 2. "Kitap Okuma Takibi" Sekmesinden Kitap Verilerini Çekiyoruz
-    let kitapMap = {};
-    try {
-      const kUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${KITAP_GID}&t=${Date.now()}`;
-      const kRes = await fetch(kUrl);
-      if (kRes.ok) {
-        const kText = await kRes.text();
-        const kRows = parseCSV(kText);
-        
-        // Kitap tablosunu satır satır okuyup öğrenci ismine göre hafızaya alıyoruz
-        kRows.slice(1).forEach(kr => {
-          const ogrenciAdi = (kr[0] || "").toString().trim().toLowerCase();
-          if (ogrenciAdi) {
-            kitapMap[ogrenciAdi] = {
-              kitap:        kr[1] || "Bu hafta henüz kitap tanımlanmadı.",
-              okunan_sayfa: toNum(kr[2]),
-              hedef_sayfa:  toNum(kr[3]),
-              toplam_kitap: toNum(kr[4])
-            };
-          }
-        });
-      }
-    } catch(ke) {
-      console.error("Kitap verileri çekilemedi:", ke);
-    }
-
-    // 3. İki Farklı Sekmeden Gelen Verileri Öğrenci İsmine Göre Birleştiriyoruz
-    allData = dersData.map(d => {
-      const ogrenciKey = d.ogrenci.toString().trim().toLowerCase();
-      const kVeri = kitapMap[ogrenciKey] || {
+    // 2. Apps Script API'miz Üzerinden Kitap Verilerini Çekiyoruz (Giriş Şifresiyle Eş zamanlı)
+    // Öğrencileri döngüye alıp her birinin şifresiyle arka planda API sorgusu yapıyoruz
+    allData = await Promise.all(dersData.map(async (d) => {
+      let kitapSorgu = {
         kitap: "Bu hafta henüz kitap tanımlanmadı.",
         okunan_sayfa: 0,
         hedef_sayfa: 100,
         toplam_kitap: 0
       };
 
+      if (d.sifre && APPS_SCRIPT_URL !== "AYARLANACAK_APPS_SCRIPT_URL_ADRESINIZ") {
+        try {
+          // Doğrudan hazırladığımız doGet fonksiyonuna şifreyi fırlatıyoruz
+          const apiRes = await fetch(`${APPS_SCRIPT_URL}?sifre=${encodeURIComponent(d.sifre)}`);
+          if (apiRes.ok) {
+            const apiData = await apiRes.json();
+            if (apiData.durum === "basarili") {
+              kitapSorgu.kitap = apiData.kitap;
+              kitapSorgu.okunan_sayfa = toNum(apiData.okunan_sayfa);
+              kitapSorgu.hedef_sayfa = toNum(apiData.hedef_sayfa);
+              kitapSorgu.toplam_kitap = toNum(apiData.toplam_kitap);
+            }
+          }
+        } catch (apiErr) {
+          console.error("API'den kitap verisi alınırken hata:", apiErr);
+        }
+      }
+
       return {
         ...d,
-        kitap:        kVeri.kitap,
-        okunan_sayfa: kVeri.okunan_sayfa,
-        hedef_sayfa:  kVeri.hedef_sayfa,
-        toplam_kitap: kVeri.toplam_kitap
+        kitap:        kitapSorgu.kitap,
+        okunan_sayfa: kitapSorgu.okunan_sayfa,
+        hedef_sayfa:  kitapSorgu.hedef_sayfa,
+        toplam_kitap: kitapSorgu.toplam_kitap
       };
-    });
+    }));
 
     // Şifreler ve Öğrenci Listesi Oluşturma
     passwords = {};
     allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
     students = [...new Set(allData.map(r => r.ogrenci))];
 
-    // Denemeler Verisini Çekme (Mevcut Kodun)
+    // Denemeler Verisini Çekme (Mevcut Orijinal Kodun)
     try {
       const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
       const dRes = await fetch(dUrl);
