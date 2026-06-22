@@ -1386,13 +1386,13 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     </div>`;
 }
 
-/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU (GÜVENLİ VE KİLİTLENMEZ SÜRÜM) 🔍 */
+/* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU (SHEETS ODAKLI DÜZELTME) 🔍 */
 function buildLessonStatusBox(rows) {
   if (!rows || !rows.length) {
     return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
   }
 
-  // Sadece ders tarihi girilmiş olan satırları filtrele
+  // Boş olmayan ders satırlarını filtrele
   const lessonRows = rows.filter(r => r && r.ders_tarihi && r.ders_tarihi.trim() !== "");
   
   if (!lessonRows.length) {
@@ -1403,29 +1403,16 @@ function buildLessonStatusBox(rows) {
   let currentLesson = null;
   let nextLesson = null;
 
-  // Bugünün tarihini alalım
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  // Güvenli ayırma döngüsü
+  // Tüm satırları tek tek tarayarak Sheets'teki durum bilgisine göre ayırıyoruz
   lessonRows.forEach(row => {
     const st = (row.ders_durumu || "").toLowerCase().trim();
-    
-    // Tarih metnini (GG.AA.YYYY) JavaScript tarih nesnesine güvenli dönüştürme
-    let isFuture = false;
-    if (row.ders_tarihi) {
-      const parts = row.ders_tarihi.split('.');
-      if (parts.length === 3) {
-        const dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
-        if (dateObj > today) isFuture = true;
-      }
-    }
 
-    if (st === "sonraki" || st === "planlandi" || isFuture) {
-      if (!nextLesson) {
-        nextLesson = row; 
-      }
-    } else {
+    // Eğer Sheets'te 'sonraki', 'planlandi' veya 'sonraki ders' yazıyorsa doğrudan GELECEK DERS yap
+    if (st === "sonraki" || st === "planlandi" || st === "sonraki ders") {
+      nextLesson = row; // En güncel eklenen sonraki dersi buraya eşitler
+    } 
+    // Tamamlanmış, ertelenmiş veya yapılmamış dersleri geçmiş/güncel akışına al
+    else if (st === "tamamlandi" || st === "ertelendi" || st === "yapilmadi" || st === "yapilmedi") {
       pastLesson = currentLesson; 
       currentLesson = row;        
     }
@@ -1457,7 +1444,7 @@ function buildLessonStatusBox(rows) {
         <div class="status-element">
           <span class="lbl">Gelecek Ders</span>
           <span class="date">${nextLesson ? nextLesson.ders_tarihi : "—"}</span>
-          ${nextLesson ? getStatusBadge(nextLesson.ders_durumu || "sonraki") : '<span class="status-empty">Plan Yok</span>'}
+          ${nextLesson ? getStatusBadge(nextLesson.ders_durumu) : '<span class="status-empty">Plan Yok</span>'}
         </div>
       </div>
     </div>
