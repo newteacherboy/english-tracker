@@ -1300,7 +1300,75 @@ function switchPageTab(name, tab) {
 }
 }
 
-		
+		function buildBookCounterSection(row) {
+    // Google Sheets'ten gelen verileri güvenli bir şekilde alalım ve temizleyelim
+    const kitapSayisi = parseInt(row.okunan_kitap_sayisi) || 0;
+    const kitapAdi = (row.son_kitap_adi || "").trim();
+    const sayfaSayisi = parseInt(row.son_kitap_sayfa) || 0;
+
+    // Teşvik edici kupa emojileri, seviyeler ve dinamik mesajlar
+    let kupaEmoji = "🌱";
+    let tebrikMesaji = "Harika bir başlangıç! Okumaya devam et.";
+    let seviyeUnvani = "Kitap Sever Yolcu";
+
+    if (kitapSayisi >= 15) {
+        kupaEmoji = "👑🏆👑";
+        tebrikMesaji = "Muhteşem ötesi! Tam bir kitap kurdu, gerçek bir şampiyonsun!";
+        seviyeUnvani = "Efsanevi Okur";
+    } else if (kitapSayisi >= 10) {
+        kupaEmoji = "🏆";
+        tebrikMesaji = "Harikulade bir başarı! Kitapların efendisi olma yolundasın!";
+        seviyeUnvani = "Usta Okur";
+    } else if (kitapSayisi >= 5) {
+        kupaEmoji = "🥇";
+        tebrikMesaji = "Tebrikler! Okuma alışkanlığın harika ilerliyor!";
+        seviyeUnvani = "İleri Düzey Okur";
+    } else if (kitapSayisi >= 3) {
+        kupaEmoji = "🥈";
+        tebrikMesaji = "Çok iyi! Hedeflerine adım adım yaklaşıyorsun!";
+        seviyeUnvani = "İstekli Okur";
+    }
+
+    // Son okunan kitap detayları alanı (Eğer veri girilmişse görünür)
+    let sonKitapHTML = "";
+    if (kitapAdi !== "") {
+        sonKitapHTML = `
+            <div class="book-last-read">
+                <span class="book-last-label">📖 Son Okunan Kitap:</span>
+                <span class="book-last-value">${kitapAdi} ${sayfaSayisi > 0 ? `(${sayfaSayisi} Sayfa)` : ''}</span>
+            </div>
+        `;
+    }
+
+    // Modülün HTML Yapısı
+    return `
+        <div class="card book-counter-card">
+            <div class="card-title" style="margin-bottom: 0.8rem;">
+                📚 Öğrenci Kitap Kitaplığı & Motivasyon
+            </div>
+            
+            <div class="book-main-grid">
+                <div class="book-trophy-zone">
+                    <div class="trophy-icon">${kupaEmoji}</div>
+                    <div class="trophy-title">${seviyeUnvani}</div>
+                </div>
+                
+                <div class="book-stats-zone">
+                    <div class="book-metric">
+                        <span class="book-num">${kitapSayisi}</span>
+                        <span class="book-lbl">Okunan Toplam Kitap</span>
+                    </div>
+                </div>
+            </div>
+
+            ${sonKitapHTML}
+
+            <div class="book-motivation-box">
+                "${tebrikMesaji}"
+            </div>
+        </div>
+    `;
+}
 
 /* ── /* ── ROZETLER ── */
 
@@ -1426,75 +1494,7 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     </div>`;
 }
 
-function buildBookCounterSection(row) {
-    // Google Sheets'ten gelen verileri güvenli bir şekilde alalım ve temizleyelim
-    const kitapSayisi = parseInt(row.okunan_kitap_sayisi) || 0;
-    const kitapAdi = (row.son_kitap_adi || "").trim();
-    const sayfaSayisi = parseInt(row.son_kitap_sayfa) || 0;
 
-    // Teşvik edici kupa emojileri, seviyeler ve dinamik mesajlar
-    let kupaEmoji = "🌱";
-    let tebrikMesaji = "Harika bir başlangıç! Okumaya devam et.";
-    let seviyeUnvani = "Kitap Sever Yolcu";
-
-    if (kitapSayisi >= 15) {
-        kupaEmoji = "👑🏆👑";
-        tebrikMesaji = "Muhteşem ötesi! Tam bir kitap kurdu, gerçek bir şampiyonsun!";
-        seviyeUnvani = "Efsanevi Okur";
-    } else if (kitapSayisi >= 10) {
-        kupaEmoji = "🏆";
-        tebrikMesaji = "Harikulade bir başarı! Kitapların efendisi olma yolundasın!";
-        seviyeUnvani = "Usta Okur";
-    } else if (kitapSayisi >= 5) {
-        kupaEmoji = "🥇";
-        tebrikMesaji = "Tebrikler! Okuma alışkanlığın harika ilerliyor!";
-        seviyeUnvani = "İleri Düzey Okur";
-    } else if (kitapSayisi >= 3) {
-        kupaEmoji = "🥈";
-        tebrikMesaji = "Çok iyi! Hedeflerine adım adım yaklaşıyorsun!";
-        seviyeUnvani = "İstekli Okur";
-    }
-
-    // Son okunan kitap detayları alanı (Eğer veri girilmişse görünür)
-    let sonKitapHTML = "";
-    if (kitapAdi !== "") {
-        sonKitapHTML = `
-            <div class="book-last-read">
-                <span class="book-last-label">📖 Son Okunan Kitap:</span>
-                <span class="book-last-value">${kitapAdi} ${sayfaSayisi > 0 ? `(${sayfaSayisi} Sayfa)` : ''}</span>
-            </div>
-        `;
-    }
-
-    // Modülün HTML Yapısı
-    return `
-        <div class="card book-counter-card">
-            <div class="card-title" style="margin-bottom: 0.8rem;">
-                📚 Öğrenci Kitap Kitaplığı & Motivasyon
-            </div>
-            
-            <div class="book-main-grid">
-                <div class="book-trophy-zone">
-                    <div class="trophy-icon">${kupaEmoji}</div>
-                    <div class="trophy-title">${seviyeUnvani}</div>
-                </div>
-                
-                <div class="book-stats-zone">
-                    <div class="book-metric">
-                        <span class="book-num">${kitapSayisi}</span>
-                        <span class="book-lbl">Okunan Toplam Kitap</span>
-                    </div>
-                </div>
-            </div>
-
-            ${sonKitapHTML}
-
-            <div class="book-motivation-box">
-                "${tebrikMesaji}"
-            </div>
-        </div>
-    `;
-}
 
 // Google Sheets'ten öğrenci satırı (row) başarıyla alındıktan sonra ekrana basılan alan:
 let html = "";
