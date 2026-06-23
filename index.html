@@ -1155,6 +1155,100 @@ function showStudentPage(name) {
   if (activePageTab === "denemeler") drawDenemeChart(name);
 }
 
+// Kitap verilerini güvenli hale getiriyoruz (Boşsa hata vermemesi için)
+const vKitapAdi = latest.kitap || "Bu hafta henüz kitap tanımlanmadı.";
+const vOkunan = parseInt(latest.okunan_sayfa) || 0;
+const vHedef = parseInt(latest.hedef_sayfa) || 100; // Sayfa Hedefi (Örn: 100 sayfa)
+const vToplam = parseInt(latest.toplam_kitap) || 0;  // T Sütunundaki Bitirilen Kitap Sayısı
+
+// Yüzde hesaplama ve sınırlandırma
+let vYuzde = Math.round((vOkunan / vHedef) * 100);
+if (vYuzde > 100) vYuzde = 100;
+if (vYuzde < 0) vYuzde = 0;
+
+// 🏆 ÖDÜL VE ROZET MOTORU (Teşvik Edici Seviyeler)
+let vRozetMetni = "🌱 YENİ FİLİZLENEN OKUR";
+let vRozetRenk = "#7A7263";
+let vKupaEmoji = "📖";
+
+if (vToplam >= 15) { 
+  vRozetMetni = "👑 AKADEMİ ELÇİSİ / BİLGİN"; 
+  vRozetRenk = "#8E44AD"; // Asil Mor
+  vKupaEmoji = "🔮";
+} else if (vToplam >= 10) { 
+  vRozetMetni = "🏆 LGS ŞAMPİYON OKURU"; 
+  vRozetRenk = "#D35400"; // Altın/Turuncu
+  vKupaEmoji = "👑";
+} else if (vToplam >= 5) { 
+  vRozetMetni = "⚡ HIZLI OKUMA YOLCUSU"; 
+  vRozetRenk = "#2980B9"; // Canlı Mavi
+  vKupaEmoji = "🚀";
+} else if (vToplam >= 3) { 
+  vRozetMetni = "🏅 KİTAP DOSTU"; 
+  vRozetRenk = "#27AE60"; // Başarı Yeşili
+  vKupaEmoji = "🥈";
+} else if (vToplam >= 1) { 
+  vRozetMetni = "📚 İLK ADIM KAHRAMANI"; 
+  vRozetRenk = "#16A085"; // Deniz Yeşili
+  vKupaEmoji = "🥉";
+}
+
+// HTML İçeriğine Eklenecek Panel Kodu:
+const kitapTakipPaneliHtml = `
+  <div id="kitapOkumaPaneli" style="background: #FFF; border: 1px solid #EAE3D2; padding: 22px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 25px; font-family: 'Segoe UI', sans-serif;">
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid #F5EFE6; padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 26px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">📚</span>
+        <div>
+          <h4 style="margin: 0; color: #2C3E50; font-size: 16px; font-weight: 700;">Okuma Kültürü & LGS Odak Takibi</h4>
+          <p style="margin: 3px 0 0 0; font-size: 11px; color: #7A7263;">Düzenli okuma, yeni nesil sorularda anlama hızını %40 artırır!</p>
+        </div>
+      </div>
+      <span id="okumaRozeti" style="background: ${vRozetRenk}; color: white; font-size: 11px; padding: 6px 14px; border-radius: 30px; font-weight: bold; letter-spacing: 0.5px; box-shadow: 0 2px 8px ${vRozetRenk}40; transition: all 0.3s ease;">
+        ${vRozetMetni}
+      </span>
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+      
+      <div style="flex: 2; min-width: 260px; display: flex; flex-direction: column; justify-content: center; gap: 14px;">
+        <div style="background: #FAF6F0; border-left: 4px solid ${vRozetRenk}; padding: 12px 14px; border-radius: 0 10px 10px 0;">
+          <span style="font-size: 9px; text-transform: uppercase; color: #9A8E76; font-weight: bold; letter-spacing: 0.5px;">Şu An Okunan Kitap</span>
+          <h5 id="panelKitapAdi" style="margin: 3px 0 0 0; color: #2C3E50; font-size: 14.5px; font-weight: 700; line-height: 1.4;">${vKitapAdi}</h5>
+        </div>
+        
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; margin-bottom: 6px; font-weight: 600; color: #4A4235;">
+            <span>Bu Haftaki Hedef İlerlemesi</span>
+            <span id="panelSayfaYuzdesi" style="color: ${vRozetRenk}; font-weight: bold; font-size: 13px;">%${vYuzde}</span>
+          </div>
+          <div style="background: #EAE3D2; width: 100%; height: 12px; border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);">
+            <div id="panelGrafikBar" style="background: linear-gradient(90deg, ${vRozetRenk}, #34495E); width: ${vYuzde}%; height: 100%; border-radius: 10px; transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #7A7263; margin-top: 5px;">
+            <span>Okunan: <strong id="panelOkunanSayfa" style="color: #2C3E50; font-size: 12px;">${vOkunan}</strong> sayfa</span>
+            <span>Hedef: <strong id="panelHedefSayfa" style="color: #2C3E50; font-size: 12px;">${vHedef}</strong> sayfa</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #FAF6F0, #EAE3D2); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center; border: 1px solid #DCD5C5; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+        <span id="kupaEmojiAlani" style="font-size: 42px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); margin-bottom: 5px; animation: bounce 2s infinite alternate;">
+          ${vToplam > 0 ? "🏆" : vKupaEmoji}
+        </span>
+        <span style="font-size: 9px; font-weight: bold; color: #7A7263; text-transform: uppercase; letter-spacing: 0.5px;">Toplam Bitirilen</span>
+        <div style="font-size: 32px; font-weight: 900; color: #2C3E50; margin: 2px 0; font-family: 'Arial Black', sans-serif;">
+          <span id="panelToplamKitap">${vToplam}</span>
+        </div>
+        <span style="font-size: 10px; font-weight: 700; color: ${vRozetRenk}; letter-spacing: 0.5px;">KİTAP SKORU</span>
+      </div>
+
+    </div>
+  </div>
+`;
+
+
 function switchPageTab(name, tab) {
   activePageTab = tab;
   showStudentPage(name); function showStudentPage(name) {
