@@ -1496,6 +1496,24 @@ function buildBookCounterSection(row) {
     `;
 }
 
+// Google Sheets'ten öğrenci satırı (row) başarıyla alındıktan sonra ekrana basılan alan:
+let html = "";
+
+// 1. Mevcut Başarı Rozetleri Alanınız (Sitenizde zaten var olan kısım)
+if (row.rozetler) {
+    html += buildBadgesSection(row); 
+}
+
+// 🚨 EKRANDA GÖRÜNMESİNİ SAĞLAYAN KRİTİK EKLEME:
+// Rozetlerin hemen altında görünmesi için buraya ekliyoruz
+html += buildBookCounterSection(row);
+
+// 3. Diğer mevcut kartlarınız (Örn: Ders çalışma süreleri, denemeler vs.)
+// html += buildStatsSection(row);
+
+// Son olarak oluşturulan tüm bu kartlar HTML div'ine basılır:
+document.getElementById("student-panel").innerHTML = html;
+
 
 /* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU (SHEETS ODAKLI DÜZELTME) 🔍 */
 function buildLessonStatusBox(rows) {
