@@ -202,6 +202,137 @@ canvas { max-height: 200px; }
 .badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
+/* 📚 KİTAP SAYAR MODÜLÜ CSS TASARIMI */
+.book-counter-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e8eaed;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.book-main-grid {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 12px;
+}
+
+.book-trophy-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    border-right: 1px dashed #e8eaed;
+    padding-right: 12px;
+}
+
+.trophy-icon {
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 4px;
+    animation: trophyPulse 2s infinite ease-in-out;
+}
+
+.trophy-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1D9E75;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.book-stats-zone {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.book-num {
+    font-size: 36px;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.book-lbl {
+    font-size: 11px;
+    color: #888;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.book-last-read {
+    background: #E1F5EE;
+    border: 1px solid #a8dfc0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.book-last-label {
+    font-weight: 600;
+    color: #085041;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.book-last-value {
+    color: #0F6E56;
+    font-weight: 700;
+}
+
+.book-motivation-box {
+    font-size: 13px;
+    color: #555;
+    font-style: italic;
+    text-align: center;
+    font-weight: 500;
+    padding: 4px 0;
+}
+
+/* Kupa simgesi için hafif canlandırma animasyonu */
+@keyframes trophyPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* Mobil Cihazlar İçin Tam Uyum */
+@media screen and (max-width: 480px) {
+    .book-main-grid {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .book-trophy-zone {
+        border-right: none;
+        border-bottom: 1px dashed #e8eaed;
+        padding-right: 0;
+        padding-bottom: 10px;
+        width: 100%;
+    }
+}
+
+
 /* CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI */
 .teacher-feedback-card {
   position: relative;
@@ -1116,51 +1247,7 @@ function showStudentPage(name) {
       ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
     </div>
 
-<div id="kitapOkumaPaneli" style="display: none; background: #FFF; border: 1px solid #EAE3D2; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; font-family: 'Segoe UI', sans-serif;">
-  
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #F5EFE6; padding-bottom: 10px;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <span style="font-size: 24px;">📚</span>
-      <div>
-        <h4 style="margin: 0; color: #2C3E50; font-size: 16px; font-weight: bold;">Okuma Kültürü & Gelişim Takibi</h4>
-        <p style="margin: 2px 0 0 0; font-size: 11px; color: #7A7263;">Düzenli okuma, LGS ve yeni nesil sorularda en büyük gücündür!</p>
-      </div>
-    </div>
-    <span id="okumaRozeti" style="background: #7A7263; color: white; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 0.5px;">YENİ OKUR</span>
-  </div>
 
-  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-    
-    <div style="flex: 2; min-width: 250px; display: flex; flex-direction: column; gap: 12px;">
-      <div style="background: #FAF6F0; border-left: 4px solid #2E5A44; padding: 10px 12px; border-radius: 0 8px 8px 0;">
-        <span style="font-size: 9px; text-transform: uppercase; color: #7A7263; font-weight: bold; letter-spacing: 0.5px;">Şu An Okunan Kitap</span>
-        <h5 id="panelKitapAdi" style="margin: 2px 0 0 0; color: #2C3E50; font-size: 14px; font-weight: 700;">-</h5>
-      </div>
-
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px; font-weight: 600; color: #4A4235;">
-          <span>Haftalık Sayfa İlerlemesi</span>
-          <span id="panelSayfaYuzdesi" style="color: #2E5A44; font-weight: bold;">%0</span>
-        </div>
-        <div style="background: #EAE3D2; width: 100%; height: 10px; border-radius: 10px; overflow: hidden;">
-          <div id="panelGrafikBar" style="background: linear-gradient(90deg, #2E5A44, #41835C); width: 0%; height: 100%; border-radius: 10px; transition: width 1.5s ease-in-out;"></div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #7A7263; margin-top: 4px;">
-          <span>Okunan: <strong id="panelOkunanSayfa" style="color: #2C3E50;">0</strong> s.</span>
-          <span>Hedef: <strong id="panelHedefSayfa" style="color: #2C3E50;">100</strong> s.</span>
-        </div>
-      </div>
-    </div>
-
-    <div style="flex: 1; min-width: 120px; background: linear-gradient(135deg, #FAF6F0, #EAE3D2); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; border: 1px solid #DCD5C5;">
-      <span style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">🏆</span>
-      <span style="font-size: 9px; font-weight: bold; color: #7A7263; text-transform: uppercase; margin-top: 5px; letter-spacing: 0.5px;">Toplam Bitirilen</span>
-      <div style="font-size: 26px; font-weight: 800; color: #2C3E50; margin: 2px 0;"><span id="panelToplamKitap">0</span></div>
-      <span style="font-size: 10px; font-weight: 600; color: #2E5A44;">KİTAP</span>
-    </div>
-
-  </div>
-</div>
 	
     <div class="page-tabs">
       <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
@@ -1213,54 +1300,7 @@ function switchPageTab(name, tab) {
 }
 }
 
-		function ogrenciKitapGrafiginiGuncelle(kitapAdi, okunanSayfa, hedefSayfa, toplamKitap) {
-    kitapAdi = kitapAdi || "Bu hafta henüz kitap tanımlanmadı.";
-    okunanSayfa = parseInt(okunanSayfa) || 0;
-    hedefSayfa = parseInt(hedefSayfa) || 100;
-    toplamKitap = parseInt(toplamKitap) || 0;
-
-    // İlerleme Yüzdesi Hesaplama
-    let yuzde = Math.round((okunanSayfa / hedefSayfa) * 100);
-    if (yuzde > 100) yuzde = 100;
-    if (yuzde < 0) yuzde = 0;
-
-    // Arayüzdeki elemanları dolduruyoruz
-    const elKitapAdi = document.getElementById("panelKitapAdi");
-    const elOkunanSayfa = document.getElementById("panelOkunanSayfa");
-    const elHedefSayfa = document.getElementById("panelHedefSayfa");
-    const elSayfaYuzdesi = document.getElementById("panelSayfaYuzdesi");
-    const elToplamKitap = document.getElementById("panelToplamKitap");
-    const elGrafikBar = document.getElementById("panelGrafikBar");
-    const elRozet = document.getElementById("okumaRozeti");
-
-    // Elemanlar DOM'da mevcutsa değerlerini basıyoruz
-    if (elKitapAdi) elKitapAdi.innerText = kitapAdi;
-    if (elOkunanSayfa) elOkunanSayfa.innerText = okunanSayfa;
-    if (elHedefSayfa) elHedefSayfa.innerText = hedefSayfa;
-    if (elSayfaYuzdesi) elSayfaYuzdesi.innerText = `%${yuzde}`;
-    if (elToplamKitap) elToplamKitap.innerText = toplamKitap;
-    if (elGrafikBar) elGrafikBar.style.width = `${yuzde}%`;
-
-    // TOPLAM KİTAP SAYISINA GÖRE UNVAN SİSTEMİ
-    if (elRozet) {
-        if (toplamKitap >= 15) {
-            elRozet.innerText = "👑 AKADEMİ ELÇİSİ / BİLGİN";
-            elRozet.style.background = "#8E44AD";
-        } else if (toplamKitap >= 10) {
-            elRozet.innerText = "🏆 LGS ŞAMPİYON OKURU";
-            elRozet.style.background = "#2E5A44";
-        } else if (toplamKitap >= 5) {
-            elRozet.innerText = "⚡ HIZLI OKUMA YOLCUSU";
-            elRozet.style.background = "#2980B9";
-        } else if (toplamKitap >= 1) {
-            elRozet.innerText = "📖 KİTAP DOSTU";
-            elRozet.style.background = "#E67E22";
-        } else {
-            elRozet.innerText = "🌱 YENİ FİLİZLENEN OKUR";
-            elRozet.style.background = "#7A7263";
-        }
-    }
-}
+		
 
 /* ── /* ── ROZETLER ── */
 
@@ -1385,6 +1425,77 @@ function buildBadges(genel, prevGenel, currentStudentName) {
       </div>
     </div>`;
 }
+
+function buildBookCounterSection(row) {
+    // Google Sheets'ten gelen verileri güvenli bir şekilde alalım ve temizleyelim
+    const kitapSayisi = parseInt(row.okunan_kitap_sayisi) || 0;
+    const kitapAdi = (row.son_kitap_adi || "").trim();
+    const sayfaSayisi = parseInt(row.son_kitap_sayfa) || 0;
+
+    // Teşvik edici kupa emojileri, seviyeler ve dinamik mesajlar
+    let kupaEmoji = "🌱";
+    let tebrikMesaji = "Harika bir başlangıç! Okumaya devam et.";
+    let seviyeUnvani = "Kitap Sever Yolcu";
+
+    if (kitapSayisi >= 15) {
+        kupaEmoji = "👑🏆👑";
+        tebrikMesaji = "Muhteşem ötesi! Tam bir kitap kurdu, gerçek bir şampiyonsun!";
+        seviyeUnvani = "Efsanevi Okur";
+    } else if (kitapSayisi >= 10) {
+        kupaEmoji = "🏆";
+        tebrikMesaji = "Harikulade bir başarı! Kitapların efendisi olma yolundasın!";
+        seviyeUnvani = "Usta Okur";
+    } else if (kitapSayisi >= 5) {
+        kupaEmoji = "🥇";
+        tebrikMesaji = "Tebrikler! Okuma alışkanlığın harika ilerliyor!";
+        seviyeUnvani = "İleri Düzey Okur";
+    } else if (kitapSayisi >= 3) {
+        kupaEmoji = "🥈";
+        tebrikMesaji = "Çok iyi! Hedeflerine adım adım yaklaşıyorsun!";
+        seviyeUnvani = "İstekli Okur";
+    }
+
+    // Son okunan kitap detayları alanı (Eğer veri girilmişse görünür)
+    let sonKitapHTML = "";
+    if (kitapAdi !== "") {
+        sonKitapHTML = `
+            <div class="book-last-read">
+                <span class="book-last-label">📖 Son Okunan Kitap:</span>
+                <span class="book-last-value">${kitapAdi} ${sayfaSayisi > 0 ? `(${sayfaSayisi} Sayfa)` : ''}</span>
+            </div>
+        `;
+    }
+
+    // Modülün HTML Yapısı
+    return `
+        <div class="card book-counter-card">
+            <div class="card-title" style="margin-bottom: 0.8rem;">
+                📚 Öğrenci Kitap Kitaplığı & Motivasyon
+            </div>
+            
+            <div class="book-main-grid">
+                <div class="book-trophy-zone">
+                    <div class="trophy-icon">${kupaEmoji}</div>
+                    <div class="trophy-title">${seviyeUnvani}</div>
+                </div>
+                
+                <div class="book-stats-zone">
+                    <div class="book-metric">
+                        <span class="book-num">${kitapSayisi}</span>
+                        <span class="book-lbl">Okunan Toplam Kitap</span>
+                    </div>
+                </div>
+            </div>
+
+            ${sonKitapHTML}
+
+            <div class="book-motivation-box">
+                "${tebrikMesaji}"
+            </div>
+        </div>
+    `;
+}
+
 
 /* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU (SHEETS ODAKLI DÜZELTME) 🔍 */
 function buildLessonStatusBox(rows) {
