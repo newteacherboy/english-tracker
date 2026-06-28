@@ -15,8 +15,6 @@ body {
     min-height: 100vh;
     font-family: 'Arial', sans-serif;
     color: #4A4235;
-    
-    /* 🌟 PREMIUM MESH GRADIENT: Kurumsal renklerin arkadan gelen lüks ışık süzmesi */
     background-color: #FAF8F5;
     background-image: 
         radial-gradient(at 0% 0%, rgba(218, 203, 182, 0.4) 0px, transparent 50%),
@@ -24,17 +22,13 @@ body {
         radial-gradient(at 50% 100%, rgba(244, 239, 230, 0.8) 0px, transparent 70%),
         radial-gradient(at 100% 100%, rgba(191, 172, 150, 0.25) 0px, transparent 50%),
         radial-gradient(at 0% 100%, rgba(125, 100, 81, 0.1) 0px, transparent 50%);
-        
     background-attachment: fixed;
     background-size: cover;
-    
-    /* Sayfadaki kutuların arkasında derinlik hissi yaratmak için yumuşak kontrast dengesi */
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* 📱 BONUS: Sayfadaki beyaz panellerin/kutuların arkasını hafif cam efekti (Glassmorphism) yapmak istersen */
 .container, .box, .card, #kurumsalRandevuAlani {
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
@@ -59,9 +53,9 @@ body {
 @media (max-width: 400px) { .home-cards { grid-template-columns: 1fr; } }
 
 /* TRACKER */
-.tracker { display: none; flex-direction: column; min-height: 100vh; }
+.tracker { display: none; flex-direction: column; min-height: 100vh; width: 100%; max-width: 720px; }
 .header { 
-  background-color: #ffffff !important; /* round yerine geçerli arka plan rengi yazıldı */
+  background-color: #ffffff !important; 
   border-bottom: 1px solid #e8eaed;
   padding: 0.9rem 1.25rem; 
   display: flex; 
@@ -69,10 +63,10 @@ body {
   gap: 10px;
   position: sticky; 
   top: 0; 
-  z-index: 9999 !important; /* Diğer elementlerin kesinlikle arkasında kalması için z-index yükseltildi */
+  z-index: 9999 !important;
 }
-.back-btn { round: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: #555; cursor: pointer; white-space: nowrap; }
-.back-btn:hover { round: #f4f6f8; }
+.back-btn { background: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: #555; cursor: pointer; white-space: nowrap; }
+.back-btn:hover { background-color: #f4f6f8; }
 .header-title { font-size: 15px; font-weight: 600; flex: 1; }
 .header-title span { color: #1D9E75; }
 .last-updated { font-size: 11px; color: #aaa; }
@@ -81,12 +75,12 @@ body {
   gap: 8px; 
   padding: 1rem 1.25rem 0; 
   overflow-x: auto; 
-  background-color: #ffffff; /* round yerine background-color yazıldı */
+  background-color: #ffffff !important;
   border-bottom: 1px solid #e8eaed;
   padding-bottom: 1rem; 
 }
-.tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; round: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
-.tab.active { round: #1D9E75; color: #fff; border-color: #1D9E75; }
+.tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background-color: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
+.tab.active { background-color: #1D9E75; color: #fff; border-color: #1D9E75; }
 
 /* KİLİT */
 .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem; }
@@ -135,7 +129,7 @@ body {
 .metric-value { font-size: 26px; font-weight: 700; color: #1a1a1a; line-height: 1; }
 .metric-delta { font-size: 12px; margin-top: 4px; }
 .up { color: #0F6E56; } .down { color: #c0392b; } .same { color: #888; }
-.card { background: #fff; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #e8eaed; }
+.card { background: #fff; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #e8eaed; width: 100%; box-sizing: border-box; }
 .card-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 1rem; }
 .skill-row { margin-bottom: 12px; }
 .skill-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
@@ -172,7 +166,7 @@ body {
 .tag-amber { background: #FAEEDA; color: #854F0B; }
 .tag-blue { background: #E6F1FB; color: #185FA5; }
 
-.content { padding: 1.25rem; max-width: 720px; margin: 0 auto; }
+.content { padding: 1.25rem; width: 100%; box-sizing: border-box; }
 .empty { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
 .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
 canvas { max-height: 200px; }
@@ -202,50 +196,15 @@ canvas { max-height: 200px; }
 .badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
-
-
 /* Kupa simgesi için hafif canlandırma animasyonu */
-@keyframes trophyPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
+@keyframes trophyPulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes kupaBounce { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-6px) scale(1.05); } 100% { transform: translateY(0) scale(1); } }
 
-/* Mobil Cihazlar İçin Tam Uyum */
-@media screen and (max-width: 480px) {
-    .book-main-grid {
-        flex-direction: column;
-        gap: 12px;
-    }
-    .book-trophy-zone {
-        border-right: none;
-        border-bottom: 1px dashed #e8eaed;
-        padding-right: 0;
-        padding-bottom: 10px;
-        width: 100%;
-    }
-}
-
+.animated-trophy { font-size: 46px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); display: inline-block; animation: kupaBounce 2.5s infinite ease-in-out; }
 
 /* CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI */
-.teacher-feedback-card {
-  position: relative;
-  background: #fff;
-  border-radius: 16px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-}
-.teacher-feedback-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 5px;
-  background: linear-gradient(90deg, #1D9E75, #378ADD, #f39c12, #1D9E75);
-  background-size: 300% 100%;
-  animation: borderGlow 6s linear infinite;
-}
+.teacher-feedback-card { position: relative; background: #fff; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02); }
+.teacher-feedback-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #1D9E75, #378ADD, #f39c12, #1D9E75); background-size: 300% 100%; animation: borderGlow 6s linear infinite; }
 .feedback-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .feedback-title { font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: 0.02em; }
 .feedback-text { font-size: 13.5px; line-height: 1.6; color: #334155; font-style: italic; position: relative; z-index: 2; padding-left: 5px; }
@@ -253,149 +212,18 @@ canvas { max-height: 200px; }
 @keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 @keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
 
-  @media screen and (max-width: 768px) {
-  .r-card, .chart-container, #content, .stats-grid {
-    padding: 10px !important;
-    margin-bottom: 10px !important;
-    width: 100% !important;
-    box-sizing: border-box;
-  }
-  .r-btn-group {
-    flex-direction: column;
-    gap: 8px !important;
-  }
-  .r-status-btn, .lock-btn, #pdfIndirBtn, #saveBtn {
-    padding: 12px 16px !important;
-    font-size: 14px !important;
-    min-height: 44px;
-    width: 100% !important;
-  }
-  canvas {
-    max-height: 280px !important;
-    width: 100% !important;
-  }
-  .data-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-}
-
-/* -----------------------------------------------------------------
-   🚀 DİJİMUALLİM MOBİL UYUMLULUK MOTORU
-   ----------------------------------------------------------------- */
+/* 🚀 DİJİMUALLİM MOBİL UYUMLULUK MOTORU */
 @media screen and (max-width: 768px) {
-  
-  /* 1. Genel Kartlar ve Grafik Kutuları Genişliği */
-  .r-card, .chart-container, #content, .stats-grid, .main-container {
-    padding: 10px !important;
-    margin-bottom: 12px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  
-  /* 2. Yan Yana Duran Elemanları Alt Alta Al */
-  .r-btn-group, .flex-row, .grid-2-col {
-    flex-direction: column !important;
-    display: flex !important;
-    gap: 8px !important;
-  }
-  
-  /* 3. Baş Parmak Dostu Butonlar (Minimum 44px Yükseklik) */
-  .r-status-btn, .lock-btn, #pdfIndirBtn, #saveBtn, .nav-button {
-    padding: 12px 16px !important;
-    font-size: 14.5px !important;
-    min-height: 44px !important;
-    width: 100% !important;
-    box-sizing: border-box;
-  }
-  
-  /* 4. Grafiklerin İç İçe Geçmesini Engelleme */
-  canvas, .chart-el {
-    max-height: 260px !important;
-    width: 100% !important;
-  }
-  
-  /* 5. Tablolar Ekranı Patlatmasın (Sağa Kaydırılabilir Alan) */
-  .data-table, table {
-    display: block !important;
-    width: 100% !important;
-    overflow-x: auto !important;
-    white-space: nowrap !important;
-    -webkit-overflow-scrolling: touch; /* Mobilde yumuşak kaydırma */
-  }
+  .r-card, .chart-container, #content, .stats-grid, .main-container { padding: 10px !important; margin-bottom: 12px !important; width: 100% !important; box-sizing: border-box !important; }
+  .r-btn-group, .flex-row, .grid-2-col { flex-direction: column !important; display: flex !important; gap: 8px !important; }
+  .r-status-btn, .lock-btn, #pdfIndirBtn, #saveBtn, .nav-button { padding: 12px 16px !important; font-size: 14.5px !important; min-height: 44px !important; width: 100% !important; box-sizing: border-box; }
+  canvas, .chart-el { max-height: 260px !important; width: 100% !important; }
+  .data-table, table { display: block !important; width: 100% !important; overflow-x: auto !important; white-space: nowrap !important; -webkit-overflow-scrolling: touch; }
+  .book-flex-layout { flex-direction: column !important; gap: 16px !important; }
+  .trophy-score-card { width: 100% !important; padding: 20px !important; }
+  #okumaRozeti { width: 100%; text-align: center; margin-top: 5px; }
 }
 
-
-/* =================================================================
-/* 📚 ÖDÜLLÜ KİTAP SAYAR PANELİ GÖRSEL MOTORU (ÖğretmenÇocuk CSS)
-/* ================================================================= */
-
-.book-tracker-container {
-  background: #FFFFFF;
-  border: 1px solid #EAE3D2;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-  margin-bottom: 25px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  transition: transform 0.3s ease;
-}
-
-.book-tracker-container:hover {
-  transform: translateY(-2px);
-}
-
-/* 🏆 Başarı Kupası Animasyonu (Öğrenciyi Teşvik Eden Tatlı Bir Sallantı) */
-@keyframes kupaBounce {
-  0% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-6px) scale(1.05); }
-  100% { transform: translateY(0) scale(1); }
-}
-
-.animated-trophy {
-  font-size: 46px;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
-  display: inline-block;
-  animation: kupaBounce 2.5s infinite ease-in-out;
-}
-
-/* İlerleme Çubuğu İçin Parlama Efekti */
-.progress-bar-wrapper {
-  background: #EAE3D2;
-  width: 100%;
-  height: 12px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
-}
-
-.progress-bar-fill-animated {
-  height: 100%;
-  border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);
-}
-
-/* 📱 Mobil Cihazlar İçin Tam Uyumluluk (Kutuları Alt Alta Alır) */
-@media screen and (max-width: 600px) {
-  .book-flex-layout {
-    flex-direction: column !important;
-    gap: 16px !important;
-  }
-  .trophy-score-card {
-    width: 100% !important;
-    padding: 20px !important;
-  }
-  #okumaRozeti {
-    width: 100%;
-    text-align: center;
-    margin-top: 5px;
-  }
-}
-
-  
 </style>
 </head>
 <body>
@@ -414,22 +242,15 @@ canvas { max-height: 200px; }
       <h2>Eğitim Koçum</h2>
       <p>Koçluk Süreci Takibi</p>
     </div>
-    
   </div>
 <br>
 
-<!-- ================================================================= -->
-<!-- 🇬🇧 CEFR PLACEMENT ENGINE V2 - RANDOM - NAVIGABLE - SMART FEEDBACK -->
-<!-- ================================================================= -->
 <div style="margin-top: 15px; margin-bottom: 25px; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;">
-  
   <button id="seviyeTestBtn" onclick="seviyeTestiKutusuAc()" style="background: #2C3E50; color: white; width: 100%; border: none; padding: 15px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
   🔍 İngilizce'de Hangi Seviyedesin? Testi Başlat
-</button>
+  </button>
 
   <div id="seviyeTestAlani" style="display: none; background: #FAF6F0; border: 1px solid #DCD5C5; padding: 25px; border-radius: 0 0 12px 12px; box-sizing: border-box; margin-top: -4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
-    
-    <!-- GİRİŞ EKRANI -->
     <div id="testGirisEkrani" style="text-align: center;">
       <h3 style="color: #2C3E50; margin-top: 0; font-size: 18px;">Uluslararası CEFR Seviye Tespit Sınavı</h3>
       <p style="font-size: 13px; color: #7A7263; line-height: 1.6; margin-bottom: 20px;">
@@ -439,14 +260,12 @@ canvas { max-height: 200px; }
       <button onclick="testiBaslat()" style="background: #2E5A44; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer;">Sınavı Başlat</button>
     </div>
 
-    <!-- SORU PANELİ -->
     <div id="testSoruEkrani" style="display: none;">
       <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #7A7263; font-weight: bold; margin-bottom: 15px;">
         <span id="soruNumarasi" style="background: #EAE3D2; padding: 4px 10px; border-radius: 20px;">Soru: 1/15</span>
         <span id="soruSeviyeEtiket" style="background: #2C3E50; padding: 4px 10px; border-radius: 4px; color: #FFF;">Kategori</span>
       </div>
 
-      <!-- Anlık Geri Bildirim Çubuğu -->
       <div id="anlikGeribildirim" style="display:none; padding: 8px; border-radius: 6px; text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 15px;"></div>
 
       <div id="soruGorselKutusu" style="display: none; text-align: center; margin-bottom: 15px;">
@@ -462,20 +281,16 @@ canvas { max-height: 200px; }
       
       <div id="seceneklerAlani" style="display: flex; flex-direction: column; gap: 10px;"></div>
 
-      <!-- İleri - Geri Kontrol Navigasyonu -->
       <div style="display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #EAE3D2; padding-top: 15px;">
         <button id="btnGeri" onclick="navigasyonSoru(-1)" style="background: #7A7263; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">⬅️ Önceki Soru</button>
         <button id="btnIleri" onclick="navigasyonSoru(1)" style="background: #4A5A6A; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">Sonraki Soru ➡️</button>
       </div>
     </div>
 
-    <!-- GAZA GETİREN COŞKULU SONUÇ EKRANI -->
     <div id="testSonucEkrani" style="display: none; text-align: center; padding: 15px 0;">
       <div style="font-size: 55px; margin-bottom: 12px;">🚀</div>
       <h4 style="color: #2C3E50; margin: 0 0 8px 0; font-size: 22px; font-weight: bold;">Muazzam Bir Başlangıç! 🎉</h4>
-      <p style="font-size: 14px; color: #4A4235; line-height: 1.5; margin-bottom: 15px;">
-       ÖĞRETMEN ÇOCUK Koçluk ve Dil Akademisi standartlarına göre başarı profiliniz analiz edildi. Potansiyeliniz harika!
-      </p>
+      <p style="font-size: 14px; color: #4A4235; line-height: 1.5; margin-bottom: 15px;">ÖĞRETMEN ÇOCUK Koçluk ve Dil Akademisi standartlarına göre başarı profiliniz analiz edildi. Potansiyeliniz harika!</p>
       
       <div style="background: #2E5A44; color: white; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 22px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(46,90,68,0.2);">
         Mevcut Seviyeniz: <span id="testSonucSeviye">-</span>
@@ -483,18 +298,12 @@ canvas { max-height: 200px; }
       
       <p id="testSkorMetni" style="font-size: 14px; color: #2C3E50; font-weight: 600; margin-bottom: 20px;"></p>
       
-      <!-- Gaz Veren Mert Hoca Mesajı Bölümü -->
-      <div style="color: #2C3E50; background: #FFF; border: 2px dashed #2E5A44; padding: 18px; border-radius: 10px; font-size: 13.5px; line-height: 1.6; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-        🔥 <strong style="color: #2E5A44;">Öğretmen Çocuktan Öğrenciye Not:</strong>İyi Ya Da Kötü Sınavdaki performansın, odaklanma yeteneğin ve potansiyelin birlikte harika işler çıkaracağımızın sinyalini veriyor! Eksiklerini nokta atışı kapatıp bu seviyeyi zirveye taşımak, İngilizce maratonunda fark yaratmak tamamen bizim elimizde. <br><br>
-        🎯 <strong>Şimdi Sıra Sende:</strong> Skorun ve detaylı beceri analizin doğrudan benim ekranıma düştü. Zaman kaybetmeden **benimle iletişime geç**, hemen sana özel profesyonel yol haritamızı ve koçluk planımızı hazırlayalım. Başarıya giden yolda liderliği kimseye bırakmıyoruz! Hemen Aşağıdan Bir Sonraki Dersimiz İçin Randevu AL!!!
-      </div>
+      <div style="color: #2C3E50; background: #FFF; border: 2px dashed #2E5A44; padding: 18px; border-radius: 10px; font-size: 13.5px; line-height: 1.6; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.02);"></div>
     </div>
-
   </div>
 </div>
 
 <script>
-// Sabit Soru Havuzu
 const hamSoruHavuzu = [
   { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel1.png", q: "Look at the picture. What is the person doing at the moment?", a: ["She is preparing a traditional dinner in the kitchen.", "She is working on his laptop and writing some notes.", "She is buying a new tablet from the tech store.", "She is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
   { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel2.png", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
@@ -512,35 +321,26 @@ const hamSoruHavuzu = [
   { type: "text", mediaUrl: "", q: "Despite the severe weather conditions and the sudden cancellation of flights, _______.", a: ["the students preferred to stay at the luxury resort hotel", "the academic coordinator managed to arrive at the seminar on time", "because they forgot to check the official announcement page", "which made it impossible for anyone to join the English camp"], c: 1, lvl: "B2 - Sentence Matching" },
   { type: "text", mediaUrl: "", q: "The teacher's primary goal is to _______ a love for reading and critical thinking in his students from an early age.", a: ["cultivate", "neglect", "artificial", "abolish"], c: 0, lvl: "B2 - Advanced Vocabulary" }
 ];
-
 let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-
-// ⚠️ BURAYI UNUTMA HOCAM: Google Apps Script'ten aldığın o güncel Web Uygulaması URL'sini buraya tırnak içine yapıştır:
 const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbzp7hNMz5XlTlvED5eNxAO5nwW8_VpLkqR4pS_HlEFrouBfqYrVULMIF-mINhp6VWy5/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
-    if(alan.style.display === "none" || alan.style.display === "") {
-        alan.style.display = "block";
-    } else {
-        alan.style.display = "none";
-    }
+    if(alan.style.display === "none" || alan.style.display === "") { alan.style.display = "block"; } else { alan.style.display = "none"; }
 }
 
 function testiBaslat() {
     const inputIsim = document.getElementById("testOgrenciIsim").value.trim();
     if(!inputIsim) { alert("Lütfen adınızı ve soyadınızı giriniz."); return; }
     ogrenciIsmi = inputIsim;
-    
     aktifSoruBankasi = [...hamSoruHavuzu];
     for (let i = aktifSoruBankasi.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [aktifSoruBankasi[i], aktifSoruBankasi[j]] = [aktifSoruBankasi[j], aktifSoruBankasi[i]];
     }
-
     document.getElementById("testGirisEkrani").style.display = "none";
     document.getElementById("testSoruEkrani").style.display = "block";
     pointerSoru = 0;
@@ -549,11 +349,7 @@ function testiBaslat() {
 }
 
 function dinamikSoruGoster() {
-    if(pointerSoru >= aktifSoruBankasi.length) {
-        nihaiSorguKapat();
-        return;
-    }
-
+    if(pointerSoru >= aktifSoruBankasi.length) { nihaiSorguKapat(); return; }
     const veri = aktifSoruBankasi[pointerSoru];
     
     document.getElementById("soruNumarasi").innerText = `Soru: ${pointerSoru + 1}/${aktifSoruBankasi.length}`;
@@ -564,75 +360,39 @@ function dinamikSoruGoster() {
     gb.style.display = "none";
 
     const gKutu = document.getElementById("soruGorselKutusu");
-    if(veri.type === "image") {
-        document.getElementById("soruGorsel").src = veri.mediaUrl;
-        gKutu.style.display = "block";
-    } else {
-        gKutu.style.display = "none";
-    }
+    if(veri.type === "image") { document.getElementById("soruGorsel").src = veri.mediaUrl; gKutu.style.display = "block"; } else { gKutu.style.display = "none"; }
 
     const sKutu = document.getElementById("soruSesKutusu");
     const oynatici = document.getElementById("soruSesOynatici");
-    if(veri.type === "audio") {
-        oynatici.src = veri.mediaUrl;
-        oynatici.load();
-        sKutu.style.display = "block";
-    } else {
-        oynatici.pause();
-        sKutu.style.display = "none";
-    }
+    if(veri.type === "audio") { oynatici.src = veri.mediaUrl; oynatici.load(); sKutu.style.display = "block"; } else { oynatici.pause(); sKutu.style.display = "none"; }
 
     const sAlan = document.getElementById("seceneklerAlani");
     sAlan.innerHTML = "";
     veri.a.forEach((alternatif, i) => {
         let ekStil = "";
         if (ogrenciCevaplari[pointerSoru] !== null) {
-            if (i === veri.c) {
-                ekStil = "background: #C2E0CC; border-color: #2E5A44; font-weight: bold; color: #2E5A44;"; 
-            } else if (i === ogrenciCevaplari[pointerSoru]) {
-                ekStil = "background: #FADBD8; border-color: #E74C3C; color: #E74C3C;"; 
-            }
+            if (i === veri.c) ekStil = "background: #C2E0CC; border-color: #2E5A44; font-weight: bold; color: #2E5A44;"; 
+            else if (i === ogrenciCevaplari[pointerSoru]) ekStil = "background: #FADBD8; border-color: #E74C3C; color: #E74C3C;"; 
         }
-        
-        sAlan.innerHTML += `
-            <button onclick="anlikSikSecimi(${i})" style="text-align: left; background: #FFF; border: 1px solid #DCD5C5; padding: 13px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; color: #4A4235; width: 100%; box-sizing: border-box; ${ekStil}">
-                <strong>${String.fromCharCode(65 + i)})</strong> ${alternatif}
-            </button>`;
+        sAlan.innerHTML += `<button onclick="anlikSikSecimi(${i})" style="text-align: left; background: #FFF; border: 1px solid #DCD5C5; padding: 13px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; color: #4A4235; width: 100%; box-sizing: border-box; ${ekStil}"><strong>${String.fromCharCode(65 + i)})</strong> ${alternatif}</button>`;
     });
-
     document.getElementById("btnGeri").style.visibility = pointerSoru === 0 ? "hidden" : "visible";
     document.getElementById("btnIleri").innerText = pointerSoru === 14 ? "Sınavı Bitir 🏁" : "Sonraki Soru ➡️";
 }
 
 function anlikSikSecimi(secilen) {
     if (ogrenciCevaplari[pointerSoru] !== null) return;
-
     const veri = aktifSoruBankasi[pointerSoru];
     ogrenciCevaplari[pointerSoru] = secilen;
-
     const gb = document.getElementById("anlikGeribildirim");
-    if (secilen === veri.c) {
-        gb.innerText = "✓ DOĞRU CEVAP!";
-        gb.style.background = "#EBF5EE";
-        gb.style.color = "#2E5A44";
-    } else {
-        gb.innerText = `✗ YANLIŞ CEVAP! (Doğru Cevap: ${String.fromCharCode(65 + veri.c)})`;
-        gb.style.background = "#FDEDEC";
-        gb.style.color = "#E74C3C";
-    }
+    if (secilen === veri.c) { gb.innerText = "✓ DOĞRU CEVAP!"; gb.style.background = "#EBF5EE"; gb.style.color = "#2E5A44"; } 
+    else { gb.innerText = `✗ YANLIŞ CEVAP! (Doğru Cevap: ${String.fromCharCode(65 + veri.c)})`; gb.style.background = "#FDEDEC"; gb.style.color = "#E74C3C"; }
     gb.style.display = "block";
-
-    setTimeout(() => {
-        dinamikSoruGoster();
-    }, 1200); 
+    setTimeout(() => { dinamikSoruGoster(); }, 1200);
 }
 
 function navigasyonSoru(yon) {
-    // Sınav bittiyse ve son soruda ileri dediyse bitir
-    if (pointerSoru === 14 && yon === 1) {
-        nihaiSorguKapat();
-        return;
-    }
+    if (pointerSoru === 14 && yon === 1) { nihaiSorguKapat(); return; }
     pointerSoru += yon;
     if (pointerSoru < 0) pointerSoru = 0;
     if (pointerSoru > 14) pointerSoru = 14;
@@ -643,93 +403,46 @@ async function nihaiSorguKapat() {
     document.getElementById("testSoruEkrani").style.display = "none";
     document.getElementById("testSonucEkrani").style.display = "block";
 
-    let dSayi = 0;
-    let ySayi = 0;
-
-    aktifSoruBankasi.forEach((v, index) => {
-        if(ogrenciCevaplari[index] === v.c) dSayi++;
-        else ySayi++;
-    });
-
+    let dSayi = 0; let ySayi = 0;
+    aktifSoruBankasi.forEach((v, index) => { if(ogrenciCevaplari[index] === v.c) dSayi++; else ySayi++; });
+    
     let seviyeUnvani = "A1 (Beginner / Başlangıç)";
     let dinamikMesaj = "";
-
     if (dSayi >= 14) {
         seviyeUnvani = "B2+ (Upper-Intermediate Mastery)";
-        dinamikMesaj = `
-            🎯 <strong>Mevcut Durumun:</strong> İngilizce altyapın oldukça güçlü. Karmaşık cümleleri, akademik veya profesyonel düzeydeki metinleri büyük oranda anlayabiliyor, akıcı konuşma potansiyeli taşıyorsun.<br><br>
-            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Bu seviyedeki en büyük tuzak "akademik körlüktür". Dil bilgisini bilsen de LGS, okul sınavları veya ileri düzey mülakatlarda hedefimiz sadece "anlamak" değil, <strong>sıfır hata ile lider olmak</strong>. İleri düzey kelime kombinasyonlarında (collocations), devrik cümle yapılarında ve zaman yönetiminde nokta atışı profesyonel koçluk almazsan, sınavlarda en seçici 1-2 soruda hata yaparak zirveden uzaklaşabilirsin. Potansiyelini şansa bırakmamalı, onu tam profesyonel bir dereceye dönüştürmeliyiz.
-        `;
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> İngilizce altyapın oldukça güçlü. Karmaşık cümleleri, akademik veya profesyonel düzeydeki metinleri büyük oranda anlayabiliyor, akıcı konuşma potansiyeli taşıyorsun.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Bu seviyedeki en büyük tuzak "akademik körlüktür". Dil bilgisini bilsen de LGS, okul sınavları veya ileri düzey mülakatlarda hedefimiz sadece "anlamak" değil, <strong>sıfır hata ile lider olmak</strong>. İleri düzey kelime kombinasyonlarında (collocations), devrik cümle yapılarında ve zaman yönetiminde nokta atışı profesyonel koçluk almazsan, sınavlarda en seçici 1-2 soruda hata yaparak zirveden uzaklaşabilirsin. Potansiyelini şansa bırakmamalı, onu tam profesyonel bir dereceye dönüştürmeliyiz.`;
     } else if (dSayi >= 11) {
         seviyeUnvani = "B2 (Vantage / İleri Orta Seviye)";
-        dinamikMesaj = `
-            🎯 <strong>Mevcut Durumun:</strong> Günlük dili aşmış, dinlediğini ve okuduğunu rahatça analiz edebilen bir seviyedesin. Temel ve orta düzey yapıların tamamına hakimsin.<br><br>
-            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B2 seviyesi, öğrencilerin "İngilizceyi biliyorum" diyerek rehavete kapıldığı ve sınavlarda en çok elendiği yerdir. Okuduğunu anlarsın ama seçeneklerdeki çeldiriciler (distractors) seni çok rahat düşürebilir. LGS ve yeni nesil MEB sınavları doğrudan analiz ve mantık muhakemesi ister. Bu seviyeden yukarı çıkıp hatasız kulvara geçmek; ancak soru analiz stratejileri, bağlamsal kelime okumaları ve profesyonel bir sınav koçunun rehberliğinde düzenli takiple mümkündür. Eksik kalan o %20'lik dilimi kapatıp şampiyonluk kulvarına geçmek için kesinlikle sistemli ders almalısın.
-        `;
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Günlük dili aşmış, dinlediğini ve okuduğunu rahatça analiz edebilen bir seviyedesin. Temel ve orta düzey yapıların tamamına hakimsin.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B2 seviyesi, öğrencilerin "İngilizceyi biliyorum" diyerek rehavete kapıldığı ve sınavlarda en çok elendiği yerdir. Okuduğunu anlarsın ama seçeneklerdeki çeldiriciler (distractors) seni çok rahat düşürebilir. LGS ve yeni nesil MEB sınavları doğrudan analiz ve mantık muhakemesi ister. Bu seviyeden yukarı çıkıp hatasız kulvara geçmek; ancak soru analiz stratejileri, bağlamsal kelime okumaları ve profesyonel bir sınav koçunun rehberliğinde düzenli takiple mümkündür. Eksik kalan o %20'lik dilimi kapatıp şampiyonluk kulvarına geçmek için kesinlikle sistemli ders almalısın.`;
     } else if (dSayi >= 8) {
         seviyeUnvani = "B1 (Threshold / Orta Seviye)";
-        dinamikMesaj = `
-            🎯 <strong>Mevcut Durumun:</strong> Kendini ifade edebiliyor, standart diyalogları ve paragrafları çözebiliyorsun. Kelime haznen var ancak karmaşık yapılarda kafan karışıyor.<br><br>
-            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B1 seviyesi tam bir "arafta kalma" dönemidir. Kendi kendine çalışarak bu seviyeyi tek başına aşman çok ciddi zaman kaybettirir. Sınavlarda zamanla yarışırken cümleleri kafanda Türkçeye çevirmeye çalışır, yorulur ve süreyi yetiştiremezsin. Bağlaçlar, koşul cümleleri ve ileri düzey okuma becerilerinde <strong>kesinlikle profesyonel bir ders altyapısına ihtiyacın var</strong>. Doğru bir koçlukla çok hızlı şekilde B2 and üzerine zıplayabilecek bir potansiyelin var; bunu kendi başına deneme-yanılma yoluyla harcamamalısın.
-        `;
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Kendini ifade edebiliyor, standart diyalogları ve paragrafları çözebiliyorsun. Kelime haznen var ancak karmaşık yapılarda kafan karışıyor.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B1 seviyesi tam bir "arafta kalma" dönemidir. Kendi kendine çalışarak bu seviyeyi tek başına aşman çok ciddi zaman kaybettirir. Sınavlarda zamanla yarışırken cümleleri kafanda Türkçeye çevirmeye çalışır, yorulur ve süreyi yetiştiremezsin. Bağlaçlar, koşul cümleleri ve ileri düzey okuma becerilerinde <strong>kesinlikle profesyonel bir ders altyapısına ihtiyacın var</strong>. Doğru bir koçlukla çok hızlı şekilde B2 and üzerine zıplayabilecek bir potansiyelin var; bunu kendi başına deneme-yanılma yoluyla harcamamalısın.`;
     } else if (dSayi >= 5) {
         seviyeUnvani = "A2 (Waystage / Temel Üstü Seviye)";
-        dinamikMesaj = `
-            🎯 <strong>Mevcut Durumun:</strong> Basit cümleleri kurabiliyor, temel kelimeleri (renkler, meslekler, rutinler) anlıyor ve kısa dinleme parçalarını takip edebiliyorsun.<br><br>
-            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> A2 seviyesindeki bilgi, maalesef okul sınavlarında ve LGS gibi yeni nesil sistemlerde <strong>barajı geçmeye yetmez</strong>. Sorular artık sadece kelime bilgisi değil, o kelimeleri bir paragraf içinde yorumlamanı istiyor. Gramer altyapında ciddi boşluklar var ve tek başına çalışırken hangi konuya öncelik vermen gerektiğini bilemezsin. Yanlış çalışma alışkanlıkları edinmemek ve zaman kaybetmeden "orta ve ileri seviyeye" pürüzsüz geçiş yapmak için <strong>kesinlikle rehberlik ve birebir ders takviyesi almalısın</strong>. Temeli sağlam atmazsak, ilerideki konular tamamen bir yük haline gelecektir.
-        `;
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Basit cümleleri kurabiliyor, temel kelimeleri (renkler, meslekler, rutinler) anlıyor ve kısa dinleme parçalarını takip edebiliyorsun.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> A2 seviyesindeki bilgi, maalesef okul sınavlarında ve LGS gibi yeni nesil sistemlerde <strong>barajı geçmeye yetmez</strong>. Sorular artık sadece kelime bilgisi değil, o kelimeleri bir paragraf içinde yorumlamanı istiyor. Gramer altyapında ciddi boşluklar var ve tek başına çalışırken hangi konuya öncelik vermen gerektiğini bilemezsin. Yanlış çalışma alışkanlıkları edinmemek ve zaman kaybetmeden "orta ve ileri seviyeye" pürüzsüz geçiş yapmak için <strong>kesinlikle rehberlik ve birebir ders takviyesi almalısın</strong>. Temeli sağlam atmazsak, ilerideki konular tamamen bir yük haline gelecektir.`;
     } else {
         seviyeUnvani = "A1 (Beginner / Başlangıç)";
-        dinamikMesaj = `
-            🎯 <strong>Mevcut Durumun:</strong> İngilizce dünyasına yeni adım atıyorsun. Çok temel kelimeleri ve selamlaşma kalıplarını tanıyorsun ancak cümle kurma ve anlama aşamasında desteğe ihtiyacın var.<br><br>
-            ⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Yolun henüz çok başında olduğun için tek başına kuralları ezberlemeye çalışmak sende "İngilizce çok zor, yapamıyorum" algısı yaratabilir ve dilden soğumana neden olur. Bu aşamada kendi kendine çalışmak yerine, <strong>doğru bir mentor eşliğinde, sıfırdan ve sistemli bir ders programıyla başlamak KESİNLİKLE zorunludur</strong>. Doğru yöntemle çalışırsan bu seviyeyi tahmin ettiğinden çok daha kısa sürede aşarsın. Kulvarı baştan profesyonel tutmalı, temelini bir uzmanla birlikte en sağlam şekilde inşa etmeliyiz.
-        `;
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> İngilizce dünyasına yeni adım atıyorsun. Çok temel kelimeleri ve selamlaşma kalıplarını tanıyorsun ancak cümle kurma ve anlama aşamasında desteğe ihtiyacın var.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Yolun henüz çok başında olduğun için tek başına kuralları ezberlemeye çalışmak sende "İngilizce çok zor, yapamıyorum" algısı yaratabilir ve dilden soğumana neden olur. Bu aşamada kendi kendine çalışmak yerine, <strong>doğru bir mentor eşliğinde, sıfırdan ve sistemli bir ders programıyla başlamak KESİNLİKLE zorunludur</strong>. Doğru yöntemle çalışırsan bu seviyeyi tahmin ettiğinden çok daha kısa sürede aşarsın. Kulvarı baştan profesyonel tutmalı, temelini bir uzmanla birlikte en sağlam şekilde inşa etmeliyiz.`;
     }
 
     document.getElementById("testSonucSeviye").innerText = seviyeUnvani;
     document.getElementById("testSkorMetni").innerText = `15 Soru Üzerinden -> Doğru: ${dSayi} | Yanlış: ${ySayi}`;
-
-    // Dinamik gaza getiren hoca mesajını sonuç alanına enjekte ediyoruz
     const hocaNotuAlani = document.querySelector("#testSonucEkrani div[style*='border: 2px dashed']");
     if (hocaNotuAlani) {
-        hocaNotuAlani.innerHTML = `
-            🔥 <strong style="color: #2E5A44; font-size: 15px;">Öğretmen Çocuk Seviye Analizi ve Yol Haritası:</strong><br><br>
-            ${dinamikMesaj}
-            <br>
-            🎯 <strong>Şimdi Sıra Sende:</strong> Skorun ve detaylı beceri analizin doğrudan benim sistemime düştü. Zaman kaybetmeden **benimle iletişime geç**, hemen sana özel profesyonel yol haritamızı ve koçluk planımızı hazırlayalım. Başarıya giden yolda liderliği kimseye bırakmıyoruz!
-        `;
+        hocaNotuAlani.innerHTML = `🔥 <strong style="color: #2E5A44; font-size: 15px;">Öğretmen Çocuk Seviye Analizi ve Yol Haritası:</strong><br><br>${dinamikMesaj}<br>🎯 <strong>Şimdi Sıra Sende:</strong> Skorun ve detaylı beceri analizin doğrudan benim sistemime düştü. Zaman kaybetmeden **benimle iletişime geç**, hemen sana özel profesyonel yol haritamızı ve koçluk planımızı hazırlayalım. Başarıya giden yolda liderliği kimseye bırakmıyoruz!`;
     }
 
-    const apiPayload = {
-        aksiyon: "seviyeKaydet",
-        isim: ogrenciIsmi,
-        dogru: dSayi,
-        yanlis: ySayi,
-        seviye: seviyeUnvani
-    };
-
+    const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
         if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbzp7hNMz5XlTlvED5eNxAO5nwW8_VpLkqR4pS_HlEFrouBfqYrVULMIF-mINhp6VWy5/exec") {
-            await fetch(sınavScriptUrl, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(apiPayload)
-            });
+            await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
-    } catch(e) {
-        console.log("Senkronizasyon tamamlandı.");
-    }
+    } catch(e) { console.log("Senkronizasyon tamamlandı."); }
 }
-
 </script>
-<!-- ================================================================= -->
-	
- <br>
-    
+<br>
     
 <div style="margin-bottom: 15px; box-sizing: border-box;">
-  
   <button id="randevuMenuBtn" onclick="randevuFormuKapatAcl()" style="background: #7D6451; color: white; width: 100%; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
     📅 Online / Yüz Yüze Ders Talebi
   </button>
@@ -784,26 +497,18 @@ async function nihaiSorguKapat() {
     <button id="randevuGonderBtn" onclick="randevuSisteminiTetikle()" style="background: #634731; color: white; width: 100%; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;">
       Talebi Kaydet ve Onaya Gönder
     </button>
-    
     <div id="randevuDurumMsg" style="margin-top: 10px; display: none;"></div>
   </div>
 </div>
 
 <script>
-// Menü Açma/Kapatma fonksiyonu
 function randevuFormuKapatAcl() {
     const formAlani = document.getElementById("kurumsalRandevuAlani");
     const anaBtn = document.getElementById("randevuMenuBtn");
-    if (formAlani.style.display === "none" || formAlani.style.display === "") {
-        formAlani.style.display = "block";
-        anaBtn.style.borderRadius = "8px 8px 0 0";
-    } else {
-        formAlani.style.display = "none";
-        anaBtn.style.borderRadius = "8px";
-    }
+    if (formAlani.style.display === "none" || formAlani.style.display === "") { formAlani.style.display = "block"; anaBtn.style.borderRadius = "8px 8px 0 0"; } 
+    else { formAlani.style.display = "none"; anaBtn.style.borderRadius = "8px"; }
 }
 
-// Ana Tetikleyici Motor
 async function randevuSisteminiTetikle() {
     const ogrenciAdi = document.getElementById("veliDersOgrenciAdi").value.trim();
     const dersTuru = document.getElementById("veliDersTuru").value;
@@ -813,72 +518,33 @@ async function randevuSisteminiTetikle() {
     const veliTel = document.getElementById("veliDersTelefon").value.trim();
     const btn = document.getElementById("randevuGonderBtn");
 
-    if(!ogrenciAdi || !secilenTarih || !veliTel) { 
-        alert("Lütfen tüm alanları (Ad Soyadı, Tarih ve Telefon) eksiksiz doldurunuz hoca hanım/bey."); 
-        return; 
-    }
+    if(!ogrenciAdi || !secilenTarih || !veliTel) { alert("Lütfen tüm alanları (Ad Soyadı, Tarih ve Telefon) eksiksiz doldurunuz hoca hanım/bey."); return; }
 
     btn.disabled = true;
     btn.innerText = "Sistem İşliyor...";
 
     const [y, m, d] = secilenTarih.split("-");
     const formatliTarih = `${d}.${m}.${y}`;
-
-    // 1. ADIM: GOOGLE SHEETS DÜZENİ
-    // Sheets'teki "Öğrenci Adı" sütununa dersin türünü ve modelini de ekleyerek gönderiyoruz 
-    // Böylece Sheets kodunu değiştirmeden tek sütunda tüm detayı görebilirsin hoca! (Örn: "Mert Akkaya (İngilizce Özel Ders - Yüz Yüze)")
     const tamOgrenciDetay = `${ogrenciAdi} (${dersTuru} - ${dersModeli})`;
-
-    const randevuPayload = {
-        aksiyon: "randevuAl",
-        ogrenci: tamOgrenciDetay,
-        tarih: formatliTarih,
-        saat: secilenSaat,
-        telefon: veliTel
-    };
+    const randevuPayload = { aksiyon: "randevuAl", ogrenci: tamOgrenciDetay, tarih: formatliTarih, saat: secilenSaat, telefon: veliTel };
 
     try {
         const urlHedef = typeof scriptUrl !== 'undefined' ? scriptUrl : (typeof url !== 'undefined' ? url : "");
-        if(urlHedef) {
-            await fetch(urlHedef, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(randevuPayload)
-            });
-        }
-    } catch (e) {
-        console.log("Sheets arka plan uyarısı...");
-    }
+        if(urlHedef) { await fetch(urlHedef, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(randevuPayload) }); }
+    } catch (e) { console.log("Sheets arka plan uyarısı..."); }
 
-    // 2. ADIM: MERT HOCANIN YENİ NUMARASINA WHATSAPP MESAJI
     const mesaj = `🤖 *DİJİMUALLİM - YENİ RANDEVU TALEBİ* \n\n` +
-                  `Hocam Merhaba,\n` +
-                  `Eğitim dönemi için yeni bir ders talebi oluşturmak istiyoruz.\n\n` +
-                  `👤 *Öğrenci:* ${ogrenciAdi}\n` +
-                  `📚 *Ders Türü:* ${dersTuru}\n` +
-                  `💻 *Ders Modeli:* ${dersModeli}\n` +
-                  `📅 *Tarih:* ${formatliTarih}\n` +
-                  `⏰ *Saat:* ${secilenSaat}\n` +
-                  `📞 *Veli Tel:* ${veliTel}\n\n` +
+                  `Hocam Merhaba,\nEğitim dönemi için yeni bir ders talebi oluşturmak istiyoruz.\n\n` +
+                  `👤 *Öğrenci:* ${ogrenciAdi}\n📚 *Ders Türü:* ${dersTuru}\n💻 *Ders Modeli:* ${dersModeli}\n📅 *Tarih:* ${formatliTarih}\n⏰ *Saat:* ${secilenSaat}\n📞 *Veli Tel:* ${veliTel}\n\n` +
                   `En Kısa Sürede Dönüş Yapılacaktır`;
-
-    // 📌 Güncellenen Yeni Numaran hoca!
     const hocamizinNumarasi = "905369937089"; 
     const wpUrl = `https://api.whatsapp.com/send?phone=${hocamizinNumarasi}&text=${encodeURIComponent(mesaj)}`;
     
     window.open(wpUrl, '_blank');
-
     setTimeout(() => {
-        btn.disabled = false;
-        btn.innerText = "Talebi Kaydet ve Onaya Gönder";
-        document.getElementById("veliDersOgrenciAdi").value = "";
-        document.getElementById("veliDersTarihi").value = "";
-        document.getElementById("veliDersTelefon").value = "";
-        
-        document.getElementById("kurumsalRandevuAlani").style.display = "none";
-        document.getElementById("randevuMenuBtn").style.borderRadius = "8px";
-        
+        btn.disabled = false; btn.innerText = "Talebi Kaydet ve Onaya Gönder";
+        document.getElementById("veliDersOgrenciAdi").value = ""; document.getElementById("veliDersTarihi").value = ""; document.getElementById("veliDersTelefon").value = "";
+        document.getElementById("kurumsalRandevuAlani").style.display = "none"; document.getElementById("randevuMenuBtn").style.borderRadius = "8px";
         alert("Harika! Talebiniz Öğretmen Çocuk  WhatsApp hattına iletildi.");
     }, 1000);
 }
@@ -895,13 +561,9 @@ async function randevuSisteminiTetikle() {
   <div class="content" id="content">
     <div class="loading">Veriler yükleniyor...</div>
   </div>
-
-  
 </div>
 
 <script>
-  
-// 📌 Girilen şifreyi anında güvenli koda (SHA-256) çeviren fonksiyon
 async function sha256(message) {
     const msgBuffer = new TextEncoder().encode(message);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -924,10 +586,9 @@ let students = [];
 let passwords = {};
 let unlockedStudents = {};
 let activeStudent = null;
-let activePageTab = "ozet"; 
+let activePageTab = "ozet";
 let denemelerData = [];
 
-// Tarih dizilim yardımcısı
 const parseDateStr = (dStr) => {
   if (!dStr) return new Date(0);
   const parts = dStr.split(".");
@@ -939,73 +600,60 @@ function generateUniqueComment(puan, studentName, latestRow, allRows) {
   const firstName = studentName.split(" ")[0];
   const odev = (latestRow.odev_durumu || "").toLowerCase();
   const r = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
   let girisCumlesi = "";
+
   if (puan >= 0 && puan <= 25) {
-    const havuz = [
+    girisCumlesi = r([
       `Bu hafta ${firstName} ile henüz motorları ısıtma ve birbirimizi tanıma evresindeyiz. Mevcut puanımız yanıltıcı olmasın; amacımız eksikleri görüp tam da buradan yukarı fırlamak! 🚀`,
       `${firstName} için bu haftaki tablo, gerçek potansiyelimizin sadece küçük bir uykuda olma hali. Biz bu filmin sonunu biliyoruz, eksiklerimizi tek tek avlayıp çok yakında harika bir ivme yakalayacağız. 💪`,
       `İlk adımlar her zaman sabır ister. ${firstName} bu hafta enerjisini topladı diyebiliriz; önümüzdeki günlerde bu temelin üzerine koyacağımız tuğlaları planladık, veli olarak hiç endişeniz olmasın. ✨`
-    ];
-    girisCumlesi = r(havuz);
+    ]);
   } else if (puan > 25 && puan <= 50) {
-    const havuz = [
+    girisCumlesi = r([
       `${firstName} bu hafta çarkları döndürmeye ve gelişim sinyalleri vermeye başladı. Taşlar yerine oturuyor, gayretini çok net görebiliyorum. 📈`,
       `Güzel bir kımıldanma ve çaba haftasındayız! ${firstName} bazı duvarları yıkmaya başladı. Eksiklerimiz var ama yürüyüşümüz kararlı. 👣`,
       `Yetersiz kaldığımız noktalar elbette mevcut ancak ${firstName}'deki o öğrenme isteği ve tatlı gelişim kıvılcımı bu hafta kendini hissettirdi. ⚡`
-    ];
-    girisCumlesi = r(havuz);
+    ]);
   } else if (puan > 50 && puan <= 75) {
-    const havuz = [
+    girisCumlesi = r([
       `Gayet iyi, dengeli ve bizi mutlu eden bir haftayı geride bıraktık. ${firstName} standardını koruyor ama bizim gözümüz çok daha yükseklerde! 🌟`,
       `${firstName} bu hafta sorumluluklarını güzel yerine getirdi ve iyi bir düzey yakaladı. Şimdi hedefimiz bu başarıyı 'en iyisi' yapmak için cilalamak. 💎`,
       `Çok net bir 'iyi düzey' performance eseri izledik. ${firstName} potansiyelinin büyük kısmını sahaya yansıttı, ufak dokunuşlarla zirveye oynayacağız. 🎯`
-    ];
-    girisCumlesi = r(havuz);
+    ]);
   } else if (puan > 75 && puan <= 100) {
-    const havuz = [
+    girisCumlesi = r([
       `Kelimelerin tam anlamıyla harika, muazzam bir hafta! ${firstName} bu hafta adeta sınıfta devleşti, gurur duymamak elde değil! 🔥`,
       `Muhteşem bir disiplin ve kusursuz bir performans tablosu! ${firstName} çıtayı öyle bir yere koydu ki, ders yaparken keyif almamak imkansız. 👑`,
       `Harika iş çıkardık! ${firstName} bu haftanın yıldızı olmayı sonuna kadar hak etti. Emeklerinin karşılığını böyle almak paha biçilemez. 🌠`
-    ];
-    girisCumlesi = r(havuz);
+    ]);
   }
 
   let haftalikKiyaslama = "";
-  const studentRows = allRows
-    .filter(r => r.ogrenci === studentName && (r.genel > 0 || r.vocabulary > 0))
-    .sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-  
+  const studentRows = allRows.filter(r => r.ogrenci === studentName && (r.genel > 0 || r.vocabulary > 0)).sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
   if (studentRows.length > 1) {
     const currentIdx = studentRows.findIndex(r => r.tarih === latestRow.tarih);
     if (currentIdx > 0) {
       const prevRow = studentRows[currentIdx - 1];
       const fark = Math.round(puan - prevRow.genel);
-      if (fark > 0) {
-        haftalikKiyaslama = ` Geçen haftaki puanına göre genel performansını **+${fark} puan** daha artırarak yukarı yönlü harika bir sıçrama gerçekleştirdi; bu yükseliş grafiği inancımızı tazeledi. 🚀`;
-      } else if (fark < 0) {
-        haftalikKiyaslama = ` Geçen haftaki puanına oranla bu hafta **${fark} puanlık** ufak bir durulma/gerileme söz konusu. Ancak bu düşüşü bir geri çekilme değil, önümüzdeki hafta daha güçlü zıplamak için bir yaylanma hareketi olarak görüyoruz. 🔋`;
-      } else {
-        haftalikKiyaslama = ` Geçen haftaki çizgimizi ve istikrarımızı tam puanı puanına koruduk. Mevcut durumu sabitlemek güzel ama bir sonraki hafta hedefimiz bu çizgiyi yukarı kırmak olacak. 🎯`;
-      }
+      if (fark > 0) { haftalikKiyaslama = ` Geçen haftaki puanına göre genel performansını **+${fark} puan** daha artırarak yukarı yönlü harika bir sıçrama gerçekleştirdi; bu yükseliş grafiği inancımızı tazeledi. 🚀`; } 
+      else if (fark < 0) { haftalikKiyaslama = ` Geçen haftaki puanına oranla bu hafta **${fark} puanlık** ufak bir durulma/gerileme söz konusu. Ancak bu düşüşü bir geri çekilme değil, önümüzdeki hafta daha güçlü zıplamak için bir yaylanma hareketi olarak görüyoruz. 🔋`; } 
+      else { haftalikKiyaslama = ` Geçen haftaki çizgimizi ve istikrarımızı tam puanı puanına koruduk. Mevcut durumu sabitlemek güzel ama bir sonraki hafta hedefimiz bu çizgiyi yukarı kırmak olacak. 🎯`; }
     }
   }
 
   let taktikNotu = "";
   if (odev.includes("yapılmadı") || odev.includes("yok")) {
-    const eksikHavuzu = [
+    taktikNotu = r([
       ` Önümüzdeki süreçte ivme yakalayabilmemiz için ödev disiplinini acilen birinci sıraya koymalıyız. Unutmayalım ki derste öğrenilenler sadece birer tohumdur; onları kalıcı başarıya dönüştürecek olan şey evde yapılacak düzenli test çözümleri ve soru avcılığıdır.`,
       ` Bu performansın kalıcı bir başarı hikayesine dönüşmesi için ödevlerin eksiksiz yapılması şart. Velimiz olarak sizden ricam, evde ders sonrası mini tekrarlar yapmasını teşvik etmeniz; zira sıcağı sıcağına yapılmayan tekrarlar bilginin hızla uçup gitmesine neden olur.`,
       ` Önümüzdeki hafta tempomuzu artırmak adına ödev sorumluluklarına sıkı sıkıya sarılmalıyız. Sadece ders saatiyle sınırlı kalmayıp, her gün mutlaka en az 15-20 dakikalık odaklanmış test çözümü ve hatalı soru analizi rutini oluşturmasını tavsiye ediyorum.`
-    ];
-    taktikNotu = r(eksikHavuzu);
+    ]);
   } else {
-    const basariHavuzu = [
+    taktikNotu = r([
       ` Sürecimizi daha da yukarı taşımak adına şu stratejik taktiği uygulamalıyız: Her akşam yatmadan önce mutlaka 10 dakikalık bir "kelime tekrarı" rutini oturtalım. Görsel hafızayı canlı tutmak, denemelerdeki yeni nesil soruları çok daha hızlı analiz etmesini sağlayacaktır.`,
       ` Yakaladığımız bu güzel ritmi korumak adına yeni taktiğimiz şu olmalı: Öğrencimiz çözdüğü testlerde sadece doğrularına odaklanmamalı; boş bıraktığı veya yanlış yaptığı soruları kesip bir "hata defteri" yapmalı. Gerçek gelişim, yapamadığımız soruları çözebildiğimiz an başlar.`,
       ` Sürecin daha sağlıklı ilerlemesi için bir sonraki adımımız ders sonrası mini özet çıkarma alışkanlığı olmalı. Konu anlatımı biter bitmez kendi cümleleriyle tutacağı küçük notlar ve ardından gelecek soru çözümleri, bilgiyi zihninde tamamen kilitleyecektir.`
-    ];
-    taktikNotu = r(basariHavuzu);
+    ]);
   }
 
   return `${girisCumlesi}${haftalikKiyaslama}${taktikNotu}`;
@@ -1015,7 +663,7 @@ function examTag(puan) {
   if (puan > 85) return { cls: 'tag-green',  lbl: 'Muhteşemsin!' };
   if (puan > 70) return { cls: 'tag-teal',   lbl: 'Böyle Devam' };
   if (puan > 50) return { cls: 'tag-amber',  lbl: 'Yükselişte' };
-  return              { cls: 'tag-blue',   lbl: 'Gelişiyor' };
+  return { cls: 'tag-blue', lbl: 'Gelişiyor' };
 }
 
 function parseCSV(text) {
@@ -1063,28 +711,31 @@ async function loadData() {
     function toNum(v) { return parseFloat((v||"").toString().replace(",",".")) || 0; }
 
     allData = rows.slice(1).map(r => ({
-      tarih:        r[0] || "",
-      ogrenci:      r[1] || "",
-      seviye:       r[2] || "",
-      genel:        toNum(r[3]),
-      vocabulary:   toNum(r[4]),
-      konusma:      toNum(r[5]),
-      okuma:        toNum(r[6]),
-      yazma:        toNum(r[7]),
-      grammar:      toNum(r[8]),
-      deneme:       toNum(r[9]),
-      sifre:        r[10] ? r[10].trim() : "",
-      ders_tarihi:  r[11] || "",
-      ders_durumu:  r[12] ? r[12].trim() : "",
-      odev_durumu:  r[13] ? r[13].trim() : "",
-      konu:         r[14] || "",
-      telefon: r[15] || ""
+      tarih:               r[0] || "",
+      ogrenci:             r[1] || "",
+      seviye:              r[2] || "",
+      genel:               toNum(r[3]),
+      vocabulary:          toNum(r[4]),
+      konusma:             toNum(r[5]),
+      okuma:               toNum(r[6]),
+      yazma:               toNum(r[7]),
+      grammar:             toNum(r[8]),
+      deneme:              toNum(r[9]),
+      sifre:               r[10] ? r[10].trim() : "",
+      ders_tarihi:         r[11] || "",
+      ders_durumu:         r[12] ? r[12].trim() : "",
+      odev_durumu:         r[13] ? r[13].trim() : "",
+      konu:                r[14] || "",
+      telefon:             r[15] || "",
+      okunan_kitap_sayisi: toNum(r[16]),
+      son_kitap_adi:       r[17] || "",
+      son_kitap_sayfa:     toNum(r[18])
     })).filter(r => r.ogrenci);
-
+    
     passwords = {};
     allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
     students = [...new Set(allData.map(r => r.ogrenci))];
-
+    
     try {
       const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
       const dRes = await fetch(dUrl);
@@ -1098,9 +749,21 @@ async function loadData() {
       })).filter(r => r.ogrenci && r.puan > 0);
     } catch(e) { denemelerData = []; }
 
-    document.getElementById("last-updated").textContent =
-      new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+    document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     renderTabs();
+
+    // 🚀 OTURUM AÇIK TUTMA (LOCAL STORAGE) OTOMATİK GİRİŞ
+    const kayitliSifre = localStorage.getItem('dijimuallim_ogrenci_sifre');
+    const kayitliOgrenci = localStorage.getItem('dijimuallim_ogrenci_isim');
+
+    if (kayitliSifre && kayitliOgrenci && passwords[kayitliOgrenci] === kayitliSifre) {
+        unlockedStudents[kayitliOgrenci] = true;
+        if (!activeStudent) {
+            selectStudent(kayitliOgrenci);
+            return;
+        }
+    }
+
     if (students.length && !activeStudent) selectStudent(students[0]);
     else if (!students.length) {
       document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
@@ -1113,20 +776,15 @@ async function loadData() {
 
 function renderTabs() {
   let optionsHtml = '<option value="">— Öğrenci seçiniz —</option>';
-  
   students.forEach(s => {
-    // Şifreli ve kilitli olan öğrencilerin yanına kilit sembolü ekleyelim
     const isLocked = passwords[s] && !unlockedStudents[s] ? " 🔒" : "";
     const isSelected = s === activeStudent ? ' selected' : '';
     optionsHtml += `<option value="${s.replace(/"/g,'&quot;')}"${isSelected}>${s}${isLocked}</option>`;
   });
 
-  // Kısa isim sekmelerini tamamen kaldırıp, sadece temiz bir Dropdown basıyoruz
   document.getElementById("tabs").innerHTML = `
     <div style="width: 100%; max-width: 400px; margin: 15px auto; padding: 0 15px; box-sizing: border-box;">
-      <label for="student-select" style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
-        📌 ÖĞRENCİ SEÇ
-      </label>
+      <label for="student-select" style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">📌 ÖĞRENCİ SEÇ</label>
       <select id="student-select" onchange="if(this.value) selectStudent(this.value)" style="width: 100%; padding: 12px 16px; font-size: 15px; font-weight: 600; color: #334155; border: 2px solid #3b82f6; border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); cursor: pointer; outline: none;">
         ${optionsHtml}
       </select>
@@ -1160,16 +818,15 @@ function showLockScreen(name) {
 function checkPassword(name) {
     const input = document.getElementById("pwd-input").value.trim();
     const correctPassword = (passwords[name] || "").trim();
-
-    // Eğer Sheets'te şifre hücresi boşsa, şifresiz girmesinler diye güvenlik kilidi:
     if (!correctPassword) {
         document.getElementById("lock-error").textContent = "Sistemde şifreniz tanımlı değil, öğretmeninize danışın.";
         return;
     }
-
-    // Düz metin karşılaştırması (Hızlı ve Hatasız)
     if (input === correctPassword) {
-        unlockedStudents[name] = true; 
+        unlockedStudents[name] = true;
+        // 🚀 BAŞARILI GİRİŞTE ŞİFREYİ CİHAZA KAYDET
+        localStorage.setItem('dijimuallim_ogrenci_sifre', input);
+        localStorage.setItem('dijimuallim_ogrenci_isim', name);
         showStudentPage(name);
     } else {
         document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
@@ -1177,19 +834,15 @@ function checkPassword(name) {
         document.getElementById("pwd-input").focus();
     }
 }
-  
 
-function hataGoster() {
-    document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
-    document.getElementById("pwd-input").value = "";
-    document.getElementById("pwd-input").focus();
+function logout(name) { 
+  delete unlockedStudents[name]; 
+  // 🚀 ÇIKIŞ YAPILDIĞINDA LOCAL STORAGE TEMİZLE
+  localStorage.removeItem('dijimuallim_ogrenci_sifre');
+  localStorage.removeItem('dijimuallim_ogrenci_isim');
+  showLockScreen(name); 
 }
 
-function logout(name) { delete unlockedStudents[name]; showLockScreen(name); }
-
-
-
-	
 function showStudentPage(name) {
   const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
   if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
@@ -1209,9 +862,6 @@ function showStudentPage(name) {
       <div class="level-badge">${latest.seviye}</div>
       ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
     </div>
-
-
-	
     <div class="page-tabs">
       <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
       <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
@@ -1219,149 +869,17 @@ function showStudentPage(name) {
     </div>
     ${pageContent}
   `;
-
   if (activePageTab === "ozet") drawCharts(rows);
   if (activePageTab === "denemeler") drawDenemeChart(name);
 }
 
-// Kitap verilerini güvenli hale getiriyoruz (Boşsa hata vermemesi için)
-const vKitapAdi = latest.kitap || "Bu hafta henüz kitap tanımlanmadı.";
-const vOkunan = parseInt(latest.okunan_sayfa) || 0;
-const vHedef = parseInt(latest.hedef_sayfa) || 100; // Sayfa Hedefi (Örn: 100 sayfa)
-const vToplam = parseInt(latest.toplam_kitap) || 0;  // T Sütunundaki Bitirilen Kitap Sayısı
-
-// Yüzde hesaplama ve sınırlandırma
-let vYuzde = Math.round((vOkunan / vHedef) * 100);
-if (vYuzde > 100) vYuzde = 100;
-if (vYuzde < 0) vYuzde = 0;
-
-// 🏆 ÖDÜL VE ROZET MOTORU (Teşvik Edici Seviyeler)
-let vRozetMetni = "🌱 YENİ FİLİZLENEN OKUR";
-let vRozetRenk = "#7A7263";
-let vKupaEmoji = "📖";
-
-if (vToplam >= 15) { 
-  vRozetMetni = "👑 AKADEMİ ELÇİSİ / BİLGİN"; 
-  vRozetRenk = "#8E44AD"; // Asil Mor
-  vKupaEmoji = "🔮";
-} else if (vToplam >= 10) { 
-  vRozetMetni = "🏆 LGS ŞAMPİYON OKURU"; 
-  vRozetRenk = "#D35400"; // Altın/Turuncu
-  vKupaEmoji = "👑";
-} else if (vToplam >= 5) { 
-  vRozetMetni = "⚡ HIZLI OKUMA YOLCUSU"; 
-  vRozetRenk = "#2980B9"; // Canlı Mavi
-  vKupaEmoji = "🚀";
-} else if (vToplam >= 3) { 
-  vRozetMetni = "🏅 KİTAP DOSTU"; 
-  vRozetRenk = "#27AE60"; // Başarı Yeşili
-  vKupaEmoji = "🥈";
-} else if (vToplam >= 1) { 
-  vRozetMetni = "📚 İLK ADIM KAHRAMANI"; 
-  vRozetRenk = "#16A085"; // Deniz Yeşili
-  vKupaEmoji = "🥉";
-}
-
-// HTML İçeriğine Eklenecek Panel Kodu:
-const kitapTakipPaneliHtml = `
-  <div id="kitapOkumaPaneli" style="background: #FFF; border: 1px solid #EAE3D2; padding: 22px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 25px; font-family: 'Segoe UI', sans-serif;">
-    
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid #F5EFE6; padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 26px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">📚</span>
-        <div>
-          <h4 style="margin: 0; color: #2C3E50; font-size: 16px; font-weight: 700;">Okuma Kültürü & LGS Odak Takibi</h4>
-          <p style="margin: 3px 0 0 0; font-size: 11px; color: #7A7263;">Düzenli okuma, yeni nesil sorularda anlama hızını %40 artırır!</p>
-        </div>
-      </div>
-      <span id="okumaRozeti" style="background: ${vRozetRenk}; color: white; font-size: 11px; padding: 6px 14px; border-radius: 30px; font-weight: bold; letter-spacing: 0.5px; box-shadow: 0 2px 8px ${vRozetRenk}40; transition: all 0.3s ease;">
-        ${vRozetMetni}
-      </span>
-    </div>
-
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-      
-      <div style="flex: 2; min-width: 260px; display: flex; flex-direction: column; justify-content: center; gap: 14px;">
-        <div style="background: #FAF6F0; border-left: 4px solid ${vRozetRenk}; padding: 12px 14px; border-radius: 0 10px 10px 0;">
-          <span style="font-size: 9px; text-transform: uppercase; color: #9A8E76; font-weight: bold; letter-spacing: 0.5px;">Şu An Okunan Kitap</span>
-          <h5 id="panelKitapAdi" style="margin: 3px 0 0 0; color: #2C3E50; font-size: 14.5px; font-weight: 700; line-height: 1.4;">${vKitapAdi}</h5>
-        </div>
-        
-        <div>
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; margin-bottom: 6px; font-weight: 600; color: #4A4235;">
-            <span>Bu Haftaki Hedef İlerlemesi</span>
-            <span id="panelSayfaYuzdesi" style="color: ${vRozetRenk}; font-weight: bold; font-size: 13px;">%${vYuzde}</span>
-          </div>
-          <div style="background: #EAE3D2; width: 100%; height: 12px; border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);">
-            <div id="panelGrafikBar" style="background: linear-gradient(90deg, ${vRozetRenk}, #34495E); width: ${vYuzde}%; height: 100%; border-radius: 10px; transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);"></div>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #7A7263; margin-top: 5px;">
-            <span>Okunan: <strong id="panelOkunanSayfa" style="color: #2C3E50; font-size: 12px;">${vOkunan}</strong> sayfa</span>
-            <span>Hedef: <strong id="panelHedefSayfa" style="color: #2C3E50; font-size: 12px;">${vHedef}</strong> sayfa</span>
-          </div>
-        </div>
-      </div>
-      
-      <div style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #FAF6F0, #EAE3D2); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center; border: 1px solid #DCD5C5; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
-        <span id="kupaEmojiAlani" style="font-size: 42px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); margin-bottom: 5px; animation: bounce 2s infinite alternate;">
-          ${vToplam > 0 ? "🏆" : vKupaEmoji}
-        </span>
-        <span style="font-size: 9px; font-weight: bold; color: #7A7263; text-transform: uppercase; letter-spacing: 0.5px;">Toplam Bitirilen</span>
-        <div style="font-size: 32px; font-weight: 900; color: #2C3E50; margin: 2px 0; font-family: 'Arial Black', sans-serif;">
-          <span id="panelToplamKitap">${vToplam}</span>
-        </div>
-        <span style="font-size: 10px; font-weight: 700; color: ${vRozetRenk}; letter-spacing: 0.5px;">KİTAP SKORU</span>
-      </div>
-
-    </div>
-  </div>
-`;
-
-
 function switchPageTab(name, tab) {
   activePageTab = tab;
-  showStudentPage(name); function showStudentPage(name) {
-  const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-  if (!rows.length) { document.getElementById("content").innerHTML = '<div class="empty">Veri yok.</div>'; return; }
-  const latest = rows[rows.length-1];
-  const initials = name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-  const s = esc(name);
-
-  let pageContent = "";
-  if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
-  else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
-  else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
-
-  document.getElementById("content").innerHTML = `
-    <div class="student-header">
-      <div class="avatar">${initials}</div>
-      <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
-      <div class="level-badge">${latest.seviye}</div>
-      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
-    </div>
-    <div class="page-tabs">
-      <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
-      <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
-      <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
-    </div>
-    ${pageContent}
-  `;
-
-
-  if (activePageTab === "ozet") {
-    drawCharts(rows);
-    // Özet yüklendiği an gecikmesiz olarak son deneme verisini de kutucuğa yazdırıyoruz
-    updateSonDenemeKutusu(name, rows);
-  }
-  if (activePageTab === "denemeler") drawDenemeChart(name);
-}
+  showStudentPage(name);
 }
 
-
-/* ── /* ── ROZETLER ── */
-
+/* ── ROZETLER ── */
 function buildBadges(genel, prevGenel, currentStudentName) {
-  // 1. Orijinal Genel Rozet Listesi (Diğer öğrenciler için - 20 Adet)
   const ORIGINAL_BADGES = [
     { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
     { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
@@ -1371,72 +889,42 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     { score:80, emoji:"💫", label:"Yörüngede" }, { score:85, emoji:"🌠", label:"Kayan Yıldız" }, { score:90, emoji:"🌌", label:"Galaksiye Ulaştı" },
     { score:95, emoji:"🔱", label:"Efsaneler Kulübü" }, { score:100,emoji:"🎓", label:"Dili Fethetti" }
   ];
-
-// 2. Barış için Şampiyonlar Ligi Listesi (Cihaz uyumlu takım renkleri)
   const BARIS_BADGES = [
-    { score: 5,   emoji: "🟡", label: "Young Boys" },
-    { score: 10,  emoji: "🔵", label: "Dinamo Zagreb" },
-    { score: 15,  emoji: "⚫", label: "PAOK" },
-    { score: 20,  emoji: "🔴", label: "Kızıl Yıldız" },
-    { score: 25,  emoji: "🟢", label: "Celtic" },
-    { score: 30,  emoji: "🟢", label: "Sporting CP" },
-    { score: 35,  emoji: "⚪", label: "Benfica" },
-    { score: 40,  emoji: "🔴", label: "Feyenoord" },
-    { score: 45,  emoji: "⚪", label: "PSV Eindhoven" },
-    { score: 50,  emoji: "⚫", label: "AC Milan" },
-    { score: 55,  emoji: "🩵", label: "Aston Villa" },
-    { score: 60,  emoji: "⚪", label: "Juventus" },
-    { score: 65,  emoji: "🔴", label: "Atletico Madrid" },
-    { score: 70,  emoji: "🔵", label: "Inter Milan" },
-    { score: 75,  emoji: "🟡", label: "B. Dortmund" },
-    { score: 80,  emoji: "🔵", label: "Paris SG" },
-    { score: 85,  emoji: "🔴", label: "Bayern Münih" },
-    { score: 90,  emoji: "🩵", label: "Manchester City" },
-    { score: 95,  emoji: "👑", label: "Real Madrid" },
-    { score: 100, emoji: "🦁", label: "GALATASARAY" }
+    { score: 5, emoji: "🟡", label: "Young Boys" }, { score: 10, emoji: "🔵", label: "Dinamo Zagreb" }, { score: 15, emoji: "⚫", label: "PAOK" },
+    { score: 20, emoji: "🔴", label: "Kızıl Yıldız" }, { score: 25, emoji: "🟢", label: "Celtic" }, { score: 30, emoji: "🟢", label: "Sporting CP" },
+    { score: 35, emoji: "⚪", label: "Benfica" }, { score: 40, emoji: "🔴", label: "Feyenoord" }, { score: 45, emoji: "⚪", label: "PSV Eindhoven" },
+    { score: 50, emoji: "⚫", label: "AC Milan" }, { score: 55, emoji: "🩵", label: "Aston Villa" }, { score: 60, emoji: "⚪", label: "Juventus" },
+    { score: 65, emoji: "🔴", label: "Atletico Madrid" }, { score: 70, emoji: "🔵", label: "Inter Milan" }, { score: 75, emoji: "🟡", label: "B. Dortmund" },
+    { score: 80, emoji: "🔵", label: "Paris SG" }, { score: 85, emoji: "🔴", label: "Bayern Münih" }, { score: 90, emoji: "🩵", label: "Manchester City" },
+    { score: 95, emoji: "👑", label: "Real Madrid" }, { score: 100, emoji: "🦁", label: "GALATASARAY" }
   ];
-
-  // 3. Mert için Çizgi Film Listesi (20 Adet)
   const MERT_BADGES = [
-    { score: 5,   emoji:"🐌", label:"Gary" }, { score: 10,  emoji:"🐷", label:"Porky Pig" }, { score: 15,  emoji:"🦀", label:"Bay Yengeç" },
-    { score: 20,  emoji:"🦠", label:"Plankton" }, { score: 25,  emoji:"🦆", label:"Daffy Duck" }, { score: 30,  emoji:"🐱", label:"Tom" },
-    { score: 35,  emoji:"🐭", label:"Jerry" }, { score: 40,  emoji:"🐕", label:"Scooby-Doo" }, { score: 45,  emoji:"🦁", label:"Simba" },
-    { score: 50,  emoji:"🐢", label:"Ninja Kaplumbağa" }, { score: 55,  emoji:"🐼", label:"Kung Fu Panda" }, { score: 60,  emoji:"🤠", label:"Sheriff Woody" },
-    { score: 65,  emoji:"🤖", label:"Buzz Lightyear" }, { score: 70,  emoji:"⚡", label:"Pikachu" }, { score: 75,  emoji:"🧪", label:"Prof. Utanyum" },
-    { score: 80,  emoji:"🔬", label:"Dexter" }, { score: 85,  emoji:"🔥", label:"Charizard" }, { score: 90,  emoji:"🧽", label:"Sünger Bob" },
-    { score: 95,  emoji:"👽", label:"Ben 10" }, { score: 100, emoji:"👑", label:"Kral Şakir" }
+    { score: 5, emoji:"🐌", label:"Gary" }, { score: 10, emoji:"🐷", label:"Porky Pig" }, { score: 15, emoji:"🦀", label:"Bay Yengeç" },
+    { score: 20, emoji:"🦠", label:"Plankton" }, { score: 25, emoji:"🦆", label:"Daffy Duck" }, { score: 30, emoji:"🐱", label:"Tom" },
+    { score: 35, emoji:"🐭", label:"Jerry" }, { score: 40, emoji:"🐕", label:"Scooby-Doo" }, { score: 45, emoji:"🦁", label:"Simba" },
+    { score: 50, emoji:"🐢", label:"Ninja Kaplumbağa" }, { score: 55, emoji:"🐼", label:"Kung Fu Panda" }, { score: 60, emoji:"🤠", label:"Sheriff Woody" },
+    { score: 65, emoji:"🤖", label:"Buzz Lightyear" }, { score: 70, emoji:"⚡", label:"Pikachu" }, { score: 75, emoji:"🧪", label:"Prof. Utanyum" },
+    { score: 80, emoji:"🔬", label:"Dexter" }, { score: 85, emoji:"🔥", label:"Charizard" }, { score: 90, emoji:"🧽", label:"Sünger Bob" },
+    { score: 95, emoji:"👽", label:"Ben 10" }, { score: 100, emoji:"👑", label:"Kral Şakir" }
   ];
 
-  // İsmi küçük harfe çevirip Türkçe karakterleri arındırarak kontrol etme
-  const checkName = (currentStudentName || "").toLowerCase().trim()
-    .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
-    .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
-
-  // Öğrenci filtreleme kontrolleri
+  const checkName = (currentStudentName || "").toLowerCase().trim().replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
   const isBaris = checkName.includes("baris");
   const isMert = checkName.includes("mert");
-  
-  // Listeyi profile göre eşleme (Hatalı değişken adı BARIS_BADGES ile eşitlendi)
+
   let currentBadgesList = ORIGINAL_BADGES;
   if (isBaris) currentBadgesList = BARIS_BADGES;
   else if (isMert) currentBadgesList = MERT_BADGES;
 
-  // Başlıklar ve metinler
   let cardTitle = "🏅 Kazanılan Rozetler";
   let progressTextSuffix = "tamamlandı";
   let gainedText = "rozeti senin oldu.";
   let lostText = "rozeti bu hafta elden gitti. Haftaya geri alabilirsin!";
 
   if (isBaris) {
-    cardTitle = "🏆 Barış'ın Şampiyonlar Ligi Yolculuğu";
-    progressTextSuffix = "Şampiyonluğa Yakın";
-    gainedText = "kulübünün seviyesine ulaştın.";
-    lostText = "takım seviyesi bu hafta elden gitti. Haftaya daha güçlü dönüp geri alabilirsin Barış!";
+    cardTitle = "🏆 Barış'ın Şampiyonlar Ligi Yolculuğu"; progressTextSuffix = "Şampiyonluğa Yakın"; gainedText = "kulübünün seviyesine ulaştın."; lostText = "takım seviyesi bu hafta elden gitti. Haftaya daha güçlü dönüp geri alabilirsin Barış!";
   } else if (isMert) {
-    cardTitle = "🎬 Mert'in Çizgi Film Dünyası";
-    progressTextSuffix = "Gelişim Seviyesi";
-    gainedText = "karakterinin gücünü açtın!";
-    lostText = "karakterinin kilidi bu hafta puan düşüşü nedeniyle tekrar kapandı Mert!";
+    cardTitle = "🎬 Mert'in Çizgi Film Dünyası"; progressTextSuffix = "Gelişim Seviyesi"; gainedText = "karakterinin gücünü açtın!"; lostText = "karakterinin kilidi bu hafta puan düşüşü nedeniyle tekrar kapandı Mert!";
   }
 
   const earned = currentBadgesList.filter(b => genel >= b.score);
@@ -1448,20 +936,12 @@ function buildBadges(genel, prevGenel, currentStudentName) {
   if (prevGenel !== null && prevGenel !== undefined) {
     const newBadges = currentBadgesList.filter(b => genel >= b.score && prevGenel < b.score);
     const lostBadges = currentBadgesList.filter(b => genel < b.score && prevGenel >= b.score);
-
     if (newBadges.length > 0) {
       const names = newBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
-      notifHtml = `
-        <div class="badge-notif gained">
-          <div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div>
-          <div class="badge-notif-text"><h3>🎉 Yeni başarı kilidi açıldı!</h3><p><strong>${names}</strong> ${gainedText}</p></div>
-        </div>`;
+      notifHtml = `<div class="badge-notif gained"><div class="badge-notif-emoji">${newBadges[newBadges.length-1].emoji}</div><div class="badge-notif-text"><h3>🎉 Yeni başarı kilidi açıldı!</h3><p><strong>${names}</strong> ${gainedText}</p></div></div>`;
     } else if (lostBadges.length > 0) {
       const names = lostBadges.map(b => `${b.emoji} ${b.label}`).join(", ");
-      notifHtml = `
-        <div class="badge-notif lost">
-          <div class="badge-notif-emoji">😔</div><div class="badge-notif-text"><h3>Bu hafta biraz düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> ${lostText}</p></div>
-        </div>`;
+      notifHtml = `<div class="badge-notif lost"><div class="badge-notif-emoji">😔</div><div class="badge-notif-text"><h3>Bu hafta biraz düşüş yaşandı</h3><p>Maalesef <strong>${names}</strong> ${lostText}</p></div></div>`;
     }
   }
 
@@ -1469,7 +949,6 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     const isEarned = genel >= b.score;
     return `<div class="badge-item ${isEarned ? 'earned' : 'locked'}"><div class="badge-emoji">${b.emoji}</div><div class="badge-label">${b.label}</div><div class="badge-score">${b.score} p</div></div>`;
   }).join("");
-
   return `
     ${notifHtml}
     <div class="badges-card">
@@ -1482,24 +961,12 @@ function buildBadges(genel, prevGenel, currentStudentName) {
     </div>`;
 }
 
-
-
-// Google Sheets'ten öğrenci satırı (row) başarıyla alındıktan sonra ekrana basılan alan:
-let html = "";
-
-// 1. Mevcut Başarı Rozetleri Alanınız (Sitenizde zaten var olan kısım)
-if (row.rozetler) {
-    html += buildBadgesSection(row); 
-}
-
-
 /* 🔍 DERS TARİHLERİ VE DURUMU KUTUCUĞU MOTORU (SHEETS ODAKLI DÜZELTME) 🔍 */
 function buildLessonStatusBox(rows) {
   if (!rows || !rows.length) {
     return `<div class="lesson-status-box"><div class="status-box-title">📅 Ders Durum Takvimi</div><div class="status-empty">Planlanmış veya işlenmiş ders verisi bulunamadı.</div></div>`;
   }
 
-  // Boş olmayan ders satırlarını filtrele
   const lessonRows = rows.filter(r => r && r.ders_tarihi && r.ders_tarihi.trim() !== "");
   
   if (!lessonRows.length) {
@@ -1510,22 +977,18 @@ function buildLessonStatusBox(rows) {
   let currentLesson = null;
   let nextLesson = null;
 
-  // Tüm satırları tek tek tarayarak Sheets'teki durum bilgisine göre ayırıyoruz
   lessonRows.forEach(row => {
     const st = (row.ders_durumu || "").toLowerCase().trim();
 
-    // Eğer Sheets'te 'sonraki', 'planlandi' veya 'sonraki ders' yazıyorsa doğrudan GELECEK DERS yap
     if (st === "sonraki" || st === "planlandi" || st === "sonraki ders") {
-      nextLesson = row; // En güncel eklenen sonraki dersi buraya eşitler
+      nextLesson = row; 
     } 
-    // Tamamlanmış, ertelenmiş veya yapılmamış dersleri geçmiş/güncel akışına al
     else if (st === "tamamlandi" || st === "ertelendi" || st === "yapilmadi" || st === "yapilmedi") {
       pastLesson = currentLesson; 
       currentLesson = row;        
     }
   });
 
-  // Rozet (Badge) üretici fonksiyon
   function getStatusBadge(status) {
     const st = (status || "").toLowerCase().trim();
     if (st === "tamamlandi") return `<span class="status-badge badge-tamamlandi">Tamamlandı</span>`;
@@ -1557,6 +1020,7 @@ function buildLessonStatusBox(rows) {
     </div>
   `;
 }
+
 /* ── ÖZET ── */
 function buildOzet(rows, latest, studentName, allRows) {
   const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
@@ -1573,23 +1037,95 @@ function buildOzet(rows, latest, studentName, allRows) {
     if (d<0) return `<span class="down">↓ ${Math.abs(d)}</span>`;
     return '<span class="same">→ sabit</span>';
   }
+
   const skills = ["vocabulary","konusma","okuma","yazma","grammar"];
   const skillRows = skills.map(sk => `
     <div class="skill-row">
       <div class="skill-header"><span class="skill-name">${SKILL_LABELS[sk]}</span><span class="skill-score" style="color:${SKILL_COLORS[sk]}">${latest[sk]}/100</span></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${latest[sk]}%;background:${SKILL_COLORS[sk]}"></div></div>
     </div>`).join("");
-
+    
   const dersler = rows.filter(r=>r.ders_durumu);
   const yapildi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="tamamlandi").length;
   const yapilmadi = dersler.filter(r=>r.ders_durumu.toLowerCase().trim()==="yapilmadi" || r.ders_durumu.toLowerCase().trim()==="yapilmedi").length;
-
+  
   const badgesHtml = buildBadges(latest.genel, prev ? prev.genel : null, studentName);
-  const lessonStatusBoxHtml = buildLessonStatusBox(rows); // Yeni oluşturduğumuz kutucuk motoru çağrılıyor
+  const lessonStatusBoxHtml = buildLessonStatusBox(rows);
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
+
+  /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
+  const vKitapAdi = latest.son_kitap_adi || "Bu hafta henüz kitap tanımlanmadı.";
+  const vOkunan = parseInt(latest.son_kitap_sayfa) || 0;
+  const vHedef = 100; 
+  const vToplam = parseInt(latest.okunan_kitap_sayisi) || 0;
+
+  let vYuzde = Math.round((vOkunan / vHedef) * 100);
+  if (vYuzde > 100) vYuzde = 100;
+  if (vYuzde < 0) vYuzde = 0;
+
+  let vRozetMetni = "🌱 YENİ FİLİZLENEN OKUR";
+  let vRozetRenk = "#7A7263";
+  let vKupaEmoji = "📖";
+
+  if (vToplam >= 15) { vRozetMetni = "👑 AKADEMİ ELÇİSİ / BİLGİN"; vRozetRenk = "#8E44AD"; vKupaEmoji = "🔮"; }
+  else if (vToplam >= 10) { vRozetMetni = "🏆 LGS ŞAMPİYON OKURU"; vRozetRenk = "#D35400"; vKupaEmoji = "👑"; }
+  else if (vToplam >= 5) { vRozetMetni = "⚡ HIZLI OKUMA YOLCUSU"; vRozetRenk = "#2980B9"; vKupaEmoji = "🚀"; }
+  else if (vToplam >= 3) { vRozetMetni = "🏅 KİTAP DOSTU"; vRozetRenk = "#27AE60"; vKupaEmoji = "🥈"; }
+  else if (vToplam >= 1) { vRozetMetni = "📚 İLK ADIM KAHRAMANI"; vRozetRenk = "#16A085"; vKupaEmoji = "🥉"; }
+
+  const kitapTakipPaneliHtml = `
+    <div id="kitapOkumaPaneli" style="background: #FFF; border: 1px solid #EAE3D2; padding: 22px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 25px; font-family: 'Segoe UI', sans-serif;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid #F5EFE6; padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 26px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">📚</span>
+          <div>
+            <h4 style="margin: 0; color: #2C3E50; font-size: 16px; font-weight: 700;">Okuma Kültürü & LGS Odak Takibi</h4>
+            <p style="margin: 3px 0 0 0; font-size: 11px; color: #7A7263;">Düzenli okuma, anlama hızını %40 artırır!</p>
+          </div>
+        </div>
+        <span id="okumaRozeti" style="background: ${vRozetRenk}; color: white; font-size: 11px; padding: 6px 14px; border-radius: 30px; font-weight: bold; letter-spacing: 0.5px; box-shadow: 0 2px 8px ${vRozetRenk}40; transition: all 0.3s ease;">
+          ${vRozetMetni}
+        </span>
+      </div>
+
+      <div class="book-flex-layout" style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 2; min-width: 260px; display: flex; flex-direction: column; justify-content: center; gap: 14px;">
+          <div style="background: #FAF6F0; border-left: 4px solid ${vRozetRenk}; padding: 12px 14px; border-radius: 0 10px 10px 0;">
+            <span style="font-size: 9px; text-transform: uppercase; color: #9A8E76; font-weight: bold; letter-spacing: 0.5px;">Şu An Okunan Kitap</span>
+            <h5 id="panelKitapAdi" style="margin: 3px 0 0 0; color: #2C3E50; font-size: 14.5px; font-weight: 700; line-height: 1.4;">${vKitapAdi}</h5>
+          </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; margin-bottom: 6px; font-weight: 600; color: #4A4235;">
+              <span>Haftalık Hedef İlerlemesi</span>
+              <span id="panelSayfaYuzdesi" style="color: ${vRozetRenk}; font-weight: bold; font-size: 13px;">%${vYuzde}</span>
+            </div>
+            <div style="background: #EAE3D2; width: 100%; height: 12px; border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);">
+              <div id="panelGrafikBar" style="background: linear-gradient(90deg, ${vRozetRenk}, #34495E); width: ${vYuzde}%; height: 100%; border-radius: 10px; transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #7A7263; margin-top: 5px;">
+              <span>Okunan: <strong id="panelOkunanSayfa" style="color: #2C3E50; font-size: 12px;">${vOkunan}</strong> sayfa</span>
+              <span>Hedef: <strong id="panelHedefSayfa" style="color: #2C3E50; font-size: 12px;">${vHedef}</strong> sayfa</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="trophy-score-card" style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #FAF6F0, #EAE3D2); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center; border: 1px solid #DCD5C5; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+          <span class="animated-trophy" id="kupaEmojiAlani" style="font-size: 42px; margin-bottom: 5px;">
+            ${vToplam > 0 ? "🏆" : vKupaEmoji}
+          </span>
+          <span style="font-size: 9px; font-weight: bold; color: #7A7263; text-transform: uppercase; letter-spacing: 0.5px;">Toplam Bitirilen</span>
+          <div style="font-size: 32px; font-weight: 900; color: #2C3E50; margin: 2px 0; font-family: 'Arial Black', sans-serif;">
+            <span id="panelToplamKitap">${vToplam}</span>
+          </div>
+          <span style="font-size: 10px; font-weight: 700; color: ${vRozetRenk}; letter-spacing: 0.5px;">KİTAP SKORU</span>
+        </div>
+      </div>
+    </div>
+  `;
 
   return `
     ${badgesHtml}
+    ${kitapTakipPaneliHtml}
     ${lessonStatusBoxHtml} 
     
     <div class="teacher-feedback-card">
@@ -1613,8 +1149,9 @@ function buildOzet(rows, latest, studentName, allRows) {
 function drawCharts(rows) {
   const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
   const latest = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : null;
-
+  
   Object.keys(Chart.instances || {}).forEach(key => { try { Chart.instances[key].destroy(); } catch(e) {} });
+  
   if (Chart.getChart) {
     ["chartGenel","chartRadar"].forEach(id => {
       const existing = Chart.getChart(id);
@@ -1666,11 +1203,9 @@ function buildHaftalar(rows) {
   const sortedRows = rows
     .filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0)
     .sort((a, b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-
   if (!sortedRows.length) return '<div class="empty">Ders raporu bulunamadı.</div>';
 
   const statusLabels = { tamamlandi: "Tamamlandı", yapilmadi: "Yapılmadı", yapilmedi: "Yapılmadı", ertelendi: "Ertelendi", sonraki: "Planlandı" };
-
   let htmlResult = `<div style="margin-bottom: 1rem; font-size: 13px; color: #666; font-weight: 500;">Ders raporunu incelemek için üzerine tıklayabilirsiniz.</div>`;
   
   for (let i = sortedRows.length - 1; i >= 0; i--) {
@@ -1678,7 +1213,7 @@ function buildHaftalar(rows) {
     const lessonNumber = i + 1;
     const st = (currentWeek.ders_durumu || "sonraki").toLowerCase().trim();
     const weekComment = generateUniqueComment(currentWeek.genel, currentWeek.ogrenci, currentWeek, allData);
-
+    
     htmlResult += `
       <div class="lesson-accordion-item">
         <button class="lesson-accordion-header" onclick="this.parentElement.classList.toggle('open')">
@@ -1700,7 +1235,6 @@ function buildHaftalar(rows) {
             <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">🎯 Haftalık Eğitim Stratejisi & Tavsiye:</div>
             <div style="font-size: 13px; line-height: 1.5; color: #334155; font-style: italic;">"${weekComment}"</div>
           </div>
-
           <div class="week-scores" style="margin-top:15px;">
             <div class="week-score-item"><span class="week-score-label">Vocabulary</span><span class="week-score-val">${currentWeek.vocabulary}</span></div>
             <div class="week-score-item"><span class="week-score-label">Konuşma</span><span class="week-score-val">${currentWeek.konusma}</span></div>
@@ -1711,7 +1245,6 @@ function buildHaftalar(rows) {
         </div>
       </div>`;
   }
-
   return htmlResult;
 }
 
@@ -1720,31 +1253,11 @@ function buildDenemeler(name) {
   const sData = denemelerData.filter(r => r.ogrenci === name);
   if (!sData.length) return '<div class="empty">Henüz deneme sınavı verisi girilmemiş.</div>';
   
-  setTimeout(() => {
-    const rows = allData.filter(r => r.ogrenci === name).sort((a,b) => parseDateStr(a.tarih) - parseDateStr(b.tarih));
-    const scoredRows = rows.filter(r => r.genel > 0 || r.vocabulary > 0 || r.konusma > 0 || r.okuma > 0 || r.yazma > 0 || r.grammar > 0);
-    const latest = scoredRows.length > 0 ? scoredRows[scoredRows.length-1] : rows[rows.length-1];
-    const prev = scoredRows.length > 1 ? scoredRows[scoredRows.length-2] : null;
-
-    const el = document.getElementById("son-deneme-val");
-    const dl = document.getElementById("son-deneme-delta");
-    if (el) el.textContent = sData[sData.length-1].puan;
-    if (dl && prev) {
-      const pD = denemelerData.filter(r => r.ogrenci === name && r.tarih === prev.tarih);
-      if (pD.length) {
-        const d = sData[sData.length-1].puan - pD[pD.length-1].puan;
-        if (d>0) dl.innerHTML = `<span class="up">↑ ${d}</span>`;
-        else if (d<0) dl.innerHTML = `<span class="down">↓ ${Math.abs(d)}</span>`;
-        else dl.innerHTML = '<span class="same">→ sabit</span>';
-      } else { dl.innerHTML = '<span class="same">—</span>'; }
-    }
-  }, 50);
-
-  const tableRows = sData.map((r, idx) => {
+  const tableRows = sData.map((r) => {
     const t = examTag(r.puan);
     return `<tr><td>${r.tarih}</td><td><b>${r.deneme_adi}</b></td><td>${r.puan}</td><td><span class="tag ${t.cls}">${t.lbl}</span></td></tr>`;
   }).reverse().join("");
-
+  
   return `
     <div class="card"><div class="card-title">Deneme Sınavları Grafik İvmesi</div><canvas id="chartDenemelerTab"></canvas></div>
     <div class="card" style="padding:10px;"><table class="exam-table"><thead><tr><th>Tarih</th><th>Deneme Adı</th><th>Puan</th><th>Durum</th></tr></thead><tbody>${tableRows}</tbody></table></div>`;
@@ -1766,15 +1279,12 @@ function drawDenemeChart(name) {
 }
 </script>
 
-	
-
 <button id="yeni_rubrikOpenBtn" style="display: block; margin: 30px auto; padding: 12px 22px; border-radius: 10px; border: none; background: #9B5435; color: #fff; font-size: 15px; font-weight: 700; font-family: 'IBM Plex Sans',-apple-system,sans-serif; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
   Öğrenci Değerlendir
 </button>
 
 <div id="yeni_rubrikOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px;">
   <div id="yeni_rubrikModal" style="background:#F6F4EF;border-radius:14px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;position:relative;font-family:'IBM Plex Sans',-apple-system,sans-serif;color:#262320;">
-
     <button id="yeni_rubrikCloseBtn" aria-label="Kapat" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:none;background:#fff;color:#5A554C;font-size:18px;cursor:pointer;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,0.15);">×</button>
 
     <div id="yeni_lockScreen" style="min-height:340px;display:flex;align-items:center;justify-content:center;padding:30px 20px;">
@@ -1789,7 +1299,6 @@ function drawDenemeChart(name) {
 
     <div id="yeni_rubrikApp" style="display:none;">
       <div style="padding:20px 20px 30px;">
-
         <header style="margin-bottom:18px;padding-right:30px;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:4px;">Özel Ders Değerlendirme</div>
           <h1 style="font-size:20px;font-weight:700;line-height:1.25;margin:0;">İngilizce Ders Rubriği</h1>
@@ -1812,10 +1321,8 @@ function drawDenemeChart(name) {
         <div class="r-card">
           <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Planlama Takvimi</div>
           <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">L and M Sütunları Ayarları</div>
-          
           <label class="r-label-sm">TAMAMLANAN DERS TARİHİ</label>
           <input type="date" id="yeni_completedLessonDate" style="margin-bottom:10px; width:100%; padding:10px 12px; border-radius:8px; border:1px solid #E2DDD2; font-size:15px;">
-
           <label class="r-label-sm">BİR SONRAKİ PLANLANAN DERS TARİHİ</label>
           <input type="date" id="yeni_nextLessonDate" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid #E2DDD2; font-size:15px;">
         </div>
@@ -1831,7 +1338,6 @@ function drawDenemeChart(name) {
         <div class="r-card">
           <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Başı Durumu</div>
           <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">Hazırlık Kontrolleri</div>
-          
           <div style="margin-bottom:10px;">
             <div style="font-size:13px; font-weight:500; margin-bottom:4px;">Ödev, Tekrar, Hazırlık Kontrolü:</div>
             <div class="r-btn-group" id="yeni_startStatusGroup">
@@ -1848,13 +1354,11 @@ function drawDenemeChart(name) {
         <div class="r-card">
           <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders İçi Gelişim</div>
           <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">5 Temel Beceri Seviyesi (0-100)</div>
-          
           <div class="skill-row"><span>Vocabulary</span> <input type="range" class="r-slider yeni-skill-input" id="yeni_scVocabulary" value="0"><span class="score-val">0</span></div>
           <div class="skill-row"><span>Konuşma</span> <input type="range" class="r-slider yeni-skill-input" id="yeni_scKonusma" value="0"><span class="score-val">0</span></div>
           <div class="skill-row"><span>Okuma</span> <input type="range" class="r-slider yeni-skill-input" id="yeni_scOkuma" value="0"><span class="score-val">0</span></div>
           <div class="skill-row"><span>Yazma</span> <input type="range" class="r-slider yeni-skill-input" id="yeni_scYazma" value="0"><span class="score-val">0</span></div>
           <div class="skill-row"><span>Grammar</span> <input type="range" class="r-slider yeni-skill-input" id="yeni_scGrammar" value="0"><span class="score-val">0</span></div>
-
           <div style="border-top:1px solid #F0EBE0;margin-top:12px;padding-top:12px;">
             <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px;">
               <span style="font-weight: 500;">Deneme / Sınav Sonucu</span>
@@ -1867,10 +1371,8 @@ function drawDenemeChart(name) {
         <div class="r-card">
           <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Ders Sonu & Çıkış</div>
           <div style="font-size:12px;color:#8A8478;margin-bottom:8px;">Kapanış Değerlendirmesi</div>
-          
           <label class="r-check-row"><input type="checkbox" id="yeni_chkOdev"> <span>Yeni ödev verildi mi?</span></label>
           <label class="r-check-row"><input type="checkbox" id="yeni_chkAnlasildi"> <span>Hedefler tamamlandı/Anlaşıldı mı?</span></label>
-
           <label class="r-label-sm" style="margin-top:12px;">DERS SONU YORUMU</label>
           <textarea id="yeni_endComment" rows="2" placeholder="Ders sonu kapanış notları..."></textarea>
         </div>
@@ -1892,7 +1394,6 @@ function drawDenemeChart(name) {
 
       </div>
     </div>
-
   </div>
 </div>
 
@@ -1901,20 +1402,16 @@ function drawDenemeChart(name) {
   #yeni_rubrikModal input, #yeni_rubrikModal textarea { font-family: inherit; box-sizing: border-box; }
   #yeni_rubrikModal input[type=text] { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #E2DDD2; font-size: 15px; }
   #yeni_rubrikModal textarea { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #E2DDD2; font-size: 13.5px; resize: vertical; }
-  
   .r-slider { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: #E2DDD2; outline: none; width: 100%; }
   .r-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #9B5435; cursor: pointer; border: 3px solid #F6F4EF; box-shadow: 0 0 0 1px #9B5435; }
   .r-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #9B5435; cursor: pointer; border: 3px solid #F6F4EF; box-shadow: 0 0 0 1px #9B5435; }
-  
   .r-card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 14px; border: 1px solid #E9E4D9; box-sizing: border-box; }
   .r-btn-group { display: flex; gap: 4px; width: 100%; }
   .r-status-btn { flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 600; border-radius: 6px; border: 1.5px solid #E2DDD2; background: #fff; color: #5A554C; cursor: pointer; }
   .r-status-btn.active { border-color: #9B5435; background: #FBEFE7; color: #9B5435; }
-  
   .skill-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13.5px; }
   .skill-row span:first-child { width: 85px; font-weight: 500; }
   .score-val { font-family: 'IBM Plex Mono', monospace; width: 30px; text-align: right; font-weight: 600; color: #9B5435; }
-  
   .r-check-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid #F0EBE0; font-size: 14px; }
   .r-check-row input { width: 18px; height: 18px; accent-color: #9B5435; flex-shrink: 0; }
   .r-label-sm { display: block; font-size: 11.5px; font-weight: 600; color: #8A8478; margin-bottom: 4px; }
@@ -1949,14 +1446,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if(localStorage.getItem("rubrik_webhook_yeni")) {
         webhookUrlInput.value = localStorage.getItem("rubrik_webhook_yeni");
-
-			
-      // 📌 UYANIK ÖĞRENCİ SAVAR: Konsoldan şifrelerin okunmasını engeller
-    setTimeout(() => {
-        if (typeof passwords !== 'undefined') {
-            window.passwords = undefined; // Konsoldan erişimi tamamen engeller
-        }
-    }, 2000); // Sayfa yüklendikten 2 saniye sonra şifre listesini konsola kapatır
+        setTimeout(() => { if (typeof passwords !== 'undefined') { window.passwords = undefined; } }, 2000);
     }
 
     openBtn.addEventListener("click", () => overlay.style.display = "flex");
@@ -1964,8 +1454,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     unlockBtn.addEventListener("click", () => {
         const girilenSifre = passInput.value.trim();
-        
-        // Şifreleme motoruna girmeden direkt senin parolanı kontrol eder:
         if(girilenSifre === "315269") { 
             lockScreen.style.display = "none";
             rubrikApp.style.display = "block";
@@ -1975,26 +1463,16 @@ document.addEventListener("DOMContentLoaded", function() {
             passError.style.display = "block"; 
             passInput.value = "";
         }
-    // 📌 UYANIK ÖĞRENCİ SAVAR: Konsoldan şifrelerin okunmasını engeller
-    setTimeout(() => {
-        if (typeof passwords !== 'undefined') {
-            window.passwords = undefined; // Konsoldan erişimi tamamen engeller
-        }
-    }, 2000); // Sayfa yüklendikten 2 saniye sonra şifre listesini konsola kapatır
-    
+        setTimeout(() => { if (typeof passwords !== 'undefined') { window.passwords = undefined; } }, 2000);
     });
 
-    // Otomatik Telefon Bulma Mekanizması (allData yüklüyse)
     studentNameInput.addEventListener("input", function() {
         const girilenIsim = studentNameInput.value.trim();
         if (girilenIsim && typeof allData !== 'undefined' && Array.isArray(allData)) {
             let row = allData.find(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
             if (row) {
-                // Sitedeki nesnede hangi isimle kayıtlıysa onu çekmeye çalışır
                 let telNo = row.telefon || row.veli_telefon || row.p || row.telefon_numarasi || "";
-                if(telNo) {
-                    studentPhoneInput.value = telNo;
-                }
+                if(telNo) { studentPhoneInput.value = telNo; }
             }
         }
     });
@@ -2018,11 +1496,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     skillSliders.forEach(s => s.addEventListener("input", updateAverage));
     examScore.addEventListener("input", () => { examScoreOut.innerText = examScore.value + "/100"; });
-
-    webhookToggle.addEventListener("click", () => {
-        webhookForm.style.display = webhookForm.style.display === "none" ? "block" : "none";
-    });
-
+    webhookToggle.addEventListener("click", () => { webhookForm.style.display = webhookForm.style.display === "none" ? "block" : "none"; });
     saveWebhookBtn.addEventListener("click", () => {
         localStorage.setItem("rubrik_webhook_yeni", webhookUrlInput.value);
         alert("Bağlantı URL'i tarayıcıya kaydedildi!");
@@ -2073,10 +1547,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const bugun = new Date();
         const tarihFormat = String(bugun.getDate()).padStart(2, '0') + "." + String(bugun.getMonth() + 1).padStart(2, '0') + "." + bugun.getFullYear();
-
         const tamamlananDersTarihi = formatTarih(compDateRaw);
         const sonrakiDersTarihi = formatTarih(nextDateRaw);
-
         const startCommentVal = document.getElementById("yeni_startComment").value.trim() || "Yok";
         const endCommentVal = document.getElementById("yeni_endComment").value.trim() || "Yok";
 
@@ -2115,61 +1587,31 @@ document.addEventListener("DOMContentLoaded", function() {
         };
 
         try {
-            await fetch(url, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payloadTamamlandi)
-            });
-
-            await fetch(url, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payloadSonraki)
-            });
-
+            await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadTamamlandi) });
+            await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadSonraki) });
+            
             statusMsg.style.display = "block";
             statusMsg.style.background = "#E6F4EA";
             statusMsg.style.color = "#137333";
             statusMsg.innerText = "Başarıyla iki satır halinde eklendi!";
-
-            // WhatsApp Motoru
+            
             try {
-                let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\n` +
-                              `Sayın Velimiz, \n` +
-                              `*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir. \n\n` +
-                              `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n` +
-                              `📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
-                              `📝 *Öğretmen Notları:* \n` +
-                              `• Ders Başı Durumu: ${startCommentVal}\n` +
-                              `• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
-                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n` +
-                              `• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n` +
-                              `• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n` +
-                              `• Okuma (Reading): %${payloadTamamlandi.okuma}\n` +
-                              `• Yazma (Writing): %${payloadTamamlandi.yazma}\n` +
-                              `• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n` +
-                              `📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
-
-                if (parseInt(payloadTamamlandi.deneme) > 0) {
-                    wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
-                }
-
-                wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\n` +
-                           `Gelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n` +
-                           `*İngilizce Öğretmeni & Eğitim Koçu*`;
-
+                let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir.\n\n` +
+                              `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
+                              `📝 *Öğretmen Notları:* \n• Ders Başı Durumu: ${startCommentVal}\n• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
+                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
+                
+                if (parseInt(payloadTamamlandi.deneme) > 0) { wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`; }
+                
+                wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\nGelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n*İngilizce Öğretmeni & Eğitim Koçu*`;
+                
                 let temizTel = veliTel.replace(/\s+/g, '');
                 let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
                 window.open(wpUrl, '_blank');
-            } catch (wpError) {
-                console.error("WhatsApp motoru hatası:", wpError);
-            }
-
+            } catch (wpError) { console.error("WhatsApp motoru hatası:", wpError); }
+            
             resetBtn.click();
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
-
         } catch (error) {
             statusMsg.style.display = "block";
             statusMsg.style.background = "#FCE8E6";
@@ -2185,4 +1627,3 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </body>
 </html>
-	
