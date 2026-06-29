@@ -1428,6 +1428,29 @@ function drawDenemeChart(name) {
   .r-check-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid #F0EBE0; font-size: 14px; }
   .r-check-row input { width: 18px; height: 18px; accent-color: #9B5435; flex-shrink: 0; }
   .r-label-sm { display: block; font-size: 11.5px; font-weight: 600; color: #8A8478; margin-bottom: 4px; }
+
+<div class="r-card">
+  <div style="font-size:15.5px;font-weight:700;margin-bottom:2px;">Haftalık Kitap Okuma Takibi</div>
+  <div style="font-size:12px;color:#8A8478;margin-bottom:12px;">Öğrenci Yazıldığında Son Veriler Otomatik Gelir (Boş bırakılırsa eski veri korunur)</div>
+  
+  <label class="r-label-sm">ŞU AN OKUDUĞU KİTAP ADI</label>
+  <input type="text" id="yeni_bookName" placeholder="Örn. Harry Potter ve Felsefe Taşı" style="margin-bottom:10px;">
+  
+  <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+    <div style="flex: 1;">
+      <label class="r-label-sm">BU HAFTA OKUNAN SAYFA</label>
+      <input type="text" id="yeni_bookRead" placeholder="Örn. 45" style="width:100%;">
+    </div>
+    <div style="flex: 1;">
+      <label class="r-label-sm">HAFTALIK SAYFA HEDEFİ</label>
+      <input type="text" id="yeni_bookTarget" placeholder="Örn. 100" value="100" style="width:100%;">
+    </div>
+  </div>
+
+  <label class="r-label-sm">TOPLAM BİTİRİLEN KİTAP SAYISI (KİTAP SKORU)</label>
+  <input type="text" id="yeni_bookTotal" placeholder="Örn. 4" value="0">
+</div>
+    
 </style>
 
 <script>
@@ -1452,6 +1475,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const resetBtn = document.getElementById("yeni_resetBtn");
     const studentNameInput = document.getElementById("yeni_studentName");
     const studentPhoneInput = document.getElementById("yeni_studentPhone");
+
+    // Kitap Giriş Elemanları
+    const bookNameInput = document.getElementById("yeni_bookName");
+    const bookReadInput = document.getElementById("yeni_bookRead");
+    const bookTargetInput = document.getElementById("yeni_bookTarget");
+    const bookTotalInput = document.getElementById("yeni_bookTotal");
 
     const bugunTarihInput = new Date().toISOString().split('T')[0];
     document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
@@ -1479,13 +1508,33 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => { if (typeof passwords !== 'undefined') { window.passwords = undefined; } }, 2000);
     });
 
+    // 🔄 İSİM YAZILINCA TELEFON VE EN SON KİTAP VERİLERİNİ OTOMATİK GETİRME
     studentNameInput.addEventListener("input", function() {
         const girilenIsim = studentNameInput.value.trim();
         if (girilenIsim && typeof allData !== 'undefined' && Array.isArray(allData)) {
+            // Telefon Bulma
             let row = allData.find(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
             if (row) {
                 let telNo = row.telefon || row.veli_telefon || row.p || row.telefon_numarasi || "";
                 if(telNo) { studentPhoneInput.value = telNo; }
+            }
+
+            // Akıllı Kitap Geçmişi Bulma (En son dolu kitap satırını forma yükler)
+            let ogrenciSatirlari = allData.filter(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
+            let sonKitapliSatir = [...ogrenciSatirlari].reverse().find(r => 
+                r.son_kitap_adi && r.son_kitap_adi !== "Bu hafta henüz kitap tanımlanmadı."
+            );
+
+            if (sonKitapliSatir) {
+                bookNameInput.value = sonKitapliSatir.son_kitap_adi || "";
+                bookTargetInput.value = sonKitapliSatir.son_kitap_hedef || "100";
+                bookTotalInput.value = sonKitapliSatir.okunan_kitap_sayisi || "0";
+                bookReadInput.value = ""; // Yeni haftanın okunan sayfasını öğretmen kendi girsin diye boş bırakıyoruz
+            } else {
+                bookNameInput.value = "";
+                bookTargetInput.value = "100";
+                bookTotalInput.value = "0";
+                bookReadInput.value = "";
             }
         }
     });
@@ -1527,6 +1576,13 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("yeni_nextLessonDate").value = bugunTarihInput;
             examScore.value = 0;
             examScoreOut.innerText = "0/100";
+            
+            // Kitap alanlarını temizle
+            bookNameInput.value = "";
+            bookReadInput.value = "";
+            bookTargetInput.value = "100";
+            bookTotalInput.value = "0";
+
             document.querySelectorAll(".r-status-btn").forEach(b => b.classList.remove("active"));
             document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
             skillSliders.forEach(s => { s.value = 0; s.nextElementSibling.innerText = "0"; });
@@ -1565,6 +1621,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const startCommentVal = document.getElementById("yeni_startComment").value.trim() || "Yok";
         const endCommentVal = document.getElementById("yeni_endComment").value.trim() || "Yok";
 
+        // 📊 Kitap Değişkenlerini Hazırla (Boşsa sheets yapısını bozmasın diye boş string gider)
+        const vKitapAdiInput = bookNameInput.value.trim();
+        const vOkunanInput = bookReadInput.value.trim();
+        const vHedefInput = bookTargetInput.value.trim();
+        const vToplamInput = bookTotalInput.value.trim();
+
         const payloadTamamlandi = {
             tarih: tarihFormat, 
             ogrenci: name, 
@@ -1579,7 +1641,13 @@ document.addEventListener("DOMContentLoaded", function() {
             ders_tarihi: tamamlananDersTarihi, 
             ders_durumu: "tamamlandi", 
             odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("yeni_chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("yeni_chkAnlasildi").checked ? "Evet" : "Hayır"), 
-            konu: document.getElementById("yeni_lessonTopic").value.trim() || "Belirtilmedi" 
+            konu: document.getElementById("yeni_lessonTopic").value.trim() || "Belirtilmedi",
+            
+            // 📚 Google Sheets Sütun Eşleşmeleri (Apps Script karşılayacak şekilde eklendi)
+            son_kitap_adi: vKitapAdiInput,
+            son_kitap_sayfa: vOkunanInput,
+            son_kitap_hedef: vHedefInput,
+            okunan_kitap_sayisi: vToplamInput
         };
 
         const payloadSonraki = {
@@ -1596,7 +1664,11 @@ document.addEventListener("DOMContentLoaded", function() {
             ders_tarihi: sonrakiDersTarihi, 
             ders_durumu: "sonraki", 
             odev_durumu: "Gelecek Ders Planı", 
-            konu: "Planlanan Sonraki Ders"
+            konu: "Planlanan Sonraki Ders",
+            son_kitap_adi: "",
+            son_kitap_sayfa: "",
+            son_kitap_hedef: "",
+            okunan_kitap_sayisi: ""
         };
 
         try {
@@ -1616,6 +1688,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 if (parseInt(payloadTamamlandi.deneme) > 0) { wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`; }
                 
+                // 📝 Eğer öğretmen formda kitap adı girmişse WhatsApp mesajına kitap raporunu da ekle
+                if (vKitapAdiInput) {
+                    wpMesaj += `\n📚 *Haftalık Kitap Okuma Raporu:* \n• Kitap: ${vKitapAdiInput}\n• Okunan: ${vOkunanInput || 0} Sayfa\n• Hedef: ${vHedefInput || 100} Sayfa\n• Toplam Bitirilen: ${vToplamInput || 0} Kitap\n`;
+                }
+
                 wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\nGelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n*İngilizce Öğretmeni & Eğitim Koçu*`;
                 
                 let temizTel = veliTel.replace(/\s+/g, '');
