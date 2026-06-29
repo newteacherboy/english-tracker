@@ -1056,9 +1056,21 @@ function buildOzet(rows, latest, studentName, allRows) {
   const lessonStatusBoxHtml = buildLessonStatusBox(rows);
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
- /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
-  const vKitapAdi = latest.son_kitap_adi || "Bu hafta henüz kitap tanımlanmadı.";
-  const vOkunan = parseInt(latest.son_kitap_sayfa) || 0;
+ // 🟢 AKILLI ARAMA: Öğrencinin tüm satırlarını filtrele
+  const ogrenciGecmisi = allData.filter(r => 
+    (r.ogrenci || "").toString().trim().toLowerCase() === (latest.ogrenci || "").toString().trim().toLowerCase()
+  );
+
+  // Öğrencinin geçmişinde, kitap adı gerçekten DOLU OLAN en son satırı bulur
+  const kitapliSonSatir = [...ogrenciGecmisi].reverse().find(r => 
+    r.son_kitap_adi && r.son_kitap_adi !== "Bu hafta henüz kitap tanımlanmadı."
+  ) || {};
+
+  /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
+  const vKitapAdi = kitapliSonSatir.son_kitap_adi || "Bu hafta henüz kitap tanımlanmadı.";
+  const vOkunan   = parseInt(kitapliSonSatir.son_kitap_sayfa) || 0;
+  const vHedef    = parseInt(kitapliSonSatir.son_kitap_hedef) || 100; 
+  const vToplam   = parseInt(kitapliSonSatir.okunan_kitap_sayisi) || 0;
   
   // 🟢 SABİT 100 YERİNE BURAYI DEĞİŞTİRDİK: 
   // Google Sheet'teki 'son_kitap_hedef' sütununu okur. Veri yoksa varsayılan olarak 100 kabul eder.
