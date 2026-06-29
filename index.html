@@ -1077,9 +1077,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   const vHedef    = parseInt(aktifKitap.son_kitap_hedef) || 100; 
   const vToplam   = parseInt(aktifKitap.okunan_kitap_sayisi) || 0;
     
- /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
-  const vKitapAdi = latest.son_kitap_adi || "Bu hafta henüz kitap tanımlanmadı.";
-  const vOkunan = parseInt(latest.son_kitap_sayfa) || 0;
+
   
   // 🟢 SABİT 100 YERİNE BURAYI DEĞİŞTİRDİK: 
   // Google Sheet'teki 'son_kitap_hedef' sütununu okur. Veri yoksa varsayılan olarak 100 kabul eder.
