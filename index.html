@@ -325,7 +325,7 @@ let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbzp7hNMz5XlTlvED5eNxAO5nwW8_VpLkqR4pS_HlEFrouBfqYrVULMIF-mINhp6VWy5/exec";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbwih7UJE7MJFjJOMm0RRURP_qrARYN-3qRLIGSWfdcx3OaJpuuiy-SW16NE_RIBFFzY/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
@@ -434,7 +434,7 @@ async function nihaiSorguKapat() {
 
     const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbxqyEmlAN2DhrXbeGL4ORgeIbC1A503sU816CR2Xs4HQZLfpcEDr-HFQPjl_UVqic4K/exec") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbwih7UJE7MJFjJOMm0RRURP_qrARYN-3qRLIGSWfdcx3OaJpuuiy-SW16NE_RIBFFzY/exec") {
             await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
     } catch(e) { console.log("Senkronizasyon tamamlandı."); }
