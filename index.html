@@ -325,7 +325,7 @@ let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbwFwWCXFL9ONkEG4jx4W-woIbopD2GmW6KmQFOVrTzwsSiIbu2XtLGJdRdkG1lq5GdJ/exec";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbwih7UJE7MJFjJOMm0RRURP_qrARYN-3qRLIGSWfdcx3OaJpuuiy-SW16NE_RIBFFzY/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
@@ -434,7 +434,7 @@ async function nihaiSorguKapat() {
 
     const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbwFwWCXFL9ONkEG4jx4W-woIbopD2GmW6KmQFOVrTzwsSiIbu2XtLGJdRdkG1lq5GdJ/exec") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbwih7UJE7MJFjJOMm0RRURP_qrARYN-3qRLIGSWfdcx3OaJpuuiy-SW16NE_RIBFFzY/exec") {
             await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
     } catch(e) { console.log("Senkronizasyon tamamlandı."); }
@@ -754,6 +754,7 @@ try {
 
 document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
 renderTabs();
+
     // 🚀 OTURUM AÇIK TUTMA (LOCAL STORAGE) OTOMATİK GİRİŞ
     const kayitliSifre = localStorage.getItem('dijimuallim_ogrenci_sifre');
     const kayitliOgrenci = localStorage.getItem('dijimuallim_ogrenci_isim');
@@ -1055,16 +1056,9 @@ function buildOzet(rows, latest, studentName, allRows) {
   const lessonStatusBoxHtml = buildLessonStatusBox(rows);
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
-// Sitede o an seçili olan öğrencinin bağımsız kitap verisini bulur
-  const aktifKitap = (window.kitaplarVerisi || []).find(k => k.ogrenci === latest.ogrenci) || {};
-
-  /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
-  const vKitapAdi = aktifKitap.son_kitap_adi || "Bu hafta henüz kitap tanımlanmadı.";
-  const vOkunan   = parseInt(aktifKitap.son_kitap_sayfa) || 0;
-  const vHedef    = parseInt(aktifKitap.son_kitap_hedef) || 100; 
-  const vToplam   = parseInt(aktifKitap.okunan_kitap_sayisi) || 0;
-    
-
+ /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
+  const vKitapAdi = latest.son_kitap_adi || "Bu hafta henüz kitap tanımlanmadı.";
+  const vOkunan = parseInt(latest.son_kitap_sayfa) || 0;
   
   // 🟢 SABİT 100 YERİNE BURAYI DEĞİŞTİRDİK: 
   // Google Sheet'teki 'son_kitap_hedef' sütununu okur. Veri yoksa varsayılan olarak 100 kabul eder.
