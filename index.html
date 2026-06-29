@@ -1621,12 +1621,14 @@ document.addEventListener("DOMContentLoaded", function() {
         const startCommentVal = document.getElementById("yeni_startComment").value.trim() || "Yok";
         const endCommentVal = document.getElementById("yeni_endComment").value.trim() || "Yok";
 
-        // 📊 Kitap Değişkenlerini Hazırla (Boşsa sheets yapısını bozmasın diye boş string gider)
+        // Değerleri alıyoruz
         const vKitapAdiInput = bookNameInput.value.trim();
         const vOkunanInput = bookReadInput.value.trim();
         const vHedefInput = bookTargetInput.value.trim();
         const vToplamInput = bookTotalInput.value.trim();
 
+        // 🌟 SİHİRLİ DOKUNUŞ: Eğer alan boşsa "" yerine "undefined" yapıyoruz. 
+        // Böylece JSON paketinden tamamen siliniyor ve Apps Script'teki koruma motorun tetikleniyor!
         const payloadTamamlandi = {
             tarih: tarihFormat, 
             ogrenci: name, 
@@ -1643,13 +1645,14 @@ document.addEventListener("DOMContentLoaded", function() {
             odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("yeni_chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("yeni_chkAnlasildi").checked ? "Evet" : "Hayır"), 
             konu: document.getElementById("yeni_lessonTopic").value.trim() || "Belirtilmedi",
             
-            // 📚 Google Sheets Sütun Eşleşmeleri (Apps Script karşılayacak şekilde eklendi)
-            son_kitap_adi: vKitapAdiInput,
-            son_kitap_sayfa: vOkunanInput,
-            son_kitap_hedef: vHedefInput,
-            okunan_kitap_sayisi: vToplamInput
+            son_kitap_adi: vKitapAdiInput || undefined,
+            son_kitap_sayfa: vOkunanInput !== "" ? Number(vOkunanInput) : undefined,
+            son_kitap_hedef: vHedefInput !== "" ? Number(vHedefInput) : undefined,
+            okunan_kitap_sayisi: vToplamInput !== "" ? Number(vToplamInput) : undefined
         };
 
+        // 🌟 Sonraki planlanan ders satırında kitap verilerini tamamen "undefined" gönderiyoruz.
+        // Böylece Apps Script bu satırı yazarken az önce yukarıda güncellenen veya geçmişte olan veriyi aynen devralıyor!
         const payloadSonraki = {
             tarih: tarihFormat, 
             ogrenci: name, 
@@ -1665,10 +1668,11 @@ document.addEventListener("DOMContentLoaded", function() {
             ders_durumu: "sonraki", 
             odev_durumu: "Gelecek Ders Planı", 
             konu: "Planlanan Sonraki Ders",
-            son_kitap_adi: "",
-            son_kitap_sayfa: "",
-            son_kitap_hedef: "",
-            okunan_kitap_sayisi: ""
+            
+            son_kitap_adi: undefined,
+            son_kitap_sayfa: undefined,
+            son_kitap_hedef: undefined,
+            okunan_kitap_sayisi: undefined
         };
 
         try {
@@ -1688,7 +1692,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 if (parseInt(payloadTamamlandi.deneme) > 0) { wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`; }
                 
-                // 📝 Eğer öğretmen formda kitap adı girmişse WhatsApp mesajına kitap raporunu da ekle
+                // Eğer formda o hafta bir kitap adı yazıyorsa veliye gidecek rapora da ekle
                 if (vKitapAdiInput) {
                     wpMesaj += `\n📚 *Haftalık Kitap Okuma Raporu:* \n• Kitap: ${vKitapAdiInput}\n• Okunan: ${vOkunanInput || 0} Sayfa\n• Hedef: ${vHedefInput || 100} Sayfa\n• Toplam Bitirilen: ${vToplamInput || 0} Kitap\n`;
                 }
