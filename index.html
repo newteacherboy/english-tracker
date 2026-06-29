@@ -246,60 +246,91 @@ canvas { max-height: 200px; }
 <br>
 
     <div class="muallim-kitap-wrapper">
-    <div class="muallim-kitap-header">
-        <h2><span>📚</span> İngilizce Kitap Oku</h2>
-        <p>Sınıf seviyenizi seçerek okuma kitaplarına anında erişebilirsiniz.</p>
-    </div>
+    
+    <button class="muallim-ana-toggle-btn" onclick="muallimKitapToggle()">
+        <span class="btn-baslik">📚 İngilizce Kitap Oku</span>
+        <span id="muallimOkIsareti" class="btn-ok">🔽</span>
+    </button>
 
-    <div class="muallim-sinif-grid">
-        <button class="muallim-sinif-btn active" onclick="kitaplariGetir('okul-oncesi', this)">Okul Öncesi</button>
-        <button class="muallim-sinif-btn" onclick="kitaplariGetir('2-sinif', this)">2. Sınıf</button>
-        <button class="muallim-sinif-btn" onclick="kitaplariGetir('3-sinif', this)">3. Sınıf</button>
-        <button class="muallim-sinif-btn" onclick="kitaplariGetir('4-sinif', this)">4. Sınıf</button>
-        <button class="muallim-sinif-btn" onclick="kitaplariGetir('5-sinif', this)">5. Sınıf</button>
-        <button class="muallim-sinif-btn" onclick="kitaplariGetir('6-sinif', this)">6. Sınıf</button>
-        <button class="muallim-sinif-btn" onclick="kitaplariGetir('7-sinif', this)">7. Sınıf</button>
-        <button class="muallim-sinif-btn" onclick="kitaplariGetir('8-sinif', this)">8. Sınıf</button>
-    </div>
-
-    <div id="muallimKitapListesi" class="muallim-kitap-grid">
+    <div id="muallimKitapIcerik" class="muallim-kitap-icerik" style="display: none;">
+        <p class="muallim-alt-bilgi">Sınıf seviyenizi seçerek okuma kitaplarına anında erişebilirsiniz.</p>
+        
+        <div class="muallim-sinif-grid">
+            <button class="muallim-sinif-btn active" onclick="kitaplariGetir('okul-oncesi', this)">Okul Öncesi</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('1-sinif', this)">1. Sınıf</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('2-sinif', this)">2. Sınıf</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('3-sinif', this)">3. Sınıf</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('4-sinif', this)">4. Sınıf</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('5-sinif', this)">5. Sınıf</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('6-sinif', this)">6. Sınıf</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('7-sinif', this)">7. Sınıf</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('8-sinif', this)">8. Sınıf</button>
         </div>
+
+        <div id="muallimKitapListesi" class="muallim-kitap-grid">
+            </div>
+    </div>
 </div>
 
 <style>
 .muallim-kitap-wrapper {
     background: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    padding: 25px;
-    margin: 30px auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    margin: 20px auto;
     max-width: 1100px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    border: 1px solid #dadce0;
 }
-.muallim-kitap-header {
-    text-align: center;
-    margin-bottom: 25px;
+
+/* Ana Açma Butonu Stili */
+.muallim-ana-toggle-btn {
+    width: 100%;
+    background: #1a73e8;
+    color: #ffffff;
+    border: none;
+    padding: 18px 25px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease;
 }
-.muallim-kitap-header h2 {
-    color: #1a73e8;
-    font-size: 24px;
-    margin-bottom: 8px;
+.muallim-ana-toggle-btn:hover {
+    background: #1557b0;
+}
+.muallim-ana-toggle-btn .btn-baslik {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 10px;
 }
-.muallim-kitap-header p {
+.muallim-ana-toggle-btn .btn-ok {
+    font-size: 14px;
+    transition: transform 0.2s ease;
+}
+
+/* İçerik Alanı Konteyneri */
+.muallim-kitap-icerik {
+    padding: 25px;
+    background: #ffffff;
+    animation: muallimFadeIn 0.3s ease-in-out;
+}
+.muallim-alt-bilgi {
     color: #5f6368;
     font-size: 14px;
-    margin: 0;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
+
 /* Sınıf Butonları Gridi */
 .muallim-sinif-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     border-bottom: 2px solid #f1f3f4;
     padding-bottom: 15px;
 }
@@ -312,7 +343,7 @@ canvas { max-height: 200px; }
     font-weight: 600;
     color: #3c4043;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease;
     text-align: center;
 }
 .muallim-sinif-btn:hover {
@@ -321,17 +352,17 @@ canvas { max-height: 200px; }
     border-color: #1a73e8;
 }
 .muallim-sinif-btn.active {
-    background: #1a73e8;
-    color: #ffffff;
+    background: #e8f0fe;
+    color: #1a73e8;
     border-color: #1a73e8;
-    box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
+    box-shadow: inset 0 0 0 1px #1a73e8;
 }
+
 /* Kitap Butonları Gridi */
 .muallim-kitap-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 15px;
-    min-height: 100px;
 }
 .muallim-pdf-link {
     display: flex;
@@ -345,14 +376,14 @@ canvas { max-height: 200px; }
     text-decoration: none;
     font-weight: 500;
     font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     transition: all 0.2s ease;
 }
 .muallim-pdf-link:hover {
-    border-color: #ea4335; /* PDF konseptine uygun kırmızı vurgu */
+    border-color: #ea4335;
     background: #fce8e6;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(234, 67, 53, 0.15);
+    box-shadow: 0 4px 12px rgba(234, 67, 53, 0.12);
 }
 .muallim-pdf-link::before {
     content: "📕";
@@ -365,15 +396,23 @@ canvas { max-height: 200px; }
     font-style: italic;
     padding: 20px;
 }
+
+/* Animasyon */
+@keyframes muallimFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 </style>
 
 <script>
 // 📝 KİTAP VERİTABANI MOTORU
-// Buraya dilediğiniz kadar kitap ekleyebilirsiniz. Virgüllere dikkat etmeniz yeterlidir.
 const muallimKitapDeposu = {
     "okul-oncesi": [
         { isim: "First Numbers & Shapes", link: "https://link-ekleyin.com/okul1.pdf" },
         { isim: "My Colourful World", link: "https://link-ekleyin.com/okul2.pdf" }
+    ],
+    "1-sinif": [
+        { isim: "At the Zoo", link: "https://link-ekleyin.com/1sinif_zoo.pdf" }
     ],
     "2-sinif": [
         { isim: "Let's Find The Clues", link: "https://tymm.meb.gov.tr/upload/kitap/hikaye-english-year-2-book-1.pdf" },
@@ -382,7 +421,6 @@ const muallimKitapDeposu = {
         { isim: "The Happy Eid al-Fitr", link: "https://tymm.meb.gov.tr/upload/kitap/hikaye-english-year-2-book-4.pdf" },
         { isim: "Where is Mimi?", link: "https://tymm.meb.gov.tr/upload/kitap/hikaye-english-year-2-book-5.pdf" },
         { isim: "A lovely Picnic", link: "https://tymm.meb.gov.tr/upload/kitap/hikaye-english-year-2-book-6.pdf" },
-    
     ],
     "3-sinif": [
         { isim: "Danny's Red Bicycle", link: "https://link-ekleyin.com/3sinif_bike.pdf" }
@@ -405,36 +443,48 @@ const muallimKitapDeposu = {
     ]
 };
 
+// 🔄 AÇMA / KAPATMA MOTORU
+function muallimKitapToggle() {
+    const icerik = document.getElementById("muallimKitapIcerik");
+    const okIsareti = document.getElementById("muallimOkIsareti");
+    
+    if (icerik.style.display === "none") {
+        icerik.style.display = "block";
+        okIsareti.innerText = "🔼";
+    } else {
+        icerik.style.display = "none";
+        okIsareti.innerText = "🔽";
+    }
+}
+
+// 📖 SINIF SEÇİLDİĞİNDE KİTAPLARI LİSTELEME MOTORU
 function kitaplariGetir(sinifId, butonElement) {
-    // 1. Aktif buton stilini değiştir
     if(butonElement) {
         document.querySelectorAll('.muallim-sinif-btn').forEach(btn => btn.classList.remove('active'));
         butonElement.classList.add('active');
     }
 
     const container = document.getElementById('muallimKitapListesi');
-    container.innerHTML = ''; // İçeriği temizle
+    container.innerHTML = ''; 
 
     const kitaplar = muallimKitapDeposu[sinifId] || [];
 
-    // 2. Eğer o sınıfa ait kitap yoksa uyarı yaz
     if(kitaplar.length === 0) {
         container.innerHTML = '<div class="muallim-empty-msg">Bu sınıf seviyesine ait kitaplar yakında eklenecektir.</div>';
         return;
     }
 
-    // 3. Kitapları döngüyle buton (link) haline getirip ekrana bas
     kitaplar.forEach(kitap => {
         const aEtiketi = document.createElement('a');
         aEtiketi.href = kitap.link;
-        aEtiketi.target = "_blank"; // Yeni sekmede açılması için
+        aEtiketi.target = "_blank"; 
         aEtiketi.className = "muallim-pdf-link";
         aEtiketi.innerText = kitap.isim;
         container.appendChild(aEtiketi);
     });
 }
 
-// Sayfa ilk yüklendiğinde otomatik olarak 'Okul Öncesi' kitaplarını getir
+// İlk kurulumda arkada varsayılan olarak okul öncesini hazır tut
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 });
