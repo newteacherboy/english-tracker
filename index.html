@@ -434,7 +434,7 @@ async function nihaiSorguKapat() {
 
     const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbzp7hNMz5XlTlvED5eNxAO5nwW8_VpLkqR4pS_HlEFrouBfqYrVULMIF-mINhp6VWy5/exec") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbxqyEmlAN2DhrXbeGL4ORgeIbC1A503sU816CR2Xs4HQZLfpcEDr-HFQPjl_UVqic4K/exec") {
             await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
     } catch(e) { console.log("Senkronizasyon tamamlandı."); }
@@ -1053,10 +1053,14 @@ function buildOzet(rows, latest, studentName, allRows) {
   const lessonStatusBoxHtml = buildLessonStatusBox(rows);
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
-  /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
+ /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
   const vKitapAdi = latest.son_kitap_adi || "Bu hafta henüz kitap tanımlanmadı.";
   const vOkunan = parseInt(latest.son_kitap_sayfa) || 0;
-  const vHedef = 100; 
+  
+  // 🟢 SABİT 100 YERİNE BURAYI DEĞİŞTİRDİK: 
+  // Google Sheet'teki 'son_kitap_hedef' sütununu okur. Veri yoksa varsayılan olarak 100 kabul eder.
+  const vHedef = parseInt(latest.son_kitap_hedef) || 100; 
+  
   const vToplam = parseInt(latest.okunan_kitap_sayisi) || 0;
 
   let vYuzde = Math.round((vOkunan / vHedef) * 100);
