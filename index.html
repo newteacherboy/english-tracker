@@ -1401,6 +1401,34 @@ function drawDenemeChart(name) {
         <div id="yeni_statusMsg" style="display:none;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-size:13px;"></div>
 
         <div style="display:flex;gap:8px;">
+<div class="yeni-kitap-section" style="margin-top: 25px; padding-top: 15px; border-top: 2px dashed #e0e0e0;">
+    <h3 style="font-size: 16px; color: #1a73e8; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <span>📚</span> Haftalık Kitap Okuma Takibi
+    </h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+        <div class="yeni-input-group" style="display: flex; flex-direction: column;">
+            <label for="yeni_bookName" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #5f6368;">Kitap Adı</label>
+            <input type="text" id="yeni_bookName" placeholder="Örn: Sol Ayağım" style="padding: 8px; border: 1px solid #dadce0; border-radius: 4px; font-size: 14px;">
+        </div>
+
+        <div class="yeni-input-group" style="display: flex; flex-direction: column;">
+            <label for="yeni_bookRead" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #5f6368;">Bu Hafta Okunan Sayfa</label>
+            <input type="number" id="yeni_bookRead" placeholder="Örn: 45" min="0" style="padding: 8px; border: 1px solid #dadce0; border-radius: 4px; font-size: 14px;">
+        </div>
+
+        <div class="yeni-input-group" style="display: flex; flex-direction: column;">
+            <label for="yeni_bookTarget" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #5f6368;">Haftalık Sayfa Hedefi</label>
+            <input type="number" id="yeni_bookTarget" value="100" min="0" style="padding: 8px; border: 1px solid #dadce0; border-radius: 4px; font-size: 14px;">
+        </div>
+
+        <div class="yeni-input-group" style="display: flex; flex-direction: column;">
+            <label for="yeni_bookTotal" style="font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #5f6368;">Toplam Bitirilen Kitap</label>
+            <input type="number" id="yeni_bookTotal" value="0" min="0" style="padding: 8px; border: 1px solid #dadce0; border-radius: 4px; font-size: 14px;">
+        </div>
+    </div>
+</div>
+            
           <button id="yeni_saveBtn" style="flex:2;padding:13px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Formu Kaydet (Yeni Satır)</button>
           <button id="yeni_resetBtn" style="flex:1;padding:13px;border-radius:10px;border:1.5px solid #E2DDD2;background:#fff;color:#5A554C;font-size:14px;font-weight:600;cursor:pointer;">Temizle</button>
         </div>
