@@ -245,6 +245,202 @@ canvas { max-height: 200px; }
   </div>
 <br>
 
+    <div class="muallim-kitap-wrapper">
+    <div class="muallim-kitap-header">
+        <h2><span>📚</span> İngilizce Kitap Oku</h2>
+        <p>Sınıf seviyenizi seçerek okuma kitaplarına anında erişebilirsiniz.</p>
+    </div>
+
+    <div class="muallim-sinif-grid">
+        <button class="muallim-sinif-btn active" onclick="kitaplariGetir('okul-oncesi', this)">Okul Öncesi</button>
+        <button class="muallim-sinif-btn" onclick="kitaplariGetir('1-sinif', this)">1. Sınıf</button>
+        <button class="muallim-sinif-btn" onclick="kitaplariGetir('2-sinif', this)">2. Sınıf</button>
+        <button class="muallim-sinif-btn" onclick="kitaplariGetir('3-sinif', this)">3. Sınıf</button>
+        <button class="muallim-sinif-btn" onclick="kitaplariGetir('4-sinif', this)">4. Sınıf</button>
+        <button class="muallim-sinif-btn" onclick="kitaplariGetir('5-sinif', this)">5. Sınıf</button>
+        <button class="muallim-sinif-btn" onclick="kitaplariGetir('6-sinif', this)">6. Sınıf</button>
+        <button class="muallim-sinif-btn" onclick="kitaplariGetir('7-sinif', this)">7. Sınıf</button>
+        <button class="muallim-sinif-btn" onclick="kitaplariGetir('8-sinif', this)">8. Sınıf</button>
+    </div>
+
+    <div id="muallimKitapListesi" class="muallim-kitap-grid">
+        </div>
+</div>
+
+<style>
+.muallim-kitap-wrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    margin: 30px auto;
+    max-width: 1100px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.muallim-kitap-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.muallim-kitap-header h2 {
+    color: #1a73e8;
+    font-size: 24px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.muallim-kitap-header p {
+    color: #5f6368;
+    font-size: 14px;
+    margin: 0;
+}
+/* Sınıf Butonları Gridi */
+.muallim-sinif-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #f1f3f4;
+    padding-bottom: 15px;
+}
+.muallim-sinif-btn {
+    background: #f8f9fa;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 12px 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #3c4043;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+}
+.muallim-sinif-btn:hover {
+    background: #e8f0fe;
+    color: #1a73e8;
+    border-color: #1a73e8;
+}
+.muallim-sinif-btn.active {
+    background: #1a73e8;
+    color: #ffffff;
+    border-color: #1a73e8;
+    box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
+}
+/* Kitap Butonları Gridi */
+.muallim-kitap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    min-height: 100px;
+}
+.muallim-pdf-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    color: #202124;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    transition: all 0.2s ease;
+}
+.muallim-pdf-link:hover {
+    border-color: #ea4335; /* PDF konseptine uygun kırmızı vurgu */
+    background: #fce8e6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(234, 67, 53, 0.15);
+}
+.muallim-pdf-link::before {
+    content: "📕";
+    font-size: 20px;
+}
+.muallim-empty-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #80868b;
+    font-style: italic;
+    padding: 20px;
+}
+</style>
+
+<script>
+// 📝 KİTAP VERİTABANI MOTORU
+// Buraya dilediğiniz kadar kitap ekleyebilirsiniz. Virgüllere dikkat etmeniz yeterlidir.
+const muallimKitapDeposu = {
+    "okul-oncesi": [
+        { isim: "First Numbers & Shapes", link: "https://link-ekleyin.com/okul1.pdf" },
+        { isim: "My Colourful World", link: "https://link-ekleyin.com/okul2.pdf" }
+    ],
+    "1-sinif": [
+        { isim: "At the Zoo", link: "https://link-ekleyin.com/1sinif_zoo.pdf" },
+        { isim: "Hello Animals", link: "https://link-ekleyin.com/1sinif_animals.pdf" }
+    ],
+    "2-sinif": [
+        { isim: "The Magic Toy Box", link: "https://link-ekleyin.com/2sinif_toy.pdf" }
+    ],
+    "3-sinif": [
+        { isim: "Danny's Red Bicycle", link: "https://link-ekleyin.com/3sinif_bike.pdf" }
+    ],
+    "4-sinif": [
+        { isim: "The Secret Garden Starter", link: "https://link-ekleyin.com/4sinif_garden.pdf" }
+    ],
+    "5-sinif": [
+        { isim: "Robin Hood - Level 1", link: "https://link-ekleyin.com/5sinif_robin.pdf" }
+    ],
+    "6-sinif": [
+        { isim: "Tom Sawyer - Level 2", link: "https://link-ekleyin.com/6sinif_tom.pdf" }
+    ],
+    "7-sinif": [
+        { isim: "Sherlock Holmes Short Stories", link: "https://link-ekleyin.com/7sinif_sherlock.pdf" }
+    ],
+    "8-sinif": [
+        { isim: "LGS Target Reading Pack", link: "https://link-ekleyin.com/8sinif_lgs1.pdf" },
+        { isim: "Time Machine - Level 3", link: "https://link-ekleyin.com/8sinif_time.pdf" }
+    ]
+};
+
+function kitaplariGetir(sinifId, butonElement) {
+    // 1. Aktif buton stilini değiştir
+    if(butonElement) {
+        document.querySelectorAll('.muallim-sinif-btn').forEach(btn => btn.classList.remove('active'));
+        butonElement.classList.add('active');
+    }
+
+    const container = document.getElementById('muallimKitapListesi');
+    container.innerHTML = ''; // İçeriği temizle
+
+    const kitaplar = muallimKitapDeposu[sinifId] || [];
+
+    // 2. Eğer o sınıfa ait kitap yoksa uyarı yaz
+    if(kitaplar.length === 0) {
+        container.innerHTML = '<div class="muallim-empty-msg">Bu sınıf seviyesine ait kitaplar yakında eklenecektir.</div>';
+        return;
+    }
+
+    // 3. Kitapları döngüyle buton (link) haline getirip ekrana bas
+    kitaplar.forEach(kitap => {
+        const aEtiketi = document.createElement('a');
+        aEtiketi.href = kitap.link;
+        aEtiketi.target = "_blank"; // Yeni sekmede açılması için
+        aEtiketi.className = "muallim-pdf-link";
+        aEtiketi.innerText = kitap.isim;
+        container.appendChild(aEtiketi);
+    });
+}
+
+// Sayfa ilk yüklendiğinde otomatik olarak 'Okul Öncesi' kitaplarını getir
+document.addEventListener("DOMContentLoaded", function() {
+    kitaplariGetir('okul-oncesi', null);
+});
+</script>
+
+<br>
+
 <div style="margin-top: 15px; margin-bottom: 25px; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;">
   <button id="seviyeTestBtn" onclick="seviyeTestiKutusuAc()" style="background: #2C3E50; color: white; width: 100%; border: none; padding: 15px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
   🔍 İngilizce'de Hangi Seviyedesin? Testi Başlat
