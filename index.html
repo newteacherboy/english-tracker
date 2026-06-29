@@ -710,47 +710,50 @@ async function loadData() {
 
     function toNum(v) { return parseFloat((v||"").toString().replace(",",".")) || 0; }
 
-    allData = rows.slice(1).map(r => ({
-      tarih:               r[0] || "",
-      ogrenci:             r[1] || "",
-      seviye:              r[2] || "",
-      genel:               toNum(r[3]),
-      vocabulary:          toNum(r[4]),
-      konusma:             toNum(r[5]),
-      okuma:               toNum(r[6]),
-      yazma:               toNum(r[7]),
-      grammar:             toNum(r[8]),
-      deneme:              toNum(r[9]),
-      sifre:               r[10] ? r[10].trim() : "",
-      ders_tarihi:         r[11] || "",
-      ders_durumu:         r[12] ? r[12].trim() : "",
-      odev_durumu:         r[13] ? r[13].trim() : "",
-      konu:                r[14] || "",
-      telefon:             r[15] || "",
-      okunan_kitap_sayisi: toNum(r[16]),
-      son_kitap_adi:       r[17] || "",
-      son_kitap_sayfa:     toNum(r[18])
-    })).filter(r => r.ogrenci);
-    
-    passwords = {};
-    allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
-    students = [...new Set(allData.map(r => r.ogrenci))];
-    
-    try {
-      const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
-      const dRes = await fetch(dUrl);
-      const dText = await dRes.text();
-      const dRows = parseCSV(dText);
-      denemelerData = dRows.slice(1).map(r => ({
-        tarih:       r[0] || "",
-        ogrenci:     r[1] || "",
-        deneme_adi:  r[2] || "",
-        puan:        toNum(r[3])
-      })).filter(r => r.ogrenci && r.puan > 0);
-    } catch(e) { denemelerData = []; }
+allData = rows.slice(1).map(r => ({
+  tarih:                r[0] || "",
+  ogrenci:              r[1] || "",
+  seviye:               r[2] || "",
+  genel:                toNum(r[3]),
+  vocabulary:           toNum(r[4]),
+  konusma:              toNum(r[5]),
+  okuma:                toNum(r[6]),
+  yazma:                toNum(r[7]),
+  grammar:              toNum(r[8]),
+  deneme:               toNum(r[9]),
+  sifre:                r[10] ? r[10].trim() : "",
+  ders_tarihi:          r[11] || "",
+  ders_durumu:          r[12] ? r[12].trim() : "",
+  odev_durumu:          r[13] ? r[13].trim() : "",
+  konu:                 r[14] || "",
+  telefon:              r[15] || "",
+  
+  // 🟢 BURASI DÜZELTİLDİ (Google Sheets Sütun Sıralamasına Tam Uyumlu Yapıldı):
+  son_kitap_adi:       r[16] || "",  // Q Sütunu: Kitabın Adı (Metin)
+  son_kitap_sayfa:     toNum(r[17]), // R Sütunu: Bu hafta okunan sayfa (Sayı)
+  son_kitap_hedef:     toNum(r[18]), // S Sütunu: Haftalık Hedef Sayısı (Sayı - YENİ EKLEDİK)
+  okunan_kitap_sayisi: toNum(r[19])  // T Sütunu: Toplam bitirilen kitap (Sayı)
+})).filter(r => r.ogrenci);
 
-    document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
-    renderTabs();
+passwords = {};
+allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
+students = [...new Set(allData.map(r => r.ogrenci))];
+
+try {
+  const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
+  const dRes = await fetch(dUrl);
+  const dText = await dRes.text();
+  const dRows = parseCSV(dText);
+  denemelerData = dRows.slice(1).map(r => ({
+    tarih:       r[0] || "",
+    ogrenci:     r[1] || "",
+    deneme_adi:  r[2] || "",
+    puan:        toNum(r[3])
+  })).filter(r => r.ogrenci && r.puan > 0);
+} catch(e) { denemelerData = []; }
+
+document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+renderTabs();
 
     // 🚀 OTURUM AÇIK TUTMA (LOCAL STORAGE) OTOMATİK GİRİŞ
     const kayitliSifre = localStorage.getItem('dijimuallim_ogrenci_sifre');
