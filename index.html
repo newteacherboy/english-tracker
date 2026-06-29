@@ -1056,7 +1056,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   const lessonStatusBoxHtml = buildLessonStatusBox(rows);
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
- // 🟢 AKILLI ARAMA: Öğrencinin tüm satırlarını filtrele
+// 🟢 AKILLI ARAMA: Öğrencinin tüm satırlarını filtrele
   const ogrenciGecmisi = allData.filter(r => 
     (r.ogrenci || "").toString().trim().toLowerCase() === (latest.ogrenci || "").toString().trim().toLowerCase()
   );
@@ -1066,27 +1066,12 @@ function buildOzet(rows, latest, studentName, allRows) {
     r.son_kitap_adi && r.son_kitap_adi !== "Bu hafta henüz kitap tanımlanmadı."
   ) || {};
 
- 
-
-// 1. Öğrencinin tüm satırlarını filtrele
-  const ogrenciGecmisi = allData.filter(r => 
-    (r.ogrenci || "").toString().trim().toLowerCase() === (latest.ogrenci || "").toString().trim().toLowerCase()
-  );
-
-  // 2. Öğrencinin geçmişinde, kitap adı gerçekten dolu olan en son satırı bul
-  const kitapliSonSatir = [...ogrenciGecmisi].reverse().find(r => 
-    r.son_kitap_adi && r.son_kitap_adi !== "Bu hafta henüz kitap tanımlanmadı."
-  ) || {};
-
-  /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML (YENİ VE DOĞRU KOD) */
+  /* 📚 KİTAP SAYAR DEĞİŞKENLERİ VE HTML */
   const vKitapAdi = kitapliSonSatir.son_kitap_adi || "Bu hafta henüz kitap tanımlanmadı.";
   const vOkunan   = parseInt(kitapliSonSatir.son_kitap_sayfa) || 0;
   const vHedef    = parseInt(kitapliSonSatir.son_kitap_hedef) || 100; 
   const vToplam   = parseInt(kitapliSonSatir.okunan_kitap_sayisi) || 0;
     
- 
-
-
   let vYuzde = Math.round((vOkunan / vHedef) * 100);
   if (vYuzde > 100) vYuzde = 100;
   if (vYuzde < 0) vYuzde = 0;
