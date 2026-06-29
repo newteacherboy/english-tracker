@@ -577,7 +577,6 @@ const SECTIONS = {
   kocluk:    { gid: "770963286", label: "🎯 Eğitim Koçum" }
 };
 const DENEMELER_GID = "969516335";
-const KITAP_TAKIBI_GID = "1217033095";
 const SKILL_COLORS = { vocabulary: "#1D9E75", konusma: "#378ADD", okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30" };
 const SKILL_LABELS = { vocabulary:"Vocabulary", konusma:"Konuşma", okuma:"Okuma", yazma:"Yazma", grammar:"Grammar" };
 
@@ -711,47 +710,35 @@ async function loadData() {
 
     function toNum(v) { return parseFloat((v||"").toString().replace(",",".")) || 0; }
 
-// 1. Ana Ders Verileri (Eski kitap sütunlarını buradan temizledik, artık sadece ders odaklı)
 allData = rows.slice(1).map(r => ({
-  tarih:        r[0] || "",
-  ogrenci:      r[1] || "",
-  seviye:       r[2] || "",
-  genel:        toNum(r[3]),
-  vocabulary:   toNum(r[4]),
-  konusma:      toNum(r[5]),
-  okuma:        toNum(r[6]),
-  yazma:        toNum(r[7]),
-  grammar:      toNum(r[8]),
-  deneme:       toNum(r[9]),
-  sifre:        r[10] ? r[10].trim() : "",
-  ders_tarihi:  r[11] || "",
-  ders_durumu:  r[12] ? r[12].trim() : "",
-  odev_durumu:  r[13] ? r[13].trim() : "",
-  konu:         r[14] || "",
-  telefon:      r[15] || ""
+  tarih:                r[0] || "",
+  ogrenci:              r[1] || "",
+  seviye:               r[2] || "",
+  genel:                toNum(r[3]),
+  vocabulary:           toNum(r[4]),
+  konusma:              toNum(r[5]),
+  okuma:                toNum(r[6]),
+  yazma:                toNum(r[7]),
+  grammar:              toNum(r[8]),
+  deneme:               toNum(r[9]),
+  sifre:                r[10] ? r[10].trim() : "",
+  ders_tarihi:          r[11] || "",
+  ders_durumu:          r[12] ? r[12].trim() : "",
+  odev_durumu:          r[13] ? r[13].trim() : "",
+  konu:                 r[14] || "",
+  telefon:              r[15] || "",
+  
+  // 🟢 BURASI DÜZELTİLDİ (Google Sheets Sütun Sıralamasına Tam Uyumlu Yapıldı):
+  son_kitap_adi:       r[16] || "",  // Q Sütunu: Kitabın Adı (Metin)
+  son_kitap_sayfa:     toNum(r[17]), // R Sütunu: Bu hafta okunan sayfa (Sayı)
+  son_kitap_hedef:     toNum(r[18]), // S Sütunu: Haftalık Hedef Sayısı (Sayı - YENİ EKLEDİK)
+  okunan_kitap_sayisi: toNum(r[19])  // T Sütunu: Toplam bitirilen kitap (Sayı)
 })).filter(r => r.ogrenci);
 
 passwords = {};
 allData.forEach(r => { if (r.sifre) passwords[r.ogrenci] = r.sifre; });
 students = [...new Set(allData.map(r => r.ogrenci))];
 
-// 2. 🟢 YENİ EKLEDİK: Bağımsız Kitap Verilerini Çekme Motoru
-try {
-  const kUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${KITAP_TAKIBI_GID}&t=${Date.now()}`;
-  const kRes = await fetch(kUrl);
-  const kText = await kRes.text();
-  const kRows = parseCSV(kText);
-  // Global bir değişkene atıyoruz ki her yerden erişebilelim
-  window.kitaplarVerisi = kRows.slice(1).map(r => ({
-    ogrenci:             r[0] || "",
-    son_kitap_adi:       r[1] || "",
-    son_kitap_sayfa:     toNum(r[2]),
-    son_kitap_hedef:     toNum(r[3]),
-    okunan_kitap_sayisi: toNum(r[4])
-  })).filter(r => r.ogrenci);
-} catch(e) { window.kitaplarVerisi = []; }
-
-// 3. Denemeler Verisi
 try {
   const dUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DENEMELER_GID}&t=${Date.now()}`;
   const dRes = await fetch(dUrl);
