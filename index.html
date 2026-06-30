@@ -245,18 +245,22 @@ canvas { max-height: 200px; }
   </div>
 <br>
 
-    <div class="muallim-kitap-wrapper">
+   <div class="muallim-ana-konteyner">
     
-    <button class="muallim-ana-toggle-btn" onclick="muallimKitapToggle()">
-        <span class="btn-baslik">📚 İngilizce Kitap Oku</span>
-        <span id="muallimOkIsareti" class="btn-ok">🔽</span>
-    </button>
+    <div class="muallim-kutu-merkezleyici">
+        <button id="muallimKareKutu" class="muallim-kare-kutu" onclick="muallimKitapToggle()">
+            <span class="kutu-ikon">📚</span>
+            <span class="kutu-baslik">İngilizce Kitap Oku</span>
+            <span id="muallimOkIsareti" class="kutu-ok">🔽</span>
+        </button>
+    </div>
 
     <div id="muallimKitapIcerik" class="muallim-kitap-icerik" style="display: none;">
         <p class="muallim-alt-bilgi">Sınıf seviyenizi seçerek okuma kitaplarına anında erişebilirsiniz.</p>
         
         <div class="muallim-sinif-grid">
             <button class="muallim-sinif-btn active" onclick="kitaplariGetir('okul-oncesi', this)">Okul Öncesi</button>
+            <button class="muallim-sinif-btn" onclick="kitaplariGetir('1-sinif', this)">1. Sınıf</button>
             <button class="muallim-sinif-btn" onclick="kitaplariGetir('2-sinif', this)">2. Sınıf</button>
             <button class="muallim-sinif-btn" onclick="kitaplariGetir('3-sinif', this)">3. Sınıf</button>
             <button class="muallim-sinif-btn" onclick="kitaplariGetir('4-sinif', this)">4. Sınıf</button>
@@ -272,59 +276,91 @@ canvas { max-height: 200px; }
 </div>
 
 <style>
-.muallim-kitap-wrapper {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    margin: 20px auto;
+.muallim-ana-konteyner {
     max-width: 1100px;
+    margin: 25px auto;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow: hidden;
-    border: 1px solid #dadce0;
 }
 
-/* Ana Açma Butonu Stili */
-.muallim-ana-toggle-btn {
-    width: 100%;
-    background: #1a73e8;
-    color: #ffffff;
-    border: none;
-    padding: 18px 25px;
-    font-size: 18px;
-    font-weight: 600;
+/* Merkezleme Alanı */
+.muallim-kutu-merkezleyici {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* 🎯 ANA KARE KUTU STİLİ (Dashboard Kartı) */
+.muallim-kare-kutu {
+    width: 170px;
+    height: 170px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    transition: background 0.2s ease;
-}
-.muallim-ana-toggle-btn:hover {
-    background: #1557b0;
-}
-.muallim-ana-toggle-btn .btn-baslik {
-    display: flex;
-    align-items: center;
+    justify-content: center;
     gap: 10px;
-}
-.muallim-ana-toggle-btn .btn-ok {
-    font-size: 14px;
-    transition: transform 0.2s ease;
+    padding: 15px;
+    transition: all 0.25s ease-in-out;
 }
 
-/* İçerik Alanı Konteyneri */
-.muallim-kitap-icerik {
-    padding: 25px;
-    background: #ffffff;
-    animation: muallimFadeIn 0.3s ease-in-out;
+/* Fareyle Üzerine Gelindiğinde */
+.muallim-kare-kutu:hover {
+    transform: translateY(-4px);
+    border-color: #1a73e8;
+    box-shadow: 0 6px 20px rgba(26, 115, 232, 0.12);
 }
+
+/* Kutu Açık/Aktif Olduğunda Alacağı Stil */
+.muallim-kare-kutu.active {
+    background: #e8f0fe;
+    border-color: #1a73e8;
+    color: #1a73e8;
+    box-shadow: 0 4px 15px rgba(26, 115, 232, 0.2);
+}
+
+.muallim-kare-kutu .kutu-ikon {
+    font-size: 42px;
+}
+
+.muallim-kare-kutu .kutu-baslik {
+    font-size: 14px;
+    font-weight: 600;
+    color: #202124;
+    text-align: center;
+}
+
+.muallim-kare-kutu.active .kutu-baslik {
+    color: #1a73e8;
+}
+
+.muallim-kare-kutu .kutu-ok {
+    font-size: 12px;
+    color: #5f6368;
+}
+
+/* 🔒 PANEL AÇILDIĞINDAKİ İÇERİK ALANI */
+.muallim-kitap-icerik {
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    animation: muallimSlideDown 0.3s ease-in-out;
+}
+
 .muallim-alt-bilgi {
     color: #5f6368;
     font-size: 14px;
     margin-top: 0;
     margin-bottom: 20px;
+    text-align: center;
 }
 
-/* Sınıf Butonları Gridi */
+/* Sınıf Seçim Gridi */
 .muallim-sinif-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
@@ -333,36 +369,40 @@ canvas { max-height: 200px; }
     border-bottom: 2px solid #f1f3f4;
     padding-bottom: 15px;
 }
+
 .muallim-sinif-btn {
     background: #f8f9fa;
     border: 1px solid #dadce0;
     border-radius: 8px;
     padding: 12px 8px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #3c4043;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
 }
+
 .muallim-sinif-btn:hover {
     background: #e8f0fe;
     color: #1a73e8;
     border-color: #1a73e8;
 }
+
 .muallim-sinif-btn.active {
-    background: #e8f0fe;
-    color: #1a73e8;
+    background: #1a73e8;
+    color: #ffffff;
     border-color: #1a73e8;
-    box-shadow: inset 0 0 0 1px #1a73e8;
+    box-shadow: 0 4px 10px rgba(26, 115, 232, 0.2);
 }
 
-/* Kitap Butonları Gridi */
+/* Kitap PDF Butonları Gridi */
 .muallim-kitap-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 15px;
 }
+
 .muallim-pdf-link {
     display: flex;
     align-items: center;
@@ -378,16 +418,19 @@ canvas { max-height: 200px; }
     box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     transition: all 0.2s ease;
 }
+
 .muallim-pdf-link:hover {
     border-color: #ea4335;
     background: #fce8e6;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(234, 67, 53, 0.12);
 }
+
 .muallim-pdf-link::before {
     content: "📕";
     font-size: 20px;
 }
+
 .muallim-empty-msg {
     grid-column: 1 / -1;
     text-align: center;
@@ -396,9 +439,9 @@ canvas { max-height: 200px; }
     padding: 20px;
 }
 
-/* Animasyon */
-@keyframes muallimFadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
+/* Panel Açılış Efekti */
+@keyframes muallimSlideDown {
+    from { opacity: 0; transform: translateY(-15px); }
     to { opacity: 1; transform: translateY(0); }
 }
 </style>
@@ -525,16 +568,20 @@ const muallimKitapDeposu = {
     ]
 };
 
-// 🔄 AÇMA / KAPATMA MOTORU
+
+// 🔄 KARE KUTU AÇMA / KAPATMA MOTORU
 function muallimKitapToggle() {
     const icerik = document.getElementById("muallimKitapIcerik");
     const okIsareti = document.getElementById("muallimOkIsareti");
+    const kareKutu = document.getElementById("muallimKareKutu");
     
     if (icerik.style.display === "none") {
         icerik.style.display = "block";
+        kareKutu.classList.add("active");
         okIsareti.innerText = "🔼";
     } else {
         icerik.style.display = "none";
+        kareKutu.classList.remove("active");
         okIsareti.innerText = "🔽";
     }
 }
