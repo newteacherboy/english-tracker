@@ -1022,18 +1022,26 @@ function sınavSoruBas() {
         govdeHTML += '<img src="'+soru.Gorsel_URL+'" style="max-width:100%; max-height:220px; display:block; margin:0 auto 15px; border-radius:8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e5e7eb;">';
     }
     
-    // 2. ÜST METİN / DİYALOG PANELİ (Kim ne demiş kutusu)
-    // Sadece diyalog varsa basıyoruz, satır aralarını ferahlatıyoruz
+    // 2. ÜST METİN / DİYALOG PANELİ (Satır satır alt alta dizme motoru)
     if(soru.Soru_Metni && soru.Soru_Metni.trim() !== "") {
-        var duzeltilmisDiyalog = soru.Soru_Metni.replace(/<br>/g, '<br style="content: \'\'; display: block; margin: 8px 0;">');
+        // Google Sheets'teki görünmez alt satır karakterlerini web satırına dönüştürür
+        var satirlar = soru.Soru_Metni.split(/\r?\n/);
+        var diyalogIcerik = "";
+        
+        satirlar.forEach(satir => {
+            if(satir.trim() !== "") {
+                // Konuşmacıları (Örn: "Jack:") tespit edip kalın yapar ve her satırı alt alta basar
+                var duzeltilmisSatir = satir.replace(/^([^:]+:)/, '<b style="color:#111827;">$1</b>');
+                diyalogIcerik += '<div style="margin-bottom: 8px;">' + duzeltilmisSatir + '</div>';
+            }
+        });
         
         govdeHTML += '<div class="ust-metin-kutusu" style="font-size:15px; font-weight:500; line-height:1.6; color:#4b5563; background:#f9fafb; padding:16px; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:12px; letter-spacing: 0.3px;">' 
-                  + duzeltilmisDiyalog + 
+                  + diyalogIcerik + 
                   '</div>';
     }
     
     // 3. ANA SORU KÖKÜ PANELİ (Koyu renkli, dikkat çeken hedef kutu)
-    // Google Sheets'e yeni eklediğimiz "Ana_Soru_Koku" sütunundan veriyi çeker
     var soruKokuMetni = soru.Ana_Soru_Koku || ""; 
     govdeHTML += '<div class="ana-soru-kutusu" style="font-size:16px; font-weight:700; line-height:1.5; color:#111827; background:#ffffff; padding:16px; border-radius:8px; border:2px solid #3b82f6; margin-bottom:20px; box-shadow: 0 2px 6px rgba(59,130,246,0.08);">' 
               + soruKokuMetni + 
@@ -1041,7 +1049,7 @@ function sınavSoruBas() {
               
     document.getElementById("sınavSoruGövdesi").innerHTML = govdeHTML;
     
-    // --- Şıklar ve Butonlar Bölümü (Aynen Kalıyor) ---
+    // --- Şıklar ve Butonlar Bölümü ---
     var verilmisCevap = ogrenciSınavCevaplari[soru.id || soru.Soru_Metni] || "";
     var siklar = ["A", "B", "C", "D"];
     var siklarHTML = "";
