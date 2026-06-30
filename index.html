@@ -816,6 +816,326 @@ async function nihaiSorguKapat() {
 }
 </script>
 <br>
+
+<!-- ========================================== -->
+<!-- 🧠 SARMAL SİSTEM KELİME EZBER KARTLARI     -->
+<!-- ========================================== -->
+<div class="ezber-ana-konteyner">
+    
+    <!-- 🎯 Kare Kutu Tetikleyici (Dashboard Kartı) -->
+    <div class="ezber-kutu-merkezleyici">
+        <button id="ezberKareKutu" class="ezber-kare-kutu" onclick="ezberKartToggle()">
+            <span class="kutu-ikon">🧠</span>
+            <span class="kutu-baslik">Kelime Ezber Kartları</span>
+            <span id="ezberOkIsareti" class="kutu-ok">🔽</span>
+        </button>
+    </div>
+
+    <!-- 🔒 Tıklanınca Aşağıya Doğru Açılan Panel -->
+    <div id="ezberKartIcerik" class="ezber-kitap-icerik" style="display: none;">
+        <p class="ezber-alt-bilgi">Sınıf yükseldikçe alt sınıfların kelimeleri de havuzunuza dahil olur!</p>
+        
+        <!-- 🎯 Sınıf Seçim Butonları -->
+        <div class="ezber-sinif-grid">
+            <button class="ezber-sinif-btn active" onclick="ezberSinifSec('2-sinif', this)">2. Sınıf</button>
+            <button class="ezber-sinif-btn" onclick="ezberSinifSec('3-sinif', this)">3. Sınıf</button>
+            <button class="ezber-sinif-btn" onclick="ezberSinifSec('4-sinif', this)">4. Sınıf</button>
+            <button class="ezber-sinif-btn" onclick="ezberSinifSec('5-sinif', this)">5. Sınıf</button>
+            <button class="ezber-sinif-btn" onclick="ezberSinifSec('6-sinif', this)">6. Sınıf</button>
+            <button class="ezber-sinif-btn" onclick="ezberSinifSec('7-sinif', this)">7. Sınıf</button>
+            <button class="ezber-sinif-btn" onclick="ezberSinifSec('8-sinif', this)">8. Sınıf (LGS)</button>
+        </div>
+
+        <!-- 📊 Skorboard ve Havuz Bilgisi -->
+        <div class="ezber-ust-bar">
+            <div class="ezber-havuz-bilgi">📋 Aktif Kelime Havuzu: <strong id="ezberHavuzSayisi">50</strong> Kelime</div>
+            <div class="ezber-skorboard">
+                <span class="skor-dogru">✅ Doğru: <strong id="ezberDogruSayisi">0</strong></span>
+                <span class="skor-yanlis">❌ Yanlış: <strong id="ezberYanlisSayisi">0</strong></span>
+                <button class="skor-sifirla-btn" onclick="ezberSkorSifirla()">Sıfırla</button>
+            </div>
+        </div>
+
+        <!-- 📇 OYUN ALANI: DÖNEN KART SİSTEMİ -->
+        <div class="ezber-kart-alani">
+            <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()">
+                <!-- Kartın Ön Yüzü (İngilizce) -->
+                <div class="ezber-card-face ezber-card-front">
+                    <span class="dil-etiket">ENGLISH</span>
+                    <h2 id="ezberIngilizceKelime">Loading...</h2>
+                    <p class="cevir-ipucu">Anlamını görmek için tıkla 🔄</p>
+                </div>
+                <!-- Kartın Arka Yüzü (Türkçe) -->
+                <div class="ezber-card-face ezber-card-back">
+                    <span class="dil-etiket">TÜRKÇE</span>
+                    <h2 id="ezberTurkceKelime">Yükleniyor...</h2>
+                    <p class="cevir-ipucu">Kelimeye dönmek için tıkla 🔄</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🕹️ KONTROL BUTONLARI -->
+        <div class="ezber-kontrol-grubu">
+            <button class="ezber-btn-action btn-yanlis" onclick="ezberCevapVer(false)">❌ Yanlış Bildim</button>
+            <button class="ezber-btn-action btn-dogru" onclick="ezberCevapVer(true)">✅ Doğru Bildim</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- 🎨 STİL DOSYASI (CSS) -->
+<style>
+.ezber-ana-konteyner { max-width: 1100px; margin: 25px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+.ezber-kutu-merkezleyici { display: flex; justify-content: center; margin-bottom: 20px; }
+.ezber-kare-kutu { width: 170px; height: 170px; background: #ffffff; border: 1px solid #dadce0; border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 15px; transition: all 0.25s ease-in-out; }
+.ezber-kare-kutu:hover { transform: translateY(-4px); border-color: #1a73e8; box-shadow: 0 6px 20px rgba(26, 115, 232, 0.12); }
+.ezber-kare-kutu.active { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; box-shadow: 0 4px 15px rgba(26, 115, 232, 0.2); }
+.ezber-kare-kutu .kutu-ikon { font-size: 42px; }
+.ezber-kare-kutu .kutu-baslik { font-size: 14px; font-weight: 600; color: #202124; text-align: center; }
+.ezber-kare-kutu.active .kutu-baslik { color: #1a73e8; }
+.ezber-kare-kutu .kutu-ok { font-size: 12px; color: #5f6368; }
+
+.ezber-kitap-icerik { background: #ffffff; border: 1px solid #dadce0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); animation: ezberSlideDown 0.3s ease-in-out; }
+.ezber-alt-bilgi { color: #5f6368; font-size: 14px; text-align: center; margin-bottom: 20px; }
+
+.ezber-sinif-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f3f4; padding-bottom: 15px; }
+.ezber-sinif-btn { background: #f8f9fa; border: 1px solid #dadce0; border-radius: 8px; padding: 12px 8px; font-size: 13px; font-weight: 600; color: #3c4043; cursor: pointer; transition: all 0.2s ease; text-align: center; }
+.ezber-sinif-btn:hover { background: #e8f0fe; color: #1a73e8; border-color: #1a73e8; }
+.ezber-sinif-btn.active { background: #1a73e8; color: #ffffff; border-color: #1a73e8; box-shadow: 0 4px 10px rgba(26, 115, 232, 0.2); }
+
+/* Üst Yönetim Barı */
+.ezber-ust-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; max-width: 650px; margin: 0 auto 25px auto; }
+.ezber-havuz-bilgi { font-size: 14px; color: #5f6368; background: #e8f0fe; padding: 8px 15px; border-radius: 20px; font-weight: 500; border: 1px solid #d2e3fc; }
+.ezber-skorboard { display: flex; align-items: center; gap: 15px; font-size: 14px; background: #f8f9fa; padding: 8px 15px; border-radius: 20px; border: 1px solid #e0e0e0; }
+.skor-dogru { color: #137333; font-weight: 600; }
+.skor-yanlis { color: #c5221f; font-weight: 600; }
+.skor-sifirla-btn { background: none; border: none; color: #1a73e8; cursor: pointer; font-size: 12px; text-decoration: underline; margin-left: 5px; }
+
+.ezber-kart-alani { display: flex; justify-content: center; margin-bottom: 25px; perspective: 1000px; }
+.ezber-flashcard { width: 340px; height: 210px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2); box-shadow: 0 8px 25px rgba(0,0,0,0.08); border-radius: 16px; }
+.ezber-flashcard.flipped { transform: rotateY(180deg); }
+.ezber-card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; border: 2px solid #e0e0e0; }
+.ezber-card-front { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); color: #1a73e8; }
+.ezber-card-back { background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%); color: #ffffff; transform: rotateY(180deg); border-color: #1a73e8; }
+.ezber-card-face h2 { font-size: 26px; margin: 15px 0 8px 0; text-align: center; font-weight: 700; }
+.dil-etiket { font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,0.04); color: #5f6368; }
+.ezber-card-back .dil-etiket { background: rgba(255,255,255,0.15); color: #ffffff; }
+.cevir-ipucu { font-size: 12px; color: #80868b; margin: 0; font-style: italic; }
+.ezber-card-back .cevir-ipucu { color: #d2e3fc; }
+
+.ezber-kontrol-grubu { display: flex; justify-content: center; gap: 15px; max-width: 340px; margin: 0 auto; }
+.ezber-btn-action { flex: 1; border: none; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; }
+.ezber-btn-action:active { transform: scale(0.96); }
+.btn-dogru { background: #34a853; color: white; box-shadow: 0 4px 10px rgba(52, 168, 83, 0.2); }
+.btn-dogru:hover { background: #2d8e47; }
+.btn-yanlis { background: #ea4335; color: white; box-shadow: 0 4px 10px rgba(234, 67, 53, 0.2); }
+.btn-yanlis:hover { background: #d3382b; }
+
+@keyframes ezberSlideDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<!-- 🧠 KELİME HAVUZU VE AKILLI SARMAL MOTOR (JAVASCRIPT) -->
+<script>
+// 📚 MEB MÜFREDATI TAM KELİME HAVUZU (Her Sınıftan Tam 50 Kelime)
+const ezberKelimeDeposu = {
+    "2-sinif": [
+        {en:"Hello", tr:"Merhaba"}, {en:"Goodbye", tr:"Hoşça kal"}, {en:"Teacher", tr:"Öğretmen"}, {en:"Student", tr:"Öğrenci"}, {en:"School", tr:"Okul"},
+        {en:"Book", tr:"Kitap"}, {en:"Pencil", tr:"Kalem"}, {en:"Desk", tr:"Sıra"}, {en:"Chair", tr:"Sandalye"}, {en:"Bag", tr:"Çanta"},
+        {en:"Red", tr:"Kırmızı"}, {en:"Blue", tr:"Mavi"}, {en:"Green", tr:"Yeşil"}, {en:"Yellow", tr:"Sarı"}, {en:"Black", tr:"Siyah"},
+        {en:"White", tr:"Beyaz"}, {en:"Orange", tr:"Turuncu"}, {en:"Pink", tr:"Pembe"}, {en:"Brown", tr:"Kahverengi"}, {en:"Purple", tr:"Mor"},
+        {en:"One", tr:"Bir"}, {en:"Two", tr:"İki"}, {en:"Three", tr:"Üç"}, {en:"Four", tr:"Dört"}, {en:"Five", tr:"Beş"},
+        {en:"Six", tr:"Altı"}, {en:"Seven", tr:"Yedi"}, {en:"Eight", tr:"Sekiz"}, {en:"Nine", tr:"Dokuz"}, {en:"Ten", tr:"On"},
+        {en:"Cat", tr:"Kedi"}, {en:"Dog", tr:"Köpek"}, {en:"Bird", tr:"Kuş"}, {en:"Horse", tr:"At"}, {en:"Fish", tr:"Balık"},
+        {en:"Cow", tr:"Inek"}, {en:"Monkey", tr:"Maymun"}, {en:"Lion", tr:"Aslan"}, {en:"Apple", tr:"Elma"}, {en:"Banana", tr:"Muz"},
+        {en:"Melon", tr:"Kavun"}, {en:"Lemon", tr:"Limon"}, {en:"Grape", tr:"Üzüm"}, {en:"Cake", tr:"Kek"}, {en:"Milk", tr:"Süt"},
+        {en:"Water", tr:"Su"}, {en:"Juice", tr:"Meyve Suyu"}, {en:"Ball", tr:"Top"}, {en:"Balloon", tr:"Balon"}, {en:"Bike", tr:"Bisiklet"}
+    ],
+    "3-sinif": [
+        {en:"Family", tr:"Aile"}, {en:"Father", tr:"Baba"}, {en:"Mother", tr:"Anne"}, {en:"Brother", tr:"Erkek Kardeş"}, {en:"Sister", tr:"Kız Kardeş"},
+        {en:"Head", tr:"Baş / Kafa"}, {en:"Eye", tr:"Göz"}, {en:"Ear", tr:"Kulak"}, {en:"Nose", tr:"Burun"}, {en:"Mouth", tr:"Ağız"},
+        {en:"Hand", tr:"El"}, {en:"Foot", tr:"Ayak"}, {en:"Leg", tr:"Bacak"}, {en:"Knee", tr:"Diz"}, {en:"Arm", tr:"Kol"},
+        {en:"Home", tr:"Ev"}, {en:"Room", tr:"Oda"}, {en:"Kitchen", tr:"Mutfak"}, {en:"Bedroom", tr:"Yatak Odası"}, {en:"Bathroom", tr:"Banyo"},
+        {en:"Living Room", tr:"Oturma Odası"}, {en:"Happy", tr:"Mutlu"}, {en:"Sad", tr:"Üzgün"}, {en:"Angry", tr:"Kızgın"}, {en:"Tired", tr:"Yorgun"},
+        {en:"Hungry", tr:"Aç"}, {en:"Thirsty", tr:"Susamış"}, {en:"Toy", tr:"Oyuncak"}, {en:"Doll", tr:"Oyuncak Bebek"}, {en:"Train", tr:"Tren"},
+        {en:"Plane", tr:"Uçak"}, {en:"Ship", tr:"Gemi"}, {en:"Run", tr:"Koşmak"}, {en:"Jump", tr:"Zıplamak"}, {en:"Walk", tr:"Yürümek"},
+        {en:"Swim", tr:"Yüzmek"}, {en:"Dance", tr:"Dans Etmek"}, {en:"Sing", tr:"Şarkı Söylemek"}, {en:"Climb", tr:"Tırmanmak"}, {en:"Hot", tr:"Sıcak"},
+        {en:"Cold", tr:"Soğuk"}, {en:"Rainy", tr:"Yağmurlu"}, {en:"Sunny", tr:"Güneşli"}, {en:"Snowy", tr:"Karlı"}, {en:"Windy", tr:"Rüzgarlı"},
+        {en:"Cloudy", tr:"Bulutlu"}, {en:"Doctor", tr:"Doktor"}, {en:"Nurse", tr:"Hemşire"}, {en:"Pilot", tr:"Pilot"}, {en:"Chef", tr:"Şef / Aşçı"}
+    ],
+    "4-sinif": [
+        {en:"Country", tr:"Ülke"}, {en:"Turkey", tr:"Türkiye"}, {en:"England", tr:"İngiltere"}, {en:"Germany", tr:"Almanya"}, {en:"Nationality", tr:"Milliyet"},
+        {en:"Turkish", tr:"Türk"}, {en:"English", tr:"İngiliz"}, {en:"Job", tr:"Meslek"}, {en:"Fireman", tr:"İtfaiyeci"}, {en:"Policeman", tr:"Polis"},
+        {en:"Morning", tr:"Sabah"}, {en:"Afternoon", tr:"Öğleden Sonra"}, {en:"Evening", tr:"Akşam"}, {en:"Night", tr:"Gece"}, {en:"Breakfast", tr:"Kahvaltı"},
+        {en:"Lunch", tr:"Öğle Yemeği"}, {en:"Dinner", tr:"Akşam Yemeği"}, {en:"Bread", tr:"Ekmek"}, {en:"Cheese", tr:"Peynir"}, {en:"Egg", tr:"Yumurta"},
+        {en:"Tomato", tr:"Domates"}, {en:"Tea", tr:"Çay"}, {en:"Coffee", tr:"Kahve"}, {en:"Shirt", tr:"Gömlek"}, {en:"Pants", tr:"Pantolon"},
+        {en:"Dress", tr:"Elbise"}, {en:"Shoes", tr:"Ayakkabı"}, {en:"Hat", tr:"Şapka"}, {en:"Jacket", tr:"Ceket"}, {en:"Skirt", tr:"Etek"},
+        {en:"Sock", tr:"Çorap"}, {en:"Left", tr:"Sol"}, {en:"Right", tr:"Sağ"}, {en:"Straight", tr:"Düz / Doğru"}, {en:"Map", tr:"Harita"},
+        {en:"Compass", tr:"Pusula"}, {en:"Cartoon", tr:"Çizgi Film"}, {en:"Movie", tr:"Film"}, {en:"Music", tr:"Müzik"}, {en:"Guitar", tr:"Gitar"},
+        {en:"Piano", tr:"Piyano"}, {en:"Puzzle", tr:"Yapboz"}, {en:"Game", tr:"Oyun"}, {en:"Play", tr:"Oynamak"}, {en:"Win", tr:"Kazanmak"},
+        {en:"Lose", tr:"Kaybetmek"}, {en:"Summer", tr:"Yaz"}, {en:"Winter", tr:"Kış"}, {en:"Spring", tr:"İlkbahar"}, {en:"Autumn", tr:"Sonbahar"}
+    ],
+    "5-sinif": [
+        {en:"History", tr:"Tarih Dersi"}, {en:"Science", tr:"Fen Bilgisi"}, {en:"Maths", tr:"Matematik"}, {en:"Art", tr:"Görsel Sanatlar"}, {en:"Geography", tr:"Coğrafya"},
+        {en:"Health", tr:"Sağlık"}, {en:"Illness", tr:"Hastalık"}, {en:"Flu", tr:"Grip"}, {en:"Headache", tr:"Baş Ağrısı"}, {en:"Toothache", tr:"Diş Ağrısı"},
+        {en:"Cough", tr:"Öksürük"}, {en:"Fever", tr:"Ateş (Hastalık)"}, {en:"Hospital", tr:"Hastane"}, {en:"Medicine", tr:"İlaç"}, {en:"Comedy", tr:"Komedi"},
+        {en:"Horror", tr:"Korku Filmi"}, {en:"Animation", tr:"Animasyon"}, {en:"Action", tr:"Aksiyon"}, {en:"Drama", tr:"Dram"}, {en:"Ticket", tr:"Bilet"},
+        {en:"Checkers", tr:"Dama"}, {en:"Chess", tr:"Satranç"}, {en:"Origami", tr:"Kağıt Katlama"}, {en:"Dodgeball", tr:"Yakar Top"}, {en:"Tag", tr:"Ebelemece"},
+        {en:"Hide and seek", tr:"Saklambaç"}, {en:"Holiday", tr:"Tatil"}, {en:"Pool", tr:"Havuz"}, {en:"Sea", tr:"Deniz"}, {en:"Beach", tr:"Plaj"},
+        {en:"Sand", tr:"Kum"}, {en:"Camel", tr:"Deve"}, {en:"Elephant", tr:"Fil"}, {en:"Tiger", tr:"Kaplan"}, {en:"Giraffe", tr:"Zürafa"},
+        {en:"Bear", tr:"Ayı"}, {en:"Snake", tr:"Yılan"}, {en:"Butterfly", tr:"Kelebek"}, {en:"Invitation", tr:"Davet"}, {en:"Party", tr:"Parti"},
+        {en:"Gift", tr:"Hediye"}, {en:"Candle", tr:"Mum"}, {en:"Clown", tr:"Palyaço"}, {en:"Accept", tr:"Kabul Etmek"}, {en:"Refuse", tr:"Reddetmek"},
+        {en:"Celebrate", tr:"Kutlamak"}, {en:"Shelter", tr:"Barınak"}, {en:"Whale", tr:"Balina"}, {en:"Permission", tr:"İzin"}, {en:"Bored", tr:"Sıkılmış"}
+    ],
+    "6-sinif": [
+        {en:"Delicious", tr:"Lezzetli"}, {en:"Nutritious", tr:"Besleyici"}, {en:"Croissant", tr:"Ay Çöreği"}, {en:"Muffin", tr:"Top Kek"}, {en:"Olive", tr:"Zeytin"},
+        {en:"Honey", tr:"Bal"}, {en:"Butter", tr:"Tereyağı"}, {en:"Jam", tr:"Reçel"}, {en:"Pancake", tr:"Krep / Akıtma"}, {en:"Downtown", tr:"Şehir Merkezi"},
+        {en:"City", tr:"Şehir"}, {en:"Village", tr:"Köy"}, {en:"Farm", tr:"Çiftlik"}, {en:"Skyscraper", tr:"Gökdelen"}, {en:"Street", tr:"Cadde / Sokak"},
+        {en:"Traffic", tr:"Trafik"}, {en:"Crowded", tr:"Kalabalık"}, {en:"Quiet", tr:"Sessiz"}, {en:"Noisy", tr:"Gürültülü"}, {en:"Roller coaster", tr:"Hız Treni"},
+        {en:"Bumper car", tr:"Çarpışan Araba"}, {en:"Ferris wheel", tr:"Dönme Dolap"}, {en:"Ghost train", tr:"Korku Tüneli"}, {en:"Fair", tr:"Fuar / Lunapark"}, {en:"Carousel", tr:"Atlıkarınca"},
+        {en:"Exciting", tr:"Heyecan Verici"}, {en:"Boring", tr:"Sıkıcı"}, {en:"Frightening", tr:"Korkutucu"}, {en:"Prediction", tr:"Tahmin"}, {en:"Freezing", tr:"Dondurucu Soğuk"},
+        {en:"Lightning", tr:"Şimşek"}, {en:"Thunder", tr:"Gökgürültüsü"}, {en:"Storm", tr:"Fırtına"}, {en:"Umbrella", tr:"Şemsiye"}, {en:"Boots", tr:"Çizme / Bot"},
+        {en:"Coat", tr:"Palto / Mont"}, {en:"Vacation", tr:"Tatil"}, {en:"Sightseeing", tr:"Turistik Gezi"}, {en:"Skiing", tr:"Kayak Yapma"}, {en:"Camping", tr:"Kamp Yapma"},
+        {en:"Hiking", tr:"Doğa Yürüyüşü"}, {en:"Traditional", tr:"Geleneksel"}, {en:"Modern", tr:"Modern"}, {en:"Popular", tr:"Popüler"}, {en:"Dangerous", tr:"Tehlikeli"},
+        {en:"Safety", tr:"Güvenlik"}, {en:"Helmet", tr:"Kask"}, {en:"Museum", tr:"Müze"}, {en:"Queue", tr:"Sıra / Kuyruk"}, {en:"Yummy", tr:"Nefis"}
+    ],
+    "7-sinif": [
+        {en:"Stubborn", tr:"İnatçı"}, {en:"Selfish", tr:"Bencil"}, {en:"Punctual", tr:"Dakik"}, {en:"Honest", tr:"Dürüst"}, {en:"Generous", tr:"Cömert"},
+        {en:"Helpful", tr:"Yardımsever"}, {en:"Outgoing", tr:"Sosyal / Dışadönük"}, {en:"Patient", tr:"Sabırlı"}, {en:"Clumsy", tr:"Sakar"}, {en:"Forgetful", tr:"Unutkan"},
+        {en:"Beautiful", tr:"Güzel"}, {en:"Handsome", tr:"Yakışıklı"}, {en:"Tall", tr:"Uzun Boylu"}, {en:"Short", tr:"Kısa Boylu"}, {en:"Plump", tr:"Balık Etli"},
+        {en:"Slim", tr:"Zayıf / Narin"}, {en:"Blonde", tr:"Sarışın"}, {en:"Dark", tr:"Esmer / Koyu"}, {en:"Wavy", tr:"Dalgalı"}, {en:"Sports", tr:"Sporlar"},
+        {en:"Training", tr:"Antrenman"}, {en:"Match", tr:"Maç / Karşılaşma"}, {en:"Medal", tr:"Madalya"}, {en:"Equipment", tr:"Ekipman / Malzeme"}, {en:"Dynamic", tr:"Dinamik"},
+        {en:"Biography", tr:"Biyografi"}, {en:"Success", tr:"Başarı"}, {en:"Achievement", tr:"Başarı / Kazanım"}, {en:"Marriage", tr:"Evlilik"}, {en:"Graduate", tr:"Mezun Olmak"},
+        {en:"Award", tr:"Ödül"}, {en:"Die", tr:"Ölmek"}, {en:"Wild", tr:"Vahşi"}, {en:"Nature", tr:"Doğa"}, {en:"Jungle", tr:"Orman / Vahşi Alan"},
+        {en:"Ocean", tr:"Okyanus"}, {en:"Extinct", tr:"Nesli Tükenmiş"}, {en:"Endangered", tr:"Nesli Tehlikede"}, {en:"Protect", tr:"Korumak"}, {en:"Save", tr:"Tasarruf Etmek / Kurtarmak"},
+        {en:"Commercial", tr:"Reklam"}, {en:"Reality show", tr:"Gerçeklik Programı"}, {en:"News", tr:"Haberler"}, {en:"Quiz show", tr:"Bilgi Yarışması"}, {en:"Documentary", tr:"Belgesel"},
+        {en:"Recycling", tr:"Geri Dönüşüm"}, {en:"Pollution", tr:"Kirlilik"}, {en:"Global warming", tr:"Küresel Isınma"}, {en:"Eco-friendly", tr:"Çevre Dostu"}, {en:"Spectator", tr:"Seyirci"}
+    ],
+    "8-sinif": [
+        {en:"Buddy / Mate", tr:"Kanka / Yakın Arkadaş"}, {en:"Count on", tr:"Güvenmek"}, {en:"Depend on", tr:"Bel Bağlamak"}, {en:"Back up", tr:"Desteklemek"}, {en:"Unreliable", tr:"Güvenilmez"},
+        {en:"Arrogant", tr:"Kibirli / Ukala"}, {en:"Sneaky", tr:"Sinsi"}, {en:"Bake", tr:"Fırında Pişirmek"}, {en:"Grill", tr:"Izgarada Pişirmek"}, {en:"Fry", tr:"Yağda Kızartmak"},
+        {en:"Boil", tr:"Haşlamak / Kaynatmak"}, {en:"Steam", tr:"Buharda Pişirmek"}, {en:"Chop", tr:"Doğramak"}, {en:"Slice", tr:"Dilimlemek"}, {en:"Dice", tr:"Küp Küp Doğramak"},
+        {en:"Ingredient", tr:"Malzeme / İçindekiler"}, {en:"Kitchenware", tr:"Mutfak Eşyası"}, {en:"Call", tr:"Telefonla Aramak"}, {en:"Text", tr:"Mesaj Yazmak"}, {en:"Face to face", tr:"Yüz Yüze"},
+        {en:"Communicate", tr:"İletişim Kurmak"}, {en:"Interaction", tr:"Etkileşim"}, {en:"Social media", tr:"Sosyal Medya"}, {en:"Connection", tr:"Bağlantı"}, {en:"Addict", tr:"Bağımlı"},
+        {en:"Browsing", tr:"İnternette Gezinme"}, {en:"Search engine", tr:"Arama Motoru"}, {en:"Download", tr:"İndirmek"}, {en:"Upload", tr:"Yüklemek"}, {en:"Attachment", tr:"E-posta Eki"},
+        {en:"Ancient", tr:"Antik / Eski"}, {en:"Historic", tr:"Tarihi"}, {en:"Architecture", tr:"Mimari"}, {en:"Cruise", tr:"Gemi Turu"}, {en:"Safari", tr:"Vahşi Yaşam Turu"},
+        {en:"Souvenir", tr:"Hediyelik Eşya"}, {en:"Accommodation", tr:"Konaklama"}, {en:"Risk", tr:"Risk"}, {en:"Freedom", tr:"Özgürlük"}, {en:"Courage", tr:"Cesaret"},
+        {en:"Extreme", tr:"Sıra Dışı / Tehlikeli"}, {en:"Indoor", tr:"Kapalı Alan"}, {en:"Outdoor", tr:"Açık Alan"}, {en:"Chore", tr:"Ev İşi / Rutin İş"}, {en:"Responsibility", tr:"Sorumluluk"},
+        {en:"Disaster", tr:"Afet / Felaket"}, {en:"Earthquake", tr:"Deprem"}, {en:"Flood", tr:"Sel"}, {en:"Keep in touch", tr:"İrtibatta Kalmak"}, {en:"Accomplish", tr:"Başarmak"}
+    ]
+};
+
+// ⚙️ GLOBAL DEĞİŞKENLER
+let aktifSinif = "2-sinif";
+let aktifKelimeListesi = [];
+let mevcutKelimeNesnesi = null;
+let dogruSkor = 0;
+let yanlisSkor = 0;
+
+// 🔄 PANEL AÇMA / KAPATMA MOTORU
+function ezberKartToggle() {
+    const icerik = document.getElementById("ezberKartIcerik");
+    const okIsareti = document.getElementById("ezberOkIsareti");
+    const kareKutu = document.getElementById("ezberKareKutu");
+    
+    if (icerik.style.display === "none") {
+        icerik.style.display = "block";
+        kareKutu.classList.add("active");
+        okIsareti.innerText = "🔼";
+        if(!mevcutKelimeNesnesi) { ezberKelimeYukle(); }
+    } else {
+        icerik.style.display = "none";
+        kareKutu.classList.remove("active");
+        okIsareti.innerText = "🔽";
+    }
+}
+
+// 🏫 AKILLI SARMAL SINIF SEÇİM MOTORU
+function ezberSinifSec(sinifId, butonElement) {
+    if(butonElement) {
+        document.querySelectorAll('.ezber-sinif-btn').forEach(btn => btn.classList.remove('active'));
+        butonElement.classList.add('active');
+    }
+    aktifSinif = sinifId;
+    ezberKelimeYukle();
+}
+
+// 🎲 DYNAMIQ KÜMÜLATİF (SARMAL) KELİME YÜKLEME MOTORU
+function ezberKelimeYukle() {
+    const card = document.getElementById("ezberFlashCard");
+    card.classList.remove("flipped");
+
+    // Sarmal Mantığı Yapı Taşları
+    const seviyeSiralamasi = ["2-sinif", "3-sinif", "4-sinif", "5-sinif", "6-sinif", "7-sinif", "8-sinif"];
+    const hedefIndex = seviyeSiralamasi.indexOf(aktifSinif);
+    
+    // Kelime havuzunu temizle ve alt seviyeler dahil yeniden inşa et
+    aktifKelimeListesi = [];
+    for(let i = 0; i <= hedefIndex; i++) {
+        const sinifKelimeleri = ezberKelimeDeposu[seviyeSiralamasi[i]] || [];
+        aktifKelimeListesi = aktifKelimeListesi.concat(sinifKelimeleri);
+    }
+
+    // Ekrandaki havuz sayacı bilgisini güncelle
+    document.getElementById("ezberHavuzSayisi").innerText = aktifKelimeListesi.length;
+
+    if(aktifKelimeListesi.length === 0) {
+        document.getElementById("ezberIngilizceKelime").innerText = "Kelime Yok";
+        document.getElementById("ezberTurkceKelime").innerText = "-";
+        return;
+    }
+
+    // Havuzdan tamamen rastgele kelime çekme
+    const rastgeleIndis = Math.floor(Math.random() * aktifKelimeListesi.length);
+    mevcutKelimeNesnesi = aktifKelimeListesi[rastgeleIndis];
+
+    // Kart dönerken kelimenin aniden değiştiği görünmesin diye ufak rötar ekliyoruz
+    setTimeout(() => {
+        document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
+        document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
+    }, 150);
+}
+
+// 🔄 KART ÇEVİRME MOTORU
+function ezberKartiCevir() {
+    document.getElementById("ezberFlashCard").classList.toggle("flipped");
+}
+
+// 🕹️ CEVAP VE ANLIK SKOR MOTORU
+function ezberCevapVer(durum) {
+    if(!mevcutKelimeNesnesi) return;
+
+    if (durum === true) {
+        dogruSkor++;
+        document.getElementById("ezberDogruSayisi").innerText = dogruSkor;
+    } else {
+        yanlisSkor++;
+        document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor;
+    }
+
+    // Yeni rastgele kelimeye geç
+    ezberKelimeYukle();
+}
+
+// 🧹 SKOR SIFIRLAMA MOTORU
+function ezberSkorSifirla() {
+    if(confirm("Mevcut doğru/yanlış skorunuz sıfırlansın mı?")) {
+        dogruSkor = 0;
+        yanlisSkor = 0;
+        document.getElementById("ezberDogruSayisi").innerText = "0";
+        document.getElementById("ezberYanlisSayisi").innerText = "0";
+    }
+}
+
+// İlk açılış hazırlığı
+document.addEventListener("DOMContentLoaded", function() {
+    aktifKelimeListesi = ezberKelimeDeposu[aktifSinif];
+});
+</script>
+<!-- ========================================== -->
+<!-- 🧠 BÖLÜM BİTİŞİ                            -->
+<!-- ========================================== -->
+    
+<br>
     
 <div style="margin-bottom: 15px; box-sizing: border-box;">
   <button id="randevuMenuBtn" onclick="randevuFormuKapatAcl()" style="background: #7D6451; color: white; width: 100%; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
