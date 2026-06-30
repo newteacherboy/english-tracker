@@ -865,12 +865,12 @@ document.addEventListener("DOMContentLoaded", function() {
    // =========================================================================
 // 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
 // =========================================================================
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxa-n192rSCQiFTgz1FL0c0xCD1AB5JyGWbBui-OZsNvt9d1VuFDbO9ooEj_orj3YJW/exec";
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyoz-u9pDrUC29DZCzs_-nltu7lITUPWyFmMmFKPUYByoFDcvyiy0G-r8EQe1CIEZN_/exec";
 
 var tumSoruHavuzu = [];
 var secilenSınavSorulari = [];
 var mevcutSoruSira = 0;
-var ogrenciSınavCevaplari = {}; // {soruId: secilenSık}
+var ogrenciSınavCevaplari = {}; 
 var sınavKronometreInterval = null;
 var sınavToplamSaniye = 0;
 var incelemeModu = false;
@@ -899,7 +899,7 @@ function denemeSınavToggle() {
         icerik.style.display = "block";
         kutu.classList.add("active");
         ok.innerText = "🔼";
-        sınavVerileriniYukle(); // Google Sheets'ten soruları ve sıralamayı çek
+        sınavVerileriniYukle(); // Google Sheets'ten soruları çek
     } else {
         icerik.style.display = "none";
         kutu.classList.remove("active");
@@ -909,7 +909,14 @@ function denemeSınavToggle() {
 
 // Google Sheets'ten Soruları ve Liderlik Tablosunu Çekme
 function sınavVerileriniYukle() {
-    if (tumSoruHavuzu.length > 0) return; // Zaten çekildiyse tekrar çekme
+    if (tumSoruHavuzu.length > 0) return; // Zaten yüklendiyse tekrar çekme
+    
+    var baslatBtn = document.querySelector("#sınavGirisEkrani button");
+    if(baslatBtn) {
+        baslatBtn.disabled = true;
+        baslatBtn.innerText = "Sorular Yükleniyor, Lütfen Bekleyin... ⏳";
+        baslatBtn.style.background = "#9ca3af";
+    }
     
     fetch(WEB_APP_URL + "?action=sorulariGetir")
     .then(res => res.json())
@@ -917,8 +924,20 @@ function sınavVerileriniYukle() {
         if(data.durum === "basarili") {
             tumSoruHavuzu = data.soruHavuzu;
             sunucuLiderlikTablosu = data.liderlikTablosu;
+            
+            // Yükleme bitince butonu aktif et
+            if(baslatBtn) {
+                baslatBtn.disabled = false;
+                baslatBtn.innerText = "Sınavı Başlat 🚀";
+                baslatBtn.style.background = "#4f46e5";
+            }
         }
-    }).catch(err => console.log("Veri çekme hatası:", err));
+    }).catch(err => {
+        console.log("Veri çekme hatası:", err);
+        if(baslatBtn) {
+            baslatBtn.innerText = "Veri Yüklenemedi! Sayfayı Yenileyin.";
+        }
+    });
 }
 
 // Sınıf Değiştiğinde Üniteleri Kutucuk Olarak Listeleme
@@ -941,6 +960,10 @@ function sınavSinifDegisti() {
 
 // Sınavı Oluşturma ve Karıştırma Algoritması
 function sınavıOlusturVeBaslat() {
+    if(tumSoruHavuzu.length === 0) {
+        return alert("Sorular henüz tam yüklenmedi veya çekilemedi. Lütfen birkaç saniye bekleyip tekrar deneyin.");
+    }
+
     var sinif = document.getElementById("sınavSinifSecimi").value;
     if(!sinif) return alert("Lütfen sınıf seviyesi seçin.");
     
@@ -950,11 +973,11 @@ function sınavıOlusturVeBaslat() {
     var seciliUniteler = Array.from(cbler).map(cb => parseInt(cb.value));
     var limit = parseInt(document.getElementById("sınavSoruSayisi").value);
     
-    // Filtreleme
+    // Filtreleme mantığı güncellendi
     var filtrelenmis = tumSoruHavuzu.filter(s => parseInt(s.Sinif) == parseInt(sinif) && seciliUniteler.includes(parseInt(s.Unite_No)));
     
     if(filtrelenmis.length === 0) {
-        return alert("Seçtiğiniz kriterlere uygun soru bulunamadı! Lütfen Google Sheets 'Soru_Havuzu' sekmesini doldurduğunuzdan emin olun.");
+        return alert("Seçtiğiniz kriterlere uygun soru bulunamadı!");
     }
     
     // Karıştırma (Shuffle)
@@ -967,10 +990,10 @@ function sınavıOlusturVeBaslat() {
     incelemeModu = false;
     sınavToplamSaniye = 0;
     
-    // Ekrana Geçiş
+    // Ekrana Geçiş (Yazım hatası düzeltildi)
     document.getElementById("sınavGirisEkrani").style.display = "none";
     document.getElementById("sınavSonucEkrani").style.display = "none";
-    document.getElementById("synavOyunEkrani" || "sınavOyunEkrani").style.display = "block";
+    document.getElementById("sınavOyunEkrani").style.display = "block";
     
     sınavSoruBas();
     
@@ -1004,16 +1027,15 @@ function sınavSoruBas() {
     siklar.forEach(s => {
         var sikMetni = soru[s + "_Sikki"];
         var harfKucuk = s.toLowerCase();
-        var stil = "background:#f3f4f6; border:1px solid #e5e7eb; padding:10px; border-radius:6px; text-align:left; cursor:pointer; font-size:15px; font-weight:500; transition:0.2s;";
+        var stil = "background:#f3f4f6; border:1px solid #e5e7eb; padding:10px; border-radius:6px; text-align:left; cursor:pointer; font-size:15px; font-weight:500; transition:0.2s; width:100%; display:block; margin-bottom:5px;";
         
         if(!incelemeModu) {
             if(verilmisCevap === harfKucuk) { stil += "background:#4f46e5; color:white; border-color:#4f46e5;"; }
         } else {
-            // İnceleme Modu Renklendirmesi
             if(harfKucuk === soru.Dogru_Cevap.toString().trim().toLowerCase()) {
-                stil += "background:#10b981; color:white; border-color:#10b981;"; // Doğru şık yeşil
+                stil += "background:#10b981; color:white; border-color:#10b981;"; 
             } else if(verilmisCevap === harfKucuk) {
-                stil += "background:#ef4444; color:white; border-color:#ef4444;"; // Öğrencinin yanlış şıkkı kırmızı
+                stil += "background:#ef4444; color:white; border-color:#ef4444;"; 
             }
         }
         
@@ -1022,7 +1044,6 @@ function sınavSoruBas() {
     
     document.getElementById("sınavSiklarAlani").innerHTML = siklarHTML;
     
-    // Son Soru Kontrolü
     if(mevcutSoruSira === secilenSınavSorulari.length - 1) {
         document.getElementById("sınavSonrakiBtn").innerText = incelemeModu ? "İncelemeyi Bitir 🏁" : "Sınavı Bitir 🏁";
     } else {
@@ -1054,11 +1075,10 @@ function sınavSonrakiSoru() {
     }
 }
 
-// Sonuç Hesaplama, Geri Dönüt ve Google Sheets'e Yazma Motoru
 function sınavıHesaplaVeBitir() {
     clearInterval(sınavKronometreInterval);
     var d = 0, y = 0, b = 0;
-    var uniteRaporu = {}; // {uniteNo: {d:0, y:0}}
+    var uniteRaporu = {}; 
     
     secilenSınavSorulari.forEach(soru => {
         var uNo = soru.Unite_No;
@@ -1083,7 +1103,6 @@ function sınavıHesaplaVeBitir() {
     var sureMetni = (dk<10?"0":"")+dk + ":" + (sn<10?"0":"")+sn;
     document.getElementById("resSure").innerText = sureMetni;
 
-    // Gelişmiş Ünite Dönüt Raporu Oluşturma
     var raporHTML = '<h4 style="margin:0 0 10px 0; color:#4f46e5;">🎯 Konu Analiz Raporun:</h4>';
     for(var u in uniteRaporu) {
         var rep = uniteRaporu[u];
@@ -1098,11 +1117,9 @@ function sınavıHesaplaVeBitir() {
     }
     document.getElementById("sınavKonuAnalizi").innerHTML = raporHTML;
 
-    // Ekranları Değiştir
     document.getElementById("sınavOyunEkrani").style.display = "none";
     document.getElementById("sınavSonucEkrani").style.display = "block";
 
-    // Sunucuya Verileri Post Etme (Google Sheets Yazma)
     var ogrenciAdi = document.getElementById("sınavOgrenciAdi").value.trim();
     var iletisim = document.getElementById("sınavIletisim").value.trim();
     var sinif = document.getElementById("sınavSinifSecimi").value;
@@ -1121,7 +1138,6 @@ function sınavıHesaplaVeBitir() {
 
     fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(postData) })
     .then(() => {
-        // Gönderim başarılı olunca yerel liderlik tablosunu anlık güncelle ve listele
         if(ogrenciAdi !== "") {
             sunucuLiderlikTablosu.push({ ogrenci_adi: ogrenciAdi, sinif: sinif + ". Sınıf", dogru: d, sure: sureMetni, puan: puan });
         }
@@ -1129,12 +1145,10 @@ function sınavıHesaplaVeBitir() {
     });
 }
 
-// Liderlik Tablosunu Sıralayıp Ekrana Basma
 function sınavLiderlikTablosunuBas(aktifSinif) {
     var govde = document.getElementById("sınavLiderlikGövdesi");
     govde.innerHTML = "";
     
-    // Sadece mevcut sınıfa ait skorları filtrele, puana göre (büyükten küçüğe), eşitlikte süreye göre sırala
     var filtrelenmis = sunucuLiderlikTablosu.filter(l => l.sinif.indexOf(aktifSinif) > -1);
     
     filtrelenmis.sort((a,b) => {
@@ -1173,7 +1187,7 @@ function sınavYenidenBaslat() {
     document.getElementById("sınavGirisEkrani").style.display = "block";
     document.getElementById("sınavSinifSecimi").value = "";
     sınavSinifDegisti();
-} 
+}
     
 </script>
 <!-- ========================================== -->
