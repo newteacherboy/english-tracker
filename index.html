@@ -267,6 +267,12 @@ canvas { max-height: 200px; }
             <span id="ezberOkIsareti" class="kutu-ok">🔽</span>
         </button>
 
+        <button id="denemeKareKutu" class="dashboard-kare-kutu" onclick="denemeSınavToggle()">
+            <span class="kutu-ikon">📝</span>
+            <span class="kutu-baslik">Online Deneme Çöz</span>
+            <span id="denemeOkIsareti" class="kutu-ok">🔽</span>
+        </button>
+
     </div>
 
     <!-- ------------------------------------------ -->
@@ -334,6 +340,104 @@ canvas { max-height: 200px; }
         </div>
     </div>
 
+<div id="denemeSınavIcerik" class="dashboard-ic-panel" style="display: none; padding: 20px;">
+        
+        <div id="sınavGirisEkrani">
+            <h3 style="text-align: center; color: #4f46e5; margin-bottom: 20px;">🎯 LGS Deneme Sınavı Oluştur</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">1. Sınıf Seçin:</label>
+                    <select id="sınavSinifSecimi" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;" onchange="sınavSinifDegisti()">
+                        <option value="">-- Seçiniz --</option>
+                        <option value="8">8. Sınıf (LGS)</option>
+                    </select>
+                </div>
+                
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">2. Soru Sayısı:</label>
+                    <select id="sınavSoruSayisi" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
+                        <option value="10">10 Soru</option>
+                        <option value="12">12 Soru</option>
+                        <option value="15">15 Soru</option>
+                        <option value="20">20 Soru</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
+                <label style="font-weight: bold; display: block; margin-bottom: 8px;">3. Üniteleri Seçin:</label>
+                <div id="sınavUniteListesi" style="max-height: 150px; overflow-y: auto;">
+                    <span style="color: #9ca3af; font-size: 14px;">Lütfen önce sınıf seçiniz.</span>
+                </div>
+            </div>
+
+            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
+                <label style="font-weight: bold; display: block; margin-bottom: 8px;">4. Öğrenci Bilgileri (İsteğe Bağlı):</label>
+                <input type="text" id="sınavOgrenciAdi" placeholder="Adınız Soyadınız" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+                <input type="text" id="sınavIletisim" placeholder="Telefon veya E-posta adresiniz" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+            </div>
+
+            <button onclick="sınavıOlusturVeBaslat()" style="width:100%; background:#4f46e5; color:white; border:none; padding:12px; font-weight:bold; border-radius:6px; cursor:pointer; font-size:16px;">Sınavı Başlat 🚀</button>
+        </div>
+
+        <div id="sınavOyunEkrani" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #eeebff; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                <span id="sınavKalanSoru" style="font-weight: bold; color: #4f46e5;">Soru: 1 / 10</span>
+                <span id="sınavKronometre" style="background: #4f46e5; color: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-family: monospace;">Süre: 00:00</span>
+            </div>
+            
+            <div id="sınavSoruGövdesi" style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                </div>
+
+            <div id="sınavSiklarAlani" style="display: flex; flex-direction: column; gap: 10px;">
+                </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 10px;">
+                <button onclick="sınavOncekiSoru()" style="flex:1; background:#9ca3af; color:white; border:none; padding:10px; font-weight:bold; border-radius:6px; cursor:pointer;">⬅️ Önceki</button>
+                <button id="sınavSonrakiBtn" onclick="sınavSonrakiSoru()" style="flex:1; background:#10b981; color:white; border:none; padding:10px; font-weight:bold; border-radius:6px; cursor:pointer;">Sonraki ➡️</button>
+            </div>
+        </div>
+
+        <div id="sınavSonucEkrani" style="display: none; text-align: center;">
+            <h3 style="color: #10b981;">🎉 Sınav Tamamlandı!</h3>
+            
+            <div style="display: flex; justify-content: space-around; background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0; font-weight: bold;">
+                <div style="color:#10b981;">Doğru: <span id="resDoğru">0</span></div>
+                <div style="color:#ef4444;">Yanlış: <span id="resYanlis">0</span></div>
+                <div style="color:#6b7280;">Boş: <span id="resBos">0</span></div>
+                <div style="color:#4f46e5;">Puan: <span id="resPuan">0</span></div>
+            </div>
+
+            <p style="font-weight: bold; color:#374151;">⏳ Harcanan Süre: <span id="resSure">00:00</span></p>
+            
+            <div id="sınavKonuAnalizi" style="text-align: left; background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                <button onclick="sınavHatalariIncele()" style="flex: 1; background: #f59e0b; color: white; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer;">🔍 Soruları İncele</button>
+                <button onclick="sınavYenidenBaslat()" style="flex: 1; background: #4f46e5; color: white; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer;">🔄 Yeni Sınav</button>
+            </div>
+
+            <h4 style="margin-top: 25px; color: #374151; border-top: 2px dashed #e5e7eb; padding-top: 15px;">📊 Sınıf Başarı Sıralaması (Top 10)</h4>
+            <div style="overflow-x: auto; margin-top: 10px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: left;">
+                    <thead>
+                        <tr style="background: #e5e7eb;">
+                            <th style="padding: 8px;">Sıra</th>
+                            <th style="padding: 8px;">Öğrenci Adı</th>
+                            <th style="padding: 8px;">Doğru</th>
+                            <th style="padding: 8px;">Süre</th>
+                            <th style="padding: 8px;">Puan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sınavLiderlikGövdesi">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
 <!-- 🎨 STİL DOSYASI (CSS) -->
@@ -756,6 +860,321 @@ function ezberSkorSifirla() {
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 });
+
+
+   // =========================================================================
+// 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
+// =========================================================================
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxa-n192rSCQiFTgz1FL0c0xCD1AB5JyGWbBui-OZsNvt9d1VuFDbO9ooEj_orj3YJW/exec";
+
+var tumSoruHavuzu = [];
+var secilenSınavSorulari = [];
+var mevcutSoruSira = 0;
+var ogrenciSınavCevaplari = {}; // {soruId: secilenSık}
+var sınavKronometreInterval = null;
+var sınavToplamSaniye = 0;
+var incelemeModu = false;
+var sunucuLiderlikTablosu = [];
+
+// Müfredat Üniteleri Tanımı
+var sınavMüfredat = {
+    "8": { "1": "Unit 1: Friendship", "2": "Unit 2: Teen Life" }
+};
+
+// Panel Açma-Kapatma Tetikleyicisi
+function denemeSınavToggle() {
+    var icerik = document.getElementById("denemeSınavIcerik");
+    var ok = document.getElementById("denemeOkIsareti");
+    var kutu = document.getElementById("denemeKareKutu");
+
+    // Diğer panelleri kapat
+    document.getElementById("muallimKitapIcerik").style.display = "none";
+    document.getElementById("muallimKareKutu").classList.remove("active");
+    document.getElementById("muallimOkIsareti").innerText = "🔽";
+    document.getElementById("ezberKartIcerik").style.display = "none";
+    document.getElementById("ezberKareKutu").classList.remove("active");
+    document.getElementById("ezberOkIsareti").innerText = "🔽";
+
+    if (icerik.style.display === "none" || icerik.style.display === "") {
+        icerik.style.display = "block";
+        kutu.classList.add("active");
+        ok.innerText = "🔼";
+        sınavVerileriniYukle(); // Google Sheets'ten soruları ve sıralamayı çek
+    } else {
+        icerik.style.display = "none";
+        kutu.classList.remove("active");
+        ok.innerText = "🔽";
+    }
+}
+
+// Google Sheets'ten Soruları ve Liderlik Tablosunu Çekme
+function sınavVerileriniYukle() {
+    if (tumSoruHavuzu.length > 0) return; // Zaten çekildiyse tekrar çekme
+    
+    fetch(WEB_APP_URL + "?action=sorulariGetir")
+    .then(res => res.json())
+    .then(data => {
+        if(data.durum === "basarili") {
+            tumSoruHavuzu = data.soruHavuzu;
+            sunucuLiderlikTablosu = data.liderlikTablosu;
+        }
+    }).catch(err => console.log("Veri çekme hatası:", err));
+}
+
+// Sınıf Değiştiğinde Üniteleri Kutucuk Olarak Listeleme
+function sınavSinifDegisti() {
+    var sinif = document.getElementById("sınavSinifSecimi").value;
+    var listeDiv = document.getElementById("sınavUniteListesi");
+    listeDiv.innerHTML = "";
+    
+    if(!sinif || !sınavMüfredat[sinif]) {
+        listeDiv.innerHTML = '<span style="color: #9ca3af; font-size: 14px;">Lütfen önce sınıf seçiniz.</span>';
+        return;
+    }
+    
+    for(var no in sınavMüfredat[sinif]) {
+        listeDiv.innerHTML += '<label style="display:flex; align-items:center; margin-bottom:6px; font-size:14px; cursor:pointer;">' +
+            '<input type="checkbox" value="' + no + '" class="sınav-unite-cb" style="margin-right:8px; width:16px; height:16px;">' +
+            sınavMüfredat[sinif][no] + '</label>';
+    }
+}
+
+// Sınavı Oluşturma ve Karıştırma Algoritması
+function sınavıOlusturVeBaslat() {
+    var sinif = document.getElementById("sınavSinifSecimi").value;
+    if(!sinif) return alert("Lütfen sınıf seviyesi seçin.");
+    
+    var cbler = document.querySelectorAll(".sınav-unite-cb:checked");
+    if(cbler.length === 0) return alert("Lütfen en az bir ünite işaretleyin.");
+    
+    var seciliUniteler = Array.from(cbler).map(cb => parseInt(cb.value));
+    var limit = parseInt(document.getElementById("sınavSoruSayisi").value);
+    
+    // Filtreleme
+    var filtrelenmis = tumSoruHavuzu.filter(s => parseInt(s.Sinif) == parseInt(sinif) && seciliUniteler.includes(parseInt(s.Unite_No)));
+    
+    if(filtrelenmis.length === 0) {
+        return alert("Seçtiğiniz kriterlere uygun soru bulunamadı! Lütfen Google Sheets 'Soru_Havuzu' sekmesini doldurduğunuzdan emin olun.");
+    }
+    
+    // Karıştırma (Shuffle)
+    filtrelenmis.sort(function() { return Math.random() - 0.5; });
+    secilenSınavSorulari = filtrelenmis.slice(0, limit);
+    
+    // Değişken Sıfırlama
+    mevcutSoruSira = 0;
+    ogrenciSınavCevaplari = {};
+    incelemeModu = false;
+    sınavToplamSaniye = 0;
+    
+    // Ekrana Geçiş
+    document.getElementById("sınavGirisEkrani").style.display = "none";
+    document.getElementById("sınavSonucEkrani").style.display = "none";
+    document.getElementById("synavOyunEkrani" || "sınavOyunEkrani").style.display = "block";
+    
+    sınavSoruBas();
+    
+    // Kronometreyi Başlat
+    clearInterval(sınavKronometreInterval);
+    sınavKronometreInterval = setInterval(function() {
+        sınavToplamSaniye++;
+        var dk = Math.floor(sınavToplamSaniye / 60);
+        var sn = sınavToplamSaniye % 60;
+        document.getElementById("sınavKronometre").innerText = "Süre: " + (dk<10?"0":"")+dk + ":" + (sn<10?"0":"")+sn;
+    }, 1000);
+}
+
+// Soruyu Ekrana Basma Fonksiyonu
+function sınavSoruBas() {
+    var soru = secilenSınavSorulari[mevcutSoruSira];
+    document.getElementById("sınavKalanSoru").innerText = "Soru: " + (mevcutSoruSira + 1) + " / " + secilenSınavSorulari.length;
+    
+    var govdeHTML = "";
+    if(soru.Gorsel_URL && soru.Gorsel_URL.trim() !== "") {
+        govdeHTML += '<img src="'+soru.Gorsel_URL+'" style="max-width:100%; max-height:220px; display:block; margin:0 auto 10px; border-radius:6px;">';
+    }
+    govdeHTML += '<div style="font-size:16px; font-weight:600; line-height:1.4; color:#1f2937;">' + soru.Soru_Metni + '</div>';
+    document.getElementById("sınavSoruGövdesi").innerHTML = govdeHTML;
+    
+    var verilmisCevap = ogrenciSınavCevaplari[soru.id || soru.Soru_Metni] || "";
+    
+    var siklar = ["A", "B", "C", "D"];
+    var siklarHTML = "";
+    
+    siklar.forEach(s => {
+        var sikMetni = soru[s + "_Sikki"];
+        var harfKucuk = s.toLowerCase();
+        var stil = "background:#f3f4f6; border:1px solid #e5e7eb; padding:10px; border-radius:6px; text-align:left; cursor:pointer; font-size:15px; font-weight:500; transition:0.2s;";
+        
+        if(!incelemeModu) {
+            if(verilmisCevap === harfKucuk) { stil += "background:#4f46e5; color:white; border-color:#4f46e5;"; }
+        } else {
+            // İnceleme Modu Renklendirmesi
+            if(harfKucuk === soru.Dogru_Cevap.toString().trim().toLowerCase()) {
+                stil += "background:#10b981; color:white; border-color:#10b981;"; // Doğru şık yeşil
+            } else if(verilmisCevap === harfKucuk) {
+                stil += "background:#ef4444; color:white; border-color:#ef4444;"; // Öğrencinin yanlış şıkkı kırmızı
+            }
+        }
+        
+        siklarHTML += '<button class="sınav-sik-btn" style="'+stil+'" onclick="sınavSıkSec(\''+harfKucuk+'\')"><b>'+s+')</b> '+sikMetni+'</button>';
+    });
+    
+    document.getElementById("sınavSiklarAlani").innerHTML = siklarHTML;
+    
+    // Son Soru Kontrolü
+    if(mevcutSoruSira === secilenSınavSorulari.length - 1) {
+        document.getElementById("sınavSonrakiBtn").innerText = incelemeModu ? "İncelemeyi Bitir 🏁" : "Sınavı Bitir 🏁";
+    } else {
+        document.getElementById("sınavSonrakiBtn").innerText = "Sonraki ➡️";
+    }
+}
+
+function sınavSıkSec(harf) {
+    if(incelemeModu) return;
+    var soru = secilenSınavSorulari[mevcutSoruSira];
+    ogrenciSınavCevaplari[soru.id || soru.Soru_Metni] = harf;
+    sınavSoruBas();
+}
+
+function sınavOncekiSoru() {
+    if(mevcutSoruSira > 0) { mevcutSoruSira--; sınavSoruBas(); }
+}
+
+function sınavSonrakiSoru() {
+    if(mevcutSoruSira < secilenSınavSorulari.length - 1) {
+        mevcutSoruSira++; sınavSoruBas();
+    } else {
+        if(incelemeModu) {
+            document.getElementById("sınavOyunEkrani").style.display = "none";
+            document.getElementById("sınavSonucEkrani").style.display = "block";
+        } else {
+            sınavıHesaplaVeBitir();
+        }
+    }
+}
+
+// Sonuç Hesaplama, Geri Dönüt ve Google Sheets'e Yazma Motoru
+function sınavıHesaplaVeBitir() {
+    clearInterval(sınavKronometreInterval);
+    var d = 0, y = 0, b = 0;
+    var uniteRaporu = {}; // {uniteNo: {d:0, y:0}}
+    
+    secilenSınavSorulari.forEach(soru => {
+        var uNo = soru.Unite_No;
+        if(!uniteRaporu[uNo]) uniteRaporu[uNo] = { d: 0, y: 0, bos: 0, ad: soru.Unite_Adi };
+        
+        var cev = ogrenciSınavCevaplari[soru.id || soru.Soru_Metni] || "";
+        if(cev === "") { b++; uniteRaporu[uNo].bos++; }
+        else if(cev === soru.Dogru_Cevap.toString().trim().toLowerCase()) { d++; uniteRaporu[uNo].d++; }
+        else { y++; uniteRaporu[uNo].y++; }
+    });
+    
+    var toplamSoru = secilenSınavSorulari.length;
+    var puan = Math.round((d / toplamSoru) * 100);
+    
+    document.getElementById("resDoğru").innerText = d;
+    document.getElementById("resYanlis").innerText = y;
+    document.getElementById("resBos").innerText = b;
+    document.getElementById("resPuan").innerText = puan;
+    
+    var dk = Math.floor(sınavToplamSaniye / 60);
+    var sn = sınavToplamSaniye % 60;
+    var sureMetni = (dk<10?"0":"")+dk + ":" + (sn<10?"0":"")+sn;
+    document.getElementById("resSure").innerText = sureMetni;
+
+    // Gelişmiş Ünite Dönüt Raporu Oluşturma
+    var raporHTML = '<h4 style="margin:0 0 10px 0; color:#4f46e5;">🎯 Konu Analiz Raporun:</h4>';
+    for(var u in uniteRaporu) {
+        var rep = uniteRaporu[u];
+        raporHTML += '<div style="margin-bottom:8px; font-size:14px; border-bottom:1px solid #f3f4f6; padding-bottom:4px;">' +
+            '<b>' + rep.ad + ':</b> ' + rep.d + ' Doğru, ' + rep.y + ' Yanlış. ';
+        if(rep.y > rep.d) {
+            raporHTML += '<span style="color:#ef4444; font-weight:bold;">⚠️ Eksiklerin var, kelimelere tekrar çalışmalısın!</span>';
+        } else {
+            raporHTML += '<span style="color:#10b981; font-weight:bold;">✅ Harika! Bu konuyu kavramışsın.</span>';
+        }
+        raporHTML += '</div>';
+    }
+    document.getElementById("sınavKonuAnalizi").innerHTML = raporHTML;
+
+    // Ekranları Değiştir
+    document.getElementById("sınavOyunEkrani").style.display = "none";
+    document.getElementById("sınavSonucEkrani").style.display = "block";
+
+    // Sunucuya Verileri Post Etme (Google Sheets Yazma)
+    var ogrenciAdi = document.getElementById("sınavOgrenciAdi").value.trim();
+    var iletisim = document.getElementById("sınavIletisim").value.trim();
+    var sinif = document.getElementById("sınavSinifSecimi").value;
+
+    var postData = {
+        aksiyon: "denemeKaydet",
+        ogrenci_adi: ogrenciAdi || "İsimsiz Öğrenci",
+        iletisim: iletisim || "Girilmedi",
+        sinif: sinif + ". Sınıf",
+        dogru_sayisi: d,
+        yanlis_sayisi: y,
+        bos_sayisi: b,
+        sure: sureMetni,
+        puan: puan
+    };
+
+    fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(postData) })
+    .then(() => {
+        // Gönderim başarılı olunca yerel liderlik tablosunu anlık güncelle ve listele
+        if(ogrenciAdi !== "") {
+            sunucuLiderlikTablosu.push({ ogrenci_adi: ogrenciAdi, sinif: sinif + ". Sınıf", dogru: d, sure: sureMetni, puan: puan });
+        }
+        sınavLiderlikTablosunuBas(sinif);
+    });
+}
+
+// Liderlik Tablosunu Sıralayıp Ekrana Basma
+function sınavLiderlikTablosunuBas(aktifSinif) {
+    var govde = document.getElementById("sınavLiderlikGövdesi");
+    govde.innerHTML = "";
+    
+    // Sadece mevcut sınıfa ait skorları filtrele, puana göre (büyükten küçüğe), eşitlikte süreye göre sırala
+    var filtrelenmis = sunucuLiderlikTablosu.filter(l => l.sinif.indexOf(aktifSinif) > -1);
+    
+    filtrelenmis.sort((a,b) => {
+        if(b.puan !== a.puan) return b.puan - a.puan;
+        return a.sure.localeCompare(b.sure);
+    });
+
+    var top10 = filtrelenmis.slice(0, 10);
+    if(top10.length === 0) {
+        govde.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#9ca3af;">Henüz bu sınıfta kayıtlı derece yok. İlk sen ol!</td></tr>';
+        return;
+    }
+
+    top10.forEach((r, idx) => {
+        var arkaPlan = idx === 0 ? "background:#fef3c7;" : (idx === 1 ? "background:#f3f4f6;" : (idx === 2 ? "background:#ffedd5;" : ""));
+        govde.innerHTML += '<tr style="border-bottom:1px solid #e5e7eb; '+arkaPlan+'">' +
+            '<td style="padding:8px; font-weight:bold;">' + (idx+1) + '</td>' +
+            '<td style="padding:8px;">' + r.ogrenci_adi + '</td>' +
+            '<td style="padding:8px;">' + r.dogru + '</td>' +
+            '<td style="padding:8px;">' + r.sure + '</td>' +
+            '<td style="padding:8px; font-weight:bold; color:#4f46e5;">' + r.puan + '</td>' +
+            '</tr>';
+    });
+}
+
+function sınavHatalariIncele() {
+    incelemeModu = true;
+    mevcutSoruSira = 0;
+    document.getElementById("sınavSonucEkrani").style.display = "none";
+    document.getElementById("sınavOyunEkrani").style.display = "block";
+    sınavSoruBas();
+}
+
+function sınavYenidenBaslat() {
+    document.getElementById("sınavSonucEkrani").style.display = "none";
+    document.getElementById("sınavGirisEkrani").style.display = "block";
+    document.getElementById("sınavSinifSecimi").value = "";
+    sınavSinifDegisti();
+} 
+    
 </script>
 <!-- ========================================== -->
 <!-- 🌐 DASHBOARD BİTİŞİ                       -->
@@ -763,6 +1182,8 @@ document.addEventListener("DOMContentLoaded", function() {
     
 <br>
 
+
+    
 <br>
 
 <div style="margin-top: 15px; margin-bottom: 25px; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;">
