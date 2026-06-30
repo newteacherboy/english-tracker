@@ -372,11 +372,12 @@ canvas { max-height: 200px; }
                 </div>
             </div>
 
-            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 8px;">4. Öğrenci Bilgileri (İsteğe Bağlı):</label>
-                <input type="text" id="sınavOgrenciAdi" placeholder="Adınız Soyadınız" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
-                <input type="text" id="sınavIletisim" placeholder="Telefon veya E-posta adresiniz" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
-            </div>
+           <div style="background: #fdf2f8; padding: 15px; border-radius: 8px; border: 1px solid #fbcfe8; margin-bottom: 20px;">
+    <label style="font-weight: bold; display: block; margin-bottom: 8px; color: #db2777;">🏆 Liderlik Tablosu İçin Bilgileriniz:</label>
+    <input type="text" id="sınavOgrenciAdi" placeholder="Adınız Soyadınız (ZORUNLU)" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 2px solid #f472b6; box-sizing: border-box; font-weight: 500;">
+    <input type="text" id="sınavIletisim" placeholder="İletişim Numarası veya Mail (İsteğe Bağlı - Gizli Kalır)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+    <small style="color: #9d174d; display:block; margin-top: 5px; font-size:12px;">* İsminiz kalıcı başarı tablosunda dereceye girmek için zorunludur.</small>
+</div>
 
             <button onclick="sınavıOlusturVeBaslat()" style="width:100%; background:#4f46e5; color:white; border:none; padding:12px; font-weight:bold; border-radius:6px; cursor:pointer; font-size:16px;">Sınavı Başlat 🚀</button>
         </div>
@@ -862,10 +863,10 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-   // =========================================================================
+  // =========================================================================
 // 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
 // =========================================================================
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyoz-u9pDrUC29DZCzs_-nltu7lITUPWyFmMmFKPUYByoFDcvyiy0G-r8EQe1CIEZN_/exec";
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxi-norEqlM8vJdOhVyKSX4-mV3b0GRmsgguoF9KHzMvVtJAGrioT4Db78KYH-PtXRU/exec";
 
 var tumSoruHavuzu = [];
 var secilenSınavSorulari = [];
@@ -958,10 +959,16 @@ function sınavSinifDegisti() {
     }
 }
 
-// Sınavı Oluşturma ve Karıştırma Algoritması
+// Sınavı Oluşturma ve Karıştırma Algoritması (İsim Kontrolü Eklendi)
 function sınavıOlusturVeBaslat() {
     if(tumSoruHavuzu.length === 0) {
         return alert("Sorular henüz tam yüklenmedi veya çekilemedi. Lütfen birkaç saniye bekleyip tekrar deneyin.");
+    }
+
+    // 🚨 İSİM ZORUNLULUK KONTROLÜ
+    var ogrenciAdi = document.getElementById("sınavOgrenciAdi").value.trim();
+    if(ogrenciAdi === "" || ogrenciAdi.length < 3) {
+        return alert("Lütfen başarı tablosunda listelenebilmek için Adınızı ve Soyadınızı yazın!");
     }
 
     var sinif = document.getElementById("sınavSinifSecimi").value;
@@ -973,31 +980,26 @@ function sınavıOlusturVeBaslat() {
     var seciliUniteler = Array.from(cbler).map(cb => parseInt(cb.value));
     var limit = parseInt(document.getElementById("sınavSoruSayisi").value);
     
-    // Filtreleme mantığı güncellendi
     var filtrelenmis = tumSoruHavuzu.filter(s => parseInt(s.Sinif) == parseInt(sinif) && seciliUniteler.includes(parseInt(s.Unite_No)));
     
     if(filtrelenmis.length === 0) {
         return alert("Seçtiğiniz kriterlere uygun soru bulunamadı!");
     }
     
-    // Karıştırma (Shuffle)
     filtrelenmis.sort(function() { return Math.random() - 0.5; });
     secilenSınavSorulari = filtrelenmis.slice(0, limit);
     
-    // Değişken Sıfırlama
     mevcutSoruSira = 0;
     ogrenciSınavCevaplari = {};
     incelemeModu = false;
     sınavToplamSaniye = 0;
     
-    // Ekrana Geçiş (Yazım hatası düzeltildi)
     document.getElementById("sınavGirisEkrani").style.display = "none";
     document.getElementById("sınavSonucEkrani").style.display = "none";
     document.getElementById("sınavOyunEkrani").style.display = "block";
     
     sınavSoruBas();
     
-    // Kronometreyi Başlat
     clearInterval(sınavKronometreInterval);
     sınavKronometreInterval = setInterval(function() {
         sınavToplamSaniye++;
@@ -1145,31 +1147,39 @@ function sınavıHesaplaVeBitir() {
     });
 }
 
+// Tüm Zamanların En İyi 10 Sıralamasını Basma Motoru
 function sınavLiderlikTablosunuBas(aktifSinif) {
     var govde = document.getElementById("sınavLiderlikGövdesi");
     govde.innerHTML = "";
     
-    var filtrelenmis = sunucuLiderlikTablosu.filter(l => l.sinif.indexOf(aktifSinif) > -1);
+    var filtrelenmis = sunucuLiderlikTablosu.filter(l => l.sinif && l.sinif.toString().indexOf(aktifSinif) > -1);
     
-    filtrelenmis.sort((a,b) => {
-        if(b.puan !== a.puan) return b.puan - a.puan;
-        return a.sure.localeCompare(b.sure);
+    filtrelenmis.sort((a, b) => {
+        var puanB = parseInt(b.puan) || 0;
+        var puanA = parseInt(a.puan) || 0;
+        if(puanB !== puanA) return puanB - puanA;
+        return a.sure.toString().localeCompare(b.sure.toString());
     });
 
     var top10 = filtrelenmis.slice(0, 10);
     if(top10.length === 0) {
-        govde.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#9ca3af;">Henüz bu sınıfta kayıtlı derece yok. İlk sen ol!</td></tr>';
+        govde.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#9ca3af;">Henüz bu sınıfta kalıcı bir derece yok. İlk sen ol!</td></tr>';
         return;
     }
 
     top10.forEach((r, idx) => {
-        var arkaPlan = idx === 0 ? "background:#fef3c7;" : (idx === 1 ? "background:#f3f4f6;" : (idx === 2 ? "background:#ffedd5;" : ""));
+        var arkaPlan = "";
+        var madalya = (idx + 1).toString();
+        if(idx === 0) { arkaPlan = "background:#fef3c7; font-weight:bold;"; madalya = "🥇"; }
+        else if(idx === 1) { arkaPlan = "background:#f3f4f6;"; madalya = "🥈"; }
+        else if(idx === 2) { arkaPlan = "background:#ffedd5;"; madalya = "🥉"; }
+        
         govde.innerHTML += '<tr style="border-bottom:1px solid #e5e7eb; '+arkaPlan+'">' +
-            '<td style="padding:8px; font-weight:bold;">' + (idx+1) + '</td>' +
-            '<td style="padding:8px;">' + r.ogrenci_adi + '</td>' +
-            '<td style="padding:8px;">' + r.dogru + '</td>' +
-            '<td style="padding:8px;">' + r.sure + '</td>' +
-            '<td style="padding:8px; font-weight:bold; color:#4f46e5;">' + r.puan + '</td>' +
+            '<td style="padding:10px; font-weight:bold; text-align:center;">' + madalya + '</td>' +
+            '<td style="padding:10px; font-weight: 600; color:#374151;">' + r.ogrenci_adi + '</td>' +
+            '<td style="padding:10px; text-align:center;">' + (r.dogru !== undefined ? r.dogru : "-") + '</td>' +
+            '<td style="padding:10px; text-align:center; font-family:monospace;">' + r.sure + '</td>' +
+            '<td style="padding:10px; font-weight:bold; color:#4f46e5; text-align:center; font-size:15px;">' + r.puan + '</td>' +
             '</tr>';
     });
 }
@@ -1188,7 +1198,6 @@ function sınavYenidenBaslat() {
     document.getElementById("sınavSinifSecimi").value = "";
     sınavSinifDegisti();
 }
-    
 </script>
 <!-- ========================================== -->
 <!-- 🌐 DASHBOARD BİTİŞİ                       -->
