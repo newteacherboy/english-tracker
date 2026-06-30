@@ -620,203 +620,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <br>
 
-<div style="margin-top: 15px; margin-bottom: 25px; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;">
-  <button id="seviyeTestBtn" onclick="seviyeTestiKutusuAc()" style="background: #2C3E50; color: white; width: 100%; border: none; padding: 15px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-  🔍 İngilizce'de Hangi Seviyedesin? Testi Başlat
-  </button>
-
-  <div id="seviyeTestAlani" style="display: none; background: #FAF6F0; border: 1px solid #DCD5C5; padding: 25px; border-radius: 0 0 12px 12px; box-sizing: border-box; margin-top: -4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
-    <div id="testGirisEkrani" style="text-align: center;">
-      <h3 style="color: #2C3E50; margin-top: 0; font-size: 18px;">Uluslararası CEFR Seviye Tespit Sınavı</h3>
-      <p style="font-size: 13px; color: #7A7263; line-height: 1.6; margin-bottom: 20px;">
-        Sorular her girişte sistem tarafından **özel olarak karıştırılır**. İşaretlediğiniz an anlık bildirim alırsınız. İleri/Geri butonlarıyla boş bıraktığınız sorulara dönebilirsiniz.
-      </p>
-      <input type="text" id="testOgrenciIsim" placeholder="Öğrencinin Adı ve Soyadı" style="width:100%; padding: 12px; border-radius:8px; border:1px solid #CFC7B9; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; text-align: center;">
-      <button onclick="testiBaslat()" style="background: #2E5A44; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer;">Sınavı Başlat</button>
-    </div>
-
-    <div id="testSoruEkrani" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #7A7263; font-weight: bold; margin-bottom: 15px;">
-        <span id="soruNumarasi" style="background: #EAE3D2; padding: 4px 10px; border-radius: 20px;">Soru: 1/15</span>
-        <span id="soruSeviyeEtiket" style="background: #2C3E50; padding: 4px 10px; border-radius: 4px; color: #FFF;">Kategori</span>
-      </div>
-
-      <div id="anlikGeribildirim" style="display:none; padding: 8px; border-radius: 6px; text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 15px;"></div>
-
-      <div id="soruGorselKutusu" style="display: none; text-align: center; margin-bottom: 15px;">
-        <img id="soruGorsel" src="" alt="Sınav Görseli" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid #FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      </div>
-
-      <div id="soruSesKutusu" style="display: none; background: #EAE3D2; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px;">
-        <p style="font-size: 11px; font-weight: 800; color: #2C3E50; margin: 0 0 8px 0;">🎧 LISTENING TRACK (SES KAYDINI DİNLEYİNİZ)</p>
-        <audio id="soruSesOynatici" controls style="width: 100%; max-width: 300px; height: 32px; margin: 0 auto; display: block;"></audio>
-      </div>
-
-      <p id="soruMetni" style="font-size: 15px; color: #2C3E50; font-weight: 600; margin-bottom: 18px; line-height: 1.5; white-space: pre-line;"></p>
-      
-      <div id="seceneklerAlani" style="display: flex; flex-direction: column; gap: 10px;"></div>
-
-      <div style="display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #EAE3D2; padding-top: 15px;">
-        <button id="btnGeri" onclick="navigasyonSoru(-1)" style="background: #7A7263; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">⬅️ Önceki Soru</button>
-        <button id="btnIleri" onclick="navigasyonSoru(1)" style="background: #4A5A6A; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">Sonraki Soru ➡️</button>
-      </div>
-    </div>
-
-    <div id="testSonucEkrani" style="display: none; text-align: center; padding: 15px 0;">
-      <div style="font-size: 55px; margin-bottom: 12px;">🚀</div>
-      <h4 style="color: #2C3E50; margin: 0 0 8px 0; font-size: 22px; font-weight: bold;">Muazzam Bir Başlangıç! 🎉</h4>
-      <p style="font-size: 14px; color: #4A4235; line-height: 1.5; margin-bottom: 15px;">ÖĞRETMEN ÇOCUK Koçluk ve Dil Akademisi standartlarına göre başarı profiliniz analiz edildi. Potansiyeliniz harika!</p>
-      
-      <div style="background: #2E5A44; color: white; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 22px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(46,90,68,0.2);">
-        Mevcut Seviyeniz: <span id="testSonucSeviye">-</span>
-      </div>
-      
-      <p id="testSkorMetni" style="font-size: 14px; color: #2C3E50; font-weight: 600; margin-bottom: 20px;"></p>
-      
-      <div style="color: #2C3E50; background: #FFF; border: 2px dashed #2E5A44; padding: 18px; border-radius: 10px; font-size: 13.5px; line-height: 1.6; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.02);"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-const hamSoruHavuzu = [
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel1.png", q: "Look at the picture. What is the person doing at the moment?", a: ["She is preparing a traditional dinner in the kitchen.", "She is working on his laptop and writing some notes.", "She is buying a new tablet from the tech store.", "She is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel2.png", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel3.png", q: "Look at the traffic sign in the picture. Which of the following is CORRECT?", a: ["Drivers are allowed to park their cars here overnight.", "Drivers must not exceed the maximum speed limit shown.", "The road is completely closed due to maintenance.", "Pedestrians have the absolute right of way here."], c: 1, lvl: "B1 - Sign Analysis" },
-  { type: "audio", mediaUrl: "ses1.mp3", q: "Listen to the speaker talking about his daily routine. What time does he usually have breakfast?", a: ["At quarter to seven in the morning.", "Right after he leaves the office.", "At half past eight with his parents.", "He prefers to skip breakfast on weekdays."], c: 2, lvl: "A1 - Listening Routine" },
-  { type: "audio", mediaUrl: "ses2.mp3", q: "Listen to the audio presentation. What will the weather be like in the northern area tomorrow afternoon?", a: ["Unseasonably warm and completely dry.", "Rainy with a strong chance of thunderstorms.", "Clear enough for a family picnic.", "Snowy and freezing throughout the day."], c: 1, lvl: "A2 - Listening Weather" },
-  { type: "audio", mediaUrl: "ses3.mp3", q: "Listen to the phone conversation. Why is the woman calling the customer service center?", a: ["To complain about a broken tablet adapter.", "To change the date of her private coaching session.", "To ask for a discount on a long-sleeve shirt.", "To report a technical bug on the exam portal."], c: 1, lvl: "B1 - Listening Management" },
-  { type: "audio", mediaUrl: "ses4.mp3", q: "Listen to the educational coordinator's interview. What is her main argument regarding language acquisition?", a: ["Grammar structures must be memorized before practicing listening.", "Continuous exposure to authentic media accelerates fluency significantly.", "Passing international placement tests is the only proof of success.", "Vocabulary lists are completely useless for high school students."], c: 1, lvl: "B2 - Advanced Listening" },
-  { type: "text", mediaUrl: "", q: "My sister _______ a book in her room at the moment, so please be quiet.", a: ["reads", "is reading", "read", "has read"], c: 1, lvl: "A1 - Grammar Structure" },
-  { type: "text", mediaUrl: "", q: "We _______ each other since we were in the same primary school classroom.", a: ["know", "are knowing", "have known", "knew"], c: 2, lvl: "A2 - Tense Structure" },
-  { type: "text", mediaUrl: "", q: "If our team _______ the national science project last week, we would be in London now.", a: ["won", "had won", "would win", "wins"], c: 1, lvl: "B1 - Conditionals" },
-  { type: "text", mediaUrl: "", q: "Little _______ know that the exam coordinator had already changed the schedule.", a: ["I did", "did I", "I had", "had I"], c: 1, lvl: "B2 - Inversion Structures" },
-  { type: "text", mediaUrl: "", q: "Kevin: Are you coming to the study group tonight?\nSarah: I'd love to, but I have to finish my vocabulary assignment.\nKevin: _______\nSarah: Thanks! That would actually help a lot.", a: ["I think you should go to sleep early.", "I can help you with it if you want.", "The assignment was extremely difficult.", "I have already failed that test."], c: 1, lvl: "A2 - Dialogue Completion" },
-  { type: "text", mediaUrl: "", q: "\"Online learning platforms offer flexibility for students who manage busy schedules. However, without high personal motivation and strict time management, it is very easy to fall behind the curriculum.\"\n\nAccording to the text, what is the main risk of online learning?", a: ["The high cost of technical digital equipment.", "The lack of high-quality educational materials.", "Falling behind due to poor motivation or time control.", "Not being able to communicate with the online tutor."], c: 2, lvl: "B1 - Text Comprehension" },
-  { type: "text", mediaUrl: "", q: "Despite the severe weather conditions and the sudden cancellation of flights, _______.", a: ["the students preferred to stay at the luxury resort hotel", "the academic coordinator managed to arrive at the seminar on time", "because they forgot to check the official announcement page", "which made it impossible for anyone to join the English camp"], c: 1, lvl: "B2 - Sentence Matching" },
-  { type: "text", mediaUrl: "", q: "The teacher's primary goal is to _______ a love for reading and critical thinking in his students from an early age.", a: ["cultivate", "neglect", "artificial", "abolish"], c: 0, lvl: "B2 - Advanced Vocabulary" }
-];
-let aktifSoruBankasi = [];
-let ogrenciCevaplari = Array(15).fill(null); 
-let pointerSoru = 0;
-let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec";
-
-function seviyeTestiKutusuAc() {
-    const alan = document.getElementById("seviyeTestAlani");
-    if(alan.style.display === "none" || alan.style.display === "") { alan.style.display = "block"; } else { alan.style.display = "none"; }
-}
-
-function testiBaslat() {
-    const inputIsim = document.getElementById("testOgrenciIsim").value.trim();
-    if(!inputIsim) { alert("Lütfen adınızı ve soyadınızı giriniz."); return; }
-    ogrenciIsmi = inputIsim;
-    aktifSoruBankasi = [...hamSoruHavuzu];
-    for (let i = aktifSoruBankasi.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [aktifSoruBankasi[i], aktifSoruBankasi[j]] = [aktifSoruBankasi[j], aktifSoruBankasi[i]];
-    }
-    document.getElementById("testGirisEkrani").style.display = "none";
-    document.getElementById("testSoruEkrani").style.display = "block";
-    pointerSoru = 0;
-    ogrenciCevaplari = Array(15).fill(null);
-    dinamikSoruGoster();
-}
-
-function dinamikSoruGoster() {
-    if(pointerSoru >= aktifSoruBankasi.length) { nihaiSorguKapat(); return; }
-    const veri = aktifSoruBankasi[pointerSoru];
-    
-    document.getElementById("soruNumarasi").innerText = `Soru: ${pointerSoru + 1}/${aktifSoruBankasi.length}`;
-    document.getElementById("soruSeviyeEtiket").innerText = veri.lvl;
-    document.getElementById("soruMetni").innerText = veri.q;
-
-    const gb = document.getElementById("anlikGeribildirim");
-    gb.style.display = "none";
-
-    const gKutu = document.getElementById("soruGorselKutusu");
-    if(veri.type === "image") { document.getElementById("soruGorsel").src = veri.mediaUrl; gKutu.style.display = "block"; } else { gKutu.style.display = "none"; }
-
-    const sKutu = document.getElementById("soruSesKutusu");
-    const oynatici = document.getElementById("soruSesOynatici");
-    if(veri.type === "audio") { oynatici.src = veri.mediaUrl; oynatici.load(); sKutu.style.display = "block"; } else { oynatici.pause(); sKutu.style.display = "none"; }
-
-    const sAlan = document.getElementById("seceneklerAlani");
-    sAlan.innerHTML = "";
-    veri.a.forEach((alternatif, i) => {
-        let ekStil = "";
-        if (ogrenciCevaplari[pointerSoru] !== null) {
-            if (i === veri.c) ekStil = "background: #C2E0CC; border-color: #2E5A44; font-weight: bold; color: #2E5A44;"; 
-            else if (i === ogrenciCevaplari[pointerSoru]) ekStil = "background: #FADBD8; border-color: #E74C3C; color: #E74C3C;"; 
-        }
-        sAlan.innerHTML += `<button onclick="anlikSikSecimi(${i})" style="text-align: left; background: #FFF; border: 1px solid #DCD5C5; padding: 13px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; color: #4A4235; width: 100%; box-sizing: border-box; ${ekStil}"><strong>${String.fromCharCode(65 + i)})</strong> ${alternatif}</button>`;
-    });
-    document.getElementById("btnGeri").style.visibility = pointerSoru === 0 ? "hidden" : "visible";
-    document.getElementById("btnIleri").innerText = pointerSoru === 14 ? "Sınavı Bitir 🏁" : "Sonraki Soru ➡️";
-}
-
-function anlikSikSecimi(secilen) {
-    if (ogrenciCevaplari[pointerSoru] !== null) return;
-    const veri = aktifSoruBankasi[pointerSoru];
-    ogrenciCevaplari[pointerSoru] = secilen;
-    const gb = document.getElementById("anlikGeribildirim");
-    if (secilen === veri.c) { gb.innerText = "✓ DOĞRU CEVAP!"; gb.style.background = "#EBF5EE"; gb.style.color = "#2E5A44"; } 
-    else { gb.innerText = `✗ YANLIŞ CEVAP! (Doğru Cevap: ${String.fromCharCode(65 + veri.c)})`; gb.style.background = "#FDEDEC"; gb.style.color = "#E74C3C"; }
-    gb.style.display = "block";
-    setTimeout(() => { dinamikSoruGoster(); }, 1200);
-}
-
-function navigasyonSoru(yon) {
-    if (pointerSoru === 14 && yon === 1) { nihaiSorguKapat(); return; }
-    pointerSoru += yon;
-    if (pointerSoru < 0) pointerSoru = 0;
-    if (pointerSoru > 14) pointerSoru = 14;
-    dinamikSoruGoster();
-}
-
-async function nihaiSorguKapat() {
-    document.getElementById("testSoruEkrani").style.display = "none";
-    document.getElementById("testSonucEkrani").style.display = "block";
-
-    let dSayi = 0; let ySayi = 0;
-    aktifSoruBankasi.forEach((v, index) => { if(ogrenciCevaplari[index] === v.c) dSayi++; else ySayi++; });
-    
-    let seviyeUnvani = "A1 (Beginner / Başlangıç)";
-    let dinamikMesaj = "";
-    if (dSayi >= 14) {
-        seviyeUnvani = "B2+ (Upper-Intermediate Mastery)";
-        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> İngilizce altyapın oldukça güçlü. Karmaşık cümleleri, akademik veya profesyonel düzeydeki metinleri büyük oranda anlayabiliyor, akıcı konuşma potansiyeli taşıyorsun.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Bu seviyedeki en büyük tuzak "akademik körlüktür". Dil bilgisini bilsen de okul sınavları veya ileri düzey mülakatlarda hedefimiz sadece "anlamak" değil, <strong>sıfır hata ile lider olmak</strong>. İleri düzey kelime kombinasyonlarında (collocations), devrik cümle yapılarında ve zaman yönetiminde nokta atışı profesyonel koçluk almazsan, sınavlarda en seçici 1-2 soruda hata yaparak zirveden uzaklaşabilirsin. Potansiyelini şansa bırakmamalı, onu tam profesyonel bir dereceye dönüştürmeliyiz.`;
-    } else if (dSayi >= 11) {
-        seviyeUnvani = "B2 (Vantage / İleri Orta Seviye)";
-        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Günlük dili aşmış, dinlediğini ve okuduğunu rahatça analiz edebilen bir seviyedesin. Temel ve orta düzey yapıların tamamına hakimsin.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B2 seviyesi, öğrencilerin "İngilizceyi biliyorum" diyerek rehavete kapıldığı ve sınavlarda en çok elendiği yerdir. Okuduğunu anlarsın ama seçeneklerdeki çeldiriciler (distractors) seni çok rahat düşürebilir. yeni nesil MEB sınavları doğrudan analiz ve mantık muhakemesi ister. Bu seviyeden yukarı çıkıp hatasız kulvara geçmek; ancak soru analiz stratejileri, bağlamsal kelime okumaları ve profesyonel bir sınav koçunun rehberliğinde düzenli takiple mümkündür. Eksik kalan o %20'lik dilimi kapatıp şampiyonluk kulvarına geçmek için kesinlikle sistemli ders almalısın.`;
-    } else if (dSayi >= 8) {
-        seviyeUnvani = "B1 (Threshold / Orta Seviye)";
-        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Kendini ifade edebiliyor, standart diyalogları ve paragrafları çözebiliyorsun. Kelime haznen var ancak karmaşık yapılarda kafan karışıyor.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B1 seviyesi tam bir "arafta kalma" dönemidir. Kendi kendine çalışarak bu seviyeyi tek başına aşman çok ciddi zaman kaybettirir. Sınavlarda zamanla yarışırken cümleleri kafanda Türkçeye çevirmeye çalışır, yorulur ve süreyi yetiştiremezsin. Bağlaçlar, koşul cümleleri ve ileri düzey okuma becerilerinde <strong>kesinlikle profesyonel bir ders altyapısına ihtiyacın var</strong>. Doğru bir koçlukla çok hızlı şekilde B2 and üzerine zıplayabilecek bir potansiyelin var; bunu kendi başına deneme-yanılma yoluyla harcamamalısın.`;
-    } else if (dSayi >= 5) {
-        seviyeUnvani = "A2 (Waystage / Temel Üstü Seviye)";
-        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Basit cümleleri kurabiliyor, temel kelimeleri (renkler, meslekler, rutinler) anlıyor ve kısa dinleme parçalarını takip edebiliyorsun.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> A2 seviyesindeki bilgi, maalesef okul sınavlarında ve yeni nesil sistemlerde <strong>barajı geçmeye yetmez</strong>. Sorular artık sadece kelime bilgisi değil, o kelimeleri bir paragraf içinde yorumlamanı istiyor. Gramer altyapında ciddi boşluklar var ve tek başına çalışırken hangi konuya öncelik vermen gerektiğini bilemezsin. Yanlış çalışma alışkanlıkları edinmemek ve zaman kaybetmeden "orta ve ileri seviyeye" pürüzsüz geçiş yapmak için <strong>kesinlikle rehberlik ve birebir ders takviyesi almalısın</strong>. Temeli sağlam atmazsak, ilerideki konular tamamen bir yük haline gelecektir.`;
-    } else {
-        seviyeUnvani = "A1 (Beginner / Başlangıç)";
-        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> İngilizce dünyasına yeni adım atıyorsun. Çok temel kelimeleri ve selamlaşma kalıplarını tanıyorsun ancak cümle kurma ve anlama aşamasında desteğe ihtiyacın var.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Yolun henüz çok başında olduğun için tek başına kuralları ezberlemeye çalışmak sende "İngilizce çok zor, yapamıyorum" algısı yaratabilir ve dilden soğumana neden olur. Bu aşamada kendi kendine çalışmak yerine, <strong>doğru bir mentor eşliğinde, sıfırdan ve sistemli bir ders programıyla başlamak KESİNLİKLE zorunludur</strong>. Doğru yöntemle çalışırsan bu seviyeyi tahmin ettiğinden çok daha kısa sürede aşarsın. Kulvarı baştan profesyonel tutmalı, temelini bir uzmanla birlikte en sağlam şekilde inşa etmeliyiz.`;
-    }
-
-    document.getElementById("testSonucSeviye").innerText = seviyeUnvani;
-    document.getElementById("testSkorMetni").innerText = `15 Soru Üzerinden -> Doğru: ${dSayi} | Yanlış: ${ySayi}`;
-    const hocaNotuAlani = document.querySelector("#testSonucEkrani div[style*='border: 2px dashed']");
-    if (hocaNotuAlani) {
-        hocaNotuAlani.innerHTML = `🔥 <strong style="color: #2E5A44; font-size: 15px;">Öğretmen Çocuk Seviye Analizi ve Yol Haritası:</strong><br><br>${dinamikMesaj}<br>🎯 <strong>Şimdi Sıra Sende:</strong> Skorun ve detaylı beceri analizin doğrudan benim sistemime düştü. Zaman kaybetmeden **benimle iletişime geç**, hemen sana özel profesyonel yol haritamızı ve koçluk planımızı hazırlayalım. Başarıya giden yolda liderliği kimseye bırakmıyoruz!`;
-    }
-
-    const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
-    try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec") {
-            await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
-        }
-    } catch(e) { console.log("Senkronizasyon tamamlandı."); }
-}
-</script>
-<br>
-
 <!-- ========================================== -->
 <!-- 🧠 SARMAL SİSTEM KELİME EZBER KARTLARI     -->
 <!-- ========================================== -->
@@ -1135,6 +938,205 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- 🧠 BÖLÜM BİTİŞİ                            -->
 <!-- ========================================== -->
     
+<br>
+
+<br>
+
+<div style="margin-top: 15px; margin-bottom: 25px; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;">
+  <button id="seviyeTestBtn" onclick="seviyeTestiKutusuAc()" style="background: #2C3E50; color: white; width: 100%; border: none; padding: 15px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+  🔍 İngilizce'de Hangi Seviyedesin? Testi Başlat
+  </button>
+
+  <div id="seviyeTestAlani" style="display: none; background: #FAF6F0; border: 1px solid #DCD5C5; padding: 25px; border-radius: 0 0 12px 12px; box-sizing: border-box; margin-top: -4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+    <div id="testGirisEkrani" style="text-align: center;">
+      <h3 style="color: #2C3E50; margin-top: 0; font-size: 18px;">Uluslararası CEFR Seviye Tespit Sınavı</h3>
+      <p style="font-size: 13px; color: #7A7263; line-height: 1.6; margin-bottom: 20px;">
+        Sorular her girişte sistem tarafından **özel olarak karıştırılır**. İşaretlediğiniz an anlık bildirim alırsınız. İleri/Geri butonlarıyla boş bıraktığınız sorulara dönebilirsiniz.
+      </p>
+      <input type="text" id="testOgrenciIsim" placeholder="Öğrencinin Adı ve Soyadı" style="width:100%; padding: 12px; border-radius:8px; border:1px solid #CFC7B9; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; text-align: center;">
+      <button onclick="testiBaslat()" style="background: #2E5A44; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer;">Sınavı Başlat</button>
+    </div>
+
+    <div id="testSoruEkrani" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #7A7263; font-weight: bold; margin-bottom: 15px;">
+        <span id="soruNumarasi" style="background: #EAE3D2; padding: 4px 10px; border-radius: 20px;">Soru: 1/15</span>
+        <span id="soruSeviyeEtiket" style="background: #2C3E50; padding: 4px 10px; border-radius: 4px; color: #FFF;">Kategori</span>
+      </div>
+
+      <div id="anlikGeribildirim" style="display:none; padding: 8px; border-radius: 6px; text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 15px;"></div>
+
+      <div id="soruGorselKutusu" style="display: none; text-align: center; margin-bottom: 15px;">
+        <img id="soruGorsel" src="" alt="Sınav Görseli" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid #FFF; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      </div>
+
+      <div id="soruSesKutusu" style="display: none; background: #EAE3D2; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px;">
+        <p style="font-size: 11px; font-weight: 800; color: #2C3E50; margin: 0 0 8px 0;">🎧 LISTENING TRACK (SES KAYDINI DİNLEYİNİZ)</p>
+        <audio id="soruSesOynatici" controls style="width: 100%; max-width: 300px; height: 32px; margin: 0 auto; display: block;"></audio>
+      </div>
+
+      <p id="soruMetni" style="font-size: 15px; color: #2C3E50; font-weight: 600; margin-bottom: 18px; line-height: 1.5; white-space: pre-line;"></p>
+      
+      <div id="seceneklerAlani" style="display: flex; flex-direction: column; gap: 10px;"></div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #EAE3D2; padding-top: 15px;">
+        <button id="btnGeri" onclick="navigasyonSoru(-1)" style="background: #7A7263; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">⬅️ Önceki Soru</button>
+        <button id="btnIleri" onclick="navigasyonSoru(1)" style="background: #4A5A6A; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">Sonraki Soru ➡️</button>
+      </div>
+    </div>
+
+    <div id="testSonucEkrani" style="display: none; text-align: center; padding: 15px 0;">
+      <div style="font-size: 55px; margin-bottom: 12px;">🚀</div>
+      <h4 style="color: #2C3E50; margin: 0 0 8px 0; font-size: 22px; font-weight: bold;">Muazzam Bir Başlangıç! 🎉</h4>
+      <p style="font-size: 14px; color: #4A4235; line-height: 1.5; margin-bottom: 15px;">ÖĞRETMEN ÇOCUK Koçluk ve Dil Akademisi standartlarına göre başarı profiliniz analiz edildi. Potansiyeliniz harika!</p>
+      
+      <div style="background: #2E5A44; color: white; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 22px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(46,90,68,0.2);">
+        Mevcut Seviyeniz: <span id="testSonucSeviye">-</span>
+      </div>
+      
+      <p id="testSkorMetni" style="font-size: 14px; color: #2C3E50; font-weight: 600; margin-bottom: 20px;"></p>
+      
+      <div style="color: #2C3E50; background: #FFF; border: 2px dashed #2E5A44; padding: 18px; border-radius: 10px; font-size: 13.5px; line-height: 1.6; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.02);"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const hamSoruHavuzu = [
+  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel1.png", q: "Look at the picture. What is the person doing at the moment?", a: ["She is preparing a traditional dinner in the kitchen.", "She is working on his laptop and writing some notes.", "She is buying a new tablet from the tech store.", "She is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
+  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel2.png", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
+  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel3.png", q: "Look at the traffic sign in the picture. Which of the following is CORRECT?", a: ["Drivers are allowed to park their cars here overnight.", "Drivers must not exceed the maximum speed limit shown.", "The road is completely closed due to maintenance.", "Pedestrians have the absolute right of way here."], c: 1, lvl: "B1 - Sign Analysis" },
+  { type: "audio", mediaUrl: "ses1.mp3", q: "Listen to the speaker talking about his daily routine. What time does he usually have breakfast?", a: ["At quarter to seven in the morning.", "Right after he leaves the office.", "At half past eight with his parents.", "He prefers to skip breakfast on weekdays."], c: 2, lvl: "A1 - Listening Routine" },
+  { type: "audio", mediaUrl: "ses2.mp3", q: "Listen to the audio presentation. What will the weather be like in the northern area tomorrow afternoon?", a: ["Unseasonably warm and completely dry.", "Rainy with a strong chance of thunderstorms.", "Clear enough for a family picnic.", "Snowy and freezing throughout the day."], c: 1, lvl: "A2 - Listening Weather" },
+  { type: "audio", mediaUrl: "ses3.mp3", q: "Listen to the phone conversation. Why is the woman calling the customer service center?", a: ["To complain about a broken tablet adapter.", "To change the date of her private coaching session.", "To ask for a discount on a long-sleeve shirt.", "To report a technical bug on the exam portal."], c: 1, lvl: "B1 - Listening Management" },
+  { type: "audio", mediaUrl: "ses4.mp3", q: "Listen to the educational coordinator's interview. What is her main argument regarding language acquisition?", a: ["Grammar structures must be memorized before practicing listening.", "Continuous exposure to authentic media accelerates fluency significantly.", "Passing international placement tests is the only proof of success.", "Vocabulary lists are completely useless for high school students."], c: 1, lvl: "B2 - Advanced Listening" },
+  { type: "text", mediaUrl: "", q: "My sister _______ a book in her room at the moment, so please be quiet.", a: ["reads", "is reading", "read", "has read"], c: 1, lvl: "A1 - Grammar Structure" },
+  { type: "text", mediaUrl: "", q: "We _______ each other since we were in the same primary school classroom.", a: ["know", "are knowing", "have known", "knew"], c: 2, lvl: "A2 - Tense Structure" },
+  { type: "text", mediaUrl: "", q: "If our team _______ the national science project last week, we would be in London now.", a: ["won", "had won", "would win", "wins"], c: 1, lvl: "B1 - Conditionals" },
+  { type: "text", mediaUrl: "", q: "Little _______ know that the exam coordinator had already changed the schedule.", a: ["I did", "did I", "I had", "had I"], c: 1, lvl: "B2 - Inversion Structures" },
+  { type: "text", mediaUrl: "", q: "Kevin: Are you coming to the study group tonight?\nSarah: I'd love to, but I have to finish my vocabulary assignment.\nKevin: _______\nSarah: Thanks! That would actually help a lot.", a: ["I think you should go to sleep early.", "I can help you with it if you want.", "The assignment was extremely difficult.", "I have already failed that test."], c: 1, lvl: "A2 - Dialogue Completion" },
+  { type: "text", mediaUrl: "", q: "\"Online learning platforms offer flexibility for students who manage busy schedules. However, without high personal motivation and strict time management, it is very easy to fall behind the curriculum.\"\n\nAccording to the text, what is the main risk of online learning?", a: ["The high cost of technical digital equipment.", "The lack of high-quality educational materials.", "Falling behind due to poor motivation or time control.", "Not being able to communicate with the online tutor."], c: 2, lvl: "B1 - Text Comprehension" },
+  { type: "text", mediaUrl: "", q: "Despite the severe weather conditions and the sudden cancellation of flights, _______.", a: ["the students preferred to stay at the luxury resort hotel", "the academic coordinator managed to arrive at the seminar on time", "because they forgot to check the official announcement page", "which made it impossible for anyone to join the English camp"], c: 1, lvl: "B2 - Sentence Matching" },
+  { type: "text", mediaUrl: "", q: "The teacher's primary goal is to _______ a love for reading and critical thinking in his students from an early age.", a: ["cultivate", "neglect", "artificial", "abolish"], c: 0, lvl: "B2 - Advanced Vocabulary" }
+];
+let aktifSoruBankasi = [];
+let ogrenciCevaplari = Array(15).fill(null); 
+let pointerSoru = 0;
+let ogrenciIsmi = "";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec";
+
+function seviyeTestiKutusuAc() {
+    const alan = document.getElementById("seviyeTestAlani");
+    if(alan.style.display === "none" || alan.style.display === "") { alan.style.display = "block"; } else { alan.style.display = "none"; }
+}
+
+function testiBaslat() {
+    const inputIsim = document.getElementById("testOgrenciIsim").value.trim();
+    if(!inputIsim) { alert("Lütfen adınızı ve soyadınızı giriniz."); return; }
+    ogrenciIsmi = inputIsim;
+    aktifSoruBankasi = [...hamSoruHavuzu];
+    for (let i = aktifSoruBankasi.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [aktifSoruBankasi[i], aktifSoruBankasi[j]] = [aktifSoruBankasi[j], aktifSoruBankasi[i]];
+    }
+    document.getElementById("testGirisEkrani").style.display = "none";
+    document.getElementById("testSoruEkrani").style.display = "block";
+    pointerSoru = 0;
+    ogrenciCevaplari = Array(15).fill(null);
+    dinamikSoruGoster();
+}
+
+function dinamikSoruGoster() {
+    if(pointerSoru >= aktifSoruBankasi.length) { nihaiSorguKapat(); return; }
+    const veri = aktifSoruBankasi[pointerSoru];
+    
+    document.getElementById("soruNumarasi").innerText = `Soru: ${pointerSoru + 1}/${aktifSoruBankasi.length}`;
+    document.getElementById("soruSeviyeEtiket").innerText = veri.lvl;
+    document.getElementById("soruMetni").innerText = veri.q;
+
+    const gb = document.getElementById("anlikGeribildirim");
+    gb.style.display = "none";
+
+    const gKutu = document.getElementById("soruGorselKutusu");
+    if(veri.type === "image") { document.getElementById("soruGorsel").src = veri.mediaUrl; gKutu.style.display = "block"; } else { gKutu.style.display = "none"; }
+
+    const sKutu = document.getElementById("soruSesKutusu");
+    const oynatici = document.getElementById("soruSesOynatici");
+    if(veri.type === "audio") { oynatici.src = veri.mediaUrl; oynatici.load(); sKutu.style.display = "block"; } else { oynatici.pause(); sKutu.style.display = "none"; }
+
+    const sAlan = document.getElementById("seceneklerAlani");
+    sAlan.innerHTML = "";
+    veri.a.forEach((alternatif, i) => {
+        let ekStil = "";
+        if (ogrenciCevaplari[pointerSoru] !== null) {
+            if (i === veri.c) ekStil = "background: #C2E0CC; border-color: #2E5A44; font-weight: bold; color: #2E5A44;"; 
+            else if (i === ogrenciCevaplari[pointerSoru]) ekStil = "background: #FADBD8; border-color: #E74C3C; color: #E74C3C;"; 
+        }
+        sAlan.innerHTML += `<button onclick="anlikSikSecimi(${i})" style="text-align: left; background: #FFF; border: 1px solid #DCD5C5; padding: 13px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; color: #4A4235; width: 100%; box-sizing: border-box; ${ekStil}"><strong>${String.fromCharCode(65 + i)})</strong> ${alternatif}</button>`;
+    });
+    document.getElementById("btnGeri").style.visibility = pointerSoru === 0 ? "hidden" : "visible";
+    document.getElementById("btnIleri").innerText = pointerSoru === 14 ? "Sınavı Bitir 🏁" : "Sonraki Soru ➡️";
+}
+
+function anlikSikSecimi(secilen) {
+    if (ogrenciCevaplari[pointerSoru] !== null) return;
+    const veri = aktifSoruBankasi[pointerSoru];
+    ogrenciCevaplari[pointerSoru] = secilen;
+    const gb = document.getElementById("anlikGeribildirim");
+    if (secilen === veri.c) { gb.innerText = "✓ DOĞRU CEVAP!"; gb.style.background = "#EBF5EE"; gb.style.color = "#2E5A44"; } 
+    else { gb.innerText = `✗ YANLIŞ CEVAP! (Doğru Cevap: ${String.fromCharCode(65 + veri.c)})`; gb.style.background = "#FDEDEC"; gb.style.color = "#E74C3C"; }
+    gb.style.display = "block";
+    setTimeout(() => { dinamikSoruGoster(); }, 1200);
+}
+
+function navigasyonSoru(yon) {
+    if (pointerSoru === 14 && yon === 1) { nihaiSorguKapat(); return; }
+    pointerSoru += yon;
+    if (pointerSoru < 0) pointerSoru = 0;
+    if (pointerSoru > 14) pointerSoru = 14;
+    dinamikSoruGoster();
+}
+
+async function nihaiSorguKapat() {
+    document.getElementById("testSoruEkrani").style.display = "none";
+    document.getElementById("testSonucEkrani").style.display = "block";
+
+    let dSayi = 0; let ySayi = 0;
+    aktifSoruBankasi.forEach((v, index) => { if(ogrenciCevaplari[index] === v.c) dSayi++; else ySayi++; });
+    
+    let seviyeUnvani = "A1 (Beginner / Başlangıç)";
+    let dinamikMesaj = "";
+    if (dSayi >= 14) {
+        seviyeUnvani = "B2+ (Upper-Intermediate Mastery)";
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> İngilizce altyapın oldukça güçlü. Karmaşık cümleleri, akademik veya profesyonel düzeydeki metinleri büyük oranda anlayabiliyor, akıcı konuşma potansiyeli taşıyorsun.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Bu seviyedeki en büyük tuzak "akademik körlüktür". Dil bilgisini bilsen de okul sınavları veya ileri düzey mülakatlarda hedefimiz sadece "anlamak" değil, <strong>sıfır hata ile lider olmak</strong>. İleri düzey kelime kombinasyonlarında (collocations), devrik cümle yapılarında ve zaman yönetiminde nokta atışı profesyonel koçluk almazsan, sınavlarda en seçici 1-2 soruda hata yaparak zirveden uzaklaşabilirsin. Potansiyelini şansa bırakmamalı, onu tam profesyonel bir dereceye dönüştürmeliyiz.`;
+    } else if (dSayi >= 11) {
+        seviyeUnvani = "B2 (Vantage / İleri Orta Seviye)";
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Günlük dili aşmış, dinlediğini ve okuduğunu rahatça analiz edebilen bir seviyedesin. Temel ve orta düzey yapıların tamamına hakimsin.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B2 seviyesi, öğrencilerin "İngilizceyi biliyorum" diyerek rehavete kapıldığı ve sınavlarda en çok elendiği yerdir. Okuduğunu anlarsın ama seçeneklerdeki çeldiriciler (distractors) seni çok rahat düşürebilir. yeni nesil MEB sınavları doğrudan analiz ve mantık muhakemesi ister. Bu seviyeden yukarı çıkıp hatasız kulvara geçmek; ancak soru analiz stratejileri, bağlamsal kelime okumaları ve profesyonel bir sınav koçunun rehberliğinde düzenli takiple mümkündür. Eksik kalan o %20'lik dilimi kapatıp şampiyonluk kulvarına geçmek için kesinlikle sistemli ders almalısın.`;
+    } else if (dSayi >= 8) {
+        seviyeUnvani = "B1 (Threshold / Orta Seviye)";
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Kendini ifade edebiliyor, standart diyalogları ve paragrafları çözebiliyorsun. Kelime haznen var ancak karmaşık yapılarda kafan karışıyor.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> B1 seviyesi tam bir "arafta kalma" dönemidir. Kendi kendine çalışarak bu seviyeyi tek başına aşman çok ciddi zaman kaybettirir. Sınavlarda zamanla yarışırken cümleleri kafanda Türkçeye çevirmeye çalışır, yorulur ve süreyi yetiştiremezsin. Bağlaçlar, koşul cümleleri ve ileri düzey okuma becerilerinde <strong>kesinlikle profesyonel bir ders altyapısına ihtiyacın var</strong>. Doğru bir koçlukla çok hızlı şekilde B2 and üzerine zıplayabilecek bir potansiyelin var; bunu kendi başına deneme-yanılma yoluyla harcamamalısın.`;
+    } else if (dSayi >= 5) {
+        seviyeUnvani = "A2 (Waystage / Temel Üstü Seviye)";
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> Basit cümleleri kurabiliyor, temel kelimeleri (renkler, meslekler, rutinler) anlıyor ve kısa dinleme parçalarını takip edebiliyorsun.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> A2 seviyesindeki bilgi, maalesef okul sınavlarında ve yeni nesil sistemlerde <strong>barajı geçmeye yetmez</strong>. Sorular artık sadece kelime bilgisi değil, o kelimeleri bir paragraf içinde yorumlamanı istiyor. Gramer altyapında ciddi boşluklar var ve tek başına çalışırken hangi konuya öncelik vermen gerektiğini bilemezsin. Yanlış çalışma alışkanlıkları edinmemek ve zaman kaybetmeden "orta ve ileri seviyeye" pürüzsüz geçiş yapmak için <strong>kesinlikle rehberlik ve birebir ders takviyesi almalısın</strong>. Temeli sağlam atmazsak, ilerideki konular tamamen bir yük haline gelecektir.`;
+    } else {
+        seviyeUnvani = "A1 (Beginner / Başlangıç)";
+        dinamikMesaj = `🎯 <strong>Mevcut Durumun:</strong> İngilizce dünyasına yeni adım atıyorsun. Çok temel kelimeleri ve selamlaşma kalıplarını tanıyorsun ancak cümle kurma ve anlama aşamasında desteğe ihtiyacın var.<br><br>⚠️ <strong>Neden Profesyonel Ders/Koçluk Almalısın?</strong> Yolun henüz çok başında olduğun için tek başına kuralları ezberlemeye çalışmak sende "İngilizce çok zor, yapamıyorum" algısı yaratabilir ve dilden soğumana neden olur. Bu aşamada kendi kendine çalışmak yerine, <strong>doğru bir mentor eşliğinde, sıfırdan ve sistemli bir ders programıyla başlamak KESİNLİKLE zorunludur</strong>. Doğru yöntemle çalışırsan bu seviyeyi tahmin ettiğinden çok daha kısa sürede aşarsın. Kulvarı baştan profesyonel tutmalı, temelini bir uzmanla birlikte en sağlam şekilde inşa etmeliyiz.`;
+    }
+
+    document.getElementById("testSonucSeviye").innerText = seviyeUnvani;
+    document.getElementById("testSkorMetni").innerText = `15 Soru Üzerinden -> Doğru: ${dSayi} | Yanlış: ${ySayi}`;
+    const hocaNotuAlani = document.querySelector("#testSonucEkrani div[style*='border: 2px dashed']");
+    if (hocaNotuAlani) {
+        hocaNotuAlani.innerHTML = `🔥 <strong style="color: #2E5A44; font-size: 15px;">Öğretmen Çocuk Seviye Analizi ve Yol Haritası:</strong><br><br>${dinamikMesaj}<br>🎯 <strong>Şimdi Sıra Sende:</strong> Skorun ve detaylı beceri analizin doğrudan benim sistemime düştü. Zaman kaybetmeden **benimle iletişime geç**, hemen sana özel profesyonel yol haritamızı ve koçluk planımızı hazırlayalım. Başarıya giden yolda liderliği kimseye bırakmıyoruz!`;
+    }
+
+    const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
+    try {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec") {
+            await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
+        }
+    } catch(e) { console.log("Senkronizasyon tamamlandı."); }
+}
+</script>
 <br>
     
 <div style="margin-bottom: 15px; box-sizing: border-box;">
