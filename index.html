@@ -852,17 +852,13 @@ function siradakiKelimeyiGetir() {
     suAnkiKelime = aktifKelimeHavuzu.pop(); 
 
     let flashcard = document.getElementById("ezberFlashCard");
-    flashcard.classList.remove("flipped"); 
+    flashcard.classList.remove("is-flipped"); 
     
     setTimeout(() => {
         // 🔧 HATA DÜZELTİLDİ: suAnkiKelime.ing yerine suAnkiKelime.en yazıldı
         document.getElementById("ezberIngilizceKelime").innerText = suAnkiKelime.en;
         document.getElementById("ezberTurkceKelime").innerText = suAnkiKelime.tr;
     }, 150);
-}
-
-    function ezberKartiCevir() {
-    document.getElementById("ezberFlashCard").classList.toggle("flipped");
 }
 
 function ezberCevapVer(dogruMu) {
