@@ -1013,52 +1013,9 @@ function kitaplariGetir(sinifId, buton) {
 }
 
 // 🧠 SARMAL EZBER SİSTEMİ MOTORU
-function ezberSinifSec(sinifId, buton) {
-    if(buton) {
-        document.querySelectorAll('#ezberKartIcerik .panel-sinif-btn').forEach(b => b.classList.remove('active'));
-        buton.classList.add('active');
-    }
-    aktifSinif = sinifId;
-    ezberKelimeYukle();
-}
 
-function ezberKelimeYukle() {
-    document.getElementById("ezberFlashCard").classList.remove("flipped");
-    const siralama = ["2-sinif", "3-sinif", "4-sinif", "5-sinif", "6-sinif", "7-sinif", "8-sinif"];
-    const hedefIdx = siralama.indexOf(aktifSinif);
-    
-    // Kümülatif havuz birleştirme tetikleyicisi
-    aktifKelimeListesi = [];
-    for(let i = 0; i <= hedefIdx; i++) {
-        aktifKelimeListesi = aktifKelimeListesi.concat(ezberKelimeDeposu[siralama[i]] || []);
-    }
-    document.getElementById("ezberHavuzSayisi").innerText = aktifKelimeListesi.length + " Kelime";
 
-    const rastgele = Math.floor(Math.random() * aktifKelimeListesi.length);
-    mevcutKelimeNesnesi = aktifKelimeListesi[rastgele];
 
-    setTimeout(() => {
-        document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
-        document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
-    }, 150);
-}
-
-function ezberKartiCevir() { document.getElementById("ezberFlashCard").classList.toggle("flipped"); }
-
-function ezberCevapVer(durum) {
-    if(!mevcutKelimeNesnesi) return;
-    if(durum) { dogruSkor++; document.getElementById("ezberDogruSayisi").innerText = dogruSkor; }
-    else { yanlisSkor++; document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor; }
-    ezberKelimeYukle();
-}
-
-function ezberSkorSifirla() {
-    if(confirm("Skor sıfırlansın mı?")) {
-        dogruSkor = 0; yanlisSkor = 0;
-        document.getElementById("ezberDogruSayisi").innerText = "0";
-        document.getElementById("ezberYanlisSayisi").innerText = "0";
-    }
-}
 
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
