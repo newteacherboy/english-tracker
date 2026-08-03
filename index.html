@@ -663,7 +663,7 @@ const muallimKitapDeposu = {
 
 // 📊 SARMAL MANTIĞA GÖRE BÜYÜYEN DİNAMİK VERİ BANKASI (TOPLAM: 470 ÖZGÜN KELİME)
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEXpifn5DzNQfVCUfCeIGHLVQHLagRZpt8tfb-V_O_sYl3oOYWAxAOAEnemKeqvOU3/exec"; // Buraya kendi URL'nizi yapıştırın
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykeMWLD5bfgXQegatj1jnWG6Id1vrnTkYBzJnjLGDmPXHeiFTdnSariQRj1koctTy5/exec"; // Buraya kendi URL'nizi yapıştırın
 
 let ezberTimer;
 let ezberGecenSure = 0;
@@ -1025,7 +1025,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // =========================================================================
 // 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
 // =========================================================================
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyEXpifn5DzNQfVCUfCeIGHLVQHLagRZpt8tfb-V_O_sYl3oOYWAxAOAEnemKeqvOU3/exec";
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbykeMWLD5bfgXQegatj1jnWG6Id1vrnTkYBzJnjLGDmPXHeiFTdnSariQRj1koctTy5/exec";
 
 var tumSoruHavuzu = [];
 var secilenSınavSorulari = [];
@@ -1535,7 +1535,7 @@ let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbyEXpifn5DzNQfVCUfCeIGHLVQHLagRZpt8tfb-V_O_sYl3oOYWAxAOAEnemKeqvOU3/exec";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbykeMWLD5bfgXQegatj1jnWG6Id1vrnTkYBzJnjLGDmPXHeiFTdnSariQRj1koctTy5/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
@@ -1644,7 +1644,7 @@ async function nihaiSorguKapat() {
 
     const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbyEXpifn5DzNQfVCUfCeIGHLVQHLagRZpt8tfb-V_O_sYl3oOYWAxAOAEnemKeqvOU3/exec") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbykeMWLD5bfgXQegatj1jnWG6Id1vrnTkYBzJnjLGDmPXHeiFTdnSariQRj1koctTy5/exec") {
             await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
     } catch(e) { console.log("Senkronizasyon tamamlandı."); }
