@@ -297,78 +297,50 @@ canvas { max-height: 200px; }
         </div>
     </div>
 
-    <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ (GÜNCELLENDİ) -->
+    <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ -->
     <div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
+        <p class="panel-alt-bilgi">Sınıf yükseldikçe alt sınıfların kelimeleri de sarmal olarak havuzunuza eklenir!</p>
+        <div class="panel-sinif-grid">
+            <button class="panel-sinif-btn active" onclick="ezberSinifSec('2-sinif', this)">2. Sınıf (70 Kelime)</button>
+            <button class="panel-sinif-btn" onclick="ezberSinifSec('3-sinif', this)">3. Sınıf (+50 Kelime)</button>
+            <button class="panel-sinif-btn" onclick="ezberSinifSec('4-sinif', this)">4. Sınıf (+50 Kelime)</button>
+            <button class="panel-sinif-btn" onclick="ezberSinifSec('5-sinif', this)">5. Sınıf (+50 Kelime)</button>
+            <button class="panel-sinif-btn" onclick="ezberSinifSec('6-sinif', this)">6. Sınıf (+50 Kelime)</button>
+            <button class="panel-sinif-btn" onclick="ezberSinifSec('7-sinif', this)">7. Sınıf (+50 Kelime)</button>
+            <button class="panel-sinif-btn" onclick="ezberSinifSec('8-sinif', this)">8. Sınıf LGS (+150 Kelime)</button>
+        </div>
         
-        <!-- 1️⃣ GİRİŞ EKRANI -->
-<div id="ezberGirisEkrani">
-    <h3>Öğrenci Girişi</h3>
-    <input type="text" id="ezberOgrenciAdi" placeholder="Adınızı ve Soyadınızı Girin">
-    
-    <div class="ezber-sinif-secim-alani">
-        <button type="button" class="ezber-giris-sinif-btn active" onclick="ezberGirisSinifSec('2-sinif', this)">2. Sınıf</button>
-        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('3-sinif', this)">3. Sınıf</button>
-        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('4-sinif', this)">4. Sınıf</button>
-        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('5-sinif', this)">5. Sınıf</button>
-        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('6-sinif', this)">6. Sınıf</button>
-        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('7-sinif', this)">7. Sınıf</button>
-        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('8-sinif', this)">8. Sınıf</button>
-    </div>
-
-    <button type="button" onclick="ezberOyunuBaslat()">Oyunu Başlat 🚀</button>
-</div>
-
-        <!-- 2️⃣ OYUN EKRANI -->
-        <div id="ezberOyunEkrani" style="display: none;">
-            <div class="ezber-ust-bar">
-                <div class="ezber-havuz-bilgi">📋 Havuz: <strong id="ezberHavuzSayisi">70</strong></div>
-                <div id="ezberKronometre" style="background: #4f46e5; color: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-family: monospace;">Süre: 00:00</div>
-                <div class="ezber-skorboard">
-                    <span class="skor-dogru">✅ Doğru: <strong id="ezberDogruSayisi">0</strong></span>
-                    <span class="skor-yanlis">❌ Yanlış: <strong id="ezberYanlisSayisi">0</strong></span>
-                </div>
-            </div>
-
-            <div class="ezber-kart-alani">
-                <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()">
-                    <div class="ezber-card-face ezber-card-front">
-                        <span class="dil-etiket">ENGLISH</span>
-                        <h2 id="ezberIngilizceKelime">Loading...</h2>
-                        <p class="cevir-ipucu">Anlamı için tıkla 🔄</p>
-                    </div>
-                    <div class="ezber-card-face ezber-card-back">
-                        <span class="dil-etiket">TÜRKÇE</span>
-                        <h2 id="ezberTurkceKelime">Yükleniyor...</h2>
-                        <p class="cevir-ipucu">Kelimeye dön 🔄</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="ezber-kontrol-grubu">
-                <button class="ezber-btn-action btn-yanlis" onclick="ezberCevapVer(false)">❌ Yanlış Bildim</button>
-                <button class="ezber-btn-action btn-dogru" onclick="ezberCevapVer(true)">✅ Doğru Bildim</button>
+        <div class="ezber-ust-bar">
+            <div class="ezber-havuz-bilgi">📋 Karşılaşabileceğiniz Toplam Kelime: <strong id="ezberHavuzSayisi">70</strong></div>
+            <div class="ezber-skorboard">
+                <span class="skor-dogru">✅ Doğru: <strong id="ezberDogruSayisi">0</strong></span>
+                <span class="skor-yanlis">❌ Yanlış: <strong id="ezberYanlisSayisi">0</strong></span>
+                <button class="skor-sifirla-btn" onclick="ezberSkorSifirla()">Sıfırla</button>
             </div>
         </div>
 
-        <!-- 3️⃣ SONUÇ EKRANI -->
-        <div id="ezberSonucEkrani" style="display: none; text-align: center; padding: 20px;">
-            <h3 style="color: #10b981; margin-bottom: 15px;">🎉 Kelime Havuzu Tamamlandı!</h3>
-            
-            <div style="display: flex; justify-content: space-around; background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0; font-weight: bold;">
-                <div style="color:#10b981;">Doğru: <span id="ezberResDogru">0</span></div>
-                <div style="color:#ef4444;">Yanlış: <span id="ezberResYanlis">0</span></div>
-                <div style="color:#4f46e5;">Puan: <span id="ezberResPuan">0</span></div>
+        <div class="ezber-kart-alani">
+            <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()">
+                <div class="ezber-card-face ezber-card-front">
+                    <span class="dil-etiket">ENGLISH</span>
+                    <h2 id="ezberIngilizceKelime">Loading...</h2>
+                    <p class="cevir-ipucu">Anlamı için tıkla 🔄</p>
+                </div>
+                <div class="ezber-card-face ezber-card-back">
+                    <span class="dil-etiket">TÜRKÇE</span>
+                    <h2 id="ezberTurkceKelime">Yükleniyor...</h2>
+                    <p class="cevir-ipucu">Kelimeye dön 🔄</p>
+                </div>
             </div>
-
-            <p style="font-weight: bold; color:#374151; margin-bottom: 20px;">⏳ Harcanan Süre: <span id="ezberResSure">00:00</span></p>
-            
-            <button onclick="ezberYenidenBaslat()" style="width:100%; background:#4f46e5; color:white; border:none; padding:12px; font-weight:bold; border-radius:6px; cursor:pointer; font-size:16px; margin-bottom: 15px;">🔄 Yeni Oyun / Tekrar Oyna</button>
         </div>
 
+        <div class="ezber-kontrol-grubu">
+            <button class="ezber-btn-action btn-yanlis" onclick="ezberCevapVer(false)">❌ Yanlış Bildim</button>
+            <button class="ezber-btn-action btn-dogru" onclick="ezberCevapVer(true)">✅ Doğru Bildim</button>
+        </div>
     </div>
 
-    <!-- 3. PANEL: ONLINE DENEME ÇÖZ -->
-    <div id="denemeSınavIcerik" class="dashboard-ic-panel" style="display: none; padding: 20px;">
+<div id="denemeSınavIcerik" class="dashboard-ic-panel" style="display: none; padding: 20px;">
         
         <div id="sınavGirisEkrani">
             <h3 style="text-align: center; color: #4f46e5; margin-bottom: 20px;">🎯 LGS Deneme Sınavı Oluştur</h3>
@@ -467,6 +439,7 @@ canvas { max-height: 200px; }
     </div>
     
 </div>
+
 <!-- 🎨 STİL DOSYASI (CSS) -->
 <style>
 .dashboard-ana-wrapper { max-width: 1100px; margin: 30px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -794,23 +767,6 @@ function muallimKitapToggle() {
     }
 }
 
-// 🌐 GLOBAL DEĞİŞKENLER
-let aktifSinif = "2-sinif";
-let aktifKelimeListesi = [];
-let kalanKelimeler = [];
-let mevcutKelimeNesnesi = null;
-let dogruSkor = 0;
-let yanlisSkor = 0;
-let ogrenciAdi = "";
-
-// ⏱️ KRONOMETRE DEĞİŞKENLERİ
-let ezberSaniye = 0;
-let ezberDakika = 0;
-let ezberTimerInterval = null;
-
-// 🔗 GOOGLE SHEETS WEB APP URL (Liderlik Sayfası İçin Kendi URL'nizi Ekleyin)
-const EZBER_GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxQbWbNT9Sp4zm-uAKHNVn6suKDbE6MQvR0lXflUW6rxm7PXiGP1c5Xlw4mwANjrniA/exec";
-
 // 🔄 EZBER PANEL TETİKLEYİCİ
 function ezberKartToggle() {
     const icerik = document.getElementById("ezberKartIcerik");
@@ -820,25 +776,20 @@ function ezberKartToggle() {
     document.getElementById("muallimKitapIcerik").style.display = "none";
     document.getElementById("muallimKareKutu").classList.remove("active");
     document.getElementById("muallimOkIsareti").innerText = "🔽";
-    
-    // Açık olan diğer panelleri kapatmak isterseniz ekleyebilirsiniz
 
     if (icerik.style.display === "none") {
         icerik.style.display = "block";
         kutu.classList.add("active");
         ok.innerText = "🔼";
-        
-        // Panel açıldığında her zaman Giriş Ekranını gösterelim
-        ezberGirisEkranineDon();
+        if(!mevcutKelimeNesnesi) { ezberKelimeYukle(); }
     } else {
         icerik.style.display = "none";
         kutu.classList.remove("active");
         ok.innerText = "🔽";
-        ezberKronometreDurdur();
     }
 }
 
-// 📖 KİTAP LİSTELEME SİSTEMİ (Değişmedi)
+// 📖 KİTAP LİSTELEME SİSTEMİ
 function kitaplariGetir(sinifId, buton) {
     if(buton) {
         document.querySelectorAll('#muallimKitapIcerik .panel-sinif-btn').forEach(b => b.classList.remove('active'));
@@ -858,76 +809,30 @@ function kitaplariGetir(sinifId, buton) {
     });
 }
 
-// 🧠 GİRİŞ EKRANINDA SINIF SEÇİMİ
-function ezberGirisSinifSec(sinifId, buton) {
-    // Sayfadaki tüm giriş sınıf butonlarından active sınıfını kaldır
-    const tumButonlar = document.querySelectorAll('.ezber-giris-sinif-btn');
-    tumButonlar.forEach(b => b.classList.remove('active'));
-    
-    // Tıklanan butona active sınıfını ekle
+// 🧠 SARMAL EZBER SİSTEMİ MOTORU
+function ezberSinifSec(sinifId, buton) {
     if(buton) {
+        document.querySelectorAll('#ezberKartIcerik .panel-sinif-btn').forEach(b => b.classList.remove('active'));
         buton.classList.add('active');
     }
-    
-    // Aktif sınıfı güncelle
     aktifSinif = sinifId;
-    console.log("Seçilen Sınıf:", aktifSinif); // Konsoldan kontrol edebilirsiniz
+    ezberKelimeYukle();
 }
-// 🚀 OYUNU BAŞLAT (Giriş Ekranından Sonra)
-function ezberOyunuBaslat() {
-    const inputAdi = document.getElementById("ezberOgrenciAdi").value.trim();
-    if(!inputAdi) {
-        alert("Lütfen oyuna başlamadan önce Adınızı ve Soyadınızı giriniz!");
-        document.getElementById("ezberOgrenciAdi").focus();
-        return;
-    }
-    ogrenciAdi = inputAdi;
 
-    // Ekran geçişleri
-    document.getElementById("ezberGirisEkrani").style.display = "none";
-    document.getElementById("ezberSonucEkrani").style.display = "none";
-    document.getElementById("ezberOyunEkrani").style.display = "block";
-
-    // Skorları ve süreleri sıfırla
-    dogruSkor = 0;
-    yanlisSkor = 0;
-    document.getElementById("ezberDogruSayisi").innerText = "0";
-    document.getElementById("ezberYanlisSayisi").innerText = "0";
-
-    // Sarmal havuzu oluştur
+function ezberKelimeYukle() {
+    document.getElementById("ezberFlashCard").classList.remove("flipped");
     const siralama = ["2-sinif", "3-sinif", "4-sinif", "5-sinif", "6-sinif", "7-sinif", "8-sinif"];
     const hedefIdx = siralama.indexOf(aktifSinif);
     
+    // Kümülatif havuz birleştirme tetikleyicisi
     aktifKelimeListesi = [];
     for(let i = 0; i <= hedefIdx; i++) {
         aktifKelimeListesi = aktifKelimeListesi.concat(ezberKelimeDeposu[siralama[i]] || []);
     }
-    
-    // Havuzun kopyasını al (oynanıldıkça kelimeler eksilsin ki "bitti" uyarısı verilebilsin)
-    kalanKelimeler = [...aktifKelimeListesi];
-    document.getElementById("ezberHavuzSayisi").innerText = kalanKelimeler.length;
+    document.getElementById("ezberHavuzSayisi").innerText = aktifKelimeListesi.length + " Kelime";
 
-    // Kronometreyi başlat
-    ezberKronometreBaslat();
-
-    // İlk kelimeyi yükle
-    ezberKelimeYukle();
-}
-
-// 📦 KELİME YÜKLEME VE HAVUZ KONTROLÜ
-function ezberKelimeYukle() {
-    document.getElementById("ezberFlashCard").classList.remove("flipped");
-
-    if (kalanKelimeler.length === 0) {
-        ezberOyunuBitir();
-        return;
-    }
-
-    // Rastgele bir kelime seç ve havuzdan çıkar
-    const rastgeleIdx = Math.floor(Math.random() * kalanKelimeler.length);
-    mevcutKelimeNesnesi = kalanKelimeler.splice(rastgeleIdx, 1)[0];
-    
-    document.getElementById("ezberHavuzSayisi").innerText = kalanKelimeler.length;
+    const rastgele = Math.floor(Math.random() * aktifKelimeListesi.length);
+    mevcutKelimeNesnesi = aktifKelimeListesi[rastgele];
 
     setTimeout(() => {
         document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
@@ -935,107 +840,23 @@ function ezberKelimeYukle() {
     }, 150);
 }
 
-// 🔄 KARTI ÇEVİR
-function ezberKartiCevir() { 
-    document.getElementById("ezberFlashCard").classList.toggle("flipped"); 
-}
+function ezberKartiCevir() { document.getElementById("ezberFlashCard").classList.toggle("flipped"); }
 
-// ✅ ❌ CEVAP VERME
 function ezberCevapVer(durum) {
     if(!mevcutKelimeNesnesi) return;
-    if(durum) { 
-        dogruSkor++; 
-        document.getElementById("ezberDogruSayisi").innerText = dogruSkor; 
-    } else { 
-        yanlisSkor++; 
-        document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor; 
-    }
+    if(durum) { dogruSkor++; document.getElementById("ezberDogruSayisi").innerText = dogruSkor; }
+    else { yanlisSkor++; document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor; }
     ezberKelimeYukle();
 }
 
-// ⏱️ KRONOMETRE FONKSİYONLARI
-function ezberKronometreBaslat() {
-    ezberSaniye = 0;
-    ezberDakika = 0;
-    ezberKronometreGuncelle();
-    clearInterval(ezberTimerInterval);
-    ezberTimerInterval = setInterval(() => {
-        ezberSaniye++;
-        if (ezberSaniye === 60) {
-            ezberSaniye = 0;
-            ezberDakika++;
-        }
-        ezberKronometreGuncelle();
-    }, 1000);
-}
-
-function ezberKronometreDurdur() {
-    clearInterval(ezberTimerInterval);
-}
-
-function ezberKronometreGuncelle() {
-    const dkStr = String(ezberDakika).padStart(2, '0');
-    const snStr = String(ezberSaniye).padStart(2, '0');
-    const zamanMetni = `${dkStr}:${snStr}`;
-    const kronometreEl = document.getElementById("ezberKronometre");
-    if(kronometreEl) kronometreEl.innerText = `Süre: ${zamanMetni}`;
-}
-
-// 🎉 OYUN BİTİRME VE GOOGLE SHEETS KAYDI
-function ezberOyunuBitir() {
-    ezberKronometreDurdur();
-    document.getElementById("ezberOyunEkrani").style.display = "none";
-    document.getElementById("ezberSonucEkrani").style.display = "block";
-
-    const toplamSoru = dogruSkor + yanlisSkor;
-    const puan = toplamSoru > 0 ? Math.round((dogruSkor / toplamSoru) * 100) : 0;
-    const dkStr = String(ezberDakika).padStart(2, '0');
-    const snStr = String(ezberSaniye).padStart(2, '0');
-    const sureStr = `${dkStr}:${snStr}`;
-
-    // Sonuç ekranına yazdır
-    document.getElementById("ezberResDogru").innerText = dogruSkor;
-    document.getElementById("ezberResYanlis").innerText = yanlisSkor;
-    document.getElementById("ezberResPuan").innerText = puan;
-    document.getElementById("ezberResSure").innerText = sureStr;
-
-    // Google Sheets'e Veri Gönderimi (Tarih - Ad Soyad - Sınıf - Doğru - Yanlış - Puan - Süre)
-    const bugunTarih = new Date().toLocaleDateString('tr-TR');
-    const veriObjesi = {
-        islem: "kelimeKayitEkle",
-        tarih: bugunTarih,
-        adSoyad: ogrenciAdi,
-        sinif: aktifSinif,
-        dogru: dogruSkor,
-        yanlis: yanlisSkor,
-        puan: puan,
-        sure: sureStr
-    };
-
-    if (EZBER_GOOGLE_SHEET_URL && EZBER_GOOGLE_SHEET_URL !== "https://script.google.com/macros/s/AKfycbxQbWbNT9Sp4zm-uAKHNVn6suKDbE6MQvR0lXflUW6rxm7PXiGP1c5Xlw4mwANjrniA/exec") {
-        fetch(EZBER_GOOGLE_SHEET_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(veriObjesi)
-        }).catch(err => console.error("Sheets Kayıt Hatası:", err));
+function ezberSkorSifirla() {
+    if(confirm("Skor sıfırlansın mı?")) {
+        dogruSkor = 0; yanlisSkor = 0;
+        document.getElementById("ezberDogruSayisi").innerText = "0";
+        document.getElementById("ezberYanlisSayisi").innerText = "0";
     }
 }
 
-// 🔄 YENİDEN BAŞLAT / GİRİŞE DÖN
-function ezberYenidenBaslat() {
-    ezberGirisEkranineDon();
-}
-
-function ezberGirisEkranineDon() {
-    ezberKronometreDurdur();
-    document.getElementById("ezberOyunEkrani").style.display = "none";
-    document.getElementById("ezberSonucEkrani").style.display = "none";
-    document.getElementById("ezberGirisEkrani").style.display = "block";
-    document.getElementById("ezberOgrenciAdi").value = "";
-}
-
-// Sayfa yüklendiğinde çalışacak ilk ayar
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 });
@@ -1044,7 +865,7 @@ document.addEventListener("DOMContentLoaded", function() {
    // =========================================================================
 // 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
 // =========================================================================
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxQbWbNT9Sp4zm-uAKHNVn6suKDbE6MQvR0lXflUW6rxm7PXiGP1c5Xlw4mwANjrniA/exec";
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyoz-u9pDrUC29DZCzs_-nltu7lITUPWyFmMmFKPUYByoFDcvyiy0G-r8EQe1CIEZN_/exec";
 
 var tumSoruHavuzu = [];
 var secilenSınavSorulari = [];
@@ -1117,97 +938,6 @@ function sınavVerileriniYukle() {
             baslatBtn.innerText = "Veri Yüklenemedi! Sayfayı Yenileyin.";
         }
     });
-}
-
-    // 📖 1. KİTAP PANELİ TETİKLEYİCİ
-function kitapPaneliToggle() {
-    const icerik = document.getElementById("muallimKitapIcerik");
-    const kutu = document.getElementById("muallimKareKutu");
-    const ok = document.getElementById("muallimOkIsareti");
-    
-    // Diğer panelleri kapat (Çakışmayı önlemek için)
-    digerPanelleriKapat("kitap");
-
-    if (icerik.style.display === "block") {
-        icerik.style.display = "none";
-        kutu.classList.remove("active");
-        if(ok) ok.innerText = "🔽";
-    } else {
-        icerik.style.display = "block";
-        kutu.classList.add("active");
-        if(ok) ok.innerText = "🔼";
-    }
-}
-
-// 🧠 2. KELİME EZBER PANELİ TETİKLEYİCİ
-function ezberKartToggle() {
-    const icerik = document.getElementById("ezberKartIcerik");
-    const kutu = document.getElementById("ezberKareKutu");
-    const ok = document.getElementById("ezberOkIsareti");
-    
-    // Diğer panelleri kapat
-    digerPanelleriKapat("ezber");
-
-    if (icerik.style.display === "block") {
-        icerik.style.display = "none";
-        kutu.classList.remove("active");
-        if(ok) ok.innerText = "🔽";
-        ezberKronometreDurdur();
-    } else {
-        icerik.style.display = "block";
-        kutu.classList.add("active");
-        if(ok) ok.innerText = "🔼";
-        ezberGirisEkranineDon();
-    }
-}
-
-// 📝 3. ONLINE DENEME ÇÖZ PANELİ TETİKLEYİCİ (Örnek İsimlendirme)
-function denemePaneliToggle() {
-    const icerik = document.getElementById("denemeIcerik");
-    const kutu = document.getElementById("denemeKareKutu");
-    const ok = document.getElementById("denemeOkIsareti");
-    
-    // Diğer panelleri kapat
-    digerPanelleriKapat("deneme");
-
-    if (icerik.style.display === "block") {
-        icerik.style.display = "none";
-        kutu.classList.remove("active");
-        if(ok) ok.innerText = "🔽";
-    } else {
-        icerik.style.display = "block";
-        kutu.classList.add("active");
-        if(ok) ok.innerText = "🔼";
-    }
-}
-
-// 🧹 YARDIMCI FONKSİYON: Biri açılırken diğerlerini kapatır
-function digerPanelleriKapat(aktifPanel) {
-    if (aktifPanel !== "kitap") {
-        const el = document.getElementById("muallimKitapIcerik");
-        const kutu = document.getElementById("muallimKareKutu");
-        const ok = document.getElementById("muallimOkIsareti");
-        if(el) el.style.display = "none";
-        if(kutu) kutu.classList.remove("active");
-        if(ok) ok.innerText = "🔽";
-    }
-    if (aktifPanel !== "ezber") {
-        const el = document.getElementById("ezberKartIcerik");
-        const kutu = document.getElementById("ezberKareKutu");
-        const ok = document.getElementById("ezberOkIsareti");
-        if(el) el.style.display = "none";
-        if(kutu) kutu.classList.remove("active");
-        if(ok) ok.innerText = "🔽";
-        ezberKronometreDurdur();
-    }
-    if (aktifPanel !== "deneme") {
-        const el = document.getElementById("denemeIcerik");
-        const kutu = document.getElementById("denemeKareKutu");
-        const ok = document.getElementById("denemeOkIsareti");
-        if(el) el.style.display = "none";
-        if(kutu) kutu.classList.remove("active");
-        if(ok) ok.innerText = "🔽";
-    }
 }
 
 // Sınıf Değiştiğinde Üniteleri Kutucuk Olarak Listeleme
@@ -1550,7 +1280,7 @@ let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbxQbWbNT9Sp4zm-uAKHNVn6suKDbE6MQvR0lXflUW6rxm7PXiGP1c5Xlw4mwANjrniA/exec";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
@@ -1659,7 +1389,7 @@ async function nihaiSorguKapat() {
 
     const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbxQbWbNT9Sp4zm-uAKHNVn6suKDbE6MQvR0lXflUW6rxm7PXiGP1c5Xlw4mwANjrniA/exec") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec") {
             await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
     } catch(e) { console.log("Senkronizasyon tamamlandı."); }
