@@ -297,49 +297,76 @@ canvas { max-height: 200px; }
         </div>
     </div>
 
-    <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ -->
-    <div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
-        <p class="panel-alt-bilgi">Sınıf yükseldikçe alt sınıfların kelimeleri de sarmal olarak havuzunuza eklenir!</p>
-        <div class="panel-sinif-grid">
-            <button class="panel-sinif-btn active" onclick="ezberSinifSec('2-sinif', this)">2. Sınıf (70 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('3-sinif', this)">3. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('4-sinif', this)">4. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('5-sinif', this)">5. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('6-sinif', this)">6. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('7-sinif', this)">7. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('8-sinif', this)">8. Sınıf LGS (+150 Kelime)</button>
-        </div>
-        
-        <div class="ezber-ust-bar">
-            <div class="ezber-havuz-bilgi">📋 Karşılaşabileceğiniz Toplam Kelime: <strong id="ezberHavuzSayisi">70</strong></div>
-            <div class="ezber-skorboard">
-                <span class="skor-dogru">✅ Doğru: <strong id="ezberDogruSayisi">0</strong></span>
-                <span class="skor-yanlis">❌ Yanlış: <strong id="ezberYanlisSayisi">0</strong></span>
-                <button class="skor-sifirla-btn" onclick="ezberSkorSifirla()">Sıfırla</button>
-            </div>
-        </div>
+   <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ -->
+<div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
+    
+    <!-- 👤 ÖĞRENCİ GİRİŞ FORMU -->
+    <div id="ezberGirisAlani" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center;">
+        <input type="text" id="ogrenciAdSoyad" placeholder="Adınız ve Soyadınız (İsteğe Bağlı)" style="padding: 10px; width: 60%; border-radius: 5px; border: 1px solid #ccc; font-size: 15px;">
+        <button onclick="ezberBaslat()" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Testi Başlat ⏱️</button>
+    </div>
 
-        <div class="ezber-kart-alani">
-            <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()">
-                <div class="ezber-card-face ezber-card-front">
-                    <span class="dil-etiket">ENGLISH</span>
-                    <h2 id="ezberIngilizceKelime">Loading...</h2>
-                    <p class="cevir-ipucu">Anlamı için tıkla 🔄</p>
-                </div>
-                <div class="ezber-card-face ezber-card-back">
-                    <span class="dil-etiket">TÜRKÇE</span>
-                    <h2 id="ezberTurkceKelime">Yükleniyor...</h2>
-                    <p class="cevir-ipucu">Kelimeye dön 🔄</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="ezber-kontrol-grubu">
-            <button class="ezber-btn-action btn-yanlis" onclick="ezberCevapVer(false)">❌ Yanlış Bildim</button>
-            <button class="ezber-btn-action btn-dogru" onclick="ezberCevapVer(true)">✅ Doğru Bildim</button>
+    <p class="panel-alt-bilgi">Sınıf yükseldikçe alt sınıfların kelimeleri de sarmal olarak havuzunuza eklenir!</p>
+    
+    <div class="panel-sinif-grid">
+        <button class="panel-sinif-btn active" onclick="ezberSinifSec('2-sinif', this)">2. Sınıf (70 Kelime)</button>
+        <button class="panel-sinif-btn" onclick="ezberSinifSec('3-sinif', this)">3. Sınıf (+50 Kelime)</button>
+        <button class="panel-sinif-btn" onclick="ezberSinifSec('4-sinif', this)">4. Sınıf (+50 Kelime)</button>
+        <button class="panel-sinif-btn" onclick="ezberSinifSec('5-sinif', this)">5. Sınıf (+50 Kelime)</button>
+        <button class="panel-sinif-btn" onclick="ezberSinifSec('6-sinif', this)">6. Sınıf (+50 Kelime)</button>
+        <button class="panel-sinif-btn" onclick="ezberSinifSec('7-sinif', this)">7. Sınıf (+50 Kelime)</button>
+        <button class="panel-sinif-btn" onclick="ezberSinifSec('8-sinif', this)">8. Sınıf LGS (+150 Kelime)</button>
+    </div>
+    
+    <div class="ezber-ust-bar">
+        <div class="ezber-havuz-bilgi">📋 Toplam Kelime: <strong id="ezberHavuzSayisi">70</strong></div>
+        <div class="ezber-skorboard">
+            <span class="skor-dogru">✅ Doğru: <strong id="ezberDogruSayisi">0</strong></span>
+            <span class="skor-yanlis">❌ Yanlış: <strong id="ezberYanlisSayisi">0</strong></span>
+            <span style="color:#f59e0b; margin-left:10px;">⏱️ Süre: <strong id="ezberSure">0</strong>s</span>
+            <button class="skor-sifirla-btn" onclick="ezberSkorSifirla()">Sıfırla</button>
         </div>
     </div>
 
+    <div class="ezber-kart-alani">
+        <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()">
+            <div class="ezber-card-face ezber-card-front">
+                <span class="dil-etiket">ENGLISH</span>
+                <h2 id="ezberIngilizceKelime">Loading...</h2>
+                <p class="cevir-ipucu">Anlamı için tıkla 🔄</p>
+            </div>
+            <div class="ezber-card-face ezber-card-back">
+                <span class="dil-etiket">TÜRKÇE</span>
+                <h2 id="ezberTurkceKelime">Yükleniyor...</h2>
+                <p class="cevir-ipucu">Kelimeye dön 🔄</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ezber-kontrol-grubu">
+        <button class="ezber-btn-action btn-yanlis" onclick="ezberCevapVer(false)">❌ Yanlış Bildim</button>
+        <button class="ezber-btn-action btn-dogru" onclick="ezberCevapVer(true)">✅ Doğru Bildim</button>
+    </div>
+
+    <!-- 🏆 LİDERLİK TABLOSU -->
+    <div style="margin-top: 30px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+        <h3 style="text-align: center; color: #f59e0b; margin-bottom: 10px;">🏆 En Yüksek Skorlar (Top 10)</h3>
+        <table id="liderlikTablosu" style="width: 100%; text-align: left; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <th style="padding: 8px;">#</th>
+                    <th style="padding: 8px;">Öğrenci</th>
+                    <th style="padding: 8px;">Sınıf</th>
+                    <th style="padding: 8px;">Puan</th>
+                    <th style="padding: 8px;">Süre</th>
+                </tr>
+            </thead>
+            <tbody id="liderlikBody">
+                <tr><td colspan="5" style="text-align:center; padding: 10px;">Liderlik tablosu yükleniyor...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 <div id="denemeSınavIcerik" class="dashboard-ic-panel" style="display: none; padding: 20px;">
         
         <div id="sınavGirisEkrani">
@@ -617,6 +644,79 @@ const muallimKitapDeposu = {
 };
 
 // 📊 SARMAL MANTIĞA GÖRE BÜYÜYEN DİNAMİK VERİ BANKASI (TOPLAM: 470 ÖZGÜN KELİME)
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-s3OLYYaPMOpb1rtENv2pcC2Em4_W0A0CwsCOOhytNi3HmosRSi3vSrjjb71GWm4/exec";
+
+let ezberTimer;
+let ezberGecenSure = 0;
+let seciliSinif = "2-sinif";
+
+// Süreyi Başlat
+function ezberBaslat() {
+    ezberGecenSure = 0;
+    clearInterval(ezberTimer);
+    ezberTimer = setInterval(() => {
+        ezberGecenSure++;
+        document.getElementById("ezberSure").innerText = ezberGecenSure;
+    }, 1000);
+}
+
+// Test/Havuz Bittiğinde Veriyi Excel'e Gönder
+function ezberTamamlandi() {
+    clearInterval(ezberTimer);
+    
+    let adSoyad = document.getElementById("ogrenciAdSoyad").value.trim() || "Anonim Öğrenci";
+    let dogru = parseInt(document.getElementById("ezberDogruSayisi").innerText);
+    let yanlis = parseInt(document.getElementById("ezberYanlisSayisi").innerText);
+    
+    // Puan Hesabı (Örn: Her doğru 10p, Her yanlış -2p)
+    let puan = Math.max(0, (dogru * 10) - (yanlis * 2));
+
+    let veri = {
+        action: "kaydet",
+        adSoyad: adSoyad,
+        sinif: seciliSinif,
+        dogru: dogru,
+        yanlis: yanlis,
+        puan: puan,
+        sure: ezberGecenSure
+    };
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(veri)
+    }).then(() => {
+        alert(`Tebrikler ${adSoyad}! Puanınız: ${puan} | Süre: ${ezberGecenSure}s`);
+        liderlikTablosunuYukle();
+    });
+}
+
+// Liderlik Tablosunu Google Sheets'ten Çek
+function liderlikTablosunuYukle() {
+    fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+            let body = document.getElementById("liderlikBody");
+            body.innerHTML = "";
+            data.forEach((row, index) => {
+                body.innerHTML += `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 8px;">${index + 1}</td>
+                        <td style="padding: 8px;">${row[0]}</td>
+                        <td style="padding: 8px;">${row[1]}</td>
+                        <td style="padding: 8px; font-weight:bold; color:#22c55e;">${row[4]}</td>
+                        <td style="padding: 8px;">${row[5]}s</td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+// Sayfa yüklendiğinde liderlik tablosunu getir
+document.addEventListener("DOMContentLoaded", liderlikTablosunuYukle);
+    
 const ezberKelimeDeposu = {
     // 📍 2. Sınıf - Başlangıç Seviyesi (Tam 70 Kelime)
     "2-sinif": [
@@ -866,7 +966,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // =========================================================================
 // 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
 // =========================================================================
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxi-norEqlM8vJdOhVyKSX4-mV3b0GRmsgguoF9KHzMvVtJAGrioT4Db78KYH-PtXRU/exec";
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycby-s3OLYYaPMOpb1rtENv2pcC2Em4_W0A0CwsCOOhytNi3HmosRSi3vSrjjb71GWm4/exec";
 
 var tumSoruHavuzu = [];
 var secilenSınavSorulari = [];
@@ -1337,7 +1437,7 @@ let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycby-s3OLYYaPMOpb1rtENv2pcC2Em4_W0A0CwsCOOhytNi3HmosRSi3vSrjjb71GWm4/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
