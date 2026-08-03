@@ -267,7 +267,7 @@ canvas { max-height: 200px; }
             <span id="ezberOkIsareti" class="kutu-ok">🔽</span>
         </button>
 
-        <button id="denemeKareKutu" class="dashboard-kare-kutu" onclick="denemeSınavToggle()">
+        <button id="denemeKareKutu" class="dashboard-kare-kutu" onclick="denemeSinavToggle()">
             <span class="kutu-ikon">📝</span>
             <span class="kutu-baslik">Online Deneme Çöz</span>
             <span id="denemeOkIsareti" class="kutu-ok">🔽</span>
@@ -1189,6 +1189,51 @@ function sınavYenidenBaslat() {
     document.getElementById("sınavGirisEkrani").style.display = "block";
     document.getElementById("sınavSinifSecimi").value = "";
     sınavSinifDegisti();
+}
+// Türkçe karakter içermeyen fonksiyon adı
+function denemeSinavToggle() {
+    const denemeAlani = document.getElementById("denemePanelIcerik"); // Sitenizdeki panel ID'si
+    
+    if (denemeAlani) {
+        if (denemeAlani.style.display === "none" || denemeAlani.style.display === "") {
+            denemeAlani.style.display = "block";
+            // Panel açıldığında soruları yükle
+            onlineDenemeSorulariniYukle();
+        } else {
+            denemeAlani.style.display = "none";
+        }
+    } else {
+        console.error("Deneme paneli HTML elemanı bulunamadı!");
+    }
+}
+
+function onlineDenemeSorulariniYukle() {
+    const yukleniyorKutusu = document.getElementById("denemeYukleniyor");
+    const soruAlani = document.getElementById("denemeSoruAlani");
+
+    if (yukleniyorKutusu) yukleniyorKutusu.style.display = "block";
+
+    fetch(SCRIPT_URL + "?action=sorulariGetir")
+        .then(response => response.json())
+        .then(data => {
+            if (yukleniyorKutusu) yukleniyorKutusu.style.display = "none";
+
+            if (data.durum === "basarili" && data.soruHavuzu) {
+                console.log("Sorular yüklendi:", data.soruHavuzu);
+                if (soruAlani) {
+                    soruAlani.style.display = "block";
+                    // Soruları ekrana basma fonksiyonunuz varsa buraya ekleyin:
+                    // sorulariekranaBas(data.soruHavuzu);
+                }
+            } else {
+                alert("Sorular alınamadı: " + (data.mesaj || "Soru havuzu boş."));
+            }
+        })
+        .catch(error => {
+            console.error("Fetch Hatası:", error);
+            if (yukleniyorKutusu) yukleniyorKutusu.style.display = "none";
+            alert("Bağlantı hatası oluştu: " + error.message);
+        });
 }
     
 </script>
