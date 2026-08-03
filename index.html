@@ -914,25 +914,38 @@ function ezberKartToggle() {
 }
 
 // 📖 KİTAP LİSTELEME SİSTEMİ
-function kitaplariGetir(sinifId, buton) {
-    if(buton) {
-        document.querySelectorAll('#muallimKitapIcerik .panel-sinif-btn').forEach(b => b.classList.remove('active'));
-        buton.classList.add('active');
+function kitaplariGetir(sinif, element) {
+    // 1. Aktif buton vurgusunu değiştir
+    if (element) {
+        let butonlar = element.parentElement.querySelectorAll('.panel-sinif-btn');
+        butonlar.forEach(b => b.classList.remove('active'));
+        element.classList.add('active');
     }
-    const container = document.getElementById('muallimKitapListesi');
-    container.innerHTML = '';
-    const kitaplar = muallimKitapDeposu[sinifId] || [];
-    if(kitaplar.length === 0) {
-        container.innerHTML = '<div class="muallim-empty-msg">Bu seviyeye ait kitaplar yakında yüklenecektir.</div>';
-        return;
-    }
-    kitaplar.forEach(k => {
-        const a = document.createElement('a');
-        a.href = k.link; a.target = "_blank"; a.className = "muallim-pdf-link"; a.innerText = k.isim;
-        container.appendChild(a);
-    });
-}
 
+    const listeAlani = document.getElementById('muallimKitapListesi');
+    if (!listeAlani) return;
+
+    // Yükleniyor bilgisi göster
+    listeAlani.innerHTML = '<p style="text-align:center; padding:10px;">📚 Kitaplar yükleniyor...</p>';
+
+    // 2. Kitap verilerini al (Kendi veri kaynağınız / objeniz varsa burayı ona göre bağlayın)
+    // Örnek dinamik işleyiş:
+    if (typeof kitapVerileri !== 'undefined' && kitapVerileri[sinif]) {
+        let html = '';
+        kitapVerileri[sinif].forEach(kitap => {
+            html += `
+                <div class="kitap-kart">
+                    <h4>${kitap.ad}</h4>
+                    <a href="${kitap.link}" target="_blank">Oku</a>
+                </div>`;
+        });
+        listeAlani.innerHTML = html;
+    } else {
+        // Eğer veriniz yoksa veya kütüphane fonksiyonu ise konsola uyarı basar
+        console.warn(sinif + " sınıfı için 'kitapVerileri' bulunamadı.");
+        // Kendi varsayılan fonksiyonunuz varsa onu çağırın
+    }
+}
 // ⚙️ GOOGLE APPS SCRIPT WEB APP URL (Kendi Web App URL'inizi buraya yapıştırın)
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPpSnBPAx-fhdwP1zzp-nCwo5FFS9pp9HeqEC-E4wvf1oo5AOTuTs2Mn-Ji6mT6Ro8/exec";
 
