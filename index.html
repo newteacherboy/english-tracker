@@ -1074,28 +1074,23 @@ var sınavMüfredat = {
 };
 
 // Panel Açma-Kapatma Tetikleyicisi
-function denemeSınavToggle() {
-    var icerik = document.getElementById("denemeSınavIcerik");
-    var ok = document.getElementById("denemeOkIsareti");
-    var kutu = document.getElementById("denemeKareKutu");
+function denemeSinavToggle() {
+    const icerik = document.getElementById("denemeSinavIcerik");
+    const kitapIcerik = document.getElementById("muallimKitapIcerik");
+    const ezberIcerik = document.getElementById("ezberKartIcerik");
+    const ok = document.getElementById("denemeOkIsareti");
 
     // Diğer panelleri kapat
-    document.getElementById("muallimKitapIcerik").style.display = "none";
-    document.getElementById("muallimKareKutu").classList.remove("active");
-    document.getElementById("muallimOkIsareti").innerText = "🔽";
-    document.getElementById("ezberKartIcerik").style.display = "none";
-    document.getElementById("ezberKareKutu").classList.remove("active");
-    document.getElementById("ezberOkIsareti").innerText = "🔽";
+    if (kitapIcerik) kitapIcerik.style.display = "none";
+    if (ezberIcerik) ezberIcerik.style.display = "none";
 
+    // Kendi panelini aç/kapat
     if (icerik.style.display === "none" || icerik.style.display === "") {
         icerik.style.display = "block";
-        kutu.classList.add("active");
-        ok.innerText = "🔼";
-        sınavVerileriniYukle(); // Google Sheets'ten soruları çek
+        if (ok) ok.innerText = "🔼";
     } else {
         icerik.style.display = "none";
-        kutu.classList.remove("active");
-        ok.innerText = "🔽";
+        if (ok) ok.innerText = "🔽";
     }
 }
 
