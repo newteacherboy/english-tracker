@@ -663,7 +663,7 @@ const muallimKitapDeposu = {
 
 // 📊 SARMAL MANTIĞA GÖRE BÜYÜYEN DİNAMİK VERİ BANKASI (TOPLAM: 470 ÖZGÜN KELİME)
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykeMWLD5bfgXQegatj1jnWG6Id1vrnTkYBzJnjLGDmPXHeiFTdnSariQRj1koctTy5/exec"; // Buraya kendi URL'nizi yapıştırın
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEXpifn5DzNQfVCUfCeIGHLVQHLagRZpt8tfb-V_O_sYl3oOYWAxAOAEnemKeqvOU3/exec"; // Buraya kendi URL'nizi yapıştırın
 
 let ezberTimer;
 let ezberGecenSure = 0;
@@ -1013,9 +1013,52 @@ function kitaplariGetir(sinifId, buton) {
 }
 
 // 🧠 SARMAL EZBER SİSTEMİ MOTORU
+function ezberSinifSec(sinifId, buton) {
+    if(buton) {
+        document.querySelectorAll('#ezberKartIcerik .panel-sinif-btn').forEach(b => b.classList.remove('active'));
+        buton.classList.add('active');
+    }
+    aktifSinif = sinifId;
+    ezberKelimeYukle();
+}
 
+function ezberKelimeYukle() {
+    document.getElementById("ezberFlashCard").classList.remove("flipped");
+    const siralama = ["2-sinif", "3-sinif", "4-sinif", "5-sinif", "6-sinif", "7-sinif", "8-sinif"];
+    const hedefIdx = siralama.indexOf(aktifSinif);
+    
+    // Kümülatif havuz birleştirme tetikleyicisi
+    aktifKelimeListesi = [];
+    for(let i = 0; i <= hedefIdx; i++) {
+        aktifKelimeListesi = aktifKelimeListesi.concat(ezberKelimeDeposu[siralama[i]] || []);
+    }
+    document.getElementById("ezberHavuzSayisi").innerText = aktifKelimeListesi.length + " Kelime";
 
+    const rastgele = Math.floor(Math.random() * aktifKelimeListesi.length);
+    mevcutKelimeNesnesi = aktifKelimeListesi[rastgele];
 
+    setTimeout(() => {
+        document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
+        document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
+    }, 150);
+}
+
+function ezberKartiCevir() { document.getElementById("ezberFlashCard").classList.toggle("flipped"); }
+
+function ezberCevapVer(durum) {
+    if(!mevcutKelimeNesnesi) return;
+    if(durum) { dogruSkor++; document.getElementById("ezberDogruSayisi").innerText = dogruSkor; }
+    else { yanlisSkor++; document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor; }
+    ezberKelimeYukle();
+}
+
+function ezberSkorSifirla() {
+    if(confirm("Skor sıfırlansın mı?")) {
+        dogruSkor = 0; yanlisSkor = 0;
+        document.getElementById("ezberDogruSayisi").innerText = "0";
+        document.getElementById("ezberYanlisSayisi").innerText = "0";
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
@@ -1025,7 +1068,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // =========================================================================
 // 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
 // =========================================================================
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbykeMWLD5bfgXQegatj1jnWG6Id1vrnTkYBzJnjLGDmPXHeiFTdnSariQRj1koctTy5/exec";
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyEXpifn5DzNQfVCUfCeIGHLVQHLagRZpt8tfb-V_O_sYl3oOYWAxAOAEnemKeqvOU3/exec";
 
 var tumSoruHavuzu = [];
 var secilenSınavSorulari = [];
@@ -1535,7 +1578,7 @@ let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbykeMWLD5bfgXQegatj1jnWG6Id1vrnTkYBzJnjLGDmPXHeiFTdnSariQRj1koctTy5/exec";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbyEXpifn5DzNQfVCUfCeIGHLVQHLagRZpt8tfb-V_O_sYl3oOYWAxAOAEnemKeqvOU3/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
@@ -1644,7 +1687,7 @@ async function nihaiSorguKapat() {
 
     const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbykeMWLD5bfgXQegatj1jnWG6Id1vrnTkYBzJnjLGDmPXHeiFTdnSariQRj1koctTy5/exec") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbyEXpifn5DzNQfVCUfCeIGHLVQHLagRZpt8tfb-V_O_sYl3oOYWAxAOAEnemKeqvOU3/exec") {
             await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
     } catch(e) { console.log("Senkronizasyon tamamlandı."); }
