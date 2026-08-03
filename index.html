@@ -323,26 +323,23 @@ canvas { max-height: 200px; }
     <!-- 🎯 KARE BUTONLARIN YAN YANA DURDUĞU SATIR -->
     <div class="dashboard-buton-satiri">
         
-        <!-- 1. KUTU: İNGİLİZCE KİTAP OKU -->
-        <button id="muallimKareKutu" class="dashboard-kare-kutu" onclick="muallimKitapToggle()">
-            <span class="kutu-ikon">📚</span>
-            <span class="kutu-baslik">İngilizce Kitap Oku</span>
-            <span id="muallimOkIsareti" class="kutu-ok">🔽</span>
-        </button>
+       <!-- 1. KUTU -->
+<button class="dashboard-kare-kutu" onclick="panelAc('muallimKitapIcerik')">
+    <span class="kutu-ikon">📚</span>
+    <span class="kutu-baslik">İngilizce Kitap Oku</span>
+</button>
 
-        <!-- 2. KUTU: KELİME EZBER KARTLARI -->
-        <button id="ezberKareKutu" class="dashboard-kare-kutu" onclick="ezberKartToggle()">
-            <span class="kutu-ikon">🧠</span>
-            <span class="kutu-baslik">Kelime Ezber Kartları</span>
-            <span id="ezberOkIsareti" class="kutu-ok">🔽</span>
-        </button>
+<!-- 2. KUTU -->
+<button class="dashboard-kare-kutu" onclick="panelAc('ezberKartIcerik')">
+    <span class="kutu-ikon">🧠</span>
+    <span class="kutu-baslik">Kelime Ezber Kartları</span>
+</button>
 
-        <!-- 3. KUTU: ONLINE DENEME ÇÖZ -->
-        <button id="denemeKareKutu" class="dashboard-kare-kutu" onclick="denemeSinavToggle()">
-            <span class="kutu-ikon">📝</span>
-            <span class="kutu-baslik">Online Deneme Çöz</span>
-            <span id="denemeOkIsareti" class="kutu-ok">🔽</span>
-        </button>
+<!-- 3. KUTU -->
+<button class="dashboard-kare-kutu" onclick="panelAc('denemeSinavIcerik')">
+    <span class="kutu-ikon">📝</span>
+    <span class="kutu-baslik">Online Deneme Çöz</span>
+</button>
 
     </div>
 
@@ -574,6 +571,26 @@ canvas { max-height: 200px; }
 
 <!-- 🧠 KELİME MOTORU VE SARMAL VERİ TABANI (JAVASCRIPT) -->
 <script>
+
+function panelAc(panelId) {
+    const hedefPanel = document.getElementById(panelId);
+    if (!hedefPanel) return;
+
+    // Panelin şu anki görünürlük durumu
+    const suAnAcikMi = hedefPanel.style.display === 'block';
+
+    // 1. Önce TÜM panelleri kapat
+    const tumPaneller = document.querySelectorAll('.dashboard-panel-icerik');
+    tumPaneller.forEach(panel => {
+        panel.style.display = 'none';
+    });
+
+    // 2. Eğer tıklandığında kapalıydıysa AÇ, zaten açık olan kuta basıldıysa KAPALI kalsın
+    if (!suAnAcikMi) {
+        hedefPanel.style.display = 'block';
+    }
+}
+    
 const muallimKitapDeposu = {
     "okul-oncesi": [
       { isim: "I'm too ill", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/im-too-ill" },
