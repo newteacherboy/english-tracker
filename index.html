@@ -9,59 +9,30 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-/* 1. ARKA PLAN VE MOBİL UYUMU (RESPONSIVE BACKGROUND) */
 body {
-    /* Görsel seçimi ve genel hizalama */
-    background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhUmOK8BExem_tmeFUrQKXpuiKHjtVw0gYNZhuI_bvhacPjGhWa7a-7cX_3eHQh5zBnB5aZsRUdFyJch8KirlaoTrmUuWIjqrox87enc24-vsWggBrNh-SXMM4ZxTJ5rdflottZFMVPye-QolQ5Uu8npLhCo3yprQqTm8GlUzSzkBf1s0ObCcpT8nIUakM/s1600/Ads%C4%B1z%20(1920%20x%201080%20piksel).png');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-color: #0f172a; /* Görsel yüklenene kadar koyu şık bir zemin */
-    min-height: 100vh;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    color: #4A4235;
+    background-color: #FAF8F5;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(218, 203, 182, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(125, 100, 81, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(244, 239, 230, 0.8) 0px, transparent 70%),
+        radial-gradient(at 100% 100%, rgba(191, 172, 150, 0.25) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(125, 100, 81, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Mobil cihazlarda resmi sıkıştırmayan ve taşmasını engelleyen özel kural */
-@media screen and (max-width: 768px) {
-    body {
-        background-attachment: scroll !important; /* Mobilde yakınlaştırma hatasını çözer */
-        background-size: cover;
-    }
-}
-
-/* 2. BAŞLIK ALANI VE OKUNABİLİRLİK (HEADER & TITLES) */
-/* "ÖğretmenÇocuk Diji Dershane" başlığının olduğu dış kapsayıcı kutu */
-.header-container, header, .site-header {
-    background: rgba(15, 23, 42, 0.75); /* Görsel üzerine yumuşak koyu bir katman atar */
-    backdrop-filter: blur(8px); /* Modern buzlu cam efekti */
-    -webkit-backdrop-filter: blur(8px);
-    padding: 25px 15px;
-    text-align: center;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-    margin-bottom: 20px;
-}
-
-/* "ÖğretmenÇocuk" Ana Başlığı */
-.site-header h1, header h1 {
-    color: #ffffff !important; /* Net beyaz */
-    font-size: 32px;
-    font-weight: 800;
-    margin: 0;
-    letter-spacing: 0.5px;
-    /* Metnin arkasına ince siyah gölge atarak her görsel üstünde parlamasını sağlar */
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(59, 130, 246, 0.5);
-}
-
-/* "Diji Dershane" Alt Başlığı */
-.site-header h2, header h2, .site-header p {
-    color: #60a5fa !important; /* Canlı Mavi Accent */
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 6px;
-    margin-bottom: 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+.container, .box, .card, #kurumsalRandevuAlani {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow: 0 8px 32px 0 rgba(125, 100, 81, 0.06) !important;
 }
 
 /* ANA SAYFA */
