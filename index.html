@@ -866,7 +866,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // =========================================================================
 // 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
 // =========================================================================
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxi-norEqlM8vJdOhVyKSX4-mV3b0GRmsgguoF9KHzMvVtJAGrioT4Db78KYH-PtXRU/exec";
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyfEofQ6MabXGmWbZmpI_k32XHBLLS9W6C-UWwej-dGO8rn0ypzrUZUxWDEm0s7E070/exec";
 
 var tumSoruHavuzu = [];
 var secilenSınavSorulari = [];
@@ -1337,7 +1337,7 @@ let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbyfEofQ6MabXGmWbZmpI_k32XHBLLS9W6C-UWwej-dGO8rn0ypzrUZUxWDEm0s7E070/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
@@ -1446,7 +1446,7 @@ async function nihaiSorguKapat() {
 
     const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycby49OcVuZtP0aDun_HUk1f7Np_BVa0nCf1yG81poeflyPn8Rl8vtuC8N39lFy27aycm/exec") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbyfEofQ6MabXGmWbZmpI_k32XHBLLS9W6C-UWwej-dGO8rn0ypzrUZUxWDEm0s7E070/exec") {
             await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
     } catch(e) { console.log("Senkronizasyon tamamlandı."); }
