@@ -1119,6 +1119,97 @@ function sınavVerileriniYukle() {
     });
 }
 
+    // 📖 1. KİTAP PANELİ TETİKLEYİCİ
+function kitapPaneliToggle() {
+    const icerik = document.getElementById("muallimKitapIcerik");
+    const kutu = document.getElementById("muallimKareKutu");
+    const ok = document.getElementById("muallimOkIsareti");
+    
+    // Diğer panelleri kapat (Çakışmayı önlemek için)
+    digerPanelleriKapat("kitap");
+
+    if (icerik.style.display === "block") {
+        icerik.style.display = "none";
+        kutu.classList.remove("active");
+        if(ok) ok.innerText = "🔽";
+    } else {
+        icerik.style.display = "block";
+        kutu.classList.add("active");
+        if(ok) ok.innerText = "🔼";
+    }
+}
+
+// 🧠 2. KELİME EZBER PANELİ TETİKLEYİCİ
+function ezberKartToggle() {
+    const icerik = document.getElementById("ezberKartIcerik");
+    const kutu = document.getElementById("ezberKareKutu");
+    const ok = document.getElementById("ezberOkIsareti");
+    
+    // Diğer panelleri kapat
+    digerPanelleriKapat("ezber");
+
+    if (icerik.style.display === "block") {
+        icerik.style.display = "none";
+        kutu.classList.remove("active");
+        if(ok) ok.innerText = "🔽";
+        ezberKronometreDurdur();
+    } else {
+        icerik.style.display = "block";
+        kutu.classList.add("active");
+        if(ok) ok.innerText = "🔼";
+        ezberGirisEkranineDon();
+    }
+}
+
+// 📝 3. ONLINE DENEME ÇÖZ PANELİ TETİKLEYİCİ (Örnek İsimlendirme)
+function denemePaneliToggle() {
+    const icerik = document.getElementById("denemeIcerik");
+    const kutu = document.getElementById("denemeKareKutu");
+    const ok = document.getElementById("denemeOkIsareti");
+    
+    // Diğer panelleri kapat
+    digerPanelleriKapat("deneme");
+
+    if (icerik.style.display === "block") {
+        icerik.style.display = "none";
+        kutu.classList.remove("active");
+        if(ok) ok.innerText = "🔽";
+    } else {
+        icerik.style.display = "block";
+        kutu.classList.add("active");
+        if(ok) ok.innerText = "🔼";
+    }
+}
+
+// 🧹 YARDIMCI FONKSİYON: Biri açılırken diğerlerini kapatır
+function digerPanelleriKapat(aktifPanel) {
+    if (aktifPanel !== "kitap") {
+        const el = document.getElementById("muallimKitapIcerik");
+        const kutu = document.getElementById("muallimKareKutu");
+        const ok = document.getElementById("muallimOkIsareti");
+        if(el) el.style.display = "none";
+        if(kutu) kutu.classList.remove("active");
+        if(ok) ok.innerText = "🔽";
+    }
+    if (aktifPanel !== "ezber") {
+        const el = document.getElementById("ezberKartIcerik");
+        const kutu = document.getElementById("ezberKareKutu");
+        const ok = document.getElementById("ezberOkIsareti");
+        if(el) el.style.display = "none";
+        if(kutu) kutu.classList.remove("active");
+        if(ok) ok.innerText = "🔽";
+        ezberKronometreDurdur();
+    }
+    if (aktifPanel !== "deneme") {
+        const el = document.getElementById("denemeIcerik");
+        const kutu = document.getElementById("denemeKareKutu");
+        const ok = document.getElementById("denemeOkIsareti");
+        if(el) el.style.display = "none";
+        if(kutu) kutu.classList.remove("active");
+        if(ok) ok.innerText = "🔽";
+    }
+}
+
 // Sınıf Değiştiğinde Üniteleri Kutucuk Olarak Listeleme
 function sınavSinifDegisti() {
     var sinif = document.getElementById("sınavSinifSecimi").value;
