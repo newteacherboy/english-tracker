@@ -918,25 +918,27 @@ function sınavVerileriniYukle() {
         baslatBtn.style.background = "#9ca3af";
     }
     
-    fetch(WEB_APP_URL + "?action=sorulariGetir")
+   function onlineDenemeSorulariniYukle() {
+  const yuklemeEkrani = document.getElementById("denemeYukleniyorEkrani"); // Sizin sitenizdeki id
+  
+  fetch(SCRIPT_URL + "?action=sorulariGetir")
     .then(res => res.json())
     .then(data => {
-        if(data.durum === "basarili") {
-            tumSoruHavuzu = data.soruHavuzu;
-            sunucuLiderlikTablosu = data.liderlikTablosu;
-            
-            // Yükleme bitince butonu aktif et
-            if(baslatBtn) {
-                baslatBtn.disabled = false;
-                baslatBtn.innerText = "Sınavı Başlat 🚀";
-                baslatBtn.style.background = "#4f46e5";
-            }
-        }
-    }).catch(err => {
-        console.log("Veri çekme hatası:", err);
-        if(baslatBtn) {
-            baslatBtn.innerText = "Veri Yüklenemedi! Sayfayı Yenileyin.";
-        }
+      if (data.durum === "basarili" && data.soruHavuzu) {
+        let tumSorular = data.soruHavuzu;
+        
+        // Yükleniyor yazısını gizle ve soruları ekrana bas
+        if (yuklemeEkrani) yuklemeEkrani.style.display = "none";
+        
+        // Soruları filtreleme veya başlatma fonksiyonunuzu çağırın
+        denemeSinaviniBaslat(tumSorular);
+      } else {
+        alert("Sorular çekilemedi: " + (data.mesaj || "Bilinmeyen hata"));
+      }
+    })
+    .catch(err => {
+      console.error("Veri çekme hatası:", err);
+      alert("Bağlantı hatası oluştu. Lütfen sayfayı yenileyin.");
     });
 }
 
