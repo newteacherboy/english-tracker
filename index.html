@@ -196,6 +196,58 @@ canvas { max-height: 200px; }
 .badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
+    .ezber-giris-formu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+}
+.form-grup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+.form-grup input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+.ezber-baslat-btn {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.ezber-siklar-grubu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+.ezber-sik-btn {
+    padding: 14px;
+    border: 2px solid #007bff;
+    background: #fff;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.ezber-sik-btn:hover {
+    background: #e7f1ff;
+}
+.static-card {
+    transform: none !important;
+    cursor: default;
+}
+
 /* Kupa simgesi için hafif canlandırma animasyonu */
 @keyframes trophyPulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
 @keyframes kupaBounce { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-6px) scale(1.05); } 100% { transform: translateY(0) scale(1); } }
@@ -298,47 +350,57 @@ canvas { max-height: 200px; }
     </div>
 
     <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ -->
-    <div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
-        <p class="panel-alt-bilgi">Sınıf yükseldikçe alt sınıfların kelimeleri de sarmal olarak havuzunuza eklenir!</p>
-        <div class="panel-sinif-grid">
-            <button class="panel-sinif-btn active" onclick="ezberSinifSec('2-sinif', this)">2. Sınıf (70 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('3-sinif', this)">3. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('4-sinif', this)">4. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('5-sinif', this)">5. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('6-sinif', this)">6. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('7-sinif', this)">7. Sınıf (+50 Kelime)</button>
-            <button class="panel-sinif-btn" onclick="ezberSinifSec('8-sinif', this)">8. Sınıf LGS (+150 Kelime)</button>
+<div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
+    <p class="panel-alt-bilgi">Sınıfını seç, zamana karşı yarış ve liderlik tablosunda yerini al!</p>
+    
+    <!-- GİRİŞ FORMU (OYUN BAŞLAMADAN ÖNCE) -->
+    <div id="ezberGirisAlani" class="ezber-giris-formu">
+        <div class="form-grup">
+            <label for="oyuncuAdi">Adınız ve Soyadınız:</label>
+            <input type="text" id="oyuncuAdi" placeholder="Örn: Ahmet Yılmaz" maxlength="25">
         </div>
-        
+        <div class="form-grup">
+            <label>Sınıfınızı Seçin:</label>
+            <div class="panel-sinif-grid">
+                <button type="button" class="panel-sinif-btn active" onclick="ezberFormSinifSec('2-sinif', this)">2. Sınıf</button>
+                <button type="button" class="panel-sinif-btn" onclick="ezberFormSinifSec('3-sinif', this)">3. Sınıf</button>
+                <button type="button" class="panel-sinif-btn" onclick="ezberFormSinifSec('4-sinif', this)">4. Sınıf</button>
+                <button type="button" class="panel-sinif-btn" onclick="ezberFormSinifSec('5-sinif', this)">5. Sınıf</button>
+                <button type="button" class="panel-sinif-btn" onclick="ezberFormSinifSec('6-sinif', this)">6. Sınıf</button>
+                <button type="button" class="panel-sinif-btn" onclick="ezberFormSinifSec('7-sinif', this)">7. Sınıf</button>
+                <button type="button" class="panel-sinif-btn" onclick="ezberFormSinifSec('8-sinif', this)">8. Sınıf LGS</button>
+            </div>
+        </div>
+        <button class="ezber-baslat-btn" onclick="ezberOyunuBaslat()">🚀 Yarışmayı Başlat</button>
+    </div>
+
+    <!-- OYUN ALANI (OYUN BAŞLAYINCA AÇILIR) -->
+    <div id="ezberOyunAlani" style="display: none;">
         <div class="ezber-ust-bar">
-            <div class="ezber-havuz-bilgi">📋 Karşılaşabileceğiniz Toplam Kelime: <strong id="ezberHavuzSayisi">70</strong></div>
+            <div class="ezber-sure-bilgi">⏱️ Süre: <strong id="ezberGecenSure">0</strong> sn</div>
+            <div class="ezber-kalan-bilgi">📊 Kalan: <strong id="ezberKalanSayisi">0</strong></div>
             <div class="ezber-skorboard">
                 <span class="skor-dogru">✅ Doğru: <strong id="ezberDogruSayisi">0</strong></span>
                 <span class="skor-yanlis">❌ Yanlış: <strong id="ezberYanlisSayisi">0</strong></span>
-                <button class="skor-sifirla-btn" onclick="ezberSkorSifirla()">Sıfırla</button>
             </div>
         </div>
 
         <div class="ezber-kart-alani">
-            <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()">
+            <div id="ezberFlashCard" class="ezber-flashcard static-card">
                 <div class="ezber-card-face ezber-card-front">
                     <span class="dil-etiket">ENGLISH</span>
                     <h2 id="ezberIngilizceKelime">Loading...</h2>
-                    <p class="cevir-ipucu">Anlamı için tıkla 🔄</p>
-                </div>
-                <div class="ezber-card-face ezber-card-back">
-                    <span class="dil-etiket">TÜRKÇE</span>
-                    <h2 id="ezberTurkceKelime">Yükleniyor...</h2>
-                    <p class="cevir-ipucu">Kelimeye dön 🔄</p>
                 </div>
             </div>
         </div>
 
-        <div class="ezber-kontrol-grubu">
-            <button class="ezber-btn-action btn-yanlis" onclick="ezberCevapVer(false)">❌ Yanlış Bildim</button>
-            <button class="ezber-btn-action btn-dogru" onclick="ezberCevapVer(true)">✅ Doğru Bildim</button>
+        <!-- İKİ ŞIKLI SEÇENEKLER -->
+        <div id="ezberSikAlani" class="ezber-siklar-grubu">
+            <button id="sikBtnA" class="ezber-sik-btn" onclick="ezberSikKONTROL('A')">A) Option A</button>
+            <button id="sikBtnB" class="ezber-sik-btn" onclick="ezberSikKONTROL('B')">B) Option B</button>
         </div>
     </div>
+</div>
 
 <div id="denemeSınavIcerik" class="dashboard-ic-panel" style="display: none; padding: 20px;">
         
@@ -810,54 +872,187 @@ function kitaplariGetir(sinifId, buton) {
     });
 }
 
-// 🧠 SARMAL EZBER SİSTEMİ MOTORU
-function ezberSinifSec(sinifId, buton) {
+// ⚙️ GOOGLE APPS SCRIPT WEB APP URL (Kendi Web App URL'inizi buraya yapıştırın)
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPpSnBPAx-fhdwP1zzp-nCwo5FFS9pp9HeqEC-E4wvf1oo5AOTuTs2Mn-Ji6mT6Ro8/exec";
+
+// Global Oyun Değişkenleri
+let secilenSinifId = "2-sinif";
+let aktifOyunListesi = [];
+let mevcutKelimeIndex = 0;
+let mevcutKelimeObj = null;
+let dogruSecenek = ""; // 'A' veya 'B'
+
+let dogruSkor = 0;
+let yanlisSkor = 0;
+let gecenSure = 0;
+let timerInterval = null;
+let oyuncuAdiGlobal = "";
+
+// Panel Aç/Kapat
+function ezberKartToggle() {
+    const icerik = document.getElementById("ezberKartIcerik");
+    const ok = document.getElementById("ezberOkIsareti");
+    const kutu = document.getElementById("ezberKareKutu");
+    
+    // Diğer panelleri kapatma güvenliği
+    if(document.getElementById("muallimKitapIcerik")) document.getElementById("muallimKitapIcerik").style.display = "none";
+    if(document.getElementById("muallimKareKutu")) document.getElementById("muallimKareKutu").classList.remove("active");
+    if(document.getElementById("muallimOkIsareti")) document.getElementById("muallimOkIsareti").innerText = "🔽";
+
+    if (icerik.style.display === "none" || icerik.style.display === "") {
+        icerik.style.display = "block";
+        kutu.classList.add("active");
+        ok.innerText = "🔼";
+        ezberEkranSifirla();
+    } else {
+        icerik.style.display = "none";
+        kutu.classList.remove("active");
+        ok.innerText = "🔽";
+        clearInterval(timerInterval);
+    }
+}
+
+// Sınıf Seçimi (Form İçi)
+function ezberFormSinifSec(sinifId, buton) {
     if(buton) {
-        document.querySelectorAll('#ezberKartIcerik .panel-sinif-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#ezberGirisAlani .panel-sinif-btn').forEach(b => b.classList.remove('active'));
         buton.classList.add('active');
     }
-    aktifSinif = sinifId;
-    ezberKelimeYukle();
+    secilenSinifId = sinifId;
 }
 
-function ezberKelimeYukle() {
-    document.getElementById("ezberFlashCard").classList.remove("flipped");
+function ezberEkranSifirla() {
+    clearInterval(timerInterval);
+    document.getElementById("ezberGirisAlani").style.display = "block";
+    document.getElementById("ezberOyunAlani").style.display = "none";
+}
+
+// Oyunu Başlatma
+function ezberOyunuBaslat() {
+    const isim = document.getElementById("oyuncuAdi").value.trim();
+    if (!isim) {
+        alert("Lütfen devam etmek için adınızı ve soyadınızı girin.");
+        return;
+    }
+    oyuncuAdiGlobal = isim;
+
+    // Sarmal kelime havuzunu hazırlama
     const siralama = ["2-sinif", "3-sinif", "4-sinif", "5-sinif", "6-sinif", "7-sinif", "8-sinif"];
-    const hedefIdx = siralama.indexOf(aktifSinif);
+    const hedefIdx = siralama.indexOf(secilenSinifId);
     
-    // Kümülatif havuz birleştirme tetikleyicisi
-    aktifKelimeListesi = [];
+    let birlesikList = [];
     for(let i = 0; i <= hedefIdx; i++) {
-        aktifKelimeListesi = aktifKelimeListesi.concat(ezberKelimeDeposu[siralama[i]] || []);
+        birlesikList = birlesikList.concat(ezberKelimeDeposu[siralama[i]] || []);
     }
-    document.getElementById("ezberHavuzSayisi").innerText = aktifKelimeListesi.length + " Kelime";
 
-    const rastgele = Math.floor(Math.random() * aktifKelimeListesi.length);
-    mevcutKelimeNesnesi = aktifKelimeListesi[rastgele];
+    // Soruları rastgele karıştır (Fisher-Yates Shuffle)
+    aktifOyunListesi = birlesikList.sort(() => Math.random() - 0.5);
 
-    setTimeout(() => {
-        document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
-        document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
-    }, 150);
+    // Skor ve Süre Sıfırlama
+    mevcutKelimeIndex = 0;
+    dogruSkor = 0;
+    yanlisSkor = 0;
+    gecenSure = 0;
+    
+    document.getElementById("ezberDogruSayisi").innerText = "0";
+    document.getElementById("ezberYanlisSayisi").innerText = "0";
+    document.getElementById("ezberGecenSure").innerText = "0";
+
+    document.getElementById("ezberGirisAlani").style.display = "none";
+    document.getElementById("ezberOyunAlani").style.display = "block";
+
+    // Süre Sayacını Başlat
+    timerInterval = setInterval(() => {
+        gecenSure++;
+        document.getElementById("ezberGecenSure").innerText = gecenSure;
+    }, 1000);
+
+    ezberSonrakiSoruYukle();
 }
 
-function ezberKartiCevir() { document.getElementById("ezberFlashCard").classList.toggle("flipped"); }
+// Yeni Soru Yükleme & Şık Oluşturma
+function ezberSonrakiSoruYukle() {
+    if (mevcutKelimeIndex >= aktifOyunListesi.length) {
+        ezberOyunuBitir();
+        return;
+    }
 
-function ezberCevapVer(durum) {
-    if(!mevcutKelimeNesnesi) return;
-    if(durum) { dogruSkor++; document.getElementById("ezberDogruSayisi").innerText = dogruSkor; }
-    else { yanlisSkor++; document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor; }
-    ezberKelimeYukle();
-}
+    document.getElementById("ezberKalanSayisi").innerText = (aktifOyunListesi.length - mevcutKelimeIndex);
+    mevcutKelimeObj = aktifOyunListesi[mevcutKelimeIndex];
+    document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeObj.en;
 
-function ezberSkorSifirla() {
-    if(confirm("Skor sıfırlansın mı?")) {
-        dogruSkor = 0; yanlisSkor = 0;
-        document.getElementById("ezberDogruSayisi").innerText = "0";
-        document.getElementById("ezberYanlisSayisi").innerText = "0";
+    // Yanlış şık için havuzdan rastgele kelime seçimi (Doğru kelimeden farklı olmalı)
+    let yanlisSecenekObj = mevcutKelimeObj;
+    while (yanlisSecenekObj.tr === mevcutKelimeObj.tr && aktifOyunListesi.length > 1) {
+        const r = Math.floor(Math.random() * aktifOyunListesi.length);
+        yanlisSecenekObj = aktifOyunListesi[r];
+    }
+
+    // Doğru cevabın yerini rastgele belirle (A mı B mi?)
+    dogruSecenek = Math.random() < 0.5 ? 'A' : 'B';
+
+    const btnA = document.getElementById("sikBtnA");
+    const btnB = document.getElementById("sikBtnB");
+
+    if (dogruSecenek === 'A') {
+        btnA.innerText = "A) " + mevcutKelimeObj.tr;
+        btnB.innerText = "B) " + yanlisSecenekObj.tr;
+    } else {
+        btnA.innerText = "A) " + yanlisSecenekObj.tr;
+        btnB.innerText = "B) " + mevcutKelimeObj.tr;
     }
 }
 
+// Şık Kontrolü
+function ezberSikKONTROL(secim) {
+    if (secim === dogruSecenek) {
+        dogruSkor++;
+        document.getElementById("ezberDogruSayisi").innerText = dogruSkor;
+    } else {
+        yanlisSkor++;
+        document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor;
+    }
+
+    mevcutKelimeIndex++;
+    ezberSonrakiSoruYukle();
+}
+
+// Oyun Bitişi & Skor Gönderimi
+function ezberOyunuBitir() {
+    clearInterval(timerInterval);
+
+    // Puan Formülü: (Doğru Sayısı * 10) - (Yanlış Sayısı * 3) - (Süre * 0.2)
+    let hamPuan = (dogruSkor * 10) - (yanlisSkor * 3) - Math.floor(gecenSure * 0.2);
+    let toplamPuan = Math.max(0, hamPuan); // Puan eksiye düşmesin
+
+    alert(`🎉 Tebrikler ${oyuncuAdiGlobal}!\n\nSınavı Tamamladınız.\n✅ Doğru: ${dogruSkor}\n❌ Yanlış: ${yanlisSkor}\n⏱️ Süre: ${gecenSure} saniye\n⭐ Puan: ${toplamPuan}`);
+
+    // Google Sheets'e Kayıt Gönderimi
+    ezberLiderligeKaydet(oyuncuAdiGlobal, dogruSkor, yanlisSkor, gecenSure, toplamPuan);
+
+    ezberEkranSifirla();
+}
+
+function ezberLiderligeKaydet(kullaniciAdi, dogru, yanlis, sure, puan) {
+    if(!SCRIPT_URL || SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) return;
+
+    const payload = {
+        islem: "kelime_liderlik_kayit",
+        kullaniciAdi: kullaniciAdi,
+        sinif: secilenSinifId,
+        dogru: dogru,
+        yanlis: yanlis,
+        sure: sure,
+        puan: puan
+    };
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    }).catch(err => console.error("Liderlik tablosu kayıt hatası:", err));
+}
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 });
@@ -866,7 +1061,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // =========================================================================
 // 📝 ONLINE DENEME SINAVI MODÜLÜ MOTORU (GOOGLE SHEETS ENTEGRELİ)
 // =========================================================================
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyfEofQ6MabXGmWbZmpI_k32XHBLLS9W6C-UWwej-dGO8rn0ypzrUZUxWDEm0s7E070/exec";
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPpSnBPAx-fhdwP1zzp-nCwo5FFS9pp9HeqEC-E4wvf1oo5AOTuTs2Mn-Ji6mT6Ro8/exec";
 
 var tumSoruHavuzu = [];
 var secilenSınavSorulari = [];
@@ -1337,7 +1532,7 @@ let aktifSoruBankasi = [];
 let ogrenciCevaplari = Array(15).fill(null); 
 let pointerSoru = 0;
 let ogrenciIsmi = "";
-const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbyfEofQ6MabXGmWbZmpI_k32XHBLLS9W6C-UWwej-dGO8rn0ypzrUZUxWDEm0s7E070/exec";
+const sınavScriptUrl = "https://script.google.com/macros/s/AKfycbxPpSnBPAx-fhdwP1zzp-nCwo5FFS9pp9HeqEC-E4wvf1oo5AOTuTs2Mn-Ji6mT6Ro8/exec";
 
 function seviyeTestiKutusuAc() {
     const alan = document.getElementById("seviyeTestAlani");
@@ -1446,7 +1641,7 @@ async function nihaiSorguKapat() {
 
     const apiPayload = { aksiyon: "seviyeKaydet", isim: ogrenciIsmi, dogru: dSayi, yanlis: ySayi, seviye: seviyeUnvani };
     try {
-        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbyfEofQ6MabXGmWbZmpI_k32XHBLLS9W6C-UWwej-dGO8rn0ypzrUZUxWDEm0s7E070/exec") {
+        if(sınavScriptUrl && sınavScriptUrl !== "https://script.google.com/macros/s/AKfycbxPpSnBPAx-fhdwP1zzp-nCwo5FFS9pp9HeqEC-E4wvf1oo5AOTuTs2Mn-Ji6mT6Ro8/exec") {
             await fetch(sınavScriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(apiPayload) });
         }
     } catch(e) { console.log("Senkronizasyon tamamlandı."); }
