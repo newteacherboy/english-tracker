@@ -321,27 +321,56 @@ canvas { max-height: 200px; }
 <div class="dashboard-ana-wrapper">
 
     <!-- 🎯 KARE BUTONLARIN YAN YANA DURDUĞU SATIR -->
+
+    <!-- ========================================== -->
+<!-- 🌐 DASHBOARD BUTONLARI VE JS ENTEGRASYONU  -->
+<!-- ========================================== -->
+<div class="dashboard-ana-wrapper">
+
+    <!-- BUTON SATIRI -->
     <div class="dashboard-buton-satiri">
-        
-       <!-- 1. KUTU -->
-<button class="dashboard-kare-kutu" onclick="panelAc('muallimKitapIcerik')">
-    <span class="kutu-ikon">📚</span>
-    <span class="kutu-baslik">İngilizce Kitap Oku</span>
-</button>
+        <button class="dashboard-kare-kutu" onclick="panelAc('muallimKitapIcerik')">
+            <span class="kutu-ikon">📚</span>
+            <span class="kutu-baslik">İngilizce Kitap Oku</span>
+        </button>
 
-<!-- 2. KUTU -->
-<button class="dashboard-kare-kutu" onclick="panelAc('ezberKartIcerik')">
-    <span class="kutu-ikon">🧠</span>
-    <span class="kutu-baslik">Kelime Ezber Kartları</span>
-</button>
+        <button class="dashboard-kare-kutu" onclick="panelAc('ezberKartIcerik')">
+            <span class="kutu-ikon">🧠</span>
+            <span class="kutu-baslik">Kelime Ezber Kartları</span>
+        </button>
 
-<!-- 3. KUTU -->
-<button class="dashboard-kare-kutu" onclick="panelAc('denemeSinavIcerik')">
-    <span class="kutu-ikon">📝</span>
-    <span class="kutu-baslik">Online Deneme Çöz</span>
-</button>
-
+        <button class="dashboard-kare-kutu" onclick="panelAc('denemeSinavIcerik')">
+            <span class="kutu-ikon">📝</span>
+            <span class="kutu-baslik">Online Deneme Çöz</span>
+        </button>
     </div>
+
+</div>
+
+<!-- 🚀 DOĞRUDAN SAYFAYA ENTEGRE PANEL AÇMA KODU -->
+<script>
+window.panelAc = function(panelId) {
+    var hedef = document.getElementById(panelId);
+    if (!hedef) {
+        console.error("Bulunamayan Panel ID:", panelId);
+        return;
+    }
+
+    // Tıklanan panel açık mı?
+    var suAnAcik = (hedef.style.display === 'block');
+
+    // Tüm panelleri bul ve gizle
+    var tumPaneller = document.querySelectorAll('.dashboard-panel-icerik');
+    tumPaneller.forEach(function(p) {
+        p.style.display = 'none';
+    });
+
+    // Zaten açık değilse tıklananı aç
+    if (!suAnAcik) {
+        hedef.style.display = 'block';
+    }
+};
+</script>
 
     <!-- ------------------------------------------ -->
     <!-- 🔓 AÇILIR PANEL İÇERİKLERİ (ALT KISIM)    -->
