@@ -344,47 +344,47 @@ canvas { max-height: 200px; }
     </div>
 
    
-    <!-- 🎮 TEST Ekrani -->
-    <div id="ezberTestEkrani" style="display: none;">
-        
-        <div class="ezber-ust-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-            <div style="font-size: 16px;">📋 Kalan Kelime: <strong id="ezberKalanSayisi">0</strong></div>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <span style="color:#10b981; font-weight:bold;">✅ Doğru: <strong id="ezberDogruSayisi">0</strong></span>
-                <span style="color:#f43f5e; font-weight:bold;">❌ Yanlış: <strong id="ezberYanlisSayisi">0</strong></span>
-                <span style="color:#f59e0b; font-weight:bold;">⏱️ Süre: <strong id="ezberSure">0</strong>s</span>
-                
-                <button onclick="ezberTamamlandi('manuel')" style="background-color: #dc2626; color: white; border: 1px solid #991b1b; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-left: 10px;">
-                    Testi Erken Bitir 🛑
-                </button>
-            </div>
-        </div>
-
-        <div class="ezber-kart-alani" style="display: flex; justify-content: center; margin-bottom: 25px;">
-            <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()" style="cursor: pointer; position: relative;">
-                <div class="ezber-card-face ezber-card-front">
-                    <span class="dil-etiket">ENGLISH</span>
-                    <h2 id="ezberIngilizceKelime">Yükleniyor...</h2>
-                    <p class="cevir-ipucu">Anlamı için tıkla 🔄</p>
-                </div>
-                <div class="ezber-card-face ezber-card-back">
-                    <span class="dil-etiket">TÜRKÇE</span>
-                    <h2 id="ezberTurkceKelime">Yükleniyor...</h2>
-                    <p class="cevir-ipucu">Kelimeye dön 🔄</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 🔧 Tıklama sorununu çözen güncel buton alanı -->
-        <div class="ezber-kontrol-grubu" style="display: flex; justify-content: center; gap: 20px; position: relative; z-index: 9999; pointer-events: auto;">
-            <button type="button" onclick="ezberCevapVer(false)" style="background-color: #f43f5e; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
-                ❌ Yanlış Bildim
-            </button>
-            <button type="button" onclick="ezberCevapVer(true)" style="background-color: #10b981; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
-                ✅ Doğru Bildim
+    <!-- 🎮 TEST EKRANI -->
+<div id="ezberTestEkrani" style="display: none;">
+    
+    <div class="ezber-ust-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+        <div style="font-size: 16px;">📋 Kalan Kelime: <strong id="ezberKalanSayisi">0</strong></div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <span style="color:#10b981; font-weight:bold;">✅ Doğru: <strong id="ezberDogruSayisi">0</strong></span>
+            <span style="color:#f43f5e; font-weight:bold;">❌ Yanlış: <strong id="ezberYanlisSayisi">0</strong></span>
+            <span style="color:#f59e0b; font-weight:bold;">⏱️ Süre: <strong id="ezberSure">0</strong>s</span>
+            
+            <button id="btnErkenBitir" type="button" style="background-color: #dc2626; color: white; border: 1px solid #991b1b; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-left: 10px;">
+                Testi Erken Bitir 🛑
             </button>
         </div>
     </div>
+
+    <div class="ezber-kart-alani" style="display: flex; justify-content: center; margin-bottom: 25px;">
+        <div id="ezberFlashCard" class="ezber-flashcard" style="cursor: pointer; position: relative;">
+            <div class="ezber-card-face ezber-card-front">
+                <span class="dil-etiket">ENGLISH</span>
+                <h2 id="ezberIngilizceKelime">Yükleniyor...</h2>
+                <p class="cevir-ipucu">Anlamı için tıkla 🔄</p>
+            </div>
+            <div class="ezber-card-face ezber-card-back">
+                <span class="dil-etiket">TÜRKÇE</span>
+                <h2 id="ezberTurkceKelime">Yükleniyor...</h2>
+                <p class="cevir-ipucu">Kelimeye dön 🔄</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔧 ID atandı ve tıklama olayları JavaScript tarafına taşındı -->
+    <div class="ezber-kontrol-grubu" style="display: flex; justify-content: center; gap: 20px; position: relative; z-index: 9999; pointer-events: auto;">
+        <button id="btnYanlisBildim" type="button" style="background-color: #f43f5e; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+            ❌ Yanlış Bildim
+        </button>
+        <button id="btnDogruBildim" type="button" style="background-color: #10b981; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+            ✅ Doğru Bildim
+        </button>
+    </div>
+</div>
     <div id="denemeSınavIcerik" class="dashboard-ic-panel" style="display: none; padding: 20px;">
         
         <div id="sınavGirisEkrani">
@@ -1448,6 +1448,45 @@ function sınavYenidenBaslat() {
     document.getElementById("sınavSinifSecimi").value = "";
     sınavSinifDegisti();
 }
+
+// Sayfa yüklendiğinde buton dinleyicilerini güvenli bir şekilde bağla
+document.addEventListener("DOMContentLoaded", function() {
+    const btnDogru = document.getElementById("btnDogruBildim");
+    const btnYanlis = document.getElementById("btnYanlisBildim");
+    const btnErken = document.getElementById("btnErkenBitir");
+    const flashCard = document.getElementById("ezberFlashCard");
+
+    if (btnDogru) {
+        btnDogru.addEventListener("click", function(e) {
+            e.preventDefault();
+            ezberCevapVer(true);
+        });
+    }
+
+    if (btnYanlis) {
+        btnYanlis.addEventListener("click", function(e) {
+            e.preventDefault();
+            ezberCevapVer(false);
+        });
+    }
+
+    if (btnErken) {
+        btnErken.addEventListener("click", function(e) {
+            e.preventDefault();
+            ezberTamamlandi("manuel");
+        });
+    }
+
+    if (flashCard) {
+        flashCard.addEventListener("click", function(e) {
+            e.preventDefault();
+            ezberKartiCevir();
+        });
+    }
+
+    liderlikTablosunuYukle();
+});
+    
 </script>
 <!-- ========================================== -->
 <!-- 🌐 DASHBOARD BİTİŞİ                       -->
