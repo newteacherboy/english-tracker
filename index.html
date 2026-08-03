@@ -343,7 +343,8 @@ canvas { max-height: 200px; }
         </div>
     </div>
 
-    <!-- 🎮 TEST EKRANI -->
+   
+    <!-- 🎮 TEST Ekrani -->
     <div id="ezberTestEkrani" style="display: none;">
         
         <div class="ezber-ust-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
@@ -360,7 +361,7 @@ canvas { max-height: 200px; }
         </div>
 
         <div class="ezber-kart-alani" style="display: flex; justify-content: center; margin-bottom: 25px;">
-            <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()" style="cursor: pointer; position: relative; z-index: 5;">
+            <div id="ezberFlashCard" class="ezber-flashcard" onclick="ezberKartiCevir()" style="cursor: pointer; position: relative;">
                 <div class="ezber-card-face ezber-card-front">
                     <span class="dil-etiket">ENGLISH</span>
                     <h2 id="ezberIngilizceKelime">Yükleniyor...</h2>
@@ -374,16 +375,16 @@ canvas { max-height: 200px; }
             </div>
         </div>
 
-        <div class="ezber-kontrol-grubu" style="display: flex; justify-content: center; gap: 20px; z-index: 10; position: relative;">
-            <button onclick="ezberCevapVer(false)" style="background-color: #f43f5e; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+        <!-- 🔧 Tıklama sorununu çözen güncel buton alanı -->
+        <div class="ezber-kontrol-grubu" style="display: flex; justify-content: center; gap: 20px; position: relative; z-index: 9999; pointer-events: auto;">
+            <button type="button" onclick="ezberCevapVer(false)" style="background-color: #f43f5e; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
                 ❌ Yanlış Bildim
             </button>
-            <button onclick="ezberCevapVer(true)" style="background-color: #10b981; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+            <button type="button" onclick="ezberCevapVer(true)" style="background-color: #10b981; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
                 ✅ Doğru Bildim
             </button>
         </div>
     </div>
-</div>
     <div id="denemeSınavIcerik" class="dashboard-ic-panel" style="display: none; padding: 20px;">
         
         <div id="sınavGirisEkrani">
