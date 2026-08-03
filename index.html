@@ -301,30 +301,22 @@ canvas { max-height: 200px; }
     <div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
         
         <!-- 1️⃣ GİRİŞ EKRANI -->
-        <div id="ezberGirisEkrani" style="padding: 10px;">
-            <h3 style="text-align: center; color: #4f46e5; margin-bottom: 20px;">🧠 Kelime Ezber Kartları Oyunu</h3>
-            
-            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 8px;">1. Adınız Soyadınız:</label>
-                <input type="text" id="ezberOgrenciAdi" placeholder="Adınız Soyadınız" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
-            </div>
+<div id="ezberGirisEkrani">
+    <h3>Öğrenci Girişi</h3>
+    <input type="text" id="ezberOgrenciAdi" placeholder="Adınızı ve Soyadınızı Girin">
+    
+    <div class="ezber-sinif-secim-alani">
+        <button type="button" class="ezber-giris-sinif-btn active" onclick="ezberGirisSinifSec('2-sinif', this)">2. Sınıf</button>
+        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('3-sinif', this)">3. Sınıf</button>
+        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('4-sinif', this)">4. Sınıf</button>
+        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('5-sinif', this)">5. Sınıf</button>
+        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('6-sinif', this)">6. Sınıf</button>
+        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('7-sinif', this)">7. Sınıf</button>
+        <button type="button" class="ezber-giris-sinif-btn" onclick="ezberGirisSinifSec('8-sinif', this)">8. Sınıf</button>
+    </div>
 
-            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 8px;">2. Sınıf Seviyenizi Seçin:</label>
-                <p class="panel-alt-bilgi" style="margin-top: 0; margin-bottom: 10px;">Sınıf yükseldikçe alt sınıfların kelimeleri de sarmal olarak havuzunuza eklenir!</p>
-                <div class="panel-sinif-grid" style="margin-bottom: 0;">
-                    <button type="button" class="ezber-giris-sinif-btn active" data-sinif="2-sinif" onclick="ezberGirisSinifSec('2-sinif', this)">2. Sınıf (70 Kelime)</button>
-                    <button type="button" class="ezber-giris-sinif-btn" data-sinif="3-sinif" onclick="ezberGirisSinifSec('3-sinif', this)">3. Sınıf (+50 Kelime)</button>
-                    <button type="button" class="ezber-giris-sinif-btn" data-sinif="4-sinif" onclick="ezberGirisSinifSec('4-sinif', this)">4. Sınıf (+50 Kelime)</button>
-                    <button type="button" class="ezber-giris-sinif-btn" data-sinif="5-sinif" onclick="ezberGirisSinifSec('5-sinif', this)">5. Sınıf (+50 Kelime)</button>
-                    <button type="button" class="ezber-giris-sinif-btn" data-sinif="6-sinif" onclick="ezberGirisSinifSec('6-sinif', this)">6. Sınıf (+50 Kelime)</button>
-                    <button type="button" class="ezber-giris-sinif-btn" data-sinif="7-sinif" onclick="ezberGirisSinifSec('7-sinif', this)">7. Sınıf (+50 Kelime)</button>
-                    <button type="button" class="ezber-giris-sinif-btn" data-sinif="8-sinif" onclick="ezberGirisSinifSec('8-sinif', this)">8. Sınıf LGS (+150 Kelime)</button>
-                </div>
-            </div>
-
-            <button onclick="ezberOyunuBaslat()" style="width:100%; background:#4f46e5; color:white; border:none; padding:12px; font-weight:bold; border-radius:6px; cursor:pointer; font-size:16px;">Kelime Oyununu Başlat 🚀</button>
-        </div>
+    <button type="button" onclick="ezberOyunuBaslat()">Oyunu Başlat 🚀</button>
+</div>
 
         <!-- 2️⃣ OYUN EKRANI -->
         <div id="ezberOyunEkrani" style="display: none;">
@@ -868,13 +860,19 @@ function kitaplariGetir(sinifId, buton) {
 
 // 🧠 GİRİŞ EKRANINDA SINIF SEÇİMİ
 function ezberGirisSinifSec(sinifId, buton) {
-    document.querySelectorAll('#ezberGirisEkrani .ezber-giris-sinif-btn').forEach(b => b.classList.remove('active'));
+    // Sayfadaki tüm giriş sınıf butonlarından active sınıfını kaldır
+    const tumButonlar = document.querySelectorAll('.ezber-giris-sinif-btn');
+    tumButonlar.forEach(b => b.classList.remove('active'));
+    
+    // Tıklanan butona active sınıfını ekle
     if(buton) {
         buton.classList.add('active');
     }
+    
+    // Aktif sınıfı güncelle
     aktifSinif = sinifId;
+    console.log("Seçilen Sınıf:", aktifSinif); // Konsoldan kontrol edebilirsiniz
 }
-
 // 🚀 OYUNU BAŞLAT (Giriş Ekranından Sonra)
 function ezberOyunuBaslat() {
     const inputAdi = document.getElementById("ezberOgrenciAdi").value.trim();
