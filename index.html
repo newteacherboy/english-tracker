@@ -347,7 +347,7 @@ canvas { max-height: 200px; }
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">1. Sınıf Seçin:</label>
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Sınıf Seçin:</label>
                     <select id="sınavSinifSecimi" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;" onchange="sınavSinifDegisti()">
                         <option value="">-- Seçiniz --</option>
                         <option value="8">8. Sınıf (LGS)</option>
@@ -355,7 +355,7 @@ canvas { max-height: 200px; }
                 </div>
                 
                 <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">2. Soru Sayısı:</label>
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Soru Sayısı:</label>
                     <select id="sınavSoruSayisi" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
                         <option value="10">10 Soru</option>
                         <option value="12">12 Soru</option>
@@ -366,14 +366,14 @@ canvas { max-height: 200px; }
             </div>
 
             <div style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 8px;">3. Üniteleri Seçin:</label>
+                <label style="font-weight: bold; display: block; margin-bottom: 8px;">Üniteleri Seçin:</label>
                 <div id="sınavUniteListesi" style="max-height: 150px; overflow-y: auto;">
                     <span style="color: #9ca3af; font-size: 14px;">Lütfen önce sınıf seçiniz.</span>
                 </div>
             </div>
 
            <div style="background: #fdf2f8; padding: 15px; border-radius: 8px; border: 1px solid #fbcfe8; margin-bottom: 20px;">
-    <label style="font-weight: bold; display: block; margin-bottom: 8px; color: #db2777;">🏆 Liderlik Tablosu İçin Bilgileriniz:</label>
+    <label style="font-weight: bold; display: block; margin-bottom: 8px; color: #db2777;">🏆( Sıralamada Yernizi Görmek İçin )Liderlik Tablosu İçin Bilgileriniz:</label>
     <input type="text" id="sınavOgrenciAdi" placeholder="Adınız Soyadınız (ZORUNLU)" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 2px solid #f472b6; box-sizing: border-box; font-weight: 500;">
     <input type="text" id="sınavIletisim" placeholder="İletişim Numarası veya Mail (İsteğe Bağlı - Gizli Kalır)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
     <small style="color: #9d174d; display:block; margin-top: 5px; font-size:12px;">* İsminiz kalıcı başarı tablosunda dereceye girmek için zorunludur.</small>
