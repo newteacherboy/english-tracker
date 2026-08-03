@@ -3009,5 +3009,13 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+<script>
+window.onerror = function(msg, url, lineNo, columnNo, error) {
+    console.log("%c 🚨 KRİTİK HATA BULUNDU: ", "background: red; color: white; font-size: 14px;", msg);
+    console.log("Satır Numarası:", lineNo);
+    return false;
+};
+</script>
+    
 </body>
 </html>
