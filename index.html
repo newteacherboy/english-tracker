@@ -1034,10 +1034,10 @@ function ezberOyunuBitir() {
 }
 
 function ezberLiderligeKaydet(kullaniciAdi, dogru, yanlis, sure, puan) {
-    if(!SCRIPT_URL || SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) return;
+    if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxPpSnBPAx-fhdwP1zzp-nCwo5FFS9pp9HeqEC-E4wvf1oo5AOTuTs2Mn-Ji6mT6Ro8/exec")) return;
 
     const payload = {
-        islem: "kelime_liderlik_kayit",
+        aksiyon: "kelime_liderlik_kayit", // Apps Script tarafındaki aksiyon kontrolü
         kullaniciAdi: kullaniciAdi,
         sinif: secilenSinifId,
         dogru: dogru,
@@ -1052,8 +1052,7 @@ function ezberLiderligeKaydet(kullaniciAdi, dogru, yanlis, sure, puan) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     }).catch(err => console.error("Liderlik tablosu kayıt hatası:", err));
-}
-document.addEventListener("DOMContentLoaded", function() {
+}document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 });
 
