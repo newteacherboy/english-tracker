@@ -977,25 +977,56 @@ function ezberKelimeCek() {
     document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
 }
 
-    // ✅ / ❌ CEVAP VERME FONKSİYONU
-function ezberCevapVer(durum) {
-    if (!mevcutKelimeNesnesi) return;
+    // 🏁 TUR BİTTİĞİNDE GÜVENLİ ŞEKİLDE BİTİR VE KAYDET
+function ezberTurBitir() {
+    // 1. Kronometreyi anında dondur
+    clearInterval(ezberKronometreInterval);
+    
+    // 2. Müziği güvenli şekilde sustur (hata vermez)
+    try {
+        const muzik = document.getElementById("ezberMuzik");
+        if (muzik) { muzik.pause(); }
+    } catch(e) { console.log("Müzik durdurma hatası atlandı:", e); }
 
-    if (durum) {
-        dogruSkor++;
-        document.getElementById("ezberDogruSayisi").innerText = dogruSkor;
-    } else {
-        yanlisSkor++;
-        document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor;
-    }
+    // 3. Ekranları değiştir
+    document.getElementById("ezberOyunEkrani").style.display = "none";
+    document.getElementById("ezberSonucEkrani").style.display = "block";
 
-    mevcutKelimeIndex++;
+    // 4. Puanı ve süreyi hesapla
+    const toplamSoru = (oyunKelimeListesi && oyunKelimeListesi.length > 0) ? oyunKelimeListesi.length : 20;
+    let finalPuan = Math.round((dogruSkor / toplamSoru) * 100);
+    
+    let dk = Math.floor(ezberSaniye / 60);
+    let sn = ezberSaniye % 60;
+    let formatliSure = (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
 
-    if (mevcutKelimeIndex < oyunKelimeListesi.length) {
-        ezberKelimeCek();
-    } else {
-        ezberTurBitir();
-    }
+    document.getElementById("sonucPuan").innerText = finalPuan;
+    document.getElementById("sonucZaman").innerText = formatliSure;
+
+    document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 15px;">Sonuçlarınız kaydediliyor ve sıralama çekiliyor... ⏳</td></tr>';
+
+    // 5. Google Sheets'e Kaydet
+    const postData = {
+        aksiyon: "ezberKaydet",
+        isim: ezberKullanici,
+        sinif: aktifSinif,
+        dogru: dogruSkor,
+        yanlis: yanlisSkor,
+        sure: formatliSure,
+        sureSaniye: ezberSaniye,
+        puan: finalPuan
+    };
+
+    fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(postData) })
+    .then(res => res.json())
+    .then(data => {
+        if(data && data.durum === "basarili" && data.liderlikTablosu) {
+            ezberLiderlikTablosuBas(data.liderlikTablosu);
+        }
+    }).catch(err => {
+        console.log("Kayıt hatası:", err);
+        document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">Sonuç kaydedildi ancak tablo anlık çekilemedi.</td></tr>';
+    });
 }
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
