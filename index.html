@@ -261,15 +261,13 @@ body {
   border-bottom: 1px solid #e8eaed;
   padding-bottom: 1rem; 
 }
-.tab { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid #e8eaed; background-color: #f4f6f8; color: #555; white-space: nowrap; transition: all 0.15s; }
-.tab.active { background-color: #1D9E75; color: #fff; border-color: #1D9E75; }
 
 /* KİLİT */
 .lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem; }
 .lock-icon { font-size: 40px; margin-bottom: 1rem; }
 .lock-screen h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
 .lock-screen p { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
-.lock-input { width: 100%; max-width: 260px; padding: 10px 14px; border: 1.5px solid #e8eaed; border-radius: 10px; font-size: 15px; text-align: center; outline: none; letter-spacing: 2px; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
+.lock-input { width: 100%; max-width: 260px; padding: 10px 14px; border: 1.5px solid #e8eaed; border-radius: 10px; font-size: 15px; text-align: center; outline: none; letter-spacing: 2px; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; text-transform: uppercase; }
 .lock-input:focus { border-color: #1D9E75; }
 .lock-btn { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: 10px 32px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; max-width: 260px; }
 .lock-error { color: #c0392b; font-size: 13px; margin-top: 10px; min-height: 18px; }
@@ -282,7 +280,6 @@ body {
 .student-info h2 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
 .student-info p { font-size: 13px; color: #666; }
 .level-badge { margin-left: auto; background: #E1F5EE; color: #0F6E56; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-.logout-btn { margin-left: 8px; background: none; border: 1px solid #e8eaed; border-radius: 999px; padding: 4px 10px; font-size: 11px; color: #888; cursor: pointer; white-space: nowrap; }
 
 /* SAYFA SEKMELERİ */
 .page-tabs { display: flex; gap: 0; margin-bottom: 1.25rem; background: #fff; border-radius: 12px; border: 1px solid #e8eaed; overflow: hidden; }
@@ -1800,14 +1797,14 @@ async function loadData() {
 
     document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
     
-    // Hafızada kalıcı giriş (session/local storage) kontrolü
+    // Kalıcı oturum kontrolü (sayfa yenilense bile hafızada tutar)
     const kayitliOgrenci = localStorage.getItem('dijimuallim_aktif_ogrenci');
-    if (kayitliOgrenci && students.includes(kayitliOgrenci)) {
-        unlockedStudents[kayitliOgrenci] = true;
-        selectStudent(kayitliOgrenci);
+    if (kayitliOgrenci && students.find(s => s.toLowerCase() === kayitliOgrenci.toLowerCase())) {
+        const dogruOgrenci = students.find(s => s.toLowerCase() === kayitliOgrenci.toLowerCase());
+        unlockedStudents[dogruOgrenci] = true;
+        selectStudent(dogruOgrenci);
     } else {
         renderTabs();
-        document.getElementById("content").innerHTML = "";
     }
 
   } catch(e) {
@@ -1834,7 +1831,7 @@ function renderTabs() {
       <h3>Öğrenci Giriş Portalı</h3>
       <p>Lütfen sistemde kayıtlı Adınızı ve Soyadınızı, ardından şifrenizi giriniz.</p>
       
-      <input class="lock-input" type="text" id="login-name-input" placeholder="Adınız Soyadınız" style="margin-bottom: 12px; text-transform: uppercase;">
+      <input class="lock-input" type="text" id="login-name-input" placeholder="Adınız Soyadınız" style="margin-bottom: 12px;">
       <input class="lock-input" type="password" id="login-pwd-input" placeholder="Şifreniz" onkeydown="if(event.key==='Enter')manuelGirisYap()">
       
       <button class="lock-btn" onclick="manuelGirisYap()">Giriş Yap</button>
@@ -1880,6 +1877,7 @@ function aktifogrenciyiKapat() {
     localStorage.removeItem('dijimuallim_aktif_ogrenci');
     activeStudent = null;
     renderTabs();
+    document.getElementById("content").innerHTML = "";
 }
 
 function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
@@ -2710,10 +2708,10 @@ document.addEventListener("DOMContentLoaded", function() {
             statusMsg.innerText = "Başarıyla iki satır halinde eklendi!";
             
             try {
-                let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir.\n\n` +
+                let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu işlenmiştir.\n\n` +
                               `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
                               `📝 *Öğretmen Notları:* \n• Ders Başı Durumu: ${startCommentVal}\n• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
-                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamland.genel}\n`;
+                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
                 
                 if (parseInt(payloadTamamlandi.deneme) > 0) { wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`; }
                 
