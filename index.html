@@ -44,7 +44,7 @@ body {
 }
 
 /* ANA SAYFA */
-.home { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+.home { min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
 .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
 .home-logo span { color: #1D9E75; }
 .home-sub { font-size: 14px; color: #888; margin-bottom: 3rem; text-align: center; }
@@ -138,7 +138,7 @@ body {
 .skor-dogru { color: #137333; font-weight: 700; }
 .skor-yanlis { color: #c5221f; font-weight: 700; }
 
-/* 🌟 YENİ 2 ŞIKLI KELİME TESTİ STİLLERİ */
+/* 🌟 2 ŞIKLI KELİME TESTİ STİLLERİ */
 .ezber-soru-karti {
     background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
     border: 2px solid #d2e3fc;
@@ -374,6 +374,163 @@ canvas { max-height: 200px; }
   .trophy-score-card { width: 100% !important; padding: 20px !important; }
   #okumaRozeti { width: 100%; text-align: center; margin-top: 5px; }
 }
+
+/* 🚀 KARŞILAMA EKRANI STİLLERİ */
+.welcome-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, rgba(29, 158, 117, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(125, 100, 81, 0.12) 0%, transparent 40%),
+              #FAF8F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.welcome-container {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  padding: 35px 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+}
+
+.welcome-badge {
+  display: inline-block;
+  background: #E1F5EE;
+  color: #0F6E56;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 15px;
+  letter-spacing: 0.5px;
+}
+
+.welcome-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+.welcome-title span { color: #1D9E75; }
+
+.welcome-subtitle {
+  font-size: 14px;
+  color: #71717a;
+  margin-bottom: 30px;
+}
+
+.welcome-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.welcome-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 2px solid #e8eaed;
+  border-radius: 16px;
+  padding: 18px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.welcome-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.welcome-card.card-english:hover {
+  border-color: #1D9E75;
+}
+
+.welcome-card.card-coach:hover {
+  border-color: #7D6451;
+}
+
+.welcome-card-icon {
+  font-size: 34px;
+  background: #f8fafc;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.welcome-card-body h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.welcome-card-body p {
+  font-size: 12px;
+  color: #71717a;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.welcome-card-arrow {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1D9E75;
+  white-space: nowrap;
+}
+
+.welcome-badge-soon {
+  position: absolute;
+  top: -10px;
+  right: 15px;
+  background: #f59e0b;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* POPUP */
+.koc-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000000;
+}
+.koc-modal-content {
+  background: white; border-radius: 18px; padding: 25px;
+  max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.koc-modal-content h3 { font-size: 16px; margin-bottom: 8px; color: #1a1a1a; }
+.koc-modal-content p { font-size: 13px; color: #666; margin-bottom: 18px; line-height: 1.5; }
+.koc-modal-content button {
+  background: #1D9E75; color: white; border: none; padding: 10px 24px;
+  border-radius: 8px; font-weight: 700; cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -429,7 +586,6 @@ canvas { max-height: 200px; }
       <h2>İngilizce Özel Dersim</h2>
       <p>Öğrencinizin Gelişimini Anlık Takip Edin</p>
     </div>
-   
   </div>
 <br>
 
@@ -561,6 +717,25 @@ canvas { max-height: 200px; }
 <!-- 🧠 KİTAP VE KELİME MOTORU (JAVASCRIPT) -->
 <script>
 var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzRLrOktwTgJedifOgvi43v9LgkkpxYkxmCgdc-x-tHRMXDsDkC0fx_47bmXGWN3-TU/exec";
+
+// 🚀 PORTAL SEÇİM FONKSİYONU
+function portalSec(tur) {
+  if (tur === 'ingilizce') {
+    const welcome = document.getElementById("welcomePortalScreen");
+    welcome.style.opacity = "0";
+    welcome.style.transition = "opacity 0.3s ease";
+    setTimeout(() => {
+      welcome.style.display = "none";
+      document.getElementById("home").style.display = "flex";
+    }, 300);
+  } else if (tur === 'kocluk') {
+    document.getElementById("kocModal").style.display = "flex";
+  }
+}
+
+function kocModalKapat() {
+  document.getElementById("kocModal").style.display = "none";
+}
 
 const muallimKitapDeposu = {
     "okul-oncesi": [
@@ -787,7 +962,6 @@ function kitaplariGetir(sinifId, buton) {
 // ==========================================
 // 🏆 KELİME EZBER YARIŞMASI MOTORU (2 ŞIKLI)
 // ==========================================
-// Sınıflara göre dinamik soru sayısı kuralı
 const SINIF_SORU_LIMITLERI = {
     "2-sinif": 20,
     "3-sinif": 20,
@@ -870,14 +1044,11 @@ function ezberSistemiBaslat() {
     const isimInput = document.getElementById("ezberOgrenciAdi").value.trim();
     ezberKullanici = isimInput === "" ? "Gizemli Oyuncu" : isimInput;
 
-    // 🎯 SADECE SEÇİLEN SINIFIN KENDİ KELİMELERİNİ AL (SARMAL KARIŞIM YOK)
     let sinifKelimeleri = ezberKelimeDeposu[aktifSinif] || ezberKelimeDeposu["2-sinif"];
     let havuzKopyasi = [...sinifKelimeleri];
     
-    // Karıştır
     havuzKopyasi.sort(() => Math.random() - 0.5);
 
-    // Sınıfa göre dinamik adet belirle
     let hedefLimit = SINIF_SORU_LIMITLERI[aktifSinif] || 20;
     oyunKelimeListesi = havuzKopyasi.slice(0, Math.min(hedefLimit, havuzKopyasi.length));
 
@@ -928,11 +1099,10 @@ function ezberKelimeCek() {
     cevapKilitli = false;
     mevcutKelimeNesnesi = oyunKelimeListesi[mevcutKelimeIndex];
 
-    document.getElementById("ezberProgress").innerText = `Kelime: ${mevcutKelimeIndex + 1} / ${oyunKelimeListesi.length}`;
+    let toplamSoruSayisi = oyunKelimeListesi.length;
+    document.getElementById("ezberProgress").innerText = `Kelime: ${mevcutKelimeIndex + 1} / ${toplamSoruSayisi}`;
     document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
 
-    // 🎯 2 ŞIKLI SİSTEM İÇİN ÇELDİRİCİ (YANLIŞ ŞIK) SEÇİMİ
-    // Çeldirici sadece aynı sınıfın kelimelerinden seçilir!
     let sinifKelimeleri = ezberKelimeDeposu[aktifSinif] || ezberKelimeDeposu["2-sinif"];
     let digerKelimeler = sinifKelimeleri.filter(k => k.tr !== mevcutKelimeNesnesi.tr);
     let yanlisKelime = digerKelimeler[Math.floor(Math.random() * digerKelimeler.length)];
@@ -942,7 +1112,6 @@ function ezberKelimeCek() {
         { metin: yanlisKelime ? yanlisKelime.tr : "Farklı Anlam", dogruMu: false }
     ];
 
-    // Şıkları rastgele karıştır (50/50 yer değişsin)
     secenekler.sort(() => Math.random() - 0.5);
 
     let siklarHTML = "";
@@ -953,9 +1122,8 @@ function ezberKelimeCek() {
     document.getElementById("ezberSiklarAlani").innerHTML = siklarHTML;
 }
 
-// 🎯 ŞIKKA TIKLANDIĞINDA ÇALIŞAN FONKSİYON
 function ezberSikSecildi(btnElement, dogruMu) {
-    if (cevapKilitli) return; // Çift tıklamayı engelle
+    if (cevapKilitli) return; 
     cevapKilitli = true;
 
     if (dogruMu) {
@@ -967,7 +1135,6 @@ function ezberSikSecildi(btnElement, dogruMu) {
         document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor;
         btnElement.classList.add("yanlis-anim");
 
-        // Yanlış seçtiğinde doğru şıkkı da yeşil gösterelim ki öğrensin
         const butonlar = document.querySelectorAll(".ezber-sik-btn");
         butonlar.forEach(b => {
             if (b.innerText.trim() === mevcutKelimeNesnesi.tr.trim()) {
@@ -976,7 +1143,6 @@ function ezberSikSecildi(btnElement, dogruMu) {
         });
     }
 
-    // Kısa bir görsel geribildirimden sonra sıradaki soruya geç
     setTimeout(() => {
         mevcutKelimeIndex++;
         if (mevcutKelimeIndex < oyunKelimeListesi.length) {
@@ -2282,189 +2448,9 @@ function drawDenemeChart(name) {
   .r-check-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid #F0EBE0; font-size: 14px; }
   .r-check-row input { width: 18px; height: 18px; accent-color: #9B5435; flex-shrink: 0; }
   .r-label-sm { display: block; font-size: 11.5px; font-weight: 600; color: #8A8478; margin-bottom: 4px; }
-
-    /* 🚀 KARŞILAMA EKRANI STİLLERİ */
-.welcome-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 10% 20%, rgba(29, 158, 117, 0.08) 0%, transparent 40%),
-              radial-gradient(circle at 90% 80%, rgba(125, 100, 81, 0.12) 0%, transparent 40%),
-              #FAF8F5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999999;
-  padding: 20px;
-  box-sizing: border-box;
-  animation: fadeIn 0.4s ease-out;
-}
-
-.welcome-container {
-  max-width: 520px;
-  width: 100%;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 24px;
-  padding: 35px 25px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-}
-
-.welcome-badge {
-  display: inline-block;
-  background: #E1F5EE;
-  color: #0F6E56;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 999px;
-  margin-bottom: 15px;
-  letter-spacing: 0.5px;
-}
-
-.welcome-title {
-  font-size: 30px;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin-bottom: 6px;
-}
-.welcome-title span { color: #1D9E75; }
-
-.welcome-subtitle {
-  font-size: 14px;
-  color: #71717a;
-  margin-bottom: 30px;
-}
-
-.welcome-card-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.welcome-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: #ffffff;
-  border: 2px solid #e8eaed;
-  border-radius: 16px;
-  padding: 18px 20px;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.welcome-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-}
-
-.welcome-card.card-english:hover {
-  border-color: #1D9E75;
-}
-
-.welcome-card.card-coach:hover {
-  border-color: #7D6451;
-}
-
-.welcome-card-icon {
-  font-size: 34px;
-  background: #f8fafc;
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 14px;
-  flex-shrink: 0;
-}
-
-.welcome-card-body h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 4px;
-}
-
-.welcome-card-body p {
-  font-size: 12px;
-  color: #71717a;
-  line-height: 1.4;
-  margin: 0;
-}
-
-.welcome-card-arrow {
-  margin-left: auto;
-  font-size: 13px;
-  font-weight: 700;
-  color: #1D9E75;
-  white-space: nowrap;
-}
-
-.welcome-badge-soon {
-  position: absolute;
-  top: -10px;
-  right: 15px;
-  background: #f59e0b;
-  color: white;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 6px;
-  letter-spacing: 0.5px;
-}
-
-/* POPUP */
-.koc-modal {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1000000;
-}
-.koc-modal-content {
-  background: white; border-radius: 18px; padding: 25px;
-  max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
-.koc-modal-content h3 { font-size: 16px; margin-bottom: 8px; color: #1a1a1a; }
-.koc-modal-content p { font-size: 13px; color: #666; margin-bottom: 18px; line-height: 1.5; }
-.koc-modal-content button {
-  background: #1D9E75; color: white; border: none; padding: 10px 24px;
-  border-radius: 8px; font-weight: 700; cursor: pointer;
-}
-    
 </style>
 
 <script>
-
-// 🚀 PORTAL SEÇİM FONKSİYONU
-function portalSec(tur) {
-  if (tur === 'ingilizce') {
-    // Hoş geldiniz ekranını yumuşakça kapatıp mevcut ana sayfayı aç
-    const welcome = document.getElementById("welcomePortalScreen");
-    welcome.style.opacity = "0";
-    welcome.style.transition = "opacity 0.3s ease";
-    setTimeout(() => {
-      welcome.style.display = "none";
-      document.getElementById("home").style.display = "flex";
-    }, 300);
-  } else if (tur === 'kocluk') {
-    // Eğitim koçu için hazırlık uyarısı göster
-    document.getElementById("kocModal").style.display = "flex";
-  }
-}
-
-function kocModalKapat() {
-  document.getElementById("kocModal").style.display = "none";
-}
-    
 document.addEventListener("DOMContentLoaded", function() {
     const overlay = document.getElementById("yeni_rubrikOverlay");
     const openBtn = document.getElementById("yeni_rubrikOpenBtn");
