@@ -222,7 +222,7 @@ canvas { max-height: 200px; }
   #okumaRozeti { width: 100%; text-align: center; margin-top: 5px; }
 }
 
-/* 🔄 KART ÇEVİRME GARANTİ STİLLERİ */
+/* 🔄 KART ÇEVİRME STİLLERİ */
 .ezber-kart-alani {
     display: flex;
     justify-content: center;
@@ -259,7 +259,7 @@ canvas { max-height: 200px; }
     padding: 20px;
     box-sizing: border-box;
     border: 2px solid #e0e0e0;
-    pointer-events: none; /* Tıklamaların ana karta iletilmesini sağlar */
+    pointer-events: none;
 }
 .ezber-card-front {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -273,7 +273,6 @@ canvas { max-height: 200px; }
     transform: rotateY(180deg);
     border-color: #1a73e8;
 }
-    
 </style>
 </head>
 <body>
@@ -339,11 +338,11 @@ canvas { max-height: 200px; }
         <div id="muallimKitapListesi" class="panel-kitap-grid"></div>
     </div>
 
-   <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ (GÜNCELLENMİŞ YARIŞMA MODU) -->
+    <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ -->
     <div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
         
-        <!-- YEREL GITHUB MP3 ÇALICI -->
-<audio id="ezberMuzik" loop preload="auto" playsinline src="muzik.mp3"></audio>
+        <!-- YEREL MP3 OYNATICI -->
+        <audio id="ezberMuzik" loop preload="auto" playsinline src="muzik.mp3"></audio>
 
         <!-- GİRİŞ EKRANI -->
         <div id="ezberGirisEkrani" style="text-align: center;">
@@ -371,7 +370,7 @@ canvas { max-height: 200px; }
                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                     <span id="ezberProgress" style="font-weight: bold; color: #1a73e8; font-size: 15px;">Kelime: 1 / 20</span>
                     
-                    <!-- SES AÇMA / KAPATMA BUTONU -->
+                    <!-- SES BUTONU -->
                     <button id="ezberSesBtn" onclick="ezberSesKontrol()" style="background: #e8f0fe; border: 1px solid #d2e3fc; font-size: 18px; cursor: pointer; padding: 4px 10px; border-radius: 20px; transition: 0.2s;">🔊</button>
 
                     <span id="ezberKronometre" style="background: #ea4335; color: white; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-family: monospace; font-size: 15px; box-shadow: 0 2px 6px rgba(234,67,53,0.3);">⏱️ 00:00</span>
@@ -473,7 +472,7 @@ canvas { max-height: 200px; }
                 <small style="color: #9d174d; display:block; margin-top: 5px; font-size:12px;">* İsminiz kalıcı başarı tablosunda dereceye girmek için zorunludur.</small>
             </div>
 
-            <button onclick="sınavıOlusturVeBaslat()" style="width:100%; background:#4f46e5; color:white; border:none; padding:12px; font-weight:bold; border-radius:6px; cursor:pointer; font-size:16px;">Sınavı Başlat 🚀</button>
+            <button onclick="sınavıOlusturVeBaslat()" style="width:100%; background:#4f46e5; colorwhite; border:none; padding:12px; font-weight:bold; border-radius:6px; cursor:pointer; font-size:16px;">Sınavı Başlat 🚀</button>
         </div>
 
         <div id="sınavOyunEkrani" style="display: none;">
@@ -823,8 +822,6 @@ let yanlisSkor = 0;
 let ezberSaniye = 0;
 let ezberKronometreInterval = null;
 let ezberKullanici = "";
-
-// Müzik kontrolü için yeni değişken
 let ezberMuzikCalisiyor = true; 
 
 function ezberKartToggle() {
@@ -849,11 +846,14 @@ function ezberKartToggle() {
         kutu.classList.remove("active");
         ok.innerText = "🔽";
         clearInterval(ezberKronometreInterval);
-        document.getElementById("ezberMuzik").pause(); // Paneli kapatınca müziği durdur
+        try {
+            const m = document.getElementById("ezberMuzik");
+            if (m) m.pause();
+        } catch(e) {}
     }
 }
 
-    function ezberKartiCevir() {
+function ezberKartiCevir() {
     const kart = document.getElementById("ezberFlashCard");
     if (kart) {
         kart.classList.toggle("flipped");
@@ -868,31 +868,32 @@ function ezberSinifSec(sinifId, buton) {
     aktifSinif = sinifId;
 }
 
-// 🎵 SES KONTROL BUTONU (AÇ / KAPAT)
 function ezberSesKontrol() {
     const muzik = document.getElementById("ezberMuzik");
     const btn = document.getElementById("ezberSesBtn");
+
+    if (!muzik) return;
 
     if (muzik.paused) {
         muzik.play().then(() => {
             btn.innerText = "🔊";
             btn.style.background = "#e8f0fe";
             btn.style.borderColor = "#d2e3fc";
-        }).catch(err => console.log("Müzik başlatılamadı:", err));
+            ezberMuzikCalisiyor = true;
+        }).catch(err => console.log("Müzik çalma hatası:", err));
     } else {
         muzik.pause();
         btn.innerText = "🔇";
         btn.style.background = "#fad4d1";
         btn.style.borderColor = "#f5b4b0";
+        ezberMuzikCalisiyor = false;
     }
 }
 
-// 🚀 GÜNCELLENMİŞ VE KORUMALI BAŞLATMA FONKSİYONU
 function ezberSistemiBaslat() {
     const isimInput = document.getElementById("ezberOgrenciAdi").value.trim();
     ezberKullanici = isimInput === "" ? "Gizemli Oyuncu" : isimInput;
 
-    // Seçili sınıfın geçerli olduğundan emin ol (varsayılan: 2-sinif)
     const siralama = ["2-sinif", "3-sinif", "4-sinif", "5-sinif", "6-sinif", "7-sinif", "8-sinif"];
     let hedefIdx = siralama.indexOf(aktifSinif);
     if (hedefIdx === -1) { 
@@ -900,7 +901,6 @@ function ezberSistemiBaslat() {
         hedefIdx = 0; 
     }
 
-    // Sarmal kelime havuzunu topla
     let kümülatifHavuz = [];
     for (let i = 0; i <= hedefIdx; i++) {
         const sinifKelimeleri = ezberKelimeDeposu[siralama[i]];
@@ -909,16 +909,13 @@ function ezberSistemiBaslat() {
         }
     }
 
-    // Havuz boşsa yedek güvenlik kontrolü
     if (kümülatifHavuz.length === 0) {
         kümülatifHavuz = ezberKelimeDeposu["2-sinif"] || [];
     }
 
-    // Kelimeleri karıştır ve soru adedi kadarını al
     kümülatifHavuz.sort(() => Math.random() - 0.5);
     oyunKelimeListesi = kümülatifHavuz.slice(0, Math.min(EZBER_TUR_SORU_SAYISI, kümülatifHavuz.length));
 
-    // Sayaç ve Skorları Sıfırla
     dogruSkor = 0; 
     yanlisSkor = 0; 
     mevcutKelimeIndex = 0; 
@@ -928,12 +925,10 @@ function ezberSistemiBaslat() {
     document.getElementById("ezberYanlisSayisi").innerText = "0";
     document.getElementById("ezberKronometre").innerText = "⏱️ 00:00";
 
-    // Ekranları değiştir
     document.getElementById("ezberGirisEkrani").style.display = "none";
     document.getElementById("ezberSonucEkrani").style.display = "none";
     document.getElementById("ezberOyunEkrani").style.display = "block";
 
-    // Kronometreyi başlat
     clearInterval(ezberKronometreInterval);
     ezberKronometreInterval = setInterval(() => {
         ezberSaniye++;
@@ -942,7 +937,6 @@ function ezberSistemiBaslat() {
         document.getElementById("ezberKronometre").innerText = "⏱️ " + (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
     }, 1000);
 
-    // 🎵 Müzik Başlatıcı
     const muzik = document.getElementById("ezberMuzik");
     const btn = document.getElementById("ezberSesBtn");
     if (muzik) {
@@ -950,20 +944,20 @@ function ezberSistemiBaslat() {
         muzik.volume = 0.35;
         muzik.play().then(() => {
             if (btn) { btn.innerText = "🔊"; btn.style.background = "#e8f0fe"; }
+            ezberMuzikCalisiyor = true;
         }).catch(e => {
             if (btn) { btn.innerText = "🔇"; btn.style.background = "#fad4d1"; }
+            ezberMuzikCalisiyor = false;
         });
     }
 
-    // İlk kelimeyi yükle
     ezberKelimeCek();
 }
 
-// 📖 KELİMEYİ ANINDA VE GECİKMESİZ EKRANA BASAN FONKSİYON
 function ezberKelimeCek() {
     const kart = document.getElementById("ezberFlashCard");
     if (kart) {
-        kart.classList.remove("flipped"); // Yeni kelimeye geçerken ön yüzü göster
+        kart.classList.remove("flipped");
     }
 
     if (!oyunKelimeListesi || oyunKelimeListesi.length === 0 || !oyunKelimeListesi[mevcutKelimeIndex]) {
@@ -977,22 +971,38 @@ function ezberKelimeCek() {
     document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
 }
 
-    // 🏁 TUR BİTTİĞİNDE GÜVENLİ ŞEKİLDE BİTİR VE KAYDET
+// 🎯 DOĞRU BİLDİM / YANLIŞ BİLDİM BUTON MOTORU
+function ezberCevapVer(durum) {
+    if (!mevcutKelimeNesnesi) return;
+
+    if (durum) {
+        dogruSkor++;
+        document.getElementById("ezberDogruSayisi").innerText = dogruSkor;
+    } else {
+        yanlisSkor++;
+        document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor;
+    }
+
+    mevcutKelimeIndex++;
+
+    if (mevcutKelimeIndex < oyunKelimeListesi.length) {
+        ezberKelimeCek();
+    } else {
+        ezberTurBitir();
+    }
+}
+
 function ezberTurBitir() {
-    // 1. Kronometreyi anında dondur
     clearInterval(ezberKronometreInterval);
     
-    // 2. Müziği güvenli şekilde sustur (hata vermez)
     try {
         const muzik = document.getElementById("ezberMuzik");
         if (muzik) { muzik.pause(); }
-    } catch(e) { console.log("Müzik durdurma hatası atlandı:", e); }
+    } catch(e) {}
 
-    // 3. Ekranları değiştir
     document.getElementById("ezberOyunEkrani").style.display = "none";
     document.getElementById("ezberSonucEkrani").style.display = "block";
 
-    // 4. Puanı ve süreyi hesapla
     const toplamSoru = (oyunKelimeListesi && oyunKelimeListesi.length > 0) ? oyunKelimeListesi.length : 20;
     let finalPuan = Math.round((dogruSkor / toplamSoru) * 100);
     
@@ -1005,7 +1015,6 @@ function ezberTurBitir() {
 
     document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 15px;">Sonuçlarınız kaydediliyor ve sıralama çekiliyor... ⏳</td></tr>';
 
-    // 5. Google Sheets'e Kaydet
     const postData = {
         aksiyon: "ezberKaydet",
         isim: ezberKullanici,
@@ -1028,6 +1037,53 @@ function ezberTurBitir() {
         document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">Sonuç kaydedildi ancak tablo anlık çekilemedi.</td></tr>';
     });
 }
+
+function ezberLiderlikTablosuBas(veriler) {
+    var govde = document.getElementById("ezberLiderlikGövdesi");
+    govde.innerHTML = "";
+    
+    var filtrelenmis = (veriler || []).filter(l => l.sinif === aktifSinif);
+    
+    filtrelenmis.sort((a, b) => {
+        if(b.puan !== a.puan) return b.puan - a.puan;
+        return a.sureSaniye - b.sureSaniye;
+    });
+
+    var top10 = filtrelenmis.slice(0, 10);
+    
+    if(top10.length === 0) {
+        govde.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#9ca3af;">Henüz bu sınıfta sıralama yok. İlk sen ol!</td></tr>';
+        return;
+    }
+
+    top10.forEach((r, idx) => {
+        var madalya = (idx + 1).toString();
+        var arkaPlan = "";
+        if(idx === 0) { madalya = "🥇"; arkaPlan = "background:#fff9c4; font-weight:bold;"; }
+        else if(idx === 1) { madalya = "🥈"; arkaPlan = "background:#f5f5f5;"; }
+        else if(idx === 2) { madalya = "🥉"; arkaPlan = "background:#efebe9;"; }
+        
+        govde.innerHTML += '<tr style="border-bottom:1px solid #e0e0e0; ' + arkaPlan + '">' +
+            '<td style="padding:10px; font-weight:bold; text-align:center;">' + madalya + '</td>' +
+            '<td style="padding:10px; font-weight: 600; color:#3c4043;">' + r.isim + '</td>' +
+            '<td style="padding:10px; text-align:center; color:#137333;">' + r.dogru + '</td>' +
+            '<td style="padding:10px; text-align:center; font-family:monospace;">' + r.sure + '</td>' +
+            '<td style="padding:10px; font-weight:bold; color:#1a73e8; text-align:center; font-size:15px;">' + r.puan + '</td>' +
+            '</tr>';
+    });
+}
+
+function ezberYenidenBaslat() {
+    clearInterval(ezberKronometreInterval);
+    try {
+        const muzik = document.getElementById("ezberMuzik");
+        if (muzik) { muzik.pause(); }
+    } catch(e) {}
+    document.getElementById("ezberOyunEkrani").style.display = "none";
+    document.getElementById("ezberSonucEkrani").style.display = "none";
+    document.getElementById("ezberGirisEkrani").style.display = "block";
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 });
