@@ -221,6 +221,59 @@ canvas { max-height: 200px; }
   .trophy-score-card { width: 100% !important; padding: 20px !important; }
   #okumaRozeti { width: 100%; text-align: center; margin-top: 5px; }
 }
+
+/* 🔄 KART ÇEVİRME GARANTİ STİLLERİ */
+.ezber-kart-alani {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+}
+.ezber-flashcard {
+    width: 340px;
+    height: 210px;
+    cursor: pointer;
+    position: relative;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: transform 0.4s ease-in-out;
+}
+.ezber-flashcard.flipped {
+    transform: rotateY(180deg) !important;
+    -webkit-transform: rotateY(180deg) !important;
+}
+.ezber-card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 2px solid #e0e0e0;
+    pointer-events: none; /* Tıklamaların ana karta iletilmesini sağlar */
+}
+.ezber-card-front {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    color: #1a73e8;
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+.ezber-card-back {
+    background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
+    color: #ffffff;
+    transform: rotateY(180deg);
+    border-color: #1a73e8;
+}
+    
 </style>
 </head>
 <body>
@@ -800,6 +853,13 @@ function ezberKartToggle() {
     }
 }
 
+    function ezberKartiCevir() {
+    const kart = document.getElementById("ezberFlashCard");
+    if (kart) {
+        kart.classList.toggle("flipped");
+    }
+}
+
 function ezberSinifSec(sinifId, buton) {
     if(buton) {
         document.querySelectorAll('#ezberGirisEkrani .panel-sinif-btn').forEach(b => b.classList.remove('active'));
@@ -902,7 +962,9 @@ function ezberSistemiBaslat() {
 // 📖 KELİMEYİ ANINDA VE GECİKMESİZ EKRANA BASAN FONKSİYON
 function ezberKelimeCek() {
     const kart = document.getElementById("ezberFlashCard");
-    if (kart) kart.classList.remove("flipped");
+    if (kart) {
+        kart.classList.remove("flipped"); // Yeni kelimeye geçerken ön yüzü göster
+    }
 
     if (!oyunKelimeListesi || oyunKelimeListesi.length === 0 || !oyunKelimeListesi[mevcutKelimeIndex]) {
         return;
@@ -913,6 +975,27 @@ function ezberKelimeCek() {
     document.getElementById("ezberProgress").innerText = `Kelime: ${mevcutKelimeIndex + 1} / ${oyunKelimeListesi.length}`;
     document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
     document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
+}
+
+    // ✅ / ❌ CEVAP VERME FONKSİYONU
+function ezberCevapVer(durum) {
+    if (!mevcutKelimeNesnesi) return;
+
+    if (durum) {
+        dogruSkor++;
+        document.getElementById("ezberDogruSayisi").innerText = dogruSkor;
+    } else {
+        yanlisSkor++;
+        document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor;
+    }
+
+    mevcutKelimeIndex++;
+
+    if (mevcutKelimeIndex < oyunKelimeListesi.length) {
+        ezberKelimeCek();
+    } else {
+        ezberTurBitir();
+    }
 }
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
