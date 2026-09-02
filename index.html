@@ -361,6 +361,48 @@ canvas { max-height: 200px; }
 </head>
 <body>
 
+    <!-- 🚀 GİRİŞ KARŞILAMA VE PORTAL SEÇİM EKRANI -->
+<div id="welcomePortalScreen" class="welcome-overlay">
+  <div class="welcome-container">
+    <div class="welcome-badge">🎓 Diji Dershane Portalı</div>
+    <h1 class="welcome-title">Öğretmen<span>Çocuk</span></h1>
+    <p class="welcome-subtitle">Bireyselleştirilmiş Dil ve Başarı Takip Sistemi</p>
+
+    <div class="welcome-card-grid">
+      <!-- 1. SEÇENEK: İNGİLİZCE DERSİ -->
+      <div class="welcome-card card-english" onclick="portalSec('ingilizce')">
+        <div class="welcome-card-icon">💡</div>
+        <div class="welcome-card-body">
+          <h3>İngilizce Özel Ders</h3>
+          <p>Öğrenci gelişim raporları, kitap takibi ve kelime yarışması</p>
+        </div>
+        <div class="welcome-card-arrow">Giriş Yap ➔</div>
+      </div>
+
+      <!-- 2. SEÇENEK: EĞİTİM KOÇUM (HENÜZ AKTİF DEĞİL) -->
+      <div class="welcome-card card-coach" onclick="portalSec('kocluk')">
+        <div class="welcome-badge-soon">YAKINDA</div>
+        <div class="welcome-card-icon">🎯</div>
+        <div class="welcome-card-body">
+          <h3>Eğitim Koçum</h3>
+          <p>Haftalık hedef yönetimi, LGS/YKS deneme stratejileri</p>
+        </div>
+        <div class="welcome-card-arrow" style="opacity: 0.7;">Hazırlanıyor ⏳</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAZIRLANIYOR UYARI POPUP'I -->
+  <div id="kocModal" class="koc-modal" style="display: none;">
+    <div class="koc-modal-content">
+      <div style="font-size: 40px; margin-bottom: 10px;">🚧</div>
+      <h3>Eğitim Koçum Modülü Hazırlanıyor</h3>
+      <p>Bu alan üzerinde çalışmalarımız devam ediyor. Çok yakında öğrencilerimiz için aktif olacaktır!</p>
+      <button onclick="kocModalKapat()">Anladım</button>
+    </div>
+  </div>
+</div>
+
 <div class="home" id="home">
   <div class="home-logo">Öğretmen<span>Çocuk</span></div>
   <div class="home-sub">Diji Dershane</div>
@@ -2227,9 +2269,189 @@ function drawDenemeChart(name) {
   .r-check-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid #F0EBE0; font-size: 14px; }
   .r-check-row input { width: 18px; height: 18px; accent-color: #9B5435; flex-shrink: 0; }
   .r-label-sm { display: block; font-size: 11.5px; font-weight: 600; color: #8A8478; margin-bottom: 4px; }
+
+    /* 🚀 KARŞILAMA EKRANI STİLLERİ */
+.welcome-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, rgba(29, 158, 117, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(125, 100, 81, 0.12) 0%, transparent 40%),
+              #FAF8F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.welcome-container {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  padding: 35px 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+}
+
+.welcome-badge {
+  display: inline-block;
+  background: #E1F5EE;
+  color: #0F6E56;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 15px;
+  letter-spacing: 0.5px;
+}
+
+.welcome-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+.welcome-title span { color: #1D9E75; }
+
+.welcome-subtitle {
+  font-size: 14px;
+  color: #71717a;
+  margin-bottom: 30px;
+}
+
+.welcome-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.welcome-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 2px solid #e8eaed;
+  border-radius: 16px;
+  padding: 18px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.welcome-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.welcome-card.card-english:hover {
+  border-color: #1D9E75;
+}
+
+.welcome-card.card-coach:hover {
+  border-color: #7D6451;
+}
+
+.welcome-card-icon {
+  font-size: 34px;
+  background: #f8fafc;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.welcome-card-body h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.welcome-card-body p {
+  font-size: 12px;
+  color: #71717a;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.welcome-card-arrow {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1D9E75;
+  white-space: nowrap;
+}
+
+.welcome-badge-soon {
+  position: absolute;
+  top: -10px;
+  right: 15px;
+  background: #f59e0b;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* POPUP */
+.koc-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000000;
+}
+.koc-modal-content {
+  background: white; border-radius: 18px; padding: 25px;
+  max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.koc-modal-content h3 { font-size: 16px; margin-bottom: 8px; color: #1a1a1a; }
+.koc-modal-content p { font-size: 13px; color: #666; margin-bottom: 18px; line-height: 1.5; }
+.koc-modal-content button {
+  background: #1D9E75; color: white; border: none; padding: 10px 24px;
+  border-radius: 8px; font-weight: 700; cursor: pointer;
+}
+    
 </style>
 
 <script>
+
+// 🚀 PORTAL SEÇİM FONKSİYONU
+function portalSec(tur) {
+  if (tur === 'ingilizce') {
+    // Hoş geldiniz ekranını yumuşakça kapatıp mevcut ana sayfayı aç
+    const welcome = document.getElementById("welcomePortalScreen");
+    welcome.style.opacity = "0";
+    welcome.style.transition = "opacity 0.3s ease";
+    setTimeout(() => {
+      welcome.style.display = "none";
+      document.getElementById("home").style.display = "flex";
+    }, 300);
+  } else if (tur === 'kocluk') {
+    // Eğitim koçu için hazırlık uyarısı göster
+    document.getElementById("kocModal").style.display = "flex";
+  }
+}
+
+function kocModalKapat() {
+  document.getElementById("kocModal").style.display = "none";
+}
+    
 document.addEventListener("DOMContentLoaded", function() {
     const overlay = document.getElementById("yeni_rubrikOverlay");
     const openBtn = document.getElementById("yeni_rubrikOpenBtn");
