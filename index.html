@@ -52,6 +52,134 @@ body {
 .contact-btn.whatsapp { background: #e8f8ef; color: #128C7E; }
 @media (max-width: 400px) { .home-cards { grid-template-columns: 1fr; } }
 
+/* 🌟 ESKİ ŞIK DASHBOARD BUTONLARI & PANEL STİLLERİ (YENİDEN EKLENDİ) */
+.dashboard-ana-wrapper { width: 100%; max-width: 650px; margin: 20px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+.dashboard-buton-satiri { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+.dashboard-kare-kutu { 
+    width: 165px; 
+    height: 165px; 
+    background: #ffffff; 
+    border: 1.5px solid #e0e0e0; 
+    border-radius: 18px; 
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05); 
+    cursor: pointer; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    padding: 16px; 
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    outline: none;
+}
+.dashboard-kare-kutu:hover { 
+    transform: translateY(-4px); 
+    border-color: #1a73e8; 
+    box-shadow: 0 8px 24px rgba(26, 115, 232, 0.15); 
+}
+.dashboard-kare-kutu.active { 
+    background: #e8f0fe; 
+    border-color: #1a73e8; 
+    box-shadow: 0 4px 16px rgba(26, 115, 232, 0.2); 
+}
+.dashboard-kare-kutu .kutu-ikon { font-size: 42px; line-height: 1; }
+.dashboard-kare-kutu .kutu-baslik { font-size: 14px; font-weight: 700; color: #202124; text-align: center; line-height: 1.3; }
+.dashboard-kare-kutu.active .kutu-baslik { color: #1a73e8; }
+.dashboard-kare-kutu .kutu-ok { font-size: 13px; color: #5f6368; }
+
+.dashboard-panel-icerik { 
+    background: #ffffff; 
+    border: 1px solid #dadce0; 
+    border-radius: 16px; 
+    padding: 24px; 
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06); 
+    animation: panelSlidIn 0.3s ease-in-out; 
+    margin-top: 10px; 
+    box-sizing: border-box;
+}
+.panel-alt-bilgi { color: #5f6368; font-size: 13.5px; text-align: center; margin-bottom: 20px; }
+
+.panel-sinif-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 22px; border-bottom: 2px solid #f1f3f4; padding-bottom: 16px; }
+.panel-sinif-btn { background: #f8f9fa; border: 1px solid #dadce0; border-radius: 8px; padding: 9px 13px; font-size: 13px; font-weight: 600; color: #3c4043; cursor: pointer; transition: all 0.2s ease; text-align: center; outline: none; }
+.panel-sinif-btn:hover { background: #e8f0fe; color: #1a73e8; border-color: #1a73e8; }
+.panel-sinif-btn.active { background: #1a73e8; color: #ffffff; border-color: #1a73e8; box-shadow: 0 4px 10px rgba(26, 115, 232, 0.25); }
+
+.panel-kitap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+.muallim-pdf-link { display: flex; align-items: center; gap: 12px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 14px; color: #202124; text-decoration: none; font-weight: 600; font-size: 13.5px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: all 0.2s ease; }
+.muallim-pdf-link:hover { border-color: #ea4335; background: #fce8e6; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(234, 67, 53, 0.12); }
+.muallim-pdf-link::before { content: "📕"; font-size: 20px; }
+
+.ezber-ust-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; }
+.skor-dogru { color: #137333; font-weight: 700; }
+.skor-yanlis { color: #c5221f; font-weight: 700; }
+.ezber-kontrol-grubu { display: flex; justify-content: center; gap: 15px; max-width: 340px; margin: 0 auto; }
+.ezber-btn-action { flex: 1; border: none; padding: 13px; font-size: 14px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; outline: none; }
+.ezber-btn-action:active { transform: scale(0.96); }
+.btn-dogru { background: #34a853; color: white; box-shadow: 0 4px 10px rgba(52, 168, 83, 0.25); }
+.btn-dogru:hover { background: #2d8e47; }
+.btn-yanlis { background: #ea4335; color: white; box-shadow: 0 4px 10px rgba(234, 67, 53, 0.25); }
+.btn-yanlis:hover { background: #d3382b; }
+.muallim-empty-msg { grid-column: 1 / -1; text-align: center; color: #80868b; font-style: italic; padding: 20px; }
+
+@keyframes panelSlidIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 🔄 KART ÇEVİRME STİLLERİ */
+.ezber-kart-alani {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+}
+.ezber-flashcard {
+    width: 340px;
+    height: 210px;
+    cursor: pointer;
+    position: relative;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: transform 0.4s ease-in-out;
+}
+.ezber-flashcard.flipped {
+    transform: rotateY(180deg) !important;
+    -webkit-transform: rotateY(180deg) !important;
+}
+.ezber-card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 2px solid #e0e0e0;
+    pointer-events: none;
+}
+.ezber-card-front {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    color: #1a73e8;
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+.ezber-card-back {
+    background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
+    color: #ffffff;
+    transform: rotateY(180deg);
+    border-color: #1a73e8;
+}
+.ezber-card-face h2 { font-size: 26px; margin: 15px 0 8px 0; text-align: center; font-weight: 700; }
+.dil-etiket { font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,0.04); color: #5f6368; }
+.ezber-card-back .dil-etiket { background: rgba(255,255,255,0.15); color: #ffffff; }
+.cevir-ipucu { font-size: 12px; color: #80868b; margin: 0; font-style: italic; }
+.ezber-card-back .cevir-ipucu { color: #d2e3fc; }
+
 /* TRACKER */
 .tracker { display: none; flex-direction: column; min-height: 100vh; width: 100%; max-width: 720px; }
 .header { 
@@ -138,7 +266,7 @@ body {
 .progress-bar { height: 8px; background: #f0f0f0; border-radius: 999px; overflow: hidden; }
 .progress-fill { height: 100%; border-radius: 999px; transition: width 0.8s ease; }
 
-/* DERS SEKMELERİ (AKORDEON ARAYÜZÜ) */
+/* DERS SEKMELERİ */
 .lesson-accordion-item { background: #fff; border: 1px solid #e8eaed; border-radius: 12px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s; }
 .lesson-accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #fff; border: none; font-size: 14px; font-weight: 600; color: #1a1a1a; cursor: pointer; text-align: left; outline: none; }
 .lesson-accordion-header:hover { background: #f8f9fa; }
@@ -196,11 +324,9 @@ canvas { max-height: 200px; }
 .badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
-/* Kupa simgesi için animasyon */
 @keyframes kupaBounce { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-6px) scale(1.05); } 100% { transform: translateY(0) scale(1); } }
 .animated-trophy { font-size: 46px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); display: inline-block; animation: kupaBounce 2.5s infinite ease-in-out; }
 
-/* CSS ANİMASYONLU ÖĞRETMEN NOTU KARTI */
 .teacher-feedback-card { position: relative; background: #fff; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02); }
 .teacher-feedback-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #1D9E75, #378ADD, #f39c12, #1D9E75); background-size: 300% 100%; animation: borderGlow 6s linear infinite; }
 .feedback-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
@@ -210,7 +336,6 @@ canvas { max-height: 200px; }
 @keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 @keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
 
-/* 🚀 DİJİMUALLİM MOBİL UYUMLULUK */
 @media screen and (max-width: 768px) {
   .r-card, .chart-container, #content, .stats-grid, .main-container { padding: 10px !important; margin-bottom: 12px !important; width: 100% !important; box-sizing: border-box !important; }
   .r-btn-group, .flex-row, .grid-2-col { flex-direction: column !important; display: flex !important; gap: 8px !important; }
@@ -220,58 +345,6 @@ canvas { max-height: 200px; }
   .book-flex-layout { flex-direction: column !important; gap: 16px !important; }
   .trophy-score-card { width: 100% !important; padding: 20px !important; }
   #okumaRozeti { width: 100%; text-align: center; margin-top: 5px; }
-}
-
-/* 🔄 KART ÇEVİRME STİLLERİ */
-.ezber-kart-alani {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-    perspective: 1000px;
-    -webkit-perspective: 1000px;
-}
-.ezber-flashcard {
-    width: 340px;
-    height: 210px;
-    cursor: pointer;
-    position: relative;
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
-    transition: transform 0.4s ease-in-out;
-}
-.ezber-flashcard.flipped {
-    transform: rotateY(180deg) !important;
-    -webkit-transform: rotateY(180deg) !important;
-}
-.ezber-card-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-    border: 2px solid #e0e0e0;
-    pointer-events: none;
-}
-.ezber-card-front {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    color: #1a73e8;
-    z-index: 2;
-    transform: rotateY(0deg);
-}
-.ezber-card-back {
-    background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
-    color: #ffffff;
-    transform: rotateY(180deg);
-    border-color: #1a73e8;
 }
 </style>
 </head>
@@ -295,7 +368,7 @@ canvas { max-height: 200px; }
 <br>
 
 <!-- ========================================== -->
-<!-- 🌐 ANA DASHBOARD ALANI (YAN YANA BUTONLAR) -->
+<!-- 🌐 ANA DASHBOARD ALANI (YAN YANA 2 BUTON)  -->
 <!-- ========================================== -->
 <div class="dashboard-ana-wrapper">
 
@@ -429,7 +502,6 @@ canvas { max-height: 200px; }
 
 <!-- 🧠 KİTAP VE KELİME MOTORU (JAVASCRIPT) -->
 <script>
-// 📌 Google Sheets Web App URL (Skor kaydı için aktif tutuldu)
 var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzRLrOktwTgJedifOgvi43v9LgkkpxYkxmCgdc-x-tHRMXDsDkC0fx_47bmXGWN3-TU/exec";
 
 const muallimKitapDeposu = {
@@ -615,7 +687,6 @@ const ezberKelimeDeposu = {
     ]
 };
 
-// 🔄 KİTAP PANEL TETİKLEYİCİ
 function muallimKitapToggle() {
     const icerik = document.getElementById("muallimKitapIcerik");
     const ok = document.getElementById("muallimOkIsareti");
@@ -636,7 +707,6 @@ function muallimKitapToggle() {
     }
 }
 
-// 📖 KİTAP LİSTELEME
 function kitaplariGetir(sinifId, buton) {
     if(buton) {
         document.querySelectorAll('#muallimKitapIcerik .panel-sinif-btn').forEach(b => b.classList.remove('active'));
@@ -815,7 +885,6 @@ function ezberKelimeCek() {
     document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
 }
 
-// 🎯 DOĞRU BİLDİM / YANLIŞ BİLDİM BUTON MOTORU
 function ezberCevapVer(durum) {
     if (!mevcutKelimeNesnesi) return;
 
