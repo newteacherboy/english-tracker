@@ -75,7 +75,7 @@ body {
   gap: 8px; 
   padding: 1rem 1.25rem 0; 
   overflow-x: auto; 
-  background-color: #ffffff !important;
+  background-color: #ffffff !important; 
   border-bottom: 1px solid #e8eaed;
   padding-bottom: 1rem; 
 }
@@ -313,8 +313,6 @@ canvas { max-height: 200px; }
             <span class="kutu-baslik">Kelime Ezber Kartları</span>
             <span id="ezberOkIsareti" class="kutu-ok">🔽</span>
         </button>
-
-        
     </div>
 
     <!-- 📖 1. PANEL: İNGİLİZCE KİTAP OKU İÇERİĞİ -->
@@ -427,156 +425,13 @@ canvas { max-height: 200px; }
             </div>
         </div>
     </div>
-
-    <!-- 📝 3. PANEL: ONLİNE DENEME SINAVI İÇERİĞİ -->
-    <div id="denemeSınavIcerik" class="dashboard-ic-panel" style="display: none; padding: 20px;">
-        <div id="sınavGirisEkrani">
-            <h3 style="text-align: center; color: #4f46e5; margin-bottom: 20px;">🎯 LGS Deneme Sınavı Oluştur</h3>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">1. Sınıf Seçin:</label>
-                    <select id="sınavSinifSecimi" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;" onchange="sınavSinifDegisti()">
-                        <option value="">-- Seçiniz --</option>
-                        <option value="8">8. Sınıf (LGS)</option>
-                    </select>
-                </div>
-                
-                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">2. Soru Sayısı:</label>
-                    <select id="sınavSoruSayisi" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
-                        <option value="10">10 Soru</option>
-                        <option value="12">12 Soru</option>
-                        <option value="15">15 Soru</option>
-                        <option value="20">20 Soru</option>
-                    </select>
-                </div>
-            </div>
-
-            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 8px;">3. Üniteleri Seçin:</label>
-                <div id="sınavUniteListesi" style="max-height: 150px; overflow-y: auto;">
-                    <span style="color: #9ca3af; font-size: 14px;">Lütfen önce sınıf seçiniz.</span>
-                </div>
-            </div>
-
-            <div style="background: #fdf2f8; padding: 15px; border-radius: 8px; border: 1px solid #fbcfe8; margin-bottom: 20px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 8px; color: #db2777;">🏆 Liderlik Tablosu İçin Bilgileriniz:</label>
-                <input type="text" id="sınavOgrenciAdi" placeholder="Adınız Soyadınız (ZORUNLU)" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 2px solid #f472b6; box-sizing: border-box; font-weight: 500;">
-                <input type="text" id="sınavIletisim" placeholder="İletişim Numarası veya Mail (İsteğe Bağlı - Gizli Kalır)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
-                <small style="color: #9d174d; display:block; margin-top: 5px; font-size:12px;">* İsminiz kalıcı başarı tablosunda dereceye girmek için zorunludur.</small>
-            </div>
-
-            <button onclick="sınavıOlusturVeBaslat()" style="width:100%; background:#4f46e5; colorwhite; border:none; padding:12px; font-weight:bold; border-radius:6px; cursor:pointer; font-size:16px;">Sınavı Başlat 🚀</button>
-        </div>
-
-        <div id="sınavOyunEkrani" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #eeebff; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                <span id="sınavKalanSoru" style="font-weight: bold; color: #4f46e5;">Soru: 1 / 10</span>
-                <span id="sınavKronometre" style="background: #4f46e5; color: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-family: monospace;">Süre: 00:00</span>
-            </div>
-            
-            <div id="sınavSoruGövdesi" style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 15px;"></div>
-
-            <div id="sınavSiklarAlani" style="display: flex; flex-direction: column; gap: 10px;"></div>
-
-            <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 10px;">
-                <button onclick="sınavOncekiSoru()" style="flex:1; background:#9ca3af; color:white; border:none; padding:10px; font-weight:bold; border-radius:6px; cursor:pointer;">⬅️ Önceki</button>
-                <button id="sınavSonrakiBtn" onclick="sınavSonrakiSoru()" style="flex:1; background:#10b981; color:white; border:none; padding:10px; font-weight:bold; border-radius:6px; cursor:pointer;">Sonraki ➡️</button>
-            </div>
-        </div>
-
-        <div id="sınavSonucEkrani" style="display: none; text-align: center;">
-            <h3 style="color: #10b981;">🎉 Sınav Tamamlandı!</h3>
-            
-            <div style="display: flex; justify-content: space-around; background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0; font-weight: bold;">
-                <div style="color:#10b981;">Doğru: <span id="resDoğru">0</span></div>
-                <div style="color:#ef4444;">Yanlış: <span id="resYanlis">0</span></div>
-                <div style="color:#6b7280;">Boş: <span id="resBos">0</span></div>
-                <div style="color:#4f46e5;">Puan: <span id="resPuan">0</span></div>
-            </div>
-
-            <p style="font-weight: bold; color:#374151;">⏳ Harcanan Süre: <span id="resSure">00:00</span></p>
-            
-            <div id="sınavKonuAnalizi" style="text-align: left; background: #fff; border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin-bottom: 20px;"></div>
-
-            <div style="display: flex; gap: 10px; margin-bottom: 25px;">
-                <button onclick="sınavHatalariIncele()" style="flex: 1; background: #f59e0b; color: white; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer;">🔍 Soruları İncele</button>
-                <button onclick="sınavYenidenBaslat()" style="flex: 1; background: #4f46e5; color: white; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer;">🔄 Yeni Sınav</button>
-            </div>
-
-            <h4 style="margin-top: 25px; color: #374151; border-top: 2px dashed #e5e7eb; padding-top: 15px;">📊 Sınıf Başarı Sıralaması (Top 10)</h4>
-            <div style="overflow-x: auto; margin-top: 10px;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: left;">
-                    <thead>
-                        <tr style="background: #e5e7eb;">
-                            <th style="padding: 8px;">Sıra</th>
-                            <th style="padding: 8px;">Öğrenci Adı</th>
-                            <th style="padding: 8px;">Doğru</th>
-                            <th style="padding: 8px;">Süre</th>
-                            <th style="padding: 8px;">Puan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sınavLiderlikGövdesi"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 </div>
 
-<!-- 🎨 DASHBOARD STİL DOSYASI -->
-<style>
-.dashboard-ana-wrapper { max-width: 1100px; margin: 30px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-.dashboard-buton-satiri { display: flex; justify-content: center; gap: 25px; margin-bottom: 25px; flex-wrap: wrap; }
-.dashboard-kare-kutu { width: 170px; height: 170px; background: #ffffff; border: 1px solid #dadce0; border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 15px; transition: all 0.25s ease-in-out; }
-.dashboard-kare-kutu:hover { transform: translateY(-4px); border-color: #1a73e8; box-shadow: 0 6px 20px rgba(26, 115, 232, 0.12); }
-.dashboard-kare-kutu.active { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; box-shadow: 0 4px 15px rgba(26, 115, 232, 0.2); }
-.dashboard-kare-kutu .kutu-ikon { font-size: 42px; }
-.dashboard-kare-kutu .kutu-baslik { font-size: 14px; font-weight: 600; color: #202124; text-align: center; }
-.dashboard-kare-kutu.active .kutu-baslik { color: #1a73e8; }
-.dashboard-kare-kutu .kutu-ok { font-size: 12px; color: #5f6368; }
-
-.dashboard-panel-icerik { background: #ffffff; border: 1px solid #dadce0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); animation: panelSlidIn 0.3s ease-in-out; margin-top: 10px; }
-.panel-alt-bilgi { color: #5f6368; font-size: 14px; text-align: center; margin-bottom: 20px; }
-
-.panel-sinif-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 25px; border-bottom: 2px solid #f1f3f4; padding-bottom: 15px; }
-.panel-sinif-btn { background: #f8f9fa; border: 1px solid #dadce0; border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 600; color: #3c4043; cursor: pointer; transition: all 0.2s ease; text-align: center; }
-.panel-sinif-btn:hover { background: #e8f0fe; color: #1a73e8; border-color: #1a73e8; }
-.panel-sinif-btn.active { background: #1a73e8; color: #ffffff; border-color: #1a73e8; box-shadow: 0 4px 10px rgba(26, 115, 232, 0.2); }
-
-.panel-kitap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-.muallim-pdf-link { display: flex; align-items: center; gap: 12px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; color: #202124; text-decoration: none; font-weight: 500; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s ease; }
-.muallim-pdf-link:hover { border-color: #ea4335; background: #fce8e6; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(234, 67, 53, 0.12); }
-.muallim-pdf-link::before { content: "📕"; font-size: 20px; }
-
-.ezber-ust-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; }
-.skor-dogru { color: #137333; font-weight: 600; }
-.skor-yanlis { color: #c5221f; font-weight: 600; }
-.ezber-kart-alani { display: flex; justify-content: center; margin-bottom: 25px; perspective: 1000px; }
-.ezber-flashcard { width: 340px; height: 210px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2); box-shadow: 0 8px 25px rgba(0,0,0,0.08); border-radius: 16px; }
-.ezber-flashcard.flipped { transform: rotateY(180deg); }
-.ezber-card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; border: 2px solid #e0e0e0; }
-.ezber-card-front { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); color: #1a73e8; }
-.ezber-card-back { background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%); color: #ffffff; transform: rotateY(180deg); border-color: #1a73e8; }
-.ezber-card-face h2 { font-size: 26px; margin: 15px 0 8px 0; text-align: center; font-weight: 700; }
-.dil-etiket { font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,0.04); color: #5f6368; }
-.ezber-card-back .dil-etiket { background: rgba(255,255,255,0.15); color: #ffffff; }
-.cevir-ipucu { font-size: 12px; color: #80868b; margin: 0; font-style: italic; }
-.ezber-card-back .cevir-ipucu { color: #d2e3fc; }
-.ezber-kontrol-grubu { display: flex; justify-content: center; gap: 15px; max-width: 340px; margin: 0 auto; }
-.ezber-btn-action { flex: 1; border: none; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; }
-.ezber-btn-action:active { transform: scale(0.96); }
-.btn-dogru { background: #34a853; color: white; box-shadow: 0 4px 10px rgba(52, 168, 83, 0.2); }
-.btn-dogru:hover { background: #2d8e47; }
-.btn-yanlis { background: #ea4335; color: white; box-shadow: 0 4px 10px rgba(234, 67, 53, 0.2); }
-.btn-yanlis:hover { background: #d3382b; }
-.muallim-empty-msg { grid-column: 1 / -1; text-align: center; color: #80868b; font-style: italic; padding: 20px; }
-
-@keyframes panelSlidIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
-</style>
-
-<!-- 🧠 KİTAP, KELİME MOTORU VE ONLİNE DENEME (JAVASCRIPT) -->
+<!-- 🧠 KİTAP VE KELİME MOTORU (JAVASCRIPT) -->
 <script>
+// 📌 Google Sheets Web App URL (Skor kaydı için aktif tutuldu)
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzRLrOktwTgJedifOgvi43v9LgkkpxYkxmCgdc-x-tHRMXDsDkC0fx_47bmXGWN3-TU/exec";
+
 const muallimKitapDeposu = {
     "okul-oncesi": [
         { isim: "I'm too ill", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/im-too-ill" },
@@ -769,9 +624,6 @@ function muallimKitapToggle() {
     document.getElementById("ezberKartIcerik").style.display = "none";
     document.getElementById("ezberKareKutu").classList.remove("active");
     document.getElementById("ezberOkIsareti").innerText = "🔽";
-    document.getElementById("denemeSınavIcerik").style.display = "none";
-    document.getElementById("denemeKareKutu").classList.remove("active");
-    document.getElementById("denemeOkIsareti").innerText = "🔽";
 
     if (icerik.style.display === "none") {
         icerik.style.display = "block";
@@ -827,9 +679,6 @@ function ezberKartToggle() {
     document.getElementById("muallimKitapIcerik").style.display = "none";
     document.getElementById("muallimKareKutu").classList.remove("active");
     document.getElementById("muallimOkIsareti").innerText = "🔽";
-    document.getElementById("denemeSınavIcerik").style.display = "none";
-    document.getElementById("denemeKareKutu").classList.remove("active");
-    document.getElementById("denemeOkIsareti").innerText = "🔽";
 
     if (icerik.style.display === "none") {
         icerik.style.display = "block";
@@ -1082,27 +931,6 @@ function ezberYenidenBaslat() {
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 });
-
-    document.getElementById("muallimKitapIcerik").style.display = "none";
-    document.getElementById("muallimKareKutu").classList.remove("active");
-    document.getElementById("muallimOkIsareti").innerText = "🔽";
-    document.getElementById("ezberKartIcerik").style.display = "none";
-    document.getElementById("ezberKareKutu").classList.remove("active");
-    document.getElementById("ezberOkIsareti").innerText = "🔽";
-
-    if (icerik.style.display === "none" || icerik.style.display === "") {
-        icerik.style.display = "block";
-        kutu.classList.add("active");
-        ok.innerText = "🔼";
-        sınavVerileriniYukle();
-    } else {
-        icerik.style.display = "none";
-        kutu.classList.remove("active");
-        ok.innerText = "🔽";
-    }
-}
-
-
 </script>
 
 <br><br>
