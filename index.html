@@ -43,6 +43,32 @@ body {
     box-shadow: 0 8px 32px 0 rgba(125, 100, 81, 0.06) !important;
 }
 
+/* 🏠 DİKKAT ÇEKİCİ GLOBAL ANA SAYFA BUTONU */
+.global-portal-home-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 9999999;
+    box-shadow: 0 4px 15px rgba(29, 158, 117, 0.35);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.global-portal-home-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 158, 117, 0.5);
+    background: linear-gradient(135deg, #24b888 0%, #128366 100%);
+}
+
 /* ANA SAYFA */
 .home { min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
 .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
@@ -534,6 +560,11 @@ canvas { max-height: 200px; }
 </style>
 </head>
 <body>
+
+    <!-- 🌟 DİKKAT ÇEKİCİ GLOBAL ANA SAYFA BUTONU (KİLİT EKRANINDA VE HER YERDE GÖZÜKÜR) -->
+    <button class="global-portal-home-btn" onclick="portalEkraninaDon()">
+      🏠 Ana Sayfa
+    </button>
 
     <!-- 🚀 GİRİŞ KARŞILAMA VE PORTAL SEÇİM EKRANI -->
 <div id="welcomePortalScreen" class="welcome-overlay">
@@ -1565,7 +1596,6 @@ async function randevuSisteminiTetikle() {
 <div class="tracker" id="tracker">
   <div class="header">
     <button class="back-btn" onclick="goHome()">← Geri</button>
-    <button class="back-btn" onclick="portalEkraninaDon()" style="background: #1D9E75; color: white; border-color: #1D9E75;">🏠 Ana Sayfa</button>
     <div class="header-title" id="header-title"></div>
     <div class="last-updated" id="last-updated"></div>
   </div>
@@ -2430,7 +2460,7 @@ function drawDenemeChart(name) {
         </div>
 
         <div style="display:flex;gap:8px;margin-top:15px;">
-          <button id="yeni_saveBtn" style="flex:2;padding:13px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Formu Kaydet (Yeni Satır)</button>
+          <button id="yeni_saveBtn" style="flex:2;padding:13px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Formu Kaydet (Yeni Satır)</label>
           <button id="yeni_resetBtn" style="flex:1;padding:13px;border-radius:10px;border:1.5px solid #E2DDD2;background:#fff;color:#5A554C;font-size:14px;font-weight:600;cursor:pointer;">Temizle</button>
         </div>
 
@@ -2703,7 +2733,7 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
         } catch (error) {
             statusMsg.style.display = "block";
-            statusMsg.style.background = "#FCE8E6";
+            statusMsg.style.background = FCE8E6;
             statusMsg.style.color = "#C5221F";
             statusMsg.innerText = "Hata oluştu! Tabloya bağlanılamadı.";
         } finally {
