@@ -827,31 +827,53 @@ function ezberSesKontrol() {
     }
 }
 
-// 🚀 YARIŞMAYI BAŞLAT VE MÜZİĞİ TETİKLE
+// 🚀 GÜNCELLENMİŞ VE KORUMALI BAŞLATMA FONKSİYONU
 function ezberSistemiBaslat() {
     const isimInput = document.getElementById("ezberOgrenciAdi").value.trim();
     ezberKullanici = isimInput === "" ? "Gizemli Oyuncu" : isimInput;
 
+    // Seçili sınıfın geçerli olduğundan emin ol (varsayılan: 2-sinif)
+    const siralama = ["2-sinif", "3-sinif", "4-sinif", "5-sinif", "6-sinif", "7-sinif", "8-sinif"];
+    let hedefIdx = siralama.indexOf(aktifSinif);
+    if (hedefIdx === -1) { 
+        aktifSinif = "2-sinif"; 
+        hedefIdx = 0; 
+    }
+
+    // Sarmal kelime havuzunu topla
+    let kümülatifHavuz = [];
+    for (let i = 0; i <= hedefIdx; i++) {
+        const sinifKelimeleri = ezberKelimeDeposu[siralama[i]];
+        if (Array.isArray(sinifKelimeleri)) {
+            kümülatifHavuz = kümülatifHavuz.concat(sinifKelimeleri);
+        }
+    }
+
+    // Havuz boşsa yedek güvenlik kontrolü
+    if (kümülatifHavuz.length === 0) {
+        kümülatifHavuz = ezberKelimeDeposu["2-sinif"] || [];
+    }
+
+    // Kelimeleri karıştır ve soru adedi kadarını al
+    kümülatifHavuz.sort(() => Math.random() - 0.5);
+    oyunKelimeListesi = kümülatifHavuz.slice(0, Math.min(EZBER_TUR_SORU_SAYISI, kümülatifHavuz.length));
+
+    // Sayaç ve Skorları Sıfırla
+    dogruSkor = 0; 
+    yanlisSkor = 0; 
+    mevcutKelimeIndex = 0; 
+    ezberSaniye = 0;
+    
+    document.getElementById("ezberDogruSayisi").innerText = "0";
+    document.getElementById("ezberYanlisSayisi").innerText = "0";
+    document.getElementById("ezberKronometre").innerText = "⏱️ 00:00";
+
+    // Ekranları değiştir
     document.getElementById("ezberGirisEkrani").style.display = "none";
     document.getElementById("ezberSonucEkrani").style.display = "none";
     document.getElementById("ezberOyunEkrani").style.display = "block";
 
-    dogruSkor = 0; yanlisSkor = 0; mevcutKelimeIndex = 0; ezberSaniye = 0;
-    document.getElementById("ezberDogruSayisi").innerText = "0";
-    document.getElementById("ezberYanlisSayisi").innerText = "0";
-
-    const siralama = ["2-sinif", "3-sinif", "4-sinif", "5-sinif", "6-sinif", "7-sinif", "8-sinif"];
-    const hedefIdx = siralama.indexOf(aktifSinif);
-    
-    let kümülatifHavuz = [];
-    for(let i = 0; i <= hedefIdx; i++) {
-        kümülatifHavuz = kümülatifHavuz.concat(ezberKelimeDeposu[siralama[i]] || []);
-    }
-
-    kümülatifHavuz.sort(() => Math.random() - 0.5);
-    oyunKelimeListesi = kümülatifHavuz.slice(0, EZBER_TUR_SORU_SAYISI);
-
-    // KRONOMETRE
+    // Kronometreyi başlat
     clearInterval(ezberKronometreInterval);
     ezberKronometreInterval = setInterval(() => {
         ezberSaniye++;
@@ -860,81 +882,38 @@ function ezberSistemiBaslat() {
         document.getElementById("ezberKronometre").innerText = "⏱️ " + (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
     }, 1000);
 
-    // 🎵 YEREL MP3 BAŞLATICI
+    // 🎵 Müzik Başlatıcı
     const muzik = document.getElementById("ezberMuzik");
     const btn = document.getElementById("ezberSesBtn");
-    
-    muzik.currentTime = 0;
-    muzik.volume = 0.35; // Arka plan ses düzeyi
+    if (muzik) {
+        muzik.currentTime = 0;
+        muzik.volume = 0.35;
+        muzik.play().then(() => {
+            if (btn) { btn.innerText = "🔊"; btn.style.background = "#e8f0fe"; }
+        }).catch(e => {
+            if (btn) { btn.innerText = "🔇"; btn.style.background = "#fad4d1"; }
+        });
+    }
 
-    // Doğrudan kullanıcı tıklamasından tetiklendiği için tarayıcı engeline takılmaz
-    muzik.play().then(() => {
-        btn.innerText = "🔊";
-        btn.style.background = "#e8f0fe";
-        btn.style.borderColor = "#d2e3fc";
-    }).catch(e => {
-        console.log("Tarayıcı kısıtlaması:", e);
-        btn.innerText = "🔇";
-        btn.style.background = "#fad4d1";
-    });
-
+    // İlk kelimeyi yükle
     ezberKelimeCek();
 }
 
-// 🏁 TUR BİTTİĞİNDE MÜZİĞİ SUSTUR
-function ezberTurBitir() {
-    clearInterval(ezberKronometreInterval);
-    
-    const muzik = document.getElementById("ezberMuzik");
-    if (muzik) { muzik.pause(); }
+// 📖 KELİMEYİ ANINDA VE GECİKMESİZ EKRANA BASAN FONKSİYON
+function ezberKelimeCek() {
+    const kart = document.getElementById("ezberFlashCard");
+    if (kart) kart.classList.remove("flipped");
 
-    document.getElementById("ezberOyunEkrani").style.display = "none";
-    document.getElementById("ezberSonucEkrani").style.display = "block";
+    if (!oyunKelimeListesi || oyunKelimeListesi.length === 0 || !oyunKelimeListesi[mevcutKelimeIndex]) {
+        return;
+    }
 
-    let finalPuan = dogruSkor * (100 / EZBER_TUR_SORU_SAYISI);
-    let dk = Math.floor(ezberSaniye / 60);
-    let sn = ezberSaniye % 60;
-    let formatliSure = (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
+    mevcutKelimeNesnesi = oyunKelimeListesi[mevcutKelimeIndex];
 
-    document.getElementById("sonucPuan").innerText = finalPuan;
-    document.getElementById("sonucZaman").innerText = formatliSure;
-
-    document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 15px;">Sonuçlarınız kaydediliyor ve sıralama çekiliyor... ⏳</td></tr>';
-
-    const postData = {
-        aksiyon: "ezberKaydet",
-        isim: ezberKullanici,
-        sinif: aktifSinif,
-        dogru: dogruSkor,
-        yanlis: yanlisSkor,
-        sure: formatliSure,
-        sureSaniye: ezberSaniye,
-        puan: finalPuan
-    };
-
-    fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(postData) })
-    .then(res => res.json())
-    .then(data => {
-        if(data.durum === "basarili") {
-            ezberLiderlikTablosuBas(data.liderlikTablosu);
-        }
-    }).catch(err => {
-        document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Veri çekilemedi. Tekrar deneyin.</td></tr>';
-    });
+    document.getElementById("ezberProgress").innerText = `Kelime: ${mevcutKelimeIndex + 1} / ${oyunKelimeListesi.length}`;
+    document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
+    document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
 }
-
-// 🔄 YENİDEN BAŞLATIRKEN MÜZİĞİ SUSTUR
-function ezberYenidenBaslat() {
-    clearInterval(ezberKronometreInterval);
-    
-    const muzik = document.getElementById("ezberMuzik");
-    if (muzik) { muzik.pause(); }
-
-    document.getElementById("ezberOyunEkrani").style.display = "none";
-    document.getElementById("ezberSonucEkrani").style.display = "none";
-    document.getElementById("ezberGirisEkrani").style.display = "block";
-}
-
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 });
