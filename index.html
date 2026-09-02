@@ -1844,17 +1844,30 @@ function renderTabs() {
     </div>`;
 }
 
+function turkceKucukBuyukDuzelt(metin) {
+    if (!metin) return "";
+    return metin.toString().trim()
+        .replace(/i/g, 'İ').replace(/ı/g, 'I')
+        .replace(/ğ/g, 'Ğ').replace(/ü/g, 'Ü')
+        .replace(/ş/g, 'Ş').replace(/ö/g, 'Ö')
+        .replace(/ç/g, 'Ç')
+        .toUpperCase();
+}
+
 function manuelGirisYap() {
-    const girilenIsimRaw = document.getElementById("login-name-input").value.trim();
+    const girilenIsimRaw = document.getElementById("login-name-input").value;
     const girilenSifre = document.getElementById("login-pwd-input").value.trim();
     const hataAlani = document.getElementById("lock-error");
 
-    if (!girilenIsimRaw) {
+    const temizGirilenIsim = turkceKucukBuyukDuzelt(girilenIsimRaw);
+
+    if (!temizGirilenIsim) {
         hataAlani.textContent = "Lütfen adınızı ve soyadınızı giriniz.";
         return;
     }
 
-    const bulunanOgrenci = students.find(s => s.toLowerCase() === girilenIsimRaw.toLowerCase());
+    // Türkçe karaktere duyarlı olarak Google Sheets'ten gelen isimle eşleştirme
+    const bulunanOgrenci = students.find(s => turkceKucukBuyukDuzelt(s) === temizGirilenIsim);
 
     if (!bulunanOgrenci) {
         hataAlani.textContent = "Bu isimle kayıtlı bir öğrenci bulunamadı.";
@@ -1875,6 +1888,8 @@ function manuelGirisYap() {
     selectStudent(bulunanOgrenci);
 }
 
+        
+        
 function aktifogrenciyiKapat() {
     if (activeStudent) {
         delete unlockedStudents[activeStudent];
