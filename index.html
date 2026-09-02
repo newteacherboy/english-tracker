@@ -48,8 +48,25 @@ body {
 .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
 .home-logo span { color: #1D9E75; }
 .home-sub { font-size: 14px; color: #888; margin-bottom: 3rem; text-align: center; }
-.home-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 480px; }
-.home-card { background: #fff; border: 1px solid #e8eaed; border-radius: 18px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.18s; }
+.home-cards { 
+    display: flex; 
+    justify-content: center; 
+    gap: 16px; 
+    width: 100%; 
+    max-width: 480px; 
+}
+.home-card { 
+    background: #fff; 
+    border: 1px solid #e8eaed; 
+    border-radius: 18px; 
+    padding: 2rem 1.5rem; 
+    text-align: center; 
+    cursor: pointer; 
+    transition: all 0.18s; 
+    width: 100%;
+    max-width: 220px;
+}
+
 .home-card:hover { border-color: #1D9E75; box-shadow: 0 4px 20px rgba(29,158,117,0.12); transform: translateY(-2px); }
 .home-card .icon { font-size: 36px; margin-bottom: 0.8rem; }
 .home-card h2 { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 0.4rem; line-height: 1.3; }
