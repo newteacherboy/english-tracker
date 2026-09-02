@@ -940,8 +940,7 @@ const ezberKelimeDeposu = {
         {en:"Diving", tr:"Dalma / Dalış"}, {en:"Trekking", tr:"Doğa Yürüyüşü"}, {en:"Accommodation", tr:"Konaklama"}, {en:"Hotel", tr:"Otel"}, {en:"Hostel", tr:"Pansiyon"},
         {en:"All-inclusive", tr:"Her Şey Dahil"}, {en:"Cruise", tr:"Gemi Turu"}, {en:"Safari", tr:"Vahşi Yaşam Turu"}, {en:"Souvenir", tr:"Hediyelik Eşya"}, {en:"Historic", tr:"Tarihi"},
         {en:"Ancient", tr:"Antik / Çok Eski"}, {en:"Architecture", tr:"Mimari"}, {en:"Destination", tr:"Varış Noktası"}, {en:"Attraction", tr:"Cazibe Merkezi"}, {en:"Marvelous", tr:"Harika / Göz alıcı"},
-        {en:"Incredible", tr:"İnanılmaz"}, {en:"Climate", tr:"İklim"}, {en:"Scenery", tr:"Manzara"}, {en:"Excursion", tr:"Kısa Yolculuk / Gezi"}, {en:"Resort", tr:"Tatil Yeri / Tatil Köyü"},
-        {en:"Daily chore", tr:"Günlük Ev İşi"}, {en:"Responsibility", tr:"Sorumluluk"}, {en:"Obligation", tr:"Zorunluluk"}, {en:"Task", tr:"Görev / İş"}, {en:"Vacuum", tr:"Elektrik süpürgesiyle çekmek"},
+        {en:"Incredible", tr:"İnanılmaz"}, {en:"Climate", tr:"İklim"}, {en:"Scenery", tr:"Manzara"}, {en:"Excursion", tr:"Kısa Yolculuk / Gezi"}, {en:"Resort", tr:"Tatil Yeri / Tatil Köyü"}, {en:"Daily chore", tr:"Günlük Ev İşi"}, {en:"Responsibility", tr:"Sorumluluk"}, {en:"Obligation", tr:"Zorunluluk"}, {en:"Task", tr:"Görev / İş"}, {en:"Vacuum", tr:"Elektrik süpürgesiyle çekmek"},
         {en:"Mop", tr:"Paspaslamak"}, {en:"Dust", tr:"Toz Almak"}, {en:"Ironing", tr:"Ütü Yapmak"}, {en:"Laundry", tr:"Çamaşır"}, {en:"Dishwasher", tr:"Bulaşık Makinesi"},
         {en:"Science", tr:"Bilim"}, {en:"Invention", tr:"İcat"}, {en:"Discovery", tr:"Keşif"}, {en:"Lab", tr:"Laboratuvar"}, {en:"Experiment", tr:"Deney"},
         {en:"Scientist", tr:"Bilim İnsanı"}, {en:"Cure", tr:"Tedavi / Çare"}, {en:"Vaccine", tr:"Aşı"}, {en:"High-tech", tr:"Yüksek Teknoloji"}, {en:"Explore", tr:"Keşfetmek / Araştırmak"},
@@ -1800,23 +1799,17 @@ async function loadData() {
     } catch(e) { denemelerData = []; }
 
     document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
-    renderTabs();
-
-    const kayitliSifre = localStorage.getItem('dijimuallim_ogrenci_sifre');
-    const kayitliOgrenci = localStorage.getItem('dijimuallim_ogrenci_isim');
-
-    if (kayitliSifre && kayitliOgrenci && passwords[kayitliOgrenci] === kayitliSifre) {
+    
+    // Hafızada kalıcı giriş (session/local storage) kontrolü
+    const kayitliOgrenci = localStorage.getItem('dijimuallim_aktif_ogrenci');
+    if (kayitliOgrenci && students.includes(kayitliOgrenci)) {
         unlockedStudents[kayitliOgrenci] = true;
-        if (!activeStudent) {
-            selectStudent(kayitliOgrenci);
-            return;
-        }
+        selectStudent(kayitliOgrenci);
+    } else {
+        renderTabs();
+        document.getElementById("content").innerHTML = "";
     }
 
-    if (students.length && !activeStudent) selectStudent(students[0]);
-    else if (!students.length) {
-      document.getElementById("content").innerHTML = '<div class="empty">Henüz öğrenci eklenmemiş.</div>';
-    }
   } catch(e) {
     console.error(e);
     document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
@@ -1824,21 +1817,69 @@ async function loadData() {
 }
 
 function renderTabs() {
-  let optionsHtml = '<option value="">— Öğrenci seçiniz —</option>';
-  students.forEach(s => {
-    const isLocked = passwords[s] && !unlockedStudents[s] ? " 🔒" : "";
-    const isSelected = s === activeStudent ? ' selected' : '';
-    optionsHtml += `<option value="${s.replace(/"/g,'&quot;')}"${isSelected}>${s}${isLocked}</option>`;
-  });
+  if (activeStudent && unlockedStudents[activeStudent]) {
+    document.getElementById("tabs").innerHTML = `
+      <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 5px 15px; box-sizing: border-box; background: #fff; border-radius: 10px; border: 1px solid #e8eaed;">
+        <span style="font-size: 13px; font-weight: 600; color: #1D9E75;">👤 Aktif Öğrenci: ${activeStudent}</span>
+        <button onclick="aktifogrenciyiKapat()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">Hesaptan Çık</button>
+      </div>
+    `;
+    return;
+  }
 
-  document.getElementById("tabs").innerHTML = `
-    <div style="width: 100%; max-width: 400px; margin: 15px auto; padding: 0 15px; box-sizing: border-box;">
-      <label for="student-select" style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">📌 ÖĞRENCİ SEÇ</label>
-      <select id="student-select" onchange="if(this.value) selectStudent(this.value)" style="width: 100%; padding: 12px 16px; font-size: 15px; font-weight: 600; color: #344155; border: 2px solid #3b82f6; border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); cursor: pointer; outline: none;">
-        ${optionsHtml}
-      </select>
-    </div>
-  `;
+  document.getElementById("tabs").innerHTML = "";
+  document.getElementById("content").innerHTML = `
+    <div class="lock-screen" style="max-width: 380px; margin: 40px auto;">
+      <div class="lock-icon">🎓</div>
+      <h3>Öğrenci Giriş Portalı</h3>
+      <p>Lütfen sistemde kayıtlı Adınızı ve Soyadınızı, ardından şifrenizi giriniz.</p>
+      
+      <input class="lock-input" type="text" id="login-name-input" placeholder="Adınız Soyadınız" style="margin-bottom: 12px; text-transform: uppercase;">
+      <input class="lock-input" type="password" id="login-pwd-input" placeholder="Şifreniz" onkeydown="if(event.key==='Enter')manuelGirisYap()">
+      
+      <button class="lock-btn" onclick="manuelGirisYap()">Giriş Yap</button>
+      <div class="lock-error" id="lock-error"></div>
+    </div>`;
+}
+
+function manuelGirisYap() {
+    const girilenIsimRaw = document.getElementById("login-name-input").value.trim();
+    const girilenSifre = document.getElementById("login-pwd-input").value.trim();
+    const hataAlani = document.getElementById("lock-error");
+
+    if (!girilenIsimRaw) {
+        hataAlani.textContent = "Lütfen adınızı ve soyadınızı giriniz.";
+        return;
+    }
+
+    const bulunanOgrenci = students.find(s => s.toLowerCase() === girilenIsimRaw.toLowerCase());
+
+    if (!bulunanOgrenci) {
+        hataAlani.textContent = "Bu isimle kayıtlı bir öğrenci bulunamadı.";
+        return;
+    }
+
+    const dogruSifre = (passwords[bulunanOgrenci] || "").trim();
+
+    if (dogruSifre && girilenSifre !== dogruSifre) {
+        hataAlani.textContent = "Şifreniz hatalı, lütfen tekrar deneyin.";
+        document.getElementById("login-pwd-input").value = "";
+        document.getElementById("login-pwd-input").focus();
+        return;
+    }
+
+    unlockedStudents[bulunanOgrenci] = true;
+    localStorage.setItem('dijimuallim_aktif_ogrenci', bulunanOgrenci);
+    selectStudent(bulunanOgrenci);
+}
+
+function aktifogrenciyiKapat() {
+    if (activeStudent) {
+        delete unlockedStudents[activeStudent];
+    }
+    localStorage.removeItem('dijimuallim_aktif_ogrenci');
+    activeStudent = null;
+    renderTabs();
 }
 
 function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
@@ -1846,48 +1887,7 @@ function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
 function selectStudent(name) {
   activeStudent = name; activePageTab = "ozet";
   renderTabs();
-  if (passwords[name] && !unlockedStudents[name]) { showLockScreen(name); return; }
   showStudentPage(name);
-}
-
-function showLockScreen(name) {
-  const s = esc(name);
-  document.getElementById("content").innerHTML = `
-    <div class="lock-screen">
-      <div class="lock-icon">🔒</div>
-      <h3>${name.split(" ")[0]} adlı öğrencinin sayfası</h3>
-      <p>Bu sayfayı görüntülemek için şifre gereklidir.</p>
-      <input class="lock-input" type="password" id="pwd-input" placeholder="Şifrenizi girin" onkeydown="if(event.key==='Enter')checkPassword('${s}')">
-      <button class="lock-btn" onclick="checkPassword('${s}')">Giriş Yap</button>
-      <div class="lock-error" id="lock-error"></div>
-    </div>`;
-  setTimeout(() => document.getElementById("pwd-input")?.focus(), 100);
-}
-
-function checkPassword(name) {
-    const input = document.getElementById("pwd-input").value.trim();
-    const correctPassword = (passwords[name] || "").trim();
-    if (!correctPassword) {
-        document.getElementById("lock-error").textContent = "Sistemde şifreniz tanımlı değil, öğretmeninize danışın.";
-        return;
-    }
-    if (input === correctPassword) {
-        unlockedStudents[name] = true;
-        localStorage.setItem('dijimuallim_ogrenci_sifre', input);
-        localStorage.setItem('dijimuallim_ogrenci_isim', name);
-        showStudentPage(name);
-    } else {
-        document.getElementById("lock-error").textContent = "Şifre yanlış, tekrar deneyin.";
-        document.getElementById("pwd-input").value = "";
-        document.getElementById("pwd-input").focus();
-    }
-}
-
-function logout(name) { 
-  delete unlockedStudents[name]; 
-  localStorage.removeItem('dijimuallim_ogrenci_sifre');
-  localStorage.removeItem('dijimuallim_ogrenci_isim');
-  showLockScreen(name); 
 }
 
 function showStudentPage(name) {
@@ -1907,7 +1907,6 @@ function showStudentPage(name) {
       <div class="avatar">${initials}</div>
       <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
       <div class="level-badge">${latest.seviye}</div>
-      ${passwords[name] ? `<button class="logout-btn" onclick="logout('${s}')">🔒 Çıkış</button>` : ""}
     </div>
     <div class="page-tabs">
       <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
@@ -2460,7 +2459,7 @@ function drawDenemeChart(name) {
         </div>
 
         <div style="display:flex;gap:8px;margin-top:15px;">
-          <button id="yeni_saveBtn" style="flex:2;padding:13px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Formu Kaydet (Yeni Satır)</label>
+          <button id="yeni_saveBtn" style="flex:2;padding:13px;border-radius:10px;border:none;background:#9B5435;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Formu Kaydet (Yeni Satır)</button>
           <button id="yeni_resetBtn" style="flex:1;padding:13px;border-radius:10px;border:1.5px solid #E2DDD2;background:#fff;color:#5A554C;font-size:14px;font-weight:600;cursor:pointer;">Temizle</button>
         </div>
 
@@ -2714,7 +2713,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu sisteme işlenmiştir.\n\n` +
                               `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
                               `📝 *Öğretmen Notları:* \n• Ders Başı Durumu: ${startCommentVal}\n• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
-                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
+                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamland.genel}\n`;
                 
                 if (parseInt(payloadTamamlandi.deneme) > 0) { wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`; }
                 
@@ -2733,7 +2732,7 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
         } catch (error) {
             statusMsg.style.display = "block";
-            statusMsg.style.background = FCE8E6;
+            statusMsg.style.background = "#FCE8E6";
             statusMsg.style.color = "#C5221F";
             statusMsg.innerText = "Hata oluştu! Tabloya bağlanılamadı.";
         } finally {
