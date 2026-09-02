@@ -1565,6 +1565,7 @@ async function randevuSisteminiTetikle() {
 <div class="tracker" id="tracker">
   <div class="header">
     <button class="back-btn" onclick="goHome()">← Geri</button>
+    <button class="back-btn" onclick="portalEkraninaDon()" style="background: #1D9E75; color: white; border-color: #1D9E75;">🏠 Ana Sayfa</button>
     <div class="header-title" id="header-title"></div>
     <div class="last-updated" id="last-updated"></div>
   </div>
@@ -1599,6 +1600,14 @@ let unlockedStudents = {};
 let activeStudent = null;
 let activePageTab = "ozet";
 let denemelerData = [];
+
+function portalEkraninaDon() {
+  document.getElementById("tracker").style.display = "none";
+  document.getElementById("home").style.display = "none";
+  const welcome = document.getElementById("welcomePortalScreen");
+  welcome.style.display = "flex";
+  welcome.style.opacity = "1";
+}
 
 const parseDateStr = (dStr) => {
   if (!dStr) return new Date(0);
