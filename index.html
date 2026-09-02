@@ -289,10 +289,8 @@ canvas { max-height: 200px; }
    <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ (GÜNCELLENMİŞ YARIŞMA MODU) -->
     <div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
         
-        <!-- YARIŞMA MÜZİĞİ (Tüm tarayıcılarla %100 uyumlu doğrudan MP3 akışı) -->
-<audio id="ezberMuzik" loop preload="auto" playsinline>
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=game-music-loop-6-144641.mp3" type="audio/mpeg">
-</audio>
+        <!-- YEREL GITHUB MP3 ÇALICI -->
+<audio id="ezberMuzik" loop preload="auto" playsinline src="muzik.mp3"></audio>
 
         <!-- GİRİŞ EKRANI -->
         <div id="ezberGirisEkrani" style="text-align: center;">
@@ -810,48 +808,26 @@ function ezberSinifSec(sinifId, buton) {
     aktifSinif = sinifId;
 }
 
-// YENİ SES KONTROL FONKSİYONU
+// 🎵 SES KONTROL BUTONU (AÇ / KAPAT)
 function ezberSesKontrol() {
     const muzik = document.getElementById("ezberMuzik");
     const btn = document.getElementById("ezberSesBtn");
-    
-    if (ezberMuzikCalisiyor) {
-        muzik.pause();
-        ezberMuzikCalisiyor = false;
-        btn.innerText = "🔇";
-        btn.style.background = "#fad4d1";
-        btn.style.borderColor = "#f5b4b0";
-    } else {
-        muzik.play();
-        ezberMuzikCalisiyor = true;
-        btn.innerText = "🔊";
-        btn.style.background = "#e8f0fe";
-        btn.style.borderColor = "#d2e3fc";
-    }
-}
 
-// SES KONTROL BUTONU FONKSİYONU
-function ezberSesKontrol() {
-    const muzik = document.getElementById("ezberMuzik");
-    const btn = document.getElementById("ezberSesBtn");
-    
-    if (!muzik.paused) {
-        muzik.pause();
-        ezberMuzikCalisiyor = false;
-        btn.innerText = "🔇";
-        btn.style.background = "#fad4d1";
-        btn.style.borderColor = "#f5b4b0";
-    } else {
+    if (muzik.paused) {
         muzik.play().then(() => {
-            ezberMuzikCalisiyor = true;
             btn.innerText = "🔊";
             btn.style.background = "#e8f0fe";
             btn.style.borderColor = "#d2e3fc";
-        }).catch(e => console.log("Ses oynatma hatası:", e));
+        }).catch(err => console.log("Müzik başlatılamadı:", err));
+    } else {
+        muzik.pause();
+        btn.innerText = "🔇";
+        btn.style.background = "#fad4d1";
+        btn.style.borderColor = "#f5b4b0";
     }
 }
 
-// YARIŞMAYI BAŞLAT FONKSİYONU (GÜNCELLENMİŞ MÜZİK KISMI)
+// 🚀 YARIŞMAYI BAŞLAT VE MÜZİĞİ TETİKLE
 function ezberSistemiBaslat() {
     const isimInput = document.getElementById("ezberOgrenciAdi").value.trim();
     ezberKullanici = isimInput === "" ? "Gizemli Oyuncu" : isimInput;
@@ -875,6 +851,7 @@ function ezberSistemiBaslat() {
     kümülatifHavuz.sort(() => Math.random() - 0.5);
     oyunKelimeListesi = kümülatifHavuz.slice(0, EZBER_TUR_SORU_SAYISI);
 
+    // KRONOMETRE
     clearInterval(ezberKronometreInterval);
     ezberKronometreInterval = setInterval(() => {
         ezberSaniye++;
@@ -883,19 +860,20 @@ function ezberSistemiBaslat() {
         document.getElementById("ezberKronometre").innerText = "⏱️ " + (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
     }, 1000);
 
-    // 🎵 GARANTİLİ MÜZİK BAŞLATMA
+    // 🎵 YEREL MP3 BAŞLATICI
     const muzik = document.getElementById("ezberMuzik");
     const btn = document.getElementById("ezberSesBtn");
-    muzik.currentTime = 0;
-    muzik.volume = 0.35; // Rahatsız etmeyecek arka plan seviyesi
     
+    muzik.currentTime = 0;
+    muzik.volume = 0.35; // Arka plan ses düzeyi
+
+    // Doğrudan kullanıcı tıklamasından tetiklendiği için tarayıcı engeline takılmaz
     muzik.play().then(() => {
-        ezberMuzikCalisiyor = true;
         btn.innerText = "🔊";
         btn.style.background = "#e8f0fe";
-    }).catch(err => {
-        console.log("Otomatik çalma engeli:", err);
-        ezberMuzikCalisiyor = false;
+        btn.style.borderColor = "#d2e3fc";
+    }).catch(e => {
+        console.log("Tarayıcı kısıtlaması:", e);
         btn.innerText = "🔇";
         btn.style.background = "#fad4d1";
     });
@@ -903,38 +881,12 @@ function ezberSistemiBaslat() {
     ezberKelimeCek();
 }
 
-function ezberKelimeCek() {
-    document.getElementById("ezberFlashCard").classList.remove("flipped");
-    document.getElementById("ezberProgress").innerText = `Kelime: ${mevcutKelimeIndex + 1} / ${EZBER_TUR_SORU_SAYISI}`;
-    
-    mevcutKelimeNesnesi = oyunKelimeListesi[mevcutKelimeIndex];
-
-    setTimeout(() => {
-        document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
-        document.getElementById("ezberTurkceKelime").innerText = mevcutKelimeNesnesi.tr;
-    }, 150);
-}
-
-function ezberKartiCevir() { document.getElementById("ezberFlashCard").classList.toggle("flipped"); }
-
-function ezberCevapVer(durum) {
-    if(!mevcutKelimeNesnesi) return;
-    
-    if(durum) { dogruSkor++; document.getElementById("ezberDogruSayisi").innerText = dogruSkor; }
-    else { yanlisSkor++; document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor; }
-    
-    mevcutKelimeIndex++;
-    
-    if(mevcutKelimeIndex < EZBER_TUR_SORU_SAYISI) {
-        ezberKelimeCek();
-    } else {
-        ezberTurBitir();
-    }
-}
-
+// 🏁 TUR BİTTİĞİNDE MÜZİĞİ SUSTUR
 function ezberTurBitir() {
     clearInterval(ezberKronometreInterval);
-    document.getElementById("ezberMuzik").pause(); // Tur bitince müziği durdur
+    
+    const muzik = document.getElementById("ezberMuzik");
+    if (muzik) { muzik.pause(); }
 
     document.getElementById("ezberOyunEkrani").style.display = "none";
     document.getElementById("ezberSonucEkrani").style.display = "block";
@@ -971,44 +923,13 @@ function ezberTurBitir() {
     });
 }
 
-function ezberLiderlikTablosuBas(veriler) {
-    var govde = document.getElementById("ezberLiderlikGövdesi");
-    govde.innerHTML = "";
-    
-    var filtrelenmis = veriler.filter(l => l.sinif === aktifSinif);
-    
-    filtrelenmis.sort((a, b) => {
-        if(b.puan !== a.puan) return b.puan - a.puan;
-        return a.sureSaniye - b.sureSaniye;
-    });
-
-    var top10 = filtrelenmis.slice(0, 10);
-    
-    if(top10.length === 0) {
-        govde.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#9ca3af;">Henüz bu sınıfta sıralama yok. İlk sen ol!</td></tr>';
-        return;
-    }
-
-    top10.forEach((r, idx) => {
-        var madalya = (idx + 1).toString();
-        var arkaPlan = "";
-        if(idx === 0) { madalya = "🥇"; arkaPlan = "background:#fff9c4; font-weight:bold;"; }
-        else if(idx === 1) { madalya = "🥈"; arkaPlan = "background:#f5f5f5;"; }
-        else if(idx === 2) { madalya = "🥉"; arkaPlan = "background:#efebe9;"; }
-        
-        govde.innerHTML += '<tr style="border-bottom:1px solid #e0e0e0; ' + arkaPlan + '">' +
-            '<td style="padding:10px; font-weight:bold; text-align:center;">' + madalya + '</td>' +
-            '<td style="padding:10px; font-weight: 600; color:#3c4043;">' + r.isim + '</td>' +
-            '<td style="padding:10px; text-align:center; color:#137333;">' + r.dogru + '</td>' +
-            '<td style="padding:10px; text-align:center; font-family:monospace;">' + r.sure + '</td>' +
-            '<td style="padding:10px; font-weight:bold; color:#1a73e8; text-align:center; font-size:15px;">' + r.puan + '</td>' +
-            '</tr>';
-    });
-}
-
+// 🔄 YENİDEN BAŞLATIRKEN MÜZİĞİ SUSTUR
 function ezberYenidenBaslat() {
     clearInterval(ezberKronometreInterval);
-    document.getElementById("ezberMuzik").pause(); // Müzik çalıyorsa durdur
+    
+    const muzik = document.getElementById("ezberMuzik");
+    if (muzik) { muzik.pause(); }
+
     document.getElementById("ezberOyunEkrani").style.display = "none";
     document.getElementById("ezberSonucEkrani").style.display = "none";
     document.getElementById("ezberGirisEkrani").style.display = "block";
