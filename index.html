@@ -289,10 +289,10 @@ canvas { max-height: 200px; }
    <!-- 🧠 2. PANEL: KELİME EZBER KARTLARI İÇERİĞİ (GÜNCELLENMİŞ YARIŞMA MODU) -->
     <div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
         
-        <!-- YARIŞMA MÜZİĞİ (Google'ın ücretsiz telifsiz döngü müziğidir, isterseniz mp3 linkini değiştirebilirsiniz) -->
-        <audio id="ezberMuzik" loop preload="auto">
-            <source src="https://actions.google.com/sounds/v1/loops/happy_quirky_loop.ogg" type="audio/ogg">
-        </audio>
+        <!-- YARIŞMA MÜZİĞİ (Tüm tarayıcılarla %100 uyumlu doğrudan MP3 akışı) -->
+<audio id="ezberMuzik" loop preload="auto" playsinline>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=game-music-loop-6-144641.mp3" type="audio/mpeg">
+</audio>
 
         <!-- GİRİŞ EKRANI -->
         <div id="ezberGirisEkrani" style="text-align: center;">
@@ -830,6 +830,28 @@ function ezberSesKontrol() {
     }
 }
 
+// SES KONTROL BUTONU FONKSİYONU
+function ezberSesKontrol() {
+    const muzik = document.getElementById("ezberMuzik");
+    const btn = document.getElementById("ezberSesBtn");
+    
+    if (!muzik.paused) {
+        muzik.pause();
+        ezberMuzikCalisiyor = false;
+        btn.innerText = "🔇";
+        btn.style.background = "#fad4d1";
+        btn.style.borderColor = "#f5b4b0";
+    } else {
+        muzik.play().then(() => {
+            ezberMuzikCalisiyor = true;
+            btn.innerText = "🔊";
+            btn.style.background = "#e8f0fe";
+            btn.style.borderColor = "#d2e3fc";
+        }).catch(e => console.log("Ses oynatma hatası:", e));
+    }
+}
+
+// YARIŞMAYI BAŞLAT FONKSİYONU (GÜNCELLENMİŞ MÜZİK KISMI)
 function ezberSistemiBaslat() {
     const isimInput = document.getElementById("ezberOgrenciAdi").value.trim();
     ezberKullanici = isimInput === "" ? "Gizemli Oyuncu" : isimInput;
@@ -861,24 +883,22 @@ function ezberSistemiBaslat() {
         document.getElementById("ezberKronometre").innerText = "⏱️ " + (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
     }, 1000);
 
-    // MÜZİĞİ BAŞLAT
+    // 🎵 GARANTİLİ MÜZİK BAŞLATMA
     const muzik = document.getElementById("ezberMuzik");
-    muzik.currentTime = 0; 
-    muzik.volume = 0.5; // Sesi %50 seviyesinde başlat
-    let playPromise = muzik.play();
+    const btn = document.getElementById("ezberSesBtn");
+    muzik.currentTime = 0;
+    muzik.volume = 0.35; // Rahatsız etmeyecek arka plan seviyesi
     
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            ezberMuzikCalisiyor = true;
-            document.getElementById("ezberSesBtn").innerText = "🔊";
-            document.getElementById("ezberSesBtn").style.background = "#e8f0fe";
-        }).catch(error => {
-            console.log("Tarayıcı otomatik ses oynatmayı engelledi.");
-            ezberMuzikCalisiyor = false;
-            document.getElementById("ezberSesBtn").innerText = "🔇";
-            document.getElementById("ezberSesBtn").style.background = "#fad4d1";
-        });
-    }
+    muzik.play().then(() => {
+        ezberMuzikCalisiyor = true;
+        btn.innerText = "🔊";
+        btn.style.background = "#e8f0fe";
+    }).catch(err => {
+        console.log("Otomatik çalma engeli:", err);
+        ezberMuzikCalisiyor = false;
+        btn.innerText = "🔇";
+        btn.style.background = "#fad4d1";
+    });
 
     ezberKelimeCek();
 }
