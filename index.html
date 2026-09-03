@@ -1513,6 +1513,8 @@ function showStudentPage(name) {
       <div class="level-badge">${latest.seviye}</div>
     </div>
 
+    
+
     <!-- ⏱️ İSTEDİĞİN YER: SEKMELERİN HEMEN ÜSTÜ, TAM GENİŞLİKTE OTURUM PANELİ -->
     <div id="oturumSayacKutusu" style="background: #E1F5EE; border: 1px solid #a8dfc0; color: #0F6E56; padding: 14px 18px; border-radius: 14px; margin-bottom: 1.25rem; font-family: 'Segoe UI', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
@@ -1549,6 +1551,14 @@ function switchPageTab(name, tab) {
   showStudentPage(name);
 }
 
+    // Sekme değiştiğinde arayüzü anında mevcut süreden devam ettir:
+  guncelSayacArayuzunuBas();
+
+  if (activePageTab === "ozet") drawCharts(rows);
+  if (activePageTab === "denemeler") drawDenemeChart(name);
+  if (activePageTab === "kitaplar") kitaplariGetir('okul-oncesi', null);
+}
+    
 // 📖 ÖĞRENCİ PANELİNE EKLENEN KİTAP OKUMA SEKMESİ İÇERİĞİ
 function buildKitaplarTab() {
   return `
@@ -3019,64 +3029,76 @@ let oturumSaniye = 0;
 let oturumTimer = null;
 let aktifKayitliOgrenci = null;
 
-// Süreyi Google Sheets'ten çekip başlatan fonksiyon (Cihazlar arası ortak havuz)
-async function oturumSayaciniBaslat(ogrenciAdi) {
-    aktifKayitliOgrenci = ogrenciAdi;
-    
-    // Sunucudan (Google Sheets'ten) öğrencinin toplam süresini çekelim
-    try {
-        if (typeof WEB_APP_URL !== "undefined" && WEB_APP_URL) {
-            let res = await fetch(`${WEB_APP_URL}?action=sureGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}`);
-            let data = await res.json();
-            if (data && data.durum === "basarili") {
-                oturumSaniye = data.toplamSaniye || 0;
-            }
-        }
-    } catch(e) {
-        console.log("Süre sunucudan çekilemedi, yerel devam ediliyor.", e);
-        oturumSaniye = 0;
-    }
-
+// Ekrana mevcut süreyi basan bağımsız fonksiyon
+function guncelSayacArayuzunuBas() {
     const sayacElementi = document.getElementById("sayacZaman");
     const progressBar = document.getElementById("sureProgressBar");
     const rozetMetni = document.getElementById("rozetBilgiMetni");
     const sonrakiMetin = document.getElementById("sonrakiRozetKalan");
 
+    if (!sayacElementi) return;
+
+    let saat = Math.floor(oturumSaniye / 3600);
+    let dk = Math.floor((oturumSaniye % 3600) / 60);
+    let sn = oturumSaniye % 60;
+    
+    let formatliZaman = (saat > 0 ? (saat < 10 ? "0" : "") + saat + ":" : "") + 
+                        (dk < 10 ? "0" : "") + dk + ":" + 
+                        (sn < 10 ? "0" : "") + sn;
+
+    sayacElementi.innerText = formatliZaman;
+
+    let kazanilanRozetler = Math.floor(oturumSaniye / 600);
+    let saniyeIcindekiIlerleme = oturumSaniye % 600;
+    let yuzde = (saniyeIcindekiIlerleme / 600) * 100;
+    let sonrakiSaniyeKalan = 600 - saniyeIcindekiIlerleme;
+    let kalanDk = Math.ceil(sonrakiSaniyeKalan / 60);
+
+    if (progressBar) progressBar.style.width = yuzde + "%";
+    if (rozetMetni) rozetMetni.innerText = "🏅 Kazanılan Rozet: " + kazanilanRozetler + " 🌟";
+    if (sonrakiMetin) sonrakiMetin.innerText = "Sonraki rozete: " + kalanDk + " dk";
+}
+
+// Sayacı başlatan fonksiyon
+async function oturumSayaciniBaslat(ogrenciAdi) {
+    aktifKayitliOgrenci = ogrenciAdi;
+    const storageKey = "dijimuallim_sure_" + turkceKucukBuyukDuzelt(ogrenciAdi);
+
+    // İlk olarak cihazdaki son süreyi yükle (gecikme yaşamadan başlasın)
+    const localSec = localStorage.getItem(storageKey);
+    if (localSec) {
+        oturumSaniye = parseInt(localSec, 10) || 0;
+    }
+
+    guncelSayacArayuzunuBas();
+
+    // Ardından buluttan (Google Sheets) güncel süreyi çek (Eğer buluttaki daha ileriyse onu al)
+    try {
+        if (typeof WEB_APP_URL !== "undefined" && WEB_APP_URL) {
+            let res = await fetch(`${WEB_APP_URL}?action=sureGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}`);
+            let data = await res.json();
+            if (data && data.durum === "basarili" && data.toplamSaniye > oturumSaniye) {
+                oturumSaniye = data.toplamSaniye;
+                localStorage.setItem(storageKey, oturumSaniye);
+                guncelSayacArayuzunuBas();
+            }
+        }
+    } catch(e) {
+        console.log("Buluttan süre çekilemedi, yerel süreden devam ediliyor:", e);
+    }
+
     if (oturumTimer) clearInterval(oturumTimer);
 
     oturumTimer = setInterval(() => {
         oturumSaniye++;
-        localStorage.setItem("dijimuallim_sure_" + turkceKucukBuyukDuzelt(aktifKayitliOgrenci), oturumSaniye);
+        localStorage.setItem(storageKey, oturumSaniye);
+        guncelSayacArayuzunuBas();
 
-        // Saat:Dakika:Saniye formatı (Sınırsız gün/hafta desteği)
-        let saat = Math.floor(oturumSaniye / 3600);
-        let dk = Math.floor((oturumSaniye % 3600) / 60);
-        let sn = oturumSaniye % 60;
-        
-        let formatliZaman = (saat > 0 ? (saat < 10 ? "0" : "") + saat + ":" : "") + 
-                            (dk < 10 ? "0" : "") + dk + ":" + 
-                            (sn < 10 ? "0" : "") + sn;
-
-        if (sayacElementi) {
-            sayacElementi.innerText = formatliZaman;
+        // Her 60 saniyede bir Google Sheets'e kaydet
+        if (oturumSaniye % 60 === 0) {
+            let rozet = Math.floor(oturumSaniye / 600);
+            googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
         }
-
-        // Her 10 dakikada (600 saniye) bir rozet hesaplama
-        let kazanilanRozetler = Math.floor(oturumSaniye / 600);
-        let saniyeIcindekiIlerleme = oturumSaniye % 600;
-        let yuzde = (saniyeIcindekiIlerleme / 600) * 100;
-        let sonrakiSaniyeKalan = 600 - saniyeIcindekiIlerleme;
-        let kalanDk = Math.ceil(sonrakiSaniyeKalan / 60);
-
-        if (progressBar) progressBar.style.width = yuzde + "%";
-        if (rozetMetni) rozetMetni.innerText = "🏅 Kazanılan Rozet: " + kazanilanRozetler + " 🌟";
-        if (sonrakiMetin) sonrakiMetin.innerText = "Sonraki rozete: " + kalanDk + " dk";
-
-        // Her 30 saniyede bir Google Sheets'e güncel süreyi kaydet
-        if (oturumSaniye % 30 === 0) {
-            googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, kazanilanRozetler);
-        }
-
     }, 1000);
 }
 
@@ -3085,7 +3107,6 @@ function oturumSayaciniDurdur() {
         clearInterval(oturumTimer);
         oturumTimer = null;
     }
-    // Çıkış yaparken son durumu Google Sheets'e kesin olarak gönder
     if (aktifKayitliOgrenci) {
         let rozet = Math.floor(oturumSaniye / 600);
         googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
@@ -3093,24 +3114,28 @@ function oturumSayaciniDurdur() {
     aktifKayitliOgrenci = null;
 }
 
-// Google Sheets Web App'e veri yollayan fonksiyon
+// Google Sheets'e garantili kayıt gönderen fonksiyon
 function googleSheetseSureKaydet(ogrenci, saniye, rozet) {
-    if (!WEB_APP_URL) return;
+    if (!WEB_APP_URL || !ogrenci) return;
     const payload = {
         aksiyon: "sureKaydet",
         ogrenci: ogrenci,
         toplamSaniye: saniye,
         rozetSayisi: rozet
     };
+    
+    // text/plain ve no-cors uyumlu fetch
     fetch(WEB_APP_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
-    }).catch(err => console.log("Süre senkronizasyon hatası:", err));
+    }).then(() => {
+        console.log("Süre Sheets'e gönderildi:", saniye);
+    }).catch(err => console.error("Süre gönderim hatası:", err));
 }
 
-// Kullanıcı sekmeden ayrıldığında, sayfayı kapattığında çalışır
+// Sekme/Ekran kapatıldığında kaydet
 window.addEventListener('beforeunload', function () {
     if (aktifKayitliOgrenci) {
         let rozet = Math.floor(oturumSaniye / 600);
@@ -3118,7 +3143,6 @@ window.addEventListener('beforeunload', function () {
     }
 });
 
-// Mobil cihazlarda uygulama arka plana atıldığında veya sekme değiştirildiğinde çalışır
 document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'hidden' && aktifKayitliOgrenci) {
         let rozet = Math.floor(oturumSaniye / 600);
