@@ -835,28 +835,28 @@ canvas { max-height: 200px; }
 </div>
 
 <!-- AÇILIR DERS TALEBİ FORMU (POPUP KART) -->
-<div id="popupRandevuKutusu" class="randevu-popup-box">
-  <button class="popup-kapat-btn" onclick="randevuFormuKapatAcl()">✕</button>
+<div id="sagAltDersKutusu" style="display: none; position: fixed; bottom: 235px; right: 25px; width: 360px; max-width: calc(100vw - 40px); max-height: 75vh; background: #FAF6F0; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); z-index: 9999999; flex-direction: column; overflow-y: auto; border: 1px solid #DCD5C5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-sizing: border-box;">
+  <button type="button" onclick="randevuFormuKapatAcl()" style="position: absolute; top: 12px; right: 14px; background: rgba(0,0,0,0.06); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #4A4235;">✕</button>
   
   <h3 style="color: #7D6451; margin-top: 5px; font-size: 16.5px; text-align: center;">📅 Bireysel Ders Başvurusu</h3>
   <p style="font-size: 12px; color: #7A7263; margin-bottom: 14px; margin-top: 6px; text-align: center;">Bilgileri doldurarak talebinizi doğrudan öğretmenimize iletebilirsiniz.</p>
   
   <div style="margin-bottom: 12px;">
     <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">ÖĞRENCİ ADI SOYADI</label>
-    <input type="text" id="popup_veliDersOgrenciAdi" placeholder="Öğrencinin adını ve soyadını giriniz" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
+    <input type="text" id="alt_ogrenciAdi" placeholder="Öğrencinin adını ve soyadını giriniz" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
   </div>
 
   <div style="display: flex; gap: 10px; margin-bottom: 12px;">
     <div style="flex: 1;">
       <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS TÜRÜ</label>
-      <select id="popup_veliDersTuru" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
+      <select id="alt_dersTuru" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
         <option value="İngilizce Özel Ders">İngilizce Özel Ders</option>
         <option value="Eğitim Koçluğu">Eğitim Koçluğu</option>
       </select>
     </div>
     <div style="flex: 1;">
       <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS MODELİ</label>
-      <select id="popup_veliDersModeli" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
+      <select id="alt_dersModeli" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
         <option value="Online (Uzaktan)">Online (Uzaktan)</option>
         <option value="Yüz Yüze">Yüz Yüze</option>
       </select>
@@ -866,11 +866,11 @@ canvas { max-height: 200px; }
   <div style="display: flex; gap: 10px; margin-bottom: 12px;">
     <div style="flex: 1;">
       <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS TARİHİ</label>
-      <input type="date" id="popup_veliDersTarihi" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
+      <input type="date" id="alt_dersTarihi" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
     </div>
     <div style="flex: 1;">
       <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS SAATİ</label>
-      <select id="popup_veliDersSaati" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
+      <select id="alt_dersSaati" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
         <option value="10:00">10:00</option>
         <option value="11:30">11:30</option>
         <option value="14:00">14:00</option>
@@ -882,13 +882,14 @@ canvas { max-height: 200px; }
 
   <div style="margin-bottom: 15px;">
     <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">VELİ TELEFON NUMARASI</label>
-    <input type="tel" id="popup_veliDersTelefon" placeholder="05xx xxx xx xx" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
+    <input type="tel" id="alt_dersTelefon" placeholder="05xx xxx xx xx" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: #FFF; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
   </div>
   
-  <button id="popup_randevuGonderBtn" onclick="randevuSisteminiTetikle()" style="background: #634731; color: white; width: 100%; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(99,71,49,0.25);">
+  <button type="button" id="alt_gonderBtn" onclick="sagAltDersTalebiGonder()" style="background: #634731; color: white; width: 100%; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(99,71,49,0.25);">
     Talebi Kaydet ve Onaya Gönder ➔
   </button>
 </div>
+  
 
 <!-- 🎯 SAĞ ALTA SABİTLENMİŞ YUVARLAK LOGO SEVİYE TESTİ BUTONU VE ETİKETİ -->
 <div class="seviye-wrapper">
@@ -2504,15 +2505,30 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-   async function randevuSisteminiTetikle() {
-    // Popup içindeki inputlardan verileri çekiyoruz
-    const ogrenciInput = document.getElementById("popup_veliDersOgrenciAdi") || document.getElementById("veliDersOgrenciAdi");
-    const dersTuruInput = document.getElementById("popup_veliDersTuru") || document.getElementById("veliDersTuru");
-    const dersModeliInput = document.getElementById("popup_veliDersModeli") || document.getElementById("veliDersModeli");
-    const tarihInput = document.getElementById("popup_veliDersTarihi") || document.getElementById("veliDersTarihi");
-    const saatInput = document.getElementById("popup_veliDersSaati") || document.getElementById("veliDersSaati");
-    const telefonInput = document.getElementById("popup_veliDersTelefon") || document.getElementById("veliDersTelefon");
-    const btn = document.getElementById("popup_randevuGonderBtn") || document.getElementById("randevuGonderBtn");
+   // 📅 SAĞ ALTTAN AÇILIP KAPANMA
+function randevuFormuKapatAcl() {
+    const kutu = document.getElementById("sagAltDersKutusu");
+    const seviyeAlani = document.getElementById("seviyeTestAlani");
+
+    if (seviyeAlani) seviyeAlani.style.display = "none";
+    if (!kutu) return;
+
+    if (kutu.style.display === "none" || kutu.style.display === "") {
+        kutu.style.display = "flex";
+    } else {
+        kutu.style.display = "none";
+    }
+}
+
+// 🚀 BİLGİLERİ ALIP DOĞRUDAN WHATSAPP'A YÖNLENDİRME
+async function sagAltDersTalebiGonder() {
+    const ogrenciInput = document.getElementById("alt_ogrenciAdi");
+    const dersTuruInput = document.getElementById("alt_dersTuru");
+    const dersModeliInput = document.getElementById("alt_dersModeli");
+    const tarihInput = document.getElementById("alt_dersTarihi");
+    const saatInput = document.getElementById("alt_dersSaati");
+    const telefonInput = document.getElementById("alt_dersTelefon");
+    const btn = document.getElementById("alt_gonderBtn");
 
     const ogrenciAdi = ogrenciInput ? ogrenciInput.value.trim() : "";
     const dersTuru = dersTuruInput ? dersTuruInput.value : "";
@@ -2521,17 +2537,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const secilenSaat = saatInput ? saatInput.value : "";
     const veliTel = telefonInput ? telefonInput.value.trim() : "";
 
-    if (!ogrenciAdi || !secilenTarih || !veliTel) { 
-        alert("Lütfen tüm alanları (Ad Soyadı, Tarih ve Telefon) eksiksiz doldurunuz."); 
-        return; 
+    if (!ogrenciAdi || !secilenTarih || !veliTel) {
+        alert("Lütfen tüm alanları (Ad Soyadı, Tarih ve Telefon) eksiksiz doldurunuz.");
+        return;
     }
 
     if (btn) {
         btn.disabled = true;
-        btn.innerText = "Sistem İşliyor...";
+        btn.innerText = "İşleniyor...";
     }
 
-    // Tarihi gün.ay.yıl formatına çeviriyoruz
     let formatliTarih = secilenTarih;
     if (secilenTarih.includes("-")) {
         const [y, m, d] = secilenTarih.split("-");
@@ -2547,44 +2562,45 @@ document.addEventListener("DOMContentLoaded", function() {
         telefon: veliTel
     };
 
-    // 1. Google Sheets Tablosuna Kayıt
+    // Google Sheets kaydı
     try {
-        if (typeof WEB_APP_URL !== "undefined" && WEB_APP_URL) { 
-            fetch(WEB_APP_URL, { 
-                method: "POST", 
-                mode: "no-cors", 
-                headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify(randevuPayload) 
-            }); 
+        if (typeof WEB_APP_URL !== "undefined" && WEB_APP_URL) {
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(randevuPayload)
+            });
         }
-    } catch (e) { 
-        console.log("Sheets arka plan uyarısı:", e); 
+    } catch (e) {
+        console.log("Sheets hatası:", e);
     }
 
-    // 2. WhatsApp Mesajını Hazırlayıp Yönlendirme
-    const mesaj = `🤖 *DİJİMUALLİM - YENİ RANDEVU TALEBİ* \n\n` +
+    // WhatsApp Mesajı
+    const mesaj = `🤖 *DİJİMUALLİM - YENİ RANDEVU TALEBİ*\n\n` +
                   `Hocam Merhaba,\nEğitim dönemi için yeni bir ders talebi oluşturmak istiyoruz.\n\n` +
-                  `👤 *Öğrenci:* ${ogrenciAdi}\n📚 *Ders Türü:* ${dersTuru}\n💻 *Ders Modeli:* ${dersModeli}\n📅 *Tarih:* ${formatliTarih}\n⏰ *Saat:* ${secilenSaat}\n📞 *Veli Tel:* ${veliTel}\n\n` +
+                  `👤 *Öğrenci:* ${ogrenciAdi}\n` +
+                  `📚 *Ders Türü:* ${dersTuru}\n` +
+                  `💻 *Ders Modeli:* ${dersModeli}\n` +
+                  `📅 *Tarih:* ${formatliTarih}\n` +
+                  `⏰ *Saat:* ${secilenSaat}\n` +
+                  `📞 *Veli Tel:* ${veliTel}\n\n` +
                   `En Kısa Sürede Dönüş Yapılacaktır`;
 
-    const hocamizinNumarasi = "905369937089"; 
+    const hocamizinNumarasi = "905369937089";
     const wpUrl = `https://api.whatsapp.com/send?phone=${hocamizinNumarasi}&text=${encodeURIComponent(mesaj)}`;
     
-    // WhatsApp penceresini aç
     window.open(wpUrl, '_blank');
 
-    // 3. Formu Temizle ve Kapat
     setTimeout(() => {
         if (btn) {
-            btn.disabled = false; 
+            btn.disabled = false;
             btn.innerText = "Talebi Kaydet ve Onaya Gönder ➔";
         }
-        if (ogrenciInput) ogrenciInput.value = ""; 
-        if (tarihInput) tarihInput.value = ""; 
+        if (ogrenciInput) ogrenciInput.value = "";
+        if (tarihInput) tarihInput.value = "";
         if (telefonInput) telefonInput.value = "";
-
-        const formKutu = document.getElementById("popupRandevuKutusu");
-        if (formKutu) formKutu.style.display = "none";
+        randevuFormuKapatAcl();
     }, 600);
 }
     
