@@ -3100,6 +3100,29 @@ function googleSheetseSureKaydet(ogrenci, saniye, rozet) {
         body: JSON.stringify(payload)
     }).catch(err => console.log("Süre senkronizasyon hatası:", err));
 }
+
+    // Kullanıcı sekmeden ayrıldığında, sayfayı kapattığında veya telefon ekranını/tarayıcısını kapattığında çalışır
+window.addEventListener('beforeunload', function () {
+    if (aktifKayitliOgrenci) {
+        const kayitliVeriKey = "dijimuallim_sure_" + turkceKucukBuyukDuzelt(aktifKayitliOgrenci);
+        const toplamSec = parseInt(localStorage.getItem(kayitliVeriKey) || "0", 10);
+        let rozet = Math.floor(toplamSec / 600);
+        
+        // Google Sheets'e son veriyi senkronize et
+        googleSheetseSureKaydet(aktifKayitliOgrenci, toplamSec, rozet);
+    }
+});
+
+// Mobil cihazlarda uygulama arka plana atıldığında veya sekme değiştirildiğinde
+document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden' && aktifKayitliOgrenci) {
+        const kayitliVeriKey = "dijimuallim_sure_" + turkceKucukBuyukDuzelt(aktifKayitliOgrenci);
+        const toplamSec = parseInt(localStorage.getItem(kayitliVeriKey) || "0", 10);
+        let rozet = Math.floor(toplamSec / 600);
+        
+        googleSheetseSureKaydet(aktifKayitliOgrenci, toplamSec, rozet);
+    }
+});
     
 </script>
 </body>
