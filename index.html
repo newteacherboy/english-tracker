@@ -3045,8 +3045,8 @@ async function oturumSayaciniBaslat(ogrenciAdi) {
     if (oturumTimer) clearInterval(oturumTimer);
 
     oturumTimer = setInterval(() => {
-    oturumSaniye++;
-    localStorage.setItem("dijimuallim_sure_" + turkceKucukBuyukDuzelt(aktifKayitliOgrenci), oturumSaniye);
+        oturumSaniye++;
+        localStorage.setItem("dijimuallim_sure_" + turkceKucukBuyukDuzelt(aktifKayitliOgrenci), oturumSaniye);
 
         // Saat:Dakika:Saniye formatı (Sınırsız gün/hafta desteği)
         let saat = Math.floor(oturumSaniye / 3600);
@@ -3058,13 +3058,8 @@ async function oturumSayaciniBaslat(ogrenciAdi) {
                             (sn < 10 ? "0" : "") + sn;
 
         if (sayacElementi) {
-    let saat = Math.floor(oturumSaniye / 3600);
-    let dk = Math.floor((oturumSaniye % 3600) / 60);
-    let sn = oturumSaniye % 60;
-    sayacElementi.innerText = (saat > 0 ? (saat < 10 ? "0" : "") + saat + ":" : "") + 
-                              (dk < 10 ? "0" : "") + dk + ":" + 
-                              (sn < 10 ? "0" : "") + sn;
-}
+            sayacElementi.innerText = formatliZaman;
+        }
 
         // Her 10 dakikada (600 saniye) bir rozet hesaplama
         let kazanilanRozetler = Math.floor(oturumSaniye / 600);
@@ -3077,7 +3072,7 @@ async function oturumSayaciniBaslat(ogrenciAdi) {
         if (rozetMetni) rozetMetni.innerText = "🏅 Kazanılan Rozet: " + kazanilanRozetler + " 🌟";
         if (sonrakiMetin) sonrakiMetin.innerText = "Sonraki rozete: " + kalanDk + " dk";
 
-        // Her 1 dakikada bir Google Sheets'e güncel süreyi kaydet
+        // Her 30 saniyede bir Google Sheets'e güncel süreyi kaydet
         if (oturumSaniye % 30 === 0) {
             googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, kazanilanRozetler);
         }
@@ -3114,20 +3109,16 @@ function googleSheetseSureKaydet(ogrenci, saniye, rozet) {
         body: JSON.stringify(payload)
     }).catch(err => console.log("Süre senkronizasyon hatası:", err));
 }
-    // Kullanıcı sekmeden ayrıldığında, sayfayı kapattığında veya telefon ekranını/tarayıcısını kapattığında çalışır
+
+// Kullanıcı sekmeden ayrıldığında, sayfayı kapattığında çalışır
 window.addEventListener('beforeunload', function () {
     if (aktifKayitliOgrenci) {
         let rozet = Math.floor(oturumSaniye / 600);
         googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
     }
 });
-        
-        // Google Sheets'e son veriyi senkronize et
-        googleSheetseSureKaydet(aktifKayitliOgrenci, toplamSec, rozet);
-    }
-});
 
-// Mobil cihazlarda uygulama arka plana atıldığında veya sekme değiştirildiğinde
+// Mobil cihazlarda uygulama arka plana atıldığında veya sekme değiştirildiğinde çalışır
 document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'hidden' && aktifKayitliOgrenci) {
         let rozet = Math.floor(oturumSaniye / 600);
