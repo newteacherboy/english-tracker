@@ -2236,18 +2236,34 @@ function ezberTurBitir() {
 
     document.getElementById("sonucPuan").innerText = finalPuan;
     document.getElementById("sonucZaman").innerText = formatliSure;
-    document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 15px;">Sonuçlarınız kaydediliyor ve sıralama çekiliyor... ⏳</td></tr>';
+    document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 15px; color: #1a73e8;">Skorun Google Sheets tablosuna kaydediliyor... ⏳</td></tr>';
 
     const postData = {
-        aksiyon: "ezberKaydet", isim: ezberKullanici, sinif: aktifSinif, dogru: dogruSkor, yanlis: yanlisSkor, sure: formatliSure, sureSaniye: ezberSaniye, puan: finalPuan
+        aksiyon: "ezberKaydet", 
+        isim: ezberKullanici, 
+        sinif: aktifSinif, 
+        dogru: dogruSkor, 
+        yanlis: yanlisSkor, 
+        sure: formatliSure, 
+        sureSaniye: ezberSaniye, 
+        puan: finalPuan
     };
 
-    fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(postData) })
+    fetch(WEB_APP_URL, { 
+        method: "POST", 
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(postData) 
+    })
     .then(res => res.json())
     .then(data => {
-        if(data && data.durum === "basarili" && data.liderlikTablosu) ezberLiderlikTablosuBas(data.liderlikTablosu);
+        if(data && data.durum === "basarili" && data.liderlikTablosu) {
+            ezberLiderlikTablosuBas(data.liderlikTablosu);
+        } else {
+            document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; color: #c5221f;">Kayıt yapıldı ancak tablo verisi okunamadı.</td></tr>';
+        }
     }).catch(err => {
-        document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">Sonuç kaydedildi ancak tablo anlık çekilemedi.</td></tr>';
+        console.error("Liderlik tablosu hatası:", err);
+        document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; color: #c5221f;">Sunucu bağlantı hatası oluştu.</td></tr>';
     });
 }
 
