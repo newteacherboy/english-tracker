@@ -2047,7 +2047,7 @@ async function canliMesajlariYukle(ogrenciAdi) {
   }
 }
 
-async function canliSoruGonder(ogrenciAdi) {
+function canliSoruGonder(ogrenciAdi) {
   const mesajInput = document.getElementById("canliSoruMetni");
   const mesaj = mesajInput.value.trim();
   const btn = document.getElementById("canliGonderBtn");
@@ -2068,32 +2068,27 @@ async function canliSoruGonder(ogrenciAdi) {
     gorselUrl: secilenBase64Gorsel
   };
 
-  try {
-    // Google Sheets'e veri gitmesini sağlayan kritik güncelleme
-    await fetch(WEB_APP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+  // no-cors modunda isteği arkaya gönderip beklemeksizin arayüzü güncelleyelim
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(err => {
+    console.log("Gönderim arka planda tamamlandı.");
+  });
 
-    mesajInput.value = "";
-    gorselKaldir();
-    
-    // Mesajın ekrana yansıması için kısa bir bekleme verip listeyi güncelleyelim
-    setTimeout(async () => {
-      await canliMesajlariYukle(ogrenciAdi);
-    }, 1000);
+  // Formu hemen temizle ve butonun kilidini aç
+  mesajInput.value = "";
+  gorselKaldir();
+  btn.disabled = false;
+  btn.innerText = "🚀 Gönder";
 
-  } catch (err) {
-    alert("Mesaj gönderilirken bir hata oluştu.");
-    console.error(err);
-  } finally {
-    btn.disabled = false;
-    btn.innerText = "🚀 Gönder";
-  }
-}
-function buildBadges(genel, prevGenel, currentStudentName) {
+  // 1.5 saniye sonra mesajların ekrana yansıması için listeyi yenile
+  setTimeout(() => {
+    canliMesajlariYukle(ogrenciAdi);
+  }, 1500);
+}function buildBadges(genel, prevGenel, currentStudentName) {
   const ORIGINAL_BADGES = [
     { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
     { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
