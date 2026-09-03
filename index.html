@@ -20,7 +20,6 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     
 <style>
-    
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     margin: 0;
@@ -2492,9 +2491,14 @@ function whatsapplaGonder() {
 
 // Sayfa Yükleme & Event Dinleyicileri
 document.addEventListener("DOMContentLoaded", function() {
-    // ⏱️ 5 SANİYE SONRA EKRANDAKİ TÜM BALONCUKLARI OTOMATİK GİZLE
+    // ⏱️ 7 SANİYE OTOMATİK GİZLEME ZAMANLAYICISI
     setTimeout(function() {
-        var baloncuklar = document.querySelectorAll(".auto-hide-badge");
+        var baloncuklar = [
+            document.getElementById("whatsappGeciciYazi"),
+            document.getElementById("seviyeGeciciYazi"),
+            document.getElementById("randevuGeciciYazi"),
+            document.getElementById("ezberBaloncukYazi") // 👈 BURASI EKLENDİ
+        ];
         baloncuklar.forEach(function(el) {
             if (el) {
                 el.style.opacity = "0";
@@ -2504,10 +2508,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }, 600);
             }
         });
-    }, 5000); 
-
-    // ... (diğer kodların aynen kalacak)
-});
+    }, 5000); // (Not: 5000 milisaniye 5 saniyedir, 7 saniye olmasını istersen burayı 7000 yapabilirsin)
 
     // Rubrik Modal Tanımlamaları
     const overlay = document.getElementById("yeni_rubrikOverlay");
