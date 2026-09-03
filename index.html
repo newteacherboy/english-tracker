@@ -2490,15 +2490,11 @@ function whatsapplaGonder() {
 }
 
 // Sayfa Yükleme & Event Dinleyicileri
+// Sayfa Yükleme & Event Dinleyicileri
 document.addEventListener("DOMContentLoaded", function() {
-    // ⏱️ 7 SANİYE OTOMATİK GİZLEME ZAMANLAYICISI
+    // ⏱️ 5 SANİYE SONRA EKRANDAKİ TÜM BALONCUKLARI OTOMATİK GİZLE
     setTimeout(function() {
-        var baloncuklar = [
-            document.getElementById("whatsappGeciciYazi"),
-            document.getElementById("seviyeGeciciYazi"),
-            document.getElementById("randevuGeciciYazi"),
-            document.getElementById("ezberBaloncukYazi") // 👈 BURASI EKLENDİ
-        ];
+        var baloncuklar = document.querySelectorAll(".auto-hide-badge");
         baloncuklar.forEach(function(el) {
             if (el) {
                 el.style.opacity = "0";
@@ -2508,9 +2504,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 }, 600);
             }
         });
-    }, 5000); // (Not: 5000 milisaniye 5 saniyedir, 7 saniye olmasını istersen burayı 7000 yapabilirsin)
+    }, 5000);
 
-    // Rubrik Modal Tanımlamaları
+    // Rubrik Modal Tanımlamaları ve Diğer Olaylar
     const overlay = document.getElementById("yeni_rubrikOverlay");
     const openBtn = document.getElementById("yeni_rubrikOpenBtn");
     const closeBtn = document.getElementById("yeni_rubrikCloseBtn");
