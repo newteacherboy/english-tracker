@@ -2008,7 +2008,16 @@ const kelimeler8Ek = [
     {en:"Diving", tr:"Dalış"}, {en:"Trekking", tr:"Doğa Yürüyüşü"}, {en:"Accommodation", tr:"Konaklama"}, {en:"All-inclusive", tr:"Her Şey Dahil"}
 ];
 
-
+// SARMAL MİMARİ: Her sınıf bir öncekinin tüm kelimelerini miras alır
+const ezberKelimeDeposu = {
+    "2-sinif": kelimeler2,                                                                       // 50 Kelime
+    "3-sinif": [...kelimeler2, ...kelimeler3Ek],                                                 // 150 Kelime (2'nin tamamı dahil)
+    "4-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek],                               // 250 Kelime (2 ve 3 dahil)
+    "5-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek],             // 350 Kelime (Öncekilerin tamamı)
+    "6-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek], // 450 Kelime
+    "7-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek, ...kelimeler7Ek], // 550 Kelime
+    "8-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek, ...kelimeler7Ek, ...kelimeler8Ek] // 650 Kelime
+};
 
 // Soru Limitleri
 const SINIF_SORU_LIMITLERI = { 
