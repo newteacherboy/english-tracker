@@ -3024,7 +3024,7 @@ let oturumSaniye = 0;
 let oturumTimer = null;
 let aktifKayitliOgrenci = null;
 
-// Ekrana mevcut süreyi basan bağımsız fonksiyon
+// Ekrana mevcut süreyi basan fonksiyon
 function guncelSayacArayuzunuBas() {
     const sayacElementi = document.getElementById("sayacZaman");
     const progressBar = document.getElementById("sureProgressBar");
@@ -3054,32 +3054,50 @@ function guncelSayacArayuzunuBas() {
     if (sonrakiMetin) sonrakiMetin.innerText = "Sonraki rozete: " + kalanDk + " dk";
 }
 
-// Sayacı başlatan fonksiyon
+// Buluttan süreyi CORS takılmadan çeken JSONP yardımcısı
+function buluttanSureGetir(ogrenciAdi) {
+    return new Promise((resolve) => {
+        if (!WEB_APP_URL || !ogrenciAdi) { resolve(0); return; }
+        const callbackName = "sureCallback_" + Math.floor(Math.random() * 1000000);
+        const script = document.createElement("script");
+        
+        window[callbackName] = function(data) {
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            if (data && data.durum === "basarili") {
+                resolve(data.toplamSaniye || 0);
+            } else {
+                resolve(0);
+            }
+        };
+
+        script.onerror = function() {
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            resolve(0);
+        };
+
+        script.src = `${WEB_APP_URL}?action=sureGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}&callback=${callbackName}&t=${Date.now()}`;
+        document.body.appendChild(script);
+    });
+}
+
+// Sayacı başlatan fonksiyon (Cihazlar arası bulut senkronizasyonlu)
 async function oturumSayaciniBaslat(ogrenciAdi) {
     aktifKayitliOgrenci = ogrenciAdi;
     const storageKey = "dijimuallim_sure_" + turkceKucukBuyukDuzelt(ogrenciAdi);
 
-    // İlk olarak cihazdaki son süreyi yükle (gecikme yaşamadan başlasın)
+    // Cihazdaki yerel süreyi ön yükleme yap
     const localSec = localStorage.getItem(storageKey);
-    if (localSec) {
-        oturumSaniye = parseInt(localSec, 10) || 0;
-    }
-
+    oturumSaniye = localSec ? (parseInt(localSec, 10) || 0) : 0;
     guncelSayacArayuzunuBas();
 
-    // Ardından buluttan (Google Sheets) güncel süreyi çek (Eğer buluttaki daha ileriyse onu al)
-    try {
-        if (typeof WEB_APP_URL !== "undefined" && WEB_APP_URL) {
-            let res = await fetch(`${WEB_APP_URL}?action=sureGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}&t=${Date.now()}`);
-            let data = await res.json();
-            if (data && data.durum === "basarili" && data.toplamSaniye > oturumSaniye) {
-                oturumSaniye = data.toplamSaniye;
-                localStorage.setItem(storageKey, oturumSaniye);
-                guncelSayacArayuzunuBas();
-            }
-        }
-    } catch(e) {
-        console.log("Buluttan süre çekilemedi, yerel süreden devam ediliyor:", e);
+    // Buluttan (Google Sheets) en taze süreyi JSONP ile al
+    const bulutSaniyesi = await buluttanSureGetir(ogrenciAdi);
+    if (bulutSaniyesi > oturumSaniye) {
+        oturumSaniye = bulutSaniyesi;
+        localStorage.setItem(storageKey, oturumSaniye);
+        guncelSayacArayuzunuBas();
     }
 
     if (oturumTimer) clearInterval(oturumTimer);
@@ -3089,7 +3107,7 @@ async function oturumSayaciniBaslat(ogrenciAdi) {
         localStorage.setItem(storageKey, oturumSaniye);
         guncelSayacArayuzunuBas();
 
-        // Her 60 saniyede bir Google Sheets'e kaydet
+        // Her 60 saniyede bir Google Sheets'e Oturum_Sureleri sekmesine kaydet
         if (oturumSaniye % 60 === 0) {
             let rozet = Math.floor(oturumSaniye / 600);
             googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
@@ -3109,7 +3127,7 @@ function oturumSayaciniDurdur() {
     aktifKayitliOgrenci = null;
 }
 
-// Google Sheets'e garantili kayıt gönderen fonksiyon
+// Google Sheets'e süre kaydını gönderen fonksiyon
 function googleSheetseSureKaydet(ogrenci, saniye, rozet) {
     if (!WEB_APP_URL || !ogrenci) return;
     const payload = {
@@ -3118,32 +3136,13 @@ function googleSheetseSureKaydet(ogrenci, saniye, rozet) {
         toplamSaniye: saniye,
         rozetSayisi: rozet
     };
-    
-    // text/plain ve no-cors uyumlu fetch
     fetch(WEB_APP_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
-    }).then(() => {
-        console.log("Süre Sheets'e gönderildi:", saniye);
-    }).catch(err => console.error("Süre gönderim hatası:", err));
+    }).catch(err => console.log("Süre kaydedilemedi:", err));
 }
-
-// Sekme/Ekran kapatıldığında kaydet
-window.addEventListener('beforeunload', function () {
-    if (aktifKayitliOgrenci) {
-        let rozet = Math.floor(oturumSaniye / 600);
-        googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
-    }
-});
-
-document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden' && aktifKayitliOgrenci) {
-        let rozet = Math.floor(oturumSaniye / 600);
-        googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
-    }
-});
     
 </script>
 </body>
