@@ -20,6 +20,39 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     
 <style>
+
+/* Mobil ve Tabletlerde Yüzen Butonları Sağ Orta Kısıma Toplama ve Boyut Küçültme */
+@media screen and (max-width: 768px) {
+  /* Butonların kapsayıcılarını sağ orta hizaya topluyoruz */
+  .whatsapp-float-wrapper,
+  .seviye-wrapper,
+  .ezber-float-wrapper,
+  .randevu-float-wrapper {
+    right: 12px !important;
+  }
+
+  /* Dikey konumlarını üst üste binmeyecek şekilde eşit aralıklarla ayarlıyoruz */
+  .whatsapp-float-wrapper { bottom: 15px !important; }
+  .randevu-float-wrapper { bottom: 80px !important; }
+  .seviye-wrapper        { bottom: 145px !important; }
+  .ezber-float-wrapper   { bottom: 210px !important; }
+
+  /* Mobilde buton boyutlarını biraz küçülterek ekranda yer kaplamasını önleyelim */
+  .whatsapp-float-btn,
+  .seviye-test-float-btn,
+  .ezber-float-btn,
+  .randevu-float-btn {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 22px !important;
+  }
+
+  /* Mobilde yazılı baloncuklar (etiketler) çok yer kaplamasın diye gizleyebiliriz veya sadece simge bırakabiliriz */
+  .auto-hide-badge {
+    display: none !important; /* Ekranı rahatlatmak için mobilde yazılı uyarıları gizler */
+  }
+}
+    
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     margin: 0;
