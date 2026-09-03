@@ -2047,7 +2047,7 @@ async function canliMesajlariYukle(ogrenciAdi) {
   }
 }
 
-function canliSoruGonder(ogrenciAdi) {
+async function canliSoruGonder(ogrenciAdi) {
   const mesajInput = document.getElementById("canliSoruMetni");
   const mesaj = mesajInput.value.trim();
   const btn = document.getElementById("canliGonderBtn");
@@ -2060,35 +2060,34 @@ function canliSoruGonder(ogrenciAdi) {
   btn.disabled = true;
   btn.innerText = "Gönderiliyor...";
 
-  const payload = {
-    aksiyon: "soruGonder",
-    ogrenci: ogrenciAdi,
-    gonderenTuru: "ogrenci",
-    mesaj: mesaj,
-    gorselUrl: secilenBase64Gorsel
-  };
+  // Uzun görseller URL parametresinde sorun yaratmasın diye encode ediyoruz
+  const encodedMesaj = encodeURIComponent(mesaj);
+  const encodedOgrenci = encodeURIComponent(ogrenciAdi);
+  const encodedGorsel = encodeURIComponent(secilenBase64Gorsel || "");
 
-  // no-cors modunda isteği arkaya gönderip beklemeksizin arayüzü güncelleyelim
-  fetch(WEB_APP_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  }).catch(err => {
-    console.log("Gönderim arka planda tamamlandı.");
-  });
+  const hedefUrl = `${WEB_APP_URL}?action=soruGonderGet&ogrenci=${encodedOgrenci}&gonderenTuru=ogrenci&mesaj=${encodedMesaj}&gorselUrl=${encodedGorsel}`;
 
-  // Formu hemen temizle ve butonun kilidini aç
-  mesajInput.value = "";
-  gorselKaldir();
-  btn.disabled = false;
-  btn.innerText = "🚀 Gönder";
+  try {
+    await fetch(hedefUrl);
 
-  // 1.5 saniye sonra mesajların ekrana yansıması için listeyi yenile
-  setTimeout(() => {
-    canliMesajlariYukle(ogrenciAdi);
-  }, 1500);
-}function buildBadges(genel, prevGenel, currentStudentName) {
+    mesajInput.value = "";
+    gorselKaldir();
+    
+    // Mesajın ekrana gelmesi için listeyi yenile
+    setTimeout(async () => {
+      await canliMesajlariYukle(ogrenciAdi);
+    }, 1000);
+
+  } catch (err) {
+    alert("Mesaj gönderilirken bir hata oluştu.");
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerText = "🚀 Gönder";
+  }
+}
+    
+    function buildBadges(genel, prevGenel, currentStudentName) {
   const ORIGINAL_BADGES = [
     { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
     { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
