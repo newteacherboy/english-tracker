@@ -630,9 +630,9 @@ canvas { max-height: 200px; }
   </div>
 </div>
 
-<!-- KELİME EZBER YARIŞMASI YÜZEN BUTONU VE BALONCUĞU -->
+<!-- KELİME EZBER YARIŞMASI YÜZEN BUtoNU VE BALONCUĞU -->
 <div class="ezber-float-wrapper">
-  <span id="ezberGeciciYazi" class="auto-hide-badge ezber-badge-text">Kelime Ezber Yarışması! 🧠</span>
+  <span id="ezberBaloncukYazi" class="auto-hide-badge ezber-badge-text">Kelime Ezber Yarışması! 🧠</span>
   <button id="ezberFloatBtn" class="ezber-float-btn" onclick="ezberKartToggle()" title="Kelime Ezber Yarışması">
     🧠
   </button>
@@ -2497,7 +2497,7 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("whatsappGeciciYazi"),
             document.getElementById("seviyeGeciciYazi"),
             document.getElementById("randevuGeciciYazi"),
-            document.getElementById("ezberGeciciYazi") // 👈 BURASI EKLENDİ
+            document.getElementById("ezberBaloncukYazi") // 👈 BURASI EKLENDİ
         ];
         baloncuklar.forEach(function(el) {
             if (el) {
@@ -2508,7 +2508,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }, 600);
             }
         });
-    }, 7000); // (Not: 5000 milisaniye 5 saniyedir, 7 saniye olmasını istersen burayı 7000 yapabilirsin)
+    }, 5000); // (Not: 5000 milisaniye 5 saniyedir, 7 saniye olmasını istersen burayı 7000 yapabilirsin)
 
     // Rubrik Modal Tanımlamaları
     const overlay = document.getElementById("yeni_rubrikOverlay");
