@@ -1817,17 +1817,218 @@ function drawDenemeChart(name) {
 }
 
 // 🧠 KELİME EZBER YARIŞMASI
+// 1. KADEME: 2. SINIF TEMEL HAVUZU (50 Kelime)
+const kelimeler2 = [
+    {en:"Hello", tr:"Merhaba"}, {en:"Goodbye", tr:"Hoşça kal"}, {en:"Please", tr:"Lütfen"}, {en:"Thank you", tr:"Teşekkürler"},
+    {en:"Yes", tr:"Evet"}, {en:"No", tr:"Hayır"}, {en:"Teacher", tr:"Öğretmen"}, {en:"Student", tr:"Öğrenci"},
+    {en:"School", tr:"Okul"}, {en:"Book", tr:"Kitap"}, {en:"Pencil", tr:"Kalem"}, {en:"Notebook", tr:"Defter"},
+    {en:"Eraser", tr:"Silgi"}, {en:"Ruler", tr:"Cetvel"}, {en:"Bag", tr:"Çanta"}, {en:"Desk", tr:"Sıra"},
+    {en:"Chair", tr:"Sandalye"}, {en:"Board", tr:"Tahta"}, {en:"Pen", tr:"Tükenmez Kalem"}, {en:"Okay", tr:"Tamam"},
+    {en:"Red", tr:"Kırmızı"}, {en:"Blue", tr:"Mavi"}, {en:"Green", tr:"Yeşil"}, {en:"Yellow", tr:"Sarı"},
+    {en:"Black", tr:"Siyah"}, {en:"White", tr:"Beyaz"}, {en:"Orange", tr:"Turuncu"}, {en:"Pink", tr:"Pembe"},
+    {en:"Brown", tr:"Kahverengi"}, {en:"Purple", tr:"Mor"}, {en:"One", tr:"Bir"}, {en:"Two", tr:"İki"},
+    {en:"Three", tr:"Üç"}, {en:"Four", tr:"Dört"}, {en:"Five", tr:"Beş"}, {en:"Six", tr:"Altı"},
+    {en:"Seven", tr:"Yedi"}, {en:"Eight", tr:"Sekiz"}, {en:"Nine", tr:"Dokuz"}, {en:"Ten", tr:"On"},
+    {en:"Cat", tr:"Kedi"}, {en:"Dog", tr:"Köpek"}, {en:"Bird", tr:"Kuş"}, {en:"Fish", tr:"Balık"},
+    {en:"Apple", tr:"Elma"}, {en:"Banana", tr:"Muz"}, {en:"Milk", tr:"Süt"}, {en:"Water", tr:"Su"},
+    {en:"Ball", tr:"Top"}, {en:"Car", tr:"Araba"}
+];
+
+// 2. KADEME: 3. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
+const kelimeler3Ek = [
+    {en:"Family", tr:"Aile"}, {en:"Father", tr:"Baba"}, {en:"Mother", tr:"Anne"}, {en:"Brother", tr:"Erkek Kardeş"},
+    {en:"Sister", tr:"Kız Kardeş"}, {en:"Grandmother", tr:"Büyükanne"}, {en:"Grandfather", tr:"Büyükbaba"}, {en:"Baby", tr:"Bebek"},
+    {en:"Friend", tr:"Arkadaş"}, {en:"Name", tr:"İsim"}, {en:"Head", tr:"Baş / Kafa"}, {en:"Eye", tr:"Göz"},
+    {en:"Ear", tr:"Kulak"}, {en:"Nose", tr:"Burun"}, {en:"Mouth", tr:"Ağız"}, {en:"Hand", tr:"El"},
+    {en:"Foot", tr:"Ayak"}, {en:"Leg", tr:"Bacak"}, {en:"Arm", tr:"Kol"}, {en:"Hair", tr:"Saç"},
+    {en:"Home", tr:"Ev"}, {en:"Room", tr:"Oda"}, {en:"Kitchen", tr:"Mutfak"}, {en:"Bedroom", tr:"Yatak Odası"},
+    {en:"Bathroom", tr:"Banyo"}, {en:"Living Room", tr:"Oturma Odası"}, {en:"Garden", tr:"Bahçe"}, {en:"Window", tr:"Pencere"},
+    {en:"Door", tr:"Kapı"}, {en:"Table", tr:"Masa"}, {en:"Happy", tr:"Mutlu"}, {en:"Sad", tr:"Üzgün"},
+    {en:"Angry", tr:"Kızgın"}, {en:"Tired", tr:"Yorgun"}, {en:"Hungry", tr:"Aç"}, {en:"Thirsty", tr:"Susamış"},
+    {en:"Big", tr:"Büyük"}, {en:"Small", tr:"Küçük"}, {en:"Good", tr:"İyi"}, {en:"Great", tr:"Harika"},
+    {en:"Run", tr:"Koşmak"}, {en:"Jump", tr:"Zıplamak"}, {en:"Walk", tr:"Yürümek"}, {en:"Swim", tr:"Yüzmek"},
+    {en:"Dance", tr:"Dans Etmek"}, {en:"Sing", tr:"Şarkı Söylemek"}, {en:"Fly", tr:"Uçmak"}, {en:"Write", tr:"Yazmak"},
+    {en:"Read", tr:"Okumak"}, {en:"Sleep", tr:"Uyumak"}, {en:"Elephant", tr:"Fil"}, {en:"Lion", tr:"Aslan"},
+    {en:"Monkey", tr:"Maymun"}, {en:"Bear", tr:"Ayı"}, {en:"Rabbit", tr:"Tavşan"}, {en:"Mouse", tr:"Fare"},
+    {en:"Duck", tr:"Ördek"}, {en:"Horse", tr:"At"}, {en:"Cow", tr:"İnek"}, {en:"Sheep", tr:"Koyun"},
+    {en:"Cake", tr:"Kek"}, {en:"Bread", tr:"Ekmek"}, {en:"Cheese", tr:"Peynir"}, {en:"Egg", tr:"Yumurta"},
+    {en:"Orange Juice", tr:"Portakal Suyu"}, {en:"Ice Cream", tr:"Dondurma"}, {en:"Pizza", tr:"Pizza"}, {en:"Soup", tr:"Çorba"},
+    {en:"Toy", tr:"Oyuncak"}, {en:"Doll", tr:"Oyuncak Bebek"}, {en:"Teddy Bear", tr:"Oyuncak Ayı"}, {en:"Kite", tr:"Uçurtma"},
+    {en:"Plane", tr:"Uçak"}, {en:"Train", tr:"Tren"}, {en:"Bike", tr:"Bisiklet"}, {en:"Boat", tr:"Tekne"},
+    {en:"Sun", tr:"Güneş"}, {en:"Moon", tr:"Ay (Gökyüzü)"}, {en:"Star", tr:"Yıldız"}, {en:"Tree", tr:"Ağaç"},
+    {en:"Flower", tr:"Çiçek"}, {en:"Grass", tr:"Çim"}, {en:"Sky", tr:"Gökyüzü"}, {en:"Cloud", tr:"Bulut"},
+    {en:"Eleven", tr:"On bir"}, {en:"Twelve", tr:"On iki"}, {en:"Thirteen", tr:"On üç"}, {en:"Fourteen", tr:"On dört"},
+    {en:"Fifteen", tr:"On beş"}, {en:"Sixteen", tr:"On altı"}, {en:"Seventeen", tr:"On yedi"}, {en:"Eighteen", tr:"On sekiz"},
+    {en:"Nineteen", tr:"On dokuz"}, {en:"Twenty", tr:"Yirmi"}, {en:"Clean", tr:"Temiz"}, {en:"Dirty", tr:"Kirli"},
+    {en:"Old", tr:"Yaşlı / Eski"}, {en:"Young", tr:"Genç"}, {en:"Fast", tr:"Hızlı"}, {en:"Slow", tr:"Yavaş"}
+];
+
+// 3. KADEME: 4. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
+const kelimeler4Ek = [
+    {en:"Country", tr:"Ülke"}, {en:"Turkey", tr:"Türkiye"}, {en:"England", tr:"İngiltere"}, {en:"Germany", tr:"Almanya"},
+    {en:"France", tr:"Fransa"}, {en:"Spain", tr:"İspanya"}, {en:"Italy", tr:"İtalya"}, {en:"Japan", tr:"Japonya"},
+    {en:"Nationality", tr:"Milliyet"}, {en:"Turkish", tr:"Türk"}, {en:"English", tr:"İngiliz"}, {en:"German", tr:"Alman"},
+    {en:"Map", tr:"Harita"}, {en:"Compass", tr:"Pusula"}, {en:"Flag", tr:"Bayrak"}, {en:"World", tr:"Dünya"},
+    {en:"North", tr:"Kuzey"}, {en:"South", tr:"Güney"}, {en:"East", tr:"Doğu"}, {en:"West", tr:"Batı"},
+    {en:"Job", tr:"Meslek"}, {en:"Doctor", tr:"Doktor"}, {en:"Nurse", tr:"Hemşire"}, {en:"Fireman", tr:"İtfaiyeci"},
+    {en:"Policeman", tr:"Polis"}, {en:"Chef", tr:"Aşçı"}, {en:"Pilot", tr:"Pilot"}, {en:"Farmer", tr:"Çiftçi"},
+    {en:"Vet", tr:"Veteriner"}, {en:"Singer", tr:"Şarkıcı"}, {en:"Morning", tr:"Sabah"}, {en:"Afternoon", tr:"Öğleden Sonra"},
+    {en:"Evening", tr:"Akşam"}, {en:"Night", tr:"Gece"}, {en:"Breakfast", tr:"Kahvaltı"}, {en:"Lunch", tr:"Öğle Yemeği"},
+    {en:"Dinner", tr:"Akşam Yemeği"}, {en:"Tomato", tr:"Domates"}, {en:"Tea", tr:"Çay"}, {en:"Coffee", tr:"Kahve"},
+    {en:"Juice", tr:"Meyve Suyu"}, {en:"Shirt", tr:"Gömlek"}, {en:"Pants", tr:"Pantolon"}, {en:"Dress", tr:"Elbise"},
+    {en:"Shoes", tr:"Ayakkabı"}, {en:"Hat", tr:"Şapka"}, {en:"Jacket", tr:"Ceket"}, {en:"Coat", tr:"Mont"},
+    {en:"Skirt", tr:"Etek"}, {en:"Socks", tr:"Çorap"}, {en:"Summer", tr:"Yaz"}, {en:"Winter", tr:"Kış"},
+    {en:"Spring", tr:"İlkbahar"}, {en:"Autumn", tr:"Sonbahar"}, {en:"Hot", tr:"Sıcak"}, {en:"Cold", tr:"Soğuk"},
+    {en:"Sunny", tr:"Güneşli"}, {en:"Rainy", tr:"Yağmurlu"}, {en:"Snowy", tr:"Karlı"}, {en:"Windy", tr:"Rüzgarlı"},
+    {en:"Science", tr:"Bilim"}, {en:"Experiment", tr:"Deney"}, {en:"Bottle", tr:"Şişe"}, {en:"Glass", tr:"Bardak"},
+    {en:"Mix", tr:"Karıştırmak"}, {en:"Pour", tr:"Dökmek"}, {en:"Drop", tr:"Damlatan / Düşürmek"}, {en:"Fold", tr:"Katlamak"},
+    {en:"Paper", tr:"Kağıt"}, {en:"Brush", tr:"Fırça"}, {en:"Paint", tr:"Boya"}, {en:"Guitar", tr:"Gitar"},
+    {en:"Piano", tr:"Piyano"}, {en:"Flute", tr:"Flüt"}, {en:"Violin", tr:"Keman"}, {en:"Listen", tr:"Dinlemek"},
+    {en:"Speak", tr:"Konuşmak"}, {en:"Learn", tr:"Öğrenmek"}, {en:"Teach", tr:"Öğretmek"}, {en:"Help", tr:"Yardım Etmek"},
+    {en:"Ride", tr:"Binmek (Bisiklete/Ata)"}, {en:"Drive", tr:"Araba Sürmek"}, {en:"Climb", tr:"Tırmanmak"}, {en:"Catch", tr:"Yakalamak"},
+    {en:"Throw", tr:"Atmak / Fırlatmak"}, {en:"Kick", tr:"Tekmelemek"}, {en:"Cook", tr:"Yemek Pişirmek"}, {en:"Wash", tr:"Yıkamak"},
+    {en:"Brush teeth", tr:"Diş Fırçalamak"}, {en:"Wake up", tr:"Uyanmak"}, {en:"Get up", tr:"Yataktan Kalkmak"}, {en:"Go to bed", tr:"Yatağa Gitmek"},
+    {en:"Watch TV", tr:"Televizyon İzlemek"}, {en:"Do homework", tr:"Ödev Yapmak"}, {en:"Strong", tr:"Güçlü"}, {en:"Weak", tr:"Zayıf / Güçsüz"},
+    {en:"Heavy", tr:"Ağır"}, {en:"Light", tr:"Hafif"}, {en:"Short", tr:"Kısa"}, {en:"Tall", tr:"Uzun"}
+];
+
+// 4. KADEME: 5. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
+const kelimeler5Ek = [
+    {en:"Maths", tr:"Matematik"}, {en:"Social Studies", tr:"Sosyal Bilgiler"}, {en:"Physical Education", tr:"Beden Eğitimi"}, {en:"History", tr:"Tarih"},
+    {en:"Geography", tr:"Coğrafya"}, {en:"Drama", tr:"Tiyatro / Drama"}, {en:"Information Technology", tr:"Bilişim Teknolojileri"}, {en:"Timetable", tr:"Ders Programı"},
+    {en:"Classroom", tr:"Derslik"}, {en:"Library", tr:"Kütüphane"}, {en:"Canteen", tr:"Kantin"}, {en:"Gym", tr:"Spor Salonu"},
+    {en:"Illness", tr:"Hastalık"}, {en:"Health", tr:"Sağlık"}, {en:"Flu", tr:"Grip"}, {en:"Cough", tr:"Öksürük"},
+    {en:"Fever", tr:"Ateş"}, {en:"Headache", tr:"Baş Ağrısı"}, {en:"Toothache", tr:"Diş Ağrısı"}, {en:"Stomachache", tr:"Karın Ağrısı"},
+    {en:"Backache", tr:"Sırt Ağrısı"}, {en:"Sore throat", tr:"Boğaz Ağrısı"}, {en:"Measles", tr:"Kızamık"}, {en:"Medicine", tr:"İlaç"},
+    {en:"Pill", tr:"Hap"}, {en:"Syrup", tr:"Şurup"}, {en:"Plaster", tr:"Yara Bandı"}, {en:"Tissue", tr:"Mendil"},
+    {en:"Hospital", tr:"Hastane"}, {en:"Pharmacy", tr:"Eczane"}, {en:"Need", tr:"İhtiyaç Duymak"}, {en:"Should", tr:"-meli / -malı (Tavsiye)"},
+    {en:"Movie", tr:"Film"}, {en:"Cinema", tr:"Sinema"}, {en:"Comedy", tr:"Komedi"}, {en:"Horror", tr:"Korku"},
+    {en:"Cartoon", tr:"Çizgi Film"}, {en:"Animation", tr:"Animasyon"}, {en:"Action", tr:"Aksiyon"}, {en:"Drama", tr:"Dram"},
+    {en:"Ticket", tr:"Bilet"}, {en:"Character", tr:"Karakter"}, {en:"Brave", tr:"Cesur"}, {en:"Frightening", tr:"Korkutucu"},
+    {en:"Funny", tr:"Komik"}, {en:"Exciting", tr:"Heyecan Verici"}, {en:"Boring", tr:"Sıkıcı"}, {en:"Honest", tr:"Dürüst"},
+    {en:"Party", tr:"Parti"}, {en:"Birthday", tr:"Doğum Günü"}, {en:"Invitation", tr:"Davetiye"}, {en:"Guest", tr:"Misafir"},
+    {en:"Candle", tr:"Mum"}, {en:"Balloon", tr:"Balon"}, {en:"Gift / Present", tr:"Hediye"}, {en:"Clown", tr:"Palyaço"},
+    {en:"Beverage", tr:"İçecek"}, {en:"Celebrate", tr:"Kutlamak"}, {en:"Join", tr:"Katılmak"}, {en:"Refuse", tr:"Reddetmek"},
+    {en:"Accept", tr:"Kabul Etmek"}, {en:"Must", tr:"Zorunda Olmak"}, {en:"Shelter", tr:"Barınak"}, {en:"Vet clinic", tr:"Veteriner Kliniği"},
+    {en:"Puppy", tr:"Yavru Köpek"}, {en:"Kitten", tr:"Yavru Kedi"}, {en:"Adopt", tr:"Sahiplenmek"}, {en:"Bark", tr:"Havlamak"},
+    {en:"Tail", tr:"Kuyruk"}, {en:"Wing", tr:"Kanat"}, {en:"Claw", tr:"Pençe"}, {en:"Feed", tr:"Beslemek"},
+    {en:"Examine", tr:"Muayene Etmek"}, {en:"Collect", tr:"Toplamak / Biriktirmek"}, {en:"Hobby", tr:"Hobi"}, {en:"Board game", tr:"Kutu Oyunu"},
+    {en:"Chess", tr:"Satranç"}, {en:"Puzzle", tr:"Yapboz"}, {en:"Origami", tr:"Kağıt Katlama"}, {en:"Dodgeball", tr:"Yakar Top"},
+    {en:"Hide and seek", tr:"Saklambaç"}, {en:"Blind man's buff", tr:"Körebe"}, {en:"Hopscotch", tr:"Seksek"}, {en:"Camping", tr:"Kamp Yapma"},
+    {en:"Fishing", tr:"Balık Tutma"}, {en:"Hiking", tr:"Doğa Yürüyüşü"}, {en:"Tent", tr:"Çadır"}, {en:"Campfire", tr:"Kamp Ateşi"},
+    {en:"Lake", tr:"Göl"}, {en:"River", tr:"Nehir"}, {en:"Mountain", tr:"Dağ"}, {en:"Forest", tr:"Orman"},
+    {en:"Compass", tr:"Pusula"}, {en:"Map", tr:"Harita"}, {en:"Tourist", tr:"Turist"}, {en:"Town", tr:"Kasaba"},
+    {en:"City centre", tr:"Şehir Merkezi"}, {en:"Mosque", tr:"Cami"}, {en:"Museum", tr:"Müze"}, {en:"Bakery", tr:"Fırın"}
+];
+
+// 5. KADEME: 6. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
+const kelimeler6Ek = [
+    {en:"Delicious", tr:"Lezzetli"}, {en:"Nutritious", tr:"Besleyici"}, {en:"Croissant", tr:"Kruvazan"}, {en:"Muffin", tr:"Kek"},
+    {en:"Olive", tr:"Zeytin"}, {en:"Honey", tr:"Bal"}, {en:"Butter", tr:"Tereyağı"}, {en:"Jam", tr:"Reçel"},
+    {en:"Pancake", tr:"Krep"}, {en:"Bagel", tr:"Simit"}, {en:"Cereal", tr:"Mısır Gevreği"}, {en:"Sausage", tr:"Sosis"},
+    {en:"Downtown", tr:"Şehir Merkezi"}, {en:"Skyscraper", tr:"Gökdelen"}, {en:"Traffic jam", tr:"Trafik Sıkışıklığı"}, {en:"Crowded", tr:"Kalabalık"},
+    {en:"Noisy", tr:"Gürültülü"}, {en:"Quiet", tr:"Sessiz / Sakin"}, {en:"Kiosk", tr:"Büfe"}, {en:"Pedestrian", tr:"Yaya"},
+    {en:"Street", tr:"Sokak / Cadde"}, {en:"Building", tr:"Bina"}, {en:"Rent", tr:"Kiralamak"}, {en:"Feed the pet", tr:"Evcil Hayvanı Beslemek"},
+    {en:"Fair", tr:"Lunapark / Fuar"}, {en:"Roller coaster", tr:"Hız Treni"}, {en:"Bumper car", tr:"Çarpışan Araba"}, {en:"Ferris wheel", tr:"Dönme Dolap"},
+    {en:"Ghost train", tr:"Korku Treni"}, {en:"Carousel", tr:"Atlıkarınca"}, {en:"Thrilling", tr:"Heyecan Dolu"}, {en:"Terrifying", tr:"Dehşet Verici"},
+    {en:"Vacation", tr:"Tatil"}, {en:"Sightseeing", tr:"Turistik Gezi"}, {en:"Skiing", tr:"Kayak Yapma"}, {en:"Seaside", tr:"Deniz Kenarı"},
+    {en:"Resort", tr:"Tatil Köyü"}, {en:"Hotel", tr:"Otel"}, {en:"Stay", tr:"Konaklamak"}, {en:"Visit", tr:"Ziyaret Etmek"},
+    {en:"Traditional", tr:"Geleneksel"}, {en:"Modern", tr:"Modern"}, {en:"Popular", tr:"Popüler"}, {en:"Dangerous", tr:"Tehlikeli"},
+    {en:"Safe", tr:"Güvenli"}, {en:"Helmet", tr:"Kask"}, {en:"Weather forecast", tr:"Hava Durumu"}, {en:"Temperature", tr:"Sıcaklık"},
+    {en:"Freezing", tr:"Dondurucu"}, {en:"Lightning", tr:"Şimşek"}, {en:"Thunder", tr:"Gökgürültüsü"}, {en:"Storm", tr:"Fırtına"},
+    {en:"Hail", tr:"Dolu (Yağış)"}, {en:"Foggy", tr:"Sisli"}, {en:"Anxious", tr:"Endişeli"}, {en:"Scared", tr:"Korkmuş"},
+    {en:"Fabulous", tr:"Kusursuz / Harika"}, {en:"Moody", tr:"Dengesiz / Huysuz"}, {en:"Sleepy", tr:"Uykulu"}, {en:"Energetic", tr:"Enerjik"},
+    {en:"Candidate", tr:"Aday"}, {en:"Election", tr:"Seçim"}, {en:"Vote", tr:"Oy Vermek"}, {en:"President", tr:"Başkan"},
+    {en:"Ballot box", tr:"Seçim Sandığı"}, {en:"Campaign", tr:"Kampanya"}, {en:"Speech", tr:"Konuşma"}, {en:"Support", tr:"Desteklemek"},
+    {en:"Democracy", tr:"Demokrasi"}, {en:"Fair", tr:"Adil"}, {en:"Law", tr:"Kanun / Yasa"}, {en:"Right", tr:"Hak (İnsan Hakkı)"},
+    {en:"Occupation", tr:"Meslek"}, {en:"Architect", tr:"Mimar"}, {en:"Engineer", tr:"Mühendis"}, {en:"Lawyer", tr:"Avukat"},
+    {en:"Dentist", tr:"Diş Hekimi"}, {en:"Tailor", tr:"Terzi"}, {en:"Mechanic", tr:"Tamirci"}, {en:"Hairdresser", tr:"Kuaför"},
+    {en:"Design", tr:"Tasarlamak"}, {en:"Build", tr:"İnşa Etmek"}, {en:"Repair", tr:"Tamir Etmek"}, {en:"Sew", tr:"Dikiş Dikmek"},
+    {en:"Defend", tr:"Savunmak"}, {en:"Pull out teeth", tr:"Diş Çekmek"}, {en:"Salary", tr:"Maaş"}, {en:"Retire", tr:"Emekli Olmak"},
+    {en:"Yesterday", tr:"Dün"}, {en:"Last week", tr:"Geçen Hafta"}, {en:"Ago", tr:"Önce"}, {en:"Discovered", tr:"Keşfetti"},
+    {en:"Invented", tr:"İcat Etti"}, {en:"Produced", tr:"Üretti"}, {en:"Painted", tr:"Boyadı / Resmetti"}, {en:"Sold", tr:"Sattı"},
+    {en:"Bought", tr:"Satın Aldı"}, {en:"Found", tr:"Buldu"}, {en:"Left", tr:"Ayrıldı / Terk Etti"}, {en:"Arrived", tr:"Vardı / Ulaştı"}
+];
+
+// 6. KADEME: 7. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
+const kelimeler7Ek = [
+    {en:"Stubborn", tr:"İnatçı"}, {en:"Selfish", tr:"Bencil"}, {en:"Punctual", tr:"Dakik"}, {en:"Generous", tr:"Cömert"},
+    {en:"Helpful", tr:"Yardımsever"}, {en:"Outgoing", tr:"Sosyal / Dışadönük"}, {en:"Patient", tr:"Sabırlı"}, {en:"Clumsy", tr:"Sakar"},
+    {en:"Forgetful", tr:"Unutkan"}, {en:"Easy-going", tr:"Uyumlu / Rahat"}, {en:"Hardworking", tr:"Çalışkan"}, {en:"Lazy", tr:"Tembel"},
+    {en:"Smart / Clever", tr:"Akıllı"}, {en:"Shy", tr:"Utangaç"}, {en:"Cute", tr:"Sevimli"}, {en:"Handsome", tr:"Yakışıklı"},
+    {en:"Beautiful", tr:"Güzel"}, {en:"Plump", tr:"Balık Etli"}, {en:"Slim", tr:"Zayıf / İnce"}, {en:"Weight", tr:"Kilo"},
+    {en:"Height", tr:"Boy"}, {en:"Medal", tr:"Madalya"}, {en:"Equipment", tr:"Ekipman"}, {en:"Court", tr:"Kort / Saha"},
+    {en:"Pitch", tr:"Futbol Sahası"}, {en:"Score", tr:"Skor"}, {en:"Goal", tr:"Gol / Hedef"}, {en:"Beat", tr:"Yenmek"},
+    {en:"Draw", tr:"Berabere Kalmak"}, {en:"Train", tr:"Antrenman Yapmak"}, {en:"Spectator", tr:"Seyirci"}, {en:"Success", tr:"Başarı"},
+    {en:"Award", tr:"Ödül"}, {en:"Biography", tr:"Biyografi"}, {en:"Born", tr:"Doğmuş"}, {en:"Die", tr:"Ölmek"},
+    {en:"Marriage", tr:"Evlilik"}, {en:"Graduate", tr:"Mezun Olmak"}, {en:"Career", tr:"Kariyer"}, {en:"Prize", tr:"Ödül"},
+    {en:"Wild", tr:"Vahşi"}, {en:"Domestic", tr:"Evcil"}, {en:"Herbivore", tr:"Otobur"}, {en:"Carnivore", tr:"Etobur"},
+    {en:"Jungle", tr:"Balta Girmemiş Orman"}, {en:"Desert", tr:"Çöl"}, {en:"Ocean", tr:"Okyanus"}, {en:"Habitat", tr:"Doğal Yaşam Alanı"},
+    {en:"Extinct", tr:"Nesli Tükenmiş"}, {en:"Endangered", tr:"Nesli Tehlikede"}, {en:"Protect", tr:"Korumak"}, {en:"Hunt", tr:"Avlanmak"},
+    {en:"Poisonous", tr:"Zehirli"}, {en:"Mammal", tr:"Memeli"}, {en:"Reptile", tr:"Sürüngen"}, {en:"Prey", tr:"Av"},
+    {en:"Predator", tr:"Yırtıcı Hayvan"}, {en:"Television", tr:"Televizyon"}, {en:"Reality show", tr:"Gerçeklik Programı"}, {en:"Documentary", tr:"Belgesel"},
+    {en:"News", tr:"Haberler"}, {en:"Soap opera", tr:"Pembe Dizi"}, {en:"Quiz show", tr:"Yarışma Programı"}, {en:"Commercial", tr:"Reklam"},
+    {en:"Series", tr:"Dizi"}, {en:"Remote control", tr:"Uzaktan Kumanda"}, {en:"Director", tr:"Yönetmen"}, {en:"Audience", tr:"İzleyici"},
+    {en:"Recommend", tr:"Tavsiye Etmek"}, {en:"Prefer", tr:"Tercih Etmek"}, {en:"Environment", tr:"Çevre"}, {en:"Pollution", tr:"Kirlilik"},
+    {en:"Recycling", tr:"Geri Dönüşüm"}, {en:"Rubbish / Trash", tr:"Çöp"}, {en:"Global warming", tr:"Küresel Isınma"}, {en:"Solar energy", tr:"Güneş Enerjisi"},
+    {en:"Wind energy", tr:"Rüzgar Enerjisi"}, {en:"Save energy", tr:"Enerji Tasarrufu"}, {en:"Waste", tr:"İsraf Etmek"}, {en:"Plant a tree", tr:"Ağaç Dikmek"},
+    {en:"Fortune teller", tr:"Falcı"}, {en:"Horoscope", tr:"Burç / Yıldız Haritası"}, {en:"Lucky", tr:"Şanslı"}, {en:"Unlucky", tr:"Şanssız"},
+    {en:"Believe", tr:"İnanmak"}, {en:"Predict", tr:"Tahmin Etmek"}, {en:"Future", tr:"Gelecek"}, {en:"Dream", tr:"Rüya / Hayal"},
+    {en:"Probably", tr:"Muhtemelen"}, {en:"Definitely", tr:"Kesinlikle"}, {en:"Superstition", tr:"Batıl İnanç"}, {en:"Evil eye", tr:"Nazar Boncuğu"},
+    {en:"Four-leaf clover", tr:"Dört Yapraklı Yonca"}, {en:"Public building", tr:"Kamu Binası"}, {en:"Police station", tr:"Karakol"}, {en:"Fire station", tr:"İtfaiye"},
+    {en:"Post office", tr:"Postane"}, {en:"City hall", tr:"Belediye Binası"}, {en:"Art gallery", tr:"Sanat Galerisi"}, {en:"Governor", tr:"Vali"}
+];
+
+// 7. KADEME: 8. SINIF LGS'DE EKLENEN HEDEF KELİMELER (+100 Kelime)
+const kelimeler8Ek = [
+    {en:"Buddy / Mate", tr:"Kanka / Yakın Arkadaş"}, {en:"Count on", tr:"Güvenmek"}, {en:"Depend on", tr:"Bel Bağlamak"}, {en:"Back up", tr:"Desteklemek"},
+    {en:"Trust", tr:"Güvenmek"}, {en:"Unreliable", tr:"Güvenilmez"}, {en:"Arrogant", tr:"Kibirli / Ukala"}, {en:"Sneaky", tr:"Sinsi"},
+    {en:"Loyal", tr:"Sadık"}, {en:"Secret", tr:"Sır"}, {en:"Share", tr:"Paylaşmak"}, {en:"Argue", tr:"Tartışmak"},
+    {en:"Jealous", tr:"Kıskanç"}, {en:"Tactful", tr:"Anlayışlı / İnce Düşünceli"}, {en:"Caring", tr:"Şefkatli / İlgili"}, {en:"Amusing", tr:"Eğlenceli"},
+    {en:"Supportive", tr:"Destekleyici"}, {en:"Fair", tr:"Adil"}, {en:"Aggressive", tr:"Saldırgan"}, {en:"Adventurous", tr:"Maceracı"},
+    {en:"Fashionable", tr:"Modaya Uygun"}, {en:"Ridiculous", tr:"Gülünç / Saçma"}, {en:"Unbearable", tr:"Katlanılmaz / Çekilmez"}, {en:"Impressive", tr:"Etkileyici"},
+    {en:"Trendy", tr:"Trend / Popüler"}, {en:"Awesome", tr:"Harika / Müthiş"}, {en:"Attract", tr:"Cezbetmek / Çekmek"}, {en:"Backer", tr:"Destekçi"},
+    {en:"Chit-chat", tr:"Sohbet Etmek / Geyik Yapmak"}, {en:"Bake", tr:"Fırında Pişirmek"}, {en:"Grill", tr:"Izgarada Pişirmek"}, {en:"Fry", tr:"Yağda Kızartmak"},
+    {en:"Boil", tr:"Haşlamak / Kaynatmak"}, {en:"Steam", tr:"Buharda Pişirmek"}, {en:"Roast", tr:"Fırında Et Kızartmak"}, {en:"Chop", tr:"Doğramak"},
+    {en:"Slice", tr:"Dilimlemek"}, {en:"Dice", tr:"Küp Küp Doğramak"}, {en:"Peel", tr:"Kabuğunu Soymak"}, {en:"Grate", tr:"Rendelemek"},
+    {en:"Mash", tr:"Ezmek / Püre Yapmak"}, {en:"Pour", tr:"Dökmek"}, {en:"Whisk", tr:"Çırpmak"}, {en:"Knead", tr:"Yoğurmak"},
+    {en:"Squeeze", tr:"Sıkmak (Limon vb.)"}, {en:"Spread", tr:"Sürmek (Yağ vb.)"}, {en:"Ingredient", tr:"İçindekiler / Malzeme"}, {en:"Process", tr:"Aşama / Süreç"},
+    {en:"Recipe", tr:"Yemek Tarifi"}, {en:"Kitchenware", tr:"Mutfak Eşyası"}, {en:"Pan", tr:"Tava"}, {en:"Pot", tr:"Tencere"},
+    {en:"Bowl", tr:"Kase"}, {en:"Knife", tr:"Bıçak"}, {en:"Spoon", tr:"Kaşık"}, {en:"Fork", tr:"Çatal"},
+    {en:"Oven", tr:"Fırın"}, {en:"Communicate", tr:"İletişim Kurmak"}, {en:"Interaction", tr:"Etkileşim"}, {en:"Face to face", tr:"Yüz Yüze"},
+    {en:"Call", tr:"Telefonla Aramak"}, {en:"Text", tr:"Mesaj Yazmak"}, {en:"Dial", tr:"Numara Çevirmek"}, {en:"Hang up", tr:"Telefonu Kapatmak"},
+    {en:"Hold on", tr:"Hatta Beklemek"}, {en:"Leave a message", tr:"Mesaj Bırakmak"}, {en:"Available", tr:"Müsait / Uygun"}, {en:"Busy", tr:"Meşgul"},
+    {en:"Connection", tr:"Bağlantı"}, {en:"Online", tr:"Çevrimiçi"}, {en:"Offline", tr:"Çevrimdışı"}, {en:"Browsing", tr:"İnternette Gezinme"},
+    {en:"Search engine", tr:"Arama Motoru"}, {en:"Website", tr:"Web Sitesi"}, {en:"Account", tr:"Hesap"}, {en:"Password", tr:"Şifre / Parola"},
+    {en:"Log in", tr:"Giriş Yapmak"}, {en:"Log out", tr:"Çıkış Yapmak"}, {en:"Download", tr:"İndirmek"}, {en:"Upload", tr:"Yüklemek"},
+    {en:"Attachment", tr:"E-posta Eki"}, {en:"Update", tr:"Güncellemek"}, {en:"Delete", tr:"Silmek"}, {en:"Social media", tr:"Sosyal Medya"},
+    {en:"Addict", tr:"Bağımlı"}, {en:"Device", tr:"Cihaz / Alet"}, {en:"Subscriber", tr:"Abone"}, {en:"Extreme sports", tr:"Ekstrem Sporlar"},
+    {en:"Risk", tr:"Risk"}, {en:"Danger", tr:"Tehlike"}, {en:"Courage", tr:"Cesaret"}, {en:"Life jacket", tr:"Can Yeleği"},
+    {en:"Paragliding", tr:"Yamaç Paraşütü"}, {en:"Bungee jumping", tr:"İpten Atlama"}, {en:"Rafting", tr:"Debili Suda Bot Turu"}, {en:"Climbing", tr:"Kaya Tırmanışı"},
+    {en:"Diving", tr:"Dalış"}, {en:"Trekking", tr:"Doğa Yürüyüşü"}, {en:"Accommodation", tr:"Konaklama"}, {en:"All-inclusive", tr:"Her Şey Dahil"}
+];
+
+// SARMAL MİMARİ: Her sınıf bir öncekinin tüm kelimelerini miras alır
 const ezberKelimeDeposu = {
-    "2-sinif": [{en:"Hello", tr:"Merhaba"}, {en:"Goodbye", tr:"Hoşça kal"}, {en:"Please", tr:"Lütfen"}, {en:"Thank you", tr:"Teşekkürler"}, {en:"Yes", tr:"Evet"}, {en:"No", tr:"Hayır"}, {en:"Teacher", tr:"Öğretmen"}, {en:"Student", tr:"Öğrenci"}, {en:"School", tr:"Okul"}, {en:"Book", tr:"Kitap"}, {en:"Pencil", tr:"Kalem"}, {en:"Notebook", tr:"Defter"}, {en:"Eraser", tr:"Silgi"}, {en:"Ruler", tr:"Cetvel"}, {en:"Bag", tr:"Çanta"}, {en:"Desk", tr:"Sıra"}, {en:"Chair", tr:"Sandalye"}, {en:"Board", tr:"Tahta"}, {en:"Pen", tr:"Tükenmez Kalem"}, {en:"Okay", tr:"Tamam"}],
-    "3-sinif": [{en:"Family", tr:"Aile"}, {en:"Father", tr:"Baba"}, {en:"Mother", tr:"Anne"}, {en:"Brother", tr:"Erkek Kardeş"}, {en:"Sister", tr:"Kız Kardeş"}, {en:"Grandmother", tr:"Büyükanne"}, {en:"Grandfather", tr:"Büyükbaba"}, {en:"Baby", tr:"Bebek"}, {en:"Friend", tr:"Arkadaş"}, {en:"Name", tr:"İsim"}],
-    "4-sinif": [{en:"Country", tr:"Ülke"}, {en:"Turkey", tr:"Türkiye"}, {en:"England", tr:"İngiltere"}, {en:"Germany", tr:"Almanya"}, {en:"France", tr:"Fransa"}, {en:"Nationality", tr:"Milliyet"}, {en:"Turkish", tr:"Türk"}, {en:"English", tr:"İngiliz"}],
-    "5-sinif": [{en:"Maths", tr:"Matematik"}, {en:"Science", tr:"Fen Bilgisi"}, {en:"History", tr:"Tarih"}, {en:"Art", tr:"Resim Dersi"}, {en:"Music", tr:"Müzik"}, {en:"Course", tr:"Ders / Kurs"}],
-    "6-sinif": [{en:"Delicious", tr:"Lezzetli"}, {en:"Nutritious", tr:"Besleyici"}, {en:"Croissant", tr:"Kruvazan"}, {en:"Muffin", tr:"Kek"}, {en:"Olive", tr:"Zeytin"}],
-    "7-sinif": [{en:"Stubborn", tr:"İnatçı"}, {en:"Selfish", tr:"Bencil"}, {en:"Punctual", tr:"Dakik"}, {en:"Honest", tr:"Dürüst"}, {en:"Generous", tr:"Cömert"}],
-    "8-sinif": [{en:"Buddy / Mate", tr:"Kanka / Yakın Arkadaş"}, {en:"Count on", tr:"Güvenmek"}, {en:"Depend on", tr:"Bel Bağlamak"}, {en:"Back up", tr:"Desteklemek"}, {en:"Trust", tr:"Güvenmek"}]
+    "2-sinif": kelimeler2,                                                                       // 50 Kelime
+    "3-sinif": [...kelimeler2, ...kelimeler3Ek],                                                 // 150 Kelime (2'nin tamamı dahil)
+    "4-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek],                               // 250 Kelime (2 ve 3 dahil)
+    "5-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek],             // 350 Kelime (Öncekilerin tamamı)
+    "6-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek], // 450 Kelime
+    "7-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek, ...kelimeler7Ek], // 550 Kelime
+    "8-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek, ...kelimeler7Ek, ...kelimeler8Ek] // 650 Kelime
 };
 
-const SINIF_SORU_LIMITLERI = { "2-sinif": 20, "3-sinif": 20, "4-sinif": 20, "5-sinif": 30, "6-sinif": 35, "7-sinif": 40, "8-sinif": 50 };
+// Soru Limitleri
+const SINIF_SORU_LIMITLERI = { 
+    "2-sinif": 20, 
+    "3-sinif": 20, 
+    "4-sinif": 20, 
+    "5-sinif": 25, 
+    "6-sinif": 30, 
+    "7-sinif": 35, 
+    "8-sinif": 40 
+};
 let aktifSinif = "2-sinif";
 let oyunKelimeListesi = [];
 let mevcutKelimeIndex = 0;
