@@ -2265,6 +2265,39 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+function muallimKitapToggle() {
+    const icerik = document.getElementById("muallimKitapIcerik");
+    const ok = document.getElementById("muallimOkIsareti");
+    const kutu = document.getElementById("muallimKareKutu");
+    
+    // Diğer paneli kapat
+    const ezberIcerik = document.getElementById("ezberKartIcerik");
+    if (ezberIcerik) ezberIcerik.style.display = "none";
+    const ezberKutu = document.getElementById("ezberKareKutu");
+    if (ezberKutu) ezberKutu.classList.remove("active");
+    const ezberOk = document.getElementById("ezberOkIsareti");
+    if (ezberOk) ezberOk.innerText = "🔽";
+
+    // Computed style ile gerçek görünürlük durumunu alıyoruz
+    const suAnGorunurMu = window.getComputedStyle(icerik).display !== "none";
+
+    if (!suAnGorunurMu) {
+        icerik.style.display = "block";
+        kutu.classList.add("active");
+        ok.innerText = "🔼";
+        // Panel açıldığında liste boşsa varsayılan sınıfı listele
+        const liste = document.getElementById("muallimKitapListesi");
+        if (liste && liste.children.length === 0) {
+            kitaplariGetir('okul-oncesi', null);
+        }
+    } else {
+        icerik.style.display = "none";
+        kutu.classList.remove("active");
+        ok.innerText = "🔽";
+    }
+}
+    
 </script>
 </body>
 </html>
