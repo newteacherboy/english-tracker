@@ -2069,22 +2069,30 @@ async function canliSoruGonder(ogrenciAdi) {
   };
 
   try {
+    // Google Sheets'e veri gitmesini sağlayan kritik güncelleme
     await fetch(WEB_APP_URL, {
       method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
     mesajInput.value = "";
     gorselKaldir();
-    await canliMesajlariYukle(ogrenciAdi);
+    
+    // Mesajın ekrana yansıması için kısa bir bekleme verip listeyi güncelleyelim
+    setTimeout(async () => {
+      await canliMesajlariYukle(ogrenciAdi);
+    }, 1000);
+
   } catch (err) {
     alert("Mesaj gönderilirken bir hata oluştu.");
+    console.error(err);
   } finally {
     btn.disabled = false;
     btn.innerText = "🚀 Gönder";
   }
 }
-
 function buildBadges(genel, prevGenel, currentStudentName) {
   const ORIGINAL_BADGES = [
     { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
