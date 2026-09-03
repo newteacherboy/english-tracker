@@ -2082,13 +2082,13 @@ const kelimeler8Ek = [
 
 // SARMAL MİMARİ: Her sınıf bir öncekinin tüm kelimelerini miras alır
 const ezberKelimeDeposu = {
-    "2-sinif": kelimeler2,                                                                       // 50 Kelime
-    "3-sinif": [...kelimeler2, ...kelimeler3Ek],                                                 // 150 Kelime (2'nin tamamı dahil)
-    "4-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek],                               // 250 Kelime (2 ve 3 dahil)
-    "5-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek],             // 350 Kelime (Öncekilerin tamamı)
-    "6-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek], // 450 Kelime
-    "7-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek, ...kelimeler7Ek], // 550 Kelime
-    "8-sinif": [...kelimeler2, ...kelimeler3Ek, ...kelimeler4Ek, ...kelimeler5Ek, ...kelimeler6Ek, ...kelimeler7Ek, ...kelimeler8Ek] // 650 Kelime
+    "2-sinif": kelimeler2,
+    "3-sinif": kelimeler3Ek,
+    "4-sinif": kelimeler4Ek,
+    "5-sinif": kelimeler5Ek,
+    "6-sinif": kelimeler6Ek,
+    "7-sinif": kelimeler7Ek,
+    "8-sinif": kelimeler8Ek
 };
 
 // Soru Limitleri
@@ -2187,7 +2187,8 @@ function ezberKelimeCek() {
     document.getElementById("ezberProgress").innerText = `Kelime: ${mevcutKelimeIndex + 1} / ${oyunKelimeListesi.length}`;
     document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
 
-    let sinifKelimeleri = ezberKelimeDeposu[aktifSinif] || ezberKelimeDeposu["2-sinif"];
+    // Sadece seçilen sınıfın havuzundan yanlış şık üretilir
+    let sinifKelimeleri = ezberKelimeDeposu[aktifSinif] || kelimeler2;
     let digerKelimeler = sinifKelimeleri.filter(k => k.tr !== mevcutKelimeNesnesi.tr);
     let yanlisKelime = digerKelimeler[Math.floor(Math.random() * digerKelimeler.length)];
 
