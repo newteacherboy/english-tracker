@@ -1550,14 +1550,6 @@ function switchPageTab(name, tab) {
   activePageTab = tab;
   showStudentPage(name);
 }
-
-    // Sekme değiştiğinde arayüzü anında mevcut süreden devam ettir:
-  guncelSayacArayuzunuBas();
-
-  if (activePageTab === "ozet") drawCharts(rows);
-  if (activePageTab === "denemeler") drawDenemeChart(name);
-  if (activePageTab === "kitaplar") kitaplariGetir('okul-oncesi', null);
-}
     
 // 📖 ÖĞRENCİ PANELİNE EKLENEN KİTAP OKUMA SEKMESİ İÇERİĞİ
 function buildKitaplarTab() {
