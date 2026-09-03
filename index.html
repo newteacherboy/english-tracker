@@ -20,6 +20,15 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     
 <style>
+    
+/* Mobil ve tabletlerde sağ taraftaki yüzen butonların içeriği kapatmasını önler */
+@media screen and (max-width: 1024px) {
+  .tracker, .content, .home, .dashboard-ana-wrapper {
+    padding-right: 75px !important; /* Sağ tarafta butonlar için güvenli boşluk bırakır */
+    box-sizing: border-box;
+  }
+}
+    
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     margin: 0;
