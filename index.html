@@ -2842,6 +2842,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 okunan_kitap_sayisi: undefined
             };
 
+// 1. Bugünün tarihini tamamlanan ders alanına otomatik yazar
+let bugun = new Date();
+let bugunYil = bugun.getFullYear();
+let bugunAy = ("0" + (bugun.getMonth() + 1)).slice(-2);
+let bugunGun = ("0" + bugun.getDate()).slice(-2);
+
+// input type="date" formatı YYYY-MM-DD ister:
+let inputBugunFormat = `${bugunYil}-${bugunAy}-${bugunGun}`;
+
+let tamamlananTarihInput = document.getElementById("tamamlananDersTarihiInputId"); // Formdaki input id'si
+if (tamamlananTarihInput) tamamlananTarihInput.value = inputBugunFormat;
+
+// 2. Bir sonraki ders tarihini sabit günlerden hesaplayıp sonraki ders alanına otomatik yazar
+let sonrakiDersInput = document.getElementById("sonrakiDersTarihiInputId"); // Formdaki input id'si
+if (sonrakiDersInput && aktifOgrenciVerisi && aktifOgrenciVerisi.sabit_gunler) {
+    let siradaki = siradakiDersTarihiniHesapla(aktifOgrenciVerisi.sabit_gunler); // dd.MM.yyyy döner
+    let parca = siradaki.split(".");
+    sonrakiDersInput.value = `${parca[2]}-${parca[1]}-${parca[0]}`;
+}
+            
             try {
                 await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadTamamlandi) });
                 await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadSonraki) });
