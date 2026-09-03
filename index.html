@@ -1474,15 +1474,23 @@ function aktifogrenciyiKapat() {
     }
     localStorage.removeItem('dijimuallim_aktif_ogrenci');
     activeStudent = null;
+    
+    // ⏱️ Hesaptan çıkınca sayaç durdurulsun
+    oturumSayaciniDurdur();
+    
     renderTabs();
 }
 
 function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
 
 function selectStudent(name) {
-  activeStudent = name; activePageTab = "ozet";
-  renderTabs();
-  showStudentPage(name);
+    activeStudent = name; 
+    activePageTab = "ozet";
+    renderTabs();
+    showStudentPage(name);
+    
+    // ⏱️ Öğrenci giriş yaptığı an sayaç başlasın
+    oturumSayaciniBaslat();
 }
 
 function showStudentPage(name) {
@@ -1503,6 +1511,13 @@ function showStudentPage(name) {
       <div class="avatar">${initials}</div>
       <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
       <div class="level-badge">${latest.seviye}</div>
+
+<!-- OTURUM SÜRE SAYACI -->
+<div id="oturumSayacKutusu" style="display: flex; align-items: center; gap: 6px; background: #E1F5EE; color: #0F6E56; padding: 5px 12px; border-radius: 999px; font-size: 11.5px; font-weight: 700;">
+  <span>⏱️ Oturum Süresi:</span>
+  <span id="sayacZaman" style="font-family: monospace; font-size: 12px;">00:00</span>
+</div>
+      
     </div>
     <div class="page-tabs">
       <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
@@ -2986,6 +3001,38 @@ async function sagAltDersTalebiGonder() {
         if (telefonInput) telefonInput.value = "";
         randevuFormuKapatAcl();
     }, 600);
+}
+
+    let oturumSaniye = 0;
+let oturumTimer = null;
+
+// Sayacı Başlatan Fonksiyon
+function oturumSayaciniBaslat() {
+    oturumSaniye = 0;
+    const sayacElementi = document.getElementById("sayacZaman");
+    
+    // Eski sayacı temizle (çakışmayı önlemek için)
+    if (oturumTimer) clearInterval(oturumTimer);
+
+    oturumTimer = setInterval(() => {
+        oturumSaniye++;
+        let dk = Math.floor(oturumSaniye / 60);
+        let sn = oturumSaniye % 60;
+        
+        let formatliZaman = (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
+        
+        if (sayacElementi) {
+            sayacElementi.innerText = formatliZaman;
+        }
+    }, 1000);
+}
+
+// Sayacı Durduran / Sıfırlayan Fonksiyon
+function oturumSayaciniDurdur() {
+    if (oturumTimer) {
+        clearInterval(oturumTimer);
+        oturumTimer = null;
+    }
 }
     
 </script>
