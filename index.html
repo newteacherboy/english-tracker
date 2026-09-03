@@ -835,7 +835,7 @@ canvas { max-height: 200px; }
 </div>
 
 <!-- AÇILIR DERS TALEBİ FORMU (POPUP KART) -->
-<div id="kurumsalRandevuAlani" class="randevu-popup-box">
+<div id="popupRandevuKutusu" class="randevu-popup-box">
   <button class="popup-kapat-btn" onclick="randevuFormuKapatAcl()">✕</button>
   
   <h3 style="color: #7D6451; margin-top: 5px; font-size: 16.5px; text-align: center;">📅 Bireysel Ders Başvurusu</h3>
@@ -2227,7 +2227,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }, 600);
             }
         });
-    }, 7000);
+    }, 5000);
 
     // Rubrik Modal Tanımlamaları
     const overlay = document.getElementById("yeni_rubrikOverlay");
@@ -2503,6 +2503,28 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+    function randevuFormuKapatAcl() {
+    const popup = document.getElementById("popupRandevuKutusu");
+    const seviyeAlani = document.getElementById("seviyeTestAlani");
+
+    // Seviye testi açıksa çakışmaması için kapat
+    if (seviyeAlani) {
+        seviyeAlani.style.setProperty("display", "none", "important");
+    }
+
+    if (!popup) return;
+
+    // Görünürlük kontrolü ve aç/kapat işlemi
+    const gorunurMu = window.getComputedStyle(popup).display !== "none";
+
+    if (!gorunurMu) {
+        popup.style.setProperty("display", "flex", "important");
+    } else {
+        popup.style.setProperty("display", "none", "important");
+    }
+}
+    
 </script>
 </body>
 </html>
