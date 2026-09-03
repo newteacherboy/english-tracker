@@ -21,6 +21,32 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     
 <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    color: #4A4235;
+    background-color: #FAF8F5;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(218, 203, 182, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(125, 100, 81, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(244, 239, 230, 0.8) 0px, transparent 70%),
+        radial-gradient(at 100% 100%, rgba(191, 172, 150, 0.25) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(125, 100, 81, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container, .box, .card, #kurumsalRandevuAlani {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow: 0 8px 32px 0 rgba(125, 100, 81, 0.06) !important;
+}
 
 /* 🟢 DİKKAT ÇEKİCİ YÜZEN CANLI DESTEK BUTONU */
 .whatsapp-float-btn {
@@ -359,8 +385,8 @@
 
 @keyframes panelSlidIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
 
-/* TRACKER */
-.tracker { display: none; flex-direction: column; min-height: 100vh; width: 100%; max-width: 720px; }
+/* TRACKER (ORTALAMA DÜZENLEMESİ) */
+.tracker { display: none; flex-direction: column; min-height: 100vh; width: 100%; max-width: 720px; margin-left: auto; margin-right: auto; }
 .header { 
   background-color: #ffffff !important; 
   border-bottom: 1px solid #e8eaed;
@@ -388,7 +414,7 @@
 }
 
 /* KİLİT */
-.lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem; }
+.lock-screen { background: #fff; border-radius: 16px; border: 1px solid #e8eaed; padding: 2.5rem 1.5rem; text-align: center; margin: 1.5rem auto; }
 .lock-icon { font-size: 40px; margin-bottom: 1rem; }
 .lock-screen h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
 .lock-screen p { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
@@ -1996,7 +2022,7 @@ function manuelGirisYap() {
     const dogruSifre = (passwords[bulunanOgrenci] || "").trim();
 
     if (dogruSifre && girilenSifre !== dogruSifre) {
-        hataAlani.textContent = "Şifreniz hatalı, lütfen tekrar deneyin.";
+        hataAlani.textContent = "Şifreniz yanlış, lütfen tekrar deneyin.";
         document.getElementById("login-pwd-input").value = "";
         document.getElementById("login-pwd-input").focus();
         return;
@@ -2049,13 +2075,9 @@ function showStudentPage(name) {
       <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
     </div>
     ${pageContent}
-    ${buildCanliDestekAlani(s)}
   `;
   if (activePageTab === "ozet") drawCharts(rows);
   if (activePageTab === "denemeler") drawDenemeChart(name);
-  
-  // Mesajları getir
-  canliMesajlariYukle(name);
 }
 
 function switchPageTab(name, tab) {
@@ -2063,151 +2085,7 @@ function switchPageTab(name, tab) {
   showStudentPage(name);
 }
 
-/* ========================================================
-   💬 CANLI SORU & DESTEK ODASI (YOL A) JAVASCRIPT & UI 
-   ======================================================== */
-function buildCanliDestekAlani(ogrenciAdi) {
-  return `
-    <div class="card" style="margin-top: 20px; border: 2px solid #1D9E75; background: #ffffff;">
-      <div class="card-title" style="display: flex; align-items: center; gap: 8px; color: #0F6E56; font-size: 15px;">
-        <span>💬 Canlı Soru Çözüm & Destek Odası</span>
-      </div>
-      <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Takıldığın soruların fotoğrafını yükleyebilir ve öğretmenine anında mesaj gönderebilirsin.</p>
-      
-      <!-- Mesajların Listelendiği Kutu -->
-      <div id="canliSohbetKutusu" style="background: #F8F9FA; border: 1px solid #E0E0E0; border-radius: 12px; padding: 15px; height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;">
-        <div style="text-align: center; color: #aaa; font-size: 12px; margin-top: auto; margin-bottom: auto;">Mesajlar yükleniyor...</div>
-      </div>
-
-      <!-- Mesaj Gönderme Formu -->
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <textarea id="canliSoruMetni" placeholder="Sorunuzu buraya yazın..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 13px; resize: vertical; min-height: 50px; outline: none;"></textarea>
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <label style="font-size: 12px; color: #1D9E75; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px; background: #E1F5EE; padding: 6px 12px; border-radius: 8px;">
-            <span>📎 Soru Fotoğrafı Ekle</span>
-            <input type="file" id="canliSoruDosya" accept="image/*" style="display: none;" onchange="gorselSecildi(this)">
-          </label>
-          <span id="secilenDosyaAdi" style="font-size: 11px; color: #555; font-style: italic;">Dosya seçilmedi</span>
-
-          <button onclick="canliSoruGonder('${ogrenciAdi}')" id="canliGonderBtn" style="background: #1D9E75; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">
-            🚀 Gönder
-          </button>
-        </div>
-        <div id="secilenGorselOnizleme" style="display: none; margin-top: 5px; position: relative; max-width: 100px;">
-          <img id="onizlemeImg" src="" style="width: 100px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #ccc;">
-          <button onclick="gorselKaldir()" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 10px; cursor: pointer;">✕</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-let secilenBase64Gorsel = "";
-
-function gorselSecildi(input) {
-  if (input.files && input.files[0]) {
-    const file = input.files[0];
-    document.getElementById("secilenDosyaAdi").innerText = file.name;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      secilenBase64Gorsel = e.target.result;
-      document.getElementById("onizlemeImg").src = secilenBase64Gorsel;
-      document.getElementById("secilenGorselOnizleme").style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function gorselKaldir() {
-  secilenBase64Gorsel = "";
-  document.getElementById("canliSoruDosya").value = "";
-  document.getElementById("secilenDosyaAdi").innerText = "Dosya seçilmedi";
-  document.getElementById("secilenGorselOnizleme").style.display = "none";
-}
-
-async function canliMesajlariYukle(ogrenciAdi) {
-  const sohbetKutusu = document.getElementById("canliSohbetKutusu");
-  if (!sohbetKutusu) return;
-
-  try {
-    const res = await fetch(`${WEB_APP_URL}?action=mesajlariGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}`);
-    const data = await res.json();
-
-    if (data.durum === "basarili" && data.mesajlar) {
-      if (data.mesajlar.length === 0) {
-        sohbetKutusu.innerHTML = '<div style="text-align: center; color: #aaa; font-size: 12px; margin: auto;">Henüz mesaj veya soru gönderilmedi. İlk soruyu sen sor! 🚀</div>';
-        return;
-      }
-
-      let html = "";
-      data.mesajlar.forEach(m => {
-        const isHoca = m.gonderenTuru === "ogretmen";
-        const arkaplan = isHoca ? "#E1F5EE" : "#FFFFFF";
-        const hizalama = isHoca ? "margin-right: auto; border-color: #a8dfc0;" : "margin-left: auto; border-color: #d2e3fc;";
-        const gonderenEtiket = isHoca ? "👨‍🏫 Öğretmen" : "👤 Sen (" + m.ogrenci + ")";
-
-        html += `
-          <div style="background: ${arkaplan}; border: 1px solid #e0e0e0; border-radius: 10px; padding: 10px; max-width: 85%; ${hizalama} box-sizing: border-box;">
-            <div style="font-size: 10px; font-weight: bold; color: #888; margin-bottom: 4px; display: flex; justify-content: space-between;">
-              <span>${gonderenEtiket}</span>
-              <span>${m.tarih}</span>
-            </div>
-            <div style="font-size: 13px; color: #333; line-height: 1.4; word-break: break-word;">${m.mesaj || ""}</div>
-            ${m.gorselUrl ? `<div style="margin-top: 8px;"><a href="${m.gorselUrl}" target="_blank"><img src="${m.gorselUrl}" style="max-width: 100%; max-height: 150px; border-radius: 6px; border: 1px solid #ddd;"></a></div>` : ""}
-          </div>
-        `;
-      });
-      sohbetKutusu.innerHTML = html;
-      sohbetKutusu.scrollTop = sohbetKutusu.scrollHeight;
-    }
-  } catch (err) {
-    console.error("Mesajlar yüklenemedi:", err);
-  }
-}
-
-async function canliSoruGonder(ogrenciAdi) {
-  const mesajInput = document.getElementById("canliSoruMetni");
-  const mesaj = mesajInput.value.trim();
-  const btn = document.getElementById("canliGonderBtn");
-
-  if (!mesaj && !secilenBase64Gorsel) {
-    alert("Lütfen bir mesaj yazın veya fotoğraf ekleyin.");
-    return;
-  }
-
-  btn.disabled = true;
-  btn.innerText = "Gönderiliyor...";
-
-  // Uzun görseller URL parametresinde sorun yaratmasın diye encode ediyoruz
-  const encodedMesaj = encodeURIComponent(mesaj);
-  const encodedOgrenci = encodeURIComponent(ogrenciAdi);
-  const encodedGorsel = encodeURIComponent(secilenBase64Gorsel || "");
-
-  const hedefUrl = `${WEB_APP_URL}?action=soruGonderGet&ogrenci=${encodedOgrenci}&gonderenTuru=ogrenci&mesaj=${encodedMesaj}&gorselUrl=${encodedGorsel}`;
-
-  try {
-    await fetch(hedefUrl);
-
-    mesajInput.value = "";
-    gorselKaldir();
-    
-    // Mesajın ekrana gelmesi için listeyi yenile
-    setTimeout(async () => {
-      await canliMesajlariYukle(ogrenciAdi);
-    }, 1000);
-
-  } catch (err) {
-    alert("Mesaj gönderilirken bir hata oluştu.");
-    console.error(err);
-  } finally {
-    btn.disabled = false;
-    btn.innerText = "🚀 Gönder";
-  }
-}
-    
-    function buildBadges(genel, prevGenel, currentStudentName) {
+function buildBadges(genel, prevGenel, currentStudentName) {
   const ORIGINAL_BADGES = [
     { score:5,  emoji:"🌱", label:"Tohum Attı" }, { score:10, emoji:"🐣", label:"Kabuğu Kırdı" }, { score:15, emoji:"🔦", label:"Işığı Gördü" },
     { score:20, emoji:"🧩", label:"Parçaları Buldu" }, { score:25, emoji:"🎒", label:"Yola Çıktı" }, { score:30, emoji:"🧭", label:"Yönünü Buldu" },
