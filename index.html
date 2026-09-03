@@ -21,6 +21,122 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     
 <style>
+
+/* 🟢 WHATSAPP SABİT YÜZEN CANLI DESTEK BALONU */
+.whatsapp-float-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25D366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    cursor: pointer;
+    z-index: 999999;
+    transition: all 0.3s ease;
+    border: none;
+}
+.whatsapp-float-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+}
+
+/* Açılır Sohbet Penceresi Kutusu */
+.whatsapp-chat-box {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 320px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 999998;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    animation: slideUp 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.whatsapp-chat-header {
+    background: #075E54;
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.whatsapp-chat-header h4 {
+    font-size: 14px;
+    margin: 0;
+    font-weight: 700;
+}
+.whatsapp-chat-header span {
+    font-size: 11px;
+    opacity: 0.8;
+}
+.whatsapp-chat-body {
+    padding: 16px;
+    background: #efeae2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.whatsapp-chat-body p {
+    font-size: 12.5px;
+    color: #333;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 0;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.whatsapp-chat-footer {
+    padding: 12px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.whatsapp-chat-footer textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    resize: none;
+    height: 70px;
+    outline: none;
+}
+.whatsapp-send-btn {
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s;
+}
+.whatsapp-send-btn:hover {
+    background: #20ba5a;
+}
+    
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     margin: 0;
@@ -2906,5 +3022,64 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+<!-- 🟢 SABİT WHATSAPP DESTEK BUTONU VE PENCERESİ -->
+<button class="whatsapp-float-btn" onclick="whatsappKutusuToggle()" title="Canlı Soru Hattı">
+  💬
+</button>
+
+<div id="waChatBox" class="whatsapp-chat-box">
+  <div class="whatsapp-chat-header">
+    <div>
+      <h4>Öğretmene Soru Sor</h4>
+      <span>Genelde hemen yanıtlanır</span>
+    </div>
+    <button onclick="whatsappKutusuToggle()" style="background:none; border:none; color:white; font-size:16px; cursor:pointer;">✕</button>
+  </div>
+  <div class="whatsapp-chat-body">
+    <p>👋 Merhaba! Takıldığın bir soru mu var? Buradan yazarak öğretmenine doğrudan fotoğraf ve mesaj gönderebilirsin.</p>
+  </div>
+  <div class="whatsapp-chat-footer">
+    <textarea id="waSoruMetni" placeholder="Sorunuzu yazın (Örn: Hocam şu soruyu anlamadım...)"></textarea>
+    <button class="whatsapp-send-btn" onclick="whatsapplaGonder()">WhatsApp ile Gönder ➔</button>
+  </div>
+</div>
+
+<script>
+function whatsappKutusuToggle() {
+    const box = document.getElementById("waChatBox");
+    if (box.style.display === "flex") {
+        box.style.display = "none";
+    } else {
+        box.style.display = "flex";
+        document.getElementById("waSoruMetni").focus();
+    }
+}
+
+function whatsapplaGonder() {
+    const mesajInput = document.getElementById("waSoruMetni");
+    const mesaj = mesajInput.value.trim();
+
+    if (!mesaj) {
+        alert("Lütfen önce sorunuzu yazın.");
+        mesajInput.focus();
+        return;
+    }
+
+    // Aktif öğrenci adını sistemden alalım (eğer giriş yaptıysa adıyla gider, yapmadıysa genel gider)
+    let ogrenciBilgisi = typeof activeStudent !== 'undefined' && activeStudent ? `Öğrenci: ${activeStudent}` : "Web Sitesi Ziyaretçisi";
+
+    const tamMesaj = `🤖 *DİJİMUALLİM - CANLI SORU HATTI*\n\n👤 ${ogrenciBilgisi}\n\n📝 *Soru / Mesaj:*\n${mesaj}`;
+    
+    // Sizin WhatsApp Numaranız (90 başı olacak şekilde)
+    const telefonNumarasi = "905369937089"; 
+    
+    const waUrl = `https://api.whatsapp.com/send?phone=${telefonNumarasi}&text=${encodeURIComponent(tamMesaj)}`;
+    
+    window.open(waUrl, '_blank');
+    mesajInput.value = "";
+    whatsappKutusuToggle();
+}
+</script>
+    
 </body>
 </html>
