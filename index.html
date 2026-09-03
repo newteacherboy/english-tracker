@@ -1134,15 +1134,7 @@ const muallimKitapDeposu = {
 
 // Portal Açılış
 function portalSec(tur) {
-  if (tur === 'ingilizce') {
-    const welcome = document.getElementById("welcomePortalScreen");
-    welcome.style.opacity = "0";
-    welcome.style.transition = "opacity 0.3s ease";
-    setTimeout(() => {
-      welcome.style.display = "none";
-      document.getElementById("home").style.display = "flex";
-    }, 300);
-  } else if (tur === 'kocluk') {
+  if (tur === 'kocluk') {
     document.getElementById("kocModal").style.display = "flex";
   }
 }
@@ -1164,7 +1156,10 @@ function openSection(section) {
   currentSection = section;
   allData = []; students = []; passwords = {}; unlockedStudents = {}; activeStudent = null;
   
-  document.getElementById("home").style.display = "none";
+  // document.getElementById("home").style.display = "none"; -> Bu satır silindi (artık home yok)
+  const welcome = document.getElementById("welcomePortalScreen");
+  if (welcome) welcome.style.display = "none"; // Karşılama ekranını kapatır
+
   const tracker = document.getElementById("tracker");
   tracker.style.display = "flex";
   
@@ -1178,9 +1173,18 @@ function openSection(section) {
   loadData();
 }
 
+// BU FONKSİYONLARI GÜNCELLEYİN
 function goHome() {
-  document.getElementById("home").style.display = "flex";
+  portalEkraninaDon();
+}
+
+function portalEkraninaDon() {
   document.getElementById("tracker").style.display = "none";
+  const welcome = document.getElementById("welcomePortalScreen");
+  if (welcome) {
+    welcome.style.display = "flex";
+    welcome.style.opacity = "1";
+  }
   currentSection = null; 
   activeStudent = null;
 }
