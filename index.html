@@ -1541,6 +1541,9 @@ function showStudentPage(name) {
     </div>
     ${pageContent}
   `;
+// Sekme değiştiğinde arayüzü anında mevcut süreden devam ettiren satır:
+  guncelSayacArayuzunuBas();
+
   if (activePageTab === "ozet") drawCharts(rows);
   if (activePageTab === "denemeler") drawDenemeChart(name);
   if (activePageTab === "kitaplar") kitaplariGetir('okul-oncesi', null);
@@ -3067,7 +3070,7 @@ async function oturumSayaciniBaslat(ogrenciAdi) {
     // Ardından buluttan (Google Sheets) güncel süreyi çek (Eğer buluttaki daha ileriyse onu al)
     try {
         if (typeof WEB_APP_URL !== "undefined" && WEB_APP_URL) {
-            let res = await fetch(`${WEB_APP_URL}?action=sureGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}`);
+            let res = await fetch(`${WEB_APP_URL}?action=sureGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}&t=${Date.now()}`);
             let data = await res.json();
             if (data && data.durum === "basarili" && data.toplamSaniye > oturumSaniye) {
                 oturumSaniye = data.toplamSaniye;
