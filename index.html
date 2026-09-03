@@ -371,7 +371,7 @@ body {
 .week-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; border-bottom: 1px dashed #f0f0f0; padding-bottom: 6px; }
 .week-row-label { color: #666; }
 .week-row-value { color: #1a1a1a; }
-.week-scores { display: flex; flex-wrap: wrap; gap: 6px; }
+.week-scores { display: flex; flex-wrap: gap: 6px; }
 .week-score-item { background: #f4f6f8; border-radius: 6px; padding: 4px 8px; font-size: 11px; }
 .week-score-label { color: #777; margin-right: 4px; }
 .week-score-val { font-weight: 600; color: #1D9E75; }
@@ -1185,6 +1185,7 @@ async function randevuSisteminiTetikle() {
 }
 </script>  
 
+<!-- TRACKER SİSTEMİ (ÖĞRENCİ PANELİ VE GİRİŞ KİLİDİ) -->
 <div class="tracker" id="tracker">
   <div class="header">
     <button class="back-btn" onclick="goHome()">← Geri</button>
@@ -1328,9 +1329,15 @@ function openSection(section) {
   document.getElementById("home").style.display = "none";
   const tracker = document.getElementById("tracker");
   tracker.style.display = "flex";
-  document.getElementById("header-title").innerHTML = SECTIONS[section].label;
-  document.getElementById("tabs").innerHTML = "";
-  document.getElementById("content").innerHTML = '<div class="loading">Veriler yükleniyor...</div>';
+  
+  const headerTitleEl = document.getElementById("header-title");
+  if (headerTitleEl) headerTitleEl.innerHTML = SECTIONS[section].label;
+  
+  const tabsEl = document.getElementById("tabs");
+  if (tabsEl) tabsEl.innerHTML = "";
+  
+  // Önce doğrudan giriş ekranını ekrana getiriyoruz (boş veya sonsuz yüklenme olmaması için)
+  renderTabs();
   loadData();
 }
 
@@ -1341,6 +1348,7 @@ function goHome() {
 }
 
 async function loadData() {
+  if (!currentSection || !SECTIONS[currentSection]) return;
   const gid = SECTIONS[currentSection].gid;
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
   try {
@@ -1391,7 +1399,10 @@ async function loadData() {
       })).filter(r => r.ogrenci && r.puan > 0);
     } catch(e) { denemelerData = []; }
 
-    document.getElementById("last-updated").textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+    const lastUp = document.getElementById("last-updated");
+    if (lastUp) {
+      lastUp.textContent = new Date().toLocaleTimeString("tr-TR", {hour:"2-digit",minute:"2-digit"});
+    }
     
     const kayitliOgrenci = localStorage.getItem('dijimuallim_aktif_ogrenci');
     if (kayitliOgrenci && students.find(s => s.toLowerCase() === kayitliOgrenci.toLowerCase())) {
@@ -1404,13 +1415,18 @@ async function loadData() {
 
   } catch(e) {
     console.error(e);
-    document.getElementById("content").innerHTML = `<div class="empty">Hata: ${e.message}</div>`;
+    // Veri çekiminde gecikme veya anlık hata olsa dahi öğrencinin giriş yapabilmesi için ekranı açık tutuyoruz
+    renderTabs();
   }
 }
 
 function renderTabs() {
+  const tabsEl = document.getElementById("tabs");
+  const contentEl = document.getElementById("content");
+  if (!tabsEl || !contentEl) return;
+
   if (activeStudent && unlockedStudents[activeStudent]) {
-    document.getElementById("tabs").innerHTML = `
+    tabsEl.innerHTML = `
       <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 5px 15px; box-sizing: border-box; background: #fff; border-radius: 10px; border: 1px solid #e8eaed;">
         <span style="font-size: 13px; font-weight: 600; color: #1D9E75;">👤 Aktif Öğrenci: ${activeStudent}</span>
         <button onclick="aktifogrenciyiKapat()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">Hesaptan Çık</button>
@@ -1419,8 +1435,8 @@ function renderTabs() {
     return;
   }
 
-  document.getElementById("tabs").innerHTML = "";
-  document.getElementById("content").innerHTML = `
+  tabsEl.innerHTML = "";
+  contentEl.innerHTML = `
     <div class="lock-screen" style="max-width: 380px; margin: 40px auto;">
       <div class="lock-icon">🎓</div>
       <h3>Öğrenci Giriş Portalı</h3>
@@ -1456,6 +1472,12 @@ function manuelGirisYap() {
         return;
     }
 
+    // Veri anlık geç geldiyse kullanıcıya bilgi verelim
+    if (!students || students.length === 0) {
+        hataAlani.textContent = "Öğrenci veritabanı yükleniyor, lütfen birkaç saniye sonra tekrar tıklayın...";
+        return;
+    }
+
     const bulunanOgrenci = students.find(s => turkceKucukBuyukDuzelt(s) === temizGirilenIsim);
 
     if (!bulunanOgrenci) {
@@ -1484,7 +1506,6 @@ function aktifogrenciyiKapat() {
     localStorage.removeItem('dijimuallim_aktif_ogrenci');
     activeStudent = null;
     renderTabs();
-    document.getElementById("content").innerHTML = "";
 }
 
 function esc(s) { return s.replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
@@ -2343,7 +2364,6 @@ document.addEventListener("DOMContentLoaded", function() {
     
     <div id="hocaOzelNotu" style="color: #2C3E50; background: #FFF; border: 2px dashed #2E5A44; padding: 14px; border-radius: 10px; font-size: 12px; line-height: 1.5; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 16px;"></div>
 
-    <!-- ÖZEL DERS AL & BANA ULAŞ BUTONU -->
     <button id="testOzelDersBtn" onclick="testSonucundanDersTalebiGonder()" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; border: none; width: 100%; padding: 13px; border-radius: 8px; font-weight: bold; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,211,102,0.35);">
       🎯 Seviyemi İlerletmek İçin Özel Ders Al
     </button>
@@ -2376,7 +2396,6 @@ let nihaiSeviyeSonucu = "";
 let nihaiDogruSayisi = 0;
 let nihaiYanlisSayisi = 0;
 
-// Sayfa ilk açıldığında baloncuk yazısını 5 saniye sonra gizleme
 window.addEventListener("load", () => {
     setTimeout(() => {
         const yazi = document.getElementById("seviyeGeciciYazi");
@@ -2504,7 +2523,6 @@ async function nihaiSorguKapat() {
         hocaNotuAlani.innerHTML = dinamikMesaj;
     }
 
-    // Google Sheets "Seviye Tespit Sınavı" Sayfasına Otomatik Kayıt
     const bugun = new Date();
     const tarihFormat = String(bugun.getDate()).padStart(2, '0') + "." + String(bugun.getMonth() + 1).padStart(2, '0') + "." + bugun.getFullYear();
     
