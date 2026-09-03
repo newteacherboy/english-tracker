@@ -2507,7 +2507,8 @@ document.addEventListener("DOMContentLoaded", function() {
         var baloncuklar = [
             document.getElementById("whatsappGeciciYazi"),
             document.getElementById("seviyeGeciciYazi"),
-            document.getElementById("randevuGeciciYazi")
+            document.getElementById("randevuGeciciYazi"),
+            document.getElementById("ezberGeciciYazi") // 👈 BURASI EKLENDİ
         ];
         baloncuklar.forEach(function(el) {
             if (el) {
@@ -2518,7 +2519,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }, 600);
             }
         });
-    }, 5000);
+    }, 7000); // (Not: 5000 milisaniye 5 saniyedir, 7 saniye olmasını istersen burayı 7000 yapabilirsin)
 
     // Rubrik Modal Tanımlamaları
     const overlay = document.getElementById("yeni_rubrikOverlay");
