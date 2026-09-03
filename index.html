@@ -167,6 +167,63 @@ body {
     box-shadow: 0 8px 25px rgba(44, 62, 80, 0.65);
 }
 
+    /* Kelime Ezber Kartları Yüzen Buton ve Baloncuk Konumlandırması */
+.ezber-float-wrapper {
+    position: fixed;
+    bottom: 235px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999998;
+}
+
+.ezber-float-btn {
+    background: linear-gradient(135deg, #8E44AD 0%, #6C3483 100%);
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(142, 68, 173, 0.45);
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    outline: none;
+}
+
+.ezber-float-btn:hover {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 8px 25px rgba(142, 68, 173, 0.65);
+}
+
+.ezber-badge-text { 
+    background: #8E44AD; 
+}
+
+.ezber-popup-box {
+    position: fixed;
+    bottom: 305px;
+    right: 25px;
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    max-height: 68vh;
+    background: #FAF6F0;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    z-index: 999999;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    border: 1px solid #DCD5C5;
+    animation: slideUpClean 0.25s ease-out;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 /* 📅 YÜZEN LOGO DERS TALEBİ BUTONU */
 .randevu-float-wrapper {
     position: fixed;
@@ -889,6 +946,15 @@ canvas { max-height: 200px; }
     Talebi Kaydet ve Onaya Gönder ➔
   </button>
 </div>
+
+    <!-- 🎯 SAĞ ALTA SABİTLENMİŞ KELİME ZEKA TESTİ BUTONU VE ETİKETİ -->
+    
+    <div class="ezber-float-wrapper">
+  <span id="ezberGeciciYazi" class="auto-hide-badge ezber-badge-text">Kelime Ezber Yarışması! 🧠</span>
+  <button id="ezberFloatBtn" class="ezber-float-btn" onclick="ezberKartToggle()" title="Kelime Ezber Yarışması">
+    🧠
+  </button>
+</div>
   
 
 <!-- 🎯 SAĞ ALTA SABİTLENMİŞ YUVARLAK LOGO SEVİYE TESTİ BUTONU VE ETİKETİ -->
@@ -897,6 +963,11 @@ canvas { max-height: 200px; }
   <button id="seviyeTestBtn" class="seviye-test-float-btn" onclick="seviyeTestiKutusuAc()" title="İngilizce Seviye Tespit Sınavı">
     🎓
   </button>
+</div>
+
+    <div id="ezberKartIcerik" class="ezber-popup-box">
+    <button class="popup-kapat-btn" onclick="ezberKartToggle()">✕</button>
+    <!-- İçerik ve oyun ekranları burada yer alır -->
 </div>
 
 <!-- AÇILIR SEVİYE TESPİT PANELİ -->
