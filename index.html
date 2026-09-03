@@ -376,7 +376,7 @@ body {
 .level-badge { margin-left: auto; background: #E1F5EE; color: #0F6E56; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 
 .page-tabs { display: flex; gap: 0; margin-bottom: 1.25rem; background: #fff; border-radius: 12px; border: 1px solid #e8eaed; overflow: hidden; }
-.page-tab { flex: 1; padding: 10px 8px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; color: #888; border-right: 1px solid #e8eaed; transition: all 0.15s; }
+.page-tab { flex: 1; padding: 10px 8px; text-align: center; font-size: 12.5px; font-weight: 500; cursor: pointer; color: #888; border-right: 1px solid #e8eaed; transition: all 0.15s; white-space: nowrap; }
 .page-tab:last-child { border-right: none; }
 .page-tab.active { background: #1D9E75; color: #fff; font-weight: 600; }
 
@@ -589,20 +589,12 @@ canvas { max-height: 200px; }
   <!-- DASHBOARD ALANI -->
   <div class="dashboard-ana-wrapper">
     <div class="dashboard-buton-satiri">
-        <button id="muallimKareKutu" class="dashboard-kare-kutu" onclick="muallimKitapToggle()">
-            <span class="kutu-ikon">📚</span>
-            <span class="kutu-baslik">İngilizce Kitap Oku</span>
-            <span id="muallimOkIsareti" class="kutu-ok">🔽</span>
-        </button>
-
         <button id="ezberKareKutu" class="dashboard-kare-kutu" onclick="ezberKartToggle()">
             <span class="kutu-ikon">🧠</span>
             <span class="kutu-baslik">Kelime Ezber Kartları</span>
             <span id="ezberOkIsareti" class="kutu-ok">🔽</span>
         </button>
     </div>
-
-    
 
     <div id="ezberKartIcerik" class="dashboard-panel-icerik" style="display: none;">
         <audio id="ezberMuzik" loop preload="auto" playsinline src="muzik.mp3"></audio>
@@ -1014,6 +1006,74 @@ let activeStudent = null;
 let activePageTab = "ozet";
 let denemelerData = [];
 
+// 📚 GÜNCELLENMİŞ KİTAP LİSTESİ
+const muallimKitapDeposu = {
+    "okul-oncesi": [
+        { isim: "I'm too ill", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/im-too-ill" },
+        { isim: "Little Red Riding Hood", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/little-red-riding-hood" },
+        { isim: "The great race", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/great-race" },
+        { isim: "Teddy's adventure", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/teddys-adventure" },
+        { isim: "The princess and the dragon", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/princess-dragon" },
+        { isim: "What's that noise?", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/whats-noise" },
+        { isim: "The snowman", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/snowman" }
+    ],
+    "1-sinif": [
+        { isim: "I'm too ill", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/im-too-ill" },
+        { isim: "Little Red Riding Hood", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/little-red-riding-hood" },
+        { isim: "The great race", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/great-race" },
+        { isim: "Teddy's adventure", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/teddys-adventure" },
+        { isim: "The princess and the dragon", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/princess-dragon" },
+        { isim: "What's that noise?", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/whats-noise" },
+        { isim: "The snowman", link: "https://learnenglishkids.britishcouncil.org/listen-watch/short-stories/snowman" }
+    ],
+    "2-sinif": [
+        { isim: "Let's Find The Clues", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-1.pdf" },
+        { isim: "The Kind Cat", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-2.pdf" },
+        { isim: "The Surprise Birthday Party", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-3.pdf" },
+        { isim: "The Happy Eid al-Fitr", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-4.pdf" },
+        { isim: "Where is Mimi?", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-5.pdf" },
+        { isim: "A lovely Picnic", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-6.pdf" }
+    ],
+    "3-sinif": [
+        { isim: "Let's Find The Clues", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-1.pdf" },
+        { isim: "The Kind Cat", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-2.pdf" },
+        { isim: "The Surprise Birthday Party", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-3.pdf" },
+        { isim: "The Happy Eid al-Fitr", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-4.pdf" },
+        { isim: "Where is Mimi?", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-5.pdf" },
+        { isim: "A lovely Picnic", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-6.pdf" }
+    ],
+    "4-sinif": [
+        { isim: "Let's Find The Clues", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-1.pdf" },
+        { isim: "The Kind Cat", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-2.pdf" },
+        { isim: "The Surprise Birthday Party", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-3.pdf" },
+        { isim: "The Happy Eid al-Fitr", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-4.pdf" },
+        { isim: "Where is Mimi?", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-5.pdf" },
+        { isim: "A lovely Picnic", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-english-year-2-book-6.pdf" }
+    ],
+    "5-sinif": [
+        { isim: "Where is Robi?", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-5-book-1.pdf" },
+        { isim: "Little Interviewers", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-5-book-2.pdf" },
+        { isim: "A Tasty Day At The Festivals", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-5-book-3.pdf" },
+        { isim: "The Laughter In the Starry Forest", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-5-book-4.pdf" },
+        { isim: "Back To School", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-5-book-5.pdf" },
+        { isim: "The Weekend We Won't Forget", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-5-book-6.pdf" },
+        { isim: "Magical Map", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-5-book-7.pdf" },
+        { isim: "Our Planet Our Future", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-5-book-8.pdf" }
+    ],
+    "6-sinif": [
+        { isim: "Harmony Together", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-6-book-1.pdf" },
+        { isim: "A New Friend", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-6-book-2.pdf" },
+        { isim: "Dreams And Surprises", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-6-book-3.pdf" },
+        { isim: "An Adventurous Day", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-6-book-4.pdf" }
+    ],
+    "7-sinif": [
+        { isim: "Spark Of Curiosity", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-7-book-1.pdf" },
+        { isim: "Roots And Resets", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-7-book-2.pdf" },
+        { isim: "Together We Rise", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-7-book-3.pdf" },
+        { isim: "Mystery Of Lost Light Forest", link: "https://tymm.meb.gov.tr/assets/pdf/hikaye-multi-english-year-7-book-4.pdf" }
+    ]
+};
+
 // Portal Açılış
 function portalSec(tur) {
   if (tur === 'ingilizce') {
@@ -1266,6 +1326,7 @@ function showStudentPage(name) {
   if (activePageTab === "ozet") pageContent = buildOzet(rows, latest, name, allData);
   else if (activePageTab === "haftalar") pageContent = buildHaftalar(rows);
   else if (activePageTab === "denemeler") pageContent = buildDenemeler(name);
+  else if (activePageTab === "kitaplar") pageContent = buildKitaplarTab();
 
   document.getElementById("content").innerHTML = `
     <div class="student-header">
@@ -1277,16 +1338,77 @@ function showStudentPage(name) {
       <div class="page-tab${activePageTab==='ozet'?' active':''}" onclick="switchPageTab('${s}','ozet')">📊 Özet</div>
       <div class="page-tab${activePageTab==='haftalar'?' active':''}" onclick="switchPageTab('${s}','haftalar')">📝 Ders Raporları</div>
       <div class="page-tab${activePageTab==='denemeler'?' active':''}" onclick="switchPageTab('${s}','denemeler')">📝 Denemeler</div>
+      <div class="page-tab${activePageTab==='kitaplar'?' active':''}" onclick="switchPageTab('${s}','kitaplar')">📚 Kitap Oku</div>
     </div>
     ${pageContent}
   `;
   if (activePageTab === "ozet") drawCharts(rows);
   if (activePageTab === "denemeler") drawDenemeChart(name);
+  if (activePageTab === "kitaplar") kitaplariGetir('okul-oncesi', null);
 }
 
 function switchPageTab(name, tab) {
   activePageTab = tab;
   showStudentPage(name);
+}
+
+// 📖 ÖĞRENCİ PANELİNE EKLENEN KİTAP OKUMA SEKMESİ İÇERİĞİ
+function buildKitaplarTab() {
+  return `
+    <div class="card" style="padding: 20px;">
+      <div class="card-title" style="text-align: center; margin-bottom: 8px;">📚 İngilizce Seviye Okuma Kitapları</div>
+      <p style="color: #666; font-size: 13px; text-align: center; margin-bottom: 20px;">Sınıf seviyenizi seçerek okuma kitaplarına anında erişebilirsiniz.</p>
+      
+      <div class="panel-sinif-grid" id="ogrenciKitapSinifGrid">
+        <button class="panel-sinif-btn active" onclick="kitaplariGetir('okul-oncesi', this)">Okul Öncesi</button>
+        <button class="panel-sinif-btn" onclick="kitaplariGetir('1-sinif', this)">1. Sınıf</button>
+        <button class="panel-sinif-btn" onclick="kitaplariGetir('2-sinif', this)">2. Sınıf</button>
+        <button class="panel-sinif-btn" onclick="kitaplariGetir('3-sinif', this)">3. Sınıf</button>
+        <button class="panel-sinif-btn" onclick="kitaplariGetir('4-sinif', this)">4. Sınıf</button>
+        <button class="panel-sinif-btn" onclick="kitaplariGetir('5-sinif', this)">5. Sınıf</button>
+        <button class="panel-sinif-btn" onclick="kitaplariGetir('6-sinif', this)">6. Sınıf</button>
+        <button class="panel-sinif-btn" onclick="kitaplariGetir('7-sinif', this)">7. Sınıf</button>
+      </div>
+      
+      <div id="muallimKitapListesi" class="panel-kitap-grid" style="margin-top: 15px;"></div>
+    </div>
+  `;
+}
+
+function kitaplariGetir(sinifId, buton) {
+    const tumSinifButonlari = document.querySelectorAll("#ogrenciKitapSinifGrid .panel-sinif-btn");
+    tumSinifButonlari.forEach(b => b.classList.remove("active"));
+
+    if (buton) {
+        buton.classList.add("active");
+    } else {
+        tumSinifButonlari.forEach(b => {
+            if (b.getAttribute("onclick") && b.getAttribute("onclick").includes(`'${sinifId}'`)) {
+                b.classList.add("active");
+            }
+        });
+    }
+
+    const container = document.getElementById("muallimKitapListesi");
+    if (!container) return;
+    container.innerHTML = "";
+
+    const kitaplar = (typeof muallimKitapDeposu !== "undefined" && muallimKitapDeposu[sinifId]) ? muallimKitapDeposu[sinifId] : [];
+
+    if (kitaplar.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 25px; font-size: 13.5px;">Bu seviyeye ait kitaplar yakında yüklenecektir.</div>';
+        return;
+    }
+
+    kitaplar.forEach(k => {
+        const a = document.createElement("a");
+        a.href = k.link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.className = "muallim-pdf-link";
+        a.innerText = k.isim;
+        container.appendChild(a);
+    });
 }
 
 function generateUniqueComment(puan, studentName, latestRow, allRows) {
@@ -1693,66 +1815,197 @@ function drawDenemeChart(name) {
   });
 }
 
-// 📅 DERS TALEBİ FORMU FONKSİYONLARI
-function randevuFormuKapatAcl() {
-    const formAlani = document.getElementById("kurumsalRandevuAlani");
-    if (formAlani.style.display === "none" || formAlani.style.display === "") {
-        formAlani.style.display = "flex";
+// 🧠 KELİME EZBER YARIŞMASI
+const ezberKelimeDeposu = {
+    "2-sinif": [{en:"Hello", tr:"Merhaba"}, {en:"Goodbye", tr:"Hoşça kal"}, {en:"Please", tr:"Lütfen"}, {en:"Thank you", tr:"Teşekkürler"}, {en:"Yes", tr:"Evet"}, {en:"No", tr:"Hayır"}, {en:"Teacher", tr:"Öğretmen"}, {en:"Student", tr:"Öğrenci"}, {en:"School", tr:"Okul"}, {en:"Book", tr:"Kitap"}, {en:"Pencil", tr:"Kalem"}, {en:"Notebook", tr:"Defter"}, {en:"Eraser", tr:"Silgi"}, {en:"Ruler", tr:"Cetvel"}, {en:"Bag", tr:"Çanta"}, {en:"Desk", tr:"Sıra"}, {en:"Chair", tr:"Sandalye"}, {en:"Board", tr:"Tahta"}, {en:"Pen", tr:"Tükenmez Kalem"}, {en:"Okay", tr:"Tamam"}],
+    "3-sinif": [{en:"Family", tr:"Aile"}, {en:"Father", tr:"Baba"}, {en:"Mother", tr:"Anne"}, {en:"Brother", tr:"Erkek Kardeş"}, {en:"Sister", tr:"Kız Kardeş"}, {en:"Grandmother", tr:"Büyükanne"}, {en:"Grandfather", tr:"Büyükbaba"}, {en:"Baby", tr:"Bebek"}, {en:"Friend", tr:"Arkadaş"}, {en:"Name", tr:"İsim"}],
+    "4-sinif": [{en:"Country", tr:"Ülke"}, {en:"Turkey", tr:"Türkiye"}, {en:"England", tr:"İngiltere"}, {en:"Germany", tr:"Almanya"}, {en:"France", tr:"Fransa"}, {en:"Nationality", tr:"Milliyet"}, {en:"Turkish", tr:"Türk"}, {en:"English", tr:"İngiliz"}],
+    "5-sinif": [{en:"Maths", tr:"Matematik"}, {en:"Science", tr:"Fen Bilgisi"}, {en:"History", tr:"Tarih"}, {en:"Art", tr:"Resim Dersi"}, {en:"Music", tr:"Müzik"}, {en:"Course", tr:"Ders / Kurs"}],
+    "6-sinif": [{en:"Delicious", tr:"Lezzetli"}, {en:"Nutritious", tr:"Besleyici"}, {en:"Croissant", tr:"Kruvazan"}, {en:"Muffin", tr:"Kek"}, {en:"Olive", tr:"Zeytin"}],
+    "7-sinif": [{en:"Stubborn", tr:"İnatçı"}, {en:"Selfish", tr:"Bencil"}, {en:"Punctual", tr:"Dakik"}, {en:"Honest", tr:"Dürüst"}, {en:"Generous", tr:"Cömert"}],
+    "8-sinif": [{en:"Buddy / Mate", tr:"Kanka / Yakın Arkadaş"}, {en:"Count on", tr:"Güvenmek"}, {en:"Depend on", tr:"Bel Bağlamak"}, {en:"Back up", tr:"Desteklemek"}, {en:"Trust", tr:"Güvenmek"}]
+};
+
+const SINIF_SORU_LIMITLERI = { "2-sinif": 20, "3-sinif": 20, "4-sinif": 20, "5-sinif": 30, "6-sinif": 35, "7-sinif": 40, "8-sinif": 50 };
+let aktifSinif = "2-sinif";
+let oyunKelimeListesi = [];
+let mevcutKelimeIndex = 0;
+let mevcutKelimeNesnesi = null;
+let dogruSkor = 0; 
+let yanlisSkor = 0;
+let ezberSaniye = 0;
+let ezberKronometreInterval = null;
+let ezberKullanici = "";
+let ezberMuzikCalisiyor = true; 
+let cevapKilitli = false;
+
+function ezberKartToggle() {
+    const icerik = document.getElementById("ezberKartIcerik");
+    const ok = document.getElementById("ezberOkIsareti");
+    const kutu = document.getElementById("ezberKareKutu");
+
+    if (icerik.style.display === "none") {
+        icerik.style.display = "block"; kutu.classList.add("active"); ok.innerText = "🔼"; ezberYenidenBaslat();
     } else {
-        formAlani.style.display = "none";
+        icerik.style.display = "none"; kutu.classList.remove("active"); ok.innerText = "🔽";
+        clearInterval(ezberKronometreInterval);
+        try { const m = document.getElementById("ezberMuzik"); if (m) m.pause(); } catch(e) {}
     }
 }
 
-async function randevuSisteminiTetikle() {
-    const ogrenciAdi = document.getElementById("veliDersOgrenciAdi").value.trim();
-    const dersTuru = document.getElementById("veliDersTuru").value;
-    const dersModeli = document.getElementById("veliDersModeli").value;
-    const secilenTarih = document.getElementById("veliDersTarihi").value;
-    const secilenSaat = document.getElementById("veliDersSaati").value;
-    const veliTel = document.getElementById("veliDersTelefon").value.trim();
-    const btn = document.getElementById("randevuGonderBtn");
-
-    if(!ogrenciAdi || !secilenTarih || !veliTel) { 
-        alert("Lütfen tüm alanları (Ad Soyadı, Tarih ve Telefon) eksiksiz doldurunuz."); 
-        return; 
+function ezberSinifSec(sinifId, buton) {
+    if(buton) {
+        document.querySelectorAll('#ezberGirisEkrani .panel-sinif-btn').forEach(b => b.classList.remove('active'));
+        buton.classList.add('active');
     }
+    aktifSinif = sinifId;
+}
 
-    btn.disabled = true;
-    btn.innerText = "Sistem İşliyor...";
+function ezberSesKontrol() {
+    const muzik = document.getElementById("ezberMuzik");
+    const btn = document.getElementById("ezberSesBtn");
+    if (!muzik) return;
+    if (muzik.paused) {
+        muzik.play().then(() => { btn.innerText = "🔊"; btn.style.background = "#e8f0fe"; ezberMuzikCalisiyor = true; }).catch(err => console.log(err));
+    } else {
+        muzik.pause(); btn.innerText = "🔇"; btn.style.background = "#fad4d1"; ezberMuzikCalisiyor = false;
+    }
+}
 
-    const [y, m, d] = secilenTarih.split("-");
-    const formatliTarih = `${d}.${m}.${y}`;
-    const tamOgrenciDetay = `${ogrenciAdi} (${dersTuru} - ${dersModeli})`;
-    const randevuPayload = { aksiyon: "randevuAl", ogrenci: tamOgrenciDetay, tarih: formatliTarih, saat: secilenSaat, telefon: veliTel };
+function ezberSistemiBaslat() {
+    const isimInput = document.getElementById("ezberOgrenciAdi").value.trim();
+    ezberKullanici = isimInput === "" ? "Gizemli Oyuncu" : isimInput;
+    let sinifKelimeleri = ezberKelimeDeposu[aktifSinif] || ezberKelimeDeposu["2-sinif"];
+    let havuzKopyasi = [...sinifKelimeleri];
+    havuzKopyasi.sort(() => Math.random() - 0.5);
 
-    try {
-        if(WEB_APP_URL) { 
-            await fetch(WEB_APP_URL, { 
-                method: "POST", 
-                mode: "no-cors", 
-                headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify(randevuPayload) 
-            }); 
-        }
-    } catch (e) { console.log("Sheets arka plan uyarısı..."); }
+    let hedefLimit = SINIF_SORU_LIMITLERI[aktifSinif] || 20;
+    oyunKelimeListesi = havuzKopyasi.slice(0, Math.min(hedefLimit, havuzKopyasi.length));
 
-    const mesaj = `🤖 *DİJİMUALLİM - YENİ RANDEVU TALEBİ* \n\n` +
-                  `Hocam Merhaba,\nEğitim dönemi için yeni bir ders talebi oluşturmak istiyoruz.\n\n` +
-                  `👤 *Öğrenci:* ${ogrenciAdi}\n📚 *Ders Türü:* ${dersTuru}\n💻 *Ders Modeli:* ${dersModeli}\n📅 *Tarih:* ${formatliTarih}\n⏰ *Saat:* ${secilenSaat}\n📞 *Veli Tel:* ${veliTel}\n\n` +
-                  `En Kısa Sürede Dönüş Yapılacaktır`;
-    const hocamizinNumarasi = "905369937089"; 
-    const wpUrl = `https://api.whatsapp.com/send?phone=${hocamizinNumarasi}&text=${encodeURIComponent(mesaj)}`;
-    
-    window.open(wpUrl, '_blank');
-    setTimeout(() => {
-        btn.disabled = false; 
-        btn.innerText = "Talebi Kaydet ve Onaya Gönder ➔";
-        document.getElementById("veliDersOgrenciAdi").value = ""; 
-        document.getElementById("veliDersTarihi").value = ""; 
-        document.getElementById("veliDersTelefon").value = "";
-        document.getElementById("kurumsalRandevuAlani").style.display = "none";
-        alert("Harika! Talebiniz WhatsApp hattına iletildi.");
+    dogruSkor = 0; yanlisSkor = 0; mevcutKelimeIndex = 0; ezberSaniye = 0; cevapKilitli = false;
+    document.getElementById("ezberDogruSayisi").innerText = "0";
+    document.getElementById("ezberYanlisSayisi").innerText = "0";
+    document.getElementById("ezberKronometre").innerText = "⏱️ 00:00";
+
+    document.getElementById("ezberGirisEkrani").style.display = "none";
+    document.getElementById("ezberSonucEkrani").style.display = "none";
+    document.getElementById("ezberOyunEkrani").style.display = "block";
+
+    clearInterval(ezberKronometreInterval);
+    ezberKronometreInterval = setInterval(() => {
+        ezberSaniye++;
+        let dk = Math.floor(ezberSaniye / 60); let sn = ezberSaniye % 60;
+        document.getElementById("ezberKronometre").innerText = "⏱️ " + (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
     }, 1000);
+
+    const muzik = document.getElementById("ezberMuzik");
+    if (muzik) {
+        muzik.currentTime = 0; muzik.volume = 0.35;
+        muzik.play().catch(e => console.log("Müzik uyarısı"));
+    }
+    ezberKelimeCek();
+}
+
+function ezberKelimeCek() {
+    if (!oyunKelimeListesi || oyunKelimeListesi.length === 0 || !oyunKelimeListesi[mevcutKelimeIndex]) return;
+    cevapKilitli = false;
+    mevcutKelimeNesnesi = oyunKelimeListesi[mevcutKelimeIndex];
+    document.getElementById("ezberProgress").innerText = `Kelime: ${mevcutKelimeIndex + 1} / ${oyunKelimeListesi.length}`;
+    document.getElementById("ezberIngilizceKelime").innerText = mevcutKelimeNesnesi.en;
+
+    let sinifKelimeleri = ezberKelimeDeposu[aktifSinif] || ezberKelimeDeposu["2-sinif"];
+    let digerKelimeler = sinifKelimeleri.filter(k => k.tr !== mevcutKelimeNesnesi.tr);
+    let yanlisKelime = digerKelimeler[Math.floor(Math.random() * digerKelimeler.length)];
+
+    let secenekler = [
+        { metin: mevcutKelimeNesnesi.tr, dogruMu: true },
+        { metin: yanlisKelime ? yanlisKelime.tr : "Farklı Anlam", dogruMu: false }
+    ];
+    secenekler.sort(() => Math.random() - 0.5);
+
+    let siklarHTML = "";
+    secenekler.forEach(s => {
+        siklarHTML += `<button class="ezber-sik-btn" onclick="ezberSikSecildi(this, ${s.dogruMu})">${s.metin}</button>`;
+    });
+    document.getElementById("ezberSiklarAlani").innerHTML = siklarHTML;
+}
+
+function ezberSikSecildi(btnElement, dogruMu) {
+    if (cevapKilitli) return; 
+    cevapKilitli = true;
+    if (dogruMu) {
+        dogruSkor++; document.getElementById("ezberDogruSayisi").innerText = dogruSkor; btnElement.classList.add("dogru-anim");
+    } else {
+        yanlisSkor++; document.getElementById("ezberYanlisSayisi").innerText = yanlisSkor; btnElement.classList.add("yanlis-anim");
+        document.querySelectorAll(".ezber-sik-btn").forEach(b => {
+            if (b.innerText.trim() === mevcutKelimeNesnesi.tr.trim()) b.classList.add("dogru-anim");
+        });
+    }
+    setTimeout(() => {
+        mevcutKelimeIndex++;
+        if (mevcutKelimeIndex < oyunKelimeListesi.length) ezberKelimeCek();
+        else ezberTurBitir();
+    }, 450);
+}
+
+function ezberTurBitir() {
+    clearInterval(ezberKronometreInterval);
+    try { const muzik = document.getElementById("ezberMuzik"); if (muzik) muzik.pause(); } catch(e) {}
+    document.getElementById("ezberOyunEkrani").style.display = "none";
+    document.getElementById("ezberSonucEkrani").style.display = "block";
+
+    const toplamSoru = (oyunKelimeListesi && oyunKelimeListesi.length > 0) ? oyunKelimeListesi.length : 20;
+    let finalPuan = Math.round((dogruSkor / toplamSoru) * 100);
+    let dk = Math.floor(ezberSaniye / 60); let sn = ezberSaniye % 60;
+    let formatliSure = (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
+
+    document.getElementById("sonucPuan").innerText = finalPuan;
+    document.getElementById("sonucZaman").innerText = formatliSure;
+    document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 15px;">Sonuçlarınız kaydediliyor ve sıralama çekiliyor... ⏳</td></tr>';
+
+    const postData = {
+        aksiyon: "ezberKaydet", isim: ezberKullanici, sinif: aktifSinif, dogru: dogruSkor, yanlis: yanlisSkor, sure: formatliSure, sureSaniye: ezberSaniye, puan: finalPuan
+    };
+
+    fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(postData) })
+    .then(res => res.json())
+    .then(data => {
+        if(data && data.durum === "basarili" && data.liderlikTablosu) ezberLiderlikTablosuBas(data.liderlikTablosu);
+    }).catch(err => {
+        document.getElementById("ezberLiderlikGövdesi").innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">Sonuç kaydedildi ancak tablo anlık çekilemedi.</td></tr>';
+    });
+}
+
+function ezberLiderlikTablosuBas(veriler) {
+    var govde = document.getElementById("ezberLiderlikGövdesi");
+    govde.innerHTML = "";
+    var filtrelenmis = (veriler || []).filter(l => l.sinif === aktifSinif);
+    filtrelenmis.sort((a, b) => { if(b.puan !== a.puan) return b.puan - a.puan; return a.sureSaniye - b.sureSaniye; });
+    var top10 = filtrelenmis.slice(0, 10);
+    if(top10.length === 0) { govde.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#9ca3af;">Henüz bu sınıfta sıralama yok. İlk sen ol!</td></tr>'; return; }
+
+    top10.forEach((r, idx) => {
+        var madalya = (idx + 1).toString();
+        var arkaPlan = "";
+        if(idx === 0) { madalya = "🥇"; arkaPlan = "background:#fff9c4; font-weight:bold;"; }
+        else if(idx === 1) { madalya = "🥈"; arkaPlan = "background:#f5f5f5;"; }
+        else if(idx === 2) { madalya = "🥉"; arkaPlan = "background:#efebe9;"; }
+        govde.innerHTML += '<tr style="border-bottom:1px solid #e0e0e0; ' + arkaPlan + '">' +
+            '<td style="padding:10px; font-weight:bold; text-align:center;">' + madalya + '</td>' +
+            '<td style="padding:10px; font-weight: 600; color:#3c4043;">' + r.isim + '</td>' +
+            '<td style="padding:10px; text-align:center; color:#137333;">' + r.dogru + '</td>' +
+            '<td style="padding:10px; text-align:center; font-family:monospace;">' + r.sure + '</td>' +
+            '<td style="padding:10px; font-weight:bold; color:#1a73e8; text-align:center; font-size:15px;">' + r.puan + '</td>' +
+            '</tr>';
+    });
+}
+
+function ezberYenidenBaslat() {
+    clearInterval(ezberKronometreInterval);
+    try { const muzik = document.getElementById("ezberMuzik"); if (muzik) muzik.pause(); } catch(e) {}
+    document.getElementById("ezberOyunEkrani").style.display = "none";
+    document.getElementById("ezberSonucEkrani").style.display = "none";
+    document.getElementById("ezberGirisEkrani").style.display = "block";
 }
 
 // 🎯 SEVİYE TESPİT SINAVI KODLARI
@@ -1958,9 +2211,7 @@ function whatsapplaGonder() {
 
 // Sayfa Yükleme & Event Dinleyicileri
 document.addEventListener("DOMContentLoaded", function() {
-    kitaplariGetir('okul-oncesi', null);
-
-    // ⏱️ 7 SANİYE OTOMATİK GİZLEME (KESİNLİKLE ÇALIŞACAK ŞEKİLDE)
+    // ⏱️ 7 SANİYE OTOMATİK GİZLEME ZAMANLAYICISI
     setTimeout(function() {
         var baloncuklar = [
             document.getElementById("whatsappGeciciYazi"),
@@ -2252,47 +2503,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
-
-function kitaplariGetir(sinifId, buton) {
-    // 1. Sınıf butonlarının aktiflik rengini güncelle
-    const tumSinifButonlari = document.querySelectorAll("#muallimKitapIcerik .panel-sinif-btn");
-    tumSinifButonlari.forEach(b => b.classList.remove("active"));
-
-    if (buton) {
-        buton.classList.add("active");
-    } else {
-        // Eğer buton parametresi gönderilmediyse ilgili sınıfa ait butonu bulup aktif yap
-        tumSinifButonlari.forEach(b => {
-            if (b.getAttribute("onclick") && b.getAttribute("onclick").includes(`'${sinifId}'`)) {
-                b.classList.add("active");
-            }
-        });
-    }
-
-    // 2. Kitap konteynerini bul ve temizle
-    const container = document.getElementById("muallimKitapListesi");
-    if (!container) return;
-    container.innerHTML = "";
-
-    // 3. İlgili sınıfa ait kitapları çek
-    const kitaplar = (typeof muallimKitapDeposu !== "undefined" && muallimKitapDeposu[sinifId]) ? muallimKitapDeposu[sinifId] : [];
-
-    if (kitaplar.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px; font-size: 13.5px;">Bu seviyeye ait kitaplar yakında yüklenecektir.</div>';
-        return;
-    }
-
-    // 4. Kitapları ekrana kart olarak bas
-    kitaplar.forEach(k => {
-        const a = document.createElement("a");
-        a.href = k.link;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.className = "muallim-pdf-link";
-        a.innerText = k.isim;
-        container.appendChild(a);
-    });
-}
 </script>
 </body>
 </html>
