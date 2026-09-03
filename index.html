@@ -47,11 +47,18 @@ body {
     box-shadow: 0 8px 32px 0 rgba(125, 100, 81, 0.06) !important;
 }
 
-/* 🟢 CANLI DESTEK BUTONU */
-.whatsapp-float-btn {
+/* 🟢 YÜZEN SAĞ ALT BUTON KAPSAYICILARI */
+.whatsapp-float-wrapper {
     position: fixed;
     bottom: 25px;
     right: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999999;
+}
+
+.whatsapp-float-btn {
     background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
     color: white;
     width: 58px;
@@ -63,9 +70,9 @@ body {
     font-size: 28px;
     box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
     cursor: pointer;
-    z-index: 999999;
     transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 2px solid #ffffff;
+    outline: none;
 }
 .whatsapp-float-btn:hover {
     transform: scale(1.08) translateY(-2px);
@@ -160,21 +167,6 @@ body {
     box-shadow: 0 8px 25px rgba(44, 62, 80, 0.65);
 }
 
-.seviye-badge-text {
-    background: #2C3E50;
-    color: #ffffff;
-    padding: 7px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    white-space: nowrap;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    border: 1px solid rgba(255,255,255,0.4);
-    pointer-events: none;
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    animation: bounceSoft 2s infinite;
-}
-
 /* 📅 YÜZEN LOGO DERS TALEBİ BUTONU */
 .randevu-float-wrapper {
     position: fixed;
@@ -207,8 +199,8 @@ body {
     box-shadow: 0 8px 25px rgba(125, 100, 81, 0.65);
 }
 
-.randevu-badge-text {
-    background: #7D6451;
+/* 🏷️ ORTAK BALONCUK METİNLERİ */
+.auto-hide-badge {
     color: #ffffff;
     padding: 7px 14px;
     border-radius: 20px;
@@ -218,9 +210,15 @@ body {
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     border: 1px solid rgba(255,255,255,0.4);
     pointer-events: none;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.6s ease, transform 0.6s ease;
     animation: bounceSoft 2s infinite;
 }
+
+.whatsapp-badge-text { background: #075E54; }
+.seviye-badge-text { background: #2C3E50; }
+.randevu-badge-text { background: #7D6451; }
 
 @keyframes bounceSoft {
     0%, 100% { transform: translateX(0); }
@@ -269,6 +267,7 @@ body {
 .popup-kapat-btn:hover { background: rgba(0,0,0,0.12); }
 
 @media screen and (max-width: 480px) {
+  .whatsapp-float-wrapper { right: 15px; bottom: 25px; }
   .whatsapp-chat-box { width: calc(100vw - 30px); right: 15px; bottom: 90px; }
   .seviye-wrapper { right: 15px; bottom: 90px; }
   .randevu-float-wrapper { right: 15px; bottom: 155px; }
@@ -850,7 +849,7 @@ canvas { max-height: 200px; }
 
 <!-- 📅 SAĞ ALTA SABİTLENMİŞ YUVARLAK LOGO DERS TALEBİ BUTONU VE ETİKETİ -->
 <div class="randevu-float-wrapper">
-  <span id="randevuGeciciYazi" class="randevu-badge-text">Özel Ders Talebi Oluştur! 📅</span>
+  <span id="randevuGeciciYazi" class="auto-hide-badge randevu-badge-text">Özel Ders Talebi Oluştur! 📅</span>
   <button id="randevuFloatBtn" class="randevu-float-btn" onclick="randevuFormuKapatAcl()" title="Online / Yüz Yüze Ders Talebi">
     📅
   </button>
@@ -914,7 +913,7 @@ canvas { max-height: 200px; }
 
 <!-- 🎯 SAĞ ALTA SABİTLENMİŞ YUVARLAK LOGO SEVİYE TESTİ BUTONU VE ETİKETİ -->
 <div class="seviye-wrapper">
-  <span id="seviyeGeciciYazi" class="seviye-badge-text">İngilizce Seviyeni Test Et! 🎯</span>
+  <span id="seviyeGeciciYazi" class="auto-hide-badge seviye-badge-text">İngilizce Seviyeni Test Et! 🎯</span>
   <button id="seviyeTestBtn" class="seviye-test-float-btn" onclick="seviyeTestiKutusuAc()" title="İngilizce Seviye Tespit Sınavı">
     🎓
   </button>
@@ -979,11 +978,14 @@ canvas { max-height: 200px; }
   </div>
 </div>
 
-<!-- 🟢 WHATSAPP DESTEK PENCERESİ -->
-<button class="whatsapp-float-btn" onclick="whatsappKutusuToggle()" title="Canlı Soru Hattı">
-  💬
-  <span class="whatsapp-badge-dot"></span>
-</button>
+<!-- 🟢 WHATSAPP DESTEK PENCERESİ VE BUTONU -->
+<div class="whatsapp-float-wrapper">
+  <span id="whatsappGeciciYazi" class="auto-hide-badge whatsapp-badge-text">Öğretmene Soru Sor! 💬</span>
+  <button class="whatsapp-float-btn" onclick="whatsappKutusuToggle()" title="Canlı Soru Hattı">
+    💬
+    <span class="whatsapp-badge-dot"></span>
+  </button>
+</div>
 
 <div id="waChatBox" class="whatsapp-chat-box">
   <div class="whatsapp-chat-header">
@@ -1024,6 +1026,23 @@ let unlockedStudents = {};
 let activeStudent = null;
 let activePageTab = "ozet";
 let denemelerData = [];
+
+// ⏱️ 7 SANİYE SONRA BALONLARI KUSURSUZ GİZLEYEN ZAMANLAYICI
+function baslatOtomatikGizleme() {
+    setTimeout(function() {
+        const ids = ["whatsappGeciciYazi", "seviyeGeciciYazi", "randevuGeciciYazi"];
+        ids.forEach(function(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.opacity = "0";
+                el.style.transform = "translateX(25px)";
+                setTimeout(function() {
+                    el.style.display = "none";
+                }, 600);
+            }
+        });
+    }, 7000);
+}
 
 // Portal Açılış
 function portalSec(tur) {
@@ -1971,25 +1990,8 @@ function whatsapplaGonder() {
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 
-    // Seviye Baloncuğu Kapanma (5 Saniye)
-    setTimeout(() => {
-        const yazi = document.getElementById("seviyeGeciciYazi");
-        if (yazi) {
-            yazi.style.opacity = "0";
-            yazi.style.transform = "translateX(20px)";
-            setTimeout(() => { yazi.style.display = "none"; }, 500);
-        }
-    }, 5000);
-
-    // 📅 Ders Talebi Baloncuğu Kapanma (İsteğiniz üzere tam 10 Saniye)
-    setTimeout(() => {
-        const rYazi = document.getElementById("randevuGeciciYazi");
-        if (rYazi) {
-            rYazi.style.opacity = "0";
-            rYazi.style.transform = "translateX(20px)";
-            setTimeout(() => { rYazi.style.display = "none"; }, 500);
-        }
-    }, 10000);
+    // ⏱️ 7 SANİYE OTOMATİK GİZLEME BAŞLATICI
+    baslatOtomatikGizleme();
 
     // Rubrik Modal Tanımlamaları
     const overlay = document.getElementById("yeni_rubrikOverlay");
