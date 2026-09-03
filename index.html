@@ -2266,38 +2266,46 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-function muallimKitapToggle() {
-    const icerik = document.getElementById("muallimKitapIcerik");
-    const ok = document.getElementById("muallimOkIsareti");
-    const kutu = document.getElementById("muallimKareKutu");
-    
-    // Diğer paneli kapat
-    const ezberIcerik = document.getElementById("ezberKartIcerik");
-    if (ezberIcerik) ezberIcerik.style.display = "none";
-    const ezberKutu = document.getElementById("ezberKareKutu");
-    if (ezberKutu) ezberKutu.classList.remove("active");
-    const ezberOk = document.getElementById("ezberOkIsareti");
-    if (ezberOk) ezberOk.innerText = "🔽";
+function kitaplariGetir(sinifId, buton) {
+    // 1. Sınıf butonlarının aktiflik rengini güncelle
+    const tumSinifButonlari = document.querySelectorAll("#muallimKitapIcerik .panel-sinif-btn");
+    tumSinifButonlari.forEach(b => b.classList.remove("active"));
 
-    // Computed style ile gerçek görünürlük durumunu alıyoruz
-    const suAnGorunurMu = window.getComputedStyle(icerik).display !== "none";
-
-    if (!suAnGorunurMu) {
-        icerik.style.display = "block";
-        kutu.classList.add("active");
-        ok.innerText = "🔼";
-        // Panel açıldığında liste boşsa varsayılan sınıfı listele
-        const liste = document.getElementById("muallimKitapListesi");
-        if (liste && liste.children.length === 0) {
-            kitaplariGetir('okul-oncesi', null);
-        }
+    if (buton) {
+        buton.classList.add("active");
     } else {
-        icerik.style.display = "none";
-        kutu.classList.remove("active");
-        ok.innerText = "🔽";
+        // Eğer buton parametresi gönderilmediyse ilgili sınıfa ait butonu bulup aktif yap
+        tumSinifButonlari.forEach(b => {
+            if (b.getAttribute("onclick") && b.getAttribute("onclick").includes(`'${sinifId}'`)) {
+                b.classList.add("active");
+            }
+        });
     }
+
+    // 2. Kitap konteynerini bul ve temizle
+    const container = document.getElementById("muallimKitapListesi");
+    if (!container) return;
+    container.innerHTML = "";
+
+    // 3. İlgili sınıfa ait kitapları çek
+    const kitaplar = (typeof muallimKitapDeposu !== "undefined" && muallimKitapDeposu[sinifId]) ? muallimKitapDeposu[sinifId] : [];
+
+    if (kitaplar.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px; font-size: 13.5px;">Bu seviyeye ait kitaplar yakında yüklenecektir.</div>';
+        return;
+    }
+
+    // 4. Kitapları ekrana kart olarak bas
+    kitaplar.forEach(k => {
+        const a = document.createElement("a");
+        a.href = k.link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.className = "muallim-pdf-link";
+        a.innerText = k.isim;
+        container.appendChild(a);
+    });
 }
-    
 </script>
 </body>
 </html>
