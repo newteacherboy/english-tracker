@@ -3070,7 +3070,7 @@ async function oturumSayaciniBaslat(ogrenciAdi) {
         if (sonrakiMetin) sonrakiMetin.innerText = "Sonraki rozete: " + kalanDk + " dk";
 
         // Her 1 dakikada bir Google Sheets'e güncel süreyi kaydet
-        if (oturumSaniye % 60 === 0) {
+        if (oturumSaniye % 05 === 0) {
             googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, kazanilanRozetler);
         }
 
