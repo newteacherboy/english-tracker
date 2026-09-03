@@ -1027,23 +1027,6 @@ let activeStudent = null;
 let activePageTab = "ozet";
 let denemelerData = [];
 
-// ⏱️ 7 SANİYE SONRA BALONLARI KUSURSUZ GİZLEYEN ZAMANLAYICI
-function baslatOtomatikGizleme() {
-    setTimeout(function() {
-        const ids = ["whatsappGeciciYazi", "seviyeGeciciYazi", "randevuGeciciYazi"];
-        ids.forEach(function(id) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.style.opacity = "0";
-                el.style.transform = "translateX(25px)";
-                setTimeout(function() {
-                    el.style.display = "none";
-                }, 600);
-            }
-        });
-    }, 7000);
-}
-
 // Portal Açılış
 function portalSec(tur) {
   if (tur === 'ingilizce') {
@@ -1990,8 +1973,23 @@ function whatsapplaGonder() {
 document.addEventListener("DOMContentLoaded", function() {
     kitaplariGetir('okul-oncesi', null);
 
-    // ⏱️ 7 SANİYE OTOMATİK GİZLEME BAŞLATICI
-    baslatOtomatikGizleme();
+    // ⏱️ 7 SANİYE OTOMATİK GİZLEME (KESİNLİKLE ÇALIŞACAK ŞEKİLDE)
+    setTimeout(function() {
+        var baloncuklar = [
+            document.getElementById("whatsappGeciciYazi"),
+            document.getElementById("seviyeGeciciYazi"),
+            document.getElementById("randevuGeciciYazi")
+        ];
+        baloncuklar.forEach(function(el) {
+            if (el) {
+                el.style.opacity = "0";
+                el.style.transform = "translateX(25px)";
+                setTimeout(function() {
+                    el.style.display = "none";
+                }, 600);
+            }
+        });
+    }, 7000);
 
     // Rubrik Modal Tanımlamaları
     const overlay = document.getElementById("yeni_rubrikOverlay");
@@ -2020,45 +2018,69 @@ document.addEventListener("DOMContentLoaded", function() {
     const bookTotalInput = document.getElementById("yeni_bookTotal");
 
     const bugunTarihInput = new Date().toISOString().split('T')[0];
-    document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
-    document.getElementById("yeni_nextLessonDate").value = bugunTarihInput;
+    if(document.getElementById("yeni_completedLessonDate")) {
+        document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
+    }
+    if(document.getElementById("yeni_nextLessonDate")) {
+        document.getElementById("yeni_nextLessonDate").value = bugunTarihInput;
+    }
 
-    if(localStorage.getItem("rubrik_webhook_yeni")) {
+    if(localStorage.getItem("rubrik_webhook_yeni") && webhookUrlInput) {
         webhookUrlInput.value = localStorage.getItem("rubrik_webhook_yeni");
     }
 
-    openBtn.addEventListener("click", () => overlay.style.display = "flex");
-    closeBtn.addEventListener("click", () => overlay.style.display = "none");
+    if(openBtn) {
+        openBtn.addEventListener("click", function() {
+            if(overlay) overlay.style.display = "flex";
+        });
+    }
 
-    unlockBtn.addEventListener("click", () => {
-        const girilenSifre = passInput.value.trim();
-        if(girilenSifre === "315269") { 
-            lockScreen.style.display = "none"; rubrikApp.style.display = "block"; passError.style.display = "none"; passInput.value = ""; 
-        } else { 
-            passError.style.display = "block"; passInput.value = "";
-        }
-    });
+    if(closeBtn) {
+        closeBtn.addEventListener("click", function() {
+            if(overlay) overlay.style.display = "none";
+        });
+    }
 
-    studentNameInput.addEventListener("input", function() {
-        const girilenIsim = studentNameInput.value.trim();
-        if (girilenIsim && typeof allData !== 'undefined' && Array.isArray(allData)) {
-            let row = allData.find(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
-            if (row) {
-                let telNo = row.telefon || row.veli_telefon || row.p || row.telefon_numarasi || "";
-                if(telNo) { studentPhoneInput.value = telNo; }
+    if(unlockBtn) {
+        unlockBtn.addEventListener("click", function() {
+            const girilenSifre = passInput.value.trim();
+            if(girilenSifre === "315269") { 
+                lockScreen.style.display = "none"; 
+                rubrikApp.style.display = "block"; 
+                passError.style.display = "none"; 
+                passInput.value = ""; 
+            } else { 
+                passError.style.display = "block"; 
+                passInput.value = "";
             }
-            let ogrenciSatirlari = allData.filter(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
-            let sonKitapliSatir = [...ogrenciSatirlari].reverse().find(r => r.son_kitap_adi && r.son_kitap_adi !== "Bu hafta henüz kitap tanımlanmadı.");
-            if (sonKitapliSatir) {
-                bookNameInput.value = sonKitapliSatir.son_kitap_adi || "";
-                bookTargetInput.value = sonKitapliSatir.son_kitap_hedef || "100";
-                bookTotalInput.value = sonKitapliSatir.okunan_kitap_sayisi || "0";
-                bookReadInput.value = "";
-            } else {
-                bookNameInput.value = ""; bookTargetInput.value = "100"; bookTotalInput.value = "0"; bookReadInput.value = "";
+        });
+    }
+
+    if(studentNameInput) {
+        studentNameInput.addEventListener("input", function() {
+            const girilenIsim = studentNameInput.value.trim();
+            if (girilenIsim && typeof allData !== 'undefined' && Array.isArray(allData)) {
+                let row = allData.find(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
+                if (row) {
+                    let telNo = row.telefon || row.veli_telefon || row.p || row.telefon_numarasi || "";
+                    if(telNo && studentPhoneInput) { studentPhoneInput.value = telNo; }
+                }
+                let ogrenciSatirlari = allData.filter(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
+                let sonKitapliSatir = [...ogrenciSatirlari].reverse().find(r => r.son_kitap_adi && r.son_kitap_adi !== "Bu hafta henüz kitap tanımlanmadı.");
+                if (sonKitapliSatir) {
+                    if(bookNameInput) bookNameInput.value = sonKitapliSatir.son_kitap_adi || "";
+                    if(bookTargetInput) bookTargetInput.value = sonKitapliSatir.son_kitap_hedef || "100";
+                    if(bookTotalInput) bookTotalInput.value = sonKitapliSatir.okunan_kitap_sayisi || "0";
+                    if(bookReadInput) bookReadInput.value = "";
+                } else {
+                    if(bookNameInput) bookNameInput.value = ""; 
+                    if(bookTargetInput) bookTargetInput.value = "100"; 
+                    if(bookTotalInput) bookTotalInput.value = "0"; 
+                    if(bookReadInput) bookReadInput.value = "";
+                }
             }
-        }
-    });
+        });
+    }
 
     document.querySelectorAll(".r-btn-group .r-status-btn").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -2071,38 +2093,57 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateAverage() {
         let total = 0;
         skillSliders.forEach(slider => {
-            const val = parseInt(slider.value);
-            slider.nextElementSibling.innerText = val;
+            const val = parseInt(slider.value) || 0;
+            if(slider.nextElementSibling) slider.nextElementSibling.innerText = val;
             total += val;
         });
-        overallScoreEl.innerText = Math.round(total / skillSliders.length);
+        if(overallScoreEl) overallScoreEl.innerText = Math.round(total / (skillSliders.length || 1));
     }
     skillSliders.forEach(s => s.addEventListener("input", updateAverage));
-    examScore.addEventListener("input", () => { examScoreOut.innerText = examScore.value + "/100"; });
-    webhookToggle.addEventListener("click", () => { webhookForm.style.display = webhookForm.style.display === "none" ? "block" : "none"; });
-    saveWebhookBtn.addEventListener("click", () => {
-        localStorage.setItem("rubrik_webhook_yeni", webhookUrlInput.value);
-        alert("Bağlantı URL'i tarayıcıya kaydedildi!");
-        webhookForm.style.display = "none";
-    });
 
-    resetBtn.addEventListener("click", () => {
-        if(confirm("Tüm formu temizlemek istediğinize emin misiniz?")) {
-            studentNameInput.value = "";
-            studentPhoneInput.value = "90";
-            document.getElementById("yeni_lessonTopic").value = "";
-            document.getElementById("yeni_startComment").value = "";
-            document.getElementById("yeni_endComment").value = "";
-            document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
-            document.getElementById("yeni_nextLessonDate").value = bugunTarihInput;
-            examScore.value = 0; examScoreOut.innerText = "0/100";
-            bookNameInput.value = ""; bookReadInput.value = ""; bookTargetInput.value = "100"; bookTotalInput.value = "0";
-            document.querySelectorAll(".r-status-btn").forEach(b => b.classList.remove("active"));
-            document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
-            skillSliders.forEach(s => { s.value = 0; s.nextElementSibling.innerText = "0"; });
-            overallScoreEl.innerText = "0";
-        }
-    });
+    if(examScore) {
+        examScore.addEventListener("input", () => { 
+            if(examScoreOut) examScoreOut.innerText = examScore.value + "/100"; 
+        });
+    }
+
+    if(webhookToggle && webhookForm) {
+        webhookToggle.addEventListener("click", () => { 
+            webhookForm.style.display = webhookForm.style.display === "none" ? "block" : "none"; 
+        });
+    }
+
+    if(saveWebhookBtn && webhookUrlInput) {
+        saveWebhookBtn.addEventListener("click", () => {
+            localStorage.setItem("rubrik_webhook_yeni", webhookUrlInput.value);
+            alert("Bağlantı URL'i tarayıcıya kaydedildi!");
+            if(webhookForm) webhookForm.style.display = "none";
+        });
+    }
+
+    if(resetBtn) {
+        resetBtn.addEventListener("click", () => {
+            if(confirm("Tüm formu temizlemek istediğinize emin misiniz?")) {
+                if(studentNameInput) studentNameInput.value = "";
+                if(studentPhoneInput) studentPhoneInput.value = "90";
+                if(document.getElementById("yeni_lessonTopic")) document.getElementById("yeni_lessonTopic").value = "";
+                if(document.getElementById("yeni_startComment")) document.getElementById("yeni_startComment").value = "";
+                if(document.getElementById("yeni_endComment")) document.getElementById("yeni_endComment").value = "";
+                if(document.getElementById("yeni_completedLessonDate")) document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
+                if(document.getElementById("yeni_nextLessonDate")) document.getElementById("yeni_nextLessonDate").value = bugunTarihInput;
+                if(examScore) examScore.value = 0; 
+                if(examScoreOut) examScoreOut.innerText = "0/100";
+                if(bookNameInput) bookNameInput.value = ""; 
+                if(bookReadInput) bookReadInput.value = ""; 
+                if(bookTargetInput) bookTargetInput.value = "100"; 
+                if(bookTotalInput) bookTotalInput.value = "0";
+                document.querySelectorAll(".r-status-btn").forEach(b => b.classList.remove("active"));
+                document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
+                skillSliders.forEach(s => { s.value = 0; if(s.nextElementSibling) s.nextElementSibling.innerText = "0"; });
+                if(overallScoreEl) overallScoreEl.innerText = "0";
+            }
+        });
+    }
 
     function formatTarih(dateString) {
         if(!dateString) return "";
@@ -2110,85 +2151,119 @@ document.addEventListener("DOMContentLoaded", function() {
         return parts[2] + "." + parts[1] + "." + parts[0];
     }
 
-    saveBtn.addEventListener("click", async () => {
-        const url = webhookUrlInput.value;
-        const name = studentNameInput.value.trim();
-        const compDateRaw = document.getElementById("yeni_completedLessonDate").value;
-        const nextDateRaw = document.getElementById("yeni_nextLessonDate").value;
-        const veliTel = studentPhoneInput.value.trim();
-        
-        if(!url) { alert("Lütfen önce Google Sheets bağlantısını ayarlayın."); return; }
-        if(!name) { alert("Lütfen Öğrenci Adı alanını doldurun."); return; }
-        if(!veliTel || veliTel === "90") { alert("Lütfen veli telefon numarasını girin."); return; }
-        if(!compDateRaw || !nextDateRaw) { alert("Lütfen iki tarih alanını da doldurun."); return; }
-
-        saveBtn.disabled = true;
-        saveBtn.innerText = "Kaydediliyor...";
-
-        const activeStartBtn = document.querySelector("#yeni_startStatusGroup .r-status-btn.active");
-        const startStatusVal = activeStartBtn ? activeStartBtn.getAttribute("data-val") : "Belirtilmedi";
-
-        const bugun = new Date();
-        const tarihFormat = String(bugun.getDate()).padStart(2, '0') + "." + String(bugun.getMonth() + 1).padStart(2, '0') + "." + bugun.getFullYear();
-        const tamamlananDersTarihi = formatTarih(compDateRaw);
-        const sonrakiDersTarihi = formatTarih(nextDateRaw);
-        const startCommentVal = document.getElementById("yeni_startComment").value.trim() || "Yok";
-        const endCommentVal = document.getElementById("yeni_endComment").value.trim() || "Yok";
-
-        const vKitapAdiInput = bookNameInput.value.trim();
-        const vOkunanInput = bookReadInput.value.trim();
-        const vHedefInput = bookTargetInput.value.trim();
-        const vToplamInput = bookTotalInput.value.trim();
-
-        const payloadTamamlandi = {
-            tarih: tarihFormat, ogrenci: name, seviye: document.getElementById("yeni_studentLevel").value.trim() || "Genel", 
-            genel: overallScoreEl.innerText, vocabulary: document.getElementById("yeni_scVocabulary").value, 
-            konusma: document.getElementById("yeni_scKonusma").value, okuma: document.getElementById("yeni_scOkuma").value, 
-            yazma: document.getElementById("yeni_scYazma").value, grammar: document.getElementById("yeni_scGrammar").value, 
-            deneme: examScore.value, ders_tarihi: tamamlananDersTarihi, ders_durumu: "tamamlandi", 
-            odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("yeni_chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("yeni_chkAnlasildi").checked ? "Evet" : "Hayır"), 
-            konu: document.getElementById("yeni_lessonTopic").value.trim() || "Belirtilmedi",
-            son_kitap_adi: vKitapAdiInput || undefined,
-            son_kitap_sayfa: vOkunanInput !== "" ? Number(vOkunanInput) : undefined,
-            son_kitap_hedef: vHedefInput !== "" ? Number(vHedefInput) : undefined,
-            okunan_kitap_sayisi: vToplamInput !== "" ? Number(vToplamInput) : undefined
-        };
-
-        const payloadSonraki = {
-            tarih: tarihFormat, ogrenci: name, seviye: document.getElementById("yeni_studentLevel").value.trim() || "Genel", 
-            genel: "0", vocabulary: "0", konusma: "0", okuma: "0", yazma: "0", grammar: "0", deneme: "0", 
-            ders_tarihi: sonrakiDersTarihi, ders_durumu: "sonraki", odev_durumu: "Gelecek Ders Planı", 
-            konu: "Planlanan Sonraki Ders", son_kitap_adi: undefined, son_kitap_sayfa: undefined, son_kitap_hedef: undefined, okunan_kitap_sayisi: undefined
-        };
-
-        try {
-            await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadTamamlandi) });
-            await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadSonraki) });
+    if(saveBtn) {
+        saveBtn.addEventListener("click", async () => {
+            const url = webhookUrlInput ? webhookUrlInput.value : "";
+            const name = studentNameInput ? studentNameInput.value.trim() : "";
+            const compDateRaw = document.getElementById("yeni_completedLessonDate") ? document.getElementById("yeni_completedLessonDate").value : "";
+            const nextDateRaw = document.getElementById("yeni_nextLessonDate") ? document.getElementById("yeni_nextLessonDate").value : "";
+            const veliTel = studentPhoneInput ? studentPhoneInput.value.trim() : "";
             
-            statusMsg.style.display = "block"; statusMsg.style.background = "#E6F4EA"; statusMsg.style.color = "#137333"; statusMsg.innerText = "Başarıyla eklendi!";
-            
+            if(!url) { alert("Lütfen önce Google Sheets bağlantısını ayarlayın."); return; }
+            if(!name) { alert("Lütfen Öğrenci Adı alanını doldurun."); return; }
+            if(!veliTel || veliTel === "90") { alert("Lütfen veli telefon numarasını girin."); return; }
+            if(!compDateRaw || !nextDateRaw) { alert("Lütfen iki tarih alanını da doldurun."); return; }
+
+            saveBtn.disabled = true;
+            saveBtn.innerText = "Kaydediliyor...";
+
+            const activeStartBtn = document.querySelector("#yeni_startStatusGroup .r-status-btn.active");
+            const startStatusVal = activeStartBtn ? activeStartBtn.getAttribute("data-val") : "Belirtilmedi";
+
+            const bugun = new Date();
+            const tarihFormat = String(bugun.getDate()).padStart(2, '0') + "." + String(bugun.getMonth() + 1).padStart(2, '0') + "." + bugun.getFullYear();
+            const tamamlananDersTarihi = formatTarih(compDateRaw);
+            const sonrakiDersTarihi = formatTarih(nextDateRaw);
+            const startCommentVal = document.getElementById("yeni_startComment") ? document.getElementById("yeni_startComment").value.trim() : "Yok";
+            const endCommentVal = document.getElementById("yeni_endComment") ? document.getElementById("yeni_endComment").value.trim() : "Yok";
+
+            const vKitapAdiInput = bookNameInput ? bookNameInput.value.trim() : "";
+            const vOkunanInput = bookReadInput ? bookReadInput.value.trim() : "";
+            const vHedefInput = bookTargetInput ? bookTargetInput.value.trim() : "";
+            const vToplamInput = bookTotalInput ? bookTotalInput.value.trim() : "";
+
+            const payloadTamamlandi = {
+                tarih: tarihFormat, 
+                ogrenci: name, 
+                seviye: document.getElementById("yeni_studentLevel") ? document.getElementById("yeni_studentLevel").value.trim() : "Genel", 
+                genel: overallScoreEl ? overallScoreEl.innerText : "0", 
+                vocabulary: document.getElementById("yeni_scVocabulary") ? document.getElementById("yeni_scVocabulary").value : "0", 
+                konusma: document.getElementById("yeni_scKonusma") ? document.getElementById("yeni_scKonusma").value : "0", 
+                okuma: document.getElementById("yeni_scOkuma") ? document.getElementById("yeni_scOkuma").value : "0", 
+                yazma: document.getElementById("yeni_scYazma") ? document.getElementById("yeni_scYazma").value : "0", 
+                grammar: document.getElementById("yeni_scGrammar") ? document.getElementById("yeni_scGrammar").value : "0", 
+                deneme: examScore ? examScore.value : "0", 
+                ders_tarihi: tamamlananDersTarihi, 
+                ders_durumu: "tamamlandi", 
+                odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("yeni_chkOdev") && document.getElementById("yeni_chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("yeni_chkAnlasildi") && document.getElementById("yeni_chkAnlasildi").checked ? "Evet" : "Hayır"), 
+                konu: document.getElementById("yeni_lessonTopic") ? document.getElementById("yeni_lessonTopic").value.trim() : "Belirtilmedi",
+                son_kitap_adi: vKitapAdiInput || undefined,
+                son_kitap_sayfa: vOkunanInput !== "" ? Number(vOkunanInput) : undefined,
+                son_kitap_hedef: vHedefInput !== "" ? Number(vHedefInput) : undefined,
+                okunan_kitap_sayisi: vToplamInput !== "" ? Number(vToplamInput) : undefined
+            };
+
+            const payloadSonraki = {
+                tarih: tarihFormat, 
+                ogrenci: name, 
+                seviye: document.getElementById("yeni_studentLevel") ? document.getElementById("yeni_studentLevel").value.trim() : "Genel", 
+                genel: "0", 
+                vocabulary: "0", 
+                konusma: "0", 
+                okuma: "0", 
+                yazma: "0", 
+                grammar: "0", 
+                deneme: "0", 
+                ders_tarihi: sonrakiDersTarihi, 
+                ders_durumu: "sonraki", 
+                odev_durumu: "Gelecek Ders Planı", 
+                konu: "Planlanan Sonraki Ders", 
+                son_kitap_adi: undefined, 
+                son_kitap_sayfa: undefined, 
+                son_kitap_hedef: undefined, 
+                okunan_kitap_sayisi: undefined
+            };
+
             try {
-                let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu işlenmiştir.\n\n` +
-                              `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
-                              `📝 *Öğretmen Notları:* \n• Ders Başı Durumu: ${startCommentVal}\n• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
-                              `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
-                if (parseInt(payloadTamamlandi.deneme) > 0) wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
-                if (vKitapAdiInput) wpMesaj += `\n📚 *Haftalık Kitap Okuma Raporu:* \n• Kitap: ${vKitapAdiInput}\n• Okunan: ${vOkunanInput || 0} Sayfa\n• Hedef: ${vHedefInput || 100} Sayfa\n• Toplam Bitirilen: ${vToplamInput || 0} Kitap\n`;
-                wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\nGelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n*İngilizce Öğretmeni & Eğitim Koçu*`;
+                await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadTamamlandi) });
+                await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadSonraki) });
                 
-                let temizTel = veliTel.replace(/\s+/g, '');
-                let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
-                window.open(wpUrl, '_blank');
-            } catch (wpError) { console.error("WhatsApp hatası:", wpError); }
-            
-            resetBtn.click();
-            setTimeout(() => { statusMsg.style.display = "none"; }, 4000);
-        } catch (error) {
-            statusMsg.style.display = "block"; statusMsg.style.background = "#FCE8E6"; statusMsg.style.color = "#C5221F"; statusMsg.innerText = "Hata oluştu! Tabloya bağlanılamadı.";
-        } finally {
-            saveBtn.disabled = false; saveBtn.innerText = "Formu Kaydet (Yeni Satır)";
-        }
-    });
+                if(statusMsg) {
+                    statusMsg.style.display = "block"; 
+                    statusMsg.style.background = "#E6F4EA"; 
+                    statusMsg.style.color = "#137333"; 
+                    statusMsg.innerText = "Başarıyla eklendi!";
+                }
+                
+                try {
+                    let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu işlenmiştir.\n\n` +
+                                  `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
+                                  `📝 *Öğretmen Notları:* \n• Ders Başı Durumu: ${startCommentVal}\n• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
+                                  `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
+                    if (parseInt(payloadTamamlandi.deneme) > 0) wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
+                    if (vKitapAdiInput) wpMesaj += `\n📚 *Haftalık Kitap Okuma Raporu:* \n• Kitap: ${vKitapAdiInput}\n• Okunan: ${vOkunanInput || 0} Sayfa\n• Hedef: ${vHedefInput || 100} Sayfa\n• Toplam Bitirilen: ${vToplamInput || 0} Kitap\n`;
+                    wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\nGelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n*İngilizce Öğretmeni & Eğitim Koçu*`;
+                    
+                    let temizTel = veliTel.replace(/\s+/g, '');
+                    let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
+                    window.open(wpUrl, '_blank');
+                } catch (wpError) { console.error("WhatsApp hatası:", wpError); }
+                
+                if(resetBtn) resetBtn.click();
+                setTimeout(() => { if(statusMsg) statusMsg.style.display = "none"; }, 4000);
+            } catch (error) {
+                if(statusMsg) {
+                    statusMsg.style.display = "block"; 
+                    statusMsg.style.background = "#FCE8E6"; 
+                    statusMsg.style.color = "#C5221F"; 
+                    statusMsg.innerText = "Hata oluştu! Tabloya bağlanılamadı.";
+                }
+            } finally {
+                saveBtn.disabled = false; 
+                saveBtn.innerText = "Formu Kaydet (Yeni Satır)";
+            }
+        });
+    }
 });
 </script>
 </body>
