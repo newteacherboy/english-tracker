@@ -3114,6 +3114,57 @@ document.addEventListener('visibilitychange', function () {
     }
 });
 
+    // 🗓️ Verilen gün metnine göre (Örn: "Salı, Cuma") en yakın sıradaki dersin tarihini dd.MM.yyyy formatında döner
+function siradakiDersTarihiniHesapla(sabitGunlerMetni) {
+    if (!sabitGunlerMetni || typeof sabitGunlerMetni !== "string") {
+        // Tanımlı gün yoksa varsayılan olarak 7 gün sonrasını verir
+        let d = new Date();
+        d.setDate(d.getDate() + 7);
+        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
+    }
+
+    const gunHaritasi = {
+        "pazar": 0, "pazartesi": 1, "sali": 2, "çarşamba": 3, "carsamba": 3,
+        "perşembe": 4, "persembe": 4, "cuma": 5, "cumartesi": 6
+    };
+
+    let parcalar = sabitGunlerMetni.toLowerCase().split(/[,\-\/]/).map(s => s.trim().replace(/ı/g, "i"));
+    let hedefGunler = [];
+    parcalar.forEach(p => {
+        for (let g in gunHaritasi) {
+            if (p.includes(g)) {
+                if (!hedefGunler.includes(gunHaritasi[g])) hedefGunler.push(gunHaritasi[g]);
+            }
+        }
+    });
+
+    if (hedefGunler.length === 0) {
+        let d = new Date();
+        d.setDate(d.getDate() + 7);
+        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
+    }
+
+    let bugun = new Date();
+    let bugunIndex = bugun.getDay();
+    let minFark = 999;
+
+    // En yakın sıradaki günü bul (En az 1 gün sonrası)
+    hedefGunler.forEach(g => {
+        let fark = g - bugunIndex;
+        if (fark <= 0) fark += 7; // Bu haftaki gün geçtiyse veya bugünse sonraki haftaya at
+        if (fark < minFark) minFark = fark;
+    });
+
+    let siradakiTarih = new Date();
+    siradakiTarih.setDate(bugun.getDate() + minFark);
+    
+    let gun = ("0" + siradakiTarih.getDate()).slice(-2);
+    let ay = ("0" + (siradakiTarih.getMonth() + 1)).slice(-2);
+    let yil = siradakiTarih.getFullYear();
+
+    return `${gun}.${ay}.${yil}`;
+}
+
 </script>
 </body>
 </html>
