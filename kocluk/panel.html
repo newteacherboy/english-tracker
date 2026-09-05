@@ -235,7 +235,7 @@
             </div>
         </div>
 
-        <!-- 8. İstatistikler (Ortalama Genel Puan Bağlandı) -->
+        <!-- 8. İstatistikler -->
         <div class="stats-grid-4">
             <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
             <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
@@ -243,7 +243,7 @@
             <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
         </div>
 
-        <!-- 9. Grafikler (5 Kriterli Beceri Radar Grafiği Güncellendi) -->
+        <!-- 9. Grafikler -->
         <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
         <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Beceri Radar Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
     </div>
@@ -251,23 +251,24 @@
     <!-- YÖNETİCİ BUTONU -->
     <button class="admin-float-btn" onclick="yoneticiGirisSorgula()">⚙️ Öğretmen Paneli</button>
 
-    <!-- ŞİFRE & RUBRİK MODAL -->
+    <!-- KAPSAMLI ÖĞRETMEN RUBRİK MODALI -->
     <div class="modal-overlay" id="rubrikModal">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="margin:0; color:#2e7d32;">📋 Otomatik Koçluk Rubriği</h3>
+                <h3 style="margin:0; color:#2e7d32;">📋 Kapsamlı Öğretmen Rubriği</h3>
                 <button onclick="modalKapat()" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
             </div>
 
+            <!-- Öğrenci Seçimi -->
             <div class="form-group">
                 <label>Öğrenci Seçin</label>
-                <select id="rubrikOgrenciSec" onchange="ogrenciSecildiTelGetir()">
+                <select id="rubrikOgrenciSec" onchange="ogrenciSecildiDetayGetir()">
                     <option value="">Öğrenci Seçin...</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>Veli WhatsApp Telefon Numarası (Otomatik Gelir)</label>
+                <label>Veli WhatsApp Numarası (Otomatik Gelir)</label>
                 <input type="text" id="rubrikVeliTel" placeholder="05XXXXXXXXX" readonly style="background:#f4f4f4;">
             </div>
 
@@ -281,6 +282,28 @@
                 <input type="date" id="rubrikSonrakiDersTarihi">
             </div>
 
+            <!-- Sheets'ten Otomatik Doldurulan Kitap ve Sayfa Alanları -->
+            <div class="form-group">
+                <label>Şu An Okunan Kitap</label>
+                <input type="text" id="rubrikAktifKitap" placeholder="Örn: Eğlenceli Masallar">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-group">
+                    <label>Okunan Sayfa</label>
+                    <input type="number" id="rubrikOkunanSayfa" placeholder="Örn: 35">
+                </div>
+                <div class="form-group">
+                    <label>Hedef Sayfa</label>
+                    <input type="number" id="rubrikHedefSayfa" placeholder="Örn: 40">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Yeni Öğrenilen Harfler (Virgülle Örn: D,T,K)</label>
+                <input type="text" id="rubrikYeniHarfler" placeholder="Örn: D, T">
+            </div>
+
             <div class="form-group">
                 <label>Ders Başı Durumu</label>
                 <select id="rubrikDersBasi">
@@ -290,13 +313,8 @@
             </div>
 
             <div class="form-group">
-                <label>Ders Başı Yorumu (Notunuz)</label>
+                <label>Ders Başı / Gözlem Yorumu</label>
                 <textarea id="rubrikDersBasiYorum" rows="2" placeholder="Ders başı gözlemleriniz..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Yeni Öğrenilen Harfler (Virgülle Örn: D,T,K)</label>
-                <input type="text" id="rubrikYeniHarfler" placeholder="Örn: D, T">
             </div>
 
             <!-- Kaydırmalı Çubuklu Puanlayıcı -->
@@ -313,13 +331,13 @@
             </div>
 
             <div class="form-group">
-                <label>Ödev Verildi mi? (Odevler Sekmesine Kaydedilir)</label>
+                <label>Bu Hafta Verilen Ödev (Odevler Sekmesine Kaydedilir)</label>
                 <input type="text" id="rubrikOdevMetni" placeholder="Örn: 2 sayfa ses çalışması">
             </div>
 
             <div class="form-group">
-                <label>Öğretmenin Genel Motivasyon Yorumu</label>
-                <textarea id="rubrikOzelYorum" rows="3" placeholder="Öğrenciye ve veliye özel mesajınız..."></textarea>
+                <label>Öğretmenin Özel Motivasyon Notu</label>
+                <textarea id="rubrikOzelYorum" rows="3" placeholder="Öğrenciye ve veliye özel koçluk mesajınız..."></textarea>
             </div>
 
             <button onclick="rubrikVerileriniKaydetVeGonder()" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & Veliye WhatsApp Raporu Gönder</button>
@@ -327,7 +345,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-TYKT6LCxSww6p6DFOU1fejPmKHqT0erG65evfENHTvfol-sJCLFZkfXoV-Gw2fhi/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdsnwYUgjC9XCNogbF-3gcAcL4svHqfPHA27QL69FHJB1cbeqlTwbT2Bz1UZYx71xE/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
@@ -374,20 +392,44 @@
                     });
                     if (ogrenciAdi) {
                         select.value = ogrenciAdi;
-                        ogrenciSecildiTelGetir();
+                        ogrenciSecildiDetayGetir();
                     }
                 }
             });
         }
 
-        function ogrenciSecildiTelGetir() {
+        // Öğrenci seçildiğinde hem telefonu hem de Sheets'teki mevcut kayıtlı son verileri otomatik çeker
+        function ogrenciSecildiDetayGetir() {
             let secilen = document.getElementById("rubrikOgrenciSec").value;
+            if (!secilen) {
+                document.getElementById("rubrikVeliTel").value = "";
+                document.getElementById("rubrikAktifKitap").value = "";
+                document.getElementById("rubrikOkunanSayfa").value = "";
+                document.getElementById("rubrikHedefSayfa").value = "";
+                return;
+            }
+
             let bulutOgr = sistemOgrencileri.find(o => o.ogrenciAdi.toLowerCase() === secilen.toLowerCase());
             if (bulutOgr) {
-                document.getElementById("rubrikVeliTel").value = bulutOgr.veliTelefon;
-            } else {
-                document.getElementById("rubrikVeliTel").value = "";
+                document.getElementById("rubrikVeliTel").value = bulutOgr.veliTelefon || "";
             }
+
+            // Sheets'ten aktif kitap ve sayfa bilgilerini çekme
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "ogrenciDetayGetir", ogrenciAdi: secilen })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    if(data.veliTelefon) document.getElementById("rubrikVeliTel").value = data.veliTelefon;
+                    document.getElementById("rubrikAktifKitap").value = data.aktifKitap || "";
+                    document.getElementById("rubrikOkunanSayfa").value = data.okunanSayfa || "";
+                    document.getElementById("rubrikHedefSayfa").value = data.hedefSayfa || "";
+                }
+            })
+            .catch(err => console.log("Detaylar alınamadı:", err));
         }
 
         function rangeGuncelle() {
@@ -414,6 +456,9 @@
 
             let dTar = document.getElementById("rubrikDersTarihi").value;
             let sTar = document.getElementById("rubrikSonrakiDersTarihi").value;
+            let aktifKitap = document.getElementById("rubrikAktifKitap").value.trim();
+            let okunanSayfa = document.getElementById("rubrikOkunanSayfa").value;
+            let hedefSayfa = document.getElementById("rubrikHedefSayfa").value;
             let dBasDurum = document.getElementById("rubrikDersBasi").value;
             let dBasYorum = document.getElementById("rubrikDersBasiYorum").value.trim();
             let hYeni = document.getElementById("rubrikYeniHarfler").value.trim();
@@ -437,6 +482,9 @@
                     ogrenciAdi: oAdi,
                     dersTarihi: dTar,
                     sonrakiDersTarihi: sTar,
+                    aktifKitap: aktifKitap,
+                    okunanSayfa: okunanSayfa,
+                    hedefSayfa: hedefSayfa,
                     yeniHarfler: hYeni,
                     genelPuan: gPuan,
                     etkinlikBasarisi: gPuan,
@@ -458,7 +506,8 @@
                                 `📌 *Ders Başı Durumu:* ${dBasDurum}\n` +
                                 (dBasYorum ? `💬 *Öğretmen Gözlemi:* ${dBasYorum}\n\n` : `\n`) +
                                 `⭐ Bu Haftaki Puan: *${gPuan} / 100*\n` +
-                                `📚 *Bu Hafta Verilen Ödev:* ${odevMetni || "Ödev verilmedi."}\n\n` +
+                                `📚 *Okunan Kitap & Sayfa:* ${aktifKitap || "Belirtilmedi"} (${okunanSayfa || 0}/${hedefSayfa || 0} sayfa)\n` +
+                                `📝 *Bu Hafta Verilen Ödev:* ${odevMetni || "Ödev verilmedi."}\n\n` +
                                 `🍎 *Öğretmen Değerlendirmesi:* ${ozelYorum || "Harika bir gelişim haftası geçirdik."}\n\n` +
                                 `📅 Tamamlanan Ders: ${dTar || "Bugün"}\n` +
                                 `📅 Sonraki Ders: ${sTar || "Planlandı"}\n\n` +
@@ -506,7 +555,6 @@
                 if (data.status === "success") {
                     toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
 
-                    // Ortalama genel puanı panele yansıtıyoruz
                     document.getElementById("statGenelPuan").innerText = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan;
                     document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
                     document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
@@ -559,9 +607,8 @@
                         alfabeHtml += `<div class="${ogrenildiMi ? "harf-kutu ogrenildi" : "harf-kutu"}">${harf}</div>`;
                     });
                     document.getElementById("alfabeGridAlani").innerHTML = alfabeHtml;
-                    document.getElementById("alfabeSayacText").innerText = `${tamamlananSayi} / 29 Harف`;
+                    document.getElementById("alfabeSayacText").innerText = `${tamamlananSayi} / 29 Harf`;
 
-                    // Grafikleri ve 5 Kriterli Radar Grafiğini Çiz
                     renkliGrafikleriCiz(data.gelisim.kriterler);
 
                     // Dersler
@@ -608,7 +655,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
 
-            // 5 Kriterli Radar Grafik (Okuma, Yazma, Dinleme, Konuşma, Dikkat)
             const ctxRadar = document.getElementById('radarChart').getContext('2d');
             if (radarChartInstance) radarChartInstance.destroy();
 
