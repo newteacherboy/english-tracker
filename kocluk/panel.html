@@ -611,11 +611,13 @@
 
                     renkliGrafikleriCiz(data.gelisim.kriterler);
 
-                    // Dersler
+                   // Dersler Çizelgesi (En son kayıtları doğru sırayla gösterme)
                     let dersler = data.dersler || [];
                     let dersHtml = "";
                     if(dersler.length > 0) {
-                        dersler.slice(0, 3).forEach((d, index) => {
+                        // Son eklenen dersleri baz alarak dilimleyelim
+                        let sonDersler = dersler.slice(-3); 
+                        sonDersler.forEach((d, index) => {
                             let temizTarih = tarihiDuzelt(d.tarih);
                             let yapildiMi = d.durum === "Yapıldı" || d.durum === "Tamamlandı";
                             let kutuSinif = yapildiMi ? "ders-box yapildi" : "ders-box yapilacak";
