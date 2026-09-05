@@ -74,18 +74,13 @@
         .ders-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
         @media(max-width: 600px) { .ders-grid-3 { grid-template-columns: 1fr; } }
         
-        /* DERS ÇİZELGESİ RENK AYARLARI (GEÇEN: SARI, GÜNCEL: YEŞİL, GELECEK: KIRMIZI) */
         .ders-box { background: #faf8f5; border: 2px solid #e0dcd0; padding: 15px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
-        
         .ders-box.gecen { background: #fffde7; border-color: #ffd54f; }
         .badge-gecen { background: #ffe082; color: #f57f17; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-
         .ders-box.guncel { background: #e8f5e9; border-color: #81c784; }
         .badge-guncel { background: #c8e6c9; color: #1b5e20; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-
         .ders-box.gelecek { background: #ffebee; border-color: #e57373; }
         .badge-gelecek { background: #ffcdd2; color: #b71c1c; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-
         .ders-durum-baslik { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; }
         .ders-tarih-yazi { font-size: 14px; font-weight: 900; color: #222; }
 
@@ -129,7 +124,7 @@
 
         .chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; }
 
-        /* YÖNETİCİ LOGO BUTONU (Yazısız, Sadece Simge) */
+        /* YÖNETİCİ LOGO BUTONU */
         .admin-float-btn {
             position: fixed; bottom: 20px; right: 20px; z-index: 1000;
             background: rgba(46, 125, 50, 0.5); color: white; border: none; width: 45px; height: 45px;
@@ -159,7 +154,7 @@
 <body>
 
     <div class="main-container">
-        <!-- 1. Üst Menü (Öğrenci Avatarı Eklendi) -->
+        <!-- 1. Üst Menü -->
         <div class="top-bar">
             <div class="top-bar-left">
                 <div class="student-avatar" id="ogrenciAvatarHarf">Ö</div>
@@ -192,23 +187,18 @@
             <button class="tab-btn" onclick="sekmeGecis(3)">🏆 Rozetler</button>
         </div>
 
-        <!-- ---------------- ANA İÇERİK BÖLÜMLERİ (SEKMELERE GÖRE DEĞİŞİR) ---------------- -->
-
         <!-- A. ÖZET GÖRÜNÜMÜ ALANI -->
         <div id="sekmeOzetAlani" style="display: flex; flex-direction: column; gap: 15px;">
-            <!-- 4. Ders Çizelgesi -->
             <div class="card">
                 <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
                 <div class="ders-grid-3" id="dersZamanAlani"></div>
             </div>
 
-            <!-- 5. Öğretmen Notu -->
             <div class="card">
                 <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
                 <div class="teacher-note-box" id="ogretmenNotu">Eğitim Koçu Notu Geliyor...</div>
             </div>
 
-            <!-- 6. Rozetler -->
             <div class="card">
                 <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
                 <div class="rozet-grid" id="rozetlerAlani"></div>
@@ -218,7 +208,6 @@
                 </div>
             </div>
 
-            <!-- 7. Okuma & Alfabe -->
             <div class="card">
                 <div class="card-header-flex">
                     <h3 class="card-title">📚 Okuma Kültürü & Odak Takibi</h3>
@@ -256,7 +245,6 @@
                 </div>
             </div>
 
-            <!-- 8. İstatistikler -->
             <div class="stats-grid-4">
                 <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
                 <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
@@ -264,15 +252,17 @@
                 <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
             </div>
 
-            <!-- 9. Grafikler -->
             <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
             <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
         </div>
 
-        <!-- B. DERS RAPORLARI SEKME ALANI -->
-        <div id="sekmeRaporlarAlani" class="card" style="display: none;">
-            <div class="card-header-flex"><h3 class="card-title">📝 Geçmiş Ders Raporları & Gelişim Arşivi</h3></div>
-            <div id="dersRaporlariListesi" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- B. DERS RAPORLARI SEKME ALANI (PROFESYONEL VE RENGARENK) -->
+        <div id="sekmeRaporlarAlani" style="display: none; flex-direction: column; gap: 15px;">
+            <div class="card" style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #a5d6a7;">
+                <h3 class="card-title" style="color:#1b5e20;">📝 Öğrenci Haftalık Gelişim Karnesi & Arşivi</h3>
+                <p style="font-size: 13px; color: #444; margin-top: 4px;">Geçmiş derslerdeki başarı puanların, haftalık çalışmaların, kriter detayların ve ödev takibin aşağıda listelenmiştir.</p>
+            </div>
+            <div id="dersRaporlariListesi" style="display: flex; flex-direction: column; gap: 15px;">
                 <!-- Dinamik olarak dolacak -->
             </div>
         </div>
@@ -286,7 +276,7 @@
         <!-- D. ROZETLER SEKME ALANI -->
         <div id="sekmeRozetlerAlani" class="card" style="display: none;">
             <div class="card-header-flex"><h3 class="card-title">🏆 Tüm Rozet Koleksiyonu</h3></div>
-            <div style="padding: 20px; text-align: center; color: #555;">Rozet detayları ve ilerleme durumu yakında burada!</div>
+            <div style="padding: 20px; text-align: center; color: #555;">Rozet detayları ve ilerleme durumu bu alanda!</div>
         </div>
 
     </div>
@@ -302,7 +292,6 @@
                 <button onclick="modalKapat()" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
             </div>
 
-            <!-- Öğrenci Seçimi -->
             <div class="form-group">
                 <label>Öğrenci Seçin</label>
                 <select id="rubrikOgrenciSec" onchange="ogrenciSecildiVerileriYukle()">
@@ -310,13 +299,11 @@
                 </select>
             </div>
 
-            <!-- GEÇMİŞ VERİLERİ DÜZENLEME SEÇENEĞİ -->
             <div class="form-group" style="background:#e8f5e9; padding:10px; border-radius:8px; border:1px solid #a5d6a7;">
                 <label style="color:#1b5e20;">🛠️ Geçmiş Verileri Düzenle (İsteğe Bağlı)</label>
                 <select id="rubrikGecmisSec" onchange="gecmisVeriFormaYukle()">
                     <option value="yeni">✨ (Yeni Kayıt Ekle - WhatsApp Raporu Gider)</option>
                 </select>
-                <small style="color:#555; font-size:11px;">Eski bir tarih seçerseniz sadece Sheets güncellenir, WhatsApp gitmez.</small>
             </div>
 
             <div class="form-group">
@@ -355,7 +342,6 @@
                 <input type="text" id="rubrikYeniHarfler" placeholder="Örn: D, T">
             </div>
 
-            <!-- ÖDEV KONTROLÜ -->
             <div class="form-group" style="background:#fff8e1; padding:10px; border-radius:8px; border:1px solid #ffe082;">
                 <label style="color:#f57f17; font-weight:bold;">📚 Önceki Hafta Verilen Ödev Kontrolü</label>
                 <div id="oncekiOdevMetni" style="font-size:13px; color:#333; margin-bottom:6px; font-style:italic;">Yükleniyor...</div>
@@ -366,7 +352,6 @@
                 </select>
             </div>
 
-            <!-- Ders Başı Durumu -->
             <div class="form-group">
                 <label>Ders Başı Durumu & Gözlem</label>
                 <select id="rubrikDersBasi">
@@ -383,7 +368,6 @@
                 <textarea id="rubrikDersBasiYorum" rows="2" placeholder="Örn: Bugün okuma akıcılığında çok büyük bir sıçrama yaptık..."></textarea>
             </div>
 
-            <!-- Kaydırmalı Çubuklu Puanlayıcı -->
             <div class="form-group">
                 <label>Ders İçi Gelişim Puanlayıcı (Kaydırmalı Çubuklar)</label>
                 <div class="range-grid">
@@ -416,14 +400,13 @@
         let gelisimChartInstance = null;
         let radarChartInstance = null;
 
-        // Oturum verisini şifreli okuyan yardımcı fonksiyon
         function oturumOku(key) {
             let val = localStorage.getItem(key);
             if (!val) return null;
             try {
-                return atob(val); // Şifreyi çöz
+                return atob(val);
             } catch (e) {
-                return val; // Eskiden kalma düz metin varsa yedek olarak kabul et
+                return val;
             }
         }
 
@@ -446,7 +429,7 @@
             });
         }
 
-        // Sekme Değiştirme Fonksiyonu
+        // Sekme Değiştirme
         function sekmeGecis(index) {
             const buttons = document.querySelectorAll(".tabs-bar .tab-btn");
             buttons.forEach((btn, idx) => {
@@ -455,36 +438,64 @@
             });
 
             document.getElementById("sekmeOzetAlani").style.display = (index === 0) ? "flex" : "none";
-            document.getElementById("sekmeRaporlarAlani").style.display = (index === 1) ? "block" : "none";
+            document.getElementById("sekmeRaporlarAlani").style.display = (index === 1) ? "flex" : "none";
             document.getElementById("sekmeKazanimlarAlani").style.display = (index === 2) ? "block" : "none";
             document.getElementById("sekmeRozetlerAlani").style.display = (index === 3) ? "block" : "none";
         }
 
-        // Ders Raporlarını Listeye Dolduran Fonksiyon
+        // Profesyonel ve Rengarenk Ders Raporları Kartları Oluşturucu
         function dersRaporlariniEkranaBas(kayitlar) {
             let listeDiv = document.getElementById("dersRaporlariListesi");
             if (!listeDiv) return;
 
             if (!kayitlar || kayitlar.length === 0) {
-                listeDiv.innerHTML = `<div style="text-align:center; color:#666; padding:15px;">Henüz geçmiş ders raporu bulunmuyor.</div>`;
+                listeDiv.innerHTML = `<div style="text-align:center; color:#666; padding:20px; background:#fff; border-radius:12px;">Henüz geçmiş ders raporu bulunmuyor.</div>`;
                 return;
             }
 
             let html = "";
             kayitlar.slice().reverse().forEach((k) => {
+                let p = k.genelPuan || 0;
+                let puanRenk = p >= 85 ? '#2e7d32' : (p >= 70 ? '#f57c00' : '#c62828');
+
                 html += `
-                    <div style="background:#faf8f5; border:1px solid #e0dcd0; padding:14px; border-radius:12px; border-left: 5px solid #2e7d32; margin-bottom:10px;">
-                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; color:#555; margin-bottom:6px;">
-                            <span>📅 Tarih: ${k.tarih}</span>
-                            <span style="background:#e8f5e9; color:#1b5e20; padding:2px 8px; border-radius:8px;">Genel Puan: ${k.genelPuan || 'N/A'}</span>
+                    <div style="background:#ffffff; border:2px solid #dcedc8; padding:18px; border-radius:16px; box-shadow: 0 4px 15px rgba(46,125,50,0.06); position:relative; overflow:hidden;">
+                        <!-- Üst Bilgi Şeridi -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px dashed #f0eae1; padding-bottom:10px; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                            <div style="font-size:14px; font-weight:900; color:#1b5e20; display:flex; align-items:center; gap:6px;">
+                                📅 Ders Tarihi: ${k.tarih}
+                            </div>
+                            <div style="background:${puanRenk}; color:white; padding:4px 12px; border-radius:20px; font-size:13px; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                                ⭐ Genel Puan: ${puan} / 100
+                            </div>
                         </div>
-                        <div style="font-size:13px; color:#333; line-height:1.5; margin-bottom:8px; font-style:italic;">
-                            "${k.haftalikNot || 'Bu hafta için özel not girilmemiş.'}"
+
+                        <!-- O Hafta Ne Yapıldı (Öğretmen Notu / Gözlem) -->
+                        <div style="margin-bottom:12px;">
+                            <div style="font-size:11px; font-weight:bold; color:#2e7d32; text-transform:uppercase; margin-bottom:4px;">🌟 O Hafta Ne Yapıldı & Gözlem:</div>
+                            <div style="background:#f9fbe7; border-left:4px solid #8bc34a; padding:10px 14px; border-radius:8px; font-size:13px; color:#333; line-height:1.6; font-style:italic;">
+                                "${k.haftalikNot || 'Bu hafta için özel not girilmemiş.'}"
+                            </div>
                         </div>
-                        <div style="font-size:11px; color:#666; display:flex; gap:15px; flex-wrap:wrap; border-top:1px dashed #ddd; padding-top:6px;">
-                            <span>📚 Kitap: <b>${k.aktifKitap || 'Belirtilmedi'}</b></span>
-                            <span>📖 Okunan: <b>${k.okunanSayfa} sayfa</b></span>
-                            <span>🎯 Hedef: <b>${k.hedefSayfa} sayfa</b></span>
+
+                        <!-- Kriter Puanları (Mini Renkli Barlar) -->
+                        <div style="margin-bottom:12px; background:#faf8f5; padding:12px; border-radius:12px; border:1px solid #eae5dc;">
+                            <div style="font-size:11px; font-weight:bold; color:#555; text-transform:uppercase; margin-bottom:8px;">🎯 Haftalık 5 Kriter Puan Dağılımı:</div>
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:8px; font-size:12px; font-weight:600;">
+                                <div>📖 Okuma: <span style="color:#2e7d32;">${k.okuma}/100</span></div>
+                                <div>✍️ Yazma: <span style="color:#1976d2;">${k.yazma}/100</span></div>
+                                <div>🎧 Dinleme: <span style="color:#f57c00;">${k.dinleme}/100</span></div>
+                                <div>🗣️ Konuşma: <span style="color:#7b1fa2;">${k.konusma}/100</span></div>
+                                <div>⚡ Dikkat: <span style="color:#c2185b;">${k.dikkat}/100</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Ödev Durumu ve Kitap Detayı -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:#e8f5e9; padding:10px 14px; border-radius:10px; font-size:12px; flex-wrap:wrap; gap:10px;">
+                            <div>📚 Kitap: <b>${k.aktifKitap || 'Belirtilmedi'}</b> (Okunan: <b>${k.okunanSayfa}</b> / Hedef: <b>${k.hedefSayfa}</b> sayfa)</div>
+                            <div style="background:#fff; color:#1b5e20; padding:3px 10px; border-radius:6px; font-weight:bold; border:1px solid #c8e6c9;">
+                                📌 Ödev Durumu: Takip Edildi ve İşlendi ✅
+                            </div>
                         </div>
                     </div>
                 `;
@@ -784,7 +795,6 @@
                     document.getElementById("okunanSayfaText").innerText = `Okunan: ${okunan} sayfa`;
                     document.getElementById("hedefSayfaText").innerText = `Hedef: ${hedefSayfa} sayfa`;
 
-                    // Google Sheets'ten Gelen Puan Bazlı Rozetler
                     let rozetler = data.rozetler || [];
                     let toplamRozet = rozetler.length;
                     let kazanilanSayisi = rozetler.filter(r => r.durum === "Kazanıldı").length;
@@ -810,7 +820,6 @@
                         document.getElementById("rozetlerAlani").innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777;">Henüz rozet tanımlanmadı.</div>`;
                     }
 
-                    // Alfabe
                     let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
                     let ogrenilenDizi = ogrenilenHarflerStr.split(",").map(h => h.trim());
                     let alfabeHtml = "";
@@ -825,7 +834,6 @@
 
                     renkliGrafikleriCiz(data.gelisim.kriterler, data.gelisim.gecmisTarihler, data.gelisim.gecmisPuanlar);
 
-                    // Dersler Çizelgesi (Geçen: Sarı, Güncel/Yapıldı: Yeşil, Gelecek: Kırmızı)
                     let dersler = data.dersler || [];
                     let dersHtml = "";
                     if(dersler.length > 0) {
@@ -873,7 +881,6 @@
         }
 
         function renkliGrafikleriCiz(kriterler, tarihler, puanlar) {
-            // 1. Yıllık Gelişim Eğrisi
             const ctxGelisim = document.getElementById('gelisimChart').getContext('2d');
             if (gelisimChartInstance) gelisimChartInstance.destroy();
 
@@ -899,7 +906,6 @@
                 }
             });
 
-            // 2. 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği
             const ctxRadar = document.getElementById('radarChart').getContext('2d');
             if (radarChartInstance) radarChartInstance.destroy();
 
