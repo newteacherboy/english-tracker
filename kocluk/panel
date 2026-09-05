@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eğitim Koçum - Öğrenci Paneli</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; /* Çocuklar için eğlenceli font */
+            background-color: #e8f5e9; /* Açık yeşil, ferah arka plan */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2e7d32;
+            margin: 0;
+            font-size: 24px;
+        }
+        .logout-btn {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .card-container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .card {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 2px solid #a5d6a7;
+        }
+        .card h2 {
+            color: #1565c0;
+            margin-top: 0;
+        }
+        .card p {
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1 id="karsilamaMesaji">Hoş Geldin!</h1>
+        <button class="logout-btn" onclick="cikisYap()">Çıkış Yap 🚪</button>
+    </div>
+
+    <div class="card-container">
+        <!-- Günlük Görev Kartı -->
+        <div class="card">
+            <h2>Bugünkü Görevlerim 🎯</h2>
+            <p>Bugün için harika görevlerin hazırlanıyor!</p>
+            <!-- İleride görevleri buraya çekeceğiz -->
+        </div>
+
+        <!-- Rozet Kartı -->
+        <div class="card">
+            <h2>Rozet Sandığım 🏆</h2>
+            <p>Henüz yeni başladın, yıldızları toplamaya hazır mısın?</p>
+            <!-- İleride rozetleri buraya çekeceğiz -->
+        </div>
+    </div>
+
+    <script>
+        // Giriş yapan öğrencinin adını LocalStorage'dan al
+        const ogrenciAdi = localStorage.getItem("aktifOgrenci");
+
+        // Eğer giriş yapılmamışsa (isim yoksa) zorla giriş ekranına geri gönder
+        if (!ogrenciAdi) {
+            window.location.href = "index.html";
+        } else {
+            // İsim varsa karşılama mesajını yazdır
+            document.getElementById("karsilamaMesaji").innerText = "Harika Gidiyorsun, " + ogrenciAdi + "! 🌟";
+        }
+
+        // Çıkış yapma fonksiyonu
+        function cikisYap() {
+            localStorage.removeItem("aktifOgrenci"); // Hafızayı temizle
+            window.location.href = "index.html"; // Giriş ekranına dön
+        }
+    </script>
+
+</body>
+</html>
