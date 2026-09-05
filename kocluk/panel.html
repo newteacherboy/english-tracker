@@ -380,7 +380,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHEgrXnGXtpCd1Z9FRxMsiPj4cWWaofED4YvneU5A6IWlMEhzt9dAbxn52K35EqZ5G/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzoz-ySVgoIMoDebStD4SYay55n3AKTUt8hDX4a6NaJ8u5NC7uQTFO2yU8K_sHUMhKQ/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
@@ -700,10 +700,11 @@
                     document.getElementById("okunanSayfaText").innerText = `Okunan: ${okunan} sayfa`;
                     document.getElementById("hedefSayfaText").innerText = `Hedef: ${hedefSayfa} sayfa`;
 
-                    // Rozetler
+                    // Google Sheets'ten Gelen Puan Bazlı Rozetler
                     let rozetler = data.rozetler || [];
                     let toplamRozet = rozetler.length;
                     let kazanilanSayisi = rozetler.filter(r => r.durum === "Kazanıldı").length;
+                    
                     document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
                     let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
                     document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
@@ -715,12 +716,14 @@
                             let aktifMi = r.durum === "Kazanıldı";
                             rozetHtml += `
                                 <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
-                                    <div style="font-size:24px; margin-bottom:4px;">${aktifMi ? '🌱' : '🔒'}</div>
+                                    <div style="font-size:26px; margin-bottom:4px;">${aktifMi ? r.emoji : '🔒'}</div>
                                     <div style="font-size:11px; font-weight:bold; color:#333;">${r.rozetAdi}</div>
-                                    <div style="font-size:10px; color:#666; margin-top:2px;">${r.puan || 0} p</div>
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${r.puan} p</div>
                                 </div>`;
                         });
                         document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
+                    } else {
+                        document.getElementById("rozetlerAlani").innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777;">Henüz rozet tanımlanmadı.</div>`;
                     }
 
                     // Alfabe
