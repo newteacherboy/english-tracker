@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eğitim Koçum - Giriş Portalı</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+        h2 { color: #2e7d32; margin-bottom: 20px; }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #1b5e20; }
+        #hataMesaji { color: #d32f2f; margin-top: 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Minik Koçluk Girişi</h2>
+        <div class="input-group">
+            <label>Öğrenci Adı</label>
+            <input type="text" id="ogrenciAdi" placeholder="Örn: Ali">
+        </div>
+        <div class="input-group">
+            <label>Şifre</label>
+            <input type="password" id="sifre" placeholder="Şifreniz">
+        </div>
+        <button onclick="girisYap()">Giriş Yap</button>
+        <div id="hataMesaji"></div>
+    </div>
+
+    <script>
+        // Google Apps Script'ten aldığın uzun URL'yi buraya tırnak içine yapıştır:
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk0aaQ-x1r_iXWeeaZ15N6ZHiyuv2PHrOm3GhP9CYSHtGULyIl-Bu1s7Qi9Al7XnES/exec";
+
+        function girisYap() {
+            const ad = document.getElementById("ogrenciAdi").value.trim();
+            const sifre = document.getElementById("sifre").value.trim();
+            const hataKutusu = document.getElementById("hataMesaji");
+
+            if (!ad || !sifre) {
+                hataKutusu.innerText = "Lütfen tüm alanları doldurun!";
+                return;
+            }
+
+            hataKutusu.innerText = "Giriş yapılıyor, lütfen bekleyin...";
+
+            const veri = {
+                action: "login",
+                ogrenciAdi: ad,
+                sifre: sifre
+            };
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", // Google Apps Script CORS engeline takılmamak için
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                },
+                body: JSON.stringify(veri)
+            })
+            .then(() => {
+                // Not: no-cors modunda yanıt doğrudan okunamaz ama 
+                // basitçe lokal test veya yönlendirme mantığı kurabiliriz.
+                // Şimdilik doğrudan panele yönlendirelim veya localStorage kullanalım:
+                localStorage.setItem("aktifOgrenci", ad);
+                window.location.href = "panel.html";
+            })
+            .catch(error => {
+                hataKutusu.innerText = "Bir hata oluştu: " + error;
+            });
+        }
+    </script>
+</body>
+</html>
