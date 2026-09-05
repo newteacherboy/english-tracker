@@ -115,7 +115,7 @@
 
         .chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; }
 
-        /* YÖNETİCİ SABİT SOLUK BUTON & RUBRİK MODAL */
+        /* YÖNETİCİ BUTONU VE RUBRİK MODAL */
         .admin-float-btn {
             position: fixed; bottom: 20px; right: 20px; z-index: 1000;
             background: rgba(46, 125, 50, 0.4); color: white; border: none; padding: 10px 16px;
@@ -235,20 +235,20 @@
             </div>
         </div>
 
-        <!-- 8. İstatistikler -->
+        <!-- 8. İstatistikler (Ortalama Genel Puan Bağlandı) -->
         <div class="stats-grid-4">
-            <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
+            <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
             <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
             <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
             <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
         </div>
 
-        <!-- 9. Grafikler -->
+        <!-- 9. Grafikler (5 Kriterli Beceri Radar Grafiği Güncellendi) -->
         <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
-        <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 Eğlenceli Beceri Radar Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
+        <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Beceri Radar Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
     </div>
 
-    <!-- SAĞ ALT SOLUK YÖNETİCİ BUTONU -->
+    <!-- YÖNETİCİ BUTONU -->
     <button class="admin-float-btn" onclick="yoneticiGirisSorgula()">⚙️ Öğretmen Paneli</button>
 
     <!-- ŞİFRE & RUBRİK MODAL -->
@@ -309,7 +309,7 @@
                     <div class="range-item"><span>Konuşma: <b id="val4">80</b></span><input type="range" id="crit4" min="0" max="100" value="80" oninput="rangeGuncelle()"></div>
                     <div class="range-item"><span>Dikkat: <b id="val5">95</b></span><input type="range" id="crit5" min="0" max="100" value="95" oninput="rangeGuncelle()"></div>
                 </div>
-                <div style="text-align:center; margin-top:8px; font-weight:bold; color:#1b5e20;">Hesaplanan Genel Puan: <span id="hesaplananPuan">87</span></div>
+                <div style="text-align:center; margin-top:8px; font-weight:bold; color:#1b5e20;">Bu Haftaki Genel Puan: <span id="hesaplananPuan">87</span></div>
             </div>
 
             <div class="form-group">
@@ -327,13 +327,14 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwpn_vmzByBIihYwCso52c9Ido7obGDQqrtoffLH_AZR1RUE7WTAY7iS1pZ591pxS2u/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynqCPJOqc7T8_EDaltIiCIpuxbWPP6nS5_cumq3Ya4S0AylwyLUPqQFF06dic6NtFS/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
         let timerInterval = null;
         let sistemOgrencileri = [];
+        let radarChartInstance = null;
 
         if (!ogrenciAdi) {
             window.location.href = "index.html";
@@ -419,6 +420,12 @@
             let gPuan = Number(document.getElementById("hesaplananPuan").innerText);
             let odevMetni = document.getElementById("rubrikOdevMetni").value.trim();
             let ozelYorum = document.getElementById("rubrikOzelYorum").value.trim();
+            
+            let c1 = Number(document.getElementById("crit1").value);
+            let c2 = Number(document.getElementById("crit2").value);
+            let c3 = Number(document.getElementById("crit3").value);
+            let c4 = Number(document.getElementById("crit4").value);
+            let c5 = Number(document.getElementById("crit5").value);
 
             alert("Veriler Google Sheets'e işleniyor...");
 
@@ -434,23 +441,23 @@
                     genelPuan: gPuan,
                     etkinlikBasarisi: gPuan,
                     ogretmenYorumu: ozelYorum,
-                    odevIcerigi: odevMetni
+                    odevIcerigi: odevMetni,
+                    kriterler: { okuma: c1, yazma: c2, dinleme: c3, konusma: c4, dikkat: c5 }
                 })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    alert("Veriler başarıyla kaydedildi! WhatsApp Raporu hazırlanıyor...");
+                    alert("Veriler kaydedildi! WhatsApp Raporu hazırlanıyor...");
                     
                     let veliTelFinal = String(data.veliTelefon || tel);
                     let temizTel = veliTelFinal.replace(/\D/g, '');
 
-                    // AI Destekli Profesyonel Veli Raporu Mesajı
                     let mesaj = `🌟 *DİJİMUALLİM HAFTALIK VELİ RAPORU* 🌟\n\n` +
                                 `Sevgili Velimiz, öğrencimiz *${oAdi.toUpperCase()}* için bu haftanın koçluk değerlendirmesi:\n\n` +
                                 `📌 *Ders Başı Durumu:* ${dBasDurum}\n` +
                                 (dBasYorum ? `💬 *Öğretmen Gözlemi:* ${dBasYorum}\n\n` : `\n`) +
-                                `⭐ Genel Puan / Etkinlik Başarısı: *${gPuan} / 100*\n` +
+                                `⭐ Bu Haftaki Puan: *${gPuan} / 100*\n` +
                                 `📚 *Bu Hafta Verilen Ödev:* ${odevMetni || "Ödev verilmedi."}\n\n` +
                                 `🍎 *Öğretmen Değerlendirmesi:* ${ozelYorum || "Harika bir gelişim haftası geçirdik."}\n\n` +
                                 `📅 Tamamlanan Ders: ${dTar || "Bugün"}\n` +
@@ -499,7 +506,8 @@
                 if (data.status === "success") {
                     toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
 
-                    document.getElementById("statGenelPuan").innerText = data.gelisim.genelPuan;
+                    // Ortalama genel puanı panele yansıtıyoruz
+                    document.getElementById("statGenelPuan").innerText = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan;
                     document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
                     document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
                     document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
@@ -540,7 +548,7 @@
                         document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
                     }
 
-                    // Alfabe (H sütunu)
+                    // Alfabe
                     let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
                     let ogrenilenDizi = ogrenilenHarflerStr.split(",").map(h => h.trim());
                     let alfabeHtml = "";
@@ -551,9 +559,10 @@
                         alfabeHtml += `<div class="${ogrenildiMi ? "harf-kutu ogrenildi" : "harf-kutu"}">${harf}</div>`;
                     });
                     document.getElementById("alfabeGridAlani").innerHTML = alfabeHtml;
-                    document.getElementById("alfabeSayacText").innerText = `${tamamlananSayi} / 29 Harf`;
+                    document.getElementById("alfabeSayacText").innerText = `${tamamlananSayi} / 29 Harف`;
 
-                    renkliGrafikleriCiz();
+                    // Grafikleri ve 5 Kriterli Radar Grafiğini Çiz
+                    renkliGrafikleriCiz(data.gelisim.kriterler);
 
                     // Dersler
                     let dersler = data.dersler || [];
@@ -580,7 +589,7 @@
             });
         }
 
-        function renkliGrafikleriCiz() {
+        function renkliGrafikleriCiz(kriterler) {
             const ctxGelisim = document.getElementById('gelisimChart').getContext('2d');
             new Chart(ctxGelisim, {
                 type: 'line',
@@ -599,21 +608,29 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
 
+            // 5 Kriterli Radar Grafik (Okuma, Yazma, Dinleme, Konuşma, Dikkat)
             const ctxRadar = document.getElementById('radarChart').getContext('2d');
-            new Chart(ctxRadar, {
+            if (radarChartInstance) radarChartInstance.destroy();
+
+            radarChartInstance = new Chart(ctxRadar, {
                 type: 'radar',
                 data: {
                     labels: ['Okuma', 'Yazma', 'Dinleme', 'Konuşma', 'Dikkat'],
                     datasets: [{
-                        label: 'Gelişim Alanları',
-                        data: [80, 70, 90, 85, 75],
-                        backgroundColor: 'rgba(255, 179, 0, 0.2)',
+                        label: '5 Kriterli Beceri Dağılımı',
+                        data: [kriterler.okuma, kriterler.yazma, kriterler.dinleme, kriterler.konusma, kriterler.dikkat],
+                        backgroundColor: 'rgba(255, 179, 0, 0.25)',
                         borderColor: '#ffb300',
                         borderWidth: 3,
                         pointBackgroundColor: '#ffb300'
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { r: { beginAtZero: true, max: 100 } }, plugins: { legend: { position: 'bottom' } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { r: { beginAtZero: true, max: 100 } }, 
+                    plugins: { legend: { position: 'bottom' } } 
+                }
             });
         }
 
