@@ -48,7 +48,7 @@ body {
     box-shadow: 0 8px 32px 0 rgba(125, 100, 81, 0.06) !important;
 }
 
-/* 🟢 YÜZEN SAĞ ALT BUTON KAPSAYICILARI (SOLUK / PASTEL VE SAĞ ALTTA SABİT) */
+/* 🟢 SAĞ ALT YÜZEN BUTONLAR (TÜM CİHAZLARDA SOLUK/PASTEL VE SAĞ ALTTA) */
 .whatsapp-float-wrapper {
     position: fixed;
     bottom: 25px;
@@ -101,10 +101,11 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     border: 2px solid rgba(255,255,255,0.8);
     outline: none;
-    opacity: 0.85;
+    opacity: 0.75;
     transition: all 0.2s ease;
 }
 
+/* Soluk / Pastel Renk Tonları */
 .whatsapp-float-btn { background: #A9DFBF; color: #0E6251; }
 .seviye-test-float-btn { background: #D4E6F1; color: #1B4F72; }
 .ezber-float-btn { background: #EBDEF0; color: #512E5F; }
@@ -298,7 +299,7 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    opacity: 0.9;
+    opacity: 0.85;
     transition: all 0.2s;
 }
 #yeni_rubrikOpenBtn:hover {
@@ -834,7 +835,7 @@ canvas { max-height: 220px; }
   </div>
 </div>
 
-<!-- 📅 SAĞ ALTA SABİTLENMİŞ YUVARLAK LOGO DERS TALEBİ BUTONU -->
+<!-- 📅 SAĞ ALTA SABİTLENMİŞ DERS TALEBİ BUTONU -->
 <div class="randevu-float-wrapper">
   <span id="randevuGeciciYazi" class="auto-hide-badge randevu-badge-text">Özel Ders Talebi Oluştur! 📅</span>
   <button id="randevuFloatBtn" class="randevu-float-btn" onclick="randevuFormuKapatAcl()" title="Online / Yüz Yüze Ders Talebi">
@@ -842,7 +843,7 @@ canvas { max-height: 220px; }
   </button>
 </div>
 
-<!-- AÇILIR DERS TALEBİ FORMU (POPUP KART) -->
+<!-- AÇILIR DERS TALEBİ FORMU -->
 <div id="sagAltDersKutusu" style="display: none; position: fixed; bottom: 200px; right: 25px; width: 360px; max-width: calc(100vw - 40px); max-height: 75vh; background: #FAF6F0; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); z-index: 9999999; flex-direction: column; overflow-y: auto; border: 1px solid #DCD5C5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-sizing: border-box;">
   <button type="button" onclick="randevuFormuKapatAcl()" style="position: absolute; top: 12px; right: 14px; background: rgba(0,0,0,0.06); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #4A4235;">✕</button>
   
@@ -999,10 +1000,7 @@ canvas { max-height: 220px; }
   </div>
 </div>
 
-<!-- ========================================== -->
-<!-- ⚙️ TÜM SİSTEMİ ÇALIŞTIRAN ANA JAVASCRIPT    -->
-<!-- ========================================== -->
-<script>
+    <script>
 var WEB_APP_URL = "https://script.google.com/macros/s/AKfycby6i1ZuSgRmPwZPbN3CQJWU3hyrhMRj44xTYGtD3Gh1jzTX-TnQTPl4-zTwu1SldQAs/exec";
 const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
 const SECTIONS = {
@@ -1350,7 +1348,7 @@ function showStudentPage(name) {
       <div class="level-badge">${latest.seviye}</div>
     </div>
 
-    <!-- ⏱️ OTURUM PANELİ -->
+    <!-- ⏱️ SEKMELERİN HEMEN ÜSTÜNDE OTURUM PANELİ -->
     <div id="oturumSayacKutusu" style="background: #E1F5EE; border: 1px solid #a8dfc0; color: #0F6E56; padding: 14px 18px; border-radius: 14px; margin-bottom: 1.25rem; font-family: 'Segoe UI', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13.5px;">
@@ -1596,7 +1594,6 @@ function buildLessonStatusBox(rows) {
   }
 
   const pastStyle = "background: #FEF9E7; border-color: #F9E79F;";
-  const pastStatus = pastLesson ? (pastLesson.ders_durumu || "").toLowerCase().trim() : "";
   const currentStatus = currentLesson ? (currentLesson.ders_durumu || "").toLowerCase().trim() : "";
   const nextStatus = nextLesson ? (nextLesson.ders_durumu || "").toLowerCase().trim() : "";
 
@@ -2178,9 +2175,22 @@ function ezberKelimeCek() {
 
     let sinifKelimeleri = ezberKelimeDeposu[aktifSinif] || kelimeler2;
     let digerKelimeler = sinifKelimeleri.filter(k => k.tr !== mevcutKelimeNesnesi.tr);
-    let yanlisKelime = digerKelimeler[Math.floor(Math.random() * digerKelimeler.lengthSize 
+    let yanlisKelime = digerKelimeler[Math.floor(Math.random() * digerKelimeler.length)];
 
-                                                 function ezberSikSecildi(btnElement, dogruMu) {
+    let secenekler = [
+        { metin: mevcutKelimeNesnesi.tr, dogruMu: true },
+        { metin: yanlisKelime ? yanlisKelime.tr : "Farklı Anlam", dogruMu: false }
+    ];
+    secenekler.sort(() => Math.random() - 0.5);
+
+    let siklarHTML = "";
+    secenekler.forEach(s => {
+        siklarHTML += `<button class="ezber-sik-btn" onclick="ezberSikSecildi(this, ${s.dogruMu})">${s.metin}</button>`;
+    });
+    document.getElementById("ezberSiklarAlani").innerHTML = siklarHTML;
+}
+
+function ezberSikSecildi(btnElement, dogruMu) {
     if (cevapKilitli) return; 
     cevapKilitli = true;
     if (dogruMu) {
@@ -2274,7 +2284,6 @@ function ezberYenidenBaslat() {
     document.getElementById("ezberGirisEkrani").style.display = "block";
 }
 
-// 🎯 SEVİYE TESPİT SINAVI KODLARI
 const hamSoruHavuzu = [
   { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel1.png", q: "Look at the picture. What is the person doing at the moment?", a: ["She is preparing a traditional dinner in the kitchen.", "She is working on his laptop and writing some notes.", "She is buying a new tablet from the tech store.", "She is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
   { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel2.png", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
@@ -2978,6 +2987,54 @@ document.addEventListener('visibilitychange', function () {
         googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
     }
 });
+
+function siradakiDersTarihiniHesapla(sabitGunlerMetni) {
+    if (!sabitGunlerMetni || typeof sabitGunlerMetni !== "string") {
+        let d = new Date();
+        d.setDate(d.getDate() + 7);
+        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
+    }
+
+    const gunHaritasi = {
+        "pazar": 0, "pazartesi": 1, "sali": 2, "çarşamba": 3, "carsamba": 3,
+        "perşembe": 4, "persembe": 4, "cuma": 5, "cumartesi": 6
+    };
+
+    let parcalar = sabitGunlerMetni.toLowerCase().split(/[,\-\/]/).map(s => s.trim().replace(/ı/g, "i"));
+    let hedefGunler = [];
+    parcalar.forEach(p => {
+        for (let g in gunHaritasi) {
+            if (p.includes(g)) {
+                if (!hedefGunler.includes(gunHaritasi[g])) hedefGunler.push(gunHaritasi[g]);
+            }
+        }
+    });
+
+    if (hedefGunler.length === 0) {
+        let d = new Date();
+        d.setDate(d.getDate() + 7);
+        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
+    }
+
+    let bugun = new Date();
+    let bugunIndex = bugun.getDay();
+    let minFark = 999;
+
+    hedefGunler.forEach(g => {
+        let fark = g - bugunIndex;
+        if (fark <= 0) fark += 7;
+        if (fark < minFark) minFark = fark;
+    });
+
+    let siradakiTarih = new Date();
+    siradakiTarih.setDate(bugun.getDate() + minFark);
+     
+    let gun = ("0" + siradakiTarih.getDate()).slice(-2);
+    let ay = ("0" + (siradakiTarih.getMonth() + 1)).slice(-2);
+    let yil = siradakiTarih.getFullYear();
+
+    return `${gun}.${ay}.${yil}`;
+}
 </script>
 </body>
 </html>
