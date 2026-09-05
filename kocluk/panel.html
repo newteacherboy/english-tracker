@@ -64,8 +64,7 @@
         .card { background: var(--card-bg); padding: 18px; border-radius: 18px; border: 2px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px dashed #f0eae1; padding-bottom: 8px; flex-wrap: wrap; gap: 10px; }
         .card-title { font-size: 15px; font-weight: bold; color: #2e7d32; display: flex; align-items: center; gap: 8px; margin: 0; }
-        .action-pill-btn { background: #ffb300; color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(255,179,0,0.3); }
-
+        
         .ders-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
         @media(max-width: 600px) { .ders-grid-3 { grid-template-columns: 1fr; } }
         .ders-box { background: #faf8f5; border: 2px solid #e0dcd0; padding: 15px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
@@ -79,19 +78,12 @@
         .teacher-note-box { 
             background: #fffde7; border: 1px solid #fff9c4; border-left: 6px solid #ffb300; 
             padding: 16px; border-radius: 14px; font-size: 14px; line-height: 1.7; color: #333; font-style: italic; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
-        /* Rozetler Vitrini Tasarımı */
         .rozet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; text-align: center; }
         .rozet-box { background: #faf8f5; border: 1px solid #eae5dc; padding: 12px 8px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .rozet-box.aktif { background: #f1f8e9; border-color: #81c784; box-shadow: 0 2px 5px rgba(46,125,50,0.1); }
+        .rozet-box.aktif { background: #f1f8e9; border-color: #81c784; }
         .rozet-box.soluk { opacity: 0.35; filter: grayscale(100%); background: #fff; }
-        
-        .rozet-progress-container { margin-top: 15px; border-top: 1px dashed #eae5dc; padding-top: 12px; }
-        .rozet-progress-track { background: #e0e0e0; height: 8px; border-radius: 4px; width: 100%; overflow: hidden; margin-bottom: 6px; }
-        .rozet-progress-fill { background: #ffb300; height: 100%; width: 0%; border-radius: 4px; transition: width 0.5s ease; }
-        .rozet-progress-text { font-size: 11px; color: #666; text-align: right; font-weight: 600; }
 
         .okuma-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
         @media(max-width: 600px) { .okuma-grid { grid-template-columns: 1fr; } }
@@ -108,24 +100,47 @@
         @media(max-width: 500px) { .alfabe-grid { grid-template-columns: repeat(6, 1fr); } }
 
         .harf-kutu { background: #faf8f5; border: 1px solid #ddd; border-radius: 6px; padding: 6px 2px; font-size: 14px; font-weight: bold; color: #aaa; opacity: 0.35; filter: grayscale(100%); transition: 0.3s; }
-        .harf-kutu.ogrenildi { background: #e8f5e9; border-color: #81c784; color: #1b5e20; opacity: 1; filter: none; box-shadow: 0 2px 4px rgba(46,125,50,0.15); }
+        .harf-kutu.ogrenildi { background: #e8f5e9; border-color: #81c784; color: #1b5e20; opacity: 1; filter: none; }
 
         .stats-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         @media(max-width: 600px) { .stats-grid-4 { grid-template-columns: 1fr; } }
-        .stat-box { padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); border: 2px solid rgba(0,0,0,0.03); }
+        .stat-box { padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 6px; border: 2px solid rgba(0,0,0,0.03); }
         .stat-box.kutu-1 { background: #e8f5e9; border-color: #a5d6a7; color: #1b5e20; }
         .stat-box.kutu-2 { background: #e3f2fd; border-color: #90caf9; color: #0d47a1; }
         .stat-box.kutu-3 { background: #fffde7; border-color: #ffe082; color: #f57f17; }
         .stat-box.kutu-4 { background: #fce4ec; border-color: #f48fb1; color: #880e4f; }
-        .stat-label { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
+        .stat-label { font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .stat-value-row { display: flex; align-items: baseline; justify-content: space-between; }
         .stat-main-num { font-size: 26px; font-weight: 900; }
-        .stat-trend { font-size: 12px; font-weight: bold; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.7); }
 
         .chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; }
 
-        .floating-actions { position: fixed; bottom: 15px; right: 15px; z-index: 100; }
-        .float-btn { background: white; border: 2px solid var(--border-color); padding: 8px 14px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-size: 12px; font-weight: bold; color: #2e7d32; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        /* YÖNETİCİ SABİT SOLUK BUTON & RUBRİK MODAL */
+        .admin-float-btn {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            background: rgba(46, 125, 50, 0.4); color: white; border: none; padding: 10px 16px;
+            border-radius: 30px; font-size: 12px; font-weight: bold; cursor: pointer; opacity: 0.5;
+            transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .admin-float-btn:hover { opacity: 1; background: rgba(46, 125, 50, 0.9); }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
+        }
+        .modal-content {
+            background: white; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+            padding: 20px; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 4px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;
+        }
+        .criteria-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center; }
+        @media(max-width: 500px) { .criteria-grid { grid-template-columns: repeat(2, 1fr); } }
+        .criteria-box { background: #f9f9f9; padding: 8px; border-radius: 8px; border: 1px solid #ddd; }
+        .criteria-box input { width: 100%; text-align: center; padding: 4px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -175,18 +190,12 @@
             <div class="teacher-note-box" id="ogretmenNotu">Yapay zeka koçluk notu hazırlanıyor...</div>
         </div>
 
-        <!-- 6. Kazanılan Rozetler (Yeniden Eklendi) -->
+        <!-- 6. Kazanılan Rozetler -->
         <div class="card">
-            <div class="card-header-flex">
-                <h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3>
-            </div>
-            <div class="rozet-grid" id="rozetlerAlani">
-                <!-- Dinamik Dolacak -->
-            </div>
-            <div class="rozet-progress-container">
-                <div class="rozet-progress-track">
-                    <div class="rozet-progress-fill" id="rozetProgressBar" style="width: 0%;"></div>
-                </div>
+            <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
+            <div class="rozet-grid" id="rozetlerAlani"></div>
+            <div class="rozet-progress-container" style="margin-top:15px; border-top:1px dashed #eae5dc; padding-top:12px;">
+                <div class="rozet-progress-track"><div class="rozet-progress-fill" id="rozetProgressBar" style="width: 0%;"></div></div>
                 <div class="rozet-progress-text" id="rozetProgressText">%0 tamamlandı</div>
             </div>
         </div>
@@ -195,7 +204,7 @@
         <div class="card">
             <div class="card-header-flex">
                 <h3 class="card-title">📚 Okuma Kültürü & Odak Takibi</h3>
-                <button class="action-pill-btn" onclick="alert('Hızlı okuma yolcusu modülü aktif!')">⚡ HIZLI OKUMA</button>
+                <button class="action-pill-btn" onclick="alert('Hızlı okuma aktif!')" style="background:#ffb300; border:none; padding:6px 12px; border-radius:15px; color:#fff; font-weight:bold; cursor:pointer;">⚡ HIZLI OKUMA</button>
             </div>
             
             <div class="okuma-grid">
@@ -208,9 +217,7 @@
                         <span>Haftalık Hedef İlerlemesi</span>
                         <span id="kitapYuzdeText" style="color: #2e7d32;">%0</span>
                     </div>
-                    <div class="okuma-progress-track">
-                        <div class="okuma-progress-fill" id="kitapProgressBar" style="width: 0%;"></div>
-                    </div>
+                    <div class="okuma-progress-track"><div class="okuma-progress-fill" id="kitapProgressBar" style="width: 0%;"></div></div>
                     <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; font-weight: 600;">
                         <span id="okunanSayfaText">Okunan: 0 sayfa</span>
                         <span id="hedefSayfaText">Hedef: 0 sayfa</span>
@@ -237,19 +244,19 @@
         <div class="stats-grid-4">
             <div class="stat-box kutu-1">
                 <div class="stat-label">⭐ Genel Puan</div>
-                <div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span><span class="stat-trend" style="color: #2e7d32;">Aktif</span></div>
+                <div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div>
             </div>
             <div class="stat-box kutu-2">
                 <div class="stat-label">🚀 Etkinlik Başarısı</div>
-                <div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span><span class="stat-trend" style="color: #0d47a1;">Puan</span></div>
+                <div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div>
             </div>
             <div class="stat-box kutu-3">
                 <div class="stat-label">🎯 Toplam Başarılı Ders</div>
-                <div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span><span style="font-size: 11px; font-weight: bold; opacity: 0.7;">Ders Kaydı</span></div>
+                <div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div>
             </div>
             <div class="stat-box kutu-4">
                 <div class="stat-label">🔥 Devam Oranı</div>
-                <div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span><span style="font-size: 11px; font-weight: bold; color: #c2185b;">Katılım</span></div>
+                <div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div>
             </div>
         </div>
 
@@ -258,19 +265,87 @@
             <div class="card-header-flex"><h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3></div>
             <div class="chart-container"><canvas id="gelisimChart"></canvas></div>
         </div>
-
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title">🎯 Eğlenceli Beceri Radar Grafiği</h3></div>
             <div class="chart-container"><canvas id="radarChart"></canvas></div>
         </div>
     </div>
 
-    <div class="floating-actions">
-        <button class="float-btn" onclick="alert('Öğretmene soru sorma ekranı aktif!')">💬 Soru Sor</button>
+    <!-- SAĞ ALT SOLUK YÖNETİCİ BUTONU -->
+    <button class="admin-float-btn" onclick="yoneticiGirisSorgula()">⚙️ Öğretmen Paneli</button>
+
+    <!-- ŞİFRE & RUBRİK MODAL -->
+    <div class="modal-overlay" id="rubrikModal">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="margin:0; color:#2e7d32;">📋 Otomatik Koçluk Rubriği</h3>
+                <button onclick="modalKapat()" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+            </div>
+
+            <div class="form-group">
+                <label>Öğrenci Adı</label>
+                <input type="text" id="rubrikOgrenciAdi" placeholder="Örn: Ali">
+            </div>
+
+            <div class="form-group">
+                <label>Tamamlanan Ders Tarihi</label>
+                <input type="date" id="rubrikDersTarihi">
+            </div>
+
+            <div class="form-group">
+                <label>Sonraki Planlanan Ders Tarihi</label>
+                <input type="date" id="rubrikSonrakiDersTarihi">
+            </div>
+
+            <div class="form-group">
+                <label>Ders Başı Durumu (Ödev / Hazırlık)</label>
+                <select id="rubrikDersBasi">
+                    <option value="Görevlerini Yaptı & Hazırdı">✅ Görevlerini Yaptı & Hazırdı</option>
+                    <option value="Ödev Eksikleri Vardı">⚠️ Ödev Eksikleri Vardı</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Ders Başı Yorumu</label>
+                <textarea id="rubrikDersBasiYorum" rows="2" placeholder="Ders başı hazırlık durumu hakkında not..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Yeni Öğrenilen Harfler (Virgülle Ayırın Örn: D,T,K)</label>
+                <input type="text" id="rubrikYeniHarfler" placeholder="Boş bırakırsanız değişmez">
+            </div>
+
+            <div class="form-group">
+                <label>Ders İçi Gelişim Puanlayıcı (5 Kriter - 0 ile 100 Arası)</label>
+                <div class="criteria-grid">
+                    <div class="criteria-box"><label>Okuma</label><input type="number" id="crit1" value="85" min="0" max="100" oninput="ortalamaHesapla()"></div>
+                    <div class="criteria-box"><label>Yazma</label><input type="number" id="crit2" value="90" min="0" max="100" oninput="ortalamaHesapla()"></div>
+                    <div class="criteria-box"><label>Dinleme</label><input type="number" id="crit3" value="88" min="0" max="100" oninput="ortalamaHesapla()"></div>
+                    <div class="criteria-box"><label>Konuşma</label><input type="number" id="crit4" value="80" min="0" max="100" oninput="ortalamaHesapla()"></div>
+                    <div class="criteria-box"><label>Dikkat</label><input type="number" id="crit5" value="95" min="0" max="100" oninput="ortalamaHesapla()"></div>
+                </div>
+                <div style="text-align:center; margin-top:8px; font-weight:bold; color:#1b5e20;">Hesaplanan Genel Puan: <span id="hesaplananPuan">87</span></div>
+            </div>
+
+            <div class="form-group">
+                <label>Ödev Verildi mi?</label>
+                <select id="rubrikOdevDurumu">
+                    <option value="Evet, Eğlenceli Okuma ve Yazma Ödevi Verildi">📚 Evet, Ödev Verildi</option>
+                    <option value="Bu Hafta Ödev Verilmedi">🎯 Bu Hafta Ödev Verilmedi</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Öğretmenin Özel Notu / Yorumu</label>
+                <textarea id="rubrikOzelYorum" rows="3" placeholder="Veliye ve öğrenciye iletilecek özel motivasyon mesajı..."></textarea>
+            </div>
+
+            <button onclick="rubrikVerileriniKaydetVeGonder()" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & Veliye WhatsApp Raporu Gönder</button>
+        </div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx08lAQItVNutgMDIPD1lDzkpdIjetkjjRhxA2UKARiw-1-O8eARtbpI7Ef4f-INnbP/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbIsyZenB4WgFH8tHfHT2XzDe2fNKYlYzxQ3ZaqE2WRQkq4o2Ze3wYFvhxrdCv4Cqo/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
@@ -284,6 +359,93 @@
             verileriCekVeBaslat(ogrenciAdi);
         }
 
+        // Şifre Korumalı Yönetici Paneli Açma
+        function yoneticiGirisSorgula() {
+            let sifre = prompt("Yönetici şifresini girin:");
+            if (sifre === "315269") {
+                document.getElementById("rubrikModal").style.display = "flex";
+                if(ogrenciAdi) document.getElementById("rubrikOgrenciAdi").value = ogrenciAdi;
+            } else if (sifre !== null) {
+                alert("Hatalı şifre!");
+            }
+        }
+
+        function modalKapat() {
+            document.getElementById("rubrikModal").style.display = "none";
+        }
+
+        function ortalamaHesapla() {
+            let c1 = Number(document.getElementById("crit1").value) || 0;
+            let c2 = Number(document.getElementById("crit2").value) || 0;
+            let c3 = Number(document.getElementById("crit3").value) || 0;
+            let c4 = Number(document.getElementById("crit4").value) || 0;
+            let c5 = Number(document.getElementById("crit5").value) || 0;
+            let ort = Math.round((c1 + c2 + c3 + c4 + c5) / 5);
+            document.getElementById("hesaplananPuan").innerText = ort;
+        }
+
+        function rubrikVerileriniKaydetVeGonder() {
+            let oAdi = document.getElementById("rubrikOgrenciAdi").value.trim();
+            if (!oAdi) { alert("Lütfen öğrenci adı girin!"); return; }
+
+            let dTar = document.getElementById("rubrikDersTarihi").value;
+            let sTar = document.getElementById("rubrikSonrakiDersTarihi").value;
+            let hYeni = document.getElementById("rubrikYeniHarfler").value.trim();
+            let gPuan = Number(document.getElementById("hesaplananPuan").innerText);
+            let ozelYorum = document.getElementById("rubrikOzelYorum").value.trim();
+            let odevDurum = document.getElementById("rubrikOdevDurumu").value;
+
+            alert("Veriler Google Sheets'e işleniyor...");
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "ogretmenVeriKaydet",
+                    ogrenciAdi: oAdi,
+                    dersTarihi: dTar,
+                    sonrakiDersTarihi: sTar,
+                    yeniHarfler: hYeni,
+                    genelPuan: gPuan,
+                    etkinlikBasarisi: gPuan,
+                    ogretmenYorumu: ozelYorum
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Veriler başarıyla kaydedildi! WhatsApp Raporu oluşturuluyor...");
+                    
+                    // Veliye WhatsApp Mesajı Hazırlama
+                    let tel = data.veliTelefon || "";
+                    let mesaj = `🌟 *DİJİMUALLİM HAFTALIK VELİ RAPORU* 🌟\n\n` +
+                                `Sevgili Velimiz, öğrencimiz *${oAdi.toUpperCase()}* için bu haftanın değerlendirmesi:\n\n` +
+                                `⭐ Genel Puan / Etkinlik Başarısı: *${gPuan} / 100*\n` +
+                                `📚 ${odevDurum}\n` +
+                                `🍎 *Öğretmen Notu:* ${ozelYorum || "Harika bir gelişim haftası geçirdik."}\n\n` +
+                                `📅 Tamamlanan Ders: ${dTar || "Belirtildi"}\n` +
+                                `📅 Sonraki Ders: ${sTar || "Planlandı"}\n\n` +
+                                `Detaylı gelişim paneli için öğrenci giriş yapabilir. İyi günler dileriz! 🎈`;
+
+                    if (tel) {
+                        // Telefon numarası başında sıfır varsa veya yoksa düzenle
+                        let temizTel = tel.replace(/\D/g, '');
+                        window.open(`https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(mesaj)}`, '_blank');
+                    } else {
+                        // Numara yoksa genel paylaşım linki aç
+                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mesaj)}`, '_blank');
+                    }
+
+                    modalKapat();
+                    location.reload(); // Sayfayı yenile
+                } else {
+                    alert("Kayıt sırasında hata oluştu: " + data.message);
+                }
+            })
+            .catch(err => alert("Bağlantı hatası: " + err));
+        }
+
+        // Veri Çekme ve Panel Gösterimi (Önceki kodlarla aynı mantık)
         function tarihiDuzelt(tarihStr) {
             if (!tarihStr) return "Tarih Belirtilmedi";
             try {
@@ -296,31 +458,8 @@
         }
 
         function akilliOgretmenNotuUret(g, isim) {
-            let harfDizi = g.ogrenilenHarfler ? g.ogrenilenHarfler.split(',').map(h=>h.trim()).filter(h=>h.length>0) : [];
-            let harfSayisi = harfDizi.length;
-            let etkinlik = Number(g.etkinlikBasarisi) || 85;
-            let puan = Number(g.genelPuan) || 32;
-
-            let baslangicSozleri = [
-                `"Harika bir kımıldanma ve çaba haftasındayız! Sevgili ${isim}, derslerdeki duruşun ve gayretinle gözlerimizi kamaştırıyorsun. 🌟`,
-                `"Bu hafta enerjine ve çalışma isteğine bayıldım ${isim}! Her geçen gün biraz daha büyüyor ve öğrenme yolculuğunda harika adımlar atıyorsun. 🚀`,
-                `"Azimli çalışmalarınla sınıfımızın parlayan yıldızı olmaya devam ediyorsun ${isim}! Çaban ve inancın her türlü takdirin üzerinde. 💫"`
-            ];
-            let rastgeleBaslangic = baslangicSozleri[Math.floor(Math.random() * baslangicSozleri.length)];
-
-            let harfYorumu = ` Harf bahçemizde toplam **${harfSayisi} harfi** başarıyla geride bıraktın; kelimeler dünyasına açılan kapıları ardına kadar aralıyorsun.`;
-            if(harfSayisi >= 20) harfYorumu = ` Neredeyse alfabenin tüm harflerini fethettin (${harfSayisi}/29)! Okuma akıcılığın muazzam bir ivme kazandı.`;
-
-            let performansYorumu = "";
-            if (etkinlik >= 90) {
-                performansYorumu = ` Etkinliklerdeki **${etkinlik} puanlık** yüksek başarın ve ders disiplinin harika bir seviyede. Bu istikrar seni doğrudan başarıya götürüyor!`;
-            } else {
-                performansYorumu = ` Etkinlik başarımız **${etkinlik} puan** ile gayet iyi düzeyde. Ufak tekrarlar ve akşam okumalarıyla bunu zirveye taşıyacağımıza eminim. 📚`;
-            }
-
-            let kapanis = ` Akşamları yapılacak 10 dakikalık keyifli okuma molalarıyla bu başarıyı taçlandıralım. Yolun açık olsun! 🎈"`;
-
-            return rastgeleBaslangic + harfYorumu + performansYorumu + kapanis;
+            if(g.haftalikNot && g.haftalikNot !== "Harika bir hafta başlangıcı! 🌟") return g.haftalikNot;
+            return `Harika bir çaba haftasındayız! Sevgili ${isim}, derslerdeki duruşun ve gayretinle gözlerimizi kamaştırıyorsun. Akşamları yapılacak kısa okuma tekrarlarıyla bu başarıyı katlayalım. 🌟`;
         }
 
         function verileriCekVeBaslat(isim) {
@@ -339,7 +478,7 @@
                     document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
                     document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
 
-                    document.getElementById("ogretmenNotu").innerHTML = akilliOgretmenNotuUret(data.gelisim, isim);
+                    document.getElementById("ogretmenNotu").innerHTML = `"${akilliOgretmenNotuUret(data.gelisim, isim)}"`;
                     document.getElementById("aktifKitapAdi").innerText = data.gelisim.aktifKitapAdi;
                     document.getElementById("toplamBitirilenKitap").innerText = data.gelisim.okunanKitap;
 
@@ -352,36 +491,9 @@
                     document.getElementById("okunanSayfaText").innerText = `Okunan: ${okunan} sayfa`;
                     document.getElementById("hedefSayfaText").innerText = `Hedef: ${hedefSayfa} sayfa`;
 
-                    // Rozetler Vitrini Doldurma
-                    let rozetler = data.rozetler || [];
-                    let toplamRozet = rozetler.length;
-                    let kazanilanSayisi = rozetler.filter(r => r.durum === "Kazanıldı").length;
-                    
-                    document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
-                    let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
-                    document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
-                    document.getElementById("rozetProgressText").innerText = `%${rozetYuzde} tamamlandı`;
-
-                    let rozetHtml = "";
-                    if (toplamRozet > 0) {
-                        rozetler.forEach(r => {
-                            let aktifMi = r.durum === "Kazanıldı";
-                            rozetHtml += `
-                                <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
-                                    <div style="font-size:24px; margin-bottom:4px;">${aktifMi ? '🌱' : '🔒'}</div>
-                                    <div style="font-size:11px; font-weight:bold; color:#333;">${r.rozetAdi}</div>
-                                    <div style="font-size:10px; color:#666; margin-top:2px;">${r.puan || 0} p</div>
-                                </div>`;
-                        });
-                        document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
-                    } else {
-                        document.getElementById("rozetlerAlani").innerHTML = "<p style='grid-column: 1/-1; font-size:12px; color:#666;'>Rozet bulunmuyor.</p>";
-                    }
-
-                    // Alfabe Dinamik Boyama
+                    // Alfabe
                     let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
                     let ogrenilenDizi = ogrenilenHarflerStr.split(",").map(h => h.trim());
-
                     let alfabeHtml = "";
                     let tamamlananSayi = 0;
                     turkceAlfabe.forEach(harf => {
@@ -394,7 +506,7 @@
 
                     renkliGrafikleriCiz();
 
-                    // Dersler Çizelgesi
+                    // Dersler
                     let dersler = data.dersler || [];
                     let dersHtml = "";
                     if(dersler.length > 0) {
@@ -471,11 +583,9 @@
             let dakika = Math.floor((toplamSaniye % 3600) / 60);
             let saniye = toplamSaniye % 60;
             document.getElementById("dijitalSaat").innerText = `${String(saat).padStart(2, '0')}:${String(dakika).padStart(2, '0')}:${String(saniye).padStart(2, '0')}`;
-
             let toplamDakika = Math.floor(toplamSaniye / 60);
             let kazanilanRozet = Math.floor(toplamDakika / 10);
             let kalanDakika = 10 - (toplamDakika % 10);
-
             document.getElementById("kazanilanRozetYazi").innerText = `🏅 Kazanılan: ${kazanilanRozet} 🌟`;
             document.getElementById("sonrakiRozetYazi").innerText = `Sonraki: ${kalanDakika} dk`;
             document.getElementById("progressFill").style.width = ((toplamDakika % 10) / 10) * 100 + "%";
