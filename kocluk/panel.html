@@ -380,24 +380,40 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwC8-tnN0eOgLXtn6mm8Sipb2XTp-l4BLmDgTRc8HsjLXrC4eaLGIeVtUOWPlgIsD0F/exec";
-        const ogrenciAdi = localStorage.getItem("aktifOgrenci");
-        const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
+       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPuBretqhaouL2BEEZuxebxIZjUzakEhDL7p9CxUMbrFlpyXS3DwqRWoi0-R4sTNMA/exec";
+const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
-        let toplamSaniye = 0;
-        let timerInterval = null;
-        let sistemOgrencileri = [];
-        let ogrenciGecmisKayitlari = [];
-        let gelisimChartInstance = null;
-        let radarChartInstance = null;
+let toplamSaniye = 0;
+let timerInterval = null;
+let sistemOgrencileri = [];
+let ogrenciGecmisKayitlari = [];
+let gelisimChartInstance = null;
+let radarChartInstance = null;
 
-        if (!ogrenciAdi) {
-            window.location.href = "index.html";
-        } else {
-            document.getElementById("aktifOgrenciBaslik").innerText = ogrenciAdi;
-            document.getElementById("ogrenciAvatarHarf").innerText = ogrenciAdi.charAt(0).toUpperCase();
-            verileriCekVeBaslat(ogrenciAdi);
-        }
+// Oturum verisini şifreli okuyan yardımcı fonksiyon
+function oturumOku(key) {
+    let val = localStorage.getItem(key);
+    if (!val) return null;
+    try {
+        return atob(val); // Şifreyi çöz
+    } catch (e) {
+        return val; // Eskiden kalma düz metin varsa yedek olarak kabul et
+    }
+}
+
+const ogrenciAdi = oturumOku("aktifOgrenci");
+
+if (!ogrenciAdi) {
+    window.location.href = "index.html";
+} else {
+    document.addEventListener("DOMContentLoaded", function() {
+        let baslik = document.getElementById("aktifOgrenciBaslik");
+        let avatar = document.getElementById("ogrenciAvatarHarf");
+        if (baslik) baslik.innerText = ogrenciAdi;
+        if (avatar) avatar.innerText = ogrenciAdi.charAt(0).toUpperCase();
+        verileriCekVeBaslat(ogrenciAdi);
+    });
+}
 
         function yoneticiGirisSorgula() {
             let sifre = prompt("Yönetici şifresini girin:");
