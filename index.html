@@ -1435,7 +1435,7 @@ function manuelGirisYap() {
     }
 
     unlockedStudents[bulunanOgrenci] = true;
-    localStorage.setItem('dijimuallim_aktif_ogrenci', bulunanOgrenci);
+    localStorage.setItem('dijimuallim_aktif_ogrenci', btoa(bulunanOgrenci));
     selectStudent(bulunanOgrenci);
 }
         
