@@ -33,7 +33,6 @@
             padding-bottom: 40px;
         }
         
-        /* 1. Üst Menü */
         .top-bar {
             display: flex; justify-content: space-between; align-items: center;
             background: var(--card-bg); padding: 12px 18px; border-radius: 16px;
@@ -45,7 +44,6 @@
         .logout-btn { background-color: #ffebee; color: #c62828; border: none; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 12px; }
         .anasayfa-btn { background-color: var(--primary-color); color: white; text-decoration: none; padding: 6px 14px; border-radius: 10px; font-weight: 600; font-size: 12px; }
 
-        /* 2. Oturum Süresi Kartı */
         .sure-card { background-color: #e2f4eb; border: 2px solid #a5d6a7; padding: 15px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .sure-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
         .sure-title { font-size: 14px; font-weight: bold; color: #1b5e20; display: flex; align-items: center; gap: 6px; }
@@ -54,7 +52,6 @@
         .progress-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 5px; }
         .sure-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #2e7d32; font-weight: 600; flex-wrap: wrap; gap: 5px; }
 
-        /* 3. Sekmeler */
         .tabs-bar {
             display: flex; gap: 6px; background: var(--card-bg); padding: 8px; border-radius: 14px; border: 2px solid var(--border-color); overflow-x: auto;
         }
@@ -64,13 +61,11 @@
         }
         .tab-btn.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(46,125,50,0.2); }
 
-        /* Kart Genel */
         .card { background: var(--card-bg); padding: 18px; border-radius: 18px; border: 2px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px dashed #f0eae1; padding-bottom: 8px; flex-wrap: wrap; gap: 10px; }
         .card-title { font-size: 15px; font-weight: bold; color: #2e7d32; display: flex; align-items: center; gap: 8px; margin: 0; }
         .action-pill-btn { background: #ffb300; color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(255,179,0,0.3); }
 
-        /* 4. Ders Zaman Çizelgesi */
         .ders-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
         @media(max-width: 600px) { .ders-grid-3 { grid-template-columns: 1fr; } }
         .ders-box { background: #faf8f5; border: 1px solid #eae5dc; padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -82,16 +77,8 @@
         .badge-sonraki { background: #bbdefb; color: #0d47a1; }
         .badge-ertelendi { background: #ffe0b2; color: #e65100; }
 
-        /* 5. Öğretmenin Notu */
         .teacher-note-box { background: #fffde7; border: 1px solid #fff9c4; border-left: 5px solid #ffb300; padding: 15px; border-radius: 12px; font-size: 14px; line-height: 1.6; color: #444; font-style: italic; }
 
-        /* 6. Kazanılan Rozetler */
-        .rozet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; text-align: center; }
-        .rozet-box { background: #faf8f5; border: 1px solid #eae5dc; padding: 10px 6px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .rozet-box.aktif { background: #f1f8e9; border-color: #81c784; }
-        .rozet-box.soluk { opacity: 0.35; filter: grayscale(100%); }
-
-        /* 7. Okuma Takip & Odak ve YENİ ALFABE TABLOSU */
         .okuma-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
         @media(max-width: 600px) { .okuma-grid { grid-template-columns: 1fr; } }
         .okunan-kitap-kutusu { background: #f1f8e9; border: 1px solid #c8e6c9; padding: 12px; border-radius: 12px; margin-bottom: 10px; }
@@ -101,53 +88,14 @@
         .okuma-progress-fill { background: #ffb300; height: 100%; width: 0%; border-radius: 5px; }
         .kitap-skor-kutu { background: #fff8e1; border: 1px solid #ffe082; padding: 15px; border-radius: 14px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
-        /* Türkçe Alfabe Kutucukları */
-        .alfabe-container {
-            margin-top: 15px;
-            background: #fdfbf7;
-            border: 1px solid #eae5dc;
-            padding: 12px;
-            border-radius: 12px;
-        }
-        .alfabe-baslik {
-            font-size: 11px;
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: space-between;
-        }
-        .alfabe-grid {
-            display: grid;
-            grid-template-columns: repeat(9, 1fr);
-            gap: 5px;
-            text-align: center;
-        }
+        .alfabe-container { margin-top: 15px; background: #fdfbf7; border: 1px solid #eae5dc; padding: 12px; border-radius: 12px; }
+        .alfabe-baslik { font-size: 11px; font-weight: bold; color: #555; margin-bottom: 8px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        .alfabe-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; text-align: center; }
         @media(max-width: 500px) { .alfabe-grid { grid-template-columns: repeat(6, 1fr); } }
 
-        .harf-kutu {
-            background: #faf8f5;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 6px 2px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #aaa;
-            opacity: 0.35;
-            filter: grayscale(100%);
-            transition: 0.3s;
-        }
-        .harf-kutu.ogrenildi {
-            background: #e8f5e9;
-            border-color: #81c784;
-            color: #1b5e20;
-            opacity: 1;
-            filter: none;
-            box-shadow: 0 2px 4px rgba(46,125,50,0.15);
-        }
+        .harf-kutu { background: #faf8f5; border: 1px solid #ddd; border-radius: 6px; padding: 6px 2px; font-size: 14px; font-weight: bold; color: #aaa; opacity: 0.35; filter: grayscale(100%); transition: 0.3s; }
+        .harf-kutu.ogrenildi { background: #e8f5e9; border-color: #81c784; color: #1b5e20; opacity: 1; filter: none; box-shadow: 0 2px 4px rgba(46,125,50,0.15); }
 
-        /* 8. Genel Puan Kısmı */
         .stats-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         @media(max-width: 600px) { .stats-grid-4 { grid-template-columns: 1fr; } }
         .stat-box { padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); border: 2px solid rgba(0,0,0,0.03); }
@@ -160,7 +108,6 @@
         .stat-main-num { font-size: 26px; font-weight: 900; }
         .stat-trend { font-size: 12px; font-weight: bold; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.7); }
 
-        /* 9. Grafikler */
         .chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; }
 
         .floating-actions { position: fixed; bottom: 15px; right: 15px; z-index: 100; }
@@ -179,7 +126,7 @@
             </div>
         </div>
 
-        <!-- 2. Oturum Süresi Kartı -->
+        <!-- 2. Oturum Süresi -->
         <div class="sure-card">
             <div class="sure-header">
                 <div class="sure-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</div>
@@ -204,134 +151,98 @@
 
         <!-- 4. Ders Zaman Çizelgesi -->
         <div class="card">
-            <div class="card-header-flex">
-                <h3 class="card-title">📅 Ders Zaman Çizelgesi</h3>
-            </div>
+            <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
             <div class="ders-grid-3" id="dersZamanAlani"></div>
         </div>
 
         <!-- 5. Öğretmenin Notu -->
         <div class="card">
-            <div class="card-header-flex">
-                <h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3>
-            </div>
+            <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
             <div class="teacher-note-box" id="ogretmenNotu">Yükleniyor...</div>
         </div>
 
-        <!-- 6. Kazanılan Rozetler -->
-        <div class="card">
-            <div class="card-header-flex">
-                <h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3>
-            </div>
-            <div class="rozet-grid" id="rozetlerAlani"></div>
-        </div>
-
-        <!-- 7. Okuma Takip & Odak + YENİ TÜRKÇE ALFABE TABLOSU -->
+        <!-- 6. Okuma Takip & Odak + Alfabe Bahçesi -->
         <div class="card">
             <div class="card-header-flex">
                 <h3 class="card-title">📚 Okuma Kültürü & Odak Takibi</h3>
-                <button class="action-pill-btn" onclick="alert('Hızlı okuma yolcusu modülü açılıyor!')">⚡ HIZLI OKUMA</button>
+                <button class="action-pill-btn" onclick="alert('Hızlı okuma yolcusu modülü aktif!')">⚡ HIZLI OKUMA</button>
             </div>
             
             <div class="okuma-grid">
                 <div>
                     <div class="okunan-kitap-kutusu">
                         <div class="kitap-etiket">ŞU AN OKUNAN KİTAP</div>
-                        <div class="kitap-isim" id="aktifKitapAdi">Eğlenceli Masallar</div>
+                        <div class="kitap-isim" id="aktifKitapAdi">Yükleniyor...</div>
                     </div>
                     <div style="font-size: 12px; font-weight: bold; color: #555; display: flex; justify-content: space-between;">
                         <span>Haftalık Hedef İlerlemesi</span>
-                        <span id="kitapYuzdeText" style="color: #2e7d32;">%94</span>
+                        <span id="kitapYuzdeText" style="color: #2e7d32;">%0</span>
                     </div>
                     <div class="okuma-progress-track">
-                        <div class="okuma-progress-fill" id="kitapProgressBar" style="width: 94%;"></div>
+                        <div class="okuma-progress-fill" id="kitapProgressBar" style="width: 0%;"></div>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; font-weight: 600;">
-                        <span id="okunanSayfaText">Okunan: 30 sayfa</span>
-                        <span id="hedefSayfaText">Hedef: 32 sayfa</span>
+                        <span id="okunanSayfaText">Okunan: 0 sayfa</span>
+                        <span id="hedefSayfaText">Hedef: 0 sayfa</span>
                     </div>
                 </div>
 
                 <div class="kitap-skor-kutu">
                     <div style="font-size: 28px;">🏆</div>
-                    <div style="font-size: 24px; font-weight: 900; color: #f57f17;" id="toplamBitirilenKitap">5</div>
+                    <div style="font-size: 24px; font-weight: 900; color: #f57f17;" id="toplamBitirilenKitap">0</div>
                     <div style="font-size: 10px; font-weight: bold; color: #555; text-transform: uppercase;">Kitap Skoru</div>
                 </div>
             </div>
 
-            <!-- Türkçe Tüm Alfabe Tablosu (Öğrenildikçe Renklenir) -->
+            <!-- Türkçe Alfabe Tablosu -->
             <div class="alfabe-container">
                 <div class="alfabe-baslik">
                     <span>✨ Harf Bahçesi (Alfabe İlerlemesi)</span>
                     <span id="alfabeSayacText" style="color:#2e7d32;">0 / 29 Harf</span>
                 </div>
-                <div class="alfabe-grid" id="alfabeGridAlani">
-                    <!-- JavaScript ile dinamik dolacak -->
-                </div>
+                <div class="alfabe-grid" id="alfabeGridAlani"></div>
             </div>
         </div>
 
-        <!-- 8. Genel Puan Kısmı -->
+        <!-- 7. Genel Puan Kısmı (etkinlikBasarisi ile güncellendi) -->
         <div class="stats-grid-4">
             <div class="stat-box kutu-1">
                 <div class="stat-label">⭐ Genel Puan</div>
-                <div class="stat-value-row">
-                    <span class="stat-main-num" id="statGenelPuan">32</span>
-                    <span class="stat-trend" style="color: #2e7d32;">↑ 28</span>
-                </div>
+                <div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span><span class="stat-trend" style="color: #2e7d32;">Aktif</span></div>
             </div>
             <div class="stat-box kutu-2">
-                <div class="stat-label">🚀 Son Deneme / Başarı</div>
-                <div class="stat-value-row">
-                    <span class="stat-main-num" id="statSonDeneme">100</span>
-                    <span class="stat-trend" style="color: #0d47a1;">↑ 43</span>
-                </div>
+                <div class="stat-label">🚀 Etkinlik Başarısı</div>
+                <div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span><span class="stat-trend" style="color: #0d47a1;">Puan</span></div>
             </div>
             <div class="stat-box kutu-3">
                 <div class="stat-label">🎯 Toplam Başarılı Ders</div>
-                <div class="stat-value-row">
-                    <span class="stat-main-num" id="statBasariliDers">9</span>
-                    <span style="font-size: 11px; font-weight: bold; opacity: 0.7;" id="statPlanliKayit">16 planlı kayıt</span>
-                </div>
+                <div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span><span style="font-size: 11px; font-weight: bold; opacity: 0.7;">Ders Kaydı</span></div>
             </div>
             <div class="stat-box kutu-4">
                 <div class="stat-label">🔥 Devam Oranı</div>
-                <div class="stat-value-row">
-                    <span class="stat-main-num" id="statDevamOrani">56%</span>
-                    <span style="font-size: 11px; font-weight: bold; color: #c2185b;" id="statKacirilan">0 kaçırıldı</span>
-                </div>
+                <div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span><span style="font-size: 11px; font-weight: bold; color: #c2185b;">Katılım</span></div>
             </div>
         </div>
 
-        <!-- 9. Grafikler -->
+        <!-- 8. Grafikler -->
         <div class="card">
-            <div class="card-header-flex">
-                <h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3>
-            </div>
-            <div class="chart-container">
-                <canvas id="gelisimChart"></canvas>
-            </div>
+            <div class="card-header-flex"><h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3></div>
+            <div class="chart-container"><canvas id="gelisimChart"></canvas></div>
         </div>
 
         <div class="card">
-            <div class="card-header-flex">
-                <h3 class="card-title">🎯 Eğlenceli Beceri Radar Grafiği</h3>
-            </div>
-            <div class="chart-container">
-                <canvas id="radarChart"></canvas>
-            </div>
+            <div class="card-header-flex"><h3 class="card-title">🎯 Eğlenceli Beceri Radar Grafiği</h3></div>
+            <div class="chart-container"><canvas id="radarChart"></canvas></div>
         </div>
     </div>
 
     <div class="floating-actions">
-        <button class="float-btn" onclick="alert('Öğretmene soru sorma ekranı yakında aktif olacak!')">💬 Soru Sor</button>
+        <button class="float-btn" onclick="alert('Öğretmene soru sorma ekranı aktif!')">💬 Soru Sor</button>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyu_ZZQsQkG0v6hwbZogMJxC1XQ45OJFJfOTEyCxDG3lYUsx91kgYE4E7q3PHm3WkI/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXnfRe1RbezBEPFVh8-EjKaRgkrrTp90Hv0QNw6ir_aLVyjtktVyHZjnSs7ySXqiMh/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
-
-        // Türkçe Alfabe Dizisi
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -355,118 +266,75 @@
                 if (data.status === "success") {
                     toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
 
-                    document.getElementById("statGenelPuan").innerText = data.gelisim.genelPuan || 32;
-                    document.getElementById("statSonDeneme").innerText = data.gelisim.sonDeneme || 100;
-                    document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers || 9;
-                    document.getElementById("statDevamOrani").innerText = (data.gelisim.devamOrani || 56) + "%";
+                    document.getElementById("statGenelPuan").innerText = data.gelisim.genelPuan;
+                    document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
+                    document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
+                    document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
 
-                    document.getElementById("ogretmenNotu").innerHTML = `"${data.gelisim.haftalikNot || "Harika bir çalışma haftasındayız! Öğrencimiz her geçen gün daha da parlıyor. 🌟 Akşamları kısa okuma tekrarlarıyla bu başarıyı katlayalım."}"`;
-                    document.getElementById("aktifKitapAdi").innerText = data.gelisim.aktifKitap || "Eğlenceli Masallar";
+                    document.getElementById("ogretmenNotu").innerHTML = `"${data.gelisim.haftalikNot}"`;
+                    document.getElementById("aktifKitapAdi").innerText = data.gelisim.aktifKitapAdi;
+                    document.getElementById("toplamBitirilenKitap").innerText = data.gelisim.okunanKitap;
 
-                    let okunan = Number(data.gelisim.okunanSayfa) || 30;
-                    let hedefSayfa = Number(data.gelisim.hedefSayfa) || 32;
-                    let yuzdeKitap = hedefSayfa > 0 ? Math.min(100, Math.round((okunan / hedefSayfa) * 100)) : 0;
+                    let okunan = Number(data.gelisim.okunanSayfa) || 0;
+                    let hedefSayfa = Number(data.gelisim.hedefSayfa) || 1;
+                    let yuzdeKitap = Math.min(100, Math.round((okunan / hedefSayfa) * 100));
                     
                     document.getElementById("kitapYuzdeText").innerText = `%${yuzdeKitap}`;
                     document.getElementById("kitapProgressBar").style.width = yuzdeKitap + "%";
                     document.getElementById("okunanSayfaText").innerText = `Okunan: ${okunan} sayfa`;
                     document.getElementById("hedefSayfaText").innerText = `Hedef: ${hedefSayfa} sayfa`;
-                    document.getElementById("toplamBitirilenKitap").innerText = data.gelisim.toplamBitirilenKitap || 5;
 
-                    // ALFABE RENKLENDİRME MANTIĞI
-                    // Google Sheets'ten gelen harfler örn: "a,e,i,o,n" şeklinde virgüllü string olabilir
+                    // Alfabe Dinamik Boyama
                     let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
                     let ogrenilenDizi = ogrenilenHarflerStr.split(",").map(h => h.trim());
 
                     let alfabeHtml = "";
                     let tamamlananSayi = 0;
-
                     turkceAlfabe.forEach(harf => {
                         let ogrenildiMi = ogrenilenDizi.includes(harf);
                         if (ogrenildiMi) tamamlananSayi++;
-                        
-                        let sinif = ogrenildiMi ? "harf-kutu ogrenildi" : "harf-kutu";
-                        alfabeHtml += `<div class="${sinif}">${harf}</div>`;
+                        alfabeHtml += `<div class="${ogrenildiMi ? "harf-kutu ogrenildi" : "harf-kutu"}">${harf}</div>`;
                     });
-
                     document.getElementById("alfabeGridAlani").innerHTML = alfabeHtml;
-                    document.getElementById("alfabeSayacText.innerText") = `${tamamlananSayi} / 29 Harf`;
-                    document.querySelector(".alfabe-baslik span:last-child").innerText = `${tamamlananSayi} / 29 Harf`;
+                    document.getElementById("alfabeSayacText").innerText = `${tamamlananSayi} / 29 Harf`;
 
-                    renkliGrafikleriCiz(data.gelisim);
+                    renkliGrafikleriCiz();
 
-                    let rozetler = data.rozetler || [];
-                    let toplamRozet = rozetler.length;
-                    let kazanilanSayisi = rozetler.filter(r => r.durum === "Kazanıldı").length;
-                    document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
-
-                    let rozetHtml = "";
-                    if (toplamRozet > 0) {
-                        rozetler.forEach(r => {
-                            let aktifMi = r.durum === "Kazanıldı";
-                            rozetHtml += `
-                                <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
-                                    <div style="font-size:24px; margin-bottom:4px;">${aktifMi ? '🌱' : '🔒'}</div>
-                                    <div style="font-size:11px; font-weight:bold; color:#333;">${r.rozetAdi}</div>
-                                    <div style="font-size:10px; color:#666; margin-top:2px;">${r.puan || 0} p</div>
-                                </div>`;
-                        });
-                        document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
-                    }
-
+                    // Dersler Çizelgesi
                     let dersler = data.dersler || [];
                     let dersHtml = "";
                     if(dersler.length > 0) {
                         dersler.slice(0, 3).forEach((d, index) => {
-                            let durumSinif = "badge-tamamlandi";
-                            let durumYazi = d.durum || "TAMAMLANDI";
+                            let durumSinif = d.durum === "Yapıldı" ? "badge-tamamlandi" : (d.durum === "Ertelendi" ? "badge-ertelendi" : "badge-sonraki");
                             let kutuSinif = index === 1 ? "ders-box aktif-ders" : "ders-box";
                             let baslikTip = index === 0 ? "GEÇEN DERS" : (index === 1 ? "GÜNCEL DERS" : "GELECEK DERS");
-
-                            if(d.durum === "Ertelendi") durumSinif = "badge-ertelendi";
-                            if(index === 2) durumSinif = "badge-sonraki";
 
                             dersHtml += `
                                 <div class="${kutuSinif}">
                                     <div class="ders-durum-baslik">${baslikTip}</div>
-                                    <div class="ders-tarih-yazi">${d.tarih || "2026-09-03"}</div>
-                                    <div class="ders-badge-mini ${durumSinif}">${durumYazi}</div>
+                                    <div class="ders-tarih-yazi">${d.tarih}</div>
+                                    <div class="ders-badge-mini ${durumSinif}">${d.durum}</div>
                                 </div>
                             `;
                         });
                         document.getElementById("dersZamanAlani").innerHTML = dersHtml;
-                    } else {
-                        document.getElementById("dersZamanAlani").innerHTML = `
-                            <div class="ders-box"><div class="ders-durum-baslik">GEÇEN DERS</div><div class="ders-tarih-yazi">2026-09-03</div><div class="ders-badge-mini badge-tamamlandi">TAMAMLANDI</div></div>
-                            <div class="ders-box aktif-ders"><div class="ders-durum-baslik">GÜNCEL DERS</div><div class="ders-tarih-yazi">2026-09-03</div><div class="ders-badge-mini badge-tamamlandi">TAMAMLANDI</div></div>
-                            <div class="ders-box"><div class="ders-durum-baslik">GELECEK DERS</div><div class="ders-tarih-yazi">2026-09-05</div><div class="ders-badge-mini badge-sonraki">SONRAKİ DERS</div></div>
-                        `;
                     }
                 }
             });
         }
 
-        function renkliGrafikleriCiz(gelisim) {
+        function renkliGrafikleriCiz() {
             const ctxGelisim = document.getElementById('gelisimChart').getContext('2d');
             new Chart(ctxGelisim, {
                 type: 'line',
                 data: {
-                    labels: ['14 Haz', '20 Haz', '30 Haz', '02 Eyl', '04 Eyl', 'Bugün'],
+                    labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Bugün'],
                     datasets: [{
-                        label: 'Genel Başarı',
-                        data: [70, 15, 25, 45, 10, 35],
+                        label: 'Haftalık Başarı',
+                        data: [60, 75, 80, 85, 90, 100],
                         borderColor: '#2e7d32',
                         backgroundColor: 'rgba(46, 125, 50, 0.1)',
                         borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }, {
-                        label: 'Deneme Puanı',
-                        data: [45, 75, 80, 60, 95, 100],
-                        borderColor: '#1976d2',
-                        backgroundColor: 'rgba(25, 118, 210, 0.05)',
-                        borderWidth: 3,
-                        borderDash: [5, 5],
                         fill: true,
                         tension: 0.4
                     }]
@@ -478,10 +346,10 @@
             new Chart(ctxRadar, {
                 type: 'radar',
                 data: {
-                    labels: ['Kelime', 'Konuşma', 'Okuma', 'Yazma', 'Dil Bilgisi'],
+                    labels: ['Okuma', 'Yazma', 'Dinleme', 'Konuşma', 'Dikkat'],
                     datasets: [{
-                        label: 'Beceri Dağılımı',
-                        data: [70, 85, 40, 50, 65],
+                        label: 'Gelişim Alanları',
+                        data: [80, 70, 90, 85, 75],
                         backgroundColor: 'rgba(255, 179, 0, 0.2)',
                         borderColor: '#ffb300',
                         borderWidth: 3,
