@@ -65,7 +65,7 @@
             <label>Şifre</label>
             <input type="password" id="sifre" placeholder="Şifreniz">
         </div>
-        <button onclick="girisYap()">Giriş Yap</button>
+<button type="button" id="girisBtn" onclick="girisYap()">Giriş Yap</button>
         <div id="hataMesaji"></div>
     </div>
 
@@ -74,8 +74,16 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPBaRr7Kpo4GxmclN-Fz-iTY2DG1_7VFEI7JZxfbV8HfC9VTOw14c72yPYLIpdPGG7/exec";
 
        function girisYap() {
-    const ogrenciAdi = document.getElementById("kullanici AdiInputId").value.trim();
-    const sifre = document.getElementById("sifreInputId").value.trim();
+    const kAdiInput = document.getElementById("kullaniciAdi"); // Senin input ID'ne göre düzenle
+    const sifreInput = document.getElementById("sifre"); // Senin input ID'ne göre düzenle
+    
+    const ogrenciAdi = kAdiInput ? kAdiInput.value.trim() : "";
+    const sifre = sifreInput ? sifreInput.value.trim() : "";
+
+    if (!ogrenciAdi || !sifre) {
+        alert("Lütfen kullanıcı adı ve şifrenizi girin!");
+        return;
+    }
 
     fetch(SCRIPT_URL, {
         method: "POST",
@@ -85,11 +93,9 @@
     .then(res => res.json())
     .then(data => {
         if (data.status === "success") {
-            // Sadece başarı dönerse panele git
             localStorage.setItem("aktifOgrenci", data.ogrenciAdi);
             window.location.href = "panel.html";
         } else {
-            // Hatalıysa asla girme, uyarı ver
             alert("Hatalı kullanıcı adı veya şifre!");
         }
     })
