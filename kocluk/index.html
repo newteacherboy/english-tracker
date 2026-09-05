@@ -65,44 +65,46 @@
             <label>Şifre</label>
             <input type="password" id="sifre" placeholder="Şifreniz">
         </div>
-<button type="button" id="girisBtn" onclick="girisYap()">Giriş Yap</button>
+        <button type="button" id="girisBtn" onclick="girisYap()">Giriş Yap</button>
         <div id="hataMesaji"></div>
     </div>
 
     <script>
-        // Google Apps Script'ten aldığın uzun URL'yi buraya tırnak içine yapıştır:
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPBaRr7Kpo4GxmclN-Fz-iTY2DG1_7VFEI7JZxfbV8HfC9VTOw14c72yPYLIpdPGG7/exec";
 
-       function girisYap() {
-    const kAdiInput = document.getElementById("kullaniciAdi"); // Senin input ID'ne göre düzenle
-    const sifreInput = document.getElementById("sifre"); // Senin input ID'ne göre düzenle
-    
-    const ogrenciAdi = kAdiInput ? kAdiInput.value.trim() : "";
-    const sifre = sifreInput ? sifreInput.value.trim() : "";
+        function girisYap() {
+            const ogrenciAdiInput = document.getElementById("ogrenciAdi");
+            const sifreInput = document.getElementById("sifre");
+            const hataDiv = document.getElementById("hataMesaji");
 
-    if (!ogrenciAdi || !sifre) {
-        alert("Lütfen kullanıcı adı ve şifrenizi girin!");
-        return;
-    }
+            const ogrenciAdi = ogrenciAdiInput ? ogrenciAdiInput.value.trim() : "";
+            const sifre = sifreInput ? sifreInput.value.trim() : "";
 
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "login", ogrenciAdi: ogrenciAdi, sifre: sifre })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            localStorage.setItem("aktifOgrenci", data.ogrenciAdi);
-            window.location.href = "panel.html";
-        } else {
-            alert("Hatalı kullanıcı adı veya şifre!");
+            if (!ogrenciAdi || !sifre) {
+                hataDiv.innerText = "Lütfen kullanıcı adı ve şifrenizi girin!";
+                return;
+            }
+
+            hataDiv.innerText = "Giriş yapılıyor...";
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "login", ogrenciAdi: ogrenciAdi, sifre: sifre })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    localStorage.setItem("aktifOgrenci", data.ogrenciAdi);
+                    window.location.href = "panel.html";
+                } else {
+                    hataDiv.innerText = "Hatalı kullanıcı adı veya şifre!";
+                }
+            })
+            .catch(err => {
+                hataDiv.innerText = "Bağlantı hatası oluştu!";
+            });
         }
-    })
-    .catch(err => {
-        alert("Bağlantı hatası oluştu!");
-    });
-}
     </script>
 </body>
 </html>
