@@ -6,8 +6,8 @@
     <title>Eğitim Koçum - Öğrenci Paneli</title>
     <style>
         body {
-            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; /* Çocuklar için eğlenceli font */
-            background-color: #e8f5e9; /* Açık yeşil, ferah arka plan */
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: #e8f5e9;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -24,11 +24,7 @@
             max-width: 400px;
             margin-bottom: 20px;
         }
-        h1 {
-            color: #2e7d32;
-            margin: 0;
-            font-size: 24px;
-        }
+        h1 { color: #2e7d32; margin: 0; font-size: 24px; }
         .logout-btn {
             background-color: #d32f2f;
             color: white;
@@ -51,16 +47,18 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            text-align: center;
             border: 2px solid #a5d6a7;
         }
-        .card h2 {
-            color: #1565c0;
-            margin-top: 0;
-        }
-        .card p {
-            font-size: 18px;
-            color: #555;
+        .card h2 { color: #1565c0; margin-top: 0; font-size: 20px; }
+        .gorev-item {
+            background: #f1f8e9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -75,34 +73,52 @@
         <!-- Günlük Görev Kartı -->
         <div class="card">
             <h2>Bugünkü Görevlerim 🎯</h2>
-            <p>Bugün için harika görevlerin hazırlanıyor!</p>
-            <!-- İleride görevleri buraya çekeceğiz -->
-        </div>
-
-        <!-- Rozet Kartı -->
-        <div class="card">
-            <h2>Rozet Sandığım 🏆</h2>
-            <p>Henüz yeni başladın, yıldızları toplamaya hazır mısın?</p>
-            <!-- İleride rozetleri buraya çekeceğiz -->
+            <div id="gorevlerListesi">Görevler yükleniyor...</div>
         </div>
     </div>
 
     <script>
-        // Giriş yapan öğrencinin adını LocalStorage'dan al
+        // Google Apps Script URL'ini buraya yapıştır:
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywmB4LTWpJDQ1JgOgvk43OBVp2-cW5_Hy4dwhrB4IWKeFeZtFTDtT4XV-WfMDzVtJj/exec";
+
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
 
-        // Eğer giriş yapılmamışsa (isim yoksa) zorla giriş ekranına geri gönder
         if (!ogrenciAdi) {
             window.location.href = "index.html";
         } else {
-            // İsim varsa karşılama mesajını yazdır
             document.getElementById("karsilamaMesaji").innerText = "Harika Gidiyorsun, " + ogrenciAdi + "! 🌟";
+            gorevleriGetir(ogrenciAdi);
         }
 
-        // Çıkış yapma fonksiyonu
+        function gorevleriGetir(isim) {
+            const listeKutusu = document.getElementById("gorevlerListesi");
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "gorevleriGetir", ogrenciAdi: isim })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success" && data.gorevler.length > 0) {
+                    let html = "";
+                    data.gorevler.forEach(g => {
+                        let ikon = g.durum === "Tamamlandı" ? "✅" : "⏳";
+                        html += `<div class="gorev-item"><span>${g.gorevAdi}</span> <span>${ikon}</span></div>`;
+                    });
+                    listeKutusu.innerHTML = html;
+                } else {
+                    listeKutusu.innerHTML = "<p>Bugün için harika bir görev bulunmuyor! Dinlenme vakti 🎈</p>";
+                }
+            })
+            .catch(error => {
+                listeKutusu.innerHTML = "Görevler yüklenirken bir hata oluştu.";
+            });
+        }
+
         function cikisYap() {
-            localStorage.removeItem("aktifOgrenci"); // Hafızayı temizle
-            window.location.href = "index.html"; // Giriş ekranına dön
+            localStorage.removeItem("aktifOgrenci");
+            window.location.href = "index.html";
         }
     </script>
 
