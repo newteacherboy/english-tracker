@@ -5,72 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eğitim Koçum - Giriş Portalı</title>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            background-color: #FAF8F5;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(218, 203, 182, 0.4) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(125, 100, 81, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(244, 239, 230, 0.8) 0px, transparent 70%),
+                radial-gradient(at 100% 100%, rgba(191, 172, 150, 0.25) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(125, 100, 81, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
         }
+
+        /* Ana Portala Dönüş Tuşu */
+        .back-to-portal {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #dcedc8;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2e7d32;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .back-to-portal:hover {
+            background: #2e7d32;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* Giriş Kutusu Tasarımı */
         .login-box {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
             width: 100%;
-            max-width: 350px;
+            max-width: 400px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
-        h2 { color: #2e7d32; margin-bottom: 20px; }
+
+        .portal-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        h2 {
+            color: #1a1a1a;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .portal-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             text-align: left;
         }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+
         input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 14px 16px;
+            background-color: #f0f4f8;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            outline: none;
+            transition: all 0.2s;
         }
+
+        input:focus {
+            background-color: #ffffff;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background-color: #2e7d32;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+            transition: all 0.2s;
         }
-        button:hover { background-color: #1b5e20; }
-        #hataMesaji { color: #d32f2f; margin-top: 15px; font-size: 14px; }
+
+        button:hover {
+            background-color: #1b5e20;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.35);
+        }
+
+        #hataMesaji {
+            color: #c62828;
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            min-height: 18px;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Ana Portala Dönüş Butonu -->
+    <a href="https://panel.ogretmencocuk.com/" class="back-to-portal">← Ana Portala Dön</a>
+
     <div class="login-box">
-        <h2>Minik Koçluk Girişi</h2>
+        <div class="portal-icon">🎓</div>
+        <h2>Öğrenci Giriş Portalı</h2>
+        <p class="portal-desc">Lütfen sistemde kayıtlı Adınızı ve Soyadınızı, ardından şifrenizi giriniz.</p>
+
         <div class="input-group">
-            <label>Öğrenci Adı</label>
-            <input type="text" id="ogrenciAdi" placeholder="Örn: Ali">
+            <input type="text" id="ogrenciAdi" placeholder="ADINIZ SOYADINIZ">
         </div>
         <div class="input-group">
-            <label>Şifre</label>
-            <input type="password" id="sifre" placeholder="Şifreniz">
+            <input type="password" id="sifre" placeholder="ŞİFRENİZ" onkeydown="if(event.key==='Enter')girisYap()">
         </div>
+
         <button type="button" id="girisBtn" onclick="girisYap()">Giriş Yap</button>
         <div id="hataMesaji"></div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPBaRr7Kpo4GxmclN-Fz-iTY2DG1_7VFEI7JZxfbV8HfC9VTOw14c72yPYLIpdPGG7/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUe6yNNarha3W7CnN32jidOZXBO1-yZXPDOtVzmiFv9Fwm-3c7s47FTIuvV5eNsjoc/exec";
 
         function girisYap() {
             const ogrenciAdiInput = document.getElementById("ogrenciAdi");
@@ -85,6 +179,7 @@
                 return;
             }
 
+            hataDiv.style.color = "#2e7d32";
             hataDiv.innerText = "Giriş yapılıyor...";
 
             fetch(SCRIPT_URL, {
@@ -95,13 +190,15 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    localStorage.setItem("aktifOgrenci", btoa(data.ogrenciAdi)); // btoa ile öğrenci adını tarayıcıda gizliyoruz
+                    localStorage.setItem("aktifOgrenci", btoa(data.ogrenciAdi));
                     window.location.href = "panel.html";
                 } else {
+                    hataDiv.style.color = "#c62828";
                     hataDiv.innerText = "Hatalı kullanıcı adı veya şifre!";
                 }
             })
             .catch(err => {
+                hataDiv.style.color = "#c62828";
                 hataDiv.innerText = "Bağlantı hatası oluştu!";
             });
         }
