@@ -244,7 +244,7 @@
         </div>
 
         <!-- 9. Grafikler -->
-        <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
+        <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
         <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Beceri Radar Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
     </div>
 
@@ -353,7 +353,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWsAG2saQrX7pC0BUn4l77y0f9r38tGuw3f6qW6dA0b3hBnQCPiwRfEEC3sHZFYM0d/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnKC-enWR2sen6V2WBSFLVy7MZebn-_w6uYZsRuMeBJrs12i-bruqtupdu6XWWAyPl/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
@@ -361,6 +361,7 @@
         let timerInterval = null;
         let sistemOgrencileri = [];
         let ogrenciGecmisKayitlari = [];
+        let gelisimChartInstance = null;
         let radarChartInstance = null;
 
         if (!ogrenciAdi) {
@@ -407,7 +408,6 @@
             });
         }
 
-        // Öğrenci seçildiğinde geçmiş kayıtları ve telefon numarasını çeker
         function ogrenciSecildiVerileriYukle() {
             let secilen = document.getElementById("rubrikOgrenciSec").value;
             let gecmisSelect = document.getElementById("rubrikGecmisSec");
@@ -423,7 +423,6 @@
                 document.getElementById("rubrikVeliTel").value = bulutOgr.veliTelefon || "";
             }
 
-            // Geçmiş verileri sunucudan iste
             fetch(SCRIPT_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -443,7 +442,6 @@
             .catch(err => console.log("Geçmiş veriler alınamadı:", err));
         }
 
-        // Geçmiş tarihlerden biri seçildiğinde form kutularını doldurur (Düzenleme Modu)
         function gecmisVeriFormaYukle() {
             let secim = document.getElementById("rubrikGecmisSec").value;
             if (secim === "yeni") {
@@ -465,7 +463,6 @@
                 document.getElementById("rubrikYeniHarfler").value = kayit.ogrenilenHarfler || "";
                 document.getElementById("rubrikOzelYorum").value = kayit.haftalikNot || "";
 
-                // Puanları yükle
                 document.getElementById("crit1").value = kayit.okuma;
                 document.getElementById("crit2").value = kayit.yazma;
                 document.getElementById("crit3").value = kayit.dinleme;
@@ -668,7 +665,8 @@
                     document.getElementById("alfabeGridAlani").innerHTML = alfabeHtml;
                     document.getElementById("alfabeSayacText").innerText = `${tamamlananSayi} / 29 Harf`;
 
-                    renkliGrafikleriCiz(data.gelisim.kriterler);
+                    // Yıllık Gelişim Eğrisi Grafiğini ve Radar Grafiğini Çiz (Tarih Bazlı)
+                    renkliGrafikleriCiz(data.gelisim.kriterler, data.gelisim.gecmisTarihler, data.gelisim.gecmisPuanlar);
 
                     // Dersler
                     let dersler = data.dersler || [];
@@ -695,25 +693,34 @@
             });
         }
 
-        function renkliGrafikleriCiz(kriterler) {
+        function renkliGrafikleriCiz(kriterler, tarihler, puanlar) {
+            // 1. Yıllık Gelişim Eğrisi (Tarih Bazlı)
             const ctxGelisim = document.getElementById('gelisimChart').getContext('2d');
-            new Chart(ctxGelisim, {
+            if (gelisimChartInstance) gelisimChartInstance.destroy();
+
+            gelisimChartInstance = new Chart(ctxGelisim, {
                 type: 'line',
                 data: {
-                    labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Bugün'],
+                    labels: tarihler && tarihler.length > 0 ? tarihler : ['Kayıt Yok'],
                     datasets: [{
-                        label: 'Haftalık Başarı',
-                        data: [60, 75, 80, 85, 90, 100],
+                        label: 'Yıllık Gelişim Eğrisi (Genel Puan)',
+                        data: puanlar && puanlar.length > 0 ? puanlar : [0],
                         borderColor: '#2e7d32',
                         backgroundColor: 'rgba(46, 125, 50, 0.1)',
                         borderWidth: 3,
                         fill: true,
-                        tension: 0.4
+                        tension: 0.3
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { y: { beginAtZero: true, max: 100 } },
+                    plugins: { legend: { position: 'bottom' } } 
+                }
             });
 
+            // 2. 5 Kriterli Beceri Radar Grafiği
             const ctxRadar = document.getElementById('radarChart').getContext('2d');
             if (radarChartInstance) radarChartInstance.destroy();
 
