@@ -66,24 +66,22 @@
         .card-title { font-size: 15px; font-weight: bold; color: #2e7d32; display: flex; align-items: center; gap: 8px; margin: 0; }
         .action-pill-btn { background: #ffb300; color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(255,179,0,0.3); }
 
-        /* YENİ: BELİRGİN, YEŞİL VE KIRMIZI DERS ZAMAN ÇİZELGESİ TASARIMI */
         .ders-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
         @media(max-width: 600px) { .ders-grid-3 { grid-template-columns: 1fr; } }
-        
         .ders-box { background: #faf8f5; border: 2px solid #e0dcd0; padding: 15px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
-        
-        /* Yapılmış / Tamamlanmış Dersler (Yeşil Tonlar) */
         .ders-box.yapildi { background: #e8f5e9; border-color: #81c784; }
         .badge-yapildi { background: #c8e6c9; color: #1b5e20; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-
-        /* Yapılacak / Gelecek Dersler (Kırmızı Tonlar) */
         .ders-box.yapilacak { background: #ffebee; border-color: #e57373; }
         .badge-yapilacak { background: #ffcdd2; color: #b71c1c; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-
         .ders-durum-baslik { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; }
         .ders-tarih-yazi { font-size: 14px; font-weight: 900; color: #222; }
 
-        .teacher-note-box { background: #fffde7; border: 1px solid #fff9c4; border-left: 5px solid #ffb300; padding: 15px; border-radius: 12px; font-size: 14px; line-height: 1.6; color: #444; font-style: italic; }
+        /* Özgün ve Şirin Öğretmen Notu Kutusu */
+        .teacher-note-box { 
+            background: #fffde7; border: 1px solid #fff9c4; border-left: 6px solid #ffb300; 
+            padding: 16px; border-radius: 14px; font-size: 14px; line-height: 1.7; color: #333; font-style: italic; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
 
         .okuma-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
         @media(max-width: 600px) { .okuma-grid { grid-template-columns: 1fr; } }
@@ -155,16 +153,16 @@
             <button class="tab-btn">🏆 Rozetler</button>
         </div>
 
-        <!-- 4. Ders Zaman Çizelgesi (Yeşil / Kırmızı Belirgin Tasarım) -->
+        <!-- 4. Ders Zaman Çizelgesi -->
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
             <div class="ders-grid-3" id="dersZamanAlani"></div>
         </div>
 
-        <!-- 5. Öğretmenin Notu -->
+        <!-- 5. Akıllı Özgün Öğretmen Notu -->
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
-            <div class="teacher-note-box" id="ogretmenNotu">Yükleniyor...</div>
+            <div class="teacher-note-box" id="ogretmenNotu">Yapay zeka koçluk notu hazırlanıyor...</div>
         </div>
 
         <!-- 6. Okuma Takip & Odak + Alfabe Bahçesi -->
@@ -246,7 +244,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPBaRr7Kpo4GxmclN-Fz-iTY2DG1_7VFEI7JZxfbV8HfC9VTOw14c72yPYLIpdPGG7/exec";
+        const SCRIPT_URL = "BURAYA_GOOGLE_APPS_SCRIPT_URL_YAZIN";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
@@ -260,7 +258,6 @@
             verileriCekVeBaslat(ogrenciAdi);
         }
 
-        // Tarih formatını düzgün gösterme fonksiyonu (Örn: 04.09.2026)
         function tarihiDuzelt(tarihStr) {
             if (!tarihStr) return "Tarih Belirtilmedi";
             try {
@@ -269,7 +266,39 @@
                     return d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
                 }
             } catch (e) {}
-            return tarihStr.split('T')[0]; // ISO kalıntısı olursa sadece tarih kısmını al
+            return tarihStr.split('T')[0];
+        }
+
+        // AKILLI ÖZGÜN ÖĞRETMEN NOTU ÜRETİCİ (Verileri analiz eder, kırmadan motive eder)
+        function akilliOgretmenNotuUret(g, isim) {
+            let harfDizi = g.ogrenilenHarfler ? g.ogrenilenHarfler.split(',').map(h=>h.trim()).filter(h=>h.length>0) : [];
+            let harfSayisi = harfDizi.length;
+            let etkinlik = Number(g.etkinlikBasarisi) || 85;
+            let puan = Number(g.genelPuan) || 32;
+            let kitapSayisi = Number(g.okunanKitap) || 3;
+
+            let baslangicSozleri = [
+                `"Harika bir kımıldanma ve çaba haftasındayız! Sevgili ${isim}, derslerdeki duruşun ve gayretinle gözlerimizi kamaştırıyorsun. 🌟`,
+                `"Bu hafta enerjine ve çalışma isteğine bayıldım ${isim}! Her geçen gün biraz daha büyüyor ve öğrenme yolculuğunda harika adımlar atıyorsun. 🚀`,
+                `"Azimli çalışmalarınla sınıfımızın parlayan yıldızı olmaya devam ediyorsun ${isim}! Çaban ve inancın her türlü takdirin üzerinde. 💫"`
+            ];
+            let rastgeleBaslangic = baslangicSozleri[Math.floor(Math.random() * baslangicSozleri.length)];
+
+            let harfYorumu = ` Harf bahçemizde toplam **${harfSayisi} harfi** başarıyla geride bıraktın; kelimeler dünyasına açılan kapıları ardına kadar aralıyorsun.`;
+            if(harfSayisi >= 20) harfYorumu = ` Neredeyse alfabenin tüm harflerini fethettin (${harfSayisi}/29)! Okuma akıcılığın muazzam bir ivme kazandı.`;
+
+            let performansYorumu = "";
+            if (etkinlik >= 90) {
+                performansYorumu = ` Etkinliklerdeki **${etkinlik} puanlık** yüksek başarın ve ders disiplinin harika bir seviyede. Bu istikrar seni doğrudan başarıya götürüyor!`;
+            } else if (etkinlik >= 70) {
+                performansYorumu = ` Etkinlik başarımız **${etkinlik} puan** ile gayet iyi düzeyde. Ufak tekrarlar ve akşam okumalarıyla bunu zirveye taşıyacağımıza eminim. 📚`;
+            } else {
+                performansYorumu = ` Bu hafta genel puanımızda (${puan}) ufak bir dinlenme/geri çekilme görüyoruz; hiç sorun değil, minik adımlarla yeniden hız kazanacağız.`;
+            }
+
+            let kapanis = ` Akşamları yapılacak 10 dakikalık keyifli okuma molalarıyla bu başarıyı taçlandıralım. Yolun açık olsun! 🎈"`;
+
+            return rastgeleBaslangic + harfYorumu + performansYorumu + kapanis;
         }
 
         function verileriCekVeBaslat(isim) {
@@ -288,7 +317,9 @@
                     document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
                     document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
 
-                    document.getElementById("ogretmenNotu").innerHTML = `"${data.gelisim.haftalikNot}"`;
+                    // AKILLI ÖĞRETMEN NOTUNu Buraya Otomatik Basıyoruz
+                    document.getElementById("ogretmenNotu").innerHTML = akilliOgretmenNotuUret(data.gelisim, isim);
+
                     document.getElementById("aktifKitapAdi").innerText = data.gelisim.aktifKitapAdi;
                     document.getElementById("toplamBitirilenKitap").innerText = data.gelisim.okunanKitap;
 
@@ -317,15 +348,13 @@
 
                     renkliGrafikleriCiz();
 
-                    // Dersler Çizelgesi (Yapılmışlar YEŞİL, Yapılacaklar KIRMIZI ve Belirgin)
+                    // Dersler Çizelgesi
                     let dersler = data.dersler || [];
                     let dersHtml = "";
                     if(dersler.length > 0) {
                         dersler.slice(0, 3).forEach((d, index) => {
                             let temizTarih = tarihiDuzelt(d.tarih);
                             let yapildiMi = d.durum === "Yapıldı" || d.durum === "Tamamlandı";
-                            
-                            // Yapıldıysa YEŞİL, Yapılacaksa/Gelecekse KIRMIZI
                             let kutuSinif = yapildiMi ? "ders-box yapildi" : "ders-box yapilacak";
                             let badgeSinif = yapildiMi ? "badge-yapildi" : "badge-yapilacak";
                             let baslikTip = index === 0 ? "GEÇEN DERS" : (index === 1 ? "GÜNCEL DERS" : "GELECEK DERS");
