@@ -76,12 +76,22 @@
         .ders-durum-baslik { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; }
         .ders-tarih-yazi { font-size: 14px; font-weight: 900; color: #222; }
 
-        /* Özgün ve Şirin Öğretmen Notu Kutusu */
         .teacher-note-box { 
             background: #fffde7; border: 1px solid #fff9c4; border-left: 6px solid #ffb300; 
             padding: 16px; border-radius: 14px; font-size: 14px; line-height: 1.7; color: #333; font-style: italic; 
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
+
+        /* Rozetler Vitrini Tasarımı */
+        .rozet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; text-align: center; }
+        .rozet-box { background: #faf8f5; border: 1px solid #eae5dc; padding: 12px 8px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .rozet-box.aktif { background: #f1f8e9; border-color: #81c784; box-shadow: 0 2px 5px rgba(46,125,50,0.1); }
+        .rozet-box.soluk { opacity: 0.35; filter: grayscale(100%); background: #fff; }
+        
+        .rozet-progress-container { margin-top: 15px; border-top: 1px dashed #eae5dc; padding-top: 12px; }
+        .rozet-progress-track { background: #e0e0e0; height: 8px; border-radius: 4px; width: 100%; overflow: hidden; margin-bottom: 6px; }
+        .rozet-progress-fill { background: #ffb300; height: 100%; width: 0%; border-radius: 4px; transition: width 0.5s ease; }
+        .rozet-progress-text { font-size: 11px; color: #666; text-align: right; font-weight: 600; }
 
         .okuma-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
         @media(max-width: 600px) { .okuma-grid { grid-template-columns: 1fr; } }
@@ -159,13 +169,29 @@
             <div class="ders-grid-3" id="dersZamanAlani"></div>
         </div>
 
-        <!-- 5. Akıllı Özgün Öğretmen Notu -->
+        <!-- 5. Öğretmenin Notu -->
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
             <div class="teacher-note-box" id="ogretmenNotu">Yapay zeka koçluk notu hazırlanıyor...</div>
         </div>
 
-        <!-- 6. Okuma Takip & Odak + Alfabe Bahçesi -->
+        <!-- 6. Kazanılan Rozetler (Yeniden Eklendi) -->
+        <div class="card">
+            <div class="card-header-flex">
+                <h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3>
+            </div>
+            <div class="rozet-grid" id="rozetlerAlani">
+                <!-- Dinamik Dolacak -->
+            </div>
+            <div class="rozet-progress-container">
+                <div class="rozet-progress-track">
+                    <div class="rozet-progress-fill" id="rozetProgressBar" style="width: 0%;"></div>
+                </div>
+                <div class="rozet-progress-text" id="rozetProgressText">%0 tamamlandı</div>
+            </div>
+        </div>
+
+        <!-- 7. Okuma Takip & Odak + Alfabe Bahçesi -->
         <div class="card">
             <div class="card-header-flex">
                 <h3 class="card-title">📚 Okuma Kültürü & Odak Takibi</h3>
@@ -207,7 +233,7 @@
             </div>
         </div>
 
-        <!-- 7. Genel Puan Kısmı -->
+        <!-- 8. Genel Puan Kısmı -->
         <div class="stats-grid-4">
             <div class="stat-box kutu-1">
                 <div class="stat-label">⭐ Genel Puan</div>
@@ -227,7 +253,7 @@
             </div>
         </div>
 
-        <!-- 8. Grafikler -->
+        <!-- 9. Grafikler -->
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3></div>
             <div class="chart-container"><canvas id="gelisimChart"></canvas></div>
@@ -244,7 +270,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPBaRr7Kpo4GxmclN-Fz-iTY2DG1_7VFEI7JZxfbV8HfC9VTOw14c72yPYLIpdPGG7/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx08lAQItVNutgMDIPD1lDzkpdIjetkjjRhxA2UKARiw-1-O8eARtbpI7Ef4f-INnbP/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
@@ -269,13 +295,11 @@
             return tarihStr.split('T')[0];
         }
 
-        // AKILLI ÖZGÜN ÖĞRETMEN NOTU ÜRETİCİ (Verileri analiz eder, kırmadan motive eder)
         function akilliOgretmenNotuUret(g, isim) {
             let harfDizi = g.ogrenilenHarfler ? g.ogrenilenHarfler.split(',').map(h=>h.trim()).filter(h=>h.length>0) : [];
             let harfSayisi = harfDizi.length;
             let etkinlik = Number(g.etkinlikBasarisi) || 85;
             let puan = Number(g.genelPuan) || 32;
-            let kitapSayisi = Number(g.okunanKitap) || 3;
 
             let baslangicSozleri = [
                 `"Harika bir kımıldanma ve çaba haftasındayız! Sevgili ${isim}, derslerdeki duruşun ve gayretinle gözlerimizi kamaştırıyorsun. 🌟`,
@@ -290,10 +314,8 @@
             let performansYorumu = "";
             if (etkinlik >= 90) {
                 performansYorumu = ` Etkinliklerdeki **${etkinlik} puanlık** yüksek başarın ve ders disiplinin harika bir seviyede. Bu istikrar seni doğrudan başarıya götürüyor!`;
-            } else if (etkinlik >= 70) {
-                performansYorumu = ` Etkinlik başarımız **${etkinlik} puan** ile gayet iyi düzeyde. Ufak tekrarlar ve akşam okumalarıyla bunu zirveye taşıyacağımıza eminim. 📚`;
             } else {
-                performansYorumu = ` Bu hafta genel puanımızda (${puan}) ufak bir dinlenme/geri çekilme görüyoruz; hiç sorun değil, minik adımlarla yeniden hız kazanacağız.`;
+                performansYorumu = ` Etkinlik başarımız **${etkinlik} puan** ile gayet iyi düzeyde. Ufak tekrarlar ve akşam okumalarıyla bunu zirveye taşıyacağımıza eminim. 📚`;
             }
 
             let kapanis = ` Akşamları yapılacak 10 dakikalık keyifli okuma molalarıyla bu başarıyı taçlandıralım. Yolun açık olsun! 🎈"`;
@@ -317,9 +339,7 @@
                     document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
                     document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
 
-                    // AKILLI ÖĞRETMEN NOTUNu Buraya Otomatik Basıyoruz
                     document.getElementById("ogretmenNotu").innerHTML = akilliOgretmenNotuUret(data.gelisim, isim);
-
                     document.getElementById("aktifKitapAdi").innerText = data.gelisim.aktifKitapAdi;
                     document.getElementById("toplamBitirilenKitap").innerText = data.gelisim.okunanKitap;
 
@@ -331,6 +351,32 @@
                     document.getElementById("kitapProgressBar").style.width = yuzdeKitap + "%";
                     document.getElementById("okunanSayfaText").innerText = `Okunan: ${okunan} sayfa`;
                     document.getElementById("hedefSayfaText").innerText = `Hedef: ${hedefSayfa} sayfa`;
+
+                    // Rozetler Vitrini Doldurma
+                    let rozetler = data.rozetler || [];
+                    let toplamRozet = rozetler.length;
+                    let kazanilanSayisi = rozetler.filter(r => r.durum === "Kazanıldı").length;
+                    
+                    document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
+                    let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
+                    document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
+                    document.getElementById("rozetProgressText").innerText = `%${rozetYuzde} tamamlandı`;
+
+                    let rozetHtml = "";
+                    if (toplamRozet > 0) {
+                        rozetler.forEach(r => {
+                            let aktifMi = r.durum === "Kazanıldı";
+                            rozetHtml += `
+                                <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
+                                    <div style="font-size:24px; margin-bottom:4px;">${aktifMi ? '🌱' : '🔒'}</div>
+                                    <div style="font-size:11px; font-weight:bold; color:#333;">${r.rozetAdi}</div>
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">${r.puan || 0} p</div>
+                                </div>`;
+                        });
+                        document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
+                    } else {
+                        document.getElementById("rozetlerAlani").innerHTML = "<p style='grid-column: 1/-1; font-size:12px; color:#666;'>Rozet bulunmuyor.</p>";
+                    }
 
                     // Alfabe Dinamik Boyama
                     let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
