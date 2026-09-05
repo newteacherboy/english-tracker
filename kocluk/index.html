@@ -71,45 +71,32 @@
 
     <script>
         // Google Apps Script'ten aldığın uzun URL'yi buraya tırnak içine yapıştır:
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk0aaQ-x1r_iXWeeaZ15N6ZHiyuv2PHrOm3GhP9CYSHtGULyIl-Bu1s7Qi9Al7XnES/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPBaRr7Kpo4GxmclN-Fz-iTY2DG1_7VFEI7JZxfbV8HfC9VTOw14c72yPYLIpdPGG7/exec";
 
-        function girisYap() {
-            const ad = document.getElementById("ogrenciAdi").value.trim();
-            const sifre = document.getElementById("sifre").value.trim();
-            const hataKutusu = document.getElementById("hataMesaji");
+       function girisYap() {
+    const ogrenciAdi = document.getElementById("kullanici AdiInputId").value.trim();
+    const sifre = document.getElementById("sifreInputId").value.trim();
 
-            if (!ad || !sifre) {
-                hataKutusu.innerText = "Lütfen tüm alanları doldurun!";
-                return;
-            }
-
-            hataKutusu.innerText = "Giriş yapılıyor, lütfen bekleyin...";
-
-            const veri = {
-                action: "login",
-                ogrenciAdi: ad,
-                sifre: sifre
-            };
-
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors", // Google Apps Script CORS engeline takılmamak için
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8"
-                },
-                body: JSON.stringify(veri)
-            })
-            .then(() => {
-                // Not: no-cors modunda yanıt doğrudan okunamaz ama 
-                // basitçe lokal test veya yönlendirme mantığı kurabiliriz.
-                // Şimdilik doğrudan panele yönlendirelim veya localStorage kullanalım:
-                localStorage.setItem("aktifOgrenci", ad);
-                window.location.href = "panel.html";
-            })
-            .catch(error => {
-                hataKutusu.innerText = "Bir hata oluştu: " + error;
-            });
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "login", ogrenciAdi: ogrenciAdi, sifre: sifre })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            // Sadece başarı dönerse panele git
+            localStorage.setItem("aktifOgrenci", data.ogrenciAdi);
+            window.location.href = "panel.html";
+        } else {
+            // Hatalıysa asla girme, uyarı ver
+            alert("Hatalı kullanıcı adı veya şifre!");
         }
+    })
+    .catch(err => {
+        alert("Bağlantı hatası oluştu!");
+    });
+}
     </script>
 </body>
 </html>
