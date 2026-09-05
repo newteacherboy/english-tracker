@@ -705,7 +705,7 @@ canvas { max-height: 200px; }
         <div class="welcome-card-arrow">Giriş Yap ➔</div>
       </div>
 
-      <div class="welcome-card card-coach" onclick="openSection('kocluk')">
+      <div class="welcome-card card-coach" onclick="portalSec('kocluk')">
   <div class="welcome-card-icon">🎯</div>
   <div class="welcome-card-body">
     <h3>Eğitim Koçum</h3>
@@ -1223,7 +1223,8 @@ const muallimKitapDeposu = {
 // Portal Açılış
 function portalSec(tur) {
   if (tur === 'kocluk') {
-    document.getElementById("kocModal").style.display = "flex";
+    // Doğrudan senin belirttiğin koçluk adresine yönlendiriyoruz
+    window.location.href = "https://panel.ogretmencocuk.com/kocluk/";
   }
 }
 
