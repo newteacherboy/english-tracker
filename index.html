@@ -1102,7 +1102,7 @@ function portalEkraninaDon() {
     welcome.style.display = "flex";
     welcome.style.opacity = "1";
   }
-  currentSection = null; 
+  currentSection = null;  
   activeStudent = null;
 }
 
@@ -1196,10 +1196,10 @@ async function loadData() {
       const dText = await dRes.text();
       const dRows = parseCSV(dText);
       denemelerData = dRows.slice(1).map(r => ({
-        tarih:       r[0] || "",
-        ogrenci:     r[1] || "",
-        deneme_adi:  r[2] || "",
-        puan:        toNum(r[3])
+        tarih:     r[0] || "",
+        ogrenci:   r[1] || "",
+        deneme_adi: r[2] || "",
+        puan:      toNum(r[3])
       })).filter(r => r.ogrenci && r.puan > 0);
     } catch(e) { denemelerData = []; }
 
@@ -1228,13 +1228,9 @@ function renderTabs() {
   const contentEl = document.getElementById("content");
   if (!tabsEl || !contentEl) return;
 
+  // Giriş yapıldıysa üst şeridi tamamen kaldırıyoruz
   if (activeStudent && unlockedStudents[activeStudent]) {
-    tabsEl.innerHTML = `
-      <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 5px 15px; box-sizing: border-box; background: #fff; border-radius: 10px; border: 1px solid #e8eaed;">
-        <span style="font-size: 13px; font-weight: 600; color: #1D9E75;">👤 Aktif Öğrenci: ${activeStudent}</span>
-        <button onclick="aktifogrenciyiKapat()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">Hesaptan Çık</button>
-      </div>
-    `;
+    tabsEl.innerHTML = "";
     return;
   }
 
@@ -1338,10 +1334,14 @@ function showStudentPage(name) {
   else if (activePageTab === "kitaplar") pageContent = buildKitaplarTab();
 
   document.getElementById("content").innerHTML = `
+    <!-- Öğrenci Kartı ve Sağ Köşede Çıkış Butonu -->
     <div class="student-header">
       <div class="avatar">${initials}</div>
       <div class="student-info"><h2>${name}</h2><p>Son güncelleme: ${latest.tarih}</p></div>
-      <div class="level-badge">${latest.seviye}</div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+        <div class="level-badge">${latest.seviye}</div>
+        <button onclick="aktifogrenciyiKapat()" title="Çıkış Yap" style="background: #3498DB; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 8px rgba(52, 152, 219, 0.3); transition: all 0.2s;">➔</button>
+      </div>
     </div>
 
     <!-- ⏱️ SEKMELERİN HEMEN ÜSTÜNDE OTURUM PANELİ -->
@@ -1439,7 +1439,6 @@ function kitaplariGetir(sinifId, buton) {
         container.appendChild(a);
     });
 }
-
 function generateUniqueComment(puan, studentName, latestRow, allRows) {
   const firstName = studentName.split(" ")[0];
   const odev = (latestRow.odev_durumu || "").toLowerCase();
