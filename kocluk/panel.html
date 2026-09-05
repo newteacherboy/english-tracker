@@ -66,16 +66,22 @@
         .card-title { font-size: 15px; font-weight: bold; color: #2e7d32; display: flex; align-items: center; gap: 8px; margin: 0; }
         .action-pill-btn { background: #ffb300; color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(255,179,0,0.3); }
 
-        .ders-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+        /* YENİ: BELİRGİN, YEŞİL VE KIRMIZI DERS ZAMAN ÇİZELGESİ TASARIMI */
+        .ders-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
         @media(max-width: 600px) { .ders-grid-3 { grid-template-columns: 1fr; } }
-        .ders-box { background: #faf8f5; border: 1px solid #eae5dc; padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .ders-box.aktif-ders { background: #e8f5e9; border-color: #a5d6a7; }
-        .ders-durum-baslik { font-size: 10px; font-weight: bold; color: #777; }
-        .ders-tarih-yazi { font-size: 13px; font-weight: bold; color: #333; font-family: monospace; }
-        .ders-badge-mini { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-        .badge-tamamlandi { background: #c8e6c9; color: #1b5e20; }
-        .badge-sonraki { background: #bbdefb; color: #0d47a1; }
-        .badge-ertelendi { background: #ffe0b2; color: #e65100; }
+        
+        .ders-box { background: #faf8f5; border: 2px solid #e0dcd0; padding: 15px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+        
+        /* Yapılmış / Tamamlanmış Dersler (Yeşil Tonlar) */
+        .ders-box.yapildi { background: #e8f5e9; border-color: #81c784; }
+        .badge-yapildi { background: #c8e6c9; color: #1b5e20; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        /* Yapılacak / Gelecek Dersler (Kırmızı Tonlar) */
+        .ders-box.yapilacak { background: #ffebee; border-color: #e57373; }
+        .badge-yapilacak { background: #ffcdd2; color: #b71c1c; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        .ders-durum-baslik { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; }
+        .ders-tarih-yazi { font-size: 14px; font-weight: 900; color: #222; }
 
         .teacher-note-box { background: #fffde7; border: 1px solid #fff9c4; border-left: 5px solid #ffb300; padding: 15px; border-radius: 12px; font-size: 14px; line-height: 1.6; color: #444; font-style: italic; }
 
@@ -149,7 +155,7 @@
             <button class="tab-btn">🏆 Rozetler</button>
         </div>
 
-        <!-- 4. Ders Zaman Çizelgesi -->
+        <!-- 4. Ders Zaman Çizelgesi (Yeşil / Kırmızı Belirgin Tasarım) -->
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
             <div class="ders-grid-3" id="dersZamanAlani"></div>
@@ -194,7 +200,6 @@
                 </div>
             </div>
 
-            <!-- Türkçe Alfabe Tablosu -->
             <div class="alfabe-container">
                 <div class="alfabe-baslik">
                     <span>✨ Harf Bahçesi (Alfabe İlerlemesi)</span>
@@ -204,7 +209,7 @@
             </div>
         </div>
 
-        <!-- 7. Genel Puan Kısmı (etkinlikBasarisi ile güncellendi) -->
+        <!-- 7. Genel Puan Kısmı -->
         <div class="stats-grid-4">
             <div class="stat-box kutu-1">
                 <div class="stat-label">⭐ Genel Puan</div>
@@ -255,6 +260,18 @@
             verileriCekVeBaslat(ogrenciAdi);
         }
 
+        // Tarih formatını düzgün gösterme fonksiyonu (Örn: 04.09.2026)
+        function tarihiDuzelt(tarihStr) {
+            if (!tarihStr) return "Tarih Belirtilmedi";
+            try {
+                let d = new Date(tarihStr);
+                if (!isNaN(d.getTime())) {
+                    return d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                }
+            } catch (e) {}
+            return tarihStr.split('T')[0]; // ISO kalıntısı olursa sadece tarih kısmını al
+        }
+
         function verileriCekVeBaslat(isim) {
             fetch(SCRIPT_URL, {
                 method: "POST",
@@ -300,20 +317,24 @@
 
                     renkliGrafikleriCiz();
 
-                    // Dersler Çizelgesi
+                    // Dersler Çizelgesi (Yapılmışlar YEŞİL, Yapılacaklar KIRMIZI ve Belirgin)
                     let dersler = data.dersler || [];
                     let dersHtml = "";
                     if(dersler.length > 0) {
                         dersler.slice(0, 3).forEach((d, index) => {
-                            let durumSinif = d.durum === "Yapıldı" ? "badge-tamamlandi" : (d.durum === "Ertelendi" ? "badge-ertelendi" : "badge-sonraki");
-                            let kutuSinif = index === 1 ? "ders-box aktif-ders" : "ders-box";
+                            let temizTarih = tarihiDuzelt(d.tarih);
+                            let yapildiMi = d.durum === "Yapıldı" || d.durum === "Tamamlandı";
+                            
+                            // Yapıldıysa YEŞİL, Yapılacaksa/Gelecekse KIRMIZI
+                            let kutuSinif = yapildiMi ? "ders-box yapildi" : "ders-box yapilacak";
+                            let badgeSinif = yapildiMi ? "badge-yapildi" : "badge-yapilacak";
                             let baslikTip = index === 0 ? "GEÇEN DERS" : (index === 1 ? "GÜNCEL DERS" : "GELECEK DERS");
 
                             dersHtml += `
                                 <div class="${kutuSinif}">
                                     <div class="ders-durum-baslik">${baslikTip}</div>
-                                    <div class="ders-tarih-yazi">${d.tarih}</div>
-                                    <div class="ders-badge-mini ${durumSinif}">${d.durum}</div>
+                                    <div class="ders-tarih-yazi">📅 ${temizTarih}</div>
+                                    <div class="${badgeSinif}">${d.durum}</div>
                                 </div>
                             `;
                         });
