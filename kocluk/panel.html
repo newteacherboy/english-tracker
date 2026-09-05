@@ -185,8 +185,17 @@
             <button class="tab-btn" onclick="sekmeGecis(3)">🏆 Rozetler</button>
         </div>
 
-        <!-- A. ÖZET GÖRÜNÜMÜ ALANI -->
+        <!-- A. ÖZET GÖRÜNÜMÜ ALANI (İstatistikler Çizelgenin Üstüne Taşındı) -->
         <div id="sekmeOzetAlani" style="display: flex; flex-direction: column; gap: 15px;">
+            
+            <!-- 4'lü İstatistik Kutuları En Üste Alındı -->
+            <div class="stats-grid-4">
+                <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
+                <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
+                <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
+                <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
+            </div>
+
             <div class="card">
                 <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
                 <div class="ders-grid-3" id="dersZamanAlani"></div>
@@ -243,18 +252,11 @@
                 </div>
             </div>
 
-            <div class="stats-grid-4">
-                <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
-                <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
-                <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
-                <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
-            </div>
-
             <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
             <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
         </div>
 
-        <!-- B. DERS RAPORLARI SEKME ALANI (GERÇEK HAFTALIK PUANLAR İLE) -->
+        <!-- B. DERS RAPORLARI SEKME ALANI -->
         <div id="sekmeRaporlarAlani" style="display: none; flex-direction: column; gap: 15px;">
             <div class="card" style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #a5d6a7;">
                 <h3 class="card-title" style="color:#1b5e20;">📝 Öğrenci Haftalık Gelişim Karnesi & Arşivi</h3>
@@ -438,7 +440,6 @@
             document.getElementById("sekmeRozetlerAlani").style.display = (index === 3) ? "block" : "none";
         }
 
-        // Haftalık Gerçek Ortalama Puanı Kullanan Rapor Kartları
         function dersRaporlariniEkranaBas(kayitlar) {
             let listeDiv = document.getElementById("dersRaporlariListesi");
             if (!listeDiv) return;
@@ -456,7 +457,6 @@
                 let kon = Number(k.konusma) || 80;
                 let dik = Number(k.dikkat) || 95;
 
-                // O haftaya ait kriterlerin matematiksel ortalaması (Gerçek Haftalık Puan)
                 let haftalikGercekPuan = Math.round((oku + yaz + din + kon + dik) / 5);
                 let puanRenk = haftalikGercekPuan >= 85 ? '#2e7d32' : (haftalikGercekPuan >= 70 ? '#f57c00' : '#c62828');
 
