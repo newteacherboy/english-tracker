@@ -52,14 +52,26 @@
         .card h2 { color: #1565c0; margin-top: 0; font-size: 20px; }
         .gorev-item {
             background: #f1f8e9;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 10px;
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 16px;
+            border: 1px solid #c8e6c9;
         }
+        .tamamlandi { background: #c8e6c9 !important; text-decoration: line-through; color: #2e7d32; }
+        .action-btn {
+            background: #ffb300;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+        }
+        .action-btn:hover { background: #ffa000; }
     </style>
 </head>
 <body>
@@ -78,9 +90,7 @@
     </div>
 
     <script>
-        // Google Apps Script URL'ini buraya yapıştır:
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywmB4LTWpJDQ1JgOgvk43OBVp2-cW5_Hy4dwhrB4IWKeFeZtFTDtT4XV-WfMDzVtJj/exec";
-
+        const SCRIPT_URL = "BURAYA_GOOGLE_APPS_SCRIPT_URL_YAZIN";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
 
         if (!ogrenciAdi) {
@@ -103,16 +113,36 @@
                 if (data.status === "success" && data.gorevler.length > 0) {
                     let html = "";
                     data.gorevler.forEach(g => {
-                        let ikon = g.durum === "Tamamlandı" ? "✅" : "⏳";
-                        html += `<div class="gorev-item"><span>${g.gorevAdi}</span> <span>${ikon}</span></div>`;
+                        let bittiMi = g.durum === "Tamamlandı";
+                        let sinif = bittiMi ? "gorev-item tamamlandi" : "gorev-item";
+                        let butonYazi = bittiMi ? "Harika! ✅" : "Bitti Yap 🚀";
+                        let butonTik = bittiMi ? "" : `onclick="gorevBitir('${g.satirId}')"`;
+                        
+                        html += `
+                            <div class="${sinif}">
+                                <span>${g.gorevAdi}</span>
+                                <button class="action-btn" ${butonTik}>${butonYazi}</button>
+                            </div>
+                        `;
                     });
                     listeKutusu.innerHTML = html;
                 } else {
-                    listeKutusu.innerHTML = "<p>Bugün için harika bir görev bulunmuyor! Dinlenme vakti 🎈</p>";
+                    listeKutusu.innerHTML = "<p>Bugün için harika görev bulunmuyor! 🎈</p>";
                 }
             })
             .catch(error => {
-                listeKutusu.innerHTML = "Görevler yüklenirken bir hata oluştu.";
+                listeKutusu.innerHTML = "Görevler yüklenirken hata oluştu.";
+            });
+        }
+
+        function gorevBitir(id) {
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "gorevTamamla", gorevId: id })
+            })
+            .then(() => {
+                gorevleriGetir(ogrenciAdi); // Listeyi yenile
             });
         }
 
@@ -121,6 +151,5 @@
             window.location.href = "index.html";
         }
     </script>
-
 </body>
 </html>
