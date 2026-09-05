@@ -21,6 +21,74 @@
     
 <style>
 
+    /* 🗂️ YENİ SEKME TASARIMI (3. Resim Kırmızı Alan) */
+.page-tabs {
+    display: flex;
+    gap: 8px;
+    background: #F4F1EA;
+    padding: 6px;
+    border-radius: 14px;
+    border: 1px solid #E2DDD2;
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+}
+.page-tab {
+    flex: 1;
+    padding: 10px 14px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #7A7263;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.page-tab:hover {
+    color: #2C3E50;
+    background: rgba(255, 255, 255, 0.5);
+}
+.page-tab.active {
+    background: #1D9E75 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(29, 158, 117, 0.25);
+}
+
+/* 🤖 YAPAY ZEKA ASİSTAN & GÖZLEM RAPORU KUTUSU (3. Resim Pembe Alan) */
+.ai-asistan-banner {
+    position: relative;
+    background: #E8F8F0;
+    border: 1.5px solid #A3E4D7;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    animation: fadeInAI 0.4s ease-out;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.ai-asistan-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0E6251;
+}
+.ai-asistan-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #117A65;
+}
+@keyframes fadeInAI {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     margin: 0;
@@ -1583,6 +1651,36 @@ function buildOzet(rows, latest, studentName, allRows) {
   const lessonStatusBoxHtml = buildLessonStatusBox(rows);
   const teacherComment = generateUniqueComment(latest.genel, studentName, latest, allRows);
 
+  // Yapay Zeka Gözlem Raporu / Motivasyon Mesajı Üreteci
+  const firstName = studentName.split(" ")[0];
+  const puanFarki = prev ? latest.genel - prev.genel : latest.genel;
+  let aiMesaj = "";
+  if (puanFarki >= 0) {
+    aiMesaj = `Harika bir enerjiyle devam ediyorsun ${firstName}! Puanındaki yükseliş ve istikrarın göz kamaştırıyor. Bu tempoyu kaybetmeden zirveye doğru ilerliyoruz! 🚀`;
+  } else {
+    aiMesaj = `Ufak bir puan dalgalanması yaşadık ${firstName}, ancak hiç sorun değil! Eksiklerimizi fırsata çevirip bir sonraki haftada bu farkı çok daha net kapatacağımıza inanıyorum. Asla pes etmek yok, birlikte başaracağız! 💪`;
+  }
+
+  const aiBannerHtml = `
+    <div id="aiAsistanKutusu" class="ai-asistan-banner">
+      <div class="ai-asistan-header">
+        <span>🤖</span>
+        <span>Koçluk Asistanı & Gözlem Raporu</span>
+      </div>
+      <div class="ai-asistan-text">${aiMesaj}</div>
+    </div>
+  `;
+
+  // 10 saniye sonra banner'ı otomatik gizleme script tetikleyicisi
+  setTimeout(() => {
+    const kutu = document.getElementById("aiAsistanKutusu");
+    if (kutu) {
+      kutu.style.opacity = "0";
+      kutu.style.transform = "translateY(-10px)";
+      setTimeout(() => kutu.style.display = "none", 800);
+    }
+  }, 10000);
+
   const ogrenciGecmisi = allData.filter(r => (r.ogrenci || "").toString().trim().toLowerCase() === (latest.ogrenci || "").toString().trim().toLowerCase());
   const kitapliSonSatir = [...ogrenciGecmisi].reverse().find(r => r.son_kitap_adi && r.son_kitap_adi !== "Bu hafta henüz kitap tanımlanmadı.") || {};
 
@@ -1652,6 +1750,8 @@ function buildOzet(rows, latest, studentName, allRows) {
   const devamlilikOrani = dersler.length ? Math.round(yapildi/dersler.length*100) : 0;
 
   return `
+    ${aiBannerHtml}
+    
     <div class="metrics-grid">
       <div class="metric-card"><div class="metric-label">⭐ Genel Puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
       <div class="metric-card"><div class="metric-label">🚀 Son Deneme</div><div class="metric-value">${latest.deneme > 0 ? latest.deneme : "—"}</div><div class="metric-delta">${delta("deneme")}</div></div>
@@ -1659,15 +1759,15 @@ function buildOzet(rows, latest, studentName, allRows) {
       <div class="metric-card"><div class="metric-label">🔥 Devam Oranı</div><div class="metric-value">${devamlilikOrani}%</div><div class="metric-delta"><span style="color:#C0392B">${yapilmadi} kaçırıldı</span></div></div>
     </div>
 
-    ${badgesHtml}
-    ${kitapTakipPaneliHtml}
-    
     <div class="teacher-feedback-card">
       <div class="feedback-header"><span class="feedback-animated-icon">✍️</span><h4 class="feedback-title">Öğretmenin Haftalık Notu</h4></div>
       <p class="feedback-text">"${teacherComment}"</p>
     </div>
 
     ${lessonStatusBoxHtml} 
+
+    ${badgesHtml}
+    ${kitapTakipPaneliHtml}
 
     <div class="card"><div class="card-title">Genel gelişim grafiği</div><canvas id="chartGenel"></canvas></div>
     <div class="card"><div class="card-title">Beceri radar grafiği</div><canvas id="chartRadar"></canvas></div>
