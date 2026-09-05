@@ -69,7 +69,7 @@
         }
         @media(max-width: 600px) {
             .tabs-bar {
-                grid-template-columns: repeat(2, 1fr); /* Mobilde 2 sütun, kaydırma yok, hepsi gözükür */
+                grid-template-columns: repeat(2, 1fr);
             }
         }
         .tab-btn {
@@ -146,6 +146,25 @@
 
         .chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; }
 
+        /* YENİ: Yapay Zeka Karşılama Balonu Animasyonu */
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); display: none; }
+        }
+        .ai-welcome-banner {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border: 2px solid #81c784;
+            color: #1b5e20;
+            padding: 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.12);
+            animation: fadeInOut 15s forwards; /* Tam 15 saniye sonra kaybolur */
+            position: relative;
+            overflow: hidden;
+        }
+
         .admin-float-btn {
             position: fixed; bottom: 20px; right: 20px; z-index: 1000;
             background: rgba(46, 125, 50, 0.5); color: white; border: none; width: 45px; height: 45px;
@@ -200,7 +219,7 @@
             </div>
         </div>
 
-        <!-- 3. Sekmeler (Mobilde 2x2 Izgara - Kaydırma Gerektirmez) -->
+        <!-- 3. Sekmeler (Mobilde 2x2 Izgara) -->
         <div class="tabs-bar">
             <button class="tab-btn active" onclick="sekmeGecis(0)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeGecis(1)">📝 Ders Raporları</button>
@@ -211,7 +230,16 @@
         <!-- A. ÖZET GÖRÜNÜMÜ ALANI -->
         <div id="sekmeOzetAlani" style="display: flex; flex-direction: column; gap: 15px;">
             
-            <!-- 4'lü İstatistik Kutuları En Üste Alındı -->
+            <!-- YAPAY ZEKA DESTEKLİ 15 SANİYE GÖRÜNÜR KARŞILAMA MESAJI -->
+            <div id="aiKarsilamaKutusu" class="ai-welcome-banner" style="display: none;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                    <span style="font-size: 22px;">🤖</span>
+                    <h4 style="margin: 0; font-size: 14.5px; font-weight: 800; color: #1b5e20;">Koçluk Asistanı & Gözlem Raporu</h4>
+                </div>
+                <p id="aiKarsilamaMetni" style="margin: 0; font-size: 13px; line-height: 1.5; color: #2e7d32; font-weight: 600;"></p>
+            </div>
+
+            <!-- 4'lü İstatistik Kutuları -->
             <div class="stats-grid-4">
                 <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
                 <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
@@ -287,12 +315,11 @@
             <div style="padding: 20px; text-align: center; color: #555;">Harf ve beceri kazanımları bu alanda listelenmektedir.</div>
         </div>
 
-        <!-- D. ROZETLER SEKME ALANI (Dikkat Çekici Dolu İlerleme Kutusuyla Güncellendi) -->
+        <!-- D. ROZETLER SEKME ALANI -->
         <div id="sekmeRozetlerAlani" class="card" style="display: none;">
             <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
             <div class="rozet-grid" id="rozetlerAlani"></div>
             
-            <!-- Dikkat Çekici Modern İlerleme Kutusu -->
             <div style="margin-top:20px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #a5d6a7; padding: 16px; border-radius: 14px; box-shadow: 0 4px 10px rgba(46,125,50,0.05);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #1b5e20;">
                     <span>🚀 Rozet Tamamlama Seviyesi</span>
@@ -524,6 +551,23 @@
                 `;
             });
             listeDiv.innerHTML = html;
+        }
+
+        // YAPAY ZEKA GİRİŞ MESAJI ÜRETİCİ
+        function yapayZekaKarsilamaUret(isim, kazanilanRozetSayisi, genelPuan) {
+            let mesajlar = [];
+            if (kazanilanRozetSayisi > 0) {
+                mesajlar = [
+                    `Harika bir başlangıç! Bu hafta gösterdiğin üstün gayretle ${kazanilanRozetSayisi} yeni rozet kilitledin ve genel puanını ${genelPuan} seviyesine taşıdın. Başarılarının detaylarını aşağıdan inceleyebilirsin! ✨`,
+                    `Mükemmel bir enerjiyle giriş yaptın! Topladığın ${kazanilanRozetSayisi} rozet ve ${genelPuan} genel puanınla harika bir ivme yakaladın. Hadi, tüm gelişim özetini aşağıdan detaylıca inceleyelim! 🚀`
+                ];
+            } else {
+                mesajlar = [
+                    `Hoş geldin ${isim}! Şu an ${genelPuan} genel puanla yola devam ediyorsun; ilk rozetini kazanmak için harika bir fırsat seni bekliyor. Aşağıdaki detaylı özetle bu haftayı harika planlayalım! 🎯`,
+                    `Selam ${isim}! Çalışmalarımız tüm hızıyla sürüyor. Puanını katlamak ve yeni rozetler açmak için hazır mısın? Geri kalan özetini ve hedeflerini hemen aşağıdan inceleyebilirsin! 🌟`
+                ];
+            }
+            return mesajlar[Math.floor(Math.random() * mesajlar.length)];
         }
 
         function yoneticiGirisSorgula() {
@@ -800,7 +844,8 @@
                 if (data.status === "success") {
                     toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
 
-                    document.getElementById("statGenelPuan").innerText = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan;
+                    let genelPuanVal = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan || 0;
+                    document.getElementById("statGenelPuan").innerText = genelPuanVal;
                     document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
                     document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
                     document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
@@ -826,6 +871,14 @@
                     let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
                     document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
                     document.getElementById("rozetProgressText").innerText = `%${rozetYuzde}`;
+
+                    // YAPAY ZEKA GİRİŞ MESAJINI AKTİFLEŞTİR VE 15 SN SONRA GİZLE
+                    let aiKutu = document.getElementById("aiKarsilamaKutusu");
+                    let aiMetin = document.getElementById("aiKarsilamaMetni");
+                    if (aiKutu && aiMetin) {
+                        aiMetin.innerText = yapayZekaKarsilamaUret(isim, kazanilanSayisi, genelPuanVal);
+                        aiKutu.style.display = "block";
+                    }
 
                     let rozetHtml = "";
                     if (toplamRozet > 0) {
