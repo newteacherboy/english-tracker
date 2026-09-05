@@ -48,6 +48,61 @@ body {
     box-shadow: 0 8px 32px 0 rgba(125, 100, 81, 0.06) !important;
 }
 
+/* 🏠 ANA SAYFA BUTONU (SAĞ ÜST KÖŞE, SOLUK/PASTEL) */
+.global-portal-home-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    background: #A3E4D7;
+    color: #0E6251;
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 9999999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.75;
+    transition: all 0.2s ease;
+}
+.global-portal-home-btn:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    background: #76D7C4;
+}
+
+/* 📝 ÖĞRENCİ DEĞERLENDİR LOGO BUTONU (ANA SAYFA BUTONUNUN HEMEN ALTINDA, SOLUK/PASTEL) */
+#yeni_rubrikOpenBtn {
+    position: fixed;
+    top: 62px;
+    right: 15px;
+    width: 42px;
+    height: 42px;
+    background: #D5F5E3;
+    color: #196F3D;
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 9999999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.75;
+    transition: all 0.2s ease;
+    outline: none;
+}
+#yeni_rubrikOpenBtn:hover {
+    opacity: 1;
+    transform: scale(1.05);
+    background: #ABEBC6;
+}
+
 /* 🟢 SAĞ ALT YÜZEN BUTONLAR (TÜM CİHAZLARDA SOLUK/PASTEL VE SAĞ ALTTA) */
 .whatsapp-float-wrapper {
     position: fixed;
@@ -257,37 +312,6 @@ body {
 }
 .popup-kapat-btn:hover { background: rgba(0,0,0,0.12); }
 
-/* 📝 ÖĞRENCİ DEĞERLENDİR LOGO BUTONU (ANA SAYFA ALTINDA, YUVARLAK VE SOLUK) */
-#yeni_rubrikOpenBtn {
-    position: fixed;
-    top: 65px;
-    right: 15px;
-    width: 44px;
-    height: 44px;
-    background: #D5F5E3;
-    color: #196F3D;
-    border: 1.5px solid #A9DFBF;
-    border-radius: 50%;
-    font-size: 18px;
-    cursor: pointer;
-    z-index: 9999999;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.75;
-    transition: all 0.2s;
-    outline: none;
-}
-#yeni_rubrikOpenBtn:hover {
-    opacity: 1;
-    transform: scale(1.05);
-    background: #ABEBC6;
-}
-
-
-
-
 /* ANA SAYFA */
 .home { min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
 .home-logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.4rem; text-align: center; }
@@ -411,37 +435,6 @@ body {
 .progress-bar { height: 8px; background: #f0f0f0; border-radius: 999px; overflow: hidden; }
 .progress-fill { height: 100%; border-radius: 999px; transition: width 0.8s ease; }
 
-.lesson-accordion-item { background: #fff; border: 1px solid #e8eaed; border-radius: 12px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s; }
-.lesson-accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #fff; border: none; font-size: 14px; font-weight: 600; color: #1a1a1a; cursor: pointer; text-align: left; outline: none; }
-.lesson-accordion-header:hover { background: #f8f9fa; }
-.lesson-header-left { display: flex; align-items: center; gap: 10px; }
-.lesson-header-right { display: flex; align-items: center; gap: 12px; }
-.lesson-accordion-arrow { font-size: 11px; color: #aaa; transition: transform 0.2s; }
-.lesson-accordion-item.open .lesson-accordion-arrow { transform: rotate(180deg); }
-.lesson-accordion-content { display: none; padding: 16px; background: #fff; border-top: 1px solid #f0f0f0; }
-.lesson-accordion-item.open .lesson-accordion-content { display: block; }
-.week-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; border-bottom: 1px dashed #f0f0f0; padding-bottom: 6px; }
-.week-row-label { color: #666; }
-.week-row-value { color: #1a1a1a; }
-.week-scores { display: flex; flex-wrap: wrap; gap: 6px; }
-.week-score-item { background: #f4f6f8; border-radius: 6px; padding: 4px 8px; font-size: 11px; }
-.week-score-label { color: #777; margin-right: 4px; }
-.week-score-val { font-weight: 600; color: #1D9E75; }
-
-.exam-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.exam-table th { color: #888; font-weight: 500; text-align: left; padding: 6px 8px; border-bottom: 1px solid #f0f0f0; font-size: 11px; text-transform: uppercase; }
-.exam-table td { padding: 9px 8px; border-bottom: 1px solid #f8f8f8; color: #333; }
-.tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
-.tag-green { background: #E1F5EE; color: #0F6E56; }
-.tag-teal { background: #d0f0e8; color: #0a5c45; }
-.tag-amber { background: #FAEEDA; color: #854F0B; }
-.tag-blue { background: #E6F1FB; color: #185FA5; }
-
-.content { padding: 1.25rem; width: 100%; box-sizing: border-box; }
-.empty { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
-.loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
-canvas { max-height: 220px; }
-
 .badges-card { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; padding: 1.25rem; margin-bottom: 1rem; }
 .badges-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 1rem; }
 .badges-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
@@ -456,27 +449,14 @@ canvas { max-height: 220px; }
 .badges-progress-fill { height: 100%; background: linear-gradient(90deg, #f39c12, #1D9E75); border-radius: 999px; transition: width 0.8s ease; }
 .badges-progress-text { font-size: 11px; color: #888; white-space: nowrap; }
 
-@keyframes kupaBounce { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-6px) scale(1.05); } 100% { transform: translateY(0) scale(1); } }
-.animated-trophy { font-size: 46px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); display: inline-block; animation: kupaBounce 2.5s infinite ease-in-out; }
-
 .teacher-feedback-card { position: relative; background: #fff; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02); }
 .teacher-feedback-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #1D9E75, #378ADD, #f39c12, #1D9E75); background-size: 300% 100%; animation: borderGlow 6s linear infinite; }
 .feedback-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .feedback-title { font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: 0.02em; }
 .feedback-text { font-size: 13.5px; line-height: 1.6; color: #334155; font-style: italic; position: relative; z-index: 2; padding-left: 5px; }
-.feedback-animated-icon { font-size: 18px; animation: writeAnimation 1.5s ease-in-out infinite alternate; display: inline-block; }
-@keyframes borderGlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
-@keyframes writeAnimation { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(3px, -3px) rotate(15deg); } }
 
 @media screen and (max-width: 768px) {
   .r-card, .chart-container, #content, .stats-grid, .main-container { padding: 10px !important; margin-bottom: 12px !important; width: 100% !important; box-sizing: border-box !important; }
-  .r-btn-group, .flex-row, .grid-2-col { flex-direction: column !important; display: flex !important; gap: 8px !important; }
-  .r-status-btn, .lock-btn, #pdfIndirBtn, #saveBtn, .nav-button { padding: 12px 16px !important; font-size: 14.5px !important; min-height: 44px !important; width: 100% !important; box-sizing: border-box; }
-  canvas, .chart-el { max-height: 260px !important; width: 100% !important; }
-  .data-table, table { display: block !important; width: 100% !important; overflow-x: auto !important; white-space: nowrap !important; -webkit-overflow-scrolling: touch; }
-  .book-flex-layout { flex-direction: column !important; gap: 16px !important; }
-  .trophy-score-card { width: 100% !important; padding: 20px !important; }
-  #okumaRozeti { width: 100%; text-align: center; margin-top: 5px; }
 }
 
 /* KARŞILAMA EKRANI */
@@ -486,63 +466,34 @@ canvas { max-height: 220px; }
   background: radial-gradient(circle at 10% 20%, rgba(29, 158, 117, 0.08) 0%, transparent 40%),
               radial-gradient(circle at 90% 80%, rgba(125, 100, 81, 0.12) 0%, transparent 40%),
               #FAF8F5;
-  display: flex; align-items: center; justify-content: center; z-index: 999999; padding: 20px; box-sizing: border-box; animation: fadeIn 0.4s ease-out;
+  display: flex; align-items: center; justify-content: center; z-index: 999999; padding: 20px; box-sizing: border-box;
 }
-.welcome-container { max-width: 520px; width: 100%; text-align: center; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 24px; padding: 35px 25px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05); }
-.welcome-badge { display: inline-block; background: #E1F5EE; color: #0F6E56; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 15px; letter-spacing: 0.5px; }
+.welcome-container { max-width: 520px; width: 100%; text-align: center; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(14px); border-radius: 24px; padding: 35px 25px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05); }
+.welcome-badge { display: inline-block; background: #E1F5EE; color: #0F6E56; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 15px; }
 .welcome-title { font-size: 30px; font-weight: 800; color: #1a1a1a; margin-bottom: 6px; }
 .welcome-title span { color: #1D9E75; }
 .welcome-subtitle { font-size: 14px; color: #71717a; margin-bottom: 30px; }
 .welcome-card-grid { display: flex; flex-direction: column; gap: 16px; }
-.welcome-card { position: relative; display: flex; align-items: center; gap: 16px; background: #ffffff; border: 2px solid #e8eaed; border-radius: 16px; padding: 18px 20px; text-align: left; cursor: pointer; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.welcome-card { position: relative; display: flex; align-items: center; gap: 16px; background: #ffffff; border: 2px solid #e8eaed; border-radius: 16px; padding: 18px 20px; text-align: left; cursor: pointer; transition: all 0.25s; }
 .welcome-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); }
-.welcome-card.card-english:hover { border-color: #1D9E75; }
-.welcome-card.card-coach:hover { border-color: #7D6451; }
 .welcome-card-icon { font-size: 34px; background: #f8fafc; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 14px; flex-shrink: 0; }
 .welcome-card-body h3 { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
 .welcome-card-body p { font-size: 12px; color: #71717a; line-height: 1.4; margin: 0; }
 .welcome-card-arrow { margin-left: auto; font-size: 13px; font-weight: 700; color: #1D9E75; white-space: nowrap; }
-.welcome-badge-soon { position: absolute; top: -10px; right: 15px; background: #f59e0b; color: white; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px; letter-spacing: 0.5px; }
 
-.koc-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; z-index: 1000000; }
-.koc-modal-content { background: white; border-radius: 18px; padding: 25px; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-.koc-modal-content h3 { font-size: 16px; margin-bottom: 8px; color: #1a1a1a; }
-.koc-modal-content p { font-size: 13px; color: #666; margin-bottom: 18px; line-height: 1.5; }
-.koc-modal-content button { background: #1D9E75; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-
-/* Rubrik Modal */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
-#yeni_rubrikModal input, #yeni_rubrikModal textarea { font-family: inherit; box-sizing: border-box; }
-#yeni_rubrikModal input[type=text] { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #E2DDD2; font-size: 15px; }
-#yeni_rubrikModal textarea { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #E2DDD2; font-size: 13.5px; resize: vertical; }
-.r-slider { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: #E2DDD2; outline: none; width: 100%; }
-.r-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #9B5435; cursor: pointer; border: 3px solid #F6F4EF; box-shadow: 0 0 0 1px #9B5435; }
-.r-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #9B5435; cursor: pointer; border: 3px solid #F6F4EF; box-shadow: 0 0 0 1px #9B5435; }
-.r-card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 14px; border: 1px solid #E9E4D9; box-sizing: border-box; }
-.r-btn-group { display: flex; gap: 4px; width: 100%; }
-.r-status-btn { flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 600; border-radius: 6px; border: 1.5px solid #E2DDD2; background: #fff; color: #5A554C; cursor: pointer; }
-.r-status-btn.active { border-color: #9B5435; background: #FBEFE7; color: #9B5435; }
-.skill-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13.5px; }
-.skill-row span:first-child { width: 85px; font-weight: 500; }
-.score-val { font-family: 'IBM Plex Mono', monospace; width: 30px; text-align: right; font-weight: 600; color: #9B5435; }
-.r-check-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid #F0EBE0; font-size: 14px; }
-.r-check-row input { width: 18px; height: 18px; accent-color: #9B5435; flex-shrink: 0; }
-.r-label-sm { display: block; font-size: 11.5px; font-weight: 600; color: #8A8478; margin-bottom: 4px; }
-  
 </style>
 </head>
 <body>
 
-    <!-- 🏠 GLOBAL ANA SAYFA BUTONU -->
+    <!-- 🏠 ANA SAYFA BUTONU (SAĞ ÜST) -->
     <button class="global-portal-home-btn" onclick="portalEkraninaDon()">
       🏠 Ana Sayfa
     </button>
 
-        <!-- 📋 ÖĞRENCİ DEĞERLENDİR LOGO BUTONU (ANA SAYFA ALTINDA) -->
+    <!-- 📝 ÖĞRENCİ DEĞERLENDİR LOGO BUTONU (ANA SAYFA BUTONUNUN ALTINDA) -->
     <button id="yeni_rubrikOpenBtn" title="Öğrenci Değerlendir">
       📝
     </button>
-
 
 <!-- 🚀 GİRİŞ KARŞILAMA VE PORTAL SEÇİM EKRANI -->
 <div id="welcomePortalScreen" class="welcome-overlay">
@@ -562,15 +513,16 @@ canvas { max-height: 220px; }
       </div>
 
       <div class="welcome-card card-coach" onclick="portalSec('kocluk')">
-  <div class="welcome-card-icon">🎯</div>
-  <div class="welcome-card-body">
-    <h3>Eğitim Koçum</h3>
-    <p>Haftalık hedef yönetimi, Bireysel Ödev ve Sınav stratejileri</p>
-  </div>
-  <div class="welcome-card-arrow">Giriş Yap ➔</div>
-</div>
+        <div class="welcome-card-icon">🎯</div>
+        <div class="welcome-card-body">
+          <h3>Eğitim Koçum</h3>
+          <p>Haftalık hedef yönetimi, Bireysel Ödev ve Sınav stratejileri</p>
+        </div>
+        <div class="welcome-card-arrow">Giriş Yap ➔</div>
+      </div>
     </div>
   </div>
+</div>
 
   <div id="kocModal" class="koc-modal" style="display: none;">
     <div class="koc-modal-content">
