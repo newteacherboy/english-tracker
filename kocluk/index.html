@@ -95,7 +95,7 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    localStorage.setItem("aktifOgrenci", data.ogrenciAdi);
+                    localStorage.setItem("aktifOgrenci", btoa(data.ogrenciAdi)); // btoa ile öğrenci adını tarayıcıda gizliyoruz
                     window.location.href = "panel.html";
                 } else {
                     hataDiv.innerText = "Hatalı kullanıcı adı veya şifre!";
