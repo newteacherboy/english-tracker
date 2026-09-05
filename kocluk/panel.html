@@ -295,11 +295,11 @@
             </div>
 
             <div class="form-group">
-                <label>Yeni Öğrenilen Harfler (Virgülle Örn: D,T,K - Boş bırakırsanız değişmez)</label>
+                <label>Yeni Öğrenilen Harfler (Virgülle Örn: D,T,K)</label>
                 <input type="text" id="rubrikYeniHarfler" placeholder="Örn: D, T">
             </div>
 
-            <!-- Kayan Çubuklu Puanlayıcı -->
+            <!-- Kaydırmalı Çubuklu Puanlayıcı -->
             <div class="form-group">
                 <label>Ders İçi Gelişim Puanlayıcı (Kaydırmalı Çubuklar)</label>
                 <div class="range-grid">
@@ -313,8 +313,8 @@
             </div>
 
             <div class="form-group">
-                <label>Ödev Verildi mi? (Yeni Ödevler Sekmesine İşlenir)</label>
-                <input type="text" id="rubrikOdevMetni" placeholder="Örn: 2 sayfa ses çalışması ve metin okuma">
+                <label>Ödev Verildi mi? (Odevler Sekmesine Kaydedilir)</label>
+                <input type="text" id="rubrikOdevMetni" placeholder="Örn: 2 sayfa ses çalışması">
             </div>
 
             <div class="form-group">
@@ -327,7 +327,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxi41q7xg33ULc21SDZVatqquQC-AK99sjfPZPD_ESxrFQCVdxhZw32F7T4qA_JUos/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwpn_vmzByBIihYwCso52c9Ido7obGDQqrtoffLH_AZR1RUE7WTAY7iS1pZ591pxS2u/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
@@ -440,19 +440,19 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    alert("Veriler kaydedildi! WhatsApp Raporu hazırlanıyor...");
+                    alert("Veriler başarıyla kaydedildi! WhatsApp Raporu hazırlanıyor...");
                     
-                    let veliTelFinal = data.veliTelefon || tel;
+                    let veliTelFinal = String(data.veliTelefon || tel);
                     let temizTel = veliTelFinal.replace(/\D/g, '');
 
-                    // Profesyonel Veli Mesajı Oluşturucu
+                    // AI Destekli Profesyonel Veli Raporu Mesajı
                     let mesaj = `🌟 *DİJİMUALLİM HAFTALIK VELİ RAPORU* 🌟\n\n` +
                                 `Sevgili Velimiz, öğrencimiz *${oAdi.toUpperCase()}* için bu haftanın koçluk değerlendirmesi:\n\n` +
                                 `📌 *Ders Başı Durumu:* ${dBasDurum}\n` +
-                                (dBasYorum ? `💬 *Gözlem:* ${dBasYorum}\n\n` : `\n`) +
+                                (dBasYorum ? `💬 *Öğretmen Gözlemi:* ${dBasYorum}\n\n` : `\n`) +
                                 `⭐ Genel Puan / Etkinlik Başarısı: *${gPuan} / 100*\n` +
                                 `📚 *Bu Hafta Verilen Ödev:* ${odevMetni || "Ödev verilmedi."}\n\n` +
-                                `🍎 *Öğretmen Notu:* ${ozelYorum || "Harika bir gelişim haftası geçirdik."}\n\n` +
+                                `🍎 *Öğretmen Değerlendirmesi:* ${ozelYorum || "Harika bir gelişim haftası geçirdik."}\n\n` +
                                 `📅 Tamamlanan Ders: ${dTar || "Bugün"}\n` +
                                 `📅 Sonraki Ders: ${sTar || "Planlandı"}\n\n` +
                                 `Detaylı gelişim paneli için öğrenci giriş yapabilir. İyi günler dileriz! 🎈`;
