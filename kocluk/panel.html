@@ -57,14 +57,37 @@
         .progress-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 5px; }
         .sure-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #2e7d32; font-weight: 600; flex-wrap: wrap; gap: 5px; }
 
+        /* MOBİLDE 2x2 IZGARA OLAN ŞIK SEKMELER BARİ */
         .tabs-bar {
-            display: flex; gap: 6px; background: var(--card-bg); padding: 8px; border-radius: 14px; border: 2px solid var(--border-color); overflow-x: auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            background: var(--card-bg);
+            padding: 8px;
+            border-radius: 14px;
+            border: 2px solid var(--border-color);
+        }
+        @media(max-width: 600px) {
+            .tabs-bar {
+                grid-template-columns: repeat(2, 1fr); /* Mobilde 2 sütun, kaydırma yok, hepsi gözükür */
+            }
         }
         .tab-btn {
-            flex: 1; min-width: 110px; padding: 10px 8px; border: none; background: transparent; border-radius: 10px;
-            font-weight: bold; font-size: 13px; color: #666; cursor: pointer; text-align: center; white-space: nowrap; transition: 0.2s;
+            width: 100%;
+            padding: 10px 8px;
+            border: none;
+            background: #f1f8e9;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #2e7d32;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+            transition: 0.2s;
+            border: 1px solid #c8e6c9;
         }
-        .tab-btn.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(46,125,50,0.2); }
+        .tab-btn.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(46,125,50,0.2); border-color: var(--primary-color); }
 
         .card { background: var(--card-bg); padding: 18px; border-radius: 18px; border: 2px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px dashed #f0eae1; padding-bottom: 8px; flex-wrap: wrap; gap: 10px; }
@@ -177,7 +200,7 @@
             </div>
         </div>
 
-        <!-- 3. Sekmeler -->
+        <!-- 3. Sekmeler (Mobilde 2x2 Izgara - Kaydırma Gerektirmez) -->
         <div class="tabs-bar">
             <button class="tab-btn active" onclick="sekmeGecis(0)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeGecis(1)">📝 Ders Raporları</button>
@@ -264,13 +287,20 @@
             <div style="padding: 20px; text-align: center; color: #555;">Harf ve beceri kazanımları bu alanda listelenmektedir.</div>
         </div>
 
-        <!-- D. ROZETLER SEKME ALANI (Rozet Kartı Buraya Taşındı) -->
+        <!-- D. ROZETLER SEKME ALANI (Dikkat Çekici Dolu İlerleme Kutusuyla Güncellendi) -->
         <div id="sekmeRozetlerAlani" class="card" style="display: none;">
             <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
             <div class="rozet-grid" id="rozetlerAlani"></div>
-            <div class="rozet-progress-container" style="margin-top:15px; border-top:1px dashed #eae5dc; padding-top:12px;">
-                <div class="rozet-progress-track"><div class="rozet-progress-fill" id="rozetProgressBar" style="width: 0%;"></div></div>
-                <div class="rozet-progress-text" id="rozetProgressText">%0 tamamlandı</div>
+            
+            <!-- Dikkat Çekici Modern İlerleme Kutusu -->
+            <div style="margin-top:20px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #a5d6a7; padding: 16px; border-radius: 14px; box-shadow: 0 4px 10px rgba(46,125,50,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #1b5e20;">
+                    <span>🚀 Rozet Tamamlama Seviyesi</span>
+                    <span id="rozetProgressText" style="background: #2e7d32; color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 12px;">%0</span>
+                </div>
+                <div style="background: #c8e6c9; height: 14px; border-radius: 7px; width: 100%; overflow: hidden; padding: 2px; border: 1px solid #a5d6a7;">
+                    <div id="rozetProgressBar" style="background: linear-gradient(90deg, #2e7d32, #4caf50); height: 100%; width: 0%; border-radius: 5px; transition: width 0.6s ease;"></div>
+                </div>
             </div>
         </div>
 
@@ -795,7 +825,7 @@
                     document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
                     let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
                     document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
-                    document.getElementById("rozetProgressText").innerText = `%${rozetYuzde} tamamlandı`;
+                    document.getElementById("rozetProgressText").innerText = `%${rozetYuzde}`;
 
                     let rozetHtml = "";
                     if (toplamRozet > 0) {
