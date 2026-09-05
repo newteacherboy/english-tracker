@@ -21,34 +21,6 @@
     
 <style>
 
-/* Mobil ve Tabletlerde Yüzen Butonları Sağ Orta Kısıma Toplama ve Boyut Küçültme */
-@media screen and (max-width: 768px) {
-  .whatsapp-float-wrapper,
-  .seviye-wrapper,
-  .ezber-float-wrapper,
-  .randevu-float-wrapper {
-    right: 12px !important;
-  }
-
-  .whatsapp-float-wrapper { bottom: 15px !important; }
-  .randevu-float-wrapper { bottom: 80px !important; }
-  .seviye-wrapper        { bottom: 145px !important; }
-  .ezber-float-wrapper   { bottom: 210px !important; }
-
-  .whatsapp-float-btn,
-  .seviye-test-float-btn,
-  .ezber-float-btn,
-  .randevu-float-btn {
-    width: 48px !important;
-    height: 48px !important;
-    font-size: 22px !important;
-  }
-
-  .auto-hide-badge {
-    display: none !important;
-  }
-}
-    
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     margin: 0;
@@ -76,7 +48,7 @@ body {
     box-shadow: 0 8px 32px 0 rgba(125, 100, 81, 0.06) !important;
 }
 
-/* 🟢 YÜZEN SAĞ ALT BUTON KAPSAYICILARI */
+/* 🟢 YÜZEN SAĞ ALT BUTON KAPSAYICILARI (SOLUK / PASTEL VE SAĞ ALTTA SABİT) */
 .whatsapp-float-wrapper {
     position: fixed;
     bottom: 25px;
@@ -86,43 +58,75 @@ body {
     gap: 10px;
     z-index: 999999;
 }
+.randevu-float-wrapper {
+    position: fixed;
+    bottom: 85px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999998;
+}
+.seviye-wrapper {
+    position: fixed;
+    bottom: 145px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999998;
+}
+.ezber-float-wrapper {
+    position: fixed;
+    bottom: 205px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999998;
+}
 
-.whatsapp-float-btn {
-    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-    color: white;
-    width: 58px;
-    height: 58px;
+.whatsapp-float-btn,
+.seviye-test-float-btn,
+.ezber-float-btn,
+.randevu-float-btn {
+    width: 50px !important;
+    height: 50px !important;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+    font-size: 22px;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 2px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 2px solid rgba(255,255,255,0.8);
     outline: none;
+    opacity: 0.85;
+    transition: all 0.2s ease;
 }
-.whatsapp-float-btn:hover {
-    transform: scale(1.08) translateY(-2px);
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+
+.whatsapp-float-btn { background: #A9DFBF; color: #0E6251; }
+.seviye-test-float-btn { background: #D4E6F1; color: #1B4F72; }
+.ezber-float-btn { background: #EBDEF0; color: #512E5F; }
+.randevu-float-btn { background: #FDEBD0; color: #784212; }
+
+.whatsapp-float-btn:hover,
+.seviye-test-float-btn:hover,
+.ezber-float-btn:hover,
+.randevu-float-btn:hover {
+    opacity: 1;
+    transform: scale(1.05);
 }
 
 .whatsapp-badge-dot {
     position: absolute;
     top: 2px;
     right: 2px;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     background-color: #ef4444;
     border-radius: 50%;
     border: 2px solid #ffffff;
-    animation: pulseDot 2s infinite;
-}
-@keyframes pulseDot {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 .whatsapp-chat-box {
@@ -164,78 +168,9 @@ body {
 .whatsapp-send-btn { background: #25D366; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12.5px; cursor: pointer; text-align: center; transition: background 0.2s; }
 .whatsapp-send-btn:hover { background: #20ba5a; }
 
-/* 🎯 YÜZEN LOGO SEVİYE BUTONU */
-.seviye-wrapper {
-    position: fixed;
-    bottom: 95px;
-    right: 25px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    z-index: 999998;
-}
-
-.seviye-test-float-btn {
-    background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%);
-    color: #ffffff;
-    border: 2px solid #ffffff;
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(44, 62, 80, 0.45);
-    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    outline: none;
-}
-.seviye-test-float-btn:hover {
-    transform: scale(1.08) translateY(-2px);
-    box-shadow: 0 8px 25px rgba(44, 62, 80, 0.65);
-}
-
-/* Kelime Ezber Kartları Yüzen Buton */
-.ezber-float-wrapper {
-    position: fixed;
-    bottom: 235px;
-    right: 25px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    z-index: 999998;
-}
-
-.ezber-float-btn {
-    background: linear-gradient(135deg, #8E44AD 0%, #6C3483 100%);
-    color: #ffffff;
-    border: 2px solid #ffffff;
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(142, 68, 173, 0.45);
-    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    outline: none;
-}
-
-.ezber-float-btn:hover {
-    transform: scale(1.08) translateY(-2px);
-    box-shadow: 0 8px 25px rgba(142, 68, 173, 0.65);
-}
-
-.ezber-badge-text { 
-    background: #8E44AD; 
-}
-
 .ezber-popup-box {
     position: fixed;
-    bottom: 305px;
+    bottom: 260px;
     right: 25px;
     width: 360px;
     max-width: calc(100vw - 40px);
@@ -251,38 +186,6 @@ body {
     animation: slideUpClean 0.25s ease-out;
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* 📅 YÜZEN LOGO DERS TALEBİ BUTONU */
-.randevu-float-wrapper {
-    position: fixed;
-    bottom: 165px;
-    right: 25px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    z-index: 999998;
-}
-
-.randevu-float-btn {
-    background: linear-gradient(135deg, #7D6451 0%, #534235 100%);
-    color: #ffffff;
-    border: 2px solid #ffffff;
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(125, 100, 81, 0.45);
-    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    outline: none;
-}
-.randevu-float-btn:hover {
-    transform: scale(1.08) translateY(-2px);
-    box-shadow: 0 8px 25px rgba(125, 100, 81, 0.65);
 }
 
 /* 🏷️ ORTAK BALONCUK METİNLERİ */
@@ -305,6 +208,7 @@ body {
 .whatsapp-badge-text { background: #075E54; }
 .seviye-badge-text { background: #2C3E50; }
 .randevu-badge-text { background: #7D6451; }
+.ezber-badge-text { background: #8E44AD; }
 
 @keyframes bounceSoft {
     0%, 100% { transform: translateX(0); }
@@ -314,7 +218,7 @@ body {
 /* POPUP KUTULARI */
 .seviye-test-popup-box, .randevu-popup-box {
     position: fixed;
-    bottom: 235px;
+    bottom: 200px;
     right: 25px;
     width: 360px;
     max-width: calc(100vw - 40px);
@@ -352,15 +256,7 @@ body {
 }
 .popup-kapat-btn:hover { background: rgba(0,0,0,0.12); }
 
-@media screen and (max-width: 480px) {
-    .whatsapp-float-wrapper { right: 15px; bottom: 25px; }
-    .whatsapp-chat-box { width: calc(100vw - 30px); right: 15px; bottom: 90px; }
-    .seviye-wrapper { right: 15px; bottom: 90px; }
-    .randevu-float-wrapper { right: 15px; bottom: 155px; }
-    .seviye-test-popup-box, .randevu-popup-box { right: 15px; bottom: 225px; width: calc(100vw - 30px); max-height: 70vh; }
-}
-
-/* 🏠 GLOBAL ANA SAYFA BUTONU */
+/* 🏠 GLOBAL ANA SAYFA BUTONU & ÖĞRENCİ DEĞERLENDİR BUTONU (SAĞ ÜST) */
 .global-portal-home-btn {
     position: fixed;
     top: 15px;
@@ -383,7 +279,32 @@ body {
 .global-portal-home-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(29, 158, 117, 0.5);
-    background: linear-gradient(135deg, #24b888 0%, #128366 100%);
+}
+
+#yeni_rubrikOpenBtn {
+    position: fixed;
+    top: 15px;
+    right: 128px;
+    background: #D5F5E3;
+    color: #196F3D;
+    border: 1.5px solid #A9DFBF;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 9999999;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.9;
+    transition: all 0.2s;
+}
+#yeni_rubrikOpenBtn:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    background: #ABEBC6;
 }
 
 /* ANA SAYFA */
@@ -469,8 +390,8 @@ body {
 .lesson-status-box { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
 .status-box-title { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
 .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.status-element { background: #f8f9fa; border-radius: 10px; padding: 10px 8px; text-align: center; border: 1px solid #f0f0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
-.status-element .lbl { font-size: 10px; font-weight: 600; color: #888; text-transform: uppercase; }
+.status-element { border-radius: 10px; padding: 10px 8px; text-align: center; border: 1px solid #f0f0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.status-element .lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; }
 .status-element .date { font-size: 12px; font-weight: 700; color: #1a1a1a; white-space: nowrap; }
 .status-badge { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; }
 .badge-tamamlandi { background: #E1F5EE; color: #0F6E56; border: 1px solid #a8dfc0; }
@@ -626,74 +547,7 @@ canvas { max-height: 220px; }
 .r-check-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid #F0EBE0; font-size: 14px; }
 .r-check-row input { width: 18px; height: 18px; accent-color: #9B5435; flex-shrink: 0; }
 .r-label-sm { display: block; font-size: 11.5px; font-weight: 600; color: #8A8478; margin-bottom: 4px; }
-
-/* SADECE MOBİL VE TABLETLERDE EKRANIN ALTINDA YATAY ŞERİT (DOCK) */
-@media screen and (max-width: 768px) {
-  .whatsapp-float-wrapper,
-  .seviye-wrapper,
-  .ezber-float-wrapper,
-  .randevu-float-wrapper {
-    position: static !important;
-    bottom: auto !important;
-    right: auto !important;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 65px;
-    background: rgba(250, 248, 245, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: 1px solid #e2e8f0;
-    z-index: 99998;
-  }
-
-  .whatsapp-float-wrapper,
-  .seviye-wrapper,
-  .ezber-float-wrapper,
-  .randevu-float-wrapper {
-    position: fixed !important;
-    bottom: 8px !important;
-    z-index: 999999 !important;
-  }
-
-  .ezber-float-wrapper   { left: 8% !important; }
-  .seviye-wrapper        { left: 31% !important; }
-  .randevu-float-wrapper { left: 54% !important; }
-  .whatsapp-float-wrapper{ left: 77% !important; }
-
-  .whatsapp-float-btn,
-  .seviye-test-float-btn,
-  .ezber-float-btn,
-  .randevu-float-btn {
-    width: 46px !important;
-    height: 46px !important;
-    font-size: 20px !important;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15) !important;
-  }
-
-  .auto-hide-badge {
-    display: none !important;
-  }
-
-  .ezber-popup-box, .seviye-test-popup-box, #sagAltDersKutusu, .whatsapp-chat-box {
-    bottom: 75px !important;
-    right: 10px !important;
-    left: 10px !important;
-    width: auto !important;
-    max-width: none !important;
-  }
-
-  .content, .tracker {
-    padding-bottom: 80px !important;
-    padding-right: 1.25rem !important;
-  }
-}
-    
+  
 </style>
 </head>
 <body>
@@ -701,6 +555,11 @@ canvas { max-height: 220px; }
     <!-- 🏠 GLOBAL ANA SAYFA BUTONU -->
     <button class="global-portal-home-btn" onclick="portalEkraninaDon()">
       🏠 Ana Sayfa
+    </button>
+
+    <!-- 📋 ÖĞRENCİ DEĞERLENDİR BUTONU (SAĞ ÜST, SOLUK/PASTEL) -->
+    <button id="yeni_rubrikOpenBtn">
+      📝 Öğrenci Değerlendir
     </button>
 
 <!-- 🚀 GİRİŞ KARŞILAMA VE PORTAL SEÇİM EKRANI -->
@@ -839,10 +698,6 @@ canvas { max-height: 220px; }
 </div>
 
 <!-- RUBRİK VE DEĞERLENDİRME MODALI -->
-<button id="yeni_rubrikOpenBtn" style="display: block; margin: 30px auto; padding: 12px 22px; border-radius: 10px; border: none; background: #9B5435; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-  Öğrenci Değerlendir
-</button>
-
 <div id="yeni_rubrikOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px;">
   <div id="yeni_rubrikModal" style="background:#F6F4EF;border-radius:14px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;position:relative;color:#262320;">
     <button id="yeni_rubrikCloseBtn" aria-label="Kapat" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:none;background:#fff;color:#5A554C;font-size:18px;cursor:pointer;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,0.15);">×</button>
@@ -979,7 +834,7 @@ canvas { max-height: 220px; }
   </div>
 </div>
 
-<!-- 📅 SAĞ ALTA SABİTLENMİŞ YUVARLAK LOGO DERS TALEBİ BUTONU VE ETİKETİ -->
+<!-- 📅 SAĞ ALTA SABİTLENMİŞ YUVARLAK LOGO DERS TALEBİ BUTONU -->
 <div class="randevu-float-wrapper">
   <span id="randevuGeciciYazi" class="auto-hide-badge randevu-badge-text">Özel Ders Talebi Oluştur! 📅</span>
   <button id="randevuFloatBtn" class="randevu-float-btn" onclick="randevuFormuKapatAcl()" title="Online / Yüz Yüze Ders Talebi">
@@ -988,7 +843,7 @@ canvas { max-height: 220px; }
 </div>
 
 <!-- AÇILIR DERS TALEBİ FORMU (POPUP KART) -->
-<div id="sagAltDersKutusu" style="display: none; position: fixed; bottom: 235px; right: 25px; width: 360px; max-width: calc(100vw - 40px); max-height: 75vh; background: #FAF6F0; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); z-index: 9999999; flex-direction: column; overflow-y: auto; border: 1px solid #DCD5C5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-sizing: border-box;">
+<div id="sagAltDersKutusu" style="display: none; position: fixed; bottom: 200px; right: 25px; width: 360px; max-width: calc(100vw - 40px); max-height: 75vh; background: #FAF6F0; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); z-index: 9999999; flex-direction: column; overflow-y: auto; border: 1px solid #DCD5C5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-sizing: border-box;">
   <button type="button" onclick="randevuFormuKapatAcl()" style="position: absolute; top: 12px; right: 14px; background: rgba(0,0,0,0.06); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #4A4235;">✕</button>
   
   <h3 style="color: #7D6451; margin-top: 5px; font-size: 16.5px; text-align: center;">📅 Bireysel Ders Başvurusu</h3>
@@ -1043,7 +898,7 @@ canvas { max-height: 220px; }
   </button>
 </div>
 
-<!-- 🎯 SAĞ ALTA SABİTLENMİŞ KELİME ZEKA TESTİ BUTONU VE ETİKETİ -->
+<!-- 🎯 KELİME ZEKA TESTİ BUTONU -->
 <div class="ezber-float-wrapper">
   <span id="ezberBaloncukYazi" class="auto-hide-badge ezber-badge-text">Kelime Ezber Yarışması! 🧠</span>
   <button id="ezberFloatBtn" class="ezber-float-btn" onclick="ezberKartToggle()" title="Kelime Ezber Yarışması">
@@ -1051,7 +906,7 @@ canvas { max-height: 220px; }
   </button>
 </div>
 
-<!-- 🎯 SAĞ ALTA SABİTLENMİŞ YUVARLAK LOGO SEVİYE TESTİ BUTONU VE ETİKETİ -->
+<!-- 🎯 SEVİYE TESTİ BUTONU -->
 <div class="seviye-wrapper">
   <span id="seviyeGeciciYazi" class="auto-hide-badge seviye-badge-text">İngilizce Seviyeni Test Et! 🎯</span>
   <button id="seviyeTestBtn" class="seviye-test-float-btn" onclick="seviyeTestiKutusuAc()" title="İngilizce Seviye Tespit Sınavı">
@@ -1238,7 +1093,6 @@ const muallimKitapDeposu = {
 // Portal Açılış
 function portalSec(tur) {
   if (tur === 'kocluk') {
-    // Doğrudan senin belirttiğin koçluk adresine yönlendiriyoruz
     window.location.href = "https://panel.ogretmencocuk.com/kocluk/";
   }
 }
@@ -1262,7 +1116,6 @@ function goHome() {
   portalEkraninaDon();
 }
 
-// Bölüm Açma (İngilizce Özel Ders Tıklanınca)
 function openSection(section) {
   currentSection = section;
   allData = []; students = []; passwords = {}; unlockedStudents = {}; activeStudent = null;
@@ -1497,7 +1350,7 @@ function showStudentPage(name) {
       <div class="level-badge">${latest.seviye}</div>
     </div>
 
-    <!-- ⏱️ SEKMELERİN HEMEN ÜSTÜNDE OTURUM PANELİ -->
+    <!-- ⏱️ OTURUM PANELİ -->
     <div id="oturumSayacKutusu" style="background: #E1F5EE; border: 1px solid #a8dfc0; color: #0F6E56; padding: 14px 18px; border-radius: 14px; margin-bottom: 1.25rem; font-family: 'Segoe UI', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13.5px;">
@@ -1523,7 +1376,6 @@ function showStudentPage(name) {
     ${pageContent}
   `;
 
-  // Sekme değiştiğinde süreyi anında ekrana basar:
   guncelSayacArayuzunuBas();
 
   if (activePageTab === "ozet") drawCharts(rows);
@@ -1535,8 +1387,7 @@ function switchPageTab(name, tab) {
   activePageTab = tab;
   showStudentPage(name);
 }
-    
-// 📖 ÖĞRENCİ PANELİNE EKLENEN KİTAP OKUMA SEKMESİ İÇERİĞİ
+  
 function buildKitaplarTab() {
   return `
     <div class="card" style="padding: 20px;">
@@ -1744,22 +1595,30 @@ function buildLessonStatusBox(rows) {
     return `<span class="status-badge badge-sonraki">Sonraki Ders</span>`;
   }
 
+  const pastStyle = "background: #FEF9E7; border-color: #F9E79F;";
+  const pastStatus = pastLesson ? (pastLesson.ders_durumu || "").toLowerCase().trim() : "";
+  const currentStatus = currentLesson ? (currentLesson.ders_durumu || "").toLowerCase().trim() : "";
+  const nextStatus = nextLesson ? (nextLesson.ders_durumu || "").toLowerCase().trim() : "";
+
+  const currentStyle = currentStatus === "tamamlandi" ? "background: #E8F8F0; border-color: #A3E4D7;" : "background: #f8f9fa; border-color: #f0f0f0;";
+  const nextStyle = (nextStatus === "sonraki" || nextStatus === "planlandi" || nextStatus === "sonraki ders" || !nextStatus) ? "background: #FADBD8; border-color: #F5B7B1;" : "background: #f8f9fa; border-color: #f0f0f0;";
+
   return `
     <div class="lesson-status-box">
       <div class="status-box-title">📅 Ders Zaman Çizelgesi ve Durumu</div>
       <div class="status-grid">
-        <div class="status-element">
-          <span class="lbl">Geçen Ders</span>
+        <div class="status-element" style="${pastStyle}">
+          <span class="lbl" style="color: #B7950B;">Geçen Ders</span>
           <span class="date">${pastLesson ? pastLesson.ders_tarihi : "—"}</span>
           ${pastLesson ? getStatusBadge(pastLesson.ders_durumu) : '<span class="status-empty">Veri Yok</span>'}
         </div>
-        <div class="status-element" style="background: #f0fdf4; border-color: #bbf7d0;">
-          <span class="lbl" style="color: #15803d;">Güncel Ders</span>
-          <span class="date" style="color: #166534;">${currentLesson ? currentLesson.ders_tarihi : "—"}</span>
+        <div class="status-element" style="${currentStyle}">
+          <span class="lbl" style="color: ${currentStatus === "tamamlandi" ? "#117A65" : "#888"};">Güncel Ders</span>
+          <span class="date">${currentLesson ? currentLesson.ders_tarihi : "—"}</span>
           ${currentLesson ? getStatusBadge(currentLesson.ders_durumu) : '<span class="status-empty">Veri Yok</span>'}
         </div>
-        <div class="status-element">
-          <span class="lbl">Gelecek Ders</span>
+        <div class="status-element" style="${nextStyle}">
+          <span class="lbl" style="color: #C0392B;">Gelecek Ders</span>
           <span class="date">${nextLesson ? nextLesson.ders_tarihi : "—"}</span>
           ${nextLesson ? getStatusBadge(nextLesson.ders_durumu) : '<span class="status-empty">Plan Yok</span>'}
         </div>
@@ -1868,21 +1727,22 @@ function buildOzet(rows, latest, studentName, allRows) {
   const devamlilikOrani = dersler.length ? Math.round(yapildi/dersler.length*100) : 0;
 
   return `
-    ${badgesHtml}
-    ${kitapTakipPaneliHtml}
-    ${lessonStatusBoxHtml} 
-    
-    <div class="teacher-feedback-card">
-      <div class="feedback-header"><span class="feedback-animated-icon">✍️</span><h4 class="feedback-title">Öğretmenin Haftalık Notu</h4></div>
-      <p class="feedback-text">"${teacherComment}"</p>
-    </div>
-
     <div class="metrics-grid">
       <div class="metric-card"><div class="metric-label">⭐ Genel Puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
       <div class="metric-card"><div class="metric-label">🚀 Son Deneme</div><div class="metric-value">${latest.deneme > 0 ? latest.deneme : "—"}</div><div class="metric-delta">${delta("deneme")}</div></div>
       <div class="metric-card"><div class="metric-label">🎯 Toplam Başarılı Ders</div><div class="metric-value">${yapildi}</div><div class="metric-delta" style="color:#888">${dersler.length} planlı kayıt</div></div>
       <div class="metric-card"><div class="metric-label">🔥 Devam Oranı</div><div class="metric-value">${devamlilikOrani}%</div><div class="metric-delta"><span style="color:#C0392B">${yapilmadi} kaçırıldı</span></div></div>
     </div>
+
+    ${badgesHtml}
+    ${kitapTakipPaneliHtml}
+    
+    <div class="teacher-feedback-card">
+      <div class="feedback-header"><span class="feedback-animated-icon">✍️</span><h4 class="feedback-title">Öğretmenin Haftalık Notu</h4></div>
+      <p class="feedback-text">"${teacherComment}"</p>
+    </div>
+
+    ${lessonStatusBoxHtml} 
 
     <div class="card"><div class="card-title">Genel gelişim grafiği</div><canvas id="chartGenel"></canvas></div>
     <div class="card"><div class="card-title">Beceri radar grafiği</div><canvas id="chartRadar"></canvas></div>
@@ -2027,7 +1887,6 @@ function drawDenemeChart(name) {
 }
 
 // 🧠 KELİME EZBER YARIŞMASI
-// 1. KADEME: 2. SINIF TEMEL HAVUZU (50 Kelime)
 const kelimeler2 = [
     {en:"Hello", tr:"Merhaba"}, {en:"Goodbye", tr:"Hoşça kal"}, {en:"Please", tr:"Lütfen"}, {en:"Thank you", tr:"Teşekkürler"},
     {en:"Yes", tr:"Evet"}, {en:"No", tr:"Hayır"}, {en:"Teacher", tr:"Öğretmen"}, {en:"Student", tr:"Öğrenci"},
@@ -2044,7 +1903,6 @@ const kelimeler2 = [
     {en:"Ball", tr:"Top"}, {en:"Car", tr:"Araba"}
 ];
 
-// 2. KADEME: 3. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
 const kelimeler3Ek = [
     {en:"Family", tr:"Aile"}, {en:"Father", tr:"Baba"}, {en:"Mother", tr:"Anne"}, {en:"Brother", tr:"Erkek Kardeş"},
     {en:"Sister", tr:"Kız Kardeş"}, {en:"Grandmother", tr:"Büyükanne"}, {en:"Grandfather", tr:"Büyükbaba"}, {en:"Baby", tr:"Bebek"},
@@ -2073,7 +1931,6 @@ const kelimeler3Ek = [
     {en:"Old", tr:"Yaşlı / Eski"}, {en:"Young", tr:"Genç"}, {en:"Fast", tr:"Hızlı"}, {en:"Slow", tr:"Yavaş"}
 ];
 
-// 3. KADEME: 4. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
 const kelimeler4Ek = [
     {en:"Country", tr:"Ülke"}, {en:"Turkey", tr:"Türkiye"}, {en:"England", tr:"İngiltere"}, {en:"Germany", tr:"Almanya"},
     {en:"France", tr:"Fransa"}, {en:"Spain", tr:"İspanya"}, {en:"Italy", tr:"İtalya"}, {en:"Japan", tr:"Japonya"},
@@ -2102,7 +1959,6 @@ const kelimeler4Ek = [
     {en:"Heavy", tr:"Ağır"}, {en:"Light", tr:"Hafif"}, {en:"Short", tr:"Kısa"}, {en:"Tall", tr:"Uzun"}
 ];
 
-// 4. KADEME: 5. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
 const kelimeler5Ek = [
     {en:"Maths", tr:"Matematik"}, {en:"Social Studies", tr:"Sosyal Bilgiler"}, {en:"Physical Education", tr:"Beden Eğitimi"}, {en:"History", tr:"Tarih"},
     {en:"Geography", tr:"Coğrafya"}, {en:"Drama", tr:"Tiyatro / Drama"}, {en:"Information Technology", tr:"Bilişim Teknolojileri"}, {en:"Timetable", tr:"Ders Programı"},
@@ -2131,7 +1987,6 @@ const kelimeler5Ek = [
     {en:"City centre", tr:"Şehir Merkezi"}, {en:"Mosque", tr:"Cami"}, {en:"Museum", tr:"Müze"}, {en:"Bakery", tr:"Fırın"}
 ];
 
-// 5. KADEME: 6. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
 const kelimeler6Ek = [
     {en:"Delicious", tr:"Lezzetli"}, {en:"Nutritious", tr:"Besleyici"}, {en:"Croissant", tr:"Kruvazan"}, {en:"Muffin", tr:"Kek"},
     {en:"Olive", tr:"Zeytin"}, {en:"Honey", tr:"Bal"}, {en:"Butter", tr:"Tereyağı"}, {en:"Jam", tr:"Reçel"},
@@ -2160,7 +2015,6 @@ const kelimeler6Ek = [
     {en:"Bought", tr:"Satın Aldı"}, {en:"Found", tr:"Buldu"}, {en:"Left", tr:"Ayrıldı / Terk Etti"}, {en:"Arrived", tr:"Vardı / Ulaştı"}
 ];
 
-// 6. KADEME: 7. SINIFTA EKLENEN YENİ KELİMELER (+100 Kelime)
 const kelimeler7Ek = [
     {en:"Stubborn", tr:"İnatçı"}, {en:"Selfish", tr:"Bencil"}, {en:"Punctual", tr:"Dakik"}, {en:"Generous", tr:"Cömert"},
     {en:"Helpful", tr:"Yardımsever"}, {en:"Outgoing", tr:"Sosyal / Dışadönük"}, {en:"Patient", tr:"Sabırlı"}, {en:"Clumsy", tr:"Sakar"},
@@ -2189,7 +2043,6 @@ const kelimeler7Ek = [
     {en:"Post office", tr:"Postane"}, {en:"City hall", tr:"Belediye Binası"}, {en:"Art gallery", tr:"Sanat Galerisi"}, {en:"Governor", tr:"Vali"}
 ];
 
-// 7. KADEME: 8. SINIF LGS'DE EKLENEN HEDEF KELİMELER (+100 Kelime)
 const kelimeler8Ek = [
     {en:"Buddy / Mate", tr:"Kanka / Yakın Arkadaş"}, {en:"Count on", tr:"Güvenmek"}, {en:"Depend on", tr:"Bel Bağlamak"}, {en:"Back up", tr:"Desteklemek"},
     {en:"Trust", tr:"Güvenmek"}, {en:"Unreliable", tr:"Güvenilmez"}, {en:"Arrogant", tr:"Kibirli / Ukala"}, {en:"Sneaky", tr:"Sinsi"},
@@ -2218,7 +2071,6 @@ const kelimeler8Ek = [
     {en:"Diving", tr:"Dalış"}, {en:"Trekking", tr:"Doğa Yürüyüşü"}, {en:"Accommodation", tr:"Konaklama"}, {en:"All-inclusive", tr:"Her Şey Dahil"}
 ];
 
-// SARMAL MİMARİ: Her sınıf bir öncekinin tüm kelimelerini miras alır
 const ezberKelimeDeposu = {
     "2-sinif": kelimeler2,
     "3-sinif": kelimeler3Ek,
@@ -2229,7 +2081,6 @@ const ezberKelimeDeposu = {
     "8-sinif": kelimeler8Ek
 };
 
-// Soru Limitleri
 const SINIF_SORU_LIMITLERI = { 
     "2-sinif": 20, 
     "3-sinif": 20, 
@@ -2327,22 +2178,9 @@ function ezberKelimeCek() {
 
     let sinifKelimeleri = ezberKelimeDeposu[aktifSinif] || kelimeler2;
     let digerKelimeler = sinifKelimeleri.filter(k => k.tr !== mevcutKelimeNesnesi.tr);
-    let yanlisKelime = digerKelimeler[Math.floor(Math.random() * digerKelimeler.length)];
+    let yanlisKelime = digerKelimeler[Math.floor(Math.random() * digerKelimeler.lengthSize 
 
-    let secenekler = [
-        { metin: mevcutKelimeNesnesi.tr, dogruMu: true },
-        { metin: yanlisKelime ? yanlisKelime.tr : "Farklı Anlam", dogruMu: false }
-    ];
-    secenekler.sort(() => Math.random() - 0.5);
-
-    let siklarHTML = "";
-    secenekler.forEach(s => {
-        siklarHTML += `<button class="ezber-sik-btn" onclick="ezberSikSecildi(this, ${s.dogruMu})">${s.metin}</button>`;
-    });
-    document.getElementById("ezberSiklarAlani").innerHTML = siklarHTML;
-}
-
-function ezberSikSecildi(btnElement, dogruMu) {
+                                                 function ezberSikSecildi(btnElement, dogruMu) {
     if (cevapKilitli) return; 
     cevapKilitli = true;
     if (dogruMu) {
@@ -2611,7 +2449,6 @@ function testSonucundanDersTalebiGonder() {
     window.open(wpLink, '_blank');
 }
 
-// 💬 WHATSAPP CANLI DESTEK FONKSİYONLARI
 function whatsappKutusuToggle() {
     const box = document.getElementById("waChatBox");
     if (box.style.display === "flex") {
@@ -2637,7 +2474,6 @@ function whatsapplaGonder() {
     whatsappKutusuToggle();
 }
 
-// Sayfa Yükleme & Event Dinleyicileri
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
         var baloncuklar = document.querySelectorAll(".auto-hide-badge");
@@ -2926,23 +2762,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-let bugun = new Date();
-let bugunYil = bugun.getFullYear();
-let bugunAy = ("0" + (bugun.getMonth() + 1)).slice(-2);
-let bugunGun = ("0" + bugun.getDate()).slice(-2);
-
-let inputBugunFormat = `${bugunYil}-${bugunAy}-${bugunGun}`;
-
-let tamamlananTarihInput = document.getElementById("tamamlananDersTarihiInputId");
-if (tamamlananTarihInput) tamamlananTarihInput.value = inputBugunFormat;
-
-let sonrakiDersInput = document.getElementById("sonrakiDersTarihiInputId");
-if (sonrakiDersInput && aktifOgrenciVerisi && aktifOgrenciVerisi.sabit_gunler) {
-    let siradaki = siradakiDersTarihiniHesapla(aktifOgrenciVerisi.sabit_gunler);
-    let parca = siradaki.split(".");
-    sonrakiDersInput.value = `${parca[2]}-${parca[1]}-${parca[0]}`;
-}
-
 function randevuFormuKapatAcl() {
     const kutu = document.getElementById("sagAltDersKutusu");
     const seviyeAlani = document.getElementById("seviyeTestAlani");
@@ -3159,54 +2978,6 @@ document.addEventListener('visibilitychange', function () {
         googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
     }
 });
-
-function siradakiDersTarihiniHesapla(sabitGunlerMetni) {
-    if (!sabitGunlerMetni || typeof sabitGunlerMetni !== "string") {
-        let d = new Date();
-        d.setDate(d.getDate() + 7);
-        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
-    }
-
-    const gunHaritasi = {
-        "pazar": 0, "pazartesi": 1, "sali": 2, "çarşamba": 3, "carsamba": 3,
-        "perşembe": 4, "persembe": 4, "cuma": 5, "cumartesi": 6
-    };
-
-    let parcalar = sabitGunlerMetni.toLowerCase().split(/[,\-\/]/).map(s => s.trim().replace(/ı/g, "i"));
-    let hedefGunler = [];
-    parcalar.forEach(p => {
-        for (let g in gunHaritasi) {
-            if (p.includes(g)) {
-                if (!hedefGunler.includes(gunHaritasi[g])) hedefGunler.push(gunHaritasi[g]);
-            }
-        }
-    });
-
-    if (hedefGunler.length === 0) {
-        let d = new Date();
-        d.setDate(d.getDate() + 7);
-        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
-    }
-
-    let bugun = new Date();
-    let bugunIndex = bugun.getDay();
-    let minFark = 999;
-
-    hedefGunler.forEach(g => {
-        let fark = g - bugunIndex;
-        if (fark <= 0) fark += 7;
-        if (fark < minFark) minFark = fark;
-    });
-
-    let siradakiTarih = new Date();
-    siradakiTarih.setDate(bugun.getDate() + minFark);
-     
-    let gun = ("0" + siradakiTarih.getDate()).slice(-2);
-    let ay = ("0" + (siradakiTarih.getMonth() + 1)).slice(-2);
-    let yil = siradakiTarih.getFullYear();
-
-    return `${gun}.${ay}.${yil}`;
-}
 </script>
 </body>
 </html>
