@@ -57,7 +57,7 @@
         .progress-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 5px; }
         .sure-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #2e7d32; font-weight: 600; flex-wrap: wrap; gap: 5px; }
 
-        /* MOBİLDE 2x2 IZGARA OLAN ŞIK SEKMELER BARİ */
+        /* MOBİLDE 2x2 IZGARA SEKMELER */
         .tabs-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -68,9 +68,7 @@
             border: 2px solid var(--border-color);
         }
         @media(max-width: 600px) {
-            .tabs-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .tabs-bar { grid-template-columns: repeat(2, 1fr); }
         }
         .tab-btn {
             width: 100%;
@@ -146,7 +144,6 @@
 
         .chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; }
 
-        /* YENİ: Yapay Zeka Karşılama Balonu Animasyonu */
         @keyframes fadeInOut {
             0% { opacity: 0; transform: translateY(-10px); }
             10% { opacity: 1; transform: translateY(0); }
@@ -160,9 +157,26 @@
             padding: 16px 20px;
             border-radius: 16px;
             box-shadow: 0 6px 20px rgba(46, 125, 50, 0.12);
-            animation: fadeInOut 15s forwards; /* Tam 15 saniye sonra kaybolur */
+            animation: fadeInOut 15s forwards;
             position: relative;
             overflow: hidden;
+        }
+
+        /* PROMPTER KELİME TIKLAMA STİLLERİ */
+        .prompter-kelime {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .prompter-kelime:hover {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+        .prompter-kelime.secildi {
+            background: #2e7d32;
+            color: white;
+            font-weight: bold;
         }
 
         .admin-float-btn {
@@ -219,18 +233,17 @@
             </div>
         </div>
 
-        <!-- 3. Sekmeler (Mobilde 2x2 Izgara) -->
+        <!-- 3. Sekmeler -->
         <div class="tabs-bar">
             <button class="tab-btn active" onclick="sekmeGecis(0)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeGecis(1)">📝 Ders Raporları</button>
-            <button class="tab-btn" onclick="sekmeGecis(2)">🎯 Kazanımlar</button>
+            <button class="tab-btn" onclick="sekmeGecis(2)">⏱️ Okuma Hızı</button>
             <button class="tab-btn" onclick="sekmeGecis(3)">🏆 Rozetler</button>
         </div>
 
         <!-- A. ÖZET GÖRÜNÜMÜ ALANI -->
         <div id="sekmeOzetAlani" style="display: flex; flex-direction: column; gap: 15px;">
             
-            <!-- YAPAY ZEKA DESTEKLİ 15 SANİYE GÖRÜNÜR KARŞILAMA MESAJI -->
             <div id="aiKarsilamaKutusu" class="ai-welcome-banner" style="display: none;">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
                     <span style="font-size: 22px;">🤖</span>
@@ -239,7 +252,6 @@
                 <p id="aiKarsilamaMetni" style="margin: 0; font-size: 13px; line-height: 1.5; color: #2e7d32; font-weight: 600;"></p>
             </div>
 
-            <!-- 4'lü İstatistik Kutuları -->
             <div class="stats-grid-4">
                 <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
                 <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
@@ -304,15 +316,60 @@
                 <h3 class="card-title" style="color:#1b5e20;">📝 Öğrenci Haftalık Gelişim Karnesi & Arşivi</h3>
                 <p style="font-size: 13px; color: #444; margin-top: 4px;">Geçmiş derslerdeki başarı puanların, haftalık çalışmaların, kriter detayların ve ödev takibin aşağıda listelenmiştir.</p>
             </div>
-            <div id="dersRaporlariListesi" style="display: flex; flex-direction: column; gap: 15px;">
-                <!-- Dinamik olarak dolacak -->
-            </div>
+            <div id="dersRaporlariListesi" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
 
-        <!-- C. KAZANIMLAR SEKME ALANI -->
-        <div id="sekmeKazanimlarAlani" class="card" style="display: none;">
-            <div class="card-header-flex"><h3 class="card-title">🎯 Öğrenci Kazanım Takibi</h3></div>
-            <div style="padding: 20px; text-align: center; color: #555;">Harf ve beceri kazanımları bu alanda listelenmektedir.</div>
+        <!-- C. KAZANIMLAR / OKUMA HIZI SEKME ALANI -->
+        <div id="sekmeKazanimlarAlani" class="card" style="display: none; flex-direction: column; gap: 15px;">
+            <div class="card-header-flex"><h3 class="card-title">⏱️ Okuma Hızı Ölçer & Akıllı Prompter Stüdyosu</h3></div>
+            <p style="font-size: 13px; color: #555; line-height: 1.5; margin: 0;">Sınıf seviyenize uygun yapay zeka destekli pedagojik metinlerle okuma hızınızı saniyeler içinde test edin. Süreyi başlatıp okuyun, kaldığınız kelimeye tıklayın!</p>
+            
+            <div style="background: #faf8f5; border: 1.5px solid #e0dcd0; padding: 15px; border-radius: 14px; display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <div style="flex: 1; min-width: 180px;">
+                        <label style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 4px;">SEVİYE / SINIF SEÇİN</label>
+                        <select id="okumaSinifSec" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 13.5px;">
+                            <option value="1-Sinif">1. Sınıf (Temel Cümleler)</option>
+                            <option value="2-Sinif">2. Sınıf (Akıcı Okuma)</option>
+                            <option value="3-Sinif">3. Sınıf (Hikaye Metinleri)</option>
+                            <option value="4-Sinif">4. Sınıf (Uzun Hikayeler)</option>
+                            <option value="5-Sinif">5. Sınıf (Ortaokul Seviyesi)</option>
+                            <option value="6-Sinif">6. Sınıf (Gelişmiş Metin)</option>
+                            <option value="7-Sinif">7. Sınıf (Akademik Paragraf)</option>
+                            <option value="8-Sinif" selected>8. Sınıf (LGS & Uzman Paragraf)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 4px;">İŞLEM</label>
+                        <button onclick="yeniMetinUretBaslat()" style="background: #2e7d32; color: white; border: none; padding: 9px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">✨ Yeni Metin Getir</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 10px 14px; border-radius: 10px; border: 1px solid #ddd; flex-wrap: wrap; gap: 10px;">
+                    <div>⏱️ Kronometre: <b id="okumaKronometre" style="font-family: monospace; font-size: 16px; color: #1b5e20;">00:00</b></div>
+                    <div>📖 Okunan Kelime: <b id="okunanKelimeSayac" style="color: #2e7d32; font-size: 16px;">0</b></div>
+                    <div>⚡ Hız (WPM): <b id="okumaWpmSonuc" style="color: #f57f17; font-size: 16px;">0 kelime/dk</b></div>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button id="okumaBaslatBtn" onclick="okumaKronometreBaslat()" style="flex: 1; background: #1b5e20; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13.5px;">▶️ Süreyi Başlat</button>
+                    <button id="okumaBitirBtn" onclick="okumaKronometreDurdurKaydet()" disabled style="flex: 1; background: #c62828; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13.5px; opacity: 0.5;">⏹️ Bitir & Sonucu Kaydet</button>
+                </div>
+            </div>
+
+            <div class="card" style="background: #fdfbf7; border: 2px dashed #c8e6c9; min-height: 180px;">
+                <div style="font-size: 11px; font-weight: bold; color: #2e7d32; margin-bottom: 8px; text-transform: uppercase;">📜 Prompter Okuma Alanı (Okumayı bitirdiğiniz kelimenin üzerine tıklayın):</div>
+                <div id="prompterMetinAlani" style="font-size: 15px; line-height: 1.8; color: #333; font-weight: 500;">
+                    Lütfen yukarıdan sınıf seviyenizi seçip <b>"Yeni Metin Getir"</b> butonuna basın ve ardından <b>"Süreyi Başlat"</b> diyerek okumaya başlayın.
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header-flex"><h3 class="card-title">📊 Geçmiş Okuma Hızı Gözlem Arşivi</h3></div>
+                <div id="okumaGecmisListesi" style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="text-align: center; color: #666; font-size: 13px; padding: 10px;">Geçmiş okuma verileri yükleniyor...</div>
+                </div>
+            </div>
         </div>
 
         <!-- D. ROZETLER SEKME ALANI -->
@@ -450,14 +507,51 @@
         let gelisimChartInstance = null;
         let radarChartInstance = null;
 
+        // OKUMA HIZI ÖLÇER DEĞİŞKENLERİ
+        let okumaSaniye = 0;
+        let okumaTimer = null;
+        let secilenKelimeSayisi = 0;
+        let aktifMetinBasligi = "";
+
+        const sinirsizMetinHavuzu = {
+            "1-Sinif": [
+                { baslik: "Minik Kedi", icerik: "Minik kedi bahçede koştu. Sütünü içti ve tık nefes uyudu. Güneş açtı, çiçekler açtı. Ali mutlu oldu." },
+                { baslik: "Top Oyunu", icerik: "Topum kırmızı ve yuvarlak. Arkadaşım Can ile bahçede top oynadık. Zil çaldı, sınıfa koştuk." }
+            ],
+            "2-Sinif": [
+                { baslik: "Ormandaki Sincap", icerik: "Sevimli sincap uzun kuyruğu ile ağaçtan ağaca zıplıyordu. Kış gelmeden önce topladığı meşe palamutlarını toprak altına sakladı. Hava soğuyunca sıcak yuvasına çekildi ve uykuya dalmayı bekledi." },
+                { baslik: "Bahçedeki Domates", icerik: "Dedemle birlikte bahçeye kırmızı domates fideleri ektik. Her gün onlara su verdik ve güneşlenmelerini sağladık. Sonunda domatesler kıpkırmızı oldu ve birlikte lezzetli bir salata yaptık." }
+            ],
+            "3-Sinif": [
+                { baslik: "Kayıp Anahtar", icerik: "Zeynep okul çıkışında çantasını kontrol ederken evlerinin anahtarının yerinde olmadığını fark etti. Oldukça telaşlandı ama öğretmeninin yardımıyla okul bahçesindeki bankın üzerinde unuttuğunu hatırladı. Koşarak gidip anahtarını aldı ve derin bir nefes aldı." },
+                { baslik: "Uzay Yolculuğu", icerik: "Pencereden dışarı bakan Mert, parlak yıldızları incelemeyi çok severdi. Bir gecede kendisini devasa bir roketin içinde bulduğunu hayal etti. Uzayda süzülen gezegenleri ve halkalı satürnü yakından görmek onu büyülemişti." }
+            ],
+            "4-Sinif": [
+                { baslik: "Doğa ile Dostluk", icerik: "Hafta sonu ailemizle birlikte dağ kenarındaki kamp alanına gittik. Sabahın erken saatlerinde kuş cıvıltıları ve temiz orman havasıyla uyandık. Plastik atıkları doğada bırakmamak konusunda özen göstererek çevre bilincinin önemini bir kez daha anladık." },
+                { baslik: "Eski Saat", icerik: "Antika dükkanının vitrininde duran bronz renkli saat dikkatimi çekti. Dedemin anlattığı hikayelerdeki zamanı durduran saat belki de buydu. İçeri girip ustadan saatin geçmişini dinlemek heyecan vericiydi." }
+            ],
+            "5-Sinif": [
+                { baslik: "Bilim Fuarı Projesi", icerik: "Okulumuzda düzenlenecek geleneksel bilim fuarı için haftalardır çalışıyorduk. Yenilenebilir enerji kaynaklarını ele aldığımız projemizde güneş panelleriyle çalışan mini bir araba tasarladık. Jürinin ilgisini çekmek ve emeklerimizin karşılığını almak hepimizi sevindirdi." },
+                { baslik: "Anadolu Medeniyetleri", icerik: "Tarih dersinde öğrendiğimiz antik kentler gözümde canlandı. Hititlerin ve Friglerin bu toprakalarda bıraktığı izleri incelemek adeta zamanda yolculuk yapmak gibiydi. Müzeleri gezmek geçmişin sırlarını aralamak için harika bir fırsattı." }
+            ],
+            "6-Sinif": [
+                { baslik: "Ekosistem Dengesi", icerik: "Dünyamızdaki canlı çeşitliliği hassas bir denge üzerine kuruludur. Ormanların yok olması ve küresel iklim değişiklikleri pek çok hayvan türünün yaşam alanını tehdit etmektedir. Bireysel olarak atacağımız her küçük geri dönüşüm adımı geleceğimiz için hayati önem taşımaktadır." },
+                { baslik: "Sanatın Gücü", icerik: "Ressam tuvalin üzerine fırçasını vurduğunda sadece boyaları değil, içindeki duyguları da kağıda döküyordu. Sanat, insanların kelimelerle ifade edemedikleri hisleri paylaşmalarının en evrensel yoludur." }
+            ],
+            "7-Sinif": [
+                { baslik: "Teknolojik Dönüşüm", icerik: "Yapay zeka algoritmaları günümüzde hayatımızın her alanına entegre olmaktadır. Sağlık sektöründen eğitim dünyasına kadar pek çok alanda verimliliği artıran bu sistemler, etik tartışmaları da beraberinde getirmektedir. Teknolojiyi doğru yönlendirmek insanlığın elindedir." },
+                { baslik: "Kutup Araştırmaları", icerik: "Antarktika kıtası bilim insanları için dünyanın en büyük açık hava laboratuvarıdır. Küresel ısınmanın buzullar üzerindeki etkisini inceleyen araştırmacılar, iklim krizine karşı çözüm yolları aramaktadır." }
+            ],
+            "8-Sinif": [
+                { baslik: "LGS Sürecinde Stratejik Başarı", icerik: "LGS maratonu sadece uzun saatler boyunca ders çalışmak değil, aynı zamanda zihinsel dayanıklılığı korumak ve stratejik zaman yönetimi becerisi geliştirmektir. Deneme sınavlarında yapılan her yanlış, aslında öğrenilmemiş bir konunun aydınlatılması için büyük bir fırsattır. Öğrencilerin bu süreçte motivasyonlarını yüksek tutarak düzenli paragraf çözme alışkanlığı edinmeleri, okuma hızını ve anlama kapasitesini doğrudan zirveye taşıyacaktır." },
+                { baslik: "Kritik Düşünme Becerisi", icerik: "Modern çağın en önemli kazanımlarından biri eleştirel ve analitik düşünme yeteneğidir. Bilgiye ulaşmanın son derece kolay olduğu günümüzde, sunulan verilerin doğruluğunu sorgulamak ve önyargılardan arınmış bir bakış açısı geliştirmek hayati önem arz etmektedir." }
+            ]
+        };
+
         function oturumOku(key) {
             let val = localStorage.getItem(key);
             if (!val) return null;
-            try {
-                return atob(val);
-            } catch (e) {
-                return val;
-            }
+            try { return atob(val); } catch (e) { return val; }
         }
 
         const ogrenciAdi = oturumOku("aktifOgrenci") || oturumOku("dijimuallim_aktif_ogrenci");
@@ -488,8 +582,154 @@
 
             document.getElementById("sekmeOzetAlani").style.display = (index === 0) ? "flex" : "none";
             document.getElementById("sekmeRaporlarAlani").style.display = (index === 1) ? "flex" : "none";
-            document.getElementById("sekmeKazanimlarAlani").style.display = (index === 2) ? "block" : "none";
+            document.getElementById("sekmeKazanimlarAlani").style.display = (index === 2) ? "flex" : "none";
             document.getElementById("sekmeRozetlerAlani").style.display = (index === 3) ? "block" : "none";
+
+            if (index === 2) {
+                okumaGecmisiniGetir(ogrenciAdi);
+            }
+        }
+
+        function yeniMetinUretBaslat() {
+            let sinifVal = document.getElementById("okumaSinifSec").value;
+            let liste = sinirsizMetinHavuzu[sinifVal] || sinirsizMetinHavuzu["8-Sinif"];
+            let rastgeleMetin = liste[Math.floor(Math.random() * liste.length)];
+            
+            aktifMetinBasligi = rastgeleMetin.baslik;
+            let kelimeler = rastgeleMetin.icerik.split(" ");
+            
+            let html = "";
+            kelimeler.forEach((kelime, idx) => {
+                html += `<span class="prompter-kelime" onclick="kelimeyeTiklandi(this, ${idx + 1})">${kelime}</span> `;
+            });
+            
+            document.getElementById("prompterMetinAlani").innerHTML = html;
+            okumaSifirla();
+        }
+
+        function kelimeyeTiklandi(el, index) {
+            if (!okumaTimer) return;
+            document.querySelectorAll(".prompter-kelime").forEach(k => k.classList.remove("secildi"));
+            el.classList.add("secildi");
+            secilenKelimeSayisi = index;
+            document.getElementById("okunanKelimeSayac").innerText = secilenKelimeSayisi;
+            if (okumaSaniye > 0) {
+                let wpm = Math.round((secilenKelimeSayisi / okumaSaniye) * 60);
+                document.getElementById("okumaWpmSonuc").innerText = wpm + " kelime/dk";
+            }
+        }
+
+        function okumaKronometreBaslat() {
+            yeniMetinUretBaslat();
+            okumaSaniye = 0;
+            secilenKelimeSayisi = 0;
+            document.getElementById("okunanKelimeSayac").innerText = "0";
+            document.getElementById("okumaWpmSonuc").innerText = "0 kelime/dk";
+            
+            document.getElementById("okumaBaslatBtn").disabled = true;
+            document.getElementById("okumaBaslatBtn").style.opacity = "0.5";
+            document.getElementById("okumaBitirBtn").disabled = false;
+            document.getElementById("okumaBitirBtn").style.opacity = "1";
+
+            if (okumaTimer) clearInterval(okumaTimer);
+            okumaTimer = setInterval(() => {
+                okumaSaniye++;
+                let dk = Math.floor(okumaSaniye / 60);
+                let sn = okumaSaniye % 60;
+                document.getElementById("okumaKronometre").innerText = (dk < 10 ? "0" : "") + dk + ":" + (sn < 10 ? "0" : "") + sn;
+                if (secilenKelimeSayisi > 0 && okumaSaniye > 0) {
+                    let wpm = Math.round((secilenKelimeSayisi / okumaSaniye) * 60);
+                    document.getElementById("okumaWpmSonuc").innerText = wpm + " kelime/dk";
+                }
+            }, 1000);
+        }
+
+        function okumaKronometreDurdurKaydet() {
+            if (okumaTimer) clearInterval(okumaTimer);
+            okumaTimer = null;
+
+            document.getElementById("okumaBaslatBtn").disabled = false;
+            document.getElementById("okumaBaslatBtn").style.opacity = "1";
+            document.getElementById("okumaBitirBtn").disabled = true;
+            document.getElementById("okumaBitirBtn").style.opacity = "0.5";
+
+            if (secilenKelimeSayisi === 0) {
+                alert("Lütfen prompter ekranında okumanızı bitirdiğiniz kelimenin üzerine tıklayın!");
+                return;
+            }
+
+            let finalWpm = Math.round((secilenKelimeSayisi / (okumaSaniye || 1)) * 60);
+            let sinifVal = document.getElementById("okumaSinifSec").value;
+
+            alert(`🎉 Okuma Testi Tamamlandı!\n\nOkunan Kelime: ${secilenKelimeSayisi}\nSüre: ${okumaSaniye} saniye\nOkuma Hızı: ${finalWpm} WPM (Kelime/Dk)\n\nSonuç Google Sheets'e kaydediliyor...`);
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "okumaHiziKaydet",
+                    ogrenciAdi: ogrenciAdi,
+                    sinif: sinifVal,
+                    okunanKelime: secilenKelimeSayisi,
+                    sureSaniye: okumaSaniye,
+                    wpm: finalWpm,
+                    metinBasligi: aktifMetinBasligi
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    okumaGecmisiniGetir(ogrenciAdi);
+                }
+            }).catch(e => console.log("Okuma kayıt hatası:", e));
+        }
+
+        function okumaSifirla() {
+            if (okumaTimer) clearInterval(okumaTimer);
+            okumaTimer = null;
+            okumaSaniye = 0;
+            secilenKelimeSayisi = 0;
+            document.getElementById("okumaKronometre").innerText = "00:00";
+            document.getElementById("okunanKelimeSayac").innerText = "0";
+            document.getElementById("okumaWpmSonuc").innerText = "0 kelime/dk";
+            document.getElementById("okumaBaslatBtn").disabled = false;
+            document.getElementById("okumaBaslatBtn").style.opacity = "1";
+            document.getElementById("okumaBitirBtn").disabled = true;
+            document.getElementById("okumaBitirBtn").style.opacity = "0.5";
+        }
+
+        function okumaGecmisiniGetir(isim) {
+            let listeDiv = document.getElementById("okumaGecmisListesi");
+            if (!listeDiv) return;
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "okumaGecmisGetir", ogrenciAdi: isim })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.kayitlar && data.kayitlar.length > 0) {
+                    let html = "";
+                    data.kayitlar.slice().reverse().forEach(k => {
+                        html += `
+                            <div style="background: #faf8f5; border: 1px solid #e0dcd0; padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12.5px;">
+                                <div>📅 <b>${k.tarih}</b> — <span style="color:#1b5e20;">${k.metinBasligi}</span> (${k.sinif})</div>
+                                <div style="display: flex; gap: 12px; font-weight: bold;">
+                                    <span>📖 ${k.okunanKelime} Kelime</span>
+                                    <span>⏱️ ${k.sureSaniye} sn</span>
+                                    <span style="background: #e8f5e9; color: #1b5e20; padding: 2px 8px; border-radius: 6px;">⚡ ${k.wpm} WPM</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    listeDiv.innerHTML = html;
+                } else {
+                    listeDiv.innerHTML = `<div style="text-align: center; color: #666; font-size: 13px; padding: 10px;">Henüz kaydedilmiş bir okuma hızı analizi bulunmuyor. Yukarıdan test başlatın!</div>`;
+                }
+            }).catch(e => {
+                listeDiv.innerHTML = `<div style="text-align: center; color: #c62828; font-size: 13px; padding: 10px;">Geçmiş veriler yüklenirken bağlantı hatası oluştu.</div>`;
+            });
         }
 
         function dersRaporlariniEkranaBas(kayitlar) {
@@ -553,7 +793,6 @@
             listeDiv.innerHTML = html;
         }
 
-        // YAPAY ZEKA GİRİŞ MESAJI ÜRETİCİ
         function yapayZekaKarsilamaUret(isim, kazanilanRozetSayisi, genelPuan) {
             let mesajlar = [];
             if (kazanilanRozetSayisi > 0) {
@@ -872,7 +1111,6 @@
                     document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
                     document.getElementById("rozetProgressText").innerText = `%${rozetYuzde}`;
 
-                    // YAPAY ZEKA GİRİŞ MESAJINI AKTİFLEŞTİR VE 15 SN SONRA GİZLE
                     let aiKutu = document.getElementById("aiKarsilamaKutusu");
                     let aiMetin = document.getElementById("aiKarsilamaMetni");
                     if (aiKutu && aiMetin) {
