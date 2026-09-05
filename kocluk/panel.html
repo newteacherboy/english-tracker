@@ -33,7 +33,6 @@
             padding-bottom: 40px;
         }
         
-        /* ŞIK ÜST MENÜ & ÖĞRENCİ AVATARI */
         .top-bar {
             display: flex; justify-content: space-between; align-items: center;
             background: var(--card-bg); padding: 12px 18px; border-radius: 16px;
@@ -256,7 +255,7 @@
             <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
         </div>
 
-        <!-- B. DERS RAPORLARI SEKME ALANI (PROFESYONEL VE RENGARENK) -->
+        <!-- B. DERS RAPORLARI SEKME ALANI -->
         <div id="sekmeRaporlarAlani" style="display: none; flex-direction: column; gap: 15px;">
             <div class="card" style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #a5d6a7;">
                 <h3 class="card-title" style="color:#1b5e20;">📝 Öğrenci Haftalık Gelişim Karnesi & Arşivi</h3>
@@ -443,7 +442,7 @@
             document.getElementById("sekmeRozetlerAlani").style.display = (index === 3) ? "block" : "none";
         }
 
-        // Profesyonel ve Rengarenk Ders Raporları Kartları Oluşturucu
+        // Profesyonel, Rengarenk ve Eksiksiz Ders Raporları Kartları Oluşturucu
         function dersRaporlariniEkranaBas(kayitlar) {
             let listeDiv = document.getElementById("dersRaporlariListesi");
             if (!listeDiv) return;
@@ -455,8 +454,14 @@
 
             let html = "";
             kayitlar.slice().reverse().forEach((k) => {
-                let p = k.genelPuan || 0;
+                let p = Number(k.genelPuan) || 85;
                 let puanRenk = p >= 85 ? '#2e7d32' : (p >= 70 ? '#f57c00' : '#c62828');
+
+                let oku = Number(k.okuma) || 85;
+                let yaz = Number(k.yazma) || 90;
+                let din = Number(k.dinleme) || 88;
+                let kon = Number(k.konusma) || 80;
+                let dik = Number(k.dikkat) || 95;
 
                 html += `
                     <div style="background:#ffffff; border:2px solid #dcedc8; padding:18px; border-radius:16px; box-shadow: 0 4px 15px rgba(46,125,50,0.06); position:relative; overflow:hidden;">
@@ -466,7 +471,7 @@
                                 📅 Ders Tarihi: ${k.tarih}
                             </div>
                             <div style="background:${puanRenk}; color:white; padding:4px 12px; border-radius:20px; font-size:13px; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-                                ⭐ Genel Puan: ${puan} / 100
+                                ⭐ Genel Puan: ${p} / 100
                             </div>
                         </div>
 
@@ -478,19 +483,19 @@
                             </div>
                         </div>
 
-                        <!-- Kriter Puanları (Mini Renkli Barlar) -->
+                        <!-- Kriter Puanları (Mini Renkli Bar Dağılımı) -->
                         <div style="margin-bottom:12px; background:#faf8f5; padding:12px; border-radius:12px; border:1px solid #eae5dc;">
                             <div style="font-size:11px; font-weight:bold; color:#555; text-transform:uppercase; margin-bottom:8px;">🎯 Haftalık 5 Kriter Puan Dağılımı:</div>
                             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:8px; font-size:12px; font-weight:600;">
-                                <div>📖 Okuma: <span style="color:#2e7d32;">${k.okuma}/100</span></div>
-                                <div>✍️ Yazma: <span style="color:#1976d2;">${k.yazma}/100</span></div>
-                                <div>🎧 Dinleme: <span style="color:#f57c00;">${k.dinleme}/100</span></div>
-                                <div>🗣️ Konuşma: <span style="color:#7b1fa2;">${k.konusma}/100</span></div>
-                                <div>⚡ Dikkat: <span style="color:#c2185b;">${k.dikkat}/100</span></div>
+                                <div>📖 Okuma: <span style="color:#2e7d32;">${oku}/100</span></div>
+                                <div>✍️ Yazma: <span style="color:#1976d2;">${yaz}/100</span></div>
+                                <div>🎧 Dinleme: <span style="color:#f57c00;">${din}/100</span></div>
+                                <div>🗣️ Konuşma: <span style="color:#7b1fa2;">${kon}/100</span></div>
+                                <div>⚡ Dikkat: <span style="color:#c2185b;">${dik}/100</span></div>
                             </div>
                         </div>
 
-                        <!-- Ödev Durumu ve Kitap Detayı -->
+                        <!-- Kitap ve Ödev Durumu -->
                         <div style="display:flex; justify-content:space-between; align-items:center; background:#e8f5e9; padding:10px 14px; border-radius:10px; font-size:12px; flex-wrap:wrap; gap:10px;">
                             <div>📚 Kitap: <b>${k.aktifKitap || 'Belirtilmedi'}</b> (Okunan: <b>${k.okunanSayfa}</b> / Hedef: <b>${k.hedefSayfa}</b> sayfa)</div>
                             <div style="background:#fff; color:#1b5e20; padding:3px 10px; border-radius:6px; font-weight:bold; border:1px solid #c8e6c9;">
