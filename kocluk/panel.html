@@ -185,7 +185,7 @@
             <button class="tab-btn" onclick="sekmeGecis(3)">🏆 Rozetler</button>
         </div>
 
-        <!-- A. ÖZET GÖRÜNÜMÜ ALANI (İstatistikler Çizelgenin Üstüne Taşındı) -->
+        <!-- A. ÖZET GÖRÜNÜMÜ ALANI -->
         <div id="sekmeOzetAlani" style="display: flex; flex-direction: column; gap: 15px;">
             
             <!-- 4'lü İstatistik Kutuları En Üste Alındı -->
@@ -196,7 +196,7 @@
                 <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
             </div>
 
-             <div class="card">
+            <div class="card">
                 <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
                 <div class="teacher-note-box" id="ogretmenNotu">Eğitim Koçu Notu Geliyor...</div>
             </div>
@@ -205,10 +205,6 @@
                 <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
                 <div class="ders-grid-3" id="dersZamanAlani"></div>
             </div>
-
-           
-
-           
 
             <div class="card">
                 <div class="card-header-flex">
@@ -268,23 +264,17 @@
             <div style="padding: 20px; text-align: center; color: #555;">Harf ve beceri kazanımları bu alanda listelenmektedir.</div>
         </div>
 
-        <!-- D. ROZETLER SEKME ALANI -->
+        <!-- D. ROZETLER SEKME ALANI (Rozet Kartı Buraya Taşındı) -->
         <div id="sekmeRozetlerAlani" class="card" style="display: none;">
-            <div class="card-header-flex"><h3 class="card-title">🏆 Tüm Rozet Koleksiyonu</h3></div>
-            <div style="padding: 20px; text-align: center; color: #555;">Rozet detayları ve ilerleme durumu bu alanda!</div>
+            <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
+            <div class="rozet-grid" id="rozetlerAlani"></div>
+            <div class="rozet-progress-container" style="margin-top:15px; border-top:1px dashed #eae5dc; padding-top:12px;">
+                <div class="rozet-progress-track"><div class="rozet-progress-fill" id="rozetProgressBar" style="width: 0%;"></div></div>
+                <div class="rozet-progress-text" id="rozetProgressText">%0 tamamlandı</div>
+            </div>
         </div>
 
     </div>
-
-    <!-- D. ROZETLER SEKME ALANI (Güncellenmiş Hali) -->
-<div id="sekmeRozetlerAlani" class="card" style="display: none;">
-    <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
-    <div class="rozet-grid" id="rozetlerAlani"></div>
-    <div class="rozet-progress-container" style="margin-top:15px; border-top:1px dashed #eae5dc; padding-top:12px;">
-        <div class="rozet-progress-track"><div class="rozet-progress-fill" id="rozetProgressBar" style="width: 0%;"></div></div>
-        <div class="rozet-progress-text" id="rozetProgressText">%0 tamamlandı</div>
-    </div>
-</div>
 
     <button class="admin-float-btn" onclick="yoneticiGirisSorgula()" title="Öğretmen Paneli">⚙️</button>
 
