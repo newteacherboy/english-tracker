@@ -186,83 +186,109 @@
 
         <!-- 3. Sekmeler -->
         <div class="tabs-bar">
-            <button class="tab-btn active">📊 Özet</button>
-            <button class="tab-btn">📝 Ders Raporları</button>
-            <button class="tab-btn">🎯 Kazanımlar</button>
-            <button class="tab-btn">🏆 Rozetler</button>
+            <button class="tab-btn active" onclick="sekmeGecis(0)">📊 Özet</button>
+            <button class="tab-btn" onclick="sekmeGecis(1)">📝 Ders Raporları</button>
+            <button class="tab-btn" onclick="sekmeGecis(2)">🎯 Kazanımlar</button>
+            <button class="tab-btn" onclick="sekmeGecis(3)">🏆 Rozetler</button>
         </div>
 
-        <!-- 4. Ders Çizelgesi -->
-        <div class="card">
-            <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
-            <div class="ders-grid-3" id="dersZamanAlani"></div>
-        </div>
+        <!-- ---------------- ANA İÇERİK BÖLÜMLERİ (SEKMELERE GÖRE DEĞİŞİR) ---------------- -->
 
-        <!-- 5. Öğretmen Notu -->
-        <div class="card">
-            <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
-            <div class="teacher-note-box" id="ogretmenNotu">Eğitim Koçu Notu Geliyor...</div>
-        </div>
-
-        <!-- 6. Rozetler -->
-        <div class="card">
-            <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
-            <div class="rozet-grid" id="rozetlerAlani"></div>
-            <div class="rozet-progress-container" style="margin-top:15px; border-top:1px dashed #eae5dc; padding-top:12px;">
-                <div class="rozet-progress-track"><div class="rozet-progress-fill" id="rozetProgressBar" style="width: 0%;"></div></div>
-                <div class="rozet-progress-text" id="rozetProgressText">%0 tamamlandı</div>
+        <!-- A. ÖZET GÖRÜNÜMÜ ALANI -->
+        <div id="sekmeOzetAlani" style="display: flex; flex-direction: column; gap: 15px;">
+            <!-- 4. Ders Çizelgesi -->
+            <div class="card">
+                <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
+                <div class="ders-grid-3" id="dersZamanAlani"></div>
             </div>
-        </div>
 
-        <!-- 7. Okuma & Alfabe -->
-        <div class="card">
-            <div class="card-header-flex">
-                <h3 class="card-title">📚 Okuma Kültürü & Odak Takibi</h3>
-                <button class="action-pill-btn" onclick="alert('Hızlı okuma aktif!')" style="background:#ffb300; border:none; padding:6px 12px; border-radius:15px; color:#fff; font-weight:bold; cursor:pointer;">⚡ HIZLI OKUMA</button>
+            <!-- 5. Öğretmen Notu -->
+            <div class="card">
+                <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
+                <div class="teacher-note-box" id="ogretmenNotu">Eğitim Koçu Notu Geliyor...</div>
             </div>
-            
-            <div class="okuma-grid">
-                <div>
-                    <div class="okunan-kitap-kutusu">
-                        <div class="kitap-etiket">ŞU AN OKUNAN KİTAP</div>
-                        <div class="kitap-isim" id="aktifKitapAdi">Yükleniyor...</div>
-                    </div>
-                    <div style="font-size: 12px; font-weight: bold; color: #555; display: flex; justify-content: space-between;">
-                        <span>Haftalık Hedef İlerlemesi</span><span id="kitapYuzdeText" style="color: #2e7d32;">%0</span>
-                    </div>
-                    <div class="okuma-progress-track"><div class="okuma-progress-fill" id="kitapProgressBar" style="width: 0%;"></div></div>
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; font-weight: 600;">
-                        <span id="okunanSayfaText">Okunan: 0 sayfa</span><span id="hedefSayfaText">Hedef: 0 sayfa</span>
-                    </div>
-                </div>
 
-                <div class="kitap-skor-kutu">
-                    <div style="font-size: 28px;">🏆</div>
-                    <div style="font-size: 24px; font-weight: 900; color: #f57f17;" id="toplamBitirilenKitap">0</div>
-                    <div style="font-size: 10px; font-weight: bold; color: #555; text-transform: uppercase;">Kitap Skoru</div>
+            <!-- 6. Rozetler -->
+            <div class="card">
+                <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
+                <div class="rozet-grid" id="rozetlerAlani"></div>
+                <div class="rozet-progress-container" style="margin-top:15px; border-top:1px dashed #eae5dc; padding-top:12px;">
+                    <div class="rozet-progress-track"><div class="rozet-progress-fill" id="rozetProgressBar" style="width: 0%;"></div></div>
+                    <div class="rozet-progress-text" id="rozetProgressText">%0 tamamlandı</div>
                 </div>
             </div>
 
-            <div class="alfabe-container">
-                <div class="alfabe-baslik">
-                    <span>✨ Harf Bahçesi (Alfabe İlerlemesi)</span>
-                    <span id="alfabeSayacText" style="color:#2e7d32;">0 / 29 Harf</span>
+            <!-- 7. Okuma & Alfabe -->
+            <div class="card">
+                <div class="card-header-flex">
+                    <h3 class="card-title">📚 Okuma Kültürü & Odak Takibi</h3>
+                    <button class="action-pill-btn" onclick="alert('Hızlı okuma aktif!')" style="background:#ffb300; border:none; padding:6px 12px; border-radius:15px; color:#fff; font-weight:bold; cursor:pointer;">⚡ HIZLI OKUMA</button>
                 </div>
-                <div class="alfabe-grid" id="alfabeGridAlani"></div>
+                
+                <div class="okuma-grid">
+                    <div>
+                        <div class="okunan-kitap-kutusu">
+                            <div class="kitap-etiket">ŞU AN OKUNAN KİTAP</div>
+                            <div class="kitap-isim" id="aktifKitapAdi">Yükleniyor...</div>
+                        </div>
+                        <div style="font-size: 12px; font-weight: bold; color: #555; display: flex; justify-content: space-between;">
+                            <span>Haftalık Hedef İlerlemesi</span><span id="kitapYuzdeText" style="color: #2e7d32;">%0</span>
+                        </div>
+                        <div class="okuma-progress-track"><div class="okuma-progress-fill" id="kitapProgressBar" style="width: 0%;"></div></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; font-weight: 600;">
+                            <span id="okunanSayfaText">Okunan: 0 sayfa</span><span id="hedefSayfaText">Hedef: 0 sayfa</span>
+                        </div>
+                    </div>
+
+                    <div class="kitap-skor-kutu">
+                        <div style="font-size: 28px;">🏆</div>
+                        <div style="font-size: 24px; font-weight: 900; color: #f57f17;" id="toplamBitirilenKitap">0</div>
+                        <div style="font-size: 10px; font-weight: bold; color: #555; text-transform: uppercase;">Kitap Skoru</div>
+                    </div>
+                </div>
+
+                <div class="alfabe-container">
+                    <div class="alfabe-baslik">
+                        <span>✨ Harf Bahçesi (Alfabe İlerlemesi)</span>
+                        <span id="alfabeSayacText" style="color:#2e7d32;">0 / 29 Harf</span>
+                    </div>
+                    <div class="alfabe-grid" id="alfabeGridAlani"></div>
+                </div>
+            </div>
+
+            <!-- 8. İstatistikler -->
+            <div class="stats-grid-4">
+                <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
+                <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
+                <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
+                <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
+            </div>
+
+            <!-- 9. Grafikler -->
+            <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
+            <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
+        </div>
+
+        <!-- B. DERS RAPORLARI SEKME ALANI -->
+        <div id="sekmeRaporlarAlani" class="card" style="display: none;">
+            <div class="card-header-flex"><h3 class="card-title">📝 Geçmiş Ders Raporları & Gelişim Arşivi</h3></div>
+            <div id="dersRaporlariListesi" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Dinamik olarak dolacak -->
             </div>
         </div>
 
-        <!-- 8. İstatistikler -->
-        <div class="stats-grid-4">
-            <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
-            <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
-            <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
-            <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
+        <!-- C. KAZANIMLAR SEKME ALANI -->
+        <div id="sekmeKazanimlarAlani" class="card" style="display: none;">
+            <div class="card-header-flex"><h3 class="card-title">🎯 Öğrenci Kazanım Takibi</h3></div>
+            <div style="padding: 20px; text-align: center; color: #555;">Harf ve beceri kazanımları bu alanda listelenmektedir.</div>
         </div>
 
-        <!-- 9. Grafikler -->
-        <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
-        <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
+        <!-- D. ROZETLER SEKME ALANI -->
+        <div id="sekmeRozetlerAlani" class="card" style="display: none;">
+            <div class="card-header-flex"><h3 class="card-title">🏆 Tüm Rozet Koleksiyonu</h3></div>
+            <div style="padding: 20px; text-align: center; color: #555;">Rozet detayları ve ilerleme durumu yakında burada!</div>
+        </div>
+
     </div>
 
     <!-- SAĞ ALT YAZISIZ SADECE LOGO BUTON -->
@@ -380,40 +406,91 @@
     </div>
 
     <script>
-       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUe6yNNarha3W7CnN32jidOZXBO1-yZXPDOtVzmiFv9Fwm-3c7s47FTIuvV5eNsjoc/exec";
-const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUe6yNNarha3W7CnN32jidOZXBO1-yZXPDOtVzmiFv9Fwm-3c7s47FTIuvV5eNsjoc/exec";
+        const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
-let toplamSaniye = 0;
-let timerInterval = null;
-let sistemOgrencileri = [];
-let ogrenciGecmisKayitlari = [];
-let gelisimChartInstance = null;
-let radarChartInstance = null;
+        let toplamSaniye = 0;
+        let timerInterval = null;
+        let sistemOgrencileri = [];
+        let ogrenciGecmisKayitlari = [];
+        let gelisimChartInstance = null;
+        let radarChartInstance = null;
 
-// Oturum verisini şifreli okuyan yardımcı fonksiyon
-function oturumOku(key) {
-    let val = localStorage.getItem(key);
-    if (!val) return null;
-    try {
-        return atob(val); // Şifreyi çöz
-    } catch (e) {
-        return val; // Eskiden kalma düz metin varsa yedek olarak kabul et
-    }
-}
+        // Oturum verisini şifreli okuyan yardımcı fonksiyon
+        function oturumOku(key) {
+            let val = localStorage.getItem(key);
+            if (!val) return null;
+            try {
+                return atob(val); // Şifreyi çöz
+            } catch (e) {
+                return val; // Eskiden kalma düz metin varsa yedek olarak kabul et
+            }
+        }
 
-const ogrenciAdi = oturumOku("aktifOgrenci");
+        const ogrenciAdi = oturumOku("aktifOgrenci") || oturumOku("dijimuallim_aktif_ogrenci");
 
-if (!ogrenciAdi) {
-    window.location.href = "index.html";
-} else {
-    document.addEventListener("DOMContentLoaded", function() {
-        let baslik = document.getElementById("aktifOgrenciBaslik");
-        let avatar = document.getElementById("ogrenciAvatarHarf");
-        if (baslik) baslik.innerText = ogrenciAdi;
-        if (avatar) avatar.innerText = ogrenciAdi.charAt(0).toUpperCase();
-        verileriCekVeBaslat(ogrenciAdi);
-    });
-}
+        if (!ogrenciAdi) {
+            window.location.href = "index.html";
+        } else {
+            document.addEventListener("DOMContentLoaded", function() {
+                let baslik = document.getElementById("aktifOgrenciBaslik");
+                let avatar = document.getElementById("ogrenciAvatarHarf");
+                if (baslik) baslik.innerText = ogrenciAdi;
+                if (avatar) avatar.innerText = ogrenciAdi.charAt(0).toUpperCase();
+                verileriCekVeBaslat(ogrenciAdi);
+
+                let kaydetBtn = document.getElementById("rubrikKaydetBtn");
+                if (kaydetBtn) {
+                    kaydetBtn.addEventListener("click", rubrikVerileriniKaydetVeGonder);
+                }
+            });
+        }
+
+        // Sekme Değiştirme Fonksiyonu
+        function sekmeGecis(index) {
+            const buttons = document.querySelectorAll(".tabs-bar .tab-btn");
+            buttons.forEach((btn, idx) => {
+                if (idx === index) btn.classList.add("active");
+                else btn.classList.remove("active");
+            });
+
+            document.getElementById("sekmeOzetAlani").style.display = (index === 0) ? "flex" : "none";
+            document.getElementById("sekmeRaporlarAlani").style.display = (index === 1) ? "block" : "none";
+            document.getElementById("sekmeKazanimlarAlani").style.display = (index === 2) ? "block" : "none";
+            document.getElementById("sekmeRozetlerAlani").style.display = (index === 3) ? "block" : "none";
+        }
+
+        // Ders Raporlarını Listeye Dolduran Fonksiyon
+        function dersRaporlariniEkranaBas(kayitlar) {
+            let listeDiv = document.getElementById("dersRaporlariListesi");
+            if (!listeDiv) return;
+
+            if (!kayitlar || kayitlar.length === 0) {
+                listeDiv.innerHTML = `<div style="text-align:center; color:#666; padding:15px;">Henüz geçmiş ders raporu bulunmuyor.</div>`;
+                return;
+            }
+
+            let html = "";
+            kayitlar.slice().reverse().forEach((k) => {
+                html += `
+                    <div style="background:#faf8f5; border:1px solid #e0dcd0; padding:14px; border-radius:12px; border-left: 5px solid #2e7d32; margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; color:#555; margin-bottom:6px;">
+                            <span>📅 Tarih: ${k.tarih}</span>
+                            <span style="background:#e8f5e9; color:#1b5e20; padding:2px 8px; border-radius:8px;">Genel Puan: ${k.genelPuan || 'N/A'}</span>
+                        </div>
+                        <div style="font-size:13px; color:#333; line-height:1.5; margin-bottom:8px; font-style:italic;">
+                            "${k.haftalikNot || 'Bu hafta için özel not girilmemiş.'}"
+                        </div>
+                        <div style="font-size:11px; color:#666; display:flex; gap:15px; flex-wrap:wrap; border-top:1px dashed #ddd; padding-top:6px;">
+                            <span>📚 Kitap: <b>${k.aktifKitap || 'Belirtilmedi'}</b></span>
+                            <span>📖 Okunan: <b>${k.okunanSayfa} sayfa</b></span>
+                            <span>🎯 Hedef: <b>${k.hedefSayfa} sayfa</b></span>
+                        </div>
+                    </div>
+                `;
+            });
+            listeDiv.innerHTML = html;
+        }
 
         function yoneticiGirisSorgula() {
             let sifre = prompt("Yönetici şifresini girin:");
@@ -479,7 +556,6 @@ if (!ogrenciAdi) {
                     if(data.veliTelefon) document.getElementById("rubrikVeliTel").value = data.veliTelefon;
                     document.getElementById("oncekiOdevMetni").innerText = `"${data.sonOdev || 'Ödev bulunmuyor.'}"`;
                     
-                    // Otomatik gelen son okunan kitap, sayfa ve hedef sayfa
                     document.getElementById("rubrikAktifKitap").value = data.aktifKitap || "";
                     document.getElementById("rubrikOkunanSayfa").value = data.okunanSayfa || 0;
                     document.getElementById("rubrikHedefSayfa").value = data.hedefSayfa || 0;
@@ -538,14 +614,6 @@ if (!ogrenciAdi) {
             let ort = Math.round((c1 + c2 + c3 + c4 + c5) / 5);
             document.getElementById("hesaplananPuan").innerText = ort;
         }
-
-        // Buton tıklama olayını güvenli şekilde bağlıyoruz
-        document.addEventListener("DOMContentLoaded", function() {
-            let kaydetBtn = document.getElementById("rubrikKaydetBtn");
-            if (kaydetBtn) {
-                kaydetBtn.addEventListener("click", rubrikVerileriniKaydetVeGonder);
-            }
-        });
 
         function aiZenginYorumUret(ogrenci, puan, kitap, okunan, hedef, odevDurumText, ekYorum, harfler) {
             let girisler = [
@@ -787,6 +855,19 @@ if (!ogrenciAdi) {
                         });
                         document.getElementById("dersZamanAlani").innerHTML = dersHtml;
                     }
+
+                    // Arka planda geçmiş kayıtları çekip Ders Raporları sekmesini dolduralım
+                    fetch(SCRIPT_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify({ action: "ogrenciGecmisVerileriGetir", ogrenciAdi: isim })
+                    })
+                    .then(r => r.json())
+                    .then(resData => {
+                        if (resData.status === "success") {
+                            dersRaporlariniEkranaBas(resData.kayitlar);
+                        }
+                    });
                 }
             });
         }
@@ -886,6 +967,7 @@ if (!ogrenciAdi) {
         function cikisYap() {
             sureyiBulutaKaydet();
             localStorage.removeItem("aktifOgrenci");
+            localStorage.removeItem("dijimuallim_aktif_ogrenci");
             window.location.href = "index.html";
         }
     </script>
