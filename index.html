@@ -479,12 +479,27 @@ body {
 .badge-sonraki { background: #E6F1FB; color: #185FA5; border: 1px solid #378ADD; }
 .status-empty { font-size: 11px; color: #bbb; font-style: italic; }
 
-.metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1rem; }
-.metric-card { background: #fff; border-radius: 12px; padding: 14px; border: 1px solid #e8eaed; }
-.metric-label { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-.metric-value { font-size: 26px; font-weight: 700; color: #1a1a1a; line-height: 1; }
-.metric-delta { font-size: 12px; margin-top: 4px; }
-.up { color: #0F6E56; } .down { color: #c0392b; } .same { color: #888; }
+.metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 1rem; }
+.metric-card { border-radius: 16px; padding: 16px; border: 1.5px solid rgba(0,0,0,0.06); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+.metric-card:nth-child(1) { background-color: #E8F8F0; border-color: #A3E4D7; }
+.metric-card:nth-child(2) { background-color: #EBF5FB; border-color: #AED6F1; }
+.metric-card:nth-child(3) { background-color: #FEF9E7; border-color: #F9E79F; }
+.metric-card:nth-child(4) { background-color: #FADBD8; border-color: #F5B7B1; }
+
+.metric-label { font-size: 11px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.metric-card:nth-child(1) .metric-label { color: #117A65; }
+.metric-card:nth-child(2) .metric-label { color: #2874A6; }
+.metric-card:nth-child(3) .metric-label { color: #B7950B; }
+.metric-card:nth-child(4) .metric-label { color: #C0392B; }
+
+.metric-value { font-size: 28px; font-weight: 800; line-height: 1; }
+.metric-card:nth-child(1) .metric-value { color: #0E6251; }
+.metric-card:nth-child(2) .metric-value { color: #1B4F72; }
+.metric-card:nth-child(3) .metric-value { color: #9A7D0A; }
+.metric-card:nth-child(4) .metric-value { color: #943126; }
+
+.metric-delta { font-size: 12px; margin-top: 6px; font-weight: 600; }
+.up { color: #117A65; } .down { color: #C0392B; } .same { color: #7F8C8D; }
 .card { background: #fff; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #e8eaed; width: 100%; box-sizing: border-box; }
 .card-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 1rem; }
 .skill-row { margin-bottom: 12px; }
@@ -523,7 +538,7 @@ body {
 .content { padding: 1.25rem; width: 100%; box-sizing: border-box; }
 .empty { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
 .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
-canvas { max-height: 200px; }
+canvas { max-height: 220px; }
 
 .badges-card { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; padding: 1.25rem; margin-bottom: 1rem; }
 .badges-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 1rem; }
@@ -1850,6 +1865,8 @@ function buildOzet(rows, latest, studentName, allRows) {
     </div>
   `;
 
+  const devamlilikOrani = dersler.length ? Math.round(yapildi/dersler.length*100) : 0;
+
   return `
     ${badgesHtml}
     ${kitapTakipPaneliHtml}
@@ -1861,10 +1878,10 @@ function buildOzet(rows, latest, studentName, allRows) {
     </div>
 
     <div class="metrics-grid">
-      <div class="metric-card"><div class="metric-label">Genel puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
-      <div class="metric-card"><div class="metric-label">Son deneme</div><div class="metric-value">${latest.deneme > 0 ? latest.deneme : "—"}</div><div class="metric-delta">${delta("deneme")}</div></div>
-      <div class="metric-card"><div class="metric-label">Toplam Başarılı Ders</div><div class="metric-value">${yapildi}</div><div class="metric-delta" style="color:#888">${dersler.length} planlı kayıt</div></div>
-      <div class="metric-card"><div class="metric-label">Devam oranı</div><div class="metric-value">${dersler.length?Math.round(yapildi/dersler.length*100):0}%</div><div class="metric-delta"><span style="color:#e74c3c">${yapilmadi} kaçırıldı</span></div></div>
+      <div class="metric-card"><div class="metric-label">⭐ Genel Puan</div><div class="metric-value">${latest.genel}</div><div class="metric-delta">${delta("genel")}</div></div>
+      <div class="metric-card"><div class="metric-label">🚀 Son Deneme</div><div class="metric-value">${latest.deneme > 0 ? latest.deneme : "—"}</div><div class="metric-delta">${delta("deneme")}</div></div>
+      <div class="metric-card"><div class="metric-label">🎯 Toplam Başarılı Ders</div><div class="metric-value">${yapildi}</div><div class="metric-delta" style="color:#888">${dersler.length} planlı kayıt</div></div>
+      <div class="metric-card"><div class="metric-label">🔥 Devam Oranı</div><div class="metric-value">${devamlilikOrani}%</div><div class="metric-delta"><span style="color:#C0392B">${yapilmadi} kaçırıldı</span></div></div>
     </div>
 
     <div class="card"><div class="card-title">Genel gelişim grafiği</div><canvas id="chartGenel"></canvas></div>
@@ -1887,23 +1904,48 @@ function drawCharts(rows) {
       data: {
         labels: scoredRows.map(r => r.tarih),
         datasets: [
-          { label: "Genel", data: scoredRows.map(r => r.genel), borderColor: "#1D9E75", backgroundColor: "rgba(29,158,117,0.08)", tension: 0.3, pointRadius: 4, fill: true },
-          { label: "Deneme", data: scoredRows.map(r => r.deneme > 0 ? r.deneme : null), borderColor: "#378ADD", backgroundColor: "transparent", tension: 0.3, pointRadius: 4, borderDash: [5,3], spanGaps: false }
+          { label: "Genel", data: scoredRows.map(r => r.genel), borderColor: "#2E5A44", backgroundColor: "rgba(46,90,68,0.1)", tension: 0.3, pointRadius: 4, fill: true, borderWidth: 2 },
+          { label: "Deneme", data: scoredRows.map(r => r.deneme > 0 ? r.deneme : null), borderColor: "#378ADD", backgroundColor: "transparent", tension: 0.3, pointRadius: 4, borderDash: [5,3], spanGaps: false, borderWidth: 2 }
         ]
       },
-      options: { responsive: true, plugins: { legend: { labels: { font: { size: 11 }, boxWidth: 10 } } }, scales: { y: { min: 0, max: 100, grid: { color: "#f0f0f0" } }, x: { grid: { display: false } } } }
+      options: { 
+        responsive: true, 
+        plugins: { 
+          legend: { 
+            display: true,
+            position: 'bottom',
+            labels: { font: { size: 11 }, boxWidth: 12, padding: 15 } 
+          } 
+        }, 
+        scales: { 
+          y: { min: 0, max: 100, grid: { color: "#f0f0f0" } }, 
+          x: { grid: { display: false } } 
+        } 
+      }
     });
   }
 
   const ctx2 = document.getElementById("chartRadar");
   if (ctx2 && latest) {
     new Chart(ctx2.getContext("2d"), {
-      type: "radar",
+      type: "bar",
       data: {
-        labels: ["Vocabulary","Konuşma","Okuma","Yazma","Grammar"],
-        datasets: [{ label: "Beceriler", data: [latest.vocabulary, latest.konusma, latest.okuma, latest.yazma, latest.grammar], borderColor: "#1D9E75", backgroundColor: "rgba(29,158,117,0.15)", pointBackgroundColor: "#1D9E75", pointRadius: 4 }]
+        labels: ["Vocabulary", "Konuşma", "Okuma", "Yazma", "Grammar"],
+        datasets: [{ 
+          label: "Beceri Puanları", 
+          data: [latest.vocabulary, latest.konusma, latest.okuma, latest.yazma, latest.grammar], 
+          backgroundColor: ["#1D9E75", "#378ADD", "#7F77DD", "#EF9F27", "#D85A30"],
+          borderRadius: 6
+        }]
       },
-      options: { responsive: true, scales: { r: { min: 0, max: 100, ticks: { stepSize: 25, font: { size: 10 } }, grid: { color: "#f0f0f0" } } }, plugins: { legend: { display: false } } }
+      options: { 
+        responsive: true, 
+        scales: { 
+          y: { min: 0, max: 100, ticks: { stepSize: 20, font: { size: 10 } }, grid: { color: "#f0f0f0" } }, 
+          x: { grid: { display: false } } 
+        }, 
+        plugins: { legend: { display: false } } 
+      }
     });
   }
 }
@@ -2366,825 +2408,4 @@ function ezberLiderlikTablosuBas(veriler) {
     var govde = document.getElementById("ezberLiderlikGövdesi");
     govde.innerHTML = "";
     var filtrelenmis = (veriler || []).filter(l => l.sinif === aktifSinif);
-    filtrelenmis.sort((a, b) => { if(b.puan !== a.puan) return b.puan - a.puan; return a.sureSaniye - b.sureSaniye; });
-    var top10 = filtrelenmis.slice(0, 10);
-    if(top10.length === 0) { govde.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center; color:#9ca3af;">Henüz bu sınıfta sıralama yok. İlk sen ol!</td></tr>'; return; }
-
-    top10.forEach((r, idx) => {
-        var madalya = (idx + 1).toString();
-        var arkaPlan = "";
-        if(idx === 0) { madalya = "🥇"; arkaPlan = "background:#fff9c4; font-weight:bold;"; }
-        else if(idx === 1) { madalya = "🥈"; arkaPlan = "background:#f5f5f5;"; }
-        else if(idx === 2) { madalya = "🥉"; arkaPlan = "background:#efebe9;"; }
-        govde.innerHTML += '<tr style="border-bottom:1px solid #e0e0e0; ' + arkaPlan + '">' +
-            '<td style="padding:10px; font-weight:bold; text-align:center;">' + madalya + '</td>' +
-            '<td style="padding:10px; font-weight: 600; color:#3c4043;">' + r.isim + '</td>' +
-            '<td style="padding:10px; text-align:center; color:#137333;">' + r.dogru + '</td>' +
-            '<td style="padding:10px; text-align:center; font-family:monospace;">' + r.sure + '</td>' +
-            '<td style="padding:10px; font-weight:bold; color:#1a73e8; text-align:center; font-size:15px;">' + r.puan + '</td>' +
-            '</tr>';
-    });
-}
-
-function ezberYenidenBaslat() {
-    clearInterval(ezberKronometreInterval);
-    try { const muzik = document.getElementById("ezberMuzik"); if (muzik) muzik.pause(); } catch(e) {}
-    document.getElementById("ezberOyunEkrani").style.display = "none";
-    document.getElementById("ezberSonucEkrani").style.display = "none";
-    document.getElementById("ezberGirisEkrani").style.display = "block";
-}
-
-// 🎯 SEVİYE TESPİT SINAVI KODLARI
-const hamSoruHavuzu = [
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel1.png", q: "Look at the picture. What is the person doing at the moment?", a: ["She is preparing a traditional dinner in the kitchen.", "She is working on his laptop and writing some notes.", "She is buying a new tablet from the tech store.", "She is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel2.png", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel3.png", q: "Look at the traffic sign in the picture. Which of the following is CORRECT?", a: ["Drivers are allowed to park their cars here overnight.", "Drivers must not exceed the maximum speed limit shown.", "The road is completely closed due to maintenance.", "Pedestrians have the absolute right of way here."], c: 1, lvl: "B1 - Sign Analysis" },
-  { type: "audio", mediaUrl: "ses1.mp3", q: "Listen to the speaker talking about his daily routine. What time does he usually have breakfast?", a: ["At quarter to seven in the morning.", "Right after he leaves the office.", "At half past eight with his parents.", "He prefers to skip breakfast on weekdays."], c: 2, lvl: "A1 - Listening Routine" },
-  { type: "audio", mediaUrl: "ses2.mp3", q: "Listen to the audio presentation. What will the weather be like in the northern area tomorrow afternoon?", a: ["Unseasonably warm and completely dry.", "Rainy with a strong chance of thunderstorms.", "Clear enough for a family picnic.", "Snowy and freezing throughout the day."], c: 1, lvl: "A2 - Listening Weather" },
-  { type: "audio", mediaUrl: "ses3.mp3", q: "Listen to the phone conversation. Why is the woman calling the customer service center?", a: ["To complain about a broken tablet adapter.", "To change the date of her private coaching session.", "To ask for a discount on a long-sleeve shirt.", "To report a technical bug on the exam portal."], c: 1, lvl: "B1 - Listening Management" },
-  { type: "audio", mediaUrl: "ses4.mp3", q: "Listen to the educational coordinator's interview. What is her main argument regarding language acquisition?", a: ["Grammar structures must be memorized before practicing listening.", "Continuous exposure to authentic media accelerates fluency significantly.", "Passing international placement tests is the only proof of success.", "Vocabulary lists are completely useless for high school students."], c: 1, lvl: "B2 - Advanced Listening" },
-  { type: "text", mediaUrl: "", q: "My sister _______ a book in her room at the moment, so please be quiet.", a: ["reads", "is reading", "read", "has read"], c: 1, lvl: "A1 - Grammar Structure" },
-  { type: "text", mediaUrl: "", q: "We _______ each other since we were in the same primary school classroom.", a: ["know", "are knowing", "have known", "knew"], c: 2, lvl: "A2 - Tense Structure" },
-  { type: "text", mediaUrl: "", q: "If our team _______ the national science project last week, we would be in London now.", a: ["won", "had won", "would win", "wins"], c: 1, lvl: "B1 - Conditionals" },
-  { type: "text", mediaUrl: "", q: "Little _______ know that the exam coordinator had already changed the schedule.", a: ["I did", "did I", "I had", "had I"], c: 1, lvl: "B2 - Inversion Structures" },
-  { type: "text", mediaUrl: "", q: "Kevin: Are you coming to the study group tonight?\nSarah: I'd love to, but I have to finish my vocabulary assignment.\nKevin: _______\nSarah: Thanks! That would actually help a lot.", a: ["I think you should go to sleep early.", "I can help you with it if you want.", "The assignment was extremely difficult.", "I have already failed that test."], c: 1, lvl: "A2 - Dialogue Completion" },
-  { type: "text", mediaUrl: "", q: "\"Online learning platforms offer flexibility for students who manage busy schedules. However, without high personal motivation and strict time management, it is very easy to fall behind the curriculum.\"\n\nAccording to the text, what is the main risk of online learning?", a: ["The high cost of technical digital equipment.", "The lack of high-quality educational materials.", "Falling behind due to poor motivation or time control.", "Not being able to communicate with the online tutor."], c: 2, lvl: "B1 - Text Comprehension" },
-  { type: "text", mediaUrl: "", q: "Despite the severe weather conditions and the sudden cancellation of flights, _______.", a: ["the students preferred to stay at the luxury resort hotel", "the academic coordinator managed to arrive at the seminar on time", "because they forgot to check the official announcement page", "which made it impossible for anyone to join the English camp"], c: 1, lvl: "B2 - Sentence Matching" },
-  { type: "text", mediaUrl: "", q: "The teacher's primary goal is to _______ a love for reading and critical thinking in his students from an early age.", a: ["cultivate", "neglect", "artificial", "abolish"], c: 0, lvl: "B2 - Advanced Vocabulary" }
-];
-let aktifSoruBankasi = [];
-let ogrenciCevaplari = Array(15).fill(null); 
-let pointerSoru = 0;
-let ogrenciIsmi = "";
-let nihaiSeviyeSonucu = "";
-let nihaiDogruSayisi = 0;
-let nihaiYanlisSayisi = 0;
-
-function seviyeTestiKutusuAc() {
-    const alan = document.getElementById("seviyeTestAlani");
-    if(alan.style.display === "none" || alan.style.display === "") {
-        alan.style.display = "flex"; 
-    } else { 
-        alan.style.display = "none"; 
-    }
-}
-
-function testiBaslat() {
-    const inputIsim = document.getElementById("testOgrenciIsim").value.trim();
-    if(!inputIsim) { alert("Lütfen adınızı ve soyadınızı giriniz."); return; }
-    ogrenciIsmi = inputIsim;
-    aktifSoruBankasi = [...hamSoruHavuzu];
-    for (let i = aktifSoruBankasi.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [aktifSoruBankasi[i], aktifSoruBankasi[j]] = [aktifSoruBankasi[j], aktifSoruBankasi[i]];
-    }
-    document.getElementById("testGirisEkrani").style.display = "none";
-    document.getElementById("testSoruEkrani").style.display = "block";
-    pointerSoru = 0;
-    ogrenciCevaplari = Array(15).fill(null);
-    dinamikSoruGoster();
-}
-
-function dinamikSoruGoster() {
-    if(pointerSoru >= aktifSoruBankasi.length) { nihaiSorguKapat(); return; }
-    const veri = aktifSoruBankasi[pointerSoru];
-    
-    document.getElementById("soruNumarasi").innerText = `Soru: ${pointerSoru + 1}/${aktifSoruBankasi.length}`;
-    document.getElementById("soruSeviyeEtiket").innerText = veri.lvl;
-    document.getElementById("soruMetni").innerText = veri.q;
-
-    const gb = document.getElementById("anlikGeribildirim");
-    gb.style.display = "none";
-
-    const gKutu = document.getElementById("soruGorselKutusu");
-    if(veri.type === "image") { document.getElementById("soruGorsel").src = veri.mediaUrl; gKutu.style.display = "block"; } else { gKutu.style.display = "none"; }
-
-    const sKutu = document.getElementById("soruSesKutusu");
-    const oynatici = document.getElementById("soruSesOynatici");
-    if(veri.type === "audio") { oynatici.src = veri.mediaUrl; oynatici.load(); sKutu.style.display = "block"; } else { oynatici.pause(); sKutu.style.display = "none"; }
-
-    const sAlan = document.getElementById("seceneklerAlani");
-    sAlan.innerHTML = "";
-    veri.a.forEach((alternatif, i) => {
-        let ekStil = "";
-        if (ogrenciCevaplari[pointerSoru] !== null) {
-            if (i === veri.c) ekStil = "background: #C2E0CC; border-color: #2E5A44; font-weight: bold; color: #2E5A44;"; 
-            else if (i === ogrenciCevaplari[pointerSoru]) ekStil = "background: #FADBD8; border-color: #E74C3C; color: #E74C3C;"; 
-        }
-        sAlan.innerHTML += `<button onclick="anlikSikSecimi(${i})" style="text-align: left; background: #FFF; border: 1px solid #DCD5C5; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 12.5px; color: #4A4235; width: 100%; box-sizing: border-box; ${ekStil}"><strong>${String.fromCharCode(65 + i)})</strong> ${alternatif}</button>`;
-    });
-    document.getElementById("btnGeri").style.visibility = pointerSoru === 0 ? "hidden" : "visible";
-    document.getElementById("btnIleri").innerText = pointerSoru === 14 ? "Sınavı Bitir 🏁" : "Sonraki ➡️";
-}
-
-function anlikSikSecimi(secilen) {
-    if (ogrenciCevaplari[pointerSoru] !== null) return;
-    const veri = aktifSoruBankasi[pointerSoru];
-    ogrenciCevaplari[pointerSoru] = secilen;
-    const gb = document.getElementById("anlikGeribildirim");
-    if (secilen === veri.c) { gb.innerText = "✓ DOĞRU CEVAP!"; gb.style.background = "#EBF5EE"; gb.style.color = "#2E5A44"; } 
-    else { gb.innerText = `✗ YANLIŞ! (Doğru: ${String.fromCharCode(65 + veri.c)})`; gb.style.background = "#FDEDEC"; gb.style.color = "#E74C3C"; }
-    gb.style.display = "block";
-    setTimeout(() => { dinamikSoruGoster(); }, 1200);
-}
-
-function navigasyonSoru(yon) {
-    if (pointerSoru === 14 && yon === 1) { nihaiSorguKapat(); return; }
-    pointerSoru += yon;
-    if (pointerSoru < 0) pointerSoru = 0;
-    if (pointerSoru > 14) pointerSoru = 14;
-    dinamikSoruGoster();
-}
-
-async function nihaiSorguKapat() {
-    document.getElementById("testSoruEkrani").style.display = "none";
-    document.getElementById("testSonucEkrani").style.display = "block";
-
-    let dSayi = 0; let ySayi = 0;
-    aktifSoruBankasi.forEach((v, index) => { if(ogrenciCevaplari[index] === v.c) dSayi++; else ySayi++; });
-    
-    nihaiDogruSayisi = dSayi;
-    nihaiYanlisSayisi = ySayi;
-
-    let seviyeUnvani = "A1 (Beginner)";
-    let dinamikMesaj = "";
-
-    if (dSayi >= 14) {
-        seviyeUnvani = "B2+ (İleri Düzey / Üst Seviye)";
-        dinamikMesaj = `🏆 <strong>Müthiş Bir Potansiyel!</strong> Harika bir altyapın var; ancak dili akıcı konuşmak, nüansları yakalamak ve uluslararası sınavlarda zirvede kalmak için profesyonel mentorlukla pratik yapman şart. Bu ateşi söndürme, profesyonel derslerle mükemmelleştir!`;
-    } else if (dSayi >= 11) {
-        seviyeUnvani = "B2 (İleri Orta Seviye)";
-        dinamikMesaj = `🚀 <strong>Zirveye Çok Yakınsın!</strong> Dilin iskeletine gayet hakimsin. Fakat kelime derinliği ve doğal konuşma refleksini kazanmak için birebir yönlendirmeye ihtiyacın var. Ufak dokunuşlarla İngilizceyi anadil rahatlığına taşıyabiliriz!`;
-    } else if (dSayi >= 8) {
-        seviyeUnvani = "B1 (Orta Seviye)";
-        dinamikMesaj = `⚡ <strong>Güçlü Bir Temel, Büyük Bir Fırsat!</strong> Kendini ifade edebiliyorsun ama karmaşık yapılar ve dinleme seni biraz zorluyor. Doğru teknikler ve bireysel özel ders takibiyle çok kısa sürede bir üst seviyeye sıçrayabilirsin!`;
-    } else if (dSayi >= 5) {
-        seviyeUnvani = "A2 (Temel Üstü Seviye)";
-        dinamikMesaj = `🌱 <strong>Güzel Başlangıç Ama Harekete Geçme Zamanı!</strong> Temel kalıpları biliyorsun ancak kendi başına ilerlerken zaman kaybedebilirsin. Eksiklerini nokta atışı tespit edip hızla seviye atlamak için birebir eğitime hemen başlamalısın!`;
-    } else {
-        seviyeUnvani = "A1 (Başlangıç Seviyesi)";
-        dinamikMesaj = `🎯 <strong>Yolun Başındasın ve En Şanslı Dönemindesin!</strong> Sıfırdan, en doğru metotlarla, sağlam temeller atarak başlamak seni yanlış alışkanlıklardan korur. Profesyonel rehberlikle İngilizce senin için bir zorluk değil, keyifli bir serüven olacak!`;
-    }
-
-    nihaiSeviyeSonucu = seviyeUnvani;
-
-    document.getElementById("testSonucSeviye").innerText = seviyeUnvani;
-    document.getElementById("testSkorMetni").innerText = `15 Soru Üzerinden -> Doğru: ${dSayi} | Yanlış: ${ySayi}`;
-    
-    const hocaNotuAlani = document.getElementById("hocaOzelNotu");
-    if (hocaNotuAlani) {
-        hocaNotuAlani.innerHTML = dinamikMesaj;
-    }
-
-    const bugun = new Date();
-    const tarihFormat = String(bugun.getDate()).padStart(2, '0') + "." + String(bugun.getMonth() + 1).padStart(2, '0') + "." + bugun.getFullYear();
-    
-    const apiPayload = { 
-        aksiyon: "seviyeKaydet",
-        sayfaAdi: "Seviye Tespit Sınavı",
-        tarih: tarihFormat, 
-        ogrenci: ogrenciIsmi,
-        isim: ogrenciIsmi, 
-        dogru: dSayi, 
-        yanlis: ySayi, 
-        seviye: seviyeUnvani 
-    };
-
-    try {
-        if(WEB_APP_URL) {
-            await fetch(WEB_APP_URL, { 
-                method: "POST", 
-                mode: "no-cors", 
-                headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify(apiPayload) 
-            });
-        }
-    } catch(e) { console.log("Seviye kaydı tamamlandı."); }
-}
-
-function testSonucundanDersTalebiGonder() {
-    const mesaj = `Merhabalar Hocam,\nBen seviye tespit sınavını tamamladım.\n\n👤 *Adım Soyadım:* ${ogrenciIsmi}\n📊 *Sınav Sonucum:* ${nihaiDogruSayisi} Doğru / ${nihaiYanlisSayisi} Yanlış\n🎯 *Seviyem:* ${nihaiSeviyeSonucu}\n\nİngilizcemi daha da ilerletmek ve bireysel özel ders planlaması yapmak için bilgi almak istiyorum.`;
-    const numara = "905369937089";
-    const wpLink = `https://api.whatsapp.com/send?phone=${numara}&text=${encodeURIComponent(mesaj)}`;
-    window.open(wpLink, '_blank');
-}
-
-// 💬 WHATSAPP CANLI DESTEK FONKSİYONLARI
-function whatsappKutusuToggle() {
-    const box = document.getElementById("waChatBox");
-    if (box.style.display === "flex") {
-        box.style.display = "none";
-    } else {
-        box.style.display = "flex";
-        document.getElementById("waSoruMetni").focus();
-    }
-}
-
-function whatsapplaGonder() {
-    const mesajInput = document.getElementById("waSoruMetni");
-    const mesaj = mesajInput.value.trim();
-    if (!mesaj) { alert("Lütfen önce sorunuzu yazın."); mesajInput.focus(); return; }
-
-    let ogrenciBilgisi = typeof activeStudent !== 'undefined' && activeStudent ? `Öğrenci: ${activeStudent}` : "Web Sitesi Ziyaretçisi";
-    const tamMesaj = `🤖 *DİJİMUALLİM - CANLI SORU HATTI*\n\n👤 ${ogrenciBilgisi}\n\n📝 *Soru / Mesaj:*\n${mesaj}`;
-    const telefonNumarasi = "905369937089"; 
-    const waUrl = `https://api.whatsapp.com/send?phone=${telefonNumarasi}&text=${encodeURIComponent(tamMesaj)}`;
-    
-    window.open(waUrl, '_blank');
-    mesajInput.value = "";
-    whatsappKutusuToggle();
-}
-
-// Sayfa Yükleme & Event Dinleyicileri
-document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-        var baloncuklar = document.querySelectorAll(".auto-hide-badge");
-        baloncuklar.forEach(function(el) {
-            if (el) {
-                el.style.opacity = "0";
-                el.style.transform = "translateX(25px)";
-                setTimeout(function() {
-                    el.style.display = "none";
-                }, 600);
-            }
-        });
-    }, 5000);
-
-    const overlay = document.getElementById("yeni_rubrikOverlay");
-    const openBtn = document.getElementById("yeni_rubrikOpenBtn");
-    const closeBtn = document.getElementById("yeni_rubrikCloseBtn");
-    const unlockBtn = document.getElementById("yeni_unlockBtn");
-    const passInput = document.getElementById("yeni_passInput");
-    const lockScreen = document.getElementById("yeni_lockScreen");
-    const rubrikApp = document.getElementById("yeni_rubrikApp");
-    const passError = document.getElementById("yeni_passError");
-    const overallScoreEl = document.getElementById("yeni_overallScore");
-    const examScore = document.getElementById("yeni_examScore");
-    const examScoreOut = document.getElementById("yeni_examScoreOut");
-    const webhookToggle = document.getElementById("yeni_webhookToggle");
-    const webhookForm = document.getElementById("yeni_webhookForm");
-    const saveWebhookBtn = document.getElementById("yeni_saveWebhook");
-    const webhookUrlInput = document.getElementById("yeni_webhookUrl");
-    const statusMsg = document.getElementById("yeni_statusMsg");
-    const saveBtn = document.getElementById("yeni_saveBtn");
-    const resetBtn = document.getElementById("yeni_resetBtn");
-    const studentNameInput = document.getElementById("yeni_studentName");
-    const studentPhoneInput = document.getElementById("yeni_studentPhone");
-    const bookNameInput = document.getElementById("yeni_bookName");
-    const bookReadInput = document.getElementById("yeni_bookRead");
-    const bookTargetInput = document.getElementById("yeni_bookTarget");
-    const bookTotalInput = document.getElementById("yeni_bookTotal");
-
-    const bugunTarihInput = new Date().toISOString().split('T')[0];
-    if(document.getElementById("yeni_completedLessonDate")) {
-        document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
-    }
-    if(document.getElementById("yeni_nextLessonDate")) {
-        document.getElementById("yeni_nextLessonDate").value = bugunTarihInput;
-    }
-
-    if(localStorage.getItem("rubrik_webhook_yeni") && webhookUrlInput) {
-        webhookUrlInput.value = localStorage.getItem("rubrik_webhook_yeni");
-    }
-
-    if(openBtn) {
-        openBtn.addEventListener("click", function() {
-            if(overlay) overlay.style.display = "flex";
-        });
-    }
-
-    if(closeBtn) {
-        closeBtn.addEventListener("click", function() {
-            if(overlay) overlay.style.display = "none";
-        });
-    }
-
-    if(unlockBtn) {
-        unlockBtn.addEventListener("click", function() {
-            const girilenSifre = passInput.value.trim();
-            if(girilenSifre === "315269") { 
-                lockScreen.style.display = "none"; 
-                rubrikApp.style.display = "block"; 
-                passError.style.display = "none"; 
-                passInput.value = ""; 
-            } else { 
-                passError.style.display = "block"; 
-                passInput.value = "";
-            }
-        });
-    }
-
-    if(studentNameInput) {
-        studentNameInput.addEventListener("input", function() {
-            const girilenIsim = studentNameInput.value.trim();
-            if (girilenIsim && typeof allData !== 'undefined' && Array.isArray(allData)) {
-                let row = allData.find(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
-                if (row) {
-                    let telNo = row.telefon || row.veli_telefon || row.p || row.telefon_numarasi || "";
-                    if(telNo && studentPhoneInput) { studentPhoneInput.value = telNo; }
-                }
-                let ogrenciSatirlari = allData.filter(r => r.ogrenci && r.ogrenci.toLowerCase() === girilenIsim.toLowerCase());
-                let sonKitapliSatir = [...ogrenciSatirlari].reverse().find(r => r.son_kitap_adi && r.son_kitap_adi !== "Bu hafta henüz kitap tanımlanmadı.");
-                if (sonKitapliSatir) {
-                    if(bookNameInput) bookNameInput.value = sonKitapliSatir.son_kitap_adi || "";
-                    if(bookTargetInput) bookTargetInput.value = sonKitapliSatir.son_kitap_hedef || "100";
-                    if(bookTotalInput) bookTotalInput.value = sonKitapliSatir.okunan_kitap_sayisi || "0";
-                    if(bookReadInput) bookReadInput.value = "";
-                } else {
-                    if(bookNameInput) bookNameInput.value = ""; 
-                    if(bookTargetInput) bookTargetInput.value = "100"; 
-                    if(bookTotalInput) bookTotalInput.value = "0"; 
-                    if(bookReadInput) bookReadInput.value = "";
-                }
-            }
-        });
-    }
-
-    document.querySelectorAll(".r-btn-group .r-status-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            btn.parentElement.querySelectorAll(".r-status-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-        });
-    });
-
-    const skillSliders = document.querySelectorAll(".yeni-skill-input");
-    function updateAverage() {
-        let total = 0;
-        skillSliders.forEach(slider => {
-            const val = parseInt(slider.value) || 0;
-            if(slider.nextElementSibling) slider.nextElementSibling.innerText = val;
-            total += val;
-        });
-        if(overallScoreEl) overallScoreEl.innerText = Math.round(total / (skillSliders.length || 1));
-    }
-    skillSliders.forEach(s => s.addEventListener("input", updateAverage));
-
-    if(examScore) {
-        examScore.addEventListener("input", () => { 
-            if(examScoreOut) examScoreOut.innerText = examScore.value + "/100"; 
-        });
-    }
-
-    if(webhookToggle && webhookForm) {
-        webhookToggle.addEventListener("click", () => { 
-            webhookForm.style.display = webhookForm.style.display === "none" ? "block" : "none"; 
-        });
-    }
-
-    if(saveWebhookBtn && webhookUrlInput) {
-        saveWebhookBtn.addEventListener("click", () => {
-            localStorage.setItem("rubrik_webhook_yeni", webhookUrlInput.value);
-            alert("Bağlantı URL'i tarayıcıya kaydedildi!");
-            if(webhookForm) webhookForm.style.display = "none";
-        });
-    }
-
-    if(resetBtn) {
-        resetBtn.addEventListener("click", () => {
-            if(confirm("Tüm formu temizlemek istediğinize emin misiniz?")) {
-                if(studentNameInput) studentNameInput.value = "";
-                if(studentPhoneInput) studentPhoneInput.value = "90";
-                if(document.getElementById("yeni_lessonTopic")) document.getElementById("yeni_lessonTopic").value = "";
-                if(document.getElementById("yeni_startComment")) document.getElementById("yeni_startComment").value = "";
-                if(document.getElementById("yeni_endComment")) document.getElementById("yeni_endComment").value = "";
-                if(document.getElementById("yeni_completedLessonDate")) document.getElementById("yeni_completedLessonDate").value = bugunTarihInput;
-                if(document.getElementById("yeni_nextLessonDate")) document.getElementById("yeni_nextLessonDate").value = bugunTarihInput;
-                if(examScore) examScore.value = 0; 
-                if(examScoreOut) examScoreOut.innerText = "0/100";
-                if(bookNameInput) bookNameInput.value = ""; 
-                if(bookReadInput) bookReadInput.value = ""; 
-                if(bookTargetInput) bookTargetInput.value = "100"; 
-                if(bookTotalInput) bookTotalInput.value = "0";
-                document.querySelectorAll(".r-status-btn").forEach(b => b.classList.remove("active"));
-                document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
-                skillSliders.forEach(s => { s.value = 0; if(s.nextElementSibling) s.nextElementSibling.innerText = "0"; });
-                if(overallScoreEl) overallScoreEl.innerText = "0";
-            }
-        });
-    }
-
-    function formatTarih(dateString) {
-        if(!dateString) return "";
-        const parts = dateString.split("-");
-        return parts[2] + "." + parts[1] + "." + parts[0];
-    }
-
-    if(saveBtn) {
-        saveBtn.addEventListener("click", async () => {
-            const url = webhookUrlInput ? webhookUrlInput.value : "";
-            const name = studentNameInput ? studentNameInput.value.trim() : "";
-            const compDateRaw = document.getElementById("yeni_completedLessonDate") ? document.getElementById("yeni_completedLessonDate").value : "";
-            const nextDateRaw = document.getElementById("yeni_nextLessonDate") ? document.getElementById("yeni_nextLessonDate").value : "";
-            const veliTel = studentPhoneInput ? studentPhoneInput.value.trim() : "";
-            
-            if(!url) { alert("Lütfen önce Google Sheets bağlantısını ayarlayın."); return; }
-            if(!name) { alert("Lütfen Öğrenci Adı alanını doldurun."); return; }
-            if(!veliTel || veliTel === "90") { alert("Lütfen veli telefon numarasını girin."); return; }
-            if(!compDateRaw || !nextDateRaw) { alert("Lütfen iki tarih alanını da doldurun."); return; }
-
-            saveBtn.disabled = true;
-            saveBtn.innerText = "Kaydediliyor...";
-
-            const activeStartBtn = document.querySelector("#yeni_startStatusGroup .r-status-btn.active");
-            const startStatusVal = activeStartBtn ? activeStartBtn.getAttribute("data-val") : "Belirtilmedi";
-
-            const bugun = new Date();
-            const tarihFormat = String(bugun.getDate()).padStart(2, '0') + "." + String(bugun.getMonth() + 1).padStart(2, '0') + "." + bugun.getFullYear();
-            const tamamlananDersTarihi = formatTarih(compDateRaw);
-            const sonrakiDersTarihi = formatTarih(nextDateRaw);
-            const startCommentVal = document.getElementById("yeni_startComment") ? document.getElementById("yeni_startComment").value.trim() : "Yok";
-            const endCommentVal = document.getElementById("yeni_endComment") ? document.getElementById("yeni_endComment").value.trim() : "Yok";
-
-            const vKitapAdiInput = bookNameInput ? bookNameInput.value.trim() : "";
-            const vOkunanInput = bookReadInput ? bookReadInput.value.trim() : "";
-            const vHedefInput = bookTargetInput ? bookTargetInput.value.trim() : "";
-            const vToplamInput = bookTotalInput ? bookTotalInput.value.trim() : "";
-
-            const payloadTamamlandi = {
-                tarih: tarihFormat, 
-                ogrenci: name, 
-                seviye: document.getElementById("yeni_studentLevel") ? document.getElementById("yeni_studentLevel").value.trim() : "Genel", 
-                genel: overallScoreEl ? overallScoreEl.innerText : "0", 
-                vocabulary: document.getElementById("yeni_scVocabulary") ? document.getElementById("yeni_scVocabulary").value : "0", 
-                konusma: document.getElementById("yeni_scKonusma") ? document.getElementById("yeni_scKonusma").value : "0", 
-                okuma: document.getElementById("yeni_scOkuma") ? document.getElementById("yeni_scOkuma").value : "0", 
-                yazma: document.getElementById("yeni_scYazma") ? document.getElementById("yeni_scYazma").value : "0", 
-                grammar: document.getElementById("yeni_scGrammar") ? document.getElementById("yeni_scGrammar").value : "0", 
-                deneme: examScore ? examScore.value : "0", 
-                ders_tarihi: tamamlananDersTarihi, 
-                ders_durumu: "tamamlandi", 
-                odev_durumu: "Hazırlık: " + startStatusVal + " | Ödev Verildi mi: " + (document.getElementById("yeni_chkOdev") && document.getElementById("yeni_chkOdev").checked ? "Evet" : "Hayır") + " | Anlaşıldı mı: " + (document.getElementById("yeni_chkAnlasildi") && document.getElementById("yeni_chkAnlasildi").checked ? "Evet" : "Hayır"), 
-                konu: document.getElementById("yeni_lessonTopic") ? document.getElementById("yeni_lessonTopic").value.trim() : "Belirtilmedi",
-                son_kitap_adi: vKitapAdiInput || undefined,
-                son_kitap_sayfa: vOkunanInput !== "" ? Number(vOkunanInput) : undefined,
-                son_kitap_hedef: vHedefInput !== "" ? Number(vHedefInput) : undefined,
-                okunan_kitap_sayisi: vToplamInput !== "" ? Number(vToplamInput) : undefined
-            };
-
-            const payloadSonraki = {
-                tarih: tarihFormat, 
-                ogrenci: name, 
-                seviye: document.getElementById("yeni_studentLevel") ? document.getElementById("yeni_studentLevel").value.trim() : "Genel", 
-                genel: "0", 
-                vocabulary: "0", 
-                konusma: "0", 
-                okuma: "0", 
-                yazma: "0", 
-                grammar: "0", 
-                deneme: "0", 
-                ders_tarihi: sonrakiDersTarihi, 
-                ders_durumu: "sonraki", 
-                odev_durumu: "Gelecek Ders Planı", 
-                konu: "Planlanan Sonraki Ders", 
-                son_kitap_adi: undefined, 
-                son_kitap_sayfa: undefined, 
-                son_kitap_hedef: undefined, 
-                okunan_kitap_sayisi: undefined
-            };
-      
-            try {
-                await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadTamamlandi) });
-                await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadSonraki) });
-                
-                if(statusMsg) {
-                    statusMsg.style.display = "block"; 
-                    statusMsg.style.background = "#E6F4EA"; 
-                    statusMsg.style.color = "#137333"; 
-                    statusMsg.innerText = "Başarıyla eklendi!";
-                }
-                
-                try {
-                    let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu işlenmiştir.\n\n` +
-                                  `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
-                                  `📝 *Öğretmen Notları:* \n• Ders Başı Durumu: ${startCommentVal}\n• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
-                                  `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
-                    if (parseInt(payloadTamamlandi.deneme) > 0) wpMesaj += `🎯 *Son Deneme/Sınav Skoru:* ${payloadTamamlandi.deneme}/100\n`;
-                    if (vKitapAdiInput) wpMesaj += `\n📚 *Haftalık Kitap Okuma Raporu:* \n• Kitap: ${vKitapAdiInput}\n• Okunan: ${vOkunanInput || 0} Sayfa\n• Hedef: ${vHedefInput || 100} Sayfa\n• Toplam Bitirilen: ${vToplamInput || 0} Kitap\n`;
-                    wpMesaj += `\n📅 *Bir Sonraki Planlanan Ders Tarihi:* ${sonrakiDersTarihi}\n\nGelişimin detaylı takibi için sistemimizi ziyaret edebilirsiniz. İyi günler dilerim. \n\n*İngilizce Öğretmeni & Eğitim Koçu*`;
-                    
-                    let temizTel = veliTel.replace(/\s+/g, '');
-                    let wpUrl = `https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(wpMesaj)}`;
-                    window.open(wpUrl, '_blank');
-                } catch (wpError) { console.error("WhatsApp hatası:", wpError); }
-                
-                if(resetBtn) resetBtn.click();
-                setTimeout(() => { if(statusMsg) statusMsg.style.display = "none"; }, 4000);
-            } catch (error) {
-                if(statusMsg) {
-                    statusMsg.style.display = "block"; 
-                    statusMsg.style.background = "#FCE8E6"; 
-                    statusMsg.style.color = "#C5221F"; 
-                    statusMsg.innerText = "Hata oluştu! Tabloya bağlanılamadı.";
-                }
-            } finally {
-                saveBtn.disabled = false; 
-                saveBtn.innerText = "Formu Kaydet (Yeni Satır)";
-            }
-        });
-    }
-});
-
-    // 1. Bugünün tarihini tamamlanan ders alanına otomatik yazar
-let bugun = new Date();
-let bugunYil = bugun.getFullYear();
-let bugunAy = ("0" + (bugun.getMonth() + 1)).slice(-2);
-let bugunGun = ("0" + bugun.getDate()).slice(-2);
-
-// input type="date" formatı YYYY-MM-DD ister:
-let inputBugunFormat = `${bugunYil}-${bugunAy}-${bugunGun}`;
-
-let tamamlananTarihInput = document.getElementById("tamamlananDersTarihiInputId"); // Formdaki input id'si
-if (tamamlananTarihInput) tamamlananTarihInput.value = inputBugunFormat;
-
-// 2. Bir sonraki ders tarihini sabit günlerden hesaplayıp sonraki ders alanına otomatik yazar
-let sonrakiDersInput = document.getElementById("sonrakiDersTarihiInputId"); // Formdaki input id'si
-if (sonrakiDersInput && aktifOgrenciVerisi && aktifOgrenciVerisi.sabit_gunler) {
-    let siradaki = siradakiDersTarihiniHesapla(aktifOgrenciVerisi.sabit_gunler); // dd.MM.yyyy döner
-    let parca = siradaki.split(".");
-    sonrakiDersInput.value = `${parca[2]}-${parca[1]}-${parca[0]}`;
-}
-
-// 📅 SAĞ ALTTAN AÇILIP KAPANMA
-function randevuFormuKapatAcl() {
-    const kutu = document.getElementById("sagAltDersKutusu");
-    const seviyeAlani = document.getElementById("seviyeTestAlani");
-
-    if (seviyeAlani) seviyeAlani.style.display = "none";
-    if (!kutu) return;
-
-    if (kutu.style.display === "none" || kutu.style.display === "") {
-        kutu.style.display = "flex";
-    } else {
-        kutu.style.display = "none";
-    }
-}
-
-// 🚀 BİLGİLERİ ALIP DOĞRUDAN WHATSAPP'A YÖNLENDİRME
-async function sagAltDersTalebiGonder() {
-    const ogrenciInput = document.getElementById("alt_ogrenciAdi");
-    const dersTuruInput = document.getElementById("alt_dersTuru");
-    const dersModeliInput = document.getElementById("alt_dersModeli");
-    const tarihInput = document.getElementById("alt_dersTarihi");
-    const saatInput = document.getElementById("alt_dersSaati");
-    const telefonInput = document.getElementById("alt_dersTelefon");
-    const btn = document.getElementById("alt_gonderBtn");
-
-    const ogrenciAdi = ogrenciInput ? ogrenciInput.value.trim() : "";
-    const dersTuru = dersTuruInput ? dersTuruInput.value : "";
-    const dersModeli = dersModeliInput ? dersModeliInput.value : "";
-    const secilenTarih = tarihInput ? tarihInput.value : "";
-    const secilenSaat = saatInput ? saatInput.value : "";
-    const veliTel = telefonInput ? telefonInput.value.trim() : "";
-
-    if (!ogrenciAdi || !secilenTarih || !veliTel) {
-        alert("Lütfen tüm alanları (Ad Soyadı, Tarih ve Telefon) eksiksiz doldurunuz.");
-        return;
-    }
-
-    if (btn) {
-        btn.disabled = true;
-        btn.innerText = "İşleniyor...";
-    }
-
-    let formatliTarih = secilenTarih;
-    if (secilenTarih.includes("-")) {
-        const [y, m, d] = secilenTarih.split("-");
-        formatliTarih = `${d}.${m}.${y}`;
-    }
-
-    const tamOgrenciDetay = `${ogrenciAdi} (${dersTuru} - ${dersModeli})`;
-    const randevuPayload = {
-        aksiyon: "randevuAl",
-        ogrenci: tamOgrenciDetay,
-        tarih: formatliTarih,
-        saat: secilenSaat,
-        telefon: veliTel
-    };
-
-    try {
-        if (typeof WEB_APP_URL !== "undefined" && WEB_APP_URL) {
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(randevuPayload)
-            });
-        }
-    } catch (e) {
-        console.log("Sheets hatası:", e);
-    }
-
-    const mesaj = `🤖 *DİJİMUALLİM - YENİ RANDEVU TALEBİ*\n\n` +
-                  `Hocam Merhaba,\nEğitim dönemi için yeni bir ders talebi oluşturmak istiyoruz.\n\n` +
-                  `👤 *Öğrenci:* ${ogrenciAdi}\n` +
-                  `📚 *Ders Türü:* ${dersTuru}\n` +
-                  `💻 *Ders Modeli:* ${dersModeli}\n` +
-                  `📅 *Tarih:* ${formatliTarih}\n` +
-                  `⏰ *Saat:* ${secilenSaat}\n` +
-                  `📞 *Veli Tel:* ${veliTel}\n\n` +
-                  `En Kısa Sürede Dönüş Yapılacaktır`;
-
-    const hocamizinNumarasi = "905369937089";
-    const wpUrl = `https://api.whatsapp.com/send?phone=${hocamizinNumarasi}&text=${encodeURIComponent(mesaj)}`;
-    
-    window.open(wpUrl, '_blank');
-
-    setTimeout(() => {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerText = "Talebi Kaydet ve Onaya Gönder ➔";
-        }
-        if (ogrenciInput) ogrenciInput.value = "";
-        if (tarihInput) tarihInput.value = "";
-        if (telefonInput) telefonInput.value = "";
-        randevuFormuKapatAcl();
-    }, 600);
-}
-
-// ==========================================
-// ⏱️ OTURUM SÜRESİ & BULUT SENKRONİZASYONU
-// ==========================================
-let oturumSaniye = 0;
-let oturumTimer = null;
-let aktifKayitliOgrenci = null;
-
-// Ekrana mevcut süreyi basan fonksiyon
-function guncelSayacArayuzunuBas() {
-    const sayacElementi = document.getElementById("sayacZaman");
-    const progressBar = document.getElementById("sureProgressBar");
-    const rozetMetni = document.getElementById("rozetBilgiMetni");
-    const sonrakiMetin = document.getElementById("sonrakiRozetKalan");
-
-    if (!sayacElementi) return;
-
-    let saat = Math.floor(oturumSaniye / 3600);
-    let dk = Math.floor((oturumSaniye % 3600) / 60);
-    let sn = oturumSaniye % 60;
-    
-    let formatliZaman = (saat > 0 ? (saat < 10 ? "0" : "") + saat + ":" : "") + 
-                        (dk < 10 ? "0" : "") + dk + ":" + 
-                        (sn < 10 ? "0" : "") + sn;
-
-    sayacElementi.innerText = formatliZaman;
-
-    let kazanilanRozetler = Math.floor(oturumSaniye / 600);
-    let saniyeIcindekiIlerleme = oturumSaniye % 600;
-    let yuzde = (saniyeIcindekiIlerleme / 600) * 100;
-    let sonrakiSaniyeKalan = 600 - saniyeIcindekiIlerleme;
-    let kalanDk = Math.ceil(sonrakiSaniyeKalan / 60);
-
-    if (progressBar) progressBar.style.width = yuzde + "%";
-    if (rozetMetni) rozetMetni.innerText = "🏅 Kazanılan Rozet: " + kazanilanRozetler + " 🌟";
-    if (sonrakiMetin) sonrakiMetin.innerText = "Sonraki rozete: " + kalanDk + " dk";
-}
-
-// Google Sheets'e Kesin Kayıt Yollayan GET Fonksiyonu (Sadece Oturum_Sureleri'ne yazar)
-function googleSheetseSureKaydet(ogrenci, saniye, rozet) {
-    if (!WEB_APP_URL || !ogrenci) return;
-    const url = `${WEB_APP_URL}?action=sureKaydetGet&ogrenci=${encodeURIComponent(ogrenci)}&toplamSaniye=${saniye}&rozetSayisi=${rozet}&t=${Date.now()}`;
-    const beacon = new Image();
-    beacon.src = url;
-}
-
-// Buluttan süreyi çeken JSONP yardımcısı (Tüm cihazlarda süreyi senkronize eder)
-function buluttanSureGetir(ogrenciAdi) {
-    return new Promise((resolve) => {
-        if (!WEB_APP_URL || !ogrenciAdi) { resolve(0); return; }
-        const callbackName = "sureCallback_" + Math.floor(Math.random() * 1000000);
-        const script = document.createElement("script");
-        
-        window[callbackName] = function(data) {
-            delete window[callbackName];
-            if (script.parentNode) script.parentNode.removeChild(script);
-            if (data && data.durum === "basarili") {
-                resolve(data.toplamSaniye || 0);
-            } else {
-                resolve(0);
-            }
-        };
-
-        script.onerror = function() {
-            delete window[callbackName];
-            if (script.parentNode) script.parentNode.removeChild(script);
-            resolve(0);
-        };
-
-        script.src = `${WEB_APP_URL}?action=sureGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}&callback=${callbackName}&t=${Date.now()}`;
-        document.body.appendChild(script);
-    });
-}
-
-// Sayacı başlatan fonksiyon
-async function oturumSayaciniBaslat(ogrenciAdi) {
-    aktifKayitliOgrenci = ogrenciAdi;
-    const storageKey = "dijimuallim_sure_" + turkceKucukBuyukDuzelt(ogrenciAdi);
-
-    // 1. Cihazdaki yerel süreyi önceden yükle
-    const localSec = localStorage.getItem(storageKey);
-    oturumSaniye = localSec ? (parseInt(localSec, 10) || 0) : 0;
-    guncelSayacArayuzunuBas();
-
-    // 2. Google Sheets'ten güncel süreyi çek (Farklı cihazdan girildiyse o süreyi alıp eşitler)
-    const bulutSaniyesi = await buluttanSureGetir(ogrenciAdi);
-    if (bulutSaniyesi > oturumSaniye) {
-        oturumSaniye = bulutSaniyesi;
-        localStorage.setItem(storageKey, oturumSaniye);
-        guncelSayacArayuzunuBas();
-    }
-
-    if (oturumTimer) clearInterval(oturumTimer);
-
-    oturumTimer = setInterval(() => {
-        oturumSaniye++;
-        localStorage.setItem(storageKey, oturumSaniye);
-        guncelSayacArayuzunuBas();
-
-        // Her 30 saniyede bir Google Sheets'e kaydet
-        if (oturumSaniye % 30 === 0) {
-            let rozet = Math.floor(oturumSaniye / 600);
-            googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
-        }
-    }, 1000);
-}
-
-function oturumSayaciniDurdur() {
-    if (oturumTimer) {
-        clearInterval(oturumTimer);
-        oturumTimer = null;
-    }
-    if (aktifKayitliOgrenci) {
-        let rozet = Math.floor(oturumSaniye / 600);
-        googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
-    }
-    aktifKayitliOgrenci = null;
-}
-
-// Sayfa kapatılırken veya sekme arka plana atılırken kaydet
-window.addEventListener('beforeunload', function () {
-    if (aktifKayitliOgrenci) {
-        let rozet = Math.floor(oturumSaniye / 600);
-        googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
-    }
-});
-
-document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden' && aktifKayitliOgrenci) {
-        let rozet = Math.floor(oturumSaniye / 600);
-        googleSheetseSureKaydet(aktifKayitliOgrenci, oturumSaniye, rozet);
-    }
-});
-
-    // 🗓️ Verilen gün metnine göre (Örn: "Salı, Cuma") en yakın sıradaki dersin tarihini dd.MM.yyyy formatında döner
-function siradakiDersTarihiniHesapla(sabitGunlerMetni) {
-    if (!sabitGunlerMetni || typeof sabitGunlerMetni !== "string") {
-        // Tanımlı gün yoksa varsayılan olarak 7 gün sonrasını verir
-        let d = new Date();
-        d.setDate(d.getDate() + 7);
-        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
-    }
-
-    const gunHaritasi = {
-        "pazar": 0, "pazartesi": 1, "sali": 2, "çarşamba": 3, "carsamba": 3,
-        "perşembe": 4, "persembe": 4, "cuma": 5, "cumartesi": 6
-    };
-
-    let parcalar = sabitGunlerMetni.toLowerCase().split(/[,\-\/]/).map(s => s.trim().replace(/ı/g, "i"));
-    let hedefGunler = [];
-    parcalar.forEach(p => {
-        for (let g in gunHaritasi) {
-            if (p.includes(g)) {
-                if (!hedefGunler.includes(gunHaritasi[g])) hedefGunler.push(gunHaritasi[g]);
-            }
-        }
-    });
-
-    if (hedefGunler.length === 0) {
-        let d = new Date();
-        d.setDate(d.getDate() + 7);
-        return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
-    }
-
-    let bugun = new Date();
-    let bugunIndex = bugun.getDay();
-    let minFark = 999;
-
-    // En yakın sıradaki günü bul (En az 1 gün sonrası)
-    hedefGunler.forEach(g => {
-        let fark = g - bugunIndex;
-        if (fark <= 0) fark += 7; // Bu haftaki gün geçtiyse veya bugünse sonraki haftaya at
-        if (fark < minFark) minFark = fark;
-    });
-
-    let siradakiTarih = new Date();
-    siradakiTarih.setDate(bugun.getDate() + minFark);
-    
-    let gun = ("0" + siradakiTarih.getDate()).slice(-2);
-    let ay = ("0" + (siradakiTarih.getMonth() + 1)).slice(-2);
-    let yil = siradakiTarih.getFullYear();
-
-    return `${gun}.${ay}.${yil}`;
-}
-
-</script>
-</body>
-</html>
+    filtrelenmis.sort((a, b) => { if(bI encountered an error doing what you asked. Could you try again?
