@@ -129,7 +129,7 @@
             display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
         }
         .modal-content {
-            background: white; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+            background: white; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;
             padding: 20px; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         .form-group { margin-bottom: 12px; }
@@ -137,10 +137,9 @@
         .form-group input, .form-group textarea, .form-group select {
             width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;
         }
-        .criteria-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center; }
-        @media(max-width: 500px) { .criteria-grid { grid-template-columns: repeat(2, 1fr); } }
-        .criteria-box { background: #f9f9f9; padding: 8px; border-radius: 8px; border: 1px solid #ddd; }
-        .criteria-box input { width: 100%; text-align: center; padding: 4px; font-weight: bold; }
+        .range-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 8px; background: #faf8f5; padding: 12px; border-radius: 10px; border: 1px solid #eae5dc; }
+        .range-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; color: #444; }
+        .range-item input[type=range] { width: 60%; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -161,9 +160,7 @@
                 <div class="sure-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</div>
                 <div class="sure-digital-box" id="dijitalSaat">00:00:00</div>
             </div>
-            <div class="progress-track">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
             <div class="sure-footer">
                 <span id="kazanilanRozetYazi">🏅 Kazanılan: 0 🌟</span>
                 <span id="sonrakiRozetYazi">Sonraki: 10 dk</span>
@@ -178,19 +175,19 @@
             <button class="tab-btn">🏆 Rozetler</button>
         </div>
 
-        <!-- 4. Ders Zaman Çizelgesi -->
+        <!-- 4. Ders Çizelgesi -->
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
             <div class="ders-grid-3" id="dersZamanAlani"></div>
         </div>
 
-        <!-- 5. Öğretmenin Notu -->
+        <!-- 5. Öğretmen Notu -->
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
             <div class="teacher-note-box" id="ogretmenNotu">Yapay zeka koçluk notu hazırlanıyor...</div>
         </div>
 
-        <!-- 6. Kazanılan Rozetler -->
+        <!-- 6. Rozetler -->
         <div class="card">
             <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
             <div class="rozet-grid" id="rozetlerAlani"></div>
@@ -200,7 +197,7 @@
             </div>
         </div>
 
-        <!-- 7. Okuma Takip & Odak + Alfabe Bahçesi -->
+        <!-- 7. Okuma & Alfabe -->
         <div class="card">
             <div class="card-header-flex">
                 <h3 class="card-title">📚 Okuma Kültürü & Odak Takibi</h3>
@@ -214,13 +211,11 @@
                         <div class="kitap-isim" id="aktifKitapAdi">Yükleniyor...</div>
                     </div>
                     <div style="font-size: 12px; font-weight: bold; color: #555; display: flex; justify-content: space-between;">
-                        <span>Haftalık Hedef İlerlemesi</span>
-                        <span id="kitapYuzdeText" style="color: #2e7d32;">%0</span>
+                        <span>Haftalık Hedef İlerlemesi</span><span id="kitapYuzdeText" style="color: #2e7d32;">%0</span>
                     </div>
                     <div class="okuma-progress-track"><div class="okuma-progress-fill" id="kitapProgressBar" style="width: 0%;"></div></div>
                     <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; font-weight: 600;">
-                        <span id="okunanSayfaText">Okunan: 0 sayfa</span>
-                        <span id="hedefSayfaText">Hedef: 0 sayfa</span>
+                        <span id="okunanSayfaText">Okunan: 0 sayfa</span><span id="hedefSayfaText">Hedef: 0 sayfa</span>
                     </div>
                 </div>
 
@@ -240,35 +235,17 @@
             </div>
         </div>
 
-        <!-- 8. Genel Puan Kısmı -->
+        <!-- 8. İstatistikler -->
         <div class="stats-grid-4">
-            <div class="stat-box kutu-1">
-                <div class="stat-label">⭐ Genel Puan</div>
-                <div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div>
-            </div>
-            <div class="stat-box kutu-2">
-                <div class="stat-label">🚀 Etkinlik Başarısı</div>
-                <div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div>
-            </div>
-            <div class="stat-box kutu-3">
-                <div class="stat-label">🎯 Toplam Başarılı Ders</div>
-                <div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div>
-            </div>
-            <div class="stat-box kutu-4">
-                <div class="stat-label">🔥 Devam Oranı</div>
-                <div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div>
-            </div>
+            <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
+            <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
+            <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
+            <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
         </div>
 
         <!-- 9. Grafikler -->
-        <div class="card">
-            <div class="card-header-flex"><h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3></div>
-            <div class="chart-container"><canvas id="gelisimChart"></canvas></div>
-        </div>
-        <div class="card">
-            <div class="card-header-flex"><h3 class="card-title">🎯 Eğlenceli Beceri Radar Grafiği</h3></div>
-            <div class="chart-container"><canvas id="radarChart"></canvas></div>
-        </div>
+        <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Renkli Genel Gelişim Grafiği</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
+        <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 Eğlenceli Beceri Radar Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
     </div>
 
     <!-- SAĞ ALT SOLUK YÖNETİCİ BUTONU -->
@@ -283,8 +260,15 @@
             </div>
 
             <div class="form-group">
-                <label>Öğrenci Adı</label>
-                <input type="text" id="rubrikOgrenciAdi" placeholder="Örn: Ali">
+                <label>Öğrenci Seçin</label>
+                <select id="rubrikOgrenciSec" onchange="ogrenciSecildiTelGetir()">
+                    <option value="">Öğrenci Seçin...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Veli WhatsApp Telefon Numarası (Otomatik Gelir)</label>
+                <input type="text" id="rubrikVeliTel" placeholder="05XXXXXXXXX" readonly style="background:#f4f4f4;">
             </div>
 
             <div class="form-group">
@@ -298,46 +282,44 @@
             </div>
 
             <div class="form-group">
-                <label>Ders Başı Durumu (Ödev / Hazırlık)</label>
+                <label>Ders Başı Durumu</label>
                 <select id="rubrikDersBasi">
-                    <option value="Görevlerini Yaptı & Hazırdı">✅ Görevlerini Yaptı & Hazırdı</option>
-                    <option value="Ödev Eksikleri Vardı">⚠️ Ödev Eksikleri Vardı</option>
+                    <option value="Görevlerini Harika Yapmış ve Hazırlıklı Gelmişti.">✅ Görevlerini Yaptı & Hazırdı</option>
+                    <option value="Ödev ve Hazırlıklarında Ufak Eksikleri Vardı.">⚠️ Ödev Eksikleri Vardı</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>Ders Başı Yorumu</label>
-                <textarea id="rubrikDersBasiYorum" rows="2" placeholder="Ders başı hazırlık durumu hakkında not..."></textarea>
+                <label>Ders Başı Yorumu (Notunuz)</label>
+                <textarea id="rubrikDersBasiYorum" rows="2" placeholder="Ders başı gözlemleriniz..."></textarea>
             </div>
 
             <div class="form-group">
-                <label>Yeni Öğrenilen Harfler (Virgülle Ayırın Örn: D,T,K)</label>
-                <input type="text" id="rubrikYeniHarfler" placeholder="Boş bırakırsanız değişmez">
+                <label>Yeni Öğrenilen Harfler (Virgülle Örn: D,T,K - Boş bırakırsanız değişmez)</label>
+                <input type="text" id="rubrikYeniHarfler" placeholder="Örn: D, T">
             </div>
 
+            <!-- Kayan Çubuklu Puanlayıcı -->
             <div class="form-group">
-                <label>Ders İçi Gelişim Puanlayıcı (5 Kriter - 0 ile 100 Arası)</label>
-                <div class="criteria-grid">
-                    <div class="criteria-box"><label>Okuma</label><input type="number" id="crit1" value="85" min="0" max="100" oninput="ortalamaHesapla()"></div>
-                    <div class="criteria-box"><label>Yazma</label><input type="number" id="crit2" value="90" min="0" max="100" oninput="ortalamaHesapla()"></div>
-                    <div class="criteria-box"><label>Dinleme</label><input type="number" id="crit3" value="88" min="0" max="100" oninput="ortalamaHesapla()"></div>
-                    <div class="criteria-box"><label>Konuşma</label><input type="number" id="crit4" value="80" min="0" max="100" oninput="ortalamaHesapla()"></div>
-                    <div class="criteria-box"><label>Dikkat</label><input type="number" id="crit5" value="95" min="0" max="100" oninput="ortalamaHesapla()"></div>
+                <label>Ders İçi Gelişim Puanlayıcı (Kaydırmalı Çubuklar)</label>
+                <div class="range-grid">
+                    <div class="range-item"><span>Okuma: <b id="val1">85</b></span><input type="range" id="crit1" min="0" max="100" value="85" oninput="rangeGuncelle()"></div>
+                    <div class="range-item"><span>Yazma: <b id="val2">90</b></span><input type="range" id="crit2" min="0" max="100" value="90" oninput="rangeGuncelle()"></div>
+                    <div class="range-item"><span>Dinleme: <b id="val3">88</b></span><input type="range" id="crit3" min="0" max="100" value="88" oninput="rangeGuncelle()"></div>
+                    <div class="range-item"><span>Konuşma: <b id="val4">80</b></span><input type="range" id="crit4" min="0" max="100" value="80" oninput="rangeGuncelle()"></div>
+                    <div class="range-item"><span>Dikkat: <b id="val5">95</b></span><input type="range" id="crit5" min="0" max="100" value="95" oninput="rangeGuncelle()"></div>
                 </div>
                 <div style="text-align:center; margin-top:8px; font-weight:bold; color:#1b5e20;">Hesaplanan Genel Puan: <span id="hesaplananPuan">87</span></div>
             </div>
 
             <div class="form-group">
-                <label>Ödev Verildi mi?</label>
-                <select id="rubrikOdevDurumu">
-                    <option value="Evet, Eğlenceli Okuma ve Yazma Ödevi Verildi">📚 Evet, Ödev Verildi</option>
-                    <option value="Bu Hafta Ödev Verilmedi">🎯 Bu Hafta Ödev Verilmedi</option>
-                </select>
+                <label>Ödev Verildi mi? (Yeni Ödevler Sekmesine İşlenir)</label>
+                <input type="text" id="rubrikOdevMetni" placeholder="Örn: 2 sayfa ses çalışması ve metin okuma">
             </div>
 
             <div class="form-group">
-                <label>Öğretmenin Özel Notu / Yorumu</label>
-                <textarea id="rubrikOzelYorum" rows="3" placeholder="Veliye ve öğrenciye iletilecek özel motivasyon mesajı..."></textarea>
+                <label>Öğretmenin Genel Motivasyon Yorumu</label>
+                <textarea id="rubrikOzelYorum" rows="3" placeholder="Öğrenciye ve veliye özel mesajınız..."></textarea>
             </div>
 
             <button onclick="rubrikVerileriniKaydetVeGonder()" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & Veliye WhatsApp Raporu Gönder</button>
@@ -345,12 +327,13 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbIsyZenB4WgFH8tHfHT2XzDe2fNKYlYzxQ3ZaqE2WRQkq4o2Ze3wYFvhxrdCv4Cqo/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxi41q7xg33ULc21SDZVatqquQC-AK99sjfPZPD_ESxrFQCVdxhZw32F7T4qA_JUos/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
         let timerInterval = null;
+        let sistemOgrencileri = [];
 
         if (!ogrenciAdi) {
             window.location.href = "index.html";
@@ -359,12 +342,11 @@
             verileriCekVeBaslat(ogrenciAdi);
         }
 
-        // Şifre Korumalı Yönetici Paneli Açma
         function yoneticiGirisSorgula() {
             let sifre = prompt("Yönetici şifresini girin:");
             if (sifre === "315269") {
                 document.getElementById("rubrikModal").style.display = "flex";
-                if(ogrenciAdi) document.getElementById("rubrikOgrenciAdi").value = ogrenciAdi;
+                ogrenciListesiniYukle();
             } else if (sifre !== null) {
                 alert("Hatalı şifre!");
             }
@@ -374,26 +356,69 @@
             document.getElementById("rubrikModal").style.display = "none";
         }
 
-        function ortalamaHesapla() {
-            let c1 = Number(document.getElementById("crit1").value) || 0;
-            let c2 = Number(document.getElementById("crit2").value) || 0;
-            let c3 = Number(document.getElementById("crit3").value) || 0;
-            let c4 = Number(document.getElementById("crit4").value) || 0;
-            let c5 = Number(document.getElementById("crit5").value) || 0;
+        function ogrenciListesiniYukle() {
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "ogrencileriGetir" })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    sistemOgrencileri = data.ogrenciler;
+                    let select = document.getElementById("rubrikOgrenciSec");
+                    select.innerHTML = '<option value="">Öğrenci Seçin...</option>';
+                    sistemOgrencileri.forEach(o => {
+                        select.innerHTML += `<option value="${o.ogrenciAdi}">${o.ogrenciAdi}</option>`;
+                    });
+                    if (ogrenciAdi) {
+                        select.value = ogrenciAdi;
+                        ogrenciSecildiTelGetir();
+                    }
+                }
+            });
+        }
+
+        function ogrenciSecildiTelGetir() {
+            let secilen = document.getElementById("rubrikOgrenciSec").value;
+            let bulutOgr = sistemOgrencileri.find(o => o.ogrenciAdi.toLowerCase() === secilen.toLowerCase());
+            if (bulutOgr) {
+                document.getElementById("rubrikVeliTel").value = bulutOgr.veliTelefon;
+            } else {
+                document.getElementById("rubrikVeliTel").value = "";
+            }
+        }
+
+        function rangeGuncelle() {
+            let c1 = Number(document.getElementById("crit1").value);
+            let c2 = Number(document.getElementById("crit2").value);
+            let c3 = Number(document.getElementById("crit3").value);
+            let c4 = Number(document.getElementById("crit4").value);
+            let c5 = Number(document.getElementById("crit5").value);
+
+            document.getElementById("val1").innerText = c1;
+            document.getElementById("val2").innerText = c2;
+            document.getElementById("val3").innerText = c3;
+            document.getElementById("val4").innerText = c4;
+            document.getElementById("val5").innerText = c5;
+
             let ort = Math.round((c1 + c2 + c3 + c4 + c5) / 5);
             document.getElementById("hesaplananPuan").innerText = ort;
         }
 
         function rubrikVerileriniKaydetVeGonder() {
-            let oAdi = document.getElementById("rubrikOgrenciAdi").value.trim();
-            if (!oAdi) { alert("Lütfen öğrenci adı girin!"); return; }
+            let oAdi = document.getElementById("rubrikOgrenciSec").value.trim();
+            let tel = document.getElementById("rubrikVeliTel").value.trim();
+            if (!oAdi) { alert("Lütfen öğrenci seçin!"); return; }
 
             let dTar = document.getElementById("rubrikDersTarihi").value;
             let sTar = document.getElementById("rubrikSonrakiDersTarihi").value;
+            let dBasDurum = document.getElementById("rubrikDersBasi").value;
+            let dBasYorum = document.getElementById("rubrikDersBasiYorum").value.trim();
             let hYeni = document.getElementById("rubrikYeniHarfler").value.trim();
             let gPuan = Number(document.getElementById("hesaplananPuan").innerText);
+            let odevMetni = document.getElementById("rubrikOdevMetni").value.trim();
             let ozelYorum = document.getElementById("rubrikOzelYorum").value.trim();
-            let odevDurum = document.getElementById("rubrikOdevDurumu").value;
 
             alert("Veriler Google Sheets'e işleniyor...");
 
@@ -408,44 +433,45 @@
                     yeniHarfler: hYeni,
                     genelPuan: gPuan,
                     etkinlikBasarisi: gPuan,
-                    ogretmenYorumu: ozelYorum
+                    ogretmenYorumu: ozelYorum,
+                    odevIcerigi: odevMetni
                 })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    alert("Veriler başarıyla kaydedildi! WhatsApp Raporu oluşturuluyor...");
+                    alert("Veriler kaydedildi! WhatsApp Raporu hazırlanıyor...");
                     
-                    // Veliye WhatsApp Mesajı Hazırlama
-                    let tel = data.veliTelefon || "";
+                    let veliTelFinal = data.veliTelefon || tel;
+                    let temizTel = veliTelFinal.replace(/\D/g, '');
+
+                    // Profesyonel Veli Mesajı Oluşturucu
                     let mesaj = `🌟 *DİJİMUALLİM HAFTALIK VELİ RAPORU* 🌟\n\n` +
-                                `Sevgili Velimiz, öğrencimiz *${oAdi.toUpperCase()}* için bu haftanın değerlendirmesi:\n\n` +
+                                `Sevgili Velimiz, öğrencimiz *${oAdi.toUpperCase()}* için bu haftanın koçluk değerlendirmesi:\n\n` +
+                                `📌 *Ders Başı Durumu:* ${dBasDurum}\n` +
+                                (dBasYorum ? `💬 *Gözlem:* ${dBasYorum}\n\n` : `\n`) +
                                 `⭐ Genel Puan / Etkinlik Başarısı: *${gPuan} / 100*\n` +
-                                `📚 ${odevDurum}\n` +
+                                `📚 *Bu Hafta Verilen Ödev:* ${odevMetni || "Ödev verilmedi."}\n\n` +
                                 `🍎 *Öğretmen Notu:* ${ozelYorum || "Harika bir gelişim haftası geçirdik."}\n\n` +
-                                `📅 Tamamlanan Ders: ${dTar || "Belirtildi"}\n` +
+                                `📅 Tamamlanan Ders: ${dTar || "Bugün"}\n` +
                                 `📅 Sonraki Ders: ${sTar || "Planlandı"}\n\n` +
                                 `Detaylı gelişim paneli için öğrenci giriş yapabilir. İyi günler dileriz! 🎈`;
 
-                    if (tel) {
-                        // Telefon numarası başında sıfır varsa veya yoksa düzenle
-                        let temizTel = tel.replace(/\D/g, '');
+                    if (temizTel) {
                         window.open(`https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(mesaj)}`, '_blank');
                     } else {
-                        // Numara yoksa genel paylaşım linki aç
                         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mesaj)}`, '_blank');
                     }
 
                     modalKapat();
-                    location.reload(); // Sayfayı yenile
+                    location.reload();
                 } else {
-                    alert("Kayıt sırasında hata oluştu: " + data.message);
+                    alert("Kayıt hatası: " + data.message);
                 }
             })
             .catch(err => alert("Bağlantı hatası: " + err));
         }
 
-        // Veri Çekme ve Panel Gösterimi (Önceki kodlarla aynı mantık)
         function tarihiDuzelt(tarihStr) {
             if (!tarihStr) return "Tarih Belirtilmedi";
             try {
@@ -491,7 +517,30 @@
                     document.getElementById("okunanSayfaText").innerText = `Okunan: ${okunan} sayfa`;
                     document.getElementById("hedefSayfaText").innerText = `Hedef: ${hedefSayfa} sayfa`;
 
-                    // Alfabe
+                    // Rozetler
+                    let rozetler = data.rozetler || [];
+                    let toplamRozet = rozetler.length;
+                    let kazanilanSayisi = rozetler.filter(r => r.durum === "Kazanıldı").length;
+                    document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
+                    let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
+                    document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
+                    document.getElementById("rozetProgressText").innerText = `%${rozetYuzde} tamamlandı`;
+
+                    let rozetHtml = "";
+                    if (toplamRozet > 0) {
+                        rozetler.forEach(r => {
+                            let aktifMi = r.durum === "Kazanıldı";
+                            rozetHtml += `
+                                <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
+                                    <div style="font-size:24px; margin-bottom:4px;">${aktifMi ? '🌱' : '🔒'}</div>
+                                    <div style="font-size:11px; font-weight:bold; color:#333;">${r.rozetAdi}</div>
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">${r.puan || 0} p</div>
+                                </div>`;
+                        });
+                        document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
+                    }
+
+                    // Alfabe (H sütunu)
                     let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
                     let ogrenilenDizi = ogrenilenHarflerStr.split(",").map(h => h.trim());
                     let alfabeHtml = "";
