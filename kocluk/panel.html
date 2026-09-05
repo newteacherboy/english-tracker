@@ -262,18 +262,27 @@
             <!-- Öğrenci Seçimi -->
             <div class="form-group">
                 <label>Öğrenci Seçin</label>
-                <select id="rubrikOgrenciSec" onchange="ogrenciSecildiDetayGetir()">
+                <select id="rubrikOgrenciSec" onchange="ogrenciSecildiVerileriYukle()">
                     <option value="">Öğrenci Seçin...</option>
                 </select>
             </div>
 
+            <!-- GEÇMİŞ VERİLERİ DÜZENLEME SEÇENEĞİ -->
+            <div class="form-group" style="background:#e8f5e9; padding:10px; border-radius:8px; border:1px solid #a5d6a7;">
+                <label style="color:#1b5e20;">🛠️ Geçmiş Verileri Düzenle (İsteğe Bağlı)</label>
+                <select id="rubrikGecmisSec" onchange="gecmisVeriFormaYukle()">
+                    <option value="yeni">✨ (Yeni Kayıt Ekle - WhatsApp Raporu Gider)</option>
+                </select>
+                <small style="color:#555; font-size:11px;">Eski bir tarih seçerseniz sadece Sheets güncellenir, WhatsApp gitmez.</small>
+            </div>
+
             <div class="form-group">
-                <label>Veli WhatsApp Numarası (Otomatik Gelir)</label>
+                <label>Veli WhatsApp Numarası</label>
                 <input type="text" id="rubrikVeliTel" placeholder="05XXXXXXXXX" readonly style="background:#f4f4f4;">
             </div>
 
             <div class="form-group">
-                <label>Tamamlanan Ders Tarihi</label>
+                <label>Tamamlanan Ders Tarihi (B Sütununa Yazılır)</label>
                 <input type="date" id="rubrikDersTarihi">
             </div>
 
@@ -282,7 +291,6 @@
                 <input type="date" id="rubrikSonrakiDersTarihi">
             </div>
 
-            <!-- Sheets'ten Otomatik Doldurulan Kitap ve Sayfa Alanları -->
             <div class="form-group">
                 <label>Şu An Okunan Kitap</label>
                 <input type="text" id="rubrikAktifKitap" placeholder="Örn: Eğlenceli Masallar">
@@ -340,18 +348,19 @@
                 <textarea id="rubrikOzelYorum" rows="3" placeholder="Öğrenciye ve veliye özel koçluk mesajınız..."></textarea>
             </div>
 
-            <button onclick="rubrikVerileriniKaydetVeGonder()" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & Veliye WhatsApp Raporu Gönder</button>
+            <button onclick="rubrikVerileriniKaydetVeGonder()" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & İşlemleri Tamamla</button>
         </div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdsnwYUgjC9XCNogbF-3gcAcL4svHqfPHA27QL69FHJB1cbeqlTwbT2Bz1UZYx71xE/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWsAG2saQrX7pC0BUn4l77y0f9r38tGuw3f6qW6dA0b3hBnQCPiwRfEEC3sHZFYM0d/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
         let timerInterval = null;
         let sistemOgrencileri = [];
+        let ogrenciGecmisKayitlari = [];
         let radarChartInstance = null;
 
         if (!ogrenciAdi) {
@@ -392,20 +401,20 @@
                     });
                     if (ogrenciAdi) {
                         select.value = ogrenciAdi;
-                        ogrenciSecildiDetayGetir();
+                        ogrenciSecildiVerileriYukle();
                     }
                 }
             });
         }
 
-        // Öğrenci seçildiğinde hem telefonu hem de Sheets'teki mevcut kayıtlı son verileri otomatik çeker
-        function ogrenciSecildiDetayGetir() {
+        // Öğrenci seçildiğinde geçmiş kayıtları ve telefon numarasını çeker
+        function ogrenciSecildiVerileriYukle() {
             let secilen = document.getElementById("rubrikOgrenciSec").value;
+            let gecmisSelect = document.getElementById("rubrikGecmisSec");
+            gecmisSelect.innerHTML = '<option value="yeni">✨ (Yeni Kayıt Ekle - WhatsApp Raporu Gider)</option>';
+
             if (!secilen) {
                 document.getElementById("rubrikVeliTel").value = "";
-                document.getElementById("rubrikAktifKitap").value = "";
-                document.getElementById("rubrikOkunanSayfa").value = "";
-                document.getElementById("rubrikHedefSayfa").value = "";
                 return;
             }
 
@@ -414,22 +423,56 @@
                 document.getElementById("rubrikVeliTel").value = bulutOgr.veliTelefon || "";
             }
 
-            // Sheets'ten aktif kitap ve sayfa bilgilerini çekme
+            // Geçmiş verileri sunucudan iste
             fetch(SCRIPT_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "ogrenciDetayGetir", ogrenciAdi: secilen })
+                body: JSON.stringify({ action: "ogrenciGecmisVerileriGetir", ogrenciAdi: secilen })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
                     if(data.veliTelefon) document.getElementById("rubrikVeliTel").value = data.veliTelefon;
-                    document.getElementById("rubrikAktifKitap").value = data.aktifKitap || "";
-                    document.getElementById("rubrikOkunanSayfa").value = data.okunanSayfa || "";
-                    document.getElementById("rubrikHedefSayfa").value = data.hedefSayfa || "";
+                    ogrenciGecmisKayitlari = data.kayitlar || [];
+                    
+                    ogrenciGecmisKayitlari.forEach((k, idx) => {
+                        gecmisSelect.innerHTML += `<option value="${idx}">📅 Tarih: ${k.tarih} (Kitap: ${k.aktifKitap || 'Yok'})</option>`;
+                    });
                 }
             })
-            .catch(err => console.log("Detaylar alınamadı:", err));
+            .catch(err => console.log("Geçmiş veriler alınamadı:", err));
+        }
+
+        // Geçmiş tarihlerden biri seçildiğinde form kutularını doldurur (Düzenleme Modu)
+        function gecmisVeriFormaYukle() {
+            let secim = document.getElementById("rubrikGecmisSec").value;
+            if (secim === "yeni") {
+                document.getElementById("rubrikDersTarihi").value = "";
+                document.getElementById("rubrikAktifKitap").value = "";
+                document.getElementById("rubrikOkunanSayfa").value = "";
+                document.getElementById("rubrikHedefSayfa").value = "";
+                document.getElementById("rubrikYeniHarfler").value = "";
+                document.getElementById("rubrikOzelYorum").value = "";
+                return;
+            }
+
+            let kayit = ogrenciGecmisKayitlari[Number(secim)];
+            if (kayit) {
+                document.getElementById("rubrikDersTarihi").value = kayit.tarih || "";
+                document.getElementById("rubrikAktifKitap").value = kayit.aktifKitap || "";
+                document.getElementById("rubrikOkunanSayfa").value = kayit.okunanSayfa || 0;
+                document.getElementById("rubrikHedefSayfa").value = kayit.hedefSayfa || 0;
+                document.getElementById("rubrikYeniHarfler").value = kayit.ogrenilenHarfler || "";
+                document.getElementById("rubrikOzelYorum").value = kayit.haftalikNot || "";
+
+                // Puanları yükle
+                document.getElementById("crit1").value = kayit.okuma;
+                document.getElementById("crit2").value = kayit.yazma;
+                document.getElementById("crit3").value = kayit.dinleme;
+                document.getElementById("crit4").value = kayit.konusma;
+                document.getElementById("crit5").value = kayit.dikkat;
+                rangeGuncelle();
+            }
         }
 
         function rangeGuncelle() {
@@ -453,6 +496,15 @@
             let oAdi = document.getElementById("rubrikOgrenciSec").value.trim();
             let tel = document.getElementById("rubrikVeliTel").value.trim();
             if (!oAdi) { alert("Lütfen öğrenci seçin!"); return; }
+
+            let gecmisSecim = document.getElementById("rubrikGecmisSec").value;
+            let hedefSatirIndex = 0;
+            let duzenlemeModuMi = gecmisSecim !== "yeni";
+
+            if (duzenlemeModuMi) {
+                let secilenKayit = ogrenciGecmisKayitlari[Number(gecmisSecim)];
+                if (secilenKayit) hedefSatirIndex = secilenKayit.satirIndex;
+            }
 
             let dTar = document.getElementById("rubrikDersTarihi").value;
             let sTar = document.getElementById("rubrikSonrakiDersTarihi").value;
@@ -490,37 +542,44 @@
                     etkinlikBasarisi: gPuan,
                     ogretmenYorumu: ozelYorum,
                     odevIcerigi: odevMetni,
-                    kriterler: { okuma: c1, yazma: c2, dinleme: c3, konusma: c4, dikkat: c5 }
+                    kriterler: { okuma: c1, yazma: c2, dinleme: c3, konusma: c4, dikkat: c5 },
+                    hedefSatirIndex: hedefSatirIndex
                 })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    alert("Veriler kaydedildi! WhatsApp Raporu hazırlanıyor...");
-                    
-                    let veliTelFinal = String(data.veliTelefon || tel);
-                    let temizTel = veliTelFinal.replace(/\D/g, '');
-
-                    let mesaj = `🌟 *DİJİMUALLİM HAFTALIK VELİ RAPORU* 🌟\n\n` +
-                                `Sevgili Velimiz, öğrencimiz *${oAdi.toUpperCase()}* için bu haftanın koçluk değerlendirmesi:\n\n` +
-                                `📌 *Ders Başı Durumu:* ${dBasDurum}\n` +
-                                (dBasYorum ? `💬 *Öğretmen Gözlemi:* ${dBasYorum}\n\n` : `\n`) +
-                                `⭐ Bu Haftaki Puan: *${gPuan} / 100*\n` +
-                                `📚 *Okunan Kitap & Sayfa:* ${aktifKitap || "Belirtilmedi"} (${okunanSayfa || 0}/${hedefSayfa || 0} sayfa)\n` +
-                                `📝 *Bu Hafta Verilen Ödev:* ${odevMetni || "Ödev verilmedi."}\n\n` +
-                                `🍎 *Öğretmen Değerlendirmesi:* ${ozelYorum || "Harika bir gelişim haftası geçirdik."}\n\n` +
-                                `📅 Tamamlanan Ders: ${dTar || "Bugün"}\n` +
-                                `📅 Sonraki Ders: ${sTar || "Planlandı"}\n\n` +
-                                `Detaylı gelişim paneli için öğrenci giriş yapabilir. İyi günler dileriz! 🎈`;
-
-                    if (temizTel) {
-                        window.open(`https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(mesaj)}`, '_blank');
+                    if (duzenlemeModuMi) {
+                        alert("Geçmiş kayıt başarıyla güncellendi! (WhatsApp raporu gönderilmedi)");
+                        modalKapat();
+                        location.reload();
                     } else {
-                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mesaj)}`, '_blank');
-                    }
+                        alert("Yeni kayıt başarıyla eklendi! WhatsApp Raporu hazırlanıyor...");
+                        
+                        let veliTelFinal = String(data.veliTelefon || tel);
+                        let temizTel = veliTelFinal.replace(/\D/g, '');
 
-                    modalKapat();
-                    location.reload();
+                        let mesaj = `🌟 *DİJİMUALLİM HAFTALIK VELİ RAPORU* 🌟\n\n` +
+                                    `Sevgili Velimiz, öğrencimiz *${oAdi.toUpperCase()}* için bu haftanın koçluk değerlendirmesi:\n\n` +
+                                    `📌 *Ders Başı Durumu:* ${dBasDurum}\n` +
+                                    (dBasYorum ? `💬 *Öğretmen Gözlemi:* ${dBasYorum}\n\n` : `\n`) +
+                                    `⭐ Bu Haftaki Puan: *${gPuan} / 100*\n` +
+                                    `📚 *Okunan Kitap & Sayfa:* ${aktifKitap || "Belirtilmedi"} (${okunanSayfa || 0}/${hedefSayfa || 0} sayfa)\n` +
+                                    `📝 *Bu Hafta Verilen Ödev:* ${odevMetni || "Ödev verilmedi."}\n\n` +
+                                    `🍎 *Öğretmen Değerlendirmesi:* ${ozelYorum || "Harika bir gelişim haftası geçirdik."}\n\n` +
+                                    `📅 Tamamlanan Ders: ${dTar || "Bugün"}\n` +
+                                    `📅 Sonraki Ders: ${sTar || "Planlandı"}\n\n` +
+                                    `Detaylı gelişim paneli için öğrenci giriş yapabilir. İyi günler dileriz! 🎈`;
+
+                        if (temizTel) {
+                            window.open(`https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(mesaj)}`, '_blank');
+                        } else {
+                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mesaj)}`, '_blank');
+                        }
+
+                        modalKapat();
+                        location.reload();
+                    }
                 } else {
                     alert("Kayıt hatası: " + data.message);
                 }
@@ -611,13 +670,11 @@
 
                     renkliGrafikleriCiz(data.gelisim.kriterler);
 
-                   // Dersler Çizelgesi (En son kayıtları doğru sırayla gösterme)
+                    // Dersler
                     let dersler = data.dersler || [];
                     let dersHtml = "";
                     if(dersler.length > 0) {
-                        // Son eklenen dersleri baz alarak dilimleyelim
-                        let sonDersler = dersler.slice(-3); 
-                        sonDersler.forEach((d, index) => {
+                        dersler.slice(-3).forEach((d, index) => {
                             let temizTarih = tarihiDuzelt(d.tarih);
                             let yapildiMi = d.durum === "Yapıldı" || d.durum === "Tamamlandı";
                             let kutuSinif = yapildiMi ? "ders-box yapildi" : "ders-box yapilacak";
