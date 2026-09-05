@@ -7,85 +7,91 @@
     <style>
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
-            background-color: #e8f5e9;
+            background-color: #f0f7f4;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        .header {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
+        .container {
             width: 100%;
-            max-width: 400px;
-            margin-bottom: 20px;
-        }
-        h1 { color: #2e7d32; margin: 0; font-size: 24px; }
-        .logout-btn {
-            background-color: #d32f2f;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-        .card-container {
-            width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-        .card {
-            background-color: #ffffff;
+        .header-card {
+            background: #ffffff;
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border: 2px solid #a5d6a7;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 2px solid #c8e6c9;
         }
-        .card h2 { color: #1565c0; margin-top: 0; font-size: 20px; }
-        .gorev-item {
-            background: #f1f8e9;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 16px;
-            border: 1px solid #c8e6c9;
+        h1 { color: #2e7d32; margin: 0 0 10px 0; font-size: 22px; }
+        .timer-box { font-size: 14px; color: #555; background: #e8f5e9; padding: 8px; border-radius: 10px; margin-bottom: 10px; }
+        .logout-btn {
+            background-color: #d32f2f; color: white; border: none;
+            padding: 6px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 14px;
         }
-        .tamamlandi { background: #c8e6c9 !important; text-decoration: line-through; color: #2e7d32; }
-        .action-btn {
-            background: #ffb300;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #fff;
+        .card {
+            background: #ffffff; padding: 18px; border-radius: 18px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); border: 2px solid #e0e0e0;
         }
-        .action-btn:hover { background: #ffa000; }
+        .card h2 { color: #1565c0; margin-top: 0; font-size: 18px; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+        
+        /* Rozetler */
+        .rozet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+        .rozet-item { background: #fafafa; padding: 10px; border-radius: 12px; border: 1px solid #ddd; }
+        .kazanildi { background: #e8f5e9; border-color: #4caf50; }
+        .kilitli { opacity: 0.4; filter: grayscale(100%); }
+        
+        /* Ders Çizelgesi & Diğer */
+        .ders-item { background: #f9f9f9; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 14px; }
+        .not-kutusu { background: #fffde7; border-left: 5px solid #ffb300; padding: 12px; border-radius: 8px; font-size: 15px; color: #333; }
+        .harf-alani { font-size: 20px; font-weight: bold; letter-spacing: 3px; color: #d81b60; text-align: center; background: #fce4ec; padding: 10px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1 id="karsilamaMesaji">Hoş Geldin!</h1>
-        <button class="logout-btn" onclick="cikisYap()">Çıkış Yap 🚪</button>
-    </div>
+    <div class="container">
+        <!-- Üst Bilgi ve Oturum -->
+        <div class="header-card">
+            <h1 id="karsilamaMesaji">Hoş Geldin!</h1>
+            <div class="timer-box" id="oturumSayaci">⏱️ Oturum Süresi: 0 dakika</div>
+            <button class="logout-btn" onclick="cikisYap()">Hesaptan Çık 🚪</button>
+        </div>
 
-    <div class="card-container">
-        <!-- Günlük Görev Kartı -->
+        <!-- Öğretmenin Haftalık Notu -->
         <div class="card">
-            <h2>Bugünkü Görevlerim 🎯</h2>
-            <div id="gorevlerListesi">Görevler yükleniyor...</div>
+            <h2>🍎 Öğretmenin Haftalık Notu</h2>
+            <div class="not-kutusu" id="ogretmenNotu">Yükleniyor...</div>
+        </div>
+
+        <!-- Kazanılan Rozetler -->
+        <div class="card">
+            <h2>🏆 Rozet Sandığım</h2>
+            <div class="rozet-grid" id="rozetlerAlani">Yükleniyor...</div>
+        </div>
+
+        <!-- Okuma Kültürü ve Odak -->
+        <div class="card">
+            <h2>📚 Okuma Kültürü & Odak</h2>
+            <p>📖 Okunan Kitap Sayısı: <b id="kitapSayisi">0</b></p>
+            <p>🎯 Odak Puanı: <b id="odakPuani">0</b> / 100</p>
+        </div>
+
+        <!-- Ders Zaman Çizelgesi -->
+        <div class="card">
+            <h2>📅 Ders Zaman Çizelgesi</h2>
+            <div id="derslerAlani">Dersler yükleniyor...</div>
+        </div>
+
+        <!-- Öğrenilen Harfler -->
+        <div class="card">
+            <h2>✨ Öğrenilen Harfler</h2>
+            <div class="harf-alani" id="harflerAlani">-</div>
         </div>
     </div>
 
@@ -96,53 +102,61 @@
         if (!ogrenciAdi) {
             window.location.href = "index.html";
         } else {
-            document.getElementById("karsilamaMesaji").innerText = "Harika Gidiyorsun, " + ogrenciAdi + "! 🌟";
-            gorevleriGetir(ogrenciAdi);
+            document.getElementById("karsilamaMesaji").innerText = "Aktif Öğrenci: " + ogrenciAdi;
+            oturumBaslat();
+            verileriCek(ogrenciAdi);
         }
 
-        function gorevleriGetir(isim) {
-            const listeKutusu = document.getElementById("gorevlerListesi");
+        // Cihaz bağımsız oturum süresi (Her 10 dakikada bir rozet mantığı altyapısı)
+        function oturumBaslat() {
+            let gecenDakika = parseInt(localStorage.getItem("oturumDakika") || "0");
+            setInterval(() => {
+                gecenDakika++;
+                localStorage.setItem("oturumDakika", gecenDakika);
+                document.getElementById("oturumSayaci").innerText = "⏱️ Oturum Süresi: " + gecenDakika + " dakika";
+            }, 60000); // Her 1 dakikada 1 artar
+        }
 
+        function verileriCek(isim) {
             fetch(SCRIPT_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "gorevleriGetir", ogrenciAdi: isim })
+                body: JSON.stringify({ action: "tumVerileriGetir", ogrenciAdi: isim })
             })
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
-                if (data.status === "success" && data.gorevler.length > 0) {
-                    let html = "";
-                    data.gorevler.forEach(g => {
-                        let bittiMi = g.durum === "Tamamlandı";
-                        let sinif = bittiMi ? "gorev-item tamamlandi" : "gorev-item";
-                        let butonYazi = bittiMi ? "Harika! ✅" : "Bitti Yap 🚀";
-                        let butonTik = bittiMi ? "" : `onclick="gorevBitir('${g.satirId}')"`;
-                        
-                        html += `
-                            <div class="${sinif}">
-                                <span>${g.gorevAdi}</span>
-                                <button class="action-btn" ${butonTik}>${butonYazi}</button>
-                            </div>
-                        `;
-                    });
-                    listeKutusu.innerHTML = html;
-                } else {
-                    listeKutusu.innerHTML = "<p>Bugün için harika görev bulunmuyor! 🎈</p>";
-                }
-            })
-            .catch(error => {
-                listeKutusu.innerHTML = "Görevler yüklenirken hata oluştu.";
-            });
-        }
+                if (data.status === "success") {
+                    // Öğretmen Notu
+                    document.getElementById("ogretmenNotu").innerText = data.gelisim.haftalikNot;
+                    // Kitap ve Odak
+                    document.getElementById("kitapSayisi").innerText = data.gelisim.okunanKitap;
+                    document.getElementById("odakPuani").innerText = data.gelisim.odakPuani;
+                    // Harfler
+                    document.getElementById("harflerAlani").innerText = data.gelisim.ogrenilenHarfler;
 
-        function gorevBitir(id) {
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "gorevTamamla", gorevId: id })
-            })
-            .then(() => {
-                gorevleriGetir(ogrenciAdi); // Listeyi yenile
+                    // Rozetler
+                    let rozetHtml = "";
+                    if (data.rozetler.length > 0) {
+                        data.rozetler.forEach(r => {
+                            let sinif = r.durum === "Kazanıldı" ? "rozet-item kazanildi" : "rozet-item kilitli";
+                            rozetHtml += `<div class="${sinif}"><div>🏅</div><div style="font-size:12px; margin-top:5px;">${r.rozetAdi}</div></div>`;
+                        });
+                    } else {
+                        rozetHtml = "<p style='grid-column: span 3; font-size:14px; color:#666;'>Henüz rozet eklenmedi.</p>";
+                    }
+                    document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
+
+                    // Dersler
+                    let dersHtml = "";
+                    if (data.dersler.length > 0) {
+                        data.dersler.forEach(d => {
+                            dersHtml += `<div class="ders-item"><span>${d.tarih} (${d.saat})</span> <b>${d.durum}</b></div>`;
+                        });
+                    } else {
+                        dersHtml = "<p style='font-size:14px; color:#666;'>Planlanmış ders bulunmuyor.</p>";
+                    }
+                    document.getElementById("derslerAlani").innerHTML = dersHtml;
+                }
             });
         }
 
