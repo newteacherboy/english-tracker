@@ -238,14 +238,14 @@
         <!-- 8. İstatistikler -->
         <div class="stats-grid-4">
             <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
-            <div class="stat-box kutu-2"><div class="stat-label">🚀 Bu Haftaki Puanı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
+            <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
             <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
             <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
         </div>
 
         <!-- 9. Grafikler -->
         <div class="card"><div class="card-header-flex"><h3 class="card-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</h3></div><div class="chart-container"><canvas id="gelisimChart"></canvas></div></div>
-        <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Beceri Sütunlu Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
+        <div class="card"><div class="card-header-flex"><h3 class="card-title">🎯 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</h3></div><div class="chart-container"><canvas id="radarChart"></canvas></div></div>
     </div>
 
     <!-- SAĞ ALT YAZISIZ SADECE LOGO BUTON -->
@@ -312,7 +312,7 @@
                 <input type="text" id="rubrikYeniHarfler" placeholder="Örn: D, T">
             </div>
 
-            <!-- ÖDEV KONTROLÜ (Önceki ödev burada belirir) -->
+            <!-- ÖDEV KONTROLÜ -->
             <div class="form-group" style="background:#fff8e1; padding:10px; border-radius:8px; border:1px solid #ffe082;">
                 <label style="color:#f57f17; font-weight:bold;">📚 Önceki Hafta Verilen Ödev Kontrolü</label>
                 <div id="oncekiOdevMetni" style="font-size:13px; color:#333; margin-bottom:6px; font-style:italic;">Yükleniyor...</div>
@@ -323,7 +323,7 @@
                 </select>
             </div>
 
-            <!-- Genişletilmiş Ders Başı Alternatifleri -->
+            <!-- Ders Başı Durumu -->
             <div class="form-group">
                 <label>Ders Başı Durumu & Gözlem</label>
                 <select id="rubrikDersBasi">
@@ -358,12 +358,12 @@
                 <input type="text" id="rubrikOdevMetni" placeholder="Örn: 2 sayfa ses çalışması ve metin okuma">
             </div>
 
-            <button onclick="rubrikVerileriniKaydetVeGonder()" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & İşlemleri Tamamla</button>
+            <button id="rubrikKaydetBtn" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & İşlemleri Tamamla</button>
         </div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2l_fZarHteqdTcsHh0c3DWde_dMQkcYLGTWpXy52rLez4mnAHg9KvPK2XPrTTn4Es/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhCF8ZiPjlgpgCpNVifcYFRlslUfq6KFWI-7NTNRlyOVXBpsd2i6TwBlDGUgNC9xKG/exec";
         const ogrenciAdi = localStorage.getItem("aktifOgrenci");
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
@@ -444,8 +444,13 @@
                 if (data.status === "success") {
                     if(data.veliTelefon) document.getElementById("rubrikVeliTel").value = data.veliTelefon;
                     document.getElementById("oncekiOdevMetni").innerText = `"${data.sonOdev || 'Ödev bulunmuyor.'}"`;
-                    ogrenciGecmisKayitlari = data.kayitlar || [];
                     
+                    // Otomatik gelen son okunan kitap, sayfa ve hedef sayfa
+                    document.getElementById("rubrikAktifKitap").value = data.aktifKitap || "";
+                    document.getElementById("rubrikOkunanSayfa").value = data.okunanSayfa || 0;
+                    document.getElementById("rubrikHedefSayfa").value = data.hedefSayfa || 0;
+
+                    ogrenciGecmisKayitlari = data.kayitlar || [];
                     ogrenciGecmisKayitlari.forEach((k, idx) => {
                         gecmisSelect.innerHTML += `<option value="${idx}">📅 Tarih: ${k.tarih} (Kitap: ${k.aktifKitap || 'Yok'})</option>`;
                     });
@@ -500,7 +505,14 @@
             document.getElementById("hesaplananPuan").innerText = ort;
         }
 
-        // AI Destekli Zengin, Benzersiz Yorum Üretici
+        // Buton tıklama olayını güvenli şekilde bağlıyoruz
+        document.addEventListener("DOMContentLoaded", function() {
+            let kaydetBtn = document.getElementById("rubrikKaydetBtn");
+            if (kaydetBtn) {
+                kaydetBtn.addEventListener("click", rubrikVerileriniKaydetVeGonder);
+            }
+        });
+
         function aiZenginYorumUret(ogrenci, puan, kitap, okunan, hedef, odevDurumText, ekYorum, harfler) {
             let girisler = [
                 `Sevgili velimiz, öğrencimiz ${ogrenci.toUpperCase()} bu haftaki çalışma sürecinde gösterdiği harika gayret ve pozitif enerjisiyle bizleri çok mutlu etti.`,
@@ -509,21 +521,21 @@
             ];
             let rastGiris = girisler[Math.floor(Math.random() * girisler.length)];
 
-            let puanYorumu = ` Gerçekleştirilen değerlendirmeler sonucunda öğrencimiz bu hafta **${puan} / 100** genel başarı puanına ulaştı.`;
+            let puanYorumu = ` Değerlendirmeler sonucunda öğrencimiz bu hafta **${puan} / 100** genel başarı puanına ulaştı.`;
             if (puan >= 85) puanYorumu += ` Ders içi odaklanması ve kavramları kavrama hızı son derece üst düzeyde seyretti.`;
             else puanYorumu += ` Çalışmalarımızda ufak tekrarlarla bu puanı çok daha yukarı taşıyacağımıza inanıyoruz.`;
 
             let kitapYorumu = ` Okuma kültürü kapsamında "${kitap || 'kitabımız'}" üzerinden ilerledik ve toplamda ${okunan} sayfalık harika bir okuma mesafesini geride bıraktık (Hedef: ${hedef}).`;
-            if (harfler) kitapYorumu += ` Ayrıca bu hafta aramıza katılan yeni harflerimiz (${harfl}) ile kelime dağarcığımızı genişlettik.`;
+            if (harfler) kitapYorumu += ` Ayrıca bu hafta aramıza katılan yeni harflerimiz (${harfler}) ile kelime dağarcığımızı genişlettik.`;
 
-            let odevYorumu = ` Ödev takibi konusunda ise öğrencimiz *${odevDurumText}*`;
+            let odevYorumu = ` Ödev takibi konusunda öğrencimiz *${odevDurumText}*`;
 
             let ekNotBolumu = ekYorum ? `\n\n📌 **Öğretmen Gözlemi:** *${ekYorum}*` : "";
 
             let kapanislar = [
                 `\n\nÖğrencimizin bu tatlı ve azimli çabasını yürekten kutlar, sağlıklı ve başarılı bir hafta dileriz. 🎈`,
                 `\n\nBirlikte harika işler başarıyoruz; öğrencimizin yolu ve bahtı açık olsun! ✨`,
-                `\n\nDestekleriniz ve bu güzel iş birliğiniz için çok teşekkür ederiz. Sevgiyle kalın! 🌟`
+                `\n\nDestekleriniz ve bu güzel iş birliği için çok teşekkür ederiz. Sevgiyle kalın! 🌟`
             ];
             let rastKapanis = kapanislar[Math.floor(Math.random() * kapanislar.length)];
 
@@ -562,7 +574,6 @@
             let c4 = Number(document.getElementById("crit4").value);
             let c5 = Number(document.getElementById("crit5").value);
 
-            // Yapay zeka ile zenginleştirilmiş özel motivasyon notu üretme
             let aiOzelYorum = aiZenginYorumUret(oAdi, gPuan, aktifKitap, okunanSayfa, hedefSayfa, odevDurumText, dBasYorum, hYeni);
 
             alert("Veriler Google Sheets'e işleniyor...");
@@ -709,13 +720,13 @@
 
                     renkliGrafikleriCiz(data.gelisim.kriterler, data.gelisim.gecmisTarihler, data.gelisim.gecmisPuanlar);
 
-                    // Dersler
+                    // Dersler Çizelgesi (Yapıldı: YEŞİL, Gelecek: KIRMIZI)
                     let dersler = data.dersler || [];
                     let dersHtml = "";
                     if(dersler.length > 0) {
                         dersler.slice(-3).forEach((d, index) => {
                             let temizTarih = tarihiDuzelt(d.tarih);
-                            let yapildiMi = d.durum === "Yapıldı" || d.durum === "Tamamlandı" || !d.durum.includes("Ertelen");
+                            let yapildiMi = d.durum === "Yapıldı" || d.durum === "Tamamlandı" || !String(d.durum).includes("Gelecek");
                             let kutuSinif = yapildiMi ? "ders-box yapildi" : "ders-box yapilacak";
                             let badgeSinif = yapildiMi ? "badge-yapildi" : "badge-yapilacak";
                             let baslikTip = index === 0 ? "GEÇEN DERS" : (index === 1 ? "GÜNCEL DERS" : "GELECEK DERS");
@@ -735,7 +746,7 @@
         }
 
         function renkliGrafikleriCiz(kriterler, tarihler, puanlar) {
-            // 1. Yıllık Gelişim Eğrisi (Çizgi Grafik)
+            // 1. Yıllık Gelişim Eğrisi
             const ctxGelisim = document.getElementById('gelisimChart').getContext('2d');
             if (gelisimChartInstance) gelisimChartInstance.destroy();
 
@@ -761,7 +772,7 @@
                 }
             });
 
-            // 2. 5 Kriterli Beceri Sütunlu (Bar) Grafik
+            // 2. 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği
             const ctxRadar = document.getElementById('radarChart').getContext('2d');
             if (radarChartInstance) radarChartInstance.destroy();
 
@@ -770,7 +781,7 @@
                 data: {
                     labels: ['Okuma', 'Yazma', 'Dinleme', 'Konuşma', 'Dikkat'],
                     datasets: [{
-                        label: '5 Kriterli Beceri Puanları',
+                        label: 'Tüm Zamanların Ortalama Puanları',
                         data: [kriterler.okuma, kriterler.yazma, kriterler.dinleme, kriterler.konusma, kriterler.dikkat],
                         backgroundColor: [
                             'rgba(46, 125, 50, 0.8)',
