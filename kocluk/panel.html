@@ -12,12 +12,15 @@
             --text-main: #333333;
             --border-color: #eae5dc;
         }
+        * {
+            box-sizing: border-box; /* Mobil uyum için en kritik kural: taşmaları önler */
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -27,60 +30,157 @@
             max-width: 800px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding-bottom: 50px;
+            gap: 15px;
+            padding-bottom: 40px;
         }
+        
+        /* Üst Menü - Mobil Uyumlu Flex */
         .top-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--card-bg); padding: 12px 20px; border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 8px;
         }
-        .logout-btn { background-color: #ffebee; color: #c62828; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; }
-        .anasayfa-btn { background-color: var(--primary-color); color: white; text-decoration: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 12px; }
+        .top-bar-left { font-size: 13px; color: #666; word-break: break-all; }
+        .top-bar-actions { display: flex; gap: 8px; }
+        .logout-btn { background-color: #ffebee; color: #c62828; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; }
+        .anasayfa-btn { background-color: var(--primary-color); color: white; text-decoration: none; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 12px; }
 
-        /* GÖRSELDEKİ SÜRE KARTI TASARIMI */
+        /* Oturum Süresi Kartı - Mobil Uyumlu */
         .sure-card {
             background-color: #e2f4eb;
             border: 1px solid #b2d8c8;
-            padding: 20px;
+            padding: 15px;
             border-radius: 16px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
         .sure-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
-        .sure-title { font-size: 15px; font-weight: bold; color: #1b5e20; display: flex; align-items: center; gap: 8px; }
+        .sure-title { font-size: 14px; font-weight: bold; color: #1b5e20; display: flex; align-items: center; gap: 6px; }
         .sure-digital-box {
-            background: #ffffff; color: #1b5e20; font-family: monospace; font-size: 18px; font-weight: bold;
-            padding: 6px 14px; border-radius: 8px; border: 1px solid #c8e6c9;
+            background: #ffffff; color: #1b5e20; font-family: monospace; font-size: 16px; font-weight: bold;
+            padding: 5px 10px; border-radius: 8px; border: 1px solid #c8e6c9;
         }
         .progress-track {
-            background: #c8e6c9; height: 10px; border-radius: 5px; width: 100%; overflow: hidden; margin-bottom: 12px;
+            background: #c8e6c9; height: 10px; border-radius: 5px; width: 100%; overflow: hidden; margin-bottom: 10px;
         }
         .progress-fill {
             background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 5px;
         }
         .sure-footer {
-            display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #2e7d32; font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #2e7d32;
+            font-weight: 600;
+            flex-wrap: wrap;
+            gap: 5px;
         }
 
-        .tabs-bar { display: flex; gap: 10px; background: var(--card-bg); padding: 8px; border-radius: 12px; border: 1px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 8px; font-weight: 600; font-size: 13px; color: #666; cursor: pointer; text-align: center; }
+        /* Sekmeler Çubuğu - Mobilde Kaydırılabilir / Esnek */
+        .tabs-bar {
+            display: flex;
+            gap: 6px;
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto; /* Mobilde taşmayı önler, yatay kaydırma sağlar */
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 90px;
+            padding: 8px 6px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+        }
         .tab-btn.active { background: var(--primary-color); color: white; }
 
-        .card { background: var(--card-bg); padding: 20px; border-radius: 14px; border: 1px solid var(--border-color); }
-        .card h3 { margin-top: 0; font-size: 15px; color: #444; border-bottom: 1px solid #f0eae1; padding-bottom: 10px; }
-        .teacher-note { background: #fffde7; border-left: 4px solid #fbc02d; padding: 15px; border-radius: 8px; font-size: 14px; color: #444; }
-        .rozet-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; text-align: center; }
-        .rozet-box { background: #faf8f5; border: 1px solid var(--border-color); padding: 12px 8px; border-radius: 10px; }
+        /* Kartlar */
+        .card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+        }
+        .card h3 { margin-top: 0; font-size: 14px; color: #444; border-bottom: 1px solid #f0eae1; padding-bottom: 8px; }
+        .teacher-note { background: #fffde7; border-left: 4px solid #fbc02d; padding: 12px; border-radius: 8px; font-size: 13px; color: #444; line-height: 1.4; }
+
+        /* Rozet Grid - Mobilde Otomatik Küçülür / Sığar */
+        .rozet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 8px;
+            text-align: center;
+        }
+        .rozet-box { background: #faf8f5; border: 1px solid var(--border-color); padding: 10px 4px; border-radius: 10px; }
         .rozet-box.aktif { background: #e8f5e9; border-color: #a5d6a7; }
         .rozet-box.soluk { opacity: 0.35; filter: grayscale(100%); }
-        .ders-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f2eb; font-size: 13px; }
-        .badge-durum { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+
+        /* Okuma ve Odak Alanı */
+        .okuma-flex {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* Ders Çizelgesi */
+        .ders-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f2eb;
+            font-size: 12px;
+            gap: 5px;
+        }
+        .badge-durum { padding: 3px 6px; border-radius: 6px; font-size: 10px; font-weight: 600; white-space: nowrap; }
         .durum-yapildi { background: #e8f5e9; color: #2e7d32; }
         .durum-ertelendi { background: #fff3e0; color: #ef6c00; }
         .durum-gelecek { background: #e3f2fd; color: #1565c0; }
-        .harfler-container { font-size: 18px; font-weight: bold; letter-spacing: 4px; color: #c2185b; background: #fce4ec; padding: 12px; border-radius: 8px; text-align: center; }
+
+        /* Harfler Alanı */
+        .harfler-container {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #c2185b;
+            background: #fce4ec;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        /* Sabit Aksiyon Butonu */
+        .floating-actions {
+            position: fixed; bottom: 15px; right: 15px; z-index: 100;
+        }
+        .float-btn {
+            background: white; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-size: 11px; font-weight: 600; color: #444; cursor: pointer;
+            display: flex; align-items: center; gap: 5px; text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -88,32 +188,32 @@
     <div class="main-container">
         <!-- Üst Menü -->
         <div class="top-bar">
-            <span style="font-size: 14px; color: #666;">📂 <b>Eğitim Koçum</b> - <span id="aktifOgrenciBaslik">Öğrenci</span></span>
-            <div style="display: flex; gap: 10px;">
+            <div class="top-bar-left">📂 <b>Eğitim Koçum</b> - <span id="aktifOgrenciBaslik">Öğrenci</span></div>
+            <div class="top-bar-actions">
                 <a href="../index.html" class="anasayfa-btn">Ana Sayfa</a>
                 <button class="logout-btn" onclick="cikisYap()">Çıkış</button>
             </div>
         </div>
 
-        <!-- YENİ: GÖRSELDEKİ OTURUM SÜRESİ KARTI -->
+        <!-- Oturum Süresi Kartı -->
         <div class="sure-card">
             <div class="sure-header">
-                <div class="sure-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</div>
+                <div class="sure-title">⏱️ Oturum Süresi:</div>
                 <div class="sure-digital-box" id="dijitalSaat">00:00:00</div>
             </div>
             <div class="progress-track">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
             <div class="sure-footer">
-                <span id="kazanilanRozetYazi">🏅 Kazanılan Rozet: 0 🌟</span>
-                <span id="sonrakiRozetYazi">Sonraki rozete: 10 dk</span>
+                <span id="kazanilanRozetYazi">🏅 Kazanılan: 0 🌟</span>
+                <span id="sonrakiRozetYazi">Sonraki: 10 dk</span>
             </div>
         </div>
 
         <!-- Sekmeler -->
         <div class="tabs-bar">
-            <button class="tab-btn active">Özet / Genel Bakış</button>
-            <button class="tab-btn">Haftalık Rapor</button>
+            <button class="tab-btn active">Özet</button>
+            <button class="tab-btn">Haftalık</button>
             <button class="tab-btn">Rozetler</button>
             <button class="tab-btn">Kazanımlar</button>
         </div>
@@ -133,15 +233,15 @@
         <!-- Okuma & Odak -->
         <div class="card">
             <h3>📚 Okuma Kültürü & Odak Takibi</h3>
-            <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 10px;">
+            <div class="okuma-flex">
                 <div>
-                    <div style="font-size: 22px; font-weight: bold; color: var(--primary-color);" id="kitapSayisi">0</div>
-                    <div style="font-size: 12px; color: #666;">Okunan Kitap</div>
+                    <div style="font-size: 20px; font-weight: bold; color: var(--primary-color);" id="kitapSayisi">0</div>
+                    <div style="font-size: 11px; color: #666;">Okunan Kitap</div>
                 </div>
                 <div style="border-left: 1px solid var(--border-color);"></div>
                 <div>
-                    <div style="font-size: 22px; font-weight: bold; color: #1565c0;" id="odakPuani">0</div>
-                    <div style="font-size: 12px; color: #666;">Odak Puanı</div>
+                    <div style="font-size: 20px; font-weight: bold; color: #1565c0;" id="odakPuani">0</div>
+                    <div style="font-size: 11px; color: #666;">Odak Puanı</div>
                 </div>
             </div>
         </div>
@@ -157,6 +257,10 @@
             <h3>✨ Öğrenilen Harfler</h3>
             <div class="harfler-container" id="harflerAlani">-</div>
         </div>
+    </div>
+
+    <div class="floating-actions">
+        <button class="float-btn" onclick="alert('Öğretmene soru sorma ekranı yakında aktif olacak!')">💬 Soru Sor</button>
     </div>
 
     <script>
@@ -196,8 +300,8 @@
                             let aktifMi = r.durum === "Kazanıldı";
                             rozetHtml += `
                                 <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
-                                    <div style="font-size:22px;">${aktifMi ? '🏅' : '🔒'}</div>
-                                    <div style="font-size:11px; font-weight:600; margin-top:4px;">${r.rozetAdi}</div>
+                                    <div style="font-size:20px;">${aktifMi ? '🏅' : '🔒'}</div>
+                                    <div style="font-size:10px; font-weight:600; margin-top:3px; word-break:break-word;">${r.rozetAdi}</div>
                                 </div>`;
                         });
                         document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
@@ -220,12 +324,10 @@
             toplamSaniye = baslangicSaniye;
             guncelleEkranSure();
 
-            // Her 1 saniyede bir sayacı artır
             timerInterval = setInterval(() => {
                 toplamSaniye++;
                 guncelleEkranSure();
 
-                // Her 1 dakikada bir buluta (Google Sheets'e) sessizce kaydet ki cihaz değişse bile kaybolmasın
                 if (toplamSaniye % 60 === 0) {
                     sureyiBulutaKaydet();
                 }
@@ -237,21 +339,16 @@
             let dakika = Math.floor((toplamSaniye % 3600) / 60);
             let saniye = toplamSaniye % 60;
 
-            let formatSaat = String(saat).padStart(2, '0');
-            let formatDakika = String(dakika).padStart(2, '0');
-            let formatSaniye = String(saniye).padStart(2, '0');
+            document.getElementById("dijitalSaat").innerText = 
+                `${String(saat).padStart(2, '0')}:${String(dakika).padStart(2, '0')}:${String(saniye).padStart(2, '0')}`;
 
-            document.getElementById("dijitalSaat").innerText = `${formatSaat}:${formatDakika}:${formatSaniye}`;
-
-            // Her 10 dakikada (600 saniyede) bir rozet mantığı
             let toplamDakika = Math.floor(toplamSaniye / 60);
             let kazanilanRozet = Math.floor(toplamDakika / 10);
             let kalanDakika = 10 - (toplamDakika % 10);
 
-            document.getElementById("kazanilanRozetYazi").innerText = `🏅 Kazanılan Rozet: ${kazanilanRozet} 🌟`;
-            document.getElementById("sonrakiRozetYazi").innerText = `Sonraki rozete: ${kalanDakika} dk`;
+            document.getElementById("kazanilanRozetYazi").innerText = `🏅 Kazanılan: ${kazanilanRozet} 🌟`;
+            document.getElementById("sonrakiRozetYazi").innerText = `Sonraki: ${kalanDakika} dk`;
 
-            // İlerleme çubuğu yüzdesi (10 dakikalık döngü içinde)
             let yuzde = ((toplamDakika % 10) / 10) * 100;
             document.getElementById("progressFill").style.width = yuzde + "%";
         }
@@ -265,7 +362,7 @@
         }
 
         function cikisYap() {
-            sureyiBulutaKaydet(); // Çıkarken son süreyi kaydet
+            sureyiBulutaKaydet();
             localStorage.removeItem("aktifOgrenci");
             window.location.href = "index.html";
         }
