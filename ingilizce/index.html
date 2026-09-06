@@ -19,7 +19,6 @@
             align-items: center;
             position: relative;
         }
-        /* Sol üst ana portal dönüş linki */
         .ana-sayfa-btn {
             position: absolute;
             top: 25px;
@@ -39,7 +38,6 @@
             background: #4b6b4b;
             color: #ffffff;
         }
-        /* Giriş Kartı */
         .login-card {
             background: #ffffff;
             padding: 40px 35px;
@@ -112,27 +110,76 @@
         .error { color: #e53e3e; }
         .success { color: #38a169; }
         
-        /* Başarılı Giriş Sonrası Panel Alanı */
         #panel-alani {
             display: none;
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             background: white;
             padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .timer-card {
+            background-color: #eaf4ed;
+            border: 1px solid #c6e3cc;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            text-align: center;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .timer-title {
+            color: #2f6838;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .timer-badge {
+            background-color: #ffffff;
+            color: #2f6838;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #d4ebd8;
+        }
+        .progress-container {
+            background-color: #d1e7d6;
+            border-radius: 10px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .progress-bar {
+            background-color: #388e3c;
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+        .timer-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #4a7c59;
         }
     </style>
 </head>
 <body>
 
-    <!-- Sol Üst Ana Sayfa Linki -->
     <a href="https://panel.ogretmencocuk.com" class="ana-sayfa-btn">← Ana Portala Dön</a>
 
-    <!-- Giriş Formu Kutusu -->
     <div class="login-card" id="login-container">
-        <div class="logo-icon">✍️</div>
+        <div class="logo-icon">🏆</div>
         <h2>İngilizce Portal Giriş</h2>
         <p class="subtitle">Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.</p>
         
@@ -148,17 +195,32 @@
         <div id="mesaj"></div>
     </div>
 
-    <!-- Başarılı Giriş Sonrası Görünecek Alan -->
     <div id="panel-alani">
-        <h2>Giriş Başarılı! 🎉</h2>
-        <p style="color: #718096; margin-top: 10px; margin-bottom: 20px;">İngilizce paneline başarıyla giriş yaptınız.</p>
+        <h2 style="color: #2d3748; margin-bottom: 15px;">Hoş Geldiniz, <span id="ogrenciAdiText"></span>! 🎉</h2>
+        
+        <div class="timer-card">
+            <div class="timer-header">
+                <span class="timer-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</span>
+                <div class="timer-badge" id="sureGosterge">00:00:00</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="timer-footer">
+                <span id="rozetBilgi">🥉 Kazanılan: 0 🌟</span>
+                <span id="sonrakiRozet">Sonraki: 10 dk</span>
+            </div>
+        </div>
+
         <button onclick="cikisYap()" class="btn-giris" style="max-width: 150px; background-color: #e53e3e;">Çıkış Yap</button>
     </div>
 
     <script>
-        // Google Apps Script Web App Linkiniz
-        const apiURL = "https://script.google.com/macros/s/AKfycbycN5uK66t86mIJ6EyRrLH7wpK3MO0Q8tSJT-JqigO9GiqCsGCY9EhN_ILpDGY9MPmj-A/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwieIsbD497puIgT73vkAk1-trZSPMNghAmilVHnS3j2ZzfMtrSNw3Qn4x56a8EKh5z/exec";
         
+        let toplamSaniye = 0;
+        let timerInterval = null;
+        let aktifOgrenciAdi = "";
         let hataliDenemeSayisi = 0;
         const MAX_DENEME = 3;
 
@@ -186,14 +248,13 @@
             }
 
             mesajDiv.className = "";
-            mesajDiv.innerText = "Bilgiler kontrol ediliyor, lütfen bekleyin...";
+            mesajDiv.innerText = "Bilgiler kontrol ediliyor, süre yükleniyor...";
             girisBtn.disabled = true;
 
             try {
                 const response = await fetch(apiURL);
                 const data = await response.json();
 
-                // Google Sheets'teki sütun adlarınızın "ogrenci" ve "sifre" olduğu varsayılmıştır.
                 let kullaniciBulundu = data.find(item => 
                     String(item.ogrenci).trim() === girilenOgrenci && 
                     String(item.sifre).trim() === girilenSifre
@@ -203,12 +264,16 @@
                     mesajDiv.className = "success";
                     mesajDiv.innerText = "Giriş başarılı! Yönlendiriliyorsunuz...";
                     
-                    sessionStorage.setItem("oturumAcik", "true");
-                    sessionStorage.setItem("aktifOgrenci", girilenOgrenci);
+                    aktifOgrenciAdi = girilenOgrenci;
+                    
+                    // Google Sheets'ten gelen toplam süreyi al (Eğer boşsa 0 al)
+                    toplamSaniye = kullaniciBulundu.toplamsure ? parseInt(kullaniciBulundu.toplamsure) : 0;
 
                     setTimeout(() => {
                         document.getElementById('login-container').style.display = 'none';
                         document.getElementById('panel-alani').style.display = 'block';
+                        document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+                        baslatSayac();
                     }, 1000);
 
                 } else {
@@ -238,9 +303,66 @@
             }
         }
 
+        function baslatSayac() {
+            guncelleArayuz();
+            
+            timerInterval = setInterval(() => {
+                toplamSaniye++;
+                guncelleArayuz();
+
+                // Her 30 saniyede bir buluta (Google Sheets'e) güncel süreyi kaydet
+                if (toplamSaniye % 30 === 0) {
+                    googleSheetseKaydet();
+                }
+            }, 1000);
+        }
+
+        function guncelleArayuz() {
+            let saat = Math.floor(toplamSaniye / 3600);
+            let dakika = Math.floor((toplamSaniye % 3600) / 60);
+            let saniye = toplamSaniye % 60;
+
+            let formatliSure = 
+                (saat < 10 ? "0" + saat : saat) + ":" + 
+                (dakika < 10 ? "0" + dakika : dakika) + ":" + 
+                (saniye < 10 ? "0" + saniye : saniye);
+
+            document.getElementById('sureGosterge').innerText = formatliSure;
+
+            let kazanilanRozet = Math.floor(toplamSaniye / 600);
+            let sonrakiRozetSaniyeKalan = 600 - (toplamSaniye % 600);
+            let sonrakiDakika = Math.ceil(sonrakiRozetSaniyeKalan / 60);
+
+            document.getElementById('rozetBilgi').innerText = `🥉 Kazanılan: ${kazanilanRozet} 🌟`;
+            document.getElementById('sonrakiRozet').innerText = `Sonraki: ${sonrakiDakika} dk`;
+
+            let yuzde = ((toplamSaniye % 600) / 600) * 100;
+            document.getElementById('progressBar').style.width = yuzde + "%";
+        }
+
+        function googleSheetseKaydet() {
+            let kazanilanRozet = Math.floor(toplamSaniye / 600);
+            
+            fetch(apiURL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({
+                    ogrenci: aktifOgrenciAdi,
+                    toplamSure: toplamSaniye,
+                    rozet: kazanilanRozet
+                })
+            }).catch(err => console.error("Kayıt hatası:", err));
+        }
+
         function cikisYap() {
-            sessionStorage.clear();
-            window.location.reload();
+            // Çıkış yaparken son süreyi Google Sheets'e kesin olarak kaydet
+            googleSheetseKaydet();
+            
+            clearInterval(timerInterval);
+            setTimeout(() => {
+                window.location.reload();
+            }, 500); // Kaydın gitmesi için mini bir bekleme
         }
     </script>
 </body>
