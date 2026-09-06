@@ -115,17 +115,6 @@
         .progress-bar { background-color: #475569; height: 100%; width: 0%; transition: width 0.4s ease; border-radius: 6px; }
         .timer-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b; flex-wrap: wrap; gap: 4px; }
 
-        /* Yüzen Baloncuk AI Mesaj */
-        .ai-floating-toast {
-            position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: #ffffff; border: 2px solid #cbd5e1;
-            border-left: 4px solid #475569; border-radius: 10px; padding: 10px 14px; width: 90%; max-width: 340px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1); z-index: 9999; animation: slideDown 0.4s ease-out; transition: opacity 0.5s ease;
-        }
-        @keyframes slideDown { from { transform: translate(-50%, -10px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
-        .ai-toast-title { color: #1e293b; font-weight: 700; font-size: 12px; margin-bottom: 3px; display: flex; align-items: center; justify-content: space-between; }
-        .ai-toast-text { color: #475569; font-size: 11px; line-height: 1.3; }
-        .ai-toast-timer { font-size: 10px; color: #334155; background: #f1f5f9; padding: 1px 4px; border-radius: 4px; font-weight: 600; }
-
         /* Kitap Takip */
         .book-tracker-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .book-tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
@@ -175,7 +164,7 @@
         .chart-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .chart-title { font-weight: 700; font-size: 12px; color: #334155; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; border-bottom: 1.5px dashed #f1f5f9; padding-bottom: 5px; }
 
-        /* Rapor Kartları (Kapsamlı ve Detaylı) */
+        /* Rapor Kartları */
         .report-archive-header { background-color: #ffffff; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .report-archive-header h3 { color: #166534; font-size: 13px; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
         .report-archive-header p { color: #15803d; font-size: 11px; }
@@ -665,12 +654,19 @@
         </div>
     </div>
 
-    <!-- OYUN MODAL -->
-    <!-- KELİME OYUNU AÇILIR PANELİ (MODAL) -->
+    <!-- KELİME OYUNU AÇILIR PANELİ (MODAL) VE MÜZİK -->
     <div class="game-modal-overlay" id="gameModalOverlay">
         <div class="game-modal-content">
             <button class="game-close-btn" onclick="oyunModaliniKapat()">✕</button>
             
+            <!-- Müzik Kontrol Barı -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #b45309;">🎵 Arka Plan Müziği</span>
+                <button id="muzikSesBtn" onclick="muzikSesToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
+            </div>
+            <!-- Doğru Göreli Yol: ../muzik.mp3 (ingilizce klasörünün dışındaki kök dizin için) -->
+            <audio id="oyunMuzigi" src="../muzik.mp3" preload="auto" loop></audio>
+
             <div id="oyunAyarBolumu">
                 <div class="game-title">🏆 Kelime Ezber Yarışması</div>
                 <div class="game-subtitle">Google Sheets Kelimeler Havuzundan Sorulur! (Tekrarsız Sorular)</div>
@@ -751,12 +747,6 @@
         </div>
     </div>
 
-    <!-- AI Toast -->
-    <div class="ai-floating-toast" id="aiToastBox" style="display: none;">
-        <div class="ai-floating-title"><span>🤖 Koçluk Asistanı</span><span class="ai-floating-timer" id="toastTimer">10s</span></div>
-        <div class="ai-floating-text" id="aiMesajMetni">Sisteme hoş geldin!</div>
-    </div>
-
     <script>
         const apiURL = "https://script.google.com/macros/s/AKfycbw90Jwctrt8ibCc6zGqYvESQ7orUlZ1Sn_VuzdY-isaNbvYGXj61eHvjtJV1HMVa_9cXA/exec";
         
@@ -772,7 +762,6 @@
             try {
                 let res = await fetch(apiURL);
                 globalDataCache = await res.json();
-                // Veriler başarıyla yüklendiğinde butonu aktif et
                 girisBtn.disabled = false;
                 girisBtn.innerText = "Giriş Yap";
                 girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
@@ -816,6 +805,7 @@
 
         function ogretmenSelectDoldur() {
             let sel = document.getElementById('rubricOgrenciSelect');
+            if(!sel) return;
             sel.innerHTML = '<option value="">-- Öğrenci Seçin --</option>';
             globalDataCache.forEach(u => {
                 let opt = document.createElement('option');
@@ -976,7 +966,6 @@
             return paletler[index % paletler.length];
         }
 
-        // Kapsamlı ve Detaylı Öğretmen Notu Oluşturucu (Eski haline döndürüldü)
         function haftalikYorumOlustur(row, ad) {
             let puan = row.genel;
             let okuma = row.okuma;
@@ -1004,18 +993,8 @@
             return `"${cumleler.join(" ")}"`;
         }
 
-        function aiMesajUret(ogrenciAdi, kazanilanRozetSayisi, toplamRozetSayisi) {
-            let mesaj = `Harika bir başlangıç ${ogrenciAdi}! Toplam ${toplamRozetSayisi} rozetten **${kazanilanRozetSayisi} tanesini** kilitledin. ✨`;
-            document.getElementById('aiMesajMetni').innerText = mesaj;
-            let toastBox = document.getElementById('aiToastBox');
-            toastBox.style.display = "block";
-            let kalan = 10;
-            let t = setInterval(() => {
-                kalan--;
-                document.getElementById('toastTimer').innerText = kalan + "s";
-                if (kalan <= 0) { clearInterval(t); toastBox.style.display = "none"; }
-            }, 1000);
-        }
+        // (AI Toast fonksiyonu devre dışı bırakıldı - istendiği gibi kaldırıldı)
+        function aiMesajUret(ogrenciAdi, kazanilanRozetSayisi, toplamRozetSayisi) {}
 
         function tarihiDuzelt(tarihStr) {
             if (!tarihStr) return "--.--.----";
@@ -1133,7 +1112,22 @@
             return { kazanilan, toplam };
         }
 
-       function oyunModaliniAc() { 
+        // --- KELİME OYUNU VE MÜZİK YÖNETİMİ MİMARİSİ ---
+        
+        function muzikSesToggle() {
+            let muzik = document.getElementById('oyunMuzigi');
+            let btn = document.getElementById('muzikSesBtn');
+            if (!muzik || !btn) return;
+            if (muzik.muted) {
+                muzik.muted = false;
+                btn.innerText = "🔊 Müzik: Açık";
+            } else {
+                muzik.muted = true;
+                btn.innerText = "🔇 Müzik: Sessiz";
+            }
+        }
+
+        function oyunModaliniAc() { 
             document.getElementById('gameModalOverlay').style.display = 'flex'; 
             document.getElementById('oyunAyarBolumu').style.display = 'block';
             document.getElementById('oyunEkranIci').style.display = 'none';
@@ -1143,6 +1137,12 @@
         function oyunModaliniKapat() { 
             document.getElementById('gameModalOverlay').style.display = 'none'; 
             if(oyunTimerInterval) clearInterval(oyunTimerInterval); 
+            
+            let muzik = document.getElementById('oyunMuzigi');
+            if(muzik) {
+                muzik.pause();
+                muzik.currentTime = 0;
+            }
         }
 
         function sinifSec(n, el) { 
@@ -1154,6 +1154,7 @@
 
         function uniteSecimleriniOlustur(n, count) {
             let kont = document.getElementById('uniteSecimKonteyner'); 
+            if(!kont) return;
             kont.innerHTML = ""; 
             secilenUniteler = [1];
             for(let u=1; u<=count; u++) {
@@ -1176,8 +1177,11 @@
         }
 
         function yarismayiBaslat() {
-            let isim = document.getElementById('oyuncuIsmiInput').value.trim();
+            let isimInput = document.getElementById('oyuncuIsmiInput');
+            if(!isimInput) return;
+            let isim = isimInput.value.trim();
             if(!isim) { alert("Adınızı yazın!"); return; }
+            
             let hedefSoru = secilenSinif>=5 ? 25+((secilenSinif-4)*5) : 25;
             let filt = masterKelimeHavuzu.filter(i => i.sinif === secilenSinif && secilenUniteler.includes(i.unite));
             if(!filt.length) { alert("Bu sınıf ve ünitelere ait Google Sheets 'Kelimeler' sekmesinde kelime bulunamadı!"); return; }
@@ -1188,10 +1192,19 @@
             document.getElementById('oyunAyarBolumu').style.display = 'none';
             document.getElementById('oyunEkranIci').style.display = 'block';
             
+            let muzik = document.getElementById('oyunMuzigi');
+            if(muzik) {
+                muzik.currentTime = 0;
+                muzik.play().catch(e => console.log("Müzik çalma tarayıcı tarafından engellendi:", e));
+            }
+
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
             oyunTimerInterval = setInterval(()=>{ 
                 oyunSaniyeSayac++; 
-                document.getElementById('lblKronometre').innerText=`⏱️ ${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`; 
+                let kronometreEl = document.getElementById('lblKronometre');
+                if(kronometreEl) {
+                    kronometreEl.innerText=`⏱️ ${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`;
+                }
             }, 1000);
             
             soruyuEkranaGetir();
@@ -1236,6 +1249,13 @@
 
         function oyunuBitir() {
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
+            
+            let muzik = document.getElementById('oyunMuzigi');
+            if(muzik) {
+                muzik.pause();
+                muzik.currentTime = 0;
+            }
+
             let puan = Math.max(0, (oyunDogru*5) - (oyunYanlis*2));
             let sureStr = `${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`;
             let isim = document.getElementById('oyuncuIsmiInput').value.trim();
@@ -1248,10 +1268,13 @@
             fetch(`${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`).catch(()=>{});
             liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
         }
+
         function liderlikTablosuGuncelle(yk) {
             globalLiderlikCache.push(yk);
             globalLiderlikCache.sort((a,b)=> b.puan!==a.puan ? b.puan-a.puan : a.suresaniye-b.suresaniye);
-            let top5 = globalLiderlikCache.slice(0,5), tbody = document.getElementById('liderlikTabloGovde'); tbody.innerHTML = "";
+            let top5 = globalLiderlikCache.slice(0,5), tbody = document.getElementById('liderlikTabloGovde'); 
+            if(!tbody) return;
+            tbody.innerHTML = "";
             top5.forEach((it, idx) => {
                 tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#b45309;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
             });
@@ -1294,7 +1317,6 @@
             dersRaporlariniOlustur(user.arsivListesi, user.kitapBilgi);
             dersTakviminiIsle(user.dersler);
             let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
-            aiMesajUret(aktifOgrenciAdi, res.kazanilan, res.toplam);
             if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
             if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
         }
