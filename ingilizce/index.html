@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İngilizce Portal Giriş - Öğretmen Çocuk</title>
+    <!-- Chart.js Kütüphanesi (Grafikler İçin) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -92,7 +94,6 @@
         .error { color: #e53e3e; }
         .success { color: #38a169; }
         
-        /* Panel ve Sekme Yapısı */
         #panel-alani {
             display: none;
             width: 100%;
@@ -103,7 +104,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        /* Kullanıcı Bilgi & Kontrol Üst Şeridi (Avatar + Butonlar) */
+        /* Kullanıcı Bilgi & Kontrol Üst Şeridi */
         .user-header-bar {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border: 1px solid #bbf7d0;
@@ -181,7 +182,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 25px;
-            background: #edf2f7;
+            background: #f1f5f9;
             padding: 6px;
             border-radius: 12px;
         }
@@ -192,16 +193,16 @@
             background: transparent;
             font-weight: 600;
             font-size: 14px;
-            color: #4a5568;
+            color: #475569;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
         }
         .tab-btn.active {
-            background: #2f855a;
+            background: #334155;
             color: white;
-            box-shadow: 0 2px 6px rgba(47, 133, 90, 0.3);
+            box-shadow: 0 2px 6px rgba(51, 65, 85, 0.3);
         }
         .tab-content {
             display: none;
@@ -212,8 +213,8 @@
 
         /* Sayaç Kartı */
         .timer-card {
-            background-color: #eaf4ed;
-            border: 1px solid #c6e3cc;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 25px;
@@ -225,7 +226,7 @@
             margin-bottom: 15px;
         }
         .timer-title {
-            color: #2f6838;
+            color: #334155;
             font-weight: 600;
             font-size: 15px;
             display: flex;
@@ -234,16 +235,16 @@
         }
         .timer-badge {
             background-color: #ffffff;
-            color: #2f6838;
+            color: #334155;
             padding: 6px 14px;
             border-radius: 8px;
             font-weight: bold;
             font-size: 16px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 1px solid #d4ebd8;
+            border: 1px solid #cbd5e1;
         }
         .progress-container {
-            background-color: #d1e7d6;
+            background-color: #e2e8f0;
             border-radius: 10px;
             height: 10px;
             width: 100%;
@@ -251,7 +252,7 @@
             margin-bottom: 15px;
         }
         .progress-bar {
-            background-color: #388e3c;
+            background-color: #475569;
             height: 100%;
             width: 0%;
             transition: width 0.4s ease;
@@ -262,17 +263,17 @@
             justify-content: space-between;
             align-items: center;
             font-size: 13px;
-            color: #4a7c59;
+            color: #64748b;
         }
 
-        /* Yüzen Baloncuk (Floating Toast) AI Mesaj Kutusu */
+        /* Yüzen Baloncuk (Toast) AI Mesaj */
         .ai-floating-toast {
             position: fixed;
             top: 25px;
             right: 25px;
             background: #ffffff;
-            border: 2px solid #bbf7d0;
-            border-left: 6px solid #22c55e;
+            border: 2px solid #cbd5e1;
+            border-left: 6px solid #475569;
             border-radius: 14px;
             padding: 16px 20px;
             max-width: 350px;
@@ -286,7 +287,7 @@
             to { transform: translateY(0); opacity: 1; }
         }
         .ai-toast-title {
-            color: #166534;
+            color: #1e293b;
             font-weight: 700;
             font-size: 14px;
             margin-bottom: 5px;
@@ -295,17 +296,105 @@
             justify-content: space-between;
         }
         .ai-toast-text {
-            color: #334155;
+            color: #475569;
             font-size: 12.5px;
             line-height: 1.4;
         }
         .ai-toast-timer {
             font-size: 11px;
-            color: #15803d;
-            background: #f0fdf4;
+            color: #334155;
+            background: #f1f5f9;
             padding: 2px 6px;
             border-radius: 6px;
             font-weight: 600;
+        }
+
+        /* Kitap Takip Sistemi Şablonu */
+        .book-tracker-box {
+            background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+            border: 1px solid #fde047;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .book-tracker-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 2px dashed #fef08a;
+            padding-bottom: 8px;
+        }
+        .book-tracker-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #854d0e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .book-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            align-items: center;
+        }
+        .book-current-card {
+            background: #ffffff;
+            border: 1px solid #fef08a;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+        .book-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #a16207;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .book-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: #713f12;
+            text-transform: capitalize;
+        }
+        .book-score-card {
+            background: #ffffff;
+            border: 1px solid #fef08a;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+        .book-score-val {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ca8a04;
+        }
+        .book-progress-area {
+            margin-top: 12px;
+        }
+        .book-progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #854d0e;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .book-progress-bar-bg {
+            background: #fef08a;
+            border-radius: 6px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .book-progress-bar-fill {
+            background: #eab308;
+            height: 100%;
+            width: 0%;
+            border-radius: 6px;
+            transition: width 0.4s ease;
         }
 
         /* 4'lü Özet Tablosu Grid */
@@ -321,10 +410,10 @@
             border: 1px solid transparent;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
-        .card-green { background-color: #f0fdf4; border-color: #bbf7d0; }
-        .card-blue { background-color: #eff6ff; border-color: #bfdbfe; }
-        .card-yellow { background-color: #fefce8; border-color: #fef08a; }
-        .card-pink { background-color: #fdf2f8; border-color: #fbcfe8; }
+        .card-slate { background-color: #f8fafc; border-color: #cbd5e1; }
+        .card-cyan { background-color: #ecfeff; border-color: #a5f3fc; }
+        .card-amber { background-color: #fffbeb; border-color: #fde68a; }
+        .card-rose { background-color: #fff1f2; border-color: #fecdd3; }
 
         .card-title {
             font-size: 12px;
@@ -336,24 +425,24 @@
             align-items: center;
             gap: 6px;
         }
-        .card-green .card-title { color: #166534; }
-        .card-blue .card-title { color: #1e40af; }
-        .card-yellow .card-title { color: #854d0e; }
-        .card-pink .card-title { color: #9d174d; }
+        .card-slate .card-title { color: #334155; }
+        .card-cyan .card-title { color: #0e7490; }
+        .card-amber .card-title { color: #b45309; }
+        .card-rose .card-title { color: #be123c; }
 
         .card-value {
             font-size: 28px;
             font-weight: 800;
         }
-        .card-green .card-value { color: #15803d; }
-        .card-blue .card-value { color: #1d4ed8; }
-        .card-yellow .card-value { color: #a16207; }
-        .card-pink .card-value { color: #be185d; }
+        .card-slate .card-value { color: #0f172a; }
+        .card-cyan .card-value { color: #155e75; }
+        .card-amber .card-value { color: #92400e; }
+        .card-rose .card-value { color: #9f1239; }
 
         /* Öğretmenim Haftalık Notu */
         .teacher-note-box {
-            background-color: #fffbeb;
-            border: 1px solid #fde68a;
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
             border-radius: 12px;
             padding: 22px;
             margin-bottom: 25px;
@@ -362,17 +451,17 @@
         .teacher-note-header {
             font-weight: 700;
             font-size: 16px;
-            color: #b45309;
+            color: #166534;
             margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
-            border-bottom: 2px dashed #fef3c7;
+            border-bottom: 2px dashed #dcfce7;
             padding-bottom: 8px;
         }
         .teacher-note-content {
             font-size: 14px;
-            color: #78350f;
+            color: #14532d;
             line-height: 1.6;
             font-style: italic;
         }
@@ -440,6 +529,27 @@
         .status-red .schedule-box-status { background: #fee2e2; color: #b91c1c; }
         .status-yellow .schedule-box-status { background: #fef9c3; color: #a16207; }
         .status-gray .schedule-box-status { background: #f1f5f9; color: #475569; }
+
+        /* Grafik Konteynerleri */
+        .chart-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .chart-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #334155;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px dashed #f1f5f9;
+            padding-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -464,7 +574,7 @@
     <!-- Başarılı Giriş Sonrası Panel Alanı -->
     <div id="panel-alani">
         
-        <!-- KULLANICI KONTROL ALANI (Avatar + İsim + Portal Dönüş + Çıkış Yap) -->
+        <!-- KULLANICI KONTROL ALANI -->
         <div class="user-header-bar">
             <div class="user-info-area">
                 <div class="user-avatar" id="userAvatarLetter">Ö</div>
@@ -524,30 +634,72 @@
             
             <!-- 4'lü Özet Tablosu -->
             <div class="summary-grid">
-                <div class="summary-card card-green">
+                <div class="summary-card card-slate">
                     <div class="card-title">⭐ GENEL PUAN (ORTALAMA)</div>
                     <div class="card-value" id="valGenelPuan">0</div>
                 </div>
-                <div class="summary-card card-blue">
+                <div class="summary-card card-cyan">
                     <div class="card-title">🚀 ETKİNLİK BAŞARISI</div>
                     <div class="card-value" id="valEtkinlikBasarisi">0</div>
                 </div>
-                <div class="summary-card card-yellow">
+                <div class="summary-card card-amber">
                     <div class="card-title">🎯 SON DENEME SONUCU</div>
                     <div class="card-value" id="valSonDeneme">0</div>
                 </div>
-                <div class="summary-card card-pink">
+                <div class="summary-card card-rose">
                     <div class="card-title">🔥 PERFORMANS EMOJİN</div>
                     <div class="card-value" id="valPerformansEmoji">😐</div>
                 </div>
             </div>
 
-            <!-- Öğretmenim Haftalık Notu -->
+            <!-- KİTAP TAKİP SİSTEMİ (Öğretmen Notunun Bir Üstü) -->
+            <div class="book-tracker-box">
+                <div class="book-tracker-top">
+                    <div class="book-tracker-title">📖 Okuma Kültürü & Odak Takibi</div>
+                    <button class="header-btn btn-portal" style="font-size: 11px; padding: 4px 10px;" onclick="window.location.reload()">Hızlı Okuma</button>
+                </div>
+                <div class="book-grid">
+                    <div class="book-current-card">
+                        <div class="book-label">Şu An Okunan Kitap</div>
+                        <div class="book-name" id="valKitapAdi">Yükleniyor...</div>
+                    </div>
+                    <div class="book-score-card">
+                        <div class="book-label">Kitap Skoru</div>
+                        <div class="book-score-val" id="valKitapEmoji">📚 1</div>
+                    </div>
+                </div>
+                <div class="book-progress-area">
+                    <div class="book-progress-info">
+                        <span>Haftalık Hedef İlerlemesi</span>
+                        <span id="valKitapYuzde">%0</span>
+                    </div>
+                    <div class="book-progress-bar-bg">
+                        <div class="book-progress-bar-fill" id="valKitapBar"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #a16207; margin-top: 4px;">
+                        <span id="valKitapSayfa">Okunan: 0 sayfa</span>
+                        <span id="valKitapHedef">Hedef: 0 sayfa</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÖĞRETMENİM HAFTALIK NOTU -->
             <div class="teacher-note-box">
                 <div class="teacher-note-header">🍎 Öğretmenimin Haftalık Notu</div>
                 <div class="teacher-note-content" id="teacherCommentText">
                     "Yükleniyor..."
                 </div>
+            </div>
+
+            <!-- GRAFİKLER (Sayfanın En Alt Kısmı) -->
+            <div class="chart-box">
+                <div class="chart-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</div>
+                <canvas id="gelisimGrafik" height="110"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <div class="chart-title">📊 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</div>
+                <canvas id="kriterGrafik" height="110"></canvas>
             </div>
 
         </div>
@@ -567,7 +719,7 @@
 
     </div>
 
-    <!-- 10 Saniye Sonra Kaybolan Yüzen Baloncuk Toast Mesajı -->
+    <!-- Yüzen Baloncuk Toast Mesajı -->
     <div class="ai-floating-toast" id="aiToastBox" style="display: none;">
         <div class="ai-toast-title">
             <span>🤖 Koçluk Asistanı</span>
@@ -584,6 +736,8 @@
         let aktifOgrenciAdi = "";
         let hataliDenemeSayisi = 0;
         const MAX_DENEME = 3;
+        let gelisimChartInstance = null;
+        let kriterChartInstance = null;
 
         window.onload = function() {
             const oturumAcik = sessionStorage.getItem("oturumAcik");
@@ -596,7 +750,6 @@
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
                 
-                // Avatar ve isim güncelleme
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
 
@@ -638,6 +791,14 @@
             if (puan >= 10) return "❄️ Donuk";
             if (puan >= 5)  return "🚨 Kritik";
             return "🐣 Başlangıç";
+        }
+
+        // Okunan Kitap Sayısına Göre Değişen Emoji / Rozet Seçici
+        function kitapEmojiGetir(sayi) {
+            let emojiler = ["📖", "📚", "📙", "📘", "📗", "📕", "🏆", "🌟", "🎯", "🚀"];
+            let idx = (sayi - 1) % emojiler.length;
+            if (idx < 0) idx = 0;
+            return `${emojiler[idx]} ${sayi}`;
         }
 
         function ogretmenYorumUret(user, rozetSayisi) {
@@ -759,6 +920,81 @@
             document.getElementById('boxGelecekDers').className = `schedule-box ${gelecekDurumClass}`;
         }
 
+        function kitapTakibiniIsle(kitap) {
+            document.getElementById('valKitapAdi').innerText = kitap.kitapAdi || "Kitap Seçilmedi";
+            document.getElementById('valKitapEmoji').innerText = kitapEmojiGetir(kitap.okunanSayisi || 1);
+            
+            let sayfa = kitap.sayfa || 0;
+            let hedef = kitap.hedef || 40;
+            let yuzde = hedef > 0 ? Math.min(Math.round((sayfa / hedef) * 100), 100) : 0;
+
+            document.getElementById('valKitapYuzde').innerText = `%${yuzde}`;
+            document.getElementById('valKitapBar').style.width = yuzde + "%";
+            document.getElementById('valKitapSayfa').innerText = `Okunan: ${sayfa} sayfa`;
+            document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef} sayfa`;
+        }
+
+        // Grafik Oluşturma Fonksiyonları (Chart.js)
+        function grafikleriCiz(grafikGecmis, user) {
+            // 1. Grafik: Yıllık Gelişim Eğrisi (Tarih Bazlı Genel Puan)
+            let labels = grafikGecmis.map(item => tarihiDuzelt(item.tarih));
+            let veriler = grafikGecmis.map(item => item.genel);
+
+            if (gelisimChartInstance) gelisimChartInstance.destroy();
+            let ctx1 = document.getElementById('gelisimGrafik').getContext('2d');
+            gelisimChartInstance = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: labels.length > 0 ? labels : ["01.08.2026", "02.08.2026", "03.08.2026", "04.08.2026"],
+                    datasets: [{
+                        label: 'Yıllık Gelişim Eğrisi (Genel Puan)',
+                        data: veriler.length > 0 ? veriler : [10, 28, 5, 2],
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+
+            // 2. Grafik: 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği
+            let cVocab = user.vocabOrt || 40;
+            let cYazma = user.yazmaOrt || 45;
+            let cOkuma = user.okumaOrt || 45;
+            let cKonusma = user.konusmaOrt || 45;
+            let cGrammar = user.grammarOrt || 50;
+
+            if (kriterChartInstance) kriterChartInstance.destroy();
+            let ctx2 = document.getElementById('kriterGrafik').getContext('2d');
+            kriterChartInstance = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Okuma', 'Yazma', 'Dinleme', 'Konuşma', 'Grammar / Dikkat'],
+                    datasets: [{
+                        data: [cOkuma, cYazma, cVocab, cKonusma, cGrammar],
+                        backgroundColor: [
+                            '#4ade80', // Yeşil
+                            '#38bdf8', // Mavi
+                            '#fbbf24', // Turuncu/Sarı
+                            '#c084fc', // Mor
+                            '#f43f5e'  // Pembe/Kırmızı
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+
         async function girisYap(event) {
             event.preventDefault();
             
@@ -800,7 +1036,6 @@
                     sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi);
                     sessionStorage.setItem("toplamSaniye", toplamSaniye);
 
-                    // Avatar ve İsim Güncelleme
                     document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                     document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
 
@@ -870,6 +1105,8 @@
             aiMesajUret(aktifOgrenciAdi, genelOrtalama, rozetSayisi);
             ogretmenYorumUret(user, rozetSayisi);
             dersTakviminiIsle(user.dersler);
+            kitapTakibiniIsle(user.kitapBilgi);
+            grafikliCiz(user.grafikGecmis, user);
         }
 
         function baslatSayac() {
