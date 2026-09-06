@@ -306,7 +306,7 @@
         .rubric-field { margin-bottom: 10px; }
         .rubric-field label { font-size: 11px; font-weight: 700; color: #334155; display: block; margin-bottom: 2px; }
         .rubric-field select, .rubric-field input, .rubric-field textarea {
-            width: 100%; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11.5px; outline: None; background: #f8fafc;
+            width: 100%; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11.5px; outline: none; background: #f8fafc;
         }
         .slider-group { display: flex; align-items: center; gap: 8px; }
         .slider-group input[type="range"] { flex: 1; }
@@ -717,8 +717,8 @@
 
     <!-- AI Toast -->
     <div class="ai-floating-toast" id="aiToastBox" style="display: none;">
-        <div class="ai-floating-title"><span>🤖 Koçluk Asistanı</span><span class="ai-floating-timer" id="toastTimer">10s</span></div>
-        <div class="ai-floating-text" id="aiMesajMetni">Sisteme hoş geldin!</div>
+        <div class="ai-toast-title"><span>🤖 Koçluk Asistanı</span><span class="ai-toast-timer" id="toastTimer">10s</span></div>
+        <div class="ai-toast-text" id="aiMesajMetni">Sisteme hoş geldin!</div>
     </div>
 
     <script>
@@ -863,19 +863,19 @@
                 let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
                 
                 // Yapay Zeka Destekli Uzun ve Akıcı Veli Raporu Metni
-                let raporMetni = `🌟 *ÖĞRETMEN ÇOCUK - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🌟\n\n` +
-                    `Sevgili Velimiz, ${tarih} tarihli dersimizi büyük bir verimle geride bıraktık. Öğrencimiz *${ogrenci}* bu hafta sergilediği gayret ve disiplinle bizleri yine gururlandırdı.\n\n` +
-                    `Değerlendirmelerimiz sonucunda öğrencimiz bu hafta genel başarı çıtasını *${ortalamaPuan}/100* seviyesine taşırken, son deneme sınavında elde ettiği *${sondeneme}* puan ile istikrarlı yükselişini sürdürmektedir. Ders içi gözlemimize göre; kelime dağarcığı ve anlama becerilerindeki pratikliği göz doldururken, beceri alanlarındaki detaylı dağılımımız şu şekildedir:\n` +
-                    `• 📖 *Okuma:* ${okuma}/100\n` +
-                    `• ✍️ *Yazma:* ${yazma}/100\n` +
-                    `• 💡 *Kelime (Vocabulary):* ${vocab}/100\n` +
-                    `• 🗣️ *Konuşma:* ${konusma}/100\n` +
-                    `• 📐 *Grammar:* ${grammar}/100\n\n` +
-                    `📖 *Okuma Kültürü Takibi:* ${ogrenci}, şu an okuduğu *${kitapAdi}* adlı kitapta ${sayfa}/${hedef} sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir.\n\n` +
-                    `🍎 *Öğretmen Gözlemi:* "${odevDonut || "Ders boyunca odaklanması ve derse katılımı son derece olumluydu."}"\n\n` +
-                    `📌 *Sonraki Adım & Ödev:* Önümüzdeki ders için öğrencimize *${sonrakiOdev || "Kelime tekrarı ve pratik"}* ödevi verilmiştir. Bir sonraki buluşma tarihimiz ise *${sonrakiTarih || "Planlanıyor"}* olarak belirlenmiştir.\n\n` +
-                    `💡 _Öğrencimizin tüm detaylı istatistiklerini, çözdüğü testleri, kazanmış olduğu rozetleri ve özel gelişim grafiklerini incelemek için lütfen **Öğrenci Portalımıza** giriş yapmayı unutmayın!_\n\n` +
-                    `Destekleriniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı ve başarılı bir hafta dileriz! 🌻`;
+                let raporMetni = `*OGRETMEN COCUK - HAFTALIK INGILIZCE GELISIM RAPORU*\n\n` +
+                    `Sevgili Velimiz, ${tarih} tarihli dersimizi büyük bir verimle geride bıraktık. Ogrencimiz *${ogrenci}* bu hafta sergiledigi gayret ve disiplinle bizleri yine gururlandirdi.\n\n` +
+                    `Degerlendirmelerimiz sonucunda ogrencimiz bu hafta genel basari citasini *${ortalamaPuan}/100* seviyesine tasirken, son deneme sinavinda elde ettigi *${sondeneme}* puan ile istikrarli yukselisini surdurmektedir. Ders ici gozlemimize gore; kelime dagarcigi ve anlama becerilerindeki pratikligi goz doldururken, beceri alanlarindaki detayli dagilimiz su sekildedir:\n` +
+                    `- *Okuma:* ${okuma}/100\n` +
+                    `- *Yazma:* ${yazma}/100\n` +
+                    `- *Kelime (Vocabulary):* ${vocab}/100\n` +
+                    `- *Konusma:* ${konusma}/100\n` +
+                    `- *Grammar:* ${grammar}/100\n\n` +
+                    `*Okuma Kulturu Takibi:* ${ogrenci}, su an okudugu *${kitapAdi}* adli kitapta ${sayfa}/${hedef} sayfaya ulasarak hedefine dogru saglam adimlarla ilerlemektedir.\n\n` +
+                    `*Ogretmen Gozlemi:* "${odevDonut || "Ders boyunca odaklanmasi ve derse katilimi son derece olumluydu."}"\n\n` +
+                    `*Sonraki Adim & Odev:* Onumuzdeki ders icin ogrencimize *${sonrakiOdev || "Kelime tekrarı ve pratik"}* odevi verilmistir. Bir sonraki bulusma tarihimiz ise *${sonrakiTarih || "Planlanıyor"}* olarak belirlenmistir.\n\n` +
+                    `_Ogrencimizin tum detayli istatistiklerini, cozdugu testleri, kazanmis oldugu rozetleri ve ozel gelisim grafiklerini incelemek icin lutfen *Ogrenci Portalimiza* giris yapmayi unutmayin!_\n\n` +
+                    `Destekleriniz ve harika is birliginiz icin cok tesekkur ederiz. Saglikli ve basarili bir hafta dileriz!`;
 
                 if (telefon) {
                     let waURL = `https://wa.me/${telefon}?text=${encodeURIComponent(raporMetni)}`;
