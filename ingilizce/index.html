@@ -45,7 +45,7 @@
         input:focus { background-color: #fff; border-color: #38a169; box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.1); }
         .btn-giris {
             width: 100%; padding: 9px; background-color: #2f855a; color: white;
-            border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
+            border: None; border-radius: 6px; font-size: 13px; font-weight: 600;
             cursor: pointer; margin-top: 6px; transition: background-color 0.3s;
         }
         .btn-giris:hover { background-color: #276749; }
@@ -56,16 +56,14 @@
         
         #panel-alani { display: none; width: 100%; max-width: 700px; margin: 0 auto; }
 
-        /* Üst Şerit (Daha da Kompakt) */
+        /* Üst Şerit */
         .user-header-bar {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border: 1px solid #bbf7d0; border-radius: 10px; padding: 8px 12px;
             display: flex; flex-direction: column; gap: 8px;
             margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
-        .user-header-top {
-            display: flex; align-items: center; justify-content: space-between; width: 100%;
-        }
+        .user-header-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .user-info-area { display: flex; align-items: center; gap: 6px; }
         .user-avatar {
             width: 32px; height: 32px; background-color: #2f855a; color: white;
@@ -95,7 +93,7 @@
         .btn-cikis { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .btn-cikis:hover { background: #dc2626; color: #ffffff; }
 
-        /* Sekmeler (Kompakt) */
+        /* Sekmeler */
         .tabs-container {
             display: flex; gap: 4px; margin-bottom: 12px; background: #ffffff;
             padding: 5px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
@@ -108,7 +106,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Sayaç Kartı (Küçültüldü) */
+        /* Sayaç Kartı */
         .timer-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .timer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
         .timer-title { color: #334155; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 5px; }
@@ -117,7 +115,7 @@
         .progress-bar { background-color: #475569; height: 100%; width: 0%; transition: width 0.4s ease; border-radius: 6px; }
         .timer-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b; flex-wrap: wrap; gap: 4px; }
 
-        /* Yüzen Baloncuk (Toast) AI Mesaj */
+        /* Yüzen Baloncuk AI Mesaj */
         .ai-floating-toast {
             position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: #ffffff; border: 2px solid #cbd5e1;
             border-left: 4px solid #475569; border-radius: 10px; padding: 10px 14px; width: 90%; max-width: 340px;
@@ -128,7 +126,7 @@
         .ai-toast-text { color: #475569; font-size: 11px; line-height: 1.3; }
         .ai-toast-timer { font-size: 10px; color: #334155; background: #f1f5f9; padding: 1px 4px; border-radius: 4px; font-weight: 600; }
 
-        /* Kitap Takip Sistemi (Küçültüldü) */
+        /* Kitap Takip */
         .book-tracker-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .book-tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
         .book-header-left { display: flex; align-items: center; gap: 8px; }
@@ -155,35 +153,32 @@
         .book-progress-bar-fill { background: #1e293b; height: 100%; width: 0%; border-radius: 6px; transition: width 0.4s ease; }
         .book-progress-footer { display: flex; justify-content: space-between; font-size: 10px; color: #64748b; font-weight: 600; margin-top: 4px; }
 
-        /* 4'lü Özet Tablosu (Küçültüldü) */
+        /* Özet Tablosu */
         .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
         .summary-card { border-radius: 8px; padding: 10px; border: 1px solid transparent; box-shadow: 0 1px 4px rgba(0,0,0,0.02); background: #ffffff; }
         .card-slate { border-color: #cbd5e1; }
         .card-cyan { border-color: #a5f3fc; }
         .card-amber { border-color: #fde68a; }
         .card-rose { border-color: #fecdd3; }
-
         .card-title { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; display: flex; align-items: center; gap: 3px; }
         .card-slate .card-title { color: #334155; }
         .card-cyan .card-title { color: #0e7490; }
         .card-amber .card-title { color: #b45309; }
         .card-rose .card-title { color: #be123c; }
-
         .card-value { font-size: 17px; font-weight: 800; }
         .card-slate .card-value { color: #0f172a; }
         .card-cyan .card-value { color: #155e75; }
         .card-amber .card-value { color: #92400e; }
         .card-rose .card-value { color: #9f1239; }
 
-        /* Grafik Konteynerleri (Küçültüldü) */
+        /* Grafikler */
         .chart-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .chart-title { font-weight: 700; font-size: 12px; color: #334155; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; border-bottom: 1.5px dashed #f1f5f9; padding-bottom: 5px; }
 
-        /* Ders Raporları Arşiv Kartları (Küçültüldü) */
+        /* Rapor Kartları */
         .report-archive-header { background-color: #ffffff; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .report-archive-header h3 { color: #166534; font-size: 13px; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
         .report-archive-header p { color: #15803d; font-size: 11px; }
-        
         .report-card { border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
         .report-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1.5px dashed rgba(0,0,0,0.1); padding-bottom: 8px; flex-wrap: wrap; gap: 6px; }
         .report-date { font-weight: 800; font-size: 12.5px; color: #1e293b; display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.05); }
@@ -196,10 +191,9 @@
         .report-footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #334155; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 8px; flex-wrap: wrap; gap: 6px; }
         .report-deneme-badge { background: #fff1f2; border: 1px solid #f43f5e; color: #be123c; padding: 4px 8px; border-radius: 14px; font-weight: 800; font-size: 11px; display: flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(244, 63, 94, 0.15); }
 
-        /* Rozetler Sekmesi (7x3 Izgara Mimarisi ve Küçültülmüş Kartlar) */
+        /* Rozetler (7x3 Izgara) */
         .badges-header-box { background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); border: 1px solid #fde047; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .badges-header-title { font-size: 13px; font-weight: 800; color: #854d0e; display: flex; align-items: center; gap: 5px; }
-        
         .badges-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 12px; }
         .badge-card { border-radius: 6px; padding: 6px 2px; text-align: center; border: 1px solid #e2e8f0; background: #ffffff; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 65px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .badge-card.unlocked { background: #f0fdf4; border-color: #bbf7d0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.06); }
@@ -208,18 +202,16 @@
         .badge-card.unlocked .badge-name { color: #166534; }
         .badge-target { font-size: 7.5px; color: #64748b; font-weight: 600; }
         .badge-card.unlocked .badge-target { color: #15803d; }
-
         .badge-progress-box { background: #ffffff; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .badge-progress-top { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 11px; color: #166534; margin-bottom: 5px; }
         .badge-progress-badge { background: #15803d; color: white; padding: 1px 5px; border-radius: 6px; font-size: 10px; }
         .badge-bar-bg { background: #dcfce7; border-radius: 5px; height: 6px; width: 100%; overflow: hidden; }
         .badge-bar-fill { background: #16a34a; height: 100%; width: 0%; border-radius: 5px; transition: width 0.4s ease; }
 
-        /* Aktiviteler Sekmesi & Açılır Oyun Paneli */
+        /* Aktiviteler & Oyun Paneli */
         .activity-banner { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .activity-banner h3 { color: #1e40af; font-size: 14.5px; font-weight: 800; margin-bottom: 4px; }
         .activity-banner p { color: #3b82f6; font-size: 11.5px; margin-bottom: 12px; }
-        
         .btn-oyun-ac {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white; border: none; padding: 10px 20px; border-radius: 20px;
@@ -229,7 +221,6 @@
         }
         .btn-oyun-ac:hover { transform: scale(1.03); background: linear-gradient(135deg, #d97706 100%, #b45309 100%); }
 
-        /* Oyun Modal Penceresi */
         .game-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
@@ -240,7 +231,7 @@
             padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto;
         }
         .game-close-btn {
-            position: absolute; top: 10px; right: 10px; background: #f1f5f9; border: none;
+            position: absolute; top: 10px; right: 10px; background: #f1f5f9; border: None;
             width: 26px; height: 26px; border-radius: 50%; font-size: 12px; font-weight: 700;
             color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
@@ -294,18 +285,182 @@
         .lid-table th { background: #e2e8f0; color: #334155; padding: 4px; text-align: left; }
         .lid-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
 
-        @media(max-width: 650px) {
-            body { padding: 5px 2px; }
-            .badges-grid { grid-template-columns: repeat(7, 1fr); }
-            .badge-card { min-height: 55px; padding: 4px 1px; }
-            .badge-emoji { font-size: 14px; }
-            .badge-name { font-size: 7.5px; }
-            .badge-target { font-size: 6.5px; }
+        /* GİZLİ ÖĞRETMEN ÇARLIĞI & RUBRİK PANELİ STİLLERİ */
+        .teacher-gear-btn {
+            position: fixed; bottom: 15px; right: 15px; background: rgba(51, 65, 85, 0.4);
+            color: #ffffff; width: 36px; height: 36px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 18px; cursor: pointer;
+            z-index: 9999; transition: all 0.3s; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
+        .teacher-gear-btn:hover { background: #334155; transform: rotate(90deg); }
+
+        .rubric-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 100000; padding: 10px;
+        }
+        .rubric-content {
+            background: #ffffff; border-radius: 14px; width: 100%; max-width: 550px;
+            padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; position: relative;
+        }
+        .rubric-field { margin-bottom: 12px; }
+        .rubric-field label { font-size: 11.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 3px; }
+        .rubric-field select, .rubric-field input, .rubric-field textarea {
+            width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; outline: none; background: #f8fafc;
+        }
+        .slider-group { display: flex; align-items: center; gap: 10px; }
+        .slider-group input[type="range"] { flex: 1; }
+        .slider-val { font-weight: 800; color: #2563eb; font-size: 13px; width: 30px; text-align: center; }
     </style>
 </head>
 <body>
 
+    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI (VİDA LOGOSU) -->
+    <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Rubrik Paneli">⚙️</button>
+
+    <!-- ŞİFRE GİRİŞ MODALI -->
+    <div class="rubric-modal" id="sifreModal">
+        <div class="rubric-content" style="max-width: 320px; text-align: center;">
+            <h3 style="color: #1e293b; margin-bottom: 10px; font-size: 16px;">🔐 Öğretmen Girişi</h3>
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 15px;">Lütfen yönetim şifresini giriniz:</p>
+            <input type="password" id="yoneticiSifreInput" placeholder="Şifre" style="text-align: center; margin-bottom: 12px;">
+            <button class="btn-giris" onclick="sifreKontrolEt()">Giriş Yap</button>
+            <button onclick="document.getElementById('sifreModal').style.display='none'" style="background:none; border:none; color:#64748b; font-size:11px; margin-top:10px; cursor:pointer;">İptal</button>
+        </div>
+    </div>
+
+    <!-- OTOMATİK RUBRİK & WHATSAPP RAPOR PANELİ -->
+    <div class="rubric-modal" id="rubricModal">
+        <div class="rubric-content">
+            <button class="game-close-btn" onclick="document.getElementById('rubricModal').style.display='none'">✕</button>
+            <h3 style="color: #1e293b; font-size: 16px; font-weight: 900; margin-bottom: 12px; text-align: center;">📝 Otomatik Öğretmen Rubrik Paneli</h3>
+            
+            <div class="rubric-field">
+                <label>Öğrenci Seçiniz:</label>
+                <select id="rubricOgrenciSelect" onchange="ogrenciVerileriniYukle()">
+                    <option value="">-- Öğrenci Seçin --</option>
+                </select>
+            </div>
+
+            <div class="rubric-field">
+                <label>Veli Telefon Numarası (WhatsApp için):</label>
+                <input type="text" id="rubricTelefon" placeholder="Örn: 905554443322">
+            </div>
+
+            <div class="rubric-field">
+                <label>Geçmiş Verilerin Tarihi (Düzenlemek için seç):</label>
+                <select id="rubricGecmisTarihSelect" onchange="gecmisTarihVerisiniGetir()">
+                    <option value="">-- Yeni Kayıt / En Güncel --</option>
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div class="rubric-field">
+                    <label>Tamamlanan Ders Tarihi:</label>
+                    <input type="date" id="rubricTamamlananTarih">
+                </div>
+                <div class="rubric-field">
+                    <label>Sonraki Ders Tarihi:</label>
+                    <input type="date" id="rubricSonrakiTarih">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 6px;">
+                <div class="rubric-field">
+                    <label>Şu An Okunan Kitap:</label>
+                    <input type="text" id="rubricKitapAdi">
+                </div>
+                <div class="rubric-field">
+                    <label>Okunan Sayfa:</label>
+                    <input type="number" id="rubricSayfa" value="0">
+                </div>
+                <div class="rubric-field">
+                    <label>Hedef Sayfa:</label>
+                    <input type="number" id="rubricHedef" value="40">
+                </div>
+                <div class="rubric-field">
+                    <label>Toplam Kitap:</label>
+                    <input type="number" id="rubricToplamKitap" value="1">
+                </div>
+            </div>
+
+            <div class="rubric-field">
+                <label>Son Deneme Sonucu:</label>
+                <input type="number" id="rubricSonDeneme" value="0">
+            </div>
+
+            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 12px 0;">
+            <p style="font-size: 11px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">📊 5 Beceri Puanlaması (0 - 100)</p>
+
+            <div class="rubric-field">
+                <label>Okuma Puanı:</label>
+                <div class="slider-group">
+                    <input type="range" id="sliderOkuma" min="0" max="100" value="50" oninput="document.getElementById('valOkuma').innerText=this.value">
+                    <span class="slider-val" id="valOkuma">50</span>
+                </div>
+            </div>
+
+            <div class="rubric-field">
+                <label>Yazma Puanı:</label>
+                <div class="slider-group">
+                    <input type="range" id="sliderYazma" min="0" max="100" value="50" oninput="document.getElementById('valYazma').innerText=this.value">
+                    <span class="slider-val" id="valYazma">50</span>
+                </div>
+            </div>
+
+            <div class="rubric-field">
+                <label>Kelime (Vocabulary) Puanı:</label>
+                <div class="slider-group">
+                    <input type="range" id="sliderVocab" min="0" max="100" value="50" oninput="document.getElementById('valVocab').innerText=this.value">
+                    <span class="slider-val" id="valVocab">50</span>
+                </div>
+            </div>
+
+            <div class="rubric-field">
+                <label>Konuşma Puanı:</label>
+                <div class="slider-group">
+                    <input type="range" id="sliderKonusma" min="0" max="100" value="50" oninput="document.getElementById('valKonusma').innerText=this.value">
+                    <span class="slider-val" id="valKonusma">50</span>
+                </div>
+            </div>
+
+            <div class="rubric-field">
+                <label>Grammar Puanı:</label>
+                <div class="slider-group">
+                    <input type="range" id="sliderGrammar" min="0" max="100" value="50" oninput="document.getElementById('valGrammar').innerText=this.value">
+                    <span class="slider-val" id="valGrammar">50</span>
+                </div>
+            </div>
+
+            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 12px 0;">
+
+            <div class="rubric-field">
+                <label>Geçen Ders Ödevi Geri Dönütü / Yorumu:</label>
+                <textarea id="rubricOdevDonut" rows="2" placeholder="Örn: Ödevlerini eksiksiz yapmış, kelime tekrarında çok başarılıydı."></textarea>
+            </div>
+
+            <div class="rubric-field">
+                <label>Sonraki Ödev (Hazır Seçenekler):</label>
+                <select id="rubricHazirOdev" onchange="document.getElementById('rubricSonrakiOdev').value=this.value">
+                    <option value="">-- Hazır Seçenek Seçin --</option>
+                    <option value="Vocabulary Tekrarı ve Kelime Kartı Çalışması">Vocabulary Tekrarı ve Kelime Kartı Çalışması</option>
+                    <option value="Ünite Testi Çözümü ve Yanlış Analizi">Ünite Testi Çözümü ve Yanlış Analizi</option>
+                    <option value="İngilizce Hikaye Kitabı Okuma ve Özet Çıkarma">İngilizce Hikaye Kitabı Okuma ve Özet Çıkarma</option>
+                    <option value="Dinleme (Listening) Pratiği ve Ses Kaydı">Dinleme (Listening) Pratiği ve Ses Kaydı</option>
+                    <option value="Grammar Konu Tekrarı ve Soru Çözümü">Grammar Konu Tekrarı ve Soru Çözümü</option>
+                </select>
+            </div>
+
+            <div class="rubric-field">
+                <label>Sonraki Ödev (Özel El Yazısı ile Düzenle):</label>
+                <input type="text" id="rubricSonrakiOdev" placeholder="Ödev detayını buraya yazabilirsiniz...">
+            </div>
+
+            <button class="btn-giris" onclick="rubrikVerileriniKaydetVeWhatsappGonder()" style="background: #2563eb; margin-top: 10px;">💾 Google Sheets'e Kaydet & WhatsApp Raporu Oluştur</button>
+        </div>
+    </div>
+
+    <!-- GİRİŞ EKRANI -->
     <div class="login-card" id="login-container">
         <div class="logo-icon">🏆</div>
         <h2>İngilizce Portal Giriş</h2>
@@ -323,10 +478,8 @@
         <div id="mesaj"></div>
     </div>
 
-    <!-- Başarılı Giriş Sonrası Panel Alanı -->
+    <!-- PANEL ALANI -->
     <div id="panel-alani">
-        
-        <!-- 1. KULLANICI KONTROL ALANI & DERS TAKVİMİ -->
         <div class="user-header-bar">
             <div class="user-header-top">
                 <div class="user-info-area">
@@ -357,7 +510,6 @@
             </div>
         </div>
 
-        <!-- 2. OTURUM SÜRESİ SAYAÇ KARTI -->
         <div class="timer-card">
             <div class="timer-header">
                 <span class="timer-title">⏱️ Oturum Süresi:</span>
@@ -372,20 +524,15 @@
             </div>
         </div>
 
-        <!-- 3. SEKMELİ YAPI -->
         <div class="tabs-container">
             <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Raporlar</button>
             <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">🎮 Aktiviteler</button>
             <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
         </div>
-
-        <!-- SEKME İÇERİKLERİ -->
         
-        <!-- 1. ÖZET SEKMESİ -->
+        <!-- ÖZET SEKMESİ -->
         <div id="tab-ozet" class="tab-content active">
-            
-            <!-- 4'lü Özet Tablosu (Küçültüldü) -->
             <div class="summary-grid">
                 <div class="summary-card card-slate">
                     <div class="card-title">⭐ GENEL PUAN</div>
@@ -405,7 +552,6 @@
                 </div>
             </div>
 
-            <!-- KİTAP TAKİP SİSTEMİ -->
             <div class="book-tracker-box">
                 <div class="book-tracker-header">
                     <div class="book-header-left">
@@ -443,7 +589,6 @@
                 </div>
             </div>
 
-            <!-- GRAFİKLER -->
             <div class="chart-box">
                 <div class="chart-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</div>
                 <canvas id="gelisimGrafik" height="90"></canvas>
@@ -453,10 +598,9 @@
                 <div class="chart-title">📊 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</div>
                 <canvas id="kriterGrafik" height="90"></canvas>
             </div>
-
         </div>
 
-        <!-- 2. DERS RAPORLARI SEKMESİ -->
+        <!-- RAPORLAR SEKMESİ -->
         <div id="tab-raporlar" class="tab-content">
             <div class="report-archive-header">
                 <h3>📝 Öğrenci Haftalık Gelişim Karnesi & Arşivi</h3>
@@ -467,32 +611,22 @@
             </div>
         </div>
 
-        <!-- 3. AKTİVİTELER SEKMESİ -->
+        <!-- AKTİVİTELER SEKMESİ -->
         <div id="tab-aktiviteler" class="tab-content">
             <div class="activity-banner">
                 <h3>🎮 İngilizce Kelime Ezber & Bilgi Yarışması</h3>
                 <p>Sınıfını ve ünitelerini seç, zamanla yarışarak kelime dağarcığını test et ve liderlik tablosunda yerini al!</p>
                 <button class="btn-oyun-ac" onclick="oyunModaliniAc()">🚀 Kelime Yarışmasını Başlat</button>
             </div>
-            
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-                <h4 style="color: #334155; margin-bottom: 4px; font-size: 13px;">Daha Fazla Eğlenceli Aktivite Yakında Burada!</h4>
-                <p style="color: #64748b; font-size: 11px;">Yeni oyun modülleri eklendikçe bu alanda listelenecektir.</p>
-            </div>
         </div>
 
-        <!-- 4. ROZETLER SEKMESİ (7x3 Izgara) -->
+        <!-- ROZETLER SEKMESİ -->
         <div id="tab-rozetler" class="tab-content">
             <div class="badges-header-box">
                 <div class="badges-header-title">🏆 Kazanılan Rozetler</div>
                 <div id="kazanilanSayacBadge" style="font-weight: 800; color: #b45309; background: #fef08a; padding: 2px 8px; border-radius: 8px; font-size: 11.5px;">0 / 0</div>
             </div>
-            
-            <!-- 7x3 Izgara Yapısı -->
-            <div class="badges-grid" id="rozetlerGridKonteyner">
-                <p style="color: #718096; text-align: center; grid-column: span 7; padding: 12px;">Rozetler yükleniyor...</p>
-            </div>
-            
+            <div class="badges-grid" id="rozetlerGridKonteyner"></div>
             <div class="badge-progress-box">
                 <div class="badge-progress-top">
                     <span>🚀 Rozet Tamamlama Seviyesi</span>
@@ -502,29 +636,23 @@
                     <div class="badge-bar-fill" id="rozetBarFill"></div>
                 </div>
             </div>
-
-            <!-- Deneme Puanları Gelişim Grafiği -->
             <div class="chart-box" style="margin-top: 15px;">
                 <div class="chart-title">🎯 Deneme Puanları Gelişim Grafiği</div>
                 <canvas id="denemeGrafik" height="90"></canvas>
             </div>
         </div>
-
     </div>
 
-    <!-- KELİME OYUNU AÇILIR PANELİ (MODAL) -->
+    <!-- OYUN MODAL -->
     <div class="game-modal-overlay" id="gameModalOverlay">
         <div class="game-modal-content">
             <button class="game-close-btn" onclick="oyunModaliniKapat()">✕</button>
-            
             <div id="oyunAyarBolumu">
                 <div class="game-title">🏆 Kelime Ezber Yarışması</div>
-                <div class="game-subtitle">Google Sheets Kelimeler Havuzundan Sorulur! (Tekrarsız Sorular)</div>
-                
+                <div class="game-subtitle">Google Sheets Kelimeler Havuzundan Sorulur!</div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <input type="text" id="oyuncuIsmiInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
                 </div>
-
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Sınıf Seçiniz:</label>
                 <div class="sinif-secim-grid">
                     <button class="sinif-btn active" onclick="sinifSec(2, this)">2. Sınıf</button>
@@ -535,103 +663,56 @@
                     <button class="sinif-btn" onclick="sinifSec(7, this)">7. Sınıf</button>
                     <button class="sinif-btn" onclick="sinifSec(8, this)">8. Sınıf</button>
                 </div>
-
-                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Ünite Seçiniz (Çoklu Seçilebilir):</label>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Ünite Seçiniz:</label>
                 <div class="unite-secim-box" id="uniteSecimKonteyner"></div>
-
                 <button class="btn-giris" onclick="yarismayiBaslat()" style="background: #2563eb; margin-top: 3px;">🚀 Yarışmayı Başlat</button>
             </div>
-
-            <!-- Çoktan Seçmeli Soru Ekranı -->
             <div id="oyunEkranIci">
                 <div class="oyun-ust-bilgi">
                     <span id="lblKelimeSayac">Kelime: 1 / 25</span>
                     <span id="lblKronometre" style="color: #dc2626;">⏱️ 00:00</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
-                    <span style="color: #16a34a;">✅ Doğru: <span id="lblDogruSayisi">0</span></span>
-                    <span style="color: #dc2626;">❌ Yanlış: <span id="lblYanlisSayisi">0</span></span>
-                </div>
-
                 <div class="kelime-gosterge">
                     <span style="font-size: 9.5px; font-weight: 700; color: #3b82f6; text-transform: uppercase;" id="lblSoruDilLabel">Kelime</span>
                     <div class="kelime-en" id="lblSoruKelime">Apple</div>
                 </div>
-
-                <div style="font-size: 11.5px; text-align: center; color: #64748b; font-weight: 600; margin-bottom: 8px;">Doğru anlamını seçiniz:</div>
                 <div class="siklar-grid">
                     <button class="btn-sik" id="btnSik0" onclick="sikSec(0)">Şık 1</button>
                     <button class="btn-sik" id="btnSik1" onclick="sikSec(1)">Şık 2</button>
                 </div>
             </div>
-
-            <!-- Sonuç ve Liderlik Ekranı -->
             <div id="oyunSonucBolumu" style="display: none; text-align: center;">
-                <div style="font-size: 24px; margin-bottom: 3px;">🎉</div>
                 <h3 style="color: #16a34a; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Harika! Tur Tamamlandı</h3>
-                
-                <div style="display: flex; justify-content: center; gap: 12px; background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
-                    <span style="color: #b45309;">Skor: <span id="sonucPuan">45</span> Puan</span>
-                    <span style="color: #475569;">Süre: <span id="sonucSure">00:46</span></span>
-                </div>
-
+                <div style="font-weight: 800; font-size: 13px; margin-bottom: 10px;">Skor: <span id="sonucPuan">45</span> Puan | Süre: <span id="sonucSure">00:46</span></div>
                 <button class="btn-giris" onclick="oyunModaliniAc()" style="background: #2563eb; margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
-
                 <div class="liderlik-tablosu-box">
                     <div class="liderlik-title">📊 Liderlik Tablosu (Top 5)</div>
-                    <table class="lid-table">
-                        <thead>
-                            <tr>
-                                <th>Sıra</th>
-                                <th>İsim</th>
-                                <th>D</th>
-                                <th>Puan</th>
-                                <th>Süre</th>
-                            </tr>
-                        </thead>
-                        <tbody id="liderlikTabloGovde"></tbody>
-                    </table>
+                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="liderlikTabloGovde"></tbody></table>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- Yüzen Baloncuk Toast Mesajı -->
+    <!-- AI Toast -->
     <div class="ai-floating-toast" id="aiToastBox" style="display: none;">
-        <div class="ai-toast-title">
-            <span>🤖 Koçluk Asistanı</span>
-            <span class="ai-toast-timer" id="toastTimer">10s</span>
-        </div>
+        <div class="ai-toast-title"><span>🤖 Koçluk Asistanı</span><span class="ai-toast-timer" id="toastTimer">10s</span></div>
         <div class="ai-toast-text" id="aiMesajMetni">Sisteme hoş geldin!</div>
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbycGd_fqICCBhsJAQtdlXQSwDJHqdJIbvv_BkACCaZsG1ORGlXzSn2WA5uL0GPCf6NSLA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxh7RmdfF0gfq-tbETJhVXc3hzelqb-vRv_eGfQ803AW10p0Rse0tS4dvoe9tJ9-DRlZQ/exec";
         
-        let toplamSaniye = 0;
-        let timerInterval = null;
-        let aktifOgrenciAdi = "";
-        let hataliDenemeSayisi = 0;
-        const MAX_DENEME = 3;
-        let gelisimChartInstance = null;
-        let kriterChartInstance = null;
-        let denemeChartInstance = null;
+        let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
+        let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
+        let secilenSinif = 2, secilenUniteler = [1], masterKelimeHavuzu = [], aktifKelimeListesi = [];
+        let aktifSoruIndex = 0, oyunDogru = 0, oyunYanlis = 0, oyunTimerInterval = null, oyunSaniyeSayac = 0, mevcutDogruSikIndex = 0, soruKilitli = false;
 
-        let secilenSinif = 2;
-        let secilenUniteler = [1];
-        let masterKelimeHavuzu = [];
-        let aktifKelimeListesi = [];
-        let aktifSoruIndex = 0;
-        let oyunDogru = 0;
-        let oyunYanlis = 0;
-        let oyunTimerInterval = null;
-        let oyunSaniyeSayac = 0;
-        let globalLiderlikCache = [];
-        let mevcutDogruSikIndex = 0;
-        let soruKilitli = false;
+        window.onload = async function() {
+            try {
+                let res = await fetch(apiURL);
+                globalDataCache = await res.json();
+            } catch(e) { console.error("Veri çekme hatası", e); }
 
-        window.onload = function() {
             const oturumAcik = sessionStorage.getItem("oturumAcik");
             const kayitliOgrenci = sessionStorage.getItem("aktifOgrenci");
             const kayitliSure = sessionStorage.getItem("toplamSaniye");
@@ -641,20 +722,157 @@
                 toplamSaniye = parseInt(kayitliSure);
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
-                
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
-
                 bilgileriSunucudanGuncelle(aktifOgrenciAdi);
             }
             uniteSecimleriniOlustur(2, 8);
+            ogretmenSelectDoldur();
         };
 
+        function ogretmenPaneliAc() {
+            document.getElementById('sifreModal').style.display = 'flex';
+        }
+
+        function sifreKontrolEt() {
+            let sifre = document.getElementById('yoneticiSifreInput').value.trim();
+            if (sifre === "315269") {
+                document.getElementById('sifreModal').style.display = 'none';
+                document.getElementById('yoneticiSifreInput').value = "";
+                document.getElementById('rubricModal').style.display = 'flex';
+            } else {
+                alert("Hatalı şifre!");
+            }
+        }
+
+        function ogretmenSelectDoldur() {
+            let sel = document.getElementById('rubricOgrenciSelect');
+            sel.innerHTML = '<option value="">-- Öğrenci Seçin --</option>';
+            globalDataCache.forEach(u => {
+                let opt = document.createElement('option');
+                opt.value = u.ogrenci;
+                opt.innerText = u.ogrenci;
+                sel.appendChild(opt);
+            });
+        }
+
+        function ogrenciVerileriniYukle() {
+            let ogrAdi = document.getElementById('rubricOgrenciSelect').value;
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrAdi.toLowerCase());
+            if (!user) return;
+
+            document.getElementById('rubricTelefon').value = user.telefon || "";
+            
+            // Geçmiş tarihleri doldur
+            let tarihSel = document.getElementById('rubricGecmisTarihSelect');
+            tarihSel.innerHTML = '<option value="">-- Yeni Kayıt / En Güncel --</option>';
+            if (user.arsivListesi) {
+                user.arsivListesi.forEach(ar => {
+                    let opt = document.createElement('option');
+                    opt.value = ar.tarih;
+                    opt.innerText = ar.tarih + ` (Genel Puan: ${ar.genel})`;
+                    tarihSel.appendChild(opt);
+                });
+            }
+
+            // En güncel verileri yerleştir
+            document.getElementById('rubricTamamlananTarih').value = new Date().toISOString().split('T')[0];
+            if (user.kitapBilgi) {
+                document.getElementById('rubricKitapAdi').value = user.kitapBilgi.kitapAdi || "";
+                document.getElementById('rubricSayfa').value = user.kitapBilgi.sayfa || 0;
+                document.getElementById('rubricHedef').value = user.kitapBilgi.hedef || 40;
+                document.getElementById('rubricToplamKitap').value = user.kitapBilgi.okunanSayisi || 1;
+            }
+            document.getElementById('rubricSonDeneme').value = user.sonDeneme || 0;
+        }
+
+        function gecmisTarihVerisiniGetir() {
+            let ogrAdi = document.getElementById('rubricOgrenciSelect').value;
+            let secilenTarih = document.getElementById('rubricGecmisTarihSelect').value;
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrAdi.toLowerCase());
+            if (!user || !secilenTarih) return;
+
+            let arsivRow = user.arsivListesi.find(ar => ar.tarih === secilenTarih);
+            if (arsivRow) {
+                document.getElementById('sliderOkuma').value = arsivRow.okuma;
+                document.getElementById('valOkuma').innerText = arsivRow.okuma;
+                document.getElementById('sliderYazma').value = arsivRow.yazma;
+                document.getElementById('valYazma').innerText = arsivRow.yazma;
+                document.getElementById('sliderVocab').value = arsivRow.vocabulary;
+                document.getElementById('valVocab').innerText = arsivRow.vocabulary;
+                document.getElementById('sliderKonusma').value = arsivRow.konusma;
+                document.getElementById('valKonusma').innerText = arsivRow.konusma;
+                document.getElementById('sliderGrammar').value = arsivRow.grammar;
+                document.getElementById('valGrammar').innerText = arsivRow.grammar;
+                document.getElementById('rubricSonDeneme').value = arsivRow.deneme;
+                document.getElementById('rubricTamamlananTarih').value = arsivRow.tarih;
+            }
+        }
+
+        async function rubrikVerileriniKaydetVeWhatsappGonder() {
+            let ogrenci = document.getElementById('rubricOgrenciSelect').value;
+            let telefon = document.getElementById('rubricTelefon').value.trim();
+            let tarih = document.getElementById('rubricTamamlananTarih').value;
+            let sonrakiTarih = document.getElementById('rubricSonrakiTarih').value;
+            let kitapAdi = document.getElementById('rubricKitapAdi').value;
+            let sayfa = document.getElementById('rubricSayfa').value;
+            let hedef = document.getElementById('rubricHedef').value;
+            let okunansayisi = document.getElementById('rubricToplamKitap').value;
+            let sondeneme = document.getElementById('rubricSonDeneme').value;
+            let okuma = document.getElementById('sliderOkuma').value;
+            let yazma = document.getElementById('sliderYazma').value;
+            let vocab = document.getElementById('sliderVocab').value;
+            let konusma = document.getElementById('sliderKonusma').value;
+            let grammar = document.getElementById('sliderGrammar').value;
+            let odevDonut = document.getElementById('rubricOdevDonut').value;
+            let sonrakiOdev = document.getElementById('rubricSonrakiOdev').value;
+
+            if (!ogrenci || !tarih) {
+                alert("Lütfen öğrenci ve tamamlanan ders tarihini seçiniz!");
+                return;
+            }
+
+            let url = `${apiURL}?islem=rubrikKaydet&ogrenci=${encodeURIComponent(ogrenci)}&tarih=${tarih}&sonrakitarih=${sonrakiTarih}&kitapadi=${encodeURIComponent(kitapAdi)}&sayfa=${sayfa}&hedef=${hedef}&okunansayisi=${okunansayisi}&sondeneme=${sondeneme}&okuma=${okuma}&yazma=${yazma}&vocab=${vocab}&konusma=${konusma}&grammar=${grammar}&odevdonut=${encodeURIComponent(odevDonut)}&sonrakiodev=${encodeURIComponent(sonrakiOdev)}`;
+
+            try {
+                await fetch(url);
+                alert("Veriler Google Sheets'e başarıyla kaydedildi!");
+                document.getElementById('rubricModal').style.display = 'none';
+
+                // WhatsApp Rapor Metni Oluşturma
+                let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
+                let raporMetni = `🌟 *ÖĞRETMEN ÇOCUK - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🌟\n\n` +
+                    `Sevgili Velimiz, ${tarih} tarihli dersimizin değerlendirme raporu aşağıdadır:\n\n` +
+                    `👤 *Öğrenci:* ${ogrenci}\n` +
+                    `⭐ *Genel Başarı Puanı:* ${ortalamaPuan} / 100\n` +
+                    `🎯 *Son Deneme Sonucu:* ${sondeneme}\n\n` +
+                    `📈 *Beceri Dağılımı:*\n` +
+                    `• Okuma: ${okuma}/100\n` +
+                    `• Yazma: ${yazma}/100\n` +
+                    `• Kelime (Vocabulary): ${vocab}/100\n` +
+                    `• Konuşma: ${konusma}/100\n` +
+                    `• Grammar: ${grammar}/100\n\n` +
+                    `📚 *Okuma Takibi:* ${kitapAdi} (${sayfa}/${hedef} sayfa)\n` +
+                    `💬 *Öğretmen Gözlemi:* ${odevDonut || "Harika bir çaba ve katılım gösterdik."}\n` +
+                    `📌 *Sonraki Ödev:* ${sonrakiOdev || "Tekrar ve pratik"}\n` +
+                    `📅 *Sonraki Ders Tarihi:* ${sonrakiTarih || "Belirtilmedi"}\n\n` +
+                    `Sağlıklı ve verimli bir hafta dileriz! 🌻`;
+
+                if (telefon) {
+                    let waURL = `https://wa.me/${telefon}?text=${encodeURIComponent(raporMetni)}`;
+                    window.open(waURL, '_blank');
+                } else {
+                    alert("Bu öğrenciye ait telefon numarası bulunamadıği için WhatsApp yönlendirmesi yapılamadı, ancak veriler kaydedildi.");
+                }
+
+            } catch(e) {
+                alert("Kayıt sırasında hata oluştu: " + e);
+            }
+        }
+
         function guvenliMetin(str) {
-            return str.replace(/[&<>'"]/g, 
-                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-            );
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
 
         function sekmeDegistir(tabName, btnElement) {
@@ -675,16 +893,7 @@
             if (puan >= 60) return "📈 Yükselişte";
             if (puan >= 55) return "👍 İyi";
             if (puan >= 50) return "💡 İstikrarlı";
-            if (puan >= 45) return "⚡ Gayretli";
-            if (puan >= 40) return "📚 Çalışkan";
-            if (puan >= 35) return "🌱 Gelişiyor";
-            if (puan >= 30) return "🚶‍♂️ İlerliyor";
-            if (puan >= 25) return "🔄 Toparlıyor";
-            if (puan >= 20) return "⚠️ Çaba Lazım";
-            if (puan >= 15) return "💤 Uykuda";
-            if (puan >= 10) return "❄️ Donuk";
-            if (puan >= 5)  return "🚨 Kritik";
-            return "🐣 Başlangıç";
+            return "🌱 Gelişiyor";
         }
 
         function skorRenkSinifiVer(puan) {
@@ -715,44 +924,25 @@
 
             let cumleler = [];
             if (puan >= 80) {
-                cumleler.push(`Bu hafta ${ad} ile oldukça disiplinli ve verimli bir ders döngüsünü geride bıraktık. Değerlendirmeler sonucunda öğrencimiz bu hafta **${puan} / 100** genel başarı puanına ulaştı. Ders içi odaklanması ve kavrama hızı son derece üst düzeyde seyretti. 🌟`);
-            } else if (puan >= 50) {
-                cumleler.push(`Sevgili velimiz, öğrencimiz ${ad} bu haftaki çalışma sürecinde gösterdiği gayretle **${puan} / 100** genel başarı puanı elde etti. Çalışmalarımızda ufak tekrarlarla bu puanı çok daha yukarı taşıyacağımıza inanıyoruz. 🚀`);
+                cumleler.push(`Bu hafta ${ad} ile oldukça disiplinli ve verimli bir ders döngüsünü geride bıraktık. Öğrencimiz bu hafta **${puan} / 100** genel başarı puanına ulaştı. Odaklanması mükemmeldi. 🌟`);
             } else {
-                cumleler.push(`Bu hafta ${ad} için biraz tempolu bir dönem oldu ve genel başarı puanı **${puan} / 100** olarak kaydedildi. Önümüzdeki haftalarda pratik yaparak bu tabloyu hızla toparlayacağız! 💪`);
+                cumleler.push(`Sevgili velimiz, öğrencimiz ${ad} bu haftaki süreçte **${puan} / 100** genel başarı puanı elde etti. Ufak tekrarlarla daha iyi olacağız. 🚀`);
             }
-
-            cumleler.push(`5 Kriter dağılımında Okuma (${okuma}), Yazma (${yazma}), Kelime (${vocab}), Konuşma (${konusma}) ve Grammar (${grammar}) becerileri ölçüldü.`);
-            if (deneme > 0) {
-                cumleler.push(`Ayrıca bu haftaki son deneme sınavı sonucu **${deneme}** olarak hanesine yazıldı.`);
-            }
-            cumleler.push(`Destekleriniz ve bu güzel iş birliği için çok teşekkür ederiz. Sevgiyle kalın! 🌻`);
-
+            cumleler.push(`Okuma (${okuma}), Yazma (${yazma}), Kelime (${vocab}), Konuşma (${konusma}) ve Grammar (${grammar}) ölçüldü.`);
+            if (deneme > 0) cumleler.push(`Son deneme sonucu: **${deneme}**.`);
             return `"${cumleler.join(" ")}"`;
         }
 
         function aiMesajUret(ogrenciAdi, kazanilanRozetSayisi, toplamRozetSayisi) {
-            let mesaj = `Harika bir başlangıç ${ogrenciAdi}! Toplam ${toplamRozetSayisi} rozetten **${kazanilanRozetSayisi} tanesini** başarıyla kilitledin. Koleksiyonunu büyütmek için çalışmaya devam et! ✨`;
-            if (kazanilanRozetSayisi === 0) {
-                mesaj = `Merhaba ${ogrenciAdi}! Henüz kilitli rozetin bulunmuyor. Puanını artırarak ilk rozetlerini hızla toplayabilirsin! 🎯`;
-            }
-
+            let mesaj = `Harika bir başlangıç ${ogrenciAdi}! Toplam ${toplamRozetSayisi} rozetten **${kazanilanRozetSayisi} tanesini** kilitledin. ✨`;
             document.getElementById('aiMesajMetni').innerText = mesaj;
-            
             let toastBox = document.getElementById('aiToastBox');
             toastBox.style.display = "block";
-            toastBox.style.opacity = "1";
-
-            let kalanSaniye = 10;
-            let toastInterval = setInterval(() => {
-                kalanSaniye--;
-                document.getElementById('toastTimer').innerText = kalanSaniye + "s";
-                if (kalanSaniye <= 0) {
-                    clearInterval(toastInterval);
-                    toastBox.style.transition = "opacity 0.5s ease";
-                    toastBox.style.opacity = "0";
-                    setTimeout(() => toastBox.style.display = "none", 500);
-                }
+            let kalan = 10;
+            let t = setInterval(() => {
+                kalan--;
+                document.getElementById('toastTimer').innerText = kalan + "s";
+                if (kalan <= 0) { clearInterval(t); toastBox.style.display = "none"; }
             }, 1000);
         }
 
@@ -760,149 +950,85 @@
             if (!tarihStr) return "--.--.----";
             let d = new Date(tarihStr);
             if (!isNaN(d.getTime())) {
-                let gun = String(d.getDate()).padStart(2, '0');
-                let ay = String(d.getMonth() + 1).padStart(2, '0');
-                let yil = d.getFullYear();
-                return `${gun}.${ay}.${yil}`;
+                return String(d.getDate()).padStart(2,'0') + "." + String(d.getMonth()+1).padStart(2,'0') + "." + d.getFullYear();
             }
             return tarihStr;
         }
 
         function dersTakviminiIsle(derslerDizisi) {
-            let gecenDersTarih = "--.--.----";
-            let gelecekDersTarih = "--.--.----";
-
+            let gecen = "--.--.----", gelecek = "--.--.----";
             if (derslerDizisi && derslerDizisi.length > 0) {
-                if (derslerDizisi.length >= 1) {
-                    gecenDersTarih = tarihiDuzelt(derslerDizisi[0].tarih);
-                }
-                if (derslerDizisi.length >= 2) {
-                    gelecekDersTarih = tarihiDuzelt(derslerDizisi[1].tarih);
-                }
+                if (derslerDizisi.length >= 1) gecen = tarihiDuzelt(derslerDizisi[0].tarih);
+                if (derslerDizisi.length >= 2) gelecek = tarihiDuzelt(derslerDizisi[1].tarih);
             }
-
-            document.getElementById('miniGecenTarih').innerText = gecenDersTarih;
-            document.getElementById('miniGelecekTarih').innerText = gelecekDersTarih;
+            document.getElementById('miniGecenTarih').innerText = gecen;
+            document.getElementById('miniGelecekTarih').innerText = gelecek;
         }
 
         function dersRaporlariniOlustur(arsivListesi, kitapBilgi) {
             let konteyner = document.getElementById('arsivKartlariKonteyner');
             konteyner.innerHTML = "";
-
             if (!arsivListesi || arsivListesi.length === 0) {
-                konteyner.innerHTML = `<p style="color: #718096; text-align: center; padding: 12px;">Henüz arşivlenmiş ders raporu bulunmuyor.</p>`;
+                konteyner.innerHTML = `<p style="color: #718096; text-align: center; padding: 12px;">Arşiv verisi bulunmuyor.</p>`;
                 return;
             }
-
             arsivListesi.forEach((row, index) => {
                 let formatliTarih = tarihiDuzelt(row.tarih);
                 let yorumMetni = haftalikYorumOlustur(row, aktifOgrenciAdi);
                 let renkSkoruSinif = skorRenkSinifiVer(row.genel);
                 let temaTonu = haftalikRenkTonuVer(index);
 
-                let cardHTML = `
+                konteyner.innerHTML += `
                     <div class="report-card" style="background-color: ${temaTonu.bg}; border-color: ${temaTonu.border};">
                         <div class="report-card-top">
-                            <div class="report-date">📅 Ders Tarihi: ${formatliTarih}</div>
-                            <div class="report-badge-score ${renkSkoruSinif}">Haftalık Genel Puan: ${row.genel} / 100</div>
+                            <div class="report-date">📅 ${formatliTarih}</div>
+                            <div class="report-badge-score ${renkSkoruSinif}">Genel: ${row.genel}/100</div>
                         </div>
-                        <div style="font-size: 11px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">🍎 O HAFTA NE YAPILDI & GÖZLEM:</div>
-                        <div class="report-comment-box">
-                            ${yorumMetni}
-                        </div>
+                        <div class="report-comment-box">${yorumMetni}</div>
                         <div class="report-criteria-bar">
-                            <span>📖 Okuma: ${row.okuma}/100</span>
-                            <span>✍️ Yazma: ${row.yazma}/100</span>
-                            <span>💡 Kelime: ${row.vocabulary}/100</span>
-                            <span>🗣️ Konuşma: ${row.konusma}/100</span>
-                            <span>📐 Grammar: ${row.grammar}/100</span>
+                            <span>📖 ${row.okuma}</span><span>✍️ ${row.yazma}</span><span>💡 ${row.vocabulary}</span><span>🗣️ ${row.konusma}</span><span>📐 ${row.grammar}</span>
                         </div>
                         <div class="report-footer-info">
-                            <span>📚 Kitap: <b>${kitapBilgi.kitapAdi}</b> (Okunan: ${kitapBilgi.sayfa} / Hedef: ${kitapBilgi.hedef} sayfa)</span>
-                            <div class="report-deneme-badge">
-                                🎯 Son Deneme Puanı: ${row.deneme}
-                            </div>
+                            <span>📚 <b>${kitapBilgi.kitapAdi}</b></span>
+                            <div class="report-deneme-badge">🎯 Deneme: ${row.deneme}</div>
                         </div>
                     </div>
                 `;
-                konteyner.innerHTML += cardHTML;
             });
         }
 
         function kitapTakibiniIsle(kitap) {
-            document.getElementById('valKitapAdi').innerText = kitap.kitapAdi || "Kitap Seçilmedi";
+            document.getElementById('valKitapAdi').innerText = kitap.kitapAdi || "Kitap Yok";
             document.getElementById('valKitapSkoru').innerText = kitap.okunanSayisi || 5;
-            
-            let sayfa = kitap.sayfa || 0;
-            let hedef = kitap.hedef || 40;
+            let sayfa = kitap.sayfa || 0, hedef = kitap.hedef || 40;
             let yuzde = hedef > 0 ? Math.min(Math.round((sayfa / hedef) * 100), 100) : 0;
-
             document.getElementById('valKitapYuzde').innerText = `%${yuzde}`;
             document.getElementById('valKitapBar').style.width = yuzde + "%";
-            document.getElementById('valKitapSayfa').innerText = `Okunan: ${sayfa} sayfa`;
-            document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef} sayfa`;
+            document.getElementById('valKitapSayfa').innerText = `Okunan: ${sayfa}`;
+            document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef}`;
         }
 
         function grafikliCiz(grafikGecmis, user, denemeGecmis) {
             let labels = grafikGecmis.map(item => tarihiDuzelt(item.tarih));
             let veriler = grafikGecmis.map(item => item.genel);
-
             if (gelisimChartInstance) gelisimChartInstance.destroy();
-            let ctx1 = document.getElementById('gelisimGrafik').getContext('2d');
-            gelisimChartInstance = new Chart(ctx1, {
+            gelisimChartInstance = new Chart(document.getElementById('gelisimGrafik').getContext('2d'), {
                 type: 'line',
-                data: {
-                    labels: labels.length > 0 ? labels : ["Veri Yok"],
-                    datasets: [{
-                        label: 'Yıllık Gelişim Eğrisi (Genel Puan)',
-                        data: veriler.length > 0 ? veriler : [0],
-                        borderColor: '#16a34a',
-                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 3
-                    }]
-                },
-                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
-            });
-
-            let cVocab = user.vocabOrt || 0;
-            let cYazma = user.yazmaOrt || 0;
-            let cOkuma = user.okumaOrt || 0;
-            let cKonusma = user.konusmaOrt || 0;
-            let cGrammar = user.grammarOrt || 0;
-
-            if (kriterChartInstance) kriterChartInstance.destroy();
-            let ctx2 = document.getElementById('kriterGrafik').getContext('2d');
-            kriterChartInstance = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: ['Okuma', 'Yazma', 'Kelime', 'Konuşma', 'Grammar'],
-                    datasets: [{
-                        data: [cOkuma, cYazma, cVocab, cKonusma, cGrammar],
-                        backgroundColor: ['#4ade80', '#38bdf8', '#fbbf24', '#c084fc', '#f43f5e'],
-                        borderRadius: 4
-                    }]
-                },
+                data: { labels: labels.length ? labels : ["Yok"], datasets: [{ data: veriler.length ? veriler : [0], borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true, tension: 0.3, pointRadius: 2 }] },
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
             });
 
-            let dLabels = denemeGecmis.map(item => tarihiDuzelt(item.tarih));
-            let dVeriler = denemeGecmis.map(item => item.deneme);
+            if (kriterChartInstance) kriterChartInstance.destroy();
+            kriterChartInstance = new Chart(document.getElementById('kriterGrafik').getContext('2d'), {
+                type: 'bar',
+                data: { labels: ['Okuma', 'Yazma', 'Kelime', 'Konuşma', 'Grammar'], datasets: [{ data: [user.okumaOrt||0, user.yazmaOrt||0, user.vocabOrt||0, user.konusmaOrt||0, user.grammarOrt||0], backgroundColor: ['#4ade80', '#38bdf8', '#fbbf24', '#c084fc', '#f43f5e'], borderRadius: 4 }] },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
 
             if (denemeChartInstance) denemeChartInstance.destroy();
-            let ctx3 = document.getElementById('denemeGrafik').getContext('2d');
-            denemeChartInstance = new Chart(ctx3, {
+            denemeChartInstance = new Chart(document.getElementById('denemeGrafik').getContext('2d'), {
                 type: 'bar',
-                data: {
-                    labels: dLabels.length > 0 ? dLabels : ["Veri Yok"],
-                    datasets: [{
-                        label: 'Deneme Puanları',
-                        data: dVeriler.length > 0 ? dVeriler : [0],
-                        backgroundColor: '#f43f5e',
-                        borderRadius: 4
-                    }]
-                },
+                data: { labels: denemeGecmis.map(i => tarihiDuzelt(i.tarih)), datasets: [{ data: denemeGecmis.map(i => i.deneme), backgroundColor: '#f43f5e', borderRadius: 4 }] },
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
             });
         }
@@ -910,430 +1036,165 @@
         function rozetleriIsle(rozetListesi, guncelPuan) {
             let konteyner = document.getElementById('rozetlerGridKonteyner');
             konteyner.innerHTML = "";
-
-            if (!rozetListesi || rozetListesi.length === 0) {
-                konteyner.innerHTML = `<p style="color: #718096; text-align: center; grid-column: span 7; padding: 12px;">Tanımlanmış rozet bulunmuyor.</p>`;
-                document.getElementById('kazanilanSayacBadge').innerText = `0 / 0`;
-                document.getElementById('rozetYuzdeBadge').innerText = `%0`;
-                document.getElementById('rozetBarFill').style.width = `0%`;
-                return { kazanilan: 0, toplam: 0 };
-            }
-
+            if (!rozetListesi || rozetListesi.length === 0) return { kazanilan: 0, toplam: 0 };
             rozetListesi.sort((a, b) => a.gerekliPuan - b.gerekliPuan);
-
-            let kazanilanSayisi = 0;
-            let toplamRozet = rozetListesi.length;
-
+            let kazanilan = 0, toplam = rozetListesi.length;
             rozetListesi.forEach(r => {
-                let kilitliMi = guncelPuan >= r.gerekliPuan;
-                if (kilitliMi) kazanilanSayisi++;
-
-                let cardClass = kilitliMi ? "badge-card unlocked" : "badge-card";
-                let emojiIcon = kilitliMi ? r.emoji : "🔒";
-
-                let html = `
-                    <div class="${cardClass}">
-                        <div class="badge-emoji">${emojiIcon}</div>
+                let unlocked = guncelPuan >= r.gerekliPuan;
+                if (unlocked) kazanilan++;
+                konteyner.innerHTML += `
+                    <div class="badge-card ${unlocked ? 'unlocked' : ''}">
+                        <div class="badge-emoji">${unlocked ? r.emoji : '🔒'}</div>
                         <div class="badge-name">${r.rozetAdi}</div>
                         <div class="badge-target">${r.gerekliPuan}p</div>
                     </div>
                 `;
-                konteyner.innerHTML += html;
             });
-
-            let yuzde = Math.round((kazanilanSayisi / toplamRozet) * 100);
-            document.getElementById('kazanilanSayacBadge').innerText = `${kazanilanSayisi} / ${toplamRozet}`;
+            let yuzde = Math.round((kazanilan / toplam) * 100);
+            document.getElementById('kazanilanSayacBadge').innerText = `${kazanilan} / ${toplam}`;
             document.getElementById('rozetYuzdeBadge').innerText = `%${yuzde}`;
             document.getElementById('rozetBarFill').style.width = `${yuzde}%`;
-
-            return { kazanilan: kazanilanSayisi, toplam: toplamRozet };
+            return { kazanilan, toplam };
         }
 
-        // --- KELİME OYUNU MİMARİSİ ---
-        function oyunModaliniAc() {
-            document.getElementById('gameModalOverlay').style.display = 'flex';
-            document.getElementById('oyunAyarBolumu').style.display = 'block';
-            document.getElementById('oyunEkranIci').style.display = 'none';
-            document.getElementById('oyunSonucBolumu').style.display = 'none';
-        }
-
-        function oyunModaliniKapat() {
-            document.getElementById('gameModalOverlay').style.display = 'none';
-            if (oyunTimerInterval) clearInterval(oyunTimerInterval);
-        }
-
-        function sinifSec(sinifNo, btnElement) {
-            secilenSinif = sinifNo;
-            document.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
-
-            let uniteSayisi = (sinifNo === 2 || sinifNo === 5) ? 8 : 10;
-            uniteSecimleriniOlustur(sinifNo, uniteSayisi);
-        }
-
-        function uniteSecimleriniOlustur(sinifNo, uniteSayisi) {
-            let konteyner = document.getElementById('uniteSecimKonteyner');
-            konteyner.innerHTML = "";
-            secilenUniteler = [1];
-
-            for (let u = 1; u <= uniteSayisi; u++) {
-                let isSelected = (u === 1) ? "selected" : "";
+        function oyunModaliniAc() { document.getElementById('gameModalOverlay').style.display = 'flex'; }
+        function oyunModaliniKapat() { document.getElementById('gameModalOverlay').style.display = 'none'; if(oyunTimerInterval)clearInterval(oyunTimerInterval); }
+        function sinifSec(n, el) { secilenSinif = n; document.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); uniteSecimleriniOlustur(n, (n===2||n===5)?8:10); }
+        function uniteSecimleriniOlustur(n, count) {
+            let kont = document.getElementById('uniteSecimKonteyner'); kont.innerHTML = ""; secilenUniteler = [1];
+            for(let u=1; u<=count; u++) {
                 let chip = document.createElement('div');
-                chip.className = `unite-chip ${isSelected}`;
-                chip.innerText = `${u}.Ünite`;
+                chip.className = `unite-chip ${u===1?'selected':''}`; chip.innerText = `${u}.Ü`;
                 chip.onclick = function() {
-                    if (secilenUniteler.includes(u)) {
-                        if (secilenUniteler.length > 1) {
-                            secilenUniteler = secilenUniteler.filter(item => item !== u);
-                            chip.classList.remove('selected');
-                        }
-                    } else {
-                        secilenUniteler.push(u);
-                        chip.classList.add('selected');
-                    }
+                    if(secilenUniteler.includes(u)) { if(secilenUniteler.length>1){ secilenUniteler = secilenUniteler.filter(i=>i!==u); chip.classList.remove('selected'); } }
+                    else { secilenUniteler.push(u); chip.classList.add('selected'); }
                 };
-                konteyner.appendChild(chip);
+                kont.appendChild(chip);
             }
         }
-
         function yarismayiBaslat() {
             let isim = document.getElementById('oyuncuIsmiInput').value.trim();
-            if (!isim) {
-                alert("Lütfen adınızı soyadınızı giriniz!");
-                return;
-            }
-
-            let hedefSoruSayisi = 25;
-            if (secilenSinif >= 5) {
-                hedefSoruSayisi = 25 + ((secilenSinif - 4) * 5);
-            }
-
-            let filtrelenmisHavuz = masterKelimeHavuzu.filter(item => 
-                item.sinif === secilenSinif && secilenUniteler.includes(item.unite)
-            );
-
-            if (filtrelenmisHavuz.length === 0) {
-                alert(`Seçilen sınıf (${secilenSinif}) ve ünite(ler) için Google Sheets 'Kelimeler' sekmesinde kelime bulunamadı!`);
-                return;
-            }
-
-            let karisikHavuz = [...filtrelenmisHavuz].sort(() => Math.random() - 0.5);
-            aktifKelimeListesi = [];
-
-            for (let i = 0; i < hedefSoruSayisi && i < karisikHavuz.length; i++) {
-                let rastKelime = karisikHavuz[i];
-                let digerleri = filtrelenmisHavuz.filter(item => item.en !== rastKelime.en);
-                if (digerleri.length === 0) digerleri = masterKelimeHavuzu;
-                let yanlisKelime = digerleri[Math.floor(Math.random() * digerleri.length)];
-
-                let ingilizceSorulsun = Math.random() < 0.5;
-                let soruMetni = ingilizceSorulsun ? rastKelime.en : rastKelime.tr;
-                let dilLabel = ingilizceSorulsun ? "İngilizce Kelime" : "Türkçe Kelime";
-                let dogruAnlam = ingilizceSorulsun ? rastKelime.tr : rastKelime.en;
-                let yanlisAnlam = ingilizceSorulsun ? yanlisKelime.tr : yanlisKelime.en;
-
-                let siklar = [dogruAnlam, yanlisAnlam];
-                siklar.sort(() => Math.random() - 0.5);
-                let dogruSikIndex = siklar.indexOf(dogruAnlam);
-
-                aktifKelimeListesi.push({
-                    soru: soruMetni,
-                    dil: dilLabel,
-                    siklar: siklar,
-                    dogruIndex: dogruSikIndex
-                });
-            }
-
-            aktifSoruIndex = 0;
-            oyunDogru = 0;
-            oyunYanlis = 0;
-            oyunSaniyeSayac = 0;
-            soruKilitli = false;
-
+            if(!isim) { alert("Adınızı yazın!"); return; }
+            let hedefSoru = secilenSinif>=5 ? 25+((secilenSinif-4)*5) : 25;
+            let filt = masterKelimeHavuzu.filter(i => i.sinif === secilenSinif && secilenUniteler.includes(i.unite));
+            if(!filt.length) { alert("Bu kriterde kelime bulunamadı!"); return; }
+            aktifKelimeListesi = [...filt].sort(()=>Math.random()-0.5).slice(0, hedefSoru);
+            aktifSoruIndex = 0; oyunDogru = 0; oyunYanlis = 0; oyunSaniyeSayac = 0; soruKilitli = false;
             document.getElementById('oyunAyarBolumu').style.display = 'none';
             document.getElementById('oyunEkranIci').style.display = 'block';
-            document.getElementById('lblDogruSayisi').innerText = "0";
-            document.getElementById('lblYanlisSayisi').innerText = "0";
-
-            oyunBaslangicZamani = new Date();
-            if (oyunTimerInterval) clearInterval(oyunTimerInterval);
-            oyunTimerInterval = setInterval(() => {
-                oyunSaniyeSayac++;
-                let dk = String(Math.floor(oyunSaniyeSayac / 60)).padStart(2, '0');
-                let sn = String(oyunSaniyeSayac % 60).padStart(2, '0');
-                document.getElementById('lblKronometre').innerText = `⏱️ ${dk}:${sn}`;
-            }, 1000);
-
+            if(oyunTimerInterval) clearInterval(oyunTimerInterval);
+            oyunTimerInterval = setInterval(()=>{ oyunSaniyeSayac++; document.getElementById('lblKronometre').innerText=`⏱️ ${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`; }, 1000);
             soruyuEkranaGetir();
         }
-
         function soruyuEkranaGetir() {
-            if (aktifSoruIndex >= aktifKelimeListesi.length) {
-                oyunuBitir();
-                return;
-            }
-            soruKilitli = false;
-            let soru = aktifKelimeListesi[aktifSoruIndex];
-            mevcutDogruSikIndex = soru.dogruIndex;
-
-            document.getElementById('btnSik0').className = "btn-sik";
-            document.getElementById('btnSik1').className = "btn-sik";
-
-            document.getElementById('lblKelimeSayac').innerText = `Kelime: ${aktifSoruIndex + 1} / ${aktifKelimeListesi.length}`;
-            document.getElementById('lblSoruDilLabel').innerText = soru.dil;
-            document.getElementById('lblSoruKelime').innerText = soru.soru;
-
-            document.getElementById('btnSik0').innerText = soru.siklar[0];
-            document.getElementById('btnSik1').innerText = soru.siklar[1];
+            if(aktifSoruIndex >= aktifKelimeListesi.length) { oyunuBitir(); return; }
+            soruKilitli = false; let s = aktifKelimeListesi[aktifSoruIndex];
+            let ing = Math.random() < 0.5;
+            let dogruAnlam = ing ? s.tr : s.en;
+            let yanlisHavuz = masterKelimeHavuzu.filter(i => i.en !== s.en);
+            let yanlisAnlam = (yanlisHavuz.length ? yanlisHavuz[Math.floor(Math.random()*yanlisHavuz.length)] : s)[ing ? 'tr' : 'en'];
+            let siklar = [dogruAnlam, yanlisAnlam].sort(()=>Math.random()-0.5);
+            mevcutDogruSikIndex = siklar.indexOf(dogruAnlam);
+            document.getElementById('btnSik0').className = "btn-sik"; document.getElementById('btnSik1').className = "btn-sik";
+            document.getElementById('lblKelimeSayac').innerText = `Kelime: ${aktifSoruIndex+1}/${aktifKelimeListesi.length}`;
+            document.getElementById('lblSoruDilLabel').innerText = ing ? "İngilizce" : "Türkçe";
+            document.getElementById('lblSoruKelime').innerText = ing ? s.en : s.tr;
+            document.getElementById('btnSik0').innerText = siklar[0]; document.getElementById('btnSik1').innerText = siklar[1];
         }
-
-        function sikSec(secilenIndex) {
-            if (soruKilitli) return;
-
-            let btnSecilen = document.getElementById('btnSik' + secilenIndex);
-
-            if (secilenIndex === mevcutDogruSikIndex) {
-                oyunDogru++;
-                document.getElementById('lblDogruSayisi').innerText = oyunDogru;
-                aktifSoruIndex++;
-                soruyuEkranaGetir();
-            } else {
-                soruKilitli = true;
-                oyunYanlis++;
-                document.getElementById('lblYanlisSayisi').innerText = oyunYanlis;
-                btnSecilen.classList.add('yanlis-animasyon');
-
-                setTimeout(() => {
-                    aktifSoruIndex++;
-                    soruyuEkranaGetir();
-                }, 400);
+        function sikSec(idx) {
+            if(soruKilitli) return;
+            let btn = document.getElementById('btnSik'+idx);
+            if(idx === mevcutDogruSikIndex) { oyunDogru++; document.getElementById('lblDogruSayisi').innerText = oyunDogru; aktifSoruIndex++; soruyuEkranaGetir(); }
+            else {
+                soruKilitli = true; oyunYanlis++; document.getElementById('lblYanlisSayisi').innerText = oyunYanlis;
+                btn.classList.add('yanlis-animasyon');
+                setTimeout(() => { aktifSoruIndex++; soruyuEkranaGetir(); }, 400);
             }
         }
-
         function oyunuBitir() {
-            if (oyunTimerInterval) clearInterval(oyunTimerInterval);
-            let toplamPuan = (oyunDogru * 5) - (oyunYanlis * 2);
-            if (toplamPuan < 0) toplamPuan = 0;
-
-            let dk = String(Math.floor(oyunSaniyeSayac / 60)).padStart(2, '0');
-            let sn = String(oyunSaniyeSayac % 60).padStart(2, '0');
-            let sureStr = `${dk}:${sn}`;
+            if(oyunTimerInterval) clearInterval(oyunTimerInterval);
+            let puan = Math.max(0, (oyunDogru*5) - (oyunYanlis*2));
+            let sureStr = `${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`;
             let isim = document.getElementById('oyuncuIsmiInput').value.trim();
-            let uniteStr = secilenUniteler.join(",");
-
             document.getElementById('oyunEkranIci').style.display = 'none';
             document.getElementById('oyunSonucBolumu').style.display = 'block';
-            document.getElementById('sonucPuan').innerText = toplamPuan;
-            document.getElementById('sonucSure').innerText = sureStr;
-
-            let kayitUrl = `${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${encodeURIComponent(uniteStr)}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${toplamPuan}`;
-            fetch(kayitUrl).catch(err => console.error("Skor kayıt hatası:", err));
-
-            liderlikTablosunuGuncelle({ isim, dogru: oyunDogru, puan: toplamPuan, sure: sureStr, suresaniye: oyunSaniyeSayac });
+            document.getElementById('sonucPuan').innerText = puan; document.getElementById('sonucSure').innerText = sureStr;
+            fetch(`${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`).catch(()=>{});
+            liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
         }
-
-        function liderlikTablosunuGuncelle(yeniKayit) {
-            globalLiderlikCache.push(yeniKayit);
-            globalLiderlikCache.sort((a, b) => {
-                if (b.puan !== a.puan) return b.puan - a.puan;
-                return a.suresaniye - b.suresaniye;
-            });
-            let top5 = globalLiderlikCache.slice(0, 5);
-
-            let tbody = document.getElementById('liderlikTabloGovde');
-            tbody.innerHTML = "";
-            top5.forEach((item, idx) => {
-                let madalya = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : `${idx + 1}`));
-                let tr = `
-                    <tr>
-                        <td><b>${madalya}</b></td>
-                        <td>${item.isim}</td>
-                        <td style="color: #16a34a; font-weight:700;">${item.dogru}</td>
-                        <td style="color: #b45309; font-weight:700;">${item.puan}</td>
-                        <td>${item.sure}</td>
-                    </tr>
-                `;
-                tbody.innerHTML += tr;
+        function liderlikTablosuGuncelle(yk) {
+            globalLiderlikCache.push(yk);
+            globalLiderlikCache.sort((a,b)=> b.puan!==a.puan ? b.puan-a.puan : a.suresaniye-b.suresaniye);
+            let top5 = globalLiderlikCache.slice(0,5), tbody = document.getElementById('liderlikTabloGovde'); tbody.innerHTML = "";
+            top5.forEach((it, idx) => {
+                tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#b45309;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
             });
         }
 
         async function girisYap(event) {
             event.preventDefault();
-            
-            const ogrenciInput = document.getElementById('ogrenci').value.trim();
-            const sifreInput = document.getElementById('sifre').value.trim();
-            const mesajDiv = document.getElementById('mesaj');
-            const girisBtn = document.getElementById('girisBtn');
-
-            const girilenOgrenci = guvenliMetin(ogrenciInput);
-            const girilenSifre = guvenliMetin(sifreInput);
-
-            if (!girilenOgrenci || !girilenSifre) {
-                mesajDiv.className = "error";
-                mesajDiv.innerText = "Lütfen tüm alanları doldurunuz.";
-                return;
-            }
-
-            mesajDiv.className = "";
-            mesajDiv.innerText = "Bilgiler kontrol ediliyor, veriler yükleniyor...";
-            girisBtn.disabled = true;
-
-            try {
-                const response = await fetch(apiURL);
-                const data = await response.json();
-
-                let kullaniciBulundu = data.find(item => 
-                    String(item.ogrenci).trim().toLowerCase() === girilenOgrenci.toLowerCase() && 
-                    String(item.sifre).trim() === girilenSifre
-                );
-
-                if (kullaniciBulundu) {
-                    mesajDiv.className = "success";
-                    mesajDiv.innerText = "Giriş başarılı! Yönlendiriliyorsunuz...";
-                    
-                    aktifOgrenciAdi = girilenOgrenci;
-                    toplamSaniye = (kullaniciBulundu.toplamsure !== undefined && !isNaN(kullaniciBulundu.toplamsure)) ? parseInt(kullaniciBulundu.toplamsure) : 0;
-
-                    sessionStorage.setItem("oturumAcik", "true");
-                    sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi);
-                    sessionStorage.setItem("toplamSaniye", toplamSaniye);
-
-                    document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-                    document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
-                    document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
-
-                    veriArayuzeIsle(kullaniciBulundu);
-
-                    setTimeout(() => {
-                        document.getElementById('login-container').style.display = 'none';
-                        document.getElementById('panel-alani').style.display = 'block';
-                        baslatSayac();
-                    }, 1000);
-
-                } else {
-                    hataliDenemeSayisi++;
-                    girisBtn.disabled = false;
-                    
-                    if (hataliDenemeSayisi >= MAX_DENEME) {
-                        mesajDiv.className = "error";
-                        mesajDiv.innerText = "Çok fazla hatalı giriş yaptınız. 30 saniye engellendiniz.";
-                        girisBtn.disabled = true;
-                        setTimeout(() => {
-                            hataliDenemeSayisi = 0;
-                            girisBtn.disabled = false;
-                            mesajDiv.innerText = "";
-                        }, 30000);
-                    } else {
-                        mesajDiv.className = "error";
-                        mesajDiv.innerText = `Hatalı kullanıcı adı veya şifre! Kalan hakkınız: ${MAX_DENEME - hataliDenemeSayisi}`;
-                    }
-                }
-
-            } catch (error) {
-                console.error("Bağlantı hatası:", error);
-                mesajDiv.className = "error";
-                mesajDiv.innerText = "Sunucu bağlantısında bir sorun oluştu.";
-                girisBtn.disabled = false;
+            const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
+            const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
+            let m = document.getElementById('mesaj');
+            if(!ogr || !sifre) { m.className="error"; m.innerText="Tüm alanları doldurun."; return; }
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
+            if(user) {
+                m.className="success"; m.innerText="Giriş başarılı!";
+                aktifOgrenciAdi = ogr; toplamSaniye = Number(user.toplamsure)||0;
+                sessionStorage.setItem("oturumAcik", "true"); sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi); sessionStorage.setItem("toplamSaniye", toplamSaniye);
+                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+                document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
+                document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
+                veriArayuzeIsle(user);
+                setTimeout(() => { document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac(); }, 800);
+            } else {
+                m.className="error"; m.innerText="Hatalı kullanıcı adı veya şifre!";
             }
         }
 
-        async function bilgileriSunucudanGuncelle(ogrenciAdi) {
-            try {
-                const response = await fetch(apiURL);
-                const data = await response.json();
-                let user = data.find(item => String(item.ogrenci).trim().toLowerCase() === ogrenciAdi.toLowerCase());
-                if (user) {
-                    toplamSaniye = user.toplamsure ? parseInt(user.toplamsure) : toplamSaniye;
-                    sessionStorage.setItem("toplamSaniye", toplamSaniye);
-                    veriArayuzeIsle(user);
-                }
-            } catch(e) { console.error(e); }
-            
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('panel-alani').style.display = 'block';
-            baslatSayac();
+        async function bilgileriSunucudanGuncelle(ogr) {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase());
+            if(user) { toplamSaniye = Number(user.toplamsure)||toplamSaniye; sessionStorage.setItem("toplamSaniye", toplamSaniye); veriArayuzeIsle(user); }
+            document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac();
         }
 
         function veriArayuzeIsle(user) {
-            let genelOrtalama = user.genelOrtalama !== undefined ? user.genelOrtalama : 0;
-            let etkinlikBasarisi = user.etkinlikBasarisi !== undefined ? user.etkinlikBasarisi : 0;
-            let sonDeneme = user.sonDeneme !== undefined ? user.sonDeneme : 0;
-            let guncelPuan = user.guncelGenelPuan !== undefined ? user.guncelGenelPuan : genelOrtalama;
-
-            document.getElementById('valGenelPuan').innerText = genelOrtalama;
-            document.getElementById('valEtkinlikBasarisi').innerText = etkinlikBasarisi;
-            document.getElementById('valSonDeneme').innerText = sonDeneme;
-            document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelOrtalama);
-
+            document.getElementById('valGenelPuan').innerText = user.genelOrtalama || 0;
+            document.getElementById('valEtkinlikBasarisi').innerText = user.etkinlikBasarisi || 0;
+            document.getElementById('valSonDeneme').innerText = user.sonDeneme || 0;
+            document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(user.genelOrtalama||0);
             kitapTakibiniIsle(user.kitapBilgi);
             grafikliCiz(user.grafikGecmis, user, user.denemeGecmis);
             dersRaporlariniOlustur(user.arsivListesi, user.kitapBilgi);
             dersTakviminiIsle(user.dersler);
-
-            let rozetSonuc = rozetleriIsle(user.rozetListesi, guncelPuan);
-            aiMesajUret(aktifOgrenciAdi, rozetSonuc.kazanilan, rozetSonuc.toplam);
-
-            if (user.kelimeHavuzu) {
-                masterKelimeHavuzu = user.kelimeHavuzu;
-            }
-
-            if (user.liderlik) {
-                globalLiderlikCache = user.liderlik;
-                liderlikTablosunuGuncelle({ isim: "", dogru: 0, puan: 0, sure: "", suresaniye: 9999 });
-            }
+            let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
+            aiMesajUret(aktifOgrenciAdi, res.kazanilan, res.toplam);
+            if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
+            if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
         }
 
         function baslatSayac() {
             guncelleArayuz();
-            
             timerInterval = setInterval(() => {
-                toplamSaniye++;
-                sessionStorage.setItem("toplamSaniye", toplamSaniye);
-                guncelleArayuz();
-
-                if (toplamSaniye % 30 === 0) {
-                    googleSheetseKaydet();
-                }
+                toplamSaniye++; sessionStorage.setItem("toplamSaniye", toplamSaniye); guncelleArayuz();
+                if(toplamSaniye % 30 === 0) googleSheetseKaydet();
             }, 1000);
         }
 
         function guncelleArayuz() {
-            let saat = Math.floor(toplamSaniye / 3600);
-            let dakika = Math.floor((toplamSaniye % 3600) / 60);
-            let saniye = toplamSaniye % 60;
-
-            let formatliSure = 
-                (saat < 10 ? "0" + saat : saat) + ":" + 
-                (dakika < 10 ? "0" + dakika : dakika) + ":" + 
-                (saniye < 10 ? "0" + saniye : saniye);
-
-            document.getElementById('sureGosterge').innerText = formatliSure;
-
-            let kazanilanRozet = Math.floor(toplamSaniye / 600);
-            let sonrakiRozetSaniyeKalan = 600 - (toplamSaniye % 600);
-            let sonrakiDakika = Math.ceil(sonrakiRozetSaniyeKalan / 60);
-
-            document.getElementById('rozetBilgi').innerText = `🥉 Kazanılan: ${kazanilanRozet} 🌟`;
-            document.getElementById('sonrakiRozet').innerText = `Sonraki: ${sonrakiDakika} dk`;
-
-            let yuzde = ((toplamSaniye % 600) / 600) * 100;
-            document.getElementById('progressBar').style.width = yuzde + "%";
+            let s = Math.floor(toplamSaniye/3600), d = Math.floor((toplamSaniye%3600)/60), sn = toplamSaniye%60;
+            document.getElementById('sureGosterge').innerText = `${s<10?'0'+s:s}:${d<10?'0'+d:d}:${sn<10?'0'+sn:sn}`;
+            let rozet = Math.floor(toplamSaniye/600);
+            document.getElementById('rozetBilgi').innerText = `🥉 Kazanılan: ${rozet} 🌟`;
+            document.getElementById('sonrakiRozet').innerText = `Sonraki: ${Math.ceil((600-(toplamSaniye%600))/60)} dk`;
+            document.getElementById('progressBar').style.width = `${((toplamSaniye%600)/600)*100}%`;
         }
 
         function googleSheetseKaydet() {
-            let kazanilanRozet = Math.floor(toplamSaniye / 600);
-            const kayitURL = `${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${kazanilanRozet}`;
-            fetch(kayitURL).catch(err => console.error("Kayıt hatası:", err));
+            fetch(`${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${Math.floor(toplamSaniye/600)}`).catch(()=>{});
         }
 
-        function cikisYap() {
-            googleSheetseKaydet();
-            clearInterval(timerInterval);
-            sessionStorage.clear();
-            setTimeout(() => {
-                window.location.reload();
-            }, 600); 
-        }
+        function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
     </script>
 </body>
 </html>
