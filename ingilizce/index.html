@@ -216,7 +216,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbzObN_P-rUytK__NiGntFOrGmv9jCAFgnLXmDTylNzoTfrc8nfzBq5_PQlE0l1sEbAuqw/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbx8tTyg_NGEJOdrWlkE9CRV47kEMqhVJZ6usZuHBWaV637gjDyn8TJnj8jHmUPwMX8YaQ/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -266,8 +266,8 @@
                     
                     aktifOgrenciAdi = girilenOgrenci;
                     
-                    // Google Sheets'ten gelen toplam süreyi al (Boşsa veya geçersizse 0 yap)
-                    toplamSaniye = (kullaniciBulundu.toplamsure && !isNaN(kullaniciBulundu.toplamsure)) ? parseInt(kullaniciBulundu.toplamsure) : 0;
+                    // Oturum Saniye sekmesinden gelen toplam süreyi al
+                    toplamSaniye = (kullaniciBulundu.toplamsure !== undefined && !isNaN(kullaniciBulundu.toplamsure)) ? parseInt(kullaniciBulundu.toplamsure) : 0;
 
                     setTimeout(() => {
                         document.getElementById('login-container').style.display = 'none';
@@ -310,7 +310,7 @@
                 toplamSaniye++;
                 guncelleArayuz();
 
-                // Her 30 saniyede bir Google Sheets'e güncel süreyi ve rozeti kaydet
+                // Her 30 saniyede bir Oturum Saniye sekmesine güncel süreyi kaydet
                 if (toplamSaniye % 30 === 0) {
                     googleSheetseKaydet();
                 }
@@ -343,14 +343,14 @@
         function googleSheetseKaydet() {
             let kazanilanRozet = Math.floor(toplamSaniye / 600);
             
-            // GET isteği ile Google Sheets'e doğrudan yazma işlemi
+            // Oturum Saniye sekmesine yazma isteği
             const kayitURL = `${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${kazanilanRozet}`;
             
             fetch(kayitURL).catch(err => console.error("Kayıt hatası:", err));
         }
 
         function cikisYap() {
-            // Çıkış yaparken son süreyi Google Sheets'e kesin olarak kaydet
+            // Çıkış yaparken süreyi Oturum Saniye sekmesine kaydet
             googleSheetseKaydet();
             
             clearInterval(timerInterval);
