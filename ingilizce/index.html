@@ -666,15 +666,19 @@
     </div>
 
     <!-- OYUN MODAL -->
+    <!-- KELİME OYUNU AÇILIR PANELİ (MODAL) -->
     <div class="game-modal-overlay" id="gameModalOverlay">
         <div class="game-modal-content">
             <button class="game-close-btn" onclick="oyunModaliniKapat()">✕</button>
+            
             <div id="oyunAyarBolumu">
                 <div class="game-title">🏆 Kelime Ezber Yarışması</div>
-                <div class="game-subtitle">Google Sheets Kelimeler Havuzundan Sorulur!</div>
+                <div class="game-subtitle">Google Sheets Kelimeler Havuzundan Sorulur! (Tekrarsız Sorular)</div>
+                
                 <div class="form-group" style="margin-bottom: 10px;">
                     <input type="text" id="oyuncuIsmiInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
                 </div>
+
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Sınıf Seçiniz:</label>
                 <div class="sinif-secim-grid">
                     <button class="sinif-btn active" onclick="sinifSec(2, this)">2. Sınıf</button>
@@ -685,33 +689,65 @@
                     <button class="sinif-btn" onclick="sinifSec(7, this)">7. Sınıf</button>
                     <button class="sinif-btn" onclick="sinifSec(8, this)">8. Sınıf</button>
                 </div>
-                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Ünite Seçiniz:</label>
+
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Ünite Seçiniz (Çoklu Seçilebilir):</label>
                 <div class="unite-secim-box" id="uniteSecimKonteyner"></div>
+
                 <button class="btn-giris" onclick="yarismayiBaslat()" style="background: #2563eb; margin-top: 3px;">🚀 Yarışmayı Başlat</button>
             </div>
+
+            <!-- Çoktan Seçmeli Soru Ekranı -->
             <div id="oyunEkranIci">
                 <div class="oyun-ust-bilgi">
                     <span id="lblKelimeSayac">Kelime: 1 / 25</span>
                     <span id="lblKronometre" style="color: #dc2626;">⏱️ 00:00</span>
                 </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
+                    <span style="color: #16a34a;">✅ Doğru: <span id="lblDogruSayisi">0</span></span>
+                    <span style="color: #dc2626;">❌ Yanlış: <span id="lblYanlisSayisi">0</span></span>
+                </div>
+
                 <div class="kelime-gosterge">
                     <span style="font-size: 9.5px; font-weight: 700; color: #3b82f6; text-transform: uppercase;" id="lblSoruDilLabel">Kelime</span>
                     <div class="kelime-en" id="lblSoruKelime">Apple</div>
                 </div>
+
+                <div style="font-size: 11.5px; text-align: center; color: #64748b; font-weight: 600; margin-bottom: 8px;">Doğru anlamını seçiniz:</div>
                 <div class="siklar-grid">
                     <button class="btn-sik" id="btnSik0" onclick="sikSec(0)">Şık 1</button>
                     <button class="btn-sik" id="btnSik1" onclick="sikSec(1)">Şık 2</button>
                 </div>
             </div>
+
+            <!-- Sonuç ve Liderlik Ekranı -->
             <div id="oyunSonucBolumu" style="display: none; text-align: center;">
+                <div style="font-size: 24px; margin-bottom: 3px;">🎉</div>
                 <h3 style="color: #16a34a; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Harika! Tur Tamamlandı</h3>
-                <div style="font-weight: 800; font-size: 13px; margin-bottom: 10px;">Skor: <span id="sonucPuan">45</span> Puan | Süre: <span id="sonucSure">00:46</span></div>
+                
+                <div style="display: flex; justify-content: center; gap: 12px; background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
+                    <span style="color: #b45309;">Skor: <span id="sonucPuan">45</span> Puan</span>
+                    <span style="color: #475569;">Süre: <span id="sonucSure">00:46</span></span>
+                </div>
+
                 <button class="btn-giris" onclick="oyunModaliniAc()" style="background: #2563eb; margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
+
                 <div class="liderlik-tablosu-box">
                     <div class="liderlik-title">📊 Liderlik Tablosu (Top 5)</div>
-                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="liderlikTabloGovde"></tbody></table>
+                    <table class="lid-table">
+                        <thead>
+                            <tr>
+                                <th>Sıra</th>
+                                <th>İsim</th>
+                                <th>D</th>
+                                <th>Puan</th>
+                                <th>Süre</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liderlikTabloGovde"></tbody>
+                    </table>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -1097,68 +1133,118 @@
             return { kazanilan, toplam };
         }
 
-        function oyunModaliniAc() { document.getElementById('gameModalOverlay').style.display = 'flex'; }
-        function oyunModaliniKapat() { document.getElementById('gameModalOverlay').style.display = 'none'; if(oyunTimerInterval)clearInterval(oyunTimerInterval); }
-        function sinifSec(n, el) { secilenSinif = n; document.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); uniteSecimleriniOlustur(n, (n===2||n===5)?8:10); }
+       function oyunModaliniAc() { 
+            document.getElementById('gameModalOverlay').style.display = 'flex'; 
+            document.getElementById('oyunAyarBolumu').style.display = 'block';
+            document.getElementById('oyunEkranIci').style.display = 'none';
+            document.getElementById('oyunSonucBolumu').style.display = 'none';
+        }
+        
+        function oyunModaliniKapat() { 
+            document.getElementById('gameModalOverlay').style.display = 'none'; 
+            if(oyunTimerInterval) clearInterval(oyunTimerInterval); 
+        }
+
+        function sinifSec(n, el) { 
+            secilenSinif = n; 
+            document.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active')); 
+            el.classList.add('active'); 
+            uniteSecimleriniOlustur(n, (n===2||n===5)?8:10); 
+        }
+
         function uniteSecimleriniOlustur(n, count) {
-            let kont = document.getElementById('uniteSecimKonteyner'); kont.innerHTML = ""; secilenUniteler = [1];
+            let kont = document.getElementById('uniteSecimKonteyner'); 
+            kont.innerHTML = ""; 
+            secilenUniteler = [1];
             for(let u=1; u<=count; u++) {
                 let chip = document.createElement('div');
-                chip.className = `unite-chip ${u===1?'selected':''}`; chip.innerText = `${u}.Ü`;
+                chip.className = `unite-chip ${u===1?'selected':''}`; 
+                chip.innerText = `${u}.Ü`;
                 chip.onclick = function() {
-                    if(secilenUniteler.includes(u)) { if(secilenUniteler.length>1){ secilenUniteler = secilenUniteler.filter(i=>i!==u); chip.classList.remove('selected'); } }
-                    else { secilenUniteler.push(u); chip.classList.add('selected'); }
+                    if(secilenUniteler.includes(u)) { 
+                        if(secilenUniteler.length>1){ 
+                            secilenUniteler = secilenUniteler.filter(i=>i!==u); 
+                            chip.classList.remove('selected'); 
+                        } 
+                    } else { 
+                        secilenUniteler.push(u); 
+                        chip.classList.add('selected'); 
+                    }
                 };
                 kont.appendChild(chip);
             }
         }
+
         function yarismayiBaslat() {
             let isim = document.getElementById('oyuncuIsmiInput').value.trim();
             if(!isim) { alert("Adınızı yazın!"); return; }
             let hedefSoru = secilenSinif>=5 ? 25+((secilenSinif-4)*5) : 25;
             let filt = masterKelimeHavuzu.filter(i => i.sinif === secilenSinif && secilenUniteler.includes(i.unite));
-            if(!filt.length) { alert("Bu kriterde kelime bulunamadı!"); return; }
+            if(!filt.length) { alert("Bu sınıf ve ünitelere ait Google Sheets 'Kelimeler' sekmesinde kelime bulunamadı!"); return; }
+            
             aktifKelimeListesi = [...filt].sort(()=>Math.random()-0.5).slice(0, hedefSoru);
             aktifSoruIndex = 0; oyunDogru = 0; oyunYanlis = 0; oyunSaniyeSayac = 0; soruKilitli = false;
+            
             document.getElementById('oyunAyarBolumu').style.display = 'none';
             document.getElementById('oyunEkranIci').style.display = 'block';
+            
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
-            oyunTimerInterval = setInterval(()=>{ oyunSaniyeSayac++; document.getElementById('lblKronometre').innerText=`⏱️ ${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`; }, 1000);
+            oyunTimerInterval = setInterval(()=>{ 
+                oyunSaniyeSayac++; 
+                document.getElementById('lblKronometre').innerText=`⏱️ ${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`; 
+            }, 1000);
+            
             soruyuEkranaGetir();
         }
+
         function soruyuEkranaGetir() {
             if(aktifSoruIndex >= aktifKelimeListesi.length) { oyunuBitir(); return; }
-            soruKilitli = false; let s = aktifKelimeListesi[aktifSoruIndex];
+            soruKilitli = false; 
+            let s = aktifKelimeListesi[aktifSoruIndex];
             let ing = Math.random() < 0.5;
             let dogruAnlam = ing ? s.tr : s.en;
             let yanlisHavuz = masterKelimeHavuzu.filter(i => i.en !== s.en);
             let yanlisAnlam = (yanlisHavuz.length ? yanlisHavuz[Math.floor(Math.random()*yanlisHavuz.length)] : s)[ing ? 'tr' : 'en'];
             let siklar = [dogruAnlam, yanlisAnlam].sort(()=>Math.random()-0.5);
             mevcutDogruSikIndex = siklar.indexOf(dogruAnlam);
-            document.getElementById('btnSik0').className = "btn-sik"; document.getElementById('btnSik1').className = "btn-sik";
+            
+            document.getElementById('btnSik0').className = "btn-sik"; 
+            document.getElementById('btnSik1').className = "btn-sik";
             document.getElementById('lblKelimeSayac').innerText = `Kelime: ${aktifSoruIndex+1}/${aktifKelimeListesi.length}`;
             document.getElementById('lblSoruDilLabel').innerText = ing ? "İngilizce" : "Türkçe";
             document.getElementById('lblSoruKelime').innerText = ing ? s.en : s.tr;
-            document.getElementById('btnSik0').innerText = siklar[0]; document.getElementById('btnSik1').innerText = siklar[1];
+            document.getElementById('btnSik0').innerText = siklar[0]; 
+            document.getElementById('btnSik1').innerText = siklar[1];
         }
+
         function sikSec(idx) {
             if(soruKilitli) return;
             let btn = document.getElementById('btnSik'+idx);
-            if(idx === mevcutDogruSikIndex) { oyunDogru++; document.getElementById('lblDogruSayisi').innerText = oyunDogru; aktifSoruIndex++; soruyuEkranaGetir(); }
-            else {
-                soruKilitli = true; oyunYanlis++; document.getElementById('lblYanlisSayisi').innerText = oyunYanlis;
+            if(idx === mevcutDogruSikIndex) { 
+                oyunDogru++; 
+                document.getElementById('lblDogruSayisi').innerText = oyunDogru; 
+                aktifSoruIndex++; 
+                soruyuEkranaGetir(); 
+            } else {
+                soruKilitli = true; 
+                oyunYanlis++; 
+                document.getElementById('lblYanlisSayisi').innerText = oyunYanlis;
                 btn.classList.add('yanlis-animasyon');
                 setTimeout(() => { aktifSoruIndex++; soruyuEkranaGetir(); }, 400);
             }
         }
+
         function oyunuBitir() {
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
             let puan = Math.max(0, (oyunDogru*5) - (oyunYanlis*2));
             let sureStr = `${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`;
             let isim = document.getElementById('oyuncuIsmiInput').value.trim();
+            
             document.getElementById('oyunEkranIci').style.display = 'none';
             document.getElementById('oyunSonucBolumu').style.display = 'block';
-            document.getElementById('sonucPuan').innerText = puan; document.getElementById('sonucSure').innerText = sureStr;
+            document.getElementById('sonucPuan').innerText = puan; 
+            document.getElementById('sonucSure').innerText = sureStr;
+            
             fetch(`${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`).catch(()=>{});
             liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
         }
