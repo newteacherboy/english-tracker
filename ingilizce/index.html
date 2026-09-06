@@ -669,15 +669,6 @@
     <!-- KELİME OYUNU AÇILIR PANELİ (MODAL) -->
     <div class="game-modal-overlay" id="gameModalOverlay">
         <div class="game-modal-content">
-            <div class="game-modal-overlay" id="gameModalOverlay">
-        <div class="game-modal-content">
-            <button class="game-close-btn" onclick="oyunModaliniKapat()">✕</button>
-            
-            <!-- YENİ: MÜZİK KONTROL BUTONU -->
-            <div style="text-align: right; margin-bottom: 5px;">
-                <button id="muzikSesBtn" onclick="muzikSesToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
-            </div>
-            <audio id="oyunMuzigi" src="muzik.mp3" preload="auto" loop></audio>
             <button class="game-close-btn" onclick="oyunModaliniKapat()">✕</button>
             
             <div id="oyunAyarBolumu">
@@ -1142,22 +1133,7 @@
             return { kazanilan, toplam };
         }
 
-       // --- KELİME OYUNU VE MÜZİK YÖNETİMİ MİMARİSİ ---
-        
-        function muzikSesToggle() {
-            let muzik = document.getElementById('oyunMuzigi');
-            let btn = document.getElementById('muzikSesBtn');
-            if (!muzik || !btn) return;
-            if (muzik.muted) {
-                muzik.muted = false;
-                btn.innerText = "🔊 Müzik: Açık";
-            } else {
-                muzik.muted = true;
-                btn.innerText = "🔇 Müzik: Sessiz";
-            }
-        }
-
-        function oyunModaliniAc() { 
+       function oyunModaliniAc() { 
             document.getElementById('gameModalOverlay').style.display = 'flex'; 
             document.getElementById('oyunAyarBolumu').style.display = 'block';
             document.getElementById('oyunEkranIci').style.display = 'none';
@@ -1167,13 +1143,6 @@
         function oyunModaliniKapat() { 
             document.getElementById('gameModalOverlay').style.display = 'none'; 
             if(oyunTimerInterval) clearInterval(oyunTimerInterval); 
-            
-            // Modal kapandığında müzik durur ve başa sarılır
-            let muzik = document.getElementById('oyunMuzigi');
-            if(muzik) {
-                muzik.pause();
-                muzik.currentTime = 0;
-            }
         }
 
         function sinifSec(n, el) { 
@@ -1219,13 +1188,6 @@
             document.getElementById('oyunAyarBolumu').style.display = 'none';
             document.getElementById('oyunEkranIci').style.display = 'block';
             
-            // Oyun başlayınca müzik çalmaya başlar
-            let muzik = document.getElementById('oyunMuzigi');
-            if(muzik) {
-                muzik.currentTime = 0;
-                muzik.play().catch(e => console.log("Müzik çalma tarayıcı tarafından engellendi:", e));
-            }
-
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
             oyunTimerInterval = setInterval(()=>{ 
                 oyunSaniyeSayac++; 
@@ -1274,14 +1236,6 @@
 
         function oyunuBitir() {
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
-            
-            // Oyun bittiğinde de müzik durur
-            let muzik = document.getElementById('oyunMuzigi');
-            if(muzik) {
-                muzik.pause();
-                muzik.currentTime = 0;
-            }
-
             let puan = Math.max(0, (oyunDogru*5) - (oyunYanlis*2));
             let sureStr = `${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`;
             let isim = document.getElementById('oyuncuIsmiInput').value.trim();
