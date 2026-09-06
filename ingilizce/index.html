@@ -18,6 +18,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            padding: 20px 0;
         }
         .ana-sayfa-btn {
             position: absolute;
@@ -110,21 +111,56 @@
         .error { color: #e53e3e; }
         .success { color: #38a169; }
         
+        /* Panel ve Sekme Yapısı */
         #panel-alani {
             display: none;
             width: 100%;
-            max-width: 650px;
+            max-width: 750px;
             background: white;
             padding: 30px;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: #edf2f7;
+            padding: 6px;
+            border-radius: 12px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 14px;
+            color: #4a5568;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .tab-btn.active {
+            background: #2f855a;
+            color: white;
+            box-shadow: 0 2px 6px rgba(47, 133, 90, 0.3);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Sayaç Kartı */
         .timer-card {
             background-color: #eaf4ed;
             border: 1px solid #c6e3cc;
             border-radius: 12px;
             padding: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .timer-header {
             display: flex;
@@ -172,6 +208,83 @@
             font-size: 13px;
             color: #4a7c59;
         }
+
+        /* AI Koçluk Asistanı Kutusu */
+        .ai-box {
+            background: #eaf4ed;
+            border: 1px solid #c6e3cc;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .ai-title {
+            color: #2f6838;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ai-text {
+            color: #315738;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+        .ai-close-toast {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 12px;
+            color: #4a7c59;
+            background: #d4ebd8;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* 4'lü Özet Tablosu Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .summary-card {
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .card-green { background-color: #f0fdf4; border-color: #bbf7d0; }
+        .card-blue { background-color: #eff6ff; border-color: #bfdbfe; }
+        .card-yellow { background-color: #fefce8; border-color: #fef08a; }
+        .card-pink { background-color: #fdf2f8; border-color: #fbcfe8; }
+
+        .card-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-green .card-title { color: #166534; }
+        .card-blue .card-title { color: #1e40af; }
+        .card-yellow .card-title { color: #854d0e; }
+        .card-pink .card-title { color: #9d174d; }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 800;
+        }
+        .card-green .card-value { color: #15803d; }
+        .card-blue .card-value { color: #1d4ed8; }
+        .card-yellow .card-value { color: #a16207; }
+        .card-pink .card-value { color: #be185d; }
     </style>
 </head>
 <body>
@@ -195,29 +308,93 @@
         <div id="mesaj"></div>
     </div>
 
+    <!-- Başarılı Giriş Sonrası Panel Alanı -->
     <div id="panel-alani">
-        <h2 style="color: #2d3748; margin-bottom: 15px;">Hoş Geldiniz, <span id="ogrenciAdiText"></span>! 🎉</h2>
         
-        <div class="timer-card">
-            <div class="timer-header">
-                <span class="timer-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</span>
-                <div class="timer-badge" id="sureGosterge">00:00:00</div>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="timer-footer">
-                <span id="rozetBilgi">🥉 Kazanılan: 0 🌟</span>
-                <span id="sonrakiRozet">Sonraki: 10 dk</span>
-            </div>
+        <!-- 4 Sekmeli Yapı -->
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
+            <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Ders Raporları</button>
+            <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">📈 Gelişim Yolu</button>
+            <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
         </div>
 
-        <button onclick="cikisYap()" class="btn-giris" style="max-width: 150px; background-color: #e53e3e;">Çıkış Yap</button>
+        <!-- 1. SEKME: ÖZET -->
+        <div id="tab-ozet" class="tab-content active">
+            
+            <!-- Sayaç Alanı -->
+            <div class="timer-card">
+                <div class="timer-header">
+                    <span class="timer-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</span>
+                    <div class="timer-badge" id="sureGosterge">00:00:00</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="timer-footer">
+                    <span id="rozetBilgi">🥉 Kazanılan: 0 🌟</span>
+                    <span id="sonrakiRozet">Sonraki: 10 dk</span>
+                </div>
+            </div>
+
+            <!-- AI Koçluk Asistanı & Gözlem Raporu (10 Saniye Sonra Kaybolan Toast / Mesaj) -->
+            <div class="ai-box" id="aiToastBox">
+                <div class="ai-close-toast" id="toastTimer">10s</div>
+                <div class="ai-title">🤖 Koçluk Asistanı & Gözlem Raporu</div>
+                <div class="ai-text" id="aiMesajMetni">Sisteme hoş geldin! Performansın analiz ediliyor...</div>
+            </div>
+
+            <!-- 4'lü Özet Tablosu -->
+            <div class="summary-grid">
+                <!-- Genel Puan -->
+                <div class="summary-card card-green">
+                    <div class="card-title">⭐ GENEL PUAN (ORTALAMA)</div>
+                    <div class="card-value" id="valGenelPuan">0</div>
+                </div>
+                <!-- Etkinlik Başarısı -->
+                <div class="summary-card card-blue">
+                    <div class="card-title">🚀 ETKİNLİK BAŞARISI</div>
+                    <div class="card-value" id="valEtkinlikBasarisi">0</div>
+                </div>
+                <!-- Son Deneme Sonucu -->
+                <div class="summary-card card-yellow">
+                    <div class="card-title">🎯 SON DENEME SONUCU</div>
+                    <div class="card-value" id="valSonDeneme">0</div>
+                </div>
+                <!-- Performans Emojin -->
+                <div class="summary-card card-pink">
+                    <div class="card-title">🔥 PERFORMANS EMOJİN</div>
+                    <div class="card-value" id="valPerformansEmoji">😐</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 2. SEKME: DERS RAPORLARI (İleride doldurulacak) -->
+        <div id="tab-raporlar" class="tab-content">
+            <h3 style="color: #2d3748; margin-bottom: 10px;">Ders Raporları</h3>
+            <p style="color: #718096; font-size: 14px;">Bu bölümde ders içerikleri ve detaylı gelişim notları yer alacaktır.</p>
+        </div>
+
+        <!-- 3. SEKME: AKTİVİTELER / GELİŞİM YOLU (İleride doldurulacak) -->
+        <div id="tab-aktiviteler" class="tab-content">
+            <h3 style="color: #2d3748; margin-bottom: 10px;">Gelişim Yolu</h3>
+            <p style="color: #718096; font-size: 14px;">Bu bölümde detaylı aktivite istatistikleri ve grafikler yer alacaktır.</p>
+        </div>
+
+        <!-- 4. SEKME: ROZETLER (İleride doldurulacak) -->
+        <div id="tab-rozetler" class="tab-content">
+            <h3 style="color: #2d3748; margin-bottom: 10px;">Rozet Koleksiyonu</h3>
+            <p style="color: #718096; font-size: 14px;">Kazandığın tüm rozetleri ve kilitli olanları burada görebileceksin.</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="cikisYap()" class="btn-giris" style="max-width: 150px; background-color: #e53e3e;">Çıkış Yap</button>
+        </div>
     </div>
 
     <script>
-        // API Linki doğrudan tanımlandı (Hata ihtimali ortadan kaldırıldı)
-        const apiURL = "https://script.google.com/macros/s/AKfycbx8tTyg_NGEJOdrWlkE9CRV47kEMqhVJZ6usZuHBWaV637gjDyn8TJnj8jHmUPwMX8YaQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzObN_P-rUytK__NiGntFOrGmv9jCAFgnLXmDTylNzoTfrc8nfzBq5_PQlE0l1sEbAuqw/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -225,7 +402,6 @@
         let hataliDenemeSayisi = 0;
         const MAX_DENEME = 3;
 
-        // Sayfa açıldığında daha önceden oturum açık kalmış mı kontrol et
         window.onload = function() {
             const oturumAcik = sessionStorage.getItem("oturumAcik");
             const kayitliOgrenci = sessionStorage.getItem("aktifOgrenci");
@@ -236,8 +412,9 @@
                 toplamSaniye = parseInt(kayitliSure);
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
-                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-                baslatSayac();
+                
+                // Arka planda güncel verileri tekrar tazeleyelim
+                bilgileriSunucudanGuncelle(aktifOgrenciAdi, true);
             }
         };
 
@@ -245,6 +422,66 @@
             return str.replace(/[&<>'"]/g, 
                 tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
             );
+        }
+
+        // Sekme Geçiş Fonksiyonu
+        function sekmeDegistir(tabName, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('tab-' + tabName).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        // Puana göre her 5 puanda bir değişen 20 kademeli emoji skalası
+        function performansEmojisiGetir(puan) {
+            if (puan >= 95) return "🏆 Harika!";
+            if (puan >= 90) return "🌟 Mükemmel";
+            if (puan >= 85) return "🚀 Süper";
+            if (puan >= 80) return "🔥 Hararetli";
+            if (puan >= 75) return "🎯 Çok İyi";
+            if (puan >= 70) return "💪 Güçlü";
+            if (puan >= 65) return "👏 Başarılı";
+            if (puan >= 60) return "📈 Yükselişte";
+            if (puan >= 55) return "👍 İyi";
+            if (puan >= 50) return "💡 İstikrarlı";
+            if (puan >= 45) return "⚡ Gayretli";
+            if (puan >= 40) return "📚 Çalışkan";
+            if (puan >= 35) return "🌱 Gelişiyor";
+            if (puan >= 30) return "🚶‍♂️ İlerliyor";
+            if (puan >= 25) return "🔄 Toparlıyor";
+            if (puan >= 20) return "⚠️ Çaba Lazım";
+            if (puan >= 15) return "💤 Uykuda";
+            if (puan >= 10) return "❄️ Donuk";
+            if (puan >= 5)  return "🚨 Kritik";
+            return "🐣 Başlangıç";
+        }
+
+        // Yapay Zeka Koçluk Mesajı Oluşturucu
+        function aiMesajUret(ogrenciAdi, genelPuan, rozetSayisi) {
+            let mesajlar = [
+                `Harika bir başlangıç ${ogrenciAdi}! Bu hafta gösterdiğin üstün gayretle ${rozetSayisi} yeni rozet kilitledin ve genel puanını ${genelPuan} seviyesine taşıdın. Başarılarının detaylarını aşağıdan inceleyebilirsin! ✨`,
+                `Süper bir ivme yakaladın! ${genelPuan} ortalama puanla sınıfın yükselen yıldızısın. Rozetlerini toplarken hız kesme! 🚀`,
+                `Harika ilerliyorsun! Puanın ${genelPuan} oldu. Eksik olduğun konulara biraz daha odaklanarak zirveye bir adım daha yaklaşabilirsin. 🎯`,
+                `Çalışmaların meyvesini veriyor! ${rozetSayisi} rozet ile harika bir koleksiyonun var. İstikrarını bozmadan devam et! 🌟`
+            ];
+            // Rastgele bir motivasyon mesajı seç
+            let secilen = mesajlar[Math.floor(Math.random() * mesajlar.length)];
+            document.getElementById('aiMesajMetni').innerText = secilen;
+
+            // 10 saniye geri sayım ve kutuyu kapatma animasyonu
+            let kalanSaniye = 10;
+            let toastInterval = setInterval(() => {
+                kalanSaniye--;
+                document.getElementById('toastTimer').innerText = kalanSaniye + "s";
+                if (kalanSaniye <= 0) {
+                    clearInterval(toastInterval);
+                    let toastBox = document.getElementById('aiToastBox');
+                    toastBox.style.transition = "opacity 0.5s ease";
+                    toastBox.style.opacity = "0";
+                    setTimeout(() => toastBox.style.display = "none", 500);
+                }
+            }, 1000);
         }
 
         async function girisYap(event) {
@@ -265,7 +502,7 @@
             }
 
             mesajDiv.className = "";
-            mesajDiv.innerText = "Bilgiler kontrol ediliyor, süre yükleniyor...";
+            mesajDiv.innerText = "Bilgiler kontrol ediliyor, veriler yükleniyor...";
             girisBtn.disabled = true;
 
             try {
@@ -288,10 +525,12 @@
                     sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi);
                     sessionStorage.setItem("toplamSaniye", toplamSaniye);
 
+                    // Puan ve Rozet Verilerini Arayüze Yansıt
+                    veriArayuzeIsle(kullaniciBulundu);
+
                     setTimeout(() => {
                         document.getElementById('login-container').style.display = 'none';
                         document.getElementById('panel-alani').style.display = 'block';
-                        document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                         baslatSayac();
                     }, 1000);
 
@@ -322,6 +561,41 @@
             }
         }
 
+        async function bilgileriSunucudanGuncelle(ogrenciAdi, isFirstLoad) {
+            try {
+                const response = await fetch(apiURL);
+                const data = await response.json();
+                let user = data.find(item => String(item.ogrenci).trim() === ogrenciAdi);
+                if (user) {
+                    toplamSaniye = user.toplamsure ? parseInt(user.toplamsure) : toplamSaniye;
+                    sessionStorage.setItem("toplamSaniye", toplamSaniye);
+                    veriArayuzeIsle(user);
+                }
+            } catch(e) { console.error(e); }
+            
+            if(isFirstLoad) {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('panel-alani').style.display = 'block';
+                baslatSayac();
+            }
+        }
+
+        function veriArayuzeIsle(user) {
+            let genelOrtalama = user.genelOrtalama !== undefined ? user.genelOrtalama : 0;
+            let etkinlikBasarisi = user.etkinlikBasarisi !== undefined ? user.etkinlikBasarisi : 0;
+            let sonDeneme = user.sonDeneme !== undefined ? user.sonDeneme : 0;
+            let rozetSayisi = user.rozet !== undefined ? user.rozet : Math.floor(toplamSaniye / 600);
+
+            // Tablo Alanlarına Değerleri Yaz
+            document.getElementById('valGenelPuan').innerText = genelOrtalama;
+            document.getElementById('valEtkinlikBasarisi').innerText = etkinlikBasarisi;
+            document.getElementById('valSonDeneme').innerText = sonDeneme;
+            document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelOrtalama);
+
+            // Yapay Zeka Mesajını Tetikle
+            aiMesajUret(aktifOgrenciAdi, genelOrtalama, rozetSayisi);
+        }
+
         function baslatSayac() {
             guncelleArayuz();
             
@@ -330,6 +604,7 @@
                 sessionStorage.setItem("toplamSaniye", toplamSaniye);
                 guncelleArayuz();
 
+                // Her 30 saniyede bir Google Sheets'e güncel süreyi kaydet
                 if (toplamSaniye % 30 === 0) {
                     googleSheetseKaydet();
                 }
