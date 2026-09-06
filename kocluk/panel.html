@@ -29,35 +29,36 @@
             max-width: 800px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             padding-bottom: 40px;
         }
         
+        /* Kompakt Üst Menü */
         .top-bar {
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--card-bg); padding: 12px 18px; border-radius: 16px;
+            background: var(--card-bg); padding: 10px 14px; border-radius: 14px;
             border: 2px solid var(--border-color); flex-wrap: wrap; gap: 8px;
             box-shadow: 0 4px 12px rgba(46,125,50,0.05);
         }
-        .top-bar-left { font-size: 13px; color: #555; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .top-bar-left { font-size: 12.5px; color: #555; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         .student-avatar {
-            width: 36px; height: 36px; border-radius: 50%; background: #c8e6c9; color: #1b5e20;
-            display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold;
+            width: 32px; height: 32px; border-radius: 50%; background: #c8e6c9; color: #1b5e20;
+            display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold;
             border: 2px solid var(--primary-color); box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .top-bar-actions { display: flex; gap: 8px; }
-        .logout-btn { background-color: #ffebee; color: #c62828; border: none; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 12px; }
-        .anasayfa-btn { background-color: var(--primary-color); color: white; text-decoration: none; padding: 6px 14px; border-radius: 10px; font-weight: 600; font-size: 12px; }
+        .top-bar-actions { display: flex; gap: 6px; }
+        .logout-btn { background-color: #ffebee; color: #c62828; border: none; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 11.5px; }
+        .anasayfa-btn { background-color: var(--primary-color); color: white; text-decoration: none; padding: 5px 12px; border-radius: 8px; font-weight: 600; font-size: 11.5px; }
 
-        .sure-card { background-color: #e2f4eb; border: 2px solid #a5d6a7; padding: 15px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .sure-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-        .sure-title { font-size: 14px; font-weight: bold; color: #1b5e20; display: flex; align-items: center; gap: 6px; }
-        .sure-digital-box { background: #ffffff; color: #1b5e20; font-family: monospace; font-size: 16px; font-weight: bold; padding: 6px 12px; border-radius: 10px; border: 1px solid #c8e6c9; }
-        .progress-track { background: #c8e6c9; height: 10px; border-radius: 5px; width: 100%; overflow: hidden; margin-bottom: 10px; }
-        .progress-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 5px; }
-        .sure-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #2e7d32; font-weight: 600; flex-wrap: wrap; gap: 5px; }
+        .sure-card { background-color: #e2f4eb; border: 2px solid #a5d6a7; padding: 12px 15px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .sure-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+        .sure-title { font-size: 13px; font-weight: bold; color: #1b5e20; display: flex; align-items: center; gap: 6px; }
+        .sure-digital-box { background: #ffffff; color: #1b5e20; font-family: monospace; font-size: 15px; font-weight: bold; padding: 4px 10px; border-radius: 8px; border: 1px solid #c8e6c9; }
+        .progress-track { background: #c8e6c9; height: 8px; border-radius: 4px; width: 100%; overflow: hidden; margin-bottom: 8px; }
+        .progress-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+        .sure-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: #2e7d32; font-weight: 600; flex-wrap: wrap; gap: 5px; }
 
-        /* MOBİLDE 2x2 SEKMELER BARİ */
+        /* Mobilde 2x2 Sekmeler */
         .tabs-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -72,12 +73,12 @@
         }
         .tab-btn {
             width: 100%;
-            padding: 10px 8px;
+            padding: 9px 8px;
             border: none;
             background: #f1f8e9;
             border-radius: 10px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12.5px;
             color: #2e7d32;
             cursor: pointer;
             text-align: center;
@@ -87,62 +88,91 @@
         }
         .tab-btn.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(46,125,50,0.2); border-color: var(--primary-color); }
 
-        .card { background: var(--card-bg); padding: 18px; border-radius: 18px; border: 2px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px dashed #f0eae1; padding-bottom: 8px; flex-wrap: wrap; gap: 10px; }
-        .card-title { font-size: 15px; font-weight: bold; color: #2e7d32; display: flex; align-items: center; gap: 8px; margin: 0; }
+        .card { background: var(--card-bg); padding: 16px; border-radius: 16px; border: 2px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px dashed #f0eae1; padding-bottom: 6px; flex-wrap: wrap; gap: 10px; }
+        .card-title { font-size: 14.5px; font-weight: bold; color: #2e7d32; display: flex; align-items: center; gap: 8px; margin: 0; }
         
-        .ders-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
-        @media(max-width: 600px) { .ders-grid-3 { grid-template-columns: 1fr; } }
-        
-        .ders-box { background: #faf8f5; border: 2px solid #e0dcd0; padding: 15px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
-        .ders-box.gecen { background: #fffde7; border-color: #ffd54f; }
-        .badge-gecen { background: #ffe082; color: #f57f17; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .ders-box.guncel { background: #e8f5e9; border-color: #81c784; }
-        .badge-guncel { background: #c8e6c9; color: #1b5e20; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .ders-box.gelecek { background: #ffebee; border-color: #e57373; }
-        .badge-gelecek { background: #ffcdd2; color: #b71c1c; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .ders-durum-baslik { font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; }
-        .ders-tarih-yazi { font-size: 14px; font-weight: 900; color: #222; }
-
         .teacher-note-box { 
             background: #fffde7; border: 1px solid #fff9c4; border-left: 6px solid #ffb300; 
-            padding: 16px; border-radius: 14px; font-size: 14px; line-height: 1.7; color: #333; font-style: italic; 
+            padding: 14px; border-radius: 12px; font-size: 13.5px; line-height: 1.6; color: #333; font-style: italic; 
         }
 
-        .rozet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; text-align: center; }
-        .rozet-box { background: #faf8f5; border: 1px solid #eae5dc; padding: 12px 8px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .rozet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; text-align: center; }
+        .rozet-box { background: #faf8f5; border: 1px solid #eae5dc; padding: 10px 6px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .rozet-box.aktif { background: #f1f8e9; border-color: #81c784; }
         .rozet-box.soluk { opacity: 0.35; filter: grayscale(100%); background: #fff; }
 
-        .okuma-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
+        .okuma-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
         @media(max-width: 600px) { .okuma-grid { grid-template-columns: 1fr; } }
-        .okunan-kitap-kutusu { background: #f1f8e9; border: 1px solid #c8e6c9; padding: 12px; border-radius: 12px; margin-bottom: 10px; }
-        .kitap-etiket { font-size: 10px; font-weight: bold; color: #2e7d32; text-transform: uppercase; margin-bottom: 4px; }
-        .kitap-isim { font-size: 16px; font-weight: bold; color: #1b5e20; }
-        .okuma-progress-track { background: #e0e0e0; height: 10px; border-radius: 5px; width: 100%; overflow: hidden; margin: 8px 0; }
-        .okuma-progress-fill { background: #ffb300; height: 100%; width: 0%; border-radius: 5px; }
-        .kitap-skor-kutu { background: #fff8e1; border: 1px solid #ffe082; padding: 15px; border-radius: 14px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .okunan-kitap-kutusu { background: #f1f8e9; border: 1px solid #c8e6c9; padding: 10px; border-radius: 10px; margin-bottom: 8px; }
+        .kitap-etiket { font-size: 9.5px; font-weight: bold; color: #2e7d32; text-transform: uppercase; margin-bottom: 3px; }
+        .kitap-isim { font-size: 15px; font-weight: bold; color: #1b5e20; }
+        .okuma-progress-track { background: #e0e0e0; height: 8px; border-radius: 4px; width: 100%; overflow: hidden; margin: 6px 0; }
+        .okuma-progress-fill { background: #ffb300; height: 100%; width: 0%; border-radius: 4px; }
+        .kitap-skor-kutu { background: #fff8e1; border: 1px solid #ffe082; padding: 12px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
-        .alfabe-container { margin-top: 15px; background: #fdfbf7; border: 1px solid #eae5dc; padding: 12px; border-radius: 12px; }
-        .alfabe-baslik { font-size: 11px; font-weight: bold; color: #555; margin-bottom: 8px; text-transform: uppercase; display: flex; justify-content: space-between; }
-        .alfabe-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; text-align: center; }
+        .alfabe-container { margin-top: 12px; background: #fdfbf7; border: 1px solid #eae5dc; padding: 10px; border-radius: 10px; }
+        .alfabe-baslik { font-size: 10.5px; font-weight: bold; color: #555; margin-bottom: 6px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        .alfabe-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; text-align: center; }
         @media(max-width: 500px) { .alfabe-grid { grid-template-columns: repeat(6, 1fr); } }
 
-        .harf-kutu { background: #faf8f5; border: 1px solid #ddd; border-radius: 6px; padding: 6px 2px; font-size: 14px; font-weight: bold; color: #aaa; opacity: 0.35; filter: grayscale(100%); transition: 0.3s; }
+        .harf-kutu { background: #faf8f5; border: 1px solid #ddd; border-radius: 5px; padding: 5px 2px; font-size: 13px; font-weight: bold; color: #aaa; opacity: 0.35; filter: grayscale(100%); transition: 0.3s; }
         .harf-kutu.ogrenildi { background: #e8f5e9; border-color: #81c784; color: #1b5e20; opacity: 1; filter: none; }
 
-        .stats-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        @media(max-width: 600px) { .stats-grid-4 { grid-template-columns: 1fr; } }
-        .stat-box { padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 6px; border: 2px solid rgba(0,0,0,0.03); }
+        /* 2x2 KÜÇÜLTÜLMÜŞ PUANLAMA / İSTATİSTİK SİSTEMİ (1. Görsel) */
+        .stats-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .stat-box { padding: 10px 12px; border-radius: 12px; display: flex; flex-direction: column; gap: 4px; border: 1.5px solid rgba(0,0,0,0.04); }
         .stat-box.kutu-1 { background: #e8f5e9; border-color: #a5d6a7; color: #1b5e20; }
         .stat-box.kutu-2 { background: #e3f2fd; border-color: #90caf9; color: #0d47a1; }
         .stat-box.kutu-3 { background: #fffde7; border-color: #ffe082; color: #f57f17; }
         .stat-box.kutu-4 { background: #fce4ec; border-color: #f48fb1; color: #880e4f; }
-        .stat-label { font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .stat-label { font-size: 9.5px; font-weight: 800; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .stat-value-row { display: flex; align-items: baseline; justify-content: space-between; }
-        .stat-main-num { font-size: 26px; font-weight: 900; }
+        .stat-main-num { font-size: 18px; font-weight: 900; }
 
-        .chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; }
+        /* AVATAR PANELİNİN ALTINA YERLEŞTİRİLEN KÜÇÜK DERS TAKVİMİ (2. ve 3. Görsel) */
+        .profile-calendar-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 10px 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .profile-calendar-header {
+            font-size: 11.5px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ders-grid-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+        .ders-box-mini {
+            background: #faf8f5;
+            border: 1px solid #e0dcd0;
+            padding: 6px 4px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .ders-box-mini.gecen { background: #fffde7; border-color: #ffd54f; }
+        .badge-mini-gecen { background: #ffe082; color: #f57f17; padding: 2px 6px; border-radius: 10px; font-size: 9px; font-weight: bold; }
+        .ders-box-mini.guncel { background: #e8f5e9; border-color: #81c784; }
+        .badge-mini-guncel { background: #c8e6c9; color: #1b5e20; padding: 2px 6px; border-radius: 10px; font-size: 9px; font-weight: bold; }
+        .ders-box-mini.gelecek { background: #ffebee; border-color: #e57373; }
+        .badge-mini-gelecek { background: #ffcdd2; color: #b71c1c; padding: 2px 6px; border-radius: 10px; font-size: 9px; font-weight: bold; }
+        .ders-baslik-mini { font-size: 8px; font-weight: bold; color: #555; text-transform: uppercase; }
+        .ders-tarih-mini { font-size: 10px; font-weight: 800; color: #222; }
+
+        .chart-container { position: relative; width: 100%; height: 200px; margin-top: 8px; }
 
         @keyframes fadeInOut {
             0% { opacity: 0; transform: translateY(-10px); }
@@ -154,15 +184,14 @@
             background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
             border: 2px solid #81c784;
             color: #1b5e20;
-            padding: 16px 20px;
-            border-radius: 16px;
+            padding: 14px 18px;
+            border-radius: 14px;
             box-shadow: 0 6px 20px rgba(46, 125, 50, 0.12);
             animation: fadeInOut 15s forwards;
             position: relative;
             overflow: hidden;
         }
 
-        /* PROMPTER BÜYÜK FONT & OKUNAKLI STİLLER */
         .prompter-kelime {
             cursor: pointer;
             padding: 3px 6px;
@@ -171,20 +200,13 @@
             display: inline-block;
             margin: 2px;
         }
-        .prompter-kelime:hover {
-            background: #c8e6c9;
-            color: #1b5e20;
-        }
-        .prompter-kelime.secildi {
-            background: #2e7d32;
-            color: white;
-            font-weight: bold;
-        }
+        .prompter-kelime:hover { background: #c8e6c9; color: #1b5e20; }
+        .prompter-kelime.secildi { background: #2e7d32; color: white; font-weight: bold; }
 
         .admin-float-btn {
             position: fixed; bottom: 20px; right: 20px; z-index: 1000;
-            background: rgba(46, 125, 50, 0.5); color: white; border: none; width: 45px; height: 45px;
-            border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center;
+            background: rgba(46, 125, 50, 0.5); color: white; border: none; width: 42px; height: 42px;
+            border-radius: 50%; font-size: 18px; display: flex; align-items: center; justify-content: center;
             cursor: pointer; opacity: 0.6; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .admin-float-btn:hover { opacity: 1; background: rgba(46, 125, 50, 1); transform: scale(1.05); }
@@ -222,7 +244,15 @@
             </div>
         </div>
 
-        <!-- 2. Oturum Süresi -->
+        <!-- 2. Avatar Panelinin Altına Yerleştirilen Küçük Ders Takvimi (2. ve 3. Görsel) -->
+        <div class="profile-calendar-card">
+            <div class="profile-calendar-header">📅 Ders Zaman Çizelgesi</div>
+            <div class="ders-grid-mini" id="dersZamanAlani">
+                <!-- Dinamik küçük kutucuklar -->
+            </div>
+        </div>
+
+        <!-- 3. Oturum Süresi -->
         <div class="sure-card">
             <div class="sure-header">
                 <div class="sure-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</div>
@@ -235,7 +265,7 @@
             </div>
         </div>
 
-        <!-- 3. Sekmeler (Gelişim Yolu olarak güncellendi) -->
+        <!-- 4. Sekmeler -->
         <div class="tabs-bar">
             <button class="tab-btn active" onclick="sekmeGecis(0)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeGecis(1)">📝 Ders Raporları</button>
@@ -254,21 +284,17 @@
                 <p id="aiKarsilamaMetni" style="margin: 0; font-size: 13px; line-height: 1.5; color: #2e7d32; font-weight: 600;"></p>
             </div>
 
+            <!-- 1. Görseldeki 2x2 Küçük İstatistik Kutuları -->
             <div class="stats-grid-4">
-                <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan (Ortalama)</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
-                <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
-                <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
+                <div class="stat-box kutu-1"><div class="stat-label">⭐ Genel Puan</div><div class="stat-value-row"><span class="stat-main-num" id="statGenelPuan">0</span></div></div>
+                <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
+                <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
                 <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
             </div>
 
             <div class="card">
                 <div class="card-header-flex"><h3 class="card-title">🍎 Öğretmenin Haftalık Notu</h3></div>
                 <div class="teacher-note-box" id="ogretmenNotu">Eğitim Koçu Notu Geliyor...</div>
-            </div>
-
-            <div class="card">
-                <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
-                <div class="ders-grid-3" id="dersZamanAlani"></div>
             </div>
 
             <div class="card">
@@ -515,35 +541,34 @@
         let secilenKelimeSayisi = 0;
         let aktifMetinBasligi = "";
 
-        // SINIF BAŞINA YAKLAŞIK 50 KELİMEDEN BAŞLAYIP 8. SINIFTA 400 KELİMEYE VARAN UZUN PEDAGOJİK METİNLER
         const sinirsizMetinHavuzu = {
             "1-Sinif": [
-                { baslik: "Minik Kedi", icerik: "Minik kedi bahçede neşeyle koştu. Sütünü içti ve tık nefes uyudu. Güneş açtı, çiçekler rengarenk açtı. Ali bu güzel günde çok mutlu oldu. Annesi ona mis gibi elmalar getirdi. Ali elmaları severek yedi ve arkadaşlarıyla oynamak dışarıya çıktı." },
-                { baslik: "Top Oyunu", icerik: "Topum kırmızı, parlak ve yuvarlak. Arkadaşım Can ile okul bahçesinde keyifle top oynadık. Zil çaldı, sıraya girip sınıfa koştuk. Öğretmenimiz bize yeni hikaye kitapları dağıttı. Okumayı öğrenmek harika bir duygu." }
+                { baslik: "Minik Kedi", icerik: "Minik kedi bahçede neşeyle koştu. Sütünü içti ve tık nefes uyudu. Güneş açtı, çiçekler rengarenk açtı. Ali bu güzel günde çok mutlu oldu. Annesi ona mis gibi elmalar getirdi. Ali elmaları severek yedi ve arkadaşlarıyla oynamak için dışarıya neşeyle çıktı." },
+                { baslik: "Top Oyunu", icerik: "Topum kırmızı, parlak ve yuvarlak. Arkadaşım Can ile okul bahçesinde keyifle top oynadık. Zil çaldı, sıraya girip sınıfa koştuk. Öğretmenimiz bize yeni hikaye kitapları dağıttı. Okumayı öğrenmek hayatımdaki en harika duygu." }
             ],
             "2-Sinif": [
-                { baslik: "Ormandaki Sincap", icerik: "Sevimli sincap uzun ve tüylü kuyruğu ile ulu çam ağaçlarından diğerine çevikçe zıplıyordu. Kış mevsimi gelmeden önce toprak altına saklayacağı meşe palamutlarını büyük bir titizlikle topluyordu. Hava soğuyunca sıcak yuvasına çekildi ve dışarıda lapa lapa yağan karı izleyerek huzurlu bir uykuya daldı. Doğa kış uykusuna yatarken sincap da yediklerinin tadını çıkarıyordu." },
-                { baslik: "Bahçedeki Domates", icerik: "Dedemle birlikte evimizin arkasındaki toprak bahçeye kırmızı domates fideleri ektik. Her gün sabah erken saatlerde onlara taze su verdik ve toprağı havalandırdık. Haftalar geçtikçe fideler büyüdü, sarı çiçekler açtı ve sonunda domatesler kıpkırmızı oldu. Birlikte topladığımız taze domateslerle akşam sofrası için çok lezzetli bir salata hazırladık." }
+                { baslik: "Ormandaki Sincap", icerik: "Sevimli sincap uzun ve tüylü kuyruğu ile ulu çam ağaçlarından diğerine çevikçe zıplıyordu. Kış mevsimi gelmeden önce toprak altına saklayacağı meşe palamutlarını büyük bir titizlikle topluyordu. Hava soğuyunca sıcak yuvasına çekildi ve dışarıda lapa lapa yağan karı izleyerek huzurlu bir uykuya daldı. Doğa kış uykusuna yatarken sincap da yediklerinin tadını çıkarıyordu. İlkbahar gelince yeniden yeşil dallarda neşeyle koşturmayı sabırsızlıkla bekliyordu." },
+                { baslik: "Bahçedeki Domates", icerik: "Dedemle birlikte evimizin arkasındaki toprak bahçeye kırmızı domates fideleri ektik. Her gün sabah erken saatlerde onlara taze su verdik ve toprağı havalandırdık. Haftalar geçtikçe fideler büyüdü, sarı çiçekler açtı ve sonunda domatesler kıpkırmızı oldu. Birlikte topladığımız taze domateslerle akşam sofrası için çok lezzetli bir salata hazırladık. Ailemizle birlikte kendi yetiştirdiğimiz sebzeleri yemek hepimizi çok mutlu etti." }
             ],
             "3-Sinif": [
-                { baslik: "Kayıp Anahtar", icerik: "Zeynep okul çıkışında sırt çantasını kontrol ederken evlerinin anahtarının her zamanki yerinde olmadığını fark etti. Oldukça telaşlandı ve ne yapacağını bilemedi. Ama akıllı arkadaşı Elif'in yardımıyla okul bahçesindeki kamelya bankında unuttuğunu hatırladı. Koşarak gidip anahtarını aynı yerde buldu ve derin bir nefes aldı. Eve vardığında annesine sarıldı ve bir daha eşyalarına daha dikkatli edeceğine dair kendi kendine söz verdi." },
-                { baslik: "Uzay Yolculuğu", icerik: "Yatak odasının penceresinden gece gökyüzünü inceleyen Mert, pırıl pırıl parlayan yıldızları saymayı çok severdi. Bir gece hayal gücünün sınırlarını zorlayarak kendisini devasa, gümüş renkli bir roketin kaptan köşküncünde buldu. Uzayın derinliklerinde süzülen gizemli gezegenleri, parlak nebulaları ve dev halkalarıyla göz kamaştıran Satürn'ü yakından görmek onu adeta büyülemişti. Bu muazzam rüya sabaha kadar sürdü ve ona uzay bilimine karşı büyük bir tutku kazandırdı." }
+                { baslik: "Kayıp Anahtar", icerik: "Zeynep okul çıkışında sırt çantasını kontrol ederken evlerinin anahtarının her zamanki yerinde olmadığını fark etti. Oldukça telaşlandı ve ne yapacağını bilemedi. Ama akıllı arkadaşı Elif'in yardımıyla okul bahçesindeki kamelya bankında unuttuğunu hatırladı. Koşarak gidip anahtarını aynı yerde buldu ve derin bir nefes aldı. Eve vardığında annesine sarıldı ve bir daha eşyalarına daha dikkatli edeceğine dair kendi kendine söz verdi. Sorumluluk sahibi olmak insanı böyle zor durumlardan kurtarıyordu." },
+                { baslik: "Uzay Yolculuğu", icerik: "Yatak odasının penceresinden gece gökyüzünü inceleyen Mert, pırıl pırıl parlayan yıldızları saymayı çok severdi. Bir gece hayal gücünün sınırlarını zorlayarak kendisini devasa, gümüş renkli bir roketin kaptan köşküncünde buldu. Uzayın derinliklerinde süzülen gizemli gezegenleri, parlak nebulaları ve dev halkalarıyla göz kamaştıran Satürn'ü yakından görmek onu adeta büyülemişti. Bu muazzam rüya sabaha kadar sürdü ve ona uzay bilimine karşı büyük bir tutku kazandırdı. Belki de gelecekte gerçek bir astronot olabilirdi." }
             ],
             "4-Sinif": [
-                { baslik: "Doğa ile Dostluk", icerik: "Hafta sonu ailemizle birlikte şehrin gürültüsünden uzaklaşarak dağ eteklerindeki huzurlu bir kamp alanına doğru yola çıktık. Sabahın ilk ışıklarıyla birlikte kulaklarımızı dolduran kuş cıvıltıları ve ormanın o mis gibi taze havasıyla uyanmak ruhumuza çok iyi geldi. Kamp ateşinin etrafında toplanıp doğanın dengesini korumanın ne kadar önemli olduğunu konuştuk. Etraftaki plastik atıkları özenle toplayarak doğaya sahip çıkmanın hepimizin ortak sorumluluğu olduğunu bir kez daha kavradık. Akşam gökyüzündeki milyarlarca yıldızı seyrederken hayatın ne kadar değerli olduğunu düşündüm." },
-                { baslik: "Eski Saat", icerik: "Tarihi mahalledeki dar sokaklarda gezinirken karşıma çıkan küçük antika dükkanının vitrini beni adeta mıknatıs gibi çekti. Vitrinin en köşesinde duran, işlemeli pirinç kasalı ve altın yaldızlı cep saati tüm dikkatimi topladı. Dükkana girip yaşlı ustadan bu saatin yüzyıllar önce saraylarda kullanıldığını öğrendim. Zamanı gösteren sadece mekanik dişliler değil, aynı zamanda geçmişin gizemli hikayeleriydi. O an, tarihin dokunulabilir bir parçasını izlediğimi hissettim ve saatçiden ayrılırken zihnimde eski zamanlara ait hayaller uçuşuyordu." }
+                { baslik: "Doğa ile Dostluk", icerik: "Hafta sonu ailemizle birlikte şehrin gürültüsünden uzaklaşarak dağ eteklerindeki huzurlu bir kamp alanına doğru yola çıktık. Sabahın ilk ışıklarıyla birlikte kulaklarımızı dolduran kuş cıvıltıları ve ormanın o mis gibi taze havasıyla uyanmak ruhumuza çok iyi geldi. Kamp ateşinin etrafında toplanıp doğanın dengesini korumanın ne kadar önemli olduğunu konuştuk. Etraftaki plastik atıkları özenle toplayarak doğaya sahip çıkmanın hepimizin ortak sorumluluğu olduğunu bir kez daha kavradık. Akşam gökyüzündeki milyarlarca yıldızı seyrederken hayatın ne kadar değerli olduğunu düşündüm. Çevremizi korumak yarınlarımız için atılacak en büyük adımdır." },
+                { baslik: "Eski Saat", icerik: "Tarihi mahalledeki dar sokaklarda gezinirken karşıma çıkan küçük antika dükkanının vitrini beni adeta mıknatıs gibi çekti. Vitrinin en köşesinde duran, işlemeli pirinç kasalı ve altın yaldızlı cep saati tüm dikkatimi topladı. Dükkana girip yaşlı ustadan bu saatin yüzyıllar önce saraylarda kullanıldığını öğrendim. Zamanı gösteren sadece mekanik dişliler değil, aynı zamanda geçmişin gizemli hikayeleriydi. O an, tarihin dokunulabilir bir parçasını izlediğimi hissettim ve saatçiden ayrılırken zihnimde eski zamanlara ait hayaller uçuşuyordu. Eşyaların da birer ruhu olduğuna inanmak insanı meraka sürüklüyor." }
             ],
             "5-Sinif": [
-                { baslik: "Bilim Fuarı Projesi", icerik: "Okulumuzda her yıl geleneksel olarak düzenlenen büyük bilim fuarı için aylar öncesinden hazırlıklara başlamıştık. Ekip arkadaşlarımla birlikte yenilenebilir enerji kaynaklarını inceleyerek geleceğin şehirlerini tasarlamaya karar verdik. Projemizin merkezine yerleştirdiğimiz güneş panelleriyle çalışan mini otonom araba modeli jüri üyelerinin büyük beğenisini kazandı. Günlerce süren laboratuvar çalışmaları, uykusuz geceler ve yapılan onlarca başarısız deneyin ardından elde ettiğimiz birincilik ödülü, tüm yorgunluğumuzu bir anda unutturdu. Bilimin ve üretmenin ne kadar keyifli bir yolculuk olduğunu bu projeyle bizzat deneyimlemiş olduk." },
-                { baslik: "Anadolu Medeniyetleri", icerik: "Sosyal bilgiler dersinde işlediğimiz antik uygarlıklar ünitesi, zihnimde adeta devasa bir tarih müzesi canlandırmıştı. Hititlerin güneş kursları, Friglerin fibula adı verilen çengelli iğneleri ve Lidyalıların bulduğu paranın ticaret tarihindeki devrim niteliğindeki etkileri beni derinden etkiledi. Müzeleri gezmek, binlerce yıl önce aynı topraklarda yaşayan insanların günlük yaşam izlerini sürmek adeta zaman makinesiyle seyahat etmek gibiydi. Geçmişi bilmeden geleceği inşa etmenin imkansız olduğunu ve kültürel mirasımıza sahip çıkmamız gerektiğini bu incelemeler sayesinde çok daha iyi idrak ettim." }
+                { baslik: "Bilim Fuarı Projesi", icerik: "Okulumuzda her yıl geleneksel olarak düzenlenen büyük bilim fuarı için aylar öncesinden hazırlıklara başlamıştık. Ekip arkadaşlarımla birlikte yenilenebilir enerji kaynaklarını inceleyerek geleceğin şehirlerini tasarlamaya karar verdik. Projemizin merkezine yerleştirdiğimiz güneş panelleriyle çalışan mini otonom araba modeli jüri üyelerinin büyük beğenisini kazandı. Günlerce süren laboratuvar çalışmaları, uykusuz geceler ve yapılan onlarca başarısız deneyin ardından elde ettiğimiz birincilik ödülü, tüm yorgunluğumuzu bir anda unutturdu. Bilimin ve üretmenin ne kadar keyifli bir yolculuk olduğunu bu projeyle bizzat deneyimlemiş olduk. Gelecekte insanlığa faydalı projeler üretmek en büyük hayalimiz." },
+                { baslik: "Anadolu Medeniyetleri", icerik: "Sosyal bilgiler dersinde işlediğimiz antik uygarlıklar ünitesi, zihnimde adeta devasa bir tarih müzesi canlandırmıştı. Hititlerin güneş kursları, Friglerin fibula adı verilen çengelli iğneleri ve Lidyalıların bulduğu paranın ticaret tarihindeki devrim niteliğindeki etkileri beni derinden etkiledi. Müzeleri gezmek, binlerce yıl önce aynı topraklarda yaşayan insanların günlük yaşam izlerini sürmek adeta zaman makinesiyle seyahat etmek gibiydi. Geçmişi bilmeden geleceği inşa etmenin imkansız olduğunu ve kültürel mirasımıza sahip çıkmamız gerektiğini bu incelemeler sayesinde çok daha iyi idrak ettim. Tarih bilinci toplumsal hafızanın en temel taşıdır." }
             ],
             "6-Sinif": [
-                { baslik: "Ekosistem Dengesi ve İklim", icerik: "Dünyamız üzerindeki canlı çeşitliliği milyonlarca yıllık evrimsel sürecin ürünü olan son derece hassas ve kırılgan bir denge üzerine kurulmuştur. Sanayi devriminden bu yana artan karbon salınımı, ormansızlaşma ve bilinçsiz tüketim alışkanlıkları pek çok ekosistemi ve endemik türü yok olma eşiğine getirmiştir. Gelecek nesillere yaşanabilir, yeşil ve temiz bir dünya bırakmak istiyorsak, bireysel ölçekte atacağımız her küçük geri dönüşüm adımı ve enerji tasarrufu politikası hayati önem taşımaktadır. Çevre bilinci sadece bir ders konusu değil, sürdürülebilir bir yaşam felsefesidir." },
-                { baslik: "Sanatın Evrensel Dili", icerik: "Ressam fırçasını tual üzerinde gezdirirken sadece boyaları karıştırmıyor, aynı zamanda ruhunun en derin köşelerindeki saklı duyguları somut bir gerçeğe dönüştürüyordu. Müzik notaları, heykeltıraşın mermere kazıdığı ince detaylar veya bir yazarın kaleme aldığı sarsıcı cümleler insanların ortak paydada buluşmasını sağlar. Sanat, coğrafi sınırları, dilleri ve kültürleri aşarak insanlığı tek bir yürekte birleştiren en güçlü evrensel köprüdür." }
+                { baslik: "Ekosistem Dengesi ve İklim", icerik: "Dünyamız üzerindeki canlı çeşitliliği milyonlarca yıllık evrimsel sürecin ürünü olan son derece hassas ve kırılgan bir denge üzerine kurulmuştur. Sanayi devriminden bu yana artan karbon salınımı, ormansızlaşma ve bilinçsiz tüketim alışkanlıkları pek çok ekosistemi ve endemik türü yok olma eşiğine getirmiştir. Gelecek nesillere yaşanabilir, yeşil ve temiz bir dünya bırakmak istiyorsak, bireysel ölçekte atacağımız her küçük geri dönüşüm adımı ve enerji tasarrufu politikası hayati önem taşımaktadır. Çevre bilinci sadece bir ders konusu değil, sürdürülebilir bir yaşam felsefesidir. Doğaya saygı duymak geleceğimize duyduğumuz saygının ta kendisidir." },
+                { baslik: "Sanatın Evrensel Dili", icerik: "Ressam fırçasını tual üzerinde gezdirirken sadece boyaları karıştırmıyor, aynı zamanda ruhunun en derin köşelerindeki saklı duyguları somut bir gerçeğe dönüştürüyordu. Müzik notaları, heykeltıraşın mermere kazıdığı ince detaylar veya bir yazarın kaleme aldığı sarsıcı cümleler insanların ortak paydada buluşmasını sağlar. Sanat, coğrafi sınırları, dilleri ve kültürleri aşarak insanlığı tek bir yürekte birleştiren en güçlü evrensel köprüdür. Sanatla beslenen bir toplum, estetik değerlere önem verir ve hoşgörüyü hayatının merkezine koyar." }
             ],
             "7-Sinif": [
-                { baslik: "Teknolojik Dönüşüm ve Etik", icerik: "Yapay zeka algoritmaları, büyük veri analitiği ve nesnelerin interneti günümüzde iş dünyasından eğitim sistemine kadar her sektörü kökten dönüştürmektedir. Rutin işlerin makineler tarafından devralınması insanlara yaratıcı düşünce ve inovasyon için geniş alanlar açarken, dijital mahremiyet ve veri güvenliği gibi etik sorunları da beraberinde getirmektedir. Teknolojiyi körü körüne tüketmek yerine onu eleştirel bir süzgeçten geçirerek insanlığın yararına optimize etmek modern bireyin en temel sorumlulukları arasındadır. Geleceğin dijital dünyasında başarılı olmak için kodlama bilmek kadar etik değerleri gözetmek de gereklidir." },
-                { baslik: "Kutup Araştırmaları ve Küresel Etki", icerik: "Antarktika ve Arktik kutup bölgeleri, Dünya'nın iklim sistemini yöneten devasa soğuk hava depoları gibidir. Küresel ısınmanın bu hassas bölgelerdeki buz kütlelerini hızla eritmesi, okyanus akıntılarının yönünü değiştirmekte ve kıyı şehirlerini tehlikeye atmaktadır. Uluslararası bilim insanlarından oluşan araştırma ekipleri zorlu hava koşullarına rağmen kutuplarda kamp kurarak buz çekirdeği örnekleri almakta ve geçmiş iklim döngülerini incelemektedir. Bu veriler, gezegenimizin yararını korumak adına atılacak stratejik adımların temelini oluşturur." }
+                { baslik: "Teknolojik Dönüşüm ve Etik", icerik: "Yapay zeka algoritmaları, büyük veri analitiği ve nesnelerin interneti günümüzde iş dünyasından eğitim sistemine kadar her sektörü kökten dönüştürmektedir. Rutin işlerin makineler tarafından devralınması insanlara yaratıcı düşünce ve inovasyon için geniş alanlar açarken, dijital mahremiyet ve veri güvenliği gibi etik sorunları da beraberinde getirmektedir. Teknolojiyi körü körüne tüketmek yerine onu eleştirel bir süzgeçten geçirerek insanlığın yararına optimize etmek modern bireyin en temel sorumlulukları arasındadır. Geleceğin dijital dünyasında başarılı olmak için kodlama bilmek kadar etik değerleri gözetmek de gereklidir. Bilgi güvenliği çağımızın en kritik güvencesidir." },
+                { baslik: "Kutup Araştırmaları ve Küresel Etki", icerik: "Antarktika ve Arktik kutup bölgeleri, Dünya'nın iklim sistemini yöneten devasa soğuk hava depoları gibidir. Küresel ısınmanın bu hassas bölgelerdeki buz kütlelerini hızla eritmesi, okyanus akıntılarının yönünü değiştirmekte ve kıyı şehirlerini tehlikeye atmaktadır. Uluslararası bilim insanlarından oluşan araştırma ekipleri zorlu hava koşullarına rağmen kutuplarda kamp kurarak buz çekirdeği örnekleri almakta ve geçmiş iklim döngülerini incelemektedir. Bu veriler, gezegenimizin yararını korumak adına atılacak stratejik adımların temelini oluşturur. Bilimsel araştırmalar doğanın sesini duymamızı sağlar." }
             ],
             "8-Sinif": [
                 { baslik: "LGS Sürecinde Stratejik Başarı ve Zihinsel Dayanıklılık", icerik: "LGS maratonu sadece uzun saatler boyunca masa başında ders çalışmak değil, aynı zamanda zihinsel dayanıklılığı en üst düzeyde korumak, stres yönetimi becerisi kazanmak ve zamanı en verimli şekilde planlamaktır. Sene boyunca çözülen binlerce soru ve yapılan denemelerdeki her yanlış, aslında henüz tam olarak oturmamış bir bilginin gün yüzüne çıkması için eşsiz bir fırsattır. Öğrencilerin bu yoğun tempoda kendilerini başkalarıyla kıyaslamak yerine kendi kişisel gelişim eğrilerine odaklanmaları mental sağlık açısından kritiktir. Düzenli paragraf analizi yapmak, okuduğunu anlama hızını artırmak ve sınav anı simülasyonları gerçekleştirmek hedeflenen liseye giden kapıları ardına kadar aralayacaktır. Unutmayın ki zafer, maratonun tamamında istikrarı elden bırakmayanlarındır."},
@@ -1158,22 +1183,22 @@
                             let temizTarih = tarihiDuzelt(d.tarih);
                             let durumStr = String(d.durum || "").toLowerCase();
                             
-                            let kutuSinif = "ders-box guncel";
-                            let badgeSinif = "badge-guncel";
-                            let baslikTip = index === 0 ? "GEÇEN DERS" : (index === 1 ? "GÜNCEL DERS" : "GELECEK DERS");
+                            let kutuSinif = "ders-box-mini guncel";
+                            let badgeSinif = "badge-mini-guncel";
+                            let baslikTip = index === 0 ? "GEÇEN" : (index === 1 ? "GÜNCEL" : "GELECEK");
 
                             if (durumStr.includes("gelecek") || durumStr.includes("ertelendi")) {
-                                kutuSinif = "ders-box gelecek";
-                                badgeSinif = "badge-gelecek";
+                                kutuSinif = "ders-box-mini gelecek";
+                                badgeSinif = "badge-mini-gelecek";
                             } else if (index === 0) {
-                                kutuSinif = "ders-box gecen";
-                                badgeSinif = "badge-gecen";
+                                kutuSinif = "ders-box-mini gecen";
+                                badgeSinif = "badge-mini-gecen";
                             }
 
                             dersHtml += `
                                 <div class="${kutuSinif}">
-                                    <div class="ders-durum-baslik">${baslikTip}</div>
-                                    <div class="ders-tarih-yazi">📅 ${temizTarih}</div>
+                                    <div class="ders-baslik-mini">${baslikTip}</div>
+                                    <div class="ders-tarih-mini">📅 ${temizTarih}</div>
                                     <div class="${badgeSinif}">${d.durum}</div>
                                 </div>
                             `;
