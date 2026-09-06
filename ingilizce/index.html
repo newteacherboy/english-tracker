@@ -612,7 +612,7 @@
             <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
         </div>
 
-        <!-- 3. DERS ZAMAN ÇİZELGESİ -->
+        <!-- 3. DERS ZAMAN ÇİZELGESİ (Önceki Ders sol, Gelecek Ders sağ kutu) -->
         <div class="schedule-section">
             <div class="schedule-title">📅 Ders Zaman Çizelgesi</div>
             <div class="schedule-grid">
@@ -729,7 +729,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbxApK7MW6fProEF_GyFqePKlCwKI7GvNHGlt25cczFcUQMoYNajOBmEwn8D9OL5D6AfwQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwvuOEAYy1xirYb6oQSBSa4aRRKqpeZ-4mNHsbrPivOsNf_wRNlm5N0RY6RQdIhAH_wCA/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -883,38 +883,50 @@
             return tarihStr;
         }
 
+        // Durum değerine göre uygun CSS sınıfını ve rengini veren yardımcı fonksiyon
+        function durumStiliVer(durumStr) {
+            let d = durumStr.toLowerCase();
+            if (d.includes("yapıldı") || d.includes("yapildi")) {
+                return { text: "YAPILDI", className: "status-green" };
+            } else if (d.includes("yapılmadı") || d.includes("yapilmadi")) {
+                return { text: "YAPILMADI", className: "status-red" };
+            } else if (d.includes("sonraki") || d.includes("gelecek")) {
+                return { text: "SONRAKİ", className: "status-yellow" };
+            }
+            return { text: durumStr.toUpperCase(), className: "status-gray" };
+        }
+
         function dersTakviminiIsle(derslerDizisi) {
             let gecenDersTarih = "--.--.----";
-            let gecenDersDurum = "Bekleniyor";
-            let gecenDurumClass = "status-gray";
+            let gecenBilgi = { text: "BEKLENİYOR", className: "status-gray" };
 
             let gelecekDersTarih = "--.--.----";
-            let gelecekDersDurum = "Bekleniyor";
-            let gelecekDurumClass = "status-gray";
+            let gelecekBilgi = { text: "BEKLENİYOR", className: "status-gray" };
 
             if (derslerDizisi && derslerDizisi.length > 0) {
-                // Dersler dizisi artık son 2 satırı içeriyor (0. eleman önceki ders, 1. eleman gelecek ders)
+                // Dizinin 0. elemanı Önceki Ders (sondan 2. kayıt)
                 if (derslerDizisi.length >= 1) {
                     let onceki = derslerDizisi[0];
                     gecenDersTarih = tarihiDuzelt(onceki.tarih);
-                    gecenDersDurum = onceki.durum.toUpperCase();
-                    gecenDurumClass = (onceki.durum.includes("yapıldı") || onceki.durum.includes("yapildi")) ? "status-green" : (onceki.durum.includes("yapılmadı") ? "status-red" : "status-yellow");
+                    gecenBilgi = durumStiliVer(onceki.durum);
                 }
+                // Dizinin 1. elemanı Gelecek Ders (en son kayıt)
                 if (derslerDizisi.length >= 2) {
                     let sonraki = derslerDizisi[1];
                     gelecekDersTarih = tarihiDuzelt(sonraki.tarih);
-                    gelecekDersDurum = sonraki.durum.toUpperCase();
-                    gelecekDurumClass = sonraki.durum.includes("sonraki") || sonraki.durum.includes("gelecek") ? "status-yellow" : (sonraki.durum.includes("yapıldı") ? "status-green" : "status-red");
+                    gelecekBilgi = durumStiliVer(sonraki.durum);
                 }
             }
 
+            // Sol Kutu: Önceki Ders
             document.getElementById('txtGecenTarih').innerHTML = `📅 ${gecenDersTarih}`;
-            document.getElementById('txtGecenDurum').innerText = gecenDersDurum;
-            document.getElementById('boxGecenDers').className = `schedule-box ${gecenDurumClass}`;
+            document.getElementById('txtGecenDurum').innerText = gecenBilgi.text;
+            document.getElementById('boxGecenDers').className = `schedule-box ${gecenBilgi.className}`;
 
+            // Sağ Kutu: Gelecek Ders
             document.getElementById('txtGelecekTarih').innerHTML = `📅 ${gelecekDersTarih}`;
-            document.getElementById('txtGelecekDurum').innerText = gelecekDersDurum;
-            document.getElementById('boxGelecekDers').className = `schedule-box ${gelecekDurumClass}`;
+            document.getElementById('txtGelecekDurum').innerText = gelecekBilgi.text;
+            document.getElementById('boxGelecekDers').className = `schedule-box ${gelecekBilgi.className}`;
         }
 
         function kitapTakibiniIsle(kitap) {
