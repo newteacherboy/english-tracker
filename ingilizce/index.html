@@ -278,6 +278,12 @@
             transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .btn-sik:hover { border-color: #2563eb; background: #f0fdf4; }
+        /* Yanlış tıklanan şıkkın kırmızı yanması için sınıf */
+        .btn-sik.yanlis-animasyon {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
 
         .liderlik-tablosu-box { margin-top: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; }
         .liderlik-title { font-weight: 800; font-size: 13px; color: #334155; margin-bottom: 8px; text-align: center; }
@@ -310,7 +316,7 @@
         <div id="mesaj"></div>
     </div>
 
-    <!-- Başarılı Giriş Sonrası Panel Alanı (Aralıklı Bağımsız Blok Mimarisi) -->
+    <!-- Başarılı Giriş Sonrası Panel Alanı -->
     <div id="panel-alani">
         
         <!-- 1. KULLANICI KONTROL ALANI & DERS TAKVİMİ -->
@@ -524,7 +530,7 @@
                 <button class="btn-giris" onclick="yarismayiBaslat()" style="background: #2563eb; margin-top: 5px;">🚀 Yarışmayı Başlat</button>
             </div>
 
-            <!-- Çoktan Seçmeli Soru Ekranı (2 Şıklı, Biri Doğru Biri Yanlış Anlam) -->
+            <!-- Çoktan Seçmeli Soru Ekranı (Yanlış Şık Kırmızı Yanma Özellikli) -->
             <div id="oyunEkranIci">
                 <div class="oyun-ust-bilgi">
                     <span id="lblKelimeSayac">Kelime: 1 / 25</span>
@@ -542,8 +548,8 @@
 
                 <div style="font-size: 12.5px; text-align: center; color: #64748b; font-weight: 600; margin-bottom: 12px;">Doğru anlamını seçiniz:</div>
                 <div class="siklar-grid">
-                    <button class="btn-sik" id="btnSik1" onclick="sikSec(0)">Şık 1</button>
-                    <button class="btn-sik" id="btnSik2" onclick="sikSec(1)">Şık 2</button>
+                    <button class="btn-sik" id="btnSik0" onclick="sikSec(0)">Şık 1</button>
+                    <button class="btn-sik" id="btnSik1" onclick="sikSec(1)">Şık 2</button>
                 </div>
             </div>
 
@@ -589,7 +595,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbxzYvThGtqfiQ6pRJm81IhqABQphopGnde5_40iw1SaDnjQNZ4GewFAuspHFFeeaqmLog/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbycGd_fqICCBhsJAQtdlXQSwDJHqdJIbvv_BkACCaZsG1ORGlXzSn2WA5uL0GPCf6NSLA/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -600,10 +606,9 @@
         let kriterChartInstance = null;
         let denemeChartInstance = null;
 
-        // Kelime Yarışması Değişkenleri
         let secilenSinif = 2;
         let secilenUniteler = [1];
-        let masterKelimeHavuzu = []; // Google Sheets'ten gelen tüm kelimeler
+        let masterKelimeHavuzu = [];
         let aktifKelimeListesi = [];
         let aktifSoruIndex = 0;
         let oyunDogru = 0;
@@ -612,6 +617,7 @@
         let oyunSaniyeSayac = 0;
         let globalLiderlikCache = [];
         let mevcutDogruSikIndex = 0;
+        let soruKilitli = false; // Tıklama çakışmasını önlemek için kilit
 
         window.onload = function() {
             const oturumAcik = sessionStorage.getItem("oturumAcik");
@@ -931,7 +937,7 @@
             return { kazanilan: kazanilanSayisi, toplam: toplamRozet };
         }
 
-        // --- KELİME OYUNU & GOOGLE SHEETS KELİME HAVUZU MİMARİSİ ---
+        // --- KELİME OYUNU MİMARİSİ ---
         function oyunModaliniAc() {
             document.getElementById('gameModalOverlay').style.display = 'flex';
             document.getElementById('oyunAyarBolumu').style.display = 'block';
@@ -985,32 +991,27 @@
                 return;
             }
 
-            // Soru sayısı: 2-4: 25, 5-8: her sınıfta +5 artar
             let hedefSoruSayisi = 25;
             if (secilenSinif >= 5) {
                 hedefSoruSayisi = 25 + ((secilenSinif - 4) * 5);
             }
 
-            // Google Sheets'ten gelen masterKelimeHavuzu içinden seçilen sınıf ve ünitelere ait kelimeleri filtrele
             let filtrelenmisHavuz = masterKelimeHavuzu.filter(item => 
                 item.sinif === secilenSinif && secilenUniteler.includes(item.unite)
             );
 
             if (filtrelenmisHavuz.length === 0) {
-                alert(`Seçilen sınıf (${secilenSinif}) ve ünite(ler) için Google Sheets 'Kelimeler' sekmesinde kelime bulunamadı! Lütfen kontrol edin.`);
+                alert(`Seçilen sınıf (${secilenSinif}) ve ünite(ler) için Google Sheets 'Kelimeler' sekmesinde kelime bulunamadı!`);
                 return;
             }
 
-            // Havuzdaki kelimeleri rastgele karıştırıp benzersiz soru listesi oluştur
             let karisikHavuz = [...filtrelenmisHavuz].sort(() => Math.random() - 0.5);
             aktifKelimeListesi = [];
 
             for (let i = 0; i < hedefSoruSayisi && i < karisikHavuz.length; i++) {
-                let rastKelime = karisikHavuz[i]; // Havuzdan sırayla alarak tekrarı önlüyoruz
-                
-                // Yanlış şık için havuzdan farklı bir kelime seç
+                let rastKelime = karisikHavuz[i];
                 let digerleri = filtrelenmisHavuz.filter(item => item.en !== rastKelime.en);
-                if (digerleri.length === 0) digerleri = masterKelimeHavuzu; // Yedek
+                if (digerleri.length === 0) digerleri = masterKelimeHavuzu;
                 let yanlisKelime = digerleri[Math.floor(Math.random() * digerleri.length)];
 
                 let ingilizceSorulsun = Math.random() < 0.5;
@@ -1035,6 +1036,7 @@
             oyunDogru = 0;
             oyunYanlis = 0;
             oyunSaniyeSayac = 0;
+            soruKilitli = false;
 
             document.getElementById('oyunAyarBolumu').style.display = 'none';
             document.getElementById('oyunEkranIci').style.display = 'block';
@@ -1058,28 +1060,44 @@
                 oyunuBitir();
                 return;
             }
+            soruKilitli = false;
             let soru = aktifKelimeListesi[aktifSoruIndex];
             mevcutDogruSikIndex = soru.dogruIndex;
+
+            // Butonların sınıflarını temizle
+            document.getElementById('btnSik0').className = "btn-sik";
+            document.getElementById('btnSik1').className = "btn-sik";
 
             document.getElementById('lblKelimeSayac').innerText = `Kelime: ${aktifSoruIndex + 1} / ${aktifKelimeListesi.length}`;
             document.getElementById('lblSoruDilLabel').innerText = soru.dil;
             document.getElementById('lblSoruKelime').innerText = soru.soru;
 
-            document.getElementById('btnSik1').innerText = soru.siklar[0];
-            document.getElementById('btnSik2').innerText = soru.siklar[1];
+            document.getElementById('btnSik0').innerText = soru.siklar[0];
+            document.getElementById('btnSik1').innerText = soru.siklar[1];
         }
 
         function sikSec(secilenIndex) {
+            if (soruKilitli) return; // Çift tıklama önlemi
+
+            let btnSecilen = document.getElementById('btnSik' + secilenIndex);
+
             if (secilenIndex === mevcutDogruSikIndex) {
                 oyunDogru++;
+                document.getElementById('lblDogruSayisi').innerText = oyunDogru;
+                aktifSoruIndex++;
+                soruyuEkranaGetir();
             } else {
+                // Yanlış şıkkı kırmızı yap ve hemen sonra diğer soruya geç
+                soruKilitli = true;
                 oyunYanlis++;
-            }
-            document.getElementById('lblDogruSayisi').innerText = oyunDogru;
-            document.getElementById('lblYanlisSayisi').innerText = oyunYanlis;
+                document.getElementById('lblYanlisSayisi').innerText = oyunYanlis;
+                btnSecilen.classList.add('yanlis-animasyon');
 
-            aktifSoruIndex++;
-            soruyuEkranaGetir();
+                setTimeout(() => {
+                    aktifSoruIndex++;
+                    soruyuEkranaGetir();
+                }, 400); // 400 milisaniye sonra diğer soruya geçiş
+            }
         }
 
         function oyunuBitir() {
