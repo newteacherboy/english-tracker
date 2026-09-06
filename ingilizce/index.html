@@ -97,7 +97,7 @@
         #panel-alani {
             display: none;
             width: 100%;
-            max-width: 780px;
+            max-width: 800px;
             background: white;
             padding: 30px;
             border-radius: 16px;
@@ -147,7 +147,6 @@
             font-weight: 600;
         }
 
-        /* Üst Şeritteki Kompakt Ders Takvimi Alanı */
         .header-schedule-area {
             display: flex;
             gap: 8px;
@@ -160,7 +159,6 @@
             border: 1px solid #cbd5e1;
             min-width: 105px;
         }
-        /* Yapılmış Ders = Yeşil, Sonraki Ders = Kırmızı */
         .sched-done { border-color: #86efac; background: #f0fdf4; }
         .sched-next { border-color: #fca5a5; background: #fef2f2; }
 
@@ -351,92 +349,129 @@
             font-weight: 600;
         }
 
-        /* Kitap Takip Sistemi Şablonu */
+        /* Kitap Takip Sistemi (1. Resimdeki Yeni Tasarım) */
         .book-tracker-box {
-            background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
-            border: 1px solid #fde047;
-            border-radius: 12px;
-            padding: 20px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 22px;
             margin-bottom: 25px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
-        .book-tracker-top {
+        .book-tracker-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            border-bottom: 2px dashed #fef08a;
-            padding-bottom: 8px;
+            margin-bottom: 18px;
         }
-        .book-tracker-title {
-            font-weight: 700;
-            font-size: 15px;
-            color: #854d0e;
+        .book-header-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
-        .book-grid {
+        .book-header-icon {
+            font-size: 28px;
+        }
+        .book-header-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+        .book-header-subtitle {
+            font-size: 12.5px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        .btn-hizli-okuma {
+            background: #2563eb;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-hizli-okuma:hover {
+            background: #1d4ed8;
+        }
+        .book-content-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 15px;
+            gap: 18px;
             align-items: center;
         }
         .book-current-card {
-            background: #ffffff;
-            border: 1px solid #fef08a;
-            border-radius: 10px;
-            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px 20px;
         }
         .book-label {
             font-size: 11px;
             font-weight: 700;
-            color: #a16207;
+            color: #64748b;
             text-transform: uppercase;
-            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
         }
         .book-name {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 800;
-            color: #713f12;
-            text-transform: capitalize;
+            color: #0f172a;
+            text-transform: uppercase;
         }
         .book-score-card {
-            background: #ffffff;
-            border: 1px solid #fef08a;
-            border-radius: 10px;
-            padding: 12px;
+            background: #fdf8f6;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 16px;
             text-align: center;
         }
         .book-score-val {
-            font-size: 22px;
-            font-weight: 800;
-            color: #ca8a04;
+            font-size: 26px;
+            font-weight: 900;
+            color: #b45309;
+            margin-top: 2px;
         }
-        .book-progress-area {
-            margin-top: 12px;
+        .book-progress-wrap {
+            margin-top: 16px;
         }
         .book-progress-info {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            color: #854d0e;
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-size: 13px;
+            color: #334155;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
         .book-progress-bar-bg {
-            background: #fef08a;
-            border-radius: 6px;
-            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 12px;
             width: 100%;
             overflow: hidden;
         }
         .book-progress-bar-fill {
-            background: #eab308;
+            background: #1e293b;
             height: 100%;
             width: 0%;
-            border-radius: 6px;
+            border-radius: 10px;
             transition: width 0.4s ease;
+        }
+        .book-progress-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+            margin-top: 6px;
         }
 
         /* 4'lü Özet Tablosu Grid */
@@ -502,7 +537,7 @@
             padding-bottom: 8px;
         }
 
-        /* Ders Raporları Arşiv Kartları Tasarımı */
+        /* Ders Raporları Arşiv Kartları */
         .report-archive-header {
             background-color: #f0fdf4;
             border: 1px solid #bbf7d0;
@@ -523,7 +558,6 @@
             color: #15803d;
             font-size: 13px;
         }
-
         .report-card {
             border: 1.5px solid #cbd5e1;
             border-radius: 14px;
@@ -562,7 +596,6 @@
         .score-green { background-color: #16a34a; }
         .score-yellow { background-color: #ca8a04; }
         .score-red { background-color: #dc2626; }
-
         .report-comment-box {
             background-color: rgba(255, 255, 255, 0.85);
             border: 1px solid rgba(0,0,0,0.08);
@@ -613,7 +646,7 @@
             box-shadow: 0 2px 5px rgba(244, 63, 94, 0.15);
         }
 
-        /* Rozetler Sekmesi Tasarımı */
+        /* Rozetler Sekmesi & Deneme Puanı Grafiği */
         .badges-header-box {
             background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
             border: 1px solid #fde047;
@@ -656,32 +689,17 @@
             border-color: #bbf7d0;
             box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);
         }
-        .badge-emoji {
-            font-size: 28px;
-            margin-bottom: 6px;
-        }
-        .badge-name {
-            font-size: 13px;
-            font-weight: 700;
-            color: #334155;
-            margin-bottom: 4px;
-        }
-        .badge-card.unlocked .badge-name {
-            color: #166534;
-        }
-        .badge-target {
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 600;
-        }
-        .badge-card.unlocked .badge-target {
-            color: #15803d;
-        }
+        .badge-emoji { font-size: 28px; margin-bottom: 6px; }
+        .badge-name { font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 4px; }
+        .badge-card.unlocked .badge-name { color: #166534; }
+        .badge-target { font-size: 11px; color: #64748b; font-weight: 600; }
+        .badge-card.unlocked .badge-target { color: #15803d; }
         .badge-progress-box {
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-radius: 12px;
             padding: 16px 20px;
+            margin-bottom: 25px;
         }
         .badge-progress-top {
             display: flex;
@@ -699,25 +717,212 @@
             border-radius: 10px;
             font-size: 12px;
         }
-        .badge-bar-bg {
-            background: #dcfce7;
-            border-radius: 10px;
-            height: 10px;
-            width: 100%;
-            overflow: hidden;
+        .badge-bar-bg { background: #dcfce7; border-radius: 10px; height: 10px; width: 100%; overflow: hidden; }
+        .badge-bar-fill { background: #16a34a; height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease; }
+
+        /* Aktiviteler Sekmesi & Oyun Butonu / Modalı */
+        .activity-banner {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 14px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .badge-bar-fill {
-            background: #16a34a;
-            height: 100%;
-            width: 0%;
-            border-radius: 10px;
-            transition: width 0.4s ease;
+        .activity-banner h3 { color: #1e40af; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+        .activity-banner p { color: #3b82f6; font-size: 13.5px; margin-bottom: 20px; }
+        
+        .btn-oyun-ac {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-oyun-ac:hover { transform: scale(1.03); background: linear-gradient(135deg, #d97706 100%, #b45309 100%); }
+
+        /* Oyun Modal / Açılır Panel Tasarımı */
+        .game-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+        .game-modal-content {
+            background: #fffdf9;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 550px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+            animation: modalPopup 0.3s ease-out;
+        }
+        @keyframes modalPopup {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .game-close-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: #f1f5f9;
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .game-close-btn:hover { background: #e2e8f0; color: #1e293b; }
+
+        .game-title {
+            text-align: center;
+            color: #b45309;
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .game-subtitle {
+            text-align: center;
+            font-size: 12.5px;
+            color: #78350f;
+            margin-bottom: 20px;
+            line-height: 1.4;
         }
 
+        /* Sınıf Seçim Butonları */
+        .sinif-secim-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .sinif-btn {
+            background: #f1f5f9;
+            border: 1.5px solid #cbd5e1;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sinif-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #1d4ed8;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Ünite Çoklu Seçim Alanı */
+        .unite-secim-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 20px;
+            max-height: 130px;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .unite-chip {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        .unite-chip.selected {
+            background: #16a34a;
+            color: white;
+            border-color: #15803d;
+        }
+
+        /* Oyun Ekranı Alanları */
+        #oyunEkranIci { display: none; }
+        .oyun-ust-bilgi {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            color: #334155;
+            margin-bottom: 20px;
+        }
+        .kelime-gosterge {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .kelime-en { font-size: 28px; font-weight: 900; color: #0f172a; margin-top: 5px; }
+        
+        .cevap-butonlari {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn-cevap {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .btn-evet { background: #fee2e2; color: #991b1b; border: 1.5px solid #fecaca; }
+        .btn-hayir { background: #dcfce7; color: #15803d; border: 1.5px solid #bbf7d0; }
+        .btn-cevap:active { transform: scale(0.97); }
+
+        /* Liderlik Tablosu (Top 5) */
+        .liderlik-tablosu-box {
+            margin-top: 15px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .liderlik-title { font-weight: 800; font-size: 13px; color: #334155; margin-bottom: 8px; text-align: center; }
+        .lid-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .lid-table th { background: #e2e8f0; color: #334155; padding: 6px; text-align: left; }
+        .lid-table td { padding: 6px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
+
         @media(max-width: 600px) {
-            .badges-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .sinif-secim-grid { grid-template-columns: repeat(2, 1fr); }
+            .badges-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -753,7 +958,6 @@
                 </div>
             </div>
 
-            <!-- İşaretlenen Alandaki Kompakt 2'li Ders Takvimi -->
             <div class="header-schedule-area">
                 <div class="sched-mini-box sched-done">
                     <div class="sched-label">Önceki Ders</div>
@@ -792,7 +996,7 @@
         <div class="tabs-container">
             <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Ders Raporları</button>
-            <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">📈 Gelişim Yolu</button>
+            <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">🎮 Aktiviteler</button>
             <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
         </div>
 
@@ -821,23 +1025,30 @@
                 </div>
             </div>
 
-            <!-- KİTAP TAKİP SİSTEMİ -->
+            <!-- KİTAP TAKİP SİSTEMİ (1. Resimdeki Yeni Tasarım) -->
             <div class="book-tracker-box">
-                <div class="book-tracker-top">
-                    <div class="book-tracker-title">📖 Okuma Kültürü & Odak Takibi</div>
-                    <button class="header-btn btn-portal" style="font-size: 11px; padding: 4px 10px;" onclick="window.location.reload()">Hızlı Okuma</button>
+                <div class="book-tracker-header">
+                    <div class="book-header-left">
+                        <div class="book-header-icon">📚</div>
+                        <div>
+                            <div class="book-header-title">Okuma Kültürü & Odak Takibi</div>
+                            <div class="book-header-subtitle">Düzenli okuma, anlama hızını %40 artırır!</div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn-hizli-okuma" onclick="window.location.reload(); return false;">⚡ HIZLI OKUMA YOLCUSU</a>
                 </div>
-                <div class="book-grid">
+                <div class="book-content-grid">
                     <div class="book-current-card">
                         <div class="book-label">Şu An Okunan Kitap</div>
                         <div class="book-name" id="valKitapAdi">Yükleniyor...</div>
                     </div>
                     <div class="book-score-card">
-                        <div class="book-label">Kitap Skoru</div>
-                        <div class="book-score-val" id="valKitapEmoji">📚 1</div>
+                        <div class="book-label">Toplam Bitirilen</div>
+                        <div class="book-score-val" id="valKitapSkoru">5</div>
+                        <div style="font-size: 11px; font-weight: 700; color: #b45309; margin-top: 2px;">KİTAP SKORU</div>
                     </div>
                 </div>
-                <div class="book-progress-area">
+                <div class="book-progress-wrap">
                     <div class="book-progress-info">
                         <span>Haftalık Hedef İlerlemesi</span>
                         <span id="valKitapYuzde">%0</span>
@@ -845,9 +1056,9 @@
                     <div class="book-progress-bar-bg">
                         <div class="book-progress-bar-fill" id="valKitapBar"></div>
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #a16207; margin-top: 4px;">
+                    <div class="book-progress-footer">
                         <span id="valKitapSayfa">Okunan: 0 sayfa</span>
-                        <span id="valKitapHedef">Hedef: 0 sayfa</span>
+                        <span id="valKitapHedef">Hedef: 40 sayfa</span>
                     </div>
                 </div>
             </div>
@@ -876,13 +1087,21 @@
             </div>
         </div>
 
-        <!-- 3. GELİŞİM YOLU SEKMESİ -->
+        <!-- 3. AKTİVİTELER SEKMESİ (KELİME OYUNU & AÇILIR PANEL) -->
         <div id="tab-aktiviteler" class="tab-content">
-            <h3 style="color: #2d3748; margin-bottom: 10px;">Gelişim Yolu</h3>
-            <p style="color: #718096; font-size: 14px;">Bu bölümde detaylı aktivite istatistikleri yer alacaktır.</p>
+            <div class="activity-banner">
+                <h3>🎮 İngilizce Kelime Ezber & Bilgi Yarışması</h3>
+                <p>Sınıfını ve ünitelerini seç, zamanla yarışarak kelime dağarcığını test et ve liderlik tablosunda yerini al!</p>
+                <button class="btn-oyun-ac" onclick="oyunModaliniAc()">🚀 Kelime Yarışmasını Başlat</button>
+            </div>
+            
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center;">
+                <h4 style="color: #334155; margin-bottom: 8px;">Daha Fazla Eğlenceli Aktivite Yakında Burada!</h4>
+                <p style="color: #64748b; font-size: 13px;">Yeni oyun modülleri eklendikçe bu alanda listelenecektir.</p>
+            </div>
         </div>
 
-        <!-- 4. ROZETLER SEKMESİ -->
+        <!-- 4. ROZETLER SEKMESİ (DENEME PUANI GRAFİĞİ İLE) -->
         <div id="tab-rozetler" class="tab-content">
             <div class="badges-header-box">
                 <div class="badges-header-title">🏆 Kazanılan Rozetler</div>
@@ -900,11 +1119,108 @@
                     <div class="badge-bar-fill" id="rozetBarFill"></div>
                 </div>
             </div>
+
+            <!-- Deneme Puanları Gelişim Grafiği -->
+            <div class="chart-box" style="margin-top: 25px;">
+                <div class="chart-title">🎯 Deneme Puanları Gelişim Grafiği</div>
+                <canvas id="denemeGrafik" height="110"></canvas>
+            </div>
         </div>
 
     </div>
 
-    <!-- Yüzen Baloncuk Toast Mesajı (Rozetler Baz Alınarak Güncellendi) -->
+    <!-- KELİME OYUNU AÇILIR PANEL (MODAL) -->
+    <div class="game-modal-overlay" id="gameModalOverlay">
+        <div class="game-modal-content">
+            <button class="game-close-btn" onclick="oyunModaliniKapat()">✕</button>
+            
+            <!-- Giriş / Ayar Ekranı -->
+            <div id="oyunAyarBolumu">
+                <div class="game-title">🏆 Kelime Ezber Yarışması</div>
+                <div class="game-subtitle">Her sınıf kendi kelime havuzundan sorulur! (2-4.Sınıf: 25 | 5-8.Sınıf: Her sınıfta +5 artar)</div>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <input type="text" id="oyuncuIsmiInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
+                </div>
+
+                <label style="font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Sınıf Seçiniz:</label>
+                <div class="sinif-secim-grid">
+                    <button class="sinif-btn active" onclick="sinifSec(2, this)">2. Sınıf</button>
+                    <button class="sinif-btn" onclick="sinifSec(3, this)">3. Sınıf</button>
+                    <button class="sinif-btn" onclick="sinifSec(4, this)">4. Sınıf</button>
+                    <button class="sinif-btn" onclick="sinifSec(5, this)">5. Sınıf</button>
+                    <button class="sinif-btn" onclick="sinifSec(6, this)">6. Sınıf</button>
+                    <button class="sinif-btn" onclick="sinifSec(7, this)">7. Sınıf</button>
+                    <button class="sinif-btn" onclick="sinifSec(8, this)">8. Sınıf</button>
+                </div>
+
+                <label style="font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Ünite Seçiniz (Çoklu Seçilebilir):</label>
+                <div class="unite-secim-box" id="uniteSecimKonteyner">
+                    <!-- Dinamik üniteler yüklenecek -->
+                </div>
+
+                <button class="btn-giris" onclick="yarismayiBaslat()" style="background: #2563eb; margin-top: 5px;">🚀 Yarışmayı Başlat</button>
+            </div>
+
+            <!-- Oyun Oynama Ekranı -->
+            <div id="oyunEkranIci">
+                <div class="oyun-ust-bilgi">
+                    <span id="lblKelimeSayac">Kelime: 1 / 25</span>
+                    <span id="lblKronometre" style="color: #dc2626;">⏱️ 00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px; font-weight: 700;">
+                    <span style="color: #16a34a;">✅ Doğru: <span id="lblDogruSayisi">0</span></span>
+                    <span style="color: #dc2626;">❌ Yanlış: <span id="lblYanlisSayisi">0</span></span>
+                </div>
+
+                <div class="kelime-gosterge">
+                    <span style="font-size: 11px; font-weight: 700; color: #3b82f6; text-transform: uppercase;">İngilizce Kelime</span>
+                    <div class="kelime-en" id="lblSoruKelime">Apple</div>
+                </div>
+
+                <div style="font-size: 12.5px; text-align: center; color: #64748b; font-weight: 600; margin-bottom: 12px;">Aşağıdaki Türkçe karşılığı doğru mu?</div>
+                <div class="cevap-butonlari">
+                    <button class="btn-cevap btn-evet" onclick="cevapVer(true)">EVET (Doğru)</button>
+                    <button class="btn-cevap btn-hayir" onclick="cevapVer(false)">HAYIR (Yanlış)</button>
+                </div>
+            </div>
+
+            <!-- Sonuç & Liderlik Ekranı -->
+            <div id="oyunSonucBolumu" style="display: none; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 5px;">🎉</div>
+                <h3 style="color: #16a34a; font-size: 20px; font-weight: 900; margin-bottom: 12px;">Harika! Tur Tamamlandı</h3>
+                
+                <div style="display: flex; justify-content: center; gap: 20px; background: #f8fafc; padding: 12px; border-radius: 10px; margin-bottom: 15px; font-weight: 800; font-size: 14px;">
+                    <span style="color: #b45309;">Skor: <span id="sonucPuan">45</span> Puan</span>
+                    <span style="color: #475569;">Süre: <span id="sonucSure">00:46</span></span>
+                </div>
+
+                <button class="btn-giris" onclick="oyunModaliniAc()" style="background: #2563eb; margin-bottom: 15px;">🔄 Yeni Tur Oyna</button>
+
+                <!-- Liderlik Tablosu -->
+                <div class="liderlik-tablosu-box">
+                    <div class="liderlik-title">📊 Liderlik Tablosu (Top 5)</div>
+                    <table class="lid-table">
+                        <thead>
+                            <tr>
+                                <th>Sıra</th>
+                                <th>İsim</th>
+                                <th>D</th>
+                                <th>Puan</th>
+                                <th>Süre</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liderlikTabloGovde">
+                            <!-- Dinamik dolar -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Yüzen Baloncuk Toast Mesajı -->
     <div class="ai-floating-toast" id="aiToastBox" style="display: none;">
         <div class="ai-toast-title">
             <span>🤖 Koçluk Asistanı</span>
@@ -914,15 +1230,59 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbzBLo1MYXweLaO6TrUIV7mH5I-fMdeVatU_mWjGpXKiesDRA8n6-AIA3V4V2YSQO-XKDw/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxfmLFkEPTd9Tih0yi7AryvmteWhRXbczxsO0t2xIFtEKbhSI3_zhgbIHkFtglK3ZKEcw/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
         let aktifOgrenciAdi = "";
-        let hataliDenemeSayisi = 0;
         const MAX_DENEME = 3;
         let gelisimChartInstance = null;
         let kriterChartInstance = null;
+        let denemeChartInstance = null;
+
+        // Kelime Yarışması Global Değişkenleri
+        let secilenSinif = 2;
+        let secilenUniteler = [1];
+        let aktifKelimeListesi = [];
+        let aktifSoruIndex = 0;
+        let oyunDogru = 0;
+        let oyunYanlis = 0;
+        let oyunBaslangicZamani = null;
+        let oyunTimerInterval = null;
+        let oyunSaniyeSayac = 0;
+        let globalLiderlikData = [];
+
+        // MEB Uyumli Örnek Kelime Havuzları (Her sınıf için ünitelere göre)
+        const mebKelimeHavuzu = {
+            2: {
+                1: [ {en:"Apple", tr:"Elma"}, {en:"Cat", tr:"Kedi"}, {en:"Dog", tr:"Köpek"}, {en:"Book", tr:"Kitap"}, {en:"Pen", tr:"Kalem"}, {en:"School", tr:"Okul"}, {en:"Table", tr:"Masa"}, {en:"Door", tr:"Kapı"}, {en:"Window", tr:"Pencere"}, {en:"Ball", tr:"Top"} ],
+                2: [ {en:"Red", tr:"Kırmızı"}, {en:"Blue", tr:"Mavi"}, {en:"Yellow", tr:"Sarı"}, {en:"Green", tr:"Yeşil"}, {en:"Black", tr:"Siyah"}, {en:"White", tr:"Beyaz"}, {en:"Orange", tr:"Turuncu"}, {en:"Pink", tr:"Pembe"}, {en:"Purple", tr:"Mor"}, {en:"Brown", tr:"Kahverengi"} ]
+            },
+            3: {
+                1: [ {en:"Hello", tr:"Merhaba"}, {en:"Friend", tr:"Arkadaş"}, {en:"Teacher", tr:"Öğretmen"}, {en:"Student", tr:"Öğrenci"}, {en:"Class", tr:"Sınıf"}, {en:"Board", tr:"Yazı Tahtası"}, {en:"Desk", tr:"Sıra"}, {en:"Bag", tr:"Çanta"}, {en:"Ruler", tr:"Cetvel"}, {en:"Rubber", tr:"Silgi"} ],
+                2: [ {en:"Family", tr:"Aile"}, {en:"Mother", tr:"Anne"}, {en:"Father", tr:"Baba"}, {en:"Brother", tr:"Erkek Kardeş"}, {en:"Sister", tr:"Kız Kardeş"}, {en:"Baby", tr:"Bebek"}, {en:"Grandma", tr:"Büyükanne"}, {en:"Grandpa", tr:"Büyükbaba"}, {en:"Home", tr:"Ev"}, {en:"Room", tr:"Oda"} ]
+            },
+            4: {
+                1: [ {en:"Nation", tr:"Millet"}, {en:"Flag", tr:"Bayrak"}, {en:"Country", tr:"Ülke"}, {en:"Capital", tr:"Başkent"}, {en:"Language", tr:"Dil"}, {en:"Speak", tr:"Konuşmak"}, {en:"Listen", tr:"Dinlemek"}, {en:"Read", tr:"Okumak"}, {en:"Write", tr:"Yazmak"}, {en:"Learn", tr:"Öğrenmek"} ],
+                2: [ {en:"Body", tr:"Vücut"}, {en:"Head", tr:"Baş"}, {en:"Eye", tr:"Göz"}, {en:"Ear", tr:"Kulak"}, {en:"Nose", tr:"Burun"}, {en:"Mouth", tr:"Ağız"}, {en:"Arm", tr:"Kol"}, {en:"Hand", tr:"El"}, {en:"Leg", tr:"Bacak"}, {en:"Foot", tr:"Ayak"} ]
+            },
+            5: {
+                1: [ {en:"Hello", tr:"Merhaba"}, {en:"Game", tr:"Oyun"}, {en:"Play", tr:"Oynamak"}, {en:"Music", tr:"Müzik"}, {en:"Art", tr:"Sanat"}, {en:"Science", tr:"Fen"}, {en:"Math", tr:"Matematik"}, {en:"Gym", tr:"Spor Salonu"}, {en:"Library", tr:"Kütüphane"}, {en:"Canteen", tr:"Kantin"} ],
+                2: [ {en:"My Town", tr:"Kasabam"}, {en:"Street", tr:"Cadde"}, {en:"Corner", tr:"Köşe"}, {en:"Post Office", tr:"Postane"}, {en:"Bakery", tr:"Fırın"}, {en:"Mosque", tr:"Cami"}, {en:"Park", tr:"Park"}, {en:"Hospital", tr:"Hastane"}, {en:"Museum", tr:"Müze"}, {en:"Library", tr:"Kütüphane"} ]
+            },
+            6: {
+                1: [ {en:"Life", tr:"Yaşam"}, {en:"Morning", tr:"Sabah"}, {en:"Routine", tr:"Rutin"}, {en:"Breakfast", tr:"Kahvaltı"}, {en:"Get up", tr:"Kalkmak"}, {en:"Wash", tr:"Yıkamak"}, {en:"Brush", tr:"Fırçalamak"}, {en:"Dress", tr:"Giyinmek"}, {en:"Leave", tr:"Ayrılmak"}, {en:"Arrive", tr:"Varmak"} ],
+                2: [ {en:"Yummy", tr:"Lezzetli"}, {en:"Breakfast", tr:"Kahvaltı"}, {en:"Cheese", tr:"Peynir"}, {en:"Olive", tr:"Zeytin"}, {en:"Butter", tr:"Tereyağı"}, {en:"Honey", tr:"Bal"}, {en:"Jam", tr:"Reçel"}, {en:"Egg", tr:"Yumurta"}, {en:"Tea", tr:"Çay"}, {en:"Bagel", tr:"Simit"} ]
+            },
+            7: {
+                1: [ {en:"Appearance", tr:"Dış Görünüş"}, {en:"Tall", tr:"Uzun"}, {en:"Short", tr:"Kısa"}, {en:"Plump", tr:"Toplu"}, {en:"Slim", tr:"İnce"}, {en:"Hair", tr:"Saç"}, {en:"Wavy", tr:"Dalgalı"}, {en:"Curly", tr:"Kıvırcık"}, {en:"Straight", tr:"Düz"}, {en:"Blue eyes", tr:"Mavi göz"} ],
+                2: [ {en:"Sports", tr:"Sporlar"}, {en:"Football", tr:"Futbol"}, {en:"Basketball", tr:"Basketbol"}, {en:"Tennis", tr:"Tenis"}, {en:"Swimming", tr:"Yüzme"}, {en:"Running", tr:"Koşu"}, {en:"Cycling", tr:"Bisiklet"}, {en:"Training", tr:"Antrenman"}, {en:"Match", tr:"Maç"}, {en:"Score", tr:"Skor"} ]
+            },
+            8: {
+                1: [ {en:"Friendship", tr:"Arkadaşlık"}, {en:"Depend", tr:"Güvenmek"}, {en:"Count on", tr:"Güvenmek"}, {en:"Support", tr:"Desteklemek"}, {en:"Share", tr:"Paylaşmak"}, {en:"Secret", tr:"Sır"}, {en:"Trust", tr:"Güven"}, {en:"Honest", tr:"Dürüst"}, {en:"Loyal", tr:"Sadık"}, {en:"Cool", tr:"Havalı"} ],
+                2: [ {en:"Teen Life", tr:"Genç Yaşamı"}, {en:"Teenager", tr:"Genç"}, {en:"Music", tr:"Müzik"}, {en:"Book", tr:"Kitap"}, {en:"Concert", tr:"Konser"}, {en:"Event", tr:"Etkinlik"}, {en:"Prefer", tr:"Tercih etmek"}, {en:"Trendy", tr:"Moda"}, {en:"Casual", tr:"Günlük kıyafet"}, {en:"Exciting", tr:"Heyecan verici"} ]
+            }
+        };
 
         window.onload = function() {
             const oturumAcik = sessionStorage.getItem("oturumAcik");
@@ -937,9 +1297,11 @@
                 
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
+                document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi; // Oyuncu ismine otomatik yansıt
 
                 bilgileriSunucudanGuncelle(aktifOgrenciAdi);
             }
+            uniteSecimleriniOlustur(2); // Varsayılan 2. sınıf üniteleri
         };
 
         function guvenliMetin(str) {
@@ -976,13 +1338,6 @@
             if (puan >= 10) return "❄️ Donuk";
             if (puan >= 5)  return "🚨 Kritik";
             return "🐣 Başlangıç";
-        }
-
-        function kitapEmojiGetir(sayi) {
-            let emojiler = ["📖", "📚", "📙", "📘", "📗", "📕", "🏆", "🌟", "🎯", "🚀"];
-            let idx = (sayi - 1) % emojiler.length;
-            if (idx < 0) idx = 0;
-            return `${emojiler[idx]} ${sayi}`;
         }
 
         function skorRenkSinifiVer(puan) {
@@ -1029,13 +1384,10 @@
             return `"${cumleler.join(" ")}"`;
         }
 
-        // Rozetler Baz Alınarak Oluşturulan AI Koçluk Mesajı
         function aiMesajUret(ogrenciAdi, kazanilanRozetSayisi, toplamRozetSayisi) {
-            let mesaj = `Harika bir başlangıç ${ogrenciAdi}! Toplam ${toplamRozetSayisi} rozetten **${kazanilanRozetSayisi} tanesini** başarıyla kilitledin. Rozet koleksiyonunu büyütmek için çalışmaya devam et! ✨`;
+            let mesaj = `Harika bir başlangıç ${ogrenciAdi}! Toplam ${toplamRozetSayisi} rozetten **${kazanilanRozetSayisi} tanesini** başarıyla kilitledin. Koleksiyonunu büyütmek için çalışmaya devam et! ✨`;
             if (kazanilanRozetSayisi === 0) {
                 mesaj = `Merhaba ${ogrenciAdi}! Henüz kilitli rozetin bulunmuyor. Puanını artırarak ilk rozetlerini hızla toplayabilirsin! 🎯`;
-            } else if (kazanilanRozetSayisi === toplamRozetSayisi && toplamRozetSayisi > 0) {
-                `Tebrikler ${ogrenciAdi}! Tüm rozetleri kilitledin, zirvedesin! 🏆`;
             }
 
             document.getElementById('aiMesajMetni').innerText = mesaj;
@@ -1132,7 +1484,7 @@
 
         function kitapTakibiniIsle(kitap) {
             document.getElementById('valKitapAdi').innerText = kitap.kitapAdi || "Kitap Seçilmedi";
-            document.getElementById('valKitapEmoji').innerText = kitapEmojiGetir(kitap.okunanSayisi || 1);
+            document.getElementById('valKitapSkoru').innerText = kitap.okunanSayisi || 5;
             
             let sayfa = kitap.sayfa || 0;
             let hedef = kitap.hedef || 40;
@@ -1144,7 +1496,8 @@
             document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef} sayfa`;
         }
 
-        function grafikliCiz(grafikGecmis, user) {
+        function grafikliCiz(grafikGecmis, user, denemeGecmis) {
+            // 1. Yıllık Gelişim Grafiği
             let labels = grafikGecmis.map(item => tarihiDuzelt(item.tarih));
             let veriler = grafikGecmis.map(item => item.genel);
 
@@ -1164,12 +1517,10 @@
                         pointRadius: 5
                     }]
                 },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true, max: 100 } }
-                }
+                options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
             });
 
+            // 2. 5 Kriter Sütun Grafiği
             let cVocab = user.vocabOrt || 0;
             let cYazma = user.yazmaOrt || 0;
             let cOkuma = user.okumaOrt || 0;
@@ -1184,21 +1535,31 @@
                     labels: ['Okuma', 'Yazma', 'Kelime', 'Konuşma', 'Grammar'],
                     datasets: [{
                         data: [cOkuma, cYazma, cVocab, cKonusma, cGrammar],
-                        backgroundColor: [
-                            '#4ade80',
-                            '#38bdf8',
-                            '#fbbf24',
-                            '#c084fc',
-                            '#f43f5e'
-                        ],
+                        backgroundColor: ['#4ade80', '#38bdf8', '#fbbf24', '#c084fc', '#f43f5e'],
                         borderRadius: 6
                     }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, max: 100 } }
-                }
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+
+            // 3. Rozetler Sayfasındaki Deneme Puanları Grafiği
+            let dLabels = denemeGecmis.map(item => tarihiDuzelt(item.tarih));
+            let dVeriler = denemeGecmis.map(item => item.deneme);
+
+            if (denemeChartInstance) denemeChartInstance.destroy();
+            let ctx3 = document.getElementById('denemeGrafik').getContext('2d');
+            denemeChartInstance = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: dLabels.length > 0 ? dLabels : ["Veri Yok"],
+                    datasets: [{
+                        label: 'Deneme Puanları',
+                        data: dVeriler.length > 0 ? dVeriler : [0],
+                        backgroundColor: '#f43f5e',
+                        borderRadius: 6
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
             });
         }
 
@@ -1211,7 +1572,7 @@
                 document.getElementById('kazanilanSayacBadge').innerText = `0 / 0`;
                 document.getElementById('rozetYuzdeBadge').innerText = `%0`;
                 document.getElementById('rozetBarFill').style.width = `0%`;
-                return 0, 0;
+                return { kazanilan: 0, toplam: 0 };
             }
 
             rozetListesi.sort((a, b) => a.gerekliPuan - b.gerekliPuan);
@@ -1244,6 +1605,197 @@
             return { kazanilan: kazanilanSayisi, toplam: toplamRozet };
         }
 
+        // --- KELİME OYUNU MANTIK MOTORU ---
+        let globalLiderlikCache = [];
+
+        function oyunModaliniAc() {
+            document.getElementById('gameModalOverlay').style.display = 'flex';
+            document.getElementById('oyunAyarBolumu').style.display = 'block';
+            document.getElementById('oyunEkranIci').style.display = 'none';
+            document.getElementById('oyunSonucBolumu').style.display = 'none';
+        }
+
+        function oyunModaliniKapat() {
+            document.getElementById('gameModalOverlay').style.display = 'none';
+            if (oyunTimerInterval) clearInterval(oyunTimerInterval);
+        }
+
+        function sinifSec(sinifNo, btnElement) {
+            secilenSinif = sinifNo;
+            document.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            uniteSecimleriniOlustur(sinifNo);
+        }
+
+        function uniteSecimleriniOlustur(sinifNo) {
+            let konteyner = document.getElementById('uniteSecimKonteyner');
+            konteyner.innerHTML = "";
+            secilenUniteler = [1]; // Varsayılan 1. ünite seçili
+
+            // Her sınıf için varsayılan 4 ünite oluşturalım
+            for (let u = 1; u <= 4; u++) {
+                let isSelected = (u === 1) ? "selected" : "";
+                let chip = document.createElement('div');
+                chip.className = `unite-chip ${isSelected}`;
+                chip.innerText = `${u}. Ünite`;
+                chip.onclick = function() {
+                    if (secilenUniteler.includes(u)) {
+                        if (secilenUniteler.length > 1) {
+                            secilenUniteler = secilenUniteler.filter(item => item !== u);
+                            chip.classList.remove('selected');
+                        }
+                    } else {
+                        secilenUniteler.push(u);
+                        chip.classList.add('selected');
+                    }
+                };
+                konteyner.appendChild(chip);
+            }
+        }
+
+        function yarismayiBaslat() {
+            let isim = document.getElementById('oyuncuIsmiInput').value.trim();
+            if (!isim) {
+                alert("Lütfen adınızı soyadınızı giriniz!");
+                return;
+            }
+
+            // Soru sayısını belirle (İlkokul 2-4: 25 soru, 5-8: her sınıfta +5 artar -> 5:30, 6:35, 7:40, 8:45)
+            let hedefSoruSayisi = 25;
+            if (secilenSinif >= 5) {
+                hedefSoruSayisi = 25 + ((secilenSinif - 4) * 5);
+            }
+
+            // Seçilen sınıf ve ünitelerden kelime havuzunu derle
+            let havuz = [];
+            secilenUniteler.forEach(unite => {
+                if (mebKelimeHavuzu[secilenSinif] && mebKelimeHavuzu[secilenSinif][unite]) {
+                    havuz = havuz.concat(mebKelimeHavuzu[secilenSinif][unite]);
+                }
+            });
+
+            if (havuz.length === 0) {
+                // Eğer havuzda kelime yoksa yedek kelimeler üret
+                havuz = [
+                    {en:"Apple", tr:"Elma"}, {en:"Book", tr:"Kitap"}, {en:"School", tr:"Okul"}, {en:"Friend", tr:"Arkadaş"},
+                    {en:"Teacher", tr:"Öğretmen"}, {en:"Pen", tr:"Kalem"}, {en:"Water", tr:"Su"}, {en:"Cat", tr:"Kedi"}
+                ];
+            }
+
+            // Karışık soru listesi oluştur
+            aktifKelimeListesi = [];
+            for (let i = 0; i < hedefSoruSayisi; i++) {
+                let rastgeleKelime = havuz[Math.floor(Math.random() * havuz.length)];
+                // Doğru mu yanlış mı eşleşme üreteceğiz (%50 ihtimalle doğru Türkçe, %50 yanlış)
+                let dogruMu = Math.random() < 0.5;
+                let gosterilenTr = rastgeleKelime.tr;
+                if (!dogruMu) {
+                    let yanlisKelime = havuz[Math.floor(Math.random() * havuz.length)];
+                    gosterilenTr = yanlisKelime.tr;
+                }
+                aktifKelimeListesi.push({
+                    en: rastgeleKelime.en,
+                    tr: gosterilenTr,
+                    gercekTr: rastgeleKelime.tr,
+                    dogruCevapMi: (gosterilenTr === rastgeleKelime.tr)
+                });
+            }
+
+            aktifSoruIndex = 0;
+            oyunDogru = 0;
+            oyunYanlis = 0;
+            oyunSaniyeSayac = 0;
+
+            document.getElementById('oyunAyarBolumu').style.display = 'none';
+            document.getElementById('oyunEkranIci').style.display = 'block';
+            document.getElementById('lblDogruSayisi').innerText = "0";
+            document.getElementById('lblYanlisSayisi').innerText = "0";
+
+            oyunBaslangicZamani = new Date();
+            if (oyunTimerInterval) clearInterval(oyunTimerInterval);
+            oyunTimerInterval = setInterval(() => {
+                oyunSaniyeSayac++;
+                let dk = String(Math.floor(oyunSaniyeSayac / 60)).padStart(2, '0');
+                let sn = String(oyunSaniyeSayac % 60).padStart(2, '0');
+                document.getElementById('lblKronometre').innerText = `⏱️ ${dk}:${sn}`;
+            }, 1000);
+
+            soruyuEkranaGetir();
+        }
+
+        function soruyuEkranaGetir() {
+            if (aktifSoruIndex >= aktifKelimeListesi.length) {
+                oyunuBitir();
+                return;
+            }
+            let soru = aktifKelimeListesi[aktifSoruIndex];
+            document.getElementById('lblKelimeSayac').innerText = `Kelime: ${aktifSoruIndex + 1} / ${aktifKelimeListesi.length}`;
+            document.getElementById('lblSoruKelime').innerText = `${soru.en} = ${soru.tr}`;
+        }
+
+        function cevapVer(kullaniciEveti) {
+            let soru = aktifKelimeListesi[aktifSoruIndex];
+            if (kullaniciEveti === soru.dogruCevapMi) {
+                oyunDogru++;
+            } else {
+                oyunYanlis++;
+            }
+            document.getElementById('lblDogruSayisi').innerText = oyunDogru;
+            document.getElementById('lblYanlisSayisi').innerText = oyunYanlis;
+
+            aktifSoruIndex++;
+            soruyuEkranaGetir();
+        }
+
+        function oyunuBitir() {
+            if (oyunTimerInterval) clearInterval(oyunTimerInterval);
+            let toplamPuan = (oyunDogru * 5) - (oyunYanlis * 2);
+            if (toplamPuan < 0) toplamPuan = 0;
+
+            let dk = String(Math.floor(oyunSaniyeSayac / 60)).padStart(2, '0');
+            let sn = String(oyunSaniyeSayac % 60).padStart(2, '0');
+            let sureStr = `${dk}:${sn}`;
+            let isim = document.getElementById('oyuncuIsmiInput').value.trim();
+            let uniteStr = secilenUniteler.join(",");
+
+            document.getElementById('oyunEkranIci').style.display = 'none';
+            document.getElementById('oyunSonucBolumu').style.display = 'block';
+            document.getElementById('sonucPuan').innerText = toplamPuan;
+            document.getElementById('sonucSure').innerText = sureStr;
+
+            // Google Sheets'e Kaydet
+            let kayitUrl = `${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${encodeURIComponent(uniteStr)}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${toplamPuan}`;
+            fetch(kayitUrl).catch(err => console.error("Skor kayıt hatası:", err));
+
+            // Yerel önizleme tablosunu güncelle
+            liderlikTablosunuGuncelle({ isim, dogru: oyunDogru, puan: toplamPuan, sure: sureStr, suresaniye: oyunSaniyeSayac });
+        }
+
+        function liderlikTablosunuGuncelle(yeniKayit) {
+            globalLiderlikCache.push(yeniKayit);
+            globalLiderlikCache.sort((a, b) => {
+                if (b.puan !== a.puan) return b.puan - a.puan;
+                return a.suresaniye - b.suresaniye;
+            });
+            let top5 = globalLiderlikCache.slice(0, 5);
+
+            let tbody = document.getElementById('liderlikTabloGovde');
+            tbody.innerHTML = "";
+            top5.forEach((item, idx) => {
+                let madalya = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : `${idx + 1}`));
+                let tr = `
+                    <tr>
+                        <td><b>${madalya}</b></td>
+                        <td>${item.isim}</td>
+                        <td style="color: #16a34a; font-weight:700;">${item.dogru}</td>
+                        <td style="color: #b45309; font-weight:700;">${item.puan}</td>
+                        <td>${item.sure}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += tr;
+            });
+        }
+
         async function girisYap(event) {
             event.preventDefault();
             
@@ -1270,7 +1822,7 @@
                 const data = await response.json();
 
                 let kullaniciBulundu = data.find(item => 
-                    String(item.ogrenci).trim() === girilenOgrenci && 
+                    String(item.ogrenci).trim().toLowerCase() === girilenOgrenci.toLowerCase() && 
                     String(item.sifre).trim() === girilenSifre
                 );
 
@@ -1287,6 +1839,7 @@
 
                     document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                     document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
+                    document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
 
                     veriArayuzeIsle(kullaniciBulundu);
 
@@ -1327,7 +1880,7 @@
             try {
                 const response = await fetch(apiURL);
                 const data = await response.json();
-                let user = data.find(item => String(item.ogrenci).trim() === ogrenciAdi);
+                let user = data.find(item => String(item.ogrenci).trim().toLowerCase() === ogrenciAdi.toLowerCase());
                 if (user) {
                     toplamSaniye = user.toplamsure ? parseInt(user.toplamsure) : toplamSaniye;
                     sessionStorage.setItem("toplamSaniye", toplamSaniye);
@@ -1352,13 +1905,17 @@
             document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelOrtalama);
 
             kitapTakibiniIsle(user.kitapBilgi);
-            grafikliCiz(user.grafikGecmis, user);
+            grafikliCiz(user.grafikGecmis, user, user.denemeGecmis);
             dersRaporlariniOlustur(user.arsivListesi, user.kitapBilgi);
             dersTakviminiIsle(user.dersler);
 
-            // Rozetleri işle ve kazanılan rozet sayısını AI mesajına gönder
             let rozetSonuc = rozetleriIsle(user.rozetListesi, guncelPuan);
             aiMesajUret(aktifOgrenciAdi, rozetSonuc.kazanilan, rozetSonuc.toplam);
+
+            if (user.liderlik) {
+                globalLiderlikCache = user.liderlik;
+                liderlikTablosunuGuncelle({ isim: "", dogru: 0, puan: 0, sure: "", suresaniye: 9999 }); // Tabloyu renderla
+            }
         }
 
         function baslatSayac() {
