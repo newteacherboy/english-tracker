@@ -112,15 +112,16 @@
         .error { color: #e53e3e; }
         .success { color: #38a169; }
         
-        /* Veri Paneli Alanı (Başarılı Giriş Sonrası Görünecek Kısım) */
+        /* Başarılı Giriş Sonrası Panel Alanı */
         #panel-alani {
             display: none;
             width: 100%;
-            max-width: 800px;
+            max-width: 600px;
             background: white;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
         }
     </style>
 </head>
@@ -133,26 +134,25 @@
     <div class="login-card" id="login-container">
         <div class="logo-icon">🎓</div>
         <h2>Öğrenci Giriş Portalı</h2>
-        <p class="subtitle">Lütfen sistemde kayıtlı şifrenizi ve telefon numaranızı giriniz.</p>
+        <p class="subtitle">Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.</p>
         
         <form id="loginForm" onsubmit="girisYap(event)">
             <div class="form-group">
-                <input type="password" id="ogrencisifre" placeholder="Öğrenci Şifreniz" required autocomplete="current-password">
+                <input type="text" id="kullaniciadi" placeholder="Kullanıcı Adınız" required autocomplete="username">
             </div>
             <div class="form-group">
-                <input type="text" id="telefon" placeholder="Telefon Numaranız" required autocomplete="tel">
+                <input type="password" id="sifre" placeholder="Şifreniz" required autocomplete="current-password">
             </div>
             <button type="submit" id="girisBtn" class="btn-giris">Giriş Yap</button>
         </form>
         <div id="mesaj"></div>
     </div>
 
-    <!-- Başarılı Giriş Sonrası Panel İçeriği -->
+    <!-- Başarılı Giriş Sonrası Görünecek Alan -->
     <div id="panel-alani">
-        <h2>Hoş Geldiniz! Panel Verileriniz</h2>
-        <p style="color: #718096; margin-top: 10px; margin-bottom: 20px;">Google Sheets üzerinden güvenli şekilde çekilen oturum bilgileriniz:</p>
-        <div id="veri-detay">Yükleniyor...</div>
-        <button onclick="cikisYap()" class="btn-giris" style="max-width: 150px; margin-top: 20px; background-color: #e53e3e;">Çıkış Yap</button>
+        <h2>Giriş Başarılı! 🎉</h2>
+        <p style="color: #718096; margin-top: 10px; margin-bottom: 20px;">Öğrenci paneline başarıyla giriş yaptınız.</p>
+        <button onclick="cikisYap()" class="btn-giris" style="max-width: 150px; background-color: #e53e3e;">Çıkış Yap</button>
     </div>
 
     <script>
@@ -162,7 +162,7 @@
         let hataliDenemeSayisi = 0;
         const MAX_DENEME = 3;
 
-        // XSS / Güvenlik için girdi temizleme fonksiyonu
+        // XSS / Güvenlik için girdi temizleme
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, 
                 tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
@@ -172,53 +172,48 @@
         async function girisYap(event) {
             event.preventDefault();
             
-            const sifreInput = document.getElementById('ogrencisifre').value.trim();
-            const telefonInput = document.getElementById('telefon').value.trim();
+            const kAdiInput = document.getElementById('kullaniciadi').value.trim();
+            const sifreInput = document.getElementById('sifre').value.trim();
             const mesajDiv = document.getElementById('mesaj');
             const girisBtn = document.getElementById('girisBtn');
 
-            // Basit Doğrulama ve Temizleme
-            const sifre = guvenliMetin(sifreInput);
-            const telefon = guvenliMetin(telefonInput);
+            const girilenKAdi = guvenliMetin(kAdiInput);
+            const girilenSifre = guvenliMetin(sifreInput);
 
-            if (!sifre || !telefon) {
+            if (!girilenKAdi || !girilenSifre) {
                 mesajDiv.className = "error";
                 mesajDiv.innerText = "Lütfen tüm alanları doldurunuz.";
                 return;
             }
 
             mesajDiv.className = "";
-            mesajDiv.innerText = "Veriler kontrol ediliyor, lütfen bekleyin...";
+            mesajDiv.innerText = "Bilgiler kontrol ediliyor, lütfen bekleyin...";
             girisBtn.disabled = true;
 
             try {
                 const response = await fetch(apiURL);
                 const data = await response.json();
 
-                // Google Sheets'ten gelen veriler içinde eşleşme arama
-                // Sütunlar: tarih, oturum_saniye, ogrencisifre, telefon
+                // Google Sheets'teki sütun adlarınızın "kullaniciadi" ve "sifre" olduğunu varsayıyoruz.
                 let kullaniciBulundu = data.find(item => 
-                    String(item.ogrencisifre).trim() === sifre && 
-                    String(item.telefon).trim() === telefon
+                    String(item.kullaniciadi).trim() === girilenKAdi && 
+                    String(item.sifre).trim() === girilenSifre
                 );
 
                 if (kullaniciBulundu) {
-                    // Başarılı Giriş
                     mesajDiv.className = "success";
                     mesajDiv.innerText = "Giriş başarılı! Yönlendiriliyorsunuz...";
                     
-                    // Oturum bilgisini tarayıcı güvenli belleğine al
+                    // Oturum bilgisini sakla
                     sessionStorage.setItem("oturumAcik", "true");
-                    sessionStorage.setItem("ogrenciTelefon", telefon);
+                    sessionStorage.setItem("aktifKullanici", girilenKAdi);
 
                     setTimeout(() => {
                         document.getElementById('login-container').style.display = 'none';
                         document.getElementById('panel-alani').style.display = 'block';
-                        paneliDoldur(kullaniciBulundu);
                     }, 1000);
 
                 } else {
-                    // Hatalı Giriş
                     hataliDenemeSayisi++;
                     girisBtn.disabled = false;
                     
@@ -233,7 +228,7 @@
                         }, 30000);
                     } else {
                         mesajDiv.className = "error";
-                        mesajDiv.innerText = `Hatalı şifre veya telefon! Kalan hakkınız: ${MAX_DENEME - hataliDenemeSayisi}`;
+                        mesajDiv.innerText = `Hatalı kullanıcı adı veya şifre! Kalan hakkınız: ${MAX_DENEME - hataliDenemeSayisi}`;
                     }
                 }
 
@@ -243,17 +238,6 @@
                 mesajDiv.innerText = "Sunucu bağlantısında bir sorun oluştu.";
                 girisBtn.disabled = false;
             }
-        }
-
-        function paneliDoldur(kullanici) {
-            const detayDiv = document.getElementById('veri-detay');
-            detayDiv.innerHTML = `
-                <div style="background: #f7f9fc; padding: 15px; border-radius: 8px; border-left: 4px solid #38a169;">
-                    <p><strong>Kayıt Tarihi:</strong> ${kullanici.tarih || 'Belirtilmemiş'}</p>
-                    <p><strong>Oturum Süresi (Saniye):</strong> ${kullanici.oturum_saniye || 'Belirtilmemiş'}</p>
-                    <p><strong>Telefon:</strong> ${kullanici.telefon || 'Belirtilmemiş'}</p>
-                </div>
-            `;
         }
 
         function cikisYap() {
