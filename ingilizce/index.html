@@ -460,7 +460,7 @@
             padding-bottom: 8px;
         }
 
-        /* Ders Raporları Arşiv Kartları Tasarımı */
+        /* Ders Raporları Arşiv Kartları Tasarımı (Her biri birbirinden farklı renk tonlarında ve belirgin) */
         .report-archive-header {
             background-color: #f0fdf4;
             border: 1px solid #bbf7d0;
@@ -483,70 +483,96 @@
         }
 
         .report-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
         .report-card-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
-            border-bottom: 2px dashed #f1f5f9;
-            padding-bottom: 10px;
+            border-bottom: 2px dashed rgba(0,0,0,0.1);
+            padding-bottom: 12px;
         }
         .report-date {
-            font-weight: 700;
-            font-size: 15px;
-            color: #334155;
+            font-weight: 800;
+            font-size: 17px;
+            color: #1e293b;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            background: rgba(255,255,255,0.7);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
+        
+        /* Puana Göre Dinamik Renk Alan Rozetler */
         .report-badge-score {
-            background-color: #15803d;
-            color: white;
-            font-weight: 700;
-            font-size: 13px;
-            padding: 5px 12px;
+            font-weight: 800;
+            font-size: 14px;
+            padding: 6px 14px;
             border-radius: 20px;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        .score-green { background-color: #16a34a; }   /* İyi Puan */
+        .score-yellow { background-color: #ca8a04; }  /* Orta Puan */
+        .score-red { background-color: #dc2626; }     /* Kötü Puan */
+
         .report-comment-box {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background-color: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(0,0,0,0.08);
             border-radius: 10px;
-            padding: 15px;
+            padding: 16px;
             margin-bottom: 15px;
             font-size: 13.5px;
-            color: #334155;
-            line-height: 1.5;
+            color: #1e293b;
+            line-height: 1.6;
             font-style: italic;
         }
         .report-criteria-bar {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0,0,0,0.08);
             border-radius: 8px;
-            padding: 10px 15px;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 10px;
             font-size: 12.5px;
-            font-weight: 600;
-            color: #166534;
+            font-weight: 700;
+            color: #334155;
             margin-bottom: 15px;
         }
         .report-footer-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12.5px;
-            color: #64748b;
-            border-top: 1px solid #f1f5f9;
-            padding-top: 10px;
+            font-size: 13px;
+            color: #334155;
+            border-top: 1px solid rgba(0,0,0,0.08);
+            padding-top: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        /* Belirgin Kırmızı Alan (Son Deneme Puanı Rozeti) */
+        .report-deneme-badge {
+            background: #fff1f2;
+            border: 1.5px solid #f43f5e;
+            color: #be123c;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(244, 63, 94, 0.15);
         }
     </style>
 </head>
@@ -686,7 +712,6 @@
                 <p>Geçmiş derslerdeki başarı puanların, 5 kriter detayların ve öğretmen değerlendirmelerin aşağıda listelenmiştir.</p>
             </div>
 
-            <!-- Dinamik Arşiv Kartlarının Listeleneceği Alan -->
             <div id="arsivKartlariKonteyner">
                 <p style="color: #718096; text-align: center; padding: 20px;">Arşiv verileri yükleniyor...</p>
             </div>
@@ -716,7 +741,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbxqfy3MQhM26mp7rx2lSFPdgYOQXtslFCco0xQHdJRmRqzCpwT7g-wRyja7POQ-60MZZQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxRuTWmbDgVjpAhhL8oD52KN82F8b2VBMP_iiOnPsLaMWZhoDuUq3NlHtLBRkNDAyGA/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -787,7 +812,25 @@
             return `${emojiler[idx]} ${sayi}`;
         }
 
-        // Her hafta için benzersiz yorum üreten fonksiyon
+        // Puana göre renk sınıfı veren yardımcı fonksiyon (Yeşil, Sarı, Kırmızı)
+        function skorRenkSinifiVer(puan) {
+            if (puan >= 70) return "score-green";
+            if (puan >= 45) return "score-yellow";
+            return "score-red";
+        }
+
+        // Her haftanın arka planı için birbirinden farklı şık pastel tonlar üreten fonksiyon
+        function haftalikRenkTonuVer(index) {
+            let paletler = [
+                { bg: "#f0fdf4", border: "#bbf7d0" }, // Açık Yeşil
+                { bg: "#eff6ff", border: "#bfdbfe" }, // Açık Mavi
+                { bg: "#fefce8", border: "#fef08a" }, // Açık Sarı
+                { bg: "#fdf2f8", border: "#fbcfe8" }, // Açık Pembe
+                { bg: "#f5f3ff", border: "#ddd6fe" }  // Açık Mor
+            ];
+            return paletler[index % paletler.length];
+        }
+
         function haftalikYorumOlustur(row, ad) {
             let puan = row.genel;
             let okuma = row.okuma;
@@ -862,17 +905,19 @@
                 return;
             }
 
-            arsivListesi.forEach(row => {
+            arsivListesi.forEach((row, index) => {
                 let formatliTarih = tarihiDuzelt(row.tarih);
                 let yorumMetni = haftalikYorumOlustur(row, aktifOgrenciAdi);
+                let renkSkoruSinif = skorRenkSinifiVer(row.genel);
+                let temaTonu = haftalikRenkTonuVer(index);
 
                 let cardHTML = `
-                    <div class="report-card">
+                    <div class="report-card" style="background-color: ${temaTonu.bg}; border-color: ${temaTonu.border};">
                         <div class="report-card-top">
                             <div class="report-date">📅 Ders Tarihi: ${formatliTarih}</div>
-                            <div class="report-badge-score">Haftalık Genel Puan: ${row.genel} / 100</div>
+                            <div class="report-badge-score ${renkSkoruSinif}">Haftalık Genel Puan: ${row.genel} / 100</div>
                         </div>
-                        <div style="font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 6px;">🍎 O HAFTA NE YAPILDI & GÖZLEM:</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">🍎 O HAFTA NE YAPILDI & GÖZLEM:</div>
                         <div class="report-comment-box">
                             ${yorumMetni}
                         </div>
@@ -885,7 +930,9 @@
                         </div>
                         <div class="report-footer-info">
                             <span>📚 Kitap: <b>${kitapBilgi.kitapAdi}</b> (Okunan: ${kitapBilgi.sayfa} / Hedef: ${kitapBilgi.hedef} sayfa)</span>
-                            <span style="font-weight: 700; color: #b45309;">🎯 Son Deneme Puanı: ${row.deneme}</span>
+                            <div class="report-deneme-badge">
+                                🎯 Son Deneme Puanı: ${row.deneme}
+                            </div>
                         </div>
                     </div>
                 `;
