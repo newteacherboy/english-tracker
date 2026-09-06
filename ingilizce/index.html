@@ -216,13 +216,31 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbx8tTyg_NGEJOdrWlkE9CRV47kEMqhVJZ6usZuHBWaV637gjDyn8TJnj8jHmUPwMX8YaQ/exec";
-        
+        // 1. GÜVENLİK: API Linki Base64 ile Şifrelenerek Kod İçinde Gizlendi
+        const encodedAPI = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6T2JOX1AtclV5dEtfX05pR250Rm9yR212OWpDQUZnbkxYbURUeWxOem9UZnJjOG5memJRNV9QUWxFMGwxc0ViQXVxdy9leGVj";
+        const apiURL = atob(encodedAPI);
+
         let toplamSaniye = 0;
         let timerInterval = null;
         let aktifOgrenciAdi = "";
         let hataliDenemeSayisi = 0;
-        const MAX_DENEME = 3;
+        const MAX_DENEME = 3; // 4. GÜVENLİK: Brute-Force (Çoklu Hatalı Giriş) Sınırı
+
+        // Sayfa açıldığında daha önceden oturum açık kalmış mı kontrol et
+        window.onload = function() {
+            const oturumAcik = sessionStorage.getItem("oturumAcik");
+            const kayitliOgrenci = sessionStorage.getItem("aktifOgrenci");
+            const kayitliSure = sessionStorage.getItem("toplamSaniye");
+
+            if (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null) {
+                aktifOgrenciAdi = kayitliOgrenci;
+                toplamSaniye = parseInt(kayitliSure);
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('panel-alani').style.display = 'block';
+                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+                baslatSayac();
+            }
+        };
 
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, 
@@ -265,9 +283,11 @@
                     mesajDiv.innerText = "Giriş başarılı! Yönlendiriliyorsunuz...";
                     
                     aktifOgrenciAdi = girilenOgrenci;
-                    
-                    // Oturum Saniye sekmesinden gelen toplam süreyi al
                     toplamSaniye = (kullaniciBulundu.toplamsure !== undefined && !isNaN(kullaniciBulundu.toplamsure)) ? parseInt(kullaniciBulundu.toplamsure) : 0;
+
+                    sessionStorage.setItem("oturumAcik", "true");
+                    sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi);
+                    sessionStorage.setItem("toplamSaniye", toplamSaniye);
 
                     setTimeout(() => {
                         document.getElementById('login-container').style.display = 'none';
@@ -308,9 +328,9 @@
             
             timerInterval = setInterval(() => {
                 toplamSaniye++;
+                sessionStorage.setItem("toplamSaniye", toplamSaniye);
                 guncelleArayuz();
 
-                // Her 30 saniyede bir Oturum Saniye sekmesine güncel süreyi kaydet
                 if (toplamSaniye % 30 === 0) {
                     googleSheetseKaydet();
                 }
@@ -342,18 +362,14 @@
 
         function googleSheetseKaydet() {
             let kazanilanRozet = Math.floor(toplamSaniye / 600);
-            
-            // Oturum Saniye sekmesine yazma isteği
             const kayitURL = `${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${kazanilanRozet}`;
-            
             fetch(kayitURL).catch(err => console.error("Kayıt hatası:", err));
         }
 
         function cikisYap() {
-            // Çıkış yaparken süreyi Oturum Saniye sekmesine kaydet
             googleSheetseKaydet();
-            
             clearInterval(timerInterval);
+            sessionStorage.clear();
             setTimeout(() => {
                 window.location.reload();
             }, 600); 
