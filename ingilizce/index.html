@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Öğrenci Giriş Portalı - Öğretmen Çocuk</title>
+    <title>İngilizce Portal Giriş - Öğretmen Çocuk</title>
     <style>
         * {
             box-sizing: border-box;
@@ -50,7 +50,7 @@
             text-align: center;
         }
         .logo-icon {
-            font-size: 32px;
+            font-size: 36px;
             margin-bottom: 15px;
         }
         h2 {
@@ -132,13 +132,13 @@
 
     <!-- Giriş Formu Kutusu -->
     <div class="login-card" id="login-container">
-        <div class="logo-icon">🎓</div>
-        <h2>Öğrenci Giriş Portalı</h2>
+        <div class="logo-icon">🇬🇧</div>
+        <h2>İngilizce Portal Giriş</h2>
         <p class="subtitle">Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.</p>
         
         <form id="loginForm" onsubmit="girisYap(event)">
             <div class="form-group">
-                <input type="text" id="kullaniciadi" placeholder="Kullanıcı Adınız" required autocomplete="username">
+                <input type="text" id="ogrenci" placeholder="Kullanıcı Adınız" required autocomplete="username">
             </div>
             <div class="form-group">
                 <input type="password" id="sifre" placeholder="Şifreniz" required autocomplete="current-password">
@@ -151,7 +151,7 @@
     <!-- Başarılı Giriş Sonrası Görünecek Alan -->
     <div id="panel-alani">
         <h2>Giriş Başarılı! 🎉</h2>
-        <p style="color: #718096; margin-top: 10px; margin-bottom: 20px;">Öğrenci paneline başarıyla giriş yaptınız.</p>
+        <p style="color: #718096; margin-top: 10px; margin-bottom: 20px;">İngilizce paneline başarıyla giriş yaptınız.</p>
         <button onclick="cikisYap()" class="btn-giris" style="max-width: 150px; background-color: #e53e3e;">Çıkış Yap</button>
     </div>
 
@@ -162,7 +162,6 @@
         let hataliDenemeSayisi = 0;
         const MAX_DENEME = 3;
 
-        // XSS / Güvenlik için girdi temizleme
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, 
                 tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
@@ -172,15 +171,15 @@
         async function girisYap(event) {
             event.preventDefault();
             
-            const kAdiInput = document.getElementById('kullaniciadi').value.trim();
+            const ogrenciInput = document.getElementById('ogrenci').value.trim();
             const sifreInput = document.getElementById('sifre').value.trim();
             const mesajDiv = document.getElementById('mesaj');
             const girisBtn = document.getElementById('girisBtn');
 
-            const girilenKAdi = guvenliMetin(kAdiInput);
+            const girilenOgrenci = guvenliMetin(ogrenciInput);
             const girilenSifre = guvenliMetin(sifreInput);
 
-            if (!girilenKAdi || !girilenSifre) {
+            if (!girilenOgrenci || !girilenSifre) {
                 mesajDiv.className = "error";
                 mesajDiv.innerText = "Lütfen tüm alanları doldurunuz.";
                 return;
@@ -194,9 +193,9 @@
                 const response = await fetch(apiURL);
                 const data = await response.json();
 
-                // Google Sheets'teki sütun adlarınızın "kullaniciadi" ve "sifre" olduğunu varsayıyoruz.
+                // Google Sheets'teki sütun adlarınızın "ogrenci" ve "sifre" olduğu varsayılmıştır.
                 let kullaniciBulundu = data.find(item => 
-                    String(item.kullaniciadi).trim() === girilenKAdi && 
+                    String(item.ogrenci).trim() === girilenOgrenci && 
                     String(item.sifre).trim() === girilenSifre
                 );
 
@@ -204,9 +203,8 @@
                     mesajDiv.className = "success";
                     mesajDiv.innerText = "Giriş başarılı! Yönlendiriliyorsunuz...";
                     
-                    // Oturum bilgisini sakla
                     sessionStorage.setItem("oturumAcik", "true");
-                    sessionStorage.setItem("aktifKullanici", girilenKAdi);
+                    sessionStorage.setItem("aktifOgrenci", girilenOgrenci);
 
                     setTimeout(() => {
                         document.getElementById('login-container').style.display = 'none';
