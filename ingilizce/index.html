@@ -216,15 +216,14 @@
     </div>
 
     <script>
-        // 1. GÜVENLİK: API Linki Base64 ile Şifrelenerek Kod İçinde Gizlendi
-        const encodedAPI = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6T2JOX1AtclV5dEtfX05pR250Rm9yR212OWpDQUZnbkxYbURUeWxOem9UZnJjOG5memJRNV9QUWxFMGwxc0ViQXVxdy9leGVj";
-        const apiURL = atob(encodedAPI);
-
+        // API Linki doğrudan tanımlandı (Hata ihtimali ortadan kaldırıldı)
+        const apiURL = "https://script.google.com/macros/s/AKfycbx8tTyg_NGEJOdrWlkE9CRV47kEMqhVJZ6usZuHBWaV637gjDyn8TJnj8jHmUPwMX8YaQ/exec";
+        
         let toplamSaniye = 0;
         let timerInterval = null;
         let aktifOgrenciAdi = "";
         let hataliDenemeSayisi = 0;
-        const MAX_DENEME = 3; // 4. GÜVENLİK: Brute-Force (Çoklu Hatalı Giriş) Sınırı
+        const MAX_DENEME = 3;
 
         // Sayfa açıldığında daha önceden oturum açık kalmış mı kontrol et
         window.onload = function() {
