@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İngilizce Portal Giriş - Öğretmen Çocuk</title>
-    <!-- Chart.js Kütüphanesi (Grafikler İçin) -->
+    <!-- Chart.js Kütüphanesi -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -652,7 +652,7 @@
                 </div>
             </div>
 
-            <!-- KİTAP TAKİP SİSTEMİ (Öğretmen Notunun Bir Üstü) -->
+            <!-- KİTAP TAKİP SİSTEMİ -->
             <div class="book-tracker-box">
                 <div class="book-tracker-top">
                     <div class="book-tracker-title">📖 Okuma Kültürü & Odak Takibi</div>
@@ -691,7 +691,7 @@
                 </div>
             </div>
 
-            <!-- GRAFİKLER (Sayfanın En Alt Kısmı) -->
+            <!-- GRAFİKLER -->
             <div class="chart-box">
                 <div class="chart-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</div>
                 <canvas id="gelisimGrafik" height="110"></canvas>
@@ -729,7 +729,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbwD8O4Dr4kVIO0wlFgZftsdlsq5qTNtQBJqA6TMEB721muFDEmlDTqArOnaAHVvhI2bmw/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxApK7MW6fProEF_GyFqePKlCwKI7GvNHGlt25cczFcUQMoYNajOBmEwn8D9OL5D6AfwQ/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -793,7 +793,6 @@
             return "🐣 Başlangıç";
         }
 
-        // Okunan Kitap Sayısına Göre Değişen Emoji / Rozet Seçici
         function kitapEmojiGetir(sayi) {
             let emojiler = ["📖", "📚", "📙", "📘", "📗", "📕", "🏆", "🌟", "🎯", "🚀"];
             let idx = (sayi - 1) % emojiler.length;
@@ -894,20 +893,18 @@
             let gelecekDurumClass = "status-gray";
 
             if (derslerDizisi && derslerDizisi.length > 0) {
-                let tamamlananlar = derslerDizisi.filter(d => d.durum === "yapıldı" || d.durum === "yapildi" || d.durum === "yapılmadı");
-                if (tamamlananlar.length > 0) {
-                    let sonDers = tamamlananlar[tamamlananlar.length - 1];
-                    gecenDersTarih = tarihiDuzelt(sonDers.tarih);
-                    gecenDersDurum = sonDers.durum.toUpperCase();
-                    gecenDurumClass = (sonDers.durum.includes("yapıldı") || sonDers.durum.includes("yapildi")) ? "status-green" : "status-red";
+                // Dersler dizisi artık son 2 satırı içeriyor (0. eleman önceki ders, 1. eleman gelecek ders)
+                if (derslerDizisi.length >= 1) {
+                    let onceki = derslerDizisi[0];
+                    gecenDersTarih = tarihiDuzelt(onceki.tarih);
+                    gecenDersDurum = onceki.durum.toUpperCase();
+                    gecenDurumClass = (onceki.durum.includes("yapıldı") || onceki.durum.includes("yapildi")) ? "status-green" : (onceki.durum.includes("yapılmadı") ? "status-red" : "status-yellow");
                 }
-
-                let gelecekOlanlar = derslerDizisi.filter(d => d.durum === "sonraki" || d.durum === "gelecek");
-                if (gelecekOlanlar.length > 0) {
-                    let sonrakiDers = gelecekOlanlar[0];
-                    gelecekDersTarih = tarihiDuzelt(sonrakiDers.tarih);
-                    gelecekDersDurum = sonrakiDers.durum.toUpperCase();
-                    gelecekDurumClass = "status-yellow";
+                if (derslerDizisi.length >= 2) {
+                    let sonraki = derslerDizisi[1];
+                    gelecekDersTarih = tarihiDuzelt(sonraki.tarih);
+                    gelecekDersDurum = sonraki.durum.toUpperCase();
+                    gelecekDurumClass = sonraki.durum.includes("sonraki") || sonraki.durum.includes("gelecek") ? "status-yellow" : (sonraki.durum.includes("yapıldı") ? "status-green" : "status-red");
                 }
             }
 
@@ -934,9 +931,7 @@
             document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef} sayfa`;
         }
 
-        // Grafik Oluşturma Fonksiyonları (Chart.js)
-        function grafikleriCiz(grafikGecmis, user) {
-            // 1. Grafik: Yıllık Gelişim Eğrisi (Tarih Bazlı Genel Puan)
+        function grafikliCiz(grafikGecmis, user) {
             let labels = grafikGecmis.map(item => tarihiDuzelt(item.tarih));
             let veriler = grafikGecmis.map(item => item.genel);
 
@@ -945,15 +940,15 @@
             gelisimChartInstance = new Chart(ctx1, {
                 type: 'line',
                 data: {
-                    labels: labels.length > 0 ? labels : ["01.08.2026", "02.08.2026", "03.08.2026", "04.08.2026"],
+                    labels: labels.length > 0 ? labels : ["Veri Yok"],
                     datasets: [{
                         label: 'Yıllık Gelişim Eğrisi (Genel Puan)',
-                        data: veriler.length > 0 ? veriler : [10, 28, 5, 2],
+                        data: veriler.length > 0 ? veriler : [0],
                         borderColor: '#16a34a',
                         backgroundColor: 'rgba(22, 163, 74, 0.1)',
                         fill: true,
                         tension: 0.3,
-                        pointRadius: 4
+                        pointRadius: 5
                     }]
                 },
                 options: {
@@ -962,27 +957,26 @@
                 }
             });
 
-            // 2. Grafik: 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği
-            let cVocab = user.vocabOrt || 40;
-            let cYazma = user.yazmaOrt || 45;
-            let cOkuma = user.okumaOrt || 45;
-            let cKonusma = user.konusmaOrt || 45;
-            let cGrammar = user.grammarOrt || 50;
+            let cVocab = user.vocabOrt || 0;
+            let cYazma = user.yazmaOrt || 0;
+            let cOkuma = user.okumaOrt || 0;
+            let cKonusma = user.konusmaOrt || 0;
+            let cGrammar = user.grammarOrt || 0;
 
             if (kriterChartInstance) kriterChartInstance.destroy();
             let ctx2 = document.getElementById('kriterGrafik').getContext('2d');
             kriterChartInstance = new Chart(ctx2, {
                 type: 'bar',
                 data: {
-                    labels: ['Okuma', 'Yazma', 'Dinleme', 'Konuşma', 'Grammar / Dikkat'],
+                    labels: ['Okuma', 'Yazma', 'Vocabulary', 'Konuşma', 'Grammar'],
                     datasets: [{
                         data: [cOkuma, cYazma, cVocab, cKonusma, cGrammar],
                         backgroundColor: [
                             '#4ade80', // Yeşil
                             '#38bdf8', // Mavi
-                            '#fbbf24', // Turuncu/Sarı
+                            '#fbbf24', // Sarı
                             '#c084fc', // Mor
-                            '#f43f5e'  // Pembe/Kırmızı
+                            '#f43f5e'  // Kırmızı
                         ],
                         borderRadius: 6
                     }]
