@@ -266,8 +266,8 @@
                     
                     aktifOgrenciAdi = girilenOgrenci;
                     
-                    // Google Sheets'ten gelen toplam süreyi al (Eğer boşsa 0 al)
-                    toplamSaniye = kullaniciBulundu.toplamsure ? parseInt(kullaniciBulundu.toplamsure) : 0;
+                    // Google Sheets'ten gelen toplam süreyi al (Boşsa veya geçersizse 0 yap)
+                    toplamSaniye = (kullaniciBulundu.toplamsure && !isNaN(kullaniciBulundu.toplamsure)) ? parseInt(kullaniciBulundu.toplamsure) : 0;
 
                     setTimeout(() => {
                         document.getElementById('login-container').style.display = 'none';
@@ -310,7 +310,7 @@
                 toplamSaniye++;
                 guncelleArayuz();
 
-                // Her 30 saniyede bir buluta (Google Sheets'e) güncel süreyi kaydet
+                // Her 30 saniyede bir Google Sheets'e güncel süreyi ve rozeti kaydet
                 if (toplamSaniye % 30 === 0) {
                     googleSheetseKaydet();
                 }
@@ -343,16 +343,10 @@
         function googleSheetseKaydet() {
             let kazanilanRozet = Math.floor(toplamSaniye / 600);
             
-            fetch(apiURL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "text/plain" },
-                body: JSON.stringify({
-                    ogrenci: aktifOgrenciAdi,
-                    toplamSure: toplamSaniye,
-                    rozet: kazanilanRozet
-                })
-            }).catch(err => console.error("Kayıt hatası:", err));
+            // GET isteği ile Google Sheets'e doğrudan yazma işlemi
+            const kayitURL = `${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${kazanilanRozet}`;
+            
+            fetch(kayitURL).catch(err => console.error("Kayıt hatası:", err));
         }
 
         function cikisYap() {
@@ -362,7 +356,7 @@
             clearInterval(timerInterval);
             setTimeout(() => {
                 window.location.reload();
-            }, 500); // Kaydın gitmesi için mini bir bekleme
+            }, 600); 
         }
     </script>
 </body>
