@@ -466,70 +466,6 @@
             font-style: italic;
         }
 
-        /* Ders Zaman Çizelgesi */
-        .schedule-section {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-        .schedule-title {
-            font-weight: 700;
-            font-size: 15px;
-            color: #334155;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 2px dashed #f1f5f9;
-            padding-bottom: 8px;
-        }
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .schedule-box {
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            border: 1px solid transparent;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
-        .status-green { background-color: #f0fdf4; border-color: #bbf7d0; color: #166534; }
-        .status-red { background-color: #fef2f2; border-color: #fecaca; color: #991b1b; }
-        .status-yellow { background-color: #fefce8; border-color: #fef08a; color: #854d0e; }
-        .status-gray { background-color: #f8fafc; border-color: #e2e8f0; color: #64748b; }
-
-        .schedule-box-label {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-        .schedule-box-date {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .schedule-box-status {
-            font-size: 13px;
-            font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        .status-green .schedule-box-status { background: #dcfce7; color: #15803d; }
-        .status-red .schedule-box-status { background: #fee2e2; color: #b91c1c; }
-        .status-yellow .schedule-box-status { background: #fef9c3; color: #a16207; }
-        .status-gray .schedule-box-status { background: #f1f5f9; color: #475569; }
-
         /* Grafik Konteynerleri */
         .chart-box {
             background: #ffffff;
@@ -610,23 +546,6 @@
             <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Ders Raporları</button>
             <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">📈 Gelişim Yolu</button>
             <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
-        </div>
-
-        <!-- 3. DERS ZAMAN ÇİZELGESİ (Önceki Ders sol, Gelecek Ders sağ kutu) -->
-        <div class="schedule-section">
-            <div class="schedule-title">📅 Ders Zaman Çizelgesi</div>
-            <div class="schedule-grid">
-                <div class="schedule-box" id="boxGecenDers">
-                    <div class="schedule-box-label">Önceki Ders</div>
-                    <div class="schedule-box-date" id="txtGecenTarih">📅 --.--.----</div>
-                    <div class="schedule-box-status" id="txtGecenDurum">Bekleniyor</div>
-                </div>
-                <div class="schedule-box" id="boxGelecekDers">
-                    <div class="schedule-box-label">Gelecek Ders</div>
-                    <div class="schedule-box-date" id="txtGelecekTarih">📅 --.--.----</div>
-                    <div class="schedule-box-status" id="txtGelecekDurum">Bekleniyor</div>
-                </div>
-            </div>
         </div>
 
         <!-- SEKME İÇERİKLERİ -->
@@ -729,7 +648,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbwvuOEAYy1xirYb6oQSBSa4aRRKqpeZ-4mNHsbrPivOsNf_wRNlm5N0RY6RQdIhAH_wCA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxWFjrDkfItcGJbmwSX2hNsusq_mbu63cJV-TNokskp3xRD2xmnDlNIAaExhLio9H6bhA/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -881,52 +800,6 @@
                 return `${gun}.${ay}.${yil}`;
             }
             return tarihStr;
-        }
-
-        // Durum değerine göre uygun CSS sınıfını ve rengini veren yardımcı fonksiyon
-        function durumStiliVer(durumStr) {
-            let d = durumStr.toLowerCase();
-            if (d.includes("yapıldı") || d.includes("yapildi")) {
-                return { text: "YAPILDI", className: "status-green" };
-            } else if (d.includes("yapılmadı") || d.includes("yapilmadi")) {
-                return { text: "YAPILMADI", className: "status-red" };
-            } else if (d.includes("sonraki") || d.includes("gelecek")) {
-                return { text: "SONRAKİ", className: "status-yellow" };
-            }
-            return { text: durumStr.toUpperCase(), className: "status-gray" };
-        }
-
-        function dersTakviminiIsle(derslerDizisi) {
-            let gecenDersTarih = "--.--.----";
-            let gecenBilgi = { text: "BEKLENİYOR", className: "status-gray" };
-
-            let gelecekDersTarih = "--.--.----";
-            let gelecekBilgi = { text: "BEKLENİYOR", className: "status-gray" };
-
-            if (derslerDizisi && derslerDizisi.length > 0) {
-                // Dizinin 0. elemanı Önceki Ders (sondan 2. kayıt)
-                if (derslerDizisi.length >= 1) {
-                    let onceki = derslerDizisi[0];
-                    gecenDersTarih = tarihiDuzelt(onceki.tarih);
-                    gecenBilgi = durumStiliVer(onceki.durum);
-                }
-                // Dizinin 1. elemanı Gelecek Ders (en son kayıt)
-                if (derslerDizisi.length >= 2) {
-                    let sonraki = derslerDizisi[1];
-                    gelecekDersTarih = tarihiDuzelt(sonraki.tarih);
-                    gelecekBilgi = durumStiliVer(sonraki.durum);
-                }
-            }
-
-            // Sol Kutu: Önceki Ders
-            document.getElementById('txtGecenTarih').innerHTML = `📅 ${gecenDersTarih}`;
-            document.getElementById('txtGecenDurum').innerText = gecenBilgi.text;
-            document.getElementById('boxGecenDers').className = `schedule-box ${gecenBilgi.className}`;
-
-            // Sağ Kutu: Gelecek Ders
-            document.getElementById('txtGelecekTarih').innerHTML = `📅 ${gelecekDersTarih}`;
-            document.getElementById('txtGelecekDurum').innerText = gelecekBilgi.text;
-            document.getElementById('boxGelecekDers').className = `schedule-box ${gelecekBilgi.className}`;
         }
 
         function kitapTakibiniIsle(kitap) {
@@ -1110,7 +983,6 @@
 
             aiMesajUret(aktifOgrenciAdi, genelOrtalama, rozetSayisi);
             ogretmenYorumUret(user, rozetSayisi);
-            dersTakviminiIsle(user.dersler);
             kitapTakibiniIsle(user.kitapBilgi);
             grafikliCiz(user.grafikGecmis, user);
         }
