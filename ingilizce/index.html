@@ -898,19 +898,25 @@
 
                 let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
                 
-                let raporMetni = `*OGRETMEN COCUK - HAFTALIK INGILIZCE GELISIM RAPORU*\n\n` +
-                    `Sevgili Velimiz, ${tarih} tarihli dersimizi büyük bir verimle geride bıraktık. Öğrencimiz *${ogrenci}* bu hafta sergilediği gayret ve disiplinle bizleri yine gururlandırdı.\n\n` +
-                    `Değerlendirmelerimiz sonucunda öğrencimiz bu hafta genel başarı çıtasını *${ortalamaPuan}/100* seviyesine taşırken, son deneme sınavında elde ettiği *${sondeneme}* puan ile istikrarlı yükselişini sürdürmektedir. Ders içi gözlemimize göre; kelime dağarcığı ve anlama becerilerindeki pratikliği göz doldururken, beceri alanlarındaki detaylı dağılımımız şu şekildedir:\n` +
-                    `- *Okuma:* ${okuma}/100\n` +
-                    `- *Yazma:* ${yazma}/100\n` +
-                    `- *Kelime (Vocabulary):* ${vocab}/100\n` +
-                    `- *Konuşma:* ${konusma}/100\n` +
-                    `- *Grammar:* ${grammar}/100\n\n` +
-                    `*Okuma Kültürü Takibi:* ${ogrenci}, şu an okuduğu *${kitapAdi}* adlı kitapta ${sayfa}/${hedef} sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir.\n\n` +
-                    `*Öğretmen Gözlemi:* "${odevDonut || "Ders boyunca odaklanması ve derse katılımı son derece olumluydu."}"\n\n` +
-                    `*Sonraki Adım & Ödev:* Önümüzdeki ders için öğrencimize *${sonrakiOdev || "Kelime tekrarı ve pratik"}* ödevi verilmiştir. Bir sonraki buluşma tarihimiz ise *${sonrakiTarih || "Planlanıyor"}* olarak belirlenmiştir.\n\n` +
-                    `_Öğrencimizin tüm detaylı istatistiklerini, çözdüğü testleri, kazanmış olduğu rozetleri ve özel gelişim grafiklerini incelemek için lütfen *Öğrenci Portalımıza* giriş yapmayı unutmayın!_\n\n` +
-                    `Destekleriniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı ve başarılı bir hafta dileriz!`;
+               let raporMetni = `🎓 *DİJİ MUALLİM - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🎓\n\n` +
+                    `Sevgili Velimiz, 🌟 *${tarih}* tarihli dersimizi büyük bir verimle geride bıraktık. Öğrencimiz *${ogrenci}*, bu hafta sergilediği harika gayret ve disiplinle bizleri yine gururlandırdı! 🚀\n\n` +
+                    `📊 *Haftalık Genel Durumumuz:*\n` +
+                    `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ✨ *${ortalamaPuan}/100* ✨ seviyesine taşırken, son deneme sınavında elde ettiği 🎯 *${sondeneme}* puan ile istikrarlı yükselişini müthiş bir şekilde sürdürmektedir. 📈\n\n` +
+                    `💡 *Detaylı Beceri Dağılımımız:*\n` +
+                    `📖 • Okuma: ${okuma}/100\n` +
+                    `✍️ • Yazma: ${yazma}/100\n` +
+                    `🧠 • Kelime (Vocabulary): ${vocab}/100\n` +
+                    `🗣️ • Konuşma: ${konusma}/100\n` +
+                    `📐 • Grammar: ${grammar}/100\n\n` +
+                    `📚 *Okuma Kültürü & Kitap Takibi:*\n` +
+                    `Öğrencimiz, şu an büyük bir ilgiyle okuduğu 📘 *${kitapAdi}* adlı kitapta 📄 *${sayfa}/${hedef}* sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir. 🎯\n\n` +
+                    `👩‍🏫 *Öğretmen Gözlemi & Değerlendirme:*\n` +
+                    `💬 _"${odevDonut || "Ders boyunca odaklanması ve derse katılımı son derece olumluydu."}"_\n\n` +
+                    `📌 *Ödev & Gelecek Planı:*\n` +
+                    `• Verilen Ödev: *${sonrakiOdev || "Kelime tekrarı ve pratik"}*\n` +
+                    `• Sonraki Dersimiz: 📅 *${sonrakiTarih || "Planlanıyor"}*\n\n` +
+                    `✨ _Öğrencimizin tüm detaylı istatistiklerini, çözdüğü testleri, kazanmış olduğu rozetleri ve özel gelişim grafiklerini anlık incelemek için lütfen **Öğrenci Portalımıza** giriş yapmayı unutmayın!_\n\n` +
+                    `Destekleriniz, değerli güveniniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı, mutlu ve başarılı bir hafta dileriz! 🌻🌿`;
 
                 if (telefon) {
                     let waURL = `https://wa.me/${telefon}?text=${encodeURIComponent(raporMetni)}`;
