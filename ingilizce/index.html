@@ -45,7 +45,7 @@
         input:focus { background-color: #fff; border-color: #38a169; box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.1); }
         .btn-giris {
             width: 100%; padding: 9px; background-color: #2f855a; color: white;
-            border: None; border-radius: 6px; font-size: 13px; font-weight: 600;
+            border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
             cursor: pointer; margin-top: 6px; transition: background-color 0.3s;
         }
         .btn-giris:hover { background-color: #276749; }
@@ -231,7 +231,7 @@
             padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto;
         }
         .game-close-btn {
-            position: absolute; top: 10px; right: 10px; background: #f1f5f9; border: None;
+            position: absolute; top: 10px; right: 10px; background: #f1f5f9; border: none;
             width: 26px; height: 26px; border-radius: 50%; font-size: 12px; font-weight: 700;
             color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
@@ -285,47 +285,56 @@
         .lid-table th { background: #e2e8f0; color: #334155; padding: 4px; text-align: left; }
         .lid-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
 
-        /* GİZLİ ÖĞRETMEN ÇARLIĞI & RUBRİK PANELİ STİLLERİ */
+        /* GİZLİ ÖĞRETMEN ÇARLIĞI & RUBRİK PANELİ */
         .teacher-gear-btn {
-            position: fixed; bottom: 15px; right: 15px; background: rgba(51, 65, 85, 0.4);
-            color: #ffffff; width: 36px; height: 36px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 18px; cursor: pointer;
-            z-index: 9999; transition: all 0.3s; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            position: fixed; bottom: 12px; right: 12px; background: rgba(51, 65, 85, 0.4);
+            color: #ffffff; width: 32px; height: 32px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 16px; cursor: pointer;
+            z-index: 9999; transition: all 0.3s; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
         .teacher-gear-btn:hover { background: #334155; transform: rotate(90deg); }
 
         .rubric-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-            display: none; justify-content: center; align-items: center; z-index: 100000; padding: 10px;
+            display: none; justify-content: center; align-items: center; z-index: 100000; padding: 8px;
         }
         .rubric-content {
-            background: #ffffff; border-radius: 14px; width: 100%; max-width: 550px;
-            padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; position: relative;
+            background: #ffffff; border-radius: 12px; width: 100%; max-width: 520px;
+            padding: 18px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; position: relative;
         }
-        .rubric-field { margin-bottom: 12px; }
-        .rubric-field label { font-size: 11.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 3px; }
+        .rubric-field { margin-bottom: 10px; }
+        .rubric-field label { font-size: 11px; font-weight: 700; color: #334155; display: block; margin-bottom: 2px; }
         .rubric-field select, .rubric-field input, .rubric-field textarea {
-            width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; outline: none; background: #f8fafc;
+            width: 100%; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11.5px; outline: None; background: #f8fafc;
         }
-        .slider-group { display: flex; align-items: center; gap: 10px; }
+        .slider-group { display: flex; align-items: center; gap: 8px; }
         .slider-group input[type="range"] { flex: 1; }
-        .slider-val { font-weight: 800; color: #2563eb; font-size: 13px; width: 30px; text-align: center; }
+        .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
+
+        @media(max-width: 650px) {
+            body { padding: 5px 2px; }
+            .badges-grid { grid-template-columns: repeat(7, 1fr); }
+            .badge-card { min-height: 55px; padding: 4px 1px; }
+            .badge-emoji { font-size: 14px; }
+            .badge-name { font-size: 7.5px; }
+            .badge-target { font-size: 6.5px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI (VİDA LOGOSU) -->
+    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI -->
     <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Rubrik Paneli">⚙️</button>
 
     <!-- ŞİFRE GİRİŞ MODALI -->
     <div class="rubric-modal" id="sifreModal">
-        <div class="rubric-content" style="max-width: 320px; text-align: center;">
-            <h3 style="color: #1e293b; margin-bottom: 10px; font-size: 16px;">🔐 Öğretmen Girişi</h3>
-            <p style="font-size: 11px; color: #64748b; margin-bottom: 15px;">Lütfen yönetim şifresini giriniz:</p>
-            <input type="password" id="yoneticiSifreInput" placeholder="Şifre" style="text-align: center; margin-bottom: 12px;">
+        <div class="rubric-content" style="max-width: 300px; text-align: center;">
+            <h3 style="color: #1e293b; margin-bottom: 8px; font-size: 15px;">🔐 Öğretmen Girişi</h3>
+            <p style="font-size: 10.5px; color: #64748b; margin-bottom: 12px;">Yönetim şifresini giriniz:</p>
+            <input type="password" id="yoneticiSifreInput" placeholder="Şifre" style="text-align: center; margin-bottom: 10px;">
             <button class="btn-giris" onclick="sifreKontrolEt()">Giriş Yap</button>
-            <button onclick="document.getElementById('sifreModal').style.display='none'" style="background:none; border:none; color:#64748b; font-size:11px; margin-top:10px; cursor:pointer;">İptal</button>
+            <button onclick="document.getElementById('sifreModal').style.display='none'" style="background:none; border:none; color:#64748b; font-size:10.5px; margin-top:8px; cursor:pointer;">İptal</button>
         </div>
     </div>
 
@@ -333,7 +342,7 @@
     <div class="rubric-modal" id="rubricModal">
         <div class="rubric-content">
             <button class="game-close-btn" onclick="document.getElementById('rubricModal').style.display='none'">✕</button>
-            <h3 style="color: #1e293b; font-size: 16px; font-weight: 900; margin-bottom: 12px; text-align: center;">📝 Otomatik Öğretmen Rubrik Paneli</h3>
+            <h3 style="color: #1e293b; font-size: 15px; font-weight: 900; margin-bottom: 10px; text-align: center;">📝 Otomatik Öğretmen Rubrik Paneli</h3>
             
             <div class="rubric-field">
                 <label>Öğrenci Seçiniz:</label>
@@ -354,7 +363,7 @@
                 </select>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
                 <div class="rubric-field">
                     <label>Tamamlanan Ders Tarihi:</label>
                     <input type="date" id="rubricTamamlananTarih">
@@ -365,17 +374,17 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 6px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 5px;">
                 <div class="rubric-field">
-                    <label>Şu An Okunan Kitap:</label>
+                    <label>Okunan Kitap:</label>
                     <input type="text" id="rubricKitapAdi">
                 </div>
                 <div class="rubric-field">
-                    <label>Okunan Sayfa:</label>
+                    <label>Okun. Sayfa:</label>
                     <input type="number" id="rubricSayfa" value="0">
                 </div>
                 <div class="rubric-field">
-                    <label>Hedef Sayfa:</label>
+                    <label>Hedef:</label>
                     <input type="number" id="rubricHedef" value="40">
                 </div>
                 <div class="rubric-field">
@@ -389,11 +398,11 @@
                 <input type="number" id="rubricSonDeneme" value="0">
             </div>
 
-            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 12px 0;">
-            <p style="font-size: 11px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">📊 5 Beceri Puanlaması (0 - 100)</p>
+            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
+            <p style="font-size: 10.5px; font-weight: 800; color: #2563eb; margin-bottom: 6px;">📊 5 Beceri Puanlaması (0 - 100)</p>
 
             <div class="rubric-field">
-                <label>Okuma Puanı:</label>
+                <label>Okuma:</label>
                 <div class="slider-group">
                     <input type="range" id="sliderOkuma" min="0" max="100" value="50" oninput="document.getElementById('valOkuma').innerText=this.value">
                     <span class="slider-val" id="valOkuma">50</span>
@@ -401,7 +410,7 @@
             </div>
 
             <div class="rubric-field">
-                <label>Yazma Puanı:</label>
+                <label>Yazma:</label>
                 <div class="slider-group">
                     <input type="range" id="sliderYazma" min="0" max="100" value="50" oninput="document.getElementById('valYazma').innerText=this.value">
                     <span class="slider-val" id="valYazma">50</span>
@@ -409,7 +418,7 @@
             </div>
 
             <div class="rubric-field">
-                <label>Kelime (Vocabulary) Puanı:</label>
+                <label>Kelime (Vocabulary):</label>
                 <div class="slider-group">
                     <input type="range" id="sliderVocab" min="0" max="100" value="50" oninput="document.getElementById('valVocab').innerText=this.value">
                     <span class="slider-val" id="valVocab">50</span>
@@ -417,7 +426,7 @@
             </div>
 
             <div class="rubric-field">
-                <label>Konuşma Puanı:</label>
+                <label>Konuşma:</label>
                 <div class="slider-group">
                     <input type="range" id="sliderKonusma" min="0" max="100" value="50" oninput="document.getElementById('valKonusma').innerText=this.value">
                     <span class="slider-val" id="valKonusma">50</span>
@@ -425,24 +434,37 @@
             </div>
 
             <div class="rubric-field">
-                <label>Grammar Puanı:</label>
+                <label>Grammar:</label>
                 <div class="slider-group">
                     <input type="range" id="sliderGrammar" min="0" max="100" value="50" oninput="document.getElementById('valGrammar').innerText=this.value">
                     <span class="slider-val" id="valGrammar">50</span>
                 </div>
             </div>
 
-            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 12px 0;">
+            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
+
+            <!-- DERS BAŞI GÖZLEM SEÇENEKLERİ (HAZIR MESAJLAR) -->
+            <div class="rubric-field">
+                <label>Ders Başı Gözlem & Değerlendirme (Hazır Seçenekler):</label>
+                <select id="rubricHazirGozlem" onchange="document.getElementById('rubricOdevDonut').value=this.value">
+                    <option value="">-- Hazır Gözlem Seçin --</option>
+                    <option value="Dersimize harika bir enerjiyle başladık, öğrencimizin odaklanması ve derse katılımı üst düzeydeydi.">1. Harika enerji ve üst düzey derse katılım.</option>
+                    <option value="Ders başında biraz yorgun olsak da kısa sürede toparlayıp tüm etkinlikleri başarıyla tamamladık.">2. Başlangıçta yorgunluk, sonrasında harika toparlanma.</option>
+                    <option value="Önceki haftanın konularını muazzam bir şekilde pekiştirmiş olarak derse geldi, tebrik ederim.">3. Geçmiş konular mükemmel pekiştirilmiş.</option>
+                    <option value="Kelime çalışmalarında gösterdiği pratik zeka ve hız bu hafta gözümüzden kaçmadı, harika ilerliyor.">4. Kelime çalışmalarında üstün pratik zeka ve hız.</option>
+                    <option value="Ders boyunca aktif iletişim kurdu, soru sorma ve anlama becerilerinde çok güzel bir ivme yakaladık.">5. Aktif iletişim ve soru sorma becerisinde harika ivme.</option>
+                </select>
+            </div>
 
             <div class="rubric-field">
-                <label>Geçen Ders Ödevi Geri Dönütü / Yorumu:</label>
-                <textarea id="rubricOdevDonut" rows="2" placeholder="Örn: Ödevlerini eksiksiz yapmış, kelime tekrarında çok başarılıydı."></textarea>
+                <label>Geçen Ders Ödevi Geri Dönütü / Gözlem (Düzenle):</label>
+                <textarea id="rubricOdevDonut" rows="2" placeholder="Örn: Ödevlerini eksiksiz yapmış..."></textarea>
             </div>
 
             <div class="rubric-field">
                 <label>Sonraki Ödev (Hazır Seçenekler):</label>
                 <select id="rubricHazirOdev" onchange="document.getElementById('rubricSonrakiOdev').value=this.value">
-                    <option value="">-- Hazır Seçenek Seçin --</option>
+                    <option value="">-- Hazır Ödev Seçin --</option>
                     <option value="Vocabulary Tekrarı ve Kelime Kartı Çalışması">Vocabulary Tekrarı ve Kelime Kartı Çalışması</option>
                     <option value="Ünite Testi Çözümü ve Yanlış Analizi">Ünite Testi Çözümü ve Yanlış Analizi</option>
                     <option value="İngilizce Hikaye Kitabı Okuma ve Özet Çıkarma">İngilizce Hikaye Kitabı Okuma ve Özet Çıkarma</option>
@@ -452,11 +474,11 @@
             </div>
 
             <div class="rubric-field">
-                <label>Sonraki Ödev (Özel El Yazısı ile Düzenle):</label>
+                <label>Sonraki Ödev (Özel El Yazısı):</label>
                 <input type="text" id="rubricSonrakiOdev" placeholder="Ödev detayını buraya yazabilirsiniz...">
             </div>
 
-            <button class="btn-giris" onclick="rubrikVerileriniKaydetVeWhatsappGonder()" style="background: #2563eb; margin-top: 10px;">💾 Google Sheets'e Kaydet & WhatsApp Raporu Oluştur</button>
+            <button class="btn-giris" onclick="rubrikVerileriniKaydetVeWhatsappGonder()" style="background: #2563eb; margin-top: 8px;">💾 Kaydet & Uzun Veli Raporunu WhatsApp'a Gönder</button>
         </div>
     </div>
 
@@ -695,8 +717,8 @@
 
     <!-- AI Toast -->
     <div class="ai-floating-toast" id="aiToastBox" style="display: none;">
-        <div class="ai-toast-title"><span>🤖 Koçluk Asistanı</span><span class="ai-toast-timer" id="toastTimer">10s</span></div>
-        <div class="ai-toast-text" id="aiMesajMetni">Sisteme hoş geldin!</div>
+        <div class="ai-floating-title"><span>🤖 Koçluk Asistanı</span><span class="ai-floating-timer" id="toastTimer">10s</span></div>
+        <div class="ai-floating-text" id="aiMesajMetni">Sisteme hoş geldin!</div>
     </div>
 
     <script>
@@ -764,7 +786,6 @@
 
             document.getElementById('rubricTelefon').value = user.telefon || "";
             
-            // Geçmiş tarihleri doldur
             let tarihSel = document.getElementById('rubricGecmisTarihSelect');
             tarihSel.innerHTML = '<option value="">-- Yeni Kayıt / En Güncel --</option>';
             if (user.arsivListesi) {
@@ -776,7 +797,6 @@
                 });
             }
 
-            // En güncel verileri yerleştir
             document.getElementById('rubricTamamlananTarih').value = new Date().toISOString().split('T')[0];
             if (user.kitapBilgi) {
                 document.getElementById('rubricKitapAdi').value = user.kitapBilgi.kitapAdi || "";
@@ -840,30 +860,28 @@
                 alert("Veriler Google Sheets'e başarıyla kaydedildi!");
                 document.getElementById('rubricModal').style.display = 'none';
 
-                // WhatsApp Rapor Metni Oluşturma
                 let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
+                
+                // Yapay Zeka Destekli Uzun ve Akıcı Veli Raporu Metni
                 let raporMetni = `🌟 *ÖĞRETMEN ÇOCUK - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🌟\n\n` +
-                    `Sevgili Velimiz, ${tarih} tarihli dersimizin değerlendirme raporu aşağıdadır:\n\n` +
-                    `👤 *Öğrenci:* ${ogrenci}\n` +
-                    `⭐ *Genel Başarı Puanı:* ${ortalamaPuan} / 100\n` +
-                    `🎯 *Son Deneme Sonucu:* ${sondeneme}\n\n` +
-                    `📈 *Beceri Dağılımı:*\n` +
-                    `• Okuma: ${okuma}/100\n` +
-                    `• Yazma: ${yazma}/100\n` +
-                    `• Kelime (Vocabulary): ${vocab}/100\n` +
-                    `• Konuşma: ${konusma}/100\n` +
-                    `• Grammar: ${grammar}/100\n\n` +
-                    `📚 *Okuma Takibi:* ${kitapAdi} (${sayfa}/${hedef} sayfa)\n` +
-                    `💬 *Öğretmen Gözlemi:* ${odevDonut || "Harika bir çaba ve katılım gösterdik."}\n` +
-                    `📌 *Sonraki Ödev:* ${sonrakiOdev || "Tekrar ve pratik"}\n` +
-                    `📅 *Sonraki Ders Tarihi:* ${sonrakiTarih || "Belirtilmedi"}\n\n` +
-                    `Sağlıklı ve verimli bir hafta dileriz! 🌻`;
+                    `Sevgili Velimiz, ${tarih} tarihli dersimizi büyük bir verimle geride bıraktık. Öğrencimiz *${ogrenci}* bu hafta sergilediği gayret ve disiplinle bizleri yine gururlandırdı.\n\n` +
+                    `Değerlendirmelerimiz sonucunda öğrencimiz bu hafta genel başarı çıtasını *${ortalamaPuan}/100* seviyesine taşırken, son deneme sınavında elde ettiği *${sondeneme}* puan ile istikrarlı yükselişini sürdürmektedir. Ders içi gözlemimize göre; kelime dağarcığı ve anlama becerilerindeki pratikliği göz doldururken, beceri alanlarındaki detaylı dağılımımız şu şekildedir:\n` +
+                    `• 📖 *Okuma:* ${okuma}/100\n` +
+                    `• ✍️ *Yazma:* ${yazma}/100\n` +
+                    `• 💡 *Kelime (Vocabulary):* ${vocab}/100\n` +
+                    `• 🗣️ *Konuşma:* ${konusma}/100\n` +
+                    `• 📐 *Grammar:* ${grammar}/100\n\n` +
+                    `📖 *Okuma Kültürü Takibi:* ${ogrenci}, şu an okuduğu *${kitapAdi}* adlı kitapta ${sayfa}/${hedef} sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir.\n\n` +
+                    `🍎 *Öğretmen Gözlemi:* "${odevDonut || "Ders boyunca odaklanması ve derse katılımı son derece olumluydu."}"\n\n` +
+                    `📌 *Sonraki Adım & Ödev:* Önümüzdeki ders için öğrencimize *${sonrakiOdev || "Kelime tekrarı ve pratik"}* ödevi verilmiştir. Bir sonraki buluşma tarihimiz ise *${sonrakiTarih || "Planlanıyor"}* olarak belirlenmiştir.\n\n` +
+                    `💡 _Öğrencimizin tüm detaylı istatistiklerini, çözdüğü testleri, kazanmış olduğu rozetleri ve özel gelişim grafiklerini incelemek için lütfen **Öğrenci Portalımıza** giriş yapmayı unutmayın!_\n\n` +
+                    `Destekleriniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı ve başarılı bir hafta dileriz! 🌻`;
 
                 if (telefon) {
                     let waURL = `https://wa.me/${telefon}?text=${encodeURIComponent(raporMetni)}`;
                     window.open(waURL, '_blank');
                 } else {
-                    alert("Bu öğrenciye ait telefon numarası bulunamadıği için WhatsApp yönlendirmesi yapılamadı, ancak veriler kaydedildi.");
+                    alert("Bu öğrenciye ait telefon numarası bulunamadı, ancak veriler başarıyla kaydedildi.");
                 }
 
             } catch(e) {
@@ -914,22 +932,12 @@
         }
 
         function haftalikYorumOlustur(row, ad) {
-            let puan = row.genel;
-            let okuma = row.okuma;
-            let yazma = row.yazma;
-            let vocab = row.vocabulary;
-            let konusma = row.konusma;
-            let grammar = row.grammar;
-            let deneme = row.deneme;
-
+            let puan = row.genel, okuma = row.okuma, yazma = row.yazma, vocab = row.vocabulary, konusma = row.konusma, grammar = row.grammar, deneme = row.deneme;
             let cumleler = [];
-            if (puan >= 80) {
-                cumleler.push(`Bu hafta ${ad} ile oldukça disiplinli ve verimli bir ders döngüsünü geride bıraktık. Öğrencimiz bu hafta **${puan} / 100** genel başarı puanına ulaştı. Odaklanması mükemmeldi. 🌟`);
-            } else {
-                cumleler.push(`Sevgili velimiz, öğrencimiz ${ad} bu haftaki süreçte **${puan} / 100** genel başarı puanı elde etti. Ufak tekrarlarla daha iyi olacağız. 🚀`);
-            }
+            if (puan >= 80) cumleler.push(`Bu hafta ${ad} ile oldukça disiplinli ve verimli bir ders döngüsünü geride bıraktık. Öğrencimiz **${puan} / 100** genel başarı puanına ulaştı. 🌟`);
+            else cumleler.push(`Öğrencimiz ${ad} bu haftaki süreçte **${puan} / 100** genel başarı puanı elde etti. 🚀`);
             cumleler.push(`Okuma (${okuma}), Yazma (${yazma}), Kelime (${vocab}), Konuşma (${konusma}) ve Grammar (${grammar}) ölçüldü.`);
-            if (deneme > 0) cumleler.push(`Son deneme sonucu: **${deneme}**.`);
+            if (deneme > 0) cumleler.push(`Son deneme: **${deneme}**.`);
             return `"${cumleler.join(" ")}"`;
         }
 
