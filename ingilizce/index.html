@@ -20,26 +20,6 @@
             position: relative;
             padding: 20px 0;
         }
-        .ana-sayfa-btn {
-            position: absolute;
-            top: 25px;
-            left: 25px;
-            text-decoration: none;
-            color: #4b6b4b;
-            background: #ffffff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
-            z-index: 10;
-        }
-        .ana-sayfa-btn:hover {
-            background: #4b6b4b;
-            color: #ffffff;
-        }
         .login-card {
             background: #ffffff;
             padding: 40px 35px;
@@ -122,6 +102,81 @@
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
+
+        /* Kullanıcı Bilgi & Kontrol Üst Şeridi (Avatar + Butonlar) */
+        .user-header-bar {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .user-info-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background-color: #2f855a;
+            color: white;
+            font-weight: 800;
+            font-size: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(47, 133, 90, 0.3);
+            text-transform: uppercase;
+        }
+        .user-details h3 {
+            color: #166534;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .user-details span {
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .header-btn {
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-portal {
+            background: #ffffff;
+            color: #2f855a;
+            border: 1px solid #bbf7d0;
+        }
+        .btn-portal:hover {
+            background: #2f855a;
+            color: #ffffff;
+        }
+        .btn-cikis {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .btn-cikis:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
         .tabs-container {
             display: flex;
             gap: 10px;
@@ -155,7 +210,7 @@
             display: block;
         }
 
-        /* Sayaç Kartı (En Üste Taşındı) */
+        /* Sayaç Kartı */
         .timer-card {
             background-color: #eaf4ed;
             border: 1px solid #c6e3cc;
@@ -322,7 +377,7 @@
             font-style: italic;
         }
 
-        /* Ders Zaman Çizelgesi (Sekmelerin Hemen Altında) */
+        /* Ders Zaman Çizelgesi */
         .schedule-section {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -389,8 +444,6 @@
 </head>
 <body>
 
-    <a href="https://panel.ogretmencocuk.com" class="ana-sayfa-btn">← Ana Portala Dön</a>
-
     <div class="login-card" id="login-container">
         <div class="logo-icon">🏆</div>
         <h2>İngilizce Portal Giriş</h2>
@@ -411,7 +464,22 @@
     <!-- Başarılı Giriş Sonrası Panel Alanı -->
     <div id="panel-alani">
         
-        <!-- 1. OTURUM SÜRESİ SAYAÇ KARTI (En Üstte) -->
+        <!-- KULLANICI KONTROL ALANI (Avatar + İsim + Portal Dönüş + Çıkış Yap) -->
+        <div class="user-header-bar">
+            <div class="user-info-area">
+                <div class="user-avatar" id="userAvatarLetter">Ö</div>
+                <div class="user-details">
+                    <h3 id="ogrenciAdiText">Öğrenci</h3>
+                    <span>İngilizce Öğrenci Paneli</span>
+                </div>
+            </div>
+            <div class="user-actions">
+                <a href="https://panel.ogretmencocuk.com" class="header-btn btn-portal">Ana Portal</a>
+                <button onclick="cikisYap()" class="header-btn btn-cikis">Çıkış Yap</button>
+            </div>
+        </div>
+
+        <!-- 1. OTURUM SÜRESİ SAYAÇ KARTI -->
         <div class="timer-card">
             <div class="timer-header">
                 <span class="timer-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</span>
@@ -434,7 +502,7 @@
             <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
         </div>
 
-        <!-- 3. DERS ZAMAN ÇİZELGESİ (Sekmelerin Hemen Altında) -->
+        <!-- 3. DERS ZAMAN ÇİZELGESİ -->
         <div class="schedule-section">
             <div class="schedule-title">📅 Ders Zaman Çizelgesi</div>
             <div class="schedule-grid">
@@ -497,9 +565,6 @@
             <p style="color: #718096; font-size: 14px;">Kazandığın tüm rozetleri ve kilitli olanları burada görebileceksin.</p>
         </div>
 
-        <div style="text-align: center; margin-top: 20px;">
-            <button onclick="cikisYap()" class="btn-giris" style="max-width: 150px; background-color: #e53e3e;">Çıkış Yap</button>
-        </div>
     </div>
 
     <!-- 10 Saniye Sonra Kaybolan Yüzen Baloncuk Toast Mesajı -->
@@ -512,7 +577,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbwVyo-41NRU8lzV2AFm74BWH6e6B_s_948s9O0KEBcZ7whehM30Ai9_k8iJgfl8waw87w/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzObN_P-rUytK__NiGntFOrGmv9jCAFgnLXmDTylNzoTfrc8nfzBq5_PQlE0l1sEbAuqw/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -530,6 +595,11 @@
                 toplamSaniye = parseInt(kayitliSure);
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
+                
+                // Avatar ve isim güncelleme
+                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+                document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
+
                 bilgileriSunucudanGuncelle(aktifOgrenciAdi);
             }
         };
@@ -615,7 +685,6 @@
             document.getElementById('teacherCommentText').innerHTML = `"${aciklamalar.join(" ")}"`;
         }
 
-        // Baloncuk Toast Mesajını Gösterme ve 10 saniye sonra yok etme
         function aiMesajUret(ogrenciAdi, genelPuan, rozetSayisi) {
             let mesajlar = [
                 `Harika bir başlangıç ${ogrenciAdi}! Bu hafta gösterdiğin gayretle ${rozetSayisi} yeni rozet kilitledin ve genel puanını ${genelPuan} seviyesine taşıdın. ✨`,
@@ -642,10 +711,8 @@
             }, 1000);
         }
 
-        // ISO Tarih Formatını (2026-09-06T21:00:00.000Z) Türkçe Tarihe (06.09.2026) Çevirme Fonksiyonu
         function tarihiDuzelt(tarihStr) {
             if (!tarihStr) return "--.--.----";
-            // Eğer doğrudan ISO formatı veya Date nesnesine dönüşebilecek bir metinse
             let d = new Date(tarihStr);
             if (!isNaN(d.getTime())) {
                 let gun = String(d.getDate()).padStart(2, '0');
@@ -653,7 +720,7 @@
                 let yil = d.getFullYear();
                 return `${gun}.${ay}.${yil}`;
             }
-            return tarihStr; // Eğer zaten düz metinse olduğu gibi bırak
+            return tarihStr;
         }
 
         function dersTakviminiIsle(derslerDizisi) {
@@ -732,6 +799,10 @@
                     sessionStorage.setItem("oturumAcik", "true");
                     sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi);
                     sessionStorage.setItem("toplamSaniye", toplamSaniye);
+
+                    // Avatar ve İsim Güncelleme
+                    document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+                    document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
 
                     veriArayuzeIsle(kullaniciBulundu);
 
