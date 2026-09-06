@@ -55,52 +55,53 @@
         
         #panel-alani { display: none; width: 100%; max-width: 800px; margin: 0 auto; }
 
-        /* Kullanıcı Bilgi, Ders Takvimi & Kontrol Üst Şeridi (Mobil Uyumlu) */
+        /* Üst Şerit (Profil, Takvim ve Butonlar Düzenlendi) */
         .user-header-bar {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #bbf7d0; border-radius: 14px; padding: 14px 18px;
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); gap: 12px;
-            flex-wrap: wrap;
+            border: 1px solid #bbf7d0; border-radius: 14px; padding: 14px 16px;
+            display: flex; flex-direction: column; gap: 12px;
+            margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .user-header-top {
+            display: flex; align-items: center; justify-content: space-between; width: 100%;
         }
         .user-info-area { display: flex; align-items: center; gap: 10px; }
         .user-avatar {
-            width: 42px; height: 42px; background-color: #2f855a; color: white;
-            font-weight: 800; font-size: 18px; border-radius: 50%; display: flex;
+            width: 40px; height: 40px; background-color: #2f855a; color: white;
+            font-weight: 800; font-size: 17px; border-radius: 50%; display: flex;
             align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(47, 133, 90, 0.3);
             text-transform: uppercase; flex-shrink: 0;
         }
-        .user-details h3 { color: #166534; font-size: 15px; font-weight: 700; }
-        .user-details span { color: #15803d; font-size: 11.5px; font-weight: 600; }
+        .user-details h3 { color: #166534; font-size: 14.5px; font-weight: 700; }
+        .user-details span { color: #15803d; font-size: 11px; font-weight: 600; }
 
-        .header-schedule-area { display: flex; gap: 8px; }
-        .sched-mini-box { background: #ffffff; border-radius: 8px; padding: 6px 10px; text-align: center; border: 1px solid #cbd5e1; min-width: 100px; }
+        .header-schedule-area { display: flex; gap: 8px; width: 100%; }
+        .sched-mini-box { background: #ffffff; border-radius: 8px; padding: 8px; text-align: center; border: 1px solid #cbd5e1; flex: 1; }
         .sched-done { border-color: #86efac; background: #f0fdf4; }
         .sched-next { border-color: #fca5a5; background: #fef2f2; }
         .sched-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
         .sched-done .sched-label { color: #166534; }
         .sched-next .sched-label { color: #991b1b; }
-        .sched-date { font-size: 12px; font-weight: 700; color: #1e293b; }
+        .sched-date { font-size: 12.5px; font-weight: 700; color: #1e293b; }
         .sched-status { font-size: 10px; font-weight: 700; margin-top: 1px; }
         .sched-done .sched-status { color: #15803d; }
         .sched-next .sched-status { color: #b91c1c; }
 
-        .user-actions { display: flex; gap: 6px; }
-        .header-btn { text-decoration: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; transition: all 0.2s ease; cursor: pointer; border: none; }
+        .user-actions { display: flex; gap: 8px; width: 100%; }
+        .header-btn { text-decoration: none; padding: 8px; border-radius: 8px; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer; border: none; flex: 1; }
         .btn-portal { background: #ffffff; color: #2f855a; border: 1px solid #bbf7d0; }
         .btn-portal:hover { background: #2f855a; color: #ffffff; }
         .btn-cikis { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .btn-cikis:hover { background: #dc2626; color: #ffffff; }
 
-        /* Sekmeler Bloğu */
+        /* Sekmeler (Tek Seferde Görünür, Kaydırmasız) */
         .tabs-container {
-            display: flex; gap: 8px; margin-bottom: 20px; background: #ffffff;
+            display: flex; gap: 6px; margin-bottom: 20px; background: #ffffff;
             padding: 8px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            overflow-x: auto;
         }
         .tab-btn {
-            flex: 1; padding: 10px 8px; border: none; background: transparent; font-weight: 600;
-            font-size: 13px; color: #475569; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; text-align: center; white-space: nowrap;
+            flex: 1; padding: 10px 4px; border: none; background: transparent; font-weight: 600;
+            font-size: 11.5px; color: #475569; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; text-align: center; white-space: nowrap;
         }
         .tab-btn.active { background: #334155; color: white; box-shadow: 0 2px 6px rgba(51, 65, 85, 0.3); }
         .tab-content { display: none; }
@@ -115,7 +116,7 @@
         .progress-bar { background-color: #475569; height: 100%; width: 0%; transition: width 0.4s ease; border-radius: 10px; }
         .timer-footer { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #64748b; flex-wrap: wrap; gap: 5px; }
 
-        /* Yüzen Baloncuk (Toast) AI Mesaj (Mobilde ekran ortasına uyumlu) */
+        /* Yüzen Baloncuk (Toast) AI Mesaj */
         .ai-floating-toast {
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background: #ffffff; border: 2px solid #cbd5e1;
             border-left: 6px solid #475569; border-radius: 14px; padding: 14px 18px; width: 90%; max-width: 380px;
@@ -153,21 +154,21 @@
         .book-progress-bar-fill { background: #1e293b; height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease; }
         .book-progress-footer { display: flex; justify-content: space-between; font-size: 12px; color: #64748b; font-weight: 600; margin-top: 6px; }
 
-        /* 4'lü Özet Tablosu Grid */
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .summary-card { border-radius: 14px; padding: 20px; border: 1px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.03); background: #ffffff; }
+        /* 4'lü Özet Tablosu (Mobilde küçültüldü ve derli toplu yapıldı) */
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .summary-card { border-radius: 12px; padding: 14px; border: 1px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.02); background: #ffffff; }
         .card-slate { border-color: #cbd5e1; }
         .card-cyan { border-color: #a5f3fc; }
         .card-amber { border-color: #fde68a; }
         .card-rose { border-color: #fecdd3; }
 
-        .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .card-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
         .card-slate .card-title { color: #334155; }
         .card-cyan .card-title { color: #0e7490; }
         .card-amber .card-title { color: #b45309; }
         .card-rose .card-title { color: #be123c; }
 
-        .card-value { font-size: 28px; font-weight: 800; }
+        .card-value { font-size: 22px; font-weight: 800; }
         .card-slate .card-value { color: #0f172a; }
         .card-cyan .card-value { color: #155e75; }
         .card-amber .card-value { color: #92400e; }
@@ -290,17 +291,10 @@
         .lid-table th { background: #e2e8f0; color: #334155; padding: 6px; text-align: left; }
         .lid-table td { padding: 6px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
 
-        /* Mobil Cihazlar İçin Özel Esnek Düzenlemeler */
         @media(max-width: 650px) {
             body { padding: 10px 5px; }
-            .user-header-bar { flex-direction: column; align-items: stretch; gap: 10px; }
-            .user-info-area { justify-content: space-between; }
-            .header-schedule-area { justify-content: space-between; }
-            .sched-mini-box { flex: 1; min-width: unset; }
-            .user-actions { justify-content: flex-end; }
             .badges-grid { grid-template-columns: repeat(2, 1fr); }
             .book-content-grid { grid-template-columns: 1fr; }
-            .summary-grid { grid-template-columns: 1fr; }
             .sinif-secim-grid { grid-template-columns: repeat(4, 1fr); }
         }
     </style>
@@ -327,13 +321,15 @@
     <!-- Başarılı Giriş Sonrası Panel Alanı -->
     <div id="panel-alani">
         
-        <!-- 1. KULLANICI KONTROL ALANI & DERS TAKVİMİ (Mobilde Alt Alta Uyumlu) -->
+        <!-- 1. KULLANICI KONTROL ALANI & DERS TAKVİMİ (Derli Toplu Düzenlendi) -->
         <div class="user-header-bar">
-            <div class="user-info-area">
-                <div class="user-avatar" id="userAvatarLetter">Ö</div>
-                <div class="user-details">
-                    <h3 id="ogrenciAdiText">Öğrenci</h3>
-                    <span>İngilizce Öğrenci Paneli</span>
+            <div class="user-header-top">
+                <div class="user-info-area">
+                    <div class="user-avatar" id="userAvatarLetter">Ö</div>
+                    <div class="user-details">
+                        <h3 id="ogrenciAdiText">Öğrenci</h3>
+                        <span>İngilizce Öğrenci Paneli</span>
+                    </div>
                 </div>
             </div>
 
@@ -359,7 +355,7 @@
         <!-- 2. OTURUM SÜRESİ SAYAÇ KARTI -->
         <div class="timer-card">
             <div class="timer-header">
-                <span class="timer-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</span>
+                <span class="timer-title">⏱️ Oturum Süresi:</span>
                 <div class="timer-badge" id="sureGosterge">00:00:00</div>
             </div>
             <div class="progress-container">
@@ -371,10 +367,10 @@
             </div>
         </div>
 
-        <!-- 3. SEKMELİ YAPI -->
+        <!-- 3. SEKMELİ YAPI (Tek Seferde Görünür, Kaydırmasız) -->
         <div class="tabs-container">
             <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
-            <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Ders Raporları</button>
+            <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Raporlar</button>
             <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">🎮 Aktiviteler</button>
             <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
         </div>
@@ -384,23 +380,23 @@
         <!-- 1. ÖZET SEKMESİ -->
         <div id="tab-ozet" class="tab-content active">
             
-            <!-- 4'lü Özet Tablosu -->
+            <!-- 4'lü Özet Tablosu (Mobilde Derli Toplu Küçültüldü) -->
             <div class="summary-grid">
                 <div class="summary-card card-slate">
-                    <div class="card-title">⭐ GENEL PUAN (ORTALAMA)</div>
+                    <div class="card-title">⭐ GENEL PUAN</div>
                     <div class="card-value" id="valGenelPuan">0</div>
                 </div>
                 <div class="summary-card card-cyan">
-                    <div class="card-title">🚀 ETKİNLİK BAŞARISI</div>
+                    <div class="card-title">🚀 ETKİNLİK</div>
                     <div class="card-value" id="valEtkinlikBasarisi">0</div>
                 </div>
                 <div class="summary-card card-amber">
-                    <div class="card-title">🎯 SON DENEME SONUCU</div>
+                    <div class="card-title">🎯 SON DENEME</div>
                     <div class="card-value" id="valSonDeneme">0</div>
                 </div>
                 <div class="summary-card card-rose">
-                    <div class="card-title">🔥 PERFORMANS EMOJİN</div>
-                    <div class="card-value" id="valPerformansEmoji">😐</div>
+                    <div class="card-title">🔥 PERFORMANS</div>
+                    <div class="card-value" id="valPerformansEmoji" style="font-size: 16px; margin-top: 5px;">😐</div>
                 </div>
             </div>
 
@@ -414,7 +410,7 @@
                             <div class="book-header-subtitle">Düzenli okuma, anlama hızını %40 artırır!</div>
                         </div>
                     </div>
-                    <button class="btn-hizli-okuma" onclick="window.location.reload()">⚡ HIZLI OKUMA YOLCUSU</button>
+                    <button class="btn-hizli-okuma" onclick="window.location.reload()">⚡ OKUMA YOLCUSU</button>
                 </div>
                 <div class="book-content-grid">
                     <div class="book-current-card">
