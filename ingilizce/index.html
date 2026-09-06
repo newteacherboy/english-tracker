@@ -175,7 +175,7 @@
         .chart-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .chart-title { font-weight: 700; font-size: 12px; color: #334155; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; border-bottom: 1.5px dashed #f1f5f9; padding-bottom: 5px; }
 
-        /* Rapor Kartları */
+        /* Rapor Kartları (Kapsamlı ve Detaylı) */
         .report-archive-header { background-color: #ffffff; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .report-archive-header h3 { color: #166534; font-size: 13px; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
         .report-archive-header p { color: #15803d; font-size: 11px; }
@@ -443,7 +443,7 @@
 
             <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
 
-            <!-- DERS BAŞI GÖZLEM SEÇENEKLERİ (HAZIR MESAJLAR) -->
+            <!-- DERS BAŞI GÖZLEM SEÇENEKLERİ -->
             <div class="rubric-field">
                 <label>Ders Başı Gözlem & Değerlendirme (Hazır Seçenekler):</label>
                 <select id="rubricHazirGozlem" onchange="document.getElementById('rubricOdevDonut').value=this.value">
@@ -478,7 +478,7 @@
                 <input type="text" id="rubricSonrakiOdev" placeholder="Ödev detayını buraya yazabilirsiniz...">
             </div>
 
-            <button class="btn-giris" onclick="rubrikVerileriniKaydetVeWhatsappGonder()" style="background: #2563eb; margin-top: 8px;">💾 Kaydet & Uzun Veli Raporunu WhatsApp'a Gönder</button>
+            <button class="btn-giris" id="rubricKaydetBtn" onclick="rubrikVerileriniKaydetVeWhatsappGonder()" style="background: #2563eb; margin-top: 8px;">💾 Kaydet & Uzun Veli Raporunu WhatsApp'a Gönder</button>
         </div>
     </div>
 
@@ -486,7 +486,7 @@
     <div class="login-card" id="login-container">
         <div class="logo-icon">🏆</div>
         <h2>İngilizce Portal Giriş</h2>
-        <p class="subtitle">Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.</p>
+        <p class="subtitle" id="girisSubtitle">Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.</p>
         
         <form id="loginForm" onsubmit="girisYap(event)">
             <div class="form-group">
@@ -495,7 +495,7 @@
             <div class="form-group">
                 <input type="password" id="sifre" placeholder="Şifreniz" required autocomplete="current-password">
             </div>
-            <button type="submit" id="girisBtn" class="btn-giris">Giriş Yap</button>
+            <button type="submit" id="girisBtn" class="btn-giris" disabled>Veriler Yükleniyor...</button>
         </form>
         <div id="mesaj"></div>
     </div>
@@ -717,12 +717,12 @@
 
     <!-- AI Toast -->
     <div class="ai-floating-toast" id="aiToastBox" style="display: none;">
-        <div class="ai-toast-title"><span>🤖 Koçluk Asistanı</span><span class="ai-toast-timer" id="toastTimer">10s</span></div>
-        <div class="ai-toast-text" id="aiMesajMetni">Sisteme hoş geldin!</div>
+        <div class="ai-floating-title"><span>🤖 Koçluk Asistanı</span><span class="ai-floating-timer" id="toastTimer">10s</span></div>
+        <div class="ai-floating-text" id="aiMesajMetni">Sisteme hoş geldin!</div>
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbxh7RmdfF0gfq-tbETJhVXc3hzelqb-vRv_eGfQ803AW10p0Rse0tS4dvoe9tJ9-DRlZQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbw90Jwctrt8ibCc6zGqYvESQ7orUlZ1Sn_VuzdY-isaNbvYGXj61eHvjtJV1HMVa_9cXA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -730,10 +730,20 @@
         let aktifSoruIndex = 0, oyunDogru = 0, oyunYanlis = 0, oyunTimerInterval = null, oyunSaniyeSayac = 0, mevcutDogruSikIndex = 0, soruKilitli = false;
 
         window.onload = async function() {
+            let girisBtn = document.getElementById('girisBtn');
+            let girisSubtitle = document.getElementById('girisSubtitle');
+            
             try {
                 let res = await fetch(apiURL);
                 globalDataCache = await res.json();
-            } catch(e) { console.error("Veri çekme hatası", e); }
+                // Veriler başarıyla yüklendiğinde butonu aktif et
+                girisBtn.disabled = false;
+                girisBtn.innerText = "Giriş Yap";
+                girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
+            } catch(e) {
+                console.error("Veri çekme hatası", e);
+                girisSubtitle.innerText = "Sunucu bağlantısı kurulamadı. Sayfayı yenileyin.";
+            }
 
             const oturumAcik = sessionStorage.getItem("oturumAcik");
             const kayitliOgrenci = sessionStorage.getItem("aktifOgrenci");
@@ -862,20 +872,19 @@
 
                 let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
                 
-                // Yapay Zeka Destekli Uzun ve Akıcı Veli Raporu Metni
                 let raporMetni = `*OGRETMEN COCUK - HAFTALIK INGILIZCE GELISIM RAPORU*\n\n` +
-                    `Sevgili Velimiz, ${tarih} tarihli dersimizi büyük bir verimle geride bıraktık. Ogrencimiz *${ogrenci}* bu hafta sergiledigi gayret ve disiplinle bizleri yine gururlandirdi.\n\n` +
-                    `Degerlendirmelerimiz sonucunda ogrencimiz bu hafta genel basari citasini *${ortalamaPuan}/100* seviyesine tasirken, son deneme sinavinda elde ettigi *${sondeneme}* puan ile istikrarli yukselisini surdurmektedir. Ders ici gozlemimize gore; kelime dagarcigi ve anlama becerilerindeki pratikligi goz doldururken, beceri alanlarindaki detayli dagilimiz su sekildedir:\n` +
+                    `Sevgili Velimiz, ${tarih} tarihli dersimizi büyük bir verimle geride bıraktık. Öğrencimiz *${ogrenci}* bu hafta sergilediği gayret ve disiplinle bizleri yine gururlandırdı.\n\n` +
+                    `Değerlendirmelerimiz sonucunda öğrencimiz bu hafta genel başarı çıtasını *${ortalamaPuan}/100* seviyesine taşırken, son deneme sınavında elde ettiği *${sondeneme}* puan ile istikrarlı yükselişini sürdürmektedir. Ders içi gözlemimize göre; kelime dağarcığı ve anlama becerilerindeki pratikliği göz doldururken, beceri alanlarındaki detaylı dağılımımız şu şekildedir:\n` +
                     `- *Okuma:* ${okuma}/100\n` +
                     `- *Yazma:* ${yazma}/100\n` +
                     `- *Kelime (Vocabulary):* ${vocab}/100\n` +
-                    `- *Konusma:* ${konusma}/100\n` +
+                    `- *Konuşma:* ${konusma}/100\n` +
                     `- *Grammar:* ${grammar}/100\n\n` +
-                    `*Okuma Kulturu Takibi:* ${ogrenci}, su an okudugu *${kitapAdi}* adli kitapta ${sayfa}/${hedef} sayfaya ulasarak hedefine dogru saglam adimlarla ilerlemektedir.\n\n` +
-                    `*Ogretmen Gozlemi:* "${odevDonut || "Ders boyunca odaklanmasi ve derse katilimi son derece olumluydu."}"\n\n` +
-                    `*Sonraki Adim & Odev:* Onumuzdeki ders icin ogrencimize *${sonrakiOdev || "Kelime tekrarı ve pratik"}* odevi verilmistir. Bir sonraki bulusma tarihimiz ise *${sonrakiTarih || "Planlanıyor"}* olarak belirlenmistir.\n\n` +
-                    `_Ogrencimizin tum detayli istatistiklerini, cozdugu testleri, kazanmis oldugu rozetleri ve ozel gelisim grafiklerini incelemek icin lutfen *Ogrenci Portalimiza* giris yapmayi unutmayin!_\n\n` +
-                    `Destekleriniz ve harika is birliginiz icin cok tesekkur ederiz. Saglikli ve basarili bir hafta dileriz!`;
+                    `*Okuma Kültürü Takibi:* ${ogrenci}, şu an okuduğu *${kitapAdi}* adlı kitapta ${sayfa}/${hedef} sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir.\n\n` +
+                    `*Öğretmen Gözlemi:* "${odevDonut || "Ders boyunca odaklanması ve derse katılımı son derece olumluydu."}"\n\n` +
+                    `*Sonraki Adım & Ödev:* Önümüzdeki ders için öğrencimize *${sonrakiOdev || "Kelime tekrarı ve pratik"}* ödevi verilmiştir. Bir sonraki buluşma tarihimiz ise *${sonrakiTarih || "Planlanıyor"}* olarak belirlenmiştir.\n\n` +
+                    `_Öğrencimizin tüm detaylı istatistiklerini, çözdüğü testleri, kazanmış olduğu rozetleri ve özel gelişim grafiklerini incelemek için lütfen *Öğrenci Portalımıza* giriş yapmayı unutmayın!_\n\n` +
+                    `Destekleriniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı ve başarılı bir hafta dileriz!`;
 
                 if (telefon) {
                     let waURL = `https://wa.me/${telefon}?text=${encodeURIComponent(raporMetni)}`;
@@ -931,13 +940,31 @@
             return paletler[index % paletler.length];
         }
 
+        // Kapsamlı ve Detaylı Öğretmen Notu Oluşturucu (Eski haline döndürüldü)
         function haftalikYorumOlustur(row, ad) {
-            let puan = row.genel, okuma = row.okuma, yazma = row.yazma, vocab = row.vocabulary, konusma = row.konusma, grammar = row.grammar, deneme = row.deneme;
+            let puan = row.genel;
+            let okuma = row.okuma;
+            let yazma = row.yazma;
+            let vocab = row.vocabulary;
+            let konusma = row.konusma;
+            let grammar = row.grammar;
+            let deneme = row.deneme;
+
             let cumleler = [];
-            if (puan >= 80) cumleler.push(`Bu hafta ${ad} ile oldukça disiplinli ve verimli bir ders döngüsünü geride bıraktık. Öğrencimiz **${puan} / 100** genel başarı puanına ulaştı. 🌟`);
-            else cumleler.push(`Öğrencimiz ${ad} bu haftaki süreçte **${puan} / 100** genel başarı puanı elde etti. 🚀`);
-            cumleler.push(`Okuma (${okuma}), Yazma (${yazma}), Kelime (${vocab}), Konuşma (${konusma}) ve Grammar (${grammar}) ölçüldü.`);
-            if (deneme > 0) cumleler.push(`Son deneme: **${deneme}**.`);
+            if (puan >= 80) {
+                cumleler.push(`Bu hafta ${ad} ile oldukça disiplinli ve verimli bir ders döngüsünü geride bıraktık. Değerlendirmeler sonucunda öğrencimiz bu hafta **${puan} / 100** genel başarı puanına ulaştı. Ders içi odaklanması ve kavrama hızı son derece üst düzeyde seyretti. 🌟`);
+            } else if (puan >= 50) {
+                cumleler.push(`Sevgili velimiz, öğrencimiz ${ad} bu haftaki çalışma sürecinde gösterdiği gayretle **${puan} / 100** genel başarı puanı elde etti. Çalışmalarımızda ufak tekrarlarla bu puanı çok daha yukarı taşıyacağımıza inanıyoruz. 🚀`);
+            } else {
+                cumleler.push(`Bu hafta ${ad} için biraz tempolu bir dönem oldu ve genel başarı puanı **${puan} / 100** olarak kaydedildi. Önümüzdeki haftalarda pratik yaparak bu tabloyu hızla toparlayacağız! 💪`);
+            }
+
+            cumleler.push(`5 Kriter dağılımında Okuma (${okuma}), Yazma (${yazma}), Kelime (${vocab}), Konuşma (${konusma}) ve Grammar (${grammar}) becerileri ölçüldü.`);
+            if (deneme > 0) {
+                cumleler.push(`Ayrıca bu haftaki son deneme sınavı sonucu **${deneme}** olarak hanesine yazıldı.`);
+            }
+            cumleler.push(`Destekleriniz ve bu güzel iş birliği için çok teşekkür ederiz. Sevgiyle kalın! 🌻`);
+
             return `"${cumleler.join(" ")}"`;
         }
 
@@ -989,16 +1016,21 @@
                 konteyner.innerHTML += `
                     <div class="report-card" style="background-color: ${temaTonu.bg}; border-color: ${temaTonu.border};">
                         <div class="report-card-top">
-                            <div class="report-date">📅 ${formatliTarih}</div>
-                            <div class="report-badge-score ${renkSkoruSinif}">Genel: ${row.genel}/100</div>
+                            <div class="report-date">📅 Ders Tarihi: ${formatliTarih}</div>
+                            <div class="report-badge-score ${renkSkoruSinif}">Haftalık Genel Puan: ${row.genel} / 100</div>
                         </div>
+                        <div style="font-size: 11px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">🍎 O HAFTA NE YAPILDI & GÖZLEM:</div>
                         <div class="report-comment-box">${yorumMetni}</div>
                         <div class="report-criteria-bar">
-                            <span>📖 ${row.okuma}</span><span>✍️ ${row.yazma}</span><span>💡 ${row.vocabulary}</span><span>🗣️ ${row.konusma}</span><span>📐 ${row.grammar}</span>
+                            <span>📖 Okuma: ${row.okuma}/100</span>
+                            <span>✍️ Yazma: ${row.yazma}/100</span>
+                            <span>💡 Kelime: ${row.vocabulary}/100</span>
+                            <span>🗣️ Konuşma: ${row.konusma}/100</span>
+                            <span>📐 Grammar: ${row.grammar}/100</span>
                         </div>
                         <div class="report-footer-info">
-                            <span>📚 <b>${kitapBilgi.kitapAdi}</b></span>
-                            <div class="report-deneme-badge">🎯 Deneme: ${row.deneme}</div>
+                            <span>📚 Kitap: <b>${kitapBilgi.kitapAdi}</b> (Okunan: ${kitapBilgi.sayfa} / Hedef: ${kitapBilgi.hedef} sayfa)</span>
+                            <div class="report-deneme-badge">🎯 Son Deneme Puanı: ${row.deneme}</div>
                         </div>
                     </div>
                 `;
@@ -1012,8 +1044,8 @@
             let yuzde = hedef > 0 ? Math.min(Math.round((sayfa / hedef) * 100), 100) : 0;
             document.getElementById('valKitapYuzde').innerText = `%${yuzde}`;
             document.getElementById('valKitapBar').style.width = yuzde + "%";
-            document.getElementById('valKitapSayfa').innerText = `Okunan: ${sayfa}`;
-            document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef}`;
+            document.getElementById('valKitapSayfa').innerText = `Okunan: ${sayfa} sayfa`;
+            document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef} sayfa`;
         }
 
         function grafikliCiz(grafikGecmis, user, denemeGecmis) {
