@@ -18,9 +18,9 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             position: relative;
-            padding: 20px 0;
+            padding: 30px 15px;
         }
         .login-card {
             background: #ffffff;
@@ -30,6 +30,7 @@
             width: 100%;
             max-width: 400px;
             text-align: center;
+            margin: auto;
         }
         .logo-icon {
             font-size: 36px;
@@ -94,27 +95,25 @@
         .error { color: #e53e3e; }
         .success { color: #38a169; }
         
+        /* Ana Panel Alanı (Büyük tek parça yerine bağımsız bloklar yapıldı) */
         #panel-alani {
             display: none;
             width: 100%;
             max-width: 800px;
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin: 0 auto;
         }
 
-        /* Kullanıcı Bilgi, Ders Takvimi & Kontrol Üst Şeridi */
+        /* Kullanıcı Bilgi, Ders Takvimi & Kontrol Üst Şeridi (Bağımsız Blok) */
         .user-header-bar {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border: 1px solid #bbf7d0;
-            border-radius: 12px;
-            padding: 12px 16px;
+            border-radius: 14px;
+            padding: 14px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             gap: 10px;
         }
         .user-info-area {
@@ -218,23 +217,26 @@
             color: #ffffff;
         }
 
+        /* Sekmeler Bloğu (Bağımsız Blok) */
         .tabs-container {
             display: flex;
             gap: 10px;
-            margin-bottom: 25px;
-            background: #f1f5f9;
-            padding: 6px;
-            border-radius: 12px;
+            margin-bottom: 20px;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: none;
             background: transparent;
             font-weight: 600;
             font-size: 14px;
             color: #475569;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
@@ -251,13 +253,14 @@
             display: block;
         }
 
-        /* Sayaç Kartı */
+        /* Sayaç Kartı (Bağımsız Blok) */
         .timer-card {
-            background-color: #f8fafc;
+            background-color: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .timer-header {
             display: flex;
@@ -274,7 +277,7 @@
             gap: 8px;
         }
         .timer-badge {
-            background-color: #ffffff;
+            background-color: #f8fafc;
             color: #334155;
             padding: 6px 14px;
             border-radius: 8px;
@@ -349,13 +352,13 @@
             font-weight: 600;
         }
 
-        /* Kitap Takip Sistemi (1. Resimdeki Yeni Tasarım) */
+        /* Kitap Takip Sistemi (Bağımsız Blok) */
         .book-tracker-box {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 14px;
             padding: 22px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .book-tracker-header {
@@ -467,18 +470,19 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .summary-card {
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 20px;
             border: 1px solid transparent;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            background: #ffffff;
         }
-        .card-slate { background-color: #f8fafc; border-color: #cbd5e1; }
-        .card-cyan { background-color: #ecfeff; border-color: #a5f3fc; }
-        .card-amber { background-color: #fffbeb; border-color: #fde68a; }
-        .card-rose { background-color: #fff1f2; border-color: #fecdd3; }
+        .card-slate { border-color: #cbd5e1; }
+        .card-cyan { border-color: #a5f3fc; }
+        .card-amber { border-color: #fde68a; }
+        .card-rose { border-color: #fecdd3; }
 
         .card-title {
             font-size: 12px;
@@ -501,14 +505,14 @@
         .card-amber .card-value { color: #92400e; }
         .card-rose .card-value { color: #9f1239; }
 
-        /* Grafik Konteynerleri */
+        /* Grafik Konteynerleri (Bağımsız Blok) */
         .chart-box {
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .chart-title {
             font-weight: 700;
@@ -522,13 +526,14 @@
             padding-bottom: 8px;
         }
 
-        /* Ders Raporları Arşiv Kartları */
+        /* Ders Raporları Arşiv Kartları (Bağımsız Bloklar) */
         .report-archive-header {
-            background-color: #f0fdf4;
+            background-color: #ffffff;
             border: 1px solid #bbf7d0;
-            border-radius: 12px;
-            padding: 16px 20px;
+            border-radius: 14px;
+            padding: 18px 20px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .report-archive-header h3 { color: #166534; font-size: 16px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
         .report-archive-header p { color: #15803d; font-size: 13px; }
@@ -537,7 +542,7 @@
             border: 1.5px solid #cbd5e1;
             border-radius: 14px;
             padding: 22px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
         .report-card-top {
@@ -551,36 +556,36 @@
         .report-date {
             font-weight: 800; font-size: 17px; color: #1e293b;
             display: flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.7); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.9); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);
         }
         .report-badge-score { font-weight: 800; font-size: 14px; padding: 6px 14px; border-radius: 20px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .score-green { background-color: #16a34a; }
         .score-yellow { background-color: #ca8a04; }
         .score-red { background-color: #dc2626; }
-        .report-comment-box { background-color: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 16px; margin-bottom: 15px; font-size: 13.5px; color: #1e293b; line-height: 1.6; font-style: italic; }
-        .report-criteria-bar { background-color: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 15px; }
+        .report-comment-box { background-color: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 16px; margin-bottom: 15px; font-size: 13.5px; color: #1e293b; line-height: 1.6; font-style: italic; }
+        .report-criteria-bar { background-color: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 15px; }
         .report-footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #334155; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 12px; flex-wrap: wrap; gap: 10px; }
         .report-deneme-badge { background: #fff1f2; border: 1.5px solid #f43f5e; color: #be123c; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(244, 63, 94, 0.15); }
 
         /* Rozetler Sekmesi */
-        .badges-header-box { background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); border: 1px solid #fde047; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .badges-header-box { background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); border: 1px solid #fde047; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .badges-header-title { font-size: 16px; font-weight: 800; color: #854d0e; display: flex; align-items: center; gap: 8px; }
-        .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }
-        .badge-card { border-radius: 12px; padding: 16px 10px; text-align: center; border: 1.5px solid #e2e8f0; background: #f8fafc; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 110px; }
+        .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .badge-card { border-radius: 12px; padding: 16px 10px; text-align: center; border: 1.5px solid #e2e8f0; background: #ffffff; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 110px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
         .badge-card.unlocked { background: #f0fdf4; border-color: #bbf7d0; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08); }
         .badge-emoji { font-size: 28px; margin-bottom: 6px; }
         .badge-name { font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 4px; }
         .badge-card.unlocked .badge-name { color: #166534; }
         .badge-target { font-size: 11px; color: #64748b; font-weight: 600; }
         .badge-card.unlocked .badge-target { color: #15803d; }
-        .badge-progress-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 16px 20px; margin-bottom: 25px; }
+        .badge-progress-box { background: #ffffff; border: 1px solid #bbf7d0; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .badge-progress-top { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; color: #166534; margin-bottom: 8px; }
         .badge-progress-badge { background: #15803d; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
         .badge-bar-bg { background: #dcfce7; border-radius: 10px; height: 10px; width: 100%; overflow: hidden; }
         .badge-bar-fill { background: #16a34a; height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease; }
 
         /* Aktiviteler Sekmesi & Açılır Oyun Paneli */
-        .activity-banner { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 14px; padding: 25px; text-align: center; margin-bottom: 20px; }
+        .activity-banner { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 14px; padding: 25px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .activity-banner h3 { color: #1e40af; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
         .activity-banner p { color: #3b82f6; font-size: 13.5px; margin-bottom: 20px; }
         
@@ -641,7 +646,6 @@
         }
         .kelime-en { font-size: 26px; font-weight: 900; color: #0f172a; margin-top: 5px; }
 
-        /* Çoktan Seçmeli 2 Şıklı Şık Butonları */
         .siklar-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
         .btn-sik {
             background: #ffffff; border: 2px solid #cbd5e1; padding: 16px; border-radius: 12px;
@@ -681,10 +685,10 @@
         <div id="mesaj"></div>
     </div>
 
-    <!-- Başarılı Giriş Sonrası Panel Alanı -->
+    <!-- Başarılı Giriş Sonrası Panel Alanı (Bağımsız Blok Yapısı) -->
     <div id="panel-alani">
         
-        <!-- KULLANICI KONTROL ALANI & DERS TAKVİMİ -->
+        <!-- 1. KULLANICI KONTROL ALANI & DERS TAKVİMİ -->
         <div class="user-header-bar">
             <div class="user-info-area">
                 <div class="user-avatar" id="userAvatarLetter">Ö</div>
@@ -713,7 +717,7 @@
             </div>
         </div>
 
-        <!-- 1. OTURUM SÜRESİ SAYAÇ KARTI -->
+        <!-- 2. OTURUM SÜRESİ SAYAÇ KARTI -->
         <div class="timer-card">
             <div class="timer-header">
                 <span class="timer-title">⏱️ Uygulamada Geçirilen Oturum Süresi:</span>
@@ -728,7 +732,7 @@
             </div>
         </div>
 
-        <!-- 2. SEKMELİ YAPI -->
+        <!-- 3. SEKMELİ YAPI -->
         <div class="tabs-container">
             <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Ders Raporları</button>
@@ -761,7 +765,7 @@
                 </div>
             </div>
 
-            <!-- KİTAP TAKİP SİSTEMİ (1. Resimdeki Yeni Tasarım) -->
+            <!-- KİTAP TAKİP SİSTEMİ -->
             <div class="book-tracker-box">
                 <div class="book-tracker-header">
                     <div class="book-header-left">
@@ -823,7 +827,7 @@
             </div>
         </div>
 
-        <!-- 3. AKTİVİTELER SEKMESİ (AÇILIR OYUN PANELİ) -->
+        <!-- 3. AKTİVİTELER SEKMESİ -->
         <div id="tab-aktiviteler" class="tab-content">
             <div class="activity-banner">
                 <h3>🎮 İngilizce Kelime Ezber & Bilgi Yarışması</h3>
@@ -831,7 +835,7 @@
                 <button class="btn-oyun-ac" onclick="oyunModaliniAc()">🚀 Kelime Yarışmasını Başlat</button>
             </div>
             
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
                 <h4 style="color: #334155; margin-bottom: 8px;">Daha Fazla Eğlenceli Aktivite Yakında Burada!</h4>
                 <p style="color: #64748b; font-size: 13px;">Yeni oyun modülleri eklendikçe bu alanda listelenecektir.</p>
             </div>
@@ -870,7 +874,6 @@
         <div class="game-modal-content">
             <button class="game-close-btn" onclick="oyunModaliniKapat()">✕</button>
             
-            <!-- Ayar ve Giriş Ekranı -->
             <div id="oyunAyarBolumu">
                 <div class="game-title">🏆 Kelime Ezber Yarışması</div>
                 <div class="game-subtitle">Her sınıf kendi havuzundan sorulur (2 ve 5.Sınıf: 8 Ünite | Diğerleri: 10 Ünite)</div>
@@ -891,9 +894,7 @@
                 </div>
 
                 <label style="font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Ünite Seçiniz (Çoklu Seçilebilir):</label>
-                <div class="unite-secim-box" id="uniteSecimKonteyner">
-                    <!-- Dinamik üniteler yüklenecek -->
-                </div>
+                <div class="unite-secim-box" id="uniteSecimKonteyner"></div>
 
                 <button class="btn-giris" onclick="yarismayiBaslat()" style="background: #2563eb; margin-top: 5px;">🚀 Yarışmayı Başlat</button>
             </div>
@@ -933,7 +934,6 @@
 
                 <button class="btn-giris" onclick="oyunModaliniAc()" style="background: #2563eb; margin-bottom: 15px;">🔄 Yeni Tur Oyna</button>
 
-                <!-- Liderlik Tablosu -->
                 <div class="liderlik-tablosu-box">
                     <div class="liderlik-title">📊 Liderlik Tablosu (Top 5)</div>
                     <table class="lid-table">
@@ -975,20 +975,17 @@
         let kriterChartInstance = null;
         let denemeChartInstance = null;
 
-        // Kelime Yarışması Değişkenleri
         let secilenSinif = 2;
         let secilenUniteler = [1];
         let aktifKelimeListesi = [];
         let aktifSoruIndex = 0;
         let oyunDogru = 0;
         let oyunYanlis = 0;
-        let oyunBaslangicZamani = null;
         let oyunTimerInterval = null;
         let oyunSaniyeSayac = 0;
-        let globalLiderlikData = [];
+        let globalLiderlikCache = [];
         let mevcutDogruSikIndex = 0;
 
-        // MEB Uyumlu Kelime Havuzları Örnekleri
         const mebKelimeHavuzu = {
             2: [
                 {en:"Apple", tr:"Elma"}, {en:"Cat", tr:"Kedi"}, {en:"Dog", tr:"Köpek"}, {en:"Book", tr:"Kitap"},
@@ -1037,7 +1034,7 @@
 
                 bilgileriSunucudanGuncelle(aktifOgrenciAdi);
             }
-            uniteSecimleriniOlustur(2, 8); // 2. sınıf 8 ünite
+            uniteSecimleriniOlustur(2, 8);
         };
 
         function guvenliMetin(str) {
@@ -1338,7 +1335,7 @@
             return { kazanilan: kazanilanSayisi, toplam: toplamRozet };
         }
 
-        // --- KELİME OYUNU & MEB 2-8 SINIF MİMARİSİ ---
+        // --- KELİME OYUNU MİMARİSİ ---
         let globalLiderlikCache = [];
 
         function oyunModaliniAc() {
@@ -1358,7 +1355,6 @@
             document.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
 
-            // 2 ve 5. sınıflarda 8 ünite, diğerlerinde 10 ünite
             let uniteSayisi = (sinifNo === 2 || sinifNo === 5) ? 8 : 10;
             uniteSecimleriniOlustur(sinifNo, uniteSayisi);
         }
@@ -1395,7 +1391,6 @@
                 return;
             }
 
-            // Soru sayısı: 2-4: 25, 5-8: her sınıfta +5 artar
             let hedefSoruSayisi = 25;
             if (secilenSinif >= 5) {
                 hedefSoruSayisi = 25 + ((secilenSinif - 4) * 5);
@@ -1411,7 +1406,6 @@
                     yanlisKelime = havuz[Math.floor(Math.random() * havuz.length)];
                 }
 
-                // Soru türü: %50 İngilizce sorulup Türkçe şıklar, %50 Türkçe sorulup İngilizce şıklar
                 let ingilizceSorulsun = Math.random() < 0.5;
                 let soruMetni = ingilizceSorulsun ? rastKelime.en : rastKelime.tr;
                 let dilLabel = ingilizceSorulsun ? "İngilizce Kelime" : "Türkçe Kelime";
@@ -1419,7 +1413,7 @@
                 let yanlisAnlam = ingilizceSorulsun ? yanlisKelime.tr : yanlisKelime.en;
 
                 let siklar = [dogruAnlam, yanlisAnlam];
-                siklar.sort(() => Math.random() - 0.5); // Şıkları karıştır
+                siklar.sort(() => Math.random() - 0.5);
                 let dogruSikIndex = siklar.indexOf(dogruAnlam);
 
                 aktifKelimeListesi.push({
