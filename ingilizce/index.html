@@ -209,7 +209,7 @@
             color: #4a7c59;
         }
 
-        /* AI Koçluk Asistanı Kutusu */
+        /* AI Koçluk Asistanı Kutusu (Toast) */
         .ai-box {
             background: #eaf4ed;
             border: 1px solid #c6e3cc;
@@ -285,6 +285,98 @@
         .card-blue .card-value { color: #1d4ed8; }
         .card-yellow .card-value { color: #a16207; }
         .card-pink .card-value { color: #be185d; }
+
+        /* Öğretmenim Haftalık Notu Şablonu */
+        .teacher-note-box {
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+        }
+        .teacher-note-header {
+            font-weight: 700;
+            font-size: 16px;
+            color: #b45309;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px dashed #fef3c7;
+            padding-bottom: 8px;
+        }
+        .teacher-note-content {
+            font-size: 14px;
+            color: #78350f;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Ders Zaman Çizelgesi (2 Kutulu) */
+        .schedule-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .schedule-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #334155;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px dashed #f1f5f9;
+            padding-bottom: 8px;
+        }
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .schedule-box {
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid transparent;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        /* Renk Kodları: Yapıldı = Yeşil, Yapılmadı = Kırmızı, Sonraki = Sarı */
+        .status-green { background-color: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+        .status-red { background-color: #fef2f2; border-color: #fecaca; color: #991b1b; }
+        .status-yellow { background-color: #fefce8; border-color: #fef08a; color: #854d0e; }
+        .status-gray { background-color: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+
+        .schedule-box-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .schedule-box-date {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .schedule-box-status {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .status-green .schedule-box-status { background: #dcfce7; color: #15803d; }
+        .status-red .schedule-box-status { background: #fee2e2; color: #b91c1c; }
+        .status-yellow .schedule-box-status { background: #fef9c3; color: #a16207; }
+        .status-gray .schedule-box-status { background: #f1f5f9; color: #475569; }
     </style>
 </head>
 <body>
@@ -337,7 +429,7 @@
                 </div>
             </div>
 
-            <!-- AI Koçluk Asistanı & Gözlem Raporu (10 Saniye Sonra Kaybolan Toast / Mesaj) -->
+            <!-- AI Koçluk Asistanı & Gözlem Raporu (Toast) -->
             <div class="ai-box" id="aiToastBox">
                 <div class="ai-close-toast" id="toastTimer">10s</div>
                 <div class="ai-title">🤖 Koçluk Asistanı & Gözlem Raporu</div>
@@ -346,43 +438,62 @@
 
             <!-- 4'lü Özet Tablosu -->
             <div class="summary-grid">
-                <!-- Genel Puan -->
                 <div class="summary-card card-green">
                     <div class="card-title">⭐ GENEL PUAN (ORTALAMA)</div>
                     <div class="card-value" id="valGenelPuan">0</div>
                 </div>
-                <!-- Etkinlik Başarısı -->
                 <div class="summary-card card-blue">
-                    <div class="card-title">🚀 Son Ders Puanın</div>
+                    <div class="card-title">🚀 ETKİNLİK BAŞARISI</div>
                     <div class="card-value" id="valEtkinlikBasarisi">0</div>
                 </div>
-                <!-- Son Deneme Sonucu -->
                 <div class="summary-card card-yellow">
                     <div class="card-title">🎯 SON DENEME SONUCU</div>
                     <div class="card-value" id="valSonDeneme">0</div>
                 </div>
-                <!-- Performans Emojin -->
                 <div class="summary-card card-pink">
                     <div class="card-title">🔥 PERFORMANS EMOJİN</div>
                     <div class="card-value" id="valPerformansEmoji">😐</div>
                 </div>
             </div>
 
+            <!-- Öğretmenim Haftalık Notu (Benzersiz Yorum Motoru) -->
+            <div class="teacher-note-box">
+                <div class="teacher-note-header">🍎 Öğretmenimin Haftalık Notu</div>
+                <div class="teacher-note-content" id="teacherCommentText">
+                    "Yükleniyor..."
+                </div>
+            </div>
+
+            <!-- Ders Zaman Çizelgesi (2 Kutulu) -->
+            <div class="schedule-section">
+                <div class="schedule-title">📅 Ders Zaman Çizelgesi</div>
+                <div class="schedule-grid">
+                    <!-- Geçen / Son Ders -->
+                    <div class="schedule-box" id="boxGecenDers">
+                        <div class="schedule-box-label">Önceki Ders</div>
+                        <div class="schedule-box-date" id="txtGecenTarih">📅 --.--.----</div>
+                        <div class="schedule-box-status" id="txtGecenDurum">Bekleniyor</div>
+                    </div>
+                    <!-- Gelecek / Sonraki Ders -->
+                    <div class="schedule-box" id="boxGelecekDers">
+                        <div class="schedule-box-label">Gelecek Ders</div>
+                        <div class="schedule-box-date" id="txtGelecekTarih">📅 --.--.----</div>
+                        <div class="schedule-box-status" id="txtGelecekDurum">Bekleniyor</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- 2. SEKME: DERS RAPORLARI (İleride doldurulacak) -->
+        <!-- Diğer Sekmeler -->
         <div id="tab-raporlar" class="tab-content">
             <h3 style="color: #2d3748; margin-bottom: 10px;">Ders Raporları</h3>
             <p style="color: #718096; font-size: 14px;">Bu bölümde ders içerikleri ve detaylı gelişim notları yer alacaktır.</p>
         </div>
-
-        <!-- 3. SEKME: AKTİVİTELER / GELİŞİM YOLU (İleride doldurulacak) -->
         <div id="tab-aktiviteler" class="tab-content">
-            <h3 style="color: #2d3748; margin-bottom: 10px;">Aktiviteler</h3>
+            <h3 style="color: #2d3748; margin-bottom: 10px;">Gelişim Yolu</h3>
             <p style="color: #718096; font-size: 14px;">Bu bölümde detaylı aktivite istatistikleri ve grafikler yer alacaktır.</p>
         </div>
-
-        <!-- 4. SEKME: ROZETLER (İleride doldurulacak) -->
         <div id="tab-rozetler" class="tab-content">
             <h3 style="color: #2d3748; margin-bottom: 10px;">Rozet Koleksiyonu</h3>
             <p style="color: #718096; font-size: 14px;">Kazandığın tüm rozetleri ve kilitli olanları burada görebileceksin.</p>
@@ -394,7 +505,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbyf6hznkvpbh9gbhTpu-Oggr5Afa6DJouGa8U3GZoR4NNkL-jjCd9ZUwC_KeKQZH7VFfg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwVyo-41NRU8lzV2AFm74BWH6e6B_s_948s9O0KEBcZ7whehM30Ai9_k8iJgfl8waw87w/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -412,9 +523,7 @@
                 toplamSaniye = parseInt(kayitliSure);
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
-                
-                // Arka planda güncel verileri tekrar tazeleyelim
-                bilgileriSunucudanGuncelle(aktifOgrenciAdi, true);
+                bilgileriSunucudanGuncelle(aktifOgrenciAdi);
             }
         };
 
@@ -424,16 +533,13 @@
             );
         }
 
-        // Sekme Geçiş Fonksiyonu
         function sekmeDegistir(tabName, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-
             document.getElementById('tab-' + tabName).classList.add('active');
             btnElement.classList.add('active');
         }
 
-        // Puana göre her 5 puanda bir değişen 20 kademeli emoji skalası
         function performansEmojisiGetir(puan) {
             if (puan >= 95) return "🏆 Harika!";
             if (puan >= 90) return "🌟 Mükemmel";
@@ -457,19 +563,69 @@
             return "🐣 Başlangıç";
         }
 
-        // Yapay Zeka Koçluk Mesajı Oluşturucu
+        // Benzersiz ve Kriterlere Tam Uyumlu Öğretmen Yorum Motoru
+        function ogretmenYorumUret(user, rozetSayisi) {
+            let ad = aktifOgrenciAdi;
+            let puan = user.genelOrtalama || 0;
+            let vocab = user.vocabOrt || 0;
+            let konusma = user.konusmaOrt || 0;
+            let okuma = user.okumaOrt || 0;
+            let yazma = user.yazmaOrt || 0;
+            let grammar = user.grammarOrt || 0;
+
+            let aciklamalar = [];
+
+            // Puan ve Beceri Değerlendirmesi
+            if (puan >= 80) {
+                aciklamalar.push(`Bu hafta ${ad} ile oldukça disiplinli, yüksek tempolu ve verimli bir süreci geride bıraktık. Genel başarı puanın **${puan} / 100** seviyesine ulaştı ki bu harika bir istikrar göstergesi! 🌟`);
+            } else if (puan >= 50) {
+                aciklamalar.push(`Sevgili ${ad}, bu hafta genel başarı ortalaman **${puan} / 100** olarak kaydedildi. Ders içi katılımın gayet güzel ancak potansiyelinin bir tık altında kaldın; biraz daha vites artırabiliriz! 🚀`);
+            } else {
+                aciklamalar.push(`Bu hafta ${ad} için biraz dağınıq ve temposuz bir döngü oldu. Genel puanın **${puan} / 100** seviyesinde seyrediyor. Önümüzdeki hafta bu tabloyu tersine çevirmek tamamen senin elinde! 💪`);
+            }
+
+            // Beceri Detayları
+            aciklamalar.push(`Beceriler bazında yaptığımız analizde; kelime dağarcığın (**${vocab}**) ve okuma kavraman (**${okuma}**) oldukça iyi yönde ilerlerken; özellikle konuşma (**${konusma}**) ve dilbilgisi (**${grammar}**) alanlarında biraz daha pratik yapmaya ve üzerine düşmeye ihtiyacımız var. 📚`);
+
+            // Rozet Durumu
+            if (rozetSayisi > 0) {
+                aciklamalar.push(`Sisteme kazandırdığın toplam **${rozetSayisi} rozet** gayretini tescilliyor, koleksiyonunu böyle görmek gurur verici! 🏆`);
+            } else {
+                aciklamalar.push(`Henüz rozet hanen boş görünüyor; ama hiç dert etme, önümüzdeki oturumlarda süreyi uzatarak ilk rozetlerini hızla toplayabilirsin! 🥇`);
+            }
+
+            // Eksiler ve Yapıcı Eleştiri
+            if (puan < 70) {
+                aciklamalar.push(`⚠️ *Öğretmen Gözlemi:* Ev ödevleri takibinde ve düzenli tekrar yapma konusunda son dönemde küçük aksamalar yaşandı, ders tekrarlarını aksatmamalısın.`);
+            } else {
+                aciklamalar.push(`✨ *Öğretmen Gözlemi:* Ödev disiplinin ve odaklanma süren bu hafta öğretmenlerinden tam not aldı, harika bir işbirliği çıkardık.`);
+            }
+
+            // Okul ve Gündelik Hayattan Tavsiye
+            let tavsiyeler = [
+                `🏫 *Gündelik Hayat Tavsiyesi:* Okul dönüşü çantayı bir kenara fırlatmadan önce günlük 15 dakikalık ingilizce podcast dinleme rutini oluşturmayı dene, farkı göreceksin! 🎧`,
+                `🏫 *Gündelik Hayat Tavsiyesi:* Okuldaki fen veya matematik derslerinde öğrendiğin mantıksal problem çözme becerisini ingilizce metin çözümlemelerine de yansıtabilirsin, zihni zinde tutar! 🧠`,
+                `🏫 *Gündelik Hayat Tavsiyesi:* Gündelik hayatta çevrendeki eşyaların ingilizce karşılıklarını içinden tekrar etmek kelime hafızanı kalıcı hale getirecektir. 💡`,
+                `🏫 *Gündelik Hayat Tavsiyesi:* Akşam yatmadan önce o gün öğrendiğin en ilginç kelimeyi bir kağıda yazıp masana koymak küçük ama devasa bir adımdır! 📌`
+            ];
+            let rastgeleTavsiye = tavsiyeler[Math.floor(Math.random() * tavsiyeler.length)];
+            aciklamalar.push(rastgeleTavsiye);
+
+            aciklamalar.push(`Destekleriniz ve bu güzel iş birliği için çok teşekkür ederiz. Sevgiyle kalın! 🌻`);
+
+            document.getElementById('teacherCommentText').innerHTML = `"${aciklamalar.join(" ")}"`;
+        }
+
+        // Yapay Zeka Koçluk Mesajı (10 Saniye Toast)
         function aiMesajUret(ogrenciAdi, genelPuan, rozetSayisi) {
             let mesajlar = [
-                `Harika bir başlangıç ${ogrenciAdi}! Bu hafta gösterdiğin üstün gayretle ${rozetSayisi} yeni rozet kilitledin ve genel puanını ${genelPuan} seviyesine taşıdın. Başarılarının detaylarını aşağıdan inceleyebilirsin! ✨`,
+                `Harika bir başlangıç ${ogrenciAdi}! Bu hafta gösterdiğin üstün gayretle ${rozetSayisi} yeni rozet kilitledin ve genel puanını ${genelPuan} seviyesine taşıdın. Detayları aşağıdan inceleyebilirsin! ✨`,
                 `Süper bir ivme yakaladın! ${genelPuan} ortalama puanla sınıfın yükselen yıldızısın. Rozetlerini toplarken hız kesme! 🚀`,
-                `Harika ilerliyorsun! Puanın ${genelPuan} oldu. Eksik olduğun konulara biraz daha odaklanarak zirveye bir adım daha yaklaşabilirsin. 🎯`,
+                `Harika ilerliyorsun! Puanın ${genelPuan} oldu. Eksik olduğun konulara odaklanarak zirveye yaklaşabilirsin. 🎯`,
                 `Çalışmaların meyvesini veriyor! ${rozetSayisi} rozet ile harika bir koleksiyonun var. İstikrarını bozmadan devam et! 🌟`
             ];
-            // Rastgele bir motivasyon mesajı seç
-            let secilen = mesajlar[Math.floor(Math.random() * mesajlar.length)];
-            document.getElementById('aiMesajMetni').innerText = secilen;
+            document.getElementById('aiMesajMetni').innerText = mesajlar[Math.floor(Math.random() * mesajlar.length)];
 
-            // 10 saniye geri sayım ve kutuyu kapatma animasyonu
             let kalanSaniye = 10;
             let toastInterval = setInterval(() => {
                 kalanSaniye--;
@@ -482,6 +638,48 @@
                     setTimeout(() => toastBox.style.display = "none", 500);
                 }
             }, 1000);
+        }
+
+        // Ders Takvimi Çizelgesini Doldurma
+        function dersTakviminiIsle(derslerDizisi) {
+            let gecenDersTarih = "--.--.----";
+            let gecenDersDurum = "Bekleniyor";
+            let gecenDurumClass = "status-gray";
+
+            let gelecekDersTarih = "--.--.----";
+            let gelecekDersDurum = "Bekleniyor";
+            let gelecekDurumClass = "status-gray";
+
+            if (derslerDizisi && derslerDizisi.length > 0) {
+                // Yapılmış veya son kaydedilen geçmiş dersi bulalım
+                let tamamlananlar = derslerDizisi.filter(d => d.durum === "yapıldı" || d.durum === "yapildi" || d.durum === "yapılmadı");
+                if (tamamlananlar.length > 0) {
+                    let sonDers = tamamlananlar[tamamlananlar.length - 1];
+                    gecenDersTarih = sonDers.tarih || "Belirtilmemiş";
+                    gecenDersDurum = sonDers.durum.toUpperCase();
+                    gecenDurumClass = (sonDers.durum.includes("yapıldı") || sonDers.durum.includes("yapildi")) ? "status-green" : "status-red";
+                }
+
+                // Sonraki / Gelecek dersi bulalım (durumu "sonraki" veya "gelecek" olan)
+                let gelecekOlanlar = derslerDizisi.filter(d => d.durum === "sonraki" || d.durum === "gelecek");
+                if (gelecekOlanlar.length > 0) {
+                    let sonrakiDers = gelecekOlanlar[0];
+                    gelecekDersTarih = sonrakiDers.tarih || "Belirtilmemiş";
+                    gelecekDersDurum = sonrakiDers.durum.toUpperCase();
+                    gelecekDurumClass = "status-yellow";
+                }
+            }
+
+            // DOM'a Yansıt
+            document.getElementById('txtGecenTarih').innerHTML = `📅 ${gecenDersTarih}`;
+            let elGecenDurum = document.getElementById('txtGecenDurum');
+            elGecenDurum.innerText = gecenDersDurum;
+            document.getElementById('boxGecenDers').className = `schedule-box ${gecenDurumClass}`;
+
+            document.getElementById('txtGelecekTarih').innerHTML = `📅 ${gelecekDersTarih}`;
+            let elGelecekDurum = document.getElementById('txtGelecekDurum');
+            elGelecekDurum.innerText = gelecekDersDurum;
+            document.getElementById('boxGelecekDers').className = `schedule-box ${gelecekDurumClass}`;
         }
 
         async function girisYap(event) {
@@ -525,7 +723,6 @@
                     sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi);
                     sessionStorage.setItem("toplamSaniye", toplamSaniye);
 
-                    // Puan ve Rozet Verilerini Arayüze Yansıt
                     veriArayuzeIsle(kullaniciBulundu);
 
                     setTimeout(() => {
@@ -561,7 +758,7 @@
             }
         }
 
-        async function bilgileriSunucudanGuncelle(ogrenciAdi, isFirstLoad) {
+        async function bilgileriSunucudanGuncelle(ogrenciAdi) {
             try {
                 const response = await fetch(apiURL);
                 const data = await response.json();
@@ -573,11 +770,9 @@
                 }
             } catch(e) { console.error(e); }
             
-            if(isFirstLoad) {
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('panel-alani').style.display = 'block';
-                baslatSayac();
-            }
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('panel-alani').style.display = 'block';
+            baslatSayac();
         }
 
         function veriArayuzeIsle(user) {
@@ -586,14 +781,20 @@
             let sonDeneme = user.sonDeneme !== undefined ? user.sonDeneme : 0;
             let rozetSayisi = user.rozet !== undefined ? user.rozet : Math.floor(toplamSaniye / 600);
 
-            // Tablo Alanlarına Değerleri Yaz
+            // 4'lü Özet Tablosu
             document.getElementById('valGenelPuan').innerText = genelOrtalama;
             document.getElementById('valEtkinlikBasarisi').innerText = etkinlikBasarisi;
             document.getElementById('valSonDeneme').innerText = sonDeneme;
             document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelOrtalama);
 
-            // Yapay Zeka Mesajını Tetikle
+            // Yapay Zeka Koçluk Mesajı
             aiMesajUret(aktifOgrenciAdi, genelOrtalama, rozetSayisi);
+
+            // Öğretmen Yorum Motoru
+            ogretmenYorumUret(user, rozetSayisi);
+
+            // Ders Zaman Çizelgesi
+            dersTakviminiIsle(user.dersler);
         }
 
         function baslatSayac() {
@@ -604,7 +805,6 @@
                 sessionStorage.setItem("toplamSaniye", toplamSaniye);
                 guncelleArayuz();
 
-                // Her 30 saniyede bir Google Sheets'e güncel süreyi kaydet
                 if (toplamSaniye % 30 === 0) {
                     googleSheetseKaydet();
                 }
