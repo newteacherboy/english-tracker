@@ -439,33 +439,6 @@
         .card-amber .card-value { color: #92400e; }
         .card-rose .card-value { color: #9f1239; }
 
-        /* Öğretmenim Haftalık Notu */
-        .teacher-note-box {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 12px;
-            padding: 22px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
-        }
-        .teacher-note-header {
-            font-weight: 700;
-            font-size: 16px;
-            color: #166534;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 2px dashed #dcfce7;
-            padding-bottom: 8px;
-        }
-        .teacher-note-content {
-            font-size: 14px;
-            color: #14532d;
-            line-height: 1.6;
-            font-style: italic;
-        }
-
         /* Grafik Konteynerleri */
         .chart-box {
             background: #ffffff;
@@ -485,6 +458,95 @@
             gap: 8px;
             border-bottom: 2px dashed #f1f5f9;
             padding-bottom: 8px;
+        }
+
+        /* Ders Raporları Arşiv Kartları Tasarımı */
+        .report-archive-header {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+        }
+        .report-archive-header h3 {
+            color: #166534;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .report-archive-header p {
+            color: #15803d;
+            font-size: 13px;
+        }
+
+        .report-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .report-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #f1f5f9;
+            padding-bottom: 10px;
+        }
+        .report-date {
+            font-weight: 700;
+            font-size: 15px;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .report-badge-score {
+            background-color: #15803d;
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        .report-comment-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 13.5px;
+            color: #334155;
+            line-height: 1.5;
+            font-style: italic;
+        }
+        .report-criteria-bar {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: 15px;
+        }
+        .report-footer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12.5px;
+            color: #64748b;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 10px;
         }
     </style>
 </head>
@@ -549,6 +611,8 @@
         </div>
 
         <!-- SEKME İÇERİKLERİ -->
+        
+        <!-- 1. ÖZET SEKMESİ -->
         <div id="tab-ozet" class="tab-content active">
             
             <!-- 4'lü Özet Tablosu -->
@@ -602,14 +666,6 @@
                 </div>
             </div>
 
-            <!-- ÖĞRETMENİM HAFTALIK NOTU -->
-            <div class="teacher-note-box">
-                <div class="teacher-note-header">🍎 Öğretmenimin Haftalık Notu</div>
-                <div class="teacher-note-content" id="teacherCommentText">
-                    "Yükleniyor..."
-                </div>
-            </div>
-
             <!-- GRAFİKLER -->
             <div class="chart-box">
                 <div class="chart-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</div>
@@ -623,14 +679,26 @@
 
         </div>
 
+        <!-- 2. DERS RAPORLARI SEKMESİ (ARŞİV & KARNE) -->
         <div id="tab-raporlar" class="tab-content">
-            <h3 style="color: #2d3748; margin-bottom: 10px;">Ders Raporları</h3>
-            <p style="color: #718096; font-size: 14px;">Bu bölümde ders içerikleri ve detaylı gelişim notları yer alacaktır.</p>
+            <div class="report-archive-header">
+                <h3>📝 Öğrenci Haftalık Gelişim Karnesi & Arşivi</h3>
+                <p>Geçmiş derslerdeki başarı puanların, 5 kriter detayların ve öğretmen değerlendirmelerin aşağıda listelenmiştir.</p>
+            </div>
+
+            <!-- Dinamik Arşiv Kartlarının Listeleneceği Alan -->
+            <div id="arsivKartlariKonteyner">
+                <p style="color: #718096; text-align: center; padding: 20px;">Arşiv verileri yükleniyor...</p>
+            </div>
         </div>
+
+        <!-- 3. GELİŞİM YOLU SEKMESİ -->
         <div id="tab-aktiviteler" class="tab-content">
             <h3 style="color: #2d3748; margin-bottom: 10px;">Gelişim Yolu</h3>
-            <p style="color: #718096; font-size: 14px;">Bu bölümde detaylı aktivite istatistikleri ve grafikler yer alacaktır.</p>
+            <p style="color: #718096; font-size: 14px;">Bu bölümde detaylı aktivite istatistikleri yer alacaktır.</p>
         </div>
+
+        <!-- 4. ROZETLER SEKMESİ -->
         <div id="tab-rozetler" class="tab-content">
             <h3 style="color: #2d3748; margin-bottom: 10px;">Rozet Koleksiyonu</h3>
             <p style="color: #718096; font-size: 14px;">Kazandığın tüm rozetleri ve kilitli olanları burada görebileceksin.</p>
@@ -648,7 +716,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbxWFjrDkfItcGJbmwSX2hNsusq_mbu63cJV-TNokskp3xRD2xmnDlNIAaExhLio9H6bhA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxqfy3MQhM26mp7rx2lSFPdgYOQXtslFCco0xQHdJRmRqzCpwT7g-wRyja7POQ-60MZZQ/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -719,49 +787,32 @@
             return `${emojiler[idx]} ${sayi}`;
         }
 
-        function ogretmenYorumUret(user, rozetSayisi) {
-            let ad = aktifOgrenciAdi;
-            let puan = user.genelOrtalama || 0;
-            let vocab = user.vocabOrt || 0;
-            let konusma = user.konusmaOrt || 0;
-            let okuma = user.okumaOrt || 0;
-            let yazma = user.yazmaOrt || 0;
-            let grammar = user.grammarOrt || 0;
+        // Her hafta için benzersiz yorum üreten fonksiyon
+        function haftalikYorumOlustur(row, ad) {
+            let puan = row.genel;
+            let okuma = row.okuma;
+            let yazma = row.yazma;
+            let vocab = row.vocabulary;
+            let konusma = row.konusma;
+            let grammar = row.grammar;
+            let deneme = row.deneme;
 
-            let aciklamalar = [];
-
+            let cumleler = [];
             if (puan >= 80) {
-                aciklamalar.push(`Bu hafta ${ad} ile oldukça disiplinli, yüksek tempolu ve verimli bir süreci geride bıraktık. Genel başarı puanın **${puan} / 100** seviyesine ulaştı ki bu harika bir istikrar göstergesi! 🌟`);
+                cumleler.push(`Bu hafta ${ad} ile oldukça disiplinli ve verimli bir ders döngüsünü geride bıraktık. Değerlendirmeler sonucunda öğrencimiz bu hafta **${puan} / 100** genel başarı puanına ulaştı. Ders içi odaklanması ve kavrama hızı son derece üst düzeyde seyretti. 🌟`);
             } else if (puan >= 50) {
-                aciklamalar.push(`Sevgili ${ad}, bu hafta genel başarı ortalaman **${puan} / 100** olarak kaydedildi. Ders içi katılımın gayet güzel ancak potansiyelinin biraz altında kaldın; vites artırabiliriz! 🚀`);
+                cumleler.push(`Sevgili velimiz, öğrencimiz ${ad} bu haftaki çalışma sürecinde gösterdiği gayretle **${puan} / 100** genel başarı puanı elde etti. Çalışmalarımızda ufak tekrarlarla bu puanı çok daha yukarı taşıyacağımıza inanıyoruz. 🚀`);
             } else {
-                aciklamalar.push(`Bu hafta ${ad} için biraz dağınık bir döngü oldu. Genel puanın **${puan} / 100** seviyesinde seyrediyor. Önümüzdeki hafta bu tabloyu tersine çevirmek senin elinde! 💪`);
+                cumleler.push(`Bu hafta ${ad} için biraz tempolu bir dönem oldu ve genel başarı puanı **${puan} / 100** olarak kaydedildi. Önümüzdeki haftalarda pratik yaparak bu tabloyu hızla toparlayacağız! 💪`);
             }
 
-            aciklamalar.push(`Beceriler analizinde; kelime dağarcığın (**${vocab}**) ve okuma kavraman (**${okuma}**) iyi giderken; özellikle konuşma (**${konusma}**) ve dilbilgisi (**${grammar}**) alanlarında biraz daha pratik yapmaya ihtiyacımız var. 📚`);
-
-            if (rozetSayisi > 0) {
-                aciklamalar.push(`Sisteme kazandırdığın toplam **${rozetSayisi} rozet** gayretini tescilliyor, koleksiyonunu böyle görmek gurur verici! 🏆`);
-            } else {
-                aciklamalar.push(`Henüz rozet hanen boş görünüyor; ama dert etme, önümüzdeki oturumlarda süreyi uzatarak rozetleri toplayabilirsin! 🥇`);
+            cumleler.push(`5 Kriter dağılımında Okuma (${okuma}), Yazma (${yazma}), Kelime (${vocab}), Konuşma (${konusma}) ve Grammar (${grammar}) becerileri ölçüldü.`);
+            if (deneme > 0) {
+                cumleler.push(`Ayrıca bu haftaki son deneme sınavı sonucu **${deneme}** olarak hanesine yazıldı.`);
             }
+            cumleler.push(`Destekleriniz ve bu güzel iş birliği için çok teşekkür ederiz. Sevgiyle kalın! 🌻`);
 
-            if (puan < 70) {
-                aciklamalar.push(`⚠️ *Öğretmen Gözlemi:* Ödev takibinde ve düzenli tekrar yapmada son dönemde aksamalar yaşandı, tekrarları aksatmamalısın.`);
-            } else {
-                aciklamalar.push(`✨ *Öğretmen Gözlemi:* Ödev disiplinin ve odaklanma süren bu hafta öğretmenlerinden tam not aldı, harika bir işbirliği çıkardık.`);
-            }
-
-            let tavsiyeler = [
-                `🏫 *Gündelik Hayat Tavsiyesi:* Okul dönüşü çantayı fırlatmadan önce günlük 15 dakikalık ingilizce podcast dinleme rutini oluşturabilirsin! 🎧`,
-                `🏫 *Gündelik Hayat Tavsiyesi:* Okuldaki derslerde öğrendiğin mantıksal problem çözme becerisini ingilizce metin çözümlemelerine de yansıtabilirsin! 🧠`,
-                `🏫 *Gündelik Hayat Tavsiyesi:* Gündelik hayatta çevrendeki eşyaların ingilizce karşılıklarını içinden tekrar etmek hafızanı kalıcı yapar. 💡`,
-                `🏫 *Gündelik Hayat Tavsiyesi:* Akşam yatmadan önce o gün öğrendiğin en ilginç kelimeyi bir kağıda yazıp masana koymak devasa bir adımdır! 📌`
-            ];
-            aciklamalar.push(tavsiyeler[Math.floor(Math.random() * tavsiyeler.length)]);
-            aciklamalar.push(`Destekleriniz ve bu güzel iş birliği için çok teşekkür ederiz. Sevgiyle kalın! 🌻`);
-
-            document.getElementById('teacherCommentText').innerHTML = `"${aciklamalar.join(" ")}"`;
+            return `"${cumleler.join(" ")}"`;
         }
 
         function aiMesajUret(ogrenciAdi, genelPuan, rozetSayisi) {
@@ -800,6 +851,46 @@
                 return `${gun}.${ay}.${yil}`;
             }
             return tarihStr;
+        }
+
+        function dersRaporlariniOlustur(arsivListesi, kitapBilgi) {
+            let konteyner = document.getElementById('arsivKartlariKonteyner');
+            konteyner.innerHTML = "";
+
+            if (!arsivListesi || arsivListesi.length === 0) {
+                konteyner.innerHTML = `<p style="color: #718096; text-align: center; padding: 20px;">Henüz arşivlenmiş ders raporu bulunmuyor.</p>`;
+                return;
+            }
+
+            arsivListesi.forEach(row => {
+                let formatliTarih = tarihiDuzelt(row.tarih);
+                let yorumMetni = haftalikYorumOlustur(row, aktifOgrenciAdi);
+
+                let cardHTML = `
+                    <div class="report-card">
+                        <div class="report-card-top">
+                            <div class="report-date">📅 Ders Tarihi: ${formatliTarih}</div>
+                            <div class="report-badge-score">Haftalık Genel Puan: ${row.genel} / 100</div>
+                        </div>
+                        <div style="font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 6px;">🍎 O HAFTA NE YAPILDI & GÖZLEM:</div>
+                        <div class="report-comment-box">
+                            ${yorumMetni}
+                        </div>
+                        <div class="report-criteria-bar">
+                            <span>📖 Okuma: ${row.okuma}/100</span>
+                            <span>✍️ Yazma: ${row.yazma}/100</span>
+                            <span>💡 Kelime: ${row.vocabulary}/100</span>
+                            <span>🗣️ Konuşma: ${row.konusma}/100</span>
+                            <span>📐 Grammar: ${row.grammar}/100</span>
+                        </div>
+                        <div class="report-footer-info">
+                            <span>📚 Kitap: <b>${kitapBilgi.kitapAdi}</b> (Okunan: ${kitapBilgi.sayfa} / Hedef: ${kitapBilgi.hedef} sayfa)</span>
+                            <span style="font-weight: 700; color: #b45309;">🎯 Son Deneme Puanı: ${row.deneme}</span>
+                        </div>
+                    </div>
+                `;
+                konteyner.innerHTML += cardHTML;
+            });
         }
 
         function kitapTakibiniIsle(kitap) {
@@ -853,7 +944,7 @@
             kriterChartInstance = new Chart(ctx2, {
                 type: 'bar',
                 data: {
-                    labels: ['Okuma', 'Yazma', 'Vocabulary', 'Konuşma', 'Grammar'],
+                    labels: ['Okuma', 'Yazma', 'Kelime', 'Konuşma', 'Grammar'],
                     datasets: [{
                         data: [cOkuma, cYazma, cVocab, cKonusma, cGrammar],
                         backgroundColor: [
@@ -982,9 +1073,9 @@
             document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelOrtalama);
 
             aiMesajUret(aktifOgrenciAdi, genelOrtalama, rozetSayisi);
-            ogretmenYorumUret(user, rozetSayisi);
             kitapTakibiniIsle(user.kitapBilgi);
             grafikliCiz(user.grafikGecmis, user);
+            dersRaporlariniOlustur(user.arsivListesi, user.kitapBilgi);
         }
 
         function baslatSayac() {
