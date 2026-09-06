@@ -20,7 +20,7 @@
             justify-content: center;
             align-items: flex-start;
             position: relative;
-            padding: 30px 15px;
+            padding: 20px 10px;
         }
         .login-card {
             background: #ffffff;
@@ -55,32 +55,33 @@
         
         #panel-alani { display: none; width: 100%; max-width: 800px; margin: 0 auto; }
 
-        /* Kullanıcı Bilgi, Ders Takvimi & Kontrol Üst Şeridi */
+        /* Kullanıcı Bilgi, Ders Takvimi & Kontrol Üst Şeridi (Mobil Uyumlu) */
         .user-header-bar {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border: 1px solid #bbf7d0; border-radius: 14px; padding: 14px 18px;
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); gap: 10px;
+            margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); gap: 12px;
+            flex-wrap: wrap;
         }
         .user-info-area { display: flex; align-items: center; gap: 10px; }
         .user-avatar {
             width: 42px; height: 42px; background-color: #2f855a; color: white;
             font-weight: 800; font-size: 18px; border-radius: 50%; display: flex;
             align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(47, 133, 90, 0.3);
-            text-transform: uppercase;
+            text-transform: uppercase; flex-shrink: 0;
         }
         .user-details h3 { color: #166534; font-size: 15px; font-weight: 700; }
         .user-details span { color: #15803d; font-size: 11.5px; font-weight: 600; }
 
         .header-schedule-area { display: flex; gap: 8px; }
-        .sched-mini-box { background: #ffffff; border-radius: 8px; padding: 6px 10px; text-align: center; border: 1px solid #cbd5e1; min-width: 105px; }
+        .sched-mini-box { background: #ffffff; border-radius: 8px; padding: 6px 10px; text-align: center; border: 1px solid #cbd5e1; min-width: 100px; }
         .sched-done { border-color: #86efac; background: #f0fdf4; }
         .sched-next { border-color: #fca5a5; background: #fef2f2; }
         .sched-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
         .sched-done .sched-label { color: #166534; }
         .sched-next .sched-label { color: #991b1b; }
-        .sched-date { font-size: 12.5px; font-weight: 700; color: #1e293b; }
-        .sched-status { font-size: 10.5px; font-weight: 700; margin-top: 1px; }
+        .sched-date { font-size: 12px; font-weight: 700; color: #1e293b; }
+        .sched-status { font-size: 10px; font-weight: 700; margin-top: 1px; }
         .sched-done .sched-status { color: #15803d; }
         .sched-next .sched-status { color: #b91c1c; }
 
@@ -93,12 +94,13 @@
 
         /* Sekmeler Bloğu */
         .tabs-container {
-            display: flex; gap: 10px; margin-bottom: 20px; background: #ffffff;
-            padding: 10px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            display: flex; gap: 8px; margin-bottom: 20px; background: #ffffff;
+            padding: 8px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            overflow-x: auto;
         }
         .tab-btn {
-            flex: 1; padding: 12px; border: none; background: transparent; font-weight: 600;
-            font-size: 14px; color: #475569; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; text-align: center;
+            flex: 1; padding: 10px 8px; border: none; background: transparent; font-weight: 600;
+            font-size: 13px; color: #475569; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; text-align: center; white-space: nowrap;
         }
         .tab-btn.active { background: #334155; color: white; box-shadow: 0 2px 6px rgba(51, 65, 85, 0.3); }
         .tab-content { display: none; }
@@ -106,27 +108,27 @@
 
         /* Sayaç Kartı */
         .timer-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .timer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .timer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .timer-title { color: #334155; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
         .timer-badge { background-color: #f8fafc; color: #334155; padding: 6px 14px; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #cbd5e1; }
         .progress-container { background-color: #e2e8f0; border-radius: 10px; height: 10px; width: 100%; overflow: hidden; margin-bottom: 15px; }
         .progress-bar { background-color: #475569; height: 100%; width: 0%; transition: width 0.4s ease; border-radius: 10px; }
-        .timer-footer { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #64748b; }
+        .timer-footer { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #64748b; flex-wrap: wrap; gap: 5px; }
 
-        /* Yüzen Baloncuk (Toast) AI Mesaj */
+        /* Yüzen Baloncuk (Toast) AI Mesaj (Mobilde ekran ortasına uyumlu) */
         .ai-floating-toast {
-            position: fixed; top: 25px; right: 25px; background: #ffffff; border: 2px solid #cbd5e1;
-            border-left: 6px solid #475569; border-radius: 14px; padding: 16px 20px; max-width: 350px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 9999; animation: slideIn 0.5s ease-out; transition: opacity 0.5s ease;
+            position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background: #ffffff; border: 2px solid #cbd5e1;
+            border-left: 6px solid #475569; border-radius: 14px; padding: 14px 18px; width: 90%; max-width: 380px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 9999; animation: slideDown 0.4s ease-out; transition: opacity 0.5s ease;
         }
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideDown { from { transform: translate(-50%, -20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
         .ai-toast-title { color: #1e293b; font-weight: 700; font-size: 14px; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between; }
         .ai-toast-text { color: #475569; font-size: 12.5px; line-height: 1.4; }
         .ai-toast-timer { font-size: 11px; color: #334155; background: #f1f5f9; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
 
         /* Kitap Takip Sistemi */
         .book-tracker-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .book-tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .book-tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
         .book-header-left { display: flex; align-items: center; gap: 12px; }
         .book-header-icon { font-size: 28px; }
         .book-header-title { font-size: 17px; font-weight: 800; color: #1e293b; }
@@ -181,16 +183,16 @@
         .report-archive-header p { color: #15803d; font-size: 13px; }
         
         .report-card { border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 22px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-        .report-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px dashed rgba(0,0,0,0.1); padding-bottom: 12px; }
-        .report-date { font-weight: 800; font-size: 17px; color: #1e293b; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05); }
-        .report-badge-score { font-weight: 800; font-size: 14px; padding: 6px 14px; border-radius: 20px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .report-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px dashed rgba(0,0,0,0.1); padding-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+        .report-date { font-weight: 800; font-size: 16px; color: #1e293b; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05); }
+        .report-badge-score { font-weight: 800; font-size: 13.5px; padding: 6px 14px; border-radius: 20px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .score-green { background-color: #16a34a; }
         .score-yellow { background-color: #ca8a04; }
         .score-red { background-color: #dc2626; }
         .report-comment-box { background-color: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 16px; margin-bottom: 15px; font-size: 13.5px; color: #1e293b; line-height: 1.6; font-style: italic; }
-        .report-criteria-bar { background-color: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 15px; }
-        .report-footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #334155; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 12px; flex-wrap: wrap; gap: 10px; }
-        .report-deneme-badge { background: #fff1f2; border: 1.5px solid #f43f5e; color: #be123c; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(244, 63, 94, 0.15); }
+        .report-criteria-bar { background-color: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 15px; }
+        .report-footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: #334155; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 12px; flex-wrap: wrap; gap: 10px; }
+        .report-deneme-badge { background: #fff1f2; border: 1.5px solid #f43f5e; color: #be123c; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 12.5px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(244, 63, 94, 0.15); }
 
         /* Rozetler Sekmesi */
         .badges-header-box { background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); border: 1px solid #fde047; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
@@ -227,35 +229,35 @@
         .game-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
-            display: none; justify-content: center; align-items: center; z-index: 99999;
+            display: none; justify-content: center; align-items: center; z-index: 99999; padding: 10px;
         }
         .game-modal-content {
             background: #fffdf9; border-radius: 20px; width: 100%; max-width: 580px;
-            padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative;
+            padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto;
         }
         .game-close-btn {
-            position: absolute; top: 20px; right: 20px; background: #f1f5f9; border: none;
-            width: 36px; height: 36px; border-radius: 50%; font-size: 16px; font-weight: 700;
+            position: absolute; top: 15px; right: 15px; background: #f1f5f9; border: none;
+            width: 34px; height: 34px; border-radius: 50%; font-size: 15px; font-weight: 700;
             color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
-        .game-title { text-align: center; color: #b45309; font-size: 20px; font-weight: 900; margin-bottom: 6px; }
-        .game-subtitle { text-align: center; font-size: 12.5px; color: #78350f; margin-bottom: 20px; line-height: 1.4; }
+        .game-title { text-align: center; color: #b45309; font-size: 19px; font-weight: 900; margin-bottom: 6px; }
+        .game-subtitle { text-align: center; font-size: 12px; color: #78350f; margin-bottom: 18px; line-height: 1.4; }
 
-        .sinif-secim-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .sinif-secim-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; }
         .sinif-btn {
-            background: #f1f5f9; border: 1.5px solid #cbd5e1; padding: 10px; border-radius: 10px;
-            font-weight: 700; font-size: 13px; color: #475569; cursor: pointer; transition: all 0.2s;
+            background: #f1f5f9; border: 1.5px solid #cbd5e1; padding: 9px 4px; border-radius: 9px;
+            font-weight: 700; font-size: 12px; color: #475569; cursor: pointer; transition: all 0.2s; text-align: center;
         }
         .sinif-btn.active { background: #2563eb; color: white; border-color: #1d4ed8; }
 
         .unite-secim-box {
             background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
-            padding: 12px; margin-bottom: 20px; max-height: 130px; overflow-y: auto;
-            display: flex; flex-wrap: wrap; gap: 8px;
+            padding: 10px; margin-bottom: 18px; max-height: 120px; overflow-y: auto;
+            display: flex; flex-wrap: wrap; gap: 6px;
         }
         .unite-chip {
-            background: #ffffff; border: 1px solid #cbd5e1; padding: 6px 12px;
-            border-radius: 20px; font-size: 12px; font-weight: 600; color: #334155; cursor: pointer;
+            background: #ffffff; border: 1px solid #cbd5e1; padding: 5px 10px;
+            border-radius: 20px; font-size: 11.5px; font-weight: 600; color: #334155; cursor: pointer;
         }
         .unite-chip.selected { background: #16a34a; color: white; border-color: #15803d; }
 
@@ -267,22 +269,19 @@
         }
         .kelime-gosterge {
             background: #ffffff; border: 2px solid #cbd5e1; border-radius: 14px;
-            padding: 25px; text-align: center; margin-bottom: 20px;
+            padding: 22px; text-align: center; margin-bottom: 18px;
         }
-        .kelime-en { font-size: 26px; font-weight: 900; color: #0f172a; margin-top: 5px; }
+        .kelime-en { font-size: 24px; font-weight: 900; color: #0f172a; margin-top: 5px; }
 
-        .siklar-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .siklar-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
         .btn-sik {
-            background: #ffffff; border: 2px solid #cbd5e1; padding: 16px; border-radius: 12px;
-            font-size: 16px; font-weight: 800; color: #1e293b; cursor: pointer; text-align: center;
+            background: #ffffff; border: 2px solid #cbd5e1; padding: 15px; border-radius: 12px;
+            font-size: 15px; font-weight: 800; color: #1e293b; cursor: pointer; text-align: center;
             transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .btn-sik:hover { border-color: #2563eb; background: #f0fdf4; }
-        /* Yanlış tıklanan şıkkın kırmızı yanması için sınıf */
         .btn-sik.yanlis-animasyon {
-            background-color: #fee2e2 !important;
-            border-color: #ef4444 !important;
-            color: #991b1b !important;
+            background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important;
         }
 
         .liderlik-tablosu-box { margin-top: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; }
@@ -291,9 +290,18 @@
         .lid-table th { background: #e2e8f0; color: #334155; padding: 6px; text-align: left; }
         .lid-table td { padding: 6px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
 
-        @media(max-width: 600px) {
-            .sinif-secim-grid { grid-template-columns: repeat(2, 1fr); }
+        /* Mobil Cihazlar İçin Özel Esnek Düzenlemeler */
+        @media(max-width: 650px) {
+            body { padding: 10px 5px; }
+            .user-header-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+            .user-info-area { justify-content: space-between; }
+            .header-schedule-area { justify-content: space-between; }
+            .sched-mini-box { flex: 1; min-width: unset; }
+            .user-actions { justify-content: flex-end; }
             .badges-grid { grid-template-columns: repeat(2, 1fr); }
+            .book-content-grid { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr; }
+            .sinif-secim-grid { grid-template-columns: repeat(4, 1fr); }
         }
     </style>
 </head>
@@ -319,7 +327,7 @@
     <!-- Başarılı Giriş Sonrası Panel Alanı -->
     <div id="panel-alani">
         
-        <!-- 1. KULLANICI KONTROL ALANI & DERS TAKVİMİ -->
+        <!-- 1. KULLANICI KONTROL ALANI & DERS TAKVİMİ (Mobilde Alt Alta Uyumlu) -->
         <div class="user-header-bar">
             <div class="user-info-area">
                 <div class="user-avatar" id="userAvatarLetter">Ö</div>
@@ -530,7 +538,7 @@
                 <button class="btn-giris" onclick="yarismayiBaslat()" style="background: #2563eb; margin-top: 5px;">🚀 Yarışmayı Başlat</button>
             </div>
 
-            <!-- Çoktan Seçmeli Soru Ekranı (Yanlış Şık Kırmızı Yanma Özellikli) -->
+            <!-- Çoktan Seçmeli Soru Ekranı -->
             <div id="oyunEkranIci">
                 <div class="oyun-ust-bilgi">
                     <span id="lblKelimeSayac">Kelime: 1 / 25</span>
@@ -595,7 +603,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbycGd_fqICCBhsJAQtdlXQSwDJHqdJIbvv_BkACCaZsG1ORGlXzSn2WA5uL0GPCf6NSLA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwvuOEAYy1xirYb6oQSBSa4aRRKqpeZ-4mNHsbrPivOsNf_wRNlm5N0RY6RQdIhAH_wCA/exec";
         
         let toplamSaniye = 0;
         let timerInterval = null;
@@ -617,7 +625,7 @@
         let oyunSaniyeSayac = 0;
         let globalLiderlikCache = [];
         let mevcutDogruSikIndex = 0;
-        let soruKilitli = false; // Tıklama çakışmasını önlemek için kilit
+        let soruKilitli = false;
 
         window.onload = function() {
             const oturumAcik = sessionStorage.getItem("oturumAcik");
@@ -1064,7 +1072,6 @@
             let soru = aktifKelimeListesi[aktifSoruIndex];
             mevcutDogruSikIndex = soru.dogruIndex;
 
-            // Butonların sınıflarını temizle
             document.getElementById('btnSik0').className = "btn-sik";
             document.getElementById('btnSik1').className = "btn-sik";
 
@@ -1077,7 +1084,7 @@
         }
 
         function sikSec(secilenIndex) {
-            if (soruKilitli) return; // Çift tıklama önlemi
+            if (soruKilitli) return;
 
             let btnSecilen = document.getElementById('btnSik' + secilenIndex);
 
@@ -1087,7 +1094,6 @@
                 aktifSoruIndex++;
                 soruyuEkranaGetir();
             } else {
-                // Yanlış şıkkı kırmızı yap ve hemen sonra diğer soruya geç
                 soruKilitli = true;
                 oyunYanlis++;
                 document.getElementById('lblYanlisSayisi').innerText = oyunYanlis;
@@ -1096,7 +1102,7 @@
                 setTimeout(() => {
                     aktifSoruIndex++;
                     soruyuEkranaGetir();
-                }, 400); // 400 milisaniye sonra diğer soruya geçiş
+                }, 400);
             }
         }
 
