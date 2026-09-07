@@ -162,6 +162,7 @@
             overflow: hidden;
         }
 
+        /* PROMPTER BÜYÜK FONT & OKUNAKLI STİLLER */
         .prompter-kelime {
             cursor: pointer;
             padding: 3px 6px;
@@ -234,7 +235,7 @@
             </div>
         </div>
 
-        <!-- 3. Sekmeler -->
+        <!-- 3. Sekmeler (Gelişim Yolu olarak güncellendi) -->
         <div class="tabs-bar">
             <button class="tab-btn active" onclick="sekmeGecis(0)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeGecis(1)">📝 Ders Raporları</button>
@@ -268,16 +269,6 @@
             <div class="card">
                 <div class="card-header-flex"><h3 class="card-title">📅 Ders Zaman Çizelgesi</h3></div>
                 <div class="ders-grid-3" id="dersZamanAlani"></div>
-            </div>
-
-            <!-- GÖSTERİLEN 2. GÖRSELDEKİ ŞIK RENKLİ BUTONLAR -->
-            <div class="card" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #bfdbfe; text-align: center; padding: 20px;">
-                <h3 style="color: #1e40af; font-size: 15px; font-weight: 800; margin-bottom: 4px;">🎮 İngilizce Kelime Ezber & Bilgi Yarışması</h3>
-                <p style="color: #3b82f6; font-size: 12px; margin-bottom: 15px;">Sınıfını ve ünitelerini seç, zamanla yarışarak kelime dağarcığını test et!</p>
-                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-                    <button onclick="oyunModaliniAc()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 13.5px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); transition: transform 0.2s;">🚀 Klasik Kelime Yarışması</button>
-                    <button onclick="oyunModaliniAc()" style="background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 13.5px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); transition: transform 0.2s;">🎈 Jeopardy Kelime Balonları</button>
-                </div>
             </div>
 
             <div class="card">
@@ -404,7 +395,7 @@
 
     <button class="admin-float-btn" onclick="yoneticiGirisSorgula()" title="Öğretmen Paneli">⚙️</button>
 
-    <div class="modal-overlay" id="rubricModal">
+    <div class="modal-overlay" id="rubrikModal">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <h3 style="margin:0; color:#2e7d32;">📋 Kapsamlı Öğretmen Rubriği</h3>
@@ -508,20 +499,8 @@
         </div>
     </div>
 
-    <!-- KELİME OYUNU / AKTİVİTE AÇILIR PANELİ (MODAL) -->
-    <div class="modal-overlay" id="gameModalOverlay" style="display: none; z-index: 9999;">
-        <div class="modal-content" style="max-width: 450px; text-align: center;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <h3 style="margin:0; color:#1e40af;">🎮 İngilizce Kelime Yarışması</h3>
-                <button onclick="oyunModaliniKapat()" style="background:none; border:none; font-size:18px; cursor:pointer;">✕</button>
-            </div>
-            <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">Sınıfını seç, kelime dağarcığını test et ve eğlenerek öğren!</p>
-            <button onclick="alert('Kelime yarışması modülü aktif!')" style="background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; width: 100%;">Oyunu Başlat</button>
-        </div>
-    </div>
-
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUe6yNNarha3W7CnN32jidOZXBO1-yZXPDOtVzmiFv9Fwm-3c7s47FTIuvV5eNsjoc/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK01mYMvCtkMsKF-ze67e1PEr6zXDAyCgrDrApSbUqY4YVdvPlMCH9EEJhNFqAp7Q/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -536,34 +515,35 @@
         let secilenKelimeSayisi = 0;
         let aktifMetinBasligi = "";
 
+        // SINIF BAŞINA YAKLAŞIK 50 KELİMEDEN BAŞLAYIP 8. SINIFTA 400 KELİMEYE VARAN UZUN PEDAGOJİK METİNLER
         const sinirsizMetinHavuzu = {
             "1-Sinif": [
-                { baslik: "Minik Kedi", icerik: "Minik kedi bahçede neşeyle koştu. Sütünü içti ve tık nefes uyudu. Güneş açtı, çiçekler rengarenk açtı. Ali bu güzel günde çok mutlu oldu. Annesi ona mis gibi elmalar getirdi. Ali elmaları severek yedi ve arkadaşlarıyla oynamak için dışarıya neşeyle çıktı." },
-                { baslik: "Top Oyunu", icerik: "Topum kırmızı, parlak ve yuvarlak. Arkadaşım Can ile okul bahçesinde keyifle top oynadık. Zil çaldı, sıraya girip sınıfa koştuk. Öğretmenimiz bize yeni hikaye kitapları dağıttı. Okumayı öğrenmek hayatımdaki en harika duygu." }
+                { baslik: "Minik Kedi", icerik: "Minik kedi bahçede neşeyle koştu. Sütünü içti ve tık nefes uyudu. Güneş açtı, çiçekler rengarenk açtı. Ali bu güzel günde çok mutlu oldu. Annesi ona mis gibi elmalar getirdi. Ali elmaları severek yedi ve arkadaşlarıyla oynamak dışarıya çıktı." },
+                { baslik: "Top Oyunu", icerik: "Topum kırmızı, parlak ve yuvarlak. Arkadaşım Can ile okul bahçesinde keyifle top oynadık. Zil çaldı, sıraya girip sınıfa koştuk. Öğretmenimiz bize yeni hikaye kitapları dağıttı. Okumayı öğrenmek harika bir duygu." }
             ],
             "2-Sinif": [
-                { baslik: "Ormandaki Sincap", icerik: "Sevimli sincap uzun ve tüylü kuyruğu ile ulu çam ağaçlarından diğerine çevikçe zıplıyordu. Kış mevsimi gelmeden önce toprak altına saklayacağı meşe palamutlarını büyük bir titizlikle topluyordu. Hava soğuyunca sıcak yuvasına çekildi ve dışarıda lapa lapa yağan karı izleyerek huzurlu bir uykuya daldı. Doğa kış uykusuna yatarken sincap da yediklerinin tadını çıkarıyordu. İlkbahar gelince yeniden yeşil dallarda neşeyle koşturmayı sabırsızlıkla bekliyordu." },
-                { baslik: "Bahçedeki Domates", icerik: "Dedemle birlikte evimizin arkasındaki toprak bahçeye kırmızı domates fideleri ektik. Her gün sabah erken saatlerde onlara taze su verdik ve toprağı havalandırdık. Haftalar geçtikçe fideler büyüdü, sarı çiçekler açtı ve sonunda domatesler kıpkırmızı oldu. Birlikte topladığımız taze domateslerle akşam sofrası için çok lezzetli bir salata hazırladık. Ailemizle birlikte kendi yetiştirdiğimiz sebzeleri yemek hepimizi çok mutlu etti." }
+                { baslik: "Ormandaki Sincap", icerik: "Sevimli sincap uzun ve tüylü kuyruğu ile ulu çam ağaçlarından diğerine çevikçe zıplıyordu. Kış mevsimi gelmeden önce toprak altına saklayacağı meşe palamutlarını büyük bir titizlikle topluyordu. Hava soğuyunca sıcak yuvasına çekildi ve dışarıda lapa lapa yağan karı izleyerek huzurlu bir uykuya daldı. Doğa kış uykusuna yatarken sincap da yediklerinin tadını çıkarıyordu." },
+                { baslik: "Bahçedeki Domates", icerik: "Dedemle birlikte evimizin arkasındaki toprak bahçeye kırmızı domates fideleri ektik. Her gün sabah erken saatlerde onlara taze su verdik ve toprağı havalandırdık. Haftalar geçtikçe fideler büyüdü, sarı çiçekler açtı ve sonunda domatesler kıpkırmızı oldu. Birlikte topladığımız taze domateslerle akşam sofrası için çok lezzetli bir salata hazırladık." }
             ],
             "3-Sinif": [
-                { baslik: "Kayıp Anahtar", icerik: "Zeynep okul çıkışında sırt çantasını kontrol ederken evlerinin anahtarının her zamanki yerinde olmadığını fark etti. Oldukça telaşlandı ve ne yapacağını bilemedi. Ama akıllı arkadaşı Elif'in yardımıyla okul bahçesindeki kamelya bankında unuttuğunu hatırladı. Koşarak gidip anahtarını aynı yerde buldu ve derin bir nefes aldı. Eve vardığında annesine sarıldı ve bir daha eşyalarına daha dikkatli edeceğine dair kendi kendine söz verdi. Sorumluluk sahibi olmak insanı böyle zor durumlardan kurtarıyordu." },
-                { baslik: "Uzay Yolculuğu", icerik: "Yatak odasının penceresinden gece gökyüzünü inceleyen Mert, pırıl pırıl parlayan yıldızları saymayı çok severdi. Bir gece hayal gücünün sınırlarını zorlayarak kendisini devasa, gümüş renkli bir roketin kaptan köşküncünde buldu. Uzayın derinliklerinde süzülen gizemli gezegenleri, parlak nebulaları ve dev halkalarıyla göz kamaştıran Satürn'ü yakından görmek onu adeta büyülemişti. Bu muazzam rüya sabaha kadar sürdü ve ona uzay bilimine karşı büyük bir tutku kazandırdı. Belki de gelecekte gerçek bir astronot olabilirdi." }
+                { baslik: "Kayıp Anahtar", icerik: "Zeynep okul çıkışında sırt çantasını kontrol ederken evlerinin anahtarının her zamanki yerinde olmadığını fark etti. Oldukça telaşlandı ve ne yapacağını bilemedi. Ama akıllı arkadaşı Elif'in yardımıyla okul bahçesindeki kamelya bankında unuttuğunu hatırladı. Koşarak gidip anahtarını aynı yerde buldu ve derin bir nefes aldı. Eve vardığında annesine sarıldı ve bir daha eşyalarına daha dikkatli edeceğine dair kendi kendine söz verdi." },
+                { baslik: "Uzay Yolculuğu", icerik: "Yatak odasının penceresinden gece gökyüzünü inceleyen Mert, pırıl pırıl parlayan yıldızları saymayı çok severdi. Bir gece hayal gücünün sınırlarını zorlayarak kendisini devasa, gümüş renkli bir roketin kaptan köşküncünde buldu. Uzayın derinliklerinde süzülen gizemli gezegenleri, parlak nebulaları ve dev halkalarıyla göz kamaştıran Satürn'ü yakından görmek onu adeta büyülemişti. Bu muazzam rüya sabaha kadar sürdü ve ona uzay bilimine karşı büyük bir tutku kazandırdı." }
             ],
             "4-Sinif": [
-                { baslik: "Doğa ile Dostluk", icerik: "Hafta sonu ailemizle birlikte şehrin gürültüsünden uzaklaşarak dağ eteklerindeki huzurlu bir kamp alanına doğru yola çıktık. Sabahın ilk ışıklarıyla birlikte kulaklarımızı dolduran kuş cıvıltıları ve ormanın o mis gibi taze havasıyla uyanmak ruhumuza çok iyi geldi. Kamp ateşinin etrafında toplanıp doğanın dengesini korumanın ne kadar önemli olduğunu konuştuk. Etraftaki plastik atıkları özenle toplayarak doğaya sahip çıkmanın hepimizin ortak sorumluluğu olduğunu bir kez daha kavradık. Akşam gökyüzündeki milyarlarca yıldızı seyrederken hayatın ne kadar değerli olduğunu düşündüm. Çevremizi korumak yarınlarımız için atılacak en büyük adımdır." },
-                { baslik: "Eski Saat", icerik: "Tarihi mahalledeki dar sokaklarda gezinirken karşıma çıkan küçük antika dükkanının vitrini beni adeta mıknatıs gibi çekti. Vitrinin en köşesinde duran, işlemeli pirinç kasalı ve altın yaldızlı cep saati tüm dikkatimi topladı. Dükkana girip yaşlı ustadan bu saatin yüzyıllar önce saraylarda kullanıldığını öğrendim. Zamanı gösteren sadece mekanik dişliler değil, aynı zamanda geçmişin gizemli hikayeleriydi. O an, tarihin dokunulabilir bir parçasını izlediğimi hissettim ve saatçiden ayrılırken zihnimde eski zamanlara ait hayaller uçuşuyordu. Eşyaların da birer ruhu olduğuna inanmak insanı meraka sürüklüyor." }
+                { baslik: "Doğa ile Dostluk", icerik: "Hafta sonu ailemizle birlikte şehrin gürültüsünden uzaklaşarak dağ eteklerindeki huzurlu bir kamp alanına doğru yola çıktık. Sabahın ilk ışıklarıyla birlikte kulaklarımızı dolduran kuş cıvıltıları ve ormanın o mis gibi taze havasıyla uyanmak ruhumuza çok iyi geldi. Kamp ateşinin etrafında toplanıp doğanın dengesini korumanın ne kadar önemli olduğunu konuştuk. Etraftaki plastik atıkları özenle toplayarak doğaya sahip çıkmanın hepimizin ortak sorumluluğu olduğunu bir kez daha kavradık. Akşam gökyüzündeki milyarlarca yıldızı seyrederken hayatın ne kadar değerli olduğunu düşündüm." },
+                { baslik: "Eski Saat", icerik: "Tarihi mahalledeki dar sokaklarda gezinirken karşıma çıkan küçük antika dükkanının vitrini beni adeta mıknatıs gibi çekti. Vitrinin en köşesinde duran, işlemeli pirinç kasalı ve altın yaldızlı cep saati tüm dikkatimi topladı. Dükkana girip yaşlı ustadan bu saatin yüzyıllar önce saraylarda kullanıldığını öğrendim. Zamanı gösteren sadece mekanik dişliler değil, aynı zamanda geçmişin gizemli hikayeleriydi. O an, tarihin dokunulabilir bir parçasını izlediğimi hissettim ve saatçiden ayrılırken zihnimde eski zamanlara ait hayaller uçuşuyordu." }
             ],
             "5-Sinif": [
-                { baslik: "Bilim Fuarı Projesi", icerik: "Okulumuzda her yıl geleneksel olarak düzenlenen büyük bilim fuarı için aylar öncesinden hazırlıklara başlamıştık. Ekip arkadaşlarımla birlikte yenilenebilir enerji kaynaklarını inceleyerek geleceğin şehirlerini tasarlamaya karar verdik. Projemizin merkezine yerleştirdiğimiz güneş panelleriyle çalışan mini otonom araba modeli jüri üyelerinin büyük beğenisini kazandı. Günlerce süren laboratuvar çalışmaları, uykusuz geceler ve yapılan onlarca başarısız deneyin ardından elde ettiğimiz birincilik ödülü, tüm yorgunluğumuzu bir anda unutturdu. Bilimin ve üretmenin ne kadar keyifli bir yolculuk olduğunu bu projeyle bizzat deneyimlemiş olduk. Gelecekte insanlığa faydalı projeler üretmek en büyük hayalimiz." },
-                { baslik: "Anadolu Medeniyetleri", icerik: "Sosyal bilgiler dersinde işlediğimiz antik uygarlıklar ünitesi, zihnimde adeta devasa bir tarih müzesi canlandırmıştı. Hititlerin güneş kursları, Friglerin fibula adı verilen çengelli iğneleri ve Lidyalıların bulduğu paranın ticaret tarihindeki devrim niteliğindeki etkileri beni derinden etkiledi. Müzeleri gezmek, binlerce yıl önce aynı topraklarda yaşayan insanların günlük yaşam izlerini sürmek adeta zaman makinesiyle seyahat etmek gibiydi. Geçmişi bilmeden geleceği inşa etmenin imkansız olduğunu ve kültürel mirasımıza sahip çıkmamız gerektiğini bu incelemeler sayesinde çok daha iyi idrak ettim. Tarih bilinci toplumsal hafızanın en temel taşıdır." }
+                { baslik: "Bilim Fuarı Projesi", icerik: "Okulumuzda her yıl geleneksel olarak düzenlenen büyük bilim fuarı için aylar öncesinden hazırlıklara başlamıştık. Ekip arkadaşlarımla birlikte yenilenebilir enerji kaynaklarını inceleyerek geleceğin şehirlerini tasarlamaya karar verdik. Projemizin merkezine yerleştirdiğimiz güneş panelleriyle çalışan mini otonom araba modeli jüri üyelerinin büyük beğenisini kazandı. Günlerce süren laboratuvar çalışmaları, uykusuz geceler ve yapılan onlarca başarısız deneyin ardından elde ettiğimiz birincilik ödülü, tüm yorgunluğumuzu bir anda unutturdu. Bilimin ve üretmenin ne kadar keyifli bir yolculuk olduğunu bu projeyle bizzat deneyimlemiş olduk." },
+                { baslik: "Anadolu Medeniyetleri", icerik: "Sosyal bilgiler dersinde işlediğimiz antik uygarlıklar ünitesi, zihnimde adeta devasa bir tarih müzesi canlandırmıştı. Hititlerin güneş kursları, Friglerin fibula adı verilen çengelli iğneleri ve Lidyalıların bulduğu paranın ticaret tarihindeki devrim niteliğindeki etkileri beni derinden etkiledi. Müzeleri gezmek, binlerce yıl önce aynı topraklarda yaşayan insanların günlük yaşam izlerini sürmek adeta zaman makinesiyle seyahat etmek gibiydi. Geçmişi bilmeden geleceği inşa etmenin imkansız olduğunu ve kültürel mirasımıza sahip çıkmamız gerektiğini bu incelemeler sayesinde çok daha iyi idrak ettim." }
             ],
             "6-Sinif": [
-                { baslik: "Ekosistem Dengesi ve İklim", icerik: "Dünyamız üzerindeki canlı çeşitliliği milyonlarca yıllık evrimsel sürecin ürünü olan son derece hassas ve kırılgan bir denge üzerine kurulmuştur. Sanayi devriminden bu yana artan karbon salınımı, ormansızlaşma ve bilinçsiz tüketim alışkanlıkları pek çok ekosistemi ve endemik türü yok olma eşiğine getirmiştir. Gelecek nesillere yaşanabilir, yeşil ve temiz bir dünya bırakmak istiyorsak, bireysel ölçekte atacağımız her küçük geri dönüşüm adımı ve enerji tasarrufu politikası hayati önem taşımaktadır. Çevre bilinci sadece bir ders konusu değil, sürdürülebilir bir yaşam felsefesidir. Doğaya saygı duymak geleceğimize duyduğumuz saygının ta kendisidir." },
-                { baslik: "Sanatın Evrensel Dili", icerik: "Ressam fırçasını tual üzerinde gezdirirken sadece boyaları karıştırmıyor, aynı zamanda ruhunun en derin köşelerindeki saklı duyguları somut bir gerçeğe dönüştürüyordu. Müzik notaları, heykeltıraşın mermere kazıdığı ince detaylar veya bir yazarın kaleme aldığı sarsıcı cümleler insanların ortak paydada buluşmasını sağlar. Sanat, coğrafi sınırları, dilleri ve kültürleri aşarak insanlığı tek bir yürekte birleştiren en güçlü evrensel köprüdür. Sanatla beslenen bir toplum, estetik değerlere önem verir ve hoşgörüyü hayatının merkezine koyar." }
+                { baslik: "Ekosistem Dengesi ve İklim", icerik: "Dünyamız üzerindeki canlı çeşitliliği milyonlarca yıllık evrimsel sürecin ürünü olan son derece hassas ve kırılgan bir denge üzerine kurulmuştur. Sanayi devriminden bu yana artan karbon salınımı, ormansızlaşma ve bilinçsiz tüketim alışkanlıkları pek çok ekosistemi ve endemik türü yok olma eşiğine getirmiştir. Gelecek nesillere yaşanabilir, yeşil ve temiz bir dünya bırakmak istiyorsak, bireysel ölçekte atacağımız her küçük geri dönüşüm adımı ve enerji tasarrufu politikası hayati önem taşımaktadır. Çevre bilinci sadece bir ders konusu değil, sürdürülebilir bir yaşam felsefesidir." },
+                { baslik: "Sanatın Evrensel Dili", icerik: "Ressam fırçasını tual üzerinde gezdirirken sadece boyaları karıştırmıyor, aynı zamanda ruhunun en derin köşelerindeki saklı duyguları somut bir gerçeğe dönüştürüyordu. Müzik notaları, heykeltıraşın mermere kazıdığı ince detaylar veya bir yazarın kaleme aldığı sarsıcı cümleler insanların ortak paydada buluşmasını sağlar. Sanat, coğrafi sınırları, dilleri ve kültürleri aşarak insanlığı tek bir yürekte birleştiren en güçlü evrensel köprüdür." }
             ],
             "7-Sinif": [
-                { baslik: "Teknolojik Dönüşüm ve Etik", icerik: "Yapay zeka algoritmaları, büyük veri analitiği ve nesnelerin interneti günümüzde iş dünyasından eğitim sistemine kadar her sektörü kökten dönüştürmektedir. Rutin işlerin makineler tarafından devralınması insanlara yaratıcı düşünce ve inovasyon için geniş alanlar açarken, dijital mahremiyet ve veri güvenliği gibi etik sorunları da beraberinde getirmektedir. Teknolojiyi körü körüne tüketmek yerine onu eleştirel bir süzgeçten geçirerek insanlığın yararına optimize etmek modern bireyin en temel sorumlulukları arasındadır. Geleceğin dijital dünyasında başarılı olmak için kodlama bilmek kadar etik değerleri gözetmek de gereklidir. Bilgi güvenliği çağımızın en kritik güvencesidir." },
-                { baslik: "Kutup Araştırmaları ve Küresel Etki", icerik: "Antarktika ve Arktik kutup bölgeleri, Dünya'nın iklim sistemini yöneten devasa soğuk hava depoları gibidir. Küresel ısınmanın bu hassas bölgelerdeki buz kütlelerini hızla eritmesi, okyanus akıntılarının yönünü değiştirmekte ve kıyı şehirlerini tehlikeye atmaktadır. Uluslararası bilim insanlarından oluşan araştırma ekipleri zorlu hava koşullarına rağmen kutuplarda kamp kurarak buz çekirdeği örnekleri almakta ve geçmiş iklim döngülerini incelemektedir. Bu veriler, gezegenimizin yararını korumak adına atılacak stratejik adımların temelini oluşturur. Bilimsel araştırmalar doğanın sesini duymamızı sağlar." }
+                { baslik: "Teknolojik Dönüşüm ve Etik", icerik: "Yapay zeka algoritmaları, büyük veri analitiği ve nesnelerin interneti günümüzde iş dünyasından eğitim sistemine kadar her sektörü kökten dönüştürmektedir. Rutin işlerin makineler tarafından devralınması insanlara yaratıcı düşünce ve inovasyon için geniş alanlar açarken, dijital mahremiyet ve veri güvenliği gibi etik sorunları da beraberinde getirmektedir. Teknolojiyi körü körüne tüketmek yerine onu eleştirel bir süzgeçten geçirerek insanlığın yararına optimize etmek modern bireyin en temel sorumlulukları arasındadır. Geleceğin dijital dünyasında başarılı olmak için kodlama bilmek kadar etik değerleri gözetmek de gereklidir." },
+                { baslik: "Kutup Araştırmaları ve Küresel Etki", icerik: "Antarktika ve Arktik kutup bölgeleri, Dünya'nın iklim sistemini yöneten devasa soğuk hava depoları gibidir. Küresel ısınmanın bu hassas bölgelerdeki buz kütlelerini hızla eritmesi, okyanus akıntılarının yönünü değiştirmekte ve kıyı şehirlerini tehlikeye atmaktadır. Uluslararası bilim insanlarından oluşan araştırma ekipleri zorlu hava koşullarına rağmen kutuplarda kamp kurarak buz çekirdeği örnekleri almakta ve geçmiş iklim döngülerini incelemektedir. Bu veriler, gezegenimizin yararını korumak adına atılacak stratejik adımların temelini oluşturur." }
             ],
             "8-Sinif": [
                 { baslik: "LGS Sürecinde Stratejik Başarı ve Zihinsel Dayanıklılık", icerik: "LGS maratonu sadece uzun saatler boyunca masa başında ders çalışmak değil, aynı zamanda zihinsel dayanıklılığı en üst düzeyde korumak, stres yönetimi becerisi kazanmak ve zamanı en verimli şekilde planlamaktır. Sene boyunca çözülen binlerce soru ve yapılan denemelerdeki her yanlış, aslında henüz tam olarak oturmamış bir bilginin gün yüzüne çıkması için eşsiz bir fırsattır. Öğrencilerin bu yoğun tempoda kendilerini başkalarıyla kıyaslamak yerine kendi kişisel gelişim eğrilerine odaklanmaları mental sağlık açısından kritiktir. Düzenli paragraf analizi yapmak, okuduğunu anlama hızını artırmak ve sınav anı simülasyonları gerçekleştirmek hedeflenen liseye giden kapıları ardına kadar aralayacaktır. Unutmayın ki zafer, maratonun tamamında istikrarı elden bırakmayanlarındır."},
@@ -611,14 +591,6 @@
             if (index === 2) {
                 okumaGecmisiniGetir(ogrenciAdi);
             }
-        }
-
-        function oyunModaliniAc() {
-            document.getElementById('gameModalOverlay').style.display = 'flex';
-        }
-
-        function oyunModaliniKapat() {
-            document.getElementById('gameModalOverlay').style.display = 'none';
         }
 
         function yeniMetinUretBaslat() {
