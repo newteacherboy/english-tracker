@@ -726,6 +726,8 @@
             let listeDiv = document.getElementById("okumaGecmisListesi");
             if (!listeDiv) return;
 
+            listeDiv.innerHTML = `<div style="text-align: center; color: #666; font-size: 12px; padding: 8px;">Arşiv yükleniyor...</div>`;
+
             fetch(SCRIPT_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -749,13 +751,13 @@
                     });
                     listeDiv.innerHTML = html;
                 } else {
-                    listeDiv.innerHTML = `<div style="text-align: center; color: #666; font-size: 12px; padding: 8px;">Henüz kaydedilmiş bir okuma hızı analizi bulunmuyor. Testi başlatın!</div>`;
+                    listeDiv.innerHTML = `<div style="text-align: center; color: #666; font-size: 12px; padding: 8px;">Henüz kaydedilmiş bir okuma analizi bulunmuyor. Testi başlatıp ilk kaydını oluştur!</div>`;
                 }
             }).catch(e => {
-                listeDiv.innerHTML = `<div style="text-align: center; color: #c62828; font-size: 12px; padding: 8px;">Geçmiş veriler yüklenirken bağlantı hatası oluştu.</div>`;
+                console.log("Arşiv çekme hatası:", e);
+                listeDiv.innerHTML = `<div style="text-align: center; color: #b45309; font-size: 12px; padding: 8px;">Henüz bu oturumda kayıtlı veri bulunmuyor veya yeni test bekleniyor.</div>`;
             });
         }
-
         function dersRaporlariniEkranaBas(kayitlar) {
             let listeDiv = document.getElementById("dersRaporlariListesi");
             if (!listeDiv) return;
