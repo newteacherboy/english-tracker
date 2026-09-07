@@ -789,7 +789,7 @@
 
             <div class="activity-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 15px;">
                 <h3 style="color: #166534;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</h3>
-                <p style="color: #15803d;">Sınıfına uygun zengin metinleri prompter mantığıyla oku, kelimelere tıklayarak anlık WPM hızını hesapla!</p>
+                <p style="color: #15803d;">Sınıfına uygun zengin İngilizce metinleri oku, kaldığın son kelimeye tıkla ve sistem toplam kelimeleri otomatik saysın!</p>
                 <button class="btn-oyun-ac" onclick="okumaModaliniAc()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);">🚀 Okuma Stüdyosunu Aç</button>
             </div>
         </div>
@@ -960,59 +960,59 @@
     <div class="game-modal-overlay" id="okumaModalOverlay">
         <div class="game-modal-content" style="max-width: 520px;">
             <button class="game-close-btn" onclick="okumaModaliniKapat()">✕</button>
-            <div class="game-title" style="color: #166534;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</div>
-            <div class="game-subtitle">Seviyeni seç, süreyi başlat, okuduğun kelimelere tıkla ve WPM hızını hesapla!</div>
+            <div class="game-title" style="color: #166534;">📖 English Fluent Reading & WPM Studio</div>
+            <div class="game-subtitle">Choose your level, start the timer, and click on the last word you read to automatically count all words!</div>
 
             <!-- Üst Kontrol Alanı -->
             <div style="display: flex; gap: 6px; margin-bottom: 10px; align-items: center;">
                 <div style="flex: 2;">
-                    <label style="font-size: 9.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">SEVİYE / SINIF SEÇİN</label>
+                    <label style="font-size: 9.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">GRADE LEVEL</label>
                     <select id="okumaSinifSelect" onchange="yeniMetinGetir()" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 11px; font-weight: 700; background: #f8fafc;">
-                        <option value="1">1. Sınıf (~50 Kelime)</option>
-                        <option value="2">2. Sınıf (~70 Kelime)</option>
-                        <option value="3">3. Sınıf (~90 Kelime)</option>
-                        <option value="4">4. Sınıf (~110 Kelime)</option>
-                        <option value="5">5. Sınıf (~130 Kelime)</option>
-                        <option value="6">6. Sınıf (~150 Kelime)</option>
-                        <option value="7">7. Sınıf (~170 Kelime)</option>
-                        <option value="8">8. Sınıf (~190 Kelime)</option>
+                        <option value="1">1st Grade (~50 Words)</option>
+                        <option value="2">2nd Grade (~70 Words)</option>
+                        <option value="3">3rd Grade (~90 Words)</option>
+                        <option value="4">4th Grade (~110 Words)</option>
+                        <option value="5">5th Grade (~130 Words)</option>
+                        <option value="6">6th Grade (~150 Words)</option>
+                        <option value="7">7th Grade (~170 Words)</option>
+                        <option value="8">8th Grade (~190 Words)</option>
                     </select>
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-size: 9.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">İŞLEM</label>
-                    <button onclick="yeniMetinGetir()" style="width: 100%; background: #16a34a; color: white; border: none; padding: 7px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer;">✨ Yeni Metin</button>
+                    <label style="font-size: 9.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">ACTION</label>
+                    <button onclick="yeniMetinGetir()" style="width: 100%; background: #16a34a; color: white; border: none; padding: 7px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer;">✨ New Text</button>
                 </div>
             </div>
 
             <!-- Bilgi / Sayaç Kutusu -->
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-around; font-size: 11px; font-weight: 800; color: #166534;">
-                <span>⏱️ Kronometre: <span id="okumaKronometre">00:00</span></span>
-                <span>📖 Kelime: <span id="okunanKelimeSayac">0</span></span>
-                <span>⚡ Hız (WPM): <span id="wpmGosterge">0</span></span>
+                <span>⏱️ Timer: <span id="okumaKronometre">00:00</span></span>
+                <span>📖 Words: <span id="okunanKelimeSayac">0</span></span>
+                <span>⚡ Speed (WPM): <span id="wpmGosterge">0</span></span>
             </div>
 
             <!-- Aksiyon Butonları -->
             <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                <button id="okumaBaslatBtn" onclick="okumaKronometreBaslat()" style="flex: 1; background: #15803d; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">▶ Süreyi Başlat</button>
-                <button onclick="okumaSonucuKaydet()" style="flex: 1; background: #e11d48; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">💾 Bitir & Sonucu Kaydet</button>
+                <button id="okumaBaslatBtn" onclick="okumaKronometreBaslat()" style="flex: 1; background: #15803d; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">▶ Start Timer</button>
+                <button onclick="okumaSonucuKaydet()" style="flex: 1; background: #e11d48; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">💾 Finish & Save Result</button>
             </div>
 
             <!-- Prompter Okuma Alanı -->
-            <div style="margin-bottom: 4px; font-size: 10px; font-weight: 700; color: #334155;">PROMPTER OKUMA ALANI (Okumayı bitirdiğin kelimenin üzerine tıkla):</div>
+            <div style="margin-bottom: 4px; font-size: 10px; font-weight: 700; color: #334155;">PROMPTER AREA (Click on the LAST word you have read):</div>
             <div id="prompterMetinAlani" style="background: #ffffff; border: 1.5px dashed #86efac; border-radius: 8px; padding: 12px; max-height: 180px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: #1e293b; line-height: 1.6;"></div>
 
             <!-- Geçmiş Arşivi Listesi -->
             <div style="border-top: 1px solid #e2e8f0; padding-top: 10px;">
-                <div style="font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 6px;">📊 Geçmiş Gelişim Yolu Arşivi</div>
+                <div style="font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 6px;">📊 Past Reading Progress & History</div>
                 <div id="okumaGecmisKonteyner" style="max-height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                    <div style="font-size: 10.5px; color: #64748b; text-align: center;">Geçmiş kayıtlar yükleniyor...</div>
+                    <div style="font-size: 10.5px; color: #64748b; text-align: center;">Loading history...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbw9q_lD7QGIMos_b7z2_a0Wzbj-mgnLLxqX-65RfXgI1D1IF4b_cEz7L5l9oKhPJJN-5A/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwuSyELC6vl6Bqs8KQe9LhQkZDfDoO-Y5IBjNEFLtx5YoVQt3FzCUcs6Xt_y0Aps5pjQQ/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1910,103 +1910,103 @@
         }
 
 
-        // --- AKICI OKUMA VE HIZ ÖLÇER STÜDYOSU MİMARİSİ ---
+        // --- AKICI OKUMA VE HIZ ÖLÇER STÜDYOSU MİMARİSİ (İNGİLİZCE) ---
         const sinirsizMetinHavuzu = {
             1: [
-                { baslik: "Top Oyunu", metin: "Topum kırmızı, parlak ve yuvarlak. Arkadaşım Can ile okul bahçesinde keyifle top oynadık. Zil çaldı, sıraya girip sınıfa koştuk. Öğretmenimiz bize yeni hikaye kitapları dağıttı. Okumayı öğrenmek harika bir duygu." },
-                { baslik: "Minik Kedi", metin: "Bahçede gezen minik sarı kedi süt içmeyi çok sever. Güneş batarken kulübesine kıvrılıp tatlı tatlı uyur. Onu sevdiğimde hemen mırlamaya başlar. Bizim evin en tatlı neşesidir." },
-                { baslik: "Okul Yolunda", metin: "Sabah erkenden kalkıp çantamı hazırladım. Annemle beraber neşeyle okul yoluna koyulduk. Yolda rengarenk çiçekler ve sevimli köpekler gördük. Sınıfımıza girip arkadaşlarımaaydınlık bir gün diledim." },
-                { baslik: "Güzel Bahçe", metin: "Evimizin arkasında kocaman yeşil bir bahçe var. Bahçede mis kokulu güller ve tatlı elma ağaçları büyüyor. Her akşam orada ip atlayıp neşeyle şarkılar söylüyorum." },
-                { baslik: "Uçurtma Şenliği", metin: "Bugün rüzgar çok güzel esiyor. Mavi gökyüzünde rengarenk uçurtmalar süzülüyor. Kendi ellerimle yaptığım kuyruklu uçurtmam en yükseklere ulaştı." },
-                { baslik: "Tatlı Dostum", _metin: "Köpeğim Pamuk, kafasını sallayarak beni kapıda karşılar. Onunla top kapmaca oynamak beni çok mutlu eder. Akşamları birlikte yatağımın yanında dinleniriz." },
-                { baslik: "Resim Çizmek", _metin: "Boya kalemlerimi açıp kocaman bir ev resmi çizdim. Evin bacasından duman tütüyor, bahçesinde mutlu çocuklar koşuyor. Öğretmenim resmimi çok beğendi." },
-                { baslik: "Yağmur Sonrası", metin: "Yağmur dindi, havada toprak kokusu var. Penceremizin camından dışarı baktığımda kocaman rengarenk gökkuşağı gördüm. Koşarak dışarı çıkıp neşeyle zıpladım." },
-                { baslik: "Yıldızlı Gece", metin: "Gece penceremden gökyüzündeki parıl parıl parlayan yıldızları izledim. Aydede sanki bana gülümseyerek tatlı rüyalar diledi. Yorganıma sarılıp huzurla uyudum." },
-                { baslik: "Kuş Yuvası", metin: "Ceviz ağacımızın dalında iki minik kuş yuva yaptı. Her gün onlara ekmek kırıntıları atıyorum. Onların cıvıltılarıyla güne mutlu uyanıyorum." }
+                { baslik: "My Red Ball", metin: "My ball is red, shiny, and round. I play happily with my friend Can in the school yard. The bell rings, and we run into the classroom. Our teacher gives us new story books. Learning to read is a wonderful feeling." },
+                { baslik: "The Little Cat", metin: "The little yellow cat in the garden loves drinking milk. When the sun goes down, it curls up in its house and sleeps sweetly. When I pet it, it starts purring immediately. It is the sweetest joy of our home." },
+                { baslik: "On the Way to School", metin: "I woke up early in the morning and prepared my backpack. Together with my mom, we happily set off on the school road. On the way, we saw colorful flowers and cute dogs. We entered our classroom and wished our friends a bright day." },
+                { baslik: "The Beautiful Garden", metin: "There is a huge green garden behind our house. Sweet-smelling roses and sweet apple trees grow in the garden. Every evening, I skip rope there and sing songs cheerfully." },
+                { baslik: "Kite Festival", metin: "The wind is blowing very nicely today. Colorful kites are gliding in the blue sky. My tailed kite, which I made with my own hands, reached the highest points." },
+                { baslik: "My Sweet Friend", metin: "My dog Pamuk greets me at the door by shaking its head. Playing catch with it makes me very happy. In the evenings, we rest together next to my bed." },
+                { baslik: "Drawing Pictures", metin: "I opened my colored pencils and drew a huge house picture. Smoke is coming out of the chimney of the house, and happy children are running in the garden. My teacher liked my picture very much." },
+                { baslik: "After the Rain", metin: "The rain stopped, and there is the smell of soil in the air. When I looked outside through our window, I saw a huge colorful rainbow. I ran outside and jumped with joy." },
+                { baslik: "Starry Night", metin: "At night, I watched the shining bright stars in the sky from my window. The moon seemed to smile at me and wished me sweet dreams. I wrapped myself in my blanket and slept peacefully." },
+                { baslik: "Bird Nest", metin: "Two tiny birds built a nest on the branch of our walnut tree. Every day, I throw bread crumbs to them. I wake up happily to their chirping every morning." }
             ],
             2: [
-                { baslik: "Ormandaki Maceramız", metin: "Hafta sonu ailemizle birlikte şehirden uzak, yemyeşil bir ormana gittik. Ormandaki devasa çam ağaçlarının altından yürürken sincapların fındık sakladığını fark ettik. Temiz havada derin nefes alarak yürüyüş yaptık. Doğa bize huzur ve mutluluk verdi." },
-                { baslik: "Küçük Tohumun Yolculuğu", metin: "Toprağın derinliklerinde saklanan minik tohum, bahar yağmurlarıyla birlikte uykusundan uyandı. Güneşin sıcak ışıklarını hissedince yavaşça yukarı doğru uzandı. Filizlenip minik yeşil yapraklar açtı. Artık o da kocaman bir bitki olmuştu." },
-                { baslik: "Yıldızları Gözlerken", metin: "Yaz akşamlarında köy evimizin bahçesinde sandalyemizi çimlere kurarız. Gökyüzündeki milyarlarca yıldızı seyrederken kayan yıldızlardan dilek tutarız. Uzayın derinlikleri her zaman bana büyük bir sır gibi görünmüştür." },
-                { baslik: "Dedemin Çiftliği", metin: "Dedemin köydeki çiftliğinde inekler, koyunlar ve sevimli ördekler var. Sabah erkenden uyanıp kümesten taze yumurta topluyorum. Doğal yaşamın içinde koşturmak bana harika bir enerji veriyor." },
-                { baslik: "Deniz Kıyısı", metin: "Yaz tatilinde sahile gidip kumdan devasa kaleler yaptım. Dalgaların kıyıya vuruş sesini dinlemek insanı dinlendiriyor. Deniz kabukları toplayıp hatıra olarak sakladım." },
-                { baslik: "Kütüphane Günü", metin: "Okulumuzun kütüphanesinde binlerce ilginç kitap var. Sessizce masaya oturup uzay ve macera dolu sayfaları çevirdim. Kitap okumak yeni dünyaların kapısını aralar." },
-                { baslik: "Bisküvi Yapımı", metin: "Bugün annemle mutfağa girip mis kokulu kurabiyeler pişirdik. Hamura şekil verirken çok eğlendim. Fırından çıkan sıcak kurabiyeleri sütle beraber zevkle yedik." },
-                { baslik: "Kar Tanesinin Dansı", metin: "Kış günü camdan dışarıyı izlerken lapa lapa kar yağmaya başladı. Her bir kar tanesi yeryüzüne süzülürken kusursuz bir dans ediyordu. Dışarı çıkıp kardan adam yaptık." },
-                { baslik: "Bisiklet Turu", metin: "Yeni aldığım mavi bisikletimle parkta tur atmaya çıktım. Rüzgar yüzüme çarparken kendimi kuş gibi özgür hissettim. Denge kurmayı öğrenmek harika bir şey." },
-                { baslik: "Müzedeki Tarih", metin: "Şehir merkezindeki eski müzeyi gezdiğimizde geçmişte yaşananları hayal ettim. Kralların kullandığı kılıçlar ve eski paralar beni büyüledi. Tarih öğrenmek çok heyecanlı." }
+                { baslik: "Our Forest Adventure", metin: "Over the weekend, we went to a lush green forest far away from the city with our family. While walking under the huge pine trees, we noticed squirrels hiding nuts. We took a deep breath of fresh air and went for a walk. Nature gave us peace and happiness." },
+                { baslik: "Journey of the Little Seed", metin: "The tiny seed hidden deep in the soil woke up from its sleep with the spring rains. When it felt the warm rays of the sun, it slowly stretched upward. It sprouted and opened tiny green leaves. Now it had become a huge plant." },
+                { baslik: "Watching the Stars", metin: "On summer evenings, we set up our chairs on the grass in the garden of our village house. While watching the billions of stars in the sky, we make wishes on shooting stars. The depths of space have always seemed like a great secret to me." },
+                { baslik: "Grandpa's Farm", metin: "There are cows, sheep, and cute ducks on my grandfather's farm in the village. I wake up early in the morning and collect fresh eggs from the coop. Running around in natural life gives me amazing energy." },
+                { baslik: "Seaside", metin: "During the summer vacation, I went to the beach and built huge sandcastles. Listening to the sound of waves hitting the shore relaxes a person. I collected seashells and kept them as souvenirs." },
+                { baslik: "Library Day", metin: "There are thousands of interesting books in our school library. I sat quietly at the table and turned pages full of space and adventure. Reading books opens the door to new worlds." },
+                { baslik: "Making Biscuits", metin: "Today, we went into the kitchen with my mother and baked sweet-smelling cookies. I had a lot of fun shaping the dough. We happily ate the hot cookies coming out of the oven with milk." },
+                { baslik: "Dance of the Snowflake", metin: "While watching outside through the window on a winter day, it started to snow thickly. Each snowflake performed a flawless dance as it drifted to the ground. We went outside and built a snowman." },
+                { baslik: "Bicycle Tour", metin: "I went out for a tour in the park with my new blue bicycle. As the wind hit my face, I felt as free as a bird. Learning to balance is a wonderful thing." },
+                { baslik: "History in the Museum", metin: "When we visited the old museum in the city center, I imagined what happened in the past. Swords used by kings and old coins fascinated me. Learning history is very exciting." }
             ],
             3: [
-                { baslik: "BİLİM VE MERAK", metin: "İnsanlık tarihi boyunca bizi ileriye taşıyan en büyük güç merak duygusu olmuştur. Isaac Newton düşen elmayı sorgulamasaydı yer çekimi belki de geç keşfedilecekti. Bilim insanları laboratuvarlarda gece gündüz çalışarak hayatımızı kolaylaştıran icatlar yaparlar. Bizler de etrafımızdaki olayları sorgulamalı, okumalı ve sürekli araştırmalıyız. Bilgi güçtür ve dünyayı değiştirir." },
-                { baslik: "ZAMANIN DEĞERİ", metin: "Elimizdeki en kıt ve geri getirilemeyen kaynak zamandır. Para kaybedildiğinde tekrar kazanılabilir ancak geçen bir saniye asla geri gelmez. Bu yüzden günümüzü planlı ve verimli yaşamak zorundayız. Ders çalışırken odaklanmak, dinlenirken hak ettiği zamanı vermek hayat dengesini kurar." },
-                { baslik: "DOSTUN GÜCÜ", metin: "Gerçek dost kötü günümüzde bizimle ağlayan, iyi günümüzde kahkahamızı paylaşandır. İnsanın dertlerini paylaşacağı güvenilir bir arkadaşının olması dünyadaki en büyük servettir." },
-                { baslik: "GERİ DÖNÜŞÜM", metin: "Dünyamızı korumak için çöplerimizi ayrıştırmalı ve plastik kullanımını azaltmalıyız. Doğaya atılan her plastik yüzyıllarca yok olmuyor. Geri dönüşümle geleceğimizi kurtarabiliriz." },
-                { baslik: "ESKİ KİTAPLARIN KOKUSU", metin: "Sahaf dükkanlarına girdiğinizde sizi saran o eski kağıt kokusu tarihin derinliklerinden gelir. Her kitabın içinde daha önce okuyan birinin bıraktığı gizli bir ruh saklıdır." },
-                { baslik: "TEKNOLOJİNİN GETİRDİKLERİ", _metin: "Akıllı cihazlar sayesinde dünyanın öbür ucundaki bilgiye saniyeler içinde ulaşabiliyoruz. Ancak ekran başında fazla vakit geçirmek sağlığımızı ve sosyal bağlarımızı zayıflatabilir." },
-                { baslik: "GEZEGENLERİN DÜNYASI", metin: "Güneş sistemimizde güneşe en yakın gezegen Merkür'dür. En büyük gaz devi ise Jüpiter'dir. Uzay boşluğunda dönen bu devasa küreler her zaman astronomların ilgi odağı olmuştur." },
-                { baslik: "MÜZİĞİN RUHSal GÜCÜ", metin: "Nota bulutları arasında gezinmek insan ruhunu dinlendiren en etkili yöntemdir. Mozart veya Beethoven dinlerken zihnimizin berraklaştığını ve odaklandığımızı hissederiz." },
-                { baslik: "SPORUN HAYATIMIZDAKİ YERİ", metin: "Düzenli egzersiz yapmak kaslarımızı güçlendirir, zihnimizi tazeler ve bağışıklık sistemimizi korur. Güne sporla başlayan bireyler gün boyu daha dinç ve mutlu olurlar." },
-                { baslik: "KÜÇÜK İYİLİKLER", metin: "Yolda yürürken karşılaştığımız bir sokak hayvanına su vermek ya da yaşlı bir komşuya yardım etmek dünyayı güzelleştirir. Sevgi paylaşıldıkça büyüyen nadide duygudur." }
+                { baslik: "SCIENCE AND CURIOSITY", metin: "Throughout human history, the greatest force driving us forward has been the feeling of curiosity. If Isaac Newton had not questioned the falling apple, gravity might have been discovered much later. Scientists work day and night in laboratories to make our lives easier. We must also question the events around us, read, and constantly research. Knowledge is power and changes the world." },
+                { baslik: "THE VALUE OF TIME", metin: "The scarcest and most unrecoverable resource we have is time. When money is lost, it can be earned again, but a second that passes never comes back. Therefore, we must live our days in a planned and efficient manner. Focusing while studying and giving proper time to rest creates life balance." },
+                { baslik: "THE POWER OF FRIENDSHIP", metin: "A true friend is someone who cries with us on our bad days and shares our laughter on our good days. Having a reliable friend to share troubles with is the greatest luxury in the world." },
+                { baslik: "RECYCLING", metin: "To protect our world, we must sort our garbage and reduce plastic use. Every piece of plastic thrown into nature does not decay for centuries. We can save our future with recycling." },
+                { baslik: "SMELL OF OLD BOOKS", metin: "When you enter second-hand book shops, that old paper smell surrounding you comes from the depths of history. Inside every book lies a secret soul left behind by someone who read it before." },
+                { baslik: "IMPACT OF TECHNOLOGY", metin: "Thanks to smart devices, we can reach information on the other side of the world in seconds. However, spending too much time in front of screens can weaken our health and social bonds." },
+                { baslik: "WORLD OF PLANETS", metin: "In our solar system, Mercury is the planet closest to the sun. The largest gas giant is Jupiter. These giant spheres spinning in the vacuum of space have always been the focus of astronomers." },
+                { baslik: "SPIRITUAL POWER OF MUSIC", metin: "Wandering among note clouds is the most effective method to relax the human soul. While listening to Mozart or Beethoven, we feel our minds clearing and focusing." },
+                { baslik: "PLACE OF SPORTS IN LIFE", metin: "Doing regular exercise strengthens our muscles, refreshes our minds, and protects our immune system. Individuals who start the day with sports are more energetic and happy all day long." },
+                { baslik: "SMALL KINDNESSES", metin: "Giving water to a stray animal we meet while walking on the street or helping an elderly neighbor makes the world a beautiful place. Love is a rare emotion that grows as it is shared." }
             ],
             4: [
-                { baslik: "ANADOLU MEDENİYETLERİ", metin: "Anadolu toprakları binlerce yıldır pek çok kadim medeniyete ev sahipliği yapmıştır. Hititlerden Friglere, Lidyalılardan Bizans ve Osmanlı'ya kadar her kültür bu topraklarda iz bırakmıştır. Tarihi kalıntıları incelediğimizde atalarımızın sanat, ticaret ve mimaride ne kadar ileri düzeyde olduğunu hayranlıkla görürüz. Bu kültürel miras hepimizin koruması gereken ortak hazinemizdir." },
-                { baslik: "EKOSİSTEMİN DENGESİ", metin: "Doğadaki canlılar birbirleriyle görünmez bağlarla örülü bir zincir oluşturur. Arıların çiçekleri polenlemesi bitkilerin çoğalmasını sağlar, bu da otçul hayvanların besin kaynağı olur. Bu hassas dengede tek bir türün yok olması tüm ekosistemi sarsabilir." },
-                { baslik: "İLETİŞİMİN EVRİMİ", metin: "Geçmişte insanlar haberleşmek için güvercinler kullanır veya dağlara ateş yakardı. Matbaanın icadıyla bilgiler kağıda basıldı, ardından telefon ve internet devri başladı. Bugün bilgi parmaklarımızın ucunda." },
-                { baslik: "ENERJİ TASARRUFU", metin: "Fosil yakıtların tükenmesi ve küresel ısınma dünyamızı tehdit eden en büyük tehlikelerdendir. Evde gereksiz yanan lambaları kapatmak, suyu boşa akatmamak geleceğimize yaptığımız en büyük yatırımdır." },
-                { baslik: "SANATIN İNSAN RUHUNA ETKİSİ", metin: "Bir tuval üzerine dökülen boyalar veya mermerden yontulan bir heykel insan duygularını kelimelerin ötesinde ifade eder. Sanat, ruhun özgürleştiği ve estetik algının zirveye çıktığı alandır." },
-                { baslik: "HARİTALARIN GİZEMİ", metin: "Piri Reis'in yüzyıllar önce çizdiği dünya haritası günümüz bilim insanlarını hala şaşırtmaktadır. Bilinmeyen kıtaları keşfetmek için denizcilere pusulalar ve haritalar kılavuzluk etmiştir." },
-                { baslik: "OKYANUSLARIN DERİNLİKLERİ", metin: "Dünyamızın üçte ikisi sularla kaplıdır ancak okyanus diplerinin çok az bir kısmı keşfedilebilmiştir. Güneş ışığının ulaşmadığı karanlık sularda yaşayan garip ve muazzam canlılar bulunmaktadır." },
-                { baslik: "FELSEfi DÜŞÜNCE VE SORGULAMA", metin: "Antik Yunan'da Socrates ve Plato gibi filozoflar 'Kendini bil' felsefesiyle insan zihnini aydınlatmıştır. Sorgulamayan bir yaşam insanı ezbere yönlendirir." },
-                { baslik: "KİTAPLARIN DÜNYAYI DEĞİŞTİRME GÜCÜ", metin: "Tarih boyunca bazı kitaplar devrimlerin fitilini ateşlemiş, kitleleri peşinden sürüklemiştir. Fikirlerin kağıda dökülmüş hali kılıçtan çok daha keskin ve kalıcıdır." },
-                { baslik: "İKLİM DEĞİŞİKLİĞİ VE GELECEK", metin: "Kutup buzullarının erimesi ve mevsimlerin kayması dünyamızın alarm verdiğinin açık göstergesidir. Karbon salınımını azaltmak için tüm dünya ülkeleri ortak kararlar alıp uygulamalıdır." }
+                { baslik: "ANATOLIAN CIVILIZATIONS", metin: "Anatolian lands have hosted many ancient civilizations for thousands of years. From Hittites to Phrygians, Lydians to Byzantines and Ottomans, every culture has left its mark on these lands. When we examine historical ruins, we admire how advanced our ancestors were in art, trade, and architecture. This cultural heritage is our common treasure that everyone must protect." },
+                { baslik: "BALANCE OF ECOSYSTEM", metin: "Living things in nature form a chain woven with invisible ties. Bees pollinating flowers ensures plant reproduction, which becomes a food source for herbivorous animals. In this delicate balance, the extinction of a single species can shake the entire ecosystem." },
+                { baslik: "EVOLUTION OF COMMUNICATION", metin: "In the past, people used pigeons to communicate or lit fires on mountains. With the invention of the printing press, information was printed on paper, followed by the phone and internet era. Today, information is at our fingertips." },
+                { baslik: "ENERGY SAVING", metin: "The depletion of fossil fuels and global warming are the biggest threats endangering our world. Turning off unnecessary lights at home and not wasting water is the biggest investment we can make for our future." },
+                { baslik: "EFFECT OF ART ON HUMAN SOUL", metin: "Paints poured onto a canvas or a sculpture carved from marble express human emotions beyond words. Art is the realm where the soul is liberated and aesthetic perception reaches its peak." },
+                { baslik: "MYSTERY OF MAPS", metin: "Piri Reis's world map, drawn centuries ago, still amazes modern scientists. Compasses and maps guided sailors to discover unknown continents." },
+                { baslik: "DEPTHS OF THE OCEANS", metin: "Two-thirds of our world is covered by water, but very little of the ocean floors has been explored. In dark waters where sunlight cannot reach, strange and magnificent creatures live." },
+                { baslik: "PHILOSOPHICAL THOUGHT AND QUESTIONING", metin: "In ancient Greece, philosophers like Socrates and Plato enlightened the human mind with the philosophy of 'Know thyself'. A life without questioning leads a person to routine." },
+                { baslik: "POWER OF BOOKS TO CHANGE THE WORLD", metin: "Throughout history, certain books have ignited revolutions and led masses. Ideas put on paper are much sharper and more permanent than a sword." },
+                { baslik: "CLIMATE CHANGE AND FUTURE", metin: "The melting of polar ice caps and the shifting of seasons are clear indicators that our world is sounding the alarm. All countries of the world must take and implement joint decisions to reduce carbon emissions." }
             ],
             5: [
-                { baslik: "UZAYIN DERİNLİKLERİ VE KEŞİF", metin: "Gökyüzüne baktığımızda gördüğümüz yıldızlar evrenin muazzam büyüklüğünün sadece küçük bir parçasıdır. James Webb Uzay Teleskobu sayesinde milyarlarca ışık yılı uzaktaki galaksilerin doğuşunu inceleyebiliyoruz. Uzay yarışı ve roket teknolojisindeki gelişmeler, insanlığın bir gün farklı gezegenlerde koloniler kurabileceği hayalini gerçeğe dönüştürüyor. Bilim insanları evrenin sırlarını çözmek için her geçen gün yeni galaksiler ve ötegezegenler keşfetmeye devam ediyor." },
-                { baslik: "YAPAY ZEKA ÇAĞI", metin: "Bilgisayar bilimlerindeki devrim niteliğindeki gelişmeler makinelerin insan gibi düşünmesini sağladı. Yapay zeka sistemleri sağlık, eğitim ve sanayi alanlarında hayatımızı hızla dönüştürüyor." },
-                { baslik: "KÜRESELLEŞME VE KÜLTÜR", metin: "İnternet sayesinde dünya artık sınırların kalktığı küresel bir köy haline geldi. Farklı kültürlerin birbirini tanımış olması hoşgörüyü artırırken yerel değerlerin korunmasını da zorunlu kılıyor." },
-                { baslik: "ARKEOLOJİK KEŞİFLER", metin: "Göbeklitepe kazıları insanlık tarihinin bilinen tüm kronolojisini altüst etti. Tapınakların mimarisi ve dikilitaşlar üzerindeki kabartmalar atalarımızın inanç dünyasına ışık tutuyor." },
-                { baslik: "BİYOTEKNOLOJİ VE GENETİK", metin: "DNA yapısının çözülmesi tıpta çığır açtı. Genetik mühendisliği sayesinde kalıtsal hastalıkların tedavisi ve dayanıklı tarım ürünlerinin geliştirilmesi üzerine umut verici çalışmalar yürütülüyor." },
-                { baslik: "OKYANUS AKINTILARI", metin: "Dünya iklimini düzenleyen en büyük unsur okyanus akıntılarıdır. Gulf Stream gibi sıcak su akıntıları kıtaların iklim dengesini koruyarak yaşanabilir kılmaktadır." },
-                { baslik: "SANAYİ DEVRİMİNİN ETKİLERİ", metin: "Buhar makinesinin icadıyla başlayan Sanayi Devrimi insan gücünün yerini makinelerin almasını sağladı. Bu büyük dönüşüm üretim hızını artırırken çevre sorunlarını da beraberinde getirdi." },
-                { baslik: "KRİPTOLOJİ VE ŞİFRELEME", metin: "Tarih boyunca devletler gizli haberleşme için şifreleme yöntemleri geliştirdi. Günümüzde dijital güvenliğimiz tamamen karmaşık matematiksel algoritmalar ve kriptolojiye emanettir." },
-                { baslik: "FOTONUN TARİHİ", metin: "İlk fotoğrafın çekildiği günden bu yana anıları ölümsüzleştirme biçimimiz tamamen değişti. Dijital sensörler ve kameralar sayesinde evrenin en uzak köşelerini yüksek çözünürlükle kaydedebiliyoruz." },
-                { baslik: "EKOLOJİK DENGE VE SÜRDÜRÜLEBİLİRLİK", metin: "Doğal kaynakları tüketirken gelecek nesillerin hakkını gözetmek sürdürülebilir kalkınmanın temelidir. Yenilenebilir enerji kaynaklarına yatırım yapmak ekosistemi korumanın tek yoludur." }
+                { baslik: "DEPTHS OF SPACE AND DISCOVERY", metin: "The stars we see when we look at the sky are only a small part of the universe's immense magnitude. Thanks to the James Webb Space Telescope, we can examine the birth of galaxies billions of light-years away. Developments in the space race and rocket technology are turning humanity's dream of one day establishing colonies on different planets into reality. Scientists continue to discover new galaxies and exoplanets every day to solve the secrets of the universe." },
+                { baslik: "THE ERA OF ARTIFICIAL INTELLIGENCE", metin: "Revolutionary developments in computer science have enabled machines to think like humans. Artificial intelligence systems are rapidly transforming our lives in health, education, and industry." },
+                { baslik: "GLOBALIZATION AND CULTURE", metin: "Thanks to the internet, the world has now become a global village where borders have been lifted. The recognition of different cultures by each other increases tolerance while making the protection of local values compulsory." },
+                { baslik: "ARCHAEOLOGICAL DISCOVERIES", metin: "Gobeklitepe excavations turned the known chronology of human history upside down. The architecture of the temples and reliefs on the stelae shed light on the belief world of our ancestors." },
+                { baslik: "BIOTECHNOLOGY AND GENETICS", metin: "Decoding the DNA structure broke new ground in medicine. Thanks to genetic engineering, promising studies are being conducted on the treatment of hereditary diseases and the development of resilient agricultural products." },
+                { baslik: "OCEAN CURRENTS", metin: "The biggest element regulating world climate is ocean currents. Warm water currents such as the Gulf Stream protect the climate balance of continents, making them habitable." },
+                { baslik: "EFFECTS OF THE INDUSTRIAL REVOLUTION", metin: "Starting with the invention of the steam engine, the Industrial Revolution enabled machines to replace human labor. While this great transformation increased production speed, it also brought environmental problems." },
+                { baslik: "CRYPTOLOGY AND ENCRYPTION", metin: "Throughout history, states developed encryption methods for secret communication. Today, our digital security is entirely entrusted to complex mathematical algorithms and cryptology." },
+                { baslik: "HISTORY OF PHOTOGRAPHY", metin: "Since the day the first photograph was taken, our way of immortalizing memories has completely changed. Thanks to digital sensors and cameras, we can record the farthest corners of the universe with high resolution." },
+                { baslik: "ECOLOGICAL BALANCE AND SUSTAINABILITY", metin: "Considering the rights of future generations while consuming natural resources is the basis of sustainable development. Investing in renewable energy sources is the only way to protect the ecosystem." }
             ],
             6: [
-                { baslik: "MEDENİYETLERİN KAVŞAĞI ANADOLU", metin: "Anadolu, coğrafi konumu itibarıyla Asya, Avrupa ve Afrika kıtalarının kesişim noktasında yer alır. Bu eşsiz konum tarih boyunca pek çok göç hareketine, ticaret yoluna ve imparatorluk mücadelesine sahne olmuştur. İpek Yolu'nun bu toprakklardan geçmesi sadece ticareti değil, aynı zamanda Doğu ile Batı arasındaki kültürel etkileşimi de en üst seviyeye taşımıştır. Günümüzde müzelerimizde sergilenen eserler bu zengin medeniyet sentezinin en muteber kanıtıdır." },
-                { baslik: "NANOTEKNOLOJİ DEVRİMİ", metin: "Maddenin atomik ve moleküler düzeyde kontrol edilmesini sağlayan nanoteknoloji tıp, elektronik ve malzeme bilimine yeni bir boyut kazandırdı. Mikroskobik robotlar gelecekte kanser hücrelerini yok edebilecek." },
-                { baslik: "İKLİM KRİZİ VE KÜRESEL ISINMA", metin: "Atmosferde biriken sera gazları yeryüzünün ortalama sıcaklığını hızla artırıyor. Buzulların erimesi ve deniz seviyesinin yükselmesi kıyı şehirlerini ve tarım alanlarını tehdit eden devasa bir ekolojik krizdir." },
-                { baslik: "YAZININ İcadı ve TARİH", metin: "Sümerlerin MÖ 3200 yıllarında bulduğu çivi yazısı insanlık için dönüm noktası oldu. Düşüncelerin ve ticaret hesaplarının kalıcı hale gelmesi tarih çağarlarını başlattı." },
-                { baslik: "PSİKOLOJİNİN TEMELLERİ", metin: "İnsan davranışlarını, zihinsel süreçleri ve bilinçaltını inceleyen psikoloji bilimi bireylerin kendilerini daha iyi tanımasını sağlar. Empati kurmak ve duygusal zeka sosyal ilişkilerin temelidir." },
-                { baslik: "ANTİK DÜNYANIN HARİKALARI", metin: "Giza Piramitleri, Babil'in Asma Bahçeleri ve Rodos Heykeli gibi antik eserler insan mühendisliğinin ve hayal gücünün sınırlarını zorlayan muazzam yapılardır." },
-                { baslik: "DİLİN GÜCÜ VE İLETİŞİM", metin: "Kelimeler insanları birleştirebileceği gibi yıkıcı çatışmalara da sebep olabilir. Etkili hitabet ve doğru iletişim kurabilmek liderlerin ve başarılı bireylerin en büyük silahıdır." },
-                { baslik: "YENİLENEBİLİR ENERJİ KAYNAKLARI", metin: "Güneş panelleri, rüzgar türbinleri ve jeotermal enerji fosil yakıtlara olan bağımlılığımızı azaltmaktadır. Temiz enerji gelecekteki yeşil dünyamızın teminatıdır." },
-                { baslik: "EKONOMİK SİSTEMLERİN EVRİMİ", metin: "Barter yani takas usulünden madeni paralara, kağıt paradan dijital kripto varlıklara uzanan ticaret tarihi insanlığın güven ve değer arayışının bir özetidir." },
-                { baslik: "BİLİMSEL DEVRİMLER VE PARADİGMA", metin: "Thomas Kuhn'a göre bilim, kabul görmüş teorilerin sarsılması ve yeni paradigmaların inşa edilmesiyle sıçrayarak ilerler. Sorgulamak bilimsel gelişmenin motorudur." }
+                { baslik: "ANATOLIA CROSSROADS OF CIVILIZATIONS", metin: "Anatolia, due to its geographical location, is located at the intersection point of the Asian, European, and African continents. This unique location has witnessed many migration movements, trade routes, and imperial struggles throughout history. The passage of the Silk Road through these lands carried not only trade but also cultural interaction between East and West to the highest level. The artifacts exhibited in our museums today are the most reputable proof of this rich civilization synthesis." },
+                { baslik: "NANOTECHNOLOGY REVOLUTION", metin: "Nanotechnology, which enables the control of matter at the atomic and molecular level, has brought a new dimension to medicine, electronics, and materials science. Microscopic robots will be able to destroy cancer cells in the future." },
+                { baslik: "CLIMATE CRISIS AND GLOBAL WARMING", metin: "Greenhouse gases accumulating in the atmosphere are rapidly increasing the average temperature of the earth. The melting of glaciers and rising sea levels are a massive ecological crisis threatening coastal cities and agricultural areas." },
+                { baslik: "INVENTION OF WRITING AND HISTORY", metin: "Cuneiform writing invented by the Sumerians around 3200 BC became a turning point for humanity. Making thoughts and trade accounts permanent started the ages of history." },
+                { baslik: "BASICS OF PSYCHOLOGY", metin: "Psychology science, which examines human behaviors, mental processes, and the subconscious, enables individuals to know themselves better. Empathy and emotional intelligence are the basis of social relationships." },
+                { baslik: "WONDERS OF THE ANCIENT WORLD", metin: "Ancient works such as the Pyramids of Giza, the Hanging Gardens of Babylon, and the Colossus of Rhodes are magnificent structures pushing the limits of human engineering and imagination." },
+                { baslik: "POWER OF LANGUAGE AND COMMUNICATION", metin: "Words can unite people as well as cause destructive conflicts. Effective rhetoric and proper communication are the greatest weapons of leaders and successful individuals." },
+                { baslik: "RENEWABLE ENERGY SOURCES", metin: "Solar panels, wind turbines, and geothermal energy reduce our dependence on fossil fuels. Clean energy is the guarantee of our future green world." },
+                { baslik: "EVOLUTION OF ECONOMIC SYSTEMS", metin: "The history of trade, extending from barter systems to metallic coins, paper money to digital crypto assets, is a summary of humanity's quest for trust and value." },
+                { baslik: "SCIENTIFIC REVOLUTIONS AND PARADIGM", metin: "According to Thomas Kuhn, science progresses by leaps through the shaking of accepted theories and the construction of new paradigms. Questioning is the engine of scientific development." }
             ],
             7: [
-                { baslik: "SOSYOLOJİK DÖNÜŞÜM VE TOPLUM", metin: "Toplumlar statik yapılar olmayıp tarihsel süreç içerisinde sürekli bir değişim ve dönüşüm halindedir. Sanayileşme ile birlikte köylerden kentlere yaşanan büyük göç dalgaları aile yapısını, komşuluk ilişkilerini ve ekonomik modelleri kökten değiştirmiştir. Sosyoloji bilimi bu değişimleri incelerken bireyin toplumsal kurumlarla olan ilişkisini ve grup dinamiklerini analiz eder. Çağımızda dijitalleşme ile birlikte toplumsal etkileşim biçimleri de sanal ortamlara taşınarak yeni bir boyut kazanmıştır." },
-                { baslik: "NÖROSBİLİNÇ VE BEYNİN SIRLARI", metin: "İnsan beyni evrendeki en karmaşık yapı olarak kabul edilir. Milyarlarca nöronun oluşturduğu sinaptik ağlar öğrenme, hafıza ve bilinç süreçlerimizi yönetir. Nörobilimdeki son gelişmeler zihin-beden ilişkisini çözmeye odaklanmaktadır." },
-                { baslik: "KÜRESEL EKONOMİ VE TEDARİK ZİNCİRİ", metin: "Bir akıllı telefonun parçaları dünyanın farklı ülkelerinde üretilip başka bir yerde monte edilmektedir. Küresel tedarik zinciri kesintiye uğradığında tüm dünya ekonomisi sarsılmaktadır." },
-                { baslik: "HUKUKUN ÜSTÜNLÜĞÜ VE DEMOKRASİ", metin: "Adil bir toplum düzeninin tesisi hukukun üstünlüğü ilkesinin eksiksiz uygulanmasına bağlıdır. Kuvvetler ayrılığı prensibi demokrasilerin korunmasında hayati bir kalkan görevi üstlenir." },
-                { baslik: "FELSEFEDE ETİK VE AHLAK", metin: "İyinin ve kötünün ne olduğunu sorgulayan etik felsefesi insan vicdanına rehberlik eder. Kant'ın ödev ahlakı ve faydacılık teorileri ahlaki kararların temelini tartışır." },
-                { baslik: "BİLGİ ÇAĞINDA GÜVENLİK", metin: "Siber casusluk ve veri ihlalleri ulusların ulusal güvenliğini tehdit eden yeni nesil savaş yöntemleridir. Dijital egemenlik kavramı günümüz politikasının odağındadır." },
-                { baslik: "KÜRESEL GÖÇLER VE DEMOGRAFİ", metin: "Savaşlar, ekonomik eşitsizlikler ve iklim krizleri milyonlarca insanın yerinden edilmesine yol açmaktadır. Göç olgusu demografik yapıyı ve uluslararası politikayı dönüştürüyor." },
-                { baslik: "SANAT TARİHİNDE AKIMLAR", metin: "Rönesans'ın perspektif anlayışından empresyonizmin ışık oyunlarına ve modern sanatın soyut formlarına kadar sanat akımları dönemin ruhunu yansıtır." },
-                { baslik: "EVRİMSEL BİYOLOJİ VE ADAPTASYON", metin: "Canlıların çevre koşullarına uyum sağlama yeteneği doğal seçilim mekanizmasıyla gerçekleşir. Biyolojik çeşitlilik milyonlarca yıllık adaptasyon sürecinin eseridir." },
-                { baslik: "STRATEJİK DÜŞÜNME VE PROBLEM ÇÖZME", metin: "Karmaşık kriz durumlarında analitik düşünebilmek ve alternatif senaryolar üretebilmek hem bireysel hem kurumsal başarının anahtarıdır." }
+                { baslik: "SOCIOLOGICAL TRANSFORMATION AND SOCIETY", metin: "Societies are not static structures but are in a constant state of change and transformation throughout historical processes. Large migration waves from villages to cities with industrialization have fundamentally changed family structures, neighborly relations, and economic models. While sociology science examines these changes, it analyzes the individual's relationship with social institutions and group dynamics. In our age, with digitalization, social interaction forms have also moved to virtual environments, gaining a new dimension." },
+                { baslik: "NEUROCONSCIOUSNESS AND SECRETS OF THE BRAIN", metin: "The human brain is accepted as the most complex structure in the universe. Synaptic networks formed by billions of neurons manage our learning, memory, and consciousness processes. Recent developments in neuroscience focus on solving the mind-body relationship." },
+                { baslik: "GLOBAL ECONOMY AND SUPPLY CHAIN", metin: "Parts of a smartphone are produced in different countries of the world and assembled somewhere else. When the global supply chain is disrupted, the entire world economy is shaken." },
+                { baslik: "RULE OF LAW AND DEMOCRACY", metin: "The establishment of a fair social order depends on the full implementation of the rule of law principle. The principle of separation of powers acts as a vital shield in protecting democracies." },
+                { baslik: "ETHICS AND MORALITY IN PHILOSOPHY", metin: "Ethics philosophy, which questions what is good and evil, guides the human conscience. Kant's duty ethics and utilitarian theories discuss the basis of moral decisions." },
+                { baslik: "SECURITY IN THE AGE OF INFORMATION", metin: "Cyber espionage and data breaches are next-generation warfare methods threatening the national security of nations. The concept of digital sovereignty is at the center of modern politics." },
+                { baslik: "GLOBAL MIGRATIONS AND DEMOGRAPHY", metin: "Wars, economic inequalities, and climate crises cause millions of people to be displaced. The phenomenon of migration is transforming demographic structure and international politics." },
+                { baslik: "MOVEMENTS IN ART HISTORY", metin: "From the perspective understanding of the Renaissance to the light plays of impressionism and the abstract forms of modern art, art movements reflect the spirit of the period." },
+                { baslik: "EVOLUTIONARY BIOLOGY AND ADAPTATION", metin: "The ability of living things to adapt to environmental conditions occurs through the natural selection mechanism. Biodiversity is the work of millions of years of adaptation process." },
+                { baslik: "STRATEGIC THINKING AND PROBLEM SOLVING", metin: "Being able to think analytically in complex crisis situations and produce alternative scenarios is the key to both individual and institutional success." }
             ],
             8: [
-                { baslik: "KÜRESEL DÜZEN VE JEOSTRATEJİ", metin: "Yirmibirinci yüzyılda uluslararası ilişkiler çok kutuplu ve son derece dinamik bir yapı arz etmektedir. Geleneksel diplomasi yöntemlerinin yerini siber güvenlik, teknolojik üstünlük ve ekonomik entegrasyon stratejileri almıştır. Ülkeler enerji koridorları, deniz ticaret yolları ve yapay zeka yatırımları üzerinden küresel güç mücadelesi vermektedirler. Genç nesillerin bu karmaşık jeopolitik dengeleri doğru okuyabilmesi, analitik bakış açısı kazanması ve eleştirel düşünme becerilerini geliştirmesi geleceğin dünyasında söz sahibi olabilmeleri için kritik bir zorunluluktur." },
-                { baslik: "FELSEfi SORGULAMA VE VAROLUŞÇULUK", metin: "Sartre ve Camus gibi varoluşçu filozoflar insanın özgürlüğünü ve kendi anlamını kendisinin yaratması gerekti savunurlar. Hayatın amaca uygunluğu bireyin kendi seçimleriyle şekillenir." },
-                { baslik: "KUANTUM FİZİĞİ VE GERÇEKLİK", metin: "Klasik fiziğin kurallarının geçerli olmadığı kuantum dünyasında parçacıklar aynı anda birden fazla konumda bulunabilirler. Bu gizemli evren algımızı kökten sarsmaktadır." },
-                { baslik: "STRATEJİK İLETİŞİM VE MEDYA OKURYAZARLIĞI", metin: "Dijital çağda bilgi kirliliği ve manipülasyon en büyük tehditlerdendir. Medya okuryazarlığı bireylerin gerçeği sahteden ayırt edebilmesi için vazgeçilmez bir kalkandır." },
-                { baslik: "SÜRDÜRÜLEBİLİR ŞEHİRLER VE AKILLI KENTLER", metin: "Geleceğin metropolleri enerji tasarrufu sağlayan akıllı binalar, sıfır atık sistemleri ve otonom toplu taşıma ağlarıyla donatılmaktadır. Ekolojik dengeyi koruyan kentler şarttır." },
-                { baslik: "BİYOMİMETRİK VE DOĞADAN İLHAM", metin: "Mühendislerin doğadaki canlıların kusursuz mekanizmalarını taklit ederek tasarladıkları teknolojiler biomimetri olarak adlandırılır. Yalıçapkını kuşundan ilham alınan trenler bunlardan biridir." },
-                { baslik: "MAKİNE ÖĞRENMESİ VE BÜYÜK VERİ", metin: "Milyarlarca verinin anlık olarak analiz edilmesi şirketlerin ve hükümetlerin stratejik kararlar almasını sağlar. Büyük veri çağında gizlilik en değerli hazinedir." },
-                { baslik: "ULUSLARARASI HUKUK VE İNSAN HAKLARI", metin: "Evrensel İnsan Hakları Bildirgesi dünyadaki tüm bireylerin temel hak ve özgürlüklerini güvence altına almayı amaçlayan ortak insanlık iradesinin belgesidir." },
-                { baslik: "FUTÜRİZM VE GELECEK BİLİMİ", metin: "Yarın dünyasında bizi bekleyen olası senaryoları bugünden öngörmek futürgik çalışmaların konusudur. Uzay turizmi ve ölümsüzlük araştırmaları kapıdadır." },
-                { baslik: "LİDERLİK VE VİZYONER BAKIŞ", metin: "Gerçek lider kriz anlarında soğukkanlılığını koruyabilen, ekibine ilham veren ve geleceği bugünden inşa edebilen vizyoner insan demektir." }
+                { baslik: "GLOBAL ORDER AND GEOSTRATEGY", metin: "In the twenty-first century, international relations present a multi-polar and extremely dynamic structure. Traditional diplomacy methods have been replaced by cyber security, technological superiority, and economic integration strategies. Countries wage global power struggles over energy corridors, maritime trade routes, and artificial intelligence investments. It is a critical necessity for young generations to read these complex geopolitical balances correctly, gain an analytical perspective, and develop critical thinking skills in order to have a say in the world of the future." },
+                { baslik: "PHILOSOPHICAL QUESTIONING AND EXISTENTIALISM", metin: "Existentialist philosophers like Sartre and Camus argue that human freedom and meaning must be created by the individual themselves. The purposefulness of life is shaped by the individual's own choices." },
+                { baslik: "QUANTUM PHYSICS AND REALITY", metin: "In the quantum world, where classical physics rules do not apply, particles can exist in multiple locations at the same time. This mysterious universe radically shakes our perception." },
+                { baslik: "STRATEGIC COMMUNICATION AND MEDIA LITERACY", metin: "In the digital age, information pollution and manipulation are the biggest threats. Media literacy is an indispensable shield for individuals to distinguish truth from falsehood." },
+                { baslik: "SUSTAINABLE CITIES AND SMART CITIES", metin: "Metropolises of the future are equipped with energy-saving smart buildings, zero-waste systems, and autonomous public transport networks. Cities protecting ecological balance are essential." },
+                { baslik: "BIOMIMETICS AND INSPIRATION FROM NATURE", metin: "Technologies designed by engineers by mimicking the flawless mechanisms of living things in nature are called biomimetics. Trains inspired by the kingfisher bird are one of them." },
+                { baslik: "MACHINE LEARNING AND BIG DATA", metin: "Analyzing billions of data instantly enables companies and governments to make strategic decisions. Privacy is the most valuable treasure in the big data era." },
+                { baslik: "INTERNATIONAL LAW AND HUMAN RIGHTS", metin: "The Universal Declaration of Human Rights is the document of the common human will aimed at guaranteeing the fundamental rights and freedoms of all individuals in the world." },
+                { baslik: "FUTURISM AND FUTURE SCIENCE", metin: "Anticipating possible scenarios awaiting us in tomorrow's world from today is the subject of futuristic studies. Space tourism and immortality research are at the door." },
+                { baslik: "LEERSHIP AND VISIONARY PERSPECTIVE", metin: "A true leader means a visionary human who can keep their cool in times of crisis, inspire their team, and build the future from today." }
             ]
         };
 
@@ -2034,7 +2034,7 @@
             document.getElementById('okumaKronometre').innerText = "00:00";
             document.getElementById('okunanKelimeSayac').innerText = "0";
             document.getElementById('wpmGosterge').innerText = "0";
-            document.getElementById('okumaBaslatBtn').innerText = "▶ Süreyi Başlat";
+            document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
 
             let sinif = document.getElementById('okumaSinifSelect').value;
             let liste = sinirsizMetinHavuzu[sinif] || sinirsizMetinHavuzu[1];
@@ -2043,23 +2043,33 @@
             let alan = document.getElementById('prompterMetinAlani');
             alan.innerHTML = "";
             let kelimeler = secilenMetinObjesi.metin.split(" ");
-            kelimeler.forEach((kelime) => {
+            
+            kelimeler.forEach((kelime, idx) => {
                 let span = document.createElement('span');
                 span.innerText = kelime;
+                span.dataset.index = idx;
                 span.style.cssText = "cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: all 0.2s; user-select: none;";
+                
                 span.onclick = function() {
                     if (!okumaTimer) return; // Süre başlamadıysa tıklanamaz
-                    if (span.classList.contains('secildi')) {
-                        span.classList.remove('secildi');
-                        span.style.background = "transparent";
-                        span.style.color = "#1e293b";
-                        okunanKelimeSayisi = Math.max(0, okunanKelimeSayisi - 1);
-                    } else {
-                        span.classList.add('secildi');
-                        span.style.background = "#16a34a";
-                        span.style.color = "#ffffff";
-                        okunanKelimeSayisi++;
-                    }
+                    
+                    let clickedIdx = parseInt(span.dataset.index);
+                    let allSpans = alan.querySelectorAll('span');
+                    
+                    // Tıklanan kelimeye kadar olanları seç, sonrakileri temizle
+                    allSpans.forEach((s, sIdx) => {
+                        if (sIdx <= clickedIdx) {
+                            s.classList.add('secildi');
+                            s.style.background = "#16a34a";
+                            s.style.color = "#ffffff";
+                        } else {
+                            s.classList.remove('secildi');
+                            s.style.background = "transparent";
+                            s.style.color = "#1e293b";
+                        }
+                    });
+
+                    okunanKelimeSayisi = clickedIdx + 1;
                     document.getElementById('okunanKelimeSayac').innerText = okunanKelimeSayisi;
                     wpmHesapla();
                 };
@@ -2072,7 +2082,7 @@
                 // Durdur / Sıfırla
                 clearInterval(okumaTimer);
                 okumaTimer = null;
-                document.getElementById('okumaBaslatBtn').innerText = "▶ Süreyi Başlat";
+                document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
                 return;
             }
             okumaSaniye = 0;
@@ -2085,7 +2095,7 @@
                 s.style.color = "#1e293b";
             });
 
-            document.getElementById('okumaBaslatBtn').innerText = "⏸ Duraklat / Sıfırla";
+            document.getElementById('okumaBaslatBtn').innerText = "⏸ Pause / Reset";
             okumaTimer = setInterval(() => {
                 okumaSaniye++;
                 let dk = String(Math.floor(okumaSaniye / 60)).padStart(2, '0');
@@ -2107,11 +2117,11 @@
 
         async function okumaSonucuKaydet() {
             if (okunanKelimeSayisi <= 0 || okumaSaniye <= 0) {
-                alert("Lütfen süreyi başlatıp okuduğunuz kelimelerin üzerine tıklayarak seçin!");
+                alert("Lütfen önce süreyi başlatıp okumayı bitirdiğiniz son kelimenin üzerine tıklayın!");
                 return;
             }
             if (okumaTimer) { clearInterval(okumaTimer); okumaTimer = null; }
-            document.getElementById('okumaBaslatBtn').innerText = "▶ Süreyi Başlat";
+            document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
 
             let sinifVal = document.getElementById('okumaSinifSelect').value + ". Sınıf";
             let wpmVal = parseInt(document.getElementById('wpmGosterge').innerText) || 0;
@@ -2125,7 +2135,7 @@
                 okunanKelime: okunanKelimeSayisi,
                 gecenSure: okumaSaniye,
                 wpm: wpmVal,
-                metinBasligi: secilenMetinObjesi ? secilenMetinObjesi.baslik : "Okuma Metni"
+                metinBasligi: secilenMetinObjesi ? secilenMetinObjesi.baslik : "Reading Text"
             };
 
             try {
@@ -2135,26 +2145,26 @@
                 });
                 let data = await res.json();
                 if (data.status === "success") {
-                    alert("Okuma hızı sonucunuz başarıyla kaydedildi! 🎉");
+                    alert("Reading speed result successfully saved! 🎉");
                     okumaGecmisiniYukle();
                 } else {
-                    alert("Kayıt sırasında hata oluştu.");
+                    alert("Error occurred while saving.");
                 }
             } catch (err) {
                 console.error(err);
-                alert("Bağlantı hatası oluştu.");
+                alert("Connection error occurred.");
             }
         }
 
         async function okumaGecmisiniYukle() {
             let konteyner = document.getElementById('okumaGecmisKonteyner');
-            konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">Arşiv yükleniyor...</div>`;
+            konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">Loading history...</div>`;
             try {
                 let res = await fetch(`${apiURL}?islem=okumaGecmisGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "Misafir Ziyaretçi")}`);
                 let liste = await res.json();
                 konteyner.innerHTML = "";
                 if (!liste || liste.length === 0) {
-                    konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">Henüz kayıtlı okuma testin bulunmuyor.</div>`;
+                    konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">No reading tests recorded yet.</div>`;
                     return;
                 }
                 liste.reverse().forEach(item => {
@@ -2165,13 +2175,13 @@
                                 <span>📅 ${tarihFormatted} — ${item.metinBasligi} (${item.sinif})</span>
                                 <span style="color: #16a34a;">⚡ ${item.wpm} WPM</span>
                             </div>
-                            <div style="color: #64748b; font-size: 10px;">📖 Okunan Kelime: ${item.okunanKelime} | ⏱️ Süre: ${item.gecenSure} sn</div>
+                            <div style="color: #64748b; font-size: 10px;">📖 Words: ${item.okunanKelime} | ⏱️ Time: ${item.gecenSure} sec</div>
                         </div>
                     `;
                 });
             } catch(err) {
                 console.error(err);
-                konteyner.innerHTML = `<div style="font-size: 10.5px; color: #dc2626; text-align: center;">Arşiv yüklenirken hata oluştu.</div>`;
+                konteyner.innerHTML = `<div style="font-size: 10.5px; color: #dc2626; text-align: center;">Error loading history.</div>`;
             }
         }
 
