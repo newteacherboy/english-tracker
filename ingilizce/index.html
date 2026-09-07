@@ -243,40 +243,6 @@
         .progress-bar { background-color: #475569; height: 100%; width: 0%; transition: width 0.4s ease; border-radius: 6px; }
         .timer-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b; flex-wrap: wrap; gap: 4px; }
 
-        /* YENİ: Yıllık Plan Widget Alanı (Okuma Kültürünün Hemen Üstüne Eklendi) */
-        .plan-widget-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-        .plan-widget-left { display: flex; align-items: center; gap: 10px; }
-        .plan-widget-icon { background: #eef2ff; color: #4f46e5; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold; flex-shrink: 0; }
-        .plan-widget-title { font-size: 13px; font-weight: 800; color: #1e293b; }
-        .plan-widget-subtitle { font-size: 10px; color: #64748b; margin-top: 1px; }
-        .plan-widget-progress { display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 6px 10px; border-radius: 8px; border: 1px solid #f1f5f9; }
-        .plan-widget-btn { background: #4f46e5; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 11.5px; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(79,70,229,0.2); }
-        .plan-widget-btn:hover { background: #4338ca; }
-
-        /* Plan Akordeon Modal Penceresi (Şifre Korumalı 315269) */
-        .plan-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 99999; display: none; justify-content: center; align-items: center; padding: 10px; }
-        .plan-modal-content { background: #ffffff; width: 100%; max-width: 650px; max-height: 85vh; border-radius: 14px; overflow-y: auto; padding: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); position: relative; }
-        
-        .unit-accordion { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-        .accordion-item { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
-        .accordion-header { padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #ffffff; transition: background 0.2s; user-select: none; }
-        .accordion-header:hover { background: #f8fafc; }
-        .accordion-title { font-weight: 700; font-size: 12px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
-        .unit-badge { font-size: 9px; background: #eef2ff; color: #4f46e5; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
-        .accordion-arrow { transition: transform 0.3s ease; font-size: 10px; color: #64748b; }
-        .accordion-item.active .accordion-arrow { transform: rotate(180deg); }
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fafafa; border-top: 1px solid transparent; }
-       .accordion-item.active .accordion-content { max-height: 2500px; border-top-color: #e2e8f0; }
-        .week-list-inner { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
-        .week-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; transition: all 0.2s; }
-        .week-card.completed { background: #ecfdf5; border-color: #a7f3d0; }
-        .week-card input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #10b981; }
-        .week-info { flex-grow: 1; }
-        .week-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-        .week-name { font-weight: 700; font-size: 11.5px; color: #1e293b; }
-        .week-date { font-size: 9.5px; background: #f1f5f9; color: #64748b; padding: 2px 5px; border-radius: 4px; font-weight: 600; }
-        .week-desc { font-size: 10.5px; color: #64748b; line-height: 1.3; }
-
         /* Kitap Takip */
         .book-tracker-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .book-tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
@@ -758,27 +724,6 @@
                 </div>
             </div>
 
-            <!-- YENİ: YILLIK PLAN WIDGET KARTI (OKUMA KÜLTÜRÜNÜN HEMEN ÜSTÜNDE) -->
-            <div id="planWidgetContainer" class="plan-widget-card" style="display: none;">
-                <div class="plan-widget-left">
-                    <div class="plan-widget-icon">🎉</div>
-                    <div>
-                        <div class="plan-widget-title" id="planWidgetTitleText">Yıllık Plan Takipçisi</div>
-                        <div class="plan-widget-subtitle">Müfredat, Kazanım ve Hafta Takip Sistemi</div>
-                    </div>
-                </div>
-                <div class="plan-widget-progress">
-                    <div>
-                        <span style="font-size: 8px; color: #64748b; font-weight: 700; display: block;">İLERLEME</span>
-                        <strong id="widgetCounterText" style="font-size: 11px; color: #4f46e5;">0 / 0</strong>
-                    </div>
-                    <div style="width: 50px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
-                      <div id="widgetProgressBar" style="width: 0%; height: 100%; background: #10b981; transition: width 0.3s;"></div>
-                    </div>
-                </div>
-                <button class="plan-widget-btn" onclick="openPlanModal()">Plana Git →</button>
-            </div>
-
             <div class="book-tracker-box">
                 <div class="book-tracker-header">
                     <div class="book-header-left">
@@ -876,34 +821,6 @@
                 <div class="chart-title">🎯 Deneme Puanları Gelişim Grafiği</div>
                 <canvas id="denemeGrafik" height="90"></canvas>
             </div>
-        </div>
-    </div>
-
-    <!-- PLAN MODALİ (ŞİFRE KORUMALI 315269) -->
-    <div id="planModalOverlay" class="plan-modal-overlay">
-        <div class="plan-modal-content">
-            <button onclick="closePlanModal()" style="position: absolute; top: 15px; right: 15px; background: #f1f5f9; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; color: #64748b;">✕</button>
-            <h2 id="modalPlanBaslik" style="color: #4f46e5; margin-top: 0; font-size: 1.2rem;">Yıllık Plan Takipçisi</h2>
-            <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 10px;">Haftalık kazanımları buradan takip edebilirsiniz. İşaretleme yapmak için öğretmen şifresi gereklidir.</p>
-            
-            <div style="display: flex; gap: 6px; margin-bottom: 10px;">
-                <button class="filter-btn active" onclick="filterUnits('all', this)" style="padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-size:11px; font-weight:600;">Tümü</button>
-                <button class="filter-btn" onclick="filterUnits('term1', this)" style="padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-size:11px; font-weight:600;">1. Dönem</button>
-                <button class="filter-btn" onclick="filterUnits('term2', this)" style="padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-size:11px; font-weight:600;">2. Dönem</button>
-            </div>
-
-            <div class="unit-accordion" id="modalAccordionContainer"></div>
-        </div>
-    </div>
-
-    <!-- ŞİFRE GİRİŞ MODALI (PLANI TİKLEMEK İÇİN) -->
-    <div class="rubric-modal" id="planSifreModal" style="z-index: 100000;">
-        <div class="rubric-content" style="max-width: 280px; text-align: center;">
-            <h3 style="color: #1e293b; margin-bottom: 6px; font-size: 14px;">🔐 Öğretmen Onayı Gerekli</h3>
-            <p style="font-size: 10px; color: #64748b; margin-bottom: 10px;">Planı değiştirmek için şifreyi giriniz:</p>
-            <input type="password" id="planYoneticiSifre" placeholder="Şifre" style="text-align: center; margin-bottom: 8px; padding: 6px;">
-            <button class="btn-giris" onclick="onaySifreKontrolEt()" style="padding: 7px; font-size: 12px;">Onayla</button>
-            <button onclick="planSifreIptalEt()" style="background:none; border:none; color:#64748b; font-size:10px; margin-top:6px; cursor:pointer;">İptal</button>
         </div>
     </div>
 
@@ -1108,11 +1025,6 @@
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
         let secilenSinif = 2, secilenUniteler = [1], masterKelimeHavuzu = [], aktifKelimeListesi = [];
         let aktifSoruIndex = 0, oyunDogru = 0, oyunYanlis = 0, oyunTimerInterval = null, oyunSaniyeSayac = 0, mevcutDogruSikIndex = 0, soruKilitli = false;
-        
-        // Yıllık Plan Değişkenleri
-        let aktifOgrenciPlanHaftalari = [];
-        let pendingCheckbox = null;
-        let currentFilter = 'all';
 
         window.onload = async function() {
             let girisBtn = document.getElementById('girisBtn');
@@ -1142,250 +1054,12 @@
                 document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
                 document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
-                
-                // BURASI DEĞİŞTİ: Mobil cihazlarda sunucudan taze veriyi çekip planları günceller
-                try {
-                    let res = await fetch(apiURL);
-                    globalDataCache = await res.json();
-                } catch(e) {}
-                
                 bilgileriSunucudanGuncelle(aktifOgrenciAdi);
             }
             uniteSecimleriniOlustur(2, 8);
             ogretmenSelectDoldur();
         };
 
-        // --- YILLIK PLAN VE ŞİFRE (315269) KONTROLÜ MİMARİSİ ---
-        function checkStudentPlanAccess(userObj) {
-            if (userObj && userObj.planHaftalari && userObj.planHaftalari.length > 0) {
-                aktifOgrenciPlanHaftalari = userObj.planHaftalari;
-                document.getElementById('planWidgetContainer').style.display = 'flex';
-                document.getElementById('planWidgetTitleText').innerText = userObj.AtananPlan || "Yıllık Plan Takipçisi";
-                document.getElementById('modalPlanBaslik').innerText = userObj.AtananPlan || "Yıllık Plan Takipçisi";
-                updateWidgetCounter();
-            } else {
-                document.getElementById('planWidgetContainer').style.display = 'none';
-            }
-        }
-
-        function openPlanModal() {
-            document.getElementById('planModalOverlay').style.display = 'flex';
-            renderModalAccordion();
-        }
-
-        function closePlanModal() {
-            document.getElementById('planModalOverlay').style.display = 'none';
-        }
-
-       function renderModalAccordion() {
-            let container = document.getElementById('modalAccordionContainer');
-            container.innerHTML = "";
-
-            let unitsMap = {};
-            aktifOgrenciPlanHaftalari.forEach(w => {
-                let donemKey = String(w.donem || "").trim().toLowerCase();
-                if(donemKey !== 'term1' && donemKey !== 'term2') {
-                    donemKey = (w.haftaNo > 18) ? 'term2' : 'term1'; 
-                    w.donem = donemKey;
-                }
-
-                // Theme veya Unit başlıklarına göre esnek gruplama
-               let baslikStr = String(w.baslik || "");
-                let unitName = "Genel Müfredat";
-                
-                // Başlık içinde Theme geçiyorsa Theme adını ayıkla, yoksa Unit al
-                if (baslikStr.includes("Theme")) {
-                    let m = baslikStr.match(/Theme\s*\d+/i);
-                    unitName = m ? m[0] : "Theme Grubu";
-                } else if (baslikStr.includes("Unit")) {
-                    let m = baslikStr.match(/Unit\s*\d+/i);
-                    unitName = m ? m[0] : "Unit Grubu";
-                }
-                
-                // Dönem Filtre Kontrolü
-                if (currentFilter !== 'all') {
-                    let fTerm = currentFilter.toLowerCase().trim();
-                    let uTerm = String(uData.term || "").toLowerCase().trim();
-                    if (uTerm !== fTerm) continue;
-                }
-
-                let item = document.createElement('div');
-                item.className = 'accordion-item' + (index === 0 ? ' active' : '');
-
-                let unitCompleted = 0;
-                uData.weeks.forEach(w => { if (w.completed) unitCompleted++; });
-
-                let weeksHTML = "";
-                uData.weeks.forEach(week => {
-                    weeksHTML += `
-                        <div class="week-card ${week.completed ? 'completed' : ''}" id="card-${week.haftaNo}">
-                            <input type="checkbox" ${week.completed ? 'checked' : ''} onclick="onPlanCheckboxClick(event, ${week.haftaNo}, this)">
-                            <div class="week-info">
-                                <div class="week-top">
-                                    <span class="week-name">${week.baslik}</span>
-                                    <span class="week-date">${week.tarih}</span>
-                                </div>
-                                <div class="week-desc">${week.aciklama}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                item.innerHTML = `
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title">
-                            <span>${uName}</span>
-                            <span class="unit-badge">${uData.term === 'term1' ? '1. Dönem' : '2. Dönem'}</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 10px; color: var(--text-muted);">${unitCompleted}/${uData.weeks.length}</span>
-                            <span class="accordion-arrow">▼</span>
-                        </div>
-                    </div>
-                    <div class="accordion-content">
-                        <div class="week-list-inner">
-                            ${weeksHTML}
-                        </div>
-                    </div>
-                `;
-                container.appendChild(item);
-                index++;
-            }
-        }
-
-        function toggleAccordion(headerEl) {
-            headerEl.parentElement.classList.toggle('active');
-        }
-
-        function filterUnits(term, btnEl) {
-            currentFilter = term;
-            document.querySelectorAll('#planModalOverlay .filter-btn').forEach(b => b.classList.remove('active'));
-            btnEl.classList.add('active');
-            renderModalAccordion();
-        }
-
-        function onPlanCheckboxClick(event, haftaNo, checkboxEl) {
-            // Öğrencinin doğrudan değiştirmesini engellemek için tıklandığı an checkbox'ı eski haline getirip şifre modalı açıyoruz
-            event.preventDefault();
-            pendingCheckbox = { haftaNo, checkboxEl };
-            document.getElementById('planYoneticiSifre').value = "";
-            document.getElementById('planSifreModal').style.display = 'flex';
-        }
-
-        function planSifreIptalEt() {
-            document.getElementById('planSifreModal').style.display = 'none';
-            pendingCheckbox = null;
-        }
-
-       async function onaySifreKontrolEt() {
-            let sifre = document.getElementById('planYoneticiSifre').value.trim();
-            if (sifre === "315269") {
-                document.getElementById('planSifreModal').style.display = 'none';
-                if (pendingCheckbox) {
-                    let haftaNo = pendingCheckbox.haftaNo;
-                    let cb = pendingCheckbox.checkboxEl;
-                    let yeniDurum = !cb.checked; // tersine çevir
-                    cb.checked = yeniDurum;
-
-                    let card = document.getElementById(`card-${haftaNo}`);
-                    if (yeniDurum) card.classList.add('completed');
-                    else card.classList.remove('completed');
-
-                    // Hafızadaki objeyi güncelle
-                    let haftaObj = aktifOgrenciPlanHaftalari.find(w => w.haftaNo === haftaNo);
-                    if (haftaObj) haftaObj.completed = yeniDurum;
-
-                    updateWidgetCounter();
-
-                    // GOOGLE SHEETS'E KAYDETME İSTEĞİ (ASENKRON)
-                    let userObj = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-                    let planKodu = userObj ? userObj.AtananPlan : "";
-
-                    try {
-                        await fetch(`${apiURL}?islem=planGuncelle&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&plankodu=${encodeURIComponent(planKodu)}&haftano=${haftaNo}&durum=${yeniDurum}`);
-                    } catch(err) {
-                        console.error("Plan kayıt hatası:", err);
-                    }
-                }
-                pendingCheckbox = null;
-            } else {
-                alert("Hatalı öğretmen şifresi!");
-            }
-        }
-
-        function updateWidgetCounter() {
-            if (!aktifOgrenciPlanHaftalari || aktifOgrenciPlanHaftalari.length === 0) return;
-            let total = aktifOgrenciPlanHaftalari.length;
-            let completed = 0;
-            aktifOgrenciPlanHaftalari.forEach(w => {
-                if (w.completed) completed++;
-            });
-            let percent = Math.round((completed / total) * 100);
-            document.getElementById('widgetCounterText').innerText = `${completed} / ${total}`;
-            document.getElementById('widgetProgressBar').style.width = percent + '%';
-        }
-
-        function renderModalAccordion() {
-            let container = document.getElementById('modalAccordionContainer');
-            container.innerHTML = "";
-
-            let unitsMap = {};
-            aktifOgrenciPlanHaftalari.forEach(w => {
-                let unitName = w.baslik.includes("Unit") ? w.baslik.split("-")[0].trim() : "Genel Müfredat";
-                if (!unitsMap[unitName]) {
-                    unitsMap[unitName] = { term: w.donem, weeks: [] };
-                }
-                unitsMap[unitName].weeks.push(w);
-            });
-
-            let index = 0;
-            for (let uName in unitsMap) {
-                let uData = unitsMap[uName];
-                if (currentFilter !== 'all' && uData.term !== currentFilter) continue;
-
-                let item = document.createElement('div');
-                item.className = 'accordion-item' + (index === 0 ? ' active' : '');
-
-                let unitCompleted = 0;
-                uData.weeks.forEach(w => { if (w.completed) unitCompleted++; });
-
-                let weeksHTML = "";
-                uData.weeks.forEach(week => {
-                    weeksHTML += `
-                        <div class="week-card ${week.completed ? 'completed' : ''}" id="card-${week.haftaNo}">
-                            <input type="checkbox" ${week.completed ? 'checked' : ''} onclick="onPlanCheckboxClick(event, ${week.haftaNo}, this)">
-                            <div class="week-info">
-                                <div class="week-top">
-                                    <span class="week-name">${week.baslik}</span>
-                                    <span class="week-date">${week.tarih}</span>
-                                </div>
-                                <div class="week-desc">${week.aciklama}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                item.innerHTML = `
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="accordion-title">
-                            <span>${uName}</span>
-                            <span class="unit-badge">${uData.term === 'term1' ? '1. Dönem' : '2. Dönem'}</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 10px; color: var(--text-muted);">${unitCompleted}/${uData.weeks.length}</span>
-                            <span class="accordion-arrow">▼</span>
-                        </div>
-                    </div>
-                    <div class="accordion-content">
-                        <div class="week-list-inner">
-                            ${weeksHTML}
-                        </div>
-                    </div>
-                `;
-                container.appendChild(item);
-                index++;
-            }
-        }
         // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
         function aiModalAc() { 
             document.getElementById('aiChatModal').style.display = 'flex'; 
@@ -1449,6 +1123,7 @@
                 infoEl.innerHTML = `💡 Kalan Soru Hakkı: <b>${kalanHak} / ${toplamHak}</b> (Oturum süresiyle her 10 dk'da +10 artar)`;
             }
 
+            // Eğer hak bittiyse sohbet kutusunu dondur
             if (kalanHak <= 0) {
                 let inputRow = document.getElementById('aiInputRow');
                 if(inputRow) inputRow.style.display = "none";
@@ -1463,6 +1138,7 @@
             let input = document.getElementById('aiMesajInput');
             let body = document.getElementById('aiChatBody');
             
+            // Hak kontrolü
             let rozetSayisi = Math.floor(toplamSaniye / 600);
             let toplamHak = 10 + (rozetSayisi * 10);
             let kayitliVeri = JSON.parse(localStorage.getItem("gunlukHakTakip") || "{" + '"tarih"' + ":" + '"' + new Date().toISOString().split('T')[0] + '"' + ", " + '"kullanilan"' + ": 0}");
@@ -1476,9 +1152,11 @@
             let txt = input.value.trim();
             if(!txt) return;
 
+            // 1. İstemci Tarafı Anlamsız Harf (Random/Spam) Kontrolü
             let sesliHarfler = txt.match(/[aeıioöuüAEIİOÖUÜ]/g);
             let isRandom = false;
 
+            // Eğer 3 harften uzunsa ve hiç sesli harf yoksa ya da aynı harf arka arkaya 3 kez tekrarlandıysa
             if (txt.length > 3 && (!sesliHarfler || sesliHarfler.length === 0)) {
                 isRandom = true;
             }
@@ -1491,6 +1169,7 @@
                 input.value = "";
                 body.scrollTop = body.scrollHeight;
                 
+                // Hak düşülmez, Sheets'e yazılmaz, sadece uyarı verilir
                 body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Uyarı: Anlamsız veya rastgele harfler algılandı! Bu soru sisteme işlenmedi ve hakkından düşülmedi. Lütfen düzgün bir soru sor. 😊</div>`;
                 body.scrollTop = body.scrollHeight;
                 return;
@@ -1520,6 +1199,8 @@
                 let data = await response.json();
                 
                 document.getElementById(loadingId).remove();
+                
+                // Başarılı geçerli soru sorulduğu için hakkı 1 artır ve kalan hakkı güncelle
                 aiSoruHakkiniGuncelle(1);
 
                 body.innerHTML += `<div class="ai-msg bot">${data.cevap || "Üzgünüm, yanıt alınamadı."}</div>`;
@@ -1683,7 +1364,7 @@
                 }
 
             } catch(e) {
-              alert("Kayıt sırasında hata oluştu: " + e);
+                alert("Kayıt sırasında hata oluştu: " + e);
             }
         }
 
@@ -1892,7 +1573,7 @@
             document.getElementById('oyunEkranIci').style.display = 'none';
             document.getElementById('oyunSonucBolumu').style.display = 'none';
         }
-         
+        
         function oyunModaliniKapat() { 
             document.getElementById('gameModalOverlay').style.display = 'none'; 
             if(oyunTimerInterval) clearInterval(oyunTimerInterval); 
@@ -1936,17 +1617,17 @@
             if(!isimInput) return;
             let isim = isimInput.value.trim();
             if(!isim) { alert("Adınızı yazın!"); return; }
-             
+            
             let hedefSoru = secilenSinif>=5 ? 25+((secilenSinif-4)*5) : 25;
             let filt = masterKelimeHavuzu.filter(i => i.sinif === secilenSinif && secilenUniteler.includes(i.unite));
             if(!filt.length) { alert("Bu sınıf ve ünitelere ait kelime bulunamadı!"); return; }
-             
+            
             aktifKelimeListesi = [...filt].sort(()=>Math.random()-0.5).slice(0, hedefSoru);
             aktifSoruIndex = 0; oyunDogru = 0; oyunYanlis = 0; oyunSaniyeSayac = 0; soruKilitli = false;
-             
+            
             document.getElementById('oyunAyarBolumu').style.display = 'none';
             document.getElementById('oyunEkranIci').style.display = 'block';
-             
+            
             let muzik = document.getElementById('oyunMuzigi');
             if(muzik) { muzik.currentTime = 0; muzik.play().catch(()=>{}); }
 
@@ -1958,7 +1639,7 @@
                     kronometreEl.innerText=`⏱️ ${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`;
                 }
             }, 1000);
-             
+            
             soruyuEkranaGetir();
         }
 
@@ -1972,7 +1653,7 @@
             let yanlisAnlam = (yanlisHavuz.length ? yanlisHavuz[Math.floor(Math.random()*yanlisHavuz.length)] : s)[ing ? 'tr' : 'en'];
             let siklar = [dogruAnlam, yanlisAnlam].sort(()=>Math.random()-0.5);
             mevcutDogruSikIndex = siklar.indexOf(dogruAnlam);
-             
+            
             document.getElementById('btnSik0').className = "btn-sik"; 
             document.getElementById('btnSik1').className = "btn-sik";
             document.getElementById('lblKelimeSayac').innerText = `Kelime: ${aktifSoruIndex+1}/${aktifKelimeListesi.length}`;
@@ -2007,12 +1688,12 @@
             let puan = Math.max(0, (oyunDogru*5) - (oyunYanlis*2));
             let sureStr = `${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`;
             let isim = document.getElementById('oyuncuIsmiInput').value.trim();
-             
+            
             document.getElementById('oyunEkranIci').style.display = 'none';
             document.getElementById('oyunSonucBolumu').style.display = 'block';
             document.getElementById('sonucPuan').innerText = puan; 
             document.getElementById('sonucSure').innerText = sureStr;
-             
+            
             fetch(`${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`).catch(()=>{});
             liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
         }
@@ -2103,7 +1784,7 @@
 
             let hedefSoru = parseInt(document.getElementById('jeopSoruSayisiSelect').value) || 20;
             let filt = masterKelimeHavuzu.filter(i => i.sinif === jeopSecilenSinif && jeopSecilenUniteler.includes(i.unite));
-             
+            
             if(filt.length === 0) {
                 alert(`Seçilen sınıf ve ünitelerde kelime bulunamadı!`);
                 return;
@@ -2162,7 +1843,7 @@
             balonElement.innerHTML = "💥";
 
             jeopAktifSoru = jeopKelimeListesi[idx];
-             
+            
             document.getElementById('jeopOyunAlani').style.display = 'none';
             document.getElementById('jeopSoruKutusu').style.display = 'block';
             document.getElementById('jeopBalonPuaniBadge').innerText = `${jeopAktifSoru.puanDegeri} Puanlık Soru`;
@@ -2170,7 +1851,7 @@
 
             let yanlisHavuz = masterKelimeHavuzu.filter(i => i.en !== jeopAktifSoru.en);
             let yanlisKelime = yanlisHavuz.length ? yanlisHavuz[Math.floor(Math.random() * yanlisHavuz.length)] : { tr: "Yanlış Anlam" };
-             
+            
             let siklar = [jeopAktifSoru.tr, yanlisKelime.tr].sort(() => Math.random() - 0.5);
             jeopDogruSikIdx = siklar.indexOf(jeopAktifSoru.tr);
 
@@ -2369,19 +2050,20 @@
             let alan = document.getElementById('prompterMetinAlani');
             alan.innerHTML = "";
             let kelimeler = secilenMetinObjesi.metin.split(" ");
-             
+            
             kelimeler.forEach((kelime, idx) => {
                 let span = document.createElement('span');
                 span.innerText = kelime;
                 span.dataset.index = idx;
                 span.style.cssText = "cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: all 0.2s; user-select: none;";
-                 
+                
                 span.onclick = function() {
-                    if (!okumaTimer) return;
-                     
+                    if (!okumaTimer) return; // Süre başlamadıysa tıklanamaz
+                    
                     let clickedIdx = parseInt(span.dataset.index);
                     let allSpans = alan.querySelectorAll('span');
-                     
+                    
+                    // Tıklanan kelimeye kadar olanları seç, sonrakileri temizle
                     allSpans.forEach((s, sIdx) => {
                         if (sIdx <= clickedIdx) {
                             s.classList.add('secildi');
@@ -2404,6 +2086,7 @@
 
         function okumaKronometreBaslat() {
             if (okumaTimer) {
+                // Durdur / Sıfırla
                 clearInterval(okumaTimer);
                 okumaTimer = null;
                 document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
@@ -2534,14 +2217,8 @@
 
         async function bilgileriSunucudanGuncelle(ogr) {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase());
-            if(user) { 
-                toplamSaniye = Number(user.toplamsure)||toplamSaniye; 
-                sessionStorage.setItem("toplamSaniye", toplamSaniye); 
-                veriArayuzeIsle(user); // Bu fonksiyon hem plan haftalarını hem tikleri günceller
-            }
-            document.getElementById('login-container').style.display='none'; 
-            document.getElementById('panel-alani').style.display='block'; 
-            baslatSayac();
+            if(user) { toplamSaniye = Number(user.toplamsure)||toplamSaniye; sessionStorage.setItem("toplamSaniye", toplamSaniye); veriArayuzeIsle(user); }
+            document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac();
         }
 
         function veriArayuzeIsle(user) {
@@ -2557,9 +2234,6 @@
             if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
             if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
             if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-            
-            // Yıllık Plan Kontrolü ve Yüklemesi
-            checkStudentPlanAccess(user);
         }
 
         function baslatSayac() {
@@ -2581,7 +2255,6 @@
 
         function googleSheetseKaydet() {
             fetch(`${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${Math.floor(toplamSaniye/600)}`).catch(()=>{});
-            aiSoruHakkiniGuncelle(0); // Süre ilerledikçe hak widget'ını da tetikle
         }
 
         function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
