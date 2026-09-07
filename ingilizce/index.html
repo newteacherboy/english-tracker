@@ -1190,25 +1190,17 @@
                 }
 
                 // Theme veya Unit başlıklarına göre esnek gruplama
-                let baslikStr = String(w.baslik || "");
+               let baslikStr = String(w.baslik || "");
                 let unitName = "Genel Müfredat";
+                
+                // Başlık içinde Theme geçiyorsa Theme adını ayıkla, yoksa Unit al
                 if (baslikStr.includes("Theme")) {
-                    let parts = baslikStr.split(":");
-                    unitName = parts[0].trim(); 
+                    let m = baslikStr.match(/Theme\s*\d+/i);
+                    unitName = m ? m[0] : "Theme Grubu";
                 } else if (baslikStr.includes("Unit")) {
-                    let parts = baslikStr.split("-");
-                    unitName = parts[0].trim();
+                    let m = baslikStr.match(/Unit\s*\d+/i);
+                    unitName = m ? m[0] : "Unit Grubu";
                 }
-
-                if (!unitsMap[unitName]) {
-                    unitsMap[unitName] = { term: donemKey, weeks: [] };
-                }
-                unitsMap[unitName].weeks.push(w);
-            });
-
-            let index = 0;
-            for (let uName in unitsMap) {
-                let uData = unitsMap[uName];
                 
                 // Dönem Filtre Kontrolü
                 if (currentFilter !== 'all') {
