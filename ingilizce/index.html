@@ -36,7 +36,7 @@
         /* Sağ Altta Çarkın TAM ÜSTÜNDE Soluk AI Asistan Butonu ve Bildirimi */
         .ai-float-container {
             position: fixed;
-            bottom: 50px; /* Çarkın (12px) hemen üstünde yer alması için */
+            bottom: 50px; /* Çarkın (12px) hemen üstünde alt alta durması için */
             right: 12px;
             z-index: 9998;
             display: flex;
@@ -155,23 +155,10 @@
         }
         .ai-input-row { display: flex; gap: 5px; }
         .ai-chat-footer input {
-            flex: 1;
-            padding: 6px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 11.5px;
-            outline: none;
-            background: #f8fafc;
+            flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11.5px; outline: none; background: #f8fafc;
         }
         .ai-chat-footer button {
-            background: #7c3aed;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11.5px;
-            font-weight: 700;
-            cursor: pointer;
+            background: #7c3aed; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;
         }
 
         .login-card {
@@ -456,12 +443,13 @@
     <!-- Sol Üst Küçük Ana Portala Dön Butonu -->
     <a href="https://panel.ogretmencocuk.com" class="portal-back-btn">← Ana Portala Dön</a>
 
-    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKININ TAM ÜSTÜNDE ASİSTAN BUTONU VE UYARI -->
+    <!-- SAĞ ALT KÖŞEDE ÇARKIN TAM ÜSTÜNDE ASİSTAN BUTONU VE UYARI -->
     <div class="ai-float-container">
         <div class="ai-badge-tip" id="aiTipBadge">Öğretmene Soru Sor!</div>
         <button class="ai-float-btn" onclick="aiModalAc()" title="Yapay Zeka İngilizce Koçu">🤖</button>
     </div>
 
+    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI -->
     <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Rubrik Paneli">⚙️</button>
 
     <!-- AI ASİSTAN SOHBET PENCERESİ -->
@@ -963,7 +951,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbyn4jVZRbysB3zMvebGHqlWFOIdzGHV_d1qic9DZU9M9pyzPhFa-hE7bMPpBo1QiCcumg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbyw8bRRCMbaswIZjDoPyAHsKlXJpDO0D3HWXPmjUzfTZisn4is9RSeLpyNkxzpSaM8zXw/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1017,7 +1005,6 @@
             let inputRow = document.getElementById('aiInputRow');
             let misafirKayit = sessionStorage.getItem("misafirBilgi");
 
-            // Eğer öğrenci giriş yapmamışsa ve misafir bilgisi de yoksa önce ad/iletişim sor
             if (!aktifOgrenciAdi && !misafirKayit) {
                 inputRow.style.display = "none";
                 let formId = "misafirForm";
@@ -1047,7 +1034,7 @@
         }
 
         function aiSoruHakkiniGuncelle() {
-            let rozetSayisi = Math.floor(toplamSaniye / 600); // her 10 dk = 1 rozet
+            let rozetSayisi = Math.floor(toplamSaniye / 600); 
             let toplamHak = 10 + (rozetSayisi * 10); 
             let infoEl = document.getElementById('aiSoruHakInfo');
             if(infoEl) {
@@ -1079,7 +1066,7 @@
                     iletisimBilgi = mInfo.iletisim || "-";
                 }
 
-                let url = `${apiURL}?islem=aiSoruSor&soru=${encodeURIComponent(txt)}&ogrenci=${encodeURIComponent(ogrenciAdi)}&iletisim=${encodeURIComponent(iletisimBilgi)}`;
+                let url = `${apiURL}?islem=aiSoruSor&soru=${encodeURIComponent(txt)}&ogrenci=${encodeURIComponent(ogrenciAdi)}&iletisim=${encodeURIComponent(iletisimBilgi)}&sure=${toplamSaniye}`;
                 
                 let response = await fetch(url);
                 let data = await response.json();
@@ -1089,7 +1076,6 @@
                 document.getElementById(loadingId).remove();
                 body.innerHTML += `<div class="ai-msg bot">${aiCevap}</div>`;
 
-                // Eğer havuzdan gelen çoklu seçenekler (butonlar) varsa ekrana ekle
                 if (data.secenekler && data.secenekler.length > 0) {
                     let secenekDiv = document.createElement('div');
                     secenekDiv.style.cssText = "display: flex; flex-direction: column; gap: 4px; margin-top: 6px;";
