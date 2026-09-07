@@ -570,20 +570,23 @@ body {
       <div class="welcome-card card-english" onclick="window.location.href='https://panel.ogretmencocuk.com/ingilizce'" style="cursor: pointer;">
          <div class="welcome-card-icon">💡</div>
          <div class="welcome-card-body">
-            <h3>İngilizce İngilizce Ders</h3>
+            <h3>İngilizce Özel Ders</h3>
             <p>Öğrenci Gelişim Raporları, İngilizce Öğretimi ve Çeşitli yarışmalar</p>
          </div>
          <div class="welcome-card-arrow">Giriş Yap ➔</div>
       </div>
    </div>
 
-      <div class="welcome-card card-coach" onclick="window.location.href='https://panel.ogretmencocuk.com/kocluk/'" style="cursor: pointer;">
-    <div class="welcome-card-icon">🎯</div>
-    <div class="welcome-card-body">
-      <h3>Eğitim Koçum</h3>
-      <p>Haftalık hedef yönetimi, Bireysel Ödev ve Sınav stratejileri</p>
+      <div class="welcome-card card-coach" onclick="portalSec('kocluk')">
+        <div class="welcome-card-icon">🎯</div>
+        <div class="welcome-card-body">
+          <h3>Eğitim Koçum</h3>
+          <p>Haftalık hedef yönetimi, Bireysel Ödev ve Sınav stratejileri</p>
+        </div>
+        <div class="welcome-card-arrow">Giriş Yap ➔</div>
+      </div>
     </div>
-    <div class="welcome-card-arrow">Giriş Yap ➔</div>
+  </div>
 </div>
 
   <div id="kocModal" class="koc-modal" style="display: none;">
@@ -695,7 +698,7 @@ body {
 
     <div id="yeni_lockScreen" style="min-height:340px;display:flex;align-items:center;justify-content:center;padding:30px 20px;">
       <div style="text-align:center;width:100%;max-width:300px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:10px;">İngilizce Ders Değerlendirme</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:10px;">Özel Ders Değerlendirme</div>
         <h2 style="font-size:18px;margin-bottom:16px;">Devam etmek için şifre girin</h2>
         <input type="password" id="yeni_passInput" placeholder="Şifre" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #E2DDD2;font-size:15px;text-align:center;margin-bottom:10px;font-family:inherit;">
         <button id="yeni_unlockBtn" style="width:100%;padding:11px;border-radius:8px;border:none;background:#9B5435;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Giriş</button>
@@ -706,7 +709,7 @@ body {
     <div id="yeni_rubrikApp" style="display:none;">
       <div style="padding:20px 20px 30px;">
         <header style="margin-bottom:18px;padding-right:30px;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:4px;">İngilizce Ders Değerlendirme</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9B5435;margin-bottom:4px;">Özel Ders Değerlendirme</div>
           <h1 style="font-size:20px;font-weight:700;line-height:1.25;margin:0;">İngilizce Ders Rubriği</h1>
         </header>
 
@@ -827,7 +830,7 @@ body {
 
 <!-- 📅 SAĞ ALTA SABİTLENMİŞ DERS TALEBİ BUTONU -->
 <div class="randevu-float-wrapper">
-  <span id="randevuGeciciYazi" class="auto-hide-badge randevu-badge-text">İngilizce Ders Talebi Oluştur! 📅</span>
+  <span id="randevuGeciciYazi" class="auto-hide-badge randevu-badge-text">Özel Ders Talebi Oluştur! 📅</span>
   <button id="randevuFloatBtn" class="randevu-float-btn" onclick="randevuFormuKapatAcl()" title="Online / Yüz Yüze Ders Talebi">
     📅
   </button>
@@ -849,7 +852,7 @@ body {
     <div style="flex: 1;">
       <label style="display: block; font-size: 10px; font-weight: 700; color: #8A806F; margin-bottom: 4px; letter-spacing: 0.5px;">DERS TÜRÜ</label>
       <select id="alt_dersTuru" style="width:100%; padding: 10px; border-radius:6px; border:1px solid #CFC7B9; background: white; font-size: 13px; color: #4A4235; box-sizing: border-box; outline: none;">
-        <option value="İngilizce İngilizce Ders">İngilizce İngilizce Ders</option>
+        <option value="İngilizce Özel Ders">İngilizce Özel Ders</option>
         <option value="Eğitim Koçluğu">Eğitim Koçluğu</option>
       </select>
     </div>
@@ -959,7 +962,7 @@ body {
     <div id="hocaOzelNotu" style="color: #2C3E50; background: #FFF; border: 2px dashed #2E5A44; padding: 14px; border-radius: 10px; font-size: 12px; line-height: 1.5; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 16px;"></div>
 
     <button id="testOzelDersBtn" onclick="testSonucundanDersTalebiGonder()" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; border: none; width: 100%; padding: 13px; border-radius: 8px; font-weight: bold; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,211,102,0.35);">
-      🎯 Seviyemi İlerletmek İçin İngilizce Ders Al
+      🎯 Seviyemi İlerletmek İçin Özel Ders Al
     </button>
   </div>
 </div>
@@ -2395,7 +2398,7 @@ async function nihaiSorguKapat() {
         dinamikMesaj = `🚀 <strong>Zirveye Çok Yakınsın!</strong> Dilin iskeletine gayet hakimsin. Fakat kelime derinliği ve doğal konuşma refleksini kazanmak için birebir yönlendirmeye ihtiyacın var. Ufak dokunuşlarla İngilizceyi anadil rahatlığına taşıyabiliriz!`;
     } else if (dSayi >= 8) {
         seviyeUnvani = "B1 (Orta Seviye)";
-        dinamikMesaj = `⚡ <strong>Güçlü Bir Temel, Büyük Bir Fırsat!</strong> Kendini ifade edebiliyorsun ama karmaşık yapılar ve dinleme seni biraz zorluyor. Doğru teknikler ve bireysel İngilizce Ders takibiyle çok kısa sürede bir üst seviyeye sıçrayabilirsin!`;
+        dinamikMesaj = `⚡ <strong>Güçlü Bir Temel, Büyük Bir Fırsat!</strong> Kendini ifade edebiliyorsun ama karmaşık yapılar ve dinleme seni biraz zorluyor. Doğru teknikler ve bireysel özel ders takibiyle çok kısa sürede bir üst seviyeye sıçrayabilirsin!`;
     } else if (dSayi >= 5) {
         seviyeUnvani = "A2 (Temel Üstü Seviye)";
         dinamikMesaj = `🌱 <strong>Güzel Başlangıç Ama Harekete Geçme Zamanı!</strong> Temel kalıpları biliyorsun ancak kendi başına ilerlerken zaman kaybedebilirsin. Eksiklerini nokta atışı tespit edip hızla seviye atlamak için birebir eğitime hemen başlamalısın!`;
@@ -2441,7 +2444,7 @@ async function nihaiSorguKapat() {
 }
 
 function testSonucundanDersTalebiGonder() {
-    const mesaj = `Merhabalar Hocam,\nBen seviye tespit sınavını tamamladım.\n\n👤 *Adım Soyadım:* ${ogrenciIsmi}\n📊 *Sınav Sonucum:* ${nihaiDogruSayisi} Doğru / ${nihaiYanlisSayisi} Yanlış\n🎯 *Seviyem:* ${nihaiSeviyeSonucu}\n\nİngilizcemi daha da ilerletmek ve bireysel İngilizce Ders planlaması yapmak için bilgi istiyorum.`;
+    const mesaj = `Merhabalar Hocam,\nBen seviye tespit sınavını tamamladım.\n\n👤 *Adım Soyadım:* ${ogrenciIsmi}\n📊 *Sınav Sonucum:* ${nihaiDogruSayisi} Doğru / ${nihaiYanlisSayisi} Yanlış\n🎯 *Seviyem:* ${nihaiSeviyeSonucu}\n\nİngilizcemi daha da ilerletmek ve bireysel özel ders planlaması yapmak için bilgi istiyorum.`;
     const numara = "905369937089";
     const wpLink = `https://api.whatsapp.com/send?phone=${numara}&text=${encodeURIComponent(mesaj)}`;
     window.open(wpLink, '_blank');
