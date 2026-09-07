@@ -1261,7 +1261,7 @@
             pendingCheckbox = null;
         }
 
-        function onaySifreKontrolEt() {
+       async function onaySifreKontrolEt() {
             let sifre = document.getElementById('planYoneticiSifre').value.trim();
             if (sifre === "315269") {
                 document.getElementById('planSifreModal').style.display = 'none';
@@ -1271,15 +1271,25 @@
                     let yeniDurum = !cb.checked; // tersine çevir
                     cb.checked = yeniDurum;
 
-                    let savedProgress = JSON.parse(localStorage.getItem('englishPlanProgress_' + aktifOgrenciAdi)) || {};
-                    savedProgress[haftaNo] = yeniDurum;
-                    localStorage.setItem('englishPlanProgress_' + aktifOgrenciAdi, JSON.stringify(savedProgress));
-
                     let card = document.getElementById(`card-${haftaNo}`);
                     if (yeniDurum) card.classList.add('completed');
                     else card.classList.remove('completed');
 
+                    // Hafızadaki objeyi güncelle
+                    let haftaObj = aktifOgrenciPlanHaftalari.find(w => w.haftaNo === haftaNo);
+                    if (haftaObj) haftaObj.completed = yeniDurum;
+
                     updateWidgetCounter();
+
+                    // GOOGLE SHEETS'E KAYDETME İSTEĞİ (ASENKRON)
+                    let userObj = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                    let planKodu = userObj ? userObj.AtananPlan : "";
+
+                    try {
+                        await fetch(`${apiURL}?islem=planGuncelle&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&plankodu=${encodeURIComponent(planKodu)}&haftano=${haftaNo}&durum=${yeniDurum}`);
+                    } catch(err) {
+                        console.error("Plan kayıt hatası:", err);
+                    }
                 }
                 pendingCheckbox = null;
             } else {
@@ -1289,17 +1299,77 @@
 
         function updateWidgetCounter() {
             if (!aktifOgrenciPlanHaftalari || aktifOgrenciPlanHaftalari.length === 0) return;
-            const savedProgress = JSON.parse(localStorage.getItem('englishPlanProgress_' + aktifOgrenciAdi)) || {};
             let total = aktifOgrenciPlanHaftalari.length;
             let completed = 0;
             aktifOgrenciPlanHaftalari.forEach(w => {
-                if (savedProgress[w.haftaNo]) completed++;
+                if (w.completed) completed++;
             });
             let percent = Math.round((completed / total) * 100);
             document.getElementById('widgetCounterText').innerText = `${completed} / ${total}`;
             document.getElementById('widgetProgressBar').style.width = percent + '%';
         }
 
+        function renderModalAccordion() {
+            let container = document.getElementById('modalAccordionContainer');
+            container.innerHTML = "";
+
+            let unitsMap = {};
+            aktifOgrenciPlanHaftalari.forEach(w => {
+                let unitName = w.baslik.includes("Unit") ? w.baslik.split("-")[0].trim() : "Genel Müfredat";
+                if (!unitsMap[unitName]) {
+                    unitsMap[unitName] = { term: w.donem, weeks: [] };
+                }
+                unitsMap[unitName].weeks.push(w);
+            });
+
+            let index = 0;
+            for (let uName in unitsMap) {
+                let uData = unitsMap[uName];
+                if (currentFilter !== 'all' && uData.term !== currentFilter) continue;
+
+                let item = document.createElement('div');
+                item.className = 'accordion-item' + (index === 0 ? ' active' : '');
+
+                let unitCompleted = 0;
+                uData.weeks.forEach(w => { if (w.completed) unitCompleted++; });
+
+                let weeksHTML = "";
+                uData.weeks.forEach(week => {
+                    weeksHTML += `
+                        <div class="week-card ${week.completed ? 'completed' : ''}" id="card-${week.haftaNo}">
+                            <input type="checkbox" ${week.completed ? 'checked' : ''} onclick="onPlanCheckboxClick(event, ${week.haftaNo}, this)">
+                            <div class="week-info">
+                                <div class="week-top">
+                                    <span class="week-name">${week.baslik}</span>
+                                    <span class="week-date">${week.tarih}</span>
+                                </div>
+                                <div class="week-desc">${week.aciklama}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                item.innerHTML = `
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span>${uName}</span>
+                            <span class="unit-badge">${uData.term === 'term1' ? '1. Dönem' : '2. Dönem'}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 10px; color: var(--text-muted);">${unitCompleted}/${uData.weeks.length}</span>
+                            <span class="accordion-arrow">▼</span>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="week-list-inner">
+                            ${weeksHTML}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+                index++;
+            }
+        }
         // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
         function aiModalAc() { 
             document.getElementById('aiChatModal').style.display = 'flex'; 
