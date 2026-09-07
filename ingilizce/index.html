@@ -1033,30 +1033,79 @@
             document.getElementById('aiInputRow').style.display = "flex";
         }
 
-        function aiSoruHakkiniGuncelle() {
-            let rozetSayisi = Math.floor(toplamSaniye / 600); 
+       function aiSoruHakkiniGuncelle(kullanilanSoru = 0) {
+            let rozetSayisi = Math.floor(toplamSaniye / 600); // Her 10 dk = 1 rozet
             let toplamHak = 10 + (rozetSayisi * 10); 
+            
+            let bugunTarih = new Date().toISOString().split('T')[0];
+            let kayitliVeri = JSON.parse(localStorage.getItem("gunlukHakTakip") || "{}");
+            
+            if (kayitliVeri.tarih !== bugunTarih) {
+                kayitliVeri = { tarih: bugunTarih, kullanilan: 0 };
+                localStorage.setItem("gunlukHakTakip", JSON.stringify(kayitliVeri));
+            }
+
+            kayitliVeri.kullanilan += kullanilanSoru;
+            localStorage.setItem("gunlukHakTakip", JSON.stringify(kayitliVeri));
+
+            let kalanHak = Math.max(0, toplamHak - kayitliVeri.kullanilan);
+            
             let infoEl = document.getElementById('aiSoruHakInfo');
             if(infoEl) {
-                infoEl.innerHTML = `💡 Günlük Soru Hakkı: <b>${toplamHak}</b> (Oturum süresi ve rozetlere göre her 10 dk'da +10 artar)`;
+                infoEl.innerHTML = `💡 Kalan Soru Hakkı: <b>${kalanHak} / ${toplamHak}</b> (Oturum süresiyle her 10 dk'da +10 artar)`;
+            }
+
+            // Eğer hak bittiyse sohbet kutusunu dondur
+            if (kalanHak <= 0) {
+                let inputRow = document.getElementById('aiInputRow');
+                if(inputRow) inputRow.style.display = "none";
+                let uyariDiv = document.getElementById('hakBittiUyarisi');
+                if(!uyariDiv) {
+                    document.getElementById('aiFooterArea').innerHTML += `<div id="hakBittiUyarisi" style="color:#dc2626; font-weight:700; text-align:center; font-size:11px; padding:4px;">⚠️ Günlük soru sorma hakkın doldu! Sohbet donduruldu.</div>`;
+                }
             }
         }
 
-       async function aiMesajGonder() {
+        async function aiMesajGonder() {
             let input = document.getElementById('aiMesajInput');
             let body = document.getElementById('aiChatBody');
             
-            // Günlük ban (engelleme) kontrolü
-            let bugunTarih = new Date().toISOString().split('T')[0];
-            let banVerisi = JSON.parse(localStorage.getItem("asistanBan") || "{}");
-            if (banVerisi.tarih === bugunTarih && banVerisi.durum === true) {
-                body.innerHTML += `<div class="ai-msg bot">⚠️ Uyarı: Uygunsuz veya anlamsız yazım kuralını çok fazla ihlal ettiğin için bugünlük soru sorma özelliğin geçici olarak engellendi. Yarın tekrar deneyebilirsin. 🛑</div>`;
+            // Hak kontrolü
+            let rozetSayisi = Math.floor(toplamSaniye / 600);
+            let toplamHak = 10 + (rozetSayisi * 10);
+            let kayitliVeri = JSON.parse(localStorage.getItem("gunlukHakTakip") || "{" + '"tarih"' + ":" + '"' + new Date().toISOString().split('T')[0] + '"' + ", " + '"kullanilan"' + ": 0}");
+            
+            if (kayitliVeri.kullanilan >= toplamHak) {
+                body.innerHTML += `<div class="ai-msg bot">⚠️ Bugünlük soru sorma hakkın tamamen bittiği için sohbet dondurulmuştur. Yarın görüşmek üzere! 🌟</div>`;
                 body.scrollTop = body.scrollHeight;
                 return;
             }
 
             let txt = input.value.trim();
             if(!txt) return;
+
+            // 1. İstemci Tarafı Anlamsız Harf (Random/Spam) Kontrolü
+            let sesliHarfler = txt.match(/[aeıioöuüAEIİOÖUÜ]/g);
+            let isRandom = false;
+
+            // Eğer 3 harften uzunsa ve hiç sesli harf yoksa ya da aynı harf arka arkaya 3 kez tekrarlandıysa
+            if (txt.length > 3 && (!sesliHarfler || sesliHarfler.length === 0)) {
+                isRandom = true;
+            }
+            if (/(.)\1{2,}/.test(txt.toLowerCase())) {
+                isRandom = true;
+            }
+
+            if (isRandom) {
+                body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
+                input.value = "";
+                body.scrollTop = body.scrollHeight;
+                
+                // Hak düşülmez, Sheets'e yazılmaz, sadece uyarı verilir
+                body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Uyarı: Anlamsız veya rastgele harfler algılandı! Bu soru sisteme işlenmedi ve hakkından düşülmedi. Lütfen düzgün bir soru sor. 😊</div>`;
+                body.scrollTop = body.scrollHeight;
+                return;
+            }
 
             body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
             input.value = "";
@@ -1082,29 +1131,19 @@
                 let data = await response.json();
                 
                 document.getElementById(loadingId).remove();
+                
+                // Başarılı geçerli soru sorulduğu için hakkı 1 artır ve kalan hakkı güncelle
+                aiSoruHakkiniGuncelle(1);
 
-                // Eğer spam (random harf) tespit edildiyse sayaç tut
-                if (data.isSpam) {
-                    let spamSayisi = parseInt(localStorage.getItem("spamSayaci") || "0") + 1;
-                    localStorage.setItem("spamSayaci", spamSayisi);
+                body.innerHTML += `<div class="ai-msg bot">${data.cevap || "Üzgünüm, yanıt alınamadı."}</div>`;
 
-                    if (spamSayisi >= 3) {
-                        localStorage.setItem("asistanBan", JSON.stringify({ tarih: bugunTarih, durum: true }));
-                        body.innerHTML += `<div class="ai-msg bot">🛑 Üst üste 3 kez anlamsız yazım yaptığın için bugünlük asistan kullanımın engellendi!</div>`;
-                    } else {
-                        body.innerHTML += `<div class="ai-msg bot">${data.cevap} <br><small style="color:#b91c1c;">(Uyarı: ${spamSayisi}/3 kez anlamsız karakter girildi)</small></div>`;
-                    }
-                } else {
-                    body.innerHTML += `<div class="ai-msg bot">${data.cevap || "Üzgünüm, yanıt alınamadı."}</div>`;
-
-                    if (data.secenekler && data.secenekler.length > 0) {
-                        let secenekDiv = document.createElement('div');
-                        secenekDiv.style.cssText = "display: flex; flex-direction: column; gap: 4px; margin-top: 6px;";
-                        data.secenekler.forEach(sec => {
-                            secenekDiv.innerHTML += `<button onclick="secenekTiklandi('${guvenliMetin(sec).replace(/'/g, "\\'")}')" style="background:#ede9fe; border:1px solid #7c3aed; color:#5b21b6; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; text-align:left;">👉 ${sec}</button>`;
-                        });
-                        body.appendChild(secenekDiv);
-                    }
+                if (data.secenekler && data.secenekler.length > 0) {
+                    let secenekDiv = document.createElement('div');
+                    secenekDiv.style.cssText = "display: flex; flex-direction: column; gap: 4px; margin-top: 6px;";
+                    data.secenekler.forEach(sec => {
+                        secenekDiv.innerHTML += `<button onclick="secenekTiklandi('${guvenliMetin(sec).replace(/'/g, "\\'")}')" style="background:#ede9fe; border:1px solid #7c3aed; color:#5b21b6; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; text-align:left;">👉 ${sec}</button>`;
+                    });
+                    body.appendChild(secenekDiv);
                 }
 
                 body.scrollTop = body.scrollHeight;
