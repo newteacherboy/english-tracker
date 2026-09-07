@@ -987,10 +987,9 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbxrxOhMKKXARFEow3qwuzKHEUsySttaZbe2juRCSNjWnHOHs_-2T9PH7WZBC-t2HHxndw/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbz0SJwVTtVqv_evXb16B47jVBeCAIYMC287zWIMEu6dfe3gIr4UCws74_gjWdF5Tlvs1Q/exec";
         
-        
-        
+        let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
         let secilenSinif = 2, secilenUniteler = [1], masterKelimeHavuzu = [], aktifKelimeListesi = [];
         let aktifSoruIndex = 0, oyunDogru = 0, oyunYanlis = 0, oyunTimerInterval = null, oyunSaniyeSayac = 0, mevcutDogruSikIndex = 0, soruKilitli = false;
@@ -1029,7 +1028,7 @@
             ogretmenSelectDoldur();
         };
 
-        // --- YAPAY ZEKA ASİSTAN SOHBET MİMARİSİ ---
+        // --- YEREL AKILLI ASİSTAN SOHBET MİMARİSİ ---
         function aiModalAc() { 
             document.getElementById('aiChatModal').style.display = 'flex'; 
             aiSoruHakkiniGuncelle();
@@ -1041,11 +1040,11 @@
             let toplamHak = 10 + (rozetSayisi * 10); // temel 10 + her rozet için +10
             let infoEl = document.getElementById('aiSoruHakInfo');
             if(infoEl) {
-                infoEl.innerHTML = `💡 Günlük Soru Hakkı: <b>${toplamHak}</b> (Oturum rozetlerine göre artar)`;
+                infoEl.innerHTML = `💡 Günlük Soru Hakkı: <b>${toplamHak}</b> (Oturum süresine ve rozetlere göre her 10 dakikada +10 artar)`;
             }
         }
 
-      async function aiMesajGonder() {
+        async function aiMesajGonder() {
             let input = document.getElementById('aiMesajInput');
             let body = document.getElementById('aiChatBody');
             let txt = input.value.trim();
@@ -1056,24 +1055,19 @@
             body.scrollTop = body.scrollHeight;
 
             let loadingId = "load_" + Date.now();
-            body.innerHTML += `<div class="ai-msg bot" id="${loadingId}">Diji Muallim düşünüyor... 💭</div>`;
+            body.innerHTML += `<div class="ai-msg bot" id="${loadingId}">Diji Muallim inceliyor... 💭</div>`;
             body.scrollTop = body.scrollHeight;
 
             try {
-                let url = `${apiURL}?islem=aiSoruSor&soru=${encodeURIComponent(txt)}`;
+                let ogrenciAdi = aktifOgrenciAdi || document.getElementById('ogrenci').value || "Misafir Öğrenci";
+                let url = `${apiURL}?islem=aiSoruSor&soru=${encodeURIComponent(txt)}&ogrenci=${encodeURIComponent(ogrenciAdi)}`;
+                
                 let response = await fetch(url);
                 let data = await response.json();
                 
                 let aiCevap = data.cevap || "Üzgünüm, yanıt alınamadı.";
 
                 document.getElementById(loadingId).remove();
-                
-                let isDersDisi = txt.toLowerCase().includes("fizik") || txt.toLowerCase().includes("matematik") || txt.toLowerCase().includes("ödevim zor") || txt.toLowerCase().includes("hocaya sor") || txt.toLowerCase().includes("mert hoca");
-                
-                if (isDersDisi || aiCevap.includes("öğretmen")) {
-                    aiCevap += `<br><br><span style="font-size:10.5px; color:#5b21b6;">Bu soruyu Mert Hoca'ya (Öğretmenine) iletmek ister misin?</span><br><button onclick="ogretmeneSoruIlet('${guvenliMetin(txt).replace(/'/g, "\\'")}')" style="background:#7c3aed; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; margin-top:4px; cursor:pointer;">📤 Mert Hoca'ya Gönder</button>`;
-                }
-
                 body.innerHTML += `<div class="ai-msg bot">${aiCevap}</div>`;
                 body.scrollTop = body.scrollHeight;
 
@@ -1081,17 +1075,6 @@
                 console.error(err);
                 document.getElementById(loadingId).remove();
                 body.innerHTML += `<div class="ai-msg bot">Bağlantı hatası oluştu.</div>`;
-            }
-        }
-
-        async function ogretmeneSoruIlet(soruMetni) {
-            let ogrenciAdi = aktifOgrenciAdi || document.getElementById('ogrenci').value || "Misafir Öğrenci";
-            let url = `${apiURL}?islem=soruGonder&ogrenci=${encodeURIComponent(ogrenciAdi)}&soru=${encodeURIComponent(soruMetni)}`;
-            try {
-                await fetch(url);
-                alert("Sorun başarıyla Mert Hoca'ya iletildi! En kısa sürede sizinle iletişime geçecektir. 🚀");
-            } catch(e) {
-                alert("Gönderilirken bir hata oluştu.");
             }
         }
 
