@@ -1181,15 +1181,19 @@
             let container = document.getElementById('modalAccordionContainer');
             container.innerHTML = "";
 
-            const savedProgress = JSON.parse(localStorage.getItem('englishPlanProgress_' + aktifOgrenciAdi)) || {};
-
-            // Planları ünitelerine göre gruplayalım
             let unitsMap = {};
             aktifOgrenciPlanHaftalari.forEach(w => {
-                // Basitçe başlık içinden ünite yakalayalım veya başlığı grup yapalım
-                let unitName = w.baslik.includes("Unit") ? w.baslik.split("-")[0].trim() : "Genel Müfredat";
+                // Dönem verisini temizleyip küçük harfe çevirelim (term1 / term2 eşleşmesi için)
+                let donemKey = String(w.donem || "").trim().toLowerCase();
+                if(donemKey !== 'term1' && donemKey !== 'term2') {
+                    // Eğer tarih Ocak sonu / Şubat başı veya sonrasındaysa otomatik term2 yapalım
+                    donemKey = (w.haftaNo > 18) ? 'term2' : 'term1'; 
+                    w.donem = donemKey;
+                }
+
+                let unitName = w.baslik.includes("Theme") || w.baslik.includes("Unit") ? w.baslik.split("-")[0].trim() : "Genel Müfredat";
                 if (!unitsMap[unitName]) {
-                    unitsMap[unitName] = { term: w.donem, weeks: [] };
+                    unitsMap[unitName] = { term: donemKey, weeks: [] };
                 }
                 unitsMap[unitName].weeks.push(w);
             });
@@ -1197,20 +1201,25 @@
             let index = 0;
             for (let uName in unitsMap) {
                 let uData = unitsMap[uName];
-                if (currentFilter !== 'all' && uData.term !== currentFilter) continue;
+                
+                // Filtre Kontrolü (Geliştirilmiş ve Esnek)
+                if (currentFilter !== 'all') {
+                    let fTerm = currentFilter.toLowerCase().trim();
+                    let uTerm = String(uData.term || "").toLowerCase().trim();
+                    if (uTerm !== fTerm) continue;
+                }
 
                 let item = document.createElement('div');
                 item.className = 'accordion-item' + (index === 0 ? ' active' : '');
 
                 let unitCompleted = 0;
-                uData.weeks.forEach(w => { if (savedProgress[w.haftaNo]) unitCompleted++; });
+                uData.weeks.forEach(w => { if (w.completed) unitCompleted++; });
 
                 let weeksHTML = "";
                 uData.weeks.forEach(week => {
-                    let isCompleted = savedProgress[week.haftaNo] || false;
                     weeksHTML += `
-                        <div class="week-card ${isCompleted ? 'completed' : ''}" id="card-${week.haftaNo}">
-                            <input type="checkbox" ${isCompleted ? 'checked' : ''} onclick="onPlanCheckboxClick(event, ${week.haftaNo}, this)">
+                        <div class="week-card ${week.completed ? 'completed' : ''}" id="card-${week.haftaNo}">
+                            <input type="checkbox" ${week.completed ? 'checked' : ''} onclick="onPlanCheckboxClick(event, ${week.haftaNo}, this)">
                             <div class="week-info">
                                 <div class="week-top">
                                     <span class="week-name">${week.baslik}</span>
