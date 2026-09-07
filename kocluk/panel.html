@@ -235,7 +235,7 @@
             </div>
         </div>
 
-        <!-- 3. Sekmeler (Gelişim Yolu olarak güncellendi) -->
+        <!-- 3. Sekmeler -->
         <div class="tabs-bar">
             <button class="tab-btn active" onclick="sekmeGecis(0)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeGecis(1)">📝 Ders Raporları</button>
@@ -321,12 +321,54 @@
             <div id="dersRaporlariListesi" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
 
-        <!-- C. GELİŞİM YOLU / OKUMA HIZI ÖLÇER ALANI -->
+        <!-- C. GELİŞİM YOLU / OKUMA HIZI ÖLÇER ALANI (ŞIK BUTON VE AÇILIR MODAL YAPISI) -->
         <div id="sekmeKazanimlarAlani" class="card" style="display: none; flex-direction: column; gap: 15px;">
             <div class="card-header-flex"><h3 class="card-title">📈 Gelişim Yolu & Okuma Hızı Stüdyosu</h3></div>
-            <p style="font-size: 13px; color: #555; line-height: 1.5; margin: 0;">Sınıf seviyenize özel zengin, pedagojik ve uzun metinlerle okuma hızınızı test edin. Süreyi başlatıp okuyun, kaldığınız kelimeye tıklayın!</p>
             
-            <div style="background: #faf8f5; border: 1.5px solid #e0dcd0; padding: 15px; border-radius: 14px; display: flex; flex-direction: column; gap: 12px;">
+            <!-- Şık Renkli Banner & Buton -->
+            <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #bfdbfe; border-radius: 16px; padding: 25px 20px; text-align: center; box-shadow: 0 4px 15px rgba(37,99,235,0.06);">
+                <div style="font-size: 28px; margin-bottom: 8px;">🚀</div>
+                <h3 style="color: #1e40af; font-size: 16px; font-weight: 800; margin-bottom: 6px;">Okuma Hızı & Akıcı Okuma Stüdyosu</h3>
+                <p style="color: #3b82f6; font-size: 12.5px; margin-bottom: 18px; line-height: 1.4;">Sınıf seviyenize özel zengin, pedagojik ve uzun metinlerle okuma hızınızı test edin, kronometreyi çalıştırıp anında WPM skorunuzu kaydedin!</p>
+                <button onclick="okumaModaliniAc()" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; padding: 12px 26px; border-radius: 25px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(37,99,235,0.3); transition: transform 0.2s;">✨ Okuma Testini Başlat</button>
+            </div>
+
+            <!-- Geçmiş Gelişim Yolu Arşivi (Her Zaman Görünür) -->
+            <div class="card" style="margin-top: 5px;">
+                <div class="card-header-flex"><h3 class="card-title">📊 Geçmiş Gelişim Yolu Arşivi</h3></div>
+                <div id="okumaGecmisListesi" style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="text-align: center; color: #666; font-size: 13px; padding: 10px;">Geçmiş okuma verileri yükleniyor...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- D. ROZETLER SEKME ALANI -->
+        <div id="sekmeRozetlerAlani" class="card" style="display: none;">
+            <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
+            <div class="rozet-grid" id="rozetlerAlani"></div>
+            
+            <div style="margin-top:20px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #a5d6a7; padding: 16px; border-radius: 14px; box-shadow: 0 4px 10px rgba(46,125,50,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #1b5e20;">
+                    <span>🚀 Rozet Tamamlama Seviyesi</span>
+                    <span id="rozetProgressText" style="background: #2e7d32; color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 12px;">%0</span>
+                </div>
+                <div style="background: #c8e6c9; height: 14px; border-radius: 7px; width: 100%; overflow: hidden; padding: 2px; border: 1px solid #a5d6a7;">
+                    <div id="rozetProgressBar" style="background: linear-gradient(90deg, #2e7d32, #4caf50); height: 100%; width: 0%; border-radius: 5px; transition: width 0.6s ease;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- OKUMA TESTİ AÇILIR PENCeresi (MODAL) -->
+    <div class="modal-overlay" id="okumaModalOverlay" style="display: none; z-index: 9999;">
+        <div class="modal-content" style="max-width: 600px; max-height: 92vh; overflow-y: auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="margin:0; color:#1e40af; font-size: 16px; font-weight: 800;">⏱️ Okuma Hızı & Prompter Stüdyosu</h3>
+                <button onclick="okumaModaliniKapat()" style="background:#f1f5f9; border:none; width: 28px; height: 28px; border-radius: 50%; font-size:14px; font-weight: bold; cursor:pointer; color:#64748b;">✕</button>
+            </div>
+            
+            <div style="background: #faf8f5; border: 1.5px solid #e0dcd0; padding: 15px; border-radius: 14px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                     <div style="flex: 1; min-width: 180px;">
                         <label style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 4px;">SEVİYE / SINIF SEÇİN</label>
@@ -360,42 +402,18 @@
             </div>
 
             <!-- BÜYÜK FONT & OKUNAKLI PROMPTER ALANI -->
-            <div class="card" style="background: #fdfbf7; border: 2px dashed #c8e6c9; min-height: 220px;">
-                <div style="font-size: 11px; font-weight: bold; color: #2e7d32; margin-bottom: 12px; text-transform: uppercase;">📜 Prompter Okuma Alanı (Okumayı bitirdiğiniz kelimenin üzerine tıklayın):</div>
-                <div id="prompterMetinAlani" style="font-size: 19px; line-height: 2.1; color: #1a1a1a; font-weight: 600; letter-spacing: 0.3px;">
+            <div style="background: #fdfbf7; border: 2px dashed #c8e6c9; padding: 15px; border-radius: 14px; min-height: 200px; max-height: 350px; overflow-y: auto;">
+                <div style="font-size: 11px; font-weight: bold; color: #2e7d32; margin-bottom: 10px; text-transform: uppercase;">📜 Prompter Okuma Alanı (Okumayı bitirdiğiniz kelimenin üzerine tıklayın):</div>
+                <div id="prompterMetinAlani" style="font-size: 18px; line-height: 2.0; color: #1a1a1a; font-weight: 600; letter-spacing: 0.3px;">
                     Lütfen yukarıdan sınıf seviyenizi seçip <b>"Yeni Metin Getir"</b> butonuna basın ve ardından <b>"Süreyi Başlat"</b> diyerek okumaya başlayın.
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-header-flex"><h3 class="card-title">📊 Geçmiş Gelişim Yolu Arşivi</h3></div>
-                <div id="okumaGecmisListesi" style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="text-align: center; color: #666; font-size: 13px; padding: 10px;">Geçmiş okuma verileri yükleniyor...</div>
-                </div>
-            </div>
         </div>
-
-        <!-- D. ROZETLER SEKME ALANI -->
-        <div id="sekmeRozetlerAlani" class="card" style="display: none;">
-            <div class="card-header-flex"><h3 class="card-title" id="rozetBaslikText">🏆 Kazanılan Rozetler — 0/0</h3></div>
-            <div class="rozet-grid" id="rozetlerAlani"></div>
-            
-            <div style="margin-top:20px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #a5d6a7; padding: 16px; border-radius: 14px; box-shadow: 0 4px 10px rgba(46,125,50,0.05);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #1b5e20;">
-                    <span>🚀 Rozet Tamamlama Seviyesi</span>
-                    <span id="rozetProgressText" style="background: #2e7d32; color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 12px;">%0</span>
-                </div>
-                <div style="background: #c8e6c9; height: 14px; border-radius: 7px; width: 100%; overflow: hidden; padding: 2px; border: 1px solid #a5d6a7;">
-                    <div id="rozetProgressBar" style="background: linear-gradient(90deg, #2e7d32, #4caf50); height: 100%; width: 0%; border-radius: 5px; transition: width 0.6s ease;"></div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <button class="admin-float-btn" onclick="yoneticiGirisSorgula()" title="Öğretmen Paneli">⚙️</button>
 
-    <div class="modal-overlay" id="rubrikModal">
+    <div class="modal-overlay" id="rubricModal">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <h3 style="margin:0; color:#2e7d32;">📋 Kapsamlı Öğretmen Rubriği</h3>
@@ -500,7 +518,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK01mYMvCtkMsKF-ze67e1PEr6zXDAyCgrDrApSbUqY4YVdvPlMCH9EEJhNFqAp7Q/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUe6yNNarha3W7CnN32jidOZXBO1-yZXPDOtVzmiFv9Fwm-3c7s47FTIuvV5eNsjoc/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -515,7 +533,6 @@
         let secilenKelimeSayisi = 0;
         let aktifMetinBasligi = "";
 
-        // SINIF BAŞINA YAKLAŞIK 50 KELİMEDEN BAŞLAYIP 8. SINIFTA 400 KELİMEYE VARAN UZUN PEDAGOJİK METİNLER
         const sinirsizMetinHavuzu = {
             "1-Sinif": [
                 { baslik: "Minik Kedi", icerik: "Minik kedi bahçede neşeyle koştu. Sütünü içti ve tık nefes uyudu. Güneş açtı, çiçekler rengarenk açtı. Ali bu güzel günde çok mutlu oldu. Annesi ona mis gibi elmalar getirdi. Ali elmaları severek yedi ve arkadaşlarıyla oynamak dışarıya çıktı." },
@@ -591,6 +608,15 @@
             if (index === 2) {
                 okumaGecmisiniGetir(ogrenciAdi);
             }
+        }
+
+        // OKUMA MODALI KONTROLÜ
+        function okumaModaliniAc() {
+            document.getElementById('okumaModalOverlay').style.display = 'flex';
+        }
+
+        function okumaModaliniKapat() {
+            document.getElementById('okumaModalOverlay').style.display = 'none';
         }
 
         function yeniMetinUretBaslat() {
@@ -683,6 +709,7 @@
             .then(data => {
                 if (data.status === "success") {
                     okumaGecmisiniGetir(ogrenciAdi);
+                    okumaModaliniKapat();
                 }
             }).catch(e => console.log("Okuma kayıt hatası:", e));
         }
@@ -728,7 +755,7 @@
                     });
                     listeDiv.innerHTML = html;
                 } else {
-                    listeDiv.innerHTML = `<div style="text-align: center; color: #666; font-size: 13px; padding: 10px;">Henüz kaydedilmiş bir gelişim yolu analizi bulunmuyor. Yukarıdan test başlatın!</div>`;
+                    listeDiv.innerHTML = `<div style="text-align: center; color: #666; font-size: 13px; padding: 10px;">Henüz kaydedilmiş bir gelişim yolu analizi bulunmuyor. Testi başlatın!</div>`;
                 }
             }).catch(e => {
                 listeDiv.innerHTML = `<div style="text-align: center; color: #c62828; font-size: 13px; padding: 10px;">Geçmiş veriler yüklenirken bağlantı hatası oluştu.</div>`;
