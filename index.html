@@ -553,15 +553,11 @@ body {
 </head>
 <body>
 
-    <!-- 🏠 ANA SAYFA BUTONU (SAĞ ÜST) -->
-    <button class="global-portal-home-btn" onclick="portalEkraninaDon()">
+    
       🏠 Ana Sayfa
     </button>
 
-    <!-- 📝 ÖĞRENCİ DEĞERLENDİR LOGO BUTONU (ANA SAYFA BUTONUNUN ALTINDA) -->
-    <button id="yeni_rubrikOpenBtn" title="Öğrenci Değerlendir">
-      📝
-    </button>
+   
 
 <!-- 🚀 GİRİŞ KARŞILAMA VE PORTAL SEÇİM EKRANI -->
 <div id="welcomePortalScreen" class="welcome-overlay">
@@ -971,39 +967,7 @@ body {
   </div>
 </div>
 
-<!-- 🟢 WHATSAPP DESTEK PENCERESİ VE BUTONU -->
-<div class="whatsapp-float-wrapper">
-  <span id="whatsappGeciciYazi" class="auto-hide-badge whatsapp-badge-text">Öğretmene Soru Sor! 💬</span>
-  <button class="whatsapp-float-btn" onclick="whatsappKutusuToggle()" title="Canlı Soru Hattı">
-    💬
-    <span class="whatsapp-badge-dot"></span>
-  </button>
-</div>
 
-<div id="waChatBox" class="whatsapp-chat-box">
-  <div class="whatsapp-chat-header">
-    <div>
-      <h4>Öğretmene Soru Sor</h4>
-      <span>Canlı Destek Hattı</span>
-    </div>
-    <button onclick="whatsappKutusuToggle()" style="background:none; border:none; color:white; font-size:16px; cursor:pointer; padding: 2px 6px;">✕</button>
-  </div>
-  <div class="whatsapp-chat-body">
-    <p>👋 Merhaba! Takıldığın bir soru mu var? Buradan yazarak öğretmenine doğrudan mesaj gönderebilirsin.</p>
-  </div>
-  <div class="whatsapp-chat-footer">
-    <textarea id="waSoruMetni" placeholder="Sorunuzu buraya yazın..."></textarea>
-    <button class="whatsapp-send-btn" onclick="whatsapplaGonder()">WhatsApp ile Gönder ➔</button>
-  </div>
-</div>
-
-    <script>
-var WEB_APP_URL = "https://script.google.com/macros/s/AKfycby6i1ZuSgRmPwZPbN3CQJWU3hyrhMRj44xTYGtD3Gh1jzTX-TnQTPl4-zTwu1SldQAs/exec";
-const SHEET_ID = "19kAcNuSVjbP_XODmFOj4uCQQ8JYxZ7IQSrw5KLwqKLY";
-const SECTIONS = {
-  ingilizce: { gid: "0",         label: "📚 İngilizce Özel Ders" },
-  kocluk:    { gid: "0", label: "🎯 Eğitim Koçum" }
-};
 const DENEMELER_GID = "969516335";
 const SKILL_COLORS = { vocabulary: "#1D9E75", konusma: "#378ADD", okuma: "#7F77DD", yazma: "#EF9F27", grammar: "#D85A30" };
 const SKILL_LABELS = { vocabulary:"Vocabulary", konusma:"Konuşma", okuma:"Okuma", yazma:"Yazma", grammar:"Grammar" };
