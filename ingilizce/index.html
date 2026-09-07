@@ -1085,7 +1085,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbymgYNey59NXstohuU4gUhaW0GqkX8Ez9B2CwYv2JMMez9al4v7McF3taokxMAxQXi1QA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwSVN6WYRv97-ml_DxIS3oKKDembLEcaCdD3nNTf_MvNohsduSP4cBZ3U6exwxgFWoNfw/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1319,10 +1319,16 @@
             });
         }
 
+        // Öğrenci seçildiğinde öğretmen panelindeki yıllık planları listele
         function ogrenciVerileriniYukle() {
             let ogrAdi = document.getElementById('rubricOgrenciSelect').value;
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrAdi.toLowerCase());
-            if (!user) return;
+            
+            let kont = document.getElementById('ogretmenPlanListesiKonteyner');
+            if (!user) {
+                if(kont) kont.innerHTML = `<span style="color: #64748b;">Lütfen önce yukarıdan bir öğrenci seçiniz...</span>`;
+                return;
+            }
 
             document.getElementById('rubricTelefon').value = user.telefon || "";
             
@@ -1345,6 +1351,9 @@
                 document.getElementById('rubricToplamKitap').value = user.kitapBilgi.okunanSayisi || 1;
             }
             document.getElementById('rubricSonDeneme').value = user.sonDeneme || 0;
+
+            // ÖĞRETMEN PANELİ YILLIK PLAN LİSTESİNİ ÇİZ (Atanan Plan Kodlarına Göre)
+            ogretmenPlanlariniCiz(user);
         }
 
         function ogretmenPlanlariniCiz(user) {
@@ -1353,7 +1362,7 @@
             kont.innerHTML = "";
 
             if (!user.atananPlanlar || user.atananPlanlar.length === 0) {
-                kont.innerHTML = `<span style="color: #64748b;">Bu öğrenciye atanmış yıllık plan bulunmuyor.</span>`;
+                kont.innerHTML = `<span style="color: #dc2626; font-weight: 600;">Bu öğrenciye İngilizce sekmesinde AtananPlan tanımlanmamış!</span>`;
                 return;
             }
 
@@ -1364,16 +1373,16 @@
                 kont.innerHTML += `
                     <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 4px;">
                         <div>
-                            <b style="color: #166534;">Hafta ${plan.haftaNo || '-'}</b>: ${plan.baslik} <span style="font-size: 9.5px; color: #64748b;">(${plan.tarih || '-'})</span>
+                            <b style="color: #166534;">[${plan.planKodu}] Hafta ${plan.haftaNo || '-'}</b>: ${plan.baslik} <span style="font-size: 9.5px; color: #64748b;">(${plan.tarih || '-'})</span>
                         </div>
-                        <input type="checkbox" ${isaretliMi ? 'checked' : ''} onchange="ogretmenPlanTikDegisti('${user.ogrenci}', '${plan.planKodu}', this.checked)" style="width: 16px; height: 16px; cursor: pointer; accent-color: #16a34a;">
+                        <input type="checkbox" ${isaretliMi ? 'checked' : ''} onchange="ogretmenPlanTikDegisti('${user.ogrenci}', '${plan.planKodu}', this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: #16a34a;">
                     </div>
                 `;
             });
         }
-
+        
         async function ogretmenPlanTikDegisti(ogrenciAdi, planKodu, isaretli) {
-            // Önce yerel cache'i güncelle ki anında yansısın
+            // Yerel cache'i anlık güncelle
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrenciAdi.toLowerCase());
             if (user && user.atananPlanlar) {
                 let planObj = user.atananPlanlar.find(p => p.planKodu === planKodu);
@@ -1388,6 +1397,7 @@
                 }
             }
 
+            // Google Sheets'e kaydet
             try {
                 let url = `${apiURL}?islem=ogretmenPlanOnayla&plankodu=${encodeURIComponent(planKodu)}&ogrenci=${encodeURIComponent(ogrenciAdi)}&isaretli=${isaretli}`;
                 await fetch(url);
