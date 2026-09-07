@@ -2477,6 +2477,26 @@ function yillikPlanArayuzunuGuncelle() {
     document.getElementById('yillikPlanDetaySayi').innerText = `${tamamlananSayisi} / ${toplamPlan} Plan Tamamlandı`;
     document.getElementById('yillikPlanBarFill').style.width = `${yuzde}%`;
 }
+
+        function yillikPlanModaliniAc() {
+    let modal = document.getElementById('yillikPlanModalOverlay');
+    if (modal) {
+        modal.style.display = 'flex';
+        // Eğer yukarıdaki fonksiyon tanımlıysa listeyi de doldursun
+        if (typeof yillikPlanListesiniCiz === 'function') {
+            yillikPlanListesiniCiz();
+        }
+    } else {
+        alert("Hata: 'yillikPlanModalOverlay' ID'sine sahip modal HTML içinde bulunamadı!");
+    }
+}
+
+function yillikPlanModaliniKapat() {
+    let modal = document.getElementById('yillikPlanModalOverlay');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
         
     </script>
 </body>
