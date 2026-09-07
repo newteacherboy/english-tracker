@@ -57,7 +57,6 @@
         .progress-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 5px; }
         .sure-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #2e7d32; font-weight: 600; flex-wrap: wrap; gap: 5px; }
 
-        /* MOBİLDE 2x2 SEKMELER BARİ */
         .tabs-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -162,7 +161,6 @@
             overflow: hidden;
         }
 
-        /* PROMPTER BÜYÜK FONT & OKUNAKLI STİLLER */
         .prompter-kelime {
             cursor: pointer;
             padding: 3px 6px;
@@ -274,7 +272,7 @@
             <div class="card">
                 <div class="card-header-flex">
                     <h3 class="card-title">📚 Okuma Kültürü & Odak Takibi</h3>
-                    <button class="action-pill-btn" onclick="alert('Hızlı okuma aktif!')" style="background:#ffb300; border:none; padding:6px 12px; border-radius:15px; color:#fff; font-weight:bold; cursor:pointer;">⚡ HIZLI OKUMA</button>
+                    <button class="action-pill-btn" onclick="okumaModaliniAc()" style="background:#ffb300; border:none; padding:6px 12px; border-radius:15px; color:#fff; font-weight:bold; cursor:pointer;">⚡ HIZLI OKUMA</button>
                 </div>
                 
                 <div class="okuma-grid">
@@ -321,7 +319,7 @@
             <div id="dersRaporlariListesi" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
 
-        <!-- C. GELİŞİM YOLU / OKUMA HIZI ÖLÇER ALANI (ŞIK BUTON) -->
+        <!-- C. GELİŞİM YOLU / OKUMA HIZI ÖLÇER ALANI -->
         <div id="sekmeKazanimlarAlani" class="card" style="display: none; flex-direction: column; gap: 15px;">
             <div class="card-header-flex"><h3 class="card-title">📈 Gelişim Yolu & Okuma Hızı Stüdyosu</h3></div>
             
@@ -400,7 +398,7 @@
                 </div>
             </div>
 
-            <!-- GEÇMİŞ GELİŞİM YOLU ARŞİVİ (MODAL İÇİNDE KÜÇÜK VE DÜZENLİ) -->
+            <!-- GEÇMİŞ GELİŞİM YOLU ARŞİVİ -->
             <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 14px; border-radius: 14px;">
                 <div style="font-size: 12.5px; font-weight: 800; color: #334155; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">📊 Geçmiş Gelişim Yolu Arşivi & Liderlik</div>
                 <div id="okumaGecmisListesi" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto;">
@@ -517,7 +515,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUe6yNNarha3W7CnN32jidOZXBO1-yZXPDOtVzmiFv9Fwm-3c7s47FTIuvV5eNsjoc/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZyMRSWPMbzgs_wnEDVuEUvJVMp4jqbR-WTC_PnBu7sMj7GWZwnoVRN6tnBAxHWpcC/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -583,7 +581,10 @@
                 let avatar = document.getElementById("ogrenciAvatarHarf");
                 if (baslik) baslik.innerText = ogrenciAdi;
                 if (avatar) avatar.innerText = ogrenciAdi.charAt(0).toUpperCase();
+                
+                // Verileri çek ve okuma geçmişini otomatik yükle
                 verileriCekVeBaslat(ogrenciAdi);
+                okumaGecmisiniGetir(ogrenciAdi);
 
                 let kaydetBtn = document.getElementById("rubrikKaydetBtn");
                 if (kaydetBtn) {
@@ -758,6 +759,7 @@
                 listeDiv.innerHTML = `<div style="text-align: center; color: #b45309; font-size: 12px; padding: 8px;">Henüz bu oturumda kayıtlı veri bulunmuyor veya yeni test bekleniyor.</div>`;
             });
         }
+
         function dersRaporlariniEkranaBas(kayitlar) {
             let listeDiv = document.getElementById("dersRaporlariListesi");
             if (!listeDiv) return;
@@ -838,7 +840,7 @@
         function yoneticiGirisSorgula() {
             let sifre = prompt("Yönetici şifresini girin:");
             if (sifre === "315269") {
-                document.getElementById("rubrikModal").style.display = "flex";
+                document.getElementById("rubricModal").style.display = "flex";
                 ogrenciListesiniYukle();
             } else if (sifre !== null) {
                 alert("Hatalı şifre!");
@@ -846,7 +848,7 @@
         }
 
         function modalKapat() {
-            document.getElementById("rubrikModal").style.display = "none";
+            document.getElementById("rubricModal").style.display = "none";
         }
 
         function ogrenciListesiniYukle() {
