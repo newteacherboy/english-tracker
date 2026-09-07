@@ -913,6 +913,7 @@
             </div>
         </div>
     </div>
+    
 
     <!-- JEOPARDY BALONLARI OYUNU MODALI -->
     <div class="game-modal-overlay" id="jeopardyModalOverlay">
@@ -1019,7 +1020,7 @@
                 </div>
             </div>
 
-            <!-- 🗓️ YILLIK PLANLAR DETAY PANELİ (MODAL) -->
+           <!-- 🗓️ YILLIK PLANLAR DETAY PANELİ (MODAL) -->
     <div class="game-modal-overlay" id="yillikPlanModalOverlay">
         <div class="game-modal-content" style="max-width: 560px;">
             <button class="game-close-btn" onclick="yillikPlanModaliniKapat()">✕</button>
@@ -2478,25 +2479,7 @@ function yillikPlanArayuzunuGuncelle() {
     document.getElementById('yillikPlanBarFill').style.width = `${yuzde}%`;
 }
 
-        function yillikPlanModaliniAc() {
-    let modal = document.getElementById('yillikPlanModalOverlay');
-    if (modal) {
-        modal.style.display = 'flex';
-        // Eğer yukarıdaki fonksiyon tanımlıysa listeyi de doldursun
-        if (typeof yillikPlanListesiniCiz === 'function') {
-            yillikPlanListesiniCiz();
-        }
-    } else {
-        alert("Hata: 'yillikPlanModalOverlay' ID'sine sahip modal HTML içinde bulunamadı!");
-    }
-}
-
-function yillikPlanModaliniKapat() {
-    let modal = document.getElementById('yillikPlanModalOverlay');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
+        
         
     </script>
 </body>
