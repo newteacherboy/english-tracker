@@ -2338,11 +2338,26 @@
             document.getElementById('yillikPlanModalOverlay').style.display = 'none';
         }
 
-        function ogretmenSifreModaliniAc() {
+        async function ogretmenSifreModaliniAc() {
             if (ogretmenYetkisiAktif) {
                 ogretmenYetkisiAktif = false;
                 yetenekDurumunuGuncelle();
-                alert("Öğretmen yetkisi kapatıldı, öğrenci moduna dönüldü.");
+                
+                // Kilitlemeden önce Google Sheets'ten güncel verileri tekrar çek ki tikler kaybolmasın kalıcı gelsin
+                let girisBtn = document.getElementById('girisBtn');
+                if(girisBtn) {
+                    try {
+                        let res = await fetch(apiURL);
+                        globalDataCache = await res.json();
+                        let guncelUser = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                        if (guncelUser && guncelUser.atananPlanlar) {
+                            ogrencininYillikPlanlari = guncelUser.atananPlanlar;
+                            yillikPlanArayuzunuGuncelle();
+                        }
+                    } catch(err) { console.error("Veri tazeleme hatası:", err); }
+                }
+
+                alert("Öğretmen yetkisi kapatıldı ve veriler sunucudan güncellendi.");
                 yillikPlanListesiniCiz();
             } else {
                 document.getElementById('planSifreModal').style.display = 'flex';
