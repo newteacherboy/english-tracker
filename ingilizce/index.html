@@ -436,6 +436,13 @@
             .badge-name { font-size: 7px; }
             .badge-target { font-size: 6px; }
         }
+
+        /* Mobil cihazlarda (ekran genişliği 768 pikselden küçükse) sol üstteki butonu gizle */
+        @media (max-width: 768px) {
+            .portal-back-btn {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
