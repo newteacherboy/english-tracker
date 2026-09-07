@@ -49,6 +49,145 @@
             color: #ffffff;
         }
 
+        /* Sağ Altta Çarkın Üstünde Soluk AI Asistan Butonu ve Bildirimi */
+        .ai-float-container {
+            position: fixed;
+            bottom: 12px;
+            right: 54px;
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+        }
+        .ai-float-btn {
+            background: rgba(124, 58, 237, 0.25);
+            color: #5b21b6;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .ai-float-btn:hover {
+            background: rgba(124, 58, 237, 0.8);
+            color: white;
+            transform: scale(1.1);
+        }
+        .ai-badge-tip {
+            position: absolute;
+            right: 40px;
+            background: #7c3aed;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            animation: fadeInOut 10s forwards;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(5px); }
+            10% { opacity: 1; transform: translateX(0); }
+            85% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        /* AI Sohbet Modal Paneli */
+        .ai-chat-modal {
+            position: fixed;
+            bottom: 55px;
+            right: 12px;
+            width: 330px;
+            max-width: 90vw;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 1px solid #e2e8f0;
+            display: none;
+            flex-direction: column;
+            z-index: 10000;
+            overflow: hidden;
+        }
+        .ai-chat-header {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            color: white;
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ai-chat-subinfo {
+            background: #f5f3ff;
+            color: #6d28d9;
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-bottom: 1px solid #ede9fe;
+            text-align: center;
+        }
+        .ai-chat-body {
+            padding: 10px;
+            height: 220px;
+            overflow-y: auto;
+            background: #f8fafc;
+            font-size: 11.5px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ai-msg {
+            padding: 8px 10px;
+            border-radius: 8px;
+            line-height: 1.4;
+            max-width: 85%;
+        }
+        .ai-msg.bot {
+            background: #ede9fe;
+            color: #3b0764;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .ai-msg.user {
+            background: #7c3aed;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .ai-chat-footer {
+            padding: 8px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 5px;
+        }
+        .ai-chat-footer input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 11.5px;
+            outline: none;
+            background: #f8fafc;
+        }
+        .ai-chat-footer button {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
         .login-card {
             background: #ffffff;
             padding: 30px 25px;
@@ -344,6 +483,28 @@
 
     <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI -->
     <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Rubrik Paneli">⚙️</button>
+
+    <!-- SAĞ ALT KÖŞEDE ÇARKIN ÜSTÜNDE SOLUK AI ASİSTAN BUTONU VE UYARI -->
+    <div class="ai-float-container">
+        <div class="ai-badge-tip" id="aiTipBadge">Öğretmene Soru Sor!</div>
+        <button class="ai-float-btn" onclick="aiModalAc()" title="Yapay Zeka İngilizce Koçu">🤖</button>
+    </div>
+
+    <!-- AI ASİSTAN SOHBET PENCERESİ -->
+    <div class="ai-chat-modal" id="aiChatModal">
+        <div class="ai-chat-header">
+            <span>🤖 Diji Muallim - AI Koç</span>
+            <button onclick="aiModalKapat()" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer;">✕</button>
+        </div>
+        <div class="ai-chat-subinfo" id="aiSoruHakInfo">Günlük Soru Hakkı Yükleniyor...</div>
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-msg bot">Merhaba! Ben İngilizce Asistanın. Bana kelimeler, gramer veya ders konuları hakkında sorular sorabilirsin! 😊</div>
+        </div>
+        <div class="ai-chat-footer">
+            <input type="text" id="aiMesajInput" placeholder="Soru sor (Örn: Apple ne demek?)..." onkeypress="if(event.key==='Enter') aiMesajGonder()">
+            <button onclick="aiMesajGonder()">Gönder</button>
+        </div>
+    </div>
 
     <!-- ŞİFRE GİRİŞ MODALI -->
     <div class="rubric-modal" id="sifreModal">
@@ -651,7 +812,7 @@
             </div>
         </div>
 
-        <!-- AKTİVİTELER SEKMESİ (Çift Oyun Butonlu) -->
+        <!-- AKTİVİTELER SEKMESİ -->
         <div id="tab-aktiviteler" class="tab-content">
             <div class="activity-banner">
                 <h3>🎮 İngilizce Kelime Ezber & Bilgi Yarışması</h3>
@@ -826,7 +987,8 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbz2r_mqh64QrDrtKCxqDbVXT1_hUuKPEgoGB_YR28AKXht7OWMGXJV2JeUvzIEPL7MF/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbz-yGW7AA5OoSDc7Wh1AY9_6kbVFz5GorSL6DhghN4PRkQwN9GM7IMZyWKk0gnMkIS_wA/exec";
+        const GEMINI_API_KEY = "AQ.Ab8RN6Lxf3PEttcwK7e7GLaA18dx3_1rhzt5o3sbmKzl6AyX-A";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -860,15 +1022,86 @@
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
+                document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
                 bilgileriSunucudanGuncelle(aktifOgrenciAdi);
             }
             uniteSecimleriniOlustur(2, 8);
             ogretmenSelectDoldur();
         };
 
-        function ogretmenPaneliAc() {
-            document.getElementById('sifreModal').style.display = 'flex';
+        // --- YAPAY ZEKA ASİSTAN SOHBET MİMARİSİ ---
+        function aiModalAc() { 
+            document.getElementById('aiChatModal').style.display = 'flex'; 
+            aiSoruHakkiniGuncelle();
         }
+        function aiModalKapat() { document.getElementById('aiChatModal').style.display = 'none'; }
+
+        function aiSoruHakkiniGuncelle() {
+            let rozetSayisi = Math.floor(toplamSaniye / 600); // her 10 dk = 1 rozet
+            let toplamHak = 10 + (rozetSayisi * 10); // temel 10 + her rozet için +10
+            let infoEl = document.getElementById('aiSoruHakInfo');
+            if(infoEl) {
+                infoEl.innerHTML = `💡 Günlük Soru Hakkı: <b>${toplamHak}</b> (Oturum rozetlerine göre artar)`;
+            }
+        }
+
+        async function aiMesajGonder() {
+            let input = document.getElementById('aiMesajInput');
+            let body = document.getElementById('aiChatBody');
+            let txt = input.value.trim();
+            if(!txt) return;
+
+            body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
+            input.value = "";
+            body.scrollTop = body.scrollHeight;
+
+            let loadingId = "load_" + Date.now();
+            body.innerHTML += `<div class="ai-msg bot" id="${loadingId}">Diji Muallim düşünüyor... 💭</div>`;
+            body.scrollTop = body.scrollHeight;
+
+            try {
+                let prompt = `Sen profesyonel, nazik ve samimi bir İngilizce Eğitim Koçusun ("Diji Muallim"). Sadece İngilizce, kelime bilgisi, dil bilgisi (grammar), ödevler ve ders konuları hakkında rehberlik yaparsın. Müstehcen, argo veya ders dışı tamamen alakasız sorular sorulursa kesinlikle kibarca reddet ve ders konularına yönlendir. 
+                Soru: ${txt}`;
+
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                let data = await response.json();
+                let aiCevap = data.candidates && data.candidates[0].content.parts[0].text ? data.candidates[0].content.parts[0].text : "Üzgünüm, şu an yanıt oluşturamadım.";
+
+                document.getElementById(loadingId).remove();
+                
+                let isDersDisi = txt.toLowerCase().includes("fizik") || txt.toLowerCase().includes("matematik") || txt.toLowerCase().includes("ödevim zor") || txt.toLowerCase().includes("hocaya sor") || txt.toLowerCase().includes("mert hoca");
+                
+                let ekButonHTML = "";
+                if (isDersDisi || aiCevap.includes("öğretmen")) {
+                    aiCevap += `<br><br><span style="font-size:10.5px; color:#5b21b6;">Bu soruyu Mert Hoca'ya (Öğretmenine) iletmek ister misin?</span><br><button onclick="ogretmeneSoruIlet('${guvenliMetin(txt).replace(/'/g, "\\'")}')" style="background:#7c3aed; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; margin-top:4px; cursor:pointer;">📤 Mert Hoca'ya Gönder</button>`;
+                }
+
+                body.innerHTML += `<div class="ai-msg bot">${aiCevap}</div>`;
+                body.scrollTop = body.scrollHeight;
+
+            } catch(err) {
+                document.getElementById(loadingId).remove();
+                body.innerHTML += `<div class="ai-msg bot">Bağlantı hatası oluştu. Lütfen bağlantınızı kontrol edin.</div>`;
+            }
+        }
+
+        async function ogretmeneSoruIlet(soruMetni) {
+            let ogrenciAdi = aktifOgrenciAdi || document.getElementById('ogrenci').value || "Misafir Öğrenci";
+            let url = `${apiURL}?islem=soruGonder&ogrenci=${encodeURIComponent(ogrenciAdi)}&soru=${encodeURIComponent(soruMetni)}`;
+            try {
+                await fetch(url);
+                alert("Sorun başarıyla Mert Hoca'ya iletildi! En kısa sürede sizinle iletişime geçecektir. 🚀");
+            } catch(e) {
+                alert("Gönderilirken bir hata oluştu.");
+            }
+        }
+
+        function ogretmenPaneliAc() { document.getElementById('sifreModal').style.display = 'flex'; }
 
         function sifreKontrolEt() {
             let sifre = document.getElementById('yoneticiSifreInput').value.trim();
