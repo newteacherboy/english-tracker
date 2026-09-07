@@ -724,33 +724,9 @@
                 </div>
             </div>
 
-            <!-- 🗓️ YILLIK PLAN & HEDEF TAKİP KUTUSU (Okuma Takibinin Üstü) -->
-            <div class="book-tracker-box" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0;">
-                <div class="book-tracker-header" style="margin-bottom: 8px;">
-                    <div class="book-header-left">
-                        <div class="book-header-icon">🗓️</div>
-                        <div>
-                            <div class="book-header-title" style="color: #166534;">Yıllık Plan & Hedef İlerlemesi</div>
-                            <div class="book-header-subtitle" style="color: #15803d;">Haftalık planları takip et, tikleri tamamla!</div>
-                        </div>
-                    </div>
-                    <!-- İlerleme Yüzdesini Gösteren Küçük Kutu / Buton -->
-                    <button onclick="yillikPlanModaliniAc()" class="btn-hizli-okuma" style="background: #16a34a; box-shadow: 0 1px 3px rgba(22, 163, 74, 0.3);">
-                        📊 <span id="yillikPlanYuzdeBadge">%0</span> • Planları Aç
-                    </button>
-                </div>
+            
                 
-                <!-- Küçük İlerleme Barı -->
-                <div class="book-progress-wrap" style="margin-top: 6px;">
-                    <div class="book-progress-info" style="color: #166534;">
-                        <span>Yıllık Plan Tamamlanma Oranı</span>
-                        <span id="yillikPlanDetaySayi">0 / 0 Plan Tamamlandı</span>
-                    </div>
-                    <div class="book-progress-bar-bg" style="background: #bbf7d0;">
-                        <div class="book-progress-bar-fill" id="yillikPlanBarFill" style="background: #16a34a; width: 0%;"></div>
-                    </div>
-                </div>
-            </div>
+               
 
             <div class="book-tracker-box">
                 <div class="book-tracker-header">
@@ -1046,36 +1022,7 @@
         </div>
     </div>
 
-    <!-- 🗓️ YILLIK PLANLAR DETAY PANELİ (MODAL) - Doğru Yere Taşındı -->
-    <div class="game-modal-overlay" id="yillikPlanModalOverlay">
-        <div class="game-modal-content" style="max-width: 560px;">
-            <button class="game-close-btn" onclick="yillikPlanModaliniKapat()">✕</button>
-            <div class="game-title" style="color: #166534;">🗓️ Yıllık Ders Planı ve Haftalık Takip</div>
-            <div class="game-subtitle">Öğrenciler sadece takip edebilir. Tik atmak için öğretmen şifresi gerekir!</div>
-
-            <!-- Şifre / Yetki Durum Çubuğu -->
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 11px;">
-                <span id="yetkiDurumText" style="font-weight: 700; color: #166534;">🔒 Öğrenci Modu (Tik Atılamaz)</span>
-                <button id="yetkiAcBtn" onclick="ogretmenSifreModaliniAc()" style="background: #16a34a; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-weight: 700; cursor: pointer;">🔐 Şifre Gir (Yetki Aç)</button>
-            </div>
-
-            <!-- Planların Listeleneceği Alan -->
-            <div id="yillikPlanlarKonteyner" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
-                <div style="text-align: center; color: #64748b; padding: 20px;">Planlar yükleniyor...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🔐 YILLIK PLAN İÇİN ÖĞRETMEN ŞİFRE GİRİŞ MODALI -->
-    <div class="rubric-modal" id="planSifreModal" style="z-index: 100005;">
-        <div class="rubric-content" style="max-width: 280px; text-align: center;">
-            <h3 style="color: #1e293b; margin-bottom: 6px; font-size: 14px;">🔐 Yönetici Şifresi</h3>
-            <p style="font-size: 10px; color: #64748b; margin-bottom: 10px;">Tik atabilmek için şifreyi giriniz:</p>
-            <input type="password" id="planYoneticisifreInput" placeholder="Şifre" style="text-align: center; margin-bottom: 8px;">
-            <button class="btn-giris" onclick="planSifreyiDogrula()" style="background: #16a34a; padding: 7px;">Onayla</button>
-            <button onclick="document.getElementById('planSifreModal').style.display='none'" style="background:none; border:none; color:#64748b; font-size:10px; margin-top:6px; cursor:pointer;">İptal</button>
-        </div>
-    </div>
+    
 
     <script>
         const apiURL = "https://script.google.com/macros/s/AKfycbywbKMK2meJXWxBLUM2f1q0m3RKuojFPaG1v1QXFHkLHoBuGJeGPgfIwp5CSGYIK7NoPA/exec";
@@ -2280,22 +2227,7 @@
             document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac();
         }
 
-        function veriArayuzeIsle(user) {
-            document.getElementById('valGenelPuan').innerText = user.genelOrtalama || 0;
-            document.getElementById('valEtkinlikBasarisi').innerText = user.etkinlikBasarisi || 0;
-            document.getElementById('valSonDeneme').innerText = user.sonDeneme || 0;
-            document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(user.genelOrtalama||0);
-            kitapTakibiniIsle(user.kitapBilgi);
-            grafikliCiz(user.grafikGecmis, user, user.denemeGecmis);
-            dersRaporlariniOlustur(user.arsivListesi, user.kitapBilgi);
-            dersTakviminiIsle(user.dersler);
-            let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
-            
-            // Yıllık Plan Verilerini İşle
-            if (user.atananPlanlar) {
-                ogrencininYillikPlanlari = user.atananPlanlar;
-                yillikPlanArayuzunuGuncelle();
-            }
+        
 
             if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
             if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
@@ -2325,58 +2257,7 @@
 
         function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
 
-        // --- YILLIK PLAN VE HEDEF TAKİP MİMARİSİ ---
-        let ogrencininYillikPlanlari = [];
-        let ogretmenYetkisiAktif = false;
-
-        function yillikPlanModaliniAc() {
-            document.getElementById('yillikPlanModalOverlay').style.display = 'flex';
-            yillikPlanListesiniCiz();
-        }
-
-        function yillikPlanModaliniKapat() {
-            document.getElementById('yillikPlanModalOverlay').style.display = 'none';
-        }
-
-        async function ogretmenSifreModaliniAc() {
-            if (ogretmenYetkisiAktif) {
-                ogretmenYetkisiAktif = false;
-                yetenekDurumunuGuncelle();
-                
-                // Kilitlemeden önce Google Sheets'ten güncel verileri tekrar çek ki tikler kaybolmasın kalıcı gelsin
-                let girisBtn = document.getElementById('girisBtn');
-                if(girisBtn) {
-                    try {
-                        let res = await fetch(apiURL);
-                        globalDataCache = await res.json();
-                        let guncelUser = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-                        if (guncelUser && guncelUser.atananPlanlar) {
-                            ogrencininYillikPlanlari = guncelUser.atananPlanlar;
-                            yillikPlanArayuzunuGuncelle();
-                        }
-                    } catch(err) { console.error("Veri tazeleme hatası:", err); }
-                }
-
-                alert("Öğretmen yetkisi kapatıldı ve veriler sunucudan güncellendi.");
-                yillikPlanListesiniCiz();
-            } else {
-                document.getElementById('planSifreModal').style.display = 'flex';
-            }
-        }
-
-        function planSifreyiDogrula() {
-            let sifre = document.getElementById('planYoneticisifreInput').value.trim();
-            if (sifre === "315269") {
-                ogretmenYetkisiAktif = true;
-                document.getElementById('planSifreModal').style.display = 'none';
-                document.getElementById('planYoneticisifreInput').value = "";
-                yetenekDurumunuGuncelle();
-                yillikPlanListesiniCiz();
-                alert("🔐 Öğretmen yetkisi başarıyla açıldı! Artık planlara tik atabilirsiniz.");
-            } else {
-                alert("Hatalı şifre!");
-            }
-        }
+       
 
         function yetenekDurumunuGuncelle() {
             let durumText = document.getElementById('yetkiDurumText');
@@ -2394,87 +2275,7 @@
             }
         }
 
-        function yillikPlanListesiniCiz() {
-            let konteyner = document.getElementById('yillikPlanlarKonteyner');
-            if (!konteyner) return;
-            konteyner.innerHTML = "";
-
-            if (!ogrencininYillikPlanlari || ogrencininYillikPlanlari.length === 0) {
-                konteyner.innerHTML = `<div style="text-align: center; color: #64748b; padding: 20px;">Bu öğrenciye atanmış yıllık plan bulunmuyor.</div>`;
-                return;
-            }
-
-            ogrencininYillikPlanlari.forEach(plan => {
-                let tamamlayanlarArr = plan.tamamlayanlar ? plan.tamamlayanlar.split(",").map(s => s.trim()) : [];
-                let isaretliMi = tamamlayanlarArr.includes(aktifOgrenciAdi);
-
-                konteyner.innerHTML += `
-                    <div style="background: ${isaretliMi ? '#f0fdf4' : '#f8fafc'}; border: 1.5px solid ${isaretliMi ? '#86efac' : '#cbd5e1'}; border-radius: 8px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                        <div style="flex: 1;">
-                            <div style="display: flex; gap: 6px; font-size: 9.5px; font-weight: 700; color: #166534; margin-bottom: 2px;">
-                                <span>Hafta ${plan.haftaNo || '-'}</span> • <span>${plan.donem || '-'}</span> • <span>📅 ${plan.tarih || '-'}</span>
-                            </div>
-                            <div style="font-size: 12.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">${plan.baslik}</div>
-                            <div style="font-size: 11px; color: #475569; line-height: 1.3;">${plan.aciklama}</div>
-                        </div>
-                        <div>
-                            <input type="checkbox" ${isaretliMi ? 'checked' : ''} ${!ogretmenYetkisiAktif ? 'disabled' : ''} onchange="planTikDegisti('${plan.planKodu}', this.checked)" style="width: 20px; height: 20px; cursor: ${ogretmenYetkisiAktif ? 'pointer' : 'not-allowed'}; accent-color: #16a34a;" title="${ogretmenYetkisiAktif ? 'Tik At' : 'Öğretmen şifresi gerekli'}">
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        async function planTikDegisti(planKodu, isaretli) {
-            if (!ogretmenYetkisiAktif) {
-                alert("Öğrenciler değişiklik yapamaz! Tik atabilmek için sağ üstteki butondan öğretmen şifresini girmelisiniz.");
-                yillikPlanListesiniCiz();
-                return;
-            }
-
-            let planObj = ogrencininYillikPlanlari.find(p => p.planKodu === planKodu);
-            if (planObj) {
-                let arr = planObj.tamamlayanlar ? planObj.tamamlayanlar.split(",").map(s => s.trim()).filter(s => s) : [];
-                if (isaretli && !arr.includes(aktifOgrenciAdi)) {
-                    arr.push(aktifOgrenciAdi);
-                } else if (!isaretli) {
-                    arr = arr.filter(s => s !== aktifOgrenciAdi);
-                }
-                planObj.tamamlayanlar = arr.join(", ");
-            }
-
-            yillikPlanArayuzunuGuncelle();
-
-            try {
-                let url = `${apiURL}?islem=planTikGuncelle&plankodu=${encodeURIComponent(planKodu)}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&isaretli=${isaretli}`;
-                await fetch(url);
-            } catch(err) {
-                console.error("Plan güncelleme hatası:", err);
-            }
-        }
-
-        function yillikPlanArayuzunuGuncelle() {
-            let toplamPlan = ogrencininYillikPlanlari.length;
-            if (toplamPlan === 0) {
-                document.getElementById('yillikPlanYuzdeBadge').innerText = "%0";
-                document.getElementById('yillikPlanDetaySayi').innerText = "0 / 0 Plan Tamamlandı";
-                document.getElementById('yillikPlanBarFill').style.width = "0%";
-                return;
-            }
-
-            let tamamlananSayisi = 0;
-            ogrencininYillikPlanlari.forEach(p => {
-                let arr = p.tamamlayanlar ? p.tamamlayanlar.split(",").map(s => s.trim()) : [];
-                if (arr.includes(aktifOgrenciAdi)) {
-                    tamamlananSayisi++;
-                }
-            });
-
-            let yuzde = Math.round((tamamlananSayisi / toplamPlan) * 100);
-            document.getElementById('yillikPlanYuzdeBadge').innerText = `%${yuzde}`;
-            document.getElementById('yillikPlanDetaySayi').innerText = `${tamamlananSayisi} / ${toplamPlan} Plan Tamamlandı`;
-            document.getElementById('yillikPlanBarFill').style.width = `${yuzde}%`;
-        }
+       
     </script>
 </body>
 </html>
