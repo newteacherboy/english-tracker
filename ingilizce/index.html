@@ -266,7 +266,7 @@
         .accordion-arrow { transition: transform 0.3s ease; font-size: 10px; color: #64748b; }
         .accordion-item.active .accordion-arrow { transform: rotate(180deg); }
         .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fafafa; border-top: 1px solid transparent; }
-        .accordion-item.active .accordion-content { max-height: 1200px; border-top-color: #e2e8f0; }
+       .accordion-item.active .accordion-content { max-height: 2500px; border-top-color: #e2e8f0; }
         .week-list-inner { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
         .week-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; transition: all 0.2s; }
         .week-card.completed { background: #ecfdf5; border-color: #a7f3d0; }
@@ -1177,21 +1177,29 @@
             document.getElementById('planModalOverlay').style.display = 'none';
         }
 
-        function renderModalAccordion() {
+       function renderModalAccordion() {
             let container = document.getElementById('modalAccordionContainer');
             container.innerHTML = "";
 
             let unitsMap = {};
             aktifOgrenciPlanHaftalari.forEach(w => {
-                // Dönem verisini temizleyip küçük harfe çevirelim (term1 / term2 eşleşmesi için)
                 let donemKey = String(w.donem || "").trim().toLowerCase();
                 if(donemKey !== 'term1' && donemKey !== 'term2') {
-                    // Eğer tarih Ocak sonu / Şubat başı veya sonrasındaysa otomatik term2 yapalım
                     donemKey = (w.haftaNo > 18) ? 'term2' : 'term1'; 
                     w.donem = donemKey;
                 }
 
-                let unitName = w.baslik.includes("Theme") || w.baslik.includes("Unit") ? w.baslik.split("-")[0].trim() : "Genel Müfredat";
+                // Theme veya Unit başlıklarına göre esnek gruplama
+                let baslikStr = String(w.baslik || "");
+                let unitName = "Genel Müfredat";
+                if (baslikStr.includes("Theme")) {
+                    let parts = baslikStr.split(":");
+                    unitName = parts[0].trim(); 
+                } else if (baslikStr.includes("Unit")) {
+                    let parts = baslikStr.split("-");
+                    unitName = parts[0].trim();
+                }
+
                 if (!unitsMap[unitName]) {
                     unitsMap[unitName] = { term: donemKey, weeks: [] };
                 }
@@ -1202,7 +1210,7 @@
             for (let uName in unitsMap) {
                 let uData = unitsMap[uName];
                 
-                // Filtre Kontrolü (Geliştirilmiş ve Esnek)
+                // Dönem Filtre Kontrolü
                 if (currentFilter !== 'all') {
                     let fTerm = currentFilter.toLowerCase().trim();
                     let uTerm = String(uData.term || "").toLowerCase().trim();
