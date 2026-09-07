@@ -1142,6 +1142,13 @@
                 document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
                 document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
+                
+                // BURASI DEĞİŞTİ: Mobil cihazlarda sunucudan taze veriyi çekip planları günceller
+                try {
+                    let res = await fetch(apiURL);
+                    globalDataCache = await res.json();
+                } catch(e) {}
+                
                 bilgileriSunucudanGuncelle(aktifOgrenciAdi);
             }
             uniteSecimleriniOlustur(2, 8);
@@ -2518,8 +2525,14 @@
 
         async function bilgileriSunucudanGuncelle(ogr) {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase());
-            if(user) { toplamSaniye = Number(user.toplamsure)||toplamSaniye; sessionStorage.setItem("toplamSaniye", toplamSaniye); veriArayuzeIsle(user); }
-            document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac();
+            if(user) { 
+                toplamSaniye = Number(user.toplamsure)||toplamSaniye; 
+                sessionStorage.setItem("toplamSaniye", toplamSaniye); 
+                veriArayuzeIsle(user); // Bu fonksiyon hem plan haftalarını hem tikleri günceller
+            }
+            document.getElementById('login-container').style.display='none'; 
+            document.getElementById('panel-alani').style.display='block'; 
+            baslatSayac();
         }
 
         function veriArayuzeIsle(user) {
