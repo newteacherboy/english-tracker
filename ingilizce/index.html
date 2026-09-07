@@ -2343,6 +2343,7 @@
                 ogretmenYetkisiAktif = false;
                 yetenekDurumunuGuncelle();
                 
+                // Kilitlemeden önce Google Sheets'ten güncel verileri tekrar çek ki tikler kaybolmasın kalıcı gelsin
                 let girisBtn = document.getElementById('girisBtn');
                 if(girisBtn) {
                     try {
@@ -2446,9 +2447,7 @@
 
             try {
                 let url = `${apiURL}?islem=planTikGuncelle&plankodu=${encodeURIComponent(planKodu)}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&isaretli=${isaretli}`;
-                let response = await fetch(url);
-                let result = await response.json();
-                console.log("Sunucu yanıtı:", result);
+                await fetch(url);
             } catch(err) {
                 console.error("Plan güncelleme hatası:", err);
             }
@@ -2463,19 +2462,6 @@
                 return;
             }
 
-            let tamamlananSayisi = 0;
-            ogrencininYillikPlanlari.forEach(p => {
-                let arr = p.tamamlayanlar ? p.tamamlayanlar.split(",").map(s => s.trim()) : [];
-                if (arr.includes(aktifOgrenciAdi)) {
-                    tamamlananSayisi++;
-                }
-            });
-
-            let yuzde = Math.round((tamamlananSayisi / toplamPlan) * 100);
-            document.getElementById('yillikPlanYuzdeBadge').innerText = `%${yuzde}`;
-            document.getElementById('yillikPlanDetaySayi').innerText = `${tamamlananSayisi} / ${toplamPlan} Plan Tamamlandı`;
-            document.getElementById('yillikPlanBarFill').style.width = `${yuzde}%`;
-        }
             let tamamlananSayisi = 0;
             ogrencininYillikPlanlari.forEach(p => {
                 let arr = p.tamamlayanlar ? p.tamamlayanlar.split(",").map(s => s.trim()) : [];
