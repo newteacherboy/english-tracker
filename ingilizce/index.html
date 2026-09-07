@@ -725,32 +725,32 @@
             </div>
 
             <!-- 🗓️ YILLIK PLAN & HEDEF TAKİP KUTUSU (Okuma Takibinin Üstü) -->
-    <div class="book-tracker-box" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0;">
-        <div class="book-tracker-header" style="margin-bottom: 8px;">
-            <div class="book-header-left">
-                <div class="book-header-icon">🗓️</div>
-                <div>
-                    <div class="book-header-title" style="color: #166534;">Yıllık Plan & Hedef İlerlemesi</div>
-                    <div class="book-header-subtitle" style="color: #15803d;">Haftalık planları takip et, tikleri tamamla!</div>
+            <div class="book-tracker-box" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0;">
+                <div class="book-tracker-header" style="margin-bottom: 8px;">
+                    <div class="book-header-left">
+                        <div class="book-header-icon">🗓️</div>
+                        <div>
+                            <div class="book-header-title" style="color: #166534;">Yıllık Plan & Hedef İlerlemesi</div>
+                            <div class="book-header-subtitle" style="color: #15803d;">Haftalık planları takip et, tikleri tamamla!</div>
+                        </div>
+                    </div>
+                    <!-- İlerleme Yüzdesini Gösteren Küçük Kutu / Buton -->
+                    <button onclick="yillikPlanModaliniAc()" class="btn-hizli-okuma" style="background: #16a34a; box-shadow: 0 1px 3px rgba(22, 163, 74, 0.3);">
+                        📊 <span id="yillikPlanYuzdeBadge">%0</span> • Planları Aç
+                    </button>
+                </div>
+                
+                <!-- Küçük İlerleme Barı -->
+                <div class="book-progress-wrap" style="margin-top: 6px;">
+                    <div class="book-progress-info" style="color: #166534;">
+                        <span>Yıllık Plan Tamamlanma Oranı</span>
+                        <span id="yillikPlanDetaySayi">0 / 0 Plan Tamamlandı</span>
+                    </div>
+                    <div class="book-progress-bar-bg" style="background: #bbf7d0;">
+                        <div class="book-progress-bar-fill" id="yillikPlanBarFill" style="background: #16a34a; width: 0%;"></div>
+                    </div>
                 </div>
             </div>
-            <!-- İlerleme Yüzdesini Gösteren Küçük Kutu / Buton -->
-            <button onclick="yillikPlanModaliniAc()" class="btn-hizli-okuma" style="background: #16a34a; box-shadow: 0 1px 3px rgba(22, 163, 74, 0.3);">
-                📊 <span id="yillikPlanYuzdeBadge">%0</span> • Planları Aç
-            </button>
-        </div>
-        
-        <!-- Küçük İlerleme Barı -->
-        <div class="book-progress-wrap" style="margin-top: 6px;">
-            <div class="book-progress-info" style="color: #166534;">
-                <span>Yıllık Plan Tamamlanma Oranı</span>
-                <span id="yillikPlanDetaySayi">0 / 0 Plan Tamamlandı</span>
-            </div>
-            <div class="book-progress-bar-bg" style="background: #bbf7d0;">
-                <div class="book-progress-bar-fill" id="yillikPlanBarFill" style="background: #16a34a; width: 0%;"></div>
-            </div>
-        </div>
-    </div>
 
             <div class="book-tracker-box">
                 <div class="book-tracker-header">
@@ -913,7 +913,6 @@
             </div>
         </div>
     </div>
-    
 
     <!-- JEOPARDY BALONLARI OYUNU MODALI -->
     <div class="game-modal-overlay" id="jeopardyModalOverlay">
@@ -1020,7 +1019,34 @@
                 </div>
             </div>
 
-           <!-- 🗓️ YILLIK PLANLAR DETAY PANELİ (MODAL) -->
+            <!-- Bilgi / Sayaç Kutusu -->
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-around; font-size: 11px; font-weight: 800; color: #166534;">
+                <span>⏱️ Timer: <span id="okumaKronometre">00:00</span></span>
+                <span>📖 Words: <span id="okunanKelimeSayac">0</span></span>
+                <span>⚡ Speed (WPM): <span id="wpmGosterge">0</span></span>
+            </div>
+
+            <!-- Aksiyon Butonları -->
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <button id="okumaBaslatBtn" onclick="okumaKronometreBaslat()" style="flex: 1; background: #15803d; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">▶ Start Timer</button>
+                <button onclick="okumaSonucuKaydet()" style="flex: 1; background: #e11d48; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">💾 Finish & Save Result</button>
+            </div>
+
+            <!-- Prompter Okuma Alanı -->
+            <div style="margin-bottom: 4px; font-size: 10px; font-weight: 700; color: #334155;">PROMPTER AREA (Click on the LAST word you have read):</div>
+            <div id="prompterMetinAlani" style="background: #ffffff; border: 1.5px dashed #86efac; border-radius: 8px; padding: 12px; max-height: 180px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: #1e293b; line-height: 1.6;"></div>
+
+            <!-- Geçmiş Arşivi Listesi -->
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 10px;">
+                <div style="font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 6px;">📊 Past Reading Progress & History</div>
+                <div id="okumaGecmisKonteyner" style="max-height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="font-size: 10.5px; color: #64748b; text-align: center;">Loading history...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🗓️ YILLIK PLANLAR DETAY PANELİ (MODAL) - Doğru Yere Taşındı -->
     <div class="game-modal-overlay" id="yillikPlanModalOverlay">
         <div class="game-modal-content" style="max-width: 560px;">
             <button class="game-close-btn" onclick="yillikPlanModaliniKapat()">✕</button>
@@ -1048,33 +1074,6 @@
             <input type="password" id="planYoneticisifreInput" placeholder="Şifre" style="text-align: center; margin-bottom: 8px;">
             <button class="btn-giris" onclick="planSifreyiDogrula()" style="background: #16a34a; padding: 7px;">Onayla</button>
             <button onclick="document.getElementById('planSifreModal').style.display='none'" style="background:none; border:none; color:#64748b; font-size:10px; margin-top:6px; cursor:pointer;">İptal</button>
-        </div>
-    </div>
-
-            <!-- Bilgi / Sayaç Kutusu -->
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-around; font-size: 11px; font-weight: 800; color: #166534;">
-                <span>⏱️ Timer: <span id="okumaKronometre">00:00</span></span>
-                <span>📖 Words: <span id="okunanKelimeSayac">0</span></span>
-                <span>⚡ Speed (WPM): <span id="wpmGosterge">0</span></span>
-            </div>
-
-            <!-- Aksiyon Butonları -->
-            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                <button id="okumaBaslatBtn" onclick="okumaKronometreBaslat()" style="flex: 1; background: #15803d; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">▶ Start Timer</button>
-                <button onclick="okumaSonucuKaydet()" style="flex: 1; background: #e11d48; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">💾 Finish & Save Result</button>
-            </div>
-
-            <!-- Prompter Okuma Alanı -->
-            <div style="margin-bottom: 4px; font-size: 10px; font-weight: 700; color: #334155;">PROMPTER AREA (Click on the LAST word you have read):</div>
-            <div id="prompterMetinAlani" style="background: #ffffff; border: 1.5px dashed #86efac; border-radius: 8px; padding: 12px; max-height: 180px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: #1e293b; line-height: 1.6;"></div>
-
-            <!-- Geçmiş Arşivi Listesi -->
-            <div style="border-top: 1px solid #e2e8f0; padding-top: 10px;">
-                <div style="font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 6px;">📊 Past Reading Progress & History</div>
-                <div id="okumaGecmisKonteyner" style="max-height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                    <div style="font-size: 10.5px; color: #64748b; text-align: center;">Loading history...</div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -2291,6 +2290,13 @@
             dersRaporlariniOlustur(user.arsivListesi, user.kitapBilgi);
             dersTakviminiIsle(user.dersler);
             let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
+            
+            // Yıllık Plan Verilerini İşle
+            if (user.atananPlanlar) {
+                ogrencininYillikPlanlari = user.atananPlanlar;
+                yillikPlanArayuzunuGuncelle();
+            }
+
             if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
             if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
             if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
@@ -2320,167 +2326,140 @@
         function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
 
         // --- YILLIK PLAN VE HEDEF TAKİP MİMARİSİ ---
-let ogrencininYillikPlanlari = [];
-let ogretmenYetkisiAktif = false;
+        let ogrencininYillikPlanlari = [];
+        let ogretmenYetkisiAktif = false;
 
-function veriArayuzeIsle(user) {
-    document.getElementById('valGenelPuan').innerText = user.genelOrtalama || 0;
-    document.getElementById('valEtkinlikBasarisi').innerText = user.etkinlikBasarisi || 0;
-    document.getElementById('valSonDeneme').innerText = user.sonDeneme || 0;
-    document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(user.genelOrtalama||0);
-    kitapTakibiniIsle(user.kitapBilgi);
-    grafikliCiz(user.grafikGecmis, user, user.denemeGecmis);
-    dersRaporlariniOlustur(user.arsivListesi, user.kitapBilgi);
-    dersTakviminiIsle(user.dersler);
-    let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
-    
-    // Yıllık Plan Verilerini İşle
-    if (user.atananPlanlar) {
-        ogrencininYillikPlanlari = user.atananPlanlar;
-        yillikPlanArayuzunuGuncelle();
-    }
+        function yillikPlanModaliniAc() {
+            document.getElementById('yillikPlanModalOverlay').style.display = 'flex';
+            yillikPlanListesiniCiz();
+        }
 
-    if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
-    if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-    if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-}
+        function yillikPlanModaliniKapat() {
+            document.getElementById('yillikPlanModalOverlay').style.display = 'none';
+        }
 
-function yillikPlanModaliniAc() {
-    document.getElementById('yillikPlanModalOverlay').style.display = 'flex';
-    yillikPlanListesiniCiz();
-}
+        function ogretmenSifreModaliniAc() {
+            if (ogretmenYetkisiAktif) {
+                ogretmenYetkisiAktif = false;
+                yetenekDurumunuGuncelle();
+                alert("Öğretmen yetkisi kapatıldı, öğrenci moduna dönüldü.");
+                yillikPlanListesiniCiz();
+            } else {
+                document.getElementById('planSifreModal').style.display = 'flex';
+            }
+        }
 
-function yillikPlanModaliniKapat() {
-    document.getElementById('yillikPlanModalOverlay').style.display = 'none';
-}
+        function planSifreyiDogrula() {
+            let sifre = document.getElementById('planYoneticisifreInput').value.trim();
+            if (sifre === "315269") {
+                ogretmenYetkisiAktif = true;
+                document.getElementById('planSifreModal').style.display = 'none';
+                document.getElementById('planYoneticisifreInput').value = "";
+                yetenekDurumunuGuncelle();
+                yillikPlanListesiniCiz();
+                alert("🔐 Öğretmen yetkisi başarıyla açıldı! Artık planlara tik atabilirsiniz.");
+            } else {
+                alert("Hatalı şifre!");
+            }
+        }
 
-function ogretmenSifreModaliniAc() {
-    if (ogretmenYetkisiAktif) {
-        ogretmenYetkisiAktif = false;
-        yetenekDurumunuGuncelle();
-        alert("Öğretmen yetkisi kapatıldı, öğrenci moduna dönüldü.");
-        yillikPlanListesiniCiz();
-    } else {
-        document.getElementById('planSifreModal').style.display = 'flex';
-    }
-}
+        function yetenekDurumunuGuncelle() {
+            let durumText = document.getElementById('yetkiDurumText');
+            let yetkiBtn = document.getElementById('yetkiAcBtn');
+            if (ogretmenYetkisiAktif) {
+                durumText.innerHTML = "🔓 Öğretmen Modu (Tik Atılabilir)";
+                durumText.style.color = "#15803d";
+                yetkiBtn.innerText = "🔒 Kilitle (Öğrenci Modu)";
+                yetkiBtn.style.background = "#dc2626";
+            } else {
+                durumText.innerHTML = "🔒 Öğrenci Modu (Tik Atılamaz)";
+                durumText.style.color = "#166534";
+                yetkiBtn.innerText = "🔐 Şifre Gir (Yetki Aç)";
+                yetkiBtn.style.background = "#16a34a";
+            }
+        }
 
-function planSifreyiDogrula() {
-    let sifre = document.getElementById('planYoneticisifreInput').value.trim();
-    if (sifre === "315269") {
-        ogretmenYetkisiAktif = true;
-        document.getElementById('planSifreModal').style.display = 'none';
-        document.getElementById('planYoneticisifreInput').value = "";
-        yetenekDurumunuGuncelle();
-        yillikPlanListesiniCiz();
-        alert("🔐 Öğretmen yetkisi başarıyla açıldı! Artık planlara tik atabilirsiniz.");
-    } else {
-        alert("Hatalı şifre!");
-    }
-}
+        function yillikPlanListesiniCiz() {
+            let konteyner = document.getElementById('yillikPlanlarKonteyner');
+            if (!konteyner) return;
+            konteyner.innerHTML = "";
 
-function yetenekDurumunuGuncelle() {
-    let durumText = document.getElementById('yetkiDurumText');
-    let yetkiBtn = document.getElementById('yetkiAcBtn');
-    if (ogretmenYetkisiAktif) {
-        durumText.innerHTML = "🔓 Öğretmen Modu (Tik Atılabilir)";
-        durumText.style.color = "#15803d";
-        yetkiBtn.innerText = "🔒 Kilitle (Öğrenci Modu)";
-        yetkiBtn.style.background = "#dc2626";
-    } else {
-        durumText.innerHTML = "🔒 Öğrenci Modu (Tik Atılamaz)";
-        durumText.style.color = "#166534";
-        yetkiBtn.innerText = "🔐 Şifre Gir (Yetki Aç)";
-        yetkiBtn.style.background = "#16a34a";
-    }
-}
+            if (!ogrencininYillikPlanlari || ogrencininYillikPlanlari.length === 0) {
+                konteyner.innerHTML = `<div style="text-align: center; color: #64748b; padding: 20px;">Bu öğrenciye atanmış yıllık plan bulunmuyor.</div>`;
+                return;
+            }
 
-function yillikPlanListesiniCiz() {
-    let konteyner = document.getElementById('yillikPlanlarKonteyner');
-    if (!konteyner) return;
-    konteyner.innerHTML = "";
+            ogrencininYillikPlanlari.forEach(plan => {
+                let tamamlayanlarArr = plan.tamamlayanlar ? plan.tamamlayanlar.split(",").map(s => s.trim()) : [];
+                let isaretliMi = tamamlayanlarArr.includes(aktifOgrenciAdi);
 
-    if (!ogrencininYillikPlanlari || ogrencininYillikPlanlari.length === 0) {
-        konteyner.innerHTML = `<div style="text-align: center; color: #64748b; padding: 20px;">Bu öğrenciye atanmış yıllık plan bulunmuyor.</div>`;
-        return;
-    }
-
-    ogrencininYillikPlanlari.forEach(plan => {
-        let tamamlayanlarArr = plan.tamamlayanlar ? plan.tamamlayanlar.split(",").map(s => s.trim()) : [];
-        let isaretliMi = tamamlayanlarArr.includes(aktifOgrenciAdi);
-
-        konteyner.innerHTML += `
-            <div style="background: ${isaretliMi ? '#f0fdf4' : '#f8fafc'}; border: 1.5px solid ${isaretliMi ? '#86efac' : '#cbd5e1'}; border-radius: 8px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                <div style="flex: 1;">
-                    <div style="display: flex; gap: 6px; font-size: 9.5px; font-weight: 700; color: #166534; margin-bottom: 2px;">
-                        <span>Hafta ${plan.haftaNo || '-'}</span> • <span>${plan.donem || '-'}</span> • <span>📅 ${plan.tarih || '-'}</span>
+                konteyner.innerHTML += `
+                    <div style="background: ${isaretliMi ? '#f0fdf4' : '#f8fafc'}; border: 1.5px solid ${isaretliMi ? '#86efac' : '#cbd5e1'}; border-radius: 8px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; gap: 6px; font-size: 9.5px; font-weight: 700; color: #166534; margin-bottom: 2px;">
+                                <span>Hafta ${plan.haftaNo || '-'}</span> • <span>${plan.donem || '-'}</span> • <span>📅 ${plan.tarih || '-'}</span>
+                            </div>
+                            <div style="font-size: 12.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">${plan.baslik}</div>
+                            <div style="font-size: 11px; color: #475569; line-height: 1.3;">${plan.aciklama}</div>
+                        </div>
+                        <div>
+                            <input type="checkbox" ${isaretliMi ? 'checked' : ''} ${!ogretmenYetkisiAktif ? 'disabled' : ''} onchange="planTikDegisti('${plan.planKodu}', this.checked)" style="width: 20px; height: 20px; cursor: ${ogretmenYetkisiAktif ? 'pointer' : 'not-allowed'}; accent-color: #16a34a;" title="${ogretmenYetkisiAktif ? 'Tik At' : 'Öğretmen şifresi gerekli'}">
+                        </div>
                     </div>
-                    <div style="font-size: 12.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">${plan.baslik}</div>
-                    <div style="font-size: 11px; color: #475569; line-height: 1.3;">${plan.aciklama}</div>
-                </div>
-                <div>
-                    <input type="checkbox" ${isaretliMi ? 'checked' : ''} ${!ogretmenYetkisiAktif ? 'disabled' : ''} onchange="planTikDegisti('${plan.planKodu}', this.checked)" style="width: 20px; height: 20px; cursor: ${ogretmenYetkisiAktif ? 'pointer' : 'not-allowed'}; accent-color: #16a34a;" title="${ogretmenYetkisiAktif ? 'Tik At' : 'Öğretmen şifresi gerekli'}">
-                </div>
-            </div>
-        `;
-    });
-}
-
-async function planTikDegisti(planKodu, isaretli) {
-    if (!ogretmenYetkisiAktif) {
-        alert("Öğrenciler değişiklik yapamaz! Tik atabilmek için sağ üstteki butondan öğretmen şifresini girmelisiniz.");
-        yillikPlanListesiniCiz(); // checkbox eski haline dönsün
-        return;
-    }
-
-    // Yerel veriyi güncelle
-    let planObj = ogrencininYillikPlanlari.find(p => p.planKodu === planKodu);
-    if (planObj) {
-        let arr = planObj.tamamlayanlar ? planObj.tamamlayanlar.split(",").map(s => s.trim()).filter(s => s) : [];
-        if (isaretli && !arr.includes(aktifOgrenciAdi)) {
-            arr.push(aktifOgrenciAdi);
-        } else if (!isaretli) {
-            arr = arr.filter(s => s !== aktifOgrenciAdi);
+                `;
+            });
         }
-        planObj.tamamlayanlar = arr.join(", ");
-    }
 
-    yillikPlanArayuzunuGuncelle();
+        async function planTikDegisti(planKodu, isaretli) {
+            if (!ogretmenYetkisiAktif) {
+                alert("Öğrenciler değişiklik yapamaz! Tik atabilmek için sağ üstteki butondan öğretmen şifresini girmelisiniz.");
+                yillikPlanListesiniCiz();
+                return;
+            }
 
-    // Google Sheets'e kaydet
-    try {
-        let url = `${apiURL}?islem=planTikGuncelle&plankodu=${encodeURIComponent(planKodu)}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&isaretli=${isaretli}`;
-        await fetch(url);
-    } catch(err) {
-        console.error("Plan güncelleme hatası:", err);
-    }
-}
+            let planObj = ogrencininYillikPlanlari.find(p => p.planKodu === planKodu);
+            if (planObj) {
+                let arr = planObj.tamamlayanlar ? planObj.tamamlayanlar.split(",").map(s => s.trim()).filter(s => s) : [];
+                if (isaretli && !arr.includes(aktifOgrenciAdi)) {
+                    arr.push(aktifOgrenciAdi);
+                } else if (!isaretli) {
+                    arr = arr.filter(s => s !== aktifOgrenciAdi);
+                }
+                planObj.tamamlayanlar = arr.join(", ");
+            }
 
-function yillikPlanArayuzunuGuncelle() {
-    let toplamPlan = ogrencininYillikPlanlari.length;
-    if (toplamPlan === 0) {
-        document.getElementById('yillikPlanYuzdeBadge').innerText = "%0";
-        document.getElementById('yillikPlanDetaySayi').innerText = "0 / 0 Plan Tamamlandı";
-        document.getElementById('yillikPlanBarFill').style.width = "0%";
-        return;
-    }
+            yillikPlanArayuzunuGuncelle();
 
-    let tamamlananSayisi = 0;
-    ogrencininYillikPlanlari.forEach(p => {
-        let arr = p.tamamlayanlar ? p.tamamlayanlar.split(",").map(s => s.trim()) : [];
-        if (arr.includes(aktifOgrenciAdi)) {
-            tamamlananSayisi++;
+            try {
+                let url = `${apiURL}?islem=planTikGuncelle&plankodu=${encodeURIComponent(planKodu)}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&isaretli=${isaretli}`;
+                await fetch(url);
+            } catch(err) {
+                console.error("Plan güncelleme hatası:", err);
+            }
         }
-    });
 
-    let yuzde = Math.round((tamamlananSayisi / toplamPlan) * 100);
-    document.getElementById('yillikPlanYuzdeBadge').innerText = `%${yuzde}`;
-    document.getElementById('yillikPlanDetaySayi').innerText = `${tamamlananSayisi} / ${toplamPlan} Plan Tamamlandı`;
-    document.getElementById('yillikPlanBarFill').style.width = `${yuzde}%`;
-}
+        function yillikPlanArayuzunuGuncelle() {
+            let toplamPlan = ogrencininYillikPlanlari.length;
+            if (toplamPlan === 0) {
+                document.getElementById('yillikPlanYuzdeBadge').innerText = "%0";
+                document.getElementById('yillikPlanDetaySayi').innerText = "0 / 0 Plan Tamamlandı";
+                document.getElementById('yillikPlanBarFill').style.width = "0%";
+                return;
+            }
 
-        
-        
+            let tamamlananSayisi = 0;
+            ogrencininYillikPlanlari.forEach(p => {
+                let arr = p.tamamlayanlar ? p.tamamlayanlar.split(",").map(s => s.trim()) : [];
+                if (arr.includes(aktifOgrenciAdi)) {
+                    tamamlananSayisi++;
+                }
+            });
+
+            let yuzde = Math.round((tamamlananSayisi / toplamPlan) * 100);
+            document.getElementById('yillikPlanYuzdeBadge').innerText = `%${yuzde}`;
+            document.getElementById('yillikPlanDetaySayi').innerText = `${tamamlananSayisi} / ${toplamPlan} Plan Tamamlandı`;
+            document.getElementById('yillikPlanBarFill').style.width = `${yuzde}%`;
+        }
     </script>
 </body>
 </html>
