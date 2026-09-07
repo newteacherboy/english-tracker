@@ -23,6 +23,32 @@
             padding: 10px 5px;
             font-size: 13px;
         }
+
+        /* Sol Üst Küçük Ana Portala Dön Butonu */
+        .portal-back-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: #ffffff;
+            color: #2f855a;
+            border: 1px solid #bbf7d0;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 99999;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .portal-back-btn:hover {
+            background: #2f855a;
+            color: #ffffff;
+        }
+
         .login-card {
             background: #ffffff;
             padding: 30px 25px;
@@ -312,6 +338,9 @@
     </style>
 </head>
 <body>
+
+    <!-- Sol Üst Küçük Ana Portala Dön Butonu -->
+    <a href="https://panel.ogretmencocuk.com" class="portal-back-btn">← Ana Portala Dön</a>
 
     <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI -->
     <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Rubrik Paneli">⚙️</button>
