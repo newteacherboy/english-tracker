@@ -1060,23 +1060,30 @@
             body.scrollTop = body.scrollHeight;
 
             try {
-                let prompt = `Sen profesyonel, nazik ve samimi bir İngilizce Eğitim Koçusun ("Diji Muallim"). Sadece İngilizce, kelime bilgisi, dil bilgisi (grammar), ödevler ve ders konuları hakkında rehberlik yaparsın. Müstehcen, argo veya ders dışı tamamen alakasız sorular sorulursa kesinlikle kibarca reddet ve ders konularına yönlendir. 
-                Soru: ${txt}`;
+                let prompt = `Sen profesyonel, nazik ve samimi bir İngilizce Eğitim Koçusun ("Diji Muallim"). Sadece İngilizce, kelime bilgisi, dil bilgisi (grammar), ödevler ve ders konuları hakkında rehberlik yaparsın. Müstehcen, argo veya ders dışı tamamen alakasız sorular sorulursa kesinlikle kibarca reddet ve ders konularına yönlendir. Soru: ${txt}`;
 
-                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                // Kararlı ve güncel v1 modeli uç noktası
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
 
                 let data = await response.json();
+                
+                if (data.error) {
+                    console.error("Gemini API Hatası:", data.error);
+                    document.getElementById(loadingId).remove();
+                    body.innerHTML += `<div class="ai-msg bot">API Hatası: ${data.error.message || "Geçersiz anahtar veya istek."}</div>`;
+                    return;
+                }
+
                 let aiCevap = data.candidates && data.candidates[0].content.parts[0].text ? data.candidates[0].content.parts[0].text : "Üzgünüm, şu an yanıt oluşturamadım.";
 
                 document.getElementById(loadingId).remove();
                 
                 let isDersDisi = txt.toLowerCase().includes("fizik") || txt.toLowerCase().includes("matematik") || txt.toLowerCase().includes("ödevim zor") || txt.toLowerCase().includes("hocaya sor") || txt.toLowerCase().includes("mert hoca");
                 
-                let ekButonHTML = "";
                 if (isDersDisi || aiCevap.includes("öğretmen")) {
                     aiCevap += `<br><br><span style="font-size:10.5px; color:#5b21b6;">Bu soruyu Mert Hoca'ya (Öğretmenine) iletmek ister misin?</span><br><button onclick="ogretmeneSoruIlet('${guvenliMetin(txt).replace(/'/g, "\\'")}')" style="background:#7c3aed; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; margin-top:4px; cursor:pointer;">📤 Mert Hoca'ya Gönder</button>`;
                 }
@@ -1085,8 +1092,9 @@
                 body.scrollTop = body.scrollHeight;
 
             } catch(err) {
+                console.error(err);
                 document.getElementById(loadingId).remove();
-                body.innerHTML += `<div class="ai-msg bot">Bağlantı hatası oluştu. Lütfen bağlantınızı kontrol edin.</div>`;
+                body.innerHTML += `<div class="ai-msg bot">Bağlantı kurulamadı. Lütfen internetinizi veya API anahtarınızı kontrol edin.</div>`;
             }
         }
 
