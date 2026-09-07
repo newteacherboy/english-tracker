@@ -988,7 +988,7 @@
 
     <script>
         const apiURL = "https://script.google.com/macros/s/AKfycbz-yGW7AA5OoSDc7Wh1AY9_6kbVFz5GorSL6DhghN4PRkQwN9GM7IMZyWKk0gnMkIS_wA/exec";
-        const GEMINI_API_KEY = "AQ.Ab8RN6Lxf3PEttcwK7e7GLaA18dx3_1rhzt5o3sbmKzl6AyX-A";
+        const GEMINI_API_KEY = "AQ.Ab8RN6K22n87a9xtx-nDgnf_bOPDt6Il54FFKS9ADCf9WGg6rQ";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1045,7 +1045,7 @@
             }
         }
 
-        async function aiMesajGonder() {
+      async function aiMesajGonder() {
             let input = document.getElementById('aiMesajInput');
             let body = document.getElementById('aiChatBody');
             let txt = input.value.trim();
@@ -1062,10 +1062,13 @@
             try {
                 let prompt = `Sen profesyonel, nazik ve samimi bir İngilizce Eğitim Koçusun ("Diji Muallim"). Sadece İngilizce, kelime bilgisi, dil bilgisi (grammar), ödevler ve ders konuları hakkında rehberlik yaparsın. Müstehcen, argo veya ders dışı tamamen alakasız sorular sorulursa kesinlikle kibarca reddet ve ders konularına yönlendir. Soru: ${txt}`;
 
-                // Kararlı ve güncel v1 modeli uç noktası
-                let response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+                // Yeni AQ. formatı için Authorization Bearer başlığı kullanıyoruz
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${GEMINI_API_KEY}`
+                    },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
 
@@ -1074,7 +1077,7 @@
                 if (data.error) {
                     console.error("Gemini API Hatası:", data.error);
                     document.getElementById(loadingId).remove();
-                    body.innerHTML += `<div class="ai-msg bot">API Hatası: ${data.error.message || "Geçersiz anahtar veya istek."}</div>`;
+                    body.innerHTML += `<div class="ai-msg bot">API Hatası: ${data.error.message || "Kimlik doğrulama başarısız."}</div>`;
                     return;
                 }
 
@@ -1094,7 +1097,7 @@
             } catch(err) {
                 console.error(err);
                 document.getElementById(loadingId).remove();
-                body.innerHTML += `<div class="ai-msg bot">Bağlantı kurulamadı. Lütfen internetinizi veya API anahtarınızı kontrol edin.</div>`;
+                body.innerHTML += `<div class="ai-msg bot">Bağlantı hatası oluştu. Lütfen bağlantınızı kontrol edin.</div>`;
             }
         }
 
