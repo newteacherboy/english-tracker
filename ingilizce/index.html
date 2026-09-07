@@ -628,6 +628,13 @@
                 <input type="text" id="rubricSonrakiOdev" placeholder="Ödev detayını buraya yazabilirsiniz...">
             </div>
 
+            <!-- 🗓️ ÖĞRETMEN PANELİ İÇİN YILLIK PLAN ONAY ALANI -->
+            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
+            <p style="font-size: 10.5px; font-weight: 800; color: #166534; margin-bottom: 6px;">🗓️ Öğrenci Yıllık Plan & Hafta Onayları</p>
+            <div id="ogretmenPlanListesiKonteyner" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; max-height: 160px; overflow-y: auto; margin-bottom: 10px; font-size: 11px; color: #1e293b;">
+                <span style="color: #64748b;">Lütfen önce yukarıdan bir öğrenci seçiniz...</span>
+            </div>
+
             <button class="btn-giris" id="rubricKaydetBtn" onclick="rubrikVerileriniKaydetVeWhatsappGonder()" style="background: #2563eb; margin-top: 8px;">💾 Kaydet & Uzun Veli Raporunu WhatsApp'a Gönder</button>
         </div>
     </div>
@@ -1078,7 +1085,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbwthCSZoRtYUkqPy0lSrlqo1QhT17nfnf1mk0HaUk-9RdzB3rAdcVwNu1F6ztcGK23dRQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbymgYNey59NXstohuU4gUhaW0GqkX8Ez9B2CwYv2JMMez9al4v7McF3taokxMAxQXi1QA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1338,6 +1345,55 @@
                 document.getElementById('rubricToplamKitap').value = user.kitapBilgi.okunanSayisi || 1;
             }
             document.getElementById('rubricSonDeneme').value = user.sonDeneme || 0;
+        }
+
+        function ogretmenPlanlariniCiz(user) {
+            let kont = document.getElementById('ogretmenPlanListesiKonteyner');
+            if (!kont) return;
+            kont.innerHTML = "";
+
+            if (!user.atananPlanlar || user.atananPlanlar.length === 0) {
+                kont.innerHTML = `<span style="color: #64748b;">Bu öğrenciye atanmış yıllık plan bulunmuyor.</span>`;
+                return;
+            }
+
+            user.atananPlanlar.forEach(plan => {
+                let tamamlayanlarArr = plan.tamamlayanlar ? plan.tamamlayanlar.split(",").map(s => s.trim()) : [];
+                let isaretliMi = tamamlayanlarArr.includes(user.ogrenci);
+
+                kont.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 4px;">
+                        <div>
+                            <b style="color: #166534;">Hafta ${plan.haftaNo || '-'}</b>: ${plan.baslik} <span style="font-size: 9.5px; color: #64748b;">(${plan.tarih || '-'})</span>
+                        </div>
+                        <input type="checkbox" ${isaretliMi ? 'checked' : ''} onchange="ogretmenPlanTikDegisti('${user.ogrenci}', '${plan.planKodu}', this.checked)" style="width: 16px; height: 16px; cursor: pointer; accent-color: #16a34a;">
+                    </div>
+                `;
+            });
+        }
+
+        async function ogretmenPlanTikDegisti(ogrenciAdi, planKodu, isaretli) {
+            // Önce yerel cache'i güncelle ki anında yansısın
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrenciAdi.toLowerCase());
+            if (user && user.atananPlanlar) {
+                let planObj = user.atananPlanlar.find(p => p.planKodu === planKodu);
+                if (planObj) {
+                    let arr = planObj.tamamlayanlar ? planObj.tamamlayanlar.split(",").map(s => s.trim()).filter(s => s) : [];
+                    if (isaretli && !arr.includes(ogrenciAdi)) {
+                        arr.push(ogrenciAdi);
+                    } else if (!isaretli) {
+                        arr = arr.filter(s => s !== ogrenciAdi);
+                    }
+                    planObj.tamamlayanlar = arr.join(", ");
+                }
+            }
+
+            try {
+                let url = `${apiURL}?islem=ogretmenPlanOnayla&plankodu=${encodeURIComponent(planKodu)}&ogrenci=${encodeURIComponent(ogrenciAdi)}&isaretli=${isaretli}`;
+                await fetch(url);
+            } catch(err) {
+                console.error("Öğretmen plan onay hatası:", err);
+            }
         }
 
         function gecmisTarihVerisiniGetir() {
