@@ -26,37 +26,23 @@
 
         /* Sol Üst Küçük Ana Portala Dön Butonu */
         .portal-back-btn {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: #ffffff;
-            color: #2f855a;
-            border: 1px solid #bbf7d0;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            text-decoration: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            z-index: 99999;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            position: fixed; top: 10px; left: 10px; background: #ffffff; color: #2f855a;
+            border: 1px solid #bbf7d0; padding: 5px 10px; border-radius: 6px; font-size: 11px;
+            font-weight: 700; text-decoration: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 99999; display: flex; align-items: center; gap: 4px; transition: all 0.2s;
         }
-        .portal-back-btn:hover {
-            background: #2f855a;
-            color: #ffffff;
-        }
+        .portal-back-btn:hover { background: #2f855a; color: #ffffff; }
 
-        /* Sağ Altta Çarkın Üstünde Soluk AI Asistan Butonu ve Bildirimi */
+        /* Sağ Altta Çarkın TAM ÜSTÜNDE Soluk AI Asistan Butonu ve Bildirimi */
         .ai-float-container {
             position: fixed;
-            bottom: 12px;
-            right: 54px;
+            bottom: 50px; /* Çarkın (12px) hemen üstünde yer alması için */
+            right: 12px;
             z-index: 9998;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
         }
         .ai-float-btn {
             background: rgba(124, 58, 237, 0.25);
@@ -79,8 +65,6 @@
             transform: scale(1.1);
         }
         .ai-badge-tip {
-            position: absolute;
-            right: 40px;
             background: #7c3aed;
             color: white;
             padding: 4px 8px;
@@ -92,8 +76,8 @@
             animation: fadeInOut 10s forwards;
         }
         @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateX(5px); }
-            10% { opacity: 1; transform: translateX(0); }
+            0% { opacity: 0; transform: translateY(5px); }
+            10% { opacity: 1; transform: translateY(0); }
             85% { opacity: 1; }
             100% { opacity: 0; visibility: hidden; }
         }
@@ -101,7 +85,7 @@
         /* AI Sohbet Modal Paneli */
         .ai-chat-modal {
             position: fixed;
-            bottom: 55px;
+            bottom: 90px;
             right: 12px;
             width: 330px;
             max-width: 90vw;
@@ -135,7 +119,7 @@
         }
         .ai-chat-body {
             padding: 10px;
-            height: 220px;
+            height: 200px;
             overflow-y: auto;
             background: #f8fafc;
             font-size: 11.5px;
@@ -166,8 +150,10 @@
             background: white;
             border-top: 1px solid #e2e8f0;
             display: flex;
+            flex-direction: column;
             gap: 5px;
         }
+        .ai-input-row { display: flex; gap: 5px; }
         .ai-chat-footer input {
             flex: 1;
             padding: 6px 10px;
@@ -189,14 +175,8 @@
         }
 
         .login-card {
-            background: #ffffff;
-            padding: 30px 25px;
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.04);
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            margin: auto;
+            background: #ffffff; padding: 30px 25px; border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.04); width: 100%; max-width: 350px; text-align: center; margin: auto;
         }
         .logo-icon { font-size: 28px; margin-bottom: 10px; }
         h2 { color: #2d3748; font-size: 18px; margin-bottom: 4px; }
@@ -204,14 +184,12 @@
         .form-group { margin-bottom: 10px; text-align: left; }
         input {
             width: 100%; padding: 8px 12px; background-color: #edf2f7;
-            border: 1px solid transparent; border-radius: 6px; font-size: 12.5px;
-            color: #2d3748; outline: none; transition: all 0.3s;
+            border: 1px solid transparent; border-radius: 6px; font-size: 12.5px; color: #2d3748; outline: none; transition: all 0.3s;
         }
         input:focus { background-color: #fff; border-color: #38a169; box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.1); }
         .btn-giris {
             width: 100%; padding: 9px; background-color: #2f855a; color: white;
-            border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
-            cursor: pointer; margin-top: 6px; transition: background-color 0.3s;
+            border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: background-color 0.3s;
         }
         .btn-giris:hover { background-color: #276749; }
         .btn-giris:disabled { background-color: #cbd5e0; cursor: not-allowed; }
@@ -225,16 +203,14 @@
         .user-header-bar {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border: 1px solid #bbf7d0; border-radius: 10px; padding: 8px 12px;
-            display: flex; flex-direction: column; gap: 8px;
-            margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         .user-header-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .user-info-area { display: flex; align-items: center; gap: 6px; }
         .user-avatar {
             width: 32px; height: 32px; background-color: #2f855a; color: white;
             font-weight: 800; font-size: 14px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(47, 133, 90, 0.3);
-            text-transform: uppercase; flex-shrink: 0;
+            align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(47, 133, 90, 0.3); text-transform: uppercase; flex-shrink: 0;
         }
         .user-details h3 { color: #166534; font-size: 12.5px; font-weight: 700; }
         .user-details span { color: #15803d; font-size: 10px; font-weight: 600; }
@@ -325,11 +301,10 @@
         .card-amber .card-value { color: #92400e; }
         .card-rose .card-value { color: #9f1239; }
 
-        /* Grafikler */
+        /* Grafikler ve Raporlar */
         .chart-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .chart-title { font-weight: 700; font-size: 12px; color: #334155; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; border-bottom: 1.5px dashed #f1f5f9; padding-bottom: 5px; }
 
-        /* Rapor Kartları */
         .report-archive-header { background-color: #ffffff; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .report-archive-header h3 { color: #166534; font-size: 13px; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
         .report-archive-header p { color: #15803d; font-size: 11px; }
@@ -345,7 +320,7 @@
         .report-footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #334155; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 8px; flex-wrap: wrap; gap: 6px; }
         .report-deneme-badge { background: #fff1f2; border: 1px solid #f43f5e; color: #be123c; padding: 4px 8px; border-radius: 14px; font-weight: 800; font-size: 11px; display: flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(244, 63, 94, 0.15); }
 
-        /* Rozetler (7x3 Izgara - Mobilde Taşma Çözüldü) */
+        /* Rozetler */
         .badges-header-box { background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); border: 1px solid #fde047; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .badges-header-title { font-size: 13px; font-weight: 800; color: #854d0e; display: flex; align-items: center; gap: 5px; }
         .badges-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; width: 100%; max-width: 100%; }
@@ -481,14 +456,13 @@
     <!-- Sol Üst Küçük Ana Portala Dön Butonu -->
     <a href="https://panel.ogretmencocuk.com" class="portal-back-btn">← Ana Portala Dön</a>
 
-    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI -->
-    <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Rubrik Paneli">⚙️</button>
-
-    <!-- SAĞ ALT KÖŞEDE ÇARKIN ÜSTÜNDE SOLUK AI ASİSTAN BUTONU VE UYARI -->
+    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKININ TAM ÜSTÜNDE ASİSTAN BUTONU VE UYARI -->
     <div class="ai-float-container">
         <div class="ai-badge-tip" id="aiTipBadge">Öğretmene Soru Sor!</div>
         <button class="ai-float-btn" onclick="aiModalAc()" title="Yapay Zeka İngilizce Koçu">🤖</button>
     </div>
+
+    <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Rubrik Paneli">⚙️</button>
 
     <!-- AI ASİSTAN SOHBET PENCERESİ -->
     <div class="ai-chat-modal" id="aiChatModal">
@@ -500,9 +474,11 @@
         <div class="ai-chat-body" id="aiChatBody">
             <div class="ai-msg bot">Merhaba! Ben İngilizce Asistanın. Bana kelimeler, gramer veya ders konuları hakkında sorular sorabilirsin! 😊</div>
         </div>
-        <div class="ai-chat-footer">
-            <input type="text" id="aiMesajInput" placeholder="Soru sor (Örn: Apple ne demek?)..." onkeypress="if(event.key==='Enter') aiMesajGonder()">
-            <button onclick="aiMesajGonder()">Gönder</button>
+        <div class="ai-chat-footer" id="aiFooterArea">
+            <div class="ai-input-row" id="aiInputRow">
+                <input type="text" id="aiMesajInput" placeholder="Soru sor (Örn: Apple ne demek?)..." onkeypress="if(event.key==='Enter') aiMesajGonder()">
+                <button onclick="aiMesajGonder()">Gönder</button>
+            </div>
         </div>
     </div>
 
@@ -987,7 +963,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbz0SJwVTtVqv_evXb16B47jVBeCAIYMC287zWIMEu6dfe3gIr4UCws74_gjWdF5Tlvs1Q/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbyn4jVZRbysB3zMvebGHqlWFOIdzGHV_d1qic9DZU9M9pyzPhFa-hE7bMPpBo1QiCcumg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1028,19 +1004,54 @@
             ogretmenSelectDoldur();
         };
 
-        // --- YEREL AKILLI ASİSTAN SOHBET MİMARİSİ ---
+        // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
         function aiModalAc() { 
             document.getElementById('aiChatModal').style.display = 'flex'; 
             aiSoruHakkiniGuncelle();
+            misafirBilgiKontrol();
         }
         function aiModalKapat() { document.getElementById('aiChatModal').style.display = 'none'; }
 
+        function misafirBilgiKontrol() {
+            let footerArea = document.getElementById('aiFooterArea');
+            let inputRow = document.getElementById('aiInputRow');
+            let misafirKayit = sessionStorage.getItem("misafirBilgi");
+
+            // Eğer öğrenci giriş yapmamışsa ve misafir bilgisi de yoksa önce ad/iletişim sor
+            if (!aktifOgrenciAdi && !misafirKayit) {
+                inputRow.style.display = "none";
+                let formId = "misafirForm";
+                if(!document.getElementById(formId)) {
+                    footerArea.innerHTML += `
+                        <div id="${formId}" style="display:flex; flex-direction:column; gap:5px; font-size:11px;">
+                            <span style="color:#5b21b6; font-weight:700;">Soru sormak için lütfen bilgilerinizi yazın:</span>
+                            <input type="text" id="misafirAd" placeholder="Adınız Soyadınız" style="padding:5px; border:1px solid #cbd5e1; border-radius:4px;">
+                            <input type="text" id="misafirIletisim" placeholder="Telefon veya E-posta Adresiniz" style="padding:5px; border:1px solid #cbd5e1; border-radius:4px;">
+                            <button onclick="misafirBilgiKaydet()" style="background:#7c3aed; color:white; border:none; padding:6px; border-radius:4px; font-weight:700; cursor:pointer;">Devam Et</button>
+                        </div>
+                    `;
+                }
+            } else {
+                inputRow.style.display = "flex";
+            }
+        }
+
+        function misafirBilgiKaydet() {
+            let ad = document.getElementById('misafirAd').value.trim();
+            let iletisim = document.getElementById('misafirIletisim').value.trim();
+            if(!ad || !iletisim) { alert("Lütfen adınızı ve iletişim bilginizi giriniz!"); return; }
+            
+            sessionStorage.setItem("misafirBilgi", JSON.stringify({ad, iletisim}));
+            document.getElementById('misafirForm').remove();
+            document.getElementById('aiInputRow').style.display = "flex";
+        }
+
         function aiSoruHakkiniGuncelle() {
             let rozetSayisi = Math.floor(toplamSaniye / 600); // her 10 dk = 1 rozet
-            let toplamHak = 10 + (rozetSayisi * 10); // temel 10 + her rozet için +10
+            let toplamHak = 10 + (rozetSayisi * 10); 
             let infoEl = document.getElementById('aiSoruHakInfo');
             if(infoEl) {
-                infoEl.innerHTML = `💡 Günlük Soru Hakkı: <b>${toplamHak}</b> (Oturum süresine ve rozetlere göre her 10 dakikada +10 artar)`;
+                infoEl.innerHTML = `💡 Günlük Soru Hakkı: <b>${toplamHak}</b> (Oturum süresi ve rozetlere göre her 10 dk'da +10 artar)`;
             }
         }
 
@@ -1059,8 +1070,16 @@
             body.scrollTop = body.scrollHeight;
 
             try {
-                let ogrenciAdi = aktifOgrenciAdi || document.getElementById('ogrenci').value || "Misafir Öğrenci";
-                let url = `${apiURL}?islem=aiSoruSor&soru=${encodeURIComponent(txt)}&ogrenci=${encodeURIComponent(ogrenciAdi)}`;
+                let ogrenciAdi = aktifOgrenciAdi;
+                let iletisimBilgi = "-";
+
+                if (!ogrenciAdi) {
+                    let mInfo = JSON.parse(sessionStorage.getItem("misafirBilgi") || "{}");
+                    ogrenciAdi = mInfo.ad || "Misafir Ziyaretçi";
+                    iletisimBilgi = mInfo.iletisim || "-";
+                }
+
+                let url = `${apiURL}?islem=aiSoruSor&soru=${encodeURIComponent(txt)}&ogrenci=${encodeURIComponent(ogrenciAdi)}&iletisim=${encodeURIComponent(iletisimBilgi)}`;
                 
                 let response = await fetch(url);
                 let data = await response.json();
@@ -1069,6 +1088,17 @@
 
                 document.getElementById(loadingId).remove();
                 body.innerHTML += `<div class="ai-msg bot">${aiCevap}</div>`;
+
+                // Eğer havuzdan gelen çoklu seçenekler (butonlar) varsa ekrana ekle
+                if (data.secenekler && data.secenekler.length > 0) {
+                    let secenekDiv = document.createElement('div');
+                    secenekDiv.style.cssText = "display: flex; flex-direction: column; gap: 4px; margin-top: 6px;";
+                    data.secenekler.forEach(sec => {
+                        secenekDiv.innerHTML += `<button onclick="secenekTiklandi('${guvenliMetin(sec).replace(/'/g, "\\'")}')" style="background:#ede9fe; border:1px solid #7c3aed; color:#5b21b6; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; text-align:left;">👉 ${sec}</button>`;
+                    });
+                    body.appendChild(secenekDiv);
+                }
+
                 body.scrollTop = body.scrollHeight;
 
             } catch(err) {
@@ -1076,6 +1106,11 @@
                 document.getElementById(loadingId).remove();
                 body.innerHTML += `<div class="ai-msg bot">Bağlantı hatası oluştu.</div>`;
             }
+        }
+
+        function secenekTiklandi(secenekMetni) {
+            document.getElementById('aiMesajInput').value = secenekMetni;
+            aiMesajGonder();
         }
 
         function ogretmenPaneliAc() { document.getElementById('sifreModal').style.display = 'flex'; }
