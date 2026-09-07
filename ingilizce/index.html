@@ -180,16 +180,16 @@
         .report-footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #334155; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 8px; flex-wrap: wrap; gap: 6px; }
         .report-deneme-badge { background: #fff1f2; border: 1px solid #f43f5e; color: #be123c; padding: 4px 8px; border-radius: 14px; font-weight: 800; font-size: 11px; display: flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(244, 63, 94, 0.15); }
 
-        /* Rozetler (7x3 Izgara) */
+        /* Rozetler (7x3 Izgara - Mobilde Taşma Çözüldü) */
         .badges-header-box { background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); border: 1px solid #fde047; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .badges-header-title { font-size: 13px; font-weight: 800; color: #854d0e; display: flex; align-items: center; gap: 5px; }
-        .badges-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 12px; }
-        .badge-card { border-radius: 6px; padding: 6px 2px; text-align: center; border: 1px solid #e2e8f0; background: #ffffff; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 65px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .badges-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; width: 100%; max-width: 100%; }
+        .badge-card { border-radius: 6px; padding: 4px 1px; text-align: center; border: 1px solid #e2e8f0; background: #ffffff; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 55px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); width: 100%; overflow: hidden; }
         .badge-card.unlocked { background: #f0fdf4; border-color: #bbf7d0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.06); }
-        .badge-emoji { font-size: 16px; margin-bottom: 2px; }
-        .badge-name { font-size: 8.5px; font-weight: 700; color: #334155; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .badge-emoji { font-size: 14px; margin-bottom: 1px; }
+        .badge-name { font-size: 7.5px; font-weight: 700; color: #334155; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .badge-card.unlocked .badge-name { color: #166534; }
-        .badge-target { font-size: 7.5px; color: #64748b; font-weight: 600; }
+        .badge-target { font-size: 6.5px; color: #64748b; font-weight: 600; }
         .badge-card.unlocked .badge-target { color: #15803d; }
         .badge-progress-box { background: #ffffff; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .badge-progress-top { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 11px; color: #166534; margin-bottom: 5px; }
@@ -302,12 +302,12 @@
         .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
 
         @media(max-width: 650px) {
-            body { padding: 5px 2px; }
-            .badges-grid { grid-template-columns: repeat(7, 1fr); }
-            .badge-card { min-height: 55px; padding: 4px 1px; }
-            .badge-emoji { font-size: 14px; }
-            .badge-name { font-size: 7.5px; }
-            .badge-target { font-size: 6.5px; }
+            body { padding: 4px 2px; }
+            .badges-grid { grid-template-columns: repeat(7, 1fr); gap: 3px; }
+            .badge-card { min-height: 48px; padding: 2px 1px; }
+            .badge-emoji { font-size: 12px; margin-bottom: 0px; }
+            .badge-name { font-size: 7px; }
+            .badge-target { font-size: 6px; }
         }
     </style>
 </head>
@@ -664,7 +664,7 @@
                 <span style="font-size: 11px; font-weight: 700; color: #b45309;">🎵 Arka Plan Müziği</span>
                 <button id="muzikSesBtn" onclick="muzikSesToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
             </div>
-            <!-- Doğru Göreli Yol: ../muzik.mp3 (ingilizce klasörünün dışındaki kök dizin için) -->
+            <!-- Aynı Klasördeki Müzik Dosyası -->
             <audio id="oyunMuzigi" src="muzik.mp3" preload="auto" loop></audio>
 
             <div id="oyunAyarBolumu">
@@ -898,7 +898,7 @@
 
                 let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
                 
-               let raporMetni = `🎓 *DİJİ MUALLİM - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🎓\n\n` +
+                let raporMetni = `🎓 *DİJİ MUALLİM - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🎓\n\n` +
                     `Sevgili Velimiz, 🌟 *${tarih}* tarihli dersimizi büyük bir verimle geride bıraktık. Öğrencimiz *${ogrenci}*, bu hafta sergilediği harika gayret ve disiplinle bizleri yine gururlandırdı! 🚀\n\n` +
                     `📊 *Haftalık Genel Durumumuz:*\n` +
                     `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ✨ *${ortalamaPuan}/100* ✨ seviyesine taşırken, son deneme sınavında elde ettiği 🎯 *${sondeneme}* puan ile istikrarlı yükselişini müthiş bir şekilde sürdürmektedir. 📈\n\n` +
@@ -999,7 +999,6 @@
             return `"${cumleler.join(" ")}"`;
         }
 
-        // (AI Toast fonksiyonu devre dışı bırakıldı - istendiği gibi kaldırıldı)
         function aiMesajUret(ogrenciAdi, kazanilanRozetSayisi, toplamRozetSayisi) {}
 
         function tarihiDuzelt(tarihStr) {
