@@ -951,7 +951,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbyw8bRRCMbaswIZjDoPyAHsKlXJpDO0D3HWXPmjUzfTZisn4is9RSeLpyNkxzpSaM8zXw/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzKokLKqzSt_fKEwvECTUndV15rEflecHTZyVbP1qYmC39HFECkTL4Rwg_3nR_78pRnKg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1042,9 +1042,19 @@
             }
         }
 
-        async function aiMesajGonder() {
+       async function aiMesajGonder() {
             let input = document.getElementById('aiMesajInput');
             let body = document.getElementById('aiChatBody');
+            
+            // Günlük ban (engelleme) kontrolü
+            let bugunTarih = new Date().toISOString().split('T')[0];
+            let banVerisi = JSON.parse(localStorage.getItem("asistanBan") || "{}");
+            if (banVerisi.tarih === bugunTarih && banVerisi.durum === true) {
+                body.innerHTML += `<div class="ai-msg bot">⚠️ Uyarı: Uygunsuz veya anlamsız yazım kuralını çok fazla ihlal ettiğin için bugünlük soru sorma özelliğin geçici olarak engellendi. Yarın tekrar deneyebilirsin. 🛑</div>`;
+                body.scrollTop = body.scrollHeight;
+                return;
+            }
+
             let txt = input.value.trim();
             if(!txt) return;
 
@@ -1071,18 +1081,30 @@
                 let response = await fetch(url);
                 let data = await response.json();
                 
-                let aiCevap = data.cevap || "Üzgünüm, yanıt alınamadı.";
-
                 document.getElementById(loadingId).remove();
-                body.innerHTML += `<div class="ai-msg bot">${aiCevap}</div>`;
 
-                if (data.secenekler && data.secenekler.length > 0) {
-                    let secenekDiv = document.createElement('div');
-                    secenekDiv.style.cssText = "display: flex; flex-direction: column; gap: 4px; margin-top: 6px;";
-                    data.secenekler.forEach(sec => {
-                        secenekDiv.innerHTML += `<button onclick="secenekTiklandi('${guvenliMetin(sec).replace(/'/g, "\\'")}')" style="background:#ede9fe; border:1px solid #7c3aed; color:#5b21b6; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; text-align:left;">👉 ${sec}</button>`;
-                    });
-                    body.appendChild(secenekDiv);
+                // Eğer spam (random harf) tespit edildiyse sayaç tut
+                if (data.isSpam) {
+                    let spamSayisi = parseInt(localStorage.getItem("spamSayaci") || "0") + 1;
+                    localStorage.setItem("spamSayaci", spamSayisi);
+
+                    if (spamSayisi >= 3) {
+                        localStorage.setItem("asistanBan", JSON.stringify({ tarih: bugunTarih, durum: true }));
+                        body.innerHTML += `<div class="ai-msg bot">🛑 Üst üste 3 kez anlamsız yazım yaptığın için bugünlük asistan kullanımın engellendi!</div>`;
+                    } else {
+                        body.innerHTML += `<div class="ai-msg bot">${data.cevap} <br><small style="color:#b91c1c;">(Uyarı: ${spamSayisi}/3 kez anlamsız karakter girildi)</small></div>`;
+                    }
+                } else {
+                    body.innerHTML += `<div class="ai-msg bot">${data.cevap || "Üzgünüm, yanıt alınamadı."}</div>`;
+
+                    if (data.secenekler && data.secenekler.length > 0) {
+                        let secenekDiv = document.createElement('div');
+                        secenekDiv.style.cssText = "display: flex; flex-direction: column; gap: 4px; margin-top: 6px;";
+                        data.secenekler.forEach(sec => {
+                            secenekDiv.innerHTML += `<button onclick="secenekTiklandi('${guvenliMetin(sec).replace(/'/g, "\\'")}')" style="background:#ede9fe; border:1px solid #7c3aed; color:#5b21b6; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer; text-align:left;">👉 ${sec}</button>`;
+                        });
+                        body.appendChild(secenekDiv);
+                    }
                 }
 
                 body.scrollTop = body.scrollHeight;
