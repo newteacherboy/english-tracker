@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -442,8 +441,13 @@
         .slider-group { display: flex; align-items: center; gap: 8px; }
         .slider-group input[type="range"] { flex: 1; }
         .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
-
-                .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
+        .puan-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 4px; }
+        .puan-btn {
+            background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 2px;
+            font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;
+        }
+        .puan-btn:hover { background: #e2e8f0; }
+        .puan-btn.active { background: #2563eb; color: #ffffff; border-color: #1d4ed8; box-shadow: 0 1px 4px rgba(37,99,235,0.3); }
 
         /* YILLIK PLAN TAKİP KARTI */
         .plan-tracker-box {
@@ -486,10 +490,14 @@
             .badge-target { font-size: 6px; }
         }
 
-        /* Mobil cihazlarda (ekran genişliği 768 pikselden küçükse) sol üstteki butonu gizle */
+        /* Mobil cihazlarda (ekran genişliği 768 pikselden küçükse) sol üstteki butonu KÜÇÜLTEREK sabit tut, gizleme */
         @media (max-width: 768px) {
             .portal-back-btn {
-                display: none !important;
+                display: flex !important;
+                top: 6px;
+                left: 6px;
+                padding: 4px 8px;
+                font-size: 10px;
             }
         }
     </style>
@@ -621,43 +629,33 @@
             <p style="font-size: 10.5px; font-weight: 800; color: #2563eb; margin-bottom: 6px;">📊 5 Beceri Puanlaması (0 - 100)</p>
 
             <div class="rubric-field">
-                <label>Okuma:</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderOkuma" min="0" max="100" value="50" oninput="document.getElementById('valOkuma').innerText=this.value">
-                    <span class="slider-val" id="valOkuma">50</span>
-                </div>
+                <label>Okuma: <span class="slider-val" id="valOkuma">50</span></label>
+                <input type="hidden" id="sliderOkuma" value="50">
+                <div class="puan-grid" id="gridOkuma"></div>
             </div>
 
             <div class="rubric-field">
-                <label>Yazma:</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderYazma" min="0" max="100" value="50" oninput="document.getElementById('valYazma').innerText=this.value">
-                    <span class="slider-val" id="valYazma">50</span>
-                </div>
+                <label>Yazma: <span class="slider-val" id="valYazma">50</span></label>
+                <input type="hidden" id="sliderYazma" value="50">
+                <div class="puan-grid" id="gridYazma"></div>
             </div>
 
             <div class="rubric-field">
-                <label>Kelime (Vocabulary):</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderVocab" min="0" max="100" value="50" oninput="document.getElementById('valVocab').innerText=this.value">
-                    <span class="slider-val" id="valVocab">50</span>
-                </div>
+                <label>Kelime (Vocabulary): <span class="slider-val" id="valVocab">50</span></label>
+                <input type="hidden" id="sliderVocab" value="50">
+                <div class="puan-grid" id="gridVocab"></div>
             </div>
 
             <div class="rubric-field">
-                <label>Konuşma:</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderKonusma" min="0" max="100" value="50" oninput="document.getElementById('valKonusma').innerText=this.value">
-                    <span class="slider-val" id="valKonusma">50</span>
-                </div>
+                <label>Konuşma: <span class="slider-val" id="valKonusma">50</span></label>
+                <input type="hidden" id="sliderKonusma" value="50">
+                <div class="puan-grid" id="gridKonusma"></div>
             </div>
 
             <div class="rubric-field">
-                <label>Grammar:</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderGrammar" min="0" max="100" value="50" oninput="document.getElementById('valGrammar').innerText=this.value">
-                    <span class="slider-val" id="valGrammar">50</span>
-                </div>
+                <label>Grammar: <span class="slider-val" id="valGrammar">50</span></label>
+                <input type="hidden" id="sliderGrammar" value="50">
+                <div class="puan-grid" id="gridGrammar"></div>
             </div>
 
             <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
@@ -1114,6 +1112,64 @@
         let secilenSinif = 2, secilenUniteler = [1], masterKelimeHavuzu = [], aktifKelimeListesi = [];
         let aktifSoruIndex = 0, oyunDogru = 0, oyunYanlis = 0, oyunTimerInterval = null, oyunSaniyeSayac = 0, mevcutDogruSikIndex = 0, soruKilitli = false;
 
+        // --- RUBRİK PUAN BUTONLARI (SLIDER YERİNE) ---
+        const RUBRIC_SKILLS = ['Okuma', 'Yazma', 'Vocab', 'Konusma', 'Grammar'];
+        const RUBRIC_PUANLAR = [40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
+
+        function rubricGridleriOlustur() {
+            RUBRIC_SKILLS.forEach(key => {
+                let kont = document.getElementById('grid' + key);
+                if (!kont) return;
+                kont.innerHTML = "";
+                RUBRIC_PUANLAR.forEach(p => {
+                    let btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'puan-btn';
+                    btn.innerText = p;
+                    btn.onclick = function () { rubricPuanSec(key, p); };
+                    kont.appendChild(btn);
+                });
+            });
+            rubricGridDegerleriGuncelle();
+        }
+
+        function rubricPuanSec(key, puan) {
+            let slider = document.getElementById('slider' + key);
+            let val = document.getElementById('val' + key);
+            if (slider) slider.value = puan;
+            if (val) val.innerText = puan;
+            let kont = document.getElementById('grid' + key);
+            if (kont) {
+                kont.querySelectorAll('.puan-btn').forEach(b => {
+                    b.classList.toggle('active', parseInt(b.innerText) === puan);
+                });
+            }
+        }
+
+        function rubricGridDegerleriGuncelle() {
+            RUBRIC_SKILLS.forEach(key => {
+                let slider = document.getElementById('slider' + key);
+                if (!slider) return;
+                let val = parseInt(slider.value) || 50;
+                let kont = document.getElementById('grid' + key);
+                if (kont) {
+                    kont.querySelectorAll('.puan-btn').forEach(b => {
+                        b.classList.toggle('active', parseInt(b.innerText) === val);
+                    });
+                }
+            });
+        }
+
+        function rubricPuanlariSifirla() {
+            RUBRIC_SKILLS.forEach(key => {
+                let slider = document.getElementById('slider' + key);
+                let val = document.getElementById('val' + key);
+                if (slider) slider.value = 50;
+                if (val) val.innerText = 50;
+            });
+            rubricGridDegerleriGuncelle();
+        }
+
         window.onload = async function() {
             let girisBtn = document.getElementById('girisBtn');
             let girisSubtitle = document.getElementById('girisSubtitle');
@@ -1146,6 +1202,7 @@
             }
             uniteSecimleriniOlustur(2, 8);
             ogretmenSelectDoldur();
+            rubricGridleriOlustur();
         };
 
         // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
@@ -1370,6 +1427,9 @@
                 document.getElementById('rubricToplamKitap').value = user.kitapBilgi.okunanSayisi || 1;
             }
             document.getElementById('rubricSonDeneme').value = user.sonDeneme || 0;
+
+            // Yeni öğrenci seçildiğinde 5 kriter puan butonlarını varsayılana (50) sıfırla
+            rubricPuanlariSifirla();
         }
 
         function gecmisTarihVerisiniGetir() {
@@ -1392,6 +1452,8 @@
                 document.getElementById('valGrammar').innerText = arsivRow.grammar;
                 document.getElementById('rubricSonDeneme').value = arsivRow.deneme;
                 document.getElementById('rubricTamamlananTarih').value = arsivRow.tarih;
+                // Buton grid'lerini geçmiş veriye göre işaretle
+                rubricGridDegerleriGuncelle();
             }
         }
 
@@ -1418,12 +1480,26 @@
                 return;
             }
 
+            // MOBİL/TABLET WHATSAPP AÇILMAMA SORUNU İÇİN DÜZELTME:
+            // window.open() işlemini, kullanıcı tıklamasından hemen sonra (fetch/await beklemeden)
+            // SENKRON olarak çağırıyoruz. Böylece mobil tarayıcıların pop-up engelleyicisi bunu
+            // "kullanıcı etkileşimiyle açılan pencere" olarak tanıyıp izin veriyor.
+            // Veriler kaydedildikten sonra bu boş pencerenin adresini WhatsApp linkine yönlendiriyoruz.
+            let waPencere = null;
+            let kaydetBtn = document.getElementById('rubricKaydetBtn');
+            if (telefon) {
+                waPencere = window.open('', '_blank');
+                if (waPencere) {
+                    waPencere.document.write('<div style="font-family:sans-serif; padding:40px; text-align:center; color:#334155;">WhatsApp raporu hazırlanıyor, lütfen bekleyin...</div>');
+                }
+            }
+
+            if (kaydetBtn) { kaydetBtn.disabled = true; kaydetBtn.innerText = "⏳ Kaydediliyor..."; }
+
             let url = `${apiURL}?islem=rubrikKaydet&ogrenci=${encodeURIComponent(ogrenci)}&tarih=${tarih}&sonrakitarih=${sonrakiTarih}&kitapadi=${encodeURIComponent(kitapAdi)}&sayfa=${sayfa}&hedef=${hedef}&okunansayisi=${okunansayisi}&sondeneme=${sondeneme}&okuma=${okuma}&yazma=${yazma}&vocab=${vocab}&konusma=${konusma}&grammar=${grammar}&odevdonut=${encodeURIComponent(odevDonut)}&sonrakiodev=${encodeURIComponent(sonrakiOdev)}`;
 
             try {
                 await fetch(url);
-                alert("Veriler Google Sheets'e başarıyla kaydedildi!");
-                document.getElementById('rubricModal').style.display = 'none';
 
                 let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
                 
@@ -1447,15 +1523,28 @@
                     `✨ _Öğrencimizin tüm detaylı istatistiklerini, çözdüğü testleri, kazanmış olduğu rozetleri ve özel gelişim grafiklerini anlık incelemek için lütfen **Öğrenci Portalımıza** giriş yapmayı unutmayın!_\n\n` +
                     `Destekleriniz, değerli güveniniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı, mutlu ve başarılı bir hafta dileriz! 🌻🌿`;
 
+                document.getElementById('rubricModal').style.display = 'none';
+
                 if (telefon) {
                     let waURL = `https://wa.me/${telefon}?text=${encodeURIComponent(raporMetni)}`;
-                    window.open(waURL, '_blank');
+                    if (waPencere) {
+                        // Önceden senkron açılmış pencereyi WhatsApp linkine yönlendir
+                        waPencere.location.href = waURL;
+                    } else {
+                        // Pop-up engellendiyse (pencere açılamadıysa) son çare olarak yine dene
+                        window.open(waURL, '_blank');
+                        alert("Pencere açma engellendi olabilir. Açılmadıysa tarayıcınızın pop-up izinlerini kontrol edin.");
+                    }
                 } else {
-                    alert("Bu öğrenciye ait telefon numarası bulunamadı, ancak veriler başarıyla kaydedildi.");
+                    if (waPencere) waPencere.close();
+                    alert("Veriler başarıyla kaydedildi. Bu öğrenciye ait telefon numarası bulunamadığı için WhatsApp raporu gönderilmedi.");
                 }
 
             } catch(e) {
+                if (waPencere) waPencere.close();
                 alert("Kayıt sırasında hata oluştu: " + e);
+            } finally {
+                if (kaydetBtn) { kaydetBtn.disabled = false; kaydetBtn.innerText = "💾 Kaydet & Uzun Veli Raporunu WhatsApp'a Gönder"; }
             }
         }
 
