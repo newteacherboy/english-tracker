@@ -202,17 +202,31 @@
         .user-details h3 { color: #166534; font-size: 12.5px; font-weight: 700; }
         .user-details span { color: #15803d; font-size: 10px; font-weight: 600; }
 
-        .header-schedule-area { display: flex; gap: 5px; width: 100%; }
-        .sched-mini-box { background: #ffffff; border-radius: 6px; padding: 5px; text-align: center; border: 1px solid #cbd5e1; flex: 1; }
+               .header-schedule-area { display: flex; gap: 4px; width: 100%; }
+        .sched-mini-box { background: #ffffff; border-radius: 6px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; flex: 1; min-width: 0; }
         .sched-done { border-color: #86efac; background: #f0fdf4; }
         .sched-next { border-color: #fca5a5; background: #fef2f2; }
-        .sched-label { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
+        .sched-label { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; margin-bottom: 1px; white-space: nowrap; }
         .sched-done .sched-label { color: #166534; }
         .sched-next .sched-label { color: #991b1b; }
-        .sched-date { font-size: 10.5px; font-weight: 700; color: #1e293b; }
-        .sched-status { font-size: 9px; font-weight: 700; margin-top: 1px; }
+        .sched-date { font-size: 9.5px; font-weight: 700; color: #1e293b; white-space: nowrap; }
+        .sched-status { font-size: 8px; font-weight: 700; margin-top: 1px; }
         .sched-done .sched-status { color: #15803d; }
         .sched-next .sched-status { color: #b91c1c; }
+
+        .plan-mini-box {
+            background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 6px; padding: 4px;
+            text-align: center; flex: 1; min-width: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 1px;
+        }
+        .plan-mini-label { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; color: #4338ca; white-space: nowrap; }
+        .plan-mini-percent { font-size: 12.5px; font-weight: 900; color: #3730a3; line-height: 1.1; }
+        .plan-mini-hafta { font-size: 7px; color: #6366f1; font-weight: 600; white-space: nowrap; }
+        .btn-plan-mini {
+            background: #4f46e5; color: white; border: none; padding: 2px 7px; border-radius: 10px;
+            font-size: 8px; font-weight: 700; cursor: pointer; margin-top: 1px;
+        }
+        .btn-plan-mini:hover { background: #4338ca; }
 
         .user-actions { display: flex; gap: 5px; width: 100%; }
         .header-btn { text-decoration: none; padding: 5px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center; cursor: pointer; border: none; flex: 1; }
@@ -708,7 +722,7 @@
                 </div>
             </div>
 
-            <div class="header-schedule-area">
+                        <div class="header-schedule-area">
                 <div class="sched-mini-box sched-done">
                     <div class="sched-label">Önceki Ders</div>
                     <div class="sched-date" id="miniGecenTarih">--.--.----</div>
@@ -718,6 +732,12 @@
                     <div class="sched-label">Sonraki Ders</div>
                     <div class="sched-date" id="miniGelecekTarih">--.--.----</div>
                     <div class="sched-status" id="miniGelecekDurum">SONRAKİ</div>
+                </div>
+                <div class="plan-mini-box" id="planTrackerBox" style="display:none;">
+                    <div class="plan-mini-label">📅 Yıllık Plan</div>
+                    <div class="plan-mini-percent" id="planYuzdeText">%0</div>
+                    <div class="plan-mini-hafta" id="planHaftaText">0/0 hafta</div>
+                    <button class="btn-plan-mini" onclick="planModaliniAc()">Görüntüle</button>
                 </div>
             </div>
 
@@ -769,18 +789,10 @@
                 </div>
             </div>
 
-                           <div class="summary-card card-rose">
+                                           <div class="summary-card card-rose">
                     <div class="card-title">🔥 PERFORMANS</div>
                     <div class="card-value" id="valPerformansEmoji" style="font-size: 13px; margin-top: 3px;">😐</div>
                 </div>
-            </div>
-
-            <div class="plan-tracker-box" id="planTrackerBox" style="display:none;">
-                <div class="plan-tracker-title">📅 Yıllık Plan</div>
-                <div class="plan-tracker-percent" id="planYuzdeText">%0</div>
-                <div class="plan-tracker-barbg"><div class="plan-tracker-barfill" id="planYuzdeBar"></div></div>
-                <div class="plan-tracker-hafta" id="planHaftaText">0 / 0 hafta</div>
-                <button class="btn-plan-goruntule" onclick="planModaliniAc()">Görüntüle</button>
             </div>
 
             <div class="book-tracker-box">
@@ -2320,7 +2332,7 @@
         }
 
         // --- YILLIK PLAN TAKİP SİSTEMİ ---
-                function planKartiniGuncelle(user) {
+                        function planKartiniGuncelle(user) {
             let box = document.getElementById('planTrackerBox');
             if (!box) { console.warn("planTrackerBox elementi bulunamadı, HTML eklemesini kontrol et."); return; }
             if (!user.atananPlanlar || user.atananPlanlar.length === 0) {
@@ -2330,8 +2342,7 @@
             box.style.display = 'flex';
             let yuzde = user.planIlerlemeYuzdesi || 0;
             document.getElementById('planYuzdeText').innerText = `%${yuzde}`;
-            document.getElementById('planYuzdeBar').style.width = `${yuzde}%`;
-            document.getElementById('planHaftaText').innerText = `${user.planTamamlananHafta || 0} / ${user.planToplamHafta || 0} hafta`;
+            document.getElementById('planHaftaText').innerText = `${user.planTamamlananHafta || 0}/${user.planToplamHafta || 0} hafta`;
         }
 
         function planModaliniAc() {
