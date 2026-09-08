@@ -424,6 +424,51 @@
         .lid-table th { background: #e2e8f0; color: #334155; padding: 4px; text-align: left; }
         .lid-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
 
+                /* POMODORO TAM EKRAN SAYAÇ */
+        .pomodoro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a1a1a; z-index: 999999; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px; text-align: center; transition: background 0.6s ease;
+        }
+        .pomodoro-overlay.mola-modu { background: #0f2419; }
+        .pomodoro-close-btn {
+            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%;
+            background: transparent; border: 1px solid #444441; color: #888780; font-size: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .pomodoro-durum-nokta { width: 7px; height: 7px; border-radius: 50%; background: #378ADD; display: inline-block; margin-right: 6px; }
+        .pomodoro-overlay.mola-modu .pomodoro-durum-nokta { background: #5DCAA5; }
+        .pomodoro-durum-etiket { font-size: 13px; letter-spacing: 1.5px; color: #85B7EB; font-weight: 700; margin-bottom: 4px; }
+        .pomodoro-overlay.mola-modu .pomodoro-durum-etiket { color: #9FE1CB; }
+        .pomodoro-tur-bilgi { font-size: 12px; color: #8a8a86; margin-bottom: 28px; }
+        .pomodoro-dijital-saat { font-family: 'Courier New', monospace; font-size: 78px; font-weight: 700; color: #F1EFE8; letter-spacing: 2px; line-height: 1; }
+        .pomodoro-alt-bilgi { font-size: 12px; color: #8a8a86; margin: 12px 0 30px; }
+        .pomodoro-kontrol-grubu { display: flex; gap: 10px; margin-bottom: 24px; }
+        .pomodoro-kontrol-btn {
+            width: 48px; height: 48px; border-radius: 50%; background: #2C2C2A; border: 1px solid #444441;
+            color: #F1EFE8; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .pomodoro-kontrol-btn:hover { background: #363634; }
+        .pomodoro-ayar-kutu {
+            background: #232322; border: 1px solid #363634; border-radius: 12px; padding: 14px 18px;
+            width: 100%; max-width: 300px; margin-bottom: 20px;
+        }
+        .pomodoro-ayar-baslik { font-size: 11px; color: #888780; letter-spacing: 0.3px; margin-bottom: 10px; text-align: left; }
+        .pomodoro-ayar-satir { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .pomodoro-ayar-satir:last-child { margin-bottom: 0; }
+        .pomodoro-ayar-etiket { font-size: 13px; color: #B4B2A9; }
+        .pomodoro-stepper { display: flex; align-items: center; gap: 12px; }
+        .pomodoro-stepper-btn { width: 26px; height: 26px; border-radius: 50%; background: #2C2C2A; border: 1px solid #444441; color: #F1EFE8; font-size: 15px; cursor: pointer; }
+        .pomodoro-stepper-val { font-size: 15px; font-weight: 700; color: #F1EFE8; min-width: 22px; text-align: center; }
+        .pomodoro-yon-toggle { display: flex; background: #2C2C2A; border-radius: 8px; padding: 2px; }
+        .pomodoro-yon-secenek { font-size: 11px; padding: 5px 10px; border-radius: 6px; color: #888780; cursor: pointer; font-weight: 600; }
+        .pomodoro-yon-secenek.aktif { background: #378ADD; color: #042C53; }
+        .pomodoro-bilgi-kutu { width: 100%; max-width: 300px; border-top: 1px solid #363634; padding-top: 16px; }
+        .pomodoro-bilgi-baslik { font-size: 11px; color: #888780; letter-spacing: 0.3px; margin-bottom: 8px; text-align: left; }
+        .pomodoro-bilgi-metin { font-size: 12px; color: #B4B2A9; line-height: 1.6; text-align: left; margin: 0; }
+
         /* GİZLİ ÖĞRETMEN ÇARLIĞI & RUBRİK PANELİ */
         .teacher-gear-btn {
             position: fixed; bottom: 12px; right: 12px; background: rgba(51, 65, 85, 0.4);
@@ -893,6 +938,12 @@
                 <p style="color: #15803d;">Sınıfına uygun zengin İngilizce metinleri oku, kaldığın son kelimeye tıkla ve sistem toplam kelimeleri otomatik saysın!</p>
                 <button class="btn-oyun-ac" onclick="okumaModaliniAc()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);">🚀 Okuma Stüdyosunu Aç</button>
             </div>
+
+                        <div class="activity-banner" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-color: #475569; margin-top: 15px;">
+                <h3 style="color: #f1f5f9;">🍅 Pomodoro Çalışma Sayacı</h3>
+                <p style="color: #cbd5e1;">Odaklanma ve mola sürelerini kendine göre ayarla, tüm ekranı kaplayan sayaçla dikkatini dağıtmadan çalış.</p>
+                <button class="btn-oyun-ac" onclick="pomodoroAc()" style="background: #378ADD; box-shadow: 0 2px 8px rgba(55, 138, 221, 0.3);">🍅 Pomodoro'yu Başlat</button>
+            </div>
         </div>
 
         <!-- ROZETLER SEKMESİ -->
@@ -1132,6 +1183,57 @@
         </div>
     </div>
 
+
+        <!-- POMODORO TAM EKRAN SAYAÇ -->
+    <div class="pomodoro-overlay" id="pomodoroOverlay">
+        <button class="pomodoro-close-btn" onclick="pomodoroKapat()" aria-label="Kapat">✕</button>
+
+        <div class="pomodoro-durum-etiket" id="pomodoroDurumEtiket"><span class="pomodoro-durum-nokta"></span>ODAKLANMA ZAMANI</div>
+        <div class="pomodoro-tur-bilgi" id="pomodoroTurBilgi">Tur 1 / 4</div>
+
+        <div class="pomodoro-dijital-saat" id="pomodoroSaat">25:00</div>
+        <div class="pomodoro-alt-bilgi" id="pomodoroAltBilgi">Başlamak için oynat tuşuna bas</div>
+
+        <div class="pomodoro-kontrol-grubu">
+            <button class="pomodoro-kontrol-btn" id="pomodoroBaslatBtn" onclick="pomodoroBaslatDuraklat()" aria-label="Başlat">▶</button>
+            <button class="pomodoro-kontrol-btn" onclick="pomodoroSifirla()" aria-label="Sıfırla">🔄</button>
+        </div>
+
+        <div class="pomodoro-ayar-kutu">
+            <div class="pomodoro-ayar-baslik">AYARLAR</div>
+            <div class="pomodoro-ayar-satir">
+                <span class="pomodoro-ayar-etiket">Odaklanma (dk)</span>
+                <div class="pomodoro-stepper">
+                    <button class="pomodoro-stepper-btn" onclick="pomodoroSureDegistir('odak', -5)">−</button>
+                    <span class="pomodoro-stepper-val" id="pomodoroOdakDegeri">25</span>
+                    <button class="pomodoro-stepper-btn" onclick="pomodoroSureDegistir('odak', 5)">+</button>
+                </div>
+            </div>
+            <div class="pomodoro-ayar-satir">
+                <span class="pomodoro-ayar-etiket">Mola (dk)</span>
+                <div class="pomodoro-stepper">
+                    <button class="pomodoro-stepper-btn" onclick="pomodoroSureDegistir('mola', -1)">−</button>
+                    <span class="pomodoro-stepper-val" id="pomodoroMolaDegeri">5</span>
+                    <button class="pomodoro-stepper-btn" onclick="pomodoroSureDegistir('mola', 1)">+</button>
+                </div>
+            </div>
+            <div class="pomodoro-ayar-satir">
+                <span class="pomodoro-ayar-etiket">Yön</span>
+                <div class="pomodoro-yon-toggle">
+                    <span class="pomodoro-yon-secenek aktif" id="pomodoroYonGeri" onclick="pomodoroYonSec('geri')">Geri say</span>
+                    <span class="pomodoro-yon-secenek" id="pomodoroYonIleri" onclick="pomodoroYonSec('ileri')">İleri say</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pomodoro-bilgi-kutu">
+            <div class="pomodoro-bilgi-baslik">POMODORO NASIL ÇALIŞIR?</div>
+            <p class="pomodoro-bilgi-metin">Belirlediğin süre boyunca kesintisiz odaklan, ardından kısa bir mola ver. Her 4 turda bir daha uzun bir mola alarak zihnini tazele. Bu döngü dikkat dağınıklığını azaltıp verimliliği artırır.</p>
+        </div>
+    </div>
+
+</parameter name="old_str">
+
     <!-- AKİCİ OKUMA VE HIZ ÖLÇER STÜDYOSU MODALI -->
     <div class="game-modal-overlay" id="okumaModalOverlay">
         <div class="game-modal-content" style="max-width: 520px;">
@@ -1190,6 +1292,136 @@
     </div>
 
     <script>
+
+                // --- POMODORO ÇALIŞMA SAYACI FONKSİYONLARI ---
+        function pomodoroAc() {
+            document.getElementById('pomodoroOverlay').style.display = 'flex';
+            if (window.Notification && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            pomodoroDurumGuncelle();
+            pomodoroSifirla();
+        }
+
+        function pomodoroKapat() {
+            if (pomodoroInterval) clearInterval(pomodoroInterval);
+            pomodoroCalisiyorMu = false;
+            pomodoroMod = 'odak';
+            pomodoroTurSayisi = 1;
+            document.getElementById('pomodoroOverlay').style.display = 'none';
+        }
+
+        function pomodoroSureDegistir(tip, fark) {
+            if (pomodoroCalisiyorMu) return;
+            if (tip === 'odak') {
+                pomodoroOdakDakika = Math.min(60, Math.max(5, pomodoroOdakDakika + fark));
+                document.getElementById('pomodoroOdakDegeri').innerText = pomodoroOdakDakika;
+                if (pomodoroMod === 'odak') pomodoroSifirla();
+            } else {
+                pomodoroMolaDakika = Math.min(30, Math.max(1, pomodoroMolaDakika + fark));
+                document.getElementById('pomodoroMolaDegeri').innerText = pomodoroMolaDakika;
+                if (pomodoroMod === 'mola') pomodoroSifirla();
+            }
+        }
+
+        function pomodoroYonSec(yon) {
+            if (pomodoroCalisiyorMu) return;
+            pomodoroYon = yon;
+            document.getElementById('pomodoroYonGeri').classList.toggle('aktif', yon === 'geri');
+            document.getElementById('pomodoroYonIleri').classList.toggle('aktif', yon === 'ileri');
+            pomodoroSifirla();
+        }
+
+        function pomodoroHedefSaniye() {
+            let dk = pomodoroMod === 'odak' ? pomodoroOdakDakika : pomodoroMolaDakika;
+            return dk * 60;
+        }
+
+        function pomodoroSifirla() {
+            if (pomodoroInterval) clearInterval(pomodoroInterval);
+            pomodoroCalisiyorMu = false;
+            pomodoroGecenSaniye = 0;
+            pomodoroKalanSaniye = pomodoroHedefSaniye();
+            document.getElementById('pomodoroBaslatBtn').innerText = '▶';
+            document.getElementById('pomodoroBaslatBtn').setAttribute('aria-label', 'Başlat');
+            document.getElementById('pomodoroAltBilgi').innerText = 'Başlamak için oynat tuşuna bas';
+            pomodoroSaatiGuncelle();
+        }
+
+        function pomodoroBaslatDuraklat() {
+            if (pomodoroCalisiyorMu) {
+                clearInterval(pomodoroInterval);
+                pomodoroCalisiyorMu = false;
+                document.getElementById('pomodoroBaslatBtn').innerText = '▶';
+                document.getElementById('pomodoroBaslatBtn').setAttribute('aria-label', 'Başlat');
+                document.getElementById('pomodoroAltBilgi').innerText = 'Duraklatıldı';
+                return;
+            }
+            pomodoroCalisiyorMu = true;
+            document.getElementById('pomodoroBaslatBtn').innerText = '⏸';
+            document.getElementById('pomodoroBaslatBtn').setAttribute('aria-label', 'Duraklat');
+            document.getElementById('pomodoroAltBilgi').innerText = pomodoroYon === 'geri' ? 'Geri sayıyor' : 'İleri sayıyor';
+
+            pomodoroInterval = setInterval(() => {
+                pomodoroGecenSaniye++;
+                if (pomodoroYon === 'geri') {
+                    pomodoroKalanSaniye--;
+                    if (pomodoroKalanSaniye <= 0) { pomodoroTamamlandi(); return; }
+                } else {
+                    pomodoroKalanSaniye++;
+                    if (pomodoroKalanSaniye >= pomodoroHedefSaniye()) { pomodoroTamamlandi(); return; }
+                }
+                pomodoroSaatiGuncelle();
+            }, 1000);
+        }
+
+        function pomodoroTamamlandi() {
+            clearInterval(pomodoroInterval);
+            pomodoroCalisiyorMu = false;
+
+            let ses = new Audio('muzik.mp3');
+            ses.play().catch(() => {});
+            setTimeout(() => { ses.pause(); }, 2500);
+
+            if (pomodoroMod === 'odak') {
+                if (pomodoroTurSayisi >= pomodoroToplamTur) {
+                    pomodoroTurSayisi = 1;
+                } else {
+                    pomodoroTurSayisi++;
+                }
+                pomodoroMod = 'mola';
+            } else {
+                pomodoroMod = 'odak';
+            }
+
+            pomodoroKalanSaniye = pomodoroYon === 'geri' ? pomodoroHedefSaniye() : 0;
+            pomodoroGecenSaniye = 0;
+            pomodoroDurumGuncelle();
+            pomodoroSaatiGuncelle();
+            document.getElementById('pomodoroBaslatBtn').innerText = '▶';
+            document.getElementById('pomodoroAltBilgi').innerText = 'Başlamak için oynat tuşuna bas';
+
+            if (window.Notification && Notification.permission === 'granted') {
+                new Notification(pomodoroMod === 'mola' ? 'Mola zamanı! ☕' : 'Odaklanma zamanı! 🎯');
+            }
+        }
+
+        function pomodoroDurumGuncelle() {
+            let overlay = document.getElementById('pomodoroOverlay');
+            let etiket = document.getElementById('pomodoroDurumEtiket');
+            overlay.classList.toggle('mola-modu', pomodoroMod === 'mola');
+            etiket.innerHTML = pomodoroMod === 'mola'
+                ? '<span class="pomodoro-durum-nokta"></span>MOLA ZAMANI'
+                : '<span class="pomodoro-durum-nokta"></span>ODAKLANMA ZAMANI';
+            document.getElementById('pomodoroTurBilgi').innerText = `Tur ${pomodoroTurSayisi} / ${pomodoroToplamTur}`;
+        }
+
+        function pomodoroSaatiGuncelle() {
+            let gosterilecek = pomodoroYon === 'geri' ? pomodoroKalanSaniye : pomodoroGecenSaniye;
+            let dk = String(Math.floor(gosterilecek / 60)).padStart(2, '0');
+            let sn = String(gosterilecek % 60).padStart(2, '0');
+            document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
+        }
         const apiURL = "https://script.google.com/macros/s/AKfycbxfmivPaOtbxGDynMr60jYm3NPiFoW0I4-fk7LOlZq-QVK0vQJQ4t12mN8YhVBZmG_44Q/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
@@ -1993,6 +2225,18 @@
         let jeopTimer = null;
         let jeopDogruSikIdx = 0;
         let jeopGlobalLiderlik = [];
+
+                // --- POMODORO ÇALIŞMA SAYACI DEĞİŞKENLERİ ---
+        let pomodoroOdakDakika = 25;
+        let pomodoroMolaDakika = 5;
+        let pomodoroYon = 'geri';
+        let pomodoroKalanSaniye = pomodoroOdakDakika * 60;
+        let pomodoroGecenSaniye = 0;
+        let pomodoroCalisiyorMu = false;
+        let pomodoroInterval = null;
+        let pomodoroMod = 'odak';
+        let pomodoroTurSayisi = 1;
+        let pomodoroToplamTur = 4;
 
         // --- ZAR ÇEKİLİŞİ KELİME OYUNU DEĞİŞKENLERİ ---
         let cekilisSecilenSinif = 2;
