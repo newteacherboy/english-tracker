@@ -1256,6 +1256,19 @@
         <div class="seviye-harita-content">
             <button class="seviye-harita-kapat" onclick="document.getElementById('seviyeHaritaOverlay').style.display='none'">✕</button>
 
+                        <div id="sinifSecimAlani" style="display:none; text-align:center; padding: 10px 0 20px;">
+                <p style="font-size:13px; font-weight:700; color:#4338ca; margin-bottom:12px;">Hangi sınıftasın?</p>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+                    <button class="sinif-btn" onclick="seviyeSinifSecildi(2)">2</button>
+                    <button class="sinif-btn" onclick="seviyeSinifSecildi(3)">3</button>
+                    <button class="sinif-btn" onclick="seviyeSinifSecildi(4)">4</button>
+                    <button class="sinif-btn" onclick="seviyeSinifSecildi(5)">5</button>
+                    <button class="sinif-btn" onclick="seviyeSinifSecildi(6)">6</button>
+                    <button class="sinif-btn" onclick="seviyeSinifSecildi(7)">7</button>
+                    <button class="sinif-btn" onclick="seviyeSinifSecildi(8)">8</button>
+                </div>
+            </div>
+
             <div class="seviye-harita-baslik">
                 <p class="seviye-harita-unite-etiket" id="seviyeHaritaUniteEtiket">ÜNİTE 1</p>
                 <p class="seviye-harita-unite-ad" id="seviyeHaritaUniteAd">Yükleniyor...</p>
@@ -1541,7 +1554,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzla4_IEpEZmbvuB-2KYR_wnSY27ZF4pmThbUg0AA-bLfJZW5X6hvu4XI7kXqMF_d_NrQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwKl4H-hB6Qhpcspp8xkd2u-Ruq4bgoEfzrbQLaIZv41cYu-J_waJ0n3YyMIbzi8k94lQ/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1991,15 +2004,37 @@
     return maskotlar[toplam % maskotlar.length];
 }
 
-                function seviyeHaritasiAc() {
+                       function seviyeHaritasiAc() {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
             if (!user || !user.aktiviteKartlari || user.aktiviteKartlari.length === 0) {
-                alert("Henüz senin sınıfın için hazırlanmış bir kelime kartı bulunmuyor. Öğretmenin yakında ekleyecek!");
+                alert("Henüz kelime kartı bulunmuyor. Öğretmenin yakında ekleyecek!");
                 return;
             }
-            seviyeAktifSinif = user.sinif ? Number(user.sinif) : (user.aktiviteKartlari[0] ? user.aktiviteKartlari[0].sinif : 2);
-            seviyeGosterilenUnite = 1;
+
             document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
+
+            if (user.secilenSinif && user.secilenSinif > 0) {
+                seviyeAktifSinif = user.secilenSinif;
+                document.getElementById('sinifSecimAlani').style.display = 'none';
+                seviyeGosterilenUnite = 1;
+                seviyeHaritasiCiz();
+            } else {
+                document.getElementById('sinifSecimAlani').style.display = 'block';
+                document.getElementById('seviyeYolAlani').innerHTML = '';
+                document.getElementById('seviyeHaritaUniteAd').innerText = '';
+            }
+        }
+
+        function seviyeSinifSecildi(sinif) {
+            seviyeAktifSinif = sinif;
+            seviyeGosterilenUnite = 1;
+            document.getElementById('sinifSecimAlani').style.display = 'none';
+
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            if (user) user.secilenSinif = sinif;
+
+            fetch(`${apiURL}?islem=sinifSec&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&sinif=${sinif}`).catch(() => {});
+
             seviyeHaritasiCiz();
         }
 
