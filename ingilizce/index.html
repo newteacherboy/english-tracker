@@ -24,7 +24,7 @@
             font-size: 13px;
         }
 
-        /* Sol Üst Küçük Ana Portala Dön Butonu - Mobilde ve Tüm Ekranlarda En Üstte Sabit */
+        /* Sol Üst Küçük Ana Portala Dön Butonu - Kesinlikle Sabit (Fixed) */
         .portal-back-btn {
             position: fixed; 
             top: 10px; 
@@ -428,7 +428,7 @@
         .lid-table th { background: #e2e8f0; color: #334155; padding: 4px; text-align: left; }
         .lid-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
 
-        /* GİZLİ ÖĞRETMEN ÇARLIĞI & RUBRİK PANELİ */
+        /* GİZLİ ÖĞRETMEN ÇARKI & RUBRİK PANELİ */
         .teacher-gear-btn {
             position: fixed; bottom: 12px; right: 12px; background: rgba(51, 65, 85, 0.4);
             color: #ffffff; width: 32px; height: 32px; border-radius: 50%; display: flex;
@@ -452,7 +452,7 @@
             width: 100%; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11.5px; outline: none; background: #f8fafc;
         }
         
-        /* Geliştirilmiş Butonlu Puanlama Alanı (Slider yerine pratik butonlar) */
+        /* Yenilenmiş Hızlı Puan Butonları Sistemi */
         .score-btn-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -462,7 +462,7 @@
         .score-choice-btn {
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
-            padding: 6px 2px;
+            padding: 7px 2px;
             border-radius: 6px;
             font-size: 11px;
             font-weight: 700;
@@ -528,7 +528,7 @@
         <button class="ai-float-btn" onclick="aiModalAc()" title="Yapay Zeka İngilizce Koçu">🤖</button>
     </div>
 
-    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI -->
+    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKINA GİRİŞ -->
     <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Rubrik Paneli">⚙️</button>
 
     <!-- AI ASİSTAN SOHBET PENCERESİ -->
@@ -641,70 +641,70 @@
             <p id="rubricPlanBosMesaj" style="font-size: 10.5px; color: #94a3b8; text-align:center; padding: 6px;">Önce yukarıdan bir öğrenci seçin.</p>
 
             <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
-            <p style="font-size: 10.5px; font-weight: 800; color: #2563eb; margin-bottom: 6px;">📊 5 Beceri Puanlaması (Hazır Butonlar veya Manuel Giriş)</p>
+            <p style="font-size: 10.5px; font-weight: 800; color: #2563eb; margin-bottom: 6px;">📊 5 Beceri Puanlaması (Tek Tıkla Hazır Puan Seçimi)</p>
 
-            <!-- Okuma Puanı -->
+            <!-- Okuma -->
             <div class="rubric-field">
-                <label>Okuma Puanı: <span id="valOkuma" style="color:#2563eb; font-weight:800;">60</span></label>
+                <label>Okuma: <span id="valOkuma" style="color:#2563eb; font-weight:800;">60</span> Puan</label>
                 <input type="hidden" id="sliderOkuma" value="60">
                 <div class="score-btn-grid">
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 40)">40 (Gelişiyor)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 60)">60 (Orta)</button>
-                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Okuma', 75)">75 (İyi)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 90)">90 (Süper)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 100)">100 (Harika)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 40)">40</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 60)">60</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Okuma', 75)">75</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 90)">90</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 100)">100</button>
                 </div>
             </div>
 
-            <!-- Yazma Puanı -->
+            <!-- Yazma -->
             <div class="rubric-field">
-                <label>Yazma Puanı: <span id="valYazma" style="color:#2563eb; font-weight:800;">60</span></label>
+                <label>Yazma: <span id="valYazma" style="color:#2563eb; font-weight:800;">60</span> Puan</label>
                 <input type="hidden" id="sliderYazma" value="60">
                 <div class="score-btn-grid">
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 40)">40 (Gelişiyor)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 60)">60 (Orta)</button>
-                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Yazma', 75)">75 (İyi)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 90)">90 (Süper)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 100)">100 (Harika)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 40)">40</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 60)">60</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Yazma', 75)">75</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 90)">90</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 100)">100</button>
                 </div>
             </div>
 
-            <!-- Kelime Puanı -->
+            <!-- Kelime -->
             <div class="rubric-field">
-                <label>Kelime (Vocabulary) Puanı: <span id="valVocab" style="color:#2563eb; font-weight:800;">60</span></label>
+                <label>Kelime (Vocabulary): <span id="valVocab" style="color:#2563eb; font-weight:800;">60</span> Puan</label>
                 <input type="hidden" id="sliderVocab" value="60">
                 <div class="score-btn-grid">
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 40)">40 (Gelişiyor)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 60)">60 (Orta)</button>
-                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Vocab', 75)">75 (İyi)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 90)">90 (Süper)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 100)">100 (Harika)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 40)">40</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 60)">60</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Vocab', 75)">75</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 90)">90</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 100)">100</button>
                 </div>
             </div>
 
-            <!-- Konuşma Puanı -->
+            <!-- Konuşma -->
             <div class="rubric-field">
-                <label>Konuşma Puanı: <span id="valKonusma" style="color:#2563eb; font-weight:800;">60</span></label>
+                <label>Konuşma: <span id="valKonusma" style="color:#2563eb; font-weight:800;">60</span> Puan</label>
                 <input type="hidden" id="sliderKonusma" value="60">
                 <div class="score-btn-grid">
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 40)">40 (Gelişiyor)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 60)">60 (Orta)</button>
-                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Konusma', 75)">75 (İyi)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 90)">90 (Süper)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 100)">100 (Harika)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 40)">40</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 60)">60</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Konusma', 75)">75</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 90)">90</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 100)">100</button>
                 </div>
             </div>
 
-            <!-- Grammar Puanı -->
+            <!-- Grammar -->
             <div class="rubric-field">
-                <label>Grammar Puanı: <span id="valGrammar" style="color:#2563eb; font-weight:800;">60</span></label>
+                <label>Grammar: <span id="valGrammar" style="color:#2563eb; font-weight:800;">60</span> Puan</label>
                 <input type="hidden" id="sliderGrammar" value="60">
                 <div class="score-btn-grid">
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 40)">40 (Gelişiyor)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 60)">60 (Orta)</button>
-                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Grammar', 75)">75 (İyi)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 90)">90 (Süper)</button>
-                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 100)">100 (Harika)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 40)">40</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 60)">60</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Grammar', 75)">75</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 90)">90</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 100)">100</button>
                 </div>
             </div>
 
@@ -1381,7 +1381,7 @@
             });
         }
 
-        // --- Puan buton seçimi fonksiyonu (Slider yerine pratik butonlar) ---
+        // --- Tek Tıkla Pratik Puan Seçim Fonksiyonu ---
         function puanButonSec(kriterAdi, puanDegeri) {
             let inputId = "slider" + kriterAdi;
             let spanId = "val" + kriterAdi;
@@ -1389,11 +1389,10 @@
             document.getElementById(inputId).value = puanDegeri;
             document.getElementById(spanId).innerText = puanDegeri;
             
-            // İlgili buton grubundaki active sınıfını güncelle
             let parentGrid = document.getElementById(spanId).closest('.rubric-field').querySelector('.score-btn-grid');
             if (parentGrid) {
                 parentGrid.querySelectorAll('.score-choice-btn').forEach(btn => {
-                    if (btn.innerText.includes(puanDegeri)) {
+                    if (btn.innerText.trim() === String(puanDegeri)) {
                         btn.classList.add('active');
                     } else {
                         btn.classList.remove('active');
@@ -1503,9 +1502,13 @@
 
                 if (telefon) {
                     let temizTelefon = telefon.replace(/\D/g, '');
-                    let waURL = `https://api.whatsapp.com/send?phone=${temizTelefon}&text=${encodeURIComponent(raporMetni)}`;
                     
-                    // Mobilde ve tablette WhatsApp yönlendirme garantisi için window.open yerine doğrudan yönlendirme tetiklemesi
+                    // Kesin WhatsApp Yönlendirme Mekanizması (Mobil/Tablet ve PC Uyumluluğu)
+                    let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    let waURL = isMobile 
+                        ? `https://api.whatsapp.com/send?phone=${temizTelefon}&text=${encodeURIComponent(raporMetni)}`
+                        : `https://web.whatsapp.com/send?phone=${temizTelefon}&text=${encodeURIComponent(raporMetni)}`;
+
                     let a = document.createElement('a');
                     a.href = waURL;
                     a.target = '_blank';
