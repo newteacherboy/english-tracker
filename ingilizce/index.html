@@ -993,36 +993,7 @@
                 </div>
             </div>
 
-            <!-- 🗓️ YILLIK PLANLAR DETAY PANELİ (MODAL) -->
-    <div class="game-modal-overlay" id="yillikPlanModalOverlay">
-        <div class="game-modal-content" style="max-width: 560px;">
-            <button class="game-close-btn" onclick="yillikPlanModaliniKapat()">✕</button>
-            <div class="game-title" style="color: #166534;">🗓️ Yıllık Ders Planı ve Haftalık Takip</div>
-            <div class="game-subtitle">Öğrenciler sadece takip edebilir. Tik atmak için öğretmen şifresi gerekir!</div>
-
-            <!-- Şifre / Yetki Durum Çubuğu -->
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 11px;">
-                <span id="yetkiDurumText" style="font-weight: 700; color: #166534;">🔒 Öğrenci Modu (Tik Atılamaz)</span>
-                <button id="yetkiAcBtn" onclick="ogretmenSifreModaliniAc()" style="background: #16a34a; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-weight: 700; cursor: pointer;">🔐 Şifre Gir (Yetki Aç)</button>
-            </div>
-
-            <!-- Planların Listeleneceği Alan -->
-            <div id="yillikPlanlarKonteyner" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
-                <div style="text-align: center; color: #64748b; padding: 20px;">Planlar yükleniyor...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🔐 YILLIK PLAN İÇİN ÖĞRETMEN ŞİFRE GİRİŞ MODALI -->
-    <div class="rubric-modal" id="planSifreModal" style="z-index: 100005;">
-        <div class="rubric-content" style="max-width: 280px; text-align: center;">
-            <h3 style="color: #1e293b; margin-bottom: 6px; font-size: 14px;">🔐 Yönetici Şifresi</h3>
-            <p style="font-size: 10px; color: #64748b; margin-bottom: 10px;">Tik atabilmek için şifreyi giriniz:</p>
-            <input type="password" id="planYoneticisifreInput" placeholder="Şifre" style="text-align: center; margin-bottom: 8px;">
-            <button class="btn-giris" onclick="planSifreyiDogrula()" style="background: #16a34a; padding: 7px;">Onayla</button>
-            <button onclick="document.getElementById('planSifreModal').style.display='none'" style="background:none; border:none; color:#64748b; font-size:10px; margin-top:6px; cursor:pointer;">İptal</button>
-        </div>
-    </div>
+           
 
             <!-- Bilgi / Sayaç Kutusu -->
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-around; font-size: 11px; font-weight: 800; color: #166534;">
