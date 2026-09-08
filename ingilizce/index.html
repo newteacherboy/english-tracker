@@ -408,6 +408,15 @@
         .btn-sik.yanlis-animasyon {
             background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important;
         }
+        .btn-sik.dogru-animasyon {
+            background-color: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important;
+        }
+        @keyframes zarDonusu {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.15); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .zar-donuyor { animation: zarDonusu 0.15s linear infinite; }
 
         .liderlik-tablosu-box { margin-top: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px; }
         .liderlik-title { font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 5px; text-align: center; }
@@ -875,6 +884,7 @@
                 <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
                     <button class="btn-oyun-ac" onclick="oyunModaliniAc()">🚀 Klasik Kelime Yarışması</button>
                     <button class="btn-oyun-ac" onclick="jeopardyModaliniAc()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);">🎈 Jeopardy Kelime Balonları</button>
+                    <button class="btn-oyun-ac" onclick="cekilisModaliniAc()" style="background: linear-gradient(135deg, #f97316 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);">🎲 Zar Çekilişi</button>
                 </div>
             </div>
 
@@ -1047,6 +1057,81 @@
         </div>
     </div>
 
+    <!-- ZAR ÇEKİLİŞİ KELİME OYUNU MODALI -->
+    <div class="game-modal-overlay" id="cekilisModalOverlay">
+        <div class="game-modal-content" style="max-width: 480px;">
+            <button class="game-close-btn" onclick="cekilisModaliniKapat()">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #c2410c;">🎲 Çekiliş Müziği</span>
+                <button id="cekilisMuzikBtn" onclick="cekilisMuzikToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
+            </div>
+            <audio id="cekilisMuzigi" src="muzik.mp3" preload="auto" loop></audio>
+
+            <div id="cekilisAyarBolumu">
+                <div class="game-title" style="color: #c2410c;">🎲 Zar Çekilişi Kelime Oyunu</div>
+                <div class="game-subtitle">Zarı at, kelimeyi bil, zarın gösterdiği kadar puan kazan ya da kaybet!</div>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <input type="text" id="cekilisIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Sınıf Seçiniz:</label>
+                <div class="sinif-secim-grid">
+                    <button class="sinif-btn active" onclick="cekilisSinifSec(2, this)">2. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(3, this)">3. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(4, this)">4. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(5, this)">5. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(6, this)">6. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(7, this)">7. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(8, this)">8. Sınıf</button>
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ünite Seçiniz (çoklu seçim yapılabilir):</label>
+                <div class="unite-secim-box" id="cekilisUniteKonteyner"></div>
+                <button class="btn-giris" onclick="cekilisOyunuBaslat()" style="background: #ea580c; margin-top: 3px;">🎲 Çekilişi Başlat</button>
+            </div>
+
+            <div id="cekilisOyunAlani" style="display: none;">
+                <div class="oyun-ust-bilgi" style="background: #fff7ed; color: #c2410c;">
+                    <span id="cekilisKelimeSayac">Kelime: 1 / 15</span>
+                    <span id="cekilisKronometre" style="color: #ea580c;">⏱️ 00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
+                    <span style="color: #ea580c;">⭐ Puan: <span id="cekilisPuanGosterge">0</span></span>
+                    <span style="color: #16a34a;">✅ Doğru: <span id="cekilisDogruSayisi">0</span></span>
+                    <span style="color: #dc2626;">❌ Yanlış: <span id="cekilisYanlisSayisi">0</span></span>
+                </div>
+
+                <div style="background: #fff7ed; border: 1.5px solid #fdba74; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 12px;">
+                    <div id="cekilisZarYuz" style="font-size: 56px; line-height: 1; margin-bottom: 6px;">🎲</div>
+                    <div id="cekilisZarDurum" style="font-size: 11px; font-weight: 700; color: #c2410c; margin-bottom: 8px;">Zarı atmak için tıkla!</div>
+                    <button class="btn-giris" id="cekilisZarAtBtn" onclick="cekilisZarAt()" style="background: #ea580c; max-width: 220px; margin: 0 auto;">🎲 Zarı At</button>
+                </div>
+
+                <div class="kelime-gosterge" id="cekilisKelimeKutu" style="display: none;">
+                    <span style="font-size: 9.5px; font-weight: 700; color: #ea580c; text-transform: uppercase;">İngilizce Kelime</span>
+                    <div class="kelime-en" id="cekilisKelimeText">Apple</div>
+                </div>
+
+                <div class="siklar-grid" id="cekilisSiklarGrid" style="display: none;">
+                    <button class="btn-sik" id="cekilisSik0" onclick="cekilisCevapVer(0)">Şık 1</button>
+                    <button class="btn-sik" id="cekilisSik1" onclick="cekilisCevapVer(1)">Şık 2</button>
+                </div>
+            </div>
+
+            <div id="cekilisSonucBolumu" style="display: none; text-align: center;">
+                <div style="font-size: 26px; margin-bottom: 3px;">🎲</div>
+                <h3 style="color: #ea580c; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Tebrikler! Çekiliş Tamamlandı</h3>
+                <div style="display: flex; justify-content: center; gap: 12px; background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
+                    <span style="color: #ea580c;">Toplam Skor: <span id="cekilisSonucPuan">0</span> Puan</span>
+                    <span style="color: #475569;">Süre: <span id="cekilisSonucSure">00:00</span></span>
+                </div>
+                <button class="btn-giris" onclick="cekilisModaliniAc()" style="background: #ea580c; margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
+                <div class="liderlik-tablosu-box">
+                    <div class="liderlik-title" style="color: #c2410c;">📊 Zar Çekilişi Liderlik Tablosu (Top 5)</div>
+                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="cekilisLiderlikGovde"></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- AKİCİ OKUMA VE HIZ ÖLÇER STÜDYOSU MODALI -->
     <div class="game-modal-overlay" id="okumaModalOverlay">
         <div class="game-modal-content" style="max-width: 520px;">
@@ -1105,7 +1190,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbwxEJM0BdSbyvZcMZ44lPN_XTtaQSNN-B5I6T0DmYV06fni3bzbcV03Ovq5XaHHXvqCqg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxfmivPaOtbxGDynMr60jYm3NPiFoW0I4-fk7LOlZq-QVK0vQJQ4t12mN8YhVBZmG_44Q/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1557,6 +1642,12 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
             btnElement.classList.add('active');
+
+            // Farklı bir sekmeye geçilince açık olan tüm oyun müziklerini durdur
+            ['oyunMuzigi', 'jeopardyMuzigi', 'cekilisMuzigi'].forEach(function(id) {
+                let m = document.getElementById(id);
+                if (m) { m.pause(); m.currentTime = 0; }
+            });
         }
 
         function performansEmojisiGetir(puan) {
@@ -1903,6 +1994,23 @@
         let jeopDogruSikIdx = 0;
         let jeopGlobalLiderlik = [];
 
+        // --- ZAR ÇEKİLİŞİ KELİME OYUNU DEĞİŞKENLERİ ---
+        let cekilisSecilenSinif = 2;
+        let cekilisSecilenUniteler = [1];
+        let cekilisKelimeListesi = [];
+        let cekilisAktifIndex = 0;
+        let cekilisPuan = 0;
+        let cekilisDogru = 0;
+        let cekilisYanlis = 0;
+        let cekilisSaniye = 0;
+        let cekilisTimer = null;
+        let cekilisDogruSikIdx = 0;
+        let cekilisAktifZarDegeri = 1;
+        let cekilisZarAtiliyor = false;
+        let cekilisCevapKilitli = false;
+        let cekilisGlobalLiderlik = [];
+        let cekilisKullanilmisKelimeler = [];
+
         function jeopardyModaliniAc() {
             document.getElementById('jeopardyModalOverlay').style.display = 'flex';
             document.getElementById('jeopAyarBolumu').style.display = 'block';
@@ -2093,6 +2201,242 @@
             tbody.innerHTML = "";
             top5.forEach((it, idx) => {
                 tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#7c3aed;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
+            });
+        }
+
+
+        // --- ZAR ÇEKİLİŞİ KELİME OYUNU MİMARİSİ ---
+        function cekilisModaliniAc() {
+            document.getElementById('cekilisModalOverlay').style.display = 'flex';
+            document.getElementById('cekilisAyarBolumu').style.display = 'block';
+            document.getElementById('cekilisOyunAlani').style.display = 'none';
+            document.getElementById('cekilisSonucBolumu').style.display = 'none';
+            cekilisUniteSecimOlustur(2, 8);
+        }
+
+        function cekilisModaliniKapat() {
+            document.getElementById('cekilisModalOverlay').style.display = 'none';
+            if(cekilisTimer) clearInterval(cekilisTimer);
+            let m = document.getElementById('cekilisMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+        }
+
+        function cekilisMuzikToggle() {
+            let m = document.getElementById('cekilisMuzigi');
+            let b = document.getElementById('cekilisMuzikBtn');
+            if(!m || !b) return;
+            if(m.muted) { m.muted = false; b.innerText = "🔊 Müzik: Açık"; }
+            else { m.muted = true; b.innerText = "🔇 Müzik: Sessiz"; }
+        }
+
+        function cekilisSinifSec(n, el) {
+            cekilisSecilenSinif = n;
+            document.querySelectorAll('#cekilisAyarBolumu .sinif-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            cekilisUniteSecimOlustur(n, (n===2||n===5)?8:10);
+        }
+
+        function cekilisUniteSecimOlustur(n, count) {
+            let kont = document.getElementById('cekilisUniteKonteyner');
+            if(!kont) return;
+            kont.innerHTML = "";
+            cekilisSecilenUniteler = [1];
+            for(let u=1; u<=count; u++) {
+                let chip = document.createElement('div');
+                chip.className = `unite-chip ${u===1?'selected':''}`;
+                chip.innerText = `${u}.Ü`;
+                chip.onclick = function() {
+                    if(cekilisSecilenUniteler.includes(u)) {
+                        if(cekilisSecilenUniteler.length > 1) {
+                            cekilisSecilenUniteler = cekilisSecilenUniteler.filter(i => i !== u);
+                            chip.classList.remove('selected');
+                        }
+                    } else {
+                        cekilisSecilenUniteler.push(u);
+                        chip.classList.add('selected');
+                    }
+                };
+                kont.appendChild(chip);
+            }
+        }
+
+        function cekilisOyunuBaslat() {
+            let isim = document.getElementById('cekilisIsimInput').value.trim();
+            if(!isim) { alert("Lütfen adınızı soyadınızı giriniz!"); return; }
+
+            let filt = masterKelimeHavuzu.filter(i => i.sinif === cekilisSecilenSinif && cekilisSecilenUniteler.includes(i.unite));
+            if(filt.length === 0) { alert("Seçilen sınıf ve ünitelerde kelime bulunamadı!"); return; }
+
+            // Önceki turlarda çekilmiş kelimeleri hariç tutarak farklı bir kelime seti oluştur.
+            // Havuzda yeterli "yeni" kelime kalmadıysa listeyi sıfırlayıp baştan çekmeye devam ederiz.
+            let kullanilmamislar = filt.filter(k => !cekilisKullanilmisKelimeler.includes(k.en));
+            let havuz = kullanilmamislar;
+            if (havuz.length < Math.min(15, filt.length)) {
+                cekilisKullanilmisKelimeler = [];
+                havuz = filt;
+            }
+
+            let hedefSayi = Math.min(15, havuz.length);
+            cekilisKelimeListesi = [...havuz].sort(() => Math.random() - 0.5).slice(0, hedefSayi);
+            cekilisKelimeListesi.forEach(k => cekilisKullanilmisKelimeler.push(k.en));
+
+            cekilisPuan = 0;
+            cekilisDogru = 0;
+            cekilisYanlis = 0;
+            cekilisAktifIndex = 0;
+            cekilisSaniye = 0;
+            cekilisCevapKilitli = false;
+            cekilisZarAtiliyor = false;
+
+            document.getElementById('cekilisAyarBolumu').style.display = 'none';
+            document.getElementById('cekilisSonucBolumu').style.display = 'none';
+            document.getElementById('cekilisOyunAlani').style.display = 'block';
+            document.getElementById('cekilisKelimeSayac').innerText = `Kelime: 1 / ${cekilisKelimeListesi.length}`;
+            document.getElementById('cekilisPuanGosterge').innerText = "0";
+            document.getElementById('cekilisDogruSayisi').innerText = "0";
+            document.getElementById('cekilisYanlisSayisi').innerText = "0";
+            document.getElementById('cekilisKelimeKutu').style.display = 'none';
+            document.getElementById('cekilisSiklarGrid').style.display = 'none';
+            document.getElementById('cekilisZarYuz').innerText = '🎲';
+            document.getElementById('cekilisZarDurum').innerText = 'Zarı atmak için tıkla!';
+            let zarBtn = document.getElementById('cekilisZarAtBtn');
+            zarBtn.style.display = 'block';
+            zarBtn.disabled = false;
+
+            let m = document.getElementById('cekilisMuzigi');
+            if(m) { m.currentTime = 0; m.play().catch(()=>{}); }
+
+            if(cekilisTimer) clearInterval(cekilisTimer);
+            cekilisTimer = setInterval(() => {
+                cekilisSaniye++;
+                let dk = String(Math.floor(cekilisSaniye/60)).padStart(2,'0');
+                let sn = String(cekilisSaniye%60).padStart(2,'0');
+                document.getElementById('cekilisKronometre').innerText = `⏱️ ${dk}:${sn}`;
+            }, 1000);
+        }
+
+        function cekilisZarAt() {
+            if (cekilisZarAtiliyor) return;
+            cekilisZarAtiliyor = true;
+
+            let zarYuz = document.getElementById('cekilisZarYuz');
+            let zarBtn = document.getElementById('cekilisZarAtBtn');
+            let durum = document.getElementById('cekilisZarDurum');
+            zarBtn.disabled = true;
+            zarYuz.classList.add('zar-donuyor');
+            durum.innerText = "Zar atılıyor...";
+
+            let zarEmojiler = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+            let sayac = 0;
+            let donmeInterval = setInterval(() => {
+                zarYuz.innerText = zarEmojiler[Math.floor(Math.random() * 6)];
+                sayac++;
+                if (sayac >= 12) {
+                    clearInterval(donmeInterval);
+                    let finalDeger = Math.floor(Math.random() * 6) + 1;
+                    cekilisAktifZarDegeri = finalDeger;
+                    zarYuz.innerText = zarEmojiler[finalDeger - 1];
+                    zarYuz.classList.remove('zar-donuyor');
+                    durum.innerText = `🎯 Bu soru ±${finalDeger} puan değerinde!`;
+                    zarBtn.style.display = 'none';
+                    cekilisZarAtiliyor = false;
+                    cekilisKelimeyiGoster();
+                }
+            }, 80);
+        }
+
+        function cekilisKelimeyiGoster() {
+            let s = cekilisKelimeListesi[cekilisAktifIndex];
+            document.getElementById('cekilisKelimeKutu').style.display = 'block';
+            document.getElementById('cekilisKelimeText').innerText = s.en;
+
+            let yanlisHavuz = masterKelimeHavuzu.filter(i => i.en !== s.en);
+            let yanlisKelime = yanlisHavuz.length ? yanlisHavuz[Math.floor(Math.random() * yanlisHavuz.length)] : { tr: "Yanlış Anlam" };
+            let siklar = [s.tr, yanlisKelime.tr].sort(() => Math.random() - 0.5);
+            cekilisDogruSikIdx = siklar.indexOf(s.tr);
+
+            document.getElementById('cekilisSik0').className = 'btn-sik';
+            document.getElementById('cekilisSik1').className = 'btn-sik';
+            document.getElementById('cekilisSik0').innerText = siklar[0];
+            document.getElementById('cekilisSik1').innerText = siklar[1];
+            document.getElementById('cekilisSiklarGrid').style.display = 'grid';
+            cekilisCevapKilitli = false;
+        }
+
+        function cekilisCevapVer(idx) {
+            if (cekilisCevapKilitli) return;
+            cekilisCevapKilitli = true;
+
+            let btn = document.getElementById('cekilisSik' + idx);
+            let dogruMu = idx === cekilisDogruSikIdx;
+            let zarDegeri = cekilisAktifZarDegeri;
+
+            if (dogruMu) {
+                cekilisPuan += zarDegeri;
+                cekilisDogru++;
+                btn.classList.add('dogru-animasyon');
+            } else {
+                cekilisPuan -= zarDegeri;
+                cekilisYanlis++;
+                btn.classList.add('yanlis-animasyon');
+                document.getElementById('cekilisSik' + cekilisDogruSikIdx).classList.add('dogru-animasyon');
+            }
+
+            document.getElementById('cekilisPuanGosterge').innerText = cekilisPuan;
+            document.getElementById('cekilisDogruSayisi').innerText = cekilisDogru;
+            document.getElementById('cekilisYanlisSayisi').innerText = cekilisYanlis;
+
+            setTimeout(() => {
+                cekilisAktifIndex++;
+                if (cekilisAktifIndex >= cekilisKelimeListesi.length) {
+                    cekilisOyunuBitir();
+                } else {
+                    cekilisSonrakiHazirla();
+                }
+            }, 700);
+        }
+
+        function cekilisSonrakiHazirla() {
+            document.getElementById('cekilisKelimeSayac').innerText = `Kelime: ${cekilisAktifIndex + 1} / ${cekilisKelimeListesi.length}`;
+            document.getElementById('cekilisKelimeKutu').style.display = 'none';
+            document.getElementById('cekilisSiklarGrid').style.display = 'none';
+            document.getElementById('cekilisZarYuz').innerText = '🎲';
+            document.getElementById('cekilisZarDurum').innerText = 'Zarı atmak için tıkla!';
+            let zarBtn = document.getElementById('cekilisZarAtBtn');
+            zarBtn.style.display = 'block';
+            zarBtn.disabled = false;
+        }
+
+        function cekilisOyunuBitir() {
+            if(cekilisTimer) clearInterval(cekilisTimer);
+            let m = document.getElementById('cekilisMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+
+            let dk = String(Math.floor(cekilisSaniye/60)).padStart(2,'0');
+            let sn = String(cekilisSaniye%60).padStart(2,'0');
+            let sureStr = `${dk}:${sn}`;
+            let isim = document.getElementById('cekilisIsimInput').value.trim();
+            let uniteStr = cekilisSecilenUniteler.join(",");
+
+            document.getElementById('cekilisOyunAlani').style.display = 'none';
+            document.getElementById('cekilisSonucBolumu').style.display = 'block';
+            document.getElementById('cekilisSonucPuan').innerText = cekilisPuan;
+            document.getElementById('cekilisSonucSure').innerText = sureStr;
+
+            fetch(`${apiURL}?islem=cekilisKaydet&isim=${encodeURIComponent(isim)}&sinif=${cekilisSecilenSinif}&unite=${encodeURIComponent(uniteStr)}&dogru=${cekilisDogru}&yanlis=${cekilisYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${cekilisSaniye}&puan=${cekilisPuan}`).catch(()=>{});
+
+            cekilisLiderlikGuncelle({ isim, dogru: cekilisDogru, puan: cekilisPuan, sure: sureStr, suresaniye: cekilisSaniye });
+        }
+
+        function cekilisLiderlikGuncelle(yk) {
+            cekilisGlobalLiderlik.push(yk);
+            cekilisGlobalLiderlik.sort((a,b) => b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye);
+            let top5 = cekilisGlobalLiderlik.slice(0, 5);
+            let tbody = document.getElementById('cekilisLiderlikGovde');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            top5.forEach((it, idx) => {
+                tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#ea580c;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
             });
         }
 
@@ -2414,6 +2758,7 @@
             if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
             if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
                         if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+            if(user.cekilisLiderlik) { cekilisGlobalLiderlik = user.cekilisLiderlik; cekilisLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
             planKartiniGuncelle(user);
         }
 
