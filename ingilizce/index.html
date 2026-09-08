@@ -2757,10 +2757,28 @@
             }, 70);
         }
 
-        function cekilisSoruyuGoster() {
+      function cekilisSoruyuGoster() {
             let s = cekilisKelimeListesi[cekilisAktifSoruIndex];
             cekilisAktifSoru = s;
-            });
+
+            document.getElementById('cekilisZarAsama').style.display = 'none';
+            document.getElementById('cekilisSoruAsama').style.display = 'block';
+
+            let puanBadge = document.getElementById('cekilisPuanBadge');
+            puanBadge.innerText = `${cekilisMevcutZarDegeri} Puanlık Soru`;
+
+            let ing = Math.random() < 0.5;
+            let dogruAnlam = ing ? s.tr : s.en;
+            let yanlisHavuz = masterKelimeHavuzu.filter(i => i.en !== s.en);
+            let yanlisAnlam = (yanlisHavuz.length ? yanlisHavuz[Math.floor(Math.random() * yanlisHavuz.length)] : s)[ing ? 'tr' : 'en'];
+            
+            let siklar = [dogruAnlam, yanlisAnlam].sort(() => Math.random() - 0.5);
+            cekilisDogruSikIdx = siklar.indexOf(dogruAnlam);
+
+            document.getElementById('cekilisSoruDilLabel').innerText = ing ? "İngilizce" : "Türkçe";
+            document.getElementById('cekilisSoruKelime').innerText = ing ? s.en : s.tr;
+            document.getElementById('cekilisSik0').innerText = siklar[0];
+            document.getElementById('cekilisSik1').innerText = siklar[1];
         }
 
             function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
