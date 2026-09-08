@@ -2322,8 +2322,9 @@
         }
 
         // --- YILLIK PLAN TAKİP SİSTEMİ ---
-        function planKartiniGuncelle(user) {
+                function planKartiniGuncelle(user) {
             let box = document.getElementById('planTrackerBox');
+            if (!box) { console.warn("planTrackerBox elementi bulunamadı, HTML eklemesini kontrol et."); return; }
             if (!user.atananPlanlar || user.atananPlanlar.length === 0) {
                 box.style.display = 'none';
                 return;
