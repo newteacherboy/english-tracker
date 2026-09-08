@@ -26,11 +26,11 @@
 
         /* Sol Üst Küçük Ana Portala Dön Butonu */
         .portal-back-btn {
-            position: fixed; top: 10px; left: 10px; background: #ffffff; color: #2f855a;
-            border: 1px solid #bbf7d0; padding: 5px 10px; border-radius: 6px; font-size: 11px;
-            font-weight: 700; text-decoration: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            z-index: 99999; display: flex; align-items: center; gap: 4px; transition: all 0.2s;
-        }
+    position: absolute; top: 10px; left: 10px; background: #ffffff; color: #2f855a;
+    border: 1px solid #bbf7d0; padding: 5px 10px; border-radius: 6px; font-size: 11px;
+    font-weight: 700; text-decoration: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    z-index: 99999; display: flex; align-items: center; gap: 4px; transition: all 0.2s;
+}
         .portal-back-btn:hover { background: #2f855a; color: #ffffff; }
 
         /* Sağ Altta Çarkın TAM ÜSTÜNDE Soluk AI Asistan Butonu ve Bildirimi */
@@ -492,14 +492,14 @@
 
         /* Mobil cihazlarda (ekran genişliği 768 pikselden küçükse) sol üstteki butonu KÜÇÜLTEREK sabit tut, gizleme */
         @media (max-width: 768px) {
-            .portal-back-btn {
-                display: flex !important;
-                top: 6px;
-                left: 6px;
-                padding: 4px 8px;
-                font-size: 10px;
-            }
-        }
+    .portal-back-btn {
+        display: flex !important;
+        top: 6px;
+        left: 6px;
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+}
     </style>
 </head>
 <body>
