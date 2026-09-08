@@ -594,6 +594,27 @@
         }
         .seviye-ilerleme-metin { font-size: 11px; color: #64748b; margin: 0; }
         .seviye-ilerleme-deger { font-size: 15px; font-weight: 800; color: #1e293b; margin: 2px 0 0; }
+
+        .kart-oyun-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; display: none; flex-direction: column; z-index: 999998; padding: 14px;
+        }
+        .kart-ust-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .kart-kapat-btn { background: none; border: none; font-size: 22px; color: #cbd5e1; cursor: pointer; }
+        .kart-ilerleme-bar { display: flex; gap: 6px; flex: 1; margin: 0 16px; }
+        .kart-ilerleme-parca { height: 8px; flex: 1; border-radius: 4px; background: #fce7e9; }
+        .kart-ilerleme-parca.dolu { background: #dc2626; }
+        .kart-govde { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .kart-gorsel-kapsayici { width: 100%; max-width: 340px; aspect-ratio: 1; border-radius: 14px; overflow: hidden; position: relative; background: #f1f5f9; cursor: pointer; }
+        .kart-gorsel-kapsayici img { width: 100%; height: 100%; object-fit: cover; }
+        .kart-ses-btn { position: absolute; bottom: 12px; right: 12px; width: 46px; height: 46px; border-radius: 12px; background: #312e81; color: #fff; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+        .kart-en-metin { font-size: 26px; font-weight: 800; color: #1e293b; margin-top: 22px; }
+        .kart-tr-metin { font-size: 15px; color: #475569; margin-top: 10px; }
+        .kart-tr-metin b { color: #1e293b; }
+        .kart-devam-btn { width: 100%; padding: 16px; background: #cbd5e1; color: #ffffff; border: none; font-size: 15px; font-weight: 800; border-radius: 10px; cursor: not-allowed; transition: background 0.2s; }
+        .kart-devam-btn.aktif { background: #84cc16; cursor: pointer; }
+        .kart-tebrik-alani { display: none; text-align: center; padding: 40px 20px; }
+        
     </style>
 </head>
 <body>
@@ -1253,6 +1274,32 @@
                 </div>
             </div>
         </div>
+    </div>
+
+        <!-- KART OYUNU EKRANI -->
+    <div class="kart-oyun-overlay" id="kartOyunOverlay">
+        <div class="kart-ust-bar">
+            <button class="kart-kapat-btn" onclick="kartOyunuKapat()">✕</button>
+            <div class="kart-ilerleme-bar" id="kartIlerlemeBar"></div>
+            <span style="width:22px;"></span>
+        </div>
+
+        <div class="kart-govde" id="kartGovdeAlani">
+            <div class="kart-gorsel-kapsayici" onclick="kartSesOku()">
+                <img id="kartGorsel" src="" alt="">
+                <button class="kart-ses-btn" onclick="event.stopPropagation(); kartSesOku();">🔊</button>
+            </div>
+            <div class="kart-en-metin" id="kartEnMetin">Hello!</div>
+            <div class="kart-tr-metin" id="kartTrMetin">Herkese <b>merhaba</b>!</div>
+        </div>
+
+        <div class="kart-tebrik-alani" id="kartTebrikAlani">
+            <div style="font-size:50px;">🎉</div>
+            <h3 style="font-size:20px; font-weight:900; color:#166534; margin:10px 0 6px;">Seviye Tamamlandı!</h3>
+            <p style="color:#64748b; font-size:13px;">Bir sonraki seviyenin kilidi açıldı.</p>
+        </div>
+
+        <button class="kart-devam-btn" id="kartDevamBtn" onclick="kartDevamEt()">Devam Et</button>
     </div>
 
 
@@ -2017,10 +2064,122 @@
             document.getElementById('seviyeIlerlemeMetni').innerText = `${tamamlananSeviyeler.length} / ${seviyeler.length} seviye tamamlandı`;
         }
 
+        
+
         function seviyeKartOyunuBaslat(sinif, unite, seviye) {
-            alert(`Seviye ${seviye} kart oyunu başlıyor! (Bir sonraki adımda bu ekranı kart arayüzüyle dolduracağız.)`);
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            if (!user) return;
+
+            kartAktifListe = user.aktiviteKartlari.filter(k => k.sinif === sinif && k.unite === unite && k.seviye === seviye);
+            if (kartAktifListe.length === 0) { alert("Bu seviyede kart bulunamadı."); return; }
+
+            kartSinif = sinif; kartUnite = unite; kartSeviye = seviye;
+            kartAktifIndex = 0;
+
+            document.getElementById('seviyeHaritaOverlay').style.display = 'none';
+            document.getElementById('kartOyunOverlay').style.display = 'flex';
+            document.getElementById('kartGovdeAlani').style.display = 'flex';
+            document.getElementById('kartTebrikAlani').style.display = 'none';
+
+            kartIlerlemeCizgileriOlustur();
+            kartGoster();
         }
 
+        function kartIlerlemeCizgileriOlustur() {
+            let bar = document.getElementById('kartIlerlemeBar');
+            bar.innerHTML = "";
+            kartAktifListe.forEach(() => {
+                let parca = document.createElement('div');
+                parca.className = 'kart-ilerleme-parca';
+                bar.appendChild(parca);
+            });
+        }
+
+        function kartGoster() {
+            let kart = kartAktifListe[kartAktifIndex];
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            let havuz = (user.gorselHavuzu && user.gorselHavuzu[kart.kategori]) ? user.gorselHavuzu[kart.kategori] : [];
+            let gorselUrl = havuz.length > 0 ? havuz[Math.floor(Math.random() * havuz.length)] : "";
+
+            document.getElementById('kartGorsel').src = gorselUrl;
+            document.getElementById('kartEnMetin').innerText = kart.en + (kart.cumleEn ? "" : "");
+            document.getElementById('kartTrMetin').innerHTML = kart.cumleTr
+                ? kart.cumleTr.replace(kart.tr, `<b>${kart.tr}</b>`)
+                : `<b>${kart.tr}</b>`;
+
+            document.querySelectorAll('.kart-ilerleme-parca').forEach((p, i) => {
+                p.classList.toggle('dolu', i <= kartAktifIndex);
+            });
+
+            kartOkunduMu = false;
+            let btn = document.getElementById('kartDevamBtn');
+            btn.classList.remove('aktif');
+            btn.disabled = true;
+
+            setTimeout(() => kartSesOku(), 400);
+        }
+
+        function kartSesOku() {
+            let kart = kartAktifListe[kartAktifIndex];
+            if (!kart) return;
+            let metin = kart.cumleEn || kart.en;
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let konusma = new SpeechSynthesisUtterance(metin);
+                konusma.lang = 'en-US';
+                konusma.rate = 0.9;
+                window.speechSynthesis.speak(konusma);
+            }
+
+            kartOkunduMu = true;
+            let btn = document.getElementById('kartDevamBtn');
+            btn.classList.add('aktif');
+            btn.disabled = false;
+        }
+
+        function kartDevamEt() {
+            if (!kartOkunduMu) return;
+
+            kartAktifIndex++;
+            if (kartAktifIndex >= kartAktifListe.length) {
+                kartSeviyeTamamla();
+            } else {
+                kartGoster();
+            }
+        }
+
+        function kartSeviyeTamamla() {
+            document.getElementById('kartGovdeAlani').style.display = 'none';
+            document.getElementById('kartTebrikAlani').style.display = 'block';
+            document.getElementById('kartDevamBtn').innerText = 'Haritaya Dön';
+            document.getElementById('kartDevamBtn').classList.add('aktif');
+            document.getElementById('kartDevamBtn').disabled = false;
+            document.getElementById('kartDevamBtn').onclick = kartHaritayaDon;
+
+            fetch(`${apiURL}?islem=seviyeTamamla&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&sinif=${kartSinif}&unite=${kartUnite}&seviye=${kartSeviye}`).catch(() => {});
+
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            if (user) {
+                if (!user.seviyeIlerleme) user.seviyeIlerleme = [];
+                user.seviyeIlerleme.push({ sinif: kartSinif, unite: kartUnite, seviye: kartSeviye, tamamlandi: true });
+            }
+        }
+
+        function kartHaritayaDon() {
+            document.getElementById('kartOyunOverlay').style.display = 'none';
+            document.getElementById('kartDevamBtn').innerText = 'Devam Et';
+            document.getElementById('kartDevamBtn').onclick = kartDevamEt;
+            document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
+            seviyeHaritasiCiz();
+        }
+
+        function kartOyunuKapat() {
+            window.speechSynthesis.cancel();
+            document.getElementById('kartOyunOverlay').style.display = 'none';
+            document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
+        }
+        
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
@@ -2384,6 +2543,10 @@
         // --- SEVİYE HARİTASI DEĞİŞKENLERİ ---
         let seviyeGosterilenUnite = 1;
         let seviyeAktifSinif = 2;
+                let kartAktifListe = [];
+        let kartAktifIndex = 0;
+        let kartOkunduMu = false;
+        let kartSinif = 0, kartUnite = 0, kartSeviye = 0;
         
                 // --- POMODORO ÇALIŞMA SAYACI DEĞİŞKENLERİ ---
         let pomodoroOdakDakika = 25;
