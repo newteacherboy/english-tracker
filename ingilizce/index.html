@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -25,12 +24,25 @@
             font-size: 13px;
         }
 
-        /* Sol Üst Küçük Ana Portala Dön Butonu */
+        /* Sol Üst Küçük Ana Portala Dön Butonu - Mobilde ve Tüm Ekranlarda En Üstte Sabit */
         .portal-back-btn {
-            position: fixed; top: 10px; left: 10px; background: #ffffff; color: #2f855a;
-            border: 1px solid #bbf7d0; padding: 5px 10px; border-radius: 6px; font-size: 11px;
-            font-weight: 700; text-decoration: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            z-index: 99999; display: flex; align-items: center; gap: 4px; transition: all 0.2s;
+            position: fixed; 
+            top: 10px; 
+            left: 10px; 
+            background: #ffffff; 
+            color: #2f855a;
+            border: 1px solid #bbf7d0; 
+            padding: 5px 10px; 
+            border-radius: 6px; 
+            font-size: 11px;
+            font-weight: 700; 
+            text-decoration: none; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 99999; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            transition: all 0.2s;
         }
         .portal-back-btn:hover { background: #2f855a; color: #ffffff; }
 
@@ -203,7 +215,7 @@
         .user-details h3 { color: #166534; font-size: 12.5px; font-weight: 700; }
         .user-details span { color: #15803d; font-size: 10px; font-weight: 600; }
 
-               .header-schedule-area { display: flex; gap: 4px; width: 100%; }
+        .header-schedule-area { display: flex; gap: 4px; width: 100%; }
         .sched-mini-box { background: #ffffff; border-radius: 6px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; flex: 1; min-width: 0; }
         .sched-done { border-color: #86efac; background: #f0fdf4; }
         .sched-next { border-color: #fca5a5; background: #fef2f2; }
@@ -439,11 +451,33 @@
         .rubric-field select, .rubric-field input, .rubric-field textarea {
             width: 100%; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11.5px; outline: none; background: #f8fafc;
         }
-        .slider-group { display: flex; align-items: center; gap: 8px; }
-        .slider-group input[type="range"] { flex: 1; }
-        .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
-
-                .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
+        
+        /* Geliştirilmiş Butonlu Puanlama Alanı (Slider yerine pratik butonlar) */
+        .score-btn-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .score-choice-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 6px 2px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .score-choice-btn:hover { background: #e2e8f0; }
+        .score-choice-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #1d4ed8;
+            box-shadow: 0 1px 3px rgba(37,99,235,0.3);
+        }
 
         /* YILLIK PLAN TAKİP KARTI */
         .plan-tracker-box {
@@ -472,10 +506,6 @@
         .plan-week-info { flex: 1; }
         .plan-week-hafta { font-size: 10.5px; font-weight: 800; color: #1e293b; }
         .plan-week-aciklama { font-size: 10px; color: #475569; margin-top: 2px; }
-        .plan-week-select {
-            font-size: 10px; font-weight: 700; padding: 4px 6px; border-radius: 6px;
-            border: 1px solid #cbd5e1; background: #fff; flex-shrink: 0;
-        }
 
         @media(max-width: 650px) {
             body { padding: 4px 2px; }
@@ -485,18 +515,11 @@
             .badge-name { font-size: 7px; }
             .badge-target { font-size: 6px; }
         }
-
-        /* Mobil cihazlarda (ekran genişliği 768 pikselden küçükse) sol üstteki butonu gizle */
-        @media (max-width: 768px) {
-            .portal-back-btn {
-                display: none !important;
-            }
-        }
     </style>
 </head>
 <body>
 
-    <!-- Sol Üst Küçük Ana Portala Dön Butonu -->
+    <!-- Sol Üst Küçük Ana Portala Dön Butonu (Mobilde ve tüm cihazlarda en üstte sabit) -->
     <a href="https://panel.ogretmencocuk.com" class="portal-back-btn">← Ana Portala Dön</a>
 
     <!-- SAĞ ALT KÖŞEDE ÇARKIN TAM ÜSTÜNDE ASİSTAN BUTONU VE UYARI -->
@@ -592,13 +615,13 @@
                 </div>
             </div>
 
-                        <div class="rubric-field">
+            <div class="rubric-field">
                 <label>Son Deneme Sonucu:</label>
                 <input type="number" id="rubricSonDeneme" value="0">
             </div>
 
             <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
-                        <p style="font-size: 10.5px; font-weight: 800; color: #4338ca; margin-bottom: 6px;">📅 Yıllık Plan - Kazanım Takibi</p>
+            <p style="font-size: 10.5px; font-weight: 800; color: #4338ca; margin-bottom: 6px;">📅 Yıllık Plan - Kazanım Takibi</p>
             <div id="rubricPlanAlani" style="margin-bottom: 10px; display: none;">
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 6px;">
                     <div class="rubric-field" style="margin-bottom: 4px;">
@@ -618,45 +641,70 @@
             <p id="rubricPlanBosMesaj" style="font-size: 10.5px; color: #94a3b8; text-align:center; padding: 6px;">Önce yukarıdan bir öğrenci seçin.</p>
 
             <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
-            <p style="font-size: 10.5px; font-weight: 800; color: #2563eb; margin-bottom: 6px;">📊 5 Beceri Puanlaması (0 - 100)</p>
+            <p style="font-size: 10.5px; font-weight: 800; color: #2563eb; margin-bottom: 6px;">📊 5 Beceri Puanlaması (Hazır Butonlar veya Manuel Giriş)</p>
 
+            <!-- Okuma Puanı -->
             <div class="rubric-field">
-                <label>Okuma:</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderOkuma" min="0" max="100" value="50" oninput="document.getElementById('valOkuma').innerText=this.value">
-                    <span class="slider-val" id="valOkuma">50</span>
+                <label>Okuma Puanı: <span id="valOkuma" style="color:#2563eb; font-weight:800;">60</span></label>
+                <input type="hidden" id="sliderOkuma" value="60">
+                <div class="score-btn-grid">
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 40)">40 (Gelişiyor)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 60)">60 (Orta)</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Okuma', 75)">75 (İyi)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 90)">90 (Süper)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Okuma', 100)">100 (Harika)</button>
                 </div>
             </div>
 
+            <!-- Yazma Puanı -->
             <div class="rubric-field">
-                <label>Yazma:</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderYazma" min="0" max="100" value="50" oninput="document.getElementById('valYazma').innerText=this.value">
-                    <span class="slider-val" id="valYazma">50</span>
+                <label>Yazma Puanı: <span id="valYazma" style="color:#2563eb; font-weight:800;">60</span></label>
+                <input type="hidden" id="sliderYazma" value="60">
+                <div class="score-btn-grid">
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 40)">40 (Gelişiyor)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 60)">60 (Orta)</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Yazma', 75)">75 (İyi)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 90)">90 (Süper)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Yazma', 100)">100 (Harika)</button>
                 </div>
             </div>
 
+            <!-- Kelime Puanı -->
             <div class="rubric-field">
-                <label>Kelime (Vocabulary):</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderVocab" min="0" max="100" value="50" oninput="document.getElementById('valVocab').innerText=this.value">
-                    <span class="slider-val" id="valVocab">50</span>
+                <label>Kelime (Vocabulary) Puanı: <span id="valVocab" style="color:#2563eb; font-weight:800;">60</span></label>
+                <input type="hidden" id="sliderVocab" value="60">
+                <div class="score-btn-grid">
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 40)">40 (Gelişiyor)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 60)">60 (Orta)</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Vocab', 75)">75 (İyi)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 90)">90 (Süper)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Vocab', 100)">100 (Harika)</button>
                 </div>
             </div>
 
+            <!-- Konuşma Puanı -->
             <div class="rubric-field">
-                <label>Konuşma:</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderKonusma" min="0" max="100" value="50" oninput="document.getElementById('valKonusma').innerText=this.value">
-                    <span class="slider-val" id="valKonusma">50</span>
+                <label>Konuşma Puanı: <span id="valKonusma" style="color:#2563eb; font-weight:800;">60</span></label>
+                <input type="hidden" id="sliderKonusma" value="60">
+                <div class="score-btn-grid">
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 40)">40 (Gelişiyor)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 60)">60 (Orta)</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Konusma', 75)">75 (İyi)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 90)">90 (Süper)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Konusma', 100)">100 (Harika)</button>
                 </div>
             </div>
 
+            <!-- Grammar Puanı -->
             <div class="rubric-field">
-                <label>Grammar:</label>
-                <div class="slider-group">
-                    <input type="range" id="sliderGrammar" min="0" max="100" value="50" oninput="document.getElementById('valGrammar').innerText=this.value">
-                    <span class="slider-val" id="valGrammar">50</span>
+                <label>Grammar Puanı: <span id="valGrammar" style="color:#2563eb; font-weight:800;">60</span></label>
+                <input type="hidden" id="sliderGrammar" value="60">
+                <div class="score-btn-grid">
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 40)">40 (Gelişiyor)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 60)">60 (Orta)</button>
+                    <button type="button" class="score-choice-btn active" onclick="puanButonSec('Grammar', 75)">75 (İyi)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 90)">90 (Süper)</button>
+                    <button type="button" class="score-choice-btn" onclick="puanButonSec('Grammar', 100)">100 (Harika)</button>
                 </div>
             </div>
 
@@ -701,12 +749,12 @@
         </div>
     </div>
 
-        <!-- YILLIK PLAN GÖRÜNTÜLEME MODALI -->
+    <!-- YILLIK PLAN GÖRÜNTÜLEME MODALI -->
     <div class="rubric-modal" id="planModal">
         <div class="rubric-content plan-modal-content">
             <button class="game-close-btn" onclick="document.getElementById('planModal').style.display='none'">✕</button>
             <h3 style="color: #3730a3; font-size: 15px; font-weight: 900; margin-bottom: 4px; text-align: center;">📅 Yıllık Plan Takibi</h3>
-                        <p style="font-size: 10.5px; color: #64748b; margin-bottom: 12px; text-align:center;">Haftalık plan durumun aşağıda listelenmiştir. Kazanım işaretlemeleri öğretmenin tarafından yapılmaktadır.</p>
+            <p style="font-size: 10.5px; color: #64748b; margin-bottom: 12px; text-align:center;">Haftalık plan durumun aşağıda listelenmiştir. Kazanım işaretlemeleri öğretmenin tarafından yapılmaktadır.</p>
             <div id="planHaftaListesi"></div>
         </div>
     </div>
@@ -743,7 +791,7 @@
                 </div>
             </div>
 
-                        <div class="header-schedule-area">
+            <div class="header-schedule-area">
                 <div class="sched-mini-box sched-done">
                     <div class="sched-label">Önceki Ders</div>
                     <div class="sched-date" id="miniGecenTarih">--.--.----</div>
@@ -1077,8 +1125,6 @@
                 </div>
             </div>
 
-           
-
             <!-- Bilgi / Sayaç Kutusu -->
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-around; font-size: 11px; font-weight: 800; color: #166534;">
                 <span>⏱️ Timer: <span id="okumaKronometre">00:00</span></span>
@@ -1211,7 +1257,6 @@
                 infoEl.innerHTML = `💡 Kalan Soru Hakkı: <b>${kalanHak} / ${toplamHak}</b> (Oturum süresiyle her 10 dk'da +10 artar)`;
             }
 
-            // Eğer hak bittiyse sohbet kutusunu dondur
             if (kalanHak <= 0) {
                 let inputRow = document.getElementById('aiInputRow');
                 if(inputRow) inputRow.style.display = "none";
@@ -1226,7 +1271,6 @@
             let input = document.getElementById('aiMesajInput');
             let body = document.getElementById('aiChatBody');
             
-            // Hak kontrolü
             let rozetSayisi = Math.floor(toplamSaniye / 600);
             let toplamHak = 10 + (rozetSayisi * 10);
             let kayitliVeri = JSON.parse(localStorage.getItem("gunlukHakTakip") || "{" + '"tarih"' + ":" + '"' + new Date().toISOString().split('T')[0] + '"' + ", " + '"kullanilan"' + ": 0}");
@@ -1240,11 +1284,9 @@
             let txt = input.value.trim();
             if(!txt) return;
 
-            // 1. İstemci Tarafı Anlamsız Harf (Random/Spam) Kontrolü
             let sesliHarfler = txt.match(/[aeıioöuüAEIİOÖUÜ]/g);
             let isRandom = false;
 
-            // Eğer 3 harften uzunsa ve hiç sesli harf yoksa ya da aynı harf arka arkaya 3 kez tekrarlandıysa
             if (txt.length > 3 && (!sesliHarfler || sesliHarfler.length === 0)) {
                 isRandom = true;
             }
@@ -1257,7 +1299,6 @@
                 input.value = "";
                 body.scrollTop = body.scrollHeight;
                 
-                // Hak düşülmez, Sheets'e yazılmaz, sadece uyarı verilir
                 body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Uyarı: Anlamsız veya rastgele harfler algılandı! Bu soru sisteme işlenmedi ve hakkından düşülmedi. Lütfen düzgün bir soru sor. 😊</div>`;
                 body.scrollTop = body.scrollHeight;
                 return;
@@ -1288,7 +1329,6 @@
                 
                 document.getElementById(loadingId).remove();
                 
-                // Başarılı geçerli soru sorulduğu için hakkı 1 artır ve kalan hakkı güncelle
                 aiSoruHakkiniGuncelle(1);
 
                 body.innerHTML += `<div class="ai-msg bot">${data.cevap || "Üzgünüm, yanıt alınamadı."}</div>`;
@@ -1341,15 +1381,34 @@
             });
         }
 
-             function ogrenciVerileriniYukle() {
+        // --- Puan buton seçimi fonksiyonu (Slider yerine pratik butonlar) ---
+        function puanButonSec(kriterAdi, puanDegeri) {
+            let inputId = "slider" + kriterAdi;
+            let spanId = "val" + kriterAdi;
+            
+            document.getElementById(inputId).value = puanDegeri;
+            document.getElementById(spanId).innerText = puanDegeri;
+            
+            // İlgili buton grubundaki active sınıfını güncelle
+            let parentGrid = document.getElementById(spanId).closest('.rubric-field').querySelector('.score-btn-grid');
+            if (parentGrid) {
+                parentGrid.querySelectorAll('.score-choice-btn').forEach(btn => {
+                    if (btn.innerText.includes(puanDegeri)) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        function ogrenciVerileriniYukle() {
             let ogrAdi = document.getElementById('rubricOgrenciSelect').value;
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrAdi.toLowerCase());
             if (!user) return;
 
             ogretmenPlanListesiniOlustur(user);
-
             document.getElementById('rubricTelefon').value = user.telefon || "";
-
             
             let tarihSel = document.getElementById('rubricGecmisTarihSelect');
             tarihSel.innerHTML = '<option value="">-- Yeni Kayıt / En Güncel --</option>';
@@ -1380,16 +1439,11 @@
 
             let arsivRow = user.arsivListesi.find(ar => ar.tarih === secilenTarih);
             if (arsivRow) {
-                document.getElementById('sliderOkuma').value = arsivRow.okuma;
-                document.getElementById('valOkuma').innerText = arsivRow.okuma;
-                document.getElementById('sliderYazma').value = arsivRow.yazma;
-                document.getElementById('valYazma').innerText = arsivRow.yazma;
-                document.getElementById('sliderVocab').value = arsivRow.vocabulary;
-                document.getElementById('valVocab').innerText = arsivRow.vocabulary;
-                document.getElementById('sliderKonusma').value = arsivRow.konusma;
-                document.getElementById('valKonusma').innerText = arsivRow.konusma;
-                document.getElementById('sliderGrammar').value = arsivRow.grammar;
-                document.getElementById('valGrammar').innerText = arsivRow.grammar;
+                puanButonSec('Okuma', arsivRow.okuma);
+                puanButonSec('Yazma', arsivRow.yazma);
+                puanButonSec('Vocab', arsivRow.vocabulary);
+                puanButonSec('Konusma', arsivRow.konusma);
+                puanButonSec('Grammar', arsivRow.grammar);
                 document.getElementById('rubricSonDeneme').value = arsivRow.deneme;
                 document.getElementById('rubricTamamlananTarih').value = arsivRow.tarih;
             }
@@ -1448,8 +1502,16 @@
                     `Destekleriniz, değerli güveniniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı, mutlu ve başarılı bir hafta dileriz! 🌻🌿`;
 
                 if (telefon) {
-                    let waURL = `https://wa.me/${telefon}?text=${encodeURIComponent(raporMetni)}`;
-                    window.open(waURL, '_blank');
+                    let temizTelefon = telefon.replace(/\D/g, '');
+                    let waURL = `https://api.whatsapp.com/send?phone=${temizTelefon}&text=${encodeURIComponent(raporMetni)}`;
+                    
+                    // Mobilde ve tablette WhatsApp yönlendirme garantisi için window.open yerine doğrudan yönlendirme tetiklemesi
+                    let a = document.createElement('a');
+                    a.href = waURL;
+                    a.target = '_blank';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
                 } else {
                     alert("Bu öğrenciye ait telefon numarası bulunamadı, ancak veriler başarıyla kaydedildi.");
                 }
@@ -1644,7 +1706,6 @@
             return { kazanilan, toplam };
         }
 
-        // --- KLASİK KELİME OYUNU VE MÜZİK YÖNETİMİ ---
         function muzikSesToggle() {
             let muzik = document.getElementById('oyunMuzigi');
             let btn = document.getElementById('muzikSesBtn');
@@ -1800,8 +1861,6 @@
             });
         }
 
-
-        // --- JEOPARDY KELİME BALONLARI OYUNU MİMARİSİ ---
         let jeopSecilenSinif = 2;
         let jeopSecilenUniteler = [1];
         let jeopKelimeListesi = [];
@@ -2007,104 +2066,31 @@
             });
         }
 
-
-        // --- AKICI OKUMA VE HIZ ÖLÇER STÜDYOSU MİMARİSİ (İNGİLİZCE) ---
         const sinirsizMetinHavuzu = {
             1: [
                 { baslik: "My Red Ball", metin: "My ball is red, shiny, and round. I play happily with my friend Can in the school yard. The bell rings, and we run into the classroom. Our teacher gives us new story books. Learning to read is a wonderful feeling." },
-                { baslik: "The Little Cat", metin: "The little yellow cat in the garden loves drinking milk. When the sun goes down, it curls up in its house and sleeps sweetly. When I pet it, it starts purring immediately. It is the sweetest joy of our home." },
-                { baslik: "On the Way to School", metin: "I woke up early in the morning and prepared my backpack. Together with my mom, we happily set off on the school road. On the way, we saw colorful flowers and cute dogs. We entered our classroom and wished our friends a bright day." },
-                { baslik: "The Beautiful Garden", metin: "There is a huge green garden behind our house. Sweet-smelling roses and sweet apple trees grow in the garden. Every evening, I skip rope there and sing songs cheerfully." },
-                { baslik: "Kite Festival", metin: "The wind is blowing very nicely today. Colorful kites are gliding in the blue sky. My tailed kite, which I made with my own hands, reached the highest points." },
-                { baslik: "My Sweet Friend", metin: "My dog Pamuk greets me at the door by shaking its head. Playing catch with it makes me very happy. In the evenings, we rest together next to my bed." },
-                { baslik: "Drawing Pictures", metin: "I opened my colored pencils and drew a huge house picture. Smoke is coming out of the chimney of the house, and happy children are running in the garden. My teacher liked my picture very much." },
-                { baslik: "After the Rain", metin: "The rain stopped, and there is the smell of soil in the air. When I looked outside through our window, I saw a huge colorful rainbow. I ran outside and jumped with joy." },
-                { baslik: "Starry Night", metin: "At night, I watched the shining bright stars in the sky from my window. The moon seemed to smile at me and wished me sweet dreams. I wrapped myself in my blanket and slept peacefully." },
-                { baslik: "Bird Nest", metin: "Two tiny birds built a nest on the branch of our walnut tree. Every day, I throw bread crumbs to them. I wake up happily to their chirping every morning." }
+                { baslik: "The Little Cat", metin: "The little yellow cat in the garden loves drinking milk. When the sun goes down, it curls up in its house and sleeps sweetly. When I pet it, it starts purring immediately. It is the sweetest joy of our home." }
             ],
             2: [
-                { baslik: "Our Forest Adventure", metin: "Over the weekend, we went to a lush green forest far away from the city with our family. While walking under the huge pine trees, we noticed squirrels hiding nuts. We took a deep breath of fresh air and went for a walk. Nature gave us peace and happiness." },
-                { baslik: "Journey of the Little Seed", metin: "The tiny seed hidden deep in the soil woke up from its sleep with the spring rains. When it felt the warm rays of the sun, it slowly stretched upward. It sprouted and opened tiny green leaves. Now it had become a huge plant." },
-                { baslik: "Watching the Stars", metin: "On summer evenings, we set up our chairs on the grass in the garden of our village house. While watching the billions of stars in the sky, we make wishes on shooting stars. The depths of space have always seemed like a great secret to me." },
-                { baslik: "Grandpa's Farm", metin: "There are cows, sheep, and cute ducks on my grandfather's farm in the village. I wake up early in the morning and collect fresh eggs from the coop. Running around in natural life gives me amazing energy." },
-                { baslik: "Seaside", metin: "During the summer vacation, I went to the beach and built huge sandcastles. Listening to the sound of waves hitting the shore relaxes a person. I collected seashells and kept them as souvenirs." },
-                { baslik: "Library Day", metin: "There are thousands of interesting books in our school library. I sat quietly at the table and turned pages full of space and adventure. Reading books opens the door to new worlds." },
-                { baslik: "Making Biscuits", metin: "Today, we went into the kitchen with my mother and baked sweet-smelling cookies. I had a lot of fun shaping the dough. We happily ate the hot cookies coming out of the oven with milk." },
-                { baslik: "Dance of the Snowflake", metin: "While watching outside through the window on a winter day, it started to snow thickly. Each snowflake performed a flawless dance as it drifted to the ground. We went outside and built a snowman." },
-                { baslik: "Bicycle Tour", metin: "I went out for a tour in the park with my new blue bicycle. As the wind hit my face, I felt as free as a bird. Learning to balance is a wonderful thing." },
-                { baslik: "History in the Museum", metin: "When we visited the old museum in the city center, I imagined what happened in the past. Swords used by kings and old coins fascinated me. Learning history is very exciting." }
+                { baslik: "Our Forest Adventure", metin: "Over the weekend, we went to a lush green forest far away from the city with our family. While walking under the huge pine trees, we noticed squirrels hiding nuts. We took a deep breath of fresh air and went for a walk. Nature gave us peace and happiness." }
             ],
             3: [
-                { baslik: "SCIENCE AND CURIOSITY", metin: "Throughout human history, the greatest force driving us forward has been the feeling of curiosity. If Isaac Newton had not questioned the falling apple, gravity might have been discovered much later. Scientists work day and night in laboratories to make our lives easier. We must also question the events around us, read, and constantly research. Knowledge is power and changes the world." },
-                { baslik: "THE VALUE OF TIME", metin: "The scarcest and most unrecoverable resource we have is time. When money is lost, it can be earned again, but a second that passes never comes back. Therefore, we must live our days in a planned and efficient manner. Focusing while studying and giving proper time to rest creates life balance." },
-                { baslik: "THE POWER OF FRIENDSHIP", metin: "A true friend is someone who cries with us on our bad days and shares our laughter on our good days. Having a reliable friend to share troubles with is the greatest luxury in the world." },
-                { baslik: "RECYCLING", metin: "To protect our world, we must sort our garbage and reduce plastic use. Every piece of plastic thrown into nature does not decay for centuries. We can save our future with recycling." },
-                { baslik: "SMELL OF OLD BOOKS", metin: "When you enter second-hand book shops, that old paper smell surrounding you comes from the depths of history. Inside every book lies a secret soul left behind by someone who read it before." },
-                { baslik: "IMPACT OF TECHNOLOGY", metin: "Thanks to smart devices, we can reach information on the other side of the world in seconds. However, spending too much time in front of screens can weaken our health and social bonds." },
-                { baslik: "WORLD OF PLANETS", metin: "In our solar system, Mercury is the planet closest to the sun. The largest gas giant is Jupiter. These giant spheres spinning in the vacuum of space have always been the focus of astronomers." },
-                { baslik: "SPIRITUAL POWER OF MUSIC", metin: "Wandering among note clouds is the most effective method to relax the human soul. While listening to Mozart or Beethoven, we feel our minds clearing and focusing." },
-                { baslik: "PLACE OF SPORTS IN LIFE", metin: "Doing regular exercise strengthens our muscles, refreshes our minds, and protects our immune system. Individuals who start the day with sports are more energetic and happy all day long." },
-                { baslik: "SMALL KINDNESSES", metin: "Giving water to a stray animal we meet while walking on the street or helping an elderly neighbor makes the world a beautiful place. Love is a rare emotion that grows as it is shared." }
+                { baslik: "SCIENCE AND CURIOSITY", metin: "Throughout human history, the greatest force driving us forward has been the feeling of curiosity. If Isaac Newton had not questioned the falling apple, gravity might have been discovered much later. Scientists work day and night in laboratories to make our lives easier." }
             ],
             4: [
-                { baslik: "ANATOLIAN CIVILIZATIONS", metin: "Anatolian lands have hosted many ancient civilizations for thousands of years. From Hittites to Phrygians, Lydians to Byzantines and Ottomans, every culture has left its mark on these lands. When we examine historical ruins, we admire how advanced our ancestors were in art, trade, and architecture. This cultural heritage is our common treasure that everyone must protect." },
-                { baslik: "BALANCE OF ECOSYSTEM", metin: "Living things in nature form a chain woven with invisible ties. Bees pollinating flowers ensures plant reproduction, which becomes a food source for herbivorous animals. In this delicate balance, the extinction of a single species can shake the entire ecosystem." },
-                { baslik: "EVOLUTION OF COMMUNICATION", metin: "In the past, people used pigeons to communicate or lit fires on mountains. With the invention of the printing press, information was printed on paper, followed by the phone and internet era. Today, information is at our fingertips." },
-                { baslik: "ENERGY SAVING", metin: "The depletion of fossil fuels and global warming are the biggest threats endangering our world. Turning off unnecessary lights at home and not wasting water is the biggest investment we can make for our future." },
-                { baslik: "EFFECT OF ART ON HUMAN SOUL", metin: "Paints poured onto a canvas or a sculpture carved from marble express human emotions beyond words. Art is the realm where the soul is liberated and aesthetic perception reaches its peak." },
-                { baslik: "MYSTERY OF MAPS", metin: "Piri Reis's world map, drawn centuries ago, still amazes modern scientists. Compasses and maps guided sailors to discover unknown continents." },
-                { baslik: "DEPTHS OF THE OCEANS", metin: "Two-thirds of our world is covered by water, but very little of the ocean floors has been explored. In dark waters where sunlight cannot reach, strange and magnificent creatures live." },
-                { baslik: "PHILOSOPHICAL THOUGHT AND QUESTIONING", metin: "In ancient Greece, philosophers like Socrates and Plato enlightened the human mind with the philosophy of 'Know thyself'. A life without questioning leads a person to routine." },
-                { baslik: "POWER OF BOOKS TO CHANGE THE WORLD", metin: "Throughout history, certain books have ignited revolutions and led masses. Ideas put on paper are much sharper and more permanent than a sword." },
-                { baslik: "CLIMATE CHANGE AND FUTURE", metin: "The melting of polar ice caps and the shifting of seasons are clear indicators that our world is sounding the alarm. All countries of the world must take and implement joint decisions to reduce carbon emissions." }
+                { baslik: "ANATOLIAN CIVILIZATIONS", metin: "Anatolian lands have hosted many ancient civilizations for thousands of years. From Hittites to Phrygians, Lydians to Byzantines and Ottomans, every culture has left its mark on these lands." }
             ],
             5: [
-                { baslik: "DEPTHS OF SPACE AND DISCOVERY", metin: "The stars we see when we look at the sky are only a small part of the universe's immense magnitude. Thanks to the James Webb Space Telescope, we can examine the birth of galaxies billions of light-years away. Developments in the space race and rocket technology are turning humanity's dream of one day establishing colonies on different planets into reality. Scientists continue to discover new galaxies and exoplanets every day to solve the secrets of the universe." },
-                { baslik: "THE ERA OF ARTIFICIAL INTELLIGENCE", metin: "Revolutionary developments in computer science have enabled machines to think like humans. Artificial intelligence systems are rapidly transforming our lives in health, education, and industry." },
-                { baslik: "GLOBALIZATION AND CULTURE", metin: "Thanks to the internet, the world has now become a global village where borders have been lifted. The recognition of different cultures by each other increases tolerance while making the protection of local values compulsory." },
-                { baslik: "ARCHAEOLOGICAL DISCOVERIES", metin: "Gobeklitepe excavations turned the known chronology of human history upside down. The architecture of the temples and reliefs on the stelae shed light on the belief world of our ancestors." },
-                { baslik: "BIOTECHNOLOGY AND GENETICS", metin: "Decoding the DNA structure broke new ground in medicine. Thanks to genetic engineering, promising studies are being conducted on the treatment of hereditary diseases and the development of resilient agricultural products." },
-                { baslik: "OCEAN CURRENTS", metin: "The biggest element regulating world climate is ocean currents. Warm water currents such as the Gulf Stream protect the climate balance of continents, making them habitable." },
-                { baslik: "EFFECTS OF THE INDUSTRIAL REVOLUTION", metin: "Starting with the invention of the steam engine, the Industrial Revolution enabled machines to replace human labor. While this great transformation increased production speed, it also brought environmental problems." },
-                { baslik: "CRYPTOLOGY AND ENCRYPTION", metin: "Throughout history, states developed encryption methods for secret communication. Today, our digital security is entirely entrusted to complex mathematical algorithms and cryptology." },
-                { baslik: "HISTORY OF PHOTOGRAPHY", metin: "Since the day the first photograph was taken, our way of immortalizing memories has completely changed. Thanks to digital sensors and cameras, we can record the farthest corners of the universe with high resolution." },
-                { baslik: "ECOLOGICAL BALANCE AND SUSTAINABILITY", metin: "Considering the rights of future generations while consuming natural resources is the basis of sustainable development. Investing in renewable energy sources is the only way to protect the ecosystem." }
+                { baslik: "DEPTHS OF SPACE AND DISCOVERY", metin: "The stars we see when we look at the sky are only a small part of the universe's immense magnitude. Thanks to the James Webb Space Telescope, we can examine the birth of galaxies billions of light-years away." }
             ],
             6: [
-                { baslik: "ANATOLIA CROSSROADS OF CIVILIZATIONS", metin: "Anatolia, due to its geographical location, is located at the intersection point of the Asian, European, and African continents. This unique location has witnessed many migration movements, trade routes, and imperial struggles throughout history. The passage of the Silk Road through these lands carried not only trade but also cultural interaction between East and West to the highest level. The artifacts exhibited in our museums today are the most reputable proof of this rich civilization synthesis." },
-                { baslik: "NANOTECHNOLOGY REVOLUTION", metin: "Nanotechnology, which enables the control of matter at the atomic and molecular level, has brought a new dimension to medicine, electronics, and materials science. Microscopic robots will be able to destroy cancer cells in the future." },
-                { baslik: "CLIMATE CRISIS AND GLOBAL WARMING", metin: "Greenhouse gases accumulating in the atmosphere are rapidly increasing the average temperature of the earth. The melting of glaciers and rising sea levels are a massive ecological crisis threatening coastal cities and agricultural areas." },
-                { baslik: "INVENTION OF WRITING AND HISTORY", metin: "Cuneiform writing invented by the Sumerians around 3200 BC became a turning point for humanity. Making thoughts and trade accounts permanent started the ages of history." },
-                { baslik: "BASICS OF PSYCHOLOGY", metin: "Psychology science, which examines human behaviors, mental processes, and the subconscious, enables individuals to know themselves better. Empathy and emotional intelligence are the basis of social relationships." },
-                { baslik: "WONDERS OF THE ANCIENT WORLD", metin: "Ancient works such as the Pyramids of Giza, the Hanging Gardens of Babylon, and the Colossus of Rhodes are magnificent structures pushing the limits of human engineering and imagination." },
-                { baslik: "POWER OF LANGUAGE AND COMMUNICATION", metin: "Words can unite people as well as cause destructive conflicts. Effective rhetoric and proper communication are the greatest weapons of leaders and successful individuals." },
-                { baslik: "RENEWABLE ENERGY SOURCES", metin: "Solar panels, wind turbines, and geothermal energy reduce our dependence on fossil fuels. Clean energy is the guarantee of our future green world." },
-                { baslik: "EVOLUTION OF ECONOMIC SYSTEMS", metin: "The history of trade, extending from barter systems to metallic coins, paper money to digital crypto assets, is a summary of humanity's quest for trust and value." },
-                { baslik: "SCIENTIFIC REVOLUTIONS AND PARADIGM", metin: "According to Thomas Kuhn, science progresses by leaps through the shaking of accepted theories and the construction of new paradigms. Questioning is the engine of scientific development." }
+                { baslik: "ANATOLIA CROSSROADS OF CIVILIZATIONS", metin: "Anatolia, due to its geographical location, is located at the intersection point of the Asian, European, and African continents. This unique location has witnessed many migration movements throughout history." }
             ],
             7: [
-                { baslik: "SOCIOLOGICAL TRANSFORMATION AND SOCIETY", metin: "Societies are not static structures but are in a constant state of change and transformation throughout historical processes. Large migration waves from villages to cities with industrialization have fundamentally changed family structures, neighborly relations, and economic models. While sociology science examines these changes, it analyzes the individual's relationship with social institutions and group dynamics. In our age, with digitalization, social interaction forms have also moved to virtual environments, gaining a new dimension." },
-                { baslik: "NEUROCONSCIOUSNESS AND SECRETS OF THE BRAIN", metin: "The human brain is accepted as the most complex structure in the universe. Synaptic networks formed by billions of neurons manage our learning, memory, and consciousness processes. Recent developments in neuroscience focus on solving the mind-body relationship." },
-                { baslik: "GLOBAL ECONOMY AND SUPPLY CHAIN", metin: "Parts of a smartphone are produced in different countries of the world and assembled somewhere else. When the global supply chain is disrupted, the entire world economy is shaken." },
-                { baslik: "RULE OF LAW AND DEMOCRACY", metin: "The establishment of a fair social order depends on the full implementation of the rule of law principle. The principle of separation of powers acts as a vital shield in protecting democracies." },
-                { baslik: "ETHICS AND MORALITY IN PHILOSOPHY", metin: "Ethics philosophy, which questions what is good and evil, guides the human conscience. Kant's duty ethics and utilitarian theories discuss the basis of moral decisions." },
-                { baslik: "SECURITY IN THE AGE OF INFORMATION", metin: "Cyber espionage and data breaches are next-generation warfare methods threatening the national security of nations. The concept of digital sovereignty is at the center of modern politics." },
-                { baslik: "GLOBAL MIGRATIONS AND DEMOGRAPHY", metin: "Wars, economic inequalities, and climate crises cause millions of people to be displaced. The phenomenon of migration is transforming demographic structure and international politics." },
-                { baslik: "MOVEMENTS IN ART HISTORY", metin: "From the perspective understanding of the Renaissance to the light plays of impressionism and the abstract forms of modern art, art movements reflect the spirit of the period." },
-                { baslik: "EVOLUTIONARY BIOLOGY AND ADAPTATION", metin: "The ability of living things to adapt to environmental conditions occurs through the natural selection mechanism. Biodiversity is the work of millions of years of adaptation process." },
-                { baslik: "STRATEGIC THINKING AND PROBLEM SOLVING", metin: "Being able to think analytically in complex crisis situations and produce alternative scenarios is the key to both individual and institutional success." }
+                { baslik: "SOCIOLOGICAL TRANSFORMATION", metin: "Societies are not static structures but are in a constant state of change and transformation throughout historical processes. Large migration waves from villages to cities have fundamentally changed family structures." }
             ],
             8: [
-                { baslik: "GLOBAL ORDER AND GEOSTRATEGY", metin: "In the twenty-first century, international relations present a multi-polar and extremely dynamic structure. Traditional diplomacy methods have been replaced by cyber security, technological superiority, and economic integration strategies. Countries wage global power struggles over energy corridors, maritime trade routes, and artificial intelligence investments. It is a critical necessity for young generations to read these complex geopolitical balances correctly, gain an analytical perspective, and develop critical thinking skills in order to have a say in the world of the future." },
-                { baslik: "PHILOSOPHICAL QUESTIONING AND EXISTENTIALISM", metin: "Existentialist philosophers like Sartre and Camus argue that human freedom and meaning must be created by the individual themselves. The purposefulness of life is shaped by the individual's own choices." },
-                { baslik: "QUANTUM PHYSICS AND REALITY", metin: "In the quantum world, where classical physics rules do not apply, particles can exist in multiple locations at the same time. This mysterious universe radically shakes our perception." },
-                { baslik: "STRATEGIC COMMUNICATION AND MEDIA LITERACY", metin: "In the digital age, information pollution and manipulation are the biggest threats. Media literacy is an indispensable shield for individuals to distinguish truth from falsehood." },
-                { baslik: "SUSTAINABLE CITIES AND SMART CITIES", metin: "Metropolises of the future are equipped with energy-saving smart buildings, zero-waste systems, and autonomous public transport networks. Cities protecting ecological balance are essential." },
-                { baslik: "BIOMIMETICS AND INSPIRATION FROM NATURE", metin: "Technologies designed by engineers by mimicking the flawless mechanisms of living things in nature are called biomimetics. Trains inspired by the kingfisher bird are one of them." },
-                { baslik: "MACHINE LEARNING AND BIG DATA", metin: "Analyzing billions of data instantly enables companies and governments to make strategic decisions. Privacy is the most valuable treasure in the big data era." },
-                { baslik: "INTERNATIONAL LAW AND HUMAN RIGHTS", metin: "The Universal Declaration of Human Rights is the document of the common human will aimed at guaranteeing the fundamental rights and freedoms of all individuals in the world." },
-                { baslik: "FUTURISM AND FUTURE SCIENCE", metin: "Anticipating possible scenarios awaiting us in tomorrow's world from today is the subject of futuristic studies. Space tourism and immortality research are at the door." },
-                { baslik: "LEERSHIP AND VISIONARY PERSPECTIVE", metin: "A true leader means a visionary human who can keep their cool in times of crisis, inspire their team, and build the future from today." }
+                { baslik: "GLOBAL ORDER AND GEOSTRATEGY", metin: "In the twenty-first century, international relations present a multi-polar and extremely dynamic structure. Traditional diplomacy methods have been replaced by cyber security and technological superiority." }
             ]
         };
 
@@ -2149,12 +2135,11 @@
                 span.style.cssText = "cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: all 0.2s; user-select: none;";
                 
                 span.onclick = function() {
-                    if (!okumaTimer) return; // Süre başlamadıysa tıklanamaz
+                    if (!okumaTimer) return;
                     
                     let clickedIdx = parseInt(span.dataset.index);
                     let allSpans = alan.querySelectorAll('span');
                     
-                    // Tıklanan kelimeye kadar olanları seç, sonrakileri temizle
                     allSpans.forEach((s, sIdx) => {
                         if (sIdx <= clickedIdx) {
                             s.classList.add('secildi');
@@ -2177,7 +2162,6 @@
 
         function okumaKronometreBaslat() {
             if (okumaTimer) {
-                // Durdur / Sıfırla
                 clearInterval(okumaTimer);
                 okumaTimer = null;
                 document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
@@ -2283,7 +2267,6 @@
             }
         }
 
-
         async function girisYap(event) {
             event.preventDefault();
             const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
@@ -2324,7 +2307,7 @@
             let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
             if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
             if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-                        if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+            if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
             planKartiniGuncelle(user);
         }
 
@@ -2349,10 +2332,9 @@
             fetch(`${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${Math.floor(toplamSaniye/600)}`).catch(()=>{});
         }
 
-        // --- YILLIK PLAN TAKİP SİSTEMİ ---
-                        function planKartiniGuncelle(user) {
+        function planKartiniGuncelle(user) {
             let box = document.getElementById('planTrackerBox');
-            if (!box) { console.warn("planTrackerBox elementi bulunamadı, HTML eklemesini kontrol et."); return; }
+            if (!box) return;
             if (!user.atananPlanlar || user.atananPlanlar.length === 0) {
                 box.style.display = 'none';
                 return;
@@ -2363,7 +2345,7 @@
             document.getElementById('planHaftaText').innerText = `${user.planTamamlananHafta || 0}/${user.planToplamHafta || 0} hafta`;
         }
 
-                function planModaliniAc() {
+        function planModaliniAc() {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
             if (!user || !user.atananPlanlar) return;
             let konteyner = document.getElementById('planHaftaListesi');
@@ -2390,37 +2372,6 @@
             document.getElementById('planModal').style.display = 'flex';
         }
 
-        async function planDurumDegisti(planKodu, hafta, deger, rowId) {
-            let isaretli = deger === "isaretli";
-            let rowEl = document.getElementById(rowId);
-            try {
-                let url = `${apiURL}?islem=planTikGuncelle&plankodu=${encodeURIComponent(planKodu)}&hafta=${encodeURIComponent(hafta)}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&isaretli=${isaretli}`;
-                let res = await fetch(url);
-                let data = await res.json();
-
-                if (data.status === "success") {
-                    rowEl.classList.toggle('tamamlandi', isaretli);
-                    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-                    let planItem = user.atananPlanlar.find(p => p.planKodu === planKodu && String(p.hafta) === hafta);
-                    if (planItem) planItem.tamamlandiMi = isaretli;
-
-                    let toplam = user.atananPlanlar.length;
-                    let tamamlanan = user.atananPlanlar.filter(p => p.tamamlandiMi).length;
-                    user.planToplamHafta = toplam;
-                    user.planTamamlananHafta = tamamlanan;
-                    user.planIlerlemeYuzdesi = toplam > 0 ? Math.round((tamamlanan / toplam) * 100) : 0;
-
-                    planKartiniGuncelle(user);
-                } else {
-                    alert("Güncelleme sırasında hata oluştu.");
-                }
-            } catch (e) {
-                alert("Bağlantı hatası: " + e);
-            }
-        }
-
-        
-                     // --- ÖĞRETMEN PANELİNDEN KAZANIM (PLAN) TAKİBİ (AÇILIR LİSTE) ---
         let rubricAktifOgrenciAdi = "";
 
         function ogretmenPlanListesiniOlustur(user) {
@@ -2502,7 +2453,6 @@
         }
 
         function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
-
     </script>
 </body>
 </html>
