@@ -2062,8 +2062,9 @@
         }
 
                 function seviyeHaritasiCiz() {
-            let user = document.getElementById('sinifDegistirBtn').style.display = 'inline-block';
+                        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
             if (!user) return;
+            document.getElementById('sinifDegistirBtn').style.display = 'inline-block';
 
             let kartlar = user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif && k.unite === seviyeGosterilenUnite);
             let seviyeler = [...new Set(kartlar.map(k => k.seviye))].sort((a,b) => a-b);
