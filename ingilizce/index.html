@@ -428,6 +428,40 @@
         .slider-group input[type="range"] { flex: 1; }
         .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
 
+                .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
+
+        /* YILLIK PLAN TAKİP KARTI */
+        .plan-tracker-box {
+            width: 108px; background: #ffffff; border: 1px solid #c7d2fe; border-radius: 10px;
+            padding: 10px 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 12px;
+        }
+        .plan-tracker-title { font-size: 9px; font-weight: 800; color: #4338ca; text-transform: uppercase; letter-spacing: 0.3px; }
+        .plan-tracker-percent { font-size: 21px; font-weight: 900; color: #3730a3; line-height: 1; }
+        .plan-tracker-barbg { background: #e0e7ff; border-radius: 5px; height: 5px; width: 100%; overflow: hidden; }
+        .plan-tracker-barfill { background: #4f46e5; height: 100%; width: 0%; border-radius: 5px; transition: width 0.4s ease; }
+        .plan-tracker-hafta { font-size: 8.5px; color: #6366f1; font-weight: 700; }
+        .btn-plan-goruntule {
+            background: #4f46e5; color: white; border: none; padding: 4px 10px; border-radius: 12px;
+            font-size: 9.5px; font-weight: 700; cursor: pointer; margin-top: 3px; transition: background 0.2s;
+        }
+        .btn-plan-goruntule:hover { background: #4338ca; }
+
+        /* YILLIK PLAN MODAL */
+        .plan-modal-content { max-width: 480px; }
+        .plan-week-row {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;
+            margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+        }
+        .plan-week-row.tamamlandi { background: #f0fdf4; border-color: #bbf7d0; }
+        .plan-week-info { flex: 1; }
+        .plan-week-hafta { font-size: 10.5px; font-weight: 800; color: #1e293b; }
+        .plan-week-aciklama { font-size: 10px; color: #475569; margin-top: 2px; }
+        .plan-week-select {
+            font-size: 10px; font-weight: 700; padding: 4px 6px; border-radius: 6px;
+            border: 1px solid #cbd5e1; background: #fff; flex-shrink: 0;
+        }
+
         @media(max-width: 650px) {
             body { padding: 4px 2px; }
             .badges-grid { grid-template-columns: repeat(7, 1fr); gap: 3px; }
@@ -632,6 +666,19 @@
         </div>
     </div>
 
+        <!-- YILLIK PLAN GÖRÜNTÜLEME MODALI -->
+    <div class="rubric-modal" id="planModal">
+        <div class="rubric-content plan-modal-content">
+            <button class="game-close-btn" onclick="document.getElementById('planModal').style.display='none'">✕</button>
+            <h3 style="color: #3730a3; font-size: 15px; font-weight: 900; margin-bottom: 4px; text-align: center;">📅 Yıllık Plan Takibi</h3>
+            <p style="font-size: 10.5px; color: #64748b; margin-bottom: 12px; text-align:center;">Haftalık planını incele, tamamladığın haftayı "İşlendi" olarak işaretle.</p>
+            <div id="planHaftaListesi"></div>
+        </div>
+    </div>
+
+    <!-- GİRİŞ EKRANI -->
+    <div class="login-card" id="login-container">
+
     <!-- GİRİŞ EKRANI -->
     <div class="login-card" id="login-container">
         <div class="logo-icon">🏆</div>
@@ -724,7 +771,19 @@
                 </div>
             </div>
 
-           
+                           <div class="summary-card card-rose">
+                    <div class="card-title">🔥 PERFORMANS</div>
+                    <div class="card-value" id="valPerformansEmoji" style="font-size: 13px; margin-top: 3px;">😐</div>
+                </div>
+            </div>
+
+            <div class="plan-tracker-box" id="planTrackerBox" style="display:none;">
+                <div class="plan-tracker-title">📅 Yıllık Plan</div>
+                <div class="plan-tracker-percent" id="planYuzdeText">%0</div>
+                <div class="plan-tracker-barbg"><div class="plan-tracker-barfill" id="planYuzdeBar"></div></div>
+                <div class="plan-tracker-hafta" id="planHaftaText">0 / 0 hafta</div>
+                <button class="btn-plan-goruntule" onclick="planModaliniAc()">Görüntüle</button>
+            </div>
 
             <div class="book-tracker-box">
                 <div class="book-tracker-header">
@@ -1023,7 +1082,7 @@
     </div>
 
     <script>
-        const apiURL = "https://script.google.com/macros/s/AKfycbzLmRqpQKBwy12g5tC4xnRfusd4C6xOxxugc-sHGkYSqJXeWso2Ww-5FTmNTnjwc8335g/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwxEJM0BdSbyvZcMZ44lPN_XTtaQSNN-B5I6T0DmYV06fni3bzbcV03Ovq5XaHHXvqCqg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -2237,7 +2296,8 @@
             let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
             if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
             if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-            if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+                        if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+            planKartiniGuncelle(user);
         }
 
         function baslatSayac() {
@@ -2261,6 +2321,79 @@
             fetch(`${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${Math.floor(toplamSaniye/600)}`).catch(()=>{});
         }
 
+        // --- YILLIK PLAN TAKİP SİSTEMİ ---
+        function planKartiniGuncelle(user) {
+            let box = document.getElementById('planTrackerBox');
+            if (!user.atananPlanlar || user.atananPlanlar.length === 0) {
+                box.style.display = 'none';
+                return;
+            }
+            box.style.display = 'flex';
+            let yuzde = user.planIlerlemeYuzdesi || 0;
+            document.getElementById('planYuzdeText').innerText = `%${yuzde}`;
+            document.getElementById('planYuzdeBar').style.width = `${yuzde}%`;
+            document.getElementById('planHaftaText').innerText = `${user.planTamamlananHafta || 0} / ${user.planToplamHafta || 0} hafta`;
+        }
+
+        function planModaliniAc() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            if (!user || !user.atananPlanlar) return;
+            let konteyner = document.getElementById('planHaftaListesi');
+            konteyner.innerHTML = "";
+
+            if (user.atananPlanlar.length === 0) {
+                konteyner.innerHTML = `<p style="text-align:center; color:#64748b; font-size:11px;">Henüz atanmış bir plan bulunmuyor.</p>`;
+            } else {
+                user.atananPlanlar.forEach((plan, idx) => {
+                    let rowId = `planRow_${idx}`;
+                    konteyner.innerHTML += `
+                        <div class="plan-week-row ${plan.tamamlandiMi ? 'tamamlandi' : ''}" id="${rowId}">
+                            <div class="plan-week-info">
+                                <div class="plan-week-hafta">Hafta ${plan.hafta} <span style="color:#94a3b8; font-weight:600;">(${plan.planKodu})</span></div>
+                                <div class="plan-week-aciklama">${plan.aciklama || '-'}</div>
+                            </div>
+                            <select class="plan-week-select" onchange="planDurumDegisti('${plan.planKodu}', '${String(plan.hafta)}', this.value, '${rowId}')">
+                                <option value="isaretsiz" ${!plan.tamamlandiMi ? 'selected' : ''}>İşlenmedi</option>
+                                <option value="isaretli" ${plan.tamamlandiMi ? 'selected' : ''}>İşlendi</option>
+                            </select>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('planModal').style.display = 'flex';
+        }
+
+        async function planDurumDegisti(planKodu, hafta, deger, rowId) {
+            let isaretli = deger === "isaretli";
+            let rowEl = document.getElementById(rowId);
+            try {
+                let url = `${apiURL}?islem=planTikGuncelle&plankodu=${encodeURIComponent(planKodu)}&hafta=${encodeURIComponent(hafta)}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&isaretli=${isaretli}`;
+                let res = await fetch(url);
+                let data = await res.json();
+
+                if (data.status === "success") {
+                    rowEl.classList.toggle('tamamlandi', isaretli);
+                    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                    let planItem = user.atananPlanlar.find(p => p.planKodu === planKodu && String(p.hafta) === hafta);
+                    if (planItem) planItem.tamamlandiMi = isaretli;
+
+                    let toplam = user.atananPlanlar.length;
+                    let tamamlanan = user.atananPlanlar.filter(p => p.tamamlandiMi).length;
+                    user.planToplamHafta = toplam;
+                    user.planTamamlananHafta = tamamlanan;
+                    user.planIlerlemeYuzdesi = toplam > 0 ? Math.round((tamamlanan / toplam) * 100) : 0;
+
+                    planKartiniGuncelle(user);
+                } else {
+                    alert("Güncelleme sırasında hata oluştu.");
+                }
+            } catch (e) {
+                alert("Bağlantı hatası: " + e);
+            }
+        }
+
+        function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
+        
         function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
     </script>
 </body>
