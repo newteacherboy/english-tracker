@@ -194,7 +194,7 @@
         }
         .user-header-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .user-info-area { display: flex; align-items: center; gap: 6px; }
-        .user-avatar {
+                .user-avatar {
             width: 32px; height: 32px; background-color: #2f855a; color: white;
             font-weight: 800; font-size: 14px; border-radius: 50%; display: flex;
             align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(47, 133, 90, 0.3); text-transform: uppercase; flex-shrink: 0;
@@ -787,10 +787,10 @@
         <div class="user-header-bar">
             <div class="user-header-top">
                 <div class="user-info-area">
-                    <div class="user-avatar" id="userAvatarLetter">Ö</div>
+                    <div class="user-avatar" id="userAvatarLetter">🦉</div>
                     <div class="user-details">
                         <h3 id="ogrenciAdiText">Öğrenci</h3>
-                        <span>İngilizce Öğrenci Paneli</span>
+                        <span>Diji Muallim'e hoş geldin! 🎉</span>
                     </div>
                 </div>
             </div>
@@ -1512,7 +1512,7 @@
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-                document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
+                document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
                 document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
                 bilgileriSunucudanGuncelle(aktifOgrenciAdi);
@@ -1864,6 +1864,13 @@
                 if (kaydetBtn) { kaydetBtn.disabled = false; kaydetBtn.innerText = "💾 Kaydet & Uzun Veli Raporunu WhatsApp'a Gönder"; }
             }
         }
+
+        function ogrenciMaskotSec(isim) {
+    const maskotlar = ['🦉', '🦊', '🐰', '🐼', '🐻', '🐨', '🐱', '🐶', '🦁', '🐯', '🐹', '🐸'];
+    let toplam = 0;
+    for (let i = 0; i < isim.length; i++) toplam += isim.charCodeAt(i);
+    return maskotlar[toplam % maskotlar.length];
+}
 
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
@@ -2973,7 +2980,7 @@
                 aktifOgrenciAdi = ogr; toplamSaniye = Number(user.toplamsure)||0;
                 sessionStorage.setItem("oturumAcik", "true"); sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi); sessionStorage.setItem("toplamSaniye", toplamSaniye);
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-                document.getElementById('userAvatarLetter').innerText = aktifOgrenciAdi.charAt(0).toUpperCase();
+                document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
                 document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
                 veriArayuzeIsle(user);
