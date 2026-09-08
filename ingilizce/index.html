@@ -561,7 +561,7 @@
             display: none; justify-content: center; align-items: center; z-index: 99999; padding: 10px;
         }
                 .seviye-harita-content {
-            background: linear-gradient(180deg, #bae6fd 0%, #7dd3fc 40%, #38bdf8 100%);
+                        background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 55%, #0ea5e9 100%);
             border-radius: 20px; width: 96%; height: 92vh; max-width: 480px; overflow-y: auto;
             padding: 18px 14px; position: relative;
         }
@@ -573,7 +573,14 @@
         .seviye-harita-baslik { text-align: center; margin-bottom: 14px; }
         .seviye-harita-unite-etiket { font-size: 12px; font-weight: 800; color: #0c4a6e; letter-spacing: 1px; margin: 0; }
         .seviye-harita-unite-ad { font-size: 18px; font-weight: 900; color: #0c4a6e; margin: 2px 0 0; }
-        .ada-svg-alani { width: 100%; display: block; margin-bottom: 14px; }
+                .seviye-yol-alani {
+            width: 100%; max-height: 60vh; overflow-y: auto; overflow-x: hidden;
+            position: relative; border-radius: 12px; margin-bottom: 14px;
+        }
+        .seviye-yol-alani::-webkit-scrollbar { width: 8px; }
+        .seviye-yol-alani::-webkit-scrollbar-track { background: rgba(255,255,255,0.2); border-radius: 8px; }
+        .seviye-yol-alani::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.7); border-radius: 8px; }
+                .ada-svg-alani { width: 100%; display: block; }
         .seviye-daire-svg { cursor: pointer; }
         .seviye-ilerleme-kutu {
             margin-top: 6px; background: #ffffff; border-radius: 14px;
@@ -1271,10 +1278,7 @@
                     <p class="seviye-ilerleme-metin">Ünite ilerlemesi</p>
                     <p class="seviye-ilerleme-deger" id="seviyeIlerlemeMetni">0 / 0 seviye</p>
                 </div>
-                <div style="display:flex; gap:6px;">
-                    <button onclick="seviyeUniteDegistir(-1)" style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:6px 10px; font-weight:700; cursor:pointer;">◀</button>
-                    <button onclick="seviyeUniteDegistir(1)" style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:6px 10px; font-weight:700; cursor:pointer;">▶</button>
-                </div>
+
             </div>
         </div>
     </div>
@@ -2036,104 +2040,132 @@
             document.getElementById('sinifSecimAlani').style.display = 'block';
         }
 
-                function seviyeUniteDegistir(fark) {
+               
+        function seviyeHaritasiCiz() {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-            if (!user) return;
-            let uniteler = [...new Set(user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif).map(k => k.unite))].sort((a,b) => a-b);
-            let mevcutIdx = uniteler.indexOf(seviyeGosterilenUnite);
-            let yeniIdx = mevcutIdx + fark;
-            if (yeniIdx < 0 || yeniIdx >= uniteler.length) return;
-
-            if (fark > 0) {
-                let mevcutUniteKartlari = user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif && k.unite === seviyeGosterilenUnite);
-                let mevcutSeviyeler = [...new Set(mevcutUniteKartlari.map(k => k.seviye))];
-                let tamamlananSeviyeler = (user.seviyeIlerleme || [])
-                    .filter(s => s.sinif === seviyeAktifSinif && s.unite === seviyeGosterilenUnite && s.tamamlandi)
-                    .map(s => s.seviye);
-                let uniteTamamlandiMi = mevcutSeviyeler.every(sv => tamamlananSeviyeler.includes(sv));
-                if (!uniteTamamlandiMi) {
-                    alert('🔒 Bir sonraki üniteye geçmek için bu ünitedeki tüm seviyeleri tamamlamalısın!');
-                    return;
-                }
-            }
-
-            seviyeGosterilenUnite = uniteler[yeniIdx];
-            seviyeHaritasiCiz();
-        }
-
-                function seviyeHaritasiCiz() {
-                        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
             if (!user) return;
             document.getElementById('sinifDegistirBtn').style.display = 'inline-block';
 
-            let kartlar = user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif && k.unite === seviyeGosterilenUnite);
-            let seviyeler = [...new Set(kartlar.map(k => k.seviye))].sort((a,b) => a-b);
+            let uniteler = [...new Set(user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif).map(k => k.unite))].sort((a,b) => a-b);
 
             document.getElementById('seviyeHaritaUniteEtiket').innerText = `${seviyeAktifSinif}. SINIF`;
-            document.getElementById('seviyeHaritaUniteAd').innerText = `🏝️ Ada ${seviyeGosterilenUnite}`;
+            document.getElementById('seviyeHaritaUniteAd').innerText = `🗺️ Takımadalar`;
 
+            let genislik = 320;
+            let adaAraligi = 150;
+            let toplamYukseklik = 90 + uniteler.length * adaAraligi;
+
+            let adaNoktalari = uniteler.map((unite, idx) => {
+                let kartlar = user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif && k.unite === unite);
+                let seviyeler = [...new Set(kartlar.map(k => k.seviye))].sort((a,b) => a-b);
+                let tamamlananSeviyeler = (user.seviyeIlerleme || [])
+                    .filter(s => s.sinif === seviyeAktifSinif && s.unite === unite && s.tamamlandi)
+                    .map(s => s.seviye);
+                let uniteTamamlandiMi = seviyeler.length > 0 && seviyeler.every(sv => tamamlananSeviyeler.includes(sv));
+
+                let x = 70 + (idx % 2 === 0 ? 0 : 140) + (idx % 4 >= 2 ? 30 : 0);
+                let y = toplamYukseklik - 80 - idx * adaAraligi;
+
+                return { unite, seviyeler, tamamlananSeviyeler, uniteTamamlandiMi, x, y };
+            });
+
+            let ilkKilitliBulundu = false;
+            adaNoktalari.forEach(ada => {
+                if (ada.uniteTamamlandiMi) {
+                    ada.kilitli = false;
+                    ada.durum = 'tamamlandi';
+                } else if (!ilkKilitliBulundu) {
+                    ada.kilitli = false;
+                    ada.durum = 'aktif';
+                    ilkKilitliBulundu = true;
+                } else {
+                    ada.kilitli = true;
+                    ada.durum = 'kilitli';
+                }
+            });
+
+            let yolStr = adaNoktalari.map((n, i) => (i === 0 ? `M ${n.x} ${n.y}` : `Q ${(n.x + adaNoktalari[i-1].x)/2 + 25} ${(n.y + adaNoktalari[i-1].y)/2} ${n.x} ${n.y}`)).join(' ');
+
+            let svgIcerik = `<path d="${yolStr}" stroke="#f8fafc" stroke-width="3" fill="none" stroke-dasharray="6 8" opacity="0.8"/>`;
+
+            adaNoktalari.forEach((n, i) => {
+                if (i > 0) {
+                    let onceki = adaNoktalari[i-1];
+                    let midX = (onceki.x + n.x) / 2 + 20;
+                    let midY = (onceki.y + n.y) / 2;
+                    svgIcerik += `<text x="${midX}" y="${midY}" font-size="18">⛵</text>`;
+                }
+
+                let renk = n.durum === 'tamamlandi' ? '#22c55e' : (n.durum === 'kilitli' ? '#e2e8f0' : '#f59e0b');
+                let icerik = n.durum === 'tamamlandi' ? '✓' : (n.durum === 'kilitli' ? '🔒' : '★');
+                let boyut = n.durum === 'aktif' ? 34 : 30;
+                let pulsAnim = n.durum === 'aktif' ? `<animate attributeName="r" values="${boyut};${boyut+4};${boyut}" dur="1.6s" repeatCount="indefinite"/>` : '';
+                let yesilRenk = n.durum === 'kilitli' ? '#94a3b8' : '#4ade80';
+
+                svgIcerik += `
+                    <g class="seviye-daire-svg" data-unite="${n.unite}" data-kilitli="${n.kilitli}" transform="translate(${n.x},${n.y})">
+                        <ellipse cx="0" cy="${boyut}" rx="${boyut + 20}" ry="18" fill="${yesilRenk}"/>
+                        <circle r="${boyut}" fill="${renk}" stroke="#ffffff" stroke-width="4">${pulsAnim}</circle>
+                        <text x="0" y="8" text-anchor="middle" font-size="${boyut - 8}" fill="#ffffff">${icerik}</text>
+                    </g>
+                    <text x="${n.x}" y="${n.y + boyut + 32}" text-anchor="middle" font-size="11" font-weight="800" fill="#f8fafc">Ada ${n.unite}</text>
+                    <text x="${n.x}" y="${n.y + boyut + 46}" text-anchor="middle" font-size="9" font-weight="700" fill="#e0f2fe">${n.tamamlananSeviyeler.length}/${n.seviyeler.length} seviye</text>
+                `;
+            });
+
+            document.getElementById('seviyeYolAlani').innerHTML = `
+                <svg class="ada-svg-alani" viewBox="0 0 ${genislik} ${toplamYukseklik}">
+                    ${svgIcerik}
+                </svg>
+            `;
+
+            document.querySelectorAll('.seviye-daire-svg').forEach(el => {
+                let unite = Number(el.getAttribute('data-unite'));
+                let kilitli = el.getAttribute('data-kilitli') === 'true';
+                if (kilitli) {
+                    el.onclick = function () {
+                        alert('🔒 Bu adayı açmak için önceki adadaki tüm seviyeleri tamamlamalısın!');
+                    };
+                } else {
+                    el.onclick = function () { seviyeGosterilenUnite = unite; adaSeviyeDetayiniAc(unite); };
+                }
+            });
+
+            let toplamAda = uniteler.length;
+            let tamamlananAda = adaNoktalari.filter(a => a.durum === 'tamamlandi').length;
+            document.getElementById('seviyeIlerlemeMetni').innerText = `${tamamlananAda} / ${toplamAda} ada tamamlandı`;
+
+            let scrollAlani = document.getElementById('seviyeYolAlani');
+            setTimeout(() => { scrollAlani.scrollTop = scrollAlani.scrollHeight; }, 50);
+        }
+
+        function adaSeviyeDetayiniAc(unite) {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            if (!user) return;
+
+            let kartlar = user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif && k.unite === unite);
+            let seviyeler = [...new Set(kartlar.map(k => k.seviye))].sort((a,b) => a-b);
             let tamamlananSeviyeler = (user.seviyeIlerleme || [])
-                .filter(s => s.sinif === seviyeAktifSinif && s.unite === seviyeGosterilenUnite && s.tamamlandi)
+                .filter(s => s.sinif === seviyeAktifSinif && s.unite === unite && s.tamamlandi)
                 .map(s => s.seviye);
 
             let ilkKilitliBulundu = false;
-            let noktalar = [];
-            let genislik = 300;
-            let dikeyAralik = 90;
-            let baslangicY = 40 + (seviyeler.length - 1) * dikeyAralik;
-
-            seviyeler.forEach((sv, idx) => {
+            let secenekler = seviyeler.map(sv => {
                 let tamamlandi = tamamlananSeviyeler.includes(sv);
                 let kilitli = false;
                 if (!tamamlandi) {
                     if (ilkKilitliBulundu) kilitli = true;
                     else ilkKilitliBulundu = true;
                 }
-                let x = 60 + (idx % 2 === 0 ? 0 : 140) + (idx % 4 >= 2 ? 40 : 0);
-                let y = baslangicY - idx * dikeyAralik;
-                noktalar.push({ sv, tamamlandi, kilitli, x, y });
+                return { sv, tamamlandi, kilitli };
             });
 
-            let yolStr = noktalar.map((n, i) => (i === 0 ? `M ${n.x} ${n.y}` : `Q ${(n.x + noktalar[i-1].x)/2 + 20} ${(n.y + noktalar[i-1].y)/2} ${n.x} ${n.y}`)).join(' ');
-
-            let svgIcerik = `
-                <path d="${yolStr}" stroke="#f8fafc" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="2 16" opacity="0.9"/>
-            `;
-
-            noktalar.forEach(n => {
-                let renk = n.tamamlandi ? '#22c55e' : (n.kilitli ? '#e2e8f0' : '#f59e0b');
-                let icerik = n.tamamlandi ? '✓' : (n.kilitli ? '🔒' : '★');
-                let boyut = n.kilitli ? 28 : (n.tamamlandi ? 28 : 32);
-                let pulsAnim = (!n.tamamlandi && !n.kilitli) ? `<animate attributeName="r" values="${boyut};${boyut+4};${boyut}" dur="1.6s" repeatCount="indefinite"/>` : '';
-                svgIcerik += `
-                    <g class="seviye-daire-svg" data-seviye="${n.sv}" data-kilitli="${n.kilitli}" transform="translate(${n.x},${n.y})">
-                        <circle r="${boyut}" fill="${renk}" stroke="#ffffff" stroke-width="4">${pulsAnim}</circle>
-                        <text x="0" y="7" text-anchor="middle" font-size="${n.kilitli ? 18 : 22}" fill="${n.kilitli ? '#94a3b8' : '#ffffff'}">${icerik}</text>
-                    </g>
-                    <text x="${n.x}" y="${n.y + boyut + 16}" text-anchor="middle" font-size="11" font-weight="700" fill="#0c4a6e">Seviye ${n.sv}</text>
-                `;
-            });
-
-            let toplamYukseklik = baslangicY + 60;
-            document.getElementById('seviyeYolAlani').innerHTML = `
-                <svg class="ada-svg-alani" viewBox="0 0 ${genislik} ${toplamYukseklik}" style="height:${Math.min(toplamYukseklik, 380)}px;">
-                    ${svgIcerik}
-                </svg>
-            `;
-
-            document.querySelectorAll('.seviye-daire-svg').forEach(el => {
-                let sv = Number(el.getAttribute('data-seviye'));
-                let kilitli = el.getAttribute('data-kilitli') === 'true';
-                if (kilitli) {
-                    el.onclick = function () {
-                        alert('🔒 Bu seviyeyi açmak için önce bir önceki seviyeyi tamamlamalısın!');
-                    };
-                } else {
-                    el.onclick = function () { seviyeKartOyunuBaslat(seviyeAktifSinif, seviyeGosterilenUnite, sv); };
-                }
-            });
-
-            document.getElementById('seviyeIlerlemeMetni').innerText = `${tamamlananSeviyeler.length} / ${seviyeler.length} seviye tamamlandı`;
+            let ilkAcikSeviye = secenekler.find(s => !s.kilitli && !s.tamamlandi) || secenekler.find(s => !s.kilitli);
+            if (ilkAcikSeviye) {
+                seviyeKartOyunuBaslat(seviyeAktifSinif, unite, ilkAcikSeviye.sv);
+            } else {
+                alert('Bu adada henüz açık bir seviye yok.');
+            }
         }
 
         
