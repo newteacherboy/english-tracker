@@ -1258,9 +1258,10 @@
                 </div>
             </div>
 
-            <div class="seviye-harita-baslik">
+                        <div class="seviye-harita-baslik">
                 <p class="seviye-harita-unite-etiket" id="seviyeHaritaUniteEtiket">ÜNİTE 1</p>
                 <p class="seviye-harita-unite-ad" id="seviyeHaritaUniteAd">Yükleniyor...</p>
+                <button id="sinifDegistirBtn" onclick="sinifDegistirmeEkraniniAc()" style="margin-top:8px; background:#ffffff; border:none; border-radius:20px; padding:6px 14px; font-size:11px; font-weight:700; color:#0c4a6e; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.1);">🔄 Sınıf Değiştir</button>
             </div>
 
             <div class="seviye-yol-alani" id="seviyeYolAlani"></div>
@@ -2009,6 +2010,7 @@
                 seviyeHaritasiCiz();
             } else {
                 document.getElementById('sinifSecimAlani').style.display = 'block';
+                document.getElementById('sinifDegistirBtn').style.display = 'none';
                 document.getElementById('seviyeYolAlani').innerHTML = '';
                 document.getElementById('seviyeHaritaUniteAd').innerText = '';
             }
@@ -2025,6 +2027,13 @@
             fetch(`${apiURL}?islem=sinifSec&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&sinif=${sinif}`).catch(() => {});
 
             seviyeHaritasiCiz();
+        }
+
+                function sinifDegistirmeEkraniniAc() {
+            document.getElementById('seviyeYolAlani').innerHTML = '';
+            document.getElementById('seviyeHaritaUniteAd').innerText = '';
+            document.getElementById('seviyeHaritaUniteEtiket').innerText = '';
+            document.getElementById('sinifSecimAlani').style.display = 'block';
         }
 
                 function seviyeUniteDegistir(fark) {
@@ -2053,7 +2062,7 @@
         }
 
                 function seviyeHaritasiCiz() {
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            let user = document.getElementById('sinifDegistirBtn').style.display = 'inline-block';
             if (!user) return;
 
             let kartlar = user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif && k.unite === seviyeGosterilenUnite);
