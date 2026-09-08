@@ -415,6 +415,26 @@
         .lid-table th { background: #e2e8f0; color: #334155; padding: 4px; text-align: left; }
         .lid-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
 
+                /* ZAR ÇEKİLİŞİ OYUNU */
+        .zar-kutu {
+            width: 90px; height: 90px; margin: 0 auto 14px auto; background: #ffffff;
+            border: 3px solid #f59e0b; border-radius: 16px; display: flex; align-items: center;
+            justify-content: center; font-size: 46px; box-shadow: 0 4px 12px rgba(245,158,11,0.25);
+            transition: transform 0.1s ease;
+        }
+        .zar-kutu.atiliyor { animation: zarSallanma 0.6s ease-in-out; }
+        @keyframes zarSallanma {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(-15deg) scale(1.05); }
+            40% { transform: rotate(12deg) scale(1.08); }
+            60% { transform: rotate(-10deg) scale(1.05); }
+            80% { transform: rotate(8deg) scale(1.02); }
+        }
+        .zar-puan-badge {
+            display: inline-block; background: #fef3c7; color: #b45309; font-weight: 800;
+            font-size: 11px; padding: 4px 12px; border-radius: 14px; margin-bottom: 10px;
+        }
+
         /* GİZLİ ÖĞRETMEN ÇARLIĞI & RUBRİK PANELİ */
         .teacher-gear-btn {
             position: fixed; bottom: 12px; right: 12px; background: rgba(51, 65, 85, 0.4);
@@ -873,11 +893,12 @@
             <div class="activity-banner">
                 <h3>🎮 İngilizce Kelime Ezber & Bilgi Yarışması</h3>
                 <p>Sınıfını ve ünitelerini seç, zamanla yarışarak kelime dağarcığını test et ve liderlik tablosunda yerini al!</p>
-                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
                     <button class="btn-oyun-ac" onclick="oyunModaliniAc()">🚀 Klasik Kelime Yarışması</button>
                     <button class="btn-oyun-ac" onclick="jeopardyModaliniAc()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);">🎈 Jeopardy Kelime Balonları</button>
+                    <button class="btn-oyun-ac" onclick="cekilisModaliniAc()" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);">🎲 Zar Çekilişi</button>
                 </div>
-            </div>
+                </div>
 
             <div class="activity-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 15px;">
                 <h3 style="color: #166534;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</h3>
@@ -1043,6 +1064,84 @@
                 <div class="liderlik-tablosu-box">
                     <div class="liderlik-title" style="color: #5b21b6;">📊 Jeopardy Liderlik Tablosu (Top 5)</div>
                     <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="jeopLiderlikGovde"></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- ZAR ÇEKİLİŞİ KELİME OYUNU MODALI -->
+    <div class="game-modal-overlay" id="cekilisModalOverlay">
+        <div class="game-modal-content" style="max-width: 460px;">
+            <button class="game-close-btn" onclick="cekilisModaliniKapat()">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #b45309;">🎲 Çekiliş Müziği</span>
+                <button id="cekilisMuzikBtn" onclick="cekilisMuzikToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
+            </div>
+            <audio id="cekilisMuzigi" src="muzik.mp3" preload="auto" loop></audio>
+
+            <div id="cekilisAyarBolumu">
+                <div class="game-title" style="color:#b45309;">🎲 Zar Çekilişi Kelime Oyunu</div>
+                <div class="game-subtitle">Zarı at, kelimeyi bil, zarın sayısı kadar puan kazan!</div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <input type="text" id="cekilisIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Sınıf Seçiniz:</label>
+                <div class="sinif-secim-grid">
+                    <button class="sinif-btn active" onclick="cekilisSinifSec(2, this)">2. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(3, this)">3. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(4, this)">4. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(5, this)">5. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(6, this)">6. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(7, this)">7. Sınıf</button>
+                    <button class="sinif-btn" onclick="cekilisSinifSec(8, this)">8. Sınıf</button>
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Ünite Seçiniz (Çoklu):</label>
+                <div class="unite-secim-box" id="cekilisUniteKonteyner"></div>
+                <button class="btn-giris" onclick="cekilisOyunuBaslat()" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); margin-top: 3px;">🎲 Çekilişi Başlat</button>
+            </div>
+
+            <div id="cekilisOyunAlani" style="display:none;">
+                <div class="oyun-ust-bilgi" style="background:#fff7ed; color:#9a3412;">
+                    <span id="cekilisSoruSayac">Kelime: 1 / 15</span>
+                    <span id="cekilisKronometre" style="color:#dc2626;">⏱️ 00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
+                    <span style="color:#16a34a;">✅ Doğru: <span id="cekilisDogruSayisi">0</span></span>
+                    <span style="color:#dc2626;">❌ Yanlış: <span id="cekilisYanlisSayisi">0</span></span>
+                    <span style="color:#b45309;">⭐ Puan: <span id="cekilisPuanGosterge">0</span></span>
+                </div>
+
+                <div id="cekilisZarAsama" style="text-align:center;">
+                    <div class="zar-kutu" id="zarKutu">🎲</div>
+                    <button class="btn-giris" onclick="cekilisZarAt()" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); max-width: 200px; margin: 0 auto;">🎲 Zarı At</button>
+                </div>
+
+                <div id="cekilisSoruAsama" style="display:none;">
+                    <div style="text-align:center;">
+                        <div class="zar-puan-badge" id="cekilisPuanBadge">1 Puanlık Soru</div>
+                    </div>
+                    <div class="kelime-gosterge">
+                        <span style="font-size: 9.5px; font-weight: 700; color: #b45309; text-transform: uppercase;" id="cekilisSoruDilLabel">Kelime</span>
+                        <div class="kelime-en" id="cekilisSoruKelime">Apple</div>
+                    </div>
+                    <div class="siklar-grid">
+                        <button class="btn-sik" id="cekilisSik0" onclick="cekilisCevapVer(0)">Şık 1</button>
+                        <button class="btn-sik" id="cekilisSik1" onclick="cekilisCevapVer(1)">Şık 2</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="cekilisSonucBolumu" style="display: none; text-align: center;">
+                <div style="font-size: 26px; margin-bottom: 3px;">🎲</div>
+                <h3 style="color: #b45309; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Çekiliş Tamamlandı!</h3>
+                <div style="display: flex; justify-content: center; gap: 12px; background: #fff7ed; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
+                    <span style="color: #b45309;">Toplam Skor: <span id="cekilisSonucPuan">0</span> Puan</span>
+                    <span style="color: #475569;">Süre: <span id="cekilisSonucSure">00:00</span></span>
+                </div>
+                <button class="btn-giris" onclick="cekilisModaliniAc()" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
+                <div class="liderlik-tablosu-box">
+                    <div class="liderlik-title" style="color:#b45309;">📊 Zar Çekilişi Liderlik Tablosu (Top 5)</div>
+                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="cekilisLiderlikGovde"></tbody></table>
                 </div>
             </div>
         </div>
@@ -1462,11 +1561,17 @@
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
 
-        function sekmeDegistir(tabName, btnElement) {
+               function sekmeDegistir(tabName, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
             btnElement.classList.add('active');
+
+            // Sekme değişince açık olan tüm oyun müziklerini durdur
+            ['oyunMuzigi', 'jeopardyMuzigi', 'cekilisMuzigi'].forEach(id => {
+                let m = document.getElementById(id);
+                if (m && !m.paused) { m.pause(); m.currentTime = 0; }
+            });
         }
 
         function performansEmojisiGetir(puan) {
@@ -2323,7 +2428,8 @@
             let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
             if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
             if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-                        if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+                                    if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+            if(user.cekilisLiderlik) { cekilisGlobalLiderlik = user.cekilisLiderlik; cekilisLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
             planKartiniGuncelle(user);
         }
 
@@ -2500,7 +2606,162 @@
             }
         }
 
-        function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
+                // --- ZAR ÇEKİLİŞİ KELİME OYUNU MİMARİSİ ---
+        let cekilisSecilenSinif = 2;
+        let cekilisSecilenUniteler = [1];
+        let cekilisKelimeListesi = [];
+        let cekilisKullanilmisKelimeler = {}; // sinif_unite bazlı kullanılmış kelime takibi
+        let cekilisAktifSoruIndex = 0;
+        let cekilisAktifSoru = null;
+        let cekilisMevcutZarDegeri = 1;
+        let cekilisDogruSikIdx = 0;
+        let cekilisDogru = 0, cekilisYanlis = 0, cekilisPuan = 0;
+        let cekilisSaniye = 0, cekilisTimer = null;
+        let cekilisGlobalLiderlik = [];
+
+        function cekilisModaliniAc() {
+            document.getElementById('cekilisModalOverlay').style.display = 'flex';
+            document.getElementById('cekilisAyarBolumu').style.display = 'block';
+            document.getElementById('cekilisOyunAlani').style.display = 'none';
+            document.getElementById('cekilisSonucBolumu').style.display = 'none';
+            cekilisUniteSecimOlustur(2, 8);
+        }
+
+        function cekilisModaliniKapat() {
+            document.getElementById('cekilisModalOverlay').style.display = 'none';
+            if (cekilisTimer) clearInterval(cekilisTimer);
+            let m = document.getElementById('cekilisMuzigi');
+            if (m) { m.pause(); m.currentTime = 0; }
+        }
+
+        function cekilisMuzikToggle() {
+            let m = document.getElementById('cekilisMuzigi');
+            let b = document.getElementById('cekilisMuzikBtn');
+            if (!m || !b) return;
+            if (m.muted) { m.muted = false; b.innerText = "🔊 Müzik: Açık"; }
+            else { m.muted = true; b.innerText = "🔇 Müzik: Sessiz"; }
+        }
+
+        function cekilisSinifSec(n, el) {
+            cekilisSecilenSinif = n;
+            document.querySelectorAll('#cekilisAyarBolumu .sinif-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            cekilisUniteSecimOlustur(n, (n===2||n===5)?8:10);
+        }
+
+        function cekilisUniteSecimOlustur(n, count) {
+            let kont = document.getElementById('cekilisUniteKonteyner');
+            if (!kont) return;
+            kont.innerHTML = "";
+            cekilisSecilenUniteler = [1];
+            for (let u = 1; u <= count; u++) {
+                let chip = document.createElement('div');
+                chip.className = `unite-chip ${u===1?'selected':''}`;
+                chip.innerText = `${u}.Ü`;
+                chip.onclick = function() {
+                    if (cekilisSecilenUniteler.includes(u)) {
+                        if (cekilisSecilenUniteler.length > 1) {
+                            cekilisSecilenUniteler = cekilisSecilenUniteler.filter(i => i !== u);
+                            chip.classList.remove('selected');
+                        }
+                    } else {
+                        cekilisSecilenUniteler.push(u);
+                        chip.classList.add('selected');
+                    }
+                };
+                kont.appendChild(chip);
+            }
+        }
+
+        function cekilisOyunuBaslat() {
+            let isim = document.getElementById('cekilisIsimInput').value.trim();
+            if (!isim) { alert("Lütfen adınızı soyadınızı giriniz!"); return; }
+
+            let havuzKey = cekilisSecilenSinif + "_" + [...cekilisSecilenUniteler].sort().join(",");
+            let tumFilt = masterKelimeHavuzu.filter(i => i.sinif === cekilisSecilenSinif && cekilisSecilenUniteler.includes(i.unite));
+
+            if (tumFilt.length === 0) {
+                alert("Seçilen sınıf ve ünitelerde kelime bulunamadı!");
+                return;
+            }
+
+            if (!cekilisKullanilmisKelimeler[havuzKey]) cekilisKullanilmisKelimeler[havuzKey] = [];
+            let kullanilmis = cekilisKullanilmisKelimeler[havuzKey];
+
+            let kullanilmamis = tumFilt.filter(k => !kullanilmis.includes(k.en));
+            let hedefBaslangicSoru = Math.min(15, tumFilt.length);
+
+            // Havuz tükendiyse veya kalan kelime yeterli değilse sıfırla
+            if (kullanilmamis.length < hedefBaslangicSoru) {
+                cekilisKullanilmisKelimeler[havuzKey] = [];
+                kullanilmamis = tumFilt;
+            }
+
+            let hedefSoru = Math.min(15, kullanilmamis.length);
+            cekilisKelimeListesi = [...kullanilmamis].sort(() => Math.random() - 0.5).slice(0, hedefSoru);
+            cekilisKelimeListesi.forEach(k => cekilisKullanilmisKelimeler[havuzKey].push(k.en));
+
+            cekilisAktifSoruIndex = 0;
+            cekilisDogru = 0; cekilisYanlis = 0; cekilisPuan = 0; cekilisSaniye = 0;
+
+            document.getElementById('cekilisAyarBolumu').style.display = 'none';
+            document.getElementById('cekilisOyunAlani').style.display = 'block';
+            document.getElementById('cekilisSonucBolumu').style.display = 'none';
+            document.getElementById('cekilisDogruSayisi').innerText = "0";
+            document.getElementById('cekilisYanlisSayisi').innerText = "0";
+            document.getElementById('cekilisPuanGosterge').innerText = "0";
+            document.getElementById('cekilisSoruSayac').innerText = `Kelime: 1 / ${cekilisKelimeListesi.length}`;
+
+            let m = document.getElementById('cekilisMuzigi');
+            if (m) { m.currentTime = 0; m.play().catch(() => {}); }
+
+            if (cekilisTimer) clearInterval(cekilisTimer);
+            cekilisTimer = setInterval(() => {
+                cekilisSaniye++;
+                let dk = String(Math.floor(cekilisSaniye / 60)).padStart(2, '0');
+                let sn = String(cekilisSaniye % 60).padStart(2, '0');
+                document.getElementById('cekilisKronometre').innerText = `⏱️ ${dk}:${sn}`;
+            }, 1000);
+
+            cekilisZarAsamasinaGec();
+        }
+
+        function cekilisZarAsamasinaGec() {
+            if (cekilisAktifSoruIndex >= cekilisKelimeListesi.length) {
+                cekilisOyunuBitir();
+                return;
+            }
+            document.getElementById('cekilisZarAsama').style.display = 'block';
+            document.getElementById('cekilisSoruAsama').style.display = 'none';
+            document.getElementById('cekilisSoruSayac').innerText = `Kelime: ${cekilisAktifSoruIndex + 1} / ${cekilisKelimeListesi.length}`;
+            document.getElementById('zarKutu').innerText = "🎲";
+            document.getElementById('zarKutu').classList.remove('atiliyor');
+        }
+
+        function cekilisZarAt() {
+            let zarKutu = document.getElementById('zarKutu');
+            zarKutu.classList.add('atiliyor');
+
+            let zarYuzleri = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+            let sayac = 0;
+            let hizliInterval = setInterval(() => {
+                zarKutu.innerText = zarYuzleri[Math.floor(Math.random() * 6)];
+                sayac++;
+                if (sayac >= 8) {
+                    clearInterval(hizliInterval);
+                    cekilisMevcutZarDegeri = Math.floor(Math.random() * 6) + 1;
+                    zarKutu.innerText = zarYuzleri[cekilisMevcutZarDegeri - 1];
+                    zarKutu.classList.remove('atiliyor');
+                    setTimeout(() => { cekilisSoruyuGoster(); }, 500);
+                }
+            }, 70);
+        }
+
+        function cekilisSoruyuGoster() {
+            let s = cekilisKelimeListesi[cekilisAktifSoruIndex];
+            cekilisAktifSoru = s;
+
+            function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
 
     </script>
 </body>
