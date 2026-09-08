@@ -597,10 +597,24 @@
             </div>
 
             <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
-            <p style="font-size: 10.5px; font-weight: 800; color: #4338ca; margin-bottom: 6px;">📅 Yıllık Plan - Kazanım Takibi</p>
-            <div id="rubricPlanListesi" style="margin-bottom: 10px;">
-                <p style="font-size: 10.5px; color: #94a3b8; text-align:center; padding: 6px;">Önce yukarıdan bir öğrenci seçin.</p>
+                        <p style="font-size: 10.5px; font-weight: 800; color: #4338ca; margin-bottom: 6px;">📅 Yıllık Plan - Kazanım Takibi</p>
+            <div id="rubricPlanAlani" style="margin-bottom: 10px; display: none;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 6px;">
+                    <div class="rubric-field" style="margin-bottom: 4px;">
+                        <label>Hafta Seçiniz:</label>
+                        <select id="rubricPlanHaftaSelect" onchange="rubricPlanHaftaSecildi()"></select>
+                    </div>
+                    <div class="rubric-field" style="margin-bottom: 4px;">
+                        <label>Durum:</label>
+                        <select id="rubricPlanDurumSelect" onchange="rubricPlanDurumKaydet()">
+                            <option value="isaretsiz">İşlenmedi</option>
+                            <option value="isaretli">İşlendi</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="rubricPlanAciklamaGoster" style="font-size: 10px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; margin-top: 2px;"></div>
             </div>
+            <p id="rubricPlanBosMesaj" style="font-size: 10.5px; color: #94a3b8; text-align:center; padding: 6px;">Önce yukarıdan bir öğrenci seçin.</p>
 
             <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
             <p style="font-size: 10.5px; font-weight: 800; color: #2563eb; margin-bottom: 6px;">📊 5 Beceri Puanlaması (0 - 100)</p>
@@ -2405,58 +2419,78 @@
         }
 
         
-               // --- ÖĞRETMEN PANELİNDEN KAZANIM (PLAN) TAKİBİ ---
+                     // --- ÖĞRETMEN PANELİNDEN KAZANIM (PLAN) TAKİBİ (AÇILIR LİSTE) ---
+        let rubricAktifOgrenciAdi = "";
+
         function ogretmenPlanListesiniOlustur(user) {
-            let konteyner = document.getElementById('rubricPlanListesi');
-            konteyner.innerHTML = "";
+            rubricAktifOgrenciAdi = user.ogrenci;
+            let haftaSelect = document.getElementById('rubricPlanHaftaSelect');
+            let planAlani = document.getElementById('rubricPlanAlani');
+            let bosMesaj = document.getElementById('rubricPlanBosMesaj');
+
+            haftaSelect.innerHTML = "";
 
             if (!user.atananPlanlar || user.atananPlanlar.length === 0) {
-                konteyner.innerHTML = `<p style="font-size: 10.5px; color: #94a3b8; text-align:center; padding: 6px;">Bu öğrenciye atanmış bir plan bulunmuyor.</p>`;
+                planAlani.style.display = 'none';
+                bosMesaj.style.display = 'block';
+                bosMesaj.innerText = "Bu öğrenciye atanmış bir plan bulunmuyor.";
                 return;
             }
 
+            planAlani.style.display = 'block';
+            bosMesaj.style.display = 'none';
+
             user.atananPlanlar.forEach((plan, idx) => {
-                let rowId = `rubricPlanRow_${idx}`;
-                konteyner.innerHTML += `
-                    <div class="plan-week-row ${plan.tamamlandiMi ? 'tamamlandi' : ''}" id="${rowId}">
-                        <div class="plan-week-info">
-                            <div class="plan-week-hafta">Hafta ${plan.hafta} <span style="color:#94a3b8; font-weight:600;">(${plan.planKodu})</span></div>
-                            <div class="plan-week-aciklama">${plan.aciklama || '-'}</div>
-                        </div>
-                        <select class="plan-week-select" onchange="ogretmenPlanDurumDegisti('${plan.planKodu}', '${String(plan.hafta)}', this.value, '${rowId}', '${user.ogrenci}')">
-                            <option value="isaretsiz" ${!plan.tamamlandiMi ? 'selected' : ''}>İşlenmedi</option>
-                            <option value="isaretli" ${plan.tamamlandiMi ? 'selected' : ''}>İşlendi</option>
-                        </select>
-                    </div>
-                `;
+                let opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = `Hafta ${plan.hafta} (${plan.planKodu}) ${plan.tamamlandiMi ? '✅' : ''}`;
+                haftaSelect.appendChild(opt);
             });
+
+            rubricPlanHaftaSecildi();
         }
 
-        async function ogretmenPlanDurumDegisti(planKodu, hafta, deger, rowId, ogrenciAdi) {
+        function rubricPlanHaftaSecildi() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === rubricAktifOgrenciAdi.toLowerCase());
+            if (!user || !user.atananPlanlar) return;
+
+            let idx = document.getElementById('rubricPlanHaftaSelect').value;
+            let plan = user.atananPlanlar[idx];
+            if (!plan) return;
+
+            document.getElementById('rubricPlanDurumSelect').value = plan.tamamlandiMi ? "isaretli" : "isaretsiz";
+            document.getElementById('rubricPlanAciklamaGoster').innerText = plan.aciklama || "Açıklama girilmemiş.";
+        }
+
+        async function rubricPlanDurumKaydet() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === rubricAktifOgrenciAdi.toLowerCase());
+            if (!user || !user.atananPlanlar) return;
+
+            let idx = document.getElementById('rubricPlanHaftaSelect').value;
+            let plan = user.atananPlanlar[idx];
+            if (!plan) return;
+
+            let deger = document.getElementById('rubricPlanDurumSelect').value;
             let isaretli = deger === "isaretli";
-            let rowEl = document.getElementById(rowId);
+
             try {
-                let url = `${apiURL}?islem=planTikGuncelle&plankodu=${encodeURIComponent(planKodu)}&hafta=${encodeURIComponent(hafta)}&ogrenci=${encodeURIComponent(ogrenciAdi)}&isaretli=${isaretli}`;
+                let url = `${apiURL}?islem=planTikGuncelle&plankodu=${encodeURIComponent(plan.planKodu)}&hafta=${encodeURIComponent(String(plan.hafta))}&ogrenci=${encodeURIComponent(user.ogrenci)}&isaretli=${isaretli}`;
                 let res = await fetch(url);
                 let data = await res.json();
 
                 if (data.status === "success") {
-                    rowEl.classList.toggle('tamamlandi', isaretli);
+                    plan.tamamlandiMi = isaretli;
 
-                    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrenciAdi.toLowerCase());
-                    if (user && user.atananPlanlar) {
-                        let planItem = user.atananPlanlar.find(p => p.planKodu === planKodu && String(p.hafta) === hafta);
-                        if (planItem) planItem.tamamlandiMi = isaretli;
+                    let toplam = user.atananPlanlar.length;
+                    let tamamlanan = user.atananPlanlar.filter(p => p.tamamlandiMi).length;
+                    user.planToplamHafta = toplam;
+                    user.planTamamlananHafta = tamamlanan;
+                    user.planIlerlemeYuzdesi = toplam > 0 ? Math.round((tamamlanan / toplam) * 100) : 0;
 
-                        let toplam = user.atananPlanlar.length;
-                        let tamamlanan = user.atananPlanlar.filter(p => p.tamamlandiMi).length;
-                        user.planToplamHafta = toplam;
-                        user.planTamamlananHafta = tamamlanan;
-                        user.planIlerlemeYuzdesi = toplam > 0 ? Math.round((tamamlanan / toplam) * 100) : 0;
+                    document.getElementById('rubricPlanHaftaSelect').options[idx].innerText = `Hafta ${plan.hafta} (${plan.planKodu}) ${isaretli ? '✅' : ''}`;
 
-                        if (aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() === ogrenciAdi.toLowerCase()) {
-                            planKartiniGuncelle(user);
-                        }
+                    if (aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() === user.ogrenci.toLowerCase()) {
+                        planKartiniGuncelle(user);
                     }
                 } else {
                     alert("Güncelleme sırasında hata oluştu.");
