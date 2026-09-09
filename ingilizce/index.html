@@ -1762,16 +1762,17 @@
             let girisBtn = document.getElementById('girisBtn');
             let girisSubtitle = document.getElementById('girisSubtitle');
             
-            try {
-                let res = await fetch(apiURL);
-                globalDataCache = await res.json();
-                girisBtn.disabled = false;
-                girisBtn.innerText = "Giriş Yap";
-                girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
-            } catch(e) {
-                console.error("Veri çekme hatası", e);
-                girisSubtitle.innerText = "Sunucu bağlantısı kurulamadı. Sayfayı yenileyin.";
-            }
+            girisBtn.disabled = false;
+girisBtn.innerText = "Giriş Yap";
+girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
+
+fetch(apiURL)
+    .then(res => res.json())
+    .then(data => { globalDataCache = data; })
+    .catch(e => {
+        console.error("Veri çekme hatası", e);
+        girisSubtitle.innerText = "Sunucu bağlantısı kurulamadı. Sayfayı yenileyin.";
+    });
 
             const oturumAcik = sessionStorage.getItem("oturumAcik");
             const kayitliOgrenci = sessionStorage.getItem("aktifOgrenci");
@@ -3623,6 +3624,11 @@
 
         async function girisYap(event) {
             event.preventDefault();
+            if (!globalDataCache || globalDataCache.length === 0) {
+    document.getElementById('mesaj').className = "error";
+    document.getElementById('mesaj').innerText = "Veriler henüz yükleniyor, lütfen birkaç saniye bekleyip tekrar deneyin.";
+    return;
+}
             const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
             const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
             let m = document.getElementById('mesaj');
