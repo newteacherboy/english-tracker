@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İngilizce Portal Giriş - Öğretmen Çocuk</title>
-    <!-- Chart.js Kütüphanesi -->
+        <!-- Chart.js Kütüphanesi -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF Kütüphanesi (Rapor PDF oluşturma için) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -469,6 +471,33 @@
         .pomodoro-bilgi-baslik { font-size: 11px; color: #888780; letter-spacing: 0.3px; margin-bottom: 8px; text-align: left; }
         .pomodoro-bilgi-metin { font-size: 12px; color: #B4B2A9; line-height: 1.6; text-align: left; margin: 0; }
 
+             /* ÖĞRETMEN RAPOR OLUŞTURMA PANELİ */
+        .rapor-teacher-banner {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border: 1px solid #c7d2fe; border-radius: 10px; padding: 14px;
+            margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .rapor-teacher-banner h3 { color: #3730a3; font-size: 13.5px; font-weight: 800; margin-bottom: 3px; }
+        .rapor-teacher-banner p { color: #4338ca; font-size: 10.5px; margin-bottom: 10px; }
+        .rapor-field { margin-bottom: 8px; }
+        .rapor-field label { font-size: 10.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 3px; }
+        .rapor-field select, .rapor-field input, .rapor-field textarea {
+            width: 100%; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 6px;
+            font-size: 11.5px; outline: none; background: #ffffff;
+        }
+        .rapor-field textarea { resize: vertical; font-family: inherit; }
+        .btn-rapor-olustur {
+            width: 100%; padding: 10px; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            color: white; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700;
+            cursor: pointer; margin-top: 4px; transition: opacity 0.2s;
+        }
+        .btn-rapor-olustur:hover { opacity: 0.9; }
+        .btn-rapor-olustur:disabled { background: #cbd5e0; cursor: not-allowed; }
+        .btn-yorum-yenile {
+            background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 5px 10px;
+            border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; margin-top: 4px;
+        }
+
         /* GİZLİ ÖĞRETMEN ÇARLIĞI & RUBRİK PANELİ */
         .teacher-gear-btn {
             position: fixed; bottom: 12px; right: 12px; background: rgba(51, 65, 85, 0.4);
@@ -897,8 +926,44 @@
             <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
         </div>
         
-        <!-- ÖZET SEKMESİ -->
+                <!-- ÖZET SEKMESİ -->
         <div id="tab-ozet" class="tab-content active">
+
+            <!-- SADECE "teacher" KULLANICISINA ÖZEL RAPOR PANELİ -->
+            <div class="rapor-teacher-banner" id="raporTeacherBanner" style="display:none;">
+                <h3>📄 Veli Raporu Oluştur</h3>
+                <p>Bir öğrenci ve tarih aralığı seçerek PDF rapor oluşturabilirsiniz.</p>
+
+                <div class="rapor-field">
+                    <label>Öğrenci Seçiniz:</label>
+                    <select id="raporOgrenciSelect">
+                        <option value="">-- Öğrenci Seçin --</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <div class="rapor-field">
+                        <label>Başlangıç Tarihi:</label>
+                        <input type="date" id="raporBaslangicTarih">
+                    </div>
+                    <div class="rapor-field">
+                        <label>Bitiş Tarihi:</label>
+                        <input type="date" id="raporBitisTarih">
+                    </div>
+                </div>
+
+                <button class="btn-rapor-olustur" id="raporVeriGetirBtn" onclick="raporVerileriniGetirVeYorumOlustur()">🔍 Verileri Getir</button>
+
+                <div id="raporYorumAlani" style="display:none; margin-top: 10px;">
+                    <div class="rapor-field">
+                        <label>Öğretmen Yorumu (Otomatik oluşturuldu, düzenleyebilirsiniz):</label>
+                        <textarea id="raporOgretmenYorumu" rows="4"></textarea>
+                        <button class="btn-yorum-yenile" onclick="raporYorumuYenidenOlustur()">🔄 Yorumu Yeniden Oluştur</button>
+                    </div>
+                    <button class="btn-rapor-olustur" id="raporPdfOlusturBtn" onclick="raporPdfOlustur()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">📄 PDF Raporu Oluştur & İndir</button>
+                </div>
+            </div>
+
             <div class="summary-grid">
                 <div class="summary-card card-slate">
                     <div class="card-title">⭐ GENEL PUAN</div>
@@ -1548,7 +1613,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbwXhsWAU1MCJcJazTVxataP334vI-sfeuzHWPOBJ8MAG5g2_g7jnmqQ4mCD0z8WSel3gA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbx0mmglCW3lVThfX8t3VwyF8eQp84qpT3nWJM9oJxRSxZUl8YPLX5FtsI0lJS2R3Yqm3Q/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -3415,7 +3480,8 @@
             document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac();
         }
 
-        function veriArayuzeIsle(user) {
+               function veriArayuzeIsle(user) {
+            teacherPaneliKontrolEt();
             document.getElementById('valGenelPuan').innerText = user.genelOrtalama || 0;
             document.getElementById('valEtkinlikBasarisi').innerText = user.etkinlikBasarisi || 0;
             document.getElementById('valSonDeneme').innerText = user.sonDeneme || 0;
@@ -3605,8 +3671,399 @@
             }
         }
 
-        function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
+                // --- RAPOR VERİ ÇEKME VE YORUM ÜRETME ---
+        let raporMevcutVeri = null;
+        let raporMevcutOgrenci = null;
 
+        async function raporVerileriniGetirVeYorumOlustur() {
+            let ogrenciAdi = document.getElementById('raporOgrenciSelect').value;
+            let baslangic = document.getElementById('raporBaslangicTarih').value;
+            let bitis = document.getElementById('raporBitisTarih').value;
+
+            if (!ogrenciAdi) { alert("Lütfen bir öğrenci seçiniz!"); return; }
+            if (!baslangic || !bitis) { alert("Lütfen başlangıç ve bitiş tarihlerini seçiniz!"); return; }
+            if (new Date(baslangic) > new Date(bitis)) { alert("Başlangıç tarihi, bitiş tarihinden sonra olamaz!"); return; }
+
+            let btn = document.getElementById('raporVeriGetirBtn');
+            btn.disabled = true;
+            btn.innerText = "⏳ Veriler getiriliyor...";
+
+            try {
+                let url = `${apiURL}?islem=raporVeriGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}&baslangic=${baslangic}&bitis=${bitis}`;
+                let res = await fetch(url);
+                let data = await res.json();
+
+                raporMevcutVeri = data;
+                raporMevcutOgrenci = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrenciAdi.toLowerCase());
+
+                document.getElementById('raporYorumAlani').style.display = 'block';
+                raporYorumuYenidenOlustur();
+
+            } catch (e) {
+                alert("Veri çekme sırasında hata oluştu: " + e);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "🔍 Verileri Getir";
+            }
+        }
+
+        function raporYorumuYenidenOlustur() {
+            if (!raporMevcutVeri || !raporMevcutOgrenci) return;
+
+            let ad = raporMevcutOgrenci.ogrenci;
+            let d = raporMevcutVeri;
+            let puan = d.ortalamalar.genel;
+            let ders = d.dersSayisiAralikta;
+            let kayitSayisi = d.kayitSayisi;
+
+            let gelisimYonu = "sabit";
+            if (d.gelisimSerisi && d.gelisimSerisi.length >= 2) {
+                let ilk = d.gelisimSerisi[0].genel;
+                let son = d.gelisimSerisi[d.gelisimSerisi.length - 1].genel;
+                if (son - ilk >= 5) gelisimYonu = "yukselen";
+                else if (ilk - son >= 5) gelisimYonu = "dusen";
+            }
+
+            if (kayitSayisi === 0) {
+                document.getElementById('raporOgretmenYorumu').value =
+                    `Bu dönem içinde ${ad} için henüz kayıtlı bir değerlendirme bulunmuyor. Bir sonraki raporlama döneminde daha detaylı bilgi paylaşabileceğiz.`;
+                return;
+            }
+
+            let acilisSecenekleri;
+            if (puan >= 80) {
+                acilisSecenekleri = [
+                    `Bu dönem ${ad} ile oldukça verimli ve disiplinli bir çalışma süreci geçirdik.`,
+                    `${ad}, bu dönem boyunca sergilediği üstün gayretle bizleri gururlandırdı.`,
+                    `Bu raporlama döneminde ${ad}'in derse katılımı ve performansı son derece üst düzeydeydi.`
+                ];
+            } else if (puan >= 50) {
+                acilisSecenekleri = [
+                    `${ad}, bu dönem boyunca istikrarlı bir gelişim gösterdi.`,
+                    `Bu dönem ${ad} ile birlikte adım adım ilerleyen güzel bir çalışma temposu yakaladık.`,
+                    `${ad}'in bu dönemki çalışma sürecinde olumlu bir ilerleme gözlemledik.`
+                ];
+            } else {
+                acilisSecenekleri = [
+                    `Bu dönem ${ad} için biraz daha yoğun bir çalışma temposu gerekti.`,
+                    `${ad} ile bu dönem temel konuları pekiştirmeye odaklandık.`,
+                    `Bu raporlama döneminde ${ad}'in bazı konularda desteklenmesi gerektiğini gözlemledik.`
+                ];
+            }
+
+            let gelisimCumlesi = "";
+            if (gelisimYonu === "yukselen") {
+                gelisimCumlesi = " Dönem içindeki puan seyri düzenli bir yükseliş gösteriyor, bu da çalışma disiplininin meyvesini verdiğini gösteriyor. 📈";
+            } else if (gelisimYonu === "dusen") {
+                gelisimCumlesi = " Dönem içinde bir miktar dalgalanma gözlemledik; önümüzdeki dönemde bu konuya daha fazla odaklanacağız.";
+            } else {
+                gelisimCumlesi = " Dönem boyunca istikrarlı bir performans sergiledi.";
+            }
+
+            let dersCumlesi = ders > 0
+                ? ` Bu süre zarfında toplam ${ders} ders tamamlandı.`
+                : ` Bu dönemde tamamlanan ders kaydına rastlanmadı.`;
+
+            let oyunToplamPuan = (d.oyunOzet.klasik.puan || 0) + (d.oyunOzet.jeopardy.puan || 0) + (d.oyunOzet.cekilis.puan || 0);
+            let aktiviteCumlesi = oyunToplamPuan > 0
+                ? ` Ayrıca aktivite ve oyun bölümlerinde de aktif katılım göstererek toplam ${oyunToplamPuan} puan topladı. 🎮`
+                : "";
+
+            let kapanisSecenekleri = [
+                " Destekleriniz için teşekkür ederiz. 🌻",
+                " Bu güzel iş birliği için teşekkür ederiz. 🌿",
+                " Değerli desteğiniz için teşekkür ederiz. 💚"
+            ];
+
+            let acilis = acilisSecenekleri[Math.floor(Math.random() * acilisSecenekleri.length)];
+            let kapanis = kapanisSecenekleri[Math.floor(Math.random() * kapanisSecenekleri.length)];
+
+            let tamMetin = acilis + gelisimCumlesi + dersCumlesi + aktiviteCumlesi + kapanis;
+            document.getElementById('raporOgretmenYorumu').value = tamMetin;
+        }
+
+                // --- PDF RAPORU OLUŞTURMA ---
+        function raporPuanRengiVer(puan) {
+            if (puan >= 80) return [22, 163, 74];
+            if (puan >= 50) return [180, 83, 9];
+            return [225, 29, 72];
+        }
+
+        function raporPdfOlustur() {
+            if (!raporMevcutVeri || !raporMevcutOgrenci) { alert("Önce verileri getiriniz!"); return; }
+
+            let btn = document.getElementById('raporPdfOlusturBtn');
+            btn.disabled = true;
+            btn.innerText = "⏳ PDF oluşturuluyor...";
+
+            try {
+                let { jsPDF } = window.jspdf;
+                let doc = new jsPDF('p', 'mm', 'a4');
+                let W = 210, H = 297, M = 11;
+                let y = H - M;
+                let d = raporMevcutVeri;
+                let user = raporMevcutOgrenci;
+                let baslangic = document.getElementById('raporBaslangicTarih').value;
+                let bitis = document.getElementById('raporBitisTarih').value;
+                let baslangicStr = tarihiDuzelt(baslangic);
+                let bitisStr = tarihiDuzelt(bitis);
+                let yorum = document.getElementById('raporOgretmenYorumu').value;
+
+                function kutu(x, yy, w, h, r, g, b, radius) {
+                    doc.setFillColor(r, g, b);
+                    doc.roundedRect(x, yy, w, h, radius || 2, radius || 2, 'F');
+                }
+                function cerceve(x, yy, w, h, r, g, b, radius) {
+                    doc.setDrawColor(r, g, b);
+                    doc.setLineWidth(0.3);
+                    doc.roundedRect(x, yy, w, h, radius || 2, radius || 2, 'S');
+                }
+
+                // ÜST BAŞLIK
+                kutu(M, y-15, W-2*M, 15, 47, 133, 90, 3);
+                doc.setTextColor(255,255,255);
+                doc.setFont("helvetica", "bold"); doc.setFontSize(15);
+                doc.text("Ingilizce Maceram", M+6, y-6.8);
+                doc.setFont("helvetica", "normal"); doc.setFontSize(8);
+                doc.text(`${user.ogrenci} icin hazirlanan gelisim raporu`, M+6, y-11.5);
+                doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+                doc.text(`${baslangicStr} - ${bitisStr}`, W-M-6, y-6.8, { align: 'right' });
+                doc.setFont("helvetica", "normal"); doc.setFontSize(7.5);
+                doc.text("Rapor Donemi", W-M-6, y-11.5, { align: 'right' });
+                y -= 19;
+
+                // ÖĞRENCİ BİLGİ ŞERİDİ
+                kutu(M, y-9.5, W-2*M, 9.5, 240, 253, 244, 2.5);
+                cerceve(M, y-9.5, W-2*M, 9.5, 187, 247, 208, 2.5);
+                doc.setFillColor(47,133,90); doc.circle(M+8, y-4.75, 3.4, 'F');
+                doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(9);
+                doc.text(user.ogrenci.charAt(0).toUpperCase(), M+8, y-3.9, { align: 'center' });
+                doc.setTextColor(30,41,59); doc.setFont("helvetica","bold"); doc.setFontSize(9.5);
+                doc.text(user.ogrenci, M+14, y-4);
+                doc.setTextColor(100,116,139); doc.setFont("helvetica","normal"); doc.setFontSize(7);
+                doc.text(`Bu donemde tamamlanan ders: ${d.dersSayisiAralikta}`, M+14, y-7.5);
+                doc.setTextColor(22,101,52); doc.setFont("helvetica","bold"); doc.setFontSize(7.5);
+                doc.text(`Kayit sayisi: ${d.kayitSayisi}`, W-M-5, y-4, { align: 'right' });
+                y -= 13;
+
+                // PERFORMANS KARTLARI
+                let kartW = (W-2*M-9)/4;
+                let kartlar = [
+                    ["GENEL PUAN", String(d.ortalamalar.genel), [47,133,90], [240,253,244]],
+                    ["SON DENEME", String(d.sonDenemeAralikta), [180,83,9], [255,251,235]],
+                    ["KAYIT SAYISI", String(d.kayitSayisi), [14,116,144], [236,254,255]],
+                    ["TAMAMLANAN DERS", String(d.dersSayisiAralikta), [190,18,60], [255,241,242]]
+                ];
+                let x = M;
+                kartlar.forEach(k => {
+                    kutu(x, y-13, kartW, 13, k[3][0], k[3][1], k[3][2], 2.5);
+                    cerceve(x, y-13, kartW, 13, k[2][0], k[2][1], k[2][2], 2.5);
+                    doc.setTextColor(k[2][0], k[2][1], k[2][2]);
+                    doc.setFont("helvetica","bold"); doc.setFontSize(6.3);
+                    doc.text(k[0], x+3, y-4.8);
+                    doc.setFontSize(13);
+                    doc.text(k[1], x+3, y-10.2);
+                    x += kartW + 3;
+                });
+                y -= 17;
+
+                // 5 KRİTER
+                doc.setTextColor(30,41,59); doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+                doc.text("Beceri Kriterleri (Donem Ortalamasi)", M, y);
+                y -= 5;
+                let kriterler = [
+                    ["Okuma", d.ortalamalar.okuma, [74,222,128]],
+                    ["Yazma", d.ortalamalar.yazma, [56,189,248]],
+                    ["Kelime", d.ortalamalar.vocabulary, [251,191,36]],
+                    ["Konusma", d.ortalamalar.konusma, [192,132,252]],
+                    ["Grammar", d.ortalamalar.grammar, [244,63,94]]
+                ];
+                let barX = M + 26, barMaxW = W - M - barX - 12;
+                kriterler.forEach(k => {
+                    doc.setTextColor(30,41,59); doc.setFont("helvetica","normal"); doc.setFontSize(7.5);
+                    doc.text(k[0], M, y-3.5);
+                    doc.setFillColor(226,232,240);
+                    doc.roundedRect(barX, y-4.7, barMaxW, 3, 1, 1, 'F');
+                    doc.setFillColor(k[2][0], k[2][1], k[2][2]);
+                    doc.roundedRect(barX, y-4.7, barMaxW*(k[1]/100), 3, 1, 1, 'F');
+                    doc.setTextColor(30,41,59); doc.setFont("helvetica","bold"); doc.setFontSize(7.5);
+                    doc.text(String(k[1]), barX+barMaxW+2, y-4.2);
+                    y -= 6.5;
+                });
+                y -= 4;
+
+                // GELİŞİM GRAFİĞİ (basit çizgi - manuel çizim)
+                doc.setTextColor(30,41,59); doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+                doc.text("Genel Gelisim Grafigi", M, y);
+                y -= 3;
+                let grafikH = 26;
+                kutu(M, y-grafikH-2, W-2*M, grafikH+2, 248, 250, 252, 2.5);
+                if (d.gelisimSerisi && d.gelisimSerisi.length > 0) {
+                    raporCizgiGrafikCiz(doc, d.gelisimSerisi.map(g => g.genel), d.gelisimSerisi.map(g => g.tarih), M+4, y-grafikH+2, W-2*M-8, grafikH-8, [22,163,74]);
+                } else {
+                    doc.setTextColor(148,163,184); doc.setFont("helvetica","italic"); doc.setFontSize(8);
+                    doc.text("Bu donemde puan kaydi bulunmuyor.", W/2, y-grafikH/2, { align: 'center' });
+                }
+                y -= grafikH + 8;
+
+                // DENEME GRAFİĞİ
+                doc.setTextColor(30,41,59); doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+                doc.text("Deneme Sinavi Gelisimi", M, y);
+                y -= 3;
+                kutu(M, y-grafikH-2, W-2*M, grafikH+2, 255, 241, 242, 2.5);
+                if (d.denemeSerisi && d.denemeSerisi.length > 0) {
+                    raporCizgiGrafikCiz(doc, d.denemeSerisi.map(g => g.deneme), d.denemeSerisi.map(g => g.tarih), M+4, y-grafikH+2, W-2*M-8, grafikH-8, [225,29,72]);
+                } else {
+                    doc.setTextColor(148,163,184); doc.setFont("helvetica","italic"); doc.setFontSize(8);
+                    doc.text("Bu donemde deneme kaydi bulunmuyor.", W/2, y-grafikH/2, { align: 'center' });
+                }
+                y -= grafikH + 9;
+
+                // KİTAP TAKİBİ (güncel durum)
+                doc.setTextColor(30,41,59); doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+                doc.text("Okuma Kulturu (Guncel Durum)", M, y);
+                y -= 4.5;
+                let kitap = user.kitapBilgi || { kitapAdi: "Yok", sayfa: 0, hedef: 40 };
+                let kitapYuzde = kitap.hedef > 0 ? Math.min(Math.round((kitap.sayfa/kitap.hedef)*100), 100) : 0;
+                kutu(M, y-11, W-2*M, 11, 255, 251, 235, 2.5);
+                cerceve(M, y-11, W-2*M, 11, 253, 230, 138, 2.5);
+                doc.setTextColor(180,83,9); doc.setFont("helvetica","bold"); doc.setFontSize(6.5);
+                doc.text("SU AN OKUNAN KITAP", M+4, y-4.2);
+                doc.setTextColor(30,41,59); doc.setFontSize(9);
+                doc.text(String(kitap.kitapAdi || "Yok"), M+4, y-8.3);
+                doc.setTextColor(100,116,139); doc.setFont("helvetica","normal"); doc.setFontSize(7);
+                doc.text(`Ilerleme: ${kitap.sayfa} / ${kitap.hedef} sayfa (%${kitapYuzde})`, M+62, y-4.2);
+                doc.setFillColor(226,232,240); doc.roundedRect(M+62, y-8.8, 55, 2.3, 1, 1, 'F');
+                doc.setFillColor(245,158,11); doc.roundedRect(M+62, y-8.8, 55*(kitapYuzde/100), 2.3, 1, 1, 'F');
+                y -= 15;
+
+                // OYUN SKORLARI (tarih aralığında)
+                doc.setTextColor(30,41,59); doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+                doc.text("Aktivite ve Oyun Basarilari (Bu Donem)", M, y);
+                y -= 4.5;
+
+                let toplamOyunSayisi = (d.oyunOzet.klasik.oyunSayisi||0) + (d.oyunOzet.jeopardy.oyunSayisi||0) + (d.oyunOzet.cekilis.oyunSayisi||0);
+
+                if (toplamOyunSayisi === 0) {
+                    kutu(M, y-8, W-2*M, 8, 248, 250, 252, 2.5);
+                    doc.setTextColor(148,163,184); doc.setFont("helvetica","italic"); doc.setFontSize(8);
+                    doc.text("Bu donemde aktivite kaydi yok.", W/2, y-4.8, { align: 'center' });
+                    y -= 12;
+                } else {
+                    let basliklar = ["Aktivite", "Oyun Sayisi", "Dogru", "Yanlis", "Toplam Puan"];
+                    let colW = [(W-2*M)*0.34, (W-2*M)*0.18, (W-2*M)*0.16, (W-2*M)*0.16, (W-2*M)*0.16];
+                    let tx = M;
+                    doc.setFillColor(51,65,85); doc.roundedRect(M, y-5, W-2*M, 5, 1.5, 1.5, 'F');
+                    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(6.8);
+                    basliklar.forEach((b, i) => { doc.text(b, tx+2.5, y-3.4); tx += colW[i]; });
+                    y -= 5;
+
+                    let oyunSatirlar = [
+                        ["Klasik Kelime Yarismasi", d.oyunOzet.klasik],
+                        ["Jeopardy Balonlari", d.oyunOzet.jeopardy],
+                        ["Zar Cekilisi", d.oyunOzet.cekilis]
+                    ];
+                    oyunSatirlar.forEach((satir, idx) => {
+                        let bg = idx % 2 === 0 ? [255,255,255] : [248,250,252];
+                        doc.setFillColor(bg[0],bg[1],bg[2]);
+                        doc.rect(M, y-5, W-2*M, 5, 'F');
+                        let tx2 = M;
+                        doc.setTextColor(30,41,59); doc.setFont("helvetica","normal"); doc.setFontSize(7);
+                        let veri = [satir[0], String(satir[1].oyunSayisi||0), String(satir[1].dogru||0), String(satir[1].yanlis||0), String(satir[1].puan||0)];
+                        veri.forEach((v, i) => { doc.text(v, tx2+2.5, y-3.4); tx2 += colW[i]; });
+                        y -= 5;
+                    });
+                    y -= 4;
+                }
+
+                // ÖĞRETMEN YORUMU
+                let yorumSatirlari = doc.splitTextToSize(yorum, W-2*M-8);
+                let yorumH = Math.max(17, yorumSatirlari.length * 3.6 + 8);
+                kutu(M, y-yorumH, W-2*M, yorumH, 250, 245, 255, 2.5);
+                cerceve(M, y-yorumH, W-2*M, yorumH, 233, 213, 255, 2.5);
+                doc.setTextColor(124,58,237); doc.setFont("helvetica","bold"); doc.setFontSize(7.5);
+                doc.text("Ogretmen Degerlendirmesi", M+4, y-4.3);
+                doc.setTextColor(30,41,59); doc.setFont("helvetica","italic"); doc.setFontSize(7);
+                let yy = y - 7.8;
+                yorumSatirlari.forEach(satir => { doc.text(satir, M+4, yy); yy -= 3.6; });
+                y -= yorumH + 4;
+
+                // ALT BİLGİ
+                doc.setDrawColor(226,232,240); doc.setLineWidth(0.2);
+                doc.line(M, y, W-M, y);
+                y -= 4.5;
+                doc.setTextColor(100,116,139); doc.setFont("helvetica","normal"); doc.setFontSize(6.5);
+                doc.text("Bu rapor Ingilizce Ogrenci Portali tarafindan hazirlanmistir.", M, y);
+                doc.text("www.panel.ogretmencocuk.com", W-M, y, { align: 'right' });
+
+                let dosyaAdi = `${user.ogrenci.replace(/\s+/g,'_')}_Rapor_${baslangic}_${bitis}.pdf`;
+                doc.save(dosyaAdi);
+
+            } catch (e) {
+                alert("PDF oluşturma sırasında hata oluştu: " + e);
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "📄 PDF Raporu Oluştur & İndir";
+            }
+        }
+
+        function raporCizgiGrafikCiz(doc, veriler, etiketler, x, y, w, h, renk) {
+            if (veriler.length === 0) return;
+            let maxV = Math.max(...veriler, 100);
+            let minV = Math.min(...veriler, 0);
+            let araGenislik = veriler.length > 1 ? w / (veriler.length - 1) : 0;
+
+            doc.setDrawColor(renk[0], renk[1], renk[2]);
+            doc.setLineWidth(0.6);
+            doc.setFillColor(renk[0], renk[1], renk[2]);
+
+            let noktalar = veriler.map((v, i) => {
+                let px = veriler.length > 1 ? x + i * araGenislik : x + w/2;
+                let py = y + h - ((v - minV) / (maxV - minV || 1)) * h;
+                return [px, py];
+            });
+
+            for (let i = 0; i < noktalar.length - 1; i++) {
+                doc.line(noktalar[i][0], noktalar[i][1], noktalar[i+1][0], noktalar[i+1][1]);
+            }
+            noktalar.forEach((p, i) => {
+                doc.circle(p[0], p[1], 1.1, 'F');
+                doc.setTextColor(renk[0], renk[1], renk[2]);
+                doc.setFont("helvetica", "bold"); doc.setFontSize(6);
+                doc.text(String(veriler[i]), p[0], p[1] - 2.5, { align: 'center' });
+            });
+        }
+
+
+
+        // --- ÖĞRETMEN RAPOR PANELİ (SADECE "teacher" KULLANICISI GÖRÜR) ---
+        function teacherPaneliKontrolEt() {
+            let banner = document.getElementById('raporTeacherBanner');
+            if (!banner) return;
+
+            if (aktifOgrenciAdi && aktifOgrenciAdi.trim().toLowerCase() === "teacher") {
+                banner.style.display = 'block';
+                let sel = document.getElementById('raporOgrenciSelect');
+                sel.innerHTML = '<option value="">-- Öğrenci Seçin --</option>';
+                globalDataCache.forEach(u => {
+                    if (String(u.ogrenci).trim().toLowerCase() === "teacher") return;
+                    let opt = document.createElement('option');
+                    opt.value = u.ogrenci;
+                    opt.innerText = u.ogrenci;
+                    sel.appendChild(opt);
+                });
+                let bugun = new Date();
+                let birAyOnce = new Date();
+                birAyOnce.setMonth(birAyOnce.getMonth() - 1);
+                document.getElementById('raporBitisTarih').value = bugun.toISOString().split('T')[0];
+                document.getElementById('raporBaslangicTarih').value = birAyOnce.toISOString().split('T')[0];
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
     </script>
 </body>
 </html>
