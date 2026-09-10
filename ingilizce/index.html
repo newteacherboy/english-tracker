@@ -1793,9 +1793,9 @@
             girisBtn.innerText = "Giriş Yap";
             girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
 
-            const oturumAcik = sessionStorage.getItem("oturumAcik");
-            const kayitliOgrenci = sessionStorage.getItem("aktifOgrenci");
-            const kayitliSure = sessionStorage.getItem("toplamSaniye");
+            const oturumAcik = localStorage.getItem("oturumAcik");
+const kayitliOgrenci = localStorage.getItem("aktifOgrenci");
+const kayitliSure = localStorage.getItem("toplamSaniye");
             const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
 
             if (otomatikGirisYapilacak) {
@@ -3698,9 +3698,9 @@
                 aktifOgrenciAdi = ogr; 
                 toplamSaniye = user ? (Number(user.toplamsure) || 0) : 0;
                 
-                sessionStorage.setItem("oturumAcik", "true"); 
-                sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi); 
-                sessionStorage.setItem("toplamSaniye", toplamSaniye);
+                localStorage.setItem("oturumAcik", "true"); 
+localStorage.setItem("aktifOgrenci", aktifOgrenciAdi); 
+localStorage.setItem("toplamSaniye", toplamSaniye);
 
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
@@ -4355,7 +4355,15 @@ function veriArayuzeIsle(user) {
     teacherPaneliKontrolEt();
 }
         
-        function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
+        function cikisYap() { 
+    googleSheetseKaydet(); 
+    clearInterval(timerInterval); 
+    
+    // Kalıcı hafızayı temizle
+    localStorage.clear(); 
+    
+    window.location.reload(); 
+}
     </script>
 </body>
 </html>
