@@ -4375,19 +4375,39 @@
         }
 
 function veriArayuzeIsle(user) {
-        if (!user) return;
-        document.getElementById('valGenelPuan').innerText = user.genelPuan || 0;
-        document.getElementById('valEtkinlikBasarisi').innerText = user.etkinlikBasarisi || 0;
-        document.getElementById('valSonDeneme').innerText = user.sonDeneme || 0;
-        document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(user.genelPuan || 0);
-        
-        kitapTakibiniIsle(user.kitapBilgi || {});
-        dersRaporlariniOlustur(user.arsivListesi || [], user.kitapBilgi || {});
-        grafikliCiz(user.gelisimSerisi || [], user, user.denemeSerisi || []);
-        rozetleriIsle(user.rozetListesi || [], user.genelPuan || 0);
-        planKartiniGuncelle(user);
-        teacherPaneliKontrolEt();
-    }
+    if (!user) return;
+
+    // 1. Özet Kartları (API'den farklı isimlerde gelebilecek alanlar için alternatifler eklendi)
+    let genelPuan = user.genelPuan || user.genel || user.puan || 0;
+    let etkinlik = user.etkinlikBasarisi || user.etkinlik || 0;
+    let sonDeneme = user.sonDeneme || user.sondeneme || 0;
+
+    document.getElementById('valGenelPuan').innerText = genelPuan;
+    document.getElementById('valEtkinlikBasarisi').innerText = etkinlik;
+    document.getElementById('valSonDeneme').innerText = sonDeneme;
+    document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelPuan);
+    
+    // 2. Kitap Takibi
+    kitapTakibiniIsle(user.kitapBilgi || {});
+
+    // 3. Ders Raporları ve Arşivi
+    dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
+
+    // 4. Üst Şerit Ders Takvimi (Eksik olan tetikleme buraya eklendi)
+    dersTakviminiIsle(user.arsivListesi || user.dersler || []);
+
+    // 5. Grafikler
+    grafikliCiz(user.gelisimSerisi || user.arsivListesi || [], user, user.denemeSerisi || user.arsivListesi || []);
+
+    // 6. Rozetler
+    rozetleriIsle(user.rozetListesi || [], genelPuan);
+
+    // 7. Yıllık Plan Takip Kartı
+    planKartiniGuncelle(user);
+
+    // 8. Öğretmen Paneli Kontrolü
+    teacherPaneliKontrolEt();
+}
         
         function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
     </script>
