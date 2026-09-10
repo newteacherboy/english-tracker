@@ -4047,20 +4047,22 @@
             document.getElementById('raporOgretmenYorumu').value = tamMetin;
         }
 
-        function turkceyiDuzelt(str) {
-                    function pdfIcinMetinTemizle(str) {
-            if (!str) return "";
-            return str.toString().replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}]/gu, "").trim();
-        }
-            if (!str) return "";
-            return str.toString()
-                .replace(/ı/g,"i").replace(/İ/g,"I")
-                .replace(/ğ/g,"g").replace(/Ğ/g,"G")
-                .replace(/ü/g,"u").replace(/Ü/g,"U")
-                .replace(/ş/g,"s").replace(/Ş/g,"S")
-                .replace(/ö/g,"o").replace(/Ö/g,"O")
-                .replace(/ç/g,"c").replace(/Ç/g,"C");
-        }
+        // Temizleme fonksiyonunu dışarıda bağımsız bir fonksiyon yapıyoruz
+function pdfIcinMetinTemizle(str) {
+    if (!str) return "";
+    return str.toString().replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}]/gu, "").trim();
+}
+
+function turkceyiDuzelt(str) {
+    if (!str) return "";
+    return str.toString()
+        .replace(/ı/g,"i").replace(/İ/g,"I")
+        .replace(/ğ/g,"g").replace(/Ğ/g,"G")
+        .replace(/ü/g,"u").replace(/Ü/g,"U")
+        .replace(/ş/g,"s").replace(/Ş/g,"S")
+        .replace(/ö/g,"o").replace(/Ö/g,"O")
+        .replace(/ç/g,"c").replace(/Ç/g,"C");
+}
         
                 // --- PDF RAPORU OLUŞTURMA ---
         function raporPuanRengiVer(puan) {
