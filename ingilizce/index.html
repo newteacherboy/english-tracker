@@ -1785,11 +1785,11 @@
             rubricGridDegerleriGuncelle();
         }
 
-        window.onload = async function() {
+                window.onload = async function() {
             let girisBtn = document.getElementById('girisBtn');
             let girisSubtitle = document.getElementById('girisSubtitle');
-            
-                       girisBtn.disabled = false;
+
+            girisBtn.disabled = false;
             girisBtn.innerText = "Giriş Yap";
             girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
 
@@ -1798,7 +1798,7 @@
             const kayitliSure = sessionStorage.getItem("toplamSaniye");
             const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
 
-                        if (otomatikGirisYapilacak) {
+            if (otomatikGirisYapilacak) {
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
             }
@@ -1812,21 +1812,35 @@
                 globalDataCache = [];
             }
 
-                       if (otomatikGirisYapilacak) {
+            if (otomatikGirisYapilacak) {
                 aktifOgrenciAdi = kayitliOgrenci;
                 toplamSaniye = parseInt(kayitliSure);
+
+                let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+
                 document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
                 document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
-                bilgileriSunucudanGuncelle(aktifOgrenciAdi);
+
+                if (user) {
+                    toplamSaniye = Number(user.toplamsure) || toplamSaniye;
+                    sessionStorage.setItem("toplamSaniye", toplamSaniye);
+                    veriArayuzeIsle(user);
+                } else {
+                    console.warn("Otomatik girişte kullanıcı bulunamadı:", aktifOgrenciAdi);
+                }
+
+                baslatSayac();
+                arkaPlanVeriYenilemeBaslat();
             }
+
             uniteSecimleriniOlustur(2, 8);
             ogretmenSelectDoldur();
             rubricGridleriOlustur();
-                        ogretmenMenuOkunmamisGuncelle();
+            ogretmenMenuOkunmamisGuncelle();
             setInterval(ogretmenMenuOkunmamisGuncelle, 60000);
         };
 
