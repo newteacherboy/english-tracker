@@ -1720,7 +1720,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbyRz_LKOEMoegczc-0wgYaBEaFXu2WCHAbIXNLmt9-GMTnkw3rC2-tqzNfQILserwhP/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycby__si15X3WASAqtRVz1YFbE367sH_DjyUD_S2ByENmZsIhjemWkbdoTpumx-fyt9Q8oQ/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -4377,35 +4377,22 @@
 function veriArayuzeIsle(user) {
     if (!user) return;
 
-    // 1. Özet Kartları (API'den farklı isimlerde gelebilecek alanlar için alternatifler eklendi)
-    let genelPuan = user.genelPuan || user.genel || user.puan || 0;
-    let etkinlik = user.etkinlikBasarisi || user.etkinlik || 0;
-    let sonDeneme = user.sonDeneme || user.sondeneme || 0;
+    // Son girilen puan yerine her zaman tüm puanların ortalaması (genelOrtalama) baz alınır
+    let genelPuan = user.genelOrtalama !== undefined ? user.genelOrtalama : (user.genelPuan || 0);
+    let etkinlik = user.etkinlikBasarisi || 0;
+    let sonDeneme = user.sonDeneme || 0;
 
     document.getElementById('valGenelPuan').innerText = genelPuan;
     document.getElementById('valEtkinlikBasarisi').innerText = etkinlik;
     document.getElementById('valSonDeneme').innerText = sonDeneme;
     document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelPuan);
     
-    // 2. Kitap Takibi
     kitapTakibiniIsle(user.kitapBilgi || {});
-
-    // 3. Ders Raporları ve Arşivi
     dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
-
-    // 4. Üst Şerit Ders Takvimi (Eksik olan tetikleme buraya eklendi)
-    dersTakviminiIsle(user.arsivListesi || user.dersler || []);
-
-    // 5. Grafikler
+    dersTakviminiIsle(user.dersler || []);
     grafikliCiz(user.gelisimSerisi || user.arsivListesi || [], user, user.denemeSerisi || user.arsivListesi || []);
-
-    // 6. Rozetler
     rozetleriIsle(user.rozetListesi || [], genelPuan);
-
-    // 7. Yıllık Plan Takip Kartı
     planKartiniGuncelle(user);
-
-    // 8. Öğretmen Paneli Kontrolü
     teacherPaneliKontrolEt();
 }
         
