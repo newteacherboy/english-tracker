@@ -1762,25 +1762,32 @@
             let girisBtn = document.getElementById('girisBtn');
             let girisSubtitle = document.getElementById('girisSubtitle');
             
-            try {
-                let res = await fetch(apiURL);
-                globalDataCache = await res.json();
-                girisBtn.disabled = false;
-                girisBtn.innerText = "Giriş Yap";
-                girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
-            } catch(e) {
-                console.error("Veri çekme hatası", e);
-                girisSubtitle.innerText = "Sunucu bağlantısı kurulamadı. Sayfayı yenileyin.";
-            }
+                       girisBtn.disabled = false;
+            girisBtn.innerText = "Giriş Yap";
+            girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
 
             const oturumAcik = sessionStorage.getItem("oturumAcik");
             const kayitliOgrenci = sessionStorage.getItem("aktifOgrenci");
             const kayitliSure = sessionStorage.getItem("toplamSaniye");
+            const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
 
-            if (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null) {
+            if (otomatikGirisYapilacak) {
+                document.getElementById('login-container').style.display = 'none';
+                girisSubtitle.innerText = "Oturumunuz yükleniyor...";
+            }
+
+            try {
+                let res = await fetch(apiURL);
+                globalDataCache = await res.json();
+            } catch(e) {
+                console.error("Veri çekme hatası", e);
+                girisSubtitle.innerText = "Sunucu bağlantısı kurulamadı. Sayfayı yenileyin.";
+                globalDataCache = [];
+            }
+
+            if (otomatikGirisYapilacak) {
                 aktifOgrenciAdi = kayitliOgrenci;
                 toplamSaniye = parseInt(kayitliSure);
-                document.getElementById('login-container').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
@@ -3623,6 +3630,11 @@
 
         async function girisYap(event) {
             event.preventDefault();
+                        if (!globalDataCache || globalDataCache.length === 0) {
+                document.getElementById('mesaj').className = "error";
+                document.getElementById('mesaj').innerText = "Veriler henüz yükleniyor, lütfen birkaç saniye bekleyip tekrar deneyin.";
+                return;
+            }
             const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
             const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
             let m = document.getElementById('mesaj');
@@ -3637,16 +3649,17 @@
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
                 document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
                 veriArayuzeIsle(user);
-                setTimeout(() => { document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac(); }, 800);
+                                setTimeout(() => { document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac(); arkaPlanVeriYenilemeBaslat(); }, 800);
             } else {
                 m.className="error"; m.innerText="Hatalı kullanıcı adı veya şifre!";
             }
         }
 
-        async function bilgileriSunucudanGuncelle(ogr) {
+               async function bilgileriSunucudanGuncelle(ogr) {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase());
             if(user) { toplamSaniye = Number(user.toplamsure)||toplamSaniye; sessionStorage.setItem("toplamSaniye", toplamSaniye); veriArayuzeIsle(user); }
             document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac();
+            arkaPlanVeriYenilemeBaslat();
         }
 
                function veriArayuzeIsle(user) {
@@ -3668,6 +3681,23 @@
         }
 
         function baslatSayac() {
+                    let arkaPlanVeriYenilemePolling = null;
+
+        function arkaPlanVeriYenilemeBaslat() {
+            if (arkaPlanVeriYenilemePolling) clearInterval(arkaPlanVeriYenilemePolling);
+            arkaPlanVeriYenilemePolling = setInterval(async () => {
+                if (!aktifOgrenciAdi) return;
+                try {
+                    let res = await fetch(apiURL);
+                    let yeniVeri = await res.json();
+                    globalDataCache = yeniVeri;
+                    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                    if (user) veriArayuzeIsle(user);
+                } catch (err) {
+                    console.error("Arka plan veri yenileme hatası:", err);
+                }
+            }, 30000);
+        }
             guncelleArayuz();
             timerInterval = setInterval(() => {
                 toplamSaniye++; sessionStorage.setItem("toplamSaniye", toplamSaniye); guncelleArayuz();
@@ -3952,6 +3982,10 @@
         }
 
         function turkceyiDuzelt(str) {
+                    function pdfIcinMetinTemizle(str) {
+            if (!str) return "";
+            return str.toString().replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}]/gu, "").trim();
+        }
             if (!str) return "";
             return str.toString()
                 .replace(/ı/g,"i").replace(/İ/g,"I")
@@ -3987,7 +4021,7 @@
                 let bitis = document.getElementById('raporBitisTarih').value;
                 let baslangicStr = tarihiDuzelt(baslangic);
                 let bitisStr = tarihiDuzelt(bitis);
-                let yorum = turkceyiDuzelt(document.getElementById('raporOgretmenYorumu').value);
+                let yorum = turkceyiDuzelt(pdfIcinMetinTemizle(document.getElementById('raporOgretmenYorumu').value));
                 let ogrenciAdi = turkceyiDuzelt(user.ogrenci);
 
                 function kutu(x, yy, w, h, r, g, b, radius) {
@@ -4161,18 +4195,27 @@
                 }
 
                 // Sayfa taşarsa yeni sayfa aç
+                                let yorumFontBoyutu = 7.5;
+                doc.setFont("helvetica", "normal"); doc.setFontSize(yorumFontBoyutu);
                 let yorumSatirlari = doc.splitTextToSize(yorum, CW - 8);
+                let kalanAlan = H - M - y - 15;
+                let maxSatirSayisi = Math.floor((kalanAlan - 10) / 4);
+                if (yorumSatirlari.length > maxSatirSayisi && maxSatirSayisi > 3) {
+                    yorumFontBoyutu = 6.3;
+                    doc.setFontSize(yorumFontBoyutu);
+                    yorumSatirlari = doc.splitTextToSize(yorum, CW - 8);
+                }
                 let yorumH = Math.max(18, yorumSatirlari.length * 4 + 10);
-                if (y + yorumH + 15 > H - M) { doc.addPage(); y = M; }
+                
 
                 // ===== 9. ÖĞRETMEN YORUMU =====
                 kutu(M, y, CW, yorumH, 250, 245, 255, 3);
                 cerceve(M, y, CW, yorumH, 221, 214, 254, 3);
                 doc.setTextColor(109, 40, 217); doc.setFont("helvetica", "bold"); doc.setFontSize(8);
                 doc.text("Ogretmen Degerlendirmesi", M + 4, y + 5.5);
-                doc.setTextColor(51, 65, 85); doc.setFont("helvetica", "normal"); doc.setFontSize(7.5);
+                doc.setTextColor(51, 65, 85); doc.setFont("helvetica", "normal"); doc.setFontSize(yorumFontBoyutu);
                 let yy = y + 9.5;
-                yorumSatirlari.forEach(satir => { doc.text(satir, M + 4, yy); yy += 4; });
+                yorumSatirlari.forEach(satir => { doc.text(satir, M + 4, yy); yy += satirAraligi; });
                 y += yorumH + GAP;
 
                 // ===== 10. ALT BİLGİ =====
