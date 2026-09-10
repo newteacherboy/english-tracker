@@ -4071,7 +4071,7 @@ function turkceyiDuzelt(str) {
             return [225, 29, 72];
         }
 
-               function raporPdfOlustur() {
+              function raporPdfOlustur() {
     if (!raporMevcutVeri || !raporMevcutOgrenci) { alert("Önce verileri getiriniz!"); return; }
 
     let btn = document.getElementById('raporPdfOlusturBtn');
@@ -4081,7 +4081,7 @@ function turkceyiDuzelt(str) {
     try {
         let { jsPDF } = window.jspdf;
         let doc = new jsPDF('p', 'mm', 'a4');
-        let W = 210, H = 297, M = 10, CW = W - 2 * M, GAP = 4.5; // Kenar payı ve boşluklar daraltıldı
+        let W = 210, H = 297, M = 10, CW = W - 2 * M, GAP = 3.5;
         let y = M;
         let d = raporMevcutVeri;
         let user = raporMevcutOgrenci;
@@ -4103,40 +4103,40 @@ function turkceyiDuzelt(str) {
         }
         function baslikCiz(metin) {
             doc.setFillColor(51, 65, 85);
-            doc.roundedRect(M, y, 2.4, 4.8, 0.8, 0.8, 'F');
+            doc.roundedRect(M, y, 2.2, 4.2, 0.6, 0.6, 'F');
             doc.setTextColor(30, 41, 59);
-            doc.setFont("helvetica", "bold"); doc.setFontSize(8.5);
-            doc.text(turkceyiDuzelt(metin), M + 4.5, y + 3.8);
-            y += 6.5;
+            doc.setFont("helvetica", "bold"); doc.setFontSize(8);
+            doc.text(turkceyiDuzelt(metin), M + 4, y + 3.2);
+            y += 5.5;
         }
 
         // ===== 1. ÜST BAŞLIK ŞERİDİ =====
-        kutu(M, y, CW, 20, 22, 101, 52, 3);
+        kutu(M, y, CW, 18, 22, 101, 52, 3);
         doc.setTextColor(255, 255, 255);
-        doc.setFont("helvetica", "bold"); doc.setFontSize(15);
-        doc.text("Ingilizce Maceram", M + 6, y + 9);
-        doc.setFont("helvetica", "normal"); doc.setFontSize(8);
-        doc.text(`${ogrenciAdi} icin hazirlanan gelisim raporu`, M + 6, y + 14.5);
-        doc.setFont("helvetica", "bold"); doc.setFontSize(10);
-        doc.text(`${baslangicStr} - ${bitisStr}`, W - M - 6, y + 9, { align: 'right' });
-        doc.setFont("helvetica", "normal"); doc.setFontSize(7);
-        doc.text("RAPOR DONEMI", W - M - 6, y + 14.5, { align: 'right' });
-        y += 20 + GAP;
+        doc.setFont("helvetica", "bold"); doc.setFontSize(14);
+        doc.text("Ingilizce Maceram", M + 5, y + 8);
+        doc.setFont("helvetica", "normal"); doc.setFontSize(7.5);
+        doc.text(`${ogrenciAdi} icin hazirlanan gelisim raporu`, M + 5, y + 13);
+        doc.setFont("helvetica", "bold"); doc.setFontSize(9.5);
+        doc.text(`${baslangicStr} - ${bitisStr}`, W - M - 5, y + 8, { align: 'right' });
+        doc.setFont("helvetica", "normal"); doc.setFontSize(6.5);
+        doc.text("RAPOR DONEMI", W - M - 5, y + 13, { align: 'right' });
+        y += 18 + GAP;
 
         // ===== 2. ÖĞRENCİ ŞERİDİ =====
-        kutu(M, y, CW, 11, 240, 253, 244, 2.5);
-        cerceve(M, y, CW, 11, 187, 247, 208, 2.5);
-        doc.setFillColor(22, 101, 52); doc.circle(M + 7.5, y + 5.5, 3.5, 'F');
-        doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(8.5);
-        doc.text(ogrenciAdi.charAt(0).toUpperCase(), M + 7.5, y + 6.5, { align: 'center' });
-        doc.setTextColor(22, 101, 52); doc.setFont("helvetica", "bold"); doc.setFontSize(9.5);
-        doc.text(ogrenciAdi, M + 14, y + 5.3);
-        doc.setTextColor(21, 128, 61); doc.setFont("helvetica", "normal"); doc.setFontSize(6.5);
-        doc.text(`Tamamlanan ders: ${d.dersSayisiAralikta}  |  Kayit sayisi: ${d.kayitSayisi}`, M + 14, y + 9);
-        y += 11 + GAP;
+        kutu(M, y, CW, 10, 240, 253, 244, 2);
+        cerceve(M, y, CW, 10, 187, 247, 208, 2);
+        doc.setFillColor(22, 101, 52); doc.circle(M + 7, y + 5, 3, 'F');
+        doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(8);
+        doc.text(ogrenciAdi.charAt(0).toUpperCase(), M + 7, y + 6, { align: 'center' });
+        doc.setTextColor(22, 101, 52); doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+        doc.text(ogrenciAdi, M + 13, y + 5);
+        doc.setTextColor(21, 128, 61); doc.setFont("helvetica", "normal"); doc.setFontSize(6);
+        doc.text(`Tamamlanan ders: ${d.dersSayisiAralikta}  |  Kayit sayisi: ${d.kayitSayisi}`, M + 13, y + 8.2);
+        y += 10 + GAP;
 
         // ===== 3. 4 İSTATİSTİK KARTI =====
-        let kartW = (CW - 3 * 3) / 4;
+        let kartW = (CW - 3 * 2.5) / 4;
         let kartlar = [
             ["GENEL PUAN", String(d.ortalamalar.genel), [22, 101, 52], [240, 253, 244]],
             ["SON DENEME", String(d.sonDenemeAralikta), [180, 83, 9], [255, 251, 235]],
@@ -4145,16 +4145,16 @@ function turkceyiDuzelt(str) {
         ];
         let x = M;
         kartlar.forEach(k => {
-            kutu(x, y, kartW, 13, k[3][0], k[3][1], k[3][2], 2.5);
-            cerceve(x, y, kartW, 13, k[2][0], k[2][1], k[2][2], 2.5);
+            kutu(x, y, kartW, 11, k[3][0], k[3][1], k[3][2], 2);
+            cerceve(x, y, kartW, 11, k[2][0], k[2][1], k[2][2], 2);
             doc.setTextColor(k[2][0], k[2][1], k[2][2]);
-            doc.setFont("helvetica", "bold"); doc.setFontSize(6);
-            doc.text(k[0], x + 3, y + 4.5);
-            doc.setFontSize(13);
-            doc.text(k[1], x + 3, y + 10.5);
-            x += kartW + 3;
+            doc.setFont("helvetica", "bold"); doc.setFontSize(5.5);
+            doc.text(k[0], x + 2.5, y + 3.8);
+            doc.setFontSize(12);
+            doc.text(k[1], x + 2.5, y + 9);
+            x += kartW + 2.5;
         });
-        y += 13 + GAP;
+        y += 11 + GAP;
 
         // ===== 4. 5 KRİTER BAR GRAFİĞİ =====
         baslikCiz("Beceri Kriterleri (Donem Ortalamasi)");
@@ -4165,30 +4165,49 @@ function turkceyiDuzelt(str) {
             ["Konusma", d.ortalamalar.konusma, [168, 85, 247]],
             ["Grammar", d.ortalamalar.grammar, [225, 29, 72]]
         ];
-        let barLabelW = 22, barNumW = 8, barW = CW - barLabelW - barNumW;
+        let barLabelW = 20, barNumW = 7, barW = CW - barLabelW - barNumW;
         kriterler.forEach(k => {
-            doc.setTextColor(51, 65, 85); doc.setFont("helvetica", "normal"); doc.setFontSize(7.2);
-            doc.text(k[0], M, y + 3.2);
+            doc.setTextColor(51, 65, 85); doc.setFont("helvetica", "normal"); doc.setFontSize(6.8);
+            doc.text(k[0], M, y + 2.8);
             doc.setFillColor(226, 232, 240);
-            doc.roundedRect(M + barLabelW, y + 1, barW, 2.8, 1, 1, 'F');
+            doc.roundedRect(M + barLabelW, y + 0.8, barW, 2.4, 0.8, 0.8, 'F');
             doc.setFillColor(k[2][0], k[2][1], k[2][2]);
-            doc.roundedRect(M + barLabelW, y + 1, barW * Math.max(k[1], 3) / 100, 2.8, 1, 1, 'F');
-            doc.setTextColor(k[2][0], k[2][1], k[2][2]); doc.setFont("helvetica", "bold"); doc.setFontSize(7.5);
-            doc.text(String(k[1]), M + barLabelW + barW + 2, y + 3.2);
-            y += 5.5;
+            doc.roundedRect(M + barLabelW, y + 0.8, barW * Math.max(k[1], 3) / 100, 2.4, 0.8, 0.8, 'F');
+            doc.setTextColor(k[2][0], k[2][1], k[2][2]); doc.setFont("helvetica", "bold"); doc.setFontSize(7);
+            doc.text(String(k[1]), M + barLabelW + barW + 2, y + 2.8);
+            y += 4.5;
         });
-        y += GAP - 2;
+        y += GAP - 1.5;
 
-        // ===== 5. GENEL GELİŞİM GRAFİĞİ =====
-        baslikCiz("Genel Gelisim Grafigi (Puan)");
-        let grafikH = 24;
-        kutu(M, y, CW, grafikH, 248, 250, 252, 2.5);
-        cerceve(M, y, CW, grafikH, 226, 232, 240, 2.5);
+        // ===== 5. YAN YANA İKİ GRAFİK: GENEL GELİŞİM VE DENEME SINAVI =====
+        let grafikW = (CW - 3) / 2;
+        let grafikH = 21;
+        
+        // Sol Grafik: Genel Gelişim
+        baslikCiz("Genel Gelisim Grafigi");
+        let eskiY = y - 5.5; // Başlık yüksekliğini dengele
+        kutu(M, eskiY, grafikW, grafikH, 248, 250, 252, 2);
+        cerceve(M, eskiY, grafikW, grafikH, 226, 232, 240, 2);
         if (d.gelisimSerisi && d.gelisimSerisi.length > 0) {
-            raporCizgiGrafikCiz(doc, d.gelisimSerisi.map(g => g.genel), d.gelisimSerisi.map(g => g.tarih), M + 8, y + 3, CW - 14, grafikH - 9, [22, 163, 74]);
+            raporCizgiGrafikCiz(doc, d.gelisimSerisi.map(g => g.genel), d.gelisimSerisi.map(g => g.tarih), M + 5, eskiY + 2.5, grafikW - 10, grafikH - 8, [22, 163, 74]);
         } else {
-            doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "italic"); doc.setFontSize(7.5);
-            doc.text("Bu donemde puan kaydi bulunmuyor.", W / 2, y + grafikH / 2, { align: 'center' });
+            doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "italic"); doc.setFontSize(6.5);
+            doc.text("Puan kaydi yok.", M + grafikW / 2, eskiY + grafikH / 2, { align: 'center' });
+        }
+
+        // Sağ Grafik: Deneme Sınavı
+        doc.setFillColor(51, 65, 85);
+        doc.roundedRect(M + grafikW + 3, eskiY - 5.5, 2.2, 4.2, 0.6, 0.6, 'F');
+        doc.setTextColor(30, 41, 59); doc.setFont("helvetica", "bold"); doc.setFontSize(8);
+        doc.text("Deneme Sinavi Gelisimi", M + grafikW + 3 + 4, eskiY - 5.5 + 3.2);
+
+        kutu(M + grafikW + 3, eskiY, grafikW, grafikH, 255, 241, 242, 2);
+        cerceve(M + grafikW + 3, eskiY, grafikW, grafikH, 254, 205, 211, 2);
+        if (d.denemeSerisi && d.denemeSerisi.length > 0) {
+            raporCizgiGrafikCiz(doc, d.denemeSerisi.map(g => g.deneme), d.denemeSerisi.map(g => g.tarih), M + grafikW + 8, eskiY + 2.5, grafikW - 10, grafikH - 8, [225, 29, 72]);
+        } else {
+            doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "italic"); doc.setFontSize(6.5);
+            doc.text("Deneme kaydi yok.", M + grafikW + 3 + grafikW / 2, eskiY + grafikH / 2, { align: 'center' });
         }
         y += grafikH + GAP;
 
@@ -4197,35 +4216,35 @@ function turkceyiDuzelt(str) {
         let kitap = user.kitapBilgi || { kitapAdi: "Yok", sayfa: 0, hedef: 40 };
         let kitapAdiTemiz = turkceyiDuzelt(kitap.kitapAdi || "Yok");
         let kitapYuzde = kitap.hedef > 0 ? Math.min(Math.round((kitap.sayfa / kitap.hedef) * 100), 100) : 0;
-        kutu(M, y, CW, 11, 255, 251, 235, 2.5);
-        cerceve(M, y, CW, 11, 253, 230, 138, 2.5);
-        doc.setTextColor(180, 83, 9); doc.setFont("helvetica", "bold"); doc.setFontSize(6);
-        doc.text("SU AN OKUNAN KITAP", M + 3.5, y + 4.2);
-        doc.setTextColor(30, 41, 59); doc.setFontSize(8.5);
-        doc.text(kitapAdiTemiz, M + 3.5, y + 8.5);
-        doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "normal"); doc.setFontSize(6.5);
-        doc.text(`Ilerleme: ${kitap.sayfa} / ${kitap.hedef} sayfa (%${kitapYuzde})`, M + 62, y + 4.2);
-        doc.setFillColor(226, 232, 240); doc.roundedRect(M + 62, y + 6, CW - 66, 2.2, 1, 1, 'F');
-        doc.setFillColor(245, 158, 11); doc.roundedRect(M + 62, y + 6, (CW - 66) * (kitapYuzde / 100), 2.2, 1, 1, 'F');
-        y += 11 + GAP;
+        kutu(M, y, CW, 10, 255, 251, 235, 2);
+        cerceve(M, y, CW, 10, 253, 230, 138, 2);
+        doc.setTextColor(180, 83, 9); doc.setFont("helvetica", "bold"); doc.setFontSize(5.5);
+        doc.text("SU AN OKUNAN KITAP", M + 3, y + 3.8);
+        doc.setTextColor(30, 41, 59); doc.setFontSize(8);
+        doc.text(kitapAdiTemiz, M + 3, y + 7.8);
+        doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "normal"); doc.setFontSize(6);
+        doc.text(`Ilerleme: ${kitap.sayfa} / ${kitap.hedef} sayfa (%${kitapYuzde})`, M + 60, y + 3.8);
+        doc.setFillColor(226, 232, 240); doc.roundedRect(M + 60, y + 5.5, CW - 64, 2, 0.8, 0.8, 'F');
+        doc.setFillColor(245, 158, 11); doc.roundedRect(M + 60, y + 5.5, (CW - 64) * (kitapYuzde / 100), 2, 0.8, 0.8, 'F');
+        y += 10 + GAP;
 
         // ===== 7. AKTİVİTE TABLOSU =====
         baslikCiz("Aktivite ve Oyun Basarilari (Bu Donem)");
         let toplamOyunSayisi = (d.oyunOzet.klasik.oyunSayisi || 0) + (d.oyunOzet.jeopardy.oyunSayisi || 0) + (d.oyunOzet.cekilis.oyunSayisi || 0);
 
         if (toplamOyunSayisi === 0) {
-            kutu(M, y, CW, 8, 248, 250, 252, 2.5);
-            doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "italic"); doc.setFontSize(7.5);
-            doc.text("Bu donemde aktivite kaydi yok.", W / 2, y + 5, { align: 'center' });
-            y += 8 + GAP;
+            kutu(M, y, CW, 7, 248, 250, 252, 2);
+            doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "italic"); doc.setFontSize(7);
+            doc.text("Bu donemde aktivite kaydi yok.", W / 2, y + 4.5, { align: 'center' });
+            y += 7 + GAP;
         } else {
             let basliklar = ["Aktivite", "Oyun Sayisi", "Dogru", "Yanlis", "Toplam Puan"];
             let colW = [CW * 0.34, CW * 0.18, CW * 0.16, CW * 0.16, CW * 0.16];
             let tx = M;
-            doc.setFillColor(51, 65, 85); doc.roundedRect(M, y, CW, 5, 1.5, 1.5, 'F');
-            doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(6.5);
-            basliklar.forEach((b, i) => { doc.text(b, tx + 2.5, y + 3.5); tx += colW[i]; });
-            y += 5;
+            doc.setFillColor(51, 65, 85); doc.roundedRect(M, y, CW, 4.5, 1.2, 1.2, 'F');
+            doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(6);
+            basliklar.forEach((b, i) => { doc.text(b, tx + 2, y + 3.2); tx += colW[i]; });
+            y += 4.5;
 
             let oyunSatirlar = [
                 ["Klasik Kelime Yarismasi", d.oyunOzet.klasik],
@@ -4235,33 +4254,33 @@ function turkceyiDuzelt(str) {
             oyunSatirlar.forEach((satir, idx) => {
                 let bg = idx % 2 === 0 ? [255, 255, 255] : [248, 250, 252];
                 doc.setFillColor(bg[0], bg[1], bg[2]);
-                doc.rect(M, y, CW, 5, 'F');
+                doc.rect(M, y, CW, 4.5, 'F');
                 let tx2 = M;
-                doc.setTextColor(30, 41, 59); doc.setFont("helvetica", "normal"); doc.setFontSize(7);
+                doc.setTextColor(30, 41, 59); doc.setFont("helvetica", "normal"); doc.setFontSize(6.5);
                 let veri = [satir[0], String(satir[1].oyunSayisi || 0), String(satir[1].dogru || 0), String(satir[1].yanlis || 0), String(satir[1].puan || 0)];
-                veri.forEach((v, i) => { doc.text(v, tx2 + 2.5, y + 3.5); tx2 += colW[i]; });
-                y += 5;
+                veri.forEach((v, i) => { doc.text(v, tx2 + 2, y + 3.2); tx2 += colW[i]; });
+                y += 4.5;
             });
-            doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.25);
-            doc.roundedRect(M, y - 15, CW, 15, 2, 2, 'S');
+            doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.2);
+            doc.roundedRect(M, y - 13.5, CW, 13.5, 1.5, 1.5, 'S');
             y += GAP;
         }
 
-        // ===== 8. ÖĞRETMEN YORUMU (TEK SAYFAYA SIĞACAK ŞEKİLDE DÜZENLENDİ) =====
-        let yorumFontBoyutu = 6.8;
-        let satirAraligi = 3.2;
+        // ===== 8. ÖĞRETMEN YORUMU =====
+        let yorumFontBoyutu = 6.3;
+        let satirAraligi = 2.8;
         doc.setFont("helvetica", "normal"); doc.setFontSize(yorumFontBoyutu);
-        let yorumSatirlari = doc.splitTextToSize(yorum, CW - 6);
-        let yorumH = Math.max(14, yorumSatirlari.length * satirAraligi + 7);
+        let yorumSatirlari = doc.splitTextToSize(yorum, CW - 5);
+        let yorumH = Math.max(12, yorumSatirlari.length * satirAraligi + 6);
 
-        kutu(M, y, CW, yorumH, 250, 245, 255, 2.5);
-        cerceve(M, y, CW, yorumH, 221, 214, 254, 2.5);
-        doc.setTextColor(109, 40, 217); doc.setFont("helvetica", "bold"); doc.setFontSize(7.5);
-        doc.text("Ogretmen Degerlendirmesi", M + 3, y + 4);
+        kutu(M, y, CW, yorumH, 250, 245, 255, 2);
+        cerceve(M, y, CW, yorumH, 221, 214, 254, 2);
+        doc.setTextColor(109, 40, 217); doc.setFont("helvetica", "bold"); doc.setFontSize(7);
+        doc.text("Ogretmen Degerlendirmesi", M + 2.5, y + 3.5);
         doc.setTextColor(51, 65, 85); doc.setFont("helvetica", "normal"); doc.setFontSize(yorumFontBoyutu);
-        let yy = y + 7.5;
+        let yy = y + 6.5;
         yorumSatirlari.forEach(satir => { 
-            doc.text(satir, M + 3, yy); 
+            doc.text(satir, M + 2.5, yy); 
             yy += satirAraligi; 
         });
         y += yorumH + GAP - 1;
@@ -4269,9 +4288,9 @@ function turkceyiDuzelt(str) {
         // ===== 9. ALT BİLGİ =====
         doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.2);
         doc.line(M, y, W - M, y);
-        y += 3.5;
-        doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "normal"); doc.setFontSize(6);
-        doc.text("Bu rapor Ingilizce Ogrenci Portali tarafindan hazirlanmistir.", M, y);
+        y += 3;
+        doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "normal"); doc.setFontSize(5.5);
+        doc.text("Bu rapor DijiMuallim  Portalı tarafindan hazirlanmistir.", M, y);
         doc.text("www.panel.ogretmencocuk.com", W - M, y, { align: 'right' });
 
         let dosyaAdi = `${ogrenciAdi.replace(/\s+/g, '_')}_Rapor_${baslangic}_${bitis}.pdf`;
@@ -4281,11 +4300,11 @@ function turkceyiDuzelt(str) {
         alert("PDF oluşturma sırasında hata oluştu: " + e);
         console.error(e);
     } finally {
+        btn.disabled.value = false;
         btn.disabled = false;
         btn.innerText = "📄 PDF Raporu Oluştur & İndir";
     }
 }
-
         function raporCizgiGrafikCiz(doc, veriler, etiketler, x, y, w, h, renk) {
             if (veriler.length === 0) return;
             let maxV = Math.max(...veriler, 10);
