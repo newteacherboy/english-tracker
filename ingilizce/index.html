@@ -574,15 +574,11 @@
         }
 
         /* Mobil cihazlarda (ekran genişliği 768 pikselden küçükse) sol üstteki butonu KÜÇÜLTEREK sabit tut, gizleme */
-        @media (max-width: 768px) {
-    .portal-back-btn {
-        display: flex !important;
-        top: 6px;
-        left: 6px;
-        padding: 4px 8px;
-        font-size: 10px;
-    }
-}
+               @media (max-width: 1024px) {
+            .portal-back-btn {
+                display: none !important;
+            }
+        }
 
                 .seviye-harita-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -2418,7 +2414,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             setTimeout(() => { scrollAlani.scrollTop = scrollAlani.scrollHeight; }, 50);
         }
 
-        function adaSeviyeDetayiniAc(unite) {
+                function adaSeviyeDetayiniAc(unite) {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
             if (!user) return;
 
@@ -2439,14 +2435,57 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 return { sv, tamamlandi, kilitli };
             });
 
-            let ilkAcikSeviye = secenekler.find(s => !s.kilitli && !s.tamamlandi) || secenekler.find(s => !s.kilitli);
-            if (ilkAcikSeviye) {
-                seviyeKartOyunuBaslat(seviyeAktifSinif, unite, ilkAcikSeviye.sv);
-            } else {
-                alert('Bu adada henüz açık bir seviye yok.');
+            let acikOlanlar = secenekler.filter(s => !s.kilitli);
+
+            if (acikOlanlar.length === 1) {
+                seviyeKartOyunuBaslat(seviyeAktifSinif, unite, acikOlanlar[0].sv);
+                return;
             }
+
+            seviyeSecimEkraniniGoster(unite, secenekler);
         }
 
+        function seviyeSecimEkraniniGoster(unite, secenekler) {
+            let mevcutModal = document.getElementById('seviyeSecimModal');
+            if (mevcutModal) mevcutModal.remove();
+
+            let modal = document.createElement('div');
+            modal.id = 'seviyeSecimModal';
+            modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000000; padding:16px;";
+
+            let kutu = document.createElement('div');
+            kutu.style.cssText = "background:#ffffff; border-radius:14px; padding:18px; width:100%; max-width:320px; max-height:80vh; overflow-y:auto;";
+
+            let baslik = document.createElement('div');
+            baslik.style.cssText = "font-weight:900; font-size:14px; color:#0c4a6e; margin-bottom:12px; text-align:center;";
+            baslik.innerText = `🏝️ Ada ${unite} · Seviye Seç`;
+            kutu.appendChild(baslik);
+
+            secenekler.forEach(s => {
+                let satir = document.createElement('button');
+                let renk = s.tamamlandi ? '#22c55e' : (s.kilitli ? '#e2e8f0' : '#f59e0b');
+                let yaziRenk = s.kilitli ? '#94a3b8' : '#ffffff';
+                let etiket = s.tamamlandi ? `Seviye ${s.sv}  ✓  (tekrar bak)` : (s.kilitli ? `Seviye ${s.sv}  🔒` : `Seviye ${s.sv}  ★  (devam et)`);
+                satir.innerText = etiket;
+                satir.style.cssText = `width:100%; text-align:left; background:${renk}; color:${yaziRenk}; border:none; border-radius:10px; padding:12px 14px; font-weight:700; font-size:12.5px; margin-bottom:8px; cursor:${s.kilitli ? 'not-allowed' : 'pointer'};`;
+                if (!s.kilitli) {
+                    satir.onclick = function () {
+                        modal.remove();
+                        seviyeKartOyunuBaslat(seviyeAktifSinif, unite, s.sv);
+                    };
+                }
+                kutu.appendChild(satir);
+            });
+
+            let kapatBtn = document.createElement('button');
+            kapatBtn.innerText = "Kapat";
+            kapatBtn.style.cssText = "width:100%; background:#f1f5f9; color:#64748b; border:none; border-radius:10px; padding:10px; font-weight:700; font-size:12.5px; margin-top:4px; cursor:pointer;";
+            kapatBtn.onclick = function () { modal.remove(); };
+            kutu.appendChild(kapatBtn);
+
+            modal.appendChild(kutu);
+            document.body.appendChild(modal);
+        }
         
 
         function seviyeKartOyunuBaslat(sinif, unite, seviye) {
