@@ -27,9 +27,12 @@
         }
 
         /* Sol Üst Küçük Ana Portala Dön Butonu */
-        .portal-back-btn {
-    position: absolute; top: 10px; left: 10px; background: #ffffff; color: #2f855a;
-    border: 1px solid #bbf7d0; padding: 5px 10px; border-radius: 6px; font-size: 11px;
+        /* Mobil cihazlarda (ekran genişliği 768 pikselden küçükse) sol üstteki ana portala dön butonunu tamamen kaldır */
+@media (max-width: 768px) {
+    .portal-back-btn {
+        display: none !important;
+    }
+}
     font-weight: 700; text-decoration: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     z-index: 99999; display: flex; align-items: center; gap: 4px; transition: all 0.2s;
 }
