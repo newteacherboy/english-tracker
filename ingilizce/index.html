@@ -680,10 +680,37 @@
         .ogretmen-cevap-satir button {
             background: #2563eb; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer;
         }
+
+        .oturum-yukleme-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #f7f5f0; z-index: 999999;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .oturum-yukleme-baykus {
+            font-size: 64px; animation: baykusSallan 1.4s ease-in-out infinite;
+        }
+        @keyframes baykusSallan {
+            0%, 100% { transform: rotate(-8deg); }
+            50% { transform: rotate(8deg); }
+        }
+        .oturum-yukleme-yazi {
+            margin-top: 14px; font-size: 13px; font-weight: 700; color: #2f855a;
+        }
+        .oturum-yukleme-nokta::after {
+            content: '...'; animation: noktaAnim 1.2s steps(4, end) infinite;
+        }
+        @keyframes noktaAnim {
+            0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; }
+        }
         
     </style>
 </head>
 <body>
+
+        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay">
+        <div class="oturum-yukleme-baykus">🦉</div>
+        <div class="oturum-yukleme-yazi">Oturumun yükleniyor<span class="oturum-yukleme-nokta"></span></div>
+    </div>
 
     <!-- Sol Üst Küçük Ana Portala Dön Butonu -->
     <a href="https://panel.ogretmencocuk.com" class="portal-back-btn">← Ana Portala Dön</a>
@@ -1771,9 +1798,9 @@
             const kayitliSure = sessionStorage.getItem("toplamSaniye");
             const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
 
-            if (otomatikGirisYapilacak) {
+                        if (otomatikGirisYapilacak) {
                 document.getElementById('login-container').style.display = 'none';
-                girisSubtitle.innerText = "Oturumunuz yükleniyor...";
+                document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
             }
 
             try {
@@ -1785,9 +1812,10 @@
                 globalDataCache = [];
             }
 
-            if (otomatikGirisYapilacak) {
+                       if (otomatikGirisYapilacak) {
                 aktifOgrenciAdi = kayitliOgrenci;
                 toplamSaniye = parseInt(kayitliSure);
+                document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
@@ -3628,17 +3656,37 @@
         }
 
 
-        async function girisYap(event) {
+                async function girisYap(event) {
             event.preventDefault();
-                        if (!globalDataCache || globalDataCache.length === 0) {
-                document.getElementById('mesaj').className = "error";
-                document.getElementById('mesaj').innerText = "Veriler henüz yükleniyor, lütfen birkaç saniye bekleyip tekrar deneyin.";
-                return;
-            }
             const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
             const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
             let m = document.getElementById('mesaj');
+
             if(!ogr || !sifre) { m.className="error"; m.innerText="Tüm alanları doldurun."; return; }
+
+            if (!globalDataCache || globalDataCache.length === 0) {
+                m.className = "success";
+                m.innerText = "Giriş başarılı! Veriler yükleniyor...";
+                aktifOgrenciAdi = ogr;
+                toplamSaniye = 0;
+                sessionStorage.setItem("oturumAcik", "true");
+                sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi);
+                sessionStorage.setItem("toplamSaniye", toplamSaniye);
+                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+                document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
+                document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
+                document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
+
+                setTimeout(() => {
+                    document.getElementById('login-container').style.display='none';
+                    document.getElementById('panel-alani').style.display='block';
+                    baslatSayac();
+                    arkaPlanVeriYenilemeBaslat();
+                    girisSonrasiVeriBekle(ogr, sifre);
+                }, 500);
+                return;
+            }
+
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
             if(user) {
                 m.className="success"; m.innerText="Giriş başarılı!";
@@ -3649,41 +3697,30 @@
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
                 document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
                 veriArayuzeIsle(user);
-                                setTimeout(() => { document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac(); arkaPlanVeriYenilemeBaslat(); }, 800);
+                setTimeout(() => { document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac(); arkaPlanVeriYenilemeBaslat(); }, 800);
             } else {
                 m.className="error"; m.innerText="Hatalı kullanıcı adı veya şifre!";
             }
         }
 
-               async function bilgileriSunucudanGuncelle(ogr) {
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase());
-            if(user) { toplamSaniye = Number(user.toplamsure)||toplamSaniye; sessionStorage.setItem("toplamSaniye", toplamSaniye); veriArayuzeIsle(user); }
-            document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac();
-            arkaPlanVeriYenilemeBaslat();
-        }
-
-               function veriArayuzeIsle(user) {
-            teacherPaneliKontrolEt();
-            document.getElementById('valGenelPuan').innerText = user.genelOrtalama || 0;
-            document.getElementById('valEtkinlikBasarisi').innerText = user.etkinlikBasarisi || 0;
-            document.getElementById('valSonDeneme').innerText = user.sonDeneme || 0;
-            document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(user.genelOrtalama||0);
-            kitapTakibiniIsle(user.kitapBilgi);
-            grafikliCiz(user.grafikGecmis, user, user.denemeGecmis);
-            dersRaporlariniOlustur(user.arsivListesi, user.kitapBilgi);
-            dersTakviminiIsle(user.dersler);
-            let res = rozetleriIsle(user.rozetListesi, user.guncelGenelPuan||user.genelOrtalama);
-            if(user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
-            if(user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-                        if(user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-            if(user.cekilisLiderlik) { cekilisGlobalLiderlik = user.cekilisLiderlik; cekilisLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-            planKartiniGuncelle(user);
+        async function girisSonrasiVeriBekle(ogr, sifre) {
+            let denemeSayisi = 0;
+            while ((!globalDataCache || globalDataCache.length === 0) && denemeSayisi < 20) {
+                await new Promise(r => setTimeout(r, 500));
+                denemeSayisi++;
+            }
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
+            if (user) {
+                toplamSaniye = Number(user.toplamsure) || toplamSaniye;
+                sessionStorage.setItem("toplamSaniye", toplamSaniye);
+                veriArayuzeIsle(user);
+            }
         }
 
         function baslatSayac() {
                     let arkaPlanVeriYenilemePolling = null;
 
-        function arkaPlanVeriYenilemeBaslat() {
+                function arkaPlanVeriYenilemeBaslat() {
             if (arkaPlanVeriYenilemePolling) clearInterval(arkaPlanVeriYenilemePolling);
             arkaPlanVeriYenilemePolling = setInterval(async () => {
                 if (!aktifOgrenciAdi) return;
@@ -3691,12 +3728,17 @@
                     let res = await fetch(apiURL);
                     let yeniVeri = await res.json();
                     globalDataCache = yeniVeri;
-                    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-                    if (user) veriArayuzeIsle(user);
+                    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+                    if (user) {
+                        veriArayuzeIsle(user);
+                        console.log("Arka plan verisi güncellendi:", new Date().toLocaleTimeString());
+                    } else {
+                        console.warn("Arka plan yenileme: kullanıcı bulunamadı ->", aktifOgrenciAdi);
+                    }
                 } catch (err) {
                     console.error("Arka plan veri yenileme hatası:", err);
                 }
-            }, 30000);
+            }, 60000);
         }
             guncelleArayuz();
             timerInterval = setInterval(() => {
