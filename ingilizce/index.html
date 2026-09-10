@@ -2541,6 +2541,37 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             setTimeout(() => kartSesOku(), 400);
         }
 
+                let sabitSesKaydi = null;
+        let sesListesiHazirMi = false;
+
+        function sesListesiniHazirla() {
+            let sesler = window.speechSynthesis.getVoices();
+            if (sesler.length === 0) return;
+
+            // Öncelik sırasına göre tercih edilen ses isimleri (bulunanı kullan)
+            let tercihSirasi = [
+                "Google US English",
+                "Google UK English Female",
+                "Samantha",
+                "Microsoft Aria Online (Natural) - English (United States)",
+                "Microsoft Zira Desktop - English (United States)"
+            ];
+
+            for (let tercih of tercihSirasi) {
+                let bulunan = sesler.find(s => s.name === tercih);
+                if (bulunan) { sabitSesKaydi = bulunan; sesListesiHazirMi = true; return; }
+            }
+
+            // Hiçbiri yoksa, İngilizce (en-US veya en-) olan ilk sesi kullan
+            let enUygun = sesler.find(s => s.lang && s.lang.toLowerCase().startsWith('en'));
+            if (enUygun) { sabitSesKaydi = enUygun; sesListesiHazirMi = true; }
+        }
+
+        if ('speechSynthesis' in window) {
+            sesListesiniHazirla();
+            window.speechSynthesis.onvoiceschanged = sesListesiniHazirla;
+        }
+
         function kartSesOku() {
             let kart = kartAktifListe[kartAktifIndex];
             if (!kart) return;
@@ -2551,6 +2582,10 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 let konusma = new SpeechSynthesisUtterance(metin);
                 konusma.lang = 'en-US';
                 konusma.rate = 0.9;
+
+                if (!sesListesiHazirMi) sesListesiniHazirla();
+                if (sabitSesKaydi) konusma.voice = sabitSesKaydi;
+
                 window.speechSynthesis.speak(konusma);
             }
 
