@@ -3742,38 +3742,28 @@ localStorage.setItem("toplamSaniye", toplamSaniye);
         }
 
         function baslatSayac() {
-    guncelleArayuz();
-    
-    // Her saniye süreyi artır ve 30 saniyede bir sunucuya kaydet
-    timerInterval = setInterval(() => {
-        toplamSaniye++; 
-        sessionStorage.setItem("toplamSaniye", toplamSaniye); 
-        guncelleArayuz();
-        if(toplamSaniye % 30 === 0) googleSheetseKaydet();
-    }, 1000);
+                    let arkaPlanVeriYenilemePolling = null;
 
-    // 60 saniyede bir arka planda sekme yenilemeden verileri tazeleyen fonksiyon
-    arkaPlanVeriYenilemeBaslat();
-}
-
-function arkaPlanVeriYenilemeBaslat() {
-    if (window.arkaPlanPollingInstance) clearInterval(window.arkaPlanPollingInstance);
-    window.arkaPlanPollingInstance = setInterval(async () => {
-        if (!aktifOgrenciAdi) return;
-        try {
-            let res = await fetch(apiURL);
-            let yeniVeri = await res.json();
-            globalDataCache = yeniVeri;
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
-            if (user) {
-                veriArayuzeIsle(user);
-                console.log("Arka plan verisi güncellendi:", new Date().toLocaleTimeString());
-            }
-        } catch (err) {
-            console.error("Arka plan veri yenileme hatası:", err);
+                function arkaPlanVeriYenilemeBaslat() {
+            if (arkaPlanVeriYenilemePolling) clearInterval(arkaPlanVeriYenilemePolling);
+            arkaPlanVeriYenilemePolling = setInterval(async () => {
+                if (!aktifOgrenciAdi) return;
+                try {
+                    let res = await fetch(apiURL);
+                    let yeniVeri = await res.json();
+                    globalDataCache = yeniVeri;
+                    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+                    if (user) {
+                        veriArayuzeIsle(user);
+                        console.log("Arka plan verisi güncellendi:", new Date().toLocaleTimeString());
+                    } else {
+                        console.warn("Arka plan yenileme: kullanıcı bulunamadı ->", aktifOgrenciAdi);
+                    }
+                } catch (err) {
+                    console.error("Arka plan veri yenileme hatası:", err);
+                }
+            }, 60000);
         }
-    }, 30000); // 60 saniye
-}
             guncelleArayuz();
             timerInterval = setInterval(() => {
                 toplamSaniye++; sessionStorage.setItem("toplamSaniye", toplamSaniye); guncelleArayuz();
