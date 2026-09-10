@@ -3670,7 +3670,7 @@
         }
 
 
-                async function girisYap(event) {
+               async function girisYap(event) {
             event.preventDefault();
             const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
             const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
@@ -3678,42 +3678,52 @@
 
             if(!ogr || !sifre) { m.className="error"; m.innerText="Tüm alanları doldurun."; return; }
 
-            if (!globalDataCache || globalDataCache.length === 0) {
-                m.className = "success";
-                m.innerText = "Giriş başarılı! Veriler yükleniyor...";
-                aktifOgrenciAdi = ogr;
-                toplamSaniye = 0;
-                sessionStorage.setItem("oturumAcik", "true");
-                sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi);
-                sessionStorage.setItem("toplamSaniye", toplamSaniye);
-                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-                document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
-                document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
-                document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
+            // Giriş tıklandığı an baykuş animasyonunu göster
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
 
-                setTimeout(() => {
-                    document.getElementById('login-container').style.display='none';
-                    document.getElementById('panel-alani').style.display='block';
-                    baslatSayac();
-                    arkaPlanVeriYenilemeBaslat();
-                    girisSonrasiVeriBekle(ogr, sifre);
-                }, 500);
-                return;
+            // Eğer global veri henüz gelmediyse biraz bekle
+            let denemeSayisi = 0;
+            while ((!globalDataCache || globalDataCache.length === 0) && denemeSayisi < 20) {
+                await new Promise(r => setTimeout(r, 300));
+                denemeSayisi++;
             }
 
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
-            if(user) {
-                m.className="success"; m.innerText="Giriş başarılı!";
-                aktifOgrenciAdi = ogr; toplamSaniye = Number(user.toplamsure)||0;
-                sessionStorage.setItem("oturumAcik", "true"); sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi); sessionStorage.setItem("toplamSaniye", toplamSaniye);
+            
+            // Eğer özel "teacher" veya veri tabanında eşleşen bir kullanıcı varsa
+            if(user || ogr.toLowerCase() === "teacher") {
+                m.className="success"; 
+                m.innerText="Giriş başarılı!";
+                aktifOgrenciAdi = ogr; 
+                toplamSaniye = user ? (Number(user.toplamsure) || 0) : 0;
+                
+                sessionStorage.setItem("oturumAcik", "true"); 
+                sessionStorage.setItem("aktifOgrenci", aktifOgrenciAdi); 
+                sessionStorage.setItem("toplamSaniye", toplamSaniye);
+
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
                 document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
                 document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
-                veriArayuzeIsle(user);
-                setTimeout(() => { document.getElementById('login-container').style.display='none'; document.getElementById('panel-alani').style.display='block'; baslatSayac(); arkaPlanVeriYenilemeBaslat(); }, 800);
+
+                if (user) {
+                    veriArayuzeIsle(user);
+                }
+
+                // Kısa bir gecikme ekleyerek animasyonun akıcı görünmesini sağla ve paneli aç
+                setTimeout(() => {
+                    document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+                    document.getElementById('panel-alani').style.display = 'block';
+                    baslatSayac(); 
+                    arkaPlanVeriYenilemeBaslat();
+                }, 600);
             } else {
-                m.className="error"; m.innerText="Hatalı kullanıcı adı veya şifre!";
+                // Hatalı giriş durumunda tekrar giriş ekranına dön
+                document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+                document.getElementById('login-container').style.display = 'block';
+                m.className="error"; 
+                m.innerText="Hatalı kullanıcı adı veya şifre!";
             }
         }
 
@@ -4364,6 +4374,21 @@
             }
         }
 
+function veriArayuzeIsle(user) {
+        if (!user) return;
+        document.getElementById('valGenelPuan').innerText = user.genelPuan || 0;
+        document.getElementById('valEtkinlikBasarisi').innerText = user.etkinlikBasarisi || 0;
+        document.getElementById('valSonDeneme').innerText = user.sonDeneme || 0;
+        document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(user.genelPuan || 0);
+        
+        kitapTakibiniIsle(user.kitapBilgi || {});
+        dersRaporlariniOlustur(user.arsivListesi || [], user.kitapBilgi || {});
+        grafikliCiz(user.gelisimSerisi || [], user, user.denemeSerisi || []);
+        rozetleriIsle(user.rozetListesi || [], user.genelPuan || 0);
+        planKartiniGuncelle(user);
+        teacherPaneliKontrolEt();
+    }
+        
         function cikisYap() { googleSheetseKaydet(); clearInterval(timerInterval); sessionStorage.clear(); window.location.reload(); }
     </script>
 </body>
