@@ -1248,15 +1248,7 @@
                     <input type="text" id="oyuncuIsmiInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
                 </div>
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Sınıf Seçiniz:</label>
-                <div class="sinif-secim-grid">
-                    <button class="sinif-btn active" onclick="sinifSec(2, this)">2. Sınıf</button>
-                    <button class="sinif-btn" onclick="sinifSec(3, this)">3. Sınıf</button>
-                    <button class="sinif-btn" onclick="sinifSec(4, this)">4. Sınıf</button>
-                    <button class="sinif-btn" onclick="sinifSec(5, this)">5. Sınıf</button>
-                    <button class="sinif-btn" onclick="sinifSec(6, this)">6. Sınıf</button>
-                    <button class="sinif-btn" onclick="sinifSec(7, this)">7. Sınıf</button>
-                    <button class="sinif-btn" onclick="sinifSec(8, this)">8. Sınıf</button>
-                </div>
+                                <div class="sinif-secim-grid" id="klasikSinifSecimGrid"></div>
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Ünite Seçiniz:</label>
                 <div class="unite-secim-box" id="uniteSecimKonteyner"></div>
                 <button class="btn-giris" onclick="yarismayiBaslat()" style="background: #2563eb; margin-top: 3px;">🚀 Yarışmayı Başlat</button>
@@ -1310,15 +1302,7 @@
                     <input type="text" id="jeopIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
                 </div>
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Sınıf Seçiniz:</label>
-                <div class="sinif-secim-grid">
-                    <button class="sinif-btn active" onclick="jeopSinifSec(2, this)">2. Sınıf</button>
-                    <button class="sinif-btn" onclick="jeopSinifSec(3, this)">3. Sınıf</button>
-                    <button class="sinif-btn" onclick="jeopSinifSec(4, this)">4. Sınıf</button>
-                    <button class="sinif-btn" onclick="jeopSinifSec(5, this)">5. Sınıf</button>
-                    <button class="sinif-btn" onclick="jeopSinifSec(6, this)">6. Sınıf</button>
-                    <button class="sinif-btn" onclick="jeopSinifSec(7, this)">7. Sınıf</button>
-                    <button class="sinif-btn" onclick="jeopSinifSec(8, this)">8. Sınıf</button>
-                </div>
+                                <div class="sinif-secim-grid" id="jeopSinifSecimGrid"></div>
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ünite Seçiniz:</label>
                 <div class="unite-secim-box" id="jeopUniteKonteyner"></div>
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Soru Sayısı (10 - 50):</label>
@@ -1387,15 +1371,7 @@
                     <input type="text" id="cekilisIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
                 </div>
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Sınıf Seçiniz:</label>
-                <div class="sinif-secim-grid">
-                    <button class="sinif-btn active" onclick="cekilisSinifSec(2, this)">2. Sınıf</button>
-                    <button class="sinif-btn" onclick="cekilisSinifSec(3, this)">3. Sınıf</button>
-                    <button class="sinif-btn" onclick="cekilisSinifSec(4, this)">4. Sınıf</button>
-                    <button class="sinif-btn" onclick="cekilisSinifSec(5, this)">5. Sınıf</button>
-                    <button class="sinif-btn" onclick="cekilisSinifSec(6, this)">6. Sınıf</button>
-                    <button class="sinif-btn" onclick="cekilisSinifSec(7, this)">7. Sınıf</button>
-                    <button class="sinif-btn" onclick="cekilisSinifSec(8, this)">8. Sınıf</button>
-                </div>
+                               <div class="sinif-secim-grid" id="cekilisSinifSecimGrid"></div>
                 <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ünite Seçiniz (çoklu seçim yapılabilir):</label>
                 <div class="unite-secim-box" id="cekilisUniteKonteyner"></div>
                 <button class="btn-giris" onclick="cekilisOyunuBaslat()" style="background: #ea580c; margin-top: 3px;">🎲 Çekilişi Başlat</button>
@@ -2873,11 +2849,15 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }
         }
 
-        function oyunModaliniAc() { 
+                function oyunModaliniAc() { 
             document.getElementById('gameModalOverlay').style.display = 'flex'; 
             document.getElementById('oyunAyarBolumu').style.display = 'block';
             document.getElementById('oyunEkranIci').style.display = 'none';
             document.getElementById('oyunSonucBolumu').style.display = 'none';
+            sinifGridOlustur('klasikSinifSecimGrid', sinifSec, secilenSinif);
+            let ilkSinif = mevcutSiniflariGetir()[0];
+            secilenSinif = ilkSinif;
+            uniteSecimleriniOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
         }
         
         function oyunModaliniKapat() { 
@@ -3076,13 +3056,16 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         let cekilisGlobalLiderlik = [];
         let cekilisKullanilmisKelimeler = [];
 
-        function jeopardyModaliniAc() {
+                function jeopardyModaliniAc() {
             document.getElementById('jeopardyModalOverlay').style.display = 'flex';
             document.getElementById('jeopAyarBolumu').style.display = 'block';
             document.getElementById('jeopOyunAlani').style.display = 'none';
             document.getElementById('jeopSoruKutusu').style.display = 'none';
             document.getElementById('jeopSonucBolumu').style.display = 'none';
-            jeopUniteSecimOlustur(2, 8);
+            sinifGridOlustur('jeopSinifSecimGrid', jeopSinifSec, jeopSecilenSinif);
+            let ilkSinif = mevcutSiniflariGetir()[0];
+            jeopSecilenSinif = ilkSinif;
+            jeopUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
         }
 
         function jeopardyModaliniKapat() {
@@ -3278,12 +3261,15 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
 
 
         // --- ZAR ÇEKİLİŞİ KELİME OYUNU MİMARİSİ ---
-        function cekilisModaliniAc() {
+               function cekilisModaliniAc() {
             document.getElementById('cekilisModalOverlay').style.display = 'flex';
             document.getElementById('cekilisAyarBolumu').style.display = 'block';
             document.getElementById('cekilisOyunAlani').style.display = 'none';
             document.getElementById('cekilisSonucBolumu').style.display = 'none';
-            cekilisUniteSecimOlustur(2, 8);
+            sinifGridOlustur('cekilisSinifSecimGrid', cekilisSinifSec, cekilisSecilenSinif);
+            let ilkSinif = mevcutSiniflariGetir()[0];
+            cekilisSecilenSinif = ilkSinif;
+            cekilisUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
         }
 
         function cekilisModaliniKapat() {
@@ -4456,6 +4442,25 @@ function turkceyiDuzelt(str) {
             }
         }
 
+        function mevcutSiniflariGetir() {
+            let siniflar = [...new Set(masterKelimeHavuzu.map(k => k.sinif))].sort((a, b) => a - b);
+            return siniflar.length > 0 ? siniflar : [1, 2, 3, 4, 5, 6, 7, 8];
+        }
+
+        function sinifGridOlustur(konteynerId, tiklamaFonksiyonu, aktifSinifDegiskeni) {
+            let kont = document.getElementById(konteynerId);
+            if (!kont) return;
+            kont.innerHTML = "";
+            let siniflar = mevcutSiniflariGetir();
+            siniflar.forEach((sinif, idx) => {
+                let btn = document.createElement('button');
+                btn.className = 'sinif-btn' + (sinif === aktifSinifDegiskeni || (idx === 0 && !siniflar.includes(aktifSinifDegiskeni)) ? ' active' : '');
+                btn.innerText = sinif + '. Sınıf';
+                btn.onclick = function () { tiklamaFonksiyonu(sinif, btn); };
+                kont.appendChild(btn);
+            });
+        }
+        
 function veriArayuzeIsle(user) {
     if (!user) return;
 
