@@ -345,6 +345,16 @@
         .activity-banner h3 { color: #1e40af; font-size: 14.5px; font-weight: 800; margin-bottom: 4px; }
         .activity-banner p { color: #3b82f6; font-size: 11.5px; margin-bottom: 12px; }
         .btn-oyun-ac {
+                    @keyframes aktiviteKartGir {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .activity-banner { animation: aktiviteKartGir 0.5s ease both; }
+        .activity-banner:nth-of-type(1) { animation-delay: 0s; }
+        .activity-banner:nth-of-type(2) { animation-delay: 0.1s; }
+        .activity-banner:nth-of-type(3) { animation-delay: 0.2s; }
+        .btn-oyun-ac { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .btn-oyun-ac:active { transform: scale(0.95); }
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white; border: none; padding: 10px 20px; border-radius: 20px;
             font-size: 13px; font-weight: 800; cursor: pointer;
@@ -408,6 +418,13 @@
         }
         .btn-sik:hover { border-color: #2563eb; background: #f0fdf4; }
         .btn-sik.yanlis-animasyon {
+                    .btn-sik.dogru-vurgula { animation: dogruNabiz 0.4s ease; }
+        @keyframes dogruNabiz {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); background: #dcfce7 !important; border-color: #22c55e !important; }
+            100% { transform: scale(1); }
+        }
+        .kelime-en { transition: transform 0.3s ease, opacity 0.3s ease; }
             background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important;
         }
         .btn-sik.dogru-animasyon {
@@ -418,7 +435,20 @@
             50% { transform: rotate(180deg) scale(1.15); }
             100% { transform: rotate(360deg) scale(1); }
         }
-        .zar-donuyor { animation: zarDonusu 0.15s linear infinite; }
+                .zar-donuyor {
+            animation: zarDonusu3D 0.4s linear infinite;
+        }
+        @keyframes zarDonusu3D {
+            0% { transform: rotateX(0deg) rotateY(0deg) scale(1); }
+            50% { transform: rotateX(180deg) rotateY(90deg) scale(1.2); }
+            100% { transform: rotateX(360deg) rotateY(180deg) scale(1); }
+        }
+
+                @keyframes zarZiplama {
+            0% { transform: scale(0.6); }
+            60% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
 
         .liderlik-tablosu-box { margin-top: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px; }
         .liderlik-title { font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 5px; text-align: center; }
@@ -2941,11 +2971,18 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         function sikSec(idx) {
             if(soruKilitli) return;
             let btn = document.getElementById('btnSik'+idx);
-            if(idx === mevcutDogruSikIndex) { 
+                       if(idx === mevcutDogruSikIndex) { 
                 oyunDogru++; 
-                document.getElementById('lblDogruSayisi').innerText = oyunDogru; 
-                aktifSoruIndex++; 
-                soruyuEkranaGetir(); 
+                document.getElementById('lblDogruSayisi').innerText = oyunDogru;
+                document.getElementById('btnSik'+idx).classList.add('dogru-vurgula');
+                document.getElementById('lblSoruKelime').style.transform = "translateX(30px)";
+                document.getElementById('lblSoruKelime').style.opacity = "0";
+                setTimeout(() => {
+                    aktifSoruIndex++; 
+                    soruyuEkranaGetir();
+                    document.getElementById('lblSoruKelime').style.transform = "translateX(0)";
+                    document.getElementById('lblSoruKelime').style.opacity = "1";
+                }, 300);
             } else {
                 soruKilitli = true; 
                 oyunYanlis++; 
@@ -3150,12 +3187,19 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
 
         function jeopBalonTiklandi(idx, balonElement) {
             if(balonElement.classList.contains('patlatildi')) return;
-            balonElement.classList.add('patlatildi');
-            balonElement.style.background = "#e2e8f0";
-            balonElement.style.borderColor = "#94a3b8";
-            balonElement.style.color = "#94a3b8";
-            balonElement.style.cursor = "not-allowed";
-            balonElement.innerHTML = "💥";
+                        balonElement.classList.add('patlatildi');
+            balonElement.style.transition = "transform 0.25s ease, opacity 0.25s ease";
+            balonElement.style.transform = "scale(1.4)";
+            balonElement.style.opacity = "0";
+            setTimeout(() => {
+                balonElement.style.transform = "scale(1)";
+                balonElement.style.opacity = "1";
+                balonElement.style.background = "#e2e8f0";
+                balonElement.style.borderColor = "#94a3b8";
+                balonElement.style.color = "#94a3b8";
+                balonElement.style.cursor = "not-allowed";
+                balonElement.innerHTML = "💥";
+            }, 220);
 
             jeopAktifSoru = jeopKelimeListesi[idx];
             
@@ -3352,6 +3396,9 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             zarBtn.disabled = true;
             zarYuz.classList.add('zar-donuyor');
             durum.innerText = "Zar atılıyor...";
+
+                                document.getElementById('cekilisZarYuz').style.animation = "zarZiplama 0.4s ease";
+                    setTimeout(() => { document.getElementById('cekilisZarYuz').style.animation = ""; }, 400);
 
             let zarEmojiler = ['⚀','⚁','⚂','⚃','⚄','⚅'];
             let sayac = 0;
