@@ -344,8 +344,7 @@
         .activity-banner { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .activity-banner h3 { color: #1e40af; font-size: 14.5px; font-weight: 800; margin-bottom: 4px; }
         .activity-banner p { color: #3b82f6; font-size: 11.5px; margin-bottom: 12px; }
-        .btn-oyun-ac {
-                    @keyframes aktiviteKartGir {
+             @keyframes aktiviteKartGir {
             from { opacity: 0; transform: translateY(14px); }
             to { opacity: 1; transform: translateY(0); }
         }
@@ -353,14 +352,15 @@
         .activity-banner:nth-of-type(1) { animation-delay: 0s; }
         .activity-banner:nth-of-type(2) { animation-delay: 0.1s; }
         .activity-banner:nth-of-type(3) { animation-delay: 0.2s; }
-        .btn-oyun-ac { transition: transform 0.15s ease, box-shadow 0.15s ease; }
-        .btn-oyun-ac:active { transform: scale(0.95); }
+        .btn-oyun-ac {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white; border: none; padding: 10px 20px; border-radius: 20px;
             font-size: 13px; font-weight: 800; cursor: pointer;
             box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
-            transition: all 0.3s; display: inline-flex; align-items: center; gap: 6px;
+            transition: all 0.3s, transform 0.15s ease, box-shadow 0.15s ease; display: inline-flex; align-items: center; gap: 6px;
         }
+        .btn-oyun-ac:active { transform: scale(0.95); }
+
         .btn-oyun-ac:hover { transform: scale(1.03); background: linear-gradient(135deg, #d97706 100%, #b45309 100%); }
 
         .game-modal-overlay {
@@ -417,16 +417,17 @@
             transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
         .btn-sik:hover { border-color: #2563eb; background: #f0fdf4; }
-        .btn-sik.yanlis-animasyon {
-                    .btn-sik.dogru-vurgula { animation: dogruNabiz 0.4s ease; }
+              .btn-sik.dogru-vurgula { animation: dogruNabiz 0.4s ease; }
         @keyframes dogruNabiz {
             0% { transform: scale(1); }
             50% { transform: scale(1.08); background: #dcfce7 !important; border-color: #22c55e !important; }
             100% { transform: scale(1); }
         }
         .kelime-en { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .btn-sik.yanlis-animasyon {
             background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important;
         }
+
         .btn-sik.dogru-animasyon {
             background-color: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important;
         }
