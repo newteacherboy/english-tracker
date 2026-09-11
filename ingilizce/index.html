@@ -729,6 +729,38 @@
         @keyframes noktaAnim {
             0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; }
         }
+
+                .bosluk-harf-kutu {
+            width: 34px; height: 38px; border-radius: 6px; display: flex; align-items: center;
+            justify-content: center; font-weight: 900; font-size: 17px; flex-shrink: 0;
+        }
+        .bosluk-harf-sabit { background: #fce7f3; border: 1.5px solid #f472b6; color: #831843; }
+        .bosluk-harf-input {
+            background: #ffffff; border: 2px solid #ec4899; color: #be185d; text-align: center;
+            text-transform: uppercase; outline: none; animation: boslukPulseGlow 1.8s ease-in-out infinite;
+        }
+        @keyframes boslukPulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(236,72,153,0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(236,72,153,0.15); }
+        }
+        .bosluk-harf-dogru { background: #dcfce7 !important; border-color: #4ade80 !important; color: #166534 !important; animation: none !important; }
+        .bosluk-harf-yanlis { background: #fee2e2 !important; border-color: #f87171 !important; color: #7f1d1d !important; animation: boslukShakeX 0.4s ease !important; }
+        @keyframes boslukShakeX {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        .bosluk-kelime-satir { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .bosluk-numara-rozet {
+            width: 26px; height: 26px; border-radius: 50%; color: #fff; display: flex;
+            align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink: 0;
+        }
+        .bosluk-ipucu { font-size: 11px; color: #9d174d; font-weight: 600; margin-left: 4px; }
+        .bosluk-onay-btn {
+            background: #be185d; color: #fff; border: none; width: 30px; height: 38px; border-radius: 6px;
+            font-weight: 900; cursor: pointer; font-size: 14px; margin-left: 4px;
+        }
+        .bosluk-onay-btn:hover { background: #9d174d; }
         
     </style>
 </head>
@@ -1192,6 +1224,7 @@
                     <button class="btn-oyun-ac" onclick="oyunModaliniAc()">🚀 Klasik Kelime Yarışması</button>
                     <button class="btn-oyun-ac" onclick="jeopardyModaliniAc()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);">🎈 Jeopardy Kelime Balonları</button>
                     <button class="btn-oyun-ac" onclick="cekilisModaliniAc()" style="background: linear-gradient(135deg, #f97316 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);">🎲 Zar Çekilişi</button>
+                                        <button class="btn-oyun-ac" onclick="boslukModaliniAc()" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);">✏️ Boşluk Doldurma</button>
                 </div>
             </div>
 
@@ -1416,6 +1449,59 @@
                 <div class="liderlik-tablosu-box">
                     <div class="liderlik-title" style="color: #c2410c;">📊 Zar Çekilişi Liderlik Tablosu (Top 5)</div>
                     <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="cekilisLiderlikGovde"></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- BOŞLUK DOLDURMA OYUNU MODALI -->
+    <div class="game-modal-overlay" id="boslukModalOverlay">
+        <div class="game-modal-content" style="max-width: 480px;">
+            <button class="game-close-btn" onclick="boslukModaliniKapat()">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #be185d;">✏️ Boşluk Müziği</span>
+                <button id="boslukMuzikBtn" onclick="boslukMuzikToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
+            </div>
+            <audio id="boslukMuzigi" src="muzik.mp3" preload="auto" loop></audio>
+
+            <div id="boslukAyarBolumu">
+                <div class="game-title" style="color: #be185d;">✏️ Complete the Blanks</div>
+                <div class="game-subtitle">Boşlukları doldur, kelimeleri tamamla, puan kazan!</div>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <input type="text" id="boslukIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Sınıf Seçiniz:</label>
+                <div class="sinif-secim-grid" id="boslukSinifSecimGrid"></div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ünite Seçiniz (çoklu seçim yapılabilir):</label>
+                <div class="unite-secim-box" id="boslukUniteKonteyner"></div>
+                <button class="btn-giris" onclick="boslukOyunuBaslat()" style="background: #be185d; margin-top: 3px;">✏️ Oyunu Başlat</button>
+            </div>
+
+            <div id="boslukOyunAlani" style="display: none;">
+                <div class="oyun-ust-bilgi" style="background: #fdf2f8; color: #831843;">
+                    <span id="boslukTamamlananSayac">0 / 8 tamamlandı</span>
+                    <span id="boslukKronometre" style="color: #be185d;">⏱️ 00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
+                    <span style="color: #be185d;">⭐ Puan: <span id="boslukPuanGosterge">0</span></span>
+                    <span style="color: #16a34a;">✅ Doğru: <span id="boslukDogruSayisi">0</span></span>
+                    <span style="color: #dc2626;">❌ Yanlış: <span id="boslukYanlisSayisi">0</span></span>
+                </div>
+
+                <div style="background: #fdfaf7; border: 1.5px solid #f9a8d4; border-radius: 14px; padding: 18px 14px; max-height: 340px; overflow-y: auto;" id="boslukKelimeListesiAlani"></div>
+            </div>
+
+            <div id="boslukSonucBolumu" style="display: none; text-align: center;">
+                <div style="font-size: 26px; margin-bottom: 3px;">✏️</div>
+                <h3 style="color: #be185d; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Tebrikler! Tur Tamamlandı</h3>
+                <div style="display: flex; justify-content: center; gap: 12px; background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
+                    <span style="color: #be185d;">Toplam Skor: <span id="boslukSonucPuan">0</span> Puan</span>
+                    <span style="color: #475569;">Süre: <span id="boslukSonucSure">00:00</span></span>
+                </div>
+                <button class="btn-giris" onclick="boslukModaliniAc()" style="background: #be185d; margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
+                <div class="liderlik-tablosu-box">
+                    <div class="liderlik-title" style="color: #9d174d;">📊 Boşluk Doldurma Liderlik Tablosu (Top 5)</div>
+                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="boslukLiderlikGovde"></tbody></table>
                 </div>
             </div>
         </div>
@@ -2655,7 +2741,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             btnElement.classList.add('active');
 
             // Farklı bir sekmeye geçilince açık olan tüm oyun müziklerini durdur
-            ['oyunMuzigi', 'jeopardyMuzigi', 'cekilisMuzigi'].forEach(function(id) {
+                        ['oyunMuzigi', 'jeopardyMuzigi', 'cekilisMuzigi', 'boslukMuzigi'].forEach(function(id) {
                 let m = document.getElementById(id);
                 if (m) { m.pause(); m.currentTime = 0; }
             });
@@ -3058,6 +3144,18 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         let cekilisCevapKilitli = false;
         let cekilisGlobalLiderlik = [];
         let cekilisKullanilmisKelimeler = [];
+        
+                // --- BOŞLUK DOLDURMA OYUNU DEĞİŞKENLERİ ---
+        let boslukSecilenSinif = 2;
+        let boslukSecilenUniteler = [1];
+        let boslukKelimeListesi = [];
+        let boslukTamamlananSayisi = 0;
+        let boslukPuan = 0;
+        let boslukDogru = 0;
+        let boslukYanlis = 0;
+        let boslukSaniye = 0;
+        let boslukTimer = null;
+        let boslukGlobalLiderlik = [];
 
                 function jeopardyModaliniAc() {
             document.getElementById('jeopardyModalOverlay').style.display = 'flex';
@@ -3525,6 +3623,248 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             tbody.innerHTML = "";
             top5.forEach((it, idx) => {
                 tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#ea580c;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
+            });
+        }
+
+        
+        // --- BOŞLUK DOLDURMA OYUNU MİMARİSİ ---
+        function boslukModaliniAc() {
+            document.getElementById('boslukModalOverlay').style.display = 'flex';
+            document.getElementById('boslukAyarBolumu').style.display = 'block';
+            document.getElementById('boslukOyunAlani').style.display = 'none';
+            document.getElementById('boslukSonucBolumu').style.display = 'none';
+            sinifGridOlustur('boslukSinifSecimGrid', boslukSinifSec, boslukSecilenSinif);
+            let ilkSinif = mevcutBoslukSiniflariGetir()[0];
+            boslukSecilenSinif = ilkSinif;
+            boslukUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
+        }
+
+        function boslukModaliniKapat() {
+            document.getElementById('boslukModalOverlay').style.display = 'none';
+            if(boslukTimer) clearInterval(boslukTimer);
+            let m = document.getElementById('boslukMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+        }
+
+        function boslukMuzikToggle() {
+            let m = document.getElementById('boslukMuzigi');
+            let b = document.getElementById('boslukMuzikBtn');
+            if(!m || !b) return;
+            if(m.muted) { m.muted = false; b.innerText = "🔊 Müzik: Açık"; }
+            else { m.muted = true; b.innerText = "🔇 Müzik: Sessiz"; }
+        }
+
+        function mevcutBoslukSiniflariGetir() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            if (!user || !user.boslukKelimeleri) return [1,2,3,4,5,6,7,8];
+            let siniflar = [...new Set(user.boslukKelimeleri.map(k => k.sinif))].sort((a,b) => a-b);
+            return siniflar.length > 0 ? siniflar : [1,2,3,4,5,6,7,8];
+        }
+
+        function boslukSinifSec(n, el) {
+            boslukSecilenSinif = n;
+            document.querySelectorAll('#boslukAyarBolumu .sinif-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            boslukUniteSecimOlustur(n, (n===2||n===5)?8:10);
+        }
+
+        function boslukUniteSecimOlustur(n, count) {
+            let kont = document.getElementById('boslukUniteKonteyner');
+            if(!kont) return;
+            kont.innerHTML = "";
+            boslukSecilenUniteler = [1];
+            for(let u=1; u<=count; u++) {
+                let chip = document.createElement('div');
+                chip.className = `unite-chip ${u===1?'selected':''}`;
+                chip.innerText = `${u}.Ü`;
+                chip.onclick = function() {
+                    if(boslukSecilenUniteler.includes(u)) {
+                        if(boslukSecilenUniteler.length > 1) {
+                            boslukSecilenUniteler = boslukSecilenUniteler.filter(i => i !== u);
+                            chip.classList.remove('selected');
+                        }
+                    } else {
+                        boslukSecilenUniteler.push(u);
+                        chip.classList.add('selected');
+                    }
+                };
+                kont.appendChild(chip);
+            }
+        }
+
+        function boslukOyunuBaslat() {
+            let isim = document.getElementById('boslukIsimInput').value.trim();
+            if(!isim) { alert("Lütfen adınızı soyadınızı giriniz!"); return; }
+
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            let havuz = (user && user.boslukKelimeleri) ? user.boslukKelimeleri : [];
+            let filt = havuz.filter(k => k.sinif === boslukSecilenSinif && boslukSecilenUniteler.includes(k.unite));
+
+            if(filt.length === 0) { alert("Seçilen sınıf ve ünitelerde kelime bulunamadı!"); return; }
+
+            boslukKelimeListesi = [...filt].sort(() => Math.random() - 0.5).slice(0, Math.min(8, filt.length));
+            boslukPuan = 0;
+            boslukDogru = 0;
+            boslukYanlis = 0;
+            boslukTamamlananSayisi = 0;
+            boslukSaniye = 0;
+
+            document.getElementById('boslukAyarBolumu').style.display = 'none';
+            document.getElementById('boslukSonucBolumu').style.display = 'none';
+            document.getElementById('boslukOyunAlani').style.display = 'block';
+            document.getElementById('boslukPuanGosterge').innerText = "0";
+            document.getElementById('boslukDogruSayisi').innerText = "0";
+            document.getElementById('boslukYanlisSayisi').innerText = "0";
+            document.getElementById('boslukTamamlananSayac').innerText = `0 / ${boslukKelimeListesi.length} tamamlandı`;
+
+            boslukKelimeListesiniCiz();
+
+            let m = document.getElementById('boslukMuzigi');
+            if(m) { m.currentTime = 0; m.play().catch(()=>{}); }
+
+            if(boslukTimer) clearInterval(boslukTimer);
+            boslukTimer = setInterval(() => {
+                boslukSaniye++;
+                let dk = String(Math.floor(boslukSaniye/60)).padStart(2,'0');
+                let sn = String(boslukSaniye%60).padStart(2,'0');
+                document.getElementById('boslukKronometre').innerText = `⏱️ ${dk}:${sn}`;
+            }, 1000);
+        }
+
+        function boslukKelimeListesiniCiz() {
+            let alan = document.getElementById('boslukKelimeListesiAlani');
+            alan.innerHTML = "";
+
+            let rozetRenkleri = ['#f97316', '#16a34a', '#dc2626', '#eab308', '#8b5cf6', '#22c55e', '#ef4444', '#0ea5e9'];
+
+            boslukKelimeListesi.forEach((kelimeObj, satirIdx) => {
+                let satir = document.createElement('div');
+                satir.className = 'bosluk-kelime-satir';
+                satir.id = `boslukSatir${satirIdx}`;
+
+                let rozet = document.createElement('div');
+                rozet.className = 'bosluk-numara-rozet';
+                rozet.style.background = rozetRenkleri[satirIdx % rozetRenkleri.length];
+                rozet.innerText = satirIdx + 1;
+                satir.appendChild(rozet);
+
+                let harfKutulari = document.createElement('div');
+                harfKutulari.style.cssText = "display: flex; gap: 3px;";
+
+                let harfler = kelimeObj.kelime.split('');
+                harfler.forEach((harf, harfIdx) => {
+                    let pozisyon = harfIdx + 1;
+                    let gizliMi = kelimeObj.gizliPozisyonlar.includes(pozisyon);
+
+                    if (gizliMi) {
+                        let input = document.createElement('input');
+                        input.maxLength = 1;
+                        input.className = 'bosluk-harf-kutu bosluk-harf-input';
+                        input.id = `boslukInput${satirIdx}_${harfIdx}`;
+                        input.dataset.dogruHarf = harf;
+                        input.dataset.satir = satirIdx;
+                        input.onkeypress = function(e) {
+                            if (e.key === 'Enter') boslukKelimeyiKontrolEt(satirIdx);
+                        };
+                        harfKutulari.appendChild(input);
+                    } else {
+                        let kutu = document.createElement('div');
+                        kutu.className = 'bosluk-harf-kutu bosluk-harf-sabit';
+                        kutu.innerText = harf;
+                        harfKutulari.appendChild(kutu);
+                    }
+                });
+                satir.appendChild(harfKutulari);
+
+                let onayBtn = document.createElement('button');
+                onayBtn.className = 'bosluk-onay-btn';
+                onayBtn.innerText = '✓';
+                onayBtn.onclick = function() { boslukKelimeyiKontrolEt(satirIdx); };
+                satir.appendChild(onayBtn);
+
+                if (kelimeObj.ipucu) {
+                    let ipucu = document.createElement('div');
+                    ipucu.className = 'bosluk-ipucu';
+                    ipucu.innerText = kelimeObj.ipucu;
+                    satir.appendChild(ipucu);
+                }
+
+                alan.appendChild(satir);
+            });
+        }
+
+        function boslukKelimeyiKontrolEt(satirIdx) {
+            let satirEl = document.getElementById(`boslukSatir${satirIdx}`);
+            if (satirEl.dataset.tamamlandi === 'true') return;
+
+            let inputlar = satirEl.querySelectorAll('.bosluk-harf-input');
+            if (inputlar.length === 0) return;
+
+            let hepsiDogru = true;
+            inputlar.forEach(input => {
+                let girilenHarf = input.value.trim().toUpperCase();
+                let dogruHarf = input.dataset.dogruHarf.toUpperCase();
+                if (girilenHarf === dogruHarf) {
+                    input.classList.add('bosluk-harf-dogru');
+                    input.classList.remove('bosluk-harf-yanlis');
+                    input.disabled = true;
+                } else {
+                    hepsiDogru = false;
+                    input.classList.add('bosluk-harf-yanlis');
+                    setTimeout(() => input.classList.remove('bosluk-harf-yanlis'), 500);
+                }
+            });
+
+            if (hepsiDogru) {
+                satirEl.dataset.tamamlandi = 'true';
+                boslukPuan += 10;
+                boslukDogru++;
+                boslukTamamlananSayisi++;
+            } else {
+                boslukPuan = Math.max(0, boslukPuan - 2);
+                boslukYanlis++;
+            }
+
+            document.getElementById('boslukPuanGosterge').innerText = boslukPuan;
+            document.getElementById('boslukDogruSayisi').innerText = boslukDogru;
+            document.getElementById('boslukYanlisSayisi').innerText = boslukYanlis;
+            document.getElementById('boslukTamamlananSayac').innerText = `${boslukTamamlananSayisi} / ${boslukKelimeListesi.length} tamamlandı`;
+
+            if (boslukTamamlananSayisi >= boslukKelimeListesi.length) {
+                setTimeout(() => boslukOyunuBitir(), 500);
+            }
+        }
+
+        function boslukOyunuBitir() {
+            if(boslukTimer) clearInterval(boslukTimer);
+            let m = document.getElementById('boslukMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+
+            let dk = String(Math.floor(boslukSaniye/60)).padStart(2,'0');
+            let sn = String(boslukSaniye%60).padStart(2,'0');
+            let sureStr = `${dk}:${sn}`;
+            let isim = document.getElementById('boslukIsimInput').value.trim();
+            let uniteStr = boslukSecilenUniteler.join(",");
+
+            document.getElementById('boslukOyunAlani').style.display = 'none';
+            document.getElementById('boslukSonucBolumu').style.display = 'block';
+            document.getElementById('boslukSonucPuan').innerText = boslukPuan;
+            document.getElementById('boslukSonucSure').innerText = sureStr;
+
+            fetch(`${apiURL}?islem=boslukKaydet&isim=${encodeURIComponent(isim)}&sinif=${boslukSecilenSinif}&unite=${encodeURIComponent(uniteStr)}&dogru=${boslukDogru}&yanlis=${boslukYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${boslukSaniye}&puan=${boslukPuan}`).catch(()=>{});
+
+            boslukLiderlikGuncelle({ isim, dogru: boslukDogru, puan: boslukPuan, sure: sureStr, suresaniye: boslukSaniye });
+        }
+
+        function boslukLiderlikGuncelle(yk) {
+            boslukGlobalLiderlik.push(yk);
+            boslukGlobalLiderlik.sort((a,b) => b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye);
+            let top5 = boslukGlobalLiderlik.slice(0, 5);
+            let tbody = document.getElementById('boslukLiderlikGovde');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            top5.forEach((it, idx) => {
+                tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#be185d;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
             });
         }
 
@@ -4502,6 +4842,7 @@ function veriArayuzeIsle(user) {
     document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelPuan);
 
         if (user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
+        if (user.boslukLiderlik) { boslukGlobalLiderlik = user.boslukLiderlik; boslukLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
     kitapTakibiniIsle(user.kitapBilgi || {});
     dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
     dersTakviminiIsle(user.dersler || []);
