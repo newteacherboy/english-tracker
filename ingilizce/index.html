@@ -4467,7 +4467,8 @@ function veriArayuzeIsle(user) {
     document.getElementById('valEtkinlikBasarisi').innerText = etkinlik;
     document.getElementById('valSonDeneme').innerText = sonDeneme;
     document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelPuan);
-    
+
+        if (user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
     kitapTakibiniIsle(user.kitapBilgi || {});
     dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
     dersTakviminiIsle(user.dersler || []);
