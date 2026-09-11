@@ -3862,10 +3862,9 @@ localStorage.setItem("toplamSaniye", toplamSaniye);
             }
         }
 
-        function baslatSayac() {
-                    let arkaPlanVeriYenilemePolling = null;
+                let arkaPlanVeriYenilemePolling = null;
 
-                function arkaPlanVeriYenilemeBaslat() {
+        function arkaPlanVeriYenilemeBaslat() {
             if (arkaPlanVeriYenilemePolling) clearInterval(arkaPlanVeriYenilemePolling);
             arkaPlanVeriYenilemePolling = setInterval(async () => {
                 if (!aktifOgrenciAdi) return;
@@ -3885,6 +3884,8 @@ localStorage.setItem("toplamSaniye", toplamSaniye);
                 }
             }, 60000);
         }
+
+        function baslatSayac() {
             guncelleArayuz();
             timerInterval = setInterval(() => {
                 toplamSaniye++; sessionStorage.setItem("toplamSaniye", toplamSaniye); guncelleArayuz();
