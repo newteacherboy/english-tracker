@@ -1727,7 +1727,7 @@
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
-        let secilenSinif = 2, secilenUniteler = [1], masterKelimeHavuzu = [], aktifKelimeListesi = [];
+                let secilenSinif = 2, secilenUniteler = [1], masterKelimeHavuzu = [], aktifKelimeListesi = [], globalLiderlikCache = [];
         let aktifSoruIndex = 0, oyunDogru = 0, oyunYanlis = 0, oyunTimerInterval = null, oyunSaniyeSayac = 0, mevcutDogruSikIndex = 0, soruKilitli = false;
 
         // --- RUBRİK PUAN BUTONLARI (SLIDER YERİNE) ---
@@ -2973,21 +2973,24 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }
         }
 
-        function oyunuBitir() {
+               function oyunuBitir() {
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
             let muzik = document.getElementById('oyunMuzigi');
             if(muzik) { muzik.pause(); muzik.currentTime = 0; }
 
             let puan = Math.max(0, (oyunDogru*5) - (oyunYanlis*2));
             let sureStr = `${String(Math.floor(oyunSaniyeSayac/60)).padStart(2,'0')}:${String(oyunSaniyeSayac%60).padStart(2,'0')}`;
-            let isim = document.getElementById('oyuncuIsmiInput').value.trim();
+            let isimInputEl = document.getElementById('oyuncuIsmiInput');
+            let isim = isimInputEl ? isimInputEl.value.trim() : "";
+            if (!isim) isim = "Misafir";
             
             document.getElementById('oyunEkranIci').style.display = 'none';
             document.getElementById('oyunSonucBolumu').style.display = 'block';
             document.getElementById('sonucPuan').innerText = puan; 
             document.getElementById('sonucSure').innerText = sureStr;
             
-            fetch(`${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`).catch(()=>{});
+            let kaydetUrl = `${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`;
+            fetch(kaydetUrl).then(() => console.log("Klasik oyun kaydedildi")).catch((e) => console.error("Klasik oyun kayıt hatası:", e));
             liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
         }
 
@@ -3202,13 +3205,23 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             document.getElementById('jeopSik1').innerText = siklar[1];
         }
 
-        function jeopCevapVer(secilenIdx) {
+                function jeopCevapVer(secilenIdx) {
+            let btn = document.getElementById('jeopSik' + secilenIdx);
+            let dogruBtn = document.getElementById('jeopSik' + jeopDogruSikIdx);
+            let dogruMu = secilenIdx === jeopDogruSikIdx;
             let kazanilanPuan = jeopAktifSoru.puanDegeri;
 
-            if(secilenIdx === jeopDogruSikIdx) {
+            btn.disabled = true;
+            document.getElementById('jeopSik0').disabled = true;
+            document.getElementById('jeopSik1').disabled = true;
+
+            if (dogruMu) {
+                btn.classList.add('dogru-animasyon');
                 jeopPuan += kazanilanPuan;
                 jeopDogruAdet++;
             } else {
+                btn.classList.add('yanlis-animasyon');
+                dogruBtn.classList.add('dogru-animasyon');
                 jeopPuan = Math.max(0, jeopPuan - Math.floor(kazanilanPuan / 2));
             }
 
@@ -3217,13 +3230,19 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             document.getElementById('jeopDogruSayisi').innerText = jeopDogruAdet;
             document.getElementById('jeopKalanBalon').innerText = `Kalan Balon: ${jeopKalanBalonSayisi}`;
 
-            document.getElementById('jeopSoruKutusu').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('jeopSik0').className = 'btn-sik';
+                document.getElementById('jeopSik1').className = 'btn-sik';
+                document.getElementById('jeopSik0').disabled = false;
+                document.getElementById('jeopSik1').disabled = false;
+                document.getElementById('jeopSoruKutusu').style.display = 'none';
 
-            if(jeopKalanBalonSayisi <= 0) {
-                jeopOyunuBitir();
-            } else {
-                document.getElementById('jeopOyunAlani').style.display = 'block';
-            }
+                if(jeopKalanBalonSayisi <= 0) {
+                    jeopOyunuBitir();
+                } else {
+                    document.getElementById('jeopOyunAlani').style.display = 'block';
+                }
+            }, 700);
         }
 
         function jeopOyunuBitir() {
@@ -3373,7 +3392,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }, 1000);
         }
 
-        function cekilisZarAt() {
+                function cekilisZarAt() {
             if (cekilisZarAtiliyor) return;
             cekilisZarAtiliyor = true;
 
@@ -3381,29 +3400,37 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             let zarBtn = document.getElementById('cekilisZarAtBtn');
             let durum = document.getElementById('cekilisZarDurum');
             zarBtn.disabled = true;
-            zarYuz.classList.add('zar-donuyor');
             durum.innerText = "Zar atılıyor...";
 
-                                document.getElementById('cekilisZarYuz').style.animation = "zarZiplama 0.4s ease";
-                    setTimeout(() => { document.getElementById('cekilisZarYuz').style.animation = ""; }, 400);
-
             let zarEmojiler = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+            let finalDeger = Math.floor(Math.random() * 6) + 1;
+            cekilisAktifZarDegeri = finalDeger;
+
+            zarYuz.style.transition = "transform 1s cubic-bezier(0.34, 1.56, 0.64, 1)";
+            zarYuz.style.transform = "rotate(1080deg) scale(1.3)";
+
             let sayac = 0;
+            let toplamAdim = 10;
             let donmeInterval = setInterval(() => {
-                zarYuz.innerText = zarEmojiler[Math.floor(Math.random() * 6)];
                 sayac++;
-                if (sayac >= 12) {
+                if (sayac < toplamAdim) {
+                    zarYuz.innerText = zarEmojiler[Math.floor(Math.random() * 6)];
+                } else {
                     clearInterval(donmeInterval);
-                    let finalDeger = Math.floor(Math.random() * 6) + 1;
-                    cekilisAktifZarDegeri = finalDeger;
                     zarYuz.innerText = zarEmojiler[finalDeger - 1];
-                    zarYuz.classList.remove('zar-donuyor');
+                    zarYuz.style.transform = "rotate(1080deg) scale(1)";
                     durum.innerText = `🎯 Bu soru ±${finalDeger} puan değerinde!`;
                     zarBtn.style.display = 'none';
                     cekilisZarAtiliyor = false;
+
+                    setTimeout(() => {
+                        zarYuz.style.transition = "none";
+                        zarYuz.style.transform = "rotate(0deg) scale(1)";
+                    }, 250);
+
                     cekilisKelimeyiGoster();
                 }
-            }, 80);
+            }, 90);
         }
 
         function cekilisKelimeyiGoster() {
