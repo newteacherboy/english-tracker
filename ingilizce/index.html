@@ -763,26 +763,6 @@
             font-weight: 900; cursor: pointer; font-size: 14px; margin-left: 4px;
         }
         .bosluk-onay-btn:hover { background: #9d174d; }
-
-                .bulmaca-izgara { display: grid; gap: 2px; max-width: 100%; margin: 0 auto; user-select: none; touch-action: none; }
-        .bulmaca-hucre {
-            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-            font-weight: 800; color: #831843; border-radius: 4px; cursor: pointer;
-            background: transparent; transition: background 0.1s;
-        }
-        .bulmaca-hucre.secili { background: #fbcfe8; }
-        .bulmaca-hucre.bulundu { background: #86efac; color: #14532d; animation: bulmacaPop 0.4s ease; }
-        @keyframes bulmacaPop { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        .bulmaca-hucre.yanlis-secim { background: #fecaca !important; animation: boslukShakeX 0.3s ease; }
-        .bulmaca-kelime-etiket {
-            background: #fbcfe8; color: #831843; font-size: 10px; font-weight: 800;
-            padding: 4px 9px; border-radius: 10px;
-        }
-        .bulmaca-kelime-etiket.bulundu { background: #86efac; color: #14532d; text-decoration: line-through; }
-        .bulmaca-bilgi-kutusu {
-            background: #fdf2f8; border: 1px solid #f9a8d4; border-radius: 8px; padding: 8px 10px;
-            font-size: 10.5px; color: #831843; margin-bottom: 10px; line-height: 1.5;
-        }
         
     </style>
 </head>
@@ -1247,7 +1227,6 @@
                     <button class="btn-oyun-ac" onclick="jeopardyModaliniAc()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);">🎈 Jeopardy Kelime Balonları</button>
                     <button class="btn-oyun-ac" onclick="cekilisModaliniAc()" style="background: linear-gradient(135deg, #f97316 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);">🎲 Zar Çekilişi</button>
                                         <button class="btn-oyun-ac" onclick="boslukModaliniAc()" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);">✏️ Boşluk Doldurma</button>
-                                        <button class="btn-oyun-ac" onclick="bulmacaModaliniAc()" style="background: linear-gradient(135deg, #db2777 0%, #831843 100%); box-shadow: 0 2px 8px rgba(219, 39, 119, 0.3);">🔍 Kelime Bulmaca</button>
                 </div>
             </div>
 
@@ -1525,62 +1504,6 @@
                 <div class="liderlik-tablosu-box">
                     <div class="liderlik-title" style="color: #9d174d;">📊 Boşluk Doldurma Liderlik Tablosu (Top 5)</div>
                     <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="boslukLiderlikGovde"></tbody></table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-            <!-- KELİME BULMACA OYUNU MODALI -->
-    <div class="game-modal-overlay" id="bulmacaModalOverlay">
-        <div class="game-modal-content" style="max-width: 560px;">
-            <button class="game-close-btn" onclick="bulmacaModaliniKapat()">✕</button>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 11px; font-weight: 700; color: #831843;">🔍 Bulmaca Müziği</span>
-                <button id="bulmacaMuzikBtn" onclick="bulmacaMuzikToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
-            </div>
-            <audio id="bulmacaMuzigi" src="muzik.mp3" preload="auto" loop></audio>
-
-            <div id="bulmacaAyarBolumu">
-                <div class="game-title" style="color: #831843;">🔍 Find the Hidden Words</div>
-                <div class="game-subtitle">Gizli kelimeleri bul! İlk harfe basılı tutup son harfe kadar sürükle.</div>
-                <div class="form-group" style="margin-bottom: 8px;">
-                    <input type="text" id="bulmacaIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
-                </div>
-                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Sınıf Seçiniz:</label>
-                <div class="sinif-secim-grid" id="bulmacaSinifSecimGrid"></div>
-                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ünite Seçiniz (çoklu seçim yapılabilir):</label>
-                <div class="unite-secim-box" id="bulmacaUniteKonteyner"></div>
-                <button class="btn-giris" onclick="bulmacaOyunuBaslat()" style="background: #831843; margin-top: 3px;">🔍 Oyunu Başlat</button>
-            </div>
-
-            <div id="bulmacaOyunAlani" style="display: none;">
-                <div class="bulmaca-bilgi-kutusu" id="bulmacaBilgiKutusu"></div>
-                <div class="oyun-ust-bilgi" style="background: #fdf2f8; color: #831843;">
-                    <span id="bulmacaBulunanSayac">0 / 10 bulundu</span>
-                    <span id="bulmacaKronometre" style="color: #831843;">⏱️ 00:00</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
-                    <span style="color: #831843;">⭐ Puan: <span id="bulmacaPuanGosterge">0</span></span>
-                </div>
-
-                <div style="background: #fdfaf7; border: 1.5px solid #f9a8d4; border-radius: 14px; padding: 12px;">
-                    <div class="bulmaca-izgara" id="bulmacaIzgaraAlani"></div>
-                </div>
-
-                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;" id="bulmacaKelimeListesiAlani"></div>
-            </div>
-
-            <div id="bulmacaSonucBolumu" style="display: none; text-align: center;">
-                <div style="font-size: 26px; margin-bottom: 3px;">🔍</div>
-                <h3 style="color: #831843; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Tebrikler! Tüm Kelimeler Bulundu</h3>
-                <div style="display: flex; justify-content: center; gap: 12px; background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
-                    <span style="color: #831843;">Toplam Skor: <span id="bulmacaSonucPuan">0</span> Puan</span>
-                    <span style="color: #475569;">Süre: <span id="bulmacaSonucSure">00:00</span></span>
-                </div>
-                <button class="btn-giris" onclick="bulmacaModaliniAc()" style="background: #831843; margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
-                <div class="liderlik-tablosu-box">
-                    <div class="liderlik-title" style="color: #831843;">📊 Kelime Bulmaca Liderlik Tablosu (Top 5)</div>
-                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="bulmacaLiderlikGovde"></tbody></table>
                 </div>
             </div>
         </div>
@@ -2820,7 +2743,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             btnElement.classList.add('active');
 
             // Farklı bir sekmeye geçilince açık olan tüm oyun müziklerini durdur
-                                   ['oyunMuzigi', 'jeopardyMuzigi', 'cekilisMuzigi', 'boslukMuzigi', 'bulmacaMuzigi'].forEach(function(id) {
+                        ['oyunMuzigi', 'jeopardyMuzigi', 'cekilisMuzigi', 'boslukMuzigi'].forEach(function(id) {
                 let m = document.getElementById(id);
                 if (m) { m.pause(); m.currentTime = 0; }
             });
@@ -3235,21 +3158,6 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         let boslukSaniye = 0;
         let boslukTimer = null;
         let boslukGlobalLiderlik = [];
-
-                // --- KELİME BULMACA OYUNU DEĞİŞKENLERİ ---
-        let bulmacaSecilenSinif = 2;
-        let bulmacaSecilenUniteler = [1];
-        let bulmacaIzgara = [];
-        let bulmacaBoyut = 10;
-        let bulmacaYerlesenKelimeler = [];
-        let bulmacaBulunanKelimeler = [];
-        let bulmacaPuan = 0;
-        let bulmacaSaniye = 0;
-        let bulmacaTimer = null;
-        let bulmacaSeciliHucreler = [];
-        let bulmacaSuruklemeAktif = false;
-        let bulmacaBaslangicHucre = null;
-        let bulmacaGlobalLiderlik = [];
 
                 function jeopardyModaliniAc() {
             document.getElementById('jeopardyModalOverlay').style.display = 'flex';
@@ -3982,354 +3890,6 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             tbody.innerHTML = "";
             top5.forEach((it, idx) => {
                 tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#be185d;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
-            });
-        }
-
-        
-        // --- KELİME BULMACA OYUNU MİMARİSİ ---
-        function bulmacaModaliniAc() {
-            document.getElementById('bulmacaModalOverlay').style.display = 'flex';
-            document.getElementById('bulmacaAyarBolumu').style.display = 'block';
-            document.getElementById('bulmacaOyunAlani').style.display = 'none';
-            document.getElementById('bulmacaSonucBolumu').style.display = 'none';
-            sinifGridOlustur('bulmacaSinifSecimGrid', bulmacaSinifSec, bulmacaSecilenSinif);
-            let ilkSinif = mevcutSiniflariGetir()[0];
-            bulmacaSecilenSinif = ilkSinif;
-            bulmacaUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
-        }
-
-        function bulmacaModaliniKapat() {
-            document.getElementById('bulmacaModalOverlay').style.display = 'none';
-            if(bulmacaTimer) clearInterval(bulmacaTimer);
-            let m = document.getElementById('bulmacaMuzigi');
-            if(m) { m.pause(); m.currentTime = 0; }
-        }
-
-        function bulmacaMuzikToggle() {
-            let m = document.getElementById('bulmacaMuzigi');
-            let b = document.getElementById('bulmacaMuzikBtn');
-            if(!m || !b) return;
-            if(m.muted) { m.muted = false; b.innerText = "🔊 Müzik: Açık"; }
-            else { m.muted = true; b.innerText = "🔇 Müzik: Sessiz"; }
-        }
-
-        function bulmacaSinifSec(n, el) {
-            bulmacaSecilenSinif = n;
-            document.querySelectorAll('#bulmacaAyarBolumu .sinif-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            bulmacaUniteSecimOlustur(n, (n===2||n===5)?8:10);
-        }
-
-        function bulmacaUniteSecimOlustur(n, count) {
-            let kont = document.getElementById('bulmacaUniteKonteyner');
-            if(!kont) return;
-            kont.innerHTML = "";
-            bulmacaSecilenUniteler = [1];
-            for(let u=1; u<=count; u++) {
-                let chip = document.createElement('div');
-                chip.className = `unite-chip ${u===1?'selected':''}`;
-                chip.innerText = `${u}.Ü`;
-                chip.onclick = function() {
-                    if(bulmacaSecilenUniteler.includes(u)) {
-                        if(bulmacaSecilenUniteler.length > 1) {
-                            bulmacaSecilenUniteler = bulmacaSecilenUniteler.filter(i => i !== u);
-                            chip.classList.remove('selected');
-                        }
-                    } else {
-                        bulmacaSecilenUniteler.push(u);
-                        chip.classList.add('selected');
-                    }
-                };
-                kont.appendChild(chip);
-            }
-        }
-
-        // Sınıf seviyesine göre zorluk: küçük sınıflar sadece yatay/dikey, büyük sınıflar çapraz da dahil
-        function bulmacaYonleriGetir(sinif) {
-            if (sinif <= 2) {
-                return [[0,1],[1,0]]; // sadece sağa, aşağı (en kolay, geriye doğru yok)
-            } else if (sinif <= 4) {
-                return [[0,1],[1,0],[0,-1],[-1,0]]; // 4 yön, ters yazım dahil
-            } else if (sinif <= 6) {
-                return [[0,1],[1,0],[1,1],[-1,1]]; // + çapraz (ileri yön)
-            } else {
-                return [[0,1],[1,0],[0,-1],[-1,0],[1,1],[-1,-1],[1,-1],[-1,1]]; // 8 yön tam zorluk
-            }
-        }
-
-        function bulmacaOyunuBaslat() {
-            let isim = document.getElementById('bulmacaIsimInput').value.trim();
-            if(!isim) { alert("Lütfen adınızı soyadınızı giriniz!"); return; }
-
-            let filt = masterKelimeHavuzu.filter(i => i.sinif === bulmacaSecilenSinif && bulmacaSecilenUniteler.includes(i.unite));
-            if(filt.length === 0) { alert("Seçilen sınıf ve ünitelerde kelime bulunamadı!"); return; }
-
-            let hedefSayi = Math.min(12, Math.max(10, filt.length >= 10 ? 10 : filt.length));
-            let secilenKelimeler = [...filt].sort(() => Math.random() - 0.5).slice(0, Math.min(12, filt.length));
-            secilenKelimeler = secilenKelimeler.filter(k => k.en.replace(/[^A-Za-z]/g, '').length >= 3);
-
-            if (secilenKelimeler.length < 3) { alert("Bu sınıf/ünitede yeterli uygun kelime yok (en az 3 harfli kelimeler gerekli)."); return; }
-
-            let enUzunKelime = Math.max(...secilenKelimeler.map(k => k.en.length));
-            bulmacaBoyut = Math.max(10, enUzunKelime + 2);
-
-            let yonler = bulmacaYonleriGetir(bulmacaSecilenSinif);
-            let sonuc = bulmacaIzgaraOlustur(secilenKelimeler, bulmacaBoyut, yonler);
-
-            bulmacaIzgara = sonuc.izgara;
-            bulmacaYerlesenKelimeler = sonuc.yerlesenler;
-            bulmacaBulunanKelimeler = [];
-            bulmacaPuan = 0;
-            bulmacaSaniye = 0;
-
-            if (bulmacaYerlesenKelimeler.length < 3) { alert("Kelimeler ızgaraya yerleştirilemedi, lütfen tekrar deneyin."); return; }
-
-            document.getElementById('bulmacaAyarBolumu').style.display = 'none';
-            document.getElementById('bulmacaSonucBolumu').style.display = 'none';
-            document.getElementById('bulmacaOyunAlani').style.display = 'block';
-            document.getElementById('bulmacaPuanGosterge').innerText = "0";
-            document.getElementById('bulmacaBulunanSayac').innerText = `0 / ${bulmacaYerlesenKelimeler.length} bulundu`;
-            document.getElementById('bulmacaBilgiKutusu').innerHTML = `💡 <b>Nasıl oynanır:</b> Kelimenin ilk harfine parmağını/fareni basılı tut, son harfine kadar sürükle ve bırak. Doğruysa yeşile boyanır ve puan kazanırsın!`;
-
-            bulmacaIzgaraCiz();
-            bulmacaKelimeListesiniCiz();
-
-            let m = document.getElementById('bulmacaMuzigi');
-            if(m) { m.currentTime = 0; m.play().catch(()=>{}); }
-
-            if(bulmacaTimer) clearInterval(bulmacaTimer);
-            bulmacaTimer = setInterval(() => {
-                bulmacaSaniye++;
-                let dk = String(Math.floor(bulmacaSaniye/60)).padStart(2,'0');
-                let sn = String(bulmacaSaniye%60).padStart(2,'0');
-                document.getElementById('bulmacaKronometre').innerText = `⏱️ ${dk}:${sn}`;
-            }, 1000);
-        }
-
-        function bulmacaIzgaraOlustur(kelimeler, boyut, yonler) {
-            let izgara = Array.from({length: boyut}, () => Array(boyut).fill(null));
-            let yerlesenler = [];
-
-            let siraliKelimeler = [...kelimeler].sort((a, b) => b.en.length - a.en.length);
-
-            siraliKelimeler.forEach(kelimeObj => {
-                let kelime = kelimeObj.en.replace(/[^A-Za-z]/g, '').toUpperCase();
-                if (kelime.length < 3 || kelime.length > boyut) return;
-
-                let yerlesti = false;
-                let denemeSayisi = 0;
-
-                while (!yerlesti && denemeSayisi < 60) {
-                    denemeSayisi++;
-                    let yon = yonler[Math.floor(Math.random() * yonler.length)];
-                    let baslangicSatir = Math.floor(Math.random() * boyut);
-                    let baslangicSutun = Math.floor(Math.random() * boyut);
-
-                    let bitisSatir = baslangicSatir + yon[0] * (kelime.length - 1);
-                    let bitisSutun = baslangicSutun + yon[1] * (kelime.length - 1);
-
-                    if (bitisSatir < 0 || bitisSatir >= boyut || bitisSutun < 0 || bitisSutun >= boyut) continue;
-
-                    let uygun = true;
-                    for (let i = 0; i < kelime.length; i++) {
-                        let s = baslangicSatir + yon[0] * i;
-                        let c = baslangicSutun + yon[1] * i;
-                        let mevcutHarf = izgara[s][c];
-                        if (mevcutHarf !== null && mevcutHarf !== kelime[i]) { uygun = false; break; }
-                    }
-
-                    if (uygun) {
-                        let hucreler = [];
-                        for (let i = 0; i < kelime.length; i++) {
-                            let s = baslangicSatir + yon[0] * i;
-                            let c = baslangicSutun + yon[1] * i;
-                            izgara[s][c] = kelime[i];
-                            hucreler.push({satir: s, sutun: c});
-                        }
-                        yerlesenler.push({ en: kelime, tr: kelimeObj.tr, hucreler: hucreler, bulundu: false });
-                        yerlesti = true;
-                    }
-                }
-            });
-
-            let alfabe = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            for (let s = 0; s < boyut; s++) {
-                for (let c = 0; c < boyut; c++) {
-                    if (izgara[s][c] === null) {
-                        izgara[s][c] = alfabe[Math.floor(Math.random() * alfabe.length)];
-                    }
-                }
-            }
-
-            return { izgara, yerlesenler };
-        }
-
-        function bulmacaIzgaraCiz() {
-            let alan = document.getElementById('bulmacaIzgaraAlani');
-            alan.style.gridTemplateColumns = `repeat(${bulmacaBoyut}, 1fr)`;
-            alan.innerHTML = "";
-
-            for (let s = 0; s < bulmacaBoyut; s++) {
-                for (let c = 0; c < bulmacaBoyut; c++) {
-                    let hucre = document.createElement('div');
-                    hucre.className = 'bulmaca-hucre';
-                    hucre.innerText = bulmacaIzgara[s][c];
-                    hucre.dataset.satir = s;
-                    hucre.dataset.sutun = c;
-
-                    hucre.addEventListener('mousedown', (e) => bulmacaSuruklemeBaslat(e, s, c));
-                    hucre.addEventListener('mouseenter', () => bulmacaSuruklemeDevam(s, c));
-                    hucre.addEventListener('touchstart', (e) => { e.preventDefault(); bulmacaSuruklemeBaslat(e, s, c); }, {passive: false});
-                    hucre.addEventListener('touchmove', (e) => bulmacaDokunmaDevam(e), {passive: false});
-
-                    alan.appendChild(hucre);
-                }
-            }
-
-            document.addEventListener('mouseup', bulmacaSuruklemeBitir);
-            document.addEventListener('touchend', bulmacaSuruklemeBitir);
-        }
-
-        function bulmacaSuruklemeBaslat(e, satir, sutun) {
-            bulmacaSuruklemeAktif = true;
-            bulmacaBaslangicHucre = {satir, sutun};
-            bulmacaSeciliHucreler = [{satir, sutun}];
-            bulmacaSeciliHucreleriGoster();
-        }
-
-        function bulmacaSuruklemeDevam(satir, sutun) {
-            if (!bulmacaSuruklemeAktif || !bulmacaBaslangicHucre) return;
-            bulmacaCizgiyiHesapla(satir, sutun);
-        }
-
-        function bulmacaDokunmaDevam(e) {
-            if (!bulmacaSuruklemeAktif) return;
-            e.preventDefault();
-            let touch = e.touches[0];
-            let el = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (el && el.classList.contains('bulmaca-hucre')) {
-                let s = parseInt(el.dataset.satir);
-                let c = parseInt(el.dataset.sutun);
-                bulmacaCizgiyiHesapla(s, c);
-            }
-        }
-
-        function bulmacaCizgiyiHesapla(bitisSatir, bitisSutun) {
-            let bas = bulmacaBaslangicHucre;
-            let dSatir = bitisSatir - bas.satir;
-            let dSutun = bitisSutun - bas.sutun;
-
-            let adim = Math.max(Math.abs(dSatir), Math.abs(dSutun));
-            if (adim === 0) { bulmacaSeciliHucreler = [{satir: bas.satir, sutun: bas.sutun}]; bulmacaSeciliHucreleriGoster(); return; }
-
-            let birimSatir = dSatir === 0 ? 0 : dSatir / Math.abs(dSatir);
-            let birimSutun = dSutun === 0 ? 0 : dSutun / Math.abs(dSutun);
-
-            if (Math.abs(dSatir) !== 0 && Math.abs(dSutun) !== 0 && Math.abs(dSatir) !== Math.abs(dSutun)) return;
-
-            let yeniSecili = [];
-            for (let i = 0; i <= adim; i++) {
-                yeniSecili.push({ satir: bas.satir + birimSatir * i, sutun: bas.sutun + birimSutun * i });
-            }
-            bulmacaSeciliHucreler = yeniSecili;
-            bulmacaSeciliHucreleriGoster();
-        }
-
-        function bulmacaSeciliHucreleriGoster() {
-            document.querySelectorAll('.bulmaca-hucre.secili').forEach(el => el.classList.remove('secili'));
-            bulmacaSeciliHucreler.forEach(h => {
-                let el = document.querySelector(`.bulmaca-hucre[data-satir="${h.satir}"][data-sutun="${h.sutun}"]`);
-                if (el && !el.classList.contains('bulundu')) el.classList.add('secili');
-            });
-        }
-
-        function bulmacaSuruklemeBitir() {
-            if (!bulmacaSuruklemeAktif) return;
-            bulmacaSuruklemeAktif = false;
-
-            let seciliStr = bulmacaSeciliHucreler.map(h => `${h.satir},${h.sutun}`).join('|');
-            let seciliTers = [...bulmacaSeciliHucreler].reverse().map(h => `${h.satir},${h.sutun}`).join('|');
-
-            let bulunanKelime = bulmacaYerlesenKelimeler.find(k => {
-                if (k.bulundu) return false;
-                let kHucreStr = k.hucreler.map(h => `${h.satir},${h.sutun}`).join('|');
-                return kHucreStr === seciliStr || kHucreStr === seciliTers;
-            });
-
-            if (bulunanKelime) {
-                bulunanKelime.bulundu = true;
-                bulmacaBulunanKelimeler.push(bulunanKelime.en);
-                bulmacaPuan += 15;
-
-                bulunanKelime.hucreler.forEach(h => {
-                    let el = document.querySelector(`.bulmaca-hucre[data-satir="${h.satir}"][data-sutun="${h.sutun}"]`);
-                    if (el) { el.classList.remove('secili'); el.classList.add('bulundu'); }
-                });
-
-                document.getElementById('bulmacaPuanGosterge').innerText = bulmacaPuan;
-                document.getElementById('bulmacaBulunanSayac').innerText = `${bulmacaBulunanKelimeler.length} / ${bulmacaYerlesenKelimeler.length} bulundu`;
-                bulmacaKelimeListesiniCiz();
-
-                if (bulmacaBulunanKelimeler.length >= bulmacaYerlesenKelimeler.length) {
-                    setTimeout(() => bulmacaOyunuBitir(), 500);
-                }
-            } else if (bulmacaSeciliHucreler.length > 1) {
-                bulmacaSeciliHucreler.forEach(h => {
-                    let el = document.querySelector(`.bulmaca-hucre[data-satir="${h.satir}"][data-sutun="${h.sutun}"]`);
-                    if (el) el.classList.add('yanlis-secim');
-                });
-                setTimeout(() => {
-                    document.querySelectorAll('.bulmaca-hucre.yanlis-secim').forEach(el => el.classList.remove('yanlis-secim', 'secili'));
-                }, 350);
-            } else {
-                document.querySelectorAll('.bulmaca-hucre.secili').forEach(el => el.classList.remove('secili'));
-            }
-
-            bulmacaSeciliHucreler = [];
-            bulmacaBaslangicHucre = null;
-        }
-
-        function bulmacaKelimeListesiniCiz() {
-            let alan = document.getElementById('bulmacaKelimeListesiAlani');
-            alan.innerHTML = "";
-            bulmacaYerlesenKelimeler.forEach(k => {
-                let etiket = document.createElement('span');
-                etiket.className = 'bulmaca-kelime-etiket' + (k.bulundu ? ' bulundu' : '');
-                etiket.innerText = k.bulundu ? `${k.en} (${k.tr})` : `${k.en} (${k.tr})`;
-                alan.appendChild(etiket);
-            });
-        }
-
-        function bulmacaOyunuBitir() {
-            if(bulmacaTimer) clearInterval(bulmacaTimer);
-            let m = document.getElementById('bulmacaMuzigi');
-            if(m) { m.pause(); m.currentTime = 0; }
-
-            let dk = String(Math.floor(bulmacaSaniye/60)).padStart(2,'0');
-            let sn = String(bulmacaSaniye%60).padStart(2,'0');
-            let sureStr = `${dk}:${sn}`;
-            let isim = document.getElementById('bulmacaIsimInput').value.trim();
-            let uniteStr = bulmacaSecilenUniteler.join(",");
-
-            document.getElementById('bulmacaOyunAlani').style.display = 'none';
-            document.getElementById('bulmacaSonucBolumu').style.display = 'block';
-            document.getElementById('bulmacaSonucPuan').innerText = bulmacaPuan;
-            document.getElementById('bulmacaSonucSure').innerText = sureStr;
-
-            fetch(`${apiURL}?islem=bulmacaKaydet&isim=${encodeURIComponent(isim)}&sinif=${bulmacaSecilenSinif}&unite=${encodeURIComponent(uniteStr)}&dogru=${bulmacaBulunanKelimeler.length}&yanlis=0&sure=${encodeURIComponent(sureStr)}&suresaniye=${bulmacaSaniye}&puan=${bulmacaPuan}`).catch(()=>{});
-
-            bulmacaLiderlikGuncelle({ isim, dogru: bulmacaBulunanKelimeler.length, puan: bulmacaPuan, sure: sureStr, suresaniye: bulmacaSaniye });
-        }
-
-        function bulmacaLiderlikGuncelle(yk) {
-            bulmacaGlobalLiderlik.push(yk);
-            bulmacaGlobalLiderlik.sort((a,b) => b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye);
-            let top5 = bulmacaGlobalLiderlik.slice(0, 5);
-            let tbody = document.getElementById('bulmacaLiderlikGovde');
-            if(!tbody) return;
-            tbody.innerHTML = "";
-            top5.forEach((it, idx) => {
-                tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#831843;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
             });
         }
 
@@ -5308,7 +4868,6 @@ function veriArayuzeIsle(user) {
 
         if (user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
         if (user.boslukLiderlik) { boslukGlobalLiderlik = user.boslukLiderlik; boslukLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-        if (user.bulmacaLiderlik) { bulmacaGlobalLiderlik = user.bulmacaLiderlik; bulmacaLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
     kitapTakibiniIsle(user.kitapBilgi || {});
     dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
     dersTakviminiIsle(user.dersler || []);
