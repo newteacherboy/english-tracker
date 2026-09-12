@@ -1759,6 +1759,39 @@
     </div>
 
    <script>
+
+       // --- POMODORO ÇALIŞMA SAYACI ---
+function pomodoroAc() {
+    tumModalKapat();
+    // Tarayıcının ana iş parçacığını (main thread) serbest bırakıp DOM'u güncellemesi için minik bir gecikme veriyoruz
+    setTimeout(() => {
+        let overlay = document.getElementById('pomodoroOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+        }
+        if (window.Notification && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+        pomodoroDurumGuncelle();
+        pomodoroSifirla();
+    }, 10);
+}
+
+// --- JEOPARDY BALONLARI ---
+function jeopardyModaliniAc() {
+    tumModalKapat();
+    setTimeout(() => {
+        document.getElementById('jeopardyModalOverlay').style.display = 'flex';
+        document.getElementById('jeopAyarBolumu').style.display = 'block';
+        document.getElementById('jeopOyunAlani').style.display = 'none';
+        document.getElementById('jeopSoruKutusu').style.display = 'none';
+        document.getElementById('jeopSonucBolumu').style.display = 'none';
+        sinifGridOlustur('jeopSinifSecimGrid', jeopSinifSec, jeopSecilenSinif);
+        let ilkSinif = mevcutSiniflariGetir()[0];
+        jeopSecilenSinif = ilkSinif;
+        jeopUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
+    }, 10);
+}
     // --- MERKEZİ MODAL YÖNETİMİ (TÜM ÇAKIŞMALARI ÖNLER) ---
     function tumModalKapat() {
         const modaller = [
