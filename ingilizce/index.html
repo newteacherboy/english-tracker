@@ -3085,6 +3085,18 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
         }
 
+        function liderlikTablosuGuncelle(yk) {
+            if (yk && yk.isim && yk.isim !== "") {
+                globalLiderlikCache.push(yk);
+            }
+            globalLiderlikCache.sort((a, b) => b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye);
+            let top5 = globalLiderlikCache.slice(0, 5), tbody = document.getElementById('liderlikTabloGovde'); 
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            top5.forEach((it, idx) => {
+                tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#b45309;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
+            });
+        }
 
         // --- JEOPARDY KELİME BALONLARI OYUNU MİMARİSİ ---
         let jeopSecilenSinif = 2;
