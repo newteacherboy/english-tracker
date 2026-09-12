@@ -1031,7 +1031,7 @@
             <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
             <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Raporlar</button>
             <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">🎮 Aktiviteler</button>
-            <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetler</button>
+            <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetlerim</button>
         </div>
         
                 <!-- ÖZET SEKMESİ -->
@@ -1222,7 +1222,7 @@
 </div>
 
         <!-- ROZETLER SEKMESİ -->
-        <div id="tab-rozetler" class="tab-content">
+       <div id="tab-rozetler" class="tab-content" style="display: none;">
             <div class="badges-header-box">
                 <div class="badges-header-title">🏆 Kazanılan Rozetler</div>
                 <div id="kazanilanSayacBadge" style="font-weight: 800; color: #b45309; background: #fef08a; padding: 2px 8px; border-radius: 8px; font-size: 11.5px;">0 / 0</div>
@@ -5064,38 +5064,54 @@ async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
     }
 }
 
-        // Kelime Kartları Yolculuğu Açılış Fonksiyonu
+       // Kelime Kartları Yolculuğu Açılış Fonksiyonu (Düzeltilmiş)
 function yolculuguAc() {
+    // Sitede mevcut olabilecek olası tüm Kelime Kartı açılış fonksiyonlarını veya modal ID'lerini deniyoruz
     if (typeof kartlarModalAc === 'function') {
         kartlarModalAc();
+    } else if (typeof kelimeKartlariAc === 'function') {
+        kelimeKartlariAc();
     } else {
-        let modal = document.getElementById('yolculukOyunOverlay') || document.getElementById('kelimeKartlariOverlay');
+        // Doğrudan olası ID'leri arayıp açalım
+        let modal = document.getElementById('yolculukOyunOverlay') || 
+                    document.getElementById('kelimeKartlariOverlay') || 
+                    document.getElementById('kartlarModal') ||
+                    document.getElementById('kelimeKartlariModal');
         if (modal) {
             document.body.appendChild(modal);
             modal.style.setProperty('display', 'flex', 'important');
             modal.style.setProperty('z-index', '9999999', 'important');
         } else {
-            console.warn("Kelime Kartları Yolculuğu modal elementi bulunamadı.");
+            alert("Kelime Kartları Yolculuğu modülü bu sayfada bulunamadı.");
         }
     }
 }
 
-// Akıcı Okuma ve Hız Ölçer Stüdyosu Açılış Fonksiyonu
+// Akıcı Okuma ve Hız Ölçer Stüdyosu Açılış Fonksiyonu (Düzeltilmiş)
 function okumaStudyosunuAc() {
-    let modal = document.getElementById('okumaOyunOverlay') || document.getElementById('okumaStudyosuOverlay');
-    if (modal) {
-        document.body.appendChild(modal);
-        modal.style.setProperty('display', 'flex', 'important');
-        modal.style.setProperty('z-index', '9999999', 'important');
+    if (typeof okumaPaneliAc === 'function') {
+        okumaPaneliAc();
+    } else if (typeof okumaHiziAc === 'function') {
+        okumaHiziAc();
     } else {
-        if (typeof okumaPaneliAc === 'function') {
-            okumaPaneliAc();
+        let modal = document.getElementById('okumaOyunOverlay') || 
+                    document.getElementById('okumaStudyosuOverlay') || 
+                    document.getElementById('okumaModal') ||
+                    document.getElementById('okumaHiziModal');
+        if (modal) {
+            document.body.appendChild(modal);
+            modal.style.setProperty('display', 'flex', 'important');
+            modal.style.setProperty('z-index', '9999999', 'important');
         } else {
-            console.warn("Okuma stüdyosu modal elementi bulunamadı.");
+            // Eğer modal yoksa okuma sekmesine geçiş yapmayı deneyelim
+            if (typeof sekmeDegistir === 'function') {
+                sekmeDegistir('okuma', document.querySelector('[onclick*="okuma"]'));
+            } else {
+                alert("Okuma Stüdyosu modülü bu sayfada bulunamadı.");
+            }
         }
     }
 }
-        
     </script>
 </body>
 </html>
