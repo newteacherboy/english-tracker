@@ -4233,8 +4233,8 @@ localStorage.setItem("toplamSaniye", toplamSaniye);
                     } else {
                         console.warn("Arka plan yenileme: kullanıcı bulunamadı ->", aktifOgrenciAdi);
                     }
-                } catch (err) {
-                    console.error("Arka plan veri yenileme hatası:", err);
+                               } catch (err) {
+                    console.warn("Arka plan veri yenileme geçici olarak başarısız oldu.");
                 }
             }, 60000);
         }
@@ -4842,6 +4842,8 @@ function veriArayuzeIsle(user) {
     document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelPuan);
 
         if (user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
+            if (user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+        if (user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
         if (user.boslukLiderlik) { boslukGlobalLiderlik = user.boslukLiderlik; boslukLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
     kitapTakibiniIsle(user.kitapBilgi || {});
     dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
