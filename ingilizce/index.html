@@ -3075,22 +3075,13 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             document.getElementById('sonucPuan').innerText = puan; 
             document.getElementById('sonucSure').innerText = sureStr;
             
+            // Önce skoru doğrudan yerel liderlik tablosuna ekleyerek ekranda hemen görünmesini sağlayalım
+            liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
+
+            // Ardından arka planda Google Sheets'e kaydı gönderelim (CORS engeline takılsa bile oyunu kitlemez)
             let kaydetUrl = `${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`;
             
-            try {
-                let res = await fetch(kaydetUrl);
-                let data = await res.json();
-                // Eğer Google Sheets güncel liderlik listesini dönüyorsa doğrudan arayüze işleyelim
-                if (data && data.liderlik) {
-                    globalLiderlikCache = data.liderlik;
-                    liderlikTablosuGuncelleDonus();
-                } else {
-                    liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
-                }
-            } catch (e) {
-                console.error("Klasik oyun kayıt hatası:", e);
-                liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
-            }
+            fetch(kaydetUrl).catch(e => console.log("Arka plan kayıt bildirimi:", e));
         }
 
         function liderlikTablosuGuncelleDonus() {
