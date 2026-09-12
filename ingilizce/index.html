@@ -761,93 +761,6 @@
             font-weight: 900; cursor: pointer; font-size: 14px; margin-left: 4px;
         }
         .bosluk-onay-btn:hover { background: #9d174d; }
-
-        /* --- KELİME OYUNLARI MODÜLÜ ÖZEL STİLLERİ --- */
-.game-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-.game-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: 1px solid #e2e8f0;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-.game-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-.game-card h3 { color: #1e293b; margin-bottom: 10px; font-size: 1.2rem; }
-.game-card p { color: #64748b; font-size: 0.9rem; margin-bottom: 20px; }
-.game-btn {
-    background: #4f46e5; color: white; border: none; padding: 10px 20px;
-    border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;
-}
-.game-btn:hover { background: #4338ca; }
-
-/* Modal Pencereleri */
-.game-modal-overlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999;
-    justify-content: center; align-items: center;
-}
-.game-modal-content {
-    background: #ffffff; width: 90%; max-width: 600px; border-radius: 16px;
-    padding: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); position: relative;
-    max-height: 90vh; overflow-y: auto;
-}
-.game-close-btn {
-    position: absolute; top: 20px; right: 20px; background: #f1f5f9; border: none;
-    width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer;
-    color: #64748b; display: flex; align-items: center; justify-content: center;
-}
-.game-close-btn:hover { background: #e2e8f0; color: #0f172a; }
-
-/* Şık Grid Alanı */
-.options-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;
-}
-.option-btn {
-    background: #f8fafc; border: 2px solid #e2e8f0; padding: 14px; border-radius: 10px;
-    font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: left;
-}
-.option-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
-.option-btn.correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #166534; }
-.option-btn.wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
-
-/* Jeopardy Balonları */
-.balloon-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; }
-.balloon {
-    width: 80px; height: 100px; background: linear-gradient(135deg, #f43f5e, #fb7185);
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; display: flex; align-items: center;
-    justify-content: center; color: white; font-weight: bold; cursor: pointer;
-    box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.1);
-    transition: transform 0.2s; animation: floatBalloon 3s ease-in-out infinite alternate;
-}
-.balloon:hover { transform: scale(1.1); }
-@keyframes floatBalloon { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
-
-/* Zar Çekilişi Alanı */
-.dice-container { text-align: center; margin: 25px 0; }
-.dice {
-    width: 90px; height: 90px; background: white; border: 3px solid #cbd5e1; border-radius: 16px;
-    margin: 0 auto; display: flex; align-items: center; justify-content: center;
-    font-size: 2.5rem; font-weight: bold; color: #1e293b; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-    transition: transform 0.6s ease;
-}
-.dice.rolling { transform: rotate(720deg) scale(0.9); }
-
-/* Boşluk Doldurma */
-.fill-blank-row { margin-bottom: 15px; font-size: 1.1rem; color: #334155; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.fill-blank-input {
-    border: 2px solid #cbd5e1; border-radius: 6px; padding: 6px 12px; font-size: 1rem; width: 140px; outline: none;
-}
-.fill-blank-input:focus { border-color: #4f46e5; }
         
     </style>
 </head>
@@ -1303,31 +1216,17 @@
                 <p style="color: #4338ca;">Ünite ünite ilerle, her seviyeyi bitirdikçe bir sonraki açılsın!</p>
                 <button class="btn-oyun-ac" onclick="seviyeHaritasiAc()" style="background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%); box-shadow: 0 2px 8px rgba(67, 56, 202, 0.3);">🗺️ Yolculuğa Başla</button>
             </div>
-
-            <div class="game-cards-grid">
-    <div class="game-card">
-        <h3>Klasik Kelime Yarışması</h3>
-        <p>Kelime hazineni test et, doğru şıkları bul ve puanları topla!</p>
-        <button class="game-btn" onclick="oyunuBaslatKlasik()">Oyunu Başlat</button>
-    </div>
-    <div class="game-card">
-        <h3>Jeopardy Balonları</h3>
-        <p>Balonları patlat, gizli İngilizce sorularını yanıtla ve kazan!</p>
-        <button class="game-btn" onclick="oyunuBaslatJeopardy()">Oyunu Başlat</button>
-    </div>
-    <div class="game-card">
-        <h3>Şans Zarı Çekilişi</h3>
-        <p>Zarı at, gelen katsayı ile kelime bonus puanlarını katla!</p>
-        <button class="game-btn" onclick="oyunuBaslatCekilis()">Oyunu Başlat</button>
-    </div>
-    <div class="game-card">
-        <h3>Boşluk Doldurma</h3>
-        <p>Cümlelerdeki eksik kelimeleri tamamla, dil becerini geliştir!</p>
-        <button class="game-btn" onclick="oyunuBaslatBosluk()">Oyunu Başlat</button>
-    </div>
-</div>
             
-            
+            <div class="activity-banner">
+                <h3>🎮 İngilizce Kelime Ezber & Bilgi Yarışması</h3>
+                <p>Sınıfını ve ünitelerini seç, zamanla yarışarak kelime dağarcığını test et ve liderlik tablosunda yerini al!</p>
+                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-oyun-ac" onclick="oyunModaliniAc()">🚀 Klasik Kelime Yarışması</button>
+                    <button class="btn-oyun-ac" onclick="jeopardyModaliniAc()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);">🎈 Jeopardy Kelime Balonları</button>
+                    <button class="btn-oyun-ac" onclick="cekilisModaliniAc()" style="background: linear-gradient(135deg, #f97316 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);">🎲 Zar Çekilişi</button>
+                                        <button class="btn-oyun-ac" onclick="boslukModaliniAc()" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);">✏️ Boşluk Doldurma</button>
+                </div>
+            </div>
 
             <div class="activity-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 15px;">
                 <h3 style="color: #166534;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</h3>
@@ -1365,7 +1264,248 @@
         </div>
     </div>
 
-   
+    <!-- KELİME YARIŞMASI MODALI -->
+    <div class="game-modal-overlay" id="gameModalOverlay">
+        <div class="game-modal-content">
+            <button class="game-close-btn" onclick="oyunModaliniKapat()">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #b45309;">🎵 Arka Plan Müziği</span>
+                <button id="muzikSesBtn" onclick="muzikSesToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
+            </div>
+            <audio id="oyunMuzigi" src="muzik.mp3" preload="auto" loop></audio>
+
+            <div id="oyunAyarBolumu">
+                <div class="game-title">🏆 Kelime Ezber Yarışması</div>
+                <div class="game-subtitle">Google Sheets Kelimeler Havuzundan Sorulur!</div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <input type="text" id="oyuncuIsmiInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Sınıf Seçiniz:</label>
+                                <div class="sinif-secim-grid" id="klasikSinifSecimGrid"></div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Ünite Seçiniz:</label>
+                <div class="unite-secim-box" id="uniteSecimKonteyner"></div>
+                <button class="btn-giris" onclick="yarismayiBaslat()" style="background: #2563eb; margin-top: 3px;">🚀 Yarışmayı Başlat</button>
+            </div>
+
+            <div id="oyunEkranIci">
+                <div class="oyun-ust-bilgi">
+                    <span id="lblKelimeSayac">Kelime: 1 / 25</span>
+                    <span id="lblKronometre" style="color: #dc2626;">⏱️ 00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
+                    <span style="color: #16a34a;">✅ Doğru: <span id="lblDogruSayisi">0</span></span>
+                    <span style="color: #dc2626;">❌ Yanlış: <span id="lblYanlisSayisi">0</span></span>
+                </div>
+                <div class="kelime-gosterge">
+                    <span style="font-size: 9.5px; font-weight: 700; color: #3b82f6; text-transform: uppercase;" id="lblSoruDilLabel">Kelime</span>
+                    <div class="kelime-en" id="lblSoruKelime">Apple</div>
+                </div>
+                <div class="siklar-grid">
+                    <button class="btn-sik" id="btnSik0" onclick="sikSec(0)">Şık 1</button>
+                    <button class="btn-sik" id="btnSik1" onclick="sikSec(1)">Şık 2</button>
+                </div>
+            </div>
+
+            <div id="oyunSonucBolumu" style="display: none; text-align: center;">
+                <h3 style="color: #16a34a; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Harika! Tur Tamamlandı</h3>
+                <div style="font-weight: 800; font-size: 13px; margin-bottom: 10px;">Skor: <span id="sonucPuan">45</span> Puan | Süre: <span id="sonucSure">00:46</span></div>
+                <button class="btn-giris" onclick="oyunModaliniAc()" style="background: #2563eb; margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
+                <div class="liderlik-tablosu-box">
+                    <div class="liderlik-title">📊 Liderlik Tablosu (Top 5)</div>
+                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="liderlikTabloGovde"></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JEOPARDY BALONLARI OYUNU MODALI -->
+    <div class="game-modal-overlay" id="jeopardyModalOverlay">
+        <div class="game-modal-content" style="max-width: 540px;">
+            <button class="game-close-btn" onclick="jeopardyModaliniKapat()">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #6d28d9;">🎈 Balonlar Müziği</span>
+                <button id="jeopardyMuzikBtn" onclick="jeopardyMuzikToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
+            </div>
+            <audio id="jeopardyMuzigi" src="muzik.mp3" preload="auto" loop></audio>
+
+            <div id="jeopAyarBolumu">
+                <div class="game-title" style="color: #6d28d9;">🎈 Jeopardy Kelime Balonları</div>
+                <div class="game-subtitle">Balonlara tıkla, kelimeleri aç, puanları topla!</div>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <input type="text" id="jeopIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Sınıf Seçiniz:</label>
+                                <div class="sinif-secim-grid" id="jeopSinifSecimGrid"></div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ünite Seçiniz:</label>
+                <div class="unite-secim-box" id="jeopUniteKonteyner"></div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Soru Sayısı (10 - 50):</label>
+                <select id="jeopSoruSayisiSelect" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; margin-bottom: 10px; background: #f8fafc; font-weight: 700;">
+                    <option value="10">10 Kelime (Balon)</option>
+                    <option value="20" selected>20 Kelime (Balon)</option>
+                    <option value="30">30 Kelime (Balon)</option>
+                    <option value="40">40 Kelime (Balon)</option>
+                    <option value="50">50 Kelime (Balon)</option>
+                </select>
+                <button class="btn-giris" onclick="jeopOyunuBaslat()" style="background: #7c3aed; margin-top: 3px;">🎈 Balonları Patlatmaya Başla</button>
+            </div>
+
+            <div id="jeopOyunAlani" style="display: none;">
+                <div class="oyun-ust-bilgi" style="background: #f5f3ff; color: #5b21b6;">
+                    <span id="jeopKalanBalon">Kalan Balon: 0</span>
+                    <span id="jeopKronometre" style="color: #7c3aed;">⏱️ 00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
+                    <span style="color: #16a34a;">⭐ Puan: <span id="jeopPuanGosterge">0</span></span>
+                    <span style="color: #15803d;">✅ Bilinen: <span id="jeopDogruSayisi">0</span></span>
+                </div>
+                <div id="jeopBalonGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-height: 260px; overflow-y: auto; padding: 5px; background: #faf5ff; border-radius: 8px; border: 1px solid #ede9fe; margin-bottom: 10px;"></div>
+            </div>
+
+            <div id="jeopSoruKutusu" style="display: none; background: #faf5ff; border: 2px solid #7c3aed; border-radius: 12px; padding: 15px; text-align: center;">
+                <div style="font-size: 10px; font-weight: 700; color: #7c3aed; text-transform: uppercase; margin-bottom: 4px;" id="jeopBalonPuaniBadge">10 Puanlık Balon</div>
+                <div style="font-size: 22px; font-weight: 900; color: #1e293b; margin-bottom: 10px;" id="jeopSoruKelimeText">Apple</div>
+                <div style="font-size: 11.5px; color: #64748b; font-weight: 600; margin-bottom: 10px;">Doğru Türkçe anlamını seçiniz:</div>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                    <button class="btn-sik" id="jeopSik0" onclick="jeopCevapVer(0)">Şık 1</button>
+                    <button class="btn-sik" id="jeopSik1" onclick="jeopCevapVer(1)">Şık 2</button>
+                </div>
+            </div>
+
+            <div id="jeopSonucBolumu" style="display: none; text-align: center;">
+                <div style="font-size: 26px; margin-bottom: 3px;">🎈</div>
+                <h3 style="color: #7c3aed; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Tebrikler! Tüm Balonlar Patlatıldı</h3>
+                <div style="display: flex; justify-content: center; gap: 12px; background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
+                    <span style="color: #7c3aed;">Toplam Skor: <span id="jeopSonucPuan">150</span> Puan</span>
+                    <span style="color: #475569;">Süre: <span id="jeopSonucSure">01:12</span></span>
+                </div>
+                <button class="btn-giris" onclick="jeopardyModaliniAc()" style="background: #7c3aed; margin-bottom: 10px;">🔄 Yeni Oyun Oyna</button>
+                <div class="liderlik-tablosu-box">
+                    <div class="liderlik-title" style="color: #5b21b6;">📊 Jeopardy Liderlik Tablosu (Top 5)</div>
+                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="jeopLiderlikGovde"></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ZAR ÇEKİLİŞİ KELİME OYUNU MODALI -->
+    <div class="game-modal-overlay" id="cekilisModalOverlay">
+        <div class="game-modal-content" style="max-width: 480px;">
+            <button class="game-close-btn" onclick="cekilisModaliniKapat()">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #c2410c;">🎲 Çekiliş Müziği</span>
+                <button id="cekilisMuzikBtn" onclick="cekilisMuzikToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
+            </div>
+            <audio id="cekilisMuzigi" src="muzik.mp3" preload="auto" loop></audio>
+
+            <div id="cekilisAyarBolumu">
+                <div class="game-title" style="color: #c2410c;">🎲 Zar Çekilişi Kelime Oyunu</div>
+                <div class="game-subtitle">Zarı at, kelimeyi bil, zarın gösterdiği kadar puan kazan ya da kaybet!</div>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <input type="text" id="cekilisIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Sınıf Seçiniz:</label>
+                               <div class="sinif-secim-grid" id="cekilisSinifSecimGrid"></div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ünite Seçiniz (çoklu seçim yapılabilir):</label>
+                <div class="unite-secim-box" id="cekilisUniteKonteyner"></div>
+                <button class="btn-giris" onclick="cekilisOyunuBaslat()" style="background: #ea580c; margin-top: 3px;">🎲 Çekilişi Başlat</button>
+            </div>
+
+            <div id="cekilisOyunAlani" style="display: none;">
+                <div class="oyun-ust-bilgi" style="background: #fff7ed; color: #c2410c;">
+                    <span id="cekilisKelimeSayac">Kelime: 1 / 15</span>
+                    <span id="cekilisKronometre" style="color: #ea580c;">⏱️ 00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
+                    <span style="color: #ea580c;">⭐ Puan: <span id="cekilisPuanGosterge">0</span></span>
+                    <span style="color: #16a34a;">✅ Doğru: <span id="cekilisDogruSayisi">0</span></span>
+                    <span style="color: #dc2626;">❌ Yanlış: <span id="cekilisYanlisSayisi">0</span></span>
+                </div>
+
+                <div style="background: #fff7ed; border: 1.5px solid #fdba74; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 12px;">
+                    <div id="cekilisZarYuz" style="font-size: 56px; line-height: 1; margin-bottom: 6px;">🎲</div>
+                    <div id="cekilisZarDurum" style="font-size: 11px; font-weight: 700; color: #c2410c; margin-bottom: 8px;">Zarı atmak için tıkla!</div>
+                    <button class="btn-giris" id="cekilisZarAtBtn" onclick="cekilisZarAt()" style="background: #ea580c; max-width: 220px; margin: 0 auto;">🎲 Zarı At</button>
+                </div>
+
+                <div class="kelime-gosterge" id="cekilisKelimeKutu" style="display: none;">
+                    <span style="font-size: 9.5px; font-weight: 700; color: #ea580c; text-transform: uppercase;">İngilizce Kelime</span>
+                    <div class="kelime-en" id="cekilisKelimeText">Apple</div>
+                </div>
+
+                <div class="siklar-grid" id="cekilisSiklarGrid" style="display: none;">
+                    <button class="btn-sik" id="cekilisSik0" onclick="cekilisCevapVer(0)">Şık 1</button>
+                    <button class="btn-sik" id="cekilisSik1" onclick="cekilisCevapVer(1)">Şık 2</button>
+                </div>
+            </div>
+
+            <div id="cekilisSonucBolumu" style="display: none; text-align: center;">
+                <div style="font-size: 26px; margin-bottom: 3px;">🎲</div>
+                <h3 style="color: #ea580c; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Tebrikler! Çekiliş Tamamlandı</h3>
+                <div style="display: flex; justify-content: center; gap: 12px; background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
+                    <span style="color: #ea580c;">Toplam Skor: <span id="cekilisSonucPuan">0</span> Puan</span>
+                    <span style="color: #475569;">Süre: <span id="cekilisSonucSure">00:00</span></span>
+                </div>
+                <button class="btn-giris" onclick="cekilisModaliniAc()" style="background: #ea580c; margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
+                <div class="liderlik-tablosu-box">
+                    <div class="liderlik-title" style="color: #c2410c;">📊 Zar Çekilişi Liderlik Tablosu (Top 5)</div>
+                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="cekilisLiderlikGovde"></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- BOŞLUK DOLDURMA OYUNU MODALI -->
+    <div class="game-modal-overlay" id="boslukModalOverlay">
+        <div class="game-modal-content" style="max-width: 480px;">
+            <button class="game-close-btn" onclick="boslukModaliniKapat()">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #be185d;">✏️ Boşluk Müziği</span>
+                <button id="boslukMuzikBtn" onclick="boslukMuzikToggle()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; cursor: pointer;">🔊 Müzik: Açık</button>
+            </div>
+            <audio id="boslukMuzigi" src="muzik.mp3" preload="auto" loop></audio>
+
+            <div id="boslukAyarBolumu">
+                <div class="game-title" style="color: #be185d;">✏️ Complete the Blanks</div>
+                <div class="game-subtitle">Boşlukları doldur, kelimeleri tamamla, puan kazan!</div>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <input type="text" id="boslukIsimInput" placeholder="Adınız Soyadınız" style="text-align: center; font-weight: 700;">
+                </div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Sınıf Seçiniz:</label>
+                <div class="sinif-secim-grid" id="boslukSinifSecimGrid"></div>
+                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">Ünite Seçiniz (çoklu seçim yapılabilir):</label>
+                <div class="unite-secim-box" id="boslukUniteKonteyner"></div>
+                <button class="btn-giris" onclick="boslukOyunuBaslat()" style="background: #be185d; margin-top: 3px;">✏️ Oyunu Başlat</button>
+            </div>
+
+            <div id="boslukOyunAlani" style="display: none;">
+                <div class="oyun-ust-bilgi" style="background: #fdf2f8; color: #831843;">
+                    <span id="boslukTamamlananSayac">0 / 8 tamamlandı</span>
+                    <span id="boslukKronometre" style="color: #be185d;">⏱️ 00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 700;">
+                    <span style="color: #be185d;">⭐ Puan: <span id="boslukPuanGosterge">0</span></span>
+                    <span style="color: #16a34a;">✅ Doğru: <span id="boslukDogruSayisi">0</span></span>
+                    <span style="color: #dc2626;">❌ Yanlış: <span id="boslukYanlisSayisi">0</span></span>
+                </div>
+
+                <div style="background: #fdfaf7; border: 1.5px solid #f9a8d4; border-radius: 14px; padding: 18px 14px; max-height: 340px; overflow-y: auto;" id="boslukKelimeListesiAlani"></div>
+            </div>
+
+            <div id="boslukSonucBolumu" style="display: none; text-align: center;">
+                <div style="font-size: 26px; margin-bottom: 3px;">✏️</div>
+                <h3 style="color: #be185d; font-size: 16px; font-weight: 900; margin-bottom: 8px;">Tebrikler! Tur Tamamlandı</h3>
+                <div style="display: flex; justify-content: center; gap: 12px; background: #f8fafc; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-weight: 800; font-size: 12px;">
+                    <span style="color: #be185d;">Toplam Skor: <span id="boslukSonucPuan">0</span> Puan</span>
+                    <span style="color: #475569;">Süre: <span id="boslukSonucSure">00:00</span></span>
+                </div>
+                <button class="btn-giris" onclick="boslukModaliniAc()" style="background: #be185d; margin-bottom: 10px;">🔄 Yeni Tur Oyna</button>
+                <div class="liderlik-tablosu-box">
+                    <div class="liderlik-title" style="color: #9d174d;">📊 Boşluk Doldurma Liderlik Tablosu (Top 5)</div>
+                    <table class="lid-table"><thead><tr><th>Sıra</th><th>İsim</th><th>D</th><th>Puan</th><th>Süre</th></tr></thead><tbody id="boslukLiderlikGovde"></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
 
         <!-- SEVİYE HARİTASI MODALI -->
     <div class="seviye-harita-overlay" id="seviyeHaritaOverlay">
@@ -1669,1249 +1809,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbymyfOZH1LBAd8eFUYKTOIK9CiV1HVl-Y1StSN5d-cSglti99qSr2E-sTmaQw_ndeNGZA/exec";
-
-  
-  // ----------------------------------------------------
-
-  // --- (Buradan sonra kodunun geri kalan kısımları, raporlar, planlar ve ana veri çekme döngüsü devam edebilir) ---
-    // ÖĞRETMEN RAPORU İÇİN TARİH ARALIKLI VERİ GETİRME
-  if (e.parameter && e.parameter.islem === "raporVeriGetir") {
-    var rOgrenci = String(e.parameter.ogrenci || "").trim().toLowerCase();
-    var rBaslangic = new Date(e.parameter.baslangic + "T00:00:00");
-    var rBitis = new Date(e.parameter.bitis + "T23:59:59");
-
-    // --- Puanlama sekmesinden aralık içi kayıtlar ---
-    var sheetPuanR = ss.getSheetByName("Puanlama");
-    var puanlamaAralik = [];
-    if (sheetPuanR && sheetPuanR.getLastRow() > 1) {
-      var pRowsR = sheetPuanR.getDataRange().getValues();
-      var pHeadR = pRowsR[0];
-      var iOgr = pHeadR.indexOf("ogrenci");
-      var iTarih = pHeadR.indexOf("tarih");
-      var iGenel = pHeadR.indexOf("genel");
-      var iVocab = pHeadR.indexOf("vocabulary");
-      var iKonusma = pHeadR.indexOf("konusma");
-      var iOkuma = pHeadR.indexOf("okuma");
-      var iYazma = pHeadR.indexOf("yazma");
-      var iGrammar = pHeadR.indexOf("grammar");
-      var iDeneme = pHeadR.indexOf("deneme_puan");
-
-      for (var pr = 1; pr < pRowsR.length; pr++) {
-        var rowR = pRowsR[pr];
-        var ogrR = String(rowR[iOgr]).trim().toLowerCase();
-        if (ogrR !== rOgrenci) continue;
-        var tarihValR = rowR[iTarih] ? new Date(rowR[iTarih]) : null;
-        if (!tarihValR || tarihValR < rBaslangic || tarihValR > rBitis) continue;
-
-        puanlamaAralik.push({
-          tarih: Utilities.formatDate(tarihValR, Session.getScriptTimeZone(), "dd.MM.yyyy"),
-          tarihVal: tarihValR.getTime(),
-          genel: Number(rowR[iGenel]) || 0,
-          vocabulary: Number(rowR[iVocab]) || 0,
-          konusma: Number(rowR[iKonusma]) || 0,
-          okuma: Number(rowR[iOkuma]) || 0,
-          yazma: Number(rowR[iYazma]) || 0,
-          grammar: Number(rowR[iGrammar]) || 0,
-          deneme: Number(rowR[iDeneme]) || 0
-        });
-      }
-      puanlamaAralik.sort(function(a, b) { return a.tarihVal - b.tarihVal; });
-    }
-
-    // --- Ortalamaları hesapla ---
-    var toplam = { genel: 0, vocab: 0, konusma: 0, okuma: 0, yazma: 0, grammar: 0 };
-    var adetR = puanlamaAralik.length;
-    puanlamaAralik.forEach(function(k) {
-      toplam.genel += k.genel; toplam.vocab += k.vocabulary; toplam.konusma += k.konusma;
-      toplam.okuma += k.okuma; toplam.yazma += k.yazma; toplam.grammar += k.grammar;
-    });
-    var ortalamalar = adetR > 0 ? {
-      genel: Math.round(toplam.genel / adetR),
-      vocabulary: Math.round(toplam.vocab / adetR),
-      konusma: Math.round(toplam.konusma / adetR),
-      okuma: Math.round(toplam.okuma / adetR),
-      yazma: Math.round(toplam.yazma / adetR),
-      grammar: Math.round(toplam.grammar / adetR)
-    } : { genel: 0, vocabulary: 0, konusma: 0, okuma: 0, yazma: 0, grammar: 0 };
-
-    var sonDenemeAralikta = 0;
-    var denemeSerisi = puanlamaAralik.filter(function(k) { return k.deneme > 0; }).map(function(k) {
-      return { tarih: k.tarih, deneme: k.deneme };
-    });
-    if (denemeSerisi.length > 0) sonDenemeAralikta = denemeSerisi[denemeSerisi.length - 1].deneme;
-
-    var gelisimSerisi = puanlamaAralik.map(function(k) { return { tarih: k.tarih, genel: k.genel }; });
-
-    // --- Dersler sekmesinden aralıkta tamamlanan ders sayısı ---
-    var sheetDersR = ss.getSheetByName("Dersler");
-    var dersSayisiAralikta = 0;
-    if (sheetDersR && sheetDersR.getLastRow() > 1) {
-      var dRowsR = sheetDersR.getDataRange().getValues();
-      var dHeadR = dRowsR[0];
-      var dIOgr = dHeadR.indexOf("ogrenci");
-      var dITarih = dHeadR.indexOf("tarih");
-      var dIDurum = dHeadR.indexOf("durum");
-      for (var dr = 1; dr < dRowsR.length; dr++) {
-        var dRowR = dRowsR[dr];
-        var dOgrR = String(dRowR[dIOgr]).trim().toLowerCase();
-        if (dOgrR !== rOgrenci) continue;
-        var dDurumR = String(dRowR[dIDurum]).trim().toLowerCase();
-        if (dDurumR !== "yapıldı") continue;
-        var dTarihR = dRowR[dITarih] ? new Date(dRowR[dITarih]) : null;
-        if (dTarihR && dTarihR >= rBaslangic && dTarihR <= rBitis) dersSayisiAralikta++;
-      }
-    }
-
-    // --- Oyun skorlarını aralığa göre topla ---
-    function oyunOzetiHesapla(sheetAdi) {
-      var sheetOyunR = ss.getSheetByName(sheetAdi);
-      var ozet = { dogru: 0, yanlis: 0, puan: 0, oyunSayisi: 0 };
-      if (sheetOyunR && sheetOyunR.getLastRow() > 1) {
-        var oRowsR = sheetOyunR.getDataRange().getValues();
-        var oHeadR = oRowsR[0];
-        var oIIsim = oHeadR.indexOf("isim");
-        var oITarih = oHeadR.indexOf("tarih");
-        var oIDogru = oHeadR.indexOf("dogru");
-        var oIYanlis = oHeadR.indexOf("yanlis");
-        var oIPuan = oHeadR.indexOf("puan");
-        for (var or = 1; or < oRowsR.length; or++) {
-          var oRowR = oRowsR[or];
-          var oIsimR = String(oRowR[oIIsim]).trim().toLowerCase();
-          if (oIsimR !== rOgrenci) continue;
-          var oTarihR = oRowR[oITarih] ? new Date(oRowR[oITarih]) : null;
-          if (!oTarihR || oTarihR < rBaslangic || oTarihR > rBitis) continue;
-          ozet.dogru += Number(oRowR[oIDogru]) || 0;
-          ozet.yanlis += Number(oRowR[oIYanlis]) || 0;
-          ozet.puan += Number(oRowR[oIPuan]) || 0;
-          ozet.oyunSayisi++;
-        }
-      }
-      return ozet;
-    }
-
-    var oyunOzet = {
-      klasik: oyunOzetiHesapla("Kelime_Liderlik"),
-      jeopardy: oyunOzetiHesapla("Jeopardy_Liderlik"),
-      cekilis: oyunOzetiHesapla("Cekilis_Liderlik")
-    };
-
-    var raporSonucu = {
-      ortalamalar: ortalamalar,
-      sonDenemeAralikta: sonDenemeAralikta,
-      gelisimSerisi: gelisimSerisi,
-      denemeSerisi: denemeSerisi,
-      dersSayisiAralikta: dersSayisiAralikta,
-      oyunOzet: oyunOzet,
-      kayitSayisi: adetR
-    };
-
-    return ContentService.createTextOutput(JSON.stringify(raporSonucu)).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // YILLIK PLAN TİK GÜNCELLEME İSTEĞİ (EN BAŞA ALINDI)
-  if (e.parameter && e.parameter.islem === "planTikGuncelle") {
-    var planKodu = String(e.parameter.plankodu || "").trim();
-    var hedefHafta = String(e.parameter.hafta || "").trim();
-    var ogrenciAdi = String(e.parameter.ogrenci || "").trim();
-    var isaretli = e.parameter.isaretli === "true";
-
-    var sheetPlanlar = ss.getSheetByName("PlanSayfa");
-    if (sheetPlanlar && sheetPlanlar.getLastRow() > 1) {
-      var pData = sheetPlanlar.getDataRange().getValues();
-      var pHeader = pData[0];
-      
-            var idxKodu = -1;
-      var idxHafta = -1;
-      var idxTamamlayanlar = -1;
-      
-      for (var c = 0; c < pHeader.length; c++) {
-        var baslik = String(pHeader[c]).trim().toLowerCase();
-        if (baslik === "plankodu") idxKodu = c;
-        if (baslik === "hafta") idxHafta = c;
-        if (baslik === "onaylananlar") idxTamamlayanlar = c;
-      }
-
-      if (idxKodu !== -1 && idxTamamlayanlar !== -1) {
-        for (var p = 1; p < pData.length; p++) {
-          var mevcutKod = String(pData[p][idxKodu]).trim();
-          var mevcutHafta = idxHafta !== -1 ? String(pData[p][idxHafta]).trim() : "";
-          if (mevcutKod === planKodu && mevcutHafta === hedefHafta) {
-            var mevcutListeStr = String(pData[p][idxTamamlayanlar] || "").trim();
-            var listeArr = mevcutListeStr ? mevcutListeStr.split(",").map(function(item) { return item.trim(); }).filter(function(i){ return i !== ""; }) : [];
-
-            var indexInArr = listeArr.indexOf(ogrenciAdi);
-            if (isaretli && indexInArr === -1) {
-              listeArr.push(ogrenciAdi);
-            } else if (!isaretli && indexInArr !== -1) {
-              listeArr.splice(indexInArr, 1);
-            }
-
-            var yeniListeStr = listeArr.join(", ");
-            sheetPlanlar.getRange(p + 1, idxTamamlayanlar + 1).setValue(yeniListeStr);
-            break;
-          }
-        }
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", mesaj: "Tik başarıyla işlendi" })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-    // ÖĞRENCİDEN MERT HOCA'YA MESAJ GÖNDERME
-  if (e.parameter && e.parameter.islem === "sohbetMesajGonder") {
-    var sheetSohbet = ss.getSheetByName("Sohbet");
-    if (!sheetSohbet) {
-      sheetSohbet = ss.insertSheet("Sohbet");
-      sheetSohbet.appendRow(["tarih", "ogrenci", "gonderen", "mesaj", "okundu"]);
-    }
-
-    var mesajMetni = (e.parameter.mesaj || "").trim();
-    var gonderenOgrenci = e.parameter.ogrenci || "Misafir Ziyaretçi";
-
-    var sesliHarflerSB = mesajMetni.toLowerCase().match(/[aeıioöuü]/g);
-    var isRandomSB = false;
-    if (mesajMetni.length > 3 && (!sesliHarflerSB || sesliHarflerSB.length === 0)) isRandomSB = true;
-    if (/(.)\1{2,}/.test(mesajMetni.toLowerCase())) isRandomSB = true;
-
-    if (isRandomSB) {
-      return ContentService.createTextOutput(JSON.stringify({ status: "spam" })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    sheetSohbet.appendRow([new Date(), gonderenOgrenci, "ogrenci", mesajMetni, "hayir"]);
-
-    try {
-      MailApp.sendEmail({
-        to: "official.ogretmencocuk@gmail.com",
-        subject: "📩 Yeni Öğrenci Mesajı: " + gonderenOgrenci,
-        body: gonderenOgrenci + " sana yeni bir mesaj gönderdi:\n\n\"" + mesajMetni + "\"\n\nCevaplamak için uygulamandaki Öğretmen Paneli > Öğrenci Sohbetleri sekmesini aç."
-      });
-    } catch (mailErr) {}
-
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // ÖĞRENCİNİN KENDİ SOHBET GEÇMİŞİNİ GETİRMESİ
-  if (e.parameter && e.parameter.islem === "sohbetGetir") {
-    var ogrSG = String(e.parameter.ogrenci || "").trim().toLowerCase();
-    var sheetSohbetG = ss.getSheetByName("Sohbet");
-    var mesajlarSG = [];
-
-    if (sheetSohbetG && sheetSohbetG.getLastRow() > 1) {
-      var rowsSG = sheetSohbetG.getDataRange().getValues();
-      for (var sg = 1; sg < rowsSG.length; sg++) {
-        if (String(rowsSG[sg][1]).trim().toLowerCase() === ogrSG) {
-          mesajlarSG.push({
-            tarih: rowsSG[sg][0],
-            gonderen: String(rowsSG[sg][2]).trim().toLowerCase(),
-            mesaj: rowsSG[sg][3]
-          });
-        }
-      }
-    }
-
-    return ContentService.createTextOutput(JSON.stringify(mesajlarSG)).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // ÖĞRETMEN: TÜM ÖĞRENCİLERİN SOHBET ÖZETİNİ (LİSTESİNİ) GETİRME
-  if (e.parameter && e.parameter.islem === "ogretmenSohbetListesi") {
-    var sheetSohbetL = ss.getSheetByName("Sohbet");
-    var ozetMap = {};
-
-    if (sheetSohbetL && sheetSohbetL.getLastRow() > 1) {
-      var rowsSL = sheetSohbetL.getDataRange().getValues();
-      for (var sl = 1; sl < rowsSL.length; sl++) {
-        var ogrAdiSL = String(rowsSL[sl][1]).trim();
-        if (!ogrAdiSL) continue;
-
-        if (!ozetMap[ogrAdiSL]) {
-          ozetMap[ogrAdiSL] = { ogrenci: ogrAdiSL, sonMesaj: "", sonTarih: null, okunmamis: 0 };
-        }
-
-        ozetMap[ogrAdiSL].sonMesaj = rowsSL[sl][3];
-        ozetMap[ogrAdiSL].sonTarih = rowsSL[sl][0];
-
-        var gonderenSL = String(rowsSL[sl][2]).trim().toLowerCase();
-        var okunduSL = String(rowsSL[sl][4]).trim().toLowerCase();
-        if (gonderenSL === "ogrenci" && okunduSL !== "evet") {
-          ozetMap[ogrAdiSL].okunmamis++;
-        }
-      }
-    }
-
-    var listeSL = Object.values(ozetMap).sort(function(a, b) {
-      return new Date(b.sonTarih) - new Date(a.sonTarih);
-    });
-
-    return ContentService.createTextOutput(JSON.stringify(listeSL)).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // ÖĞRETMEN: BİR ÖĞRENCİNİN SOHBETİNİ AÇMA (OKUNDU İŞARETLEME DAHİL)
-  if (e.parameter && e.parameter.islem === "ogretmenSohbetAc") {
-    var ogrOA = String(e.parameter.ogrenci || "").trim();
-    var sheetSohbetOA = ss.getSheetByName("Sohbet");
-    var mesajlarOA = [];
-
-    if (sheetSohbetOA && sheetSohbetOA.getLastRow() > 1) {
-      var rowsOA = sheetSohbetOA.getDataRange().getValues();
-      for (var oa = 1; oa < rowsOA.length; oa++) {
-        if (String(rowsOA[oa][1]).trim().toLowerCase() === ogrOA.toLowerCase()) {
-          mesajlarOA.push({
-            tarih: rowsOA[oa][0],
-            gonderen: String(rowsOA[oa][2]).trim().toLowerCase(),
-            mesaj: rowsOA[oa][3]
-          });
-
-          var gonderenOA = String(rowsOA[oa][2]).trim().toLowerCase();
-          if (gonderenOA === "ogrenci") {
-            sheetSohbetOA.getRange(oa + 1, 5).setValue("evet");
-          }
-        }
-      }
-    }
-
-    return ContentService.createTextOutput(JSON.stringify(mesajlarOA)).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // ÖĞRETMEN: ÖĞRENCİYE CEVAP YAZMA
-  if (e.parameter && e.parameter.islem === "ogretmenCevapGonder") {
-    var sheetSohbetCG = ss.getSheetByName("Sohbet");
-    if (!sheetSohbetCG) {
-      sheetSohbetCG = ss.insertSheet("Sohbet");
-      sheetSohbetCG.appendRow(["tarih", "ogrenci", "gonderen", "mesaj", "okundu"]);
-    }
-
-    var ogrCG = e.parameter.ogrenci || "";
-    var mesajCG = (e.parameter.mesaj || "").trim();
-
-    sheetSohbetCG.appendRow([new Date(), ogrCG, "ogretmen", mesajCG, "evet"]);
-
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // OKUMA HIZI GEÇMİŞİNİ GETİRME
-  if (e.parameter && e.parameter.islem === "okumaGecmisGetir") {
-    var ogr = String(e.parameter.ogrenci || "").trim().toLowerCase();
-    var sheetOkuma = ss.getSheetByName("Okuma_Hizi");
-    var liste = [];
-    if (sheetOkuma && sheetOkuma.getLastRow() > 1) {
-      var rows = sheetOkuma.getDataRange().getValues();
-      var head = rows[0];
-      var iOgr = head.indexOf("OgrenciAdi");
-      var iTarih = head.indexOf("Tarih");
-      var iSinif = head.indexOf("Sinif");
-      var iKelime = head.indexOf("OkunanKelime");
-      var iSure = head.indexOf("GecsenSureSaniye");
-      var iWpm = head.indexOf("DakikadaKelimeWPM");
-      var iBaslik = head.indexOf("MetinBasligi");
-
-      for (var r = 1; r < rows.length; r++) {
-        var rowOgr = String(rows[r][iOgr]).trim().toLowerCase();
-        if (rowOgr === ogr) {
-          liste.push({
-            tarih: rows[r][iTarih],
-            sinif: rows[r][iSinif],
-            okunanKelime: rows[r][iKelime],
-            gecenSure: rows[r][iSure],
-            wpm: rows[r][iWpm],
-            metinBasligi: rows[r][iBaslik]
-          });
-        }
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify(liste)).setMimeType(ContentService.MimeType.JSON);
-  }
-  
-  // ÖĞRETMEN RUBRİK VERİLERİNİ KAYDETME İSTEĞİ
-  if (e.parameter && e.parameter.islem === "rubrikKaydet") {
-    var ogrenci = e.parameter.ogrenci;
-    var tarih = e.parameter.tarih;
-    var sonrakiTarih = e.parameter.sonrakitarih;
-    var kitapAdi = e.parameter.kitapadi;
-    var sayfa = e.parameter.sayfa;
-    var hedef = e.parameter.hedef;
-    var okunanSayisi = e.parameter.okunansayisi;
-    var sonDeneme = e.parameter.sondeneme;
-    var pOkuma = e.parameter.okuma;
-    var pYazma = e.parameter.yazma;
-    var pVocab = e.parameter.vocab;
-    var pKonusma = e.parameter.konusma;
-    var pGrammar = e.parameter.grammar;
-    
-    var sheetPuan = ss.getSheetByName("Puanlama");
-    if (sheetPuan) {
-      var genelPuan = Math.round((Number(pOkuma) + Number(pYazma) + Number(pVocab) + Number(pKonusma) + Number(pGrammar)) / 5);
-      sheetPuan.appendRow([tarih, ogrenci, genelPuan, pVocab, pKonusma, pOkuma, pYazma, pGrammar, sonDeneme]);
-    }
-    
-    var sheetKitap = ss.getSheetByName("Kitaplar");
-    if (sheetKitap) {
-      sheetKitap.appendRow([tarih, ogrenci, kitapAdi, sayfa, hedef, okunanSayisi]);
-    }
-
-    var sheetDers = ss.getSheetByName("Dersler");
-    if (sheetDers) {
-      sheetDers.appendRow([tarih, ogrenci, "yapıldı"]);
-      if (sonrakiTarih) {
-        sheetDers.appendRow([sonrakiTarih, ogrenci, "sonraki"]);
-      }
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({"status": "success"}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-
- 
-  
-    
-
-  // SEVİYE TAMAMLAMA KAYDETME
-  if (e.parameter && e.parameter.islem === "seviyeTamamla") {
-    var sheetSI = ss.getSheetByName("SeviyeIlerleme");
-    if (!sheetSI) {
-      sheetSI = ss.insertSheet("SeviyeIlerleme");
-      sheetSI.appendRow(["ogrenci", "sinif", "unite", "seviye", "tamamlandi_mi", "tarih", "secilen_sinif"]);
-    }
-
-    var ogrenciAdiSI = String(e.parameter.ogrenci || "").trim();
-    var sinifSI = Number(e.parameter.sinif) || 0;
-    var uniteSI = Number(e.parameter.unite) || 0;
-    var seviyeSI = Number(e.parameter.seviye) || 0;
-
-    var mevcutSatirlar = sheetSI.getDataRange().getValues();
-    var bulunduSI = false;
-    for (var s = 1; s < mevcutSatirlar.length; s++) {
-      if (String(mevcutSatirlar[s][0]).trim().toLowerCase() === ogrenciAdiSI.toLowerCase()
-          && Number(mevcutSatirlar[s][1]) === sinifSI
-          && Number(mevcutSatirlar[s][2]) === uniteSI
-          && Number(mevcutSatirlar[s][3]) === seviyeSI) {
-        sheetSI.getRange(s + 1, 5).setValue("true");
-        sheetSI.getRange(s + 1, 6).setValue(new Date());
-        bulunduSI = true;
-        break;
-      }
-    }
-    if (!bulunduSI) {
-      sheetSI.appendRow([ogrenciAdiSI, sinifSI, uniteSI, seviyeSI, "true", new Date(), ""]);
-    }
-
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // ÖĞRENCİNİN SEÇTİĞİ SINIFI KAYDETME
-  if (e.parameter && e.parameter.islem === "sinifSec") {
-    var sheetSSinif = ss.getSheetByName("SeviyeIlerleme");
-    if (!sheetSSinif) {
-      sheetSSinif = ss.insertSheet("SeviyeIlerleme");
-      sheetSSinif.appendRow(["ogrenci", "sinif", "unite", "seviye", "tamamlandi_mi", "tarih", "secilen_sinif"]);
-    }
-
-    var ogrenciSS = String(e.parameter.ogrenci || "").trim();
-    var secilenSinif = Number(e.parameter.sinif) || 0;
-
-    var veriSS = sheetSSinif.getDataRange().getValues();
-    var headSS = veriSS[0];
-    var idxOgrSS = headSS.indexOf("ogrenci");
-    var idxSecSinif = headSS.indexOf("secilen_sinif");
-
-    if (idxSecSinif === -1) {
-      sheetSSinif.getRange(1, sheetSSinif.getLastColumn() + 1).setValue("secilen_sinif");
-      idxSecSinif = sheetSSinif.getLastColumn() - 1;
-    }
-
-    var bulunduSS = false;
-    for (var r = 1; r < veriSS.length; r++) {
-      if (String(veriSS[r][idxOgrSS]).trim().toLowerCase() === ogrenciSS.toLowerCase() && String(veriSS[r][idxSecSinif] || "") !== "") {
-        sheetSSinif.getRange(r + 1, idxSecSinif + 1).setValue(secilenSinif);
-        bulunduSS = true;
-        break;
-      }
-    }
-    if (!bulunduSS) {
-      sheetSSinif.appendRow([ogrenciSS, "", "", "", "", new Date(), secilenSinif]);
-    }
-
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  
-
-  // OTURUM SÜRESİ KAYDETME
-  if (e.parameter && e.parameter.islem === "kaydet") {
-    var ogrenciAdi = e.parameter.ogrenci;
-    var toplamSure = e.parameter.toplamsure;
-    var rozet = e.parameter.rozet;
-    var sheetSure = ss.getSheetByName("Oturum Saniye") || ss.getSheetByName("İngilizce");
-    var rows = sheetSure.getDataRange().getValues();
-    var headers = rows[0];
-    var idxOgrenci = headers.indexOf("ogrenci");
-    var idxSure = headers.indexOf("toplam sure") !== -1 ? headers.indexOf("toplam sure") : headers.indexOf("toplamsure");
-    var idxRozet = headers.indexOf("rozet");
-    
-    var bulundu = false;
-    for (var i = 1; i < rows.length; i++) {
-      if (String(rows[i][idxOgrenci]).trim().toLowerCase() === String(ogrenciAdi).trim().toLowerCase()) {
-        if (idxSure !== -1) sheetSure.getRange(i + 1, idxSure + 1).setValue(toplamSure);
-        if (idxRozet !== -1) sheetSure.getRange(i + 1, idxRozet + 1).setValue(rozet);
-        bulundu = true;
-        break;
-      }
-    }
-    if (!bulundu) sheetSure.appendRow([ogrenciAdi, toplamSure, rozet]);
-    return ContentService.createTextOutput(JSON.stringify({"status": "success"}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-  
-  // Sekme adını güvenli bulma (Büyük/küçük harf duyarsız)
-  var sheetGiris = null;
-var tumSekmeler = ss.getSheets();
-for (var st = 0; st < tumSekmeler.length; st++) {
-  var adi = tumSekmeler[st].getName().trim();
-  if (adi === "İngilizce" || adi.toLowerCase().indexOf("ngilizce") !== -1) {
-    sheetGiris = tumSekmeler[st];
-    break;
-  }
-}
-  if (!sheetGiris) {
-    return ContentService.createTextOutput(JSON.stringify([{ hata: "'İngilizce' adında bir sekme bulunamadı!" }])).setMimeType(ContentService.MimeType.JSON);
-  }
-  var rowsGiris = sheetGiris.getDataRange().getValues();
-  var headersGiris = rowsGiris[0];
-  var idxTel = headersGiris.indexOf("telefon");
-  var idxAtananPlan = headersGiris.indexOf("AtananPlan");
-
-    var sheetPlanlar = ss.getSheetByName("PlanSayfa");
-  var tumPlanlarHavuzu = [];
-  if (sheetPlanlar && sheetPlanlar.getLastRow() > 1) {
-    var pRows = sheetPlanlar.getDataRange().getValues();
-    var pHead = pRows[0];
-    var pKodu = pHead.indexOf("Plankodu");
-    var pHafta = pHead.indexOf("Hafta");
-    var pAciklama = pHead.indexOf("Açıklama");
-    var pOnaylananlar = pHead.indexOf("Onaylananlar");
-
-    for (var pi = 1; pi < pRows.length; pi++) {
-      var pRow = pRows[pi];
-      tumPlanlarHavuzu.push({
-        planKodu: String(pRow[pKodu] || "").trim(),
-        hafta: pRow[pHafta] || "",
-        aciklama: String(pRow[pAciklama] || "").trim(),
-        onaylananlar: String(pRow[pOnaylananlar] || "").trim()
-      });
-    }
-  }
-
-  var sheetSure = ss.getSheetByName("Oturum Saniye");
-  var sureMap = {};
-  if (sheetSure) {
-    var rowsSure = sheetSure.getDataRange().getValues();
-    var headersSure = rowsSure[0];
-    var sIdxOgrenci = headersSure.indexOf("ogrenci");
-    var sIdxSure = headersSure.indexOf("toplam sure") !== -1 ? headersSure.indexOf("toplam sure") : headersSure.indexOf("toplamsure");
-    var sIdxRozet = headersSure.indexOf("rozet");
-    for (var k = 1; k < rowsSure.length; k++) {
-      var og = String(rowsSure[k][sIdxOgrenci]).trim().toLowerCase();
-      sureMap[og] = { toplamsure: Number(rowsSure[k][sIdxSure]) || 0, rozet: Number(rowsSure[k][sIdxRozet]) || 0 };
-    }
-  }
-
-  var sheetPuan = ss.getSheetByName("Puanlama");
-  var puanMap = {};
-  var grafikGecmisMap = {};
-  var denemeGecmisMap = {};
-  var arsivMap = {}; 
-  
-  if (sheetPuan) {
-    var rowsPuan = sheetPuan.getDataRange().getValues();
-    var headersPuan = rowsPuan[0];
-    var pOgrenci = headersPuan.indexOf("ogrenci");
-    var pGenel = headersPuan.indexOf("genel");
-    var pVocab = headersPuan.indexOf("vocabulary");
-    var pKonusma = headersPuan.indexOf("konusma");
-    var pOkuma = headersPuan.indexOf("okuma");
-    var pYazma = headersPuan.indexOf("yazma");
-    var pGrammar = headersPuan.indexOf("grammar");
-    var pDeneme = headersPuan.indexOf("deneme_puan");
-    var pTarih = headersPuan.indexOf("tarih");
-    
-    var ogrenciPuanlari = {};
-    for (var p = 1; p < rowsPuan.length; p++) {
-      var row = rowsPuan[p];
-      var ogr = String(row[pOgrenci]).trim().toLowerCase();
-      if (!ogr) continue;
-      
-      var genelPuan = Number(row[pGenel]) || 0;
-      var vocabP = Number(row[pVocab]) || 0;
-      var konusmaP = Number(row[pKonusma]) || 0;
-      var okumaP = Number(row[pOkuma]) || 0;
-      var yazmaP = Number(row[pYazma]) || 0;
-      var grammarP = Number(row[pGrammar]) || 0;
-      var denemePuan = Number(row[pDeneme]) || 0;
-      var tarihVal = row[pTarih] ? new Date(row[pTarih]) : new Date(0);
-      var tarihStr = tarihVal.getTime() !== 0 ? Utilities.formatDate(tarihVal, Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
-      
-      if (!grafikGecmisMap[ogr]) grafikGecmisMap[ogr] = [];
-      grafikGecmisMap[ogr].push({ tarih: tarihStr, tarihVal: tarihVal.getTime(), genel: genelPuan });
-
-      if (!denemeGecmisMap[ogr]) denemeGecmisMap[ogr] = [];
-      denemeGecmisMap[ogr].push({ tarih: tarihStr, tarihVal: tarihVal.getTime(), deneme: denemePuan });
-      
-      if (!arsivMap[ogr]) arsivMap[ogr] = [];
-      arsivMap[ogr].push({
-        tarih: tarihStr, tarihVal: tarihVal.getTime(), genel: genelPuan, vocabulary: vocabP, konusma: konusmaP, okuma: okumaP, yazma: yazmaP, grammar: grammarP, deneme: denemePuan
-      });
-      
-      if (!ogrenciPuanlari[ogr]) {
-        ogrenciPuanlari[ogr] = { 
-          toplamGenel: 0, toplamVocab: 0, toplamKonusma: 0, toplamOkuma: 0, toplamYazma: 0, toplamGrammar: 0, 
-          adet: 0, sonDeneme: 0, sonGenel: 0, sonVocab: 0, sonKonusma: 0, sonOkuma: 0, sonYazma: 0, sonGrammar: 0, enYeniTarih: tarihVal 
-        };
-      }
-      ogrenciPuanlari[ogr].toplamGenel += genelPuan;
-      ogrenciPuanlari[ogr].toplamVocab += vocabP;
-      ogrenciPuanlari[ogr].toplamKonusma += konusmaP;
-      ogrenciPuanlari[ogr].toplamOkuma += okumaP;
-      ogrenciPuanlari[ogr].toplamYazma += yazmaP;
-      ogrenciPuanlari[ogr].toplamGrammar += grammarP;
-      ogrenciPuanlari[ogr].adet += 1;
-      
-      if (tarihVal >= ogrenciPuanlari[ogr].enYeniTarih) {
-        ogrenciPuanlari[ogr].enYeniTarih = tarihVal;
-        ogrenciPuanlari[ogr].sonDeneme = denemePuan;
-        ogrenciPuanlari[ogr].sonGenel = genelPuan;
-        ogrenciPuanlari[ogr].sonVocab = vocabP;
-        ogrenciPuanlari[ogr].sonKonusma = konusmaP;
-        ogrenciPuanlari[ogr].sonOkuma = okumaP;
-        ogrenciPuanlari[ogr].sonYazma = yazmaP;
-        ogrenciPuanlari[ogr].sonGrammar = grammarP;
-      }
-    }
-    for (var ogrKey in grafikGecmisMap) grafikGecmisMap[ogrKey].sort(function(a, b) { return a.tarihVal - b.tarihVal; });
-    for (var ogrKey in denemeGecmisMap) denemeGecmisMap[ogrKey].sort(function(a, b) { return a.tarihVal - b.tarihVal; });
-    for (var ogrKey in arsivMap) arsivMap[ogrKey].sort(function(a, b) { return b.tarihVal - a.tarihVal; });
-    
-    for (var ogrKey in ogrenciPuanlari) {
-      var item = ogrenciPuanlari[ogrKey];
-      var adet = item.adet;
-      puanMap[ogrKey] = {
-        genelOrtalama: adet > 0 ? Math.round(item.toplamGenel / adet) : 0,
-        guncelGenelPuan: item.sonGenel,
-        vocabOrt: adet > 0 ? Math.round(item.toplamVocab / adet) : 0,
-        konusmaOrt: adet > 0 ? Math.round(item.toplamKonusma / adet) : 0,
-        okumaOrt: adet > 0 ? Math.round(item.toplamOkuma / adet) : 0,
-        yazmaOrt: adet > 0 ? Math.round(item.toplamYazma / adet) : 0,
-        grammarOrt: adet > 0 ? Math.round(item.toplamGrammar / adet) : 0,
-        etkinlikBasarisi: item.sonGenel,
-        sonDeneme: item.sonDeneme
-      };
-    }
-  }
-
-  var sheetRozet = ss.getSheetByName("Rozetler");
-  var tumRozetler = [];
-  if (sheetRozet) {
-    var rowsRozet = sheetRozet.getDataRange().getValues();
-    var headersRozet = rowsRozet[0];
-    var rOgr = headersRozet.indexOf("ogrenciAdi");
-    var rAdi = headersRozet.indexOf("rozetAdi");
-    var rPuan = headersRozet.indexOf("gerekliPuan");
-    var rEmoji = headersRozet.indexOf("emoji");
-    for (var ri = 1; ri < rowsRozet.length; ri++) {
-      var rRow = rowsRozet[ri];
-      tumRozetler.push({ ogrenciAdi: String(rRow[rOgr]).trim().toLowerCase(), rozetAdi: String(rRow[rAdi]).trim(), gerekliPuan: Number(rRow[rPuan]) || 0, emoji: String(rRow[rEmoji]).trim() || "🏆" });
-    }
-  }
-
-  var sheetLiderlik = ss.getSheetByName("Kelime_Liderlik");
-  var liderlikListesi = [];
-  if (sheetLiderlik) {
-    var rowsLid = sheetLiderlik.getDataRange().getValues();
-    if (rowsLid.length > 1) {
-      var lHeaders = rowsLid[0];
-      var kayitlar = [];
-      for (var li = 1; li < rowsLid.length; li++) {
-        var lRow = rowsLid[li];
-        kayitlar.push({ isim: String(lRow[lHeaders.indexOf("isim")]) || "Misafir", dogru: Number(lRow[lHeaders.indexOf("dogru")]) || 0, sure: String(lRow[lHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(lRow[lHeaders.indexOf("suresaniye")]) || 9999, puan: Number(lRow[lHeaders.indexOf("puan")]) || 0 });
-      }
-      kayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
-      liderlikListesi = kayitlar.slice(0, 5);
-    }
-  }
-
-  var sheetJeopLid = ss.getSheetByName("Jeopardy_Liderlik");
-  var jeopLiderlikListesi = [];
-  if (sheetJeopLid) {
-    var rowsJeop = sheetJeopLid.getDataRange().getValues();
-    if (rowsJeop.length > 1) {
-      var jHeaders = rowsJeop[0];
-      var jKayitlar = [];
-      for (var ji = 1; ji < rowsJeop.length; ji++) {
-        var jRow = rowsJeop[ji];
-        jKayitlar.push({ isim: String(jRow[jHeaders.indexOf("isim")]) || "Misafir", dogru: Number(jRow[jHeaders.indexOf("dogru")]) || 0, sure: String(jRow[jHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(jRow[jHeaders.indexOf("suresaniye")]) || 9999, puan: Number(jRow[jHeaders.indexOf("puan")]) || 0 });
-      }
-      jKayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
-      jeopLiderlikListesi = jKayitlar.slice(0, 5);
-    }
-  }
-
-var sheetCekilisLid = ss.getSheetByName("Cekilis_Liderlik");
-  var cekilisLiderlikListesi = [];
-  if (sheetCekilisLid) {
-    var rowsCekilis = sheetCekilisLid.getDataRange().getValues();
-    if (rowsCekilis.length > 1) {
-      var cHeaders = rowsCekilis[0];
-      var cKayitlar = [];
-      for (var ci = 1; ci < rowsCekilis.length; ci++) {
-        var cRow = rowsCekilis[ci];
-        cKayitlar.push({ isim: String(cRow[cHeaders.indexOf("isim")]) || "Misafir", dogru: Number(cRow[cHeaders.indexOf("dogru")]) || 0, sure: String(cRow[cHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(cRow[cHeaders.indexOf("suresaniye")]) || 9999, puan: Number(cRow[cHeaders.indexOf("puan")]) || 0 });
-      }
-      cKayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
-      cekilisLiderlikListesi = cKayitlar.slice(0, 5);
-    }
-  }
-
-    var sheetBoslukLid = ss.getSheetByName("BoslukDoldurma_Liderlik");
-  var boslukLiderlikListesi = [];
-  if (sheetBoslukLid) {
-    var rowsBoslukLid = sheetBoslukLid.getDataRange().getValues();
-    if (rowsBoslukLid.length > 1) {
-      var blHeaders = rowsBoslukLid[0];
-      var blKayitlar = [];
-      for (var bli = 1; bli < rowsBoslukLid.length; bli++) {
-        var blRow = rowsBoslukLid[bli];
-        blKayitlar.push({ isim: String(blRow[blHeaders.indexOf("isim")]) || "Misafir", dogru: Number(blRow[blHeaders.indexOf("dogru")]) || 0, sure: String(blRow[blHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(blRow[blHeaders.indexOf("suresaniye")]) || 9999, puan: Number(blRow[blHeaders.indexOf("puan")]) || 0 });
-      }
-      blKayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
-      boslukLiderlikListesi = blKayitlar.slice(0, 5);
-    }
-  }
-
-    var sheetBulmacaLid = ss.getSheetByName("KelimeBulmaca_Liderlik");
-  var bulmacaLiderlikListesi = [];
-  if (sheetBulmacaLid) {
-    var rowsBulmacaLid = sheetBulmacaLid.getDataRange().getValues();
-    if (rowsBulmacaLid.length > 1) {
-      var bmHeaders = rowsBulmacaLid[0];
-      var bmKayitlar = [];
-      for (var bmi = 1; bmi < rowsBulmacaLid.length; bmi++) {
-        var bmRow = rowsBulmacaLid[bmi];
-        bmKayitlar.push({ isim: String(bmRow[bmHeaders.indexOf("isim")]) || "Misafir", dogru: Number(bmRow[bmHeaders.indexOf("dogru")]) || 0, sure: String(bmRow[bmHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(bmRow[bmHeaders.indexOf("suresaniye")]) || 9999, puan: Number(bmRow[bmHeaders.indexOf("puan")]) || 0 });
-      }
-      bmKayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
-      bulmacaLiderlikListesi = bmKayitlar.slice(0, 5);
-    }
-  }
-
-  var sheetKitap = ss.getSheetByName("Kitaplar");
-  var kitapMap = {};
-  if (sheetKitap) {
-    var rowsKitap = sheetKitap.getDataRange().getValues();
-    var headersKitap = rowsKitap[0];
-    var kOgrenci = headersKitap.indexOf("ogrenci");
-    var kKitapAdi = headersKitap.indexOf("son_kitap_adi");
-    var kSayfa = headersKitap.indexOf("son_kitap_sayfa");
-    var kHedef = headersKitap.indexOf("son_kitap_hedef");
-    var kOkunanSayi = headersKitap.indexOf("okunan_kitap_sayisi");
-    var ogrenciKitaplar = {};
-    for (var ki = 1; ki < rowsKitap.length; ki++) {
-      var kRow = rowsKitap[ki];
-      var kOgr = String(kRow[kOgrenci]).trim().toLowerCase();
-      if (!kOgr) continue;
-      if (!ogrenciKitaplar[kOgr]) ogrenciKitaplar[kOgr] = [];
-      ogrenciKitaplar[kOgr].push({ kitapAdi: kRow[kKitapAdi] || "Belirtilmemiş", sayfa: Number(kRow[kSayfa]) || 0, hedef: Number(kRow[kHedef]) || 40, okunanSayisi: Number(kRow[kOkunanSayi]) || 1 });
-    }
-    for (var ogrKey in ogrenciKitaplar) kitapMap[ogrKey] = ogrenciKitaplar[ogrKey][ogrenciKitaplar[ogrKey].length - 1];
-  }
-
-  var sheetDers = ss.getSheetByName("Dersler");
-  var dersMap = {};
-  if (sheetDers) {
-    var rowsDers = sheetDers.getDataRange().getValues();
-    if (rowsDers.length > 1) {
-      var headersDers = rowsDers[0];
-      var dOgrenci = headersDers.indexOf("ogrenci");
-      var dTarih = headersDers.indexOf("tarih");
-      var dDurum = headersDers.indexOf("durum");
-      var ogrenciTumDersler = {};
-      
-      for (var d = 1; d < rowsDers.length; d++) {
-        var dRow = rowsDers[d];
-        var dOgr = String(dRow[dOgrenci]).trim().toLowerCase();
-        if (!dOgr) continue;
-        if (!ogrenciTumDersler[dOgr]) ogrenciTumDersler[dOgr] = [];
-        var tarihStr = dRow[dTarih];
-        if (tarihStr instanceof Date) tarihStr = Utilities.formatDate(tarihStr, Session.getScriptTimeZone(), "dd.MM.yyyy");
-        ogrenciTumDersler[dOgr].push({ tarih: tarihStr || "", durum: String(dRow[dDurum]).trim().toLowerCase() });
-      }
-      
-      // Her öğrenci için tablodaki (sekmedeki) en son girilen son 2 kaydı al
-      for (var ogrKey in ogrenciTumDersler) {
-        var liste = ogrenciTumDersler[ogrKey];
-        dersMap[ogrKey] = liste.slice(-2); // Son 2 satırı doğrudan alır
-      }
-    }
-  }
-  
-    var sheetKelimeler = ss.getSheetByName("Kelimeler");
-  var tumKelimelerHavuzu = [];
-  if (sheetKelimeler) {
-    var rowsKel = sheetKelimeler.getDataRange().getValues();
-    if (rowsKel.length > 1) {
-      var kHead = rowsKel[0].map(function(h) { return String(h).trim().toLowerCase(); });
-      var iSinifK = kHead.indexOf("sinif");
-      var iUniteK = kHead.indexOf("unite");
-      var iEnK = kHead.indexOf("ingilizce");
-      var iTrK = kHead.indexOf("turkce");
-
-      if (iSinifK === -1 || iUniteK === -1 || iEnK === -1 || iTrK === -1) {
-        Logger.log("KELIMELER SEKMESI BASLIK HATASI - bulunanlar: " + kHead.join(", "));
-      } else {
-        for (var ki = 1; ki < rowsKel.length; ki++) {
-          var enVal = String(rowsKel[ki][iEnK] || "").trim();
-          if (!enVal) continue;
-          tumKelimelerHavuzu.push({
-            sinif: Number(rowsKel[ki][iSinifK]) || 2,
-            unite: Number(rowsKel[ki][iUniteK]) || 1,
-            en: enVal,
-            tr: String(rowsKel[ki][iTrK] || "").trim()
-          });
-        }
-      }
-    }
-  } else {
-    Logger.log("KELIMELER SEKMESI BULUNAMADI");
-  }
-
-    var sheetBosluk = ss.getSheetByName("BoslukDoldurma");
-  var tumBoslukKelimeleri = [];
-  if (sheetBosluk) {
-    var rowsBosluk = sheetBosluk.getDataRange().getValues();
-    if (rowsBosluk.length > 1) {
-      var bHead = rowsBosluk[0].map(function(h) { return String(h).trim().toLowerCase(); });
-      var iSinifB = bHead.indexOf("sinif");
-      var iUniteB = bHead.indexOf("unite");
-      var iKelimeB = bHead.indexOf("kelime");
-      var iGizliB = bHead.indexOf("gizli_harfler");
-      var iIpucuB = bHead.indexOf("ipucu_tr");
-      var iKategoriB = bHead.indexOf("kategori");
-
-      for (var bi = 1; bi < rowsBosluk.length; bi++) {
-        var kelimeVal = String(rowsBosluk[bi][iKelimeB] || "").trim().toUpperCase();
-        if (!kelimeVal) continue;
-        var gizliStr = String(rowsBosluk[bi][iGizliB] || "").trim();
-        var gizliPozisyonlar = gizliStr ? gizliStr.split(",").map(function(p) { return parseInt(p.trim()); }).filter(function(p) { return !isNaN(p); }) : [];
-
-        tumBoslukKelimeleri.push({
-          sinif: Number(rowsBosluk[bi][iSinifB]) || 2,
-          unite: Number(rowsBosluk[bi][iUniteB]) || 1,
-          kelime: kelimeVal,
-          gizliPozisyonlar: gizliPozisyonlar,
-          ipucu: String(rowsBosluk[bi][iIpucuB] || "").trim(),
-          kategori: String(rowsBosluk[bi][iKategoriB] || "genel").trim().toLowerCase()
-        });
-      }
-    }
-  }
-
-  // SEVİYE İLERLEME TAKİBİ (+ ÖĞRENCİNİN SEÇTİĞİ SINIF)
-  var sheetSeviyeIlerleme = ss.getSheetByName("SeviyeIlerleme");
-  var seviyeIlerlemeMap = {};
-  var secilenSinifMap = {};
-  if (sheetSeviyeIlerleme && sheetSeviyeIlerleme.getLastRow() > 1) {
-    var rowsSI = sheetSeviyeIlerleme.getDataRange().getValues();
-    var siHead = rowsSI[0];
-    var siOgr = siHead.indexOf("ogrenci");
-    var siSinif = siHead.indexOf("sinif");
-    var siUnite = siHead.indexOf("unite");
-    var siSeviye = siHead.indexOf("seviye");
-    var siTamam = siHead.indexOf("tamamlandi_mi");
-    var siSecilenSinif = siHead.indexOf("secilen_sinif");
-
-    for (var si = 1; si < rowsSI.length; si++) {
-      var siRow = rowsSI[si];
-      var ogrKey = String(siRow[siOgr]).trim().toLowerCase();
-      if (!ogrKey) continue;
-
-      if (siSecilenSinif !== -1 && siRow[siSecilenSinif]) {
-        secilenSinifMap[ogrKey] = Number(siRow[siSecilenSinif]);
-      }
-
-      var satirSinif = siSinif !== -1 ? Number(siRow[siSinif]) || 0 : 0;
-      var satirUnite = siUnite !== -1 ? Number(siRow[siUnite]) || 0 : 0;
-      var satirSeviye = siSeviye !== -1 ? Number(siRow[siSeviye]) || 0 : 0;
-      if (satirSinif === 0 && satirUnite === 0 && satirSeviye === 0) continue;
-
-      if (!seviyeIlerlemeMap[ogrKey]) seviyeIlerlemeMap[ogrKey] = [];
-      seviyeIlerlemeMap[ogrKey].push({
-        sinif: satirSinif,
-        unite: satirUnite,
-        seviye: satirSeviye,
-        tamamlandi: String(siRow[siTamam]).trim().toLowerCase() === "true"
-      });
-    }
-  }
-
-    // AKTİVİTE KARTLARI HAVUZU (seviye bazlı kelime kartları)
-  var sheetAktiviteKart = ss.getSheetByName("AktiviteKartlari");
-  var tumAktiviteKartlari = [];
-  if (sheetAktiviteKart) {
-    var rowsAK = sheetAktiviteKart.getDataRange().getValues();
-    if (rowsAK.length > 1) {
-      var akHead = rowsAK[0];
-      var iSinif = akHead.indexOf("sinif");
-      var iUnite = akHead.indexOf("unite");
-      var iSeviye = akHead.indexOf("seviye");
-      var iEn = akHead.indexOf("ingilizce");
-      var iTr = akHead.indexOf("turkce");
-      var iCumleEn = akHead.indexOf("ornek_cumle_en");
-      var iCumleTr = akHead.indexOf("ornek_cumle_tr");
-      var iKategori = akHead.indexOf("gorsel_kategori");
-
-      for (var ak = 1; ak < rowsAK.length; ak++) {
-        var akRow = rowsAK[ak];
-        if (!akRow[iEn]) continue;
-        tumAktiviteKartlari.push({
-          sinif: Number(akRow[iSinif]) || 2,
-          unite: Number(akRow[iUnite]) || 1,
-          seviye: Number(akRow[iSeviye]) || 1,
-          en: String(akRow[iEn]).trim(),
-          tr: String(akRow[iTr]).trim(),
-          cumleEn: String(akRow[iCumleEn] || "").trim(),
-          cumleTr: String(akRow[iCumleTr] || "").trim(),
-          kategori: String(akRow[iKategori] || "genel").trim().toLowerCase()
-        });
-      }
-    }
-  }
-
-  // GÖRSEL HAVUZU (kategoriye göre gruplu)
-  var sheetGorsel = ss.getSheetByName("GorselHavuzu");
-  var gorselHavuzuMap = {};
-  if (sheetGorsel) {
-    var rowsGH = sheetGorsel.getDataRange().getValues();
-    if (rowsGH.length > 1) {
-      var ghHead = rowsGH[0];
-      var giKategori = ghHead.indexOf("gorsel_kategori");
-      var giUrl = ghHead.indexOf("gorsel_url");
-      for (var gh = 1; gh < rowsGH.length; gh++) {
-        var ghRow = rowsGH[gh];
-        var kat = String(ghRow[giKategori] || "").trim().toLowerCase();
-        var url = String(ghRow[giUrl] || "").trim();
-        if (!kat || !url) continue;
-        if (!gorselHavuzuMap[kat]) gorselHavuzuMap[kat] = [];
-        gorselHavuzuMap[kat].push(url);
-      }
-    }
-  }
-  
-  var dataGiris = [];
-  for (var i = 1; i < rowsGiris.length; i++) {
-    var row = rowsGiris[i];
-    var obj = {};
-    for (var j = 0; j < headersGiris.length; j++) obj[headersGiris[j]] = row[j];
-    
-    var ogrAdi = String(obj.ogrenci).trim().toLowerCase();
-    obj.telefon = idxTel !== -1 ? String(row[idxTel]) : "";
-    obj.toplamsure = sureMap[ogrAdi] ? sureMap[ogrAdi].toplamsure : 0;
-    obj.rozet = sureMap[ogrAdi] ? sureMap[ogrAdi].rozet : 0;
-    
-    var atananPlanStr = idxAtananPlan !== -1 ? String(row[idxAtananPlan] || "").trim() : "";
-    var atananPlanKodlari = atananPlanStr ? atananPlanStr.split(",").map(function(k) { return k.trim(); }) : [];
-
-    var ogrencininPlanlari = [];
-    var toplamHaftaSayisi = 0;
-    var tamamlananHaftaSayisi = 0;
-
-    tumPlanlarHavuzu.forEach(function(plan) {
-      if (atananPlanKodlari.indexOf(plan.planKodu) !== -1) {
-        var onaylananListesi = plan.onaylananlar
-          ? plan.onaylananlar.split(",").map(function(isim) { return isim.trim().toLowerCase(); })
-          : [];
-        var buOgrenciTamamladiMi = onaylananListesi.indexOf(ogrAdi) !== -1;
-
-        toplamHaftaSayisi++;
-        if (buOgrenciTamamladiMi) tamamlananHaftaSayisi++;
-
-        ogrencininPlanlari.push({
-          planKodu: plan.planKodu,
-          hafta: plan.hafta,
-          aciklama: plan.aciklama,
-          onaylananlar: plan.onaylananlar,
-          tamamlandiMi: buOgrenciTamamladiMi
-        });
-      }
-    });
-
-    obj.atananPlanlar = ogrencininPlanlari;
-    obj.planIlerlemeYuzdesi = toplamHaftaSayisi > 0 ? Math.round((tamamlananHaftaSayisi / toplamHaftaSayisi) * 100) : 0;
-    obj.planToplamHafta = toplamHaftaSayisi;
-    obj.planTamamlananHafta = tamamlananHaftaSayisi;
-
-    // --- BURASI EKLENDİ / DÜZELTİLDİ: Puanlama sekmesinden gelen genel puanları objeye bağlıyoruz ---
-    var pData = puanMap[ogrAdi] || { genelOrtalama: 0, guncelGenelPuan: 0, vocabOrt: 0, konusmaOrt: 0, okumaOrt: 0, yazmaOrt: 0, grammarOrt: 0, etkinlikBasarisi: 0, sonDeneme: 0 };
-    obj.genelOrtalama = pData.genelOrtalama;
-    obj.guncelGenelPuan = pData.guncelGenelPuan;
-    obj.genelPuan = pData.guncelGenelPuan; // HTML tarafının doğrudan okuyabilmesi için eklendi
-    obj.vocabOrt = pData.vocabOrt;
-    obj.konusmaOrt = pData.konusmaOrt;
-    obj.okumaOrt = pData.okumaOrt;
-    obj.yazmaOrt = pData.yazmaOrt;
-    obj.grammarOrt = pData.grammarOrt;
-    obj.etkinlikBasarisi = pData.etkinlikBasarisi;
-    obj.sonDeneme = pData.sonDeneme;
-    
-    obj.rozetListesi = tumRozetler.filter(function(r) { return r.ogrenciAdi === "herkes" || r.ogrenciAdi === ogrAdi; });
-    obj.kitapBilgi = kitapMap[ogrAdi] || { kitapAdi: "Okunan Kitap Yok", sayfa: 0, hedef: 40, okunanSayisi: 1 };
-    obj.grafikGecmis = grafikGecmisMap[ogrAdi] || [];
-    obj.denemeGecmis = denemeGecmisMap[ogrAdi] || [];
-    obj.arsivListesi = arsivMap[ogrAdi] || [];
-    obj.dersler = dersMap[ogrAdi] || [];
-    obj.liderlik = liderlikListesi;
-    obj.jeopLiderlik = jeopLiderlikListesi;
-    obj.cekilisLiderlik = cekilisLiderlikListesi;
-        obj.boslukLiderlik = boslukLiderlikListesi;
-            obj.bulmacaLiderlik = bulmacaLiderlikListesi;
-    obj.kelimeHavuzu = tumKelimelerHavuzu;
-        obj.boslukKelimeleri = tumBoslukKelimeleri;
-    obj.aktiviteKartlari = tumAktiviteKartlari;
-    obj.gorselHavuzu = gorselHavuzuMap;
-    obj.seviyeIlerleme = seviyeIlerlemeMap[ogrAdi] || [];
-    obj.secilenSinif = secilenSinifMap[ogrAdi] || 0;
-    dataGiris.push(obj);
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify(dataGiris)).setMimeType(ContentService.MimeType.JSON);
-}
-
-// POST İSTEKLERİ (OKUMA HIZI KAYDETME)
-function doPost(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  try {
-    var data = JSON.parse(e.postData.contents);
-    if (data.islem === "okumaHiziKaydet") {
-      var sheetOkuma = ss.getSheetByName("Okuma_Hizi");
-      if (!sheetOkuma) {
-        sheetOkuma = ss.insertSheet("Okuma_Hizi");
-        sheetOkuma.appendRow(["OgrenciAdi", "Tarih", "Sinif", "OkunanKelime", "GecsenSureSaniye", "DakikadaKelimeWPM", "MetinBasligi"]);
-      }
-      sheetOkuma.appendRow([
-        data.ogrenci || "Misafir",
-        data.tarih || new Date().toISOString(),
-        data.sinif || "1. Sınıf",
-        data.okunanKelime || 0,
-        data.gecenSure || 0,
-        data.wpm || 0,
-        data.metinBasligi || "Okuma Metni"
-      ]);
-      return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
-    }
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
-  }
-  return ContentService.createTextOutput(JSON.stringify({ status: "not_found" })).setMimeType(ContentService.MimeType.JSON);
-}
-
-// ==================== OTOMATİK GÖRSEL DOLDURMA SİSTEMİ ====================
-// Pexels API key'ini buraya yapıştır:
-var PEXELS_API_KEY = "ZJ9VVOyFkD1NUqqwLVAmgqghk9b95bbkSsfRIKFaKPtvJPoAMG2UbDhd";
-var UNSPLASH_ACCESS_KEY = "KfICAtsrX5v0jye5AO238-cWzIljjrEXRNF4xTLx63k";
-
-// Türkçe kategori isimlerini İngilizce arama terimine çeviren sözlük
-// Yeni bir kategori eklediğinde buraya da bir satır ekleyebilirsin (eklemesen de sistem
-// kategori adını direkt İngilizce arama terimi olarak dener, ama çeviri varsa daha isabetli olur)
-var KATEGORI_CEVIRI_SOZLUGU = {
-  "selamlasma": "people greeting each other",
-  "renkler": "colorful paint",
-  "sayilar": "numbers counting",
-  "aile": "happy family",
-  "hayvanlar": "cute animals",
-  "sinif_esyalari": "school supplies",
-  "okul_kisileri": "teacher and student classroom",
-  "okul_yerleri": "school building hallway",
-  "aylar": "calendar months",
-  "kutlamalar": "birthday party celebration",
-  "sinif_komutlari": "classroom students",
-  "duygular": "facial expressions emotions",
-  "kisisel_ozellikler": "portrait people",
-  "tercihler": "hobby activity",
-  "yetenekler": "skill activity",
-  "gunluk_rutin": "daily routine morning",
-  "ev": "cozy living room house",
-  "mahalle": "neighborhood street",
-  "sehir": "city skyline",
-  "sehir_binalari": "city buildings",
-  "okul_dersleri": "classroom lesson",
-  "zaman": "clock time",
-  "milli_gunler": "flag ceremony",
-  "sinif_etkinlik": "students group work",
-  "hava_durumu": "weather sky",
-  "mevsimler": "seasons nature",
-  "gunun_zamanlari": "sunrise sunset",
-  "saglik": "health doctor",
-  "aile_genis": "extended family",
-  "ev_isleri": "household chores",
-  "aile_etkinlik": "family activity",
-  "karsilastirma": "comparison size",
-  "ev_odalari": "house room interior",
-  "mobilya": "furniture",
-  "mahalle_yerleri": "local shop street",
-  "yon_tarifi": "direction street sign",
-  "ulasim": "transportation vehicle",
-  "sehir_hayati": "busy city life",
-  "ulkeler": "country flag map",
-  "cevre": "environment nature green",
-  "sinav": "exam test",
-  "kulupler": "school club activity",
-  "gecmis_zaman": "past memory",
-  "sinif_aninda": "classroom activity",
-  "sinif_kurallari": "classroom rules",
-  "teknoloji": "technology computer",
-  "grup_calismasi": "group teamwork",
-  "hobiler": "hobby",
-  "bos_zaman": "free time leisure",
-  "duygular_ileri": "emotions expression",
-  "kisisel_ozellikler_ileri": "personality portrait",
-  "aile_roller": "family caring",
-  "aile_gelenekleri": "family tradition",
-  "konut_turleri": "house building types",
-  "ev_sorunlari": "house repair problem",
-  "yon_tarifi_ileri": "street direction map",
-  "mahalle_kisiler": "neighbor community",
-  "sehir_yapilari": "urban architecture",
-  "doga": "nature landscape",
-  "seyahat": "travel trip",
-  "kuresel_sorunlar": "global environment problem",
-  "deger_kavramlar": "values discipline",
-  "okul_etkinlik": "school event",
-  "kip_ifadeleri": "modal expression communication",
-  "kisisel_gelisim": "personal growth",
-  "saglik_ileri": "healthy lifestyle",
-  "tercihler_ileri": "preference choice",
-  "ev_ekonomi": "budget money home",
-  "aile_iliskiler": "family relationship",
-  "aile_yapilari": "family structure",
-  "konut_ekonomi": "real estate housing",
-  "ev_tasviri": "modern house interior",
-  "trafik_ileri": "traffic road",
-  "dilbilgisi": "books grammar study",
-  "ev_ekonomi_ileri": "family budget",
-  "kultur_dunya": "world culture festival",
-  "dogal_sorunlar": "environmental disaster",
-  "uzay_gelecek": "space future technology",
-  "lgs_gecis": "student exam success"
-};
-
-function gorselleriOtomatikDoldur() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheetAK = ss.getSheetByName("AktiviteKartlari");
-  var sheetGH = ss.getSheetByName("GorselHavuzu");
-
-  if (!sheetAK) {
-    SpreadsheetApp.getUi().alert("AktiviteKartlari sekmesi bulunamadı!");
-    return;
-  }
-  if (!sheetGH) {
-    sheetGH = ss.insertSheet("GorselHavuzu");
-    sheetGH.appendRow(["gorsel_kategori", "gorsel_url"]);
-  }
-
-  // 1. AktiviteKartlari'ndaki tüm benzersiz kategorileri topla
-  var rowsAK = sheetAK.getDataRange().getValues();
-  var headAK = rowsAK[0];
-  var idxKat = headAK.indexOf("gorsel_kategori");
-  var tumKategoriler = [];
-  for (var i = 1; i < rowsAK.length; i++) {
-    var kat = String(rowsAK[i][idxKat] || "").trim().toLowerCase();
-    if (kat && tumKategoriler.indexOf(kat) === -1) {
-      tumKategoriler.push(kat);
-    }
-  }
-
-    // 2. GorselHavuzu'nda zaten GEÇERLİ (url'si dolu) görseli OLAN kategorileri bul
-  var rowsGH = sheetGH.getDataRange().getValues();
-  var doluKategoriler = {};
-  for (var g = 1; g < rowsGH.length; g++) {
-    var katGH = String(rowsGH[g][0] || "").trim().toLowerCase();
-    var urlGH = String(rowsGH[g][1] || "").trim();
-    if (katGH && urlGH) doluKategoriler[katGH] = true;
-  }
-
-  // 3. Görseli eksik olan kategoriler için Pexels'ten çek
-  var eklenenSayisi = 0;
-  var atlananSayisi = 0;
-
-  for (var k = 0; k < tumKategoriler.length; k++) {
-    var kategori = tumKategoriler[k];
-    if (doluKategoriler[kategori]) {
-      atlananSayisi++;
-      continue; // zaten görseli var, atla
-    }
-
-    var aramaTerimi = KATEGORI_CEVIRI_SOZLUGU[kategori] || kategori.replace(/_/g, " ");
-
-        // PEXELS'TEN 2 GÖRSEL ÇEK
-    try {
-      var urlPexels = "https://api.pexels.com/v1/search?query=" + encodeURIComponent(aramaTerimi) + "&per_page=2&orientation=square";
-      var responsePexels = UrlFetchApp.fetch(urlPexels, {
-        headers: { "Authorization": PEXELS_API_KEY },
-        muteHttpExceptions: true
-      });
-
-      var dataPexels = JSON.parse(responsePexels.getContentText());
-
-      if (dataPexels.photos && dataPexels.photos.length > 0) {
-        dataPexels.photos.forEach(function(foto) {
-          sheetGH.appendRow([kategori, foto.src.large]);
-          eklenenSayisi++;
-        });
-      }
-
-      Utilities.sleep(250);
-
-    } catch (err) {
-      Logger.log("Pexels hata (" + kategori + "): " + err);
-    }
-
-    // UNSPLASH'TEN 2 GÖRSEL ÇEK
-    try {
-      var urlUnsplash = "https://api.unsplash.com/search/photos?query=" + encodeURIComponent(aramaTerimi) + "&per_page=2&orientation=squarish";
-      var responseUnsplash = UrlFetchApp.fetch(urlUnsplash, {
-        headers: { "Authorization": "Client-ID " + UNSPLASH_ACCESS_KEY },
-        muteHttpExceptions: true
-      });
-
-      var dataUnsplash = JSON.parse(responseUnsplash.getContentText());
-
-      if (dataUnsplash.results && dataUnsplash.results.length > 0) {
-        dataUnsplash.results.forEach(function(foto) {
-          sheetGH.appendRow([kategori, foto.urls.regular]);
-          eklenenSayisi++;
-        });
-      }
-
-      Utilities.sleep(400);
-
-    } catch (err) {
-      Logger.log("Unsplash hata (" + kategori + "): " + err);
-    }
-  }
-
-  SpreadsheetApp.getUi().alert(
-    "✅ Tamamlandı!\n\n" +
-    "Yeni eklenen görsel: " + eklenenSayisi + "\n" +
-    "Zaten dolu olduğu için atlanan kategori: " + atlananSayisi + "\n" +
-    "Toplam taranan kategori: " + tumKategoriler.length
-  );
-}
-
-// Sheets menüsüne özel bir buton eklemek için
-function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu("🖼️ Görsel Araçları")
-    .addItem("Eksik Görselleri Otomatik Doldur", "gorselleriOtomatikDoldur")
-    .addToUi();
-}";
-
-        const apiURL = "https://script.google.com/macros/s/AKfycbw3LvSB2iJ1LDhG8pWcZpJ1kVaFknX5KGI6-acVGecO9S7HdqhP_TtPACO0FSpHYjteLw/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwcuw2CoU5IFhoj8H05ieKmCjtffA0VaKMGQ-RgGdZfMd-iauiW-MZSxRTxhlZnU6iySQ/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -2952,10 +1850,11 @@ function onOpen() {
             }
         }
 
-      function rubricGridDegerleriGuncelle() {
+        function rubricGridDegerleriGuncelle() {
             RUBRIC_SKILLS.forEach(key => {
                 let slider = document.getElementById('slider' + key);
-                let val = parseInt(slider ? slider.value : 50) || 50;
+                if (!slider) return;
+                let val = parseInt(slider.value) || 50;
                 let kont = document.getElementById('grid' + key);
                 if (kont) {
                     kont.querySelectorAll('.puan-btn').forEach(b => {
@@ -3012,6 +1911,8 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 document.getElementById('panel-alani').style.display = 'block';
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
+                document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
+                document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
 
                 if (user) {
                     toplamSaniye = Number(user.toplamsure) || toplamSaniye;
@@ -4034,7 +2935,16 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }
         }
 
-                
+                function oyunModaliniAc() { 
+            document.getElementById('gameModalOverlay').style.display = 'flex'; 
+            document.getElementById('oyunAyarBolumu').style.display = 'block';
+            document.getElementById('oyunEkranIci').style.display = 'none';
+            document.getElementById('oyunSonucBolumu').style.display = 'none';
+            sinifGridOlustur('klasikSinifSecimGrid', sinifSec, secilenSinif);
+            let ilkSinif = mevcutSiniflariGetir()[0];
+            secilenSinif = ilkSinif;
+            uniteSecimleriniOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
+        }
         
         function oyunModaliniKapat() { 
             document.getElementById('gameModalOverlay').style.display = 'none'; 
@@ -4190,11 +3100,781 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             });
         }
 
+        // --- JEOPARDY KELİME BALONLARI OYUNU MİMARİSİ ---
+        let jeopSecilenSinif = 2;
+        let jeopSecilenUniteler = [1];
+        let jeopKelimeListesi = [];
+        let jeopAktifSoru = null;
+        let jeopPuan = 0;
+        let jeopDogruAdet = 0;
+        let jeopKalanBalonSayisi = 0;
+        let jeopSaniye = 0;
+        let jeopTimer = null;
+        let jeopDogruSikIdx = 0;
+        let jeopGlobalLiderlik = [];
+                // --- ÖĞRETMEN SOHBET PANELİ DEĞİŞKENLERİ ---
+        let ogretmenAktifSohbetOgrenci = null;
+        let ogretmenSohbetPolling = null;
+        let ogrenciSohbetPolling = null;
+        // --- SEVİYE HARİTASI DEĞİŞKENLERİ ---
+        let seviyeGosterilenUnite = 1;
+        let seviyeAktifSinif = 2;
+                let kartAktifListe = [];
+        let kartAktifIndex = 0;
+        let kartOkunduMu = false;
+        let kartSinif = 0, kartUnite = 0, kartSeviye = 0;
         
-       
-        
+                // --- POMODORO ÇALIŞMA SAYACI DEĞİŞKENLERİ ---
+        let pomodoroOdakDakika = 25;
+        let pomodoroMolaDakika = 5;
+        let pomodoroYon = 'geri';
+        let pomodoroKalanSaniye = pomodoroOdakDakika * 60;
+        let pomodoroGecenSaniye = 0;
+        let pomodoroCalisiyorMu = false;
+        let pomodoroInterval = null;
+        let pomodoroMod = 'odak';
+        let pomodoroTurSayisi = 1;
+        let pomodoroToplamTur = 4;
 
-       
+        // --- ZAR ÇEKİLİŞİ KELİME OYUNU DEĞİŞKENLERİ ---
+        let cekilisSecilenSinif = 2;
+        let cekilisSecilenUniteler = [1];
+        let cekilisKelimeListesi = [];
+        let cekilisAktifIndex = 0;
+        let cekilisPuan = 0;
+        let cekilisDogru = 0;
+        let cekilisYanlis = 0;
+        let cekilisSaniye = 0;
+        let cekilisTimer = null;
+        let cekilisDogruSikIdx = 0;
+        let cekilisAktifZarDegeri = 1;
+        let cekilisZarAtiliyor = false;
+        let cekilisCevapKilitli = false;
+        let cekilisGlobalLiderlik = [];
+        let cekilisKullanilmisKelimeler = [];
+        
+                // --- BOŞLUK DOLDURMA OYUNU DEĞİŞKENLERİ ---
+        let boslukSecilenSinif = 2;
+        let boslukSecilenUniteler = [1];
+        let boslukKelimeListesi = [];
+        let boslukTamamlananSayisi = 0;
+        let boslukPuan = 0;
+        let boslukDogru = 0;
+        let boslukYanlis = 0;
+        let boslukSaniye = 0;
+        let boslukTimer = null;
+        let boslukGlobalLiderlik = [];
+
+                function jeopardyModaliniAc() {
+            document.getElementById('jeopardyModalOverlay').style.display = 'flex';
+            document.getElementById('jeopAyarBolumu').style.display = 'block';
+            document.getElementById('jeopOyunAlani').style.display = 'none';
+            document.getElementById('jeopSoruKutusu').style.display = 'none';
+            document.getElementById('jeopSonucBolumu').style.display = 'none';
+            sinifGridOlustur('jeopSinifSecimGrid', jeopSinifSec, jeopSecilenSinif);
+            let ilkSinif = mevcutSiniflariGetir()[0];
+            jeopSecilenSinif = ilkSinif;
+            jeopUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
+        }
+
+        function jeopardyModaliniKapat() {
+            document.getElementById('jeopardyModalOverlay').style.display = 'none';
+            if(jeopTimer) clearInterval(jeopTimer);
+            let m = document.getElementById('jeopardyMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+        }
+
+        function jeopardyMuzikToggle() {
+            let m = document.getElementById('jeopardyMuzigi');
+            let b = document.getElementById('jeopardyMuzikBtn');
+            if(!m || !b) return;
+            if(m.muted) { m.muted = false; b.innerText = "🔊 Müzik: Açık"; }
+            else { m.muted = true; b.innerText = "🔇 Müzik: Sessiz"; }
+        }
+
+        function jeopSinifSec(n, el) {
+            jeopSecilenSinif = n;
+            document.querySelectorAll('#jeopAyarBolumu .sinif-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            jeopUniteSecimOlustur(n, (n===2||n===5)?8:10);
+        }
+
+        function jeopUniteSecimOlustur(n, count) {
+            let kont = document.getElementById('jeopUniteKonteyner');
+            if(!kont) return;
+            kont.innerHTML = "";
+            jeopSecilenUniteler = [1];
+            for(let u=1; u<=count; u++) {
+                let chip = document.createElement('div');
+                chip.className = `unite-chip ${u===1?'selected':''}`;
+                chip.innerText = `${u}.Ü`;
+                chip.onclick = function() {
+                    if(jeopSecilenUniteler.includes(u)) {
+                        if(jeopSecilenUniteler.length > 1) {
+                            jeopSecilenUniteler = jeopSecilenUniteler.filter(i => i !== u);
+                            chip.classList.remove('selected');
+                        }
+                    } else {
+                        jeopSecilenUniteler.push(u);
+                        chip.classList.add('selected');
+                    }
+                };
+                kont.appendChild(chip);
+            }
+        }
+
+        function jeopOyunuBaslat() {
+            let isim = document.getElementById('jeopIsimInput').value.trim();
+            if(!isim) { alert("Lütfen adınızı soyadınızı giriniz!"); return; }
+
+            let hedefSoru = parseInt(document.getElementById('jeopSoruSayisiSelect').value) || 20;
+            let filt = masterKelimeHavuzu.filter(i => i.sinif === jeopSecilenSinif && jeopSecilenUniteler.includes(i.unite));
+            
+            if(filt.length === 0) {
+                alert(`Seçilen sınıf ve ünitelerde kelime bulunamadı!`);
+                return;
+            }
+
+            jeopKelimeListesi = [...filt].sort(() => Math.random() - 0.5).slice(0, hedefSoru);
+            jeopPuan = 0;
+            jeopDogruAdet = 0;
+            jeopKalanBalonSayisi = jeopKelimeListesi.length;
+            jeopSaniye = 0;
+
+            document.getElementById('jeopAyarBolumu').style.display = 'none';
+            document.getElementById('jeopOyunAlani').style.display = 'block';
+            document.getElementById('jeopPuanGosterge').innerText = "0";
+            document.getElementById('jeopDogruSayisi').innerText = "0";
+            document.getElementById('jeopKalanBalon').innerText = `Kalan Balon: ${jeopKalanBalonSayisi}`;
+
+            let m = document.getElementById('jeopardyMuzigi');
+            if(m) { m.currentTime = 0; m.play().catch(()=>{}); }
+
+            if(jeopTimer) clearInterval(jeopTimer);
+            jeopTimer = setInterval(() => {
+                jeopSaniye++;
+                let dk = String(Math.floor(jeopSaniye/60)).padStart(2,'0');
+                let sn = String(jeopSaniye%60).padStart(2,'0');
+                document.getElementById('jeopKronometre').innerText = `⏱️ ${dk}:${sn}`;
+            }, 1000);
+
+            jeopBalonlariOlustur();
+        }
+
+        function jeopBalonlariOlustur() {
+            let grid = document.getElementById('jeopBalonGrid');
+            grid.innerHTML = "";
+
+            jeopKelimeListesi.forEach((kelime, idx) => {
+                let puanDegeri = ((idx % 5) + 1) * 10;
+                kelime.puanDegeri = puanDegeri;
+
+                let balon = document.createElement('div');
+                balon.className = "jeop-balon";
+                balon.style.cssText = "background: #ede9fe; border: 1.5px solid #7c3aed; border-radius: 8px; padding: 10px 4px; text-align: center; cursor: pointer; font-weight: 800; font-size: 11px; color: #5b21b6; transition: all 0.2s;";
+                balon.innerHTML = `🎈<br>${puanDegeri}p`;
+                balon.onclick = function() { jeopBalonTiklandi(idx, balon); };
+                grid.appendChild(balon);
+            });
+        }
+
+        function jeopBalonTiklandi(idx, balonElement) {
+            if(balonElement.classList.contains('patlatildi')) return;
+                        balonElement.classList.add('patlatildi');
+            balonElement.style.transition = "transform 0.25s ease, opacity 0.25s ease";
+            balonElement.style.transform = "scale(1.4)";
+            balonElement.style.opacity = "0";
+            setTimeout(() => {
+                balonElement.style.transform = "scale(1)";
+                balonElement.style.opacity = "1";
+                balonElement.style.background = "#e2e8f0";
+                balonElement.style.borderColor = "#94a3b8";
+                balonElement.style.color = "#94a3b8";
+                balonElement.style.cursor = "not-allowed";
+                balonElement.innerHTML = "💥";
+            }, 220);
+
+            jeopAktifSoru = jeopKelimeListesi[idx];
+            
+            document.getElementById('jeopOyunAlani').style.display = 'none';
+            document.getElementById('jeopSoruKutusu').style.display = 'block';
+            document.getElementById('jeopBalonPuaniBadge').innerText = `${jeopAktifSoru.puanDegeri} Puanlık Soru`;
+            document.getElementById('jeopSoruKelimeText').innerText = jeopAktifSoru.en;
+
+            let yanlisHavuz = masterKelimeHavuzu.filter(i => i.en !== jeopAktifSoru.en);
+            let yanlisKelime = yanlisHavuz.length ? yanlisHavuz[Math.floor(Math.random() * yanlisHavuz.length)] : { tr: "Yanlış Anlam" };
+            
+            let siklar = [jeopAktifSoru.tr, yanlisKelime.tr].sort(() => Math.random() - 0.5);
+            jeopDogruSikIdx = siklar.indexOf(jeopAktifSoru.tr);
+
+            document.getElementById('jeopSik0').innerText = siklar[0];
+            document.getElementById('jeopSik1').innerText = siklar[1];
+        }
+
+                function jeopCevapVer(secilenIdx) {
+            let btn = document.getElementById('jeopSik' + secilenIdx);
+            let dogruBtn = document.getElementById('jeopSik' + jeopDogruSikIdx);
+            let dogruMu = secilenIdx === jeopDogruSikIdx;
+            let kazanilanPuan = jeopAktifSoru.puanDegeri;
+
+            btn.disabled = true;
+            document.getElementById('jeopSik0').disabled = true;
+            document.getElementById('jeopSik1').disabled = true;
+
+            if (dogruMu) {
+                btn.classList.add('dogru-animasyon');
+                jeopPuan += kazanilanPuan;
+                jeopDogruAdet++;
+            } else {
+                btn.classList.add('yanlis-animasyon');
+                dogruBtn.classList.add('dogru-animasyon');
+                jeopPuan = Math.max(0, jeopPuan - Math.floor(kazanilanPuan / 2));
+            }
+
+            jeopKalanBalonSayisi--;
+            document.getElementById('jeopPuanGosterge').innerText = jeopPuan;
+            document.getElementById('jeopDogruSayisi').innerText = jeopDogruAdet;
+            document.getElementById('jeopKalanBalon').innerText = `Kalan Balon: ${jeopKalanBalonSayisi}`;
+
+            setTimeout(() => {
+                document.getElementById('jeopSik0').className = 'btn-sik';
+                document.getElementById('jeopSik1').className = 'btn-sik';
+                document.getElementById('jeopSik0').disabled = false;
+                document.getElementById('jeopSik1').disabled = false;
+                document.getElementById('jeopSoruKutusu').style.display = 'none';
+
+                if(jeopKalanBalonSayisi <= 0) {
+                    jeopOyunuBitir();
+                } else {
+                    document.getElementById('jeopOyunAlani').style.display = 'block';
+                }
+            }, 700);
+        }
+
+        function jeopOyunuBitir() {
+            if(jeopTimer) clearInterval(jeopTimer);
+            let m = document.getElementById('jeopardyMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+
+            let dk = String(Math.floor(jeopSaniye/60)).padStart(2,'0');
+            let sn = String(jeopSaniye%60).padStart(2,'0');
+            let sureStr = `${dk}:${sn}`;
+            let isim = document.getElementById('jeopIsimInput').value.trim();
+            let uniteStr = jeopSecilenUniteler.join(",");
+
+            document.getElementById('jeopOyunAlani').style.display = 'none';
+            document.getElementById('jeopSonucBolumu').style.display = 'block';
+            document.getElementById('jeopSonucPuan').innerText = jeopPuan;
+            document.getElementById('jeopSonucSure').innerText = sureStr;
+
+            fetch(`${apiURL}?islem=jeopardyKaydet&isim=${encodeURIComponent(isim)}&sinif=${jeopSecilenSinif}&unite=${encodeURIComponent(uniteStr)}&dogru=${jeopDogruAdet}&yanlis=${jeopKelimeListesi.length - jeopDogruAdet}&sure=${encodeURIComponent(sureStr)}&suresaniye=${jeopSaniye}&puan=${jeopPuan}`).catch(()=>{});
+
+            jeopLiderlikGuncelle({ isim, dogru: jeopDogruAdet, puan: jeopPuan, sure: sureStr, suresaniye: jeopSaniye });
+        }
+
+        function jeopLiderlikGuncelle(yk) {
+            jeopGlobalLiderlik.push(yk);
+            jeopGlobalLiderlik.sort((a,b) => b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye);
+            let top5 = jeopGlobalLiderlik.slice(0, 5);
+            let tbody = document.getElementById('jeopLiderlikGovde');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            top5.forEach((it, idx) => {
+                tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#7c3aed;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
+            });
+        }
+
+
+        // --- ZAR ÇEKİLİŞİ KELİME OYUNU MİMARİSİ ---
+               function cekilisModaliniAc() {
+            document.getElementById('cekilisModalOverlay').style.display = 'flex';
+            document.getElementById('cekilisAyarBolumu').style.display = 'block';
+            document.getElementById('cekilisOyunAlani').style.display = 'none';
+            document.getElementById('cekilisSonucBolumu').style.display = 'none';
+            sinifGridOlustur('cekilisSinifSecimGrid', cekilisSinifSec, cekilisSecilenSinif);
+            let ilkSinif = mevcutSiniflariGetir()[0];
+            cekilisSecilenSinif = ilkSinif;
+            cekilisUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
+        }
+
+        function cekilisModaliniKapat() {
+            document.getElementById('cekilisModalOverlay').style.display = 'none';
+            if(cekilisTimer) clearInterval(cekilisTimer);
+            let m = document.getElementById('cekilisMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+        }
+
+        function cekilisMuzikToggle() {
+            let m = document.getElementById('cekilisMuzigi');
+            let b = document.getElementById('cekilisMuzikBtn');
+            if(!m || !b) return;
+            if(m.muted) { m.muted = false; b.innerText = "🔊 Müzik: Açık"; }
+            else { m.muted = true; b.innerText = "🔇 Müzik: Sessiz"; }
+        }
+
+        function cekilisSinifSec(n, el) {
+            cekilisSecilenSinif = n;
+            document.querySelectorAll('#cekilisAyarBolumu .sinif-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            cekilisUniteSecimOlustur(n, (n===2||n===5)?8:10);
+        }
+
+        function cekilisUniteSecimOlustur(n, count) {
+            let kont = document.getElementById('cekilisUniteKonteyner');
+            if(!kont) return;
+            kont.innerHTML = "";
+            cekilisSecilenUniteler = [1];
+            for(let u=1; u<=count; u++) {
+                let chip = document.createElement('div');
+                chip.className = `unite-chip ${u===1?'selected':''}`;
+                chip.innerText = `${u}.Ü`;
+                chip.onclick = function() {
+                    if(cekilisSecilenUniteler.includes(u)) {
+                        if(cekilisSecilenUniteler.length > 1) {
+                            cekilisSecilenUniteler = cekilisSecilenUniteler.filter(i => i !== u);
+                            chip.classList.remove('selected');
+                        }
+                    } else {
+                        cekilisSecilenUniteler.push(u);
+                        chip.classList.add('selected');
+                    }
+                };
+                kont.appendChild(chip);
+            }
+        }
+
+        function cekilisOyunuBaslat() {
+            let isim = document.getElementById('cekilisIsimInput').value.trim();
+            if(!isim) { alert("Lütfen adınızı soyadınızı giriniz!"); return; }
+
+            let filt = masterKelimeHavuzu.filter(i => i.sinif === cekilisSecilenSinif && cekilisSecilenUniteler.includes(i.unite));
+            if(filt.length === 0) { alert("Seçilen sınıf ve ünitelerde kelime bulunamadı!"); return; }
+
+            // Önceki turlarda çekilmiş kelimeleri hariç tutarak farklı bir kelime seti oluştur.
+            // Havuzda yeterli "yeni" kelime kalmadıysa listeyi sıfırlayıp baştan çekmeye devam ederiz.
+            let kullanilmamislar = filt.filter(k => !cekilisKullanilmisKelimeler.includes(k.en));
+            let havuz = kullanilmamislar;
+            if (havuz.length < Math.min(15, filt.length)) {
+                cekilisKullanilmisKelimeler = [];
+                havuz = filt;
+            }
+
+            let hedefSayi = Math.min(15, havuz.length);
+            cekilisKelimeListesi = [...havuz].sort(() => Math.random() - 0.5).slice(0, hedefSayi);
+            cekilisKelimeListesi.forEach(k => cekilisKullanilmisKelimeler.push(k.en));
+
+            cekilisPuan = 0;
+            cekilisDogru = 0;
+            cekilisYanlis = 0;
+            cekilisAktifIndex = 0;
+            cekilisSaniye = 0;
+            cekilisCevapKilitli = false;
+            cekilisZarAtiliyor = false;
+
+            document.getElementById('cekilisAyarBolumu').style.display = 'none';
+            document.getElementById('cekilisSonucBolumu').style.display = 'none';
+            document.getElementById('cekilisOyunAlani').style.display = 'block';
+            document.getElementById('cekilisKelimeSayac').innerText = `Kelime: 1 / ${cekilisKelimeListesi.length}`;
+            document.getElementById('cekilisPuanGosterge').innerText = "0";
+            document.getElementById('cekilisDogruSayisi').innerText = "0";
+            document.getElementById('cekilisYanlisSayisi').innerText = "0";
+            document.getElementById('cekilisKelimeKutu').style.display = 'none';
+            document.getElementById('cekilisSiklarGrid').style.display = 'none';
+            document.getElementById('cekilisZarYuz').innerText = '🎲';
+            document.getElementById('cekilisZarDurum').innerText = 'Zarı atmak için tıkla!';
+            let zarBtn = document.getElementById('cekilisZarAtBtn');
+            zarBtn.style.display = 'block';
+            zarBtn.disabled = false;
+
+            let m = document.getElementById('cekilisMuzigi');
+            if(m) { m.currentTime = 0; m.play().catch(()=>{}); }
+
+            if(cekilisTimer) clearInterval(cekilisTimer);
+            cekilisTimer = setInterval(() => {
+                cekilisSaniye++;
+                let dk = String(Math.floor(cekilisSaniye/60)).padStart(2,'0');
+                let sn = String(cekilisSaniye%60).padStart(2,'0');
+                document.getElementById('cekilisKronometre').innerText = `⏱️ ${dk}:${sn}`;
+            }, 1000);
+        }
+
+                function cekilisZarAt() {
+            if (cekilisZarAtiliyor) return;
+            cekilisZarAtiliyor = true;
+
+            let zarYuz = document.getElementById('cekilisZarYuz');
+            let zarBtn = document.getElementById('cekilisZarAtBtn');
+            let durum = document.getElementById('cekilisZarDurum');
+            zarBtn.disabled = true;
+            durum.innerText = "Zar atılıyor...";
+
+            let zarEmojiler = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+            let finalDeger = Math.floor(Math.random() * 6) + 1;
+            cekilisAktifZarDegeri = finalDeger;
+
+            zarYuz.style.transition = "transform 1s cubic-bezier(0.34, 1.56, 0.64, 1)";
+            zarYuz.style.transform = "rotate(1080deg) scale(1.3)";
+
+            let sayac = 0;
+            let toplamAdim = 10;
+            let donmeInterval = setInterval(() => {
+                sayac++;
+                if (sayac < toplamAdim) {
+                    zarYuz.innerText = zarEmojiler[Math.floor(Math.random() * 6)];
+                } else {
+                    clearInterval(donmeInterval);
+                    zarYuz.innerText = zarEmojiler[finalDeger - 1];
+                    zarYuz.style.transform = "rotate(1080deg) scale(1)";
+                    durum.innerText = `🎯 Bu soru ±${finalDeger} puan değerinde!`;
+                    zarBtn.style.display = 'none';
+                    cekilisZarAtiliyor = false;
+
+                    setTimeout(() => {
+                        zarYuz.style.transition = "none";
+                        zarYuz.style.transform = "rotate(0deg) scale(1)";
+                    }, 250);
+
+                    cekilisKelimeyiGoster();
+                }
+            }, 90);
+        }
+
+        function cekilisKelimeyiGoster() {
+            let s = cekilisKelimeListesi[cekilisAktifIndex];
+            document.getElementById('cekilisKelimeKutu').style.display = 'block';
+            document.getElementById('cekilisKelimeText').innerText = s.en;
+
+            let yanlisHavuz = masterKelimeHavuzu.filter(i => i.en !== s.en);
+            let yanlisKelime = yanlisHavuz.length ? yanlisHavuz[Math.floor(Math.random() * yanlisHavuz.length)] : { tr: "Yanlış Anlam" };
+            let siklar = [s.tr, yanlisKelime.tr].sort(() => Math.random() - 0.5);
+            cekilisDogruSikIdx = siklar.indexOf(s.tr);
+
+            document.getElementById('cekilisSik0').className = 'btn-sik';
+            document.getElementById('cekilisSik1').className = 'btn-sik';
+            document.getElementById('cekilisSik0').innerText = siklar[0];
+            document.getElementById('cekilisSik1').innerText = siklar[1];
+            document.getElementById('cekilisSiklarGrid').style.display = 'grid';
+            cekilisCevapKilitli = false;
+        }
+
+        function cekilisCevapVer(idx) {
+            if (cekilisCevapKilitli) return;
+            cekilisCevapKilitli = true;
+
+            let btn = document.getElementById('cekilisSik' + idx);
+            let dogruMu = idx === cekilisDogruSikIdx;
+            let zarDegeri = cekilisAktifZarDegeri;
+
+            if (dogruMu) {
+                cekilisPuan += zarDegeri;
+                cekilisDogru++;
+                btn.classList.add('dogru-animasyon');
+            } else {
+                cekilisPuan -= zarDegeri;
+                cekilisYanlis++;
+                btn.classList.add('yanlis-animasyon');
+                document.getElementById('cekilisSik' + cekilisDogruSikIdx).classList.add('dogru-animasyon');
+            }
+
+            document.getElementById('cekilisPuanGosterge').innerText = cekilisPuan;
+            document.getElementById('cekilisDogruSayisi').innerText = cekilisDogru;
+            document.getElementById('cekilisYanlisSayisi').innerText = cekilisYanlis;
+
+            setTimeout(() => {
+                cekilisAktifIndex++;
+                if (cekilisAktifIndex >= cekilisKelimeListesi.length) {
+                    cekilisOyunuBitir();
+                } else {
+                    cekilisSonrakiHazirla();
+                }
+            }, 700);
+        }
+
+        function cekilisSonrakiHazirla() {
+            document.getElementById('cekilisKelimeSayac').innerText = `Kelime: ${cekilisAktifIndex + 1} / ${cekilisKelimeListesi.length}`;
+            document.getElementById('cekilisKelimeKutu').style.display = 'none';
+            document.getElementById('cekilisSiklarGrid').style.display = 'none';
+            document.getElementById('cekilisZarYuz').innerText = '🎲';
+            document.getElementById('cekilisZarDurum').innerText = 'Zarı atmak için tıkla!';
+            let zarBtn = document.getElementById('cekilisZarAtBtn');
+            zarBtn.style.display = 'block';
+            zarBtn.disabled = false;
+        }
+
+        function cekilisOyunuBitir() {
+            if(cekilisTimer) clearInterval(cekilisTimer);
+            let m = document.getElementById('cekilisMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+
+            let dk = String(Math.floor(cekilisSaniye/60)).padStart(2,'0');
+            let sn = String(cekilisSaniye%60).padStart(2,'0');
+            let sureStr = `${dk}:${sn}`;
+            let isim = document.getElementById('cekilisIsimInput').value.trim();
+            let uniteStr = cekilisSecilenUniteler.join(",");
+
+            document.getElementById('cekilisOyunAlani').style.display = 'none';
+            document.getElementById('cekilisSonucBolumu').style.display = 'block';
+            document.getElementById('cekilisSonucPuan').innerText = cekilisPuan;
+            document.getElementById('cekilisSonucSure').innerText = sureStr;
+
+            fetch(`${apiURL}?islem=cekilisKaydet&isim=${encodeURIComponent(isim)}&sinif=${cekilisSecilenSinif}&unite=${encodeURIComponent(uniteStr)}&dogru=${cekilisDogru}&yanlis=${cekilisYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${cekilisSaniye}&puan=${cekilisPuan}`).catch(()=>{});
+
+            cekilisLiderlikGuncelle({ isim, dogru: cekilisDogru, puan: cekilisPuan, sure: sureStr, suresaniye: cekilisSaniye });
+        }
+
+        function cekilisLiderlikGuncelle(yk) {
+            cekilisGlobalLiderlik.push(yk);
+            cekilisGlobalLiderlik.sort((a,b) => b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye);
+            let top5 = cekilisGlobalLiderlik.slice(0, 5);
+            let tbody = document.getElementById('cekilisLiderlikGovde');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            top5.forEach((it, idx) => {
+                tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#ea580c;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
+            });
+        }
+
+        
+        // --- BOŞLUK DOLDURMA OYUNU MİMARİSİ ---
+        function boslukModaliniAc() {
+            document.getElementById('boslukModalOverlay').style.display = 'flex';
+            document.getElementById('boslukAyarBolumu').style.display = 'block';
+            document.getElementById('boslukOyunAlani').style.display = 'none';
+            document.getElementById('boslukSonucBolumu').style.display = 'none';
+            sinifGridOlustur('boslukSinifSecimGrid', boslukSinifSec, boslukSecilenSinif);
+            let ilkSinif = mevcutBoslukSiniflariGetir()[0];
+            boslukSecilenSinif = ilkSinif;
+            boslukUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
+        }
+
+        function boslukModaliniKapat() {
+            document.getElementById('boslukModalOverlay').style.display = 'none';
+            if(boslukTimer) clearInterval(boslukTimer);
+            let m = document.getElementById('boslukMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+        }
+
+        function boslukMuzikToggle() {
+            let m = document.getElementById('boslukMuzigi');
+            let b = document.getElementById('boslukMuzikBtn');
+            if(!m || !b) return;
+            if(m.muted) { m.muted = false; b.innerText = "🔊 Müzik: Açık"; }
+            else { m.muted = true; b.innerText = "🔇 Müzik: Sessiz"; }
+        }
+
+        function mevcutBoslukSiniflariGetir() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            if (!user || !user.boslukKelimeleri) return [1,2,3,4,5,6,7,8];
+            let siniflar = [...new Set(user.boslukKelimeleri.map(k => k.sinif))].sort((a,b) => a-b);
+            return siniflar.length > 0 ? siniflar : [1,2,3,4,5,6,7,8];
+        }
+
+        function boslukSinifSec(n, el) {
+            boslukSecilenSinif = n;
+            document.querySelectorAll('#boslukAyarBolumu .sinif-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            boslukUniteSecimOlustur(n, (n===2||n===5)?8:10);
+        }
+
+        function boslukUniteSecimOlustur(n, count) {
+            let kont = document.getElementById('boslukUniteKonteyner');
+            if(!kont) return;
+            kont.innerHTML = "";
+            boslukSecilenUniteler = [1];
+            for(let u=1; u<=count; u++) {
+                let chip = document.createElement('div');
+                chip.className = `unite-chip ${u===1?'selected':''}`;
+                chip.innerText = `${u}.Ü`;
+                chip.onclick = function() {
+                    if(boslukSecilenUniteler.includes(u)) {
+                        if(boslukSecilenUniteler.length > 1) {
+                            boslukSecilenUniteler = boslukSecilenUniteler.filter(i => i !== u);
+                            chip.classList.remove('selected');
+                        }
+                    } else {
+                        boslukSecilenUniteler.push(u);
+                        chip.classList.add('selected');
+                    }
+                };
+                kont.appendChild(chip);
+            }
+        }
+
+        function boslukOyunuBaslat() {
+            let isim = document.getElementById('boslukIsimInput').value.trim();
+            if(!isim) { alert("Lütfen adınızı soyadınızı giriniz!"); return; }
+
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            let havuz = (user && user.boslukKelimeleri) ? user.boslukKelimeleri : [];
+            let filt = havuz.filter(k => k.sinif === boslukSecilenSinif && boslukSecilenUniteler.includes(k.unite));
+
+            if(filt.length === 0) { alert("Seçilen sınıf ve ünitelerde kelime bulunamadı!"); return; }
+
+            boslukKelimeListesi = [...filt].sort(() => Math.random() - 0.5).slice(0, Math.min(8, filt.length));
+            boslukPuan = 0;
+            boslukDogru = 0;
+            boslukYanlis = 0;
+            boslukTamamlananSayisi = 0;
+            boslukSaniye = 0;
+
+            document.getElementById('boslukAyarBolumu').style.display = 'none';
+            document.getElementById('boslukSonucBolumu').style.display = 'none';
+            document.getElementById('boslukOyunAlani').style.display = 'block';
+            document.getElementById('boslukPuanGosterge').innerText = "0";
+            document.getElementById('boslukDogruSayisi').innerText = "0";
+            document.getElementById('boslukYanlisSayisi').innerText = "0";
+            document.getElementById('boslukTamamlananSayac').innerText = `0 / ${boslukKelimeListesi.length} tamamlandı`;
+
+            boslukKelimeListesiniCiz();
+
+            let m = document.getElementById('boslukMuzigi');
+            if(m) { m.currentTime = 0; m.play().catch(()=>{}); }
+
+            if(boslukTimer) clearInterval(boslukTimer);
+            boslukTimer = setInterval(() => {
+                boslukSaniye++;
+                let dk = String(Math.floor(boslukSaniye/60)).padStart(2,'0');
+                let sn = String(boslukSaniye%60).padStart(2,'0');
+                document.getElementById('boslukKronometre').innerText = `⏱️ ${dk}:${sn}`;
+            }, 1000);
+        }
+
+        function boslukKelimeListesiniCiz() {
+            let alan = document.getElementById('boslukKelimeListesiAlani');
+            alan.innerHTML = "";
+
+            let rozetRenkleri = ['#f97316', '#16a34a', '#dc2626', '#eab308', '#8b5cf6', '#22c55e', '#ef4444', '#0ea5e9'];
+
+            boslukKelimeListesi.forEach((kelimeObj, satirIdx) => {
+                let satir = document.createElement('div');
+                satir.className = 'bosluk-kelime-satir';
+                satir.id = `boslukSatir${satirIdx}`;
+
+                let rozet = document.createElement('div');
+                rozet.className = 'bosluk-numara-rozet';
+                rozet.style.background = rozetRenkleri[satirIdx % rozetRenkleri.length];
+                rozet.innerText = satirIdx + 1;
+                satir.appendChild(rozet);
+
+                let harfKutulari = document.createElement('div');
+                harfKutulari.style.cssText = "display: flex; gap: 3px;";
+
+                let harfler = kelimeObj.kelime.split('');
+                harfler.forEach((harf, harfIdx) => {
+                    let pozisyon = harfIdx + 1;
+                    let gizliMi = kelimeObj.gizliPozisyonlar.includes(pozisyon);
+
+                    if (gizliMi) {
+                        let input = document.createElement('input');
+                        input.maxLength = 1;
+                        input.className = 'bosluk-harf-kutu bosluk-harf-input';
+                        input.id = `boslukInput${satirIdx}_${harfIdx}`;
+                        input.dataset.dogruHarf = harf;
+                        input.dataset.satir = satirIdx;
+                        input.onkeypress = function(e) {
+                            if (e.key === 'Enter') boslukKelimeyiKontrolEt(satirIdx);
+                        };
+                        harfKutulari.appendChild(input);
+                    } else {
+                        let kutu = document.createElement('div');
+                        kutu.className = 'bosluk-harf-kutu bosluk-harf-sabit';
+                        kutu.innerText = harf;
+                        harfKutulari.appendChild(kutu);
+                    }
+                });
+                satir.appendChild(harfKutulari);
+
+                let onayBtn = document.createElement('button');
+                onayBtn.className = 'bosluk-onay-btn';
+                onayBtn.innerText = '✓';
+                onayBtn.onclick = function() { boslukKelimeyiKontrolEt(satirIdx); };
+                satir.appendChild(onayBtn);
+
+                if (kelimeObj.ipucu) {
+                    let ipucu = document.createElement('div');
+                    ipucu.className = 'bosluk-ipucu';
+                    ipucu.innerText = kelimeObj.ipucu;
+                    satir.appendChild(ipucu);
+                }
+
+                alan.appendChild(satir);
+            });
+        }
+
+        function boslukKelimeyiKontrolEt(satirIdx) {
+            let satirEl = document.getElementById(`boslukSatir${satirIdx}`);
+            if (satirEl.dataset.tamamlandi === 'true') return;
+
+            let inputlar = satirEl.querySelectorAll('.bosluk-harf-input');
+            if (inputlar.length === 0) return;
+
+            let hepsiDogru = true;
+            inputlar.forEach(input => {
+                let girilenHarf = input.value.trim().toUpperCase();
+                let dogruHarf = input.dataset.dogruHarf.toUpperCase();
+                if (girilenHarf === dogruHarf) {
+                    input.classList.add('bosluk-harf-dogru');
+                    input.classList.remove('bosluk-harf-yanlis');
+                    input.disabled = true;
+                } else {
+                    hepsiDogru = false;
+                    input.classList.add('bosluk-harf-yanlis');
+                    setTimeout(() => input.classList.remove('bosluk-harf-yanlis'), 500);
+                }
+            });
+
+            if (hepsiDogru) {
+                satirEl.dataset.tamamlandi = 'true';
+                boslukPuan += 10;
+                boslukDogru++;
+                boslukTamamlananSayisi++;
+            } else {
+                boslukPuan = Math.max(0, boslukPuan - 2);
+                boslukYanlis++;
+            }
+
+            document.getElementById('boslukPuanGosterge').innerText = boslukPuan;
+            document.getElementById('boslukDogruSayisi').innerText = boslukDogru;
+            document.getElementById('boslukYanlisSayisi').innerText = boslukYanlis;
+            document.getElementById('boslukTamamlananSayac').innerText = `${boslukTamamlananSayisi} / ${boslukKelimeListesi.length} tamamlandı`;
+
+            if (boslukTamamlananSayisi >= boslukKelimeListesi.length) {
+                setTimeout(() => boslukOyunuBitir(), 500);
+            }
+        }
+
+        function boslukOyunuBitir() {
+            if(boslukTimer) clearInterval(boslukTimer);
+            let m = document.getElementById('boslukMuzigi');
+            if(m) { m.pause(); m.currentTime = 0; }
+
+            let dk = String(Math.floor(boslukSaniye/60)).padStart(2,'0');
+            let sn = String(boslukSaniye%60).padStart(2,'0');
+            let sureStr = `${dk}:${sn}`;
+            let isim = document.getElementById('boslukIsimInput').value.trim();
+            let uniteStr = boslukSecilenUniteler.join(",");
+
+            document.getElementById('boslukOyunAlani').style.display = 'none';
+            document.getElementById('boslukSonucBolumu').style.display = 'block';
+            document.getElementById('boslukSonucPuan').innerText = boslukPuan;
+            document.getElementById('boslukSonucSure').innerText = sureStr;
+
+            fetch(`${apiURL}?islem=boslukKaydet&isim=${encodeURIComponent(isim)}&sinif=${boslukSecilenSinif}&unite=${encodeURIComponent(uniteStr)}&dogru=${boslukDogru}&yanlis=${boslukYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${boslukSaniye}&puan=${boslukPuan}`).catch(()=>{});
+
+            boslukLiderlikGuncelle({ isim, dogru: boslukDogru, puan: boslukPuan, sure: sureStr, suresaniye: boslukSaniye });
+        }
+
+        function boslukLiderlikGuncelle(yk) {
+            boslukGlobalLiderlik.push(yk);
+            boslukGlobalLiderlik.sort((a,b) => b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye);
+            let top5 = boslukGlobalLiderlik.slice(0, 5);
+            let tbody = document.getElementById('boslukLiderlikGovde');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            top5.forEach((it, idx) => {
+                tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#be185d;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
+            });
+        }
 
 
         // --- AKICI OKUMA VE HIZ ÖLÇER STÜDYOSU MİMARİSİ (İNGİLİZCE) ---
@@ -5170,7 +4850,9 @@ function veriArayuzeIsle(user) {
     document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelPuan);
 
         if (user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
-                   
+                    if (user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+        if (user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+        if (user.boslukLiderlik) { boslukGlobalLiderlik = user.boslukLiderlik; boslukLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
     kitapTakibiniIsle(user.kitapBilgi || {});
     dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
     dersTakviminiIsle(user.dersler || []);
@@ -5189,270 +4871,6 @@ function veriArayuzeIsle(user) {
     
     window.location.reload(); 
 }
-
-// --- KELİME OYUNLARI JAVASCRIPT MODÜLÜ ---
-
-function getOgrenciAdi() {
-    // Sisteminizde kayıtlı öğrenci adı bilgisini alır, yoksa varsayılan döner
-    return (window.globalDataCache && window.globalDataCache.ogrenciAdi) || "Mert Akkayaoğlu";
-}
-
-function getKelimeListesi() {
-    // masterKelimeHavuzu veya globalDataCache üzerinden kelimeleri güvenli çeker
-    if (window.masterKelimeHavuzu && window.masterKelimeHavuzu.length > 0) {
-        return window.masterKelimeHavuzu;
-    }
-    if (window.globalDataCache && window.globalDataCache.kelimeler) {
-        return window.globalDataCache.kelimeler;
-    }
-    // Yedek statik veri havuzu (API verisi henüz gelmediyse)
-    return [
-        { ingilizce: "Apple", turkce: "Elma" },
-        { ingilizce: "School", turkce: "Okul" },
-        { ingilizce: "Teacher", turkce: "Öğretmen" },
-        { ingilizce: "Student", turkce: "Öğrenci" },
-        { ingilizce: "Computer", turkce: "Bilgisayar" }
-    ];
-}
-
-function modalKapat(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-function skorGonderBackend(islemAdi, veriObjesi) {
-    if (typeof apiURL === 'undefined' || !apiURL) return;
-    let url = `${apiURL}?islem=${islemAdi}&ogrenciAdi=${encodeURIComponent(getOgrenciAdi())}`;
-    for (let key in veriObjesi) {
-        url += `&${key}=${encodeURIComponent(veriObjesi[key])}`;
-    }
-    fetch(url).then(res => res.json()).catch(err => console.log("Kayıt hatası:", err));
-}
-
-// 1. KLASİK KELİME YARIŞMASI
-let klasikDurum = { sorular: [], currentIndex: 0, dogru: 0, yanlis: 0, puan: 0 };
-
-function oyunuBaslatKlasik() {
-    let kelimeler = [...getKelimeListesi()].sort(() => 0.5 - Math.random());
-    klasikDurum.sorular = kelimeler.slice(0, 5); // 5 soru
-    klasikDurum.currentIndex = 0;
-    klasikDurum.dogru = 0;
-    klasikDurum.yanlis = 0;
-    klasikDurum.puan = 0;
-    
-    document.getElementById('modalKlasik').style.display = 'flex';
-    klasikSoruGoster();
-}
-
-function klasikSoruGoster() {
-    let icerik = document.getElementById('klasikIcerik');
-    if (klasikDurum.currentIndex >= klasikDurum.sorular.length) {
-        icerik.innerHTML = `
-            <div style="text-align:center; padding: 20px;">
-                <h3>Tebrikler Yarışma Bitti! 🎉</h3>
-                <p style="font-size: 1.2rem; margin: 15px 0;">Toplam Puan: <b>${klasikDurum.puan}</b></p>
-                <p>Doğru: ${klasikDurum.dogru} | Yanlış: ${klasikDurum.yanlis}</p>
-                <button class="game-btn" onclick="modalKapat('modalKlasik')" style="margin-top:15px;">Kapat</button>
-            </div>
-        `;
-        skorGonderBackend('kelimeKaydet', { puan: klasikDurum.puan, dogru: klasikDurum.dogru, yanlis: klasikDurum.yanlis });
-        return;
-    }
-
-    let aktifKelime = klasikDurum.sorular[klasikDurum.currentIndex];
-    let tumKelimeler = getKelimeListesi();
-    let yanlisSecenekler = tumKelimeler.filter(k => k.turkce !== aktifKelime.turkce).sort(() => 0.5 - Math.random()).slice(0, 3);
-    let secenekler = [...yanlisSecenekler, aktifKelime].sort(() => 0.5 - Math.random());
-
-    let html = `
-        <p style="font-size:0.9rem; color:#64748b; margin-bottom:10px;">Soru ${klasikDurum.currentIndex + 1} / ${klasikDurum.sorular.length}</p>
-        <h3 style="font-size: 1.5rem; color:#1e293b; margin-bottom:20px;">"${aktifKelime.ingilizce}" kelimesinin Türkçe karşılığı nedir?</h3>
-        <div class="options-grid">
-    `;
-    secenekler.forEach(sec => {
-        html += `<button class="option-btn" onclick="klasikSecimYap(this, '${sec.turkce}', '${aktifKelime.turkce}')">${sec.turkce}</button>`;
-    });
-    html += `</div>`;
-    icerik.innerHTML = html;
-}
-
-function klasikSecimYap(btn, secilen, dogru) {
-    let tuslar = document.querySelectorAll('.option-btn');
-    tuslar.forEach(b => b.disabled = true);
-
-    if (secilen === dogru) {
-        btn.classList.add('correct');
-        klasikDurum.dogru++;
-        klasikDurum.puan += 20;
-    } else {
-        btn.classList.add('wrong');
-        klasikDurum.yanlis++;
-        tuslar.forEach(b => { if (b.innerText === dogru) b.classList.add('correct'); });
-    }
-
-    setTimeout(() => {
-        klasikDurum.currentIndex++;
-        klasikSoruGoster();
-    }, 1200);
-}
-
-
-// 2. JEOPARDY BALONLARI
-function oyunuBaslatJeopardy() {
-    document.getElementById('modalJeopardy').style.display = 'flex';
-    jeopardyEkraniniCiz();
-}
-
-function jeopardyEkraniniCiz() {
-    let icerik = document.getElementById('jeopardyIcerik');
-    let kelimeler = getKelimeListesi().slice(0, 6);
-    
-    let html = `<p style="margin-bottom:15px; color:#64748b;">Bir balon seç ve açılan kelimeyi yanıtla!</p><div class="balloon-grid">`;
-    kelimeler.forEach((k, index) => {
-        html += `<div class="balloon" onclick="jeopardyBalonAc(this, '${k.ingilizce}', '${k.turkce}')">${(index + 1) * 10}P</div>`;
-    });
-    html += `</div>`;
-    icerik.innerHTML = html;
-}
-
-function jeopardyBalonAc(element, ing, tr) {
-    element.style.visibility = 'hidden';
-    let icerik = document.getElementById('jeopardyIcerik');
-    icerik.innerHTML = `
-        <div style="text-align:center; padding: 20px;">
-            <h3>Soru: "${ing}"</h3>
-            <input type="text" id="jeopardyInput" placeholder="Türkçe anlamını yazın..." class="fill-blank-input" style="width:100%; margin: 15px 0; padding:10px;">
-            <button class="game-btn" onclick="jeopardyKontrolEt('${tr}')">Cevapla</button>
-        </div>
-    `;
-}
-
-function jeopardyKontrolEt(dogruCevap) {
-    let tahmin = document.getElementById('jeopardyInput').value.trim();
-    let icerik = document.getElementById('jeopardyIcerik');
-    let kazanc = 20;
-    
-    if (tahmin.toLowerCase() === dogruCevap.toLowerCase()) {
-        icerik.innerHTML = `<h3 style="color:#22c55e; text-align:center;">Harika! Doğru Cevap. (+${kazanc} Puan)</h3>`;
-        skorGonderBackend('jeopardyKaydet', { puan: kazanc, secilenBalon: dogruCevap });
-    } else {
-        icerik.innerHTML = `<h3 style="color:#ef4444; text-align:center;">Yanlış! Doğru cevap: ${dogruCevap}</h3>`;
-    }
-    setTimeout(() => { oyunuBaslatJeopardy(); }, 2000);
-}
-
-
-// 3. ŞANS ZARI ÇEKİLİŞİ
-function oyunuBaslatCekilis() {
-    document.getElementById('modalCekilis').style.display = 'flex';
-    document.getElementById('cekilisIcerik').innerHTML = `
-        <div class="dice-container">
-            <div id="zarKutusu" class="dice">?</div>
-            <p style="margin: 20px 0; color:#64748b;">Zarı at ve çarpan puanını kap!</p>
-            <button class="game-btn" onclick="zarAt()">Zarı At</button>
-        </div>
-    `;
-}
-
-function zarAt() {
-    let zarKutusu = document.getElementById('zarKutusu');
-    zarKutusu.classList.add('rolling');
-    
-    setTimeout(() => {
-        zarKutusu.classList.remove('rolling');
-        let rastgeleZar = Math.floor(Math.random() * 6) + 1;
-        let puanKatsayisi = rastgeleZar * 15;
-        zarKutusu.innerText = rastgeleZar;
-        
-        document.getElementById('cekilisIcerik').innerHTML += `
-            <div style="text-align:center; margin-top:15px;">
-                <h3 style="color:#4f46e5;">Tebrikler! ${rastgeleZar} attın ve ${puanKatsayisi} Bonus Puan Kazandın! 🎲</h3>
-                <button class="game-btn" onclick="modalKapat('modalCekilis')" style="margin-top:15px;">Tamam</button>
-            </div>
-        `;
-        skorGonderBackend('cekilisKaydet', { puan: puanKatsayisi, zarDegeri: rastgeleZar });
-    }, 600);
-}
-
-
-// 4. BOŞLUK DOLDURMA
-function oyunuBaslatBosluk() {
-    document.getElementById('modalBosluk').style.display = 'flex';
-    let kelimeler = [...getKelimeListesi()].sort(() => 0.5 - Math.random()).slice(0, 3);
-    
-    let html = `<div style="padding: 10px;">`;
-    kelimeler.forEach((k, i) => {
-        html += `
-            <div class="fill-blank-row">
-                <span>${i + 1}. The meaning of <b>"${k.ingilizce}"</b> is</span>
-                <input type="text" class="fill-blank-input" data-answer="${k.turkce}" placeholder="Cevap...">
-            </div>
-        `;
-    });
-    html += `<button class="game-btn" onclick="bosluklariKontrolEt()" style="margin-top: 15px; width:100%;">Sonuçları Kontrol Et</button>
-             <div id="boslukSonuc" style="margin-top:15px; text-align:center; font-weight:bold;"></div></div>`;
-    document.getElementById('boslukIcerik').innerHTML = html;
-}
-
-function bosluklariKontrolEt() {
-    let inputs = document.querySelectorAll('.fill-blank-input');
-    let dogruSayisi = 0;
-    
-    inputs.forEach(input => {
-        let cevap = input.value.trim();
-        let dogruCevap = input.getAttribute('data-answer');
-        if (cevap.toLowerCase() === dogruCevap.toLowerCase()) {
-            input.style.borderColor = '#22c55e';
-            input.style.backgroundColor = '#dcfce7';
-            dogruSayisi++;
-        } else {
-            input.style.borderColor = '#ef4444';
-            input.style.backgroundColor = '#fee2e2';
-        }
-        input.disabled = true;
-    });
-
-    let toplamPuan = dogruSayisi * 25;
-    document.getElementById('boslukSonuc').innerHTML = `<span style="color:#1e293b;">Doğru: ${dogruSayisi}/3 | Kazanılan Puan: ${toplamPuan}</span>`;
-    skorGonderBackend('boslukKaydet', { puan: toplamPuan, tamamlanan: dogruSayisi });
-}
-        
     </script>
-
-    <!-- KLASİK OYUN MODALI -->
-<div id="modalKlasik" class="game-modal-overlay">
-    <div class="game-modal-content">
-        <button class="game-close-btn" onclick="modalKapat('modalKlasik')">&times;</button>
-        <h2 id="klasikBaslik" style="margin-bottom: 15px; color:#1e293b;">Klasik Kelime Yarışması</h2>
-        <div id="klasikIcerik"></div>
-    </div>
-</div>
-
-<!-- JEOPARDY MODALI -->
-<div id="modalJeopardy" class="game-modal-overlay">
-    <div class="game-modal-content">
-        <button class="game-close-btn" onclick="modalKapat('modalJeopardy')">&times;</button>
-        <h2 style="margin-bottom: 15px; color:#1e293b;">Jeopardy Balonları</h2>
-        <div id="jeopardyIcerik"></div>
-    </div>
-</div>
-
-<!-- ZAR ÇEKİLİŞİ MODALI -->
-<div id="modalCekilis" class="game-modal-overlay">
-    <div class="game-modal-content">
-        <button class="game-close-btn" onclick="modalKapat('modalCekilis')">&times;</button>
-        <h2 style="margin-bottom: 15px; color:#1e293b;">Şans Zarı Çekilişi</h2>
-        <div id="cekilisIcerik"></div>
-    </div>
-</div>
-
-<!-- BOŞLUK DOLDURMA MODALI -->
-<div id="modalBosluk" class="game-modal-overlay">
-    <div class="game-modal-content">
-        <button class="game-close-btn" onclick="modalKapat('modalBosluk')">&times;</button>
-        <h2 style="margin-bottom: 15px; color:#1e293b;">Boşluk Doldurma</h2>
-        <div id="boslukIcerik"></div>
-    </div>
-</div>
-    
 </body>
 </html>
