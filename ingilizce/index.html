@@ -1600,11 +1600,10 @@
             }
         }
 
-        function rubricGridDegerleriGuncelle() {
+      function rubricGridDegerleriGuncelle() {
             RUBRIC_SKILLS.forEach(key => {
                 let slider = document.getElementById('slider' + key);
-                if (!slider) return;
-                let val = parseInt(slider.value) || 50;
+                let val = parseInt(slider ? slider.value : 50) || 50;
                 let kont = document.getElementById('grid' + key);
                 if (kont) {
                     kont.querySelectorAll('.puan-btn').forEach(b => {
@@ -1661,8 +1660,6 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 document.getElementById('panel-alani').style.display = 'block';
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
-                document.getElementById('oyuncuIsmiInput').value = aktifOgrenciAdi;
-                document.getElementById('jeopIsimInput').value = aktifOgrenciAdi;
 
                 if (user) {
                     toplamSaniye = Number(user.toplamsure) || toplamSaniye;
@@ -3821,9 +3818,7 @@ function veriArayuzeIsle(user) {
     document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelPuan);
 
         if (user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
-                    if (user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-        if (user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-        if (user.boslukLiderlik) { boslukGlobalLiderlik = user.boslukLiderlik; boslukLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+                   
     kitapTakibiniIsle(user.kitapBilgi || {});
     dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
     dersTakviminiIsle(user.dersler || []);
