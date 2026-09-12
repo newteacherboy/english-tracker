@@ -1158,6 +1158,13 @@
                 <p style="color: #4338ca;">Ünite ünite ilerle, her seviyeyi bitirdikçe bir sonraki açılsın!</p>
                 <button class="btn-oyun-ac" onclick="seviyeHaritasiAc()" style="background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%); box-shadow: 0 2px 8px rgba(67, 56, 202, 0.3);">🗺️ Yolculuğa Başla</button>
             </div>
+
+            <!-- KELİME EZBER YARIŞMASI BANNER KARTI -->
+<div class="activity-banner" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border-color: #f5d0fe; margin-top: 15px;">
+    <h3 style="color: #86198f;">🏆 Kelime Ezber Yarışması</h3>
+    <p style="color: #a21caf;">Google Sheets kelime havuzundan üniteleri seç, 2 şıkkı yarışarak çöz, liderlik tablosuna adını yazdır!</p>
+    <button class="btn-oyun-ac" onclick="kelimeYarismasiAc()" style="background: linear-gradient(135deg, #c026d3 0%, #a21caf 100%); box-shadow: 0 2px 8px rgba(192, 38, 211, 0.3);">🚀 Kelime Yarışmasını Başlat</button>
+</div>
             
             
 
@@ -1311,6 +1318,100 @@
         </div>
     </div>
 
+    <!-- KELİME YARIŞMASI MODALI -->
+<div class="game-modal-overlay" id="kelimeYarismaOverlay">
+    <div class="game-modal-content" style="max-width: 480px; background: #fffdf9;">
+        <button class="game-close-btn" onclick="kelimeYarismasiKapat()">✕</button>
+        
+        <!-- ÜST MÜZİK VE BAŞLIK BARı -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #f3e8ff; padding-bottom: 6px;">
+            <div style="font-size: 11px; font-weight: 700; color: #86198f; display: flex; align-items: center; gap: 4px;">
+                🎵 Arka Plan Müziği
+            </div>
+            <button id="kelimeMuzikBtn" onclick="kelimeMuzikToggle()" style="background: #fdf4ff; border: 1px solid #f5d0fe; color: #86198f; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; cursor: pointer;">
+                🔊 Müzik: Açık
+            </button>
+        </div>
+
+        <div class="game-title" style="color: #86198f;">🏆 Kelime Ezber Yarışması</div>
+        <div class="game-subtitle">Google Sheets Kelimeler Havuzundan Sorulur! Sınıf arttıkça soru sayısı artar!</div>
+
+        <!-- 1. GİRİŞ EKRANI (Filtreler) -->
+        <div id="kyGirisEkrani">
+            <div style="margin-bottom: 10px;">
+                <label style="font-size: 10px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">ÖĞRENCİ ADI</label>
+                <input type="text" id="kyIsimInput" placeholder="Adınız" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; font-weight: 700; background: #f8fafc; text-align: center;">
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label style="font-size: 10px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">SINIF SEÇİNİZ:</label>
+                <div class="sinif-secim-grid" id="kySinifGrid">
+                    <button class="sinif-btn active" onclick="kySinifSec(1, this)">1. Sınıf</button>
+                    <button class="sinif-btn" onclick="kySinifSec(2, this)">2. Sınıf</button>
+                    <button class="sinif-btn" onclick="kySinifSec(3, this)">3. Sınıf</button>
+                    <button class="sinif-btn" onclick="kySinifSec(4, this)">4. Sınıf</button>
+                    <button class="sinif-btn" onclick="kySinifSec(5, this)">5. Sınıf</button>
+                    <button class="sinif-btn" onclick="kySinifSec(6, this)">6. Sınıf</button>
+                    <button class="sinif-btn" onclick="kySinifSec(7, this)">7. Sınıf</button>
+                    <button class="sinif-btn" onclick="kySinifSec(8, this)">8. Sınıf</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 10px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">ÜNİTE SEÇİNİZ (Birden çok seçebilirsiniz):</label>
+                <div class="unite-secim-box" id="kyUniteBox" style="display: flex; flex-wrap: wrap; gap: 4px; max-height: 90px; overflow-y: auto; padding: 6px;">
+                    <!-- Üniteler Dinamik Yüklenecek -->
+                </div>
+            </div>
+
+            <button class="btn-giris" onclick="kelimeYarismasiBaslat()" style="background: linear-gradient(135deg, #c026d3 0%, #a21caf 100%); font-size: 13px; font-weight: 800; padding: 10px;">🚀 Yarışmayı Başlat</button>
+        </div>
+
+        <!-- 2. OYUN EKRANI -->
+        <div id="kyOyunEkrani" style="display:none;">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #86198f; margin-bottom: 8px;">
+                <span id="kySoruSayacInfo">Soru: 1 / 10</span>
+                <span id="kySureInfo">⏱️ Süre: 0s</span>
+                <span id="kyPuanInfo">Puan: 0</span>
+            </div>
+            
+            <div class="progress-container" style="margin-bottom: 12px;">
+                <div class="progress-bar" id="kyProgressBar" style="background-color: #c026d3; width: 0%;"></div>
+            </div>
+
+            <!-- Soru Kartı -->
+            <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 14px;">
+                <div style="font-size: 9.5px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;" id="kySoruYonEtiket">Bu kelimenin Türkçe anlamı nedir?</div>
+                <div style="font-size: 22px; font-weight: 900; color: #1e293b;" id="kySoruKelimeText">Apple</div>
+            </div>
+
+            <!-- 2 Şık Alanı -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;" id="kySeceneklerGrid">
+                <button class="ky-sik-btn" onclick="kyCevapVer(0)" id="kySik0" style="padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; background: #ffffff; font-size: 14px; font-weight: 800; color: #334155; cursor: pointer; transition: all 0.2s;">Elma</button>
+                <button class="ky-sik-btn" onclick="kyCevapVer(1)" id="kySik1" style="padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; background: #ffffff; font-size: 14px; font-weight: 800; color: #334155; cursor: pointer; transition: all 0.2s;">Armut</button>
+            </div>
+        </div>
+
+        <!-- 3. BİTİŞ & SKOR EKRANI -->
+        <div id="kyBitisEkrani" style="display:none; text-align: center; padding: 10px;">
+            <div style="font-size: 48px;">🎉</div>
+            <h3 style="font-size: 18px; font-weight: 900; color: #86198f; margin: 6px 0;">Yarışma Tamamlandı!</h3>
+            <p style="color: #64748b; font-size: 11px; margin-bottom: 12px;" id="kyBitisOzetMetin">Skorun başarıyla liderlik tablosuna kaydedildi.</p>
+            
+            <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 10px; padding: 12px; margin-bottom: 14px; text-align: left; font-size: 11.5px; color: #581c87; display: flex; flex-direction: column; gap: 4px;">
+                <div>👤 <b>İsim:</b> <span id="kyResIsim">-</span></div>
+                <div>📚 <b>Sınıf / Ünite:</b> <span id="kyResSinifUnite">-</span></div>
+                <div>✅ <b>Doğru / Yanlış:</b> <span id="kyResDogruYanlis">-</span></div>
+                <div>⏱️ <b>Toplam Süre:</b> <span id="kyResSure">-</span></div>
+                <div>🏆 <b>Kazanılan Puan:</b> <span id="kyResPuan">-</span></div>
+            </div>
+
+            <button class="btn-giris" onclick="kelimeYarismasiAc()" style="background: #86198f; font-size: 12px; font-weight: 700; padding: 8px;">🔄 Tekrar Oyna</button>
+        </div>
+
+    </div>
+</div>
+
 </parameter name="old_str">
 
     <!-- AKİCİ OKUMA VE HIZ ÖLÇER STÜDYOSU MODALI -->
@@ -1371,6 +1472,269 @@
     </div>
 
     <script>
+
+        // --- KELİME YARIŞMASI MİMARİSİ ---
+let kyAktifSinif = 1;
+let kySecilenUniteler = [];
+let kySorularListesi = [];
+let kySoruIndex = 0;
+let kyDogruSayisi = 0;
+let kyYanlisSayisi = 0;
+let kyBaslangicZamani = 0;
+let kyGecenSaniye = 0;
+let kyTimerInterval = null;
+let kyMuzikAcik = true;
+let kyAudioElement = null;
+
+function kelimeYarismasiAc() {
+    document.getElementById('kelimeYarismaOverlay').style.display = 'flex';
+    document.getElementById('kyGirisEkrani').style.display = 'block';
+    document.getElementById('kyOyunEkrani').style.display = 'none';
+    document.getElementById('kyBitisEkrani').style.display = 'none';
+
+    // Oturum açıksa ismi doldur
+    let isimInput = document.getElementById('kyIsimInput');
+    if (aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
+        isimInput.value = aktifOgrenciAdi;
+        isimInput.disabled = true;
+    } else {
+        isimInput.value = "";
+        isimInput.disabled = false;
+    }
+
+    kySinifGuncelle(1);
+    kelimeMuzikBaslat();
+}
+
+function kelimeYarismasiKapat() {
+    document.getElementById('kelimeYarismaOverlay').style.display = 'none';
+    kelimeMuzikDurdur();
+    if (kyTimerInterval) clearInterval(kyTimerInterval);
+}
+
+function kySinifSec(sinif, btnElement) {
+    kyAktifSinif = sinif;
+    let grid = document.getElementById('kySinifGrid');
+    grid.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+    kySinifGuncelle(sinif);
+}
+
+function kySinifGuncelle(sinif) {
+    // Sınıfa ait üniteleri masterKelimeHavuzu'ndan veya global veriden bulalım
+    let havuz = window.masterKelimeHavuzu || [];
+    let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
+    let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a, b) => a - b);
+    
+    if (uniteler.length === 0) {
+        uniteler = [1, 2, 3, 4, 5]; // Varsayılan
+    }
+
+    let uniteBox = document.getElementById('kyUniteBox');
+    uniteBox.innerHTML = "";
+    kySecilenUniteler = [];
+
+    uniteler.forEach((u, idx) => {
+        let chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'unite-chip' + (idx === 0 ? ' selected' : '');
+        chip.innerText = u + '.Ü';
+        chip.onclick = function() {
+            chip.classList.toggle('selected');
+            kyUniteSecimleriniGuncelle();
+        };
+        uniteBox.appendChild(chip);
+        if (idx === 0) kySecilenUniteler.push(u);
+    });
+}
+
+function kyUniteSecimleriniGuncelle() {
+    kySecilenUniteler = [];
+    document.querySelectorAll('#kyUniteBox .unite-chip').forEach((chip, idx) => {
+        if (chip.classList.contains('selected')) {
+            kySecilenUniteler.push(idx + 1);
+        }
+    });
+}
+
+function kelimeMuzikBaslat() {
+    if (!kyMuzikAcik) return;
+    if (!kyAudioElement) {
+        kyAudioElement = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'); // Arka plan müzik akışı
+        kyAudioElement.loop = true;
+        kyAudioElement.volume = 0.25;
+    }
+    kyAudioElement.play().catch(() => {});
+}
+
+function kelimeMuzikDurdur() {
+    if (kyAudioElement) {
+        kyAudioElement.pause();
+        kyAudioElement.currentTime = 0;
+    }
+}
+
+function kelimeMuzikToggle() {
+    kyMuzikAcik = !kyMuzikAcik;
+    let btn = document.getElementById('kelimeMuzikBtn');
+    if (kyMuzikAcik) {
+        btn.innerText = "🔊 Müzik: Açık";
+        kelimeMuzikBaslat();
+    } else {
+        btn.innerText = "🔇 Müzik: Kapalı";
+        kelimeMuzikDurdur();
+    }
+}
+
+function kelimeYarismasiBaslat() {
+    let isim = document.getElementById('kyIsimInput').value.trim();
+    if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
+    if (kySecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
+
+    let havuz = window.masterKelimeHavuzu || [];
+    // Seçilen sınıf ve çoklu ünitelere ait kelimeleri filtrele
+    let filtrelenmis = havuz.filter(k => Number(k.sinif) === Number(kyAktifSinif) && kySecilenUniteler.includes(Number(k.unite)));
+    
+    if (filtrelenmis.length < 3) {
+        alert("Seçtiğiniz kriterlere uygun yeterli kelime bulunamadı. Lütfen farklı üniteler seçin.");
+        return;
+    }
+
+    // İstediğin kural: 1. sınıfta 10 soru, sınıf arttıkça +5 ekle (1.sınıf=10, 2.sınıf=15, 3.sınıf=20 ... 8.sınıf=45)
+    let hedefSoruSayisi = 10 + (Number(kyAktifSinif) - 1) * 5;
+
+    // Kelimeleri karıştır ve yeni turda aynı kelimelerin gelmemesini sağla (Fisher-Yates Shuffle)
+    let karisikHavuz = [...filtrelenmis].sort(() => Math.random() - 0.5);
+    kySorularListesi = karisikHavuz.slice(0, Math.min(hedefSoruSayisi, karisikHavuz.length));
+
+    kySoruIndex = 0;
+    kyDogruSayisi = 0;
+    kyYanlisSayisi = 0;
+    kyBaslangicZamani = Date.now();
+    kyGecenSaniye = 0;
+
+    document.getElementById('kyGirisEkrani').style.display = 'none';
+    document.getElementById('kyOyunEkrani').style.display = 'block';
+
+    if (kyTimerInterval) clearInterval(kyTimerInterval);
+    kyTimerInterval = setInterval(() => {
+        kyGecenSaniye = Math.floor((Date.now() - kyBaslangicZamani) / 1000);
+        document.getElementById('kySureInfo').innerText = `⏱️ Süre: ${kyGecenSaniye}s`;
+    }, 1000);
+
+    kySoruGoster();
+}
+
+function kySoruGoster() {
+    if (kySoruIndex >= kySorularListesi.length) {
+        kelimeYarismasiBitir();
+        return;
+    }
+
+    let soru = kySorularListesi[kySoruIndex];
+    let toplam = kySorularListesi.length;
+
+    document.getElementById('kySoruSayacInfo').innerText = `Soru: ${kySoruIndex + 1} / ${toplam}`;
+    document.getElementById('kyProgressBar').style.width = `${((kySoruIndex) / toplam) * 100}%`;
+    document.getElementById('kyPuanInfo').innerText = `Puan: ${kyDogruSayisi * 10}`;
+
+    // İngilizce ya da Türkçe rastgele yön seçimi
+    let ingilizceMi = Math.random() > 0.5;
+    soru._yonIngilizce = ingilizceMi;
+
+    if (ingilizceMi) {
+        document.getElementById('kySoruYonEtiket').innerText = "Bu kelimenin Türkçe anlamı nedir?";
+        document.getElementById('kySoruKelimeText').innerText = soru.ingilizce;
+        soru._dogruCevap = soru.turkce;
+    } else {
+        document.getElementById('kySoruYonEtiket').innerText = "Bu kelimenin İngilizce karşılığı nedir?";
+        document.getElementById('kySoruKelimeText').innerText = soru.turkce;
+        soru._dogruCevap = soru.ingilizce;
+    }
+
+    // Yanlış şıkkı genel havuzdan (aynı türde) rastgele seçelim
+    let havuz = window.masterKelimeHavuzu || [];
+    let yanlisAdaylar = havuz.filter(k => (ingilizceMi ? k.turkce !== soru.turkce : k.ingilizce !== soru.ingilizce));
+    let rastgeleYanlisObj = yanlisAdaylar[Math.floor(Math.random() * yanlisAdaylar.length)] || { turkce: "Yanlış Şık", ingilizce: "Wrong Choice" };
+    let yanlisCevap = ingilizceMi ? rastgeleYanlisObj.turkce : rastgeleYanlisObj.ingilizce;
+
+    // 2 Şıkkı rastgele yerleştir
+    let siklar = [soru._dogruCevap, yanlisCevap].sort(() => Math.random() - 0.5);
+    soru._secenekler = siklar;
+    soru._dogruIndex = siklar.indexOf(soru._dogruCevap);
+
+    for (let i = 0; i < 2; i++) {
+        let btn = document.getElementById('kySik' + i);
+        btn.innerText = siklar[i];
+        btn.disabled = false;
+        btn.style.background = "#ffffff";
+        btn.style.color = "#334155";
+        btn.style.borderColor = "#cbd5e1";
+    }
+}
+
+function kyCevapVer(secilenIndex) {
+    let soru = kySorularListesi[kySoruIndex];
+    let dogruIdx = soru._dogruIndex;
+
+    // Butonları kilitle
+    document.getElementById('kySik0').disabled = true;
+    document.getElementById('kySik1').disabled = true;
+
+    if (secilenIndex === dogruIdx) {
+        kyDogruSayisi++;
+        document.getElementById('kySik' + secilenIndex).style.background = "#16a34a"; // Yeşil (Doğru)
+        document.getElementById('kySik' + secilenIndex).style.color = "#ffffff";
+        document.getElementById('kySik' + secilenIndex).style.borderColor = "#15803d";
+    } else {
+        kyYanlisSayisi++;
+        document.getElementById('kySik' + secilenIndex).style.background = "#dc2626"; // Kırmızı (Yanlış)
+        document.getElementById('kySik' + secilenIndex).style.color = "#ffffff";
+        document.getElementById('kySik' + secilenIndex).style.borderColor = "#b91c1c";
+
+        // Doğru olanı da yeşil göster
+        document.getElementById('kySik' + dogruIdx).style.background = "#16a34a";
+        document.getElementById('kySik' + dogruIdx).style.color = "#ffffff";
+        document.getElementById('kySik' + dogruIdx).style.borderColor = "#15803d";
+    }
+
+    setTimeout(() => {
+        kySoruIndex++;
+        kySoruGoster();
+    }, 900);
+}
+
+async function kelimeYarismasiBitir() {
+    if (kyTimerInterval) clearInterval(kyTimerInterval);
+    kelimeMuzikDurdur();
+
+    document.getElementById('kyOyunEkrani').style.display = 'none';
+    document.getElementById('kyBitisEkrani').style.display = 'block';
+
+    let isim = document.getElementById('kyIsimInput').value.trim();
+    let sinifStr = kyAktifSinif + ". Sınıf";
+    let uniteStr = kySecilenUniteler.join(",") + ". Ünite";
+    let toplamPuan = kyDogruSayisi * 10;
+    let tarihStr = new Date().toISOString().split('T')[0];
+
+    // Özet alanlarını doldur
+    document.getElementById('kyResIsim').innerText = isim;
+    document.getElementById('kyResSinifUnite').innerText = `${sinifStr} (${uniteStr})`;
+    document.getElementById('kyResDogruYanlis').innerText = `${kyDogruSayisi} Doğru / ${kyYanlisSayisi} Yanlış`;
+    document.getElementById('kyResSure').innerText = `${kyGecenSaniye} saniye`;
+    document.getElementById('kyResPuan').innerText = `${toplamPuan} Puan`;
+
+    // Google Sheets'e Kayıt Gönderimi (`Kelime_Liderlik` sekmesi için uygun parametreler)
+    // Sütun beklentin: tarihisimsinifunitedogruyanlissuresuresaniyepuan
+    let url = `${apiURL}?islem=kelimeLiderlikKaydet&tarih=${encodeURIComponent(tarihStr)}&isim=${encodeURIComponent(isim)}&sinif=${encodeURIComponent(sinifStr)}&unite=${encodeURIComponent(uniteStr)}&dogru=${kyDogruSayisi}&yanlis=${kyYanlisSayisi}&sure=${encodeURIComponent(kyGecenSaniye + "s")}&suresaniye=${kyGecenSaniye}&puan=${toplamPuan}`;
+
+    try {
+        await fetch(url);
+        console.log("Kelime liderlik tablosuna başarıyla kaydedildi.");
+    } catch(e) {
+        console.error("Liderlik kaydı gönderilemedi:", e);
+    }
+}
 
                 // --- POMODORO ÇALIŞMA SAYACI FONKSİYONLARI ---
         function pomodoroAc() {
@@ -1501,7 +1865,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbygcicm9CxM1hFzxEEE7eNkXh7SKdGTXjPiBXVM-01St2FsvKFlcZOI9nJBlDkDLZo6mQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwxA_gRdanl21IaiREernJAMUYrkDIKM4SrmiRrJ6tH_sKW267TKmdNHCpur3q_I232dA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -1585,6 +1949,13 @@
             girisBtn.disabled = false;
             girisBtn.innerText = "Giriş Yap";
             girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
+
+                    fetch(apiURL + "?islem=kelimelerGetir")
+        .then(res => res.json())
+        .then(data => {
+            window.masterKelimeHavuzu = data;
+            console.log("Kelime havuzu yüklendi:", data.length);
+        }).catch(err => console.error("Kelime havuzu yüklenemedi", err));
 
             const oturumAcik = localStorage.getItem("oturumAcik");
 const kayitliOgrenci = localStorage.getItem("aktifOgrenci");
