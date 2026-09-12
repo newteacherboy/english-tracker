@@ -3059,7 +3059,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }
         }
 
-               function oyunuBitir() {
+              async function oyunuBitir() {
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
             let muzik = document.getElementById('oyunMuzigi');
             if(muzik) { muzik.pause(); muzik.currentTime = 0; }
@@ -3076,12 +3076,24 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             document.getElementById('sonucSure').innerText = sureStr;
             
             let kaydetUrl = `${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`;
-            fetch(kaydetUrl).then(() => console.log("Klasik oyun kaydedildi")).catch((e) => console.error("Klasik oyun kayıt hatası:", e));
-            liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
+            
+            try {
+                let res = await fetch(kaydetUrl);
+                let data = await res.json();
+                // Eğer Google Sheets güncel liderlik listesini dönüyorsa doğrudan arayüze işleyelim
+                if (data && data.liderlik) {
+                    globalLiderlikCache = data.liderlik;
+                    liderlikTablosuGuncelleDonus();
+                } else {
+                    liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
+                }
+            } catch (e) {
+                console.error("Klasik oyun kayıt hatası:", e);
+                liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
+            }
         }
 
-        function liderlikTablosuGuncelle(yk) {
-            globalLiderlikCache.push(yk);
+        function liderlikTablosuGuncelleDonus() {
             globalLiderlikCache.sort((a,b)=> b.puan!==a.puan ? b.puan-a.puan : a.suresaniye-b.suresaniye);
             let top5 = globalLiderlikCache.slice(0,5), tbody = document.getElementById('liderlikTabloGovde'); 
             if(!tbody) return;
@@ -3090,7 +3102,6 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#b45309;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
             });
         }
-
 
         // --- JEOPARDY KELİME BALONLARI OYUNU MİMARİSİ ---
         let jeopSecilenSinif = 2;
