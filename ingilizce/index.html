@@ -4833,7 +4833,6 @@ function boslukBulmacayiCiz() {
 
     const renkler = ["#f97316", "#22c55e", "#ef4444", "#eab308", "#8b5cf6", "#06b6d4", "#ec4899", "#3b82f6"];
 
-    // Sadece içinde boşluk veya özel karakter olmayan düzgün kelimeleri filtreleyelim
     let temizKelimeler = boslukAktifKelimeler.filter(item => {
         let en = (item.ingilizce || item.en || "").trim();
         return en.length >= 3 && !en.includes(" ") && !en.includes("'");
@@ -4846,7 +4845,6 @@ function boslukBulmacayiCiz() {
         let turkce = item.turkce || item.tr || "";
         let renk = renkler[index % renkler.length];
 
-        // Sadece 1 veya 2 harfi gizle (diğer harfler görünsün)
         let gizliIndexler = [];
         if (ing.length <= 4) {
             gizliIndexler = [Math.floor(Math.random() * ing.length)];
@@ -4862,13 +4860,11 @@ function boslukBulmacayiCiz() {
         let satirDiv = document.createElement('div');
         satirDiv.style.cssText = "display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 6px;";
 
-        // Sıra rozeti
         let rozet = document.createElement('div');
         rozet.style.cssText = `background: ${renk}; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0;`;
         rozet.innerText = index + 1;
         satirDiv.appendChild(rozet);
 
-        // Harf kutuları alanı
         let kutularDiv = document.createElement('div');
         kutularDiv.style.cssText = "display: flex; gap: 4px; align-items: center;";
 
@@ -4881,10 +4877,10 @@ function boslukBulmacayiCiz() {
             input.maxLength = 1;
             input.dataset.dogruHarf = harf;
 
+            // Kutuların genişliği 36px yapılarak harflerin tam sığması ve ortalanması sağlandı
             if (isGizli) {
-                // BOŞ KUTU (Öğrencinin dolduracağı yer)
                 input.value = "";
-                input.style.cssText = "width: 30px; height: 32px; text-align: center; font-size: 14px; font-weight: 900; text-transform: uppercase; border: 2px solid #3b82f6 !important; border-radius: 6px; background: #ffffff !important; color: #1e293b !important; outline: none; pointer-events: auto !important;";
+                input.style.cssText = "width: 36px !important; height: 38px !important; min-width: 36px !important; text-align: center !important; font-size: 16px !important; font-weight: 900 !important; text-transform: uppercase !important; border: 2px solid #3b82f6 !important; border-radius: 6px !important; background: #ffffff !important; color: #1e293b !important; outline: none !important; padding: 0 !important; margin: 0 !important; box-sizing: border-box !important;";
                 
                 input.oninput = function() {
                     this.value = this.value.toUpperCase();
@@ -4893,16 +4889,14 @@ function boslukBulmacayiCiz() {
                     }
                 };
             } else {
-                // DOLU KUTU (İpucu olarak görünen harf)
                 input.value = harf;
                 input.disabled = true;
-                input.style.cssText = "width: 30px; height: 32px; text-align: center; font-size: 14px; font-weight: 900; text-transform: uppercase; border: 1px solid #cbd5e1 !important; border-radius: 6px; background: #f1f5f9 !important; color: #475569 !important;";
+                input.style.cssText = "width: 36px !important; height: 38px !important; min-width: 36px !important; text-align: center !important; font-size: 16px !important; font-weight: 900 !important; text-transform: uppercase !important; border: 1px solid #cbd5e1 !important; border-radius: 6px !important; background: #f1f5f9 !important; color: #475569 !important; padding: 0 !important; margin: 0 !important; box-sizing: border-box !important;";
             }
             kutularDiv.appendChild(input);
         }
         satirDiv.appendChild(kutularDiv);
 
-        // Türkçe Karşılığı sağ tarafta yazacak
         let trSpan = document.createElement('div');
         trSpan.style.cssText = "margin-left: auto; font-size: 12px; font-weight: 800; color: #334155; padding-right: 4px; text-align: right;";
         trSpan.innerText = turkce;
