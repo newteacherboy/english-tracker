@@ -1698,7 +1698,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzV3C0Wc8d79Hiu2qistHM3q7Ks-GnC5gk3q52KhH-DuG-4FmKtLzRuY0ru-mk9-Cfw1g/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxHDmxgvTfZloWS1AueRfxeqr8ZqfE2d7EF8nriX-8Cl1tyNbtG02fA5k2zRMivHnuiLg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -4187,7 +4187,7 @@ const oyunModulu = {
     sunucuyaKaydet(actionTip) {
         const payload = {
             action: actionTip,
-            isim: window.globalDataCache?.aktifOgrenci || "Mert Akkayaoğlu",
+            isim: window.globalDataCache?.aktifOgrenci || "Misafir",
             sinif: this.secilenSinif,
             unite: this.secilenUnite,
             dogru: this.dogruSayisi,
