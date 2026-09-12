@@ -1559,7 +1559,1248 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbyZss8bPSiJkmCspdWtoxQt8TYRTwahG8IXl4q95IkNFbRt4HPiavUgcwMsu3PjrpjN/exec";
+        const apiURL = "function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  
+  // ----------------------------------------------------
+
+  // --- (Buradan sonra kodunun geri kalan kısımları, raporlar, planlar ve ana veri çekme döngüsü devam edebilir) ---
+    // ÖĞRETMEN RAPORU İÇİN TARİH ARALIKLI VERİ GETİRME
+  if (e.parameter && e.parameter.islem === "raporVeriGetir") {
+    var rOgrenci = String(e.parameter.ogrenci || "").trim().toLowerCase();
+    var rBaslangic = new Date(e.parameter.baslangic + "T00:00:00");
+    var rBitis = new Date(e.parameter.bitis + "T23:59:59");
+
+    // --- Puanlama sekmesinden aralık içi kayıtlar ---
+    var sheetPuanR = ss.getSheetByName("Puanlama");
+    var puanlamaAralik = [];
+    if (sheetPuanR && sheetPuanR.getLastRow() > 1) {
+      var pRowsR = sheetPuanR.getDataRange().getValues();
+      var pHeadR = pRowsR[0];
+      var iOgr = pHeadR.indexOf("ogrenci");
+      var iTarih = pHeadR.indexOf("tarih");
+      var iGenel = pHeadR.indexOf("genel");
+      var iVocab = pHeadR.indexOf("vocabulary");
+      var iKonusma = pHeadR.indexOf("konusma");
+      var iOkuma = pHeadR.indexOf("okuma");
+      var iYazma = pHeadR.indexOf("yazma");
+      var iGrammar = pHeadR.indexOf("grammar");
+      var iDeneme = pHeadR.indexOf("deneme_puan");
+
+      for (var pr = 1; pr < pRowsR.length; pr++) {
+        var rowR = pRowsR[pr];
+        var ogrR = String(rowR[iOgr]).trim().toLowerCase();
+        if (ogrR !== rOgrenci) continue;
+        var tarihValR = rowR[iTarih] ? new Date(rowR[iTarih]) : null;
+        if (!tarihValR || tarihValR < rBaslangic || tarihValR > rBitis) continue;
+
+        puanlamaAralik.push({
+          tarih: Utilities.formatDate(tarihValR, Session.getScriptTimeZone(), "dd.MM.yyyy"),
+          tarihVal: tarihValR.getTime(),
+          genel: Number(rowR[iGenel]) || 0,
+          vocabulary: Number(rowR[iVocab]) || 0,
+          konusma: Number(rowR[iKonusma]) || 0,
+          okuma: Number(rowR[iOkuma]) || 0,
+          yazma: Number(rowR[iYazma]) || 0,
+          grammar: Number(rowR[iGrammar]) || 0,
+          deneme: Number(rowR[iDeneme]) || 0
+        });
+      }
+      puanlamaAralik.sort(function(a, b) { return a.tarihVal - b.tarihVal; });
+    }
+
+    // --- Ortalamaları hesapla ---
+    var toplam = { genel: 0, vocab: 0, konusma: 0, okuma: 0, yazma: 0, grammar: 0 };
+    var adetR = puanlamaAralik.length;
+    puanlamaAralik.forEach(function(k) {
+      toplam.genel += k.genel; toplam.vocab += k.vocabulary; toplam.konusma += k.konusma;
+      toplam.okuma += k.okuma; toplam.yazma += k.yazma; toplam.grammar += k.grammar;
+    });
+    var ortalamalar = adetR > 0 ? {
+      genel: Math.round(toplam.genel / adetR),
+      vocabulary: Math.round(toplam.vocab / adetR),
+      konusma: Math.round(toplam.konusma / adetR),
+      okuma: Math.round(toplam.okuma / adetR),
+      yazma: Math.round(toplam.yazma / adetR),
+      grammar: Math.round(toplam.grammar / adetR)
+    } : { genel: 0, vocabulary: 0, konusma: 0, okuma: 0, yazma: 0, grammar: 0 };
+
+    var sonDenemeAralikta = 0;
+    var denemeSerisi = puanlamaAralik.filter(function(k) { return k.deneme > 0; }).map(function(k) {
+      return { tarih: k.tarih, deneme: k.deneme };
+    });
+    if (denemeSerisi.length > 0) sonDenemeAralikta = denemeSerisi[denemeSerisi.length - 1].deneme;
+
+    var gelisimSerisi = puanlamaAralik.map(function(k) { return { tarih: k.tarih, genel: k.genel }; });
+
+    // --- Dersler sekmesinden aralıkta tamamlanan ders sayısı ---
+    var sheetDersR = ss.getSheetByName("Dersler");
+    var dersSayisiAralikta = 0;
+    if (sheetDersR && sheetDersR.getLastRow() > 1) {
+      var dRowsR = sheetDersR.getDataRange().getValues();
+      var dHeadR = dRowsR[0];
+      var dIOgr = dHeadR.indexOf("ogrenci");
+      var dITarih = dHeadR.indexOf("tarih");
+      var dIDurum = dHeadR.indexOf("durum");
+      for (var dr = 1; dr < dRowsR.length; dr++) {
+        var dRowR = dRowsR[dr];
+        var dOgrR = String(dRowR[dIOgr]).trim().toLowerCase();
+        if (dOgrR !== rOgrenci) continue;
+        var dDurumR = String(dRowR[dIDurum]).trim().toLowerCase();
+        if (dDurumR !== "yapıldı") continue;
+        var dTarihR = dRowR[dITarih] ? new Date(dRowR[dITarih]) : null;
+        if (dTarihR && dTarihR >= rBaslangic && dTarihR <= rBitis) dersSayisiAralikta++;
+      }
+    }
+
+    // --- Oyun skorlarını aralığa göre topla ---
+    function oyunOzetiHesapla(sheetAdi) {
+      var sheetOyunR = ss.getSheetByName(sheetAdi);
+      var ozet = { dogru: 0, yanlis: 0, puan: 0, oyunSayisi: 0 };
+      if (sheetOyunR && sheetOyunR.getLastRow() > 1) {
+        var oRowsR = sheetOyunR.getDataRange().getValues();
+        var oHeadR = oRowsR[0];
+        var oIIsim = oHeadR.indexOf("isim");
+        var oITarih = oHeadR.indexOf("tarih");
+        var oIDogru = oHeadR.indexOf("dogru");
+        var oIYanlis = oHeadR.indexOf("yanlis");
+        var oIPuan = oHeadR.indexOf("puan");
+        for (var or = 1; or < oRowsR.length; or++) {
+          var oRowR = oRowsR[or];
+          var oIsimR = String(oRowR[oIIsim]).trim().toLowerCase();
+          if (oIsimR !== rOgrenci) continue;
+          var oTarihR = oRowR[oITarih] ? new Date(oRowR[oITarih]) : null;
+          if (!oTarihR || oTarihR < rBaslangic || oTarihR > rBitis) continue;
+          ozet.dogru += Number(oRowR[oIDogru]) || 0;
+          ozet.yanlis += Number(oRowR[oIYanlis]) || 0;
+          ozet.puan += Number(oRowR[oIPuan]) || 0;
+          ozet.oyunSayisi++;
+        }
+      }
+      return ozet;
+    }
+
+    var oyunOzet = {
+      klasik: oyunOzetiHesapla("Kelime_Liderlik"),
+      jeopardy: oyunOzetiHesapla("Jeopardy_Liderlik"),
+      cekilis: oyunOzetiHesapla("Cekilis_Liderlik")
+    };
+
+    var raporSonucu = {
+      ortalamalar: ortalamalar,
+      sonDenemeAralikta: sonDenemeAralikta,
+      gelisimSerisi: gelisimSerisi,
+      denemeSerisi: denemeSerisi,
+      dersSayisiAralikta: dersSayisiAralikta,
+      oyunOzet: oyunOzet,
+      kayitSayisi: adetR
+    };
+
+    return ContentService.createTextOutput(JSON.stringify(raporSonucu)).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // YILLIK PLAN TİK GÜNCELLEME İSTEĞİ (EN BAŞA ALINDI)
+  if (e.parameter && e.parameter.islem === "planTikGuncelle") {
+    var planKodu = String(e.parameter.plankodu || "").trim();
+    var hedefHafta = String(e.parameter.hafta || "").trim();
+    var ogrenciAdi = String(e.parameter.ogrenci || "").trim();
+    var isaretli = e.parameter.isaretli === "true";
+
+    var sheetPlanlar = ss.getSheetByName("PlanSayfa");
+    if (sheetPlanlar && sheetPlanlar.getLastRow() > 1) {
+      var pData = sheetPlanlar.getDataRange().getValues();
+      var pHeader = pData[0];
+      
+            var idxKodu = -1;
+      var idxHafta = -1;
+      var idxTamamlayanlar = -1;
+      
+      for (var c = 0; c < pHeader.length; c++) {
+        var baslik = String(pHeader[c]).trim().toLowerCase();
+        if (baslik === "plankodu") idxKodu = c;
+        if (baslik === "hafta") idxHafta = c;
+        if (baslik === "onaylananlar") idxTamamlayanlar = c;
+      }
+
+      if (idxKodu !== -1 && idxTamamlayanlar !== -1) {
+        for (var p = 1; p < pData.length; p++) {
+          var mevcutKod = String(pData[p][idxKodu]).trim();
+          var mevcutHafta = idxHafta !== -1 ? String(pData[p][idxHafta]).trim() : "";
+          if (mevcutKod === planKodu && mevcutHafta === hedefHafta) {
+            var mevcutListeStr = String(pData[p][idxTamamlayanlar] || "").trim();
+            var listeArr = mevcutListeStr ? mevcutListeStr.split(",").map(function(item) { return item.trim(); }).filter(function(i){ return i !== ""; }) : [];
+
+            var indexInArr = listeArr.indexOf(ogrenciAdi);
+            if (isaretli && indexInArr === -1) {
+              listeArr.push(ogrenciAdi);
+            } else if (!isaretli && indexInArr !== -1) {
+              listeArr.splice(indexInArr, 1);
+            }
+
+            var yeniListeStr = listeArr.join(", ");
+            sheetPlanlar.getRange(p + 1, idxTamamlayanlar + 1).setValue(yeniListeStr);
+            break;
+          }
+        }
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", mesaj: "Tik başarıyla işlendi" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+    // ÖĞRENCİDEN MERT HOCA'YA MESAJ GÖNDERME
+  if (e.parameter && e.parameter.islem === "sohbetMesajGonder") {
+    var sheetSohbet = ss.getSheetByName("Sohbet");
+    if (!sheetSohbet) {
+      sheetSohbet = ss.insertSheet("Sohbet");
+      sheetSohbet.appendRow(["tarih", "ogrenci", "gonderen", "mesaj", "okundu"]);
+    }
+
+    var mesajMetni = (e.parameter.mesaj || "").trim();
+    var gonderenOgrenci = e.parameter.ogrenci || "Misafir Ziyaretçi";
+
+    var sesliHarflerSB = mesajMetni.toLowerCase().match(/[aeıioöuü]/g);
+    var isRandomSB = false;
+    if (mesajMetni.length > 3 && (!sesliHarflerSB || sesliHarflerSB.length === 0)) isRandomSB = true;
+    if (/(.)\1{2,}/.test(mesajMetni.toLowerCase())) isRandomSB = true;
+
+    if (isRandomSB) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "spam" })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    sheetSohbet.appendRow([new Date(), gonderenOgrenci, "ogrenci", mesajMetni, "hayir"]);
+
+    try {
+      MailApp.sendEmail({
+        to: "official.ogretmencocuk@gmail.com",
+        subject: "📩 Yeni Öğrenci Mesajı: " + gonderenOgrenci,
+        body: gonderenOgrenci + " sana yeni bir mesaj gönderdi:\n\n\"" + mesajMetni + "\"\n\nCevaplamak için uygulamandaki Öğretmen Paneli > Öğrenci Sohbetleri sekmesini aç."
+      });
+    } catch (mailErr) {}
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ÖĞRENCİNİN KENDİ SOHBET GEÇMİŞİNİ GETİRMESİ
+  if (e.parameter && e.parameter.islem === "sohbetGetir") {
+    var ogrSG = String(e.parameter.ogrenci || "").trim().toLowerCase();
+    var sheetSohbetG = ss.getSheetByName("Sohbet");
+    var mesajlarSG = [];
+
+    if (sheetSohbetG && sheetSohbetG.getLastRow() > 1) {
+      var rowsSG = sheetSohbetG.getDataRange().getValues();
+      for (var sg = 1; sg < rowsSG.length; sg++) {
+        if (String(rowsSG[sg][1]).trim().toLowerCase() === ogrSG) {
+          mesajlarSG.push({
+            tarih: rowsSG[sg][0],
+            gonderen: String(rowsSG[sg][2]).trim().toLowerCase(),
+            mesaj: rowsSG[sg][3]
+          });
+        }
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify(mesajlarSG)).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ÖĞRETMEN: TÜM ÖĞRENCİLERİN SOHBET ÖZETİNİ (LİSTESİNİ) GETİRME
+  if (e.parameter && e.parameter.islem === "ogretmenSohbetListesi") {
+    var sheetSohbetL = ss.getSheetByName("Sohbet");
+    var ozetMap = {};
+
+    if (sheetSohbetL && sheetSohbetL.getLastRow() > 1) {
+      var rowsSL = sheetSohbetL.getDataRange().getValues();
+      for (var sl = 1; sl < rowsSL.length; sl++) {
+        var ogrAdiSL = String(rowsSL[sl][1]).trim();
+        if (!ogrAdiSL) continue;
+
+        if (!ozetMap[ogrAdiSL]) {
+          ozetMap[ogrAdiSL] = { ogrenci: ogrAdiSL, sonMesaj: "", sonTarih: null, okunmamis: 0 };
+        }
+
+        ozetMap[ogrAdiSL].sonMesaj = rowsSL[sl][3];
+        ozetMap[ogrAdiSL].sonTarih = rowsSL[sl][0];
+
+        var gonderenSL = String(rowsSL[sl][2]).trim().toLowerCase();
+        var okunduSL = String(rowsSL[sl][4]).trim().toLowerCase();
+        if (gonderenSL === "ogrenci" && okunduSL !== "evet") {
+          ozetMap[ogrAdiSL].okunmamis++;
+        }
+      }
+    }
+
+    var listeSL = Object.values(ozetMap).sort(function(a, b) {
+      return new Date(b.sonTarih) - new Date(a.sonTarih);
+    });
+
+    return ContentService.createTextOutput(JSON.stringify(listeSL)).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ÖĞRETMEN: BİR ÖĞRENCİNİN SOHBETİNİ AÇMA (OKUNDU İŞARETLEME DAHİL)
+  if (e.parameter && e.parameter.islem === "ogretmenSohbetAc") {
+    var ogrOA = String(e.parameter.ogrenci || "").trim();
+    var sheetSohbetOA = ss.getSheetByName("Sohbet");
+    var mesajlarOA = [];
+
+    if (sheetSohbetOA && sheetSohbetOA.getLastRow() > 1) {
+      var rowsOA = sheetSohbetOA.getDataRange().getValues();
+      for (var oa = 1; oa < rowsOA.length; oa++) {
+        if (String(rowsOA[oa][1]).trim().toLowerCase() === ogrOA.toLowerCase()) {
+          mesajlarOA.push({
+            tarih: rowsOA[oa][0],
+            gonderen: String(rowsOA[oa][2]).trim().toLowerCase(),
+            mesaj: rowsOA[oa][3]
+          });
+
+          var gonderenOA = String(rowsOA[oa][2]).trim().toLowerCase();
+          if (gonderenOA === "ogrenci") {
+            sheetSohbetOA.getRange(oa + 1, 5).setValue("evet");
+          }
+        }
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify(mesajlarOA)).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ÖĞRETMEN: ÖĞRENCİYE CEVAP YAZMA
+  if (e.parameter && e.parameter.islem === "ogretmenCevapGonder") {
+    var sheetSohbetCG = ss.getSheetByName("Sohbet");
+    if (!sheetSohbetCG) {
+      sheetSohbetCG = ss.insertSheet("Sohbet");
+      sheetSohbetCG.appendRow(["tarih", "ogrenci", "gonderen", "mesaj", "okundu"]);
+    }
+
+    var ogrCG = e.parameter.ogrenci || "";
+    var mesajCG = (e.parameter.mesaj || "").trim();
+
+    sheetSohbetCG.appendRow([new Date(), ogrCG, "ogretmen", mesajCG, "evet"]);
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // OKUMA HIZI GEÇMİŞİNİ GETİRME
+  if (e.parameter && e.parameter.islem === "okumaGecmisGetir") {
+    var ogr = String(e.parameter.ogrenci || "").trim().toLowerCase();
+    var sheetOkuma = ss.getSheetByName("Okuma_Hizi");
+    var liste = [];
+    if (sheetOkuma && sheetOkuma.getLastRow() > 1) {
+      var rows = sheetOkuma.getDataRange().getValues();
+      var head = rows[0];
+      var iOgr = head.indexOf("OgrenciAdi");
+      var iTarih = head.indexOf("Tarih");
+      var iSinif = head.indexOf("Sinif");
+      var iKelime = head.indexOf("OkunanKelime");
+      var iSure = head.indexOf("GecsenSureSaniye");
+      var iWpm = head.indexOf("DakikadaKelimeWPM");
+      var iBaslik = head.indexOf("MetinBasligi");
+
+      for (var r = 1; r < rows.length; r++) {
+        var rowOgr = String(rows[r][iOgr]).trim().toLowerCase();
+        if (rowOgr === ogr) {
+          liste.push({
+            tarih: rows[r][iTarih],
+            sinif: rows[r][iSinif],
+            okunanKelime: rows[r][iKelime],
+            gecenSure: rows[r][iSure],
+            wpm: rows[r][iWpm],
+            metinBasligi: rows[r][iBaslik]
+          });
+        }
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify(liste)).setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  // ÖĞRETMEN RUBRİK VERİLERİNİ KAYDETME İSTEĞİ
+  if (e.parameter && e.parameter.islem === "rubrikKaydet") {
+    var ogrenci = e.parameter.ogrenci;
+    var tarih = e.parameter.tarih;
+    var sonrakiTarih = e.parameter.sonrakitarih;
+    var kitapAdi = e.parameter.kitapadi;
+    var sayfa = e.parameter.sayfa;
+    var hedef = e.parameter.hedef;
+    var okunanSayisi = e.parameter.okunansayisi;
+    var sonDeneme = e.parameter.sondeneme;
+    var pOkuma = e.parameter.okuma;
+    var pYazma = e.parameter.yazma;
+    var pVocab = e.parameter.vocab;
+    var pKonusma = e.parameter.konusma;
+    var pGrammar = e.parameter.grammar;
+    
+    var sheetPuan = ss.getSheetByName("Puanlama");
+    if (sheetPuan) {
+      var genelPuan = Math.round((Number(pOkuma) + Number(pYazma) + Number(pVocab) + Number(pKonusma) + Number(pGrammar)) / 5);
+      sheetPuan.appendRow([tarih, ogrenci, genelPuan, pVocab, pKonusma, pOkuma, pYazma, pGrammar, sonDeneme]);
+    }
+    
+    var sheetKitap = ss.getSheetByName("Kitaplar");
+    if (sheetKitap) {
+      sheetKitap.appendRow([tarih, ogrenci, kitapAdi, sayfa, hedef, okunanSayisi]);
+    }
+
+    var sheetDers = ss.getSheetByName("Dersler");
+    if (sheetDers) {
+      sheetDers.appendRow([tarih, ogrenci, "yapıldı"]);
+      if (sonrakiTarih) {
+        sheetDers.appendRow([sonrakiTarih, ogrenci, "sonraki"]);
+      }
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({"status": "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+ 
+  
+    
+
+  // SEVİYE TAMAMLAMA KAYDETME
+  if (e.parameter && e.parameter.islem === "seviyeTamamla") {
+    var sheetSI = ss.getSheetByName("SeviyeIlerleme");
+    if (!sheetSI) {
+      sheetSI = ss.insertSheet("SeviyeIlerleme");
+      sheetSI.appendRow(["ogrenci", "sinif", "unite", "seviye", "tamamlandi_mi", "tarih", "secilen_sinif"]);
+    }
+
+    var ogrenciAdiSI = String(e.parameter.ogrenci || "").trim();
+    var sinifSI = Number(e.parameter.sinif) || 0;
+    var uniteSI = Number(e.parameter.unite) || 0;
+    var seviyeSI = Number(e.parameter.seviye) || 0;
+
+    var mevcutSatirlar = sheetSI.getDataRange().getValues();
+    var bulunduSI = false;
+    for (var s = 1; s < mevcutSatirlar.length; s++) {
+      if (String(mevcutSatirlar[s][0]).trim().toLowerCase() === ogrenciAdiSI.toLowerCase()
+          && Number(mevcutSatirlar[s][1]) === sinifSI
+          && Number(mevcutSatirlar[s][2]) === uniteSI
+          && Number(mevcutSatirlar[s][3]) === seviyeSI) {
+        sheetSI.getRange(s + 1, 5).setValue("true");
+        sheetSI.getRange(s + 1, 6).setValue(new Date());
+        bulunduSI = true;
+        break;
+      }
+    }
+    if (!bulunduSI) {
+      sheetSI.appendRow([ogrenciAdiSI, sinifSI, uniteSI, seviyeSI, "true", new Date(), ""]);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ÖĞRENCİNİN SEÇTİĞİ SINIFI KAYDETME
+  if (e.parameter && e.parameter.islem === "sinifSec") {
+    var sheetSSinif = ss.getSheetByName("SeviyeIlerleme");
+    if (!sheetSSinif) {
+      sheetSSinif = ss.insertSheet("SeviyeIlerleme");
+      sheetSSinif.appendRow(["ogrenci", "sinif", "unite", "seviye", "tamamlandi_mi", "tarih", "secilen_sinif"]);
+    }
+
+    var ogrenciSS = String(e.parameter.ogrenci || "").trim();
+    var secilenSinif = Number(e.parameter.sinif) || 0;
+
+    var veriSS = sheetSSinif.getDataRange().getValues();
+    var headSS = veriSS[0];
+    var idxOgrSS = headSS.indexOf("ogrenci");
+    var idxSecSinif = headSS.indexOf("secilen_sinif");
+
+    if (idxSecSinif === -1) {
+      sheetSSinif.getRange(1, sheetSSinif.getLastColumn() + 1).setValue("secilen_sinif");
+      idxSecSinif = sheetSSinif.getLastColumn() - 1;
+    }
+
+    var bulunduSS = false;
+    for (var r = 1; r < veriSS.length; r++) {
+      if (String(veriSS[r][idxOgrSS]).trim().toLowerCase() === ogrenciSS.toLowerCase() && String(veriSS[r][idxSecSinif] || "") !== "") {
+        sheetSSinif.getRange(r + 1, idxSecSinif + 1).setValue(secilenSinif);
+        bulunduSS = true;
+        break;
+      }
+    }
+    if (!bulunduSS) {
+      sheetSSinif.appendRow([ogrenciSS, "", "", "", "", new Date(), secilenSinif]);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  
+
+  // OTURUM SÜRESİ KAYDETME
+  if (e.parameter && e.parameter.islem === "kaydet") {
+    var ogrenciAdi = e.parameter.ogrenci;
+    var toplamSure = e.parameter.toplamsure;
+    var rozet = e.parameter.rozet;
+    var sheetSure = ss.getSheetByName("Oturum Saniye") || ss.getSheetByName("İngilizce");
+    var rows = sheetSure.getDataRange().getValues();
+    var headers = rows[0];
+    var idxOgrenci = headers.indexOf("ogrenci");
+    var idxSure = headers.indexOf("toplam sure") !== -1 ? headers.indexOf("toplam sure") : headers.indexOf("toplamsure");
+    var idxRozet = headers.indexOf("rozet");
+    
+    var bulundu = false;
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][idxOgrenci]).trim().toLowerCase() === String(ogrenciAdi).trim().toLowerCase()) {
+        if (idxSure !== -1) sheetSure.getRange(i + 1, idxSure + 1).setValue(toplamSure);
+        if (idxRozet !== -1) sheetSure.getRange(i + 1, idxRozet + 1).setValue(rozet);
+        bulundu = true;
+        break;
+      }
+    }
+    if (!bulundu) sheetSure.appendRow([ogrenciAdi, toplamSure, rozet]);
+    return ContentService.createTextOutput(JSON.stringify({"status": "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  // Sekme adını güvenli bulma (Büyük/küçük harf duyarsız)
+  var sheetGiris = null;
+var tumSekmeler = ss.getSheets();
+for (var st = 0; st < tumSekmeler.length; st++) {
+  var adi = tumSekmeler[st].getName().trim();
+  if (adi === "İngilizce" || adi.toLowerCase().indexOf("ngilizce") !== -1) {
+    sheetGiris = tumSekmeler[st];
+    break;
+  }
+}
+  if (!sheetGiris) {
+    return ContentService.createTextOutput(JSON.stringify([{ hata: "'İngilizce' adında bir sekme bulunamadı!" }])).setMimeType(ContentService.MimeType.JSON);
+  }
+  var rowsGiris = sheetGiris.getDataRange().getValues();
+  var headersGiris = rowsGiris[0];
+  var idxTel = headersGiris.indexOf("telefon");
+  var idxAtananPlan = headersGiris.indexOf("AtananPlan");
+
+    var sheetPlanlar = ss.getSheetByName("PlanSayfa");
+  var tumPlanlarHavuzu = [];
+  if (sheetPlanlar && sheetPlanlar.getLastRow() > 1) {
+    var pRows = sheetPlanlar.getDataRange().getValues();
+    var pHead = pRows[0];
+    var pKodu = pHead.indexOf("Plankodu");
+    var pHafta = pHead.indexOf("Hafta");
+    var pAciklama = pHead.indexOf("Açıklama");
+    var pOnaylananlar = pHead.indexOf("Onaylananlar");
+
+    for (var pi = 1; pi < pRows.length; pi++) {
+      var pRow = pRows[pi];
+      tumPlanlarHavuzu.push({
+        planKodu: String(pRow[pKodu] || "").trim(),
+        hafta: pRow[pHafta] || "",
+        aciklama: String(pRow[pAciklama] || "").trim(),
+        onaylananlar: String(pRow[pOnaylananlar] || "").trim()
+      });
+    }
+  }
+
+  var sheetSure = ss.getSheetByName("Oturum Saniye");
+  var sureMap = {};
+  if (sheetSure) {
+    var rowsSure = sheetSure.getDataRange().getValues();
+    var headersSure = rowsSure[0];
+    var sIdxOgrenci = headersSure.indexOf("ogrenci");
+    var sIdxSure = headersSure.indexOf("toplam sure") !== -1 ? headersSure.indexOf("toplam sure") : headersSure.indexOf("toplamsure");
+    var sIdxRozet = headersSure.indexOf("rozet");
+    for (var k = 1; k < rowsSure.length; k++) {
+      var og = String(rowsSure[k][sIdxOgrenci]).trim().toLowerCase();
+      sureMap[og] = { toplamsure: Number(rowsSure[k][sIdxSure]) || 0, rozet: Number(rowsSure[k][sIdxRozet]) || 0 };
+    }
+  }
+
+  var sheetPuan = ss.getSheetByName("Puanlama");
+  var puanMap = {};
+  var grafikGecmisMap = {};
+  var denemeGecmisMap = {};
+  var arsivMap = {}; 
+  
+  if (sheetPuan) {
+    var rowsPuan = sheetPuan.getDataRange().getValues();
+    var headersPuan = rowsPuan[0];
+    var pOgrenci = headersPuan.indexOf("ogrenci");
+    var pGenel = headersPuan.indexOf("genel");
+    var pVocab = headersPuan.indexOf("vocabulary");
+    var pKonusma = headersPuan.indexOf("konusma");
+    var pOkuma = headersPuan.indexOf("okuma");
+    var pYazma = headersPuan.indexOf("yazma");
+    var pGrammar = headersPuan.indexOf("grammar");
+    var pDeneme = headersPuan.indexOf("deneme_puan");
+    var pTarih = headersPuan.indexOf("tarih");
+    
+    var ogrenciPuanlari = {};
+    for (var p = 1; p < rowsPuan.length; p++) {
+      var row = rowsPuan[p];
+      var ogr = String(row[pOgrenci]).trim().toLowerCase();
+      if (!ogr) continue;
+      
+      var genelPuan = Number(row[pGenel]) || 0;
+      var vocabP = Number(row[pVocab]) || 0;
+      var konusmaP = Number(row[pKonusma]) || 0;
+      var okumaP = Number(row[pOkuma]) || 0;
+      var yazmaP = Number(row[pYazma]) || 0;
+      var grammarP = Number(row[pGrammar]) || 0;
+      var denemePuan = Number(row[pDeneme]) || 0;
+      var tarihVal = row[pTarih] ? new Date(row[pTarih]) : new Date(0);
+      var tarihStr = tarihVal.getTime() !== 0 ? Utilities.formatDate(tarihVal, Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
+      
+      if (!grafikGecmisMap[ogr]) grafikGecmisMap[ogr] = [];
+      grafikGecmisMap[ogr].push({ tarih: tarihStr, tarihVal: tarihVal.getTime(), genel: genelPuan });
+
+      if (!denemeGecmisMap[ogr]) denemeGecmisMap[ogr] = [];
+      denemeGecmisMap[ogr].push({ tarih: tarihStr, tarihVal: tarihVal.getTime(), deneme: denemePuan });
+      
+      if (!arsivMap[ogr]) arsivMap[ogr] = [];
+      arsivMap[ogr].push({
+        tarih: tarihStr, tarihVal: tarihVal.getTime(), genel: genelPuan, vocabulary: vocabP, konusma: konusmaP, okuma: okumaP, yazma: yazmaP, grammar: grammarP, deneme: denemePuan
+      });
+      
+      if (!ogrenciPuanlari[ogr]) {
+        ogrenciPuanlari[ogr] = { 
+          toplamGenel: 0, toplamVocab: 0, toplamKonusma: 0, toplamOkuma: 0, toplamYazma: 0, toplamGrammar: 0, 
+          adet: 0, sonDeneme: 0, sonGenel: 0, sonVocab: 0, sonKonusma: 0, sonOkuma: 0, sonYazma: 0, sonGrammar: 0, enYeniTarih: tarihVal 
+        };
+      }
+      ogrenciPuanlari[ogr].toplamGenel += genelPuan;
+      ogrenciPuanlari[ogr].toplamVocab += vocabP;
+      ogrenciPuanlari[ogr].toplamKonusma += konusmaP;
+      ogrenciPuanlari[ogr].toplamOkuma += okumaP;
+      ogrenciPuanlari[ogr].toplamYazma += yazmaP;
+      ogrenciPuanlari[ogr].toplamGrammar += grammarP;
+      ogrenciPuanlari[ogr].adet += 1;
+      
+      if (tarihVal >= ogrenciPuanlari[ogr].enYeniTarih) {
+        ogrenciPuanlari[ogr].enYeniTarih = tarihVal;
+        ogrenciPuanlari[ogr].sonDeneme = denemePuan;
+        ogrenciPuanlari[ogr].sonGenel = genelPuan;
+        ogrenciPuanlari[ogr].sonVocab = vocabP;
+        ogrenciPuanlari[ogr].sonKonusma = konusmaP;
+        ogrenciPuanlari[ogr].sonOkuma = okumaP;
+        ogrenciPuanlari[ogr].sonYazma = yazmaP;
+        ogrenciPuanlari[ogr].sonGrammar = grammarP;
+      }
+    }
+    for (var ogrKey in grafikGecmisMap) grafikGecmisMap[ogrKey].sort(function(a, b) { return a.tarihVal - b.tarihVal; });
+    for (var ogrKey in denemeGecmisMap) denemeGecmisMap[ogrKey].sort(function(a, b) { return a.tarihVal - b.tarihVal; });
+    for (var ogrKey in arsivMap) arsivMap[ogrKey].sort(function(a, b) { return b.tarihVal - a.tarihVal; });
+    
+    for (var ogrKey in ogrenciPuanlari) {
+      var item = ogrenciPuanlari[ogrKey];
+      var adet = item.adet;
+      puanMap[ogrKey] = {
+        genelOrtalama: adet > 0 ? Math.round(item.toplamGenel / adet) : 0,
+        guncelGenelPuan: item.sonGenel,
+        vocabOrt: adet > 0 ? Math.round(item.toplamVocab / adet) : 0,
+        konusmaOrt: adet > 0 ? Math.round(item.toplamKonusma / adet) : 0,
+        okumaOrt: adet > 0 ? Math.round(item.toplamOkuma / adet) : 0,
+        yazmaOrt: adet > 0 ? Math.round(item.toplamYazma / adet) : 0,
+        grammarOrt: adet > 0 ? Math.round(item.toplamGrammar / adet) : 0,
+        etkinlikBasarisi: item.sonGenel,
+        sonDeneme: item.sonDeneme
+      };
+    }
+  }
+
+  var sheetRozet = ss.getSheetByName("Rozetler");
+  var tumRozetler = [];
+  if (sheetRozet) {
+    var rowsRozet = sheetRozet.getDataRange().getValues();
+    var headersRozet = rowsRozet[0];
+    var rOgr = headersRozet.indexOf("ogrenciAdi");
+    var rAdi = headersRozet.indexOf("rozetAdi");
+    var rPuan = headersRozet.indexOf("gerekliPuan");
+    var rEmoji = headersRozet.indexOf("emoji");
+    for (var ri = 1; ri < rowsRozet.length; ri++) {
+      var rRow = rowsRozet[ri];
+      tumRozetler.push({ ogrenciAdi: String(rRow[rOgr]).trim().toLowerCase(), rozetAdi: String(rRow[rAdi]).trim(), gerekliPuan: Number(rRow[rPuan]) || 0, emoji: String(rRow[rEmoji]).trim() || "🏆" });
+    }
+  }
+
+  var sheetLiderlik = ss.getSheetByName("Kelime_Liderlik");
+  var liderlikListesi = [];
+  if (sheetLiderlik) {
+    var rowsLid = sheetLiderlik.getDataRange().getValues();
+    if (rowsLid.length > 1) {
+      var lHeaders = rowsLid[0];
+      var kayitlar = [];
+      for (var li = 1; li < rowsLid.length; li++) {
+        var lRow = rowsLid[li];
+        kayitlar.push({ isim: String(lRow[lHeaders.indexOf("isim")]) || "Misafir", dogru: Number(lRow[lHeaders.indexOf("dogru")]) || 0, sure: String(lRow[lHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(lRow[lHeaders.indexOf("suresaniye")]) || 9999, puan: Number(lRow[lHeaders.indexOf("puan")]) || 0 });
+      }
+      kayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
+      liderlikListesi = kayitlar.slice(0, 5);
+    }
+  }
+
+  var sheetJeopLid = ss.getSheetByName("Jeopardy_Liderlik");
+  var jeopLiderlikListesi = [];
+  if (sheetJeopLid) {
+    var rowsJeop = sheetJeopLid.getDataRange().getValues();
+    if (rowsJeop.length > 1) {
+      var jHeaders = rowsJeop[0];
+      var jKayitlar = [];
+      for (var ji = 1; ji < rowsJeop.length; ji++) {
+        var jRow = rowsJeop[ji];
+        jKayitlar.push({ isim: String(jRow[jHeaders.indexOf("isim")]) || "Misafir", dogru: Number(jRow[jHeaders.indexOf("dogru")]) || 0, sure: String(jRow[jHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(jRow[jHeaders.indexOf("suresaniye")]) || 9999, puan: Number(jRow[jHeaders.indexOf("puan")]) || 0 });
+      }
+      jKayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
+      jeopLiderlikListesi = jKayitlar.slice(0, 5);
+    }
+  }
+
+var sheetCekilisLid = ss.getSheetByName("Cekilis_Liderlik");
+  var cekilisLiderlikListesi = [];
+  if (sheetCekilisLid) {
+    var rowsCekilis = sheetCekilisLid.getDataRange().getValues();
+    if (rowsCekilis.length > 1) {
+      var cHeaders = rowsCekilis[0];
+      var cKayitlar = [];
+      for (var ci = 1; ci < rowsCekilis.length; ci++) {
+        var cRow = rowsCekilis[ci];
+        cKayitlar.push({ isim: String(cRow[cHeaders.indexOf("isim")]) || "Misafir", dogru: Number(cRow[cHeaders.indexOf("dogru")]) || 0, sure: String(cRow[cHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(cRow[cHeaders.indexOf("suresaniye")]) || 9999, puan: Number(cRow[cHeaders.indexOf("puan")]) || 0 });
+      }
+      cKayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
+      cekilisLiderlikListesi = cKayitlar.slice(0, 5);
+    }
+  }
+
+    var sheetBoslukLid = ss.getSheetByName("BoslukDoldurma_Liderlik");
+  var boslukLiderlikListesi = [];
+  if (sheetBoslukLid) {
+    var rowsBoslukLid = sheetBoslukLid.getDataRange().getValues();
+    if (rowsBoslukLid.length > 1) {
+      var blHeaders = rowsBoslukLid[0];
+      var blKayitlar = [];
+      for (var bli = 1; bli < rowsBoslukLid.length; bli++) {
+        var blRow = rowsBoslukLid[bli];
+        blKayitlar.push({ isim: String(blRow[blHeaders.indexOf("isim")]) || "Misafir", dogru: Number(blRow[blHeaders.indexOf("dogru")]) || 0, sure: String(blRow[blHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(blRow[blHeaders.indexOf("suresaniye")]) || 9999, puan: Number(blRow[blHeaders.indexOf("puan")]) || 0 });
+      }
+      blKayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
+      boslukLiderlikListesi = blKayitlar.slice(0, 5);
+    }
+  }
+
+    var sheetBulmacaLid = ss.getSheetByName("KelimeBulmaca_Liderlik");
+  var bulmacaLiderlikListesi = [];
+  if (sheetBulmacaLid) {
+    var rowsBulmacaLid = sheetBulmacaLid.getDataRange().getValues();
+    if (rowsBulmacaLid.length > 1) {
+      var bmHeaders = rowsBulmacaLid[0];
+      var bmKayitlar = [];
+      for (var bmi = 1; bmi < rowsBulmacaLid.length; bmi++) {
+        var bmRow = rowsBulmacaLid[bmi];
+        bmKayitlar.push({ isim: String(bmRow[bmHeaders.indexOf("isim")]) || "Misafir", dogru: Number(bmRow[bmHeaders.indexOf("dogru")]) || 0, sure: String(bmRow[bmHeaders.indexOf("sure")]) || "00:00", suresaniye: Number(bmRow[bmHeaders.indexOf("suresaniye")]) || 9999, puan: Number(bmRow[bmHeaders.indexOf("puan")]) || 0 });
+      }
+      bmKayitlar.sort(function(a, b) { return b.puan !== a.puan ? b.puan - a.puan : a.suresaniye - b.suresaniye; });
+      bulmacaLiderlikListesi = bmKayitlar.slice(0, 5);
+    }
+  }
+
+  var sheetKitap = ss.getSheetByName("Kitaplar");
+  var kitapMap = {};
+  if (sheetKitap) {
+    var rowsKitap = sheetKitap.getDataRange().getValues();
+    var headersKitap = rowsKitap[0];
+    var kOgrenci = headersKitap.indexOf("ogrenci");
+    var kKitapAdi = headersKitap.indexOf("son_kitap_adi");
+    var kSayfa = headersKitap.indexOf("son_kitap_sayfa");
+    var kHedef = headersKitap.indexOf("son_kitap_hedef");
+    var kOkunanSayi = headersKitap.indexOf("okunan_kitap_sayisi");
+    var ogrenciKitaplar = {};
+    for (var ki = 1; ki < rowsKitap.length; ki++) {
+      var kRow = rowsKitap[ki];
+      var kOgr = String(kRow[kOgrenci]).trim().toLowerCase();
+      if (!kOgr) continue;
+      if (!ogrenciKitaplar[kOgr]) ogrenciKitaplar[kOgr] = [];
+      ogrenciKitaplar[kOgr].push({ kitapAdi: kRow[kKitapAdi] || "Belirtilmemiş", sayfa: Number(kRow[kSayfa]) || 0, hedef: Number(kRow[kHedef]) || 40, okunanSayisi: Number(kRow[kOkunanSayi]) || 1 });
+    }
+    for (var ogrKey in ogrenciKitaplar) kitapMap[ogrKey] = ogrenciKitaplar[ogrKey][ogrenciKitaplar[ogrKey].length - 1];
+  }
+
+  var sheetDers = ss.getSheetByName("Dersler");
+  var dersMap = {};
+  if (sheetDers) {
+    var rowsDers = sheetDers.getDataRange().getValues();
+    if (rowsDers.length > 1) {
+      var headersDers = rowsDers[0];
+      var dOgrenci = headersDers.indexOf("ogrenci");
+      var dTarih = headersDers.indexOf("tarih");
+      var dDurum = headersDers.indexOf("durum");
+      var ogrenciTumDersler = {};
+      
+      for (var d = 1; d < rowsDers.length; d++) {
+        var dRow = rowsDers[d];
+        var dOgr = String(dRow[dOgrenci]).trim().toLowerCase();
+        if (!dOgr) continue;
+        if (!ogrenciTumDersler[dOgr]) ogrenciTumDersler[dOgr] = [];
+        var tarihStr = dRow[dTarih];
+        if (tarihStr instanceof Date) tarihStr = Utilities.formatDate(tarihStr, Session.getScriptTimeZone(), "dd.MM.yyyy");
+        ogrenciTumDersler[dOgr].push({ tarih: tarihStr || "", durum: String(dRow[dDurum]).trim().toLowerCase() });
+      }
+      
+      // Her öğrenci için tablodaki (sekmedeki) en son girilen son 2 kaydı al
+      for (var ogrKey in ogrenciTumDersler) {
+        var liste = ogrenciTumDersler[ogrKey];
+        dersMap[ogrKey] = liste.slice(-2); // Son 2 satırı doğrudan alır
+      }
+    }
+  }
+  
+    var sheetKelimeler = ss.getSheetByName("Kelimeler");
+  var tumKelimelerHavuzu = [];
+  if (sheetKelimeler) {
+    var rowsKel = sheetKelimeler.getDataRange().getValues();
+    if (rowsKel.length > 1) {
+      var kHead = rowsKel[0].map(function(h) { return String(h).trim().toLowerCase(); });
+      var iSinifK = kHead.indexOf("sinif");
+      var iUniteK = kHead.indexOf("unite");
+      var iEnK = kHead.indexOf("ingilizce");
+      var iTrK = kHead.indexOf("turkce");
+
+      if (iSinifK === -1 || iUniteK === -1 || iEnK === -1 || iTrK === -1) {
+        Logger.log("KELIMELER SEKMESI BASLIK HATASI - bulunanlar: " + kHead.join(", "));
+      } else {
+        for (var ki = 1; ki < rowsKel.length; ki++) {
+          var enVal = String(rowsKel[ki][iEnK] || "").trim();
+          if (!enVal) continue;
+          tumKelimelerHavuzu.push({
+            sinif: Number(rowsKel[ki][iSinifK]) || 2,
+            unite: Number(rowsKel[ki][iUniteK]) || 1,
+            en: enVal,
+            tr: String(rowsKel[ki][iTrK] || "").trim()
+          });
+        }
+      }
+    }
+  } else {
+    Logger.log("KELIMELER SEKMESI BULUNAMADI");
+  }
+
+    var sheetBosluk = ss.getSheetByName("BoslukDoldurma");
+  var tumBoslukKelimeleri = [];
+  if (sheetBosluk) {
+    var rowsBosluk = sheetBosluk.getDataRange().getValues();
+    if (rowsBosluk.length > 1) {
+      var bHead = rowsBosluk[0].map(function(h) { return String(h).trim().toLowerCase(); });
+      var iSinifB = bHead.indexOf("sinif");
+      var iUniteB = bHead.indexOf("unite");
+      var iKelimeB = bHead.indexOf("kelime");
+      var iGizliB = bHead.indexOf("gizli_harfler");
+      var iIpucuB = bHead.indexOf("ipucu_tr");
+      var iKategoriB = bHead.indexOf("kategori");
+
+      for (var bi = 1; bi < rowsBosluk.length; bi++) {
+        var kelimeVal = String(rowsBosluk[bi][iKelimeB] || "").trim().toUpperCase();
+        if (!kelimeVal) continue;
+        var gizliStr = String(rowsBosluk[bi][iGizliB] || "").trim();
+        var gizliPozisyonlar = gizliStr ? gizliStr.split(",").map(function(p) { return parseInt(p.trim()); }).filter(function(p) { return !isNaN(p); }) : [];
+
+        tumBoslukKelimeleri.push({
+          sinif: Number(rowsBosluk[bi][iSinifB]) || 2,
+          unite: Number(rowsBosluk[bi][iUniteB]) || 1,
+          kelime: kelimeVal,
+          gizliPozisyonlar: gizliPozisyonlar,
+          ipucu: String(rowsBosluk[bi][iIpucuB] || "").trim(),
+          kategori: String(rowsBosluk[bi][iKategoriB] || "genel").trim().toLowerCase()
+        });
+      }
+    }
+  }
+
+  // SEVİYE İLERLEME TAKİBİ (+ ÖĞRENCİNİN SEÇTİĞİ SINIF)
+  var sheetSeviyeIlerleme = ss.getSheetByName("SeviyeIlerleme");
+  var seviyeIlerlemeMap = {};
+  var secilenSinifMap = {};
+  if (sheetSeviyeIlerleme && sheetSeviyeIlerleme.getLastRow() > 1) {
+    var rowsSI = sheetSeviyeIlerleme.getDataRange().getValues();
+    var siHead = rowsSI[0];
+    var siOgr = siHead.indexOf("ogrenci");
+    var siSinif = siHead.indexOf("sinif");
+    var siUnite = siHead.indexOf("unite");
+    var siSeviye = siHead.indexOf("seviye");
+    var siTamam = siHead.indexOf("tamamlandi_mi");
+    var siSecilenSinif = siHead.indexOf("secilen_sinif");
+
+    for (var si = 1; si < rowsSI.length; si++) {
+      var siRow = rowsSI[si];
+      var ogrKey = String(siRow[siOgr]).trim().toLowerCase();
+      if (!ogrKey) continue;
+
+      if (siSecilenSinif !== -1 && siRow[siSecilenSinif]) {
+        secilenSinifMap[ogrKey] = Number(siRow[siSecilenSinif]);
+      }
+
+      var satirSinif = siSinif !== -1 ? Number(siRow[siSinif]) || 0 : 0;
+      var satirUnite = siUnite !== -1 ? Number(siRow[siUnite]) || 0 : 0;
+      var satirSeviye = siSeviye !== -1 ? Number(siRow[siSeviye]) || 0 : 0;
+      if (satirSinif === 0 && satirUnite === 0 && satirSeviye === 0) continue;
+
+      if (!seviyeIlerlemeMap[ogrKey]) seviyeIlerlemeMap[ogrKey] = [];
+      seviyeIlerlemeMap[ogrKey].push({
+        sinif: satirSinif,
+        unite: satirUnite,
+        seviye: satirSeviye,
+        tamamlandi: String(siRow[siTamam]).trim().toLowerCase() === "true"
+      });
+    }
+  }
+
+    // AKTİVİTE KARTLARI HAVUZU (seviye bazlı kelime kartları)
+  var sheetAktiviteKart = ss.getSheetByName("AktiviteKartlari");
+  var tumAktiviteKartlari = [];
+  if (sheetAktiviteKart) {
+    var rowsAK = sheetAktiviteKart.getDataRange().getValues();
+    if (rowsAK.length > 1) {
+      var akHead = rowsAK[0];
+      var iSinif = akHead.indexOf("sinif");
+      var iUnite = akHead.indexOf("unite");
+      var iSeviye = akHead.indexOf("seviye");
+      var iEn = akHead.indexOf("ingilizce");
+      var iTr = akHead.indexOf("turkce");
+      var iCumleEn = akHead.indexOf("ornek_cumle_en");
+      var iCumleTr = akHead.indexOf("ornek_cumle_tr");
+      var iKategori = akHead.indexOf("gorsel_kategori");
+
+      for (var ak = 1; ak < rowsAK.length; ak++) {
+        var akRow = rowsAK[ak];
+        if (!akRow[iEn]) continue;
+        tumAktiviteKartlari.push({
+          sinif: Number(akRow[iSinif]) || 2,
+          unite: Number(akRow[iUnite]) || 1,
+          seviye: Number(akRow[iSeviye]) || 1,
+          en: String(akRow[iEn]).trim(),
+          tr: String(akRow[iTr]).trim(),
+          cumleEn: String(akRow[iCumleEn] || "").trim(),
+          cumleTr: String(akRow[iCumleTr] || "").trim(),
+          kategori: String(akRow[iKategori] || "genel").trim().toLowerCase()
+        });
+      }
+    }
+  }
+
+  // GÖRSEL HAVUZU (kategoriye göre gruplu)
+  var sheetGorsel = ss.getSheetByName("GorselHavuzu");
+  var gorselHavuzuMap = {};
+  if (sheetGorsel) {
+    var rowsGH = sheetGorsel.getDataRange().getValues();
+    if (rowsGH.length > 1) {
+      var ghHead = rowsGH[0];
+      var giKategori = ghHead.indexOf("gorsel_kategori");
+      var giUrl = ghHead.indexOf("gorsel_url");
+      for (var gh = 1; gh < rowsGH.length; gh++) {
+        var ghRow = rowsGH[gh];
+        var kat = String(ghRow[giKategori] || "").trim().toLowerCase();
+        var url = String(ghRow[giUrl] || "").trim();
+        if (!kat || !url) continue;
+        if (!gorselHavuzuMap[kat]) gorselHavuzuMap[kat] = [];
+        gorselHavuzuMap[kat].push(url);
+      }
+    }
+  }
+  
+  var dataGiris = [];
+  for (var i = 1; i < rowsGiris.length; i++) {
+    var row = rowsGiris[i];
+    var obj = {};
+    for (var j = 0; j < headersGiris.length; j++) obj[headersGiris[j]] = row[j];
+    
+    var ogrAdi = String(obj.ogrenci).trim().toLowerCase();
+    obj.telefon = idxTel !== -1 ? String(row[idxTel]) : "";
+    obj.toplamsure = sureMap[ogrAdi] ? sureMap[ogrAdi].toplamsure : 0;
+    obj.rozet = sureMap[ogrAdi] ? sureMap[ogrAdi].rozet : 0;
+    
+    var atananPlanStr = idxAtananPlan !== -1 ? String(row[idxAtananPlan] || "").trim() : "";
+    var atananPlanKodlari = atananPlanStr ? atananPlanStr.split(",").map(function(k) { return k.trim(); }) : [];
+
+    var ogrencininPlanlari = [];
+    var toplamHaftaSayisi = 0;
+    var tamamlananHaftaSayisi = 0;
+
+    tumPlanlarHavuzu.forEach(function(plan) {
+      if (atananPlanKodlari.indexOf(plan.planKodu) !== -1) {
+        var onaylananListesi = plan.onaylananlar
+          ? plan.onaylananlar.split(",").map(function(isim) { return isim.trim().toLowerCase(); })
+          : [];
+        var buOgrenciTamamladiMi = onaylananListesi.indexOf(ogrAdi) !== -1;
+
+        toplamHaftaSayisi++;
+        if (buOgrenciTamamladiMi) tamamlananHaftaSayisi++;
+
+        ogrencininPlanlari.push({
+          planKodu: plan.planKodu,
+          hafta: plan.hafta,
+          aciklama: plan.aciklama,
+          onaylananlar: plan.onaylananlar,
+          tamamlandiMi: buOgrenciTamamladiMi
+        });
+      }
+    });
+
+    obj.atananPlanlar = ogrencininPlanlari;
+    obj.planIlerlemeYuzdesi = toplamHaftaSayisi > 0 ? Math.round((tamamlananHaftaSayisi / toplamHaftaSayisi) * 100) : 0;
+    obj.planToplamHafta = toplamHaftaSayisi;
+    obj.planTamamlananHafta = tamamlananHaftaSayisi;
+
+    // --- BURASI EKLENDİ / DÜZELTİLDİ: Puanlama sekmesinden gelen genel puanları objeye bağlıyoruz ---
+    var pData = puanMap[ogrAdi] || { genelOrtalama: 0, guncelGenelPuan: 0, vocabOrt: 0, konusmaOrt: 0, okumaOrt: 0, yazmaOrt: 0, grammarOrt: 0, etkinlikBasarisi: 0, sonDeneme: 0 };
+    obj.genelOrtalama = pData.genelOrtalama;
+    obj.guncelGenelPuan = pData.guncelGenelPuan;
+    obj.genelPuan = pData.guncelGenelPuan; // HTML tarafının doğrudan okuyabilmesi için eklendi
+    obj.vocabOrt = pData.vocabOrt;
+    obj.konusmaOrt = pData.konusmaOrt;
+    obj.okumaOrt = pData.okumaOrt;
+    obj.yazmaOrt = pData.yazmaOrt;
+    obj.grammarOrt = pData.grammarOrt;
+    obj.etkinlikBasarisi = pData.etkinlikBasarisi;
+    obj.sonDeneme = pData.sonDeneme;
+    
+    obj.rozetListesi = tumRozetler.filter(function(r) { return r.ogrenciAdi === "herkes" || r.ogrenciAdi === ogrAdi; });
+    obj.kitapBilgi = kitapMap[ogrAdi] || { kitapAdi: "Okunan Kitap Yok", sayfa: 0, hedef: 40, okunanSayisi: 1 };
+    obj.grafikGecmis = grafikGecmisMap[ogrAdi] || [];
+    obj.denemeGecmis = denemeGecmisMap[ogrAdi] || [];
+    obj.arsivListesi = arsivMap[ogrAdi] || [];
+    obj.dersler = dersMap[ogrAdi] || [];
+    obj.liderlik = liderlikListesi;
+    obj.jeopLiderlik = jeopLiderlikListesi;
+    obj.cekilisLiderlik = cekilisLiderlikListesi;
+        obj.boslukLiderlik = boslukLiderlikListesi;
+            obj.bulmacaLiderlik = bulmacaLiderlikListesi;
+    obj.kelimeHavuzu = tumKelimelerHavuzu;
+        obj.boslukKelimeleri = tumBoslukKelimeleri;
+    obj.aktiviteKartlari = tumAktiviteKartlari;
+    obj.gorselHavuzu = gorselHavuzuMap;
+    obj.seviyeIlerleme = seviyeIlerlemeMap[ogrAdi] || [];
+    obj.secilenSinif = secilenSinifMap[ogrAdi] || 0;
+    dataGiris.push(obj);
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify(dataGiris)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// POST İSTEKLERİ (OKUMA HIZI KAYDETME)
+function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  try {
+    var data = JSON.parse(e.postData.contents);
+    if (data.islem === "okumaHiziKaydet") {
+      var sheetOkuma = ss.getSheetByName("Okuma_Hizi");
+      if (!sheetOkuma) {
+        sheetOkuma = ss.insertSheet("Okuma_Hizi");
+        sheetOkuma.appendRow(["OgrenciAdi", "Tarih", "Sinif", "OkunanKelime", "GecsenSureSaniye", "DakikadaKelimeWPM", "MetinBasligi"]);
+      }
+      sheetOkuma.appendRow([
+        data.ogrenci || "Misafir",
+        data.tarih || new Date().toISOString(),
+        data.sinif || "1. Sınıf",
+        data.okunanKelime || 0,
+        data.gecenSure || 0,
+        data.wpm || 0,
+        data.metinBasligi || "Okuma Metni"
+      ]);
+      return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+  return ContentService.createTextOutput(JSON.stringify({ status: "not_found" })).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ==================== OTOMATİK GÖRSEL DOLDURMA SİSTEMİ ====================
+// Pexels API key'ini buraya yapıştır:
+var PEXELS_API_KEY = "ZJ9VVOyFkD1NUqqwLVAmgqghk9b95bbkSsfRIKFaKPtvJPoAMG2UbDhd";
+var UNSPLASH_ACCESS_KEY = "KfICAtsrX5v0jye5AO238-cWzIljjrEXRNF4xTLx63k";
+
+// Türkçe kategori isimlerini İngilizce arama terimine çeviren sözlük
+// Yeni bir kategori eklediğinde buraya da bir satır ekleyebilirsin (eklemesen de sistem
+// kategori adını direkt İngilizce arama terimi olarak dener, ama çeviri varsa daha isabetli olur)
+var KATEGORI_CEVIRI_SOZLUGU = {
+  "selamlasma": "people greeting each other",
+  "renkler": "colorful paint",
+  "sayilar": "numbers counting",
+  "aile": "happy family",
+  "hayvanlar": "cute animals",
+  "sinif_esyalari": "school supplies",
+  "okul_kisileri": "teacher and student classroom",
+  "okul_yerleri": "school building hallway",
+  "aylar": "calendar months",
+  "kutlamalar": "birthday party celebration",
+  "sinif_komutlari": "classroom students",
+  "duygular": "facial expressions emotions",
+  "kisisel_ozellikler": "portrait people",
+  "tercihler": "hobby activity",
+  "yetenekler": "skill activity",
+  "gunluk_rutin": "daily routine morning",
+  "ev": "cozy living room house",
+  "mahalle": "neighborhood street",
+  "sehir": "city skyline",
+  "sehir_binalari": "city buildings",
+  "okul_dersleri": "classroom lesson",
+  "zaman": "clock time",
+  "milli_gunler": "flag ceremony",
+  "sinif_etkinlik": "students group work",
+  "hava_durumu": "weather sky",
+  "mevsimler": "seasons nature",
+  "gunun_zamanlari": "sunrise sunset",
+  "saglik": "health doctor",
+  "aile_genis": "extended family",
+  "ev_isleri": "household chores",
+  "aile_etkinlik": "family activity",
+  "karsilastirma": "comparison size",
+  "ev_odalari": "house room interior",
+  "mobilya": "furniture",
+  "mahalle_yerleri": "local shop street",
+  "yon_tarifi": "direction street sign",
+  "ulasim": "transportation vehicle",
+  "sehir_hayati": "busy city life",
+  "ulkeler": "country flag map",
+  "cevre": "environment nature green",
+  "sinav": "exam test",
+  "kulupler": "school club activity",
+  "gecmis_zaman": "past memory",
+  "sinif_aninda": "classroom activity",
+  "sinif_kurallari": "classroom rules",
+  "teknoloji": "technology computer",
+  "grup_calismasi": "group teamwork",
+  "hobiler": "hobby",
+  "bos_zaman": "free time leisure",
+  "duygular_ileri": "emotions expression",
+  "kisisel_ozellikler_ileri": "personality portrait",
+  "aile_roller": "family caring",
+  "aile_gelenekleri": "family tradition",
+  "konut_turleri": "house building types",
+  "ev_sorunlari": "house repair problem",
+  "yon_tarifi_ileri": "street direction map",
+  "mahalle_kisiler": "neighbor community",
+  "sehir_yapilari": "urban architecture",
+  "doga": "nature landscape",
+  "seyahat": "travel trip",
+  "kuresel_sorunlar": "global environment problem",
+  "deger_kavramlar": "values discipline",
+  "okul_etkinlik": "school event",
+  "kip_ifadeleri": "modal expression communication",
+  "kisisel_gelisim": "personal growth",
+  "saglik_ileri": "healthy lifestyle",
+  "tercihler_ileri": "preference choice",
+  "ev_ekonomi": "budget money home",
+  "aile_iliskiler": "family relationship",
+  "aile_yapilari": "family structure",
+  "konut_ekonomi": "real estate housing",
+  "ev_tasviri": "modern house interior",
+  "trafik_ileri": "traffic road",
+  "dilbilgisi": "books grammar study",
+  "ev_ekonomi_ileri": "family budget",
+  "kultur_dunya": "world culture festival",
+  "dogal_sorunlar": "environmental disaster",
+  "uzay_gelecek": "space future technology",
+  "lgs_gecis": "student exam success"
+};
+
+function gorselleriOtomatikDoldur() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetAK = ss.getSheetByName("AktiviteKartlari");
+  var sheetGH = ss.getSheetByName("GorselHavuzu");
+
+  if (!sheetAK) {
+    SpreadsheetApp.getUi().alert("AktiviteKartlari sekmesi bulunamadı!");
+    return;
+  }
+  if (!sheetGH) {
+    sheetGH = ss.insertSheet("GorselHavuzu");
+    sheetGH.appendRow(["gorsel_kategori", "gorsel_url"]);
+  }
+
+  // 1. AktiviteKartlari'ndaki tüm benzersiz kategorileri topla
+  var rowsAK = sheetAK.getDataRange().getValues();
+  var headAK = rowsAK[0];
+  var idxKat = headAK.indexOf("gorsel_kategori");
+  var tumKategoriler = [];
+  for (var i = 1; i < rowsAK.length; i++) {
+    var kat = String(rowsAK[i][idxKat] || "").trim().toLowerCase();
+    if (kat && tumKategoriler.indexOf(kat) === -1) {
+      tumKategoriler.push(kat);
+    }
+  }
+
+    // 2. GorselHavuzu'nda zaten GEÇERLİ (url'si dolu) görseli OLAN kategorileri bul
+  var rowsGH = sheetGH.getDataRange().getValues();
+  var doluKategoriler = {};
+  for (var g = 1; g < rowsGH.length; g++) {
+    var katGH = String(rowsGH[g][0] || "").trim().toLowerCase();
+    var urlGH = String(rowsGH[g][1] || "").trim();
+    if (katGH && urlGH) doluKategoriler[katGH] = true;
+  }
+
+  // 3. Görseli eksik olan kategoriler için Pexels'ten çek
+  var eklenenSayisi = 0;
+  var atlananSayisi = 0;
+
+  for (var k = 0; k < tumKategoriler.length; k++) {
+    var kategori = tumKategoriler[k];
+    if (doluKategoriler[kategori]) {
+      atlananSayisi++;
+      continue; // zaten görseli var, atla
+    }
+
+    var aramaTerimi = KATEGORI_CEVIRI_SOZLUGU[kategori] || kategori.replace(/_/g, " ");
+
+        // PEXELS'TEN 2 GÖRSEL ÇEK
+    try {
+      var urlPexels = "https://api.pexels.com/v1/search?query=" + encodeURIComponent(aramaTerimi) + "&per_page=2&orientation=square";
+      var responsePexels = UrlFetchApp.fetch(urlPexels, {
+        headers: { "Authorization": PEXELS_API_KEY },
+        muteHttpExceptions: true
+      });
+
+      var dataPexels = JSON.parse(responsePexels.getContentText());
+
+      if (dataPexels.photos && dataPexels.photos.length > 0) {
+        dataPexels.photos.forEach(function(foto) {
+          sheetGH.appendRow([kategori, foto.src.large]);
+          eklenenSayisi++;
+        });
+      }
+
+      Utilities.sleep(250);
+
+    } catch (err) {
+      Logger.log("Pexels hata (" + kategori + "): " + err);
+    }
+
+    // UNSPLASH'TEN 2 GÖRSEL ÇEK
+    try {
+      var urlUnsplash = "https://api.unsplash.com/search/photos?query=" + encodeURIComponent(aramaTerimi) + "&per_page=2&orientation=squarish";
+      var responseUnsplash = UrlFetchApp.fetch(urlUnsplash, {
+        headers: { "Authorization": "Client-ID " + UNSPLASH_ACCESS_KEY },
+        muteHttpExceptions: true
+      });
+
+      var dataUnsplash = JSON.parse(responseUnsplash.getContentText());
+
+      if (dataUnsplash.results && dataUnsplash.results.length > 0) {
+        dataUnsplash.results.forEach(function(foto) {
+          sheetGH.appendRow([kategori, foto.urls.regular]);
+          eklenenSayisi++;
+        });
+      }
+
+      Utilities.sleep(400);
+
+    } catch (err) {
+      Logger.log("Unsplash hata (" + kategori + "): " + err);
+    }
+  }
+
+  SpreadsheetApp.getUi().alert(
+    "✅ Tamamlandı!\n\n" +
+    "Yeni eklenen görsel: " + eklenenSayisi + "\n" +
+    "Zaten dolu olduğu için atlanan kategori: " + atlananSayisi + "\n" +
+    "Toplam taranan kategori: " + tumKategoriler.length
+  );
+}
+
+// Sheets menüsüne özel bir buton eklemek için
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu("🖼️ Görsel Araçları")
+    .addItem("Eksik Görselleri Otomatik Doldur", "gorselleriOtomatikDoldur")
+    .addToUi();
+}";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
