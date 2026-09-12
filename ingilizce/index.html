@@ -1170,7 +1170,7 @@
 <div class="activity-banner" style="background: linear-gradient(135deg, #fef2f2 0%, #ffe4e6 100%); border-color: #fecdd3; margin-top: 15px;">
     <h3 style="color: #9f1239;">🎈 Jeopardy Balonları Kelime Yarışması</h3>
     <p style="color: #be123c;">Puan değerindeki balonları patlat, 4 şıklı soruları çöz, liderlik tablosunda yerini al!</p>
-  <button class="btn-oyun-ac" onclick="jpOyunAc()" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);">🚀 Jeopardy Oyununu Başlat</button>
+  <button id="jpMenuBtn" class="btn-oyun-ac" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);">🚀 Jeopardy Oyununu Başlat</button>
 </div>
             
             
@@ -4500,6 +4500,16 @@ async function jeopardyOyunuBitir() {
         tabloKonum.innerHTML = "<div>Liderlik tablosu yüklenirken hata oluştu.</div>";
     }
 }
+
+        // Jeopardy butonunu ve modalını güvenli bir şekilde birbirine bağlar
+document.addEventListener('DOMContentLoaded', function() {
+    let btn = document.getElementById('jpMenuBtn');
+    if (btn) {
+        btn.onclick = function() {
+            jpOyunAc();
+        };
+    }
+});
         
     </script>
 </body>
