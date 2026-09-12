@@ -1760,38 +1760,16 @@
 
    <script>
 
-       // --- POMODORO ÇALIŞMA SAYACI ---
-function pomodoroAc() {
-    tumModalKapat();
-    // Tarayıcının ana iş parçacığını (main thread) serbest bırakıp DOM'u güncellemesi için minik bir gecikme veriyoruz
-    setTimeout(() => {
-        let overlay = document.getElementById('pomodoroOverlay');
-        if (overlay) {
-            overlay.style.display = 'flex';
+      
+// Sayfa açıldığında gizli pencerelerin tıklamaları engellemesini önler
+document.addEventListener("DOMContentLoaded", function() {
+    const tumOverlayler = document.querySelectorAll('.pomodoro-overlay, .game-modal-overlay, .rubric-modal, .seviye-harita-overlay, .kart-oyun-overlay');
+    tumOverlayler.forEach(overlay => {
+        if (window.getComputedStyle(overlay).display === 'none') {
+            overlay.style.pointerEvents = 'none';
         }
-        if (window.Notification && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
-        pomodoroDurumGuncelle();
-        pomodoroSifirla();
-    }, 10);
-}
-
-// --- JEOPARDY BALONLARI ---
-function jeopardyModaliniAc() {
-    tumModalKapat();
-    setTimeout(() => {
-        document.getElementById('jeopardyModalOverlay').style.display = 'flex';
-        document.getElementById('jeopAyarBolumu').style.display = 'block';
-        document.getElementById('jeopOyunAlani').style.display = 'none';
-        document.getElementById('jeopSoruKutusu').style.display = 'none';
-        document.getElementById('jeopSonucBolumu').style.display = 'none';
-        sinifGridOlustur('jeopSinifSecimGrid', jeopSinifSec, jeopSecilenSinif);
-        let ilkSinif = mevcutSiniflariGetir()[0];
-        jeopSecilenSinif = ilkSinif;
-        jeopUniteSecimOlustur(ilkSinif, (ilkSinif===2||ilkSinif===5)?8:10);
-    }, 10);
-}
+    });
+});
     // --- MERKEZİ MODAL YÖNETİMİ (TÜM ÇAKIŞMALARI ÖNLER) ---
     function tumModalKapat() {
         const modaller = [
@@ -1810,10 +1788,13 @@ function jeopardyModaliniAc() {
             'sifreModal',
             'planModal'
         ];
-        modaller.forEach(id => {
-            let el = document.getElementById(id);
-            if (el) el.style.display = 'none';
-        });
+      modaller.forEach(id => {
+        let el = document.getElementById(id);
+        if (el) {
+            el.style.display = 'none';
+            el.style.pointerEvents = 'none'; // <-- BURAYI EKLE
+        }
+    });
 
         // Açık kalan oyun müziklerini de sustur
         ['oyunMuzigi', 'jeopardyMuzigi', 'cekilisMuzigi', 'boslukMuzigi', 'bulmacaMuzigi'].forEach(id => {
@@ -1825,10 +1806,11 @@ function jeopardyModaliniAc() {
     // --- POMODORO ÇALIŞMA SAYACI ---
     function pomodoroAc() {
         tumModalKapat();
-        document.getElementById('pomodoroOverlay').style.display = 'flex';
-        if (window.Notification && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
+        let overlay = document.getElementById('pomodoroOverlay');
+    if (overlay) {
+        overlay.style.pointerEvents = 'auto'; // <-- BURAYI EKLE
+        overlay.style.display = 'flex';       // <-- Görünür yap
+    }
         pomodoroDurumGuncelle();
         pomodoroSifirla();
     }
