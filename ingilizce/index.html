@@ -1805,10 +1805,9 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             if (otomatikGirisYapilacak) {
                 aktifOgrenciAdi = kayitliOgrenci;
                 toplamSaniye = parseInt(kayitliSure);
-
-               // Güvenli arama (Eğer globalDataCache nesne ise içindeki dizileri tarar, dizi ise direkt arar)
-let hedefListe = Array.isArray(window.globalDataCache) ? window.globalDataCache : (window.globalDataCache.ogrenciler || window.globalDataCache.kullanicilar || Object.values(window.globalDataCache).find(Array.isArray) || []);
-let user = hedefListe.find(u => u && String(u.ogrenci || u.isim || "").trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+// Hata veren satırı bununla değiştir:
+let hedefListe = Array.isArray(window.globalDataCache) ? window.globalDataCache : Object.values(window.globalDataCache).find(Array.isArray) || [];
+let user = hedefListe.find(u => u && String(u.ogrenci || u.isim || u.ad || "").trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
 
                 document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
