@@ -1406,8 +1406,18 @@
                 <div>🏆 <b>Kazanılan Puan:</b> <span id="kyResPuan">-</span></div>
             </div>
 
+            <!-- Liderlik Tablosu Alanı -->
+            <div style="text-align: left; margin-bottom: 12px;">
+                <div style="font-size: 11px; font-weight: 800; color: #86198f; margin-bottom: 4px;">🏆 Liderlik Tablosu (En İyi Skorlar):</div>
+                <div id="kyGecmisSkorlarListesi" style="max-height: 120px; overflow-y: auto; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; gap: 4px; font-size: 10px; color: #334155;">
+                    <div>Liderlik tablosu yükleniyor...</div>
+                </div>
+            </div>
+
             <button class="btn-giris" onclick="kelimeYarismasiAc()" style="background: #86198f; font-size: 12px; font-weight: 700; padding: 8px;">🔄 Tekrar Oyna</button>
         </div>
+
+            
 
     </div>
 </div>
@@ -1724,18 +1734,46 @@ async function kelimeYarismasiBitir() {
     document.getElementById('kyResSure').innerText = `${kyGecenSaniye} saniye`;
     document.getElementById('kyResPuan').innerText = `${toplamPuan} Puan`;
 
-    // Google Sheets'e Kayıt Gönderimi (`Kelime_Liderlik` sekmesi için uygun parametreler)
-    // Sütun beklentin: tarihisimsinifunitedogruyanlissuresuresaniyepuan
-    let url = `${apiURL}?islem=kelimeLiderlikKaydet&tarih=${encodeURIComponent(tarihStr)}&isim=${encodeURIComponent(isim)}&sinif=${encodeURIComponent(sinifStr)}&unite=${encodeURIComponent(uniteStr)}&dogru=${kyDogruSayisi}&yanlis=${kyYanlisSayisi}&sure=${encodeURIComponent(kyGecenSaniye + "s")}&suresaniye=${kyGecenSaniye}&puan=${toplamPuan}`;
+    let tabloKonum = document.getElementById('kyGecmisSkorlarListesi');
+    tabloKonum.innerHTML = "<div>Liderlik tablosu güncelleniyor...</div>";
+
+    // 1. Google Sheets'e Kayıt Gönderimi
+    let kayitUrl = `${apiURL}?islem=kelimeLiderlikKaydet&tarih=${encodeURIComponent(tarihStr)}&isim=${encodeURIComponent(isim)}&sinif=${encodeURIComponent(sinifStr)}&unite=${encodeURIComponent(uniteStr)}&dogru=${kyDogruSayisi}&yanlis=${kyYanlisSayisi}&sure=${encodeURIComponent(kyGecenSaniye + "s")}&suresaniye=${kyGecenSaniye}&puan=${toplamPuan}`;
 
     try {
-        await fetch(url);
-        console.log("Kelime liderlik tablosuna başarıyla kaydedildi.");
+        await fetch(kayitUrl);
     } catch(e) {
         console.error("Liderlik kaydı gönderilemedi:", e);
     }
-}
 
+    // 2. Tablodaki Tüm Oyuncuların Skorlarını Çek ve Sıralı Listele
+    try {
+        let liderlikUrl = `${apiURL}?islem=kelimeLiderlikTumunuGetir`;
+        let res = await fetch(liderlikUrl);
+        let liste = await res.json();
+
+        tabloKonum.innerHTML = "";
+        if (!liste || liste.length === 0) {
+            tabloKonum.innerHTML = "<div>Henüz kayıtlı skor bulunmuyor.</div>";
+            return;
+        }
+
+        // En yüksek puanlılar üstte olacak şekilde ilk 15 kişiyi listele
+        liste.slice(0, 15).forEach((item, index) => {
+            let siraEmoji = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
+            let benimSatirimMi = item.isim.toLowerCase() === isim.toLowerCase() ? "background: #fdf4ff; font-weight: bold;" : "";
+            
+            tabloKonum.innerHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf2f7; padding: 2px 4px; border-radius: 4px; ${benimSatirimMi}">
+                    <span>${siraEmoji} <b>${item.isim}</b> <span style="color:#64748b; font-size:9px;">(${item.sinif})</span></span>
+                    <span>🏆 <b>${item.puan} Puan</b> <span style="color:#64748b; font-size:9px;">(${item.sure})</span></span>
+                </div>
+            `;
+        });
+    } catch (err) {
+        tabloKonum.innerHTML = "<div>Liderlik tablosu yüklenirken hata oluştu.</div>";
+    }
+}
                 // --- POMODORO ÇALIŞMA SAYACI FONKSİYONLARI ---
         function pomodoroAc() {
             document.getElementById('pomodoroOverlay').style.display = 'flex';
@@ -1865,7 +1903,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbxbVjtcqebVDWqrMacB3QcTXCwM2VZoRNIxLsQqt0Lin_rt-9NpIDJVcj5IFd0F10AB2g/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxAiT7iUTLwyYEesPdvvcv88VaaZKFbjzELwWzrtVxm_6dlIJ89tX7J67Z-gloO5LmH/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
