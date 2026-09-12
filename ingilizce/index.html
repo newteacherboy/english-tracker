@@ -4149,7 +4149,7 @@ function veriArayuzeIsle(user) {
     window.location.reload(); 
 }
 
-// --- JEOPARDY BALONLARI OYUN MİMARİSİ ---
+// --- JEOPARDY BALONLARI OYUN MİMARİSİ (DÜZELTİLMİŞ) ---
 let jpAktifSinif = 1;
 let jpSecilenUniteler = [];
 let jpBalonlarListesi = [];
@@ -4164,33 +4164,13 @@ let jpMuzikAcik = true;
 let jpAudioElement = null;
 
 function jpOyunAc() {
-    console.log("1. jpOyunAc tetiklendi ve başladı");
-    
     let modal = document.getElementById('jpOyunOverlay');
-    if (!modal) {
-        alert("Hata: 'jpOyunOverlay' ID'sine sahip modal HTML içinde bulunamadı!");
-        return;
-    }
+    if (modal) modal.style.setProperty('display', 'flex', 'important');
 
-    // Modalı hangi HTML etiketinin içinde olursa olsun çıkarıp doğrudan BODY'nin içine taşıyoruz (Hapis kalmasın diye)
-    document.body.appendChild(modal);
-
-    // Görünürlüğü zorla aç
-    modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('z-index', '9999999', 'important');
-    console.log("2. Modal body'ye taşındı ve flex yapıldı");
-
-    let giris = document.getElementById('jpGirisEkrani');
-    if (giris) giris.style.setProperty('display', 'block', 'important');
-
-    let balon = document.getElementById('jpBalonEkrani');
-    if (balon) balon.style.display = 'none';
-
-    let soru = document.getElementById('jpSoruEkrani');
-    if (soru) soru.style.display = 'none';
-
-    let bitis = document.getElementById('jpBitisEkrani');
-    if (bitis) bitis.style.display = 'none';
+    document.getElementById('jpGirisEkrani').style.display = 'block';
+    document.getElementById('jpBalonEkrani').style.display = 'none';
+    document.getElementById('jpSoruEkrani').style.display = 'none';
+    document.getElementById('jpBitisEkrani').style.display = 'none';
 
     let isimInput = document.getElementById('jpIsimInput');
     if (isimInput) {
@@ -4210,16 +4190,9 @@ function jpOyunAc() {
         });
     }
 
-    window.jpAktifSinif = 1;
-    if (typeof jpSinifGuncelle === 'function') {
-        jpSinifGuncelle(1);
-    }
-    
-    if (typeof jeopardyMuzikBaslat === 'function') {
-        jeopardyMuzikBaslat();
-    }
-
-    console.log("3. jpOyunAc başarıyla tamamlandı");
+    jpAktifSinif = 1;
+    jpSinifGuncelle(1);
+    jeopardyMuzikBaslat();
 }
 
 function jpOyunKapat() {
@@ -4360,7 +4333,16 @@ function jpBalonlariCiz() {
 
 function jpBalonSecildi(index, puanDegeri) {
     let kelimeObj = jpBalonlarListesi.splice(index, 1)[0];
-    jpAktifSoru = { ...kelimeObj, puanDegeri: puanDegeri };
+    
+    // Doğru anahtar adlarını güvenli bir şekilde alıyoruz (ingilizce / turkce)
+    let ingKelime = kelimeObj.ingilizce || kelimeObj.en || "";
+    let turkKelime = kelimeObj.turkce || kelimeObj.tr || "";
+
+    jpAktifSoru = { 
+        ingilizce: ingKelime, 
+        turkce: turkKelime, 
+        puanDegeri: puanDegeri 
+    };
 
     document.getElementById('jpBalonEkrani').style.display = 'none';
     document.getElementById('jpSoruEkrani').style.display = 'block';
@@ -4371,21 +4353,26 @@ function jpBalonSecildi(index, puanDegeri) {
     let ingilizceMi = Math.random() > 0.5;
     if (ingilizceMi) {
         document.getElementById('jpSoruYonEtiket').innerText = "Bu kelimenin Türkçe anlamı nedir?";
-        document.getElementById('jpSoruKelimeText').innerText = jpAktifSoru.en;
-        jpAktifSoru._dogruCevap = jpAktifSoru.tr;
+        document.getElementById('jpSoruKelimeText').innerText = jpAktifSoru.ingilizce;
+        jpAktifSoru._dogruCevap = jpAktifSoru.turkce;
     } else {
         document.getElementById('jpSoruYonEtiket').innerText = "Bu kelimenin İngilizce karşılığı nedir?";
-        document.getElementById('jpSoruKelimeText').innerText = jpAktifSoru.tr;
-        jpAktifSoru._dogruCevap = jpAktifSoru.en;
+        document.getElementById('jpSoruKelimeText').innerText = jpAktifSoru.turkce;
+        jpAktifSoru._dogruCevap = jpAktifSoru.ingilizce;
     }
 
     let havuz = window.masterKelimeHavuzu || [];
-    let yanlisAdaylar = havuz.filter(k => (ingilizceMi ? k.tr !== jpAktifSoru.tr : k.en !== jpAktifSoru.en));
+    let yanlisAdaylar = havuz.filter(k => {
+        let kIng = k.ingilizce || k.en || "";
+        let kTur = k.turkce || k.tr || "";
+        return ingilizceMi ? kTur !== jpAktifSoru.turkce : kIng !== jpAktifSoru.ingilizce;
+    });
+
     let karisikYanlislar = [...yanlisAdaylar].sort(() => Math.random() - 0.5).slice(0, 3);
     
     let secenekler = [jpAktifSoru._dogruCevap];
     karisikYanlislar.forEach(y => {
-        secenekler.push(ingilizceMi ? y.tr : y.en);
+        secenekler.push(ingilizceMi ? (y.turkce || y.tr) : (y.ingilizce || y.en));
     });
 
     while(secenekler.length < 4) {
