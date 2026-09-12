@@ -761,6 +761,93 @@
             font-weight: 900; cursor: pointer; font-size: 14px; margin-left: 4px;
         }
         .bosluk-onay-btn:hover { background: #9d174d; }
+
+        /* --- KELİME OYUNLARI MODÜLÜ ÖZEL STİLLERİ --- */
+.game-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+.game-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.game-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+.game-card h3 { color: #1e293b; margin-bottom: 10px; font-size: 1.2rem; }
+.game-card p { color: #64748b; font-size: 0.9rem; margin-bottom: 20px; }
+.game-btn {
+    background: #4f46e5; color: white; border: none; padding: 10px 20px;
+    border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+}
+.game-btn:hover { background: #4338ca; }
+
+/* Modal Pencereleri */
+.game-modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999;
+    justify-content: center; align-items: center;
+}
+.game-modal-content {
+    background: #ffffff; width: 90%; max-width: 600px; border-radius: 16px;
+    padding: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); position: relative;
+    max-height: 90vh; overflow-y: auto;
+}
+.game-close-btn {
+    position: absolute; top: 20px; right: 20px; background: #f1f5f9; border: none;
+    width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer;
+    color: #64748b; display: flex; align-items: center; justify-content: center;
+}
+.game-close-btn:hover { background: #e2e8f0; color: #0f172a; }
+
+/* Şık Grid Alanı */
+.options-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;
+}
+.option-btn {
+    background: #f8fafc; border: 2px solid #e2e8f0; padding: 14px; border-radius: 10px;
+    font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: left;
+}
+.option-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+.option-btn.correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #166534; }
+.option-btn.wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
+
+/* Jeopardy Balonları */
+.balloon-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; }
+.balloon {
+    width: 80px; height: 100px; background: linear-gradient(135deg, #f43f5e, #fb7185);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; display: flex; align-items: center;
+    justify-content: center; color: white; font-weight: bold; cursor: pointer;
+    box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s; animation: floatBalloon 3s ease-in-out infinite alternate;
+}
+.balloon:hover { transform: scale(1.1); }
+@keyframes floatBalloon { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+
+/* Zar Çekilişi Alanı */
+.dice-container { text-align: center; margin: 25px 0; }
+.dice {
+    width: 90px; height: 90px; background: white; border: 3px solid #cbd5e1; border-radius: 16px;
+    margin: 0 auto; display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; font-weight: bold; color: #1e293b; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    transition: transform 0.6s ease;
+}
+.dice.rolling { transform: rotate(720deg) scale(0.9); }
+
+/* Boşluk Doldurma */
+.fill-blank-row { margin-bottom: 15px; font-size: 1.1rem; color: #334155; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fill-blank-input {
+    border: 2px solid #cbd5e1; border-radius: 6px; padding: 6px 12px; font-size: 1rem; width: 140px; outline: none;
+}
+.fill-blank-input:focus { border-color: #4f46e5; }
         
     </style>
 </head>
@@ -1216,6 +1303,29 @@
                 <p style="color: #4338ca;">Ünite ünite ilerle, her seviyeyi bitirdikçe bir sonraki açılsın!</p>
                 <button class="btn-oyun-ac" onclick="seviyeHaritasiAc()" style="background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%); box-shadow: 0 2px 8px rgba(67, 56, 202, 0.3);">🗺️ Yolculuğa Başla</button>
             </div>
+
+            <div class="game-cards-grid">
+    <div class="game-card">
+        <h3>Klasik Kelime Yarışması</h3>
+        <p>Kelime hazineni test et, doğru şıkları bul ve puanları topla!</p>
+        <button class="game-btn" onclick="oyunuBaslatKlasik()">Oyunu Başlat</button>
+    </div>
+    <div class="game-card">
+        <h3>Jeopardy Balonları</h3>
+        <p>Balonları patlat, gizli İngilizce sorularını yanıtla ve kazan!</p>
+        <button class="game-btn" onclick="oyunuBaslatJeopardy()">Oyunu Başlat</button>
+    </div>
+    <div class="game-card">
+        <h3>Şans Zarı Çekilişi</h3>
+        <p>Zarı at, gelen katsayı ile kelime bonus puanlarını katla!</p>
+        <button class="game-btn" onclick="oyunuBaslatCekilis()">Oyunu Başlat</button>
+    </div>
+    <div class="game-card">
+        <h3>Boşluk Doldurma</h3>
+        <p>Cümlelerdeki eksik kelimeleri tamamla, dil becerini geliştir!</p>
+        <button class="game-btn" onclick="oyunuBaslatBosluk()">Oyunu Başlat</button>
+    </div>
+</div>
             
             
 
@@ -1559,8 +1669,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "function doGet(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+        const apiURL = "https://script.google.com/macros/s/AKfycbymyfOZH1LBAd8eFUYKTOIK9CiV1HVl-Y1StSN5d-cSglti99qSr2E-sTmaQw_ndeNGZA/exec";
 
   
   // ----------------------------------------------------
@@ -5078,6 +5187,270 @@ function veriArayuzeIsle(user) {
     
     window.location.reload(); 
 }
+
+// --- KELİME OYUNLARI JAVASCRIPT MODÜLÜ ---
+
+function getOgrenciAdi() {
+    // Sisteminizde kayıtlı öğrenci adı bilgisini alır, yoksa varsayılan döner
+    return (window.globalDataCache && window.globalDataCache.ogrenciAdi) || "Mert Akkayaoğlu";
+}
+
+function getKelimeListesi() {
+    // masterKelimeHavuzu veya globalDataCache üzerinden kelimeleri güvenli çeker
+    if (window.masterKelimeHavuzu && window.masterKelimeHavuzu.length > 0) {
+        return window.masterKelimeHavuzu;
+    }
+    if (window.globalDataCache && window.globalDataCache.kelimeler) {
+        return window.globalDataCache.kelimeler;
+    }
+    // Yedek statik veri havuzu (API verisi henüz gelmediyse)
+    return [
+        { ingilizce: "Apple", turkce: "Elma" },
+        { ingilizce: "School", turkce: "Okul" },
+        { ingilizce: "Teacher", turkce: "Öğretmen" },
+        { ingilizce: "Student", turkce: "Öğrenci" },
+        { ingilizce: "Computer", turkce: "Bilgisayar" }
+    ];
+}
+
+function modalKapat(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function skorGonderBackend(islemAdi, veriObjesi) {
+    if (typeof apiURL === 'undefined' || !apiURL) return;
+    let url = `${apiURL}?islem=${islemAdi}&ogrenciAdi=${encodeURIComponent(getOgrenciAdi())}`;
+    for (let key in veriObjesi) {
+        url += `&${key}=${encodeURIComponent(veriObjesi[key])}`;
+    }
+    fetch(url).then(res => res.json()).catch(err => console.log("Kayıt hatası:", err));
+}
+
+// 1. KLASİK KELİME YARIŞMASI
+let klasikDurum = { sorular: [], currentIndex: 0, dogru: 0, yanlis: 0, puan: 0 };
+
+function oyunuBaslatKlasik() {
+    let kelimeler = [...getKelimeListesi()].sort(() => 0.5 - Math.random());
+    klasikDurum.sorular = kelimeler.slice(0, 5); // 5 soru
+    klasikDurum.currentIndex = 0;
+    klasikDurum.dogru = 0;
+    klasikDurum.yanlis = 0;
+    klasikDurum.puan = 0;
+    
+    document.getElementById('modalKlasik').style.display = 'flex';
+    klasikSoruGoster();
+}
+
+function klasikSoruGoster() {
+    let icerik = document.getElementById('klasikIcerik');
+    if (klasikDurum.currentIndex >= klasikDurum.sorular.length) {
+        icerik.innerHTML = `
+            <div style="text-align:center; padding: 20px;">
+                <h3>Tebrikler Yarışma Bitti! 🎉</h3>
+                <p style="font-size: 1.2rem; margin: 15px 0;">Toplam Puan: <b>${klasikDurum.puan}</b></p>
+                <p>Doğru: ${klasikDurum.dogru} | Yanlış: ${klasikDurum.yanlis}</p>
+                <button class="game-btn" onclick="modalKapat('modalKlasik')" style="margin-top:15px;">Kapat</button>
+            </div>
+        `;
+        skorGonderBackend('kelimeKaydet', { puan: klasikDurum.puan, dogru: klasikDurum.dogru, yanlis: klasikDurum.yanlis });
+        return;
+    }
+
+    let aktifKelime = klasikDurum.sorular[klasikDurum.currentIndex];
+    let tumKelimeler = getKelimeListesi();
+    let yanlisSecenekler = tumKelimeler.filter(k => k.turkce !== aktifKelime.turkce).sort(() => 0.5 - Math.random()).slice(0, 3);
+    let secenekler = [...yanlisSecenekler, aktifKelime].sort(() => 0.5 - Math.random());
+
+    let html = `
+        <p style="font-size:0.9rem; color:#64748b; margin-bottom:10px;">Soru ${klasikDurum.currentIndex + 1} / ${klasikDurum.sorular.length}</p>
+        <h3 style="font-size: 1.5rem; color:#1e293b; margin-bottom:20px;">"${aktifKelime.ingilizce}" kelimesinin Türkçe karşılığı nedir?</h3>
+        <div class="options-grid">
+    `;
+    secenekler.forEach(sec => {
+        html += `<button class="option-btn" onclick="klasikSecimYap(this, '${sec.turkce}', '${aktifKelime.turkce}')">${sec.turkce}</button>`;
+    });
+    html += `</div>`;
+    icerik.innerHTML = html;
+}
+
+function klasikSecimYap(btn, secilen, dogru) {
+    let tuslar = document.querySelectorAll('.option-btn');
+    tuslar.forEach(b => b.disabled = true);
+
+    if (secilen === dogru) {
+        btn.classList.add('correct');
+        klasikDurum.dogru++;
+        klasikDurum.puan += 20;
+    } else {
+        btn.classList.add('wrong');
+        klasikDurum.yanlis++;
+        tuslar.forEach(b => { if (b.innerText === dogru) b.classList.add('correct'); });
+    }
+
+    setTimeout(() => {
+        klasikDurum.currentIndex++;
+        klasikSoruGoster();
+    }, 1200);
+}
+
+
+// 2. JEOPARDY BALONLARI
+function oyunuBaslatJeopardy() {
+    document.getElementById('modalJeopardy').style.display = 'flex';
+    jeopardyEkraniniCiz();
+}
+
+function jeopardyEkraniniCiz() {
+    let icerik = document.getElementById('jeopardyIcerik');
+    let kelimeler = getKelimeListesi().slice(0, 6);
+    
+    let html = `<p style="margin-bottom:15px; color:#64748b;">Bir balon seç ve açılan kelimeyi yanıtla!</p><div class="balloon-grid">`;
+    kelimeler.forEach((k, index) => {
+        html += `<div class="balloon" onclick="jeopardyBalonAc(this, '${k.ingilizce}', '${k.turkce}')">${(index + 1) * 10}P</div>`;
+    });
+    html += `</div>`;
+    icerik.innerHTML = html;
+}
+
+function jeopardyBalonAc(element, ing, tr) {
+    element.style.visibility = 'hidden';
+    let icerik = document.getElementById('jeopardyIcerik');
+    icerik.innerHTML = `
+        <div style="text-align:center; padding: 20px;">
+            <h3>Soru: "${ing}"</h3>
+            <input type="text" id="jeopardyInput" placeholder="Türkçe anlamını yazın..." class="fill-blank-input" style="width:100%; margin: 15px 0; padding:10px;">
+            <button class="game-btn" onclick="jeopardyKontrolEt('${tr}')">Cevapla</button>
+        </div>
+    `;
+}
+
+function jeopardyKontrolEt(dogruCevap) {
+    let tahmin = document.getElementById('jeopardyInput').value.trim();
+    let icerik = document.getElementById('jeopardyIcerik');
+    let kazanc = 20;
+    
+    if (tahmin.toLowerCase() === dogruCevap.toLowerCase()) {
+        icerik.innerHTML = `<h3 style="color:#22c55e; text-align:center;">Harika! Doğru Cevap. (+${kazanc} Puan)</h3>`;
+        skorGonderBackend('jeopardyKaydet', { puan: kazanc, secilenBalon: dogruCevap });
+    } else {
+        icerik.innerHTML = `<h3 style="color:#ef4444; text-align:center;">Yanlış! Doğru cevap: ${dogruCevap}</h3>`;
+    }
+    setTimeout(() => { oyunuBaslatJeopardy(); }, 2000);
+}
+
+
+// 3. ŞANS ZARI ÇEKİLİŞİ
+function oyunuBaslatCekilis() {
+    document.getElementById('modalCekilis').style.display = 'flex';
+    document.getElementById('cekilisIcerik').innerHTML = `
+        <div class="dice-container">
+            <div id="zarKutusu" class="dice">?</div>
+            <p style="margin: 20px 0; color:#64748b;">Zarı at ve çarpan puanını kap!</p>
+            <button class="game-btn" onclick="zarAt()">Zarı At</button>
+        </div>
+    `;
+}
+
+function zarAt() {
+    let zarKutusu = document.getElementById('zarKutusu');
+    zarKutusu.classList.add('rolling');
+    
+    setTimeout(() => {
+        zarKutusu.classList.remove('rolling');
+        let rastgeleZar = Math.floor(Math.random() * 6) + 1;
+        let puanKatsayisi = rastgeleZar * 15;
+        zarKutusu.innerText = rastgeleZar;
+        
+        document.getElementById('cekilisIcerik').innerHTML += `
+            <div style="text-align:center; margin-top:15px;">
+                <h3 style="color:#4f46e5;">Tebrikler! ${rastgeleZar} attın ve ${puanKatsayisi} Bonus Puan Kazandın! 🎲</h3>
+                <button class="game-btn" onclick="modalKapat('modalCekilis')" style="margin-top:15px;">Tamam</button>
+            </div>
+        `;
+        skorGonderBackend('cekilisKaydet', { puan: puanKatsayisi, zarDegeri: rastgeleZar });
+    }, 600);
+}
+
+
+// 4. BOŞLUK DOLDURMA
+function oyunuBaslatBosluk() {
+    document.getElementById('modalBosluk').style.display = 'flex';
+    let kelimeler = [...getKelimeListesi()].sort(() => 0.5 - Math.random()).slice(0, 3);
+    
+    let html = `<div style="padding: 10px;">`;
+    kelimeler.forEach((k, i) => {
+        html += `
+            <div class="fill-blank-row">
+                <span>${i + 1}. The meaning of <b>"${k.ingilizce}"</b> is</span>
+                <input type="text" class="fill-blank-input" data-answer="${k.turkce}" placeholder="Cevap...">
+            </div>
+        `;
+    });
+    html += `<button class="game-btn" onclick="bosluklariKontrolEt()" style="margin-top: 15px; width:100%;">Sonuçları Kontrol Et</button>
+             <div id="boslukSonuc" style="margin-top:15px; text-align:center; font-weight:bold;"></div></div>`;
+    document.getElementById('boslukIcerik').innerHTML = html;
+}
+
+function bosluklariKontrolEt() {
+    let inputs = document.querySelectorAll('.fill-blank-input');
+    let dogruSayisi = 0;
+    
+    inputs.forEach(input => {
+        let cevap = input.value.trim();
+        let dogruCevap = input.getAttribute('data-answer');
+        if (cevap.toLowerCase() === dogruCevap.toLowerCase()) {
+            input.style.borderColor = '#22c55e';
+            input.style.backgroundColor = '#dcfce7';
+            dogruSayisi++;
+        } else {
+            input.style.borderColor = '#ef4444';
+            input.style.backgroundColor = '#fee2e2';
+        }
+        input.disabled = true;
+    });
+
+    let toplamPuan = dogruSayisi * 25;
+    document.getElementById('boslukSonuc').innerHTML = `<span style="color:#1e293b;">Doğru: ${dogruSayisi}/3 | Kazanılan Puan: ${toplamPuan}</span>`;
+    skorGonderBackend('boslukKaydet', { puan: toplamPuan, tamamlanan: dogruSayisi });
+}
+        
     </script>
+
+    <!-- KLASİK OYUN MODALI -->
+<div id="modalKlasik" class="game-modal-overlay">
+    <div class="game-modal-content">
+        <button class="game-close-btn" onclick="modalKapat('modalKlasik')">&times;</button>
+        <h2 id="klasikBaslik" style="margin-bottom: 15px; color:#1e293b;">Klasik Kelime Yarışması</h2>
+        <div id="klasikIcerik"></div>
+    </div>
+</div>
+
+<!-- JEOPARDY MODALI -->
+<div id="modalJeopardy" class="game-modal-overlay">
+    <div class="game-modal-content">
+        <button class="game-close-btn" onclick="modalKapat('modalJeopardy')">&times;</button>
+        <h2 style="margin-bottom: 15px; color:#1e293b;">Jeopardy Balonları</h2>
+        <div id="jeopardyIcerik"></div>
+    </div>
+</div>
+
+<!-- ZAR ÇEKİLİŞİ MODALI -->
+<div id="modalCekilis" class="game-modal-overlay">
+    <div class="game-modal-content">
+        <button class="game-close-btn" onclick="modalKapat('modalCekilis')">&times;</button>
+        <h2 style="margin-bottom: 15px; color:#1e293b;">Şans Zarı Çekilişi</h2>
+        <div id="cekilisIcerik"></div>
+    </div>
+</div>
+
+<!-- BOŞLUK DOLDURMA MODALI -->
+<div id="modalBosluk" class="game-modal-overlay">
+    <div class="game-modal-content">
+        <button class="game-close-btn" onclick="modalKapat('modalBosluk')">&times;</button>
+        <h2 style="margin-bottom: 15px; color:#1e293b;">Boşluk Doldurma</h2>
+        <div id="boslukIcerik"></div>
+    </div>
+</div>
+    
 </body>
 </html>
