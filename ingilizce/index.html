@@ -2165,7 +2165,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbxb85BgwZdtfsIyb2WwfW1N-c8KIz4EeQUvlCXUir_HeFqIJqbIcSBwo0mH88MTiXNLlQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzewKkBu0uSKqgEcEnmBsGjKgTocKJdTO27b8uOEGAbFPycA3rBmm-3_CFetgQnbsQz5A/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -4818,25 +4818,27 @@ function boslukOyunuBaslat() {
     if (boslukSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
 
     let havuz = window.masterKelimeHavuzu || [];
+    // Seçilen sınıf ve ünitelere ait kelimeleri filtrele
     let filtrelenmis = havuz.filter(k => Number(k.sinif) === Number(boslukAktifSinif) && boslukSecilenUniteler.includes(Number(k.unite)));
     
-    // En az 6 harfli kelimeleri filtreleyelim ki boşluk bırakacak yer olsun (yoksa en az 4 harfli de olabilir)
+    // Sadece düzgün, tek kelimelik ve boşluksuz olanları al
     let uygunlar = filtrelenmis.filter(k => {
         let en = (k.ingilizce || k.en || "").trim();
-        return en.length >= 4;
+        return en.length >= 3 && !en.includes(" ") && !en.includes("'");
     });
 
-    if (uygunlar.length < 6) {
-        uygunlar = filtrelenmis; // Yetersizse tümünü al
+    if (uygunlar.length < 5) {
+        uygunlar = filtrelenmis; 
     }
 
-    if (uygunlar.length < 5) {
+    if (uygunlar.length < 4) {
         alert("Seçtiğiniz kriterlere uygun yeterli kelime bulunamadı. Lütfen farklı üniteler seçin.");
         return;
     }
 
-    let karisik = [...uygunlar].sort(() => Math.random() - 0.5);
-    boslukAktifKelimeler = karisik.slice(0, 8); // 8 kelimelik bulmaca
+    // Her seferinde tamamen rastgele (karışık) sıralayıp ilk 8 tanesini seçiyoruz
+    let rastgeleKarisik = [...uygunlar].sort(() => Math.random() - 0.5);
+    boslukAktifKelimeler = rastgeleKarisik.slice(0, Math.min(8, rastgeleKarisik.length));
 
     boslukBaslangicZamani = Date.now();
     boslukGecenSaniye = 0;
