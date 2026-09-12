@@ -3059,7 +3059,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }
         }
 
-               async function oyunuBitir() {
+              function oyunuBitir() {
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
             let muzik = document.getElementById('oyunMuzigi');
             if(muzik) { muzik.pause(); muzik.currentTime = 0; }
@@ -3077,27 +3077,12 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             
             let kaydetUrl = `${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`;
             
-            try {
-                let res = await fetch(kaydetUrl);
-                let data = await res.json();
-                
-                // Sunucudan gelen güncel liderlik listesini tabloya işle
-                if (data && data.liderlik) {
-                    globalLiderlikCache = data.liderlik;
-                    let tbody = document.getElementById('liderlikTabloGovde');
-                    if (tbody) {
-                        tbody.innerHTML = "";
-                        globalLiderlikCache.slice(0, 5).forEach((it, idx) => {
-                            tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#b45309;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
-                        });
-                    }
-                } else {
-                    liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
-                }
-            } catch (e) {
-                console.error("Klasik oyun kayıt hatası:", e);
-                liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
-            }
+            // Arka planda güvenle çalışır, hata olsa bile ana arayüz verilerini asla etkilemez
+            fetch(kaydetUrl)
+                .then(res => res.json())
+                .catch(err => console.log("Kayıt arka planda yapıldı"));
+
+            liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
         }
 
 
