@@ -2024,7 +2024,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycby0e89FGKj7z2-QKyLPHoPicUxpk6PdCkwAXxCutFvtBd7FSogpuXm3d1udW7HyJFA1kA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzKczQd7ByV914GxTwcT-nqoFv8UxfUn2t1q5C-DsE_DS_1Lxdk3VZ7V7177ylUZxXO7A/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -4219,6 +4219,7 @@ function jpOyunAc() {
     }
 }
 
+// İster jpOyunKapat ister jpOyunuKapat çağrılsın, ikisi de çalışır
 function jpOyunKapat() {
     let modal = document.getElementById('jpOyunOverlay');
     if (modal) {
@@ -4228,8 +4229,12 @@ function jpOyunKapat() {
     if (typeof jeopardyMuzikDurdur === 'function') {
         jeopardyMuzikDurdur();
     }
-    if (jpTimerInterval) clearInterval(jpTimerInterval);
+    if (typeof jpTimerInterval !== 'undefined' && jpTimerInterval) {
+        clearInterval(jpTimerInterval);
+    }
 }
+// Çift isim desteği
+const jpOyunuKapat = jpOyunKapat;
 
 function jpSinifSec(sinif, btnElement) {
     jpAktifSinif = sinif;
