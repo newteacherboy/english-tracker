@@ -3059,7 +3059,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }
         }
 
-              async function oyunuBitir() {
+               function oyunuBitir() {
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
             let muzik = document.getElementById('oyunMuzigi');
             if(muzik) { muzik.pause(); muzik.currentTime = 0; }
@@ -3075,16 +3075,27 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             document.getElementById('sonucPuan').innerText = puan; 
             document.getElementById('sonucSure').innerText = sureStr;
             
-            // Önce skoru doğrudan yerel liderlik tablosuna ekleyerek ekranda hemen görünmesini sağlayalım
-            liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
-
-            // Ardından arka planda Google Sheets'e kaydı gönderelim (CORS engeline takılsa bile oyunu kitlemez)
             let kaydetUrl = `${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`;
             
-            fetch(kaydetUrl).catch(e => console.log("Arka plan kayıt bildirimi:", e));
+            fetch(kaydetUrl)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.liderlik) {
+                        globalLiderlikCache = data.liderlik;
+                        liderlikTablosuGuncelle({isim: "", dogru: 0, puan: 0, sure: "", suresaniye: 0});
+                    } else {
+                        liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
+                    }
+                })
+                .catch((e) => {
+                    console.error("Klasik oyun kayıt hatası:", e);
+                    liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
+                });
         }
+    
 
-        function liderlikTablosuGuncelleDonus() {
+        function liderlikTablosuGuncelle(yk) {
+            globalLiderlikCache.push(yk);
             globalLiderlikCache.sort((a,b)=> b.puan!==a.puan ? b.puan-a.puan : a.suresaniye-b.suresaniye);
             let top5 = globalLiderlikCache.slice(0,5), tbody = document.getElementById('liderlikTabloGovde'); 
             if(!tbody) return;
@@ -3093,6 +3104,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 tbody.innerHTML += `<tr><td><b>${idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':idx+1}</b></td><td>${it.isim}</td><td style="color:#16a34a;font-weight:700;">${it.dogru}</td><td style="color:#b45309;font-weight:700;">${it.puan}</td><td>${it.sure}</td></tr>`;
             });
         }
+
 
         // --- JEOPARDY KELİME BALONLARI OYUNU MİMARİSİ ---
         let jeopSecilenSinif = 2;
