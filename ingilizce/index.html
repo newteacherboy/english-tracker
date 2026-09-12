@@ -1762,16 +1762,24 @@
 
                 // --- POMODORO ÇALIŞMA SAYACI FONKSİYONLARI ---
         function pomodoroAc() {
-            document.getElementById('pomodoroOverlay').style.display = 'flex';
-                        document.getElementById('seviyeHaritaOverlay').style.display = 'none';
-            document.getElementById('okumaModalOverlay').style.display = 'none';
-            document.getElementById('bulmacaModalOverlay').style.display = 'none';
-            if (window.Notification && Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-            pomodoroDurumGuncelle();
-            pomodoroSifirla();
-        }
+    // Diğer tüm pencereleri kapat
+    document.getElementById('seviyeHaritaOverlay').style.display = 'none';
+    document.getElementById('okumaModalOverlay').style.display = 'none';
+    document.getElementById('bulmacaModalOverlay').style.display = 'none';
+    document.getElementById('gameModalOverlay').style.display = 'none';
+    document.getElementById('jeopardyModalOverlay').style.display = 'none';
+    document.getElementById('cekilisModalOverlay').style.display = 'none';
+    document.getElementById('boslukModalOverlay').style.display = 'none';
+
+    // Pomodoro'yu aç
+    document.getElementById('pomodoroOverlay').style.display = 'flex';
+    
+    if (window.Notification && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+    pomodoroDurumGuncelle();
+    pomodoroSifirla();
+}
 
         function pomodoroKapat() {
             if (pomodoroInterval) clearInterval(pomodoroInterval);
@@ -2450,30 +2458,35 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
 }
 
                        function seviyeHaritasiAc() {
-                                       document.getElementById('pomodoroOverlay').style.display = 'none';
-            document.getElementById('okumaModalOverlay').style.display = 'none';
-            document.getElementById('bulmacaModalOverlay').style.display = 'none';
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-            if (!user || !user.aktiviteKartlari || user.aktiviteKartlari.length === 0) {
-                alert("Henüz kelime kartı bulunmuyor. Öğretmenin yakında ekleyecek!");
-                return;
-            }
+    // Diğer tüm pencereleri kapat
+    document.getElementById('pomodoroOverlay').style.display = 'none';
+    document.getElementById('okumaModalOverlay').style.display = 'none';
+    document.getElementById('bulmacaModalOverlay').style.display = 'none';
+    document.getElementById('gameModalOverlay').style.display = 'none';
+    document.getElementById('jeopardyModalOverlay').style.display = 'none';
+    document.getElementById('cekilisModalOverlay').style.display = 'none';
+    document.getElementById('boslukModalOverlay').style.display = 'none';
 
-            document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
+    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+    if (!user || !user.aktiviteKartlari || user.aktiviteKartlari.length === 0) {
+        alert("Henüz kelime kartı bulunmuyor. Öğretmenin yakında ekleyecek!");
+        return;
+    }
 
-            if (user.secilenSinif && user.secilenSinif > 0) {
-                seviyeAktifSinif = user.secilenSinif;
-                document.getElementById('sinifSecimAlani').style.display = 'none';
-                seviyeGosterilenUnite = 1;
-                seviyeHaritasiCiz();
-            } else {
-                document.getElementById('sinifSecimAlani').style.display = 'block';
-                document.getElementById('sinifDegistirBtn').style.display = 'none';
-                document.getElementById('seviyeYolAlani').innerHTML = '';
-                document.getElementById('seviyeHaritaUniteAd').innerText = '';
-            }
-        }
+    document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
 
+    if (user.secilenSinif && user.secilenSinif > 0) {
+        seviyeAktifSinif = user.secilenSinif;
+        document.getElementById('sinifSecimAlani').style.display = 'none';
+        seviyeGosterilenUnite = 1;
+        seviyeHaritasiCiz();
+    } else {
+        document.getElementById('sinifSecimAlani').style.display = 'block';
+        document.getElementById('sinifDegistirBtn').style.display = 'none';
+        document.getElementById('seviyeYolAlani').innerHTML = '';
+        document.getElementById('seviyeHaritaUniteAd').innerText = '';
+    }
+}
         function seviyeSinifSecildi(sinif) {
             seviyeAktifSinif = sinif;
             seviyeGosterilenUnite = 1;
@@ -4452,6 +4465,15 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         let okunanKelimeSayisi = 0;
 
         function okumaModaliniAc() {
+
+            // Diğer tüm pencereleri kapat
+    document.getElementById('pomodoroOverlay').style.display = 'none';
+            document.getElementById('seviyeHaritaOverlay').style.display = 'none';
+    document.getElementById('bulmacaModalOverlay').style.display = 'none';
+    document.getElementById('gameModalOverlay').style.display = 'none';
+    document.getElementById('jeopardyModalOverlay').style.display = 'none';
+    document.getElementById('cekilisModalOverlay').style.display = 'none';
+    document.getElementById('boslukModalOverlay').style.display = 'none';
             document.getElementById('okumaModalOverlay').style.display = 'flex';
             yeniMetinGetir();
             okumaGecmisiniYukle();
