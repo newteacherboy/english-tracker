@@ -1804,16 +1804,23 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // --- POMODORO ÇALIŞMA SAYACI ---
-    function pomodoroAc() {
-        tumModalKapat();
-        let overlay = document.getElementById('pomodoroOverlay');
+    // --- POMODORO ÇALIŞMA SAYACI ---
+function pomodoroAc() {
+    tumModalKapat();
+    let overlay = document.getElementById('pomodoroOverlay');
     if (overlay) {
-        overlay.style.pointerEvents = 'auto'; // <-- BURAYI EKLE
-        overlay.style.display = 'flex';       // <-- Görünür yap
+        overlay.style.pointerEvents = 'auto'; // Tıklama kilidini kaldırır
+        overlay.style.display = 'flex';       // Görünür yapar
     }
-        pomodoroDurumGuncelle();
-        pomodoroSifirla();
+    
+    if (window.Notification && Notification.permission === 'default') {
+        Notification.requestPermission();
     }
+    
+    // Alt fonksiyonlar eksiksiz çalışır
+    if (typeof pomodoroDurumGuncelle === 'function') pomodoroDurumGuncelle();
+    if (typeof pomodoroSifirla === 'function') pomodoroSifirla();
+}
 
     // --- KELİME KARTLARI YOLCULUĞU ---
     function seviyeHaritasiAc() {
@@ -5035,6 +5042,36 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.clear(); 
         window.location.reload(); 
     }
+
+       function pomodoroDurumGuncelle() {
+    let overlay = document.getElementById('pomodoroOverlay');
+    let etiket = document.getElementById('pomodoroDurumEtiket');
+    if (overlay) overlay.classList.toggle('mola-modu', pomodoroMod === 'mola');
+    if (etiket) {
+        etiket.innerHTML = pomodoroMod === 'mola'
+            ? '<span class="pomodoro-durum-nokta"></span>MOLA ZAMANI'
+            : '<span class="pomodoro-durum-nokta"></span>ODAKLANMA ZAMANI';
+    }
+    let turBilgi = document.getElementById('pomodoroTurBilgi');
+    if (turBilgi) turBilgi.innerText = `Tur ${pomodoroTurSayisi} / ${pomodoroToplamTur}`;
+}
+
+function pomodoroSifirla() {
+    if (typeof pomodoroInterval !== 'undefined' && pomodoroInterval) clearInterval(pomodoroInterval);
+    pomodoroCalisiyorMu = false;
+    pomodoroGecenSaniye = 0;
+    pomodoroKalanSaniye = pomodoroMod === 'odak' ? pomodoroOdakDakika * 60 : pomodoroMolaDakika * 60;
+    
+    let baslatBtn = document.getElementById('pomodoroBaslatBtn');
+    let altBilgi = document.getElementById('pomodoroAltBilgi');
+    if (baslatBtn) {
+        baslatBtn.innerText = '▶';
+        baslatBtn.setAttribute('aria-label', 'Başlat');
+    }
+    if (altBilgi) altBilgi.innerText = 'Başlamak için oynat tuşuna bas';
+    if (typeof pomodoroSaatiGuncelle === 'function') pomodoroSaatiGuncelle();
+}
+       
 </script>
 </body>
 </html>
