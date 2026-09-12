@@ -3867,12 +3867,13 @@ const oyunModulu = {
         } catch(e) {}
     },
 
-    // 1. Klasik Kelime Yarışması Mantığı
     klasikHazirlik() {
         const havuz = window.masterKelimeHavuzu || [];
         const siniflar = [...new Set(havuz.map(i => i.sinif))].sort();
         const sinifCont = document.getElementById('klasikSinifContainer');
-        sinifCont.innerHTML = siniflar.map(s => `<button type="button" onclick="oyunModulu.sinifSec('${s}', 'klasik')" style="padding:8px 16px; border-radius:8px; border:1px solid #ccc; background:${s==this.secilenSinif?'#2980b9':'#fff'}; color:${s==this.secilenSinif?'#fff':'#333'}; cursor:pointer; font-weight:bold;">${s}. Sınıf</button>`).join('');
+        if(sinifCont) {
+            sinifCont.innerHTML = siniflar.map(s => `<button type="button" onclick="oyunModulu.sinifSec('${s}', 'klasik')" style="padding:8px 16px; border-radius:8px; border:1px solid #ccc; background:${s==this.secilenSinif?'#2980b9':'#fff'}; color:${s==this.secilenSinif?'#fff':'#333'}; cursor:pointer; font-weight:bold;">${s}. Sınıf</button>`).join('');
+        }
         this.klasikUniteGuncelle();
     },
 
@@ -3886,7 +3887,9 @@ const oyunModulu = {
         const havuz = window.masterKelimeHavuzu || [];
         const uniteler = [...new Set(havuz.filter(i => String(i.sinif) === String(this.secilenSinif)).map(i => i.unite))].sort((a,b)=>a-b);
         const uniteCont = document.getElementById('klasikUniteContainer');
-        uniteCont.innerHTML = uniteler.map(u => `<button type="button" onclick="oyunModulu.uniteSec('${u}', 'klasik')" style="padding:8px 14px; border-radius:8px; border:1px solid #ccc; background:${u==this.secilenUnite?'#27ae60':'#fff'}; color:${u==this.secilenUnite?'#fff':'#333'}; cursor:pointer; font-weight:bold;">${u}.Ü</button>`).join('');
+        if(uniteCont) {
+            uniteCont.innerHTML = uniteler.map(u => `<button type="button" onclick="oyunModulu.uniteSec('${u}', 'klasik')" style="padding:8px 14px; border-radius:8px; border:1px solid #ccc; background:${u==this.secilenUnite?'#27ae60':'#fff'}; color:${u==this.secilenUnite?'#fff':'#333'}; cursor:pointer; font-weight:bold;">${u}.Ü</button>`).join('');
+        }
     },
 
     uniteSec(unite, tip) {
@@ -3914,7 +3917,8 @@ const oyunModulu = {
             this.sureSaniye++;
             let dk = Math.floor(this.sureSaniye / 60).toString().padStart(2, '0');
             let sn = (this.sureSaniye % 60).toString().padStart(2, '0');
-            document.getElementById('klasikSayacSure').textContent = `⏱️ ${dk}:${sn}`;
+            const sayacSure = document.getElementById('klasikSayacSure');
+            if(sayacSure) sayacSure.textContent = `⏱️ ${dk}:${sn}`;
         }, 1000);
 
         this.klasikSoruGoster();
@@ -3930,14 +3934,16 @@ const oyunModulu = {
         }
 
         const soru = this.aktifHavuz[this.aktifSoruIndex];
-        document.getElementById('klasikSayacKelime').textContent = `Kelime: ${this.aktifSoruIndex + 1} / ${Math.min(this.aktifHavuz.length, 25)}`;
-        document.getElementById('klasikSoruMetni').textContent = soru.ingilizce;
+        const sayacKelime = document.getElementById('klasikSayacKelime');
+        if(sayacKelime) sayacKelime.textContent = `Kelime: ${this.aktifSoruIndex + 1} / ${Math.min(this.aktifHavuz.length, 25)}`;
+        const soruMetni = document.getElementById('klasikSoruMetni');
+        if(soruMetni) soruMetni.textContent = soru.ingilizce;
 
-        // Şıklar havuzdan her defasında tamamen farklı ve rastgele çekilir
         const digerleri = (window.masterKelimeHavuzu || []).filter(i => i.turkce !== soru.turkce).sort(() => 0.5 - Math.random()).slice(0, 3);
         const secenekler = [...digerleri, soru].sort(() => 0.5 - Math.random());
 
         const container = document.getElementById('klasikSeceneklerContainer');
+        if(!container) return;
         container.innerHTML = '';
 
         secenekler.forEach(sec => {
@@ -3959,8 +3965,10 @@ const oyunModulu = {
                         if (b.textContent === soru.turkce) b.classList.add('dogru-vurgula');
                     });
                 }
-                document.getElementById('klasikDogruGosterge').textContent = `✅ Doğru: ${this.dogruSayisi}`;
-                document.getElementById('klasikYanlisGosterge').textContent = `❌ Yanlış: ${this.yanlisSayisi}`;
+                const dogruGosterge = document.getElementById('klasikDogruGosterge');
+                const yanlisGosterge = document.getElementById('klasikYanlisGosterge');
+                if(dogruGosterge) dogruGosterge.textContent = `✅ Doğru: ${this.dogruSayisi}`;
+                if(yanlisGosterge) yanlisGosterge.textContent = `❌ Yanlış: ${this.yanlisSayisi}`;
 
                 setTimeout(() => {
                     this.aktifSoruIndex++;
@@ -3971,12 +3979,13 @@ const oyunModulu = {
         });
     },
 
-    // 2. Jeopardy Balonları Mantığı
     jeopardyHazirlik() {
         const havuz = window.masterKelimeHavuzu || [];
         const siniflar = [...new Set(havuz.map(i => i.sinif))].sort();
         const sinifCont = document.getElementById('jeopardySinifContainer');
-        sinifCont.innerHTML = siniflar.map(s => `<button type="button" onclick="oyunModulu.sinifSec('${s}', 'jeopardy')" style="padding:8px 16px; border-radius:8px; border:1px solid #ccc; background:${s==this.secilenSinif?'#8e44ad':'#fff'}; color:${s==this.secilenSinif?'#fff':'#333'}; cursor:pointer; font-weight:bold;">${s}. Sınıf</button>`).join('');
+        if(sinifCont) {
+            sinifCont.innerHTML = siniflar.map(s => `<button type="button" onclick="oyunModulu.sinifSec('${s}', 'jeopardy')" style="padding:8px 16px; border-radius:8px; border:1px solid #ccc; background:${s==this.secilenSinif?'#8e44ad':'#fff'}; color:${s==this.secilenSinif?'#fff':'#333'}; cursor:pointer; font-weight:bold;">${s}. Sınıf</button>`).join('');
+        }
         this.jeopardyUniteGuncelle();
     },
 
@@ -3984,11 +3993,14 @@ const oyunModulu = {
         const havuz = window.masterKelimeHavuzu || [];
         const uniteler = [...new Set(havuz.filter(i => String(i.sinif) === String(this.secilenSinif)).map(i => i.unite))].sort((a,b)=>a-b);
         const uniteCont = document.getElementById('jeopardyUniteContainer');
-        uniteCont.innerHTML = uniteler.map(u => `<button type="button" onclick="oyunModulu.uniteSec('${u}', 'jeopardy')" style="padding:8px 14px; border-radius:8px; border:1px solid #ccc; background:${u==this.secilenUnite?'#8e44ad':'#fff'}; color:${u==this.secilenUnite?'#fff':'#333'}; cursor:pointer; font-weight:bold;">${u}.Ü</button>`).join('');
+        if(uniteCont) {
+            uniteCont.innerHTML = uniteler.map(u => `<button type="button" onclick="oyunModulu.uniteSec('${u}', 'jeopardy')" style="padding:8px 14px; border-radius:8px; border:1px solid #ccc; background:${u==this.secilenUnite?'#8e44ad':'#fff'}; color:${u==this.secilenUnite?'#fff':'#333'}; cursor:pointer; font-weight:bold;">${u}.Ü</button>`).join('');
+        }
     },
 
     jeopardyBaslat() {
-        const soruSayisi = parseInt(document.getElementById('jeopardySoruSayisiSec').value) || 20;
+        const soruSayisiEl = document.getElementById('jeopardySoruSayisiSec');
+        const soruSayisi = soruSayisiEl ? parseInt(soruSayisiEl.value) || 20 : 20;
         const havuz = window.masterKelimeHavuzu || [];
         this.aktifHavuz = havuz.filter(i => String(i.sinif) === String(this.secilenSinif) && String(i.unite) === String(this.secilenUnite)).sort(() => 0.5 - Math.random()).slice(0, soruSayisi);
 
@@ -3997,8 +4009,10 @@ const oyunModulu = {
             return;
         }
 
-        document.getElementById('jeopardyAyarEkrani').style.display = 'none';
-        document.getElementById('jeopardyOyunEkrani').style.display = 'block';
+        const ayarEkrani = document.getElementById('jeopardyAyarEkrani');
+        const oyunEkrani = document.getElementById('jeopardyOyunEkrani');
+        if(ayarEkrani) ayarEkrani.style.display = 'none';
+        if(oyunEkrani) oyunEkrani.style.display = 'block';
 
         this.skor = 0; this.dogruSayisi = 0; this.yanlisSayisi = 0; this.sureSaniye = 0;
         
@@ -4007,12 +4021,15 @@ const oyunModulu = {
             this.sureSaniye++;
             let dk = Math.floor(this.sureSaniye / 60).toString().padStart(2, '0');
             let sn = (this.sureSaniye % 60).toString().padStart(2, '0');
-            document.getElementById('jeopardySure').textContent = `⏱️ ${dk}:${sn}`;
+            const jeopardySure = document.getElementById('jeopardySure');
+            if(jeopardySure) jeopardySure.textContent = `⏱️ ${dk}:${sn}`;
         }, 1000);
 
         const grid = document.getElementById('jeopardyGridContainer');
+        if(!grid) return;
         grid.innerHTML = '';
-        document.getElementById('jeopardyKalanBalon').textContent = `Kalan Balon: ${this.aktifHavuz.length}`;
+        const kalanBalon = document.getElementById('jeopardyKalanBalon');
+        if(kalanBalon) kalanBalon.textContent = `Kalan Balon: ${this.aktifHavuz.length}`;
 
         this.aktifHavuz.forEach((soru, idx) => {
             const puan = ((idx % 5) + 1) * 10;
@@ -4032,7 +4049,8 @@ const oyunModulu = {
     jeopardySoruAc(soru, puan) {
         const cevap = prompt(`[${puan} Puan] "${soru.turkce}" kelimesinin İngilizcesi nedir?`);
         const kalanlar = document.querySelectorAll('.jeopardy-kart:not(.patladi)').length;
-        document.getElementById('jeopardyKalanBalon').textContent = `Kalan Balon: ${kalanlar}`;
+        const kalanBalon = document.getElementById('jeopardyKalanBalon');
+        if(kalanBalon) kalanBalon.textContent = `Kalan Balon: ${kalanlar}`;
 
         if (cevap && cevap.trim().toLowerCase() === soru.ingilizce.toLowerCase()) {
             this.skor += puan;
@@ -4045,8 +4063,10 @@ const oyunModulu = {
             alert(`Yanlış! Doğru cevap: ${soru.ingilizce}`);
         }
 
-        document.getElementById('jeopardyPuanGosterge').textContent = `⭐ Puan: ${this.skor}`;
-        document.getElementById('jeopardyBilinenGosterge').textContent = `✅ Bilinen: ${this.dogruSayisi}`;
+        const puanGosterge = document.getElementById('jeopardyPuanGosterge');
+        const bilinenGosterge = document.getElementById('jeopardyBilinenGosterge');
+        if(puanGosterge) puanGosterge.textContent = `⭐ Puan: ${this.skor}`;
+        if(bilinenGosterge) bilinenGosterge.textContent = `✅ Bilinen: ${this.dogruSayisi}`;
 
         if (kalanlar === 0) {
             clearInterval(this.timerInterval);
@@ -4056,9 +4076,9 @@ const oyunModulu = {
         }
     },
 
-    // 3. Zar Çekilişi Mantığı
     zarAt() {
         const zarEl = document.getElementById('zarGorsel');
+        if(!zarEl) return;
         zarEl.classList.add('zar-donuyor');
         this.sesCal('dogru');
 
@@ -4066,7 +4086,8 @@ const oyunModulu = {
             zarEl.classList.remove('zar-donuyor');
             const katSayi = Math.floor(Math.random() * 6) + 1;
             zarEl.textContent = katSayi;
-            document.getElementById('zarDurumMetni').textContent = `Zar Çarpanı: x${katSayi}! Soruyu yanıtla!`;
+            const zarDurumMetni = document.getElementById('zarDurumMetni');
+            if(zarDurumMetni) zarDurumMetni.textContent = `Zar Çarpanı: x${katSayi}! Soruyu yanıtla!`;
             this.zarSoruGetir(katSayi);
         }, 800);
     },
@@ -4076,13 +4097,16 @@ const oyunModulu = {
         if (havuz.length === 0) return;
         const soru = havuz[Math.floor(Math.random() * havuz.length)];
 
-        document.getElementById('zarSoruKutusu').style.display = 'block';
-        document.getElementById('zarSoruMetni').textContent = `"${soru.ingilizce}" kelimesinin Türkçe karşılığı nedir?`;
+        const zarSoruKutusu = document.getElementById('zarSoruKutusu');
+        const zarSoruMetni = document.getElementById('zarSoruMetni');
+        if(zarSoruKutusu) zarSoruKutusu.style.display = 'block';
+        if(zarSoruMetni) zarSoruMetni.textContent = `"${soru.ingilizce}" kelimesinin Türkçe karşılığı nedir?`;
 
         const digerleri = havuz.filter(i => i.turkce !== soru.turkce).sort(() => 0.5 - Math.random()).slice(0, 2);
         const secenekler = [...digerleri, soru].sort(() => 0.5 - Math.random());
 
         const container = document.getElementById('zarSeceneklerContainer');
+        if(!container) return;
         container.innerHTML = '';
 
         secenekler.forEach(sec => {
@@ -4098,20 +4122,22 @@ const oyunModulu = {
                     this.sesCal('yanlis');
                     alert(`Yanlış! Doğru cevap: ${soru.turkce}`);
                 }
-                document.getElementById('zarSoruKutusu').style.display = 'none';
-                document.getElementById('zarGorsel').textContent = '🎲';
-                document.getElementById('zarDurumMetni').textContent = 'Zarı atmak için tekrar tıkla!';
+                if(zarSoruKutusu) zarSoruKutusu.style.display = 'none';
+                const zarGorsel = document.getElementById('zarGorsel');
+                if(zarGorsel) zarGorsel.textContent = '🎲';
+                const zarDurumMetni = document.getElementById('zarDurumMetni');
+                if(zarDurumMetni) zarDurumMetni.textContent = 'Zarı atmak için tekrar tıkla!';
             };
             container.appendChild(btn);
         });
     },
 
-    // 4. Boşluk Doldurma Mantığı
     boslukHazirlik() {
         const havuz = window.globalDataCache?.BoslukDoldurma || window.masterKelimeHavuzu || [];
         const sorular = [...havuz].sort(() => 0.5 - Math.random()).slice(0, 8);
         
         const container = document.getElementById('boslukSorularListesi');
+        if(!container) return;
         container.innerHTML = '';
         this.dogruSayisi = 0; this.yanlisSayisi = 0;
 
@@ -4151,41 +4177,43 @@ const oyunModulu = {
                         this.sesCal('yanlis');
                         setTimeout(() => e.target.classList.remove('yanlis-sarsilma'), 400);
                     }
-                    document.getElementById('boslukDogruSayi').textContent = `✅ Doğru: ${this.dogruSayisi}`;
+                    const boslukDogruSayi = document.getElementById('boslukDogruSayi');
+                    if(boslukDogruSayi) boslukDogruSayi.textContent = `✅ Doğru: ${this.dogruSayisi}`;
                 }
             };
         });
     },
 
     sunucuyaKaydet(actionTip) {
-    const payload = {
-        action: actionTip,
-        isim: window.globalDataCache?.aktifOgrenci || "Mert Akkayaoğlu",
-        sinif: this.secilenSinif,
-        unite: this.secilenUnite,
-        dogru: this.dogruSayisi,
-        yanlis: this.yanlisSayisi,
-        sure: "01:00",
-        suresaniye: this.sureSaniye,
-        puan: this.skor
-    };
+        const payload = {
+            action: actionTip,
+            isim: window.globalDataCache?.aktifOgrenci || "Mert Akkayaoğlu",
+            sinif: this.secilenSinif,
+            unite: this.secilenUnite,
+            dogru: this.dogruSayisi,
+            yanlis: this.yanlisSayisi,
+            sure: "01:00",
+            suresaniye: this.sureSaniye,
+            puan: this.skor
+        };
 
-    const hedefURL = window.apiURL || (typeof apiURL !== 'undefined' ? apiURL : '');
-    if (hedefURL) {
-        fetch(hedefURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8'
-            },
-            body: JSON.stringify(payload)
-        }).then(() => {
-            console.log("Kayıt isteği gönderildi.");
-        }).catch(err => {
-            console.error("Kayıt hatası:", err);
-        });
+        const hedefURL = window.apiURL || (typeof apiURL !== 'undefined' ? apiURL : '');
+        if (hedefURL) {
+            fetch(hedefURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                console.log("Kayıt isteği gönderildi.");
+            }).catch(err => {
+                console.error("Kayıt hatası:", err);
+            });
+        }
     }
-}
+};
         
     </script>
 </body>
