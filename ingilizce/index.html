@@ -1736,12 +1736,25 @@ async function kelimeYarismasiBitir() {
 
     let tabloKonum = document.getElementById('kyGecmisSkorlarListesi');
     tabloKonum.innerHTML = "<div>Liderlik tablosu güncelleniyor...</div>";
-
-    // 1. Google Sheets'e Kayıt Gönderimi
-    let kayitUrl = `${apiURL}?islem=kelimeLiderlikKaydet&tarih=${encodeURIComponent(tarihStr)}&isim=${encodeURIComponent(isim)}&sinif=${encodeURIComponent(sinifStr)}&unite=${encodeURIComponent(uniteStr)}&dogru=${kyDogruSayisi}&yanlis=${kyYanlisSayisi}&sure=${encodeURIComponent(kyGecenSaniye + "s")}&suresaniye=${kyGecenSaniye}&puan=${toplamPuan}`;
+// 1. Google Sheets'e Güvenli POST İsteği ile Kayıt Gönderimi
+    let kayitPayload = {
+        islem: "kelimeLiderlikKaydet",
+        tarih: tarihStr,
+        isim: isim,
+        sinif: sinifStr,
+        unite: uniteStr,
+        dogru: kyDogruSayisi,
+        yanlis: kyYanlisSayisi,
+        sure: kyGecenSaniye + "s",
+        suresaniye: kyGecenSaniye,
+        puan: toplamPuan
+    };
 
     try {
-        await fetch(kayitUrl);
+        await fetch(apiURL, {
+            method: "POST",
+            body: JSON.stringify(kayitPayload)
+        });
     } catch(e) {
         console.error("Liderlik kaydı gönderilemedi:", e);
     }
@@ -1903,7 +1916,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbxcit_G3bnWI9AEo6_VzsRNJdiOegHBM-IKdq5wx1E5G0h-69eZzO0pV9yOxEnvp5zu8A/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwjPsl2436M6L7jKDQGq_EQnqvSavQK5MmCJzeckm_OsVdg6aG_W3_CPwzK07ujLNkbzQ/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
