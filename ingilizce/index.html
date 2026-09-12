@@ -4164,63 +4164,59 @@ let jpMuzikAcik = true;
 let jpAudioElement = null;
 
 function jpOyunAc() {
-    try {
-        console.log("1. jpOyunAc tetiklendi ve başladı");
-        
-        let modal = document.getElementById('jpOyunOverlay');
-        if (!modal) {
-            alert("Hata: 'jpOyunOverlay' ID'sine sahip modal HTML içinde bulunamadı!");
-            return;
-        }
-
-        // Pencereyi ve arka planını zorla görünür yap
-        modal.style.display = 'flex';
-        modal.style.zIndex = '999999';
-        console.log("2. Modal açıldı (display: flex yapıldı)");
-
-        let giris = document.getElementById('jpGirisEkrani');
-        if (giris) giris.style.display = 'block';
-
-        let balon = document.getElementById('jpBalonEkrani');
-        if (balon) balon.style.display = 'none';
-
-        let soru = document.getElementById('jpSoruEkrani');
-        if (soru) soru.style.display = 'none';
-
-        let bitis = document.getElementById('jpBitisEkrani');
-        if (bitis) bitis.style.display = 'none';
-
-        let isimInput = document.getElementById('jpIsimInput');
-        if (isimInput) {
-            if (window.aktifOgrenciAdi && window.aktifOgrenciAdi.toLowerCase() !== "teacher") {
-                isimInput.value = window.aktifOgrenciAdi;
-                isimInput.disabled = true;
-            } else {
-                isimInput.value = "";
-                isimInput.disabled = false;
-            }
-        }
-
-        let grid = document.getElementById('jpSinifGrid');
-        if (grid) {
-            grid.querySelectorAll('.sinif-btn').forEach((b, idx) => {
-                b.classList.toggle('active', idx === 0);
-            });
-        }
-
-        window.jpAktifSinif = 1;
-        if (typeof jpSinifGuncelle === 'function') {
-            jpSinifGuncelle(1);
-        }
-        
-        if (typeof jeopardyMuzikBaslat === 'function') {
-            jeopardyMuzikBaslat();
-        }
-
-        console.log("3. jpOyunAc başarıyla tamamlandı");
-    } catch (err) {
-        console.error("jpOyunAc çalışırken hata oluştu:", err);
+    console.log("1. jpOyunAc tetiklendi ve başladı");
+    
+    let modal = document.getElementById('jpOyunOverlay');
+    if (!modal) {
+        alert("Hata: 'jpOyunOverlay' ID'sine sahip modal HTML içinde bulunamadı!");
+        return;
     }
+
+    // CSS kurallarını ezip geçmek için !important kullanıyoruz
+    modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('z-index', '999999', 'important');
+    console.log("2. Modal açıldı (display: flex ve !important atandı)");
+
+    let giris = document.getElementById('jpGirisEkrani');
+    if (giris) giris.style.setProperty('display', 'block', 'important');
+
+    let balon = document.getElementById('jpBalonEkrani');
+    if (balon) balon.style.display = 'none';
+
+    let soru = document.getElementById('jpSoruEkrani');
+    if (soru) soru.style.display = 'none';
+
+    let bitis = document.getElementById('jpBitisEkrani');
+    if (bitis) bitis.style.display = 'none';
+
+    let isimInput = document.getElementById('jpIsimInput');
+    if (isimInput) {
+        if (window.aktifOgrenciAdi && window.aktifOgrenciAdi.toLowerCase() !== "teacher") {
+            isimInput.value = window.aktifOgrenciAdi;
+            isimInput.disabled = true;
+        } else {
+            isimInput.value = "";
+            isimInput.disabled = false;
+        }
+    }
+
+    let grid = document.getElementById('jpSinifGrid');
+    if (grid) {
+        grid.querySelectorAll('.sinif-btn').forEach((b, idx) => {
+            b.classList.toggle('active', idx === 0);
+        });
+    }
+
+    window.jpAktifSinif = 1;
+    if (typeof jpSinifGuncelle === 'function') {
+        jpSinifGuncelle(1);
+    }
+    
+    if (typeof jeopardyMuzikBaslat === 'function') {
+        jeopardyMuzikBaslat();
+    }
+
+    console.log("3. jpOyunAc başarıyla tamamlandı");
 }
 
 function jpOyunKapat() {
