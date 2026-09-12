@@ -1762,6 +1762,9 @@
                 // --- POMODORO ÇALIŞMA SAYACI FONKSİYONLARI ---
         function pomodoroAc() {
             document.getElementById('pomodoroOverlay').style.display = 'flex';
+                        document.getElementById('seviyeHaritaOverlay').style.display = 'none';
+            document.getElementById('okumaModalOverlay').style.display = 'none';
+            document.getElementById('bulmacaModalOverlay').style.display = 'none';
             if (window.Notification && Notification.permission === 'default') {
                 Notification.requestPermission();
             }
@@ -2446,6 +2449,9 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
 }
 
                        function seviyeHaritasiAc() {
+                                       document.getElementById('pomodoroOverlay').style.display = 'none';
+            document.getElementById('okumaModalOverlay').style.display = 'none';
+            document.getElementById('bulmacaModalOverlay').style.display = 'none';
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
             if (!user || !user.aktiviteKartlari || user.aktiviteKartlari.length === 0) {
                 alert("Henüz kelime kartı bulunmuyor. Öğretmenin yakında ekleyecek!");
@@ -3987,6 +3993,9 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         
         // --- KELİME BULMACA OYUNU MİMARİSİ ---
         function bulmacaModaliniAc() {
+                        document.getElementById('pomodoroOverlay').style.display = 'none';
+            document.getElementById('seviyeHaritaOverlay').style.display = 'none';
+            document.getElementById('okumaModalOverlay').style.display = 'none';
             document.getElementById('bulmacaModalOverlay').style.display = 'flex';
             document.getElementById('bulmacaAyarBolumu').style.display = 'block';
             document.getElementById('bulmacaOyunAlani').style.display = 'none';
@@ -4044,15 +4053,13 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         }
 
         // Sınıf seviyesine göre zorluk: küçük sınıflar sadece yatay/dikey, büyük sınıflar çapraz da dahil
-        function bulmacaYonleriGetir(sinif) {
-            if (sinif <= 2) {
-                return [[0,1],[1,0]]; // sadece sağa, aşağı (en kolay, geriye doğru yok)
-            } else if (sinif <= 4) {
-                return [[0,1],[1,0],[0,-1],[-1,0]]; // 4 yön, ters yazım dahil
+               function bulmacaYonleriGetir(sinif) {
+            if (sinif <= 3) {
+                return [[0,1],[1,0]]; // sadece sağa, aşağı
             } else if (sinif <= 6) {
-                return [[0,1],[1,0],[1,1],[-1,1]]; // + çapraz (ileri yön)
+                return [[0,1],[1,0],[1,1]]; // + çapraz aşağı-sağ
             } else {
-                return [[0,1],[1,0],[0,-1],[-1,0],[1,1],[-1,-1],[1,-1],[-1,1]]; // 8 yön tam zorluk
+                return [[0,1],[1,0],[1,1],[1,-1]]; // + çapraz aşağı-sol
             }
         }
 
@@ -4063,13 +4070,13 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             let filt = masterKelimeHavuzu.filter(i => i.sinif === bulmacaSecilenSinif && bulmacaSecilenUniteler.includes(i.unite));
             if(filt.length === 0) { alert("Seçilen sınıf ve ünitelerde kelime bulunamadı!"); return; }
 
-                       let secilenKelimeler = [...filt].sort(() => Math.random() - 0.5).slice(0, Math.min(7, filt.length));
+                                   let secilenKelimeler = [...filt].sort(() => Math.random() - 0.5).slice(0, Math.min(6, filt.length));
             secilenKelimeler = secilenKelimeler.filter(k => k.en.replace(/[^A-Za-z]/g, '').length >= 3);
 
             if (secilenKelimeler.length < 3) { alert("Bu sınıf/ünitede yeterli uygun kelime yok (en az 3 harfli kelimeler gerekli)."); return; }
 
             let enUzunKelime = Math.max(...secilenKelimeler.map(k => k.en.length));
-                        bulmacaBoyut = Math.max(8, enUzunKelime + 1);
+                                   bulmacaBoyut = Math.max(7, enUzunKelime);
 
             let yonler = bulmacaYonleriGetir(bulmacaSecilenSinif);
             let sonuc = bulmacaIzgaraOlustur(secilenKelimeler, bulmacaBoyut, yonler);
@@ -4287,18 +4294,19 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             bulmacaBaslangicHucre = null;
         }
 
-               function bulmacaKelimeListesiniCiz() {
+                      function bulmacaKelimeListesiniCiz() {
             let alan = document.getElementById('bulmacaKelimeListesiAlani');
             alan.innerHTML = "";
-            let bulunanlar = bulmacaYerlesenKelimeler.filter(k => k.bulundu);
-            if (bulunanlar.length === 0) {
-                alan.innerHTML = `<span style="font-size:10.5px; color:#94a3b8;">Henüz kelime bulunmadı...</span>`;
-                return;
-            }
-            bulunanlar.forEach(k => {
+            bulmacaYerlesenKelimeler.forEach(k => {
                 let etiket = document.createElement('span');
-                etiket.className = 'bulmaca-kelime-etiket bulundu';
-                etiket.innerText = `${k.en} — ${k.tr}`;
+                if (k.bulundu) {
+                    etiket.className = 'bulmaca-kelime-etiket bulundu';
+                    etiket.innerText = `${k.en} — ${k.tr}`;
+                } else {
+                    etiket.className = 'bulmaca-kelime-etiket';
+                    etiket.style.opacity = '0.5';
+                    etiket.innerText = '? ? ?';
+                }
                 alan.appendChild(etiket);
             });
         }
@@ -4449,6 +4457,9 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         }
 
         function okumaModaliniKapat() {
+                        document.getElementById('pomodoroOverlay').style.display = 'none';
+            document.getElementById('seviyeHaritaOverlay').style.display = 'none';
+            document.getElementById('bulmacaModalOverlay').style.display = 'none';
             document.getElementById('okumaModalOverlay').style.display = 'none';
             if (okumaTimer) clearInterval(okumaTimer);
             okumaTimer = null;
