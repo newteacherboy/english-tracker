@@ -1805,8 +1805,12 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             if (otomatikGirisYapilacak) {
                 aktifOgrenciAdi = kayitliOgrenci;
                 toplamSaniye = parseInt(kayitliSure);
-// Hata veren satırı bununla değiştir:
-let hedefListe = Array.isArray(window.globalDataCache) ? window.globalDataCache : Object.values(window.globalDataCache).find(Array.isArray) || [];
+
+                
+let hedefListe = (window.globalDataCache && typeof window.globalDataCache === 'object') 
+    ? (Array.isArray(window.globalDataCache) ? window.globalDataCache : (Object.values(window.globalDataCache).find(Array.isArray) || [])) 
+    : [];
+
 let user = hedefListe.find(u => u && String(u.ogrenci || u.isim || u.ad || "").trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
 
                 document.getElementById('oturumYuklemeOverlay').style.display = 'none';
