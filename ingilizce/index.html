@@ -4187,6 +4187,15 @@ function jeopardyOyunuAc() {
         isimInput.disabled = false;
     }
 
+    // Sınıf butonlarının aktiflik durumunu sıfırla ve 1. sınıfı seçili yap
+    let grid = document.getElementById('jpSinifGrid');
+    if(grid) {
+        grid.querySelectorAll('.sinif-btn').forEach((b, idx) => {
+            b.classList.toggle('active', idx === 0);
+        });
+    }
+
+    jpAktifSinif = 1;
     jpSinifGuncelle(1);
     jeopardyMuzikBaslat();
 }
@@ -4200,8 +4209,10 @@ function jeopardyOyunuKapat() {
 function jpSinifSec(sinif, btnElement) {
     jpAktifSinif = sinif;
     let grid = document.getElementById('jpSinifGrid');
-    grid.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
-    btnElement.classList.add('active');
+    if(grid) {
+        grid.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
+    }
+    if(btnElement) btnElement.classList.add('active');
     jpSinifGuncelle(sinif);
 }
 
