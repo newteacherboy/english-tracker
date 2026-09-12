@@ -1506,6 +1506,18 @@
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
                  masterKelimeHavuzu = [];
+
+                // --- POMODORO ÇALIŞMA SAYACI DEĞİŞKENLERİ ---
+        let pomodoroOdakDakika = 25;
+        let pomodoroMolaDakika = 5;
+        let pomodoroYon = 'geri';
+        let pomodoroKalanSaniye = pomodoroOdakDakika * 60;
+        let pomodoroGecenSaniye = 0;
+        let pomodoroCalisiyorMu = false;
+        let pomodoroInterval = null;
+        let pomodoroMod = 'odak';
+        let pomodoroTurSayisi = 1;
+        let pomodoroToplamTur = 4;
         
 
         // --- RUBRİK PUAN BUTONLARI (SLIDER YERİNE) ---
@@ -1617,7 +1629,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 arkaPlanVeriYenilemeBaslat();
             }
 
-            uniteSecimleriniOlustur(2, 8);
+           
             ogretmenSelectDoldur();
             rubricGridleriOlustur();
             ogretmenMenuOkunmamisGuncelle();
