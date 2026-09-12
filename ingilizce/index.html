@@ -2106,7 +2106,11 @@ let user = hedefListe.find(u => u && String(u.ogrenci || u.isim || u.ad || "").t
             let sel = document.getElementById('rubricOgrenciSelect');
             if(!sel) return;
             sel.innerHTML = '<option value="">-- Öğrenci Seçin --</option>';
-            globalDataCache.forEach(u => {
+           const veriListesi = Array.isArray(window.globalDataCache) 
+    ? window.globalDataCache 
+    : (window.globalDataCache.ogrenciler || window.globalDataCache.kullanicilar || Object.values(window.globalDataCache).find(Array.isArray) || []);
+
+veriListesi.forEach(u => {
                 let opt = document.createElement('option');
                 opt.value = u.ogrenci;
                 opt.innerText = u.ogrenci;
