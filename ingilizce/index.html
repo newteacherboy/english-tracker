@@ -4225,7 +4225,9 @@ function jpOyunKapat() {
         modal.style.display = 'none';
         modal.style.setProperty('display', 'none', 'important');
     }
-    jeopardyMuzikDurdur();
+    if (typeof jeopardyMuzikDurdur === 'function') {
+        jeopardyMuzikDurdur();
+    }
     if (jpTimerInterval) clearInterval(jpTimerInterval);
 }
 
@@ -4453,12 +4455,15 @@ function jpCevapVer(secilenIndex) {
 
 async function jeopardyOyunuBitir() {
     if (jpTimerInterval) clearInterval(jpTimerInterval);
-    jeopardyMuzikDurdur();
+    if (typeof jeopardyMuzikDurdur === 'function') {
+        jeopardyMuzikDurdur();
+    }
 
+    document.getElementById('jpSoruEkrani').style.display = 'none';
     document.getElementById('jpBalonEkrani').style.display = 'none';
     document.getElementById('jpBitisEkrani').style.display = 'block';
 
-    let isim = document.getElementById('jpIsimInput').value.trim();
+    let isim = document.getElementById('jpIsimInput').value.trim() || "Misafir";
     let sinifStr = jpAktifSinif + ". Sınıf";
     let uniteStr = jpSecilenUniteler.join(",") + ". Ünite";
     let tarihStr = new Date().toISOString().split('T')[0];
@@ -4472,6 +4477,7 @@ async function jeopardyOyunuBitir() {
     let tabloKonum = document.getElementById('jpGecmisSkorlarListesi');
     tabloKonum.innerHTML = "<div>Liderlik tablosu güncelleniyor...</div>";
 
+    // Google Sheets'e POST isteği ile Jeopardy_Liderlik sekmesine kayıt
     let kayitPayload = {
         islem: "jeopardyLiderlikKaydet",
         tarih: tarihStr,
@@ -4494,6 +4500,7 @@ async function jeopardyOyunuBitir() {
         console.error("Jeopardy liderlik kaydı gönderilemedi:", e);
     }
 
+    // Liderlik tablosunu çek ve ekrana bas
     try {
         let liderlikUrl = `${apiURL}?islem=jeopardyLiderlikTumunuGetir`;
         let res = await fetch(liderlikUrl);
