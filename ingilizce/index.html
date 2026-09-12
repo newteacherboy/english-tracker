@@ -4063,14 +4063,13 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             let filt = masterKelimeHavuzu.filter(i => i.sinif === bulmacaSecilenSinif && bulmacaSecilenUniteler.includes(i.unite));
             if(filt.length === 0) { alert("Seçilen sınıf ve ünitelerde kelime bulunamadı!"); return; }
 
-            let hedefSayi = Math.min(12, Math.max(10, filt.length >= 10 ? 10 : filt.length));
-            let secilenKelimeler = [...filt].sort(() => Math.random() - 0.5).slice(0, Math.min(12, filt.length));
+                       let secilenKelimeler = [...filt].sort(() => Math.random() - 0.5).slice(0, Math.min(7, filt.length));
             secilenKelimeler = secilenKelimeler.filter(k => k.en.replace(/[^A-Za-z]/g, '').length >= 3);
 
             if (secilenKelimeler.length < 3) { alert("Bu sınıf/ünitede yeterli uygun kelime yok (en az 3 harfli kelimeler gerekli)."); return; }
 
             let enUzunKelime = Math.max(...secilenKelimeler.map(k => k.en.length));
-            bulmacaBoyut = Math.max(10, enUzunKelime + 2);
+                        bulmacaBoyut = Math.max(8, enUzunKelime + 1);
 
             let yonler = bulmacaYonleriGetir(bulmacaSecilenSinif);
             let sonuc = bulmacaIzgaraOlustur(secilenKelimeler, bulmacaBoyut, yonler);
@@ -4288,13 +4287,18 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             bulmacaBaslangicHucre = null;
         }
 
-        function bulmacaKelimeListesiniCiz() {
+               function bulmacaKelimeListesiniCiz() {
             let alan = document.getElementById('bulmacaKelimeListesiAlani');
             alan.innerHTML = "";
-            bulmacaYerlesenKelimeler.forEach(k => {
+            let bulunanlar = bulmacaYerlesenKelimeler.filter(k => k.bulundu);
+            if (bulunanlar.length === 0) {
+                alan.innerHTML = `<span style="font-size:10.5px; color:#94a3b8;">Henüz kelime bulunmadı...</span>`;
+                return;
+            }
+            bulunanlar.forEach(k => {
                 let etiket = document.createElement('span');
-                etiket.className = 'bulmaca-kelime-etiket' + (k.bulundu ? ' bulundu' : '');
-                etiket.innerText = k.bulundu ? `${k.en} (${k.tr})` : `${k.en} (${k.tr})`;
+                etiket.className = 'bulmaca-kelime-etiket bulundu';
+                etiket.innerText = `${k.en} — ${k.tr}`;
                 alan.appendChild(etiket);
             });
         }
@@ -4697,8 +4701,8 @@ localStorage.setItem("toplamSaniye", toplamSaniye);
                     } else {
                         console.warn("Arka plan yenileme: kullanıcı bulunamadı ->", aktifOgrenciAdi);
                     }
-                } catch (err) {
-                    console.error("Arka plan veri yenileme hatası:", err);
+                               } catch (err) {
+                    console.warn("Arka plan veri yenileme geçici olarak başarısız oldu.");
                 }
             }, 60000);
         }
@@ -5306,8 +5310,8 @@ function veriArayuzeIsle(user) {
     document.getElementById('valPerformansEmoji').innerText = performansEmojisiGetir(genelPuan);
 
         if (user.kelimeHavuzu) masterKelimeHavuzu = user.kelimeHavuzu;
-        if (user.boslukLiderlik) { boslukGlobalLiderlik = user.boslukLiderlik; boslukLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
-        if (user.bulmacaLiderlik) { bulmacaGlobalLiderlik = user.bulmacaLiderlik; bulmacaLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+               if (user.liderlik) { globalLiderlikCache = user.liderlik; liderlikTablosuGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
+        if (user.jeopLiderlik) { jeopGlobalLiderlik = user.jeopLiderlik; jeopLiderlikGuncelle({isim:"", dogru:0, puan:0, sure:"", suresaniye:9999}); }
     kitapTakibiniIsle(user.kitapBilgi || {});
     dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
     dersTakviminiIsle(user.dersler || []);
