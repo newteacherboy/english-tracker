@@ -1170,7 +1170,7 @@
 <div class="activity-banner" style="background: linear-gradient(135deg, #fef2f2 0%, #ffe4e6 100%); border-color: #fecdd3; margin-top: 15px;">
     <h3 style="color: #9f1239;">🎈 Jeopardy Balonları Kelime Yarışması</h3>
     <p style="color: #be123c;">Puan değerindeki balonları patlat, 4 şıklı soruları çöz, liderlik tablosunda yerini al!</p>
-    <button class="btn-oyun-ac" onclick="jeopardyOyunuAc()" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);">🚀 Jeopardy Oyununu Başlat</button>
+   <button class="btn-oyun-ac" onclick="jpOyunuAc()" style="...">🚀 Jeopardy Oyununu Başlat</button>
 </div>
             
             
@@ -1344,9 +1344,9 @@
         <div class="game-subtitle">Google Sheets Kelimeler Havuzundan Sorulur! Sınıf arttıkça soru sayısı artar!</div>
 
         <!-- JEOPARDY BALONLARI OYUN MODALI -->
-<div class="game-modal-overlay" id="jeopardyModalOverlay">
+<div class="game-modal-overlay" id="jpOyunOverlay">
     <div class="game-modal-content" style="max-width: 480px; background: #fffdf9;">
-        <button class="game-close-btn" onclick="jeopardyOyunuKapat()">✕</button>
+        <button class="game-close-btn" onclick="jpOyunuKapat()">✕</button>
         
         <!-- ÜST MÜZİK VE BAŞLIK BARI -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #ffe4e6; padding-bottom: 6px;">
@@ -1445,7 +1445,7 @@
                 </div>
             </div>
 
-            <button class="btn-giris" onclick="jeopardyOyunuAc()" style="background: #9f1239; font-size: 12px; font-weight: 700; padding: 8px;">🔄 Tekrar Oyna</button>
+            <button class="btn-giris" onclick="jpOyunuAc()" style="background: #9f1239; font-size: 12px; font-weight: 700; padding: 8px;">🔄 Tekrar Oyna</button>
         </div>
 
     </div>
@@ -4171,8 +4171,8 @@ let jpTimerInterval = null;
 let jpMuzikAcik = true;
 let jpAudioElement = null;
 
-function jeopardyOyunuAc() {
-    document.getElementById('jeopardyModalOverlay').style.display = 'flex';
+function jpOyunuAc() {
+    document.getElementById('jpOyunOverlay').style.display = 'flex';
     document.getElementById('jpGirisEkrani').style.display = 'block';
     document.getElementById('jpBalonEkrani').style.display = 'none';
     document.getElementById('jpSoruEkrani').style.display = 'none';
@@ -4187,7 +4187,6 @@ function jeopardyOyunuAc() {
         isimInput.disabled = false;
     }
 
-    // Sınıf butonlarının aktiflik durumunu sıfırla ve 1. sınıfı seçili yap
     let grid = document.getElementById('jpSinifGrid');
     if(grid) {
         grid.querySelectorAll('.sinif-btn').forEach((b, idx) => {
@@ -4200,8 +4199,8 @@ function jeopardyOyunuAc() {
     jeopardyMuzikBaslat();
 }
 
-function jeopardyOyunuKapat() {
-    document.getElementById('jeopardyModalOverlay').style.display = 'none';
+function jpOyunuKapat() {
+    document.getElementById('jpOyunOverlay').style.display = 'none';
     jeopardyMuzikDurdur();
     if (jpTimerInterval) clearInterval(jpTimerInterval);
 }
