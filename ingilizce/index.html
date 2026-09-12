@@ -1809,7 +1809,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbwLmcwFe6IMu4rvn6d0gb5US9Bo5EK72N-YmDEWxQT6ZeyJ0EyfPIK5VLaA_xj820qF3g/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbymyfOZH1LBAd8eFUYKTOIK9CiV1HVl-Y1StSN5d-cSglti99qSr2E-sTmaQw_ndeNGZA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -3059,7 +3059,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }
         }
 
-             async function oyunuBitir() {
+             function oyunuBitir() {
             if(oyunTimerInterval) clearInterval(oyunTimerInterval);
             let muzik = document.getElementById('oyunMuzigi');
             if(muzik) { muzik.pause(); muzik.currentTime = 0; }
@@ -3075,19 +3075,14 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             document.getElementById('sonucPuan').innerText = puan; 
             document.getElementById('sonucSure').innerText = sureStr;
             
+            // Parametrelerin eksiksiz gittiğinden emin oluyoruz
             let kaydetUrl = `${apiURL}?islem=kelimeKaydet&isim=${encodeURIComponent(isim)}&sinif=${secilenSinif}&unite=${secilenUniteler.join(",")}&dogru=${oyunDogru}&yanlis=${oyunYanlis}&sure=${encodeURIComponent(sureStr)}&suresaniye=${oyunSaniyeSayac}&puan=${puan}`;
             
-            try {
-                let res = await fetch(kaydetUrl);
-                let data = await res.json();
-                
-                // Eğer sunucudan güncel liderlik listesi döndüyse anında ekrana yansıt
-                if (data && data.liderlik) {
-                    globalLiderlikCache = data.liderlik;
-                }
-            } catch (err) {
-                console.error("Kayıt arka planda yapıldı veya hata oluştu:", err);
-            }
+            // İsteği gönderip sonucu konsola yazdıralım ki takip edebilelim
+            fetch(kaydetUrl)
+                .then(res => res.text())
+                .then(text => console.log("Sunucu kayıt yanıtı:", text))
+                .catch(err => console.error("Kayıt ağ hatası:", err));
 
             liderlikTablosuGuncelle({isim, dogru: oyunDogru, puan, sure: sureStr, suresaniye: oyunSaniyeSayac});
         }
