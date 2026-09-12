@@ -3108,18 +3108,29 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
 
-        function sekmeDegistir(tabName, btnElement) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
-            btnElement.classList.add('active');
+       function sekmeDegistir(tabName, btnElement) {
+    // Tüm sekme içeriklerini ve butonları güvenli bir şekilde temizle
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    // Hedef sekme varsa aktif yap
+    let hedefTab = document.getElementById('tab-' + tabName);
+    if (hedefTab) {
+        hedefTab.classList.add('active');
+    }
 
-            // Farklı bir sekmeye geçilince açık olan tüm oyun müziklerini durdur
-                                                [].forEach(function(id) {
-                let m = document.getElementById(id);
-                if (m) { m.pause(); m.currentTime = 0; }
-            });
-        }
+    // Tıklanan buton varsa aktif yap
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+
+    // Farklı bir sekmeye geçilince aktif oyun müziklerini durdur
+    let muzikIdleri = ['jeopardyMuzik', 'kelimeMuzik', 'boslukMuzik']; // Varsa diğer müzik ID'leri
+    muzikIdleri.forEach(function(id) {
+        let m = document.getElementById(id);
+        if (m) { m.pause(); m.currentTime = 0; }
+    });
+}
 
         function performansEmojisiGetir(puan) {
             if (puan >= 95) return "🏆 Harika!";
@@ -5050,6 +5061,38 @@ async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
         });
     } catch (err) {
         tabloKonum.innerHTML = "<div>Liderlik tablosu yüklenirken hata oluştu.</div>";
+    }
+}
+
+        // Kelime Kartları Yolculuğu Açılış Fonksiyonu
+function yolculuguAc() {
+    if (typeof kartlarModalAc === 'function') {
+        kartlarModalAc();
+    } else {
+        let modal = document.getElementById('yolculukOyunOverlay') || document.getElementById('kelimeKartlariOverlay');
+        if (modal) {
+            document.body.appendChild(modal);
+            modal.style.setProperty('display', 'flex', 'important');
+            modal.style.setProperty('z-index', '9999999', 'important');
+        } else {
+            console.warn("Kelime Kartları Yolculuğu modal elementi bulunamadı.");
+        }
+    }
+}
+
+// Akıcı Okuma ve Hız Ölçer Stüdyosu Açılış Fonksiyonu
+function okumaStudyosunuAc() {
+    let modal = document.getElementById('okumaOyunOverlay') || document.getElementById('okumaStudyosuOverlay');
+    if (modal) {
+        document.body.appendChild(modal);
+        modal.style.setProperty('display', 'flex', 'important');
+        modal.style.setProperty('z-index', '9999999', 'important');
+    } else {
+        if (typeof okumaPaneliAc === 'function') {
+            okumaPaneliAc();
+        } else {
+            console.warn("Okuma stüdyosu modal elementi bulunamadı.");
+        }
     }
 }
         
