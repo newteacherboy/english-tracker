@@ -1698,7 +1698,7 @@
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbyS9Ff8-Gx0VMpZPdIpYwcg59Dn2GckK8p7tgpA6F3chghfXto6z8zkLz5FLi4LLB1Qxg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzV3C0Wc8d79Hiu2qistHM3q7Ks-GnC5gk3q52KhH-DuG-4FmKtLzRuY0ru-mk9-Cfw1g/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -4158,26 +4158,34 @@ const oyunModulu = {
     },
 
     sunucuyaKaydet(actionTip) {
-        const payload = {
-            action: actionTip,
-            isim: window.globalDataCache?.aktifOgrenci || "Mert Akkayaoğlu",
-            sinif: this.secilenSinif,
-            unite: this.secilenUnite,
-            dogru: this.dogruSayisi,
-            yanlis: this.yanlisSayisi,
-            sure: "01:00",
-            suresaniye: this.sureSaniye,
-            puan: this.skor
-        };
+    const payload = {
+        action: actionTip,
+        isim: window.globalDataCache?.aktifOgrenci || "Mert Akkayaoğlu",
+        sinif: this.secilenSinif,
+        unite: this.secilenUnite,
+        dogru: this.dogruSayisi,
+        yanlis: this.yanlisSayisi,
+        sure: "01:00",
+        suresaniye: this.sureSaniye,
+        puan: this.skor
+    };
 
-        if (typeof apiURL !== 'undefined') {
-            fetch(apiURL, { method: 'POST', body: JSON.stringify(payload) })
-                .then(res => res.json())
-                .then(data => console.log("Kayıt başarılı:", data))
-                .catch(err => console.error("Kayıt hatası:", err));
-        }
+    const hedefURL = window.apiURL || (typeof apiURL !== 'undefined' ? apiURL : '');
+    if (hedefURL) {
+        fetch(hedefURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            console.log("Kayıt isteği gönderildi.");
+        }).catch(err => {
+            console.error("Kayıt hatası:", err);
+        });
     }
-};
+}
         
     </script>
 </body>
