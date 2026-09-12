@@ -4164,21 +4164,39 @@ let jpMuzikAcik = true;
 let jpAudioElement = null;
 
 function jpOyunAc() {
+    console.log("jpOyunAc tetiklendi!"); // Konsolda bu yazıyı göreceğiz
+    
     let modal = document.getElementById('jpOyunOverlay');
-    if (modal) modal.style.display = 'flex';
+    if (!modal) {
+        alert("Hata: 'jpOyunOverlay' ID'sine sahip modal HTML içinde bulunamadı!");
+        return;
+    }
 
-    document.getElementById('jpGirisEkrani').style.display = 'block';
-    document.getElementById('jpBalonEkrani').style.display = 'none';
-    document.getElementById('jpSoruEkrani').style.display = 'none';
-    document.getElementById('jpBitisEkrani').style.display = 'none';
+    // Pencereyi zorla görünür yap
+    modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('z-index', '999999', 'important');
+
+    let giris = document.getElementById('jpGirisEkrani');
+    if (giris) giris.style.display = 'block';
+
+    let balon = document.getElementById('jpBalonEkrani');
+    if (balon) balon.style.display = 'none';
+
+    let soru = document.getElementById('jpSoruEkrani');
+    if (soru) soru.style.display = 'none';
+
+    let bitis = document.getElementById('jpBitisEkrani');
+    if (bitis) bitis.style.display = 'none';
 
     let isimInput = document.getElementById('jpIsimInput');
-    if (aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
-        isimInput.value = aktifOgrenciAdi;
-        isimInput.disabled = true;
-    } else {
-        isimInput.value = "";
-        isimInput.disabled = false;
+    if (isimInput) {
+        if (window.aktifOgrenciAdi && window.aktifOgrenciAdi.toLowerCase() !== "teacher") {
+            isimInput.value = window.aktifOgrenciAdi;
+            isimInput.disabled = true;
+        } else {
+            isimInput.value = "";
+            isimInput.disabled = false;
+        }
     }
 
     let grid = document.getElementById('jpSinifGrid');
@@ -4188,9 +4206,14 @@ function jpOyunAc() {
         });
     }
 
-    jpAktifSinif = 1;
-    jpSinifGuncelle(1);
-    jeopardyMuzikBaslat();
+    window.jpAktifSinif = 1;
+    if (typeof jpSinifGuncelle === 'function') {
+        jpSinifGuncelle(1);
+    }
+    
+    if (typeof jeopardyMuzikBaslat === 'function') {
+        jeopardyMuzikBaslat();
+    }
 }
 
 function jpOyunKapat() {
