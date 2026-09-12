@@ -4154,7 +4154,6 @@ let jpAktifSinif = 1;
 let jpSecilenUniteler = [];
 let jpBalonlarListesi = [];
 let jpAktifSoru = null;
-let jpSecilenSikIndex = null;
 let jpDogruSayisi = 0;
 let jpYanlisSayisi = 0;
 let jpToplamPuan = 0;
@@ -4164,8 +4163,10 @@ let jpTimerInterval = null;
 let jpMuzikAcik = true;
 let jpAudioElement = null;
 
-function jpOyunuAc() {
-    document.getElementById('jpOyunOverlay').style.display = 'flex';
+function jpOyunAc() {
+    let modal = document.getElementById('jpOyunOverlay');
+    if (modal) modal.style.display = 'flex';
+
     document.getElementById('jpGirisEkrani').style.display = 'block';
     document.getElementById('jpBalonEkrani').style.display = 'none';
     document.getElementById('jpSoruEkrani').style.display = 'none';
@@ -4181,7 +4182,7 @@ function jpOyunuAc() {
     }
 
     let grid = document.getElementById('jpSinifGrid');
-    if(grid) {
+    if (grid) {
         grid.querySelectorAll('.sinif-btn').forEach((b, idx) => {
             b.classList.toggle('active', idx === 0);
         });
@@ -4192,8 +4193,9 @@ function jpOyunuAc() {
     jeopardyMuzikBaslat();
 }
 
-function jpOyunuKapat() {
-    document.getElementById('jpOyunOverlay').style.display = 'none';
+function jpOyunKapat() {
+    let modal = document.getElementById('jpOyunOverlay');
+    if (modal) modal.style.display = 'none';
     jeopardyMuzikDurdur();
     if (jpTimerInterval) clearInterval(jpTimerInterval);
 }
@@ -4201,10 +4203,10 @@ function jpOyunuKapat() {
 function jpSinifSec(sinif, btnElement) {
     jpAktifSinif = sinif;
     let grid = document.getElementById('jpSinifGrid');
-    if(grid) {
+    if (grid) {
         grid.querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
     }
-    if(btnElement) btnElement.classList.add('active');
+    if (btnElement) btnElement.classList.add('active');
     jpSinifGuncelle(sinif);
 }
 
@@ -4284,7 +4286,6 @@ function jeopardyOyunuBaslat() {
         return;
     }
 
-    // Sınıf seviyesine göre soru sayısı (10'dan başlayıp +5 artan yapı)
     let hedefSoruSayisi = 10 + (Number(jpAktifSinif) - 1) * 5;
     let karisikHavuz = [...filtrelenmis].sort(() => Math.random() - 0.5);
     jpBalonlarListesi = karisikHavuz.slice(0, Math.min(hedefSoruSayisi, karisikHavuz.length));
@@ -4316,7 +4317,6 @@ function jpBalonlariCiz() {
         return;
     }
 
-    // Her balona 10'dan başlayan puanlar verelim (10, 20, 30...)
     jpBalonlarListesi.forEach((kelimeObj, index) => {
         let puanDegeri = (index + 1) * 10;
         let balonBtn = document.createElement('button');
@@ -4330,7 +4330,7 @@ function jpBalonlariCiz() {
 }
 
 function jpBalonSecildi(index, puanDegeri) {
-    let kelimeObj = jpBalonlarListesi.splice(index, 1)[0]; // Seçilen balonu listeden çıkar
+    let kelimeObj = jpBalonlarListesi.splice(index, 1)[0];
     jpAktifSoru = { ...kelimeObj, puanDegeri: puanDegeri };
 
     document.getElementById('jpBalonEkrani').style.display = 'none';
@@ -4339,7 +4339,6 @@ function jpBalonSecildi(index, puanDegeri) {
     document.getElementById('jpSoruPuanBadge').innerText = `Puan Değeri: ${puanDegeri}`;
     document.getElementById('jpKalanBalonInfo').innerText = `Kalan Balon: ${jpBalonlarListesi.length}`;
 
-    // İngilizce - Türkçe yön seçimi
     let ingilizceMi = Math.random() > 0.5;
     if (ingilizceMi) {
         document.getElementById('jpSoruYonEtiket').innerText = "Bu kelimenin Türkçe anlamı nedir?";
@@ -4351,7 +4350,6 @@ function jpBalonSecildi(index, puanDegeri) {
         jpAktifSoru._dogruCevap = jpAktifSoru.en;
     }
 
-    // 4 Adet Şık Hazırlama (1 Doğru, 3 Yanlış)
     let havuz = window.masterKelimeHavuzu || [];
     let yanlisAdaylar = havuz.filter(k => (ingilizceMi ? k.tr !== jpAktifSoru.tr : k.en !== jpAktifSoru.en));
     let karisikYanlislar = [...yanlisAdaylar].sort(() => Math.random() - 0.5).slice(0, 3);
@@ -4361,12 +4359,10 @@ function jpBalonSecildi(index, puanDegeri) {
         secenekler.push(ingilizceMi ? y.tr : y.en);
     });
 
-    // Eğer havuzdan yeterli yanlış şık gelmezse yedek ekle
     while(secenekler.length < 4) {
         secenekler.push("Alternatif Şık");
     }
 
-    // Şıkkarı karıştır
     secenekler.sort(() => Math.random() - 0.5);
     jpAktifSoru._secenekler = secenekler;
     jpAktifSoru._dogruIndex = secenekler.indexOf(jpAktifSoru._dogruCevap);
@@ -4433,7 +4429,6 @@ async function jeopardyOyunuBitir() {
     let tabloKonum = document.getElementById('jpGecmisSkorlarListesi');
     tabloKonum.innerHTML = "<div>Liderlik tablosu güncelleniyor...</div>";
 
-    // 1. Google Sheets'e POST ile Kayıt Gönderimi (Jeopardy_Liderlik sekmesine)
     let kayitPayload = {
         islem: "jeopardyLiderlikKaydet",
         tarih: tarihStr,
@@ -4456,7 +4451,6 @@ async function jeopardyOyunuBitir() {
         console.error("Jeopardy liderlik kaydı gönderilemedi:", e);
     }
 
-    // 2. Jeopardy Liderlik Tablosunu Çek ve Listele
     try {
         let liderlikUrl = `${apiURL}?islem=jeopardyLiderlikTumunuGetir`;
         let res = await fetch(liderlikUrl);
