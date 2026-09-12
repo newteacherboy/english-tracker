@@ -4164,13 +4164,32 @@ let jpMuzikAcik = true;
 let jpAudioElement = null;
 
 function jpOyunAc() {
+    console.log("jpOyunAc tetiklendi");
+    
     let modal = document.getElementById('jpOyunOverlay');
-    if (modal) modal.style.setProperty('display', 'flex', 'important');
+    if (!modal) {
+        alert("Hata: 'jpOyunOverlay' ID'sine sahip modal bulunamadı!");
+        return;
+    }
 
-    document.getElementById('jpGirisEkrani').style.display = 'block';
-    document.getElementById('jpBalonEkrani').style.display = 'none';
-    document.getElementById('jpSoruEkrani').style.display = 'none';
-    document.getElementById('jpBitisEkrani').style.display = 'none';
+    // Modalı her zaman body'nin en altına taşıyoruz ki hiçbir şey gizleyemesin
+    document.body.appendChild(modal);
+
+    // Zorla görünür yap
+    modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('z-index', '9999999', 'important');
+
+    let giris = document.getElementById('jpGirisEkrani');
+    if (giris) giris.style.setProperty('display', 'block', 'important');
+
+    let balon = document.getElementById('jpBalonEkrani');
+    if (balon) balon.style.display = 'none';
+
+    let soru = document.getElementById('jpSoruEkrani');
+    if (soru) soru.style.display = 'none';
+
+    let bitis = document.getElementById('jpBitisEkrani');
+    if (bitis) bitis.style.display = 'none';
 
     let isimInput = document.getElementById('jpIsimInput');
     if (isimInput) {
@@ -4190,14 +4209,22 @@ function jpOyunAc() {
         });
     }
 
-    jpAktifSinif = 1;
-    jpSinifGuncelle(1);
-    jeopardyMuzikBaslat();
+    window.jpAktifSinif = 1;
+    if (typeof jpSinifGuncelle === 'function') {
+        jpSinifGuncelle(1);
+    }
+    
+    if (typeof jeopardyMuzikBaslat === 'function') {
+        jeopardyMuzikBaslat();
+    }
 }
 
 function jpOyunKapat() {
     let modal = document.getElementById('jpOyunOverlay');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+        modal.style.display = 'none';
+        modal.style.setProperty('display', 'none', 'important');
+    }
     jeopardyMuzikDurdur();
     if (jpTimerInterval) clearInterval(jpTimerInterval);
 }
