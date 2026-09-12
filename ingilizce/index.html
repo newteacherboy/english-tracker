@@ -4833,12 +4833,20 @@ function boslukBulmacayiCiz() {
 
     const renkler = ["#f97316", "#22c55e", "#ef4444", "#eab308", "#8b5cf6", "#06b6d4", "#ec4899", "#3b82f6"];
 
-    boslukAktifKelimeler.forEach((item, index) => {
-        let ing = (item.ingilizce || item.en || "").toUpperCase();
+    // Sadece içinde boşluk veya özel karakter olmayan düzgün kelimeleri filtreleyelim
+    let temizKelimeler = boslukAktifKelimeler.filter(item => {
+        let en = (item.ingilizce || item.en || "").trim();
+        return en.length >= 3 && !en.includes(" ") && !en.includes("'");
+    });
+
+    if (temizKelimeler.length === 0) temizKelimeler = boslukAktifKelimeler;
+
+    temizKelimeler.forEach((item, index) => {
+        let ing = (item.ingilizce || item.en || "").trim().toUpperCase();
         let turkce = item.turkce || item.tr || "";
         let renk = renkler[index % renkler.length];
 
-        // Kelimenin uzunluğuna göre rastgele 1 veya 2 harfi gizleyelim (boşluk yapalım)
+        // Sadece 1 veya 2 harfi gizle (diğer harfler görünsün)
         let gizliIndexler = [];
         if (ing.length <= 4) {
             gizliIndexler = [Math.floor(Math.random() * ing.length)];
@@ -4852,18 +4860,17 @@ function boslukBulmacayiCiz() {
         }
 
         let satirDiv = document.createElement('div');
-        satirDiv.style.cssText = "display: flex; align-items: center; gap: 6px; background: #f8fafc; padding: 6px; border-radius: 8px; border: 1px solid #e2e8f0;";
-        satirDiv.dataset.kelime = ing;
+        satirDiv.style.cssText = "display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 6px;";
 
         // Sıra rozeti
         let rozet = document.createElement('div');
-        rozet.style.cssText = `background: ${renk}; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0;`;
+        rozet.style.cssText = `background: ${renk}; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0;`;
         rozet.innerText = index + 1;
         satirDiv.appendChild(rozet);
 
-        // Harf kutuları container
+        // Harf kutuları alanı
         let kutularDiv = document.createElement('div');
-        kutularDiv.style.cssText = "display: flex; gap: 3px; align-items: center; flex-wrap: wrap;";
+        kutularDiv.style.cssText = "display: flex; gap: 4px; align-items: center;";
 
         for (let i = 0; i < ing.length; i++) {
             let harf = ing[i];
@@ -4872,15 +4879,13 @@ function boslukBulmacayiCiz() {
             let input = document.createElement('input');
             input.type = "text";
             input.maxLength = 1;
-            input.className = "bosluk-harf-input";
             input.dataset.dogruHarf = harf;
 
             if (isGizli) {
+                // BOŞ KUTU (Öğrencinin dolduracağı yer)
                 input.value = "";
-                input.disabled = false;
-                input.style.cssText = "width: 26px; height: 28px; text-align: center; font-size: 13px; font-weight: 900; text-transform: uppercase; border: 2px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #1e293b; outline: none;";
+                input.style.cssText = "width: 30px; height: 32px; text-align: center; font-size: 14px; font-weight: 900; text-transform: uppercase; border: 2px solid #3b82f6 !important; border-radius: 6px; background: #ffffff !important; color: #1e293b !important; outline: none; pointer-events: auto !important;";
                 
-                // Otomatik sonraki kutuya odaklanma
                 input.oninput = function() {
                     this.value = this.value.toUpperCase();
                     if (this.value && this.nextElementSibling && this.nextElementSibling.tagName === 'INPUT') {
@@ -4888,24 +4893,25 @@ function boslukBulmacayiCiz() {
                     }
                 };
             } else {
+                // DOLU KUTU (İpucu olarak görünen harf)
                 input.value = harf;
                 input.disabled = true;
-                input.style.cssText = "width: 26px; height: 28px; text-align: center; font-size: 13px; font-weight: 900; text-transform: uppercase; border: 1px solid #e2e8f0; border-radius: 6px; background: #f1f5f9; color: #475569;";
+                input.style.cssText = "width: 30px; height: 32px; text-align: center; font-size: 14px; font-weight: 900; text-transform: uppercase; border: 1px solid #cbd5e1 !important; border-radius: 6px; background: #f1f5f9 !important; color: #475569 !important;";
             }
             kutularDiv.appendChild(input);
         }
         satirDiv.appendChild(kutularDiv);
 
-        // Türkçe Karşılığı (İstediğin gibi yanında yazacak)
+        // Türkçe Karşılığı sağ tarafta yazacak
         let trSpan = document.createElement('div');
-        trSpan.style.cssText = "margin-left: auto; font-size: 11px; font-weight: 700; color: #475569; padding-right: 4px; text-align: right;";
+        trSpan.style.cssText = "margin-left: auto; font-size: 12px; font-weight: 800; color: #334155; padding-right: 4px; text-align: right;";
         trSpan.innerText = turkce;
         satirDiv.appendChild(trSpan);
 
         container.appendChild(satirDiv);
     });
 
-    document.getElementById('boslukSayacInfo').innerText = `0 / ${boslukAktifKelimeler.length} tamamlandı`;
+    document.getElementById('boslukSayacInfo').innerText = `0 / ${temizKelimeler.length} tamamlandı`;
 }
 
 function boslukKontrolEt() {
