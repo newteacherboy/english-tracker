@@ -5064,53 +5064,58 @@ async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
     }
 }
 
-       // Kelime Kartları Yolculuğu Açılış Fonksiyonu (Düzeltilmiş)
+       // --- KELİME KARTLARI YOLCULUĞU BAĞLANTISI ---
 function yolculuguAc() {
-    // Sitede mevcut olabilecek olası tüm Kelime Kartı açılış fonksiyonlarını veya modal ID'lerini deniyoruz
-    if (typeof kartlarModalAc === 'function') {
-        kartlarModalAc();
-    } else if (typeof kelimeKartlariAc === 'function') {
-        kelimeKartlariAc();
+    if (typeof seviyeHaritasiAc === 'function') {
+        seviyeHaritasiAc();
     } else {
-        // Doğrudan olası ID'leri arayıp açalım
-        let modal = document.getElementById('yolculukOyunOverlay') || 
-                    document.getElementById('kelimeKartlariOverlay') || 
-                    document.getElementById('kartlarModal') ||
-                    document.getElementById('kelimeKartlariModal');
+        alert("Kelime Kartları Yolculuğu modülü yüklenemedi.");
+    }
+}
+
+// --- AKICI OKUMA STÜDYOSU BAĞLANTISI ---
+function okumaStudyosunuAc() {
+    if (typeof okumaModaliniAc === 'function') {
+        okumaModaliniAc();
+    } else {
+        let modal = document.getElementById('okumaModalOverlay');
         if (modal) {
             document.body.appendChild(modal);
             modal.style.setProperty('display', 'flex', 'important');
             modal.style.setProperty('z-index', '9999999', 'important');
         } else {
-            alert("Kelime Kartları Yolculuğu modülü bu sayfada bulunamadı.");
+            alert("Okuma Stüdyosu modülü bulunamadı.");
         }
     }
 }
 
-// Akıcı Okuma ve Hız Ölçer Stüdyosu Açılış Fonksiyonu (Düzeltilmiş)
-function okumaStudyosunuAc() {
-    if (typeof okumaPaneliAc === 'function') {
-        okumaPaneliAc();
-    } else if (typeof okumaHiziAc === 'function') {
-        okumaHiziAc();
-    } else {
-        let modal = document.getElementById('okumaOyunOverlay') || 
-                    document.getElementById('okumaStudyosuOverlay') || 
-                    document.getElementById('okumaModal') ||
-                    document.getElementById('okumaHiziModal');
-        if (modal) {
-            document.body.appendChild(modal);
-            modal.style.setProperty('display', 'flex', 'important');
-            modal.style.setProperty('z-index', '9999999', 'important');
-        } else {
-            // Eğer modal yoksa okuma sekmesine geçiş yapmayı deneyelim
-            if (typeof sekmeDegistir === 'function') {
-                sekmeDegistir('okuma', document.querySelector('[onclick*="okuma"]'));
-            } else {
-                alert("Okuma Stüdyosu modülü bu sayfada bulunamadı.");
-            }
-        }
+// --- GÜVENLİ SEKME DEĞİŞTİRME (Rozetler ve Diğerleri İçin) ---
+function sekmeDegistir(tabName, btnElement) {
+    // Tüm sekme içeriklerini ve butonları güvenli bir şekilde temizle
+    document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    // Hedef sekme varsa aktif yap ve görünür kıl (Rozetler dahil)
+    let hedefTab = document.getElementById('tab-' + tabName);
+    if (hedefTab) {
+        hedefTab.classList.add('active');
+        hedefTab.style.display = 'block';
     }
+
+    // Tıklanan buton varsa aktif yap
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+
+    // Aktif oyun müziklerini durdur
+    let muzikIdleri = ['jeopardyMuzik', 'kelimeMuzik', 'boslukMuzik'];
+    muzikIdleri.forEach(function(id) {
+        let m = document.getElementById(id);
+        if (m) { m.pause(); m.currentTime = 0; }
+    });
 }
     </script>
 </body>
