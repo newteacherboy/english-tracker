@@ -4172,10 +4172,13 @@ function jpOyunAc() {
         return;
     }
 
-    // CSS kurallarını ezip geçmek için !important kullanıyoruz
+    // Modalı hangi HTML etiketinin içinde olursa olsun çıkarıp doğrudan BODY'nin içine taşıyoruz (Hapis kalmasın diye)
+    document.body.appendChild(modal);
+
+    // Görünürlüğü zorla aç
     modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('z-index', '999999', 'important');
-    console.log("2. Modal açıldı (display: flex ve !important atandı)");
+    modal.style.setProperty('z-index', '9999999', 'important');
+    console.log("2. Modal body'ye taşındı ve flex yapıldı");
 
     let giris = document.getElementById('jpGirisEkrani');
     if (giris) giris.style.setProperty('display', 'block', 'important');
