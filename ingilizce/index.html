@@ -1481,6 +1481,8 @@
                 </div>
             </div>
 
+    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
+    <button class="btn-giris" onclick="boslukYanitlariGosterGizle()" id="boslukIpucuGosterBtn" style="background: #0284c7; font-size: 11.5px; font-weight: 700; padding: 7px;">👁️ Yanlışlarımı ve Doğruları Gör</button>
     <button class="btn-giris" onclick="boslukOyunAc()" style="background: #166534; font-size: 12px; font-weight: 700; padding: 8px;">🔄 Tekrar Oyna</button>
 </div>
 
@@ -5914,6 +5916,41 @@ function sekmeDegistir(tabName, btnElement) {
         if (m) { m.pause(); m.currentTime = 0; }
     });
 }
+
+        // --- BOŞLUK BULMACASI YANLIŞLARI GÖSTERME ÖZELLİĞİ ---
+let boslukYanitlarGorunuyorMu = false;
+
+function boslukYanitlariGosterGizle() {
+    let satirlar = document.querySelectorAll('#boslukSatirlarContainer > div');
+    let btn = document.getElementById('boslukIpucuGosterBtn');
+    boslukYanitlarGorunuyorMu = !boslukYanitlarGorunuyorMu;
+
+    satirlar.forEach(satir => {
+        let inputs = satir.querySelectorAll('input');
+        inputs.forEach(input => {
+            let dogruHarf = input.dataset.dogruHarf;
+            if (boslukYanitlarGorunuyorMu) {
+                if (input.value.trim().toUpperCase() !== dogruHarf) {
+                    input.dataset.eskiDeger = input.value;
+                    input.value = dogruHarf;
+                    input.style.backgroundColor = "#fee2e2";
+                    input.style.color = "#dc2626";
+                }
+            } else {
+                if (input.dataset.eskiDeger !== undefined) {
+                    input.value = input.dataset.eskiDeger;
+                    input.style.backgroundColor = "#ffffff";
+                    input.style.color = "#1e293b";
+                }
+            }
+        });
+    });
+
+    if (btn) {
+        btn.innerText = boslukYanitlarGorunuyorMu ? "🔒 Kendi Cevaplarıma Dön" : "👁️ Yanlışlarımı ve Doğruları Gör";
+    }
+}
+        
     </script>
 </body>
 </html>
