@@ -1762,7 +1762,8 @@ let kyMuzikAcik = true;
 let kyAudioElement = null;
 
 function kelimeYarismasiAc() {
-    document.getElementById('kelimeYarismaOverlay').style.display = 'flex';
+    tumModalleriKapat(); // Önce açık olan tüm pencereleri ve çakışmaları kapat!
+    document.getElementById('kelimeYarismaOverlay').style.setProperty('display', 'flex', 'important');
     document.getElementById('kyGirisEkrani').style.display = 'block';
     document.getElementById('kyOyunEkrani').style.display = 'none';
     document.getElementById('kyBitisEkrani').style.display = 'none';
@@ -2055,13 +2056,19 @@ async function kelimeYarismasiBitir() {
 }
                 // --- POMODORO ÇALIŞMA SAYACI FONKSİYONLARI ---
         function pomodoroAc() {
-            document.getElementById('pomodoroOverlay').style.display = 'flex';
-            if (window.Notification && Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-            pomodoroDurumGuncelle();
-            pomodoroSifirla();
-        }
+    tumModalleriKapat(); // Çakışmaları temizle
+    let overlay = document.getElementById('pomodoroOverlay');
+    if (overlay) {
+        document.body.appendChild(overlay);
+        overlay.style.setProperty('display', 'flex', 'important');
+        overlay.style.setProperty('z-index', '9999999', 'important');
+    }
+    if (window.Notification && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+    if (typeof pomodoroDurumGuncelle === 'function') pomodoroDurumGuncelle();
+    if (typeof pomodoroSifirla === 'function') pomodoroSifirla();
+}
 
         function pomodoroKapat() {
             if (pomodoroInterval) clearInterval(pomodoroInterval);
@@ -5122,24 +5129,11 @@ let jpMuzikAcik = true;
 let jpAudioElement = null;
 
 function jpOyunAc() {
+    tumModalleriKapat(); // Önce çakışmaları temizle!
     let modal = document.getElementById('jpOyunOverlay');
     if (!modal) return;
-
     document.body.appendChild(modal);
     modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('z-index', '9999999', 'important');
-
-    let giris = document.getElementById('jpGirisEkrani');
-    if (giris) giris.style.setProperty('display', 'block', 'important');
-
-    let balon = document.getElementById('jpBalonEkrani');
-    if (balon) balon.style.display = 'none';
-
-    let soru = document.getElementById('jpSoruEkrani');
-    if (soru) soru.style.display = 'none';
-
-    let bitis = document.getElementById('jpBitisEkrani');
-    if (bitis) bitis.style.display = 'none';
 
     // Oturum açıksa ismi yaz ama değiştirmeye izin ver
     let isimInput = document.getElementById('jpIsimInput');
@@ -5504,6 +5498,7 @@ let boslukMuzikAcik = true;
 let boslukAudioElement = null;
 
 function boslukOyunAc() {
+    tumModalleriKapat(); // Çakışmaları temizle
     let modal = document.getElementById('boslukOyunOverlay');
     if (modal) {
         document.body.appendChild(modal);
@@ -5949,6 +5944,33 @@ function boslukYanitlariGosterGizle() {
     if (btn) {
         btn.innerText = boslukYanitlarGorunuyorMu ? "🔒 Kendi Cevaplarıma Dön" : "👁️ Yanlışlarımı ve Doğruları Gör";
     }
+}
+
+        // Tüm modalleri sıfırlayan ve iç içe geçmeleri engelleyen ana temizlik fonksiyonu
+function tumModalleriKapat() {
+    let modalIdleri = [
+        'kelimeYarismaOverlay', 
+        'jpOyunOverlay', 
+        'boslukOyunOverlay', 
+        'okumaModalOverlay', 
+        'seviyeHaritaOverlay', 
+        'kartOyunOverlay', 
+        'pomodoroOverlay',
+        'rubricModal',
+        'sifreModal',
+        'ogretmenMenuModal',
+        'ogretmenSohbetModal',
+        'aiChatModal',
+        'planModal'
+    ];
+    
+    modalIdleri.forEach(id => {
+        let m = document.getElementById(id);
+        if (m) {
+            m.style.display = 'none';
+            m.style.setProperty('display', 'none', 'important');
+        }
+    });
 }
         
     </script>
