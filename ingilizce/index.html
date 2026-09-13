@@ -1722,6 +1722,17 @@
             <div style="margin-bottom: 4px; font-size: 10px; font-weight: 700; color: #334155;">PROMPTER AREA (Click on the LAST word you have read):</div>
             <div id="prompterMetinAlani" style="background: #ffffff; border: 1.5px dashed #86efac; border-radius: 8px; padding: 12px; max-height: 180px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: #1e293b; line-height: 1.6;"></div>
 
+<!-- Seçilen Kelime Anlamı Göstergesi (Süre durdurulunca çalışır) -->
+<div id="kelimeCeviriKutusu" style="display: none; background: #e0f2fe; border: 1px solid #7dd3fc; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #0369a1; text-align: center;">
+    🔍 <span id="secilenKelimeBilgi">Bir kelimeye tıklayın</span>
+</div>
+
+<!-- Metnin Tam Türkçe Çevirisi (Süre durdurulunca / Test bitince görünür) -->
+<div id="metinTurkceCeviriKutusu" style="display: none; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-top: 10px; font-size: 11.5px; color: #334155; line-height: 1.4;">
+    <div style="font-weight: 800; color: #1e293b; margin-bottom: 3px;">📖 Metnin Türkçe Çevirisi:</div>
+    <div id="metinTurkceIcerik">-</div>
+</div>
+            
             <!-- Geçmiş Arşivi Listesi -->
             <div style="border-top: 1px solid #e2e8f0; padding-top: 10px;">
                 <div style="font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 6px;">📊 Past Reading Progress & History</div>
@@ -3429,134 +3440,272 @@ const sinirsizMetinHavuzu = {
             okumaTimer = null;
         }
 
-        function yeniMetinGetir() {
-            if (okumaTimer) { clearInterval(okumaTimer); okumaTimer = null; }
-            okumaSaniye = 0;
-            okunanKelimeSayisi = 0;
-            document.getElementById('okumaKronometre').innerText = "00:00";
-            document.getElementById('okunanKelimeSayac').innerText = "0";
-            document.getElementById('wpmGosterge').innerText = "0";
-            document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
+        // Basit bir İngilizce-Türkçe Akıllı Kelime Sözlüğü (İhtiyaca göre zenginleştirilebilir)
+const kelimeSozlugu = {
+    "my": "benim", "ball": "top", "red": "kırmızı", "shiny": "parlak", "and": "ve", "round": "yuvarlak",
+    "i": "ben", "play": "oynamak", "happily": "mutlulukla", "with": "ile", "friend": "arkadaş", "school": "okul",
+    "yard": "bahçe", "the": "o", "bell": "zil", "rings": "çalmak", "we": "biz", "run": "koşmak", "into": "içine",
+    "classroom": "sınıf", "our": "bizim", "teacher": "öğretmen", "gives": "vermek", "us": "bize", "new": "yeni",
+    "story": "hikaye", "books": "kitaplar", "learning": "öğrenmek", "to": "mak/mek", "read": "okumak", "is": "dır/dir",
+    "wonderful": "harika", "feeling": "duygu", "little": "küçük", "yellow": "sarı", "cat": "kedi", "garden": "bahçe",
+    "loves": "sevmek", "drinking": "içmek", "milk": "süt", "when": "ne zaman", "sun": "güneş", "goes": "gitmek",
+    "down": "aşağı", "curls": "kıvrılmak", "up": "yukarı", "house": "ev", "sleeps": "uyumak", "sweetly": "tatlı tatlı",
+    "pet": "okşamak", "it": "o", "starts": "başlamak", "purring": "mırıldanmak", "immediately": "derhal", "sweetest": "en tatlı",
+    "joy": "neşe", "home": "ev", "woke": "uyanmak", "early": "erken", "morning": "sabah", "prepared": "hazırlamak",
+    "backpack": "sırt çantası", "together": "birlikte", "mom": "anne", "happily": "mutlu bir şekilde", "set": "kurmak/çıkmak",
+    "off": "uzak", "road": "yol", "way": "yol", "saw": "görmek", "colorful": "renkli", "flowers": "çiçekler",
+    "cute": "sevimli", "dogs": "köpekler", "entered": "girmek", "wished": "dilemek", "bright": "parlak", "day": "gün",
+    "huge": "kocaman", "green": "yeşil", "behind": "arkasında", "smelling": "kokan", "roses": "güller", "apple": "elma",
+    "trees": "ağaçlar", "grow": "yetişmek", "every": "her", "evening": "akşam", "skip": "atlamak", "rope": "ip",
+    "sing": "şarkı söylemek", "songs": "şarkılar", "cheerfully": "neşeyle", "wind": "rüzgar", "blowing": "esmek",
+    "very": "çok", "nicely": "güzelce", "today": "bugün", "kites": "uçurtmalar", "gliding": "süzülmek", "blue": "mavi",
+    "sky": "gökyüzü", "tailed": "kuyruklu", "kite": "uçurtma", "made": "yapmak", "own": "kendi", "hands": "eller",
+    "reached": "ulaşmak", "highest": "en yüksek", "points": "noktalar", "dog": "köpek", "pamuk": "pamuk",
+    "greets": "selamlamak", "door": "kapı", "shaking": "sallamak", "head": "baş", "catch": "yakalamak", "makes": "yapmak",
+    "rest": "dinlenmek", "next": "yanında", "bed": "yatak", "opened": "açmak", "colored": "renkli", "pencils": "kalemler",
+    "drew": "çizmek", "picture": "resim", "smoke": "duman", "coming": "gelmek", "out": "dışarı", "chimney": "baca",
+    "children": "çocuklar", "liked": "beğenmek", "rain": "yağmur", "stopped": "durmak", "smell": "koku", "soil": "toprak",
+    "air": "hava", "looked": "bakmak", "outside": "dışarıda", "through": "vasıtasıyla", "window": "pencere",
+    "rainbow": "gökkuşağı", "jumped": "atlamak", "night": "gece", "watched": "izlemek", "shining": "parlayan",
+    "stars": "yıldızlar", "moon": "ay", "seemed": "gibi görünmek", "smile": "gülümsemek", "dreams": "rüyalar",
+    "wrapped": "sarmak", "blanket": "battaniye", "slept": "uyumak", "peacefully": "huzurla", "birds": "kuşlar",
+    "nest": "yuva", "branch": "dal", "walnut": "ceviz", "throw": "atmak", "bread": "ekmek", "crumbs": "kırıntılar",
+    "chirping": "cıvıltı", "weekend": "hafta sonu", "lush": "gıl/gür", "far": "uzak", "city": "şehir", "family": "aile",
+    "walking": "yürümek", "pine": "çam", "noticed": "fark etmek", "squirrels": "sincaplar", "hiding": "saklamak",
+    "nuts": "fındık/ceviz", "took": "almak", "deep": "derin", "breath": "nefes", "fresh": "taze", "nature": "doğa",
+    "peace": "huzur", "happiness": "mutluluk", "tiny": "minik", "seed": "tohum", "hidden": "gizli", "soil": "toprak",
+    "sleep": "uyku", "spring": "ilkbahar", "rains": "yağmurlar", "felt": "hissetmek", "warm": "ılık", "rays": "ışınlar",
+    "slowly": "yavaşça", "stretched": "uzanmak", "upward": "yukarı doğru", "sprouted": "filizlenmek", "leaves": "yapraklar",
+    "plant": "bitki", "earthworms": "solucanlar", "loosened": "gevşetmek", "ground": "zemin", "roots": "kökler",
+    "breathe": "nefes almak", "easily": "kolayca", "drops": "damlalar", "dew": "çiy", "refreshed": "tazelenmek",
+    "petals": "taç yapraklar", "dawn": "şafak", "soon": "yakında", "bees": "arılar", "bright": "parlak", "nectar": "nektar",
+    "realized": "fark etmek", "truly": "gerçekten", "grow": "büyümek", "patience": "sabır", "love": "sevgi", "courage": "cesaret",
+    "grass": "çimen", "villages": "köy", "billions": "milyarlarca", "wishes": "dilekler", "shooting": "kayan", "depths": "derinlikler",
+    "space": "uzay", "secret": "sır", "grandfather": "büyükbaba", "tells": "anlatmak", "old": "eski", "stories": "hikayeler",
+    "constellations": "takımyıldızları", "explorers": "kaşifler", "telescope": "teleskop", "craters": "kraterler",
+    "crickets": "cırcır böcekleri", "quiet": "sessiz", "nighttime": "gece vakti", "lullaby": "ninni", "background": "arka plan",
+    "clears": "temizlemek", "daily": "günlük", "tiredness": "yorgunluk", "gazing": "bakakalmak", "infinite": "sonsuz",
+    "universe": "evren", "reminds": "hatırlatmak", "small": "küçük", "special": "özel", "vast": "geniş", "magnificent": "muhteşem",
+    "creation": "yaratılış", "cows": "inekler", "sheep": "koyunlar", "ducks": "ördekler", "collect": "toplamak",
+    "eggs": "yumurtalar", "coop": "kümes", "running": "koşmak", "amazing": "şaşırtıcı", "energy": "enerji",
+    "friendly": "dost canlısı", "dog": "köpek", "joins": "katılmak", "morning": "sabah", "walks": "yürüyüşler",
+    "wooden": "ahşap", "barn": "ahır", "feed": "beslemek", "fluffy": "tüylü", "white": "beyaz", "afternoon": "öğleden sonra",
+    "help": "yardım etmek", "water": "sulamak", "vegetable": "sebze", "juicy": "sulu", "tomatoes": "domatesler",
+    "cucumbers": "salatalıklar", "country": "köy/kırsal", "teaches": "öğretmek", "value": "değer", "simplicity": "sadelik",
+    "sunset": "gün batımı", "paints": "boyamak", "shades": "tonlar", "orange": "turuncu", "purple": "mor",
+    "vacation": "tatil", "beach": "plaj", "sandcastles": "kumdan kaleler", "listening": "dinlemek", "sound": "ses",
+    "waves": "dalgalar", "shore": "sahil", "relaxes": "rahatlatmak", "person": "kişi", "collected": "toplamak",
+    "seashells": "deniz kabukları", "kept": "saklamak", "souvenirs": "hatıra", "seagulls": "martılar", "flew": "uçmak",
+    "gracefully": "zarifçe", "above": "üzerinde", "turquoise": "turkuaz", "water": "su", "searching": "aramak",
+    "father": "baba", "taught": "öğretmek", "swim": "yüzmek", "safely": "güvenle", "shallow": "sığ", "shorelines": "kıyı şeridi",
+    "eating": "yemek", "cold": "soğuk", "watermelon": "karpuz", "umbrella": "şemsiye", "arrived": "varmak",
+    "walked": "yürümek", "along": "boyunca", "sandy": "kumlu", "coastline": "sahil şeridi", "smooth": "pürüzsüz",
+    "pebbles": "çakıl taşları", "breeze": "eser rüzgar", "carried": "taşımak", "salty": "tuzlu", "scent": "koku",
+    "adventure": "macera", "endless": "sonsuz", "freedom": "özgürlük", "hearts": "kalpler", "thousands": "binlerce",
+    "interesting": "ilginç", "library": "kütüphane", "sat": "oturmak", "quietly": "sessizce", "table": "masa",
+    "turned": "çevirmek", "pages": "sayfalar", "full": "dolu", "librarian": "kütüphaneci", "help": "yardım etmek",
+    "finding": "bulmak", "fascinating": "büyüleyici", "dinosaur": "dinozor", "fossils": "fosiller", "tapped": "vurmak",
+    "softly": "yumuşakça", "tall": "uzun", "glass": "cam", "explored": "keşfetmek", "ancient": "antik", "history": "tarih",
+    "room": "oda", "brings": "getirmek", "deep": "derin", "inner": "iç", "expands": "genişletmek", "imagination": "hayal gücü",
+    "borrowed": "ödünç almak", "finish": "bitirmek", "loyal": "sadık", "silent": "sessiz", "leave": "terk etmek",
+    "alone": "yalnız", "thickly": "yoğun bir şekilde", "drifted": "sürüklenmek", "snowman": "kardan adam",
+    "nose": "burun", "carrot": "havuç", "gave": "vermek", "woolen": "yünlü", "scarf": "atkı", "neighborhood": "mahalle",
+    "kids": "çocuklar", "gathered": "toplanmak", "around": "etrafında", "exciting": "heyecan verici", "snowball": "kartopu",
+    "fight": "kavga/oyun", "filled": "dolu", "laughter": "gülüş", "cheeks": "yanaklar", "turned": "dönüşmek",
+    "rosy": "pembe", "red": "kırmızı", "freezing": "dondurucu", "heart": "kalp", "warm": "sıcak", "joyful": "neşeli",
+    "magical": "sihirli", "white": "beyaz", "landscapes": "manzaralar", "transform": "dönüştürmek", "ordinary": "sıradan",
+    "streets": "sokaklar", "enchanted": "büyülü", "fairy": "peri", "tale": "masal", "kingdoms": "krallıklar",
+    "pure": "saf", "childhood": "çocukluk", "wonder": "merak", "tour": "tur", "park": "park", "new": "yeni",
+    "bicycle": "bisiklet", "hit": "çarpmak", "face": "yüz", "free": "özgür", "bird": "kuş", "learning": "öğrenmek",
+    "balance": "denge", "pedaled": "pedal çevirmek", "smoothly": "düzgünce", "paved": "asfalt/taşlı", "path": "patika",
+    "lined": "sıralanmış", "oak": "meşe", "passing": "geçerken", "playground": "oyun alanı", "waved": "el sallamak",
+    "swings": "salıncaklar", "requires": "gerektirmek", "attention": "dikkat", "steady": "istikrarlı", "coordination": "koordinasyon",
+    "reached": "ulaşmak", "top": "zirve", "hill": "tepe", "view": "manzara", "entire": "bütün", "breathtaking": "nefes kesici",
+    "cycling": "bisiklet sürmek", "healthy": "sağlıklı", "exercise": "egzersiz", "incredible": "inanılmaz",
+    "outdoor": "açık hava", "look": "bakmak", "forward": "ileri", "museum": "müze", "center": "merkez", "imagined": "hayal etmek",
+    "happened": "olmak", "past": "geçmiş", "swords": "kılıçlar", "kings": "krallar", "coins": "paralar", "fascinated": "büyülemek",
+    "knowledgeable": "bilgili", "guide": "rehber", "explained": "açıklamak", "people": "insanlar", "stone": "taş",
+    "pottery": "çömlek", "vessels": "kaplar", "decorated": "sere bezeli", "unique": "eşsiz", "geometric": "geometrik",
+    "patterns": "desenler", "standing": "durmak", "front": "ön", "giant": "dev", "mammoth": "mamut", "skeleton": "iskelet",
+    "realize": "fark etmek", "planet": "gezegeni", "changed": "değişmek", "over": "boyunca", "time": "zaman",
+    "preserving": "korumak", "cultural": "kültürel", "heritage": "miras", "future": "gelecek", "generations": "nesiller",
+    "exploring": "keşfetmek", "artifacts": "eserler", "connects": "bağlamak", "present": "şimdiki", "identity": "kimlik",
+    "deeply": "derinden", "roots": "kökler", "civilization": "medeniyet"
+};
 
-            let sinif = document.getElementById('okumaSinifSelect').value;
-            let liste = sinirsizMetinHavuzu[sinif] || sinirsizMetinHavuzu[1];
-            secilenMetinObjesi = liste[Math.floor(Math.random() * liste.length)];
+let okumaTestiBittiMi = false;
 
-            let alan = document.getElementById('prompterMetinAlani');
-            alan.innerHTML = "";
-            let kelimeler = secilenMetinObjesi.metin.split(" ");
-            
-            kelimeler.forEach((kelime, idx) => {
-                let span = document.createElement('span');
-                span.innerText = kelime;
-                span.dataset.index = idx;
-                span.style.cssText = "cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: all 0.2s; user-select: none;";
+function yeniMetinGetir() {
+    if (okumaTimer) { clearInterval(okumaTimer); okumaTimer = null; }
+    okumaSaniye = 0;
+    okunanKelimeSayisi = 0;
+    okumaTestiBittiMi = false;
+    
+    document.getElementById('okumaKronometre').innerText = "00:00";
+    document.getElementById('okunanKelimeSayac').innerText = "0";
+    document.getElementById('wpmGosterge').innerText = "0";
+    document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
+    
+    // Çeviri kutularını gizle ve sıfırla
+    document.getElementById('kelimeCeviriKutusu').style.display = 'none';
+    document.getElementById('metinTurkceCeviriKutusu').style.display = 'none';
+    document.getElementById('secilenKelimeBilgi').innerText = "Bir kelimeye tıklayın";
+
+    let sinif = document.getElementById('okumaSinifSelect').value;
+    let liste = sinirsizMetinHavuzu[sinif] || sinirsizMetinHavuzu[1];
+    secilenMetinObjesi = liste[Math.floor(Math.random() * liste.length)];
+
+    let alan = document.getElementById('prompterMetinAlani');
+    alan.innerHTML = "";
+    let kelimeler = secilenMetinObjesi.metin.split(" ");
+    
+    kelimeler.forEach((kelime, idx) => {
+        let span = document.createElement('span');
+        span.innerText = kelime;
+        span.dataset.index = idx;
+        span.style.cssText = "cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: all 0.2s; user-select: none;";
+        
+        span.onclick = function() {
+            // DURUM 1: Süre HALA Çalışıyorsa (Test devam ediyor -> Normal kelime seçimi/sayımı)
+            if (okumaTimer && !okumaTestiBittiMi) {
+                let clickedIdx = parseInt(span.dataset.index);
+                let allSpans = alan.querySelectorAll('span');
                 
-                span.onclick = function() {
-                    if (!okumaTimer) return; // Süre başlamadıysa tıklanamaz
-                    
-                    let clickedIdx = parseInt(span.dataset.index);
-                    let allSpans = alan.querySelectorAll('span');
-                    
-                    // Tıklanan kelimeye kadar olanları seç, sonrakileri temizle
-                    allSpans.forEach((s, sIdx) => {
-                        if (sIdx <= clickedIdx) {
-                            s.classList.add('secildi');
-                            s.style.background = "#16a34a";
-                            s.style.color = "#ffffff";
-                        } else {
-                            s.classList.remove('secildi');
-                            s.style.background = "transparent";
-                            s.style.color = "#1e293b";
-                        }
-                    });
-
-                    okunanKelimeSayisi = clickedIdx + 1;
-                    document.getElementById('okunanKelimeSayac').innerText = okunanKelimeSayisi;
-                    wpmHesapla();
-                };
-                alan.appendChild(span);
-            });
-        }
-
-        function okumaKronometreBaslat() {
-            if (okumaTimer) {
-                // Durdur / Sıfırla
-                clearInterval(okumaTimer);
-                okumaTimer = null;
-                document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
-                return;
-            }
-            okumaSaniye = 0;
-            okunanKelimeSayisi = 0;
-            document.getElementById('okunanKelimeSayac').innerText = "0";
-            document.getElementById('wpmGosterge').innerText = "0";
-            document.querySelectorAll('#prompterMetinAlani span').forEach(s => {
-                s.classList.remove('secildi');
-                s.style.background = "transparent";
-                s.style.color = "#1e293b";
-            });
-
-            document.getElementById('okumaBaslatBtn').innerText = "⏸ Pause / Reset";
-            okumaTimer = setInterval(() => {
-                okumaSaniye++;
-                let dk = String(Math.floor(okumaSaniye / 60)).padStart(2, '0');
-                let sn = String(okumaSaniye % 60).padStart(2, '0');
-                document.getElementById('okumaKronometre').innerText = `${dk}:${sn}`;
-                wpmHesapla();
-            }, 1000);
-        }
-
-        function wpmHesapla() {
-            if (okumaSaniye <= 0 || okunanKelimeSayisi <= 0) {
-                document.getElementById('wpmGosterge').innerText = "0";
-                return;
-            }
-            let dakika = okumaSaniye / 60;
-            let wpm = Math.round(okunanKelimeSayisi / dakika);
-            document.getElementById('wpmGosterge').innerText = wpm;
-        }
-
-        async function okumaSonucuKaydet() {
-            if (okunanKelimeSayisi <= 0 || okumaSaniye <= 0) {
-                alert("Lütfen önce süreyi başlatıp okumayı bitirdiğiniz son kelimenin üzerine tıklayın!");
-                return;
-            }
-            if (okumaTimer) { clearInterval(okumaTimer); okumaTimer = null; }
-            document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
-
-            let sinifVal = document.getElementById('okumaSinifSelect').value + ". Sınıf";
-            let wpmVal = parseInt(document.getElementById('wpmGosterge').innerText) || 0;
-            let tarihStr = new Date().toISOString();
-
-            let payload = {
-                islem: "okumaHiziKaydet",
-                ogrenci: aktifOgrenciAdi || "Misafir Ziyaretçi",
-                tarih: tarihStr,
-                sinif: sinifVal,
-                okunanKelime: okunanKelimeSayisi,
-                gecenSure: okumaSaniye,
-                wpm: wpmVal,
-                metinBasligi: secilenMetinObjesi ? secilenMetinObjesi.baslik : "Reading Text"
-            };
-
-            try {
-                let res = await fetch(apiURL, {
-                    method: "POST",
-                    body: JSON.stringify(payload)
+                allSpans.forEach((s, sIdx) => {
+                    if (sIdx <= clickedIdx) {
+                        s.classList.add('secildi');
+                        s.style.background = "#16a34a";
+                        s.style.color = "#ffffff";
+                    } else {
+                        s.classList.remove('secildi');
+                        s.style.background = "transparent";
+                        s.style.color = "#1e293b";
+                    }
                 });
-                let data = await res.json();
-                if (data.status === "success") {
-                    alert("Reading speed result successfully saved! 🎉");
-                    okumaGecmisiniYukle();
-                } else {
-                    alert("Error occurred while saving.");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Connection error occurred.");
+
+                okunanKelimeSayisi = clickedIdx + 1;
+                document.getElementById('okunanKelimeSayac').innerText = okunanKelimeSayisi;
+                wpmHesapla();
+            } 
+            // DURUM 2: Süre DURDURULDU veya TEST BİTTİ (Çeviri Özelliği Aktif!)
+            else {
+                let hamKelime = kelime.replace(/[^a-zA-Z]/g, "").toLowerCase();
+                let anlami = kelimeSozlugu[hamKelime] || "Bu kelimenin sözlük karşılığı henüz eklenmemiş.";
+                
+                document.getElementById('kelimeCeviriKutusu').style.display = 'block';
+                document.getElementById('secilenKelimeBilgiinnerHTML = `<b>${kelime}</b> = <span style="color:#0284c7;">${anlami}</span>`;
             }
+        };
+        alan.appendChild(span);
+    });
+}
+
+function okumaKronometreBaslat() {
+    if (okumaTimer) {
+        // Durdur / Sıfırla (Süre durdurulduğu an çeviri özelliği aktifleşir)
+        clearInterval(okumaTimer);
+        okumaTimer = null;
+        okumaTestiBittiMi = true;
+        document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
+        
+        // Süre durdurulduğunda metnin tam Türkçe çevirisini de altta göster
+        metinTurkceCevirisiniGoster();
+        return;
+    }
+    
+    okumaSaniye = 0;
+    okunanKelimeSayisi = 0;
+    okumaTestiBittiMi = false;
+    
+    document.getElementById('okunanKelimeSayac').innerText = "0";
+    document.getElementById('wpmGosterge').innerText = "0";
+    document.getElementById('kelimeCeviriKutusu').style.display = 'none';
+    document.getElementById('metinTurkceCeviriKutusu').style.display = 'none';
+    
+    document.querySelectorAll('#prompterMetinAlani span').forEach(s => {
+        s.classList.remove('secildi');
+        s.style.background = "transparent";
+        s.style.color = "#1e293b";
+    });
+
+    document.getElementById('okumaBaslatBtn').innerText = "⏸ Pause / Finish";
+    okumaTimer = setInterval(() => {
+        okumaSaniye++;
+        let dk = String(Math.floor(okumaSaniye / 60)).padStart(2, '0');
+        let sn = String(okumaSaniye % 60).padStart(2, '0');
+        document.getElementById('okumaKronometre').innerText = `${dk}:${sn}`;
+        wpmHesapla();
+    }, 1000);
+}
+
+// Test tamamlanıp kaydedildiğinde veya süre durdurulduğunda Türkçe metni gösteren yardımcı fonksiyon
+function metinTurkceCevirisiniGoster() {
+    if (!secilenMetinObjesi) return;
+    
+    // Örnek başlık ve metin bazlı akıllı simüle edilmiş Türkçe çeviri gösterimi
+    let cevirilerSozlugu = {
+        "My Red Ball": "Topum kırmızı, parlak ve yuvarlak. Okul bahçesinde arkadaşım Can ile mutlu bir şekilde oynuyorum. Zil çalar, ve sınıfa koşarız. Öğretmenimiz bize yeni hikaye kitapları verir. Okumayı öğrenmek harika bir duygu.",
+        "The Little Cat": "Bahçedeki küçük sarı kedi süt içmeyi çok sever. Güneş batarken evine kıvrılır ve tatlı tatlı uyur. Onu okşadığımda hemen mırıldanmaya başlar. Evimizin en tatlı neşesidir.",
+        "On the Way to School": "Sabah erkenden uyandım ve sırt çantamı hazırladım. Annemle birlikte mutlu bir şekilde okul yoluna koyulduk. Yolda renkli çiçekler ve sevimli köpeklere gördük. Sınıfımıza girdik ve arkadaşlarımıza parlak bir gün diledik.",
+        "The Beautiful Garden": "Evimizin arkasında kocaman yeşil bir bahçe var. Bahçede güzel kokan güller ve tatlı elma ağaçları yetişiyor. Her akşam orada ip atlıyor ve neşeyle şarkılar söylüyorum.",
+        "Kite Festival": "Bugün rüzgar çok güzel esiyor. Renkli uçurtmalar mavi gökyüzünde süzülüyor. Kendi ellerimle yaptığım kuyruklu uçurtmam en yüksek noktalara ulaştı.",
+        "My Sweet Friend": "Pamuk isimli köpeğim başını sallayarak beni kapıda karşılar. Onunla yakalamaç oynamak beni çok mutlu ediyor. Akşamları yatağımın yanında birlikte dinleniyoruz.",
+        "Drawing Pictures": "Renkli kalemlerimi açtım ve koca bir ev resmi çizdim. Evin bacasından duman tütüyor ve mutlu çocuklar bahçede koşuyor. Öğretmenim resmimi çok beğendi.",
+        "After the Rain": "Yağmur dindi ve havada toprak kokusu var. Penceremizden dışarı baktığımda devasa renkli bir gökkuşağı gördüm. Dışarı koştum ve sevinçle zıpladım.",
+        "Starry Night": "Gece pencereden gökyüzündeki parlayan parlak yıldızları izledim. Ay bana gülümser gibiydi ve tatlı rüyalar diledi. Battaniyeme sarıldım ve huzurla uyudum.",
+        "Bird Nest": "Ceviz ağacımızın dalına iki minik kuş yuva yaptı. Her gün onlara ekmek kırıntıları atıyorum. Her sabah onların cıvıltısıyla mutlu bir şekilde uyanıyorum."
+    };
+
+    let turkceMetin = cevirilerSozlugu[secilenMetinObjesi.baslik] || "Bu metnin tam Türkçe çevirisi yakında sisteme eklenecektir. Kelimelerin üzerine tıklayarak tek tek anlamlarını öğrenebilirsiniz.";
+    
+    document.getElementById('metinTurkceCeviriKutusu').style.display = 'block';
+    document.getElementById('metinTurkceIcerik').innerText = turkceMetin;
+}
+
+async function okumaSonucuKaydet() {
+    if (okunanKelimeSayisi <= 0 || okumaSaniye <= 0) {
+        alert("Lütfen önce süreyi başlatıp okumayı bitirdiğiniz son kelimenin üzerine tıklayın!");
+        return;
+    }
+    if (okumaTimer) { clearInterval(okumaTimer); okumaTimer = null; }
+    okumaTestiBittiMi = true;
+    document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
+    
+    // Kayıt anında da çevirileri görünür kıl
+    metinTurkceCevirisiniGoster();
+
+    let sinifVal = document.getElementById('okumaSinifSelect').value + ". Sınıf";
+    let wpmVal = parseInt(document.getElementById('wpmGosterge').innerText) || 0;
+    let tarihStr = new Date().toISOString();
+
+    let payload = {
+        islem: "okumaHiziKaydet",
+        ogrenci: aktifOgrenciAdi || "Misafir Ziyaretçi",
+        tarih: tarihStr,
+        sinif: sinifVal,
+        okunanKelime: okunanKelimeSayisi,
+        gecenSure: okumaSaniye,
+        wpm: wpmVal,
+        metinBasligi: secilenMetinObjesi ? secilenMetinObjesi.baslik : "Reading Text"
+    };
+
+    try {
+        let res = await fetch(apiURL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+        let data = await res.json();
+        if (data.status === "success") {
+            alert("Reading speed result successfully saved! 🎉");
+            okumaGecmisiniYukle();
+        } else {
+            alert("Error occurred while saving.");
         }
+    } catch (err) {
+        console.error(err);
+        alert("Connection error occurred.");
+    }
+}
 
         async function okumaGecmisiniYukle() {
             let konteyner = document.getElementById('okumaGecmisKonteyner');
