@@ -1481,9 +1481,6 @@
                 </div>
             </div>
 
-            <!-- Bitiş Ekranındaki Butonların Olduğu Kısım -->
-<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
-    <button class="btn-giris" onclick="boslukYanitlariGosterGizle()" id="boslukIpucuGosterBtn" style="background: #0284c7; font-size: 11.5px; font-weight: 700; padding: 7px;">👁️ Yanlışlarımı ve Doğruları Gör</button>
     <button class="btn-giris" onclick="boslukOyunAc()" style="background: #166534; font-size: 12px; font-weight: 700; padding: 8px;">🔄 Tekrar Oyna</button>
 </div>
 
@@ -5790,41 +5787,7 @@ function boslukKontrolEt() {
     }, 500);
 }
 
-        let boslukYanitlarGorunuyorMu = false;
-
-function boslukYanitlariGosterGizle() {
-    let satirlar = document.querySelectorAll('#boslukSatirlarContainer > div');
-    let btn = document.getElementById('boslukIpucuGosterBtn');
-    boslukYanitlarGorunuyorMu = !boslukYanitlarGorunuyorMu;
-
-    satirlar.forEach(satir => {
-        let inputs = satir.querySelectorAll('input');
-        inputs.forEach(input => {
-            let dogruHarf = input.dataset.dogruHarf;
-            if (boslukYanitlarGorunuyorMu) {
-                // Eğer öğrenci yanlış yazdıysa veya boş bıraktıysa doğrusunu göster
-                if (input.value.trim().toUpperCase() !== dogruHarf) {
-                    input.dataset.eskiDeger = input.value; // Kullanıcının yazdığını sakla
-                    input.value = dogruHarf;
-                    input.style.backgroundColor = "#fee2e2"; // Hafif kırmızı/pembe vurgu
-                    input.style.color = "#dc2626";
-                }
-            } else {
-                // Eski haline (öğrencinin yazdığına) geri döndür
-                if (input.dataset.eskiDeger !== undefined) {
-                    input.value = input.dataset.eskiDeger;
-                    input.style.backgroundColor = "#ffffff";
-                    input.style.color = "#1e293b";
-                }
-            }
-        });
-    });
-
-    if (btn) {
-        btn.innerText = boslukYanitlarGorunuyorMu ? "🔒 Kendi Cevaplarıma Dön" : "👁️ Yanlışlarımı ve Doğruları Gör";
-    }
-}
-
+        
 async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
     if (boslukTimerInterval) clearInterval(boslukTimerInterval);
     boslukMuzikDurdur();
