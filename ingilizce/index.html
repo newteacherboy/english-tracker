@@ -1481,7 +1481,8 @@
                 </div>
             </div>
 
-    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
+            <!-- Bitiş Ekranındaki Butonların Olduğu Kısım -->
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
     <button class="btn-giris" onclick="boslukYanitlariGosterGizle()" id="boslukIpucuGosterBtn" style="background: #0284c7; font-size: 11.5px; font-weight: 700; padding: 7px;">👁️ Yanlışlarımı ve Doğruları Gör</button>
     <button class="btn-giris" onclick="boslukOyunAc()" style="background: #166534; font-size: 12px; font-weight: 700; padding: 8px;">🔄 Tekrar Oyna</button>
 </div>
@@ -1762,8 +1763,7 @@ let kyMuzikAcik = true;
 let kyAudioElement = null;
 
 function kelimeYarismasiAc() {
-    tumModalleriKapat(); // Önce açık olan tüm pencereleri ve çakışmaları kapat!
-    document.getElementById('kelimeYarismaOverlay').style.setProperty('display', 'flex', 'important');
+    document.getElementById('kelimeYarismaOverlay').style.display = 'flex';
     document.getElementById('kyGirisEkrani').style.display = 'block';
     document.getElementById('kyOyunEkrani').style.display = 'none';
     document.getElementById('kyBitisEkrani').style.display = 'none';
@@ -2056,19 +2056,13 @@ async function kelimeYarismasiBitir() {
 }
                 // --- POMODORO ÇALIŞMA SAYACI FONKSİYONLARI ---
         function pomodoroAc() {
-    tumModalleriKapat(); // Çakışmaları temizle
-    let overlay = document.getElementById('pomodoroOverlay');
-    if (overlay) {
-        document.body.appendChild(overlay);
-        overlay.style.setProperty('display', 'flex', 'important');
-        overlay.style.setProperty('z-index', '9999999', 'important');
-    }
-    if (window.Notification && Notification.permission === 'default') {
-        Notification.requestPermission();
-    }
-    if (typeof pomodoroDurumGuncelle === 'function') pomodoroDurumGuncelle();
-    if (typeof pomodoroSifirla === 'function') pomodoroSifirla();
-}
+            document.getElementById('pomodoroOverlay').style.display = 'flex';
+            if (window.Notification && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            pomodoroDurumGuncelle();
+            pomodoroSifirla();
+        }
 
         function pomodoroKapat() {
             if (pomodoroInterval) clearInterval(pomodoroInterval);
@@ -5129,11 +5123,24 @@ let jpMuzikAcik = true;
 let jpAudioElement = null;
 
 function jpOyunAc() {
-    tumModalleriKapat(); // Önce çakışmaları temizle!
     let modal = document.getElementById('jpOyunOverlay');
     if (!modal) return;
+
     document.body.appendChild(modal);
     modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('z-index', '9999999', 'important');
+
+    let giris = document.getElementById('jpGirisEkrani');
+    if (giris) giris.style.setProperty('display', 'block', 'important');
+
+    let balon = document.getElementById('jpBalonEkrani');
+    if (balon) balon.style.display = 'none';
+
+    let soru = document.getElementById('jpSoruEkrani');
+    if (soru) soru.style.display = 'none';
+
+    let bitis = document.getElementById('jpBitisEkrani');
+    if (bitis) bitis.style.display = 'none';
 
     // Oturum açıksa ismi yaz ama değiştirmeye izin ver
     let isimInput = document.getElementById('jpIsimInput');
@@ -5498,7 +5505,6 @@ let boslukMuzikAcik = true;
 let boslukAudioElement = null;
 
 function boslukOyunAc() {
-    tumModalleriKapat(); // Çakışmaları temizle
     let modal = document.getElementById('boslukOyunOverlay');
     if (modal) {
         document.body.appendChild(modal);
@@ -5784,7 +5790,41 @@ function boslukKontrolEt() {
     }, 500);
 }
 
-        
+        let boslukYanitlarGorunuyorMu = false;
+
+function boslukYanitlariGosterGizle() {
+    let satirlar = document.querySelectorAll('#boslukSatirlarContainer > div');
+    let btn = document.getElementById('boslukIpucuGosterBtn');
+    boslukYanitlarGorunuyorMu = !boslukYanitlarGorunuyorMu;
+
+    satirlar.forEach(satir => {
+        let inputs = satir.querySelectorAll('input');
+        inputs.forEach(input => {
+            let dogruHarf = input.dataset.dogruHarf;
+            if (boslukYanitlarGorunuyorMu) {
+                // Eğer öğrenci yanlış yazdıysa veya boş bıraktıysa doğrusunu göster
+                if (input.value.trim().toUpperCase() !== dogruHarf) {
+                    input.dataset.eskiDeger = input.value; // Kullanıcının yazdığını sakla
+                    input.value = dogruHarf;
+                    input.style.backgroundColor = "#fee2e2"; // Hafif kırmızı/pembe vurgu
+                    input.style.color = "#dc2626";
+                }
+            } else {
+                // Eski haline (öğrencinin yazdığına) geri döndür
+                if (input.dataset.eskiDeger !== undefined) {
+                    input.value = input.dataset.eskiDeger;
+                    input.style.backgroundColor = "#ffffff";
+                    input.style.color = "#1e293b";
+                }
+            }
+        });
+    });
+
+    if (btn) {
+        btn.innerText = boslukYanitlarGorunuyorMu ? "🔒 Kendi Cevaplarıma Dön" : "👁️ Yanlışlarımı ve Doğruları Gör";
+    }
+}
+
 async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
     if (boslukTimerInterval) clearInterval(boslukTimerInterval);
     boslukMuzikDurdur();
@@ -5911,68 +5951,6 @@ function sekmeDegistir(tabName, btnElement) {
         if (m) { m.pause(); m.currentTime = 0; }
     });
 }
-
-        // --- BOŞLUK BULMACASI YANLIŞLARI GÖSTERME ÖZELLİĞİ ---
-let boslukYanitlarGorunuyorMu = false;
-
-function boslukYanitlariGosterGizle() {
-    let satirlar = document.querySelectorAll('#boslukSatirlarContainer > div');
-    let btn = document.getElementById('boslukIpucuGosterBtn');
-    boslukYanitlarGorunuyorMu = !boslukYanitlarGorunuyorMu;
-
-    satirlar.forEach(satir => {
-        let inputs = satir.querySelectorAll('input');
-        inputs.forEach(input => {
-            let dogruHarf = input.dataset.dogruHarf;
-            if (boslukYanitlarGorunuyorMu) {
-                if (input.value.trim().toUpperCase() !== dogruHarf) {
-                    input.dataset.eskiDeger = input.value;
-                    input.value = dogruHarf;
-                    input.style.backgroundColor = "#fee2e2";
-                    input.style.color = "#dc2626";
-                }
-            } else {
-                if (input.dataset.eskiDeger !== undefined) {
-                    input.value = input.dataset.eskiDeger;
-                    input.style.backgroundColor = "#ffffff";
-                    input.style.color = "#1e293b";
-                }
-            }
-        });
-    });
-
-    if (btn) {
-        btn.innerText = boslukYanitlarGorunuyorMu ? "🔒 Kendi Cevaplarıma Dön" : "👁️ Yanlışlarımı ve Doğruları Gör";
-    }
-}
-
-        // Tüm modalleri sıfırlayan ve iç içe geçmeleri engelleyen ana temizlik fonksiyonu
-function tumModalleriKapat() {
-    let modalIdleri = [
-        'kelimeYarismaOverlay', 
-        'jpOyunOverlay', 
-        'boslukOyunOverlay', 
-        'okumaModalOverlay', 
-        'seviyeHaritaOverlay', 
-        'kartOyunOverlay', 
-        'pomodoroOverlay',
-        'rubricModal',
-        'sifreModal',
-        'ogretmenMenuModal',
-        'ogretmenSohbetModal',
-        'aiChatModal',
-        'planModal'
-    ];
-    
-    modalIdleri.forEach(id => {
-        let m = document.getElementById(id);
-        if (m) {
-            m.style.display = 'none';
-            m.style.setProperty('display', 'none', 'important');
-        }
-    });
-}
-        
     </script>
 </body>
 </html>
