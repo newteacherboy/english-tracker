@@ -3707,35 +3707,6 @@ async function okumaSonucuKaydet() {
     }
 }
 
-        async function okumaGecmisiniYukle() {
-            let konteyner = document.getElementById('okumaGecmisKonteyner');
-            konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">Loading history...</div>`;
-            try {
-                let res = await fetch(`${apiURL}?islem=okumaGecmisGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "Misafir Ziyaretçi")}`);
-                let liste = await res.json();
-                konteyner.innerHTML = "";
-                if (!liste || liste.length === 0) {
-                    konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">No reading tests recorded yet.</div>`;
-                    return;
-                }
-                liste.reverse().forEach(item => {
-                    let tarihFormatted = tarihiDuzelt(item.tarih);
-                    konteyner.innerHTML += `
-                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; font-size: 11px;">
-                            <div style="display: flex; justify-content: space-between; font-weight: 800; color: #1e293b; margin-bottom: 2px;">
-                                <span>📅 ${tarihFormatted} — ${item.metinBasligi} (${item.sinif})</span>
-                                <span style="color: #16a34a;">⚡ ${item.wpm} WPM</span>
-                            </div>
-                            <div style="color: #64748b; font-size: 10px;">📖 Words: ${item.okunanKelime} | ⏱️ Time: ${item.gecenSure} sec</div>
-                        </div>
-                    `;
-                });
-            } catch(err) {
-                console.error(err);
-                konteyner.innerHTML = `<div style="font-size: 10.5px; color: #dc2626; text-align: center;">Error loading history.</div>`;
-            }
-        }
-
 
                async function girisYap(event) {
             event.preventDefault();
