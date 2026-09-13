@@ -3693,6 +3693,20 @@ async function okumaSonucuKaydet() {
     }
 }
 
+        function wpmHesapla() {
+    if (okumaSaniye <= 0 || okunanKelimeSayisi <= 0) {
+        let wpmGosterge = document.getElementById('wpmGosterge');
+        if (wpmGosterge) wpmGosterge.innerText = "0";
+        return;
+    }
+    let dakika = okumaSaniye / 60;
+    let wpm = Math.round(okunanKelimeSayisi / dakika);
+    let wpmGosterge = document.getElementById('wpmGosterge');
+    if (wpmGosterge) {
+        wpmGosterge.innerText = wpm;
+    }
+}
+
         async function okumaGecmisiniYukle() {
             let konteyner = document.getElementById('okumaGecmisKonteyner');
             konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">Loading history...</div>`;
