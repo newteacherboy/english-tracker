@@ -5756,6 +5756,26 @@ function boslukKontrolEt() {
         inputs.forEach(input => {
             let girilen = input.value.trim().toUpperCase();
             let gercek = input.dataset.dogruHarf;
+
+            // Sadece öğrencinin doldurduğu (disabled olmayan) kutuları tek tek doğru/yanlış olarak işaretle
+            if (!input.disabled) {
+                if (girilen === gercek) {
+                    input.style.setProperty('background', '#dcfce7', 'important');
+                    input.style.setProperty('border-color', '#4ade80', 'important');
+                    input.style.setProperty('color', '#166534', 'important');
+                } else {
+                    input.style.setProperty('background', '#fee2e2', 'important');
+                    input.style.setProperty('border-color', '#f87171', 'important');
+                    input.style.setProperty('color', '#7f1d1d', 'important');
+                    // Doğru harfi küçük bir ipucu olarak placeholder'da göster
+                    input.placeholder = gercek;
+                    input.classList.remove('shake-error');
+                    void input.offsetWidth;
+                    input.classList.add('shake-error');
+                }
+                input.disabled = true;
+            }
+
             if (girilen !== gercek) {
                 kelimeDogruMu = false;
             }
@@ -5765,13 +5785,8 @@ function boslukKontrolEt() {
             dogruKelimeSayisi++;
             satir.style.borderColor = "#22c55e";
             satir.style.background = "#f0fdf4";
-            inputs.forEach(inp => { if(!inp.disabled) inp.style.borderColor = "#22c55e"; });
         } else {
             toplamYanlisYapilan++;
-            // Hatalı satırı titret
-            satir.classList.remove('shake-error');
-            void satir.offsetWidth; 
-            satir.classList.add('shake-error');
             satir.style.borderColor = "#dc2626";
         }
     });
@@ -5780,10 +5795,18 @@ function boslukKontrolEt() {
     document.getElementById('boslukDogruText').innerText = `✅ Doğru: ${dogruKelimeSayisi}`;
     document.getElementById('boslukYanlisText').innerText = `❌ Hatalı Satır: ${toplamYanlisYapilan}`;
 
-    // "Kontrol Et" butonuna basıldığı an oyunu bitir, Google Sheets'e kaydet ve sonuç ekranını göster!
+    // Öğrencinin hangi harfleri doğru/yanlış yaptığını görmesi için butonu kilitleyip biraz bekletiyoruz
+    let kontrolButonu = document.querySelector('#boslukOyunEkrani .btn-giris');
+    if (kontrolButonu) {
+        kontrolButonu.disabled = true;
+        kontrolButonu.innerText = "✅ Sonuçlar gösteriliyor...";
+    }
+
+    // "Kontrol Et" butonuna basıldıktan sonra doğru/yanlışlar ekranda görünsün diye
+    // oyunu bitirip Google Sheets'e kaydetme ve sonuç ekranına geçme işlemini birkaç saniye erteliyoruz
     setTimeout(() => {
         boslukOyunuBitir(dogruKelimeSayisi, toplamYanlisYapilan);
-    }, 500);
+    }, 2500);
 }
 
 async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
