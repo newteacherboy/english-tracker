@@ -1150,75 +1150,77 @@
             </div>
         </div>
 
-       <!-- AKTİVİTELER 2x2 GRID DÜZENİ -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
+      <!-- AKTİVİTELER SEKMESİ (Sadece Aktiviteler sekmesine basınca görünür) -->
+<div id="tab-aktiviteler" class="tab-content">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
 
-    <!-- 1. Kelime Kartları Yolculuğu -->
-    <div class="activity-banner" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #bfdbfe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-        <div>
-            <h3 style="color: #1e40af; font-size: 15px; margin-bottom: 6px;">🗺️ Kelime Kartları Yolculuğu</h3>
-            <p style="color: #3b82f6; font-size: 11px; margin-bottom: 12px;">Ünite ünite ilerle, her seviyeyi bitirdikçe bir sonraki açılsın!</p>
+        <!-- 1. Kelime Kartları Yolculuğu -->
+        <div class="activity-banner" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #bfdbfe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+            <div>
+                <h3 style="color: #1e40af; font-size: 15px; margin-bottom: 6px;">🗺️ Kelime Kartları Yolculuğu</h3>
+                <p style="color: #3b82f6; font-size: 11px; margin-bottom: 12px;">Ünite ünite ilerle, her seviyeyi bitirdikçe bir sonraki açılsın!</p>
+            </div>
+            <div>
+                <button class="btn-oyun-ac" onclick="yolculuguAc()" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); width: 100%;">📖 Yolculuğa Başla</button>
+            </div>
         </div>
-        <div>
-            <button class="btn-oyun-ac" onclick="yolculuguAc()" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); width: 100%;">📖 Yolculuğa Başla</button>
+
+        <!-- 2. Kelime Ezber Yarışması -->
+        <div class="activity-banner" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border-color: #f5d0fe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+            <div>
+                <h3 style="color: #86198f; font-size: 15px; margin-bottom: 6px;">🏆 Kelime Ezber Yarışması</h3>
+                <p style="color: #a21caf; font-size: 11px; margin-bottom: 12px;">Google Sheets havuzundan üniteleri seç, 2 şıklı yarışarak çöz, liderliğe adını yazdır!</p>
+            </div>
+            <div>
+                <button class="btn-oyun-ac" onclick="kelimeYarismasiAc()" style="background: linear-gradient(135deg, #d946ef 0%, #a21caf 100%); box-shadow: 0 2px 8px rgba(217, 70, 239, 0.3); width: 100%;">🎯 Kelime Yarışmasını Başlat</button>
+            </div>
         </div>
+
+        <!-- 3. Jeopardy Balonları Kelime Yarışması -->
+        <div class="activity-banner" style="background: linear-gradient(135deg, #fef2f2 0%, #ffe4e6 100%); border-color: #fecdd3; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+            <div>
+                <h3 style="color: #9f1239; font-size: 15px; margin-bottom: 6px;">🎈 Jeopardy Balonları Kelime Yarışması</h3>
+                <p style="color: #be123c; font-size: 11px; margin-bottom: 12px;">Puan değerindeki balonları patlat, 4 şıklı soruları çöz, liderlik tablosunda yerini al!</p>
+            </div>
+            <div>
+                <button class="btn-oyun-ac" onclick="jpOyunAc()" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3); width: 100%;">🚀 Jeopardy Oyununu Başlat</button>
+            </div>
+        </div>
+
+        <!-- 4. Boşluk Doldurma Bulmacası -->
+        <div class="activity-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+            <div>
+                <h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">🧩 Boşluk Doldurma Bulmacası</h3>
+                <p style="color: #15803d; font-size: 11px; margin-bottom: 12px;">Eksik harfleri tamamla, kelimeleri bul, puanları topla!</p>
+            </div>
+            <div>
+                <button class="btn-oyun-ac" onclick="boslukOyunAc()" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3); width: 100%;">🚀 Bulmacayı Başlat</button>
+            </div>
+        </div>
+
+        <!-- 5. Akıcı Okuma ve Hız Ölçer Stüdyosu -->
+        <div class="activity-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+            <div>
+                <h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</h3>
+                <p style="color: #15803d; font-size: 11px; margin-bottom: 12px;">Sınıfına uygun zengin İngilizce metinleri oku, kaldığın son kelimeye tıkla!</p>
+            </div>
+            <div>
+                <button class="btn-oyun-ac" onclick="okumaStudyosunuAc()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3); width: 100%;">🚀 Okuma Stüdyosunu Aç</button>
+            </div>
+        </div>
+
+        <!-- 6. Pomodoro Çalışma Sayacı -->
+        <div class="activity-banner" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-color: #334155; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+            <div>
+                <h3 style="color: #f8fafc; font-size: 15px; margin-bottom: 6px;">🍅 Pomodoro Çalışma Sayacı</h3>
+                <p style="color: #94a3b8; font-size: 11px; margin-bottom: 12px;">Odaklanma ve mola sürelerini kendine göre ayarla, tüm ekranı kaplayan sayaçla çalış.</p>
+            </div>
+            <div>
+                <button class="btn-oyun-ac" onclick="pomodoroAc()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); width: 100%; color: white;">🍅 Pomodoro’yu Başlat</button>
+            </div>
+        </div>
+
     </div>
-
-    <!-- 2. Kelime Ezber Yarışması -->
-    <div class="activity-banner" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border-color: #f5d0fe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-        <div>
-            <h3 style="color: #86198f; font-size: 15px; margin-bottom: 6px;">🏆 Kelime Ezber Yarışması</h3>
-            <p style="color: #a21caf; font-size: 11px; margin-bottom: 12px;">Google Sheets havuzundan üniteleri seç, 2 şıklı yarışarak çöz, liderliğe adını yazdır!</p>
-        </div>
-        <div>
-            <button class="btn-oyun-ac" onclick="kelimeYarismasiAc()" style="background: linear-gradient(135deg, #d946ef 0%, #a21caf 100%); box-shadow: 0 2px 8px rgba(217, 70, 239, 0.3); width: 100%;">🎯 Kelime Yarışmasını Başlat</button>
-        </div>
-    </div>
-
-    <!-- 3. Jeopardy Balonları Kelime Yarışması -->
-    <div class="activity-banner" style="background: linear-gradient(135deg, #fef2f2 0%, #ffe4e6 100%); border-color: #fecdd3; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-        <div>
-            <h3 style="color: #9f1239; font-size: 15px; margin-bottom: 6px;">🎈 Jeopardy Balonları Kelime Yarışması</h3>
-            <p style="color: #be123c; font-size: 11px; margin-bottom: 12px;">Puan değerindeki balonları patlat, 4 şıklı soruları çöz, liderlik tablosunda yerini al!</p>
-        </div>
-        <div>
-            <button class="btn-oyun-ac" onclick="jpOyunAc()" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3); width: 100%;">🚀 Jeopardy Oyununu Başlat</button>
-        </div>
-    </div>
-
-    <!-- 4. Boşluk Doldurma Bulmacası -->
-    <div class="activity-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-        <div>
-            <h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">🧩 Boşluk Doldurma Bulmacası</h3>
-            <p style="color: #15803d; font-size: 11px; margin-bottom: 12px;">Eksik harfleri tamamla, kelimeleri bul, puanları topla!</p>
-        </div>
-        <div>
-            <button class="btn-oyun-ac" onclick="boslukOyunAc()" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3); width: 100%;">🚀 Bulmacayı Başlat</button>
-        </div>
-    </div>
-
-    <!-- 5. Akıcı Okuma ve Hız Ölçer Stüdyosu -->
-    <div class="activity-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-        <div>
-            <h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</h3>
-            <p style="color: #15803d; font-size: 11px; margin-bottom: 12px;">Sınıfına uygun zengin İngilizce metinleri oku, kaldığın son kelimeye tıkla!</p>
-        </div>
-        <div>
-            <button class="btn-oyun-ac" onclick="okumaStudyosunuAc()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3); width: 100%;">🚀 Okuma Stüdyosunu Aç</button>
-        </div>
-    </div>
-
-    <!-- 6. Pomodoro Çalışma Sayacı -->
-    <div class="activity-banner" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-color: #334155; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-        <div>
-            <h3 style="color: #f8fafc; font-size: 15px; margin-bottom: 6px;">🍅 Pomodoro Çalışma Sayacı</h3>
-            <p style="color: #94a3b8; font-size: 11px; margin-bottom: 12px;">Odaklanma ve mola sürelerini kendine göre ayarla, tüm ekranı kaplayan sayaçla çalış.</p>
-        </div>
-        <div>
-            <button class="btn-oyun-ac" onclick="pomodoroAc()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); width: 100%; color: white;">🍅 Pomodoro’yu Başlat</button>
-        </div>
-    </div>
-
 </div>
 
         <!-- ROZETLER SEKMESİ -->
