@@ -1753,16 +1753,15 @@ function kelimeYarismasiAc() {
     document.getElementById('kyOyunEkrani').style.display = 'none';
     document.getElementById('kyBitisEkrani').style.display = 'none';
 
-    // OTOMATİK İSİM DOLDURMA KONTROLÜ
+    // Oturum açıksa ismi yaz ama değiştirmeye izin ver
     let isimInput = document.getElementById('kyIsimInput');
     if (isimInput) {
         if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
             isimInput.value = aktifOgrenciAdi;
-            isimInput.disabled = true; // Oturum açıksa değiştirilemez
         } else {
             isimInput.value = "";
-            isimInput.disabled = false;
         }
+        isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
     }
 
     kySinifGuncelle(1);
@@ -4339,16 +4338,15 @@ function jpOyunAc() {
     let bitis = document.getElementById('jpBitisEkrani');
     if (bitis) bitis.style.display = 'none';
 
-    // OTOMATİK İSİM DOLDURMA KONTROLÜ
+    // Oturum açıksa ismi yaz ama değiştirmeye izin ver
     let isimInput = document.getElementById('jpIsimInput');
     if (isimInput) {
         if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
             isimInput.value = aktifOgrenciAdi;
-            isimInput.disabled = true; // Oturum açıksa değiştirilemez
         } else {
             isimInput.value = "";
-            isimInput.disabled = false;
         }
+        isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
     }
 
     let grid = document.getElementById('jpSinifGrid');
@@ -4714,16 +4712,15 @@ function boslukOyunAc() {
     document.getElementById('boslukOyunEkrani').style.display = 'none';
     document.getElementById('boslukBitisEkrani').style.display = 'none';
 
-    // OTOMATİK İSİM DOLDURMA KONTROLÜ
+    // Oturum açıksa ismi yaz ama değiştirmeye (düzenlemeye) izin ver
     let isimInput = document.getElementById('boslukIsimInput');
     if (isimInput) {
         if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
             isimInput.value = aktifOgrenciAdi;
-            isimInput.disabled = true; // Oturum açıksa değiştirilemez
         } else {
             isimInput.value = "";
-            isimInput.disabled = false;
         }
+        isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
     }
 
     let grid = document.getElementById('boslukSinifGrid');
