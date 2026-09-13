@@ -1475,6 +1475,13 @@
             </div>
 
             <div style="text-align: left; margin-bottom: 12px;">
+    <div style="font-size: 11px; font-weight: 800; color: #166534; margin-bottom: 4px;">📋 Kelime Sonuçların:</div>
+    <div id="bpKelimeDetayListesi" style="max-height: 130px; overflow-y: auto; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; gap: 4px; font-size: 10.5px; color: #334155;">
+        <div>Yükleniyor...</div>
+    </div>
+</div>
+
+            <div style="text-align: left; margin-bottom: 12px;">
                 <div style="font-size: 11px; font-weight: 800; color: #166534; margin-bottom: 4px;">🏆 Liderlik Tablosu:</div>
                 <div id="bpGecmisSkorlarListesi" style="max-height: 100px; overflow-y: auto; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; gap: 4px; font-size: 10px; color: #334155;">
                     <div>Yükleniyor...</div>
@@ -5740,7 +5747,7 @@ function boslukBulmacayiCiz() {
 
         container.appendChild(satirDiv);
     });
-
+window.boslukCizilenKelimeler = temizKelimeler;
     document.getElementById('boslukSayacInfo').innerText = `0 / ${temizKelimeler.length} tamamlandı`;
 }
 
@@ -5748,16 +5755,20 @@ function boslukKontrolEt() {
     let satirlar = document.querySelectorAll('#boslukSatirlarContainer > div');
     let dogruKelimeSayisi = 0;
     let toplamYanlisYapilan = 0;
+    let sonucDetaylari = []; // YENİ: kelime kelime sonuç listesi
 
-    satirlar.forEach(satir => {
+    satirlar.forEach((satir, satirIndex) => {
         let inputs = satir.querySelectorAll('input');
         let kelimeDogruMu = true;
+        let girilenKelime = "";
+        let dogruKelime = "";
 
         inputs.forEach(input => {
             let girilen = input.value.trim().toUpperCase();
             let gercek = input.dataset.dogruHarf;
+            girilenKelime += (girilen || "_");
+            dogruKelime += gercek;
 
-            // Sadece öğrencinin doldurduğu (disabled olmayan) kutuları tek tek doğru/yanlış olarak işaretle
             if (!input.disabled) {
                 if (girilen === gercek) {
                     input.style.setProperty('background', '#dcfce7', 'important');
@@ -5767,7 +5778,6 @@ function boslukKontrolEt() {
                     input.style.setProperty('background', '#fee2e2', 'important');
                     input.style.setProperty('border-color', '#f87171', 'important');
                     input.style.setProperty('color', '#7f1d1d', 'important');
-                    // Doğru harfi küçük bir ipucu olarak placeholder'da göster
                     input.placeholder = gercek;
                     input.classList.remove('shake-error');
                     void input.offsetWidth;
@@ -5781,6 +5791,17 @@ function boslukKontrolEt() {
             }
         });
 
+        // YENİ: bu satırın (kelimenin) Türkçesini de bulup listeye ekliyoruz
+        let turkceKarsilik = "";
+        let kaynakVeri = (window.boslukCizilenKelimeler || [])[satirIndex];
+        if (kaynakVeri) turkceKarsilik = kaynakVeri.turkce || kaynakVeri.tr || "";
+
+        sonucDetaylari.push({
+            kelime: dogruKelime,
+            turkce: turkceKarsilik,
+            dogruMu: kelimeDogruMu
+        });
+
         if (kelimeDogruMu) {
             dogruKelimeSayisi++;
             satir.style.borderColor = "#22c55e";
@@ -5791,19 +5812,18 @@ function boslukKontrolEt() {
         }
     });
 
+    window.boslukSonucDetaylari = sonucDetaylari; // YENİ: bitiş ekranında kullanmak için sakla
+
     document.getElementById('boslukSayacInfo').innerText = `${dogruKelimeSayisi} / ${boslukAktifKelimeler.length} tamamlandı`;
     document.getElementById('boslukDogruText').innerText = `✅ Doğru: ${dogruKelimeSayisi}`;
     document.getElementById('boslukYanlisText').innerText = `❌ Hatalı Satır: ${toplamYanlisYapilan}`;
 
-    // Öğrencinin hangi harfleri doğru/yanlış yaptığını görmesi için butonu kilitleyip biraz bekletiyoruz
     let kontrolButonu = document.querySelector('#boslukOyunEkrani .btn-giris');
     if (kontrolButonu) {
         kontrolButonu.disabled = true;
         kontrolButonu.innerText = "✅ Sonuçlar gösteriliyor...";
     }
 
-    // "Kontrol Et" butonuna basıldıktan sonra doğru/yanlışlar ekranda görünsün diye
-    // oyunu bitirip Google Sheets'e kaydetme ve sonuç ekranına geçme işlemini birkaç saniye erteliyoruz
     setTimeout(() => {
         boslukOyunuBitir(dogruKelimeSayisi, toplamYanlisYapilan);
     }, 2500);
@@ -5827,6 +5847,24 @@ async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
     document.getElementById('bpResDogruYanlis').innerText = `${dogruSayisi} Doğru / ${yanlisSayisi} Hata`;
     document.getElementById('bpResSure').innerText = `${boslukGecenSaniye} saniye`;
     document.getElementById('bpResPuan').innerText = `${puan} Puan`;
+
+    // YENİ: Kelime kelime doğru/yanlış listesini bitiş ekranında göster
+let detayKonum = document.getElementById('bpKelimeDetayListesi');
+if (detayKonum) {
+    let liste = window.boslukSonucDetaylari || [];
+    detayKonum.innerHTML = "";
+    liste.forEach(item => {
+        let renk = item.dogruMu ? "#166534" : "#991b1b";
+        let arkaplan = item.dogruMu ? "#f0fdf4" : "#fef2f2";
+        let ikon = item.dogruMu ? "✅" : "❌";
+        detayKonum.innerHTML += `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:${arkaplan}; border-radius:6px; padding:4px 8px;">
+                <span style="font-weight:800; color:${renk};">${ikon} ${item.kelime}</span>
+                <span style="color:#64748b;">${item.turkce}</span>
+            </div>
+        `;
+    });
+}
 
     let tabloKonum = document.getElementById('bpGecmisSkorlarListesi');
     tabloKonum.innerHTML = "<div>Liderlik tablosu güncelleniyor...</div>";
