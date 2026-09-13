@@ -1753,14 +1753,16 @@ function kelimeYarismasiAc() {
     document.getElementById('kyOyunEkrani').style.display = 'none';
     document.getElementById('kyBitisEkrani').style.display = 'none';
 
-    // Oturum açıksa ismi doldur
+    // OTOMATİK İSİM DOLDURMA KONTROLÜ
     let isimInput = document.getElementById('kyIsimInput');
-    if (aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
-        isimInput.value = aktifOgrenciAdi;
-        isimInput.disabled = true;
-    } else {
-        isimInput.value = "";
-        isimInput.disabled = false;
+    if (isimInput) {
+        if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
+            isimInput.value = aktifOgrenciAdi;
+            isimInput.disabled = true; // Oturum açıksa değiştirilemez
+        } else {
+            isimInput.value = "";
+            isimInput.disabled = false;
+        }
     }
 
     kySinifGuncelle(1);
@@ -4318,18 +4320,10 @@ let jpMuzikAcik = true;
 let jpAudioElement = null;
 
 function jpOyunAc() {
-    console.log("jpOyunAc tetiklendi");
-    
     let modal = document.getElementById('jpOyunOverlay');
-    if (!modal) {
-        alert("Hata: 'jpOyunOverlay' ID'sine sahip modal bulunamadı!");
-        return;
-    }
+    if (!modal) return;
 
-    // Modalı her zaman body'nin en altına taşıyoruz ki hiçbir şey gizleyemesin
     document.body.appendChild(modal);
-
-    // Zorla görünür yap
     modal.style.setProperty('display', 'flex', 'important');
     modal.style.setProperty('z-index', '9999999', 'important');
 
@@ -4345,11 +4339,12 @@ function jpOyunAc() {
     let bitis = document.getElementById('jpBitisEkrani');
     if (bitis) bitis.style.display = 'none';
 
+    // OTOMATİK İSİM DOLDURMA KONTROLÜ
     let isimInput = document.getElementById('jpIsimInput');
     if (isimInput) {
-        if (window.aktifOgrenciAdi && window.aktifOgrenciAdi.toLowerCase() !== "teacher") {
-            isimInput.value = window.aktifOgrenciAdi;
-            isimInput.disabled = true;
+        if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
+            isimInput.value = aktifOgrenciAdi;
+            isimInput.disabled = true; // Oturum açıksa değiştirilemez
         } else {
             isimInput.value = "";
             isimInput.disabled = false;
@@ -4719,11 +4714,12 @@ function boslukOyunAc() {
     document.getElementById('boslukOyunEkrani').style.display = 'none';
     document.getElementById('boslukBitisEkrani').style.display = 'none';
 
+    // OTOMATİK İSİM DOLDURMA KONTROLÜ
     let isimInput = document.getElementById('boslukIsimInput');
     if (isimInput) {
-        if (window.aktifOgrenciAdi && window.aktifOgrenciAdi.toLowerCase() !== "teacher") {
-            isimInput.value = window.aktifOgrenciAdi;
-            isimInput.disabled = true;
+        if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
+            isimInput.value = aktifOgrenciAdi;
+            isimInput.disabled = true; // Oturum açıksa değiştirilemez
         } else {
             isimInput.value = "";
             isimInput.disabled = false;
