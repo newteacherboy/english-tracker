@@ -5537,6 +5537,13 @@ function boslukOyunAc() {
         });
     }
 
+    // YENİ: "Kontrol Et" butonunu bir önceki oyundan kalan kilitli/değişmiş halinden sıfırla
+    let kontrolButonuSifirla = document.querySelector('#boslukOyunEkrani .btn-giris');
+    if (kontrolButonuSifirla) {
+        kontrolButonuSifirla.disabled = false;
+        kontrolButonuSifirla.innerText = "🎯 Kontrol Et";
+    }
+
     boslukAktifSinif = 1;
     boslukSinifGuncelle(1);
     boslukMuzikBaslat();
