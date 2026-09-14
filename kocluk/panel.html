@@ -631,7 +631,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxIqoj6yGkCU_8fcvyhffka0eT2YZ803TeTyuJIRvQ9Gy8eWkvLaWi6QjC8wZxN0TDQ/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjl2uEcLPaNkR3TNEFN4SD2eliqzZw8PQKNmWob9ijBqf7b6rXQRH-KzhaszE871aU/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -1404,7 +1404,7 @@
             timerInterval = setInterval(() => {
                 toplamSaniye++;
                 guncelleEkranSure();
-                if (toplamSaniye % 60 === 0) { sureyiBulutaKaydet(); }
+                if (toplamSaniye % 30 === 0) { sureyiBulutaKaydet(); }
             }, 1000);
         }
 
@@ -1693,6 +1693,26 @@ function adminRozetPollingBaslat() {
             adminRozetleriGuncelle(toplam);
         }).catch(() => {});
     }, 60000);
+}
+
+        // YENİ: Sayfa kapatılırken/yenilenirken/sekme değiştirilirken süreyi kaydet
+window.addEventListener("beforeunload", function() {
+    sureyiBulutaKaydetSenkron();
+});
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "hidden") {
+        sureyiBulutaKaydet();
+    }
+});
+
+// beforeunload anında normal fetch güvenilir çalışmayabilir, bu yüzden sendBeacon kullanıyoruz
+function sureyiBulutaKaydetSenkron() {
+    try {
+        let payload = JSON.stringify({ action: "sureyiGuncelle", ogrenciAdi: ogrenciAdi, toplamSaniye: toplamSaniye });
+        navigator.sendBeacon(SCRIPT_URL, new Blob([payload], { type: "text/plain;charset=utf-8" }));
+    } catch (e) {
+        console.log("Senkron kayıt hatası:", e);
+    }
 }
         
     </script>
