@@ -449,6 +449,10 @@
                 <p style="color: #3b82f6; font-size: 13px; margin-bottom: 20px; line-height: 1.4;">Sınıf seviyenize özel zengin, pedagojik metinlerle okuma hızınızı test edin, kronometreyi çalıştırıp WPM skorunuzu arşive kaydedin!</p>
                 <button onclick="okumaModaliniAc()" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; padding: 13px 28px; border-radius: 25px; font-size: 14.5px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(37,99,235,0.3); transition: transform 0.2s;">✨ Okuma Testini Başlat</button>
           <button onclick="etkinliklerModalAc()" class="etkinlikler-baslat-btn" style="margin-top:16px;">🎯 Etkinlikler</button>
+                <button class="etkinlik-liste-btn" onclick="etk2Ac()">
+    <span>🐥 2. Etkinlik — Civciv & Tavuk</span>
+    <span>▶️</span>
+</button>
             </div>
         </div>
 
@@ -731,6 +735,29 @@
         <div class="etkinlik-tebrik-sure" id="etkinlik1SonucSure">00:00</div>
         <br>
         <button class="etkinlik-tebrik-kapat-btn" onclick="etk1TamamKapat()">Harika! Kapat</button>
+    </div>
+</div>
+
+    <!-- 2. ETKİNLİK TAM EKRAN -->
+<div class="etkinlik-tam-ekran" id="etkinlik2Overlay">
+    <div class="etkinlik-header">
+        <div class="etkinlik-timer-box" id="etkinlik2Timer">00:00</div>
+        <button class="etkinlik-cikis-btn" onclick="etk2Kapat()" title="Kapat">✕</button>
+    </div>
+    <div class="etkinlik-govde">
+        <svg id="etkinlik2Svg" viewBox="0 0 600 500" style="touch-action:none;"></svg>
+    </div>
+</div>
+
+<!-- 2. ETKİNLİK TEBRİKLER KUTUSU -->
+<div class="etkinlik-tebrik-overlay" id="etkinlik2TebrikOverlay">
+    <div class="etkinlik-tebrik-kutu">
+        <div style="font-size:52px; margin-bottom:8px;">🎉</div>
+        <h2>Tebrikler!</h2>
+        <p>Tüm civcivleri tavuklara başarıyla ulaştırdın!</p>
+        <div class="etkinlik-tebrik-sure" id="etkinlik2SonucSure">00:00</div>
+        <br>
+        <button class="etkinlik-tebrik-kapat-btn" onclick="etk2TamamKapat()">Harika! Kapat</button>
     </div>
 </div>
 
@@ -1836,7 +1863,7 @@ let etk1TimerInterval = null;
 let etk1Bitti = false;
 
 const ETK1_ROW_COUNT = 5;
-const ETK1_TOLERANS = 32;
+const ETK1_TOLERANS = 13;
 const ETK1_BASLANGIC_YARICAP = 45;
 
 function etk1SvgKoordinat(svg, clientX, clientY) {
@@ -2085,7 +2112,229 @@ function etk1BuyukKonfeti() {
         }, i * 18);
     }
 }
-    
+    // ===== ETKİNLİKLER: 2. Etkinlik (Civciv - Tavuk Eşleştirme) =====
+let etk2Rows = [];
+let etk2ActiveRow = null;
+let etk2TamamlananSayi = 0;
+let etk2BaslangicZamani = 0;
+let etk2TimerInterval = null;
+let etk2Bitti = false;
+
+const ETK2_ROW_COUNT = 4;
+const ETK2_BASLANGIC_YARICAP = 45;
+
+// Her satır için farklı dalga tipi: [amplitude, dalgaBoyu, tolerans]
+const ETK2_DALGA_TIPLERI = [
+    { amplitude: 24, dalgaBoyu: 150, tolerans: 15 },  // 1. satır: geniş yumuşak dalga
+    { amplitude: 9,  dalgaBoyu: 240, tolerans: 12 },  // 2. satır: düz-yatay hafif dalga
+    { amplitude: 18, dalgaBoyu: 85,  tolerans: 14 },  // 3. satır: sık dalga
+    { amplitude: 13, dalgaBoyu: 50,  tolerans: 12 }   // 4. satır: dar zikzak
+];
+
+function etk2DalgaOlustur(rowIndex, rowY, amplitude, dalgaBoyu) {
+    let xBas = 120, xBit = 460;
+    let samples = [], toplamUzunluk = 0, oncekiX = null, oncekiY = null;
+
+    for (let x = xBas; x <= xBit; x += 3) {
+        let y = rowY + amplitude * Math.sin((2 * Math.PI * (x - xBas)) / dalgaBoyu);
+        if (oncekiX !== null) {
+            let dx = x - oncekiX, dy = y - oncekiY;
+            toplamUzunluk += Math.sqrt(dx * dx + dy * dy);
+        }
+        samples.push({ x: x, y: y, cumLen: toplamUzunluk });
+        oncekiX = x; oncekiY = y;
+    }
+    return { index: rowIndex, samples: samples, totalLen: toplamUzunluk, progressLen: 0, progressIdx: 0, completed: false, traceStarted: false };
+}
+
+function etk2SvgOlustur() {
+    let svg = document.getElementById('etkinlik2Svg');
+    svg.innerHTML = "";
+    etk2Rows = []; etk2TamamlananSayi = 0; etk2Bitti = false;
+    let ns = "http://www.w3.org/2000/svg";
+    let rowGap = 115, ustBosluk = 55;
+
+    for (let i = 0; i < ETK2_ROW_COUNT; i++) {
+        let rowY = ustBosluk + i * rowGap;
+        let tip = ETK2_DALGA_TIPLERI[i];
+        let row = etk2DalgaOlustur(i, rowY, tip.amplitude, tip.dalgaBoyu);
+        etk2Rows.push(row);
+
+        let civciv = document.createElementNS(ns, "text");
+        civciv.setAttribute("x", 40); civciv.setAttribute("y", rowY + 12);
+        civciv.setAttribute("font-size", "34"); civciv.textContent = "🐥";
+        svg.appendChild(civciv);
+
+        let dot = document.createElementNS(ns, "circle");
+        dot.setAttribute("cx", row.samples[0].x); dot.setAttribute("cy", row.samples[0].y);
+        dot.setAttribute("r", 5); dot.setAttribute("fill", "#e53935");
+        svg.appendChild(dot);
+
+        let dPath = "M " + row.samples.map(p => p.x + "," + p.y).join(" L ");
+        let bgPath = document.createElementNS(ns, "path");
+        bgPath.setAttribute("d", dPath);
+        bgPath.setAttribute("stroke", "#c9c9c9");
+        bgPath.setAttribute("stroke-width", "3");
+        bgPath.setAttribute("stroke-dasharray", "1,9");
+        bgPath.setAttribute("stroke-linecap", "round");
+        bgPath.setAttribute("fill", "none");
+        svg.appendChild(bgPath);
+
+        let izPath = document.createElementNS(ns, "path");
+        izPath.setAttribute("id", "etk2Iz" + i);
+        izPath.setAttribute("stroke", "#f59e0b");
+        izPath.setAttribute("stroke-width", "6");
+        izPath.setAttribute("stroke-linecap", "round");
+        izPath.setAttribute("stroke-linejoin", "round");
+        izPath.setAttribute("fill", "none");
+        izPath.setAttribute("d", "");
+        svg.appendChild(izPath);
+
+        let tavuk = document.createElementNS(ns, "text");
+        tavuk.setAttribute("x", 500); tavuk.setAttribute("y", rowY + 14);
+        tavuk.setAttribute("font-size", "36"); tavuk.textContent = "🐔";
+        svg.appendChild(tavuk);
+    }
+
+    svg.addEventListener("pointerdown", etk2PointerDown);
+    svg.addEventListener("pointermove", etk2PointerMove);
+    svg.addEventListener("pointerup", etk2PointerUp);
+    svg.addEventListener("pointercancel", etk2PointerUp);
+    svg.addEventListener("pointerleave", etk2PointerUp);
+}
+
+function etk2PointerDown(evt) {
+    if (etk2Bitti) return;
+    let svg = document.getElementById('etkinlik2Svg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    for (let row of etk2Rows) {
+        if (row.completed) continue;
+        let bas = row.samples[0];
+        let dx = coord.x - bas.x, dy = coord.y - bas.y;
+        if (Math.sqrt(dx * dx + dy * dy) <= ETK2_BASLANGIC_YARICAP) {
+            etk2ActiveRow = row;
+            row.traceStarted = true; row.progressLen = 0; row.progressIdx = 0;
+            etk2IzGuncelle(row, [bas]);
+            svg.setPointerCapture(evt.pointerId);
+            break;
+        }
+    }
+}
+
+function etk2PointerMove(evt) {
+    if (!etk2ActiveRow || etk2Bitti) return;
+    let svg = document.getElementById('etkinlik2Svg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    let row = etk2ActiveRow;
+    let tolerans = ETK2_DALGA_TIPLERI[row.index].tolerans;
+
+    let aramaBasi = row.progressIdx;
+    let aramaSonu = Math.min(row.samples.length - 1, row.progressIdx + 40);
+    let enYakinIdx = -1, enYakinMesafe = Infinity;
+
+    for (let i = aramaBasi; i <= aramaSonu; i++) {
+        let s = row.samples[i];
+        let dx = coord.x - s.x, dy = coord.y - s.y;
+        let mesafe = Math.sqrt(dx * dx + dy * dy);
+        if (mesafe < enYakinMesafe) { enYakinMesafe = mesafe; enYakinIdx = i; }
+    }
+
+    if (enYakinMesafe > tolerans) { etk2IziSifirla(row); return; }
+
+    if (enYakinIdx > row.progressIdx) {
+        row.progressIdx = enYakinIdx;
+        row.progressLen = row.samples[enYakinIdx].cumLen;
+        etk2IzGuncelle(row, row.samples.slice(0, enYakinIdx + 1));
+    }
+
+    if (row.progressLen >= row.totalLen * 0.94) {
+        etk2SatirTamamlandi(row);
+    }
+}
+
+function etk2PointerUp(evt) {
+    if (etk2ActiveRow && !etk2ActiveRow.completed) etk2IziSifirla(etk2ActiveRow);
+    etk2ActiveRow = null;
+}
+
+function etk2IzGuncelle(row, noktalar) {
+    document.getElementById("etk2Iz" + row.index).setAttribute("d", "M " + noktalar.map(p => p.x + "," + p.y).join(" L "));
+}
+
+function etk2IziSifirla(row) {
+    row.traceStarted = false; row.progressLen = 0; row.progressIdx = 0;
+    document.getElementById("etk2Iz" + row.index).setAttribute("d", "");
+    etk2ActiveRow = null;
+}
+
+function etk2SatirTamamlandi(row) {
+    row.completed = true;
+    etk2ActiveRow = null;
+    let izPath = document.getElementById("etk2Iz" + row.index);
+    izPath.setAttribute("stroke", "#22c55e");
+    izPath.setAttribute("d", "M " + row.samples.map(p => p.x + "," + p.y).join(" L "));
+
+    etk2TamamlananSayi++;
+    let svg = document.getElementById('etkinlik2Svg');
+    let ctm = svg.getScreenCTM();
+    let pt = svg.createSVGPoint();
+    let sonNokta = row.samples[row.samples.length - 1];
+    pt.x = sonNokta.x; pt.y = sonNokta.y;
+    let ekran = pt.matrixTransform(ctm);
+    etk1KonfetiOlustur(ekran.x, ekran.y, 12);
+
+    if (etk2TamamlananSayi >= ETK2_ROW_COUNT) etk2TumTamamlandi();
+}
+
+function etk2Timer() {
+    let gecen = Math.floor((Date.now() - etk2BaslangicZamani) / 1000);
+    let dk = String(Math.floor(gecen / 60)).padStart(2, '0');
+    let sn = String(gecen % 60).padStart(2, '0');
+    document.getElementById('etkinlik2Timer').innerText = dk + ":" + sn;
+}
+
+function etk2Ac() {
+    document.getElementById('etkinliklerModal').style.display = 'none';
+    document.getElementById('etkinlik2Overlay').style.display = 'flex';
+    etk2SvgOlustur();
+    etk2BaslangicZamani = Date.now();
+    document.getElementById('etkinlik2Timer').innerText = "00:00";
+    if (etk2TimerInterval) clearInterval(etk2TimerInterval);
+    etk2TimerInterval = setInterval(etk2Timer, 1000);
+}
+
+function etk2Kapat() {
+    document.getElementById('etkinlik2Overlay').style.display = 'none';
+    if (etk2TimerInterval) clearInterval(etk2TimerInterval);
+    etk2TimerInterval = null;
+}
+
+function etk2TumTamamlandi() {
+    etk2Bitti = true;
+    if (etk2TimerInterval) clearInterval(etk2TimerInterval);
+    let gecenSaniye = Math.floor((Date.now() - etk2BaslangicZamani) / 1000);
+    let dk = String(Math.floor(gecenSaniye / 60)).padStart(2, '0');
+    let sn = String(gecenSaniye % 60).padStart(2, '0');
+    document.getElementById('etkinlik2SonucSure').innerText = dk + ":" + sn;
+    document.getElementById('etkinlik2TebrikOverlay').style.display = 'flex';
+    etk1BuyukKonfeti();
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "etkinlikSonucKaydet",
+            ogrenciAdi: ogrenciAdi,
+            etkinlikAdi: "2. Etkinlik - Civciv Tavuk",
+            sureSaniye: gecenSaniye
+        })
+    }).catch(err => console.log("Etkinlik kayıt hatası:", err));
+}
+
+function etk2TamamKapat() {
+    document.getElementById('etkinlik2TebrikOverlay').style.display = 'none';
+    etk2Kapat();
+}
         
     </script>
 </body>
