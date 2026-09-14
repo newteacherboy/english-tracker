@@ -200,41 +200,49 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUe6yNNarha3W7CnN32jidOZXBO1-yZXPDOtVzmiFv9Fwm-3c7s47FTIuvV5eNsjoc/exec";
 
         function girisYap() {
-            const ogrenciAdiInput = document.getElementById("ogrenciAdi");
-            const sifreInput = document.getElementById("sifre");
-            const hataDiv = document.getElementById("hataMesaji");
+    const ogrenciAdiInput = document.getElementById("ogrenciAdi");
+    const sifreInput = document.getElementById("sifre");
+    const hataDiv = document.getElementById("hataMesaji");
+    const yuklemeEkrani = document.getElementById("oturumYuklemeOverlay");
 
-            const ogrenciAdi = ogrenciAdiInput ? ogrenciAdiInput.value.trim() : "";
-            const sifre = sifreInput ? sifreInput.value.trim() : "";
+    const ogrenciAdi = ogrenciAdiInput ? ogrenciAdiInput.value.trim() : "";
+    const sifre = sifreInput ? sifreInput.value.trim() : "";
 
-            if (!ogrenciAdi || !sifre) {
-                hataDiv.innerText = "Lütfen kullanıcı adı ve şifrenizi girin!";
-                return;
-            }
+    if (!ogrenciAdi || !sifre) {
+        hataDiv.innerText = "Lütfen kullanıcı adı ve şifrenizi girin!";
+        return;
+    }
 
-            hataDiv.style.color = "#2e7d32";
-            hataDiv.innerText = "Giriş yapılıyor...";
+    hataDiv.innerText = "";
 
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "login", ogrenciAdi: ogrenciAdi, sifre: sifre })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "success") {
-                    localStorage.setItem("aktifOgrenci", btoa(data.ogrenciAdi));
-                    window.location.href = "panel.html";
-                } else {
-                    hataDiv.style.color = "#c62828";
-                    hataDiv.innerText = "Hatalı kullanıcı adı veya şifre!";
-                }
-            })
-            .catch(err => {
-                hataDiv.style.color = "#c62828";
-                hataDiv.innerText = "Bağlantı hatası oluştu!";
-            });
+    // YENİ: Baykuş yükleme ekranını göster
+    yuklemeEkrani.style.display = "flex";
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "login", ogrenciAdi: ogrenciAdi, sifre: sifre })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            localStorage.setItem("aktifOgrenci", btoa(data.ogrenciAdi));
+            window.location.href = "panel.html";
+            // Not: yönlendirme olduğu için overlay'i kapatmaya gerek yok, sayfa zaten değişiyor
+        } else {
+            // YENİ: Hata varsa yükleme ekranını kapat, hatayı göster
+            yuklemeEkrani.style.display = "none";
+            hataDiv.style.color = "#c62828";
+            hataDiv.innerText = "Hatalı kullanıcı adı veya şifre!";
         }
+    })
+    .catch(err => {
+        // YENİ: Bağlantı hatasında da yükleme ekranını kapat
+        yuklemeEkrani.style.display = "none";
+        hataDiv.style.color = "#c62828";
+        hataDiv.innerText = "Bağlantı hatası oluştu!";
+    });
+}
     </script>
 </body>
 </html>
