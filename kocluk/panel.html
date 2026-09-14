@@ -1528,77 +1528,35 @@
         }
 
         function verileriCekVeBaslat(isim) {
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "tumVerileriGetir", ogrenciAdi: isim })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "success") {
-                    toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "tumVerileriGetir", ogrenciAdi: isim })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
 
-                    let genelPuanVal = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan || 0;
-                    document.getElementById("statGenelPuan").innerText = genelPuanVal;
-                    document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
-                    document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
-                    document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
+            let genelPuanVal = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan || 0;
+            document.getElementById("statGenelPuan").innerText = genelPuanVal;
+            document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
+            document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
+            document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
 
-                    document.getElementById("ogretmenNotu").innerHTML = `"${akilliOgretmenNotuUret(data.gelisim, isim)}"`;
-                    document.getElementById("aktifKitapAdi").innerText = data.gelisim.aktifKitapAdi;
-                    document.getElementById("toplamBitirilenKitap").innerText = data.gelisim.okunanKitap;
+            document.getElementById("ogretmenNotu").innerHTML = `"${akilliOgretmenNotuUret(data.gelisim, isim)}"`;
+            document.getElementById("aktifKitapAdi").innerText = data.gelisim.aktifKitapAdi;
+            document.getElementById("toplamBitirilenKitap").innerText = data.gelisim.okunanKitap;
 
-                    let okunan = Number(data.gelisim.okunanSayfa) || 0;
-                    let hedefSayfa = Number(data.gelisim.hedefSayfa) || 1;
-                    let yuzdeKitap = Math.min(100, Math.round((okunan / hedefSayfa) * 100));
-                    
-                    document.getElementById("kitapYuzdeText").innerText = `%${yuzdeKitap}`;
-                    document.getElementById("kitapProgressBar").style.width = yuzdeKitap + "%";
-                    document.getElementById("okunanSayfaText").innerText = `Okunan: ${okunan} sayfa`;
-                    document.getElementById("hedefSayfaText").innerText = `Hedef: ${hedefSayfa} sayfa`;
+            // --- ESKİ ROZET KODLARININ YERİNE BURAYA TEK SATIR YAZIYORSUNUZ: ---
+            rozetleriGuvenleGoster(data);
+            // -----------------------------------------------------------------
 
-                  let rozetler = data.rozetler || [];
-console.log("Sunucudan gelen rozetler:", rozetler);
-let toplamRozet = rozetler.length;
-
-// Öğrencinin genel puanını alalım (veya ortalama puanı)
-let ogrenciPuani = Number(data.gelisim.genelPuan || data.gelisim.ortalamaGenelPuan || 0);
-
-// Rozetleri gelen puan ile hedefe göre doğrudan aktif/pasif yapalım
-let kazanilanSayisi = rozetler.filter(r => {
-    let gerekliPuan = Number(r.puan || 0);
-    // Puanı yetiyorsa veya tablodan "kazanıldı/aktif" geldiyse kazanılmıştır
-    let d = String(r.durum || "").trim().toLowerCase();
-    return ogrenciPuani >= gerekliPuan || d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true";
-}).length;
-
-document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
-let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
-document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
-document.getElementById("rozetProgressText").innerText = `%${rozetYuzde}`;
-
-let rozetHtml = "";
-if (toplamRozet > 0) {
-    rozetler.forEach(r => {
-        let gerekliPuan = Number(r.puan || 0);
-        let d = String(r.durum || "").trim().toLowerCase();
-        
-        // Puan yeterliyse VEYA tablodan aktif/kazanıldı geldiyse renkli (aktif) göster
-        let aktifMi = (ogrenciPuani >= gerekliPuan) || (d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true");
-        
-        rozetHtml += `
-            <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
-                <div style="font-size:26px; margin-bottom:4px;">${aktifMi ? (r.emoji || '⭐') : '🔒'}</div>
-                <div style="font-size:11px; font-weight:bold; color:#333;">${guvenliMetin(r.rozetAdi || 'Rozet')}</div>
-                <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${gerekliPuan} p</div>
-            </div>`;
+            let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
+            // ... (diğer kodlar aşağıya doğru devam eder)
+        }
     });
-    document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
-} else {
-    document.getElementById("rozetlerAlani").innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777; padding:20px;">Henüz bu öğrenci için tanımlanmış rozet bulunmuyor.</div>`;
 }
-
-                    let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
                     let ogrenilenDizi = ogrenilenHarflerStr.split(",").map(h => h.trim());
                     let alfabeHtml = "";
                     let tamamlananSayi = 0;
@@ -3544,6 +3502,59 @@ function videoOynaticiKapat() {
     document.getElementById('videoOynaticiOverlay').style.display = 'none';
     document.getElementById('videoIcerikAlani').innerHTML = "";
 }        
+
+        function rozetleriGuvenleGoster(data) {
+    try {
+        let rozetler = data.rozetler || [];
+        console.log("Bağımsız Rozet Yükleyici Çalıştı. Gelen:", rozetler);
+        
+        let toplamRozet = rozetler.length;
+        let ogrenciPuani = Number(data.gelisim && (data.gelisim.genelPuan || data.gelisim.ortalamaGenelPuan)) || 0;
+
+        let kazanilanSayisi = 0;
+        let rozetHtml = "";
+
+        let alan = document.getElementById("rozetlerAlani");
+        if (!alan) {
+            console.error("Kritik Hata: HTML'de id='rozetlerAlani' elemanı bulunamadı!");
+            return;
+        }
+
+        if (toplamRozet > 0) {
+            rozetler.forEach(r => {
+                let gerekliPuan = Number(r.puan || 0);
+                let d = String(r.durum || "").trim().toLowerCase();
+                let aktifMi = (ogrenciPuani >= gerekliPuan) || (d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true");
+                
+                if (aktifMi) kazanilanSayisi++;
+
+                rozetHtml += `
+                    <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
+                        <div style="font-size:26px; margin-bottom:4px;">${aktifMi ? (r.emoji || '⭐') : '🔒'}</div>
+                        <div style="font-size:11px; font-weight:bold; color:#333;">${typeof guvenliMetin === 'function' ? guvenliMetin(r.rozetAdi || 'Rozet') : (r.rozetAdi || 'Rozet')}</div>
+                        <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${gerekliPuan} p</div>
+                    </div>`;
+            });
+            alan.innerHTML = rozetHtml;
+        } else {
+            alan.innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777; padding:20px;">Henüz rozet tanımlanmamış.</div>`;
+        }
+
+        // Başlık ve Progress bar güncellemeleri
+        let baslikEl = document.getElementById("rozetBaslikText");
+        if (baslikEl) baslikEl.innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
+
+        let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
+        let barEl = document.getElementById("rozetProgressBar");
+        if (barEl) barEl.style.width = rozetYuzde + "%";
+        let textEl = document.getElementById("rozetProgressText");
+        if (textEl) textEl.innerText = `%${rozetYuzde}`;
+
+    } catch (err) {
+        console.error("Rozet render edilirken hata patladı:", err);
+    }
+}
+        
     </script>
 </body>
 </html>
