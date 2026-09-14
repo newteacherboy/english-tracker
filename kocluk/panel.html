@@ -203,6 +203,61 @@
         .range-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 8px; background: #faf8f5; padding: 12px; border-radius: 10px; border: 1px solid #eae5dc; }
         .range-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; color: #444; }
         .range-item input[type=range] { width: 60%; cursor: pointer; }
+
+/* ===== AI SOHBET ASİSTANI ===== */
+.ai-float-btn {
+    position: fixed; bottom: 75px; right: 20px; z-index: 999;
+    background: rgba(46, 125, 50, 0.5); color: white; border: none; width: 45px; height: 45px;
+    border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; opacity: 0.6; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.ai-float-btn:hover { opacity: 1; background: rgba(46, 125, 50, 1); transform: scale(1.05); }
+
+.ai-chat-modal {
+    position: fixed; bottom: 125px; right: 20px; width: 330px; max-width: 90vw;
+    background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border: 2px solid var(--border-color); display: none; flex-direction: column;
+    z-index: 1000; overflow: hidden;
+}
+.ai-chat-header {
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white;
+    padding: 12px 14px; font-size: 13px; font-weight: 800; display: flex;
+    justify-content: space-between; align-items: center;
+}
+.ai-chat-body {
+    padding: 10px; height: 220px; overflow-y: auto; background: #f7f9f6;
+    font-size: 12.5px; display: flex; flex-direction: column; gap: 8px;
+}
+.ai-msg { padding: 8px 10px; border-radius: 10px; line-height: 1.4; max-width: 85%; }
+.ai-msg.bot { background: #e8f5e9; color: #1b5e20; align-self: flex-start; border-bottom-left-radius: 2px; }
+.ai-msg.user { background: #2e7d32; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+.ai-chat-footer { padding: 8px; background: white; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 6px; }
+.ai-input-row { display: flex; gap: 6px; }
+.ai-chat-footer input { flex: 1; padding: 8px 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 12.5px; outline: none; }
+.ai-chat-footer button { background: #2e7d32; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+
+/* ===== ÖĞRETMEN MENÜ & SOHBET PANELİ ===== */
+.ogretmen-menu-btn {
+    width: 100%; padding: 12px; background: #f7f9f6; border: 2px solid var(--border-color);
+    border-radius: 12px; font-size: 13px; font-weight: 700; color: #1b5e20; cursor: pointer;
+    margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;
+}
+.ogretmen-menu-btn:hover { background: #e8f5e9; }
+.ogretmen-menu-rozet, .admin-gear-rozet {
+    background: #c62828; color: #fff; font-size: 10px; font-weight: 800; border-radius: 10px; padding: 2px 7px;
+}
+.admin-gear-rozet {
+    position: fixed; bottom: 62px; right: 15px; z-index: 1001; display: none;
+}
+.ogretmen-sohbet-satir {
+    display: flex; align-items: center; justify-content: space-between; padding: 10px 12px;
+    border-bottom: 1px solid #eee; cursor: pointer;
+}
+.ogretmen-sohbet-satir:hover { background: #f7f9f6; }
+.ogretmen-sohbet-isim { font-weight: 700; font-size: 13px; color: #1b5e20; }
+.ogretmen-sohbet-onizleme { font-size: 11px; color: #777; margin-top: 2px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ogretmen-geri-btn { background: none; border: none; color: #2e7d32; font-weight: 700; font-size: 12px; cursor: pointer; padding: 6px 0; text-align: left; }
+        
     </style>
 </head>
 <body>
@@ -408,7 +463,68 @@
         </div>
     </div>
 
+    <!-- AI SOHBET ASİSTANI -->
+<button class="ai-float-btn" onclick="aiModalAc()" title="Yapay Zeka Asistanı">🤖</button>
+<div class="ai-chat-modal" id="aiChatModal">
+    <div class="ai-chat-header">
+        <span>🤖 Diji Muallim Asistan</span>
+        <button onclick="aiModalKapat()" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer;">✕</button>
+    </div>
+    <div class="ai-chat-body" id="aiChatBody">
+        <div class="ai-msg bot">Merhaba! 👋 Buradan öğretmenine doğrudan mesaj bırakabilirsin. Yazdığın mesaj öğretmenine iletilir, en kısa sürede buradan sana dönüş yapar. Arada sohbeti kontrol etmeyi unutma! 😊</div>
+    </div>
+    <div class="ai-chat-footer" id="aiFooterArea">
+        <div class="ai-input-row" id="aiInputRow">
+            <input type="text" id="aiMesajInput" placeholder="Mesajını yaz..." onkeypress="if(event.key==='Enter') aiMesajGonder()">
+            <button onclick="aiMesajGonder()">Gönder</button>
+        </div>
+    </div>
+</div>
+
+<!-- ÖĞRETMEN SOHBETLERİ OKUNMAMIŞ ROZETİ -->
+<span class="admin-gear-rozet" id="adminGearRozet">0</span>
+
     <button class="admin-float-btn" onclick="yoneticiGirisSorgula()" title="Öğretmen Paneli">⚙️</button>
+
+
+    <!-- ÖĞRETMEN ANA MENÜ MODALI -->
+<div class="modal-overlay" id="ogretmenMenuModal">
+    <div class="modal-content" style="max-width: 320px; text-align: center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:#2e7d32;">👨‍🏫 Öğretmen Paneli</h3>
+            <button onclick="document.getElementById('ogretmenMenuModal').style.display='none'" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+        </div>
+        <button class="ogretmen-menu-btn" onclick="ogretmenMenuRubrikAc()">
+            <span>📋 Rubrik Paneli</span>
+        </button>
+        <button class="ogretmen-menu-btn" onclick="ogretmenMenuSohbetAc()">
+            <span>💬 Öğrenci Sohbetleri</span>
+            <span class="ogretmen-menu-rozet" id="ogretmenMenuOkunmamis" style="display:none;">0</span>
+        </button>
+    </div>
+</div>
+
+<!-- ÖĞRETMEN SOHBET PANELİ -->
+<div class="modal-overlay" id="ogretmenSohbetModal">
+    <div class="modal-content" style="max-width: 420px; display: flex; flex-direction: column;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="margin:0; color:#2e7d32;">💬 Öğrenci Sohbetleri</h3>
+            <button onclick="ogretmenSohbetModalKapat()" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+        </div>
+
+        <div id="ogretmenSohbetListeAlani"></div>
+
+        <div id="ogretmenSohbetDetayAlani" style="display: none; flex-direction: column;">
+            <button class="ogretmen-geri-btn" onclick="ogretmenSohbetListesineDon()">← Listeye Dön</button>
+            <div style="font-weight:800; font-size:14px; color:#1b5e20; padding:6px 0 10px; border-bottom:1px solid #eee; margin-bottom:8px;" id="ogretmenSohbetBaslikOgrenci">Öğrenci</div>
+            <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; min-height:200px; max-height:320px;" id="ogretmenSohbetMesajAlani"></div>
+            <div style="display:flex; gap:6px; margin-top:10px;">
+                <input type="text" id="ogretmenCevapInput" placeholder="Cevabınızı yazın..." style="flex:1; padding:8px 10px; border:1px solid #ccc; border-radius:8px; font-size:12.5px;" onkeypress="if(event.key==='Enter') ogretmenCevapGonderYolla()">
+                <button onclick="ogretmenCevapGonderYolla()" style="background:#2e7d32; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer;">Gönder</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <div class="modal-overlay" id="rubricModal">
         <div class="modal-content">
@@ -515,7 +631,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZyMRSWPMbzgs_wnEDVuEUvJVMp4jqbR-WTC_PnBu7sMj7GWZwnoVRN6tnBAxHWpcC/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxIqoj6yGkCU_8fcvyhffka0eT2YZ803TeTyuJIRvQ9Gy8eWkvLaWi6QjC8wZxN0TDQ/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -582,9 +698,11 @@
                 if (baslik) baslik.innerText = ogrenciAdi;
                 if (avatar) avatar.innerText = ogrenciAdi.charAt(0).toUpperCase();
                 
+                
                 // Verileri çek ve okuma geçmişini otomatik yükle
                 verileriCekVeBaslat(ogrenciAdi);
                 okumaGecmisiniGetir(ogrenciAdi);
+                sohbetGecmisiniYukle();
 
                 let kaydetBtn = document.getElementById("rubrikKaydetBtn");
                 if (kaydetBtn) {
@@ -839,10 +957,10 @@
 
         function yoneticiGirisSorgula() {
             let sifre = prompt("Yönetici şifresini girin:");
-            if (sifre === "315269") {
-                document.getElementById("rubricModal").style.display = "flex";
-                ogrenciListesiniYukle();
-            } else if (sifre !== null) {
+           if (sifre === "315269") {
+    document.getElementById("ogretmenMenuModal").style.display = "flex";
+    adminRozetPollingBaslat();
+} else if (sifre !== null) {
                 alert("Hatalı şifre!");
             }
         }
@@ -1317,6 +1435,266 @@
             localStorage.removeItem("dijimuallim_aktif_ogrenci");
             window.location.href = "index.html";
         }
+
+        // ===== AI SOHBET ASİSTANI (Öğrenci Tarafı) =====
+let ogrenciSohbetPolling = null;
+
+function aiModalAc() {
+    document.getElementById('aiChatModal').style.display = 'flex';
+    misafirBilgiKontrol();
+    sohbetGecmisiniYukle();
+    if (ogrenciSohbetPolling) clearInterval(ogrenciSohbetPolling);
+    ogrenciSohbetPolling = setInterval(sohbetGecmisiniYukle, 15000);
+}
+function aiModalKapat() {
+    document.getElementById('aiChatModal').style.display = 'none';
+    if (ogrenciSohbetPolling) clearInterval(ogrenciSohbetPolling);
+    ogrenciSohbetPolling = null;
+}
+
+function misafirBilgiKontrol() {
+    let footerArea = document.getElementById('aiFooterArea');
+    let inputRow = document.getElementById('aiInputRow');
+    let misafirKayit = sessionStorage.getItem("misafirBilgi");
+
+    if (!ogrenciAdi && !misafirKayit) {
+        inputRow.style.display = "none";
+        let formId = "misafirForm";
+        if (!document.getElementById(formId)) {
+            footerArea.innerHTML += `
+                <div id="${formId}" style="display:flex; flex-direction:column; gap:5px; font-size:11px;">
+                    <span style="color:#1b5e20; font-weight:700;">Soru sormak için lütfen bilgilerinizi yazın:</span>
+                    <input type="text" id="misafirAd" placeholder="Adınız Soyadınız" style="padding:6px; border:1px solid #ccc; border-radius:6px;">
+                    <input type="text" id="misafirIletisim" placeholder="Telefon veya E-posta" style="padding:6px; border:1px solid #ccc; border-radius:6px;">
+                    <button onclick="misafirBilgiKaydet()" style="background:#2e7d32; color:white; border:none; padding:7px; border-radius:6px; font-weight:700; cursor:pointer;">Devam Et</button>
+                </div>
+            `;
+        }
+    } else {
+        inputRow.style.display = "flex";
+    }
+}
+
+function misafirBilgiKaydet() {
+    let ad = document.getElementById('misafirAd').value.trim();
+    let iletisim = document.getElementById('misafirIletisim').value.trim();
+    if (!ad || !iletisim) { alert("Lütfen adınızı ve iletişim bilginizi giriniz!"); return; }
+    sessionStorage.setItem("misafirBilgi", JSON.stringify({ ad, iletisim }));
+    document.getElementById('misafirForm').remove();
+    document.getElementById('aiInputRow').style.display = "flex";
+}
+
+function sohbetIcinAktifIsim() {
+    if (ogrenciAdi) return ogrenciAdi;
+    let mInfo = JSON.parse(sessionStorage.getItem("misafirBilgi") || "{}");
+    return mInfo.ad || "Misafir Ziyaretçi";
+}
+
+function guvenliMetin(str) {
+    return String(str || "").replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+}
+
+function sohbetGecmisiniYukle() {
+    let isim = sohbetIcinAktifIsim();
+    if (!isim) return;
+    let body = document.getElementById('aiChatBody');
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "sohbetGetir", ogrenci: isim })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status !== "success") return;
+        let sabitKarsilama = body.querySelector('.ai-msg.bot');
+        body.innerHTML = "";
+        if (sabitKarsilama) body.appendChild(sabitKarsilama);
+        (data.mesajlar || []).forEach(m => {
+            let sinif = m.gonderen === 'ogretmen' ? 'bot' : 'user';
+            body.innerHTML += `<div class="ai-msg ${sinif}">${guvenliMetin(m.mesaj)}</div>`;
+        });
+        body.scrollTop = body.scrollHeight;
+    }).catch(err => console.log("Sohbet yükleme hatası:", err));
+}
+
+function aiMesajGonder() {
+    let input = document.getElementById('aiMesajInput');
+    let body = document.getElementById('aiChatBody');
+    let txt = input.value.trim();
+    if (!txt) return;
+
+    let isim = sohbetIcinAktifIsim();
+    body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
+    input.value = "";
+    body.scrollTop = body.scrollHeight;
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "sohbetMesajGonder", ogrenci: isim, mesaj: txt })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "spam") {
+            body.innerHTML += `<div class="ai-msg bot" style="color:#c62828; background:#ffebee;">⚠️ Anlamsız veya rastgele karakterler algılandı, mesajın öğretmenine iletilmedi. Lütfen düzgün bir mesaj yaz. 😊</div>`;
+        } else {
+            body.innerHTML += `<div class="ai-msg bot">✅ Mesajın öğretmenine iletildi, en kısa sürede buradan dönüş yapacaktır. Arada sohbet kutusunu kontrol etmeyi unutma! 😊</div>`;
+        }
+        body.scrollTop = body.scrollHeight;
+    }).catch(err => {
+        body.innerHTML += `<div class="ai-msg bot">Bağlantı hatası oluştu.</div>`;
+    });
+}
+
+// ===== ÖĞRETMEN TARAFI: MENÜ + SOHBET PANELİ =====
+let ogretmenAktifSohbetOgrenci = null;
+let ogretmenSohbetPolling = null;
+let ogretmenPanelPolling = null;
+
+function ogretmenMenuRubrikAc() {
+    document.getElementById('ogretmenMenuModal').style.display = 'none';
+    document.getElementById('rubricModal').style.display = 'flex';
+    ogrenciListesiniYukle();
+}
+
+function ogretmenMenuSohbetAc() {
+    document.getElementById('ogretmenMenuModal').style.display = 'none';
+    document.getElementById('ogretmenSohbetModal').style.display = 'flex';
+    document.getElementById('ogretmenSohbetListeAlani').style.display = 'block';
+    document.getElementById('ogretmenSohbetDetayAlani').style.display = 'none';
+    ogretmenSohbetListesiniYukle();
+    if (ogretmenSohbetPolling) clearInterval(ogretmenSohbetPolling);
+    ogretmenSohbetPolling = setInterval(() => {
+        if (document.getElementById('ogretmenSohbetDetayAlani').style.display === 'none') {
+            ogretmenSohbetListesiniYukle();
+        } else if (ogretmenAktifSohbetOgrenci) {
+            ogretmenSohbetMesajlariYenile();
+        }
+    }, 15000);
+}
+
+function ogretmenSohbetModalKapat() {
+    document.getElementById('ogretmenSohbetModal').style.display = 'none';
+    if (ogretmenSohbetPolling) clearInterval(ogretmenSohbetPolling);
+    ogretmenSohbetPolling = null;
+    ogretmenAktifSohbetOgrenci = null;
+}
+
+function ogretmenSohbetListesiniYukle() {
+    let alan = document.getElementById('ogretmenSohbetListeAlani');
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "ogretmenSohbetListesi" })
+    })
+    .then(res => res.json())
+    .then(data => {
+        let liste = data.liste || [];
+        if (liste.length === 0) {
+            alan.innerHTML = `<p style="text-align:center; color:#999; font-size:12px; padding:20px;">Henüz hiç mesaj yok.</p>`;
+        } else {
+            alan.innerHTML = "";
+            liste.forEach(item => {
+                let rozetHtml = item.okunmamis > 0 ? `<span class="ogretmen-menu-rozet">${item.okunmamis}</span>` : "";
+                let satir = document.createElement('div');
+                satir.className = 'ogretmen-sohbet-satir';
+                satir.innerHTML = `
+                    <div>
+                        <div class="ogretmen-sohbet-isim">${guvenliMetin(item.ogrenci)}</div>
+                        <div class="ogretmen-sohbet-onizleme">${guvenliMetin(String(item.sonMesaj || ""))}</div>
+                    </div>
+                    ${rozetHtml}
+                `;
+                satir.onclick = function () { ogretmenSohbetAc(item.ogrenci); };
+                alan.appendChild(satir);
+            });
+        }
+        let toplamOkunmamis = liste.reduce((acc, i) => acc + (i.okunmamis || 0), 0);
+        adminRozetleriGuncelle(toplamOkunmamis);
+    }).catch(err => console.log("Sohbet listesi hatası:", err));
+}
+
+function ogretmenSohbetAc(ogrenciAdi2) {
+    ogretmenAktifSohbetOgrenci = ogrenciAdi2;
+    document.getElementById('ogretmenSohbetBaslikOgrenci').innerText = ogrenciAdi2;
+    document.getElementById('ogretmenSohbetListeAlani').style.display = 'none';
+    document.getElementById('ogretmenSohbetDetayAlani').style.display = 'flex';
+    ogretmenSohbetMesajlariYenile();
+}
+
+function ogretmenSohbetMesajlariYenile() {
+    if (!ogretmenAktifSohbetOgrenci) return;
+    let mesajAlani = document.getElementById('ogretmenSohbetMesajAlani');
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "ogretmenSohbetAc", ogrenci: ogretmenAktifSohbetOgrenci })
+    })
+    .then(res => res.json())
+    .then(data => {
+        mesajAlani.innerHTML = "";
+        (data.mesajlar || []).forEach(m => {
+            let sinif = m.gonderen === 'ogretmen' ? 'user' : 'bot';
+            mesajAlani.innerHTML += `<div class="ai-msg ${sinif}">${guvenliMetin(m.mesaj)}</div>`;
+        });
+        mesajAlani.scrollTop = mesajAlani.scrollHeight;
+    }).catch(err => console.log(err));
+}
+
+function ogretmenSohbetListesineDon() {
+    document.getElementById('ogretmenSohbetDetayAlani').style.display = 'none';
+    document.getElementById('ogretmenSohbetListeAlani').style.display = 'block';
+    ogretmenAktifSohbetOgrenci = null;
+    ogretmenSohbetListesiniYukle();
+}
+
+function ogretmenCevapGonderYolla() {
+    let input = document.getElementById('ogretmenCevapInput');
+    let mesaj = input.value.trim();
+    if (!mesaj || !ogretmenAktifSohbetOgrenci) return;
+
+    let mesajAlani = document.getElementById('ogretmenSohbetMesajAlani');
+    mesajAlani.innerHTML += `<div class="ai-msg user">${guvenliMetin(mesaj)}</div>`;
+    mesajAlani.scrollTop = mesajAlani.scrollHeight;
+    input.value = "";
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "ogretmenCevapGonder", ogrenci: ogretmenAktifSohbetOgrenci, mesaj: mesaj })
+    }).catch(err => console.log(err));
+}
+
+function adminRozetleriGuncelle(sayi) {
+    let rozet = document.getElementById('adminGearRozet');
+    let menuRozet = document.getElementById('ogretmenMenuOkunmamis');
+    if (sayi > 0) {
+        rozet.style.display = 'flex';
+        rozet.innerText = sayi;
+        if (menuRozet) { menuRozet.style.display = 'inline-block'; menuRozet.innerText = sayi; }
+    } else {
+        rozet.style.display = 'none';
+        if (menuRozet) menuRozet.style.display = 'none';
+    }
+}
+
+function adminRozetPollingBaslat() {
+    if (ogretmenPanelPolling) clearInterval(ogretmenPanelPolling);
+    ogretmenPanelPolling = setInterval(() => {
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "ogretmenSohbetListesi" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            let toplam = (data.liste || []).reduce((acc, i) => acc + (i.okunmamis || 0), 0);
+            adminRozetleriGuncelle(toplam);
+        }).catch(() => {});
+    }, 60000);
+}
+        
     </script>
 </body>
 </html>
