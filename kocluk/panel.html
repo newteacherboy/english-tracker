@@ -257,6 +257,71 @@
 .ogretmen-sohbet-isim { font-weight: 700; font-size: 13px; color: #1b5e20; }
 .ogretmen-sohbet-onizleme { font-size: 11px; color: #777; margin-top: 2px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ogretmen-geri-btn { background: none; border: none; color: #2e7d32; font-weight: 700; font-size: 12px; cursor: pointer; padding: 6px 0; text-align: left; }
+
+/* ===== ETKİNLİKLER (Gelişim Yolu) ===== */
+.etkinlikler-baslat-btn {
+    background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+    color: white; border: none; padding: 13px 28px; border-radius: 25px;
+    font-size: 14.5px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(124,58,237,0.3);
+}
+.etkinlikler-baslat-btn:hover { opacity: 0.92; }
+
+.etkinlik-liste-btn {
+    width: 100%; text-align: left; background: #f7f9f6; border: 2px solid var(--border-color);
+    border-radius: 12px; padding: 14px 16px; font-size: 14px; font-weight: 700; color: #1b5e20;
+    cursor: pointer; margin-bottom: 10px; display:flex; align-items:center; justify-content:space-between;
+}
+.etkinlik-liste-btn:hover { background: #e8f5e9; }
+
+.etkinlik-tam-ekran {
+    position: fixed; inset: 0; background: #fffdf0; z-index: 999998;
+    display: none; flex-direction: column; overflow: hidden;
+}
+.etkinlik-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 14px 18px; background: #fff; border-bottom: 2px solid #f3e8b8; flex-shrink:0;
+}
+.etkinlik-timer-box {
+    background:#fff3cd; border:2px solid #ffe082; color:#a15c00; font-weight:900; font-size:16px;
+    padding:6px 16px; border-radius: 14px; font-family: monospace;
+}
+.etkinlik-cikis-btn {
+    background:#ffebee; color:#c62828; border:none; width:38px; height:38px; border-radius:50%;
+    font-size:18px; font-weight:800; cursor:pointer;
+}
+.etkinlik-govde {
+    flex: 1; overflow-y: auto; display:flex; align-items:center; justify-content:center; padding: 10px;
+}
+.etkinlik-govde svg { width: 100%; max-width: 700px; height: auto; }
+
+.etkinlik-tebrik-overlay {
+    position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index: 999999;
+    display:none; align-items:center; justify-content:center; padding: 20px;
+}
+.etkinlik-tebrik-kutu {
+    background: white; border-radius: 22px; padding: 34px 28px; text-align:center; max-width: 360px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+.etkinlik-tebrik-kutu h2 { color:#7c3aed; font-size: 22px; margin-bottom: 8px; }
+.etkinlik-tebrik-kutu p { color:#555; font-size: 14px; margin-bottom: 18px; }
+.etkinlik-tebrik-sure {
+    font-family: monospace; font-size: 20px; font-weight:900; color:#1b5e20; background:#e8f5e9;
+    border-radius: 12px; padding: 8px 16px; display:inline-block; margin-bottom: 18px;
+}
+.etkinlik-tebrik-kapat-btn {
+    background:#7c3aed; color:white; border:none; padding: 12px 26px; border-radius: 12px;
+    font-weight:800; font-size:14px; cursor:pointer;
+}
+.confetti-piece {
+    position: fixed; top: -20px; width: 10px; height: 16px; opacity: 0.95;
+    z-index: 9999999; pointer-events:none; border-radius: 2px;
+    animation: confettiDus linear forwards;
+}
+@keyframes confettiDus {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(540deg); opacity: 0.3; }
+}
         
     </style>
 </head>
@@ -383,6 +448,7 @@
                 <h3 style="color: #1e40af; font-size: 17px; font-weight: 800; margin-bottom: 6px;">Akıcı Okuma & Hız Ölçer Testi</h3>
                 <p style="color: #3b82f6; font-size: 13px; margin-bottom: 20px; line-height: 1.4;">Sınıf seviyenize özel zengin, pedagojik metinlerle okuma hızınızı test edin, kronometreyi çalıştırıp WPM skorunuzu arşive kaydedin!</p>
                 <button onclick="okumaModaliniAc()" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; padding: 13px 28px; border-radius: 25px; font-size: 14.5px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(37,99,235,0.3); transition: transform 0.2s;">✨ Okuma Testini Başlat</button>
+          <button onclick="etkinliklerModalAc()" class="etkinlikler-baslat-btn" style="margin-top:16px;">🎯 Etkinlikler</button>
             </div>
         </div>
 
@@ -631,7 +697,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjl2uEcLPaNkR3TNEFN4SD2eliqzZw8PQKNmWob9ijBqf7b6rXQRH-KzhaszE871aU/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQKh3F1qjK4Xja_zXjEadh8op0MWMoiVePx8A7Atx9SJtPMYpYizOd1VaUEnXYW0gV/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -1713,7 +1779,308 @@ function sureyiBulutaKaydetSenkron() {
     } catch (e) {
         console.log("Senkron kayıt hatası:", e);
     }
+
+
+    <!-- ETKİNLİKLER LİSTE MODALI -->
+<div class="modal-overlay" id="etkinliklerModal">
+    <div class="modal-content" style="max-width: 380px; text-align:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="margin:0; color:#7c3aed;">🎯 Etkinlikler</h3>
+            <button onclick="document.getElementById('etkinliklerModal').style.display='none'" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+        </div>
+        <button class="etkinlik-liste-btn" onclick="etk1Ac()">
+            <span>🦋 1. Etkinlik — Kelebek & Çiçek</span>
+            <span>▶️</span>
+        </button>
+    </div>
+</div>
+
+<!-- 1. ETKİNLİK TAM EKRAN -->
+<div class="etkinlik-tam-ekran" id="etkinlik1Overlay">
+    <div class="etkinlik-header">
+        <div class="etkinlik-timer-box" id="etkinlik1Timer">00:00</div>
+        <button class="etkinlik-cikis-btn" onclick="etk1Kapat()" title="Kapat">✕</button>
+    </div>
+    <div class="etkinlik-govde">
+        <svg id="etkinlik1Svg" viewBox="0 0 600 560" style="touch-action:none;"></svg>
+    </div>
+</div>
+
+<!-- TEBRİKLER KUTUSU -->
+<div class="etkinlik-tebrik-overlay" id="etkinlik1TebrikOverlay">
+    <div class="etkinlik-tebrik-kutu">
+        <div style="font-size:52px; margin-bottom:8px;">🎉</div>
+        <h2>Tebrikler!</h2>
+        <p>Tüm kelebekleri çiçeklere başarıyla ulaştırdın!</p>
+        <div class="etkinlik-tebrik-sure" id="etkinlik1SonucSure">00:00</div>
+        <br>
+        <button class="etkinlik-tebrik-kapat-btn" onclick="etk1TamamKapat()">Harika! Kapat</button>
+    </div>
+</div>
+
+    // ===== ETKİNLİKLER: 1. Etkinlik (Kelebek - Çiçek Eşleştirme) =====
+function etkinliklerModalAc() {
+    document.getElementById('etkinliklerModal').style.display = 'flex';
 }
+
+let etk1Rows = [];
+let etk1ActiveRow = null;
+let etk1TamamlananSayi = 0;
+let etk1BaslangicZamani = 0;
+let etk1TimerInterval = null;
+let etk1Bitti = false;
+
+const ETK1_ROW_COUNT = 5;
+const ETK1_TOLERANS = 32;
+const ETK1_BASLANGIC_YARICAP = 45;
+
+function etk1SvgKoordinat(svg, clientX, clientY) {
+    let pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    let ctm = svg.getScreenCTM();
+    if (!ctm) return { x: 0, y: 0 };
+    let d = pt.matrixTransform(ctm.inverse());
+    return { x: d.x, y: d.y };
+}
+
+function etk1DalgaOlustur(rowIndex, rowY) {
+    let xBas = 120, xBit = 460, amplitude = 18, dalgaBoyu = 170;
+    let samples = [], toplamUzunluk = 0, oncekiX = null, oncekiY = null;
+
+    for (let x = xBas; x <= xBit; x += 4) {
+        let y = rowY + amplitude * Math.sin((2 * Math.PI * (x - xBas)) / dalgaBoyu);
+        if (oncekiX !== null) {
+            let dx = x - oncekiX, dy = y - oncekiY;
+            toplamUzunluk += Math.sqrt(dx * dx + dy * dy);
+        }
+        samples.push({ x: x, y: y, cumLen: toplamUzunluk });
+        oncekiX = x; oncekiY = y;
+    }
+    return { index: rowIndex, samples: samples, totalLen: toplamUzunluk, progressLen: 0, progressIdx: 0, completed: false, traceStarted: false };
+}
+
+function etk1SvgOlustur() {
+    let svg = document.getElementById('etkinlik1Svg');
+    svg.innerHTML = "";
+    etk1Rows = []; etk1TamamlananSayi = 0; etk1Bitti = false;
+    let ns = "http://www.w3.org/2000/svg";
+    let rowGap = 105, ustBosluk = 55;
+
+    for (let i = 0; i < ETK1_ROW_COUNT; i++) {
+        let rowY = ustBosluk + i * rowGap;
+        let row = etk1DalgaOlustur(i, rowY);
+        etk1Rows.push(row);
+
+        let kelebek = document.createElementNS(ns, "text");
+        kelebek.setAttribute("x", 40); kelebek.setAttribute("y", rowY + 12);
+        kelebek.setAttribute("font-size", "34"); kelebek.textContent = "🦋";
+        svg.appendChild(kelebek);
+
+        let dot = document.createElementNS(ns, "circle");
+        dot.setAttribute("cx", row.samples[0].x); dot.setAttribute("cy", row.samples[0].y);
+        dot.setAttribute("r", 5); dot.setAttribute("fill", "#e53935");
+        svg.appendChild(dot);
+
+        let dPath = "M " + row.samples.map(p => p.x + "," + p.y).join(" L ");
+        let bgPath = document.createElementNS(ns, "path");
+        bgPath.setAttribute("d", dPath);
+        bgPath.setAttribute("stroke", "#c9c9c9");
+        bgPath.setAttribute("stroke-width", "3");
+        bgPath.setAttribute("stroke-dasharray", "1,9");
+        bgPath.setAttribute("stroke-linecap", "round");
+        bgPath.setAttribute("fill", "none");
+        svg.appendChild(bgPath);
+
+        let izPath = document.createElementNS(ns, "path");
+        izPath.setAttribute("id", "etk1Iz" + i);
+        izPath.setAttribute("stroke", "#7c3aed");
+        izPath.setAttribute("stroke-width", "6");
+        izPath.setAttribute("stroke-linecap", "round");
+        izPath.setAttribute("stroke-linejoin", "round");
+        izPath.setAttribute("fill", "none");
+        izPath.setAttribute("d", "");
+        svg.appendChild(izPath);
+
+        let cicek = document.createElementNS(ns, "text");
+        cicek.setAttribute("x", 500); cicek.setAttribute("y", rowY + 14);
+        cicek.setAttribute("font-size", "36"); cicek.textContent = "🌼";
+        svg.appendChild(cicek);
+    }
+
+    svg.addEventListener("pointerdown", etk1PointerDown);
+    svg.addEventListener("pointermove", etk1PointerMove);
+    svg.addEventListener("pointerup", etk1PointerUp);
+    svg.addEventListener("pointercancel", etk1PointerUp);
+    svg.addEventListener("pointerleave", etk1PointerUp);
+}
+
+function etk1PointerDown(evt) {
+    if (etk1Bitti) return;
+    let svg = document.getElementById('etkinlik1Svg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    for (let row of etk1Rows) {
+        if (row.completed) continue;
+        let bas = row.samples[0];
+        let dx = coord.x - bas.x, dy = coord.y - bas.y;
+        if (Math.sqrt(dx * dx + dy * dy) <= ETK1_BASLANGIC_YARICAP) {
+            etk1ActiveRow = row;
+            row.traceStarted = true; row.progressLen = 0; row.progressIdx = 0;
+            etk1IzGuncelle(row, [bas]);
+            svg.setPointerCapture(evt.pointerId);
+            break;
+        }
+    }
+}
+
+function etk1PointerMove(evt) {
+    if (!etk1ActiveRow || etk1Bitti) return;
+    let svg = document.getElementById('etkinlik1Svg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    let row = etk1ActiveRow;
+
+    let aramaBasi = row.progressIdx;
+    let aramaSonu = Math.min(row.samples.length - 1, row.progressIdx + 40);
+    let enYakinIdx = -1, enYakinMesafe = Infinity;
+
+    for (let i = aramaBasi; i <= aramaSonu; i++) {
+        let s = row.samples[i];
+        let dx = coord.x - s.x, dy = coord.y - s.y;
+        let mesafe = Math.sqrt(dx * dx + dy * dy);
+        if (mesafe < enYakinMesafe) { enYakinMesafe = mesafe; enYakinIdx = i; }
+    }
+
+    if (enYakinMesafe > ETK1_TOLERANS) { etk1IziSifirla(row); return; }
+
+    if (enYakinIdx > row.progressIdx) {
+        row.progressIdx = enYakinIdx;
+        row.progressLen = row.samples[enYakinIdx].cumLen;
+        etk1IzGuncelle(row, row.samples.slice(0, enYakinIdx + 1));
+    }
+
+    if (row.progressLen >= row.totalLen * 0.94) {
+        etk1SatirTamamlandi(row);
+    }
+}
+
+function etk1PointerUp(evt) {
+    if (etk1ActiveRow && !etk1ActiveRow.completed) etk1IziSifirla(etk1ActiveRow);
+    etk1ActiveRow = null;
+}
+
+function etk1IzGuncelle(row, noktalar) {
+    document.getElementById("etk1Iz" + row.index).setAttribute("d", "M " + noktalar.map(p => p.x + "," + p.y).join(" L "));
+}
+
+function etk1IziSifirla(row) {
+    row.traceStarted = false; row.progressLen = 0; row.progressIdx = 0;
+    document.getElementById("etk1Iz" + row.index).setAttribute("d", "");
+    etk1ActiveRow = null;
+}
+
+function etk1SatirTamamlandi(row) {
+    row.completed = true;
+    etk1ActiveRow = null;
+    let izPath = document.getElementById("etk1Iz" + row.index);
+    izPath.setAttribute("stroke", "#22c55e");
+    izPath.setAttribute("d", "M " + row.samples.map(p => p.x + "," + p.y).join(" L "));
+
+    etk1TamamlananSayi++;
+    etk1MiniKutlama(row.samples[row.samples.length - 1]);
+
+    if (etk1TamamlananSayi >= ETK1_ROW_COUNT) etk1TumTamamlandi();
+}
+
+function etk1MiniKutlama(nokta) {
+    let svg = document.getElementById('etkinlik1Svg');
+    let ctm = svg.getScreenCTM();
+    let pt = svg.createSVGPoint();
+    pt.x = nokta.x; pt.y = nokta.y;
+    let ekran = pt.matrixTransform(ctm);
+    etk1KonfetiOlustur(ekran.x, ekran.y, 12);
+}
+
+function etk1Timer() {
+    let gecen = Math.floor((Date.now() - etk1BaslangicZamani) / 1000);
+    let dk = String(Math.floor(gecen / 60)).padStart(2, '0');
+    let sn = String(gecen % 60).padStart(2, '0');
+    document.getElementById('etkinlik1Timer').innerText = dk + ":" + sn;
+}
+
+function etk1Ac() {
+    document.getElementById('etkinliklerModal').style.display = 'none';
+    document.getElementById('etkinlik1Overlay').style.display = 'flex';
+    etk1SvgOlustur();
+    etk1BaslangicZamani = Date.now();
+    document.getElementById('etkinlik1Timer').innerText = "00:00";
+    if (etk1TimerInterval) clearInterval(etk1TimerInterval);
+    etk1TimerInterval = setInterval(etk1Timer, 1000);
+}
+
+function etk1Kapat() {
+    document.getElementById('etkinlik1Overlay').style.display = 'none';
+    if (etk1TimerInterval) clearInterval(etk1TimerInterval);
+    etk1TimerInterval = null;
+}
+
+function etk1TumTamamlandi() {
+    etk1Bitti = true;
+    if (etk1TimerInterval) clearInterval(etk1TimerInterval);
+    let gecenSaniye = Math.floor((Date.now() - etk1BaslangicZamani) / 1000);
+    let dk = String(Math.floor(gecenSaniye / 60)).padStart(2, '0');
+    let sn = String(gecenSaniye % 60).padStart(2, '0');
+    document.getElementById('etkinlik1SonucSure').innerText = dk + ":" + sn;
+    document.getElementById('etkinlik1TebrikOverlay').style.display = 'flex';
+    etk1BuyukKonfeti();
+
+    // YENİ: Google Sheets'e kayıt
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "etkinlikSonucKaydet",
+            ogrenciAdi: ogrenciAdi,
+            etkinlikAdi: "1. Etkinlik - Kelebek Çiçek",
+            sureSaniye: gecenSaniye
+        })
+    }).catch(err => console.log("Etkinlik kayıt hatası:", err));
+}
+
+function etk1TamamKapat() {
+    document.getElementById('etkinlik1TebrikOverlay').style.display = 'none';
+    etk1Kapat();
+}
+
+function etk1KonfetiOlustur(x, y, adet) {
+    const renkler = ["#f87171", "#fbbf24", "#34d399", "#60a5fa", "#a78bfa", "#f472b6"];
+    for (let i = 0; i < adet; i++) {
+        let p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.left = (x + (Math.random() * 60 - 30)) + "px";
+        p.style.top = (y - 10) + "px";
+        p.style.background = renkler[Math.floor(Math.random() * renkler.length)];
+        p.style.animationDuration = (1 + Math.random() * 0.8) + "s";
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 2000);
+    }
+}
+
+function etk1BuyukKonfeti() {
+    const renkler = ["#f87171", "#fbbf24", "#34d399", "#60a5fa", "#a78bfa", "#f472b6"];
+    let genislik = window.innerWidth;
+    for (let i = 0; i < 90; i++) {
+        setTimeout(() => {
+            let p = document.createElement('div');
+            p.className = 'confetti-piece';
+            p.style.left = (Math.random() * genislik) + "px";
+            p.style.top = "-20px";
+            p.style.background = renkler[Math.floor(Math.random() * renkler.length)];
+            p.style.animationDuration = (2 + Math.random() * 1.5) + "s";
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 3800);
+        }, i * 18);
+    }
+}
+    
         
     </script>
 </body>
