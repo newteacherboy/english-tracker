@@ -696,6 +696,32 @@
         </div>
     </div>
 
+
+    <!-- ETKİNLİKLER LİSTE MODALI -->
+<div class="modal-overlay" id="etkinliklerModal">
+    <div class="modal-content" style="max-width: 380px; text-align:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="margin:0; color:#7c3aed;">🎯 Etkinlikler</h3>
+            <button onclick="document.getElementById('etkinliklerModal').style.display='none'" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+        </div>
+        <button class="etkinlik-liste-btn" onclick="etk1Ac()">
+            <span>🦋 1. Etkinlik — Kelebek & Çiçek</span>
+            <span>▶️</span>
+        </button>
+    </div>
+</div>
+
+<!-- 1. ETKİNLİK TAM EKRAN -->
+<div class="etkinlik-tam-ekran" id="etkinlik1Overlay">
+    <div class="etkinlik-header">
+        <div class="etkinlik-timer-box" id="etkinlik1Timer">00:00</div>
+        <button class="etkinlik-cikis-btn" onclick="etk1Kapat()" title="Kapat">✕</button>
+    </div>
+    <div class="etkinlik-govde">
+        <svg id="etkinlik1Svg" viewBox="0 0 600 560" style="touch-action:none;"></svg>
+    </div>
+</div>
+
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQKh3F1qjK4Xja_zXjEadh8op0MWMoiVePx8A7Atx9SJtPMYpYizOd1VaUEnXYW0gV/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
@@ -1779,32 +1805,9 @@ function sureyiBulutaKaydetSenkron() {
     } catch (e) {
         console.log("Senkron kayıt hatası:", e);
     }
+}
 
-
-    <!-- ETKİNLİKLER LİSTE MODALI -->
-<div class="modal-overlay" id="etkinliklerModal">
-    <div class="modal-content" style="max-width: 380px; text-align:center;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-            <h3 style="margin:0; color:#7c3aed;">🎯 Etkinlikler</h3>
-            <button onclick="document.getElementById('etkinliklerModal').style.display='none'" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
-        </div>
-        <button class="etkinlik-liste-btn" onclick="etk1Ac()">
-            <span>🦋 1. Etkinlik — Kelebek & Çiçek</span>
-            <span>▶️</span>
-        </button>
-    </div>
-</div>
-
-<!-- 1. ETKİNLİK TAM EKRAN -->
-<div class="etkinlik-tam-ekran" id="etkinlik1Overlay">
-    <div class="etkinlik-header">
-        <div class="etkinlik-timer-box" id="etkinlik1Timer">00:00</div>
-        <button class="etkinlik-cikis-btn" onclick="etk1Kapat()" title="Kapat">✕</button>
-    </div>
-    <div class="etkinlik-govde">
-        <svg id="etkinlik1Svg" viewBox="0 0 600 560" style="touch-action:none;"></svg>
-    </div>
-</div>
+    
 
 <!-- TEBRİKLER KUTUSU -->
 <div class="etkinlik-tebrik-overlay" id="etkinlik1TebrikOverlay">
