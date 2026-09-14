@@ -930,7 +930,7 @@
 </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBxnV3astLX4EypqimHk2dJECAg9tz_emHAkiBBfuiwaUP63PTW0xkElKFhzDPJ4Xb/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtz_e5kbpaH0_J2RyWUJKmW7lmsWJPzVt1vYyTSUKWx2TDZkLeVPGCPCrr7gIWLU9P/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -3410,15 +3410,25 @@ function videolariGetirVeGoster() {
         alan.innerHTML = "";
         liste.forEach((v, idx) => {
             let btn = document.createElement('button');
-            btn.style.cssText = "width:100%; text-align:left; background:#fff; border:2px solid #fed7aa; border-radius:12px; padding:12px 16px; font-size:13.5px; font-weight:700; color:#9a3412; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:10px;";
+            btn.style.cssText = "width:100%; text-align:left; background:#fff; border:2px solid " + (v.izlendiMi ? "#86efac" : "#fed7aa") + "; border-radius:12px; padding:12px 16px; font-size:13.5px; font-weight:700; color:#9a3412; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:10px;";
+
+            let izlendiRozetHtml = v.izlendiMi
+                ? `<span style="background:#dcfce7; color:#166534; font-size:10px; font-weight:800; padding:3px 8px; border-radius:10px; white-space:nowrap;">✅ İzlendi${v.izlenmeTarihi ? " · " + v.izlenmeTarihi : ""}</span>`
+                : `<span style="background:#ffedd5; color:#c2410c; font-size:10px; font-weight:800; padding:3px 8px; border-radius:10px; white-space:nowrap;">🆕 Yeni</span>`;
+
+            let butonYazisi = v.izlendiMi ? "🔁 Tekrar İzle" : "▶️ İzle";
+
             btn.innerHTML = `
-                <span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
-                    <span>▶️ ${guvenliMetin(v.baslik || "Video " + (idx + 1))}</span>
+                <span style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; flex:1; min-width:0;">
+                    <span style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                        <span>${butonYazisi} — ${guvenliMetin(v.baslik || "Video " + (idx + 1))}</span>
+                    </span>
                     ${v.aciklama ? `<span style="font-size:11px; font-weight:500; color:#c2410c;">${guvenliMetin(v.aciklama)}</span>` : ""}
+                    ${izlendiRozetHtml}
                 </span>
-                <span>🎬</span>
+                <span style="font-size:18px; flex-shrink:0;">🎬</span>
             `;
-            btn.onclick = function () { videoOynaticiAc(v.baslik, v.videoLink); };
+            btn.onclick = function () { videoOynaticiAc(v.baslik, v.videoLink, v.satirIndex); };
             alan.appendChild(btn);
         });
     })
@@ -3448,7 +3458,7 @@ function videoEmbedBilgisiOlustur(link) {
     return { tip: "iframe", src: temizLink };
 }
 
-function videoOynaticiAc(baslik, link) {
+function videoOynaticiAc(baslik, link, satirIndex) {
     document.getElementById('videoOynaticiBaslik').innerText = baslik || "Video";
     document.getElementById('videoYeniSekmeLink').href = link;
 
@@ -3462,11 +3472,17 @@ function videoOynaticiAc(baslik, link) {
     }
 
     document.getElementById('videoOynaticiOverlay').style.display = 'flex';
-}
 
-function videoOynaticiKapat() {
-    document.getElementById('videoOynaticiOverlay').style.display = 'none';
-    document.getElementById('videoIcerikAlani').innerHTML = "";
+    // YENİ: Video açılınca "izlendi" olarak işaretle
+    if (satirIndex) {
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "videoIzlendiIsaretle", satirIndex: satirIndex })
+        })
+        .then(() => videolariGetirVeGoster()) // listeyi arka planda güncelle
+        .catch(err => console.log("İzlendi işaretleme hatası:", err));
+    }
 }
         
     </script>
