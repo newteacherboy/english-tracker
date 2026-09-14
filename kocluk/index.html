@@ -140,9 +140,37 @@
             font-weight: 600;
             min-height: 18px;
         }
+
+        .oturum-yukleme-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #f7f5f0; z-index: 999999;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+}
+.oturum-yukleme-baykus {
+    font-size: 64px; animation: baykusSallan 1.4s ease-in-out infinite;
+}
+@keyframes baykusSallan {
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+}
+.oturum-yukleme-yazi {
+    margin-top: 14px; font-size: 13px; font-weight: 700; color: #2f855a;
+}
+.oturum-yukleme-nokta::after {
+    content: '...'; animation: noktaAnim 1.2s steps(4, end) infinite;
+}
+@keyframes noktaAnim {
+    0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; }
+}
+        
     </style>
 </head>
 <body>
+
+    <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay">
+    <div class="oturum-yukleme-baykus">🦉</div>
+    <div class="oturum-yukleme-yazi">Oturumun yükleniyor<span class="oturum-yukleme-nokta"></span></div>
+</div>
 
     <!-- Ana Portala Dönüş Butonu -->
     <a href="https://panel.ogretmencocuk.com/" class="back-to-portal">← Ana Portala Dön</a>
