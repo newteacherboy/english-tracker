@@ -1558,36 +1558,37 @@
                     document.getElementById("hedefSayfaText").innerText = `Hedef: ${hedefSayfa} sayfa`;
 
                    let rozetler = data.rozetler || [];
-let toplamRozet = rozetler.length;
+                    let toplamRozet = rozetler.length;
 
-// Büyük/küçük harf duyarlılığını ortadan kaldırarak kontrol edelim
-let kazanilanSayisi = rozetler.filter(r => {
-    let d = String(r.durum || "").trim().toLowerCase();
-    return d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true";
-}).length;
+                    // Kazanılan rozetleri filtreleyelim
+                    let kazanilanSayisi = rozetler.filter(r => {
+                        let d = String(r.durum || "").trim().toLowerCase();
+                        return d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true";
+                    }).length;
 
-document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
-let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
-document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
-document.getElementById("rozetProgressText").innerText = `%${rozetYuzde}`;
+                    document.getElementById("rozetBaslikText").innerText = `🏆 Kazanılan Rozetler — ${kazanilanSayisi}/${toplamRozet}`;
+                    let rozetYuzde = toplamRozet > 0 ? Math.round((kazanilanSayisi / toplamRozet) * 100) : 0;
+                    document.getElementById("rozetProgressBar").style.width = rozetYuzde + "%";
+                    document.getElementById("rozetProgressText").innerText = `%${rozetYuzde}`;
 
-let rozetHtml = "";
-if (toplamRozet > 0) {
-    rozetler.forEach(r => {
-        let d = String(r.durum || "").trim().toLowerCase();
-        let aktifMi = (d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true");
-        
-        rozetHtml += `
-            <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
-                <div style="font-size:26px; margin-bottom:4px;">${aktifMi ? (r.emoji || '⭐') : '🔒'}</div>
-                <div style="font-size:11px; font-weight:bold; color:#333;">${guvenliMetin(r.rozetAdi || 'Rozet')}</div>
-                <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${r.puan || 0} p</div>
-            </div>`;
-    });
-    document.getElementById("tarh... rozetlerAlani").innerHTML = rozetHtml; // id="rozetlerAlani"
-} else {
-    document.getElementById("rozetlerAlani").innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777; padding:20px;">Henüz bu öğrenci için tanımlanmış rozet bulunmuyor.</div>`;
-}
+                    let rozetHtml = "";
+                    if (toplamRozet > 0) {
+                        rozetler.forEach(r => {
+                            let d = String(r.durum || "").trim().toLowerCase();
+                            let aktifMi = (d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true");
+                            
+                            rozetHtml += `
+                                <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
+                                    <div style="font-size:26px; margin-bottom:4px;">${aktifMi ? (r.emoji || '⭐') : '🔒'}</div>
+                                    <div style="font-size:11px; font-weight:bold; color:#333;">${guvenliMetin(r.rozetAdi || 'Rozet')}</div>
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${r.puan || 0} p</div>
+                                </div>`;
+                        });
+                        // HATA BURadaydI: "tarh... rozetlerAlani" düzeltildi -> "rozetlerAlani" yapıldı
+                        document.getElementById("rozetlerAlani").innerHTML = rozetHtml; 
+                    } else {
+                        document.getElementById("rozetlerAlani").innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777; padding:20px;">Henüz bu öğrenci için tanımlanmış rozet bulunmuyor.</div>`;
+                    }
 
                     let ogrenilenHarflerStr = String(data.gelisim.ogrenilenHarfler || "").toUpperCase();
                     let ogrenilenDizi = ogrenilenHarflerStr.split(",").map(h => h.trim());
