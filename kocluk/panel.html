@@ -721,6 +721,10 @@
 <button class="etkinlik-liste-btn" onclick="etkGenelAc(5)"><span>🌷 8. Etkinlik — Çukur (U) Takibi</span><span>▶️</span></button>
 <button class="etkinlik-liste-btn" onclick="etkGenelAc(6)"><span>🧢 9. Etkinlik — Kemer Takibi</span><span>▶️</span></button>
 <button class="etkinlik-liste-btn" onclick="etkGenelAc(7)"><span>🐟 10. Etkinlik — Dalga Takibi</span><span>▶️</span></button>
+        <button class="etkinlik-liste-btn" onclick="etkLabirentAc()"><span>🐕 11. Etkinlik — Labirent</span><span>▶️</span></button>
+<button class="etkinlik-liste-btn" onclick="etkKarisikAc()"><span>🐦 12. Etkinlik — Karışık Çizgi</span><span>▶️</span></button>
+<button class="etkinlik-liste-btn" onclick="etkBoyaAc()"><span>🎨 13. Etkinlik — Bağla & Boya</span><span>▶️</span></button>
+<button class="etkinlik-liste-btn" onclick="etkFarkAc()"><span>🔍 14. Etkinlik — Farkı Bul</span><span>▶️</span></button>
         
     </div>
 </div>
@@ -799,6 +803,100 @@
         <div class="etkinlik-tebrik-sure" id="etkinlikGenelSonucSure">00:00</div>
         <br>
         <button class="etkinlik-tebrik-kapat-btn" onclick="etkGenelTamamKapat()">Harika! Kapat</button>
+    </div>
+</div>
+
+    <svg id="etkOlcumSvg" width="0" height="0" style="position:absolute; visibility:hidden;"></svg>
+
+    <div class="etkinlik-tam-ekran" id="etkinlikLabirentOverlay">
+    <div class="etkinlik-header">
+        <div class="etkinlik-timer-box" id="etkinlikLabirentTimer">00:00</div>
+        <div style="display:flex; gap:8px;">
+            <button class="etkinlik-cikis-btn etk-muzik-btn" onclick="etkMuzikToggle()" title="Müzik" style="background:#fff3cd; color:#a15c00;">🔊</button>
+            <button class="etkinlik-cikis-btn" onclick="etkLabirentKapat()" title="Kapat">✕</button>
+        </div>
+    </div>
+    <div class="etkinlik-govde">
+        <svg id="etkinlikLabirentSvg" viewBox="0 0 600 560" style="touch-action:none;"></svg>
+    </div>
+</div>
+<div class="etkinlik-tebrik-overlay" id="etkinlikLabirentTebrikOverlay">
+    <div class="etkinlik-tebrik-kutu">
+        <div style="font-size:52px; margin-bottom:8px;">🎉</div>
+        <h2>Tebrikler!</h2>
+        <p>Köpeği kulübeye başarıyla ulaştırdın!</p>
+        <div class="etkinlik-tebrik-sure" id="etkinlikLabirentSonucSure">00:00</div>
+        <br>
+        <button class="etkinlik-tebrik-kapat-btn" onclick="etkLabirentTamamKapat()">Harika! Kapat</button>
+    </div>
+</div>   
+
+    <div class="etkinlik-tam-ekran" id="etkinlikKarisikOverlay">
+    <div class="etkinlik-header">
+        <div class="etkinlik-timer-box" id="etkinlikKarisikTimer">00:00</div>
+        <div style="display:flex; gap:8px;">
+            <button class="etkinlik-cikis-btn etk-muzik-btn" onclick="etkMuzikToggle()" title="Müzik" style="background:#fff3cd; color:#a15c00;">🔊</button>
+            <button class="etkinlik-cikis-btn" onclick="etkKarisikKapat()" title="Kapat">✕</button>
+        </div>
+    </div>
+    <div class="etkinlik-govde">
+        <svg id="etkinlikKarisikSvg" viewBox="0 0 600 560" style="touch-action:none;"></svg>
+    </div>
+</div>
+<div class="etkinlik-tebrik-overlay" id="etkinlikKarisikTebrikOverlay">
+    <div class="etkinlik-tebrik-kutu">
+        <div style="font-size:52px; margin-bottom:8px;">🎉</div>
+        <h2>Tebrikler!</h2>
+        <p>Tüm kuşları çiçeklere başarıyla ulaştırdın!</p>
+        <div class="etkinlik-tebrik-sure" id="etkinlikKarisikSonucSure">00:00</div>
+        <br>
+        <button class="etkinlik-tebrik-kapat-btn" onclick="etkKarisikTamamKapat()">Harika! Kapat</button>
+    </div>
+</div>
+
+    <div class="etkinlik-tam-ekran" id="etkinlikBoyaOverlay">
+    <div class="etkinlik-header">
+        <div class="etkinlik-timer-box" id="etkinlikBoyaTimer">00:00</div>
+        <div style="display:flex; gap:8px;">
+            <button class="etkinlik-cikis-btn etk-muzik-btn" onclick="etkMuzikToggle()" title="Müzik" style="background:#fff3cd; color:#a15c00;">🔊</button>
+            <button class="etkinlik-cikis-btn" onclick="etkBoyaKapat()" title="Kapat">✕</button>
+        </div>
+    </div>
+    <div class="etkinlik-govde">
+        <svg id="etkinlikBoyaSvg" viewBox="0 0 600 700" style="touch-action:none;"></svg>
+    </div>
+</div>
+<div class="etkinlik-tebrik-overlay" id="etkinlikBoyaTebrikOverlay">
+    <div class="etkinlik-tebrik-kutu">
+        <div style="font-size:52px; margin-bottom:8px;">🎉</div>
+        <h2>Tebrikler!</h2>
+        <p>Tüm şekilleri tamamlayıp boyadın!</p>
+        <div class="etkinlik-tebrik-sure" id="etkinlikBoyaSonucSure">00:00</div>
+        <br>
+        <button class="etkinlik-tebrik-kapat-btn" onclick="etkBoyaTamamKapat()">Harika! Kapat</button>
+    </div>
+</div>
+
+    <div class="etkinlik-tam-ekran" id="etkinlikFarkOverlay">
+    <div class="etkinlik-header">
+        <div class="etkinlik-timer-box"><span id="etkinlikFarkSayac">0 / 5</span> &nbsp; <span id="etkinlikFarkTimer">00:00</span></div>
+        <div style="display:flex; gap:8px;">
+            <button class="etkinlik-cikis-btn etk-muzik-btn" onclick="etkMuzikToggle()" title="Müzik" style="background:#fff3cd; color:#a15c00;">🔊</button>
+            <button class="etkinlik-cikis-btn" onclick="etkFarkKapat()" title="Kapat">✕</button>
+        </div>
+    </div>
+    <div class="etkinlik-govde">
+        <svg id="etkinlikFarkSvg" viewBox="0 0 600 620" style="touch-action:none;"></svg>
+    </div>
+</div>
+<div class="etkinlik-tebrik-overlay" id="etkinlikFarkTebrikOverlay">
+    <div class="etkinlik-tebrik-kutu">
+        <div style="font-size:52px; margin-bottom:8px;">🎉</div>
+        <h2>Tebrikler!</h2>
+        <p>5 farkı da başarıyla buldun!</p>
+        <div class="etkinlik-tebrik-sure" id="etkinlikFarkSonucSure">00:00</div>
+        <br>
+        <button class="etkinlik-tebrik-kapat-btn" onclick="etkFarkTamamKapat()">Harika! Kapat</button>
     </div>
 </div>
 
@@ -2640,6 +2738,627 @@ function etkGenelTumTamamlandi() {
 function etkGenelTamamKapat() {
     document.getElementById('etkinlikGenelTebrikOverlay').style.display = 'none';
     etkGenelKapat();
+}
+
+        // ===== 11. ETKİNLİK: LABİRENT =====
+let etkLabirentRow = null;
+let etkLabirentBaslangicZamani = 0;
+let etkLabirentTimerInterval = null;
+let etkLabirentBitti = false;
+const ETK_LABIRENT_TOLERANS = 24;
+
+function etkYolSamplesFromPath(pathD, adimSayisi) {
+    let tempPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    tempPath.setAttribute("d", pathD);
+    document.getElementById('etkOlcumSvg').appendChild(tempPath);
+    let uzunluk = tempPath.getTotalLength();
+    let samples = [];
+    for (let i = 0; i <= adimSayisi; i++) {
+        let len = uzunluk * i / adimSayisi;
+        let pt = tempPath.getPointAtLength(len);
+        samples.push({ x: pt.x, y: pt.y, cumLen: len });
+    }
+    tempPath.remove();
+    return { samples: samples, totalLen: uzunluk };
+}
+
+function etkLabirentYolUret() {
+    let x = 70, y = 280, adimlar = ["M " + x + "," + y];
+    let hedefX = 530;
+    while (x < hedefX) {
+        let adim = 55 + Math.random() * 20;
+        x += adim;
+        if (x > hedefX) x = hedefX;
+        if (Math.random() < 0.55 && x < hedefX - 40) {
+            let dy = (Math.random() < 0.5 ? -1 : 1) * (40 + Math.random() * 50);
+            y = Math.max(90, Math.min(470, y + dy));
+        }
+        adimlar.push("L " + x + "," + y);
+    }
+    adimlar.push("L " + hedefX + ",280");
+    return adimlar.join(" ");
+}
+
+function etkLabirentSvgOlustur() {
+    let svg = document.getElementById('etkinlikLabirentSvg');
+    svg.innerHTML = "";
+    etkLabirentBitti = false;
+    let ns = "http://www.w3.org/2000/svg";
+    let pathD = etkLabirentYolUret();
+    let yol = etkYolSamplesFromPath(pathD, 160);
+    yol.progressLen = 0; yol.progressIdx = 0; yol.completed = false;
+    etkLabirentRow = yol;
+
+    let korBg = document.createElementNS(ns, "path");
+    korBg.setAttribute("d", pathD);
+    korBg.setAttribute("stroke", "#e7d9bd");
+    korBg.setAttribute("stroke-width", "50");
+    korBg.setAttribute("stroke-linecap", "round");
+    korBg.setAttribute("stroke-linejoin", "round");
+    korBg.setAttribute("fill", "none");
+    svg.appendChild(korBg);
+
+    let korCizgi = document.createElementNS(ns, "path");
+    korCizgi.setAttribute("d", pathD);
+    korCizgi.setAttribute("stroke", "#cbb37c");
+    korCizgi.setAttribute("stroke-width", "50");
+    korCizgi.setAttribute("stroke-linecap", "round");
+    korCizgi.setAttribute("stroke-linejoin", "round");
+    korCizgi.setAttribute("fill", "none");
+    korCizgi.setAttribute("stroke-dasharray", "1,14");
+    svg.appendChild(korCizgi);
+
+    let izPath = document.createElementNS(ns, "path");
+    izPath.setAttribute("id", "etkLabirentIz");
+    izPath.setAttribute("stroke", "#7c3aed");
+    izPath.setAttribute("stroke-width", "18");
+    izPath.setAttribute("stroke-linecap", "round");
+    izPath.setAttribute("stroke-linejoin", "round");
+    izPath.setAttribute("fill", "none");
+    izPath.setAttribute("opacity", "0.55");
+    svg.appendChild(izPath);
+
+    let kopek = document.createElementNS(ns, "text");
+    kopek.setAttribute("x", yol.samples[0].x - 30); kopek.setAttribute("y", yol.samples[0].y + 10);
+    kopek.setAttribute("font-size", "34"); kopek.textContent = "🐕";
+    svg.appendChild(kopek);
+
+    let kulube = document.createElementNS(ns, "text");
+    let sonNokta = yol.samples[yol.samples.length - 1];
+    kulube.setAttribute("x", sonNokta.x - 5); kulube.setAttribute("y", sonNokta.y + 10);
+    kulube.setAttribute("font-size", "36"); kulube.textContent = "🏠";
+    svg.appendChild(kulube);
+
+    svg.addEventListener("pointerdown", etkLabirentDown);
+    svg.addEventListener("pointermove", etkLabirentMove);
+    svg.addEventListener("pointerup", etkLabirentUp);
+    svg.addEventListener("pointercancel", etkLabirentUp);
+    svg.addEventListener("pointerleave", etkLabirentUp);
+}
+
+function etkLabirentDown(evt) {
+    if (etkLabirentBitti) return;
+    let svg = document.getElementById('etkinlikLabirentSvg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    let bas = etkLabirentRow.samples[0];
+    let dx = coord.x - bas.x, dy = coord.y - bas.y;
+    if (Math.sqrt(dx * dx + dy * dy) <= 45) {
+        etkLabirentRow.progressLen = 0; etkLabirentRow.progressIdx = 0;
+        etkLabirentIzGuncelle([bas]);
+        svg.setPointerCapture(evt.pointerId);
+        etkLabirentAktif = true;
+    }
+}
+let etkLabirentAktif = false;
+
+function etkLabirentMove(evt) {
+    if (!etkLabirentAktif || etkLabirentBitti) return;
+    let svg = document.getElementById('etkinlikLabirentSvg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    let row = etkLabirentRow;
+
+    let aramaBasi = row.progressIdx, aramaSonu = Math.min(row.samples.length - 1, row.progressIdx + 25);
+    let enYakinIdx = -1, enYakinMesafe = Infinity;
+    for (let i = aramaBasi; i <= aramaSonu; i++) {
+        let s = row.samples[i];
+        let mesafe = Math.sqrt((coord.x - s.x) ** 2 + (coord.y - s.y) ** 2);
+        if (mesafe < enYakinMesafe) { enYakinMesafe = mesafe; enYakinIdx = i; }
+    }
+    if (enYakinMesafe > ETK_LABIRENT_TOLERANS) { etkLabirentSifirla(); return; }
+    if (enYakinIdx > row.progressIdx) {
+        row.progressIdx = enYakinIdx;
+        row.progressLen = row.samples[enYakinIdx].cumLen;
+        etkLabirentIzGuncelle(row.samples.slice(0, enYakinIdx + 1));
+    }
+    if (row.progressLen >= row.totalLen * 0.95) etkLabirentTamamlandi();
+}
+
+function etkLabirentUp() {
+    if (!etkLabirentBitti) etkLabirentSifirla();
+    etkLabirentAktif = false;
+}
+function etkLabirentIzGuncelle(noktalar) {
+    document.getElementById("etkLabirentIz").setAttribute("d", "M " + noktalar.map(p => p.x + "," + p.y).join(" L "));
+}
+function etkLabirentSifirla() {
+    etkLabirentRow.progressLen = 0; etkLabirentRow.progressIdx = 0;
+    document.getElementById("etkLabirentIz").setAttribute("d", "");
+    etkLabirentAktif = false;
+}
+
+function etkLabirentTimer() {
+    let gecen = Math.floor((Date.now() - etkLabirentBaslangicZamani) / 1000);
+    document.getElementById('etkinlikLabirentTimer').innerText = String(Math.floor(gecen / 60)).padStart(2, '0') + ":" + String(gecen % 60).padStart(2, '0');
+}
+function etkLabirentAc() {
+    document.getElementById('etkinliklerModal').style.display = 'none';
+    document.getElementById('etkinlikLabirentOverlay').style.display = 'flex';
+    etkLabirentSvgOlustur();
+    etkLabirentBaslangicZamani = Date.now();
+    document.getElementById('etkinlikLabirentTimer').innerText = "00:00";
+    if (etkLabirentTimerInterval) clearInterval(etkLabirentTimerInterval);
+    etkLabirentTimerInterval = setInterval(etkLabirentTimer, 1000);
+    etkMuzikBaslat(); etkMuzikToggleGuncelle();
+}
+function etkLabirentKapat() {
+    document.getElementById('etkinlikLabirentOverlay').style.display = 'none';
+    if (etkLabirentTimerInterval) clearInterval(etkLabirentTimerInterval);
+    etkMuzikDurdur();
+}
+function etkLabirentTamamlandi() {
+    etkLabirentBitti = true;
+    if (etkLabirentTimerInterval) clearInterval(etkLabirentTimerInterval);
+    let gecenSaniye = Math.floor((Date.now() - etkLabirentBaslangicZamani) / 1000);
+    document.getElementById('etkinlikLabirentSonucSure').innerText = String(Math.floor(gecenSaniye / 60)).padStart(2, '0') + ":" + String(gecenSaniye % 60).padStart(2, '0');
+    document.getElementById('etkinlikLabirentTebrikOverlay').style.display = 'flex';
+    etk1BuyukKonfeti();
+    fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "etkinlikSonucKaydet", ogrenciAdi: ogrenciAdi, etkinlikAdi: "11. Etkinlik - Labirent", sureSaniye: gecenSaniye }) }).catch(err => console.log(err));
+}
+function etkLabirentTamamKapat() {
+    document.getElementById('etkinlikLabirentTebrikOverlay').style.display = 'none';
+    etkLabirentKapat();
+}
+
+
+        // ===== 12. ETKİNLİK: KARIŞIK ÇİZGİ =====
+let etkKarisikRows = [];
+let etkKarisikActiveRow = null;
+let etkKarisikTamamlananSayi = 0;
+let etkKarisikBaslangicZamani = 0;
+let etkKarisikTimerInterval = null;
+let etkKarisikBitti = false;
+const ETK_KARISIK_ROW_COUNT = 3;
+const ETK_KARISIK_TOLERANS = 15;
+
+function etkKarisikPathUret(rowY) {
+    let xBas = 110, xBit = 480;
+    let p = "M " + xBas + "," + rowY;
+    let segmentSayisi = 4;
+    let cx = xBas, cy = rowY;
+    for (let i = 0; i < segmentSayisi; i++) {
+        let hedefX = xBas + (xBit - xBas) * (i + 1) / segmentSayisi;
+        let c1x = cx + 30 + Math.random() * 30, c1y = cy + (Math.random() < 0.5 ? -1 : 1) * (40 + Math.random() * 40);
+        let c2x = hedefX - 40 - Math.random() * 20, c2y = rowY + (Math.random() < 0.5 ? -1 : 1) * (40 + Math.random() * 40);
+        let ny = rowY + (Math.random() < 0.5 ? -1 : 1) * (Math.random() * 15);
+        p += " C " + c1x + "," + c1y + " " + c2x + "," + c2y + " " + hedefX + "," + ny;
+        cx = hedefX; cy = ny;
+    }
+    return p;
+}
+
+function etkKarisikSvgOlustur() {
+    let svg = document.getElementById('etkinlikKarisikSvg');
+    svg.innerHTML = "";
+    etkKarisikRows = []; etkKarisikTamamlananSayi = 0; etkKarisikBitti = false;
+    let ns = "http://www.w3.org/2000/svg";
+    let rowGap = 165, ustBosluk = 90;
+
+    for (let i = 0; i < ETK_KARISIK_ROW_COUNT; i++) {
+        let rowY = ustBosluk + i * rowGap;
+        let pathD = etkKarisikPathUret(rowY);
+        let row = etkYolSamplesFromPath(pathD, 140);
+        row.progressLen = 0; row.progressIdx = 0; row.completed = false; row.index = i;
+        etkKarisikRows.push(row);
+
+        let kus = document.createElementNS(ns, "text");
+        kus.setAttribute("x", 40); kus.setAttribute("y", rowY + 10);
+        kus.setAttribute("font-size", "32"); kus.textContent = "🐦";
+        svg.appendChild(kus);
+
+        let bg = document.createElementNS(ns, "path");
+        bg.setAttribute("d", pathD);
+        bg.setAttribute("stroke", "#c9c9c9"); bg.setAttribute("stroke-width", "3");
+        bg.setAttribute("stroke-dasharray", "1,9"); bg.setAttribute("stroke-linecap", "round"); bg.setAttribute("fill", "none");
+        svg.appendChild(bg);
+
+        let iz = document.createElementNS(ns, "path");
+        iz.setAttribute("id", "etkKarisikIz" + i);
+        iz.setAttribute("stroke", "#eab308"); iz.setAttribute("stroke-width", "6");
+        iz.setAttribute("stroke-linecap", "round"); iz.setAttribute("stroke-linejoin", "round"); iz.setAttribute("fill", "none");
+        svg.appendChild(iz);
+
+        let cicek = document.createElementNS(ns, "text");
+        cicek.setAttribute("x", 495); cicek.setAttribute("y", rowY + 12);
+        cicek.setAttribute("font-size", "34"); cicek.textContent = "🌸";
+        svg.appendChild(cicek);
+    }
+    svg.addEventListener("pointerdown", etkKarisikDown);
+    svg.addEventListener("pointermove", etkKarisikMove);
+    svg.addEventListener("pointerup", etkKarisikUp);
+    svg.addEventListener("pointercancel", etkKarisikUp);
+    svg.addEventListener("pointerleave", etkKarisikUp);
+}
+
+function etkKarisikDown(evt) {
+    if (etkKarisikBitti) return;
+    let svg = document.getElementById('etkinlikKarisikSvg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    for (let row of etkKarisikRows) {
+        if (row.completed) continue;
+        let bas = row.samples[0];
+        if (Math.sqrt((coord.x - bas.x) ** 2 + (coord.y - bas.y) ** 2) <= 45) {
+            etkKarisikActiveRow = row; row.progressLen = 0; row.progressIdx = 0;
+            etkKarisikIzGuncelle(row, [bas]);
+            svg.setPointerCapture(evt.pointerId);
+            break;
+        }
+    }
+}
+function etkKarisikMove(evt) {
+    if (!etkKarisikActiveRow || etkKarisikBitti) return;
+    let svg = document.getElementById('etkinlikKarisikSvg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    let row = etkKarisikActiveRow;
+    let aramaBasi = row.progressIdx, aramaSonu = Math.min(row.samples.length - 1, row.progressIdx + 30);
+    let enYakinIdx = -1, enYakinMesafe = Infinity;
+    for (let i = aramaBasi; i <= aramaSonu; i++) {
+        let s = row.samples[i];
+        let mesafe = Math.sqrt((coord.x - s.x) ** 2 + (coord.y - s.y) ** 2);
+        if (mesafe < enYakinMesafe) { enYakinMesafe = mesafe; enYakinIdx = i; }
+    }
+    if (enYakinMesafe > ETK_KARISIK_TOLERANS) { etkKarisikSifirla(row); return; }
+    if (enYakinIdx > row.progressIdx) {
+        row.progressIdx = enYakinIdx; row.progressLen = row.samples[enYakinIdx].cumLen;
+        etkKarisikIzGuncelle(row, row.samples.slice(0, enYakinIdx + 1));
+    }
+    if (row.progressLen >= row.totalLen * 0.93) etkKarisikTamamlandi(row);
+}
+function etkKarisikUp() {
+    if (etkKarisikActiveRow && !etkKarisikActiveRow.completed) etkKarisikSifirla(etkKarisikActiveRow);
+    etkKarisikActiveRow = null;
+}
+function etkKarisikIzGuncelle(row, noktalar) {
+    document.getElementById("etkKarisikIz" + row.index).setAttribute("d", "M " + noktalar.map(p => p.x + "," + p.y).join(" L "));
+}
+function etkKarisikSifirla(row) {
+    row.progressLen = 0; row.progressIdx = 0;
+    document.getElementById("etkKarisikIz" + row.index).setAttribute("d", "");
+    etkKarisikActiveRow = null;
+}
+function etkKarisikTamamlandi(row) {
+    row.completed = true; etkKarisikActiveRow = null;
+    let iz = document.getElementById("etkKarisikIz" + row.index);
+    iz.setAttribute("stroke", "#22c55e");
+    iz.setAttribute("d", "M " + row.samples.map(p => p.x + "," + p.y).join(" L "));
+    etkKarisikTamamlananSayi++;
+    let svg = document.getElementById('etkinlikKarisikSvg');
+    let ctm = svg.getScreenCTM(); let pt = svg.createSVGPoint();
+    let son = row.samples[row.samples.length - 1];
+    pt.x = son.x; pt.y = son.y;
+    let ekran = pt.matrixTransform(ctm);
+    etk1KonfetiOlustur(ekran.x, ekran.y, 12);
+    if (etkKarisikTamamlananSayi >= ETK_KARISIK_ROW_COUNT) etkKarisikTumTamamlandi();
+}
+function etkKarisikTimer() {
+    let gecen = Math.floor((Date.now() - etkKarisikBaslangicZamani) / 1000);
+    document.getElementById('etkinlikKarisikTimer').innerText = String(Math.floor(gecen / 60)).padStart(2, '0') + ":" + String(gecen % 60).padStart(2, '0');
+}
+function etkKarisikAc() {
+    document.getElementById('etkinliklerModal').style.display = 'none';
+    document.getElementById('etkinlikKarisikOverlay').style.display = 'flex';
+    etkKarisikSvgOlustur();
+    etkKarisikBaslangicZamani = Date.now();
+    document.getElementById('etkinlikKarisikTimer').innerText = "00:00";
+    if (etkKarisikTimerInterval) clearInterval(etkKarisikTimerInterval);
+    etkKarisikTimerInterval = setInterval(etkKarisikTimer, 1000);
+    etkMuzikBaslat(); etkMuzikToggleGuncelle();
+}
+function etkKarisikKapat() {
+    document.getElementById('etkinlikKarisikOverlay').style.display = 'none';
+    if (etkKarisikTimerInterval) clearInterval(etkKarisikTimerInterval);
+    etkMuzikDurdur();
+}
+function etkKarisikTumTamamlandi() {
+    etkKarisikBitti = true;
+    if (etkKarisikTimerInterval) clearInterval(etkKarisikTimerInterval);
+    let gecenSaniye = Math.floor((Date.now() - etkKarisikBaslangicZamani) / 1000);
+    document.getElementById('etkinlikKarisikSonucSure').innerText = String(Math.floor(gecenSaniye / 60)).padStart(2, '0') + ":" + String(gecenSaniye % 60).padStart(2, '0');
+    document.getElementById('etkinlikKarisikTebrikOverlay').style.display = 'flex';
+    etk1BuyukKonfeti();
+    fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "etkinlikSonucKaydet", ogrenciAdi: ogrenciAdi, etkinlikAdi: "12. Etkinlik - Karışık Çizgi", sureSaniye: gecenSaniye }) }).catch(err => console.log(err));
+}
+function etkKarisikTamamKapat() {
+    document.getElementById('etkinlikKarisikTebrikOverlay').style.display = 'none';
+    etkKarisikKapat();
+}
+
+        // ===== 13. ETKİNLİK: BAĞLA & BOYA =====
+const ETK_BOYA_SEKILLER = [
+    { ad: "sun",   renk: "#fbbf24", cx: 150, cy: 130, r: 55 },
+    { ad: "sun",   renk: "#60a5fa", cx: 450, cy: 130, r: 55 },
+    { ad: "sun",   renk: "#f472b6", cx: 150, cy: 350, r: 55 },
+    { ad: "sun",   renk: "#34d399", cx: 450, cy: 350, r: 55 },
+    { ad: "sun",   renk: "#a78bfa", cx: 150, cy: 570, r: 55 },
+    { ad: "sun",   renk: "#f87171", cx: 450, cy: 570, r: 55 }
+];
+let etkBoyaTamamlananSayi = 0;
+let etkBoyaBaslangicZamani = 0;
+let etkBoyaTimerInterval = null;
+let etkBoyaBitti = false;
+let etkBoyaAktifRow = null;
+const ETK_BOYA_TOLERANS = 14;
+
+function etkBoyaCirclePath(cx, cy, r) {
+    return "M " + (cx + r) + "," + cy + " A " + r + "," + r + " 0 1,1 " + (cx - r) + "," + cy + " A " + r + "," + r + " 0 1,1 " + (cx + r) + "," + cy + " Z";
+}
+
+function etkBoyaSvgOlustur() {
+    let svg = document.getElementById('etkinlikBoyaSvg');
+    svg.innerHTML = "";
+    etkBoyaTamamlananSayi = 0; etkBoyaBitti = false;
+
+    ETK_BOYA_SEKILLER.forEach((s, i) => {
+        let pathD = etkBoyaCirclePath(s.cx, s.cy, s.r);
+        let row = etkYolSamplesFromPath(pathD, 120);
+        row.progressLen = 0; row.progressIdx = 0; row.completed = false;
+        row.index = i; row.d = pathD; row.renk = s.renk; row.cx = s.cx; row.cy = s.cy; row.r = s.r;
+        s.rowObj = row;
+
+        let ns = "http://www.w3.org/2000/svg";
+        let dolgu = document.createElementNS(ns, "circle");
+        dolgu.setAttribute("id", "etkBoyaDolgu" + i);
+        dolgu.setAttribute("cx", s.cx); dolgu.setAttribute("cy", s.cy); dolgu.setAttribute("r", s.r);
+        dolgu.setAttribute("fill", s.renk); dolgu.setAttribute("opacity", "0");
+        svg.appendChild(dolgu);
+
+        let bg = document.createElementNS(ns, "path");
+        bg.setAttribute("d", pathD);
+        bg.setAttribute("stroke", "#c9c9c9"); bg.setAttribute("stroke-width", "3");
+        bg.setAttribute("stroke-dasharray", "2,8"); bg.setAttribute("fill", "none");
+        svg.appendChild(bg);
+
+        let iz = document.createElementNS(ns, "path");
+        iz.setAttribute("id", "etkBoyaIz" + i);
+        iz.setAttribute("stroke", s.renk); iz.setAttribute("stroke-width", "6");
+        iz.setAttribute("stroke-linecap", "round"); iz.setAttribute("fill", "none");
+        svg.appendChild(iz);
+
+        let dot = document.createElementNS(ns, "circle");
+        dot.setAttribute("cx", row.samples[0].x); dot.setAttribute("cy", row.samples[0].y);
+        dot.setAttribute("r", 6); dot.setAttribute("fill", "#e53935");
+        svg.appendChild(dot);
+    });
+
+    svg.addEventListener("pointerdown", etkBoyaDown);
+    svg.addEventListener("pointermove", etkBoyaMove);
+    svg.addEventListener("pointerup", etkBoyaUp);
+    svg.addEventListener("pointercancel", etkBoyaUp);
+    svg.addEventListener("pointerleave", etkBoyaUp);
+}
+
+function etkBoyaDown(evt) {
+    if (etkBoyaBitti) return;
+    let svg = document.getElementById('etkinlikBoyaSvg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    for (let s of ETK_BOYA_SEKILLER) {
+        let row = s.rowObj;
+        if (row.completed) continue;
+        let bas = row.samples[0];
+        if (Math.sqrt((coord.x - bas.x) ** 2 + (coord.y - bas.y) ** 2) <= 40) {
+            etkBoyaAktifRow = row; row.progressLen = 0; row.progressIdx = 0;
+            etkBoyaIzGuncelle(row, [bas]);
+            svg.setPointerCapture(evt.pointerId);
+            break;
+        }
+    }
+}
+function etkBoyaMove(evt) {
+    if (!etkBoyaAktifRow || etkBoyaBitti) return;
+    let svg = document.getElementById('etkinlikBoyaSvg');
+    let coord = etk1SvgKoordinat(svg, evt.clientX, evt.clientY);
+    let row = etkBoyaAktifRow;
+    let aramaBasi = row.progressIdx, aramaSonu = Math.min(row.samples.length - 1, row.progressIdx + 20);
+    let enYakinIdx = -1, enYakinMesafe = Infinity;
+    for (let i = aramaBasi; i <= aramaSonu; i++) {
+        let s = row.samples[i];
+        let mesafe = Math.sqrt((coord.x - s.x) ** 2 + (coord.y - s.y) ** 2);
+        if (mesafe < enYakinMesafe) { enYakinMesafe = mesafe; enYakinIdx = i; }
+    }
+    if (enYakinMesafe > ETK_BOYA_TOLERANS) { etkBoyaSifirla(row); return; }
+    if (enYakinIdx > row.progressIdx) {
+        row.progressIdx = enYakinIdx; row.progressLen = row.samples[enYakinIdx].cumLen;
+        etkBoyaIzGuncelle(row, row.samples.slice(0, enYakinIdx + 1));
+    }
+    if (row.progressLen >= row.totalLen * 0.92) etkBoyaTamamlandi(row);
+}
+function etkBoyaUp() {
+    if (etkBoyaAktifRow && !etkBoyaAktifRow.completed) etkBoyaSifirla(etkBoyaAktifRow);
+    etkBoyaAktifRow = null;
+}
+function etkBoyaIzGuncelle(row, noktalar) {
+    document.getElementById("etkBoyaIz" + row.index).setAttribute("d", "M " + noktalar.map(p => p.x + "," + p.y).join(" L "));
+}
+function etkBoyaSifirla(row) {
+    row.progressLen = 0; row.progressIdx = 0;
+    document.getElementById("etkBoyaIz" + row.index).setAttribute("d", "");
+    etkBoyaAktifRow = null;
+}
+function etkBoyaTamamlandi(row) {
+    row.completed = true; etkBoyaAktifRow = null;
+    let dolgu = document.getElementById("etkBoyaDolgu" + row.index);
+    dolgu.style.transition = "opacity 0.6s ease";
+    dolgu.setAttribute("opacity", "1");
+    etkBoyaTamamlananSayi++;
+    let svg = document.getElementById('etkinlikBoyaSvg');
+    let ctm = svg.getScreenCTM(); let pt = svg.createSVGPoint();
+    pt.x = row.cx; pt.y = row.cy;
+    let ekran = pt.matrixTransform(ctm);
+    etk1KonfetiOlustur(ekran.x, ekran.y, 14);
+    if (etkBoyaTamamlananSayi >= ETK_BOYA_SEKILLER.length) etkBoyaTumTamamlandi();
+}
+function etkBoyaTimer() {
+    let gecen = Math.floor((Date.now() - etkBoyaBaslangicZamani) / 1000);
+    document.getElementById('etkinlikBoyaTimer').innerText = String(Math.floor(gecen / 60)).padStart(2, '0') + ":" + String(gecen % 60).padStart(2, '0');
+}
+function etkBoyaAc() {
+    document.getElementById('etkinliklerModal').style.display = 'none';
+    document.getElementById('etkinlikBoyaOverlay').style.display = 'flex';
+    etkBoyaSvgOlustur();
+    etkBoyaBaslangicZamani = Date.now();
+    document.getElementById('etkinlikBoyaTimer').innerText = "00:00";
+    if (etkBoyaTimerInterval) clearInterval(etkBoyaTimerInterval);
+    etkBoyaTimerInterval = setInterval(etkBoyaTimer, 1000);
+    etkMuzikBaslat(); etkMuzikToggleGuncelle();
+}
+function etkBoyaKapat() {
+    document.getElementById('etkinlikBoyaOverlay').style.display = 'none';
+    if (etkBoyaTimerInterval) clearInterval(etkBoyaTimerInterval);
+    etkMuzikDurdur();
+}
+function etkBoyaTumTamamlandi() {
+    etkBoyaBitti = true;
+    if (etkBoyaTimerInterval) clearInterval(etkBoyaTimerInterval);
+    let gecenSaniye = Math.floor((Date.now() - etkBoyaBaslangicZamani) / 1000);
+    document.getElementById('etkinlikBoyaSonucSure').innerText = String(Math.floor(gecenSaniye / 60)).padStart(2, '0') + ":" + String(gecenSaniye % 60).padStart(2, '0');
+    document.getElementById('etkinlikBoyaTebrikOverlay').style.display = 'flex';
+    etk1BuyukKonfeti();
+    fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "etkinlikSonucKaydet", ogrenciAdi: ogrenciAdi, etkinlikAdi: "13. Etkinlik - Bağla ve Boya", sureSaniye: gecenSaniye }) }).catch(err => console.log(err));
+}
+function etkBoyaTamamKapat() {
+    document.getElementById('etkinlikBoyaTebrikOverlay').style.display = 'none';
+    etkBoyaKapat();
+}
+
+        // ===== 14. ETKİNLİK: FARKI BUL =====
+const ETK_FARK_NOKTALAR = [
+    { x: 195, y: 155, r: 32, emoji1: "", emoji2: "🕶️" },
+    { x: 410, y: 130, r: 30, emoji1: "", emoji2: "📿" },
+    { x: 495, y: 60,  r: 28, emoji1: "", emoji2: "☁️" },
+    { x: 90,  y: 480, r: 30, emoji1: "", emoji2: "🌼" },
+    { x: 350, y: 500, r: 30, emoji1: "😐", emoji2: "😄" }
+];
+let etkFarkBulunanSayi = 0;
+let etkFarkBaslangicZamani = 0;
+let etkFarkTimerInterval = null;
+let etkFarkBitti = false;
+
+function etkFarkSvgOlustur() {
+    let svg = document.getElementById('etkinlikFarkSvg');
+    svg.innerHTML = "";
+    etkFarkBulunanSayi = 0; etkFarkBitti = false;
+    document.getElementById('etkinlikFarkSayac').innerText = "0 / 5";
+    let ns = "http://www.w3.org/2000/svg";
+
+    let ust = document.createElementNS(ns, "rect");
+    ust.setAttribute("x", 20); ust.setAttribute("y", 20); ust.setAttribute("width", 560); ust.setAttribute("height", 260);
+    ust.setAttribute("rx", 18); ust.setAttribute("fill", "#dbeafe");
+    svg.appendChild(ust);
+
+    let alt = document.createElementNS(ns, "rect");
+    alt.setAttribute("x", 20); alt.setAttribute("y", 320); alt.setAttribute("width", 560); alt.setAttribute("height", 260);
+    alt.setAttribute("rx", 18); alt.setAttribute("fill", "#dbeafe");
+    svg.appendChild(alt);
+
+    let baslik1 = document.createElementNS(ns, "text");
+    baslik1.setAttribute("x", 300); baslik1.setAttribute("y", 55); baslik1.setAttribute("text-anchor", "middle");
+    baslik1.setAttribute("font-size", "13"); baslik1.setAttribute("fill", "#1e40af"); baslik1.setAttribute("font-weight", "bold");
+    baslik1.textContent = "Bu resme bak (orijinal)";
+    svg.appendChild(baslik1);
+
+    let baslik2 = document.createElementNS(ns, "text");
+    baslik2.setAttribute("x", 300); baslik2.setAttribute("y", 355); baslik2.setAttribute("text-anchor", "middle");
+    baslik2.setAttribute("font-size", "13"); baslik2.setAttribute("fill", "#1e40af"); baslik2.setAttribute("font-weight", "bold");
+    baslik2.textContent = "Farkları burada bul (5 tık)";
+    svg.appendChild(baslik2);
+
+    let tavuk1 = document.createElementNS(ns, "text");
+    tavuk1.setAttribute("x", 240); tavuk1.setAttribute("y", 220); tavuk1.setAttribute("font-size", "110"); tavuk1.textContent = "🐔";
+    svg.appendChild(tavuk1);
+
+    let tavuk2 = document.createElementNS(ns, "text");
+    tavuk2.setAttribute("x", 240); tavuk2.setAttribute("y", 520); tavuk2.setAttribute("font-size", "110"); tavuk2.textContent = "🐔";
+    svg.appendChild(tavuk2);
+
+    ETK_FARK_NOKTALAR.forEach((n, i) => {
+        if (n.emoji2) {
+            let ek = document.createElementNS(ns, "text");
+            ek.setAttribute("x", n.x); ek.setAttribute("y", n.y + 300);
+            ek.setAttribute("font-size", "26"); ek.textContent = n.emoji2;
+            svg.appendChild(ek);
+        }
+        let hotspot = document.createElementNS(ns, "circle");
+        hotspot.setAttribute("id", "etkFarkNokta" + i);
+        hotspot.setAttribute("cx", n.x); hotspot.setAttribute("cy", n.y + 300);
+        hotspot.setAttribute("r", n.r);
+        hotspot.setAttribute("fill", "transparent");
+        hotspot.setAttribute("stroke", "transparent");
+        hotspot.setAttribute("stroke-width", "3");
+        hotspot.style.cursor = "pointer";
+        hotspot.dataset.bulundu = "false";
+        hotspot.addEventListener("click", () => etkFarkTiklandi(i, hotspot));
+        svg.appendChild(hotspot);
+    });
+}
+
+function etkFarkTiklandi(index, el) {
+    if (etkFarkBitti || el.dataset.bulundu === "true") return;
+    el.dataset.bulundu = "true";
+    el.setAttribute("fill", "rgba(34,197,94,0.25)");
+    el.setAttribute("stroke", "#22c55e");
+    el.style.cursor = "default";
+    etkFarkBulunanSayi++;
+    document.getElementById('etkinlikFarkSayac').innerText = etkFarkBulunanSayi + " / 5";
+
+    let svg = document.getElementById('etkinlikFarkSvg');
+    let ctm = svg.getScreenCTM(); let pt = svg.createSVGPoint();
+    pt.x = Number(el.getAttribute("cx")); pt.y = Number(el.getAttribute("cy"));
+    let ekran = pt.matrixTransform(ctm);
+    etk1KonfetiOlustur(ekran.x, ekran.y, 10);
+
+    if (etkFarkBulunanSayi >= 5) etkFarkTumTamamlandi();
+}
+
+function etkFarkTimer() {
+    let gecen = Math.floor((Date.now() - etkFarkBaslangicZamani) / 1000);
+    document.getElementById('etkinlikFarkTimer').innerText = String(Math.floor(gecen / 60)).padStart(2, '0') + ":" + String(gecen % 60).padStart(2, '0');
+}
+function etkFarkAc() {
+    document.getElementById('etkinliklerModal').style.display = 'none';
+    document.getElementById('etkinlikFarkOverlay').style.display = 'flex';
+    etkFarkSvgOlustur();
+    etkFarkBaslangicZamani = Date.now();
+    document.getElementById('etkinlikFarkTimer').innerText = "00:00";
+    if (etkFarkTimerInterval) clearInterval(etkFarkTimerInterval);
+    etkFarkTimerInterval = setInterval(etkFarkTimer, 1000);
+    etkMuzikBaslat(); etkMuzikToggleGuncelle();
+}
+function etkFarkKapat() {
+    document.getElementById('etkinlikFarkOverlay').style.display = 'none';
+    if (etkFarkTimerInterval) clearInterval(etkFarkTimerInterval);
+    etkMuzikDurdur();
+}
+function etkFarkTumTamamlandi() {
+    etkFarkBitti = true;
+    if (etkFarkTimerInterval) clearInterval(etkFarkTimerInterval);
+    let gecenSaniye = Math.floor((Date.now() - etkFarkBaslangicZamani) / 1000);
+    document.getElementById('etkinlikFarkSonucSure').innerText = String(Math.floor(gecenSaniye / 60)).padStart(2, '0') + ":" + String(gecenSaniye % 60).padStart(2, '0');
+    document.getElementById('etkinlikFarkTebrikOverlay').style.display = 'flex';
+    etk1BuyukKonfeti();
+    fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "etkinlikSonucKaydet", ogrenciAdi: ogrenciAdi, etkinlikAdi: "14. Etkinlik - Farkı Bul", sureSaniye: gecenSaniye }) }).catch(err => console.log(err));
+}
+function etkFarkTamamKapat() {
+    document.getElementById('etkinlikFarkTebrikOverlay').style.display = 'none';
+    etkFarkKapat();
 }
         
     </script>
