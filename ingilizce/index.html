@@ -6554,6 +6554,9 @@ function dyOyunuBitir() {
     if (dyAktifSatirIndex && typeof etkinlikYapildiIsaretleCagir === 'function') {
         etkinlikYapildiIsaretleCagir(dyAktifSatirIndex);
     }
+    window.speechSynthesis.cancel();
+    document.getElementById('dyOyunOverlay').style.display = 'none';
+
     document.getElementById('dyTebrikDogru').innerText = dyDogruSayisi;
     document.getElementById('dyTebrikToplam').innerText = dySorular.length;
     document.getElementById('dyTebrikOverlay').style.display = 'flex';
