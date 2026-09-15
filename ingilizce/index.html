@@ -2228,7 +2228,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbwVfQi-LJZJTXIa1PcFvs7uDEZr3PNwcMWjO3phf9JYImSQWjzB26PJHmSOe0KxLEPI1w/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzDe_98lZXNdvNbQBRPS_Igpi39jYSzyGW62A3OFByjzUcG84abDn2jTJsdlgYZJKuONA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -6065,7 +6065,7 @@ function sekmeDegistir(tabName, btnElement) {
 //    (fonksiyonun İÇİNDE oyunu bitirdiğinde etkinlikYapildiIsaretleCagir(satirIndex) çağırman,
 //     "yapıldı" rozetinin doğru anda işaretlenmesini sağlar — istersen oyunun başında da çağırabilirsin)
 const ETKINLIK_KOD_HARITASI = {
-    // şu an boş — sen zamanla buraya ekleyeceksin
+    "dogru_yanlis_1": function(satirIndex) { dogruYanlisOyunAc("dogru_yanlis_1", satirIndex); }
 };
 
 function etkinliklerModalAc() {
@@ -6391,6 +6391,165 @@ function rubricVideolariAta() {
     })
     .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası oluştu."; });
 }
+
+        // ===== DOĞRU/YANLIŞ DİNLEME OYUNU =====
+let dySorular = [];
+let dyAktifIndex = 0;
+let dyDogruSayisi = 0;
+let dyAktifEtkinlikKodu = "";
+let dyAktifSatirIndex = 0;
+let dySesKaydi = null;
+
+function dogruYanlisOyunAc(etkinlikKodu, satirIndex) {
+    dyAktifEtkinlikKodu = etkinlikKodu;
+    dyAktifSatirIndex = satirIndex;
+
+    document.getElementById('dyOyunOverlay').style.display = 'flex';
+    document.getElementById('dyIcerikAlani').style.opacity = '0.4';
+
+    fetch(`${apiURL}?islem=dogruYanlisSorulariGetir&etkinlikKodu=${encodeURIComponent(etkinlikKodu)}`)
+    .then(res => res.json())
+    .then(liste => {
+        dySorular = liste || [];
+        dyAktifIndex = 0;
+        dyDogruSayisi = 0;
+        document.getElementById('dyIcerikAlani').style.opacity = '1';
+
+        if (dySorular.length === 0) {
+            alert("Bu etkinlik için henüz soru eklenmemiş.");
+            dyOyunKapat();
+            return;
+        }
+
+        dyIlerlemeCubuguCiz();
+        dySoruGoster();
+    })
+    .catch(() => {
+        alert("Sorular yüklenirken hata oluştu.");
+        dyOyunKapat();
+    });
+}
+
+function dyIlerlemeCubuguCiz() {
+    let alan = document.getElementById('dyIlerlemeCubugu');
+    alan.innerHTML = "";
+    dySorular.forEach((s, idx) => {
+        let cizgi = document.createElement('div');
+        cizgi.style.cssText = `flex:1; height:5px; border-radius:3px; background:${idx === 0 ? '#2563eb' : '#e2e8f0'};`;
+        cizgi.dataset.dyIndex = idx;
+        alan.appendChild(cizgi);
+    });
+}
+
+function dyIlerlemeCubuguGuncelle() {
+    let alan = document.getElementById('dyIlerlemeCubugu');
+    Array.from(alan.children).forEach((cizgi, idx) => {
+        cizgi.style.background = idx <= dyAktifIndex ? '#2563eb' : '#e2e8f0';
+    });
+}
+
+function dySoruGoster() {
+    let soru = dySorular[dyAktifIndex];
+    if (!soru) return;
+
+    document.getElementById('dyGorselAlani').src = soru.gorselLink;
+    document.getElementById('dyTranscriptMetni').style.display = 'none';
+    document.getElementById('dyTranscriptMetni').innerText = soru.dinlemeMetni;
+
+    let dBtn = document.getElementById('dyDogruBtn');
+    let yBtn = document.getElementById('dyYanlisBtn');
+    [dBtn, yBtn].forEach(b => {
+        b.disabled = false;
+        b.style.background = '#fff';
+        b.style.borderColor = '#cbd5e1';
+        b.style.color = '#2563eb';
+        b.style.cursor = 'pointer';
+    });
+
+    let sonrakiBtn = document.getElementById('dySonrakiBtn');
+    sonrakiBtn.disabled = true;
+    sonrakiBtn.style.background = '#cbd5e1';
+    sonrakiBtn.style.cursor = 'not-allowed';
+    sonrakiBtn.innerText = (dyAktifIndex === dySorular.length - 1) ? "Bitir ✓" : "Sonraki →";
+
+    dyIlerlemeCubuguGuncelle();
+    setTimeout(() => dySesiOku(), 400);
+}
+
+function dySesiOku() {
+    let soru = dySorular[dyAktifIndex];
+    if (!soru || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    let konusma = new SpeechSynthesisUtterance(soru.dinlemeMetni);
+    konusma.lang = 'en-US';
+    konusma.rate = 0.9;
+    if (typeof sabitSesKaydi !== 'undefined' && sabitSesKaydi) konusma.voice = sabitSesKaydi;
+    window.speechSynthesis.speak(konusma);
+}
+
+function dyTranscriptToggle() {
+    let alan = document.getElementById('dyTranscriptMetni');
+    alan.style.display = alan.style.display === 'none' ? 'block' : 'none';
+}
+
+function dyCevapVer(secilenCevap) {
+    let soru = dySorular[dyAktifIndex];
+    let dBtn = document.getElementById('dyDogruBtn');
+    let yBtn = document.getElementById('dyYanlisBtn');
+    let secilenBtn = secilenCevap === 'dogru' ? dBtn : yBtn;
+    let digerBtn = secilenCevap === 'dogru' ? yBtn : dBtn;
+
+    dBtn.disabled = true;
+    yBtn.disabled = true;
+    dBtn.style.cursor = 'default';
+    yBtn.style.cursor = 'default';
+
+    if (secilenCevap === soru.dogruCevap) {
+        dyDogruSayisi++;
+        secilenBtn.style.background = '#dcfce7';
+        secilenBtn.style.borderColor = '#22c55e';
+        secilenBtn.style.color = '#166534';
+    } else {
+        secilenBtn.style.background = '#fee2e2';
+        secilenBtn.style.borderColor = '#ef4444';
+        secilenBtn.style.color = '#991b1b';
+        let dogruBtn = soru.dogruCevap === 'dogru' ? dBtn : yBtn;
+        dogruBtn.style.background = '#dcfce7';
+        dogruBtn.style.borderColor = '#22c55e';
+        dogruBtn.style.color = '#166534';
+    }
+    digerBtn.style.opacity = '0.5';
+
+    let sonrakiBtn = document.getElementById('dySonrakiBtn');
+    sonrakiBtn.disabled = false;
+    sonrakiBtn.style.background = '#2563eb';
+    sonrakiBtn.style.cursor = 'pointer';
+}
+
+function dySonrakiSoru() {
+    if (dyAktifIndex >= dySorular.length - 1) {
+        dyOyunuBitir();
+        return;
+    }
+    dyAktifIndex++;
+    document.getElementById('dyDogruBtn').style.opacity = '1';
+    document.getElementById('dyYanlisBtn').style.opacity = '1';
+    dySoruGoster();
+}
+
+function dyOyunuBitir() {
+    if (dyAktifSatirIndex && typeof etkinlikYapildiIsaretleCagir === 'function') {
+        etkinlikYapildiIsaretleCagir(dyAktifSatirIndex);
+    }
+    document.getElementById('dyTebrikDogru').innerText = dyDogruSayisi;
+    document.getElementById('dyTebrikToplam').innerText = dySorular.length;
+    document.getElementById('dyTebrikOverlay').style.display = 'flex';
+}
+
+function dyOyunKapat() {
+    window.speechSynthesis.cancel();
+    document.getElementById('dyOyunOverlay').style.display = 'none';
+}
         
     </script>
 
@@ -6438,6 +6597,54 @@ function rubricVideolariAta() {
     <div id="videoOynaticiBaslik" style="color:#fff; font-size:13px; font-weight:700; margin-bottom:14px; max-width:85%; text-align:center;">Video</div>
     <div id="videoIcerikAlani" style="width:100%; max-width:800px; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center;"></div>
     <a id="videoYeniSekmeLink" href="#" target="_blank" style="margin-top:14px; color:#94a3b8; font-size:11px; text-decoration:underline;">Yeni sekmede aç ↗</a>
+</div>
+
+    <!-- DOĞRU/YANLIŞ DİNLEME OYUNU -->
+<div class="pomodoro-overlay" id="dyOyunOverlay" style="background:#f8fafc;">
+    <button class="pomodoro-close-btn" onclick="dyOyunKapat()" style="color:#334155; border-color:#cbd5e1;">✕</button>
+
+    <div style="width:100%; max-width:900px; padding:0 16px;">
+        <div id="dyIlerlemeCubugu" style="display:flex; align-items:center; gap:4px; margin-bottom:30px; margin-top:20px;"></div>
+
+        <div id="dyIcerikAlani" style="display:flex; flex-direction:column; align-items:center;">
+            <div style="font-size:18px; font-weight:800; color:#1e293b; margin-bottom:20px; text-align:center;">Listen and choose a tick (✓) or a cross (✗).</div>
+
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:14px 18px; width:100%; max-width:520px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                <div style="display:flex; align-items:center; justify-content:center; gap:14px;">
+                    <button id="dyTranscriptBtn" onclick="dyTranscriptToggle()" style="background:none; border:none; color:#f59e0b; font-size:11px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px;">
+                        <span style="font-size:20px;">📄</span>Transcript
+                    </button>
+                    <button onclick="dySesiOku()" style="background:#f59e0b; border:none; width:52px; height:52px; border-radius:50%; color:#fff; font-size:20px; cursor:pointer; box-shadow:0 3px 8px rgba(245,158,11,0.3);">▶️</button>
+                    <div style="font-size:11px; color:#94a3b8; font-weight:700;">🔊 Dinle</div>
+                </div>
+                <div id="dyTranscriptMetni" style="display:none; margin-top:12px; text-align:center; font-size:13px; color:#334155; font-style:italic; border-top:1px dashed #e2e8f0; padding-top:10px;"></div>
+            </div>
+
+            <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; justify-content:center; width:100%;">
+                <img id="dyGorselAlani" src="" style="width:220px; height:280px; object-fit:contain; background:#fff; border-radius:12px; border:1px solid #e2e8f0;">
+
+                <div style="display:flex; gap:14px;">
+                    <button id="dyDogruBtn" onclick="dyCevapVer('dogru')" style="width:130px; height:130px; background:#fff; border:3px solid #cbd5e1; border-radius:12px; font-size:52px; color:#2563eb; cursor:pointer; font-weight:900;">✓</button>
+                    <button id="dyYanlisBtn" onclick="dyCevapVer('yanlis')" style="width:130px; height:130px; background:#fff; border:3px solid #cbd5e1; border-radius:12px; font-size:52px; color:#2563eb; cursor:pointer; font-weight:900;">✗</button>
+                </div>
+            </div>
+
+            <button id="dySonrakiBtn" onclick="dySonrakiSoru()" disabled style="margin-top:26px; background:#cbd5e1; color:#fff; border:none; padding:12px 40px; border-radius:10px; font-size:14px; font-weight:800; cursor:not-allowed;">Sonraki →</button>
+        </div>
+    </div>
+</div>
+
+<!-- DOĞRU/YANLIŞ TEBRİK EKRANI -->
+<div class="game-modal-overlay" id="dyTebrikOverlay">
+    <div class="game-modal-content" style="max-width:360px; text-align:center;">
+        <div style="font-size:52px; margin-bottom:8px;">🎉</div>
+        <h3 style="font-size:18px; font-weight:900; color:#166534; margin-bottom:6px;">Etkinlik Bitti!</h3>
+        <p style="color:#64748b; font-size:12px; margin-bottom:14px;">Bu etkinliği başarıyla tamamladın.</p>
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px; margin-bottom:16px; font-size:13px; font-weight:800; color:#166534;">
+            ✅ Doğru: <span id="dyTebrikDogru">0</span> / <span id="dyTebrikToplam">8</span>
+        </div>
+        <button class="btn-giris" onclick="document.getElementById('dyTebrikOverlay').style.display='none'; document.getElementById('dyOyunOverlay').style.display='none';" style="background:#16a34a;">Kapat</button>
+    </div>
 </div>
     
 </body>
