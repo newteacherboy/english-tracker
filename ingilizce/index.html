@@ -6400,6 +6400,19 @@ let dyAktifEtkinlikKodu = "";
 let dyAktifSatirIndex = 0;
 let dySesKaydi = null;
 
+        function dyGorselLinkiDuzelt(link) {
+    let temizLink = String(link || "").trim();
+    let driveMatch = temizLink.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) {
+        return "https://drive.google.com/uc?export=view&id=" + driveMatch[1];
+    }
+    let driveMatch2 = temizLink.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (driveMatch2 && temizLink.includes("drive.google.com")) {
+        return "https://drive.google.com/uc?export=view&id=" + driveMatch2[1];
+    }
+    return temizLink;
+}
+
 function dogruYanlisOyunAc(etkinlikKodu, satirIndex) {
     dyAktifEtkinlikKodu = etkinlikKodu;
     dyAktifSatirIndex = satirIndex;
@@ -6452,7 +6465,7 @@ function dySoruGoster() {
     let soru = dySorular[dyAktifIndex];
     if (!soru) return;
 
-    document.getElementById('dyGorselAlani').src = soru.gorselLink;
+        document.getElementById('dyGorselAlani').src = dyGorselLinkiDuzelt(soru.gorselLink);
     document.getElementById('dyTranscriptMetni').style.display = 'none';
     document.getElementById('dyTranscriptMetni').innerText = soru.dinlemeMetni;
 
