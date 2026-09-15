@@ -1315,7 +1315,8 @@
         }
 
         function ogrenciSecildiVerileriYukle() {
-            rubrikSeciliEtkinlikler = [];
+    // YENİ: Öğrenci değişince önceki seçili etkinlik/video önerilerini temizle
+    rubrikSeciliEtkinlikler = [];
     rubrikSeciliVideolar = [];
     let etkinlikMesajEl = document.getElementById('rubrikEtkinlikSonucMesaj');
     let videoMesajEl = document.getElementById('rubrikVideoSonucMesaj');
@@ -1323,44 +1324,43 @@
     if (videoMesajEl) videoMesajEl.innerText = "";
 
     let secilen = document.getElementById("rubrikOgrenciSec").value;
-            let secilen = document.getElementById("rubrikOgrenciSec").value;
-            let gecmisSelect = document.getElementById("rubrikGecmisSec");
-            gecmisSelect.innerHTML = '<option value="yeni">✨ (Yeni Kayıt Ekle - WhatsApp Raporu Gider)</option>';
+    let gecmisSelect = document.getElementById("rubrikGecmisSec");
+    gecmisSelect.innerHTML = '<option value="yeni">✨ (Yeni Kayıt Ekle - WhatsApp Raporu Gider)</option>';
 
-            if (!secilen) {
-                document.getElementById("rubrikVeliTel").value = "";
-                document.getElementById("oncekiOdevMetni").innerText = "Öğrenci seçilmedi.";
-                return;
-            }
+    if (!secilen) {
+        document.getElementById("rubrikVeliTel").value = "";
+        document.getElementById("oncekiOdevMetni").innerText = "Öğrenci seçilmedi.";
+        return;
+    }
 
-            let bulutOgr = sistemOgrencileri.find(o => o.ogrenciAdi.toLowerCase() === secilen.toLowerCase());
-            if (bulutOgr) {
-                document.getElementById("rubrikVeliTel").value = bulutOgr.veliTelefon || "";
-            }
+    let bulutOgr = sistemOgrencileri.find(o => o.ogrenciAdi.toLowerCase() === secilen.toLowerCase());
+    if (bulutOgr) {
+        document.getElementById("rubrikVeliTel").value = bulutOgr.veliTelefon || "";
+    }
 
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "ogrenciGecmisVerileriGetir", ogrenciAdi: secilen })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "success") {
-                    if(data.veliTelefon) document.getElementById("rubrikVeliTel").value = data.veliTelefon;
-                    document.getElementById("oncekiOdevMetni").innerText = `"${data.sonOdev || 'Ödev bulunmuyor.'}"`;
-                    
-                    document.getElementById("rubrikAktifKitap").value = data.aktifKitap || "";
-                    document.getElementById("rubrikOkunanSayfa").value = data.okunanSayfa || 0;
-                    document.getElementById("rubrikHedefSayfa").value = data.hedefSayfa || 0;
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "ogrenciGecmisVerileriGetir", ogrenciAdi: secilen })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            if(data.veliTelefon) document.getElementById("rubrikVeliTel").value = data.veliTelefon;
+            document.getElementById("oncekiOdevMetni").innerText = `"${data.sonOdev || 'Ödev bulunmuyor.'}"`;
 
-                    ogrenciGecmisKayitlari = data.kayitlar || [];
-                    ogrenciGecmisKayitlari.forEach((k, idx) => {
-                        gecmisSelect.innerHTML += `<option value="${idx}">📅 Tarih: ${k.tarih} (Kitap: ${k.aktifKitap || 'Yok'})</option>`;
-                    });
-                }
-            })
-            .catch(err => console.log("Geçmiş veriler alınamadı:", err));
+            document.getElementById("rubrikAktifKitap").value = data.aktifKitap || "";
+            document.getElementById("rubrikOkunanSayfa").value = data.okunanSayfa || 0;
+            document.getElementById("rubrikHedefSayfa").value = data.hedefSayfa || 0;
+
+            ogrenciGecmisKayitlari = data.kayitlar || [];
+            ogrenciGecmisKayitlari.forEach((k, idx) => {
+                gecmisSelect.innerHTML += `<option value="${idx}">📅 Tarih: ${k.tarih} (Kitap: ${k.aktifKitap || 'Yok'})</option>`;
+            });
         }
+    })
+    .catch(err => console.log("Geçmiş veriler alınamadı:", err));
+}
 
         function gecmisVeriFormaYukle() {
             let secim = document.getElementById("rubrikGecmisSec").value;
