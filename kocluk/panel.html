@@ -709,6 +709,26 @@
                 <input type="text" id="rubrikOdevMetni" placeholder="Örn: 2 sayfa ses çalışması ve metin okuma">
             </div>
 
+                        <hr style="border:0; border-top:1px solid #e2e8f0; margin: 14px 0;">
+            <div class="form-group" style="background:#f5f3ff; padding:12px; border-radius:10px; border:1px solid #ddd6fe;">
+                <label style="color:#5b21b6; font-weight:bold;">🎯 Bu Öğrenciye Etkinlik Ata</label>
+                <select id="rubrikEtkinlikSec" style="margin-bottom:6px;">
+                    <option value="">-- Etkinlik Seçin --</option>
+                </select>
+                <input type="text" id="rubrikEtkinlikKategori" placeholder="Kategori (örn: Eşleştirme)" style="margin-bottom:6px;">
+                <button type="button" onclick="rubrikEtkinlikAta()" style="width:100%; background:#7c3aed; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:12.5px;">➕ Etkinliği Ata</button>
+                <div id="rubrikEtkinlikSonucMesaj" style="font-size:11px; margin-top:6px;"></div>
+            </div>
+
+            <div class="form-group" style="background:#fff7ed; padding:12px; border-radius:10px; border:1px solid #fed7aa; margin-top:10px;">
+                <label style="color:#9a3412; font-weight:bold;">🎬 Bu Öğrenciye Video(lar) Ata</label>
+                <div id="rubrikVideoListeAlani" style="max-height:180px; overflow-y:auto; background:#fff; border:1px solid #fed7aa; border-radius:8px; padding:8px; margin-bottom:6px;">
+                    <div style="font-size:11px; color:#c2410c; text-align:center;">Videolar yükleniyor...</div>
+                </div>
+                <button type="button" onclick="rubrikVideolariAta()" style="width:100%; background:#ea580c; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:12.5px;">➕ Seçilenleri Ata</button>
+                <div id="rubrikVideoSonucMesaj" style="font-size:11px; margin-top:6px;"></div>
+            </div>
+
             <button id="rubrikKaydetBtn" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & İşlemleri Tamamla</button>
         </div>
     </div>
@@ -932,7 +952,7 @@
 </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB6M6xwvv7Z9qveIBCg2UIYKODGeWe9f6PcokCqYElk919SLue1o8ZIpg-wTienbLz/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytvTuUzSvMBrhL8kF8THfeIuGdOFzSMsvAV9nYG1_I0BDZtuWfnoVrj8TwiF7sKqpR/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -1295,6 +1315,14 @@
         }
 
         function ogrenciSecildiVerileriYukle() {
+            rubrikSeciliEtkinlikler = [];
+    rubrikSeciliVideolar = [];
+    let etkinlikMesajEl = document.getElementById('rubrikEtkinlikSonucMesaj');
+    let videoMesajEl = document.getElementById('rubrikVideoSonucMesaj');
+    if (etkinlikMesajEl) etkinlikMesajEl.innerText = "";
+    if (videoMesajEl) videoMesajEl.innerText = "";
+
+    let secilen = document.getElementById("rubrikOgrenciSec").value;
             let secilen = document.getElementById("rubrikOgrenciSec").value;
             let gecmisSelect = document.getElementById("rubrikGecmisSec");
             gecmisSelect.innerHTML = '<option value="yeni">✨ (Yeni Kayıt Ekle - WhatsApp Raporu Gider)</option>';
@@ -1379,7 +1407,38 @@
             let ort = Math.round((c1 + c2 + c3 + c4 + c5) / 5);
             document.getElementById("hesaplananPuan").innerText = ort;
         }
-
+// YENİ: Kısa, sade ve her seferinde farklı olan haftalık değerlendirme cümlesi
+function haftalikYorumUret(isim, puan) {
+    let girisler = [
+        `${isim} ile bu hafta oldukça verimli ve keyifli bir çalışma temposu yakaladık.`,
+        `Bu hafta ${isim} derslerde gösterdiği gayretle bizi gururlandırdı.`,
+        `${isim} ile birlikte istikrarlı ve üretken bir hafta geçirdik.`,
+        `Bu hafta ${isim} ile keyifli ve verimli bir ders döngüsü tamamladık.`
+    ];
+    let ortaCumleler;
+    if (puan >= 85) {
+        ortaCumleler = [
+            "Ders içi odaklanması ve kavrama hızı son derece üst düzeydeydi.",
+            "Konulara hakimiyeti ve katılımı bu hafta göz doldurdu.",
+            "Gösterdiği başarı ve azimle harika bir hafta geçirdi."
+        ];
+    } else if (puan >= 60) {
+        ortaCumleler = [
+            "Gösterdiği çabayla puanını her hafta biraz daha yukarı taşıyor.",
+            "Küçük tekrarlarla bu ivmeyi kolayca artırabiliriz.",
+            "İstikrarlı ilerlemesi bizi memnun etti."
+        ];
+    } else {
+        ortaCumleler = [
+            "Bu hafta biraz daha fazla tekrar ve pratikle ilerlememiz gerekiyor.",
+            "Birlikte küçük adımlarla bu konuları pekiştireceğiz.",
+            "Önümüzdeki hafta odaklanacağımız noktaları netleştirdik."
+        ];
+    }
+    let giris = girisler[Math.floor(Math.random() * girisler.length)];
+    let orta = ortaCumleler[Math.floor(Math.random() * ortaCumleler.length)];
+    return giris + " " + orta;
+}
         function aiZenginYorumUret(ogrenci, puan, kitap, okunan, hedef, odevDurumText, ekYorum, harfler) {
             let girisler = [
                 `Sevgili velimiz, öğrencimiz ${ogrenci.toUpperCase()} bu haftaki çalışma sürecinde gösterdiği harika gayret ve pozitif enerjisiyle bizleri çok mutlu etti.`,
@@ -1410,99 +1469,126 @@
         }
 
         function rubrikVerileriniKaydetVeGonder() {
-            let oAdi = document.getElementById("rubrikOgrenciSec").value.trim();
-            let tel = document.getElementById("rubrikVeliTel").value.trim();
-            if (!oAdi) { alert("Lütfen öğrenci seçin!"); return; }
+    let oAdi = document.getElementById("rubrikOgrenciSec").value.trim();
+    let tel = document.getElementById("rubrikVeliTel").value.trim();
+    if (!oAdi) { alert("Lütfen öğrenci seçin!"); return; }
 
-            let gecmisSecim = document.getElementById("rubrikGecmisSec").value;
-            let hedefSatirIndex = 0;
-            let duzenlemeModuMi = gecmisSecim !== "yeni";
+    let gecmisSecim = document.getElementById("rubrikGecmisSec").value;
+    let hedefSatirIndex = 0;
+    let duzenlemeModuMi = gecmisSecim !== "yeni";
 
+    if (duzenlemeModuMi) {
+        let secilenKayit = ogrenciGecmisKayitlari[Number(gecmisSecim)];
+        if (secilenKayit) hedefSatirIndex = secilenKayit.satirIndex;
+    }
+
+    let dTar = document.getElementById("rubrikDersTarihi").value;
+    let sTar = document.getElementById("rubrikSonrakiDersTarihi").value;
+    let aktifKitap = document.getElementById("rubrikAktifKitap").value.trim();
+    let okunanSayfa = document.getElementById("rubrikOkunanSayfa").value;
+    let hedefSayfa = document.getElementById("rubrikHedefSayfa").value;
+    let dBasDurum = document.getElementById("rubrikDersBasi").value;
+    let dBasYorum = document.getElementById("rubrikDersBasiYorum").value.trim();
+    let hYeni = document.getElementById("rubrikYeniHarfler").value.trim();
+    let gPuan = Number(document.getElementById("hesaplananPuan").innerText);
+    let odevMetni = document.getElementById("rubrikOdevMetni").value.trim();
+    let odevDurumText = document.getElementById("rubrikOdevDurumu").value;
+
+    let c1 = Number(document.getElementById("crit1").value);
+    let c2 = Number(document.getElementById("crit2").value);
+    let c3 = Number(document.getElementById("crit3").value);
+    let c4 = Number(document.getElementById("crit4").value);
+    let c5 = Number(document.getElementById("crit5").value);
+
+    // YENİ: Sade, birleşik değerlendirme metni (ders başı durumu + benzersiz AI yorumu + varsa manuel yorum)
+    let degerlendirmeMetni = dBasDurum + " " + haftalikYorumUret(oAdi, gPuan) + (dBasYorum ? " " + dBasYorum : "");
+
+    alert("Veriler Google Sheets'e işleniyor...");
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "ogretmenVeriKaydet",
+            ogrenciAdi: oAdi,
+            dersTarihi: dTar,
+            sonrakiDersTarihi: sTar,
+            aktifKitap: aktifKitap,
+            okunanSayfa: okunanSayfa,
+            hedefSayfa: hedefSayfa,
+            yeniHarfler: hYeni,
+            genelPuan: gPuan,
+            etkinlikBasarisi: gPuan,
+            ogretmenYorumu: degerlendirmeMetni,
+            odevIcerigi: odevMetni,
+            dersDurumu: dBasDurum,
+            kriterler: { okuma: c1, yazma: c2, dinleme: c3, konusma: c4, dikkat: c5 },
+            hedefSatirIndex: hedefSatirIndex
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
             if (duzenlemeModuMi) {
-                let secilenKayit = ogrenciGecmisKayitlari[Number(gecmisSecim)];
-                if (secilenKayit) hedefSatirIndex = secilenKayit.satirIndex;
-            }
+                alert("Geçmiş kayıt başarıyla güncellendi! (WhatsApp raporu gönderilmedi)");
+                modalKapat();
+                location.reload();
+            } else {
+                alert("Yeni kayıt başarıyla eklendi! WhatsApp Raporu hazırlanıyor...");
 
-            let dTar = document.getElementById("rubrikDersTarihi").value;
-            let sTar = document.getElementById("rubrikSonrakiDersTarihi").value;
-            let aktifKitap = document.getElementById("rubrikAktifKitap").value.trim();
-            let okunanSayfa = document.getElementById("rubrikOkunanSayfa").value;
-            let hedefSayfa = document.getElementById("rubrikHedefSayfa").value;
-            let dBasDurum = document.getElementById("rubrikDersBasi").value;
-            let dBasYorum = document.getElementById("rubrikDersBasiYorum").value.trim();
-            let hYeni = document.getElementById("rubrikYeniHarfler").value.trim();
-            let gPuan = Number(document.getElementById("hesaplananPuan").innerText);
-            let odevMetni = document.getElementById("rubrikOdevMetni").value.trim();
-            let odevDurumText = document.getElementById("rubrikOdevDurumu").value;
-            
-            let c1 = Number(document.getElementById("crit1").value);
-            let c2 = Number(document.getElementById("crit2").value);
-            let c3 = Number(document.getElementById("crit3").value);
-            let c4 = Number(document.getElementById("crit4").value);
-            let c5 = Number(document.getElementById("crit5").value);
+                let veliTelFinal = String(data.veliTelefon || tel);
+                let temizTel = veliTelFinal.replace(/\D/g, '');
 
-            let aiOzelYorum = aiZenginYorumUret(oAdi, gPuan, aktifKitap, okunanSayfa, hedefSayfa, odevDurumText, dBasYorum, hYeni);
+                // YENİ: Sadeleştirilmiş rapor mesajı
+                let mesaj = `🎓 *DİJİMUALLİM HAFTALIK VELİ RAPORU* 🎓\n\n` +
+                    `Sevgili Velimiz,\n\n` +
+                    `${oAdi} ile bu haftayı geride bıraktık! 🌟\n\n` +
+                    `📊 *Bu Haftanın Özeti*\n` +
+                    `⭐ Genel Puan: ${gPuan}/100\n` +
+                    `📖 Okuma ${c1} · ✍️ Yazma ${c2} · 🎧 Dinleme ${c3} · 🗣️ Konuşma ${c4} · ⚡ Dikkat ${c5}\n` +
+                    `📚 Kitap: "${aktifKitap || 'Belirtilmedi'}" — ${okunanSayfa || 0}/${hedefSayfa || 0} sayfa\n\n` +
+                    `📝 *Öğretmen Değerlendirmesi*\n` +
+                    `"${degerlendirmeMetni}"\n\n`;
 
-            alert("Veriler Google Sheets'e işleniyor...");
-
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    action: "ogretmenVeriKaydet",
-                    ogrenciAdi: oAdi,
-                    dersTarihi: dTar,
-                    sonrakiDersTarihi: sTar,
-                    aktifKitap: aktifKitap,
-                    okunanSayfa: okunanSayfa,
-                    hedefSayfa: hedefSayfa,
-                    yeniHarfler: hYeni,
-                    genelPuan: gPuan,
-                    etkinlikBasarisi: gPuan,
-                    ogretmenYorumu: aiOzelYorum,
-                    odevIcerigi: odevMetni,
-                    dersDurumu: dBasDurum,
-                    kriterler: { okuma: c1, yazma: c2, dinleme: c3, konusma: c4, dikkat: c5 },
-                    hedefSatirIndex: hedefSatirIndex
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "success") {
-                    if (duzenlemeModuMi) {
-                        alert("Geçmiş kayıt başarıyla güncellendi! (WhatsApp raporu gönderilmedi)");
-                        modalKapat();
-                        location.reload();
-                    } else {
-                        alert("Yeni kayıt başarıyla eklendi! WhatsApp Raporu hazırlanıyor...");
-                        
-                        let veliTelFinal = String(data.veliTelefon || tel);
-                        let temizTel = veliTelFinal.replace(/\D/g, '');
-
-                        let mesaj = `🌟 *DİJİMUALLİM HAFTALIK VELİ RAPORU* 🌟\n\n` +
-                                    aiOzelYorum + `\n\n` +
-                                    `📌 *Ders Durumu:* ${dBasDurum}\n` +
-                                    `📚 *Ödev Durumu:* ${odevDurumText}\n` +
-                                    `📝 *Gelecek Hafta Ödevi:* ${odevMetni || "Belirtilmedi"}\n\n` +
-                                    `📅 Tamamlanan Ders: ${dTar || "Bugün"}\n` +
-                                    `📅 Sonraki Ders: ${sTar || "Planlandı"}\n\n` +
-                                    `Detaylı gelişim paneli için öğrenci giriş yapabilir. İyi günler dileriz! 🎈`;
-
-                        if (temizTel) {
-                            window.open(`https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(mesaj)}`, '_blank');
-                        } else {
-                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mesaj)}`, '_blank');
-                        }
-
-                        modalKapat();
-                        location.reload();
-                    }
-                } else {
-                    alert("Kayıt hatası: " + data.message);
+                if (rubrikSeciliEtkinlikler.length > 0 || rubrikSeciliVideolar.length > 0) {
+                    mesaj += `🌟 *Bu Hafta Önerilenler*\nÖğretmeniniz aşağıdaki etkinlik ve videoları yapmanızı/izlemenizi tavsiye ediyor:\n`;
+                    let sayac = 1;
+                    rubrikSeciliEtkinlikler.forEach(ad => {
+                        mesaj += `🎯 ${sayac}. ${ad}\n`;
+                        sayac++;
+                    });
+                    rubrikSeciliVideolar.forEach(baslik => {
+                        mesaj += `🎬 ${sayac}. ${baslik}\n`;
+                        sayac++;
+                    });
+                    mesaj += `\n`;
                 }
-            })
-            .catch(err => alert("Bağlantı hatası: " + err));
+
+                mesaj += `📌 *Ödev Durumu:* ${odevDurumText}\n`;
+                if (odevMetni) mesaj += `📝 *Gelecek Hafta Ödevi:* ${odevMetni}\n`;
+                mesaj += `📅 *Sonraki Dersimiz:* ${sTar ? tarihiDuzelt(sTar) : "Planlanıyor"}\n\n` +
+                    `✨ Tüm gelişim grafiklerini, interaktif etkinlikleri ve videoları Öğrenci Portalımızdan dilediğiniz zaman inceleyebilirsiniz!\n\n` +
+                    `Destekleriniz için teşekkür ederiz, sağlıklı ve mutlu bir hafta dileriz. 🌻`;
+
+                if (temizTel) {
+                    window.open(`https://api.whatsapp.com/send?phone=${temizTel}&text=${encodeURIComponent(mesaj)}`, '_blank');
+                } else {
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mesaj)}`, '_blank');
+                }
+
+                // YENİ: Rapor gönderildikten sonra listeleri temizle
+                rubrikSeciliEtkinlikler = [];
+                rubrikSeciliVideolar = [];
+
+                modalKapat();
+                location.reload();
+            }
+        } else {
+            alert("Kayıt hatası: " + data.message);
         }
+    })
+    .catch(err => alert("Bağlantı hatası: " + err));
+}
 
         function tarihiDuzelt(tarihStr) {
             if (!tarihStr) return "Tarih Belirtilmedi";
@@ -1862,11 +1948,15 @@ function aiMesajGonder() {
 let ogretmenAktifSohbetOgrenci = null;
 let ogretmenSohbetPolling = null;
 let ogretmenPanelPolling = null;
+        let rubrikSeciliEtkinlikler = [];
+let rubrikSeciliVideolar = [];
 
 function ogretmenMenuRubrikAc() {
     document.getElementById('ogretmenMenuModal').style.display = 'none';
     document.getElementById('rubricModal').style.display = 'flex';
     ogrenciListesiniYukle();
+    rubrikEtkinlikSecDoldur();
+    rubrikVideoListesiYukle();
 }
 
 function ogretmenMenuSohbetAc() {
@@ -3623,7 +3713,164 @@ function videoOynaticiAc(baslik, link, satirIndex) {
 function videoOynaticiKapat() {
     document.getElementById('videoOynaticiOverlay').style.display = 'none';
     document.getElementById('videoIcerikAlani').innerHTML = "";
-}        
+}    
+
+
+        // ===== RUBRİK PANELİ: ETKİNLİK & VİDEO ATAMA =====
+const RUBRIK_ETKINLIK_TANIMLARI = [
+    { kod: "kelebek_cicek", ad: "Kelebek & Çiçek", kategori: "Eşleştirme" },
+    { kod: "civciv_tavuk",  ad: "Civciv & Tavuk", kategori: "Eşleştirme" },
+    { kod: "kus_cicek",     ad: "Kuş & Çiçek (Karışık Çizgi)", kategori: "Eşleştirme" },
+    { kod: "duz_cizgi",     ad: "Düz Çizgi", kategori: "Çizgi Takibi" },
+    { kod: "capraz_cizgi",  ad: "Çapraz Çizgi", kategori: "Çizgi Takibi" },
+    { kod: "zigzag",        ad: "Zikzak Takibi", kategori: "Çizgi Takibi" },
+    { kod: "kavis_c",       ad: "Kavis (C) Takibi", kategori: "Çizgi Takibi" },
+    { kod: "yuvarlak",      ad: "Yuvarlak Takibi", kategori: "Çizgi Takibi" },
+    { kod: "cukur_u",       ad: "Çukur (U) Takibi", kategori: "Çizgi Takibi" },
+    { kod: "kemer",         ad: "Kemer Takibi", kategori: "Çizgi Takibi" },
+    { kod: "dalga",         ad: "Dalga Takibi", kategori: "Çizgi Takibi" },
+    { kod: "labirent",      ad: "Labirent", kategori: "Yol Bulma" },
+    { kod: "bagla_boya",    ad: "Bağla & Boya", kategori: "Boyama & Gözlem" },
+    { kod: "farki_bul",     ad: "Farkı Bul", kategori: "Boyama & Gözlem" }
+];
+
+function rubrikEtkinlikSecDoldur() {
+    let sel = document.getElementById('rubrikEtkinlikSec');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Etkinlik Seçin --</option>';
+    RUBRIK_ETKINLIK_TANIMLARI.forEach(e => {
+        sel.innerHTML += `<option value="${e.kod}">${e.ad}</option>`;
+    });
+    sel.onchange = function() {
+        let secili = RUBRIK_ETKINLIK_TANIMLARI.find(e => e.kod === sel.value);
+        document.getElementById('rubrikEtkinlikKategori').value = secili ? secili.kategori : "";
+    };
+}
+
+function rubrikEtkinlikAta() {
+    let ogrenci = document.getElementById('rubrikOgrenciSec').value.trim();
+    let kod = document.getElementById('rubrikEtkinlikSec').value;
+    let mesajDiv = document.getElementById('rubrikEtkinlikSonucMesaj');
+
+    if (!ogrenci) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Önce yukarıdan bir öğrenci seçin!"; return; }
+    if (!kod) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen bir etkinlik seçin!"; return; }
+
+    let tanim = RUBRIK_ETKINLIK_TANIMLARI.find(e => e.kod === kod);
+    let kategori = document.getElementById('rubrikEtkinlikKategori').value.trim() || tanim.kategori;
+
+    mesajDiv.style.color = "#5b21b6";
+    mesajDiv.innerText = "Atanıyor...";
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "etkinlikAta",
+            ogrenciAdi: ogrenci,
+            etkinlikKodu: kod,
+            gorunenAd: tanim.ad,
+            kategori: kategori,
+            siraNo: 1
+        })
+    })
+    .then(res => res.json())
+        .then(data => {
+        if (data.status === "success") {
+            mesajDiv.style.color = "#166534";
+            mesajDiv.innerText = data.zatenVardi ? "Bu etkinlik zaten atanmış." : "✅ Etkinlik başarıyla atandı!";
+            // YENİ: Rapor mesajında önerilecek etkinlik listesine ekle
+            if (!data.zatenVardi && rubrikSeciliEtkinlikler.indexOf(tanim.ad) === -1) {
+                rubrikSeciliEtkinlikler.push(tanim.ad);
+            }
+        } else {
+            mesajDiv.style.color = "#c62828";
+            mesajDiv.innerText = "Hata: " + (data.message || "Bilinmeyen hata");
+        }
+    })
+    .catch(() => {
+        mesajDiv.style.color = "#c62828";
+        mesajDiv.innerText = "Bağlantı hatası oluştu.";
+    });
+}
+
+function rubrikVideoListesiYukle() {
+    let alan = document.getElementById('rubrikVideoListeAlani');
+    if (!alan) return;
+    alan.innerHTML = `<div style="font-size:11px; color:#c2410c; text-align:center;">Videolar yükleniyor...</div>`;
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "tumVideolariGetir" })
+    })
+    .then(res => res.json())
+    .then(data => {
+        let liste = data.videolar || [];
+        if (liste.length === 0) {
+            alan.innerHTML = `<div style="font-size:11px; color:#c2410c; text-align:center;">Henüz hiç video eklenmemiş.</div>`;
+            return;
+        }
+        alan.innerHTML = "";
+        liste.forEach(v => {
+            let satir = document.createElement('label');
+            satir.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; padding:4px 2px; cursor:pointer;";
+                       satir.innerHTML = `
+                <input type="checkbox" value="${v.satirIndex}" data-baslik="${guvenliMetin(v.baslik)}" class="rubrik-video-checkbox">
+                <span>${guvenliMetin(v.baslik)} <span style="color:#c2410c; font-size:10px;">(${guvenliMetin(v.kategori)})</span></span>
+            `;
+            alan.appendChild(satir);
+        });
+    })
+    .catch(() => {
+        alan.innerHTML = `<div style="font-size:11px; color:#c62828; text-align:center;">Videolar yüklenirken hata oluştu.</div>`;
+    });
+}
+
+function rubrikVideolariAta() {
+    let ogrenci = document.getElementById('rubrikOgrenciSec').value.trim();
+    let mesajDiv = document.getElementById('rubrikVideoSonucMesaj');
+
+    if (!ogrenci) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Önce yukarıdan bir öğrenci seçin!"; return; }
+
+    let secilenCheckboxlar = document.querySelectorAll('.rubrik-video-checkbox:checked');
+    let secilenler = Array.from(secilenCheckboxlar).map(cb => Number(cb.value));
+    let secilenBasliklar = Array.from(secilenCheckboxlar).map(cb => cb.dataset.baslik);
+
+    if (secilenler.length === 0) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen en az bir video seçin!"; return; }
+
+    mesajDiv.style.color = "#9a3412";
+    mesajDiv.innerText = "Atanıyor...";
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            action: "videoOgrenciEkle",
+            ogrenciAdi: ogrenci,
+            satirIndexListesi: secilenler
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            mesajDiv.style.color = "#166534";
+            mesajDiv.innerText = `✅ ${secilenler.length} video başarıyla atandı!`;
+            // YENİ: Rapor mesajında önerilecek video listesine ekle
+            secilenBasliklar.forEach(baslik => {
+                if (rubrikSeciliVideolar.indexOf(baslik) === -1) rubrikSeciliVideolar.push(baslik);
+            });
+            document.querySelectorAll('.rubrik-video-checkbox:checked').forEach(cb => cb.checked = false);
+        } else {
+            mesajDiv.style.color = "#c62828";
+            mesajDiv.innerText = "Hata: " + (data.message || "Bilinmeyen hata");
+        }
+    })
+    .catch(() => {
+        mesajDiv.style.color = "#c62828";
+        mesajDiv.innerText = "Bağlantı hatası oluştu.";
+    });
+}
+        
     </script>
 </body>
 </html>
