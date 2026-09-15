@@ -463,9 +463,10 @@
         <h3 style="color: #9a3412; font-size: 17px; font-weight: 800; margin-bottom: 6px;">Eğitim Videoları</h3>
         <p style="color: #c2410c; font-size: 13px; line-height: 1.4;">Öğretmenin senin için özel olarak seçtiği videoları izle!</p>
     </div>
-    <div id="videoListesiAlani" style="display:flex; flex-direction:column; gap:8px;">
+   <div id="videoListesiAlani" style="display:flex; flex-direction:column; gap:8px;">
         <div style="text-align:center; color:#c2410c; font-size:12px; padding:10px;">Videolar yükleniyor...</div>
     </div>
+</div>
 </div>
 
         <!-- D. ROZETLER SEKME ALANI -->
@@ -720,27 +721,19 @@
             <h3 style="margin:0; color:#7c3aed;">🎯 Etkinlikler</h3>
             <button onclick="document.getElementById('etkinliklerModal').style.display='none'" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
         </div>
-        <button class="etkinlik-liste-btn" onclick="etk1Ac()">
-            <span>🦋 1. Etkinlik — Kelebek & Çiçek</span>
-            <span>▶️</span>
-        </button>
-        <button class="etkinlik-liste-btn" onclick="etk2Ac()">
-    <span>🐥 2. Etkinlik — Civciv & Tavuk</span>
-    <span>▶️</span>
-</button>
-<button class="etkinlik-liste-btn" onclick="etkGenelAc(0)"><span>➡️ 3. Etkinlik — Düz Çizgi</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkGenelAc(1)"><span>↘️ 4. Etkinlik — Çapraz Çizgi</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkGenelAc(2)"><span>◀️ 5. Etkinlik — Zikzak Takibi</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkGenelAc(3)"><span>🌙 6. Etkinlik — Kavis (C) Takibi</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkGenelAc(4)"><span>🌸 7. Etkinlik — Yuvarlak Takibi</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkGenelAc(5)"><span>🌷 8. Etkinlik — Çukur (U) Takibi</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkGenelAc(6)"><span>🧢 9. Etkinlik — Kemer Takibi</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkGenelAc(7)"><span>🐟 10. Etkinlik — Dalga Takibi</span><span>▶️</span></button>
-        <button class="etkinlik-liste-btn" onclick="etkLabirentAc()"><span>🐕 11. Etkinlik — Labirent</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkKarisikAc()"><span>🐦 12. Etkinlik — Karışık Çizgi</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkBoyaAc()"><span>🎨 13. Etkinlik — Bağla & Boya</span><span>▶️</span></button>
-<button class="etkinlik-liste-btn" onclick="etkFarkAc()"><span>🔍 14. Etkinlik — Farkı Bul</span><span>▶️</span></button>
-        
+        <div id="etkinlikKategoriListeAlani" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+</div>
+
+<!-- ETKİNLİK ALT LİSTE MODALI (kategori içindeki oyunlar) -->
+<div class="modal-overlay" id="etkinlikAltListeModal">
+    <div class="modal-content" style="max-width: 400px; text-align:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 id="etkinlikAltListeBaslik" style="margin:0; color:#7c3aed;">Kategori</h3>
+            <button onclick="etkinlikAltListeKapat()" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+        </div>
+        <button class="ogretmen-geri-btn" onclick="etkinlikKategoriListesineDon()" style="color:#7c3aed; margin-bottom:10px;">← Kategorilere Dön</button>
+        <div id="etkinlikAltListeAlani" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 </div>
 
@@ -939,7 +932,7 @@
 </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwiokOQNA7UUSBv96tWzzPBOseUDceQXQ0RfLOQIiEalAcy3c9staclVz-O2kGamRYL/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCCEQSGcXc3VF5VqWNjyzg9YuzyCHXcQqLplzjXvd6LO7eCLB2oTFBq_MXApm-jI4I/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -2037,11 +2030,98 @@ function sureyiBulutaKaydetSenkron() {
 
 
 
-    // ===== ETKİNLİKLER: 1. Etkinlik (Kelebek - Çiçek Eşleştirme) =====
+       // ===== ETKİNLİK KODU → GERÇEK FONKSİYON EŞLEŞTİRMESİ (sabit, değiştirme) =====
+const ETKINLIK_KOD_HARITASI = {
+    "kelebek_cicek": { fn: "etk1Ac" },
+    "civciv_tavuk":  { fn: "etk2Ac" },
+    "kus_cicek":     { fn: "etkKarisikAc" },
+    "duz_cizgi":     { fn: "etkGenelAc", arg: 0 },
+    "capraz_cizgi":  { fn: "etkGenelAc", arg: 1 },
+    "zigzag":        { fn: "etkGenelAc", arg: 2 },
+    "kavis_c":       { fn: "etkGenelAc", arg: 3 },
+    "yuvarlak":      { fn: "etkGenelAc", arg: 4 },
+    "cukur_u":       { fn: "etkGenelAc", arg: 5 },
+    "kemer":         { fn: "etkGenelAc", arg: 6 },
+    "dalga":         { fn: "etkGenelAc", arg: 7 },
+    "labirent":      { fn: "etkLabirentAc" },
+    "bagla_boya":    { fn: "etkBoyaAc" },
+    "farki_bul":     { fn: "etkFarkAc" }
+};
+
+let etkinlikSheetVerisi = [];
+
 function etkinliklerModalAc() {
+    let alan = document.getElementById('etkinlikKategoriListeAlani');
+    alan.innerHTML = `<div style="text-align:center; color:#7c3aed; font-size:12px; padding:10px;">Yükleniyor...</div>`;
     document.getElementById('etkinliklerModal').style.display = 'flex';
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "etkinlikleriGetir", ogrenciAdi: ogrenciAdi })
+    })
+    .then(res => res.json())
+    .then(data => {
+        etkinlikSheetVerisi = (data.etkinlikler || []).filter(e => ETKINLIK_KOD_HARITASI[e.etkinlikKodu]);
+
+        if (etkinlikSheetVerisi.length === 0) {
+            alan.innerHTML = `<div style="text-align:center; color:#7c3aed; font-size:12px; padding:10px;">Henüz sana atanmış etkinlik yok.</div>`;
+            return;
+        }
+
+        let kategoriMap = {};
+        etkinlikSheetVerisi.forEach(e => {
+            if (!kategoriMap[e.kategori]) kategoriMap[e.kategori] = [];
+            kategoriMap[e.kategori].push(e);
+        });
+
+        alan.innerHTML = "";
+        Object.keys(kategoriMap).forEach(kat => {
+            let liste = kategoriMap[kat];
+            let btn = document.createElement('button');
+            btn.className = "etkinlik-liste-btn";
+            btn.innerHTML = `<span>🎯 ${guvenliMetin(kat)}</span><span style="font-size:11px; font-weight:700; background:#f3e8ff; color:#7c3aed; padding:3px 10px; border-radius:10px;">${liste.length} etkinlik</span>`;
+            btn.onclick = function () { etkinlikAltListeAc(kat, liste); };
+            alan.appendChild(btn);
+        });
+    })
+    .catch(err => {
+        console.log("Etkinlik listesi hatası:", err);
+        alan.innerHTML = `<div style="text-align:center; color:#c62828; font-size:12px; padding:10px;">Etkinlikler yüklenirken hata oluştu.</div>`;
+    });    
 }
 
+function etkinlikAltListeAc(kategoriAdi, liste) {
+    document.getElementById('etkinliklerModal').style.display = 'none';
+    document.getElementById('etkinlikAltListeBaslik').innerText = "🎯 " + kategoriAdi;
+
+    let alan = document.getElementById('etkinlikAltListeAlani');
+    alan.innerHTML = "";
+    liste.forEach(e => {
+        let btn = document.createElement('button');
+        btn.className = "etkinlik-liste-btn";
+        btn.innerHTML = `<span>▶️ ${guvenliMetin(e.gorunenAd || e.etkinlikKodu)}</span><span>🎮</span>`;
+        btn.onclick = function () {
+            document.getElementById('etkinlikAltListeModal').style.display = 'none';
+            let eslesme = ETKINLIK_KOD_HARITASI[e.etkinlikKodu];
+            if (!eslesme) { alert("Bu etkinlik henüz tanımlanmamış."); return; }
+            if (eslesme.arg !== undefined) window[eslesme.fn](eslesme.arg);
+            else window[eslesme.fn]();
+        };
+        alan.appendChild(btn);
+    });
+
+    document.getElementById('etkinlikAltListeModal').style.display = 'flex';
+}
+
+function etkinlikAltListeKapat() {
+    document.getElementById('etkinlikAltListeModal').style.display = 'none';
+}
+
+function etkinlikKategoriListesineDon() {
+    document.getElementById('etkinlikAltListeModal').style.display = 'none';
+    document.getElementById('etkinliklerModal').style.display = 'flex';
+}
 let etk1Rows = [];
 let etk1ActiveRow = null;
 let etk1TamamlananSayi = 0;
