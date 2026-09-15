@@ -1220,6 +1220,28 @@
             </div>
         </div>
 
+        <!-- 7. Etkinlikler (Altyapı — sen zamanla oyun ekleyeceksin) -->
+<div class="activity-banner" style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-color: #c7d2fe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+    <div>
+        <h3 style="color: #3730a3; font-size: 15px; margin-bottom: 6px;">🎯 Etkinlikler</h3>
+        <p style="color: #4338ca; font-size: 11px; margin-bottom: 12px;">Öğretmenin senin için özel olarak hazırladığı eğlenceli etkinlikleri keşfet!</p>
+    </div>
+    <div>
+        <button class="btn-oyun-ac" onclick="etkinliklerModalAc()" style="background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3); width: 100%;">🎯 Etkinlikleri Gör</button>
+    </div>
+</div>
+
+<!-- 8. Videolar -->
+<div class="activity-banner" style="background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-color: #a5f3fc; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+    <div>
+        <h3 style="color: #155e75; font-size: 15px; margin-bottom: 6px;">🎬 Videolar</h3>
+        <p style="color: #0e7490; font-size: 11px; margin-bottom: 12px;">Öğretmeninin senin için seçtiği eğitim videolarını izle!</p>
+    </div>
+    <div>
+        <button class="btn-oyun-ac" onclick="videolarModalAc()" style="background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%); box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3); width: 100%;">🎬 Videoları Gör</button>
+    </div>
+</div>
+
     </div>
 </div>
 
@@ -2186,7 +2208,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbyVC9PR33KkGLtkqLu51i9zujEHkWaesPSdZ5UjGR5AGB42O-M1lxGRDjwcq2EKIvS8ew/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbz4GgkAHBOHpaNuu7xVCbpcKXXZVImwaQ19Xg2U17meKT6-watS8oLbcmutXygiSf9AFA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -5980,6 +6002,261 @@ function sekmeDegistir(tabName, btnElement) {
         if (m) { m.pause(); m.currentTime = 0; }
     });
 }
+
+        // ===================================================================
+// ETKİNLİKLER ALTYAPISI
+// ===================================================================
+// YENİ BİR ETKİNLİK EKLEMEK İSTEDİĞİNDE:
+// 1) Google Sheets "Etkinlikler" sekmesine yeni satır ekle
+//    (etkinlikKodu, gorunenAd, kategori, siraNo, ogrenciAdi)
+// 2) Oyunun gerçek JS motorunu (fonksiyonlarını) kodun başka bir yerine yaz
+// 3) Aşağıdaki ETKINLIK_KOD_HARITASI objesine, kodunla eşleşen bir satır ekle. Örnek:
+//    "kelebek_cicek": function(satirIndex) { etkinlikYapildiIsaretleCagir(satirIndex); etk1Ac(); }
+//    (fonksiyonun İÇİNDE oyunu bitirdiğinde etkinlikYapildiIsaretleCagir(satirIndex) çağırman,
+//     "yapıldı" rozetinin doğru anda işaretlenmesini sağlar — istersen oyunun başında da çağırabilirsin)
+const ETKINLIK_KOD_HARITASI = {
+    // şu an boş — sen zamanla buraya ekleyeceksin
+};
+
+function etkinliklerModalAc() {
+    let alan = document.getElementById('etkinlikKategoriListeAlani');
+    alan.innerHTML = `<div style="text-align:center; color:#4338ca; font-size:12px; padding:10px;">Yükleniyor...</div>`;
+    document.getElementById('etkinliklerModal').style.display = 'flex';
+
+    fetch(`${apiURL}?islem=etkinlikleriGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "")}`)
+    .then(res => res.json())
+    .then(liste => {
+        tumEtkinliklerCache = liste || [];
+        if (tumEtkinliklerCache.length === 0) {
+            alan.innerHTML = `<div style="text-align:center; color:#4338ca; font-size:12px; padding:10px;">Henüz atanmış bir etkinlik yok. Öğretmenin yakında ekleyecek! 🎯</div>`;
+            return;
+        }
+        let kategoriMap = {};
+        tumEtkinliklerCache.forEach(e => {
+            if (!kategoriMap[e.kategori]) kategoriMap[e.kategori] = [];
+            kategoriMap[e.kategori].push(e);
+        });
+        alan.innerHTML = "";
+        Object.keys(kategoriMap).forEach(kat => {
+            let grup = kategoriMap[kat];
+            let yapilanSayisi = grup.filter(g => g.yapildiMi).length;
+            let btn = document.createElement('button');
+            btn.className = "ogretmen-menu-btn";
+            btn.innerHTML = `<span>🎯 ${guvenliMetin(kat)}</span><span class="ogretmen-menu-rozet" style="display:inline-block; background:#6366f1;">${yapilanSayisi}/${grup.length}</span>`;
+            btn.onclick = function () { etkinlikAltListeAc(kat); };
+            alan.appendChild(btn);
+        });
+    })
+    .catch(() => {
+        alan.innerHTML = `<div style="text-align:center; color:#dc2626; font-size:12px; padding:10px;">Etkinlikler yüklenirken hata oluştu.</div>`;
+    });
+}
+
+let tumEtkinliklerCache = [];
+
+function etkinlikAltListeAc(kategoriAdi) {
+    document.getElementById('etkinliklerModal').style.display = 'none';
+    document.getElementById('etkinlikAltListeBaslik').innerText = "🎯 " + kategoriAdi;
+    let liste = tumEtkinliklerCache.filter(e => e.kategori === kategoriAdi);
+    liste.sort((a, b) => a.siraNo - b.siraNo);
+
+    let alan = document.getElementById('etkinlikAltListeAlani');
+    alan.innerHTML = "";
+    liste.forEach(e => {
+        let btn = document.createElement('button');
+        btn.className = "ogretmen-menu-btn";
+        let rozet = e.yapildiMi
+            ? `<span class="ogretmen-menu-rozet" style="display:inline-block; background:#16a34a;">✅ Yapıldı</span>`
+            : `<span class="ogretmen-menu-rozet" style="display:inline-block; background:#f59e0b;">🆕 Yeni</span>`;
+        btn.innerHTML = `<span>▶️ ${guvenliMetin(e.gorunenAd || e.etkinlikKodu)}</span>${rozet}`;
+        btn.onclick = function () {
+            let fonk = ETKINLIK_KOD_HARITASI[e.etkinlikKodu];
+            if (typeof fonk === "function") {
+                document.getElementById('etkinlikAltListeModal').style.display = 'none';
+                fonk(e.satirIndex);
+            } else {
+                alert("Bu etkinlik çok yakında eklenecek! 🚀");
+            }
+        };
+        alan.appendChild(btn);
+    });
+    document.getElementById('etkinlikAltListeModal').style.display = 'flex';
+}
+
+function etkinlikKategoriListesineDon() {
+    document.getElementById('etkinlikAltListeModal').style.display = 'none';
+    document.getElementById('etkinliklerModal').style.display = 'flex';
+}
+
+// Bir oyun bitince (veya başlarken) bunu çağırarak "yapıldı" olarak işaretleyebilirsin
+function etkinlikYapildiIsaretleCagir(satirIndex) {
+    if (!satirIndex || !aktifOgrenciAdi) return;
+    fetch(`${apiURL}?islem=etkinlikYapildiIsaretle&satirIndex=${satirIndex}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`)
+    .then(() => {
+        let e = tumEtkinliklerCache.find(x => x.satirIndex === satirIndex);
+        if (e) e.yapildiMi = true;
+    })
+    .catch(() => {});
+}
+
+// ===================================================================
+// VİDEOLAR SİSTEMİ (tam çalışır)
+// ===================================================================
+let tumVideolarCache = [];
+
+function videolarModalAc() {
+    let alan = document.getElementById('videoKategoriListeAlani');
+    alan.innerHTML = `<div style="text-align:center; color:#0e7490; font-size:12px; padding:10px;">Yükleniyor...</div>`;
+    document.getElementById('videolarModal').style.display = 'flex';
+
+    fetch(`${apiURL}?islem=videolariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "")}`)
+    .then(res => res.json())
+    .then(liste => {
+        tumVideolarCache = liste || [];
+        if (tumVideolarCache.length === 0) {
+            alan.innerHTML = `<div style="text-align:center; color:#0e7490; font-size:12px; padding:10px;">Henüz sana özel video eklenmemiş.</div>`;
+            return;
+        }
+        let kategoriMap = {};
+        tumVideolarCache.forEach(v => {
+            let kat = v.kategori || "Genel";
+            if (!kategoriMap[kat]) kategoriMap[kat] = { toplam: 0, izlenen: 0 };
+            kategoriMap[kat].toplam++;
+            if (v.izlendiMi) kategoriMap[kat].izlenen++;
+        });
+        alan.innerHTML = "";
+        Object.keys(kategoriMap).forEach(kat => {
+            let bilgi = kategoriMap[kat];
+            let btn = document.createElement('button');
+            btn.className = "ogretmen-menu-btn";
+            btn.innerHTML = `<span>📂 ${guvenliMetin(kat)}</span><span class="ogretmen-menu-rozet" style="display:inline-block; background:#0891b2;">${bilgi.izlenen}/${bilgi.toplam}</span>`;
+            btn.onclick = function () { videoAltListeAc(kat); };
+            alan.appendChild(btn);
+        });
+    })
+    .catch(() => {
+        alan.innerHTML = `<div style="text-align:center; color:#dc2626; font-size:12px; padding:10px;">Videolar yüklenirken hata oluştu.</div>`;
+    });
+}
+
+function videoAltListeAc(kategoriAdi) {
+    document.getElementById('videolarModal').style.display = 'none';
+    document.getElementById('videoAltListeBaslik').innerText = "📂 " + kategoriAdi;
+    let liste = tumVideolarCache.filter(v => (v.kategori || "Genel") === kategoriAdi);
+    liste.sort((a, b) => a.siraNo - b.siraNo);
+
+    let alan = document.getElementById('videoAltListeAlani');
+    alan.innerHTML = "";
+    liste.forEach(v => {
+        let btn = document.createElement('button');
+        btn.className = "ogretmen-menu-btn";
+        let rozet = v.izlendiMi
+            ? `<span class="ogretmen-menu-rozet" style="display:inline-block; background:#16a34a;">✅ İzlendi</span>`
+            : `<span class="ogretmen-menu-rozet" style="display:inline-block; background:#f59e0b;">🆕 Yeni</span>`;
+        btn.innerHTML = `
+            <span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
+                <span>▶️ ${guvenliMetin(v.baslik)}</span>
+                ${v.aciklama ? `<span style="font-size:10px; font-weight:500; color:#0e7490;">${guvenliMetin(v.aciklama)}</span>` : ""}
+            </span>
+            ${rozet}
+        `;
+        btn.onclick = function () { videoOynaticiAc(v.baslik, v.videoLink, v.satirIndex); };
+        alan.appendChild(btn);
+    });
+    document.getElementById('videoAltListeModal').style.display = 'flex';
+}
+
+function videoKategoriListesineDon() {
+    document.getElementById('videoAltListeModal').style.display = 'none';
+    document.getElementById('videolarModal').style.display = 'flex';
+}
+
+function videoEmbedBilgisiOlustur(link) {
+    let temizLink = String(link || "").trim();
+    let ytMatch = temizLink.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{6,})/);
+    if (ytMatch) return { tip: "iframe", src: "https://www.youtube.com/embed/" + ytMatch[1] + "?rel=0&autoplay=1" };
+    let driveMatch = temizLink.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) return { tip: "iframe", src: "https://drive.google.com/file/d/" + driveMatch[1] + "/preview" };
+    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(temizLink)) return { tip: "video", src: temizLink };
+    return { tip: "iframe", src: temizLink };
+}
+
+function videoOynaticiAc(baslik, link, satirIndex) {
+    document.getElementById('videoOynaticiBaslik').innerText = baslik || "Video";
+    document.getElementById('videoYeniSekmeLink').href = link;
+
+    let icerikAlani = document.getElementById('videoIcerikAlani');
+    let embedBilgi = videoEmbedBilgisiOlustur(link);
+    if (embedBilgi.tip === "video") {
+        icerikAlani.innerHTML = `<video src="${embedBilgi.src}" controls autoplay style="max-width:100%; max-height:100%;"></video>`;
+    } else {
+        icerikAlani.innerHTML = `<iframe src="${embedBilgi.src}" style="width:100%; height:100%; border:none;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    }
+
+    document.getElementById('videoOynaticiOverlay').style.display = 'flex';
+
+    if (satirIndex && aktifOgrenciAdi) {
+        fetch(`${apiURL}?islem=videoIzlendiIsaretle&satirIndex=${satirIndex}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`)
+        .then(() => {
+            let v = tumVideolarCache.find(x => x.satirIndex === satirIndex);
+            if (v) v.izlendiMi = true;
+        })
+        .catch(() => {});
+    }
+}
+
+function videoOynaticiKapat() {
+    document.getElementById('videoOynaticiOverlay').style.display = 'none';
+    document.getElementById('videoIcerikAlani').innerHTML = "";
+}
+        
     </script>
+
+    <!-- ETKİNLİKLER MODALLARI -->
+<div class="game-modal-overlay" id="etkinliklerModal">
+    <div class="game-modal-content" style="max-width: 380px; text-align:center;">
+        <button class="game-close-btn" onclick="document.getElementById('etkinliklerModal').style.display='none'">✕</button>
+        <div class="game-title" style="color:#4338ca;">🎯 Etkinlikler</div>
+        <div class="game-subtitle">Aşağıdaki kategorilerden birini seçerek etkinliklere göz atabilirsin.</div>
+        <div id="etkinlikKategoriListeAlani" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+</div>
+
+<div class="game-modal-overlay" id="etkinlikAltListeModal">
+    <div class="game-modal-content" style="max-width: 400px; text-align:center;">
+        <button class="game-close-btn" onclick="document.getElementById('etkinlikAltListeModal').style.display='none'">✕</button>
+        <div class="game-title" id="etkinlikAltListeBaslik" style="color:#4338ca;">Kategori</div>
+        <button class="ogretmen-sohbet-geri-btn" onclick="etkinlikKategoriListesineDon()" style="color:#4338ca; margin-bottom:10px;">← Kategorilere Dön</button>
+        <div id="etkinlikAltListeAlani" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+</div>
+
+<!-- VİDEOLAR MODALLARI -->
+<div class="game-modal-overlay" id="videolarModal">
+    <div class="game-modal-content" style="max-width: 380px; text-align:center;">
+        <button class="game-close-btn" onclick="document.getElementById('videolarModal').style.display='none'">✕</button>
+        <div class="game-title" style="color:#0e7490;">🎬 Videolar</div>
+        <div class="game-subtitle">Aşağıdaki kategorilerden birini seçerek videolara göz atabilirsin.</div>
+        <div id="videoKategoriListeAlani" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+</div>
+
+<div class="game-modal-overlay" id="videoAltListeModal">
+    <div class="game-modal-content" style="max-width: 420px; text-align:center;">
+        <button class="game-close-btn" onclick="document.getElementById('videoAltListeModal').style.display='none'">✕</button>
+        <div class="game-title" id="videoAltListeBaslik" style="color:#0e7490;">Kategori</div>
+        <button class="ogretmen-sohbet-geri-btn" onclick="videoKategoriListesineDon()" style="color:#0e7490; margin-bottom:10px;">← Kategorilere Dön</button>
+        <div id="videoAltListeAlani" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+</div>
+
+<!-- VİDEO OYNATICI (tam ekran) -->
+<div class="pomodoro-overlay" id="videoOynaticiOverlay" style="background:#000;">
+    <button class="pomodoro-close-btn" onclick="videoOynaticiKapat()">✕</button>
+    <div id="videoOynaticiBaslik" style="color:#fff; font-size:13px; font-weight:700; margin-bottom:14px; max-width:85%; text-align:center;">Video</div>
+    <div id="videoIcerikAlani" style="width:100%; max-width:800px; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center;"></div>
+    <a id="videoYeniSekmeLink" href="#" target="_blank" style="margin-top:14px; color:#94a3b8; font-size:11px; text-decoration:underline;">Yeni sekmede aç ↗</a>
+</div>
+    
 </body>
 </html>
