@@ -1337,30 +1337,37 @@
         </div>
     </div>
 
-        <!-- KART OYUNU EKRANI -->
-    <div class="kart-oyun-overlay" id="kartOyunOverlay">
-        <div class="kart-ust-bar">
-            <button class="kart-kapat-btn" onclick="kartOyunuKapat()">✕</button>
-            <div class="kart-ilerleme-bar" id="kartIlerlemeBar"></div>
-            <span style="width:22px;"></span>
+          <!-- SEVİYE DIŞ LİNK EKRANI (Kelime Kartları Yolculuğu güncel hali) -->
+    <div class="pomodoro-overlay" id="seviyeDisLinkOverlay" style="background:#000;">
+        <div style="position:absolute; top:14px; right:14px; z-index:10;">
+            <button onclick="seviyeDisLinkKapatOnaySor()" title="Kapat" style="width:36px; height:36px; border-radius:50%; background:#334155; border:1px solid #475569; color:#fff; font-size:15px; cursor:pointer;">✕</button>
+        </div>
+        <div id="seviyeDisLinkBaslikAlani" style="position:absolute; top:14px; left:14px; color:#fff; font-size:12px; font-weight:700; background:rgba(51,65,85,0.7); padding:6px 12px; border-radius:8px; max-width:60%; z-index:5;"></div>
+
+        <div id="seviyeDisLinkYukleniyorAlani" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:3;">
+            <div style="color:#94a3b8; font-size:13px; font-weight:600;">Etkinlik yükleniyor...</div>
         </div>
 
-        <div class="kart-govde" id="kartGovdeAlani">
-            <div class="kart-gorsel-kapsayici" onclick="kartSesOku()">
-                <img id="kartGorsel" src="" alt="">
-                <button class="kart-ses-btn" onclick="event.stopPropagation(); kartSesOku();">🔊</button>
+        <div id="seviyeDisLinkEngelliUyari" style="position:absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:4; background:#0f172a; text-align:center; padding:20px;">
+            <div style="font-size:40px;">🔒</div>
+            <div style="color:#e2e8f0; font-size:14px; font-weight:700; max-width:320px;">Bu etkinlik güvenlik nedeniyle site içinde açılamıyor.</div>
+            <a id="seviyeDisLinkYeniSekmeBtn" href="#" target="_blank" style="background:#f59e0b; color:#1e293b; padding:12px 28px; border-radius:10px; font-weight:800; font-size:13px; text-decoration:none;">↗️ Yeni Sekmede Aç</a>
+        </div>
+
+        <iframe id="seviyeDisLinkIframe" src="" style="width:100%; height:100%; border:none;" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+
+    <!-- SEVİYE TAMAMLAMA ONAY MODALI -->
+    <div class="rubric-modal" id="seviyeOnayModal">
+        <div class="rubric-content" style="max-width: 320px; text-align: center;">
+            <div style="font-size:38px; margin-bottom:8px;">🤔</div>
+            <h3 style="color: #1e293b; margin-bottom: 8px; font-size: 15px;">Bu seviyeyi bitirdin mi?</h3>
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 16px;">Eğer bitirdiysen bir sonraki seviyenin kilidi açılacak.</p>
+            <div style="display:flex; gap:8px;">
+                <button onclick="seviyeOnayVer(false)" style="flex:1; background:#f1f5f9; color:#64748b; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Hayır, Devam Et</button>
+                <button onclick="seviyeOnayVer(true)" style="flex:1; background:#16a34a; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Evet, Bitirdim ✓</button>
             </div>
-            <div class="kart-en-metin" id="kartEnMetin">Hello!</div>
-            <div class="kart-tr-metin" id="kartTrMetin">Herkese <b>merhaba</b>!</div>
         </div>
-
-        <div class="kart-tebrik-alani" id="kartTebrikAlani">
-            <div style="font-size:50px;">🎉</div>
-            <h3 style="font-size:20px; font-weight:900; color:#166534; margin:10px 0 6px;">Seviye Tamamlandı!</h3>
-            <p style="color:#64748b; font-size:13px;">Bir sonraki seviyenin kilidi açıldı.</p>
-        </div>
-
-        <button class="kart-devam-btn" id="kartDevamBtn" onclick="kartDevamEt()">Devam Et</button>
     </div>
 
 
@@ -2238,7 +2245,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbz4x_C4BOMLgD9NcgGXETzVY5K_1NI01s04kLx6Kl898i4QG3Jr2aWLQ2QQOG4AF5_9vA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzOO4Y013zmjdAWWSZLJIIlSHoCbQtInKvyNofcRRuAKtxbKSvi7puCOazeTLBKfQwuTg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -3004,8 +3011,8 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
 
             let acikOlanlar = secenekler.filter(s => !s.kilitli);
 
-            if (acikOlanlar.length === 1) {
-                seviyeKartOyunuBaslat(seviyeAktifSinif, unite, acikOlanlar[0].sv);
+                        if (acikOlanlar.length === 1) {
+                seviyeDisLinkAc(seviyeAktifSinif, unite, acikOlanlar[0].sv);
                 return;
             }
 
@@ -3036,9 +3043,9 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 satir.innerText = etiket;
                 satir.style.cssText = `width:100%; text-align:left; background:${renk}; color:${yaziRenk}; border:none; border-radius:10px; padding:12px 14px; font-weight:700; font-size:12.5px; margin-bottom:8px; cursor:${s.kilitli ? 'not-allowed' : 'pointer'};`;
                 if (!s.kilitli) {
-                    satir.onclick = function () {
+                                    satir.onclick = function () {
                         modal.remove();
-                        seviyeKartOyunuBaslat(seviyeAktifSinif, unite, s.sv);
+                        seviyeDisLinkAc(seviyeAktifSinif, unite, s.sv);
                     };
                 }
                 kutu.appendChild(satir);
@@ -3055,154 +3062,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
         }
         
 
-        function seviyeKartOyunuBaslat(sinif, unite, seviye) {
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-            if (!user) return;
-
-            kartAktifListe = user.aktiviteKartlari.filter(k => k.sinif === sinif && k.unite === unite && k.seviye === seviye);
-            if (kartAktifListe.length === 0) { alert("Bu seviyede kart bulunamadı."); return; }
-
-            kartSinif = sinif; kartUnite = unite; kartSeviye = seviye;
-            kartAktifIndex = 0;
-
-            document.getElementById('seviyeHaritaOverlay').style.display = 'none';
-            document.getElementById('kartOyunOverlay').style.display = 'flex';
-            document.getElementById('kartGovdeAlani').style.display = 'flex';
-            document.getElementById('kartTebrikAlani').style.display = 'none';
-
-            kartIlerlemeCizgileriOlustur();
-            kartGoster();
-        }
-
-        function kartIlerlemeCizgileriOlustur() {
-            let bar = document.getElementById('kartIlerlemeBar');
-            bar.innerHTML = "";
-            kartAktifListe.forEach(() => {
-                let parca = document.createElement('div');
-                parca.className = 'kart-ilerleme-parca';
-                bar.appendChild(parca);
-            });
-        }
-
-        function kartGoster() {
-            let kart = kartAktifListe[kartAktifIndex];
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-            let havuz = (user.gorselHavuzu && user.gorselHavuzu[kart.kategori]) ? user.gorselHavuzu[kart.kategori] : [];
-            let gorselUrl = havuz.length > 0 ? havuz[Math.floor(Math.random() * havuz.length)] : "";
-
-            document.getElementById('kartGorsel').src = gorselUrl;
-            document.getElementById('kartEnMetin').innerText = kart.en + (kart.cumleEn ? "" : "");
-            document.getElementById('kartTrMetin').innerHTML = kart.cumleTr
-                ? kart.cumleTr.replace(kart.tr, `<b>${kart.tr}</b>`)
-                : `<b>${kart.tr}</b>`;
-
-            document.querySelectorAll('.kart-ilerleme-parca').forEach((p, i) => {
-                p.classList.toggle('dolu', i <= kartAktifIndex);
-            });
-
-            kartOkunduMu = false;
-            let btn = document.getElementById('kartDevamBtn');
-            btn.classList.remove('aktif');
-            btn.disabled = true;
-
-            setTimeout(() => kartSesOku(), 400);
-        }
-
-                let sabitSesKaydi = null;
-        let sesListesiHazirMi = false;
-
-        function sesListesiniHazirla() {
-            let sesler = window.speechSynthesis.getVoices();
-            if (sesler.length === 0) return;
-
-            // Öncelik sırasına göre tercih edilen ses isimleri (bulunanı kullan)
-            let tercihSirasi = [
-                "Google US English",
-                "Google UK English Female",
-                "Samantha",
-                "Microsoft Aria Online (Natural) - English (United States)",
-                "Microsoft Zira Desktop - English (United States)"
-            ];
-
-            for (let tercih of tercihSirasi) {
-                let bulunan = sesler.find(s => s.name === tercih);
-                if (bulunan) { sabitSesKaydi = bulunan; sesListesiHazirMi = true; return; }
-            }
-
-            // Hiçbiri yoksa, İngilizce (en-US veya en-) olan ilk sesi kullan
-            let enUygun = sesler.find(s => s.lang && s.lang.toLowerCase().startsWith('en'));
-            if (enUygun) { sabitSesKaydi = enUygun; sesListesiHazirMi = true; }
-        }
-
-        if ('speechSynthesis' in window) {
-            sesListesiniHazirla();
-            window.speechSynthesis.onvoiceschanged = sesListesiniHazirla;
-        }
-
-        function kartSesOku() {
-            let kart = kartAktifListe[kartAktifIndex];
-            if (!kart) return;
-            let metin = kart.cumleEn || kart.en;
-
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                let konusma = new SpeechSynthesisUtterance(metin);
-                konusma.lang = 'en-US';
-                konusma.rate = 0.9;
-
-                if (!sesListesiHazirMi) sesListesiniHazirla();
-                if (sabitSesKaydi) konusma.voice = sabitSesKaydi;
-
-                window.speechSynthesis.speak(konusma);
-            }
-
-            kartOkunduMu = true;
-            let btn = document.getElementById('kartDevamBtn');
-            btn.classList.add('aktif');
-            btn.disabled = false;
-        }
-
-        function kartDevamEt() {
-            if (!kartOkunduMu) return;
-
-            kartAktifIndex++;
-            if (kartAktifIndex >= kartAktifListe.length) {
-                kartSeviyeTamamla();
-            } else {
-                kartGoster();
-            }
-        }
-
-        function kartSeviyeTamamla() {
-            document.getElementById('kartGovdeAlani').style.display = 'none';
-            document.getElementById('kartTebrikAlani').style.display = 'block';
-            document.getElementById('kartDevamBtn').innerText = 'Haritaya Dön';
-            document.getElementById('kartDevamBtn').classList.add('aktif');
-            document.getElementById('kartDevamBtn').disabled = false;
-            document.getElementById('kartDevamBtn').onclick = kartHaritayaDon;
-
-            fetch(`${apiURL}?islem=seviyeTamamla&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&sinif=${kartSinif}&unite=${kartUnite}&seviye=${kartSeviye}`).catch(() => {});
-
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
-            if (user) {
-                if (!user.seviyeIlerleme) user.seviyeIlerleme = [];
-                user.seviyeIlerleme.push({ sinif: kartSinif, unite: kartUnite, seviye: kartSeviye, tamamlandi: true });
-            }
-        }
-
-        function kartHaritayaDon() {
-            document.getElementById('kartOyunOverlay').style.display = 'none';
-            document.getElementById('kartDevamBtn').innerText = 'Devam Et';
-            document.getElementById('kartDevamBtn').onclick = kartDevamEt;
-            document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
-            seviyeHaritasiCiz();
-        }
-
-        function kartOyunuKapat() {
-            window.speechSynthesis.cancel();
-            document.getElementById('kartOyunOverlay').style.display = 'none';
-            document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
-        }
+        
         
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
@@ -6692,6 +6552,89 @@ function rubricDisLinkAta() {
         }
     })
     .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası oluştu."; });
+}
+
+        // ===== KELİME KARTLARI YOLCULUĞU — YENİ SİSTEM (DIŞ LİNK) =====
+let seviyeDisLinkAktifSinif = 0;
+let seviyeDisLinkAktifUnite = 0;
+let seviyeDisLinkAktifSeviye = 0;
+let seviyeDisLinkAktifUrl = "";
+let seviyeDisLinkZamanAsimi = null;
+let seviyeDisLinkYuklendiMi = false;
+
+function seviyeDisLinkAc(sinif, unite, seviye) {
+    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+    if (!user) return;
+
+    let kart = (user.aktiviteKartlari || []).find(k => k.sinif === sinif && k.unite === unite && k.seviye === seviye);
+    if (!kart || !kart.disLink) {
+        alert("Bu seviye için henüz bir etkinlik eklenmemiş.");
+        return;
+    }
+
+    seviyeDisLinkAktifSinif = sinif;
+    seviyeDisLinkAktifUnite = unite;
+    seviyeDisLinkAktifSeviye = seviye;
+    seviyeDisLinkAktifUrl = kart.disLink;
+
+    document.getElementById('seviyeHaritaOverlay').style.display = 'none';
+    document.getElementById('seviyeDisLinkBaslikAlani').innerText = kart.butonAdi || `Seviye ${seviye}`;
+    document.getElementById('seviyeDisLinkYeniSekmeBtn').href = kart.disLink;
+    document.getElementById('seviyeDisLinkOverlay').style.display = 'flex';
+
+    seviyeDisLinkIframeYukle(kart.disLink);
+}
+
+function seviyeDisLinkIframeYukle(url) {
+    seviyeDisLinkYuklendiMi = false;
+    document.getElementById('seviyeDisLinkYukleniyorAlani').style.display = 'flex';
+    document.getElementById('seviyeDisLinkEngelliUyari').style.display = 'none';
+
+    let iframe = document.getElementById('seviyeDisLinkIframe');
+    iframe.src = "";
+
+    iframe.onload = function () {
+        if (iframe.src && iframe.src !== "about:blank") {
+            seviyeDisLinkYuklendiMi = true;
+            document.getElementById('seviyeDisLinkYukleniyorAlani').style.display = 'none';
+        }
+    };
+
+    setTimeout(() => {
+        iframe.src = url;
+        if (seviyeDisLinkZamanAsimi) clearTimeout(seviyeDisLinkZamanAsimi);
+        seviyeDisLinkZamanAsimi = setTimeout(() => {
+            if (!seviyeDisLinkYuklendiMi) {
+                document.getElementById('seviyeDisLinkYukleniyorAlani').style.display = 'none';
+                document.getElementById('seviyeDisLinkEngelliUyari').style.display = 'flex';
+            }
+        }, 3500);
+    }, 50);
+}
+
+function seviyeDisLinkKapatOnaySor() {
+    document.getElementById('seviyeOnayModal').style.display = 'flex';
+}
+
+function seviyeOnayVer(bitirdiMi) {
+    document.getElementById('seviyeOnayModal').style.display = 'none';
+
+    if (seviyeDisLinkZamanAsimi) clearTimeout(seviyeDisLinkZamanAsimi);
+    document.getElementById('seviyeDisLinkIframe').src = "";
+    document.getElementById('seviyeDisLinkOverlay').style.display = 'none';
+
+    if (bitirdiMi) {
+        fetch(`${apiURL}?islem=seviyeTamamla&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&sinif=${seviyeDisLinkAktifSinif}&unite=${seviyeDisLinkAktifUnite}&seviye=${seviyeDisLinkAktifSeviye}`).catch(() => {});
+
+        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+        if (user) {
+            if (!user.seviyeIlerleme) user.seviyeIlerleme = [];
+            user.seviyeIlerleme.push({ sinif: seviyeDisLinkAktifSinif, unite: seviyeDisLinkAktifUnite, seviye: seviyeDisLinkAktifSeviye, tamamlandi: true });
+        }
+    }
+
+    document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
+    seviyeHaritasiCiz();
 }
         
     </script>
