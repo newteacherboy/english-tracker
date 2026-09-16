@@ -953,6 +953,16 @@
                 <div id="rubricEtkinlikSonucMesaj" style="font-size:10.5px; margin-top:6px;"></div>
             </div>
 
+                        <div class="rubric-field" style="background:#fefce8; padding:10px; border-radius:8px; border:1px solid #fde047; margin-top:8px;">
+                <label style="color:#854d0e; font-weight:bold;">🔗 Dış Bağlantı Etkinliği Ekle</label>
+                <input type="text" id="rubricDisLinkAd" placeholder="Etkinlik adı (örn: Hayvanlar Eşleştirme)" style="margin-bottom:6px;">
+                <input type="text" id="rubricDisLinkUrl" placeholder="https://..." style="margin-bottom:6px;">
+                <input type="text" id="rubricDisLinkKategori" placeholder="Kategori (örn: Eşleştirme)" style="margin-bottom:6px;">
+                <textarea id="rubricDisLinkYorum" rows="2" placeholder="Bu etkinlikle ilgili notun (isteğe bağlı)..." style="margin-bottom:6px;"></textarea>
+                <button type="button" onclick="rubricDisLinkAta()" style="width:100%; background:#a16207; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:11.5px;">➕ Dış Bağlantıyı Ekle & Ata</button>
+                <div id="rubricDisLinkSonucMesaj" style="font-size:10.5px; margin-top:6px;"></div>
+            </div>
+
             <div class="rubric-field" style="background:#ecfeff; padding:10px; border-radius:8px; border:1px solid #a5f3fc; margin-top:8px;">
                 <label style="color:#0e7490; font-weight:bold;">🎬 Bu Öğrenciye Video(lar) Ata</label>
                 <div id="rubricVideoListeAlani" style="max-height:170px; overflow-y:auto; background:#fff; border:1px solid #a5f3fc; border-radius:8px; padding:8px; margin-bottom:6px;">
@@ -2228,7 +2238,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzDe_98lZXNdvNbQBRPS_Igpi39jYSzyGW62A3OFByjzUcG84abDn2jTJsdlgYZJKuONA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbz4x_C4BOMLgD9NcgGXETzVY5K_1NI01s04kLx6Kl898i4QG3Jr2aWLQ2QQOG4AF5_9vA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -6118,17 +6128,21 @@ function etkinlikAltListeAc(kategoriAdi) {
         let rozet = e.yapildiMi
             ? `<span class="ogretmen-menu-rozet" style="display:inline-block; background:#16a34a;">✅ Yapıldı</span>`
             : `<span class="ogretmen-menu-rozet" style="display:inline-block; background:#f59e0b;">🆕 Yeni</span>`;
-        btn.innerHTML = `<span>▶️ ${guvenliMetin(e.gorunenAd || e.etkinlikKodu)}</span>${rozet}`;
-        btn.onclick = function () {
+                let ikon = (e.disLink && e.disLink.trim()) ? "↗️" : "▶️";
+        btn.innerHTML = `<span>${ikon} ${guvenliMetin(e.gorunenAd || e.etkinlikKodu)}</span>${rozet}`;
+               btn.onclick = function () {
+            document.getElementById('etkinlikAltListeModal').style.display = 'none';
+            if (e.disLink && e.disLink.trim()) {
+                disLinkOyunAc(e.disLink, e.gorunenAd, e.ogretmenYorumu, e.satirIndex);
+                return;
+            }
             let fonk = ETKINLIK_KOD_HARITASI[e.etkinlikKodu];
             if (typeof fonk === "function") {
-                document.getElementById('etkinlikAltListeModal').style.display = 'none';
                 fonk(e.satirIndex);
             } else {
                 alert("Bu etkinlik çok yakında eklenecek! 🚀");
             }
-        };
-        alan.appendChild(btn);
+        };        alan.appendChild(btn);
     });
     document.getElementById('etkinlikAltListeModal').style.display = 'flex';
 }
@@ -6566,6 +6580,119 @@ function dyOyunKapat() {
     window.speechSynthesis.cancel();
     document.getElementById('dyOyunOverlay').style.display = 'none';
 }
+
+        // ===== DIŞ LİNK ETKİNLİK SİSTEMİ =====
+let disLinkAktifSatirIndex = 0;
+let disLinkAktifUrl = "";
+
+let disLinkYuklemeZamanAsimi = null;
+let disLinkYuklendiMi = false;
+
+function disLinkOyunAc(url, baslik, yorum, satirIndex) {
+    disLinkAktifSatirIndex = satirIndex;
+    disLinkAktifUrl = url;
+
+    document.getElementById('disLinkBaslikAlani').innerText = baslik || "";
+    document.getElementById('disLinkYeniSekmeBtn').href = url;
+
+    let yorumAlani = document.getElementById('disLinkYorumAlani');
+    if (yorum && yorum.trim()) {
+        yorumAlani.innerText = "📌 " + yorum;
+        yorumAlani.style.display = 'block';
+    } else {
+        yorumAlani.style.display = 'none';
+    }
+
+    document.getElementById('disLinkOverlay').style.display = 'flex';
+    disLinkIframeYukle(url);
+
+    if (satirIndex && typeof etkinlikYapildiIsaretleCagir === 'function') {
+        etkinlikYapildiIsaretleCagir(satirIndex);
+    }
+}
+
+function disLinkIframeYukle(url) {
+    disLinkYuklendiMi = false;
+    document.getElementById('disLinkYukleniyorAlani').style.display = 'flex';
+    document.getElementById('disLinkEngelliUyari').style.display = 'none';
+
+    let iframe = document.getElementById('disLinkIframe');
+    iframe.src = "";
+
+    iframe.onload = function () {
+        // about:blank yüklenince de onload tetiklenir, bu yüzden gerçek url atandıktan sonraki
+        // onload'ı dikkate alıyoruz (küçük gecikmeyle kontrol ediyoruz)
+        if (iframe.src && iframe.src !== "about:blank") {
+            disLinkYuklendiMi = true;
+            document.getElementById('disLinkYukleniyorAlani').style.display = 'none';
+        }
+    };
+
+    setTimeout(() => {
+        iframe.src = url;
+
+        if (disLinkYuklemeZamanAsimi) clearTimeout(disLinkYuklemeZamanAsimi);
+        disLinkYuklemeZamanAsimi = setTimeout(() => {
+            if (!disLinkYuklendiMi) {
+                document.getElementById('disLinkYukleniyorAlani').style.display = 'none';
+                document.getElementById('disLinkEngelliUyari').style.display = 'flex';
+            }
+        }, 10000);
+    }, 50);
+}
+
+function disLinkTekrarOyna() {
+    disLinkIframeYukle(disLinkAktifUrl);
+}
+function disLinkKapat() {
+    if (disLinkYuklemeZamanAsimi) clearTimeout(disLinkYuklemeZamanAsimi);
+    document.getElementById('disLinkIframe').src = "";
+    document.getElementById('disLinkOverlay').style.display = 'none';
+}
+
+// ===== RUBRİK PANELİ: DIŞ LİNK ETKİNLİK EKLEME =====
+function rubricDisLinkAta() {
+    let ogrenci = document.getElementById('rubricOgrenciSelect').value.trim();
+    let ad = document.getElementById('rubricDisLinkAd').value.trim();
+    let url = document.getElementById('rubricDisLinkUrl').value.trim();
+    let kategori = document.getElementById('rubricDisLinkKategori').value.trim() || "Genel";
+    let yorum = document.getElementById('rubricDisLinkYorum').value.trim();
+    let mesajDiv = document.getElementById('rubricDisLinkSonucMesaj');
+
+    if (!ogrenci) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Önce yukarıdan bir öğrenci seçin!"; return; }
+    if (!ad || !url) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Etkinlik adı ve link zorunludur!"; return; }
+
+    mesajDiv.style.color = "#a16207";
+    mesajDiv.innerText = "Ekleniyor...";
+
+    fetch(apiURL, {
+        method: "POST",
+        body: JSON.stringify({
+            islem: "disLinkEtkinlikAta",
+            ogrenciAdi: ogrenci,
+            gorunenAd: ad,
+            kategori: kategori,
+            disLink: url,
+            ogretmenYorumu: yorum
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            mesajDiv.style.color = "#16a34a";
+            mesajDiv.innerText = "✅ Dış bağlantı başarıyla eklendi ve atandı!";
+            document.getElementById('rubricDisLinkAd').value = "";
+            document.getElementById('rubricDisLinkUrl').value = "";
+            document.getElementById('rubricDisLinkKategori').value = "";
+            document.getElementById('rubricDisLinkYorum').value = "";
+            if (rubricSeciliEtkinlikler.indexOf(ad) === -1) rubricSeciliEtkinlikler.push(ad);
+        } else {
+            mesajDiv.style.color = "#dc2626";
+            mesajDiv.innerText = "Hata: " + (data.message || "Bilinmeyen hata");
+        }
+    })
+    .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası oluştu."; });
+}
         
     </script>
 
@@ -6661,6 +6788,27 @@ function dyOyunKapat() {
         </div>
         <button class="btn-giris" onclick="document.getElementById('dyTebrikOverlay').style.display='none'; document.getElementById('dyOyunOverlay').style.display='none';" style="background:#16a34a;">Kapat</button>
     </div>
+</div>
+
+<div class="pomodoro-overlay" id="disLinkOverlay" style="background:#000;">
+    <div style="position:absolute; top:14px; right:14px; display:flex; gap:8px; z-index:10;">
+        <button onclick="disLinkTekrarOyna()" title="Tekrar Oyna" style="width:36px; height:36px; border-radius:50%; background:#334155; border:1px solid #475569; color:#fff; font-size:15px; cursor:pointer;">🔄</button>
+        <button onclick="disLinkKapat()" title="Kapat" style="width:36px; height:36px; border-radius:50%; background:#334155; border:1px solid #475569; color:#fff; font-size:15px; cursor:pointer;">✕</button>
+    </div>
+    <div id="disLinkBaslikAlani" style="position:absolute; top:14px; left:14px; color:#fff; font-size:12px; font-weight:700; background:rgba(51,65,85,0.7); padding:6px 12px; border-radius:8px; max-width:60%; z-index:5;"></div>
+    <div id="disLinkYorumAlani" style="position:absolute; bottom:14px; left:14px; right:14px; color:#cbd5e1; font-size:11.5px; background:rgba(15,23,42,0.85); padding:10px 14px; border-radius:8px; display:none; z-index:5;"></div>
+
+    <div id="disLinkYukleniyorAlani" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:3;">
+        <div style="color:#94a3b8; font-size:13px; font-weight:600;">Etkinlik yükleniyor...</div>
+    </div>
+
+    <div id="disLinkEngelliUyari" style="position:absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:4; background:#0f172a; text-align:center; padding:20px;">
+        <div style="font-size:40px;">🔒</div>
+        <div style="color:#e2e8f0; font-size:14px; font-weight:700; max-width:320px;">Bu etkinlik güvenlik nedeniyle site içinde açılamıyor.</div>
+        <a id="disLinkYeniSekmeBtn" href="#" target="_blank" style="background:#f59e0b; color:#1e293b; padding:12px 28px; border-radius:10px; font-weight:800; font-size:13px; text-decoration:none;">↗️ Yeni Sekmede Aç</a>
+    </div>
+
+    <iframe id="disLinkIframe" src="" style="width:100%; height:100%; border:none;" allow="autoplay; fullscreen" allowfullscreen></iframe>
 </div>
     
 </body>
