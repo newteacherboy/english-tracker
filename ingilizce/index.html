@@ -2401,9 +2401,9 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 arkaPlanVeriYenilemeBaslat();
             }
 
-           
-            ogretmenSelectDoldur();
+                       ogretmenSelectDoldur();
             rubricGridleriOlustur();
+            ozellikSecDoldur();
             ogretmenMenuOkunmamisGuncelle();
             setInterval(ogretmenMenuOkunmamisGuncelle, 60000);
         };
@@ -6252,6 +6252,61 @@ function rubricEtkinlikSecDoldur() {
         };
     })
     .catch(() => { sel.innerHTML = '<option value="">Yüklenemedi</option>'; });
+}
+
+        function ozellikSecDoldur() {
+    let sel = document.getElementById('ozellikSec');
+    if (!sel) return;
+    fetch(`${apiURL}?islem=ozellikListesiGetir`)
+    .then(res => res.json())
+    .then(liste => {
+        sel.innerHTML = '<option value="">-- Özellik Seçin --</option>';
+        liste.forEach(o => {
+            sel.innerHTML += `<option value="${o.kod}">${guvenliMetin(o.ad)}</option>`;
+        });
+    })
+    .catch(() => { sel.innerHTML = '<option value="">Yüklenemedi</option>'; });
+}
+
+function ozellikHedefAlaniGuncelle() {
+    let tip = document.getElementById('ozellikHedefTipiSec').value;
+    document.getElementById('ozellikHedefDegeri').style.display = (tip === 'tumogrenciler') ? 'none' : 'block';
+}
+
+function ozellikIzniKaydet() {
+    let kod = document.getElementById('ozellikSec').value;
+    let tip = document.getElementById('ozellikHedefTipiSec').value;
+    let deger = document.getElementById('ozellikHedefDegeri').value.trim();
+    let durum = document.getElementById('ozellikDurumSec').value;
+    let mesajDiv = document.getElementById('ozellikIzniSonucMesaj');
+
+    if (!kod) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen bir özellik seçin!"; return; }
+    if (tip !== 'tumogrenciler' && !deger) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen hedef değeri girin!"; return; }
+
+    mesajDiv.style.color = "#334155";
+    mesajDiv.innerText = "Kaydediliyor...";
+
+    fetch(apiURL, {
+        method: "POST",
+        body: JSON.stringify({
+            islem: "ozellikIzniKaydet",
+            ozellikKodu: kod,
+            hedefTipi: tip,
+            hedefDegeri: tip === 'tumogrenciler' ? '' : deger,
+            durum: durum
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            mesajDiv.style.color = "#16a34a";
+            mesajDiv.innerText = "✅ Kural kaydedildi! (Öğrenciler yeni girişte/yenilemede görecek)";
+        } else {
+            mesajDiv.style.color = "#dc2626";
+            mesajDiv.innerText = "Hata oluştu.";
+        }
+    })
+    .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası."; });
 }
 
 function rubricEtkinlikAta() {
