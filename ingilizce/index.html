@@ -955,9 +955,21 @@
 
                         <div class="rubric-field" style="background:#fefce8; padding:10px; border-radius:8px; border:1px solid #fde047; margin-top:8px;">
                 <label style="color:#854d0e; font-weight:bold;">🔗 Dış Bağlantı Etkinliği Ekle</label>
+                
+                <!-- Kategori Açılır Menüsü (Google Sheets Kategoriler sekmesinden dolacak) -->
+                <label style="font-size:10px; font-weight:700; color:#854d0e; display:block; margin-bottom:2px;">Kategori Seçin:</label>
+                <select id="rubricDisLinkKategori" style="margin-bottom:6px;">
+                    <option value="">Yükleniyor...</option>
+                </select>
+
+                <!-- Çoklu Öğrenci Tik (Checkbox) Listesi Alanı -->
+                <label style="font-size:10px; font-weight:700; color:#854d0e; display:block; margin-bottom:2px;">Öğrenci Seçin (Toplu veya Tekli):</label>
+                <div id="rubricOgrenciCheckboxListesi" style="max-height:120px; overflow-y:auto; background:#fff; border:1px solid #fde047; border-radius:6px; padding:6px; margin-bottom:6px; display:flex; flex-direction:column; gap:4px;">
+                    <div style="font-size:10px; color:#854d0e;">Öğrenciler yükleniyor...</div>
+                </div>
+
                 <input type="text" id="rubricDisLinkAd" placeholder="Etkinlik adı (örn: Hayvanlar Eşleştirme)" style="margin-bottom:6px;">
                 <input type="text" id="rubricDisLinkUrl" placeholder="https://..." style="margin-bottom:6px;">
-                <input type="text" id="rubricDisLinkKategori" placeholder="Kategori (örn: Eşleştirme)" style="margin-bottom:6px;">
                 <textarea id="rubricDisLinkYorum" rows="2" placeholder="Bu etkinlikle ilgili notun (isteğe bağlı)..." style="margin-bottom:6px;"></textarea>
                 <button type="button" onclick="rubricDisLinkAta()" style="width:100%; background:#a16207; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:11.5px;">➕ Dış Bağlantıyı Ekle & Ata</button>
                 <div id="rubricDisLinkSonucMesaj" style="font-size:10.5px; margin-top:6px;"></div>
@@ -2267,7 +2279,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbwCphtybNwvH9QzMrapoAafn6hKJfYVGKEUYewnmHL_ubN1PPedTIW_YS-84mADlboX-A/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzQaVU1fz6hZ8lSXVEJcoMnFCGd7SNc-xwL-zdISOVdlVigZdwkK1v6TbZY2dTEIHlh7g/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -2697,6 +2709,8 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             if (!user) return;
 
             ogretmenPlanListesiniOlustur(user);
+                 rubricKategorileriYukle();
+rubricOgrenciChecklistDoldur();
 
             document.getElementById('rubricTelefon').value = user.telefon || "";
 
@@ -6681,24 +6695,28 @@ function disLinkKapat() {
 
 // ===== RUBRİK PANELİ: DIŞ LİNK ETKİNLİK EKLEME =====
 function rubricDisLinkAta() {
-    let ogrenci = document.getElementById('rubricOgrenciSelect').value.trim();
+    let secilenOgrler = [];
+    document.querySelectorAll('.rubric-ogr-cb:checked').forEach(cb => {
+        secilenOgrler.push(cb.value);
+    });
+
+    let kategori = document.getElementById('rubricDisLinkKategori').value;
     let ad = document.getElementById('rubricDisLinkAd').value.trim();
     let url = document.getElementById('rubricDisLinkUrl').value.trim();
-    let kategori = document.getElementById('rubricDisLinkKategori').value.trim() || "Genel";
     let yorum = document.getElementById('rubricDisLinkYorum').value.trim();
     let mesajDiv = document.getElementById('rubricDisLinkSonucMesaj');
 
-    if (!ogrenci) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Önce yukarıdan bir öğrenci seçin!"; return; }
+    if (secilenOgrler.length === 0) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen en az bir öğrenci veya 'Herkes' seçin!"; return; }
     if (!ad || !url) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Etkinlik adı ve link zorunludur!"; return; }
 
     mesajDiv.style.color = "#a16207";
-    mesajDiv.innerText = "Ekleniyor...";
+    mesajDiv.innerText = "Ekleniyor ve atanıyor...";
 
     fetch(apiURL, {
         method: "POST",
         body: JSON.stringify({
             islem: "disLinkEtkinlikAta",
-            ogrenciAdi: ogrenci,
+            ogrenciAdiListesi: secilenOgrler, // Çoklu öğrenci dizisi gönderiliyor
             gorunenAd: ad,
             kategori: kategori,
             disLink: url,
@@ -6709,12 +6727,11 @@ function rubricDisLinkAta() {
     .then(data => {
         if (data.status === "success") {
             mesajDiv.style.color = "#16a34a";
-            mesajDiv.innerText = "✅ Dış bağlantı başarıyla eklendi ve atandı!";
+            mesajDiv.innerText = "✅ Başarıyla eklendi ve seçilen öğrencilere atandı!";
             document.getElementById('rubricDisLinkAd').value = "";
             document.getElementById('rubricDisLinkUrl').value = "";
-            document.getElementById('rubricDisLinkKategori').value = "";
             document.getElementById('rubricDisLinkYorum').value = "";
-            if (rubricSeciliEtkinlikler.indexOf(ad) === -1) rubricSeciliEtkinlikler.push(ad);
+            document.querySelectorAll('.rubric-ogr-cb').forEach(cb => { cb.checked = false; cb.disabled = false; });
         } else {
             mesajDiv.style.color = "#dc2626";
             mesajDiv.innerText = "Hata: " + (data.message || "Bilinmeyen hata");
@@ -6815,6 +6832,59 @@ document.addEventListener('fullscreenchange', function() {
         console.log("Tam ekrandan çıkıldı, kontrol butonları tekrar erişilebilir.");
     }
 });
+
+        // Kategorileri Google Sheets'ten çekip açılır menüye dolduran fonksiyon
+async function rubricKategorileriYukle() {
+    let sel = document.getElementById('rubricDisLinkKategori');
+    if (!sel) return;
+    try {
+        let res = await fetch(`${apiURL}?islem=kategorileriGetir`);
+        let kategoriler = await res.json();
+        sel.innerHTML = "";
+        kategoriler.forEach(kat => {
+            let opt = document.createElement('option');
+            opt.value = kat;
+            opt.innerText = kat;
+            sel.appendChild(opt);
+        });
+    } catch (e) {
+        sel.innerHTML = '<option value="Etkinlikler">Etkinlikler</option><option value="Videolar">Videolar</option>';
+    }
+}
+
+// Öğrencileri ve "Herkes" seçeneğini checkbox olarak listeleyen fonksiyon
+function rubricOgrenciChecklistDoldur() {
+    let konteyner = document.getElementById('rubricOgrenciCheckboxListesi');
+    if (!konteyner) return;
+    konteyner.innerHTML = "";
+
+    // "Herkes" seçeneği en üstte
+    let herkesLabel = document.createElement('label');
+    herkesLabel.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; font-weight:bold; cursor:pointer; color:#854d0e;";
+    herkesLabel.innerHTML = `<input type="checkbox" value="Herkes" class="rubric-ogr-cb" onchange="rubricHerkesSecildi(this)"> 🌟 Herkes (Tüm Öğrenciler)`;
+    konteyner.appendChild(herkesLabel);
+
+    globalDataCache.forEach(u => {
+        let ogrAdi = String(u.ogrenci || "").trim();
+        if (!ogrAdi || ogrAdi.toLowerCase() === "teacher") return;
+
+        let label = document.createElement('label');
+        label.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; cursor:pointer; color:#334155;";
+        label.innerHTML = `<input type="checkbox" value="${guvenliMetin(ogrAdi)}" class="rubric-ogr-cb"> ${guvenliMetin(ogrAdi)}`;
+        konteyner.appendChild(label);
+    });
+}
+
+// "Herkes" seçildiğinde diğerlerini otomatik tikleme veya yönetme mantığı
+function rubricHerkesSecildi(herkesCb) {
+    let digerCheckboxlar = document.querySelectorAll('.rubric-ogr-cb');
+    digerCheckboxlar.forEach(cb => {
+        if (cb !== herkesCb) {
+            cb.checked = herkesCb.checked;
+            cb.disabled = herkesCb.checked; // Herkes seçiliyse bireysel seçimleri kilitleyebiliriz veya serbest bırakabiliriz
+        }
+    });
+}
         
     </script>
 
