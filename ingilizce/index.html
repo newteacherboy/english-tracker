@@ -972,6 +972,26 @@
                 <div id="rubricVideoSonucMesaj" style="font-size:10.5px; margin-top:6px;"></div>
             </div>
 
+            <div class="rubric-field" style="background:#f1f5f9; padding:10px; border-radius:8px; border:1px solid #cbd5e1; margin-top:8px;">
+    <label style="color:#334155; font-weight:bold;">🎛️ Özellik Yönetimi (Aç/Kapat İzinleri)</label>
+    <select id="ozellikSec" style="margin-bottom:6px;">
+        <option value="">-- Özellik Seçin --</option>
+    </select>
+    <select id="ozellikHedefTipiSec" onchange="ozellikHedefAlaniGuncelle()" style="margin-bottom:6px;">
+        <option value="tumogrenciler">Herkes (Tüm Öğrenciler)</option>
+        <option value="sinif">Belirli Sınıf</option>
+        <option value="sube">Belirli Şube</option>
+        <option value="ogrenci">Belirli Öğrenci</option>
+    </select>
+    <input type="text" id="ozellikHedefDegeri" placeholder="Örn: 6 / A / Ahmet Yılmaz" style="display:none; margin-bottom:6px;">
+    <select id="ozellikDurumSec" style="margin-bottom:6px;">
+        <option value="acik">Açık (Gösterilsin)</option>
+        <option value="kapali">Kapalı (Gizlensin)</option>
+    </select>
+    <button type="button" onclick="ozellikIzniKaydet()" style="width:100%; background:#334155; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:11.5px;">💾 Kuralı Kaydet</button>
+    <div id="ozellikIzniSonucMesaj" style="font-size:10.5px; margin-top:6px;"></div>
+</div>
+
             <button class="btn-giris" id="rubricKaydetBtn" onclick="rubrikVerileriniKaydetVeWhatsappGonder()" style="background: #2563eb; margin-top: 8px;">💾 Kaydet & Uzun Veli Raporunu WhatsApp'a Gönder</button>
         </div>
     </div>
@@ -1018,7 +1038,7 @@
                 </div>
             </div>
 
-                        <div class="header-schedule-area">
+                        <div class="header-schedule-area" id="takvimAlani">
                 <div class="sched-mini-box sched-done">
                     <div class="sched-label">Önceki Ders</div>
                     <div class="sched-date" id="miniGecenTarih">--.--.----</div>
@@ -1059,9 +1079,9 @@
 
         <div class="tabs-container">
             <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
-            <button class="tab-btn" onclick="sekmeDegistir('raporlar', this)">📝 Raporlar</button>
+            <button class="tab-btn" id="tabBtnRaporlar" onclick="sekmeDegistir('raporlar', this)">📝 Raporlar</button>
             <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">🎮 Aktiviteler</button>
-            <button class="tab-btn" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetlerim</button>
+            <button class="tab-btn" id="tabBtnRozetler" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetlerim</button>
         </div>
         
                 <!-- ÖZET SEKMESİ -->
@@ -1121,7 +1141,7 @@
                 </div>
             </div>
 
-            <div class="book-tracker-box">
+            <div class="book-tracker-box" id="okumaKulturuKutusu">
                 <div class="book-tracker-header">
                     <div class="book-header-left">
                         <div class="book-header-icon">📚</div>
@@ -1158,12 +1178,12 @@
                 </div>
             </div>
 
-            <div class="chart-box">
+            <div class="chart-box" id="gelisimGrafikKutusu">
                 <div class="chart-title">📈 Yıllık Gelişim Eğrisi (Tarih Bazlı)</div>
                 <canvas id="gelisimGrafik" height="90"></canvas>
             </div>
 
-            <div class="chart-box">
+            <div class="chart-box" id="kriterGrafikKutusu">
                 <div class="chart-title">📊 5 Kriterli Tüm Zamanların Ortalama Sütun Grafiği</div>
                 <canvas id="kriterGrafik" height="90"></canvas>
             </div>
@@ -2246,7 +2266,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzOO4Y013zmjdAWWSZLJIIlSHoCbQtInKvyNofcRRuAKtxbKSvi7puCOazeTLBKfQwuTg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzVy_VjyagNPZI69ykbrf0XlCHiSynW97qrHB5k1MJwff1tTYS1AUOKkKKeCpP6BfiX2A/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -2702,7 +2722,60 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
 
             // Yeni öğrenci seçildiğinde 5 kriter puan butonlarını varsayılana (50) sıfırla
                         rubricPuanlariSifirla();
-            rubricEtkinlikSecDoldur();
+            rubricEtkinlikSecDoldur(); function ozellikSecDoldur() {
+    let sel = document.getElementById('ozellikSec');
+    if (!sel) return;
+    fetch(`${apiURL}?islem=ozellikListesiGetir`)
+    .then(res => res.json())
+    .then(liste => {
+        sel.innerHTML = '<option value="">-- Özellik Seçin --</option>';
+        liste.forEach(o => {
+            sel.innerHTML += `<option value="${o.kod}">${guvenliMetin(o.ad)}</option>`;
+        });
+    })
+    .catch(() => { sel.innerHTML = '<option value="">Yüklenemedi</option>'; });
+}
+
+function ozellikHedefAlaniGuncelle() {
+    let tip = document.getElementById('ozellikHedefTipiSec').value;
+    document.getElementById('ozellikHedefDegeri').style.display = (tip === 'tumogrenciler') ? 'none' : 'block';
+}
+
+function ozellikIzniKaydet() {
+    let kod = document.getElementById('ozellikSec').value;
+    let tip = document.getElementById('ozellikHedefTipiSec').value;
+    let deger = document.getElementById('ozellikHedefDegeri').value.trim();
+    let durum = document.getElementById('ozellikDurumSec').value;
+    let mesajDiv = document.getElementById('ozellikIzniSonucMesaj');
+
+    if (!kod) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen bir özellik seçin!"; return; }
+    if (tip !== 'tumogrenciler' && !deger) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen hedef değeri girin!"; return; }
+
+    mesajDiv.style.color = "#334155";
+    mesajDiv.innerText = "Kaydediliyor...";
+
+    fetch(apiURL, {
+        method: "POST",
+        body: JSON.stringify({
+            islem: "ozellikIzniKaydet",
+            ozellikKodu: kod,
+            hedefTipi: tip,
+            hedefDegeri: tip === 'tumogrenciler' ? '' : deger,
+            durum: durum
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            mesajDiv.style.color = "#16a34a";
+            mesajDiv.innerText = "✅ Kural kaydedildi! (Öğrenciler yeni girişte/yenilemede görecek)";
+        } else {
+            mesajDiv.style.color = "#dc2626";
+            mesajDiv.innerText = "Hata oluştu.";
+        }
+    })
+    .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası."; });
+}
             rubricVideoListesiYukleAta();
         }
 
@@ -5042,6 +5115,27 @@ function veriArayuzeIsle(user) {
     rozetleriIsle(user.rozetListesi || [], genelPuan);
     planKartiniGuncelle(user);
     teacherPaneliKontrolEt();
+        ozellikGorunurlukleriniUygula(user.izinler || {});
+}
+
+function ozellikGorunurlukAyarla(elementId, aciksaGoster) {
+    let el = document.getElementById(elementId);
+    if (el) el.style.display = aciksaGoster ? '' : 'none';
+}
+
+function ozellikGorunurlukleriniUygula(izinler) {
+    ozellikGorunurlukAyarla('tabBtnRaporlar', izinler.raporlar_sekmesi !== false);
+    ozellikGorunurlukAyarla('tabBtnRozetler', izinler.rozetler_sekmesi !== false);
+    ozellikGorunurlukAyarla('takvimAlani', izinler.takvim !== false);
+    ozellikGorunurlukAyarla('okumaKulturuKutusu', izinler.okuma_kulturu !== false);
+    ozellikGorunurlukAyarla('gelisimGrafikKutusu', izinler.gelisim_grafikleri !== false);
+    ozellikGorunurlukAyarla('kriterGrafikKutusu', izinler.gelisim_grafikleri !== false);
+        if (izinler.raporlar_sekmesi === false && document.getElementById('tab-raporlar').classList.contains('active')) {
+        sekmeDegistir('ozet', document.querySelector('.tab-btn'));
+    }
+    if (izinler.rozetler_sekmesi === false && document.getElementById('tab-rozetler').classList.contains('active')) {
+        sekmeDegistir('ozet', document.querySelector('.tab-btn'));
+    }
 }
         
         function cikisYap() { 
@@ -6779,6 +6873,39 @@ document.addEventListener('fullscreenchange', function() {
         </div>
 
         <iframe id="disLinkIframe" src="" style="width:100%; height:100%; border:none; display:block;" allow="autoplay"></iframe>
+    </div>
+</div>
+
+    <!-- SEVİYE DIŞ LİNK EKRANI (Kelime Kartları Yolculuğu) -->
+<div class="pomodoro-overlay" id="seviyeDisLinkOverlay" style="background:#000;">
+    <div style="position:absolute; top:14px; right:14px; z-index:999999;">
+        <button onclick="seviyeDisLinkKapatOnaySor()" title="Kapat" style="width:36px; height:36px; border-radius:50%; background:#334155; border:1px solid #475569; color:#fff; font-size:15px; cursor:pointer;">✕</button>
+    </div>
+    <div id="seviyeDisLinkBaslikAlani" style="position:absolute; top:14px; left:14px; color:#fff; font-size:12px; font-weight:700; background:rgba(51,65,85,0.7); padding:6px 12px; border-radius:8px; max-width:60%; z-index:999999;"></div>
+
+    <div id="seviyeDisLinkYukleniyorAlani" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:3;">
+        <div style="color:#94a3b8; font-size:13px; font-weight:600;">Etkinlik yükleniyor...</div>
+    </div>
+
+    <div id="seviyeDisLinkEngelliUyari" style="position:absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:4; background:#0f172a; text-align:center; padding:20px;">
+        <div style="font-size:40px;">🔒</div>
+        <div style="color:#e2e8f0; font-size:14px; font-weight:700; max-width:320px;">Bu etkinlik güvenlik nedeniyle site içinde açılamıyor.</div>
+        <a id="seviyeDisLinkYeniSekmeBtn" href="#" target="_blank" style="background:#f59e0b; color:#1e293b; padding:12px 28px; border-radius:10px; font-weight:800; font-size:13px; text-decoration:none;">↗️ Yeni Sekmede Aç</a>
+    </div>
+
+    <iframe id="seviyeDisLinkIframe" src="" style="width:100%; height:100%; border:none;"></iframe>
+</div>
+
+<!-- SEVİYE TAMAMLAMA ONAY MODALI -->
+<div class="rubric-modal" id="seviyeOnayModal">
+    <div class="rubric-content" style="max-width: 320px; text-align: center;">
+        <div style="font-size:38px; margin-bottom:8px;">🤔</div>
+        <h3 style="color: #1e293b; margin-bottom: 8px; font-size: 15px;">Bu seviyeyi bitirdin mi?</h3>
+        <p style="font-size: 11px; color: #64748b; margin-bottom: 16px;">Eğer bitirdiysen bir sonraki seviyenin kilidi açılacak.</p>
+        <div style="display:flex; gap:8px;">
+            <button onclick="seviyeOnayVer(false)" style="flex:1; background:#f1f5f9; color:#64748b; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Hayır, Devam Et</button>
+            <button onclick="seviyeOnayVer(true)" style="flex:1; background:#16a34a; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Evet, Bitirdim ✓</button>
+        </div>
     </div>
 </div>
     
