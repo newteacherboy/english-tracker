@@ -1857,6 +1857,8 @@ let kyGecenSaniye = 0;
 let kyTimerInterval = null;
 let kyMuzikAcik = true;
 let kyAudioElement = null;
+        let kySoruBaslangicZamani = 0;
+let kyToplamPuan = 0;
 
 function kelimeYarismasiAc() {
     document.getElementById('kelimeYarismaOverlay').style.display = 'flex';
@@ -1985,6 +1987,7 @@ function kelimeYarismasiBaslat() {
     kyYanlisSayisi = 0;
     kyBaslangicZamani = Date.now();
     kyGecenSaniye = 0;
+    kyToplamPuan = 0;
 
     document.getElementById('kyGirisEkrani').style.display = 'none';
     document.getElementById('kyOyunEkrani').style.display = 'block';
@@ -2009,7 +2012,7 @@ function kySoruGoster() {
 
     document.getElementById('kySoruSayacInfo').innerText = `Soru: ${kySoruIndex + 1} / ${toplam}`;
     document.getElementById('kyProgressBar').style.width = `${((kySoruIndex) / toplam) * 100}%`;
-    document.getElementById('kyPuanInfo').innerText = `Puan: ${kyDogruSayisi * 10}`;
+    document.getElementById('kyPuanInfo').innerText = \Puan: ${kyToplamPuan}`;`
 
     // İngilizce ya da Türkçe rastgele yön seçimi
     let ingilizceMi = Math.random() > 0.5;
@@ -2044,28 +2047,31 @@ function kySoruGoster() {
         btn.style.color = "#334155";
         btn.style.borderColor = "#cbd5e1";
     }
+    kySoruBaslangicZamani = Date.now();
 }
 
 function kyCevapVer(secilenIndex) {
     let soru = kySorularListesi[kySoruIndex];
     let dogruIdx = soru._dogruIndex;
+    let gecenSaniyeSoru = Math.floor((Date.now() - kySoruBaslangicZamani) / 1000);
 
-    // Butonları kilitle
     document.getElementById('kySik0').disabled = true;
     document.getElementById('kySik1').disabled = true;
 
     if (secilenIndex === dogruIdx) {
         kyDogruSayisi++;
-        document.getElementById('kySik' + secilenIndex).style.background = "#16a34a"; // Yeşil (Doğru)
+        let kazanc = Math.max(3, 10 - gecenSaniyeSoru);
+        kyToplamPuan += kazanc;
+        document.getElementById('kySik' + secilenIndex).style.background = "#16a34a";
         document.getElementById('kySik' + secilenIndex).style.color = "#ffffff";
         document.getElementById('kySik' + secilenIndex).style.borderColor = "#15803d";
     } else {
         kyYanlisSayisi++;
-        document.getElementById('kySik' + secilenIndex).style.background = "#dc2626"; // Kırmızı (Yanlış)
+        kyToplamPuan -= 5;
+        document.getElementById('kySik' + secilenIndex).style.background = "#dc2626";
         document.getElementById('kySik' + secilenIndex).style.color = "#ffffff";
         document.getElementById('kySik' + secilenIndex).style.borderColor = "#b91c1c";
 
-        // Doğru olanı da yeşil göster
         document.getElementById('kySik' + dogruIdx).style.background = "#16a34a";
         document.getElementById('kySik' + dogruIdx).style.color = "#ffffff";
         document.getElementById('kySik' + dogruIdx).style.borderColor = "#15803d";
@@ -2087,7 +2093,7 @@ async function kelimeYarismasiBitir() {
     let isim = document.getElementById('kyIsimInput').value.trim();
     let sinifStr = kyAktifSinif + ". Sınıf";
     let uniteStr = kySecilenUniteler.join(",") + ". Ünite";
-    let toplamPuan = kyDogruSayisi * 10;
+    let toplamPuan = kyToplamPuan;
     let tarihStr = new Date().toISOString().split('T')[0];
 
     // Özet alanlarını doldur
@@ -5182,6 +5188,7 @@ let jpGecenSaniye = 0;
 let jpTimerInterval = null;
 let jpMuzikAcik = true;
 let jpAudioElement = null;
+        let jpSoruBaslangicZamani = 0;
 
 function jpOyunAc() {
     let modal = document.getElementById('jpOyunOverlay');
@@ -5437,10 +5444,12 @@ function jpBalonSecildi(index, puanDegeri) {
         btn.style.color = "#334155";
         btn.style.borderColor = "#cbd5e1";
     }
+    jpSoruBaslangicZamani = Date.now();
 }
 
 function jpCevapVer(secilenIndex) {
     let dogruIdx = jpAktifSoru._dogruIndex;
+    let gecenSaniyeSoru = Math.floor((Date.now() - jpSoruBaslangicZamani) / 1000);
 
     for (let i = 0; i < 4; i++) {
         document.getElementById('jpSik' + i).disabled = true;
@@ -5448,12 +5457,15 @@ function jpCevapVer(secilenIndex) {
 
     if (secilenIndex === dogruIdx) {
         jpDogruSayisi++;
-        jpToplamPuan += jpAktifSoru.puanDegeri;
+        let minPuan = Math.max(2, Math.floor(jpAktifSoru.puanDegeri / 3));
+        let kazanc = Math.max(minPuan, jpAktifSoru.puanDegeri - gecenSaniyeSoru * 2);
+        jpToplamPuan += kazanc;
         document.getElementById('jpSik' + secilenIndex).style.background = "#16a34a";
         document.getElementById('jpSik' + secilenIndex).style.color = "#ffffff";
         document.getElementById('jpSik' + secilenIndex).style.borderColor = "#15803d";
     } else {
         jpYanlisSayisi++;
+        jpToplamPuan -= Math.max(3, Math.floor(jpAktifSoru.puanDegeri / 2));
         document.getElementById('jpSik' + secilenIndex).style.background = "#dc2626";
         document.getElementById('jpSik' + secilenIndex).style.color = "#ffffff";
         document.getElementById('jpSik' + secilenIndex).style.borderColor = "#b91c1c";
@@ -5905,7 +5917,8 @@ async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
     let sinifStr = boslukAktifSinif + ". Sınıf";
     let uniteStr = boslukSecilenUniteler.join(",") + ". Ünite";
     let tarihStr = new Date().toISOString().split('T')[0];
-    let puan = dogruSayisi * 15; // Her doğru kelime 15 puan
+        let kelimeBasiPuan = Math.max(5, 15 - Math.floor(boslukGecenSaniye / 10));
+    let puan = (dogruSayisi * kelimeBasiPuan) - (yanlisSayisi * 8);
 
     document.getElementById('bpResIsim').innerText = isim;
     document.getElementById('bpResSinifUnite').innerText = `${sinifStr} (${uniteStr})`;
