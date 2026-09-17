@@ -2285,7 +2285,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbw30KfS5P8QncsBTN_Ju2d2nBdARMCYxDQm7R4JC0A61_z-PJFmhwGopdU3oPVxHDqh7w/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwkN2iTJzkfn16-0BcqYmYjbkyu_1BSsn9mK6hw8gtmpqDuAzlLhW-lLGGE1tEBRuvNhQ/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -2505,7 +2505,7 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             }
         }
 
-        async function aiMesajGonder() {
+              async function aiMesajGonder() {
             let input = document.getElementById('aiMesajInput');
             let body = document.getElementById('aiChatBody');
 
@@ -2518,23 +2518,30 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
                 ogrenciAdi = mInfo.ad || "Misafir Ziyaretçi";
             }
 
-            body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
             input.value = "";
-            body.scrollTop = body.scrollHeight;
 
             try {
                 let url = `${apiURL}?islem=sohbetMesajGonder&ogrenci=${encodeURIComponent(ogrenciAdi)}&mesaj=${encodeURIComponent(txt)}`;
                 let response = await fetch(url);
                 let data = await response.json();
 
-                if (data.status === "spam") {
-                    body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Anlamsız veya rastgele karakterler algılandı, mesajın Mert Hoca'ya iletilmedi. Lütfen düzgün bir mesaj yaz. 😊</div>`;
+                if (data.status === "limit_doldu") {
+                    input.value = txt;
+                    body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Bugünlük mesaj hakkını doldurdun (günlük limit: ${data.limit}). Yarın tekrar deneyebilir ya da rozet kazanarak hakkını artırabilirsin!</div>`;
+                } else if (data.status === "cooldown") {
+                    input.value = txt;
+                    body.innerHTML += `<div class="ai-msg bot" style="color:#b45309; background:#fef3c7;">⏳ Çok hızlı mesaj gönderiyorsun, lütfen ${data.kalanSaniye} saniye daha bekle.</div>`;
+                } else if (data.status === "spam") {
+                    body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
+                    body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Anlamsız veya rastgele karakterler algılandı, mesajın Mert Hoca'ya iletilmedi. Lütfen düzgün bir mesaj yaz.</div>`;
                 } else {
-                    body.innerHTML += `<div class="ai-msg bot">✅ Sorunuz Mert Hoca'ya iletildi, en kısa sürede buradan size dönüş sağlayacaktır. Arada girip sohbet kutusunu kontrol edin! 😊</div>`;
+                    body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
+                    body.innerHTML += `<div class="ai-msg bot">✅ Sorunuz Mert Hoca'ya iletildi, en kısa sürede buradan size dönüş sağlayacaktır. Arada girip sohbet kutusunu kontrol edin!</div>`;
                 }
                 body.scrollTop = body.scrollHeight;
             } catch (err) {
                 console.error(err);
+                input.value = txt;
                 body.innerHTML += `<div class="ai-msg bot">Bağlantı hatası oluştu.</div>`;
             }
         }
