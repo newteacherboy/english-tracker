@@ -4460,6 +4460,7 @@ async function okumaSonucuKaydet() {
                 localStorage.setItem("oturumAcik", "true"); 
 localStorage.setItem("aktifOgrenci", aktifOgrenciAdi); 
 localStorage.setItem("toplamSaniye", toplamSaniye);
+                                fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`).catch(() => {});
 
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
