@@ -765,6 +765,9 @@
             <button class="ogretmen-menu-btn" onclick="ogretmenMenuRubrikAc()">
                 <span>📝 Rubrik Paneli</span>
             </button>
+                        <button class="ogretmen-menu-btn" onclick="ogretmenMenuSinifIciAc()">
+                <span>⚡ Ders İçi Performans</span>
+            </button>
             <button class="ogretmen-menu-btn" onclick="ogretmenMenuSohbetAc()">
                 <span>💬 Öğrenci Sohbetleri</span>
                 <span class="ogretmen-menu-rozet" id="ogretmenMenuOkunmamis" style="display:none;">0</span>
@@ -1015,6 +1018,35 @@
             <h3 style="color: #3730a3; font-size: 15px; font-weight: 900; margin-bottom: 4px; text-align: center;">📅 Yıllık Plan Takibi</h3>
                         <p style="font-size: 10.5px; color: #64748b; margin-bottom: 12px; text-align:center;">Haftalık plan durumun aşağıda listelenmiştir. Kazanım işaretlemeleri öğretmenin tarafından yapılmaktadır.</p>
             <div id="planHaftaListesi"></div>
+        </div>
+    </div>
+
+        <!-- DERS İÇİ PERFORMANS MODALI -->
+    <div class="rubric-modal" id="sinifIciModal">
+        <div class="rubric-content" style="max-width: 480px;">
+            <button class="game-close-btn" onclick="sinifIciKapat()">✕</button>
+            <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:10px; text-align:center;">⚡ Ders İçi Performans</h3>
+
+            <div class="rubric-field">
+                <label>Sınıf / Şube Seçiniz:</label>
+                <select id="sinifIciSinifSubeSelect" onchange="sinifIciOgrencileriListele()">
+                    <option value="">-- Sınıf/Şube Seçin --</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;" id="sinifIciEtiketAlani"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <button type="button" onclick="sinifIciTumunuSecToggle()" style="background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe; padding:6px 10px; border-radius:8px; font-size:10.5px; font-weight:700; cursor:pointer;">Tümünü Seç / Kaldır</button>
+                <button type="button" onclick="sinifIciSonIslemiGeriAl()" id="sinifIciGeriAlBtn" style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; padding:6px 10px; border-radius:8px; font-size:10.5px; font-weight:700; cursor:pointer; display:none;">↩️ Son İşlemi Geri Al</button>
+            </div>
+
+            <div id="sinifIciOgrenciListesi" style="display:flex; flex-direction:column; gap:8px; max-height:400px; overflow-y:auto;"></div>
+
+            <div style="display:flex; gap:8px; margin-top:12px;">
+                <button type="button" onclick="sinifIciTopluUygula(-1)" style="flex:1; background:#fee2e2; color:#991b1b; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:18px; cursor:pointer;">− Seçilenlere</button>
+                <button type="button" onclick="sinifIciTopluUygula(1)" style="flex:1; background:#dcfce7; color:#166534; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:18px; cursor:pointer;">+ Seçilenlere</button>
+            </div>
         </div>
     </div>
 
@@ -2285,7 +2317,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbwkN2iTJzkfn16-0BcqYmYjbkyu_1BSsn9mK6hw8gtmpqDuAzlLhW-lLGGE1tEBRuvNhQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycby3G-VuPxIpVoIskOqsESIs7Xds9xVlZxE_IuA6nUQNvAHlLHcn8blRTJkdmPQvixUkfw/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -3307,6 +3339,163 @@ function ozellikIzniKaydet() {
                 `;
             });
         }
+
+        const SINIF_ICI_ETIKETLER = ["Katılım", "Ödev Eksik", "Davranış", "Yardımsever", "Derse Geç Kaldı", "Genel"];
+let sinifIciAktifEtiket = "Genel";
+let sinifIciSonIslemZamani = null;
+let sinifIciSonIslemOgrencileri = [];
+
+function ogretmenMenuSinifIciAc() {
+    document.getElementById('ogretmenMenuModal').style.display = 'none';
+    document.getElementById('sinifIciModal').style.display = 'flex';
+    sinifIciEtiketleriCiz();
+    sinifIciSinifSubeDoldur();
+    document.getElementById('sinifIciGeriAlBtn').style.display = 'none';
+}
+
+function sinifIciKapat() {
+    document.getElementById('sinifIciModal').style.display = 'none';
+}
+
+function sinifIciEtiketleriCiz() {
+    let alan = document.getElementById('sinifIciEtiketAlani');
+    alan.innerHTML = "";
+    SINIF_ICI_ETIKETLER.forEach(etiket => {
+        let chip = document.createElement('button');
+        chip.type = 'button';
+        chip.innerText = etiket;
+        chip.className = 'unite-chip' + (etiket === sinifIciAktifEtiket ? ' selected' : '');
+        chip.onclick = function() {
+            sinifIciAktifEtiket = etiket;
+            sinifIciEtiketleriCiz();
+        };
+        alan.appendChild(chip);
+    });
+}
+
+function sinifIciSinifSubeDoldur() {
+    let sel = document.getElementById('sinifIciSinifSubeSelect');
+    let kombinasyonlar = new Set();
+    globalDataCache.forEach(u => {
+        let sinif = String(u.Sinif || "").trim();
+        let sube = String(u.Sube || "").trim();
+        if (sinif) kombinasyonlar.add(sinif + "|" + sube);
+    });
+    sel.innerHTML = '<option value="">-- Sınıf/Şube Seçin --</option>';
+    Array.from(kombinasyonlar).sort().forEach(k => {
+        let parcalar = k.split("|");
+        let etiket = parcalar[1] ? (parcalar[0] + "-" + parcalar[1]) : parcalar[0];
+        sel.innerHTML += `<option value="${k}">${etiket}</option>`;
+    });
+}
+
+function sinifIciOgrencileriListele() {
+    let secim = document.getElementById('sinifIciSinifSubeSelect').value;
+    let alan = document.getElementById('sinifIciOgrenciListesi');
+    alan.innerHTML = "";
+    if (!secim) return;
+
+    let parcalar = secim.split("|");
+    let sinif = parcalar[0], sube = parcalar[1] || "";
+    let ogrenciler = globalDataCache.filter(u => String(u.Sinif || "").trim() === sinif && String(u.Sube || "").trim() === sube);
+
+    let enYuksekBugun = 0;
+    ogrenciler.forEach(u => { if ((u.sinifIciBugun || 0) > enYuksekBugun) enYuksekBugun = u.sinifIciBugun || 0; });
+
+    ogrenciler.forEach(u => {
+        let efektifPuan = u.genelOrtalama || 0;
+        let yildizMi = enYuksekBugun > 0 && (u.sinifIciBugun || 0) === enYuksekBugun;
+
+        let kart = document.createElement('div');
+        kart.style.cssText = "display:flex; align-items:center; gap:8px; background:#f8fafc; border:2px solid #e2e8f0; border-radius:10px; padding:8px 10px;";
+
+        kart.innerHTML = `
+            <input type="checkbox" class="sinif-ici-cb" value="${guvenliMetin(u.ogrenci)}" style="width:18px; height:18px; flex-shrink:0;">
+            <div style="flex:1; min-width:0;">
+                <div style="font-weight:800; font-size:12.5px; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${yildizMi ? '⭐ ' : ''}${guvenliMetin(u.ogrenci)}</div>
+                <div style="font-size:10px; color:#64748b;">Genel Puan: ${efektifPuan}</div>
+            </div>
+            <button type="button" onclick="sinifIciTekilUygula('${guvenliMetin(u.ogrenci)}', -1)" style="background:#fee2e2; color:#991b1b; border:none; width:34px; height:34px; border-radius:8px; font-weight:900; font-size:18px; cursor:pointer;">−</button>
+            <button type="button" onclick="sinifIciTekilUygula('${guvenliMetin(u.ogrenci)}', 1)" style="background:#dcfce7; color:#166534; border:none; width:34px; height:34px; border-radius:8px; font-weight:900; font-size:18px; cursor:pointer;">+</button>
+        `;
+        alan.appendChild(kart);
+    });
+}
+
+function sinifIciTumunuSecToggle() {
+    let checkboxlar = document.querySelectorAll('.sinif-ici-cb');
+    let hepsiSecili = Array.from(checkboxlar).every(cb => cb.checked);
+    checkboxlar.forEach(cb => { cb.checked = !hepsiSecili; });
+}
+
+async function sinifIciTekilUygula(ogrenciAdi, yon) {
+    await sinifIciPuanGonder([ogrenciAdi], yon);
+}
+
+async function sinifIciTopluUygula(yon) {
+    let checkboxlar = document.querySelectorAll('.sinif-ici-cb:checked');
+    let ogrenciler = Array.from(checkboxlar).map(cb => cb.value);
+    if (ogrenciler.length === 0) { alert("Lütfen en az bir öğrenci seçin!"); return; }
+    await sinifIciPuanGonder(ogrenciler, yon);
+}
+
+async function sinifIciPuanGonder(ogrenciler, yon) {
+    try {
+        let res = await fetch(apiURL, {
+            method: "POST",
+            body: JSON.stringify({
+                islem: "sinifIciPuanVer",
+                ogrenciler: ogrenciler,
+                degisim: yon,
+                sebep: sinifIciAktifEtiket
+            })
+        });
+        let data = await res.json();
+        if (data.status === "success") {
+            if (data.atlanan && data.atlanan.length > 0) {
+                alert((yon > 0 ? "Zaten 100 puanda: " : "Zaten 0 puanda: ") + data.atlanan.join(", "));
+            }
+            if (data.uygulanan && data.uygulanan.length > 0) {
+                sinifIciSonIslemZamani = data.zamanDamgasi;
+                sinifIciSonIslemOgrencileri = data.uygulanan;
+                document.getElementById('sinifIciGeriAlBtn').style.display = 'inline-block';
+
+                data.uygulanan.forEach(ogrAdi => {
+                    let user = globalDataCache.find(u => u.ogrenci === ogrAdi);
+                    if (user) user.genelOrtalama = Math.max(0, Math.min(100, (user.genelOrtalama || 0) + yon));
+                });
+                sinifIciOgrencileriListele();
+            }
+        }
+    } catch (e) {
+        alert("Bağlantı hatası: " + e);
+    }
+}
+
+async function sinifIciSonIslemiGeriAl() {
+    if (!sinifIciSonIslemZamani) return;
+    try {
+        let res = await fetch(apiURL, {
+            method: "POST",
+            body: JSON.stringify({
+                islem: "sinifIciGeriAl",
+                zamanDamgasi: sinifIciSonIslemZamani,
+                ogrenciler: sinifIciSonIslemOgrencileri
+            })
+        });
+        let data = await res.json();
+        if (data.status === "success") {
+            document.getElementById('sinifIciGeriAlBtn').style.display = 'none';
+            sinifIciSonIslemZamani = null;
+            sinifIciSonIslemOgrencileri = [];
+            let res2 = await fetch(apiURL);
+            globalDataCache = await res2.json();
+            sinifIciOgrencileriListele();
+        }
+    } catch (e) {
+        alert("Bağlantı hatası: " + e);
+    }
+}
 
         function kitapTakibiniIsle(kitap) {
             document.getElementById('valKitapAdi').innerText = kitap.kitapAdi || "Kitap Yok";
