@@ -2162,7 +2162,7 @@ async function kelimeYarismasiBitir() {
 
     // 2. Tablodaki Tüm Oyuncuların Skorlarını Çek ve Sıralı Listele
     try {
-        let liderlikUrl = `${apiURL}?islem=kelimeLiderlikTumunuGetir`;
+                let liderlikUrl = `${apiURL}?islem=kelimeLiderlikTumunuGetir&sinif=${encodeURIComponent(sinifStr)}`;
         let res = await fetch(liderlikUrl);
         let liste = await res.json();
 
@@ -2317,7 +2317,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycby460gCRjN-7RgrTxajTYvhs5_v63vVVj2AcYcuQula3XlxyJEbUNEn0971NJf6vDXcHA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxs3QUGYK_3DOjHBIPPNgl0_SxPLPqw9sK4zQ5Xpyb--Qkvv84zaso6aYwVwH2IY0G0Kg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -5731,7 +5731,7 @@ async function jeopardyOyunuBitir() {
 
     // Liderlik tablosunu çek ve ekrana bas
     try {
-        let liderlikUrl = `${apiURL}?islem=jeopardyLiderlikTumunuGetir`;
+              let liderlikUrl = `${apiURL}?islem=jeopardyLiderlikTumunuGetir&sinif=${encodeURIComponent(sinifStr)}`;
         let res = await fetch(liderlikUrl);
         let liste = await res.json();
 
@@ -6172,7 +6172,7 @@ if (detayKonum) {
 
     // Bosluk_Tablosu verilerini çek ve ekrandaki liderlik listesini doldur
     try {
-        let liderlikUrl = `${apiURL}?islem=boslukLiderlikTumunuGetir`;
+             let liderlikUrl = `${apiURL}?islem=boslukLiderlikTumunuGetir&sinif=${encodeURIComponent(sinifStr)}`;
         let res = await fetch(liderlikUrl);
         let liste = await res.json();
 
