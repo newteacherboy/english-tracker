@@ -2317,7 +2317,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycby3G-VuPxIpVoIskOqsESIs7Xds9xVlZxE_IuA6nUQNvAHlLHcn8blRTJkdmPQvixUkfw/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxqngM0-WoFAWKLuxe9o9VgtpJlwG6g8XLkSXHVhFrurM0RlNNSeJjCvWnLQP6c06-3Pg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -3460,9 +3460,12 @@ async function sinifIciPuanGonder(ogrenciler, yon) {
                 sinifIciSonIslemOgrencileri = data.uygulanan;
                 document.getElementById('sinifIciGeriAlBtn').style.display = 'inline-block';
 
-                data.uygulanan.forEach(ogrAdi => {
+                                data.uygulanan.forEach(ogrAdi => {
                     let user = globalDataCache.find(u => u.ogrenci === ogrAdi);
-                    if (user) user.genelOrtalama = Math.max(0, Math.min(100, (user.genelOrtalama || 0) + yon));
+                    if (user) {
+                        let gercekDeger = yon > 0 ? 0.3 : -2;
+                        user.genelOrtalama = Math.round(Math.max(0, Math.min(100, (user.genelOrtalama || 0) + gercekDeger)));
+                    }
                 });
                 sinifIciOgrencileriListele();
             }
