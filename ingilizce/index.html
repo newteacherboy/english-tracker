@@ -497,7 +497,7 @@
         .slider-group { display: flex; align-items: center; gap: 8px; }
         .slider-group input[type="range"] { flex: 1; }
         .slider-val { font-weight: 800; color: #2563eb; font-size: 12px; width: 26px; text-align: center; }
-        .puan-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 4px; }
+                .puan-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 4px; }
         .puan-btn {
             background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 2px;
             font-size: 11px; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;
@@ -796,9 +796,9 @@
     </div>
 
     <!-- OTOMATİK RUBRİK & WHATSAPP RAPOR PANELİ -->
-    <div class="rubric-modal" id="rubricModal">
+        <div class="rubric-modal" id="rubricModal">
         <div class="rubric-content">
-            <button class="game-close-btn" onclick="document.getElementById('rubricModal').style.display='none'">✕</button>
+            <button class="game-close-btn" onclick="rubricPaneliKapat()">✕</button>
             <h3 style="color: #1e293b; font-size: 15px; font-weight: 900; margin-bottom: 10px; text-align: center;">📝 Otomatik Öğretmen Rubrik Paneli</h3>
             
             <div class="rubric-field">
@@ -946,31 +946,30 @@
             </div>
 
                         <hr style="border:0; border-top:1px solid #e2e8f0; margin: 10px 0;">
-            <div class="rubric-field" style="background:#eef2ff; padding:10px; border-radius:8px; border:1px solid #c7d2fe;">
-                <label style="color:#3730a3; font-weight:bold;">🎯 Bu Öğrenciye Etkinlik Ata</label>
+                        <div class="rubric-field" style="background:#eef2ff; padding:10px; border-radius:8px; border:1px solid #c7d2fe;">
+                <label style="color:#3730a3; font-weight:bold;">🎯 Etkinlik Ata</label>
+
+                <label style="font-size:10px; font-weight:700; color:#3730a3; display:block; margin-top:8px; margin-bottom:2px;">Öğrenci Seçin (Toplu veya Tekli):</label>
+                <div id="rubricOgrenciCheckboxListesi" style="max-height:120px; overflow-y:auto; background:#fff; border:1px solid #c7d2fe; border-radius:6px; padding:6px; margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
+                    <div style="font-size:10px; color:#4338ca;">Öğrenciler yükleniyor...</div>
+                </div>
+
+                <hr style="border:0; border-top:1px dashed #c7d2fe; margin:8px 0;">
+
+                <label style="font-size:10.5px; font-weight:700; color:#3730a3; display:block; margin-bottom:3px;">Var Olan Bir Etkinliği Ata:</label>
                 <select id="rubricEtkinlikSec" style="margin-bottom:6px;">
                     <option value="">-- Etkinlik Seçin --</option>
                 </select>
-                <input type="text" id="rubricEtkinlikKategori" placeholder="Kategori (örn: Eşleştirme)" style="margin-bottom:6px;">
-                <button type="button" onclick="rubricEtkinlikAta()" style="width:100%; background:#4338ca; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:11.5px;">➕ Etkinliği Ata</button>
+                <button type="button" onclick="rubricEtkinlikAta()" style="width:100%; background:#4338ca; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:11.5px;">➕ Seçilen Etkinliği Ata</button>
                 <div id="rubricEtkinlikSonucMesaj" style="font-size:10.5px; margin-top:6px;"></div>
-            </div>
 
-                        <div class="rubric-field" style="background:#fefce8; padding:10px; border-radius:8px; border:1px solid #fde047; margin-top:8px;">
-                <label style="color:#854d0e; font-weight:bold;">🔗 Dış Bağlantı Etkinliği Ekle</label>
-                
-                <!-- Kategori Açılır Menüsü (Google Sheets Kategoriler sekmesinden dolacak) -->
-                <label style="font-size:10px; font-weight:700; color:#854d0e; display:block; margin-bottom:2px;">Kategori Seçin:</label>
+                <hr style="border:0; border-top:1px dashed #c7d2fe; margin:12px 0;">
+
+                <label style="font-size:10.5px; font-weight:700; color:#3730a3; display:block; margin-bottom:3px;">Ya da Yeni Bir Dış Bağlantı Ekle:</label>
+                <label style="font-size:10px; font-weight:700; color:#3730a3; display:block; margin-bottom:2px;">Kategori:</label>
                 <select id="rubricDisLinkKategori" style="margin-bottom:6px;">
                     <option value="">Yükleniyor...</option>
                 </select>
-
-                <!-- Çoklu Öğrenci Tik (Checkbox) Listesi Alanı -->
-                <label style="font-size:10px; font-weight:700; color:#854d0e; display:block; margin-bottom:2px;">Öğrenci Seçin (Toplu veya Tekli):</label>
-                <div id="rubricOgrenciCheckboxListesi" style="max-height:120px; overflow-y:auto; background:#fff; border:1px solid #fde047; border-radius:6px; padding:6px; margin-bottom:6px; display:flex; flex-direction:column; gap:4px;">
-                    <div style="font-size:10px; color:#854d0e;">Öğrenciler yükleniyor...</div>
-                </div>
-
                 <input type="text" id="rubricDisLinkAd" placeholder="Etkinlik adı (örn: Hayvanlar Eşleştirme)" style="margin-bottom:6px;">
                 <input type="text" id="rubricDisLinkUrl" placeholder="https://..." style="margin-bottom:6px;">
                 <textarea id="rubricDisLinkYorum" rows="2" placeholder="Bu etkinlikle ilgili notun (isteğe bağlı)..." style="margin-bottom:6px;"></textarea>
@@ -978,8 +977,15 @@
                 <div id="rubricDisLinkSonucMesaj" style="font-size:10.5px; margin-top:6px;"></div>
             </div>
 
-            <div class="rubric-field" style="background:#ecfeff; padding:10px; border-radius:8px; border:1px solid #a5f3fc; margin-top:8px;">
-                <label style="color:#0e7490; font-weight:bold;">🎬 Bu Öğrenciye Video(lar) Ata</label>
+                       <div class="rubric-field" style="background:#ecfeff; padding:10px; border-radius:8px; border:1px solid #a5f3fc; margin-top:8px;">
+                <label style="color:#0e7490; font-weight:bold;">🎬 Video(lar) Ata</label>
+
+                <label style="font-size:10px; font-weight:700; color:#0e7490; display:block; margin-top:6px; margin-bottom:2px;">Öğrenci Seçin (Toplu veya Tekli):</label>
+                <div id="rubricVideoOgrenciCheckboxListesi" style="max-height:110px; overflow-y:auto; background:#fff; border:1px solid #a5f3fc; border-radius:6px; padding:6px; margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
+                    <div style="font-size:10px; color:#0e7490;">Öğrenciler yükleniyor...</div>
+                </div>
+
+                <label style="font-size:10px; font-weight:700; color:#0e7490; display:block; margin-bottom:2px;">Video Seçin:</label>
                 <div id="rubricVideoListeAlani" style="max-height:170px; overflow-y:auto; background:#fff; border:1px solid #a5f3fc; border-radius:8px; padding:8px; margin-bottom:6px;">
                     <div style="font-size:10.5px; color:#0e7490; text-align:center;">Videolar yükleniyor...</div>
                 </div>
@@ -2317,7 +2323,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbxs3QUGYK_3DOjHBIPPNgl0_SxPLPqw9sK4zQ5Xpyb--Qkvv84zaso6aYwVwH2IY0G0Kg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxHjl8tlNTDU1gBUUoS20nnS4s7ya127kK_lyQ9zDOTyGPQJY5Has20Nwi7rV72bVqLwQ/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -2337,8 +2343,8 @@ async function kelimeYarismasiBitir() {
         
 
         // --- RUBRİK PUAN BUTONLARI (SLIDER YERİNE) ---
-        const RUBRIC_SKILLS = ['Okuma', 'Yazma', 'Vocab', 'Konusma', 'Grammar'];
-        const RUBRIC_PUANLAR = [40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
+               const RUBRIC_SKILLS = ['Okuma', 'Yazma', 'Vocab', 'Konusma', 'Grammar'];
+        const RUBRIC_PUANLAR = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
 
         function rubricGridleriOlustur() {
             RUBRIC_SKILLS.forEach(key => {
@@ -2602,6 +2608,11 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             document.getElementById('rubricModal').style.display = 'flex';
         }
 
+        function rubricPaneliKapat() {
+    document.getElementById('rubricModal').style.display = 'none';
+    document.getElementById('ogretmenMenuModal').style.display = 'flex';
+}
+
         function ogretmenMenuSohbetAc() {
             document.getElementById('ogretmenMenuModal').style.display = 'none';
             document.getElementById('ogretmenSohbetModal').style.display = 'flex';
@@ -2753,9 +2764,10 @@ const kayitliSure = localStorage.getItem("toplamSaniye");
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogrAdi.toLowerCase());
             if (!user) return;
 
-            ogretmenPlanListesiniOlustur(user);
-                 rubricKategorileriYukle();
-rubricOgrenciChecklistDoldur();
+                        ogretmenPlanListesiniOlustur(user);
+            rubricKategorileriYukle();
+            rubricOgrenciChecklistDoldur();
+            rubricVideoOgrenciChecklistDoldur();
 
             document.getElementById('rubricTelefon').value = user.telefon || "";
 
@@ -2908,9 +2920,17 @@ function ozellikIzniKaydet() {
             try {
                 await fetch(url);
 
-                let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
-                
-                                let tavsiyeBolumu = "";
+                                let sondenemeGecerliMiWA = Number(sondeneme) > 0;
+                let kitapGecerliMiWA = kitapAdi && kitapAdi.trim() !== "" && Number(sayfa) > 0;
+
+                let genelDurumCumlesi = sondenemeGecerliMiWA
+                    ? `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ✨ *${ortalamaPuan}/100* ✨ seviyesine taşırken, son deneme sınavında elde ettiği 🎯 *${sondeneme}* puan ile istikrarlı yükselişini müthiş bir şekilde sürdürmektedir. 📈\n\n`
+                    : `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ✨ *${ortalamaPuan}/100* ✨ seviyesine taşıdı. 📈\n\n`;
+
+                let kitapBolumuWA = kitapGecerliMiWA
+                    ? `📚 *Okuma Kültürü & Kitap Takibi:*\n` +
+                      `Öğrencimiz, şu an büyük bir ilgiyle okuduğu 📘 *${kitapAdi}* adlı kitapta 📄 *${sayfa}/${hedef}* sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir. 🎯\n\n`
+                    : "";
                 if (rubricSeciliEtkinlikler.length > 0 || rubricSeciliVideolar.length > 0) {
                     tavsiyeBolumu = `🌟 *Bu Hafta Önerilenler:*\nÖğretmeniniz aşağıdaki etkinlik ve videoları yapmanızı/izlemenizi tavsiye ediyor:\n`;
                     let sayac = 1;
@@ -2925,18 +2945,17 @@ function ozellikIzniKaydet() {
                     tavsiyeBolumu += `\n`;
                 }
 
-                let raporMetni = `🎓 *DİJİ MUALLİM - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🎓\n\n` +
+                                let raporMetni = `🎓 *DİJİ MUALLİM - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🎓\n\n` +
                     `Sevgili Velimiz, 🌟 *${tarih}* tarihli dersimizi büyük bir verimle geride bıraktık. Öğrencimiz *${ogrenci}*, bu hafta sergilediği harika gayret ve disiplinle bizleri yine gururlandırdı! 🚀\n\n` +
                     `📊 *Haftalık Genel Durumumuz:*\n` +
-                    `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ✨ *${ortalamaPuan}/100* ✨ seviyesine taşırken, son deneme sınavında elde ettiği 🎯 *${sondeneme}* puan ile istikrarlı yükselişini müthiş bir şekilde sürdürmektedir. 📈\n\n` +
+                    genelDurumCumlesi +
                     `💡 *Detaylı Beceri Dağılımımız:*\n` +
                     `📖 • Okuma: ${okuma}/100\n` +
                     `✍️ • Yazma: ${yazma}/100\n` +
                     `🧠 • Kelime (Vocabulary): ${vocab}/100\n` +
                     `🗣️ • Konuşma: ${konusma}/100\n` +
                     `📐 • Grammar: ${grammar}/100\n\n` +
-                    `📚 *Okuma Kültürü & Kitap Takibi:*\n` +
-                    `Öğrencimiz, şu an büyük bir ilgiyle okuduğu 📘 *${kitapAdi}* adlı kitapta 📄 *${sayfa}/${hedef}* sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir. 🎯\n\n` +
+                    kitapBolumuWA +
                     `👩‍🏫 *Öğretmen Gözlemi & Değerlendirme:*\n` +
                     `💬 _"${odevDonut || "Ders boyunca odaklanması ve derse katılımı son derece olumluydu."}"_\n\n` +
                     tavsiyeBolumu +
@@ -3316,6 +3335,9 @@ function ozellikIzniKaydet() {
                 let renkSkoruSinif = skorRenkSinifiVer(row.genel);
                 let temaTonu = haftalikRenkTonuVer(index);
 
+                               let kitapHtml = (kitapBilgi && kitapBilgi.kitapAdi) ? `<span>📚 Kitap: <b>${kitapBilgi.kitapAdi}</b> (Okunan: ${kitapBilgi.sayfa} / Hedef: ${kitapBilgi.hedef} sayfa)</span>` : `<span></span>`;
+                let denemeHtml = (row.deneme && row.deneme > 0) ? `<div class="report-deneme-badge">🎯 Son Deneme Puanı: ${row.deneme}</div>` : '';
+
                 konteyner.innerHTML += `
                     <div class="report-card" style="background-color: ${temaTonu.bg}; border-color: ${temaTonu.border};">
                         <div class="report-card-top">
@@ -3332,8 +3354,8 @@ function ozellikIzniKaydet() {
                             <span>📐 Grammar: ${row.grammar}/100</span>
                         </div>
                         <div class="report-footer-info">
-                            <span>📚 Kitap: <b>${kitapBilgi.kitapAdi}</b> (Okunan: ${kitapBilgi.sayfa} / Hedef: ${kitapBilgi.hedef} sayfa)</span>
-                            <div class="report-deneme-badge">🎯 Son Deneme Puanı: ${row.deneme}</div>
+                            ${kitapHtml}
+                            ${denemeHtml}
                         </div>
                     </div>
                 `;
@@ -3500,7 +3522,9 @@ async function sinifIciSonIslemiGeriAl() {
     }
 }
 
-        function kitapTakibiniIsle(kitap) {
+                function kitapTakibiniIsle(kitap) {
+            window._kitapVarMi = !!(kitap && kitap.kitapAdi);
+            if (!kitap || !kitap.kitapAdi) return;
             document.getElementById('valKitapAdi').innerText = kitap.kitapAdi || "Kitap Yok";
             document.getElementById('valKitapSkoru').innerText = kitap.okunanSayisi || 5;
             let sayfa = kitap.sayfa || 0, hedef = kitap.hedef || 40;
@@ -3510,7 +3534,6 @@ async function sinifIciSonIslemiGeriAl() {
             document.getElementById('valKitapSayfa').innerText = `Okunan: ${sayfa} sayfa`;
             document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef} sayfa`;
         }
-
         function grafikliCiz(grafikGecmis, user, denemeGecmis) {
             let labels = grafikGecmis.map(item => tarihiDuzelt(item.tarih));
             let veriler = grafikGecmis.map(item => item.genel);
@@ -5348,7 +5371,7 @@ function ozellikGorunurlukleriniUygula(izinler) {
     ozellikGorunurlukAyarla('tabBtnRaporlar', izinler.raporlar_sekmesi !== false);
     ozellikGorunurlukAyarla('tabBtnRozetler', izinler.rozetler_sekmesi !== false);
     ozellikGorunurlukAyarla('takvimAlani', izinler.takvim !== false);
-    ozellikGorunurlukAyarla('okumaKulturuKutusu', izinler.okuma_kulturu !== false);
+        ozellikGorunurlukAyarla('okumaKulturuKutusu', izinler.okuma_kulturu !== false && window._kitapVarMi);
     ozellikGorunurlukAyarla('gelisimGrafikKutusu', izinler.gelisim_grafikleri !== false);
     ozellikGorunurlukAyarla('kriterGrafikKutusu', izinler.gelisim_grafikleri !== false);
         ozellikGorunurlukAyarla('kartKelimeYolculugu', izinler.kelime_yolculugu !== false);
@@ -6542,27 +6565,28 @@ function ozellikIzniKaydet() {
     })
     .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası."; });
 }
-
 function rubricEtkinlikAta() {
-    let ogrenci = document.getElementById('rubricOgrenciSelect').value.trim();
+    let secilenOgrler = [];
+    document.querySelectorAll('.rubric-ogr-cb:checked').forEach(cb => { secilenOgrler.push(cb.value); });
+
     let kod = document.getElementById('rubricEtkinlikSec').value;
     let mesajDiv = document.getElementById('rubricEtkinlikSonucMesaj');
 
-    if (!ogrenci) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Önce yukarıdan bir öğrenci seçin!"; return; }
+    if (secilenOgrler.length === 0) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen en az bir öğrenci veya 'Herkes' seçin!"; return; }
     if (!kod) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen bir etkinlik seçin!"; return; }
 
     let tanim = (window.rubricEtkinlikTanimlari || []).find(e => e.kod === kod);
     let ad = tanim ? tanim.ad : kod;
-    let kategori = document.getElementById('rubricEtkinlikKategori').value.trim() || (tanim ? tanim.kategori : "Genel");
+    let kategori = tanim ? tanim.kategori : "Genel";
 
     mesajDiv.style.color = "#3730a3";
     mesajDiv.innerText = "Atanıyor...";
 
-       fetch(apiURL, {
+    fetch(apiURL, {
         method: "POST",
         body: JSON.stringify({
             islem: "etkinlikAta",
-            ogrenciAdi: ogrenci,
+            ogrenciAdiListesi: secilenOgrler,
             etkinlikKodu: kod,
             gorunenAd: ad,
             kategori: kategori,
@@ -6571,13 +6595,12 @@ function rubricEtkinlikAta() {
         })
     })
     .then(res => res.json())
-        .then(data => {
+    .then(data => {
         if (data.status === "success") {
             mesajDiv.style.color = "#16a34a";
-            mesajDiv.innerText = data.zatenVardi ? "Bu etkinlik zaten atanmış." : "✅ Etkinlik başarıyla atandı!";
-            if (!data.zatenVardi && rubricSeciliEtkinlikler.indexOf(ad) === -1) {
-                rubricSeciliEtkinlikler.push(ad);
-            }
+            mesajDiv.innerText = "✅ Etkinlik başarıyla atandı!";
+            if (rubricSeciliEtkinlikler.indexOf(ad) === -1) rubricSeciliEtkinlikler.push(ad);
+            document.querySelectorAll('.rubric-ogr-cb').forEach(cb => { cb.checked = false; cb.disabled = false; });
         } else {
             mesajDiv.style.color = "#dc2626";
             mesajDiv.innerText = "Hata: " + (data.message || "Bilinmeyen hata");
@@ -6585,7 +6608,6 @@ function rubricEtkinlikAta() {
     })
     .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası oluştu."; });
 }
-
 function rubricVideoListesiYukleAta() {
     let alan = document.getElementById('rubricVideoListeAlani');
     if (!alan) return;
@@ -6613,12 +6635,13 @@ function rubricVideoListesiYukleAta() {
 }
 
 function rubricVideolariAta() {
-    let ogrenci = document.getElementById('rubricOgrenciSelect').value.trim();
+    let secilenOgrler = [];
+    document.querySelectorAll('.rubric-video-ogr-cb:checked').forEach(cb => { secilenOgrler.push(cb.value); });
+
     let mesajDiv = document.getElementById('rubricVideoSonucMesaj');
+    if (secilenOgrler.length === 0) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen en az bir öğrenci veya 'Herkes' seçin!"; return; }
 
-    if (!ogrenci) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Önce yukarıdan bir öğrenci seçin!"; return; }
-
-        let secilenCheckboxlar = document.querySelectorAll('.rubric-video-checkbox:checked');
+    let secilenCheckboxlar = document.querySelectorAll('.rubric-video-checkbox:checked');
     let secilenler = Array.from(secilenCheckboxlar).map(cb => Number(cb.value));
     let secilenBasliklar = Array.from(secilenCheckboxlar).map(cb => cb.dataset.baslik);
     if (secilenler.length === 0) { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen en az bir video seçin!"; return; }
@@ -6630,28 +6653,26 @@ function rubricVideolariAta() {
         method: "POST",
         body: JSON.stringify({
             islem: "videoOgrenciEkle",
-            ogrenciAdi: ogrenci,
+            ogrenciAdiListesi: secilenOgrler,
             satirIndexListesi: secilenler
         })
     })
     .then(res => res.json())
     .then(data => {
-                if (data.status === "success") {
+        if (data.status === "success") {
             mesajDiv.style.color = "#16a34a";
-            mesajDiv.innerText = `✅ ${secilenler.length} video başarıyla atandı!`;
+            mesajDiv.innerText = `✅ ${secilenler.length} video, ${secilenOgrler.length} öğrenciye atandı!`;
             secilenBasliklar.forEach(baslik => {
                 if (rubricSeciliVideolar.indexOf(baslik) === -1) rubricSeciliVideolar.push(baslik);
             });
-            document.querySelectorAll('.rubric-video-checkbox:checked').forEach(cb => cb.checked = false);       
-                } 
-            else {
+            document.querySelectorAll('.rubric-video-checkbox:checked').forEach(cb => cb.checked = false);
+        } else {
             mesajDiv.style.color = "#dc2626";
             mesajDiv.innerText = "Hata: " + (data.message || "Bilinmeyen hata");
         }
     })
     .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası oluştu."; });
 }
-
         // Sayfadaki hiçbir iframe'in native tam ekrana geçmesine izin verme (dış link etkinlikleri donmasın diye)
 document.addEventListener('fullscreenchange', function() {
     if (document.fullscreenElement) {
@@ -7068,15 +7089,14 @@ async function rubricKategorileriYukle() {
 }
 
 // Öğrencileri ve "Herkes" seçeneğini checkbox olarak listeleyen fonksiyon
-function rubricOgrenciChecklistDoldur() {
-    let konteyner = document.getElementById('rubricOgrenciCheckboxListesi');
+function rubricOgrenciChecklistDoldurGenel(konteynerId, cbClass) {
+    let konteyner = document.getElementById(konteynerId);
     if (!konteyner) return;
     konteyner.innerHTML = "";
 
-    // "Herkes" seçeneği en üstte
     let herkesLabel = document.createElement('label');
-    herkesLabel.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; font-weight:bold; cursor:pointer; color:#854d0e;";
-    herkesLabel.innerHTML = `<input type="checkbox" value="Herkes" class="rubric-ogr-cb" onchange="rubricHerkesSecildi(this)"> 🌟 Herkes (Tüm Öğrenciler)`;
+    herkesLabel.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; font-weight:bold; cursor:pointer; color:#334155;";
+    herkesLabel.innerHTML = `<input type="checkbox" value="Herkes" class="${cbClass}" onchange="rubricHerkesSecildiGenel(this, '${cbClass}')"> 🌟 Herkes (Tüm Öğrenciler)`;
     konteyner.appendChild(herkesLabel);
 
     globalDataCache.forEach(u => {
@@ -7085,20 +7105,27 @@ function rubricOgrenciChecklistDoldur() {
 
         let label = document.createElement('label');
         label.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; cursor:pointer; color:#334155;";
-        label.innerHTML = `<input type="checkbox" value="${guvenliMetin(ogrAdi)}" class="rubric-ogr-cb"> ${guvenliMetin(ogrAdi)}`;
+        label.innerHTML = `<input type="checkbox" value="${guvenliMetin(ogrAdi)}" class="${cbClass}"> ${guvenliMetin(ogrAdi)}`;
         konteyner.appendChild(label);
     });
 }
 
-// "Herkes" seçildiğinde diğerlerini otomatik tikleme veya yönetme mantığı
-function rubricHerkesSecildi(herkesCb) {
-    let digerCheckboxlar = document.querySelectorAll('.rubric-ogr-cb');
+function rubricHerkesSecildiGenel(herkesCb, cbClass) {
+    let digerCheckboxlar = document.querySelectorAll('.' + cbClass);
     digerCheckboxlar.forEach(cb => {
         if (cb !== herkesCb) {
             cb.checked = herkesCb.checked;
-            cb.disabled = herkesCb.checked; // Herkes seçiliyse bireysel seçimleri kilitleyebiliriz veya serbest bırakabiliriz
+            cb.disabled = herkesCb.checked;
         }
     });
+}
+
+function rubricOgrenciChecklistDoldur() {
+    rubricOgrenciChecklistDoldurGenel('rubricOgrenciCheckboxListesi', 'rubric-ogr-cb');
+}
+
+function rubricVideoOgrenciChecklistDoldur() {
+    rubricOgrenciChecklistDoldurGenel('rubricVideoOgrenciCheckboxListesi', 'rubric-video-ogr-cb');
 }
         
     </script>
