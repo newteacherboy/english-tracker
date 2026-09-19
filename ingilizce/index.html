@@ -2919,8 +2919,9 @@ function ozellikIzniKaydet() {
 
             try {
                 await fetch(url);
+                let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
 
-                                let sondenemeGecerliMiWA = Number(sondeneme) > 0;
+                let sondenemeGecerliMiWA = Number(sondeneme) > 0;
                 let kitapGecerliMiWA = kitapAdi && kitapAdi.trim() !== "" && Number(sayfa) > 0;
 
                 let genelDurumCumlesi = sondenemeGecerliMiWA
@@ -2931,6 +2932,8 @@ function ozellikIzniKaydet() {
                     ? `📚 *Okuma Kültürü & Kitap Takibi:*\n` +
                       `Öğrencimiz, şu an büyük bir ilgiyle okuduğu 📘 *${kitapAdi}* adlı kitapta 📄 *${sayfa}/${hedef}* sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir. 🎯\n\n`
                     : "";
+
+                let tavsiyeBolumu = "";
                 if (rubricSeciliEtkinlikler.length > 0 || rubricSeciliVideolar.length > 0) {
                     tavsiyeBolumu = `🌟 *Bu Hafta Önerilenler:*\nÖğretmeniniz aşağıdaki etkinlik ve videoları yapmanızı/izlemenizi tavsiye ediyor:\n`;
                     let sayac = 1;
@@ -6503,10 +6506,6 @@ function rubricEtkinlikSecDoldur() {
         liste.forEach(e => {
             sel.innerHTML += `<option value="${e.kod}">${guvenliMetin(e.ad)}</option>`;
         });
-        sel.onchange = function() {
-            let secili = window.rubricEtkinlikTanimlari.find(e => e.kod === sel.value);
-            document.getElementById('rubricEtkinlikKategori').value = secili ? secili.kategori : "";
-        };
     })
     .catch(() => { sel.innerHTML = '<option value="">Yüklenemedi</option>'; });
 }
