@@ -130,7 +130,7 @@
         .harf-kutu { background: #faf8f5; border: 1px solid #ddd; border-radius: 6px; padding: 6px 2px; font-size: 14px; font-weight: bold; color: #aaa; opacity: 0.35; filter: grayscale(100%); transition: 0.3s; }
         .harf-kutu.ogrenildi { background: #e8f5e9; border-color: #81c784; color: #1b5e20; opacity: 1; filter: none; }
 
-        .stats-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .stats-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;                 <div class="stat-box" style="background:#fce4ec; border-color:#f48fb1; color:#880e4f;"><div class="stat-label">😊 Performans</div><div class="stat-value-row"><span class="stat-main-num" id="statPerformansEmoji" style="font-size:16px;">🌱</span></div></div> }
         @media(max-width: 600px) { .stats-grid-4 { grid-template-columns: 1fr; } }
         .stat-box { padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 6px; border: 2px solid rgba(0,0,0,0.03); }
         .stat-box.kutu-1 { background: #e8f5e9; border-color: #a5d6a7; color: #1b5e20; }
@@ -203,6 +203,15 @@
         .range-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 8px; background: #faf8f5; padding: 12px; border-radius: 10px; border: 1px solid #eae5dc; }
         .range-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; color: #444; }
         .range-item input[type=range] { width: 60%; cursor: pointer; }
+
+                               .refresh-float-btn {
+            position: fixed; bottom: 20px; left: 20px; z-index: 999;
+            background: rgba(46, 125, 50, 0.35); color: #ffffff;
+            width: 32px; height: 32px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 15px; cursor: pointer;
+            transition: all 0.3s; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .refresh-float-btn:hover { background: rgba(46, 125, 50, 0.85); transform: rotate(180deg); }
 
 /* ===== AI SOHBET ASİSTANI ===== */
 .ai-float-btn {
@@ -567,7 +576,8 @@
 <!-- ÖĞRETMEN SOHBETLERİ OKUNMAMIŞ ROZETİ -->
 <span class="admin-gear-rozet" id="adminGearRozet">0</span>
 
-    <button class="admin-float-btn" onclick="yoneticiGirisSorgula()" title="Öğretmen Paneli">⚙️</button>
+    <button class="admin-float-btn" onclick="yoneticiGirisSorgula()" title="Öğretmen Paneli">⚙️</button>    
+    <button class="refresh-float-btn" onclick="window.location.reload();" title="Sayfayı Yenile">🔄</button>
 
 
     <!-- ÖĞRETMEN ANA MENÜ MODALI -->
@@ -579,6 +589,9 @@
         </div>
         <button class="ogretmen-menu-btn" onclick="ogretmenMenuRubrikAc()">
             <span>📋 Rubrik Paneli</span>
+        </button>
+                <button class="ogretmen-menu-btn" onclick="ogretmenMenuSinifIciAc()">
+            <span>⚡ Ders İçi Performans</span>
         </button>
         <button class="ogretmen-menu-btn" onclick="ogretmenMenuSohbetAc()">
             <span>💬 Öğrenci Sohbetleri</span>
@@ -711,13 +724,33 @@
 
                         <hr style="border:0; border-top:1px solid #e2e8f0; margin: 14px 0;">
             <div class="form-group" style="background:#f5f3ff; padding:12px; border-radius:10px; border:1px solid #ddd6fe;">
-                <label style="color:#5b21b6; font-weight:bold;">🎯 Bu Öğrenciye Etkinlik Ata</label>
+                            <div class="form-group" style="background:#f5f3ff; padding:12px; border-radius:10px; border:1px solid #ddd6fe;">
+                <label style="color:#5b21b6; font-weight:bold;">🎯 Etkinlik Ata</label>
+
+                <label style="font-size:11px; font-weight:700; color:#5b21b6; display:block; margin-top:8px; margin-bottom:4px;">Öğrenci Seçin (Toplu veya Tekli):</label>
+                <div id="rubrikEtkinlikOgrenciCbListesi" style="max-height:110px; overflow-y:auto; background:#fff; border:1px solid #ddd6fe; border-radius:8px; padding:6px; margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
+                    <div style="font-size:10px; color:#5b21b6;">Öğrenciler yükleniyor...</div>
+                </div>
+
+                <label style="font-size:11px; font-weight:700; color:#5b21b6; display:block; margin-bottom:4px;">Var Olan Bir Etkinliği Ata:</label>
                 <select id="rubrikEtkinlikSec" style="margin-bottom:6px;">
                     <option value="">-- Etkinlik Seçin --</option>
                 </select>
-                <input type="text" id="rubrikEtkinlikKategori" placeholder="Kategori (örn: Eşleştirme)" style="margin-bottom:6px;">
-                <button type="button" onclick="rubrikEtkinlikAta()" style="width:100%; background:#7c3aed; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:12.5px;">➕ Etkinliği Ata</button>
+                <button type="button" onclick="rubrikEtkinlikAta()" style="width:100%; background:#7c3aed; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:12.5px;">➕ Seçilen Etkinliği Ata</button>
                 <div id="rubrikEtkinlikSonucMesaj" style="font-size:11px; margin-top:6px;"></div>
+
+                <hr style="border:0; border-top:1px dashed #ddd6fe; margin:12px 0;">
+
+                <label style="font-size:11px; font-weight:700; color:#5b21b6; display:block; margin-bottom:4px;">Ya da Yeni Bir Dış Bağlantı Ekle:</label>
+                <label style="font-size:10px; font-weight:700; color:#5b21b6; display:block; margin-bottom:2px;">Kategori:</label>
+                <select id="rubrikDisLinkKategori" style="margin-bottom:6px;">
+                    <option value="">Yükleniyor...</option>
+                </select>
+                <input type="text" id="rubrikDisLinkAd" placeholder="Etkinlik adı" style="margin-bottom:6px;">
+                <input type="text" id="rubrikDisLinkUrl" placeholder="https://..." style="margin-bottom:6px;">
+                <textarea id="rubrikDisLinkYorum" rows="2" placeholder="Bu etkinlikle ilgili notun (isteğe bağlı)..." style="margin-bottom:6px;"></textarea>
+                <button type="button" onclick="rubrikDisLinkAta()" style="width:100%; background:#a16207; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:12.5px;">➕ Dış Bağlantıyı Ekle & Ata</button>
+                <div id="rubrikDisLinkSonucMesaj" style="font-size:11px; margin-top:6px;"></div>
             </div>
 
             <div class="form-group" style="background:#fff7ed; padding:12px; border-radius:10px; border:1px solid #fed7aa; margin-top:10px;">
@@ -729,10 +762,58 @@
                 <div id="rubrikVideoSonucMesaj" style="font-size:11px; margin-top:6px;"></div>
             </div>
 
+            <div class="form-group" style="background:#f7f9f6; padding:12px; border-radius:10px; border:2px solid var(--border-color); margin-top:10px;">
+                <label style="color:#1b5e20; font-weight:bold;">🎛️ Özellik Yönetimi (Aç/Kapat İzinleri)</label>
+                <select id="ozellikSec" style="margin-bottom:6px;">
+                    <option value="">-- Özellik Seçin --</option>
+                </select>
+                <select id="ozellikHedefTipiSec" onchange="ozellikHedefAlaniGuncelle()" style="margin-bottom:6px;">
+                    <option value="tumogrenciler">Herkes (Tüm Öğrenciler)</option>
+                    <option value="sinif">Belirli Sınıf</option>
+                    <option value="sube">Belirli Şube</option>
+                    <option value="ogrenci">Belirli Öğrenci</option>
+                </select>
+                <input type="text" id="ozellikHedefDegeri" placeholder="Örn: 6 / A / Ahmet Yılmaz" style="display:none; margin-bottom:6px;">
+                <select id="ozellikDurumSec" style="margin-bottom:6px;">
+                    <option value="acik">Açık (Gösterilsin)</option>
+                    <option value="kapali">Kapalı (Gizlensin)</option>
+                </select>
+                <button type="button" onclick="ozellikIzniKaydet()" style="width:100%; background:#455a64; color:white; border:none; padding:8px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:12.5px;">💾 Kuralı Kaydet</button>
+                <div id="ozellikIzniSonucMesaj" style="font-size:11px; margin-top:6px;"></div>
+            </div>
+            
             <button id="rubrikKaydetBtn" style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">💾 Kaydet & İşlemleri Tamamla</button>
         </div>
     </div>
+<div class="modal-overlay" id="sinifIciModal">
+    <div class="modal-content" style="max-width: 480px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:#2e7d32;">⚡ Ders İçi Performans</h3>
+            <button onclick="document.getElementById('sinifIciModal').style.display='none'" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+        </div>
 
+        <div class="form-group">
+            <label>Sınıf / Şube Seçiniz</label>
+            <select id="sinifIciSinifSubeSelect" onchange="sinifIciOgrencileriListele()">
+                <option value="">-- Sınıf/Şube Seçin --</option>
+            </select>
+        </div>
+
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;" id="sinifIciEtiketAlani"></div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <button type="button" onclick="sinifIciTumunuSecToggle()" style="background:#e8f5e9; color:#1b5e20; border:1px solid #a5d6a7; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer;">Tümünü Seç/Kaldır</button>
+            <button type="button" onclick="sinifIciSonIslemiGeriAl()" id="sinifIciGeriAlBtn" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; display:none;">↩️ Son İşlemi Geri Al</button>
+        </div>
+
+        <div id="sinifIciOgrenciListesi" style="display:flex; flex-direction:column; gap:8px; max-height:400px; overflow-y:auto;"></div>
+
+        <div style="display:flex; gap:8px; margin-top:12px;">
+            <button type="button" onclick="sinifIciTopluUygula(-1)" style="flex:1; background:#ffebee; color:#c62828; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:18px; cursor:pointer;">− Seçilenlere</button>
+            <button type="button" onclick="sinifIciTopluUygula(1)" style="flex:1; background:#e8f5e9; color:#1b5e20; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:18px; cursor:pointer;">+ Seçilenlere</button>
+        </div>
+    </div>
+</div>
 
     <!-- ETKİNLİKLER LİSTE MODALI -->
 <div class="modal-overlay" id="etkinliklerModal">
@@ -928,6 +1009,26 @@
     </div>
 </div>
 
+        <div class="etkinlik-tam-ekran" id="dislinkEtkinlikOverlay" style="background:#000;">
+    <div class="etkinlik-header" style="background:#111; border-bottom-color:#333;">
+        <div class="etkinlik-timer-box" id="dislinkEtkinlikBaslik" style="background:#222; color:#fff; border-color:#444; max-width:60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Etkinlik</div>
+        <div style="display:flex; gap:8px;">
+            <button type="button" class="etkinlik-cikis-btn" onclick="dislinkEtkinlikTekrarYukle()" title="Tekrar Yükle" style="background:#334155; color:#fff;">🔄</button>
+            <button type="button" class="etkinlik-cikis-btn" onclick="dislinkEtkinlikKapat()" title="Kapat">✕</button>
+        </div>
+    </div>
+    <div id="dislinkEtkinlikYorumAlani" style="display:none; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:12px; padding:10px 16px;"></div>
+    <div class="etkinlik-govde" style="padding:0; position:relative;">
+        <div id="dislinkEtkinlikYukleniyor" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; font-weight:600; z-index:2;">Etkinlik yükleniyor...</div>
+        <div id="dislinkEtkinlikEngelliUyari" style="position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:3; background:#0f172a; text-align:center; padding:20px;">
+            <div style="font-size:40px;">🔒</div>
+            <div style="color:#e2e8f0; font-size:14px; font-weight:700; max-width:320px;">Bu etkinlik güvenlik nedeniyle site içinde açılamıyor.</div>
+            <a id="dislinkEtkinlikYeniSekmeBtn" href="#" target="_blank" style="background:#f59e0b; color:#1e293b; padding:12px 28px; border-radius:10px; font-weight:800; font-size:13px; text-decoration:none;">↗️ Yeni Sekmede Aç</a>
+        </div>
+        <iframe id="dislinkEtkinlikIframe" src="" style="width:100%; height:100%; border:none; position:relative; z-index:1;" allow="autoplay"></iframe>
+    </div>
+</div>
+
   <div class="etkinlik-tam-ekran" id="videoOynaticiOverlay" style="background:#000;">
     <div class="etkinlik-header" style="background:#111; border-bottom-color:#333; flex-shrink:0;">
         <div class="etkinlik-timer-box" id="videoOynaticiBaslik" style="background:#222; color:#fff; border-color:#444; max-width:50%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Video</div>
@@ -952,7 +1053,7 @@
 </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytvTuUzSvMBrhL8kF8THfeIuGdOFzSMsvAV9nYG1_I0BDZtuWfnoVrj8TwiF7sKqpR/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRQOtvwPi8Zi9AD8d4yfc7MNIElGRS-pAUihobMYOaGITXu-pH2kaobLyB0MxwcYwz/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -1022,6 +1123,7 @@
                 
                 // Verileri çek ve okuma geçmişini otomatik yükle
                 verileriCekVeBaslat(ogrenciAdi);
+                                arkaPlanYenilemeBaslat(ogrenciAdi);
                 okumaGecmisiniGetir(ogrenciAdi);
                 sohbetGecmisiniYukle();
                 videolariGetirVeGoster();
@@ -1044,6 +1146,47 @@
             document.getElementById("sekmeRaporlarAlani").style.display = (index === 1) ? "flex" : "none";
             document.getElementById("sekmeKazanimlarAlani").style.display = (index === 2) ? "flex" : "none";
             document.getElementById("sekmeRozetlerAlani").style.display = (index === 3) ? "block" : "none";
+        }
+
+                function ozellikGorunurlukAyarla(elementId, aciksaGoster) {
+            let el = document.getElementById(elementId);
+            if (el) el.style.display = aciksaGoster ? '' : 'none';
+        }
+
+        function ozellikGorunurlukleriniUygula(izinler) {
+            let tabButonlar = document.querySelectorAll('.tabs-bar .tab-btn');
+            if (tabButonlar[1]) tabButonlar[1].style.display = (izinler.raporlar_sekmesi !== false) ? '' : 'none';
+            if (tabButonlar[2]) tabButonlar[2].style.display = (izinler.gelisim_yolu_sekmesi !== false) ? '' : 'none';
+            if (tabButonlar[3]) tabButonlar[3].style.display = (izinler.rozetler_sekmesi !== false) ? '' : 'none';
+
+            let alfabeKutu = document.querySelector('.alfabe-container');
+            if (alfabeKutu) alfabeKutu.style.display = (izinler.okuma_kulturu !== false) ? '' : 'none';
+
+            let grafikKartlari = document.querySelectorAll('.chart-container');
+            grafikKartlari.forEach(g => {
+                let ustKart = g.closest('.card');
+                if (ustKart) ustKart.style.display = (izinler.gelisim_grafikleri !== false) ? '' : 'none';
+            });
+
+            let dersZamanKart = document.getElementById('dersZamanAlani');
+            if (dersZamanKart) {
+                let ustKart = dersZamanKart.closest('.card');
+                if (ustKart) ustKart.style.display = (izinler.ders_zaman_cizelgesi !== false) ? '' : 'none';
+            }
+
+            let aiKutu = document.getElementById('aiKarsilamaKutusu');
+            if (aiKutu && izinler.ai_karsilama_kutusu === false) aiKutu.style.display = 'none';
+
+            let aiButon = document.querySelector('.ai-float-btn');
+            if (aiButon) aiButon.style.display = (izinler.ai_asistan !== false) ? '' : 'none';
+
+            let kazanimAlani = document.getElementById('sekmeKazanimlarAlani');
+            if (kazanimAlani) {
+                let cocuklar = kazanimAlani.children;
+                if (cocuklar[1]) cocuklar[1].style.display = (izinler.okuma_hiz_studyosu !== false) ? '' : 'none';
+                if (cocuklar[2]) cocuklar[2].style.display = (izinler.etkinlikler !== false) ? '' : 'none';
+                if (cocuklar[3]) cocuklar[3].style.display = (izinler.videolar !== false) ? '' : 'none';
+            }
         }
 
         function okumaModaliniAc() {
@@ -1308,6 +1451,8 @@
                     });
                     if (ogrenciAdi) {
                         select.value = ogrenciAdi;
+                                            rubrikOgrenciChecklistDoldurGenel('rubrikEtkinlikOgrenciCbListesi', 'rubrik-etk-ogr-cb');
+                    rubrikOgrenciChecklistDoldurGenel('rubrikVideoOgrenciCbListesi', 'rubrik-video-ogr-cb');
                         ogrenciSecildiVerileriYukle();
                     }
                 }
@@ -1606,15 +1751,28 @@ function haftalikYorumUret(isim, puan) {
             return `Harika bir çaba haftasındayız! Sevgili ${isim}, derslerdeki duruşun ve gayretinle gözlerimizi kamaştırıyorsun. Akşamları yapılacak kısa okuma tekrarlarıyla bu başarıyı katlayalım. 🌟`;
         }
 
-        function verileriCekVeBaslat(isim) {
+                function verileriCekVeBaslat(isim, sessizMi) {
+                    let arkaPlanYenilemePolling = null;
+        function arkaPlanYenilemeBaslat(isim) {
+            if (arkaPlanYenilemePolling) clearInterval(arkaPlanYenilemePolling);
+            arkaPlanYenilemePolling = setInterval(() => {
+                verileriCekVeBaslat(isim, true);
+            }, 30000);
+        }
             fetch(SCRIPT_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "tumVerileriGetir", ogrenciAdi: isim })
             })
             .then(res => res.json())
+                
             .then(data => {
-                if (data.status === "success") {
+                                if (data.status === "success") {
+                    if (!sessizMi) {
+                        toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
+                    } else {
+                        toplamSaniye = data.gelisim.toplasSaniye || toplamSaniye;
+                    }
                     toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
 
                     let genelPuanVal = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan || 0;
@@ -1622,8 +1780,12 @@ function haftalikYorumUret(isim, puan) {
                     document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
                     document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
                     document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
+                                                        document.getElementById("statPerformansEmoji").innerText = performansEmojisiGetirEK(genelPuanVal);
 
                     document.getElementById("ogretmenNotu").innerHTML = `"${akilliOgretmenNotuUret(data.gelisim, isim)}"`;
+                                        let okumaKutuKitap = document.querySelector('.okuma-grid');
+                    let kitapVarMiEK = data.gelisim.aktifKitapAdi && data.gelisim.aktifKitapAdi.trim() !== "" && data.gelisim.aktifKitapAdi !== "Eğlenceli Masallar";
+                    if (okumaKutuKitap) okumaKutuKitap.style.display = kitapVarMiEK ? '' : 'none';
                     document.getElementById("aktifKitapAdi").innerText = data.gelisim.aktifKitapAdi;
                     document.getElementById("toplamBitirilenKitap").innerText = data.gelisim.okunanKitap;
 
@@ -1673,6 +1835,7 @@ if (toplamRozet > 0) {
             </div>`;
     });
     document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
+                        ozellikGorunurlukleriniUygula(data.izinler || {});
 } else {
     document.getElementById("rozetlerAlani").innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777; padding:20px;">Henüz bu öğrenci için tanımlanmış rozet bulunmuyor.</div>`;
 }
@@ -1915,33 +2078,39 @@ function sohbetGecmisiniYukle() {
     }).catch(err => console.log("Sohbet yükleme hatası:", err));
 }
 
-function aiMesajGonder() {
+async function aiMesajGonder() {
     let input = document.getElementById('aiMesajInput');
     let body = document.getElementById('aiChatBody');
     let txt = input.value.trim();
     if (!txt) return;
-
     let isim = sohbetIcinAktifIsim();
-    body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
     input.value = "";
-    body.scrollTop = body.scrollHeight;
 
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "sohbetMesajGonder", ogrenci: isim, mesaj: txt })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "spam") {
+    try {
+        let res = await fetch(SCRIPT_URL, {
+            method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "sohbetMesajGonder", ogrenci: isim, mesaj: txt })
+        });
+        let data = await res.json();
+
+        if (data.status === "limit_doldu") {
+            input.value = txt;
+            body.innerHTML += `<div class="ai-msg bot" style="color:#c62828; background:#ffebee;">⚠️ Bugünlük mesaj hakkını doldurdun (günlük limit: ${data.limit}). Yarın tekrar deneyebilir ya da rozet kazanarak hakkını artırabilirsin!</div>`;
+        } else if (data.status === "cooldown") {
+            input.value = txt;
+            body.innerHTML += `<div class="ai-msg bot" style="color:#f57f17; background:#fffde7;">⏳ Çok hızlı mesaj gönderiyorsun, lütfen ${data.kalanSaniye} saniye daha bekle.</div>`;
+        } else if (data.status === "spam") {
+            body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
             body.innerHTML += `<div class="ai-msg bot" style="color:#c62828; background:#ffebee;">⚠️ Anlamsız veya rastgele karakterler algılandı, mesajın öğretmenine iletilmedi. Lütfen düzgün bir mesaj yaz. 😊</div>`;
         } else {
+            body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
             body.innerHTML += `<div class="ai-msg bot">✅ Mesajın öğretmenine iletildi, en kısa sürede buradan dönüş yapacaktır. Arada sohbet kutusunu kontrol etmeyi unutma! 😊</div>`;
         }
         body.scrollTop = body.scrollHeight;
-    }).catch(err => {
+    } catch (err) {
+        input.value = txt;
         body.innerHTML += `<div class="ai-msg bot">Bağlantı hatası oluştu.</div>`;
-    });
+    }
 }
 
 // ===== ÖĞRETMEN TARAFI: MENÜ + SOHBET PANELİ =====
@@ -1957,6 +2126,9 @@ function ogretmenMenuRubrikAc() {
     ogrenciListesiniYukle();
     rubrikEtkinlikSecDoldur();
     rubrikVideoListesiYukle();
+    ozellikSecDoldur();
+        rubrikEtkinlikSecDoldurSunucudan();
+    rubrikKategorileriYukle();
 }
 
 function ogretmenMenuSohbetAc() {
@@ -2152,7 +2324,7 @@ function etkinliklerModalAc() {
     })
     .then(res => res.json())
     .then(data => {
-        etkinlikSheetVerisi = (data.etkinlikler || []).filter(e => ETKINLIK_KOD_HARITASI[e.etkinlikKodu]);
+              etkinlikSheetVerisi = (data.etkinlikler || []).filter(e => ETKINLIK_KOD_HARITASI[e.etkinlikKodu] || (e.disLink && e.disLink.trim()));
 
         if (etkinlikSheetVerisi.length === 0) {
             alan.innerHTML = `<div style="text-align:center; color:#7c3aed; font-size:12px; padding:10px;">Henüz sana atanmış etkinlik yok.</div>`;
@@ -2170,7 +2342,8 @@ function etkinliklerModalAc() {
             let liste = kategoriMap[kat];
             let btn = document.createElement('button');
             btn.className = "etkinlik-liste-btn";
-            btn.innerHTML = `<span>🎯 ${guvenliMetin(kat)}</span><span style="font-size:11px; font-weight:700; background:#f3e8ff; color:#7c3aed; padding:3px 10px; border-radius:10px;">${liste.length} etkinlik</span>`;
+                      let yapilanSayisi = liste.filter(e => e.yapildiMi).length;
+            btn.innerHTML = `<span>🎯 ${guvenliMetin(kat)}</span><span style="font-size:11px; font-weight:700; background:#f3e8ff; color:#7c3aed; padding:3px 10px; border-radius:10px;">${yapilanSayisi}/${liste.length} yapıldı</span>`;
             btn.onclick = function () { etkinlikAltListeAc(kat, liste); };
             alan.appendChild(btn);
         });
@@ -2190,9 +2363,29 @@ function etkinlikAltListeAc(kategoriAdi, liste) {
     liste.forEach(e => {
         let btn = document.createElement('button');
         btn.className = "etkinlik-liste-btn";
-        btn.innerHTML = `<span>▶️ ${guvenliMetin(e.gorunenAd || e.etkinlikKodu)}</span><span>🎮</span>`;
+        let ikon = (e.disLink && e.disLink.trim()) ? "↗️" : "▶️";
+        let rozetHtml = e.yapildiMi
+            ? `<span style="background:#dcfce7; color:#166534; font-size:10px; font-weight:800; padding:3px 8px; border-radius:10px;">✅ Yapıldı</span>`
+            : `<span style="background:#f3e8ff; color:#7c3aed; font-size:10px; font-weight:800; padding:3px 8px; border-radius:10px;">🆕 Yeni</span>`;
+        btn.innerHTML = `<span>${ikon} ${guvenliMetin(e.gorunenAd || e.etkinlikKodu)}</span>${rozetHtml}`;
+
         btn.onclick = function () {
+            if (e.satirIndex) {
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "etkinlikYapildiIsaretle", satirIndex: e.satirIndex, ogrenciAdi: ogrenciAdi })
+                }).catch(() => {});
+                e.yapildiMi = true;
+            }
+
             document.getElementById('etkinlikAltListeModal').style.display = 'none';
+
+            if (e.disLink && e.disLink.trim()) {
+                dislinkEtkinlikAc(e.disLink, e.gorunenAd || e.etkinlikKodu, e.ogretmenYorumu);
+                return;
+            }
+
             let eslesme = ETKINLIK_KOD_HARITASI[e.etkinlikKodu];
             if (!eslesme) { alert("Bu etkinlik henüz tanımlanmamış."); return; }
             if (eslesme.arg !== undefined) window[eslesme.fn](eslesme.arg);
@@ -2412,6 +2605,64 @@ function etk1Kapat() {
     if (etk1TimerInterval) clearInterval(etk1TimerInterval);
     etk1TimerInterval = null;
     etkMuzikDurdur();  // YENİ
+}
+
+        let dislinkEtkinlikAktifUrl = "";
+let dislinkEtkinlikZamanAsimi = null;
+let dislinkEtkinlikYuklendiMi = false;
+
+function dislinkEtkinlikAc(url, baslik, yorum) {
+    dislinkEtkinlikAktifUrl = url;
+    document.getElementById('dislinkEtkinlikBaslik').innerText = baslik || "Etkinlik";
+    document.getElementById('dislinkEtkinlikYeniSekmeBtn').href = url;
+
+    let yorumAlani = document.getElementById('dislinkEtkinlikYorumAlani');
+    if (yorum && yorum.trim()) {
+        yorumAlani.innerText = "📌 " + yorum;
+        yorumAlani.style.display = 'block';
+    } else {
+        yorumAlani.style.display = 'none';
+    }
+
+    document.getElementById('dislinkEtkinlikOverlay').style.display = 'flex';
+    dislinkEtkinlikIframeYukle(url);
+}
+
+function dislinkEtkinlikIframeYukle(url) {
+    dislinkEtkinlikYuklendiMi = false;
+    document.getElementById('dislinkEtkinlikYukleniyor').style.display = 'flex';
+    document.getElementById('dislinkEtkinlikEngelliUyari').style.display = 'none';
+
+    let iframe = document.getElementById('dislinkEtkinlikIframe');
+    iframe.src = "";
+
+    iframe.onload = function () {
+        if (iframe.src && iframe.src !== "about:blank") {
+            dislinkEtkinlikYuklendiMi = true;
+            document.getElementById('dislinkEtkinlikYukleniyor').style.display = 'none';
+        }
+    };
+
+    setTimeout(() => {
+        iframe.src = url;
+        if (dislinkEtkinlikZamanAsimi) clearTimeout(dislinkEtkinlikZamanAsimi);
+        dislinkEtkinlikZamanAsimi = setTimeout(() => {
+            if (!dislinkEtkinlikYuklendiMi) {
+                document.getElementById('dislinkEtkinlikYukleniyor').style.display = 'none';
+                document.getElementById('dislinkEtkinlikEngelliUyari').style.display = 'flex';
+            }
+        }, 3500);
+    }, 50);
+}
+
+function dislinkEtkinlikTekrarYukle() {
+    dislinkEtkinlikIframeYukle(dislinkEtkinlikAktifUrl);
+}
+
+function dislinkEtkinlikKapat() {
+    if (dislinkEtkinlikZamanAsimi) clearTimeout(dislinkEtkinlikZamanAsimi);
+    document.getElementById('dislinkEtkinlikIframe').src = "";
+    document.getElementById('dislinkEtkinlikOverlay').style.display = 'none';
 }
 
 function etk1TumTamamlandi() {
@@ -3746,9 +3997,13 @@ function rubrikEtkinlikSecDoldur() {
         document.getElementById('rubrikEtkinlikKategori').value = secili ? secili.kategori : "";
     };
 }
+                        <label style="font-size:11px; font-weight:700; color:#5b21b6; display:block; margin-top:8px; margin-bottom:4px;">Öğrenci Seçin (Toplu veya Tekli):</label>
+                <div id="rubrikEtkinlikOgrenciCbListesi" style="max-height:110px; overflow-y:auto; background:#fff; border:1px solid #ddd6fe; border-radius:8px; padding:6px; margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
+                    <div style="font-size:10px; color:#5b21b6;">Öğrenciler yükleniyor...</div>
+                </div>
 
 function rubrikEtkinlikAta() {
-    let ogrenci = document.getElementById('rubrikOgrenciSec').value.trim();
+        let secilenOgrler = Array.from(document.querySelectorAll('.rubrik-etk-ogr-cb:checked')).map(cb => cb.value);
     let kod = document.getElementById('rubrikEtkinlikSec').value;
     let mesajDiv = document.getElementById('rubrikEtkinlikSonucMesaj');
 
@@ -3766,7 +4021,7 @@ function rubrikEtkinlikAta() {
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
             action: "etkinlikAta",
-            ogrenciAdi: ogrenci,
+            ogrenciAdiListesi: secilenOgrler,
             etkinlikKodu: kod,
             gorunenAd: tanim.ad,
             kategori: kategori,
@@ -3794,6 +4049,10 @@ function rubrikEtkinlikAta() {
 }
 
 function rubrikVideoListesiYukle() {
+                    <label style="font-size:11px; font-weight:700; color:#9a3412; display:block; margin-top:8px; margin-bottom:4px;">Öğrenci Seçin (Toplu veya Tekli):</label>
+                <div id="rubrikVideoOgrenciCbListesi" style="max-height:110px; overflow-y:auto; background:#fff; border:1px solid #fed7aa; border-radius:8px; padding:6px; margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
+                    <div style="font-size:10px; color:#9a3412;">Öğrenciler yükleniyor...</div>
+                </div>
     let alan = document.getElementById('rubrikVideoListeAlani');
     if (!alan) return;
     alan.innerHTML = `<div style="font-size:11px; color:#c2410c; text-align:center;">Videolar yükleniyor...</div>`;
@@ -3846,7 +4105,7 @@ function rubrikVideolariAta() {
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
             action: "videoOgrenciEkle",
-            ogrenciAdi: ogrenci,
+            ogrenciAdiListesi: Array.from(document.querySelectorAll('.rubrik-video-ogr-cb:checked')).map(cb => cb.value)
             satirIndexListesi: secilenler
         })
     })
@@ -3869,6 +4128,290 @@ function rubrikVideolariAta() {
         mesajDiv.style.color = "#c62828";
         mesajDiv.innerText = "Bağlantı hatası oluştu.";
     });
+}
+
+                function ozellikSecDoldur() {
+            let sel = document.getElementById('ozellikSec');
+            if (!sel) return;
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "ozellikListesiGetir" })
+            })
+            .then(res => res.json())
+            .then(data => {
+                sel.innerHTML = '<option value="">-- Özellik Seçin --</option>';
+                (data.liste || []).forEach(o => {
+                    sel.innerHTML += `<option value="${o.kod}">${guvenliMetin(o.ad)}</option>`;
+                });
+            })
+            .catch(() => { sel.innerHTML = '<option value="">Yüklenemedi</option>'; });
+        }
+
+        function ozellikHedefAlaniGuncelle() {
+            let tip = document.getElementById('ozellikHedefTipiSec').value;
+            document.getElementById('ozellikHedefDegeri').style.display = (tip === 'tumogrenciler') ? 'none' : 'block';
+        }
+
+        function ozellikIzniKaydet() {
+            let kod = document.getElementById('ozellikSec').value;
+            let tip = document.getElementById('ozellikHedefTipiSec').value;
+            let deger = document.getElementById('ozellikHedefDegeri').value.trim();
+            let durum = document.getElementById('ozellikDurumSec').value;
+            let mesajDiv = document.getElementById('ozellikIzniSonucMesaj');
+
+            if (!kod) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen bir özellik seçin!"; return; }
+            if (tip !== 'tumogrenciler' && !deger) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen hedef değeri girin!"; return; }
+
+            mesajDiv.style.color = "#333";
+            mesajDiv.innerText = "Kaydediliyor...";
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "ozellikIzniKaydet",
+                    ozellikKodu: kod,
+                    hedefTipi: tip,
+                    hedefDegeri: tip === 'tumogrenciler' ? '' : deger,
+                    durum: durum
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    mesajDiv.style.color = "#166534";
+                    mesajDiv.innerText = "✅ Kural kaydedildi!";
+                } else {
+                    mesajDiv.style.color = "#c62828";
+                    mesajDiv.innerText = "Hata oluştu.";
+                }
+            })
+            .catch(() => { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Bağlantı hatası."; });
+        }
+
+        function ogrenciyeAdditifPuanVer(ss, ogrenciAdi, miktar, sebep) {
+  var sheetSI = ss.getSheetByName("SinifIciPerformans");
+  if (!sheetSI) {
+    sheetSI = ss.insertSheet("SinifIciPerformans");
+    sheetSI.appendRow(["tarih", "ogrenci", "degisim", "sebep"]);
+  }
+  sheetSI.appendRow([new Date(), ogrenciAdi, miktar, sebep]);
+}
+
+        const SINIF_ICI_ETIKETLER = ["Katılım", "Ödev Eksik", "Davranış", "Yardımsever", "Derse Geç Kaldı", "Genel"];
+let sinifIciAktifEtiket = "Genel";
+let sinifIciSonIslemZamani = null;
+let sinifIciSonIslemOgrencileri = [];
+let sistemOgrencileriTumVeri = [];
+
+function ogretmenMenuSinifIciAc() {
+    document.getElementById('ogretmenMenuModal').style.display = 'none';
+    document.getElementById('sinifIciModal').style.display = 'flex';
+    sinifIciEtiketleriCiz();
+    sinifIciSinifSubeDoldur();
+    document.getElementById('sinifIciGeriAlBtn').style.display = 'none';
+}
+
+function sinifIciEtiketleriCiz() {
+    let alan = document.getElementById('sinifIciEtiketAlani');
+    alan.innerHTML = "";
+    SINIF_ICI_ETIKETLER.forEach(etiket => {
+        let chip = document.createElement('button');
+        chip.type = 'button';
+        chip.innerText = etiket;
+        chip.style.cssText = "background:" + (etiket === sinifIciAktifEtiket ? "#2e7d32" : "#f7f9f6") + "; color:" + (etiket === sinifIciAktifEtiket ? "#fff" : "#333") + "; border:1px solid var(--border-color); padding:5px 10px; border-radius:14px; font-size:11px; font-weight:700; cursor:pointer;";
+        chip.onclick = function() { sinifIciAktifEtiket = etiket; sinifIciEtiketleriCiz(); };
+        alan.appendChild(chip);
+    });
+}
+
+function sinifIciSinifSubeDoldur() {
+    fetch(SCRIPT_URL, {
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "ogrencileriGetir" })
+    })
+    .then(res => res.json())
+    .then(data => {
+        sistemOgrencileriTumVeri = data.ogrenciler || [];
+        let sel = document.getElementById('sinifIciSinifSubeSelect');
+        let kombinasyonlar = new Set();
+        sistemOgrencileriTumVeri.forEach(u => {
+            let sinif = String(u.sinif || "").trim();
+            let sube = String(u.sube || "").trim();
+            if (sinif) kombinasyonlar.add(sinif + "|" + sube);
+        });
+        sel.innerHTML = '<option value="">-- Sınıf/Şube Seçin --</option>';
+        Array.from(kombinasyonlar).sort().forEach(k => {
+            let parcalar = k.split("|");
+            let etiket = parcalar[1] ? (parcalar[0] + "-" + parcalar[1]) : parcalar[0];
+            sel.innerHTML += `<option value="${k}">${etiket}</option>`;
+        });
+    });
+}
+
+function sinifIciOgrencileriListele() {
+    let secim = document.getElementById('sinifIciSinifSubeSelect').value;
+    let alan = document.getElementById('sinifIciOgrenciListesi');
+    alan.innerHTML = "";
+    if (!secim) return;
+    let parcalar = secim.split("|");
+    let sinif = parcalar[0], sube = parcalar[1] || "";
+    let ogrenciler = sistemOgrencileriTumVeri.filter(u => String(u.sinif || "").trim() === sinif && String(u.sube || "").trim() === sube);
+
+    ogrenciler.forEach(u => {
+        let kart = document.createElement('div');
+        kart.style.cssText = "display:flex; align-items:center; gap:8px; background:#faf8f5; border:2px solid #e0dcd0; border-radius:10px; padding:8px 10px;";
+        kart.innerHTML = `
+            <input type="checkbox" class="sinif-ici-cb" value="${guvenliMetin(u.ogrenciAdi)}" style="width:18px; height:18px; flex-shrink:0;">
+            <div style="flex:1; min-width:0; font-weight:800; font-size:13px; color:#1a1a1a;">${guvenliMetin(u.ogrenciAdi)}</div>
+            <button type="button" onclick="sinifIciTekilUygula('${guvenliMetin(u.ogrenciAdi)}', -1)" style="background:#ffebee; color:#c62828; border:none; width:34px; height:34px; border-radius:8px; font-weight:900; font-size:18px; cursor:pointer;">−</button>
+            <button type="button" onclick="sinifIciTekilUygula('${guvenliMetin(u.ogrenciAdi)}', 1)" style="background:#e8f5e9; color:#1b5e20; border:none; width:34px; height:34px; border-radius:8px; font-weight:900; font-size:18px; cursor:pointer;">+</button>
+        `;
+        alan.appendChild(kart);
+    });
+}
+
+function sinifIciTumunuSecToggle() {
+    let checkboxlar = document.querySelectorAll('.sinif-ici-cb');
+    let hepsiSecili = Array.from(checkboxlar).every(cb => cb.checked);
+    checkboxlar.forEach(cb => { cb.checked = !hepsiSecili; });
+}
+
+async function sinifIciTekilUygula(ogrenciAdi, yon) { await sinifIciPuanGonder([ogrenciAdi], yon); }
+
+async function sinifIciTopluUygula(yon) {
+    let ogrenciler = Array.from(document.querySelectorAll('.sinif-ici-cb:checked')).map(cb => cb.value);
+    if (ogrenciler.length === 0) { alert("Lütfen en az bir öğrenci seçin!"); return; }
+    await sinifIciPuanGonder(ogrenciler, yon);
+}
+
+async function sinifIciPuanGonder(ogrenciler, yon) {
+    try {
+        let res = await fetch(SCRIPT_URL, {
+            method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "sinifIciPuanVer", ogrenciler: ogrenciler, degisim: yon, sebep: sinifIciAktifEtiket })
+        });
+        let data = await res.json();
+        if (data.status === "success") {
+            if (data.atlanan && data.atlanan.length > 0) alert((yon > 0 ? "Zaten 100 puanda: " : "Zaten 0 puanda: ") + data.atlanan.join(", "));
+            if (data.uygulanan && data.uygulanan.length > 0) {
+                sinifIciSonIslemZamani = data.zamanDamgasi;
+                sinifIciSonIslemOgrencileri = data.uygulanan;
+                document.getElementById('sinifIciGeriAlBtn').style.display = 'inline-block';
+            }
+        }
+    } catch (e) { alert("Bağlantı hatası: " + e); }
+}
+
+async function sinifIciSonIslemiGeriAl() {
+    if (!sinifIciSonIslemZamani) return;
+    try {
+        let res = await fetch(SCRIPT_URL, {
+            method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "sinifIciGeriAl", zamanDamgasi: sinifIciSonIslemZamani, ogrenciler: sinifIciSonIslemOgrencileri })
+        });
+        let data = await res.json();
+        if (data.status === "success") {
+            document.getElementById('sinifIciGeriAlBtn').style.display = 'none';
+            sinifIciSonIslemZamani = null;
+            sinifIciSonIslemOgrencileri = [];
+        }
+    } catch (e) { alert("Bağlantı hatası: " + e); }
+}
+
+        function rubrikOgrenciChecklistDoldurGenel(konteynerId, cbClass) {
+    let konteyner = document.getElementById(konteynerId);
+    if (!konteyner) return;
+    konteyner.innerHTML = "";
+    let herkesLabel = document.createElement('label');
+    herkesLabel.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; font-weight:bold; cursor:pointer;";
+    herkesLabel.innerHTML = `<input type="checkbox" value="Herkes" class="${cbClass}" onchange="rubrikHerkesSecildiGenel(this, '${cbClass}')"> 🌟 Herkes (Tüm Öğrenciler)`;
+    konteyner.appendChild(herkesLabel);
+
+    (sistemOgrencileri || []).forEach(u => {
+        let label = document.createElement('label');
+        label.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; cursor:pointer;";
+        label.innerHTML = `<input type="checkbox" value="${guvenliMetin(u.ogrenciAdi)}" class="${cbClass}"> ${guvenliMetin(u.ogrenciAdi)}`;
+        konteyner.appendChild(label);
+    });
+}
+function rubrikHerkesSecildiGenel(herkesCb, cbClass) {
+    document.querySelectorAll('.' + cbClass).forEach(cb => {
+        if (cb !== herkesCb) { cb.checked = herkesCb.checked; cb.disabled = herkesCb.checked; }
+    });
+}
+
+        function rubrikEtkinlikSecDoldurSunucudan() {
+    let sel = document.getElementById('rubrikEtkinlikSec');
+    if (!sel) return;
+    fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "tumEtkinlikTanimlariGetir" }) })
+    .then(res => res.json())
+    .then(data => {
+        window.rubrikTumEtkinlikTanimlari = data.liste || [];
+        sel.innerHTML = '<option value="">-- Etkinlik Seçin --</option>';
+        window.rubrikTumEtkinlikTanimlari.forEach(e => { sel.innerHTML += `<option value="${e.kod}">${guvenliMetin(e.ad)}</option>`; });
+    });
+}
+
+function rubrikKategorileriYukle() {
+    let sel = document.getElementById('rubrikDisLinkKategori');
+    if (!sel) return;
+    fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "kategorileriGetir" }) })
+    .then(res => res.json())
+    .then(data => {
+        sel.innerHTML = "";
+        (data.liste || []).forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; });
+    })
+    .catch(() => { sel.innerHTML = '<option value="Genel">Genel</option>'; });
+}
+
+function rubrikDisLinkAta() {
+    let secilenOgrler = Array.from(document.querySelectorAll('.rubrik-etk-ogr-cb:checked')).map(cb => cb.value);
+    let kategori = document.getElementById('rubrikDisLinkKategori').value;
+    let ad = document.getElementById('rubrikDisLinkAd').value.trim();
+    let url = document.getElementById('rubrikDisLinkUrl').value.trim();
+    let yorum = document.getElementById('rubrikDisLinkYorum').value.trim();
+    let mesajDiv = document.getElementById('rubrikDisLinkSonucMesaj');
+
+    if (secilenOgrler.length === 0) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen en az bir öğrenci veya 'Herkes' seçin!"; return; }
+    if (!ad || !url) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Etkinlik adı ve link zorunludur!"; return; }
+
+    mesajDiv.style.color = "#a16207";
+    mesajDiv.innerText = "Ekleniyor...";
+
+    fetch(SCRIPT_URL, {
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "disLinkEtkinlikAta", ogrenciAdiListesi: secilenOgrler, gorunenAd: ad, kategori: kategori, disLink: url, ogretmenYorumu: yorum })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            mesajDiv.style.color = "#166534";
+            mesajDiv.innerText = "✅ Başarıyla eklendi ve atandı!";
+            document.getElementById('rubrikDisLinkAd').value = "";
+            document.getElementById('rubrikDisLinkUrl').value = "";
+            document.getElementById('rubrikDisLinkYorum').value = "";
+        } else {
+            mesajDiv.style.color = "#c62828";
+            mesajDiv.innerText = "Hata: " + (data.message || "");
+        }
+    })
+    .catch(() => { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Bağlantı hatası."; });
+}
+
+        function performansEmojisiGetirEK(puan) {
+    if (puan >= 95) return "🏆 Harika!";
+    if (puan >= 90) return "🌟 Mükemmel";
+    if (puan >= 85) return "🚀 Süper";
+    if (puan >= 80) return "🔥 Hararetli";
+    if (puan >= 75) return "🎯 Çok İyi";
+    if (puan >= 70) return "💪 Güçlü";
+    if (puan >= 65) return "👏 Başarılı";
+    if (puan >= 60) return "📈 Yükselişte";
+    if (puan >= 55) return "👍 İyi";
+    if (puan >= 50) return "💡 İstikrarlı";
+    return "🌱 Gelişiyor";
 }
         
     </script>
