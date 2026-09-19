@@ -1814,30 +1814,30 @@
 </parameter name="old_str">
 
     <!-- AKİCİ OKUMA VE HIZ ÖLÇER STÜDYOSU MODALI -->
-    <div class="game-modal-overlay" id="okumaModalOverlay">
-        <div class="game-modal-content" style="max-width: 520px;">
+           <div class="game-modal-overlay" id="okumaModalOverlay">
+        <div class="game-modal-content" style="max-width: 96vw; width: 96vw; max-height: 94vh;">
             <button class="game-close-btn" onclick="okumaModaliniKapat()">✕</button>
-            <div class="game-title" style="color: #166534;">📖 English Fluent Reading & WPM Studio</div>
-            <div class="game-subtitle">Choose your level, start the timer, and click on the last word you read to automatically count all words!</div>
+                        <div class="game-title" style="color: #166534;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</div>
+            <div class="game-subtitle">Seviyeni seç, süreyi başlat ve okuduğun son kelimeye tıklayarak tüm kelimelerin otomatik sayılmasını sağla!</div>
 
             <!-- Üst Kontrol Alanı -->
             <div style="display: flex; gap: 6px; margin-bottom: 10px; align-items: center;">
                 <div style="flex: 2;">
-                    <label style="font-size: 9.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">GRADE LEVEL</label>
+                    <label style="font-size: 9.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">SINIF SEVİYESİ</label>
                     <select id="okumaSinifSelect" onchange="yeniMetinGetir()" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 11px; font-weight: 700; background: #f8fafc;">
-                        <option value="1">1st Grade (~50 Words)</option>
-                        <option value="2">2nd Grade (~70 Words)</option>
-                        <option value="3">3rd Grade (~90 Words)</option>
-                        <option value="4">4th Grade (~110 Words)</option>
-                        <option value="5">5th Grade (~130 Words)</option>
-                        <option value="6">6th Grade (~150 Words)</option>
-                        <option value="7">7th Grade (~170 Words)</option>
-                        <option value="8">8th Grade (~190 Words)</option>
+                        <option value="1">1. Sınıf (~50 Kelime)</option>
+                        <option value="2">2. Sınıf (~70 Kelime)</option>
+                        <option value="3">3. Sınıf (~90 Kelime)</option>
+                        <option value="4">4. Sınıf (~110 Kelime)</option>
+                        <option value="5">5. Sınıf (~130 Kelime)</option>
+                        <option value="6">6. Sınıf (~150 Kelime)</option>
+                        <option value="7">7. Sınıf (~170 Kelime)</option>
+                        <option value="8">8. Sınıf (~190 Kelime)</option>
                     </select>
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-size: 9.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">ACTION</label>
-                    <button onclick="yeniMetinGetir()" style="width: 100%; background: #16a34a; color: white; border: none; padding: 7px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer;">✨ New Text</button>
+                    <label style="font-size: 9.5px; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">İŞLEM</label>
+                    <button onclick="yeniMetinGetir()" style="width: 100%; background: #16a34a; color: white; border: none; padding: 7px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer;">✨ Yeni Metin</button>
                 </div>
             </div>
 
@@ -1845,21 +1845,20 @@
 
             <!-- Bilgi / Sayaç Kutusu -->
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; display: flex; justify-content: space-around; font-size: 11px; font-weight: 800; color: #166534;">
-                <span>⏱️ Timer: <span id="okumaKronometre">00:00</span></span>
-                <span>📖 Words: <span id="okunanKelimeSayac">0</span></span>
-                <span>⚡ Speed (WPM): <span id="wpmGosterge">0</span></span>
+                <span>⏱️ Süre: <span id="okumaKronometre">00:00</span></span>
+                <span>📖 Kelime: <span id="okunanKelimeSayac">0</span></span>
+                <span>⚡ Hız (WPM): <span id="wpmGosterge">0</span></span>
             </div>
 
             <!-- Aksiyon Butonları -->
             <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                <button id="okumaBaslatBtn" onclick="okumaKronometreBaslat()" style="flex: 1; background: #15803d; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">▶ Start Timer</button>
-                <button onclick="okumaSonucuKaydet()" style="flex: 1; background: #e11d48; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">💾 Finish & Save Result</button>
+                <button id="okumaBaslatBtn" onclick="okumaKronometreBaslat()" style="flex: 1; background: #15803d; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">▶ Süreyi Başlat</button>
+                <button onclick="okumaSonucuKaydet()" style="flex: 1; background: #e11d48; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer;">💾 Bitir & Kaydet</button>
             </div>
 
             <!-- Prompter Okuma Alanı -->
-            <div style="margin-bottom: 4px; font-size: 10px; font-weight: 700; color: #334155;">PROMPTER AREA (Click on the LAST word you have read):</div>
-            <div id="prompterMetinAlani" style="background: #ffffff; border: 1.5px dashed #86efac; border-radius: 8px; padding: 12px; max-height: 180px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: #1e293b; line-height: 1.6;"></div>
-
+            <div style="margin-bottom: 4px; font-size: 10px; font-weight: 700; color: #334155;">OKUMA ALANI (Okuduğun SON kelimeye tıkla):</div>
+            <div id="prompterMetinAlani" style="background: #ffffff; border: 1.5px dashed #86efac; border-radius: 8px; padding: 12px; max-height: 38vh; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: #1e293b; line-height: 1.6;"></div>
 <!-- Seçilen Kelime Anlamı Göstergesi (Süre durdurulunca çalışır) -->
 <div id="kelimeCeviriKutusu" style="display: none; background: #e0f2fe; border: 1px solid #7dd3fc; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #0369a1; text-align: center;">
     🔍 <span id="secilenKelimeBilgi">Bir kelimeye tıklayın</span>
@@ -1871,16 +1870,13 @@
     <div id="metinTurkceIcerik">-</div>
 </div>
             
-            <!-- Geçmiş Arşivi Listesi -->
+                        <!-- Geçmiş Arşivi Listesi -->
             <div style="border-top: 1px solid #e2e8f0; padding-top: 10px;">
-                <div style="font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 6px;">📊 Past Reading Progress & History</div>
-                <div id="okumaGecmisKonteyner" style="max-height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                    <div style="font-size: 10.5px; color: #64748b; text-align: center;">Loading history...</div>
+                <div style="font-weight: 800; font-size: 11px; color: #334155; margin-bottom: 6px;">📊 Geçmiş Okuma İlerlemesi</div>
+                <div id="okumaGecmisKonteyner" style="max-height: 22vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="font-size: 10.5px; color: #64748b; text-align: center;">Geçmiş yükleniyor...</div>
                 </div>
             </div>
-        </div>
-    </div>
-
     <script>
 
         // --- KELİME YARIŞMASI MİMARİSİ ---
@@ -4457,7 +4453,7 @@ function yeniMetinGetir() {
     document.getElementById('okumaKronometre').innerText = "00:00";
     document.getElementById('okunanKelimeSayac').innerText = "0";
     document.getElementById('wpmGosterge').innerText = "0";
-    document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
+        document.getElementById('okumaBaslatBtn').innerText = "▶ Süreyi Başlat";
     
     document.getElementById('kelimeCeviriKutusu').style.display = 'none';
     document.getElementById('metinTurkceCeviriKutusu').style.display = 'none';
@@ -4514,7 +4510,7 @@ function okumaKronometreBaslat() {
         clearInterval(okumaTimer);
         okumaTimer = null;
         okumaTestiBittiMi = true;
-        document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
+        document.getElementById('okumaBaslatBtn').innerText = "▶ Süreyi Başlat";
         metinTurkceCevirisiniGoster();
         return;
     }
@@ -4534,8 +4530,8 @@ function okumaKronometreBaslat() {
         s.style.color = "#1e293b";
     });
 
-    document.getElementById('okumaBaslatBtn').innerText = "⏸ Pause / Finish";
-    okumaTimer = setInterval(() => {
+    document.getElementById('okumaBaslatBtn').innerText = "⏸ Duraklat / Bitir";
+    okumaTimer = setInterval(() => {    
         okumaSaniye++;
         let dk = String(Math.floor(okumaSaniye / 60)).padStart(2, '0');
         let sn = String(okumaSaniye % 60).padStart(2, '0');
@@ -4571,9 +4567,9 @@ async function okumaSonucuKaydet() {
         alert("Lütfen önce süreyi başlatıp okumayı bitirdiğiniz son kelimenin üzerine tıklayın!");
         return;
     }
-    if (okumaTimer) { clearInterval(okumaTimer); okumaTimer = null; }
+        if (okumaTimer) { clearInterval(okumaTimer); okumaTimer = null; }
     okumaTestiBittiMi = true;
-    document.getElementById('okumaBaslatBtn').innerText = "▶ Start Timer";
+    document.getElementById('okumaBaslatBtn').innerText = "▶ Süreyi Başlat";
     metinTurkceCevirisiniGoster();
 
     let sinifVal = document.getElementById('okumaSinifSelect').value + ". Sınıf";
@@ -4598,14 +4594,14 @@ async function okumaSonucuKaydet() {
         });
         let data = await res.json();
         if (data.status === "success") {
-            alert("Reading speed result successfully saved! 🎉");
+            alert("Okuma hızı sonucu başarıyla kaydedildi! 🎉");
             okumaGecmisiniYukle();
         } else {
-            alert("Error occurred while saving.");
+            alert("Kaydetme sırasında hata oluştu.");
         }
     } catch (err) {
         console.error(err);
-        alert("Connection error occurred.");
+        alert("Bağlantı hatası oluştu.");
     }
 }
 
@@ -4623,15 +4619,15 @@ async function okumaSonucuKaydet() {
     }
 }
 
-        async function okumaGecmisiniYukle() {
+                async function okumaGecmisiniYukle() {
             let konteyner = document.getElementById('okumaGecmisKonteyner');
-            konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">Loading history...</div>`;
+            konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">Geçmiş yükleniyor...</div>`;
             try {
                 let res = await fetch(`${apiURL}?islem=okumaGecmisGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "Misafir Ziyaretçi")}`);
                 let liste = await res.json();
                 konteyner.innerHTML = "";
                 if (!liste || liste.length === 0) {
-                    konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">No reading tests recorded yet.</div>`;
+                    konteyner.innerHTML = `<div style="font-size: 10.5px; color: #64748b; text-align: center;">Henüz kayıtlı okuma testi yok.</div>`;
                     return;
                 }
                 liste.reverse().forEach(item => {
@@ -4642,16 +4638,15 @@ async function okumaSonucuKaydet() {
                                 <span>📅 ${tarihFormatted} — ${item.metinBasligi} (${item.sinif})</span>
                                 <span style="color: #16a34a;">⚡ ${item.wpm} WPM</span>
                             </div>
-                            <div style="color: #64748b; font-size: 10px;">📖 Words: ${item.okunanKelime} | ⏱️ Time: ${item.gecenSure} sec</div>
+                            <div style="color: #64748b; font-size: 10px;">📖 Kelime: ${item.okunanKelime} | ⏱️ Süre: ${item.gecenSure} sn</div>
                         </div>
                     `;
                 });
             } catch(err) {
                 console.error(err);
-                konteyner.innerHTML = `<div style="font-size: 10.5px; color: #dc2626; text-align: center;">Error loading history.</div>`;
+                konteyner.innerHTML = `<div style="font-size: 10.5px; color: #dc2626; text-align: center;">Geçmiş yüklenirken hata oluştu.</div>`;
             }
         }
-
 
 
                async function girisYap(event) {
