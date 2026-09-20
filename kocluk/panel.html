@@ -1779,13 +1779,18 @@ function haftalikYorumUret(isim, puan) {
 
                    
                                     
-                                        let genelPuanVal = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan || 0;
+                                                            let genelPuanVal = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan || 0;
                     ozellikGorunurlukleriniUygula(data.izinler || {});
-                    document.getElementById("statGenelPuan").innerText = genelPuanVal;
-                    document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
-                    document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
-                    document.getElementById("statDevamOrani").innerText = data.gelisim.devamOrani + "%";
-                                                        document.getElementById("statPerformansEmoji").innerText = performansEmojisiGetirEK(genelPuanVal);
+                    let elGenelPuan = document.getElementById("statGenelPuan");
+                    let elEtkinlikBasarisi = document.getElementById("statEtkinlikBasarisi");
+                    let elBasariliDers = document.getElementById("statBasariliDers");
+                    let elDevamOrani = document.getElementById("statDevamOrani");
+                    let elPerformansEmoji = document.getElementById("statPerformansEmoji");
+                    if (elGenelPuan) elGenelPuan.innerText = genelPuanVal;
+                    if (elEtkinlikBasarisi) elEtkinlikBasarisi.innerText = data.gelisim.etkinlikBasarisi;
+                    if (elBasariliDers) elBasariliDers.innerText = data.gelisim.basariliDers;
+                    if (elDevamOrani) elDevamOrani.innerText = data.gelisim.devamOrani + "%";
+                    if (elPerformansEmoji) elPerformansEmoji.innerText = performansEmojisiGetirEK(genelPuanVal);
 
                     document.getElementById("ogretmenNotu").innerHTML = `"${akilliOgretmenNotuUret(data.gelisim, isim)}"`;
                                         let okumaKutuKitap = document.querySelector('.okuma-grid');
