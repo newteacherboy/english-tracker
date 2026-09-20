@@ -1897,6 +1897,51 @@
     </div>
     <script>
 
+        // --- SINIF SEVİYESİ KISITLAMA SİSTEMİ ---
+function izinVerilenSinifAraligiGetir() {
+    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+    let ogrSinif = user ? Number(user.Sinif) : 0;
+    if (!ogrSinif || ogrSinif < 1) return null; // sınıf bilgisi yoksa (örn. teacher) sınırlama uygulanmaz
+    let min = Math.max(1, ogrSinif - 1);
+    let max = Math.min(8, ogrSinif + 1);
+    return { min: min, max: max };
+}
+
+function sinifGridKisitlamaUygula(gridId, aktifSinifAyarlaFn, sinifGuncelleFn) {
+    let aralik = izinVerilenSinifAraligiGetir();
+    let grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    let butonlar = grid.querySelectorAll('.sinif-btn');
+    let ilkIzinli = null;
+
+    butonlar.forEach((btn, idx) => {
+        let sinifNo = idx + 1;
+        let izinli = !aralik || (sinifNo >= aralik.min && sinifNo <= aralik.max);
+        btn.disabled = !izinli;
+        btn.style.opacity = izinli ? '1' : '0.35';
+        btn.style.cursor = izinli ? 'pointer' : 'not-allowed';
+        btn.classList.remove('active');
+        if (izinli && !ilkIzinli) ilkIzinli = { btn: btn, sinifNo: sinifNo };
+    });
+
+    if (ilkIzinli) {
+        ilkIzinli.btn.classList.add('active');
+        aktifSinifAyarlaFn(ilkIzinli.sinifNo);
+        sinifGuncelleFn(ilkIzinli.sinifNo);
+    }
+}
+
+function kySinifKisitlamaUygulaVeBaslat() {
+    sinifGridKisitlamaUygula('kySinifGrid', function(s) { kyAktifSinif = s; }, kySinifGuncelle);
+}
+function jpSinifKisitlamaUygulaVeBaslat() {
+    sinifGridKisitlamaUygula('jpSinifGrid', function(s) { jpAktifSinif = s; }, jpSinifGuncelle);
+}
+function boslukSinifKisitlamaUygulaVeBaslat() {
+    sinifGridKisitlamaUygula('boslukSinifGrid', function(s) { boslukAktifSinif = s; }, boslukSinifGuncelle);
+}
+
         // --- KELİME YARIŞMASI MİMARİSİ ---
 let kyAktifSinif = 1;
 let kySecilenUniteler = [];
@@ -1929,7 +1974,7 @@ function kelimeYarismasiAc() {
         isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
     }
 
-    kySinifGuncelle(1);
+        kySinifKisitlamaUygulaVeBaslat();
     kelimeMuzikBaslat();
 }
 
@@ -5473,17 +5518,7 @@ function jpOyunAc() {
         isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
     }
 
-    let grid = document.getElementById('jpSinifGrid');
-    if (grid) {
-        grid.querySelectorAll('.sinif-btn').forEach((b, idx) => {
-            b.classList.toggle('active', idx === 0);
-        });
-    }
-
-    window.jpAktifSinif = 1;
-    if (typeof jpSinifGuncelle === 'function') {
-        jpSinifGuncelle(1);
-    }
+       jpSinifKisitlamaUygulaVeBaslat();
     
     if (typeof jeopardyMuzikBaslat === 'function') {
         jeopardyMuzikBaslat();
@@ -5852,22 +5887,14 @@ function boslukOyunAc() {
         isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
     }
 
-    let grid = document.getElementById('boslukSinifGrid');
-    if (grid) {
-        grid.querySelectorAll('.sinif-btn').forEach((b, idx) => {
-            b.classList.toggle('active', idx === 0);
-        });
-    }
-
-    // YENİ: "Kontrol Et" butonunu bir önceki oyundan kalan kilitli/değişmiş halinden sıfırla
+        // YENİ: "Kontrol Et" butonunu bir önceki oyundan kalan kilitli/değişmiş halinden sıfırla
     let kontrolButonuSifirla = document.querySelector('#boslukOyunEkrani .btn-giris');
     if (kontrolButonuSifirla) {
         kontrolButonuSifirla.disabled = false;
         kontrolButonuSifirla.innerText = "🎯 Kontrol Et";
     }
 
-    boslukAktifSinif = 1;
-    boslukSinifGuncelle(1);
+    boslukSinifKisitlamaUygulaVeBaslat();
     boslukMuzikBaslat();
 }
 
