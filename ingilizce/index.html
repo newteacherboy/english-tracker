@@ -2382,7 +2382,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbw3vCyZ1y8p1VhNFObe0skS304DvNpt1tCrrmO8cMSlQMyWcgmrTZMh4LcBx9lmMEHnmA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxDP9DNJKdX_5jEJwE1HHcL47n3ZiIv8IXO0g5HMcs5g1WMSvt3zMfasYtcUl64czTQHg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -6552,13 +6552,7 @@ function rubricEtkinlikSecDoldur() {
     .then(res => res.json())
     .then(liste => {
         window.rubricEtkinlikTanimlari = liste || [];
-        if (liste.length === 0) {
-            sel.innerHTML = '<option value="">Henüz tanımlı etkinlik yok</option>';
-            return;
-        }
-        liste.forEach(e => {
-            sel.innerHTML += `<option value="${e.kod}">${guvenliMetin(e.ad)}</option>`;
-        });
+        rubricEtkinlikListesiFiltreliCiz();
     })
     .catch(() => { sel.innerHTML = '<option value="">Yüklenemedi</option>'; });
 }
@@ -6668,20 +6662,8 @@ function rubricVideoListesiYukleAta() {
     fetch(`${apiURL}?islem=tumVideolariGetir`)
     .then(res => res.json())
     .then(liste => {
-        if (!liste || liste.length === 0) {
-            alan.innerHTML = `<div style="font-size:10.5px; color:#0e7490; text-align:center;">Henüz hiç video eklenmemiş.</div>`;
-            return;
-        }
-        alan.innerHTML = "";
-        liste.forEach(v => {
-            let satir = document.createElement('label');
-            satir.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; padding:4px 2px; cursor:pointer;";
-                        satir.innerHTML = `
-                <input type="checkbox" value="${v.satirIndex}" data-baslik="${guvenliMetin(v.baslik)}" class="rubric-video-checkbox">
-                <span>${guvenliMetin(v.baslik)} <span style="color:#0e7490; font-size:9.5px;">(${guvenliMetin(v.kategori)})</span></span>
-            `;
-            alan.appendChild(satir);
-        });
+        window.rubricTumVideoTanimlari = liste || [];
+        rubricVideoListesiFiltreliCiz();
     })
     .catch(() => { alan.innerHTML = `<div style="font-size:10.5px; color:#dc2626; text-align:center;">Videolar yüklenirken hata oluştu.</div>`; });
 }
@@ -7141,7 +7123,7 @@ async function rubricKategorileriYukle() {
 }
 
 // Öğrencileri ve "Herkes" seçeneğini checkbox olarak listeleyen fonksiyon
-function rubricOgrenciChecklistDoldurGenel(konteynerId, cbClass) {
+function rubricOgrenciChecklistDoldurGenel(konteynerId, cbClass, filtreYenileFn) {
     let konteyner = document.getElementById(konteynerId);
     if (!konteyner) return;
     konteyner.innerHTML = "";
@@ -7160,6 +7142,13 @@ function rubricOgrenciChecklistDoldurGenel(konteynerId, cbClass) {
         label.innerHTML = `<input type="checkbox" value="${guvenliMetin(ogrAdi)}" class="${cbClass}"> ${guvenliMetin(ogrAdi)}`;
         konteyner.appendChild(label);
     });
+
+    if (typeof filtreYenileFn === "function") {
+        konteyner.querySelectorAll('.' + cbClass).forEach(cb => {
+            cb.addEventListener('change', filtreYenileFn);
+        });
+        filtreYenileFn();
+    }
 }
 
 function rubricHerkesSecildiGenel(herkesCb, cbClass) {
@@ -7172,12 +7161,82 @@ function rubricHerkesSecildiGenel(herkesCb, cbClass) {
     });
 }
 
+function rubricSeciliOgrencileriGetir(cbClass) {
+    let herkesSecili = false;
+    let secilenler = [];
+    document.querySelectorAll('.' + cbClass + ':checked').forEach(cb => {
+        if (cb.value === "Herkes") herkesSecili = true;
+        else secilenler.push(cb.value.trim().toLowerCase());
+    });
+    return { herkesSecili: herkesSecili, secilenler: secilenler };
+}
+
+function rubricEtkinlikListesiFiltreliCiz() {
+    let sel = document.getElementById('rubricEtkinlikSec');
+    if (!sel) return;
+    let tumListe = window.rubricEtkinlikTanimlari || [];
+    let durum = rubricSeciliOgrencileriGetir('rubric-ogr-cb');
+    let mevcutDeger = sel.value;
+
+    if (tumListe.length === 0) {
+        sel.innerHTML = '<option value="">Henüz tanımlı etkinlik yok</option>';
+        return;
+    }
+
+    sel.innerHTML = '<option value="">-- Etkinlik Seçin --</option>';
+    tumListe.forEach(e => {
+        let atananlar = e.atananlar || [];
+        let gizle = false;
+        if (!durum.herkesSecili && durum.secilenler.length > 0) {
+            gizle = durum.secilenler.every(ogr => atananlar.indexOf(ogr) !== -1);
+        }
+        if (!gizle) sel.innerHTML += `<option value="${e.kod}">${guvenliMetin(e.ad)}</option>`;
+    });
+
+    if ([...sel.options].some(o => o.value === mevcutDeger)) sel.value = mevcutDeger;
+}
+
+function rubricVideoListesiFiltreliCiz() {
+    let alan = document.getElementById('rubricVideoListeAlani');
+    if (!alan) return;
+    let tumListe = window.rubricTumVideoTanimlari || [];
+    let durum = rubricSeciliOgrencileriGetir('rubric-video-ogr-cb');
+
+    if (tumListe.length === 0) {
+        alan.innerHTML = `<div style="font-size:10.5px; color:#0e7490; text-align:center;">Henüz hiç video eklenmemiş.</div>`;
+        return;
+    }
+
+    alan.innerHTML = "";
+    let gosterilenSayisi = 0;
+    tumListe.forEach(v => {
+        let atananlar = v.atananlar || [];
+        let gizle = false;
+        if (!durum.herkesSecili && durum.secilenler.length > 0) {
+            gizle = durum.secilenler.every(ogr => atananlar.indexOf(ogr) !== -1);
+        }
+        if (gizle) return;
+        gosterilenSayisi++;
+        let satir = document.createElement('label');
+        satir.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; padding:4px 2px; cursor:pointer;";
+        satir.innerHTML = `
+            <input type="checkbox" value="${v.satirIndex}" data-baslik="${guvenliMetin(v.baslik)}" class="rubric-video-checkbox">
+            <span>${guvenliMetin(v.baslik)} <span style="color:#0e7490; font-size:9.5px;">(${guvenliMetin(v.kategori)})</span></span>
+        `;
+        alan.appendChild(satir);
+    });
+
+    if (gosterilenSayisi === 0) {
+        alan.innerHTML = `<div style="font-size:10.5px; color:#0e7490; text-align:center;">Seçili öğrenci(ler)e atanabilecek yeni video kalmadı.</div>`;
+    }
+}
+
 function rubricOgrenciChecklistDoldur() {
-    rubricOgrenciChecklistDoldurGenel('rubricOgrenciCheckboxListesi', 'rubric-ogr-cb');
+    rubricOgrenciChecklistDoldurGenel('rubricOgrenciCheckboxListesi', 'rubric-ogr-cb', rubricEtkinlikListesiFiltreliCiz);
 }
 
 function rubricVideoOgrenciChecklistDoldur() {
-    rubricOgrenciChecklistDoldurGenel('rubricVideoOgrenciCheckboxListesi', 'rubric-video-ogr-cb');
+    rubricOgrenciChecklistDoldurGenel('rubricVideoOgrenciCheckboxListesi', 'rubric-video-ogr-cb', rubricVideoListesiFiltreliCiz);
 }
         
     </script>
