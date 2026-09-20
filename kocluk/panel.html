@@ -1838,12 +1838,21 @@ if (toplamRozet > 0) {
         let gerekliPuan = Number(r.puan || 0);
         let d = String(r.durum || "").trim().toLowerCase();
         let aktifMi = (ogrenciPuani >= gerekliPuan) || (d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true");
-        rozetHtml += `
-            <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
-                <div style="font-size:26px; margin-bottom:4px;">${aktifMi ? (r.emoji || '⭐') : '🔒'}</div>
-                <div style="font-size:11px; font-weight:bold; color:#333;">${guvenliMetin(r.rozetAdi || 'Rozet')}</div>
-                <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${gerekliPuan} p</div>
-            </div>`;
+        let rozetGorselHtml;
+if (!aktifMi) {
+    rozetGorselHtml = `<div style="font-size:26px; margin-bottom:4px;">🔒</div>`;
+} else if (String(r.emoji || '').trim().startsWith('http')) {
+    rozetGorselHtml = `<img src="${r.emoji}" alt="${guvenliMetin(r.rozetAdi || 'Rozet')}" style="width:36px; height:26px; object-fit:cover; border-radius:4px; margin-bottom:4px; box-shadow:0 1px 3px rgba(0,0,0,0.2);">`;
+} else {
+    rozetGorselHtml = `<div style="font-size:26px; margin-bottom:4px;">${r.emoji || '⭐'}</div>`;
+}
+
+rozetHtml += `
+    <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
+        ${rozetGorselHtml}
+        <div style="font-size:11px; font-weight:bold; color:#333;">${guvenliMetin(r.rozetAdi || 'Rozet')}</div>
+        <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${gerekliPuan} p</div>
+    </div>`;
     });
     document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
 } else {
