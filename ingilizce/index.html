@@ -1392,9 +1392,9 @@
         <div class="seviye-harita-content">
             <button class="seviye-harita-kapat" onclick="document.getElementById('seviyeHaritaOverlay').style.display='none'">✕</button>
 
-                                   <div id="sinifSecimAlani" style="display:none; text-align:center; padding: 10px 0 20px;">
+                                                                    <div id="sinifSecimAlani" style="display:none; text-align:center; padding: 10px 0 20px;">
                 <p style="font-size:13px; font-weight:700; color:#4338ca; margin-bottom:12px;">Hangi sınıftasın?</p>
-                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+                <div id="seviyeSinifGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
                     <button class="sinif-btn" onclick="seviyeSinifSecildi(1)">1</button>
                     <button class="sinif-btn" onclick="seviyeSinifSecildi(2)">2</button>
                     <button class="sinif-btn" onclick="seviyeSinifSecildi(3)">3</button>
@@ -2382,7 +2382,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbxDP9DNJKdX_5jEJwE1HHcL47n3ZiIv8IXO0g5HMcs5g1WMSvt3zMfasYtcUl64czTQHg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwTj8YFBUMkpCLbcC0we_vhpMV5AR9dMNqL3bkMkvJ8hg13XJsg5cFWZKH8GNADg94s8g/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -3062,7 +3062,22 @@ function ozellikIzniKaydet() {
     return maskotlar[toplam % maskotlar.length];
 }
 
-                       function seviyeHaritasiAc() {
+                                           function seviyeSinifSecimKisitlamaUygula() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            let kendiSinifi = user ? Number(user.Sinif) || 0 : 0;
+            let grid = document.getElementById('seviyeSinifGrid');
+            if (!grid) return;
+
+            grid.querySelectorAll('.sinif-btn').forEach((btn, idx) => {
+                let sinifNo = idx + 1;
+                let izinli = !kendiSinifi || (sinifNo === kendiSinifi || sinifNo === kendiSinifi - 1);
+                btn.disabled = !izinli;
+                btn.style.opacity = izinli ? '1' : '0.35';
+                btn.style.cursor = izinli ? 'pointer' : 'not-allowed';
+            });
+        }
+
+        function seviyeHaritasiAc() {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
             if (!user || !user.aktiviteKartlari || user.aktiviteKartlari.length === 0) {
                 alert("Henüz kelime kartı bulunmuyor. Öğretmenin yakında ekleyecek!");
@@ -3071,37 +3086,51 @@ function ozellikIzniKaydet() {
 
             document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
 
+            let kendiSinifi = Number(user.Sinif) || 0;
+
             if (user.secilenSinif && user.secilenSinif > 0) {
                 seviyeAktifSinif = user.secilenSinif;
                 document.getElementById('sinifSecimAlani').style.display = 'none';
                 seviyeGosterilenUnite = 1;
                 seviyeHaritasiCiz();
+            } else if (kendiSinifi > 0) {
+                // YENİ: Sınıf bilgisi varsa hiç sormadan direkt kendi sınıfıyla aç
+                seviyeSinifSecildi(kendiSinifi);
             } else {
                 document.getElementById('sinifSecimAlani').style.display = 'block';
                 document.getElementById('sinifDegistirBtn').style.display = 'none';
                 document.getElementById('seviyeYolAlani').innerHTML = '';
                 document.getElementById('seviyeHaritaUniteAd').innerText = '';
+                seviyeSinifSecimKisitlamaUygula();
             }
         }
 
-        function seviyeSinifSecildi(sinif) {
+               function seviyeSinifSecildi(sinif) {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+            let kendiSinifi = user ? Number(user.Sinif) || 0 : 0;
+
+            // YENİ: Öğrenci sadece kendi sınıfını veya bir alt sınıfı seçebilir
+            if (kendiSinifi && sinif !== kendiSinifi && sinif !== kendiSinifi - 1) {
+                alert("Sadece kendi sınıf seviyeni veya bir alt sınıfı seçebilirsin.");
+                return;
+            }
+
             seviyeAktifSinif = sinif;
             seviyeGosterilenUnite = 1;
             document.getElementById('sinifSecimAlani').style.display = 'none';
 
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
             if (user) user.secilenSinif = sinif;
 
             fetch(`${apiURL}?islem=sinifSec&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&sinif=${sinif}`).catch(() => {});
 
             seviyeHaritasiCiz();
         }
-
-                function sinifDegistirmeEkraniniAc() {
+                               function sinifDegistirmeEkraniniAc() {
             document.getElementById('seviyeYolAlani').innerHTML = '';
             document.getElementById('seviyeHaritaUniteAd').innerText = '';
             document.getElementById('seviyeHaritaUniteEtiket').innerText = '';
             document.getElementById('sinifSecimAlani').style.display = 'block';
+            seviyeSinifSecimKisitlamaUygula();
         }
 
                
