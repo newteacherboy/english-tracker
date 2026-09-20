@@ -130,7 +130,7 @@
         .harf-kutu { background: #faf8f5; border: 1px solid #ddd; border-radius: 6px; padding: 6px 2px; font-size: 14px; font-weight: bold; color: #aaa; opacity: 0.35; filter: grayscale(100%); transition: 0.3s; }
         .harf-kutu.ogrenildi { background: #e8f5e9; border-color: #81c784; color: #1b5e20; opacity: 1; filter: none; }
 
-        .stats-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;                 <div class="stat-box" style="background:#fce4ec; border-color:#f48fb1; color:#880e4f;"><div class="stat-label">😊 Performans</div><div class="stat-value-row"><span class="stat-main-num" id="statPerformansEmoji" style="font-size:16px;">🌱</span></div></div> }
+               .stats-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         @media(max-width: 600px) { .stats-grid-4 { grid-template-columns: 1fr; } }
         .stat-box { padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 6px; border: 2px solid rgba(0,0,0,0.03); }
         .stat-box.kutu-1 { background: #e8f5e9; border-color: #a5d6a7; color: #1b5e20; }
@@ -386,6 +386,7 @@
                 <div class="stat-box kutu-2"><div class="stat-label">🚀 Etkinlik Başarısı</div><div class="stat-value-row"><span class="stat-main-num" id="statEtkinlikBasarisi">100</span></div></div>
                 <div class="stat-box kutu-3"><div class="stat-label">🎯 Toplam Başarılı Ders</div><div class="stat-value-row"><span class="stat-main-num" id="statBasariliDers">0</span></div></div>
                 <div class="stat-box kutu-4"><div class="stat-label">🔥 Devam Oranı</div><div class="stat-value-row"><span class="stat-main-num" id="statDevamOrani">0%</span></div></div>
+                           <div class="stat-box" style="background:#fce4ec; border-color:#f48fb1; color:#880e4f;"><div class="stat-label">😊 Performans</div><div class="stat-value-row"><span class="stat-main-num" id="statPerformansEmoji" style="font-size:16px;">🌱</span></div></div>     
             </div>
 
             <div class="card">
@@ -1053,13 +1054,20 @@
 </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRQOtvwPi8Zi9AD8d4yfc7MNIElGRS-pAUihobMYOaGITXu-pH2kaobLyB0MxwcYwz/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygDbn9RdSVwxSaOl-00Sb97Tw-kPGL0cJ3812xtmA_18bBySNmuy2In-otKJ-QzPnA/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
         let timerInterval = null;
         let sistemOgrencileri = [];
         let ogrenciGecmisKayitlari = [];
+                let arkaPlanYenilemePolling = null;
+        function arkaPlanYenilemeBaslat(isim) {
+            if (arkaPlanYenilemePolling) clearInterval(arkaPlanYenilemePolling);
+            arkaPlanYenilemePolling = setInterval(() => {
+                verileriCekVeBaslat(isim, true);
+            }, 30000);
+        }
         let gelisimChartInstance = null;
         let radarChartInstance = null;
 
@@ -1752,13 +1760,7 @@ function haftalikYorumUret(isim, puan) {
         }
 
                 function verileriCekVeBaslat(isim, sessizMi) {
-                    let arkaPlanYenilemePolling = null;
-        function arkaPlanYenilemeBaslat(isim) {
-            if (arkaPlanYenilemePolling) clearInterval(arkaPlanYenilemePolling);
-            arkaPlanYenilemePolling = setInterval(() => {
-                verileriCekVeBaslat(isim, true);
-            }, 30000);
-        }
+                    
             fetch(SCRIPT_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1773,9 +1775,12 @@ function haftalikYorumUret(isim, puan) {
                     } else {
                         toplamSaniye = data.gelisim.toplasSaniye || toplamSaniye;
                     }
-                    toplasmaSaniyeKontrol(data.gelisim.toplasSaniye || 0);
+                   
 
                     let genelPuanVal = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan || 0;
+                                    
+                                        let genelPuanVal = data.gelisim.ortalamaGenelPuan || data.gelisim.genelPuan || 0;
+                    ozellikGorunurlukleriniUygula(data.izinler || {});
                     document.getElementById("statGenelPuan").innerText = genelPuanVal;
                     document.getElementById("statEtkinlikBasarisi").innerText = data.gelisim.etkinlikBasarisi;
                     document.getElementById("statBasariliDers").innerText = data.gelisim.basariliDers;
@@ -1834,9 +1839,7 @@ if (toplamRozet > 0) {
                 <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${gerekliPuan} p</div>
             </div>`;
     });
-    document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
-                        ozellikGorunurlukleriniUygula(data.izinler || {});
-} else {
+   
     document.getElementById("rozetlerAlani").innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777; padding:20px;">Henüz bu öğrenci için tanımlanmış rozet bulunmuyor.</div>`;
 }
 
@@ -2124,7 +2127,7 @@ function ogretmenMenuRubrikAc() {
     document.getElementById('ogretmenMenuModal').style.display = 'none';
     document.getElementById('rubricModal').style.display = 'flex';
     ogrenciListesiniYukle();
-    rubrikEtkinlikSecDoldur();
+    
     rubrikVideoListesiYukle();
     ozellikSecDoldur();
         rubrikEtkinlikSecDoldurSunucudan();
@@ -3997,17 +4000,14 @@ function rubrikEtkinlikSecDoldur() {
         document.getElementById('rubrikEtkinlikKategori').value = secili ? secili.kategori : "";
     };
 }
-                        <label style="font-size:11px; font-weight:700; color:#5b21b6; display:block; margin-top:8px; margin-bottom:4px;">Öğrenci Seçin (Toplu veya Tekli):</label>
-                <div id="rubrikEtkinlikOgrenciCbListesi" style="max-height:110px; overflow-y:auto; background:#fff; border:1px solid #ddd6fe; border-radius:8px; padding:6px; margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
-                    <div style="font-size:10px; color:#5b21b6;">Öğrenciler yükleniyor...</div>
-                </div>
+                       
 
 function rubrikEtkinlikAta() {
         let secilenOgrler = Array.from(document.querySelectorAll('.rubrik-etk-ogr-cb:checked')).map(cb => cb.value);
     let kod = document.getElementById('rubrikEtkinlikSec').value;
     let mesajDiv = document.getElementById('rubrikEtkinlikSonucMesaj');
 
-    if (!ogrenci) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Önce yukarıdan bir öğrenci seçin!"; return; }
+        if (secilenOgrler.length === 0) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen en az bir öğrenci veya 'Herkes' seçin!"; return; }
     if (!kod) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen bir etkinlik seçin!"; return; }
 
     let tanim = RUBRIK_ETKINLIK_TANIMLARI.find(e => e.kod === kod);
@@ -4049,10 +4049,7 @@ function rubrikEtkinlikAta() {
 }
 
 function rubrikVideoListesiYukle() {
-                    <label style="font-size:11px; font-weight:700; color:#9a3412; display:block; margin-top:8px; margin-bottom:4px;">Öğrenci Seçin (Toplu veya Tekli):</label>
-                <div id="rubrikVideoOgrenciCbListesi" style="max-height:110px; overflow-y:auto; background:#fff; border:1px solid #fed7aa; border-radius:8px; padding:6px; margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
-                    <div style="font-size:10px; color:#9a3412;">Öğrenciler yükleniyor...</div>
-                </div>
+                  
     let alan = document.getElementById('rubrikVideoListeAlani');
     if (!alan) return;
     alan.innerHTML = `<div style="font-size:11px; color:#c2410c; text-align:center;">Videolar yükleniyor...</div>`;
@@ -4086,10 +4083,10 @@ function rubrikVideoListesiYukle() {
 }
 
 function rubrikVideolariAta() {
-    let ogrenci = document.getElementById('rubrikOgrenciSec').value.trim();
-    let mesajDiv = document.getElementById('rubrikVideoSonucMesaj');
+        let mesajDiv = document.getElementById('rubrikVideoSonucMesaj');
+    let secilenVideoOgrler = Array.from(document.querySelectorAll('.rubrik-video-ogr-cb:checked')).map(cb => cb.value);
 
-    if (!ogrenci) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Önce yukarıdan bir öğrenci seçin!"; return; }
+    if (secilenVideoOgrler.length === 0) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen en az bir öğrenci veya 'Herkes' seçin!"; return; }
 
     let secilenCheckboxlar = document.querySelectorAll('.rubrik-video-checkbox:checked');
     let secilenler = Array.from(secilenCheckboxlar).map(cb => Number(cb.value));
@@ -4103,9 +4100,9 @@ function rubrikVideolariAta() {
     fetch(SCRIPT_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
+               body: JSON.stringify({
             action: "videoOgrenciEkle",
-            ogrenciAdiListesi: Array.from(document.querySelectorAll('.rubrik-video-ogr-cb:checked')).map(cb => cb.value)
+                        ogrenciAdiListesi: secilenVideoOgrler,
             satirIndexListesi: secilenler
         })
     })
@@ -4190,14 +4187,7 @@ function rubrikVideolariAta() {
             .catch(() => { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Bağlantı hatası."; });
         }
 
-        function ogrenciyeAdditifPuanVer(ss, ogrenciAdi, miktar, sebep) {
-  var sheetSI = ss.getSheetByName("SinifIciPerformans");
-  if (!sheetSI) {
-    sheetSI = ss.insertSheet("SinifIciPerformans");
-    sheetSI.appendRow(["tarih", "ogrenci", "degisim", "sebep"]);
-  }
-  sheetSI.appendRow([new Date(), ogrenciAdi, miktar, sebep]);
-}
+      
 
         const SINIF_ICI_ETIKETLER = ["Katılım", "Ödev Eksik", "Davranış", "Yardımsever", "Derse Geç Kaldı", "Genel"];
 let sinifIciAktifEtiket = "Genel";
