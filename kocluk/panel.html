@@ -1058,7 +1058,7 @@
 </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyecd-wWxDu9D0OFzaMIzzpGd_KtOKuSdICCjVS-wn8F3qHJY1sQe4RzMySSMxERcf7/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGPho3zeQ4VtVLCKGIs5Va080hMdv9AU-omnv3vdAq3A1T1U2jnbaQaE15zX7oogDs/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -1461,10 +1461,10 @@
                     sistemOgrencileri.forEach(o => {
                         select.innerHTML += `<option value="${o.ogrenciAdi}">${o.ogrenciAdi}</option>`;
                     });
-                    if (ogrenciAdi) {
+                                       if (ogrenciAdi) {
                         select.value = ogrenciAdi;
-                                            rubrikOgrenciChecklistDoldurGenel('rubrikEtkinlikOgrenciCbListesi', 'rubrik-etk-ogr-cb');
-                    rubrikOgrenciChecklistDoldurGenel('rubrikVideoOgrenciCbListesi', 'rubrik-video-ogr-cb');
+                        rubrikOgrenciChecklistDoldurGenel('rubrikEtkinlikOgrenciCbListesi', 'rubrik-etk-ogr-cb', rubrikEtkinlikListesiFiltreliCiz);
+                        rubrikOgrenciChecklistDoldurGenel('rubrikVideoOgrenciCbListesi', 'rubrik-video-ogr-cb', rubrikVideoListesiFiltreliCiz);
                         ogrenciSecildiVerileriYukle();
                     }
                 }
@@ -4066,7 +4066,6 @@ function rubrikEtkinlikAta() {
 }
 
 function rubrikVideoListesiYukle() {
-                  
     let alan = document.getElementById('rubrikVideoListeAlani');
     if (!alan) return;
     alan.innerHTML = `<div style="font-size:11px; color:#c2410c; text-align:center;">Videolar yükleniyor...</div>`;
@@ -4078,21 +4077,8 @@ function rubrikVideoListesiYukle() {
     })
     .then(res => res.json())
     .then(data => {
-        let liste = data.videolar || [];
-        if (liste.length === 0) {
-            alan.innerHTML = `<div style="font-size:11px; color:#c2410c; text-align:center;">Henüz hiç video eklenmemiş.</div>`;
-            return;
-        }
-        alan.innerHTML = "";
-        liste.forEach(v => {
-            let satir = document.createElement('label');
-            satir.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; padding:4px 2px; cursor:pointer;";
-                       satir.innerHTML = `
-                <input type="checkbox" value="${v.satirIndex}" data-baslik="${guvenliMetin(v.baslik)}" class="rubrik-video-checkbox">
-                <span>${guvenliMetin(v.baslik)} <span style="color:#c2410c; font-size:10px;">(${guvenliMetin(v.kategori)})</span></span>
-            `;
-            alan.appendChild(satir);
-        });
+        window.rubrikTumVideoTanimlari = data.videolar || [];
+        rubrikVideoListesiFiltreliCiz();
     })
     .catch(() => {
         alan.innerHTML = `<div style="font-size:11px; color:#c62828; text-align:center;">Videolar yüklenirken hata oluştu.</div>`;
@@ -4327,7 +4313,7 @@ async function sinifIciSonIslemiGeriAl() {
     } catch (e) { alert("Bağlantı hatası: " + e); }
 }
 
-        function rubrikOgrenciChecklistDoldurGenel(konteynerId, cbClass) {
+               function rubrikOgrenciChecklistDoldurGenel(konteynerId, cbClass, filtreYenileFn) {
     let konteyner = document.getElementById(konteynerId);
     if (!konteyner) return;
     konteyner.innerHTML = "";
@@ -4342,6 +4328,13 @@ async function sinifIciSonIslemiGeriAl() {
         label.innerHTML = `<input type="checkbox" value="${guvenliMetin(u.ogrenciAdi)}" class="${cbClass}"> ${guvenliMetin(u.ogrenciAdi)}`;
         konteyner.appendChild(label);
     });
+
+    if (typeof filtreYenileFn === "function") {
+        konteyner.querySelectorAll('.' + cbClass).forEach(cb => {
+            cb.addEventListener('change', filtreYenileFn);
+        });
+        filtreYenileFn();
+    }
 }
 function rubrikHerkesSecildiGenel(herkesCb, cbClass) {
     document.querySelectorAll('.' + cbClass).forEach(cb => {
@@ -4349,15 +4342,74 @@ function rubrikHerkesSecildiGenel(herkesCb, cbClass) {
     });
 }
 
-        function rubrikEtkinlikSecDoldurSunucudan() {
+function rubrikSeciliOgrencileriGetir(cbClass) {
+    let herkesSecili = false;
+    let secilenler = [];
+    document.querySelectorAll('.' + cbClass + ':checked').forEach(cb => {
+        if (cb.value === "Herkes") herkesSecili = true;
+        else secilenler.push(cb.value.trim().toLowerCase());
+    });
+    return { herkesSecili: herkesSecili, secilenler: secilenler };
+}
+
+function rubrikEtkinlikListesiFiltreliCiz() {
+    let sel = document.getElementById('rubrikEtkinlikSec');
+    if (!sel) return;
+    let tumListe = window.rubrikTumEtkinlikTanimlari || [];
+    let durum = rubrikSeciliOgrencileriGetir('rubrik-etk-ogr-cb');
+    let mevcutDeger = sel.value;
+
+    sel.innerHTML = '<option value="">-- Etkinlik Seçin --</option>';
+    tumListe.forEach(e => {
+        let atananlar = e.atananlar || [];
+        let gizle = false;
+        if (!durum.herkesSecili && durum.secilenler.length > 0) {
+            gizle = durum.secilenler.every(ogr => atananlar.indexOf(ogr) !== -1);
+        }
+        if (!gizle) sel.innerHTML += `<option value="${e.kod}">${guvenliMetin(e.ad)}</option>`;
+    });
+
+    if ([...sel.options].some(o => o.value === mevcutDeger)) sel.value = mevcutDeger;
+}
+
+function rubrikVideoListesiFiltreliCiz() {
+    let alan = document.getElementById('rubrikVideoListeAlani');
+    if (!alan) return;
+    let tumListe = window.rubrikTumVideoTanimlari || [];
+    let durum = rubrikSeciliOgrencileriGetir('rubrik-video-ogr-cb');
+
+    alan.innerHTML = "";
+    let gosterilenSayisi = 0;
+    tumListe.forEach(v => {
+        let atananlar = v.atananlar || [];
+        let gizle = false;
+        if (!durum.herkesSecili && durum.secilenler.length > 0) {
+            gizle = durum.secilenler.every(ogr => atananlar.indexOf(ogr) !== -1);
+        }
+        if (gizle) return;
+        gosterilenSayisi++;
+        let satir = document.createElement('label');
+        satir.style.cssText = "display:flex; align-items:center; gap:6px; font-size:12px; padding:4px 2px; cursor:pointer;";
+        satir.innerHTML = `
+            <input type="checkbox" value="${v.satirIndex}" data-baslik="${guvenliMetin(v.baslik)}" class="rubrik-video-checkbox">
+            <span>${guvenliMetin(v.baslik)} <span style="color:#c2410c; font-size:10px;">(${guvenliMetin(v.kategori)})</span></span>
+        `;
+        alan.appendChild(satir);
+    });
+
+    if (gosterilenSayisi === 0) {
+        alan.innerHTML = `<div style="font-size:11px; color:#c2410c; text-align:center;">Seçili öğrenci(ler)e atanabilecek yeni video kalmadı.</div>`;
+    }
+}
+
+       function rubrikEtkinlikSecDoldurSunucudan() {
     let sel = document.getElementById('rubrikEtkinlikSec');
     if (!sel) return;
     fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "tumEtkinlikTanimlariGetir" }) })
     .then(res => res.json())
     .then(data => {
         window.rubrikTumEtkinlikTanimlari = data.liste || [];
-        sel.innerHTML = '<option value="">-- Etkinlik Seçin --</option>';
-        window.rubrikTumEtkinlikTanimlari.forEach(e => { sel.innerHTML += `<option value="${e.kod}">${guvenliMetin(e.ad)}</option>`; });
+        rubrikEtkinlikListesiFiltreliCiz();
     });
 }
 
