@@ -4013,8 +4013,9 @@ function rubrikEtkinlikAta() {
         if (secilenOgrler.length === 0) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen en az bir öğrenci veya 'Herkes' seçin!"; return; }
     if (!kod) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen bir etkinlik seçin!"; return; }
 
-    let tanim = RUBRIK_ETKINLIK_TANIMLARI.find(e => e.kod === kod);
-    let kategori = document.getElementById('rubrikEtkinlikKategori').value.trim() || tanim.kategori;
+        let tanim = (window.rubrikTumEtkinlikTanimlari || RUBRIK_ETKINLIK_TANIMLARI).find(e => e.kod === kod);
+    if (!tanim) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Etkinlik tanımı bulunamadı, lütfen tekrar seçin."; return; }
+    let kategori = tanim.kategori;
 
     mesajDiv.style.color = "#5b21b6";
     mesajDiv.innerText = "Atanıyor...";
