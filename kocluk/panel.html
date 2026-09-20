@@ -842,7 +842,7 @@
 <!-- 1. ETKİNLİK TAM EKRAN -->
 <div class="etkinlik-tam-ekran" id="etkinlik1Overlay">
     <div class="etkinlik-header">
-    <div class="etkinlik-timer-box" id="etkinlik1Timer">00:00</div>
+        <div class="etkinlik-timer-box" id="etkinlik2Timer">00:00</div>
     <div style="display:flex; gap:8px;">
         <button class="etkinlik-cikis-btn etk-muzik-btn" onclick="etkMuzikToggle()" title="Müzik" style="background:#fff3cd; color:#a15c00;">🔊</button>
         <button class="etkinlik-cikis-btn" onclick="etk1Kapat()" title="Kapat">✕</button>
@@ -1828,10 +1828,7 @@ if (toplamRozet > 0) {
     rozetler.forEach(r => {
         let gerekliPuan = Number(r.puan || 0);
         let d = String(r.durum || "").trim().toLowerCase();
-        
-        // Puan yeterliyse VEYA tablodan aktif/kazanıldı geldiyse renkli (aktif) göster
         let aktifMi = (ogrenciPuani >= gerekliPuan) || (d === "kazanıldı" || d === "aktif" || d === "kazandi" || d === "1" || d === "true");
-        
         rozetHtml += `
             <div class="rozet-box ${aktifMi ? 'aktif' : 'soluk'}">
                 <div style="font-size:26px; margin-bottom:4px;">${aktifMi ? (r.emoji || '⭐') : '🔒'}</div>
@@ -1839,7 +1836,8 @@ if (toplamRozet > 0) {
                 <div style="font-size:10px; color:#666; margin-top:2px;">Hedef: ${gerekliPuan} p</div>
             </div>`;
     });
-   
+    document.getElementById("rozetlerAlani").innerHTML = rozetHtml;
+} else {
     document.getElementById("rozetlerAlani").innerHTML = `<div style="grid-column: span 3; font-size:12px; color:#777; padding:20px;">Henüz bu öğrenci için tanımlanmış rozet bulunmuyor.</div>`;
 }
 
