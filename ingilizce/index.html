@@ -2474,9 +2474,9 @@ async function kelimeYarismasiBitir() {
             console.log("Kelime havuzu yüklendi:", data.length);
         }).catch(err => console.error("Kelime havuzu yüklenemedi", err));
 
-            const oturumAcik = localStorage.getItem("oturumAcik");
-const kayitliOgrenci = localStorage.getItem("aktifOgrenci");
-const kayitliSure = localStorage.getItem("toplamSaniye");
+                        const oturumAcik = localStorage.getItem("ing_oturumAcik");
+const kayitliOgrenci = localStorage.getItem("ing_aktifOgrenci");
+const kayitliSure = localStorage.getItem("ing_toplamSaniye");
             const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
 
             if (otomatikGirisYapilacak) {
@@ -4753,9 +4753,9 @@ async function okumaSonucuKaydet() {
                 aktifOgrenciAdi = ogr; 
                 toplamSaniye = user ? (Number(user.toplamsure) || 0) : 0;
                 
-                localStorage.setItem("oturumAcik", "true"); 
-localStorage.setItem("aktifOgrenci", aktifOgrenciAdi); 
-localStorage.setItem("toplamSaniye", toplamSaniye);
+                                localStorage.setItem("ing_oturumAcik", "true"); 
+localStorage.setItem("ing_aktifOgrenci", aktifOgrenciAdi); 
+localStorage.setItem("ing_toplamSaniye", toplamSaniye);
                                 fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`).catch(() => {});
 
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
@@ -5462,12 +5462,14 @@ function ozellikGorunurlukleriniUygula(izinler) {
     }
 }
         
-        function cikisYap() { 
+       function cikisYap() { 
     googleSheetseKaydet(); 
     clearInterval(timerInterval); 
     
-    // Kalıcı hafızayı temizle
-    localStorage.clear(); 
+    // Sadece kendi oturum verilerini temizle, diğer uygulamalara (Eğitim Koçum vb.) dokunma
+    localStorage.removeItem("ing_oturumAcik");
+    localStorage.removeItem("ing_aktifOgrenci");
+    localStorage.removeItem("ing_toplamSaniye");
     
     window.location.reload(); 
 }
