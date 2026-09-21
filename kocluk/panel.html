@@ -392,8 +392,9 @@
                 <div class="student-avatar" id="ogrenciAvatarHarf">Ö</div>
                 <div>📂 <b>Eğitim Koçum</b> — <span id="aktifOgrenciBaslik">Öğrenci</span></div>
             </div>
-            <div class="top-bar-actions">
+                        <div class="top-bar-actions">
                 <a href="../index.html" class="anasayfa-btn">Ana Sayfa</a>
+                <button class="logout-btn" style="background:#e3f2fd; color:#0d47a1;" onclick="sifreDegistirAc()">🔑 Şifre</button>
                 <button class="logout-btn" onclick="cikisYap()">Çıkış Yap</button>
             </div>
         </div>
@@ -1207,6 +1208,42 @@
     </div>
 </div>
 
+    <!-- ŞİFRE DEĞİŞTİR MODALI -->
+    <div class="modal-overlay" id="sifreIslemModal">
+        <div class="modal-content" style="max-width: 360px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h3 style="margin:0; color:#2e7d32;">🔑 Şifre Değiştir</h3>
+                <button onclick="sifreIslemKapat()" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+            </div>
+            <p style="font-size:10.5px; color:#666; margin-bottom:12px;">Kimliğini doğrulamak için aşağıdaki bilgileri eksiksiz doldur.</p>
+
+            <div class="form-group">
+                <label>Kullanıcı Adın:</label>
+                <input type="text" id="sifreIslemKullaniciAdi" readonly style="background:#eee;">
+            </div>
+            <div class="form-group">
+                <label>Kayıtlı Veli Telefon Numarası:</label>
+                <input type="text" id="sifreIslemTelefon" placeholder="05XXXXXXXXX">
+            </div>
+            <div class="form-group">
+                <label>Neden değiştiriyorsun? (en az 10 karakter):</label>
+                <textarea id="sifreIslemNeden" rows="2" placeholder="Örn: Şifremi unuttum, yeni bir şifre belirlemek istiyorum."></textarea>
+                <div id="sifreIslemNedenSayac" style="font-size:9.5px; color:#999; margin-top:2px; text-align:right;">0 / 10</div>
+            </div>
+            <div class="form-group">
+                <label>Yeni Şifre:</label>
+                <input type="password" id="sifreIslemYeniSifre1" placeholder="Yeni şifreniz">
+            </div>
+            <div class="form-group">
+                <label>Yeni Şifre (Tekrar):</label>
+                <input type="password" id="sifreIslemYeniSifre2" placeholder="Yeni şifrenizi tekrar girin">
+            </div>
+
+            <button id="sifreIslemGonderBtn" onclick="sifreIslemGonder()" style="width:100%; background:#2e7d32; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:13px;">Şifreyi Güncelle</button>
+            <div id="sifreIslemSonucMesaj" style="font-size:11px; margin-top:8px; text-align:center;"></div>
+        </div>
+    </div>
+    
         <div class="modal-overlay" id="videoKategoriModal">
     <div class="modal-content" style="max-width: 420px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -1218,7 +1255,7 @@
 </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpiSecVBh8qNIZ53gxN3Xd7pKsCqmxKZxVzuF9lOUSOslnhmIADZwhy-GQ1uWGoD7d/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxm1Ym232923XovK5BO27GR9u7ErfQDYiFeEbEXBuL1eHQ0VYl9NBvmsAvDAyGrFiBu/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -4877,6 +4914,84 @@ function rubrikDisLinkAta() {
     })
     .catch(() => { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Bağlantı hatası."; });
 }
+
+                // ===== ŞİFRE DEĞİŞTİR =====
+        function sifreDegistirAc() {
+            if (!ogrenciAdi) return;
+            document.getElementById('sifreIslemKullaniciAdi').value = ogrenciAdi;
+            document.getElementById('sifreIslemTelefon').value = "";
+            document.getElementById('sifreIslemNeden').value = "";
+            document.getElementById('sifreIslemNedenSayac').innerText = "0 / 10";
+            document.getElementById('sifreIslemNedenSayac').style.color = "#999";
+            document.getElementById('sifreIslemYeniSifre1').value = "";
+            document.getElementById('sifreIslemYeniSifre2').value = "";
+            document.getElementById('sifreIslemSonucMesaj').innerText = "";
+            document.getElementById('sifreIslemModal').style.display = 'flex';
+        }
+
+        function sifreIslemKapat() {
+            document.getElementById('sifreIslemModal').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let nedenEl = document.getElementById('sifreIslemNeden');
+            if (nedenEl) {
+                nedenEl.addEventListener('input', function() {
+                    let uzunluk = this.value.trim().length;
+                    let sayacEl = document.getElementById('sifreIslemNedenSayac');
+                    sayacEl.innerText = uzunluk + " / 10";
+                    sayacEl.style.color = uzunluk >= 10 ? "#2e7d32" : "#999";
+                });
+            }
+        });
+
+        async function sifreIslemGonder() {
+            let kullaniciAdi = document.getElementById('sifreIslemKullaniciAdi').value.trim();
+            let telefon = document.getElementById('sifreIslemTelefon').value.trim();
+            let neden = document.getElementById('sifreIslemNeden').value.trim();
+            let yeni1 = document.getElementById('sifreIslemYeniSifre1').value;
+            let yeni2 = document.getElementById('sifreIslemYeniSifre2').value;
+            let mesajDiv = document.getElementById('sifreIslemSonucMesaj');
+
+            if (!kullaniciAdi || !telefon || !neden || !yeni1 || !yeni2) {
+                mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen tüm alanları doldurun."; return;
+            }
+            if (neden.length < 10) {
+                mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Açıklama en az 10 karakter olmalı."; return;
+            }
+            if (yeni1.length < 4) {
+                mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Şifre en az 4 karakter olmalı."; return;
+            }
+            if (yeni1 !== yeni2) {
+                mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Girdiğiniz yeni şifreler birbiriyle uyuşmuyor."; return;
+            }
+
+            let btn = document.getElementById('sifreIslemGonderBtn');
+            btn.disabled = true; btn.innerText = "İşleniyor...";
+            mesajDiv.style.color = "#333"; mesajDiv.innerText = "Kontrol ediliyor...";
+
+            try {
+                let res = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "sifreDegistir", ogrenciAdi: kullaniciAdi, telefon: telefon, neden: neden, yeniSifre: yeni1 })
+                });
+                let data = await res.json();
+                if (data.status === "success") {
+                    mesajDiv.style.color = "#2e7d32";
+                    mesajDiv.innerText = "✅ Şifreniz başarıyla güncellendi!";
+                    setTimeout(() => { sifreIslemKapat(); }, 2500);
+                } else {
+                    mesajDiv.style.color = "#c62828";
+                    mesajDiv.innerText = "❌ " + (data.message || "Bir hata oluştu.");
+                }
+            } catch (e) {
+                mesajDiv.style.color = "#c62828";
+                mesajDiv.innerText = "Bağlantı hatası oluştu.";
+            } finally {
+                btn.disabled = false; btn.innerText = "Şifreyi Güncelle";
+            }
+        }
 
         function performansEmojisiGetirEK(puan) {
     if (puan >= 95) return "🏆 Harika!";
