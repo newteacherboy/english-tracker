@@ -745,8 +745,44 @@
         <!-- SOL ALTTA, YENİLEME BUTONUNUN ÜSTÜNDE DUYURU GEÇMİŞİ BUTONU -->
     <button class="refresh-float-btn" id="duyuruGecmisBtn" onclick="duyuruGecmisiniAc()" title="Duyuru Geçmişi" style="bottom: 52px; opacity: 0.75;">📋</button>
 
-    <!-- SOL ALTTA, DUYURU GEÇMİŞİNİN ÜSTÜNDE YARDIM BUTONU -->
+        <!-- SOL ALTTA, DUYURU GEÇMİŞİNİN ÜSTÜNDE YARDIM BUTONU -->
     <button class="refresh-float-btn" id="yardimBtn" onclick="yardimAc()" title="Yardım" style="bottom: 92px; opacity: 0.75;">❓</button>
+
+    <!-- SINIF OYUN MODU AKTİF ROZETİ (her zaman en üstte görünür) -->
+    <div id="siniftaOyunAktifRozet" style="display:none; position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:100000000; background:#111827; color:#fff; padding:8px 14px; border-radius:999px; font-size:11.5px; font-weight:800; align-items:center; gap:10px; box-shadow:0 6px 18px rgba(0,0,0,.35); font-family:'Nunito', sans-serif;">
+        <span>🏫 Sınıfta oynatılıyor: <span id="siniftaOyunAktifIsim" style="color:#93c5fd;">-</span></span>
+        <button onclick="siniftaOyunModuAc()" style="background:rgba(255,255,255,.15); border:none; color:#fff; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;">Değiştir</button>
+        <button onclick="siniftaOyunModunuKapat()" style="background:rgba(255,255,255,.15); border:none; color:#fff; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;">✕ Kapat</button>
+    </div>
+
+    <!-- SINIF OYUN MODU SEÇİM MODALI -->
+    <div class="rubric-modal" id="siniftaOyunModal">
+        <div class="rubric-content" style="max-width: 380px; text-align:center;">
+            <button class="game-close-btn" onclick="document.getElementById('siniftaOyunModal').style.display='none'">✕</button>
+            <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px;">🏫 Sınıf Oyun Modu</h3>
+            <p style="font-size:10.5px; color:#64748b; margin-bottom:14px; line-height:1.5;">Sınıfta topluca oynatırken, hesabına tek tek girmeden puanları doğru öğrenciye işlemek için kullan.</p>
+
+            <div class="rubric-field" style="text-align:left;">
+                <label>Sınıf:</label>
+                <select id="siniftaOyunSinifSelect" onchange="siniftaOyunSinifSecildi()">
+                    <option value="">-- Sınıf Seçin --</option>
+                </select>
+            </div>
+            <div class="rubric-field" style="text-align:left;">
+                <label>Öğrenci:</label>
+                <select id="siniftaOyunOgrenciSelect" onchange="siniftaOyunButonlariGuncelle()">
+                    <option value="">-- Önce sınıf seçin --</option>
+                </select>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+                <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('yolculuk')" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; opacity:.45;">🗺️ Kelime Kartları Yolculuğu</button>
+                <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('ky')" style="background:linear-gradient(135deg,#d946ef,#a21caf); color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; opacity:.45;">🏆 Kelime Ezber Yarışması</button>
+                <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('jp')" style="background:linear-gradient(135deg,#e11d48,#be123c); color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; opacity:.45;">🎈 Jeopardy Balonları</button>
+                <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('bosluk')" style="background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; opacity:.45;">🧩 Boşluk Doldurma Bulmacası</button>
+            </div>
+        </div>
+    </div>
 
         <!-- YARDIM KÖŞESİ MODALI -->
     <div class="yardim-modal-overlay" id="yardimModal">
@@ -810,8 +846,11 @@
             <button class="ogretmen-menu-btn" onclick="ogretmenMenuRubrikAc()">
                 <span>📝 Rubrik Paneli</span>
             </button>
-                                               <button class="ogretmen-menu-btn" onclick="ogretmenMenuSinifIciAc()">
+                                                       <button class="ogretmen-menu-btn" onclick="ogretmenMenuSinifIciAc()">
                 <span>⚡ Ders İçi Performans</span>
+            </button>
+            <button class="ogretmen-menu-btn" onclick="siniftaOyunModuAc()">
+                <span>🏫 Sınıf Oyun Modu</span>
             </button>
                        <button class="ogretmen-menu-btn" onclick="ogretmenMenuDuyuruAc()">
                 <span>📢 Duyurular</span>
@@ -2249,16 +2288,15 @@
     </div>
     <script>
 
-        // --- SINIF SEVİYESİ KISITLAMA SİSTEMİ ---
+         // --- SINIF SEVİYESİ KISITLAMA SİSTEMİ ---
 function izinVerilenSinifAraligiGetir() {
-    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(oyunIcinAktifIsim()).trim().toLowerCase());
     let ogrSinif = user ? Number(user.Sinif) : 0;
     if (!ogrSinif || ogrSinif < 1) return null; // sınıf bilgisi yoksa (örn. teacher) sınırlama uygulanmaz
     let min = Math.max(1, ogrSinif - 1);
     let max = Math.min(8, ogrSinif + 1);
     return { min: min, max: max };
 }
-
 function sinifGridKisitlamaUygula(gridId, aktifSinifAyarlaFn, sinifGuncelleFn) {
     let aralik = izinVerilenSinifAraligiGetir();
     let grid = document.getElementById(gridId);
@@ -2316,19 +2354,6 @@ function kelimeYarismasiAc() {
     document.getElementById('kyBitisEkrani').style.display = 'none';
 
     // Oturum açıksa ismi yaz ama değiştirmeye izin ver
-    let isimInput = document.getElementById('kyIsimInput');
-    if (isimInput) {
-        if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
-            isimInput.value = aktifOgrenciAdi;
-        } else {
-            isimInput.value = "";
-        }
-        isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
-    }
-
-        kySinifKisitlamaUygulaVeBaslat();
-    kelimeMuzikBaslat();
-}
 
 function kelimeYarismasiKapat() {
     document.getElementById('kelimeYarismaOverlay').style.display = 'none';
@@ -2737,6 +2762,8 @@ async function kelimeYarismasiBitir() {
         const apiURL = "https://script.google.com/macros/s/AKfycbxMB__-aoNd2ut8HnUrh7YEVrhPavJx8bOsUf4dm1HxMhvqGaIJ22fR3fB4JHpqjxyKXA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
+                let siniftaOynananOgrenci = null;
+        function oyunIcinAktifIsim() { return siniftaOynananOgrenci || aktifOgrenciAdi; }
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
                  masterKelimeHavuzu = [];
 
@@ -3792,6 +3819,83 @@ function ozellikIzniKaydet() {
                 }, 5000);
             });
         }
+
+            // ===== SINIF OYUN MODU =====
+        function siniftaOyunModuAc() {
+            document.getElementById('ogretmenMenuModal').style.display = 'none';
+            document.getElementById('siniftaOyunModal').style.display = 'flex';
+            siniftaOyunSinifDoldur();
+            document.getElementById('siniftaOyunOgrenciSelect').innerHTML = '<option value="">-- Önce sınıf seçin --</option>';
+            siniftaOyunButonlariGuncelle();
+        }
+
+        function siniftaOyunSinifDoldur() {
+            let sel = document.getElementById('siniftaOyunSinifSelect');
+            let siniflar = new Set();
+            globalDataCache.forEach(u => {
+                let ad = String(u.ogrenci || "").trim();
+                if (!ad || ad.toLowerCase() === "teacher") return;
+                let s = String(u.Sinif || "").trim();
+                if (s) siniflar.add(s);
+            });
+            sel.innerHTML = '<option value="">-- Sınıf Seçin --</option>';
+            Array.from(siniflar).sort((a,b) => Number(a) - Number(b)).forEach(s => {
+                sel.innerHTML += `<option value="${s}">${s}. Sınıf</option>`;
+            });
+        }
+
+        function siniftaOyunSinifSecildi() {
+            let sinif = document.getElementById('siniftaOyunSinifSelect').value;
+            let ogrSel = document.getElementById('siniftaOyunOgrenciSelect');
+            ogrSel.innerHTML = '<option value="">-- Öğrenci Seçin --</option>';
+            if (sinif) {
+                globalDataCache
+                    .filter(u => String(u.Sinif || "").trim() === sinif && String(u.ogrenci || "").trim().toLowerCase() !== "teacher")
+                    .sort((a, b) => String(a.ogrenci).localeCompare(String(b.ogrenci), 'tr'))
+                    .forEach(u => {
+                        ogrSel.innerHTML += `<option value="${guvenliMetin(u.ogrenci)}">${guvenliMetin(u.ogrenci)}</option>`;
+                    });
+            }
+            siniftaOyunButonlariGuncelle();
+        }
+
+        function siniftaOyunButonlariGuncelle() {
+            let ogr = document.getElementById('siniftaOyunOgrenciSelect').value;
+            let aktifMi = !!ogr;
+            document.querySelectorAll('.siniftaOyunBtn').forEach(b => {
+                b.disabled = !aktifMi;
+                b.style.opacity = aktifMi ? '1' : '0.45';
+            });
+        }
+
+        function siniftaOyunuBaslat(oyunTuru) {
+            let ogr = document.getElementById('siniftaOyunOgrenciSelect').value;
+            if (!ogr) { alert("Lütfen önce bir öğrenci seçin."); return; }
+            siniftaOynananOgrenci = ogr;
+            document.getElementById('siniftaOyunModal').style.display = 'none';
+            siniftaOyunRozetiGoster();
+
+            if (oyunTuru === 'yolculuk') seviyeHaritasiAc();
+            else if (oyunTuru === 'ky') kelimeYarismasiAc();
+            else if (oyunTuru === 'jp') jpOyunAc();
+            else if (oyunTuru === 'bosluk') boslukOyunAc();
+        }
+
+        function siniftaOyunRozetiGoster() {
+            let rozet = document.getElementById('siniftaOyunAktifRozet');
+            if (!rozet) return;
+            if (siniftaOynananOgrenci) {
+                document.getElementById('siniftaOyunAktifIsim').innerText = siniftaOynananOgrenci;
+                rozet.style.display = 'flex';
+            } else {
+                rozet.style.display = 'none';
+            }
+        }
+
+        function siniftaOyunModunuKapat() {
+            siniftaOynananOgrenci = null;
+            siniftaOyunRozetiGoster();
+        }
         
         function ogrenciMaskotSec(isim) {
     const maskotlar = ['🦉', '🦊', '🐰', '🐼', '🐻', '🐨', '🐱', '🐶', '🦁', '🐯', '🐹', '🐸'];
@@ -3799,9 +3903,8 @@ function ozellikIzniKaydet() {
     for (let i = 0; i < isim.length; i++) toplam += isim.charCodeAt(i);
     return maskotlar[toplam % maskotlar.length];
 }
-
-                                           function seviyeSinifSecimKisitlamaUygula() {
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                function seviyeSinifSecimKisitlamaUygula() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === oyunIcinAktifIsim().toLowerCase());
             let kendiSinifi = user ? Number(user.Sinif) || 0 : 0;
             let grid = document.getElementById('seviyeSinifGrid');
             if (!grid) return;
@@ -3815,8 +3918,8 @@ function ozellikIzniKaydet() {
             });
         }
 
-        function seviyeHaritasiAc() {
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                             function seviyeHaritasiAc() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === oyunIcinAktifIsim().toLowerCase());
             if (!user || !user.aktiviteKartlari || user.aktiviteKartlari.length === 0) {
                 alert("Henüz kelime kartı bulunmuyor. Öğretmenin yakında ekleyecek!");
                 return;
@@ -3843,8 +3946,8 @@ function ozellikIzniKaydet() {
             }
         }
 
-               function seviyeSinifSecildi(sinif) {
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                    function seviyeSinifSecildi(sinif) {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === oyunIcinAktifIsim().toLowerCase());
             let kendiSinifi = user ? Number(user.Sinif) || 0 : 0;
 
             // YENİ: Öğrenci sadece kendi sınıfını veya bir alt sınıfı seçebilir
@@ -3859,7 +3962,7 @@ function ozellikIzniKaydet() {
 
             if (user) user.secilenSinif = sinif;
 
-            fetch(`${apiURL}?islem=sinifSec&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&sinif=${sinif}`).catch(() => {});
+            fetch(`${apiURL}?islem=sinifSec&ogrenci=${encodeURIComponent(oyunIcinAktifIsim())}&sinif=${sinif}`).catch(() => {});
 
             seviyeHaritasiCiz();
         }
@@ -3872,8 +3975,8 @@ function ozellikIzniKaydet() {
         }
 
                
-        function seviyeHaritasiCiz() {
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+               function seviyeHaritasiCiz() {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === oyunIcinAktifIsim().toLowerCase());
             if (!user) return;
             document.getElementById('sinifDegistirBtn').style.display = 'inline-block';
 
@@ -3970,8 +4073,8 @@ function ozellikIzniKaydet() {
             setTimeout(() => { scrollAlani.scrollTop = scrollAlani.scrollHeight; }, 50);
         }
 
-                function adaSeviyeDetayiniAc(unite) {
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                                function adaSeviyeDetayiniAc(unite) {
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === oyunIcinAktifIsim().toLowerCase());
             if (!user) return;
 
             let kartlar = user.aktiviteKartlari.filter(k => k.sinif === seviyeAktifSinif && k.unite === unite);
@@ -6290,23 +6393,22 @@ function jpOyunAc() {
     let bitis = document.getElementById('jpBitisEkrani');
     if (bitis) bitis.style.display = 'none';
 
-    // Oturum açıksa ismi yaz ama değiştirmeye izin ver
+        // Sınıfta oynatılıyorsa ismi kilitle, değilse normal davran
     let isimInput = document.getElementById('jpIsimInput');
     if (isimInput) {
-        if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
+        if (siniftaOynananOgrenci) {
+            isimInput.value = siniftaOynananOgrenci;
+            isimInput.disabled = true;
+        } else if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
             isimInput.value = aktifOgrenciAdi;
+            isimInput.disabled = false;
         } else {
             isimInput.value = "";
+            isimInput.disabled = false;
         }
-        isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
     }
 
        jpSinifKisitlamaUygulaVeBaslat();
-    
-    if (typeof jeopardyMuzikBaslat === 'function') {
-        jeopardyMuzikBaslat();
-    }
-}
 
 // İster jpOyunKapat ister jpOyunuKapat çağrılsın, ikisi de çalışır
 function jpOyunKapat() {
@@ -6659,17 +6761,20 @@ function boslukOyunAc() {
     document.getElementById('boslukOyunEkrani').style.display = 'none';
     document.getElementById('boslukBitisEkrani').style.display = 'none';
 
-    // Oturum açıksa ismi yaz ama değiştirmeye (düzenlemeye) izin ver
+     // Sınıfta oynatılıyorsa ismi kilitle, değilse normal davran
     let isimInput = document.getElementById('boslukIsimInput');
     if (isimInput) {
-        if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
+        if (siniftaOynananOgrenci) {
+            isimInput.value = siniftaOynananOgrenci;
+            isimInput.disabled = true;
+        } else if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
             isimInput.value = aktifOgrenciAdi;
+            isimInput.disabled = false;
         } else {
             isimInput.value = "";
+            isimInput.disabled = false;
         }
-        isimInput.disabled = false; // Kullanıcı isterse ismi değiştirebilir
     }
-
         // YENİ: "Kontrol Et" butonunu bir önceki oyundan kalan kilitli/değişmiş halinden sıfırla
     let kontrolButonuSifirla = document.querySelector('#boslukOyunEkrani .btn-giris');
     if (kontrolButonuSifirla) {
@@ -7806,8 +7911,8 @@ let seviyeDisLinkYuklendiMi = false;
         let seviyeDisLinkAcilisZamani = 0;
         const SEVIYE_MIN_SANIYE = 60;
 
-        function seviyeDisLinkAc(sinif, unite, seviye) {
-    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+                function seviyeDisLinkAc(sinif, unite, seviye) {
+    let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === oyunIcinAktifIsim().toLowerCase());
     if (!user) return;
 
     let kart = (user.aktiviteKartlari || []).find(k => k.sinif === sinif && k.unite === unite && k.seviye === seviye);
@@ -7891,10 +7996,10 @@ function seviyeOnayVer(bitirdiMi) {
     document.getElementById('seviyeDisLinkIframe').src = "";
     document.getElementById('seviyeDisLinkOverlay').style.display = 'none';
 
-    if (bitirdiMi) {
-        fetch(`${apiURL}?islem=seviyeTamamla&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&sinif=${seviyeDisLinkAktifSinif}&unite=${seviyeDisLinkAktifUnite}&seviye=${seviyeDisLinkAktifSeviye}`).catch(() => {});
+       if (bitirdiMi) {
+        fetch(`${apiURL}?islem=seviyeTamamla&ogrenci=${encodeURIComponent(oyunIcinAktifIsim())}&sinif=${seviyeDisLinkAktifSinif}&unite=${seviyeDisLinkAktifUnite}&seviye=${seviyeDisLinkAktifSeviye}`).catch(() => {});
 
-        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
+        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === oyunIcinAktifIsim().toLowerCase());
         if (user) {
             if (!user.seviyeIlerleme) user.seviyeIlerleme = [];
             user.seviyeIlerleme.push({ sinif: seviyeDisLinkAktifSinif, unite: seviyeDisLinkAktifUnite, seviye: seviyeDisLinkAktifSeviye, tamamlandi: true });
