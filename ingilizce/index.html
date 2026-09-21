@@ -791,8 +791,12 @@
                                                <button class="ogretmen-menu-btn" onclick="ogretmenMenuSinifIciAc()">
                 <span>⚡ Ders İçi Performans</span>
             </button>
-            <button class="ogretmen-menu-btn" onclick="ogretmenMenuDuyuruAc()">
+                       <button class="ogretmen-menu-btn" onclick="ogretmenMenuDuyuruAc()">
                 <span>📢 Duyurular</span>
+            </button>
+            <button class="ogretmen-menu-btn" onclick="ogretmenMenuBekleyenKayitlarAc()">
+                <span>🆕 Bekleyen Kayıtlar</span>
+                <span class="ogretmen-menu-rozet" id="ogretmenMenuBekleyenSayisi" style="display:none;">0</span>
             </button>
             <button class="ogretmen-menu-btn" onclick="ogretmenMenuSohbetAc()">
                 <span>💬 Öğrenci Sohbetleri</span>
@@ -1180,8 +1184,10 @@
             </div>
             <button type="submit" id="girisBtn" class="btn-giris" disabled>Veriler Yükleniyor...</button>
                 </form>
-        <div id="mesaj"></div>
-        <div style="text-align:center; margin-top:10px;">
+               <div id="mesaj"></div>
+        <div style="text-align:center; margin-top:10px; display:flex; justify-content:center; gap:14px;">
+            <a href="javascript:void(0)" onclick="kayitOlAc()" style="font-size:11.5px; color:#2f855a; font-weight:700; text-decoration:none;">Hesabım yok, kayıt ol</a>
+            <span style="color:#cbd5e1;">|</span>
             <a href="javascript:void(0)" onclick="sifremiUnuttumAc()" style="font-size:11.5px; color:#2f855a; font-weight:700; text-decoration:none;">Şifremi unuttum?</a>
         </div>
     </div>
@@ -1571,6 +1577,70 @@
 
         <button class="btn-giris" id="sifreIslemGonderBtn" onclick="sifreIslemGonder()" style="background:#2563eb;">Şifreyi Güncelle</button>
         <div id="sifreIslemSonucMesaj" style="font-size:11px; margin-top:8px; text-align:center;"></div>
+    </div>
+</div>
+
+    <!-- KAYIT OL MODALI -->
+<div class="rubric-modal" id="kayitOlModal">
+    <div class="rubric-content" style="max-width: 380px;">
+        <button class="game-close-btn" onclick="kayitOlKapat()">✕</button>
+        <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">📝 Kayıt Ol</h3>
+        <p style="font-size:10.5px; color:#64748b; text-align:center; margin-bottom:14px;">Kayıt talebin öğretmenine iletilecek. Onaylandıktan sonra giriş yapabilirsin.</p>
+
+        <div class="rubric-field">
+            <label>Kullanıcı Adı (Ad Soyad):</label>
+            <input type="text" id="kayitOlKullaniciAdi" placeholder="Örn: Ahmet Yılmaz">
+        </div>
+        <div class="rubric-field">
+            <label>Şifre:</label>
+            <input type="password" id="kayitOlSifre1" placeholder="En az 4 karakter">
+        </div>
+        <div class="rubric-field">
+            <label>Şifre (Tekrar):</label>
+            <input type="password" id="kayitOlSifre2" placeholder="Şifrenizi tekrar girin">
+        </div>
+        <div class="rubric-field">
+            <label>Veli Telefon Numarası:</label>
+            <input type="text" id="kayitOlTelefon" placeholder="05XXXXXXXXX">
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="rubric-field">
+                <label>Sınıf:</label>
+                <select id="kayitOlSinif">
+                    <option value="">Seçin</option>
+                    <option value="1">1. Sınıf</option>
+                    <option value="2">2. Sınıf</option>
+                    <option value="3">3. Sınıf</option>
+                    <option value="4">4. Sınıf</option>
+                    <option value="5">5. Sınıf</option>
+                    <option value="6">6. Sınıf</option>
+                    <option value="7">7. Sınıf</option>
+                    <option value="8">8. Sınıf</option>
+                </select>
+            </div>
+            <div class="rubric-field">
+                <label>Şube:</label>
+                <input type="text" id="kayitOlSube" placeholder="Örn: A">
+            </div>
+        </div>
+        <div class="rubric-field">
+            <label>E-posta (isteğe bağlı):</label>
+            <input type="text" id="kayitOlEmail" placeholder="ornek@mail.com">
+        </div>
+
+        <button class="btn-giris" id="kayitOlGonderBtn" onclick="kayitOlGonder()" style="background:#2563eb;">Kayıt Talebi Gönder</button>
+        <div id="kayitOlSonucMesaj" style="font-size:11px; margin-top:8px; text-align:center;"></div>
+    </div>
+</div>
+
+    <!-- BEKLEYEN KAYITLAR MODALI (öğretmen tarafı) -->
+<div class="rubric-modal" id="bekleyenKayitlarModal">
+    <div class="rubric-content" style="max-width: 440px;">
+        <button class="game-close-btn" onclick="document.getElementById('bekleyenKayitlarModal').style.display='none'">✕</button>
+        <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:12px; text-align:center;">🆕 Bekleyen Kayıtlar</h3>
+        <div id="bekleyenKayitlarListeAlani" style="max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+            <div style="font-size:11px; color:#64748b; text-align:center; padding:10px;">Yükleniyor...</div>
+        </div>
     </div>
 </div>
 
@@ -2581,7 +2651,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzEuK4qNpGL_j7OcV30kVSIsCFXQ2-kxrhwrS2cf_MTGQq5uInd-h-zFLRfLmhv5cZRDA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxMB__-aoNd2ut8HnUrh7YEVrhPavJx8bOsUf4dm1HxMhvqGaIJ22fR3fB4JHpqjxyKXA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -3346,6 +3416,135 @@ function ozellikIzniKaydet() {
             } finally {
                 btn.disabled = false; btn.innerText = "Şifreyi Güncelle";
             }
+        }
+
+                // ===== KAYIT OL =====
+        function kayitOlAc() {
+            document.getElementById('kayitOlKullaniciAdi').value = "";
+            document.getElementById('kayitOlSifre1').value = "";
+            document.getElementById('kayitOlSifre2').value = "";
+            document.getElementById('kayitOlTelefon').value = "";
+            document.getElementById('kayitOlSinif').value = "";
+            document.getElementById('kayitOlSube').value = "";
+            document.getElementById('kayitOlEmail').value = "";
+            document.getElementById('kayitOlSonucMesaj').innerText = "";
+            document.getElementById('kayitOlModal').style.display = 'flex';
+        }
+
+        function kayitOlKapat() {
+            document.getElementById('kayitOlModal').style.display = 'none';
+        }
+
+        async function kayitOlGonder() {
+            let kullaniciAdi = document.getElementById('kayitOlKullaniciAdi').value.trim();
+            let sifre1 = document.getElementById('kayitOlSifre1').value;
+            let sifre2 = document.getElementById('kayitOlSifre2').value;
+            let telefon = document.getElementById('kayitOlTelefon').value.trim();
+            let sinif = document.getElementById('kayitOlSinif').value;
+            let sube = document.getElementById('kayitOlSube').value.trim();
+            let email = document.getElementById('kayitOlEmail').value.trim();
+            let mesajDiv = document.getElementById('kayitOlSonucMesaj');
+
+            if (!kullaniciAdi || !sifre1 || !sifre2 || !telefon || !sinif || !sube) {
+                mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen zorunlu alanları doldurun."; return;
+            }
+            if (sifre1.length < 4) {
+                mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Şifre en az 4 karakter olmalı."; return;
+            }
+            if (sifre1 !== sifre2) {
+                mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Girdiğiniz şifreler birbiriyle uyuşmuyor."; return;
+            }
+
+            let btn = document.getElementById('kayitOlGonderBtn');
+            btn.disabled = true; btn.innerText = "Gönderiliyor...";
+            mesajDiv.style.color = "#334155"; mesajDiv.innerText = "İşleniyor...";
+
+            try {
+                let res = await fetch(apiURL, {
+                    method: "POST",
+                    body: JSON.stringify({ islem: "kayitOl", ogrenciAdi: kullaniciAdi, sifre: sifre1, telefon: telefon, sinif: sinif, sube: sube, email: email })
+                });
+                let data = await res.json();
+                if (data.status === "success") {
+                    mesajDiv.style.color = "#16a34a";
+                    mesajDiv.innerText = "✅ Kayıt talebin alındı! Öğretmenin onayladıktan sonra bu kullanıcı adı ve şifreyle giriş yapabilirsin.";
+                    setTimeout(() => { kayitOlKapat(); }, 3200);
+                } else {
+                    mesajDiv.style.color = "#dc2626";
+                    mesajDiv.innerText = "❌ " + (data.message || "Bir hata oluştu.");
+                }
+            } catch (e) {
+                mesajDiv.style.color = "#dc2626";
+                mesajDiv.innerText = "Bağlantı hatası oluştu.";
+            } finally {
+                btn.disabled = false; btn.innerText = "Kayıt Talebi Gönder";
+            }
+        }
+
+        // ===== BEKLEYEN KAYITLAR (öğretmen tarafı) =====
+        function ogretmenMenuBekleyenKayitlarAc() {
+            document.getElementById('ogretmenMenuModal').style.display = 'none';
+            document.getElementById('bekleyenKayitlarModal').style.display = 'flex';
+            bekleyenKayitlariYukle();
+        }
+
+        function bekleyenKayitlariYukle() {
+            let alan = document.getElementById('bekleyenKayitlarListeAlani');
+            alan.innerHTML = `<div style="font-size:11px; color:#64748b; text-align:center; padding:10px;">Yükleniyor...</div>`;
+            fetch(apiURL, {
+                method: "POST",
+                body: JSON.stringify({ islem: "bekleyenKayitlariGetir" })
+            })
+            .then(res => res.json())
+            .then(data => {
+                let liste = data.liste || [];
+                let badge = document.getElementById('ogretmenMenuBekleyenSayisi');
+                if (liste.length > 0) { badge.style.display = 'inline-block'; badge.innerText = liste.length; }
+                else { badge.style.display = 'none'; }
+
+                if (liste.length === 0) {
+                    alan.innerHTML = `<div style="font-size:11px; color:#64748b; text-align:center; padding:14px;">Bekleyen kayıt talebi yok.</div>`;
+                    return;
+                }
+                alan.innerHTML = "";
+                liste.forEach(k => {
+                    let kart = document.createElement('div');
+                    kart.style.cssText = "background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px;";
+                    kart.innerHTML = `
+                        <div style="font-weight:800; font-size:13px; color:#1e293b; margin-bottom:4px;">${guvenliMetin(k.ogrenciAdi)}</div>
+                        <div style="font-size:11px; color:#64748b; line-height:1.7; margin-bottom:10px;">
+                            📚 Sınıf: ${guvenliMetin(String(k.sinif))} / ${guvenliMetin(String(k.sube))}<br>
+                            📞 Veli Telefon: ${guvenliMetin(String(k.telefon))}<br>
+                            ${k.email ? `✉️ E-posta: ${guvenliMetin(String(k.email))}` : ''}
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button onclick="kayitOnaylaYap('${guvenliMetin(k.ogrenciAdi).replace(/'/g,"\\'")}')" style="flex:1; background:#dcfce7; color:#166534; border:none; padding:8px; border-radius:8px; font-weight:700; font-size:11.5px; cursor:pointer;">✅ Onayla</button>
+                            <button onclick="kayitReddetYap('${guvenliMetin(k.ogrenciAdi).replace(/'/g,"\\'")}')" style="flex:1; background:#fee2e2; color:#991b1b; border:none; padding:8px; border-radius:8px; font-weight:700; font-size:11.5px; cursor:pointer;">❌ Reddet</button>
+                        </div>
+                    `;
+                    alan.appendChild(kart);
+                });
+            })
+            .catch(() => { alan.innerHTML = `<div style="font-size:11px; color:#dc2626; text-align:center;">Yüklenirken hata oluştu.</div>`; });
+        }
+
+        function kayitOnaylaYap(ogrenciAdi) {
+            fetch(apiURL, {
+                method: "POST",
+                body: JSON.stringify({ islem: "kayitOnayla", ogrenciAdi: ogrenciAdi })
+            })
+            .then(() => bekleyenKayitlariYukle())
+            .catch(() => {});
+        }
+
+        function kayitReddetYap(ogrenciAdi) {
+            if (!confirm(`${ogrenciAdi} adlı kayıt talebini reddetmek istediğine emin misin? Bu işlem geri alınamaz.`)) return;
+            fetch(apiURL, {
+                method: "POST",
+                body: JSON.stringify({ islem: "kayitReddet", ogrenciAdi: ogrenciAdi })
+            })
+            .then(() => bekleyenKayitlariYukle())
+            .catch(() => {});
         }
         
         function ogrenciMaskotSec(isim) {
@@ -5066,8 +5265,19 @@ async function okumaSonucuKaydet() {
                 denemeSayisi++;
             }
 
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
-            
+                        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
+
+            if (user) {
+                let durumVal = String(user.durum || "").trim().toLowerCase();
+                if (durumVal === "onay bekliyor") {
+                    document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+                    document.getElementById('login-container').style.display = 'block';
+                    m.className = "error";
+                    m.innerText = "Hesabın henüz öğretmen onayı bekliyor. Onaylandığında giriş yapabilirsin.";
+                    return;
+                }
+            }
+
             // Eğer özel "teacher" veya veri tabanında eşleşen bir kullanıcı varsa
             if(user || ogr.toLowerCase() === "teacher") {
                 m.className="success"; 
