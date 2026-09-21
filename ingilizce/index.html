@@ -1099,6 +1099,11 @@
                 <textarea id="duyuruMesajInput" rows="3" placeholder="Duyuru içeriğini buraya yazın..."></textarea>
             </div>
 
+                        <div class="rubric-field">
+                <label>Görsel Linki (isteğe bağlı):</label>
+                <input type="text" id="duyuruGorselInput" placeholder="https://... (resim URL'si)">
+            </div>
+
             <div class="rubric-field">
                 <label>Renk Teması:</label>
                 <select id="duyuruTemaSelect">
@@ -1547,13 +1552,12 @@
                 <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.85); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:4px;">📢 Duyuru</div>
                 <div id="duyuruBaslik" style="font-size:16px; font-weight:900; color:#fff;">Başlık</div>
             </div>
-            <div style="padding:18px 20px 20px;">
+                        <div style="padding:18px 20px 20px;">
+                <img id="duyuruGorsel" src="" style="display:none; width:100%; max-height:220px; object-fit:cover; border-radius:10px; margin-bottom:14px;">
                 <div id="duyuruMesaj" style="font-size:13.5px; color:#334155; line-height:1.6; white-space:pre-line;">Mesaj</div>
                 <button onclick="duyuruKapat()" style="width:100%; margin-top:16px; background:#f1f5f9; color:#334155; border:none; padding:10px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer;">Anladım, Kapat</button>
             </div>
-            <div style="height:3px; background:#e2e8f0;">
-                <div id="duyuruProgressBar" style="height:100%; width:100%; background:#2563eb;"></div>
-            </div>
+           
         </div>
     </div>
 
@@ -2485,7 +2489,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbwWgH97RB4PQ6FogEfC7LwiylLv0WI1Y8Uey7-_PwMi4nNPQJPBEnEFjhi1EwiVBv-pBg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxhOck7E2yJbZFkx1NeT012GWuMRG02Ro8Nb-T0VUQblTeCOlzwCJMeZqM5ROR-DW1NkA/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
         let gelisimChartInstance = null, kriterChartInstance = null, denemeChartInstance = null;
@@ -7375,8 +7379,7 @@ function rubricVideoOgrenciChecklistDoldur() {
     rubricOgrenciChecklistDoldurGenel('rubricVideoOgrenciCheckboxListesi', 'rubric-video-ogr-cb', rubricVideoListesiFiltreliCiz);
 }
 
-                // ===== DUYURU SİSTEMİ (öğrenci tarafı) =====
-        let duyuruAktifTimer = null;
+                       // ===== DUYURU SİSTEMİ (öğrenci tarafı) =====
         let duyuruAktifId = null;
 
         function duyuruKontrolEt() {
@@ -7390,25 +7393,30 @@ function rubricVideoOgrenciChecklistDoldur() {
             })
             .catch(() => {});
         }
+
         function duyuruGoster(duyuru) {
             duyuruAktifId = duyuru.id;
             let temaRenkleri = {
-                mavi:    { bg: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', accent: '#2563eb' },
-                yesil:   { bg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', accent: '#16a34a' },
-                mor:     { bg: 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)', accent: '#7c3aed' },
-                turuncu: { bg: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', accent: '#f59e0b' },
-                kirmizi: { bg: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)', accent: '#e11d48' }
+                mavi:    'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                yesil:   'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                mor:     'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
+                turuncu: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                kirmizi: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)'
             };
-            let renk = temaRenkleri[duyuru.tema] || temaRenkleri.mavi;
+            let renkBg = temaRenkleri[duyuru.tema] || temaRenkleri.mavi;
 
             document.getElementById('duyuruBaslik').innerText = duyuru.baslik;
             document.getElementById('duyuruMesaj').innerText = duyuru.mesaj;
-            document.getElementById('duyuruHeaderAlani').style.background = renk.bg;
+            document.getElementById('duyuruHeaderAlani').style.background = renkBg;
 
-            let bar = document.getElementById('duyuruProgressBar');
-            bar.style.transition = 'none';
-            bar.style.width = '100%';
-            bar.style.background = renk.accent;
+            let gorselEl = document.getElementById('duyuruGorsel');
+            if (duyuru.gorselLink && duyuru.gorselLink.trim()) {
+                gorselEl.src = duyuru.gorselLink.trim();
+                gorselEl.style.display = 'block';
+            } else {
+                gorselEl.src = '';
+                gorselEl.style.display = 'none';
+            }
 
             document.getElementById('duyuruOverlay').style.display = 'flex';
         }
@@ -7421,7 +7429,6 @@ function rubricVideoOgrenciChecklistDoldur() {
             }
             duyuruAktifId = null;
         }
-
         // ===== DUYURU SİSTEMİ (öğretmen tarafı) =====
         function ogretmenMenuDuyuruAc() {
             document.getElementById('ogretmenMenuModal').style.display = 'none';
@@ -7508,9 +7515,10 @@ function rubricVideoOgrenciChecklistDoldur() {
             .catch(() => {});
         }
 
-        function duyuruEkleGonder() {
+                function duyuruEkleGonder() {
             let baslik = document.getElementById('duyuruBaslikInput').value.trim();
             let mesaj = document.getElementById('duyuruMesajInput').value.trim();
+            let gorselLink = document.getElementById('duyuruGorselInput').value.trim();
             let tema = document.getElementById('duyuruTemaSelect').value;
             let gosterimSinir = document.getElementById('duyuruGosterimSelect').value;
             let herkesMi = document.getElementById('duyuruHerkesCb').checked;
@@ -7535,6 +7543,7 @@ function rubricVideoOgrenciChecklistDoldur() {
                     islem: "duyuruEkle",
                     baslik: baslik,
                     mesaj: mesaj,
+                    gorselLink: gorselLink,
                     hedefTipi: hedefTipi,
                     hedefListesi: hedefListesi,
                     gosterimSinir: gosterimSinir,
@@ -7546,8 +7555,9 @@ function rubricVideoOgrenciChecklistDoldur() {
                 if (data.status === "success") {
                     mesajDiv.style.color = "#16a34a";
                     mesajDiv.innerText = "✅ Duyuru yayınlandı!";
-                    document.getElementById('duyuruBaslikInput').value = "";
+                                        document.getElementById('duyuruBaslikInput').value = "";
                     document.getElementById('duyuruMesajInput').value = "";
+                    document.getElementById('duyuruGorselInput').value = "";
                     document.getElementById('duyuruHerkesCb').checked = true;
                     duyuruHerkesToggle();
                     document.querySelectorAll('.duyuru-ogr-cb').forEach(cb => cb.checked = false);
