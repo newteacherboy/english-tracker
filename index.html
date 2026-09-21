@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1D9E75">
-<title>Diji Muallim Diji Dershane</title>
+<title>DijiEdu | Akıllı Eğitim Stüdyosu</title>
 <link rel="manifest" href="manifest.json">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
@@ -587,8 +587,8 @@ body {
 
         <div class="splash-ekrani" id="splashEkrani">
         <div class="splash-logo">🦉</div>
-        <div class="splash-baslik">DijiMuallim</div>
-        <div class="splash-alt-yazi">Hep En İyisi</div>
+        <div class="splash-baslik">DijiEdu</div>
+        <div class="splash-alt-yazi">Akıllı Eğitim Stüdyosu</div>
     </div>
     <script>
         setTimeout(function() {
@@ -609,8 +609,8 @@ body {
 <!-- 🚀 GİRİŞ KARŞILAMA VE PORTAL SEÇİM EKRANI -->
 <div id="welcomePortalScreen" class="welcome-overlay">
   <div class="welcome-container">
-    <div class="welcome-badge">🎓 Diji Dershane Portalı</div>
-    <h1 class="welcome-title">Diji<span>Muallim</span></h1>
+    <div class="welcome-badge">🎓 Diji-Edu Eğitim Portalı</div>
+    <h1 class="welcome-title">Diji<span>Edu</span></h1>
     <p class="welcome-subtitle">Bireyselleştirilmiş Dil ve Başarı Takip Sistemi</p>
 
    <div class="welcome-card-grid">
@@ -1709,7 +1709,7 @@ function buildOzet(rows, latest, studentName, allRows) {
   let vKupaEmoji = "📖";
 
   if (vToplam >= 15) { vRozetMetni = "👑 AKADEMİ ELÇİSİ / BİLGİN"; vRozetRenk = "#8E44AD"; vKupaEmoji = "🔮"; }
-  else if (vToplam >= 10) { vRozetMetni = "🏆 DijiMuallim ŞAMPİYON OKURU"; vRozetRenk = "#D35400"; vKupaEmoji = "👑"; }
+  else if (vToplam >= 10) { vRozetMetni = "🏆 DijiEdu ŞAMPİYON OKURU"; vRozetRenk = "#D35400"; vKupaEmoji = "👑"; }
   else if (vToplam >= 5) { vRozetMetni = "⚡ HIZLI OKUMA YOLCUSU"; vRozetRenk = "#2980B9"; vKupaEmoji = "🚀"; }
   else if (vToplam >= 3) { vRozetMetni = "🏅 KİTAP DOSTU"; vRozetRenk = "#27AE60"; vKupaEmoji = "🥈"; }
   else if (vToplam >= 1) { vRozetMetni = "📚 İLK ADIM KAHRAMANI"; vRozetRenk = "#16A085"; vKupaEmoji = "🥉"; }
@@ -2780,7 +2780,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                  
                 try {
-                    let wpMesaj = `🤖 *DijiMuallim - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu işlenmiştir.\n\n` +
+                    let wpMesaj = `🤖 *DijiEdu - DERS SONU BİLGİLENDİRME* \n\nSayın Velimiz, \n*${payloadTamamlandi.ogrenci}* ile bugün (${tamamlananDersTarihi}) gerçekleştirdiğimiz dersimizin raporu işlenmiştir.\n\n` +
                                   `📖 *Ders Konusu:* ${payloadTamamlandi.konu}\n📌 *Ödev & Hazırlık:* ${payloadTamamlandi.odev_durumu}\n\n` +
                                   `📝 *Öğretmen Notları:* \n• Ders Başı Durumu: ${startCommentVal}\n• Ders Sonu Değerlendirmesi: ${endCommentVal}\n\n` +
                                   `📊 *Dil Becerileri Rubrik Analizi (%):* \n• Kelime Bilgisi (Vocabulary): %${payloadTamamlandi.vocabulary}\n• Konuşma (Speaking): %${payloadTamamlandi.konusma}\n• Okuma (Reading): %${payloadTamamlandi.okuma}\n• Yazma (Writing): %${payloadTamamlandi.yazma}\n• Dil Bilgisi (Grammar): %${payloadTamamlandi.grammar}\n📈 *Genel Başarı Ortalaması:* %${payloadTamamlandi.genel}\n`;
