@@ -3375,54 +3375,81 @@ function ozellikIzniKaydet() {
 
             try {
                 await fetch(url);
-                let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
+                               let ortalamaPuan = Math.round((Number(okuma) + Number(yazma) + Number(vocab) + Number(konusma) + Number(grammar)) / 5);
 
                 let sondenemeGecerliMiWA = Number(sondeneme) > 0;
                 let kitapGecerliMiWA = kitapAdi && kitapAdi.trim() !== "" && Number(sayfa) > 0;
 
+                // Emojiler Unicode kaçış koduyla yazılıyor ki editör/kayıt sırasında bozulmasınlar
+                const E = {
+                    cap: "\uD83C\uDF93",       // 🎓
+                    star: "\uD83C\uDF1F",      // 🌟
+                    rocket: "\uD83D\uDE80",    // 🚀
+                    chart: "\uD83D\uDCCA",     // 📊
+                    bulb: "\uD83D\uDCA1",      // 💡
+                    book: "\uD83D\uDCD6",      // 📖
+                    pencil: "\u270D\uFE0F",    // ✍️
+                    brain: "\uD83E\uDDE0",     // 🧠
+                    speak: "\uD83D\uDDE3\uFE0F", // 🗣️
+                    ruler: "\uD83D\uDCD0",     // 📐
+                    teacher: "\uD83D\uDC69\u200D\uD83C\uDFEB", // 👩‍🏫
+                    chat: "\uD83D\uDCAC",      // 💬
+                    pin: "\uD83D\uDCCC",       // 📌
+                    sparkle: "\u2728",         // ✨
+                    target: "\uD83C\uDFAF",    // 🎯
+                    trend: "\uD83D\uDCC8",     // 📈
+                    bookBlue: "\uD83D\uDCD8",  // 📘
+                    page: "\uD83D\uDCC4",      // 📄
+                    clapper: "\uD83C\uDFAC",   // 🎬
+                    sunflower: "\uD83C\uDF3B", // 🌻
+                    herb: "\uD83C\uDF3F",      // 🌿
+                    calendar: "\uD83D\uDCC5",  // 📅
+                    books: "\uD83D\uDCDA"      // 📚
+                };
+
                 let genelDurumCumlesi = sondenemeGecerliMiWA
-                    ? `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ✨ *${ortalamaPuan}/100* ✨ seviyesine taşırken, son deneme sınavında elde ettiği 🎯 *${sondeneme}* puan ile istikrarlı yükselişini müthiş bir şekilde sürdürmektedir. 📈\n\n`
-                    : `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ✨ *${ortalamaPuan}/100* ✨ seviyesine taşıdı. 📈\n\n`;
+                    ? `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ${E.sparkle} *${ortalamaPuan}/100* ${E.sparkle} seviyesine taşırken, son deneme sınavında elde ettiği ${E.target} *${sondeneme}* puan ile istikrarlı yükselişini müthiş bir şekilde sürdürmektedir. ${E.trend}\n\n`
+                    : `Değerlendirmelerimiz sonucunda öğrencimiz genel başarı çıtasını ${E.sparkle} *${ortalamaPuan}/100* ${E.sparkle} seviyesine taşıdı. ${E.trend}\n\n`;
 
                 let kitapBolumuWA = kitapGecerliMiWA
-                    ? `📚 *Okuma Kültürü & Kitap Takibi:*\n` +
-                      `Öğrencimiz, şu an büyük bir ilgiyle okuduğu 📘 *${kitapAdi}* adlı kitapta 📄 *${sayfa}/${hedef}* sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir. 🎯\n\n`
+                    ? `${E.books} *Okuma Kültürü & Kitap Takibi:*\n` +
+                      `Öğrencimiz, şu an büyük bir ilgiyle okuduğu ${E.bookBlue} *${kitapAdi}* adlı kitapta ${E.page} *${sayfa}/${hedef}* sayfaya ulaşarak hedefine doğru sağlam adımlarla ilerlemektedir. ${E.target}\n\n`
                     : "";
 
                 let tavsiyeBolumu = "";
                 if (rubricSeciliEtkinlikler.length > 0 || rubricSeciliVideolar.length > 0) {
-                    tavsiyeBolumu = `🌟 *Bu Hafta Önerilenler:*\nÖğretmeniniz aşağıdaki etkinlik ve videoları yapmanızı/izlemenizi tavsiye ediyor:\n`;
+                    tavsiyeBolumu = `${E.star} *Bu Hafta Önerilenler:*\nÖğretmeniniz aşağıdaki etkinlik ve videoları yapmanızı/izlemenizi tavsiye ediyor:\n`;
                     let sayac = 1;
                     rubricSeciliEtkinlikler.forEach(ad => {
-                        tavsiyeBolumu += `🎯 ${sayac}. ${ad}\n`;
+                        tavsiyeBolumu += `${E.target} ${sayac}. ${ad}\n`;
                         sayac++;
                     });
                     rubricSeciliVideolar.forEach(baslik => {
-                        tavsiyeBolumu += `🎬 ${sayac}. ${baslik}\n`;
+                        tavsiyeBolumu += `${E.clapper} ${sayac}. ${baslik}\n`;
                         sayac++;
                     });
                     tavsiyeBolumu += `\n`;
                 }
 
-                                let raporMetni = `🎓 *DİJİ MUALLİM - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* 🎓\n\n` +
-                    `Sevgili Velimiz, 🌟 *${tarih}* tarihli dersimizi büyük bir verimle geride bıraktık. Öğrencimiz *${ogrenci}*, bu hafta sergilediği harika gayret ve disiplinle bizleri yine gururlandırdı! 🚀\n\n` +
-                    `📊 *Haftalık Genel Durumumuz:*\n` +
+                                let raporMetni = `${E.cap} *Diji-Medu - HAFTALIK İNGİLİZCE GELİŞİM RAPORU* ${E.cap}\n\n` +
+                    `Sevgili Velimiz, ${E.star} *${tarih}* tarihli dersimizi geride bıraktık. Öğrencimiz *${ogrenci}*, 'ın bu hafta sergilediği performansın özeti sizlerle. ${E.rocket}\n\n` +
+                    `${E.chart} *Haftalık Genel Durumumuz:*\n` +
                     genelDurumCumlesi +
-                    `💡 *Detaylı Beceri Dağılımımız:*\n` +
-                    `📖 • Okuma: ${okuma}/100\n` +
-                    `✍️ • Yazma: ${yazma}/100\n` +
-                    `🧠 • Kelime (Vocabulary): ${vocab}/100\n` +
-                    `🗣️ • Konuşma: ${konusma}/100\n` +
-                    `📐 • Grammar: ${grammar}/100\n\n` +
+                    `${E.bulb} *Detaylı Beceri Dağılımımız:*\n` +
+                    `${E.book} • Okuma: ${okuma}/100\n` +
+                    `${E.pencil} • Yazma: ${yazma}/100\n` +
+                    `${E.brain} • Kelime (Vocabulary): ${vocab}/100\n` +
+                    `${E.speak} • Konuşma: ${konusma}/100\n` +
+                    `${E.ruler} • Grammar: ${grammar}/100\n\n` +
                     kitapBolumuWA +
-                    `👩‍🏫 *Öğretmen Gözlemi & Değerlendirme:*\n` +
-                    `💬 _"${odevDonut || "Ders boyunca odaklanması ve derse katılımı son derece olumluydu."}"_\n\n` +
+                    `${E.teacher} *Öğretmen Gözlemi & Değerlendirme:*\n` +
+                    `${E.chat} _"${odevDonut || "Ders boyunca odaklanması ve derse katılımı son derece olumluydu."}"_\n\n` +
                     tavsiyeBolumu +
-                    `📌 *Ödev & Gelecek Planı:*\n` +
+                    `${E.pin} *Ödev & Gelecek Planı:*\n` +
                     `• Verilen Ödev: *${sonrakiOdev || "Kelime tekrarı ve pratik"}*\n` +
-                    `• Sonraki Dersimiz: 📅 *${sonrakiTarih || "Planlanıyor"}*\n\n` +
-                    `✨ _Öğrencimizin tüm detaylı istatistiklerini, çözdüğü testleri, kazanmış olduğu rozetleri ve özel gelişim grafiklerini anlık incelemek için lütfen **Öğrenci Portalımıza** giriş yapmayı unutmayın!_\n\n` +
-                    `Destekleriniz, değerli güveniniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı, mutlu ve başarılı bir hafta dileriz! 🌻🌿`;
+                    `• Sonraki Dersimiz: ${E.calendar} *${sonrakiTarih || "Planlanıyor"}*\n\n` +
+                    `${E.sparkle} _Öğrencimizin tüm detaylı istatistiklerini, çözdüğü testleri, kazanmış olduğu rozetleri ve özel gelişim grafiklerini anlık incelemek için lütfen **Öğrenci Portalımıza** giriş yapmayı unutmayın!_\n\n` +
+                    `Destekleriniz, değerli güveniniz ve harika iş birliğiniz için çok teşekkür ederiz. Sağlıklı, mutlu ve başarılı bir hafta dileriz! ${E.sunflower}${E.herb}`;
 
                 document.getElementById('rubricModal').style.display = 'none';
                                 document.getElementById('rubricModal').style.display = 'none';
