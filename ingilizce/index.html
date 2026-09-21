@@ -7174,7 +7174,10 @@ let seviyeDisLinkAktifUrl = "";
 let seviyeDisLinkZamanAsimi = null;
 let seviyeDisLinkYuklendiMi = false;
 
-function seviyeDisLinkAc(sinif, unite, seviye) {
+        let seviyeDisLinkAcilisZamani = 0;
+        const SEVIYE_MIN_SANIYE = 60;
+
+        function seviyeDisLinkAc(sinif, unite, seviye) {
     let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === aktifOgrenciAdi.toLowerCase());
     if (!user) return;
 
@@ -7188,6 +7191,7 @@ function seviyeDisLinkAc(sinif, unite, seviye) {
     seviyeDisLinkAktifUnite = unite;
     seviyeDisLinkAktifSeviye = seviye;
     seviyeDisLinkAktifUrl = kart.disLink;
+    seviyeDisLinkAcilisZamani = Date.now();
 
     document.getElementById('seviyeHaritaOverlay').style.display = 'none';
     document.getElementById('seviyeDisLinkBaslikAlani').innerText = kart.butonAdi || `Seviye ${seviye}`;
@@ -7225,7 +7229,30 @@ function seviyeDisLinkIframeYukle(url) {
 }
 
 function seviyeDisLinkKapatOnaySor() {
+    let gecenSaniye = Math.floor((Date.now() - seviyeDisLinkAcilisZamani) / 1000);
+    if (gecenSaniye < SEVIYE_MIN_SANIYE) {
+        let kalanSaniye = SEVIYE_MIN_SANIYE - gecenSaniye;
+        document.getElementById('seviyeSureUyariMetni').innerText =
+            `Bu etkinlikte en az ${SEVIYE_MIN_SANIYE} saniye geçirmen gerekiyor. Kalan süre: ${kalanSaniye} saniye. Şimdi çıkarsan bu seviye puan olarak sayılmayacak.`;
+        document.getElementById('seviyeSureUyariModal').style.display = 'flex';
+        return;
+    }
     document.getElementById('seviyeOnayModal').style.display = 'flex';
+}
+
+function seviyeSureYetersizDevamEt() {
+    document.getElementById('seviyeSureUyariModal').style.display = 'none';
+}
+
+function seviyeSureYetersizCik() {
+    document.getElementById('seviyeSureUyariModal').style.display = 'none';
+
+    if (seviyeDisLinkZamanAsimi) clearTimeout(seviyeDisLinkZamanAsimi);
+    document.getElementById('seviyeDisLinkIframe').src = "";
+    document.getElementById('seviyeDisLinkOverlay').style.display = 'none';
+
+    document.getElementById('seviyeHaritaOverlay').style.display = 'flex';
+    seviyeHaritasiCiz();
 }
 
 function seviyeOnayVer(bitirdiMi) {
@@ -7776,6 +7803,19 @@ function rubricVideoOgrenciChecklistDoldur() {
         <div style="display:flex; gap:8px;">
             <button onclick="seviyeOnayVer(false)" style="flex:1; background:#f1f5f9; color:#64748b; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Hayır, Devam Et</button>
             <button onclick="seviyeOnayVer(true)" style="flex:1; background:#16a34a; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Evet, Bitirdim ✓</button>
+        </div>
+    </div>
+</div>
+
+    <!-- SÜRE YETERSİZ UYARI MODALI -->
+<div class="rubric-modal" id="seviyeSureUyariModal" style="z-index: 9999999;">
+    <div class="rubric-content" style="max-width: 340px; text-align: center;">
+        <div style="font-size:38px; margin-bottom:8px;">⏳</div>
+        <h3 style="color: #1e293b; margin-bottom: 8px; font-size: 15px;">Henüz erken!</h3>
+        <p id="seviyeSureUyariMetni" style="font-size: 11.5px; color: #64748b; margin-bottom: 16px; line-height:1.5;"></p>
+        <div style="display:flex; gap:8px;">
+            <button onclick="seviyeSureYetersizCik()" style="flex:1; background:#f1f5f9; color:#64748b; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">Yine de Çık (puan yok)</button>
+            <button onclick="seviyeSureYetersizDevamEt()" style="flex:1; background:#2563eb; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">Devam Et</button>
         </div>
     </div>
 </div>
