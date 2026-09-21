@@ -7390,7 +7390,6 @@ function rubricVideoOgrenciChecklistDoldur() {
             })
             .catch(() => {});
         }
-
         function duyuruGoster(duyuru) {
             duyuruAktifId = duyuru.id;
             let temaRenkleri = {
@@ -7405,27 +7404,16 @@ function rubricVideoOgrenciChecklistDoldur() {
             document.getElementById('duyuruBaslik').innerText = duyuru.baslik;
             document.getElementById('duyuruMesaj').innerText = duyuru.mesaj;
             document.getElementById('duyuruHeaderAlani').style.background = renk.bg;
+
             let bar = document.getElementById('duyuruProgressBar');
-            bar.style.background = renk.accent;
             bar.style.transition = 'none';
             bar.style.width = '100%';
+            bar.style.background = renk.accent;
 
             document.getElementById('duyuruOverlay').style.display = 'flex';
-
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    bar.style.transition = 'width 15s linear';
-                    bar.style.width = '0%';
-                });
-            });
-
-            if (duyuruAktifTimer) clearTimeout(duyuruAktifTimer);
-            duyuruAktifTimer = setTimeout(() => { duyuruKapat(); }, 15000);
         }
 
         function duyuruKapat() {
-            if (duyuruAktifTimer) clearTimeout(duyuruAktifTimer);
-            duyuruAktifTimer = null;
             document.getElementById('duyuruOverlay').style.display = 'none';
 
             if (duyuruAktifId && aktifOgrenciAdi) {
