@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İngilizce Portal Giriş - Öğretmen Çocuk</title>
+    <title>İngilizce Portal Giriş - Diji-Medu</title>
         <!-- Chart.js Kütüphanesi -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- jsPDF Kütüphanesi (Rapor PDF oluşturma için) -->
@@ -751,12 +751,12 @@
     <!-- AI ASİSTAN SOHBET PENCERESİ -->
     <div class="ai-chat-modal" id="aiChatModal">
         <div class="ai-chat-header">
-            <span>🤖 Diji Muallim - AI Koç</span>
+            <span>🤖 Diji-Medu - AI Koç</span>
             <button onclick="aiModalKapat()" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer;">✕</button>
         </div>
         <div class="ai-chat-subinfo" id="aiSoruHakInfo">Günlük Soru Hakkı Yükleniyor...</div>
         <div class="ai-chat-body" id="aiChatBody">
-           <div class="ai-msg bot">Merhaba! 👋 Buradan Mert Hoca'ya doğrudan mesaj bırakabilirsin. Sorunu yazdığında Mert Hoca'ya iletilir, en kısa sürede buradan sana dönüş yapar. Arada sohbeti kontrol etmeyi unutma! 😊</div>
+           <div class="ai-msg bot">Merhaba! 👋 Buradan Diji Hoca'na doğrudan mesaj bırakabilirsin. Sorunu yazdığında Diji Hoca'ya iletilir, en kısa sürede buradan sana dönüş yapar. Arada sohbeti kontrol etmeyi unutma! 😊</div>
         </div>
         <div class="ai-chat-footer" id="aiFooterArea">
             <div class="ai-input-row" id="aiInputRow">
@@ -1188,7 +1188,7 @@
                     <div class="user-avatar" id="userAvatarLetter">🦉</div>
                     <div class="user-details">
                         <h3 id="ogrenciAdiText">Öğrenci</h3>
-                        <span>Diji Muallim'e hoş geldin! 🎉</span>
+                        <span>Diji-Medu'ya hoş geldin! 🎉</span>
                     </div>
                 </div>
             </div>
@@ -2649,7 +2649,7 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
         // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
                 function aiModalAc() { 
             document.getElementById('aiChatModal').style.display = 'flex'; 
-            document.getElementById('aiSoruHakInfo').innerHTML = "💬 Mert Hoca'ya doğrudan mesaj bırakabilirsin";
+            document.getElementById('aiSoruHakInfo').innerHTML = "💬 Diji-Medu'ya doğrudan mesaj bırakabilirsin";
             misafirBilgiKontrol();
             sohbetGecmisiniYukle();
             if (ogrenciSohbetPolling) clearInterval(ogrenciSohbetPolling);
@@ -2752,10 +2752,10 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
                     body.innerHTML += `<div class="ai-msg bot" style="color:#b45309; background:#fef3c7;">⏳ Çok hızlı mesaj gönderiyorsun, lütfen ${data.kalanSaniye} saniye daha bekle.</div>`;
                 } else if (data.status === "spam") {
                     body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
-                    body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Anlamsız veya rastgele karakterler algılandı, mesajın Mert Hoca'ya iletilmedi. Lütfen düzgün bir mesaj yaz.</div>`;
+                    body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Anlamsız veya rastgele karakterler algılandı, mesajın Diji Medu'ya iletilmedi. Lütfen düzgün bir mesaj yaz.</div>`;
                 } else {
                     body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
-                    body.innerHTML += `<div class="ai-msg bot">✅ Sorunuz Mert Hoca'ya iletildi, en kısa sürede buradan size dönüş sağlayacaktır. Arada girip sohbet kutusunu kontrol edin!</div>`;
+                    body.innerHTML += `<div class="ai-msg bot">✅ Sorunuz Diji Medu'ya iletildi, en kısa sürede buradan size dönüş sağlayacaktır. Arada girip sohbet kutusunu kontrol edin!</div>`;
                 }
                 body.scrollTop = body.scrollHeight;
             } catch (err) {
