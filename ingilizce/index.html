@@ -742,8 +742,30 @@
                <!-- SOL ALT KÖŞEDE SAYFA YENİLEME BUTONU -->
     <button class="refresh-float-btn" id="sayfaYenileBtn" onclick="sayfayiYenile()" title="Sayfayı Yenile">🔄</button>
 
-    <!-- SOL ALTTA, YENİLEME BUTONUNUN ÜSTÜNDE DUYURU GEÇMİŞİ BUTONU -->
+        <!-- SOL ALTTA, YENİLEME BUTONUNUN ÜSTÜNDE DUYURU GEÇMİŞİ BUTONU -->
     <button class="refresh-float-btn" id="duyuruGecmisBtn" onclick="duyuruGecmisiniAc()" title="Duyuru Geçmişi" style="bottom: 52px; opacity: 0.75;">📋</button>
+
+    <!-- SOL ALTTA, DUYURU GEÇMİŞİNİN ÜSTÜNDE YARDIM BUTONU -->
+    <button class="refresh-float-btn" id="yardimBtn" onclick="yardimAc()" title="Yardım" style="bottom: 92px; opacity: 0.75;">❓</button>
+
+        <!-- YARDIM KÖŞESİ MODALI -->
+    <div class="yardim-modal-overlay" id="yardimModal">
+        <div class="yardim-frame">
+            <div class="yardim-topbar">
+                <div class="yardim-topbar-row">
+                    <div>
+                        <h2>❓ Yardım Köşesi</h2>
+                        <p>Panelde her şeyin ne işe yaradığını burada bulabilirsin</p>
+                    </div>
+                    <button class="yardim-closebtn" onclick="yardimKapat()">✕</button>
+                </div>
+            </div>
+            <div class="yardim-searchbox">
+                <input type="text" id="yardimAramaInput" placeholder="Bir şey ara... (örn: rozet, puan, şifre)">
+            </div>
+            <div class="yardim-body" id="yardimIcerikAlani"></div>
+        </div>
+    </div>
 
     <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI -->
         <div class="teacher-gear-wrap">
@@ -1926,6 +1948,67 @@
     font-size:14.5px; padding:13px; border-radius:13px; cursor:pointer;
     position:relative; z-index:1; width:100%;
 }
+
+.corner-tip {
+    position: fixed; z-index: 9997;
+    background: #1e293b; color:#fff; font-size:10.5px; font-weight:700;
+    padding:5px 10px; border-radius:8px; white-space:nowrap;
+    opacity:0; transform:translateY(4px); pointer-events:none;
+    transition: opacity .3s ease, transform .3s ease;
+    box-shadow:0 4px 10px rgba(0,0,0,.18);
+    font-family:'Nunito', sans-serif;
+}
+.corner-tip.show { opacity:1; transform:translateY(0); }
+
+.yardim-modal-overlay {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(15,23,42,.55); backdrop-filter: blur(2px);
+    display:none; align-items:center; justify-content:center;
+    z-index: 999998; padding: 14px;
+}
+.yardim-frame {
+    width:100%; max-width:420px; max-height:88vh; background:#fff; border-radius:22px;
+    overflow:hidden; box-shadow:0 24px 60px -14px rgba(0,0,0,.4);
+    display:flex; flex-direction:column; font-family:'Nunito', sans-serif;
+}
+.yardim-topbar {
+    padding:18px 20px 14px; background:linear-gradient(135deg,#111827 0%,#1f2937 100%);
+    position:relative; overflow:hidden; flex-shrink:0;
+}
+.yardim-topbar::before {
+    content:""; position:absolute; width:130px; height:130px;
+    background:rgba(37,99,235,.25); border-radius:50%; top:-60px; right:-30px; filter:blur(4px);
+}
+.yardim-topbar-row { display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1; }
+.yardim-topbar h2 { font-family:'Fredoka', sans-serif; font-size:16px; color:#fff; margin:0; }
+.yardim-topbar p { font-size:10.5px; color:#9ca3af; margin:3px 0 0; }
+.yardim-closebtn { width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.12); border:none; color:#fff; font-size:12px; cursor:pointer; flex-shrink:0; }
+.yardim-searchbox { margin:12px 18px 4px; position:relative; flex-shrink:0; }
+.yardim-searchbox input {
+    width:100%; padding:9px 12px 9px 30px; border:1.5px solid #e4e7eb; border-radius:10px;
+    font-family:'Nunito', sans-serif; font-size:12px; font-weight:700; color:#334155; outline:none; background:#f8fafc;
+}
+.yardim-searchbox input:focus { border-color:#2563eb; background:#fff; }
+.yardim-searchbox::before { content:"🔍"; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:11px; opacity:.5; }
+.yardim-body { flex:1; overflow-y:auto; padding:12px 14px 18px; }
+.yardim-cat-label { font-family:'Fredoka', sans-serif; font-size:10px; font-weight:600; letter-spacing:.3px; color:#94a3b8; text-transform:uppercase; margin:12px 4px 6px; }
+.yardim-cat-label:first-child { margin-top:0; }
+.yardim-acc { border:1.5px solid #eef0f3; border-radius:13px; margin-bottom:7px; overflow:hidden; background:#fff; }
+.yardim-acc-head { display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; user-select:none; }
+.yardim-acc-icon { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.yardim-acc-title { flex:1; min-width:0; font-family:'Fredoka', sans-serif; font-weight:600; font-size:12.5px; color:#1e2530; }
+.yardim-acc-sub { font-size:10px; color:#94a3b8; margin-top:1px; font-weight:600; }
+.yardim-acc-chevron { font-size:10px; color:#94a3b8; transition:transform .2s; flex-shrink:0; }
+.yardim-acc.open .yardim-acc-chevron { transform:rotate(180deg); }
+.yardim-acc-panel { max-height:0; overflow:hidden; transition:max-height .25s ease; }
+.yardim-acc.open .yardim-acc-panel { max-height:700px; }
+.yardim-acc-panel-inner { padding:0 14px 14px 56px; font-size:12px; line-height:1.6; color:#475569; }
+.yardim-acc-panel-inner p { margin:0 0 7px; }
+.yardim-acc-panel-inner ul { margin:5px 0 7px; padding-left:16px; }
+.yardim-acc-panel-inner li { margin-bottom:4px; }
+.yardim-acc-panel-inner .yardim-puan-chip { display:inline-block; background:#eef2ff; color:#4338ca; font-weight:800; font-size:10px; padding:2px 7px; border-radius:7px; margin:2px 3px 2px 0; }
+.yardim-acc-panel-inner .yardim-tip { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:7px 9px; font-size:11px; color:#92400e; margin-top:5px; }
+    
 </style>
 
         <!-- 1. GİRİŞ EKRANI -->
@@ -3545,6 +3628,169 @@ function ozellikIzniKaydet() {
             })
             .then(() => bekleyenKayitlariYukle())
             .catch(() => {});
+        }
+
+                // ===== YARDIM KÖŞESİ =====
+        const YARDIM_DATA = [
+          { cat: "Genel Bakış", items: [
+            { icon:"📊", color:"#e0e7ff", iconColor:"#4338ca", title:"Özet Sekmesi", sub:"Genel puanın ve gelişimin burada",
+              html:`<p>Giriş yaptığında ilk gördüğün sekmedir. Burada şunları görürsün:</p>
+              <ul>
+                <li><b>Genel Puan</b> — tüm derslerin, oyunların ve etkinliklerin ortalamasından oluşan tek bir puan.</li>
+                <li><b>Etkinlik / Son Deneme</b> — öğretmeninin girdiği son deneme sınavı sonucun.</li>
+                <li><b>Okuma Kültürü</b> — şu an okuduğun kitap ve sayfa ilerlemen.</li>
+                <li><b>Gelişim Grafikleri</b> — puanının zaman içinde nasıl değiştiğini gösteren çizgi ve sütun grafikler.</li>
+              </ul>
+              <div class="yardim-tip">💡 Bu sekmedeki bazı kutular öğretmenin tarafından kapatılmış olabilir, bu normaldir.</div>` },
+            { icon:"📝", color:"#dcfce7", iconColor:"#166534", title:"Raporlar Sekmesi", sub:"Geçmiş haftalık karnelerin",
+              html:`<p>Öğretmenin her ders sonunda senin için bir değerlendirme girer. Bu sekmede geçmişe dönük tüm bu haftalık karneleri görebilirsin: o hafta ne çalıştığın, 5 beceri puanın (Okuma, Yazma, Kelime, Konuşma, Grammar) ve varsa deneme sınavı sonucun.</p>` }
+          ]},
+          { cat: "Aktiviteler", items: [
+            { icon:"🗺️", color:"#dbeafe", iconColor:"#1e40af", title:"Kelime Kartları Yolculuğu", sub:"Adalar arasında ilerleyerek kelime öğren",
+              html:`<p>Sınıf seviyene göre bir harita açılır. Her "ada" bir üniteyi, adanın içindeki yıldızlar ise seviyeleri temsil eder.</p>
+              <ul>
+                <li>Sadece <b>kendi sınıfın</b> veya <b>bir alt sınıfın</b> seviyelerini oynayabilirsin.</li>
+                <li>Bir seviyeyi açtığında en az <b>60 saniye</b> orada kalman gerekir, yoksa puan almadan çıkarsın.</li>
+                <li>Bir seviyeyi bitirdiğinde <span class="yardim-puan-chip">+0.3 puan</span> kazanırsın.</li>
+                <li>Bir adadaki <b>tüm</b> seviyeleri bitirirsen ekstra <span class="yardim-puan-chip">+0.6 bonus</span> alırsın.</li>
+              </ul>` },
+            { icon:"🏆", color:"#fae8ff", iconColor:"#86198f", title:"Kelime Ezber Yarışması", sub:"2 şıklı hızlı kelime testi",
+              html:`<p>Sınıf ve ünite seçip başlarsın. Her soru İngilizce veya Türkçe kelimenin karşılığını sorar, 2 şık arasından doğru olanı seçersin. Ne kadar hızlı doğru cevap verirsen o kadar çok puan kazanırsın. Sonunda skorun liderlik tablosuna eklenir.</p>` },
+            { icon:"🎈", color:"#ffe4e6", iconColor:"#9f1239", title:"Jeopardy Balonları", sub:"Balon patlat, 4 şıklı soru çöz",
+              html:`<p>Farklı puan değerlerindeki balonlardan birini seçersin, 4 şıklı bir soru çıkar. Yüksek puanlı balonlar daha değerlidir ama yanlış cevap puan kaybettirir. Tüm balonları bitirince liderlik tablosunu görürsün.</p>` },
+            { icon:"🧩", color:"#dcfce7", iconColor:"#166534", title:"Boşluk Doldurma Bulmacası", sub:"Kelimedeki eksik harfleri tamamla",
+              html:`<p>Ekrana gelen kelimelerde bazı harfler boş bırakılır, sen bu harfleri klavyeden yazarak tamamlarsın. Türkçe ipucunu okuyup doğru İngilizce kelimeyi tamamlamaya çalışırsın.</p>` },
+            { icon:"📖", color:"#dbeafe", iconColor:"#1e40af", title:"Akıcı Okuma Stüdyosu", sub:"Okuma hızını (WPM) ölç",
+              html:`<p>Sınıfına uygun bir İngilizce metin çıkar. Süreyi başlatıp okumaya başlarsın, okuduğun son kelimeye tıklarsın; sistem senin için dakikada kaç kelime okuduğunu (WPM) hesaplar ve kaydeder. Geçmiş sonuçlarını aynı ekrandan görebilirsin.</p>` },
+            { icon:"🍅", color:"#1e293b", iconColor:"#fca5a5", title:"Pomodoro Çalışma Sayacı", sub:"Odaklanma ve mola süreni ayarla",
+              html:`<p>Ders çalışırken kullanabileceğin bir zamanlayıcıdır. Odaklanma süreni (örn. 25 dakika) ve mola süreni (örn. 5 dakika) kendine göre ayarlayabilirsin. Süre dolduğunda sesli uyarı verir.</p>` },
+            { icon:"🎯", color:"#e0e7ff", iconColor:"#4338ca", title:"Etkinlikler", sub:"Öğretmeninin sana özel seçtiği görevler",
+              html:`<p>Öğretmenin senin için (ya da tüm sınıf için) özel etkinlikler atayabilir. Kategoriye göre gruplanmış olarak burada görünürler. Bir etkinliği tamamladığında "Yapıldı" olarak işaretlenir.</p>` },
+            { icon:"🎬", color:"#cffafe", iconColor:"#155e75", title:"Videolar", sub:"Öğretmeninin seçtiği eğitim videoları",
+              html:`<p>Öğretmenin sana izlemen için videolar atayabilir. Kategoriye göre listelenirler, izlediklerin "İzlendi" olarak işaretlenir.</p>` }
+          ]},
+          { cat: "Rozetler ve Puan", items: [
+            { icon:"➕", color:"#e0e7ff", iconColor:"#4338ca", title:"Genel Puanın Nasıl Oluşuyor?", sub:"Tek bir puanda birleşen tüm kaynaklar",
+              html:`<p>Gördüğün <b>Genel Puan</b>, birçok farklı kaynağın toplamından oluşur:</p>
+              <ul>
+                <li><b>Öğretmen değerlendirmeleri</b> — rubrik panelinden girilen haftalık 5 beceri puanının ortalaması.</li>
+                <li><b>Video / Etkinlik tamamlama</b> — her tamamlanan video veya etkinlik <span class="yardim-puan-chip">+0.3</span> ekler.</li>
+                <li><b>Kelime Kartları Yolculuğu</b> — her seviye <span class="yardim-puan-chip">+0.3</span>, her tamamlanan ada <span class="yardim-puan-chip">+0.6</span> ekler.</li>
+                <li><b>Liderlik bonusu</b> — yarışma oyunlarında ilk 15'e girmek <span class="yardim-puan-chip">+0.5 ile +1.5</span> arası ekler.</li>
+                <li><b>Ders içi performans</b> — öğretmeninin dersteki anlık gözlemlerine göre verdiği + / − puanlar.</li>
+              </ul>
+              <p>Tüm bunlar toplanıp 0-100 arasına sabitlenir. Yani hem düzenli ders çalışman hem de oyunlarda/etkinliklerde aktif olman puanını doğrudan yükseltir.</p>` },
+            { icon:"🏅", color:"#fef9c3", iconColor:"#854d0e", title:"Rozetlerim", sub:"Genel puanına göre kazanılır",
+              html:`<p>Her rozetin bir hedef puanı vardır. Genel puanın o hedefe ulaştığında rozet otomatik olarak "kazanıldı" durumuna geçer. Rozetler sekmesinden toplam kazandığın rozet sayısını ve tamamlama yüzdeni görebilirsin.</p>` },
+            { icon:"⏱️", color:"#dcfce7", iconColor:"#166534", title:"Oturum Süresi", sub:"Panelde geçirdiğin zaman da rozet kazandırır",
+              html:`<p>Panelde ne kadar süre kalırsan, üstteki sayaç o kadar artar. Her 10 dakikada bir küçük bir rozet kazanırsın. Bu, AI asistana gönderebileceğin günlük mesaj hakkını da artırır.</p>` },
+            { icon:"🥇", color:"#fef9c3", iconColor:"#854d0e", title:"Liderlik Bonusu", sub:"Yarışma oyunlarında ilk 15'e girmenin ödülü",
+              html:`<p><b>Kelime Ezber Yarışması</b>, <b>Jeopardy Balonları</b> ve <b>Boşluk Doldurma Bulmacası</b> oyunlarını her bitirdiğinde skorun, o oyunun kendi sınıfındaki liderlik tablosuyla karşılaştırılır. Sınıfında <b>ilk 15'e</b> girersen otomatik olarak bonus puan kazanırsın:</p>
+              <ul>
+                <li><span class="yardim-puan-chip">İlk 3 → +1.5 puan</span></li>
+                <li><span class="yardim-puan-chip">İlk 8 → +1 puan</span></li>
+                <li><span class="yardim-puan-chip">İlk 15 → +0.5 puan</span></li>
+              </ul>
+              <p>Bu bonus doğrudan <b>genel puanına</b> eklenir. Her oyun için günde en fazla 1 kez bonus verilir — yani günde 3 farklı oyunu oynayarak en fazla 3 ayrı bonus kazanabilirsin.</p>
+              <div class="yardim-tip">💡 Liderlik tablosu sınıfına özeldir — sadece kendi sınıfındaki öğrencilerle karşılaştırılırsın.</div>` }
+          ]},
+          { cat: "İletişim ve Hesap", items: [
+            { icon:"🤖", color:"#ede9fe", iconColor:"#5b21b6", title:"Mesaj Gönder", sub:"Sağ alttaki 🤖 ikonundan öğretmenine ulaş",
+              html:`<p>Bir sorun varsa buradan doğrudan öğretmenine mesaj yazabilirsin. Günlük mesaj hakkın sınırlıdır (rozet kazandıkça bu hak artar). Öğretmenin cevap yazdığında burada görürsün.</p>` },
+            { icon:"📢", color:"#fee2e2", iconColor:"#991b1b", title:"Duyurular", sub:"Panelle ilgili yenilikler",
+              html:`<p>Öğretmenin yeni bir özellik eklediğinde veya önemli bir hatırlatma yapmak istediğinde giriş yaptığında karşına bir duyuru çıkar. Sol alttaki 📋 butonuna basarak geçmiş tüm duyuruları da görebilirsin.</p>` },
+            { icon:"🔑", color:"#dbeafe", iconColor:"#1e40af", title:"Şifre Değiştirme", sub:"Kullanıcı adı + kayıtlı telefon gerekir",
+              html:`<p>Giriş ekranındaki "Şifremi Unuttum" veya panel içindeki "🔑 Şifre" butonundan yeni şifre belirleyebilirsin. Kimliğini doğrulamak için kayıtlı veli telefon numaranı girmen ve neden değiştirdiğini kısaca açıklaman istenir. Şifreni <b>haftada sadece 1 kez</b> değiştirebilirsin.</p>` },
+            { icon:"📝", color:"#dcfce7", iconColor:"#166534", title:"Kayıt Ol", sub:"Yeni hesap oluşturma",
+              html:`<p>Henüz hesabın yoksa giriş ekranından kayıt olabilirsin. Kayıt talebin öğretmenine iletilir; öğretmenin onaylamadan giriş yapamazsın. Onaylandığında normal şekilde giriş yapabilirsin.</p>` }
+          ]}
+        ];
+
+        function yardimAc() {
+            document.getElementById('yardimAramaInput').value = "";
+            yardimIcerikCiz("");
+            document.getElementById('yardimModal').style.display = 'flex';
+        }
+        function yardimKapat() {
+            document.getElementById('yardimModal').style.display = 'none';
+        }
+        function yardimIcerikCiz(filtre) {
+            let alan = document.getElementById('yardimIcerikAlani');
+            alan.innerHTML = "";
+            let q = (filtre || "").trim().toLowerCase();
+            let hicSonucYokMu = true;
+
+            YARDIM_DATA.forEach(grup => {
+                let filtreliOgeler = q
+                    ? grup.items.filter(it => it.title.toLowerCase().includes(q) || it.sub.toLowerCase().includes(q) || it.html.toLowerCase().includes(q))
+                    : grup.items;
+                if (filtreliOgeler.length === 0) return;
+                hicSonucYokMu = false;
+
+                let catEl = document.createElement('div');
+                catEl.className = 'yardim-cat-label';
+                catEl.innerText = grup.cat;
+                alan.appendChild(catEl);
+
+                filtreliOgeler.forEach(item => {
+                    let acc = document.createElement('div');
+                    acc.className = 'yardim-acc';
+                    acc.innerHTML = `
+                        <div class="yardim-acc-head">
+                            <div class="yardim-acc-icon" style="background:${item.color};color:${item.iconColor};">${item.icon}</div>
+                            <div style="flex:1;min-width:0;">
+                                <div class="yardim-acc-title">${item.title}</div>
+                                <div class="yardim-acc-sub">${item.sub}</div>
+                            </div>
+                            <div class="yardim-acc-chevron">▾</div>
+                        </div>
+                        <div class="yardim-acc-panel"><div class="yardim-acc-panel-inner">${item.html}</div></div>
+                    `;
+                    acc.querySelector('.yardim-acc-head').addEventListener('click', () => { acc.classList.toggle('open'); });
+                    alan.appendChild(acc);
+                });
+            });
+
+            if (hicSonucYokMu) {
+                alan.innerHTML = `<div style="text-align:center;color:#94a3b8;font-size:12px;padding:30px 10px;">Aramanla eşleşen bir sonuç bulunamadı.</div>`;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            let aramaEl = document.getElementById('yardimAramaInput');
+            if (aramaEl) aramaEl.addEventListener('input', (e) => { yardimIcerikCiz(e.target.value); });
+        });
+
+        // ===== KÖŞE BUTON ETİKETLERİ (5 saniyeliğine görünüp kaybolur) =====
+        function cornerButonEtiketleriGoster() {
+            let hedefler = [
+                { sel: '#yardimBtn', metin: 'Yardım', yon: 'sag' },
+                { sel: '#duyuruGecmisBtn', metin: 'Duyurular', yon: 'sag' },
+                { sel: '#sayfaYenileBtn', metin: 'Yenile', yon: 'sag' },
+                { sel: '.teacher-gear-btn', metin: 'Öğretmen Paneli', yon: 'sol' },
+                { sel: '.ai-float-btn', metin: 'AI Asistan', yon: 'sol' }
+            ];
+            hedefler.forEach(h => {
+                let btn = document.querySelector(h.sel);
+                if (!btn) return;
+                let rect = btn.getBoundingClientRect();
+                let etiket = document.createElement('div');
+                etiket.className = 'corner-tip';
+                etiket.innerText = h.metin;
+                document.body.appendChild(etiket);
+
+                let etiketGenislik = etiket.offsetWidth;
+                let topPos = rect.top + (rect.height / 2) - (etiket.offsetHeight / 2);
+                let leftPos = h.yon === 'sag' ? rect.right + 8 : rect.left - etiketGenislik - 8;
+
+                etiket.style.top = topPos + 'px';
+                etiket.style.left = leftPos + 'px';
+
+                requestAnimationFrame(() => { etiket.classList.add('show'); });
+                setTimeout(() => {
+                    etiket.classList.remove('show');
+                    setTimeout(() => { etiket.remove(); }, 350);
+                }, 5000);
+            });
         }
         
         function ogrenciMaskotSec(isim) {
@@ -5299,11 +5545,13 @@ localStorage.setItem("ing_toplamSaniye", toplamSaniye);
                 }
 
                 // Kısa bir gecikme ekleyerek animasyonun akıcı görünmesini sağla ve paneli aç
-                                setTimeout(() => {
+                                              setTimeout(() => {
                     document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                     document.getElementById('panel-alani').style.display = 'block';
                     baslatSayac(); 
                     arkaPlanVeriYenilemeBaslat();
+                    setTimeout(cornerButonEtiketleriGoster, 900);
+            
                     duyuruKontrolEt();
                 }, 600);
             } else {
