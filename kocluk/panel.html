@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DijiMedu - Eğitim Koçum Paneli</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -330,6 +333,52 @@
 @keyframes confettiDus {
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(110vh) rotate(540deg); opacity: 0.3; }
+}
+
+.duy3-overlay {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(10,12,24,0.72); backdrop-filter: blur(2px);
+    display:none; align-items:center; justify-content:center;
+    z-index: 999999; padding: 16px;
+}
+.duy3-card {
+    width:100%; max-width:360px; background:#14162b; border-radius:24px;
+    padding:30px 24px 26px; text-align:center; position:relative; overflow:hidden;
+    border:1px solid #2a2d4a; box-shadow:0 24px 60px -14px rgba(0,0,0,.5);
+    animation: duy3pop .35s cubic-bezier(.2,.9,.3,1.3);
+    font-family:'Nunito', sans-serif;
+}
+@keyframes duy3pop { from{opacity:0; transform:translateY(14px) scale(.94);} to{opacity:1; transform:translateY(0) scale(1);} }
+.duy3-glow { position:absolute; inset:0; pointer-events:none; }
+.duy3-close {
+    position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%;
+    background:rgba(255,255,255,.08); border:none; color:#9aa0c0; font-size:14px; cursor:pointer; z-index:2;
+}
+.duy3-medal {
+    width:74px; height:74px; margin:6px auto 16px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:34px;
+    position:relative; z-index:1;
+}
+.duy3-tag {
+    display:inline-block; font-family:'Fredoka', sans-serif; font-size:10.5px; font-weight:600;
+    letter-spacing:.3px; padding:4px 11px; border-radius:999px; margin-bottom:10px; position:relative; z-index:1;
+}
+.duy3-title {
+    font-family:'Fredoka', sans-serif; font-size:21px; font-weight:600; color:#fff;
+    margin:0 0 10px; position:relative; z-index:1; line-height:1.3;
+}
+.duy3-img {
+    display:none; width:100%; max-height:150px; object-fit:cover; border-radius:14px;
+    margin-bottom:14px; position:relative; z-index:1;
+}
+.duy3-msg {
+    font-size:13.5px; line-height:1.65; color:#b7bcd6; margin:0 0 22px;
+    position:relative; z-index:1; white-space:pre-line;
+}
+.duy3-btn {
+    border:none; color:#14162b; font-family:'Fredoka', sans-serif; font-weight:600;
+    font-size:14.5px; padding:13px; border-radius:13px; cursor:pointer;
+    position:relative; z-index:1; width:100%;
 }
         
     </style>
@@ -825,18 +874,16 @@
 </div>
 
 <!-- DUYURU KUTUSU (öğrenci tarafı) -->
-<div class="modal-overlay" id="duyuruOverlay" style="background: rgba(15,23,42,0.65); z-index: 999999;">
-    <div style="background:#fff; border-radius:16px; max-width:420px; width:92%; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
-        <div id="duyuruHeaderAlani" style="padding:18px 20px; position:relative; background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%);">
-            <button onclick="duyuruKapat()" style="position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.2); border:none; width:26px; height:26px; border-radius:50%; color:#fff; font-size:13px; cursor:pointer;">✕</button>
-            <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.85); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:4px;">📢 Duyuru</div>
-            <div id="duyuruBaslik" style="font-size:16px; font-weight:900; color:#fff;">Başlık</div>
-        </div>
-        <div style="padding:18px 20px 20px;">
-            <img id="duyuruGorsel" src="" style="display:none; width:100%; max-height:220px; object-fit:cover; border-radius:10px; margin-bottom:14px;">
-            <div id="duyuruMesaj" style="font-size:13.5px; color:#333; line-height:1.6; white-space:pre-line;">Mesaj</div>
-            <button onclick="duyuruKapat()" style="width:100%; margin-top:16px; background:#f1f8e9; color:#1b5e20; border:none; padding:10px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer;">Anladım, Kapat</button>
-        </div>
+<div class="duy3-overlay" id="duyuruOverlay">
+    <div class="duy3-card">
+        <div class="duy3-glow" id="duyuruGlow"></div>
+        <button class="duy3-close" onclick="duyuruKapat()">✕</button>
+        <div class="duy3-medal" id="duyuruMedal">🎉</div>
+        <span class="duy3-tag" id="duyuruTag">DUYURU</span>
+        <h3 class="duy3-title" id="duyuruBaslik">Başlık</h3>
+        <img id="duyuruGorsel" class="duy3-img" src="">
+        <div class="duy3-msg" id="duyuruMesaj">Mesaj</div>
+        <button class="duy3-btn" id="duyuruBtn" onclick="duyuruKapat()">Anladım, Kapat</button>
     </div>
 </div>
 
@@ -1562,20 +1609,27 @@
             .catch(() => {});
         }
 
-        function duyuruGoster(duyuru) {
+                function duyuruGoster(duyuru) {
             window.duyuruAktifId = duyuru.id;
-            let temaRenkleri = {
-                yesil:   'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
-                mavi:    'linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)',
-                mor:     'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
-                turuncu: 'linear-gradient(135deg, #f57c00 0%, #e65100 100%)',
-                kirmizi: 'linear-gradient(135deg, #c62828 0%, #8e0000 100%)'
+            let temalar = {
+                yesil:   { medal: 'linear-gradient(145deg,#4ade80,#16a34a)', tagBg: 'rgba(74,222,128,.14)', tagBorder: 'rgba(74,222,128,.35)', tagColor: '#86efac', btn: 'linear-gradient(120deg,#4ade80,#22c55e)', glow1: 'rgba(74,222,128,.22)', glow2: 'rgba(22,163,74,.20)', icon: '🌿' },
+                mavi:    { medal: 'linear-gradient(145deg,#60a5fa,#2563eb)', tagBg: 'rgba(96,165,250,.14)', tagBorder: 'rgba(96,165,250,.35)', tagColor: '#93c5fd', btn: 'linear-gradient(120deg,#60a5fa,#3b82f6)', glow1: 'rgba(96,165,250,.22)', glow2: 'rgba(37,99,235,.20)', icon: '📘' },
+                mor:     { medal: 'linear-gradient(145deg,#a78bfa,#7c3aed)', tagBg: 'rgba(167,139,250,.14)', tagBorder: 'rgba(167,139,250,.35)', tagColor: '#c4b5fd', btn: 'linear-gradient(120deg,#a78bfa,#8b5cf6)', glow1: 'rgba(167,139,250,.22)', glow2: 'rgba(124,58,237,.20)', icon: '🔮' },
+                turuncu: { medal: 'linear-gradient(145deg,#fbbf24,#f59e0b)', tagBg: 'rgba(251,191,36,.14)', tagBorder: 'rgba(251,191,36,.35)', tagColor: '#fde68a', btn: 'linear-gradient(120deg,#fbbf24,#f59e0b)', glow1: 'rgba(251,191,36,.22)', glow2: 'rgba(245,158,11,.20)', icon: '⭐' },
+                kirmizi: { medal: 'linear-gradient(145deg,#fb7185,#e11d48)', tagBg: 'rgba(251,113,133,.14)', tagBorder: 'rgba(251,113,133,.35)', tagColor: '#fda4af', btn: 'linear-gradient(120deg,#fb7185,#f43f5e)', glow1: 'rgba(251,113,133,.22)', glow2: 'rgba(225,29,72,.20)', icon: '🔔' }
             };
-            let renkBg = temaRenkleri[duyuru.tema] || temaRenkleri.yesil;
+            let t = temalar[duyuru.tema] || temalar.yesil;
 
             document.getElementById('duyuruBaslik').innerText = duyuru.baslik;
             document.getElementById('duyuruMesaj').innerText = duyuru.mesaj;
-            document.getElementById('duyuruHeaderAlani').style.background = renkBg;
+            document.getElementById('duyuruMedal').style.background = t.medal;
+            document.getElementById('duyuruMedal').innerText = t.icon;
+            document.getElementById('duyuruTag').style.background = t.tagBg;
+            document.getElementById('duyuruTag').style.border = '1px solid ' + t.tagBorder;
+            document.getElementById('duyuruTag').style.color = t.tagColor;
+            document.getElementById('duyuruBtn').style.background = t.btn;
+            document.getElementById('duyuruGlow').style.background =
+                `radial-gradient(circle at 18% 18%, ${t.glow1}, transparent 42%), radial-gradient(circle at 85% 82%, ${t.glow2}, transparent 46%)`;
 
             let gorselEl = document.getElementById('duyuruGorsel');
             if (duyuru.gorselLink && duyuru.gorselLink.trim()) {
