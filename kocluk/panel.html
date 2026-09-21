@@ -577,8 +577,9 @@
 <!-- ÖĞRETMEN SOHBETLERİ OKUNMAMIŞ ROZETİ -->
 <span class="admin-gear-rozet" id="adminGearRozet">0</span>
 
-    <button class="admin-float-btn" onclick="yoneticiGirisSorgula()" title="Öğretmen Paneli">⚙️</button>    
+        <button class="admin-float-btn" onclick="yoneticiGirisSorgula()" title="Öğretmen Paneli">⚙️</button>    
     <button class="refresh-float-btn" onclick="window.location.reload();" title="Sayfayı Yenile">🔄</button>
+    <button class="refresh-float-btn" onclick="duyuruGecmisiniAc()" title="Duyuru Geçmişi" style="bottom: 62px; opacity: 0.6;">📋</button>
 
 
     <!-- ÖĞRETMEN ANA MENÜ MODALI -->
@@ -594,9 +595,12 @@
                 <button class="ogretmen-menu-btn" onclick="ogretmenMenuSinifIciAc()">
             <span>⚡ Ders İçi Performans</span>
         </button>
-        <button class="ogretmen-menu-btn" onclick="ogretmenMenuSohbetAc()">
+                <button class="ogretmen-menu-btn" onclick="ogretmenMenuSohbetAc()">
             <span>💬 Öğrenci Sohbetleri</span>
             <span class="ogretmen-menu-rozet" id="ogretmenMenuOkunmamis" style="display:none;">0</span>
+        </button>
+        <button class="ogretmen-menu-btn" onclick="ogretmenMenuDuyuruAc()">
+            <span>📢 Duyurular</span>
         </button>
     </div>
 </div>
@@ -813,9 +817,118 @@
 
         <div id="sinifIciOgrenciListesi" style="display:flex; flex-direction:column; gap:8px; max-height:400px; overflow-y:auto;"></div>
 
-        <div style="display:flex; gap:8px; margin-top:12px;">
+               <div style="display:flex; gap:8px; margin-top:12px;">
             <button type="button" onclick="sinifIciTopluUygula(-1)" style="flex:1; background:#ffebee; color:#c62828; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:18px; cursor:pointer;">− Seçilenlere</button>
             <button type="button" onclick="sinifIciTopluUygula(1)" style="flex:1; background:#e8f5e9; color:#1b5e20; border:none; padding:12px; border-radius:10px; font-weight:900; font-size:18px; cursor:pointer;">+ Seçilenlere</button>
+        </div>
+    </div>
+</div>
+
+<!-- DUYURU KUTUSU (öğrenci tarafı) -->
+<div class="modal-overlay" id="duyuruOverlay" style="background: rgba(15,23,42,0.65); z-index: 999999;">
+    <div style="background:#fff; border-radius:16px; max-width:420px; width:92%; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+        <div id="duyuruHeaderAlani" style="padding:18px 20px; position:relative; background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%);">
+            <button onclick="duyuruKapat()" style="position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.2); border:none; width:26px; height:26px; border-radius:50%; color:#fff; font-size:13px; cursor:pointer;">✕</button>
+            <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.85); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:4px;">📢 Duyuru</div>
+            <div id="duyuruBaslik" style="font-size:16px; font-weight:900; color:#fff;">Başlık</div>
+        </div>
+        <div style="padding:18px 20px 20px;">
+            <img id="duyuruGorsel" src="" style="display:none; width:100%; max-height:220px; object-fit:cover; border-radius:10px; margin-bottom:14px;">
+            <div id="duyuruMesaj" style="font-size:13.5px; color:#333; line-height:1.6; white-space:pre-line;">Mesaj</div>
+            <button onclick="duyuruKapat()" style="width:100%; margin-top:16px; background:#f1f8e9; color:#1b5e20; border:none; padding:10px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer;">Anladım, Kapat</button>
+        </div>
+    </div>
+</div>
+
+<!-- DUYURU YÖNETİM MODALI (öğretmen tarafı) -->
+<div class="modal-overlay" id="duyuruYonetimModal">
+    <div class="modal-content" style="max-width: 480px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:#2e7d32;">📢 Duyuru Yönetimi</h3>
+            <button onclick="document.getElementById('duyuruYonetimModal').style.display='none'" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+        </div>
+
+        <div style="max-height:220px; overflow-y:auto; margin-bottom:14px;" id="duyuruListeAlani">
+            <div style="font-size:11px; color:#666; text-align:center; padding:10px;">Yükleniyor...</div>
+        </div>
+
+        <hr style="border:0; border-top:1px solid #eee; margin:12px 0;">
+        <p style="font-size:11px; font-weight:800; color:#333; margin-bottom:8px;">+ Yeni Duyuru Oluştur</p>
+
+        <div class="form-group">
+            <label>Başlık:</label>
+            <input type="text" id="duyuruBaslikInput" placeholder="Örn: Yeni Özellik Eklendi!">
+        </div>
+        <div class="form-group">
+            <label>Mesaj:</label>
+            <textarea id="duyuruMesajInput" rows="3" placeholder="Duyuru içeriğini buraya yazın..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Görsel Linki (isteğe bağlı):</label>
+            <input type="text" id="duyuruGorselInput" placeholder="https://... (resim URL'si)">
+        </div>
+        <div class="form-group">
+            <label>Renk Teması:</label>
+            <select id="duyuruTemaSelect">
+                <option value="yesil" selected>🟢 Yeşil (Güncelleme)</option>
+                <option value="mavi">🔵 Mavi (Bilgi)</option>
+                <option value="mor">🟣 Mor (Özellik)</option>
+                <option value="turuncu">🟠 Turuncu (Önemli)</option>
+                <option value="kirmizi">🔴 Kırmızı (Acil)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Gösterim Sıklığı:</label>
+            <select id="duyuruGosterimSelect">
+                <option value="0">Her girişte göster (kapatana kadar)</option>
+                <option value="1">Sadece ilk girişte göster</option>
+                <option value="2">İlk 2 girişte göster</option>
+                <option value="3" selected>İlk 3 girişte göster</option>
+                <option value="5">İlk 5 girişte göster</option>
+                <option value="10">İlk 10 girişte göster</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Kime Gösterilsin:</label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:#333; margin-bottom:6px; cursor:pointer;">
+                <input type="checkbox" id="duyuruHerkesCb" checked onchange="duyuruHerkesToggle()"> 🌟 Herkes (Tüm Öğrenciler)
+            </label>
+            <div id="duyuruHedefSecimAlani" style="display:none;">
+                <div style="display:flex; gap:6px; margin-bottom:6px;">
+                    <select id="duyuruSinifToplu" style="flex:1;">
+                        <option value="">-- Sınıfa göre toplu seç --</option>
+                        <option value="1">1. Sınıflar</option>
+                        <option value="2">2. Sınıflar</option>
+                        <option value="3">3. Sınıflar</option>
+                        <option value="4">4. Sınıflar</option>
+                        <option value="5">5. Sınıflar</option>
+                        <option value="6">6. Sınıflar</option>
+                        <option value="7">7. Sınıflar</option>
+                        <option value="8">8. Sınıflar</option>
+                    </select>
+                    <button type="button" onclick="duyuruSinifToplaSec()" style="background:#e8f5e9; color:#1b5e20; border:1px solid #a5d6a7; padding:0 10px; border-radius:6px; font-size:10.5px; font-weight:700; cursor:pointer;">Seç</button>
+                </div>
+                <div id="duyuruOgrenciCheckboxListesi" style="max-height:120px; overflow-y:auto; background:#fff; border:1px solid #ccc; border-radius:6px; padding:6px; display:flex; flex-direction:column; gap:4px;">
+                    <div style="font-size:10px; color:#666;">Öğrenciler yükleniyor...</div>
+                </div>
+            </div>
+        </div>
+
+        <button style="width:100%; background:#2e7d32; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; margin-top:4px;" onclick="duyuruEkleGonder()">📢 Duyuruyu Yayınla</button>
+        <div id="duyuruEkleSonucMesaj" style="font-size:10.5px; margin-top:6px; text-align:center;"></div>
+    </div>
+</div>
+
+<!-- DUYURU GEÇMİŞİ MODALI (öğrenci tarafı) -->
+<div class="modal-overlay" id="duyuruGecmisModal">
+    <div class="modal-content" style="max-width: 440px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:#2e7d32;">📋 Duyuru Geçmişi</h3>
+            <button onclick="document.getElementById('duyuruGecmisModal').style.display='none'" style="background:none; border:none; font-size:18px; cursor:pointer;">❌</button>
+        </div>
+        <div id="duyuruGecmisListeAlani" style="max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+            <div style="font-size:11px; color:#666; text-align:center; padding:10px;">Yükleniyor...</div>
         </div>
     </div>
 </div>
@@ -1058,7 +1171,7 @@
 </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyL7ueUUGdPTuUCRlRh0WLDmzz2iQaEgpIOFvlontpfk8mywaE_zsbRatm52o4zjYH8/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpiSecVBh8qNIZ53gxN3Xd7pKsCqmxKZxVzuF9lOUSOslnhmIADZwhy-GQ1uWGoD7d/exec";
         const turkceAlfabe = ["A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"];
 
         let toplamSaniye = 0;
@@ -1133,12 +1246,13 @@
                 if (avatar) avatar.innerText = ogrenciAdi.charAt(0).toUpperCase();
                 
                 
-                // Verileri çek ve okuma geçmişini otomatik yükle
+                            // Verileri çek ve okuma geçmişini otomatik yükle
                 verileriCekVeBaslat(ogrenciAdi);
                                 arkaPlanYenilemeBaslat(ogrenciAdi);
                 okumaGecmisiniGetir(ogrenciAdi);
                 sohbetGecmisiniYukle();
                 videolariGetirVeGoster();
+                duyuruKontrolEt();
 
                 let kaydetBtn = document.getElementById("rubrikKaydetBtn");
                 if (kaydetBtn) {
@@ -1431,7 +1545,258 @@
             }
             return mesajlar[Math.floor(Math.random() * mesajlar.length)];
         }
+        // ===== DUYURU SİSTEMİ (öğrenci tarafı) =====
+        function duyuruKontrolEt() {
+            if (!ogrenciAdi) return;
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "duyurulariGetir", ogrenciAdi: ogrenciAdi })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.duyuru && data.duyuru.id) {
+                    setTimeout(() => duyuruGoster(data.duyuru), 700);
+                }
+            })
+            .catch(() => {});
+        }
 
+        function duyuruGoster(duyuru) {
+            window.duyuruAktifId = duyuru.id;
+            let temaRenkleri = {
+                yesil:   'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
+                mavi:    'linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)',
+                mor:     'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
+                turuncu: 'linear-gradient(135deg, #f57c00 0%, #e65100 100%)',
+                kirmizi: 'linear-gradient(135deg, #c62828 0%, #8e0000 100%)'
+            };
+            let renkBg = temaRenkleri[duyuru.tema] || temaRenkleri.yesil;
+
+            document.getElementById('duyuruBaslik').innerText = duyuru.baslik;
+            document.getElementById('duyuruMesaj').innerText = duyuru.mesaj;
+            document.getElementById('duyuruHeaderAlani').style.background = renkBg;
+
+            let gorselEl = document.getElementById('duyuruGorsel');
+            if (duyuru.gorselLink && duyuru.gorselLink.trim()) {
+                gorselEl.src = duyuru.gorselLink.trim();
+                gorselEl.style.display = 'block';
+            } else {
+                gorselEl.src = '';
+                gorselEl.style.display = 'none';
+            }
+
+            document.getElementById('duyuruOverlay').style.display = 'flex';
+        }
+
+        function duyuruKapat() {
+            document.getElementById('duyuruOverlay').style.display = 'none';
+            if (window.duyuruAktifId && ogrenciAdi) {
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "duyuruGorulduIsaretle", duyuruId: window.duyuruAktifId, ogrenciAdi: ogrenciAdi })
+                }).catch(() => {});
+            }
+            window.duyuruAktifId = null;
+        }
+
+        function duyuruGecmisiniAc() {
+            if (!ogrenciAdi) return;
+            document.getElementById('duyuruGecmisModal').style.display = 'flex';
+            let alan = document.getElementById('duyuruGecmisListeAlani');
+            alan.innerHTML = `<div style="font-size:11px; color:#666; text-align:center; padding:10px;">Yükleniyor...</div>`;
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "duyuruGecmisiGetir", ogrenciAdi: ogrenciAdi })
+            })
+            .then(res => res.json())
+            .then(data => {
+                let liste = data.liste || [];
+                if (liste.length === 0) {
+                    alan.innerHTML = `<div style="font-size:11px; color:#666; text-align:center; padding:14px;">Henüz sana ait bir duyuru bulunmuyor.</div>`;
+                    return;
+                }
+                let temaRenkleri = { yesil: '#2e7d32', mavi: '#1976d2', mor: '#7c3aed', turuncu: '#f57c00', kirmizi: '#c62828' };
+                alan.innerHTML = "";
+                liste.forEach(d => {
+                    let renk = temaRenkleri[d.tema] || temaRenkleri.yesil;
+                    let gorselHtml = d.gorselLink && d.gorselLink.trim()
+                        ? `<img src="${d.gorselLink}" style="width:100%; max-height:140px; object-fit:cover; border-radius:8px; margin-bottom:8px;">`
+                        : "";
+                    let kart = document.createElement('div');
+                    kart.style.cssText = `background:#fff; border:1px solid #eee; border-left:4px solid ${renk}; border-radius:10px; padding:12px;`;
+                    kart.innerHTML = `
+                        ${gorselHtml}
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px;">
+                            <div style="font-weight:800; font-size:12.5px; color:#1a1a1a;">${guvenliMetin(d.baslik)}</div>
+                            <div style="font-size:9.5px; color:#999; flex-shrink:0; white-space:nowrap;">${d.tarih}</div>
+                        </div>
+                        <div style="font-size:11.5px; color:#444; line-height:1.5; white-space:pre-line;">${guvenliMetin(d.mesaj)}</div>
+                    `;
+                    alan.appendChild(kart);
+                });
+            })
+            .catch(() => { alan.innerHTML = `<div style="font-size:11px; color:#c62828; text-align:center;">Yüklenirken hata oluştu.</div>`; });
+        }
+
+        // ===== DUYURU SİSTEMİ (öğretmen tarafı) =====
+        function ogretmenMenuDuyuruAc() {
+            document.getElementById('ogretmenMenuModal').style.display = 'none';
+            document.getElementById('duyuruYonetimModal').style.display = 'flex';
+            duyuruOgrencileriYukle();
+            duyuruListesiniYukle();
+            document.getElementById('duyuruHerkesCb').checked = true;
+            document.getElementById('duyuruHedefSecimAlani').style.display = 'none';
+        }
+
+        function duyuruOgrencileriYukle() {
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "ogrencileriGetir" })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    sistemOgrencileri = data.ogrenciler;
+                    rubrikOgrenciChecklistDoldurGenel('duyuruOgrenciCheckboxListesi', 'duyuru-ogr-cb');
+                }
+            });
+        }
+
+        function duyuruHerkesToggle() {
+            let herkesCb = document.getElementById('duyuruHerkesCb');
+            document.getElementById('duyuruHedefSecimAlani').style.display = herkesCb.checked ? 'none' : 'block';
+        }
+
+        function duyuruSinifToplaSec() {
+            let sinif = document.getElementById('duyuruSinifToplu').value;
+            if (!sinif) return;
+            document.querySelectorAll('.duyuru-ogr-cb').forEach(cb => {
+                if (cb.dataset.sinif === sinif) cb.checked = true;
+            });
+        }
+
+        function duyuruListesiniYukle() {
+            let alan = document.getElementById('duyuruListeAlani');
+            alan.innerHTML = `<div style="font-size:11px; color:#666; text-align:center; padding:10px;">Yükleniyor...</div>`;
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "duyuruListesiGetir" })
+            })
+            .then(res => res.json())
+            .then(data => {
+                let liste = data.liste || [];
+                if (liste.length === 0) {
+                    alan.innerHTML = `<div style="font-size:11px; color:#666; text-align:center; padding:10px;">Henüz duyuru oluşturulmamış.</div>`;
+                    return;
+                }
+                alan.innerHTML = "";
+                liste.forEach(d => {
+                    let aktifMi = String(d.aktif).trim().toLowerCase() === "evet";
+                    let hedefEtiket = d.hedefTipi === "herkes" ? "🌟 Herkese" : "👤 Seçili Öğrenciler";
+                    let sinirEtiket = d.gosterimSinir > 0 ? `İlk ${d.gosterimSinir} girişte` : "Her girişte";
+                    let satir = document.createElement('div');
+                    satir.style.cssText = `background:${aktifMi ? '#faf8f5' : '#f0f0f0'}; border:1px solid ${aktifMi ? '#e0dcd0' : '#ccc'}; border-radius:8px; padding:10px; margin-bottom:8px; opacity:${aktifMi ? '1' : '0.6'};`;
+                    satir.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-weight:800; font-size:12px; color:#1a1a1a;">${guvenliMetin(d.baslik)}</div>
+                                <div style="font-size:10px; color:#666; margin-top:2px;">${hedefEtiket} · ${sinirEtiket}</div>
+                            </div>
+                            <div style="display:flex; gap:4px; flex-shrink:0;">
+                                <button onclick="duyuruAktifPasifToggleYap('${d.id}', ${aktifMi})" style="background:${aktifMi ? '#fff3cd' : '#dcfce7'}; color:${aktifMi ? '#856404' : '#166534'}; border:none; padding:4px 8px; border-radius:6px; font-size:9.5px; font-weight:700; cursor:pointer;">${aktifMi ? 'Durdur' : 'Aktif Et'}</button>
+                                <button onclick="duyuruSilOnayla('${d.id}')" style="background:#ffebee; color:#c62828; border:none; padding:4px 8px; border-radius:6px; font-size:9.5px; font-weight:700; cursor:pointer;">Sil</button>
+                            </div>
+                        </div>
+                    `;
+                    alan.appendChild(satir);
+                });
+            })
+            .catch(() => { alan.innerHTML = `<div style="font-size:11px; color:#c62828; text-align:center;">Yüklenirken hata oluştu.</div>`; });
+        }
+
+        function duyuruAktifPasifToggleYap(duyuruId, suAnAktifMi) {
+            let yeniDurum = suAnAktifMi ? "hayir" : "evet";
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "duyuruAktifPasif", duyuruId: duyuruId, durum: yeniDurum })
+            })
+            .then(() => duyuruListesiniYukle())
+            .catch(() => {});
+        }
+
+        function duyuruSilOnayla(duyuruId) {
+            if (!confirm("Bu duyuruyu silmek istediğinize emin misiniz?")) return;
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "duyuruSil", duyuruId: duyuruId })
+            })
+            .then(() => duyuruListesiniYukle())
+            .catch(() => {});
+        }
+
+        function duyuruEkleGonder() {
+            let baslik = document.getElementById('duyuruBaslikInput').value.trim();
+            let mesaj = document.getElementById('duyuruMesajInput').value.trim();
+            let gorselLink = document.getElementById('duyuruGorselInput').value.trim();
+            let tema = document.getElementById('duyuruTemaSelect').value;
+            let gosterimSinir = document.getElementById('duyuruGosterimSelect').value;
+            let herkesMi = document.getElementById('duyuruHerkesCb').checked;
+            let mesajDiv = document.getElementById('duyuruEkleSonucMesaj');
+
+            if (!baslik || !mesaj) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Başlık ve mesaj zorunludur!"; return; }
+
+            let hedefTipi = "herkes";
+            let hedefListesi = [];
+            if (!herkesMi) {
+                document.querySelectorAll('.duyuru-ogr-cb:checked').forEach(cb => hedefListesi.push(cb.value));
+                if (hedefListesi.length === 0) { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Lütfen en az bir öğrenci seçin veya 'Herkes' işaretleyin!"; return; }
+                hedefTipi = "secili";
+            }
+
+            mesajDiv.style.color = "#333";
+            mesajDiv.innerText = "Yayınlanıyor...";
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "duyuruEkle",
+                    baslik: baslik,
+                    mesaj: mesaj,
+                    gorselLink: gorselLink,
+                    hedefTipi: hedefTipi,
+                    hedefListesi: hedefListesi,
+                    gosterimSinir: gosterimSinir,
+                    tema: tema
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    mesajDiv.style.color = "#166534";
+                    mesajDiv.innerText = "✅ Duyuru yayınlandı!";
+                    document.getElementById('duyuruBaslikInput').value = "";
+                    document.getElementById('duyuruMesajInput').value = "";
+                    document.getElementById('duyuruGorselInput').value = "";
+                    document.getElementById('duyuruHerkesCb').checked = true;
+                    duyuruHerkesToggle();
+                    document.querySelectorAll('.duyuru-ogr-cb').forEach(cb => cb.checked = false);
+                    duyuruListesiniYukle();
+                } else {
+                    mesajDiv.style.color = "#c62828";
+                    mesajDiv.innerText = "Hata: " + (data.message || "Bilinmeyen hata");
+                }
+            })
+            .catch(() => { mesajDiv.style.color = "#c62828"; mesajDiv.innerText = "Bağlantı hatası."; });
+        }
         function yoneticiGirisSorgula() {
             let sifre = prompt("Yönetici şifresini girin:");
            if (sifre === "315269") {
@@ -4322,10 +4687,10 @@ async function sinifIciSonIslemiGeriAl() {
     herkesLabel.innerHTML = `<input type="checkbox" value="Herkes" class="${cbClass}" onchange="rubrikHerkesSecildiGenel(this, '${cbClass}')"> 🌟 Herkes (Tüm Öğrenciler)`;
     konteyner.appendChild(herkesLabel);
 
-    (sistemOgrencileri || []).forEach(u => {
+       (sistemOgrencileri || []).forEach(u => {
         let label = document.createElement('label');
         label.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; cursor:pointer;";
-        label.innerHTML = `<input type="checkbox" value="${guvenliMetin(u.ogrenciAdi)}" class="${cbClass}"> ${guvenliMetin(u.ogrenciAdi)}`;
+        label.innerHTML = `<input type="checkbox" value="${guvenliMetin(u.ogrenciAdi)}" data-sinif="${guvenliMetin(String(u.sinif || ''))}" class="${cbClass}"> ${guvenliMetin(u.ogrenciAdi)}`;
         konteyner.appendChild(label);
     });
 
