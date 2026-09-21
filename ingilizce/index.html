@@ -2353,7 +2353,24 @@ function kelimeYarismasiAc() {
     document.getElementById('kyOyunEkrani').style.display = 'none';
     document.getElementById('kyBitisEkrani').style.display = 'none';
 
-    // Oturum açıksa ismi yaz ama değiştirmeye izin ver
+    // Sınıfta oynatılıyorsa ismi kilitle, değilse normal davran
+    let isimInput = document.getElementById('kyIsimInput');
+    if (isimInput) {
+        if (siniftaOynananOgrenci) {
+            isimInput.value = siniftaOynananOgrenci;
+            isimInput.disabled = true;
+        } else if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") {
+            isimInput.value = aktifOgrenciAdi;
+            isimInput.disabled = false;
+        } else {
+            isimInput.value = "";
+            isimInput.disabled = false;
+        }
+    }
+
+    kySinifKisitlamaUygulaVeBaslat();
+    kelimeMuzikBaslat();
+}
 
 function kelimeYarismasiKapat() {
     document.getElementById('kelimeYarismaOverlay').style.display = 'none';
