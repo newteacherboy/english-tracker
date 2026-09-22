@@ -1663,23 +1663,14 @@
             </div>
         </div>
 
-              <!-- EKRAN: KONU IZGARASI -->
+                     <!-- EKRAN: KONU KARTLARI -->
         <div class="dc-screen" id="dcScreenTopics">
             <div class="dc-level-badge" id="dcCatBadge"><span class="dc-badge-dot" id="dcCatBadgeDot"></span><span id="dcCatBadgeText"></span></div>
-            <button class="dc-pdf-toplu-btn" onclick="dcTopluPdfIndir()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4338ca" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg>
-                Bu Kategorinin Tüm PDF'ini İndir
-            </button>
             <div class="dc-grid-progress">
                 <div class="dc-grid-progress-top"><span>İlerleme</span><span id="dcGridProgressText">0 / 0 konu</span></div>
                 <div class="dc-grid-bar-bg"><div class="dc-grid-bar-fill" id="dcGridBarFill"></div></div>
             </div>
             <div class="dc-topic-grid" id="dcTopicListArea"></div>
-            <div class="dc-grid-legend">
-                <span><span class="dc-legend-dot" style="background:#2f855a;"></span>Tamamlandı</span>
-                <span><span class="dc-legend-dot" style="background:#ef4444;"></span>Tekrar Dene</span>
-                <span><span class="dc-legend-dot" style="background:#eee9db;"></span>Yeni</span>
-            </div>
         </div>
 
         <!-- EKRAN: KONU DETAYI -->
@@ -2391,25 +2382,26 @@
 .dc-pdf-toplu-btn{width:100%; background:#eef2ff; color:#4338ca; border:none; padding:10px; border-radius:13px; font-weight:800; font-size:11px; cursor:pointer; margin-bottom:12px; box-shadow:0 2px 0 #c7d2fe; display:flex; align-items:center; justify-content:center; gap:6px;}
 
 
-/* IZGARA (SAYI IZGARASI) */
+/* RENKLİ KART IZGARASI */
 .dc-grid-progress{background:#fff; border-radius:16px; padding:12px 14px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.04);}
 .dc-grid-progress-top{display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:#1e293b; margin-bottom:6px;}
 .dc-grid-bar-bg{background:#eef1e9; border-radius:6px; height:8px; overflow:hidden;}
 .dc-grid-bar-fill{background:linear-gradient(90deg,#2f855a,#22c55e); height:100%; width:0%; border-radius:6px; transition:width .4s ease;}
 
-.dc-topic-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px 8px; margin-bottom:14px;}
-.dc-grid-item{display:flex; flex-direction:column; align-items:center; gap:5px;}
-.dc-grid-node{width:100%; aspect-ratio:1; border-radius:16px; border:none; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; box-shadow:0 3px 0 var(--dc-gn-deep); cursor:pointer; padding:4px; transition:transform .08s, box-shadow .08s; position:relative;}
-.dc-grid-label{text-align:center; font-size:9px; font-weight:800; color:#64748b; line-height:1.25; max-width:78px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
-.dc-grid-node:active{transform:translateY(3px); box-shadow:0 0 0 var(--dc-gn-deep);}
-.dc-grid-node.done{--dc-gn-deep:#1c5a3a; background:#2f855a; color:#fff;}
-.dc-grid-node.retry{--dc-gn-deep:#b91c1c; background:#ef4444; color:#fff;}
-.dc-grid-node.yeni{--dc-gn-deep:#e2ddce; background:#fbfaf7; color:#a8a496; border:2px solid #eee9db;}
-.dc-grid-node-num{font-family:'Segoe UI', sans-serif; font-weight:800; font-size:14px;}
-.dc-grid-node-flag{position:absolute; top:-5px; right:-3px; font-size:12px;}
-.dc-grid-legend{display:flex; gap:14px; justify-content:center; font-size:9.5px; font-weight:800; color:#64748b; margin-bottom:14px; flex-wrap:wrap;}
-.dc-grid-legend span{display:flex; align-items:center; gap:5px;}
-.dc-grid-legend .dc-legend-dot{width:9px; height:9px; border-radius:50%;}
+.dc-topic-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.dc-card{background:#fff; border-radius:18px; padding:14px 12px; box-shadow:0 3px 0 var(--dc-card-deep), 0 2px 8px rgba(0,0,0,.03); cursor:pointer; transition:transform .08s, box-shadow .08s; border:2px solid transparent; position:relative;}
+.dc-card:active{transform:translateY(3px); box-shadow:0 0 0 var(--dc-card-deep);}
+.dc-card.done{--dc-card-deep:#c8ecd6; border-color:#c8ecd6; background:#f4fdf7;}
+.dc-card.retry{--dc-card-deep:#fecaca; border-color:#fecaca; background:#fef5f5;}
+.dc-card.yeni{--dc-card-deep:#eee9db;}
+.dc-card-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:9px;}
+.dc-card-icon{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.dc-card-icon.done{background:#2f855a;}
+.dc-card-icon.retry{background:#ef4444;}
+.dc-card-icon.yeni{background:#fef3c7;}
+.dc-card-num{font-family:'Segoe UI', sans-serif; font-weight:700; font-size:10px; color:#a8a496;}
+.dc-card-title{font-size:11.5px; font-weight:800; color:#1e293b; line-height:1.35;}
+.dc-card-flag{position:absolute; top:-6px; right:-4px; font-size:14px;}
 
 .dc-topic-header{border-radius:20px; padding:18px; margin-bottom:14px; color:#fff; position:relative; overflow:hidden;}
 .dc-topic-header::after{content:""; position:absolute; right:-18px; top:-18px; width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,.08);}
@@ -5742,27 +5734,28 @@ function dcKategoriSec(key, ad) {
         document.getElementById('dcGridProgressText').innerText = `${tamamlananSayisi} / ${konular.length} konu`;
         document.getElementById('dcGridBarFill').style.width = `${Math.round((tamamlananSayisi / konular.length) * 100)}%`;
 
-               alan.innerHTML = konular.map((k, i) => {
-            let durumSinif = 'yeni', icerik = `<div class="dc-grid-node-num">${i+1}</div>`;
+        alan.innerHTML = konular.map((k, i) => {
+            let ds = 'yeni', ikon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>`;
             if (k.durum === 'tamamlandi') {
-                durumSinif = 'done';
-                icerik = `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+                ds = 'done';
+                ikon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
             } else if (k.durum === 'basarisiz') {
-                durumSinif = 'retry';
-                icerik = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>`;
+                ds = 'retry';
+                ikon = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>`;
             }
-            let flagHtml = k.bilmiyordum ? '<span class="dc-grid-node-flag">🚩</span>' : '';
-            return `<div class="dc-grid-item">
-                <button class="dc-grid-node ${durumSinif}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')" title="${k.konuAdi.replace(/"/g,'&quot;')}">
-                    ${flagHtml}${icerik}
-                </button>
-                <div class="dc-grid-label">${k.konuAdi}</div>
+            let flagHtml = k.bilmiyordum ? '<span class="dc-card-flag">🚩</span>' : '';
+            return `<div class="dc-card ${ds}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')">
+                ${flagHtml}
+                <div class="dc-card-top">
+                    <div class="dc-card-icon ${ds}">${ikon}</div>
+                    <span class="dc-card-num">${i+1}</span>
+                </div>
+                <div class="dc-card-title">${k.konuAdi}</div>
             </div>`;
         }).join('');
     }
     dcIleriGit('dcScreenTopics');
 }
-
 function dcKonuAc(konuAdi) {
     dcAktifKonu = konuAdi;
     let r = dcKategoriRenkleri[dcAktifKategori];
@@ -5968,16 +5961,23 @@ function dcAramaSonucundanGit(seviye, kategori, konuAdi) {
     let r = dcKategoriRenkleri[kategori];
     document.getElementById('dcCatBadge').style.background = r.accent;
     document.getElementById('dcCatBadge').innerText = `${seviye} · ${r.label}`;
-       let konular = dcTumKonularCache.filter(k => k.seviye === seviye && k.kategori === kategori).sort((a,b) => a.siraNo - b.siraNo);
+         let konular = dcTumKonularCache.filter(k => k.seviye === seviye && k.kategori === kategori).sort((a,b) => a.siraNo - b.siraNo);
     let tamamlananAS = konular.filter(k => k.durum === 'tamamlandi').length;
     document.getElementById('dcGridProgressText').innerText = `${tamamlananAS} / ${konular.length} konu`;
     document.getElementById('dcGridBarFill').style.width = `${konular.length ? Math.round((tamamlananAS / konular.length) * 100) : 0}%`;
-        document.getElementById('dcTopicListArea').innerHTML = konular.map((k, i) => {
-        let durumSinifAS = k.durum === 'tamamlandi' ? 'done' : k.durum === 'basarisiz' ? 'retry' : 'yeni';
-        let icerikAS = k.durum === 'tamamlandi' ? `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>` : k.durum === 'basarisiz' ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>` : `<div class="dc-grid-node-num">${i+1}</div>`;
-        return `<div class="dc-grid-item">
-            <button class="dc-grid-node ${durumSinifAS}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')" title="${k.konuAdi.replace(/"/g,'&quot;')}">${icerikAS}</button>
-            <div class="dc-grid-label">${k.konuAdi}</div>
+    document.getElementById('dcTopicListArea').innerHTML = konular.map((k, i) => {
+        let ds = k.durum === 'tamamlandi' ? 'done' : k.durum === 'basarisiz' ? 'retry' : 'yeni';
+        let ikon = k.durum === 'tamamlandi'
+            ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`
+            : k.durum === 'basarisiz'
+            ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>`
+            : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>`;
+        return `<div class="dc-card ${ds}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')">
+            <div class="dc-card-top">
+                <div class="dc-card-icon ${ds}">${ikon}</div>
+                <span class="dc-card-num">${i+1}</span>
+            </div>
+            <div class="dc-card-title">${k.konuAdi}</div>
         </div>`;
     }).join('');
     dcGecmis.push('dcScreenTopics');
