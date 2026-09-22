@@ -1813,9 +1813,9 @@
             <input type="text" id="kayitOlEmail" placeholder="ornek@mail.com">
         </div>
 
-                <label class="kayit-onay-kutu">
+                       <label class="kayit-onay-kutu">
             <input type="checkbox" id="kayitOlKvkkOnay">
-            <span>Bu bilgilerin bir <b>veli/vasi eşliğinde ve onayıyla</b> girildiğini, kaydedilen kişisel verilerin öğrenci takibi amacıyla işleneceğini <a href="javascript:void(0)" onclick="gizlilikModaliniAc()">Gizlilik ve KVKK Aydınlatma Metni</a>'nde belirtildiği şekilde kabul ve beyan ederim.</span>
+            <span><a href="javascript:void(0)" onclick="gizlilikModaliniAc()">KVKK Aydınlatma Metni'ni</a> okudum ve anladım. Yasal temsilcisi (velisi) olarak öğrencimin bilgilerinin işlenmesine ve yurt dışındaki bulut sunucularına aktarılmasına, bilgilendirilmiş olarak <b>AÇIK RIZA VERİYORUM.</b></span>
         </label>
 
         <button class="btn-giris" id="kayitOlGonderBtn" onclick="kayitOlGonder()" style="background:#2563eb;">Kayıt Talebi Gönder</button>
@@ -5240,17 +5240,20 @@ function ozellikIzniKaydet() {
             genelKilitKapatCallback = null;
         }
 
-                // ===== SEKME İÇERİKLERİNİ DÜZELT (yanlış yere düşmüş .tab-content'leri panel-alani içine geri taşır) =====
-        function sekmeIcerikleriniYerineTasi() {
+                      // ===== KAYBOLAN/YANLIŞ YERE DÜŞEN İÇERİKLERİ KURTAR (kalıcı, genel çözüm) =====
+        function govdeKaybolanIcerikleriKurtar() {
             let panelAlani = document.getElementById('panel-alani');
             if (!panelAlani) return;
-            document.querySelectorAll('.tab-content').forEach(function(tabEl) {
-                if (tabEl.parentElement !== panelAlani) {
-                    panelAlani.appendChild(tabEl);
-                }
+            let govdeCocuklari = Array.from(document.body.children);
+            govdeCocuklari.forEach(function(el) {
+                if (el.id === 'login-container' || el.id === 'panel-alani' || el.id === 'oturumYuklemeOverlay') return;
+                if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+                let konum = window.getComputedStyle(el).position;
+                if (konum === 'fixed') return; // sabit konumlu modal/pencere ise dokunma, olduğu yerde kalsın
+                panelAlani.appendChild(el);
             });
         }
-        document.addEventListener('DOMContentLoaded', sekmeIcerikleriniYerineTasi);
+        document.addEventListener('DOMContentLoaded', govdeKaybolanIcerikleriKurtar);
 
                 function gizlilikModaliniAc() { document.getElementById('gizlilikModal').style.display = 'flex'; }
         function kullanimKosullariModaliniAc() { document.getElementById('kullanimKosullariModal').style.display = 'flex'; }
@@ -9527,31 +9530,56 @@ function rubricVideoOgrenciChecklistDoldur() {
     <div class="rubric-content legal-modal-content">
         <button class="game-close-btn" onclick="document.getElementById('gizlilikModal').style.display='none'">✕</button>
         <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px;">🔒 Gizlilik ve KVKK Aydınlatma Metni</h3>
-        <p style="font-size:10.5px; color:#64748b;">Diji-Medu İngilizce Portalı, öğrencilerimizin ve velilerimizin kişisel verilerinin güvenliğini önemser. Bu metin, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında sizi bilgilendirmek amacıyla hazırlanmıştır.</p>
+               <p style="font-size:11px; font-weight:800; color:#334155; margin-bottom:2px;">DİJİ MEDU</p>
+        <p style="font-size:10.5px; color:#64748b;">Bu Aydınlatma Metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu'nun ("KVKK") 10. maddesi uyarınca, Diji Medu tarafından işletilen İngilizce eğitim uygulamasını kullanan öğrencilerin ve yasal temsilcilerinin (velilerinin) kişisel verilerinin işlenme amaçları, hukuki sebepleri ve hakları konusunda bilgilendirilmesi amacıyla hazırlanmıştır.</p>
+        <p style="font-size:10.5px; color:#64748b;">Uygulamamız tamamen ticari amaç gütmeyen, ücretsiz bir eğitim faaliyeti olarak yürütülmekte olup, toplanan veriler yalnızca öğrencilerin İngilizce dil gelişim süreçlerinin takibi amacıyla kullanılmaktadır.</p>
 
         <h4>1. Veri Sorumlusu</h4>
-        <p>Bu platform, Öğretmen Çocuk tarafından işletilmektedir. Sorularınız için official.ogretmencocuk@gmail.com adresinden bize ulaşabilirsiniz.</p>
+        <p>KVKK uyarınca veri sorumlusu Diji Medu olup, veri işleme süreçlerine ilişkin her türlü soru ve talebiniz için iletişim kanalı dijimedu@gmail.com e-posta adresidir. Faaliyetin ticari nitelikte olmaması ve veri sorumlusunun fiziki adresi yerine dijital iletişim tercih edilmesi nedeniyle yasal yazışmalar bu e-posta adresi üzerinden yürütülecektir.</p>
 
-        <h4>2. Toplanan Veriler</h4>
+        <h4>2. İşlenen Kişisel Veriler</h4>
+        <p>Uygulama kapsamında yalnızca aşağıdaki sınırlı ve amaca uygun veriler işlenmektedir:</p>
         <ul>
-            <li>Öğrenci adı, sınıf ve şube bilgisi</li>
-            <li>Veli/erişim telefon numarası (kimlik doğrulama ve şifre işlemleri için)</li>
-            <li>Veli e-posta adresi (isteğe bağlı, bildirim amaçlı)</li>
-            <li>Ders içi performans, oyun/etkinlik sonuçları ve puanlar</li>
-            <li>Oturum süresi ve platform kullanım istatistikleri</li>
+            <li><b>Öğrenciye Ait Veriler:</b> Adı ve soyadı, yaşı, cinsiyeti, uygulama içi oyun oynama verileri, ders içi performans ve İngilizce dil gelişim takip bilgileri.</li>
+            <li><b>Veliye Ait Veriler:</b> Telefon numarası ve e-posta adresi.</li>
         </ul>
 
-        <h4>3. Verilerin İşlenme Amacı</h4>
-        <p>Toplanan veriler yalnızca; öğrencinin eğitim sürecinin takibi, veliye gelişim raporu sunulması, platforma güvenli giriş yapılabilmesi ve öğretmenin öğrenciye özel içerik/etkinlik ataması amacıyla işlenir. Hiçbir veri üçüncü taraflarla pazarlama amacıyla paylaşılmaz veya satılmaz.</p>
+        <h4>3. Kişisel Verilerin İşlenme Amaçları ve Hukuki Sebepleri</h4>
+        <p>Söz konusu kişisel veriler, KVKK'nın 5. maddesinde belirtilen "Bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması kaydıyla, sözleşmenin taraflarına ait kişisel verilerin işlenmesinin gerekli olması" ve "Veri sorumlusunun meşru menfaati" hukuki sebeplerine dayalı olarak aşağıdaki amaçlarla işlenmektedir:</p>
+        <ul>
+            <li>Öğrencinin uygulamaya kaydının yapılması ve kullanıcı profilinin oluşturulması,</li>
+            <li>İngilizce eğitim oyunlarının oynatılması ve ders içi performans analizlerinin yapılması,</li>
+            <li>Öğrencinin dil gelişim sürecinin takip edilmesi ve velisine raporlanabilmesi,</li>
+            <li>Uygulama içi güvenliğin sağlanması ve olası teknik aksaklıkların giderilmesi,</li>
+            <li>Veli ile iletişim kurulması (bilgilendirme, teknik destek veya sistem bildirimleri).</li>
+        </ul>
 
-               <h4>4. Çocukların Verileri Hakkında Özel Not</h4>
-        <p>Bu platform öğrencilere (çoğunlukla 18 yaş altı) yöneliktir. Öğrenci kayıtları, ilgili öğretmen/kurum aracılığıyla ve veli bilgisiyle oluşturulmaktadır. Kayıt formunda işaretlenen onay kutucuğu ile, bilgilerin bir veli/vasi eşliğinde ve onayıyla girildiği beyan edilmektedir. Veliler, çocuklarına ait verilerin görüntülenmesi, düzeltilmesi veya silinmesi talebi için istediği zaman yukarıdaki e-posta adresinden bizimle iletişime geçebilir.</p> <h4>5. Veri Güvenliği</h4>
-        <p>Veriler, Google'ın altyapısı (Google Sheets/Apps Script) üzerinde, yetkisiz erişimi önlemeye yönelik makul teknik önlemlerle saklanmaktadır. Buna rağmen internet üzerinden hiçbir veri iletiminin %100 güvenli olduğu garanti edilemez.</p>
+        <h4>4. İşlenen Kişisel Verilerin Aktarılması</h4>
+        <p>Toplanan kişisel veriler, ticari amaçla asla üçüncü kişilere satılmamakta, kiralanmamakta veya paylaşılmamaktadır. Veriler yalnızca uygulamanın teknik altyapısını (hosting, veri tabanı ve bulut sunucu servisleri) sağlayan hizmet sağlayıcı altyapılarında muhafaza edilmektedir. Kullanılan bulut altyapısı servislerinin sunucularının yurt dışında bulunması ihtimaline binaen, bu aktarım işlemi aşağıdaki "Açık Rıza Beyanı" kapsamında velinin onayına tabi tutulmaktadır.</p>
 
-        <h4>6. Haklarınız</h4>
-        <p>KVKK'nın 11. maddesi uyarınca; verilerinizin işlenip işlenmediğini öğrenme, işlenmişse buna ilişkin bilgi talep etme, işlenme amacını öğrenme, yurt içinde/dışında aktarıldığı üçüncü kişileri bilme, eksik/yanlış işlenmişse düzeltilmesini isteme ve mevzuatta öngörülen şartlar çerçevesinde silinmesini isteme haklarına sahipsiniz.</p>
+        <h4>5. Kişisel Verilerin Toplanma Yöntemi</h4>
+        <p>Kişisel verileriniz, veli tarafından uygulamanın kayıt ekranında bilgilerin manuel olarak girilmesi ve öğrencinin uygulama içerisindeki oyun/ders aktivitelerini gerçekleştirmesi suretiyle tamamen otomatik yollarla dijital ortamda toplanmaktadır.</p>
 
-        <div class="legal-last-updated">Son güncelleme: 2026. Bu metin bilgilendirme amaçlıdır ve hukuki danışmanlık yerine geçmez.</div>
+        <h4>6. İlgili Kişinin (Velinin ve Öğrencinin) KVKK Kapsamındaki Hakları</h4>
+        <p>KVKK'nın 11. maddesi uyarınca veliler, hem kendileri hem de yasal temsilcisi oldukları çocukları adına dijimedu@gmail.com adresine e-posta göndererek aşağıdaki haklarını kullanabilirler:</p>
+        <ul>
+            <li>Kişisel veri işlenip işlenmediğini öğrenme,</li>
+            <li>Kişisel verileri işlenmişse buna ilişkin bilgi talep etme,</li>
+            <li>Kişisel verilerin işlenme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme,</li>
+            <li>Yurt içinde veya yurt dışında kişisel verilerin aktarıldığı üçüncü kişileri bilme,</li>
+            <li>Kişisel verilerin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme,</li>
+            <li>KVKK'da öngörülen şartlar çerçevesinde kişisel verilerin silinmesini veya yok edilmesini isteme,</li>
+            <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle kişinin kendisi aleyhine bir sonucun ortaya çıkmasına itiraz etme.</li>
+        </ul>
+
+        <hr style="border:0; border-top:1.5px dashed #e2e8f0; margin:16px 0;">
+
+        <p style="font-size:11px; font-weight:800; color:#334155; margin-bottom:2px;">DİJİ MEDU UYGULAMASI</p>
+        <h4 style="margin-top:2px;">VELİ AÇIK RIZA BEYANI</h4>
+        <p>Diji Medu tarafından yukarıda sunulan Aydınlatma Metni'ni okudum ve anladım. Yasal temsilcisi (velisi) olduğum öğrencimin uygulamayı kullanabilmesi, İngilizce ders içi performansının ve oyun başarılarının takip edilerek eğitim süreçlerinin iyileştirilmesi amacıyla;</p>
+        <p>Öğrencimin adı, soyadı, yaşı, cinsiyeti ve uygulama içi performans bilgileri ile şahsıma ait telefon numarası ve e-posta adresinin işlenmesine, uygulamanın kesintisiz çalışmasını sağlayan küresel bulut tabanlı veri tabanı sistemlerinin sunucularının yurt dışında bulunması ihtimali nedeniyle verilerin yurt dışına aktarılmasına hiçbir baskı altında kalmadan, bilgilendirilmiş olarak <b>AÇIK RIZA VERİYORUM.</b></p>
+
+        <div class="legal-last-updated">Bu metin Diji Medu eğitim uygulaması kullanıcıları için hazırlanmıştır.<br>İletişim: dijimedu@gmail.com</div>
     </div>
 </div>
 
