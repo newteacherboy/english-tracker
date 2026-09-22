@@ -2315,7 +2315,7 @@
     </div>
     <div id="asmacaOyunEkrani" style="display:none;text-align:center;">
       <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:#991b1b;margin-bottom:8px;">
-        <span id="asmacaKelimeInfo">Kelime: 1/5</span><span id="asmacaPuanInfo">Puan: 0</span>
+             <span id="asmacaKelimeInfo">Kelime: 1/5</span><span id="asmacaCanInfo">❤️❤️❤️❤️❤️</span><span id="asmacaPuanInfo">Puan: 0</span>
       </div>
       <div id="asmacaSahne" style="font-size:44px;margin-bottom:10px;">🙂</div>
       <div id="asmacaIpucu" style="font-size:11px;color:#64748b;font-weight:700;margin-bottom:8px;"></div>
@@ -2356,7 +2356,7 @@
     </div>
     <div id="kelimebulOyunEkrani" style="display:none;text-align:center;">
       <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:#166534;margin-bottom:6px;">
-        <span id="kbKelimeInfo">Kelime: 1/3</span><span id="kbPuanInfo">Puan: 0</span>
+              <span id="kbKelimeInfo">Kelime: 1/3</span><span id="kbCanInfo">❤️❤️❤️❤️❤️</span><span id="kbPuanInfo">Puan: 0</span>
       </div>
       <div id="kbIpucu" style="font-size:11px;color:#64748b;font-weight:700;margin-bottom:10px;"></div>
       <div id="kbSatirlar" style="margin-bottom:14px;"></div>
@@ -4214,9 +4214,9 @@ function ozellikIzniKaydet() {
             secilenUnitelerSetFn(secilen);
         }
 
-               // ============ 1) HAFIZA KARTLARI ============
+                   // ============ 1) HAFIZA KARTLARI ============
         let hafizaAktifSinif = 1, hafizaSecilenUniteler = [1];
-        let hafizaKartlar = [], hafizaAcikIndexler = [], hafizaHamle = 0, hafizaEslesenSayi = 0, hafizaSure = 0, hafizaTimer = null;
+        let hafizaKartlar = [], hafizaAcikIndexler = [], hafizaHamle = 0, hafizaEslesenSayi = 0, hafizaSure = 0, hafizaYanlisSayisi = 0, hafizaTimer = null;
         let hafizaMuzikAcik = true, hafizaAudioElement = null;
 
         function hafizaMuzikBaslat() {
@@ -4283,7 +4283,7 @@ function ozellikIzniKaydet() {
                 hafizaKartlar.push({ tip:'tr', metin:(k.turkce||k.tr||''), pairId:i, acik:false, eslesti:false });
             });
             hafizaKartlar.sort(() => Math.random() - 0.5);
-            hafizaAcikIndexler = []; hafizaHamle = 0; hafizaEslesenSayi = 0; hafizaSure = 0;
+            hafizaAcikIndexler = []; hafizaHamle = 0; hafizaEslesenSayi = 0; hafizaSure = 0; hafizaYanlisSayisi = 0;
 
             document.getElementById('hafizaGirisEkrani').style.display = 'none';
             document.getElementById('hafizaOyunEkrani').style.display = 'block';
@@ -4325,6 +4325,7 @@ function ozellikIzniKaydet() {
                     hafizaKartlariCiz();
                     if (hafizaEslesenSayi === hafizaKartlar.length / 2) setTimeout(() => hafizaOyunuBitir(), 500);
                 } else {
+                    hafizaYanlisSayisi++;
                     if (navigator.vibrate) navigator.vibrate([40,40,40]);
                     hafizaSesCal(false);
                     setTimeout(() => {
@@ -4343,13 +4344,14 @@ function ozellikIzniKaydet() {
             let isim = document.getElementById('hafizaIsimInput').value.trim();
             let sinifStr = hafizaAktifSinif + ". Sınıf";
             let ciftSayisi = hafizaKartlar.length / 2;
-            let puan = Math.max(5, Math.round(ciftSayisi * 15 - hafizaHamle * 2 - hafizaSure * 0.3));
+            // Süre geçtikçe ve yanlış eşleştirme yaptıkça puan düşer
+            let puan = Math.max(5, Math.round(ciftSayisi * 12 - hafizaYanlisSayisi * 4 - hafizaSure * 0.4));
             document.getElementById('hzResIsim').innerText = isim;
             document.getElementById('hzResHamle').innerText = hafizaHamle;
             document.getElementById('hzResSure').innerText = hafizaSure + " saniye";
             document.getElementById('hzResPuan').innerText = puan + " Puan";
             try {
-                await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"hafizaLiderlikKaydet", tarih:new Date().toISOString().split('T')[0], isim:isim, sinif:sinifStr, detay:hafizaHamle+" hamle", sure:hafizaSure+"s", suresaniye:hafizaSure, puan:puan }) });
+                await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"hafizaLiderlikKaydet", tarih:new Date().toISOString().split('T')[0], isim:isim, sinif:sinifStr, detay:hafizaYanlisSayisi+" yanlış", sure:hafizaSure+"s", suresaniye:hafizaSure, puan:puan }) });
             } catch(e) {}
             oyunLiderlikGoster('hafizaLiderlikTumunuGetir', sinifStr, isim, 'hzGecmisSkorlarListesi', 'Hafıza Kartları');
         }
@@ -4372,9 +4374,9 @@ function ozellikIzniKaydet() {
             } catch(e) { konum.innerHTML = "Liderlik tablosu yüklenirken hata oluştu."; }
         }
 
-        // ============ 2) KELİME YAĞMURU (4 ŞIKLI) ============
+        // ============ 2) KELİME YAĞMURU (4 ŞIKLI + SÜRE/YANLIŞ CEZALI) ============
         let yagmurAktifSinif = 1, yagmurSecilenUniteler = [1];
-        let yagmurHavuz = [], yagmurAktifIndex = 0, yagmurPuan = 0, yagmurDogru = 0, yagmurCan = 3, yagmurLevel = 1, yagmurInterval = null, yagmurPozisyon = 0, yagmurBaslangic = 0, yagmurAktifKelime = null;
+        let yagmurHavuz = [], yagmurAktifIndex = 0, yagmurPuan = 0, yagmurDogru = 0, yagmurCan = 3, yagmurLevel = 1, yagmurInterval = null, yagmurPozisyon = 0, yagmurBaslangic = 0, yagmurAktifKelime = null, yagmurKelimeBaslangicZamani = 0;
         let yagmurMuzikAcik = true, yagmurAudioElement = null;
 
         function yagmurMuzikBaslat() {
@@ -4434,6 +4436,7 @@ function ozellikIzniKaydet() {
             if (yagmurInterval) clearInterval(yagmurInterval);
             if (yagmurAktifIndex >= yagmurHavuz.length) { yagmurAktifIndex = 0; yagmurHavuz.sort(() => Math.random() - 0.5); }
             yagmurAktifKelime = yagmurHavuz[yagmurAktifIndex];
+            yagmurKelimeBaslangicZamani = Date.now();
 
             let alan = document.getElementById('yagmurAlan');
             alan.innerHTML = "";
@@ -4470,7 +4473,9 @@ function ozellikIzniKaydet() {
                 if (yagmurPozisyon >= 90) {
                     clearInterval(yagmurInterval);
                     document.querySelectorAll('.yg-secenek-btn').forEach(b => b.disabled = true);
+                    yagmurPuan = Math.max(0, yagmurPuan - 5); // süresi dolan kelime de puan kaybettirir
                     yagmurCan--;
+                    document.getElementById('yagmurPuanInfo').innerText = `Puan: ${yagmurPuan}`;
                     if (yagmurCan <= 0) { setTimeout(() => yagmurOyunuBitir(), 400); return; }
                     yagmurAktifIndex++;
                     setTimeout(() => yagmurYeniKelimeDusur(), 400);
@@ -4481,10 +4486,13 @@ function ozellikIzniKaydet() {
         function yagmurSecenekSec(secilenIndex, dogruIndex, btnEl) {
             if (yagmurInterval) clearInterval(yagmurInterval);
             document.querySelectorAll('.yg-secenek-btn').forEach(b => b.disabled = true);
+            let gecenSaniyeKelime = Math.floor((Date.now() - yagmurKelimeBaslangicZamani) / 1000);
 
             if (secilenIndex === dogruIndex) {
                 btnEl.classList.add('dogru');
-                yagmurPuan += 10 + yagmurLevel * 2;
+                // Süre geçtikçe kazanılan puan azalır
+                let kazanc = Math.max(5, (12 + yagmurLevel * 2) - gecenSaniyeKelime * 2);
+                yagmurPuan += kazanc;
                 yagmurDogru++;
                 yagmurLevel++;
                 document.getElementById('yagmurPuanInfo').innerText = `Puan: ${yagmurPuan}`;
@@ -4494,6 +4502,8 @@ function ozellikIzniKaydet() {
                 btnEl.classList.add('yanlis');
                 let dogruBtn = document.querySelectorAll('.yg-secenek-btn')[dogruIndex];
                 if (dogruBtn) dogruBtn.classList.add('dogru');
+                yagmurPuan = Math.max(0, yagmurPuan - 5);
+                document.getElementById('yagmurPuanInfo').innerText = `Puan: ${yagmurPuan}`;
                 yagmurCan--;
                 if (yagmurCan <= 0) { setTimeout(() => yagmurOyunuBitir(), 700); return; }
                 yagmurAktifIndex++;
@@ -4519,9 +4529,9 @@ function ozellikIzniKaydet() {
             oyunLiderlikGoster('yagmurLiderlikTumunuGetir', sinifStr, isim, 'ygGecmisSkorlarListesi', 'Kelime Yağmuru');
         }
 
-        // ============ 3) ADAM ASMACA (YENİ TASARIM + NOKTALAMA DÜZELTMESİ) ============
+        // ============ 3) ADAM ASMACA (5 CAN + SÜRE/YANLIŞ CEZALI + NOKTALAMA DÜZELTMESİ) ============
         let asmacaAktifSinif = 1, asmacaSecilenUniteler = [1];
-        let asmacaKelimeler = [], asmacaAktifIndex = 0, asmacaAktifKelime = "", asmacaTahminEdilenHarfler = [], asmacaYanlisSayisi = 0, asmacaPuan = 0;
+        let asmacaKelimeler = [], asmacaAktifIndex = 0, asmacaAktifKelime = "", asmacaTahminEdilenHarfler = [], asmacaYanlisSayisi = 0, asmacaPuan = 0, asmacaCan = 5, asmacaKelimeBaslangicZamani = 0;
         let asmacaMuzikAcik = true, asmacaAudioElement = null;
 
         function asmacaMuzikBaslat() {
@@ -4540,6 +4550,7 @@ function ozellikIzniKaydet() {
             if (asmacaMuzikAcik) { btn.innerText = "🔊 Müzik: Açık"; asmacaMuzikBaslat(); }
             else { btn.innerText = "🔇 Müzik: Kapalı"; asmacaMuzikDurdur(); }
         }
+        function asmacaCanGoster() { document.getElementById('asmacaCanInfo').innerText = "❤️".repeat(Math.max(0, asmacaCan)) + "🖤".repeat(5 - Math.max(0, asmacaCan)); }
 
         function asmacaHangmanSVG(yanlis) {
             let parcalar = [
@@ -4583,20 +4594,22 @@ function ozellikIzniKaydet() {
             if (havuz.length < 3) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
             let hedefSayisi = 10 + (Number(asmacaAktifSinif) - 1) * 5;
             asmacaKelimeler = [...havuz].sort(() => Math.random() - 0.5).slice(0, Math.min(hedefSayisi, havuz.length));
-            asmacaAktifIndex = 0; asmacaPuan = 0;
+            asmacaAktifIndex = 0; asmacaPuan = 0; asmacaCan = 5;
             document.getElementById('asmacaGirisEkrani').style.display = 'none';
             document.getElementById('asmacaOyunEkrani').style.display = 'block';
             asmacaMuzikBaslat();
             asmacaSonrakiKelime();
         }
         function asmacaSonrakiKelime() {
-            if (asmacaAktifIndex >= asmacaKelimeler.length) { asmacaOyunuBitir(); return; }
+            if (asmacaAktifIndex >= asmacaKelimeler.length || asmacaCan <= 0) { asmacaOyunuBitir(); return; }
             let k = asmacaKelimeler[asmacaAktifIndex];
             asmacaAktifKelime = (k.ingilizce || k.en || '').toUpperCase();
             asmacaTahminEdilenHarfler = [];
             asmacaYanlisSayisi = 0;
+            asmacaKelimeBaslangicZamani = Date.now();
             document.getElementById('asmacaKelimeInfo').innerText = `Kelime: ${asmacaAktifIndex+1}/${asmacaKelimeler.length}`;
             document.getElementById('asmacaPuanInfo').innerText = `Puan: ${asmacaPuan}`;
+            asmacaCanGoster();
             document.getElementById('asmacaIpucu').innerText = "İpucu: " + (k.turkce || k.tr || '');
             document.getElementById('asmacaSahne').innerHTML = asmacaHangmanSVG(0);
             asmacaBlanklariCiz();
@@ -4632,7 +4645,9 @@ function ozellikIzniKaydet() {
                 let sadeceHarfler = asmacaAktifKelime.split('').filter(ch => /[A-Z]/.test(ch));
                 let tamamMi = sadeceHarfler.every(ch => asmacaTahminEdilenHarfler.includes(ch));
                 if (tamamMi) {
-                    asmacaPuan += Math.max(5, 20 - asmacaYanlisSayisi * 3);
+                    let gecenSaniye = Math.floor((Date.now() - asmacaKelimeBaslangicZamani) / 1000);
+                    asmacaPuan += Math.max(5, 20 - asmacaYanlisSayisi * 3 - gecenSaniye);
+                    document.getElementById('asmacaPuanInfo').innerText = `Puan: ${asmacaPuan}`;
                     setTimeout(() => { asmacaAktifIndex++; asmacaSonrakiKelime(); }, 900);
                 }
             } else {
@@ -4640,6 +4655,10 @@ function ozellikIzniKaydet() {
                 document.getElementById('asmacaSahne').innerHTML = asmacaHangmanSVG(asmacaYanlisSayisi);
                 if (asmacaYanlisSayisi >= 6) {
                     document.getElementById('asmacaIpucu').innerText = "Doğrusu: " + asmacaAktifKelime;
+                    asmacaCan--;
+                    asmacaCanGoster();
+                    asmacaPuan = Math.max(0, asmacaPuan - 8);
+                    document.getElementById('asmacaPuanInfo').innerText = `Puan: ${asmacaPuan}`;
                     setTimeout(() => { asmacaAktifIndex++; asmacaSonrakiKelime(); }, 1400);
                 }
             }
@@ -4653,14 +4672,14 @@ function ozellikIzniKaydet() {
             document.getElementById('asResIsim').innerText = isim;
             document.getElementById('asResPuan').innerText = asmacaPuan + " Puan";
             try {
-                await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"asmacaLiderlikKaydet", tarih:new Date().toISOString().split('T')[0], isim:isim, sinif:sinifStr, detay:asmacaKelimeler.length+" kelime", sure:"", suresaniye:0, puan:asmacaPuan }) });
+                await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"asmacaLiderlikKaydet", tarih:new Date().toISOString().split('T')[0], isim:isim, sinif:sinifStr, detay:asmacaAktifIndex+" kelime tamamlandı", sure:"", suresaniye:0, puan:asmacaPuan }) });
             } catch(e) {}
             oyunLiderlikGoster('asmacaLiderlikTumunuGetir', sinifStr, isim, 'asGecmisSkorlarListesi', 'Adam Asmaca');
         }
 
-        // ============ 4) KELİME BUL (WORDLE - YENİ TASARIM) ============
+        // ============ 4) KELİME BUL (5 CAN + SÜRE/YANLIŞ CEZALI - WORDLE) ============
         let kelimebulAktifSinif = 1, kelimebulSecilenUniteler = [1];
-        let kelimebulKelimeler = [], kelimebulAktifIndex = 0, kelimebulHedef = "", kelimebulDenemeSayisi = 0, kelimebulPuan = 0, kelimebulSatirlarArr = [];
+        let kelimebulKelimeler = [], kelimebulAktifIndex = 0, kelimebulHedef = "", kelimebulDenemeSayisi = 0, kelimebulPuan = 0, kelimebulSatirlarArr = [], kelimebulCan = 5, kelimebulKelimeBaslangicZamani = 0;
         let kelimebulMuzikAcik = true, kelimebulAudioElement = null;
 
         function kelimebulMuzikBaslat() {
@@ -4679,6 +4698,7 @@ function ozellikIzniKaydet() {
             if (kelimebulMuzikAcik) { btn.innerText = "🔊 Müzik: Açık"; kelimebulMuzikBaslat(); }
             else { btn.innerText = "🔇 Müzik: Kapalı"; kelimebulMuzikDurdur(); }
         }
+        function kelimebulCanGoster() { document.getElementById('kbCanInfo').innerText = "❤️".repeat(Math.max(0, kelimebulCan)) + "🖤".repeat(5 - Math.max(0, kelimebulCan)); }
 
         function kelimebulOyunAc() {
             let modalEl = document.getElementById('kelimebulOyunOverlay');
@@ -4711,20 +4731,22 @@ function ozellikIzniKaydet() {
             if (havuz.length < 2) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
             let hedefSayisi = 10 + (Number(kelimebulAktifSinif) - 1) * 5;
             kelimebulKelimeler = [...havuz].sort(() => Math.random() - 0.5).slice(0, Math.min(hedefSayisi, havuz.length));
-            kelimebulAktifIndex = 0; kelimebulPuan = 0;
+            kelimebulAktifIndex = 0; kelimebulPuan = 0; kelimebulCan = 5;
             document.getElementById('kelimebulGirisEkrani').style.display = 'none';
             document.getElementById('kelimebulOyunEkrani').style.display = 'block';
             kelimebulMuzikBaslat();
             kelimebulSonrakiKelime();
         }
         function kelimebulSonrakiKelime() {
-            if (kelimebulAktifIndex >= kelimebulKelimeler.length) { kelimebulOyunuBitir(); return; }
+            if (kelimebulAktifIndex >= kelimebulKelimeler.length || kelimebulCan <= 0) { kelimebulOyunuBitir(); return; }
             let k = kelimebulKelimeler[kelimebulAktifIndex];
             kelimebulHedef = (k.ingilizce || k.en || '').toUpperCase();
             kelimebulDenemeSayisi = 0;
             kelimebulSatirlarArr = [];
+            kelimebulKelimeBaslangicZamani = Date.now();
             document.getElementById('kbKelimeInfo').innerText = `Kelime: ${kelimebulAktifIndex+1}/${kelimebulKelimeler.length}`;
             document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
+            kelimebulCanGoster();
             document.getElementById('kbIpucu').className = 'kb-ipucu-kutu';
             document.getElementById('kbIpucu').innerHTML = `💡 <b>${guvenliMetin(k.turkce || k.tr || '')}</b> &nbsp;·&nbsp; ${kelimebulHedef.length} harfli kelime`;
             document.getElementById('kbTahminInput').value = "";
@@ -4760,11 +4782,17 @@ function ozellikIzniKaydet() {
             document.getElementById('kbTahminInput').value = "";
 
             if (tahmin === kelimebulHedef) {
-                let puanKazanc = Math.max(5, (7 - kelimebulDenemeSayisi) * 10);
+                let gecenSaniye = Math.floor((Date.now() - kelimebulKelimeBaslangicZamani) / 1000);
+                let puanKazanc = Math.max(5, (7 - kelimebulDenemeSayisi) * 10 - gecenSaniye);
                 kelimebulPuan += puanKazanc;
+                document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
                 setTimeout(() => { kelimebulAktifIndex++; kelimebulSonrakiKelime(); }, 1200);
             } else if (kelimebulDenemeSayisi >= 6) {
                 document.getElementById('kbIpucu').innerHTML = "❌ Doğrusu: <b>" + kelimebulHedef + "</b>";
+                kelimebulCan--;
+                kelimebulCanGoster();
+                kelimebulPuan = Math.max(0, kelimebulPuan - 8);
+                document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
                 setTimeout(() => { kelimebulAktifIndex++; kelimebulSonrakiKelime(); }, 1600);
             }
         }
@@ -4777,7 +4805,7 @@ function ozellikIzniKaydet() {
             document.getElementById('kbResIsim').innerText = isim;
             document.getElementById('kbResPuan').innerText = kelimebulPuan + " Puan";
             try {
-                await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"kelimebulLiderlikKaydet", tarih:new Date().toISOString().split('T')[0], isim:isim, sinif:sinifStr, detay:kelimebulKelimeler.length+" kelime", sure:"", suresaniye:0, puan:kelimebulPuan }) });
+                await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"kelimebulLiderlikKaydet", tarih:new Date().toISOString().split('T')[0], isim:isim, sinif:sinifStr, detay:kelimebulAktifIndex+" kelime tamamlandı", sure:"", suresaniye:0, puan:kelimebulPuan }) });
             } catch(e) {}
             oyunLiderlikGoster('kelimebulLiderlikTumunuGetir', sinifStr, isim, 'kbGecmisSkorlarListesi', 'Kelime Bul');
         }
@@ -6593,10 +6621,20 @@ async function okumaSonucuKaydet() {
             document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
 
             // Eğer global veri henüz gelmediyse biraz bekle
-            let denemeSayisi = 0;
+                       let denemeSayisi = 0;
             while ((!globalDataCache || globalDataCache.length === 0) && denemeSayisi < 20) {
                 await new Promise(r => setTimeout(r, 300));
                 denemeSayisi++;
+            }
+
+            // YENİ: 6 saniye sonunda hâlâ veri gelmediyse, son bir kez doğrudan tekrar dene
+            if (!globalDataCache || globalDataCache.length === 0) {
+                try {
+                    let sonRes = await fetch(apiURL);
+                    globalDataCache = await sonRes.json();
+                } catch (sonErr) {
+                    console.error("Giriş öncesi veri tekrar çekilemedi:", sonErr);
+                }
             }
 
                         let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
