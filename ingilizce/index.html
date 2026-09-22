@@ -835,20 +835,7 @@
     <!-- Sol Üst Küçük Ana Portala Dön Butonu -->
     <a href="https://panel.ogretmencocuk.com" class="portal-back-btn">← Ana Portala Dön</a>
 
-    <!-- SAĞ ALT KÖŞEDE ÇARKIN TAM ÜSTÜNDE ASİSTAN BUTONU VE UYARI -->
-    <div class="ai-float-container">
-        <div class="ai-badge-tip" id="aiTipBadge">Öğretmene Soru Sor!</div>
-        <button class="ai-float-btn" onclick="aiModalAc()" title="Yapay Zeka İngilizce Koçu">🤖</button>
-    </div>
-
-               <!-- SOL ALT KÖŞEDE SAYFA YENİLEME BUTONU -->
-    <button class="refresh-float-btn" id="sayfaYenileBtn" onclick="sayfayiYenile()" title="Sayfayı Yenile">🔄</button>
-
-        <!-- SOL ALTTA, YENİLEME BUTONUNUN ÜSTÜNDE DUYURU GEÇMİŞİ BUTONU -->
-    <button class="refresh-float-btn" id="duyuruGecmisBtn" onclick="duyuruGecmisiniAc()" title="Duyuru Geçmişi" style="bottom: 52px; opacity: 0.75;">📋</button>
-
-        <!-- SOL ALTTA, DUYURU GEÇMİŞİNİN ÜSTÜNDE YARDIM BUTONU -->
-    <button class="refresh-float-btn" id="yardimBtn" onclick="yardimAc()" title="Yardım" style="bottom: 92px; opacity: 0.75;">❓</button>
+   
 
         <!-- PUAN BİLDİRİM TOAST -->
     <div class="pb-toast-overlay" id="pbToastOverlay">
@@ -920,11 +907,7 @@
         </div>
     </div>
 
-    <!-- SAĞ ALT KÖŞEDE GİZLİ ÖĞRETMEN ÇARKI -->
-        <div class="teacher-gear-wrap">
-        <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Paneli">⚙️</button>
-        <span class="teacher-gear-badge" id="ogretmenGenelRozet">0</span>
-    </div>
+   
 
     <!-- AI ASİSTAN SOHBET PENCERESİ -->
     <div class="ai-chat-modal" id="aiChatModal">
@@ -1453,6 +1436,26 @@
                 <span class="bn-icon">🏆</span><span class="bn-label">Rozetler</span>
             </button>
         </div>
+
+        <!-- MOBİL ORTAK ARAÇLAR MENÜSÜ (ALTA TAŞINDI) -->
+<div class="floating-tools-dock" id="floatingToolsDock">
+    <!-- Ana Tetikleyici Buton -->
+    <button class="dock-main-btn" onclick="dockToggle()" title="Araçlar Menüsü">🛠️</button>
+    
+    <!-- Yatay Açılan Araç Butonları -->
+    <div class="dock-items-row" id="dockItemsRow">
+        <button class="refresh-float-btn dock-btn-item" id="sayfaYenileBtn" onclick="sayfayiYenile()" title="Sayfayı Yenile">🔄</button>
+        <button class="refresh-float-btn dock-btn-item" id="duyuruGecmisBtn" onclick="duyuruGecmisiniAc()" title="Duyurular">📋</button>
+        <button class="refresh-float-btn dock-btn-item" id="yardimBtn" onclick="yardimAc()" title="Yardım">❓</button>
+        <div class="teacher-gear-wrap dock-btn-item" style="position:relative; bottom:auto; right:auto;">
+            <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" style="position:static;" title="Öğretmen Paneli">⚙️</button>
+            <span class="teacher-gear-badge" id="ogretmenGenelRozet">0</span>
+        </div>
+        <div class="ai-float-container dock-btn-item" style="position:relative; bottom:auto; right:auto; flex-direction:row;">
+            <button class="ai-float-btn" onclick="aiModalAc()" style="position:static;" title="AI Asistan">🤖</button>
+        </div>
+    </div>
+</div>
         
                 <!-- ÖZET SEKMESİ -->
         <div id="tab-ozet" class="tab-content active">
@@ -2629,6 +2632,74 @@
     #yardimBtn { bottom: auto !important; top: 94px !important; left: 10px !important; z-index: 99990 !important; }
     .teacher-gear-wrap { bottom: auto !important; top: 10px !important; right: 10px !important; z-index: 99991 !important; }
     .ai-float-container { bottom: auto !important; top: 58px !important; right: 10px !important; z-index: 99990 !important; }
+}
+
+    /* Alt Sekmelerin Hemen Üzerindeki Kayar Araçlar Çubuğu */
+.floating-tools-dock {
+    position: fixed;
+    bottom: 65px; /* Alt mobil menünün tam üstünde yer alır */
+    right: 14px;
+    z-index: 99995;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(6px);
+    padding: 6px 10px;
+    border-radius: 999px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e2e8f0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Ana Tetikleyici Buton */
+.dock-main-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #2f855a; /* Portalın ana yeşil teması */
+    color: #ffffff;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(47, 133, 90, 0.3);
+    flex-shrink: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Yatay Sıralı Butonlar Alanı */
+.dock-items-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 250px;
+    overflow: hidden;
+    transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin 0.3s ease;
+    margin-left: 8px;
+    opacity: 1;
+}
+
+/* Kapalı Durum (5 saniye sonra veya tıklandığında toplanma hali) */
+.floating-tools-dock.collapsed .dock-items-row {
+    max-width: 0;
+    opacity: 0;
+    margin-left: 0;
+    pointer-events: none;
+}
+
+.floating-tools-dock.collapsed .dock-main-btn {
+    transform: rotate(180deg);
+}
+
+/* İçerideki butonların dock içi uyumlu biçimlendirilmesi */
+.dock-btn-item {
+    position: static !important;
+    width: 32px !important;
+    height: 32px !important;
+    box-shadow: none !important;
+    margin: 0 !important;
 }
     
 </style>
@@ -10515,6 +10586,38 @@ function dcBottomNavSenkronize() {
     let nav = document.getElementById('bottomNavMobile');
     if (nav) nav.classList.toggle('force-show-desktop', herhangiAcikMi);
 }
+
+        let dockKapanmaZamanasimi = null;
+
+function dockToggle() {
+    let dock = document.getElementById('floatingToolsDock');
+    dock.classList.toggle('collapsed');
+    
+    // Eğer açıldıysa 5 saniye sonra tekrar otomatik kapat
+    if (!dock.classList.contains('collapsed')) {
+        dockZamanlayiciyiBaslat();
+    } else {
+        if (dockKapanmaZamanasimi) clearTimeout(dockKapanmaZamanasimi);
+    }
+}
+
+function dockZamanlayiciyiBaslat() {
+    if (dockKapanmaZamanasimi) clearTimeout(dockKapanmaZamanasimi);
+    dockKapanmaZamanasimi = setTimeout(() => {
+        let dock = document.getElementById('floatingToolsDock');
+        if (dock && !dock.classList.contains('collapsed')) {
+            dock.classList.add('collapsed');
+        }
+    }, 5000); // 5 saniye
+}
+
+// Sayfa yüklendiğinde araçlar menüsü açık başlasın ve 5 saniye sonra otomatik toplansın
+document.addEventListener('DOMContentLoaded', function() {
+    let dock = document.getElementById('floatingToolsDock');
+    if (dock) {
+        dockZamanlayiciyiBaslat();
+    }
+});
         
     </script>
 
