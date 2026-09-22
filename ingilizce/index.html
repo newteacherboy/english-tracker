@@ -2534,16 +2534,11 @@
 @media (max-width: 768px) {
     .tabs-container{ display:none; }
     .dc-fullscreen-overlay{ padding-bottom: 78px !important; }
+
     .bottom-nav-mobile{
         display:flex; position:fixed; bottom:0; left:0; right:0; z-index:99998;
         background:#fff; border-top:1px solid #eef1e9; padding:6px 3px calc(6px + env(safe-area-inset-bottom,0px));
         box-shadow:0 -3px 14px rgba(0,0,0,.06);
-    #sayfaYenileBtn{ bottom:auto !important; top:10px !important; left:10px !important; z-index:99990 !important; }
-    #duyuruGecmisBtn{ bottom:auto !important; top:52px !important; left:10px !important; z-index:99990 !important; }
-    #yardimBtn{ bottom:auto !important; top:94px !important; left:10px !important; z-index:99990 !important; }
-    .teacher-gear-wrap{ bottom:auto !important; top:10px !important; right:10px !important; z-index:99991 !important; }
-    .ai-float-container{ bottom:auto !important; top:58px !important; right:10px !important; z-index:99990 !important; }
-}
     }
     .bn-item{
         flex:1; border:none; background:transparent; display:flex; flex-direction:column;
@@ -2557,11 +2552,11 @@
     #panel-alani{ padding-bottom:64px; }
 
     /* Sağ/sol köşe butonları alt navla çakışmasın diye üste taşınıyor */
-    #sayfaYenileBtn{ bottom:auto !important; top:10px !important; left:10px !important; }
-    #duyuruGecmisBtn{ bottom:auto !important; top:52px !important; left:10px !important; }
-    #yardimBtn{ bottom:auto !important; top:94px !important; left:10px !important; }
-    .teacher-gear-wrap{ bottom:auto !important; top:10px !important; right:10px !important; }
-    .ai-float-container{ bottom:auto !important; top:58px !important; right:10px !important; }
+    #sayfaYenileBtn{ bottom:auto !important; top:10px !important; left:10px !important; z-index:99990 !important; }
+    #duyuruGecmisBtn{ bottom:auto !important; top:52px !important; left:10px !important; z-index:99990 !important; }
+    #yardimBtn{ bottom:auto !important; top:94px !important; left:10px !important; z-index:99990 !important; }
+    .teacher-gear-wrap{ bottom:auto !important; top:10px !important; right:10px !important; z-index:99991 !important; }
+    .ai-float-container{ bottom:auto !important; top:58px !important; right:10px !important; z-index:99990 !important; }
 }
     
 </style>
