@@ -1663,14 +1663,23 @@
             </div>
         </div>
 
-        <!-- EKRAN: KONU PATİKASI -->
+              <!-- EKRAN: KONU IZGARASI -->
         <div class="dc-screen" id="dcScreenTopics">
             <div class="dc-level-badge" id="dcCatBadge"><span class="dc-badge-dot" id="dcCatBadgeDot"></span><span id="dcCatBadgeText"></span></div>
             <button class="dc-pdf-toplu-btn" onclick="dcTopluPdfIndir()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4338ca" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg>
                 Bu Kategorinin Tüm PDF'ini İndir
             </button>
-            <div class="dc-path-wrap" id="dcTopicListArea"></div>
+            <div class="dc-grid-progress">
+                <div class="dc-grid-progress-top"><span>İlerleme</span><span id="dcGridProgressText">0 / 0 konu</span></div>
+                <div class="dc-grid-bar-bg"><div class="dc-grid-bar-fill" id="dcGridBarFill"></div></div>
+            </div>
+            <div class="dc-topic-grid" id="dcTopicListArea"></div>
+            <div class="dc-grid-legend">
+                <span><span class="dc-legend-dot" style="background:#2f855a;"></span>Tamamlandı</span>
+                <span><span class="dc-legend-dot" style="background:#ef4444;"></span>Tekrar Dene</span>
+                <span><span class="dc-legend-dot" style="background:#eee9db;"></span>Yeni</span>
+            </div>
         </div>
 
         <!-- EKRAN: KONU DETAYI -->
@@ -2381,18 +2390,24 @@
 
 .dc-pdf-toplu-btn{width:100%; background:#eef2ff; color:#4338ca; border:none; padding:10px; border-radius:13px; font-weight:800; font-size:11px; cursor:pointer; margin-bottom:12px; box-shadow:0 2px 0 #c7d2fe; display:flex; align-items:center; justify-content:center; gap:6px;}
 
-/* PATİKA */
-.dc-path-wrap{position:relative; padding:8px 0 24px;}
-.dc-path-node-row{display:flex; justify-content:center; position:relative; margin-bottom:5px;}
-.dc-path-node-row:nth-child(4n+2){transform:translateX(-30px);}
-.dc-path-node-row:nth-child(4n+4){transform:translateX(30px);}
-.dc-path-node-btn{width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; position:relative; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 0 var(--dc-node-deep); transition:transform .08s, box-shadow .08s;}
-.dc-path-node-btn:active{transform:translateY(3px); box-shadow:0 1px 0 var(--dc-node-deep);}
-.dc-path-node-btn.done{--dc-node-main:#2f855a; --dc-node-deep:#1c5a3a; background:var(--dc-node-main);}
-.dc-path-node-btn.retry{--dc-node-main:#ef4444; --dc-node-deep:#b91c1c; background:var(--dc-node-main);}
-.dc-path-node-btn.new{--dc-node-main:#f59e0b; --dc-node-deep:#c2760a; background:var(--dc-node-main);}
-.dc-node-label{text-align:center; font-size:10px; font-weight:800; color:#64748b; max-width:110px; margin:0 auto 12px; line-height:1.25;}
-.dc-node-flag{position:absolute; top:-4px; right:-2px; font-size:13px;}
+
+/* IZGARA (SAYI IZGARASI) */
+.dc-grid-progress{background:#fff; border-radius:16px; padding:12px 14px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.04);}
+.dc-grid-progress-top{display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:#1e293b; margin-bottom:6px;}
+.dc-grid-bar-bg{background:#eef1e9; border-radius:6px; height:8px; overflow:hidden;}
+.dc-grid-bar-fill{background:linear-gradient(90deg,#2f855a,#22c55e); height:100%; width:0%; border-radius:6px; transition:width .4s ease;}
+
+.dc-topic-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:9px; margin-bottom:14px;}
+.dc-grid-node{aspect-ratio:1; border-radius:16px; border:none; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; box-shadow:0 3px 0 var(--dc-gn-deep); cursor:pointer; padding:4px; transition:transform .08s, box-shadow .08s; position:relative;}
+.dc-grid-node:active{transform:translateY(3px); box-shadow:0 0 0 var(--dc-gn-deep);}
+.dc-grid-node.done{--dc-gn-deep:#1c5a3a; background:#2f855a; color:#fff;}
+.dc-grid-node.retry{--dc-gn-deep:#b91c1c; background:#ef4444; color:#fff;}
+.dc-grid-node.yeni{--dc-gn-deep:#e2ddce; background:#fbfaf7; color:#a8a496; border:2px solid #eee9db;}
+.dc-grid-node-num{font-family:'Segoe UI', sans-serif; font-weight:800; font-size:14px;}
+.dc-grid-node-flag{position:absolute; top:-5px; right:-3px; font-size:12px;}
+.dc-grid-legend{display:flex; gap:14px; justify-content:center; font-size:9.5px; font-weight:800; color:#64748b; margin-bottom:14px; flex-wrap:wrap;}
+.dc-grid-legend span{display:flex; align-items:center; gap:5px;}
+.dc-grid-legend .dc-legend-dot{width:9px; height:9px; border-radius:50%;}
 
 .dc-topic-header{border-radius:20px; padding:18px; margin-bottom:14px; color:#fff; position:relative; overflow:hidden;}
 .dc-topic-header::after{content:""; position:absolute; right:-18px; top:-18px; width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,.08);}
@@ -5715,31 +5730,29 @@ function dcKategoriSec(key, ad) {
 
     let konular = dcTumKonularCache.filter(k => k.seviye === dcAktifSeviye && k.kategori === key).sort((a,b) => a.siraNo - b.siraNo);
     let alan = document.getElementById('dcTopicListArea');
+
     if (konular.length === 0) {
-        alan.innerHTML = `<div style="text-align:center; padding:40px 20px; color:#94a3b8; font-weight:700; font-size:12px;">🌱 Bu kategori için konular yakında eklenecek</div>`;
+        alan.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#94a3b8; font-weight:700; font-size:12px;">🌱 Bu kategori için konular yakında eklenecek</div>`;
+        document.getElementById('dcGridProgressText').innerText = '0 / 0 konu';
+        document.getElementById('dcGridBarFill').style.width = '0%';
     } else {
-        let ilkAktifBulundu = false;
+        let tamamlananSayisi = konular.filter(k => k.durum === 'tamamlandi').length;
+        document.getElementById('dcGridProgressText').innerText = `${tamamlananSayisi} / ${konular.length} konu`;
+        document.getElementById('dcGridBarFill').style.width = `${Math.round((tamamlananSayisi / konular.length) * 100)}%`;
+
         alan.innerHTML = konular.map((k, i) => {
-            let durumSinif = 'new', ikon = `<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#a8a496" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`;
-            let tiklanabilir = true;
+            let durumSinif = 'yeni', icerik = `<div class="dc-grid-node-num">${i+1}</div>`;
             if (k.durum === 'tamamlandi') {
                 durumSinif = 'done';
-                ikon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+                icerik = `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
             } else if (k.durum === 'basarisiz') {
                 durumSinif = 'retry';
-                ikon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>`;
-            } else if (!ilkAktifBulundu) {
-                durumSinif = 'new';
-                ilkAktifBulundu = true;
-                ikon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.4 5.7 21l2.3-7.2-6-4.6h7.6z"/></svg>`;
+                icerik = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>`;
             }
-            let flagHtml = k.bilmiyordum ? '<span class="dc-node-flag">🚩</span>' : '';
-            return `<div class="dc-path-node-row">
-                <button class="dc-path-node-btn ${durumSinif}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')">
-                    ${flagHtml}${ikon}
-                </button>
-            </div>
-            <div class="dc-node-label">${k.konuAdi}</div>`;
+            let flagHtml = k.bilmiyordum ? '<span class="dc-grid-node-flag">🚩</span>' : '';
+            return `<button class="dc-grid-node ${durumSinif}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')" title="${k.konuAdi.replace(/"/g,'&quot;')}">
+                ${flagHtml}${icerik}
+            </button>`;
         }).join('');
     }
     dcIleriGit('dcScreenTopics');
@@ -5950,10 +5963,14 @@ function dcAramaSonucundanGit(seviye, kategori, konuAdi) {
     let r = dcKategoriRenkleri[kategori];
     document.getElementById('dcCatBadge').style.background = r.accent;
     document.getElementById('dcCatBadge').innerText = `${seviye} · ${r.label}`;
-    let konular = dcTumKonularCache.filter(k => k.seviye === seviye && k.kategori === kategori).sort((a,b) => a.siraNo - b.siraNo);
+       let konular = dcTumKonularCache.filter(k => k.seviye === seviye && k.kategori === kategori).sort((a,b) => a.siraNo - b.siraNo);
+    let tamamlananAS = konular.filter(k => k.durum === 'tamamlandi').length;
+    document.getElementById('dcGridProgressText').innerText = `${tamamlananAS} / ${konular.length} konu`;
+    document.getElementById('dcGridBarFill').style.width = `${konular.length ? Math.round((tamamlananAS / konular.length) * 100) : 0}%`;
     document.getElementById('dcTopicListArea').innerHTML = konular.map((k, i) => {
-        let statusHtml = k.durum === 'tamamlandi' ? `<span class="dc-topic-status dc-st-done">✅ Tamamlandı</span>` : k.durum === 'basarisiz' ? `<span class="dc-topic-status dc-st-retry">↻ Tekrar Dene</span>` : `<span class="dc-topic-status dc-st-new">🆕 Yeni</span>`;
-        return `<div class="dc-topic-row" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')"><div class="dc-topic-num">${i+1}</div><div class="dc-topic-name">${k.konuAdi}</div>${statusHtml}</div>`;
+        let durumSinifAS = k.durum === 'tamamlandi' ? 'done' : k.durum === 'basarisiz' ? 'retry' : 'yeni';
+        let icerikAS = k.durum === 'tamamlandi' ? `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>` : k.durum === 'basarisiz' ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>` : `<div class="dc-grid-node-num">${i+1}</div>`;
+        return `<button class="dc-grid-node ${durumSinifAS}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')" title="${k.konuAdi.replace(/"/g,'&quot;')}">${icerikAS}</button>`;
     }).join('');
     dcGecmis.push('dcScreenTopics');
     dcKonuAc(konuAdi);
