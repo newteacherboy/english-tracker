@@ -1648,8 +1648,7 @@
     </div>
 </div>
 
-            </div>
-</div>
+         
 
       <!-- DERS ÇALIŞ SEKMESİ (PREMIUM) -->
 <div id="tab-derscalis" class="dc-fullscreen-overlay">
@@ -5860,7 +5859,7 @@ function dcKategoriIcerikCiz(key) {
             ikon = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>`;
         }
         let flagHtml = k.bilmiyordum ? '<span class="dc-card-flag">🚩</span>' : '';
-        return `<div class="dc-card ${ds}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')">
+                return `<div class="dc-card ${ds}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')">
             ${flagHtml}
             <div class="dc-card-top">
                 <div class="dc-card-icon ${ds}">${ikon}</div>
@@ -5870,8 +5869,8 @@ function dcKategoriIcerikCiz(key) {
         </div>`;
     }).join('');
 }
-    dcIleriGit('dcScreenTopics');
-}
+
+   
 function dcKonuAc(konuAdi) {
     dcAktifKonu = konuAdi;
     let r = dcKategoriRenkleri[dcAktifKategori];
