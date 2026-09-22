@@ -5204,6 +5204,18 @@ function ozellikIzniKaydet() {
             if (genelKilitKapatCallback) genelKilitKapatCallback();
             genelKilitKapatCallback = null;
         }
+
+                // ===== SEKME İÇERİKLERİNİ DÜZELT (yanlış yere düşmüş .tab-content'leri panel-alani içine geri taşır) =====
+        function sekmeIcerikleriniYerineTasi() {
+            let panelAlani = document.getElementById('panel-alani');
+            if (!panelAlani) return;
+            document.querySelectorAll('.tab-content').forEach(function(tabEl) {
+                if (tabEl.parentElement !== panelAlani) {
+                    panelAlani.appendChild(tabEl);
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', sekmeIcerikleriniYerineTasi);
         
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
