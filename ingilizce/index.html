@@ -344,6 +344,23 @@
         .badge-bar-fill { background: #16a34a; height: 100%; width: 0%; border-radius: 5px; transition: width 0.4s ease; }
         .sana-ozel-odevler-baslik { font-size: 14px; font-weight: 800; color: #334155; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 2px dashed #e2e8f0; }
 
+        .site-footer { max-width:700px; margin:24px auto 12px; padding:16px 14px 10px; border-top:1px solid #e2e8f0; text-align:center; }
+.site-footer-brand { font-size:11.5px; font-weight:800; color:#475569; margin-bottom:4px; }
+.site-footer-links { display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+.site-footer-links a { font-size:10.5px; color:#2f855a; font-weight:700; text-decoration:none; cursor:pointer; }
+.site-footer-links a:hover { text-decoration:underline; }
+.site-footer-copy { font-size:9.5px; color:#94a3b8; }
+.legal-modal-content { max-width:560px; text-align:left; }
+.legal-modal-content h4 { font-size:13px; font-weight:800; color:#1e293b; margin:14px 0 6px; }
+.legal-modal-content h4:first-of-type { margin-top:0; }
+.legal-modal-content p, .legal-modal-content li { font-size:11.5px; color:#475569; line-height:1.65; }
+.legal-modal-content ul { margin:4px 0 4px 18px; }
+.legal-modal-content .legal-last-updated { font-size:10px; color:#94a3b8; margin-top:14px; padding-top:10px; border-top:1px dashed #e2e8f0; }
+        .kayit-onay-kutu { display:flex; align-items:flex-start; gap:8px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:8px; padding:10px 12px; margin:10px 0; cursor:pointer; }
+.kayit-onay-kutu input[type="checkbox"] { margin-top:2px; width:16px; height:16px; flex-shrink:0; cursor:pointer; }
+.kayit-onay-kutu span { font-size:10.5px; color:#475569; line-height:1.5; }
+.kayit-onay-kutu span a { color:#2f855a; font-weight:700; text-decoration:underline; cursor:pointer; }
+
         /* Aktiviteler & Oyun Paneli */
         .activity-banner { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .activity-banner h3 { color: #1e40af; font-size: 14.5px; font-weight: 800; margin-bottom: 4px; }
@@ -1642,6 +1659,15 @@
                 <div class="chart-title">🎯 Deneme Puanları Gelişim Grafiği</div>
                 <canvas id="denemeGrafik" height="90"></canvas>
             </div>
+              </div>
+
+        <div class="site-footer">
+            <div class="site-footer-brand">🦉 Diji-Medu İngilizce Portalı</div>
+            <div class="site-footer-links">
+                <a href="javascript:void(0)" onclick="gizlilikModaliniAc()">🔒 Gizlilik & KVKK Aydınlatma Metni</a>
+                <a href="javascript:void(0)" onclick="kullanimKosullariModaliniAc()">📄 Kullanım Koşulları</a>
+            </div>
+            <div class="site-footer-copy">© 2025-2026 Öğretmen Çocuk. Tüm hakları saklıdır. Bu platformun tasarımı, kodu ve içeriği izinsiz kopyalanamaz.</div>
         </div>
     </div>
 
@@ -1786,6 +1812,11 @@
             <label>E-posta (isteğe bağlı):</label>
             <input type="text" id="kayitOlEmail" placeholder="ornek@mail.com">
         </div>
+
+                <label class="kayit-onay-kutu">
+            <input type="checkbox" id="kayitOlKvkkOnay">
+            <span>Bu bilgilerin bir <b>veli/vasi eşliğinde ve onayıyla</b> girildiğini, kaydedilen kişisel verilerin öğrenci takibi amacıyla işleneceğini <a href="javascript:void(0)" onclick="gizlilikModaliniAc()">Gizlilik ve KVKK Aydınlatma Metni</a>'nde belirtildiği şekilde kabul ve beyan ederim.</span>
+        </label>
 
         <button class="btn-giris" id="kayitOlGonderBtn" onclick="kayitOlGonder()" style="background:#2563eb;">Kayıt Talebi Gönder</button>
         <div id="kayitOlSonucMesaj" style="font-size:11px; margin-top:8px; text-align:center;"></div>
@@ -3037,7 +3068,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzY3UFlP8Gvv4UwLPKoUqzeO6rUTgxL_gqP31ut6_2-TdAzsb0f-0usCg3qp2h2EBuiQg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbxObv_DplPXwt3_5y7R3o7I163BZO3f4LzhHgjLnN2u7bU3BLxeix_Pkg-4g9ICsuLWug/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
@@ -3850,7 +3881,7 @@ function ozellikIzniKaydet() {
             document.getElementById('kayitOlModal').style.display = 'none';
         }
 
-        async function kayitOlGonder() {
+               async function kayitOlGonder() {
             let kullaniciAdi = document.getElementById('kayitOlKullaniciAdi').value.trim();
             let sifre1 = document.getElementById('kayitOlSifre1').value;
             let sifre2 = document.getElementById('kayitOlSifre2').value;
@@ -3858,10 +3889,14 @@ function ozellikIzniKaydet() {
             let sinif = document.getElementById('kayitOlSinif').value;
             let sube = document.getElementById('kayitOlSube').value.trim();
             let email = document.getElementById('kayitOlEmail').value.trim();
+            let kvkkOnay = document.getElementById('kayitOlKvkkOnay').checked;
             let mesajDiv = document.getElementById('kayitOlSonucMesaj');
 
             if (!kullaniciAdi || !sifre1 || !sifre2 || !telefon || !sinif || !sube) {
                 mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen zorunlu alanları doldurun."; return;
+            }
+            if (!kvkkOnay) {
+                mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Devam edebilmek için veli onayı kutucuğunu işaretlemelisiniz."; return;
             }
             if (sifre1.length < 4) {
                 mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Şifre en az 4 karakter olmalı."; return;
@@ -3875,9 +3910,9 @@ function ozellikIzniKaydet() {
             mesajDiv.style.color = "#334155"; mesajDiv.innerText = "İşleniyor...";
 
             try {
-                let res = await fetch(apiURL, {
+                                let res = await fetch(apiURL, {
                     method: "POST",
-                    body: JSON.stringify({ islem: "kayitOl", ogrenciAdi: kullaniciAdi, sifre: sifre1, telefon: telefon, sinif: sinif, sube: sube, email: email })
+                    body: JSON.stringify({ islem: "kayitOl", ogrenciAdi: kullaniciAdi, sifre: sifre1, telefon: telefon, sinif: sinif, sube: sube, email: email, kvkkOnayTarihi: new Date().toISOString() })
                 });
                 let data = await res.json();
                 if (data.status === "success") {
@@ -5216,6 +5251,9 @@ function ozellikIzniKaydet() {
             });
         }
         document.addEventListener('DOMContentLoaded', sekmeIcerikleriniYerineTasi);
+
+                function gizlilikModaliniAc() { document.getElementById('gizlilikModal').style.display = 'flex'; }
+        function kullanimKosullariModaliniAc() { document.getElementById('kullanimKosullariModal').style.display = 'flex'; }
         
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
@@ -9483,6 +9521,67 @@ function rubricVideoOgrenciChecklistDoldur() {
         }
         
     </script>
+
+    <!-- GİZLİLİK / KVKK AYDINLATMA METNİ MODALI -->
+<div class="rubric-modal" id="gizlilikModal">
+    <div class="rubric-content legal-modal-content">
+        <button class="game-close-btn" onclick="document.getElementById('gizlilikModal').style.display='none'">✕</button>
+        <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px;">🔒 Gizlilik ve KVKK Aydınlatma Metni</h3>
+        <p style="font-size:10.5px; color:#64748b;">Diji-Medu İngilizce Portalı, öğrencilerimizin ve velilerimizin kişisel verilerinin güvenliğini önemser. Bu metin, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında sizi bilgilendirmek amacıyla hazırlanmıştır.</p>
+
+        <h4>1. Veri Sorumlusu</h4>
+        <p>Bu platform, Öğretmen Çocuk tarafından işletilmektedir. Sorularınız için official.ogretmencocuk@gmail.com adresinden bize ulaşabilirsiniz.</p>
+
+        <h4>2. Toplanan Veriler</h4>
+        <ul>
+            <li>Öğrenci adı, sınıf ve şube bilgisi</li>
+            <li>Veli/erişim telefon numarası (kimlik doğrulama ve şifre işlemleri için)</li>
+            <li>Veli e-posta adresi (isteğe bağlı, bildirim amaçlı)</li>
+            <li>Ders içi performans, oyun/etkinlik sonuçları ve puanlar</li>
+            <li>Oturum süresi ve platform kullanım istatistikleri</li>
+        </ul>
+
+        <h4>3. Verilerin İşlenme Amacı</h4>
+        <p>Toplanan veriler yalnızca; öğrencinin eğitim sürecinin takibi, veliye gelişim raporu sunulması, platforma güvenli giriş yapılabilmesi ve öğretmenin öğrenciye özel içerik/etkinlik ataması amacıyla işlenir. Hiçbir veri üçüncü taraflarla pazarlama amacıyla paylaşılmaz veya satılmaz.</p>
+
+               <h4>4. Çocukların Verileri Hakkında Özel Not</h4>
+        <p>Bu platform öğrencilere (çoğunlukla 18 yaş altı) yöneliktir. Öğrenci kayıtları, ilgili öğretmen/kurum aracılığıyla ve veli bilgisiyle oluşturulmaktadır. Kayıt formunda işaretlenen onay kutucuğu ile, bilgilerin bir veli/vasi eşliğinde ve onayıyla girildiği beyan edilmektedir. Veliler, çocuklarına ait verilerin görüntülenmesi, düzeltilmesi veya silinmesi talebi için istediği zaman yukarıdaki e-posta adresinden bizimle iletişime geçebilir.</p> <h4>5. Veri Güvenliği</h4>
+        <p>Veriler, Google'ın altyapısı (Google Sheets/Apps Script) üzerinde, yetkisiz erişimi önlemeye yönelik makul teknik önlemlerle saklanmaktadır. Buna rağmen internet üzerinden hiçbir veri iletiminin %100 güvenli olduğu garanti edilemez.</p>
+
+        <h4>6. Haklarınız</h4>
+        <p>KVKK'nın 11. maddesi uyarınca; verilerinizin işlenip işlenmediğini öğrenme, işlenmişse buna ilişkin bilgi talep etme, işlenme amacını öğrenme, yurt içinde/dışında aktarıldığı üçüncü kişileri bilme, eksik/yanlış işlenmişse düzeltilmesini isteme ve mevzuatta öngörülen şartlar çerçevesinde silinmesini isteme haklarına sahipsiniz.</p>
+
+        <div class="legal-last-updated">Son güncelleme: 2026. Bu metin bilgilendirme amaçlıdır ve hukuki danışmanlık yerine geçmez.</div>
+    </div>
+</div>
+
+<!-- KULLANIM KOŞULLARI MODALI -->
+<div class="rubric-modal" id="kullanimKosullariModal">
+    <div class="rubric-content legal-modal-content">
+        <button class="game-close-btn" onclick="document.getElementById('kullanimKosullariModal').style.display='none'">✕</button>
+        <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px;">📄 Kullanım Koşulları</h3>
+
+        <h4>1. Platform Hakkında</h4>
+        <p>Diji-Medu İngilizce Portalı, Öğretmen Çocuk tarafından geliştirilmiş ve işletilmekte olan, İngilizce öğrenimini desteklemeye yönelik bir eğitim platformudur.</p>
+
+        <h4>2. Fikri Mülkiyet</h4>
+        <p>Bu platformun tüm tasarımı, kaynak kodu, içeriği, oyun mekanikleri ve grafikleri Öğretmen Çocuk'a aittir. İzinsiz kopyalanması, çoğaltılması veya ticari amaçla kullanılması yasaktır.</p>
+
+        <h4>3. Hesap Sorumluluğu</h4>
+        <p>Kullanıcı adı ve şifre bilgilerinin güvenliğinden hesap sahibi (öğrenci/veli) sorumludur. Şüpheli bir durum fark edilmesi halinde derhal öğretmenle iletişime geçilmesi önerilir.</p>
+
+        <h4>4. Sorumluluk Sınırı</h4>
+        <p>Platform "olduğu gibi" sunulmaktadır. Teknik aksaklıklar, geçici erişim kesintileri veya üçüncü taraf servislerden (Google, internet servis sağlayıcıları vb.) kaynaklanan sorunlardan Öğretmen Çocuk sorumlu tutulamaz.</p>
+
+        <h4>5. Değişiklikler</h4>
+        <p>Bu koşullar ve platformun özellikleri önceden haber verilmeksizin güncellenebilir.</p>
+
+        <h4>6. İletişim</h4>
+        <p>Sorularınız için: official.ogretmencocuk@gmail.com</p>
+
+        <div class="legal-last-updated">Son güncelleme: 2026.</div>
+    </div>
+</div>
 
     <!-- ETKİNLİKLER MODALLARI -->
 <div class="game-modal-overlay" id="etkinliklerModal">
