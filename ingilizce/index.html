@@ -1394,7 +1394,8 @@
             <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
             <button class="tab-btn" id="tabBtnSanaOzel" onclick="sekmeDegistir('sanaozel', this)">✨ Sana Özel</button>
             <button class="tab-btn" id="tabBtnRaporlar" onclick="sekmeDegistir('raporlar', this)">📝 Raporlar</button>
-            <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">🎮 Aktiviteler</button>
+                          <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">🎮 Aktiviteler</button>
+            <button class="tab-btn" id="tabBtnDersCalis" onclick="sekmeDegistir('derscalis', this); dersCalisBaslat();">📘 Ders Çalış</button>
             <button class="tab-btn" id="tabBtnRozetler" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetlerim</button>
         </div>
         
@@ -1529,6 +1530,91 @@
             </div>
         </div>
 
+        <!-- DERS ÇALIŞ SEKMESİ -->
+<div id="tab-derscalis" class="tab-content">
+    <div class="topbar-dc">
+        <button class="back-btn-dc hidden" id="dcBackBtn" onclick="dcGeriGit()">←</button>
+        <div class="crumb-dc" id="dcCrumb"></div>
+        <div class="dc-arama-kutu">
+            <input type="text" id="dcAramaInput" placeholder="🔍 Konu ara..." oninput="dcAramaYap(this.value)">
+        </div>
+    </div>
+    <div id="dcAramaSonuclari" style="display:none;"></div>
+
+    <div id="dcAnaIcerik">
+        <!-- EKRAN: SEVİYE SEÇİMİ -->
+        <div class="dc-screen active" id="dcScreenLevels">
+            <div class="dc-hero">
+                <h1>📘 Ders Çalış</h1>
+                <p>Seviyeni seç, konuları sırayla öğren — her konuda anlatım, örnekler, uygulama ve test seni bekliyor!</p>
+                <div class="dc-ses-secim">
+                    <span>🔊 Seslendirme:</span>
+                    <button class="dc-ses-btn active" id="dcSesUS" onclick="dcSesSecimiYap('us')">🇺🇸 American</button>
+                    <button class="dc-ses-btn" id="dcSesUK" onclick="dcSesSecimiYap('uk')">🇬🇧 British</button>
+                </div>
+            </div>
+            <div class="dc-level-grid">
+                <button class="dc-level-card dc-lc-a1" onclick="dcSeviyeSec('A1','Başlangıç')"><div class="dc-lv-code">A1</div><div class="dc-lv-name">Başlangıç</div></button>
+                <button class="dc-level-card dc-lc-a2" onclick="dcSeviyeSec('A2','Temel')"><div class="dc-lv-code">A2</div><div class="dc-lv-name">Temel Seviye</div></button>
+                <button class="dc-level-card dc-lc-b1" onclick="dcSeviyeSec('B1','Orta')"><div class="dc-lv-code">B1</div><div class="dc-lv-name">Orta Seviye</div></button>
+                <button class="dc-level-card dc-lc-b2" onclick="dcSeviyeSec('B2','Orta-Üstü')"><div class="dc-lv-code">B2</div><div class="dc-lv-name">Orta-Üstü</div></button>
+            </div>
+        </div>
+
+        <!-- EKRAN: KATEGORİLER -->
+        <div class="dc-screen" id="dcScreenCats">
+            <div class="dc-level-badge" id="dcLevelBadge"></div>
+            <div class="dc-cat-grid">
+                <button class="dc-cat-card" data-kat="grammar" onclick="dcKategoriSec('grammar','Grammar Topics','📐')"><div class="dc-cat-icon">📐</div><div><div class="dc-cat-title">Grammar Topics</div></div><div class="dc-cat-arrow">›</div></button>
+                <button class="dc-cat-card" data-kat="vocab" onclick="dcKategoriSec('vocab','Vocabulary Topics','📚')"><div class="dc-cat-icon">📚</div><div><div class="dc-cat-title">Vocabulary Topics</div></div><div class="dc-cat-arrow">›</div></button>
+                <button class="dc-cat-card" data-kat="comm" onclick="dcKategoriSec('comm','Communication / Functions','💬')"><div class="dc-cat-icon">💬</div><div><div class="dc-cat-title">Communication / Functions</div></div><div class="dc-cat-arrow">›</div></button>
+                <button class="dc-cat-card" data-kat="pron" onclick="dcKategoriSec('pron','Pronunciation Focus','🔊')"><div class="dc-cat-icon">🔊</div><div><div class="dc-cat-title">Pronunciation Focus</div></div><div class="dc-cat-arrow">›</div></button>
+            </div>
+        </div>
+
+        <!-- EKRAN: KONU LİSTESİ -->
+        <div class="dc-screen" id="dcScreenTopics">
+            <div class="dc-level-badge" id="dcCatBadge"></div>
+            <button class="dc-pdf-toplu-btn" onclick="dcTopluPdfIndir()">📄 Bu Kategorinin Tüm PDF'ini İndir</button>
+            <div class="dc-topic-list" id="dcTopicListArea"></div>
+        </div>
+
+        <!-- EKRAN: KONU DETAYI -->
+        <div class="dc-screen" id="dcScreenDetail">
+            <div class="dc-topic-header" id="dcTopicHeader">
+                <div class="dc-th-eyebrow" id="dcThEyebrow"></div>
+                <h2 id="dcThTitle"></h2>
+                <button class="dc-bilmiyordum-btn" id="dcBilmiyordumBtn" onclick="dcBilmiyordumToggle()">🚩 Bunu Bilmiyordum</button>
+            </div>
+            <img id="dcTopicImg" class="dc-topic-img" src="" style="display:none;">
+
+            <div class="dc-tabbar">
+                <button class="dc-tab-btn active" data-tab="anlatim" onclick="dcSekmeSec('anlatim',this)">📖 Anlatım</button>
+                <button class="dc-tab-btn" data-tab="ornek" onclick="dcSekmeSec('ornek',this)">💡 Örnekler</button>
+                <button class="dc-tab-btn" data-tab="uygulama" onclick="dcSekmeSec('uygulama',this)">✏️ Uygulama</button>
+                <button class="dc-tab-btn" data-tab="test" onclick="dcSekmeSec('test',this)">🎯 Test</button>
+            </div>
+
+            <div class="dc-tab-panel active" id="dcTab-anlatim">
+                <div class="dc-content-card" id="dcAnlatimIcerik"></div>
+                <button class="dc-pdf-tekli-btn" onclick="dcTekliPdfIndir()">📄 Bu Konuyu PDF Olarak İndir</button>
+            </div>
+            <div class="dc-tab-panel" id="dcTab-ornek">
+                <div class="dc-content-card" id="dcOrnekIcerik"></div>
+            </div>
+            <div class="dc-tab-panel" id="dcTab-uygulama">
+                <div class="dc-content-card" id="dcUygulamaIcerik"></div>
+            </div>
+            <div class="dc-tab-panel" id="dcTab-test">
+                <div id="dcTestIcerik"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hover sözlük balonu (tek, tekrar kullanılan) -->
+<div id="dcHoverBalon" class="dc-hover-balon"></div>
+
         <!-- 2. Kelime Ezber Yarışması -->
        <div class="activity-banner" id="kartKelimeYarismasi" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border-color: #f5d0fe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
             <div>
@@ -1592,6 +1678,16 @@
         <!-- SANA ÖZEL SEKMESİ -->
         <div id="tab-sanaozel" class="tab-content">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
+
+                                <div class="activity-banner" id="kartGununKonusu" style="background: linear-gradient(135deg, #fef9c3 0%, #fde68a 100%); border-color: #fcd34d; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+                    <div>
+                        <h3 style="color: #92400e; font-size: 15px; margin-bottom: 6px;">🎯 Günün Konusu</h3>
+                        <p id="gununKonusuMetni" style="color: #b45309; font-size: 11px; margin-bottom: 12px;">Öğretmenin bugün bu konuyu çalışmanı öneriyor!</p>
+                    </div>
+                    <div>
+                        <button class="btn-oyun-ac" id="gununKonusuBtn" onclick="gununKonusunaGit()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); width: 100%;">📘 Hemen Başla</button>
+                    </div>
+                </div>
 
                 <div class="activity-banner" id="kartOkumaStudyosu" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
                     <div>
@@ -2178,6 +2274,101 @@
 .yardim-acc-panel-inner li { margin-bottom:4px; }
 .yardim-acc-panel-inner .yardim-puan-chip { display:inline-block; background:#eef2ff; color:#4338ca; font-weight:800; font-size:10px; padding:2px 7px; border-radius:7px; margin:2px 3px 2px 0; }
 .yardim-acc-panel-inner .yardim-tip { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:7px 9px; font-size:11px; color:#92400e; margin-top:5px; }
+
+/* ===== DERS ÇALIŞ SİSTEMİ ===== */
+.topbar-dc{display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+.back-btn-dc{background:#fff; border:2px solid #e2e8f0; width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:15px; cursor:pointer; flex-shrink:0;}
+.back-btn-dc.hidden{visibility:hidden;}
+.crumb-dc{font-size:11px; font-weight:800; color:#64748b; flex:1;}
+.dc-arama-kutu{width:100%; order:3;}
+.dc-arama-kutu input{width:100%; padding:9px 12px; border:2px solid #e2e8f0; border-radius:12px; font-size:12px; outline:none;}
+.dc-arama-kutu input:focus{border-color:#2563eb;}
+#dcAramaSonuclari{background:#fff; border:2px solid #e2e8f0; border-radius:14px; padding:8px; margin-bottom:12px; max-height:260px; overflow-y:auto;}
+.dc-arama-satir{padding:9px 10px; border-radius:10px; cursor:pointer; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
+.dc-arama-satir:hover{background:#f1f5f9;}
+.dc-arama-etiket{font-size:9.5px; font-weight:800; color:#94a3b8;}
+
+.dc-screen{display:none;}
+.dc-screen.active{display:block; animation:dcFade .3s ease both;}
+@keyframes dcFade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.dc-hero{background:linear-gradient(135deg,#1e293b,#334155); border-radius:18px; padding:18px; margin-bottom:14px; color:#fff;}
+.dc-hero h1{font-family:'Segoe UI', sans-serif; font-size:18px; margin-bottom:4px;}
+.dc-hero p{font-size:11.5px; color:#cbd5e1; line-height:1.5; margin-bottom:10px;}
+.dc-ses-secim{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:10.5px; color:#e2e8f0; font-weight:700;}
+.dc-ses-btn{background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.25); color:#fff; padding:5px 10px; border-radius:20px; font-size:10.5px; font-weight:700; cursor:pointer;}
+.dc-ses-btn.active{background:#fff; color:#1e293b;}
+
+.dc-level-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.dc-level-card{border:none; border-radius:16px; padding:16px; cursor:pointer; text-align:left;}
+.dc-lv-code{font-size:22px; font-weight:800; color:#fff;}
+.dc-lv-name{font-size:10.5px; font-weight:800; color:rgba(255,255,255,.9); margin-top:2px;}
+.dc-lc-a1{background:linear-gradient(135deg,#16a34a,#0d7a3a);}
+.dc-lc-a2{background:linear-gradient(135deg,#2563eb,#1741a6);}
+.dc-lc-b1{background:linear-gradient(135deg,#7c3aed,#5b21b6);}
+.dc-lc-b2{background:linear-gradient(135deg,#ea580c,#c2410c);}
+
+.dc-level-badge{display:inline-block; padding:6px 14px; border-radius:24px; font-weight:800; font-size:12px; color:#fff; margin-bottom:12px;}
+.dc-cat-grid{display:flex; flex-direction:column; gap:10px;}
+.dc-cat-card{display:flex; align-items:center; gap:12px; background:#fff; border:2px solid #eef1f4; border-radius:16px; padding:14px; cursor:pointer; text-align:left;}
+.dc-cat-icon{width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; background:#f1f5f9; flex-shrink:0;}
+.dc-cat-title{font-weight:800; font-size:13px; color:#1e293b;}
+.dc-cat-arrow{margin-left:auto; color:#cbd5e1; font-size:16px;}
+
+.dc-pdf-toplu-btn{width:100%; background:#eef2ff; color:#4338ca; border:1.5px solid #c7d2fe; padding:9px; border-radius:12px; font-weight:800; font-size:11px; cursor:pointer; margin-bottom:10px;}
+.dc-topic-list{display:flex; flex-direction:column; gap:8px;}
+.dc-topic-row{display:flex; align-items:center; gap:10px; background:#fff; border:1.5px solid #eef1f4; border-radius:12px; padding:11px 12px; cursor:pointer;}
+.dc-topic-num{width:26px; height:26px; border-radius:8px; background:#f1f5f9; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.dc-topic-name{font-size:12px; font-weight:800; color:#1e293b; flex:1;}
+.dc-topic-flag{font-size:12px;}
+.dc-topic-status{font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:16px; white-space:nowrap;}
+.dc-st-done{background:#dcfce7; color:#166534;}
+.dc-st-retry{background:#fee2e2; color:#991b1b;}
+.dc-st-new{background:#f1f5f9; color:#64748b;}
+.dc-topic-placeholder{text-align:center; padding:26px 14px; color:#94a3b8; font-size:11.5px; font-weight:700; background:#fff; border:2px dashed #e2e8f0; border-radius:14px;}
+
+.dc-topic-header{border-radius:16px; padding:16px; margin-bottom:12px; color:#fff; position:relative;}
+.dc-th-eyebrow{font-size:9.5px; font-weight:800; opacity:.85;}
+.dc-topic-header h2{font-size:16px; font-weight:700; margin-top:2px; padding-right:90px;}
+.dc-bilmiyordum-btn{position:absolute; top:14px; right:14px; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.35); color:#fff; font-size:9.5px; font-weight:800; padding:6px 9px; border-radius:10px; cursor:pointer;}
+.dc-bilmiyordum-btn.aktif{background:#fbbf24; color:#78350f; border-color:#f59e0b;}
+.dc-topic-img{width:100%; max-height:160px; object-fit:cover; border-radius:14px; margin-bottom:12px;}
+
+.dc-tabbar{display:flex; gap:5px; background:#fff; border:2px solid #eef1f4; border-radius:14px; padding:4px; margin-bottom:12px;}
+.dc-tab-btn{flex:1; border:none; background:transparent; padding:8px 3px; border-radius:10px; cursor:pointer; font-weight:700; font-size:9.5px; color:#64748b;}
+.dc-tab-btn.active{background:#334155; color:#fff;}
+.dc-tab-panel{display:none;}
+.dc-tab-panel.active{display:block; animation:dcFade .25s ease both;}
+.dc-content-card{background:#fff; border:2px solid #eef1f4; border-radius:16px; padding:16px; margin-bottom:10px; font-size:12px; line-height:1.7; color:#334155;}
+.dc-content-card h3{font-size:13px; font-weight:800; color:#1e293b; margin-bottom:6px;}
+
+.dc-example-row{display:flex; align-items:center; gap:8px; padding:9px 0; border-bottom:1px dashed #eef1f4;}
+.dc-example-row:last-child{border-bottom:none;}
+.dc-ex-en{font-weight:700; font-size:12.5px; color:#1e293b; flex:1;}
+.dc-ex-tr{font-size:11px; color:#64748b; flex:1;}
+.dc-ex-play{background:#eef2ff; border:none; width:28px; height:28px; border-radius:8px; cursor:pointer; font-size:12px; flex-shrink:0;}
+
+.dc-word{cursor:pointer; border-bottom:1.5px dotted #94a3b8; position:relative;}
+.dc-word:hover{background:#fef9c3;}
+
+.dc-hover-balon{
+  position:fixed; background:#1e293b; color:#fff; padding:8px 12px; border-radius:10px; font-size:11px;
+  font-weight:700; z-index:9999999; display:none; max-width:200px; box-shadow:0 6px 16px rgba(0,0,0,.25); pointer-events:none;
+}
+.dc-hover-balon .dc-alt{font-size:9.5px; color:#94a3b8; font-weight:600; margin-top:2px;}
+
+.dc-uyg-soru{margin-bottom:14px;}
+.dc-uyg-metin{font-size:12px; font-weight:800; margin-bottom:7px;}
+.dc-uyg-inputlar{display:flex; gap:5px; flex-wrap:wrap;}
+.dc-uyg-input{width:44px; padding:6px; border:2px solid #cbd5e1; border-radius:8px; text-align:center; font-weight:800; font-size:12px; outline:none;}
+.dc-uyg-kontrol-btn{width:100%; padding:11px; border:none; border-radius:12px; background:#334155; color:#fff; font-weight:800; font-size:12px; cursor:pointer; margin-top:6px;}
+
+.dc-quiz-q{background:#fff; border:2px solid #eef1f4; border-radius:14px; padding:13px; margin-bottom:9px;}
+.dc-quiz-q-text{font-size:12px; font-weight:800; margin-bottom:9px;}
+.dc-quiz-opt{display:block; width:100%; text-align:left; padding:9px 11px; border:2px solid #eef1f4; border-radius:10px; background:#fafbfc; font-size:11.5px; font-weight:700; color:#334155; margin-bottom:6px; cursor:pointer;}
+.dc-quiz-opt.dogru{background:#dcfce7; border-color:#16a34a; color:#166534;}
+.dc-quiz-opt.yanlis{background:#fee2e2; border-color:#dc2626; color:#7f1d1d;}
+.dc-quiz-bitir-btn{width:100%; padding:12px; border:none; border-radius:14px; background:#16a34a; color:#fff; font-weight:800; font-size:12.5px; cursor:pointer; margin-top:4px;}
     
 </style>
 
@@ -3070,7 +3261,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbwUUBxDvvytMa5MV2yDtXkqc8PPl8pq21uFecvIUJ_tNZuMIIpl3i5n0t8Yay9ZizUsmA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbz0otrSNk5zXOiNU85UfPljjG-ImITE1ilRkwAYV3ErUQhIifDiPNviDFuMoMHjfPnwKQ/exec";
         
               let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
@@ -3208,6 +3399,7 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
 
                                 baslatSayac();
                 arkaPlanVeriYenilemeBaslat();
+                gununKonusuYukle();
                 duyuruKontrolEt();
             }
 
@@ -5341,6 +5533,379 @@ function ozellikIzniKaydet() {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
 
+// ==================== DERS ÇALIŞ SİSTEMİ ====================
+let dcGecmis = ['dcScreenLevels'];
+let dcAktifSeviye = null, dcAktifKategori = null, dcAktifKonu = null;
+let dcTumKonularCache = [];
+let dcSesTercihi = localStorage.getItem('dc_ses_tercihi') || 'us';
+let dcSecilenVoice = null;
+let dcQuizCevaplari = [];
+let dcQuizDogruSayisi = 0;
+
+const dcKategoriRenkleri = {
+    grammar: { accent:'#f59e0b', label:'Grammar Topics' },
+    vocab:   { accent:'#16a34a', label:'Vocabulary Topics' },
+    comm:    { accent:'#2563eb', label:'Communication / Functions' },
+    pron:    { accent:'#db2777', label:'Pronunciation Focus' }
+};
+
+function dcSesSecimiYap(tip) {
+    dcSesTercihi = tip;
+    localStorage.setItem('dc_ses_tercihi', tip);
+    document.getElementById('dcSesUS').classList.toggle('active', tip === 'us');
+    document.getElementById('dcSesUK').classList.toggle('active', tip === 'uk');
+    dcVoiceSec();
+}
+function dcVoiceSec() {
+    if (!('speechSynthesis' in window)) return;
+    let voices = window.speechSynthesis.getVoices();
+    let hedefLang = dcSesTercihi === 'uk' ? 'en-GB' : 'en-US';
+    dcSecilenVoice = voices.find(v => v.lang === hedefLang) || voices.find(v => v.lang.startsWith('en')) || null;
+}
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = dcVoiceSec;
+    dcVoiceSec();
+}
+function dcSesOku(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    let u = new SpeechSynthesisUtterance(text);
+    u.lang = dcSesTercihi === 'uk' ? 'en-GB' : 'en-US';
+    if (dcSecilenVoice) u.voice = dcSecilenVoice;
+    u.rate = 0.92;
+    window.speechSynthesis.speak(u);
+}
+
+function dcCalisBaslat() { dersCalisBaslat(); }
+function dersCalisBaslat() {
+    document.getElementById('dcSesUS').classList.toggle('active', dcSesTercihi === 'us');
+    document.getElementById('dcSesUK').classList.toggle('active', dcSesTercihi === 'uk');
+    if (dcTumKonularCache.length === 0) {
+        fetch(`${apiURL}?islem=dersKonulariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "")}`)
+        .then(res => res.json())
+        .then(liste => { dcTumKonularCache = liste || []; })
+        .catch(() => {});
+    }
+}
+
+function dcEkranGoster(id) {
+    document.querySelectorAll('.dc-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('dcBackBtn').classList.toggle('hidden', dcGecmis.length <= 1);
+}
+function dcGeriGit() {
+    dcGecmis.pop();
+    dcEkranGoster(dcGecmis[dcGecmis.length - 1]);
+    dcCrumbGuncelle();
+}
+function dcIleriGit(id) { dcGecmis.push(id); dcEkranGoster(id); dcCrumbGuncelle(); }
+function dcCrumbGuncelle() {
+    let parts = [];
+    if (dcAktifSeviye) parts.push(dcAktifSeviye);
+    if (dcAktifKategori) parts.push(dcKategoriRenkleri[dcAktifKategori].label);
+    if (dcAktifKonu) parts.push(dcAktifKonu);
+    document.getElementById('dcCrumb').innerText = parts.join(' / ');
+}
+
+function dcSeviyeSec(kod, ad) {
+    dcAktifSeviye = kod;
+    let renkler = { A1:'#16a34a', A2:'#2563eb', B1:'#7c3aed', B2:'#ea580c' };
+    let badge = document.getElementById('dcLevelBadge');
+    badge.style.background = renkler[kod];
+    badge.innerText = `${kod} · ${ad} Seviyesi`;
+    dcIleriGit('dcScreenCats');
+}
+
+function dcKategoriSec(key, ad, emoji) {
+    dcAktifKategori = key;
+    let r = dcKategoriRenkleri[key];
+    let badge = document.getElementById('dcCatBadge');
+    badge.style.background = r.accent;
+    badge.innerText = `${emoji} ${dcAktifSeviye} · ${ad}`;
+
+    let konular = dcTumKonularCache.filter(k => k.seviye === dcAktifSeviye && k.kategori === key).sort((a,b) => a.siraNo - b.siraNo);
+    let alan = document.getElementById('dcTopicListArea');
+    if (konular.length === 0) {
+        alan.innerHTML = `<div class="dc-topic-placeholder">🌱 Bu kategori için konular yakında eklenecek</div>`;
+    } else {
+        alan.innerHTML = konular.map((k, i) => {
+            let statusHtml = k.durum === 'tamamlandi' ? `<span class="dc-topic-status dc-st-done">✅ Tamamlandı</span>`
+                : k.durum === 'basarisiz' ? `<span class="dc-topic-status dc-st-retry">↻ Tekrar Dene</span>`
+                : `<span class="dc-topic-status dc-st-new">🆕 Yeni</span>`;
+            let flagHtml = k.bilmiyordum ? `<span class="dc-topic-flag">🚩</span>` : '';
+            return `<div class="dc-topic-row" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')">
+                <div class="dc-topic-num">${i+1}</div>
+                <div class="dc-topic-name">${flagHtml} ${k.konuAdi}</div>
+                ${statusHtml}
+            </div>`;
+        }).join('');
+    }
+    dcIleriGit('dcScreenTopics');
+}
+
+function dcKonuAc(konuAdi) {
+    dcAktifKonu = konuAdi;
+    let r = dcKategoriRenkleri[dcAktifKategori];
+    let konuOzet = dcTumKonularCache.find(k => k.seviye === dcAktifSeviye && k.kategori === dcAktifKategori && k.konuAdi === konuAdi);
+
+    document.getElementById('dcTopicHeader').style.background = r.accent;
+    document.getElementById('dcThEyebrow').innerText = `${dcAktifSeviye} · ${r.label.toUpperCase()}`;
+    document.getElementById('dcThTitle').innerText = konuAdi;
+    document.getElementById('dcBilmiyordumBtn').classList.toggle('aktif', konuOzet && konuOzet.bilmiyordum);
+
+    document.querySelectorAll('.dc-tab-btn').forEach(b => { b.classList.remove('active'); b.style.background = 'transparent'; });
+    document.querySelectorAll('.dc-tab-panel').forEach(p => p.classList.remove('active'));
+    let ilkTab = document.querySelector('.dc-tab-btn[data-tab="anlatim"]');
+    ilkTab.classList.add('active'); ilkTab.style.background = r.accent;
+    document.getElementById('dcTab-anlatim').classList.add('active');
+
+    document.getElementById('dcAnlatimIcerik').innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px;">Yükleniyor...</div>`;
+
+    fetch(`${apiURL}?islem=dersKonuDetayGetir&seviye=${dcAktifSeviye}&kategori=${dcAktifKategori}&konu=${encodeURIComponent(konuAdi)}`)
+    .then(res => res.json())
+    .then(detay => { dcKonuDetayiCiz(detay, r.accent); })
+    .catch(() => { document.getElementById('dcAnlatimIcerik').innerHTML = `<div>Yüklenirken hata oluştu.</div>`; });
+
+    dcIleriGit('dcScreenDetail');
+}
+
+function dcKelimeleriIsle(text, sozlukObj) {
+    if (!text) return "";
+    let anahtarlar = Object.keys(sozlukObj || {}).sort((a,b) => b.length - a.length);
+    anahtarlar.forEach(kelime => {
+        let veri = sozlukObj[kelime];
+        let regex = new RegExp('\\b(' + kelime.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')\\b', 'gi');
+        text = text.replace(regex, function(match) {
+            return `<span class="dc-word" data-tr="${(veri.tr||'').replace(/"/g,'&quot;')}" data-alt="${(veri.alt||'').replace(/"/g,'&quot;')}" onclick="dcSesOku('${match.replace(/'/g,"")}')">${match}</span>`;
+        });
+    });
+    return text;
+}
+
+let dcSonYuklenenSozluk = {};
+function dcKonuDetayiCiz(detay, accent) {
+    let sozluk = {};
+    try { sozluk = JSON.parse(detay.kelimeSozlugu || "{}"); } catch(e) {}
+    dcSonYuklenenSozluk = sozluk;
+
+    document.getElementById('dcAnlatimIcerik').innerHTML = dcKelimeleriIsle(detay.anlatimHTML || "İçerik yakında eklenecek.", sozluk);
+
+    let img = document.getElementById('dcTopicImg');
+    if (detay.gorselLink && detay.gorselLink.trim()) { img.src = detay.gorselLink; img.style.display = 'block'; }
+    else { img.style.display = 'none'; }
+
+    let ornekler = [];
+    try { ornekler = JSON.parse(detay.ornekler || "[]"); } catch(e) {}
+    let ornekHtml = ornekler.map(o => `
+        <div class="dc-example-row">
+            <button class="dc-ex-play" onclick="dcSesOku('${(o.en||"").replace(/'/g,"")}')">🔊</button>
+            <div class="dc-ex-en">${dcKelimeleriIsle(o.en, sozluk)}</div>
+            <div class="dc-ex-tr">${o.tr || ''}</div>
+        </div>
+    `).join('');
+    document.getElementById('dcOrnekIcerik').innerHTML = `<h3>Örnek Cümleler</h3>` + (ornekHtml || '<p>Örnek yakında eklenecek.</p>');
+
+    let uygulama = [];
+    try { uygulama = JSON.parse(detay.uygulamaJSON || "[]"); } catch(e) {}
+    dcUygulamaCiz(uygulama, accent);
+
+    let test = [];
+    try { test = JSON.parse(detay.testJSON || "[]"); } catch(e) {}
+    dcTestCiz(test, accent);
+
+    document.querySelectorAll('.dc-tab-btn').forEach(b => b.style.setProperty('--accent', accent));
+
+    // Hover sözlük balonu
+    document.querySelectorAll('.dc-word').forEach(el => {
+        el.addEventListener('mouseenter', function(evt) {
+            let balon = document.getElementById('dcHoverBalon');
+            let tr = this.dataset.tr, alt = this.dataset.alt;
+            balon.innerHTML = `<div>${tr}</div>` + (alt ? `<div class="dc-alt">alt: ${alt}</div>` : '');
+            let rect = this.getBoundingClientRect();
+            balon.style.left = rect.left + 'px';
+            balon.style.top = (rect.top - 42) + 'px';
+            balon.style.display = 'block';
+        });
+        el.addEventListener('mouseleave', function() { document.getElementById('dcHoverBalon').style.display = 'none'; });
+    });
+}
+
+function dcUygulamaCiz(sorular, accent) {
+    let alan = document.getElementById('dcUygulamaIcerik');
+    if (sorular.length === 0) { alan.innerHTML = `<h3>Uygulama</h3><p>Uygulama soruları yakında eklenecek.</p>`; return; }
+    let html = `<h3>Şimdi Sen Dene</h3>`;
+    sorular.forEach((s, i) => {
+        html += `<div class="dc-uyg-soru"><div class="dc-uyg-metin">${i+1}. ${s.soru}</div><div class="dc-uyg-inputlar">`;
+        for (let p = 0; p < (s.parcalar || 1); p++) {
+            html += `<input class="dc-uyg-input" maxlength="12" data-soru="${i}" data-parca="${p}">`;
+        }
+        html += `</div><div class="dc-uyg-sonuc" id="dcUygSonuc${i}" style="font-size:10.5px; font-weight:800; margin-top:5px;"></div></div>`;
+    });
+    html += `<button class="dc-uyg-kontrol-btn" style="background:${accent};" onclick='dcUygulamaKontrolEt(${JSON.stringify(sorular)})'>✓ Kontrol Et</button>`;
+    alan.innerHTML = html;
+}
+function dcUygulamaKontrolEt(sorular) {
+    sorular.forEach((s, i) => {
+        let inputlar = document.querySelectorAll(`.dc-uyg-input[data-soru="${i}"]`);
+        let girilenler = Array.from(inputlar).map(inp => inp.value.trim().toUpperCase());
+        let dogruCevap = (s.cevap || []).map(c => String(c).toUpperCase());
+        let dogruMu = JSON.stringify(girilenler) === JSON.stringify(dogruCevap);
+        let sonucEl = document.getElementById('dcUygSonuc' + i);
+        sonucEl.innerText = dogruMu ? "✅ Doğru!" : "❌ Tekrar dene, doğrusu: " + dogruCevap.join('');
+        sonucEl.style.color = dogruMu ? "#16a34a" : "#dc2626";
+    });
+}
+
+function dcTestCiz(sorular, accent) {
+    let alan = document.getElementById('dcTestIcerik');
+    dcQuizCevaplari = new Array(sorular.length).fill(-1);
+    dcQuizDogruSayisi = 0;
+    if (sorular.length === 0) { alan.innerHTML = `<div class="dc-content-card"><h3>Test</h3><p>Test soruları yakında eklenecek.</p></div>`; return; }
+    let html = "";
+    sorular.forEach((s, qi) => {
+        html += `<div class="dc-quiz-q"><div class="dc-quiz-q-text">${qi+1}. ${s.soru}</div>`;
+        s.secenekler.forEach((sec, si) => {
+            html += `<button class="dc-quiz-opt" id="dcQOpt${qi}_${si}" onclick="dcQuizCevapVer(${qi},${si},${s.dogru})">${sec}</button>`;
+        });
+        html += `</div>`;
+    });
+    html += `<button class="dc-quiz-bitir-btn" onclick='dcTestiBitir(${sorular.length})'>🏆 Testi Bitir</button>`;
+    alan.innerHTML = html;
+}
+function dcQuizCevapVer(qi, secilenIndex, dogruIndex) {
+    if (dcQuizCevaplari[qi] !== -1) return;
+    dcQuizCevaplari[qi] = secilenIndex;
+    document.getElementById(`dcQOpt${qi}_${secilenIndex}`).classList.add(secilenIndex === dogruIndex ? 'dogru' : 'yanlis');
+    if (secilenIndex !== dogruIndex) document.getElementById(`dcQOpt${qi}_${dogruIndex}`).classList.add('dogru');
+    else dcQuizDogruSayisi++;
+}
+function dcTestiBitir(toplamSoru) {
+    let cevaplanan = dcQuizCevaplari.filter(c => c !== -1).length;
+    if (cevaplanan < toplamSoru) { alert("Lütfen tüm soruları cevapla!"); return; }
+    let basariliMi = dcQuizDogruSayisi >= Math.ceil(toplamSoru * 0.7);
+    alert(basariliMi ? `🎉 Tebrikler! ${dcQuizDogruSayisi}/${toplamSoru} doğru — konu tamamlandı!` : `${dcQuizDogruSayisi}/${toplamSoru} doğru. Bu konuyu tekrar çalışman gerekiyor.`);
+
+    fetch(apiURL, {
+        method: "POST",
+        body: JSON.stringify({ islem: "dersTestSonucKaydet", ogrenci: aktifOgrenciAdi, seviye: dcAktifSeviye, kategori: dcAktifKategori, konuAdi: dcAktifKonu, basariliMi: basariliMi })
+    }).then(() => {
+        let k = dcTumKonularCache.find(x => x.seviye === dcAktifSeviye && x.kategori === dcAktifKategori && x.konuAdi === dcAktifKonu);
+        if (k) k.durum = basariliMi ? 'tamamlandi' : 'basarisiz';
+    }).catch(() => {});
+}
+
+function dcBilmiyordumToggle() {
+    fetch(apiURL, {
+        method: "POST",
+        body: JSON.stringify({ islem: "dersBilmiyordumToggle", ogrenci: aktifOgrenciAdi, seviye: dcAktifSeviye, kategori: dcAktifKategori, konuAdi: dcAktifKonu })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('dcBilmiyordumBtn').classList.toggle('aktif', data.isaretli);
+        let k = dcTumKonularCache.find(x => x.seviye === dcAktifSeviye && x.kategori === dcAktifKategori && x.konuAdi === dcAktifKonu);
+        if (k) k.bilmiyordum = data.isaretli;
+    })
+    .catch(() => {});
+}
+
+function dcSekmeSec(tab, btn) {
+    let r = dcKategoriRenkleri[dcAktifKategori];
+    document.querySelectorAll('.dc-tab-btn').forEach(b => { b.classList.remove('active'); b.style.background = 'transparent'; });
+    document.querySelectorAll('.dc-tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active'); btn.style.background = r.accent;
+    document.getElementById('dcTab-' + tab).classList.add('active');
+}
+
+// ===== ARAMA =====
+function dcAramaYap(deger) {
+    let sonucAlani = document.getElementById('dcAramaSonuclari');
+    if (!deger || deger.trim().length < 2) { sonucAlani.style.display = 'none'; return; }
+    let aranan = deger.trim().toLowerCase();
+    let eslesenler = dcTumKonularCache.filter(k => k.konuAdi.toLowerCase().includes(aranan));
+    if (eslesenler.length === 0) {
+        sonucAlani.innerHTML = `<div style="padding:10px; font-size:11px; color:#94a3b8; text-align:center;">Sonuç bulunamadı.</div>`;
+    } else {
+        sonucAlani.innerHTML = eslesenler.slice(0, 20).map(k => `
+            <div class="dc-arama-satir" onclick="dcAramaSonucundanGit('${k.seviye}','${k.kategori}','${k.konuAdi.replace(/'/g,"\\'")}')">
+                <span>${k.konuAdi}</span>
+                <span class="dc-arama-etiket">${k.seviye} · ${dcKategoriRenkleri[k.kategori].label}</span>
+            </div>
+        `).join('');
+    }
+    sonucAlani.style.display = 'block';
+}
+function dcAramaSonucundanGit(seviye, kategori, konuAdi) {
+    document.getElementById('dcAramaInput').value = "";
+    document.getElementById('dcAramaSonuclari').style.display = 'none';
+    dcGecmis = ['dcScreenLevels'];
+    dcAktifSeviye = seviye;
+    let renkler = { A1:'#16a34a', A2:'#2563eb', B1:'#7c3aed', B2:'#ea580c' };
+    document.getElementById('dcLevelBadge').style.background = renkler[seviye];
+    document.getElementById('dcLevelBadge').innerText = seviye;
+    dcGecmis.push('dcScreenCats');
+    dcAktifKategori = kategori;
+    let r = dcKategoriRenkleri[kategori];
+    document.getElementById('dcCatBadge').style.background = r.accent;
+    document.getElementById('dcCatBadge').innerText = `${seviye} · ${r.label}`;
+    let konular = dcTumKonularCache.filter(k => k.seviye === seviye && k.kategori === kategori).sort((a,b) => a.siraNo - b.siraNo);
+    document.getElementById('dcTopicListArea').innerHTML = konular.map((k, i) => {
+        let statusHtml = k.durum === 'tamamlandi' ? `<span class="dc-topic-status dc-st-done">✅ Tamamlandı</span>` : k.durum === 'basarisiz' ? `<span class="dc-topic-status dc-st-retry">↻ Tekrar Dene</span>` : `<span class="dc-topic-status dc-st-new">🆕 Yeni</span>`;
+        return `<div class="dc-topic-row" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')"><div class="dc-topic-num">${i+1}</div><div class="dc-topic-name">${k.konuAdi}</div>${statusHtml}</div>`;
+    }).join('');
+    dcGecmis.push('dcScreenTopics');
+    dcKonuAc(konuAdi);
+}
+
+// ===== PDF İNDİRME =====
+function dcTekliPdfIndir() {
+    let { jsPDF } = window.jspdf;
+    let doc = new jsPDF('p', 'mm', 'a4');
+    let y = 20;
+    doc.setFont("helvetica", "bold"); doc.setFontSize(16);
+    doc.text(dcAktifKonu, 15, y); y += 10;
+    doc.setFontSize(10); doc.setFont("helvetica", "normal");
+    let anlatimMetin = document.getElementById('dcAnlatimIcerik').innerText;
+    let satirlar = doc.splitTextToSize(anlatimMetin, 180);
+    doc.text(satirlar, 15, y); y += satirlar.length * 5 + 8;
+    doc.setFont("helvetica", "bold"); doc.text("Örnekler:", 15, y); y += 6;
+    doc.setFont("helvetica", "normal");
+    let ornekMetin = document.getElementById('dcOrnekIcerik').innerText;
+    let ornekSatirlar = doc.splitTextToSize(ornekMetin, 180);
+    doc.text(ornekSatirlar, 15, y);
+    doc.save(dcAktifKonu.replace(/\s+/g, '_') + '.pdf');
+}
+async function dcTopluPdfIndir() {
+    let { jsPDF } = window.jspdf;
+    let doc = new jsPDF('p', 'mm', 'a4');
+    let r = dcKategoriRenkleri[dcAktifKategori];
+    try {
+        let res = await fetch(`${apiURL}?islem=dersKategoriTumIcerikGetir&seviye=${dcAktifSeviye}&kategori=${dcAktifKategori}`);
+        let liste = await res.json();
+        let ilkSayfaMi = true;
+        liste.forEach(konu => {
+            if (!ilkSayfaMi) doc.addPage();
+            ilkSayfaMi = false;
+            let y = 20;
+            doc.setFont("helvetica", "bold"); doc.setFontSize(15);
+            doc.text(konu.konuAdi, 15, y); y += 10;
+            doc.setFontSize(10); doc.setFont("helvetica", "normal");
+            let temizAnlatim = String(konu.anlatimHTML || "").replace(/<[^>]*>/g, ' ');
+            let satirlar = doc.splitTextToSize(temizAnlatim, 180);
+            doc.text(satirlar, 15, y); y += satirlar.length * 5 + 8;
+            let ornekler = [];
+            try { ornekler = JSON.parse(konu.ornekler || "[]"); } catch(e) {}
+            if (ornekler.length > 0) {
+                doc.setFont("helvetica", "bold"); doc.text("Örnekler:", 15, y); y += 6;
+                doc.setFont("helvetica", "normal");
+                ornekler.forEach(o => { doc.text(`• ${o.en} — ${o.tr}`, 15, y); y += 6; });
+            }
+        });
+        doc.save(`${dcAktifSeviye}_${r.label.replace(/\s+/g,'_')}.pdf`);
+    } catch (e) {
+        alert("PDF oluşturulurken hata oluştu.");
+    }
+}
+        
         function sayfayiYenile() {
     let btn = document.getElementById('sayfaYenileBtn');
     if (btn) btn.classList.add('donuyor');
@@ -9555,6 +10120,29 @@ function rubricVideoOgrenciChecklistDoldur() {
             })
             .catch(() => { mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Bağlantı hatası."; });
         }
+
+        function gununKonusuYukle() {
+    if (!aktifOgrenciAdi) return;
+    fetch(`${apiURL}?islem=gununKonusuGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`)
+    .then(res => res.json())
+    .then(konu => {
+        let kart = document.getElementById('kartGununKonusu');
+        if (!konu) { kart.style.display = 'none'; return; }
+        window._gununKonusuData = konu;
+        document.getElementById('gununKonusuMetni').innerText = `Öğretmenin bugün "${konu.konuAdi}" konusunu çalışmanı öneriyor!`;
+    })
+    .catch(() => {});
+}
+function gununKonusunaGit() {
+    let konu = window._gununKonusuData;
+    if (!konu) return;
+    document.querySelectorAll('.tab-btn').forEach(b => { if (b.getAttribute('onclick').includes('derscalis')) sekmeDegistir('derscalis', b); });
+    dersCalisBaslat();
+    setTimeout(() => {
+        if (dcTumKonularCache.length === 0) { setTimeout(() => dcAramaSonucundanGit(konu.seviye, konu.kategori, konu.konuAdi), 800); }
+        else dcAramaSonucundanGit(konu.seviye, konu.kategori, konu.konuAdi);
+    }, 300);
+}
         
     </script>
 
