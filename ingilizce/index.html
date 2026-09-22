@@ -4197,8 +4197,10 @@ function ozellikIzniKaydet() {
         let hafizaAktifSinif = 1, hafizaSecilenUniteler = [1];
         let hafizaKartlar = [], hafizaAcikIndexler = [], hafizaHamle = 0, hafizaEslesenSayi = 0, hafizaSure = 0, hafizaTimer = null;
 
-        function hafizaOyunAc() {
-            document.getElementById('hafizaOyunOverlay').style.display = 'flex';
+               function hafizaOyunAc() {
+            let hafizaModalEl = document.getElementById('hafizaOyunOverlay');
+            document.body.appendChild(hafizaModalEl);
+            hafizaModalEl.style.display = 'flex';
             document.getElementById('hafizaGirisEkrani').style.display = 'block';
             document.getElementById('hafizaOyunEkrani').style.display = 'none';
             document.getElementById('hafizaBitisEkrani').style.display = 'none';
@@ -4316,8 +4318,10 @@ function ozellikIzniKaydet() {
         let yagmurAktifSinif = 1, yagmurSecilenUniteler = [1];
         let yagmurHavuz = [], yagmurAktifIndex = 0, yagmurPuan = 0, yagmurDogru = 0, yagmurCan = 3, yagmurLevel = 1, yagmurInterval = null, yagmurPozisyon = 0, yagmurBaslangic = 0, yagmurAktifKelime = null;
 
-        function yagmurOyunAc() {
-            document.getElementById('yagmurOyunOverlay').style.display = 'flex';
+                function yagmurOyunAc() {
+            let yagmurModalEl = document.getElementById('yagmurOyunOverlay');
+            document.body.appendChild(yagmurModalEl);
+            yagmurModalEl.style.display = 'flex';
             document.getElementById('yagmurGirisEkrani').style.display = 'block';
             document.getElementById('yagmurOyunEkrani').style.display = 'none';
             document.getElementById('yagmurBitisEkrani').style.display = 'none';
@@ -4413,8 +4417,10 @@ function ozellikIzniKaydet() {
         let asmacaKelimeler = [], asmacaAktifIndex = 0, asmacaAktifKelime = "", asmacaTahminEdilenHarfler = [], asmacaYanlisSayisi = 0, asmacaPuan = 0;
         const ASMACA_SAHNELER = ['🙂','😐','😟','😧','😢','😭','💀'];
 
-        function asmacaOyunAc() {
-            document.getElementById('asmacaOyunOverlay').style.display = 'flex';
+               function asmacaOyunAc() {
+            let asmacaModalEl = document.getElementById('asmacaOyunOverlay');
+            document.body.appendChild(asmacaModalEl);
+            asmacaModalEl.style.display = 'flex';
             document.getElementById('asmacaGirisEkrani').style.display = 'block';
             document.getElementById('asmacaOyunEkrani').style.display = 'none';
             document.getElementById('asmacaBitisEkrani').style.display = 'none';
@@ -4513,8 +4519,10 @@ function ozellikIzniKaydet() {
         let kelimebulAktifSinif = 1, kelimebulSecilenUniteler = [1];
         let kelimebulKelimeler = [], kelimebulAktifIndex = 0, kelimebulHedef = "", kelimebulDenemeSayisi = 0, kelimebulPuan = 0, kelimebulSatirlarArr = [];
 
-        function kelimebulOyunAc() {
-            document.getElementById('kelimebulOyunOverlay').style.display = 'flex';
+                function kelimebulOyunAc() {
+            let kelimebulModalEl = document.getElementById('kelimebulOyunOverlay');
+            document.body.appendChild(kelimebulModalEl);
+            kelimebulModalEl.style.display = 'flex';
             document.getElementById('kelimebulGirisEkrani').style.display = 'block';
             document.getElementById('kelimebulOyunEkrani').style.display = 'none';
             document.getElementById('kelimebulBitisEkrani').style.display = 'none';
