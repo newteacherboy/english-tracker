@@ -342,6 +342,7 @@
         .badge-progress-badge { background: #15803d; color: white; padding: 1px 5px; border-radius: 6px; font-size: 10px; }
         .badge-bar-bg { background: #dcfce7; border-radius: 5px; height: 6px; width: 100%; overflow: hidden; }
         .badge-bar-fill { background: #16a34a; height: 100%; width: 0%; border-radius: 5px; transition: width 0.4s ease; }
+        .sana-ozel-odevler-baslik { font-size: 14px; font-weight: 800; color: #334155; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 2px dashed #e2e8f0; }
 
         /* Aktiviteler & Oyun Paneli */
         .activity-banner { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
@@ -1370,8 +1371,9 @@
             </div>
         </div>
 
-        <div class="tabs-container">
+              <div class="tabs-container">
             <button class="tab-btn active" onclick="sekmeDegistir('ozet', this)">📊 Özet</button>
+            <button class="tab-btn" id="tabBtnSanaOzel" onclick="sekmeDegistir('sanaozel', this)">✨ Sana Özel</button>
             <button class="tab-btn" id="tabBtnRaporlar" onclick="sekmeDegistir('raporlar', this)">📝 Raporlar</button>
             <button class="tab-btn" onclick="sekmeDegistir('aktiviteler', this)">🎮 Aktiviteler</button>
             <button class="tab-btn" id="tabBtnRozetler" onclick="sekmeDegistir('rozetler', this)">🏆 Rozetlerim</button>
@@ -1541,27 +1543,7 @@
             </div>
         </div>
 
-        <!-- 5. Akıcı Okuma ve Hız Ölçer Stüdyosu -->
-        <div class="activity-banner" id="kartOkumaStudyosu" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div>
-                <h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</h3>
-                <p style="color: #15803d; font-size: 11px; margin-bottom: 12px;">Sınıfına uygun zengin İngilizce metinleri oku, kaldığın son kelimeye tıkla!</p>
-            </div>
-            <div>
-                <button class="btn-oyun-ac" onclick="okumaStudyosunuAc()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3); width: 100%;">🚀 Okuma Stüdyosunu Aç</button>
-            </div>
-        </div>
-
-        <!-- 6. Pomodoro Çalışma Sayacı -->
-        <div class="activity-banner" id="kartPomodoro" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-color: #334155; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div>
-                <h3 style="color: #f8fafc; font-size: 15px; margin-bottom: 6px;">🍅 Pomodoro Çalışma Sayacı</h3>
-                <p style="color: #94a3b8; font-size: 11px; margin-bottom: 12px;">Odaklanma ve mola sürelerini kendine göre ayarla, tüm ekranı kaplayan sayaçla çalış.</p>
-            </div>
-            <div>
-                <button class="btn-oyun-ac" onclick="pomodoroAc()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); width: 100%; color: white;">🍅 Pomodoro’yu Başlat</button>
-            </div>
-        </div>
+       
 
                 <div class="activity-banner" style="background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-color: #a5f3fc; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
             <div><h3 style="color: #0e7490; font-size: 15px; margin-bottom: 6px;">🧠 Hafıza Kartları</h3><p style="color: #0891b2; font-size: 11px; margin-bottom: 12px;">Eşleşen kartları bul, hafızanı test et!</p></div>
@@ -1580,30 +1562,65 @@
             <div><button class="btn-oyun-ac" onclick="kelimebulOyunAc()" style="background: linear-gradient(135deg, #22c55e, #15803d); box-shadow: 0 2px 8px rgba(34,197,94,.3); width: 100%;">🚀 Başlat</button></div>
         </div>
 
-        <!-- 7. Etkinlikler (Altyapı — sen zamanla oyun ekleyeceksin) -->
-<div class="activity-banner" style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-color: #c7d2fe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-    <div>
-        <h3 style="color: #3730a3; font-size: 15px; margin-bottom: 6px;">🎯 Etkinlikler</h3>
-        <p style="color: #4338ca; font-size: 11px; margin-bottom: 12px;">Öğretmenin senin için özel olarak hazırladığı eğlenceli etkinlikleri keşfet!</p>
-    </div>
-    <div>
-        <button class="btn-oyun-ac" onclick="etkinliklerModalAc()" style="background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3); width: 100%;">🎯 Etkinlikleri Gör</button>
-    </div>
-</div>
-
-<!-- 8. Videolar -->
-<div class="activity-banner" style="background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-color: #a5f3fc; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-    <div>
-        <h3 style="color: #155e75; font-size: 15px; margin-bottom: 6px;">🎬 Videolar</h3>
-        <p style="color: #0e7490; font-size: 11px; margin-bottom: 12px;">Öğretmeninin senin için seçtiği eğitim videolarını izle!</p>
-    </div>
-    <div>
-        <button class="btn-oyun-ac" onclick="videolarModalAc()" style="background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%); box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3); width: 100%;">🎬 Videoları Gör</button>
-    </div>
-</div>
+        
 
     </div>
 </div>
+
+            </div>
+</div>
+
+        <!-- SANA ÖZEL SEKMESİ -->
+        <div id="tab-sanaozel" class="tab-content">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
+
+                <div class="activity-banner" id="kartOkumaStudyosu" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+                    <div>
+                        <h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</h3>
+                        <p style="color: #15803d; font-size: 11px; margin-bottom: 12px;">Sınıfına uygun zengin İngilizce metinleri oku, kaldığın son kelimeye tıkla!</p>
+                    </div>
+                    <div>
+                        <button class="btn-oyun-ac" onclick="okumaStudyosunuAc()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3); width: 100%;">🚀 Okuma Stüdyosunu Aç</button>
+                    </div>
+                </div>
+
+                <div class="activity-banner" id="kartPomodoro" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-color: #334155; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+                    <div>
+                        <h3 style="color: #f8fafc; font-size: 15px; margin-bottom: 6px;">🍅 Pomodoro Çalışma Sayacı</h3>
+                        <p style="color: #94a3b8; font-size: 11px; margin-bottom: 12px;">Odaklanma ve mola sürelerini kendine göre ayarla, tüm ekranı kaplayan sayaçla çalış.</p>
+                    </div>
+                    <div>
+                        <button class="btn-oyun-ac" onclick="pomodoroAc()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); width: 100%; color: white;">🍅 Pomodoro’yu Başlat</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="sana-ozel-odevler-baslik">📚 Ödevlerim</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+
+                <div class="activity-banner" style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-color: #c7d2fe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+                    <div>
+                        <h3 style="color: #3730a3; font-size: 15px; margin-bottom: 6px;">🎯 Etkinlikler</h3>
+                        <p style="color: #4338ca; font-size: 11px; margin-bottom: 12px;">Öğretmenin senin için özel olarak hazırladığı eğlenceli etkinlikleri keşfet!</p>
+                    </div>
+                    <div>
+                        <button class="btn-oyun-ac" onclick="etkinliklerModalAc()" style="background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3); width: 100%;">🎯 Etkinlikleri Gör</button>
+                    </div>
+                </div>
+
+                <div class="activity-banner" style="background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-color: #a5f3fc; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
+                    <div>
+                        <h3 style="color: #155e75; font-size: 15px; margin-bottom: 6px;">🎬 Videolar</h3>
+                        <p style="color: #0e7490; font-size: 11px; margin-bottom: 12px;">Öğretmeninin senin için seçtiği eğitim videolarını izle!</p>
+                    </div>
+                    <div>
+                        <button class="btn-oyun-ac" onclick="videolarModalAc()" style="background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%); box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3); width: 100%;">🎬 Videoları Gör</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
         <!-- ROZETLER SEKMESİ -->
        <div id="tab-rozetler" class="tab-content" style="display: none;">
@@ -3020,7 +3037,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbxNZPevfOmQYa3_Qz8j9IR-k7inP2B4jBIbBt8aWl1NcbJhEfxnNa8v5QiEQI3hYr9asw/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzY3UFlP8Gvv4UwLPKoUqzeO6rUTgxL_gqP31ut6_2-TdAzsb0f-0usCg3qp2h2EBuiQg/exec";
         
         let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
@@ -5160,7 +5177,33 @@ function ozellikIzniKaydet() {
         }
         
 
-        
+                // ===== GENEL SÜRE KİLİDİ (Video + Etkinlik Dış Link için) =====
+        let genelKilitAcilisZamani = 0;
+        const GENEL_MIN_SANIYE = 60;
+        let genelKilitKapatCallback = null;
+
+        function genelSureKilitBaslat() { genelKilitAcilisZamani = Date.now(); }
+
+        function genelSureKontrolEtVeKapat(gercekKapatFn) {
+            let gecen = Math.floor((Date.now() - genelKilitAcilisZamani) / 1000);
+            if (gecen < GENEL_MIN_SANIYE) {
+                let kalan = GENEL_MIN_SANIYE - gecen;
+                document.getElementById('genelSureUyariMetni').innerText = `Bu içerikte en az ${GENEL_MIN_SANIYE} saniye geçirmen gerekiyor. Kalan süre: ${kalan} saniye.`;
+                genelKilitKapatCallback = gercekKapatFn;
+                document.getElementById('genelSureUyariModal').style.display = 'flex';
+                return;
+            }
+            gercekKapatFn();
+        }
+        function genelSureUyariDevamEt() {
+            document.getElementById('genelSureUyariModal').style.display = 'none';
+            genelKilitKapatCallback = null;
+        }
+        function genelSureUyariniOnaylaKapat() {
+            document.getElementById('genelSureUyariModal').style.display = 'none';
+            if (genelKilitKapatCallback) genelKilitKapatCallback();
+            genelKilitKapatCallback = null;
+        }
         
         function guvenliMetin(str) {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
@@ -8430,6 +8473,7 @@ function videoEmbedBilgisiOlustur(link) {
 }
 
 function videoOynaticiAc(baslik, link, satirIndex) {
+    genelSureKilitBaslat();
     document.getElementById('videoOynaticiBaslik').innerText = baslik || "Video";
     document.getElementById('videoYeniSekmeLink').href = link;
 
@@ -8454,8 +8498,10 @@ function videoOynaticiAc(baslik, link, satirIndex) {
 }
 
 function videoOynaticiKapat() {
-    document.getElementById('videoOynaticiOverlay').style.display = 'none';
-    document.getElementById('videoIcerikAlani').innerHTML = "";
+    genelSureKontrolEtVeKapat(function() {
+        document.getElementById('videoOynaticiOverlay').style.display = 'none';
+        document.getElementById('videoIcerikAlani').innerHTML = "";
+    });
 }
 
         // ===== RUBRİK PANELİ: ETKİNLİK & VİDEO ATAMA =====
@@ -8820,6 +8866,7 @@ let disLinkYuklendiMi = false;
 function disLinkOyunAc(url, baslik, yorum, satirIndex) {
     disLinkAktifSatirIndex = satirIndex;
     disLinkAktifUrl = url;
+    genelSureKilitBaslat();
 
     document.getElementById('disLinkBaslikAlani').innerText = baslik || "";
     document.getElementById('disLinkYeniSekmeBtn').href = url;
@@ -8874,9 +8921,11 @@ function disLinkTekrarOyna() {
     disLinkIframeYukle(disLinkAktifUrl);
 }
 function disLinkKapat() {
-    if (disLinkYuklemeZamanAsimi) clearTimeout(disLinkYuklemeZamanAsimi);
-    document.getElementById('disLinkIframe').src = "";
-    document.getElementById('disLinkOverlay').style.display = 'none';
+    genelSureKontrolEtVeKapat(function() {
+        if (disLinkYuklemeZamanAsimi) clearTimeout(disLinkYuklemeZamanAsimi);
+        document.getElementById('disLinkIframe').src = "";
+        document.getElementById('disLinkOverlay').style.display = 'none';
+    });
 }
 
 // ===== RUBRİK PANELİ: DIŞ LİNK ETKİNLİK EKLEME =====
@@ -9572,6 +9621,19 @@ function rubricVideoOgrenciChecklistDoldur() {
         <div style="display:flex; gap:8px;">
             <button onclick="seviyeOnayVer(false)" style="flex:1; background:#f1f5f9; color:#64748b; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Hayır, Devam Et</button>
             <button onclick="seviyeOnayVer(true)" style="flex:1; background:#16a34a; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Evet, Bitirdim ✓</button>
+        </div>
+    </div>
+</div>
+
+    <!-- GENEL SÜRE YETERSİZ UYARI MODALI (Video + Etkinlik için) -->
+<div class="rubric-modal" id="genelSureUyariModal" style="z-index: 9999999;">
+    <div class="rubric-content" style="max-width: 320px; text-align: center;">
+        <div style="font-size:38px; margin-bottom:8px;">⏳</div>
+        <h3 style="color: #1e293b; margin-bottom: 8px; font-size: 15px;">Henüz erken!</h3>
+        <p id="genelSureUyariMetni" style="font-size: 11.5px; color: #64748b; margin-bottom: 16px; line-height:1.5;"></p>
+        <div style="display:flex; gap:8px;">
+            <button onclick="genelSureUyariniOnaylaKapat()" style="flex:1; background:#f1f5f9; color:#64748b; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">Yine de Kapat</button>
+            <button onclick="genelSureUyariDevamEt()" style="flex:1; background:#2563eb; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">Devam Et</button>
         </div>
     </div>
 </div>
