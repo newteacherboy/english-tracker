@@ -2701,6 +2701,27 @@
     box-shadow: none !important;
     margin: 0 !important;
 }
+
+    /* --- Z-INDEX (KATMAN) DÜZELTMESİ --- */
+
+/* Tam ekran sekmelerin katman ayarı */
+.dc-fullscreen-overlay {
+    z-index: 99990 !important;
+}
+
+/* Araçlar çubuğunun her zaman en üstte durması için */
+.floating-tools-dock {
+    z-index: 99999 !important;
+}
+
+/* AI Sohbet ve diğer pencerelerin arkada kalmaması için */
+.ai-chat-modal {
+    z-index: 100000 !important;
+}
+
+.rubric-modal, .game-modal-overlay {
+    z-index: 100000 !important;
+}
     
 </style>
 
