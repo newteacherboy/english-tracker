@@ -1591,11 +1591,13 @@
             </div>
 </div>
 
-      <!-- DERS ÇALIŞ SEKMESİ -->
+      <!-- DERS ÇALIŞ SEKMESİ (PREMIUM) -->
 <div id="tab-derscalis" class="tab-content">
-    <div class="topbar-dc">
-        <button class="back-btn-dc hidden" id="dcBackBtn" onclick="dcGeriGit()">←</button>
-        <div class="crumb-dc" id="dcCrumb"></div>
+    <div class="dc-topbar">
+        <button class="dc-icon-btn hidden" id="dcBackBtn" onclick="dcGeriGit()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="dc-crumb" id="dcCrumb"></div>
         <div class="dc-arama-kutu">
             <input type="text" id="dcAramaInput" placeholder="🔍 Konu ara..." oninput="dcAramaYap(this.value)">
         </div>
@@ -1606,38 +1608,69 @@
         <!-- EKRAN: SEVİYE SEÇİMİ -->
         <div class="dc-screen active" id="dcScreenLevels">
             <div class="dc-hero">
-                <h1>📘 Ders Çalış</h1>
-                <p>Seviyeni seç, konuları sırayla öğren — her konuda anlatım, örnekler, uygulama ve test seni bekliyor!</p>
-                <div class="dc-ses-secim">
-                    <span>🔊 Seslendirme:</span>
+                <span class="dc-hero-owl">🦉</span>
+                <h1>Ders Çalış</h1>
+                <p>Seviyeni seç, konuları patika boyunca ilerleyerek öğren. Her durakta anlatım, örnek, uygulama ve test seni bekliyor.</p>
+                <div class="dc-voice-toggle">
                     <button class="dc-ses-btn active" id="dcSesUS" onclick="dcSesSecimiYap('us')">🇺🇸 American</button>
                     <button class="dc-ses-btn" id="dcSesUK" onclick="dcSesSecimiYap('uk')">🇬🇧 British</button>
                 </div>
             </div>
             <div class="dc-level-grid">
-                <button class="dc-level-card dc-lc-a1" onclick="dcSeviyeSec('A1','Başlangıç')"><div class="dc-lv-code">A1</div><div class="dc-lv-name">Başlangıç</div></button>
-                <button class="dc-level-card dc-lc-a2" onclick="dcSeviyeSec('A2','Temel')"><div class="dc-lv-code">A2</div><div class="dc-lv-name">Temel Seviye</div></button>
-                <button class="dc-level-card dc-lc-b1" onclick="dcSeviyeSec('B1','Orta')"><div class="dc-lv-code">B1</div><div class="dc-lv-name">Orta Seviye</div></button>
-                <button class="dc-level-card dc-lc-b2" onclick="dcSeviyeSec('B2','Orta-Üstü')"><div class="dc-lv-code">B2</div><div class="dc-lv-name">Orta-Üstü</div></button>
+                <button class="dc-level-card dc-lc-a1" onclick="dcSeviyeSec('A1','Başlangıç')">
+                    <div class="dc-lv-ring"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.4 5.7 21l2.3-7.2-6-4.6h7.6z"/></svg></div>
+                    <div class="dc-lv-code">A1</div><div class="dc-lv-name">Başlangıç</div>
+                </button>
+                <button class="dc-level-card dc-lc-a2" onclick="dcSeviyeSec('A2','Temel')">
+                    <div class="dc-lv-ring"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></div>
+                    <div class="dc-lv-code">A2</div><div class="dc-lv-name">Temel Seviye</div>
+                </button>
+                <button class="dc-level-card dc-lc-b1" onclick="dcSeviyeSec('B1','Orta')">
+                    <div class="dc-lv-ring"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+                    <div class="dc-lv-code">B1</div><div class="dc-lv-name">Orta Seviye</div>
+                </button>
+                <button class="dc-level-card dc-lc-b2" onclick="dcSeviyeSec('B2','Orta-Üstü')">
+                    <div class="dc-lv-ring"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+                    <div class="dc-lv-code">B2</div><div class="dc-lv-name">Orta-Üstü</div>
+                </button>
             </div>
         </div>
 
         <!-- EKRAN: KATEGORİLER -->
         <div class="dc-screen" id="dcScreenCats">
-            <div class="dc-level-badge" id="dcLevelBadge"></div>
+            <div class="dc-level-badge" id="dcLevelBadge"><span class="dc-badge-dot" id="dcLevelBadgeDot"></span><span id="dcLevelBadgeText"></span></div>
             <div class="dc-cat-grid">
-                <button class="dc-cat-card" data-kat="grammar" onclick="dcKategoriSec('grammar','Grammar Topics','📐')"><div class="dc-cat-icon">📐</div><div><div class="dc-cat-title">Grammar Topics</div></div><div class="dc-cat-arrow">›</div></button>
-                <button class="dc-cat-card" data-kat="vocab" onclick="dcKategoriSec('vocab','Vocabulary Topics','📚')"><div class="dc-cat-icon">📚</div><div><div class="dc-cat-title">Vocabulary Topics</div></div><div class="dc-cat-arrow">›</div></button>
-                <button class="dc-cat-card" data-kat="comm" onclick="dcKategoriSec('comm','Communication / Functions','💬')"><div class="dc-cat-icon">💬</div><div><div class="dc-cat-title">Communication / Functions</div></div><div class="dc-cat-arrow">›</div></button>
-                <button class="dc-cat-card" data-kat="pron" onclick="dcKategoriSec('pron','Pronunciation Focus','🔊')"><div class="dc-cat-icon">🔊</div><div><div class="dc-cat-title">Pronunciation Focus</div></div><div class="dc-cat-arrow">›</div></button>
+                <button class="dc-cat-card" onclick="dcKategoriSec('grammar','Grammar Topics')">
+                    <div class="dc-cat-icon" style="background:#fef3c7;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+                    <div><div class="dc-cat-title">Grammar Topics</div><div class="dc-cat-sub">Dil bilgisi kuralları</div></div>
+                    <div class="dc-cat-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+                </button>
+                <button class="dc-cat-card" onclick="dcKategoriSec('vocab','Vocabulary Topics')">
+                    <div class="dc-cat-icon" style="background:#dcfce7;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20V4H6.5A2.5 2.5 0 004 6.5v13z"/><path d="M8 8h8M8 12h5"/></svg></div>
+                    <div><div class="dc-cat-title">Vocabulary Topics</div><div class="dc-cat-sub">Kelime dağarcığı</div></div>
+                    <div class="dc-cat-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+                </button>
+                <button class="dc-cat-card" onclick="dcKategoriSec('comm','Communication / Functions')">
+                    <div class="dc-cat-icon" style="background:#dbeafe;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>
+                    <div><div class="dc-cat-title">Communication / Functions</div><div class="dc-cat-sub">Gerçek hayat kullanımı</div></div>
+                    <div class="dc-cat-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+                </button>
+                <button class="dc-cat-card" onclick="dcKategoriSec('pron','Pronunciation Focus')">
+                    <div class="dc-cat-icon" style="background:#fce7f3;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9d174d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></svg></div>
+                    <div><div class="dc-cat-title">Pronunciation Focus</div><div class="dc-cat-sub">Doğru telaffuz</div></div>
+                    <div class="dc-cat-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+                </button>
             </div>
         </div>
 
-        <!-- EKRAN: KONU LİSTESİ -->
+        <!-- EKRAN: KONU PATİKASI -->
         <div class="dc-screen" id="dcScreenTopics">
-            <div class="dc-level-badge" id="dcCatBadge"></div>
-            <button class="dc-pdf-toplu-btn" onclick="dcTopluPdfIndir()">📄 Bu Kategorinin Tüm PDF'ini İndir</button>
-            <div class="dc-topic-list" id="dcTopicListArea"></div>
+            <div class="dc-level-badge" id="dcCatBadge"><span class="dc-badge-dot" id="dcCatBadgeDot"></span><span id="dcCatBadgeText"></span></div>
+            <button class="dc-pdf-toplu-btn" onclick="dcTopluPdfIndir()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4338ca" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg>
+                Bu Kategorinin Tüm PDF'ini İndir
+            </button>
+            <div class="dc-path-wrap" id="dcTopicListArea"></div>
         </div>
 
         <!-- EKRAN: KONU DETAYI -->
@@ -1645,20 +1678,38 @@
             <div class="dc-topic-header" id="dcTopicHeader">
                 <div class="dc-th-eyebrow" id="dcThEyebrow"></div>
                 <h2 id="dcThTitle"></h2>
-                <button class="dc-bilmiyordum-btn" id="dcBilmiyordumBtn" onclick="dcBilmiyordumToggle()">🚩 Bunu Bilmiyordum</button>
+                <button class="dc-bilmiyordum-btn" id="dcBilmiyordumBtn" onclick="dcBilmiyordumToggle()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3v18l7-4 7 4V3z"/></svg>
+                    Bilmiyordum
+                </button>
             </div>
             <img id="dcTopicImg" class="dc-topic-img" src="" style="display:none;">
 
             <div class="dc-tabbar">
-                <button class="dc-tab-btn active" data-tab="anlatim" onclick="dcSekmeSec('anlatim',this)">📖 Anlatım</button>
-                <button class="dc-tab-btn" data-tab="ornek" onclick="dcSekmeSec('ornek',this)">💡 Örnekler</button>
-                <button class="dc-tab-btn" data-tab="uygulama" onclick="dcSekmeSec('uygulama',this)">✏️ Uygulama</button>
-                <button class="dc-tab-btn" data-tab="test" onclick="dcSekmeSec('test',this)">🎯 Test</button>
+                <button class="dc-tab-btn active" data-tab="anlatim" onclick="dcSekmeSec('anlatim',this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+                    Anlatım
+                </button>
+                <button class="dc-tab-btn" data-tab="ornek" onclick="dcSekmeSec('ornek',this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/></svg>
+                    Örnekler
+                </button>
+                <button class="dc-tab-btn" data-tab="uygulama" onclick="dcSekmeSec('uygulama',this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+                    Uygulama
+                </button>
+                <button class="dc-tab-btn" data-tab="test" onclick="dcSekmeSec('test',this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                    Test
+                </button>
             </div>
 
             <div class="dc-tab-panel active" id="dcTab-anlatim">
                 <div class="dc-content-card" id="dcAnlatimIcerik"></div>
-                <button class="dc-pdf-tekli-btn" onclick="dcTekliPdfIndir()">📄 Bu Konuyu PDF Olarak İndir</button>
+                <button class="dc-uyg-kontrol-btn" style="background:#334155; box-shadow:0 4px 0 #1e293b;" onclick="dcTekliPdfIndir()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+                    Bu Konuyu PDF Olarak İndir
+                </button>
             </div>
             <div class="dc-tab-panel" id="dcTab-ornek">
                 <div class="dc-content-card" id="dcOrnekIcerik"></div>
@@ -1673,8 +1724,11 @@
     </div>
 </div>
 
-<!-- Hover sözlük balonu (tek, tekrar kullanılan) -->
 <div id="dcHoverBalon" class="dc-hover-balon"></div>
+<div class="dc-toast" id="dcToast">
+    <span class="dc-toast-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="#78350f"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.4 5.7 21l2.3-7.2-6-4.6h7.6z"/></svg></span>
+    <span id="dcToastText">+0.2 puan kazandın!</span>
+</div>
 
 
         <!-- SANA ÖZEL SEKMESİ -->
@@ -2277,100 +2331,124 @@
 .yardim-acc-panel-inner .yardim-puan-chip { display:inline-block; background:#eef2ff; color:#4338ca; font-weight:800; font-size:10px; padding:2px 7px; border-radius:7px; margin:2px 3px 2px 0; }
 .yardim-acc-panel-inner .yardim-tip { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:7px 9px; font-size:11px; color:#92400e; margin-top:5px; }
 
-/* ===== DERS ÇALIŞ SİSTEMİ ===== */
-.topbar-dc{display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
-.back-btn-dc{background:#fff; border:2px solid #e2e8f0; width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:15px; cursor:pointer; flex-shrink:0;}
-.back-btn-dc.hidden{visibility:hidden;}
-.crumb-dc{font-size:11px; font-weight:800; color:#64748b; flex:1;}
+/* ===== DERS ÇALIŞ SİSTEMİ (PREMIUM) ===== */
+.dc-topbar{display:flex; align-items:center; gap:10px; margin-bottom:16px; min-height:38px; flex-wrap:wrap;}
+.dc-icon-btn{background:#fff; border:none; width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 0 #e2e0d8, 0 3px 8px rgba(0,0,0,.04); transition:transform .1s;}
+.dc-icon-btn:active{transform:translateY(2px); box-shadow:0 0 0 #e2e0d8;}
+.dc-icon-btn.hidden{visibility:hidden;}
+.dc-crumb{font-size:11.5px; font-weight:800; color:#64748b; flex:1;}
 .dc-arama-kutu{width:100%; order:3;}
-.dc-arama-kutu input{width:100%; padding:9px 12px; border:2px solid #e2e8f0; border-radius:12px; font-size:12px; outline:none;}
-.dc-arama-kutu input:focus{border-color:#2563eb;}
-#dcAramaSonuclari{background:#fff; border:2px solid #e2e8f0; border-radius:14px; padding:8px; margin-bottom:12px; max-height:260px; overflow-y:auto;}
-.dc-arama-satir{padding:9px 10px; border-radius:10px; cursor:pointer; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
-.dc-arama-satir:hover{background:#f1f5f9;}
+.dc-arama-kutu input{width:100%; padding:10px 14px; border:2px solid #eef1e9; border-radius:14px; font-size:12px; outline:none; background:#fff; font-weight:700;}
+.dc-arama-kutu input:focus{border-color:#2f855a;}
+#dcAramaSonuclari{background:#fff; border-radius:16px; padding:8px; margin-bottom:12px; max-height:260px; overflow-y:auto; box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.dc-arama-satir{padding:10px 11px; border-radius:12px; cursor:pointer; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
+.dc-arama-satir:hover{background:#f4f2ec;}
 .dc-arama-etiket{font-size:9.5px; font-weight:800; color:#94a3b8;}
 
 .dc-screen{display:none;}
-.dc-screen.active{display:block; animation:dcFade .3s ease both;}
-@keyframes dcFade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+.dc-screen.active{display:block; animation:dcRise .3s cubic-bezier(.2,.8,.3,1) both;}
+@keyframes dcRise{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
 
-.dc-hero{background:linear-gradient(135deg,#1e293b,#334155); border-radius:18px; padding:18px; margin-bottom:14px; color:#fff;}
-.dc-hero h1{font-family:'Segoe UI', sans-serif; font-size:18px; margin-bottom:4px;}
-.dc-hero p{font-size:11.5px; color:#cbd5e1; line-height:1.5; margin-bottom:10px;}
-.dc-ses-secim{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:10.5px; color:#e2e8f0; font-weight:700;}
-.dc-ses-btn{background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.25); color:#fff; padding:5px 10px; border-radius:20px; font-size:10.5px; font-weight:700; cursor:pointer;}
-.dc-ses-btn.active{background:#fff; color:#1e293b;}
+.dc-hero{background:linear-gradient(160deg,#234b3a 0%,#16332a 100%); border-radius:22px; padding:20px 20px; margin-bottom:16px; position:relative; overflow:hidden; color:#fff;}
+.dc-hero-owl{position:absolute; right:-4px; bottom:-10px; font-size:74px; opacity:.15; transform:rotate(-6deg);}
+.dc-hero h1{font-family:'Segoe UI', sans-serif; font-size:19px; font-weight:700; margin-bottom:5px; position:relative;}
+.dc-hero p{font-size:11.5px; color:#cdeadc; line-height:1.5; margin-bottom:12px; position:relative; max-width:290px;}
+.dc-voice-toggle{display:inline-flex; background:rgba(255,255,255,.1); border-radius:13px; padding:4px; gap:4px; position:relative;}
+.dc-ses-btn{padding:6px 11px; border-radius:9px; font-size:10.5px; font-weight:800; color:#cdeadc; cursor:pointer; border:none; background:transparent;}
+.dc-ses-btn.active{background:#fff; color:#1c5a3a;}
 
 .dc-level-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.dc-level-card{border:none; border-radius:16px; padding:16px; cursor:pointer; text-align:left;}
-.dc-lv-code{font-size:22px; font-weight:800; color:#fff;}
-.dc-lv-name{font-size:10.5px; font-weight:800; color:rgba(255,255,255,.9); margin-top:2px;}
-.dc-lc-a1{background:linear-gradient(135deg,#16a34a,#0d7a3a);}
-.dc-lc-a2{background:linear-gradient(135deg,#2563eb,#1741a6);}
-.dc-lc-b1{background:linear-gradient(135deg,#7c3aed,#5b21b6);}
-.dc-lc-b2{background:linear-gradient(135deg,#ea580c,#c2410c);}
+.dc-level-card{border:none; border-radius:18px; padding:16px; cursor:pointer; text-align:left; box-shadow:0 4px 0 var(--dc-lv-deep); transition:transform .08s, box-shadow .08s; background:var(--dc-lv-main);}
+.dc-level-card:active{transform:translateY(3px); box-shadow:0 1px 0 var(--dc-lv-deep);}
+.dc-lv-ring{width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; margin-bottom:8px;}
+.dc-lv-code{font-family:'Segoe UI', sans-serif; font-size:19px; font-weight:800; color:#fff;}
+.dc-lv-name{font-size:10px; font-weight:800; color:rgba(255,255,255,.85); margin-top:1px;}
+.dc-lc-a1{--dc-lv-main:#2f855a; --dc-lv-deep:#1c5a3a;}
+.dc-lc-a2{--dc-lv-main:#2563eb; --dc-lv-deep:#1741a6;}
+.dc-lc-b1{--dc-lv-main:#7c3aed; --dc-lv-deep:#5223ad;}
+.dc-lc-b2{--dc-lv-main:#ea580c; --dc-lv-deep:#a83f08;}
 
-.dc-level-badge{display:inline-block; padding:6px 14px; border-radius:24px; font-weight:800; font-size:12px; color:#fff; margin-bottom:12px;}
+.dc-level-badge{display:inline-flex; align-items:center; gap:8px; padding:7px 15px 7px 7px; border-radius:26px; font-weight:800; font-size:12px; color:#fff; margin-bottom:14px;}
+.dc-badge-dot{width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; flex-shrink:0;}
+
 .dc-cat-grid{display:flex; flex-direction:column; gap:10px;}
-.dc-cat-card{display:flex; align-items:center; gap:12px; background:#fff; border:2px solid #eef1f4; border-radius:16px; padding:14px; cursor:pointer; text-align:left;}
-.dc-cat-icon{width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; background:#f1f5f9; flex-shrink:0;}
+.dc-cat-card{display:flex; align-items:center; gap:12px; background:#fff; border:none; border-radius:16px; padding:13px 14px; cursor:pointer; text-align:left; width:100%; box-shadow:0 3px 0 #e8e6de, 0 2px 8px rgba(0,0,0,.03); transition:transform .08s, box-shadow .08s;}
+.dc-cat-card:active{transform:translateY(3px); box-shadow:0 0 0 #e8e6de;}
+.dc-cat-icon{width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
 .dc-cat-title{font-weight:800; font-size:13px; color:#1e293b;}
-.dc-cat-arrow{margin-left:auto; color:#cbd5e1; font-size:16px;}
+.dc-cat-sub{font-size:10px; color:#64748b; margin-top:1px;}
+.dc-cat-arrow{margin-left:auto; width:26px; height:26px; border-radius:50%; background:#f4f2ec; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
 
-.dc-pdf-toplu-btn{width:100%; background:#eef2ff; color:#4338ca; border:1.5px solid #c7d2fe; padding:9px; border-radius:12px; font-weight:800; font-size:11px; cursor:pointer; margin-bottom:10px;}
-.dc-topic-list{display:flex; flex-direction:column; gap:8px;}
-.dc-topic-row{display:flex; align-items:center; gap:10px; background:#fff; border:1.5px solid #eef1f4; border-radius:12px; padding:11px 12px; cursor:pointer;}
-.dc-topic-num{width:26px; height:26px; border-radius:8px; background:#f1f5f9; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
-.dc-topic-name{font-size:12px; font-weight:800; color:#1e293b; flex:1;}
-.dc-topic-flag{font-size:12px;}
-.dc-topic-status{font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:16px; white-space:nowrap;}
-.dc-st-done{background:#dcfce7; color:#166534;}
-.dc-st-retry{background:#fee2e2; color:#991b1b;}
-.dc-st-new{background:#f1f5f9; color:#64748b;}
-.dc-topic-placeholder{text-align:center; padding:26px 14px; color:#94a3b8; font-size:11.5px; font-weight:700; background:#fff; border:2px dashed #e2e8f0; border-radius:14px;}
+.dc-pdf-toplu-btn{width:100%; background:#eef2ff; color:#4338ca; border:none; padding:10px; border-radius:13px; font-weight:800; font-size:11px; cursor:pointer; margin-bottom:12px; box-shadow:0 2px 0 #c7d2fe; display:flex; align-items:center; justify-content:center; gap:6px;}
 
-.dc-topic-header{border-radius:16px; padding:16px; margin-bottom:12px; color:#fff; position:relative;}
-.dc-th-eyebrow{font-size:9.5px; font-weight:800; opacity:.85;}
-.dc-topic-header h2{font-size:16px; font-weight:700; margin-top:2px; padding-right:90px;}
-.dc-bilmiyordum-btn{position:absolute; top:14px; right:14px; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.35); color:#fff; font-size:9.5px; font-weight:800; padding:6px 9px; border-radius:10px; cursor:pointer;}
-.dc-bilmiyordum-btn.aktif{background:#fbbf24; color:#78350f; border-color:#f59e0b;}
-.dc-topic-img{width:100%; max-height:160px; object-fit:cover; border-radius:14px; margin-bottom:12px;}
+/* PATİKA */
+.dc-path-wrap{position:relative; padding:8px 0 24px;}
+.dc-path-node-row{display:flex; justify-content:center; position:relative; margin-bottom:5px;}
+.dc-path-node-row:nth-child(4n+2){transform:translateX(-30px);}
+.dc-path-node-row:nth-child(4n+4){transform:translateX(30px);}
+.dc-path-node-btn{width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; position:relative; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 0 var(--dc-node-deep); transition:transform .08s, box-shadow .08s;}
+.dc-path-node-btn:active{transform:translateY(3px); box-shadow:0 1px 0 var(--dc-node-deep);}
+.dc-path-node-btn.done{--dc-node-main:#2f855a; --dc-node-deep:#1c5a3a; background:var(--dc-node-main);}
+.dc-path-node-btn.retry{--dc-node-main:#ef4444; --dc-node-deep:#b91c1c; background:var(--dc-node-main);}
+.dc-path-node-btn.new{--dc-node-main:#f59e0b; --dc-node-deep:#c2760a; background:var(--dc-node-main);}
+.dc-node-label{text-align:center; font-size:10px; font-weight:800; color:#64748b; max-width:110px; margin:0 auto 12px; line-height:1.25;}
+.dc-node-flag{position:absolute; top:-4px; right:-2px; font-size:13px;}
 
-.dc-tabbar{display:flex; gap:5px; background:#fff; border:2px solid #eef1f4; border-radius:14px; padding:4px; margin-bottom:12px;}
-.dc-tab-btn{flex:1; border:none; background:transparent; padding:8px 3px; border-radius:10px; cursor:pointer; font-weight:700; font-size:9.5px; color:#64748b;}
-.dc-tab-btn.active{background:#334155; color:#fff;}
+.dc-topic-header{border-radius:20px; padding:18px; margin-bottom:14px; color:#fff; position:relative; overflow:hidden;}
+.dc-topic-header::after{content:""; position:absolute; right:-18px; top:-18px; width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,.08);}
+.dc-th-eyebrow{font-size:10px; font-weight:800; opacity:.8; letter-spacing:.2px; position:relative;}
+.dc-topic-header h2{font-size:17px; font-weight:700; margin-top:3px; position:relative; padding-right:80px;}
+.dc-bilmiyordum-btn{position:absolute; top:16px; right:16px; background:rgba(255,255,255,.16); border:none; color:#fff; font-size:10px; font-weight:800; padding:7px 9px; border-radius:11px; cursor:pointer; display:flex; align-items:center; gap:4px;}
+.dc-bilmiyordum-btn.aktif{background:#fff; color:#c2760a;}
+.dc-topic-img{width:100%; max-height:150px; object-fit:cover; border-radius:14px; margin-bottom:12px;}
+
+.dc-tabbar{display:flex; gap:4px; background:#fff; border-radius:15px; padding:4px; margin-bottom:14px; box-shadow:0 2px 0 #e8e6de;}
+.dc-tab-btn{flex:1; border:none; background:transparent; padding:9px 2px; border-radius:11px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; font-weight:800; font-size:8.8px; color:#64748b;}
+.dc-tab-btn.active{color:#fff;}
 .dc-tab-panel{display:none;}
-.dc-tab-panel.active{display:block; animation:dcFade .25s ease both;}
-.dc-content-card{background:#fff; border:2px solid #eef1f4; border-radius:16px; padding:16px; margin-bottom:10px; font-size:12px; line-height:1.7; color:#334155;}
-.dc-content-card h3{font-size:13px; font-weight:800; color:#1e293b; margin-bottom:6px;}
+.dc-tab-panel.active{display:block; animation:dcRise .25s ease both;}
 
-.dc-example-row{display:flex; align-items:center; gap:8px; padding:9px 0; border-bottom:1px dashed #eef1f4;}
+.dc-content-card{background:#fff; border-radius:18px; padding:17px; margin-bottom:11px; box-shadow:0 2px 10px rgba(0,0,0,.03);}
+.dc-content-card h3{font-size:13px; font-weight:800; color:#1e293b; margin-bottom:8px; display:flex; align-items:center; gap:7px;}
+.dc-content-card p{font-size:12px; line-height:1.7; color:#3d4657;}
+.dc-content-card ul{margin:6px 0 0 0; list-style:none;}
+.dc-content-card ul li{font-size:12px; line-height:1.65; color:#3d4657; padding:6px 0; border-bottom:1px dashed #eef1e9; display:flex; gap:7px;}
+.dc-content-card ul li:last-child{border-bottom:none;}
+
+.dc-example-row{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px dashed #eef1e9;}
 .dc-example-row:last-child{border-bottom:none;}
 .dc-ex-en{font-weight:700; font-size:12.5px; color:#1e293b; flex:1;}
 .dc-ex-tr{font-size:11px; color:#64748b; flex:1;}
-.dc-ex-play{background:#eef2ff; border:none; width:28px; height:28px; border-radius:8px; cursor:pointer; font-size:12px; flex-shrink:0;}
+.dc-ex-play{background:#eafaf1; border:none; width:32px; height:32px; border-radius:10px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:.1s;}
+.dc-ex-play:active{transform:scale(.9);}
 
-.dc-word{cursor:pointer; border-bottom:1.5px dotted #94a3b8; position:relative;}
-.dc-word:hover{background:#fef9c3;}
-
-.dc-hover-balon{
-  position:fixed; background:#1e293b; color:#fff; padding:8px 12px; border-radius:10px; font-size:11px;
-  font-weight:700; z-index:9999999; display:none; max-width:200px; box-shadow:0 6px 16px rgba(0,0,0,.25); pointer-events:none;
-}
+.dc-word{cursor:pointer; border-bottom:2px dotted #b7d9c8; position:relative; border-radius:2px;}
+.dc-word:hover{background:#fef3c7;}
+.dc-hover-balon{position:fixed; background:#1e293b; color:#fff; padding:8px 12px; border-radius:11px; font-size:11px; font-weight:700; z-index:9999999; display:none; max-width:200px; box-shadow:0 6px 16px rgba(0,0,0,.25); pointer-events:none;}
 .dc-hover-balon .dc-alt{font-size:9.5px; color:#94a3b8; font-weight:600; margin-top:2px;}
 
 .dc-uyg-soru{margin-bottom:14px;}
-.dc-uyg-metin{font-size:12px; font-weight:800; margin-bottom:7px;}
+.dc-uyg-metin{font-size:12px; font-weight:800; margin-bottom:7px; color:#1e293b;}
 .dc-uyg-inputlar{display:flex; gap:5px; flex-wrap:wrap;}
-.dc-uyg-input{width:44px; padding:6px; border:2px solid #cbd5e1; border-radius:8px; text-align:center; font-weight:800; font-size:12px; outline:none;}
-.dc-uyg-kontrol-btn{width:100%; padding:11px; border:none; border-radius:12px; background:#334155; color:#fff; font-weight:800; font-size:12px; cursor:pointer; margin-top:6px;}
+.dc-uyg-input{width:42px; height:42px; padding:0; border:2.5px solid #e4e1d8; border-radius:11px; text-align:center; font-weight:800; font-size:14px; outline:none; transition:.15s; color:#1e293b;}
+.dc-uyg-input:focus{border-color:#2f855a;}
+.dc-uyg-kontrol-btn{width:100%; padding:13px; border:none; border-radius:15px; background:#2f855a; color:#fff; font-weight:800; font-size:12.5px; cursor:pointer; margin-top:6px; box-shadow:0 4px 0 #1c5a3a; transition:transform .08s, box-shadow .08s; display:flex; align-items:center; justify-content:center; gap:7px;}
+.dc-uyg-kontrol-btn:active{transform:translateY(3px); box-shadow:0 1px 0 #1c5a3a;}
 
-.dc-quiz-q{background:#fff; border:2px solid #eef1f4; border-radius:14px; padding:13px; margin-bottom:9px;}
-.dc-quiz-q-text{font-size:12px; font-weight:800; margin-bottom:9px;}
-.dc-quiz-opt{display:block; width:100%; text-align:left; padding:9px 11px; border:2px solid #eef1f4; border-radius:10px; background:#fafbfc; font-size:11.5px; font-weight:700; color:#334155; margin-bottom:6px; cursor:pointer;}
-.dc-quiz-opt.dogru{background:#dcfce7; border-color:#16a34a; color:#166534;}
-.dc-quiz-opt.yanlis{background:#fee2e2; border-color:#dc2626; color:#7f1d1d;}
-.dc-quiz-bitir-btn{width:100%; padding:12px; border:none; border-radius:14px; background:#16a34a; color:#fff; font-weight:800; font-size:12.5px; cursor:pointer; margin-top:4px;}
+.dc-quiz-q{background:#fff; border-radius:16px; padding:15px; margin-bottom:10px; box-shadow:0 2px 10px rgba(0,0,0,.03);}
+.dc-quiz-q-text{font-size:12px; font-weight:800; margin-bottom:10px; color:#1e293b;}
+.dc-quiz-opt{display:flex; align-items:center; gap:9px; width:100%; text-align:left; padding:11px 12px; border:2.5px solid #eef1e9; border-radius:13px; background:#fbfaf7; font-size:11.5px; font-weight:700; color:#3d4657; margin-bottom:7px; cursor:pointer; transition:.12s;}
+.dc-quiz-opt .dc-opt-dot{width:18px; height:18px; border-radius:50%; border:2px solid #cbd5c9; flex-shrink:0;}
+.dc-quiz-opt.dogru{background:#eafaf1; border-color:#2f855a; color:#1c5a3a;}
+.dc-quiz-opt.dogru .dc-opt-dot{background:#2f855a; border-color:#2f855a;}
+.dc-quiz-opt.yanlis{background:#fef2f2; border-color:#f87171; color:#991b1b;}
+.dc-quiz-opt.yanlis .dc-opt-dot{background:#ef4444; border-color:#ef4444;}
+.dc-quiz-bitir-btn{width:100%; padding:14px; border:none; border-radius:15px; background:#f59e0b; color:#fff; font-weight:800; font-size:12.5px; cursor:pointer; margin-top:4px; box-shadow:0 4px 0 #c2760a; transition:transform .08s, box-shadow .08s; display:flex; align-items:center; justify-content:center; gap:7px;}
+.dc-quiz-bitir-btn:active{transform:translateY(3px); box-shadow:0 1px 0 #c2760a;}
+
+.dc-toast{position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-30px); opacity:0; background:#1e293b; color:#fff; padding:12px 18px; border-radius:15px; font-weight:700; font-size:12px; display:flex; align-items:center; gap:8px; z-index:100000010; transition:all .35s cubic-bezier(.2,.9,.3,1.3); box-shadow:0 10px 30px rgba(0,0,0,.25);}
+.dc-toast.show{transform:translateX(-50%) translateY(0); opacity:1;}
+.dc-toast-icon{width:22px; height:22px; border-radius:50%; background:#f59e0b; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
     
 </style>
 
@@ -5545,10 +5623,10 @@ let dcQuizCevaplari = [];
 let dcQuizDogruSayisi = 0;
 
 const dcKategoriRenkleri = {
-    grammar: { accent:'#f59e0b', label:'Grammar Topics' },
-    vocab:   { accent:'#16a34a', label:'Vocabulary Topics' },
-    comm:    { accent:'#2563eb', label:'Communication / Functions' },
-    pron:    { accent:'#db2777', label:'Pronunciation Focus' }
+    grammar: { accent:'#f59e0b', accentDeep:'#c2760a', label:'Grammar Topics' },
+    vocab:   { accent:'#16a34a', accentDeep:'#0d7a3a', label:'Vocabulary Topics' },
+    comm:    { accent:'#2563eb', accentDeep:'#1741a6', label:'Communication / Functions' },
+    pron:    { accent:'#db2777', accentDeep:'#9d174d', label:'Pronunciation Focus' }
 };
 
 function dcSesSecimiYap(tip) {
@@ -5576,6 +5654,14 @@ function dcSesOku(text) {
     if (dcSecilenVoice) u.voice = dcSecilenVoice;
     u.rate = 0.92;
     window.speechSynthesis.speak(u);
+}
+
+        function dcToastGoster(msg) {
+    document.getElementById('dcToastText').innerText = msg;
+    let t = document.getElementById('dcToast');
+    t.classList.add('show');
+    clearTimeout(window._dcToastTimeout);
+    window._dcToastTimeout = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
 function dcCalisBaslat() { dersCalisBaslat(); }
@@ -5611,35 +5697,49 @@ function dcCrumbGuncelle() {
 
 function dcSeviyeSec(kod, ad) {
     dcAktifSeviye = kod;
-    let renkler = { A1:'#16a34a', A2:'#2563eb', B1:'#7c3aed', B2:'#ea580c' };
+    let renkler = { A1:'#2f855a', A2:'#2563eb', B1:'#7c3aed', B2:'#ea580c' };
     let badge = document.getElementById('dcLevelBadge');
     badge.style.background = renkler[kod];
-    badge.innerText = `${kod} · ${ad} Seviyesi`;
+    document.getElementById('dcLevelBadgeDot').innerText = kod;
+    document.getElementById('dcLevelBadgeText').innerText = ad + ' Seviyesi';
     dcIleriGit('dcScreenCats');
 }
 
-function dcKategoriSec(key, ad, emoji) {
+function dcKategoriSec(key, ad) {
     dcAktifKategori = key;
     let r = dcKategoriRenkleri[key];
     let badge = document.getElementById('dcCatBadge');
     badge.style.background = r.accent;
-    badge.innerText = `${emoji} ${dcAktifSeviye} · ${ad}`;
+    document.getElementById('dcCatBadgeDot').innerHTML = '';
+    document.getElementById('dcCatBadgeText').innerText = `${dcAktifSeviye} · ${ad}`;
 
     let konular = dcTumKonularCache.filter(k => k.seviye === dcAktifSeviye && k.kategori === key).sort((a,b) => a.siraNo - b.siraNo);
     let alan = document.getElementById('dcTopicListArea');
     if (konular.length === 0) {
-        alan.innerHTML = `<div class="dc-topic-placeholder">🌱 Bu kategori için konular yakında eklenecek</div>`;
+        alan.innerHTML = `<div style="text-align:center; padding:40px 20px; color:#94a3b8; font-weight:700; font-size:12px;">🌱 Bu kategori için konular yakında eklenecek</div>`;
     } else {
+        let ilkAktifBulundu = false;
         alan.innerHTML = konular.map((k, i) => {
-            let statusHtml = k.durum === 'tamamlandi' ? `<span class="dc-topic-status dc-st-done">✅ Tamamlandı</span>`
-                : k.durum === 'basarisiz' ? `<span class="dc-topic-status dc-st-retry">↻ Tekrar Dene</span>`
-                : `<span class="dc-topic-status dc-st-new">🆕 Yeni</span>`;
-            let flagHtml = k.bilmiyordum ? `<span class="dc-topic-flag">🚩</span>` : '';
-            return `<div class="dc-topic-row" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')">
-                <div class="dc-topic-num">${i+1}</div>
-                <div class="dc-topic-name">${flagHtml} ${k.konuAdi}</div>
-                ${statusHtml}
-            </div>`;
+            let durumSinif = 'new', ikon = `<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#a8a496" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`;
+            let tiklanabilir = true;
+            if (k.durum === 'tamamlandi') {
+                durumSinif = 'done';
+                ikon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+            } else if (k.durum === 'basarisiz') {
+                durumSinif = 'retry';
+                ikon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>`;
+            } else if (!ilkAktifBulundu) {
+                durumSinif = 'new';
+                ilkAktifBulundu = true;
+                ikon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.4 5.7 21l2.3-7.2-6-4.6h7.6z"/></svg>`;
+            }
+            let flagHtml = k.bilmiyordum ? '<span class="dc-node-flag">🚩</span>' : '';
+            return `<div class="dc-path-node-row">
+                <button class="dc-path-node-btn ${durumSinif}" onclick="dcKonuAc('${k.konuAdi.replace(/'/g,"\\'")}')">
+                    ${flagHtml}${ikon}
+                </button>
+            </div>
+            <div class="dc-node-label">${k.konuAdi}</div>`;
         }).join('');
     }
     dcIleriGit('dcScreenTopics');
@@ -5650,7 +5750,7 @@ function dcKonuAc(konuAdi) {
     let r = dcKategoriRenkleri[dcAktifKategori];
     let konuOzet = dcTumKonularCache.find(k => k.seviye === dcAktifSeviye && k.kategori === dcAktifKategori && k.konuAdi === konuAdi);
 
-    document.getElementById('dcTopicHeader').style.background = r.accent;
+    document.getElementById('dcTopicHeader').style.background = `linear-gradient(135deg, ${r.accent}, ${r.accentDeep || r.accent})`;
     document.getElementById('dcThEyebrow').innerText = `${dcAktifSeviye} · ${r.label.toUpperCase()}`;
     document.getElementById('dcThTitle').innerText = konuAdi;
     document.getElementById('dcBilmiyordumBtn').classList.toggle('aktif', konuOzet && konuOzet.bilmiyordum);
@@ -5753,9 +5853,10 @@ function dcUygulamaKontrolEt(sorular) {
         let dogruCevap = (s.cevap || []).map(c => String(c).toUpperCase());
         let dogruMu = JSON.stringify(girilenler) === JSON.stringify(dogruCevap);
         let sonucEl = document.getElementById('dcUygSonuc' + i);
-        sonucEl.innerText = dogruMu ? "✅ Doğru!" : "❌ Tekrar dene, doğrusu: " + dogruCevap.join('');
+                sonucEl.innerText = dogruMu ? "✅ Doğru!" : "❌ Tekrar dene, doğrusu: " + dogruCevap.join('');
         sonucEl.style.color = dogruMu ? "#16a34a" : "#dc2626";
     });
+    dcToastGoster("+0.1 puan kazandın!");
 }
 
 function dcTestCiz(sorular, accent) {
@@ -5785,7 +5886,7 @@ function dcTestiBitir(toplamSoru) {
     let cevaplanan = dcQuizCevaplari.filter(c => c !== -1).length;
     if (cevaplanan < toplamSoru) { alert("Lütfen tüm soruları cevapla!"); return; }
     let basariliMi = dcQuizDogruSayisi >= Math.ceil(toplamSoru * 0.7);
-    alert(basariliMi ? `🎉 Tebrikler! ${dcQuizDogruSayisi}/${toplamSoru} doğru — konu tamamlandı!` : `${dcQuizDogruSayisi}/${toplamSoru} doğru. Bu konuyu tekrar çalışman gerekiyor.`);
+      dcToastGoster(basariliMi ? `🎉 Tebrikler! Konu tamamlandı — +0.2 puan` : `${dcQuizDogruSayisi}/${toplamSoru} doğru, tekrar deneyelim`);
 
     fetch(apiURL, {
         method: "POST",
