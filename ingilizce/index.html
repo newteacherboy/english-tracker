@@ -216,13 +216,27 @@
         .user-details h3 { color: #ffffff; font-size: 14.5px; font-weight: 700; font-family:'Fredoka', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .user-details span { color: #cdeadc; font-size: 10.5px; font-weight: 600; }
 
-        .header-right-widgets { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+                .header-right-widgets { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .header-gear-mini {
             width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22);
             color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
             transition: background .2s; padding: 0;
         }
         .header-gear-mini:hover { background: rgba(255,255,255,.28); }
+
+        .header-tools-row { display: flex; align-items: center; gap: 6px; width: 100%; position: relative; flex-wrap: wrap; }
+        .header-tool-btn {
+            width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+            color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+            transition: background .2s, transform .15s; padding: 0; position: relative;
+        }
+        .header-tool-btn:hover { background: rgba(255,255,255,.26); }
+        .header-tool-btn:active { transform: scale(.92); }
+        .header-tool-badge {
+            position: absolute; top: -3px; right: -3px; background: #dc2626; color: #fff;
+            font-size: 8.5px; font-weight: 800; border-radius: 50%; width: 15px; height: 15px;
+            display: none; align-items: center; justify-content: center; border: 1.5px solid #16332a;
+        }
         .header-streak-badge { background: rgba(255,255,255,.14); border-radius: 12px; padding: 5px 10px; text-align: center; flex-shrink: 0; min-width: 46px; }
         .header-streak-num { color: #fbbf24; font-family:'Fredoka', sans-serif; font-weight: 700; font-size: 13.5px; line-height: 1; white-space: nowrap; }
         .header-streak-label { color: #cdeadc; font-size: 6.8px; font-weight: 800; letter-spacing: .2px; margin-top: 1px; }
@@ -1390,7 +1404,7 @@
 
     <!-- PANEL ALANI -->
     <div id="panel-alani">
-               <div class="user-header-bar">
+                      <div class="user-header-bar">
             <span class="user-header-owl">🦉</span>
             <div class="user-header-top">
                 <div class="user-info-area">
@@ -1401,12 +1415,21 @@
                     </div>
                 </div>
                 <div class="header-right-widgets">
-                    <button class="header-gear-mini" onclick="ogretmenPaneliAc()" title="Öğretmen Paneli">⚙️</button>
                     <div class="header-streak-badge">
                         <div class="header-streak-num" id="headerStreakNum">🔥 0</div>
                         <div class="header-streak-label">GÜN SERİ</div>
                     </div>
                 </div>
+            </div>
+
+            <div class="header-tools-row">
+                <button class="header-tool-btn" onclick="sayfayiYenile()" title="Sayfayı Yenile">🔄</button>
+                <button class="header-tool-btn" onclick="duyuruGecmisiniAc()" title="Duyurular">📋</button>
+                <button class="header-tool-btn" onclick="yardimAc()" title="Yardım">❓</button>
+                <button class="header-tool-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Paneli">
+                    ⚙️<span class="header-tool-badge" id="ogretmenGenelRozet">0</span>
+                </button>
+                <button class="header-tool-btn" onclick="aiModalAc()" title="AI Asistan">🤖</button>
             </div>
 
                         <div class="header-schedule-area" id="takvimAlani">
@@ -11176,6 +11199,9 @@ function dockZamanlayiciyiBaslat() {
     align-items: center !important;
     justify-content: center !important;
 }
+
+/* Eski kayan araçlar çubuğu artık kullanılmıyor — butonlar header'a taşındı */
+#floatingToolsDock { display: none !important; }
 </style>
 </body>
 </html>
