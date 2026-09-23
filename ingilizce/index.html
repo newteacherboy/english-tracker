@@ -166,46 +166,66 @@
             background: #7c3aed; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;
         }
 
-        .login-card {
-            background: #ffffff; padding: 30px 25px; border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.04); width: 100%; max-width: 350px; text-align: center; margin: auto;
+                .login-card {
+            background: linear-gradient(160deg, #fef9c3, #fde68a); padding: 30px 22px; border-radius: 22px;
+            box-shadow: 0 8px 20px rgba(217,119,6,0.15); width: 100%; max-width: 350px; text-align: center; margin: auto;
         }
-        .logo-icon { font-size: 28px; margin-bottom: 10px; }
-        h2 { color: #2d3748; font-size: 18px; margin-bottom: 4px; }
-        .subtitle { color: #718096; font-size: 11px; margin-bottom: 20px; line-height: 1.3; }
+        .logo-icon {
+            width: 64px; height: 64px; border-radius: 50%; background: #fff;
+            display: flex; align-items: center; justify-content: center; font-size: 30px;
+            margin: 0 auto 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        h2 { font-family: 'Fredoka', sans-serif; color: #78350f; font-size: 19px; font-weight: 700; margin-bottom: 4px; }
+        .subtitle { color: #92400e; font-size: 11px; margin-bottom: 20px; line-height: 1.5; font-weight: 600; }
         .form-group { margin-bottom: 10px; text-align: left; }
         input {
-            width: 100%; padding: 8px 12px; background-color: #edf2f7;
-            border: 1px solid transparent; border-radius: 6px; font-size: 12.5px; color: #2d3748; outline: none; transition: all 0.3s;
+            width: 100%; padding: 12px 14px; background-color: #ffffff;
+            border: 1px solid transparent; border-radius: 12px; font-size: 13px; color: #334155; outline: none; transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
-        input:focus { background-color: #fff; border-color: #38a169; box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.1); }
+        input:focus { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15); }
         .btn-giris {
-            width: 100%; padding: 9px; background-color: #2f855a; color: white;
-            border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: background-color 0.3s;
+            width: 100%; padding: 13px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
+            border: none; border-radius: 12px; font-size: 13.5px; font-weight: 800; cursor: pointer; margin-top: 8px;
+            transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 0 #b45309;
         }
-        .btn-giris:hover { background-color: #276749; }
-        .btn-giris:disabled { background-color: #cbd5e0; cursor: not-allowed; }
-        #mesaj { margin-top: 10px; font-size: 11px; min-height: 15px; }
+        .btn-giris:active { transform: translateY(3px); box-shadow: 0 1px 0 #b45309; }
+        .btn-giris:disabled { background: #cbd5e0; box-shadow: 0 4px 0 #94a3b8; cursor: not-allowed; }
+                #mesaj { margin-top: 10px; font-size: 11px; min-height: 15px; }
         .error { color: #e53e3e; }
         .success { color: #38a169; }
+        #login-container a { color: #92400e !important; font-weight: 800 !important; }
         
         #panel-alani { display: none; width: 100%; max-width: 700px; margin: 0 auto; }
 
-        /* Üst Şerit */
+                /* Üst Şerit — Gradient Hero */
         .user-header-bar {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #bbf7d0; border-radius: 10px; padding: 8px 12px;
-            display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            background: linear-gradient(135deg, #234b3a 0%, #16332a 100%);
+            border-radius: 16px; padding: 14px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.18);
         }
-        .user-header-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-        .user-info-area { display: flex; align-items: center; gap: 6px; }
+        .user-header-owl { position: absolute; right: -8px; top: -10px; font-size: 62px; opacity: .12; transform: rotate(8deg); pointer-events: none; }
+        .user-header-top { display: flex; align-items: center; gap: 10px; width: 100%; position: relative; }
+        .user-info-area { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
                                 .user-avatar {
-            width: 52px; height: 52px; background-color: #2f855a; color: white;
-            font-weight: 800; font-size: 26px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(47, 133, 90, 0.3); text-transform: uppercase; flex-shrink: 0;
+            width: 50px; height: 50px; background-color: rgba(255,255,255,.15); color: white;
+            font-weight: 800; font-size: 24px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,.3); text-transform: uppercase; flex-shrink: 0;
         }
-        .user-details h3 { color: #166534; font-size: 12.5px; font-weight: 700; }
-        .user-details span { color: #15803d; font-size: 10px; font-weight: 600; }
+        .user-details { min-width: 0; }
+        .user-details h3 { color: #ffffff; font-size: 14.5px; font-weight: 700; font-family:'Fredoka', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-details span { color: #cdeadc; font-size: 10.5px; font-weight: 600; }
+
+        .header-right-widgets { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .header-gear-mini {
+            width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22);
+            color: #fff; font-size: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+            transition: background .2s; padding: 0;
+        }
+        .header-gear-mini:hover { background: rgba(255,255,255,.28); }
+        .header-streak-badge { background: rgba(255,255,255,.14); border-radius: 12px; padding: 5px 10px; text-align: center; flex-shrink: 0; min-width: 46px; }
+        .header-streak-num { color: #fbbf24; font-family:'Fredoka', sans-serif; font-weight: 700; font-size: 13.5px; line-height: 1; white-space: nowrap; }
+        .header-streak-label { color: #cdeadc; font-size: 6.8px; font-weight: 800; letter-spacing: .2px; margin-top: 1px; }
 
                .header-schedule-area { display: flex; gap: 4px; width: 100%; }
         .sched-mini-box { background: #ffffff; border-radius: 6px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; flex: 1; min-width: 0; }
@@ -233,12 +253,12 @@
         }
         .btn-plan-mini:hover { background: #4338ca; }
 
-        .user-actions { display: flex; gap: 5px; width: 100%; }
-        .header-btn { text-decoration: none; padding: 5px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center; cursor: pointer; border: none; flex: 1; }
-        .btn-portal { background: #ffffff; color: #2f855a; border: 1px solid #bbf7d0; }
-        .btn-portal:hover { background: #2f855a; color: #ffffff; }
-        .btn-cikis { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        .btn-cikis:hover { background: #dc2626; color: #ffffff; }
+                .user-actions { display: flex; gap: 6px; width: 100%; position: relative; }
+        .header-btn { text-decoration: none; padding: 7px; border-radius: 9px; font-size: 10.5px; font-weight: 700; text-align: center; cursor: pointer; border: none; flex: 1; }
+        .btn-portal { background: rgba(255,255,255,.12); color: #ffffff; }
+        .btn-portal:hover { background: rgba(255,255,255,.22); }
+        .btn-cikis { background: rgba(239,68,68,.22); color: #fca5a5; }
+        .btn-cikis:hover { background: rgba(239,68,68,.35); color: #ffffff; }
 
         /* Sekmeler */
         .tabs-container {
@@ -382,7 +402,18 @@
         }
         .btn-oyun-ac:active { transform: scale(0.95); }
 
-        .btn-oyun-ac:hover { transform: scale(1.03); background: linear-gradient(135deg, #d97706 100%, #b45309 100%); }
+                .btn-oyun-ac:hover { transform: scale(1.03); background: linear-gradient(135deg, #d97706 100%, #b45309 100%); }
+
+        /* AKTİVİTE KARTLARI — KOYU TEMA */
+        .ak-card{ background:#1e293b; border-radius:18px; padding:16px; position:relative; overflow:hidden; margin-bottom:12px; }
+        .ak-card:last-child{ margin-bottom:0; }
+        .ak-glow{ position:absolute; width:100px; height:100px; border-radius:50%; right:-24px; top:-24px; opacity:.18; filter:blur(6px); pointer-events:none; }
+        .ak-top{ display:flex; align-items:center; gap:10px; position:relative; }
+        .ak-icon{ width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+        .ak-title{ font-family:'Fredoka', sans-serif; font-weight:600; font-size:13.5px; color:#fff; }
+        .ak-sub{ font-size:10px; color:#94a3b8; margin-top:2px; line-height:1.4; }
+        .ak-btn{ width:100%; padding:11px; border:none; border-radius:10px; font-weight:800; font-size:12px; margin-top:12px; position:relative; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; transition:transform .15s; }
+        .ak-btn:active{ transform:scale(.97); }
 
         .game-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -810,6 +841,9 @@
         justify-content: center;
         padding: 30px 20px 70px 20px; /* Alttaki menü çubuğu için ekstra boşluk bırakıldı */
     }
+    .dc-fullscreen-overlay.active {
+        display: flex;
+    }
     .dc-focus-card {
         background: #fbfaf7;
         border-radius: 24px;
@@ -819,6 +853,7 @@
         overflow-y: auto;
         padding: 20px 22px 40px 22px;
         box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+        margin: 0 auto;
     }
 }
         .dc-fullscreen-below{ z-index: 49000 !important; }
@@ -1332,7 +1367,7 @@
 
     <!-- GİRİŞ EKRANI -->
     <div class="login-card" id="login-container">
-        <div class="logo-icon">🏆</div>
+                <div class="logo-icon">🦉</div>
         <h2>İngilizce Portal Giriş</h2>
         <p class="subtitle" id="girisSubtitle">Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.</p>
         
@@ -1355,13 +1390,21 @@
 
     <!-- PANEL ALANI -->
     <div id="panel-alani">
-        <div class="user-header-bar">
+               <div class="user-header-bar">
+            <span class="user-header-owl">🦉</span>
             <div class="user-header-top">
                 <div class="user-info-area">
                     <div class="user-avatar" id="userAvatarLetter">🦉</div>
                     <div class="user-details">
                         <h3 id="ogrenciAdiText">Öğrenci</h3>
                         <span>Diji-Medu'ya hoş geldin! 🎉</span>
+                    </div>
+                </div>
+                <div class="header-right-widgets">
+                    <button class="header-gear-mini" onclick="ogretmenPaneliAc()" title="Öğretmen Paneli">⚙️</button>
+                    <div class="header-streak-badge">
+                        <div class="header-streak-num" id="headerStreakNum">🔥 0</div>
+                        <div class="header-streak-label">GÜN SERİ</div>
                     </div>
                 </div>
             </div>
@@ -1578,77 +1621,92 @@
     <button class="dc-exit-btn" onclick="aktivitelerTamEkranKapat()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
-    <div class="dc-focus-card">
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
+        <div class="dc-focus-card">
+    <div style="margin-top: 10px;">
 
         <!-- 1. Kelime Kartları Yolculuğu -->
-        <div class="activity-banner" id="kartKelimeYolculugu" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #bfdbfe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div>
-                <h3 style="color: #1e40af; font-size: 15px; margin-bottom: 6px;">🗺️ Kelime Kartları Yolculuğu</h3>
-                <p style="color: #3b82f6; font-size: 11px; margin-bottom: 12px;">Ünite ünite ilerle, her seviyeyi bitirdikçe bir sonraki açılsın!</p>
+        <div class="ak-card" id="kartKelimeYolculugu">
+            <div class="ak-glow" style="background:#3b82f6;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(59,130,246,.2); color:#60a5fa;">🗺️</div>
+                <div><div class="ak-title">Kelime Kartları Yolculuğu</div><div class="ak-sub">Ünite ünite ilerle, her seviyeyi bitirdikçe bir sonraki açılsın!</div></div>
             </div>
-            <div>
-                <button class="btn-oyun-ac" onclick="yolculuguAc()" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); width: 100%;">📖 Yolculuğa Başla</button>
-            </div>
+            <button class="ak-btn" onclick="yolculuguAc()" style="background:#3b82f6; color:#fff;">📖 Yolculuğa Başla</button>
         </div>
 
-      
         <!-- 2. Kelime Ezber Yarışması -->
-       <div class="activity-banner" id="kartKelimeYarismasi" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border-color: #f5d0fe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div>
-                <h3 style="color: #86198f; font-size: 15px; margin-bottom: 6px;">🏆 Kelime Ezber Yarışması</h3>
-                <p style="color: #a21caf; font-size: 11px; margin-bottom: 12px;">Google Sheets havuzundan üniteleri seç, 2 şıklı yarışarak çöz, liderliğe adını yazdır!</p>
+        <div class="ak-card" id="kartKelimeYarismasi">
+            <div class="ak-glow" style="background:#a855f7;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(168,85,247,.2); color:#c084fc;">🏆</div>
+                <div><div class="ak-title">Kelime Ezber Yarışması</div><div class="ak-sub">Google Sheets havuzundan üniteleri seç, 2 şıklı yarışarak çöz, liderliğe adını yazdır!</div></div>
             </div>
-            <div>
-                <button class="btn-oyun-ac" onclick="kelimeYarismasiAc()" style="background: linear-gradient(135deg, #d946ef 0%, #a21caf 100%); box-shadow: 0 2px 8px rgba(217, 70, 239, 0.3); width: 100%;">🎯 Kelime Yarışmasını Başlat</button>
-            </div>
+            <button class="ak-btn" onclick="kelimeYarismasiAc()" style="background:#a855f7; color:#fff;">🎯 Kelime Yarışmasını Başlat</button>
         </div>
 
         <!-- 3. Jeopardy Balonları Kelime Yarışması -->
-       <div class="activity-banner" id="kartJeopardy" style="background: linear-gradient(135deg, #fef2f2 0%, #ffe4e6 100%); border-color: #fecdd3; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div>
-                <h3 style="color: #9f1239; font-size: 15px; margin-bottom: 6px;">🎈 Jeopardy Balonları Kelime Yarışması</h3>
-                <p style="color: #be123c; font-size: 11px; margin-bottom: 12px;">Puan değerindeki balonları patlat, 4 şıklı soruları çöz, liderlik tablosunda yerini al!</p>
+        <div class="ak-card" id="kartJeopardy">
+            <div class="ak-glow" style="background:#f43f5e;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(244,63,94,.2); color:#fb7185;">🎈</div>
+                <div><div class="ak-title">Jeopardy Balonları Kelime Yarışması</div><div class="ak-sub">Puan değerindeki balonları patlat, 4 şıklı soruları çöz, liderlik tablosunda yerini al!</div></div>
             </div>
-            <div>
-                <button class="btn-oyun-ac" onclick="jpOyunAc()" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3); width: 100%;">🚀 Jeopardy Oyununu Başlat</button>
-            </div>
+            <button class="ak-btn" onclick="jpOyunAc()" style="background:#f43f5e; color:#fff;">🚀 Jeopardy Oyununu Başlat</button>
         </div>
 
         <!-- 4. Boşluk Doldurma Bulmacası -->
-        <div class="activity-banner" id="kartBoslukDoldurma" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div>
-                <h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">🧩 Boşluk Doldurma Bulmacası</h3>
-                <p style="color: #15803d; font-size: 11px; margin-bottom: 12px;">Eksik harfleri tamamla, kelimeleri bul, puanları topla!</p>
+        <div class="ak-card" id="kartBoslukDoldurma">
+            <div class="ak-glow" style="background:#22c55e;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(34,197,94,.2); color:#4ade80;">🧩</div>
+                <div><div class="ak-title">Boşluk Doldurma Bulmacası</div><div class="ak-sub">Eksik harfleri tamamla, kelimeleri bul, puanları topla!</div></div>
             </div>
-            <div>
-                <button class="btn-oyun-ac" onclick="boslukOyunAc()" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3); width: 100%;">🚀 Bulmacayı Başlat</button>
+            <button class="ak-btn" onclick="boslukOyunAc()" style="background:#22c55e; color:#0f172a;">🚀 Bulmacayı Başlat</button>
+        </div>
+
+        <!-- 5. Hafıza Kartları -->
+        <div class="ak-card">
+            <div class="ak-glow" style="background:#06b6d4;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(6,182,212,.2); color:#22d3ee;">🧠</div>
+                <div><div class="ak-title">Hafıza Kartları</div><div class="ak-sub">Eşleşen kartları bul, hafızanı test et!</div></div>
             </div>
+            <button class="ak-btn" onclick="hafizaOyunAc()" style="background:#06b6d4; color:#0f172a;">🚀 Başlat</button>
         </div>
 
-       
-
-                <div class="activity-banner" style="background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-color: #a5f3fc; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div><h3 style="color: #0e7490; font-size: 15px; margin-bottom: 6px;">🧠 Hafıza Kartları</h3><p style="color: #0891b2; font-size: 11px; margin-bottom: 12px;">Eşleşen kartları bul, hafızanı test et!</p></div>
-            <div><button class="btn-oyun-ac" onclick="hafizaOyunAc()" style="background: linear-gradient(135deg, #06b6d4, #0891b2); box-shadow: 0 2px 8px rgba(6,182,212,.3); width: 100%;">🚀 Başlat</button></div>
-        </div>
-        <div class="activity-banner" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #bfdbfe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div><h3 style="color: #1e40af; font-size: 15px; margin-bottom: 6px;">☔ Kelime Yağmuru</h3><p style="color: #3b82f6; font-size: 11px; margin-bottom: 12px;">Kelime yere değmeden Türkçesini yaz!</p></div>
-            <div><button class="btn-oyun-ac" onclick="yagmurOyunAc()" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 2px 8px rgba(59,130,246,.3); width: 100%;">🚀 Başlat</button></div>
-        </div>
-        <div class="activity-banner" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-color: #fecaca; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div><h3 style="color: #991b1b; font-size: 15px; margin-bottom: 6px;">🎪 Adam Asmaca</h3><p style="color: #dc2626; font-size: 11px; margin-bottom: 12px;">Harfleri tahmin et, kelimeyi bul!</p></div>
-            <div><button class="btn-oyun-ac" onclick="asmacaOyunAc()" style="background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 2px 8px rgba(239,68,68,.3); width: 100%;">🚀 Başlat</button></div>
-        </div>
-        <div class="activity-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-            <div><h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">🎯 Kelime Bul</h3><p style="color: #16a34a; font-size: 11px; margin-bottom: 12px;">İngilizce kelimeyi harf harf tahmin et!</p></div>
-            <div><button class="btn-oyun-ac" onclick="kelimebulOyunAc()" style="background: linear-gradient(135deg, #22c55e, #15803d); box-shadow: 0 2px 8px rgba(34,197,94,.3); width: 100%;">🚀 Başlat</button></div>
+        <!-- 6. Kelime Yağmuru -->
+        <div class="ak-card">
+            <div class="ak-glow" style="background:#3b82f6;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(59,130,246,.2); color:#60a5fa;">☔</div>
+                <div><div class="ak-title">Kelime Yağmuru</div><div class="ak-sub">Kelime yere değmeden Türkçesini yaz!</div></div>
+            </div>
+            <button class="ak-btn" onclick="yagmurOyunAc()" style="background:#3b82f6; color:#fff;">🚀 Başlat</button>
         </div>
 
-         </div>
+        <!-- 7. Adam Asmaca -->
+        <div class="ak-card">
+            <div class="ak-glow" style="background:#ef4444;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(239,68,68,.2); color:#f87171;">🎪</div>
+                <div><div class="ak-title">Adam Asmaca</div><div class="ak-sub">Harfleri tahmin et, kelimeyi bul!</div></div>
+            </div>
+            <button class="ak-btn" onclick="asmacaOyunAc()" style="background:#ef4444; color:#fff;">🚀 Başlat</button>
+        </div>
+
+        <!-- 8. Kelime Bul -->
+        <div class="ak-card">
+            <div class="ak-glow" style="background:#22c55e;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(34,197,94,.2); color:#4ade80;">🎯</div>
+                <div><div class="ak-title">Kelime Bul</div><div class="ak-sub">İngilizce kelimeyi harf harf tahmin et!</div></div>
+            </div>
+            <button class="ak-btn" onclick="kelimebulOyunAc()" style="background:#22c55e; color:#0f172a;">🚀 Başlat</button>
+        </div>
+
+    </div>
     </div>
 </div>
-
          
 
       <!-- DERS ÇALIŞ SEKMESİ (PREMIUM) -->
@@ -1765,8 +1823,12 @@
                 </button>
             </div>
 
-            <div class="dc-tab-panel active" id="dcTab-anlatim">
+                        <div class="dc-tab-panel active" id="dcTab-anlatim">
                 <div class="dc-content-card" id="dcAnlatimIcerik"></div>
+                <button class="dc-uyg-kontrol-btn" id="dcOkudumBtn" disabled style="background:#cbd5e1; box-shadow:0 4px 0 #94a3b8; cursor:not-allowed;" onclick="dcOkudumAnladimOnayla()">
+                    ⏳ En az <span id="dcOkudumSayac">30</span> saniye oku...
+                </button>
+            </div>
                 
             </div>
             <div class="dc-tab-panel" id="dcTab-ornek">
@@ -1788,67 +1850,62 @@
 </div>
 
 
-                <!-- SANA ÖZEL SEKMESİ -->
+                       <!-- SANA ÖZEL SEKMESİ -->
         <div id="tab-sanaozel" class="dc-fullscreen-overlay dc-fullscreen-below">
             <button class="dc-exit-btn" onclick="sanaOzelTamEkranKapat()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
             <div class="dc-focus-card">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
+            <div style="margin-top: 10px;">
 
-                                <div class="activity-banner" id="kartGununKonusu" style="background: linear-gradient(135deg, #fef9c3 0%, #fde68a 100%); border-color: #fcd34d; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-                    <div>
-                        <h3 style="color: #92400e; font-size: 15px; margin-bottom: 6px;">🎯 Günün Konusu</h3>
-                        <p id="gununKonusuMetni" style="color: #b45309; font-size: 11px; margin-bottom: 12px;">Öğretmenin bugün bu konuyu çalışmanı öneriyor!</p>
+                <div class="ak-card" id="kartGununKonusu">
+                    <div class="ak-glow" style="background:#f59e0b;"></div>
+                    <div class="ak-top">
+                        <div class="ak-icon" style="background:rgba(245,158,11,.2); color:#fbbf24;">🎯</div>
+                        <div><div class="ak-title">Günün Konusu</div><div class="ak-sub" id="gununKonusuMetni">Öğretmenin bugün bu konuyu çalışmanı öneriyor!</div></div>
                     </div>
-                    <div>
-                        <button class="btn-oyun-ac" id="gununKonusuBtn" onclick="gununKonusunaGit()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); width: 100%;">📘 Hemen Başla</button>
-                    </div>
+                    <button class="ak-btn" id="gununKonusuBtn" onclick="gununKonusunaGit()" style="background:#f59e0b; color:#0f172a;">📘 Hemen Başla</button>
                 </div>
 
-                <div class="activity-banner" id="kartOkumaStudyosu" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-                    <div>
-                        <h3 style="color: #166534; font-size: 15px; margin-bottom: 6px;">📖 Akıcı Okuma ve Hız Ölçer Stüdyosu</h3>
-                        <p style="color: #15803d; font-size: 11px; margin-bottom: 12px;">Sınıfına uygun zengin İngilizce metinleri oku, kaldığın son kelimeye tıkla!</p>
+                <div class="ak-card" id="kartOkumaStudyosu">
+                    <div class="ak-glow" style="background:#22c55e;"></div>
+                    <div class="ak-top">
+                        <div class="ak-icon" style="background:rgba(34,197,94,.2); color:#4ade80;">📖</div>
+                        <div><div class="ak-title">Akıcı Okuma ve Hız Ölçer Stüdyosu</div><div class="ak-sub">Sınıfına uygun zengin İngilizce metinleri oku, kaldığın son kelimeye tıkla!</div></div>
                     </div>
-                    <div>
-                        <button class="btn-oyun-ac" onclick="okumaStudyosunuAc()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3); width: 100%;">🚀 Okuma Stüdyosunu Aç</button>
-                    </div>
+                    <button class="ak-btn" onclick="okumaStudyosunuAc()" style="background:#22c55e; color:#0f172a;">🚀 Okuma Stüdyosunu Aç</button>
                 </div>
 
-                <div class="activity-banner" id="kartPomodoro" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-color: #334155; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-                    <div>
-                        <h3 style="color: #f8fafc; font-size: 15px; margin-bottom: 6px;">🍅 Pomodoro Çalışma Sayacı</h3>
-                        <p style="color: #94a3b8; font-size: 11px; margin-bottom: 12px;">Odaklanma ve mola sürelerini kendine göre ayarla, tüm ekranı kaplayan sayaçla çalış.</p>
+                <div class="ak-card" id="kartPomodoro">
+                    <div class="ak-glow" style="background:#ef4444;"></div>
+                    <div class="ak-top">
+                        <div class="ak-icon" style="background:rgba(239,68,68,.2); color:#f87171;">🍅</div>
+                        <div><div class="ak-title">Pomodoro Çalışma Sayacı</div><div class="ak-sub">Odaklanma ve mola sürelerini kendine göre ayarla, tüm ekranı kaplayan sayaçla çalış.</div></div>
                     </div>
-                    <div>
-                        <button class="btn-oyun-ac" onclick="pomodoroAc()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); width: 100%; color: white;">🍅 Pomodoro’yu Başlat</button>
-                    </div>
+                    <button class="ak-btn" onclick="pomodoroAc()" style="background:#ef4444; color:#fff;">🍅 Pomodoro'yu Başlat</button>
                 </div>
 
             </div>
 
-            <div class="sana-ozel-odevler-baslik">📚 Ödevlerim</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+            <div class="sana-ozel-odevler-baslik" style="color:#f8fafc; border-bottom-color:#334155;">📚 Ödevlerim</div>
+            <div>
 
-                <div class="activity-banner" style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-color: #c7d2fe; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-                    <div>
-                        <h3 style="color: #3730a3; font-size: 15px; margin-bottom: 6px;">🎯 Etkinlikler</h3>
-                        <p style="color: #4338ca; font-size: 11px; margin-bottom: 12px;">Öğretmenin senin için özel olarak hazırladığı eğlenceli etkinlikleri keşfet!</p>
+                <div class="ak-card">
+                    <div class="ak-glow" style="background:#6366f1;"></div>
+                    <div class="ak-top">
+                        <div class="ak-icon" style="background:rgba(99,102,241,.2); color:#818cf8;">🎯</div>
+                        <div><div class="ak-title">Etkinlikler</div><div class="ak-sub">Öğretmenin senin için özel olarak hazırladığı eğlenceli etkinlikleri keşfet!</div></div>
                     </div>
-                    <div>
-                        <button class="btn-oyun-ac" onclick="etkinliklerModalAc()" style="background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3); width: 100%;">🎯 Etkinlikleri Gör</button>
-                    </div>
+                    <button class="ak-btn" onclick="etkinliklerModalAc()" style="background:#6366f1; color:#fff;">🎯 Etkinlikleri Gör</button>
                 </div>
 
-                <div class="activity-banner" style="background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-color: #a5f3fc; margin-top: 0; display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 16px; border-radius: 12px; border: 1.5px solid;">
-                    <div>
-                        <h3 style="color: #155e75; font-size: 15px; margin-bottom: 6px;">🎬 Videolar</h3>
-                        <p style="color: #0e7490; font-size: 11px; margin-bottom: 12px;">Öğretmeninin senin için seçtiği eğitim videolarını izle!</p>
+                <div class="ak-card">
+                    <div class="ak-glow" style="background:#06b6d4;"></div>
+                    <div class="ak-top">
+                        <div class="ak-icon" style="background:rgba(6,182,212,.2); color:#22d3ee;">🎬</div>
+                        <div><div class="ak-title">Videolar</div><div class="ak-sub">Öğretmeninin senin için seçtiği eğitim videolarını izle!</div></div>
                     </div>
-                    <div>
-                        <button class="btn-oyun-ac" onclick="videolarModalAc()" style="background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%); box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3); width: 100%;">🎬 Videoları Gör</button>
-                    </div>
+                    <button class="ak-btn" onclick="videolarModalAc()" style="background:#06b6d4; color:#0f172a;">🎬 Videoları Gör</button>
                 </div>
 
             </div>
@@ -3616,8 +3673,13 @@ async function kelimeYarismasiBitir() {
         }
         const apiURL = "https://script.google.com/macros/s/AKfycbz0otrSNk5zXOiNU85UfPljjG-ImITE1ilRkwAYV3ErUQhIifDiPNviDFuMoMHjfPnwKQ/exec";
         
-              let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
+                    let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
+        let dcSayacDurduMu = false;
+        function dcSayacDurumGuncelle() { dcSayacDurduMu = document.hidden || !document.hasFocus(); }
+        document.addEventListener('visibilitychange', dcSayacDurumGuncelle);
+        window.addEventListener('blur', dcSayacDurumGuncelle);
+        window.addEventListener('focus', dcSayacDurumGuncelle);
         let ogrenciSohbetPolling = null;
         let ogretmenSohbetPolling = null;
         let ogretmenAktifSohbetOgrenci = null;
@@ -3736,11 +3798,11 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
 
                 let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
 
-                document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+                               document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                 document.getElementById('panel-alani').style.display = 'block';
                 document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
                 document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
-                
+                girisSerisiGuncelleVeGetir();
 
                 if (user) {
                     toplamSaniye = Number(user.toplamsure) || toplamSaniye;
@@ -5591,6 +5653,25 @@ function ozellikIzniKaydet() {
     let toplam = 0;
     for (let i = 0; i < isim.length; i++) toplam += isim.charCodeAt(i);
     return maskotlar[toplam % maskotlar.length];
+            
+}
+
+    function girisSerisiGuncelleVeGetir() {
+    let bugun = new Date();
+    let bugunStr = bugun.getFullYear() + '-' + String(bugun.getMonth()+1).padStart(2,'0') + '-' + String(bugun.getDate()).padStart(2,'0');
+    let sonGirisTarihi = localStorage.getItem('ing_girisSerisiSonTarih');
+    let mevcutSeri = parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0');
+
+    if (sonGirisTarihi !== bugunStr) {
+        let dun = new Date(bugun);
+        dun.setDate(dun.getDate() - 1);
+        let dunStr = dun.getFullYear() + '-' + String(dun.getMonth()+1).padStart(2,'0') + '-' + String(dun.getDate()).padStart(2,'0');
+        mevcutSeri = (sonGirisTarihi === dunStr) ? mevcutSeri + 1 : 1;
+        localStorage.setItem('ing_girisSerisiSonTarih', bugunStr);
+        localStorage.setItem('ing_girisSerisiSayisi', mevcutSeri);
+    }
+    let el = document.getElementById('headerStreakNum');
+    if (el) el.innerText = `🔥 ${mevcutSeri}`;
 }
                 function seviyeSinifSecimKisitlamaUygula() {
             let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === oyunIcinAktifIsim().toLowerCase());
@@ -5895,6 +5976,11 @@ let dcSesTercihi = localStorage.getItem('dc_ses_tercihi') || 'us';
 let dcSecilenVoice = null;
 let dcQuizCevaplari = [];
 let dcQuizDogruSayisi = 0;
+let dcAnlatimBaslangicZamani = 0;
+let dcAnlatimOnaylandiMi = false;
+let dcAnlatimTimerInterval = null;
+let dcOrnekDinlenenSet = new Set();
+let dcOrnekToplamSayisi = 0;
 
 const dcKategoriRenkleri = {
     grammar: { accent:'#f59e0b', accentDeep:'#c2760a', label:'Grammar Topics' },
@@ -5928,6 +6014,57 @@ function dcSesOku(text) {
     if (dcSecilenVoice) u.voice = dcSecilenVoice;
     u.rate = 0.92;
     window.speechSynthesis.speak(u);
+}
+
+        function dcAnlatimTimerBaslat() {
+    dcAnlatimBaslangicZamani = Date.now();
+    dcAnlatimOnaylandiMi = false;
+    if (dcAnlatimTimerInterval) clearInterval(dcAnlatimTimerInterval);
+    let btn = document.getElementById('dcOkudumBtn');
+    if (!btn) return;
+    btn.disabled = true;
+    btn.style.background = '#cbd5e1';
+    btn.style.boxShadow = '0 4px 0 #94a3b8';
+    btn.style.cursor = 'not-allowed';
+    btn.innerHTML = `⏳ En az <span id="dcOkudumSayac">30</span> saniye oku...`;
+
+    dcAnlatimTimerInterval = setInterval(() => {
+        let gecen = Math.floor((Date.now() - dcAnlatimBaslangicZamani) / 1000);
+        let kalan = 30 - gecen;
+        if (kalan <= 0) {
+            clearInterval(dcAnlatimTimerInterval);
+            btn.disabled = false;
+            btn.innerHTML = '✅ Okudum, Anladım';
+            btn.style.background = '#2f855a';
+            btn.style.boxShadow = '0 4px 0 #1c5a3a';
+            btn.style.cursor = 'pointer';
+        } else {
+            let sayacEl = document.getElementById('dcOkudumSayac');
+            if (sayacEl) sayacEl.innerText = kalan;
+        }
+    }, 300);
+}
+
+function dcOkudumAnladimOnayla() {
+    if (!document.getElementById('dcOkudumBtn') || document.getElementById('dcOkudumBtn').disabled) return;
+    dcAnlatimOnaylandiMi = true;
+    let btn = document.getElementById('dcOkudumBtn');
+    btn.innerHTML = '✅ Onaylandı — Örneklere geçebilirsin';
+    btn.disabled = true;
+    btn.style.cursor = 'default';
+    dcToastGoster('✅ Harika! Şimdi Örnekler sekmesine geçebilirsin');
+}
+
+function dcOrnekSesOku(idx, text) {
+    dcSesOku(text);
+    dcOrnekDinlenenSet.add(idx);
+    let ilerlemeEl = document.getElementById('dcOrnekIlerleme');
+    if (ilerlemeEl) ilerlemeEl.innerText = `🔊 ${dcOrnekDinlenenSet.size} / ${dcOrnekToplamSayisi} cümle dinlendi`;
+    let btnEl = document.getElementById('dcExPlay' + idx);
+    if (btnEl) { btnEl.innerHTML = '✅'; btnEl.style.background = '#dcfce7'; }
+    if (dcOrnekDinlenenSet.size >= dcOrnekToplamSayisi && dcOrnekToplamSayisi > 0) {
+        dcToastGoster('✅ Tüm cümleleri dinledin! Teste geçebilirsin');
+    }
 }
 
         function dcToastGoster(msg) {
@@ -6051,8 +6188,8 @@ function dcKonuAc(konuAdi) {
     let ilkTab = document.querySelector('.dc-tab-btn[data-tab="anlatim"]');
     ilkTab.classList.add('active'); ilkTab.style.background = r.accent;
     document.getElementById('dcTab-anlatim').classList.add('active');
-
     document.getElementById('dcAnlatimIcerik').innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px;">Yükleniyor...</div>`;
+    dcAnlatimTimerBaslat();
 
     fetch(`${apiURL}?islem=dersKonuDetayGetir&seviye=${dcAktifSeviye}&kategori=${dcAktifKategori}&konu=${encodeURIComponent(konuAdi)}`)
     .then(res => res.json())
@@ -6087,16 +6224,21 @@ function dcKonuDetayiCiz(detay, accent) {
     if (detay.gorselLink && detay.gorselLink.trim()) { img.src = detay.gorselLink; img.style.display = 'block'; }
     else { img.style.display = 'none'; }
 
-    let ornekler = [];
+      let ornekler = [];
     try { ornekler = JSON.parse(detay.ornekler || "[]"); } catch(e) {}
-    let ornekHtml = ornekler.map(o => `
+    dcOrnekDinlenenSet = new Set();
+    dcOrnekToplamSayisi = ornekler.length;
+    let ornekHtml = ornekler.map((o, idx) => `
         <div class="dc-example-row">
-            <button class="dc-ex-play" onclick="dcSesOku('${(o.en||"").replace(/'/g,"")}')">🔊</button>
+            <button class="dc-ex-play" id="dcExPlay${idx}" onclick="dcOrnekSesOku(${idx}, '${(o.en||"").replace(/'/g,"")}')">🔊</button>
             <div class="dc-ex-en">${dcKelimeleriIsle(o.en, sozluk)}</div>
             <div class="dc-ex-tr">${o.tr || ''}</div>
         </div>
     `).join('');
-    document.getElementById('dcOrnekIcerik').innerHTML = `<h3>Örnek Cümleler</h3>` + (ornekHtml || '<p>Örnek yakında eklenecek.</p>');
+    let ilerlemeHtml = dcOrnekToplamSayisi > 0
+        ? `<div id="dcOrnekIlerleme" style="font-size:10.5px; font-weight:800; color:#94a3b8; margin-bottom:10px;">🔊 0 / ${dcOrnekToplamSayisi} cümle dinlendi</div>`
+        : '';
+    document.getElementById('dcOrnekIcerik').innerHTML = `<h3>Örnek Cümleler</h3>` + ilerlemeHtml + (ornekHtml || '<p>Örnek yakında eklenecek.</p>');
 
        let test = [];
     try { test = JSON.parse(detay.testJSON || "[]"); } catch(e) {}
@@ -6210,6 +6352,14 @@ function dcBilmiyordumToggle() {
 }
 
 function dcSekmeSec(tab, btn) {
+    if (tab === 'ornek' && !dcAnlatimOnaylandiMi) {
+        dcToastGoster('⏳ Önce Anlatım kısmını oku ve "Okudum, Anladım" butonuna bas!');
+        return;
+    }
+    if (tab === 'test' && dcOrnekDinlenenSet.size < dcOrnekToplamSayisi) {
+        dcToastGoster(`🔊 Önce tüm örnek cümleleri dinlemelisin (${dcOrnekDinlenenSet.size}/${dcOrnekToplamSayisi})`);
+        return;
+    }
     let r = dcKategoriRenkleri[dcAktifKategori];
     document.querySelectorAll('.dc-tab-btn').forEach(b => { b.classList.remove('active'); b.style.background = 'transparent'; });
     document.querySelectorAll('.dc-tab-panel').forEach(p => p.classList.remove('active'));
@@ -7827,9 +7977,10 @@ localStorage.setItem("ing_toplamSaniye", toplamSaniye);
                 }
 
                 // Kısa bir gecikme ekleyerek animasyonun akıcı görünmesini sağla ve paneli aç
-                                                            setTimeout(() => {
+                                                                                                                        setTimeout(() => {
                     document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                     document.getElementById('panel-alani').style.display = 'block';
+                    girisSerisiGuncelleVeGetir();
                     baslatSayac(); 
                     arkaPlanVeriYenilemeBaslat();
                     setTimeout(cornerButonEtiketleriGoster, 900);
@@ -7884,9 +8035,11 @@ localStorage.setItem("ing_toplamSaniye", toplamSaniye);
             }, 60000);
         }
 
-        function baslatSayac() {
+              function baslatSayac() {
             guncelleArayuz();
+            dcSayacDurumGuncelle();
             timerInterval = setInterval(() => {
+                if (dcSayacDurduMu) return;
                 toplamSaniye++; sessionStorage.setItem("toplamSaniye", toplamSaniye); guncelleArayuz();
                 if(toplamSaniye % 30 === 0) googleSheetseKaydet();
             }, 1000);
