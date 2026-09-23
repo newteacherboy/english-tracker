@@ -2788,6 +2788,33 @@
     pointer-events: auto !important;
 }
 
+/* ARAÇLAR ÇUBUĞU — PC/MASAÜSTÜ DAĞINIKLIK KESİN DÜZELTMESİ */
+#floatingToolsDock {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+}
+#dockItemsRow {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+#floatingToolsDock #sayfaYenileBtn,
+#floatingToolsDock #duyuruGecmisBtn,
+#floatingToolsDock #yardimBtn,
+#floatingToolsDock .teacher-gear-wrap,
+#floatingToolsDock .ai-float-container,
+#floatingToolsDock .teacher-gear-btn,
+#floatingToolsDock .ai-float-btn {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+}
+
 /* Dış link etkinlik ekranları (Kelime Kartları Yolculuğu içi oyunlar, video, etkinlik) ve onlara ait
    "60 saniye" / süre onay modalları, iframe'in ARKASINDA kalmasın diye en üste alındı */
 #seviyeDisLinkOverlay, #disLinkOverlay, #videoOynaticiOverlay {
@@ -5996,6 +6023,7 @@ let dcQuizCevaplari = [];
 let dcQuizDogruSayisi = 0;
 let dcAnlatimBaslangicZamani = 0;
 let dcAnlatimOnaylandiMi = false;
+let dcAktifKonuTamamlanmisMi = false;
 let dcAnlatimTimerInterval = null;
 let dcOrnekDinlenenSet = new Set();
 let dcOrnekToplamSayisi = 0;
@@ -6039,10 +6067,23 @@ function dcSesOku(text) {
 }
 
         function dcAnlatimTimerBaslat() {
-    dcAnlatimBaslangicZamani = Date.now();
-    dcAnlatimOnaylandiMi = false;
     if (dcAnlatimTimerInterval) clearInterval(dcAnlatimTimerInterval);
     let btn = document.getElementById('dcOkudumBtn');
+
+    if (dcAktifKonuTamamlanmisMi) {
+        dcAnlatimOnaylandiMi = true;
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '✅ Bu konuyu zaten tamamladın';
+            btn.style.background = '#2f855a';
+            btn.style.boxShadow = '0 4px 0 #1c5a3a';
+            btn.style.cursor = 'default';
+        }
+        return;
+    }
+
+    dcAnlatimBaslangicZamani = Date.now();
+    dcAnlatimOnaylandiMi = false;
     if (!btn) return;
     btn.disabled = true;
     btn.style.background = '#cbd5e1';
@@ -6198,6 +6239,8 @@ function dcKategoriIcerikCiz(key) {
 function dcKonuAc(konuAdi) {
     dcSesDurdur();
     dcAktifKonu = konuAdi;
+    let konuOzetErken = dcTumKonularCache.find(k => k.seviye === dcAktifSeviye && k.kategori === dcAktifKategori && k.konuAdi === konuAdi);
+    dcAktifKonuTamamlanmisMi = !!(konuOzetErken && konuOzetErken.durum === 'tamamlandi');
     let r = dcKategoriRenkleri[dcAktifKategori];
     let konuOzet = dcTumKonularCache.find(k => k.seviye === dcAktifSeviye && k.kategori === dcAktifKategori && k.konuAdi === konuAdi);
 
@@ -6389,13 +6432,15 @@ function dcBilmiyordumToggle() {
 
 function dcSekmeSec(tab, btn) {
     dcSesDurdur();
-    if (tab === 'ornek' && !dcAnlatimOnaylandiMi) {
-        dcToastGoster('⏳ Önce Anlatım kısmını oku ve "Okudum, Anladım" butonuna bas!');
-        return;
-    }
-    if (tab === 'test' && dcOrnekDinlenenSet.size < dcOrnekToplamSayisi) {
-        dcToastGoster(`🔊 Önce tüm örnek cümleleri dinlemelisin (${dcOrnekDinlenenSet.size}/${dcOrnekToplamSayisi})`);
-        return;
+    if (!dcAktifKonuTamamlanmisMi) {
+        if (tab === 'ornek' && !dcAnlatimOnaylandiMi) {
+            dcToastGoster('⏳ Önce Anlatım kısmını oku ve "Okudum, Anladım" butonuna bas!');
+            return;
+        }
+        if (tab === 'test' && dcOrnekDinlenenSet.size < dcOrnekToplamSayisi) {
+            dcToastGoster(`🔊 Önce tüm örnek cümleleri dinlemelisin (${dcOrnekDinlenenSet.size}/${dcOrnekToplamSayisi})`);
+            return;
+        }
     }
     let r = dcKategoriRenkleri[dcAktifKategori];
     document.querySelectorAll('.dc-tab-btn').forEach(b => { b.classList.remove('active'); b.style.background = 'transparent'; });
