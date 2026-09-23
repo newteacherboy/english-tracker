@@ -1831,17 +1831,26 @@
             <button class="btn-giris" onclick="kpKelimeOyunuBaslat()" style="background:linear-gradient(135deg,#2ed7ea,#0c9bb5); color:#072c35; margin-top:10px;">🎤 Pratiğe Başla</button>
         </div>
 
-        <div id="kpKelimeOyunEkrani" style="display:none; text-align:center;">
-            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:#0a7f95; margin-bottom:10px;">
+                <div id="kpKelimeOyunEkrani" style="display:none; text-align:center;">
+            <div class="kp-progress-row">
                 <span id="kpSoruSayac">Kelime: 1/10</span>
-                <span id="kpPuanGoster">Puan: 0</span>
+                <span id="kpPuanGoster">⭐ Puan: 0</span>
             </div>
-            <div class="kp-soru-kart">
-                <div class="kp-soru-yon" id="kpSoruYon">Bu kelimenin İngilizcesini SÖYLE:</div>
-                <div class="kp-soru-kelime" id="kpSoruKelime">Merhaba</div>
+            <div class="kp-progress-bar-bg"><div class="kp-progress-bar-fill" id="kpProgressFill" style="width:0%;"></div></div>
+
+            <div class="kp-soru-wrap" id="kpSoruWrap">
+                <div class="kp-soru-kart" id="kpSoruKart">
+                    <div class="kp-soru-yon" id="kpSoruYon">Bu kelimenin İngilizcesini SÖYLE:</div>
+                    <div class="kp-soru-kelime" id="kpSoruKelime">Merhaba</div>
+                </div>
             </div>
-            <button class="kp-mik-btn" id="kpMikBtn" onclick="kpDinlemeyiBaslat()">🎤</button>
-            <div id="kpSonucAlani" style="min-height:34px; margin-top:10px;"></div>
+
+            <div class="kp-mik-wrap">
+                <button class="kp-mik-btn" id="kpMikBtn" onclick="kpDinlemeyiBaslat()">🎤</button>
+                <div class="kp-mik-label" id="kpMikLabel">Dokun ve Söyle</div>
+            </div>
+
+            <div id="kpSonucAlani" style="min-height:44px; margin-top:6px;"></div>
             <div class="kp-yazi-fallback">
                 <input type="text" id="kpYazariCevapInput" placeholder="ya da buraya yazarak cevapla..." onkeypress="if(event.key==='Enter')kpYazariCevapGonder()">
                 <button onclick="kpYazariCevapGonder()">Gönder</button>
@@ -2992,7 +3001,7 @@
     z-index: 1000000 !important;
 }
 
-        .kp-hero { text-align:center; margin-bottom:14px; }
+       .kp-hero { text-align:center; margin-bottom:14px; }
 .kp-hero h1 { font-size:18px; font-weight:800; color:#0c3a44; }
 .kp-hero p { font-size:11px; color:#5c7980; margin-top:3px; }
 .kp-tabbar { display:flex; gap:4px; background:#fff; padding:4px; border-radius:12px; margin-bottom:14px; box-shadow:0 2px 8px rgba(12,58,68,.05); }
@@ -3002,18 +3011,89 @@
 .kp-panel.active { display:block; }
 .kp-input { width:100%; padding:10px 12px; border:1px solid #d9edf0; border-radius:10px; font-size:13px; font-weight:600; text-align:center; outline:none; }
 .kp-uyari { background:#fef0e2; border:1px solid #f9d9ae; color:#a1560f; font-size:11px; font-weight:700; padding:9px 12px; border-radius:8px; }
-.kp-soru-kart { background:#e3f7fa; border:2px solid #b9ecf3; border-radius:16px; padding:26px 16px; margin-bottom:16px; }
-.kp-soru-yon { font-size:10px; font-weight:800; color:#0a7f95; text-transform:uppercase; margin-bottom:8px; }
-.kp-soru-kelime { font-size:26px; font-weight:900; color:#0c3a44; }
-.kp-mik-btn { width:74px; height:74px; border-radius:50%; background:linear-gradient(135deg,#2ed7ea,#0c9bb5); border:none; font-size:30px; color:#fff; cursor:pointer; box-shadow:0 6px 18px rgba(12,155,181,.35); transition:transform .15s; }
-.kp-mik-btn:active { transform:scale(.94); }
-.kp-mik-btn.dinliyor { animation:kpPulseMik 1s ease-in-out infinite; background:linear-gradient(135deg,#ef4444,#dc2626); }
-@keyframes kpPulseMik { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5);} 50%{box-shadow:0 0 0 14px rgba(239,68,68,0);} }
-.kp-dogru { background:#e3fbf1; color:#0a8f62; font-weight:700; font-size:12px; padding:8px 12px; border-radius:8px; }
-.kp-yanlis { background:#fef2f2; color:#b91c1c; font-weight:700; font-size:12px; padding:8px 12px; border-radius:8px; }
-.kp-yazi-fallback { display:flex; gap:6px; margin-top:14px; }
-.kp-yazi-fallback input { flex:1; padding:8px 10px; border:1px solid #d9edf0; border-radius:8px; font-size:12px; outline:none; }
-.kp-yazi-fallback button { background:#0c9bb5; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer; }
+
+/* İlerleme çubuğu */
+.kp-progress-row { display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800; color:#0a7f95; margin-bottom:12px; }
+.kp-progress-bar-bg { background:#e3f7fa; height:7px; border-radius:5px; overflow:hidden; margin:6px 0 14px; }
+.kp-progress-bar-fill { background:linear-gradient(90deg,#2ed7ea,#0c9bb5); height:100%; border-radius:5px; transition:width .35s ease; }
+
+/* BÜYÜK KARE KELİME KUTUSU */
+.kp-soru-wrap { position:relative; display:flex; justify-content:center; margin-bottom:22px; }
+.kp-soru-kart {
+    width:210px; height:210px; border-radius:26px;
+    background:linear-gradient(160deg, #0d5a6c 0%, #072c35 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    box-shadow:0 14px 34px rgba(7,44,53,.35);
+    position:relative; overflow:hidden;
+    animation:kpKartGir .45s cubic-bezier(.2,.85,.3,1.1) both;
+}
+.kp-soru-kart::before {
+    content:''; position:absolute; width:150px; height:150px; border-radius:50%;
+    background:radial-gradient(circle, rgba(46,215,234,.28), transparent 70%);
+    top:-40px; right:-30px;
+}
+@keyframes kpKartGir { from{ opacity:0; transform:scale(.85) rotate(-2deg);} to{ opacity:1; transform:scale(1) rotate(0);} }
+.kp-soru-yon { font-size:9.5px; font-weight:800; color:#7de8f5; text-transform:uppercase; letter-spacing:.4px; position:relative; z-index:2; padding:0 14px; text-align:center; }
+.kp-soru-kelime { font-size:30px; font-weight:900; color:#ffffff; position:relative; z-index:2; padding:0 10px; text-align:center; line-height:1.15; word-break:break-word; }
+
+.kp-soru-kart.kp-dogru-anim { animation:kpDogruBounce .5s ease both; box-shadow:0 14px 34px rgba(11,178,136,.45); }
+@keyframes kpDogruBounce { 0%{transform:scale(1);} 30%{transform:scale(1.08);} 55%{transform:scale(.97);} 100%{transform:scale(1);} }
+.kp-soru-kart.kp-yanlis-anim { animation:kpYanlisSallan .45s ease both; box-shadow:0 14px 34px rgba(220,38,38,.4); }
+@keyframes kpYanlisSallan {
+    0%,100% { transform:translateX(0); }
+    20% { transform:translateX(-10px) rotate(-1.5deg); }
+    40% { transform:translateX(9px) rotate(1.5deg); }
+    60% { transform:translateX(-7px) rotate(-1deg); }
+    80% { transform:translateX(5px) rotate(1deg); }
+}
+
+/* KONFETİ */
+.kp-confetti-piece {
+    position:absolute; top:50%; left:50%; font-size:16px; opacity:0; z-index:5;
+    animation:kpConfettiBurst 1.1s ease-out forwards;
+}
+@keyframes kpConfettiBurst {
+    0%   { opacity:1; transform:translate(-50%,-50%) translate(0,0) rotate(0deg) scale(1); }
+    100% { opacity:0; transform:translate(-50%,-50%) translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(.5); }
+}
+
+/* MİKROFON — büyük, dikkat çekici */
+.kp-mik-wrap { display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:14px; }
+.kp-mik-btn {
+    width:104px; height:104px; border-radius:50%;
+    background:linear-gradient(135deg,#2ed7ea,#0c9bb5);
+    border:4px solid #ffffff; font-size:42px; color:#fff; cursor:pointer;
+    box-shadow:0 10px 26px rgba(12,155,181,.45);
+    transition:transform .15s;
+    position:relative;
+    animation:kpMikBekle 1.8s ease-in-out infinite;
+}
+@keyframes kpMikBekle {
+    0%,100% { box-shadow:0 10px 26px rgba(12,155,181,.45), 0 0 0 0 rgba(46,215,234,.5); }
+    50%     { box-shadow:0 10px 26px rgba(12,155,181,.45), 0 0 0 16px rgba(46,215,234,0); }
+}
+.kp-mik-btn:active { transform:scale(.93); }
+.kp-mik-btn.dinliyor {
+    animation:kpPulseMik 1s ease-in-out infinite;
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+}
+@keyframes kpPulseMik { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.55);} 50%{box-shadow:0 0 0 20px rgba(239,68,68,0);} }
+.kp-mik-label { font-size:10.5px; font-weight:800; color:#0a7f95; letter-spacing:.2px; }
+
+/* SONUÇ ROZETİ */
+.kp-sonuc-badge {
+    display:inline-flex; align-items:center; gap:8px; font-weight:900; font-size:14px;
+    padding:10px 20px; border-radius:14px; animation:kpSonucGir .35s cubic-bezier(.2,.9,.3,1.3) both;
+}
+@keyframes kpSonucGir { from{ opacity:0; transform:translateY(8px) scale(.9);} to{ opacity:1; transform:translateY(0) scale(1);} }
+.kp-dogru { background:linear-gradient(135deg,#0bb288,#0a8f62); color:#fff; box-shadow:0 6px 16px rgba(11,178,136,.35); }
+.kp-yanlis { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; box-shadow:0 6px 16px rgba(220,38,38,.3); }
+.kp-sonuc-alt { font-size:11px; color:#5c7980; margin-top:6px; font-weight:600; }
+
+.kp-yazi-fallback { display:flex; gap:6px; margin-top:16px; }
+.kp-yazi-fallback input { flex:1; padding:9px 12px; border:1.5px solid #d9edf0; border-radius:10px; font-size:12px; outline:none; }
+.kp-yazi-fallback input:focus { border-color:#2ed7ea; }
+.kp-yazi-fallback button { background:#0c9bb5; color:#fff; border:none; padding:9px 16px; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer; }
 
     
 </style>
@@ -3817,7 +3897,7 @@ function kpSekmeSec(tab, btn) {
 function kpKelimeGirisGoster() {
     document.getElementById('kpKelimeGirisEkrani').style.display = 'block';
     document.getElementById('kpKelimeOyunEkrani').style.display = 'none';
-    sinifGridKisitlamaUygula('kpSinifGrid', function(s){ kpAktifSinif = s; }, function(s){ genericSinifGuncelle(s, 'kpUniteBox', function(u){ kpSecilenUniteler = u; }); });
+    sinifGridKisitlamaUygula('kpSinifGrid', function(s){ kpAktifSinif = s; }, kpUniteGuncelle);
     let isimInput = document.getElementById('kpIsimInput');
     if (isimInput) {
         if (siniftaOynananOgrenci) { isimInput.value = siniftaOynananOgrenci; isimInput.disabled = true; }
@@ -3830,7 +3910,28 @@ function kpSinifSec(sinif, btn) {
     kpAktifSinif = sinif;
     document.getElementById('kpSinifGrid').querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    genericSinifGuncelle(sinif, 'kpUniteBox', function(u){ kpSecilenUniteler = u; });
+    kpUniteGuncelle(sinif);
+}
+
+function kpUniteGuncelle(sinif) {
+    let havuz = window.masterKelimeHavuzu || [];
+    let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
+    let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a,b) => a-b);
+    if (uniteler.length === 0) uniteler = [1,2,3,4,5];
+    let box = document.getElementById('kpUniteBox');
+    box.innerHTML = "";
+    uniteler.forEach((u) => {
+        let chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'unite-chip selected';
+        chip.innerText = u + '.Ü';
+        chip.onclick = function() {
+            chip.classList.toggle('selected');
+            kpSecilenUniteler = Array.from(box.querySelectorAll('.unite-chip.selected')).map(c => Number(c.innerText.replace('.Ü','')));
+        };
+        box.appendChild(chip);
+    });
+    kpSecilenUniteler = uniteler.slice();
 }
 
 function kpKelimeOyunuBaslat() {
@@ -3839,7 +3940,7 @@ function kpKelimeOyunuBaslat() {
     if (kpSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
 
     let havuz = oyunHavuzGetir(kpAktifSinif, kpSecilenUniteler);
-    if (havuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
+    if (havuz.length < 2) { alert("Bu ünite(ler)de yeterli kelime yok, lütfen daha fazla ünite seçin."); return; }
 
     let hedefSoruSayisi = 10 + (Number(kpAktifSinif) - 1) * 5;
     let karisik = [...havuz].sort(() => Math.random() - 0.5);
@@ -3867,12 +3968,33 @@ function kpSoruGoster() {
         dil: ingilizceGosterilsin ? 'tr-TR' : 'en-US'
     };
     document.getElementById('kpSoruSayac').innerText = 'Kelime: ' + (kpSoruIndex+1) + ' / ' + kpSoruListesi.length;
-    document.getElementById('kpPuanGoster').innerText = 'Puan: ' + kpToplamPuan;
+    document.getElementById('kpPuanGoster').innerText = '⭐ Puan: ' + kpToplamPuan;
+    document.getElementById('kpProgressFill').style.width = Math.round((kpSoruIndex / kpSoruListesi.length) * 100) + '%';
     document.getElementById('kpSoruYon').innerText = ingilizceGosterilsin ? "Bu kelimenin Türkçesini SÖYLE:" : "Bu kelimenin İngilizcesini SÖYLE:";
     document.getElementById('kpSoruKelime').innerText = kpAktifSoru.gosterilen;
     document.getElementById('kpSonucAlani').innerHTML = '';
     document.getElementById('kpYazariCevapInput').value = '';
+    let kart = document.getElementById('kpSoruKart');
+    kart.classList.remove('kp-dogru-anim', 'kp-yanlis-anim');
     kpMikButonSifirla();
+}
+
+function kpKonfetiPatlat() {
+    let wrap = document.getElementById('kpSoruWrap');
+    let renkler = ['🎉','✨','🟢','🔵','⭐','🎊'];
+    for (let i = 0; i < 18; i++) {
+        let p = document.createElement('span');
+        p.className = 'kp-confetti-piece';
+        p.textContent = renkler[Math.floor(Math.random()*renkler.length)];
+        let acili = Math.random() * Math.PI * 2;
+        let uzaklik = 90 + Math.random() * 70;
+        p.style.setProperty('--tx', (Math.cos(acili)*uzaklik) + 'px');
+        p.style.setProperty('--ty', (Math.sin(acili)*uzaklik - 40) + 'px');
+        p.style.setProperty('--tr', (Math.random()*360 - 180) + 'deg');
+        p.style.animationDelay = (Math.random()*0.15) + 's';
+        wrap.appendChild(p);
+        setTimeout(() => p.remove(), 1300);
+    }
 }
 function kpMikButonSifirla() {
     let btn = document.getElementById('kpMikBtn');
@@ -3925,16 +4047,28 @@ function kpCevapKontrolEt(soylenenMetin) {
     let dogruCevap = kpNormallestir(kpAktifSoru.beklenenCevap);
     let dogruMu = adaylar.some(function(a){ return a === dogruCevap || a.indexOf(dogruCevap) !== -1 || dogruCevap.indexOf(a) !== -1; });
 
+    let kart = document.getElementById('kpSoruKart');
+    kart.classList.remove('kp-dogru-anim', 'kp-yanlis-anim');
+    void kart.offsetWidth;
+
     if (dogruMu) {
         kpDogruSayisi++;
         kpToplamPuan += 10;
-        document.getElementById('kpSonucAlani').innerHTML = '<div class="kp-dogru">✅ Doğru! Sen: "' + soylenenMetin.split('|')[0] + '"</div>';
+        kart.classList.add('kp-dogru-anim');
+        kpKonfetiPatlat();
+        document.getElementById('kpSonucAlani').innerHTML =
+            '<div class="kp-sonuc-badge kp-dogru">🎉 Doğru bildin!</div>' +
+            '<div class="kp-sonuc-alt">Sen: "' + soylenenMetin.split('|')[0] + '"</div>';
     } else {
         kpYanlisSayisi++;
-        document.getElementById('kpSonucAlani').innerHTML = '<div class="kp-yanlis">❌ Sen: "' + soylenenMetin.split('|')[0] + '" — Doğrusu: "' + kpAktifSoru.beklenenCevap + '"</div>';
+        kart.classList.add('kp-yanlis-anim');
+        if (navigator.vibrate) navigator.vibrate([40,40,40]);
+        document.getElementById('kpSonucAlani').innerHTML =
+            '<div class="kp-sonuc-badge kp-yanlis">😕 Olmadı, tekrar dene!</div>' +
+            '<div class="kp-sonuc-alt">Sen: "' + soylenenMetin.split('|')[0] + '" — Doğrusu: "' + kpAktifSoru.beklenenCevap + '"</div>';
     }
-    document.getElementById('kpPuanGoster').innerText = 'Puan: ' + kpToplamPuan;
-    setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1400);
+    document.getElementById('kpPuanGoster').innerText = '⭐ Puan: ' + kpToplamPuan;
+    setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1600);
 }
 
 function kpYazariCevapGonder() {
