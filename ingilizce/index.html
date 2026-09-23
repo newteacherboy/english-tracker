@@ -196,7 +196,7 @@
         .success { color: #38a169; }
         #login-container a { color: #92400e !important; font-weight: 800 !important; }
         
-        #panel-alani { display: none; width: 100%; max-width: 700px; margin: 0 auto; }
+               #panel-alani { display: none; width: 100%; max-width: 700px; margin: 0 auto; padding-bottom: 78px; }
 
                 /* Üst Şerit — Gradient Hero */
         .user-header-bar {
@@ -260,9 +260,9 @@
         .btn-cikis { background: rgba(239,68,68,.22); color: #fca5a5; }
         .btn-cikis:hover { background: rgba(239,68,68,.35); color: #ffffff; }
 
-        /* Sekmeler */
+               /* Sekmeler — artık kullanılmıyor, navigasyon her zaman altta */
         .tabs-container {
-            display: flex; gap: 4px; margin-bottom: 12px; background: #ffffff;
+            display: none; gap: 4px; margin-bottom: 12px; background: #ffffff;
             padding: 5px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         .tab-btn {
@@ -2578,75 +2578,62 @@
 .dc-toast.show{transform:translateX(-50%) translateY(0); opacity:1;}
 .dc-toast-icon{width:22px; height:22px; border-radius:50%; background:#f59e0b; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
 
-.bottom-nav-mobile { 
-    display: none; 
-}
+        .bottom-nav-mobile { 
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 99998;
+            background: #ffffff;
+            border-radius: 16px 16px 0 0;
+            max-width: 480px;
+            width: 100%;
+            padding: 8px 12px;
+            box-shadow: -8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            border-bottom: none;
+            justify-content: space-around;
+            align-items: center;
+            font-family: 'Nunito', sans-serif;
+        }
 
-.bottom-nav-mobile.force-show-desktop {
-    display: flex !important;
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 99998;
-    background: #ffffff;
-    border-radius: 16px 16px 0 0;
-    max-width: 480px;
-    width: 100%;
-    padding: 8px 12px;
-    box-shadow: -8px 25px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
-    border-bottom: none;
-    justify-content: space-around;
-    align-items: center;
-    font-family: 'Nunito', sans-serif;
-}
+        .bottom-nav-mobile .bn-item {
+            flex: 1;
+            border: none;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 6px 4px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
 
-.bottom-nav-mobile.force-show-desktop .bn-item {
-    flex: 1;
-    border: none;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 6px 4px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
+        .bottom-nav-mobile .bn-item:hover {
+            background: #f1f5f9;
+        }
 
-.bottom-nav-mobile.force-show-desktop .bn-item:hover {
-    background: #f1f5f9;
-}
+        .bottom-nav-mobile .bn-item.active {
+            background: #f0fdf4;
+        }
 
-.bottom-nav-mobile.force-show-desktop .bn-item.active {
-    background: #f0fdf4;
-}
+        .bottom-nav-mobile .bn-icon {
+            font-size: 16px;
+            line-height: 1;
+        }
 
-.bottom-nav-mobile.force-show-desktop .bn-icon {
-    font-size: 16px;
-    line-height: 1;
-}
+        .bottom-nav-mobile .bn-label {
+            font-size: 9px;
+            font-weight: 800;
+            color: #64748b;
+        }
 
-.bottom-nav-mobile.force-show-desktop .bn-label {
-    font-size: 9px;
-    font-weight: 800;
-    color: #64748b;
-}
-
-.bottom-nav-mobile.force-show-desktop .bn-item.active .bn-label {
-    color: #2f855a;
-}
-
-@media (max-width: 768px) {
-    .bottom-nav-mobile.force-show-desktop { 
-        left: 0; 
-        transform: none; 
-        border-radius: 0; 
-        max-width: 100%; 
-    }
-}
+        .bottom-nav-mobile .bn-item.active .bn-label {
+            color: #2f855a;
+        }
 
 @media (max-width: 768px) {
     .tabs-container { display: none; }
