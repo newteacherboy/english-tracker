@@ -1460,7 +1460,11 @@
                         <span>Diji-Medu'ya hoş geldin! 🎉</span>
                     </div>
                 </div>
-                <div class="header-right-widgets">
+                               <div class="header-right-widgets">
+                    <div class="header-energy-badge" id="headerEnerjiBadge" style="--pct:0%;">
+                        <div class="header-energy-ring">⚡</div>
+                        <div class="header-energy-num" id="headerEnerjiNum">--/--</div>
+                    </div>
                     <div class="header-streak-badge">
                         <div class="header-streak-num" id="headerStreakNum">🔥 0</div>
                         <div class="header-streak-label">GÜN SERİ</div>
@@ -1856,6 +1860,20 @@
 #tab-konusmapratigi .kp-liderlik-kutu { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:8px; max-height:150px; overflow-y:auto; font-size:10.5px; text-align:left; }
 
 #tab-konusmapratigi .kp-sohbet-yer-tutucu { text-align:center; padding:50px 16px; color:#9fdbe6; }
+
+.header-energy-badge { display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0; }
+.header-energy-ring {
+    width:30px; height:30px; border-radius:50%;
+    background: conic-gradient(#ffd166 var(--pct, 0%), rgba(255,255,255,.15) 0);
+    display:flex; align-items:center; justify-content:center; font-size:13px;
+    position:relative;
+}
+.header-energy-ring::before { content:''; position:absolute; inset:3px; background:#0d5a6c; border-radius:50%; }
+.header-energy-ring { z-index:1; }
+.header-energy-ring::after { content:'⚡'; position:relative; z-index:2; }
+.header-energy-ring { color:transparent; }
+.header-energy-num { color:#ffd166; font-size:7px; font-weight:800; }
+        
 </style>
 
 <div class="kp-shell">
@@ -1864,6 +1882,7 @@
     <div class="kp-topbar-progress"><div class="kp-topbar-fill" id="kpProgressFill" style="width:0%;"></div></div>
     <div class="kp-kombo" id="kpKomboText">KOMBO x0</div>
   </div>
+  <div id="kpEnerjiSatiri" style="text-align:center; font-size:11px; font-weight:800; color:#ffd166; margin-bottom:14px;">⚡ Enerji: --/--</div>
 
   <div class="kp-tabbar">
     <button class="kp-tab-btn active" data-tab="kelime" onclick="kpSekmeSec('kelime', this)">🔤 Kelime Modu</button>
@@ -8977,9 +8996,25 @@ function veriArayuzeIsle(user) {
     rozetleriIsle(user.rozetListesi || [], genelPuan);
     planKartiniGuncelle(user);
     teacherPaneliKontrolEt();
-        ozellikGorunurlukleriniUygula(user.izinler || {});
+              ozellikGorunurlukleriniUygula(user.izinler || {});
+    headerEnerjiYukle();
 }
 
+function headerEnerjiYukle() {
+    if (!aktifOgrenciAdi) return;
+    fetch(`${apiURL}?islem=enerjiDurumuGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`)
+    .then(res => res.json())
+    .then(d => { headerEnerjiGoster(d.enerjiKalan, d.enerjiMax); window._kpEnerjiCache = d; })
+    .catch(() => {});
+}
+function headerEnerjiGoster(kalan, max) {
+    let pct = max > 0 ? Math.round((kalan / max) * 100) : 0;
+    let badge = document.getElementById('headerEnerjiBadge');
+    if (badge) badge.style.setProperty('--pct', pct + '%');
+    let num = document.getElementById('headerEnerjiNum');
+    if (num) num.innerText = kalan + '/' + max;
+    window._kpEnerjiCache = { enerjiKalan: kalan, enerjiMax: max };
+}
 function ozellikGorunurlukAyarla(elementId, aciksaGoster) {
     let el = document.getElementById(elementId);
     if (el) el.style.display = aciksaGoster ? '' : 'none';
@@ -11150,12 +11185,60 @@ let kpTanimaDesteklVar = ('webkitSpeechRecognition' in window) || ('SpeechRecogn
 let kpRecognition = null;
 let kpDinliyorMu = false;
 
+let kpEnerjiKalan = 0;
+let kpEnerjiMax = 0;
+let kpArkaArkayaDogru = 0;
+
 function kpModuAc() {
     dcTumTamEkranlariKapat();
     document.getElementById('tab-konusmapratigi').classList.add('active');
     dcBottomNavSenkronize();
     kpSekmeSec('kelime');
     kpKelimeGirisGoster();
+    kpEnerjiYukleVeGoster();
+}
+
+async function kpEnerjiYukleVeGoster() {
+    let isim = siniftaOynananOgrenci || aktifOgrenciAdi;
+    if (!isim) return;
+    try {
+        let res = await fetch(`${apiURL}?islem=enerjiDurumuGetir&ogrenci=${encodeURIComponent(isim)}`);
+        let d = await res.json();
+        kpEnerjiKalan = d.enerjiKalan;
+        kpEnerjiMax = d.enerjiMax;
+        headerEnerjiGoster(kpEnerjiKalan, kpEnerjiMax);
+    } catch(e) {}
+    kpEnerjiSatiriniGuncelle();
+}
+function kpEnerjiSatiriniGuncelle() {
+    let satir = document.getElementById('kpEnerjiSatiri');
+    if (!satir) return;
+    satir.innerText = `⚡ Enerji: ${kpEnerjiKalan}/${kpEnerjiMax}`;
+    let baslatBtn = document.querySelector('#kpKelimeGirisEkrani .kp-start-btn');
+    if (baslatBtn) {
+        if (kpEnerjiKalan <= 0) {
+            baslatBtn.disabled = true;
+            baslatBtn.style.opacity = '.5';
+            baslatBtn.innerText = '⚡ Enerjin bitti, yarın tekrar gel!';
+        } else {
+            baslatBtn.disabled = false;
+            baslatBtn.style.opacity = '1';
+            baslatBtn.innerText = '🎤 Pratiğe Başla';
+        }
+    }
+}
+async function kpEnerjiDegistir(fark) {
+    let isim = siniftaOynananOgrenci || aktifOgrenciAdi;
+    kpEnerjiKalan = Math.max(0, Math.min(kpEnerjiMax, kpEnerjiKalan + fark));
+    kpEnerjiSatiriniGuncelle();
+    headerEnerjiGoster(kpEnerjiKalan, kpEnerjiMax);
+    try {
+        let res = await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"enerjiDegistir", ogrenci: isim, fark: fark }) });
+        let d = await res.json();
+        kpEnerjiKalan = d.enerjiKalan; kpEnerjiMax = d.enerjiMax;
+        kpEnerjiSatiriniGuncelle();
+        headerEnerjiGoster(kpEnerjiKalan, kpEnerjiMax);
+    } catch(e) {}
 }
 function kpModuKapat() {
     kpDinlemeyiDurdur();
@@ -11191,33 +11274,19 @@ function kpSinifSec(sinif, btn) {
     kpUniteGuncelle(sinif);
 }
 function kpUniteGuncelle(sinif) {
-    let havuz = window.masterKelimeHavuzu || [];
-    let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
-    let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a,b) => a-b);
-    if (uniteler.length === 0) uniteler = [1,2,3,4,5];
-    let box = document.getElementById('kpUniteBox');
-    box.innerHTML = "";
-    uniteler.forEach((u) => {
-        let chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'unite-chip selected';
-        chip.innerText = u + '.Ü';
-        chip.onclick = function() {
-            chip.classList.toggle('selected');
-            kpSecilenUniteler = Array.from(box.querySelectorAll('.unite-chip.selected')).map(c => Number(c.innerText.replace('.Ü','')));
-        };
-        box.appendChild(chip);
-    });
-    kpSecilenUniteler = uniteler.slice();
+    genericSinifGuncelle(sinif, 'kpUniteBox', function(u){ kpSecilenUniteler = u; });
 }
 
 function kpKelimeOyunuBaslat() {
+    if (kpEnerjiKalan <= 0) { alert("Enerjin bitti! Enerjin saat başı biraz yenilenir, 24 saatte tamamen dolar."); return; }
     let isim = document.getElementById('kpIsimInput').value.trim();
     if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
     if (kpSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
 
     let havuz = oyunHavuzGetir(kpAktifSinif, kpSecilenUniteler);
     if (havuz.length < 2) { alert("Bu ünite(ler)de yeterli kelime yok, lütfen daha fazla ünite seçin."); return; }
+
+    kpArkaArkayaDogru = 0;
 
     let hedefSoruSayisi = 10 + (Number(kpAktifSinif) - 1) * 5;
     let karisik = [...havuz].sort(() => Math.random() - 0.5);
@@ -11237,14 +11306,14 @@ function kpKelimeOyunuBaslat() {
 
 function kpSoruGoster() {
     if (kpSoruIndex >= kpSoruListesi.length) { kpKelimeOyunuBitir(); return; }
+    if (kpEnerjiKalan <= 0) { kpKelimeOyunuBitir(true); return; }
     let soru = kpSoruListesi[kpSoruIndex];
-    let ingilizceGosterilsin = Math.random() > 0.5;
     kpAktifSoru = {
-        gosterilen: ingilizceGosterilsin ? (soru.ingilizce||soru.en) : (soru.turkce||soru.tr),
-        beklenenCevap: ingilizceGosterilsin ? (soru.turkce||soru.tr) : (soru.ingilizce||soru.en),
-        dil: ingilizceGosterilsin ? 'tr-TR' : 'en-US'
+        gosterilen: (soru.turkce || soru.tr),
+        beklenenCevap: (soru.ingilizce || soru.en),
+        dil: 'en-US'
     };
-    document.getElementById('kpSoruYon').innerText = ingilizceGosterilsin ? "Kelimenin Türkçesini söyle" : "Kelimenin İngilizcesini söyle";
+    document.getElementById('kpSoruYon').innerText = "Kelimenin İngilizcesini söyle";
     document.getElementById('kpSoruKelime').innerText = kpAktifSoru.gosterilen;
     document.getElementById('kpProgressFill').style.width = Math.round((kpSoruIndex / kpSoruListesi.length) * 100) + '%';
     document.getElementById('kpKomboText').innerText = 'KOMBO x' + kpKombo;
@@ -11339,24 +11408,33 @@ function kpCevapKontrolEt(soylenenMetin) {
     kart.classList.remove('kp-ok', 'kp-hata');
     void kart.offsetWidth;
 
-    let sonucEl = document.getElementById('kpSonucAlani');
+        let sonucEl = document.getElementById('kpSonucAlani');
     if (dogruMu) {
         kpDogruSayisi++;
+        kpArkaArkayaDogru++;
+        let kazanc = 10 + (kpKombo * 3);
+        kpToplamPuan += kazanc;
         kpKombo++;
-        kpToplamPuan += 10;
         kart.classList.add('kp-ok');
         kpKonfetiPatlat();
         sonucEl.className = 'kp-sonuc ok';
-        sonucEl.innerHTML = '🎉 Doğru bildin! "' + soylenenMetin.split('|')[0] + '"';
+        sonucEl.innerHTML = '🎉 Doğru bildin! +' + kazanc + ' puan';
+
+        if (kpArkaArkayaDogru > 0 && kpArkaArkayaDogru % 4 === 0) {
+            kpEnerjiDegistir(1);
+            sonucEl.innerHTML += '<br><span style="color:#ffd166;">⚡ 4 doğru üst üste! +1 enerji bonus</span>';
+        }
     } else {
         kpYanlisSayisi++;
         kpKombo = 0;
+        kpArkaArkayaDogru = 0;
         kart.classList.add('kp-hata');
         if (navigator.vibrate) navigator.vibrate([40,40,40]);
         sonucEl.className = 'kp-sonuc hata';
         sonucEl.innerHTML = '😕 Olmadı — Doğrusu: "' + kpAktifSoru.beklenenCevap + '"';
     }
     document.getElementById('kpKomboText').innerText = 'KOMBO x' + kpKombo;
+    kpEnerjiDegistir(-1);
     setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1600);
 }
 
@@ -11366,10 +11444,15 @@ function kpYazariCevapGonder() {
     kpCevapKontrolEt(deger);
 }
 
-async function kpKelimeOyunuBitir() {
+async function kpKelimeOyunuBitir(enerjiBittiMi) {
     if (kpTimerInterval) clearInterval(kpTimerInterval);
     document.getElementById('kpKelimeOyunEkrani').style.display = 'none';
     document.getElementById('kpKelimeBitisEkrani').style.display = 'block';
+    if (enerjiBittiMi) {
+        document.getElementById('kpKelimeBitisEkrani').insertAdjacentHTML('afterbegin',
+            '<div style="background:rgba(255,209,102,.15); border:1px solid #ffd166; color:#ffd166; padding:8px 12px; border-radius:10px; font-size:11.5px; font-weight:700; margin-bottom:10px;">⚡ Enerjin bitti, kalan kelimeler için yarın tekrar gel!</div>');
+    }
+    kpEnerjiSatiriniGuncelle();
 
     let isim = document.getElementById('kpIsimInput').value.trim();
     let sinifStr = kpAktifSinif + ". Sınıf";
