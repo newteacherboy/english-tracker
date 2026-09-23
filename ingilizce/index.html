@@ -3857,10 +3857,11 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
                     console.warn("Otomatik girişte kullanıcı bulunamadı:", aktifOgrenciAdi);
                 }
 
-                                baslatSayac();
+                                              baslatSayac();
                 arkaPlanVeriYenilemeBaslat();
                 gununKonusuYukle();
                 duyuruKontrolEt();
+                dockZamanlayiciyiBaslat();
             }
 
                        ogretmenSelectDoldur();
@@ -8059,7 +8060,7 @@ localStorage.setItem("ing_toplamSaniye", toplamSaniye);
                 }
 
                 // Kısa bir gecikme ekleyerek animasyonun akıcı görünmesini sağla ve paneli aç
-                                                                                                                        setTimeout(() => {
+                                                                              setTimeout(() => {
                     document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                     document.getElementById('panel-alani').style.display = 'block';
                     girisSerisiGuncelleVeGetir();
@@ -8070,6 +8071,7 @@ localStorage.setItem("ing_toplamSaniye", toplamSaniye);
                     setInterval(puanBildirimKontrolEt, 45000);
             
                     duyuruKontrolEt();
+                    dockZamanlayiciyiBaslat();
                 }, 600);
             } else {
                 // Hatalı giriş durumunda tekrar giriş ekranına dön
@@ -10865,16 +10867,10 @@ function dockZamanlayiciyiBaslat() {
         if (dock && !dock.classList.contains('collapsed')) {
             dock.classList.add('collapsed');
         }
-    }, 5000); // 5 saniye
+    }, 10000); // 10 saniye
 }
 
-// Sayfa yüklendiğinde araçlar menüsü açık başlasın ve 5 saniye sonra otomatik toplansın
-document.addEventListener('DOMContentLoaded', function() {
-    let dock = document.getElementById('floatingToolsDock');
-    if (dock) {
-        dockZamanlayiciyiBaslat();
-    }
-});
+// Not: dock zamanlayıcısı artık girişten hemen sonra (otomatik veya manuel) başlatılıyor.
         
     </script>
 
