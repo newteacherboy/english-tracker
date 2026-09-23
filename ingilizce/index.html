@@ -2639,18 +2639,27 @@
     .tabs-container { display: none; }
     .dc-fullscreen-overlay { padding-bottom: 78px !important; }
 
-    .bottom-nav-mobile {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 99998;
-        background: #fff;
-        border-top: 1px solid #eef1e9;
-        padding: 6px 3px calc(6px + env(safe-area-inset-bottom, 0px));
-        box-shadow: 0 -3px 14px rgba(0, 0, 0, .06);
-    }
+          @media (max-width: 768px) {
+            .tabs-container { display: none; }
+            .dc-fullscreen-overlay { padding-bottom: 78px !important; }
+
+            .bottom-nav-mobile {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                transform: none;
+                max-width: 100%;
+                width: 100%;
+                border-radius: 0;
+                z-index: 99998;
+                background: #fff;
+                border-top: 1px solid #eef1e9;
+                padding: 6px 3px calc(6px + env(safe-area-inset-bottom, 0px));
+                box-shadow: 0 -3px 14px rgba(0, 0, 0, .06);
+            }
+
     .bn-item {
         flex: 1;
         border: none;
