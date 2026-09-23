@@ -172,10 +172,25 @@
             background: linear-gradient(160deg, #fef9c3, #fde68a); padding: 30px 22px; border-radius: 22px;
             box-shadow: 0 8px 20px rgba(217,119,6,0.15); width: 100%; max-width: 350px; text-align: center; margin: auto;
         }
-        .logo-icon {
-            width: 64px; height: 64px; border-radius: 50%; background: #fff;
-            display: flex; align-items: center; justify-content: center; font-size: 30px;
-            margin: 0 auto 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+                .dm-logo-row {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-bottom: 14px;
+        }
+        .dm-logo-icon {
+            width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+            background: linear-gradient(160deg, #22d3ee, #0891b2);
+            display: flex; align-items: center; justify-content: center; font-size: 28px;
+            box-shadow: 0 6px 14px rgba(8,145,178,0.3);
+        }
+        .dm-logo-text { text-align: left; }
+        .dm-logo-word {
+            font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 20px; line-height: 1;
+        }
+        .dm-logo-word .dm-diji { color: #1e293b; }
+        .dm-logo-word .dm-medu { color: #0891b2; }
+        .dm-logo-tag {
+            font-size: 9px; font-weight: 800; color: #92400e; letter-spacing: 0.4px;
+            margin-top: 3px; text-transform: uppercase;
         }
         h2 { font-family: 'Fredoka', sans-serif; color: #78350f; font-size: 19px; font-weight: 700; margin-bottom: 4px; }
         .subtitle { color: #92400e; font-size: 11px; margin-bottom: 20px; line-height: 1.5; font-weight: 600; }
@@ -1382,8 +1397,14 @@
 
 
     <!-- GİRİŞ EKRANI -->
-    <div class="login-card" id="login-container">
-                <div class="logo-icon">🦜</div>
+        <div class="login-card" id="login-container">
+                <div class="dm-logo-row">
+            <div class="dm-logo-icon">🦜</div>
+            <div class="dm-logo-text">
+                <div class="dm-logo-word"><span class="dm-diji">Diji</span>-<span class="dm-medu">Medu</span></div>
+                <div class="dm-logo-tag">İngilizce Portalı</div>
+            </div>
+        </div>
         <h2>İngilizce Portal Giriş</h2>
         <p class="subtitle" id="girisSubtitle">Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.</p>
         
