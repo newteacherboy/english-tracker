@@ -759,20 +759,30 @@
             background: #2563eb; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer;
         }
 
-        .oturum-yukleme-overlay {
+                .oturum-yukleme-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #f7f5f0; z-index: 999999;
+            background: linear-gradient(180deg, #eafcff 0%, #bdeef6 100%);
+            z-index: 999999; overflow: hidden;
             display: none; flex-direction: column; align-items: center; justify-content: center;
         }
-        .oturum-yukleme-baykus {
-            font-size: 64px; animation: baykusSallan 1.4s ease-in-out infinite;
+        .oturum-yukleme-wave {
+            position: absolute; bottom: -10px; left: 0; width: 200%; height: 100px;
+            animation: oturumWaveMove 3.5s linear infinite;
         }
-        @keyframes baykusSallan {
-            0%, 100% { transform: rotate(-8deg); }
-            50% { transform: rotate(8deg); }
+        @keyframes oturumWaveMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .oturum-yukleme-logo {
+            position: relative; z-index: 3;
+            width: 86px; height: 86px; border-radius: 22px;
+            box-shadow: 0 10px 24px rgba(12,58,68,0.22);
+            animation: oturumLogoBreathe 1.8s ease-in-out infinite;
+        }
+        @keyframes oturumLogoBreathe {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.06); }
         }
         .oturum-yukleme-yazi {
-            margin-top: 14px; font-size: 13px; font-weight: 700; color: #2f855a;
+            position: relative; z-index: 3;
+            margin-top: 16px; font-size: 13px; font-weight: 700; color: #0c3a44;
         }
         .oturum-yukleme-nokta::after {
             content: '...'; animation: noktaAnim 1.2s steps(4, end) infinite;
@@ -903,8 +913,12 @@
 </head>
 <body>
 
-        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay">
-        <div class="oturum-yukleme-baykus">🦜</div>
+                <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay">
+        <svg class="oturum-yukleme-wave" viewBox="0 0 400 100" preserveAspectRatio="none">
+            <path d="M0,45 C50,12 100,78 150,45 C200,12 250,78 300,45 C350,12 400,78 400,45 L400,100 L0,100 Z" fill="#2ed7ea" opacity="0.4"/>
+            <path d="M200,45 C250,12 300,78 350,45 C400,12 450,78 500,45 C550,12 600,78 600,45 L600,100 L200,100 Z" fill="#0c9bb5" opacity="0.32"/>
+        </svg>
+        <img class="oturum-yukleme-logo" src="/icon-512.png?v=3" alt="Diji-Medu">
         <div class="oturum-yukleme-yazi">Oturumun yükleniyor<span class="oturum-yukleme-nokta"></span></div>
     </div>
 
