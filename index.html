@@ -4,7 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1D9E75">
-<title>Diji-Medu | Akıllı Eğitim Stüdyosu</title>
+<title>Diji-Medu | İngilizce Öğrenme ve Eğitim Koçluğu Portalı</title>
+<meta name="description" content="Diji-Medu; öğrenciler için İngilizce dersi, seviye tespit sınavı, kelime oyunları ve bireysel eğitim koçluğunu tek platformda birleştiren akıllı eğitim stüdyosudur.">
+<meta name="keywords" content="Diji-Medu, Diji Medu, DijiMedu, dijimedu ingilizce, diji medu eğitim koçu, ingilizce öğrenme portalı, öğrenci takip sistemi">
+<meta name="robots" content="index, follow">
+<meta name="author" content="Diji-Medu">
+<link rel="canonical" href="https://panel.ogretmencocuk.com/">
+
+<!-- Google Search Console doğrulaması (aşağıdaki 6. adımda alacağın kodu buraya yapıştıracaksın) -->
+<meta name="google-site-verification" content="BURAYA_SEARCH_CONSOLE_KODUNU_YAPISTIR">
+
+<!-- Sosyal medyada / WhatsApp'ta paylaşınca güzel görünmesi için -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Diji-Medu">
+<meta property="og:title" content="Diji-Medu | İngilizce Öğrenme ve Eğitim Koçluğu Portalı">
+<meta property="og:description" content="Öğrenciler için İngilizce dersi, seviye tespit sınavı ve bireysel eğitim koçluğunu tek platformda birleştiren akıllı eğitim stüdyosu.">
+<meta property="og:url" content="https://panel.ogretmencocuk.com/">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Diji-Medu | İngilizce Öğrenme ve Eğitim Koçluğu Portalı">
+<meta name="twitter:description" content="Öğrenciler için İngilizce dersi, seviye tespit sınavı ve bireysel eğitim koçluğunu tek platformda birleştiren akıllı eğitim stüdyosu.">
+
+<!-- Google'a "bu ne tür bir kurum" bilgisini yapılandırılmış şekilde veriyoruz -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Diji-Medu",
+  "alternateName": ["DijiMedu", "Diji Medu"],
+  "url": "https://panel.ogretmencocuk.com/",
+  "description": "İngilizce öğrenme portalı ve bireysel eğitim koçluğu hizmeti.",
+  "sameAs": [],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Diji-Medu Eğitim Hizmetleri",
+    "itemListElement": [
+      {
+        "@type": "Course",
+        "name": "İngilizce Dersim",
+        "url": "https://panel.ogretmencocuk.com/ingilizce",
+        "description": "Öğrenci gelişim raporları, İngilizce öğretimi ve kelime yarışmaları."
+      },
+      {
+        "@type": "Service",
+        "name": "Eğitim Koçum",
+        "url": "https://panel.ogretmencocuk.com/kocluk",
+        "description": "Haftalık hedef yönetimi, bireysel ödev ve sınav stratejileri."
+      }
+    ]
+  }
+}
+</script>
 <link rel="manifest" href="manifest.json">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
@@ -664,29 +714,28 @@ body {
 <!-- 🚀 GİRİŞ KARŞILAMA VE PORTAL SEÇİM EKRANI -->
 <div id="welcomePortalScreen" class="welcome-overlay">
   <div class="welcome-container">
-    <div class="welcome-badge">🎓 Diji-Medu Eğitim Portalı</div>
+        <div class="welcome-badge">🎓 Diji-Medu Eğitim Portalı</div>
     <h1 class="welcome-title">Diji<span>Medu</span></h1>
-    <p class="welcome-subtitle">Bireyselleştirilmiş Dil ve Başarı Takip Sistemi</p>
+    <p class="welcome-subtitle">İngilizce Öğrenme ve Bireysel Eğitim Koçluğu Sistemi</p>
 
-   <div class="welcome-card-grid">
-      <div class="welcome-card card-english" onclick="window.location.href='https://panel.ogretmencocuk.com/ingilizce'" style="cursor: pointer;">
+     <div class="welcome-card-grid">
+      <a class="welcome-card card-english" href="https://panel.ogretmencocuk.com/ingilizce" style="cursor: pointer; text-decoration: none; color: inherit;">
          <div class="welcome-card-icon">💡</div>
          <div class="welcome-card-body">
             <h3>İngilizce Dersim</h3>
             <p>Öğrenci Gelişim Raporları, İngilizce Öğretimi ve Çeşitli yarışmalar</p>
          </div>
          <div class="welcome-card-arrow">Giriş Yap ➔</div>
-      </div>
-   </div>
+      </a>
 
-      <div class="welcome-card card-coach" onclick="window.location.href='https://panel.ogretmencocuk.com/kocluk'" style="cursor: pointer;">
+      <a class="welcome-card card-coach" href="https://panel.ogretmencocuk.com/kocluk" style="cursor: pointer; text-decoration: none; color: inherit;">
         <div class="welcome-card-icon">🎯</div>
         <div class="welcome-card-body">
           <h3>Eğitim Koçum</h3>
           <p>Haftalık hedef yönetimi, Bireysel Ödev ve Sınav stratejileri</p>
         </div>
         <div class="welcome-card-arrow">Giriş Yap ➔</div>
-      </div>
+      </a>
     </div>
   </div>
 </div>
