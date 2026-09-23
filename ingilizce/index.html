@@ -5993,6 +5993,10 @@ if ('speechSynthesis' in window) {
     window.speechSynthesis.onvoiceschanged = dcVoiceSec;
     dcVoiceSec();
 }
+function dcSesDurdur() {
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+}
+
 function dcSesOku(text) {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
@@ -6080,11 +6084,12 @@ function dcEkranGoster(id) {
     document.getElementById('dcBackBtn').classList.toggle('hidden', dcGecmis.length <= 1);
 }
 function dcGeriGit() {
+    dcSesDurdur();
     dcGecmis.pop();
     dcEkranGoster(dcGecmis[dcGecmis.length - 1]);
     dcCrumbGuncelle();
 }
-function dcIleriGit(id) { dcGecmis.push(id); dcEkranGoster(id); dcCrumbGuncelle(); }
+function dcIleriGit(id) { dcSesDurdur(); dcGecmis.push(id); dcEkranGoster(id); dcCrumbGuncelle(); }
 function dcCrumbGuncelle() {
     let parts = [];
     if (dcAktifSeviye) parts.push(dcAktifSeviye);
@@ -6159,8 +6164,8 @@ function dcKategoriIcerikCiz(key) {
     }).join('');
 }
 
-   
 function dcKonuAc(konuAdi) {
+    dcSesDurdur();
     dcAktifKonu = konuAdi;
     let r = dcKategoriRenkleri[dcAktifKategori];
     let konuOzet = dcTumKonularCache.find(k => k.seviye === dcAktifSeviye && k.kategori === dcAktifKategori && k.konuAdi === konuAdi);
@@ -6339,6 +6344,7 @@ function dcBilmiyordumToggle() {
 }
 
 function dcSekmeSec(tab, btn) {
+    dcSesDurdur();
     if (tab === 'ornek' && !dcAnlatimOnaylandiMi) {
         dcToastGoster('⏳ Önce Anlatım kısmını oku ve "Okudum, Anladım" butonuna bas!');
         return;
@@ -10703,8 +10709,8 @@ function gununKonusunaGit() {
     document.getElementById('tab-derscalis').classList.add('active');
     dersCalisBaslat();
     dcBottomNavSenkronize();
-}
 function dersCalisTamEkranKapat() {
+    dcSesDurdur();
     document.getElementById('tab-derscalis').classList.remove('active');
     dcBottomNavSenkronize();
 }
@@ -11008,18 +11014,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <iframe id="seviyeDisLinkIframe" src="" style="width:100%; height:100%; border:none;"></iframe>
 </div>
 
-<!-- SEVİYE TAMAMLAMA ONAY MODALI -->
-<div class="rubric-modal" id="seviyeOnayModal">
-    <div class="rubric-content" style="max-width: 320px; text-align: center;">
-        <div style="font-size:38px; margin-bottom:8px;">🤔</div>
-        <h3 style="color: #1e293b; margin-bottom: 8px; font-size: 15px;">Bu seviyeyi bitirdin mi?</h3>
-        <p style="font-size: 11px; color: #64748b; margin-bottom: 16px;">Eğer bitirdiysen bir sonraki seviyenin kilidi açılacak.</p>
-        <div style="display:flex; gap:8px;">
-            <button onclick="seviyeOnayVer(false)" style="flex:1; background:#f1f5f9; color:#64748b; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Hayır, Devam Et</button>
-            <button onclick="seviyeOnayVer(true)" style="flex:1; background:#16a34a; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12.5px;">Evet, Bitirdim ✓</button>
-        </div>
-    </div>
-</div>
 
     <!-- GENEL SÜRE YETERSİZ UYARI MODALI (Video + Etkinlik için) -->
 <div class="rubric-modal" id="genelSureUyariModal" style="z-index: 9999999;">
