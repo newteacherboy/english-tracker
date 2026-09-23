@@ -30,8 +30,8 @@
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        body {
-            background-color: #f7f5f0;
+               body {
+            background-color: #eef8fa;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -178,50 +178,49 @@
             background: #7c3aed; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;
         }
 
-                .login-card {
-            background: linear-gradient(160deg, #fef9c3, #fde68a); padding: 30px 22px; border-radius: 22px;
-            box-shadow: 0 8px 20px rgba(217,119,6,0.15); width: 100%; max-width: 350px; text-align: center; margin: auto;
+                             .login-card {
+            background: linear-gradient(160deg, #0d5a6c, #072c35); padding: 30px 22px; border-radius: 22px;
+            box-shadow: 0 10px 30px rgba(7,44,53,0.3); width: 100%; max-width: 350px; text-align: center; margin: auto;
         }
                 .dm-logo-row {
             display: flex; align-items: center; justify-content: center; gap: 10px;
             margin-bottom: 14px;
         }
-        .dm-logo-icon {
-            width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
-            background: linear-gradient(160deg, #22d3ee, #0891b2);
-            display: flex; align-items: center; justify-content: center; font-size: 28px;
-            box-shadow: 0 6px 14px rgba(8,145,178,0.3);
+               .dm-logo-icon {
+            width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0; overflow: hidden;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.35);
         }
+        .dm-logo-icon img { width: 100%; height: 100%; display: block; object-fit: cover; }
         .dm-logo-text { text-align: left; }
         .dm-logo-word {
             font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 20px; line-height: 1;
         }
-        .dm-logo-word .dm-diji { color: #1e293b; }
-        .dm-logo-word .dm-medu { color: #0891b2; }
+        .dm-logo-word .dm-diji { color: #ffffff; }
+        .dm-logo-word .dm-medu { color: #2ed7ea; }
         .dm-logo-tag {
-            font-size: 9px; font-weight: 800; color: #92400e; letter-spacing: 0.4px;
+            font-size: 9px; font-weight: 800; color: #9fdbe6; letter-spacing: 0.4px;
             margin-top: 3px; text-transform: uppercase;
         }
-        h2 { font-family: 'Fredoka', sans-serif; color: #78350f; font-size: 19px; font-weight: 700; margin-bottom: 4px; }
-        .subtitle { color: #92400e; font-size: 11px; margin-bottom: 20px; line-height: 1.5; font-weight: 600; }
+               h2 { font-family: 'Fredoka', sans-serif; color: #ffffff; font-size: 19px; font-weight: 700; margin-bottom: 4px; }
+        .subtitle { color: #9fdbe6; font-size: 11px; margin-bottom: 20px; line-height: 1.5; font-weight: 600; }
         .form-group { margin-bottom: 10px; text-align: left; }
         input {
             width: 100%; padding: 12px 14px; background-color: #ffffff;
-            border: 1px solid transparent; border-radius: 12px; font-size: 13px; color: #334155; outline: none; transition: all 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border: 1px solid transparent; border-radius: 12px; font-size: 13px; color: #0c3a44; outline: none; transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        input:focus { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15); }
+        input:focus { border-color: #2ed7ea; box-shadow: 0 0 0 2px rgba(46,215,234,0.25); }
         .btn-giris {
-            width: 100%; padding: 13px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
+            width: 100%; padding: 13px; background: linear-gradient(135deg, #2ed7ea, #0c9bb5); color: #072c35;
             border: none; border-radius: 12px; font-size: 13.5px; font-weight: 800; cursor: pointer; margin-top: 8px;
-            transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 0 #b45309;
+            transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 0 #0a7f95;
         }
-        .btn-giris:active { transform: translateY(3px); box-shadow: 0 1px 0 #b45309; }
-        .btn-giris:disabled { background: #cbd5e0; box-shadow: 0 4px 0 #94a3b8; cursor: not-allowed; }
+        .btn-giris:active { transform: translateY(3px); box-shadow: 0 1px 0 #0a7f95; }
+        .btn-giris:disabled { background: #6d8890; box-shadow: 0 4px 0 #4c6b72; cursor: not-allowed; color: #fff; }
                 #mesaj { margin-top: 10px; font-size: 11px; min-height: 15px; }
         .error { color: #e53e3e; }
         .success { color: #38a169; }
-        #login-container a { color: #92400e !important; font-weight: 800 !important; }
+        #login-container a { color: #7de8f5 !important; font-weight: 800 !important; }
         
                #panel-alani { display: none; width: 100%; max-width: 700px; margin: 0 auto; padding-bottom: 78px; }
 
@@ -1423,7 +1422,7 @@
     <!-- GİRİŞ EKRANI -->
         <div class="login-card" id="login-container">
                 <div class="dm-logo-row">
-            <div class="dm-logo-icon">🦜</div>
+                    <div class="dm-logo-icon"><img src="/icon-512.png?v=3" alt="Diji-Medu"></div>
             <div class="dm-logo-text">
                 <div class="dm-logo-word"><span class="dm-diji">Diji</span>-<span class="dm-medu">Medu</span></div>
                 <div class="dm-logo-tag">İngilizce Portalı</div>
@@ -1764,8 +1763,8 @@
             <button class="ak-btn" onclick="asmacaOyunAc()" style="background:#0d5a6c; color:#fff;">🚀 Başlat</button>
         </div>
 
-        <!-- 8. Kelime Bul -->
-                <div class="ak-card">
+               <!-- 8. Kelime Bul -->
+        <div class="ak-card">
             <div class="ak-glow" style="background:#8bcc30;"></div>
             <div class="ak-top">
                 <div class="ak-icon" style="background:rgba(139,204,48,.22); color:#c3e88a;">🎯</div>
@@ -1774,11 +1773,110 @@
             <button class="ak-btn" onclick="kelimebulOyunAc()" style="background:#8bcc30; color:#072c35;">🚀 Başlat</button>
         </div>
 
+        <!-- 9. Konuşma Pratiği -->
+        <div class="ak-card">
+            <div class="ak-glow" style="background:#2ed7ea;"></div>
+            <div class="ak-top">
+                <div class="ak-icon" style="background:rgba(46,215,234,.22); color:#7de8f5;">🗣️</div>
+                <div><div class="ak-title">Konuşma Pratiği</div><div class="ak-sub">Mikrofona konuş, telaffuzunu ve kelime bilgini test et!</div></div>
+            </div>
+            <button class="ak-btn" onclick="kpModuAc()" style="background:#2ed7ea; color:#072c35;">🎤 Konuşmaya Başla</button>
+        </div>
+
     </div>
     </div>
 </div>
-         
 
+<!-- KONUŞMA PRATİĞİ (tamamen ayrı bölüm) -->
+<div id="tab-konusmapratigi" class="dc-fullscreen-overlay">
+    <button class="dc-exit-btn" onclick="kpModuKapat()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="dc-focus-card">
+    <div class="kp-hero">
+        <h1>🗣️ Konuşma Pratiği</h1>
+        <p>Mikrofona konuşarak İngilizce pratiği yap!</p>
+    </div>
+
+    <div class="kp-tabbar">
+        <button class="kp-tab-btn active" data-tab="kelime" onclick="kpSekmeSec('kelime', this)">🔤 Kelime Modu</button>
+        <button class="kp-tab-btn" data-tab="sohbet" onclick="kpSekmeSec('sohbet', this)">💬 Sohbet Modu</button>
+    </div>
+
+    <!-- KELİME MODU -->
+    <div class="kp-panel active" id="kp-panel-kelime">
+
+        <div id="kpKelimeGirisEkrani">
+            <div id="kpMikUyari" class="kp-uyari" style="display:none; margin-bottom:12px;">
+                ⚠️ Tarayıcın mikrofon ile konuşma tanımayı desteklemiyor. Yine de oyunu açabilir, cevapları yazarak verebilirsin.
+            </div>
+            <label style="font-size:10px; font-weight:700; color:#5c7980; display:block; margin-bottom:2px;">ÖĞRENCİ ADI</label>
+            <input type="text" id="kpIsimInput" placeholder="Adınız" class="kp-input">
+
+            <label style="font-size:10px; font-weight:700; color:#5c7980; display:block; margin:10px 0 4px;">SINIF SEÇİNİZ:</label>
+            <div class="sinif-secim-grid" id="kpSinifGrid">
+                <button class="sinif-btn active" onclick="kpSinifSec(1,this)">1.Sınıf</button>
+                <button class="sinif-btn" onclick="kpSinifSec(2,this)">2.Sınıf</button>
+                <button class="sinif-btn" onclick="kpSinifSec(3,this)">3.Sınıf</button>
+                <button class="sinif-btn" onclick="kpSinifSec(4,this)">4.Sınıf</button>
+                <button class="sinif-btn" onclick="kpSinifSec(5,this)">5.Sınıf</button>
+                <button class="sinif-btn" onclick="kpSinifSec(6,this)">6.Sınıf</button>
+                <button class="sinif-btn" onclick="kpSinifSec(7,this)">7.Sınıf</button>
+                <button class="sinif-btn" onclick="kpSinifSec(8,this)">8.Sınıf</button>
+            </div>
+
+            <label style="font-size:10px; font-weight:700; color:#5c7980; display:block; margin:10px 0 4px;">ÜNİTE SEÇİNİZ:</label>
+            <div class="unite-secim-box" id="kpUniteBox"></div>
+
+            <button class="btn-giris" onclick="kpKelimeOyunuBaslat()" style="background:linear-gradient(135deg,#2ed7ea,#0c9bb5); color:#072c35; margin-top:10px;">🎤 Pratiğe Başla</button>
+        </div>
+
+        <div id="kpKelimeOyunEkrani" style="display:none; text-align:center;">
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:#0a7f95; margin-bottom:10px;">
+                <span id="kpSoruSayac">Kelime: 1/10</span>
+                <span id="kpPuanGoster">Puan: 0</span>
+            </div>
+            <div class="kp-soru-kart">
+                <div class="kp-soru-yon" id="kpSoruYon">Bu kelimenin İngilizcesini SÖYLE:</div>
+                <div class="kp-soru-kelime" id="kpSoruKelime">Merhaba</div>
+            </div>
+            <button class="kp-mik-btn" id="kpMikBtn" onclick="kpDinlemeyiBaslat()">🎤</button>
+            <div id="kpSonucAlani" style="min-height:34px; margin-top:10px;"></div>
+            <div class="kp-yazi-fallback">
+                <input type="text" id="kpYazariCevapInput" placeholder="ya da buraya yazarak cevapla..." onkeypress="if(event.key==='Enter')kpYazariCevapGonder()">
+                <button onclick="kpYazariCevapGonder()">Gönder</button>
+            </div>
+        </div>
+
+        <div id="kpKelimeBitisEkrani" style="display:none; text-align:center; padding:10px;">
+            <div style="font-size:48px;">🎉</div>
+            <h3 style="font-size:18px; font-weight:900; color:#0a7f95; margin:6px 0;">Pratik Tamamlandı!</h3>
+            <div style="background:#e3f7fa; border:1px solid #b9ecf3; border-radius:10px; padding:12px; margin-bottom:12px; text-align:left; font-size:11.5px; color:#0c3a44;">
+                <div>👤 İsim: <span id="kpResIsim">-</span></div>
+                <div>✅ Sonuç: <span id="kpResDY">-</span></div>
+                <div>🏆 Puan: <span id="kpResPuan">-</span></div>
+            </div>
+            <div style="text-align:left; margin-bottom:12px;">
+                <div style="font-size:11px; font-weight:800; color:#0a7f95; margin-bottom:4px;">🏆 Liderlik Tablosu:</div>
+                <div id="kpGecmisSkorlar" style="max-height:120px; overflow-y:auto; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; font-size:10px;"></div>
+            </div>
+            <button class="btn-giris" onclick="document.getElementById('kpKelimeBitisEkrani').style.display='none'; kpKelimeGirisGoster();" style="background:#0c9bb5; color:#fff;">🔄 Tekrar Pratik Yap</button>
+        </div>
+
+    </div>
+
+    <!-- SOHBET MODU — yakında -->
+    <div class="kp-panel" id="kp-panel-sohbet">
+        <div style="text-align:center; padding:40px 16px; color:#5c7980;">
+            <div style="font-size:44px; margin-bottom:10px;">💬</div>
+            <div style="font-weight:800; color:#0c3a44; font-size:14px; margin-bottom:6px;">Sohbet Modu Yakında</div>
+            <p style="font-size:11.5px; line-height:1.6;">Burada öğretmenin hazırlayacağı örnek diyalog cümlelerine (örn. "Hello, how are you?") sesli cevap vereceksin. Bu mod için ayrı bir veri kaynağı gerekiyor — aşağıdaki notlara bak.</p>
+        </div>
+    </div>
+
+    </div>
+</div>
+            
       <!-- DERS ÇALIŞ SEKMESİ (PREMIUM) -->
 <div id="tab-derscalis" class="dc-fullscreen-overlay">
     <button class="dc-exit-btn" onclick="dersCalisTamEkranKapat()">
@@ -2894,6 +2992,29 @@
     z-index: 1000000 !important;
 }
 
+        .kp-hero { text-align:center; margin-bottom:14px; }
+.kp-hero h1 { font-size:18px; font-weight:800; color:#0c3a44; }
+.kp-hero p { font-size:11px; color:#5c7980; margin-top:3px; }
+.kp-tabbar { display:flex; gap:4px; background:#fff; padding:4px; border-radius:12px; margin-bottom:14px; box-shadow:0 2px 8px rgba(12,58,68,.05); }
+.kp-tab-btn { flex:1; border:none; background:transparent; padding:9px 4px; border-radius:9px; font-weight:800; font-size:11px; color:#6d8890; cursor:pointer; }
+.kp-tab-btn.active { background:#0c9bb5; color:#fff; }
+.kp-panel { display:none; }
+.kp-panel.active { display:block; }
+.kp-input { width:100%; padding:10px 12px; border:1px solid #d9edf0; border-radius:10px; font-size:13px; font-weight:600; text-align:center; outline:none; }
+.kp-uyari { background:#fef0e2; border:1px solid #f9d9ae; color:#a1560f; font-size:11px; font-weight:700; padding:9px 12px; border-radius:8px; }
+.kp-soru-kart { background:#e3f7fa; border:2px solid #b9ecf3; border-radius:16px; padding:26px 16px; margin-bottom:16px; }
+.kp-soru-yon { font-size:10px; font-weight:800; color:#0a7f95; text-transform:uppercase; margin-bottom:8px; }
+.kp-soru-kelime { font-size:26px; font-weight:900; color:#0c3a44; }
+.kp-mik-btn { width:74px; height:74px; border-radius:50%; background:linear-gradient(135deg,#2ed7ea,#0c9bb5); border:none; font-size:30px; color:#fff; cursor:pointer; box-shadow:0 6px 18px rgba(12,155,181,.35); transition:transform .15s; }
+.kp-mik-btn:active { transform:scale(.94); }
+.kp-mik-btn.dinliyor { animation:kpPulseMik 1s ease-in-out infinite; background:linear-gradient(135deg,#ef4444,#dc2626); }
+@keyframes kpPulseMik { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5);} 50%{box-shadow:0 0 0 14px rgba(239,68,68,0);} }
+.kp-dogru { background:#e3fbf1; color:#0a8f62; font-weight:700; font-size:12px; padding:8px 12px; border-radius:8px; }
+.kp-yanlis { background:#fef2f2; color:#b91c1c; font-weight:700; font-size:12px; padding:8px 12px; border-radius:8px; }
+.kp-yazi-fallback { display:flex; gap:6px; margin-top:14px; }
+.kp-yazi-fallback input { flex:1; padding:8px 10px; border:1px solid #d9edf0; border-radius:8px; font-size:12px; outline:none; }
+.kp-yazi-fallback button { background:#0c9bb5; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer; }
+
     
 </style>
 
@@ -3657,6 +3778,195 @@ async function kelimeYarismasiBitir() {
         tabloKonum.innerHTML = "<div>Liderlik tablosu yüklenirken hata oluştu.</div>";
     }
 }
+
+
+// ========= KONUŞMA PRATİĞİ MODÜLÜ =========
+let kpAktifSinif = 1;
+let kpSecilenUniteler = [];
+let kpSoruListesi = [];
+let kpSoruIndex = 0;
+let kpDogruSayisi = 0;
+let kpYanlisSayisi = 0;
+let kpToplamPuan = 0;
+let kpBaslangicZamani = 0;
+let kpGecenSaniye = 0;
+let kpTimerInterval = null;
+let kpAktifSoru = null;
+let kpTanimaDesteklVar = ('webkitSpeechRecognition' in window) || ('SpeechRecognition' in window);
+let kpRecognition = null;
+let kpDinliyorMu = false;
+
+function kpModuAc() {
+    document.getElementById('tab-konusmapratigi').classList.add('active');
+    kpSekmeSec('kelime');
+    kpKelimeGirisGoster();
+}
+function kpModuKapat() {
+    kpDinlemeyiDurdur();
+    if (kpTimerInterval) clearInterval(kpTimerInterval);
+    document.getElementById('tab-konusmapratigi').classList.remove('active');
+}
+function kpSekmeSec(tab, btn) {
+    document.querySelectorAll('#tab-konusmapratigi .kp-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#tab-konusmapratigi .kp-panel').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    else document.querySelector('#tab-konusmapratigi .kp-tab-btn[data-tab="'+tab+'"]').classList.add('active');
+    document.getElementById('kp-panel-' + tab).classList.add('active');
+}
+
+function kpKelimeGirisGoster() {
+    document.getElementById('kpKelimeGirisEkrani').style.display = 'block';
+    document.getElementById('kpKelimeOyunEkrani').style.display = 'none';
+    sinifGridKisitlamaUygula('kpSinifGrid', function(s){ kpAktifSinif = s; }, function(s){ genericSinifGuncelle(s, 'kpUniteBox', function(u){ kpSecilenUniteler = u; }); });
+    let isimInput = document.getElementById('kpIsimInput');
+    if (isimInput) {
+        if (siniftaOynananOgrenci) { isimInput.value = siniftaOynananOgrenci; isimInput.disabled = true; }
+        else if (aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== "teacher") { isimInput.value = aktifOgrenciAdi; isimInput.disabled = false; }
+        else { isimInput.value = ""; isimInput.disabled = false; }
+    }
+    document.getElementById('kpMikUyari').style.display = kpTanimaDesteklVar ? 'none' : 'block';
+}
+function kpSinifSec(sinif, btn) {
+    kpAktifSinif = sinif;
+    document.getElementById('kpSinifGrid').querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    genericSinifGuncelle(sinif, 'kpUniteBox', function(u){ kpSecilenUniteler = u; });
+}
+
+function kpKelimeOyunuBaslat() {
+    let isim = document.getElementById('kpIsimInput').value.trim();
+    if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
+    if (kpSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
+
+    let havuz = oyunHavuzGetir(kpAktifSinif, kpSecilenUniteler);
+    if (havuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
+
+    let hedefSoruSayisi = 10 + (Number(kpAktifSinif) - 1) * 5;
+    let karisik = [...havuz].sort(() => Math.random() - 0.5);
+    kpSoruListesi = karisik.slice(0, Math.min(hedefSoruSayisi, karisik.length));
+
+    kpSoruIndex = 0; kpDogruSayisi = 0; kpYanlisSayisi = 0; kpToplamPuan = 0;
+    kpBaslangicZamani = Date.now(); kpGecenSaniye = 0;
+
+    document.getElementById('kpKelimeGirisEkrani').style.display = 'none';
+    document.getElementById('kpKelimeOyunEkrani').style.display = 'block';
+
+    if (kpTimerInterval) clearInterval(kpTimerInterval);
+    kpTimerInterval = setInterval(() => { kpGecenSaniye = Math.floor((Date.now()-kpBaslangicZamani)/1000); }, 1000);
+
+    kpSoruGoster();
+}
+
+function kpSoruGoster() {
+    if (kpSoruIndex >= kpSoruListesi.length) { kpKelimeOyunuBitir(); return; }
+    let soru = kpSoruListesi[kpSoruIndex];
+    let ingilizceGosterilsin = Math.random() > 0.5;
+    kpAktifSoru = {
+        gosterilen: ingilizceGosterilsin ? (soru.ingilizce||soru.en) : (soru.turkce||soru.tr),
+        beklenenCevap: ingilizceGosterilsin ? (soru.turkce||soru.tr) : (soru.ingilizce||soru.en),
+        dil: ingilizceGosterilsin ? 'tr-TR' : 'en-US'
+    };
+    document.getElementById('kpSoruSayac').innerText = 'Kelime: ' + (kpSoruIndex+1) + ' / ' + kpSoruListesi.length;
+    document.getElementById('kpPuanGoster').innerText = 'Puan: ' + kpToplamPuan;
+    document.getElementById('kpSoruYon').innerText = ingilizceGosterilsin ? "Bu kelimenin Türkçesini SÖYLE:" : "Bu kelimenin İngilizcesini SÖYLE:";
+    document.getElementById('kpSoruKelime').innerText = kpAktifSoru.gosterilen;
+    document.getElementById('kpSonucAlani').innerHTML = '';
+    document.getElementById('kpYazariCevapInput').value = '';
+    kpMikButonSifirla();
+}
+function kpMikButonSifirla() {
+    let btn = document.getElementById('kpMikBtn');
+    btn.classList.remove('dinliyor');
+    btn.innerHTML = '🎤';
+}
+
+function kpDinlemeyiBaslat() {
+    if (!kpTanimaDesteklVar) { alert("Tarayıcın konuşma tanımayı desteklemiyor, aşağıdan yazarak cevaplayabilirsin."); return; }
+    if (kpDinliyorMu) { kpDinlemeyiDurdur(); return; }
+
+    let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    kpRecognition = new SR();
+    kpRecognition.lang = kpAktifSoru.dil;
+    kpRecognition.interimResults = false;
+    kpRecognition.maxAlternatives = 3;
+
+    kpDinliyorMu = true;
+    document.getElementById('kpMikBtn').classList.add('dinliyor');
+    document.getElementById('kpMikBtn').innerHTML = '⏺️';
+
+    kpRecognition.onresult = function(event) {
+        let sonuclar = [];
+        for (let i = 0; i < event.results[0].length; i++) { sonuclar.push(event.results[0][i].transcript); }
+        kpCevapKontrolEt(sonuclar.join(' | '));
+    };
+    kpRecognition.onerror = function() {
+        kpDinlemeyiDurdur();
+        document.getElementById('kpSonucAlani').innerHTML = '<div class="kp-yanlis">🎙️ Ses algılanamadı, tekrar dene ya da yazarak cevapla.</div>';
+    };
+    kpRecognition.onend = function() { kpDinlemeyiDurdur(); };
+
+    kpRecognition.start();
+}
+function kpDinlemeyiDurdur() {
+    kpDinliyorMu = false;
+    if (kpRecognition) { try { kpRecognition.stop(); } catch(e) {} }
+    kpMikButonSifirla();
+}
+
+function kpNormallestir(s) {
+    return (s||"").toString().trim().toLowerCase()
+        .replace(/ı/g,'i').replace(/İ/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u')
+        .replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c')
+        .replace(/[.,!?'"]/g,'').replace(/\s+/g,' ');
+}
+
+function kpCevapKontrolEt(soylenenMetin) {
+    let adaylar = soylenenMetin.split('|').map(function(s){ return kpNormallestir(s); });
+    let dogruCevap = kpNormallestir(kpAktifSoru.beklenenCevap);
+    let dogruMu = adaylar.some(function(a){ return a === dogruCevap || a.indexOf(dogruCevap) !== -1 || dogruCevap.indexOf(a) !== -1; });
+
+    if (dogruMu) {
+        kpDogruSayisi++;
+        kpToplamPuan += 10;
+        document.getElementById('kpSonucAlani').innerHTML = '<div class="kp-dogru">✅ Doğru! Sen: "' + soylenenMetin.split('|')[0] + '"</div>';
+    } else {
+        kpYanlisSayisi++;
+        document.getElementById('kpSonucAlani').innerHTML = '<div class="kp-yanlis">❌ Sen: "' + soylenenMetin.split('|')[0] + '" — Doğrusu: "' + kpAktifSoru.beklenenCevap + '"</div>';
+    }
+    document.getElementById('kpPuanGoster').innerText = 'Puan: ' + kpToplamPuan;
+    setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1400);
+}
+
+function kpYazariCevapGonder() {
+    let deger = document.getElementById('kpYazariCevapInput').value.trim();
+    if (!deger) return;
+    kpCevapKontrolEt(deger);
+}
+
+async function kpKelimeOyunuBitir() {
+    if (kpTimerInterval) clearInterval(kpTimerInterval);
+    document.getElementById('kpKelimeOyunEkrani').style.display = 'none';
+    document.getElementById('kpKelimeBitisEkrani').style.display = 'block';
+
+    let isim = document.getElementById('kpIsimInput').value.trim();
+    let sinifStr = kpAktifSinif + ". Sınıf";
+
+    document.getElementById('kpResIsim').innerText = isim;
+    document.getElementById('kpResDY').innerText = kpDogruSayisi + ' Doğru / ' + kpYanlisSayisi + ' Yanlış';
+    document.getElementById('kpResPuan').innerText = kpToplamPuan + ' Puan';
+
+    try {
+        await fetch(apiURL, { method:"POST", body: JSON.stringify({
+            islem: "konusmaLiderlikKaydet", tarih: new Date().toISOString().split('T')[0],
+            isim: isim, sinif: sinifStr, dogru: kpDogruSayisi, yanlis: kpYanlisSayisi,
+            sure: kpGecenSaniye+"s", suresaniye: kpGecenSaniye, puan: kpToplamPuan
+        })});
+    } catch(e) {}
+
+    liderlikKilitBaslat('kp');
+    oyunLiderlikGoster('konusmaLiderlikTumunuGetir', sinifStr, isim, 'kpGecmisSkorlar', 'Konuşma Pratiği', 'kp');
+}
+            
                 // --- POMODORO ÇALIŞMA SAYACI FONKSİYONLARI ---
         function pomodoroAc() {
             document.getElementById('pomodoroOverlay').style.display = 'flex';
@@ -3786,7 +4096,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbz0otrSNk5zXOiNU85UfPljjG-ImITE1ilRkwAYV3ErUQhIifDiPNviDFuMoMHjfPnwKQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbwzTwEE_OPfy_e-oYMyyJfEcUpqoxiKPYMHnAsfhM26CKMYfWhIP7avD6l6OVXr-vRFmg/exec";
         
                     let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
@@ -10875,6 +11185,25 @@ function dersCalisTamEkranKapat() {
     dcSesDurdur();
     document.getElementById('tab-derscalis').classList.remove('active');
     dcBottomNavSenkronize();
+    dcDurumuSifirla();
+}
+
+function dcDurumuSifirla() {
+    document.querySelectorAll('.dc-screen').forEach(s => s.classList.remove('active'));
+    let seviyeEkrani = document.getElementById('dcScreenLevels');
+    if (seviyeEkrani) seviyeEkrani.classList.add('active');
+    dcGecmis = ['dcScreenLevels'];
+    dcAktifSeviye = null;
+    dcAktifKategori = null;
+    dcAktifKonu = null;
+    let geriBtn = document.getElementById('dcBackBtn');
+    if (geriBtn) geriBtn.classList.add('hidden');
+    let crumb = document.getElementById('dcCrumb');
+    if (crumb) crumb.innerText = '';
+    let aramaInput = document.getElementById('dcAramaInput');
+    if (aramaInput) aramaInput.value = '';
+    let aramaSonuc = document.getElementById('dcAramaSonuclari');
+    if (aramaSonuc) aramaSonuc.style.display = 'none';
 }
 
       function bnSekmeSec(tab, btn) {
