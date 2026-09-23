@@ -11131,5 +11131,55 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
     
+<style>
+/* ===== ARAÇLAR ÇUBUĞU — KESİN VE NİHAİ DÜZELTME (Belgenin en sonunda, her şeyi ezer) ===== */
+#floatingToolsDock{
+    position: fixed !important;
+    bottom: 72px !important;
+    right: 14px !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 999997 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    background: rgba(255,255,255,0.95) !important;
+    padding: 6px 10px !important;
+    border-radius: 999px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+#dockItemsRow{
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    position: static !important;
+}
+#floatingToolsDock .dock-btn-item,
+#floatingToolsDock #sayfaYenileBtn,
+#floatingToolsDock #duyuruGecmisBtn,
+#floatingToolsDock #yardimBtn,
+#floatingToolsDock .teacher-gear-wrap,
+#floatingToolsDock .ai-float-container,
+#floatingToolsDock .teacher-gear-btn,
+#floatingToolsDock .ai-float-btn{
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
+}
+#floatingToolsDock .teacher-gear-wrap,
+#floatingToolsDock .ai-float-container{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+</style>
 </body>
 </html>
