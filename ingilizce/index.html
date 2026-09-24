@@ -6061,11 +6061,12 @@ function genelOyunGirisEngelliMi() {
             let hedefSayisi = 10 + (Number(kelimebulAktifSinif) - 1) * 5;
             kelimebulKelimeler = [...havuz].sort(() => Math.random() - 0.5).slice(0, Math.min(hedefSayisi, havuz.length));
                       kelimebulAktifIndex = 0; kelimebulPuan = 0; kelimebulCan = 5; kelimebulKombo = 0;
-            document.getElementById('kelimebulGirisEkrani').style.display = 'none';
-            document.getElementById('kelimebulOyunEkrani').style.display = 'block';
-            kelimebulMuzikBaslat();
-            kelimebulSonrakiKelime();
-        }
+                genelEnerjiHarca(-1);
+    document.getElementById('kelimebulGirisEkrani').style.display = 'none';
+    document.getElementById('kelimebulOyunEkrani').style.display = 'block';
+    kelimebulMuzikBaslat();
+    kelimebulSonrakiKelime();
+}
         function kelimebulSonrakiKelime() {
             if (kelimebulAktifIndex >= kelimebulKelimeler.length || kelimebulCan <= 0) { kelimebulOyunuBitir(); return; }
             let k = kelimebulKelimeler[kelimebulAktifIndex];
@@ -6115,8 +6116,7 @@ function genelOyunGirisEngelliMi() {
                                 let puanKazanc = Math.max(5, (7 - kelimebulDenemeSayisi) * 10 - gecenSaniye) + (kelimebulKombo * 3);
                 kelimebulKombo++;
                 kelimebulPuan += puanKazanc;
-                genelKomboGoster(kelimebulKombo, document.querySelector('#kelimebulOyunOverlay .game-modal-content'));
-                genelEnerjiHarca(-1);
+                               genelKomboGoster(kelimebulKombo, document.querySelector('#kelimebulOyunOverlay .game-modal-content'));
                 document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
                 setTimeout(() => { kelimebulAktifIndex++; kelimebulSonrakiKelime(); }, 1200);
             } else if (kelimebulDenemeSayisi >= 6) {
