@@ -4342,13 +4342,13 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
                     console.warn("Otomatik girişte kullanıcı bulunamadı:", aktifOgrenciAdi);
                 }
 
-                                              baslatSayac();
+                                                                baslatSayac();
                 arkaPlanVeriYenilemeBaslat();
                 gununKonusuYukle();
                 duyuruKontrolEt();
                 dockZamanlayiciyiBaslat();
+                baModuAc();
             }
-
                        ogretmenSelectDoldur();
             rubricGridleriOlustur();
             ozellikSecDoldur();
@@ -8642,7 +8642,7 @@ localStorage.setItem("ing_toplamSaniye", toplamSaniye);
                 }
 
                 // Kısa bir gecikme ekleyerek animasyonun akıcı görünmesini sağla ve paneli aç
-                                                                              setTimeout(() => {
+                                                                                                                                                           setTimeout(() => {
                     document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                     document.getElementById('panel-alani').style.display = 'block';
                     girisSerisiGuncelleVeGetir();
@@ -8654,6 +8654,7 @@ localStorage.setItem("ing_toplamSaniye", toplamSaniye);
             
                     duyuruKontrolEt();
                     dockZamanlayiciyiBaslat();
+                    baModuAc();
                 }, 600);
             } else {
                 // Hatalı giriş durumunda tekrar giriş ekranına dön
