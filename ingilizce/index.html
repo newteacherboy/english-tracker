@@ -916,17 +916,15 @@
     font-weight: 800 !important;
 }
 
-                       .genel-kombo-ucus-wrap { position:fixed; left:50%; bottom:-100px; transform:translateX(-50%); z-index:100000020; text-align:center; pointer-events:none; animation: genelKomboUcusYol 2.1s cubic-bezier(.2,.7,.3,1) forwards; }
-@keyframes genelKomboUcusYol {
-  0% { bottom:-100px; opacity:0; transform:translateX(-50%) scale(.6) rotate(-8deg); }
-  15% { opacity:1; }
-  55% { transform:translateX(-50%) scale(1.18) rotate(6deg); }
-  85% { opacity:1; }
-  100% { bottom:105%; opacity:0; transform:translateX(-50%) scale(.9) rotate(0deg); }
-}
-.genel-kombo-papagan-ucan { font-size:62px; display:block; filter:drop-shadow(0 8px 12px rgba(0,0,0,.35)); }
-.genel-kombo-txt-ucan { display:inline-block; margin-top:-10px; font-size:16px; font-weight:900; color:#78350f; background:linear-gradient(135deg,#ffd166,#ec8636); padding:7px 18px; border-radius:22px; box-shadow:0 8px 22px rgba(236,134,54,.5); white-space:nowrap; }
-
+                                 .genel-kombo-burst-wrap { position:fixed; top:38%; left:50%; transform:translate(-50%,-50%); z-index:100000020; pointer-events:none; text-align:center; }
+.gkb-star { position:absolute; top:50%; left:50%; width:80px; height:80px; border-radius:50%; background:radial-gradient(circle,rgba(255,209,102,.9),transparent 70%); transform:translate(-50%,-50%); animation:gkbBurst 1.5s ease-out forwards; }
+@keyframes gkbBurst { 0%{opacity:0; transform:translate(-50%,-50%) scale(.2);} 30%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-50%) scale(3);} }
+.gkb-ray { position:absolute; top:50%; left:50%; width:6px; height:26px; background:linear-gradient(#ffd166,transparent); border-radius:4px; transform-origin:center; animation:gkbRay 1.5s ease-out forwards; }
+@keyframes gkbRay { 0%{opacity:0; transform:translate(-50%,-50%) rotate(var(--rot)) translateY(0) scale(.5);} 30%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-50%) rotate(var(--rot)) translateY(-70px) scale(1.2);} }
+.gkb-papagan { position:relative; font-size:70px; display:block; animation:gkbPapagan 1.5s ease-out forwards; filter:drop-shadow(0 10px 14px rgba(0,0,0,.4)); }
+@keyframes gkbPapagan { 0%{opacity:0; transform:scale(.3) rotate(-15deg) translateY(60px);} 20%{opacity:1; transform:scale(1.3) rotate(8deg) translateY(-10px);} 40%{transform:scale(1) rotate(-4deg) translateY(-4px);} 80%{opacity:1;} 100%{opacity:0; transform:scale(.9) rotate(0deg) translateY(-20px);} }
+.gkb-txt { display:inline-block; margin-top:-10px; background:linear-gradient(135deg,#ffd166,#ec8636); color:#78350f; font-weight:900; font-size:17px; padding:8px 22px; border-radius:24px; white-space:nowrap; box-shadow:0 8px 20px rgba(236,134,54,.5); animation:gkbTxt 1.5s ease-out forwards; }
+@keyframes gkbTxt { 0%{opacity:0; transform:scale(.5) translateY(10px);} 40%{opacity:1; transform:scale(1.1) translateY(0);} 60%{transform:scale(1);} 85%{opacity:1;} 100%{opacity:0; transform:scale(.95) translateY(-10px);} }
 .enerji-bitti-card { background:linear-gradient(160deg,#0d5a6c,#072c35); border-radius:24px; max-width:340px; margin:0 auto; padding:28px 22px 22px; text-align:center; position:relative; }
 .enerji-bitti-kapat { position:absolute; top:12px; right:12px; background:rgba(255,255,255,.12); border:none; color:#fff; width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:12px; }
 .enerji-bitti-ikon-wrap { position:relative; height:80px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; }
@@ -2121,7 +2119,7 @@
       <div class="ba-secenekler" id="baYagmurSecenekler"></div>
     </div>
 
-    <div id="baAsmacaPanel" style="display:none; text-align:center;">
+        <div id="baAsmacaPanel" style="display:none; text-align:center;">
       <div class="ba-panel-title">💀 Kayıp Harfler Laneti</div>
       <div class="ba-bosluk-ipucu" id="baAsmacaIpucu">💡 İpucu</div>
       <div id="baAsmacaCan" style="margin:8px 0; font-size:16px;"></div>
@@ -2129,6 +2127,21 @@
       <div class="ba-asmaca-klavye" id="baAsmacaKlavye"></div>
     </div>
   </div>
+
+  <div id="baSonucEkrani" class="ba-sonuc-ekrani" style="display:none;">
+    <div class="ba-sonuc-mascot">🦜</div>
+    <div class="ba-sonuc-title" id="baSonucBaslik">Süpersin!</div>
+    <div class="ba-sonuc-sub" id="baSonucSub">Seviyeyi tamamladın!</div>
+    <div class="ba-sonuc-stats">
+      <div class="ba-stat-card"><div class="ba-stat-head" style="background:#ff6b6b;">PUAN</div><div class="ba-stat-body" id="baSonucPuan">0</div></div>
+      <div class="ba-stat-card"><div class="ba-stat-head" style="background:#6bcb77;">DOĞRULUK</div><div class="ba-stat-body" id="baSonucDogruluk">%0</div></div>
+      <div class="ba-stat-card"><div class="ba-stat-head" style="background:#4d96ff;">SÜRE</div><div class="ba-stat-body" id="baSonucSure">0:00</div></div>
+    </div>
+    <button class="ba-sonuc-btn" onclick="baLevelupKapat()">DEVAM ET</button>
+    <div class="ba-rank-title">🏆 Bu Seviyede Sıralama</div>
+    <div id="baSonucSiralama"></div>
+  </div>
+</div>
 </div>
 
 <div class="ba-levelup-overlay" id="baLevelupOverlay">
@@ -4289,7 +4302,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbyvjkx2goAt3ldsVXcRSKbtGCgj60p1fOii7LmvFNQkTw7-QoYowg2DP2MmRRo-RKZdUQ/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbyxkcgBAsj8ZIe-yDQbYwCktzacIWI9GCDYXLwelAmz3245Ui_4pb_8VwjoyFW1B_6oag/exec";
         
                     let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
@@ -4433,10 +4446,11 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
                                                                 baslatSayac();
                 arkaPlanVeriYenilemeBaslat();
                 gununKonusuYukle();
-                duyuruKontrolEt();
-                dockZamanlayiciyiBaslat();
-                baModuAc();
-            }
+                                   duyuruKontrolEt();
+                    dockZamanlayiciyiBaslat();
+                    baModuAc();
+                    gunlukEnerjiBonusuKontrolEt();
+                }, 600);
                        ogretmenSelectDoldur();
             rubricGridleriOlustur();
             ozellikSecDoldur();
@@ -5539,10 +5553,12 @@ function genelKomboGoster(komboSayisi, targetEl) {
     if (!komboSayisi || komboSayisi % 5 !== 0) return;
     genelSesEfektiCal('kombo', komboSayisi);
     let wrap = document.createElement('div');
-    wrap.className = 'genel-kombo-ucus-wrap';
-    wrap.innerHTML = '<span class="genel-kombo-papagan-ucan">🦜</span><span class="genel-kombo-txt-ucan">HARİKA! KOMBO x' + komboSayisi + '</span>';
+    wrap.className = 'genel-kombo-burst-wrap';
+    let raylar = '';
+    for (let i = 0; i < 8; i++) raylar += `<div class="gkb-ray" style="--rot:${i*45}deg;"></div>`;
+    wrap.innerHTML = `<div class="gkb-star"></div>${raylar}<span class="gkb-papagan">🦜</span><span class="gkb-txt">🔥 KOMBO x${komboSayisi}!</span>`;
     document.body.appendChild(wrap);
-    setTimeout(() => wrap.remove(), 2200);
+    setTimeout(() => wrap.remove(), 1500);
 }
 async function genelEnerjiHarca(miktar) {
     let isim = (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) || (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi);
@@ -5551,6 +5567,7 @@ async function genelEnerjiHarca(miktar) {
         let res = await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"enerjiDegistir", ogrenci: isim, fark: miktar }) });
         let d = await res.json();
         if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
+        genelEnerjiDegisimGoster(miktar);
     } catch(e) {}
 }
 function genelEnerjiBittiGoster() {
@@ -8781,10 +8798,11 @@ localStorage.setItem("ing_toplamSaniye", toplamSaniye);
                     setTimeout(puanBildirimKontrolEt, 1400);
                     setInterval(puanBildirimKontrolEt, 45000);
             
-                    duyuruKontrolEt();
-                    dockZamanlayiciyiBaslat();
-                    baModuAc();
-                }, 600);
+                                    duyuruKontrolEt();
+                dockZamanlayiciyiBaslat();
+                baModuAc();
+                gunlukEnerjiBonusuKontrolEt();
+            }, 600);
             } else {
                 // Hatalı giriş durumunda tekrar giriş ekranına dön
                 document.getElementById('oturumYuklemeOverlay').style.display = 'none';
@@ -9458,10 +9476,29 @@ function headerEnerjiYukle() {
     .then(d => { headerEnerjiGoster(d.enerjiKalan, d.enerjiMax); window._kpEnerjiCache = d; })
     .catch(() => {});
 }
+function genelEnerjiDegisimGoster(fark) {
+    if (!fark) return;
+    let badge = document.getElementById('headerEnerjiBadge');
+    if (!badge) return;
+    let el = document.createElement('div');
+    el.className = 'enerji-degisim-ucan';
+    el.innerText = (fark > 0 ? '+' : '') + fark + ' ⚡';
+    el.style.color = fark > 0 ? '#4ade80' : '#f87171';
+    badge.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+}
 function headerEnerjiGoster(kalan, max) {
     let pct = max > 0 ? Math.round((kalan / max) * 100) : 0;
     let bar = document.getElementById('headerEnerjiBar');
-    if (bar) bar.style.width = pct + '%';
+    let onceki = window.genelEnerjiKalan;
+    if (bar) {
+        bar.style.width = pct + '%';
+        if (onceki !== undefined && kalan !== onceki) {
+            bar.classList.remove('enerji-doldu', 'enerji-azaldi');
+            void bar.offsetWidth;
+            bar.classList.add(kalan > onceki ? 'enerji-doldu' : 'enerji-azaldi');
+        }
+    }
     let num = document.getElementById('headerEnerjiNum');
     if (num) num.innerText = kalan + '/' + max;
     window._kpEnerjiCache = { enerjiKalan: kalan, enerjiMax: max };
@@ -10152,6 +10189,13 @@ window.boslukCizilenKelimeler = temizKelimeler;
     document.getElementById('boslukSayacInfo').innerText = `0 / ${temizKelimeler.length} tamamlandı`;
 }
 
+            function baKampanyaIndirimUygula(seviyeNo) {
+    let baslangic = localStorage.getItem('ing_baKampanyaBaslangic');
+    if (!baslangic) { baslangic = new Date().toISOString(); localStorage.setItem('ing_baKampanyaBaslangic', baslangic); }
+    let gecenGun = (Date.now() - new Date(baslangic).getTime()) / 86400000;
+    return gecenGun <= 14 && seviyeNo % 2 === 0;
+}
+
 function boslukKontrolEt() {
     let satirlar = document.querySelectorAll('#boslukSatirlarContainer > div');
     let dogruKelimeSayisi = 0;
@@ -10454,6 +10498,7 @@ function etkinlikYapildiIsaretleCagir(satirIndex) {
     fetch(`${apiURL}?islem=etkinlikYapildiIsaretle&satirIndex=${satirIndex}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`)
     .then(() => {
         let e = tumEtkinliklerCache.find(x => x.satirIndex === satirIndex);
+        if (!e || !e.yapildiMi) { genelEnerjiHarca(1); genelEnerjiKazanimAnimasyonuGoster(1, '🎯 Etkinlik bonusu!'); }
         if (e) e.yapildiMi = true;
     })
     .catch(() => {});
@@ -10556,10 +10601,11 @@ function videoOynaticiAc(baslik, link, satirIndex) {
 
     document.getElementById('videoOynaticiOverlay').style.display = 'flex';
 
-    if (satirIndex && aktifOgrenciAdi) {
+       if (satirIndex && aktifOgrenciAdi) {
         fetch(`${apiURL}?islem=videoIzlendiIsaretle&satirIndex=${satirIndex}&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`)
         .then(() => {
             let v = tumVideolarCache.find(x => x.satirIndex === satirIndex);
+            if (!v || !v.izlendiMi) { genelEnerjiHarca(1); genelEnerjiKazanimAnimasyonuGoster(1, '🎬 Video bonusu!'); }
             if (v) v.izlendiMi = true;
         })
         .catch(() => {});
@@ -11659,6 +11705,31 @@ function dockZamanlayiciyiBaslat() {
 
 // Not: dock zamanlayıcısı artık girişten hemen sonra (otomatik veya manuel) başlatılıyor.
 
+         function genelEnerjiKazanimAnimasyonuGoster(miktar, sebep) {
+    let wrap = document.createElement('div');
+    wrap.className = 'genel-enerji-kazanim-wrap';
+    wrap.innerHTML = `
+        <div class="gek-battery-row">
+            <div class="gek-battery"><div class="gek-fill"></div></div>
+            <div class="gek-mascot">🦜</div>
+            <div class="gek-spark" style="top:10%; right:-6px; --sx:14px; --sy:-14px;">✨</div>
+            <div class="gek-spark" style="top:70%; right:-2px; --sx:10px; --sy:16px; animation-delay:.1s;">⭐</div>
+        </div>
+        <div class="gek-txt">${sebep} <b>+${miktar} ⚡</b></div>`;
+    document.body.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 2200);
+}
+function gunlukEnerjiBonusuKontrolEt() {
+    let bugun = new Date().toISOString().split('T')[0];
+    let sonBonus = localStorage.getItem('ing_gunlukEnerjiBonusTarih');
+    if (sonBonus === bugun) return;
+    localStorage.setItem('ing_gunlukEnerjiBonusTarih', bugun);
+    setTimeout(() => {
+        genelEnerjiHarca(2);
+        genelEnerjiKazanimAnimasyonuGoster(2, '🌙 Günlük giriş bonusu!');
+    }, 1200);
+}
+
             // ========= KONUŞMA PRATİĞİ MODÜLÜ =========
 let kpAktifSinif = 1;
 let kpSecilenUniteler = [];
@@ -11757,6 +11828,48 @@ function kpParkurCiz() {
     .kp-step-name { font-size:12.5px; font-weight:900; color:#553c9a; margin-top:1px; }
     .kp-step-name.locked-txt { color:#b3a4d9; }
     .kp-step-sub { font-size:9.5px; color:#9f7aea; margin-top:1px; }
+
+
+.header-energy-badge { position:relative; }
+.header-energy-bar-fill.enerji-doldu { animation: enerjiDolduPulse .7s ease; }
+@keyframes enerjiDolduPulse { 0%{filter:brightness(1);} 40%{filter:brightness(1.9);} 100%{filter:brightness(1);} }
+.header-energy-bar-fill.enerji-azaldi { animation: enerjiAzaldiShake .4s ease; }
+@keyframes enerjiAzaldiShake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-2px);} 75%{transform:translateX(2px);} }
+.enerji-degisim-ucan { position:absolute; top:-6px; right:2px; font-size:11px; font-weight:900; animation: enerjiDegisimYuz 1s ease-out forwards; pointer-events:none; white-space:nowrap; }
+@keyframes enerjiDegisimYuz { 0%{opacity:0; transform:translateY(0);} 20%{opacity:1;} 100%{opacity:0; transform:translateY(-20px);} }
+
+.genel-enerji-kazanim-wrap { position:fixed; top:40%; left:50%; transform:translate(-50%,-50%); z-index:100000025; text-align:center; pointer-events:none; }
+.gek-battery-row { position:relative; display:inline-block; padding-right:34px; }
+.gek-battery { width:130px; height:60px; border:5px solid #fff; border-radius:10px; position:relative; padding:4px; background:#1e293b; box-shadow:0 14px 34px rgba(0,0,0,.4); }
+.gek-battery::after { content:''; position:absolute; top:50%; right:-11px; transform:translateY(-50%); width:8px; height:24px; background:#fff; border-radius:0 3px 3px 0; z-index:1; }
+.gek-fill { height:100%; border-radius:5px; background:linear-gradient(90deg,#fbbf24,#f59e0b); animation:gekRise 2s ease-out forwards; box-shadow:0 0 16px rgba(245,158,11,.8); }
+@keyframes gekRise { 0%{width:5%;} 60%{width:88%;} 100%{width:88%;} }
+.gek-mascot { position:absolute; top:50%; right:-40px; transform:translateY(-50%) scale(0); font-size:34px; z-index:3; animation:gekMascotPop 2s ease-out forwards; filter:drop-shadow(0 4px 8px rgba(0,0,0,.4)); }
+@keyframes gekMascotPop {
+  0%,50% { transform:translateY(-50%) scale(0) rotate(-10deg); opacity:0; }
+  62% { transform:translateY(-50%) scale(1.3) rotate(8deg); opacity:1; }
+  72% { transform:translateY(-50%) scale(1) rotate(-4deg); }
+  85% { transform:translateY(-58%) scale(1.05) rotate(3deg); }
+  100% { transform:translateY(-50%) scale(1) rotate(0deg); opacity:1; }
+}
+.gek-spark { position:absolute; font-size:13px; opacity:0; animation:gekSparkPop 2s ease-out forwards; z-index:2; }
+@keyframes gekSparkPop { 0%,55%{opacity:0; transform:translate(0,0) scale(.4);} 65%{opacity:1;} 100%{opacity:0; transform:translate(var(--sx),var(--sy)) scale(1.1);} }
+.gek-txt { margin-top:16px; color:#fbbf24; font-weight:900; font-size:14px; background:rgba(0,0,0,.5); padding:6px 16px; border-radius:14px; display:inline-block; animation:gekTxtFade 2.2s ease-out forwards; }
+@keyframes gekTxtFade { 0%{opacity:0;} 15%{opacity:1;} 85%{opacity:1;} 100%{opacity:0;} }
+
+
+#tab-buyuakademisi .ba-sonuc-ekrani { text-align:center; padding:20px 16px; }
+#tab-buyuakademisi .ba-sonuc-mascot { font-size:70px; margin-bottom:8px; }
+#tab-buyuakademisi .ba-sonuc-title { font-size:22px; font-weight:900; color:#7c3aed; margin-bottom:4px; }
+#tab-buyuakademisi .ba-sonuc-sub { font-size:12px; color:#9f7aea; margin-bottom:18px; }
+#tab-buyuakademisi .ba-sonuc-stats { display:flex; gap:8px; margin-bottom:18px; }
+#tab-buyuakademisi .ba-stat-card { flex:1; border-radius:12px; overflow:hidden; }
+#tab-buyuakademisi .ba-stat-head { font-size:8px; font-weight:900; padding:5px; color:#fff; }
+#tab-buyuakademisi .ba-stat-body { background:#f5f3ff; padding:10px 4px; font-weight:900; font-size:14px; }
+#tab-buyuakademisi .ba-sonuc-btn { width:100%; max-width:280px; padding:13px; border-radius:14px; border:none; font-weight:900; font-size:13px; margin-bottom:18px; background:linear-gradient(135deg,#a06bff,#ff6b9d); color:#fff; cursor:pointer; }
+#tab-buyuakademisi .ba-rank-title { font-size:12px; font-weight:900; text-align:left; margin-bottom:8px; color:#553c9a; max-width:280px; margin-left:auto; margin-right:auto; }
+#tab-buyuakademisi .ba-rank-row { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; margin-bottom:5px; font-size:11px; font-weight:800; max-width:280px; margin-left:auto; margin-right:auto; background:#f5f3ff; color:#553c9a; }
+    
     </style>`;
         let html = stil + '<div id="kpParkurKapsayici">';
     html += '<div class="kp-confetti-bg" style="top:8px;right:14px;">🎊</div><div class="kp-confetti-bg" style="top:50px;left:4px;animation-delay:1s;">🎈</div>';kpTumSeviyeler.forEach((sv, idx) => {
@@ -11970,6 +12083,7 @@ function baSeviyeBaslat(seviyeNo) {
     let seviye = baTumSeviyeler.find(s => s.seviyeNo === seviyeNo);
     if (!seviye || seviye.kelimeler.length === 0) { alert("Bu seviyede kelime bulunamadı."); return; }
 
+    if (!baKampanyaIndirimUygula(seviyeNo)) genelEnerjiHarca(-1);
     baAktifSeviyeNo = seviyeNo;
     baDogruSayisi = 0; baYanlisSayisi = 0; baToplamPuan = 0; baKombo = 0; baSoruIndex = 0;
 
@@ -12007,16 +12121,12 @@ function baDogruIsle() {
     baToplamPuan += kazanc;
     baKombo++;
     genelKomboGoster(baKombo, document.getElementById('baOyunEkrani'));
-    genelEnerjiHarca(-1);
-    baEnerjiSatiriGuncelle();
     document.getElementById('baKomboText').innerText = 'KOMBO x' + baKombo;
 }
 function baYanlisIsle() {
     genelSesEfektiCal('yanlis');
     baYanlisSayisi++;
     baKombo = 0;
-    genelEnerjiHarca(-1);
-    baEnerjiSatiriGuncelle();
     document.getElementById('baKomboText').innerText = 'KOMBO x' + baKombo;
 }
 
@@ -12068,7 +12178,7 @@ function baSesCevapKontrolEt(soylenenMetin) {
     let dogruCevapRaw = baAktifSoru.kelime.ingilizce || baAktifSoru.kelime.en;
     let dogruCevap = kpNormallestir(dogruCevapRaw);
     let altlar = kpEsAnlamMap[dogruCevap] || [];
-    let dogruMu = adaylar.some(a => a === dogruCevap || a.indexOf(dogruCevap) !== -1 || dogruCevap.indexOf(a) !== -1 || altlar.indexOf(a) !== -1);
+        let dogruMu = adaylar.some(a => genelSesEslesiyorMu(a, dogruCevap, altlar));
     let sonucEl = document.getElementById('baSesSonuc');
     if (dogruMu) {
         sonucEl.className = 'ba-sonuc ok';
@@ -12091,6 +12201,7 @@ function baSesCevapKontrolEt(soylenenMetin) {
 
 /* ===== KRİSTAL KÜRE KEHANETİ ===== */
 function baKristalKuresiGoster(k) {
+    document.getElementById('baKristalPanel').style.display = 'block';
     let ingilizceMi = Math.random() > 0.5;
     let soruMetin, yonEtiket, dogruCevap;
     if (ingilizceMi) {
@@ -12143,6 +12254,7 @@ function baKristalCevapVer(secilenIndex) {
 
 /* ===== BALON PATLATMA ===== */
 function baBalonGoster(k) {
+    document.getElementById('baBalonPanel').style.display = 'block';
     let ingilizceMi = Math.random() > 0.5;
     let soruMetin, dogruCevap;
     if (ingilizceMi) { soruMetin = k.ingilizce||k.en; dogruCevap = k.turkce||k.tr; }
@@ -12183,6 +12295,7 @@ function baBalonCevapVer(secilenIndex) {
 
 /* ===== FORMÜL TAMAMLAMA (Boşluk Doldurma) ===== */
 function baBoslukGoster(k) {
+    document.getElementById('baBoslukPanel').style.display = 'block';
     let en = (k.ingilizce || k.en || '').toUpperCase();
     let gizliIdx = [Math.floor(Math.random()*en.length)];
     if (en.length >= 5) {
@@ -12221,6 +12334,7 @@ function baBoslukKontrolEt() {
 
 /* ===== İKİZ AYNA BÜYÜSÜ (Hafıza) ===== */
 function baHafizaGoster(k) {
+    document.getElementById('baHafizaPanel').style.display = 'block';
     let havuz = window.masterKelimeHavuzu || [];
     let yanlisAday = havuz.filter(x => (x.ingilizce||x.en) !== (k.ingilizce||k.en));
     let yanlis = yanlisAday[Math.floor(Math.random()*yanlisAday.length)] || { ingilizce:'---', turkce:'---' };
@@ -12266,6 +12380,7 @@ function baHafizaTikla(i) {
 /* ===== YILDIZ TOZU YAĞMURU ===== */
 let baYagmurTimer = null;
 function baYagmurGoster(k) {
+    document.getElementById('baYagmurPanel').style.display = 'block';
     let dogru = k.turkce || k.tr;
     document.getElementById('baYagmurKelime').innerText = k.ingilizce || k.en;
     let havuz = window.masterKelimeHavuzu || [];
@@ -12307,6 +12422,7 @@ function baYagmurCevapVer(dogruMu, btnEl) {
 /* ===== KAYIP HARFLER LANETİ (Adam Asmaca) ===== */
 let baAsmacaYanlis = 0, baAsmacaTahmin = [];
 function baAsmacaGoster(k) {
+    document.getElementById('baAsmacaPanel').style.display = 'block';
     let en = (k.ingilizce || k.en || '').toUpperCase();
     baAktifSoru._enKelime = en;
     baAsmacaYanlis = 0; baAsmacaTahmin = [];
@@ -12354,13 +12470,17 @@ async function baSeviyeBitir(enerjiBittiMi) {
     let isim = document.getElementById('baIsimInput').value.trim();
     let seviyeAdi = baSeviyeAdiGetir(baAktifSeviyeNo - 1);
     let basariliMi = !enerjiBittiMi && baDogruSayisi >= Math.ceil(baSoruListesi.length * 0.6);
+    if (!enerjiBittiMi && baYanlisSayisi === 0 && baDogruSayisi === baSoruListesi.length) {
+        genelEnerjiHarca(1);
+        genelEnerjiKazanimAnimasyonuGoster(1, '🏆 Mükemmel seviye bonusu!');
+    }
 
     if (basariliMi && !baTamamlananSeviyeler.has(baAktifSeviyeNo)) {
         baTamamlananSeviyeler.add(baAktifSeviyeNo);
         fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"buyuSeviyeTamamla", ogrenci: isim, seviyeNo: baAktifSeviyeNo }) }).catch(()=>{});
     }
 
-    document.getElementById('baLevelupBaslik').innerText = enerjiBittiMi ? 'Enerjin Bitti!' : (basariliMi ? 'Büyü Tamamlandı!' : 'Neredeyse Oldu!');
+       document.getElementById('baLevelupBaslik').innerText = enerjiBittiMi ? 'Enerjin Bitti!' : (basariliMi ? 'Büyü Tamamlandı!' : 'Neredeyse Oldu!');
     document.getElementById('baLevelupSub').innerText = enerjiBittiMi ? 'Yarın devam edebilirsin' : ('"' + seviyeAdi + '" seviyesini ' + (basariliMi ? 'bitirdin' : 'tamamlayamadın'));
     let sonrakiSeviye = baTumSeviyeler.find(s => s.seviyeNo === baAktifSeviyeNo + 1);
     let badgeMetin = basariliMi
@@ -12368,6 +12488,28 @@ async function baSeviyeBitir(enerjiBittiMi) {
         : ('✅ ' + baDogruSayisi + ' / ' + baSoruListesi.length + ' doğru — en az %60 gerekiyor');
     document.getElementById('baLevelupBadge').innerText = badgeMetin;
     document.getElementById('baLevelupOverlay').style.display = 'flex';
+
+    let dogrulukYuzde = baSoruListesi.length > 0 ? Math.round((baDogruSayisi / baSoruListesi.length) * 100) : 0;
+    let sureStr = Math.floor((baGecenSaniye||0)/60) + ':' + String((baGecenSaniye||0)%60).padStart(2,'0');
+    document.getElementById('baSonucBaslik').innerText = basariliMi ? 'Süpersin!' : 'Neredeyse Oldu!';
+    document.getElementById('baSonucSub').innerText = '"' + seviyeAdi + '" seviyesi';
+    document.getElementById('baSonucPuan').innerText = baToplamPuan;
+    document.getElementById('baSonucDogruluk').innerText = '%' + dogrulukYuzde;
+    document.getElementById('baSonucSure').innerText = sureStr;
+
+    try {
+        await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"konusmaLiderlikKaydet", tarih:new Date().toISOString().split('T')[0], isim:isim, sinif:'Büyü '+baAktifSeviyeNo, unite:seviyeAdi, dogru:baDogruSayisi, yanlis:baYanlisSayisi, sure:sureStr, suresaniye:baGecenSaniye||0, puan:baToplamPuan }) });
+        let liderlikRes = await fetch(`${apiURL}?islem=konusmaLiderlikTumunuGetir&sinif=${encodeURIComponent('Büyü '+baAktifSeviyeNo)}`);
+        let liste = await liderlikRes.json();
+        let siralamaHtml = '';
+        (liste||[]).slice(0,5).forEach((item, idx) => {
+            let emoji = idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':(idx+1)+'.';
+            siralamaHtml += `<div class="ba-rank-row"><span>${emoji}</span><span style="flex:1; text-align:left;">${item.isim}</span><span>${item.puan}</span></div>`;
+        });
+        document.getElementById('baSonucSiralama').innerHTML = siralamaHtml || '<div class="ba-rank-row">Henüz kayıt yok</div>';
+    } catch(e) {}
+
+    document.getElementById('baSonucEkrani').style.display = 'block';
 }
 function baLevelupKapat() {
     document.getElementById('baLevelupOverlay').style.display = 'none';
@@ -12573,6 +12715,27 @@ function kpDinlemeyiDurdur() {
     if (kpRecognition) { try { kpRecognition.stop(); } catch(e) {} }
     kpMikButonSifirla();
 }
+function genelBenzerlikOrani(a, b) {
+    if (!a || !b) return 0;
+    let maliyet = [];
+    for (let i = 0; i <= a.length; i++) maliyet[i] = [i];
+    for (let j = 0; j <= b.length; j++) maliyet[0][j] = j;
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+            maliyet[i][j] = a[i-1] === b[j-1] ? maliyet[i-1][j-1] : 1 + Math.min(maliyet[i-1][j], maliyet[i][j-1], maliyet[i-1][j-1]);
+        }
+    }
+    let mesafe = maliyet[a.length][b.length];
+    let uzunMax = Math.max(a.length, b.length);
+    return uzunMax === 0 ? 1 : 1 - (mesafe / uzunMax);
+}
+function genelSesEslesiyorMu(soylenen, dogruCevap, altlar) {
+    if (soylenen === dogruCevap) return true;
+    if (soylenen.indexOf(dogruCevap) !== -1 || dogruCevap.indexOf(soylenen) !== -1) return true;
+    if (altlar && altlar.indexOf(soylenen) !== -1) return true;
+    if (dogruCevap.length >= 4 && genelBenzerlikOrani(soylenen, dogruCevap) >= 0.75) return true;
+    return false;
+}
 function kpNormallestir(s) {
     return (s||"").toString().trim().toLowerCase()
         .replace(/ı/g,'i').replace(/İ/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u')
@@ -12584,9 +12747,7 @@ function kpCevapKontrolEt(soylenenMetin) {
     let adaylar = soylenenMetin.split('|').map(function(s){ return kpNormallestir(s); });
     let dogruCevap = kpNormallestir(kpAktifSoru.beklenenCevap);
     let altlar = kpEsAnlamMap[dogruCevap] || [];
-    let dogruMu = adaylar.some(function(a){
-        return a === dogruCevap || a.indexOf(dogruCevap) !== -1 || dogruCevap.indexOf(a) !== -1 || altlar.indexOf(a) !== -1;
-    });
+       let dogruMu = adaylar.some(function(a){ return genelSesEslesiyorMu(a, dogruCevap, altlar); });
 
     let kart = document.getElementById('kpCard');
     kart.classList.remove('kp-ok', 'kp-hata');
