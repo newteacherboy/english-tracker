@@ -916,18 +916,16 @@
     font-weight: 800 !important;
 }
 
-            .genel-kombo-wrap { position:absolute; top:38%; left:50%; transform:translate(-50%,-50%); z-index:999999; text-align:center; pointer-events:none; }
-.genel-kombo-papagan { font-size:52px; display:block; animation: genelKomboUcus 1.5s ease-in-out forwards; }
-@keyframes genelKomboUcus {
-  0% { opacity:0; transform:translateY(16px) scale(.5) rotate(-8deg); }
-  25% { opacity:1; transform:translateY(-16px) scale(1.3) rotate(6deg); }
-  60% { transform:translateY(-34px) scale(1.05) rotate(-4deg); }
-  100% { opacity:0; transform:translateY(-58px) scale(.9) rotate(0deg); }
+                       .genel-kombo-ucus-wrap { position:fixed; left:50%; bottom:-100px; transform:translateX(-50%); z-index:100000020; text-align:center; pointer-events:none; animation: genelKomboUcusYol 2.1s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes genelKomboUcusYol {
+  0% { bottom:-100px; opacity:0; transform:translateX(-50%) scale(.6) rotate(-8deg); }
+  15% { opacity:1; }
+  55% { transform:translateX(-50%) scale(1.18) rotate(6deg); }
+  85% { opacity:1; }
+  100% { bottom:105%; opacity:0; transform:translateX(-50%) scale(.9) rotate(0deg); }
 }
-.genel-kombo-txt { font-size:14px; font-weight:900; color:#78350f; background:linear-gradient(135deg,#ffd166,#ec8636); padding:6px 16px; border-radius:20px; margin-top:-6px; box-shadow:0 6px 16px rgba(236,134,54,.5); animation: genelKomboPop .5s cubic-bezier(.3,1.4,.5,1) both; white-space:nowrap; display:inline-block; }
-@keyframes genelKomboPop { from{opacity:0; transform:scale(.3);} to{opacity:1; transform:scale(1);} }
-.genel-kombo-dalga { position:absolute; top:50%; left:50%; width:10px; height:10px; border:3px solid #2ed7ea; border-radius:50%; transform:translate(-50%,-50%); animation: genelKomboDalga 1s ease-out forwards; }
-@keyframes genelKomboDalga { from{width:10px;height:10px;opacity:1;} to{width:240px;height:240px;opacity:0;} }
+.genel-kombo-papagan-ucan { font-size:62px; display:block; filter:drop-shadow(0 8px 12px rgba(0,0,0,.35)); }
+.genel-kombo-txt-ucan { display:inline-block; margin-top:-10px; font-size:16px; font-weight:900; color:#78350f; background:linear-gradient(135deg,#ffd166,#ec8636); padding:7px 18px; border-radius:22px; box-shadow:0 8px 22px rgba(236,134,54,.5); white-space:nowrap; }
 
 .enerji-bitti-card { background:linear-gradient(160deg,#0d5a6c,#072c35); border-radius:24px; max-width:340px; margin:0 auto; padding:28px 22px 22px; text-align:center; position:relative; }
 .enerji-bitti-kapat { position:absolute; top:12px; right:12px; background:rgba(255,255,255,.12); border:none; color:#fff; width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:12px; }
@@ -3980,11 +3978,13 @@ function kyCevapVer(secilenIndex) {
                 let kazanc = Math.max(3, 10 - gecenSaniyeSoru) + (kyKombo * 2);
         kyKombo++;
         kyToplamPuan += kazanc;
-                genelKomboGoster(kyKombo, document.querySelector('#kelimeYarismaOverlay .game-modal-content'));
+                        genelSesEfektiCal('dogru');
+        genelKomboGoster(kyKombo, document.querySelector('#kelimeYarismaOverlay .game-modal-content'));
         document.getElementById('kySik' + secilenIndex).style.background = "#16a34a";
         document.getElementById('kySik' + secilenIndex).style.color = "#ffffff";
         document.getElementById('kySik' + secilenIndex).style.borderColor = "#15803d";
-    } else {
+        } else {
+        genelSesEfektiCal('yanlis');
         kyYanlisSayisi++;
         kyKombo = 0;
         kyToplamPuan -= 5;
@@ -5421,15 +5421,49 @@ function ozellikIzniKaydet() {
             siniftaOyunRozetiGoster();
         }
 
-            function genelKomboGoster(komboSayisi, targetEl) {
-    if (!targetEl || komboSayisi < 2) return;
-    let cs = window.getComputedStyle(targetEl);
-    if (cs.position === 'static') targetEl.style.position = 'relative';
+                    function genelSesEfektiCal(tip, komboSayisi) {
+    try {
+        let ctx = new (window.AudioContext || window.webkitAudioContext)();
+        let osc = ctx.createOscillator();
+        let gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        if (tip === 'dogru') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(660, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.18, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+            osc.start(); osc.stop(ctx.currentTime + 0.3);
+            if (navigator.vibrate) navigator.vibrate(40);
+        } else if (tip === 'yanlis') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 0.25);
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+            osc.start(); osc.stop(ctx.currentTime + 0.35);
+            if (navigator.vibrate) navigator.vibrate([50, 40, 50]);
+        } else if (tip === 'kombo') {
+            let pitch = Math.min(1800, 700 + (komboSayisi || 5) * 60);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(pitch * 0.7, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(pitch, ctx.currentTime + 0.22);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+            osc.start(); osc.stop(ctx.currentTime + 0.5);
+            if (navigator.vibrate) navigator.vibrate([30, 20, 30, 20, 70]);
+        }
+    } catch (e) {}
+}
+
+function genelKomboGoster(komboSayisi, targetEl) {
+    if (!komboSayisi || komboSayisi % 5 !== 0) return;
+    genelSesEfektiCal('kombo', komboSayisi);
     let wrap = document.createElement('div');
-    wrap.className = 'genel-kombo-wrap';
-    wrap.innerHTML = '<span class="genel-kombo-papagan">🦜</span><span class="genel-kombo-txt">HARİKA! KOMBO x' + komboSayisi + '</span><span class="genel-kombo-dalga"></span>';
-    targetEl.appendChild(wrap);
-    setTimeout(() => wrap.remove(), 1600);
+    wrap.className = 'genel-kombo-ucus-wrap';
+    wrap.innerHTML = '<span class="genel-kombo-papagan-ucan">🦜</span><span class="genel-kombo-txt-ucan">HARİKA! KOMBO x' + komboSayisi + '</span>';
+    document.body.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 2200);
 }
 async function genelEnerjiHarca(miktar) {
     let isim = (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) || (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi);
@@ -5587,17 +5621,18 @@ function genelOyunGirisEngelliMi() {
                        hafizaEslesenSayi++;
             hafizaKombo++;
             hafizaKomboBonus += hafizaKombo * 2;
-                       genelKomboGoster(hafizaKombo, document.querySelector('#hafizaOyunOverlay .game-modal-content'));
+                                 genelSesEfektiCal('dogru');
+            genelKomboGoster(hafizaKombo, document.querySelector('#hafizaOyunOverlay .game-modal-content'));
             hafizaAcikIndexler = [];
             if (navigator.vibrate) navigator.vibrate(80);
             hafizaSesCal(true);
             document.getElementById('hafizaKalanInfo').innerText = `Kalan: ${(hafizaKartlar.length/2) - hafizaEslesenSayi} çift`;
             hafizaKartlariCiz();
             if (hafizaEslesenSayi === hafizaKartlar.length / 2) setTimeout(() => hafizaOyunuBitir(), 500);
-        } else {
+                } else {
+            genelSesEfektiCal('yanlis');
             hafizaYanlisSayisi++;
             hafizaKombo = 0;
-            if (navigator.vibrate) navigator.vibrate([40,40,40]);
                     hafizaSesCal(false);
                     setTimeout(() => {
                         hafizaKartlar[i1].acik = false; hafizaKartlar[i2].acik = false;
@@ -5816,13 +5851,15 @@ function genelOyunGirisEngelliMi() {
                let kazanc = Math.max(5, (12 + yagmurLevel * 2) - gecenSaniyeKelime * 2) + (yagmurKombo * 2);
         yagmurKombo++;
         yagmurPuan += kazanc;
-                genelKomboGoster(yagmurKombo, document.querySelector('#yagmurOyunOverlay .game-modal-content'));
+                       genelSesEfektiCal('dogru');
+        genelKomboGoster(yagmurKombo, document.querySelector('#yagmurOyunOverlay .game-modal-content'));
         yagmurDogru++;
         yagmurLevel++;
         document.getElementById('yagmurPuanInfo').innerText = `Puan: ${yagmurPuan}`;
         yagmurAktifIndex++;
         setTimeout(() => yagmurYeniKelimeDusur(), 500);
-    } else {
+       } else {
+        genelSesEfektiCal('yanlis');
         btnEl.classList.add('yanlis');
         yagmurKombo = 0;
         let dogruBtn = document.querySelectorAll('.yg-secenek-btn')[dogruIndex];
@@ -5977,11 +6014,13 @@ function genelOyunGirisEngelliMi() {
             let gecenSaniye = Math.floor((Date.now() - asmacaKelimeBaslangicZamani) / 1000);
                         asmacaPuan += Math.max(5, 20 - asmacaYanlisSayisi * 3 - gecenSaniye) + (asmacaKombo * 2);
             if (asmacaYanlisSayisi === 0) asmacaKombo++; else asmacaKombo = 0;
-                       genelKomboGoster(asmacaKombo, document.querySelector('#asmacaOyunOverlay .game-modal-content'));
+                                 genelSesEfektiCal('dogru');
+            genelKomboGoster(asmacaKombo, document.querySelector('#asmacaOyunOverlay .game-modal-content'));
             document.getElementById('asmacaPuanInfo').innerText = `Puan: ${asmacaPuan}`;
             setTimeout(() => { asmacaAktifIndex++; asmacaSonrakiKelime(); }, 900);
         }
-    } else {
+        } else {
+        genelSesEfektiCal('yanlis');
         asmacaYanlisSayisi++;
         document.getElementById('asmacaSahne').innerHTML = asmacaHangmanSVG(asmacaYanlisSayisi);
         if (asmacaYanlisSayisi >= 6) {
@@ -6123,10 +6162,12 @@ function genelOyunGirisEngelliMi() {
                                 let puanKazanc = Math.max(5, (7 - kelimebulDenemeSayisi) * 10 - gecenSaniye) + (kelimebulKombo * 3);
                 kelimebulKombo++;
                 kelimebulPuan += puanKazanc;
-                               genelKomboGoster(kelimebulKombo, document.querySelector('#kelimebulOyunOverlay .game-modal-content'));
+                                              genelSesEfektiCal('dogru');
+                genelKomboGoster(kelimebulKombo, document.querySelector('#kelimebulOyunOverlay .game-modal-content'));
                 document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
                 setTimeout(() => { kelimebulAktifIndex++; kelimebulSonrakiKelime(); }, 1200);
-            } else if (kelimebulDenemeSayisi >= 6) {
+                       } else if (kelimebulDenemeSayisi >= 6) {
+                genelSesEfektiCal('yanlis');
                 kelimebulKombo = 0;
                 document.getElementById('kbIpucu').innerHTML = "❌ Doğrusu: <b>" + kelimebulHedef + "</b>";
                 kelimebulCan--;
@@ -9663,11 +9704,13 @@ function jpCevapVer(secilenIndex) {
                 let kazanc = Math.max(minPuan, jpAktifSoru.puanDegeri - gecenSaniyeSoru * 2) + (jpKombo * 2);
         jpKombo++;
         jpToplamPuan += kazanc;
-               genelKomboGoster(jpKombo, document.querySelector('#jpOyunOverlay .game-modal-content'));
+                      genelSesEfektiCal('dogru');
+        genelKomboGoster(jpKombo, document.querySelector('#jpOyunOverlay .game-modal-content'));
         document.getElementById('jpSik' + secilenIndex).style.background = "#16a34a";
         document.getElementById('jpSik' + secilenIndex).style.color = "#ffffff";
         document.getElementById('jpSik' + secilenIndex).style.borderColor = "#15803d";
-    } else {
+        } else {
+        genelSesEfektiCal('yanlis');
         jpYanlisSayisi++;
         jpKombo = 0;
         jpToplamPuan -= Math.max(3, Math.floor(jpAktifSoru.puanDegeri / 2));
@@ -10126,9 +10169,9 @@ async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
     let tarihStr = new Date().toISOString().split('T')[0];
                let kelimeBasiPuan = Math.max(5, 15 - Math.floor(boslukGecenSaniye / 10));
     let puan = (dogruSayisi * kelimeBasiPuan) - (yanlisSayisi * 8) + boslukKomboBonus;
-    if (boslukKomboSayaci >= 2) genelKomboGoster(boslukKomboSayaci, document.querySelector('#boslukOyunOverlay .game-modal-content'));
+       genelSesEfektiCal(dogruSayisi >= yanlisSayisi ? 'dogru' : 'yanlis');
+    if (boslukKomboSayaci >= 5) genelKomboGoster(boslukKomboSayaci, document.querySelector('#boslukOyunOverlay .game-modal-content'));
     genelEnerjiHarca(-1);
-
     document.getElementById('bpResIsim').innerText = isim;
     document.getElementById('bpResSinifUnite').innerText = `${sinifStr} (${uniteStr})`;
     document.getElementById('bpResDogruYanlis').innerText = `${dogruSayisi} Doğru / ${yanlisSayisi} Hata`;
@@ -11845,6 +11888,7 @@ function baSoruGoster() {
 }
 
 function baDogruIsle() {
+    genelSesEfektiCal('dogru');
     baDogruSayisi++;
     let kazanc = 10 + baKombo * 3;
     baToplamPuan += kazanc;
@@ -11855,6 +11899,7 @@ function baDogruIsle() {
     document.getElementById('baKomboText').innerText = 'KOMBO x' + baKombo;
 }
 function baYanlisIsle() {
+    genelSesEfektiCal('yanlis');
     baYanlisSayisi++;
     baKombo = 0;
     genelEnerjiHarca(-1);
@@ -12237,6 +12282,7 @@ function kpCevapKontrolEt(soylenenMetin) {
         kpKonfetiPatlat();
         sonucEl.className = 'kp-sonuc ok';
         sonucEl.innerHTML = '🎉 Doğru bildin! +' + kazanc + ' puan';
+               genelSesEfektiCal('dogru');
         genelKomboGoster(kpKombo, document.getElementById('kpCardWrap'));
 
         if (kpArkaArkayaDogru > 0 && kpArkaArkayaDogru % 4 === 0) {
@@ -12258,13 +12304,13 @@ function kpCevapKontrolEt(soylenenMetin) {
             sonucEl.innerHTML = '😕 Olmadı, tekrar dene! (' + kpAktifSoruYanlisDeneme + '/3 hak)';
             return;
         }
+               genelSesEfektiCal('yanlis');
         kpYanlisSayisi++;
         kpKombo = 0;
         kpArkaArkayaDogru = 0;
         kart.classList.add('kp-hata');
-        if (navigator.vibrate) navigator.vibrate([40,40,40]);
         sonucEl.className = 'kp-sonuc hata';
-        sonucEl.innerHTML = '😕 3 hakkın doldu — Doğrusu: "' + kpAktifSoru.beklenenCevap + '"';
+         sonucEl.innerHTML = '😕 3 hakkın doldu — Doğrusu: "' + kpAktifSoru.beklenenCevap + '"';
         document.getElementById('kpKomboText').innerText = 'KOMBO x' + kpKombo;
         kpEnerjiDegistir(-1);
         setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1900);
