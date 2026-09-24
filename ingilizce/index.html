@@ -2156,7 +2156,7 @@
   <div class="ba-lv-title" id="baLevelupBaslik">Büyü Tamamlandı!</div>
   <div class="ba-lv-sub" id="baLevelupSub">Seviye bitti</div>
   <div class="ba-lv-badge" id="baLevelupBadge"></div>
-  <button class="ba-lv-btn" onclick="baLevelupKapat()">Devam Et →</button>
+  <button class="ba-lv-btn" onclick="baLevelupOverlayKapat()">Devam Et →</button>
 </div>
 
 <div id="tab-anasayfa" class="dc-fullscreen-overlay">
@@ -11948,6 +11948,9 @@ function baYazGonder() {
 }
 
 let baTumSeviyeler = [];
+let baGecenSaniye = 0;
+let baBaslangicZamani = 0;
+let baTimerInterval = null;
 let baTamamlananSeviyeler = new Set();
 let baAktifSeviyeNo = null;
 let baSoruListesi = [];
@@ -12087,6 +12090,10 @@ function baSeviyeBaslat(seviyeNo) {
     if (!baKampanyaIndirimUygula(seviyeNo)) genelEnerjiHarca(-1);
     baAktifSeviyeNo = seviyeNo;
     baDogruSayisi = 0; baYanlisSayisi = 0; baToplamPuan = 0; baKombo = 0; baSoruIndex = 0;
+        baBaslangicZamani = Date.now();
+baGecenSaniye = 0;
+if (baTimerInterval) clearInterval(baTimerInterval);
+baTimerInterval = setInterval(() => { baGecenSaniye = Math.floor((Date.now()-baBaslangicZamani)/1000); }, 1000);
 
     let tipler = [];
     for (let i = 0; i < seviye.kelimeler.length; i++) tipler.push(BA_SORU_TIPLERI[i % BA_SORU_TIPLERI.length]);
@@ -12466,6 +12473,7 @@ function baAsmacaHarfSec(harf, btn) {
 
 /* ===== SEVİYE BİTİŞİ ===== */
 async function baSeviyeBitir(enerjiBittiMi) {
+        if (baTimerInterval) clearInterval(baTimerInterval);
     baDinlemeyiDurdur();
     document.getElementById('baOyunEkrani').style.display = 'none';
     let isim = document.getElementById('baIsimInput').value.trim();
@@ -12514,6 +12522,7 @@ async function baSeviyeBitir(enerjiBittiMi) {
 }
 function baLevelupKapat() {
     document.getElementById('baLevelupOverlay').style.display = 'none';
+    document.getElementById('baSonucEkrani').style.display = 'none';
     baEnerjiSatiriGuncelle();
     baGirisGoster();
 }      
@@ -12610,6 +12619,10 @@ function kpSeviyeBaslat(seviyeNo) {
     kpTimerInterval = setInterval(() => { kpGecenSaniye = Math.floor((Date.now()-kpBaslangicZamani)/1000); }, 1000);
 
     kpSoruGoster();
+}
+
+            function baLevelupOverlayKapat() {
+    document.getElementById('baLevelupOverlay').style.display = 'none';
 }
 
 let kpAktifSoruYanlisDeneme = 0;
