@@ -4422,40 +4422,62 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
                 globalDataCache = [];
             }
 
-            if (otomatikGirisYapilacak) {
-                aktifOgrenciAdi = kayitliOgrenci;
-                toplamSaniye = parseInt(kayitliSure);
+           if (otomatikGirisYapilacak) {
+    aktifOgrenciAdi = kayitliOgrenci;
+    toplamSaniye = parseInt(kayitliSure) || 0;
 
-                let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+    // setTimeout açılışı eklendi
+    setTimeout(() => {
+        // globalDataCache dizisinin varlığını kontrol ederek güvenli arama yapma
+        let user = Array.isArray(globalDataCache) 
+            ? globalDataCache.find(u => String(u?.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase())
+            : null;
 
-                               document.getElementById('oturumYuklemeOverlay').style.display = 'none';
-                document.getElementById('panel-alani').style.display = 'block';
-                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-                document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
-                girisSerisiGuncelleVeGetir();
+        // DOM elemanlarını güvenli bir şekilde gizleme/gösterme
+        const overlay = document.getElementById('oturumYuklemeOverlay');
+        if (overlay) overlay.style.display = 'none';
 
-                if (user) {
-                    toplamSaniye = Number(user.toplamsure) || toplamSaniye;
-                    sessionStorage.setItem("toplamSaniye", toplamSaniye);
-                    veriArayuzeIsle(user);
-                } else {
-                    console.warn("Otomatik girişte kullanıcı bulunamadı:", aktifOgrenciAdi);
-                }
+        const panel = document.getElementById('panel-alani');
+        if (panel) panel.style.display = 'block';
 
-                                                                baslatSayac();
-                arkaPlanVeriYenilemeBaslat();
-                gununKonusuYukle();
-                                   duyuruKontrolEt();
-                    dockZamanlayiciyiBaslat();
-                    baModuAc();
-                    gunlukEnerjiBonusuKontrolEt();
-                }, 600);
-                       ogretmenSelectDoldur();
-            rubricGridleriOlustur();
-            ozellikSecDoldur();
-            ogretmenMenuOkunmamisGuncelle();
-            setInterval(ogretmenMenuOkunmamisGuncelle, 60000);
-        };
+        const ogrenciText = document.getElementById('ogrenciAdiText');
+        if (ogrenciText) ogrenciText.innerText = aktifOgrenciAdi;
+
+        const avatarLetter = document.getElementById('userAvatarLetter');
+        if (avatarLetter && typeof ogrenciMaskotSec === 'function') {
+            avatarLetter.innerText = ogrenciMaskotSec(aktifOgrenciAdi);
+        }
+
+        if (typeof girisSerisiGuncelleVeGetir === 'function') girisSerisiGuncelleVeGetir();
+
+        if (user) {
+            toplamSaniye = Number(user.toplamsure) || toplamSaniye;
+            sessionStorage.setItem("toplamSaniye", toplamSaniye);
+            if (typeof veriArayuzeIsle === 'function') veriArayuzeIsle(user);
+        } else {
+            console.warn("Otomatik girişte kullanıcı bulunamadı:", aktifOgrenciAdi);
+        }
+
+        // Zamanlayıcı ve arka plan fonksiyonları
+        if (typeof baslatSayac === 'function') baslatSayac();
+        if (typeof arkaPlanVeriYenilemeBaslat === 'function') arkaPlanVeriYenilemeBaslat();
+        if (typeof gununKonusuYukle === 'function') gununKonusuYukle();
+        if (typeof duyuruKontrolEt === 'function') duyuruKontrolEt();
+        if (typeof dockZamanlayiciyiBaslat === 'function') dockZamanlayiciyiBaslat();
+        if (typeof baModuAc === 'function') baModuAc();
+        if (typeof gunlukEnerjiBonusuKontrolEt === 'function') gunlukEnerjiBonusuKontrolEt();
+        
+    }, 600); // Kapanış parantezi üstteki setTimeout ile eşleşti
+
+    // Öğretmen/Genel Panel Doldurma İşlemleri
+    if (typeof ogretmenSelectDoldur === 'function') ogretmenSelectDoldur();
+    if (typeof rubricGridleriOlustur === 'function') rubricGridleriOlustur();
+    if (typeof ozellikSecDoldur === 'function') ozellikSecDoldur();
+    if (typeof ogretmenMenuOkunmamisGuncelle === 'function') {
+        ogretmenMenuOkunmamisGuncelle();
+        setInterval(ogretmenMenuOkunmamisGuncelle, 60000);
+    }
+}
 
         // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
                 function aiModalAc() { 
