@@ -1594,10 +1594,7 @@
             </button>
         </div>
 
-       <!-- MEDU OYUN SİHİRBAZI (Büyü Akademisi butonu) -->
-<button class="ba-fab" id="baFabBtn" onclick="baFabTikla()" title="Medu Oyun Sihirbazı">
-  🧙<div class="ba-fab-badge">🦜</div>
-</button>
+  
 
 <!-- MOBİL ORTAK ARAÇLAR MENÜSÜ (ALTA TAŞINDI) -->
 <div class="floating-tools-dock" id="floatingToolsDock">
@@ -1887,12 +1884,7 @@
 .header-energy-bar-fill { height:100%; border-radius:5px; background:linear-gradient(90deg,#ffd166,#f59e0b); transition:width .35s ease; }
 .header-energy-num { color:#ffd166; font-size:8.5px; font-weight:800; white-space:nowrap; }
 
-        .ba-fab { position:fixed; bottom:140px; right:16px; z-index:99998; width:60px; height:60px; border-radius:50%; background:linear-gradient(145deg,#2ed7ea,#0c9bb5); border:none; font-size:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 10px 24px rgba(12,155,181,.45); animation:baFabBob 2s ease-in-out infinite; }
-@keyframes baFabBob { 0%,100%{transform:translateY(0) rotate(-3deg);} 50%{transform:translateY(-8px) rotate(3deg);} }
-.ba-fab::before { content:'✨'; position:absolute; top:-8px; left:-6px; font-size:13px; animation:baFabSpin 4s linear infinite; }
-@keyframes baFabSpin { to{transform:rotate(360deg);} }
-.ba-fab-badge { position:absolute; bottom:-3px; right:-4px; width:22px; height:22px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; box-shadow:0 3px 6px rgba(0,0,0,.2); }
-@media (max-width:768px) { .ba-fab { bottom:88px; } }
+
 
         .az-grid2x2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px; }
 .az-gcard { border-radius:18px; padding:16px 14px; min-height:108px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 6px 16px rgba(0,0,0,.18); position:relative; overflow:hidden; cursor:pointer; transition:transform .15s; color:#fff; border:none; text-align:left; }
@@ -1982,8 +1974,8 @@
 <div id="tab-buyuakademisi" class="dc-fullscreen-overlay">
 <style>
 #tab-buyuakademisi .ba-shell { background:#f4fbfc; min-height:100%; padding:0 0 50px; color:#0c3a44; position:relative; overflow:hidden; }
-#tab-buyuakademisi .ba-topbar2 { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; font-size:12px; font-weight:900; color:#0c3a44; position:relative; z-index:3; }
-#tab-buyuakademisi .ba-topbar2 .ba-t2item { display:flex; align-items:center; gap:4px; }
+#tab-buyuakademisi .ba-topbar2 { display:flex; justify-content:center; align-items:center; padding:14px 54px 8px; position:relative; z-index:3; }
+#tab-buyuakademisi .ba-stats-pill { display:flex; align-items:center; gap:14px; background:#fff; border-radius:20px; padding:7px 16px; box-shadow:0 3px 10px rgba(0,0,0,.1); font-size:12px; font-weight:900; color:#0c3a44; }
 #tab-buyuakademisi .ba-close { width:34px; height:34px; border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,.12); border:none; color:#0c3a44; font-size:16px; cursor:pointer; flex-shrink:0; position:absolute; top:12px; right:14px; z-index:5; }
 #tab-buyuakademisi .ba-unit-card { margin:0 14px 16px; border-radius:18px; padding:16px; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(135deg,#0d5a6c,#072c35); color:#fff; position:relative; z-index:3; box-shadow:0 8px 20px rgba(13,90,108,.3); }
 #tab-buyuakademisi .ba-unit-title { font-size:15px; font-weight:900; }
@@ -2051,11 +2043,13 @@
 <div class="ba-shell">
   <button class="ba-close" onclick="baModuKapat()">✕</button>
 
-  <div id="baGirisEkrani">
+    <div id="baGirisEkrani">
     <div class="ba-topbar2">
-      <div class="ba-t2item">🔥 <span id="baStreakGoster">0</span></div>
-      <div class="ba-t2item">⭐ <span id="baPuanGoster">0</span></div>
-      <div class="ba-t2item">⚡ <span id="baEnerjiSatiri">--/--</span></div>
+      <div class="ba-stats-pill">
+        <span>🔥 <span id="baStreakGoster">0</span></span>
+        <span>⭐ <span id="baPuanGoster">0</span></span>
+        <span>⚡ <span id="baEnerjiSatiri">--/--</span></span>
+      </div>
     </div>
     <div class="ba-unit-card">
       <div><div class="ba-unit-title" id="baUniteBaslik">Sahil Başlangıcı</div><div class="ba-unit-sub" id="baRutbeAlani">🌙 Çırak Büyücü</div></div>
@@ -12589,20 +12583,7 @@ async function kpKelimeOyunuBitir(enerjiBittiMi) {
 <style>
 /* ===== ARAÇLAR ÇUBUĞU — KESİN VE NİHAİ DÜZELTME (Belgenin en sonunda, her şeyi ezer) ===== */
 #floatingToolsDock{
-    position: fixed !important;
-    bottom: 72px !important;
-    right: 14px !important;
-    top: auto !important;
-    left: auto !important;
-    z-index: 999997 !important;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    background: rgba(255,255,255,0.95) !important;
-    padding: 6px 10px !important;
-    border-radius: 999px !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
-    border: 1px solid #e2e8f0 !important;
+    display: none !important;
 }
 #dockItemsRow{
     display: flex !important;
