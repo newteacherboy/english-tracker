@@ -389,7 +389,7 @@
         /* Rozetler */
         .badges-header-box { background: linear-gradient(135deg, #fef0e2 0%, #fde6cc 100%); border: 1px solid #f9d9ae; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .badges-header-title { font-size: 13px; font-weight: 800; color: #a1560f; display: flex; align-items: center; gap: 5px; }
-        .badges-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-bottom: 12px; width: 100%; max-width: 100%; }
+        .badges-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; width: 100%; max-width: 100%; }
         .badge-card { border-radius: 6px; padding: 4px 1px; text-align: center; border: 1px solid #e6f2f4; background: #ffffff; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 55px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); width: 100%; overflow: hidden; }
         .badge-card.unlocked { background: #e3fbf1; border-color: #b8ecd5; box-shadow: 0 2px 5px rgba(11,178,136,0.1); }
         .badge-emoji { font-size: 14px; margin-bottom: 1px; }
@@ -4422,62 +4422,40 @@ const kayitliSure = localStorage.getItem("ing_toplamSaniye");
                 globalDataCache = [];
             }
 
-           if (otomatikGirisYapilacak) {
-    aktifOgrenciAdi = kayitliOgrenci;
-    toplamSaniye = parseInt(kayitliSure) || 0;
+            if (otomatikGirisYapilacak) {
+                aktifOgrenciAdi = kayitliOgrenci;
+                toplamSaniye = parseInt(kayitliSure);
 
-    // setTimeout açılışı eklendi
-    setTimeout(() => {
-        // globalDataCache dizisinin varlığını kontrol ederek güvenli arama yapma
-        let user = Array.isArray(globalDataCache) 
-            ? globalDataCache.find(u => String(u?.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase())
-            : null;
+                let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
 
-        // DOM elemanlarını güvenli bir şekilde gizleme/gösterme
-        const overlay = document.getElementById('oturumYuklemeOverlay');
-        if (overlay) overlay.style.display = 'none';
+                               document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+                document.getElementById('panel-alani').style.display = 'block';
+                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+                document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
+                girisSerisiGuncelleVeGetir();
 
-        const panel = document.getElementById('panel-alani');
-        if (panel) panel.style.display = 'block';
+                if (user) {
+                    toplamSaniye = Number(user.toplamsure) || toplamSaniye;
+                    sessionStorage.setItem("toplamSaniye", toplamSaniye);
+                    veriArayuzeIsle(user);
+                } else {
+                    console.warn("Otomatik girişte kullanıcı bulunamadı:", aktifOgrenciAdi);
+                }
 
-        const ogrenciText = document.getElementById('ogrenciAdiText');
-        if (ogrenciText) ogrenciText.innerText = aktifOgrenciAdi;
-
-        const avatarLetter = document.getElementById('userAvatarLetter');
-        if (avatarLetter && typeof ogrenciMaskotSec === 'function') {
-            avatarLetter.innerText = ogrenciMaskotSec(aktifOgrenciAdi);
-        }
-
-        if (typeof girisSerisiGuncelleVeGetir === 'function') girisSerisiGuncelleVeGetir();
-
-        if (user) {
-            toplamSaniye = Number(user.toplamsure) || toplamSaniye;
-            sessionStorage.setItem("toplamSaniye", toplamSaniye);
-            if (typeof veriArayuzeIsle === 'function') veriArayuzeIsle(user);
-        } else {
-            console.warn("Otomatik girişte kullanıcı bulunamadı:", aktifOgrenciAdi);
-        }
-
-        // Zamanlayıcı ve arka plan fonksiyonları
-        if (typeof baslatSayac === 'function') baslatSayac();
-        if (typeof arkaPlanVeriYenilemeBaslat === 'function') arkaPlanVeriYenilemeBaslat();
-        if (typeof gununKonusuYukle === 'function') gununKonusuYukle();
-        if (typeof duyuruKontrolEt === 'function') duyuruKontrolEt();
-        if (typeof dockZamanlayiciyiBaslat === 'function') dockZamanlayiciyiBaslat();
-        if (typeof baModuAc === 'function') baModuAc();
-        if (typeof gunlukEnerjiBonusuKontrolEt === 'function') gunlukEnerjiBonusuKontrolEt();
-        
-    }, 600); // Kapanış parantezi üstteki setTimeout ile eşleşti
-
-    // Öğretmen/Genel Panel Doldurma İşlemleri
-    if (typeof ogretmenSelectDoldur === 'function') ogretmenSelectDoldur();
-    if (typeof rubricGridleriOlustur === 'function') rubricGridleriOlustur();
-    if (typeof ozellikSecDoldur === 'function') ozellikSecDoldur();
-    if (typeof ogretmenMenuOkunmamisGuncelle === 'function') {
-        ogretmenMenuOkunmamisGuncelle();
-        setInterval(ogretmenMenuOkunmamisGuncelle, 60000);
-    }
-}
+                                                                baslatSayac();
+                arkaPlanVeriYenilemeBaslat();
+                gununKonusuYukle();
+                                   duyuruKontrolEt();
+                    dockZamanlayiciyiBaslat();
+                    baModuAc();
+                    gunlukEnerjiBonusuKontrolEt();
+                }, 600);
+                       ogretmenSelectDoldur();
+            rubricGridleriOlustur();
+            ozellikSecDoldur();
+            ogretmenMenuOkunmamisGuncelle();
+            setInterval(ogretmenMenuOkunmamisGuncelle, 60000);
+        };
 
         // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
                 function aiModalAc() { 
