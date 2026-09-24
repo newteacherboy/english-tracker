@@ -915,6 +915,19 @@
     color: #78350f !important;
     font-weight: 800 !important;
 }
+
+            .genel-kombo-wrap { position:absolute; top:38%; left:50%; transform:translate(-50%,-50%); z-index:999999; text-align:center; pointer-events:none; }
+.genel-kombo-papagan { font-size:52px; display:block; animation: genelKomboUcus 1.5s ease-in-out forwards; }
+@keyframes genelKomboUcus {
+  0% { opacity:0; transform:translateY(16px) scale(.5) rotate(-8deg); }
+  25% { opacity:1; transform:translateY(-16px) scale(1.3) rotate(6deg); }
+  60% { transform:translateY(-34px) scale(1.05) rotate(-4deg); }
+  100% { opacity:0; transform:translateY(-58px) scale(.9) rotate(0deg); }
+}
+.genel-kombo-txt { font-size:14px; font-weight:900; color:#78350f; background:linear-gradient(135deg,#ffd166,#ec8636); padding:6px 16px; border-radius:20px; margin-top:-6px; box-shadow:0 6px 16px rgba(236,134,54,.5); animation: genelKomboPop .5s cubic-bezier(.3,1.4,.5,1) both; white-space:nowrap; display:inline-block; }
+@keyframes genelKomboPop { from{opacity:0; transform:scale(.3);} to{opacity:1; transform:scale(1);} }
+.genel-kombo-dalga { position:absolute; top:50%; left:50%; width:10px; height:10px; border:3px solid #2ed7ea; border-radius:50%; transform:translate(-50%,-50%); animation: genelKomboDalga 1s ease-out forwards; }
+@keyframes genelKomboDalga { from{width:10px;height:10px;opacity:1;} to{width:240px;height:240px;opacity:0;} }
         
     </style>
 </head>
@@ -1899,27 +1912,13 @@
   <!-- KELİME MODU -->
   <div class="kp-panel active" id="kp-panel-kelime">
 
-    <div id="kpKelimeGirisEkrani">
+       <div id="kpKelimeGirisEkrani">
       <div id="kpMikUyari" class="kp-uyari" style="display:none;">⚠️ Tarayıcın mikrofonla konuşma tanımayı desteklemiyor. Yine de açabilir, cevapları yazarak verebilirsin.</div>
       <label class="kp-label">Öğrenci Adı</label>
       <input type="text" id="kpIsimInput" placeholder="Adınız" class="kp-input">
 
-      <label class="kp-label">Sınıf Seçiniz</label>
-      <div class="sinif-secim-grid" id="kpSinifGrid">
-        <button class="sinif-btn active" onclick="kpSinifSec(1,this)">1.Sınıf</button>
-        <button class="sinif-btn" onclick="kpSinifSec(2,this)">2.Sınıf</button>
-        <button class="sinif-btn" onclick="kpSinifSec(3,this)">3.Sınıf</button>
-        <button class="sinif-btn" onclick="kpSinifSec(4,this)">4.Sınıf</button>
-        <button class="sinif-btn" onclick="kpSinifSec(5,this)">5.Sınıf</button>
-        <button class="sinif-btn" onclick="kpSinifSec(6,this)">6.Sınıf</button>
-        <button class="sinif-btn" onclick="kpSinifSec(7,this)">7.Sınıf</button>
-        <button class="sinif-btn" onclick="kpSinifSec(8,this)">8.Sınıf</button>
-      </div>
-
-      <label class="kp-label">Ünite Seçiniz</label>
-      <div class="unite-secim-box" id="kpUniteBox"></div>
-
-      <button class="kp-start-btn" onclick="kpKelimeOyunuBaslat()">🎤 Pratiğe Başla</button>
+      <label class="kp-label" style="margin-top:20px;">🗺️ Seviye Parkuru</label>
+      <div id="kpParkurAlani"></div>
     </div>
 
     <div id="kpKelimeOyunEkrani" style="display:none;" class="kp-oyun-alani">
@@ -1955,7 +1954,7 @@
       </div>
       <div style="text-align:left; margin-bottom:10px; font-size:11px; font-weight:800; color:#9fdbe6;">🏆 Liderlik Tablosu</div>
       <div class="kp-liderlik-kutu" id="kpGecmisSkorlar"></div>
-      <button class="kp-start-btn" style="margin-top:16px;" onclick="document.getElementById('kpKelimeBitisEkrani').style.display='none'; kpKelimeGirisGoster();">🔄 Tekrar Pratik Yap</button>
+            <button class="kp-start-btn" style="margin-top:16px;" onclick="document.getElementById('kpKelimeBitisEkrani').style.display='none'; kpParkurCiz(); kpKelimeGirisGoster();">🗺️ Parkura Dön</button>
     </div>
 
   </div>
@@ -3106,6 +3105,29 @@
   #tab-konusmapratigi .kp-mik-btn { width:220px; height:74px; font-size:27px; }
   #tab-konusmapratigi .kp-yaz-row { max-width:460px; }
 } 
+
+#tab-konusmapratigi .kp-step-row { display:flex; align-items:center; gap:14px; margin-bottom:6px; position:relative; }
+#tab-konusmapratigi .kp-step-row.right { flex-direction:row-reverse; text-align:right; }
+#tab-konusmapratigi .kp-step-connector { position:absolute; left:29px; top:-6px; width:3px; height:38px; background:repeating-linear-gradient(180deg,rgba(46,215,234,.5) 0 6px, transparent 6px 12px); z-index:0; }
+#tab-konusmapratigi .kp-step-row.right .kp-step-connector { left:auto; right:29px; }
+#tab-konusmapratigi .kp-node-outer { width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative; z-index:2; cursor:pointer; }
+#tab-konusmapratigi .kp-node-outer.locked { cursor:not-allowed; }
+#tab-konusmapratigi .kp-node-inner { width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:17px; color:#fff; box-shadow:inset 0 -4px 8px rgba(0,0,0,.18), 0 4px 10px rgba(0,0,0,.25); }
+#tab-konusmapratigi .kp-node-outer.done .kp-node-inner { background:linear-gradient(150deg,#4be8b0,#0bb288); }
+#tab-konusmapratigi .kp-node-outer.active .kp-node-inner { background:linear-gradient(150deg,#ffcb84,#ec8636); }
+#tab-konusmapratigi .kp-node-outer.locked .kp-node-inner { background:linear-gradient(150deg,#41565d,#2a3a3f); color:#6b8790; font-size:15px; }
+@keyframes kpActiveGlow { 0%,100%{ box-shadow:0 0 0 0 rgba(236,134,54,.55);} 70%{ box-shadow:0 0 0 14px rgba(236,134,54,0);} }
+#tab-konusmapratigi .kp-node-outer.active { animation:kpActiveGlow 1.8s ease-out infinite; }
+#tab-konusmapratigi .kp-node-outer.active::after { content:'🦜'; position:absolute; top:-28px; left:50%; transform:translateX(-50%); font-size:20px; animation:kpMascotBob 1.4s ease-in-out infinite; }
+@keyframes kpMascotBob { 0%,100%{transform:translateX(-50%) translateY(0) rotate(-4deg);} 50%{transform:translateX(-50%) translateY(-6px) rotate(4deg);} }
+#tab-konusmapratigi .kp-done-check { position:absolute; top:-3px; right:-2px; width:18px; height:18px; background:#0bb288; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; border:2px solid #0b1e26; }
+#tab-konusmapratigi .kp-step-row.right .kp-done-check { right:auto; left:-2px; }
+#tab-konusmapratigi .kp-step-info { flex:1; }
+#tab-konusmapratigi .kp-step-num { font-size:9px; font-weight:800; color:#6fb8c4; text-transform:uppercase; letter-spacing:.5px; }
+#tab-konusmapratigi .kp-step-name { font-size:13px; font-weight:800; color:#fff; margin-top:1px; }
+#tab-konusmapratigi .kp-step-name.locked-txt { color:#587179; }
+#tab-konusmapratigi .kp-step-sub { font-size:9.5px; color:#8fb9c2; margin-top:1px; }
+        
 </style>
 
         <!-- 1. GİRİŞ EKRANI -->
@@ -3771,9 +3793,11 @@ function kyCevapVer(secilenIndex) {
 
         if (secilenIndex === dogruIdx) {
         kyDogruSayisi++;
-        let kazanc = Math.max(3, 10 - gecenSaniyeSoru) + (kyKombo * 2);
+                let kazanc = Math.max(3, 10 - gecenSaniyeSoru) + (kyKombo * 2);
         kyKombo++;
         kyToplamPuan += kazanc;
+        genelKomboGoster(kyKombo, document.querySelector('#kelimeYarismaOverlay .game-modal-content'));
+        genelEnerjiHarca(-1);
         document.getElementById('kySik' + secilenIndex).style.background = "#16a34a";
         document.getElementById('kySik' + secilenIndex).style.color = "#ffffff";
         document.getElementById('kySik' + secilenIndex).style.borderColor = "#15803d";
@@ -4003,7 +4027,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzToRPO4pz2M0VrLxAQGknqm0A8Jyr7XB_jbHRgMqDFIA08kJ6i26bINHU-uCvkJq2iMg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbyxyKzVk5Gs5waeEh1ck44kgRRIPP0H9OuxCnlRPSYoWDwxibNZBxab1pNuztHa_C8CEQ/exec";
         
                     let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
@@ -5187,6 +5211,26 @@ function ozellikIzniKaydet() {
             siniftaOyunRozetiGoster();
         }
 
+            function genelKomboGoster(komboSayisi, targetEl) {
+    if (!targetEl || komboSayisi < 2) return;
+    let cs = window.getComputedStyle(targetEl);
+    if (cs.position === 'static') targetEl.style.position = 'relative';
+    let wrap = document.createElement('div');
+    wrap.className = 'genel-kombo-wrap';
+    wrap.innerHTML = '<span class="genel-kombo-papagan">🦜</span><span class="genel-kombo-txt">HARİKA! KOMBO x' + komboSayisi + '</span><span class="genel-kombo-dalga"></span>';
+    targetEl.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 1600);
+}
+async function genelEnerjiHarca(miktar) {
+    let isim = (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) || (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi);
+    if (!isim || isim.toLowerCase() === 'teacher') return;
+    try {
+        let res = await fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"enerjiDegistir", ogrenci: isim, fark: miktar }) });
+        let d = await res.json();
+        if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
+    } catch(e) {}
+}
+
                 // ===== ORTAK: Bu 4 oyun için havuz filtreleme yardımcı fonksiyonu =====
         function oyunHavuzGetir(sinif, uniteler) {
             let havuz = window.masterKelimeHavuzu || [];
@@ -5316,9 +5360,11 @@ function ozellikIzniKaydet() {
                 let [i1, i2] = hafizaAcikIndexler;
                         if (hafizaKartlar[i1].pairId === hafizaKartlar[i2].pairId) {
             hafizaKartlar[i1].eslesti = true; hafizaKartlar[i2].eslesti = true;
-            hafizaEslesenSayi++;
+                       hafizaEslesenSayi++;
             hafizaKombo++;
             hafizaKomboBonus += hafizaKombo * 2;
+            genelKomboGoster(hafizaKombo, document.querySelector('#hafizaOyunOverlay .game-modal-content'));
+            genelEnerjiHarca(-1);
             hafizaAcikIndexler = [];
             if (navigator.vibrate) navigator.vibrate(80);
             hafizaSesCal(true);
@@ -5541,9 +5587,11 @@ function ozellikIzniKaydet() {
                 if (secilenIndex === dogruIndex) {
         btnEl.classList.add('dogru');
         // Süre geçtikçe kazanılan puan azalır, kombo arttıkça bonus büyür
-        let kazanc = Math.max(5, (12 + yagmurLevel * 2) - gecenSaniyeKelime * 2) + (yagmurKombo * 2);
+               let kazanc = Math.max(5, (12 + yagmurLevel * 2) - gecenSaniyeKelime * 2) + (yagmurKombo * 2);
         yagmurKombo++;
         yagmurPuan += kazanc;
+        genelKomboGoster(yagmurKombo, document.querySelector('#yagmurOyunOverlay .game-modal-content'));
+        genelEnerjiHarca(-1);
         yagmurDogru++;
         yagmurLevel++;
         document.getElementById('yagmurPuanInfo').innerText = `Puan: ${yagmurPuan}`;
@@ -5700,8 +5748,10 @@ function ozellikIzniKaydet() {
                 let tamamMi = sadeceHarfler.every(ch => asmacaTahminEdilenHarfler.includes(ch));
                        if (tamamMi) {
             let gecenSaniye = Math.floor((Date.now() - asmacaKelimeBaslangicZamani) / 1000);
-            asmacaPuan += Math.max(5, 20 - asmacaYanlisSayisi * 3 - gecenSaniye) + (asmacaKombo * 2);
+                        asmacaPuan += Math.max(5, 20 - asmacaYanlisSayisi * 3 - gecenSaniye) + (asmacaKombo * 2);
             if (asmacaYanlisSayisi === 0) asmacaKombo++; else asmacaKombo = 0;
+            genelKomboGoster(asmacaKombo, document.querySelector('#asmacaOyunOverlay .game-modal-content'));
+            genelEnerjiHarca(-1);
             document.getElementById('asmacaPuanInfo').innerText = `Puan: ${asmacaPuan}`;
             setTimeout(() => { asmacaAktifIndex++; asmacaSonrakiKelime(); }, 900);
         }
@@ -5841,9 +5891,11 @@ function ozellikIzniKaydet() {
 
                       if (tahmin === kelimebulHedef) {
                 let gecenSaniye = Math.floor((Date.now() - kelimebulKelimeBaslangicZamani) / 1000);
-                let puanKazanc = Math.max(5, (7 - kelimebulDenemeSayisi) * 10 - gecenSaniye) + (kelimebulKombo * 3);
+                                let puanKazanc = Math.max(5, (7 - kelimebulDenemeSayisi) * 10 - gecenSaniye) + (kelimebulKombo * 3);
                 kelimebulKombo++;
                 kelimebulPuan += puanKazanc;
+                genelKomboGoster(kelimebulKombo, document.querySelector('#kelimebulOyunOverlay .game-modal-content'));
+                genelEnerjiHarca(-1);
                 document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
                 setTimeout(() => { kelimebulAktifIndex++; kelimebulSonrakiKelime(); }, 1200);
             } else if (kelimebulDenemeSayisi >= 6) {
@@ -9368,9 +9420,11 @@ function jpCevapVer(secilenIndex) {
        if (secilenIndex === dogruIdx) {
         jpDogruSayisi++;
         let minPuan = Math.max(2, Math.floor(jpAktifSoru.puanDegeri / 3));
-        let kazanc = Math.max(minPuan, jpAktifSoru.puanDegeri - gecenSaniyeSoru * 2) + (jpKombo * 2);
+                let kazanc = Math.max(minPuan, jpAktifSoru.puanDegeri - gecenSaniyeSoru * 2) + (jpKombo * 2);
         jpKombo++;
         jpToplamPuan += kazanc;
+        genelKomboGoster(jpKombo, document.querySelector('#jpOyunOverlay .game-modal-content'));
+        genelEnerjiHarca(-1);
         document.getElementById('jpSik' + secilenIndex).style.background = "#16a34a";
         document.getElementById('jpSik' + secilenIndex).style.color = "#ffffff";
         document.getElementById('jpSik' + secilenIndex).style.borderColor = "#15803d";
@@ -9809,8 +9863,10 @@ async function boslukOyunuBitir(dogruSayisi, yanlisSayisi) {
     let sinifStr = boslukAktifSinif + ". Sınıf";
     let uniteStr = boslukSecilenUniteler.join(",") + ". Ünite";
     let tarihStr = new Date().toISOString().split('T')[0];
-           let kelimeBasiPuan = Math.max(5, 15 - Math.floor(boslukGecenSaniye / 10));
+               let kelimeBasiPuan = Math.max(5, 15 - Math.floor(boslukGecenSaniye / 10));
     let puan = (dogruSayisi * kelimeBasiPuan) - (yanlisSayisi * 8) + boslukKomboBonus;
+    if (boslukKomboSayaci >= 2) genelKomboGoster(boslukKomboSayaci, document.querySelector('#boslukOyunOverlay .game-modal-content'));
+    genelEnerjiHarca(-1);
 
     document.getElementById('bpResIsim').innerText = isim;
     document.getElementById('bpResSinifUnite').innerText = `${sinifStr} (${uniteStr})`;
@@ -11252,7 +11308,74 @@ async function kpEsAnlamlariYukle() {
         });
     } catch(e) {}
 }
-function kpModuAc() {
+const KP_SEVIYE_BOYUTU = 8;
+const KP_SEVIYE_ISIMLERI = ["Sahil Başlangıcı","Mercan Koyu","Yelken Tepesi","Fırtına Burnu","Ada Gizemi","Deniz Feneri","Korsan Koyu","İnci Mağarası","Rüzgar Geçidi","Gün Batımı Limanı","Kayıp Hazine","Dalga Tepesi","Yıldız Adası","Mavi Lagün","Kaptan Köşkü","Gökkuşağı Resifi","Ejder Kayalıkları","Sis Denizi","Altın Kumsal","Okyanus Kalbi","Balina Yolu","Fener Adası","Kristal Koy","Bulut Limanı"];
+function kpSeviyeAdiGetir(index) {
+    let taban = KP_SEVIYE_ISIMLERI[index % KP_SEVIYE_ISIMLERI.length];
+    let tur = Math.floor(index / KP_SEVIYE_ISIMLERI.length);
+    return tur > 0 ? taban + ' ' + (tur+1) : taban;
+}
+let kpTumSeviyeler = [];
+let kpTamamlananSeviyeler = new Set();
+let kpAktifSeviyeNo = null;
+
+function kpParkurHazirla() {
+    let havuz = (window.masterKelimeHavuzu || []).filter(k => (k.ingilizce||k.en) && (k.turkce||k.tr));
+    kpTumSeviyeler = [];
+    for (let i = 0; i < havuz.length; i += KP_SEVIYE_BOYUTU) {
+        let parca = havuz.slice(i, i + KP_SEVIYE_BOYUTU);
+        let seviyeNo = kpTumSeviyeler.length + 1;
+        kpTumSeviyeler.push({ seviyeNo: seviyeNo, isim: kpSeviyeAdiGetir(seviyeNo - 1), kelimeler: parca });
+    }
+}
+
+async function kpTamamlananSeviyeleriYukle() {
+    let isim = siniftaOynananOgrenci || aktifOgrenciAdi;
+    kpTamamlananSeviyeler = new Set();
+    if (!isim) return;
+    try {
+        let res = await fetch(`${apiURL}?islem=konusmaSeviyeIlerlemeGetir&ogrenci=${encodeURIComponent(isim)}`);
+        let liste = await res.json();
+        kpTamamlananSeviyeler = new Set(liste);
+    } catch(e) {}
+}
+
+function kpParkurCiz() {
+    let alan = document.getElementById('kpParkurAlani');
+    if (!alan) return;
+    if (kpTumSeviyeler.length === 0) {
+        alan.innerHTML = '<p style="color:#9fdbe6; font-size:12px; text-align:center; padding:20px;">Kelime havuzu henüz yüklenmedi, birkaç saniye sonra tekrar dene.</p>';
+        return;
+    }
+    let html = '';
+    kpTumSeviyeler.forEach((sv, idx) => {
+        let tamamMi = kpTamamlananSeviyeler.has(sv.seviyeNo);
+        let oncekiTamamMi = sv.seviyeNo === 1 || kpTamamlananSeviyeler.has(sv.seviyeNo - 1);
+        let durum = tamamMi ? 'done' : (oncekiTamamMi ? 'active' : 'locked');
+        let yonSinifi = idx % 2 === 0 ? '' : ' right';
+        let connector = idx === 0 ? '' : '<div class="kp-step-connector"></div>';
+        let checkHtml = tamamMi ? '<div class="kp-done-check">✓</div>' : '';
+        let ikon = tamamMi ? '✓' : (durum === 'locked' ? '🔒' : sv.seviyeNo);
+        let tiklamaOzelligi = durum === 'locked' ? '' : `onclick="kpSeviyeBaslat(${sv.seviyeNo})"`;
+        let altYazi = tamamMi ? sv.kelimeler.length + ' kelime — Tamamlandı' : (durum === 'active' ? sv.kelimeler.length + ' kelime — Hazır!' : 'Önceki seviyeyi bitir');
+        html += `
+        <div class="kp-step-row${yonSinifi}">
+            ${connector}
+            <div class="kp-node-outer ${durum}" ${tiklamaOzelligi}>
+                <div class="kp-node-inner">${ikon}</div>
+                ${checkHtml}
+            </div>
+            <div class="kp-step-info">
+                <div class="kp-step-num">Seviye ${sv.seviyeNo}${durum==='active' ? ' · şu an' : ''}</div>
+                <div class="kp-step-name${durum==='locked' ? ' locked-txt' : ''}">${sv.isim}</div>
+                <div class="kp-step-sub">${altYazi}</div>
+            </div>
+        </div>`;
+    });
+    alan.innerHTML = html;
+}
+
+async function kpModuAc() {
     dcTumTamEkranlariKapat();
     document.getElementById('tab-konusmapratigi').classList.add('active');
     dcBottomNavSenkronize();
@@ -11260,6 +11383,9 @@ function kpModuAc() {
     kpKelimeGirisGoster();
     kpEnerjiYukleVeGoster();
     kpEsAnlamlariYukle();
+    kpParkurHazirla();
+    await kpTamamlananSeviyeleriYukle();
+    kpParkurCiz();
 }
 
 async function kpEnerjiYukleVeGoster() {
@@ -11322,7 +11448,6 @@ function kpKelimeGirisGoster() {
     document.getElementById('kpKelimeGirisEkrani').style.display = 'block';
     document.getElementById('kpKelimeOyunEkrani').style.display = 'none';
     document.getElementById('kpKelimeBitisEkrani').style.display = 'none';
-    sinifGridKisitlamaUygula('kpSinifGrid', function(s){ kpAktifSinif = s; }, kpUniteGuncelle);
     let isimInput = document.getElementById('kpIsimInput');
     if (isimInput) {
         if (siniftaOynananOgrenci) { isimInput.value = siniftaOynananOgrenci; isimInput.disabled = true; }
@@ -11330,28 +11455,20 @@ function kpKelimeGirisGoster() {
         else { isimInput.value = ""; isimInput.disabled = false; }
     }
     document.getElementById('kpMikUyari').style.display = kpTanimaDesteklVar ? 'none' : 'block';
-}
-function kpSinifSec(sinif, btn) {
-    kpAktifSinif = sinif;
-    document.getElementById('kpSinifGrid').querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    kpUniteGuncelle(sinif);
-}
-function kpUniteGuncelle(sinif) {
-    genericSinifGuncelle(sinif, 'kpUniteBox', function(u){ kpSecilenUniteler = u; });
+    kpParkurCiz();
 }
 
-function kpKelimeOyunuBaslat() {
+function kpSeviyeBaslat(seviyeNo) {
     if (kpEnerjiKalan <= 0) { alert("Enerjin bitti! Enerjin saat başı biraz yenilenir, 24 saatte tamamen dolar."); return; }
     let isim = document.getElementById('kpIsimInput').value.trim();
     if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
-    if (kpSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
 
-       let havuz = oyunHavuzGetir(kpAktifSinif, kpSecilenUniteler);
-    if (havuz.length < 1) { alert("Bu ünite(ler)de hiç kelime yok, lütfen farklı ünite seçin."); return; }
+    let seviye = kpTumSeviyeler.find(s => s.seviyeNo === seviyeNo);
+    if (!seviye || seviye.kelimeler.length === 0) { alert("Bu seviyede kelime bulunamadı."); return; }
 
+    kpAktifSeviyeNo = seviyeNo;
     kpArkaArkayaDogru = 0;
-    kpSoruListesi = [...havuz].sort(() => Math.random() - 0.5);
+    kpSoruListesi = [...seviye.kelimeler];
 
     kpSoruIndex = 0; kpDogruSayisi = 0; kpYanlisSayisi = 0; kpToplamPuan = 0; kpKombo = 0;
     kpBaslangicZamani = Date.now(); kpGecenSaniye = 0;
@@ -11365,9 +11482,11 @@ function kpKelimeOyunuBaslat() {
     kpSoruGoster();
 }
 
+let kpAktifSoruYanlisDeneme = 0;
 function kpSoruGoster() {
     if (kpSoruIndex >= kpSoruListesi.length) { kpKelimeOyunuBitir(); return; }
     if (kpEnerjiKalan <= 0) { kpKelimeOyunuBitir(true); return; }
+    kpAktifSoruYanlisDeneme = 0;
     let soru = kpSoruListesi[kpSoruIndex];
     kpAktifSoru = {
         gosterilen: (soru.turkce || soru.tr),
@@ -11483,7 +11602,8 @@ function kpCevapKontrolEt(soylenenMetin) {
     kart.classList.remove('kp-ok', 'kp-hata');
     void kart.offsetWidth;
 
-        let sonucEl = document.getElementById('kpSonucAlani');
+    let sonucEl = document.getElementById('kpSonucAlani');
+
     if (dogruMu) {
         kpDogruSayisi++;
         kpArkaArkayaDogru++;
@@ -11494,24 +11614,38 @@ function kpCevapKontrolEt(soylenenMetin) {
         kpKonfetiPatlat();
         sonucEl.className = 'kp-sonuc ok';
         sonucEl.innerHTML = '🎉 Doğru bildin! +' + kazanc + ' puan';
+        genelKomboGoster(kpKombo, document.getElementById('kpCardWrap'));
 
-             if (kpArkaArkayaDogru > 0 && kpArkaArkayaDogru % 4 === 0) {
+        if (kpArkaArkayaDogru > 0 && kpArkaArkayaDogru % 4 === 0) {
             kpEnerjiDegistir(1);
             kpBonusPapaganGoster();
             sonucEl.innerHTML += '<br><span style="color:#ffd166;">⚡ 4 doğru üst üste! +1 enerji bonus</span>';
         }
+        document.getElementById('kpKomboText').innerText = 'KOMBO x' + kpKombo;
+        kpEnerjiDegistir(-1);
+        setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1600);
     } else {
+        kpAktifSoruYanlisDeneme++;
+        if (kpAktifSoruYanlisDeneme < 3) {
+            kpKombo = 0;
+            document.getElementById('kpKomboText').innerText = 'KOMBO x' + kpKombo;
+            kart.classList.add('kp-hata');
+            if (navigator.vibrate) navigator.vibrate([25,25]);
+            sonucEl.className = 'kp-sonuc hata';
+            sonucEl.innerHTML = '😕 Olmadı, tekrar dene! (' + kpAktifSoruYanlisDeneme + '/3 hak)';
+            return;
+        }
         kpYanlisSayisi++;
         kpKombo = 0;
         kpArkaArkayaDogru = 0;
         kart.classList.add('kp-hata');
         if (navigator.vibrate) navigator.vibrate([40,40,40]);
         sonucEl.className = 'kp-sonuc hata';
-        sonucEl.innerHTML = '😕 Olmadı — Doğrusu: "' + kpAktifSoru.beklenenCevap + '"';
+        sonucEl.innerHTML = '😕 3 hakkın doldu — Doğrusu: "' + kpAktifSoru.beklenenCevap + '"';
+        document.getElementById('kpKomboText').innerText = 'KOMBO x' + kpKombo;
+        kpEnerjiDegistir(-1);
+        setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1900);
     }
-    document.getElementById('kpKomboText').innerText = 'KOMBO x' + kpKombo;
-    kpEnerjiDegistir(-1);
-    setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1600);
 }
 
 function kpYazariCevapGonder() {
@@ -11531,13 +11665,25 @@ async function kpKelimeOyunuBitir(enerjiBittiMi) {
     }
     kpEnerjiSatiriniGuncelle();
 
-    let isim = document.getElementById('kpIsimInput').value.trim();
-    let sinifStr = kpAktifSinif + ". Sınıf";
-    let uniteStr = kpSecilenUniteler.join(",") + ". Ünite";
+      let isim = document.getElementById('kpIsimInput').value.trim();
+    let seviyeAdi = kpAktifSeviyeNo ? kpSeviyeAdiGetir(kpAktifSeviyeNo - 1) : "";
+    let sinifStr = "Seviye " + kpAktifSeviyeNo;
+    let uniteStr = seviyeAdi;
 
     document.getElementById('kpResIsim').innerText = isim;
     document.getElementById('kpResDY').innerText = kpDogruSayisi + ' Doğru / ' + kpYanlisSayisi + ' Yanlış';
     document.getElementById('kpResPuan').innerText = kpToplamPuan + ' Puan';
+
+    let basariliMi = kpDogruSayisi >= Math.ceil(kpSoruListesi.length * 0.6);
+    if (basariliMi && kpAktifSeviyeNo && !kpTamamlananSeviyeler.has(kpAktifSeviyeNo)) {
+        kpTamamlananSeviyeler.add(kpAktifSeviyeNo);
+        fetch(apiURL, { method:"POST", body: JSON.stringify({ islem:"konusmaSeviyeTamamla", ogrenci: isim, seviyeNo: kpAktifSeviyeNo }) }).catch(()=>{});
+        document.getElementById('kpKelimeBitisEkrani').insertAdjacentHTML('afterbegin',
+            '<div style="background:rgba(11,178,136,.18); border:1px solid #0bb288; color:#6de8c4; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; margin-bottom:10px;">🏆 "' + seviyeAdi + '" seviyesi tamamlandı! Bir sonraki seviyenin kilidi açıldı.</div>');
+    } else if (!basariliMi) {
+        document.getElementById('kpKelimeBitisEkrani').insertAdjacentHTML('afterbegin',
+            '<div style="background:rgba(236,134,54,.18); border:1px solid #ec8636; color:#ffb37a; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:800; margin-bottom:10px;">💪 Bu seviyeyi geçmek için en az %60 doğru gerekiyor, tekrar dene!</div>');
+    }
 
     try {
         await fetch(apiURL, { method:"POST", body: JSON.stringify({
