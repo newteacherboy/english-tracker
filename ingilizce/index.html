@@ -2059,17 +2059,24 @@
     <div id="baParkurAlani"></div>
   </div>
 
-  <div id="baOyunEkrani" class="ba-oyun-alani" style="display:none;">
+   <div id="baOyunEkrani" class="ba-oyun-alani" style="display:none;">
     <div class="ba-top">
       <div class="ba-bar-bg"><div class="ba-bar-fill" id="baProgressFill"></div></div>
       <div class="ba-kombo" id="baKomboText">KOMBO x0</div>
     </div>
+
     <div id="baSesPanel" style="display:none;">
       <div class="ba-panel-title" id="baSesBaslik">🔊 Ses Büyüsü</div>
       <div class="ba-kart" id="baSesKelime">Kelime</div>
       <button class="ba-mik-btn" id="baMikBtn" onclick="baDinlemeyiBaslat()">🎤 Konuş</button>
       <div class="ba-sonuc" id="baSesSonuc"></div>
+      <button class="ba-yazi-toggle" onclick="baYaziToggle()">✍️ Yazarak cevapla</button>
+      <div class="ba-yaz-row" id="baYazRow">
+        <input type="text" id="baYazInput" placeholder="Cevabını yaz..." onkeypress="if(event.key==='Enter')baYazGonder()">
+        <button onclick="baYazGonder()">Gönder</button>
+      </div>
     </div>
+
     <div id="baKristalPanel" style="display:none;">
       <div class="ba-panel-title" id="baKristalYon">🔮 Kristal Küre Kehaneti</div>
       <div class="ba-kart" id="baKristalKelime">Kelime</div>
@@ -2079,6 +2086,47 @@
         <button class="ba-sik-btn" id="baKSik2" onclick="baKristalCevapVer(2)">Şık 3</button>
         <button class="ba-sik-btn" id="baKSik3" onclick="baKristalCevapVer(3)">Şık 4</button>
       </div>
+      <button class="ba-devam-btn" id="baKristalDevamBtn" style="display:none;" onclick="baSonrakiSoruyaGec()">Devam Et →</button>
+    </div>
+
+    <div id="baBalonPanel" style="display:none;">
+      <div class="ba-panel-title">🎈 Balon Patlatma</div>
+      <div class="ba-kart" id="baBalonKelime">Kelime</div>
+      <div class="ba-secenekler">
+        <button class="ba-balon-btn" id="baBalon0" onclick="baBalonCevapVer(0)">Şık 1</button>
+        <button class="ba-balon-btn" id="baBalon1" onclick="baBalonCevapVer(1)">Şık 2</button>
+        <button class="ba-balon-btn" id="baBalon2" onclick="baBalonCevapVer(2)">Şık 3</button>
+        <button class="ba-balon-btn" id="baBalon3" onclick="baBalonCevapVer(3)">Şık 4</button>
+      </div>
+      <button class="ba-devam-btn" id="baBalonDevamBtn" style="display:none;" onclick="baSonrakiSoruyaGec()">Devam Et →</button>
+    </div>
+
+    <div id="baBoslukPanel" style="display:none;">
+      <div class="ba-panel-title">🧩 Formül Tamamlama</div>
+      <div class="ba-bosluk-ipucu" id="baBoslukIpucu">💡 İpucu</div>
+      <div class="ba-bosluk-harfler" id="baBoslukHarfler"></div>
+      <button class="ba-mik-btn" style="width:180px;" onclick="baBoslukKontrolEt()">✓ Kontrol Et</button>
+    </div>
+
+    <div id="baHafizaPanel" style="display:none;">
+      <div class="ba-panel-title">🪞 İkiz Ayna Büyüsü</div>
+      <div class="ba-hafiza-grid" id="baHafizaGrid"></div>
+    </div>
+
+    <div id="baYagmurPanel" style="display:none;">
+      <div class="ba-panel-title">✨ Yıldız Tozu Yağmuru</div>
+      <div class="ba-yagmur-alan">
+        <div class="ba-yagmur-dusen" id="baYagmurDusen"><span id="baYagmurKelime">Kelime</span></div>
+      </div>
+      <div class="ba-secenekler" id="baYagmurSecenekler"></div>
+    </div>
+
+    <div id="baAsmacaPanel" style="display:none; text-align:center;">
+      <div class="ba-panel-title">💀 Kayıp Harfler Laneti</div>
+      <div class="ba-bosluk-ipucu" id="baAsmacaIpucu">💡 İpucu</div>
+      <div id="baAsmacaCan" style="margin:8px 0; font-size:16px;"></div>
+      <div id="baAsmacaBlank" style="font-size:22px; font-weight:900; letter-spacing:4px; color:#0c3a44; margin-bottom:14px;"></div>
+      <div class="ba-asmaca-klavye" id="baAsmacaKlavye"></div>
     </div>
   </div>
 </div>
@@ -2128,6 +2176,37 @@
   #tab-anasayfa .asy-shell { width:100% !important; max-width:none !important; min-height:100vh !important; flex:none !important; flex-shrink:0 !important; border-radius:0 !important; }
   #tab-anasayfa .asy-path-col { max-width:520px !important; padding-top:30px; }
 }
+
+        #tab-buyuakademisi .ba-yazi-toggle { background:none; border:none; color:#0a7f95; font-size:11.5px; font-weight:700; text-decoration:underline; cursor:pointer; margin-top:10px; display:block; margin-left:auto; margin-right:auto; }
+#tab-buyuakademisi .ba-yaz-row { display:none; gap:8px; margin-top:10px; width:100%; max-width:280px; }
+#tab-buyuakademisi .ba-yaz-row.acik { display:flex; }
+#tab-buyuakademisi .ba-yaz-row input { flex:1; padding:9px 12px; border-radius:10px; border:2px solid #d9edf0; background:#fff; color:#0c3a44; font-size:12px; outline:none; }
+#tab-buyuakademisi .ba-yaz-row button { background:#0c9bb5; border:none; color:#fff; padding:9px 14px; border-radius:10px; font-weight:800; font-size:12px; cursor:pointer; }
+#tab-buyuakademisi .ba-devam-btn { margin-top:14px; background:#0c9bb5; border:none; color:#fff; padding:11px 26px; border-radius:14px; font-weight:900; font-size:12.5px; cursor:pointer; box-shadow:0 6px 16px rgba(12,155,181,.35); }
+
+#tab-buyuakademisi .ba-balon-btn { padding:16px 10px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; border:none; background:linear-gradient(160deg,#7dd3fc,#0284c7); color:#fff; font-weight:900; font-size:11.5px; cursor:pointer; box-shadow:0 5px 0 #075985, inset 0 -6px 10px rgba(0,0,0,.15); position:relative; }
+#tab-buyuakademisi .ba-balon-btn::after { content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); width:2px; height:8px; background:#94a3b8; }
+#tab-buyuakademisi .ba-balon-btn.patladi { animation:baBalonPat .4s ease forwards; background:#38a169; box-shadow:0 5px 0 #276749; }
+#tab-buyuakademisi .ba-balon-btn.sondu { animation:baBalonSon .3s ease forwards; background:#e53e3e; box-shadow:0 5px 0 #991b1b; }
+@keyframes baBalonPat { 0%{transform:scale(1);} 50%{transform:scale(1.25);} 100%{transform:scale(1);} }
+@keyframes baBalonSon { 0%{transform:scale(1);} 100%{transform:scale(.85); opacity:.6;} }
+
+#tab-buyuakademisi .ba-bosluk-ipucu { text-align:center; font-size:12px; font-weight:800; color:#0a7f95; background:#e3f7fa; border-radius:10px; padding:8px; margin-bottom:16px; max-width:280px; margin-left:auto; margin-right:auto; }
+#tab-buyuakademisi .ba-bosluk-harfler { display:flex; justify-content:center; flex-wrap:wrap; gap:5px; margin-bottom:16px; }
+#tab-buyuakademisi .ba-bosluk-sabit { width:30px; height:38px; background:#f1f5f9; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:15px; color:#64748b; }
+#tab-buyuakademisi .ba-bosluk-input { width:30px; height:38px; border-radius:6px; border:2px solid #0c9bb5; text-align:center; text-transform:uppercase; font-weight:900; font-size:15px; outline:none; background:#fff; color:#0c3a44; }
+
+#tab-buyuakademisi .ba-hafiza-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:260px; margin:0 auto; }
+#tab-buyuakademisi .ba-hafiza-kart { height:64px; border-radius:12px; border:none; background:#0c9bb5; color:transparent; font-weight:800; font-size:12px; cursor:pointer; }
+#tab-buyuakademisi .ba-hafiza-kart.acik { background:#e0f2fe; color:#0c3a44; }
+
+#tab-buyuakademisi .ba-yagmur-alan { position:relative; height:130px; background:linear-gradient(180deg,#dbeafe,#bfdbfe); border-radius:14px; overflow:hidden; margin-bottom:14px; max-width:280px; margin-left:auto; margin-right:auto; }
+#tab-buyuakademisi .ba-yagmur-dusen { position:absolute; left:50%; transform:translateX(-50%); top:0%; background:#fff; padding:6px 14px; border-radius:16px; font-weight:900; font-size:13px; color:#1e40af; box-shadow:0 3px 8px rgba(0,0,0,.15); }
+
+#tab-buyuakademisi .ba-asmaca-klavye { display:flex; flex-wrap:wrap; gap:4px; justify-content:center; max-width:280px; margin:0 auto; }
+#tab-buyuakademisi .ba-harf-btn { width:26px; height:30px; border-radius:6px; border:1.5px solid #d9edf0; background:#fff; color:#0c3a44; font-weight:800; font-size:12px; cursor:pointer; }
+#tab-buyuakademisi .ba-harf-btn:disabled { opacity:.3; }
+        
 </style>
 <button class="dc-exit-btn" onclick="anaSayfaKapat()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -11723,7 +11802,36 @@ async function kpModuAc() {
 
       const BA_SEVIYE_BOYUTU = 8;
 const BA_SEVIYE_ISIMLERI = ["Başlangıç Büyüleri","Kelime İksirleri","Gizli Formüller","Ejder Dili","Kristal Kehanetler","Unutulmuş Tılsımlar","Ay Işığı Büyüleri","Zümrüt Tomarı","Gökkuşağı Asası","Sonsuzluk Kitabı"];
-const BA_SORU_TIPLERI = ['ses', 'kristal'];
+const BA_SORU_TIPLERI = ['kristal', 'balon', 'bosluk', 'hafiza', 'yagmur', 'asmaca', 'ses'];
+
+function baPanelleriGizle() {
+    ['baSesPanel','baKristalPanel','baBalonPanel','baBoslukPanel','baHafizaPanel','baYagmurPanel','baAsmacaPanel'].forEach(id => {
+        let el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+}
+function genelSesOku(metin) {
+    if (!('speechSynthesis' in window) || !metin) return;
+    window.speechSynthesis.cancel();
+    let u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'en-US'; u.rate = 0.9;
+    window.speechSynthesis.speak(u);
+}
+function baSonrakiSoruyaGec() {
+    document.getElementById('baKristalDevamBtn').style.display = 'none';
+    document.getElementById('baBalonDevamBtn').style.display = 'none';
+    baSoruIndex++;
+    baSoruGoster();
+}
+function baYaziToggle() {
+    document.getElementById('baYazRow').classList.toggle('acik');
+}
+function baYazGonder() {
+    let deger = document.getElementById('baYazInput').value.trim();
+    if (!deger) return;
+    baSesCevapKontrolEt(deger);
+    document.getElementById('baYazInput').value = '';
+}
 
 let baTumSeviyeler = [];
 let baTamamlananSeviyeler = new Set();
@@ -11883,10 +11991,15 @@ function baSoruGoster() {
     baAktifSoru = soru;
     document.getElementById('baProgressFill').style.width = Math.round((baSoruIndex / baSoruListesi.length) * 100) + '%';
     document.getElementById('baKomboText').innerText = 'KOMBO x' + baKombo;
+    baPanelleriGizle();
     if (soru.tip === 'ses') baSesBuyusuGoster(soru.kelime);
-    else baKristalKuresiGoster(soru.kelime);
+    else if (soru.tip === 'kristal') baKristalKuresiGoster(soru.kelime);
+    else if (soru.tip === 'balon') baBalonGoster(soru.kelime);
+    else if (soru.tip === 'bosluk') baBoslukGoster(soru.kelime);
+    else if (soru.tip === 'hafiza') baHafizaGoster(soru.kelime);
+    else if (soru.tip === 'yagmur') baYagmurGoster(soru.kelime);
+    else if (soru.tip === 'asmaca') baAsmacaGoster(soru.kelime);
 }
-
 function baDogruIsle() {
     genelSesEfektiCal('dogru');
     baDogruSayisi++;
@@ -11978,8 +12091,6 @@ function baSesCevapKontrolEt(soylenenMetin) {
 
 /* ===== KRİSTAL KÜRE KEHANETİ ===== */
 function baKristalKuresiGoster(k) {
-    document.getElementById('baSesPanel').style.display = 'none';
-    document.getElementById('baKristalPanel').style.display = 'block';
     let ingilizceMi = Math.random() > 0.5;
     let soruMetin, yonEtiket, dogruCevap;
     if (ingilizceMi) {
@@ -11991,6 +12102,7 @@ function baKristalKuresiGoster(k) {
         yonEtiket = '🔮 Bu kelimenin İngilizcesi nedir?';
         dogruCevap = k.ingilizce || k.en;
     }
+    baAktifSoru._ingilizceMi = !ingilizceMi;
     document.getElementById('baKristalYon').innerText = yonEtiket;
     document.getElementById('baKristalKelime').innerText = soruMetin;
     let havuz = window.masterKelimeHavuzu || [];
@@ -12000,6 +12112,7 @@ function baKristalKuresiGoster(k) {
     let secenekler = [dogruCevap, ...yanlislar].sort(() => Math.random() - 0.5);
     baAktifSoru._dogruCevap = dogruCevap;
     baAktifSoru._dogruIndex = secenekler.indexOf(dogruCevap);
+    document.getElementById('baKristalDevamBtn').style.display = 'none';
     for (let i = 0; i < 4; i++) {
         let btn = document.getElementById('baKSik' + i);
         btn.innerText = secenekler[i];
@@ -12014,15 +12127,224 @@ function baKristalCevapVer(secilenIndex) {
     if (secilenIndex === dogruIdx) {
         document.getElementById('baKSik' + secilenIndex).style.background = '#38a169';
         document.getElementById('baKSik' + secilenIndex).style.color = '#fff';
+        if (baAktifSoru._ingilizceMi) genelSesOku(baAktifSoru._dogruCevap);
         baDogruIsle();
+        setTimeout(() => baSonrakiSoruyaGec(), 1300);
     } else {
         document.getElementById('baKSik' + secilenIndex).style.background = '#e53e3e';
         document.getElementById('baKSik' + secilenIndex).style.color = '#fff';
         document.getElementById('baKSik' + dogruIdx).style.background = '#38a169';
         document.getElementById('baKSik' + dogruIdx).style.color = '#fff';
+        if (baAktifSoru._ingilizceMi) genelSesOku(baAktifSoru._dogruCevap);
         baYanlisIsle();
+        document.getElementById('baKristalDevamBtn').style.display = 'block';
     }
+}
+
+/* ===== BALON PATLATMA ===== */
+function baBalonGoster(k) {
+    let ingilizceMi = Math.random() > 0.5;
+    let soruMetin, dogruCevap;
+    if (ingilizceMi) { soruMetin = k.ingilizce||k.en; dogruCevap = k.turkce||k.tr; }
+    else { soruMetin = k.turkce||k.tr; dogruCevap = k.ingilizce||k.en; }
+    document.getElementById('baBalonKelime').innerText = soruMetin;
+    baAktifSoru._ingilizceMi = !ingilizceMi;
+    let havuz = window.masterKelimeHavuzu||[];
+    let yanlisAday = havuz.filter(x => (ingilizceMi ? (x.turkce||x.tr) : (x.ingilizce||x.en)) !== dogruCevap);
+    let yanlislar = [...yanlisAday].sort(()=>Math.random()-0.5).slice(0,3).map(x => ingilizceMi ? (x.turkce||x.tr) : (x.ingilizce||x.en));
+    while (yanlislar.length<3) yanlislar.push('---');
+    let secenekler = [dogruCevap, ...yanlislar].sort(()=>Math.random()-0.5);
+    baAktifSoru._dogruCevap = dogruCevap;
+    baAktifSoru._dogruIndex = secenekler.indexOf(dogruCevap);
+    document.getElementById('baBalonDevamBtn').style.display = 'none';
+    for (let i=0;i<4;i++) {
+        let btn = document.getElementById('baBalon'+i);
+        btn.innerText = secenekler[i];
+        btn.disabled = false;
+        btn.className = 'ba-balon-btn';
+    }
+}
+function baBalonCevapVer(secilenIndex) {
+    let dogruIdx = baAktifSoru._dogruIndex;
+    for (let x=0;x<4;x++) document.getElementById('baBalon'+x).disabled = true;
+    if (secilenIndex === dogruIdx) {
+        document.getElementById('baBalon'+secilenIndex).classList.add('patladi');
+        if (baAktifSoru._ingilizceMi) genelSesOku(baAktifSoru._dogruCevap);
+        baDogruIsle();
+        setTimeout(() => baSonrakiSoruyaGec(), 1300);
+    } else {
+        document.getElementById('baBalon'+secilenIndex).classList.add('sondu');
+        document.getElementById('baBalon'+dogruIdx).classList.add('patladi');
+        if (baAktifSoru._ingilizceMi) genelSesOku(baAktifSoru._dogruCevap);
+        baYanlisIsle();
+        document.getElementById('baBalonDevamBtn').style.display = 'block';
+    }
+}
+
+/* ===== FORMÜL TAMAMLAMA (Boşluk Doldurma) ===== */
+function baBoslukGoster(k) {
+    let en = (k.ingilizce || k.en || '').toUpperCase();
+    let gizliIdx = [Math.floor(Math.random()*en.length)];
+    if (en.length >= 5) {
+        let idx2;
+        do { idx2 = Math.floor(Math.random()*en.length); } while (idx2 === gizliIdx[0]);
+        gizliIdx.push(idx2);
+    }
+    baAktifSoru._enKelime = en;
+    document.getElementById('baBoslukIpucu').innerText = '💡 ' + (k.turkce || k.tr);
+    let alan = document.getElementById('baBoslukHarfler');
+    alan.innerHTML = '';
+    for (let i=0;i<en.length;i++) {
+        if (gizliIdx.includes(i)) {
+            let inp = document.createElement('input');
+            inp.maxLength = 1; inp.className = 'ba-bosluk-input'; inp.dataset.dogru = en[i];
+            alan.appendChild(inp);
+        } else {
+            let span = document.createElement('span');
+            span.className = 'ba-bosluk-sabit'; span.innerText = en[i];
+            alan.appendChild(span);
+        }
+    }
+}
+function baBoslukKontrolEt() {
+    let inputs = document.querySelectorAll('#baBoslukHarfler .ba-bosluk-input');
+    let hepsiDogru = true;
+    inputs.forEach(inp => {
+        let girilen = inp.value.trim().toUpperCase();
+        if (girilen === inp.dataset.dogru) { inp.style.background = '#dcfce7'; inp.style.borderColor = '#22c55e'; }
+        else { hepsiDogru = false; inp.style.background = '#fee2e2'; inp.style.borderColor = '#ef4444'; inp.value = inp.dataset.dogru; }
+        inp.disabled = true;
+    });
+    if (hepsiDogru) baDogruIsle(); else baYanlisIsle();
     setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 1300);
+}
+
+/* ===== İKİZ AYNA BÜYÜSÜ (Hafıza) ===== */
+function baHafizaGoster(k) {
+    let havuz = window.masterKelimeHavuzu || [];
+    let yanlisAday = havuz.filter(x => (x.ingilizce||x.en) !== (k.ingilizce||k.en));
+    let yanlis = yanlisAday[Math.floor(Math.random()*yanlisAday.length)] || { ingilizce:'---', turkce:'---' };
+    let kartlar = [
+        { metin:(k.ingilizce||k.en), pair:'A' },
+        { metin:(k.turkce||k.tr), pair:'A' },
+        { metin:(yanlis.ingilizce||yanlis.en), pair:'B' },
+        { metin:(yanlis.turkce||yanlis.tr), pair:'B' }
+    ].sort(() => Math.random()-0.5);
+    baAktifSoru._kartlar = kartlar;
+    baAktifSoru._acikIndex = [];
+    let alan = document.getElementById('baHafizaGrid');
+    alan.innerHTML = '';
+    kartlar.forEach((kart, i) => {
+        let btn = document.createElement('button');
+        btn.className = 'ba-hafiza-kart';
+        btn.innerText = '❓';
+        btn.onclick = () => baHafizaTikla(i);
+        alan.appendChild(btn);
+    });
+}
+function baHafizaTikla(i) {
+    let kartlar = baAktifSoru._kartlar;
+    let acik = baAktifSoru._acikIndex;
+    if (acik.includes(i) || acik.length >= 2) return;
+    let btns = document.querySelectorAll('#baHafizaGrid .ba-hafiza-kart');
+    btns[i].innerText = kartlar[i].metin;
+    btns[i].classList.add('acik');
+    acik.push(i);
+    if (acik.length === 2) {
+        setTimeout(() => {
+            let dogruMu = kartlar[acik[0]].pair === 'A' && kartlar[acik[1]].pair === 'A';
+            if (dogruMu) { baDogruIsle(); }
+            else {
+                baYanlisIsle();
+                kartlar.forEach((kart, idx) => { if (kart.pair === 'A') { btns[idx].innerText = kart.metin; btns[idx].classList.add('acik'); } });
+            }
+            setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 900);
+        }, 500);
+    }
+}
+
+/* ===== YILDIZ TOZU YAĞMURU ===== */
+let baYagmurTimer = null;
+function baYagmurGoster(k) {
+    let dogru = k.turkce || k.tr;
+    document.getElementById('baYagmurKelime').innerText = k.ingilizce || k.en;
+    let havuz = window.masterKelimeHavuzu || [];
+    let yanlislar = [...havuz].filter(x => (x.turkce||x.tr) !== dogru).sort(() => Math.random()-0.5).slice(0,3).map(x => x.turkce||x.tr);
+    while (yanlislar.length < 3) yanlislar.push('---');
+    let secenekler = [dogru, ...yanlislar].sort(() => Math.random()-0.5);
+    baAktifSoru._dogruCevap = dogru;
+    let alan = document.getElementById('baYagmurSecenekler');
+    alan.innerHTML = '';
+    secenekler.forEach(sec => {
+        let btn = document.createElement('button');
+        btn.className = 'ba-sik-btn'; btn.innerText = sec;
+        btn.onclick = () => baYagmurCevapVer(sec === dogru, btn);
+        alan.appendChild(btn);
+    });
+    let dusenEl = document.getElementById('baYagmurDusen');
+    dusenEl.style.top = '0%';
+    if (baYagmurTimer) clearInterval(baYagmurTimer);
+    let pos = 0;
+    baYagmurTimer = setInterval(() => {
+        pos += 1.2;
+        dusenEl.style.top = pos + '%';
+        if (pos >= 85) {
+            clearInterval(baYagmurTimer);
+            document.querySelectorAll('#baYagmurSecenekler .ba-sik-btn').forEach(b => b.disabled = true);
+            baYanlisIsle();
+            setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 900);
+        }
+    }, 60);
+}
+function baYagmurCevapVer(dogruMu, btnEl) {
+    if (baYagmurTimer) clearInterval(baYagmurTimer);
+    document.querySelectorAll('#baYagmurSecenekler .ba-sik-btn').forEach(b => b.disabled = true);
+    if (dogruMu) { btnEl.style.background = '#38a169'; btnEl.style.color = '#fff'; baDogruIsle(); }
+    else { btnEl.style.background = '#e53e3e'; btnEl.style.color = '#fff'; baYanlisIsle(); }
+    setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 1000);
+}
+
+/* ===== KAYIP HARFLER LANETİ (Adam Asmaca) ===== */
+let baAsmacaYanlis = 0, baAsmacaTahmin = [];
+function baAsmacaGoster(k) {
+    let en = (k.ingilizce || k.en || '').toUpperCase();
+    baAktifSoru._enKelime = en;
+    baAsmacaYanlis = 0; baAsmacaTahmin = [];
+    document.getElementById('baAsmacaIpucu').innerText = '💡 ' + (k.turkce || k.tr);
+    baAsmacaCiz();
+    let klavye = document.getElementById('baAsmacaKlavye');
+    klavye.innerHTML = '';
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(harf => {
+        let btn = document.createElement('button');
+        btn.className = 'ba-harf-btn'; btn.innerText = harf;
+        btn.onclick = () => baAsmacaHarfSec(harf, btn);
+        klavye.appendChild(btn);
+    });
+}
+function baAsmacaCiz() {
+    let en = baAktifSoru._enKelime;
+    document.getElementById('baAsmacaBlank').innerText = en.split('').map(ch => baAsmacaTahmin.includes(ch) ? ch : '_').join(' ');
+    document.getElementById('baAsmacaCan').innerText = '❤️'.repeat(4-baAsmacaYanlis) + '🖤'.repeat(baAsmacaYanlis);
+}
+function baAsmacaHarfSec(harf, btn) {
+    btn.disabled = true;
+    let en = baAktifSoru._enKelime;
+    if (en.includes(harf)) {
+        baAsmacaTahmin.push(harf);
+        baAsmacaCiz();
+        if (en.split('').every(ch => baAsmacaTahmin.includes(ch))) {
+            baDogruIsle();
+            setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 1200);
+        }
+    } else {
+        baAsmacaYanlis++;
+        baAsmacaCiz();
+        if (baAsmacaYanlis >= 4) {
+            baYanlisIsle();
+            document.getElementById('baAsmacaIpucu').innerText = '❌ Doğrusu: ' + en;
+            setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 1500);
+        }
+    }
 }
 
 /* ===== SEVİYE BİTİŞİ ===== */
