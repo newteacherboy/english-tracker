@@ -3136,13 +3136,14 @@
 }
       
 @media (min-width: 769px) {
-  #tab-konusmapratigi.dc-fullscreen-overlay { padding-left:8px !important; padding-right:8px !important; }
-  #tab-konusmapratigi .kp-shell { width:96%; max-width:1300px; margin:0 auto; padding:30px 50px 60px; border-radius:26px; }
+  #tab-konusmapratigi.dc-fullscreen-overlay { padding-left:8px !important; padding-right:8px !important; justify-content:stretch !important; }
+  #tab-konusmapratigi .kp-shell { width:96% !important; max-width:1300px !important; margin:0 auto !important; flex:none !important; flex-shrink:0 !important; box-sizing:border-box !important; padding:30px 50px 60px; border-radius:26px; }
   #tab-konusmapratigi .kp-card { width:300px; height:300px; }
   #tab-konusmapratigi .kp-card-word { font-size:32px; }
   #tab-konusmapratigi .kp-mik-btn { width:220px; height:74px; font-size:27px; }
   #tab-konusmapratigi .kp-yaz-row { max-width:460px; }
 } 
+
 
 #tab-konusmapratigi .kp-step-row { display:flex; align-items:center; gap:14px; margin-bottom:6px; position:relative; }
 #tab-konusmapratigi .kp-step-row.right { flex-direction:row-reverse; text-align:right; }
@@ -11591,12 +11592,15 @@ function kpSoruGoster() {
     if (kpSoruIndex >= kpSoruListesi.length) { kpKelimeOyunuBitir(); return; }
     if (kpEnerjiKalan <= 0) { genelEnerjiBittiGoster(); kpKelimeOyunuBitir(true); return; }
     kpAktifSoruYanlisDeneme = 0;
-    let soru = kpSoruListesi[kpSoruIndex];
+        let soru = kpSoruListesi[kpSoruIndex];
+    let turkceDeger = soru.turkce || soru.tr || soru.Turkce || soru.TR || soru.anlam || '';
+    let ingilizceDeger = soru.ingilizce || soru.en || soru.Ingilizce || soru.EN || '';
     kpAktifSoru = {
-        gosterilen: (soru.turkce || soru.tr),
-        beklenenCevap: (soru.ingilizce || soru.en),
+        gosterilen: turkceDeger,
+        beklenenCevap: ingilizceDeger,
         dil: 'en-US'
     };
+
     document.getElementById('kpSoruYon').innerText = "Kelimenin İngilizcesini söyle";
     document.getElementById('kpSoruKelime').innerText = kpAktifSoru.gosterilen;
     document.getElementById('kpProgressFill').style.width = Math.round((kpSoruIndex / kpSoruListesi.length) * 100) + '%';
