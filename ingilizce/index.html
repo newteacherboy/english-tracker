@@ -1981,82 +1981,97 @@
 
 <div id="tab-buyuakademisi" class="dc-fullscreen-overlay">
 <style>
-#tab-buyuakademisi .ba-shell { background:radial-gradient(circle at 30% 15%,#3b2172,#160b30 65%); min-height:100%; padding:16px 14px 40px; color:#fff; position:relative; overflow:hidden; }
-#tab-buyuakademisi .ba-star { position:absolute; background:#fff; border-radius:50%; animation:baTwinkle 2.2s ease-in-out infinite; }
-@keyframes baTwinkle { 0%,100%{opacity:.15;} 50%{opacity:1;} }
-#tab-buyuakademisi .ba-top { display:flex; align-items:center; gap:10px; margin-bottom:14px; position:relative; z-index:2; }
-#tab-buyuakademisi .ba-close { width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.1); border:none; color:#fff; font-size:16px; cursor:pointer; flex-shrink:0; }
-#tab-buyuakademisi .ba-bar-bg { flex:1; height:11px; background:rgba(255,255,255,.1); border-radius:8px; overflow:hidden; }
-#tab-buyuakademisi .ba-bar-fill { height:100%; width:0%; background:linear-gradient(90deg,#a78bfa,#f0abfc); transition:width .35s ease; }
-#tab-buyuakademisi .ba-kombo { font-size:10px; font-weight:900; color:#fbbf24; white-space:nowrap; }
-#tab-buyuakademisi .ba-enerji-satiri { text-align:center; font-size:11px; font-weight:900; color:#fbbf24; margin-bottom:12px; position:relative; z-index:2; }
-#tab-buyuakademisi .ba-rutbe { text-align:center; background:rgba(255,255,255,.06); border:1px solid rgba(167,139,250,.3); border-radius:14px; padding:8px; margin-bottom:14px; position:relative; z-index:2; }
-#tab-buyuakademisi .ba-rutbe-title { color:#f0abfc; font-weight:900; font-size:11.5px; }
-#tab-buyuakademisi .ba-rutbe-sub { color:#a99fd4; font-size:9px; margin-top:1px; }
-#tab-buyuakademisi .ba-isim-input { width:100%; padding:12px 14px; border:2px solid rgba(167,139,250,.3); border-radius:12px; font-size:13px; font-weight:700; text-align:center; outline:none; background:rgba(255,255,255,.08); color:#fff; margin-bottom:14px; position:relative; z-index:2; }
-#tab-buyuakademisi .ba-isim-input::placeholder { color:#a99fd4; }
-#tab-buyuakademisi .ba-step-row { display:flex; align-items:center; gap:12px; margin-bottom:8px; position:relative; z-index:2; }
-#tab-buyuakademisi .ba-step-row.right { flex-direction:row-reverse; text-align:right; }
-#tab-buyuakademisi .ba-node { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:17px; flex-shrink:0; position:relative; cursor:pointer; }
-#tab-buyuakademisi .ba-node.locked { cursor:not-allowed; }
-#tab-buyuakademisi .ba-node.done { background:radial-gradient(circle at 30% 30%,#c4b5fd,#7c3aed); box-shadow:0 0 14px rgba(124,58,237,.6); color:#fff; }
-#tab-buyuakademisi .ba-node.active { background:radial-gradient(circle at 30% 30%,#f0abfc,#c026d3); box-shadow:0 0 20px rgba(240,171,252,.8); color:#fff; animation:baPulse 1.6s ease-in-out infinite; }
-@keyframes baPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
-#tab-buyuakademisi .ba-node.active::after { content:'🧙'; position:absolute; top:-26px; left:50%; transform:translateX(-50%); font-size:18px; animation:baBob 1.6s ease-in-out infinite; }
+#tab-buyuakademisi .ba-shell { background:#f4fbfc; min-height:100%; padding:0 0 50px; color:#0c3a44; position:relative; overflow:hidden; }
+#tab-buyuakademisi .ba-topbar2 { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; font-size:12px; font-weight:900; color:#0c3a44; position:relative; z-index:3; }
+#tab-buyuakademisi .ba-topbar2 .ba-t2item { display:flex; align-items:center; gap:4px; }
+#tab-buyuakademisi .ba-close { width:34px; height:34px; border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,.12); border:none; color:#0c3a44; font-size:16px; cursor:pointer; flex-shrink:0; position:absolute; top:12px; right:14px; z-index:5; }
+#tab-buyuakademisi .ba-unit-card { margin:0 14px 16px; border-radius:18px; padding:16px; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(135deg,#0d5a6c,#072c35); color:#fff; position:relative; z-index:3; box-shadow:0 8px 20px rgba(13,90,108,.3); }
+#tab-buyuakademisi .ba-unit-title { font-size:15px; font-weight:900; }
+#tab-buyuakademisi .ba-unit-sub { font-size:10px; opacity:.8; margin-top:2px; }
+#tab-buyuakademisi .ba-unit-btns { display:flex; gap:6px; flex-shrink:0; }
+#tab-buyuakademisi .ba-unit-btn { width:32px; height:32px; border-radius:10px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:15px; cursor:pointer; border:none; }
+#tab-buyuakademisi .ba-sec-title { font-size:14px; font-weight:900; color:#0c3a44; text-align:center; margin-bottom:6px; position:relative; z-index:3; }
+#tab-buyuakademisi .ba-sec-progress { max-width:150px; margin:0 auto 24px; background:#e3f7fa; border-radius:20px; text-align:center; font-size:10px; font-weight:800; color:#0a7f95; padding:5px; position:relative; z-index:3; }
+#tab-buyuakademisi .ba-isim-input { width:calc(100% - 28px); margin:0 14px 14px; padding:12px 14px; border:2px solid #d9edf0; border-radius:12px; font-size:13px; font-weight:700; text-align:center; outline:none; background:#fff; color:#0c3a44; position:relative; z-index:3; }
+#tab-buyuakademisi .ba-isim-input::placeholder { color:#8fb9c2; }
+#tab-buyuakademisi .ba-path-wrap { position:relative; padding:0 34px 10px; max-width:420px; margin:0 auto; }
+#tab-buyuakademisi .ba-node-block { display:flex; flex-direction:column; align-items:center; margin-bottom:8px; position:relative; z-index:3; cursor:pointer; }
+#tab-buyuakademisi .ba-node-block.left { align-items:flex-start; margin-left:6%; }
+#tab-buyuakademisi .ba-node-block.right { align-items:flex-end; margin-right:6%; }
+#tab-buyuakademisi .ba-portrait { width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px; border:4px solid; position:relative; box-shadow:0 4px 10px rgba(0,0,0,.15); background:#e0f2fe; }
+#tab-buyuakademisi .ba-portrait.done { border-color:#0284c7; background:#e0f2fe; }
+#tab-buyuakademisi .ba-portrait.active { border-color:#ec8636; background:#fff3e0; animation:baPortraitPulse 1.8s ease-out infinite; }
+@keyframes baPortraitPulse { 0%,100%{box-shadow:0 4px 10px rgba(0,0,0,.15), 0 0 0 0 rgba(236,134,54,.5);} 70%{box-shadow:0 4px 10px rgba(0,0,0,.15), 0 0 0 14px rgba(236,134,54,0);} }
+#tab-buyuakademisi .ba-portrait.locked { border-color:#cbd5e1; background:#f1f5f9; filter:grayscale(1); opacity:.55; cursor:not-allowed; }
+#tab-buyuakademisi .ba-portrait.active::after { content:'🦜'; position:absolute; top:-28px; left:50%; transform:translateX(-50%); font-size:20px; animation:baBob 1.6s ease-in-out infinite; }
 @keyframes baBob { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(-6px);} }
-#tab-buyuakademisi .ba-node.locked { background:rgba(255,255,255,.08); color:#8f7bb8; }
-#tab-buyuakademisi .ba-info { flex:1; }
-#tab-buyuakademisi .ba-snum { font-size:9px; font-weight:800; color:#c4b5fd; text-transform:uppercase; }
-#tab-buyuakademisi .ba-sname { font-size:12.5px; font-weight:900; color:#fff; margin-top:1px; }
-#tab-buyuakademisi .ba-sname.locked-t { color:#7a6ba3; }
-#tab-buyuakademisi .ba-ssub { font-size:9px; color:#a99fd4; margin-top:1px; }
+#tab-buyuakademisi .ba-lock-badge { position:absolute; bottom:-2px; right:-2px; background:#94a3b8; color:#fff; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid #f4fbfc; }
+#tab-buyuakademisi .ba-stars { font-size:12px; margin-top:6px; letter-spacing:1px; }
+#tab-buyuakademisi .ba-node-name { font-size:11.5px; font-weight:900; color:#0c3a44; margin-top:3px; max-width:100px; text-align:center; }
+#tab-buyuakademisi .ba-node-name.locked-t { color:#94a3b8; }
+#tab-buyuakademisi .ba-dots-svg { position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; }
 
-#tab-buyuakademisi .ba-oyun-alani { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
-#tab-buyuakademisi .ba-panel-title { text-align:center; font-size:14px; font-weight:900; color:#f0abfc; margin-bottom:16px; }
-#tab-buyuakademisi .ba-kart { width:220px; min-height:120px; border-radius:24px; background:rgba(255,255,255,.06); border:1.5px solid rgba(240,171,252,.3); display:flex; align-items:center; justify-content:center; text-align:center; padding:16px; margin-bottom:20px; font-size:22px; font-weight:900; color:#fff; }
-#tab-buyuakademisi .ba-mik-btn { width:150px; height:58px; border-radius:29px; background:linear-gradient(135deg,#a78bfa,#f0abfc); border:none; color:#3b0764; font-size:20px; font-weight:900; cursor:pointer; box-shadow:0 8px 22px rgba(167,139,250,.5); margin-bottom:14px; }
+#tab-buyuakademisi .ba-oyun-alani { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; padding:14px 14px 0; }
+#tab-buyuakademisi .ba-top { display:flex; align-items:center; gap:10px; margin-bottom:14px; width:100%; max-width:360px; }
+#tab-buyuakademisi .ba-bar-bg { flex:1; height:11px; background:#e3f7fa; border-radius:8px; overflow:hidden; }
+#tab-buyuakademisi .ba-bar-fill { height:100%; width:0%; background:linear-gradient(90deg,#2ed7ea,#0c9bb5); transition:width .35s ease; }
+#tab-buyuakademisi .ba-kombo { font-size:10px; font-weight:900; color:#ec8636; white-space:nowrap; }
+#tab-buyuakademisi .ba-panel-title { text-align:center; font-size:14px; font-weight:900; color:#0c3a44; margin-bottom:16px; }
+#tab-buyuakademisi .ba-kart { width:220px; min-height:120px; border-radius:24px; background:#fff; border:1.5px solid #d9edf0; box-shadow:0 6px 16px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center; text-align:center; padding:16px; margin-bottom:20px; font-size:22px; font-weight:900; color:#0c3a44; }
+#tab-buyuakademisi .ba-mik-btn { width:150px; height:58px; border-radius:29px; background:linear-gradient(135deg,#2ed7ea,#0c9bb5); border:none; color:#072c35; font-size:20px; font-weight:900; cursor:pointer; box-shadow:0 8px 22px rgba(12,155,181,.4); margin-bottom:14px; }
 #tab-buyuakademisi .ba-mik-btn.dinliyor { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; }
 #tab-buyuakademisi .ba-sonuc { min-height:26px; text-align:center; font-size:13px; font-weight:900; margin-bottom:10px; }
-#tab-buyuakademisi .ba-sonuc.ok { color:#5fe3c0; }
-#tab-buyuakademisi .ba-sonuc.hata { color:#ff8a8a; }
+#tab-buyuakademisi .ba-sonuc.ok { color:#0a8f62; }
+#tab-buyuakademisi .ba-sonuc.hata { color:#dc2626; }
 #tab-buyuakademisi .ba-secenekler { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:320px; }
-#tab-buyuakademisi .ba-sik-btn { padding:14px; border-radius:12px; border:2px solid rgba(255,255,255,.15); background:#fff8f0; color:#3b0764; font-weight:900; font-size:12.5px; cursor:pointer; }
+#tab-buyuakademisi .ba-sik-btn { padding:14px; border-radius:12px; border:2px solid #d9edf0; background:#fff; color:#0c3a44; font-weight:900; font-size:12.5px; cursor:pointer; }
 
-#tab-buyuakademisi .ba-levelup-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:radial-gradient(circle at 50% 40%,#3b2172,#0a0620 75%); z-index:100000005; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; }
-#tab-buyuakademisi .ba-magic-circle { position:absolute; border:2px solid rgba(240,171,252,.4); border-radius:50%; animation:baCircleSpin 8s linear infinite; }
-#tab-buyuakademisi .ba-mc2 { width:170px; height:170px; border-color:rgba(167,139,250,.5); animation:baCircleSpin 6s linear infinite reverse; }
-#tab-buyuakademisi .ba-mc3 { width:120px; height:120px; border-color:rgba(252,211,77,.4); animation:baCircleSpin 4s linear infinite; }
+#tab-buyuakademisi .ba-levelup-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:radial-gradient(circle at 50% 40%,#0d5a6c,#031a20 75%); z-index:100000005; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; }
+#tab-buyuakademisi .ba-magic-circle { position:absolute; border:2px solid rgba(46,215,234,.4); border-radius:50%; animation:baCircleSpin 8s linear infinite; }
+#tab-buyuakademisi .ba-mc2 { width:170px; height:170px; border-color:rgba(11,178,136,.5); animation:baCircleSpin 6s linear infinite reverse; }
+#tab-buyuakademisi .ba-mc3 { width:120px; height:120px; border-color:rgba(236,134,54,.4); animation:baCircleSpin 4s linear infinite; }
 #tab-buyuakademisi .ba-mc1 { width:220px; height:220px; }
 @keyframes baCircleSpin { to{transform:rotate(360deg);} }
 #tab-buyuakademisi .ba-spark { position:absolute; font-size:16px; animation:baSparkBurst 1.8s ease-out infinite; }
 @keyframes baSparkBurst { 0%{opacity:0; transform:translate(0,0) scale(.4);} 30%{opacity:1;} 100%{opacity:0; transform:translate(var(--sx),var(--sy)) scale(1.2);} }
-#tab-buyuakademisi .ba-wand { font-size:64px; position:relative; z-index:3; animation:baWandPulse 1.4s ease-in-out infinite; filter:drop-shadow(0 0 18px rgba(240,171,252,.7)); }
+#tab-buyuakademisi .ba-wand { font-size:64px; position:relative; z-index:3; animation:baWandPulse 1.4s ease-in-out infinite; filter:drop-shadow(0 0 18px rgba(46,215,234,.7)); }
 @keyframes baWandPulse { 0%,100%{transform:scale(1) rotate(-4deg);} 50%{transform:scale(1.1) rotate(4deg);} }
-#tab-buyuakademisi .ba-lv-title { position:relative; z-index:3; color:#fff; font-size:20px; font-weight:900; margin-top:18px; text-shadow:0 0 14px rgba(240,171,252,.6); }
-#tab-buyuakademisi .ba-lv-sub { position:relative; z-index:3; color:#f0abfc; font-size:13px; font-weight:800; margin-top:4px; }
-#tab-buyuakademisi .ba-lv-badge { position:relative; z-index:3; margin-top:16px; background:rgba(255,255,255,.08); border:1px solid rgba(240,171,252,.4); border-radius:16px; padding:10px 18px; color:#fff; font-size:11.5px; font-weight:700; max-width:280px; }
-#tab-buyuakademisi .ba-lv-btn { position:relative; z-index:3; margin-top:20px; background:linear-gradient(135deg,#f0abfc,#a78bfa); border:none; color:#3b0764; padding:12px 30px; border-radius:14px; font-weight:900; font-size:13px; box-shadow:0 8px 20px rgba(240,171,252,.4); cursor:pointer; }
+#tab-buyuakademisi .ba-lv-title { position:relative; z-index:3; color:#fff; font-size:20px; font-weight:900; margin-top:18px; text-shadow:0 0 14px rgba(46,215,234,.6); }
+#tab-buyuakademisi .ba-lv-sub { position:relative; z-index:3; color:#7de8f5; font-size:13px; font-weight:800; margin-top:4px; }
+#tab-buyuakademisi .ba-lv-badge { position:relative; z-index:3; margin-top:16px; background:rgba(255,255,255,.08); border:1px solid rgba(46,215,234,.4); border-radius:16px; padding:10px 18px; color:#fff; font-size:11.5px; font-weight:700; max-width:280px; }
+#tab-buyuakademisi .ba-lv-btn { position:relative; z-index:3; margin-top:20px; background:linear-gradient(135deg,#2ed7ea,#0c9bb5); border:none; color:#072c35; padding:12px 30px; border-radius:14px; font-weight:900; font-size:13px; box-shadow:0 8px 20px rgba(12,155,181,.4); cursor:pointer; }
+
+@media (min-width: 769px) {
+  #tab-buyuakademisi.dc-fullscreen-overlay { padding:0 !important; background:transparent !important; justify-content:stretch !important; align-items:stretch !important; }
+  #tab-buyuakademisi .ba-shell { width:100% !important; max-width:none !important; min-height:100vh !important; flex:none !important; flex-shrink:0 !important; }
+  #tab-buyuakademisi .ba-path-wrap { max-width:480px !important; padding-top:10px; }
+  #tab-buyuakademisi .ba-unit-card { max-width:480px !important; margin-left:auto !important; margin-right:auto !important; }
+}
 </style>
-
 <div class="ba-shell">
-  <div class="ba-star" style="width:2px;height:2px;top:20px;left:40px;"></div>
-  <div class="ba-star" style="width:2px;height:2px;top:60px;right:30px;animation-delay:.7s;"></div>
-  <div class="ba-star" style="width:3px;height:3px;top:140px;left:80px;animation-delay:1.3s;"></div>
-
-  <div class="ba-top">
-    <button class="ba-close" onclick="baModuKapat()">✕</button>
-    <div class="ba-bar-bg"><div class="ba-bar-fill" id="baProgressFill"></div></div>
-    <div class="ba-kombo" id="baKomboText">KOMBO x0</div>
-  </div>
-  <div class="ba-enerji-satiri" id="baEnerjiSatiri">⚡ Enerji: --/--</div>
+  <button class="ba-close" onclick="baModuKapat()">✕</button>
 
   <div id="baGirisEkrani">
-    <div class="ba-rutbe" id="baRutbeAlani"></div>
+    <div class="ba-topbar2">
+      <div class="ba-t2item">🔥 <span id="baStreakGoster">0</span></div>
+      <div class="ba-t2item">⭐ <span id="baPuanGoster">0</span></div>
+      <div class="ba-t2item">⚡ <span id="baEnerjiSatiri">--/--</span></div>
+    </div>
+    <div class="ba-unit-card">
+      <div><div class="ba-unit-title" id="baUniteBaslik">Sahil Başlangıcı</div><div class="ba-unit-sub" id="baRutbeAlani">🌙 Çırak Büyücü</div></div>
+      <div class="ba-unit-btns"><div class="ba-unit-btn">📋</div><div class="ba-unit-btn">🧙</div></div>
+    </div>
+    <div class="ba-sec-title">Büyü Akademisi Parkuru</div>
+    <div class="ba-sec-progress" id="baIlerlemeGoster">0 / 0 seviye</div>
     <input type="text" id="baIsimInput" class="ba-isim-input" placeholder="Adınız">
     <div id="baParkurAlani"></div>
   </div>
 
   <div id="baOyunEkrani" class="ba-oyun-alani" style="display:none;">
+    <div class="ba-top">
+      <div class="ba-bar-bg"><div class="ba-bar-fill" id="baProgressFill"></div></div>
+      <div class="ba-kombo" id="baKomboText">KOMBO x0</div>
+    </div>
     <div id="baSesPanel" style="display:none;">
       <div class="ba-panel-title" id="baSesBaslik">🔊 Ses Büyüsü</div>
       <div class="ba-kart" id="baSesKelime">Kelime</div>
@@ -11723,39 +11738,57 @@ function baEnerjiSatiriGuncelle() {
     if (!satir) return;
     let kalan = window.genelEnerjiKalan !== undefined ? window.genelEnerjiKalan : '--';
     let max = window.genelEnerjiMax !== undefined ? window.genelEnerjiMax : '--';
-    satir.innerText = `⚡ Enerji: ${kalan}/${max}`;
+    satir.innerText = `${kalan}/${max}`;
+    let streakEl = document.getElementById('baStreakGoster');
+    let puanEl = document.getElementById('baPuanGoster');
+    if (streakEl) { let h = document.getElementById('headerStreakNum'); if (h) streakEl.innerText = h.innerText.replace('🔥','').trim(); }
+    if (puanEl) { let g = document.getElementById('valGenelPuan'); if (g) puanEl.innerText = g.innerText; }
 }
 
+const BA_PORTRE_IKONLAR = ['🦜','🐢','🐠','🦈','🐙','🦑','🐬','🦭','🪼','🐚'];
 function baParkurCiz() {
     let alan = document.getElementById('baParkurAlani');
     let rutbeAlani = document.getElementById('baRutbeAlani');
+    let uniteBaslik = document.getElementById('baUniteBaslik');
+    let ilerlemeGoster = document.getElementById('baIlerlemeGoster');
     if (!alan) return;
     let r = baRutbeGetir(baTamamlananSeviyeler.size);
-    if (rutbeAlani) rutbeAlani.innerHTML = `<div class="ba-rutbe-title">${r.unvan}</div><div class="ba-rutbe-sub">${r.sonraki}</div>`;
+    if (rutbeAlani) rutbeAlani.innerText = r.unvan;
+    if (ilerlemeGoster) ilerlemeGoster.innerText = baTamamlananSeviyeler.size + ' / ' + baTumSeviyeler.length + ' seviye';
     if (baTumSeviyeler.length === 0) {
-        alan.innerHTML = '<p style="color:#a99fd4; font-size:12px; text-align:center; padding:20px;">Kelime havuzu henüz yüklenmedi, birkaç saniye sonra tekrar dene.</p>';
+        alan.innerHTML = '<p style="color:#5c7980; font-size:12px; text-align:center; padding:20px;">Kelime havuzu henüz yüklenmedi, birkaç saniye sonra tekrar dene.</p>';
         return;
     }
-    let html = '';
+    let aktifSeviye = baTumSeviyeler.find(s => !baTamamlananSeviyeler.has(s.seviyeNo) && (s.seviyeNo === 1 || baTamamlananSeviyeler.has(s.seviyeNo - 1)));
+    if (uniteBaslik) uniteBaslik.innerText = aktifSeviye ? aktifSeviye.isim : 'Tüm Büyüler Tamamlandı!';
+
+    let noktaYol = '<svg class="ba-dots-svg" viewBox="0 0 300 ' + (baTumSeviyeler.length * 100) + '"><path d="';
+    baTumSeviyeler.forEach((sv, idx) => {
+        let x = idx % 2 === 0 ? 70 : 230;
+        let y = idx * 100 + 40;
+        noktaYol += (idx === 0 ? 'M' : 'Q ' + (x < 150 ? 200 : 100) + ',' + (y - 50) + ' ') + x + ',' + y + ' ';
+    });
+    noktaYol += '" stroke="#7dd3fc" stroke-width="3" stroke-dasharray="1 10" stroke-linecap="round" fill="none"/></svg>';
+
+    let html = noktaYol;
     baTumSeviyeler.forEach((sv, idx) => {
         let tamamMi = baTamamlananSeviyeler.has(sv.seviyeNo);
         let oncekiTamamMi = sv.seviyeNo === 1 || baTamamlananSeviyeler.has(sv.seviyeNo - 1);
         let durum = tamamMi ? 'done' : (oncekiTamamMi ? 'active' : 'locked');
-        let yonSinifi = idx % 2 === 0 ? '' : ' right';
-        let ikon = tamamMi ? '✓' : (durum === 'locked' ? '🔒' : sv.seviyeNo);
+        let yonSinifi = idx % 2 === 0 ? 'left' : 'right';
+        let portreIkon = BA_PORTRE_IKONLAR[idx % BA_PORTRE_IKONLAR.length];
+        let ikonGoster = durum === 'locked' ? portreIkon : (tamamMi ? '✓' : '🧙');
+        let yildizlar = tamamMi ? '⭐⭐⭐' : (durum === 'active' ? '<span style="color:#ec8636; font-weight:900; font-size:10px;">HAZIR!</span>' : '☆☆☆');
+        let kilitRozeti = durum === 'locked' ? '<div class="ba-lock-badge">🔒</div>' : '';
         let tiklamaOzelligi = durum === 'locked' ? '' : `onclick="baSeviyeBaslat(${sv.seviyeNo})"`;
-        let altYazi = tamamMi ? sv.kelimeler.length + ' büyü — Tamamlandı' : (durum === 'active' ? sv.kelimeler.length + ' büyü — Hazır!' : 'Önceki seviyeyi bitir');
         html += `
-        <div class="ba-step-row${yonSinifi}">
-            <div class="ba-node ${durum}" ${tiklamaOzelligi}><span>${ikon}</span></div>
-            <div class="ba-info">
-                <div class="ba-snum">Seviye ${sv.seviyeNo}${durum==='active' ? ' · şu an' : ''}</div>
-                <div class="ba-sname${durum==='locked' ? ' locked-t' : ''}">${sv.isim}</div>
-                <div class="ba-ssub">${altYazi}</div>
-            </div>
+        <div class="ba-node-block ${yonSinifi}" ${tiklamaOzelligi}>
+            <div class="ba-portrait ${durum}">${ikonGoster}${kilitRozeti}</div>
+            <div class="ba-stars">${yildizlar}</div>
+            <div class="ba-node-name${durum==='locked' ? ' locked-t' : ''}">${sv.isim}</div>
         </div>`;
     });
-    alan.innerHTML = html;
+    alan.innerHTML = `<div class="ba-path-wrap" style="min-height:${baTumSeviyeler.length * 100}px;">${html}</div>`;
 }
 
 async function baModuAc() {
