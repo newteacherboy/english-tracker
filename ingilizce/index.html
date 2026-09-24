@@ -5035,8 +5035,17 @@ function ozellikIzniKaydet() {
               html:`<p>Sınıf ve ünite seçip başlarsın. Her soru İngilizce veya Türkçe kelimenin karşılığını sorar, 2 şık arasından doğru olanı seçersin. Ne kadar hızlı doğru cevap verirsen o kadar çok puan kazanırsın. Sonunda skorun liderlik tablosuna eklenir.</p>` },
             { icon:"🎈", color:"#ffe4e6", iconColor:"#9f1239", title:"Jeopardy Balonları", sub:"Balon patlat, 4 şıklı soru çöz",
               html:`<p>Farklı puan değerlerindeki balonlardan birini seçersin, 4 şıklı bir soru çıkar. Yüksek puanlı balonlar daha değerlidir ama yanlış cevap puan kaybettirir. Tüm balonları bitirince liderlik tablosunu görürsün.</p>` },
-            { icon:"🧩", color:"#dcfce7", iconColor:"#166534", title:"Boşluk Doldurma Bulmacası", sub:"Kelimedeki eksik harfleri tamamla",
+                        { icon:"🧩", color:"#dcfce7", iconColor:"#166534", title:"Boşluk Doldurma Bulmacası", sub:"Eksik harfleri tamamla, kelimeleri bul, puanları topla!",
               html:`<p>Ekrana gelen kelimelerde bazı harfler boş bırakılır, sen bu harfleri klavyeden yazarak tamamlarsın. Türkçe ipucunu okuyup doğru İngilizce kelimeyi tamamlamaya çalışırsın.</p>` },
+            { icon:"🎤", color:"#e0e7ff", iconColor:"#4338ca", title:"Konuşma Pratiği (Seviye Parkuru)", sub:"Mikrofonla İngilizce söyle, seviye seviye ilerle",
+              html:`<p>Ekranda Türkçe bir kelime çıkar, sen mikrofona basıp İngilizcesini <b>sesli olarak söylersin</b>. Doğru söylersen puan kazanır, kombo yaparsın; istersen aşağıdaki "✍️ Yazarak cevapla" seçeneğiyle sesli değil yazarak da cevap verebilirsin.</p>
+              <ul>
+                <li>Kelime havuzundaki tüm kelimeler otomatik olarak <b>8'erli seviyelere</b> bölünür ve her seviyenin kendine özgü bir ismi vardır (Sahil Başlangıcı, Mercan Koyu, Yelken Tepesi...).</li>
+                <li>Bir seviye <b>kilitlidir</b> — bir önceki seviyeyi en az <b>%60 doğrulukla</b> bitirmeden açılmaz.</li>
+                <li>Her kelimede <b>3 deneme hakkın</b> var: ilk 2 yanlışta "tekrar dene" uyarısı çıkar, mikrofon açık kalır; 3. yanlışta doğru cevap gösterilip bir sonraki kelimeye geçilir.</li>
+                <li>Her soru <b>1 enerji</b> harcar; <b>4 doğruyu üst üste</b> yaparsan +1 enerji bonusu ve uçan papağan animasyonu kazanırsın.</li>
+                <li>Seviyeyi bitirdiğinde bir sonraki seviyenin kilidi açılır ve parkur haritasına geri dönersin.</li>
+              </ul>` },
             { icon:"📖", color:"#dbeafe", iconColor:"#1e40af", title:"Akıcı Okuma Stüdyosu", sub:"Okuma hızını (WPM) ölç",
               html:`<p>Sınıfına uygun bir İngilizce metin çıkar. Süreyi başlatıp okumaya başlarsın, okuduğun son kelimeye tıklarsın; sistem senin için dakikada kaç kelime okuduğunu (WPM) hesaplar ve kaydeder. Geçmiş sonuçlarını aynı ekrandan görebilirsin.</p>` },
             { icon:"🍅", color:"#1e293b", iconColor:"#fca5a5", title:"Pomodoro Çalışma Sayacı", sub:"Odaklanma ve mola süreni ayarla",
@@ -5045,6 +5054,24 @@ function ozellikIzniKaydet() {
               html:`<p>Öğretmenin senin için (ya da tüm sınıf için) özel etkinlikler atayabilir. Kategoriye göre gruplanmış olarak burada görünürler. Bir etkinliği tamamladığında "Yapıldı" olarak işaretlenir.</p>` },
             { icon:"🎬", color:"#cffafe", iconColor:"#155e75", title:"Videolar", sub:"Öğretmeninin seçtiği eğitim videoları",
               html:`<p>Öğretmenin sana izlemen için videolar atayabilir. Kategoriye göre listelenirler, izlediklerin "İzlendi" olarak işaretlenir.</p>` }
+                    ]},
+          { cat: "Enerji ve Kombo Sistemi", items: [
+            { icon:"⚡", color:"#fef9c3", iconColor:"#854d0e", title:"Enerji Sistemi Nedir?", sub:"Oyun oynamak ve ders çalışmak enerji harcar",
+              html:`<p>Her gün <b>18 enerjiyle</b> başlarsın. Bu, bir günde yapabileceğin oyun ve ders sayısının sınırıdır — amacı seni dengeli, kısa süreli ve odaklı çalışmaya teşvik etmektir.</p>
+              <ul>
+                <li><b>Nerede harcanır:</b> Aktiviteler'deki 8 oyunun her turunda (her soru/kelime), Kelime Kartları Yolculuğu'nda her seviye açılışında ve Ders Çalış'ta her konuya girişte 1 enerji harcanır.</li>
+                <li><b>Nerede harcanmaz:</b> Sana Özel sekmesindeki Etkinlikler, Videolar, Okuma Stüdyosu ve Pomodoro sayacı enerjiden bağımsızdır, sınırsız kullanabilirsin.</li>
+                <li><b>Nasıl yenilenir:</b> Enerji her saat başı otomatik olarak biraz artar, 24 saat içinde tavana kadar tamamen dolar.</li>
+                <li><b>Kapasite nasıl büyür:</b> Enerji tavanın (18'in üzeri) genel puanına ve kazandığın rozetlere göre büyür — her 10 puana +1, her rozete +1 kapasite eklenir.</li>
+                <li><b>Bittiğinde ne olur:</b> Enerjin 0 olduğunda hiçbir oyun veya ders konusu açılmaz, ekrana uyuyan papağan animasyonlu bir uyarı çıkar ve ne zaman doleceğini gösterir.</li>
+              </ul>` },
+            { icon:"🦜", color:"#dcfce7", iconColor:"#166534", title:"Kombo Sistemi Nasıl Çalışır?", sub:"Art arda doğru yaparak bonus kazan",
+              html:`<p>Bir oyunda <b>art arda doğru cevap</b> verdikçe "kombo" sayacın artar ve her doğru cevaptan kazandığın puan büyür. 2. kombodan itibaren ekranda uçan bir papağan ve "HARİKA! KOMBO x N" yazısı belirir.</p>
+              <ul>
+                <li>Kombo, Konuşma Pratiği dahil <b>tüm 8 oyunda</b> aynı şekilde çalışır.</li>
+                <li>Bir kelimeyi/soruyu <b>yanlış</b> yaparsan kombo sıfırlanır, baştan başlarsın.</li>
+                <li>Kombo yüksekken doğru yapmak, düşükken doğru yapmaktan <b>daha fazla puan</b> kazandırır — bu yüzden seri bozmadan ilerlemek en verimli oyun tarzıdır.</li>
+              </ul>` }
           ]},
           { cat: "Rozetler ve Puan", items: [
             { icon:"➕", color:"#e0e7ff", iconColor:"#4338ca", title:"Genel Puanın Nasıl Oluşuyor?", sub:"Tek bir puanda birleşen tüm kaynaklar",
