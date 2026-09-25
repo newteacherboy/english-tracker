@@ -1739,30 +1739,28 @@
                 <p style="color: #718096; text-align: center; padding: 12px;">Arşiv verileri yükleniyor...</p>
             </div>
         </div>
-
-            <!-- MEDU AKIŞ TAM EKRAN ALANI -->
+<!-- MEDU AKIŞ TAM EKRAN ALANI -->
 <div id="tab-meduakis" class="dc-fullscreen-overlay">
     <button class="dc-exit-btn" onclick="meduAkisKapat()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
-    <div class="dc-focus-card" style="max-width:440px; padding:16px 10px 40px;">
-        <div class="akis-baslik">
-            <h2 style="font-family:'Fredoka',sans-serif; font-size:22px; display:flex; align-items:center; gap:8px;">
+    <div class="dc-focus-card">
+        <div class="akis-baslik" style="background:transparent; border-bottom:1.5px solid var(--cizgi, #eadcff); padding-bottom:10px; margin-bottom:12px;">
+            <h2 style="font-family:'Fredoka',sans-serif; font-size:20px; display:flex; align-items:center; gap:8px; color:var(--metin, #3b2c66);">
                 <span style="display:inline-block; animation:carkDon 8s linear infinite;">🎡</span>Medu Akış
             </h2>
-            <div class="segment" id="meduAkisSegment">
+            <div class="segment" id="meduAkisSegment" style="margin-top:10px;">
                 <i id="segmentIz" style="position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px) / 5); border-radius:11px; background:linear-gradient(135deg,#a06bff,#ff6b9d); transition:transform .3s cubic-bezier(.3,.9,.3,1.1); box-shadow:0 3px 8px rgba(160,107,255,.35);"></i>
-                <button data-s="akis" onclick="meduAkisSekmeSec('akis')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Akış</button>
-                <button data-s="kesfet" onclick="meduAkisSekmeSec('kesfet')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Keşfet</button>
-                <button data-s="vitrin" onclick="meduAkisSekmeSec('vitrin')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Vitrinim</button>
-                <button data-s="sanaozel" onclick="meduAkisSekmeSec('sanaozel')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Sana Özel</button>
-                <button data-s="aktivite" onclick="meduAkisSekmeSec('aktivite')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Aktivite</button>
+                <button data-s="akis" onclick="meduAkisSekmeSec('akis')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center;">Akış</button>
+                <button data-s="kesfet" onclick="meduAkisSekmeSec('kesfet')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center;">Keşfet</button>
+                <button data-s="vitrin" onclick="meduAkisSekmeSec('vitrin')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center;">Vitrinim</button>
+                <code data-s="sanaozel" onclick="meduAkisSekmeSec('sanaozel')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center; display:inline-flex; align-items:center; justify-content:center;">Sana Özel</code>
+                <button data-s="aktivite" onclick="meduAkisSekmeSec('aktivite')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center;">Aktivite</button>
             </div>
         </div>
-        <div class="ekran" id="meduAkisEkran" style="margin-top:12px;"></div>
+        <div class="ekran" id="meduAkisEkran" style="max-height:calc(80vh - 110px); overflow-y:auto;"></div>
     </div>
 </div>
-
       <!-- AKTİVİTELER SEKMESİ (Sadece Aktiviteler sekmesine basınca görünür) -->
 <div id="tab-aktiviteler" class="dc-fullscreen-overlay">
     <button class="dc-exit-btn" onclick="aktivitelerTamEkranKapat()">
@@ -11939,7 +11937,36 @@ function kpParkurCiz() {
 #tab-buyuakademisi .ba-sonuc-btn { width:100%; max-width:280px; padding:13px; border-radius:14px; border:none; font-weight:900; font-size:13px; margin-bottom:18px; background:linear-gradient(135deg,#a06bff,#ff6b9d); color:#fff; cursor:pointer; }
 #tab-buyuakademisi .ba-rank-title { font-size:12px; font-weight:900; text-align:left; margin-bottom:8px; color:#553c9a; max-width:280px; margin-left:auto; margin-right:auto; }
 #tab-buyuakademisi .ba-rank-row { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; margin-bottom:5px; font-size:11px; font-weight:800; max-width:280px; margin-left:auto; margin-right:auto; background:#f5f3ff; color:#553c9a; }
-    
+
+    /* --- MEDU AKIŞ VE ALT MENÜ GÖRSEL DÜZELTMELERİ --- */
+
+/* Medu Akış penceresinin diğer tam ekran pencerelerle (Aktiviteler, Ders Çalış vb.) aynı dörtdörtlük boyuta gelmesi için */
+#tab-meduakis.dc-fullscreen-overlay {
+    background: rgba(15, 23, 42, 0.55) !important;
+    padding: 20px 10px 70px 10px !important;
+}
+
+#tab-meduakis .dc-focus-card {
+    max-width: 520px !important;
+    max-height: calc(100vh - 90px) !important;
+    background: var(--bg, #fdf7ff) !important;
+    border-radius: 24px !important;
+    padding: 20px !important;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Alt menünün (bottom-nav-mobile) telefonda ekranı tam kaplaması ve ortadaki dar görüntüden kurtulması için */
+@media (max-width: 768px) {
+    .bottom-nav-mobile {
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        border-radius: 0 !important;
+        padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+}
     </style>`;
         let html = stil + '<div id="kpParkurKapsayici">';
     html += '<div class="kp-confetti-bg" style="top:8px;right:14px;">🎊</div><div class="kp-confetti-bg" style="top:50px;left:4px;animation-delay:1s;">🎈</div>';kpTumSeviyeler.forEach((sv, idx) => {
