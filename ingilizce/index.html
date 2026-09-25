@@ -23,6 +23,11 @@
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <!-- jsPDF Kütüphanesi (Rapor PDF oluşturma için) -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+
+
+                
             <style>
                 * {
                     box-sizing: border-box;
@@ -939,7 +944,29 @@
         .enerji-bitti-aciklama { color:#9fdbe6; font-size:12px; line-height:1.6; margin-bottom:16px; }
         .enerji-bitti-liste { display:flex; flex-direction:column; gap:8px; text-align:left; }
         .enerji-madde { background:rgba(255,255,255,.06); border-radius:10px; padding:8px 10px; font-size:11px; color:#dff5f8; line-height:1.5; }
-                
+
+.mk-mini-btn {
+  position: fixed; right: 12px; z-index: 99997;
+  border: none; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  transition: all .25s;
+}
+.mk-mini-ai {
+  bottom: 84px; width: 34px; height: 34px; font-size: 16px;
+  background: rgba(124,58,237,.28);
+}
+.mk-mini-ai:hover { background: rgba(124,58,237,.85); transform: scale(1.1); }
+.mk-mini-yardim {
+  bottom: 126px; width: 30px; height: 30px; font-size: 13px;
+  background: rgba(51,65,85,.28);
+}
+.mk-mini-yardim:hover { background: rgba(51,65,85,.85); transform: scale(1.1); }
+@media (max-width: 768px) {
+  .mk-mini-ai { bottom: 92px; }
+  .mk-mini-yardim { bottom: 130px; }
+}
+                    
             </style>
         </head>
         <body>
@@ -1508,11 +1535,11 @@
                     <div class="header-tools-row">
                         <button class="header-tool-btn" onclick="sayfayiYenile()" title="Sayfayı Yenile">🔄</button>
                         <button class="header-tool-btn" onclick="duyuruGecmisiniAc()" title="Duyurular">📋</button>
-                        <button class="header-tool-btn" onclick="yardimAc()" title="Yardım">❓</button>
+                        
                         <button class="header-tool-btn" onclick="ogretmenPaneliAc()" title="Öğretmen Paneli">
                             ⚙️<span class="header-tool-badge" id="ogretmenGenelRozet">0</span>
                         </button>
-                        <button class="header-tool-btn" onclick="aiModalAc()" title="AI Asistan">🤖</button>
+                        
                     </div>
         
                                 <div class="header-schedule-area" id="takvimAlani">
@@ -1574,24 +1601,15 @@
                                 <button class="bn-item" onclick="sanaOzelTamEkranAc()">
                         <span class="bn-icon">✨</span><span class="bn-label">Sana Özel</span>
                     </button>
-                    <button class="bn-item" id="bnBtnRaporlar" onclick="bnSekmeSec('raporlar', this)">
-                        <span class="bn-icon">📝</span><span class="bn-label">Raporlar</span>
-                    </button>
+                    
                     <button class="bn-item" onclick="aktivitelerTamEkranAc()">
                         <span class="bn-icon">🎮</span><span class="bn-label">Aktivite</span>
                     </button>
                                 <button class="bn-item" onclick="dersCalisTamEkranAc()">
                         <span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span>
                     </button>
-                    <button class="bn-item" onclick="baModuAc()">
-                        <span class="bn-icon">🧙</span><span class="bn-label">Büyü Akademisi</span>
-                    </button>
-                    <button class="bn-item" onclick="kpModuAc()">
-                        <span class="bn-icon">🎤</span><span class="bn-label">Konuşma</span>
-                    </button>
-                    <button class="bn-item active" id="bnBtnOzet" onclick="bnSekmeSec('ozet', this)">
-                        <span class="bn-icon">👤</span><span class="bn-label">Profil</span>
-                    </button>
+                   
+                   
                 </div>
         
           
@@ -1605,19 +1623,17 @@
             <div class="dock-items-row" id="dockItemsRow">
                 <button class="refresh-float-btn dock-btn-item" id="sayfaYenileBtn" onclick="sayfayiYenile()" title="Sayfayı Yenile">🔄</button>
                 <button class="refresh-float-btn dock-btn-item" id="duyuruGecmisBtn" onclick="duyuruGecmisiniAc()" title="Duyurular">📋</button>
-                <button class="refresh-float-btn dock-btn-item" id="yardimBtn" onclick="yardimAc()" title="Yardım">❓</button>
+               
                 <div class="teacher-gear-wrap dock-btn-item" style="position:relative; bottom:auto; right:auto;">
                     <button class="teacher-gear-btn" onclick="ogretmenPaneliAc()" style="position:static;" title="Öğretmen Paneli">⚙️</button>
                     <span class="teacher-gear-badge" id="ogretmenGenelRozet">0</span>
                 </div>
-                <div class="ai-float-container dock-btn-item" style="position:relative; bottom:auto; right:auto; flex-direction:row;">
-                    <button class="ai-float-btn" onclick="aiModalAc()" style="position:static;" title="AI Asistan">🤖</button>
-                </div>
+                
             </div>
         </div>
                 
                         <!-- ÖZET SEKMESİ -->
-                <div id="tab-ozet" class="tab-content active">
+                <div id="tab-ozet" class="tab-content">
         
                     <!-- SADECE "teacher" KULLANICISINA ÖZEL RAPOR PANELİ -->
                     <div class="rapor-teacher-banner" id="raporTeacherBanner" style="display:none;">
@@ -1893,6 +1909,20 @@
         .az-gcard-title { font-weight:900; font-size:12px; line-height:1.3; }
         .az-gcard-badge { position:absolute; top:8px; left:10px; font-size:7.5px; font-weight:900; background:rgba(255,255,255,.28); padding:2px 7px; border-radius:8px; }
         .az-gcard.span2 { grid-column:1/-1; }
+
+                .mk-orb-katman { position: relative; height: 0; }
+.mk-orb {
+  position: absolute; z-index: 5; width: 58px; height: 58px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; border: none; color: #fff; font-size: 22px; opacity: .55;
+  animation: mkOrbYuz 3.4s ease-in-out infinite;
+  box-shadow: 0 6px 16px rgba(0,0,0,.18); transition: opacity .2s, transform .2s;
+}
+.mk-orb:hover { opacity: 1; transform: scale(1.08); }
+.mk-orb .mk-orb-sayi { font-size: 9px; font-weight: 900; margin-top: 1px; }
+.mk-orb.mk-buyu { background: linear-gradient(135deg,#a06bff,#7c3aed); top: 6px; right: 16px; }
+.mk-orb.mk-konusma { background: linear-gradient(135deg,#ff6b9d,#e11d48); top: 80px; right: 26px; animation-delay: 1.1s; }
+@keyframes mkOrbYuz { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
                 
         </style>
         
@@ -2443,6 +2473,9 @@
                             <div class="az-gcard-badge">GÜNLÜK</div>
                             <div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Günün Konusu</div>
                         </button>
+                                        <button class="az-gcard" id="kartRaporlarim" style="background:linear-gradient(160deg,#22c55e,#15803d);" onclick="raporlarimAc()">
+    <div class="az-gcard-icon">📝</div><div class="az-gcard-title">Raporlarım</div>
+</button>
                         <button class="az-gcard" id="kartOkumaStudyosu" style="background:linear-gradient(160deg,#34d399,#059669);" onclick="okumaStudyosunuAc()">
                             <div class="az-gcard-icon">📖</div><div class="az-gcard-title">Okuma Stüdyosu</div>
                         </button>
@@ -3822,6 +3855,27 @@
                 </div>
             </div>
             <script>
+
+                    function raporlarimAc() {
+    let modal = document.getElementById('tab-raporlar');
+    modal.classList.add('active');
+    modal.style.cssText = 'position:fixed; inset:0; z-index:100000015; background:#eef8fa; overflow-y:auto; padding:16px; display:block;';
+    if (!document.getElementById('raporlarimKapatBtn')) {
+        let kapat = document.createElement('button');
+        kapat.id = 'raporlarimKapatBtn';
+        kapat.innerHTML = '✕';
+        kapat.style.cssText = 'position:fixed; top:14px; right:14px; z-index:100000016; width:36px; height:36px; border-radius:50%; background:#1e293b; color:#fff; border:none; font-size:16px; cursor:pointer;';
+        kapat.onclick = raporlarimKapat;
+        document.body.appendChild(kapat);
+    }
+}
+function raporlarimKapat() {
+    let modal = document.getElementById('tab-raporlar');
+    modal.classList.remove('active');
+    modal.style.cssText = '';
+    let btn = document.getElementById('raporlarimKapatBtn');
+    if (btn) btn.remove();
+}
         
                  // --- SINIF SEVİYESİ KISITLAMA SİSTEMİ ---
         function izinVerilenSinifAraligiGetir() {
@@ -9587,8 +9641,7 @@
             ozellikGorunurlukAyarla('kartBoslukDoldurma', izinler.bosluk_doldurma !== false);
             ozellikGorunurlukAyarla('kartOkumaStudyosu', izinler.okuma_studyosu !== false);
             ozellikGorunurlukAyarla('kartPomodoro', izinler.pomodoro_sayaci !== false);
-               if (izinler.raporlar_sekmesi === false && document.getElementById('tab-raporlar').classList.contains('active')) {
-                sekmeDegistir('ozet', document.getElementById('tabBtnProfil'));
+              ozellikGorunurlukAyarla('kartRaporlarim', izinler.raporlar_sekmesi !== false);
             }
         }    
                function cikisYap() { 
@@ -14261,6 +14314,8 @@
             <div class="yo-satir"><span style="font-size:24px">🧊</span><span class="ad" style="white-space:normal">Seri dondurucu<br><small>Bir gün giremezsen serin bozulmaz. Elinde: ${yo.dondurucu}/2</small></span>
               <button class="yo-btn" style="width:auto; margin:0; padding:9px 12px;" onclick="yoDondurucuAl()">🪙 ${YO_DONDURUCU_FIYAT}</button></div>
             <div class="yo-bos">Altınları oyunlarda her doğru cevapla kazanırsın.</div>`);
+                ${mkOrbHtml()}`);
+                mkOrbGuncelle();
         }
         function yoUrunTikla(tip, i) {
           let u = YO_URUN[tip][i], id = tip + ':' + u[0];
@@ -14940,8 +14995,8 @@
 #tab-meduakis .akis-baslik h2 { font:700 22px 'Fredoka',sans-serif; display:flex; align-items:center; gap:8px; color:var(--metin); }
 #tab-meduakis .akis-baslik h2 span { display:inline-block; animation:maCarkDon 8s linear infinite; }
 @keyframes maCarkDon { to { transform:rotate(360deg); } }
-#tab-meduakis .segment { position:relative; display:grid; grid-template-columns:repeat(5,1fr); background:#f1e9ff; border-radius:14px; padding:4px; margin-top:10px; }
-#tab-meduakis .segment i { position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px)/5); border-radius:11px; background:linear-gradient(135deg,#a06bff,#ff6b9d); transition:transform .3s cubic-bezier(.3,.9,.3,1.1); box-shadow:0 3px 8px rgba(160,107,255,.35); }
+#tab-meduakis .segment { position:relative; display:grid; grid-template-columns:repeat(6,1fr); background:#f1e9ff; border-radius:14px; padding:4px; margin-top:10px; }
+#tab-meduakis .segment i { position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px)/6); border-radius:11px; background:linear-gradient(135deg,#a06bff,#ff6b9d); transition:transform .3s cubic-bezier(.3,.9,.3,1.1); box-shadow:0 3px 8px rgba(160,107,255,.35); }
 #tab-meduakis .segment button { position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 13px 'Nunito',sans-serif; color:var(--soluk); cursor:pointer; width:100%; }
 #tab-meduakis .segment button.aktif { color:#fff; }
 #tab-meduakis .ma-ekran { padding-bottom:30px; }
@@ -15038,14 +15093,15 @@
 <div class="ma-wrap">
   <div class="akis-baslik">
     <h2><span>🎡</span>Medu Akış</h2>
-       <div class="segment" id="maSegment">
-      <i id="maSegmentIz"></i>
-      <button data-s="akis" onclick="maSekmeSec('akis')">Akış</button>
-      <button data-s="kesfet" onclick="maSekmeSec('kesfet')">Keşfet</button>
-      <button data-s="vitrin" onclick="maSekmeSec('vitrin')">Vitrinim</button>
-      <button onclick="if(typeof yoMagazaAc==='function') yoMagazaAc();">Mağaza</button>
-      <button onclick="if(typeof yoLigAc==='function') yoLigAc();">Lig</button>
-    </div>
+     <div class="segment" id="maSegment">
+  <i id="maSegmentIz"></i>
+  <button data-s="akis" onclick="maSekmeSec('akis')">Akış</button>
+  <button data-s="kesfet" onclick="maSekmeSec('kesfet')">Keşfet</button>
+  <button data-s="vitrin" onclick="maSekmeSec('vitrin')">Vitrinim</button>
+  <button onclick="if(typeof yoMagazaAc==='function') yoMagazaAc();">Mağaza</button>
+  <button onclick="if(typeof yoLigAc==='function') yoLigAc();">Lig</button>
+  <button data-s="profil" onclick="maSekmeSec('profil')">Profil</button>
+</div>
   </div>
   <div class="ma-ekran" id="maEkran"></div>
 </div>
@@ -15144,15 +15200,27 @@ async function maSinifGetir() {
 function maBul(id) { return id === 'ben' ? maBen() : maSinifListeSon.find(o => o.id === id); }
 
 async function maCiz() {
-    let sira = ['akis','kesfet','vitrin'].indexOf(maSekme);
+    let siraMap = { akis:0, kesfet:1, vitrin:2, profil:5 };
+    let sira = siraMap[maSekme] !== undefined ? siraMap[maSekme] : 0;
     let iz = document.getElementById('maSegmentIz');
     if (iz) iz.style.transform = `translateX(${sira * 100}%)`;
     document.querySelectorAll('#maSegment button').forEach(b => b.classList.toggle('aktif', b.dataset.s === maSekme));
     let ekran = document.getElementById('maEkran');
+
+    if (maSekme === 'profil' && !maProfilId) {
+        ekran.innerHTML = '<div class="ma-gir" id="maProfilKapsayici"></div>';
+        let ozet = document.getElementById('tab-ozet');
+        ozet.classList.add('active');
+        ozet.style.cssText = 'display:block; position:static;';
+        document.getElementById('maProfilKapsayici').appendChild(ozet);
+        return;
+    }
+
     ekran.innerHTML = '<div class="ma-bos">Yükleniyor...</div>';
     maSinifListeSon = await maSinifGetir();
     let html = maProfilId ? maVitrinHtml(maProfilId, false) : maSekme === 'akis' ? maAkisHtml() : maSekme === 'kesfet' ? maKesfetHtml() : maVitrinHtml('ben', true);
     ekran.innerHTML = `<div class="ma-gir">${html}</div>`;
+    mkOrbGuncelle();
     requestAnimationFrame(() => requestAnimationFrame(maBalonlariUcur));
 }
 function maSekmeSec(s) { maSekme = s; maProfilId = null; maCiz(); document.getElementById('maEkran').scrollTop = 0; }
@@ -15171,7 +15239,7 @@ function maAkisHtml() {
       <div class="akis-metin">${metin}</div>
       <div class="aksiyon"><button class="${b ? 'basili' : ''}" onclick="maBegen('${id}', this)">${b ? '❤️' : '🤍'} Beğen</button>
       <button class="${t ? 'basili' : ''}" onclick="maTebrikEt('${id}', this)">🎉 Tebrik et</button></div></div>`;
-    }).join('');
+    }).join('') + mkOrbHtml();
 }
 function maBegen(id, btn) {
     let hedef = id.replace(/^akis-/, '');
@@ -15199,7 +15267,7 @@ function maTebrikEt(id, btn) {
     return `<div class="bolum"><div class="bolum-baslik">Haftanın yıldızları</div><div class="podyum">${podyum || '<div class="ma-bos">Henüz sınıf verisi yok.</div>'}</div>
     ${benSeviye.length ? `<div class="bolum-baslik">Seninle aynı seviyede</div><div>${benSeviye.map(maKisiHtml).join('')}</div>` : ''}
     <input class="ara" placeholder="Sınıf arkadaşını ara" value="${guvenliMetin(maArama)}" oninput="maArama=this.value; document.getElementById('maKesfetListe').innerHTML = maKesfetListe()">
-    <div id="maKesfetListe">${maKesfetListe()}</div></div>`;
+    <div id="maKesfetListe">${maKesfetListe()}</div>${mkOrbHtml()}</div>`;
 }
 function maKisiHtml(o) {
     return `<div class="kisi" onclick="maProfilAc('${o.id}')">${maAvatar(o)}<div class="kisi-ad"><b>${guvenliMetin(o.ad)}</b><small>${o.lig} lig · ${o.xp} XP</small></div>
@@ -15271,7 +15339,29 @@ function maTakipDegistir(id, btn) {
     if (t) { maPatlat(btn, ['🎈','⭐','✨'], 10); maToast('Artık Medu Akış\'ında takip ediyorsun 🎡'); }
     maOlayGonder(id, 'takip');
 }
+
+function mkOrbHtml() {
+  return `<div class="mk-orb-katman">
+    <button class="mk-orb mk-buyu" id="mkOrbBuyu" onclick="baModuAc()">🧙<span class="mk-orb-sayi" id="mkOrbBuyuSayi">.../...</span></button>
+    <button class="mk-orb mk-konusma" id="mkOrbKonusma" onclick="kpModuAc()">🎤<span class="mk-orb-sayi" id="mkOrbKonusmaSayi">.../...</span></button>
+  </div>`;
+}
+async function mkOrbGuncelle() {
+  if (typeof baParkurHazirla === 'function') baParkurHazirla();
+  if (typeof baTamamlananSeviyeleriYukle === 'function') await baTamamlananSeviyeleriYukle();
+  let bEl = document.getElementById('mkOrbBuyuSayi');
+  if (bEl && typeof baTumSeviyeler !== 'undefined') bEl.innerText = baTamamlananSeviyeler.size + '/' + baTumSeviyeler.length;
+
+  if (typeof kpParkurHazirla === 'function') kpParkurHazirla();
+  if (typeof kpTamamlananSeviyeleriYukle === 'function') await kpTamamlananSeviyeleriYukle();
+  let kEl = document.getElementById('mkOrbKonusmaSayi');
+  if (kEl && typeof kpTumSeviyeler !== 'undefined') kEl.innerText = kpTamamlananSeviyeler.size + '/' + kpTumSeviyeler.length;
+}
+        
 </script>
+
+                <button class="mk-mini-btn mk-mini-ai" onclick="aiModalAc()" title="AI Koç" aria-label="AI Koç">🤖</button>
+<button class="mk-mini-btn mk-mini-yardim" onclick="yardimAc()" title="Yardım Köşesi" aria-label="Yardım Köşesi">❓</button>
                 
         </body>
         </html>
