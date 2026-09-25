@@ -1566,29 +1566,20 @@
         </div>
 
         <!-- SADECE MOBİLDE GÖRÜNEN ALT NAVİGASYON -->
-        <div class="bottom-nav-mobile" id="bottomNavMobile">
-                       <button class="bn-item" onclick="baModuAc()">
-                <span class="bn-icon">🧙</span><span class="bn-label">Ana Sayfa</span>
-            </button>
-                        <button class="bn-item" onclick="sanaOzelTamEkranAc()">
-                <span class="bn-icon">✨</span><span class="bn-label">Sana Özel</span>
-            </button>
-            <button class="bn-item" id="bnBtnRaporlar" onclick="bnSekmeSec('raporlar', this)">
-                <span class="bn-icon">📝</span><span class="bn-label">Raporlar</span>
-            </button>
-            <button class="bn-item" onclick="aktivitelerTamEkranAc()">
-                <span class="bn-icon">🎮</span><span class="bn-label">Aktivite</span>
-            </button>
-                        <button class="bn-item" onclick="dersCalisTamEkranAc()">
-                <span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span>
-            </button>
-            <button class="bn-item" onclick="kpModuAc()">
-                <span class="bn-icon">🎤</span><span class="bn-label">Konuşma</span>
-            </button>
-            <button class="bn-item active" id="bnBtnOzet" onclick="bnSekmeSec('ozet', this)">
-                <span class="bn-icon">👤</span><span class="bn-label">Profil</span>
-            </button>
-        </div>
+       <div class="bottom-nav-mobile" id="bottomNavMobile">
+    <button class="bn-item" onclick="baModuAc()" title="Ana Sayfa">
+        <span class="bn-icon">🧙</span><span class="bn-label">Ana Sayfa</span>
+    </button>
+    <button class="bn-item" onclick="meduAkisAc()" title="Medu Akış">
+        <span class="bn-icon">🎡</span><span class="bn-label">Medu Akış</span>
+    </button>
+    <button class="bn-item" onclick="dersCalisTamEkranAc()" title="Ders Çalış">
+        <span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span>
+    </button>
+    <button class="bn-item" onclick="enerjiSekmesiniAc()" title="Enerji">
+        <span class="bn-icon">⚡</span><span class="bn-label">Enerji</span>
+    </button>
+</div>
 
   
 
@@ -1748,6 +1739,29 @@
                 <p style="color: #718096; text-align: center; padding: 12px;">Arşiv verileri yükleniyor...</p>
             </div>
         </div>
+
+            <!-- MEDU AKIŞ TAM EKRAN ALANI -->
+<div id="tab-meduakis" class="dc-fullscreen-overlay">
+    <button class="dc-exit-btn" onclick="meduAkisKapat()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="dc-focus-card" style="max-width:440px; padding:16px 10px 40px;">
+        <div class="akis-baslik">
+            <h2 style="font-family:'Fredoka',sans-serif; font-size:22px; display:flex; align-items:center; gap:8px;">
+                <span style="display:inline-block; animation:carkDon 8s linear infinite;">🎡</span>Medu Akış
+            </h2>
+            <div class="segment" id="meduAkisSegment">
+                <i id="segmentIz" style="position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px) / 5); border-radius:11px; background:linear-gradient(135deg,#a06bff,#ff6b9d); transition:transform .3s cubic-bezier(.3,.9,.3,1.1); box-shadow:0 3px 8px rgba(160,107,255,.35);"></i>
+                <button data-s="akis" onclick="meduAkisSekmeSec('akis')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Akış</button>
+                <button data-s="kesfet" onclick="meduAkisSekmeSec('kesfet')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Keşfet</button>
+                <button data-s="vitrin" onclick="meduAkisSekmeSec('vitrin')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Vitrinim</button>
+                <button data-s="sanaozel" onclick="meduAkisSekmeSec('sanaozel')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Sana Özel</button>
+                <button data-s="aktivite" onclick="meduAkisSekmeSec('aktivite')" style="position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 12px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer;">Aktivite</button>
+            </div>
+        </div>
+        <div class="ekran" id="meduAkisEkran" style="margin-top:12px;"></div>
+    </div>
+</div>
 
       <!-- AKTİVİTELER SEKMESİ (Sadece Aktiviteler sekmesine basınca görünür) -->
 <div id="tab-aktiviteler" class="dc-fullscreen-overlay">
@@ -4326,7 +4340,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzQX04FKqUT4RrbRu6rl4NOMHgg4wS6xTZG-LQbU2jzrS3aJCyKwkg1iIvA0Z7yjDMazg/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzw5rbAR7dLr5JMvU18rbbs1L-wV7ZHrmAzd2OevJrbO4O1R26KzRAn0nm-9_3o8vDxkA/exec";
         
                     let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
@@ -8785,92 +8799,74 @@ async function okumaSonucuKaydet() {
         }
 
 
-               async function girisYap(event) {
-            event.preventDefault();
-            const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
-            const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
-            let m = document.getElementById('mesaj');
+              async function girisYap(event) {
+  event.preventDefault();
+  const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
+  const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
+  let m = document.getElementById('mesaj');
 
-            if(!ogr || !sifre) { m.className="error"; m.innerText="Tüm alanları doldurun."; return; }
+  if(!ogr || !sifre) { m.className="error"; m.innerText="Tüm alanları doldurun."; return; }
 
-            // Giriş tıklandığı an baykuş animasyonunu göster
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
+  document.getElementById('login-container').style.display = 'none';
+  document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
 
-            // Eğer global veri henüz gelmediyse biraz bekle
-                       let denemeSayisi = 0;
-            while ((!globalDataCache || globalDataCache.length === 0) && denemeSayisi < 20) {
-                await new Promise(r => setTimeout(r, 300));
-                denemeSayisi++;
-            }
+  try {
+    let res = await fetch(apiURL, {
+      method: "POST",
+      body: JSON.stringify({ islem: "girisYap", ogrenci: ogr, sifre: sifre })
+    });
+    let data = await res.json();
 
-            // YENİ: 6 saniye sonunda hâlâ veri gelmediyse, son bir kez doğrudan tekrar dene
-            if (!globalDataCache || globalDataCache.length === 0) {
-                try {
-                    let sonRes = await fetch(apiURL);
-                    globalDataCache = await sonRes.json();
-                } catch (sonErr) {
-                    console.error("Giriş öncesi veri tekrar çekilemedi:", sonErr);
-                }
-            }
+    if (data.status === "success") {
+      m.className = "success";
+      m.innerText = "Giriş başarılı!";
+      aktifOgrenciAdi = data.ogrenci;
+      
+      localStorage.setItem("ing_oturumAcik", "true");
+      localStorage.setItem("ing_aktifOgrenci", aktifOgrenciAdi);
+      localStorage.setItem("ing_token", data.token);
 
-                        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
+      let dataRes = await fetch(apiURL);
+      globalDataCache = await dataRes.json();
 
-            if (user) {
-                let durumVal = String(user.durum || "").trim().toLowerCase();
-                if (durumVal === "onay bekliyor") {
-                    document.getElementById('oturumYuklemeOverlay').style.display = 'none';
-                    document.getElementById('login-container').style.display = 'block';
-                    m.className = "error";
-                    m.innerText = "Hesabın henüz öğretmen onayı bekliyor. Onaylandığında giriş yapabilirsin.";
-                    return;
-                }
-            }
+      let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+      toplamSaniye = user ? (Number(user.toplamsure) || 0) : 0;
+      localStorage.setItem("ing_toplamSaniye", toplamSaniye);
 
-            // Eğer özel "teacher" veya veri tabanında eşleşen bir kullanıcı varsa
-            if(user || ogr.toLowerCase() === "teacher") {
-                m.className="success"; 
-                m.innerText="Giriş başarılı!";
-                aktifOgrenciAdi = ogr; 
-                toplamSaniye = user ? (Number(user.toplamsure) || 0) : 0;
-                
-                                localStorage.setItem("ing_oturumAcik", "true"); 
-localStorage.setItem("ing_aktifOgrenci", aktifOgrenciAdi); 
-localStorage.setItem("ing_toplamSaniye", toplamSaniye);
-                                fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`).catch(() => {});
+      document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+      document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
 
-                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-                document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
-                
+      if (user) {
+        veriArayuzeIsle(user);
+      }
 
-                if (user) {
-                    veriArayuzeIsle(user);
-                }
-
-                // Kısa bir gecikme ekleyerek animasyonun akıcı görünmesini sağla ve paneli aç
-                                                                                                                                                           setTimeout(() => {
-                    document.getElementById('oturumYuklemeOverlay').style.display = 'none';
-                    document.getElementById('panel-alani').style.display = 'block';
-                    girisSerisiGuncelleVeGetir();
-                    baslatSayac(); 
-                    arkaPlanVeriYenilemeBaslat();
-                    setTimeout(cornerButonEtiketleriGoster, 900);
-                    setTimeout(puanBildirimKontrolEt, 1400);
-                    setInterval(puanBildirimKontrolEt, 45000);
-            
-                                    duyuruKontrolEt();
-                dockZamanlayiciyiBaslat();
-                baModuAc();
-                gunlukEnerjiBonusuKontrolEt();
-            }, 600);
-            } else {
-                // Hatalı giriş durumunda tekrar giriş ekranına dön
-                document.getElementById('oturumYuklemeOverlay').style.display = 'none';
-                document.getElementById('login-container').style.display = 'block';
-                m.className="error"; 
-                m.innerText="Hatalı kullanıcı adı veya şifre!";
-            }
-        }
+      setTimeout(() => {
+        document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+        document.getElementById('panel-alani').style.display = 'block';
+        girisSerisiGuncelleVeGetir();
+        baslatSayac();
+        arkaPlanVeriYenilemeBaslat();
+        setTimeout(cornerButonEtiketleriGoster, 900);
+        setTimeout(puanBildirimKontrolEt, 1400);
+        setInterval(puanBildirimKontrolEt, 45000);
+        duyuruKontrolEt();
+        dockZamanlayiciyiBaslat();
+        baModuAc();
+        gunlukEnerjiBonusuKontrolEt();
+      }, 600);
+    } else {
+      document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+      document.getElementById('login-container').style.display = 'block';
+      m.className = "error";
+      m.innerText = data.message || "Hatalı kullanıcı adı veya şifre!";
+    }
+  } catch (err) {
+    document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+    document.getElementById('login-container').style.display = 'block';
+    m.className = "error";
+    m.innerText = "Bağlantı hatası oluştu.";
+  }
+}
 
         async function girisSonrasiVeriBekle(ogr, sifre) {
             let denemeSayisi = 0;
@@ -12979,6 +12975,72 @@ async function kpKelimeOyunuBitir(enerjiBittiMi) {
             function baFabTikla() {
     if (genelOyunGirisEngelliMi()) return;
     baModuAc();
+}
+
+                // --- MEDU AKIŞ KONTROL MİMARİSİ ---
+let meduAkisAktifSekme = 'akis';
+
+function meduAkisAc() {
+    dcTumTamEkranlariKapat();
+    let akisEl = document.getElementById('tab-meduakis');
+    if (akisEl) akisEl.classList.add('active');
+    dcBottomNavSenkronize();
+    meduAkisSekmeSec('akis');
+}
+
+function meduAkisKapat() {
+    let akisEl = document.getElementById('tab-meduakis');
+    if (akisEl) akisEl.classList.remove('active');
+    dcBottomNavSenkronize();
+}
+
+function meduAkisSekmeSec(sekmeAdi) {
+    meduAkisAktifSekme = sekmeAdi;
+    let butonlar = document.querySelectorAll('#meduAkisSegment button');
+    let sira = 0;
+    butonlar.forEach((b, idx) => {
+        if (b.dataset.s === sekmeAdi) {
+            b.classList.add('aktif');
+            sira = idx;
+        } else {
+            b.classList.remove('aktif');
+        }
+    });
+    let iz = document.getElementById('segmentIz');
+    if (iz) {
+        iz.style.transform = `translateX(${sira * 100}%)`;
+    }
+
+    let ekran = document.getElementById('meduAkisEkran');
+    if (!ekran) return;
+
+    if (sekmeAdi === 'sanaozel') {
+        // Mevcut Sana Özel içeriğini buraya yansıt
+        ekran.innerHTML = `<div style="padding:10px;"><h3 style="color:#553c9a; margin-bottom:10px;">✨ Sana Özel</h3><div class="az-grid2x2">
+            <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="gununKonusunaGit()"><div class="az-gcard-badge">GÜNLÜK</div><div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Günün Konusu</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#059669);" onclick="okumaStudyosunuAc()"><div class="az-gcard-icon">📖</div><div class="az-gcard-title">Okuma Stüdyosu</div></button>
+            <button class="az-gcard span2" style="background:linear-gradient(160deg,#fb923c,#ea580c);" onclick="pomodoroAc()"><div class="az-gcard-icon">🍅</div><div class="az-gcard-title">Pomodoro Çalışma Sayacı</div></button>
+        </div></div>`;
+    } else if (sekmeAdi === 'aktivite') {
+        ekran.innerHTML = `<div style="padding:10px;"><h3 style="color:#553c9a; margin-bottom:10px;">🎮 Aktiviteler</h3><div class="az-grid2x2">
+            <button class="az-gcard" style="background:linear-gradient(160deg,#38bdf8,#0284c7);" onclick="yolculuguAc()"><div class="az-gcard-icon">🗺️</div><div class="az-gcard-title">Kelime Kartları Yolculuğu</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#a78bfa,#7c3aed);" onclick="kelimeYarismasiAc()"><div class="az-gcard-icon">🏆</div><div class="az-gcard-title">Kelime Ezber Yarışması</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="jpOyunAc()"><div class="az-gcard-icon">🎈</div><div class="az-gcard-title">Jeopardy Balonları</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#16a34a);" onclick="boslukOyunAc()"><div class="az-gcard-icon">🧩</div><div class="az-gcard-title">Boşluk Doldurma</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#22d3ee,#0891b2);" onclick="hafizaOyunAc()"><div class="az-gcard-icon">🧠</div><div class="az-gcard-title">Hafıza Kartları</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#60a5fa,#2563eb);" onclick="yagmurOyunAc()"><div class="az-gcard-icon">☔</div><div class="az-gcard-title">Kelime Yağmuru</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#f87171,#b91c1c);" onclick="asmacaOyunAc()"><div class="az-gcard-icon">🎪</div><div class="az-gcard-title">Adam Asmaca</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#a3e635,#65a30d);" onclick="kelimebulOyunAc()"><div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Kelime Bul</div></button>
+        </div></div>`;
+    } else {
+        // Akış, Keşfet, Vitrinim sekmeleri demo içeriği veya varsayılan yer tutucuları
+        ekran.innerHTML = `<div style="padding:20px; text-align:center; color:#7d6ca8; font-weight:800;"><b>${sekmeAdi.toUpperCase()}</b> sekmesi Karnaval demosu ile entegre ediliyor...</div>`;
+    }
+}
+
+// Enerji sekmesi için geçici tam ekran yönlendirici
+function enerjiSekmesiniAc() {
+    alert("⚡ Enerji sekmesi Aşama 2'de aktifleşecektir!");
 }
         
     </script>
