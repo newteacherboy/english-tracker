@@ -1556,28 +1556,25 @@
                 </div>
         
                                   <div class="tabs-container">
-                               <button class="tab-btn" onclick="baModuAc()">🧙 Ana Sayfa</button>
+                                                              <button class="tab-btn" onclick="meduAkisAc()">🎡 Medu Akış</button>
                   <button class="tab-btn" id="tabBtnSanaOzel" onclick="sanaOzelTamEkranAc()">✨ Sana Özel</button>
                     <button class="tab-btn" id="tabBtnRaporlar" onclick="sekmeDegistir('raporlar', this)">📝 Raporlar</button>
-                                          <button class="tab-btn" onclick="meduAkisAc()">🎡 Medu Akış</button>
                                                     <button class="tab-btn" onclick="aktivitelerTamEkranAc()">🎮 Aktiviteler</button>
                             <button class="tab-btn" id="tabBtnDersCalis" onclick="dersCalisTamEkranAc()">📘 Ders Çalış</button>
+                                 <button class="tab-btn" onclick="baModuAc()">🧙 Büyü Akademisi</button>
                   <button class="tab-btn" id="tabBtnKonusma" onclick="kpModuAc()">🎤 Konuşma</button>
                                  <button class="tab-btn active" id="tabBtnProfil" onclick="sekmeDegistir('ozet', this)">👤 Profil</button>
-                </div>
+                                  </div>
         
                 <!-- SADECE MOBİLDE GÖRÜNEN ALT NAVİGASYON -->
                 <div class="bottom-nav-mobile" id="bottomNavMobile">
-                               <button class="bn-item" onclick="baModuAc()">
-                        <span class="bn-icon">🧙</span><span class="bn-label">Ana Sayfa</span>
+                                                   <button class="bn-item" onclick="meduAkisAc()">
+                        <span class="bn-icon">🎡</span><span class="bn-label">Medu Akış</span>
                     </button>
                                 <button class="bn-item" onclick="sanaOzelTamEkranAc()">
                         <span class="bn-icon">✨</span><span class="bn-label">Sana Özel</span>
                     </button>
                     <button class="bn-item" id="bnBtnRaporlar" onclick="bnSekmeSec('raporlar', this)">
-                            <button class="bn-item" onclick="meduAkisAc()">
-    <span class="bn-icon">🎡</span><span class="bn-label">Medu Akış</span>
-</button>
                         <span class="bn-icon">📝</span><span class="bn-label">Raporlar</span>
                     </button>
                     <button class="bn-item" onclick="aktivitelerTamEkranAc()">
@@ -1585,6 +1582,9 @@
                     </button>
                                 <button class="bn-item" onclick="dersCalisTamEkranAc()">
                         <span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span>
+                    </button>
+                    <button class="bn-item" onclick="baModuAc()">
+                        <span class="bn-icon">🧙</span><span class="bn-label">Büyü Akademisi</span>
                     </button>
                     <button class="bn-item" onclick="kpModuAc()">
                         <span class="bn-icon">🎤</span><span class="bn-label">Konuşma</span>
@@ -4330,7 +4330,7 @@
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbzQX04FKqUT4RrbRu6rl4NOMHgg4wS6xTZG-LQbU2jzrS3aJCyKwkg1iIvA0Z7yjDMazg/exec";
+                const apiURL = "https://script.google.com/macros/s/AKfycbxneIjFgQpAI3JKe4Yk8Y4hptH5PQFHX32TFtdFNdGWvWotYRSp_O3EJSiIskhRgJVBRA/exec";
                 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
@@ -4475,8 +4475,8 @@
                         arkaPlanVeriYenilemeBaslat();
                         gununKonusuYukle();
                         duyuruKontrolEt();
-                            dockZamanlayiciyiBaslat();
-                            baModuAc();
+                                                        dockZamanlayiciyiBaslat();
+                            meduAkisAc();
                               gunlukEnerjiBonusuKontrolEt();
                         }
                           
@@ -8864,7 +8864,7 @@
                     
                                             duyuruKontrolEt();
                         dockZamanlayiciyiBaslat();
-                        baModuAc();
+                        meduAkisAc();
                         gunlukEnerjiBonusuKontrolEt();
                     }, 600);
                     } else {
@@ -13958,9 +13958,21 @@
         const YO_ZK_GUN = { 1:1, 2:3, 3:7, 4:14 };
         const YO_ZK_MAX = 250;
         const YO_URUN = {
-          aks: [['🎩','Silindir',20],['🧢','Kasket',25],['🎀','Kurdele',20],['🕶️','Gözlük',30],['🎓','Mezuniyet',50],['👑','Taç',60]],
-          renk: [['#ff8a80','Mercan',15],['#5fcf9f','Nane',15],['#a08cff','Lavanta',15],['#f5b700','Güneş',15]]
-        };
+  aks: [
+    ['🎩','Silindir',20],['🧢','Kasket',25],['🎀','Kurdele',20],['🕶️','Gözlük',30],
+    ['🎓','Mezuniyet',50],['👑','Taç',60],['🎃','Kabak Şapka',35],['🦄','Tek Boynuz',70],
+    ['🧣','Atkı',25],['🌸','Çiçek Taç',30],['🎧','Kulaklık',40],['🕵️','Dedektif Şapkası',45],
+    ['🥽','Dalış Gözlüğü',35],['🎊','Konfeti Taç',40],['⭐','Yıldız Bandana',30],['🍀','Yonca',25],
+    ['🦋','Kelebek Kanadı',55],['🌈','Gökkuşağı Halka',65],['🔥','Alev Tacı',75],['❄️','Kar Tanesi',35],
+    ['🎮','Oyun Kulaklığı',45],['📚','Bilge Gözlüğü',30],['🥇','Şampiyon Madalyası',90],['🚀','Roket Sırt Çantası',80]
+  ],
+  renk: [
+    ['#ff8a80','Mercan',15],['#5fcf9f','Nane',15],['#a08cff','Lavanta',15],['#f5b700','Güneş',15],
+    ['#ff6fa5','Pembe Şeker',18],['#4fc3f7','Gökyüzü',18],['#ffb74d','Tatlı Turuncu',18],['#81c784','Fıstık Yeşili',18],
+    ['#ba68c8','Erik Moru',20],['#4dd0e1','Turkuaz',20],['#ffd54f','Bal Sarısı',20],['#e57373','Kiraz',20],
+    ['#90a4ae','Gümüş',25],['#7986cb','Gece Mavisi',25],['#a1887f','Kahve',22],['#f06292','Fuşya',22]
+  ]
+};
         const YO_DONDURUCU_FIYAT = 30;
         
         const YO_CUMLE = [
@@ -14928,8 +14940,8 @@
 #tab-meduakis .akis-baslik h2 { font:700 22px 'Fredoka',sans-serif; display:flex; align-items:center; gap:8px; color:var(--metin); }
 #tab-meduakis .akis-baslik h2 span { display:inline-block; animation:maCarkDon 8s linear infinite; }
 @keyframes maCarkDon { to { transform:rotate(360deg); } }
-#tab-meduakis .segment { position:relative; display:grid; grid-template-columns:repeat(3,1fr); background:#f1e9ff; border-radius:14px; padding:4px; margin-top:10px; }
-#tab-meduakis .segment i { position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px)/3); border-radius:11px; background:linear-gradient(135deg,#a06bff,#ff6b9d); transition:transform .3s cubic-bezier(.3,.9,.3,1.1); box-shadow:0 3px 8px rgba(160,107,255,.35); }
+#tab-meduakis .segment { position:relative; display:grid; grid-template-columns:repeat(5,1fr); background:#f1e9ff; border-radius:14px; padding:4px; margin-top:10px; }
+#tab-meduakis .segment i { position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px)/5); border-radius:11px; background:linear-gradient(135deg,#a06bff,#ff6b9d); transition:transform .3s cubic-bezier(.3,.9,.3,1.1); box-shadow:0 3px 8px rgba(160,107,255,.35); }
 #tab-meduakis .segment button { position:relative; z-index:1; border:none; background:none; padding:9px 4px; font:900 13px 'Nunito',sans-serif; color:var(--soluk); cursor:pointer; width:100%; }
 #tab-meduakis .segment button.aktif { color:#fff; }
 #tab-meduakis .ma-ekran { padding-bottom:30px; }
@@ -15026,11 +15038,13 @@
 <div class="ma-wrap">
   <div class="akis-baslik">
     <h2><span>🎡</span>Medu Akış</h2>
-    <div class="segment" id="maSegment">
+       <div class="segment" id="maSegment">
       <i id="maSegmentIz"></i>
       <button data-s="akis" onclick="maSekmeSec('akis')">Akış</button>
       <button data-s="kesfet" onclick="maSekmeSec('kesfet')">Keşfet</button>
       <button data-s="vitrin" onclick="maSekmeSec('vitrin')">Vitrinim</button>
+      <button onclick="if(typeof yoMagazaAc==='function') yoMagazaAc();">Mağaza</button>
+      <button onclick="if(typeof yoLigAc==='function') yoLigAc();">Lig</button>
     </div>
   </div>
   <div class="ma-ekran" id="maEkran"></div>
@@ -15039,10 +15053,11 @@
 <div class="ma-toast" id="maToast"></div>
 
 <script>
-function meduAkisAc() {
+async function meduAkisAc() {
     dcTumTamEkranlariKapat();
     document.getElementById('tab-meduakis').classList.add('active');
     dcBottomNavSenkronize();
+    await maOlaylariYukle();
     maSekmeSec('akis');
 }
 function meduAkisKapat() {
@@ -15051,17 +15066,28 @@ function meduAkisKapat() {
 }
 
 let maSekme = 'akis', maProfilId = null, maFiltre = 'herkes', maArama = '', maSinifListeSon = [], maSinifCache = null;
-const maTakip = new Set(JSON.parse(localStorage.getItem('ing_ma_takip') || '[]'));
-const maBegeni = new Set(JSON.parse(localStorage.getItem('ing_ma_begeni') || '[]'));
-const maTebrik = new Set(JSON.parse(localStorage.getItem('ing_ma_tebrik') || '[]'));
+let maTakip = new Set(), maBegeni = new Set(), maTebrik = new Set();
 let maVitrinSecim = JSON.parse(localStorage.getItem('ing_ma_vitrinsecim') || '[0,1,2]');
+async function maOlaylariYukle() {
+    try {
+        let r = await fetch(`${apiURL}?islem=akisOlaylariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`);
+        let d = await r.json();
+        maTakip = new Set(d.takip || []);
+        maBegeni = new Set(d.begeni || []);
+        maTebrik = new Set(d.tebrik || []);
+    } catch (e) {}
+}
+async function maOlayGonder(hedef, tur) {
+    try {
+        let r = await fetch(apiURL, { method: "POST", body: JSON.stringify({ islem: "akisOlayToggle", ogrenci: aktifOgrenciAdi, hedef: hedef, tur: tur }) });
+        let d = await r.json();
+        return !!d.aktif;
+    } catch (e) { return null; }
+}
 const LIG_RENK = { 'Bronz':'#c98a4a', 'Gümüş':'#8b9bb4', 'Altın':'#e0a800', 'Elmas':'#2ea8e6' };
 const MA_SERIT = ['#ff6b6b','#ffc93c','#34b36a','#4d96ff','#a06bff'];
 
-function maKaydet() {
-    localStorage.setItem('ing_ma_takip', JSON.stringify([...maTakip]));
-    localStorage.setItem('ing_ma_begeni', JSON.stringify([...maBegeni]));
-    localStorage.setItem('ing_ma_tebrik', JSON.stringify([...maTebrik]));
+function maVitrinKaydet() {
     localStorage.setItem('ing_ma_vitrinsecim', JSON.stringify(maVitrinSecim));
 }
 function maToast(m) {
@@ -15147,10 +15173,22 @@ function maAkisHtml() {
       <button class="${t ? 'basili' : ''}" onclick="maTebrikEt('${id}', this)">🎉 Tebrik et</button></div></div>`;
     }).join('');
 }
-function maBegen(id, btn) { let b = !maBegeni.has(id); b ? maBegeni.add(id) : maBegeni.delete(id); maKaydet(); btn.classList.toggle('basili', b); btn.innerHTML = `${b ? '❤️' : '🤍'} Beğen`; maTekrarOyna(btn, 'ma-pop'); if (b) maPatlat(btn, ['❤️','💖','✨'], 9); }
-function maTebrikEt(id, btn) { let t = !maTebrik.has(id); t ? maTebrik.add(id) : maTebrik.delete(id); maKaydet(); btn.classList.toggle('basili', t); btn.innerHTML = `🎉 Tebrik et`; maTekrarOyna(btn, 'ma-pop'); if (t) maPatlat(btn, ['🎉','🎊','⭐'], 12); }
-
-function maKesfetHtml() {
+function maBegen(id, btn) {
+    let hedef = id.replace(/^akis-/, '');
+    let b = !maBegeni.has(id);
+    b ? maBegeni.add(id) : maBegeni.delete(id);
+    btn.classList.toggle('basili', b); btn.innerHTML = `${b ? '❤️' : '🤍'} Beğen`; maTekrarOyna(btn, 'ma-pop');
+    if (b) maPatlat(btn, ['❤️','💖','✨'], 9);
+    maOlayGonder(hedef, 'begeni');
+}
+function maTebrikEt(id, btn) {
+    let hedef = id.replace(/^akis-/, '');
+    let t = !maTebrik.has(id);
+    t ? maTebrik.add(id) : maTebrik.delete(id);
+    btn.classList.toggle('basili', t); btn.innerHTML = `🎉 Tebrik et`; maTekrarOyna(btn, 'ma-pop');
+    if (t) maPatlat(btn, ['🎉','🎊','⭐'], 12);
+    maOlayGonder(hedef, 'tebrik');
+}function maKesfetHtml() {
     let ilk3 = [...maSinifListeSon].sort((a, b) => b.xp - a.xp).slice(0, 3);
     let podyum = '';
     if (ilk3.length) {
@@ -15220,17 +15258,18 @@ function maRozetSec(i) {
     let k = maVitrinSecim.indexOf(i);
     if (k > -1) maVitrinSecim.splice(k, 1);
     else { if (maVitrinSecim.length >= 3) { maToast('En fazla 3 rozet seçebilirsin'); return; } maVitrinSecim.push(i); }
-    maKaydet();
+    maVitrinKaydet();
     let y = document.getElementById('maEkran').scrollTop;
     maCiz().then(() => { document.getElementById('maEkran').scrollTop = y; });
 }
 function maBalonlariUcur() { document.querySelectorAll('#tab-meduakis .yaris-balon').forEach(b => { b.style.bottom = Math.round(b.dataset.hedef * 0.9) + 'px'; }); }
 function maTakipDegistir(id, btn) {
-    let t = !maTakip.has(id); t ? maTakip.add(id) : maTakip.delete(id); maKaydet();
+    let t = !maTakip.has(id); t ? maTakip.add(id) : maTakip.delete(id);
     btn.classList.toggle('takipte', t); maTekrarOyna(btn, 'ma-pop');
     if (btn.classList.contains('takip-btn')) btn.innerHTML = t ? '✓ Takip ediliyor' : '🎈 Takip et';
     else btn.innerText = t ? 'Takipte' : 'Takip et';
     if (t) { maPatlat(btn, ['🎈','⭐','✨'], 10); maToast('Artık Medu Akış\'ında takip ediyorsun 🎡'); }
+    maOlayGonder(id, 'takip');
 }
 </script>
                 
