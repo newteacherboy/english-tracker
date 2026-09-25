@@ -1739,6 +1739,61 @@
                 <p style="color: #718096; text-align: center; padding: 12px;">Arşiv verileri yükleniyor...</p>
             </div>
         </div>
+
+
+<!-- PAPAĞAN PAZARI (MAĞAZA) TAM EKRAN ALANI -->
+<div id="tab-magaza" class="dc-fullscreen-overlay">
+    <button class="dc-exit-btn" onclick="magazaKapat()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="dc-focus-card" style="max-width:480px; padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <h2 style="font-family:'Fredoka',sans-serif; font-size:20px; color:#7c3aed; display:flex; align-items:center; gap:6px;">🛍️ Papağan Pazarı</h2>
+            <div id="magazaBakiyeKutusu" style="background:#fef9c3; border:1px solid #fef08a; padding:6px 12px; border-radius:999px; font-weight:900; font-size:13px; color:#b7791f;">🪙 0 Altın</div>
+        </div>
+        <div style="text-align:center; margin-bottom:16px;">
+            <button class="yo-btn" onclick="atolyeAc()" style="background:linear-gradient(135deg,#38bdf8,#2563eb); box-shadow:0 4px 14px rgba(37,99,235,0.3);">🎨 Maskot Atölyesi (Avatar Yarat)</button>
+        </div>
+        <!-- Kategori Sekmeleri -->
+        <div class="segment" id="magazaSegment" style="margin-bottom:14px;">
+            <button class="aktif" onclick="magazaKategoriSec('sapka', this)" style="position:relative; z-index:1; border:none; background:none; font:900 11px 'Nunito',sans-serif; cursor:pointer;">Şapkalar</button>
+            <button onclick="magazaKategoriSec('gozluk', this)" style="position:relative; z-index:1; border:none; background:none; font:900 11px 'Nunito',sans-serif; cursor:pointer;">Gözlükler</button>
+            <button onclick="magazaKategoriSec('arkaplan', this)" style="position:relative; z-index:1; border:none; background:none; font:900 11px 'Nunito',sans-serif; cursor:pointer;">Arka Plan</button>
+        </div>
+        <div id="magazaUrunGrid" class="yo-magaza" style="max-height:50vh; overflow-y:auto; padding:4px;"></div>
+    </div>
+</div>
+
+<!-- MASKOT ATÖLYESİ (AVATAR YARATICI) TAM EKRAN ALANI -->
+<div id="tab-atolye" class="dc-fullscreen-overlay" style="z-index:100000050;">
+    <button class="dc-exit-btn" onclick="atolyeKapat()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="dc-focus-card" style="max-width:440px; text-align:center; padding:20px;">
+        <h2 style="font-family:'Fredoka',sans-serif; font-size:20px; color:#2563eb; margin-bottom:10px;">🎨 Maskot Atölyesi</h2>
+        
+        <!-- Canlı Avatar Önizleme Alanı -->
+        <div id="atolyeCanliOnizleme" style="width:100px; height:100px; margin:0 auto 14px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.12); position:relative; overflow:visible;">
+            🦜
+        </div>
+
+        <!-- Parça Seçim Sekmeleri -->
+        <div style="display:flex; gap:6px; margin-bottom:12px; overflow-x:auto; padding-bottom:4px;">
+            <button class="yo-btn ikincil" onclick="atolyeParcaTipSec('taban')" style="padding:6px 10px; font-size:11px;">Karakter</button>
+            <button class="yo-btn ikincil" onclick="atolyeParcaTipSec('renk')" style="padding:6px 10px; font-size:11px;">Gövde Renk</button>
+            <button class="yo-btn ikincil" onclick="atolyeParcaTipSec('sapka')" style="padding:6px 10px; font-size:11px;">Şapka</button>
+            <button class="yo-btn ikincil" onclick="atolyeParcaTipSec('gozluk')" style="padding:6px 10px; font-size:11px;">Gözlük</button>
+        </div>
+
+        <div id="atolyeParcaSecenekGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; max-height:35vh; overflow-y:auto; margin-bottom:16px; padding:4px;"></div>
+
+        <div style="display:flex; gap:8px;">
+            <button class="yo-btn ikincil" onclick="atolyeRastgele()">🎲 Rastgele</button>
+            <button class="yo-btn" onclick="atolyeKaydet()">💾 Kaydet</button>
+        </div>
+    </div>
+</div>
+            
 <!-- MEDU AKIŞ TAM EKRAN ALANI -->
 <div id="tab-meduakis" class="dc-fullscreen-overlay">
     <button class="dc-exit-btn" onclick="meduAkisKapat()">
@@ -1797,6 +1852,177 @@
             <div class="az-gcard-icon">🧙</div><div class="az-gcard-title">Medu Oyun Sihirbazı — Büyü Akademisi</div>
         </button>
     </div>
+    </div>
+</div>
+
+            // --- MEDU AKIŞ SOSYAL SİSTEM VE SEKME YÖNETİMİ ---
+
+function meduAkisSekmeSec(sekmeAdi) {
+    meduAkisAktifSekme = sekmeAdi;
+    let butonlar = document.querySelectorAll('#meduAkisSegment button');
+    let sira = 0;
+    butonlar.forEach((b, idx) => {
+        if (b.dataset.s === sekmeAdi) {
+            b.classList.add('aktif');
+            sira = idx;
+        } else {
+            b.classList.remove('aktif');
+        }
+    });
+    let iz = document.getElementById('segmentIz');
+    if (iz) {
+        iz.style.transform = `translateX(${sira * 100}%)`;
+    }
+
+    let ekran = document.getElementById('meduAkisEkran');
+    if (!ekran) return;
+
+    if (sekmeAdi === 'akis') {
+        ekran.innerHTML = `
+            <div class="filtre" style="padding:4px 0 10px;">
+                <button class="aktif" onclick="toast('Tüm sınıf akışı gösteriliyor')">Tüm Sınıf</button>
+            </div>
+            <div class="akis-kart" style="--serit:#ff6b6b;">
+                <span class="akis-ikon">🔥</span>
+                <div class="akis-ust">
+                    <div class="user-avatar" style="width:36px; height:36px; font-size:18px;">🦁</div>
+                    <span><b>Sınıf Arkadaşın</b><small>2 saat önce</small></span>
+                </div>
+                <div class="akis-metin">7 günlük seriyi tamamladı ve rozet kazandı!</div>
+                <div class="aksiyon">
+                    <button onclick="patlat(this, ['❤️','💖','✨'], 8); toast('Beğenildi!')">❤️ 12</button>
+                    <button onclick="patlat(this, ['🎉','🎊','⭐'], 10); toast('Tebrik edildi!')">🎉 5</button>
+                </div>
+            </div>
+            <div class="akis-kart" style="--serit:#4d96ff;">
+                <span class="akis-ikon">🏆</span>
+                <div class="akis-ust">
+                    <div class="user-avatar" style="width:36px; height:36px; font-size:18px;">🐼</div>
+                    <span><b>Sınıf Arkadaşın</b><small>1 gün önce</small></span>
+                </div>
+                <div class="akis-metin">Haftalık ligde zirveye yerleşti!</div>
+                <div class="aksiyon">
+                    <button onclick="patlat(this, ['❤️','💖','✨'], 8); toast('Beğenildi!')">❤️ 19</button>
+                    <button onclick="patlat(this, ['🎉','🎊','⭐'], 10); toast('Tebrik edildi!')">🎉 8</button>
+                </div>
+            </div>
+        `;
+    } else if (sekmeAdi === 'kesfet') {
+        ekran.innerHTML = `
+            <div class="bolum">
+                <div class="bolum-baslik">Haftanın Yıldızları (Podyum)</div>
+                <div class="podyum" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; text-align:center; margin-bottom:16px;">
+                    <div class="podyum-kisi">
+                        <div class="user-avatar" style="width:48px; height:48px; margin:0 auto; font-size:24px;">🦊</div>
+                        <b>Öğrenci 2</b><small>1850 XP</small>
+                        <div class="basamak" style="height:60px; background:#8b9bb4; border-radius:8px; color:#fff; font-weight:900; padding-top:4px;">2</div>
+                    </div>
+                    <div class="podyum-kisi">
+                        <div class="user-avatar" style="width:56px; height:56px; margin:0 auto; font-size:28px;">🦁</div>
+                        <b>Öğrenci 1</b><small>2120 XP</small>
+                        <div class="basamak" style="height:80px; background:#e0a800; border-radius:8px; color:#fff; font-weight:900; padding-top:4px;">1</div>
+                    </div>
+                    <div class="podyum-kisi">
+                        <div class="user-avatar" style="width:48px; height:48px; margin:0 auto; font-size:24px;">🐰</div>
+                        <b>Öğrenci 3</b><small>1640 XP</small>
+                        <div class="basamak" style="height:44px; background:#c98a4a; border-radius:8px; color:#fff; font-weight:900; padding-top:4px;">3</div>
+                    </div>
+                </div>
+                <div class="bolum-baslik">Sınıf Arkadaşların</div>
+                <div class="kisi" style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #eadcff;">
+                    <div class="user-avatar" style="width:40px; height:40px; font-size:20px;">🐼</div>
+                    <div class="kisi-ad" style="flex:1;"><b>Zeynep K.</b><small style="color:#8a78b8; font-weight:700;">🔥 12 gün seri</small></div>
+                    <button class="mini-takip" onclick="toast('Takip edildi!')" style="border:none; background:#8b5cf6; color:#fff; padding:6px 12px; border-radius:10px; font-weight:900; cursor:pointer;">Takip et</button>
+                </div>
+            </div>
+        `;
+    } else if (sekmeAdi === 'vitrin') {
+        let aktifIsim = aktifOgrenciAdi || 'Öğrenci';
+        ekran.innerHTML = `
+            <div class="onizleme-bant" style="background:#fff7d1; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12px; margin-bottom:10px;">👀 Sınıf arkadaşların vitrinini böyle görüyor</div>
+            <div class="sahne" style="text-align:center; padding:10px;">
+                <div class="user-avatar" style="width:72px; height:72px; margin:0 auto 8px; font-size:36px;" id="vitrinAvatarOrnek">🦜</div>
+                <h3 style="font-family:'Fredoka',sans-serif; font-size:20px;">${aktifIsim}</h3>
+                <div class="kulad" style="font-size:12px; color:#8a78b8; font-weight:800;">@${aktifIsim.toLowerCase().replace(/\s+/g,'_')} · Diji-Medu Kaşifi</div>
+                <div class="takip-satir" style="display:flex; justify-content:center; gap:12px; margin:10px 0;">
+                    <div class="sayac-rozet"><b>3</b>takipçi</div>
+                    <div class="sayac-rozet"><b>2</b>takip</div>
+                </div>
+            </div>
+            <div class="biletler" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+                <div class="bilet" style="background:#ff6b6b; padding:10px; border-radius:10px; color:#fff;"><small>Seri</small><b>5 gün 🔥</b></div>
+                <div class="bilet" style="background:#e0a800; padding:10px; border-radius:10px; color:#fff;"><small>Lig</small><b>Gümüş 🏆</b></div>
+            </div>
+        `;
+        // Vitrin içindeki avatarı güncel özel avatara uyarla
+        setTimeout(yoAvatarUygula, 50);
+    } else if (sekmeAdi === 'sanaozel') {
+        ekran.innerHTML = `<div style="padding:10px;"><h3 style="color:#553c9a; margin-bottom:10px;">✨ Sana Özel</h3><div class="az-grid2x2">
+            <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="gununKonusunaGit()"><div class="az-gcard-badge">GÜNLÜK</div><div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Günün Konusu</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#059669);" onclick="okumaStudyosunuAc()"><div class="az-gcard-icon">📖</div><div class="az-gcard-title">Okuma Stüdyosu</div></button>
+            <button class="az-gcard span2" style="background:linear-gradient(160deg,#fb923c,#ea580c);" onclick="pomodoroAc()"><div class="az-gcard-icon">🍅</div><div class="az-gcard-title">Pomodoro Çalışma Sayacı</div></button>
+        </div></div>`;
+    } else if (sekmeAdi === 'aktivite') {
+        ekran.innerHTML = `<div style="padding:10px;"><h3 style="color:#553c9a; margin-bottom:10px;">🎮 Aktiviteler</h3><div class="az-grid2x2">
+            <button class="az-gcard" style="background:linear-gradient(160deg,#38bdf8,#0284c7);" onclick="yolculuguAc()"><div class="az-gcard-icon">🗺️</div><div class="az-gcard-title">Kelime Kartları Yolculuğu</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#a78bfa,#7c3aed);" onclick="kelimeYarismasiAc()"><div class="az-gcard-icon">🏆</div><div class="az-gcard-title">Kelime Ezber Yarışması</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="jpOyunAc()"><div class="az-gcard-icon">🎈</div><div class="az-gcard-title">Jeopardy Balonları</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#16a34a);" onclick="boslukOyunAc()"><div class="az-gcard-icon">🧩</div><div class="az-gcard-title">Boşluk Doldurma</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#22d3ee,#0891b2);" onclick="hafizaOyunAc()"><div class="az-gcard-icon">🧠</div><div class="az-gcard-title">Hafıza Kartları</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#60a5fa,#2563eb);" onclick="yagmurOyunAc()"><div class="az-gcard-icon">☔</div><div class="az-gcard-title">Kelime Yağmuru</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#f87171,#b91c1c);" onclick="asmacaOyunAc()"><div class="az-gcard-icon">🎪</div><div class="az-gcard-title">Adam Asmaca</div></button>
+            <button class="az-gcard" style="background:linear-gradient(160deg,#a3e635,#65a30d);" onclick="kelimebulOyunAc()"><div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Kelime Bul</div></button>
+        </div></div>`;
+    }
+}
+
+            <!-- ENERJİ SEKMESİ TAM EKRAN ALANI -->
+<div id="tab-enerji" class="dc-fullscreen-overlay">
+    <button class="dc-exit-btn" onclick="enerjiSekmesiniKapat()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="dc-focus-card" style="max-width:440px; text-align:center; padding:24px 20px;">
+        <div style="font-family:'Fredoka',sans-serif; font-size:22px; font-weight:700; color:var(--metin, #3b2c66); margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <span>⚡</span> Enerji ve Yaşam Pınarı
+        </div>
+
+        <!-- Büyük Animasyonlu İksir / Batarya Kutusu -->
+        <div style="background:linear-gradient(145deg, #0d5a6c, #072c35); border-radius:22px; padding:24px; color:#fff; margin-bottom:20px; box-shadow:0 10px 25px rgba(13,90,108,0.3); position:relative; overflow:hidden;">
+            <div style="font-size:36px; margin-bottom:6px;">🔋</div>
+            <div id="enerjiDevSayi" style="font-family:'Fredoka',sans-serif; font-size:32px; font-weight:700; color:#ffd166; margin-bottom:4px;">-- / --</div>
+            <div style="font-size:12px; color:#9fdbe6; font-weight:700; margin-bottom:14px;">Aktif Enerji Seviyesi</div>
+            
+            <!-- Dolum Çubuğu -->
+            <div style="background:rgba(255,255,255,0.15); border-radius:10px; height:12px; width:100%; overflow:hidden; padding:2px;">
+                <div id="enerjiDevBar" style="height:100%; background:linear-gradient(90deg,#ffd166,#f59e0b); border-radius:8px; width:0%; transition:width 0.4s ease;"></div>
+            </div>
+        </div>
+
+        <!-- Geri Sayım ve Bilgi Kartları -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:14px 10px; text-align:center;">
+                <div style="font-size:18px; margin-bottom:4px;">⏰</div>
+                <div style="font-size:10px; font-weight:800; color:#64748b; text-transform:uppercase;">Sonraki +1 Enerji</div>
+                <div id="enerjiGeriSayimSure" style="font-size:14px; font-weight:900; color:#1e293b; margin-top:2px;">Hesaplanıyor...</div>
+            </div>
+            <div style="background:#fef9c3; border:1px solid #fef08a; border-radius:16px; padding:14px 10px; text-align:center;">
+                <div style="font-size:18px; margin-bottom:4px;">🌕</div>
+                <div style="font-size:10px; font-weight:800; color:#854d0e; text-transform:uppercase;">Dolunay Bonusu</div>
+                <div id="dolunayBonusSure" style="font-size:14px; font-weight:900; color:#78350f; margin-top:2px;">Cmt 08:00</div>
+            </div>
+        </div>
+
+        <!-- Enerji Kazanma Yolları Listesi -->
+        <div style="text-align:left; background:#f5efff; border:1px solid #eadcff; border-radius:18px; padding:16px; margin-bottom:10px;">
+            <div style="font-family:'Fredoka',sans-serif; font-size:14px; font-weight:700; color:#7c3aed; margin-bottom:10px;">✨ Enerji Nasıl Yenilenir?</div>
+            <div style="display:flex; flex-direction:column; gap:8px; font-size:11.5px; font-weight:700; color:#3b2c66; line-height:1.4;">
+                <div>⏰ Her saat başı sistem otomatik olarak enerji yeniler.</div>
+                <div>🌙 Cumartesi sabahı 08:00'de enerjiniz tamamen (tavana) dolar.</div>
+                <div>🌙 Günlük portala ilk girişinizde otomatik +2 enerji kazanırsınız.</div>
+                <div>🎬 Atanan video veya etkinlikleri tamamladığınızda +1 enerji alırsınız.</div>
+                <div>🎤 Konuşma Pratiği'nde 4 doğruyu üst üste yaparsanız +1 enerji bonusu kazanırsınız.</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -13068,6 +13294,215 @@ function meduAkisSekmeSec(sekmeAdi) {
 // Enerji sekmesi için geçici tam ekran yönlendirici
 function enerjiSekmesiniAc() {
     alert("⚡ Enerji sekmesi Aşama 2'de aktifleşecektir!");
+}
+
+            // --- ENERJİ SEKMESİ KONTROL MİMARİSİ ---
+function enerjiSekmesiniAc() {
+    dcTumTamEkranlariKapat();
+    let enerjiEl = document.getElementById('tab-enerji');
+    if (enerjiEl) enerjiEl.classList.add('active');
+    dcBottomNavSenkronize();
+    enerjiEkraniniGuncelle();
+}
+
+function enerjiSekmesiniKapat() {
+    let enerjiEl = document.getElementById('tab-enerji');
+    if (enerjiEl) enerjiEl.classList.remove('active');
+    dcBottomNavSenkronize();
+}
+
+function enerjiEkraniniGuncelle() {
+    let kalan = window.genelEnerjiKalan !== undefined ? window.genelEnerjiKalan : 18;
+    let max = window.genelEnerjiMax !== undefined ? window.genelEnerjiMax : 18;
+    let yuzde = max > 0 ? Math.round((kalan / max) * 100) : 0;
+
+    let devSayi = document.getElementById('enerjiDevSayi');
+    let devBar = document.getElementById('enerjiDevBar');
+    if (devSayi) devSayi.innerText = `${kalan} / ${max}`;
+    if (devBar) devBar.style.width = `${yuzde}%`;
+
+    // Sonraki enerji için örnek geri sayım (ör. 38 dk)
+    let geriSayimEl = document.getElementById('enerjiGeriSayimSure');
+    if (geriSayimEl) {
+        geriSayimEl.innerText = kalan >= max ? 'Depo Dolu ✨' : '38 dk';
+    }
+
+    // Dolunay Bonusu (Cumartesi 08:00) hesaplama
+    let simdi = new Date();
+    let cmt = new Date(simdi);
+    let gunFarki = (6 - simdi.getDay() + 7) % 7;
+    if (gunFarki === 0 && simdi.getHours() >= 8) gunFarki = 7;
+    cmt.setDate(simdi.getDate() + gunFarki);
+    cmt.setHours(8, 0, 0, 0);
+    let farkMs = cmt.getTime() - simdi.getTime();
+    let kalanSaat = Math.floor(farkMs / (1000 * 60 * 60));
+    let kalanGun = Math.floor(kalanSaat / 24);
+    let saatParca = kalanSaat % 24;
+
+    let dolunayEl = document.getElementById('dolunayBonusSure');
+    if (dolunayEl) {
+        dolunayEl.innerText = kalanGun > 0 ? `${kalanGun}g ${saatParca}s` : `${kalanSaat} saat`;
+    }
+}
+
+            // --- MAĞAZA VE KATMANLI AVATAR MİMARİSİ ---
+let magazaAktifKategori = 'sapka';
+let atolyeAktifTip = 'taban';
+let aktifAvatarVerisi = { taban: '🦜', renk: '#0d5a6c', sapka: '', gozluk: '', arkaplan: '#f1f5f9' };
+
+function magazaAc() {
+    dcTumTamEkranlariKapat();
+    let m = document.getElementById('tab-magaza');
+    if (m) m.classList.add('active');
+    dcBottomNavSenkronize();
+    magazaKategoriSec('sapka', document.querySelector('#magazaSegment button'));
+    magazaBakiyeGuncelle();
+}
+
+function magazaKapat() {
+    let m = document.getElementById('tab-magaza');
+    if (m) m.classList.remove('active');
+    dcBottomNavSenkronize();
+}
+
+function magazaBakiyeGuncelle() {
+    let kutu = document.getElementById('magazaBakiyeKutusu');
+    if (kutu && yo) {
+        kutu.innerText = `🪙 ${yo.altin || 0} Altın`;
+    }
+}
+
+function magazaKategoriSec(kat, btn) {
+    magazaAktifKategori = kat;
+    if (btn) {
+        btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('aktif'));
+        btn.classList.add('aktif');
+    }
+    let grid = document.getElementById('magazaUrunGrid');
+    if (!grid) return;
+
+    // Örnek ürün listesi
+    let urunler = {
+        sapka: [['🎩','Silindir Şapka',20],['🧢','Kasket',25],['👑','Kral Taç',60],['🎓','Mezuniyet Kep',50]],
+        gozluk: [['🕶️','Güneş Gözlüğü',30],['👓','Akıllı Gözlük',40]],
+        arkaplan: [['#38bdf8','Okyanus',25],['#a78bfa','Mor Galaksi',35],['#34d399','Orman',30]]
+    }[kat] || [];
+
+    grid.innerHTML = urunler.map(u => {
+        let sahip = yo && yo.sahip && yo.sahip.includes(`${kat}:${u[0]}`);
+        let takili = yo && yo.takili && yo.takili[kat] === u[0];
+        return `<div class="yo-urun${takili ? ' takili' : ''}" onclick="magazaUrunTikla('${kat}', '${u[0]}', ${u[2]})">
+            <span class="ik">${u[0].startsWith('#') ? '🎨' : u[0]}</span>
+            <span style="font-size:11px; font-weight:800; display:block; margin-top:4px;">${u[1]}</span>
+            <span class="fiyat">${takili ? '✓ Takılı' : (sahip ? 'Tak' : '🪙 ' + u[2])}</span>
+        </div>`;
+    }).join('');
+}
+
+function magazaUrunTikla(tip, deger, fiyat) {
+    if (!yo) return;
+    let id = `${tip}:${deger}`;
+    if (!yo.sahip.includes(id)) {
+        if (yo.altin < fiyat) {
+            yoToast(`Bunun için ${fiyat - yo.altin} altın daha lazım 🪙`);
+            return;
+        }
+        yo.altin -= fiyat;
+        yo.sahip.push(id);
+        yoToast(`🎉 ${deger} satın alındı!`);
+        yoSes('dogru');
+    }
+    yo.takili[tip] = yo.takili[tip] === deger ? '' : deger;
+    yoKaydet();
+    magazaBakiyeGuncelle();
+    magazaKategoriSec(magazaAktifKategori);
+    yoAvatarUygula();
+}
+
+function atolyeAc() {
+    magazaKapat();
+    let a = document.getElementById('tab-atolye');
+    if (a) a.classList.add('active');
+    atolyeParcaTipSec('taban');
+    atolyeOnizlemeCiz();
+}
+
+function atolyeKapat() {
+    let a = document.getElementById('tab-atolye');
+    if (a) a.classList.remove('active');
+    magazaAc();
+}
+
+function atolyeParcaTipSec(tip) {
+    atolyeAktifTip = tip;
+    let grid = document.getElementById('atolyeParcaSecenekGrid');
+    if (!grid) return;
+
+    let secenekler = {
+        taban: ['🦜','🦊','🐰','🐼','🦁','🐨','🐱','🐶','🐸','🐯'],
+        renk: ['#0d5a6c','#2f855a','#2563eb','#7c3aed','#ea580c','#db2777','#1e293b','#f59e0b'],
+        sapka: ['','🎩','🧢','👑','🎓','🎀'],
+        gozluk: ['','🕶️','👓']
+    }[tip] || [];
+
+    grid.innerHTML = secenekler.map(s => `
+        <button class="yo-btn ikincil" onclick="atolyeParcaSec('${tip}', '${s}')" style="font-size:20px; padding:10px;">${s.startsWith('#') ? '🎨' : s}</button>
+    `).join('');
+}
+
+function atolyeParcaSec(tip, deger) {
+    if (tip === 'taban') aktifAvatarVerisi.taban = deger;
+    else if (tip === 'renk') aktifAvatarVerisi.renk = deger;
+    else if (tip === 'sapka') aktifAvatarVerisi.sapka = deger;
+    else if (tip === 'gozluk') aktifAvatarVerisi.gozluk = deger;
+    atolyeOnizlemeCiz();
+}
+
+function atolyeRastgele() {
+    let tabanlar = ['🦜','🦊','🐰','🐼','🦁','🐨'];
+    let renkler = ['#0d5a6c','#2f855a','#2563eb','#7c3aed','#ea580c'];
+    let sapkalar = ['','🎩','🧢','👑'];
+    aktifAvatarVerisi.taban = tabanlar[Math.floor(Math.random() * tabanlar.length)];
+    aktifAvatarVerisi.renk = renkler[Math.floor(Math.random() * renkler.length)];
+    aktifAvatarVerisi.sapka = sapkalar[Math.floor(Math.random() * sapkalar.length)];
+    atolyeOnizlemeCiz();
+}
+
+function atolyeOnizlemeCiz() {
+    let alani = document.getElementById('atolyeCanliOnizleme');
+    if (!alani) return;
+    alani.style.background = aktifAvatarVerisi.renk || '#0d5a6c';
+    alani.innerHTML = `<span style="position:relative; font-size:42px;">${aktifAvatarVerisi.taban || '🦜'}
+        ${aktifAvatarVerisi.sapka ? `<span style="position:absolute; top:-22px; left:50%; transform:translateX(-50%); font-size:24px;">${aktifAvatarVerisi.sapka}</span>` : ''}
+        ${aktifAvatarVerisi.gozluk ? `<span style="position:absolute; top:8px; left:50%; transform:translateX(-50%); font-size:18px;">${aktifAvatarVerisi.gozluk}</span>` : ''}
+    </span>`;
+}
+
+function atolyeKaydet() {
+    if (yo) {
+        yo.ozelAvatar = aktifAvatarVerisi;
+        yoKaydet();
+    }
+    yoToast('🎨 Avatar başarıyla kaydedildi!');
+    atolyeKapat();
+    yoAvatarUygula();
+}
+
+// Genel avatar çizim ve güncelleme fonksiyonu
+function yoAvatarUygula() {
+    let avatarAlanlari = document.querySelectorAll('.user-avatar, #userAvatarLetter');
+    avatarAlanlari.forEach(a => {
+        if (!a) return;
+        if (yo && yo.ozelAvatar && yo.ozelAvatar.taban) {
+            a.style.background = yo.ozelAvatar.renk || '#0d5a6c';
+            a.innerHTML = `<span style="position:relative; display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-size:26px;">${yo.ozelAvatar.taban}
+                ${yo.ozelAvatar.sapka ? `<span style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:16px;">${yo.ozelAvatar.sapka}</span>` : ''}
+                ${yo.ozelAvatar.gozluk ? `<span style="position:absolute; top:4px; left:50%; transform:translateX(-50%); font-size:12px;">${yo.ozelAvatar.gozluk}</span>` : ''}
+            </span>`;
+        } else if (aktifOgrenciAdi) {
+            a.innerText = ogrenciMaskotSec(aktifOgrenciAdi);
+        }
+    });
 }
         
     </script>
