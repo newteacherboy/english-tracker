@@ -14764,6 +14764,158 @@ setInterval(() => {
 }, 1000);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('yoModal').classList.contains('acik')) yoModalKapat(); });
 </script>
+
+<!-- =====================================================================
+     DÜZELTME 1 — İkiz Ayna + Asmaca/Kelime Bul doğruluk oranı
+     "aksam-eklenecek-blok.html" bloğunun ALTINA, </body>'nin hemen ÜSTÜNE yapıştır.
+     Buradaki fonksiyonlar, sayfadaki aynı isimli eski fonksiyonların yerine geçer;
+     eski kodu silmene gerek yok.
+     ===================================================================== -->
+<script>
+/* ---------- 1) İKİZ AYNA BÜYÜSÜ (baştan, sağlam sürüm) ---------- */
+function baHafizaGoster(k) {
+    let panel = document.getElementById('baHafizaPanel');
+    if (panel) panel.style.display = 'block';
+    let dogruEn = String(k.ingilizce || k.en || '').trim();
+    let dogruTr = String(k.turkce || k.tr || '').trim();
+    let adaylar = (window.masterKelimeHavuzu || []).filter(x => {
+        let en = String(x.ingilizce || x.en || '').trim(), tr = String(x.turkce || x.tr || '').trim();
+        return en && tr && en.toLowerCase() !== dogruEn.toLowerCase() && tr.toLowerCase() !== dogruTr.toLowerCase();
+    });
+    let yanlis = adaylar[Math.floor(Math.random() * adaylar.length)] || { ingilizce: 'cat', turkce: 'kedi' };
+    let kartlar = [
+        { metin: dogruEn, pair: 'A' },
+        { metin: dogruTr, pair: 'A' },
+        { metin: String(yanlis.ingilizce || yanlis.en), pair: 'B' },
+        { metin: String(yanlis.turkce || yanlis.tr), pair: 'B' }
+    ].sort(() => Math.random() - 0.5);
+
+    baAktifSoru._kartlar = kartlar;
+    baAktifSoru._acikIndex = [];
+    baAktifSoru._eslesen = [];
+    baAktifSoru._kalanHak = 1;
+    baAktifSoru._kilit = false;
+
+    let alan = document.getElementById('baHafizaGrid');
+    alan.innerHTML = '';
+    kartlar.forEach((kart, i) => {
+        let btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'ba-hafiza-kart';
+        btn.innerText = '❓';
+        btn.onclick = () => baHafizaTikla(i);
+        alan.appendChild(btn);
+    });
+
+    let mesaj = document.getElementById('baHafizaMesaj');
+    if (!mesaj) { mesaj = document.createElement('div'); mesaj.id = 'baHafizaMesaj'; alan.insertAdjacentElement('afterend', mesaj); }
+    mesaj.style.color = '#0a7f95';
+    mesaj.innerText = '🪞 "' + dogruTr + '" kelimesinin İngilizce ikizini bul! Kartları çevir.';
+}
+
+function baHafizaTikla(i) {
+    let s = baAktifSoru;
+    if (!s || !s._kartlar) return;
+    s._acikIndex = s._acikIndex || [];
+    s._eslesen = s._eslesen || [];
+    if (s._kalanHak === undefined) s._kalanHak = 1;
+    let kartlar = s._kartlar;
+    if (s._kilit || s._acikIndex.includes(i) || s._eslesen.includes(i)) return;
+
+    let btns = document.querySelectorAll('#baHafizaGrid .ba-hafiza-kart');
+    let mesaj = document.getElementById('baHafizaMesaj');
+    btns[i].innerText = kartlar[i].metin;
+    btns[i].classList.add('acik');
+    s._acikIndex.push(i);
+    if (s._acikIndex.length < 2) return;
+
+    s._kilit = true;
+    let a = s._acikIndex[0], b = s._acikIndex[1];
+    setTimeout(() => {
+        if (kartlar[a].pair === kartlar[b].pair) {
+            s._eslesen.push(a, b);
+            btns[a].classList.add('eslesti'); btns[b].classList.add('eslesti');
+            s._acikIndex = [];
+            if (kartlar[a].pair === 'A') {
+                if (mesaj) { mesaj.style.color = '#0a8f62'; mesaj.innerText = '🎉 İkizleri buldun!'; }
+                baDogruIsle();
+                setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 900);
+            } else {
+                if (mesaj) { mesaj.style.color = '#0a7f95'; mesaj.innerText = '👍 Bu çift de doğru eşleşti, şimdi asıl ikizleri bul!'; }
+                s._kilit = false;
+            }
+            return;
+        }
+        if (s._kalanHak > 0) {
+            s._kalanHak--;
+            if (mesaj) { mesaj.style.color = '#dc2626'; mesaj.innerText = '😕 Eşleşmedi! 1 hakkın daha var.'; }
+            setTimeout(() => {
+                [a, b].forEach(idx => { btns[idx].innerText = '❓'; btns[idx].classList.remove('acik'); });
+                s._acikIndex = [];
+                s._kilit = false;
+            }, 700);
+            return;
+        }
+        if (mesaj) { mesaj.style.color = '#dc2626'; mesaj.innerText = '😕 Doğru ikizler bunlardı.'; }
+        baYanlisIsle();
+        kartlar.forEach((kart, idx) => { if (kart.pair === 'A') { btns[idx].innerText = kart.metin; btns[idx].classList.add('acik', 'eslesti'); } });
+        setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 1300);
+    }, 500);
+}
+
+/* ---------- 2) ASMACA VE KELİME BUL: güvenilir doğru/yanlış sayımı ---------- */
+(function () {
+    let sayac = { asmaca: { d: 0, y: 0 }, kelimebul: { d: 0, y: 0 } };
+
+    function sar(ad, once, sonra) {
+        let org = window[ad];
+        if (typeof org !== 'function' || org._dz1) return;
+        let f = function () {
+            let c = null;
+            try { if (once) c = once.apply(this, arguments); } catch (e) {}
+            let r = org.apply(this, arguments);
+            try { if (sonra) sonra(c); } catch (e) {}
+            return r;
+        };
+        f._dz1 = true;
+        window[ad] = f;
+    }
+
+    // Adam Asmaca
+    let asmacaHarfler = () => String(asmacaAktifKelime || '').split('').filter(c => /[A-Z]/.test(c));
+    let asmacaTamamMi = () => asmacaHarfler().every(c => asmacaTahminEdilenHarfler.includes(c));
+    sar('asmacaOyunuBaslat', () => { sayac.asmaca = { d: 0, y: 0 }; });
+    sar('asmacaHarfSec',
+        () => ({ tamam: asmacaTamamMi(), y: asmacaYanlisSayisi }),
+        c => {
+            if (!c) return;
+            if (!c.tamam && asmacaTamamMi()) sayac.asmaca.d++;
+            if (c.y < 6 && asmacaYanlisSayisi >= 6) sayac.asmaca.y++;
+        });
+
+    // Kelime Bul
+    sar('kelimebulOyunuBaslat', () => { sayac.kelimebul = { d: 0, y: 0 }; });
+    sar('kelimebulTahminGonder',
+        () => ({ deneme: kelimebulDenemeSayisi, tahmin: String(document.getElementById('kbTahminInput').value || '').trim().toUpperCase(), hedef: kelimebulHedef }),
+        c => {
+            if (!c || kelimebulDenemeSayisi === c.deneme) return; // geçersiz tahmin (uzunluk uyarısı)
+            if (c.tahmin === c.hedef) sayac.kelimebul.d++;
+            else if (kelimebulDenemeSayisi >= 6) sayac.kelimebul.y++;
+        });
+
+    // Sonuç ekranına doğru sayıları gönder
+    let orgSonuc = window.genelSonucEkraniGoster;
+    if (typeof orgSonuc === 'function' && !orgSonuc._dz1) {
+        let yeni = function (o) {
+            if (o && sayac[o.oyunKey]) { o.dogru = sayac[o.oyunKey].d; o.yanlis = sayac[o.oyunKey].y; }
+            return orgSonuc.apply(this, arguments);
+        };
+        yeni._dz1 = true;
+        window.genelSonucEkraniGoster = yeni;
+    }
+})();
+</script>
+
         
 </body>
 </html>
