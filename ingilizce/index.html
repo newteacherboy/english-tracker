@@ -9642,7 +9642,7 @@ function raporlarimKapat() {
             ozellikGorunurlukAyarla('kartOkumaStudyosu', izinler.okuma_studyosu !== false);
             ozellikGorunurlukAyarla('kartPomodoro', izinler.pomodoro_sayaci !== false);
               ozellikGorunurlukAyarla('kartRaporlarim', izinler.raporlar_sekmesi !== false);
-            }
+            
         }    
                function cikisYap() { 
             googleSheetseKaydet(); 
@@ -14305,7 +14305,7 @@ function raporlarimKapat() {
             let gorsel = tip === 'aks' ? `<span class="ik">${u[0]}</span>` : `<span class="rk" style="background:${u[0]}"></span>`;
             return `<button class="yo-urun${takili ? ' takili' : ''}" onclick="yoUrunTikla('${tip}',${i})">${gorsel}${u[1]}<span class="fiyat">${takili ? '✓ Takılı' : (sahip ? 'Tak' : '🪙 ' + u[2])}</span></button>`;
           }).join('');
-          yoModalAc('🛍️ Papağan mağazası', `
+                   yoModalAc('🛍️ Papağan mağazası', `
             <div class="yo-avatar-onizleme" style="background:${yo.takili.renk || '#0d5a6c'}">${avatarEmoji}<span class="yo-aks">${yo.takili.aks || ''}</span></div>
             <div class="yo-bakiye">🪙 ${yo.altin} altın</div>
             <div class="yo-bolum">Aksesuarlar</div><div class="yo-magaza">${urunHtml('aks')}</div>
@@ -14313,9 +14313,9 @@ function raporlarimKapat() {
             <div class="yo-bolum">Seri koruma</div>
             <div class="yo-satir"><span style="font-size:24px">🧊</span><span class="ad" style="white-space:normal">Seri dondurucu<br><small>Bir gün giremezsen serin bozulmaz. Elinde: ${yo.dondurucu}/2</small></span>
               <button class="yo-btn" style="width:auto; margin:0; padding:9px 12px;" onclick="yoDondurucuAl()">🪙 ${YO_DONDURUCU_FIYAT}</button></div>
-            <div class="yo-bos">Altınları oyunlarda her doğru cevapla kazanırsın.</div>`);
-                ${mkOrbHtml()}`);
-                mkOrbGuncelle();
+            <div class="yo-bos">Altınları oyunlarda her doğru cevapla kazanırsın.</div>
+            ${mkOrbHtml()}`);
+          mkOrbGuncelle();
         }
         function yoUrunTikla(tip, i) {
           let u = YO_URUN[tip][i], id = tip + ':' + u[0];
