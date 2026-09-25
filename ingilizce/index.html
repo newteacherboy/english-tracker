@@ -939,42 +939,7 @@
 .enerji-bitti-aciklama { color:#9fdbe6; font-size:12px; line-height:1.6; margin-bottom:16px; }
 .enerji-bitti-liste { display:flex; flex-direction:column; gap:8px; text-align:left; }
 .enerji-madde { background:rgba(255,255,255,.06); border-radius:10px; padding:8px 10px; font-size:11px; color:#dff5f8; line-height:1.5; }
-
-/* Medu Akış segment kayan çubuk düzeltmesi */
-.segment {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    background: #f1e9ff;
-    border-radius: 14px;
-    padding: 4px;
-    margin-top: 10px;
-}
-.segment i {
-    position: absolute;
-    top: 4px;
-    bottom: 4px;
-    left: 4px;
-    width: calc((100% - 8px) / 5);
-    border-radius: 11px;
-    background: linear-gradient(135deg, #a06bff, #ff6b9d);
-    transition: transform .3s cubic-bezier(.3,.9,.3,1.1);
-    box-shadow: 0 3px 8px rgba(160,107,255,.35);
-}
-.segment button {
-    position: relative;
-    z-index: 1;
-    border: none;
-    background: none;
-    padding: 9px 2px;
-    font: 900 11px 'Nunito', sans-serif;
-    color: var(--soluk, #8a78b8);
-    cursor: pointer;
-    transition: color .2s;
-    text-align: center;
-}
-.segment button.aktif { color: #fff; }
-            
+        
     </style>
 </head>
 <body>
@@ -1601,20 +1566,29 @@
         </div>
 
         <!-- SADECE MOBİLDE GÖRÜNEN ALT NAVİGASYON -->
-       <div class="bottom-nav-mobile" id="bottomNavMobile">
-    <button class="bn-item" onclick="baModuAc()" title="Ana Sayfa">
-        <span class="bn-icon">🧙</span><span class="bn-label">Ana Sayfa</span>
-    </button>
-    <button class="bn-item" onclick="meduAkisAc()" title="Medu Akış">
-        <span class="bn-icon">🎡</span><span class="bn-label">Medu Akış</span>
-    </button>
-    <button class="bn-item" onclick="dersCalisTamEkranAc()" title="Ders Çalış">
-        <span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span>
-    </button>
-    <button class="bn-item" onclick="enerjiSekmesiniAc()" title="Enerji">
-        <span class="bn-icon">⚡</span><span class="bn-label">Enerji</span>
-    </button>
-</div>
+        <div class="bottom-nav-mobile" id="bottomNavMobile">
+                       <button class="bn-item" onclick="baModuAc()">
+                <span class="bn-icon">🧙</span><span class="bn-label">Ana Sayfa</span>
+            </button>
+                        <button class="bn-item" onclick="sanaOzelTamEkranAc()">
+                <span class="bn-icon">✨</span><span class="bn-label">Sana Özel</span>
+            </button>
+            <button class="bn-item" id="bnBtnRaporlar" onclick="bnSekmeSec('raporlar', this)">
+                <span class="bn-icon">📝</span><span class="bn-label">Raporlar</span>
+            </button>
+            <button class="bn-item" onclick="aktivitelerTamEkranAc()">
+                <span class="bn-icon">🎮</span><span class="bn-label">Aktivite</span>
+            </button>
+                        <button class="bn-item" onclick="dersCalisTamEkranAc()">
+                <span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span>
+            </button>
+            <button class="bn-item" onclick="kpModuAc()">
+                <span class="bn-icon">🎤</span><span class="bn-label">Konuşma</span>
+            </button>
+            <button class="bn-item active" id="bnBtnOzet" onclick="bnSekmeSec('ozet', this)">
+                <span class="bn-icon">👤</span><span class="bn-label">Profil</span>
+            </button>
+        </div>
 
   
 
@@ -1775,82 +1749,6 @@
             </div>
         </div>
 
-
-<!-- PAPAĞAN PAZARI (MAĞAZA) TAM EKRAN ALANI -->
-<div id="tab-magaza" class="dc-fullscreen-overlay">
-    <button class="dc-exit-btn" onclick="magazaKapat()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <div class="dc-focus-card" style="max-width:480px; padding:20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-            <h2 style="font-family:'Fredoka',sans-serif; font-size:20px; color:#7c3aed; display:flex; align-items:center; gap:6px;">🛍️ Papağan Pazarı</h2>
-            <div id="magazaBakiyeKutusu" style="background:#fef9c3; border:1px solid #fef08a; padding:6px 12px; border-radius:999px; font-weight:900; font-size:13px; color:#b7791f;">🪙 0 Altın</div>
-        </div>
-        <div style="text-align:center; margin-bottom:16px;">
-            <button class="yo-btn" onclick="atolyeAc()" style="background:linear-gradient(135deg,#38bdf8,#2563eb); box-shadow:0 4px 14px rgba(37,99,235,0.3);">🎨 Maskot Atölyesi (Avatar Yarat)</button>
-        </div>
-        <!-- Kategori Sekmeleri -->
-        <div class="segment" id="magazaSegment" style="margin-bottom:14px;">
-            <button class="aktif" onclick="magazaKategoriSec('sapka', this)" style="position:relative; z-index:1; border:none; background:none; font:900 11px 'Nunito',sans-serif; cursor:pointer;">Şapkalar</button>
-            <button onclick="magazaKategoriSec('gozluk', this)" style="position:relative; z-index:1; border:none; background:none; font:900 11px 'Nunito',sans-serif; cursor:pointer;">Gözlükler</button>
-            <button onclick="magazaKategoriSec('arkaplan', this)" style="position:relative; z-index:1; border:none; background:none; font:900 11px 'Nunito',sans-serif; cursor:pointer;">Arka Plan</button>
-        </div>
-        <div id="magazaUrunGrid" class="yo-magaza" style="max-height:50vh; overflow-y:auto; padding:4px;"></div>
-    </div>
-</div>
-
-<!-- MASKOT ATÖLYESİ (AVATAR YARATICI) TAM EKRAN ALANI -->
-<div id="tab-atolye" class="dc-fullscreen-overlay" style="z-index:100000050;">
-    <button class="dc-exit-btn" onclick="atolyeKapat()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <div class="dc-focus-card" style="max-width:440px; text-align:center; padding:20px;">
-        <h2 style="font-family:'Fredoka',sans-serif; font-size:20px; color:#2563eb; margin-bottom:10px;">🎨 Maskot Atölyesi</h2>
-        
-        <!-- Canlı Avatar Önizleme Alanı -->
-        <div id="atolyeCanliOnizleme" style="width:100px; height:100px; margin:0 auto 14px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.12); position:relative; overflow:visible;">
-            🦜
-        </div>
-
-        <!-- Parça Seçim Sekmeleri -->
-        <div style="display:flex; gap:6px; margin-bottom:12px; overflow-x:auto; padding-bottom:4px;">
-            <button class="yo-btn ikincil" onclick="atolyeParcaTipSec('taban')" style="padding:6px 10px; font-size:11px;">Karakter</button>
-            <button class="yo-btn ikincil" onclick="atolyeParcaTipSec('renk')" style="padding:6px 10px; font-size:11px;">Gövde Renk</button>
-            <button class="yo-btn ikincil" onclick="atolyeParcaTipSec('sapka')" style="padding:6px 10px; font-size:11px;">Şapka</button>
-            <button class="yo-btn ikincil" onclick="atolyeParcaTipSec('gozluk')" style="padding:6px 10px; font-size:11px;">Gözlük</button>
-        </div>
-
-        <div id="atolyeParcaSecenekGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; max-height:35vh; overflow-y:auto; margin-bottom:16px; padding:4px;"></div>
-
-        <div style="display:flex; gap:8px;">
-            <button class="yo-btn ikincil" onclick="atolyeRastgele()">🎲 Rastgele</button>
-            <button class="yo-btn" onclick="atolyeKaydet()">💾 Kaydet</button>
-        </div>
-    </div>
-</div>
-            
-<!-- MEDU AKIŞ TAM EKRAN ALANI -->
-<div id="tab-meduakis" class="dc-fullscreen-overlay">
-    <button class="dc-exit-btn" onclick="meduAkisKapat()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <div class="dc-focus-card">
-        <div class="akis-baslik" style="background:transparent; border-bottom:1.5px solid var(--cizgi, #eadcff); padding-bottom:10px; margin-bottom:12px;">
-            <h2 style="font-family:'Fredoka',sans-serif; font-size:20px; display:flex; align-items:center; gap:8px; color:var(--metin, #3b2c66);">
-                <span style="display:inline-block; animation:carkDon 8s linear infinite;">🎡</span>Medu Akış
-            </h2>
-            <div class="segment" id="meduAkisSegment" style="margin-top:10px;">
-                <i id="segmentIz" style="position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px) / 5); border-radius:11px; background:linear-gradient(135deg,#a06bff,#ff6b9d); transition:transform .3s cubic-bezier(.3,.9,.3,1.1); box-shadow:0 3px 8px rgba(160,107,255,.35);"></i>
-                <button data-s="akis" onclick="meduAkisSekmeSec('akis')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center;">Akış</button>
-                <button data-s="kesfet" onclick="meduAkisSekmeSec('kesfet')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center;">Keşfet</button>
-                <button data-s="vitrin" onclick="meduAkisSekmeSec('vitrin')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center;">Vitrinim</button>
-                <code data-s="sanaozel" onclick="meduAkisSekmeSec('sanaozel')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center; display:inline-flex; align-items:center; justify-content:center;">Sana Özel</code>
-                <button data-s="aktivite" onclick="meduAkisSekmeSec('aktivite')" style="position:relative; z-index:1; border:none; background:none; padding:8px 2px; font:900 11px 'Nunito',sans-serif; color:#8a78b8; cursor:pointer; text-align:center;">Aktivite</button>
-            </div>
-        </div>
-        <div class="ekran" id="meduAkisEkran" style="max-height:calc(80vh - 110px); overflow-y:auto;"></div>
-    </div>
-</div>
       <!-- AKTİVİTELER SEKMESİ (Sadece Aktiviteler sekmesine basınca görünür) -->
 <div id="tab-aktiviteler" class="dc-fullscreen-overlay">
     <button class="dc-exit-btn" onclick="aktivitelerTamEkranKapat()">
@@ -1887,177 +1785,6 @@
             <div class="az-gcard-icon">🧙</div><div class="az-gcard-title">Medu Oyun Sihirbazı — Büyü Akademisi</div>
         </button>
     </div>
-    </div>
-</div>
-
-            // --- MEDU AKIŞ SOSYAL SİSTEM VE SEKME YÖNETİMİ ---
-
-function meduAkisSekmeSec(sekmeAdi) {
-    meduAkisAktifSekme = sekmeAdi;
-    let butonlar = document.querySelectorAll('#meduAkisSegment button');
-    let sira = 0;
-    butonlar.forEach((b, idx) => {
-        if (b.dataset.s === sekmeAdi) {
-            b.classList.add('aktif');
-            sira = idx;
-        } else {
-            b.classList.remove('aktif');
-        }
-    });
-    let iz = document.getElementById('segmentIz');
-    if (iz) {
-        iz.style.transform = `translateX(${sira * 100}%)`;
-    }
-
-    let ekran = document.getElementById('meduAkisEkran');
-    if (!ekran) return;
-
-    if (sekmeAdi === 'akis') {
-        ekran.innerHTML = `
-            <div class="filtre" style="padding:4px 0 10px;">
-                <button class="aktif" onclick="toast('Tüm sınıf akışı gösteriliyor')">Tüm Sınıf</button>
-            </div>
-            <div class="akis-kart" style="--serit:#ff6b6b;">
-                <span class="akis-ikon">🔥</span>
-                <div class="akis-ust">
-                    <div class="user-avatar" style="width:36px; height:36px; font-size:18px;">🦁</div>
-                    <span><b>Sınıf Arkadaşın</b><small>2 saat önce</small></span>
-                </div>
-                <div class="akis-metin">7 günlük seriyi tamamladı ve rozet kazandı!</div>
-                <div class="aksiyon">
-                    <button onclick="patlat(this, ['❤️','💖','✨'], 8); toast('Beğenildi!')">❤️ 12</button>
-                    <button onclick="patlat(this, ['🎉','🎊','⭐'], 10); toast('Tebrik edildi!')">🎉 5</button>
-                </div>
-            </div>
-            <div class="akis-kart" style="--serit:#4d96ff;">
-                <span class="akis-ikon">🏆</span>
-                <div class="akis-ust">
-                    <div class="user-avatar" style="width:36px; height:36px; font-size:18px;">🐼</div>
-                    <span><b>Sınıf Arkadaşın</b><small>1 gün önce</small></span>
-                </div>
-                <div class="akis-metin">Haftalık ligde zirveye yerleşti!</div>
-                <div class="aksiyon">
-                    <button onclick="patlat(this, ['❤️','💖','✨'], 8); toast('Beğenildi!')">❤️ 19</button>
-                    <button onclick="patlat(this, ['🎉','🎊','⭐'], 10); toast('Tebrik edildi!')">🎉 8</button>
-                </div>
-            </div>
-        `;
-    } else if (sekmeAdi === 'kesfet') {
-        ekran.innerHTML = `
-            <div class="bolum">
-                <div class="bolum-baslik">Haftanın Yıldızları (Podyum)</div>
-                <div class="podyum" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; text-align:center; margin-bottom:16px;">
-                    <div class="podyum-kisi">
-                        <div class="user-avatar" style="width:48px; height:48px; margin:0 auto; font-size:24px;">🦊</div>
-                        <b>Öğrenci 2</b><small>1850 XP</small>
-                        <div class="basamak" style="height:60px; background:#8b9bb4; border-radius:8px; color:#fff; font-weight:900; padding-top:4px;">2</div>
-                    </div>
-                    <div class="podyum-kisi">
-                        <div class="user-avatar" style="width:56px; height:56px; margin:0 auto; font-size:28px;">🦁</div>
-                        <b>Öğrenci 1</b><small>2120 XP</small>
-                        <div class="basamak" style="height:80px; background:#e0a800; border-radius:8px; color:#fff; font-weight:900; padding-top:4px;">1</div>
-                    </div>
-                    <div class="podyum-kisi">
-                        <div class="user-avatar" style="width:48px; height:48px; margin:0 auto; font-size:24px;">🐰</div>
-                        <b>Öğrenci 3</b><small>1640 XP</small>
-                        <div class="basamak" style="height:44px; background:#c98a4a; border-radius:8px; color:#fff; font-weight:900; padding-top:4px;">3</div>
-                    </div>
-                </div>
-                <div class="bolum-baslik">Sınıf Arkadaşların</div>
-                <div class="kisi" style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #eadcff;">
-                    <div class="user-avatar" style="width:40px; height:40px; font-size:20px;">🐼</div>
-                    <div class="kisi-ad" style="flex:1;"><b>Zeynep K.</b><small style="color:#8a78b8; font-weight:700;">🔥 12 gün seri</small></div>
-                    <button class="mini-takip" onclick="toast('Takip edildi!')" style="border:none; background:#8b5cf6; color:#fff; padding:6px 12px; border-radius:10px; font-weight:900; cursor:pointer;">Takip et</button>
-                </div>
-            </div>
-        `;
-    } else if (sekmeAdi === 'vitrin') {
-        let aktifIsim = aktifOgrenciAdi || 'Öğrenci';
-        ekran.innerHTML = `
-            <div class="onizleme-bant" style="background:#fff7d1; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12px; margin-bottom:10px;">👀 Sınıf arkadaşların vitrinini böyle görüyor</div>
-            <div class="sahne" style="text-align:center; padding:10px;">
-                <div class="user-avatar" style="width:72px; height:72px; margin:0 auto 8px; font-size:36px;" id="vitrinAvatarOrnek">🦜</div>
-                <h3 style="font-family:'Fredoka',sans-serif; font-size:20px;">${aktifIsim}</h3>
-                <div class="kulad" style="font-size:12px; color:#8a78b8; font-weight:800;">@${aktifIsim.toLowerCase().replace(/\s+/g,'_')} · Diji-Medu Kaşifi</div>
-                <div class="takip-satir" style="display:flex; justify-content:center; gap:12px; margin:10px 0;">
-                    <div class="sayac-rozet"><b>3</b>takipçi</div>
-                    <div class="sayac-rozet"><b>2</b>takip</div>
-                </div>
-            </div>
-            <div class="biletler" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
-                <div class="bilet" style="background:#ff6b6b; padding:10px; border-radius:10px; color:#fff;"><small>Seri</small><b>5 gün 🔥</b></div>
-                <div class="bilet" style="background:#e0a800; padding:10px; border-radius:10px; color:#fff;"><small>Lig</small><b>Gümüş 🏆</b></div>
-            </div>
-        `;
-        // Vitrin içindeki avatarı güncel özel avatara uyarla
-        setTimeout(yoAvatarUygula, 50);
-    } else if (sekmeAdi === 'sanaozel') {
-        ekran.innerHTML = `<div style="padding:10px;"><h3 style="color:#553c9a; margin-bottom:10px;">✨ Sana Özel</h3><div class="az-grid2x2">
-            <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="gununKonusunaGit()"><div class="az-gcard-badge">GÜNLÜK</div><div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Günün Konusu</div></button>
-            <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#059669);" onclick="okumaStudyosunuAc()"><div class="az-gcard-icon">📖</div><div class="az-gcard-title">Okuma Stüdyosu</div></button>
-            <button class="az-gcard span2" style="background:linear-gradient(160deg,#fb923c,#ea580c);" onclick="pomodoroAc()"><div class="az-gcard-icon">🍅</div><div class="az-gcard-title">Pomodoro Çalışma Sayacı</div></button>
-        </div></div>`;
-    } else if (sekmeAdi === 'aktivite') {
-        ekran.innerHTML = `<div style="padding:10px;"><h3 style="color:#553c9a; margin-bottom:10px;">🎮 Aktiviteler</h3><div class="az-grid2x2">
-            <button class="az-gcard" style="background:linear-gradient(160deg,#38bdf8,#0284c7);" onclick="yolculuguAc()"><div class="az-gcard-icon">🗺️</div><div class="az-gcard-title">Kelime Kartları Yolculuğu</div></button>
-            <button class="az-gcard" style="background:linear-gradient(160deg,#a78bfa,#7c3aed);" onclick="kelimeYarismasiAc()"><div class="az-gcard-icon">🏆</div><div class="az-gcard-title">Kelime Ezber Yarışması</div></button>
-            <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="jpOyunAc()"><div class="az-gcard-icon">🎈</div><div class="az-gcard-title">Jeopardy Balonları</div></button>
-            <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#16a34a);" onclick="boslukOyunAc()"><div class="az-gcard-icon">🧩</div><div class="az-gcard-title">Boşluk Doldurma</div></button>
-            <button class="az-gcard" style="background:linear-gradient(160deg,#22d3ee,#0891b2);" onclick="hafizaOyunAc()"><div class="az-gcard-icon">🧠</div><div class="az-gcard-title">Hafıza Kartları</div></button>
-            <button class="az-gcard" style="background:linear-gradient(160deg,#60a5fa,#2563eb);" onclick="yagmurOyunAc()"><div class="az-gcard-icon">☔</div><div class="az-gcard-title">Kelime Yağmuru</div></button>
-            <button class="az-gcard" style="background:linear-gradient(160deg,#f87171,#b91c1c);" onclick="asmacaOyunAc()"><div class="az-gcard-icon">🎪</div><div class="az-gcard-title">Adam Asmaca</div></button>
-            <button class="az-gcard" style="background:linear-gradient(160deg,#a3e635,#65a30d);" onclick="kelimebulOyunAc()"><div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Kelime Bul</div></button>
-        </div></div>`;
-    }
-}
-
-            <!-- ENERJİ SEKMESİ TAM EKRAN ALANI -->
-<div id="tab-enerji" class="dc-fullscreen-overlay">
-    <button class="dc-exit-btn" onclick="enerjiSekmesiniKapat()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <div class="dc-focus-card" style="max-width:440px; text-align:center; padding:24px 20px;">
-        <div style="font-family:'Fredoka',sans-serif; font-size:22px; font-weight:700; color:var(--metin, #3b2c66); margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:8px;">
-            <span>⚡</span> Enerji ve Yaşam Pınarı
-        </div>
-
-        <!-- Büyük Animasyonlu İksir / Batarya Kutusu -->
-        <div style="background:linear-gradient(145deg, #0d5a6c, #072c35); border-radius:22px; padding:24px; color:#fff; margin-bottom:20px; box-shadow:0 10px 25px rgba(13,90,108,0.3); position:relative; overflow:hidden;">
-            <div style="font-size:36px; margin-bottom:6px;">🔋</div>
-            <div id="enerjiDevSayi" style="font-family:'Fredoka',sans-serif; font-size:32px; font-weight:700; color:#ffd166; margin-bottom:4px;">-- / --</div>
-            <div style="font-size:12px; color:#9fdbe6; font-weight:700; margin-bottom:14px;">Aktif Enerji Seviyesi</div>
-            
-            <!-- Dolum Çubuğu -->
-            <div style="background:rgba(255,255,255,0.15); border-radius:10px; height:12px; width:100%; overflow:hidden; padding:2px;">
-                <div id="enerjiDevBar" style="height:100%; background:linear-gradient(90deg,#ffd166,#f59e0b); border-radius:8px; width:0%; transition:width 0.4s ease;"></div>
-            </div>
-        </div>
-
-        <!-- Geri Sayım ve Bilgi Kartları -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:14px 10px; text-align:center;">
-                <div style="font-size:18px; margin-bottom:4px;">⏰</div>
-                <div style="font-size:10px; font-weight:800; color:#64748b; text-transform:uppercase;">Sonraki +1 Enerji</div>
-                <div id="enerjiGeriSayimSure" style="font-size:14px; font-weight:900; color:#1e293b; margin-top:2px;">Hesaplanıyor...</div>
-            </div>
-            <div style="background:#fef9c3; border:1px solid #fef08a; border-radius:16px; padding:14px 10px; text-align:center;">
-                <div style="font-size:18px; margin-bottom:4px;">🌕</div>
-                <div style="font-size:10px; font-weight:800; color:#854d0e; text-transform:uppercase;">Dolunay Bonusu</div>
-                <div id="dolunayBonusSure" style="font-size:14px; font-weight:900; color:#78350f; margin-top:2px;">Cmt 08:00</div>
-            </div>
-        </div>
-
-        <!-- Enerji Kazanma Yolları Listesi -->
-        <div style="text-align:left; background:#f5efff; border:1px solid #eadcff; border-radius:18px; padding:16px; margin-bottom:10px;">
-            <div style="font-family:'Fredoka',sans-serif; font-size:14px; font-weight:700; color:#7c3aed; margin-bottom:10px;">✨ Enerji Nasıl Yenilenir?</div>
-            <div style="display:flex; flex-direction:column; gap:8px; font-size:11.5px; font-weight:700; color:#3b2c66; line-height:1.4;">
-                <div>⏰ Her saat başı sistem otomatik olarak enerji yeniler.</div>
-                <div>🌙 Cumartesi sabahı 08:00'de enerjiniz tamamen (tavana) dolar.</div>
-                <div>🌙 Günlük portala ilk girişinizde otomatik +2 enerji kazanırsınız.</div>
-                <div>🎬 Atanan video veya etkinlikleri tamamladığınızda +1 enerji alırsınız.</div>
-                <div>🎤 Konuşma Pratiği'nde 4 doğruyu üst üste yaparsanız +1 enerji bonusu kazanırsınız.</div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -4599,7 +4326,7 @@ async function kelimeYarismasiBitir() {
             let sn = String(gosterilecek % 60).padStart(2, '0');
             document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
         }
-        const apiURL = "https://script.google.com/macros/s/AKfycbzw5rbAR7dLr5JMvU18rbbs1L-wV7ZHrmAzd2OevJrbO4O1R26KzRAn0nm-9_3o8vDxkA/exec";
+        const apiURL = "https://script.google.com/macros/s/AKfycbzQX04FKqUT4RrbRu6rl4NOMHgg4wS6xTZG-LQbU2jzrS3aJCyKwkg1iIvA0Z7yjDMazg/exec";
         
                     let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                 let siniftaOynananOgrenci = null;
@@ -9058,74 +8785,92 @@ async function okumaSonucuKaydet() {
         }
 
 
-              async function girisYap(event) {
-  event.preventDefault();
-  const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
-  const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
-  let m = document.getElementById('mesaj');
+               async function girisYap(event) {
+            event.preventDefault();
+            const ogr = guvenliMetin(document.getElementById('ogrenci').value.trim());
+            const sifre = guvenliMetin(document.getElementById('sifre').value.trim());
+            let m = document.getElementById('mesaj');
 
-  if(!ogr || !sifre) { m.className="error"; m.innerText="Tüm alanları doldurun."; return; }
+            if(!ogr || !sifre) { m.className="error"; m.innerText="Tüm alanları doldurun."; return; }
 
-  document.getElementById('login-container').style.display = 'none';
-  document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
+            // Giriş tıklandığı an baykuş animasyonunu göster
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
 
-  try {
-    let res = await fetch(apiURL, {
-      method: "POST",
-      body: JSON.stringify({ islem: "girisYap", ogrenci: ogr, sifre: sifre })
-    });
-    let data = await res.json();
+            // Eğer global veri henüz gelmediyse biraz bekle
+                       let denemeSayisi = 0;
+            while ((!globalDataCache || globalDataCache.length === 0) && denemeSayisi < 20) {
+                await new Promise(r => setTimeout(r, 300));
+                denemeSayisi++;
+            }
 
-    if (data.status === "success") {
-      m.className = "success";
-      m.innerText = "Giriş başarılı!";
-      aktifOgrenciAdi = data.ogrenci;
-      
-      localStorage.setItem("ing_oturumAcik", "true");
-      localStorage.setItem("ing_aktifOgrenci", aktifOgrenciAdi);
-      localStorage.setItem("ing_token", data.token);
+            // YENİ: 6 saniye sonunda hâlâ veri gelmediyse, son bir kez doğrudan tekrar dene
+            if (!globalDataCache || globalDataCache.length === 0) {
+                try {
+                    let sonRes = await fetch(apiURL);
+                    globalDataCache = await sonRes.json();
+                } catch (sonErr) {
+                    console.error("Giriş öncesi veri tekrar çekilemedi:", sonErr);
+                }
+            }
 
-      let dataRes = await fetch(apiURL);
-      globalDataCache = await dataRes.json();
+                        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
 
-      let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
-      toplamSaniye = user ? (Number(user.toplamsure) || 0) : 0;
-      localStorage.setItem("ing_toplamSaniye", toplamSaniye);
+            if (user) {
+                let durumVal = String(user.durum || "").trim().toLowerCase();
+                if (durumVal === "onay bekliyor") {
+                    document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+                    document.getElementById('login-container').style.display = 'block';
+                    m.className = "error";
+                    m.innerText = "Hesabın henüz öğretmen onayı bekliyor. Onaylandığında giriş yapabilirsin.";
+                    return;
+                }
+            }
 
-      document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-      document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
+            // Eğer özel "teacher" veya veri tabanında eşleşen bir kullanıcı varsa
+            if(user || ogr.toLowerCase() === "teacher") {
+                m.className="success"; 
+                m.innerText="Giriş başarılı!";
+                aktifOgrenciAdi = ogr; 
+                toplamSaniye = user ? (Number(user.toplamsure) || 0) : 0;
+                
+                                localStorage.setItem("ing_oturumAcik", "true"); 
+localStorage.setItem("ing_aktifOgrenci", aktifOgrenciAdi); 
+localStorage.setItem("ing_toplamSaniye", toplamSaniye);
+                                fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`).catch(() => {});
 
-      if (user) {
-        veriArayuzeIsle(user);
-      }
+                document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
+                document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
+                
 
-      setTimeout(() => {
-        document.getElementById('oturumYuklemeOverlay').style.display = 'none';
-        document.getElementById('panel-alani').style.display = 'block';
-        girisSerisiGuncelleVeGetir();
-        baslatSayac();
-        arkaPlanVeriYenilemeBaslat();
-        setTimeout(cornerButonEtiketleriGoster, 900);
-        setTimeout(puanBildirimKontrolEt, 1400);
-        setInterval(puanBildirimKontrolEt, 45000);
-        duyuruKontrolEt();
-        dockZamanlayiciyiBaslat();
-        baModuAc();
-        gunlukEnerjiBonusuKontrolEt();
-      }, 600);
-    } else {
-      document.getElementById('oturumYuklemeOverlay').style.display = 'none';
-      document.getElementById('login-container').style.display = 'block';
-      m.className = "error";
-      m.innerText = data.message || "Hatalı kullanıcı adı veya şifre!";
-    }
-  } catch (err) {
-    document.getElementById('oturumYuklemeOverlay').style.display = 'none';
-    document.getElementById('login-container').style.display = 'block';
-    m.className = "error";
-    m.innerText = "Bağlantı hatası oluştu.";
-  }
-}
+                if (user) {
+                    veriArayuzeIsle(user);
+                }
+
+                // Kısa bir gecikme ekleyerek animasyonun akıcı görünmesini sağla ve paneli aç
+                                                                                                                                                           setTimeout(() => {
+                    document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+                    document.getElementById('panel-alani').style.display = 'block';
+                    girisSerisiGuncelleVeGetir();
+                    baslatSayac(); 
+                    arkaPlanVeriYenilemeBaslat();
+                    setTimeout(cornerButonEtiketleriGoster, 900);
+                    setTimeout(puanBildirimKontrolEt, 1400);
+                    setInterval(puanBildirimKontrolEt, 45000);
+            
+                                    duyuruKontrolEt();
+                dockZamanlayiciyiBaslat();
+                baModuAc();
+                gunlukEnerjiBonusuKontrolEt();
+            }, 600);
+            } else {
+                // Hatalı giriş durumunda tekrar giriş ekranına dön
+                document.getElementById('oturumYuklemeOverlay').style.display = 'none';
+                document.getElementById('login-container').style.display = 'block';
+                m.className="error"; 
+                m.innerText="Hatalı kullanıcı adı veya şifre!";
+            }
+        }
 
         async function girisSonrasiVeriBekle(ogr, sifre) {
             let denemeSayisi = 0;
@@ -12198,36 +11943,7 @@ function kpParkurCiz() {
 #tab-buyuakademisi .ba-sonuc-btn { width:100%; max-width:280px; padding:13px; border-radius:14px; border:none; font-weight:900; font-size:13px; margin-bottom:18px; background:linear-gradient(135deg,#a06bff,#ff6b9d); color:#fff; cursor:pointer; }
 #tab-buyuakademisi .ba-rank-title { font-size:12px; font-weight:900; text-align:left; margin-bottom:8px; color:#553c9a; max-width:280px; margin-left:auto; margin-right:auto; }
 #tab-buyuakademisi .ba-rank-row { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; margin-bottom:5px; font-size:11px; font-weight:800; max-width:280px; margin-left:auto; margin-right:auto; background:#f5f3ff; color:#553c9a; }
-
-    /* --- MEDU AKIŞ VE ALT MENÜ GÖRSEL DÜZELTMELERİ --- */
-
-/* Medu Akış penceresinin diğer tam ekran pencerelerle (Aktiviteler, Ders Çalış vb.) aynı dörtdörtlük boyuta gelmesi için */
-#tab-meduakis.dc-fullscreen-overlay {
-    background: rgba(15, 23, 42, 0.55) !important;
-    padding: 20px 10px 70px 10px !important;
-}
-
-#tab-meduakis .dc-focus-card {
-    max-width: 520px !important;
-    max-height: calc(100vh - 90px) !important;
-    background: var(--bg, #fdf7ff) !important;
-    border-radius: 24px !important;
-    padding: 20px !important;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35) !important;
-}
-
-/* Alt menünün (bottom-nav-mobile) telefonda ekranı tam kaplaması ve ortadaki dar görüntüden kurtulması için */
-@media (max-width: 768px) {
-    .bottom-nav-mobile {
-        left: 0 !important;
-        right: 0 !important;
-        transform: none !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        border-radius: 0 !important;
-        padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)) !important;
-    }
-}
+    
     </style>`;
         let html = stil + '<div id="kpParkurKapsayici">';
     html += '<div class="kp-confetti-bg" style="top:8px;right:14px;">🎊</div><div class="kp-confetti-bg" style="top:50px;left:4px;animation-delay:1s;">🎈</div>';kpTumSeviyeler.forEach((sv, idx) => {
@@ -13264,372 +12980,6 @@ async function kpKelimeOyunuBitir(enerjiBittiMi) {
     if (genelOyunGirisEngelliMi()) return;
     baModuAc();
 }
-
-// --- MEDU AKIŞ SOSYAL SİSTEM VE SEKME YÖNETİMİ (TAM ENTEGRE) ---
-const BEN = { id:'ben', ad:'Deniz Y.', kul:'@deniz.y', maskot:'🦜', av:'#bdeef6', aks:'🎓', katilim:'2026', seri:5, lig:'Gümüş', xp:1840, hafta:79, seviye:'A2', takip:2, takipci:3, sohbet:14,
-    rozetler:[['🔥','5 gün seri',5],['📚','Kelime avcısı',2],['🎤','Konuşkan',1],['🧙','Büyü çırağı',3]] };
-const OGR = [
-    { id:'zeynep', ad:'Zeynep K.', kul:'@zeynep.k', maskot:'🐰', av:'#fbcfe8', aks:'🎀', katilim:'2026', seri:12, lig:'Altın', xp:2410, hafta:126, seviye:'A2', takip:3, takipci:3, sohbet:22,
-      rozetler:[['💯','100 kelime',1],['🎤','Konuşkan',3],['🌟','Mükemmel sohbet',2],['🧙','Büyü ustası',10]] },
-    { id:'can', ad:'Can A.', kul:'@can.a', maskot:'🦊', av:'#fed7aa', aks:'🧢', katilim:'2025', seri:31, lig:'Elmas', xp:5120, hafta:220, seviye:'B1', takip:5, takipci:9, sohbet:36,
-      rozetler:[['🔥','30 gün seri',30],['🏆','Lig birincisi',2],['📚','Kelime avcısı',4],['🎧','Dikte ustası',1]] },
-    { id:'elif', ad:'Elif S.', kul:'@elif.s', maskot:'🐼', av:'#e5e7eb', aks:'👑', katilim:'2026', seri:3, lig:'Bronz', xp:960, hafta:60, seviye:'A1', takip:4, takipci:2, sohbet:9,
-      rozetler:[['🌱','İlk adım',1],['🎤','Konuşkan',1],['🧱','Cümle ustası',1]] },
-    { id:'mert', ad:'Mert D.', kul:'@mert.d', maskot:'🦁', av:'#fde68a', aks:'🕶️', katilim:'2025', seri:8, lig:'Altın', xp:3380, hafta:140, seviye:'B1', takip:6, takipci:5, sohbet:28,
-      rozetler:[['🔥','7 gün seri',7],['🥇','Sınıf birincisi',1],['📋','Seviye testi',1],['💬','Sohbet yıldızı',3]] },
-    { id:'ayse', ad:'Ayşe T.', kul:'@ayse.t', maskot:'🐨', av:'#c7d2fe', aks:'', katilim:'2026', seri:1, lig:'Bronz', xp:410, hafta:27, seviye:'A1', takip:1, takipci:1, sohbet:4,
-      rozetler:[['🌱','İlk adım',1]] }
-];
-const AKIS = [
-    { id:1, kim:'can', ikon:'🔥', metin:'30 günlük seriyi tamamladı!', zaman:'12 saat', beg:18, teb:6 },
-    { id:2, kim:'zeynep', ikon:'🌟', metin:'"Kafede" sohbetini 3 yıldızla bitirdi.', zaman:'3 saat', beg:9, teb:3 },
-    { id:3, kim:'mert', ikon:'🏆', metin:'Haftalık ligde sınıf birincisi oldu!', zaman:'1 gün', beg:24, teb:11 },
-    { id:4, kim:'elif', ikon:'📘', metin:'Bugün öğrendiği kelimeyi paylaştı.', kelime:['brave','cesur'], zaman:'5 saat', beg:7, teb:2 },
-    { id:5, kim:'ayse', ikon:'🌱', metin:'Diji-Medu\'ya katıldı. Hoş geldin de!', zaman:'2 gün', beg:12, teb:9 },
-    { id:6, kim:'can', ikon:'📋', metin:'Seviye testinde B1 oldu!', zaman:'2 gün', beg:15, teb:5 },
-    { id:7, kim:'zeynep', ikon:'🧙', metin:'Büyü Akademisi\'nde 10. seviyeye ulaştı.', zaman:'3 gün', beg:10, teb:4 },
-    { id:8, kim:'mert', ikon:'👑', metin:'Papağanına taç taktı.', zaman:'4 gün', beg:6, teb:1 },
-    { id:9, kim:'ben', ikon:'🎤', metin:'"Tanışma" sohbetini tamamladı.', zaman:'6 saat', beg:4, teb:2 }
-];
-const LIG_RENK = { 'Bronz':'#c98a4a', 'Gümüş':'#8b9bb4', 'Altın':'#e0a800', 'Elmas':'#2ea8e6' };
-const SERIT = ['#ff6b6b','#ffc93c','#34b36a','#4d96ff','#a06bff'];
-const BAYRAK_RENK = ['#ff5d8f','#ffc93c','#34b36a','#4d96ff','#a06bff'];
-
-let profilId = null, filtre = 'herkes', arama = '';
-const takip = new Set(['can']), begendim = new Set(), tebrik = new Set();
-let vitrinSecim = [0, 1, 2];
-
-function meduAkisSekmeSec(sekmeAdi) {
-    meduAkisAktifSekme = sekmeAdi;
-    profilId = null;
-    let butonlar = document.querySelectorAll('#meduAkisSegment button');
-    let sira = 0;
-    butonlar.forEach((b, idx) => {
-        if (b.dataset.s === sekmeAdi) {
-            b.classList.add('aktif');
-            sira = idx;
-        } else {
-            b.classList.remove('aktif');
-        }
-    });
-    let iz = document.getElementById('segmentIz');
-    if (iz) {
-        iz.style.transform = `translateX(${sira * 100}%)`;
-    }
-
-    let ekran = document.getElementById('meduAkisEkran');
-    if (!ekran) return;
-
-    let html = profilId ? vitrinHtml(profilId, false) : sekmeAdi === 'akis' ? akisHtml() : sekmeAdi === 'kesfet' ? kesfetHtml() : sekmeAdi === 'vitrin' ? vitrinHtml('ben', true) : sekmeAdi === 'sanaozel' ? `<div style="padding:10px;"><h3 style="color:#553c9a; margin-bottom:10px;">✨ Sana Özel</h3><div class="az-grid2x2">
-        <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="gununKonusunaGit()"><div class="az-gcard-badge">GÜNLÜK</div><div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Günün Konusu</div></button>
-        <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#059669);" onclick="okumaStudyosunuAc()"><div class="az-gcard-icon">📖</div><div class="az-gcard-title">Okuma Stüdyosu</div></button>
-        <button class="az-gcard span2" style="background:linear-gradient(160deg,#fb923c,#ea580c);" onclick="pomodoroAc()"><div class="az-gcard-icon">🍅</div><div class="az-gcard-title">Pomodoro Çalışma Sayacı</div></button>
-    </div></div>` : `<div style="padding:10px;"><h3 style="color:#553c9a; margin-bottom:10px;">🎮 Aktiviteler</h3><div class="az-grid2x2">
-        <button class="az-gcard" style="background:linear-gradient(160deg,#38bdf8,#0284c7);" onclick="yolculuguAc()"><div class="az-gcard-icon">🗺️</div><div class="az-gcard-title">Kelime Kartları Yolculuğu</div></button>
-        <button class="az-gcard" style="background:linear-gradient(160deg,#a78bfa,#7c3aed);" onclick="kelimeYarismasiAc()"><div class="az-gcard-icon">🏆</div><div class="az-gcard-title">Kelime Ezber Yarışması</div></button>
-        <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="jpOyunAc()"><div class="az-gcard-icon">🎈</div><div class="az-gcard-title">Jeopardy Balonları</div></button>
-        <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#16a34a);" onclick="boslukOyunAc()"><div class="az-gcard-icon">🧩</div><div class="az-gcard-title">Boşluk Doldurma</div></button>
-        <button class="az-gcard" style="background:linear-gradient(160deg,#22d3ee,#0891b2);" onclick="hafizaOyunAc()"><div class="az-gcard-icon">🧠</div><div class="az-gcard-title">Hafıza Kartları</div></button>
-        <button class="az-gcard" style="background:linear-gradient(160deg,#60a5fa,#2563eb);" onclick="yagmurOyunAc()"><div class="az-gcard-icon">☔</div><div class="az-gcard-title">Kelime Yağmuru</div></button>
-        <button class="az-gcard" style="background:linear-gradient(160deg,#f87171,#b91c1c);" onclick="asmacaOyunAc()"><div class="az-gcard-icon">🎪</div><div class="az-gcard-title">Adam Asmaca</div></button>
-        <button class="az-gcard" style="background:linear-gradient(160deg,#a3e635,#65a30d);" onclick="kelimebulOyunAc()"><div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Kelime Bul</div></button>
-    </div></div>`;
-
-    ekran.innerHTML = `<div class="gir">${html}</div>`;
-    ekran.scrollTop = 0;
-}
-
-function akisHtml() {
-    let liste = AKIS.filter(a => filtre === 'herkes' || takip.has(a.kim) || a.kim === 'ben');
-    let ust = `<div class="filtre" style="display:flex; gap:6px; padding:12px 16px 12px;"><button class="${filtre === 'herkes' ? 'aktif' : ''}" onclick="filtre='herkes'; meduAkisSekmeSec('akis')">Tüm sınıf</button><button class="${filtre === 'takip' ? 'aktif' : ''}" onclick="filtre='takip'; meduAkisSekmeSec('akis')">Takip ettiklerim (${takip.size})</button></div>`;
-    if (!liste.length) return ust + '<div class="bos" style="text-align:center; padding:46px 26px; color:#8a78b8; font-weight:800;">Henüz kimseyi takip etmiyorsun.<br>Keşfet\'ten sınıf arkadaşlarını bul.</div>';
-    return ust + liste.map((a, i) => {
-        let o = bul(a.kim), b = begendim.has(a.id), t = tebrik.has(a.id);
-        return `<div class="akis-kart" style="--serit:${SERIT[i % 5]}; margin:0 16px 14px; background:#fff; border-radius:22px; padding:18px 14px 14px; box-shadow:0 5px 0 #eadcff; position:relative; overflow:hidden;"><span class="akis-ikon" style="position:absolute; right:12px; top:16px; font-size:38px; transform:rotate(10deg);">${a.ikon}</span>
-            <div class="akis-ust" onclick="profilAc('${o.id}')" style="display:flex; align-items:center; gap:10px; cursor:pointer;"><span class="avatar" style="--av:${o.av}; width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; font-size:24px;">${o.maskot}</span><span><b>${a.kim === 'ben' ? 'Sen' : esc(o.ad)}</b><small style="font-size:12px; color:#8a78b8; font-weight:700;">${a.zaman} önce</small></span></div>
-            <div class="akis-metin" style="font-size:15px; font-weight:800; margin-top:10px; line-height:1.4;">${esc(a.metin)}</div>
-            ${a.kelime ? `<div class="kelime-balon" style="background:#f5efff; border-radius:14px; padding:10px 13px; margin-top:10px;"><b>🇺🇸 ${esc(a.kelime[0])}</b><span style="font-size:13px; color:#8a78b8; font-weight:700;">${esc(a.kelime[1])}</span></div>` : ''}
-            <div class="aksiyon" style="display:flex; gap:8px; margin-top:12px;"><button class="${b ? 'basili' : ''}" onclick="begen(${a.id}, this)" style="border-radius:12px; padding:7px 12px; font:900 13.5px 'Nunito',sans-serif; cursor:pointer; background:transparent; color:#3b2c66; border:2px solid #eadcff;">${b ? '❤️' : '🤍'} ${a.beg + (b ? 1 : 0)}</button>
-            <button class="${t ? 'basili' : ''}" onclick="tebrikEt(${a.id}, this)" style="border-radius:12px; padding:7px 12px; font:900 13.5px 'Nunito',sans-serif; cursor:pointer; background:transparent; color:#3b2c66; border:2px solid #eadcff;">🎉 ${a.teb + (t ? 1 : 0)}</button></div></div>`;
-    }).join('');
-}
-
-function kesfetHtml() {
-    let ilk3 = [...OGR].sort((a, b) => b.hafta - a.hafta).slice(0, 3);
-    let sira = [ilk3[1], ilk3[0], ilk3[2]], yuk = [58, 80, 44], renk = ['#8b9bb4', '#e0a800', '#c98a4a'], no = [2, 1, 3];
-    let podyum = sira.map((o, i) => `<div class="podyum-kisi" onclick="profilAc('${o.id}')" style="cursor:pointer; text-align:center;"><span class="avatar" style="--av:${o.av}; width:54px; height:54px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; font-size:30px;">${o.maskot}</span><b>${esc(o.ad)}</b><small style="font-size:11px; color:#8a78b8; font-weight:800;">${o.hafta} XP</small>
-        <div class="basamak" style="height:${yuk[i]}px; background:${renk[i]}; margin-top:6px; border-radius:12px 12px 4px 4px; color:#fff; font:700 20px 'Fredoka',sans-serif; display:flex; justify-content:center; padding-top:6px;">${no[i]}</div></div>`).join('');
-    let benSeviye = OGR.filter(o => o.seviye === BEN.seviye);
-    return `<div class="bolum" style="padding:0 16px;"><div class="bolum-baslik" style="font:700 17px 'Fredoka',sans-serif; margin:18px 0 10px;">Haftanın yıldızları</div><div class="podyum" style="display:grid; grid-template-columns:1fr 1fr 1fr; align-items:end; gap:8px;">${podyum}</div>
-        ${benSeviye.length ? `<div class="bolum-baslik" style="font:700 17px 'Fredoka',sans-serif; margin:18px 0 10px;">Seninle aynı seviyede (${BEN.seviye})</div><div>${benSeviye.map(kisiHtml).join('')}</div>` : ''}
-        <input class="ara" placeholder="Sınıf arkadaşını ara" value="${esc(arama)}" oninput="arama=this.value; document.getElementById('kesfetListe').innerHTML = kesfetListe()" style="width:100%; padding:12px 14px; border-radius:14px; border:2px solid #eadcff; background:#fff; color:#3b2c66; font:800 14px 'Nunito',sans-serif; margin-top:16px;" aria-label="Sınıf arkadaşı ara">
-        <div id="kesfetListe" style="margin-top:10px;">${kesfetListe()}</div></div>`;
-}
-
-function kisiHtml(o) {
-    return `<div class="kisi" onclick="profilAc('${o.id}')" style="display:flex; align-items:center; gap:12px; padding:10px 0; cursor:pointer; border-bottom:1.5px dashed #eadcff;"><span class="avatar" style="--av:${o.av}; width:48px; height:48px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; font-size:26px;">${o.maskot}</span><div class="kisi-ad" style="flex:1; min-width:0;"><b>${esc(o.ad)}</b><small style="font-size:12px; color:#8a78b8; font-weight:700;">🔥 ${o.seri} gün · ${o.lig} lig</small></div>
-        <button class="mini-takip ${takip.has(o.id) ? 'takipte' : ''}" onclick="event.stopPropagation(); takipDegistir('${o.id}', this)" style="border:none; border-radius:11px; padding:8px 12px; font:900 12px 'Nunito',sans-serif; cursor:pointer; background:${takip.has(o.id) ? 'transparent' : '#8b5cf6'}; color:${takip.has(o.id) ? '#8a78b8' : '#fff'};">${takip.has(o.id) ? 'Takipte' : 'Takip et'}</button></div>`;
-}
-function kesfetListe() {
-    let l = OGR.filter(o => o.ad.toLocaleLowerCase('tr').includes(arama.toLocaleLowerCase('tr')));
-    return l.length ? l.map(kisiHtml).join('') : '<div class="bos" style="text-align:center; padding:20px; color:#8a78b8; font-weight:800;">Bu isimde bir sınıf arkadaşı bulunamadı.</div>';
-}
-
-function vitrinHtml(id, benimMi) {
-    let o = bul(id), t = takip.has(id);
-    let rozetler = benimMi ? vitrinSecim.map(i => o.rozetler[i]).filter(Boolean) : o.rozetler.slice(0, 4);
-    while (rozetler.length < 3) rozetler.push(null);
-    let bayraklar = rozetler.map((r, i) => r
-        ? `<button class="bayrak" style="--c:${BAYRAK_RENK[i % 5]};--d:${i * .4}s; position:relative; width:58px; background:none; border:none; cursor:pointer;" onclick="toast('${esc(r[1])}')"><div class="ucgen" style="height:70px; background:var(--c); clip-path:polygon(0 0, 100% 0, 50% 100%); display:flex; justify-content:center; padding-top:8px; font-size:24px;">${r[0]}</div><small style="display:block; font-size:10.5px; font-weight:900; margin-top:3px;">${esc(r[1])}</small></button>`
-        : `<button class="bayrak bos" style="position:relative; width:58px; background:none; border:none; cursor:pointer;"><div class="ucgen" style="height:70px; background:#eee6fb; color:#b7a9dc; clip-path:polygon(0 0, 100% 0, 50% 100%); display:flex; justify-content:center; padding-top:8px; font-size:24px;">?</div><small style="display:block; font-size:10.5px; font-weight:900; margin-top:3px;">Sıradaki</small></button>`).join('');
-
-    return `${benimMi ? '<div class="onizleme-bant" style="display:flex; align-items:center; gap:8px; background:#fff7d1; color:#7a5200; border-radius:12px; padding:9px 12px; font-size:12.5px; font-weight:800; margin-bottom:10px;">👀 Sınıf arkadaşların vitrinini böyle görüyor</div>' : ''}
-    <div class="sahne" style="text-align:center; padding:12px 16px;">
-        <div class="yildiz-maskot" style="font-size:84px; line-height:1;">${o.maskot}</div>
-        <h3 style="font:700 25px 'Fredoka',sans-serif; margin-top:10px;">${benimMi ? esc(o.ad) + ' (sen)' : esc(o.ad)}</h3><div class="kulad" style="font-size:12.5px; font-weight:800; color:#8a78b8;">${o.kul} · ${o.katilim}'dan beri Diji-Medu'da</div>
-    </div>
-    <div class="bolum" style="padding:0 16px;">
-        <div class="bolum-baslik" style="font:700 17px 'Fredoka',sans-serif; margin:16px 0 10px;">Karnaval biletleri</div>
-        <div class="biletler" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="bilet" style="background:#ff6b6b; border-radius:12px; padding:11px 12px; color:#fff;"><small style="font-size:11px; font-weight:800;">Seri</small><b style="font:700 19px 'Fredoka',sans-serif;">${o.seri} gün</b></div>
-            <div class="bilet" style="background:${LIG_RENK[o.lig]}; border-radius:12px; padding:11px 12px; color:#fff;"><small style="font-size:11px; font-weight:800;">Haftalık lig</small><b style="font:700 19px 'Fredoka',sans-serif;">${o.lig}</b></div>
-            <div class="bilet" style="background:#8b5cf6; border-radius:12px; padding:11px 12px; color:#fff;"><small style="font-size:11px; font-weight:800;">Toplam XP</small><b style="font:700 19px 'Fredoka',sans-serif;">${o.xp.toLocaleString('tr-TR')}</b></div>
-            <div class="bilet" style="background:#34b36a; border-radius:12px; padding:11px 12px; color:#fff;"><small style="font-size:11px; font-weight:800;">Seviye</small><b style="font:700 19px 'Fredoka',sans-serif;">${o.seviye}</b></div>
-        </div>
-        <div class="bolum-baslik" style="font:700 17px 'Fredoka',sans-serif; margin:18px 0 10px;">Ödül çizgisi</div>
-        <div class="bayraklar" style="display:flex; justify-content:space-around; margin-top:10px;">${bayraklar}</div>
-    </div>`;
-}
-
-function begen(id, btn) {
-    let a = AKIS.find(x => x.id === id), b = !begendim.has(id); b ? begendim.add(id) : begendim.delete(id);
-    btn.classList.toggle('basili', b); btn.innerHTML = `${b ? '❤️' : '🤍'} ${a.beg + (b ? 1 : 0)}`;
-}
-function tebrikEt(id, btn) {
-    let a = AKIS.find(x => x.id === id), t = !tebrik.has(id); t ? tebrik.add(id) : tebrik.delete(id);
-    btn.classList.toggle('basili', t); btn.innerHTML = `🎉 ${a.teb + (t ? 1 : 0)}`;
-}
-function bul(id) { return id === 'ben' ? BEN : OGR.find(o => o.id === id); }
-function esc(s) { return String(s).replace(/[&<>'"]/g, t => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[t])); }
-function takipDegistir(id, btn) {
-    let t = !takip.has(id); t ? takip.add(id) : takip.delete(id);
-    btn.classList.toggle('takipte', t);
-    btn.innerText = t ? 'Takipte' : 'Takip et';
-}
-
-// Enerji sekmesi için geçici tam ekran yönlendirici
-function enerjiSekmesiniAc() {
-    alert("⚡ Enerji sekmesi Aşama 2'de aktifleşecektir!");
-}
-
-            // --- ENERJİ SEKMESİ KONTROL MİMARİSİ ---
-function enerjiSekmesiniAc() {
-    dcTumTamEkranlariKapat();
-    let enerjiEl = document.getElementById('tab-enerji');
-    if (enerjiEl) enerjiEl.classList.add('active');
-    dcBottomNavSenkronize();
-    enerjiEkraniniGuncelle();
-}
-
-function enerjiSekmesiniKapat() {
-    let enerjiEl = document.getElementById('tab-enerji');
-    if (enerjiEl) enerjiEl.classList.remove('active');
-    dcBottomNavSenkronize();
-}
-
-function enerjiEkraniniGuncelle() {
-    let kalan = window.genelEnerjiKalan !== undefined ? window.genelEnerjiKalan : 18;
-    let max = window.genelEnerjiMax !== undefined ? window.genelEnerjiMax : 18;
-    let yuzde = max > 0 ? Math.round((kalan / max) * 100) : 0;
-
-    let devSayi = document.getElementById('enerjiDevSayi');
-    let devBar = document.getElementById('enerjiDevBar');
-    if (devSayi) devSayi.innerText = `${kalan} / ${max}`;
-    if (devBar) devBar.style.width = `${yuzde}%`;
-
-    // Sonraki enerji için örnek geri sayım (ör. 38 dk)
-    let geriSayimEl = document.getElementById('enerjiGeriSayimSure');
-    if (geriSayimEl) {
-        geriSayimEl.innerText = kalan >= max ? 'Depo Dolu ✨' : '38 dk';
-    }
-
-    // Dolunay Bonusu (Cumartesi 08:00) hesaplama
-    let simdi = new Date();
-    let cmt = new Date(simdi);
-    let gunFarki = (6 - simdi.getDay() + 7) % 7;
-    if (gunFarki === 0 && simdi.getHours() >= 8) gunFarki = 7;
-    cmt.setDate(simdi.getDate() + gunFarki);
-    cmt.setHours(8, 0, 0, 0);
-    let farkMs = cmt.getTime() - simdi.getTime();
-    let kalanSaat = Math.floor(farkMs / (1000 * 60 * 60));
-    let kalanGun = Math.floor(kalanSaat / 24);
-    let saatParca = kalanSaat % 24;
-
-    let dolunayEl = document.getElementById('dolunayBonusSure');
-    if (dolunayEl) {
-        dolunayEl.innerText = kalanGun > 0 ? `${kalanGun}g ${saatParca}s` : `${kalanSaat} saat`;
-    }
-}
-
-            // --- MAĞAZA VE KATMANLI AVATAR MİMARİSİ ---
-let magazaAktifKategori = 'sapka';
-let atolyeAktifTip = 'taban';
-let aktifAvatarVerisi = { taban: '🦜', renk: '#0d5a6c', sapka: '', gozluk: '', arkaplan: '#f1f5f9' };
-
-function magazaAc() {
-    dcTumTamEkranlariKapat();
-    let m = document.getElementById('tab-magaza');
-    if (m) m.classList.add('active');
-    dcBottomNavSenkronize();
-    magazaKategoriSec('sapka', document.querySelector('#magazaSegment button'));
-    magazaBakiyeGuncelle();
-}
-
-function magazaKapat() {
-    let m = document.getElementById('tab-magaza');
-    if (m) m.classList.remove('active');
-    dcBottomNavSenkronize();
-}
-
-function magazaBakiyeGuncelle() {
-    let kutu = document.getElementById('magazaBakiyeKutusu');
-    if (kutu && yo) {
-        kutu.innerText = `🪙 ${yo.altin || 0} Altın`;
-    }
-}
-
-function magazaKategoriSec(kat, btn) {
-    magazaAktifKategori = kat;
-    if (btn) {
-        btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('aktif'));
-        btn.classList.add('aktif');
-    }
-    let grid = document.getElementById('magazaUrunGrid');
-    if (!grid) return;
-
-    // Örnek ürün listesi
-    let urunler = {
-        sapka: [['🎩','Silindir Şapka',20],['🧢','Kasket',25],['👑','Kral Taç',60],['🎓','Mezuniyet Kep',50]],
-        gozluk: [['🕶️','Güneş Gözlüğü',30],['👓','Akıllı Gözlük',40]],
-        arkaplan: [['#38bdf8','Okyanus',25],['#a78bfa','Mor Galaksi',35],['#34d399','Orman',30]]
-    }[kat] || [];
-
-    grid.innerHTML = urunler.map(u => {
-        let sahip = yo && yo.sahip && yo.sahip.includes(`${kat}:${u[0]}`);
-        let takili = yo && yo.takili && yo.takili[kat] === u[0];
-        return `<div class="yo-urun${takili ? ' takili' : ''}" onclick="magazaUrunTikla('${kat}', '${u[0]}', ${u[2]})">
-            <span class="ik">${u[0].startsWith('#') ? '🎨' : u[0]}</span>
-            <span style="font-size:11px; font-weight:800; display:block; margin-top:4px;">${u[1]}</span>
-            <span class="fiyat">${takili ? '✓ Takılı' : (sahip ? 'Tak' : '🪙 ' + u[2])}</span>
-        </div>`;
-    }).join('');
-}
-
-function magazaUrunTikla(tip, deger, fiyat) {
-    if (!yo) return;
-    let id = `${tip}:${deger}`;
-    if (!yo.sahip.includes(id)) {
-        if (yo.altin < fiyat) {
-            yoToast(`Bunun için ${fiyat - yo.altin} altın daha lazım 🪙`);
-            return;
-        }
-        yo.altin -= fiyat;
-        yo.sahip.push(id);
-        yoToast(`🎉 ${deger} satın alındı!`);
-        yoSes('dogru');
-    }
-    yo.takili[tip] = yo.takili[tip] === deger ? '' : deger;
-    yoKaydet();
-    magazaBakiyeGuncelle();
-    magazaKategoriSec(magazaAktifKategori);
-    yoAvatarUygula();
-}
-
-function atolyeAc() {
-    magazaKapat();
-    let a = document.getElementById('tab-atolye');
-    if (a) a.classList.add('active');
-    atolyeParcaTipSec('taban');
-    atolyeOnizlemeCiz();
-}
-
-function atolyeKapat() {
-    let a = document.getElementById('tab-atolye');
-    if (a) a.classList.remove('active');
-    magazaAc();
-}
-
-function atolyeParcaTipSec(tip) {
-    atolyeAktifTip = tip;
-    let grid = document.getElementById('atolyeParcaSecenekGrid');
-    if (!grid) return;
-
-    let secenekler = {
-        taban: ['🦜','🦊','🐰','🐼','🦁','🐨','🐱','🐶','🐸','🐯'],
-        renk: ['#0d5a6c','#2f855a','#2563eb','#7c3aed','#ea580c','#db2777','#1e293b','#f59e0b'],
-        sapka: ['','🎩','🧢','👑','🎓','🎀'],
-        gozluk: ['','🕶️','👓']
-    }[tip] || [];
-
-    grid.innerHTML = secenekler.map(s => `
-        <button class="yo-btn ikincil" onclick="atolyeParcaSec('${tip}', '${s}')" style="font-size:20px; padding:10px;">${s.startsWith('#') ? '🎨' : s}</button>
-    `).join('');
-}
-
-function atolyeParcaSec(tip, deger) {
-    if (tip === 'taban') aktifAvatarVerisi.taban = deger;
-    else if (tip === 'renk') aktifAvatarVerisi.renk = deger;
-    else if (tip === 'sapka') aktifAvatarVerisi.sapka = deger;
-    else if (tip === 'gozluk') aktifAvatarVerisi.gozluk = deger;
-    atolyeOnizlemeCiz();
-}
-
-function atolyeRastgele() {
-    let tabanlar = ['🦜','🦊','🐰','🐼','🦁','🐨'];
-    let renkler = ['#0d5a6c','#2f855a','#2563eb','#7c3aed','#ea580c'];
-    let sapkalar = ['','🎩','🧢','👑'];
-    aktifAvatarVerisi.taban = tabanlar[Math.floor(Math.random() * tabanlar.length)];
-    aktifAvatarVerisi.renk = renkler[Math.floor(Math.random() * renkler.length)];
-    aktifAvatarVerisi.sapka = sapkalar[Math.floor(Math.random() * sapkalar.length)];
-    atolyeOnizlemeCiz();
-}
-
-function atolyeOnizlemeCiz() {
-    let alani = document.getElementById('atolyeCanliOnizleme');
-    if (!alani) return;
-    alani.style.background = aktifAvatarVerisi.renk || '#0d5a6c';
-    alani.innerHTML = `<span style="position:relative; font-size:42px;">${aktifAvatarVerisi.taban || '🦜'}
-        ${aktifAvatarVerisi.sapka ? `<span style="position:absolute; top:-22px; left:50%; transform:translateX(-50%); font-size:24px;">${aktifAvatarVerisi.sapka}</span>` : ''}
-        ${aktifAvatarVerisi.gozluk ? `<span style="position:absolute; top:8px; left:50%; transform:translateX(-50%); font-size:18px;">${aktifAvatarVerisi.gozluk}</span>` : ''}
-    </span>`;
-}
-
-function atolyeKaydet() {
-    if (yo) {
-        yo.ozelAvatar = aktifAvatarVerisi;
-        yoKaydet();
-    }
-    yoToast('🎨 Avatar başarıyla kaydedildi!');
-    atolyeKapat();
-    yoAvatarUygula();
-}
-
-// Genel avatar çizim ve güncelleme fonksiyonu
-function yoAvatarUygula() {
-    let avatarAlanlari = document.querySelectorAll('.user-avatar, #userAvatarLetter');
-    avatarAlanlari.forEach(a => {
-        if (!a) return;
-        if (yo && yo.ozelAvatar && yo.ozelAvatar.taban) {
-            a.style.background = yo.ozelAvatar.renk || '#0d5a6c';
-            a.innerHTML = `<span style="position:relative; display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-size:26px;">${yo.ozelAvatar.taban}
-                ${yo.ozelAvatar.sapka ? `<span style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:16px;">${yo.ozelAvatar.sapka}</span>` : ''}
-                ${yo.ozelAvatar.gozluk ? `<span style="position:absolute; top:4px; left:50%; transform:translateX(-50%); font-size:12px;">${yo.ozelAvatar.gozluk}</span>` : ''}
-            </span>`;
-        } else if (aktifOgrenciAdi) {
-            a.innerText = ogrenciMaskotSec(aktifOgrenciAdi);
-        }
-    });
-}
         
     </script>
 
@@ -14588,111 +13938,6 @@ function jokerCiftCarpan() {
 .yo-yukle { display:flex; gap:8px; margin-bottom:10px; }
 .yo-yukle select { flex:1; padding:10px; border-radius:12px; border:2px solid #e7dcff; font:800 13px 'Nunito',sans-serif; color:#3b2c66; background:#fff; }
 .yo-wa { flex-shrink:0; background:#25d366; color:#fff; border-radius:10px; padding:7px 10px; font-size:11.5px; font-weight:900; text-decoration:none; }
-/* ===== Sohbet haritası ===== */
-.ys-harita { background:linear-gradient(180deg,#fef6ff 0%,#f3ecff 50%,#eef3ff 100%); border-radius:22px; padding:14px 12px 34px; position:relative; z-index:2; color:#3b2c66; font-family:'Nunito',sans-serif; }
-.ys-ust { display:flex; gap:12px; align-items:center; background:#fff; border:2px solid #e7dcff; border-radius:18px; padding:12px 14px; }
-.ys-ust-kus { font-size:42px; animation:ysSallan 1.6s ease-in-out infinite; }
-.ys-ust-metin { flex:1; min-width:0; }
-.ys-ust-metin b { display:block; font-family:'Fredoka',sans-serif; font-size:18px; font-weight:700; color:#7c3aed; }
-.ys-ust-metin span { font-size:12px; font-weight:800; color:#8a78b8; }
-.ys-ust-bar { height:8px; border-radius:5px; background:#ece3ff; margin-top:6px; overflow:hidden; }
-.ys-ust-bar i { display:block; height:100%; background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#a06bff); transition:width .6s; }
-.ys-aciklama { font-size:11.5px; color:#8a78b8; font-weight:700; margin:10px 6px 4px; line-height:1.5; text-align:center; }
-.ys-bant { position:relative; overflow:hidden; display:flex; align-items:center; gap:10px; margin:24px 0 14px; padding:11px 14px; border-radius:16px; color:#fff; background:var(--sr); box-shadow:0 5px 0 rgba(0,0,0,.14); }
-.ys-bant::after { content:''; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent); animation:ysParilti 3.6s ease-in-out infinite; }
-.ys-bant b { display:block; font-family:'Fredoka',sans-serif; font-size:16px; font-weight:700; }
-.ys-bant small { font-size:11px; font-weight:800; opacity:.9; }
-.ys-bant-ikon { font-size:28px; }
-.ys-bant-kilit { margin-left:auto; font-size:18px; }
-.ys-bant.kilitli { filter:grayscale(.9); opacity:.55; }
-.ys-bant.kilitli::after { display:none; }
-.ys-bant-acildi { animation:ysBantAc .8s cubic-bezier(.2,.9,.3,1.4); }
-.ys-satir { display:flex; flex-direction:column; align-items:center; width:112px; margin-left:calc(var(--x) - 56px); }
-.ys-dugum { position:relative; width:72px; height:72px; border-radius:50%; border:none; padding:0; background:transparent; cursor:pointer; transition:transform .15s; }
-.ys-dugum:active { transform:scale(.92); }
-.ys-dugum:focus-visible { outline:3px solid #4d96ff; outline-offset:4px; }
-.ys-dugum-ic { position:absolute; inset:0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px; background:#fff; box-shadow:0 6px 0 rgba(59,44,102,.16); }
-.ys-dugum.bitti .ys-dugum-ic { background:var(--sr); box-shadow:0 6px 0 rgba(0,0,0,.2), inset 0 -6px 10px rgba(0,0,0,.12); }
-.ys-dugum.aktif::before { content:''; position:absolute; inset:-6px; border-radius:50%; background:conic-gradient(#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#a06bff,#ff6b6b); animation:ysDon 3s linear infinite; }
-.ys-dugum.aktif { animation:ysNabiz 2s ease-out infinite; }
-.ys-dugum.aktif::after { content:'🦜'; position:absolute; top:-34px; left:50%; font-size:24px; transform:translateX(-50%); animation:ysPapaganZipla 1.4s ease-in-out infinite; }
-.ys-dugum.kilitli .ys-dugum-ic { background:#ebe5fa; filter:grayscale(1); opacity:.7; box-shadow:0 6px 0 rgba(59,44,102,.1); }
-.ys-kilit { position:absolute; bottom:-4px; right:-4px; width:28px; height:28px; border-radius:50%; background:#8a78b8; font-size:13px; display:flex; align-items:center; justify-content:center; border:3px solid #fdfaff; z-index:2; }
-.ys-kilit.kiriliyor { animation:ysKilitKir .65s ease forwards; }
-.ys-yeni-acildi { animation:ysAcilma .8s cubic-bezier(.2,.9,.3,1.5) !important; }
-.ys-yildizlar { margin-top:7px; letter-spacing:1px; }
-.ys-yildizlar span { color:#dcd3f2; font-size:15px; }
-.ys-yildizlar span.dolu { color:#ffc93c; text-shadow:0 1px 0 #d99a00; }
-.ys-ad { font-size:12px; font-weight:900; text-align:center; line-height:1.25; }
-.ys-noktalar { position:relative; height:34px; }
-.ys-noktalar i { position:absolute; width:8px; height:8px; border-radius:50%; background:#c9b3ff; transform:translate(-50%,-50%); }
-.ys-salla { animation:ysSalla .45s ease; }
-
-/* ===== Sohbet ekranı ===== */
-.ys-rozet { margin-left:auto; background:var(--sr); color:#fff; font-size:11px; font-weight:900; padding:3px 10px; border-radius:10px; }
-.ys-adimlar { display:flex; gap:5px; margin-bottom:10px; }
-.ys-adimlar i { flex:1; height:7px; border-radius:4px; background:#ece3ff; transition:background .4s; }
-.ys-adimlar i.tamam { background:var(--sr); }
-.ys-adimlar i.simdi { background:var(--sr); opacity:.5; animation:ysAdim .9s ease-in-out infinite alternate; }
-.yo-s-balon.ys-yaziyor { display:flex; gap:5px; padding:14px 16px; }
-.yo-s-balon.ys-yaziyor i { width:8px; height:8px; border-radius:50%; background:#a06bff; animation:ysZipla 1s ease-in-out infinite; }
-.yo-s-balon.ys-yaziyor i:nth-child(2) { animation-delay:.15s; }
-.yo-s-balon.ys-yaziyor i:nth-child(3) { animation-delay:.3s; }
-.yo-s-balon.ben.parla { box-shadow:0 0 0 3px #6bcb77, 0 0 18px rgba(107,203,119,.6); }
-.yo-s-balon.ben.ys-salla { background:#e0434b; }
-
-/* ===== Portal ===== */
-.ys-portal { position:fixed; inset:0; z-index:100000045; pointer-events:none; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 50% 45%, #fff 0%, var(--sr) 42%, #2a1d52 100%); }
-.ys-portal-kus { font-size:96px; animation:ysPortalKus .75s cubic-bezier(.2,.9,.3,1.4) both; filter:drop-shadow(0 10px 20px rgba(0,0,0,.3)); }
-.ys-ucan-kus { position:fixed; left:0; top:0; z-index:100000046; font-size:40px; pointer-events:none; }
-.ys-parca { position:fixed; z-index:100000046; pointer-events:none; font-size:18px; animation:ysParca 1.05s ease-out forwards; }
-.ys-konfeti { position:fixed; top:-30px; z-index:100000047; pointer-events:none; font-size:20px; animation:ysDus linear forwards; }
-
-/* ===== Bitiş ===== */
-.ys-final { text-align:center; padding:26px 16px 22px; }
-.ys-final-kus { font-size:78px; display:inline-block; animation:ysGir .6s cubic-bezier(.2,.9,.3,1.4) both; }
-.ys-final-kus.mutlu { animation:ysGir .6s cubic-bezier(.2,.9,.3,1.4) both, ysDans 1.1s .6s ease-in-out infinite; }
-.ys-final-baslik { font-family:'Fredoka',sans-serif; font-size:25px; font-weight:700; color:#7c3aed; animation:ysGir .5s .15s both; }
-.ys-final-alt { font-size:13px; font-weight:800; color:#8a78b8; margin:2px 0 8px; }
-.ys-final-yildiz span { display:inline-block; font-size:52px; margin:0 3px; color:#e3dbf7; transform:scale(0); animation:ysYildizGel .55s cubic-bezier(.2,.9,.3,1.6) forwards; }
-.ys-final-yildiz span.dolu { color:#ffc93c; text-shadow:0 3px 0 #d99a00, 0 0 20px rgba(255,201,60,.7); }
-.ys-final-xp { font:900 18px 'Nunito',sans-serif; color:#b7791f; margin:4px 0 8px; }
-.ys-final-not { font-size:13px; font-weight:900; color:#1d6b3d; background:#dff6e7; border-radius:12px; padding:8px; margin:4px 0; animation:ysGir .5s 1.3s both; }
-.ys-final-not.hata { color:#9a5b00; background:#fff3d6; }
-
-/* ===== Seviye kutlaması ===== */
-.ys-kutlama { position:fixed; inset:0; z-index:100000046; display:flex; align-items:center; justify-content:center; overflow:hidden; background:radial-gradient(circle at 50% 45%, var(--sr) 0%, #1e1238 78%); animation:ysSolGel .35s both; }
-.ys-kutlama.kapaniyor { animation:ysSolGit .4s forwards; }
-.ys-isinlar { position:absolute; left:50%; top:50%; width:220vmax; height:220vmax; margin:-110vmax 0 0 -110vmax; background:repeating-conic-gradient(rgba(255,255,255,.13) 0deg 9deg, transparent 9deg 18deg); animation:ysDon 16s linear infinite; }
-.ys-kutlama-icerik { position:relative; text-align:center; color:#fff; padding:20px; max-width:340px; font-family:'Nunito',sans-serif; }
-.ys-kutlama-ikon { font-size:104px; animation:ysKutlaIkon .9s cubic-bezier(.2,.9,.3,1.5) both; filter:drop-shadow(0 12px 22px rgba(0,0,0,.35)); }
-.ys-kutlama-ust { font-size:13px; font-weight:900; letter-spacing:3px; opacity:.9; margin-top:8px; animation:ysGir .5s .35s both; }
-.ys-kutlama-baslik { font-family:'Fredoka',sans-serif; font-size:34px; font-weight:700; text-shadow:0 4px 14px rgba(0,0,0,.3); animation:ysGir .5s .5s both; }
-.ys-kutlama-alt { font-size:14px; font-weight:800; opacity:.9; margin:4px 0 16px; animation:ysGir .5s .65s both; }
-.ys-kutlama-btn { animation:ysGir .5s .8s both; }
-
-@keyframes ysSallan { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(6deg) translateY(-3px); } }
-@keyframes ysDon { to { transform:rotate(360deg); } }
-@keyframes ysNabiz { 0%,100% { filter:drop-shadow(0 0 0 rgba(160,107,255,.0)); } 50% { filter:drop-shadow(0 0 12px rgba(160,107,255,.75)); } }
-@keyframes ysPapaganZipla { 0%,100% { transform:translateX(-50%) translateY(0) rotate(-5deg); } 50% { transform:translateX(-50%) translateY(-7px) rotate(5deg); } }
-@keyframes ysParilti { 0%,55% { left:-60%; } 100% { left:130%; } }
-@keyframes ysBantAc { 0% { transform:scale(.85); } 60% { transform:scale(1.05); } 100% { transform:scale(1); } }
-@keyframes ysKilitKir { 0% { transform:rotate(0); } 20% { transform:rotate(-20deg) scale(1.1); } 40% { transform:rotate(20deg) scale(1.2); } 60% { transform:rotate(-14deg) scale(1.3); } 100% { transform:scale(2.4); opacity:0; } }
-@keyframes ysAcilma { 0% { transform:scale(.6); } 60% { transform:scale(1.22); } 100% { transform:scale(1); } }
-@keyframes ysSalla { 20% { transform:translateX(-7px); } 40% { transform:translateX(7px); } 60% { transform:translateX(-5px); } 80% { transform:translateX(4px); } }
-@keyframes ysAdim { to { opacity:1; } }
-@keyframes ysZipla { 0%,100% { transform:translateY(0); opacity:.5; } 50% { transform:translateY(-6px); opacity:1; } }
-@keyframes ysPortalKus { from { transform:scale(0) rotate(-30deg); } to { transform:scale(1) rotate(0); } }
-@keyframes ysParca { from { opacity:1; transform:translate(0,0) scale(.6); } to { opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(1.1); } }
-@keyframes ysDus { to { transform:translateY(110vh) rotate(720deg); } }
-@keyframes ysGir { from { opacity:0; transform:translateY(14px) scale(.9); } }
-@keyframes ysDans { 0%,100% { transform:rotate(-8deg) translateY(0); } 50% { transform:rotate(8deg) translateY(-8px); } }
-@keyframes ysYildizGel { 0% { transform:scale(0) rotate(-120deg); } 70% { transform:scale(1.35) rotate(10deg); } 100% { transform:scale(1) rotate(0); } }
-@keyframes ysSolGel { from { opacity:0; } }
-@keyframes ysSolGit { to { opacity:0; transform:scale(1.08); } }
-@keyframes ysKutlaIkon { 0% { transform:scale(0) rotate(-40deg); } 70% { transform:scale(1.25) rotate(8deg); } 100% { transform:scale(1) rotate(0); } }
-@media (prefers-reduced-motion: reduce) { .ys-harita *, .ys-sohbet *, .ys-final *, .ys-kutlama, .ys-kutlama * { animation:none !important; } .ys-final-yildiz span { transform:none; } }
-
 @media (prefers-reduced-motion: reduce) { .yo-kart, .yo-chip, .yo-s-balon, .yo-toast, .yo-davet { animation:none !important; transition:none !important; } }
 </style>
 
@@ -14771,100 +14016,26 @@ const YO_SEVIYE = [
 ];
 const YO_SEVIYE_AD = { A1:'Başlangıç', A2:'Temel', B1:'Orta', B2:'Orta-Üstü' };
 
-const YO_SOHBET_SEVIYE = [
-  { kod:'A1', ad:'Başlangıç', ikon:'🌱', renk:'#34b36a' },
-  { kod:'A2', ad:'Temel', ikon:'🌿', renk:'#3b82f6' },
-  { kod:'B1', ad:'Orta', ikon:'🌳', renk:'#8b5cf6' },
-  { kod:'B2', ad:'Orta-Üstü', ikon:'🏔️', renk:'#f43f5e' }
-];
 const YO_SOHBET = [
-  /* ---------- A1 ---------- */
-  { id:'tanisma', sv:'A1', ad:'Tanışma', ikon:'👋', satirlar:[
-    { p:"Hello! What is your name?", tr:"Adını söyle.", ornek:"My name is Ali.", k:["my name is","i am","i'm","name"] },
-    { p:"Nice to meet you! How old are you?", tr:"Yaşını söyle.", ornek:"I am ten years old.", k:["i am","i'm","years old","year"] },
-    { p:"Where are you from?", tr:"Nereli olduğunu söyle.", ornek:"I am from Turkey.", k:["from","turkey","istanbul","ankara","izmir"] },
-    { p:"Great! Goodbye!", tr:"Vedalaş.", ornek:"Goodbye! See you.", k:["goodbye","bye","see you"] } ] },
-  { id:'renkler', sv:'A1', ad:'Renkler ve Eşyalar', ikon:'🎨', satirlar:[
-    { p:"What color is your bag?", tr:"Çantanın rengini söyle.", ornek:"My bag is blue.", k:["red","blue","green","yellow","black","white","pink","purple","orange","brown","grey","gray"] },
-    { p:"Do you have a pencil?", tr:"Kalemin olup olmadığını söyle.", ornek:"Yes, I have a pencil.", k:["yes","no","i have","i don't","i do"] },
-    { p:"How many books are on your desk?", tr:"Masandaki kitap sayısını söyle.", ornek:"There are three books.", k:["one","two","three","four","five","six","seven","eight","nine","ten","there are","there is","no books"] },
-    { p:"Thank you! See you later!", tr:"Karşılık ver.", ornek:"You're welcome! Bye!", k:["welcome","bye","see you","thank"] } ] },
-  { id:'hayvanlar', sv:'A1', ad:'Hayvanlar', ikon:'🐶', satirlar:[
-    { p:"Do you have a pet?", tr:"Evcil hayvanın var mı?", ornek:"Yes, I have a cat.", k:["yes","no","i have","i don't","cat","dog","bird","fish","rabbit"] },
-    { p:"What is your favourite animal?", tr:"En sevdiğin hayvanı söyle.", ornek:"My favourite animal is the lion.", k:["favourite","favorite","i like","i love","cat","dog","lion","tiger","horse","bird","fish","rabbit","elephant","monkey","panda"] },
-    { p:"Can a fish fly?", tr:"Balık uçabilir mi?", ornek:"No, it can't fly. It can swim.", k:["no","can't","cannot","can not","swim"] },
-    { p:"What can a bird do?", tr:"Kuşun neler yapabildiğini söyle.", ornek:"A bird can fly and sing.", k:["can","fly","sing"] } ] },
-  { id:'aile', sv:'A1', ad:'Ailem', ikon:'👨‍👩‍👧', satirlar:[
-    { p:"How many people are there in your family?", tr:"Ailende kaç kişi olduğunu söyle.", ornek:"There are four people in my family.", k:["there are","we are","three","four","five","six","two","seven"] },
-    { p:"What is your mother's name?", tr:"Annenin adını söyle.", ornek:"Her name is Ayşe.", k:["her name","name is","my mother","she is"] },
-    { p:"Do you have a brother or a sister?", tr:"Kardeşin var mı?", ornek:"Yes, I have a sister.", k:["yes","no","i have","brother","sister","i don't"] },
-    { p:"Who is your best friend?", tr:"En iyi arkadaşını söyle.", ornek:"My best friend is Can.", k:["my best friend","best friend","is","name"] } ] },
-
-  /* ---------- A2 ---------- */
-  { id:'kafe', sv:'A2', ad:'Kafede', ikon:'☕', satirlar:[
-    { p:"Hi! What would you like to drink?", tr:"Ne içmek istediğini söyle.", ornek:"I would like some water, please.", k:["i would like","i'd like","can i have","please","water","tea","juice","milk","lemonade"] },
-    { p:"Would you like something to eat?", tr:"Yiyecek isteyip istemediğini söyle.", ornek:"Yes, a sandwich, please.", k:["yes","no","sandwich","cake","cookie","please","thank"] },
-    { p:"That is five lira, please.", tr:"Parayı ver.", ornek:"Here you are.", k:["here you are","here","thank"] },
-    { p:"Have a nice day!", tr:"Karşılık ver.", ornek:"You too, thank you!", k:["you too","thank","thanks","bye"] } ] },
-  { id:'okul', sv:'A2', ad:'Okulda', ikon:'🏫', satirlar:[
-    { p:"What is your favourite lesson?", tr:"En sevdiğin dersi söyle.", ornek:"My favourite lesson is English.", k:["favourite","favorite","i like","english","math","science","art","music","history","turkish","pe"] },
-    { p:"Why do you like it?", tr:"Nedenini söyle.", ornek:"Because it is fun.", k:["because","it is","it's","fun","interesting","easy","love"] },
-    { p:"What time does school start?", tr:"Okulun başlama saatini söyle.", ornek:"It starts at nine o'clock.", k:["at","o'clock","starts","half past","eight","nine"] },
-    { p:"See you tomorrow!", tr:"Vedalaş.", ornek:"See you! Bye!", k:["see you","bye","goodbye"] } ] },
-  { id:'alisveris', sv:'A2', ad:'Alışveriş', ikon:'🛍️', satirlar:[
-    { p:"Hello! Can I help you?", tr:"Ne aradığını söyle.", ornek:"Yes, I'm looking for a T-shirt.", k:["looking for","i want","i'd like","i would like","yes","please","t-shirt","shoes","jacket"] },
-    { p:"What size do you need?", tr:"Bedenini söyle.", ornek:"Medium, please.", k:["small","medium","large","size","s","m","l"] },
-    { p:"It is fifty lira. Cash or card?", tr:"Nasıl ödeyeceğini söyle.", ornek:"By card, please.", k:["cash","card"] },
-    { p:"Here is your bag. Have a nice day!", tr:"Teşekkür et.", ornek:"Thank you! You too.", k:["thank","you too","bye"] } ] },
-  { id:'rutin', sv:'A2', ad:'Günlük Rutin', ikon:'⏰', satirlar:[
-    { p:"What time do you get up in the morning?", tr:"Kaçta kalktığını söyle.", ornek:"I get up at seven o'clock.", k:["i get up","get up","at","o'clock","wake up"] },
-    { p:"What do you have for breakfast?", tr:"Kahvaltıda ne yediğini söyle.", ornek:"I have eggs, cheese and bread.", k:["i have","i eat","eggs","egg","bread","cheese","olives","milk","tea","honey","toast"] },
-    { p:"How do you go to school?", tr:"Okula nasıl gittiğini söyle.", ornek:"I go to school by bus.", k:["by bus","by car","on foot","walk","by bike","by metro","school bus"] },
-    { p:"What do you usually do after school?", tr:"Okuldan sonra ne yaptığını söyle.", ornek:"I usually do my homework.", k:["i do","homework","i play","i watch","i read","i usually","i go","i help"] } ] },
-
-  /* ---------- B1 ---------- */
-  { id:'yol', sv:'B1', ad:'Yol Tarifi', ikon:'🗺️', satirlar:[
-    { p:"Excuse me, where is the library?", tr:"Yerini tarif et.", ornek:"It is next to the park.", k:["it is","it's","next to","near","left","right","straight","opposite","between","behind"] },
-    { p:"Is it far from here?", tr:"Uzak olup olmadığını söyle.", ornek:"No, it is very close. About five minutes.", k:["no","yes","near","far","close","minutes"] },
-    { p:"Which bus should I take?", tr:"Hangi otobüse binmesi gerektiğini söyle.", ornek:"You should take bus number 12.", k:["you should","take","number","bus","you can"] },
-    { p:"Thank you very much!", tr:"Rica et.", ornek:"You are welcome!", k:["welcome","no problem","not at all","my pleasure"] } ] },
-  { id:'haftasonu', sv:'B1', ad:'Hafta Sonum', ikon:'📅', satirlar:[
-    { p:"What did you do last weekend?", tr:"Geçen hafta sonu ne yaptığını anlat.", ornek:"I visited my grandparents.", k:["i went","i played","i watched","i visited","i was","i did","i stayed","i met","i read","i helped","i cooked"], min:3 },
-    { p:"Who were you with?", tr:"Kiminle olduğunu söyle.", ornek:"I was with my family.", k:["with","i was","alone","my"] },
-    { p:"Did you have a good time?", tr:"Eğlenip eğlenmediğini söyle.", ornek:"Yes, it was really fun.", k:["yes","no","it was","i did","i didn't","fun","great","boring"] },
-    { p:"What are you going to do next weekend?", tr:"Gelecek hafta sonu planını söyle.", ornek:"I am going to watch a film.", k:["going to","i will","i'll","i'm going","i am going","plan"], min:3 } ] },
-  { id:'doktor', sv:'B1', ad:'Doktorda', ikon:'🩺', satirlar:[
-    { p:"Hello, what's the matter?", tr:"Neyin var, anlat.", ornek:"I have a headache and a fever.", k:["i have","headache","stomachache","fever","cold","cough","hurts","sore","i feel","toothache"] },
-    { p:"How long have you felt like this?", tr:"Ne zamandır böyle olduğunu söyle.", ornek:"Since yesterday.", k:["since","for","days","yesterday","week","two","three"] },
-    { p:"Are you taking any medicine?", tr:"İlaç kullanıp kullanmadığını söyle.", ornek:"No, I'm not taking any medicine.", k:["yes","no","i am","i'm not","i take","i don't"] },
-    { p:"You should rest and drink lots of water. Get well soon!", tr:"Teşekkür et.", ornek:"Thank you, doctor. I will.", k:["thank","i will","okay","ok"] } ] },
-  { id:'tatil', sv:'B1', ad:'Tatil Planı', ikon:'✈️', satirlar:[
-    { p:"Where would you like to travel?", tr:"Nereye gitmek istediğini söyle.", ornek:"I would like to go to Japan.", k:["i would like","i'd like","i want","to go","to visit"] },
-    { p:"Why do you want to go there?", tr:"Nedenini açıkla.", ornek:"Because I want to see the famous temples.", k:["because","it is","it's","beautiful","famous","want to see","interesting"], min:4 },
-    { p:"How will you get there?", tr:"Oraya nasıl gideceğini söyle.", ornek:"I will go by plane.", k:["by plane","by train","by car","by bus","by ship","will","fly"] },
-    { p:"What will you pack in your suitcase?", tr:"Bavuluna neler koyacağını söyle.", ornek:"I will pack clothes, a camera and my passport.", k:["i will","i'll","clothes","camera","passport","pack","shoes","book"], min:3 } ] },
-
-  /* ---------- B2 ---------- */
-  { id:'cevre', sv:'B2', ad:'Çevre ve Gezegen', ikon:'🌍', satirlar:[
-    { p:"In your opinion, what is the biggest problem for our planet?", tr:"Sence gezegenin en büyük sorunu ne?", ornek:"I think plastic pollution is the biggest problem.", k:["pollution","climate","global warming","plastic","waste","i think","in my opinion","deforestation"], min:4 },
-    { p:"What can students do to help?", tr:"Öğrencilerin neler yapabileceğini anlat.", ornek:"We can recycle and use less plastic.", k:["we can","should","recycle","save","turn off","use less","plant","reduce"], min:4 },
-    { p:"Have you ever joined a clean-up activity?", tr:"Hiç temizlik etkinliğine katıldın mı?", ornek:"Yes, I have. We cleaned the beach last year.", k:["i have","i've","never","yes","no","haven't","have not"] },
-    { p:"If you were the president, what would you change?", tr:"Başkan olsaydın neyi değiştirirdin?", ornek:"I would ban plastic bags.", k:["i would","i'd"], min:4 } ] },
-  { id:'teknoloji', sv:'B2', ad:'Teknoloji', ikon:'💻', satirlar:[
-    { p:"How much time do you spend online every day?", tr:"Günde ne kadar internette olduğunu söyle.", ornek:"I spend about two hours online.", k:["hours","hour","minutes","about","i spend","around"] },
-    { p:"Do you think social media is good for teenagers?", tr:"Sosyal medya gençler için iyi mi? Görüşünü söyle.", ornek:"I think it can be useful, but it can also be addictive.", k:["i think","in my opinion","i believe","because","good","bad","useful","addictive","harmful"], min:5 },
-    { p:"What would happen if the internet stopped for a week?", tr:"İnternet bir hafta kesilse ne olurdu?", ornek:"People would talk to each other more.", k:["would","people","we","couldn't","could not"], min:4 },
-    { p:"Which invention couldn't you live without?", tr:"Hangi icat olmadan yaşayamazdın?", ornek:"I couldn't live without my computer.", k:["couldn't","could not","without","phone","computer","internet","electricity"] } ] },
-  { id:'gelecek', sv:'B2', ad:'Gelecek Hayallerim', ikon:'🎯', satirlar:[
-    { p:"What do you want to be in the future?", tr:"Gelecekte ne olmak istediğini söyle.", ornek:"I want to be a doctor.", k:["i want to be","i'd like to be","i would like to be","become","i want to become"] },
-    { p:"Why did you choose this job?", tr:"Bu mesleği neden seçtiğini anlat.", ornek:"Because I love helping people.", k:["because","i love","i like","help","interested","enjoy"], min:4 },
-    { p:"What do you need to do to achieve this dream?", tr:"Bu hayale ulaşmak için ne yapman gerektiğini söyle.", ornek:"I need to study hard and read a lot.", k:["i need to","i have to","study","work hard","learn","should","practise","practice"], min:4 },
-    { p:"Where do you see yourself in ten years?", tr:"On yıl sonra kendini nerede görüyorsun?", ornek:"I will be working in a big hospital.", k:["i will","i'll","i see myself","i hope","i'd","i would"], min:4 } ] },
-  { id:'film', sv:'B2', ad:'Film Sohbeti', ikon:'🎬', satirlar:[
-    { p:"What's the best film you've ever seen?", tr:"İzlediğin en iyi filmi söyle.", ornek:"The best film I've ever seen is Coco.", k:["the best","i've seen","i have seen","film","movie","is"] },
-    { p:"What was it about?", tr:"Filmin konusunu anlat.", ornek:"It was about a boy who loved music.", k:["it was about","it's about","it is about","about","story"], min:4 },
-    { p:"Would you recommend it to your friends? Why?", tr:"Arkadaşlarına önerir misin? Neden?", ornek:"Yes, I would, because it is funny and touching.", k:["yes","no","i would","because","recommend"], min:4 },
-    { p:"Thanks for the great chat! Goodbye!", tr:"Sohbeti güzelce bitir.", ornek:"Thank you too! It was a pleasure. Goodbye!", k:["thank","bye","goodbye","see you","pleasure"] } ] }
+  { ad:'👋 Tanışma', satirlar:[
+    { p:'Hello! What is your name?', tr:'Adını söyle.', ornek:'My name is Ali.', k:['my name is','i am','i\'m','name'] },
+    { p:'Nice to meet you! How old are you?', tr:'Yaşını söyle.', ornek:'I am ten years old.', k:['i am','i\'m','years old','year'] },
+    { p:'Where are you from?', tr:'Nereli olduğunu söyle.', ornek:'I am from Turkey.', k:['from','turkey','istanbul','ankara','izmir'] },
+    { p:'Great! Goodbye!', tr:'Vedalaş.', ornek:'Goodbye! See you.', k:['goodbye','bye','see you'] } ] },
+  { ad:'☕ Kafede', satirlar:[
+    { p:'Hi! What would you like to drink?', tr:'Ne içmek istediğini söyle.', ornek:'I would like some water, please.', k:['i would like','i\'d like','can i have','please','water','tea','juice','milk','lemonade'] },
+    { p:'Anything to eat?', tr:'Yiyecek isteyip istemediğini söyle.', ornek:'Yes, a sandwich, please.', k:['yes','no','sandwich','cake','cookie','please','thank'] },
+    { p:'That is five lira, please.', tr:'Parayı ver.', ornek:'Here you are.', k:['here you are','here','thank'] },
+    { p:'Have a nice day!', tr:'Karşılık ver.', ornek:'You too, thank you!', k:['you too','thank','thanks','bye'] } ] },
+  { ad:'🏫 Okulda', satirlar:[
+    { p:'What is your favourite lesson?', tr:'En sevdiğin dersi söyle.', ornek:'My favourite lesson is English.', k:['favourite','favorite','i like','english','math','science','art','music','history'] },
+    { p:'Why do you like it?', tr:'Nedenini söyle.', ornek:'Because it is fun.', k:['because','it is','it\'s','fun','interesting','easy','love'] },
+    { p:'What time does school start?', tr:'Okulun başlama saatini söyle.', ornek:'It starts at nine o\'clock.', k:['at','o\'clock','starts','half past','eight','nine'] },
+    { p:'See you tomorrow!', tr:'Vedalaş.', ornek:'See you! Bye!', k:['see you','bye','goodbye'] } ] },
+  { ad:'🗺️ Yol tarifi', satirlar:[
+    { p:'Excuse me, where is the library?', tr:'Yerini tarif et.', ornek:'It is next to the park.', k:['it is','it\'s','next to','near','left','right','straight','opposite','between','behind'] },
+    { p:'Is it far from here?', tr:'Uzak olup olmadığını söyle.', ornek:'No, it is very close.', k:['no','yes','near','far','close','minutes'] },
+    { p:'Thank you very much!', tr:'Rica et.', ornek:'You are welcome!', k:['welcome','no problem','not at all'] } ] }
 ];
 
 /* ========== DURUM VE KAYIT ========== */
@@ -14880,7 +14051,7 @@ function yoHaftaKodu(zaman) {
   return t.getUTCFullYear() + '-H' + Math.ceil(((t - yb) / 86400000 + 1) / 7);
 }
 function yoHaftaBaslangic() { let d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return yoTarihStr(d); }
-function yoVarsayilan() { return { v:1, guncelleme:0, hedef:50, xpGun:{ tarih:'', xp:0 }, hedefOdul:'', altin:0, sahip:[], takili:{ aks:'', renk:'' }, dondurucu:0, lig:{ hafta:'', xp:0, gecen:null }, log:{}, zk:{}, seviye:null, sohbet:{} }; }
+function yoVarsayilan() { return { v:1, guncelleme:0, hedef:50, xpGun:{ tarih:'', xp:0 }, hedefOdul:'', altin:0, sahip:[], takili:{ aks:'', renk:'' }, dondurucu:0, lig:{ hafta:'', xp:0, gecen:null }, log:{}, zk:{}, seviye:null }; }
 function yoGuvenli(fn) { try { return fn(); } catch (e) { console.warn('Yeni özellik hatası:', e); } }
 
 function yoHazirla(isim) {
@@ -15351,204 +14522,39 @@ function seviyeDavetGoster() {
   setTimeout(kapat, 15000);
 }
 
-/* ========== 9) SOHBET MODU — SEVİYELİ HARİTA ========== */
+/* ========== 9) SOHBET MODU ========== */
 let sh = null, yoSR = null;
-const YS_KONUM = [50, 76, 50, 24];
-function ysAzHareket() { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
-function ysPanel() { return document.getElementById('kp-panel-sohbet'); }
-function ysYildiz(id) { return (yo && yo.sohbet && yo.sohbet[id]) || 0; }
-function ysAcikMi(i) { return i === 0 || ysYildiz(YO_SOHBET[i - 1].id) >= 1; }
-function ysSeviye(kod) { return YO_SOHBET_SEVIYE.find(s => s.kod === kod) || YO_SOHBET_SEVIYE[0]; }
-function ysMerkez(el) { let r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
-
-function ysPatlat(el, ikonlar, adet) {
-  if (!el || ysAzHareket()) return;
-  let p = ysMerkez(el);
-  for (let i = 0; i < (adet || 12); i++) {
-    let s = document.createElement('span'); s.className = 'ys-parca'; s.innerText = ikonlar[i % ikonlar.length];
-    let a = Math.random() * Math.PI * 2, u = 50 + Math.random() * 70;
-    s.style.left = (p.x - 10) + 'px'; s.style.top = (p.y - 12) + 'px';
-    s.style.setProperty('--tx', Math.cos(a) * u + 'px'); s.style.setProperty('--ty', Math.sin(a) * u + 'px');
-    s.style.setProperty('--tr', (Math.random() * 360 - 180) + 'deg');
-    document.body.appendChild(s); setTimeout(() => s.remove(), 1100);
-  }
-}
-function ysKonfetiYagmuru(adet) {
-  if (ysAzHareket()) return;
-  let ikonlar = ['🎉','✨','⭐','🎊','💜','💛','💚','💙','🧡'];
-  for (let i = 0; i < adet; i++) {
-    let s = document.createElement('span'); s.className = 'ys-konfeti'; s.innerText = ikonlar[i % ikonlar.length];
-    s.style.left = (Math.random() * 100) + 'vw';
-    s.style.animationDuration = (2 + Math.random() * 2) + 's';
-    s.style.animationDelay = (Math.random() * 0.8) + 's';
-    document.body.appendChild(s); setTimeout(() => s.remove(), 5000);
-  }
-}
-function ysNoktalar(x1, x2) {
-  return '<div class="ys-noktalar">' + [0.25, 0.5, 0.75].map(t => `<i style="left:${x1 + (x2 - x1) * t}%; top:${t * 100}%"></i>`).join('') + '</div>';
-}
-
-/* ---- Harita ---- */
-function sohbetListeCiz(acilis) {
-  let p = ysPanel(); if (!p) return;
+function sohbetListeCiz() {
+  let p = document.getElementById('kp-panel-sohbet');
+  if (!p) return;
   sohbetMikDur(); sh = null;
-  if (yo && !yo.sohbet) yo.sohbet = {};
-  let toplam = YO_SOHBET.length;
-  let tamam = YO_SOHBET.filter(d => ysYildiz(d.id) >= 1).length;
-  let yildizTop = YO_SOHBET.reduce((t, d) => t + ysYildiz(d.id), 0);
-  let html = `<div class="ys-harita">
-    <div class="ys-ust"><div class="ys-ust-kus">🦜</div><div class="ys-ust-metin"><b>Papağanla sohbet</b>
-      <span>${tamam}/${toplam} diyalog · ⭐ ${yildizTop}/${toplam * 3}</span>
-      <div class="ys-ust-bar"><i style="width:${Math.round(tamam / toplam * 100)}%"></i></div></div></div>
-    <div class="ys-aciklama">Her sohbet 1 enerji. En az %60 doğru cevapla, sıradaki sohbetin kilidi açılsın. Hepsini ilk denemede bilirsen 3 yıldız!</div>`;
-  YO_SOHBET_SEVIYE.forEach(sv => {
-    let grup = YO_SOHBET.map((d, i) => ({ d, i })).filter(x => x.d.sv === sv.kod);
-    if (!grup.length) return;
-    let svAcik = ysAcikMi(grup[0].i) && !(acilis && acilis.yeniSeviye === sv.kod);
-    let svTamam = grup.filter(x => ysYildiz(x.d.id) >= 1).length;
-    html += `<div class="ys-bant${svAcik ? '' : ' kilitli'}" id="ysBant${sv.kod}" style="--sr:${sv.renk}"><span class="ys-bant-ikon">${sv.ikon}</span>
-      <span><b>${sv.kod} · ${sv.ad}</b><small>${svTamam}/${grup.length} tamamlandı</small></span>${svAcik ? '' : '<span class="ys-bant-kilit">🔒</span>'}</div>`;
-    grup.forEach((x, j) => {
-      let konum = YS_KONUM[x.i % 4];
-      if (j > 0) html += ysNoktalar(YS_KONUM[(x.i - 1) % 4], konum);
-      let y = ysYildiz(x.d.id), acik = ysAcikMi(x.i);
-      let acilacak = acilis && acilis.yeniIdx === x.i;
-      let durum = acilacak ? 'kilitli' : (y >= 1 ? 'bitti' : (acik ? 'aktif' : 'kilitli'));
-      let kilit = durum === 'kilitli' ? '<span class="ys-kilit">🔒</span>' : '';
-      let tik = acik ? `sohbetBasla(${x.i}, this)` : 'ysKilitliTik(this)';
-      html += `<div class="ys-satir" style="--x:${konum}%">
-        <button class="ys-dugum ${durum}" id="ysDugum${x.i}" style="--sr:${sv.renk}" onclick="${tik}" aria-label="${x.d.ad}${acik ? '' : ', kilitli'}">
-          <span class="ys-dugum-ic">${x.d.ikon}</span>${kilit}</button>
-        <div class="ys-yildizlar">${[1, 2, 3].map(n => `<span class="${n <= y ? 'dolu' : ''}">★</span>`).join('')}</div>
-        <div class="ys-ad">${x.d.ad}</div></div>`;
-    });
-  });
-  html += '</div>';
-  p.innerHTML = html;
-  if (acilis) setTimeout(() => ysKilitAcAnimasyonu(acilis), 300);
+  p.innerHTML = `<div class="yo-sohbet"><div style="font-family:'Fredoka',sans-serif; font-size:18px; font-weight:700; color:#7c3aed">💬 Papağanla sohbet</div>
+    <div class="yo-bos" style="text-align:left; padding:4px 0 0">Papağan sana soru soracak. Mikrofonla konuş ya da yazarak cevap ver. Her diyalog 1 enerji.</div>
+    <div class="yo-s-liste">${YO_SOHBET.map((s, i) => `<button class="yo-s-kart" onclick="sohbetBasla(${i})">${s.ad}<span>${s.satirlar.length} soru</span></button>`).join('')}</div></div>`;
 }
-function ysKilitliTik(btn) {
-  btn.classList.remove('ys-salla'); void btn.offsetWidth; btn.classList.add('ys-salla');
-  yoToast('🔒 Önce bir önceki sohbeti tamamla!');
-}
-function ysKilitAcAnimasyonu(a) {
-  let yeni = document.getElementById('ysDugum' + a.yeniIdx), onceki = document.getElementById('ysDugum' + a.oncekiIdx);
-  if (!yeni) return;
-  let ac = () => {
-    yeni.scrollIntoView({ behavior: ysAzHareket() ? 'auto' : 'smooth', block: 'center' });
-    setTimeout(() => {
-      let kilit = yeni.querySelector('.ys-kilit');
-      if (kilit) kilit.classList.add('kiriliyor');
-      setTimeout(() => {
-        if (kilit) kilit.remove();
-        yeni.classList.remove('kilitli'); yeni.classList.add('aktif', 'ys-yeni-acildi');
-        setTimeout(() => yeni.classList.remove('ys-yeni-acildi'), 800);
-        ysPatlat(yeni, ['✨','⭐','💫','🎉'], 16);
-        yoSes('dogru');
-        if (onceki) ysPapaganUcur(onceki, yeni);
-      }, 650);
-    }, 550);
-  };
-  if (a.yeniSeviye) {
-    ysSeviyeKutla(a.yeniSeviye, () => {
-      let bant = document.getElementById('ysBant' + a.yeniSeviye);
-      if (bant) { bant.classList.remove('kilitli'); let k = bant.querySelector('.ys-bant-kilit'); if (k) k.remove(); bant.classList.add('ys-bant-acildi'); }
-      ac();
-    });
-  } else ac();
-}
-function ysPapaganUcur(a, b) {
-  if (ysAzHareket() || !document.body.animate) return;
-  let p1 = ysMerkez(a), p2 = ysMerkez(b);
-  let k = document.createElement('div'); k.className = 'ys-ucan-kus'; k.innerText = '🦜';
-  document.body.appendChild(k);
-  let ortaX = (p1.x + p2.x) / 2, ortaY = Math.min(p1.y, p2.y) - 90;
-  k.animate([
-    { transform: `translate(${p1.x - 22}px, ${p1.y - 22}px) scale(.8) rotate(0deg)` },
-    { transform: `translate(${ortaX - 22}px, ${ortaY - 22}px) scale(1.5) rotate(-12deg)` },
-    { transform: `translate(${p2.x - 22}px, ${p2.y - 52}px) scale(1) rotate(0deg)` }
-  ], { duration: 1000, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }).onfinish = () => k.remove();
-}
-function ysSeviyeKutla(kod, sonra) {
-  let sv = ysSeviye(kod);
-  let k = document.createElement('div'); k.className = 'ys-kutlama'; k.style.setProperty('--sr', sv.renk);
-  k.innerHTML = `<div class="ys-isinlar"></div><div class="ys-kutlama-icerik">
-    <div class="ys-kutlama-ikon">${sv.ikon}</div><div class="ys-kutlama-ust">YENİ SEVİYE AÇILDI</div>
-    <div class="ys-kutlama-baslik">${sv.kod} · ${sv.ad}</div><div class="ys-kutlama-alt">Yeni sohbetler seni bekliyor!</div>
-    <button class="yo-btn ys-kutlama-btn">Hadi başlayalım! 🚀</button></div>`;
-  document.body.appendChild(k);
-  if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('kombo', 15);
-  ysKonfetiYagmuru(40);
-  let kapandi = false;
-  let kapat = () => { if (kapandi) return; kapandi = true; k.classList.add('kapaniyor'); setTimeout(() => { k.remove(); if (sonra) sonra(); }, 400); };
-  k.querySelector('button').onclick = kapat;
-  setTimeout(() => { let b = k.querySelector('button'); if (b) b.focus(); }, 900);
-}
-
-/* ---- Portal geçişi ---- */
-function ysPortal(kaynak, renk, sonra) {
-  if (ysAzHareket() || !kaynak || !document.body.animate) { sonra(); return; }
-  let m = ysMerkez(kaynak);
-  let p = document.createElement('div'); p.className = 'ys-portal'; p.style.setProperty('--sr', renk);
-  p.innerHTML = '<div class="ys-portal-kus">🦜</div>';
-  document.body.appendChild(p);
-  let an = p.animate([{ clipPath: `circle(0px at ${m.x}px ${m.y}px)` }, { clipPath: `circle(150vmax at ${m.x}px ${m.y}px)` }],
-    { duration: 650, easing: 'cubic-bezier(.6,0,.2,1)', fill: 'forwards' });
-  an.onfinish = () => {
-    sonra();
-    setTimeout(() => { p.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, fill: 'forwards' }).onfinish = () => p.remove(); }, 300);
-  };
-}
-
-/* ---- Sohbet ekranı ---- */
-function sohbetBasla(i, kaynak) {
-  if (!yoHazirMi()) return;
-  if (!ysAcikMi(i)) { if (kaynak) ysKilitliTik(kaynak); return; }
+function sohbetBasla(i) {
   if (!yoEnerjiKontrol()) return;
-  let d = YO_SOHBET[i], sv = ysSeviye(d.sv);
-  sohbetMikDur();
-  sh = { idx: i, s: d, i: 0, d: 0, y: 0, ilk: 0, deneme: 0, bas: Date.now(), kilit: true };
-  let o = sh;
-  ysPortal(kaynak, sv.renk, () => {
-    if (sh !== o) return;
-    let p = ysPanel();
-    p.innerHTML = `<div class="yo-sohbet ys-sohbet" style="--sr:${sv.renk}">
-      <div class="yo-s-ust"><button class="yo-s-geri" onclick="sohbetListeCiz()">← Harita</button><b>${d.ikon} ${d.ad}</b><span class="ys-rozet">${d.sv}</span></div>
-      <div class="ys-adimlar" id="ysAdimlar">${d.satirlar.map(() => '<i></i>').join('')}</div>
-      <div class="yo-s-akis" id="yoSAkis"></div>
-      <div class="yo-s-ipucu" id="yoSIpucu"></div>
-      <div class="yo-s-giris"><button class="yo-s-mik" id="yoSMik" onclick="sohbetMik()" aria-label="Mikrofonla cevap ver">🎤</button>
-        <input id="yoSInput" placeholder="Cevabını yaz..." autocomplete="off" onkeydown="if(event.key==='Enter')sohbetGonder()">
-        <button onclick="sohbetGonder()" aria-label="Gönder">➤</button></div></div>`;
-    p.scrollIntoView({ block: 'start' });
-    sohbetPapaganSoyle();
-  });
-}
-function ysAdimGuncelle() {
-  let a = document.getElementById('ysAdimlar'); if (!a || !sh) return;
-  [...a.children].forEach((e, k) => { e.className = k < sh.i ? 'tamam' : (k === sh.i ? 'simdi' : ''); });
+  sh = { idx:i, s:YO_SOHBET[i], i:0, d:0, y:0, deneme:0, bas:Date.now(), kilit:false };
+  document.getElementById('kp-panel-sohbet').innerHTML = `<div class="yo-sohbet">
+    <div class="yo-s-ust"><button class="yo-s-geri" onclick="sohbetListeCiz()">← Diyaloglar</button><b>${sh.s.ad}</b></div>
+    <div class="yo-s-akis" id="yoSAkis"></div>
+    <div class="yo-s-ipucu" id="yoSIpucu"></div>
+    <div class="yo-s-giris"><button class="yo-s-mik" id="yoSMik" onclick="sohbetMik()" aria-label="Mikrofonla cevap ver">🎤</button>
+      <input id="yoSInput" placeholder="Cevabını yaz..." autocomplete="off" onkeydown="if(event.key==='Enter')sohbetGonder()">
+      <button onclick="sohbetGonder()" aria-label="Gönder">➤</button></div></div>`;
+  sohbetPapaganSoyle();
 }
 function sohbetBalon(tur, html) {
-  let a = document.getElementById('yoSAkis'); if (!a) return null;
+  let a = document.getElementById('yoSAkis'); if (!a) return;
   a.insertAdjacentHTML('beforeend', `<div class="yo-s-balon ${tur}">${html}</div>`);
   a.scrollTop = a.scrollHeight;
-  return a.lastElementChild;
 }
 function sohbetPapaganSoyle() {
-  let o = sh; if (!o) return;
-  let s = o.s.satirlar[o.i];
-  ysAdimGuncelle();
-  o.kilit = true;
-  let yaziyor = sohbetBalon('p ys-yaziyor', '<i></i><i></i><i></i>');
-  document.getElementById('yoSIpucu').innerHTML = '';
-  setTimeout(() => {
-    if (sh !== o) return;
-    if (yaziyor) yaziyor.remove();
-    sohbetBalon('p', '🦜 ' + yoGuvenliMetin(s.p));
-    yoSoyle(s.p, 0.9);
-    document.getElementById('yoSIpucu').innerHTML = `💡 ${yoGuvenliMetin(s.tr)} Örnek: <i>${yoGuvenliMetin(s.ornek)}</i>`;
-    o.kilit = false;
-  }, ysAzHareket() ? 100 : 950);
+  let s = sh.s.satirlar[sh.i];
+  sohbetBalon('p', '🦜 ' + yoGuvenliMetin(s.p));
+  yoSoyle(s.p, 0.9);
+  document.getElementById('yoSIpucu').innerHTML = `💡 ${yoGuvenliMetin(s.tr)} Örnek: <i>${yoGuvenliMetin(s.ornek)}</i>`;
+  sh.kilit = false;
 }
 function sohbetGonder(metin) {
   if (!sh || sh.kilit) return;
@@ -15556,28 +14562,17 @@ function sohbetGonder(metin) {
   metin = String(metin || (inp ? inp.value : '')).trim();
   if (!metin) return;
   if (inp) inp.value = '';
-  let benBalon = sohbetBalon('ben', yoGuvenliMetin(metin));
+  sohbetBalon('ben', yoGuvenliMetin(metin));
   let s = sh.s.satirlar[sh.i];
   let norm = typeof kpNormallestir === 'function' ? kpNormallestir : (x => String(x).toLowerCase());
-  let n = norm(metin), kelimeSay = n.split(' ').filter(Boolean).length;
-  let tutar = s.k.some(k => n.includes(norm(k)));
-  if (tutar && s.min && kelimeSay < s.min) {
-    sohbetBalon('hata', `✍️ Güzel başlangıç! Biraz daha uzun anlat (en az ${s.min} kelime).`);
-    return;
-  }
-  if (tutar) {
-    sh.d++; if (sh.deneme === 0) sh.ilk++;
-    sh.kilit = true;
-    if (benBalon) benBalon.classList.add('parla');
-    sohbetBalon('ok', sh.deneme === 0 ? '✅ Harika cevap!' : '✅ Bu sefer oldu!');
-    ysPatlat(benBalon, ['✨','⭐','🎉'], 10);
-    yoSes('dogru');
-    sohbetIleri(1300);
+  let n = norm(metin);
+  if (s.k.some(k => n.includes(norm(k)))) {
+    sh.d++; sh.kilit = true; sohbetBalon('ok', '✅ Harika cevap!'); yoSes('dogru');
+    sohbetIleri(1200);
   } else {
     sh.deneme++; yoSes('yanlis');
-    if (benBalon) benBalon.classList.add('ys-salla');
     if (sh.deneme < 2) sohbetBalon('hata', '🤔 Tam olmadı, ipucuna bakıp tekrar dene.');
-    else { sh.y++; sh.kilit = true; sohbetBalon('hata', `Şöyle diyebilirdin: "${yoGuvenliMetin(s.ornek)}"`); sohbetIleri(2400); }
+    else { sh.y++; sh.kilit = true; sohbetBalon('hata', `Şöyle diyebilirdin: "${yoGuvenliMetin(s.ornek)}"`); sohbetIleri(2300); }
   }
 }
 function sohbetIleri(ms) {
@@ -15585,43 +14580,12 @@ function sohbetIleri(ms) {
   let o = sh;
   setTimeout(() => { if (sh !== o) return; sh.i++; if (sh.i >= sh.s.satirlar.length) sohbetBitir(); else sohbetPapaganSoyle(); }, ms);
 }
-
-/* ---- Bitiş sahnesi ---- */
 function sohbetBitir() {
   sohbetMikDur();
-  let o = sh, t = o.s.satirlar.length;
-  let gecti = o.d / t >= 0.6;
-  let yildiz = !gecti ? 0 : (o.d === t ? (o.ilk === t ? 3 : 2) : 1);
-  let eski = ysYildiz(o.s.id), ilkKezGecti = gecti && eski < 1;
-  if (yo) { yo.sohbet = yo.sohbet || {}; if (yildiz > eski) yo.sohbet[o.s.id] = yildiz; yoKaydet(); }
-  let xp = o.d * 10;
-  if (o.d > 0) yoXpEkle(xp, o.d);
-  let acilis = null;
-  if (ilkKezGecti && o.idx + 1 < YO_SOHBET.length) {
-    let sonraki = YO_SOHBET[o.idx + 1];
-    acilis = { yeniIdx: o.idx + 1, oncekiIdx: o.idx, yeniSeviye: sonraki.sv !== o.s.sv ? sonraki.sv : null };
-  }
-  let baslik = !gecti ? 'Biraz daha pratik!' : (yildiz === 3 ? 'Mükemmel sohbet!' : 'Harika sohbet!');
-  let p = ysPanel();
-  p.innerHTML = `<div class="yo-sohbet ys-final" style="--sr:${ysSeviye(o.s.sv).renk}">
-    <div class="ys-final-kus${gecti ? ' mutlu' : ''}">🦜</div>
-    <div class="ys-final-baslik">${baslik}</div>
-    <div class="ys-final-alt">${o.s.ikon} ${o.s.ad} · ${o.d}/${t} doğru</div>
-    <div class="ys-final-yildiz">${[1, 2, 3].map(n => `<span class="${n <= yildiz ? 'dolu' : ''}" style="animation-delay:${0.25 + n * 0.35}s">★</span>`).join('')}</div>
-    <div class="ys-final-xp">+<b id="ysXp">0</b> XP · +${o.d} 🪙</div>
-    ${gecti ? (acilis ? '<div class="ys-final-not">🔓 Yeni bir sohbetin kilidi açıldı!</div>' : '') : '<div class="ys-final-not hata">Kilidi açmak için en az %60 doğru gerekiyor.</div>'}
-    <button class="yo-btn" id="ysHaritaBtn">🗺️ Haritaya dön</button>
-    <button class="yo-btn ikincil" id="ysTekrarBtn">🔁 Tekrar dene</button></div>`;
-  p.scrollIntoView({ block: 'start' });
-  let xpEl = document.getElementById('ysXp'), sayi = 0, adim = Math.max(1, Math.ceil(xp / 20));
-  let say = setInterval(() => { sayi = Math.min(xp, sayi + adim); if (xpEl) xpEl.innerText = sayi; if (sayi >= xp) clearInterval(say); }, 45);
-  if (gecti) { setTimeout(() => ysKonfetiYagmuru(yildiz * 12), 600); if (typeof genelSesEfektiCal === 'function') setTimeout(() => genelSesEfektiCal('kombo', 10), 400); }
-  document.getElementById('ysHaritaBtn').onclick = () => sohbetListeCiz(acilis);
-  document.getElementById('ysTekrarBtn').onclick = (e) => sohbetBasla(o.idx, e.currentTarget);
-  sh = null;
+  let o = sh;
+  yoSonuc({ oyunAdi:'💬 Sohbet: ' + o.s.ad, dogru:o.d, yanlis:o.y, puan:o.d * 10, sureSaniye:Math.round((Date.now() - o.bas) / 1000), siralamaYok:true,
+    devamFn: sohbetListeCiz, tekrarFn: () => sohbetBasla(o.idx) });
 }
-
-/* ---- Mikrofon ---- */
 function sohbetMik() {
   let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { yoToast('Tarayıcın mikrofonu desteklemiyor, yazarak cevap ver.'); return; }
@@ -15800,6 +14764,158 @@ setInterval(() => {
 }, 1000);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('yoModal').classList.contains('acik')) yoModalKapat(); });
 </script>
+
+<!-- =====================================================================
+     DÜZELTME 1 — İkiz Ayna + Asmaca/Kelime Bul doğruluk oranı
+     "aksam-eklenecek-blok.html" bloğunun ALTINA, </body>'nin hemen ÜSTÜNE yapıştır.
+     Buradaki fonksiyonlar, sayfadaki aynı isimli eski fonksiyonların yerine geçer;
+     eski kodu silmene gerek yok.
+     ===================================================================== -->
+<script>
+/* ---------- 1) İKİZ AYNA BÜYÜSÜ (baştan, sağlam sürüm) ---------- */
+function baHafizaGoster(k) {
+    let panel = document.getElementById('baHafizaPanel');
+    if (panel) panel.style.display = 'block';
+    let dogruEn = String(k.ingilizce || k.en || '').trim();
+    let dogruTr = String(k.turkce || k.tr || '').trim();
+    let adaylar = (window.masterKelimeHavuzu || []).filter(x => {
+        let en = String(x.ingilizce || x.en || '').trim(), tr = String(x.turkce || x.tr || '').trim();
+        return en && tr && en.toLowerCase() !== dogruEn.toLowerCase() && tr.toLowerCase() !== dogruTr.toLowerCase();
+    });
+    let yanlis = adaylar[Math.floor(Math.random() * adaylar.length)] || { ingilizce: 'cat', turkce: 'kedi' };
+    let kartlar = [
+        { metin: dogruEn, pair: 'A' },
+        { metin: dogruTr, pair: 'A' },
+        { metin: String(yanlis.ingilizce || yanlis.en), pair: 'B' },
+        { metin: String(yanlis.turkce || yanlis.tr), pair: 'B' }
+    ].sort(() => Math.random() - 0.5);
+
+    baAktifSoru._kartlar = kartlar;
+    baAktifSoru._acikIndex = [];
+    baAktifSoru._eslesen = [];
+    baAktifSoru._kalanHak = 1;
+    baAktifSoru._kilit = false;
+
+    let alan = document.getElementById('baHafizaGrid');
+    alan.innerHTML = '';
+    kartlar.forEach((kart, i) => {
+        let btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'ba-hafiza-kart';
+        btn.innerText = '❓';
+        btn.onclick = () => baHafizaTikla(i);
+        alan.appendChild(btn);
+    });
+
+    let mesaj = document.getElementById('baHafizaMesaj');
+    if (!mesaj) { mesaj = document.createElement('div'); mesaj.id = 'baHafizaMesaj'; alan.insertAdjacentElement('afterend', mesaj); }
+    mesaj.style.color = '#0a7f95';
+    mesaj.innerText = '🪞 "' + dogruTr + '" kelimesinin İngilizce ikizini bul! Kartları çevir.';
+}
+
+function baHafizaTikla(i) {
+    let s = baAktifSoru;
+    if (!s || !s._kartlar) return;
+    s._acikIndex = s._acikIndex || [];
+    s._eslesen = s._eslesen || [];
+    if (s._kalanHak === undefined) s._kalanHak = 1;
+    let kartlar = s._kartlar;
+    if (s._kilit || s._acikIndex.includes(i) || s._eslesen.includes(i)) return;
+
+    let btns = document.querySelectorAll('#baHafizaGrid .ba-hafiza-kart');
+    let mesaj = document.getElementById('baHafizaMesaj');
+    btns[i].innerText = kartlar[i].metin;
+    btns[i].classList.add('acik');
+    s._acikIndex.push(i);
+    if (s._acikIndex.length < 2) return;
+
+    s._kilit = true;
+    let a = s._acikIndex[0], b = s._acikIndex[1];
+    setTimeout(() => {
+        if (kartlar[a].pair === kartlar[b].pair) {
+            s._eslesen.push(a, b);
+            btns[a].classList.add('eslesti'); btns[b].classList.add('eslesti');
+            s._acikIndex = [];
+            if (kartlar[a].pair === 'A') {
+                if (mesaj) { mesaj.style.color = '#0a8f62'; mesaj.innerText = '🎉 İkizleri buldun!'; }
+                baDogruIsle();
+                setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 900);
+            } else {
+                if (mesaj) { mesaj.style.color = '#0a7f95'; mesaj.innerText = '👍 Bu çift de doğru eşleşti, şimdi asıl ikizleri bul!'; }
+                s._kilit = false;
+            }
+            return;
+        }
+        if (s._kalanHak > 0) {
+            s._kalanHak--;
+            if (mesaj) { mesaj.style.color = '#dc2626'; mesaj.innerText = '😕 Eşleşmedi! 1 hakkın daha var.'; }
+            setTimeout(() => {
+                [a, b].forEach(idx => { btns[idx].innerText = '❓'; btns[idx].classList.remove('acik'); });
+                s._acikIndex = [];
+                s._kilit = false;
+            }, 700);
+            return;
+        }
+        if (mesaj) { mesaj.style.color = '#dc2626'; mesaj.innerText = '😕 Doğru ikizler bunlardı.'; }
+        baYanlisIsle();
+        kartlar.forEach((kart, idx) => { if (kart.pair === 'A') { btns[idx].innerText = kart.metin; btns[idx].classList.add('acik', 'eslesti'); } });
+        setTimeout(() => { baSoruIndex++; baSoruGoster(); }, 1300);
+    }, 500);
+}
+
+/* ---------- 2) ASMACA VE KELİME BUL: güvenilir doğru/yanlış sayımı ---------- */
+(function () {
+    let sayac = { asmaca: { d: 0, y: 0 }, kelimebul: { d: 0, y: 0 } };
+
+    function sar(ad, once, sonra) {
+        let org = window[ad];
+        if (typeof org !== 'function' || org._dz1) return;
+        let f = function () {
+            let c = null;
+            try { if (once) c = once.apply(this, arguments); } catch (e) {}
+            let r = org.apply(this, arguments);
+            try { if (sonra) sonra(c); } catch (e) {}
+            return r;
+        };
+        f._dz1 = true;
+        window[ad] = f;
+    }
+
+    // Adam Asmaca
+    let asmacaHarfler = () => String(asmacaAktifKelime || '').split('').filter(c => /[A-Z]/.test(c));
+    let asmacaTamamMi = () => asmacaHarfler().every(c => asmacaTahminEdilenHarfler.includes(c));
+    sar('asmacaOyunuBaslat', () => { sayac.asmaca = { d: 0, y: 0 }; });
+    sar('asmacaHarfSec',
+        () => ({ tamam: asmacaTamamMi(), y: asmacaYanlisSayisi }),
+        c => {
+            if (!c) return;
+            if (!c.tamam && asmacaTamamMi()) sayac.asmaca.d++;
+            if (c.y < 6 && asmacaYanlisSayisi >= 6) sayac.asmaca.y++;
+        });
+
+    // Kelime Bul
+    sar('kelimebulOyunuBaslat', () => { sayac.kelimebul = { d: 0, y: 0 }; });
+    sar('kelimebulTahminGonder',
+        () => ({ deneme: kelimebulDenemeSayisi, tahmin: String(document.getElementById('kbTahminInput').value || '').trim().toUpperCase(), hedef: kelimebulHedef }),
+        c => {
+            if (!c || kelimebulDenemeSayisi === c.deneme) return; // geçersiz tahmin (uzunluk uyarısı)
+            if (c.tahmin === c.hedef) sayac.kelimebul.d++;
+            else if (kelimebulDenemeSayisi >= 6) sayac.kelimebul.y++;
+        });
+
+    // Sonuç ekranına doğru sayıları gönder
+    let orgSonuc = window.genelSonucEkraniGoster;
+    if (typeof orgSonuc === 'function' && !orgSonuc._dz1) {
+        let yeni = function (o) {
+            if (o && sayac[o.oyunKey]) { o.dogru = sayac[o.oyunKey].d; o.yanlis = sayac[o.oyunKey].y; }
+            return orgSonuc.apply(this, arguments);
+        };
+        yeni._dz1 = true;
+        window.genelSonucEkraniGoster = yeni;
+    }
+})();
+</script>
+
         
 </body>
 </html>
