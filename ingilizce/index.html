@@ -4361,7 +4361,7 @@ function raporlarimKapat() {
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbxJpMnjh-JLJmuSdqwFu07TcrRK7X86Qz_b7UO7z1DsvS7uM1DINOycE603QvMaoyypIQ/exec";
+                const apiURL = "https://script.google.com/macros/s/AKfycbxU4ie9noy6Mercw6Ck4W9AdDCTCjgYgSmT8n2nVzz1EY1ck-weXQ59AYdAfatxgAyspQ/exec";
                 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
@@ -8924,25 +8924,32 @@ function raporlarimKapat() {
                         let arkaPlanVeriYenilemePolling = null;
         
                         function arkaPlanVeriYenilemeBaslat() {
-                    if (arkaPlanVeriYenilemePolling) clearInterval(arkaPlanVeriYenilemePolling);
-                    arkaPlanVeriYenilemePolling = setInterval(async () => {
-                        if (!aktifOgrenciAdi) return;
-                        try {
-                            let res = await fetch(apiURL);
-                            let yeniVeri = await res.json();
-                            globalDataCache = yeniVeri;
-                            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
-                            if (user) {
-                                veriArayuzeIsle(user);
-                                console.log("Arka plan verisi güncellendi:", new Date().toLocaleTimeString());
-                            } else {
-                                console.warn("Arka plan yenileme: kullanıcı bulunamadı ->", aktifOgrenciAdi);
-                            }
-                                       } catch (err) {
-                            console.warn("Arka plan veri yenileme geçici olarak başarısız oldu.");
-                        }
-                    }, 10000);
-                }
+    if (arkaPlanVeriYenilemePolling) clearInterval(arkaPlanVeriYenilemePolling);
+    let calisiyor = false, hataSayisi = 0, sonrakiDeneme = 0;
+    arkaPlanVeriYenilemePolling = setInterval(async () => {
+        if (!aktifOgrenciAdi || calisiyor || document.hidden || Date.now() < sonrakiDeneme) return;
+        calisiyor = true;
+        let kontrol = new AbortController();
+        let zamanAsimi = setTimeout(() => kontrol.abort(), 20000);
+        try {
+            let res = await fetch(apiURL, { signal: kontrol.signal, cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            let yeniVeri = await res.json();
+            if (!Array.isArray(yeniVeri)) throw new Error('Beklenmeyen yanıt');
+            globalDataCache = yeniVeri;
+            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
+            if (user) veriArayuzeIsle(user);
+            hataSayisi = 0;
+        } catch (err) {
+            hataSayisi++;
+            sonrakiDeneme = Date.now() + Math.min(120000, 15000 * hataSayisi);
+            if (hataSayisi >= 3) console.warn('Arka plan yenileme ' + hataSayisi + ' kez üst üste başarısız:', err && err.message);
+        } finally {
+            clearTimeout(zamanAsimi);
+            calisiyor = false;
+        }
+    }, 30000);
+}
         
                       function baslatSayac() {
                     guncelleArayuz();
@@ -16330,7 +16337,7 @@ setInterval(async () => {
         <div class="ust"><div class="gosterge"><div class="yb-ic">${enerjiHtml(d)}</div></div>
         <div><h3>⚡ Enerjin</h3><div class="buyuk-sayi" style="color:${r === '#ffd166' ? '#b7791f' : r}">${d.e !== undefined ? d.e : '--'} / ${d.m || '--'}</div></div></div>
         <div class="bar"><i style="width:${Math.round(d.p * 100)}%; background:${r}"></i></div>
-        <div class="not">Her saat biraz dolar, Cumartesi 08:00'de tamamen dolar. Günlük girişte +2, video ve etkinlikte +1 enerji kazanırsın.</div>
+        <div class="not">Her saat +2 enerji dolar (en fazla ${d.m || 20}). 3 gün üst üste girip 3 seviye geçersen ya da bir mini oyunda günün ilk 10'una girersen, o gün limitin 25 olur.</div>
         <div class="altin-satir"><span>🪙 Altının</span><span>${d.a}</span></div>
         <div class="not">Her doğru cevap 1 altın kazandırır.</div>
         <button class="btn" id="ybMagazaBtn">🛍️ Mağazaya git</button></div>
@@ -16829,6 +16836,148 @@ function avatarSVG(s, stil, px, cins) {
   }, 1000);
 })();
 </script>    
+
+                <!-- ===================== GRUP 3: ENERJİ V2 + LİG ÖDÜLLERİ ===================== -->
+<style>
+.od-perde { position:fixed; inset:0; z-index:100000014; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(20,12,45,.6); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); animation:odSol .3s ease; font-family:'Nunito',sans-serif; }
+.od-kart { position:relative; width:min(92vw,380px); border-radius:28px; padding:26px 20px 20px; text-align:center; color:#fff; overflow:hidden;
+  background:radial-gradient(circle at 50% 0%,rgba(255,209,102,.4),transparent 60%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:odGel .55s cubic-bezier(.2,.9,.3,1.4) both; }
+.od-isin { position:absolute; left:50%; top:62px; width:340px; height:340px; margin:-170px 0 0 -170px; background:repeating-conic-gradient(rgba(255,209,102,.16) 0 12deg, transparent 12deg 30deg); border-radius:50%; animation:odDon 14s linear infinite; pointer-events:none; }
+.od-ikon { position:relative; font-size:64px; line-height:1; animation:odZipla 1.4s ease-in-out infinite; filter:drop-shadow(0 8px 16px rgba(0,0,0,.35)); }
+.od-baslik { position:relative; font:700 22px 'Fredoka',sans-serif; margin-top:10px; }
+.od-alt { position:relative; font-size:13px; font-weight:700; color:#d8cbff; margin-top:6px; line-height:1.5; }
+.od-cipler { position:relative; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:16px; }
+.od-cip { padding:8px 13px; border-radius:14px; font-weight:900; font-size:15px; background:rgba(255,255,255,.1); border:1.5px solid rgba(255,255,255,.18); animation:odCip .5s cubic-bezier(.2,.9,.3,1.6) both; animation-delay:var(--g); }
+.od-cip.en { color:#86efac; } .od-cip.xp { color:#c4b5fd; } .od-cip.al { color:#fde68a; }
+.od-btn { position:relative; display:block; width:100%; margin-top:18px; border:none; border-radius:16px; padding:13px; background:linear-gradient(120deg,#ffd166,#f59e0b); color:#5a3a00; font:900 15px 'Nunito',sans-serif; cursor:pointer; box-shadow:0 8px 20px rgba(245,158,11,.35); }
+.od-btn:focus-visible { outline:3px solid #fff; outline-offset:2px; }
+.od-konfeti { position:fixed; z-index:100000015; top:-20px; pointer-events:none; font-size:18px; animation:odDus linear forwards; }
+@keyframes odSol { from { opacity:0; } }
+@keyframes odGel { from { opacity:0; transform:scale(.7) translateY(30px); } }
+@keyframes odDon { to { transform:rotate(360deg); } }
+@keyframes odZipla { 50% { transform:translateY(-8px) scale(1.05); } }
+@keyframes odCip { from { opacity:0; transform:scale(.3); } }
+@keyframes odDus { to { transform:translateY(110vh) rotate(540deg); } }
+@media (prefers-reduced-motion: reduce) { .od-perde *, .od-perde, .od-konfeti { animation:none !important; } .od-konfeti { display:none; } }
+</style>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const yoVar = () => typeof yo !== 'undefined' && yo;
+  function girisli() {
+    let p = $('panel-alani');
+    return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci));
+  }
+  function oyunda() {
+    let secici = ['.game-modal-overlay', '.seviye-harita-overlay', '.kart-oyun-overlay', '.pomodoro-overlay', '#genelSonucOverlay', '#yoModal', '.duy3-overlay', '.bd-perde', '.ka-perde', '.od-perde', '.yb-perde.acik'];
+    for (let s of secici) for (let el of document.querySelectorAll(s)) if (getComputedStyle(el).display !== 'none') return true;
+    let bo = $('baOyunEkrani'), ko = $('kpKelimeOyunEkrani');
+    if ($('tab-buyuakademisi') && $('tab-buyuakademisi').classList.contains('active') && bo && bo.style.display !== 'none') return true;
+    if ($('tab-konusmapratigi') && $('tab-konusmapratigi').classList.contains('active') && ko && ko.style.display !== 'none') return true;
+    return false;
+  }
+  window.odulOyunda = oyunda;
+
+  /* ---------- Genel ödül kartı ---------- */
+  let odulKuyruk = [];
+  window.odulGoster = function (o) { odulKuyruk.push(o); };
+  function odulCiz(o) {
+    let p = document.createElement('div');
+    p.className = 'od-perde';
+    p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', o.baslik);
+    let cip = [];
+    if (o.enerji) cip.push(`<span class="od-cip en" style="--g:.35s">+${o.enerji} ⚡</span>`);
+    if (o.xp) cip.push(`<span class="od-cip xp" style="--g:.47s">+${o.xp} XP</span>`);
+    if (o.altin) cip.push(`<span class="od-cip al" style="--g:.59s">+${o.altin} 🪙</span>`);
+    p.innerHTML = `<div class="od-kart"><div class="od-isin"></div><div class="od-ikon">${o.ikon || '🏆'}</div>
+      <div class="od-baslik">${o.baslik}</div>${o.alt ? `<div class="od-alt">${o.alt}</div>` : ''}
+      <div class="od-cipler">${cip.join('')}</div><button class="od-btn">${o.btn || 'Süper! 🎉'}</button></div>`;
+    document.body.appendChild(p);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      for (let i = 0; i < 26; i++) {
+        let k = document.createElement('span'); k.className = 'od-konfeti';
+        k.innerText = ['🎉', '✨', '⭐', '🪙', '⚡'][i % 5];
+        k.style.left = Math.random() * 100 + 'vw';
+        k.style.animationDuration = (1.8 + Math.random() * 1.6) + 's';
+        k.style.animationDelay = (Math.random() * .5) + 's';
+        document.body.appendChild(k); setTimeout(() => k.remove(), 4200);
+      }
+    }
+    let kapat = () => p.remove();
+    p.querySelector('.od-btn').onclick = kapat;
+    setTimeout(() => p.querySelector('.od-btn').focus({ preventScroll: true }), 400);
+  }
+  setInterval(() => { if (odulKuyruk.length && girisli() && !oyunda()) odulCiz(odulKuyruk.shift()); }, 800);
+
+  /* ---------- Hediye enerji (tavanı aşabilir) ---------- */
+  window.enerjiHediye = async function (miktar) {
+    if (!miktar || !girisli()) return;
+    try {
+      let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: aktifOgrenciAdi, fark: miktar, hediye: true }) });
+      let d = await r.json();
+      if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
+      if (typeof genelEnerjiDegisimGoster === 'function') genelEnerjiDegisimGoster(miktar);
+    } catch (e) {}
+  };
+
+  /* ---------- Lig ve sıra ödülleri ---------- */
+  const LIG_DEGER = { yerel: 0, super: 1, sampiyon: 2 };
+  const GUNLUK_SIRA_ODUL_TAVANI = 5;
+  let ligKontrolEdiliyor = false;
+  async function ligOdulKontrol() {
+    if (ligKontrolEdiliyor || !girisli() || !yoVar() || oyunda()) return;
+    if (typeof maTumGetir !== 'function' || typeof maLigSiralama !== 'function') return;
+    ligKontrolEdiliyor = true;
+    try {
+      await maTumGetir();
+      maLigOnbellek = null;
+      let ben = maLigSiralama().liste.find(x => x.benMi);
+      if (!ben) return;
+      let hafta = yoHaftaKodu(), bugun = yoBugun(), t = yo.ligTakip;
+      if (!t || t.hafta !== hafta) {
+        yo.ligTakip = { hafta, enIyiSira: ben.sira, enIyiLig: LIG_DEGER[ben.kod], gun: bugun, gunOdul: 0 };
+        yoKaydet();
+        return;
+      }
+      if (t.gun !== bugun) { t.gun = bugun; t.gunOdul = 0; }
+      let enerji = 0, xp = 0, altin = 0, satirlar = [], ligAtladi = false;
+      if (LIG_DEGER[ben.kod] > t.enIyiLig) {
+        let fark = LIG_DEGER[ben.kod] - t.enIyiLig;
+        enerji += 5 * fark; xp += 10 * fark; altin += 5 * fark;
+        t.enIyiLig = LIG_DEGER[ben.kod]; ligAtladi = true;
+      }
+      if (ben.sira < t.enIyiSira) {
+        let adim = Math.min(t.enIyiSira - ben.sira, Math.max(0, GUNLUK_SIRA_ODUL_TAVANI - t.gunOdul));
+        t.enIyiSira = ben.sira;
+        if (adim > 0) { t.gunOdul += adim; enerji += 2 * adim; xp += 5 * adim; satirlar.push(`${adim} sıra yükseldin, artık ${ben.sira}. sıradasın!`); }
+      }
+      yoKaydet();
+      if (!enerji && !xp) return;
+      if (xp || altin) yoXpEkle(xp, altin);
+      enerjiHediye(enerji);
+      let L = MA_LIGLER[ben.kod];
+      odulGoster(ligAtladi
+        ? { ikon: L.ikon, baslik: `${L.yon} yükseldin!`, alt: satirlar.join(' ') || 'Harika gidiyorsun, bu hafta yerini koru!', enerji, xp, altin }
+        : { ikon: '📈', baslik: 'Sıralamada yükseldin!', alt: satirlar.join(' '), enerji, xp, altin });
+    } catch (e) {
+    } finally { ligKontrolEdiliyor = false; }
+  }
+  setInterval(ligOdulKontrol, 60000);
+  setTimeout(ligOdulKontrol, 15000);
+
+  /* ---------- Bugün limit 25 oldu ---------- */
+  let boostGosterildi = '';
+  setInterval(() => {
+    if (!girisli() || !yoVar()) return;
+    if (window.genelEnerjiMax === 25 && boostGosterildi !== yoBugun() && localStorage.getItem('ing_boost_gun') !== yoBugun()) {
+      boostGosterildi = yoBugun();
+      try { localStorage.setItem('ing_boost_gun', yoBugun()); } catch (e) {}
+      odulGoster({ ikon: '🔋', baslik: 'Enerji limitin bugün 25!', alt: 'Çok çalıştın! Bugün bataryan 20 yerine 25 enerji alabiliyor.', btn: 'Oynamaya git! 🚀' });
+    }
+  }, 3000);
+})();
+</script>
                 
         </body>
         </html>
