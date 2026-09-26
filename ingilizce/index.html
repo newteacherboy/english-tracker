@@ -1910,18 +1910,18 @@
         .az-gcard-badge { position:absolute; top:8px; left:10px; font-size:7.5px; font-weight:900; background:rgba(255,255,255,.28); padding:2px 7px; border-radius:8px; }
         .az-gcard.span2 { grid-column:1/-1; }
 
-                .mk-orb-katman { position: relative; height: 0; }
+                .mk-orb-katman { display: flex; gap: 16px; justify-content: center; padding: 4px 16px 16px; }
 .mk-orb {
-  position: absolute; z-index: 5; width: 58px; height: 58px; border-radius: 50%;
+  position: relative; z-index: 5; width: 58px; height: 58px; border-radius: 50%;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  cursor: pointer; border: none; color: #fff; font-size: 22px; opacity: .55;
+  cursor: pointer; border: none; color: #fff; font-size: 22px; opacity: .6;
   animation: mkOrbYuz 3.4s ease-in-out infinite;
   box-shadow: 0 6px 16px rgba(0,0,0,.18); transition: opacity .2s, transform .2s;
 }
-.mk-orb:hover { opacity: 1; transform: scale(1.08); }
+.mk-orb:hover { opacity: 1; }
 .mk-orb .mk-orb-sayi { font-size: 9px; font-weight: 900; margin-top: 1px; }
-.mk-orb.mk-buyu { background: linear-gradient(135deg,#a06bff,#7c3aed); top: 6px; right: 16px; }
-.mk-orb.mk-konusma { background: linear-gradient(135deg,#ff6b9d,#e11d48); top: 80px; right: 26px; animation-delay: 1.1s; }
+.mk-orb.mk-buyu { background: linear-gradient(135deg,#a06bff,#7c3aed); }
+.mk-orb.mk-konusma { background: linear-gradient(135deg,#ff6b9d,#e11d48); animation-delay: 1.1s; }
 @keyframes mkOrbYuz { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
                 
         </style>
@@ -2087,18 +2087,13 @@
     flex: none !important;
     flex-shrink: 0 !important;
   }
-  #tab-meduakis .akis-baslik,
-  #tab-meduakis .filtre,
-  #tab-meduakis .bolum {
+   #tab-meduakis .akis-baslik {
     max-width: 640px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
   }
-  #tab-meduakis .akis-kart {
-    max-width: 608px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 14px;
+  #tab-meduakis .ma-gir {
+    max-width: 640px;
+    margin: 0 auto;
   }
 }
                 
@@ -15263,7 +15258,7 @@ function maAkisHtml() {
     let ust = `<div class="filtre"><button class="${maFiltre === 'herkes' ? 'aktif' : ''}" onclick="maFiltre='herkes'; maCiz()">Tüm sınıf</button><button class="${maFiltre === 'takip' ? 'aktif' : ''}" onclick="maFiltre='takip'; maCiz()">Takip ettiklerim (${maTakip.size})</button></div>`;
     let liste = [...maSinifListeSon].filter(o => maFiltre === 'herkes' || maTakip.has(o.id)).sort((a, b) => b.xp - a.xp).slice(0, 10);
     if (!liste.length) return ust + '<div class="ma-bos">Henüz kimseyi takip etmiyorsun.<br>Keşfet\'ten sınıf arkadaşlarını bul.</div>';
-    return ust + liste.map((o, i) => {
+    return ust + mkOrbHtml() + liste.map((o, i) => {
         let id = 'akis-' + o.id, b = maBegeni.has(id), t = maTebrik.has(id);
         let ikon = o.xp >= 2000 ? '🏆' : (o.seviye !== '—' ? '📋' : '⭐');
         let metin = o.xp >= 2000 ? `Bu hafta ${o.xp} XP ile lig liderlerinden!` : (o.seviye !== '—' ? `Şu an ${o.seviye} seviyesinde çalışıyor.` : `Diji-Medu'da aktif çalışıyor.`);
@@ -15272,7 +15267,7 @@ function maAkisHtml() {
       <div class="akis-metin">${metin}</div>
       <div class="aksiyon"><button class="${b ? 'basili' : ''}" onclick="maBegen('${id}', this)">${b ? '❤️' : '🤍'} Beğen</button>
       <button class="${t ? 'basili' : ''}" onclick="maTebrikEt('${id}', this)">🎉 Tebrik et</button></div></div>`;
-    }).join('') + mkOrbHtml();
+    }).join('');
 }
 function maBegen(id, btn) {
     let hedef = id.replace(/^akis-/, '');
@@ -15297,10 +15292,10 @@ function maTebrikEt(id, btn) {
         podyum = sira.map((o, i) => o ? `<div class="podyum-kisi" onclick="maProfilAc('${o.id}')">${maAvatar(o)}<b>${guvenliMetin(o.ad)}</b><small>${o.xp} XP</small><div class="basamak" style="height:${yuk[i]}px;background:${renk[i]}">${no[i]}</div></div>` : '').join('');
     }
     let benSeviye = maSinifListeSon.filter(o => o.seviye === maBen().seviye && o.seviye !== '—');
-    return `<div class="bolum"><div class="bolum-baslik">Haftanın yıldızları</div><div class="podyum">${podyum || '<div class="ma-bos">Henüz sınıf verisi yok.</div>'}</div>
+    return `<div class="bolum">${mkOrbHtml()}<div class="bolum-baslik">Haftanın yıldızları</div><div class="podyum">${podyum || '<div class="ma-bos">Henüz sınıf verisi yok.</div>'}</div>
     ${benSeviye.length ? `<div class="bolum-baslik">Seninle aynı seviyede</div><div>${benSeviye.map(maKisiHtml).join('')}</div>` : ''}
     <input class="ara" placeholder="Sınıf arkadaşını ara" value="${guvenliMetin(maArama)}" oninput="maArama=this.value; document.getElementById('maKesfetListe').innerHTML = maKesfetListe()">
-    <div id="maKesfetListe">${maKesfetListe()}</div>${mkOrbHtml()}</div>`;
+    <div id="maKesfetListe">${maKesfetListe()}</div>`;
 }
 function maKisiHtml(o) {
     return `<div class="kisi" onclick="maProfilAc('${o.id}')">${maAvatar(o)}<div class="kisi-ad"><b>${guvenliMetin(o.ad)}</b><small>${o.lig} lig · ${o.xp} XP</small></div>
