@@ -1603,6 +1603,7 @@
     <button class="bn-item" data-ekran="tab-aktiviteler" onclick="aktivitelerTamEkranAc()"><span class="bn-icon">🎮</span><span class="bn-label">Aktivite</span></button>
   
     <button class="bn-item" data-ekran="tab-derscalis" onclick="dersCalisTamEkranAc()"><span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span></button>
+                           <button class="bn-item" data-ekran="tab-magaza" onclick="magazaAc()"><span class="bn-icon">🛍️</span><span class="bn-label">Mağaza</span></button>
 </div>
         
           
@@ -4360,7 +4361,7 @@ function raporlarimKapat() {
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbw5jsDUC0TtuCZyutbcSUQx6A5AmU13d4sSnvmTVTa1vRZrI9pmSn8zejBW9NMzmalcVw/exec";
+                const apiURL = "https://script.google.com/macros/s/AKfycbxJpMnjh-JLJmuSdqwFu07TcrRK7X86Qz_b7UO7z1DsvS7uM1DINOycE603QvMaoyypIQ/exec";
                 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
@@ -15470,7 +15471,7 @@ function sohbetMikDur() {
                <button data-s="akis" onclick="maSekmeSec('akis')">Akış</button>
              <button data-s="kesfet" onclick="maSekmeSec('kesfet')">Keşfet</button>
              <button data-s="vitrin" onclick="maSekmeSec('vitrin')">Vitrinim</button>
-    <button data-s="magaza" onclick="maSekmeSec('magaza')">Mağaza</button>
+    
   <button data-s="lig" onclick="maSekmeSec('lig')">Lig</button>
 
   
@@ -15657,7 +15658,7 @@ function maOzetGeriKoy() {
 }
 async function maCiz() {
     let no = ++maCizNo;
-    let siraMap = { akis:0, kesfet:1, vitrin:2, magaza:3, lig:4, profil:5 };
+      let siraMap = { akis:0, kesfet:1, vitrin:2, lig:3, profil:4 };
     let iz = document.getElementById('maSegmentIz');
     if (iz) iz.style.transform = `translateX(${(siraMap[maSekme] || 0) * 100}%)`;
     document.querySelectorAll('#maSegment button').forEach(b => b.classList.toggle('aktif', b.dataset.s === maSekme));
@@ -15778,7 +15779,8 @@ function maBegen(id, btn) {
     b ? maBegeni.add(id) : maBegeni.delete(id);
     btn.classList.toggle('basili', b); btn.innerHTML = `${b ? '❤️' : '🤍'} Beğen`; maTekrarOyna(btn, 'ma-pop');
     if (b) maPatlat(btn, ['❤️','💖','✨'], 9);
-    maOlayGonder(hedef, 'begeni');
+       maOlayGonder(hedef, 'begeni');
+    if (b && typeof maBildirimGonder === 'function') maBildirimGonder(hedef, 'begeni');
 }
 function maTebrikEt(id, btn) {
     let hedef = id.replace(/^akis-/, '');
@@ -15786,7 +15788,8 @@ function maTebrikEt(id, btn) {
     t ? maTebrik.add(id) : maTebrik.delete(id);
     btn.classList.toggle('basili', t); btn.innerHTML = `🎉 Tebrik et`; maTekrarOyna(btn, 'ma-pop');
     if (t) maPatlat(btn, ['🎉','🎊','⭐'], 12);
-    maOlayGonder(hedef, 'tebrik');
+      maOlayGonder(hedef, 'tebrik');
+    if (t && typeof maBildirimGonder === 'function') maBildirimGonder(hedef, 'tebrik');
 }
         
        function maKesfetHtml() {
