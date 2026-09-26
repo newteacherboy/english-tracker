@@ -15554,13 +15554,16 @@ function maOgrenciMi(u) {
     let a = String(u.ogrenci || '').trim().toLowerCase();
     return a && a !== 'teacher' && String(u.durum || '').trim().toLowerCase() !== 'onay bekliyor';
 }
+let maXpHarita = {};
 function maLigSiralama() {
     if (maLigOnbellek && Date.now() - maLigZaman < 15000) return maLigOnbellek;
     let ben = String(aktifOgrenciAdi || '').trim().toLowerCase();
-    let liste = (globalDataCache || []).filter(maOgrenciMi).map(u => ({
-        ad: String(u.ogrenci).trim(), sinif: String(u.Sinif || '').trim(),
-        puan: Math.round((Number(u.genelOrtalama) || 0) * 10) / 10
-    })).sort((a, b) => (b.puan - a.puan) || a.ad.localeCompare(b.ad, 'tr'));
+    let hafta = typeof yoHaftaKodu === 'function' ? yoHaftaKodu() : '';
+    let benXp = (typeof yo !== 'undefined' && yo && yo.lig && yo.lig.hafta === hafta) ? (yo.lig.xp || 0) : 0;
+    let liste = (globalDataCache || []).filter(maOgrenciMi).map(u => {
+        let ad = String(u.ogrenci).trim(), k = ad.toLowerCase();
+        return { ad, sinif: String(u.Sinif || '').trim(), puan: Math.round((Number(u.genelOrtalama) || 0) * 10) / 10, xp: k === ben ? benXp : (maXpHarita[k] || 0) };
+    }).sort((a, b) => (b.xp - a.xp) || (b.puan - a.puan) || a.ad.localeCompare(b.ad, 'tr'));
     let harita = {};
     liste.forEach((x, i) => {
         x.sira = i + 1;
@@ -15617,7 +15620,11 @@ async function maTumGetir() {
     if (maTumListe.length && Date.now() - maTumZaman < 120000) return maTumListe;
     if (maTumSoz) return maTumSoz;
     maTumSoz = (async () => {
-        let veri = await maTumVeriHaritasi();
+                let veri = await maTumVeriHaritasi();
+        let haftaKod = typeof yoHaftaKodu === 'function' ? yoHaftaKodu() : '';
+        maXpHarita = {};
+        Object.keys(veri || {}).forEach(k => { let b = veri[k]; if (b && b.lig && b.lig.hafta === haftaKod) maXpHarita[k] = b.lig.xp || 0; });
+        maLigOnbellek = null;
         let benK = (globalDataCache || []).find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi || '').toLowerCase());
         let benSinif = benK ? String(benK.Sinif || '').trim() : '';
         let ben = String(aktifOgrenciAdi || '').toLowerCase();
@@ -15683,9 +15690,11 @@ async function maCiz() {
         if (typeof yoMagazaAc === 'function') yoMagazaAc();
         return;
     }
-    if (maSekme === 'lig' && !maProfilId) {
+        if (maSekme === 'lig' && !maProfilId) {
+        if (!maTumListe.length) ekran.innerHTML = '<div class="ma-bos">Lig yükleniyor...</div>';
+        await maTumGetir();
+        if (no !== maCizNo) return;
         ekran.innerHTML = `<div class="ma-gir">${maLigHtml()}</div>`;
-        maTumGetir();
         return;
     }
     if (maSekme === 'akis' && !maProfilId) {
@@ -15812,11 +15821,11 @@ function maLigHtml() {
     if (ben) {
         let L = MA_LIGLER[ben.kod], esik = ben.kod === 'super' ? liste[9] : ben.kod === 'yerel' ? liste[29] : null, hedef;
         if (esik) {
-            let fark = Math.max(0, Math.round((esik.puan - ben.puan) * 10) / 10);
+            let fark = Math.max(0, esik.xp - ben.xp + 1);
             let H = MA_LIGLER[ben.kod === 'super' ? 'sampiyon' : 'super'];
-            hedef = `${H.ikon} ${H.yon} yükselmek için ${fark > 0 ? '<b>' + fark + ' puan</b> daha' : 'bir adım daha'} kazanmalısın`;
+            hedef = `${H.ikon} ${H.yon} yükselmek için bu hafta <b>${fark} XP</b> daha kazanmalısın`;
         } else hedef = '👑 En üst ligdesin, yerini koru!';
-        ozet = `<div class="ml-ben" style="--lg:${L.grad}"><div class="ml-ben-ikon">${L.ikon}</div><div><small>${L.de}</small><b>${ben.sira}. sıra</b><span>Genel puanın: ${ben.puan}</span></div></div><div class="ml-hedef">${hedef}</div>`;
+        ozet = `<div class="ml-ben" style="--lg:${L.grad}"><div class="ml-ben-ikon">${L.ikon}</div><div><small>${L.de}</small><b>${ben.sira}. sıra</b><span>Bu hafta: ${ben.xp} XP</span></div></div><div class="ml-hedef">${hedef}</div>`;
     }
     let sekmeler = ['sampiyon', 'super', 'yerel'].map(k => {
         let L = MA_LIGLER[k], n = liste.filter(x => x.kod === k).length;
@@ -15826,14 +15835,13 @@ function maLigHtml() {
     let satirlar = liste.filter(x => x.kod === secili).slice(0, 120).map(x =>
         `<div class="ml-satir${x.benMi ? ' ben' : ''}" data-o="${guvenliMetin(x.ad)}" onclick="maAkisKisiAc(this.dataset.o)">
           <span class="ml-sira">${x.sira <= 3 ? madalya[x.sira - 1] : x.sira}</span>
-                    ${maAvatar({ ad: x.ad, maskot: typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(x.ad) : '🦜', av: '#f3ebff' })}
+          ${maAvatar({ ad: x.ad, maskot: typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(x.ad) : '🦜', av: '#f3ebff' })}
           <span class="ml-ad"><b>${x.benMi ? 'Sen' : guvenliMetin(x.ad)}</b><small>${x.sinif ? x.sinif + '. sınıf' : ''}</small></span>
-          <span class="ml-puan">${x.puan}</span></div>`).join('');
+          <span class="ml-puan">${x.xp} <small style="font-size:11px">XP</small></span></div>`).join('');
     return `<div class="bolum">${ozet}<div class="ml-sekme">${sekmeler}</div>
       <div class="ml-liste">${satirlar || '<div class="ma-bos">Bu ligde henüz kimse yok.</div>'}</div>
-      <div class="ml-kural">Ligler genel puana göre belirlenir: ilk 10 öğrenci 🏆 Şampiyonlar Ligi, 11–30. sıralar ⭐ Süper Lig, diğerleri 🌱 Yerel Lig. Genel puanın dersler, etkinlikler ve oyunlarla her gün değişir.</div></div>`;
+      <div class="ml-kural">Ligler bu haftaki XP'ye göre belirlenir: ilk 10 öğrenci 🏆 Şampiyonlar Ligi, 11–30. sıralar ⭐ Süper Lig, diğerleri 🌱 Yerel Lig. XP'yi oyunlarda, derslerde ve etkinliklerde kazanırsın. Her hafta yeniden başlar.</div></div>`;
 }
-
 function maVitrinHtml(id, benimMi) {
     let o = maBul(id), t = maTakip.has(id);
     if (!o) return '<div class="ma-bos">Bulunamadı.</div>';
@@ -16094,6 +16102,8 @@ setInterval(async () => {
 <style>
 .header-right-widgets #yoHedefBtn { display:none !important; }
         .dc-exit-btn { display:none !important; }
+        #aiChatModal.ai-chat-modal { z-index:100000013 !important; }
+#yardimModal.yardim-modal-overlay { z-index:100000013 !important; }
 .yb-fw { position:fixed; z-index:100000002; width:52px; height:52px; display:none; touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab; opacity:.55; transition:left .35s cubic-bezier(.2,.9,.3,1.2), top .35s cubic-bezier(.2,.9,.3,1.2), opacity .3s; }
 .yb-fw.gor { display:block; }
 .yb-fw:hover, .yb-fw:focus-visible, .yb-fw.parla, .yb-fw.suruklen { opacity:1; outline:none; }
@@ -16674,17 +16684,11 @@ function avatarSVG(s, stil, px, cins) {
   }
 
   /* ---- Eski mağaza alışverişinin iadesi ---- */
-  function eskiIade() {
+    function eskiIade() {
     if (!yoVar() || yo.kaIade) return 0;
-    let toplam = 0;
-    (yo.sahip || []).forEach(id => {
-      let i = String(id).indexOf(':'), tip = String(id).slice(0, i), deger = String(id).slice(i + 1);
-      let u = (typeof YO_URUN !== 'undefined' && YO_URUN[tip] || []).find(x => x[0] === deger);
-      if (u) toplam += u[2];
-    });
-    yo.altin = (yo.altin || 0) + toplam;
+    yo.altin = (yo.altin || 0) + 10;
     yo.sahip = []; yo.takili = { aks:'', renk:'' }; yo.kaIade = 1;
-    return toplam;
+    return 10;
   }
 
   /* ---- Atölye ---- */
@@ -16719,7 +16723,7 @@ function avatarSVG(s, stil, px, cins) {
       yo.karakter = { cins: c, s: Object.assign({}, VARSAYILAN[c]), sahip: [] };
       yoKaydet();
       window.yoAvatarUygula();
-      if (typeof yoToast === 'function') yoToast(iade > 0 ? `🎉 Karakterin hazır! Eski mağaza eşyaların için ${iade} altın iade edildi.` : '🎉 Karakterin hazır! Altınlarınla süsleyebilirsin.');
+      if (typeof yoToast === 'function') yoToast(iade > 0 ? `🎉 Karakterin hazır! Hoş geldin hediyesi: +${iade} altın 🪙` : '🎉 Karakterin hazır! Altınlarınla süsleyebilirsin.');
       if (sonra) sonra();
     });
   }
