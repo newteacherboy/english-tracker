@@ -1594,23 +1594,14 @@
                                   </div>
         
                 <!-- SADECE MOBİLDE GÖRÜNEN ALT NAVİGASYON -->
-                <div class="bottom-nav-mobile" id="bottomNavMobile">
-                                                   <button class="bn-item" onclick="meduAkisAc()">
-                        <span class="bn-icon">🎡</span><span class="bn-label">Medu Akış</span>
-                    </button>
-                                <button class="bn-item" onclick="sanaOzelTamEkranAc()">
-                        <span class="bn-icon">✨</span><span class="bn-label">Sana Özel</span>
-                    </button>
-                    
-                    <button class="bn-item" onclick="aktivitelerTamEkranAc()">
-                        <span class="bn-icon">🎮</span><span class="bn-label">Aktivite</span>
-                    </button>
-                                <button class="bn-item" onclick="dersCalisTamEkranAc()">
-                        <span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span>
-                    </button>
-                   
-                   
-                </div>
+               <div class="bottom-nav-mobile" id="bottomNavMobile">
+    <button class="bn-item" data-ekran="tab-meduakis" onclick="meduAkisAc()"><span class="bn-icon">🎡</span><span class="bn-label">Medu Akış</span></button>
+    <button class="bn-item" data-ekran="tab-sanaozel" onclick="sanaOzelTamEkranAc()"><span class="bn-icon">✨</span><span class="bn-label">Sana Özel</span></button>
+    <button class="bn-item" data-ekran="tab-aktiviteler" onclick="aktivitelerTamEkranAc()"><span class="bn-icon">🎮</span><span class="bn-label">Aktivite</span></button>
+    <button class="bn-item" data-ekran="tab-buyuakademisi" onclick="baModuAc()"><span class="bn-icon">🧙</span><span class="bn-label">Büyü Akademisi</span></button>
+    <button class="bn-item" data-ekran="tab-konusmapratigi" onclick="kpModuAc()"><span class="bn-icon">🎤</span><span class="bn-label">Konuşma</span></button>
+    <button class="bn-item" data-ekran="tab-derscalis" onclick="dersCalisTamEkranAc()"><span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span></button>
+</div>
         
           
         
@@ -1936,7 +1927,7 @@
         
           <div class="kp-tabbar">
             <button class="kp-tab-btn active" data-tab="kelime" onclick="kpSekmeSec('kelime', this)">🔤 Kelime Modu</button>
-            <button class="kp-tab-btn" data-tab="sohbet" onclick="kpSekmeSec('sohbet', this)">💬 Sohbet Modu</button>
+           
           </div>
         
           <!-- KELİME MODU -->
@@ -1989,14 +1980,7 @@
         
           </div>
         
-          <!-- SOHBET MODU -->
-          <div class="kp-panel" id="kp-panel-sohbet">
-            <div class="kp-sohbet-yer-tutucu">
-              <div style="font-size:44px; margin-bottom:10px;">💬</div>
-              <div style="font-weight:800; color:#fff; font-size:14px; margin-bottom:6px;">Sohbet Modu Yakında</div>
-              <p style="font-size:11.5px; line-height:1.6;">Öğretmenin hazırlayacağı örnek diyalog cümlelerine sesli cevap vereceksin.</p>
-            </div>
-          </div>
+          
         
         </div>
         </div>
@@ -2359,6 +2343,7 @@
                 <button class="dc-icon-btn hidden" id="dcBackBtn" onclick="dcGeriGit()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
+                                    <button class="dc-icon-btn hidden" id="dcHomeBtn" onclick="dcAnaEkranaDon()" title="Seviyelere dön" aria-label="Seviyelere dön">🏠</button>
                 <div class="dc-crumb" id="dcCrumb"></div>
                 <div class="dc-arama-kutu">
                     <input type="text" id="dcAramaInput" placeholder="🔍 Konu ara..." oninput="dcAramaYap(this.value)">
@@ -2512,7 +2497,7 @@
                         </button>
                     </div>
         
-                    <div class="sana-ozel-odevler-baslik" style="color:#f8fafc; border-bottom-color:#334155;">📚 Ödevlerim</div>
+                    <div class="sana-ozel-odevler-baslik" style="color:#553c9a; border-bottom-color:#e7dcff;">📚 Ödevlerim</div>
                     <div class="az-grid2x2">
                         <button class="az-gcard" style="background:linear-gradient(160deg,#818cf8,#6366f1);" onclick="etkinliklerModalAc()">
                             <div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Etkinlikler</div>
@@ -14023,6 +14008,110 @@ function raporlarimKapat() {
         .yo-yukle { display:flex; gap:8px; margin-bottom:10px; }
         .yo-yukle select { flex:1; padding:10px; border-radius:12px; border:2px solid #e7dcff; font:800 13px 'Nunito',sans-serif; color:#3b2c66; background:#fff; }
         .yo-wa { flex-shrink:0; background:#25d366; color:#fff; border-radius:10px; padding:7px 10px; font-size:11.5px; font-weight:900; text-decoration:none; }
+                /* ===== Sohbet haritası ===== */
+.ys-harita { background:linear-gradient(180deg,#fef6ff 0%,#f3ecff 50%,#eef3ff 100%); border-radius:22px; padding:14px 12px 34px; position:relative; z-index:2; color:#3b2c66; font-family:'Nunito',sans-serif; }
+.ys-ust { display:flex; gap:12px; align-items:center; background:#fff; border:2px solid #e7dcff; border-radius:18px; padding:12px 14px; }
+.ys-ust-kus { font-size:42px; animation:ysSallan 1.6s ease-in-out infinite; }
+.ys-ust-metin { flex:1; min-width:0; }
+.ys-ust-metin b { display:block; font-family:'Fredoka',sans-serif; font-size:18px; font-weight:700; color:#7c3aed; }
+.ys-ust-metin span { font-size:12px; font-weight:800; color:#8a78b8; }
+.ys-ust-bar { height:8px; border-radius:5px; background:#ece3ff; margin-top:6px; overflow:hidden; }
+.ys-ust-bar i { display:block; height:100%; background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#a06bff); transition:width .6s; }
+.ys-aciklama { font-size:11.5px; color:#8a78b8; font-weight:700; margin:10px 6px 4px; line-height:1.5; text-align:center; }
+.ys-bant { position:relative; overflow:hidden; display:flex; align-items:center; gap:10px; margin:24px 0 14px; padding:11px 14px; border-radius:16px; color:#fff; background:var(--sr); box-shadow:0 5px 0 rgba(0,0,0,.14); }
+.ys-bant::after { content:''; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent); animation:ysParilti 3.6s ease-in-out infinite; }
+.ys-bant b { display:block; font-family:'Fredoka',sans-serif; font-size:16px; font-weight:700; }
+.ys-bant small { font-size:11px; font-weight:800; opacity:.9; }
+.ys-bant-ikon { font-size:28px; }
+.ys-bant-kilit { margin-left:auto; font-size:18px; }
+.ys-bant.kilitli { filter:grayscale(.9); opacity:.55; }
+.ys-bant.kilitli::after { display:none; }
+.ys-bant-acildi { animation:ysBantAc .8s cubic-bezier(.2,.9,.3,1.4); }
+.ys-satir { display:flex; flex-direction:column; align-items:center; width:112px; margin-left:calc(var(--x) - 56px); }
+.ys-dugum { position:relative; width:72px; height:72px; border-radius:50%; border:none; padding:0; background:transparent; cursor:pointer; transition:transform .15s; }
+.ys-dugum:active { transform:scale(.92); }
+.ys-dugum:focus-visible { outline:3px solid #4d96ff; outline-offset:4px; }
+.ys-dugum-ic { position:absolute; inset:0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px; background:#fff; box-shadow:0 6px 0 rgba(59,44,102,.16); }
+.ys-dugum.bitti .ys-dugum-ic { background:var(--sr); box-shadow:0 6px 0 rgba(0,0,0,.2), inset 0 -6px 10px rgba(0,0,0,.12); }
+.ys-dugum.aktif::before { content:''; position:absolute; inset:-6px; border-radius:50%; background:conic-gradient(#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#a06bff,#ff6b6b); animation:ysDon 3s linear infinite; }
+.ys-dugum.aktif { animation:ysNabiz 2s ease-out infinite; }
+.ys-dugum.aktif::after { content:'🦜'; position:absolute; top:-34px; left:50%; font-size:24px; transform:translateX(-50%); animation:ysPapaganZipla 1.4s ease-in-out infinite; }
+.ys-dugum.kilitli .ys-dugum-ic { background:#ebe5fa; filter:grayscale(1); opacity:.7; box-shadow:0 6px 0 rgba(59,44,102,.1); }
+.ys-kilit { position:absolute; bottom:-4px; right:-4px; width:28px; height:28px; border-radius:50%; background:#8a78b8; font-size:13px; display:flex; align-items:center; justify-content:center; border:3px solid #fdfaff; z-index:2; }
+.ys-kilit.kiriliyor { animation:ysKilitKir .65s ease forwards; }
+.ys-yeni-acildi { animation:ysAcilma .8s cubic-bezier(.2,.9,.3,1.5) !important; }
+.ys-yildizlar { margin-top:7px; letter-spacing:1px; }
+.ys-yildizlar span { color:#dcd3f2; font-size:15px; }
+.ys-yildizlar span.dolu { color:#ffc93c; text-shadow:0 1px 0 #d99a00; }
+.ys-ad { font-size:12px; font-weight:900; text-align:center; line-height:1.25; }
+.ys-noktalar { position:relative; height:34px; }
+.ys-noktalar i { position:absolute; width:8px; height:8px; border-radius:50%; background:#c9b3ff; transform:translate(-50%,-50%); }
+.ys-salla { animation:ysSalla .45s ease; }
+
+/* ===== Sohbet ekranı ===== */
+.ys-rozet { margin-left:auto; background:var(--sr); color:#fff; font-size:11px; font-weight:900; padding:3px 10px; border-radius:10px; }
+.ys-adimlar { display:flex; gap:5px; margin-bottom:10px; }
+.ys-adimlar i { flex:1; height:7px; border-radius:4px; background:#ece3ff; transition:background .4s; }
+.ys-adimlar i.tamam { background:var(--sr); }
+.ys-adimlar i.simdi { background:var(--sr); opacity:.5; animation:ysAdim .9s ease-in-out infinite alternate; }
+.yo-s-balon.ys-yaziyor { display:flex; gap:5px; padding:14px 16px; }
+.yo-s-balon.ys-yaziyor i { width:8px; height:8px; border-radius:50%; background:#a06bff; animation:ysZipla 1s ease-in-out infinite; }
+.yo-s-balon.ys-yaziyor i:nth-child(2) { animation-delay:.15s; }
+.yo-s-balon.ys-yaziyor i:nth-child(3) { animation-delay:.3s; }
+.yo-s-balon.ben.parla { box-shadow:0 0 0 3px #6bcb77, 0 0 18px rgba(107,203,119,.6); }
+.yo-s-balon.ben.ys-salla { background:#e0434b; }
+
+/* ===== Portal ===== */
+.ys-portal { position:fixed; inset:0; z-index:100000045; pointer-events:none; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 50% 45%, #fff 0%, var(--sr) 42%, #2a1d52 100%); }
+.ys-portal-kus { font-size:96px; animation:ysPortalKus .75s cubic-bezier(.2,.9,.3,1.4) both; filter:drop-shadow(0 10px 20px rgba(0,0,0,.3)); }
+.ys-ucan-kus { position:fixed; left:0; top:0; z-index:100000046; font-size:40px; pointer-events:none; }
+.ys-parca { position:fixed; z-index:100000046; pointer-events:none; font-size:18px; animation:ysParca 1.05s ease-out forwards; }
+.ys-konfeti { position:fixed; top:-30px; z-index:100000047; pointer-events:none; font-size:20px; animation:ysDus linear forwards; }
+
+/* ===== Bitiş ===== */
+.ys-final { text-align:center; padding:26px 16px 22px; }
+.ys-final-kus { font-size:78px; display:inline-block; animation:ysGir .6s cubic-bezier(.2,.9,.3,1.4) both; }
+.ys-final-kus.mutlu { animation:ysGir .6s cubic-bezier(.2,.9,.3,1.4) both, ysDans 1.1s .6s ease-in-out infinite; }
+.ys-final-baslik { font-family:'Fredoka',sans-serif; font-size:25px; font-weight:700; color:#7c3aed; animation:ysGir .5s .15s both; }
+.ys-final-alt { font-size:13px; font-weight:800; color:#8a78b8; margin:2px 0 8px; }
+.ys-final-yildiz span { display:inline-block; font-size:52px; margin:0 3px; color:#e3dbf7; transform:scale(0); animation:ysYildizGel .55s cubic-bezier(.2,.9,.3,1.6) forwards; }
+.ys-final-yildiz span.dolu { color:#ffc93c; text-shadow:0 3px 0 #d99a00, 0 0 20px rgba(255,201,60,.7); }
+.ys-final-xp { font:900 18px 'Nunito',sans-serif; color:#b7791f; margin:4px 0 8px; }
+.ys-final-not { font-size:13px; font-weight:900; color:#1d6b3d; background:#dff6e7; border-radius:12px; padding:8px; margin:4px 0; animation:ysGir .5s 1.3s both; }
+.ys-final-not.hata { color:#9a5b00; background:#fff3d6; }
+
+/* ===== Seviye kutlaması ===== */
+.ys-kutlama { position:fixed; inset:0; z-index:100000046; display:flex; align-items:center; justify-content:center; overflow:hidden; background:radial-gradient(circle at 50% 45%, var(--sr) 0%, #1e1238 78%); animation:ysSolGel .35s both; }
+.ys-kutlama.kapaniyor { animation:ysSolGit .4s forwards; }
+.ys-isinlar { position:absolute; left:50%; top:50%; width:220vmax; height:220vmax; margin:-110vmax 0 0 -110vmax; background:repeating-conic-gradient(rgba(255,255,255,.13) 0deg 9deg, transparent 9deg 18deg); animation:ysDon 16s linear infinite; }
+.ys-kutlama-icerik { position:relative; text-align:center; color:#fff; padding:20px; max-width:340px; font-family:'Nunito',sans-serif; }
+.ys-kutlama-ikon { font-size:104px; animation:ysKutlaIkon .9s cubic-bezier(.2,.9,.3,1.5) both; filter:drop-shadow(0 12px 22px rgba(0,0,0,.35)); }
+.ys-kutlama-ust { font-size:13px; font-weight:900; letter-spacing:3px; opacity:.9; margin-top:8px; animation:ysGir .5s .35s both; }
+.ys-kutlama-baslik { font-family:'Fredoka',sans-serif; font-size:34px; font-weight:700; text-shadow:0 4px 14px rgba(0,0,0,.3); animation:ysGir .5s .5s both; }
+.ys-kutlama-alt { font-size:14px; font-weight:800; opacity:.9; margin:4px 0 16px; animation:ysGir .5s .65s both; }
+.ys-kutlama-btn { animation:ysGir .5s .8s both; }
+
+@keyframes ysSallan { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(6deg) translateY(-3px); } }
+@keyframes ysDon { to { transform:rotate(360deg); } }
+@keyframes ysNabiz { 0%,100% { filter:drop-shadow(0 0 0 rgba(160,107,255,.0)); } 50% { filter:drop-shadow(0 0 12px rgba(160,107,255,.75)); } }
+@keyframes ysPapaganZipla { 0%,100% { transform:translateX(-50%) translateY(0) rotate(-5deg); } 50% { transform:translateX(-50%) translateY(-7px) rotate(5deg); } }
+@keyframes ysParilti { 0%,55% { left:-60%; } 100% { left:130%; } }
+@keyframes ysBantAc { 0% { transform:scale(.85); } 60% { transform:scale(1.05); } 100% { transform:scale(1); } }
+@keyframes ysKilitKir { 0% { transform:rotate(0); } 20% { transform:rotate(-20deg) scale(1.1); } 40% { transform:rotate(20deg) scale(1.2); } 60% { transform:rotate(-14deg) scale(1.3); } 100% { transform:scale(2.4); opacity:0; } }
+@keyframes ysAcilma { 0% { transform:scale(.6); } 60% { transform:scale(1.22); } 100% { transform:scale(1); } }
+@keyframes ysSalla { 20% { transform:translateX(-7px); } 40% { transform:translateX(7px); } 60% { transform:translateX(-5px); } 80% { transform:translateX(4px); } }
+@keyframes ysAdim { to { opacity:1; } }
+@keyframes ysZipla { 0%,100% { transform:translateY(0); opacity:.5; } 50% { transform:translateY(-6px); opacity:1; } }
+@keyframes ysPortalKus { from { transform:scale(0) rotate(-30deg); } to { transform:scale(1) rotate(0); } }
+@keyframes ysParca { from { opacity:1; transform:translate(0,0) scale(.6); } to { opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(1.1); } }
+@keyframes ysDus { to { transform:translateY(110vh) rotate(720deg); } }
+@keyframes ysGir { from { opacity:0; transform:translateY(14px) scale(.9); } }
+@keyframes ysDans { 0%,100% { transform:rotate(-8deg) translateY(0); } 50% { transform:rotate(8deg) translateY(-8px); } }
+@keyframes ysYildizGel { 0% { transform:scale(0) rotate(-120deg); } 70% { transform:scale(1.35) rotate(10deg); } 100% { transform:scale(1) rotate(0); } }
+@keyframes ysSolGel { from { opacity:0; } }
+@keyframes ysSolGit { to { opacity:0; transform:scale(1.08); } }
+@keyframes ysKutlaIkon { 0% { transform:scale(0) rotate(-40deg); } 70% { transform:scale(1.25) rotate(8deg); } 100% { transform:scale(1) rotate(0); } }
+@media (prefers-reduced-motion: reduce) { .ys-harita *, .ys-sohbet *, .ys-final *, .ys-kutlama, .ys-kutlama * { animation:none !important; } .ys-final-yildiz span { transform:none; } }
         @media (prefers-reduced-motion: reduce) { .yo-kart, .yo-chip, .yo-s-balon, .yo-toast, .yo-davet { animation:none !important; transition:none !important; } }
         </style>
         
@@ -14113,27 +14202,101 @@ function raporlarimKapat() {
         ];
         const YO_SEVIYE_AD = { A1:'Başlangıç', A2:'Temel', B1:'Orta', B2:'Orta-Üstü' };
         
-        const YO_SOHBET = [
-          { ad:'👋 Tanışma', satirlar:[
-            { p:'Hello! What is your name?', tr:'Adını söyle.', ornek:'My name is Ali.', k:['my name is','i am','i\'m','name'] },
-            { p:'Nice to meet you! How old are you?', tr:'Yaşını söyle.', ornek:'I am ten years old.', k:['i am','i\'m','years old','year'] },
-            { p:'Where are you from?', tr:'Nereli olduğunu söyle.', ornek:'I am from Turkey.', k:['from','turkey','istanbul','ankara','izmir'] },
-            { p:'Great! Goodbye!', tr:'Vedalaş.', ornek:'Goodbye! See you.', k:['goodbye','bye','see you'] } ] },
-          { ad:'☕ Kafede', satirlar:[
-            { p:'Hi! What would you like to drink?', tr:'Ne içmek istediğini söyle.', ornek:'I would like some water, please.', k:['i would like','i\'d like','can i have','please','water','tea','juice','milk','lemonade'] },
-            { p:'Anything to eat?', tr:'Yiyecek isteyip istemediğini söyle.', ornek:'Yes, a sandwich, please.', k:['yes','no','sandwich','cake','cookie','please','thank'] },
-            { p:'That is five lira, please.', tr:'Parayı ver.', ornek:'Here you are.', k:['here you are','here','thank'] },
-            { p:'Have a nice day!', tr:'Karşılık ver.', ornek:'You too, thank you!', k:['you too','thank','thanks','bye'] } ] },
-          { ad:'🏫 Okulda', satirlar:[
-            { p:'What is your favourite lesson?', tr:'En sevdiğin dersi söyle.', ornek:'My favourite lesson is English.', k:['favourite','favorite','i like','english','math','science','art','music','history'] },
-            { p:'Why do you like it?', tr:'Nedenini söyle.', ornek:'Because it is fun.', k:['because','it is','it\'s','fun','interesting','easy','love'] },
-            { p:'What time does school start?', tr:'Okulun başlama saatini söyle.', ornek:'It starts at nine o\'clock.', k:['at','o\'clock','starts','half past','eight','nine'] },
-            { p:'See you tomorrow!', tr:'Vedalaş.', ornek:'See you! Bye!', k:['see you','bye','goodbye'] } ] },
-          { ad:'🗺️ Yol tarifi', satirlar:[
-            { p:'Excuse me, where is the library?', tr:'Yerini tarif et.', ornek:'It is next to the park.', k:['it is','it\'s','next to','near','left','right','straight','opposite','between','behind'] },
-            { p:'Is it far from here?', tr:'Uzak olup olmadığını söyle.', ornek:'No, it is very close.', k:['no','yes','near','far','close','minutes'] },
-            { p:'Thank you very much!', tr:'Rica et.', ornek:'You are welcome!', k:['welcome','no problem','not at all'] } ] }
-        ];
+       const YO_SOHBET_SEVIYE = [
+  { kod:'A1', ad:'Başlangıç', ikon:'🌱', renk:'#34b36a' },
+  { kod:'A2', ad:'Temel', ikon:'🌿', renk:'#3b82f6' },
+  { kod:'B1', ad:'Orta', ikon:'🌳', renk:'#8b5cf6' },
+  { kod:'B2', ad:'Orta-Üstü', ikon:'🏔️', renk:'#f43f5e' }
+];
+const YO_SOHBET = [
+  /* ---------- A1 ---------- */
+  { id:'tanisma', sv:'A1', ad:'Tanışma', ikon:'👋', satirlar:[
+    { p:"Hello! What is your name?", tr:"Adını söyle.", ornek:"My name is Ali.", k:["my name is","i am","i'm","name"] },
+    { p:"Nice to meet you! How old are you?", tr:"Yaşını söyle.", ornek:"I am ten years old.", k:["i am","i'm","years old","year"] },
+    { p:"Where are you from?", tr:"Nereli olduğunu söyle.", ornek:"I am from Turkey.", k:["from","turkey","istanbul","ankara","izmir"] },
+    { p:"Great! Goodbye!", tr:"Vedalaş.", ornek:"Goodbye! See you.", k:["goodbye","bye","see you"] } ] },
+  { id:'renkler', sv:'A1', ad:'Renkler ve Eşyalar', ikon:'🎨', satirlar:[
+    { p:"What color is your bag?", tr:"Çantanın rengini söyle.", ornek:"My bag is blue.", k:["red","blue","green","yellow","black","white","pink","purple","orange","brown","grey","gray"] },
+    { p:"Do you have a pencil?", tr:"Kalemin olup olmadığını söyle.", ornek:"Yes, I have a pencil.", k:["yes","no","i have","i don't","i do"] },
+    { p:"How many books are on your desk?", tr:"Masandaki kitap sayısını söyle.", ornek:"There are three books.", k:["one","two","three","four","five","six","seven","eight","nine","ten","there are","there is","no books"] },
+    { p:"Thank you! See you later!", tr:"Karşılık ver.", ornek:"You're welcome! Bye!", k:["welcome","bye","see you","thank"] } ] },
+  { id:'hayvanlar', sv:'A1', ad:'Hayvanlar', ikon:'🐶', satirlar:[
+    { p:"Do you have a pet?", tr:"Evcil hayvanın var mı?", ornek:"Yes, I have a cat.", k:["yes","no","i have","i don't","cat","dog","bird","fish","rabbit"] },
+    { p:"What is your favourite animal?", tr:"En sevdiğin hayvanı söyle.", ornek:"My favourite animal is the lion.", k:["favourite","favorite","i like","i love","cat","dog","lion","tiger","horse","bird","fish","rabbit","elephant","monkey","panda"] },
+    { p:"Can a fish fly?", tr:"Balık uçabilir mi?", ornek:"No, it can't fly. It can swim.", k:["no","can't","cannot","can not","swim"] },
+    { p:"What can a bird do?", tr:"Kuşun neler yapabildiğini söyle.", ornek:"A bird can fly and sing.", k:["can","fly","sing"] } ] },
+  { id:'aile', sv:'A1', ad:'Ailem', ikon:'👨‍👩‍👧', satirlar:[
+    { p:"How many people are there in your family?", tr:"Ailende kaç kişi olduğunu söyle.", ornek:"There are four people in my family.", k:["there are","we are","three","four","five","six","two","seven"] },
+    { p:"What is your mother's name?", tr:"Annenin adını söyle.", ornek:"Her name is Ayşe.", k:["her name","name is","my mother","she is"] },
+    { p:"Do you have a brother or a sister?", tr:"Kardeşin var mı?", ornek:"Yes, I have a sister.", k:["yes","no","i have","brother","sister","i don't"] },
+    { p:"Who is your best friend?", tr:"En iyi arkadaşını söyle.", ornek:"My best friend is Can.", k:["my best friend","best friend","is","name"] } ] },
+
+  /* ---------- A2 ---------- */
+  { id:'kafe', sv:'A2', ad:'Kafede', ikon:'☕', satirlar:[
+    { p:"Hi! What would you like to drink?", tr:"Ne içmek istediğini söyle.", ornek:"I would like some water, please.", k:["i would like","i'd like","can i have","please","water","tea","juice","milk","lemonade"] },
+    { p:"Would you like something to eat?", tr:"Yiyecek isteyip istemediğini söyle.", ornek:"Yes, a sandwich, please.", k:["yes","no","sandwich","cake","cookie","please","thank"] },
+    { p:"That is five lira, please.", tr:"Parayı ver.", ornek:"Here you are.", k:["here you are","here","thank"] },
+    { p:"Have a nice day!", tr:"Karşılık ver.", ornek:"You too, thank you!", k:["you too","thank","thanks","bye"] } ] },
+  { id:'okul', sv:'A2', ad:'Okulda', ikon:'🏫', satirlar:[
+    { p:"What is your favourite lesson?", tr:"En sevdiğin dersi söyle.", ornek:"My favourite lesson is English.", k:["favourite","favorite","i like","english","math","science","art","music","history","turkish","pe"] },
+    { p:"Why do you like it?", tr:"Nedenini söyle.", ornek:"Because it is fun.", k:["because","it is","it's","fun","interesting","easy","love"] },
+    { p:"What time does school start?", tr:"Okulun başlama saatini söyle.", ornek:"It starts at nine o'clock.", k:["at","o'clock","starts","half past","eight","nine"] },
+    { p:"See you tomorrow!", tr:"Vedalaş.", ornek:"See you! Bye!", k:["see you","bye","goodbye"] } ] },
+  { id:'alisveris', sv:'A2', ad:'Alışveriş', ikon:'🛍️', satirlar:[
+    { p:"Hello! Can I help you?", tr:"Ne aradığını söyle.", ornek:"Yes, I'm looking for a T-shirt.", k:["looking for","i want","i'd like","i would like","yes","please","t-shirt","shoes","jacket"] },
+    { p:"What size do you need?", tr:"Bedenini söyle.", ornek:"Medium, please.", k:["small","medium","large","size","s","m","l"] },
+    { p:"It is fifty lira. Cash or card?", tr:"Nasıl ödeyeceğini söyle.", ornek:"By card, please.", k:["cash","card"] },
+    { p:"Here is your bag. Have a nice day!", tr:"Teşekkür et.", ornek:"Thank you! You too.", k:["thank","you too","bye"] } ] },
+  { id:'rutin', sv:'A2', ad:'Günlük Rutin', ikon:'⏰', satirlar:[
+    { p:"What time do you get up in the morning?", tr:"Kaçta kalktığını söyle.", ornek:"I get up at seven o'clock.", k:["i get up","get up","at","o'clock","wake up"] },
+    { p:"What do you have for breakfast?", tr:"Kahvaltıda ne yediğini söyle.", ornek:"I have eggs, cheese and bread.", k:["i have","i eat","eggs","egg","bread","cheese","olives","milk","tea","honey","toast"] },
+    { p:"How do you go to school?", tr:"Okula nasıl gittiğini söyle.", ornek:"I go to school by bus.", k:["by bus","by car","on foot","walk","by bike","by metro","school bus"] },
+    { p:"What do you usually do after school?", tr:"Okuldan sonra ne yaptığını söyle.", ornek:"I usually do my homework.", k:["i do","homework","i play","i watch","i read","i usually","i go","i help"] } ] },
+
+  /* ---------- B1 ---------- */
+  { id:'yol', sv:'B1', ad:'Yol Tarifi', ikon:'🗺️', satirlar:[
+    { p:"Excuse me, where is the library?", tr:"Yerini tarif et.", ornek:"It is next to the park.", k:["it is","it's","next to","near","left","right","straight","opposite","between","behind"] },
+    { p:"Is it far from here?", tr:"Uzak olup olmadığını söyle.", ornek:"No, it is very close. About five minutes.", k:["no","yes","near","far","close","minutes"] },
+    { p:"Which bus should I take?", tr:"Hangi otobüse binmesi gerektiğini söyle.", ornek:"You should take bus number 12.", k:["you should","take","number","bus","you can"] },
+    { p:"Thank you very much!", tr:"Rica et.", ornek:"You are welcome!", k:["welcome","no problem","not at all","my pleasure"] } ] },
+  { id:'haftasonu', sv:'B1', ad:'Hafta Sonum', ikon:'📅', satirlar:[
+    { p:"What did you do last weekend?", tr:"Geçen hafta sonu ne yaptığını anlat.", ornek:"I visited my grandparents.", k:["i went","i played","i watched","i visited","i was","i did","i stayed","i met","i read","i helped","i cooked"], min:3 },
+    { p:"Who were you with?", tr:"Kiminle olduğunu söyle.", ornek:"I was with my family.", k:["with","i was","alone","my"] },
+    { p:"Did you have a good time?", tr:"Eğlenip eğlenmediğini söyle.", ornek:"Yes, it was really fun.", k:["yes","no","it was","i did","i didn't","fun","great","boring"] },
+    { p:"What are you going to do next weekend?", tr:"Gelecek hafta sonu planını söyle.", ornek:"I am going to watch a film.", k:["going to","i will","i'll","i'm going","i am going","plan"], min:3 } ] },
+  { id:'doktor', sv:'B1', ad:'Doktorda', ikon:'🩺', satirlar:[
+    { p:"Hello, what's the matter?", tr:"Neyin var, anlat.", ornek:"I have a headache and a fever.", k:["i have","headache","stomachache","fever","cold","cough","hurts","sore","i feel","toothache"] },
+    { p:"How long have you felt like this?", tr:"Ne zamandır böyle olduğunu söyle.", ornek:"Since yesterday.", k:["since","for","days","yesterday","week","two","three"] },
+    { p:"Are you taking any medicine?", tr:"İlaç kullanıp kullanmadığını söyle.", ornek:"No, I'm not taking any medicine.", k:["yes","no","i am","i'm not","i take","i don't"] },
+    { p:"You should rest and drink lots of water. Get well soon!", tr:"Teşekkür et.", ornek:"Thank you, doctor. I will.", k:["thank","i will","okay","ok"] } ] },
+  { id:'tatil', sv:'B1', ad:'Tatil Planı', ikon:'✈️', satirlar:[
+    { p:"Where would you like to travel?", tr:"Nereye gitmek istediğini söyle.", ornek:"I would like to go to Japan.", k:["i would like","i'd like","i want","to go","to visit"] },
+    { p:"Why do you want to go there?", tr:"Nedenini açıkla.", ornek:"Because I want to see the famous temples.", k:["because","it is","it's","beautiful","famous","want to see","interesting"], min:4 },
+    { p:"How will you get there?", tr:"Oraya nasıl gideceğini söyle.", ornek:"I will go by plane.", k:["by plane","by train","by car","by bus","by ship","will","fly"] },
+    { p:"What will you pack in your suitcase?", tr:"Bavuluna neler koyacağını söyle.", ornek:"I will pack clothes, a camera and my passport.", k:["i will","i'll","clothes","camera","passport","pack","shoes","book"], min:3 } ] },
+
+  /* ---------- B2 ---------- */
+  { id:'cevre', sv:'B2', ad:'Çevre ve Gezegen', ikon:'🌍', satirlar:[
+    { p:"In your opinion, what is the biggest problem for our planet?", tr:"Sence gezegenin en büyük sorunu ne?", ornek:"I think plastic pollution is the biggest problem.", k:["pollution","climate","global warming","plastic","waste","i think","in my opinion","deforestation"], min:4 },
+    { p:"What can students do to help?", tr:"Öğrencilerin neler yapabileceğini anlat.", ornek:"We can recycle and use less plastic.", k:["we can","should","recycle","save","turn off","use less","plant","reduce"], min:4 },
+    { p:"Have you ever joined a clean-up activity?", tr:"Hiç temizlik etkinliğine katıldın mı?", ornek:"Yes, I have. We cleaned the beach last year.", k:["i have","i've","never","yes","no","haven't","have not"] },
+    { p:"If you were the president, what would you change?", tr:"Başkan olsaydın neyi değiştirirdin?", ornek:"I would ban plastic bags.", k:["i would","i'd"], min:4 } ] },
+  { id:'teknoloji', sv:'B2', ad:'Teknoloji', ikon:'💻', satirlar:[
+    { p:"How much time do you spend online every day?", tr:"Günde ne kadar internette olduğunu söyle.", ornek:"I spend about two hours online.", k:["hours","hour","minutes","about","i spend","around"] },
+    { p:"Do you think social media is good for teenagers?", tr:"Sosyal medya gençler için iyi mi? Görüşünü söyle.", ornek:"I think it can be useful, but it can also be addictive.", k:["i think","in my opinion","i believe","because","good","bad","useful","addictive","harmful"], min:5 },
+    { p:"What would happen if the internet stopped for a week?", tr:"İnternet bir hafta kesilse ne olurdu?", ornek:"People would talk to each other more.", k:["would","people","we","couldn't","could not"], min:4 },
+    { p:"Which invention couldn't you live without?", tr:"Hangi icat olmadan yaşayamazdın?", ornek:"I couldn't live without my computer.", k:["couldn't","could not","without","phone","computer","internet","electricity"] } ] },
+  { id:'gelecek', sv:'B2', ad:'Gelecek Hayallerim', ikon:'🎯', satirlar:[
+    { p:"What do you want to be in the future?", tr:"Gelecekte ne olmak istediğini söyle.", ornek:"I want to be a doctor.", k:["i want to be","i'd like to be","i would like to be","become","i want to become"] },
+    { p:"Why did you choose this job?", tr:"Bu mesleği neden seçtiğini anlat.", ornek:"Because I love helping people.", k:["because","i love","i like","help","interested","enjoy"], min:4 },
+    { p:"What do you need to do to achieve this dream?", tr:"Bu hayale ulaşmak için ne yapman gerektiğini söyle.", ornek:"I need to study hard and read a lot.", k:["i need to","i have to","study","work hard","learn","should","practise","practice"], min:4 },
+    { p:"Where do you see yourself in ten years?", tr:"On yıl sonra kendini nerede görüyorsun?", ornek:"I will be working in a big hospital.", k:["i will","i'll","i see myself","i hope","i'd","i would"], min:4 } ] },
+  { id:'film', sv:'B2', ad:'Film Sohbeti', ikon:'🎬', satirlar:[
+    { p:"What's the best film you've ever seen?", tr:"İzlediğin en iyi filmi söyle.", ornek:"The best film I've ever seen is Coco.", k:["the best","i've seen","i have seen","film","movie","is"] },
+    { p:"What was it about?", tr:"Filmin konusunu anlat.", ornek:"It was about a boy who loved music.", k:["it was about","it's about","it is about","about","story"], min:4 },
+    { p:"Would you recommend it to your friends? Why?", tr:"Arkadaşlarına önerir misin? Neden?", ornek:"Yes, I would, because it is funny and touching.", k:["yes","no","i would","because","recommend"], min:4 },
+    { p:"Thanks for the great chat! Goodbye!", tr:"Sohbeti güzelce bitir.", ornek:"Thank you too! It was a pleasure. Goodbye!", k:["thank","bye","goodbye","see you","pleasure"] } ] }
+];
         
         /* ========== DURUM VE KAYIT ========== */
         let yo = null, yoIsim = null, yoKayitZaman = null, yoModalKapaninca = null;
@@ -14148,7 +14311,7 @@ function raporlarimKapat() {
           return t.getUTCFullYear() + '-H' + Math.ceil(((t - yb) / 86400000 + 1) / 7);
         }
         function yoHaftaBaslangic() { let d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return yoTarihStr(d); }
-        function yoVarsayilan() { return { v:1, guncelleme:0, hedef:50, xpGun:{ tarih:'', xp:0 }, hedefOdul:'', altin:0, sahip:[], takili:{ aks:'', renk:'' }, dondurucu:0, lig:{ hafta:'', xp:0, gecen:null }, log:{}, zk:{}, seviye:null }; }
+        function yoVarsayilan() { return { v:1, guncelleme:0, hedef:50, xpGun:{ tarih:'', xp:0 }, hedefOdul:'', altin:0, sahip:[], takili:{ aks:'', renk:'' }, dondurucu:0, lig:{ hafta:'', xp:0, gecen:null }, log:{}, zk:{}, seviye:null, sohbet:{} };}
         function yoGuvenli(fn) { try { return fn(); } catch (e) { console.warn('Yeni özellik hatası:', e); } }
         
         function yoHazirla(isim) {
@@ -14222,13 +14385,23 @@ function raporlarimKapat() {
           setTimeout(() => e.classList.add('gor'), 20);
           setTimeout(() => { e.classList.remove('gor'); setTimeout(() => e.remove(), 400); }, 3200);
         }
-        function yoModalAc(baslik, html, kapaninca) {
+               function yoModalAc(baslik, html, kapaninca) {
+          if (window.yoGomuluHedef) {
+            let hedef = document.getElementById(window.yoGomuluHedef);
+            if (hedef) {
+              hedef.innerHTML = `<div class="yo-kart" style="animation:none; max-width:560px;"><div class="yo-baslik" style="margin-right:2px">${baslik}</div><div id="yoGovdeGomulu">${html}</div></div>`;
+              return;
+            }
+          }
           document.getElementById('yoBaslik').innerText = baslik;
           document.getElementById('yoGovde').innerHTML = html;
           yoModalKapaninca = kapaninca || null;
           document.getElementById('yoModal').classList.add('acik');
         }
-        function yoGovde(html) { document.getElementById('yoGovde').innerHTML = html; }
+                function yoGovde(html) {
+          if (window.yoGomuluHedef) { let g = document.getElementById('yoGovdeGomulu'); if (g) g.innerHTML = html; return; }
+          document.getElementById('yoGovde').innerHTML = html;
+        }
         function yoModalKapat() {
           document.getElementById('yoModal').classList.remove('acik');
           if ('speechSynthesis' in window) speechSynthesis.cancel();
@@ -14621,85 +14794,292 @@ function raporlarimKapat() {
           setTimeout(kapat, 15000);
         }
         
-        /* ========== 9) SOHBET MODU ========== */
-        let sh = null, yoSR = null;
-        function sohbetListeCiz() {
-          let p = document.getElementById('kp-panel-sohbet');
-          if (!p) return;
-          sohbetMikDur(); sh = null;
-          p.innerHTML = `<div class="yo-sohbet"><div style="font-family:'Fredoka',sans-serif; font-size:18px; font-weight:700; color:#7c3aed">💬 Papağanla sohbet</div>
-            <div class="yo-bos" style="text-align:left; padding:4px 0 0">Papağan sana soru soracak. Mikrofonla konuş ya da yazarak cevap ver. Her diyalog 1 enerji.</div>
-            <div class="yo-s-liste">${YO_SOHBET.map((s, i) => `<button class="yo-s-kart" onclick="sohbetBasla(${i})">${s.ad}<span>${s.satirlar.length} soru</span></button>`).join('')}</div></div>`;
-        }
-        function sohbetBasla(i) {
-          if (!yoEnerjiKontrol()) return;
-          sh = { idx:i, s:YO_SOHBET[i], i:0, d:0, y:0, deneme:0, bas:Date.now(), kilit:false };
-          document.getElementById('kp-panel-sohbet').innerHTML = `<div class="yo-sohbet">
-            <div class="yo-s-ust"><button class="yo-s-geri" onclick="sohbetListeCiz()">← Diyaloglar</button><b>${sh.s.ad}</b></div>
-            <div class="yo-s-akis" id="yoSAkis"></div>
-            <div class="yo-s-ipucu" id="yoSIpucu"></div>
-            <div class="yo-s-giris"><button class="yo-s-mik" id="yoSMik" onclick="sohbetMik()" aria-label="Mikrofonla cevap ver">🎤</button>
-              <input id="yoSInput" placeholder="Cevabını yaz..." autocomplete="off" onkeydown="if(event.key==='Enter')sohbetGonder()">
-              <button onclick="sohbetGonder()" aria-label="Gönder">➤</button></div></div>`;
-          sohbetPapaganSoyle();
-        }
-        function sohbetBalon(tur, html) {
-          let a = document.getElementById('yoSAkis'); if (!a) return;
-          a.insertAdjacentHTML('beforeend', `<div class="yo-s-balon ${tur}">${html}</div>`);
-          a.scrollTop = a.scrollHeight;
-        }
-        function sohbetPapaganSoyle() {
-          let s = sh.s.satirlar[sh.i];
-          sohbetBalon('p', '🦜 ' + yoGuvenliMetin(s.p));
-          yoSoyle(s.p, 0.9);
-          document.getElementById('yoSIpucu').innerHTML = `💡 ${yoGuvenliMetin(s.tr)} Örnek: <i>${yoGuvenliMetin(s.ornek)}</i>`;
-          sh.kilit = false;
-        }
-        function sohbetGonder(metin) {
-          if (!sh || sh.kilit) return;
-          let inp = document.getElementById('yoSInput');
-          metin = String(metin || (inp ? inp.value : '')).trim();
-          if (!metin) return;
-          if (inp) inp.value = '';
-          sohbetBalon('ben', yoGuvenliMetin(metin));
-          let s = sh.s.satirlar[sh.i];
-          let norm = typeof kpNormallestir === 'function' ? kpNormallestir : (x => String(x).toLowerCase());
-          let n = norm(metin);
-          if (s.k.some(k => n.includes(norm(k)))) {
-            sh.d++; sh.kilit = true; sohbetBalon('ok', '✅ Harika cevap!'); yoSes('dogru');
-            sohbetIleri(1200);
-          } else {
-            sh.deneme++; yoSes('yanlis');
-            if (sh.deneme < 2) sohbetBalon('hata', '🤔 Tam olmadı, ipucuna bakıp tekrar dene.');
-            else { sh.y++; sh.kilit = true; sohbetBalon('hata', `Şöyle diyebilirdin: "${yoGuvenliMetin(s.ornek)}"`); sohbetIleri(2300); }
-          }
-        }
-        function sohbetIleri(ms) {
-          sh.deneme = 0;
-          let o = sh;
-          setTimeout(() => { if (sh !== o) return; sh.i++; if (sh.i >= sh.s.satirlar.length) sohbetBitir(); else sohbetPapaganSoyle(); }, ms);
-        }
-        function sohbetBitir() {
-          sohbetMikDur();
-          let o = sh;
-          yoSonuc({ oyunAdi:'💬 Sohbet: ' + o.s.ad, dogru:o.d, yanlis:o.y, puan:o.d * 10, sureSaniye:Math.round((Date.now() - o.bas) / 1000), siralamaYok:true,
-            devamFn: sohbetListeCiz, tekrarFn: () => sohbetBasla(o.idx) });
-        }
-        function sohbetMik() {
-          let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-          if (!SR) { yoToast('Tarayıcın mikrofonu desteklemiyor, yazarak cevap ver.'); return; }
-          if (yoSR) { sohbetMikDur(); return; }
-          yoSR = new SR(); yoSR.lang = 'en-US'; yoSR.interimResults = false; yoSR.maxAlternatives = 1;
-          let btn = document.getElementById('yoSMik'); if (btn) btn.classList.add('dinliyor');
-          yoSR.onresult = e => { let t = e.results[0][0].transcript; sohbetMikDur(); sohbetGonder(t); };
-          yoSR.onerror = () => sohbetMikDur();
-          yoSR.onend = () => { yoSR = null; let b = document.getElementById('yoSMik'); if (b) b.classList.remove('dinliyor'); };
-          try { yoSR.start(); } catch (e) { sohbetMikDur(); }
-        }
-        function sohbetMikDur() {
-          if (yoSR) { let r = yoSR; yoSR = null; try { r.stop(); } catch (e) {} }
-          let b = document.getElementById('yoSMik'); if (b) b.classList.remove('dinliyor');
-        }
+        /* ========== 9) SOHBET MODU — SEVİYELİ HARİTA ========== */
+let sh = null, yoSR = null;
+const YS_KONUM = [50, 76, 50, 24];
+function ysAzHareket() { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
+function ysPanel() { return document.getElementById('kp-panel-sohbet'); }
+function ysYildiz(id) { return (yo && yo.sohbet && yo.sohbet[id]) || 0; }
+function ysAcikMi(i) { return i === 0 || ysYildiz(YO_SOHBET[i - 1].id) >= 1; }
+function ysSeviye(kod) { return YO_SOHBET_SEVIYE.find(s => s.kod === kod) || YO_SOHBET_SEVIYE[0]; }
+function ysMerkez(el) { let r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
+
+function ysPatlat(el, ikonlar, adet) {
+  if (!el || ysAzHareket()) return;
+  let p = ysMerkez(el);
+  for (let i = 0; i < (adet || 12); i++) {
+    let s = document.createElement('span'); s.className = 'ys-parca'; s.innerText = ikonlar[i % ikonlar.length];
+    let a = Math.random() * Math.PI * 2, u = 50 + Math.random() * 70;
+    s.style.left = (p.x - 10) + 'px'; s.style.top = (p.y - 12) + 'px';
+    s.style.setProperty('--tx', Math.cos(a) * u + 'px'); s.style.setProperty('--ty', Math.sin(a) * u + 'px');
+    s.style.setProperty('--tr', (Math.random() * 360 - 180) + 'deg');
+    document.body.appendChild(s); setTimeout(() => s.remove(), 1100);
+  }
+}
+function ysKonfetiYagmuru(adet) {
+  if (ysAzHareket()) return;
+  let ikonlar = ['🎉','✨','⭐','🎊','💜','💛','💚','💙','🧡'];
+  for (let i = 0; i < adet; i++) {
+    let s = document.createElement('span'); s.className = 'ys-konfeti'; s.innerText = ikonlar[i % ikonlar.length];
+    s.style.left = (Math.random() * 100) + 'vw';
+    s.style.animationDuration = (2 + Math.random() * 2) + 's';
+    s.style.animationDelay = (Math.random() * 0.8) + 's';
+    document.body.appendChild(s); setTimeout(() => s.remove(), 5000);
+  }
+}
+function ysNoktalar(x1, x2) {
+  return '<div class="ys-noktalar">' + [0.25, 0.5, 0.75].map(t => `<i style="left:${x1 + (x2 - x1) * t}%; top:${t * 100}%"></i>`).join('') + '</div>';
+}
+
+/* ---- Harita ---- */
+function sohbetListeCiz(acilis) {
+  let p = ysPanel(); if (!p) return;
+  sohbetMikDur(); sh = null;
+  if (yo && !yo.sohbet) yo.sohbet = {};
+  let toplam = YO_SOHBET.length;
+  let tamam = YO_SOHBET.filter(d => ysYildiz(d.id) >= 1).length;
+  let yildizTop = YO_SOHBET.reduce((t, d) => t + ysYildiz(d.id), 0);
+  let html = `<div class="ys-harita">
+    <div class="ys-ust"><div class="ys-ust-kus">🦜</div><div class="ys-ust-metin"><b>Papağanla sohbet</b>
+      <span>${tamam}/${toplam} diyalog · ⭐ ${yildizTop}/${toplam * 3}</span>
+      <div class="ys-ust-bar"><i style="width:${Math.round(tamam / toplam * 100)}%"></i></div></div></div>
+    <div class="ys-aciklama">Her sohbet 1 enerji. En az %60 doğru cevapla, sıradaki sohbetin kilidi açılsın. Hepsini ilk denemede bilirsen 3 yıldız!</div>`;
+  YO_SOHBET_SEVIYE.forEach(sv => {
+    let grup = YO_SOHBET.map((d, i) => ({ d, i })).filter(x => x.d.sv === sv.kod);
+    if (!grup.length) return;
+    let svAcik = ysAcikMi(grup[0].i) && !(acilis && acilis.yeniSeviye === sv.kod);
+    let svTamam = grup.filter(x => ysYildiz(x.d.id) >= 1).length;
+    html += `<div class="ys-bant${svAcik ? '' : ' kilitli'}" id="ysBant${sv.kod}" style="--sr:${sv.renk}"><span class="ys-bant-ikon">${sv.ikon}</span>
+      <span><b>${sv.kod} · ${sv.ad}</b><small>${svTamam}/${grup.length} tamamlandı</small></span>${svAcik ? '' : '<span class="ys-bant-kilit">🔒</span>'}</div>`;
+    grup.forEach((x, j) => {
+      let konum = YS_KONUM[x.i % 4];
+      if (j > 0) html += ysNoktalar(YS_KONUM[(x.i - 1) % 4], konum);
+      let y = ysYildiz(x.d.id), acik = ysAcikMi(x.i);
+      let acilacak = acilis && acilis.yeniIdx === x.i;
+      let durum = acilacak ? 'kilitli' : (y >= 1 ? 'bitti' : (acik ? 'aktif' : 'kilitli'));
+      let kilit = durum === 'kilitli' ? '<span class="ys-kilit">🔒</span>' : '';
+      let tik = acik ? `sohbetBasla(${x.i}, this)` : 'ysKilitliTik(this)';
+      html += `<div class="ys-satir" style="--x:${konum}%">
+        <button class="ys-dugum ${durum}" id="ysDugum${x.i}" style="--sr:${sv.renk}" onclick="${tik}" aria-label="${x.d.ad}${acik ? '' : ', kilitli'}">
+          <span class="ys-dugum-ic">${x.d.ikon}</span>${kilit}</button>
+        <div class="ys-yildizlar">${[1, 2, 3].map(n => `<span class="${n <= y ? 'dolu' : ''}">★</span>`).join('')}</div>
+        <div class="ys-ad">${x.d.ad}</div></div>`;
+    });
+  });
+  html += '</div>';
+  p.innerHTML = html;
+  if (acilis) setTimeout(() => ysKilitAcAnimasyonu(acilis), 300);
+}
+function ysKilitliTik(btn) {
+  btn.classList.remove('ys-salla'); void btn.offsetWidth; btn.classList.add('ys-salla');
+  yoToast('🔒 Önce bir önceki sohbeti tamamla!');
+}
+function ysKilitAcAnimasyonu(a) {
+  let yeni = document.getElementById('ysDugum' + a.yeniIdx), onceki = document.getElementById('ysDugum' + a.oncekiIdx);
+  if (!yeni) return;
+  let ac = () => {
+    yeni.scrollIntoView({ behavior: ysAzHareket() ? 'auto' : 'smooth', block: 'center' });
+    setTimeout(() => {
+      let kilit = yeni.querySelector('.ys-kilit');
+      if (kilit) kilit.classList.add('kiriliyor');
+      setTimeout(() => {
+        if (kilit) kilit.remove();
+        yeni.classList.remove('kilitli'); yeni.classList.add('aktif', 'ys-yeni-acildi');
+        setTimeout(() => yeni.classList.remove('ys-yeni-acildi'), 800);
+        ysPatlat(yeni, ['✨','⭐','💫','🎉'], 16);
+        yoSes('dogru');
+        if (onceki) ysPapaganUcur(onceki, yeni);
+      }, 650);
+    }, 550);
+  };
+  if (a.yeniSeviye) {
+    ysSeviyeKutla(a.yeniSeviye, () => {
+      let bant = document.getElementById('ysBant' + a.yeniSeviye);
+      if (bant) { bant.classList.remove('kilitli'); let k = bant.querySelector('.ys-bant-kilit'); if (k) k.remove(); bant.classList.add('ys-bant-acildi'); }
+      ac();
+    });
+  } else ac();
+}
+function ysPapaganUcur(a, b) {
+  if (ysAzHareket() || !document.body.animate) return;
+  let p1 = ysMerkez(a), p2 = ysMerkez(b);
+  let k = document.createElement('div'); k.className = 'ys-ucan-kus'; k.innerText = '🦜';
+  document.body.appendChild(k);
+  let ortaX = (p1.x + p2.x) / 2, ortaY = Math.min(p1.y, p2.y) - 90;
+  k.animate([
+    { transform: `translate(${p1.x - 22}px, ${p1.y - 22}px) scale(.8) rotate(0deg)` },
+    { transform: `translate(${ortaX - 22}px, ${ortaY - 22}px) scale(1.5) rotate(-12deg)` },
+    { transform: `translate(${p2.x - 22}px, ${p2.y - 52}px) scale(1) rotate(0deg)` }
+  ], { duration: 1000, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }).onfinish = () => k.remove();
+}
+function ysSeviyeKutla(kod, sonra) {
+  let sv = ysSeviye(kod);
+  let k = document.createElement('div'); k.className = 'ys-kutlama'; k.style.setProperty('--sr', sv.renk);
+  k.innerHTML = `<div class="ys-isinlar"></div><div class="ys-kutlama-icerik">
+    <div class="ys-kutlama-ikon">${sv.ikon}</div><div class="ys-kutlama-ust">YENİ SEVİYE AÇILDI</div>
+    <div class="ys-kutlama-baslik">${sv.kod} · ${sv.ad}</div><div class="ys-kutlama-alt">Yeni sohbetler seni bekliyor!</div>
+    <button class="yo-btn ys-kutlama-btn">Hadi başlayalım! 🚀</button></div>`;
+  document.body.appendChild(k);
+  if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('kombo', 15);
+  ysKonfetiYagmuru(40);
+  let kapandi = false;
+  let kapat = () => { if (kapandi) return; kapandi = true; k.classList.add('kapaniyor'); setTimeout(() => { k.remove(); if (sonra) sonra(); }, 400); };
+  k.querySelector('button').onclick = kapat;
+  setTimeout(() => { let b = k.querySelector('button'); if (b) b.focus(); }, 900);
+}
+
+/* ---- Portal geçişi ---- */
+function ysPortal(kaynak, renk, sonra) {
+  if (ysAzHareket() || !kaynak || !document.body.animate) { sonra(); return; }
+  let m = ysMerkez(kaynak);
+  let p = document.createElement('div'); p.className = 'ys-portal'; p.style.setProperty('--sr', renk);
+  p.innerHTML = '<div class="ys-portal-kus">🦜</div>';
+  document.body.appendChild(p);
+  let an = p.animate([{ clipPath: `circle(0px at ${m.x}px ${m.y}px)` }, { clipPath: `circle(150vmax at ${m.x}px ${m.y}px)` }],
+    { duration: 650, easing: 'cubic-bezier(.6,0,.2,1)', fill: 'forwards' });
+  an.onfinish = () => {
+    sonra();
+    setTimeout(() => { p.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, fill: 'forwards' }).onfinish = () => p.remove(); }, 300);
+  };
+}
+
+/* ---- Sohbet ekranı ---- */
+function sohbetBasla(i, kaynak) {
+  if (!yoHazirMi()) return;
+  if (!ysAcikMi(i)) { if (kaynak) ysKilitliTik(kaynak); return; }
+  if (!yoEnerjiKontrol()) return;
+  let d = YO_SOHBET[i], sv = ysSeviye(d.sv);
+  sohbetMikDur();
+  sh = { idx: i, s: d, i: 0, d: 0, y: 0, ilk: 0, deneme: 0, bas: Date.now(), kilit: true };
+  let o = sh;
+  ysPortal(kaynak, sv.renk, () => {
+    if (sh !== o) return;
+    let p = ysPanel();
+    p.innerHTML = `<div class="yo-sohbet ys-sohbet" style="--sr:${sv.renk}">
+      <div class="yo-s-ust"><button class="yo-s-geri" onclick="sohbetListeCiz()">← Harita</button><b>${d.ikon} ${d.ad}</b><span class="ys-rozet">${d.sv}</span></div>
+      <div class="ys-adimlar" id="ysAdimlar">${d.satirlar.map(() => '<i></i>').join('')}</div>
+      <div class="yo-s-akis" id="yoSAkis"></div>
+      <div class="yo-s-ipucu" id="yoSIpucu"></div>
+      <div class="yo-s-giris"><button class="yo-s-mik" id="yoSMik" onclick="sohbetMik()" aria-label="Mikrofonla cevap ver">🎤</button>
+        <input id="yoSInput" placeholder="Cevabını yaz..." autocomplete="off" onkeydown="if(event.key==='Enter')sohbetGonder()">
+        <button onclick="sohbetGonder()" aria-label="Gönder">➤</button></div></div>`;
+    p.scrollIntoView({ block: 'start' });
+    sohbetPapaganSoyle();
+  });
+}
+function ysAdimGuncelle() {
+  let a = document.getElementById('ysAdimlar'); if (!a || !sh) return;
+  [...a.children].forEach((e, k) => { e.className = k < sh.i ? 'tamam' : (k === sh.i ? 'simdi' : ''); });
+}
+function sohbetBalon(tur, html) {
+  let a = document.getElementById('yoSAkis'); if (!a) return null;
+  a.insertAdjacentHTML('beforeend', `<div class="yo-s-balon ${tur}">${html}</div>`);
+  a.scrollTop = a.scrollHeight;
+  return a.lastElementChild;
+}
+function sohbetPapaganSoyle() {
+  let o = sh; if (!o) return;
+  let s = o.s.satirlar[o.i];
+  ysAdimGuncelle();
+  o.kilit = true;
+  let yaziyor = sohbetBalon('p ys-yaziyor', '<i></i><i></i><i></i>');
+  document.getElementById('yoSIpucu').innerHTML = '';
+  setTimeout(() => {
+    if (sh !== o) return;
+    if (yaziyor) yaziyor.remove();
+    sohbetBalon('p', '🦜 ' + yoGuvenliMetin(s.p));
+    yoSoyle(s.p, 0.9);
+    document.getElementById('yoSIpucu').innerHTML = `💡 ${yoGuvenliMetin(s.tr)} Örnek: <i>${yoGuvenliMetin(s.ornek)}</i>`;
+    o.kilit = false;
+  }, ysAzHareket() ? 100 : 950);
+}
+function sohbetGonder(metin) {
+  if (!sh || sh.kilit) return;
+  let inp = document.getElementById('yoSInput');
+  metin = String(metin || (inp ? inp.value : '')).trim();
+  if (!metin) return;
+  if (inp) inp.value = '';
+  let benBalon = sohbetBalon('ben', yoGuvenliMetin(metin));
+  let s = sh.s.satirlar[sh.i];
+  let norm = typeof kpNormallestir === 'function' ? kpNormallestir : (x => String(x).toLowerCase());
+  let n = norm(metin), kelimeSay = n.split(' ').filter(Boolean).length;
+  let tutar = s.k.some(k => n.includes(norm(k)));
+  if (tutar && s.min && kelimeSay < s.min) {
+    sohbetBalon('hata', `✍️ Güzel başlangıç! Biraz daha uzun anlat (en az ${s.min} kelime).`);
+    return;
+  }
+  if (tutar) {
+    sh.d++; if (sh.deneme === 0) sh.ilk++;
+    sh.kilit = true;
+    if (benBalon) benBalon.classList.add('parla');
+    sohbetBalon('ok', sh.deneme === 0 ? '✅ Harika cevap!' : '✅ Bu sefer oldu!');
+    ysPatlat(benBalon, ['✨','⭐','🎉'], 10);
+    yoSes('dogru');
+    sohbetIleri(1300);
+  } else {
+    sh.deneme++; yoSes('yanlis');
+    if (benBalon) benBalon.classList.add('ys-salla');
+    if (sh.deneme < 2) sohbetBalon('hata', '🤔 Tam olmadı, ipucuna bakıp tekrar dene.');
+    else { sh.y++; sh.kilit = true; sohbetBalon('hata', `Şöyle diyebilirdin: "${yoGuvenliMetin(s.ornek)}"`); sohbetIleri(2400); }
+  }
+}
+function sohbetIleri(ms) {
+  sh.deneme = 0;
+  let o = sh;
+  setTimeout(() => { if (sh !== o) return; sh.i++; if (sh.i >= sh.s.satirlar.length) sohbetBitir(); else sohbetPapaganSoyle(); }, ms);
+}
+
+/* ---- Bitiş sahnesi ---- */
+function sohbetBitir() {
+  sohbetMikDur();
+  let o = sh, t = o.s.satirlar.length;
+  let gecti = o.d / t >= 0.6;
+  let yildiz = !gecti ? 0 : (o.d === t ? (o.ilk === t ? 3 : 2) : 1);
+  let eski = ysYildiz(o.s.id), ilkKezGecti = gecti && eski < 1;
+  if (yo) { yo.sohbet = yo.sohbet || {}; if (yildiz > eski) yo.sohbet[o.s.id] = yildiz; yoKaydet(); }
+  let xp = o.d * 10;
+  if (o.d > 0) yoXpEkle(xp, o.d);
+  let acilis = null;
+  if (ilkKezGecti && o.idx + 1 < YO_SOHBET.length) {
+    let sonraki = YO_SOHBET[o.idx + 1];
+    acilis = { yeniIdx: o.idx + 1, oncekiIdx: o.idx, yeniSeviye: sonraki.sv !== o.s.sv ? sonraki.sv : null };
+  }
+  let baslik = !gecti ? 'Biraz daha pratik!' : (yildiz === 3 ? 'Mükemmel sohbet!' : 'Harika sohbet!');
+  let p = ysPanel();
+  p.innerHTML = `<div class="yo-sohbet ys-final" style="--sr:${ysSeviye(o.s.sv).renk}">
+    <div class="ys-final-kus${gecti ? ' mutlu' : ''}">🦜</div>
+    <div class="ys-final-baslik">${baslik}</div>
+    <div class="ys-final-alt">${o.s.ikon} ${o.s.ad} · ${o.d}/${t} doğru</div>
+    <div class="ys-final-yildiz">${[1, 2, 3].map(n => `<span class="${n <= yildiz ? 'dolu' : ''}" style="animation-delay:${0.25 + n * 0.35}s">★</span>`).join('')}</div>
+    <div class="ys-final-xp">+<b id="ysXp">0</b> XP · +${o.d} 🪙</div>
+    ${gecti ? (acilis ? '<div class="ys-final-not">🔓 Yeni bir sohbetin kilidi açıldı!</div>' : '') : '<div class="ys-final-not hata">Kilidi açmak için en az %60 doğru gerekiyor.</div>'}
+    <button class="yo-btn" id="ysHaritaBtn">🗺️ Haritaya dön</button>
+    <button class="yo-btn ikincil" id="ysTekrarBtn">🔁 Tekrar dene</button></div>`;
+  p.scrollIntoView({ block: 'start' });
+  let xpEl = document.getElementById('ysXp'), sayi = 0, adim = Math.max(1, Math.ceil(xp / 20));
+  let say = setInterval(() => { sayi = Math.min(xp, sayi + adim); if (xpEl) xpEl.innerText = sayi; if (sayi >= xp) clearInterval(say); }, 45);
+  if (gecti) { setTimeout(() => ysKonfetiYagmuru(yildiz * 12), 600); if (typeof genelSesEfektiCal === 'function') setTimeout(() => genelSesEfektiCal('kombo', 10), 400); }
+  document.getElementById('ysHaritaBtn').onclick = () => sohbetListeCiz(acilis);
+  document.getElementById('ysTekrarBtn').onclick = (e) => sohbetBasla(o.idx, e.currentTarget);
+  sh = null;
+}
+
+/* ---- Mikrofon ---- */
+function sohbetMik() {
+  let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { yoToast('Tarayıcın mikrofonu desteklemiyor, yazarak cevap ver.'); return; }
+  if (yoSR) { sohbetMikDur(); return; }
+  yoSR = new SR(); yoSR.lang = 'en-US'; yoSR.interimResults = false; yoSR.maxAlternatives = 1;
+  let btn = document.getElementById('yoSMik'); if (btn) btn.classList.add('dinliyor');
+  yoSR.onresult = e => { let t = e.results[0][0].transcript; sohbetMikDur(); sohbetGonder(t); };
+  yoSR.onerror = () => sohbetMikDur();
+  yoSR.onend = () => { yoSR = null; let b = document.getElementById('yoSMik'); if (b) b.classList.remove('dinliyor'); };
+  try { yoSR.start(); } catch (e) { sohbetMikDur(); }
+}
+function sohbetMikDur() {
+  if (yoSR) { let r = yoSR; yoSR = null; try { r.stop(); } catch (e) {} }
+  let b = document.getElementById('yoSMik'); if (b) b.classList.remove('dinliyor');
+}
         
         /* ========== 10-11) ÖĞRETMEN RAPORLARI ========== */
         let yoRaporTip = 'zayif';
@@ -15126,8 +15506,8 @@ function raporlarimKapat() {
   <button data-s="akis" onclick="maSekmeSec('akis')">Akış</button>
   <button data-s="kesfet" onclick="maSekmeSec('kesfet')">Keşfet</button>
   <button data-s="vitrin" onclick="maSekmeSec('vitrin')">Vitrinim</button>
-  <button onclick="if(typeof yoMagazaAc==='function') yoMagazaAc();">Mağaza</button>
-  <button onclick="if(typeof yoLigAc==='function') yoLigAc();">Lig</button>
+    <button data-s="magaza" onclick="maSekmeSec('magaza')">Mağaza</button>
+  <button data-s="lig" onclick="maSekmeSec('lig')">Lig</button>
   <button data-s="profil" onclick="maSekmeSec('profil')">Profil</button>
 </div>
   </div>
@@ -15141,8 +15521,13 @@ async function meduAkisAc() {
     dcTumTamEkranlariKapat();
     document.getElementById('tab-meduakis').classList.add('active');
     dcBottomNavSenkronize();
-    await maOlaylariYukle();
-    maSekmeSec('akis');
+    maSekmeSec(maSekme || 'akis');
+    maOlaylariYukle().then(() => {
+        if (maProfilId) return;
+        if (maSekme === 'kesfet') maCiz();
+        let l = document.getElementById('maAkisListe');
+        if (l && maSekme === 'akis') l.innerHTML = maAkisListeHtml();
+    });
 }
 function meduAkisKapat() {
     document.getElementById('tab-meduakis').classList.remove('active');
@@ -15227,47 +15612,102 @@ async function maSinifGetir() {
 }
 function maBul(id) { return id === 'ben' ? maBen() : maSinifListeSon.find(o => o.id === id); }
 
+let maCizNo = 0;
+function maOzetGeriKoy() {
+    let oz = document.getElementById('tab-ozet'), ek = document.getElementById('maEkran');
+    if (oz && ek && ek.contains(oz)) {
+        oz.classList.remove('active');
+        oz.style.cssText = '';
+        document.getElementById('panel-alani').appendChild(oz);
+    }
+}
 async function maCiz() {
-    let siraMap = { akis:0, kesfet:1, vitrin:2, profil:5 };
-    let sira = siraMap[maSekme] !== undefined ? siraMap[maSekme] : 0;
+    let no = ++maCizNo;
+    let siraMap = { akis:0, kesfet:1, vitrin:2, magaza:3, lig:4, profil:5 };
     let iz = document.getElementById('maSegmentIz');
-    if (iz) iz.style.transform = `translateX(${sira * 100}%)`;
+    if (iz) iz.style.transform = `translateX(${(siraMap[maSekme] || 0) * 100}%)`;
     document.querySelectorAll('#maSegment button').forEach(b => b.classList.toggle('aktif', b.dataset.s === maSekme));
     let ekran = document.getElementById('maEkran');
+    maOzetGeriKoy();
+    window.yoGomuluHedef = null;
 
     if (maSekme === 'profil' && !maProfilId) {
-        ekran.innerHTML = '<div class="ma-gir" id="maProfilKapsayici"></div>';
+        ekran.innerHTML = '<div class="ma-gir" id="maProfilKapsayici" style="padding:14px 12px"></div>';
         let ozet = document.getElementById('tab-ozet');
-        ozet.classList.add('active');
-        ozet.style.cssText = 'display:block; position:static;';
-        document.getElementById('maProfilKapsayici').appendChild(ozet);
+        if (ozet) {
+            ozet.classList.add('active');
+            ozet.style.cssText = 'display:block;';
+            document.getElementById('maProfilKapsayici').appendChild(ozet);
+            setTimeout(() => {
+                if (typeof gelisimChartInstance !== 'undefined' && gelisimChartInstance) gelisimChartInstance.resize();
+                if (typeof kriterChartInstance !== 'undefined' && kriterChartInstance) kriterChartInstance.resize();
+                if (typeof denemeChartInstance !== 'undefined' && denemeChartInstance) denemeChartInstance.resize();
+            }, 60);
+        }
+        return;
+    }
+    if ((maSekme === 'magaza' || maSekme === 'lig') && !maProfilId) {
+        ekran.innerHTML = '<div class="ma-gir" style="padding:14px 12px"><div id="maGomuluAlan"></div></div>';
+        window.yoGomuluHedef = 'maGomuluAlan';
+        if (maSekme === 'magaza') { if (typeof yoMagazaAc === 'function') yoMagazaAc(); }
+        else if (typeof yoLigAc === 'function') yoLigAc();
         return;
     }
 
     ekran.innerHTML = '<div class="ma-bos">Yükleniyor...</div>';
-    maSinifListeSon = await maSinifGetir();
+    let liste = await maSinifGetir();
+    if (maSekme === 'akis' && !maProfilId) await maAkisYukle();
+    if (no !== maCizNo) return;
+    maSinifListeSon = liste;
     let html = maProfilId ? maVitrinHtml(maProfilId, false) : maSekme === 'akis' ? maAkisHtml() : maSekme === 'kesfet' ? maKesfetHtml() : maVitrinHtml('ben', true);
     ekran.innerHTML = `<div class="ma-gir">${html}</div>`;
-    mkOrbGuncelle();
     requestAnimationFrame(() => requestAnimationFrame(maBalonlariUcur));
 }
-function maSekmeSec(s) { maSekme = s; maProfilId = null; maCiz(); document.getElementById('maEkran').scrollTop = 0; }
-function maProfilAc(id) { if (id === 'ben') { maSekmeSec('vitrin'); return; } maProfilId = id; maCiz(); document.getElementById('maEkran').scrollTop = 0; }
+function maSekmeSec(s) { maSekme = s; maProfilId = null; maCiz(); document.getElementById('tab-meduakis').scrollTop = 0; }
+function maProfilAc(id) { if (id === 'ben') { maSekmeSec('vitrin'); return; } maProfilId = id; maCiz(); document.getElementById('tab-meduakis').scrollTop = 0; }
 
+let maAkisVeri = [];
+async function maAkisYukle() {
+    try {
+        let r = await fetch(`${apiURL}?islem=akisTumu`);
+        let d = await r.json();
+        if (d && Array.isArray(d.liste)) maAkisVeri = d.liste;
+    } catch (e) {}
+}
+function maZamanOnce(e) {
+    if (e.g) {
+        let g = Math.round((new Date().setHours(0,0,0,0) - new Date(e.t).setHours(0,0,0,0)) / 86400000);
+        return g <= 0 ? 'bugün' : g === 1 ? 'dün' : g + ' gün önce';
+    }
+    let s = Math.max(0, Math.round((Date.now() - e.t) / 1000));
+    if (s < 60) return 'az önce';
+    if (s < 3600) return Math.floor(s / 60) + ' dk önce';
+    if (s < 86400) return Math.floor(s / 3600) + ' saat önce';
+    return Math.floor(s / 86400) + ' gün önce';
+}
 function maAkisHtml() {
-    let ust = `<div class="filtre"><button class="${maFiltre === 'herkes' ? 'aktif' : ''}" onclick="maFiltre='herkes'; maCiz()">Tüm sınıf</button><button class="${maFiltre === 'takip' ? 'aktif' : ''}" onclick="maFiltre='takip'; maCiz()">Takip ettiklerim (${maTakip.size})</button></div>`;
-    let liste = [...maSinifListeSon].filter(o => maFiltre === 'herkes' || maTakip.has(o.id)).sort((a, b) => b.xp - a.xp).slice(0, 10);
-    if (!liste.length) return ust + '<div class="ma-bos">Henüz kimseyi takip etmiyorsun.<br>Keşfet\'ten sınıf arkadaşlarını bul.</div>';
-    return ust + mkOrbHtml() + liste.map((o, i) => {
-        let id = 'akis-' + o.id, b = maBegeni.has(id), t = maTebrik.has(id);
-        let ikon = o.xp >= 2000 ? '🏆' : (o.seviye !== '—' ? '📋' : '⭐');
-        let metin = o.xp >= 2000 ? `Bu hafta ${o.xp} XP ile lig liderlerinden!` : (o.seviye !== '—' ? `Şu an ${o.seviye} seviyesinde çalışıyor.` : `Diji-Medu'da aktif çalışıyor.`);
-        return `<div class="akis-kart" style="--serit:${MA_SERIT[i % 5]}"><span class="akis-ikon">${ikon}</span>
-      <div class="akis-ust" onclick="maProfilAc('${o.id}')">${maAvatar(o)}<span><b>${guvenliMetin(o.ad)}</b><small>${o.lig} lig · ${o.seviye}</small></span></div>
-      <div class="akis-metin">${metin}</div>
-      <div class="aksiyon"><button class="${b ? 'basili' : ''}" onclick="maBegen('${id}', this)">${b ? '❤️' : '🤍'} Beğen</button>
-      <button class="${t ? 'basili' : ''}" onclick="maTebrikEt('${id}', this)">🎉 Tebrik et</button></div></div>`;
+    let ust = `<div class="filtre"><button class="${maFiltre === 'herkes' ? 'aktif' : ''}" onclick="maFiltre='herkes'; maCiz()">Herkes</button><button class="${maFiltre === 'takip' ? 'aktif' : ''}" onclick="maFiltre='takip'; maCiz()">Takip ettiklerim (${maTakip.size})</button><span class="ma-canli">● Canlı</span></div>`;
+    return ust + `<div id="maAkisListe">${maAkisListeHtml()}</div>`;
+}
+function maAkisListeHtml() {
+    if (!maAkisVeri.length) return '<div class="ma-bos">Henüz bir hareket yok.<br>Biri oyun oynadığında, puan ya da enerji kazandığında burada anında görünecek.</div>';
+    let liste = maAkisVeri.filter(e => maFiltre === 'herkes' || maTakip.has(e.ogr));
+    if (!liste.length) return '<div class="ma-bos">Takip ettiklerinden henüz bir hareket yok.</div>';
+    return liste.map((e, i) => {
+        let id = 'akis-' + e.k, b = maBegeni.has(id), t = maTebrik.has(id);
+        let o = { maskot: typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(e.ogr) : '🦜', av: '#fde68a' };
+        let renk = e.tur === 'eksi' ? '#cbd5e1' : MA_SERIT[i % 5];
+        let aksiyon = e.tur === 'eksi' ? '' : `<div class="aksiyon"><button class="${b ? 'basili' : ''}" onclick="maBegen('${id}', this)">${b ? '❤️' : '🤍'} Beğen</button><button class="${t ? 'basili' : ''}" onclick="maTebrikEt('${id}', this)">🎉 Tebrik et</button></div>`;
+        return `<div class="akis-kart" style="--serit:${renk}"><span class="akis-ikon">${e.ikon}</span>
+      <div class="akis-ust" data-o="${guvenliMetin(String(e.ogr))}" onclick="maAkisKisiAc(this.dataset.o)">${maAvatar(o)}<span><b>${guvenliMetin(String(e.ad))}</b><small>${maZamanOnce(e)}</small></span></div>
+      <div class="akis-metin">${guvenliMetin(String(e.metin))}</div>${aksiyon}</div>`;
     }).join('');
+}
+function maAkisKisiAc(ad) {
+    ad = String(ad || '').toLowerCase();
+    if (ad === String(aktifOgrenciAdi || '').toLowerCase()) { maSekmeSec('vitrin'); return; }
+    let o = maSinifListeSon.find(x => String(x.id).toLowerCase() === ad);
+    if (o) maProfilAc(o.id); else maToast('Bu öğrencinin vitrini sadece kendi sınıfına açık.');
 }
 function maBegen(id, btn) {
     let hedef = id.replace(/^akis-/, '');
@@ -15348,7 +15788,7 @@ function maVitrinDuzenHtml(o) {
     let rozetKaynagi = o.rozetler || [];
     return `<div class="duzen-kart"><h4>🏅 Vitrindeki rozetlerin</h4><p>En fazla 3 rozet seç.</p>
       <div class="secim">${rozetKaynagi.length ? rozetKaynagi.map((r, i) => `<button class="${maVitrinSecim.includes(i) ? 'secili' : ''}" onclick="maRozetSec(${i})">${r[0] || '🏅'} ${guvenliMetin(r[1])}</button>`).join('') : '<span style="font-size:12px;color:var(--soluk)">Henüz rozet kazanmadın.</span>'}</div></div>
-    <div class="duzen-kart"><h4>🦜 Maskot ve aksesuar</h4><p>Papağan mağazasından aldıkların burada görünür.</p><button class="duzen-btn" onclick="if(typeof yoMagazaAc==='function') yoMagazaAc();">Mağazaya git</button></div>`;
+    <div class="duzen-kart"><h4>🦜 Maskot ve aksesuar</h4><p>Papağan mağazasından aldıkların burada görünür.</p><button class="duzen-btn" onclick="maSekmeSec('magaza')">Mağazaya git</button></div>`;
 }
 function maRozetSec(i) {
     let k = maVitrinSecim.indexOf(i);
@@ -15368,13 +15808,8 @@ function maTakipDegistir(id, btn) {
     maOlayGonder(id, 'takip');
 }
 
-function mkOrbHtml() {
-  return `<div class="mk-orb-katman">
-    <button class="mk-orb mk-buyu" id="mkOrbBuyu" onclick="baModuAc()">🧙<span class="mk-orb-sayi" id="mkOrbBuyuSayi">.../...</span></button>
-    <button class="mk-orb mk-konusma" id="mkOrbKonusma" onclick="kpModuAc()">🎤<span class="mk-orb-sayi" id="mkOrbKonusmaSayi">.../...</span></button>
-  </div>`;
-}
-async function mkOrbGuncelle() {
+function mkOrbHtml() { return ''; }
+async function mkOrbGuncelle() { return;
   if (typeof baParkurHazirla === 'function') baParkurHazirla();
   if (typeof baTamamlananSeviyeleriYukle === 'function') await baTamamlananSeviyeleriYukle();
   let bEl = document.getElementById('mkOrbBuyuSayi');
@@ -15390,6 +15825,162 @@ async function mkOrbGuncelle() {
 
                 <button class="mk-mini-btn mk-mini-ai" onclick="aiModalAc()" title="AI Koç" aria-label="AI Koç">🤖</button>
 <button class="mk-mini-btn mk-mini-yardim" onclick="yardimAc()" title="Yardım Köşesi" aria-label="Yardım Köşesi">❓</button>
+
+<!-- ===================== SON BLOK (Medu Akış düzeltmeleri + Sohbet butonu) ===================== -->
+<style>
+/* Tüm alt sekmeler gömülü ve tam ekran (ayrı panel görünümü yok) */
+#tab-meduakis.dc-fullscreen-overlay, #tab-sanaozel.dc-fullscreen-overlay, #tab-aktiviteler.dc-fullscreen-overlay,
+#tab-derscalis.dc-fullscreen-overlay, #tab-sohbet.dc-fullscreen-overlay { background:#fdf7ff !important; }
+#tab-buyuakademisi.dc-fullscreen-overlay { background:#f4fbfc !important; }
+#tab-konusmapratigi.dc-fullscreen-overlay { background:#fef6ff !important; }
+#tab-meduakis.dc-fullscreen-overlay { padding:0 0 100px !important; }
+#tab-meduakis .ma-wrap { min-height:100%; }
+#tab-meduakis .akis-baslik { position:sticky; top:0; z-index:5; }
+#tab-meduakis .ma-canli { margin-left:auto; align-self:center; font:900 11px 'Nunito',sans-serif; color:#e0434b; animation:maCanli 1.4s ease-in-out infinite; }
+@keyframes maCanli { 50% { opacity:.35; } }
+.sohbet-kap { max-width:560px; margin:0 auto; }
+@media (min-width: 769px) {
+  #tab-meduakis.dc-fullscreen-overlay.active, #tab-sanaozel.dc-fullscreen-overlay.active, #tab-aktiviteler.dc-fullscreen-overlay.active,
+  #tab-derscalis.dc-fullscreen-overlay.active, #tab-sohbet.dc-fullscreen-overlay.active,
+  #tab-buyuakademisi.dc-fullscreen-overlay.active, #tab-konusmapratigi.dc-fullscreen-overlay.active {
+    display:block !important; height:100% !important; overflow-y:auto !important;
+  }
+  #tab-sanaozel.dc-fullscreen-overlay, #tab-aktiviteler.dc-fullscreen-overlay,
+  #tab-derscalis.dc-fullscreen-overlay, #tab-sohbet.dc-fullscreen-overlay { padding:24px 16px 110px !important; }
+  #tab-meduakis.dc-fullscreen-overlay { padding:0 0 110px !important; }
+  #tab-sanaozel .dc-focus-card, #tab-aktiviteler .dc-focus-card, #tab-derscalis .dc-focus-card {
+    max-width:680px; max-height:none; overflow:visible; box-shadow:none; background:transparent; border-radius:0; padding:8px 4px 20px; margin:0 auto;
+  }
+}
+
+/* Papağanla sohbet — yüzen buton */
+.sohbet-fab { position:fixed; right:12px; bottom:max(200px, 32vh); z-index:99996; width:62px; height:62px; border-radius:50%; border:none; padding:0; background:transparent; cursor:pointer; opacity:.75; display:none; animation:sfSuzul 3.2s ease-in-out infinite; transition:opacity .2s; }
+.sohbet-fab.gor { display:block; }
+.sohbet-fab:hover, .sohbet-fab:focus-visible { opacity:1; outline:none; }
+.sohbet-fab::before { content:''; position:absolute; inset:0; border-radius:50%; background:conic-gradient(#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#a06bff,#ff6b6b); animation:sfDon 4s linear infinite; }
+.sohbet-fab .ic { position:absolute; inset:4px; border-radius:50%; background:#fff8ff; display:flex; align-items:center; justify-content:center; font-size:30px; }
+.sohbet-fab .dalga { position:absolute; inset:-6px; border-radius:50%; border:3px solid #a06bff; opacity:0; animation:sfDalga 2.4s ease-out infinite; }
+.sohbet-fab .dalga.d2 { animation-delay:1.2s; }
+.sohbet-fab .balon { position:absolute; right:72px; top:50%; transform:translateY(-50%) scale(.6); opacity:0; white-space:nowrap; background:#fff; color:#6d28d9; border:2px solid #e7dcff; border-radius:14px 14px 4px 14px; padding:6px 10px; font:900 12px 'Nunito',sans-serif; box-shadow:0 6px 16px rgba(124,58,237,.2); transition:all .35s cubic-bezier(.2,.9,.3,1.4); pointer-events:none; }
+.sohbet-fab .balon.gor { opacity:1; transform:translateY(-50%) scale(1); }
+@keyframes sfSuzul { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+@keyframes sfDon { to { transform:rotate(360deg); } }
+@keyframes sfDalga { 0% { transform:scale(.9); opacity:.7; } 100% { transform:scale(1.5); opacity:0; } }
+@media (max-width: 768px) { .sohbet-fab { width:56px; height:56px; bottom:max(190px, 30vh); } .sohbet-fab .ic { font-size:27px; } }
+@media (prefers-reduced-motion: reduce) { .sohbet-fab, .sohbet-fab::before, .sohbet-fab .dalga, #tab-meduakis .ma-canli { animation:none; } }
+</style>
+
+<div id="tab-sohbet" class="dc-fullscreen-overlay">
+  <button class="dc-exit-btn" onclick="sohbetEkraniKapat()" aria-label="Kapat">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="sohbet-kap"><div id="kp-panel-sohbet"></div></div>
+</div>
+
+<button class="sohbet-fab" id="sohbetFab" onclick="sohbetEkraniAc()" aria-label="Papağanla sohbet et">
+  <span class="dalga"></span><span class="dalga d2"></span><span class="ic">🦜</span><span class="balon" id="sohbetFabBalon">Hi! Let's talk 👋</span>
+</button>
+
+<script>
+/* ---- En son kalınan ekranı hatırla ---- */
+let sonEkran = null;
+const SON_EKRAN_HARIC = ['tab-buyuakademisi', 'tab-konusmapratigi', 'tab-sohbet'];
+(function () {
+  let org = window.dcTumTamEkranlariKapat;
+  if (typeof org !== 'function') return;
+  window.dcTumTamEkranlariKapat = function () {
+    let acik = document.querySelector('.dc-fullscreen-overlay.active');
+    if (acik && acik.id && SON_EKRAN_HARIC.indexOf(acik.id) === -1) sonEkran = acik.id;
+    return org.apply(this, arguments);
+  };
+})();
+function sonEkranaDon() {
+  if (document.querySelector('.dc-fullscreen-overlay.active')) return;
+  let el = sonEkran && document.getElementById(sonEkran);
+  let maBos = sonEkran === 'tab-meduakis' && !document.getElementById('maEkran').innerHTML.trim();
+  if (!el || maBos) { if (typeof meduAkisAc === 'function') meduAkisAc(); return; }
+  el.classList.add('active');
+  if (typeof dcBottomNavSenkronize === 'function') dcBottomNavSenkronize();
+}
+function ekranKapaninca(ad, fn) {
+  let org = window[ad];
+  if (typeof org !== 'function') return;
+  window[ad] = function () { let r = org.apply(this, arguments); try { fn(); } catch (e) {} return r; };
+}
+ekranKapaninca('baModuKapat', sonEkranaDon);
+ekranKapaninca('kpModuKapat', sonEkranaDon);
+
+/* ---- Papağanla sohbet ekranı ---- */
+function sohbetEkraniAc() {
+  if (typeof aktifOgrenciAdi === 'undefined' || !aktifOgrenciAdi) return;
+  dcTumTamEkranlariKapat();
+  let ek = document.getElementById('tab-sohbet');
+  ek.classList.add('active');
+  ek.scrollTop = 0;
+  if (typeof dcBottomNavSenkronize === 'function') dcBottomNavSenkronize();
+  if (typeof sohbetListeCiz === 'function') sohbetListeCiz();
+}
+function sohbetEkraniKapat() {
+  if (typeof sohbetMikDur === 'function') sohbetMikDur();
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  document.getElementById('tab-sohbet').classList.remove('active');
+  if (typeof dcBottomNavSenkronize === 'function') dcBottomNavSenkronize();
+  sonEkranaDon();
+}
+
+/* ---- Alt menüde aktif sekme + sohbet butonunun görünürlüğü ---- */
+function navAktifGuncelle() {
+  let acik = document.querySelector('.dc-fullscreen-overlay.active');
+  let id = acik ? acik.id : '';
+  document.querySelectorAll('#bottomNavMobile .bn-item').forEach(b => b.classList.toggle('active', b.dataset.ekran === id));
+}
+setInterval(() => {
+  let fab = document.getElementById('sohbetFab');
+  if (!fab) return;
+  let panel = document.getElementById('panel-alani');
+  let girisli = panel && panel.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher';
+  let sohbetAcik = document.getElementById('tab-sohbet').classList.contains('active');
+  fab.classList.toggle('gor', !!girisli && !sohbetAcik);
+  navAktifGuncelle();
+}, 600);
+const SF_MESAJLAR = ["Hi! Let's talk 👋", 'Papağanla konuş! 🦜', 'How are you? 😊', 'Yeni sohbetler seni bekliyor!'];
+let sfSira = 0;
+setInterval(() => {
+  let fab = document.getElementById('sohbetFab'), b = document.getElementById('sohbetFabBalon');
+  if (!fab || !b || !fab.classList.contains('gor')) return;
+  b.innerText = SF_MESAJLAR[sfSira++ % SF_MESAJLAR.length];
+  b.classList.add('gor');
+  setTimeout(() => b.classList.remove('gor'), 3500);
+}, 12000);
+
+/* ---- Ders Çalış: ilk ekrana dön ---- */
+function dcAnaEkranaDon() {
+  if (typeof dcSesDurdur === 'function') dcSesDurdur();
+  if (typeof dcAnlatimTimerInterval !== 'undefined' && dcAnlatimTimerInterval) clearInterval(dcAnlatimTimerInterval);
+  dcDurumuSifirla();
+  let h = document.getElementById('dcHomeBtn');
+  if (h) h.classList.add('hidden');
+}
+(function () {
+  let org = window.dcEkranGoster;
+  if (typeof org !== 'function') return;
+  window.dcEkranGoster = function (id) {
+    let r = org.apply(this, arguments);
+    let h = document.getElementById('dcHomeBtn');
+    if (h) h.classList.toggle('hidden', id === 'dcScreenLevels');
+    return r;
+  };
+})();
+
+/* ---- Medu Akış: canlı akış (20 saniyede bir yenilenir) ---- */
+setInterval(async () => {
+  let el = document.getElementById('tab-meduakis');
+  if (!el || !el.classList.contains('active') || maSekme !== 'akis' || maProfilId || document.hidden) return;
+  await maAkisYukle();
+  let l = document.getElementById('maAkisListe');
+  if (l && maSekme === 'akis' && !maProfilId) l.innerHTML = maAkisListeHtml();
+}, 20000);
+</script>
                 
         </body>
         </html>
