@@ -4362,7 +4362,7 @@ function raporlarimKapat() {
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbxIJ2xvbw4A1d-_CDDDQItgdC_xdoqGOZbqX1wStWOzlTP9wMzkMjRKYZZHDOq-T3Yj_g/exec";
+                const apiURL = "https://script.google.com/macros/s/AKfycbyKuDDwSlahuyGc7VRk6uT95w8ysMH2ago-PjwO1Nvh2X-8nMGLLhOgHeVPheniAMwbug/exec";
                 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
@@ -18553,101 +18553,259 @@ function odulUret(k, o) {
 })();
 </script>
 
-                /* =====================================================================
-   DİJİ-MEDU — DÜELLO (v2: 24 saat, bildirimler)
-   Davet 24 saat geçerli. Kabulden sonra 24 saat içinde ikisi de oynar.
-   Biri oynayınca rakibine, düello bitince ikisine bildirim gider.
-   ===================================================================== */
-var DUELLO_OYUN_SUTUN = { Kelime_Liderlik: 8, Jeopardy_Liderlik: 8, Bosluk_Tablosu: 8, Hafiza_Liderlik: 6, Yagmur_Liderlik: 6, Asmaca_Liderlik: 6, KelimeBul_Liderlik: 6 };
-var DUELLO_OYUN_AD = { Kelime_Liderlik: 'Kelime Ezber', Jeopardy_Liderlik: 'Jeopardy', Bosluk_Tablosu: 'Boşluk Doldurma', Hafiza_Liderlik: 'Hafıza', Yagmur_Liderlik: 'Kelime Yağmuru', Asmaca_Liderlik: 'Adam Asmaca', KelimeBul_Liderlik: 'Kelime Bul' };
-var GUN_MS = 86400000;
+               <!-- ===================== DÜZELTME 3 ===================== -->
+<style>
+/* Dünya parkuru: kaydırma çubuğu yok, parmak/fare ile sürükle */
+.bc-kaydir { scrollbar-width:none; cursor:grab; touch-action:pan-y; overscroll-behavior:contain; }
+.bc-kaydir::-webkit-scrollbar { display:none; }
+.bc-kaydir.suruk { cursor:grabbing; scroll-behavior:auto; }
+.bc-kaydir.suruk * { pointer-events:none; }
+.bc-akis-btn { border:none; border-radius:12px; padding:8px 10px; background:rgba(255,255,255,.16); color:#fff; font:900 12px 'Nunito',sans-serif; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+/* Büyü Akademisi soru ekranı dünyanın temasında */
+#tab-buyuakademisi.bc-tema.dc-fullscreen-overlay { background:var(--bcz) !important; }
+#tab-buyuakademisi.bc-tema .ba-shell { background:transparent !important; position:relative; z-index:1; }
+.bc-amb-kat { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.bc-amb-kat span { position:absolute; font-size:var(--s); opacity:var(--o); animation:var(--a) var(--d) ease-in-out infinite; animation-delay:var(--g); }
+.bc-dunya-rozet { position:fixed; left:50%; top:calc(8px + env(safe-area-inset-top,0px)); transform:translateX(-50%); z-index:2; padding:5px 12px; border-radius:12px; background:rgba(0,0,0,.35); color:#fff; font:800 12px 'Nunito',sans-serif; pointer-events:none; }
+/* Canlı bildirim kartı */
+.cb-kart { position:fixed; right:12px; top:calc(70px + env(safe-area-inset-top,0px)); z-index:100000017; display:flex; align-items:center; gap:10px; width:min(92vw,360px); padding:12px; border-radius:18px; background:#fff; color:#3b2c66; box-shadow:0 14px 34px rgba(59,44,102,.3); font:800 13px 'Nunito',sans-serif; transform:translateX(120%); transition:transform .5s cubic-bezier(.2,.9,.3,1.2); }
+.cb-kart.gor { transform:translateX(0); }
+.cb-ikon { width:44px; height:44px; flex-shrink:0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; background:linear-gradient(145deg,#fff7d1,#ffe0ef); animation:cbZipla 1s ease-in-out 3; overflow:hidden; }
+.cb-ikon svg { width:100%; height:100%; }
+.cb-kart span.m { flex:1; line-height:1.4; }
+.cb-kart small { display:block; font-size:11px; color:#8a78b8; font-weight:700; }
+.cb-kart button { border:none; background:#f1e9ff; color:#7c3aed; border-radius:10px; padding:6px 9px; font:900 12px 'Nunito',sans-serif; cursor:pointer; }
+/* Düello daveti */
+.dv-perde { position:fixed; inset:0; z-index:100000018; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(20,12,45,.6); backdrop-filter:blur(5px); font-family:'Nunito',sans-serif; }
+.dv-kart { width:min(92vw,370px); border-radius:28px; padding:24px 18px 18px; text-align:center; color:#fff; background:radial-gradient(circle at 50% 0%,rgba(255,107,107,.45),transparent 60%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:dvGel .55s cubic-bezier(.2,.9,.3,1.4) both; }
+.dv-kilic { font-size:62px; animation:dvKilic 1.2s ease-in-out infinite; }
+.dv-kart h3 { font:700 22px 'Fredoka',sans-serif; margin-top:6px; }
+.dv-kart p { font-size:13.5px; font-weight:700; color:#d8cbff; margin:8px 0 16px; line-height:1.5; }
+.dv-kart button { width:100%; border:none; border-radius:16px; padding:13px; font:900 15px 'Nunito',sans-serif; cursor:pointer; margin-top:8px; }
+.dv-kabul { background:linear-gradient(120deg,#6bcb77,#2f9e5a); color:#fff; }
+.dv-vaz { background:rgba(255,255,255,.14); color:#fff; }
+/* Keşfet: düellolarım aç/kapa */
+.dl-kart.dl-katla h4 { cursor:pointer; display:flex; align-items:center; gap:8px; margin-bottom:0 !important; }
+.dl-kart.dl-katla h4::after { content:'▾'; margin-left:auto; transition:transform .2s; }
+.dl-kart.dl-katla.kapali h4::after { transform:rotate(-90deg); }
+.dl-kart.dl-katla.kapali .dl-alan { display:none; }
+.dl-kart.dl-katla:not(.kapali) .dl-alan { margin-top:6px; }
+.dl-rozet { font:900 11px 'Nunito',sans-serif; color:#fff; background:#ff4d6d; border-radius:10px; padding:2px 8px; animation:cbZipla 1s ease-in-out infinite; }
+@keyframes cbZipla { 50% { transform:translateY(-3px) scale(1.06); } }
+@keyframes dvGel { from { opacity:0; transform:scale(.7) rotate(-4deg); } }
+@keyframes dvKilic { 0%,100% { transform:rotate(-10deg); } 50% { transform:rotate(10deg) scale(1.1); } }
+@keyframes bcSuzul { 50% { transform:translateY(-12px); } }
+@keyframes bcYatay { 0%,100% { transform:translateX(-30px); } 50% { transform:translateX(30px); } }
+@keyframes bcPirilti { 0%,100% { opacity:.15; transform:scale(.7); } 50% { opacity:1; transform:scale(1.15); } }
+@keyframes bcYuksel { 0% { transform:translateY(40px); opacity:0; } 20% { opacity:.8; } 100% { transform:translateY(-160px); opacity:0; } }
+@media (prefers-reduced-motion: reduce) { .cb-kart, .cb-ikon, .dv-kart, .dv-kilic, .dl-rozet, .bc-amb-kat span { animation:none !important; transition:none !important; } }
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const kucuk = x => String(x || '').trim().toLowerCase();
+  const enc = encodeURIComponent;
+  const yoVar = () => typeof yo !== 'undefined' && yo;
+  const girisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci)); };
+  const oyunda = () => (typeof odulOyunda === 'function' && odulOyunda()) || !!document.querySelector('.bc-perde, .bs-perde, .dv-perde, .kr-perde');
 
-function dlNorm_(s) { return String(s || '').trim().toLowerCase().replace(/ı/g, 'i').replace(/i̇/g, 'i').replace(/\s+/g, ' '); }
-function dlBildir_(alici, gonderen, tur, metin) { try { bildirimSayfa_().appendRow([new Date(), alici, gonderen, tur, metin, '', '']); } catch (e) {} }
-function duelloSayfa_() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet(), sh = ss.getSheetByName('Duello');
-  if (!sh) { sh = ss.insertSheet('Duello'); sh.appendRow(['id', 'tarih', 'gun', 'gonderen', 'alici', 'oyun', 'durum', 'kabulZaman', 'kazanan', 'gBild', 'aBild']); sh.setFrozenRows(1); }
-  return sh;
-}
-function duelloEnIyi_(oyun, ad, gunler) {
-  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(oyun), col = DUELLO_OYUN_SUTUN[oyun];
-  if (!sh || !col || sh.getLastRow() < 2) return null;
-  var son = sh.getLastRow(), bas = Math.max(2, son - 600), enIyi = null, n = dlNorm_(ad);
-  sh.getRange(bas, 1, son - bas + 1, col + 1).getValues().forEach(function (r) {
-    var t = r[0] instanceof Date ? r[0] : new Date(r[0]);
-    if (isNaN(t.getTime()) || gunler.indexOf(enerjiGun_(t)) === -1) return;
-    if (dlNorm_(r[1]) !== n) return;
-    var p = Number(r[col]) || 0;
-    if (enIyi === null || p > enIyi) enIyi = p;
+  /* ===== 1) Alt menü: Medu Akış → Dünya Parkuru ===== */
+  setInterval(() => {
+    let b = document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
+    if (b && typeof dunyaAc === 'function') { b.dataset.ekran = 'tab-dunya'; b.onclick = () => dunyaAc(); b.removeAttribute('onclick'); }
+    let hud = document.querySelector('#dunyaAlan .bc-hud');
+    if (hud && !hud.querySelector('.bc-akis-btn')) {
+      let a = document.createElement('button'); a.className = 'bc-akis-btn'; a.innerText = '🎡 Akış';
+      a.onclick = () => { if (typeof maSekme !== 'undefined') maSekme = 'akis'; window.yoGomuluHedef = null; if (typeof meduAkisAc === 'function') meduAkisAc(); };
+      hud.appendChild(a);
+    }
+    /* Sana Özel: haftalık lig kartı kalksın */
+    document.querySelectorAll('#yoSanaOzelGrid [onclick="yoLigAc()"]').forEach(x => x.remove());
+    /* Aktivite: Büyü Akademisi kartı kalksın */
+    document.querySelectorAll('#tab-aktiviteler [onclick*="baModuAc"], #tab-aktiviteler [onclick*="baFabTikla"]').forEach(x => { let k = x.closest('.az-gcard') || x; k.style.display = 'none'; });
+  }, 800);
+
+  /* ===== 2) Dünya haritası: fareyle sürükleyerek kaydır ===== */
+  let sr = null;
+  document.addEventListener('pointerdown', e => {
+    let k = e.target.closest && e.target.closest('.bc-kaydir');
+    if (!k || e.pointerType === 'touch') return;
+    sr = { k, y: e.clientY, t: k.scrollTop, oynadi: false };
   });
-  return enIyi;
-}
-function duelloIsle_(p) {
-  var sh = duelloSayfa_(), islem = String(p.islem || ''), simdi = new Date().getTime();
-  if (islem === 'duelloGonder') {
-    var g = String(p.gonderen || '').trim(), a = String(p.alici || '').trim(), o = String(p.oyun || '');
-    if (!g || !a || dlNorm_(g) === dlNorm_(a) || !DUELLO_OYUN_SUTUN[o]) return enerjiJson_({ ok: false, mesaj: 'Geçersiz düello' });
-    var rows = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 7).getValues() : [], say = 0;
-    for (var i = 0; i < rows.length; i++) {
-      if (simdi - new Date(rows[i][1]).getTime() > GUN_MS || dlNorm_(rows[i][3]) !== dlNorm_(g)) continue;
-      say++;
-      if (dlNorm_(rows[i][4]) === dlNorm_(a) && (rows[i][6] === 'bekliyor' || rows[i][6] === 'kabul')) return enerjiJson_({ ok: false, mesaj: 'Zaten açık bir düellonuz var' });
-    }
-    if (say >= 3) return enerjiJson_({ ok: false, mesaj: 'Günde en fazla 3 düello' });
-    sh.appendRow([Utilities.getUuid().slice(0, 8), new Date(), enerjiGun_(), g, a, o, 'bekliyor', '', '', '', '']);
-    dlBildir_(a, g, 'duello', o);
-    return enerjiJson_({ ok: true });
+  document.addEventListener('pointermove', e => {
+    if (!sr) return;
+    let dy = e.clientY - sr.y;
+    if (!sr.oynadi && Math.abs(dy) > 6) { sr.oynadi = true; sr.k.classList.add('suruk'); }
+    if (sr.oynadi) sr.k.scrollTop = sr.t - dy;
+  });
+  document.addEventListener('pointerup', () => { if (sr && sr.oynadi) { let k = sr.k; setTimeout(() => k.classList.remove('suruk'), 0); } sr = null; });
+
+  /* ===== 3) Seviye dünyanın temasında açılsın, bitince haritaya dönülsün ===== */
+  const DUNYA = [
+    ['☁️ Gökyüzü Kulesi', 'linear-gradient(180deg,#312e81 0%,#6366f1 45%,#a5b4fc 100%)', ['☁️', '🎈', '✨', '🕊️']],
+    ['🌳 Büyülü Orman', 'linear-gradient(180deg,#052e16 0%,#14532d 50%,#4d7c0f 100%)', ['🌲', '🍄', '✨', '🦋']],
+    ['💎 Kristal Mağara', 'linear-gradient(180deg,#0c0a1d 0%,#1e1b4b 50%,#4c1d95 100%)', ['💎', '🔮', '✨', '💠']],
+    ['🚀 Uzay Akademisi', 'radial-gradient(circle at 70% 20%,#312e81 0%,#0f172a 50%,#020617 100%)', ['⭐', '🪐', '☄️', '🛸']],
+    ['🐠 Denizaltı Kalesi', 'linear-gradient(180deg,#0e7490 0%,#164e63 60%,#083344 100%)', ['🫧', '🐠', '🐟', '🪸']],
+    ['🌋 Ejder Dağı', 'linear-gradient(180deg,#1c0a0a 0%,#7f1d1d 50%,#c2410c 100%)', ['🔥', '🌋', '✨', '🪨']]
+  ];
+  const ANIM = ['bcSuzul', 'bcYatay', 'bcPirilti', 'bcYuksel'];
+  let dunyadan = false, basladi = false;
+  function temaUygula(n) {
+    let ov = $('tab-buyuakademisi'); if (!ov) return;
+    let D = DUNYA[Math.floor((n - 1) / 10) % DUNYA.length];
+    ov.classList.add('bc-tema'); ov.style.setProperty('--bcz', D[1]);
+    let kat = ov.querySelector('.bc-amb-kat');
+    if (!kat) { kat = document.createElement('div'); kat.className = 'bc-amb-kat'; ov.insertBefore(kat, ov.firstChild); }
+    let h = '';
+    for (let i = 0; i < 16; i++) h += `<span style="left:${(i * 37) % 94}%;top:${(i * 53) % 92}%;--s:${16 + (i % 3) * 8}px;--o:${.45 + (i % 3) * .15};--a:${ANIM[i % 4]};--d:${5 + (i % 4)}s;--g:${(i % 5) * .6}s">${D[2][i % 4]}</span>`;
+    kat.innerHTML = h + `<div class="bc-dunya-rozet">${D[0]} · ${n}. seviye</div>`;
   }
-  var ad = String(p.ogrenci || '').trim();
-  if (!ad) return enerjiJson_({ ok: false });
-  var son = sh.getLastRow(), data = son > 1 ? sh.getRange(2, 1, son - 1, 11).getValues() : [];
-  if (islem === 'duelloYanit') {
-    for (var j = 0; j < data.length; j++) {
-      if (String(data[j][0]) === String(p.id) && dlNorm_(data[j][4]) === dlNorm_(ad) && data[j][6] === 'bekliyor') {
-        var kabul = String(p.kabul) === '1';
-        sh.getRange(j + 2, 7, 1, 2).setValues([[kabul ? 'kabul' : 'red', simdi]]);
-        dlBildir_(data[j][3], data[j][4], 'duelloYanit', kabul ? 'kabul etti ⚔️ ' + DUELLO_OYUN_AD[data[j][5]] + ' oyna!' : 'düelloyu reddetti');
-      }
-    }
-    return enerjiJson_({ ok: true });
+  function temaKaldir() { let ov = $('tab-buyuakademisi'); if (!ov) return; ov.classList.remove('bc-tema'); let k = ov.querySelector('.bc-amb-kat'); if (k) k.remove(); }
+  let orgBaAc = window.baModuAc;
+  if (typeof orgBaAc === 'function') window.baModuAc = function () { dunyadan = !!($('tab-dunya') && $('tab-dunya').classList.contains('active')); basladi = false; if (!dunyadan) temaKaldir(); return orgBaAc.apply(this, arguments); };
+  let orgBaSev = window.baSeviyeBaslat;
+  if (typeof orgBaSev === 'function') window.baSeviyeBaslat = function (n) { if (dunyadan) { temaUygula(Number(n) || 1); basladi = true; } return orgBaSev.apply(this, arguments); };
+  let orgBaGiris = window.baGirisGoster;
+  if (typeof orgBaGiris === 'function') window.baGirisGoster = function () {
+    let r = orgBaGiris.apply(this, arguments);
+    if (dunyadan && basladi) { dunyadan = false; basladi = false; temaKaldir(); setTimeout(() => { if (typeof baModuKapat === 'function') baModuKapat(); }, 50); }
+    return r;
+  };
+  let orgBaKapat = window.baModuKapat;
+  if (typeof orgBaKapat === 'function') window.baModuKapat = function () { temaKaldir(); return orgBaKapat.apply(this, arguments); };
+
+  /* ===== 4) Konuşma: boş/anlamsız sesi doğru sayma ===== */
+  window.genelSesEslesiyorMu = function (soylenen, dogru, altlar) {
+    let s = String(soylenen || '').trim(), d = String(dogru || '').trim();
+    if (!s || !d || s.replace(/[^a-z0-9]/gi, '').length < 2) return false;
+    if (s === d) return true;
+    if (altlar && altlar.indexOf(s) !== -1) return true;
+    if ((' ' + s + ' ').indexOf(' ' + d + ' ') !== -1) return true;
+    if (s.length >= Math.max(3, Math.ceil(d.length * 0.7)) && d.indexOf(s) !== -1) return true;
+    if (d.length >= 4 && typeof genelBenzerlikOrani === 'function' && genelBenzerlikOrani(s, d) >= 0.75) return true;
+    return false;
+  };
+
+  /* ===== 5) Tüm İngilizce metinler İngiliz/Amerikan sesiyle okunsun ===== */
+  if ('speechSynthesis' in window) {
+    const TR_HARF = /[çğıöşüÇĞİÖŞÜ]/;
+    let enSes = null;
+    const sesSec = () => { let v = speechSynthesis.getVoices(); enSes = v.find(x => /en[-_]US/i.test(x.lang) && /google|samantha|natural|premium/i.test(x.name)) || v.find(x => /en[-_]US/i.test(x.lang)) || v.find(x => /^en/i.test(x.lang)) || null; };
+    sesSec(); speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', sesSec);
+    let orgSpeak = speechSynthesis.speak.bind(speechSynthesis);
+    speechSynthesis.speak = function (u) {
+      try {
+        if (u && !TR_HARF.test(u.text || '') && !/^tr/i.test(u.lang || '')) { u.lang = 'en-US'; if (!enSes) sesSec(); if (enSes) u.voice = enSes; }
+        else if (u && !TR_HARF.test(u.text || '') && /^tr/i.test(u.lang || '') && /^[\x00-\x7F\s]+$/.test(u.text || '') && /[a-z]{2,}/i.test(u.text || '')) { u.lang = 'en-US'; if (enSes) u.voice = enSes; }
+      } catch (e) {}
+      return orgSpeak(u);
+    };
   }
-  if (islem === 'duellolarim') {
-    var liste = [], sinir = simdi - 7 * GUN_MS;
-    for (var k = data.length - 1; k >= 0 && liste.length < 20; k--) {
-      var r = data[k], g2 = String(r[3]), a2 = String(r[4]), tarihMs = new Date(r[1]).getTime();
-      if (dlNorm_(g2) !== dlNorm_(ad) && dlNorm_(a2) !== dlNorm_(ad)) continue;
-      if (tarihMs < sinir) continue;
-      var d = { id: String(r[0]), gonderen: g2, alici: a2, oyun: r[5], durum: r[6], kazanan: String(r[8] || ''), kalanDk: 0 };
-      if (d.durum === 'bekliyor') {
-        if (simdi - tarihMs > GUN_MS) { d.durum = 'sure'; sh.getRange(k + 2, 7).setValue('sure'); }
-        else d.kalanDk = Math.round((tarihMs + GUN_MS - simdi) / 60000);
-      }
-      if (d.durum === 'kabul' || d.durum === 'bitti') {
-        var kabulMs = Number(r[7]) || tarihMs, gunler = [enerjiGun_(new Date(kabulMs)), enerjiGun_(new Date(kabulMs + GUN_MS))];
-        var gp = duelloEnIyi_(d.oyun, g2, gunler), ap = duelloEnIyi_(d.oyun, a2, gunler), oad = DUELLO_OYUN_AD[d.oyun] || d.oyun;
-        if (d.durum === 'kabul') {
-          if (gp !== null && !r[9]) { sh.getRange(k + 2, 10).setValue('1'); dlBildir_(a2, g2, 'duelloOyun', oad + ' oynadı: ' + gp + ' puan! Sıra sende 🔥'); }
-          if (ap !== null && !r[10]) { sh.getRange(k + 2, 11).setValue('1'); dlBildir_(g2, a2, 'duelloOyun', oad + ' oynadı: ' + ap + ' puan! Sıra sende 🔥'); }
-          d.kalanDk = Math.max(0, Math.round((kabulMs + GUN_MS - simdi) / 60000));
-          if ((gp !== null && ap !== null) || simdi > kabulMs + GUN_MS) {
-            gp = gp || 0; ap = ap || 0;
-            d.kazanan = gp === ap ? 'berabere' : (gp > ap ? g2 : a2);
-            d.durum = 'bitti';
-            sh.getRange(k + 2, 7).setValue('bitti'); sh.getRange(k + 2, 9).setValue(d.kazanan);
-            var sonucMetin = oad + ' düellosu bitti: ' + gp + ' – ' + ap + (d.kazanan === 'berabere' ? ' (berabere)' : ' · kazanan ' + d.kazanan);
-            dlBildir_(g2, a2, 'duelloSonuc', sonucMetin); dlBildir_(a2, g2, 'duelloSonuc', sonucMetin);
-          }
-        }
-        var benG = dlNorm_(g2) === dlNorm_(ad);
-        d.benPuan = benG ? gp : ap; d.rakipPuan = benG ? ap : gp;
-        if (d.kazanan && d.kazanan !== 'berabere') d.kazanan = dlNorm_(d.kazanan) === dlNorm_(ad) ? ad : d.kazanan;
-      }
-      liste.push(d);
-    }
-    return enerjiJson_({ ok: true, liste: liste });
+
+  /* ===== 6) Canlı bildirimler + düello daveti ===== */
+  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc' };
+  const OYUN_AD = { Kelime_Liderlik: '🏆 Kelime Ezber', Jeopardy_Liderlik: '🎈 Jeopardy', Bosluk_Tablosu: '🧩 Boşluk Doldurma', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '☔ Kelime Yağmuru', Asmaca_Liderlik: '🎪 Adam Asmaca', KelimeBul_Liderlik: '🎯 Kelime Bul' };
+  window.duelloOyununuAc = function (oyun) {
+    let f = window[OYUN_AC[oyun]];
+    if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat();
+    if (typeof f === 'function') f(); else if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
+  };
+  const ICON = { begeni: '❤️', tebrik: '🎉', takip: '👋', enerji: '⚡', duello: '⚔️', duelloYanit: '⚔️', duelloOyun: '🔥', duelloSonuc: '🏁' };
+  const METIN = b => ({
+    begeni: `${b.gonderen} paylaşımını beğendi`, tebrik: `${b.gonderen} seni tebrik etti`, takip: `${b.gonderen} seni takip etmeye başladı`,
+    enerji: `${b.gonderen} sana 2 enerji gönderdi! ⚡`, duelloYanit: `${b.gonderen} ${b.metin}`, duelloOyun: `Rakibin ${b.gonderen} ${b.metin}`, duelloSonuc: b.metin
+  }[b.tur] || `${b.gonderen}: ${b.metin}`);
+  let kuyruk = [], gorulen = new Set(JSON.parse(sessionStorage.getItem('ing_cb_gor') || '[]')), ilkTur = true, cbAcik = false;
+  function kartGoster(b) {
+    cbAcik = true;
+    let k = document.createElement('div'); k.className = 'cb-kart'; k.setAttribute('role', 'status');
+    let av = (typeof karakterSvg === 'function' && b.gonderen && karakterSvg(b.gonderen, 44)) || ICON[b.tur] || '🔔';
+    let dugme = b.tur === 'duelloOyun' ? '<button class="cb-git">Oyna</button>' : '';
+    k.innerHTML = `<div class="cb-ikon">${av}</div><span class="m">${ICON[b.tur] || '🔔'} ${guvenliMetin(METIN(b))}<small>şimdi</small></span>${dugme}<button class="cb-x" aria-label="Kapat">✕</button>`;
+    document.body.appendChild(k);
+    requestAnimationFrame(() => requestAnimationFrame(() => k.classList.add('gor')));
+    if (b.tur === 'enerji' && typeof headerEnerjiYukle === 'function') headerEnerjiYukle();
+    let kapat = () => { k.classList.remove('gor'); setTimeout(() => { k.remove(); cbAcik = false; }, 500); };
+    k.querySelector('.cb-x').onclick = kapat;
+    let g = k.querySelector('.cb-git'); if (g) g.onclick = () => { kapat(); let d = (window._dlSon || []).find(x => x.durum === 'kabul'); if (d) duelloOyununuAc(d.oyun); };
+    setTimeout(kapat, 7000);
   }
-  return enerjiJson_({ ok: false });
-}
+  async function davetGoster(b) {
+    let liste = [];
+    try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); liste = (d && d.liste) || []; window._dlSon = liste; } catch (e) {}
+    let dl = liste.find(x => x.durum === 'bekliyor' && kucuk(x.alici) === kucuk(aktifOgrenciAdi) && kucuk(x.gonderen) === kucuk(b.gonderen));
+    if (!dl) return;
+    let p = document.createElement('div'); p.className = 'dv-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Düello daveti');
+    p.innerHTML = `<div class="dv-kart"><div class="dv-kilic">⚔️</div><h3>Düello daveti!</h3><p><b>${guvenliMetin(b.gonderen)}</b> seni <b>${OYUN_AD[dl.oyun] || dl.oyun}</b> düellosuna çağırıyor.<br>Kazanan +3 ⚡ ve +20 XP alır!</p><button class="dv-kabul">⚔️ Kabul et ve oyna</button><button class="dv-vaz">Sonra</button></div>`;
+    document.body.appendChild(p);
+    setTimeout(() => p.querySelector('.dv-kabul').focus({ preventScroll: true }), 300);
+    p.querySelector('.dv-kabul').onclick = async () => {
+      p.remove();
+      try { await fetch(`${apiURL}?islem=duelloYanit&ogrenci=${enc(aktifOgrenciAdi)}&id=${enc(dl.id)}&kabul=1`); } catch (e) {}
+      if (typeof yoToast === 'function') yoToast('⚔️ Düello başladı! En yüksek puanını yap, 24 saatin var.');
+      duelloOyununuAc(dl.oyun);
+    };
+    p.querySelector('.dv-vaz').onclick = () => {
+      p.remove();
+      let saat = Math.max(1, Math.round((dl.kalanDk || 1440) / 60));
+      if (typeof yoToast === 'function') yoToast(`⏳ Tamam! Bu daveti kabul edip oynamak için ${saat} saatin var. Keşfet › Düellolarım'dan ulaşabilirsin.`);
+    };
+  }
+  async function bildirimYokla() {
+    if (!girisli() || document.hidden) return;
+    try {
+      let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
+      let d = await r.json(), liste = ((d && d.liste) || []).slice().reverse();
+      liste.forEach(b => {
+        let key = String(b.sat);
+        if (gorulen.has(key)) return;
+        gorulen.add(key);
+        if (!ilkTur || b.tur === 'duello') kuyruk.push(b);
+      });
+      sessionStorage.setItem('ing_cb_gor', JSON.stringify([...gorulen].slice(-300)));
+      ilkTur = false;
+    } catch (e) {}
+  }
+  setInterval(bildirimYokla, 45000);
+  /* Düello durumunu 2 dakikada bir yokla: rakip oynadıysa sunucu bildirim üretir */
+  setInterval(async () => {
+    if (!girisli() || document.hidden) return;
+    try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); window._dlSon = (d && d.liste) || []; } catch (e) {}
+  }, 120000);
+  setInterval(() => { if (girisli() && ilkTur) bildirimYokla(); }, 5000);
+  setInterval(() => {
+    if (!kuyruk.length || cbAcik || oyunda() || !girisli()) return;
+    let b = kuyruk.shift();
+    if (b.tur === 'duello') davetGoster(b); else kartGoster(b);
+  }, 1500);
+
+  /* ===== 7) Keşfet: düellolarım aç/kapa + rozet ===== */
+  setInterval(() => {
+    document.querySelectorAll('#tab-meduakis .dl-kart').forEach(k => {
+      let h = k.querySelector('h4');
+      if (!h || !/Düellolarım/.test(h.innerText)) return;
+      let aktif = [...k.querySelectorAll('.dl-alan > div')].filter(x => /Kabul|Bugün oyna|Seni düelloya|🔥/.test(x.innerText)).length;
+      if (!k.classList.contains('dl-katla')) {
+        k.classList.add('dl-katla');
+        if (!aktif) k.classList.add('kapali');
+        h.setAttribute('role', 'button'); h.tabIndex = 0;
+        h.onclick = () => k.classList.toggle('kapali');
+        h.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); k.classList.toggle('kapali'); } };
+      }
+      let rz = h.querySelector('.dl-rozet');
+      if (aktif && !rz) h.insertAdjacentHTML('beforeend', `<span class="dl-rozet">${aktif} aktif</span>`);
+      else if (rz) { if (aktif) rz.innerText = aktif + ' aktif'; else rz.remove(); }
+      k.querySelectorAll('.dl-satir').forEach(s => {
+        if (s.dataset.oyna || !/Bugün oyna|🔥/.test(s.innerText)) return;
+        s.dataset.oyna = '1';
+        let ad = Object.keys(OYUN_AD).find(o => s.innerText.includes(OYUN_AD[o].replace(/^\S+\s/, '')));
+        if (ad) { let b = document.createElement('button'); b.className = 'kr-evet'; b.innerText = 'Oyna'; b.onclick = () => duelloOyununuAc(ad); s.appendChild(b); }
+      });
+    });
+  }, 1000);
+})();
+</script>
                 
         </body>
         </html>
