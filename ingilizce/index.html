@@ -4362,7 +4362,7 @@ function raporlarimKapat() {
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbzba3yXuhNOAGL0mJcCSN-r8DIc9QyphdOEXj7sO-hI_qw4l9urVQRu_jBgPyHUCM_4qA/exec";
+                const apiURL = "https://script.google.com/macros/s/AKfycbz4W63JvhmzQm-5V4RSANXPkr5zrTXG1MCfgYdWR2u_FISldqq-z-q1gFft1aqBrzm9_Q/exec";
                 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
@@ -17891,7 +17891,7 @@ function avatarSVG(s, stil, px, cins) {
   /* ================= 2) DOKUNMA SESİ ================= */
   let ctx = null;
   function tik() {
-    if (localStorage.getItem('ing_tik_ses') === '0') return;
+        return;
     try {
       ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
       if (ctx.state === 'suspended') ctx.resume();
@@ -18971,7 +18971,7 @@ function odulUret(k, o) {
     if (!nav.querySelector('[data-bc="profil"]')) {
       let b = document.createElement('button');
       b.className = 'bn-item'; b.dataset.ekran = 'tab-profil'; b.dataset.bc = 'profil';
-      b.innerHTML = '<span class="bn-icon">👤</span><span class="bn-label">Profil</span>';
+      b.innerHTML = '<span class="bn-icon">​🧌​</span><span class="bn-label">Profil</span>';
       b.onclick = () => profilAc();
       let mg = nav.querySelector('[data-ekran="tab-magaza"]');
       mg ? mg.insertAdjacentElement('afterend', b) : nav.appendChild(b);
@@ -19042,6 +19042,81 @@ function odulUret(k, o) {
     if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
     setTimeout(() => { let f = window[OYUN_AC[oyun]]; if (typeof f === 'function') { try { f(); } catch (e) { console.error(e); } } }, 400);
   };
+})();
+</script>
+
+                <!-- ===================== SARI ALTIN: 🪙 yerine her yerde sarı para ===================== -->
+<style>
+.sari-altin { display:inline-block; width:1em; height:1em; vertical-align:-0.14em; background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23f59e0b'/%3E%3Ccircle cx='16' cy='16' r='12' fill='%23ffd166'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23f59e0b' stroke-width='1.6'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial' font-weight='900' font-size='13' fill='%23b45309'%3E%E2%82%BA%3C/text%3E%3Cellipse cx='11' cy='9' rx='4' ry='2' fill='%23fff' opacity='.55'/%3E%3C/svg%3E"); }
+</style>
+<script>
+(function () {
+  const ALTIN = '\u{1FA99}';
+  const ATLA = /^(SCRIPT|STYLE|TEXTAREA|INPUT|SELECT|OPTION|TITLE|text|tspan)$/;
+  function isle(kok) {
+    if (!kok) return;
+    if (kok.nodeType === 3) { degistir(kok); return; }
+    if (kok.nodeType !== 1 || ATLA.test(kok.nodeName) || kok.closest && kok.closest('svg')) return;
+    let w = document.createTreeWalker(kok, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.indexOf(ALTIN) !== -1 && !(n.parentNode && (ATLA.test(n.parentNode.nodeName) || (n.parentNode.closest && n.parentNode.closest('svg')))) ? 1 : 2 });
+    let liste = []; while (w.nextNode()) liste.push(w.currentNode);
+    liste.forEach(degistir);
+  }
+  function degistir(n) {
+    if (!n.parentNode || n.nodeValue.indexOf(ALTIN) === -1) return;
+    if (ATLA.test(n.parentNode.nodeName) || (n.parentNode.closest && n.parentNode.closest('svg'))) return;
+    let parcalar = n.nodeValue.split(ALTIN), frag = document.createDocumentFragment();
+    parcalar.forEach((p, i) => {
+      if (p) frag.appendChild(document.createTextNode(p));
+      if (i < parcalar.length - 1) { let s = document.createElement('span'); s.className = 'sari-altin'; s.setAttribute('role', 'img'); s.setAttribute('aria-label', 'altın'); frag.appendChild(s); }
+    });
+    n.parentNode.replaceChild(frag, n);
+  }
+  isle(document.body);
+  new MutationObserver(ms => {
+    for (let m of ms) {
+      if (m.type === 'characterData') degistir(m.target);
+      else m.addedNodes.forEach(isle);
+    }
+  }).observe(document.body, { subtree: true, childList: true, characterData: true });
+})();
+</script>
+
+                <!-- ===================== XP KORUMA: farklı cihazdan girişte veri kaybını önler ===================== -->
+<script>
+(function () {
+  let yerelVardi = {}, yuklendi = {}, bekleyen = {}, yukleniyor = {};
+  let orgHazirla = window.yoHazirla;
+  if (typeof orgHazirla === 'function') window.yoHazirla = function (isim) {
+    if (isim && !(isim in yerelVardi)) { try { yerelVardi[isim] = !!localStorage.getItem('ing_yo_' + isim); } catch (e) { yerelVardi[isim] = false; } }
+    return orgHazirla.apply(this, arguments);
+  };
+  let orgAl = window.yoSunucudanAl;
+  if (typeof orgAl === 'function') window.yoSunucudanAl = async function () {
+    let isim = typeof yoIsim !== 'undefined' ? yoIsim : '';
+    if (!isim) return;
+    /* Bu cihazda daha önce kayıt yoksa sunucudaki kayıt her zaman kazansın */
+    if (!yerelVardi[isim] && !yuklendi[isim] && typeof yo !== 'undefined' && yo) yo.guncelleme = 0;
+    yukleniyor[isim] = true;
+    try { await orgAl.apply(this, arguments); } catch (e) {}
+    yukleniyor[isim] = false;
+    yuklendi[isim] = true;
+    if (bekleyen[isim]) { bekleyen[isim] = false; if (typeof yoSunucuyaGonder === 'function') yoSunucuyaGonder(); }
+  };
+  let orgGonder = window.yoSunucuyaGonder;
+  if (typeof orgGonder === 'function') window.yoSunucuyaGonder = function () {
+    let isim = typeof yoIsim !== 'undefined' ? yoIsim : '';
+    if (isim && !yuklendi[isim]) {
+      bekleyen[isim] = true;
+      if (!yukleniyor[isim] && typeof yoSunucudanAl === 'function') yoSunucudanAl();
+      return;
+    }
+    return orgGonder.apply(this, arguments);
+  };
+  /* Güvenlik: sunucudan okuma hiç tetiklenmediyse girişten 2 sn sonra tetikle */
+  setInterval(() => {
+    let isim = typeof yoIsim !== 'undefined' ? yoIsim : '';
+    if (isim && !yuklendi[isim] && !yukleniyor[isim] && typeof yoSunucudanAl === 'function') yoSunucudanAl();
+  }, 2000);
 })();
 </script>
                 
