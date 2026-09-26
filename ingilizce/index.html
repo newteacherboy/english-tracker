@@ -966,6 +966,22 @@
   .mk-mini-ai { bottom: 92px; }
   .mk-mini-yardim { bottom: 130px; }
 }
+
+/* --- MOBİL İÇİN SAĞ KANAT BOŞLUĞu (BUTONLARIN ALTINDA KALMAYI ÖNLER) --- */
+@media (max-width: 768px) {
+    /* Ana panel alanına sağdan boşluk veriyoruz ki içerikler butonların altına girmesin */
+    #panel-alani {
+        padding-right: 56px !important;
+        box-sizing: border-box;
+    }
+
+    /* Tam ekran açılan tüm karnaval pencerelerinin (Medu Akış, Aktiviteler vb.) de sağdan taşmasını önleyelim */
+    .dc-fullscreen-overlay .dc-focus-card,
+    .dc-fullscreen-overlay {
+        padding-right: 48px !important;
+    }
+}
+                    
                     
             </style>
         </head>
