@@ -18552,6 +18552,102 @@ function odulUret(k, o) {
 
 })();
 </script>
+
+                /* =====================================================================
+   DİJİ-MEDU — DÜELLO (v2: 24 saat, bildirimler)
+   Davet 24 saat geçerli. Kabulden sonra 24 saat içinde ikisi de oynar.
+   Biri oynayınca rakibine, düello bitince ikisine bildirim gider.
+   ===================================================================== */
+var DUELLO_OYUN_SUTUN = { Kelime_Liderlik: 8, Jeopardy_Liderlik: 8, Bosluk_Tablosu: 8, Hafiza_Liderlik: 6, Yagmur_Liderlik: 6, Asmaca_Liderlik: 6, KelimeBul_Liderlik: 6 };
+var DUELLO_OYUN_AD = { Kelime_Liderlik: 'Kelime Ezber', Jeopardy_Liderlik: 'Jeopardy', Bosluk_Tablosu: 'Boşluk Doldurma', Hafiza_Liderlik: 'Hafıza', Yagmur_Liderlik: 'Kelime Yağmuru', Asmaca_Liderlik: 'Adam Asmaca', KelimeBul_Liderlik: 'Kelime Bul' };
+var GUN_MS = 86400000;
+
+function dlNorm_(s) { return String(s || '').trim().toLowerCase().replace(/ı/g, 'i').replace(/i̇/g, 'i').replace(/\s+/g, ' '); }
+function dlBildir_(alici, gonderen, tur, metin) { try { bildirimSayfa_().appendRow([new Date(), alici, gonderen, tur, metin, '', '']); } catch (e) {} }
+function duelloSayfa_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet(), sh = ss.getSheetByName('Duello');
+  if (!sh) { sh = ss.insertSheet('Duello'); sh.appendRow(['id', 'tarih', 'gun', 'gonderen', 'alici', 'oyun', 'durum', 'kabulZaman', 'kazanan', 'gBild', 'aBild']); sh.setFrozenRows(1); }
+  return sh;
+}
+function duelloEnIyi_(oyun, ad, gunler) {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(oyun), col = DUELLO_OYUN_SUTUN[oyun];
+  if (!sh || !col || sh.getLastRow() < 2) return null;
+  var son = sh.getLastRow(), bas = Math.max(2, son - 600), enIyi = null, n = dlNorm_(ad);
+  sh.getRange(bas, 1, son - bas + 1, col + 1).getValues().forEach(function (r) {
+    var t = r[0] instanceof Date ? r[0] : new Date(r[0]);
+    if (isNaN(t.getTime()) || gunler.indexOf(enerjiGun_(t)) === -1) return;
+    if (dlNorm_(r[1]) !== n) return;
+    var p = Number(r[col]) || 0;
+    if (enIyi === null || p > enIyi) enIyi = p;
+  });
+  return enIyi;
+}
+function duelloIsle_(p) {
+  var sh = duelloSayfa_(), islem = String(p.islem || ''), simdi = new Date().getTime();
+  if (islem === 'duelloGonder') {
+    var g = String(p.gonderen || '').trim(), a = String(p.alici || '').trim(), o = String(p.oyun || '');
+    if (!g || !a || dlNorm_(g) === dlNorm_(a) || !DUELLO_OYUN_SUTUN[o]) return enerjiJson_({ ok: false, mesaj: 'Geçersiz düello' });
+    var rows = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 7).getValues() : [], say = 0;
+    for (var i = 0; i < rows.length; i++) {
+      if (simdi - new Date(rows[i][1]).getTime() > GUN_MS || dlNorm_(rows[i][3]) !== dlNorm_(g)) continue;
+      say++;
+      if (dlNorm_(rows[i][4]) === dlNorm_(a) && (rows[i][6] === 'bekliyor' || rows[i][6] === 'kabul')) return enerjiJson_({ ok: false, mesaj: 'Zaten açık bir düellonuz var' });
+    }
+    if (say >= 3) return enerjiJson_({ ok: false, mesaj: 'Günde en fazla 3 düello' });
+    sh.appendRow([Utilities.getUuid().slice(0, 8), new Date(), enerjiGun_(), g, a, o, 'bekliyor', '', '', '', '']);
+    dlBildir_(a, g, 'duello', o);
+    return enerjiJson_({ ok: true });
+  }
+  var ad = String(p.ogrenci || '').trim();
+  if (!ad) return enerjiJson_({ ok: false });
+  var son = sh.getLastRow(), data = son > 1 ? sh.getRange(2, 1, son - 1, 11).getValues() : [];
+  if (islem === 'duelloYanit') {
+    for (var j = 0; j < data.length; j++) {
+      if (String(data[j][0]) === String(p.id) && dlNorm_(data[j][4]) === dlNorm_(ad) && data[j][6] === 'bekliyor') {
+        var kabul = String(p.kabul) === '1';
+        sh.getRange(j + 2, 7, 1, 2).setValues([[kabul ? 'kabul' : 'red', simdi]]);
+        dlBildir_(data[j][3], data[j][4], 'duelloYanit', kabul ? 'kabul etti ⚔️ ' + DUELLO_OYUN_AD[data[j][5]] + ' oyna!' : 'düelloyu reddetti');
+      }
+    }
+    return enerjiJson_({ ok: true });
+  }
+  if (islem === 'duellolarim') {
+    var liste = [], sinir = simdi - 7 * GUN_MS;
+    for (var k = data.length - 1; k >= 0 && liste.length < 20; k--) {
+      var r = data[k], g2 = String(r[3]), a2 = String(r[4]), tarihMs = new Date(r[1]).getTime();
+      if (dlNorm_(g2) !== dlNorm_(ad) && dlNorm_(a2) !== dlNorm_(ad)) continue;
+      if (tarihMs < sinir) continue;
+      var d = { id: String(r[0]), gonderen: g2, alici: a2, oyun: r[5], durum: r[6], kazanan: String(r[8] || ''), kalanDk: 0 };
+      if (d.durum === 'bekliyor') {
+        if (simdi - tarihMs > GUN_MS) { d.durum = 'sure'; sh.getRange(k + 2, 7).setValue('sure'); }
+        else d.kalanDk = Math.round((tarihMs + GUN_MS - simdi) / 60000);
+      }
+      if (d.durum === 'kabul' || d.durum === 'bitti') {
+        var kabulMs = Number(r[7]) || tarihMs, gunler = [enerjiGun_(new Date(kabulMs)), enerjiGun_(new Date(kabulMs + GUN_MS))];
+        var gp = duelloEnIyi_(d.oyun, g2, gunler), ap = duelloEnIyi_(d.oyun, a2, gunler), oad = DUELLO_OYUN_AD[d.oyun] || d.oyun;
+        if (d.durum === 'kabul') {
+          if (gp !== null && !r[9]) { sh.getRange(k + 2, 10).setValue('1'); dlBildir_(a2, g2, 'duelloOyun', oad + ' oynadı: ' + gp + ' puan! Sıra sende 🔥'); }
+          if (ap !== null && !r[10]) { sh.getRange(k + 2, 11).setValue('1'); dlBildir_(g2, a2, 'duelloOyun', oad + ' oynadı: ' + ap + ' puan! Sıra sende 🔥'); }
+          d.kalanDk = Math.max(0, Math.round((kabulMs + GUN_MS - simdi) / 60000));
+          if ((gp !== null && ap !== null) || simdi > kabulMs + GUN_MS) {
+            gp = gp || 0; ap = ap || 0;
+            d.kazanan = gp === ap ? 'berabere' : (gp > ap ? g2 : a2);
+            d.durum = 'bitti';
+            sh.getRange(k + 2, 7).setValue('bitti'); sh.getRange(k + 2, 9).setValue(d.kazanan);
+            var sonucMetin = oad + ' düellosu bitti: ' + gp + ' – ' + ap + (d.kazanan === 'berabere' ? ' (berabere)' : ' · kazanan ' + d.kazanan);
+            dlBildir_(g2, a2, 'duelloSonuc', sonucMetin); dlBildir_(a2, g2, 'duelloSonuc', sonucMetin);
+          }
+        }
+        var benG = dlNorm_(g2) === dlNorm_(ad);
+        d.benPuan = benG ? gp : ap; d.rakipPuan = benG ? ap : gp;
+        if (d.kazanan && d.kazanan !== 'berabere') d.kazanan = dlNorm_(d.kazanan) === dlNorm_(ad) ? ad : d.kazanan;
+      }
+      liste.push(d);
+    }
+    return enerjiJson_({ ok: true, liste: liste });
+  }
+  return enerjiJson_({ ok: false });
+}
                 
         </body>
         </html>
