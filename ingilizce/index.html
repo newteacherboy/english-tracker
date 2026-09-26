@@ -4362,7 +4362,7 @@ function raporlarimKapat() {
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbyipgzWs38-YU7KXDSkRC5UAcOWZ_IFEBXqLkHieb-XasSieU8kEgeiKa7aAvrh9XAsLg/exec";
+                const apiURL = "https://script.google.com/macros/s/AKfycbyIB7hG6sOgcARVDz_bRxbsZSnqYvaXSTeZneIDnxYM2Vv1PywROZwkPsdSdqTfrYfOgw/exec";
                 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
@@ -16985,7 +16985,7 @@ function avatarSVG(s, stil, px, cins) {
   setInterval(async () => {
     let panel = $('panel-alani');
     if (!panel || panel.style.display !== 'block' || typeof aktifOgrenciAdi === 'undefined' || !aktifOgrenciAdi) return;
-    if (kucuk(aktifOgrenciAdi) === 'teacher' || bdBakildi === kucuk(aktifOgrenciAdi)) return;
+       return;
     if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return;
     bdBakildi = kucuk(aktifOgrenciAdi);
     await new Promise(r => setTimeout(r, 2500));
@@ -17553,8 +17553,8 @@ function avatarSVG(s, stil, px, cins) {
   function krBildirimHtml() {
     if (!krBildirim || !krBildirim.length) return '';
     let s = krBildirim.slice(0, 5).map(b => {
-      let ikon = b.tur === 'tebrik' ? '🎉' : b.tur === 'enerji' ? '⚡' : '❤️';
-      let fiil = b.tur === 'tebrik' ? 'seni tebrik etti' : b.tur === 'enerji' ? 'sana 2 enerji gönderdi' : 'paylaşımını beğendi';
+           let ikon = { tebrik:'🎉', enerji:'⚡', takip:'👋', duello:'⚔️' }[b.tur] || '❤️';
+      let fiil = { tebrik:'seni tebrik etti', enerji:'sana 2 enerji gönderdi', takip:'seni takip etmeye başladı', duello:'seni düelloya çağırdı' }[b.tur] || 'paylaşımını beğendi';
       return `<div class="kr-dl">${ikon} <span><b>${guvenliMetin(b.gonderen)}</b> ${fiil}</span></div>`;
     }).join('');
     return `<div class="kr-bolum"><h4>🔔 Bildirimlerin (${krBildirim.length})</h4>${s}</div>`;
@@ -17629,6 +17629,186 @@ function avatarSVG(s, stil, px, cins) {
       karsilamaGoster();
     }, 1200);
   }, 1000);
+})();
+</script>
+
+                <!-- ===================== DÜZELTME 2: MAĞAZA, BİLDİRİMLER, ZİL, SAYILAR ===================== -->
+<style>
+#tab-magaza.dc-fullscreen-overlay.active, #tab-sohbet.dc-fullscreen-overlay.active { display:block !important; position:fixed !important; inset:0 !important; z-index:99990 !important; overflow-y:auto !important; -webkit-overflow-scrolling:touch; }
+.zl-btn { position:relative; margin-left:auto; width:40px; height:40px; border:none; border-radius:50%; background:#fff; box-shadow:0 3px 0 #eadcff; font-size:20px; cursor:pointer; }
+.zl-btn.sallan { animation:zlSallan 1s ease 2; }
+.zl-btn:focus-visible { outline:3px solid #4d96ff; outline-offset:2px; }
+.zl-rozet { position:absolute; top:-4px; right:-4px; min-width:19px; height:19px; padding:0 5px; border-radius:10px; background:#ff4d6d; color:#fff; font:900 11px/19px 'Nunito',sans-serif; box-shadow:0 0 0 2px #fdf7ff; }
+.zl-perde { position:fixed; inset:0; z-index:100000012; display:flex; justify-content:flex-end; background:rgba(20,12,45,.45); animation:zlSol .25s ease; font-family:'Nunito',sans-serif; }
+.zl-panel { width:min(100vw,420px); height:100%; background:#fdf7ff; color:#3b2c66; overflow-y:auto; padding:18px 14px 90px; animation:zlKay .35s cubic-bezier(.2,.9,.3,1.1); box-shadow:-10px 0 30px rgba(0,0,0,.2); }
+.zl-ust { display:flex; align-items:center; justify-content:space-between; position:sticky; top:-18px; background:#fdf7ff; padding:6px 0 10px; z-index:2; }
+.zl-ust h3 { font:700 21px 'Fredoka',sans-serif; }
+.zl-ust button { border:none; background:#f1e9ff; border-radius:12px; padding:8px 12px; font:900 12.5px 'Nunito',sans-serif; color:#7c3aed; cursor:pointer; }
+.zl-filtre { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.zl-filtre button { border:none; border-radius:12px; padding:7px 11px; background:#fff; box-shadow:0 2px 0 #eadcff; font:900 12px 'Nunito',sans-serif; color:#3b2c66; cursor:pointer; }
+.zl-filtre button.aktif { background:#3b2c66; color:#fff; box-shadow:none; }
+.zl-satir { display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#fff; margin-bottom:8px; box-shadow:0 2px 0 #eadcff; animation:zlGir .3s ease both; }
+.zl-satir.yeni { background:linear-gradient(135deg,#fff7d1,#ffe0ef); }
+.zl-ikon { width:38px; height:38px; flex-shrink:0; border-radius:50%; background:#f3ebff; display:flex; align-items:center; justify-content:center; font-size:19px; overflow:hidden; }
+.zl-ikon svg { width:100%; height:100%; }
+.zl-metin { flex:1; min-width:0; font-size:13px; font-weight:800; line-height:1.4; }
+.zl-metin small { display:block; font-size:11px; color:#8a78b8; font-weight:700; }
+@keyframes zlSallan { 0%,100% { transform:rotate(0); } 20% { transform:rotate(18deg); } 40% { transform:rotate(-16deg); } 60% { transform:rotate(10deg); } 80% { transform:rotate(-6deg); } }
+@keyframes zlSol { from { opacity:0; } }
+@keyframes zlKay { from { transform:translateX(100%); } }
+@keyframes zlGir { from { opacity:0; transform:translateY(8px); } }
+@media (prefers-reduced-motion: reduce) { .zl-perde *, .zl-perde, .zl-btn { animation:none !important; } }
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const kucuk = x => String(x || '').trim().toLowerCase();
+  const enc = encodeURIComponent;
+  const girisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher'); };
+
+  /* ---- Mağaza boş kalırsa yeniden çiz ---- */
+  let orgMagaza = window.magazaAc;
+  if (typeof orgMagaza === 'function') window.magazaAc = function () {
+    let r = orgMagaza.apply(this, arguments);
+    setTimeout(() => {
+      let a = $('magazaAlan');
+      if (a && !a.innerHTML.trim()) { window.yoGomuluHedef = 'magazaAlan'; if (typeof yoMagazaAc === 'function') yoMagazaAc(); }
+      if (a && !a.innerHTML.trim()) a.innerHTML = '<div style="text-align:center;padding:40px 10px;font-weight:800;color:#8a78b8">Mağaza yükleniyor… Birkaç saniye sonra tekrar dene.</div>';
+    }, 400);
+    return r;
+  };
+
+  /* ---- Bildirim gönderme (paylaşım anahtarı ile) ---- */
+  function gonder(alici, tur, metin, k) {
+    if (!alici || kucuk(alici) === kucuk(aktifOgrenciAdi)) return;
+    fetch(`${apiURL}?islem=bildirimGonder&alici=${enc(alici)}&gonderen=${enc(aktifOgrenciAdi)}&tur=${enc(tur)}&metin=${enc(String(metin || '').slice(0, 100))}&k=${enc(k || '')}`).catch(() => {});
+  }
+  window.maBildirimGonder = function (hedef, tur) {
+    let olay = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).find(e => e.k === hedef);
+    gonder(olay ? olay.ogr : hedef, tur, olay ? olay.metin : '', olay ? olay.k : '');
+  };
+  [['maBegen', 'begeni', () => maBegeni], ['maTebrikEt', 'tebrik', () => maTebrik]].forEach(([ad, tur, kume]) => {
+    let org = window[ad];
+    if (typeof org !== 'function') return;
+    window[ad] = function (id) {
+      let once = kume().has(id);
+      let r = org.apply(this, arguments);
+      if (!once && kume().has(id)) window.maBildirimGonder(String(id).replace(/^akis-/, ''), tur);
+      return r;
+    };
+  });
+  let orgTakip = window.maTakipDegistir;
+  if (typeof orgTakip === 'function') window.maTakipDegistir = function (id) {
+    let once = maTakip.has(id);
+    let r = orgTakip.apply(this, arguments);
+    if (!once && maTakip.has(id)) gonder(id, 'takip', 'seni takip etmeye başladı', '');
+    return r;
+  };
+
+  /* ---- Akışta beğeni / tebrik sayıları herkese görünsün ---- */
+  let orgListe = window.maAkisListeHtml;
+  if (typeof orgListe === 'function') window.maAkisListeHtml = function () {
+    let html = orgListe.apply(this, arguments);
+    let say = {};
+    (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).forEach(e => { say[e.k] = e; });
+    return html
+      .replace(/maBegen\('akis-([^']+)', this\)">([^<]*)<\/button>/g, (m, k, t) => say[k] && say[k].b ? m.replace(t + '</button>', `${t} · ${say[k].b}</button>`) : m)
+      .replace(/maTebrikEt\('akis-([^']+)', this\)">([^<]*)<\/button>/g, (m, k, t) => say[k] && say[k].tb ? m.replace(t + '</button>', `${t} · ${say[k].tb}</button>`) : m);
+  };
+
+  /* ---- Tür metinleri ---- */
+  const TUR = {
+    begeni: ['❤️', b => `${b.gonderen} paylaşımını beğendi`],
+    tebrik: ['🎉', b => `${b.gonderen} seni tebrik etti`],
+    takip: ['👋', b => `${b.gonderen} seni takip etmeye başladı`],
+    enerji: ['⚡', b => `${b.gonderen} sana 2 enerji gönderdi`],
+    duello: ['⚔️', b => `${b.gonderen} seni düelloya çağırdı`]
+  };
+  const turMetin = b => (TUR[b.tur] || ['🔔', x => `${x.gonderen}: ${x.metin}`])[1](b);
+  const turIkon = b => (TUR[b.tur] || ['🔔'])[0];
+
+  /* ---- Girişte bildirimleri karşılama paneline ver ---- */
+  let girisBakildi = '';
+  setInterval(async () => {
+    if (!girisli() || girisBakildi === kucuk(aktifOgrenciAdi)) return;
+    girisBakildi = kucuk(aktifOgrenciAdi);
+    try {
+      let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
+      let d = await r.json(), liste = (d && d.liste) || [];
+      zilSayi = liste.length; zilCiz();
+      if (!liste.length) return;
+      let yaz = () => { if (typeof window.karsilamaBildirim === 'function') window.karsilamaBildirim(liste.map(b => Object.assign({}, b, { tur: TUR[b.tur] ? b.tur : 'begeni' }))); };
+      yaz(); setTimeout(yaz, 4000);
+      fetch(`${apiURL}?islem=bildirimOkundu&ogrenci=${enc(aktifOgrenciAdi)}&satirlar=${enc(liste.map(b => b.sat).join(','))}`).catch(() => {});
+      setTimeout(() => { zilSayi = 0; zilCiz(); }, 6000);
+    } catch (e) {}
+  }, 1500);
+
+  /* ---- Medu Akış: 🔔 bildirim merkezi ---- */
+  let zilSayi = 0, zilFiltre = 'hepsi';
+  function zilCiz() {
+    let h2 = document.querySelector('#tab-meduakis .akis-baslik h2');
+    if (!h2) return;
+    let b = $('zlBtn');
+    if (!b) {
+      b = document.createElement('button');
+      b.id = 'zlBtn'; b.className = 'zl-btn'; b.setAttribute('aria-label', 'Bildirimler');
+      b.onclick = zilAc;
+      h2.style.width = '100%';
+      h2.appendChild(b);
+    }
+    b.innerHTML = '🔔' + (zilSayi ? `<span class="zl-rozet">${zilSayi > 99 ? '99+' : zilSayi}</span>` : '');
+  }
+  setInterval(zilCiz, 1500);
+  setInterval(async () => {
+    if (!girisli() || document.hidden) return;
+    try {
+      let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
+      let d = await r.json(), n = ((d && d.liste) || []).length;
+      if (n > zilSayi) { let b = $('zlBtn'); if (b) { b.classList.remove('sallan'); void b.offsetWidth; b.classList.add('sallan'); } }
+      zilSayi = n; zilCiz();
+    } catch (e) {}
+  }, 90000);
+  function zamanOnce(t) {
+    let s = Math.max(0, Math.round((Date.now() - t) / 1000));
+    if (s < 60) return 'az önce'; if (s < 3600) return Math.floor(s / 60) + ' dk önce';
+    if (s < 86400) return Math.floor(s / 3600) + ' saat önce'; return Math.floor(s / 86400) + ' gün önce';
+  }
+  async function zilAc() {
+    let p = document.createElement('div');
+    p.className = 'zl-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Bildirimler');
+    p.innerHTML = `<div class="zl-panel"><div class="zl-ust"><h3>🔔 Bildirimler</h3><button id="zlKapat">Kapat</button></div><div class="zl-filtre" id="zlFiltre"></div><div id="zlListe"><div style="text-align:center;padding:30px;color:#8a78b8;font-weight:800">Yükleniyor…</div></div></div>`;
+    document.body.appendChild(p);
+    let kapat = () => p.remove();
+    p.querySelector('#zlKapat').onclick = kapat;
+    p.addEventListener('click', e => { if (e.target === p) kapat(); });
+    let sosyal = [];
+    try {
+      let r = await fetch(`${apiURL}?islem=bildirimlerim&tumu=1&ogrenci=${enc(aktifOgrenciAdi)}`);
+      let d = await r.json(); sosyal = (d && d.liste) || [];
+    } catch (e) {}
+    if (typeof maAkisYukle === 'function') await maAkisYukle();
+    let benim = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).filter(e => kucuk(e.ogr) === kucuk(aktifOgrenciAdi)).map(e => ({ tarih: e.t, tur: 'kazanc', ikon: e.ikon, metin: e.metin, yeni: false }));
+    let sosyalS = sosyal.map(b => ({ tarih: b.tarih, tur: b.tur, gonderen: b.gonderen, ikon: turIkon(b), metin: turMetin(b) + (b.metin && b.tur !== 'takip' && b.tur !== 'duello' ? ` · “${b.metin}”` : ''), yeni: !b.okundu, sat: b.sat }));
+    let duyuru = [];
+    let dm = $('duyuruMesaj');
+    if (dm && dm.innerText.trim()) duyuru.push({ tarih: Date.now(), tur: 'duyuru', ikon: '📢', metin: dm.innerText.trim().slice(0, 200), yeni: false });
+    let hepsi = [...sosyalS, ...benim, ...duyuru].sort((a, b) => b.tarih - a.tarih);
+    const FILTRELER = [['hepsi', 'Hepsi'], ['sosyal', '💜 Sosyal'], ['kazanc', '🌟 Kazançlar'], ['duyuru', '📢 Duyuru']];
+    function ciz() {
+      $('zlFiltre').innerHTML = FILTRELER.map(([k, t]) => `<button class="${k === zilFiltre ? 'aktif' : ''}" data-f="${k}">${t}</button>`).join('');
+      $('zlFiltre').querySelectorAll('button').forEach(b => b.onclick = () => { zilFiltre = b.dataset.f; ciz(); });
+      let l = hepsi.filter(x => zilFiltre === 'hepsi' || (zilFiltre === 'sosyal' ? TUR[x.tur] : x.tur === zilFiltre));
+      $('zlListe').innerHTML = l.length ? l.map((x, i) => {
+        let av = x.gonderen && typeof karakterSvg === 'function' ? karakterSvg(x.gonderen, 38) : '';
+        return `<div class="zl-satir${x.yeni ? ' yeni' : ''}" style="animation-delay:${Math.min(i, 12) * 0.03}s"><div class="zl-ikon">${av || x.ikon}</div><div class="zl-metin">${av ? x.ikon + ' ' : ''}${guvenliMetin(x.metin)}<small>${zamanOnce(x.tarih)}</small></div></div>`;
+      }).join('') : '<div style="text-align:center;padding:30px;color:#8a78b8;font-weight:800">Burada henüz bir şey yok.</div>';
+    }
+    ciz();
+    let okunmamis = sosyal.filter(b => !b.okundu).map(b => b.sat);
+    if (okunmamis.length) fetch(`${apiURL}?islem=bildirimOkundu&ogrenci=${enc(aktifOgrenciAdi)}&satirlar=${enc(okunmamis.join(','))}`).catch(() => {});
+    zilSayi = 0; zilCiz();
+  }
 })();
 </script>
                 
