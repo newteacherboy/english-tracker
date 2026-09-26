@@ -966,6 +966,110 @@
   .mk-mini-ai { bottom: 92px; }
   .mk-mini-yardim { bottom: 130px; }
 }
+
+
+                    /* Sağ Taraf Akıllı Sürüklenebilir Buton Grubu */
+#akilliDock {
+    position: fixed;
+    top: 140px;
+    right: 14px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+#akilliDock:active {
+    cursor: grabbing;
+}
+
+/* Tek ve Küçültülmüş Dönen Ana Buton */
+.ana-donen-buton {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #a06bff;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+.ana-donen-buton:hover {
+    transform: scale(1.08);
+}
+.donen-oge {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    opacity: 0;
+    transform: scale(0.6) rotate(-15deg);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.3, 1.3, 0.3, 1);
+}
+.donen-oge.aktif {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+/* Yuvarlaklaştırılmış Enerji Butonu */
+.yuvarlak-enerji-buton {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d5a6c, #072c35);
+    border: 2px solid #2ed7ea;
+    box-shadow: 0 4px 14px rgba(13, 90, 108, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffd166;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.yuvarlak-enerji-buton:hover {
+    transform: scale(1.08);
+}
+
+/* Açılır Menü */
+.acilir-menu-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+#akilliDock.acik .acilir-menu-row {
+    max-height: 180px;
+    opacity: 1;
+}
+.mini-buton {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
                     
             </style>
         </head>
@@ -16310,6 +16414,94 @@ function dockMenuToggle() {
     let dock = document.getElementById('akilliDock');
     dock.classList.toggle('acik');
 }
+</script>
+
+                <div class="akilli-donen-dock" id="akilliDock">
+    <!-- Dönen Ana Buton (3'lü birleşim) -->
+    <div class="ana-donen-buton" onclick="dockMenuToggle()" title="Hızlı Araçlar">
+        <div class="donen-oge aktif" style="color: #4d96ff;" data-index="0">🔄</div>
+        <div class="donen-oge" style="color: #34b36a;" data-index="1">📋</div>
+        <div class="donen-oge" style="color: #ff8a3d;" data-index="2">❓</div>
+    </div>
+
+    <!-- Tıklayınca Açılan Alt Menü -->
+    <div class="acilir-menu-row" id="acilirMenuRow">
+        <button class="mini-buton" style="background: #e0f2fe;" onclick="sayfayiYenile()" title="Sayfayı Yenile">🔄</button>
+        <button class="mini-buton" style="background: #dcfce7;" onclick="duyuruGecmisiniAc()" title="Duyurular">📋</button>
+        <button class="mini-buton" style="background: #fef9c3;" onclick="yardimAc()" title="Yardım">❓</button>
+    </div>
+
+    <!-- Kompakt Yuvarlak Enerji Butonu -->
+    <div class="yuvarlak-enerji-buton" onclick="enerjiSekmesiniAc()" title="Enerji Durumu">
+        <span style="font-size: 14px; line-height: 1;">⚡</span>
+        <span id="yuvarlakEnerjiTxt" style="font-size: 9px;">--/--</span>
+    </div>
+</div>
+
+<script>
+// Her 5 saniyede bir dönen simgeler
+let aktifDnenIndex = 0;
+const donenOgeler = document.querySelectorAll('.donen-oge');
+function sonrakiOgeyiGoster() {
+    if (!donenOgeler.length) return;
+    donenOgeler[aktifDnenIndex].classList.remove('aktif');
+    aktifDnenIndex = (aktifDnenIndex + 1) % donenOgeler.length;
+    donenOgeler[aktifDnenIndex].classList.add('aktif');
+}
+setInterval(sonrakiOgeyiGoster, 5000);
+
+function dockMenuToggle() {
+    let dock = document.getElementById('akilliDock');
+    if (isDragging) return;
+    dock.classList.toggle('acik');
+}
+
+// Sürükleme (Draggable) Özelliği
+const dock = document.getElementById('akilliDock');
+let isDragging = false, startX, startY, initialX, initialY;
+
+dock.addEventListener('mousedown', dragStart);
+dock.addEventListener('touchstart', dragStart, {passive: true});
+
+document.addEventListener('mousemove', drag);
+document.addEventListener('touchmove', drag, {passive: true});
+
+document.addEventListener('mouseup', dragEnd);
+document.addEventListener('touchend', dragEnd);
+
+function dragStart(e) {
+    isDragging = false;
+    startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+    startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+    initialX = dock.offsetLeft;
+    initialY = dock.offsetTop;
+}
+
+function drag(e) {
+    let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+    let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+    let dx = clientX - startX;
+    let dy = clientY - startY;
+
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        isDragging = true;
+        dock.style.right = 'auto';
+        dock.style.left = (initialX + dx) + 'px';
+        dock.style.top = (initialY + dy) + 'px';
+    }
+}
+
+function dragEnd() {
+    setTimeout(() => { isDragging = false; }, 50);
+}
+
+// Enerji metnini güncelleme
+setInterval(() => {
+    let txt = document.getElementById('yuvarlakEnerjiTxt');
+    if (txt && window.genelEnerjiKalan !== undefined) {
+        txt.innerText = `${window.genelEnerjiKalan}/${window.genelEnerjiMax || 18}`;
+    }
+}, 1000);
 </script>
                 
         </body>
