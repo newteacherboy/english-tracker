@@ -17351,9 +17351,9 @@ function avatarSVG(s, stil, px, cins) {
       yo.dcOdul = yo.dcOdul || [];
       if (yo.dcOdul.includes(konu)) return;
       yo.dcOdul.push(konu); if (yo.dcOdul.length > 500) yo.dcOdul.shift();
-      yoXpEkle(10, 0);
+            yoXpEkle(30, 2);
       if (typeof enerjiHediye === 'function') enerjiHediye(2);
-      ODUL({ ikon: '📘', baslik: 'Konuyu geçtin!', alt: konu, enerji: 2, xp: 10 });
+      ODUL({ ikon: '📘', baslik: 'Konuyu geçtin!', alt: konu, enerji: 2, xp: 30, altin: 2 });
     }, 1500);
     return r;
   };
@@ -17437,8 +17437,8 @@ function avatarSVG(s, stil, px, cins) {
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
       let p = document.createElement('div'); p.className = 'kb-papagan'; p.innerText = '🦜'; document.body.appendChild(p); setTimeout(() => p.remove(), 2300);
     }
-    let y = document.createElement('div'); y.className = 'kb-yazi'; y.innerText = `🔥 ${kombo} KOMBO!` + (odullu ? ' +5 🪙 +2 ⚡' : ''); document.body.appendChild(y); setTimeout(() => y.remove(), 2100);
-    if (odullu) { yo.komboSay++; yoXpEkle(0, 5); if (typeof enerjiHediye === 'function') enerjiHediye(2); }
+    let y = document.createElement('div'); y.className = 'kb-yazi'; y.innerText = `🔥 ${kombo} KOMBO!` + (odullu ? ' +5 🪙' : ''); document.body.appendChild(y); setTimeout(() => y.remove(), 2100);
+        if (odullu) { yo.komboSay++; yoXpEkle(0, 5); }
   }
   new MutationObserver(ms => {
     for (let m of ms) {
@@ -17769,7 +17769,7 @@ function avatarSVG(s, stil, px, cins) {
       if (n > zilSayi) { let b = $('zlBtn'); if (b) { b.classList.remove('sallan'); void b.offsetWidth; b.classList.add('sallan'); } }
       zilSayi = n; zilCiz();
     } catch (e) {}
-  }, 90000);
+  }, 60000);
   function zamanOnce(t) {
     let s = Math.max(0, Math.round((Date.now() - t) / 1000));
     if (s < 60) return 'az önce'; if (s < 3600) return Math.floor(s / 60) + ' dk önce';
@@ -17859,7 +17859,7 @@ function avatarSVG(s, stil, px, cins) {
     let enerji = window.genelEnerjiKalan;
     let p = document.createElement('div');
     p.className = 'bs-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', meta.ad);
-    let cipler = [`⭐ Her doğru +10 XP`, `🪙 Her doğru +1${carpanYazi()}`, `🔥 4'lü kombo +5 🪙 +2 ⚡`].concat(meta.ekstra || []);
+    let cipler = [`⭐ Her doğru +10 XP`, `🪙 Her doğru +1${carpanYazi()}`, `🔥 4'lü kombo +5 🪙`].concat(meta.ekstra || []);
     if (meta.enerji !== false) cipler.push(`⚡ Giriş: 1 enerji${enerji !== undefined ? ` (sende ${enerji})` : ''}`);
     p.innerHTML = `<div class="bs-kart" style="--r:${meta.renk}"><div class="bs-ust"><div class="bs-ikon">${meta.ikon}</div><div><b>${meta.ad}</b><small>${meta.alt || 'Hazır mısın? Kazanacakların:'}</small></div></div>
       <div class="bs-oduller">${cipler.map((c, i) => `<span style="--g:${0.05 + i * 0.06}s">${c}</span>`).join('')}</div>
@@ -18482,6 +18482,14 @@ function odulUret(k, o) {
         return `<div class="bc-satir"><span class="bc-mini">${sandikSVG(o, k, 54)}</span><span><b>${OYUN_AD[g]}</b><small>${n} seviye · ${acilan} sandık açtın · sonraki (${KADEME[k].ad}) ${sonraki} seviye sonra</small></span></div>`; }).join('')}
       <div class="bc-envanter"><span>🎟️ Ekstra joker: <b>${(yoVar() && yo.jokerStok) || 0}</b><small>Bir jokeri aynı turda tekrar kullanır</small></span><span>🎁 Hediye hakkı: <b>${(yoVar() && yo.hediyeHak) || 0}</b><small>Arkadaşına günde 1'den fazla enerji yollar</small></span></div></div>`;
   }
+          window.bcMgCiz = mgCiz;
+  window.bcKoleksiyonCiz = function (el) {
+    let ciz = () => {
+      el.innerHTML = koleksiyonHtml(); kolBagla(el);
+      el.querySelectorAll('.bc-filtre button, .bc-krk, #bcKendi').forEach(b => { let o = b.onclick; b.onclick = e => { if (o) o(e); setTimeout(ciz, 40); }; });
+    };
+    ilerlemeGetir().then(ciz); ciz();
+  };
   let orgMg = window.magazaAc;
   if (typeof orgMg === 'function') window.magazaAc = function () { let r = orgMg.apply(this, arguments); setTimeout(mgCiz, 60); return r; };
 
@@ -18898,6 +18906,143 @@ function odulUret(k, o) {
       if (typeof f === 'function') { try { f(); } catch (e) { console.error(e); } }
       else if (typeof yoToast === 'function') yoToast('Oyunu Aktivite sekmesinden açabilirsin ⚔️');
     }, 400);
+  };
+})();
+</script>
+
+                <!-- ===================== DÜZELTME 5: PROFİL SEKMESİ, KOLEKSİYON, BAŞLAT KARTLARI ===================== -->
+<style>
+#tab-meduakis #maSegment.segment { grid-template-columns:repeat(5,1fr) !important; }
+#tab-meduakis #maSegment.segment i { width:calc((100% - 8px)/5) !important; }
+#maSegment button[data-s="profil"] { display:none !important; }
+#tab-profil.dc-fullscreen-overlay { background:#fdf7ff !important; }
+#tab-profil.dc-fullscreen-overlay.active { display:block !important; position:fixed !important; inset:0 !important; z-index:99990 !important; overflow-y:auto !important; padding:14px 10px 110px !important; }
+.pr-kap { max-width:640px; margin:0 auto; }
+.pr-baslik { font:700 20px 'Fredoka',sans-serif; color:#3b2c66; margin:18px 4px 10px; }
+.ab-perde { position:fixed; inset:0; z-index:100000013; display:flex; align-items:flex-end; justify-content:center; padding:16px 12px calc(96px + env(safe-area-inset-bottom,0px)); background:rgba(20,12,45,.35); font-family:'Nunito',sans-serif; }
+.ab-kart { width:min(94vw,380px); background:#fff; color:#3b2c66; border-radius:24px; padding:16px; box-shadow:0 20px 50px rgba(59,44,102,.35); animation:abGel .4s cubic-bezier(.2,.9,.3,1.3) both; }
+.ab-ust { display:flex; align-items:center; gap:12px; }
+.ab-ikon { width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:28px; background:var(--r); }
+.ab-ust b { display:block; font:700 17px 'Fredoka',sans-serif; }
+.ab-ust small { font-size:12px; font-weight:700; color:#8a78b8; }
+.ab-cip { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0; }
+.ab-cip span { padding:6px 10px; border-radius:12px; background:#f6f1ff; font-weight:900; font-size:12.5px; }
+.ab-btn { display:flex; gap:8px; }
+.ab-btn button { border:none; border-radius:14px; padding:12px; font:900 14px 'Nunito',sans-serif; cursor:pointer; }
+.ab-basla { flex:1; background:linear-gradient(120deg,#a06bff,#ff6b9d); color:#fff; }
+.ab-vaz { background:#f1e9ff; color:#7c3aed; }
+.ab-basla:focus-visible, .ab-vaz:focus-visible { outline:3px solid #4d96ff; outline-offset:2px; }
+@keyframes abGel { from { opacity:0; transform:translateY(40px); } }
+@media (prefers-reduced-motion: reduce) { .ab-kart { animation:none; } }
+</style>
+<div id="tab-profil" class="dc-fullscreen-overlay"><div class="pr-kap"><div id="profilAlan"></div><div class="pr-baslik">🎭 Karakterlerim</div><div id="profilKoleksiyon"></div></div></div>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+
+  /* ===== 1) Profil alt sekmesi ===== */
+  function profilGeriKoy() {
+    let pa = $('panel-alani'), alan = $('profilAlan');
+    if (!pa || !alan) return;
+    let ref = pa.querySelector('.tabs-container');
+    ['.user-header-bar', '.timer-card'].forEach(s => { let el = alan.querySelector(s); if (el) pa.insertBefore(el, ref); });
+    let oz = alan.querySelector('#tab-ozet');
+    if (oz) { oz.classList.remove('active'); oz.style.cssText = ''; pa.appendChild(oz); }
+  }
+  window.profilAc = function () {
+    dcTumTamEkranlariKapat();
+    if (typeof maOzetGeriKoy === 'function') maOzetGeriKoy();
+    let alan = $('profilAlan');
+    ['.user-header-bar', '.timer-card'].forEach(s => { let el = document.querySelector('#panel-alani > ' + s); if (el) alan.appendChild(el); });
+    let oz = $('tab-ozet');
+    if (oz) { oz.classList.add('active'); oz.style.cssText = 'display:block;'; alan.appendChild(oz); }
+    let ov = $('tab-profil'); ov.classList.add('active'); ov.scrollTop = 0;
+    if (typeof dcBottomNavSenkronize === 'function') dcBottomNavSenkronize();
+    setTimeout(() => {
+      ['gelisimChartInstance', 'kriterChartInstance', 'denemeChartInstance'].forEach(n => { try { let c = eval(n); if (c && c.resize) c.resize(); } catch (e) {} });
+    }, 80);
+    let k = $('profilKoleksiyon');
+    if (typeof bcKoleksiyonCiz === 'function') bcKoleksiyonCiz(k);
+    else k.innerHTML = '<div style="padding:14px;font-weight:800;color:#8a78b8">Koleksiyon yükleniyor…</div>';
+  };
+  let orgKapat = window.dcTumTamEkranlariKapat;
+  if (typeof orgKapat === 'function') window.dcTumTamEkranlariKapat = function () { profilGeriKoy(); return orgKapat.apply(this, arguments); };
+
+  setInterval(() => {
+    let nav = $('bottomNavMobile'); if (!nav) return;
+    if (!nav.querySelector('[data-bc="profil"]')) {
+      let b = document.createElement('button');
+      b.className = 'bn-item'; b.dataset.ekran = 'tab-profil'; b.dataset.bc = 'profil';
+      b.innerHTML = '<span class="bn-icon">👤</span><span class="bn-label">Profil</span>';
+      b.onclick = () => profilAc();
+      let mg = nav.querySelector('[data-ekran="tab-magaza"]');
+      mg ? mg.insertAdjacentElement('afterend', b) : nav.appendChild(b);
+    }
+    /* Medu Akış profil sekmesindeyse akışa çevir */
+    if (typeof maSekme !== 'undefined' && maSekme === 'profil') { maSekme = 'akis'; if (typeof maCiz === 'function' && $('tab-meduakis') && $('tab-meduakis').classList.contains('active')) maCiz(); }
+    /* Mağaza sekme çubuğu yoksa çiz */
+    let mgv = $('tab-magaza');
+    if (mgv && mgv.classList.contains('active') && !$('bcMgBar') && typeof bcMgCiz === 'function') bcMgCiz();
+  }, 700);
+
+  /* ===== 2) Görünmeyen pencere sorunu (Dikte, Cümle Kur, Zor Kelimeler, Seviye Tespit) ===== */
+  function hedefKontrol() {
+    let h = window.yoGomuluHedef && $(window.yoGomuluHedef);
+    if (window.yoGomuluHedef && (!h || !h.getClientRects().length)) window.yoGomuluHedef = null;
+  }
+  ['yoModalAc', 'yoGovde'].forEach(ad => {
+    let org = window[ad];
+    if (typeof org === 'function') window[ad] = function () { hedefKontrol(); return org.apply(this, arguments); };
+  });
+
+  /* ===== 3) Oyun içinde kombo enerjisi verilmesin ===== */
+  let orgHarca = window.genelEnerjiHarca;
+  if (typeof orgHarca === 'function') window.genelEnerjiHarca = function (m) {
+    if (Number(m) > 0 && typeof odulOyunda === 'function' && odulOyunda()) return Promise.resolve();
+    return orgHarca.apply(this, arguments);
+  };
+  let orgKp = window.kpEnerjiDegistir;
+  if (typeof orgKp === 'function') window.kpEnerjiDegistir = function (f) {
+    if (Number(f) > 0) return Promise.resolve();
+    return orgKp.apply(this, arguments);
+  };
+
+  /* ===== 4) Başlat kartı: Aktivite oyunları, Dikte, Cümle Kur, Ders Çalış konuları ===== */
+  function kart(meta, devam) {
+    let p = document.createElement('div'); p.className = 'ab-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', meta.ad);
+    p.innerHTML = `<div class="ab-kart" style="--r:${meta.renk}"><div class="ab-ust"><div class="ab-ikon">${meta.ikon}</div><div><b>${meta.ad}</b><small>Hazır mısın? Kazanacakların:</small></div></div>
+      <div class="ab-cip">${meta.cip.map(c => `<span>${c}</span>`).join('')}</div>
+      <div class="ab-btn"><button class="ab-vaz">Vazgeç</button><button class="ab-basla">▶ Başlat</button></div></div>`;
+    document.body.appendChild(p);
+    let kapat = () => p.remove();
+    p.querySelector('.ab-vaz').onclick = kapat;
+    p.addEventListener('click', e => { if (e.target === p) kapat(); });
+    p.querySelector('.ab-basla').onclick = () => { kapat(); devam(); };
+    setTimeout(() => p.querySelector('.ab-basla').focus({ preventScroll: true }), 250);
+  }
+  const OYUN_CIP = () => { let c = typeof seriCarpani === 'function' ? seriCarpani() : 1; return ['⭐ Her doğru +10 XP', `🪙 Her doğru +1${c > 1 ? ` (seri ${c}x)` : ''}`, "🔥 4'lü kombo +5 🪙", `⚡ Giriş: 1 enerji${window.genelEnerjiKalan !== undefined ? ` (sende ${window.genelEnerjiKalan})` : ''}`]; };
+  function sar(ad, meta) {
+    let org = window[ad]; if (typeof org !== 'function') return;
+    let onay = false;
+    window[ad] = function () {
+      let a = arguments, self = this;
+      if (onay) { onay = false; return org.apply(self, a); }
+      kart(typeof meta === 'function' ? meta(a) : meta, () => { onay = true; window[ad].apply(self, a); });
+    };
+  }
+  [['kelimeYarismasiBaslat', '🏆', 'Kelime Ezber Yarışması', '#ffd166,#f59e0b'], ['jeopardyOyunuBaslat', '🎈', 'Jeopardy Balonları', '#ff8fb8,#ff5d8f'],
+   ['boslukOyunuBaslat', '🧩', 'Boşluk Doldurma', '#a5b4fc,#6366f1'], ['hafizaOyunuBaslat', '🧠', 'Hafıza Kartları', '#c4b5fd,#8b5cf6'],
+   ['yagmurOyunuBaslat', '☔', 'Kelime Yağmuru', '#7dd3fc,#0ea5e9'], ['asmacaOyunuBaslat', '🎪', 'Adam Asmaca', '#fdba74,#f97316'], ['kelimebulOyunuBaslat', '🎯', 'Kelime Bul', '#86efac,#16a34a']]
+    .forEach(([ad, ikon, isim, r]) => sar(ad, () => ({ ikon, ad: isim, renk: `linear-gradient(145deg,${r})`, cip: OYUN_CIP() })));
+  sar('dikteAc', () => ({ ikon: '🎧', ad: 'Dikte (Dinle-Yaz)', renk: 'linear-gradient(145deg,#38bdf8,#6d28d9)', cip: OYUN_CIP() }));
+  sar('cumleAc', () => ({ ikon: '🧱', ad: 'Cümle Kur', renk: 'linear-gradient(145deg,#f472b6,#9333ea)', cip: OYUN_CIP() }));
+  sar('dcKonuAc', a => ({ ikon: '📘', ad: 'Konuyu çalış', renk: 'linear-gradient(145deg,#93c5fd,#2563eb)', cip: ['📖 Konu anlatımı ve örnekler', '📝 Sonunda kısa test', '🏁 Testi geçersen: +30 XP · +2 ⚡ · +2 🪙', '⚡ Enerji harcamaz'] }));
+
+  /* ===== 5) Kelime Bul düellosu doğru oyunu açsın ===== */
+  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimebulOyunAc' };
+  window.duelloOyununuAc = function (oyun) {
+    if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
+    setTimeout(() => { let f = window[OYUN_AC[oyun]]; if (typeof f === 'function') { try { f(); } catch (e) { console.error(e); } } }, 400);
   };
 })();
 </script>
