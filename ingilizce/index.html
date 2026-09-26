@@ -4362,7 +4362,7 @@ function raporlarimKapat() {
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbyKuDDwSlahuyGc7VRk6uT95w8ysMH2ago-PjwO1Nvh2X-8nMGLLhOgHeVPheniAMwbug/exec";
+                const apiURL = "https://script.google.com/macros/s/AKfycby9bqDU0RETwTbZ_H3Y0c-ZPVVKQCoR_9YlzGghFYqP3iPZBJNcnVzL6NoY1BARRZhz8w/exec";
                 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
@@ -18612,7 +18612,7 @@ function odulUret(k, o) {
   /* ===== 1) Alt menü: Medu Akış → Dünya Parkuru ===== */
   setInterval(() => {
     let b = document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
-    if (b && typeof dunyaAc === 'function') { b.dataset.ekran = 'tab-dunya'; b.onclick = () => dunyaAc(); b.removeAttribute('onclick'); }
+   
     let hud = document.querySelector('#dunyaAlan .bc-hud');
     if (hud && !hud.querySelector('.bc-akis-btn')) {
       let a = document.createElement('button'); a.className = 'bc-akis-btn'; a.innerText = '🎡 Akış';
@@ -18804,6 +18804,101 @@ function odulUret(k, o) {
       });
     });
   }, 1000);
+})();
+</script>
+
+                <!-- ===================== DÜZELTME 4 ===================== -->
+<style>
+/* Soru ekranı dünya temasında: iç kutular da temaya uysun */
+#tab-buyuakademisi.bc-tema .ba-shell, #tab-buyuakademisi.bc-tema .ba-shell > div:not(.ba-levelup-overlay):not(.bc-amb-kat) { background:transparent !important; }
+#tab-buyuakademisi.bc-tema .ba-top { background:rgba(255,255,255,.9); border-radius:16px; padding:8px 12px; box-shadow:0 6px 16px rgba(0,0,0,.2); }
+#tab-buyuakademisi.bc-tema .ba-kart { background:rgba(255,255,255,.95) !important; border:3px solid rgba(255,255,255,.6) !important; box-shadow:0 12px 30px rgba(0,0,0,.3), 0 0 0 6px rgba(255,255,255,.12) !important; }
+#tab-buyuakademisi.bc-tema .ba-sik-btn { background:rgba(255,255,255,.92) !important; border-color:rgba(255,255,255,.5) !important; box-shadow:0 5px 0 rgba(0,0,0,.2); }
+#tab-buyuakademisi.bc-tema .ba-bar-fill { background:linear-gradient(90deg,#ffd166,#ff6b9d) !important; }
+#tab-buyuakademisi.bc-tema .ba-mik-btn { background:linear-gradient(135deg,#ffd166,#ff8a3d) !important; color:#3b2c66 !important; box-shadow:0 6px 0 rgba(0,0,0,.25); }
+/* Dünyadan gelince Büyü Akademisi'nin kendi sade parkuru görünmesin */
+#tab-buyuakademisi.bc-dunyadan .ba-path-wrap, #tab-buyuakademisi.bc-dunyadan .ba-unit-card { visibility:hidden !important; }
+.bc-yukleniyor { position:fixed; left:50%; top:45%; transform:translate(-50%,-50%); z-index:5; color:#fff; font:800 15px 'Nunito',sans-serif; background:rgba(0,0,0,.35); padding:12px 18px; border-radius:16px; }
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+
+  /* ===== 1) Alt menü: en başta "Parkur", Medu Akış yine akışı açsın ===== */
+  setInterval(() => {
+    let nav = $('bottomNavMobile'); if (!nav) return;
+    if (!nav.querySelector('[data-ekran="tab-dunya"][data-bc="parkur"]') && typeof dunyaAc === 'function') {
+      let b = document.createElement('button');
+      b.className = 'bn-item'; b.dataset.ekran = 'tab-dunya'; b.dataset.bc = 'parkur';
+      b.innerHTML = '<span class="bn-icon">🧙</span><span class="bn-label">Parkur</span>';
+      b.onclick = () => dunyaAc();
+      nav.insertBefore(b, nav.firstChild);
+    }
+    let m = nav.querySelector('.bn-item:not([data-bc="parkur"])[data-ekran="tab-dunya"]');
+    if (m) { m.dataset.ekran = 'tab-meduakis'; m.onclick = () => { if (typeof maSekme !== 'undefined') maSekme = 'akis'; window.yoGomuluHedef = null; meduAkisAc(); }; }
+  }, 700);
+
+  /* ===== 2) Mağaza kesin açılsın ===== */
+  let orgMg = window.magazaAc;
+  window.magazaAc = function () {
+    let el = $('tab-magaza');
+    if (!el) { el = document.createElement('div'); el.id = 'tab-magaza'; el.className = 'dc-fullscreen-overlay'; el.innerHTML = '<div class="mg-kap"><div id="magazaAlan"></div></div>'; document.body.appendChild(el); }
+    try { if (typeof orgMg === 'function') orgMg.apply(this, arguments); else { dcTumTamEkranlariKapat(); el.classList.add('active'); window.yoGomuluHedef = 'magazaAlan'; yoMagazaAc(); } }
+    catch (e) { console.error('Mağaza açılamadı:', e); }
+    el.classList.add('active');
+    el.style.cssText = 'display:block;position:fixed;inset:0;z-index:99991;overflow-y:auto;background:#fdf7ff;padding:14px 10px 110px;';
+    setTimeout(() => {
+      let a = $('magazaAlan');
+      if (a && !a.innerHTML.trim()) {
+        window.yoGomuluHedef = 'magazaAlan';
+        try { yoMagazaAc(); } catch (e) { console.error('Atölye çizilemedi:', e); }
+      }
+      if (a && !a.innerHTML.trim()) a.innerHTML = '<div style="text-align:center;padding:40px 12px;font-weight:800;color:#8a78b8">Mağaza yüklenemedi. Sayfayı yenileyip tekrar dene.</div>';
+    }, 350);
+  };
+  let orgKapat = window.dcTumTamEkranlariKapat;
+  if (typeof orgKapat === 'function') window.dcTumTamEkranlariKapat = function () { let el = $('tab-magaza'); if (el) el.style.cssText = ''; return orgKapat.apply(this, arguments); };
+
+  /* ===== 3) Dünyadan açılan seviye: sade parkuru gösterme, seviye yüklenene kadar dene ===== */
+  let orgBa = window.baModuAc;
+  if (typeof orgBa === 'function') window.baModuAc = function () {
+    let dunyadan = !!($('tab-dunya') && $('tab-dunya').classList.contains('active'));
+    let r = orgBa.apply(this, arguments);
+    let ov = $('tab-buyuakademisi');
+    if (ov) {
+      ov.classList.toggle('bc-dunyadan', dunyadan);
+      let y = ov.querySelector('.bc-yukleniyor'); if (y) y.remove();
+      if (dunyadan) { let d = document.createElement('div'); d.className = 'bc-yukleniyor'; d.innerText = '✨ Seviye hazırlanıyor...'; ov.appendChild(d); setTimeout(() => d.remove(), 6000); }
+    }
+    return r;
+  };
+  let orgSev = window.baSeviyeBaslat;
+  if (typeof orgSev === 'function') window.baSeviyeBaslat = function (n) {
+    let a = arguments, self = this, ov = $('tab-buyuakademisi');
+    let hazir = typeof baTumSeviyeler !== 'undefined' && baTumSeviyeler && baTumSeviyeler.find && baTumSeviyeler.find(s => s.seviyeNo === n);
+    if (!hazir && ov && ov.classList.contains('bc-dunyadan')) {
+      let deneme = 0, t = setInterval(() => {
+        let h = typeof baTumSeviyeler !== 'undefined' && baTumSeviyeler && baTumSeviyeler.find && baTumSeviyeler.find(s => s.seviyeNo === n);
+        if (h || ++deneme > 25) { clearInterval(t); orgSev.apply(self, a); }
+      }, 200);
+      return;
+    }
+    let y = ov && ov.querySelector('.bc-yukleniyor'); if (y) y.remove();
+    return orgSev.apply(this, a);
+  };
+  let orgBaK = window.baModuKapat;
+  if (typeof orgBaK === 'function') window.baModuKapat = function () { let ov = $('tab-buyuakademisi'); if (ov) ov.classList.remove('bc-dunyadan'); return orgBaK.apply(this, arguments); };
+
+  /* ===== 4) Düello: kabul edince oyun gerçekten açılsın (oyunlar Aktivite içinde) ===== */
+  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc' };
+  window.duelloOyununuAc = function (oyun) {
+    if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
+    setTimeout(() => {
+      let f = window[OYUN_AC[oyun]];
+      if (typeof f === 'function') { try { f(); } catch (e) { console.error(e); } }
+      else if (typeof yoToast === 'function') yoToast('Oyunu Aktivite sekmesinden açabilirsin ⚔️');
+    }, 400);
+  };
 })();
 </script>
                 
