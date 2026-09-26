@@ -18440,7 +18440,7 @@ function odulUret(k, o) {
       kap.insertBefore(bar, kap.firstChild);
       let k = document.createElement('div'); k.id = 'bcMgAlan'; kap.appendChild(k);
     }
-    bar.innerHTML = [['atolye', '🎨 Atölye'], ['koleksiyon', '🎭 Koleksiyon'], ['sandik', '🎁 Sandıklar']].map(([k, t]) => `<button class="${k === mgSekme ? 'aktif' : ''}" data-k="${k}">${t}</button>`).join('');
+    bar.innerHTML = [['atolye', '🎨 Atölye'], ['koleksiyon', '🎭 Karakterlerim'], ['sandik', '🎁 Sandıklar']].map(([k, t]) => `<button class="${k === mgSekme ? 'aktif' : ''}" data-k="${k}">${t}</button>`).join('');
     bar.querySelectorAll('button').forEach(b => b.onclick = () => { mgSekme = b.dataset.k; mgCiz(); });
   }
   function mgCiz() {
@@ -18961,9 +18961,7 @@ function odulUret(k, o) {
     setTimeout(() => {
       ['gelisimChartInstance', 'kriterChartInstance', 'denemeChartInstance'].forEach(n => { try { let c = eval(n); if (c && c.resize) c.resize(); } catch (e) {} });
     }, 80);
-    let k = $('profilKoleksiyon');
-    if (typeof bcKoleksiyonCiz === 'function') bcKoleksiyonCiz(k);
-    else k.innerHTML = '<div style="padding:14px;font-weight:800;color:#8a78b8">Koleksiyon yükleniyor…</div>';
+   
   };
   let orgKapat = window.dcTumTamEkranlariKapat;
   if (typeof orgKapat === 'function') window.dcTumTamEkranlariKapat = function () { profilGeriKoy(); return orgKapat.apply(this, arguments); };
