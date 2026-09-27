@@ -20770,6 +20770,67 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   if (typeof orgBC === 'function') window.boslukBulmacayiCiz = function () { let r = orgBC.apply(this, arguments); try { boslukBoya(); } catch (e) {} return r; };
 })();
 </script>
+
+                <!-- ===================== DUYURU PANELİ: GÖRÜNÜRLÜK + GEÇMİŞ DÜĞMESİ ===================== -->
+<style>
+/* Duyuru her şeyin üstünde (Papi turu, parkur sekmeleri, bilgi kartları dahil) */
+#duyuruOverlay.duy3-overlay { z-index:100000060 !important; }
+#duyuruGecmisModal { z-index:100000060 !important; }
+/* Duyuru açıkken Papi turu ve bilgi kartları beklesin */
+body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart, body.duyuru-acik .st-overlay { visibility:hidden !important; pointer-events:none !important; }
+/* Yardım penceresindeki duyurular düğmesi */
+.dy-yardim-btn { display:flex; align-items:center; gap:10px; width:100%; margin:0 0 12px; padding:12px 14px; border:3px solid #3b2c66; border-radius:16px; background:#fff3c4; color:#3b2c66; font:800 14px 'Baloo 2','Nunito',sans-serif; box-shadow:0 4px 0 #3b2c66; cursor:pointer; text-align:left; }
+.dy-yardim-btn:active { transform:translateY(3px); box-shadow:0 1px 0 #3b2c66; }
+.dy-yardim-btn i { font-style:normal; font-size:22px; }
+.dy-yardim-btn small { display:block; font:700 11.5px 'Nunito',sans-serif; color:#7c6aa8; }
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const gor = el => el && getComputedStyle(el).display !== 'none';
+
+  /* 1) Duyuru açıkken diğer katmanları beklet */
+  setInterval(() => document.body.classList.toggle('duyuru-acik', gor($('duyuruOverlay')) || gor($('duyuruGecmisModal'))), 300);
+
+  /* 2) Papi turu, duyuru varken otomatik başlamasın; duyuru kapanınca başlasın */
+  let orgTur = window.turBaslat;
+  if (typeof orgTur === 'function') window.turBaslat = function (k, zorla) {
+    if (!zorla && (gor($('duyuruOverlay')) || duyuruBekleniyor)) {
+      let a = arguments, self = this;
+      let t = setInterval(() => { if (!gor($('duyuruOverlay')) && !duyuruBekleniyor) { clearInterval(t); setTimeout(() => orgTur.apply(self, a), 600); } }, 500);
+      return;
+    }
+    return orgTur.apply(this, arguments);
+  };
+
+  /* 3) Her girişte duyuru kontrolü mutlaka yapılsın */
+  let duyuruBekleniyor = false, kontrolYapildi = false;
+  let orgKontrol = window.duyuruKontrolEt;
+  if (typeof orgKontrol === 'function') window.duyuruKontrolEt = function () {
+    kontrolYapildi = true; duyuruBekleniyor = true;
+    setTimeout(() => { duyuruBekleniyor = false; }, 4000);
+    return orgKontrol.apply(this, arguments);
+  };
+  let bekle = setInterval(() => {
+    let p = $('panel-alani');
+    if (!p || p.style.display !== 'block' || typeof aktifOgrenciAdi === 'undefined' || !aktifOgrenciAdi) return;
+    clearInterval(bekle);
+    setTimeout(() => { if (!kontrolYapildi && typeof window.duyuruKontrolEt === 'function') window.duyuruKontrolEt(); }, 2500);
+  }, 1000);
+
+  /* 4) Duyuru geçmişi: Yardım penceresinin en üstüne düğme */
+  function yardimaEkle() {
+    let govde = document.querySelector('.yardim-body');
+    if (!govde || govde.querySelector('.dy-yardim-btn') || typeof duyuruGecmisiniAc !== 'function') return;
+    let b = document.createElement('button');
+    b.type = 'button'; b.className = 'dy-yardim-btn';
+    b.innerHTML = '<i>📢</i><span>Duyurular<small>Öğretmeninin tüm duyurularını tekrar oku</small></span>';
+    b.onclick = () => { let y = document.querySelector('.yardim-modal-overlay'); if (y) y.style.display = 'none'; duyuruGecmisiniAc(); };
+    govde.prepend(b);
+  }
+  setInterval(() => { let y = document.querySelector('.yardim-modal-overlay'); if (y && gor(y)) yardimaEkle(); }, 600);
+})();
+</script>
                 
         </body>
         </html>
