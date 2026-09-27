@@ -5395,8 +5395,9 @@ function raporlarimKapat() {
             let isim = document.getElementById('yagmurIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             yagmurHavuz = oyunHavuzGetir(yagmurAktifSinif, yagmurSecilenUniteler);
-                    if (yagmurHavuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
-                    yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
+if (yagmurHavuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
+// Karıştırıp sadece ilk 12 kelimeyi alıyoruz (Soru sayısı sınırı: 12)
+yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5).slice(0, 12);
                         yagmurAktifIndex = 0; yagmurPuan = 0; yagmurDogru = 0; yagmurCan = 3; yagmurLevel = 1; yagmurBaslangic = Date.now(); yagmurKombo = 0;
                         genelEnerjiHarca(-1);
             document.getElementById('yagmurGirisEkrani').style.display = 'none';
@@ -13320,38 +13321,7 @@ function raporlarimKapat() {
       
         const YO_DONDURUCU_FIYAT = 10;
         
-        const YO_CUMLE = [
-          ['I have a red bicycle','Kırmızı bir bisikletim var.','A1'],
-          ['She is my best friend','O benim en iyi arkadaşım.','A1'],
-          ['We play football after school','Okuldan sonra futbol oynarız.','A1'],
-          ['My cat is very small','Kedim çok küçük.','A1'],
-          ['He gets up at seven','O yedide kalkar.','A1'],
-          ['They are in the classroom','Onlar sınıftalar.','A1'],
-          ['I like apples and bananas','Elmaları ve muzları severim.','A1'],
-          ['Where is your school bag','Okul çantan nerede?','A1'],
-          ['It is sunny today','Bugün hava güneşli.','A1'],
-          ['My mother is a teacher','Annem bir öğretmen.','A1'],
-          ['Can you swim','Yüzebilir misin?','A1'],
-          ['The book is on the table','Kitap masanın üstünde.','A1'],
-          ['I went to the cinema yesterday','Dün sinemaya gittim.','A2'],
-          ['She is taller than her brother','O, erkek kardeşinden daha uzun.','A2'],
-          ['We are going to visit our grandmother','Büyükannemizi ziyaret edeceğiz.','A2'],
-          ['He has never been to Paris','O hiç Paris\'e gitmedi.','A2'],
-          ['What were you doing last night','Dün gece ne yapıyordun?','A2'],
-          ['You should drink more water','Daha fazla su içmelisin.','A2'],
-          ['It was raining when I woke up','Uyandığımda yağmur yağıyordu.','A2'],
-          ['My brother can play the guitar very well','Kardeşim gitarı çok iyi çalabilir.','A2'],
-          ['There is a bakery next to the bank','Bankanın yanında bir fırın var.','A2'],
-          ['How much is this jacket','Bu ceket ne kadar?','A2'],
-          ['If it rains we will stay at home','Yağmur yağarsa evde kalacağız.','B1'],
-          ['I have been learning English for three years','Üç yıldır İngilizce öğreniyorum.','B1'],
-          ['The letter was written by my uncle','Mektup amcam tarafından yazıldı.','B1'],
-          ['She told me that she was tired','Bana yorgun olduğunu söyledi.','B1'],
-          ['I am used to getting up early','Erken kalkmaya alışkınım.','B1'],
-          ['Although it was cold we went swimming','Hava soğuk olmasına rağmen yüzmeye gittik.','B1'],
-          ['He asked me where I lived','Bana nerede yaşadığımı sordu.','B1'],
-          ['You had better finish your homework','Ödevini bitirsen iyi olur.','B1']
-        ];
+        
         
         const YO_SEVIYE = [
           { s:'A1', q:'I ___ a student.', o:['am','is','are','be'] },
@@ -13787,14 +13757,15 @@ const YO_SOHBET = [
         /* ========== 6) DİKTE (dinle-yaz) ========== */
         let dkt = null;
         function dikteAc() {
-          if (!yoHazirMi()) return;
-          let havuz = yoOrnekKelimeHavuzu(/^[a-zA-Z]{3,10}$/);
-          if (havuz.length < 5) { yoToast('Kelime havuzu henüz yüklenmedi, birkaç saniye sonra dene.'); return; }
-          if (!yoEnerjiKontrol()) return;
-          dkt = { liste: yoKaristir(havuz).slice(0, 10), i:0, d:0, y:0, bas:Date.now() };
-          yoModalAc('🎧 Dikte', '');
-          dikteSoru();
-        }
+  if (!yoHazirMi()) return;
+  let havuz = yoOrnekKelimeHavuzu(/^[a-zA-Z]{3,10}$/);
+  if (havuz.length < 5) { yoToast('Kelime havuzu henüz yüklenmedi, birkaç saniye sonra dene.'); return; }
+  if (!yoEnerjiKontrol()) return;
+  
+  dkt = { liste: yoKaristir(havuz).slice(0, 12), i:0, d:0, y:0, bas:Date.now() }; // SINIR: 12 SORU
+  yoModalAc('🎧 Dikte', '');
+  dikteSoru();
+}
         function dikteSoru() {
           if (dkt.i >= dkt.liste.length) return dikteBitir();
           let w = dkt.liste[dkt.i];
@@ -13829,13 +13800,26 @@ const YO_SOHBET = [
             devamFn: yoModalKapat, tekrarFn: () => { yoModalKapat(); dikteAc(); } });
         }
         
-        /* ========== 7) CÜMLE KURMA ========== */
+        let YO_CUMLE = [];
+        
+        async function cumleHavuzunuYukle() {
+          try {
+            let r = await fetch(`${apiURL}?islem=cumleleriGetir`);
+            let d = await r.json();
+            if (Array.isArray(d) && d.length > 0) YO_CUMLE = d;
+          } catch (e) {}
+        }
+        document.addEventListener("DOMContentLoaded", cumleHavuzunuYukle);
+
+        /* ========== 7) CÜMLE KURMA (Güncellendi) ========== */
         let cml = null;
         function cumleAc() {
           if (!yoHazirMi()) return;
           let s = Number(yoSinif(yoIsim)) || 0;
           let seviyeler = !s ? ['A1','A2','B1'] : s <= 4 ? ['A1'] : s <= 6 ? ['A1','A2'] : ['A2','B1'];
-          let liste = yoKaristir(YO_CUMLE.filter(c => seviyeler.includes(c[2]))).slice(0, 8);
+          let filtreli = YO_CUMLE.filter(c => seviyeler.includes(c[2]));
+          let liste = yoKaristir(filtreli.length ? filtreli : YO_CUMLE).slice(0, 12); // Sınır: 12 soru
+          if (!liste.length) { yoToast('Cümleler yükleniyor, birkaç saniye sonra dene.'); return; }
           if (!yoEnerjiKontrol()) return;
           cml = { liste, i:0, d:0, y:0, bas:Date.now() };
           yoModalAc('🧱 Cümle kur', '');
@@ -14305,7 +14289,7 @@ function sohbetMikDur() {
           let ak = document.querySelector('#tab-aktiviteler .az-grid2x2');
           if (ak && !document.getElementById('yoDikteKart')) {
             let son = ak.querySelector('.az-gcard.span2');
-            let html = `<button class="az-gcard" id="yoDikteKart" style="background:linear-gradient(160deg,#38bdf8,#6d28d9);" onclick="dikteAc()"><div class="az-gcard-badge">YENİ</div><div class="az-gcard-icon">🎧</div><div class="az-gcard-title">Dikte (Dinle-Yaz)</div></button>
+            let html = `<button class="az-gcard" id="yoDikteKart" style="background:linear-gradient(160deg,#38bdf8,#6d28d9);" onclick="()"><div class="az-gcard-badge">YENİ</div><div class="az-gcard-icon">🎧</div><div class="az-gcard-title">Dikte (Dinle-Yaz)</div></button>
               <button class="az-gcard" style="background:linear-gradient(160deg,#f472b6,#9333ea);" onclick="cumleAc()"><div class="az-gcard-badge">YENİ</div><div class="az-gcard-icon">🧱</div><div class="az-gcard-title">Cümle Kur</div></button>`;
             if (son) son.insertAdjacentHTML('beforebegin', html); else ak.insertAdjacentHTML('beforeend', html);
           }
@@ -16235,7 +16219,7 @@ function avatarSVG(s, stil, px, cins) {
     if (b !== harcananBaglam && !harcananBaglam.startsWith('izin:')) harcananBaglam = null;
     else if (harcananBaglam.startsWith('izin:') && Date.now() - izin.t > 60000 && !(yoVar() && $('yoModal') && $('yoModal').classList.contains('acik'))) harcananBaglam = null;
   }, 1000);
-  ['dikteAc', 'cumleAc', 'sohbetBasla'].forEach(ad => {
+  ['', 'cumleAc', 'sohbetBasla'].forEach(ad => {
     let org = window[ad];
     if (typeof org === 'function') window[ad] = function () { izin = { ad: ad + ':' + Date.now(), t: Date.now() }; return org.apply(this, arguments); };
   });
@@ -18004,7 +17988,7 @@ function odulUret(k, o) {
    ['boslukOyunuBaslat', '🧩', 'Boşluk Doldurma', '#a5b4fc,#6366f1'], ['hafizaOyunuBaslat', '🧠', 'Hafıza Kartları', '#c4b5fd,#8b5cf6'],
    ['yagmurOyunuBaslat', '☔', 'Kelime Yağmuru', '#7dd3fc,#0ea5e9'], ['asmacaOyunuBaslat', '🎪', 'Adam Asmaca', '#fdba74,#f97316'], ['kelimebulOyunuBaslat', '🎯', 'Kelime Bul', '#86efac,#16a34a']]
     .forEach(([ad, ikon, isim, r]) => sar(ad, () => ({ ikon, ad: isim, renk: `linear-gradient(145deg,${r})`, cip: OYUN_CIP() })));
-  sar('dikteAc', () => ({ ikon: '🎧', ad: 'Dikte (Dinle-Yaz)', renk: 'linear-gradient(145deg,#38bdf8,#6d28d9)', cip: OYUN_CIP() }));
+  sar('', () => ({ ikon: '🎧', ad: 'Dikte (Dinle-Yaz)', renk: 'linear-gradient(145deg,#38bdf8,#6d28d9)', cip: OYUN_CIP() }));
   sar('cumleAc', () => ({ ikon: '🧱', ad: 'Cümle Kur', renk: 'linear-gradient(145deg,#f472b6,#9333ea)', cip: OYUN_CIP() }));
   sar('dcKonuAc', a => ({ ikon: '📘', ad: 'Konuyu çalış', renk: 'linear-gradient(145deg,#93c5fd,#2563eb)', cip: ['📖 Konu anlatımı ve örnekler', '📝 Sonunda kısa test', '🏁 Testi geçersen: +30 XP · +2 ⚡ · +2 🪙', '⚡ Enerji harcamaz'] }));
 
