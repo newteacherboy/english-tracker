@@ -21056,6 +21056,112 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   }, 1000);
 })();
 </script>
+
+                <!-- ===================== KARŞILAMA PANELİ ===================== -->
+<style>
+.kr-kart { position:relative; width:min(94vw,440px); max-height:88vh; overflow-y:auto; border-radius:28px; padding:20px 16px 16px; color:#fff; text-align:left;
+  background:radial-gradient(circle at 15% 0%,rgba(255,107,157,.35),transparent 55%), radial-gradient(circle at 100% 20%,rgba(107,203,119,.25),transparent 50%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:odGel .55s cubic-bezier(.2,.9,.3,1.3) both; font-family:'Nunito',sans-serif; }
+.kr-ust { display:flex; align-items:center; gap:12px; }
+.kr-av { width:64px; height:64px; border-radius:50%; overflow:hidden; background:#3b2c66; display:flex; align-items:center; justify-content:center; font-size:34px; flex-shrink:0; animation:odZipla 2s ease-in-out infinite; }
+.kr-av svg { width:100%; height:100%; }
+.kr-ust h3 { font:700 21px 'Fredoka',sans-serif; }
+.kr-ust small { font-size:12.5px; font-weight:700; color:#d8cbff; }
+.kr-cipler { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:14px; }
+.kr-cip { text-align:center; padding:9px 2px; border-radius:14px; background:rgba(255,255,255,.08); font-weight:900; font-size:15px; animation:odCip .5s cubic-bezier(.2,.9,.3,1.6) both; animation-delay:var(--g); }
+.kr-cip small { display:block; font-size:10px; color:#c9b8f5; font-weight:800; }
+.kr-lig { display:flex; align-items:center; gap:12px; margin-top:12px; padding:12px 14px; border-radius:18px; background:var(--lg); color:#fff; }
+.kr-lig b { font:700 18px 'Fredoka',sans-serif; display:block; }
+.kr-ok { font-size:30px; margin-left:auto; animation:krOk 1s ease-in-out infinite; }
+.kr-ok.asagi { animation-name:krAsagi; }
+.kr-bolum { margin-top:12px; padding:12px; border-radius:16px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); font-size:13px; font-weight:700; line-height:1.5; }
+.kr-bolum h4 { font:700 14.5px 'Fredoka',sans-serif; margin-bottom:6px; }
+.kr-btnler { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+.kr-btnler button { border:none; border-radius:11px; padding:13px; font:900 14px 'Nunito',sans-serif; cursor:pointer; }
+.kr-ana { background:linear-gradient(120deg,#ffd166,#f59e0b); color:#5a3a00; }
+.kr-ikinci { background:rgba(255,255,255,.14); color:#fff; }
+@keyframes krOk { 50% { transform:translateY(-6px); } }
+@keyframes krAsagi { 50% { transform:translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .kr-kart *, .kr-kart { animation:none !important; } }
+</style>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const yoVar = () => typeof yo !== 'undefined' && yo;
+  const kucuk = x => String(x || '').trim().toLowerCase();
+  const girisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci)); };
+  const seri = () => parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0') || 0;
+
+  let krAcik = null;
+  function duyuruYakala() {
+    let m = $('duyuruMesaj');
+    if (!m || !gor(m)) return null;
+    let metin = m.innerText.trim();
+    let ov = m.closest('.duy3-overlay') || m.parentElement;
+    while (ov && getComputedStyle(ov).position !== 'fixed' && ov.parentElement) ov = ov.parentElement;
+    let kapat = ov && [...ov.querySelectorAll('button')].find(b => /kapat|tamam|anlad|okudum|✕|×/i.test(b.innerText));
+    if (kapat) kapat.click(); else if (ov) ov.style.display = 'none';
+    return metin;
+  }
+  const gor = el => el && getComputedStyle(el).display !== 'none' && el.getClientRects().length > 0;
+
+  async function karsilamaGoster() {
+    if (!girisli() || !yoVar()) return;
+    let isim = aktifOgrenciAdi;
+    let av = (typeof karakterSvg === 'function' && karakterSvg(isim, 64)) || (typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(isim) : '🦜');
+    let ligHtml = '';
+    try {
+      if (typeof maTumGetir === 'function') { await maTumGetir(); maLigOnbellek = null; }
+      let ben = maLigSiralama().liste.find(x => x.benMi);
+      if (ben) {
+        let L = MA_LIGLER[ben.kod], once = yo.sonGirisSira, fark = once ? once - ben.sira : 0;
+        yo.sonGirisSira = ben.sira;
+        let ok = fark > 0 ? `<span class="kr-ok">📈</span>` : fark < 0 ? `<span class="kr-ok asagi">📉</span>` : '';
+        let yazi = fark > 0 ? `Son girişinden beri <b>${fark} sıra yükseldin!</b>` : fark < 0 ? `${-fark} sıra düştün, hadi geri al! 💪` : `Bu hafta ${ben.xp} XP`;
+        ligHtml = `<div class="kr-lig" style="--lg:${L.grad}"><span style="font-size:34px">${L.ikon}</span><span><b>${L.ad} · ${ben.sira}. sıra</b>${yazi}</span>${ok}</div>`;
+      }
+    } catch (e) {}
+    let hedefYuzde = Math.min(100, Math.round(((yo.xpGun && yo.xpGun.xp) || 0) / (yo.hedef || 50) * 100));
+    let p = document.createElement('div');
+    p.className = 'od-perde kr-perde';
+    p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Hoş geldin');
+    p.innerHTML = `<div class="kr-kart">
+      <div class="kr-ust"><div class="kr-av">${av}</div><div><h3>Hoş geldin, ${guvenliMetin(String(isim).split(' ')[0])}! 👋</h3><small>${seri() > 1 ? `🔥 ${seri()} günlük serin var!` : 'Bugün harika bir gün olacak!'}</small></div></div>
+      <div class="kr-cipler">
+        <div class="kr-cip" style="--g:.2s">⚡ ${window.genelEnerjiKalan ?? '–'}<small>Enerji</small></div>
+        <div class="kr-cip" style="--g:.3s">🪙 ${yo.altin || 0}<small>Altın</small></div>
+        <div class="kr-cip" style="--g:.4s">⭐ ${(yo.lig && yo.lig.xp) || 0}<small>Haftalık XP</small></div>
+        <div class="kr-cip" style="--g:.5s">🎯 %${hedefYuzde}<small>Günlük hedef</small></div>
+      </div>
+      ${ligHtml}
+      <div id="krDuyuruAlan"></div>
+      <div class="kr-btnler"><button class="kr-ana" id="krParkur">🧙 Parkura devam</button><button class="kr-ikinci" id="krAkis">🎡 Akışa bak</button></div>
+    </div>`;
+    document.body.appendChild(p);
+    krAcik = p;
+    yoKaydet();
+    let kapat = () => { p.remove(); krAcik = null; };
+    p.querySelector('#krParkur').onclick = () => { kapat(); if (typeof baModuAc === 'function' && !$('tab-buyuakademisi').classList.contains('active')) baModuAc(); };
+    p.querySelector('#krAkis').onclick = () => { kapat(); if (typeof meduAkisAc === 'function') { maSekme = 'akis'; meduAkisAc(); } };
+    setTimeout(() => p.querySelector('#krParkur').focus({ preventScroll: true }), 400);
+    let deneme = 0, t = setInterval(() => {
+      let d = duyuruYakala();
+      if (d && $('krDuyuruAlan'))$('krDuyuruAlan').innerHTML = `<div class="kr-bolum"><h4>📢 Duyuru</h4>${guvenliMetin(d).replace(/\n/g, '<br>')}</div>`;
+      if (d || ++deneme > 10) clearInterval(t);
+    }, 700);
+  }
+
+  let krGosterilen = '';
+  setInterval(() => {
+    if (!girisli() || !yoVar() || krGosterilen === kucuk(aktifOgrenciAdi)) return;
+    krGosterilen = kucuk(aktifOgrenciAdi);
+    setTimeout(() => {
+      if (typeof baModuAc === 'function' && !(typeof odulOyunda === 'function' && odulOyunda())) baModuAc();
+      karsilamaGoster();
+    }, 1200);
+  }, 1000);
+})();
+</script>
                 
         </body>
         </html>
