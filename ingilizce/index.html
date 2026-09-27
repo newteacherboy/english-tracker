@@ -21057,8 +21057,9 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 })();
 </script>
 
- <!-- ===================== KARŞILAMA PANELİ ===================== -->
+ <!-- ===================== KARŞILAMA PANELİ, DÜELLO VE BİLDİRİM SİSTEMİ ===================== -->
 <style>
+/* Karşılama Kartı Stilleri */
 .kr-kart { position:relative; width:min(94vw,440px); max-height:88vh; overflow-y:auto; border-radius:28px; padding:20px 16px 16px; color:#fff; text-align:left;
   background:radial-gradient(circle at 15% 0%,rgba(255,107,157,.35),transparent 55%), radial-gradient(circle at 100% 20%,rgba(107,203,119,.25),transparent 50%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:odGel .55s cubic-bezier(.2,.9,.3,1.3) both; font-family:'Nunito',sans-serif; }
 .kr-ust { display:flex; align-items:center; gap:12px; }
@@ -21079,18 +21080,295 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 .kr-btnler button { border:none; border-radius:11px; padding:13px; font:900 14px 'Nunito',sans-serif; cursor:pointer; }
 .kr-ana { background:linear-gradient(120deg,#ffd166,#f59e0b); color:#5a3a00; }
 .kr-ikinci { background:rgba(255,255,255,.14); color:#fff; }
+
+/* Düello Daveti Perdesi */
+.dv-perde { position:fixed; inset:0; z-index:100000018; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(20,12,45,.6); backdrop-filter:blur(5px); font-family:'Nunito',sans-serif; }
+.dv-kart { width:min(92vw,370px); border-radius:28px; padding:24px 18px 18px; text-align:center; color:#fff; background:radial-gradient(circle at 50% 0%,rgba(255,107,107,.45),transparent 60%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:dvGel .55s cubic-bezier(.2,.9,.3,1.3) both; }
+.dv-kilic { font-size:62px; animation:dvKilic 1.2s ease-in-out infinite; }
+.dv-kart h3 { font:700 22px 'Fredoka',sans-serif; margin-top:6px; }
+.dv-kart p { font-size:13.5px; font-weight:700; color:#d8cbff; margin:8px 0 16px; line-height:1.5; }
+.dv-kart button { width:100%; border:none; border-radius:16px; padding:13px; font:900 15px 'Nunito',sans-serif; cursor:pointer; margin-top:8px; }
+.dv-kabul { background:linear-gradient(120deg,#6bcb77,#2f9e5a); color:#fff; }
+.dv-vaz { background:rgba(255,255,255,.14); color:#fff; }
+
+/* Keşfet ve Vitrin içi Düellolarım alanı */
+.dl-kart { margin:12px 12px 0; padding:12px 14px; border-radius:18px; background:#fff; box-shadow:0 3px 0 #eadcff; font:800 13px 'Nunito',sans-serif; color:#3b2c66; }
+.dl-kart.dl-katla h4 { cursor:pointer; display:flex; align-items:center; gap:8px; margin-bottom:0 !important; }
+.dl-kart.dl-katla h4::after { content:'▾'; margin-left:auto; transition:transform .2s; }
+.dl-kart.dl-katla.kapali h4::after { transform:rotate(-90deg); }
+.dl-kart.dl-katla.kapali .dl-alan { display:none; }
+.dl-kart.dl-katla:not(.kapali) .dl-alan { margin-top:6px; }
+.dl-rozet { font:900 11px 'Nunito',sans-serif; color:#fff; background:#ff4d6d; border-radius:10px; padding:2px 8px; animation:cbZipla 1s ease-in-out infinite; }
+.dl-satir, .kr-dl { display:flex; align-items:center; gap:8px; padding:8px 0; border-top:1px dashed #eadcff; }
+.dl-satir span, .kr-dl span { flex:1; }
+.dl-satir small, .kr-dl small { display:block; color:#8a78b8; font-weight:700; }
+.dl-gonder, .kr-evet { border:none; border-radius:11px; padding:8px 11px; font:900 12.5px 'Nunito',sans-serif; cursor:pointer; }
+.dl-gonder { background:linear-gradient(135deg,#ff6b6b,#a06bff); color:#fff; }
+.kr-evet { background:#6bcb77; color:#fff; }
+.kr-hayir { background:rgba(255,255,255,.15); color:#fff; border:none; border-radius:11px; padding:8px 11px; font:900 12.5px 'Nunito',sans-serif; cursor:pointer; }
+
+/* Bildirim Zili ve Paneli Stilleri */
+#tab-magaza.dc-fullscreen-overlay.active, #tab-sohbet.dc-fullscreen-overlay.active { display:block !important; position:fixed !important; inset:0 !important; z-index:99990 !important; overflow-y:auto !important; -webkit-overflow-scrolling:touch; }
+.zl-btn { position:relative; margin-left:auto; width:40px; height:40px; border:none; border-radius:50%; background:#fff; box-shadow:0 3px 0 #eadcff; font-size:20px; cursor:pointer; }
+.zl-btn.sallan { animation:zlSallan 1s ease 2; }
+.zl-btn:focus-visible { outline:3px solid #4d96ff; outline-offset:2px; }
+.zl-rozet { position:absolute; top:-4px; right:-4px; min-width:19px; height:19px; padding:0 5px; border-radius:10px; background:#ff4d6d; color:#fff; font:900 11px/19px 'Nunito',sans-serif; box-shadow:0 0 0 2px #fdf7ff; }
+.zl-perde { position:fixed; inset:0; z-index:100000012; display:flex; justify-content:flex-end; background:rgba(20,12,45,.45); animation:zlSol .25s ease; font-family:'Nunito',sans-serif; }
+.zl-panel { width:min(100vw,420px); height:100%; background:#fdf7ff; color:#3b2c66; overflow-y:auto; padding:18px 14px 90px; animation:zlKay .35s cubic-bezier(.2,.9,.3,1.1); box-shadow:-10px 0 30px rgba(0,0,0,.2); }
+.zl-ust { display:flex; align-items:center; justify-content:space-between; position:sticky; top:-18px; background:#fdf7ff; padding:6px 0 10px; z-index:2; }
+.zl-ust h3 { font:700 21px 'Fredoka',sans-serif; }
+.zl-ust button { border:none; background:#f1e9ff; border-radius:12px; padding:8px 12px; font:900 12.5px 'Nunito',sans-serif; color:#7c3aed; cursor:pointer; }
+.zl-filtre { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.zl-filtre button { border:none; border-radius:12px; padding:7px 11px; background:#fff; box-shadow:0 2px 0 #eadcff; font:900 12px 'Nunito',sans-serif; color:#3b2c66; cursor:pointer; }
+.zl-filtre button.aktif { background:#3b2c66; color:#fff; box-shadow:none; }
+.zl-satir { display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#fff; margin-bottom:8px; box-shadow:0 2px 0 #eadcff; animation:zlGir .3s ease both; }
+.zl-satir.yeni { background:linear-gradient(135deg,#fff7d1,#ffe0ef); }
+.zl-ikon { width:38px; height:38px; flex-shrink:0; border-radius:50%; background:#f3ebff; display:flex; align-items:center; justify-content:center; font-size:19px; overflow:hidden; }
+.zl-ikon svg { width:100%; height:100%; }
+.zl-metin { flex:1; min-width:0; font-size:13px; font-weight:800; line-height:1.4; }
+.zl-metin small { display:block; font-size:11px; color:#8a78b8; font-weight:700; }
+
+@keyframes cbZipla { 50% { transform:translateY(-3px) scale(1.06); } }
+@keyframes dvGel { from { opacity:0; transform:scale(.7) rotate(-4deg); } }
+@keyframes dvKilic { 0%,100% { transform:rotate(-10deg); } 50% { transform:rotate(10deg) scale(1.1); } }
+@keyframes zlSallan { 0%,100% { transform:rotate(0); } 20% { transform:rotate(18deg); } 40% { transform:rotate(-16deg); } 60% { transform:rotate(10deg); } 80% { transform:rotate(-6deg); } }
+@keyframes zlSol { from { opacity:0; } }
+@keyframes zlKay { from { transform:translateX(100%); } }
+@keyframes zlGir { from { opacity:0; transform:translateY(8px); } }
 @keyframes krOk { 50% { transform:translateY(-6px); } }
 @keyframes krAsagi { 50% { transform:translateY(6px); } }
-@media (prefers-reduced-motion: reduce) { .kr-kart *, .kr-kart { animation:none !important; } }
+
+@media (prefers-reduced-motion: reduce) { .kr-kart *, .kr-kart, .dv-kart, .dv-kilic, .dl-rozet, .zl-perde, .zl-perde *, .zl-btn { animation:none !important; } }
 </style>
 
 <script>
 (function () {
   const $ = id => document.getElementById(id);
-  const yoVar = () => typeof yo !== 'undefined' && yo;
   const kucuk = x => String(x || '').trim().toLowerCase();
+  const enc = encodeURIComponent;
+  const yoVar = () => typeof yo !== 'undefined' && yo;
   const girisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci)); };
-  const seri = () => parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0') || 0;
+  const gor = el => el && getComputedStyle(el).display !== 'none' && el.getClientRects().length > 0;
+
+  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc' };
+  const OYUN_AD = { Kelime_Liderlik: '🏆 Kelime Ezber', Jeopardy_Liderlik: '🎈 Jeopardy', Bosluk_Tablosu: '🧩 Boşluk Doldurma', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '☔ Kelime Yağmuru', Asmaca_Liderlik: '🎪 Adam Asmaca', KelimeBul_Liderlik: '🎯 Kelime Bul' };
+  const DL_OYUNLAR = { Kelime_Liderlik: '🏆 Kelime Ezber', Jeopardy_Liderlik: '🎈 Jeopardy', Bosluk_Tablosu: '🧩 Boşluk Doldurma', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '☔ Kelime Yağmuru', Asmaca_Liderlik: '🎪 Adam Asmaca', KelimeBul_Liderlik: '🎯 Kelime Bul' };
+
+  window.duelloOyununuAc = function (oyun) {
+    let f = window[OYUN_AC[oyun]];
+    if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat();
+    if (typeof f === 'function') f(); else if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
+  };
+
+  let dlListe = [];
+  async function duellolarGetir() {
+    try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); dlListe = (d && d.liste) || []; } catch (e) {}
+    duelloOdulKontrol();
+    return dlListe;
+  }
+  function duelloOdulKontrol() {
+    if (!yoVar()) return;
+    yo.duelloOdul = yo.duelloOdul || [];
+    dlListe.filter(d => d.durum === 'bitti' && !yo.duelloOdul.includes(d.id)).forEach(d => {
+      yo.duelloOdul.push(d.id);
+      let rakip = kucuk(d.gonderen) === kucuk(aktifOgrenciAdi) ? d.alici : d.gonderen;
+      if (kucuk(d.kazanan) === kucuk(aktifOgrenciAdi)) { yoXpEkle(20, 0); if (typeof enerjiHediye === 'function') enerjiHediye(3); if (typeof odulGoster === 'function') odulGoster({ ikon: '⚔️', baslik: 'Düelloyu kazandın!', alt: `${rakip} ile ${DL_OYUNLAR[d.oyun] || d.oyun} düellosu: ${d.benPuan} – ${d.rakipPuan}`, enerji: 3, xp: 20 }); }
+      else if (d.kazanan === 'berabere') { yoXpEkle(10, 0); if (typeof odulGoster === 'function') odulGoster({ ikon: '🤝', baslik: 'Düello berabere!', alt: `${rakip} ile eşit puan aldınız.`, xp: 10 }); }
+      else { yoXpEkle(5, 0); if (typeof odulGoster === 'function') odulGoster({ ikon: '🛡️', baslik: 'Düello bitti', alt: `${rakip} bu sefer kazandı (${d.rakipPuan} – ${d.benPuan}). Katıldığın için +5 XP, rövanş iste!`, xp: 5 }); }
+    });
+    yoKaydet();
+  }
+
+  window.duelloGonder = async function (alici, btn) {
+    let sel = $('dlOyunSec'); if (!sel) return;
+    btn.disabled = true; btn.innerText = 'Gönderiliyor...';
+    try {
+      let r = await fetch(`${apiURL}?islem=duelloGonder&gonderen=${enc(aktifOgrenciAdi)}&alici=${enc(alici)}&oyun=${enc(sel.value)}`);
+      let d = await r.json();
+      btn.innerText = d.ok ? 'Gönderildi ⚔️' : (d.mesaj || 'Gönderilemedi');
+      if (d.ok && typeof yoToast === 'function') yoToast('⚔️ Düello daveti gönderildi! Kabul ederse bugün ikiniz de oynayın.');
+    } catch (e) { btn.disabled = false; btn.innerText = 'Tekrar dene'; }
+  };
+
+  window.duelloYanit = async function (id, kabul, btn) {
+    if (btn) btn.disabled = true;
+    try { await fetch(`${apiURL}?islem=duelloYanit&ogrenci=${enc(aktifOgrenciAdi)}&id=${enc(id)}&kabul=${kabul ? 1 : 0}`); } catch (e) {}
+    await duellolarGetir();
+    document.querySelectorAll('.dl-alan').forEach(a => a.innerHTML = dlListeHtml(true));
+    if (kabul && typeof yoToast === 'function') yoToast('⚔️ Kabul ettin! Bugün oyna, en yüksek puan kazanır.');
+  };
+
+  function dlListeHtml(koyu) {
+    if (!dlListe.length) return `<div style="opacity:.75">Henüz düello yok. Takip ettiğin birinin vitrininden düello yollayabilirsin.</div>`;
+    return dlListe.slice(0, 8).map(d => {
+      let benGonderen = kucuk(d.gonderen) === kucuk(aktifOgrenciAdi), rakip = benGonderen ? d.alici : d.gonderen, oyun = DL_OYUNLAR[d.oyun] || d.oyun;
+      let durum = d.durum === 'bekliyor' ? (benGonderen ? '⏳ Cevap bekleniyor' : '') : d.durum === 'kabul' ? `🔥 Bugün oyna! Sen: ${d.benPuan ?? '–'} · Rakip: ${d.rakipPuan ?? '–'}` : d.durum === 'red' ? '🙅 Reddedildi' : d.durum === 'bitti' ? (kucuk(d.kazanan) === kucuk(aktifOgrenciAdi) ? `🏆 Kazandın ${d.benPuan}–${d.rakipPuan}` : d.kazanan === 'berabere' ? '🤝 Berabere' : `Kaybettin ${d.benPuan}–${d.rakipPuan}`) : '⌛ Süresi doldu';
+      let aks = d.durum === 'bekliyor' && !benGonderen ? `<button class="kr-evet" onclick="duelloYanit('${d.id}', true, this)">Kabul</button><button class="kr-hayir" style="${koyu ? '' : 'background:#eee;color:#3b2c66'}" onclick="duelloYanit('${d.id}', false, this)">Reddet</button>` : '';
+      return `<div class="${koyu ? 'kr-dl' : 'dl-satir'}"><span>⚔️ <b>${guvenliMetin(rakip)}</b> · ${oyun}<small>${durum || '📩 Seni düelloya çağırdı!'}</small></span>${aks}</div>`;
+    }).join('');
+  }
+
+  let orgVitrin = window.maVitrinHtml;
+  if (typeof orgVitrin === 'function') window.maVitrinHtml = function (id, benimMi) {
+    let html = orgVitrin.apply(this, arguments);
+    if (benimMi || id === 'ben' || typeof maTakip === 'undefined' || !maTakip.has(id)) return html;
+    let sec = Object.keys(DL_OYUNLAR).map(k => `<option value="${k}">${DL_OYUNLAR[k]}</option>`).join('');
+    return `<div class="dl-kart"><h4>⚔️ Düelloya çağır</h4><div style="display:flex;gap:8px;align-items:center"><select id="dlOyunSec" aria-label="Düello oyunu">${sec}</select><button class="dl-gonder" data-o="${guvenliMetin(id)}" onclick="duelloGonder(this.dataset.o, this)">Düello yolla</button></div><small style="display:block;margin-top:6px;color:#8a78b8">Kabul ederse bugün ikiniz de bu oyunu oynarsınız, en yüksek puan kazanır: +3 ⚡ +20 XP.</small></div>` + html;
+  };
+
+  let orgKesfet = window.maKesfetHtml;
+  if (typeof orgKesfet === 'function') window.maKesfetHtml = function () {
+    setTimeout(async () => { await duellolarGetir(); document.querySelectorAll('.dl-alan').forEach(a => a.innerHTML = dlListeHtml(false)); }, 50);
+    return `<div class="dl-kart"><h4>⚔️ Düellolarım</h4><div class="dl-alan">${dlListeHtml(false)}</div></div>` + orgKesfet.apply(this, arguments);
+  };
+
+  let orgMagaza = window.magazaAc;
+  if (typeof orgMagaza === 'function') window.magazaAc = function () {
+    let r = orgMagaza.apply(this, arguments);
+    setTimeout(() => {
+      let a = $('magazaAlan');
+      if (a && !a.innerHTML.trim()) { window.yoGomuluHedef = 'magazaAlan'; if (typeof yoMagazaAc === 'function') yoMagazaAc(); }
+    }, 400);
+    return r;
+  };
+
+  function gonder(alici, tur, metin, k) {
+    if (!alici || kucuk(alici) === kucuk(aktifOgrenciAdi)) return;
+    fetch(`${apiURL}?islem=bildirimGonder&alici=${enc(alici)}&gonderen=${enc(aktifOgrenciAdi)}&tur=${enc(tur)}&metin=${enc(String(metin || '').slice(0, 100))}&k=${enc(k || '')}`).catch(() => {});
+  }
+  window.maBildirimGonder = function (hedef, tur) {
+    let olay = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).find(e => e.k === hedef);
+    gonder(olay ? olay.ogr : hedef, tur, olay ? olay.metin : '', olay ? olay.k : '');
+  };
+  [['maBegen', 'begeni', () => maBegeni], ['maTebrikEt', 'tebrik', () => maTebrik']].forEach(([ad, tur, kume]) => {
+    let org = window[ad];
+    if (typeof org !== 'function') return;
+    window[ad] = function (id) {
+      let once = kume().has(id);
+      let r = org.apply(this, arguments);
+      if (!once && kume().has(id)) window.maBildirimGonder(String(id).replace(/^akis-/, ''), tur);
+      return r;
+    };
+  });
+  let orgTakip = window.maTakipDegistir;
+  if (typeof orgTakip === 'function') window.maTakipDegistir = function (id) {
+    let once = maTakip.has(id);
+    let r = orgTakip.apply(this, arguments);
+    if (!once && maTakip.has(id)) gonder(id, 'takip', 'seni takip etmeye başladı', '');
+    return r;
+  };
+
+  let orgListe = window.maAkisListeHtml;
+  if (typeof orgListe === 'function') window.maAkisListeHtml = function () {
+    let html = orgListe.apply(this, arguments);
+    let say = {};
+    (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).forEach(e => { say[e.k] = e; });
+    return html
+      .replace(/maBegen\('akis-([^']+)', this\)">([^<]*)<\/button>/g, (m, k, t) => say[k] && say[k].b ? m.replace(t + '</button>', `${t} · ${say[k].b}</button>`) : m)
+      .replace(/maTebrikEt\('akis-([^']+)', this\)">([^<]*)<\/button>/g, (m, k, t) => say[k] && say[k].tb ? m.replace(t + '</button>', `${t} · ${say[k].tb}</button>`) : m);
+  };
+
+  const TUR = {
+    begeni: ['❤️', b => `${b.gonderen} paylaşımını beğendi`],
+    tebrik: ['🎉', b => `${b.gonderen} seni tebrik etti`],
+    takip: ['👋', b => `${b.gonderen} seni takip etmeye başladı`],
+    enerji: ['⚡', b => `${b.gonderen} sana 2 enerji gönderdi`],
+    duello: ['⚔️', b => `${b.gonderen} seni düelloya çağırdı`]
+  };
+  const turMetin = b => (TUR[b.tur] || ['🔔', x => `${x.gonderen}: ${x.metin}`])[1](b);
+  const turIkon = b => (TUR[b.tur] || ['🔔'])[0];
+
+  let zilSayi = 0, zilFiltre = 'hepsi';
+  function zilCiz() {
+    let h2 = document.querySelector('#tab-meduakis .akis-baslik h2');
+    if (!h2) return;
+    let b = $('zlBtn');
+    if (!b) {
+      b = document.createElement('button');
+      b.id = 'zlBtn'; b.className = 'zl-btn'; b.setAttribute('aria-label', 'Bildirimler');
+      b.onclick = zilAc;
+      h2.style.width = '100%';
+      h2.appendChild(b);
+    }
+    b.innerHTML = '🔔' + (zilSayi ? `<span class="zl-rozet">${zilSayi > 99 ? '99+' : zilSayi}</span>` : '');
+  }
+  setInterval(zilCiz, 1500);
+
+  async function zilAc() {
+    let p = document.createElement('div');
+    p.className = 'zl-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Bildirimler');
+    p.innerHTML = `<div class="zl-panel"><div class="zl-ust"><h3>🔔 Bildirimler</h3><button id="zlKapat">Kapat</button></div><div class="zl-filtre" id="zlFiltre"></div><div id="zlListe"><div style="text-align:center;padding:30px;color:#8a78b8;font-weight:800">Yükleniyor…</div></div></div>`;
+    document.body.appendChild(p);
+    let kapat = () => p.remove();
+    p.querySelector('#zlKapat').onclick = kapat;
+    p.addEventListener('click', e => { if (e.target === p) kapat(); });
+    let sosyal = [];
+    try {
+      let r = await fetch(`${apiURL}?islem=bildirimlerim&tumu=1&ogrenci=${enc(aktifOgrenciAdi)}`);
+      let d = await r.json(); sosyal = (d && d.liste) || [];
+    } catch (e) {}
+    if (typeof maAkisYukle === 'function') await maAkisYukle();
+    let benim = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).filter(e => kucuk(e.ogr) === kucuk(aktifOgrenciAdi)).map(e => ({ tarih: e.t, tur: 'kazanc', ikon: e.ikon, metin: e.metin, yeni: false }));
+    let sosyalS = sosyal.map(b => ({ tarih: b.tarih, tur: b.tur, gonderen: b.gonderen, ikon: turIkon(b), metin: turMetin(b) + (b.metin && b.tur !== 'takip' && b.tur !== 'duello' ? ` · “${b.metin}”` : ''), yeni: !b.okundu, sat: b.sat }));
+    let duyuru = [];
+    let dm = $('duyuruMesaj');
+    if (dm && dm.innerText.trim()) duyuru.push({ tarih: Date.now(), tur: 'duyuru', ikon: '📢', metin: dm.innerText.trim().slice(0, 200), yeni: false });
+    let hepsi = [...sosyalS, ...benim, ...duyuru].sort((a, b) => b.tarih - a.tarih);
+    const FILTRELER = [['hepsi', 'Hepsi'], ['sosyal', '💜 Sosyal'], ['kazanc', '🌟 Kazançlar'], ['duyuru', '📢 Duyuru']];
+    function ciz() {
+      $('zlFiltre').innerHTML = FILTRELER.map(([k, t]) => `<button class="${k === zilFiltre ? 'aktif' : ''}" data-f="${k}">${t}</button>`).join('');
+      $('zlFiltre').querySelectorAll('button').forEach(b => b.onclick = () => { zilFiltre = b.dataset.f; ciz(); });
+      let l = hepsi.filter(x => zilFiltre === 'hepsi' || (zilFiltre === 'sosyal' ? TUR[x.tur] : x.tur === zilFiltre));
+      $('zlListe').innerHTML = l.length ? l.map((x, i) => {
+        let av = x.gonderen && typeof karakterSvg === 'function' ? karakterSvg(x.gonderen, 38) : '';
+        let zZaman = typeof zamanOnce === 'function' ? zamanOnce(x.tarih) : '';
+        return `<div class="zl-satir${x.yeni ? ' yeni' : ''}" style="animation-delay:${Math.min(i, 12) * 0.03}s"><div class="zl-ikon">${av || x.ikon}</div><div class="zl-metin">${av ? x.ikon + ' ' : ''}${guvenliMetin(x.metin)}<small>${zZaman}</small></div></div>`;
+      }).join('') : '<div style="text-align:center;padding:30px;color:#8a78b8;font-weight:800">Burada henüz bir şey yok.</div>';
+    }
+    ciz();
+    let okunmamis = sosyal.filter(b => !b.okundu).map(b => b.sat);
+    if (okunmamis.length) fetch(`${apiURL}?islem=bildirimOkundu&ogrenci=${enc(aktifOgrenciAdi)}&satirlar=${enc(okunmamis.join(','))}`).catch(() => {});
+    zilSayi = 0; zilCiz();
+  }
+
+  async function duelloBildirimYokla() {
+    if (!girisli() || document.hidden) return;
+    try {
+      let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
+      let d = await r.json(), liste = ((d && d.liste) || []).filter(b => b.tur === 'duello');
+      if (liste.length > 0) {
+        let b = liste[liste.length - 1];
+        let gorulenKey = 'ing_dl_gor_' + b.sat;
+        if (!sessionStorage.getItem(gorulenKey)) {
+          sessionStorage.setItem(gorulenKey, '1');
+          davetGoster(b);
+        }
+      }
+    } catch (e) {}
+  }
+  setInterval(duelloBildirimYokla, 15000);
+
+  async function davetGoster(b) {
+    let liste = [];
+    try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); liste = (d && d.liste) || []; window._dlSon = liste; } catch (e) {}
+    let dl = liste.find(x => x.durum === 'bekliyor' && kucuk(x.alici) === kucuk(aktifOgrenciAdi) && kucuk(x.gonderen) === kucuk(b.gonderen));
+    if (!dl) return;
+    let p = document.createElement('div'); p.className = 'dv-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Düello daveti');
+    p.innerHTML = `<div class="dv-kart"><div class="dv-kilic">⚔️</div><h3>Düello daveti!</h3><p><b>${guvenliMetin(b.gonderen)}</b> seni <b>${OYUN_AD[dl.oyun] || dl.oyun}</b> düellosuna çağırıyor.<br>Kazanan +3 ⚡ ve +20 XP alır!</p><button class="dv-kabul">⚔️ Kabul et ve oyna</button><button class="dv-vaz">Sonra</button></div>`;
+    document.body.appendChild(p);
+    setTimeout(() => p.querySelector('.dv-kabul').focus({ preventScroll: true }), 300);
+    p.querySelector('.dv-kabul').onclick = async () => {
+      p.remove();
+      try { await fetch(`${apiURL}?islem=duelloYanit&ogrenci=${enc(aktifOgrenciAdi)}&id=${enc(dl.id)}&kabul=1`); } catch (e) {}
+      if (typeof yoToast === 'function') yoToast('⚔️ Düello başladı! En yüksek puanını yap, 24 saatin var.');
+      duelloOyununuAc(dl.oyun);
+    };
+    p.querySelector('.dv-vaz').onclick = () => {
+      p.remove();
+      let saat = Math.max(1, Math.round((dl.kalanDk || 1440) / 60));
+      if (typeof yoToast === 'function') yoToast(`⏳ Tamam! Bu daveti kabul edip oynamak için ${saat} saatin var. Keşfet › Düellolarım'dan ulaşabilirsin.`);
+    };
+  }
 
   let krAcik = null;
   function duyuruYakala() {
@@ -21103,7 +21381,6 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     if (kapat) kapat.click(); else if (ov) ov.style.display = 'none';
     return metin;
   }
-  const gor = el => el && getComputedStyle(el).display !== 'none' && el.getClientRects().length > 0;
 
   async function karsilamaGoster() {
     if (!girisli() || !yoVar()) return;
