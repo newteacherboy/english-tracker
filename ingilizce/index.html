@@ -17627,7 +17627,7 @@ function avatarSVG(s, stil, px, cins) {
     krGosterilen = kucuk(aktifOgrenciAdi);
     setTimeout(() => {
          if (typeof baModuAc === 'function' && !(typeof odulOyunda === 'function' && odulOyunda())) (window.dunyaAc || baModuAc)();
-      karsilamaGoster();
+            if ((yo.turlar || []).includes('ana')) karsilamaGoster();
     }, 1200);
   }, 1000);
 })();
