@@ -11107,18 +11107,24 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             dersCalisBaslat();
             dcBottomNavSenkronize();
         }
-        function dersCalisTamEkranKapat() {
+      function dersCalisTamEkranKapat() {
     if (typeof dcSesDurdur === 'function') dcSesDurdur();
-    document.getElementById('tab-derscalis').classList.remove('active');
     
-    // YENİ EKLENEN TEMİZLİK KODLARI:
+    let dersCalisPanel = document.getElementById('tab-derscalis');
+    if (dersCalisPanel) {
+        dersCalisPanel.classList.remove('active');
+        dersCalisPanel.style.display = 'none'; // Kesin gizle
+    }
+    
+    // Test içeriğini ve aramayı tamamen temizle
     let testIcerik = document.getElementById('dcTestIcerik');
-    if (testIcerik) testIcerik.innerHTML = ""; // Test sorularını temizle
+    if (testIcerik) testIcerik.innerHTML = "";
+    
     let aramaSonuc = document.getElementById('dcAramaSonuclari');
     if (aramaSonuc) aramaSonuc.style.display = 'none';
     
     if (typeof dcBottomNavSenkronize === 'function') dcBottomNavSenkronize();
-    dcDurumuSifirla();
+    if (typeof dcDurumuSifirla === 'function') dcDurumuSifirla();
 }
         
         function dcDurumuSifirla() {
@@ -21361,6 +21367,79 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   setInterval(navAkisRozetCiz, 1000);
 })();
 </script>
+
+                <style>
+/* KESİN ETKİ EDEN TEST TASARIMI */
+#tab-derscalis #dcTestIcerik .dc-quiz-q {
+    background: #ffffff !important;
+    border: 2px solid #e7dcff !important;
+    border-radius: 20px !important;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+    box-shadow: 0 4px 12px rgba(59,44,102,0.06) !important;
+}
+
+#tab-derscalis #dcTestIcerik .dc-quiz-q-text {
+    font-family: 'Fredoka', 'Nunito', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #3b2c66 !important;
+    margin-bottom: 12px !important;
+}
+
+#tab-derscalis #dcTestIcerik .dc-quiz-opt {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    text-align: left !important;
+    padding: 11px 14px !important;
+    border: 2px solid #e7dcff !important;
+    border-radius: 14px !important;
+    background: #fdfaff !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    color: #3b2c66 !important;
+    margin-bottom: 8px !important;
+    cursor: pointer !important;
+    box-shadow: 0 3px 0 #eadcff !important;
+}
+
+#tab-derscalis #dcTestIcerik .dc-quiz-opt:hover {
+    background: #f6f1ff !important;
+    border-color: #c9b3ff !important;
+}
+
+#tab-derscalis #dcTestIcerik .dc-quiz-opt.dogru {
+    background: #dff6e7 !important;
+    border-color: #2f9e5a !important;
+    color: #1d6b3d !important;
+    box-shadow: 0 3px 0 #2f9e5a !important;
+}
+
+#tab-derscalis #dcTestIcerik .dc-quiz-opt.yanlis {
+    background: #fde2e3 !important;
+    border-color: #e0434b !important;
+    color: #8f1f25 !important;
+    box-shadow: 0 3px 0 #e0434b !important;
+}
+
+#tab-derscalis #dcTestIcerik .dc-quiz-bitir-btn {
+    width: 100% !important;
+    padding: 13px !important;
+    border: none !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #a06bff, #ff6b9d) !important;
+    color: #fff !important;
+    font-family: 'Fredoka', 'Nunito', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    box-shadow: 0 6px 18px rgba(160,107,255,0.4) !important;
+    margin-top: 10px !important;
+}
+</style>
                 
         </body>
         </html>
