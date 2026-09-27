@@ -13787,15 +13787,14 @@ const YO_SOHBET = [
         /* ========== 6) DİKTE (dinle-yaz) ========== */
         let dkt = null;
         function dikteAc() {
-  if (!yoHazirMi()) return;
-  let havuz = yoOrnekKelimeHavuzu(/^[a-zA-Z]{3,10}$/);
-  if (havuz.length < 5) { yoToast('Kelime havuzu henüz yüklenmedi, birkaç saniye sonra dene.'); return; }
-  if (!yoEnerjiKontrol()) return;
-  
-  dkt = { liste: yoKaristir(havuz).slice(0, 10), i:0, d:0, y:0, bas:Date.now() }; // SINIR: 12 SORU
-  yoModalAc('🎧 Dikte', '');
-  dikteSoru();
-}
+          if (!yoHazirMi()) return;
+          let havuz = yoOrnekKelimeHavuzu(/^[a-zA-Z]{3,10}$/);
+          if (havuz.length < 5) { yoToast('Kelime havuzu henüz yüklenmedi, birkaç saniye sonra dene.'); return; }
+          if (!yoEnerjiKontrol()) return;
+          dkt = { liste: yoKaristir(havuz).slice(0, 10), i:0, d:0, y:0, bas:Date.now() };
+          yoModalAc('🎧 Dikte', '');
+          dikteSoru();
+        }
         function dikteSoru() {
           if (dkt.i >= dkt.liste.length) return dikteBitir();
           let w = dkt.liste[dkt.i];
