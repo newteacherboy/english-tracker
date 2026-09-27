@@ -21141,7 +21141,14 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     krAcik = p;
     yoKaydet();
     let kapat = () => { p.remove(); krAcik = null; };
-    p.querySelector('#krParkur').onclick = () => { kapat(); if (typeof baModuAc === 'function' && !$('tab-buyuakademisi').classList.contains('active')) baModuAc(); };
+    p.querySelector('#krParkur').onclick = () => { 
+  kapat(); 
+  if (typeof dunyaAc === 'function') {
+    dunyaAc(); 
+  } else if (typeof baModuAc === 'function') {
+    baModuAc(); 
+  }
+};
     p.querySelector('#krAkis').onclick = () => { kapat(); if (typeof meduAkisAc === 'function') { maSekme = 'akis'; meduAkisAc(); } };
     setTimeout(() => p.querySelector('#krParkur').focus({ preventScroll: true }), 400);
     let deneme = 0, t = setInterval(() => {
