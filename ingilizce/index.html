@@ -5396,8 +5396,7 @@ function raporlarimKapat() {
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             yagmurHavuz = oyunHavuzGetir(yagmurAktifSinif, yagmurSecilenUniteler);
 if (yagmurHavuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
-// Karıştırıp sadece ilk 12 kelimeyi alıyoruz (Soru sayısı sınırı: 12)
-yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5).slice(0, 12);
+yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                         yagmurAktifIndex = 0; yagmurPuan = 0; yagmurDogru = 0; yagmurCan = 3; yagmurLevel = 1; yagmurBaslangic = Date.now(); yagmurKombo = 0;
                         genelEnerjiHarca(-1);
             document.getElementById('yagmurGirisEkrani').style.display = 'none';
