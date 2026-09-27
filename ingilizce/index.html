@@ -872,6 +872,75 @@
   .mk-mini-yardim { bottom: 130px; }
 }
 
+                    <style>
+/* ==========================================================
+   ADAM ASMACA — Göz Yormayan Yeni Tasarım (Yumuşak Pastel)
+   ========================================================== */
+
+/* İşaretlediğiniz Harf Kutucukları (Üst Alan) */
+#asmacaOyunOverlay #asmacaBlanklar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin: 12px 0 !important;
+}
+
+#asmacaOyunOverlay #asmacaBlanklar > * {
+  min-width: 38px !important;
+  height: 44px !important;
+  padding: 0 6px !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  border: 2px solid #d8cbff !important;
+  box-shadow: 0 4px 0 #ecdffc !important;
+  font: 800 21px 'Fredoka', 'Nunito', sans-serif !important;
+  color: #5b3a9d !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Alttaki Sanal Klavye Tuşları */
+#asmacaOyunOverlay #asmacaKlavye {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  justify-content: center !important;
+  max-width: 420px !important;
+  margin: 0 auto !important;
+  padding: 8px !important;
+  background: #f1ebff !important;
+  border-radius: 20px !important;
+  border: 2px solid #e2d4ff !important;
+}
+
+#asmacaOyunOverlay #asmacaKlavye button.as-harf-btn {
+  min-width: 34px !important;
+  height: 40px !important;
+  background: #ffffff !important;
+  color: #4b3c7a !important;
+  border: 2px solid #d8cbff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 3px 0 #d9c8ff !important;
+  font: 900 14px 'Nunito', sans-serif !important;
+  transition: all 0.1s ease !important;
+}
+
+#asmacaOyunOverlay #asmacaKlavye button.as-harf-btn:not(:disabled):active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 0 #d9c8ff !important;
+}
+
+#asmacaOyunOverlay #asmacaKlavye button.as-harf-btn:disabled,
+#asmacaOyunOverlay #asmacaKlavye button.as-harf-btn.kullanildi {
+  opacity: 0.35 !important;
+  background: #e9e2ff !important;
+  box-shadow: none !important;
+  transform: translateY(3px) !important;
+  cursor: not-allowed !important;
+}
+</style>
 
                    
                     
