@@ -21057,7 +21057,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 })();
 </script>
 
-                <!-- ===================== KARŞILAMA PANELİ ===================== -->
+ <!-- ===================== KARŞILAMA PANELİ ===================== -->
 <style>
 .kr-kart { position:relative; width:min(94vw,440px); max-height:88vh; overflow-y:auto; border-radius:28px; padding:20px 16px 16px; color:#fff; text-align:left;
   background:radial-gradient(circle at 15% 0%,rgba(255,107,157,.35),transparent 55%), radial-gradient(circle at 100% 20%,rgba(107,203,119,.25),transparent 50%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:odGel .55s cubic-bezier(.2,.9,.3,1.3) both; font-family:'Nunito',sans-serif; }
@@ -21156,7 +21156,6 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     if (!girisli() || !yoVar() || krGosterilen === kucuk(aktifOgrenciAdi)) return;
     krGosterilen = kucuk(aktifOgrenciAdi);
     setTimeout(() => {
-      if (typeof baModuAc === 'function' && !(typeof odulOyunda === 'function' && odulOyunda())) baModuAc();
       karsilamaGoster();
     }, 1200);
   }, 1000);
