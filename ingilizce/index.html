@@ -21168,6 +21168,92 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   }, 1000);
 })();
 </script>
+
+                <!-- ===================== ALT MENÜ MEDU AKIŞ BİLDİRİM NOKTASI ===================== -->
+<style>
+/* Alt menüdeki Medu Akış ikonunun üzerinde kırmızı rozet/nokta */
+#bottomNavMobile [data-ekran="tab-meduakis"] {
+  position: relative;
+}
+.nav-akis-rozet {
+  position: absolute;
+  top: 4px;
+  right: 18px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #ff4d6d;
+  color: #fff;
+  font: 900 9px/16px 'Nunito', sans-serif;
+  box-shadow: 0 0 0 2px #fff;
+  text-align: center;
+  pointer-events: none;
+  animation: navRozetZipla 1s ease-in-out infinite;
+}
+@keyframes navRozetZipla {
+  50% { transform: scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-akis-rozet { animation: none !important; }
+}
+</style>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  let okunmamisAkisSayisi = 0;
+
+  // Alt menüdeki Medu Akış butonuna rozet ekleme / güncelleme
+  function navAkisRozetCiz() {
+    let btn = document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
+    if (!btn) return;
+    let rozet = btn.querySelector('.nav-akis-rozet');
+    if (okunmamisAkisSayisi > 0) {
+      if (!rozet) {
+        rozet = document.createElement('span');
+        rozet.className = 'nav-akis-rozet';
+        btn.appendChild(rozet);
+      }
+      rozet.innerText = okunmamisAkisSayisi > 9 ? '9+' : okunmamisAkisSayisi;
+    } else if (rozet) {
+      rozet.remove();
+    }
+  }
+
+  // Periyodik olarak yeni akış olaylarını veya etkileşimleri kontrol et
+  async function akisBildirimKontrol() {
+    if (typeof aktifOgrenciAdi === 'undefined' || !aktifOgrenciAdi || aktifOgrenciAdi.toLowerCase() === 'teacher') return;
+    try {
+      let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`);
+      let d = await r.json();
+      let liste = (d && d.liste) || [];
+      // Henüz okunmamış sosyal etkileşimleri (beğeni, tebrik, takip vb.) say
+      let yeniSayi = liste.filter(b => !b.okundu).length;
+      if (yeniSayi !== okunmamisAkisSayisi) {
+        okunmamisAkisSayisi = yeniSayi;
+        navAkisRozetCiz();
+      }
+    } catch (e) {}
+  }
+
+  setInterval(akisBildirimKontrol, 20000);
+
+  // Kullanıcı Medu Akış'a gittiğinde (sekme açıldığında) rozeti sıfırla ve okundu işaretle
+  let orgMeduAc = window.meduAkisAc;
+  if (typeof orgMeduAc === 'function') {
+    window.meduAkisAc = function () {
+      let r = orgMeduAc.apply(this, arguments);
+      okunmamisAkisSayisi = 0;
+      navAkisRozetCiz();
+      return r;
+    };
+  }
+
+  // Periyodik kontrol ve ilk çizim
+  setInterval(navAkisRozetCiz, 1000);
+})();
+</script>
                 
         </body>
         </html>
