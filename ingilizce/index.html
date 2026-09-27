@@ -14832,7 +14832,7 @@ function maOzetGeriKoy() {
 }
 async function maCiz() {
     let no = ++maCizNo;
-          let siraMap = { parkur:0, akis:1, kesfet:2, vitrin:3, lig:4, profil:5 };
+          let siraMap = { parkur:0, akis:1, kesfet:2, vitrin:3, lig:4, };
     let iz = document.getElementById('maSegmentIz');
     if (iz) iz.style.transform = `translateX(${(siraMap[maSekme] || 0) * 100}%)`;
     document.querySelectorAll('#maSegment button').forEach(b => b.classList.toggle('aktif', b.dataset.s === maSekme));
