@@ -20866,194 +20866,33 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 })();
 </script>
 
-                <!-- ===================== DÜELLO SİSTEMİ ===================== -->
-<style>
-/* Düello davet modalı / perdesi */
-.dv-perde { position:fixed; inset:0; z-index:100000018; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(20,12,45,.6); backdrop-filter:blur(5px); font-family:'Nunito',sans-serif; }
-.dv-kart { width:min(92vw,370px); border-radius:28px; padding:24px 18px 18px; text-align:center; color:#fff; background:radial-gradient(circle at 50% 0%,rgba(255,107,107,.45),transparent 60%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:dvGel .55s cubic-bezier(.2,.9,.3,1.4) both; }
-.dv-kilic { font-size:62px; animation:dvKilic 1.2s ease-in-out infinite; }
-.dv-kart h3 { font:700 22px 'Fredoka',sans-serif; margin-top:6px; }
-.dv-kart p { font-size:13.5px; font-weight:700; color:#d8cbff; margin:8px 0 16px; line-height:1.5; }
-.dv-kart button { width:100%; border:none; border-radius:16px; padding:13px; font:900 15px 'Nunito',sans-serif; cursor:pointer; margin-top:8px; }
-.dv-kabul { background:linear-gradient(120deg,#6bcb77,#2f9e5a); color:#fff; }
-.dv-vaz { background:rgba(255,255,255,.14); color:#fff; }
-
-/* Keşfet ve Vitrin içi Düellolarım alanı */
-.dl-kart { margin:12px 12px 0; padding:12px 14px; border-radius:18px; background:#fff; box-shadow:0 3px 0 #eadcff; font:800 13px 'Nunito',sans-serif; color:#3b2c66; }
-.dl-kart.dl-katla h4 { cursor:pointer; display:flex; align-items:center; gap:8px; margin-bottom:0 !important; }
-.dl-kart.dl-katla h4::after { content:'▾'; margin-left:auto; transition:transform .2s; }
-.dl-kart.dl-katla.kapali h4::after { transform:rotate(-90deg); }
-.dl-kart.dl-katla.kapali .dl-alan { display:none; }
-.dl-kart.dl-katla:not(.kapali) .dl-alan { margin-top:6px; }
-.dl-rozet { font:900 11px 'Nunito',sans-serif; color:#fff; background:#ff4d6d; border-radius:10px; padding:2px 8px; animation:cbZipla 1s ease-in-out infinite; }
-.dl-satir, .kr-dl { display:flex; align-items:center; gap:8px; padding:8px 0; border-top:1px dashed #eadcff; }
-.dl-satir span, .kr-dl span { flex:1; }
-.dl-satir small, .kr-dl small { display:block; color:#8a78b8; font-weight:700; }
-.dl-gonder, .kr-evet { border:none; border-radius:11px; padding:8px 11px; font:900 12.5px 'Nunito',sans-serif; cursor:pointer; }
-.dl-gonder { background:linear-gradient(135deg,#ff6b6b,#a06bff); color:#fff; }
-.kr-evet { background:#6bcb77; color:#fff; }
-.kr-hayir { background:rgba(255,255,255,.15); color:#fff; border:none; border-radius:11px; padding:8px 11px; font:900 12.5px 'Nunito',sans-serif; cursor:pointer; }
-
-@keyframes cbZipla { 50% { transform:translateY(-3px) scale(1.06); } }
-@keyframes dvGel { from { opacity:0; transform:scale(.7) rotate(-4deg); } }
-@keyframes dvKilic { 0%,100% { transform:rotate(-10deg); } 50% { transform:rotate(10deg) scale(1.1); } }
-@media (prefers-reduced-motion: reduce) { .dv-kart, .dv-kilic, .dl-rozet { animation:none !important; } }
-</style>
-
+               <!-- ===================== DÜELTO BAĞLANTISI VE OYUN AÇIMI ===================== -->
 <script>
 (function () {
   const $ = id => document.getElementById(id);
-  const kucuk = x => String(x || '').trim().toLowerCase();
-  const enc = encodeURIComponent;
-  const yoVar = () => typeof yo !== 'undefined' && yo;
-  const girisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci)); };
-  const oyunda = () => (typeof odulOyunda === 'function' && odulOyunda()) || !!document.querySelector('.dv-perde');
 
-  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc' };
-  const OYUN_AD = { Kelime_Liderlik: '🏆 Kelime Ezber', Jeopardy_Liderlik: '🎈 Jeopardy', Bosluk_Tablosu: '🧩 Boşluk Doldurma', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '☔ Kelime Yağmuru', Asmaca_Liderlik: '🎪 Adam Asmaca', KelimeBul_Liderlik: '🎯 Kelime Bul' };
-  const DL_OYUNLAR = { Kelime_Liderlik: '🏆 Kelime Ezber', Jeopardy_Liderlik: '🎈 Jeopardy', Bosluk_Tablosu: '🧩 Boşluk Doldurma', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '☔ Kelime Yağmuru', Asmaca_Liderlik: '🎪 Adam Asmaca', KelimeBul_Liderlik: '🎯 Kelime Bul' };
-
+  /* ===== Düello: kabul edince oyun gerçekten açılsın (oyunlar Aktivite içinde) ===== */
+  const OYUN_AC = { 
+    Kelime_Liderlik: 'kelimeYarismasiAc', 
+    Jeopardy_Liderlik: 'jpOyunAc', 
+    Bosluk_Tablosu: 'boslukOyunAc', 
+    Hafiza_Liderlik: 'hafizaOyunAc', 
+    Yagmur_Liderlik: 'yagmurOyunAc', 
+    Asmaca_Liderlik: 'asmacaOyunAc', 
+    KelimeBul_Liderlik: 'kelimeBulOyunAc' 
+  };
+  
   window.duelloOyununuAc = function (oyun) {
-    let f = window[OYUN_AC[oyun]];
-    if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat();
-    if (typeof f === 'function') f(); else if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
-  };
-
-  let dlListe = [];
-  async function duellolarGetir() {
-    try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); dlListe = (d && d.liste) || []; } catch (e) {}
-    duelloOdulKontrol();
-    return dlListe;
-  }
-  function duelloOdulKontrol() {
-    if (!yoVar()) return;
-    yo.duelloOdul = yo.duelloOdul || [];
-    dlListe.filter(d => d.durum === 'bitti' && !yo.duelloOdul.includes(d.id)).forEach(d => {
-      yo.duelloOdul.push(d.id);
-      let rakip = kucuk(d.gonderen) === kucuk(aktifOgrenciAdi) ? d.alici : d.gonderen;
-      if (kucuk(d.kazanan) === kucuk(aktifOgrenciAdi)) {
-        if (typeof yoXpEkle === 'function') yoXpEkle(20, 0);
-        if (typeof enerjiHediye === 'function') enerjiHediye(2);
-        if (typeof odulGoster === 'function') odulGoster({ ikon: '⚔️', baslik: 'Düelloyu kazandın!', alt: `${rakip} ile ${DL_OYUNLAR[d.oyun] || d.oyun} düellosu: ${d.benPuan} – ${d.rakipPuan}`, enerji: 2, xp: 30 });
-      } else if (d.kazanan === 'berabere') {
-        if (typeof yoXpEkle === 'function') yoXpEkle(10, 0);
-        if (typeof odulGoster === 'function') odulGoster({ ikon: '🤝', baslik: 'Düello berabere!', alt: `${rakip} ile eşit puan aldınız.`, xp: 10 });
-      } else {
-        if (typeof yoXpEkle === 'function') yoXpEkle(5, 0);
-        if (typeof odulGoster === 'function') odulGoster({ ikon: '🛡️', baslik: 'Düello bitti', alt: `${rakip} bu sefer kazandı (${d.rakipPuan} – ${d.benPuan}). Katıldığın için +5 XP, rövanş iste!`, xp: 5 });
+    if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
+    setTimeout(() => {
+      let f = window[OYUN_AC[oyun]];
+      if (typeof f === 'function') { 
+        try { f(); } catch (e) { console.error(e); } 
+      } else if (typeof yoToast === 'function') {
+        yoToast('Oyunu Aktivite sekmesinden açabilirsin ⚔️');
       }
-    });
-    yoKaydet();
-  }
-
-  window.duelloGonder = async function (alici, btn) {
-    let sel = $('dlOyunSec'); if (!sel) return;
-    btn.disabled = true; btn.innerText = 'Gönderiliyor...';
-    try {
-      let r = await fetch(`${apiURL}?islem=duelloGonder&gonderen=${enc(aktifOgrenciAdi)}&alici=${enc(alici)}&oyun=${enc(sel.value)}`);
-      let d = await r.json();
-      btn.innerText = d.ok ? 'Gönderildi ⚔️' : (d.mesaj || 'Gönderilemedi');
-      if (d.ok && typeof yoToast === 'function') yoToast('⚔️ Düello daveti gönderildi! Kabul ederse bugün ikiniz de oynayın.');
-    } catch (e) { btn.disabled = false; btn.innerText = 'Tekrar dene'; }
+    }, 400);
   };
-
-  window.duelloYanit = async function (id, kabul, btn) {
-    if (btn) btn.disabled = true;
-    try { await fetch(`${apiURL}?islem=duelloYanit&ogrenci=${enc(aktifOgrenciAdi)}&id=${enc(id)}&kabul=${kabul ? 1 : 0}`); } catch (e) {}
-    await duellolarGetir();
-    document.querySelectorAll('.dl-alan').forEach(a => a.innerHTML = dlListeHtml(true));
-    if (kabul && typeof yoToast === 'function') yoToast('⚔️ Kabul ettin! Bugün o oyunu oyna, en yüksek puan kazanır.');
-  };
-
-  function dlListeHtml(koyu) {
-    if (!dlListe.length) return `<div style="opacity:.75">Henüz düello yok. Takip ettiğin birinin vitrininden düello yollayabilirsin.</div>`;
-    return dlListe.slice(0, 8).map(d => {
-      let benGonderen = kucuk(d.gonderen) === kucuk(aktifOgrenciAdi), rakip = benGonderen ? d.alici : d.gonderen, oyun = DL_OYUNLAR[d.oyun] || d.oyun;
-      let durum = d.durum === 'bekliyor' ? (benGonderen ? '⏳ Cevap bekleniyor' : '') : d.durum === 'kabul' ? `🔥 Bugün oyna! Sen: ${d.benPuan ?? '–'} · Rakip: ${d.rakipPuan ?? '–'}` : d.durum === 'red' ? '🙅 Reddedildi' : d.durum === 'bitti' ? (kucuk(d.kazanan) === kucuk(aktifOgrenciAdi) ? `🏆 Kazandın ${d.benPuan}–${d.rakipPuan}` : d.kazanan === 'berabere' ? '🤝 Berabere' : `Kaybettin ${d.benPuan}–${d.rakipPuan}`) : '⌛ Süresi doldu';
-      let aks = d.durum === 'bekliyor' && !benGonderen ? `<button class="kr-evet" onclick="duelloYanit('${d.id}', true, this)">Kabul</button><button class="kr-hayir" style="${koyu ? '' : 'background:#eee;color:#3b2c66'}" onclick="duelloYanit('${d.id}', false, this)">Reddet</button>` : '';
-      return `<div class="${koyu ? 'kr-dl' : 'dl-satir'}"><span>⚔️ <b>${guvenliMetin(rakip)}</b> · ${oyun}<small>${durum || '📩 Seni düelloya çağırdı!'}</small></span>${aks}</div>`;
-    }).join('');
-  }
-
-  /* Vitrine ve Keşfet'e Düello Kartı Ekleme */
-  let orgVitrin = window.maVitrinHtml;
-  if (typeof orgVitrin === 'function') window.maVitrinHtml = function (id, benimMi) {
-    let html = orgVitrin.apply(this, arguments);
-    if (benimMi || id === 'ben' || typeof maTakip === 'undefined' || !maTakip.has(id)) return html;
-    let sec = Object.keys(DL_OYUNLAR).map(k => `<option value="${k}">${DL_OYUNLAR[k]}</option>`).join('');
-    return `<div class="dl-kart"><h4>⚔️ Düelloya çağır</h4><div style="display:flex;gap:8px;align-items:center"><select id="dlOyunSec" aria-label="Düello oyunu">${sec}</select><button class="dl-gonder" data-o="${guvenliMetin(id)}" onclick="duelloGonder(this.dataset.o, this)">Düello yolla</button></div><small style="display:block;margin-top:6px;color:#8a78b8">Kabul ederse bugün ikiniz de bu oyunu oynarsınız, en yüksek puan kazanır: +3 ⚡ +20 XP.</small></div>` + html;
-  };
-
-  let orgKesfet = window.maKesfetHtml;
-  if (typeof orgKesfet === 'function') window.maKesfetHtml = function () {
-    setTimeout(async () => { await duellolarGetir(); document.querySelectorAll('.dl-alan').forEach(a => a.innerHTML = dlListeHtml(false)); }, 50);
-    return `<div class="dl-kart"><h4>⚔️ Düellolarım</h4><div class="dl-alan">${dlListeHtml(false)}</div></div>` + orgKesfet.apply(this, arguments);
-  };
-
-  /* Düello Davet Dinleyicisi */
-  async function duelloBildirimYokla() {
-    if (!girisli() || document.hidden || oyunda()) return;
-    try {
-      let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
-      let d = await r.json(), liste = ((d && d.liste) || []).filter(b => b.tur === 'duello');
-      if (liste.length > 0) {
-        let b = liste[liste.length - 1];
-        let gorulenKey = 'ing_dl_gor_' + b.sat;
-        if (!sessionStorage.getItem(gorulenKey)) {
-          sessionStorage.setItem(gorulenKey, '1');
-          davetGoster(b);
-        }
-      }
-    } catch (e) {}
-  }
-  setInterval(duelloBildirimYokla, 15000);
-
-  async function davetGoster(b) {
-    let liste = [];
-    try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); liste = (d && d.liste) || []; window._dlSon = liste; } catch (e) {}
-    let dl = liste.find(x => x.durum === 'bekliyor' && kucuk(x.alici) === kucuk(aktifOgrenciAdi) && kucuk(x.gonderen) === kucuk(b.gonderen));
-    if (!dl) return;
-    let p = document.createElement('div'); p.className = 'dv-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Düello daveti');
-    p.innerHTML = `<div class="dv-kart"><div class="dv-kilic">⚔️</div><h3>Düello daveti!</h3><p><b>${guvenliMetin(b.gonderen)}</b> seni <b>${OYUN_AD[dl.oyun] || dl.oyun}</b> düellosuna çağırıyor.<br>Kazanan +3 ⚡ ve +20 XP alır!</p><button class="dv-kabul">⚔️ Kabul et ve oyna</button><button class="dv-vaz">Sonra</button></div>`;
-    document.body.appendChild(p);
-    setTimeout(() => p.querySelector('.dv-kabul').focus({ preventScroll: true }), 300);
-    p.querySelector('.dv-kabul').onclick = async () => {
-      p.remove();
-      try { await fetch(`${apiURL}?islem=duelloYanit&ogrenci=${enc(aktifOgrenciAdi)}&id=${enc(dl.id)}&kabul=1`); } catch (e) {}
-      if (typeof yoToast === 'function') yoToast('⚔️ Düello başladı! En yüksek puanını yap, 24 saatin var.');
-      duelloOyununuAc(dl.oyun);
-    };
-    p.querySelector('.dv-vaz').onclick = () => {
-      p.remove();
-      let saat = Math.max(1, Math.round((dl.kalanDk || 1440) / 60));
-      if (typeof yoToast === 'function') yoToast(`⏳ Tamam! Bu daveti kabul edip oynamak için ${saat} saatin var. Keşfet › Düellolarım'dan ulaşabilirsin.`);
-    };
-  }
-
-  /* Keşfet sekmesindeki Düellolarım akordiyon ve buton işlemleri */
-  setInterval(() => {
-    document.querySelectorAll('#tab-meduakis .dl-kart').forEach(k => {
-      let h = k.querySelector('h4');
-      if (!h || !/Düellolarım/.test(h.innerText)) return;
-      let aktif = [...k.querySelectorAll('.dl-alan > div')].filter(x => /Kabul|Bugün oyna|Seni düelloya|🔥/.test(x.innerText)).length;
-      if (!k.classList.contains('dl-katla')) {
-        k.classList.add('dl-katla');
-        if (!aktif) k.classList.add('kapali');
-        h.setAttribute('role', 'button'); h.tabIndex = 0;
-        h.onclick = () => k.classList.toggle('kapali');
-        h.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); k.classList.toggle('kapali'); } };
-      }
-      let rz = h.querySelector('.dl-rozet');
-      if (aktif && !rz) h.insertAdjacentHTML('beforeend', `<span class="dl-rozet">${aktif} aktif</span>`);
-      else if (rz) { if (aktif) rz.innerText = aktif + ' aktif'; else rz.remove(); }
-      k.querySelectorAll('.dl-satir').forEach(s => {
-        if (s.dataset.oyna || !/Bugün oyna|🔥/.test(s.innerText)) return;
-        s.dataset.oyna = '1';
-        let ad = Object.keys(OYUN_AD).find(o => s.innerText.includes(OYUN_AD[o].replace(/^\S+\s/, '')));
-        if (ad) { let b = document.createElement('button'); b.className = 'kr-evet'; b.innerText = 'Oyna'; b.onclick = () => duelloOyununuAc(ad); s.appendChild(b); }
-      });
-    });
-  }, 1000);
 })();
 </script>
                 
