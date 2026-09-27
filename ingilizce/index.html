@@ -18902,7 +18902,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
 })();
 </script>
 
-                <!-- ===================== MİKROFON, PARKUR SEKMELERİ, BA OKUNURLUK, ADİL PUAN, YARDIM, TANITIM TURU, BİLGİ KARTLARI ===================== -->
+<!-- ===================== MİKROFON, PARKUR SEKMELERİ, BA OKUNURLUK, ADİL PUAN, YARDIM, TANITIM TURU, BİLGİ KARTLARI ===================== -->
 <style>
 /* ---- 1) Mikrofon: dinliyor / durdu belli olsun ---- */
 body.mik-dinliyor #kpMikBtn, body.mik-dinliyor #tab-buyuakademisi .ba-mik-btn { background:radial-gradient(circle at 35% 30%,#fca5a5,#ef4444 55%,#991b1b) !important; animation:mkDinle 1s ease-in-out infinite !important; }
@@ -18948,8 +18948,6 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 @keyframes baDogru { 0% { transform:scale(1); } 35% { transform:scale(1.12); } 65% { transform:scale(.97); } 100% { transform:scale(1); } }
 @keyframes baYanlis { 20% { transform:translateX(-8px); } 40% { transform:translateX(8px); } 60% { transform:translateX(-5px); } 80% { transform:translateX(3px); } }
 @keyframes baPat { from { opacity:1; transform:translate(0,0) scale(.5); } to { opacity:0; transform:translate(var(--tx),var(--ty)) scale(1.3) rotate(180deg); } }
-
-
 
 /* ---- 6) Soluk bilgi kartları ---- */
 .bk-kart { position:fixed; left:12px; top:calc(84px + env(safe-area-inset-top,0px)); z-index:100000005; display:flex; align-items:center; gap:10px; max-width:min(78vw,330px); padding:10px 12px; border-radius:18px; background:rgba(255,255,255,.82); color:#3b2c66; backdrop-filter:blur(8px); box-shadow:0 10px 26px rgba(59,44,102,.18); font:800 12.5px 'Nunito',sans-serif; opacity:0; transform:translateX(-120%); transition:all .6s cubic-bezier(.2,.9,.3,1.1); cursor:pointer; }
@@ -19060,7 +19058,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   /* ================= 5) YARDIM ================= */
   const YARDIM = [
     ['🧭', 'Uygulamada nerede ne var?', `<table><tr><td>🧙 <b>Parkur</b></td><td>Açılış ekranı. Üstteki 4 sekmeyle Büyü Akademisi, Kelime Modu, Sohbet ve Kelime Kartları parkurları arasında geçersin.</td></tr><tr><td>🎡 <b>Medu Akış</b></td><td>Herkesin başarıları (Akış), haftanın yıldızları ve düellolar (Keşfet), vitrinin ve lig.</td></tr><tr><td>✨ <b>Sana Özel</b></td><td>Ödevlerin, Zor Kelimelerim, Seviye Tespit.</td></tr><tr><td>🎮 <b>Aktivite</b></td><td>Mini oyunlar, Dikte, Cümle Kur, Okuma Stüdyosu, etkinlik ve videolar.</td></tr><tr><td>📘 <b>Ders Çalış</b></td><td>Konu anlatımları ve konu testleri.</td></tr><tr><td>🛍️ <b>Mağaza</b></td><td>Karakter Atölyesi, Koleksiyon, Sandıklar, Jokerler.</td></tr><tr><td>👤 <b>Profil</b></td><td>Puanların, grafiklerin ve karakterlerin.</td></tr></table>Sağdaki soluk butonlar: ⚡ enerji ve altın, 🎯 günlük hedef / ❓ yardım / 🤖 AI Koç. Medu Akış'taki 🔔 zil tüm bildirimlerini gösterir.`],
-    ['⚡', 'Enerji', `Oyunlara girmek için enerji gerekir. Tavan <b>20</b>. Bazı günler <b>25</b> olur: 3 gün üst üste girip 3 seviye geçersen ya da bir mini oyunda günün ilk 10'una girersen. Hiçbir kazanç tavanı aşamaz.<table><tr><th>Kazanç</th><th>Enerji</th></tr><tr><td>Her saat</td><td>+1</td></tr><tr><td>Günlük ilk giriş (7. günde +5)</td><td>+3</td></tr><tr><td>Ders Çalış'ta konu testini geçmek</td><td>+2</td></tr><tr><td>Etkinlik tamamlamak</td><td>+1</td></tr><tr><td>Seviye tespit (başarıya göre)</td><td>en fazla +3</td></tr><tr><td>Üst lige çıkmak / sıra yükselmek</td><td>+5 / +1</td></tr><tr><td>Düello kazanmak</td><td>+2</td></tr><tr><td>Gümüş, Altın, Efsane sandık</td><td>+2 / +3 / +5</td></tr><tr><td>Arkadaşın gönderirse</td><td>+2</td></tr><tr><td>Mağazadan paket</td><td>5 ⚡ = 25 🪙</td></tr></table>     <b>Harcama:</b> Parkurlara (Büyü Akademisi, Kelime Modu, Sohbet, Kelime Kartları) girişte 2 ⚡; mini oyunlara, Dikte'ye ve Cümle Kur'a girişte 1 ⚡. Ayrıca tüm oyun ve parkurlarda her 3 soruda 1 ⚡ harcanır. Öğretmenin sınıfta oynattığı oyunlar enerji harcamaz.`],
+    ['⚡', 'Enerji', `Oyunlara girmek için enerji gerekir. Tavan <b>20</b>. Bazı günler <b>25</b> olur: 3 gün üst üste girip 3 seviye geçersen ya da bir mini oyunda günün ilk 10'una girersen. Hiçbir kazanç tavanı aşamaz.<table><tr><th>Kazanç</th><th>Enerji</th></tr><tr><td>Her saat</td><td>+1</td></tr><tr><td>Günlük ilk giriş (7. günde +5)</td><td>+3</td></tr><tr><td>Ders Çalış'ta konu testini geçmek</td><td>+2</td></tr><tr><td>Etkinlik tamamlamak</td><td>+1</td></tr><tr><td>Seviye tespit (başarıya göre)</td><td>en fazla +3</td></tr><tr><td>Üst lige çıkmak / sıra yükselmek</td><td>+5 / +1</td></tr><tr><td>Düello kazanmak</td><td>+2</td></tr><tr><td>Gümüş, Altın, Efsane sandık</td><td>+2 / +3 / +5</td></tr><tr><td>Arkadaşın gönderirse</td><td>+2</td></tr><tr><td>Mağazadan paket</td><td>5 ⚡ = 25 🪙</td></tr></table><b>Harcama:</b> Parkurlara (Büyü Akademisi, Kelime Modu, Sohbet, Kelime Kartları) girişte 2 ⚡; mini oyunlara, Dikte'ye ve Cümle Kur'a girişte 1 ⚡. Ayrıca tüm oyun ve parkurlarda her 3 soruda 1 ⚡ harcanır. Öğretmenin sınıfta oynattığı oyunlar enerji harcamaz. Ders Çalış, konu anlatımları, okuma, videolar, etkinlikler ve mağaza hiç enerji harcamaz.`],
     ['⭐', 'XP ve haftalık lig', `XP en kolay kazanılan puandır. Her doğru cevap <b>+10 XP</b> (Büyü Akademisi'nde +20). Konu testi +30, etkinlik ve video +10, seviye tespit en fazla +50 XP verir.<br><b>Lig:</b> Haftalık XP'ye göre sıralanırsın. İlk 10 🏆 Şampiyonlar Ligi, 11–30 ⭐ Süper Lig, diğerleri 🌱 Yerel Lig. Lig atlarsan +5 ⚡ +10 XP +5 🪙, her yeni sıra için +1 ⚡ +10 XP (günde en fazla 5 basamak). Lig her hafta yeniden başlar. Toplam XP'n ise hiç silinmez.`],
     ['🪙', 'Altın', `Her doğru cevap <b>+1 🪙</b> (Büyü Akademisi'nde +2). Günlük hedefi tamamlamak +5, art arda 4 doğru (kombo) +3 🪙 (günde 5 kez). Etkinlik ve video +2, konu testi +2 🪙.<br><b>Seri çarpanı:</b> 3 gün üst üste girersen altınlar ×1.25, 7 gün olursa ×1.5.<br><b>Harcama:</b> Karakter Atölyesi (10–120), karakter satın alma (50–130), jokerler (10–30), sandık (150–700), enerji paketi (25), seri dondurucu (10).`],
     ['🎁', 'Sandıklar ve karakterler', `Her parkurda <b>her 3 seviyede bir sandık</b> kazanırsın. Sıra: Bronz → Gümüş → Altın → Efsane, her sandığın %15 bir üst kademeye çıkma şansı var. İçinden XP, altın, enerji, ekstra joker, hediye hakkı ve nadir kıyafet çıkar. Sandığa 3 kez dokunarak açarsın.<br><b>Karakterler:</b> Her parkurda her 3 seviyede yeni bir karakter açılır (toplam 36). Mağaza › Koleksiyon ya da Profil › Karakterlerim'den profil fotoğrafın yaparsın. Beklemek istemezsen altınla da alabilirsin.`],
@@ -19070,7 +19068,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     ['⚖️', 'Adil puan kuralı', `Tüm mini oyunlarda puan aynı kuralla verilir: her doğru +10 XP +1 🪙. Bir oyunda en fazla <b>12 doğru</b> sayılır ve her doğru için en az <b>6 saniye</b> oynamış olmak gerekir. Böylece çok hızlı ya da çok uzun oyunlar diğerlerinden avantajlı olmaz. Kendi liderlik tablolarındaki puanın aynen kalır.`],
     ['👩‍🏫', 'Öğretmen puanları ve genel puan', `Genel puan öğrenmeyi gösterir: konu testleri, etkinlikler, videolar ve öğretmeninin derste verdiği artı/eksi puanlar. Öğretmenin verdiği her 1 puan haftalık XP'ne de 10 XP olarak yansır.`],
     ['🔔', 'Bildirimler', `Beğeni, tebrik, takip, enerji hediyesi ve düello haberleri uygulama açıkken sağdan kayan kartlarla gelir. Hepsi Medu Akış'taki 🔔 zilde birikir. Girişte karşılama panelinde de gösterilir.`],
-    ['🎤', 'Mikrofon', `Mikrofona dokununca kırmızıya döner ve "Dinliyorum…" yazar, konuş. Bitince mora döner ve "Dinleme bitti" yazar. Kelimeyi net söylemen gerekir, anlamsız sesler kabul edilmez.`]        
+    ['🎤', 'Mikrofon', `Mikrofona dokununca kırmızıya döner ve "Dinliyorum…" yazar, konuş. Bitince mora döner ve "Dinleme bitti" yazar. Kelimeyi net söylemen gerekir, anlamsız sesler kabul edilmez.`]
   ];
   function yardimHtml(q) {
     q = kucuk(q);
@@ -19091,7 +19089,9 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   };
   document.addEventListener('input', e => { if (e.target && e.target.id === 'yardimAramaInput') window.yardimIcerikCiz(e.target.value); });
 
- 
+  /* ================= 6) TANITIM TURU: Papi'ye devredildi (papi-tur-blok.html) ================= */
+  const turBaslat = (ad, zorla) => { if (typeof window.turBaslat === 'function') window.turBaslat(ad, zorla); };
+  const turBitti = ad => typeof window.turBitti === 'function' ? !!(window.turBitti('v2:' + ad) || window.turBitti(ad)) : true;
 
   /* ================= 7) SOLUK BİLGİ KARTLARI ================= */
   let bkSay = 0, bkSon = 0, bkBas = Date.now();
@@ -19108,7 +19108,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     return l;
   }
   setInterval(() => {
-    if (!girisli() || !yoVar() || oyunda() || turAcik || !turBitti('ana') || document.hidden) return;
+    if (!girisli() || !yoVar() || oyunda() || window.turAcik || !turBitti('ana') || document.hidden) return;
     let gecen = Date.now() - bkBas;
     if (bkSay >= 3 || gecen < 3 * 60000 || Date.now() - bkSon < 12 * 60000) return;
     if (document.querySelector('.tv-kart, .sa-perde, .kr-perde, .od-perde, .bc-perde, .cb-kart, .bk-kart')) return;
@@ -20635,59 +20635,59 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 })();
 </script>
 
-                <!-- ===================== ÇIKARTMA TASARIMI: TÜM SORU EKRANLARI ===================== -->
+<!-- ===================== ÇIKARTMA TASARIMI: TÜM SORU EKRANLARI ===================== -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap">
 <style>
 /* ============ ÇIKARTMA TASARIMI — ortak ============ */
-:root { --st-m:#3b2c66; --st-y:#58cc02; --st-yk:#58a700; --st-sari:#ffd43b; --st-lila:#f3eeff; }
-:is(#stA,html) :is(#stB,body) .st-sik { background:#fff !important; background-image:none !important; color:var(--st-m) !important; border:3px solid var(--st-m) !important; border-radius:16px !important; box-shadow:0 5px 0 var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; font-weight:800 !important; text-shadow:none !important; transition:transform .12s, box-shadow .12s !important; }
-:is(#stA,html) :is(#stB,body) .st-sik:not(:disabled):active { transform:translateY(3px) !important; box-shadow:0 2px 0 var(--st-m) !important; }
-:is(#stA,html) :is(#stB,body) .st-sik.st-kucuk { border-width:2.5px !important; border-radius:11px !important; box-shadow:0 3px 0 var(--st-m) !important; }
-:is(#stA,html) :is(#stB,body) .st-sik.st-s { background:#fff3c4 !important; border-color:#ff9600 !important; box-shadow:0 5px 0 #ff9600 !important; }
-:is(#stA,html) :is(#stB,body) .st-sik.st-d { background:#d7ffb8 !important; border-color:var(--st-yk) !important; box-shadow:0 5px 0 var(--st-yk) !important; color:#3f7d00 !important; animation:stPop .55s cubic-bezier(.2,.9,.3,1.6); }
-:is(#stA,html) :is(#stB,body) .st-sik.st-yn { background:#ffdfe0 !important; border-color:#ea2b2b !important; box-shadow:0 5px 0 #ea2b2b !important; color:#b91c1c !important; animation:stSalla .45s ease; }
-:is(#stA,html) :is(#stB,body) .st-harfli { position:relative !important; padding-left:42px !important; text-align:left !important; }
-:is(#stA,html) :is(#stB,body) .st-harfli::before { content:attr(data-sth) !important; position:absolute !important; left:9px; top:50%; transform:translateY(-50%); width:24px; height:24px; border-radius:8px; background:#e9e1ff; color:var(--st-m); font:900 12px 'Nunito',sans-serif; display:flex !important; align-items:center; justify-content:center; box-shadow:none !important; animation:none !important; opacity:1 !important; }
-:is(#stA,html) :is(#stB,body) .st-sik.st-d::before { background:#b8f28c; } :is(#stA,html) :is(#stB,body) .st-sik.st-yn::before { background:#ffc2c4; }
-:is(#stA,html) :is(#stB,body) .st-kart { background:#fff !important; background-image:none !important; color:var(--st-m) !important; border:3px solid var(--st-m) !important; border-radius:24px !important; box-shadow:0 6px 0 var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; text-shadow:none !important; backdrop-filter:none !important; }
-:is(#stA,html) :is(#stB,body) .st-kart-yazi { display:block !important; padding:18px 14px !important; margin:10px auto 16px !important; font-size:clamp(30px,9vw,44px) !important; font-weight:800 !important; line-height:1.15 !important; text-align:center !important; }
-:is(#stA,html) :is(#stB,body) .st-baslik { display:table !important; margin:8px auto 14px !important; padding:5px 18px !important; background:var(--st-sari) !important; color:var(--st-m) !important; border:3px solid var(--st-m) !important; border-radius:12px !important; box-shadow:0 4px 0 var(--st-m) !important; transform:rotate(-1.5deg); font:700 17px/1.3 'Baloo 2','Nunito',sans-serif !important; text-shadow:none !important; -webkit-text-fill-color:var(--st-m) !important; background-clip:border-box !important; }
-:is(#stA,html) :is(#stB,body) .st-cerceve { border:3px solid var(--st-m) !important; border-radius:14px !important; box-shadow:0 4px 0 var(--st-m) !important; }
-:is(#stA,html) :is(#stB,body) .st-girdi { background:#fff7d1 !important; border:3px dashed #ff9600 !important; border-radius:12px !important; color:var(--st-m) !important; -webkit-text-fill-color:var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; font-weight:800 !important; text-shadow:none !important; box-shadow:none !important; caret-color:#ff9600; }
-:is(#stA,html) :is(#stB,body) .st-girdi:focus { border-style:solid !important; background:#fff !important; box-shadow:0 0 0 4px rgba(255,150,0,.25) !important; outline:none !important; }
-:is(#stA,html) :is(#stB,body) .st-onay { background:var(--st-y) !important; background-image:none !important; color:#fff !important; border:3px solid var(--st-m) !important; border-radius:16px !important; box-shadow:0 5px 0 var(--st-m) !important; font:800 16px 'Baloo 2','Nunito',sans-serif !important; text-shadow:none !important; animation:none !important; }
-:is(#stA,html) :is(#stB,body) .st-onay:not(:disabled):active { transform:translateY(3px) !important; box-shadow:0 2px 0 var(--st-m) !important; }
-:is(#stA,html) :is(#stB,body) .st-bar { background:var(--st-y) !important; background-image:none !important; border-radius:10px !important; }
-@keyframes stPop { 40% { transform:scale(1.08); } }
-@keyframes stSalla { 20% { transform:translateX(-7px); } 40% { transform:translateX(7px); } 60% { transform:translateX(-4px); } }
+:root { --ck-m:#3b2c66; --ck-y:#58cc02; --ck-yk:#58a700; --ck-sari:#ffd43b; --ck-lila:#f3eeff; }
+:is(#ckA,html) :is(#ckB,body) .ck-sik { background:#fff !important; background-image:none !important; color:var(--ck-m) !important; border:3px solid var(--ck-m) !important; border-radius:16px !important; box-shadow:0 5px 0 var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; font-weight:800 !important; text-shadow:none !important; transition:transform .12s, box-shadow .12s !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-sik:not(:disabled):active { transform:translateY(3px) !important; box-shadow:0 2px 0 var(--ck-m) !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-sik.ck-kucuk { border-width:2.5px !important; border-radius:11px !important; box-shadow:0 3px 0 var(--ck-m) !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-sik.ck-s { background:#fff3c4 !important; border-color:#ff9600 !important; box-shadow:0 5px 0 #ff9600 !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-sik.ck-d { background:#d7ffb8 !important; border-color:var(--ck-yk) !important; box-shadow:0 5px 0 var(--ck-yk) !important; color:#3f7d00 !important; animation:ckPop .55s cubic-bezier(.2,.9,.3,1.6); }
+:is(#ckA,html) :is(#ckB,body) .ck-sik.ck-yn { background:#ffdfe0 !important; border-color:#ea2b2b !important; box-shadow:0 5px 0 #ea2b2b !important; color:#b91c1c !important; animation:ckSalla .45s ease; }
+:is(#ckA,html) :is(#ckB,body) .ck-harfli { position:relative !important; padding-left:42px !important; text-align:left !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-harfli::before { content:attr(data-ckh) !important; position:absolute !important; left:9px; top:50%; transform:translateY(-50%); width:24px; height:24px; border-radius:8px; background:#e9e1ff; color:var(--ck-m); font:900 12px 'Nunito',sans-serif; display:flex !important; align-items:center; justify-content:center; box-shadow:none !important; animation:none !important; opacity:1 !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-sik.ck-d::before { background:#b8f28c; } :is(#ckA,html) :is(#ckB,body) .ck-sik.ck-yn::before { background:#ffc2c4; }
+:is(#ckA,html) :is(#ckB,body) .ck-kart { background:#fff !important; background-image:none !important; color:var(--ck-m) !important; border:3px solid var(--ck-m) !important; border-radius:24px !important; box-shadow:0 6px 0 var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; text-shadow:none !important; backdrop-filter:none !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-kart-yazi { display:block !important; padding:18px 14px !important; margin:10px auto 16px !important; font-size:clamp(30px,9vw,44px) !important; font-weight:800 !important; line-height:1.15 !important; text-align:center !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-baslik { display:table !important; margin:8px auto 14px !important; padding:5px 18px !important; background:var(--ck-sari) !important; color:var(--ck-m) !important; border:3px solid var(--ck-m) !important; border-radius:12px !important; box-shadow:0 4px 0 var(--ck-m) !important; transform:rotate(-1.5deg); font:700 17px/1.3 'Baloo 2','Nunito',sans-serif !important; text-shadow:none !important; -webkit-text-fill-color:var(--ck-m) !important; background-clip:border-box !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-cerceve { border:3px solid var(--ck-m) !important; border-radius:14px !important; box-shadow:0 4px 0 var(--ck-m) !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-girdi { background:#fff7d1 !important; border:3px dashed #ff9600 !important; border-radius:12px !important; color:var(--ck-m) !important; -webkit-text-fill-color:var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; font-weight:800 !important; text-shadow:none !important; box-shadow:none !important; caret-color:#ff9600; }
+:is(#ckA,html) :is(#ckB,body) .ck-girdi:focus { border-style:solid !important; background:#fff !important; box-shadow:0 0 0 4px rgba(255,150,0,.25) !important; outline:none !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-onay { background:var(--ck-y) !important; background-image:none !important; color:#fff !important; border:3px solid var(--ck-m) !important; border-radius:16px !important; box-shadow:0 5px 0 var(--ck-m) !important; font:800 16px 'Baloo 2','Nunito',sans-serif !important; text-shadow:none !important; animation:none !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-onay:not(:disabled):active { transform:translateY(3px) !important; box-shadow:0 2px 0 var(--ck-m) !important; }
+:is(#ckA,html) :is(#ckB,body) .ck-bar { background:var(--ck-y) !important; background-image:none !important; border-radius:10px !important; }
+@keyframes ckPop { 40% { transform:scale(1.08); } }
+@keyframes ckSalla { 20% { transform:translateX(-7px); } 40% { transform:translateX(7px); } 60% { transform:translateX(-4px); } }
 
 /* ============ Büyü Akademisi: soru alanı lila kâğıt ============ */
-:is(#stA,html) :is(#stB,body) #tab-buyuakademisi .ba-oyun-alani { background:var(--st-lila) !important; border:3px solid var(--st-m) !important; border-radius:26px !important; box-shadow:0 8px 0 var(--st-m) !important; padding:16px 12px 20px !important; color:var(--st-m) !important; text-shadow:none !important; }
-:is(#stA,html) :is(#stB,body) #tab-buyuakademisi .ba-oyun-alani .ba-bosluk-ipucu { background:#fff !important; color:var(--st-m) !important; border:3px solid var(--st-m) !important; border-radius:16px !important; box-shadow:0 4px 0 var(--st-m) !important; font:800 20px 'Baloo 2','Nunito',sans-serif !important; }
-:is(#stA,html) :is(#stB,body) #tab-buyuakademisi #baBoslukHarfler .ba-bosluk-sabit { background:#fff !important; color:var(--st-m) !important; border:3px solid var(--st-m) !important; box-shadow:0 4px 0 var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
-:is(#stA,html) :is(#stB,body) #tab-buyuakademisi #baBoslukHarfler .ba-bosluk-input { background:#fff7d1 !important; border:3px dashed #ff9600 !important; color:var(--st-m) !important; -webkit-text-fill-color:var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
-:is(#stA,html) :is(#stB,body) #tab-buyuakademisi #baBoslukPanel .ba-mik-btn { background:var(--st-y) !important; border:3px solid var(--st-m) !important; box-shadow:0 5px 0 var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
-:is(#stA,html) :is(#stB,body) .ba-mik-btn, :is(#stA,html) :is(#stB,body) .kp-mik-btn { border:3px solid var(--st-m) !important; box-shadow:0 6px 0 var(--st-m) !important; }
+:is(#ckA,html) :is(#ckB,body) #tab-buyuakademisi .ba-oyun-alani { background:var(--ck-lila) !important; border:3px solid var(--ck-m) !important; border-radius:26px !important; box-shadow:0 8px 0 var(--ck-m) !important; padding:16px 12px 20px !important; color:var(--ck-m) !important; text-shadow:none !important; }
+:is(#ckA,html) :is(#ckB,body) #tab-buyuakademisi .ba-oyun-alani .ba-bosluk-ipucu { background:#fff !important; color:var(--ck-m) !important; border:3px solid var(--ck-m) !important; border-radius:16px !important; box-shadow:0 4px 0 var(--ck-m) !important; font:800 20px 'Baloo 2','Nunito',sans-serif !important; }
+:is(#ckA,html) :is(#ckB,body) #tab-buyuakademisi #baBoslukHarfler .ba-bosluk-sabit { background:#fff !important; color:var(--ck-m) !important; border:3px solid var(--ck-m) !important; box-shadow:0 4px 0 var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
+:is(#ckA,html) :is(#ckB,body) #tab-buyuakademisi #baBoslukHarfler .ba-bosluk-input { background:#fff7d1 !important; border:3px dashed #ff9600 !important; color:var(--ck-m) !important; -webkit-text-fill-color:var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
+:is(#ckA,html) :is(#ckB,body) #tab-buyuakademisi #baBoslukPanel .ba-mik-btn { background:var(--ck-y) !important; border:3px solid var(--ck-m) !important; box-shadow:0 5px 0 var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
+:is(#ckA,html) :is(#ckB,body) .ba-mik-btn, :is(#ckA,html) :is(#ckB,body) .kp-mik-btn { border:3px solid var(--ck-m) !important; box-shadow:0 6px 0 var(--ck-m) !important; }
 
 /* ============ Joker çubuğu ============ */
-:is(#stA,html) :is(#stB,body) #jkBar { background:#fff !important; border:3px solid var(--st-m) !important; border-radius:20px !important; box-shadow:0 5px 0 var(--st-m) !important; padding:8px 10px !important; }
-:is(#stA,html) :is(#stB,body) #jkBar .jk-btn, :is(#stA,html) :is(#stB,body) #jkBar .jk-alt, :is(#stA,html) :is(#stB,body) #jkBar .jk-mesaj, :is(#stA,html) :is(#stB,body) #jkBar .jk-alt span { color:var(--st-m) !important; text-shadow:none !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
-:is(#stA,html) :is(#stB,body) #jkBar .jk-daire { border-width:3px !important; box-shadow:0 3px 0 var(--st-m) !important; background:#fff !important; }
+:is(#ckA,html) :is(#ckB,body) #jkBar { background:#fff !important; border:3px solid var(--ck-m) !important; border-radius:20px !important; box-shadow:0 5px 0 var(--ck-m) !important; padding:8px 10px !important; }
+:is(#ckA,html) :is(#ckB,body) #jkBar .jk-btn, :is(#ckA,html) :is(#ckB,body) #jkBar .jk-alt, :is(#ckA,html) :is(#ckB,body) #jkBar .jk-mesaj, :is(#ckA,html) :is(#ckB,body) #jkBar .jk-alt span { color:var(--ck-m) !important; text-shadow:none !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
+:is(#ckA,html) :is(#ckB,body) #jkBar .jk-daire { border-width:3px !important; box-shadow:0 3px 0 var(--ck-m) !important; background:#fff !important; }
 
 /* ============ Mini oyun pencereleri ============ */
-:is(#stA,html) :is(#stB,body) .game-modal-content { background:var(--st-lila) !important; border:3px solid var(--st-m) !important; border-radius:26px !important; box-shadow:0 8px 0 var(--st-m) !important; }
-:is(#stA,html) :is(#stB,body) .game-modal-content h2, :is(#stA,html) :is(#stB,body) .game-modal-content h3 { font-family:'Baloo 2','Nunito',sans-serif !important; color:var(--st-m) !important; }
-:is(#stA,html) :is(#stB,body) #boslukSatirlarContainer > div { background:#fff !important; border:3px solid var(--st-m) !important; border-radius:14px !important; box-shadow:0 4px 0 var(--st-m) !important; }
-:is(#stA,html) :is(#stB,body) #boslukOyunEkrani .btn-giris, :is(#stA,html) :is(#stB,body) .yg-kontrol-btn, :is(#stA,html) :is(#stB,body) .dc-uyg-kontrol-btn, :is(#stA,html) :is(#stB,body) .dc-quiz-bitir-btn, :is(#stA,html) :is(#stB,body) .kp-start-btn { background:var(--st-y) !important; background-image:none !important; color:#fff !important; border:3px solid var(--st-m) !important; border-radius:16px !important; box-shadow:0 5px 0 var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; font-weight:800 !important; }
+:is(#ckA,html) :is(#ckB,body) .game-modal-content { background:var(--ck-lila) !important; border:3px solid var(--ck-m) !important; border-radius:26px !important; box-shadow:0 8px 0 var(--ck-m) !important; }
+:is(#ckA,html) :is(#ckB,body) .game-modal-content h2, :is(#ckA,html) :is(#ckB,body) .game-modal-content h3 { font-family:'Baloo 2','Nunito',sans-serif !important; color:var(--ck-m) !important; }
+:is(#ckA,html) :is(#ckB,body) #boslukSatirlarContainer > div { background:#fff !important; border:3px solid var(--ck-m) !important; border-radius:14px !important; box-shadow:0 4px 0 var(--ck-m) !important; }
+:is(#ckA,html) :is(#ckB,body) #boslukOyunEkrani .btn-giris, :is(#ckA,html) :is(#ckB,body) .yg-kontrol-btn, :is(#ckA,html) :is(#ckB,body) .dc-uyg-kontrol-btn, :is(#ckA,html) :is(#ckB,body) .dc-quiz-bitir-btn, :is(#ckA,html) :is(#ckB,body) .kp-start-btn { background:var(--ck-y) !important; background-image:none !important; color:#fff !important; border:3px solid var(--ck-m) !important; border-radius:16px !important; box-shadow:0 5px 0 var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; font-weight:800 !important; }
 
 /* ============ Kelime Modu ============ */
-:is(#stA,html) :is(#stB,body) .kp-card-word { font-family:'Baloo 2','Nunito',sans-serif !important; color:var(--st-m) !important; font-weight:800 !important; text-shadow:none !important; -webkit-text-fill-color:var(--st-m) !important; }
-:is(#stA,html) :is(#stB,body) .kp-skip-btn { background:#fff !important; color:var(--st-m) !important; border:3px solid var(--st-m) !important; border-radius:14px !important; box-shadow:0 4px 0 var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; font-weight:800 !important; }
-:is(#stA,html) :is(#stB,body) .kp-topbar-progress { background:#fff !important; border:3px solid var(--st-m) !important; border-radius:12px !important; }
+:is(#ckA,html) :is(#ckB,body) .kp-card-word { font-family:'Baloo 2','Nunito',sans-serif !important; color:var(--ck-m) !important; font-weight:800 !important; text-shadow:none !important; -webkit-text-fill-color:var(--ck-m) !important; }
+:is(#ckA,html) :is(#ckB,body) .kp-skip-btn { background:#fff !important; color:var(--ck-m) !important; border:3px solid var(--ck-m) !important; border-radius:14px !important; box-shadow:0 4px 0 var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; font-weight:800 !important; }
+:is(#ckA,html) :is(#ckB,body) .kp-topbar-progress { background:#fff !important; border:3px solid var(--ck-m) !important; border-radius:12px !important; }
 
 /* ============ Sohbet balonları ============ */
-:is(#stA,html) :is(#stB,body) .yo-s-balon { border:3px solid var(--st-m) !important; box-shadow:0 4px 0 var(--st-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
-@media (prefers-reduced-motion: reduce) { :is(#stA,html) :is(#stB,body) .st-sik.st-d, :is(#stA,html) :is(#stB,body) .st-sik.st-yn { animation:none; } }
+:is(#ckA,html) :is(#ckB,body) .yo-s-balon { border:3px solid var(--ck-m) !important; box-shadow:0 4px 0 var(--ck-m) !important; font-family:'Baloo 2','Nunito',sans-serif !important; }
+@media (prefers-reduced-motion: reduce) { :is(#ckA,html) :is(#ckB,body) .ck-sik.ck-d, :is(#ckA,html) :is(#ckB,body) .ck-sik.ck-yn { animation:none; } }
 </style>
 <script>(function () {
   /* Hangi öğe hangi çıkartma parçası olacak */
@@ -20726,32 +20726,32 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   }
   function boya(el) {
     let d = durum(el);
-    d === 'd' ? ekle(el, 'st-d') : cikar(el, 'st-d');
-    d === 'y' ? ekle(el, 'st-yn') : cikar(el, 'st-yn');
-    d === 's' ? ekle(el, 'st-s') : cikar(el, 'st-s');
+    d === 'd' ? ekle(el, 'ck-d') : cikar(el, 'ck-d');
+    d === 'y' ? ekle(el, 'ck-yn') : cikar(el, 'ck-yn');
+    d === 's' ? ekle(el, 'ck-s') : cikar(el, 'ck-s');
   }
   function harfVer(el) {
     let kardes = [...el.parentElement.children].filter(x => x.matches(HARFLI));
     let i = kardes.indexOf(el);
-    if (kardes.length >= 3 && i >= 0 && i < 6) { el.dataset.sth = 'ABCDEF'[i]; ekle(el, 'st-harfli'); }
+    if (kardes.length >= 3 && i >= 0 && i < 6) { el.dataset.ckh = 'ABCDEF'[i]; ekle(el, 'ck-harfli'); }
   }
   function isle(kok) {
     if (!kok || !kok.querySelectorAll) return;
     const her = (sec, fn) => { if (kok.matches && kok.matches(sec)) fn(kok); kok.querySelectorAll(sec).forEach(fn); };
-    her(SIK, el => { ekle(el, 'st-sik'); boya(el); });
-    her(KUCUK_SIK, el => { ekle(el, 'st-sik'); ekle(el, 'st-kucuk'); boya(el); });
+    her(SIK, el => { ekle(el, 'ck-sik'); boya(el); });
+    her(KUCUK_SIK, el => { ekle(el, 'ck-sik'); ekle(el, 'ck-kucuk'); boya(el); });
     her(HARFLI, harfVer);
-    her(KART, el => ekle(el, 'st-kart'));
-    her(KART_YAZI, el => { ekle(el, 'st-kart'); ekle(el, 'st-kart-yazi'); });
-    her(BASLIK, el => ekle(el, 'st-baslik'));
-    her(CERCEVE, el => ekle(el, 'st-cerceve'));
-    her(GIRDI, el => ekle(el, 'st-girdi'));
-    her(BAR, el => ekle(el, 'st-bar'));
+    her(KART, el => ekle(el, 'ck-kart'));
+    her(KART_YAZI, el => { ekle(el, 'ck-kart'); ekle(el, 'ck-kart-yazi'); });
+    her(BASLIK, el => ekle(el, 'ck-baslik'));
+    her(CERCEVE, el => ekle(el, 'ck-cerceve'));
+    her(GIRDI, el => ekle(el, 'ck-girdi'));
+    her(BAR, el => ekle(el, 'ck-bar'));
   }
   new MutationObserver(ms => {
     for (let m of ms) {
       if (m.type === 'childList') m.addedNodes.forEach(n => { if (n.nodeType === 1) isle(n); });
-      else if (m.target.classList && m.target.classList.contains('st-sik')) boya(m.target);
+      else if (m.target.classList && m.target.classList.contains('ck-sik')) boya(m.target);
     }
   }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
   isle(document.body);
@@ -20771,13 +20771,13 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 })();
 </script>
 
-                <!-- ===================== DUYURU PANELİ: GÖRÜNÜRLÜK + GEÇMİŞ DÜĞMESİ ===================== -->
+<!-- ===================== DUYURU PANELİ: GÖRÜNÜRLÜK + GEÇMİŞ DÜĞMESİ ===================== -->
 <style>
 /* Duyuru her şeyin üstünde (Papi turu, parkur sekmeleri, bilgi kartları dahil) */
 #duyuruOverlay.duy3-overlay { z-index:100000060 !important; }
 #duyuruGecmisModal { z-index:100000060 !important; }
 /* Duyuru açıkken Papi turu ve bilgi kartları beklesin */
-body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart, body.duyuru-acik .st-overlay { visibility:hidden !important; pointer-events:none !important; }
+body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !important; pointer-events:none !important; }
 /* Yardım penceresindeki duyurular düğmesi */
 .dy-yardim-btn { display:flex; align-items:center; gap:10px; width:100%; margin:0 0 12px; padding:12px 14px; border:3px solid #3b2c66; border-radius:16px; background:#fff3c4; color:#3b2c66; font:800 14px 'Baloo 2','Nunito',sans-serif; box-shadow:0 4px 0 #3b2c66; cursor:pointer; text-align:left; }
 .dy-yardim-btn:active { transform:translateY(3px); box-shadow:0 1px 0 #3b2c66; }
@@ -20829,6 +20829,40 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart, body.duyuru-acik .st-over
     govde.prepend(b);
   }
   setInterval(() => { let y = document.querySelector('.yardim-modal-overlay'); if (y && gor(y)) yardimaEkle(); }, 600);
+})();
+</script>
+
+                <!-- ===================== TUR KURTARICI: ekran hiçbir zaman kilitli kalmasın ===================== -->
+<style>
+.tr-perde { display:none !important; }   /* eski tur kalıntısı varsa asla görünmesin */
+.tk-kapat { position:fixed; z-index:100000070; top:calc(10px + env(safe-area-inset-top,0px)); right:10px; border:3px solid #3b2c66; border-radius:14px; padding:8px 12px; background:#fff; color:#3b2c66; font:900 12.5px 'Nunito',sans-serif; box-shadow:0 4px 0 #3b2c66; cursor:pointer; }
+</style>
+<script>
+(function () {
+  let gorunmezSure = 0;
+  function tumunuKapat() {
+    let g = document.querySelector('.t2-perde .t2-gec');
+    if (g) g.click();
+    setTimeout(() => document.querySelectorAll('.t2-perde, .tr-perde').forEach(p => p.remove()), 300);
+  }
+  setInterval(() => {
+    /* 1) Eski turun perdesi sayfada kaldıysa kaldır */
+    document.querySelectorAll('.tr-perde').forEach(p => p.remove());
+
+    /* 2) Papi turu açık ama balon görünmüyorsa önce ortala, düzelmezse turu kapat */
+    let p = document.querySelector('.t2-perde'), btn = document.querySelector('.tk-kapat');
+    if (!p) { gorunmezSure = 0; if (btn) btn.remove(); return; }
+    let b = p.querySelector('.t2-balon'), cs = b && getComputedStyle(b), r = b && b.getBoundingClientRect();
+    let gorunur = b && cs.display !== 'none' && cs.visibility !== 'hidden' && parseFloat(cs.opacity) > 0.2 &&
+      r.width > 50 && r.height > 40 && r.bottom > 30 && r.top < innerHeight - 30 && r.right > 30 && r.left < innerWidth - 30;
+    if (gorunur) { gorunmezSure = 0; return; }
+    gorunmezSure += 500;
+    if (b && gorunmezSure >= 1000) {
+      Object.assign(b.style, { left: Math.max(10, (innerWidth - r.width) / 2) + 'px', top: Math.max(80, innerHeight / 2 - 90) + 'px', opacity: '1', visibility: 'visible', display: 'block' });
+    }
+    if (!btn) { btn = document.createElement('button'); btn.className = 'tk-kapat'; btn.textContent = '✕ Turu kapat'; btn.onclick = tumunuKapat; document.body.appendChild(btn); }
+    if (gorunmezSure >= 4000) tumunuKapat();
+  }, 500);
 })();
 </script>
                 
