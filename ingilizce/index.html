@@ -21530,7 +21530,47 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 }
 </style>
 
-          
+          <script>
+/* ================= DIJI PRESENCE BAŞLATMA ================= */
+
+(function () {
+
+    function dijiPresenceOtomatikBaslat_() {
+
+        var ogrenci = String(
+            window.aktifOgrenciAdi ||
+            localStorage.getItem('ing_aktifOgrenci') ||
+            ''
+        ).trim();
+
+        var token = localStorage.getItem('ing_token') || '';
+
+        if (!ogrenci || !token) {
+            return;
+        }
+
+        if (typeof dijiPresenceBaslat_ === 'function') {
+            dijiPresenceBaslat_();
+            console.log('DIJI Presence başlatıldı:', ogrenci);
+        } else {
+            console.warn('DIJI Presence fonksiyonu bulunamadı.');
+        }
+    }
+
+    /*
+     * Sayfa tamamen yüklendikten sonra kontrol et.
+     * Otomatik giriş tamamlanmışsa Presence başlar.
+     */
+    window.addEventListener('load', function () {
+
+        setTimeout(function () {
+            dijiPresenceOtomatikBaslat_();
+        }, 3000);
+
+    });
+
+})();
+</script>
                 
         </body>
         </html>
