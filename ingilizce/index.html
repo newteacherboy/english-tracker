@@ -4383,7 +4383,10 @@ function raporlarimKapat() {
         
                     try {
                         let res = await fetch(`${apiURL}?islem=sohbetGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}`);
-                        let mesajlar = await res.json();
+                        let cevap = await res.json();
+let mesajlar = Array.isArray(cevap)
+    ? cevap
+    : (cevap.messages || []);
         
                         let sabitKarsilama = body.querySelector('.ai-msg.bot');
                         body.innerHTML = "";
