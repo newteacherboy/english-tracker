@@ -19877,13 +19877,14 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
       t: token
     };
 
-    fetch(apiURL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      keepalive: state === 'offline'
-    }).catch(function (e) {
-      console.warn('Presence gönderilemedi:', e);
-    });
+  fetch(apiURL, {
+  method: 'POST',
+  mode: 'no-cors',
+  body: JSON.stringify(payload),
+  keepalive: state === 'offline'
+}).catch(function (e) {
+  console.warn('Presence gönderilemedi:', e);
+});
   }
 
   function dijiPresenceBaslat_() {
