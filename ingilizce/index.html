@@ -4159,21 +4159,26 @@ function raporlarimKapat() {
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbwscjo-1pKq5gNOeYsvNRI6T-9LB5DA4JKyf3xcSeC2NFMGMM3Mw2C1odXTmDUprA8rXA/exec";
+                const apiURL = "https://script.google.com/macros/s/AKfycbziRyUDucnjmbVTpvzfR-SkA2F8lJFuFcfZc8QCqq6QGlFCI2z85XlZjbqsvR3vUXo1/exec";
 
-                    // ================= DIJI PRESENCE =================
+                   // ============================================================
+// DIJI PRESENCE
+// ============================================================
 
 var DIJI_PRESENCE_KEY = 'ing_presence_id';
 var DIJI_PRESENCE_TIMER = null;
 
 function dijiPresenceIdGetir_() {
+
     var id = localStorage.getItem(DIJI_PRESENCE_KEY);
 
     if (!id) {
+
         if (window.crypto && crypto.randomUUID) {
             id = 'p_' + crypto.randomUUID();
         } else {
-            id = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+            id = 'p_' + Date.now() + '_' +
+                Math.random().toString(36).slice(2);
         }
 
         localStorage.setItem(DIJI_PRESENCE_KEY, id);
@@ -4182,7 +4187,9 @@ function dijiPresenceIdGetir_() {
     return id;
 }
 
+
 function dijiPresenceGonder_(state) {
+
     var ogrenci = String(
         window.aktifOgrenciAdi ||
         localStorage.getItem('ing_aktifOgrenci') ||
@@ -4191,21 +4198,37 @@ function dijiPresenceGonder_(state) {
 
     var token = localStorage.getItem('ing_token') || '';
 
-    if (!ogrenci || !token) return;
+    if (!ogrenci || !token) {
+        return;
+    }
 
+    var payload = {
+        islem: 'dijiPresence',
+        ogrenci: ogrenci,
+        presenceId: dijiPresenceIdGetir_(),
+        state: state,
+        t: token
+    };
+
+    /*
+     * Google Apps Script cevabını okumuyoruz.
+     * Amaç sadece isteği sunucuya ulaştırmak.
+     * Böylece CORS response okuma problemi Presence'i bozmaz.
+     */
     fetch(apiURL, {
         method: 'POST',
-        body: JSON.stringify({
-            islem: 'dijiPresence',
-            ogrenci: ogrenci,
-            presenceId: dijiPresenceIdGetir_(),
-            state: state,
-            t: token
-        })
-    }).catch(function(err) {
-        console.warn('Presence gönderilemedi:', err);
+        mode: 'no-cors',
+        body: JSON.stringify(payload)
+    }).catch(function (err) {
+
+        console.warn(
+            'Presence gönderilemedi:',
+            err
+        );
+
     });
 }
+
 
 function dijiPresenceBaslat_() {
 
@@ -4215,38 +4238,78 @@ function dijiPresenceBaslat_() {
 
     dijiPresenceGonder_('online');
 
-    DIJI_PRESENCE_TIMER = setInterval(function() {
+    DIJI_PRESENCE_TIMER = setInterval(function () {
 
-        if (document.visibilityState === 'visible') {
+        if (
+            document.visibilityState === 'visible' &&
+            document.hasFocus()
+        ) {
             dijiPresenceGonder_('online');
         }
 
     }, 30000);
 }
 
+
 function dijiPresenceDurdur_() {
 
     if (DIJI_PRESENCE_TIMER) {
+
         clearInterval(DIJI_PRESENCE_TIMER);
+
         DIJI_PRESENCE_TIMER = null;
     }
 
     dijiPresenceGonder_('offline');
 }
 
-document.addEventListener('visibilitychange', function() {
 
-    if (document.visibilityState === 'visible') {
-        dijiPresenceGonder_('online');
-    } else {
-        dijiPresenceGonder_('offline');
+document.addEventListener(
+    'visibilitychange',
+    function () {
+
+        if (document.visibilityState === 'visible') {
+
+            dijiPresenceGonder_('online');
+
+        } else {
+
+            dijiPresenceGonder_('offline');
+
+        }
+
     }
+);
 
-});
 
-window.addEventListener('pagehide', function() {
-    dijiPresenceGonder_('offline');
-});
+window.addEventListener(
+    'focus',
+    function () {
+
+        dijiPresenceGonder_('online');
+
+    }
+);
+
+
+window.addEventListener(
+    'blur',
+    function () {
+
+        dijiPresenceGonder_('offline');
+
+    }
+);
+
+
+window.addEventListener(
+    'pagehide',
+    function () {
+
+        dijiPresenceGonder_('offline');
+
+    }
+);
                 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
@@ -4369,7 +4432,9 @@ window.addEventListener('pagehide', function() {
         
                     if (otomatikGirisYapilacak) {
                         aktifOgrenciAdi = kayitliOgrenci;
-                            dijiPresenceBaslat_();
+                           setTimeout(function () {
+    dijiPresenceBaslat_();
+}, 1000);
                         toplamSaniye = parseInt(kayitliSure);
         
                         let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
@@ -20050,7 +20115,9 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token);
     localStorage.setItem('ing_oturumAcik', 'true');
     localStorage.setItem('ing_aktifOgrenci', d.ogrenci || ogr);
-          dijiPresenceBaslat_();
+          setTimeout(function () {
+    dijiPresenceBaslat_();
+}, 1000);
     if (localStorage.getItem('ing_toplamSaniye') === null) localStorage.setItem('ing_toplamSaniye', '0');
     fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(d.ogrenci || ogr)}`, { keepalive: true }).catch(() => {});
     $('login-container').style.display = 'none';
@@ -21530,47 +21597,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 }
 </style>
 
-          <script>
-/* ================= DIJI PRESENCE BAŞLATMA ================= */
 
-(function () {
-
-    function dijiPresenceOtomatikBaslat_() {
-
-        var ogrenci = String(
-            window.aktifOgrenciAdi ||
-            localStorage.getItem('ing_aktifOgrenci') ||
-            ''
-        ).trim();
-
-        var token = localStorage.getItem('ing_token') || '';
-
-        if (!ogrenci || !token) {
-            return;
-        }
-
-        if (typeof dijiPresenceBaslat_ === 'function') {
-            dijiPresenceBaslat_();
-            console.log('DIJI Presence başlatıldı:', ogrenci);
-        } else {
-            console.warn('DIJI Presence fonksiyonu bulunamadı.');
-        }
-    }
-
-    /*
-     * Sayfa tamamen yüklendikten sonra kontrol et.
-     * Otomatik giriş tamamlanmışsa Presence başlar.
-     */
-    window.addEventListener('load', function () {
-
-        setTimeout(function () {
-            dijiPresenceOtomatikBaslat_();
-        }, 3000);
-
-    });
-
-})();
-</script>
                 
         </body>
         </html>
