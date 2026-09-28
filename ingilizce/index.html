@@ -19842,6 +19842,104 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   const $ = id => document.getElementById(id);
   const TOKEN = () => localStorage.getItem('ing_token') || '';
   const OGRT = () => sessionStorage.getItem('ing_ogr_token') || '';
+          /* ================= PRESENCE / ONLINE DURUMU ================= */
+  const DIJI_PRESENCE_KEY = 'ing_presence_id';
+  let dijiPresenceTimer = null;
+
+  function dijiPresenceIdGetir_() {
+    let id = localStorage.getItem(DIJI_PRESENCE_KEY);
+
+    if (!id) {
+      id = 'p_' + crypto.randomUUID();
+      localStorage.setItem(DIJI_PRESENCE_KEY, id);
+    }
+
+    return id;
+  }
+
+  function dijiPresenceGonder_(state) {
+    const ogrenci =
+      String(
+        window.aktifOgrenciAdi ||
+        localStorage.getItem('ing_aktifOgrenci') ||
+        ''
+      ).trim();
+
+    const token = localStorage.getItem('ing_token') || '';
+
+    if (!ogrenci || !token) return;
+
+    const payload = {
+      islem: 'dijiPresence',
+      ogrenci: ogrenci,
+      presenceId: dijiPresenceIdGetir_(),
+      state: state,
+      t: token
+    };
+
+    fetch(apiURL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      keepalive: state === 'offline'
+    }).catch(function (e) {
+      console.warn('Presence gönderilemedi:', e);
+    });
+  }
+
+  function dijiPresenceBaslat_() {
+    if (dijiPresenceTimer) {
+      clearInterval(dijiPresenceTimer);
+    }
+
+    if (!TOKEN()) return;
+
+    dijiPresenceGonder_('online');
+
+    dijiPresenceTimer = setInterval(function () {
+      if (document.hidden || !document.hasFocus()) return;
+
+      if (TOKEN()) {
+        dijiPresenceGonder_('online');
+      }
+    }, 30000);
+  }
+
+  function dijiPresenceDurdur_() {
+    if (dijiPresenceTimer) {
+      clearInterval(dijiPresenceTimer);
+      dijiPresenceTimer = null;
+    }
+
+    if (TOKEN()) {
+      dijiPresenceGonder_('offline');
+    }
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      dijiPresenceDurdur_();
+    } else {
+      dijiPresenceBaslat_();
+    }
+  });
+
+  window.addEventListener('pagehide', function () {
+    dijiPresenceDurdur_();
+  });
+
+  window.addEventListener('beforeunload', function () {
+    dijiPresenceDurdur_();
+  });
+
+  window.dijiPresenceBaslat_ = dijiPresenceBaslat_;
+  window.dijiPresenceDurdur_ = dijiPresenceDurdur_;
+
+  /* Login olmuş sayfa açılırsa Presence başlat */
+  setTimeout(function () {
+    if (TOKEN()) {
+      dijiPresenceBaslat_();
+    }
+  }, 3000);
   async function listeYenile() {
     try { let r = await fetch(apiURL, { cache: 'no-store' }); let l = await r.json(); if (Array.isArray(l)) globalDataCache = l; } catch (e) {}
   }
