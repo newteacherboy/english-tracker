@@ -4369,6 +4369,7 @@ window.addEventListener('pagehide', function() {
         
                     if (otomatikGirisYapilacak) {
                         aktifOgrenciAdi = kayitliOgrenci;
+                            dijiPresenceBaslat_();
                         toplamSaniye = parseInt(kayitliSure);
         
                         let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
