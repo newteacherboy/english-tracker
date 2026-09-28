@@ -16673,16 +16673,24 @@ function avatarSVG(s, stil, px, cins) {
     let p = $('panel-alani');
     return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci));
   }
-  const seri = () => parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0') || 0;
+ const seri = () => parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0') || 0;
 
-  /* ================= GRUP 6 ================= */
-  /* Seri çarpanı: 3+ gün 1.5x, 7+ gün 2x altın */
-   : seri() >= 3 ? 1.5 : 1;
-  let orgXp = window.yoXpEkle;
-  if (typeof orgXp === 'function') window.yoXpEkle = function (xp, altin) {
-    if (altin > 0) altin = Math.round(altin * window.seriCarpani());
+/* ================= GRUP 6 ================= */
+
+/* Seri çarpanı: 3+ gün 1.5x, 7+ gün 2x altın */
+const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
+
+let orgXp = window.yoXpEkle;
+
+if (typeof orgXp === 'function') {
+  window.yoXpEkle = function (xp, altin) {
+    if (altin > 0) {
+      altin = Math.round(altin * window.seriCarpani());
+    }
+
     return orgXp.call(this, xp, altin);
   };
+}
   /* Kombo: art arda her 4 doğruda uçan papağan +5 🪙 +2 ⚡ (günde en fazla 5 kez) */
   let kombo = 0;
   function oyunIcindeMi(el) { return !!el.closest('.game-modal-overlay, .seviye-harita-overlay, .kart-oyun-overlay, #tab-buyuakademisi, #tab-konusmapratigi, #yoModal'); }
