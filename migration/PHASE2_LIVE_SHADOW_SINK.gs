@@ -111,6 +111,47 @@ function dijiLiveShadowNotificationCreated_(notificationId, recipient, type) {
   );
 }
 
+function dijiLiveShadowChatMessage_(messageId, studentId, recipientId, senderRole, sheetRow) {
+  return dijiLiveShadowEmit_(
+    'chat.message',
+    'chat:' + String(messageId),
+    studentId || recipientId,
+    {
+      messageId: String(messageId),
+      recipientId: recipientId || null,
+      senderRole: senderRole || null,
+      sheetRow: sheetRow || null
+    }
+  );
+}
+
+function dijiLiveShadowChatRead_(messageId, studentId, sheetRow) {
+  return dijiLiveShadowEmit_(
+    'chat.read',
+    'chat:' + String(messageId) + ':read',
+    studentId,
+    { messageId: String(messageId), sheetRow: sheetRow || null }
+  );
+}
+
+function dijiLiveShadowPresenceUpsert_(presenceId, studentId, role, state) {
+  return dijiLiveShadowEmit_(
+    'presence.upsert',
+    'presence:' + String(presenceId),
+    studentId,
+    { presenceId: String(presenceId), role: role || 'ogrenci', state: state || 'online' }
+  );
+}
+
+function dijiLiveShadowPresenceClose_(presenceId, studentId, role) {
+  return dijiLiveShadowEmit_(
+    'presence.close',
+    'presence:' + String(presenceId) + ':close',
+    studentId,
+    { presenceId: String(presenceId), role: role || 'ogrenci', state: 'offline' }
+  );
+}
+
 function dijiLiveShadowNotificationRead_(notificationId, studentId) {
   return dijiLiveShadowEmit_(
     'notification.read',
