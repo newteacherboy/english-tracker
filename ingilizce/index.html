@@ -4161,156 +4161,8 @@ function raporlarimKapat() {
                 }
                 const apiURL = "https://script.google.com/macros/s/AKfycbySI3Hz4Y4t9JCNQZlyCS4o1M_1GQthw-lKNRX5g2HJtJCkfOTrBoQurwdFpxXuJpdQOg/exec";
 
-                   // ============================================================
-// DIJI PRESENCE
-// ============================================================
-
-var DIJI_PRESENCE_KEY = 'ing_presence_id';
-var DIJI_PRESENCE_TIMER = null;
-
-function dijiPresenceIdGetir_() {
-
-    var id = localStorage.getItem(DIJI_PRESENCE_KEY);
-
-    if (!id) {
-
-        if (window.crypto && crypto.randomUUID) {
-            id = 'p_' + crypto.randomUUID();
-        } else {
-            id = 'p_' + Date.now() + '_' +
-                Math.random().toString(36).slice(2);
-        }
-
-        localStorage.setItem(DIJI_PRESENCE_KEY, id);
-    }
-
-    return id;
-}
-
-
-function dijiPresenceGonder_(state) {
-
-    var ogrenci = String(
-        window.aktifOgrenciAdi ||
-        localStorage.getItem('ing_aktifOgrenci') ||
-        ''
-    ).trim();
-
-    var token = localStorage.getItem('ing_token') || '';
-
-    if (!ogrenci || !token) {
-        return;
-    }
-
-    var payload = {
-        islem: 'dijiPresence',
-        ogrenci: ogrenci,
-        presenceId: dijiPresenceIdGetir_(),
-        state: state,
-        t: token
-    };
-
-    /*
-     * Google Apps Script cevabını okumuyoruz.
-     * Amaç sadece isteği sunucuya ulaştırmak.
-     * Böylece CORS response okuma problemi Presence'i bozmaz.
-     */
-    fetch(apiURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(payload)
-    }).catch(function (err) {
-
-        console.warn(
-            'Presence gönderilemedi:',
-            err
-        );
-
-    });
-}
-
-
-function dijiPresenceBaslat_() {
-
-    if (DIJI_PRESENCE_TIMER) {
-        clearInterval(DIJI_PRESENCE_TIMER);
-    }
-
-    dijiPresenceGonder_('online');
-
-    DIJI_PRESENCE_TIMER = setInterval(function () {
-
-        if (
-            document.visibilityState === 'visible' &&
-            document.hasFocus()
-        ) {
-            dijiPresenceGonder_('online');
-        }
-
-    }, 30000);
-}
-
-
-function dijiPresenceDurdur_() {
-
-    if (DIJI_PRESENCE_TIMER) {
-
-        clearInterval(DIJI_PRESENCE_TIMER);
-
-        DIJI_PRESENCE_TIMER = null;
-    }
-
-    dijiPresenceGonder_('offline');
-}
-
-
-document.addEventListener(
-    'visibilitychange',
-    function () {
-
-        if (document.visibilityState === 'visible') {
-
-            dijiPresenceGonder_('online');
-
-        } else {
-
-            dijiPresenceGonder_('offline');
-
-        }
-
-    }
-);
-
-
-window.addEventListener(
-    'focus',
-    function () {
-
-        dijiPresenceGonder_('online');
-
-    }
-);
-
-
-window.addEventListener(
-    'blur',
-    function () {
-
-        dijiPresenceGonder_('offline');
-
-    }
-);
-
-
-window.addEventListener(
-    'pagehide',
-    function () {
-
-        dijiPresenceGonder_('offline');
-
-    }
-);
                 
+
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
                         let siniftaOynananOgrenci = null;
                 let dcSayacDurduMu = false;
@@ -4433,7 +4285,7 @@ window.addEventListener(
                     if (otomatikGirisYapilacak) {
                         aktifOgrenciAdi = kayitliOgrenci;
                            setTimeout(function () {
-    dijiPresenceBaslat_();
+ 
 }, 1000);
                         toplamSaniye = parseInt(kayitliSure);
         
@@ -19842,108 +19694,8 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   const $ = id => document.getElementById(id);
   const TOKEN = () => localStorage.getItem('ing_token') || '';
   const OGRT = () => sessionStorage.getItem('ing_ogr_token') || '';
-          /* ================= PRESENCE / ONLINE DURUMU ================= */
-  const DIJI_PRESENCE_KEY = 'ing_presence_id';
-  let dijiPresenceTimer = null;
-
-  function dijiPresenceIdGetir_() {
-    let id = localStorage.getItem(DIJI_PRESENCE_KEY);
-
-    if (!id) {
-      id = 'p_' + crypto.randomUUID();
-      localStorage.setItem(DIJI_PRESENCE_KEY, id);
-    }
-
-    return id;
-  }
-
-  function dijiPresenceGonder_(state) {
-    const ogrenci =
-      String(
-        window.aktifOgrenciAdi ||
-        localStorage.getItem('ing_aktifOgrenci') ||
-        ''
-      ).trim();
-
-    const token = localStorage.getItem('ing_token') || '';
-
-    if (!ogrenci || !token) return;
-
-    const payload = {
-      islem: 'dijiPresence',
-      ogrenci: ogrenci,
-      presenceId: dijiPresenceIdGetir_(),
-      state: state,
-      t: token
-    };
-
-  fetch(apiURL, {
-  method: 'POST',
-  mode: 'no-cors',
-  body: JSON.stringify(payload),
-  keepalive: state === 'offline'
-}).catch(function (e) {
-  console.warn('Presence gönderilemedi:', e);
-});
-  }
-
-  function dijiPresenceBaslat_() {
-    if (dijiPresenceTimer) {
-      clearInterval(dijiPresenceTimer);
-    }
-
-    if (!TOKEN()) return;
-
-    dijiPresenceGonder_('online');
-
-    dijiPresenceTimer = setInterval(function () {
-      if (document.hidden || !document.hasFocus()) return;
-
-      if (TOKEN()) {
-        dijiPresenceGonder_('online');
-      }
-    }, 30000);
-  }
-
-  function dijiPresenceDurdur_() {
-    if (dijiPresenceTimer) {
-      clearInterval(dijiPresenceTimer);
-      dijiPresenceTimer = null;
-    }
-
-    if (TOKEN()) {
-      dijiPresenceGonder_('offline');
-    }
-  }
-
-  document.addEventListener('visibilitychange', function () {
-    if (document.hidden) {
-      dijiPresenceDurdur_();
-    } else {
-      dijiPresenceBaslat_();
-    }
-  });
-
-  window.addEventListener('pagehide', function () {
-    dijiPresenceDurdur_();
-  });
-
-  window.addEventListener('beforeunload', function () {
-    dijiPresenceDurdur_();
-  });
-
-  window.dijiPresenceBaslat_ = dijiPresenceBaslat_;
-  window.dijiPresenceDurdur_ = dijiPresenceDurdur_;
-
-  /* Login olmuş sayfa açılırsa Presence başlat */
-  setTimeout(function () {
-    if (TOKEN()) {
-      dijiPresenceBaslat_();
-    }
-  }, 3000);
-  async function listeYenile() {
-    try { let r = await fetch(apiURL, { cache: 'no-store' }); let l = await r.json(); if (Array.isArray(l)) globalDataCache = l; } catch (e) {}
-  }
+        
+  
 
   /* ================= 1) ÖĞRENCİ GİRİŞİ SUNUCUDA ================= */
   const orgGiris = window.girisYap;
@@ -20223,7 +19975,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     localStorage.setItem('ing_oturumAcik', 'true');
     localStorage.setItem('ing_aktifOgrenci', d.ogrenci || ogr);
           setTimeout(function () {
-    dijiPresenceBaslat_();
+    
 }, 1000);
     if (localStorage.getItem('ing_toplamSaniye') === null) localStorage.setItem('ing_toplamSaniye', '0');
     fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(d.ogrenci || ogr)}`, { keepalive: true }).catch(() => {});
