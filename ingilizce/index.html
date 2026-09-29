@@ -17604,7 +17604,10 @@ function odulUret(k, o) {
     let dunyaSay = Math.ceil(toplam / 10), BAND = 10 * 112, yuk = dunyaSay * BAND + 120;
     let simdi = 1; while (baSet.includes(simdi)) simdi++;
     let kahramanSvg = window.karakterSvg(aktifOgrenciAdi, 56) || krkSVG(KRK[0], 56);
-    let nk = i => ({ x: 50 + Math.sin(i * 0.75) * 28, y: yuk - 90 - i * 112 });
+    let nk = i => ({
+    x: 50 + Math.sin(i * 0.78) * 25,
+    y: yuk - 105 - i * 118
+});
     let bantlar = '', amb = '', dugum = '', rozet = '';
     for (let w = 0; w < dunyaSay; w++) {
       let T = TEMALAR[w % TEMALAR.length], ust = yuk - (w + 1) * BAND - (w === dunyaSay - 1 ? 120 : 0), yuks = BAND + (w === dunyaSay - 1 ? 120 : 0);
@@ -17612,7 +17615,18 @@ function odulUret(k, o) {
       for (let i = 0; i < 9; i++) { let a = T.amb[i % T.amb.length]; amb += `<span class="amb" style="left:${(i * 37 + w * 11) % 90}%;top:${ust + (i * 127) % yuks}px;--s:${a[2]}px;--o:${a[3]};--a:${a[1]};--d:${a[4] + (i % 3)}s;--g:${(i % 5) * .7}s">${a[0]}</span>`; }
     }
     let noktalar = Array.from({ length: toplam }, (_, i) => nk(i));
-    let yol = noktalar.map((p, i) => (i ? 'L' : 'M') + p.x + ' ' + p.y).join(' ');
+    let yol = noktalar.map((p, i) => {
+    if (i === 0) {
+        return `M ${p.x} ${p.y}`;
+    }
+
+    let onceki = noktalar[i - 1];
+
+    let kontrolX = (onceki.x + p.x) / 2;
+    let kontrolY = (onceki.y + p.y) / 2;
+
+    return `Q ${kontrolX} ${kontrolY} ${p.x} ${p.y}`;
+}).join(' ');
     noktalar.forEach((p, i) => {
       let sv = i + 1, bitti = baSet.includes(sv), T = TEMALAR[Math.floor(i / 10) % TEMALAR.length];
       let cls = sv === simdi ? 'simdi' : bitti ? 'bitti' : 'kilit', ic = bitti ? '✓' : sv;
@@ -17688,6 +17702,759 @@ function odulUret(k, o) {
 @keyframes bcPirilti { 0%,100% { opacity:.15; transform:scale(.7); } 50% { opacity:1; transform:scale(1.15); } }
 @keyframes bcYuksel { 0% { transform:translateY(40px); opacity:0; } 20% { opacity:.8; } 100% { transform:translateY(-160px); opacity:0; } }
 @media (prefers-reduced-motion: reduce) { .cb-kart, .cb-ikon, .dv-kart, .dv-kilic, .dl-rozet, .bc-amb-kat span { animation:none !important; transition:none !important; } }
+
+
+/* =========================================================
+   ☁️ GÖKYÜZÜ KULESİ — YENİ PARKUR TASARIMI
+   Mevcut parkur mantığı korunur, sadece görünüm yenilenir.
+   ========================================================= */
+
+#tab-dunya.dc-fullscreen-overlay {
+    background:
+        linear-gradient(
+            180deg,
+            #8190f5 0%,
+            #aab8fb 48%,
+            #dce5ff 100%
+        ) !important;
+    padding: 0 !important;
+}
+
+/* Ana alan */
+#tab-dunya.dc-fullscreen-overlay.active {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99990 !important;
+    overflow: hidden !important;
+}
+
+#dunyaAlan {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   ÜST BİLGİ PANELİ
+   ========================================================= */
+
+.bc-hud {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding:
+        calc(10px + env(safe-area-inset-top, 0px))
+        14px
+        11px;
+
+    background: rgba(34, 29, 76, .94);
+    color: #fff;
+
+    border-bottom: 3px solid rgba(255,255,255,.18);
+
+    box-shadow:
+        0 8px 25px rgba(43, 39, 100, .28);
+
+    z-index: 30;
+
+    font-family: 'Nunito', sans-serif;
+}
+
+.bc-kapat {
+    width: 38px !important;
+    height: 38px !important;
+
+    border-radius: 50% !important;
+    border: 2px solid rgba(255,255,255,.2) !important;
+
+    background: rgba(255,255,255,.14) !important;
+    color: #fff !important;
+
+    font-size: 17px !important;
+
+    box-shadow: 0 3px 8px rgba(0,0,0,.2);
+
+    cursor: pointer;
+}
+
+.bc-rutbe {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f8d99b,
+            #c77b35
+        );
+
+    border: 3px solid rgba(255,255,255,.75);
+
+    box-shadow:
+        0 5px 0 rgba(92,49,23,.28),
+        0 0 0 4px rgba(255,255,255,.08);
+
+    font-size: 23px !important;
+
+    animation: gokyuzuRutbe 2s ease-in-out infinite;
+}
+
+@keyframes gokyuzuRutbe {
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+.bc-bar {
+    flex: 1;
+    min-width: 0;
+}
+
+.bc-bar b {
+    display: block;
+
+    color: #fff;
+
+    font:
+        900 15px 'Fredoka',
+        sans-serif;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bc-bar small {
+    display: block;
+
+    margin-top: 2px;
+
+    color: rgba(255,255,255,.88);
+
+    font:
+        800 11px 'Nunito',
+        sans-serif;
+}
+
+.bc-bar .cubuk {
+    height: 9px !important;
+
+    margin-top: 6px !important;
+
+    border-radius: 10px !important;
+
+    background: rgba(255,255,255,.20) !important;
+
+    overflow: hidden;
+
+    box-shadow:
+        inset 0 1px 2px rgba(0,0,0,.15);
+}
+
+.bc-bar .cubuk i {
+    height: 100% !important;
+
+    border-radius: 10px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffd166,
+            #ff9f68,
+            #ff6b9d
+        ) !important;
+
+    box-shadow:
+        0 0 8px rgba(255,209,102,.45);
+
+    animation: bcDolum 1.2s ease both;
+}
+
+/* =========================================================
+   HARİTA
+   ========================================================= */
+
+.bc-kaydir {
+    flex: 1;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding-bottom: 100px;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            #8997f3 0%,
+            #abbafa 50%,
+            #dce5ff 100%
+        );
+}
+
+.bc-kaydir::-webkit-scrollbar {
+    display: none;
+}
+
+.bc-harita {
+    position: relative;
+
+    min-height: 100%;
+}
+
+/* Dünya bantlarının üstüne yumuşak atmosfer */
+.bc-bant {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    opacity: .72;
+
+    background-image:
+        radial-gradient(
+            circle at 20% 25%,
+            rgba(255,255,255,.18) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 75% 70%,
+            rgba(255,255,255,.14) 0 3px,
+            transparent 4px
+        );
+}
+
+/* Dünya etiketi */
+.bc-dunya-ad {
+    left: 50% !important;
+    right: auto !important;
+
+    transform: translateX(-50%);
+
+    top: 16px !important;
+
+    padding: 7px 15px !important;
+
+    border-radius: 18px !important;
+
+    background:
+        rgba(44,39,99,.58) !important;
+
+    border:
+        2px solid rgba(255,255,255,.28);
+
+    box-shadow:
+        0 5px 14px rgba(35,39,100,.16);
+
+    color: #fff !important;
+
+    font:
+        900 12px 'Nunito',
+        sans-serif !important;
+
+    backdrop-filter: blur(8px);
+
+    white-space: nowrap;
+}
+
+/* =========================================================
+   YOL
+   ========================================================= */
+
+.bc-yol {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+
+    opacity: .9;
+
+    filter:
+        drop-shadow(
+            0 2px 2px rgba(69,76,150,.15)
+        );
+}
+
+/* =========================================================
+   SEVİYE ADASI
+   ========================================================= */
+
+.bc-d {
+    position: absolute;
+
+    transform: translate(-50%, -50%);
+
+    width: 82px !important;
+    height: 70px !important;
+
+    border: none !important;
+
+    border-radius:
+        28px
+        28px
+        22px
+        22px !important;
+
+    display: flex !important;
+
+    align-items: center;
+    justify-content: center;
+
+    padding-top: 2px;
+
+    color: #4b3c88 !important;
+
+    font:
+        900 21px 'Fredoka',
+        sans-serif !important;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #eef2ff 68%,
+            #d9e0ff 100%
+        ) !important;
+
+    border:
+        4px solid rgba(255,255,255,.92) !important;
+
+    box-shadow:
+        0 9px 0 #8795d9,
+        0 15px 22px rgba(65,74,150,.22),
+        0 0 0 5px rgba(255,255,255,.18);
+
+    transition:
+        transform .18s ease,
+        filter .18s ease,
+        box-shadow .18s ease;
+
+    z-index: 8;
+}
+
+/* Adanın altındaki küçük gölge/zemin */
+.bc-d::before {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: -11px;
+
+    width: 62px;
+    height: 17px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+        rgba(112,126,205,.48);
+
+    filter: blur(2px);
+
+    z-index: -1;
+}
+
+/* Ada üstündeki küçük parıltı */
+.bc-d::after {
+    content: "✦";
+
+    position: absolute;
+
+    top: 5px;
+    right: 9px;
+
+    color: rgba(255,255,255,.9);
+
+    font-size: 10px;
+
+    pointer-events: none;
+}
+
+/* Tamamlanmış */
+.bc-d.bitti {
+    background:
+        linear-gradient(
+            180deg,
+            #ecfff4 0%,
+            #c8f7dc 70%,
+            #a9eac8 100%
+        ) !important;
+
+    color: #16824d !important;
+
+    box-shadow:
+        0 9px 0 #61b98c,
+        0 15px 22px rgba(45,145,96,.20),
+        0 0 0 5px rgba(255,255,255,.2);
+}
+
+/* Tamamlanmış tik */
+.bc-d.bitti {
+    font-size: 28px !important;
+}
+
+/* Sıradaki seviye */
+.bc-d.simdi {
+    width: 94px !important;
+    height: 78px !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f7fbff 58%,
+            #dce8ff 100%
+        ) !important;
+
+    color: #493487 !important;
+
+    box-shadow:
+        0 10px 0 #8795dc,
+        0 18px 28px rgba(67,75,157,.26),
+        0 0 0 7px rgba(255,255,255,.32);
+
+    z-index: 20;
+
+    animation:
+        gokyuzuAda 1.8s ease-in-out infinite;
+}
+
+@keyframes gokyuzuAda {
+    0%,100% {
+        transform: translate(-50%,-50%) translateY(0);
+    }
+
+    50% {
+        transform: translate(-50%,-50%) translateY(-6px);
+    }
+}
+
+/* Aktif adanın ışık halkası */
+.bc-d.simdi::before {
+    width: 78px;
+    height: 21px;
+
+    background:
+        rgba(92,111,215,.38);
+}
+
+/* Kilitli */
+.bc-d.kilit {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(238,242,255,.72),
+            rgba(198,207,239,.65)
+        ) !important;
+
+    color: #7c86a8 !important;
+
+    border-color:
+        rgba(255,255,255,.55) !important;
+
+    box-shadow:
+        0 8px 0 rgba(112,124,182,.48),
+        0 12px 18px rgba(65,74,150,.12);
+}
+
+.bc-d.kilit::after {
+    content: "🔒";
+
+    top: 7px;
+    right: 8px;
+
+    font-size: 11px;
+}
+
+/* =========================================================
+   KARAKTER
+   ========================================================= */
+
+.bc-d .oyuncu {
+    position: absolute;
+
+    bottom: 61px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 25;
+
+    filter:
+        drop-shadow(
+            0 7px 6px rgba(48,53,110,.28)
+        );
+
+    pointer-events: none;
+
+    animation:
+        gokyuzuKarakter 1.7s ease-in-out infinite;
+}
+
+@keyframes gokyuzuKarakter {
+    0%,100% {
+        transform:
+            translateX(-50%)
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateX(-50%)
+            translateY(-8px);
+    }
+}
+
+.bc-d .oyuncu svg {
+    border-radius: 50%;
+}
+
+/* =========================================================
+   OYNA BUTONU
+   ========================================================= */
+
+.bc-d .baslat {
+    position: absolute;
+
+    top: 83px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    white-space: nowrap;
+
+    padding: 7px 15px !important;
+
+    border-radius: 14px !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f2f4ff
+        ) !important;
+
+    color: #493487 !important;
+
+    border:
+        2px solid rgba(255,255,255,.95);
+
+    box-shadow:
+        0 5px 12px rgba(51,57,126,.22),
+        0 2px 0 #d3d8f5;
+
+    font:
+        900 12px 'Nunito',
+        sans-serif !important;
+
+    z-index: 30;
+}
+
+/* =========================================================
+   SANDIK
+   ========================================================= */
+
+.bc-sandikr {
+    position: absolute;
+
+    transform: translate(-50%,-50%);
+
+    font-size: 31px;
+
+    z-index: 12;
+
+    filter:
+        drop-shadow(
+            0 5px 4px rgba(55,60,130,.22)
+        );
+
+    animation:
+        gokyuzuSandik 2.2s ease-in-out infinite;
+
+    pointer-events: none;
+}
+
+@keyframes gokyuzuSandik {
+    0%,100% {
+        transform:
+            translate(-50%,-50%)
+            translateY(0)
+            rotate(0);
+    }
+
+    50% {
+        transform:
+            translate(-50%,-50%)
+            translateY(-7px)
+            rotate(5deg);
+    }
+}
+
+.bc-sandikr.acildi {
+    opacity: .35;
+
+    filter:
+        grayscale(1)
+        drop-shadow(
+            0 2px 2px rgba(0,0,0,.1)
+        );
+
+    animation: none;
+}
+
+/* =========================================================
+   KARAKTER ÖDÜLÜ
+   ========================================================= */
+
+.bc-kr {
+    width: 40px !important;
+    height: 40px !important;
+
+    border:
+        3px solid rgba(255,255,255,.9) !important;
+
+    border-radius: 50% !important;
+
+    background:
+        rgba(255,255,255,.92) !important;
+
+    box-shadow:
+        0 5px 12px rgba(53,60,130,.22) !important;
+
+    z-index: 13;
+}
+
+.bc-kr:not(.acik) svg {
+    filter:
+        grayscale(1)
+        brightness(.75)
+        opacity(.35);
+}
+
+/* =========================================================
+   BOSS
+   ========================================================= */
+
+.bc-d.boss {
+    width: 98px !important;
+    height: 98px !important;
+
+    border-radius: 32px !important;
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            #fff6c9 0%,
+            var(--boss) 48%,
+            #59429a 100%
+        ) !important;
+
+    border:
+        5px solid rgba(255,255,255,.88) !important;
+
+    box-shadow:
+        0 11px 0 rgba(73,57,130,.48),
+        0 18px 30px rgba(61,51,125,.30),
+        0 0 0 7px rgba(255,255,255,.16) !important;
+
+    font-size: 45px !important;
+
+    z-index: 15;
+}
+
+.bc-d.boss small {
+    bottom: -23px !important;
+
+    padding: 5px 10px !important;
+
+    border-radius: 12px !important;
+
+    background:
+        rgba(49,43,96,.78) !important;
+
+    backdrop-filter: blur(5px);
+
+    font:
+        900 10px 'Nunito',
+        sans-serif !important;
+
+    color: #fff !important;
+}
+
+/* =========================================================
+   BULUT / ATMOSFER
+   ========================================================= */
+
+.bc-harita .amb {
+    z-index: 2;
+
+    filter:
+        drop-shadow(
+            0 4px 5px rgba(91,102,174,.12)
+        );
+}
+
+/* =========================================================
+   MOBİL
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    #dunyaAlan {
+        width: 100%;
+    }
+
+    .bc-hud {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .bc-bar b {
+        font-size: 13px;
+    }
+
+    .bc-bar small {
+        font-size: 10px;
+    }
+
+    .bc-d {
+        width: 76px !important;
+        height: 66px !important;
+    }
+
+    .bc-d.simdi {
+        width: 88px !important;
+        height: 74px !important;
+    }
+
+    .bc-d.boss {
+        width: 90px !important;
+        height: 90px !important;
+    }
+}
+        
 </style>
 <script>
 (function () {
