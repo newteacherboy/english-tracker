@@ -74,6 +74,22 @@ const supabaseClient = supabase.createClient(
     }, ms].concat(ek));
   };
 })();
+
+        const BAKIM_MODU = true;
+
+
+if(BAKIM_MODU){
+
+    window.addEventListener("load",()=>{
+
+        document.getElementById("bakimEkrani").style.display="flex";
+
+        document.body.style.overflow="hidden";
+
+    });
+
+}
+        
 </script>
                 <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3645,6 +3661,8 @@ const supabaseClient = supabase.createClient(
                 </div>
             </div>
             <script>
+
+                    
 
                     function raporlarimAc() {
     let modal = document.getElementById('tab-raporlar');
@@ -14876,7 +14894,7 @@ function maOgrenciMi(u) {
     return a && a !== 'teacher' && String(u.durum || '').trim().toLowerCase() !== 'onay bekliyor';
 }
 let maXpHarita = {};
-function maLigSiralama(){if(maLigOnbellek&&Date.now()-maLigZaman<15000)return maLigOnbellek;const ben=String(aktifOgrenciAdi||"").trim().toLowerCase(),hafta=typeof yoHaftaKodu==="function"?yoHaftaKodu():"",benObj=maSosyalListe.find(u=>String(u.ogrenci).trim().toLowerCase()===ben);const benXp=benObj?.lig?.hafta===hafta?Number(benObj.lig.xp||0):((typeof yo!=="undefined"&&yo?.lig?.hafta===hafta)?Number(yo.lig.xp||0):0),source=maSosyalListe.length?maSosyalListe:(globalDataCache||[]).filter(maOgrenciMi);const liste=source.map(u=>{const ad=String(u.ogrenci).trim(),k=ad.toLowerCase();return{ad,sinif:String(u.sinif??u.Sinif??"").trim(),puan:Math.round(Number(u.genelOrtalama??u.genelPuan??0)*10)/10,xp:k===ben?benXp:(u.lig?.hafta===hafta?Number(u.lig.xp||0):Number(maXpHarita[k]||0))};}).sort((a,b)=>(b.xp-a.xp)||(b.puan-a.puan)||a.ad.localeCompare(b.ad,"tr"));const harita={};liste.forEach((x,i)=>{x.sira=i+1;x.kod=i<10?"sampiyon":i<30?"super":"yerel";x.benMi=x.ad.toLowerCase()===ben;harita[x.ad.toLowerCase()]=x;});maLigOnbellek={liste,harita};maLigZaman=Date.now();return maLigOnbellek;}
+if(!maTumListe.length) return []; function maLigSiralama(){if(maLigOnbellek&&Date.now()-maLigZaman<15000)return maLigOnbellek;const ben=String(aktifOgrenciAdi||"").trim().toLowerCase(),hafta=typeof yoHaftaKodu==="function"?yoHaftaKodu():"",benObj=maSosyalListe.find(u=>String(u.ogrenci).trim().toLowerCase()===ben);const benXp=benObj?.lig?.hafta===hafta?Number(benObj.lig.xp||0):((typeof yo!=="undefined"&&yo?.lig?.hafta===hafta)?Number(yo.lig.xp||0):0),source=maSosyalListe.length?maSosyalListe:(globalDataCache||[]).filter(maOgrenciMi);const liste=source.map(u=>{const ad=String(u.ogrenci).trim(),k=ad.toLowerCase();return{ad,sinif:String(u.sinif??u.Sinif??"").trim(),puan:Math.round(Number(u.genelOrtalama??u.genelPuan??0)*10)/10,xp:k===ben?benXp:(u.lig?.hafta===hafta?Number(u.lig.xp||0):Number(maXpHarita[k]||0))};}).sort((a,b)=>(b.xp-a.xp)||(b.puan-a.puan)||a.ad.localeCompare(b.ad,"tr"));const harita={};liste.forEach((x,i)=>{x.sira=i+1;x.kod=i<10?"sampiyon":i<30?"super":"yerel";x.benMi=x.ad.toLowerCase()===ben;harita[x.ad.toLowerCase()]=x;});maLigOnbellek={liste,harita};maLigZaman=Date.now();return maLigOnbellek;}
 function maLigBilgi(isim) {
     let x = maLigSiralama().harita[String(isim || '').trim().toLowerCase()];
     let kod = x ? x.kod : 'yerel', L = MA_LIGLER[kod];
@@ -14901,48 +14919,52 @@ let maTumListe = [], maTumZaman = 0, maTumSoz = null, maSosyalListe = [];
 async function maTumVeriHaritasi(){try{const r=await fetch(apiURL+"?islem=sosyalOgrencilerGetir&ogrenci="+encodeURIComponent(aktifOgrenciAdi||""));const d=await r.json();if(Array.isArray(d)){maSosyalListe=d;const h={__students:d};d.forEach(x=>h[String(x.ogrenci).trim().toLowerCase()]=x);return h;}}catch(e){}maSosyalListe=[];try{return await yoTumVeri();}catch(e){return {};}}
 async function maTumGetir(){
 
-    if(maTumListe.length && Date.now()-maTumZaman < 120000){
-        return maTumListe;
-    }
+    const aktifHafta = yoHaftaKodu();
 
-    const haftaKod = yoHaftaKodu();
+    console.log("Lig verisi çekiliyor:", aktifHafta);
 
-    const {data,error} = await supabaseClient
-    .from("student_xp_weekly")
-    .select("*")
-    .eq("week_code",haftaKod)
-    .order("week_xp",{ascending:false});
+    const { data, error } = await supabaseClient
+        .from("student_xp_weekly")
+        .select(`
+            student_id,
+            student_name,
+            week_code,
+            week_xp,
+            total_xp,
+            gold,
+            freeze_count,
+            unlocked_character_count
+        `)
+        .eq("week_code", aktifHafta)
+        .order("week_xp", { ascending:false });
 
 
     if(error){
-        console.error(error);
+        console.error("Lig veri hatası:", error);
         return [];
     }
 
 
-    maTumListe = data.map((x,index)=>{
+    maTumListe = data.map((ogrenci,index)=>({
 
-        return {
-            id:x.student_id,
-            ogrenci:x.student_name,
-            ad:x.student_name,
-            sinif:"",
-            lig:{
-                hafta:x.week_code,
-                xp:x.week_xp
-            },
-            xp:x.week_xp,
-            sira:index+1
-        }
+        id: ogrenci.student_name,
 
-    });
+        ogrenci: ogrenci.student_name,
 
+        ad: ogrenci.student_name,
 
-    maSosyalListe = maTumListe;
+        xp: Number(ogrenci.week_xp || 0),
 
-    maTumZaman = Date.now();
+        toplamXP: Number(ogrenci.total_xp || 0),
 
-    maLigOnbellek=null;
+        altin: Number(ogrenci.gold || 0),
+
+        ligSirasi:index + 1,
+
+        lig:null
+
+    }));
+
 
     return maTumListe;
 }
@@ -21417,7 +21439,68 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 }
 </style>
 
+<!-- Diji Medu Bakım Ekranı -->
+<div id="bakimEkrani" style="
+display:none;
+position:fixed;
+z-index:99999;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(135deg,#f0f7ff,#ffffff);
+font-family:'Arial',sans-serif;
+align-items:center;
+justify-content:center;
+text-align:center;
+">
 
+<div style="
+background:white;
+padding:40px;
+border-radius:30px;
+box-shadow:0 15px 40px rgba(0,0,0,.12);
+max-width:420px;
+">
+
+<div style="font-size:70px;">
+🛠️
+</div>
+
+<h1 style="
+color:#2563eb;
+font-size:34px;
+margin:15px 0;
+">
+Diji Medu
+</h1>
+
+<h2 style="
+color:#374151;
+">
+Kısa Bir Mola Veriyoruz
+</h2>
+
+<p style="
+color:#6b7280;
+font-size:17px;
+line-height:1.6;
+">
+Sistemimizi daha güzel ve hızlı yapmak için küçük bir bakım yapıyoruz.
+<br><br>
+🚀 Çok yakında tekrar buradayız!
+</p>
+
+<div style="
+margin-top:25px;
+font-size:40px;
+">
+📚 ✨ 🎮
+</div>
+
+</div>
+
+</div>
                 
         </body>
         </html>
