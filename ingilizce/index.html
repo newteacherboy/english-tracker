@@ -20847,7 +20847,7 @@ font-size:40px;
 
 </div>
 
-                <!-- ===================== SUPABASE UYUM BLOĞU (v3) =====================
+            <!-- ===================== SUPABASE UYUM BLOĞU (v3) =====================
      </body> etiketinin hemen ÜSTÜNE, en sona yapıştır.
      Medu Akış, Keşfet ve Lig'in öğrenci listesini sunucudan (sosyalOgrencilerGetir) alır.
      Eski sürüm, veritabanına anahtarsız doğrudan bağlanmaya çalışıyordu ve boş liste dönüyordu.
@@ -20877,6 +20877,57 @@ font-size:40px;
     })();
     return soz;
   };
+})();
+</script>
+
+<script>
+/* ===== [2] AVATAR VE OYUN VERİSİ: girişte sunucudaki kayıt esas alınsın ===== */
+(function () {
+  try { sessionStorage.setItem('ing_ka_soruldu', '1'); } catch (e) {}   /* sunucu verisi gelmeden "karakterini seç" sorulmasın */
+  let ilk = {};
+  let org = window.yoSunucudanAl;
+  if (typeof org !== 'function') return;
+  window.yoSunucudanAl = async function () {
+    let isim = typeof yoIsim !== 'undefined' ? yoIsim : '', yerelLig = null;
+    if (isim && !ilk[isim] && typeof yo !== 'undefined' && yo) { ilk[isim] = 1; yerelLig = yo.lig ? { ...yo.lig } : null; yo.guncelleme = 0; }
+    try { await org.apply(this, arguments); } catch (e) {}
+    try {
+      if (yerelLig && yo && yo.lig && yo.lig.hafta === yerelLig.hafta && (yerelLig.xp || 0) > (yo.lig.xp || 0)) { yo.lig.xp = yerelLig.xp; yoKaydet(); }
+      if (typeof yoAvatarUygula === 'function') yoAvatarUygula();
+      if (yo && !yo.karakter) sessionStorage.removeItem('ing_ka_soruldu');   /* sunucuda da karakter yoksa şimdi sorulabilir */
+    } catch (e) {}
+  };
+})();
+
+/* ===== [3] ÜNİTE SEÇİMİ: seçilen çipin gerçek ünite numarası kullanılsın ===== */
+(function () {
+  const secili = kutu => [...document.querySelectorAll('#' + kutu + ' .unite-chip.selected')].map(c => parseInt(c.innerText)).filter(n => !isNaN(n));
+  window.kyUniteSecimleriniGuncelle = function () { kySecilenUniteler = secili('kyUniteBox'); };
+  window.jpUniteSecimleriniGuncelle = function () { jpSecilenUniteler = secili('jpUniteBox'); };
+  window.boslukUniteSecimGuncelle = function () { boslukSecilenUniteler = secili('boslukUniteBox'); };
+})();
+
+/* ===== [4] DİKTE düğmesi + DÜELLO kartlarının tekrarı ===== */
+(function () {
+  setInterval(() => {
+    let d = document.getElementById('yoDikteKart');
+    if (d && !d.dataset.uyum && typeof dikteAc === 'function') {
+      d.dataset.uyum = '1';
+      d.removeAttribute('onclick');
+      d.onclick = () => {
+        dikteAc();
+        setTimeout(() => { let m = document.getElementById('yoModal'); if (m && m.classList.contains('acik') && typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-1); }, 150);
+      };
+    }
+    let gorulen = new Set();
+    document.querySelectorAll('#tab-meduakis .dl-kart').forEach(k => {
+      let h = k.querySelector('h4'), anahtar = h ? h.innerText.replace(/\d+ aktif/, '').trim() : '';
+      if (!anahtar) return;
+      if (gorulen.has(anahtar)) k.remove(); else gorulen.add(anahtar);
+    });
+    let davetler = document.querySelectorAll('.dv-perde');
+    for (let i = 1; i < davetler.length; i++) davetler[i].remove();
+  }, 400);
 })();
 </script>
                 
