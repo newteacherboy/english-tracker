@@ -20563,7 +20563,30 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 
   async function karsilamaGoster() {
     if (!girisli() || !yoVar()) return;
+
     let isim = aktifOgrenciAdi;
+
+    // Aynı öğrenci için karşılama paneli aynı gün içinde
+    // 1 saatten daha sık gösterilmesin.
+    const krKey = 'karsilamaSonGosterim_' + kucuk(String(isim));
+    const simdi = Date.now();
+    const bugun = new Date().toISOString().slice(0, 10);
+
+    let sonKayit = null;
+
+    try {
+        sonKayit = JSON.parse(localStorage.getItem(krKey) || 'null');
+    } catch (e) {
+        sonKayit = null;
+    }
+
+    if (
+        sonKayit &&
+        sonKayit.tarih === bugun &&
+        (simdi - Number(sonKayit.zaman || 0)) < 60 * 60 * 1000
+    ) {
+        return;
+    }
     let av = (typeof karakterSvg === 'function' && karakterSvg(isim, 64)) || (typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(isim) : '🦜');
     let ligHtml = '';
     try {
@@ -20596,6 +20619,10 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     document.body.appendChild(p);
     krAcik = p;
     yoKaydet();
+              localStorage.setItem(krKey, JSON.stringify({
+        zaman: Date.now(),
+        tarih: bugun
+    }));
     let kapat = () => { p.remove(); krAcik = null; };
     p.querySelector('#krParkur').onclick = () => { 
   kapat(); 
