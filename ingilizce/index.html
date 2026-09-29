@@ -20847,7 +20847,7 @@ font-size:40px;
 
 </div>
 
-            <!-- ===================== SUPABASE UYUM BLOĞU (v3) =====================
+        <!-- ===================== SUPABASE UYUM BLOĞU (v3) =====================
      </body> etiketinin hemen ÜSTÜNE, en sona yapıştır.
      Medu Akış, Keşfet ve Lig'in öğrenci listesini sunucudan (sosyalOgrencilerGetir) alır.
      Eski sürüm, veritabanına anahtarsız doğrudan bağlanmaya çalışıyordu ve boş liste dönüyordu.
@@ -20928,6 +20928,35 @@ font-size:40px;
     let davetler = document.querySelectorAll('.dv-perde');
     for (let i = 1; i < davetler.length; i++) davetler[i].remove();
   }, 400);
+})();
+</script>
+
+<script>
+/* ===== [5] RUBRİK: kaydın sonucu ekranda görünsün, başarılıysa veriler yenilensin ===== */
+(function () {
+  const orgFetch = window.fetch;
+  function bildir(metin, iyi) {
+    let d = document.createElement('div');
+    d.setAttribute('role', 'status');
+    d.style.cssText = 'position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:100000080;max-width:92vw;padding:12px 16px;border-radius:14px;font:800 13.5px Nunito,sans-serif;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.3);background:' + (iyi ? '#16a34a' : '#dc2626');
+    d.innerText = metin;
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), iyi ? 3500 : 9000);
+  }
+  window.fetch = function (url, opt) {
+    let u = typeof url === 'string' ? url : (url && url.url) || '';
+    let p = orgFetch.apply(this, arguments);
+    if (!/islem=rubrikKaydet/.test(u)) return p;
+    return p.then(r => {
+      r.clone().json().then(d => {
+        if (d && d.status === 'success') {
+          bildir('✅ Rubrik ' + (d.guncellendi ? 'güncellendi' : 'kaydedildi') + (d.uyari ? ' · ⚠️ ' + d.uyari : ''), !d.uyari);
+          orgFetch(apiURL).then(x => x.json()).then(l => { if (Array.isArray(l) && l.length) { globalDataCache = l; try { ogretmenSelectDoldur(); } catch (e) {} } }).catch(() => {});
+        } else bildir('⚠️ Rubrik kaydedilemedi: ' + ((d && (d.message || d.mesaj)) || ('HTTP ' + r.status)), false);
+      }).catch(() => bildir('⚠️ Rubrik kaydedilemedi (HTTP ' + r.status + ')', false));
+      return r;
+    }).catch(e => { bildir('⚠️ Sunucuya ulaşılamadı, rubrik kaydedilmedi.', false); throw e; });
+  };
 })();
 </script>
                 
