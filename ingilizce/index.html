@@ -4308,7 +4308,7 @@ function raporlarimKapat() {
                                                                         baslatSayac();
                         arkaPlanVeriYenilemeBaslat();
                         gununKonusuYukle();
-                        duyuruKontrolEt();
+                        anaPanelDuyuruBildirimleriYukle();
                                                        
                             meduAkisAc();
                               gunlukEnerjiBonusuKontrolEt();
@@ -5225,7 +5225,7 @@ mesajlar.forEach(m => {
                     let havuz = window.masterKelimeHavuzu || [];
                     let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
                     let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a,b) => a-b);
-                    if (uniteler.length === 0) uniteler = [1,2,3,4,5];
+                    if (uniteler.length === 0) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
                     let box = document.getElementById(uniteBoxId);
                     box.innerHTML = "";
                     let secilen = [];
@@ -8370,7 +8370,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                             setTimeout(puanBildirimKontrolEt, 1400);
                             setInterval(puanBildirimKontrolEt, 45000);
                     
-                                            duyuruKontrolEt();
+                                            anaPanelDuyuruBildirimleriYukle();
                      
                         meduAkisAc();
                         gunlukEnerjiBonusuKontrolEt();
@@ -9148,7 +9148,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
             let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a, b) => a - b);
             
-            if (uniteler.length === 0) uniteler = [1, 2, 3, 4, 5];
+            if (uniteler.length === 0) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
         
             let uniteBox = document.getElementById('jpUniteBox');
             uniteBox.innerHTML = "";
@@ -9516,7 +9516,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
             let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a, b) => a - b);
             
-            if (uniteler.length === 0) uniteler = [1, 2, 3, 4, 5];
+            if (uniteler.length === 0) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
         
             let uniteBox = document.getElementById('boslukUniteBox');
             uniteBox.innerHTML = "";
@@ -10861,7 +10861,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                                // ===== DUYURU SİSTEMİ (öğrenci tarafı) =====
                 let duyuruAktifId = null;
         
-                function duyuruKontrolEt() {
+                async function anaPanelDuyuruBildirimleriYukle(){const pa=document.getElementById("panel-alani");if(!pa)return;let box=document.getElementById("anaPanelSosyalOzet");if(!box){box=document.createElement("div");box.id="anaPanelSosyalOzet";const ref=pa.querySelector(".tabs-container");if(ref)pa.insertBefore(box,ref);else pa.prepend(box);}try{const dr=await fetch(apiURL+"?islem=duyurulariGetir&ogrenci="+encodeURIComponent(aktifOgrenciAdi||"")).then(r=>r.json()).catch(()=>null);const nr=await fetch(apiURL+"?islem=bildirimlerim&ogrenci="+encodeURIComponent(aktifOgrenciAdi||"")+"&tumu=1").then(r=>r.json()).catch(()=>({liste:[]}));const d=dr&&dr.baslik?dr:null,n=(nr&&nr.liste)||[];const duyuru=d?'<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:12px 14px"><div style="font-weight:900;color:#334155">📢 '+guvenliMetin(d.baslik)+'</div><div style="font-size:12px;color:#64748b;margin-top:5px;line-height:1.45">'+guvenliMetin(d.mesaj||"")+'</div></div>':'<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:12px 14px;color:#64748b">📢 Şu anda duyuru yok.</div>';const bild=n.slice(0,5).map(x=>'<div style="padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:#475569"><b>'+guvenliMetin(x.gonderen||"Diji-Medu")+'</b> '+guvenliMetin(x.metin||"Yeni bildirimin var")+'</div>').join("");box.innerHTML='<div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:10px;margin:0 0 12px">'+duyuru+'<div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px"><div style="font-weight:900;color:#334155;margin-bottom:5px">🔔 Bildirimlerin</div>'+(bild||'<div style="font-size:12px;color:#94a3b8;padding:6px 0">Yeni bildirim yok.</div>')+'</div></div>';}catch(e){box.innerHTML="";}}function duyuruKontrolEt() {
                     if (!aktifOgrenciAdi || aktifOgrenciAdi.toLowerCase() === "teacher") return;
                     fetch(`${apiURL}?islem=duyurulariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`)
                     .then(res => res.json())
@@ -14861,26 +14861,7 @@ function maOgrenciMi(u) {
     return a && a !== 'teacher' && String(u.durum || '').trim().toLowerCase() !== 'onay bekliyor';
 }
 let maXpHarita = {};
-function maLigSiralama() {
-    if (maLigOnbellek && Date.now() - maLigZaman < 15000) return maLigOnbellek;
-    let ben = String(aktifOgrenciAdi || '').trim().toLowerCase();
-    let hafta = typeof yoHaftaKodu === 'function' ? yoHaftaKodu() : '';
-    let benXp = (typeof yo !== 'undefined' && yo && yo.lig && yo.lig.hafta === hafta) ? (yo.lig.xp || 0) : 0;
-    let liste = (globalDataCache || []).filter(maOgrenciMi).map(u => {
-        let ad = String(u.ogrenci).trim(), k = ad.toLowerCase();
-        return { ad, sinif: String(u.Sinif || '').trim(), puan: Math.round((Number(u.genelOrtalama) || 0) * 10) / 10, xp: k === ben ? benXp : (maXpHarita[k] || 0) };
-    }).sort((a, b) => (b.xp - a.xp) || (b.puan - a.puan) || a.ad.localeCompare(b.ad, 'tr'));
-    let harita = {};
-    liste.forEach((x, i) => {
-        x.sira = i + 1;
-        x.kod = i < 10 ? 'sampiyon' : i < 30 ? 'super' : 'yerel';
-        x.benMi = x.ad.toLowerCase() === ben;
-        harita[x.ad.toLowerCase()] = x;
-    });
-    maLigOnbellek = { liste, harita };
-    maLigZaman = Date.now();
-    return maLigOnbellek;
-}
+function maLigSiralama(){if(maLigOnbellek&&Date.now()-maLigZaman<15000)return maLigOnbellek;const ben=String(aktifOgrenciAdi||"").trim().toLowerCase(),hafta=typeof yoHaftaKodu==="function"?yoHaftaKodu():"",benObj=maSosyalListe.find(u=>String(u.ogrenci).trim().toLowerCase()===ben);const benXp=benObj?.lig?.hafta===hafta?Number(benObj.lig.xp||0):((typeof yo!=="undefined"&&yo?.lig?.hafta===hafta)?Number(yo.lig.xp||0):0),source=maSosyalListe.length?maSosyalListe:(globalDataCache||[]).filter(maOgrenciMi);const liste=source.map(u=>{const ad=String(u.ogrenci).trim(),k=ad.toLowerCase();return{ad,sinif:String(u.sinif??u.Sinif??"").trim(),puan:Math.round(Number(u.genelOrtalama??u.genelPuan??0)*10)/10,xp:k===ben?benXp:(u.lig?.hafta===hafta?Number(u.lig.xp||0):Number(maXpHarita[k]||0))};}).sort((a,b)=>(b.xp-a.xp)||(b.puan-a.puan)||a.ad.localeCompare(b.ad,"tr"));const harita={};liste.forEach((x,i)=>{x.sira=i+1;x.kod=i<10?"sampiyon":i<30?"super":"yerel";x.benMi=x.ad.toLowerCase()===ben;harita[x.ad.toLowerCase()]=x;});maLigOnbellek={liste,harita};maLigZaman=Date.now();return maLigOnbellek;}
 function maLigBilgi(isim) {
     let x = maLigSiralama().harita[String(isim || '').trim().toLowerCase()];
     let kod = x ? x.kod : 'yerel', L = MA_LIGLER[kod];
@@ -14900,49 +14881,10 @@ function maKisiKur(u, b) {
         rozetler: (u.rozetListesi ? u.rozetListesi.filter(r => (u.genelOrtalama || 0) >= r.gerekliPuan) : []).map(r => [r.emoji, r.rozetAdi])
     };
 }
-function maBen() {
-    let u = (globalDataCache || []).find(x => String(x.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi || '').toLowerCase()) || { ogrenci: aktifOgrenciAdi || 'Sen' };
-    let yerel = (typeof yo !== 'undefined' && yo) ? yo : {};
-    let o = maKisiKur(u, yerel);
-    o.id = 'ben';
-    o.av = (yerel.takili && yerel.takili.renk) || '#bdeef6';
-    o.seri = parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0');
-    return o;
-}
-let maTumListe = [], maTumZaman = 0, maTumSoz = null;
-async function maTumVeriHaritasi() {
-    try {
-        let r = await fetch(`${apiURL}?islem=ekVeriOzet`);
-        let d = await r.json();
-        if (Array.isArray(d) && (d.length === 0 || 'takili' in d[0])) {
-            let h = {};
-            d.forEach(x => { h[String(x.ogrenci).trim().toLowerCase()] = x; });
-            return h;
-        }
-    } catch (e) {}
-    try { return await yoTumVeri(); } catch (e) { return {}; }
-}
-async function maTumGetir() {
-    if (maTumListe.length && Date.now() - maTumZaman < 120000) return maTumListe;
-    if (maTumSoz) return maTumSoz;
-    maTumSoz = (async () => {
-                let veri = await maTumVeriHaritasi();
-        let haftaKod = typeof yoHaftaKodu === 'function' ? yoHaftaKodu() : '';
-        maXpHarita = {};
-        Object.keys(veri || {}).forEach(k => { let b = veri[k]; if (b && b.lig && b.lig.hafta === haftaKod) maXpHarita[k] = b.lig.xp || 0; });
-        maLigOnbellek = null;
-        let benK = (globalDataCache || []).find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi || '').toLowerCase());
-        let benSinif = benK ? String(benK.Sinif || '').trim() : '';
-        let ben = String(aktifOgrenciAdi || '').toLowerCase();
-        maTumListe = (globalDataCache || []).filter(u => maOgrenciMi(u) && String(u.ogrenci).trim().toLowerCase() !== ben)
-            .map(u => maKisiKur(u, veri[String(u.ogrenci).trim().toLowerCase()]));
-        maSinifListeSon = maTumListe.filter(o => o.sinif === benSinif);
-        maTumZaman = Date.now();
-        maTumSoz = null;
-        return maTumListe;
-    })();
-    return maTumSoz;
-}
+function maBen(){const u=maSosyalListe.find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||(globalDataCache||[]).find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||{ogrenci:aktifOgrenciAdi||"Sen"};const yerel=(typeof yo!=="undefined"&&yo)?yo:{},o=maKisiKur({ogrenci:u.ogrenci,Sinif:u.sinif??u.Sinif??"",genelOrtalama:u.genelOrtalama??u.genelPuan??0,rozetListesi:u.rozetListesi||[]},Object.keys(yerel).length?yerel:u);o.id="ben";o.av=(yerel.takili&&yerel.takili.renk)||"#bdeef6";o.seri=parseInt(localStorage.getItem("ing_girisSerisiSayisi")||"0");return o;}
+let maTumListe = [], maTumZaman = 0, maTumSoz = null, maSosyalListe = [];
+async function maTumVeriHaritasi(){try{const r=await fetch(apiURL+"?islem=sosyalOgrencilerGetir&ogrenci="+encodeURIComponent(aktifOgrenciAdi||""));const d=await r.json();if(Array.isArray(d)){maSosyalListe=d;const h={__students:d};d.forEach(x=>h[String(x.ogrenci).trim().toLowerCase()]=x);return h;}}catch(e){}maSosyalListe=[];try{return await yoTumVeri();}catch(e){return {};}}
+async function maTumGetir(){if(maTumListe.length&&Date.now()-maTumZaman<120000)return maTumListe;if(maTumSoz)return maTumSoz;maTumSoz=(async()=>{const veri=await maTumVeriHaritasi(),haftaKod=typeof yoHaftaKodu==="function"?yoHaftaKodu():"";maXpHarita={};Object.keys(veri||{}).forEach(k=>{const b=veri[k];if(b&&b.lig&&b.lig.hafta===haftaKod)maXpHarita[k]=b.lig.xp||0;});maLigOnbellek=null;const ben=String(aktifOgrenciAdi||"").toLowerCase(),source=maSosyalListe.length?maSosyalListe:(globalDataCache||[]).filter(maOgrenciMi);const benK=source.find(u=>String(u.ogrenci).trim().toLowerCase()===ben),benSinif=benK?String(benK.sinif??benK.Sinif??"").trim():"";maTumListe=source.filter(u=>String(u.ogrenci).trim().toLowerCase()!==ben).map(u=>maKisiKur({ogrenci:u.ogrenci,Sinif:u.sinif??u.Sinif??"",genelOrtalama:u.genelOrtalama??u.genelPuan??0,rozetListesi:u.rozetListesi||[]},veri[String(u.ogrenci).trim().toLowerCase()]||u));maSinifListeSon=maTumListe.filter(o=>o.sinif===benSinif);maTumZaman=Date.now();maTumSoz=null;return maTumListe;})();return maTumSoz;}
 async function maSinifGetir() { await maTumGetir(); return maSinifListeSon; }
 function maBul(id) { return id === 'ben' ? maBen() : (maTumListe.find(o => o.id === id) || maSinifListeSon.find(o => o.id === id)); }
 
@@ -15072,12 +15014,7 @@ function maAkisListeHtml() {
       <div class="akis-metin">${guvenliMetin(String(e.metin))}</div>${aksiyon}</div>`;
     }).join('');
 }
-function maAkisKisiAc(ad) {
-    ad = String(ad || '').toLowerCase();
-    if (ad === String(aktifOgrenciAdi || '').toLowerCase()) { maSekmeSec('vitrin'); return; }
-        let o = maTumListe.find(x => String(x.id).toLowerCase() === ad);
-    if (o) maProfilAc(o.id); else { maToast('Öğrenci bilgileri yükleniyor, birazdan tekrar dene.'); maTumGetir(); }
-}
+async function maAkisKisiAc(ad){ad=String(ad||"").toLowerCase();if(ad===String(aktifOgrenciAdi||"").toLowerCase()){maSekmeSec("vitrin");return;}await maTumGetir();const o=maTumListe.find(x=>String(x.id).toLowerCase()===ad)||maSinifListeSon.find(x=>String(x.id).toLowerCase()===ad);if(o)maProfilAc(o.id);else maToast("Öğrenci bilgisi bulunamadı.");}
 function maBegen(id, btn) {
     let hedef = id.replace(/^akis-/, '');
     let b = !maBegeni.has(id);
@@ -16700,57 +16637,7 @@ if (typeof orgXp === 'function') {
     if (kapat) kapat.click(); else if (ov) ov.style.display = 'none';
     return metin;
   }
-  async function karsilamaGoster() {
-    if (!girisli() || !yoVar()) return;
-    let isim = aktifOgrenciAdi;
-    let av = (typeof karakterSvg === 'function' && karakterSvg(isim, 64)) || (typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(isim) : '🦜');
-    let ligHtml = '';
-    try {
-      if (typeof maTumGetir === 'function') { await maTumGetir(); maLigOnbellek = null; }
-      let ben = maLigSiralama().liste.find(x => x.benMi);
-      if (ben) {
-        let L = MA_LIGLER[ben.kod], once = yo.sonGirisSira, fark = once ? once - ben.sira : 0;
-        yo.sonGirisSira = ben.sira;
-        let ok = fark > 0 ? `<span class="kr-ok">📈</span>` : fark < 0 ? `<span class="kr-ok asagi">📉</span>` : '';
-        let yazi = fark > 0 ? `Son girişinden beri <b>${fark} sıra yükseldin!</b>` : fark < 0 ? `${-fark} sıra düştün, hadi geri al! 💪` : `Bu hafta ${ben.xp} XP`;
-        ligHtml = `<div class="kr-lig" style="--lg:${L.grad}"><span style="font-size:34px">${L.ikon}</span><span><b>${L.ad} · ${ben.sira}. sıra</b>${yazi}</span>${ok}</div>`;
-      }
-    } catch (e) {}
-    let hedefYuzde = Math.min(100, Math.round(((yo.xpGun && yo.xpGun.xp) || 0) / (yo.hedef || 50) * 100));
-    let p = document.createElement('div');
-    p.className = 'od-perde kr-perde';
-    p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Hoş geldin');
-    p.innerHTML = `<div class="kr-kart">
-      <div class="kr-ust"><div class="kr-av">${av}</div><div><h3>Hoş geldin, ${guvenliMetin(String(isim).split(' ')[0])}! 👋</h3><small>${seri() > 1 ? `🔥 ${seri()} günlük serin var${window.seriCarpani() > 1 ? ` · altınların ${window.seriCarpani()}x!` : '!'}` : 'Bugün harika bir gün olacak!'}</small></div></div>
-      <div class="kr-cipler">
-        <div class="kr-cip" style="--g:.2s">⚡ ${window.genelEnerjiKalan ?? '–'}<small>Enerji</small></div>
-        <div class="kr-cip" style="--g:.3s">🪙 ${yo.altin || 0}<small>Altın</small></div>
-        <div class="kr-cip" style="--g:.4s">⭐ ${(yo.lig && yo.lig.xp) || 0}<small>Haftalık XP</small></div>
-        <div class="kr-cip" style="--g:.5s">🎯 %${hedefYuzde}<small>Günlük hedef</small></div>
-      </div>
-      ${ligHtml}
-      <div id="krDuyuruAlan"></div>
-      <div id="krBildirimAlan">${krBildirimHtml()}</div>
-      <div id="krDuelloAlan"></div>
-      <div class="kr-btnler"><button class="kr-ana" id="krParkur">🧙 Parkura devam</button><button class="kr-ikinci" id="krAkis">🎡 Akışa bak</button></div>
-    </div>`;
-    document.body.appendChild(p);
-    krAcik = p;
-    yoKaydet();
-    let kapat = () => { p.remove(); krAcik = null; };
-        p.querySelector('#krParkur').onclick = () => { kapat(); (window.dunyaAc || baModuAc)(); };
-    p.querySelector('#krAkis').onclick = () => { kapat(); if (typeof meduAkisAc === 'function') { maSekme = 'akis'; meduAkisAc(); } };
-    setTimeout(() => p.querySelector('#krParkur').focus({ preventScroll: true }), 400);
-    let deneme = 0, t = setInterval(() => {
-      let d = duyuruYakala();
-      if (d && $('krDuyuruAlan')) $('krDuyuruAlan').innerHTML = `<div class="kr-bolum"><h4>📢 Duyuru</h4>${guvenliMetin(d).replace(/\n/g, '<br>')}</div>`;
-      if (d || ++deneme > 10) clearInterval(t);
-    }, 700);
-    await duellolarGetir();
-    let bekleyen = dlListe.filter(d => d.durum === 'bekliyor' && kucuk(d.alici) === kucuk(aktifOgrenciAdi));
-    let aktif = dlListe.filter(d => d.durum === 'kabul');
-    if ((bekleyen.length || aktif.length) && $('krDuelloAlan')) $('krDuelloAlan').innerHTML = `<div class="kr-bolum"><h4>⚔️ Düellolar</h4><div class="dl-alan">${dlListeHtml(true)}</div></div>`;
-  }
+  async function karsilamaGoster(){return;}
   let krGosterilen = '';
   setInterval(() => {
     if (!girisli() || !yoVar() || krGosterilen === kucuk(aktifOgrenciAdi)) return;
@@ -20956,7 +20843,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     let p = $('panel-alani');
     if (!p || p.style.display !== 'block' || typeof aktifOgrenciAdi === 'undefined' || !aktifOgrenciAdi) return;
     clearInterval(bekle);
-    setTimeout(() => { if (!kontrolYapildi && typeof window.duyuruKontrolEt === 'function') window.duyuruKontrolEt(); }, 2500);
+    setTimeout(() => { if (!kontrolYapildi && typeof window.duyuruKontrolEt === 'function') window.anaPanelDuyuruBildirimleriYukle(); }, 2500);
   }, 1000);
 
   /* 4) Duyuru geçmişi: Yardım penceresinin en üstüne düğme */
