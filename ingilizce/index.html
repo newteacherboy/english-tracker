@@ -1,4 +1,13 @@
-        <!DOCTYPE html>
+const SUPABASE_URL = "SENİN_SUPABASE_URL";
+const SUPABASE_KEY = "SENİN_ANON_KEY";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+<!DOCTYPE html>
         <html lang="tr">
         <head>
 
@@ -14884,7 +14893,53 @@ function maKisiKur(u, b) {
 function maBen(){const u=maSosyalListe.find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||(globalDataCache||[]).find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||{ogrenci:aktifOgrenciAdi||"Sen"};const yerel=(typeof yo!=="undefined"&&yo)?yo:{},o=maKisiKur({ogrenci:u.ogrenci,Sinif:u.sinif??u.Sinif??"",genelOrtalama:u.genelOrtalama??u.genelPuan??0,rozetListesi:u.rozetListesi||[]},Object.keys(yerel).length?yerel:u);o.id="ben";o.av=(yerel.takili&&yerel.takili.renk)||"#bdeef6";o.seri=parseInt(localStorage.getItem("ing_girisSerisiSayisi")||"0");return o;}
 let maTumListe = [], maTumZaman = 0, maTumSoz = null, maSosyalListe = [];
 async function maTumVeriHaritasi(){try{const r=await fetch(apiURL+"?islem=sosyalOgrencilerGetir&ogrenci="+encodeURIComponent(aktifOgrenciAdi||""));const d=await r.json();if(Array.isArray(d)){maSosyalListe=d;const h={__students:d};d.forEach(x=>h[String(x.ogrenci).trim().toLowerCase()]=x);return h;}}catch(e){}maSosyalListe=[];try{return await yoTumVeri();}catch(e){return {};}}
-async function maTumGetir(){if(maTumListe.length&&Date.now()-maTumZaman<120000)return maTumListe;if(maTumSoz)return maTumSoz;maTumSoz=(async()=>{const veri=await maTumVeriHaritasi(),haftaKod=typeof yoHaftaKodu==="function"?yoHaftaKodu():"";maXpHarita={};Object.keys(veri||{}).forEach(k=>{const b=veri[k];if(b&&b.lig&&b.lig.hafta===haftaKod)maXpHarita[k]=b.lig.xp||0;});maLigOnbellek=null;const ben=String(aktifOgrenciAdi||"").toLowerCase(),source=maSosyalListe.length?maSosyalListe:(globalDataCache||[]).filter(maOgrenciMi);const benK=source.find(u=>String(u.ogrenci).trim().toLowerCase()===ben),benSinif=benK?String(benK.sinif??benK.Sinif??"").trim():"";maTumListe=source.filter(u=>String(u.ogrenci).trim().toLowerCase()!==ben).map(u=>maKisiKur({ogrenci:u.ogrenci,Sinif:u.sinif??u.Sinif??"",genelOrtalama:u.genelOrtalama??u.genelPuan??0,rozetListesi:u.rozetListesi||[]},veri[String(u.ogrenci).trim().toLowerCase()]||u));maSinifListeSon=maTumListe.filter(o=>o.sinif===benSinif);maTumZaman=Date.now();maTumSoz=null;return maTumListe;})();return maTumSoz;}
+async function maTumGetir(){
+
+    if(maTumListe.length && Date.now()-maTumZaman < 120000){
+        return maTumListe;
+    }
+
+    const haftaKod = yoHaftaKodu();
+
+    const {data,error} = await supabaseClient
+    .from("student_xp_weekly")
+    .select("*")
+    .eq("week_code",haftaKod)
+    .order("week_xp",{ascending:false});
+
+
+    if(error){
+        console.error(error);
+        return [];
+    }
+
+
+    maTumListe = data.map((x,index)=>{
+
+        return {
+            id:x.student_id,
+            ogrenci:x.student_name,
+            ad:x.student_name,
+            sinif:"",
+            lig:{
+                hafta:x.week_code,
+                xp:x.week_xp
+            },
+            xp:x.week_xp,
+            sira:index+1
+        }
+
+    });
+
+
+    maSosyalListe = maTumListe;
+
+    maTumZaman = Date.now();
+
+    maLigOnbellek=null;
+
+    return maTumListe;
+}
 async function maSinifGetir() { await maTumGetir(); return maSinifListeSon; }
 function maBul(id) { return id === 'ben' ? maBen() : (maTumListe.find(o => o.id === id) || maSinifListeSon.find(o => o.id === id)); }
 
