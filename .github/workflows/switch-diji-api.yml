@@ -36,8 +36,8 @@ jobs:
               ''
           )
           s = s.replace(
-              r"var API = /script\.google(usercontent)?\.com\\/macros\\//;",
-              r"var API = /nxfqlutulxqzqgwewssd\.supabase\.co\\/functions\\/v1\\/diji-api/;"
+              "var API = /script\\.google(usercontent)?\\.com\\/macros\\//;",
+              "var API = /nxfqlutulxqzqgwewssd\\.supabase\\.co\\/functions\\/v1\\/diji-api/;"
           )
           s = s.replace(
               'const apiURL = "https://script.google.com/macros/s/AKfycbxSfB0NNJW8L3g-i39jX7QJCkHnhaNsoYfGpC7jFYzA8eyRLpEruRl4jZP9BQQptVUQCQ/exec";',
