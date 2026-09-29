@@ -3,10 +3,10 @@
         <head>
 
                 <!-- ===================== GÜVENLİK + PERFORMANS (HEAD) — <head> etiketinin HEMEN ALTINA ===================== -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<link rel="preconnect" href="https://script.google.com">
-<link rel="preconnect" href="https://script.googleusercontent.com">
+<link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
+
 <script>
 (function () {
   var TOKEN = function () { try { return localStorage.getItem('ing_token') || ''; } catch (e) { return ''; } };
@@ -18,7 +18,7 @@
   } catch (e) {}
 
   /* Tüm API isteklerine oturum anahtarını otomatik ekle */
-  var API = /script\.google(usercontent)?\.com\/macros\//;
+  var API = /nxfqlutulxqzqgwewssd\.supabase\.co\/functions\/v1\/diji-api/;
   var orgFetch = window.fetch.bind(window);
   window.fetch = function (url, opt) {
     var u = typeof url === 'string' ? url : (url && url.url) || '';
@@ -4159,7 +4159,7 @@ function raporlarimKapat() {
                     let sn = String(gosterilecek % 60).padStart(2, '0');
                     document.getElementById('pomodoroSaat').innerText = `${dk}:${sn}`;
                 }
-                const apiURL = "https://script.google.com/macros/s/AKfycbxSfB0NNJW8L3g-i39jX7QJCkHnhaNsoYfGpC7jFYzA8eyRLpEruRl4jZP9BQQptVUQCQ/exec";
+                const apiURL = "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api";
 
                 
 
