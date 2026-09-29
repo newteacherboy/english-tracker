@@ -20846,6 +20846,39 @@ font-size:40px;
 </div>
 
 </div>
+
+                <!-- ===================== SUPABASE UYUM BLOĞU (v3) =====================
+     </body> etiketinin hemen ÜSTÜNE, en sona yapıştır.
+     Medu Akış, Keşfet ve Lig'in öğrenci listesini sunucudan (sosyalOgrencilerGetir) alır.
+     Eski sürüm, veritabanına anahtarsız doğrudan bağlanmaya çalışıyordu ve boş liste dönüyordu.
+     ===================================================================== -->
+<script>
+(function () {
+  const kucuk = x => String(x || '').trim().toLocaleLowerCase('tr');
+  let soz = null;
+  window.maTumGetir = async function () {
+    if (maTumListe.length && Date.now() - maTumZaman < 20000) return maTumListe;
+    if (soz) return soz;
+    soz = (async () => {
+      try {
+        await maTumVeriHaritasi();
+        maLigOnbellek = null;
+        const ben = kucuk(aktifOgrenciAdi);
+        const benKaydi = maSosyalListe.find(u => kucuk(u.ogrenci) === ben) || (globalDataCache || []).find(u => kucuk(u.ogrenci) === ben) || {};
+        const benSinif = String(benKaydi.sinif || benKaydi.Sinif || '');
+        maTumListe = maSosyalListe
+          .filter(u => kucuk(u.ogrenci) !== ben)
+          .map(u => maKisiKur({ ogrenci: u.ogrenci, Sinif: u.sinif, genelOrtalama: u.genelOrtalama, rozetListesi: u.rozetListesi || [] }, u));
+        maSinifListeSon = maTumListe.filter(o => String(o.sinif) === benSinif);
+        maTumZaman = Date.now();
+      } catch (e) { console.warn('Öğrenci listesi alınamadı:', e); }
+      soz = null;
+      return maTumListe;
+    })();
+    return soz;
+  };
+})();
+</script>
                 
         </body>
         </html>
