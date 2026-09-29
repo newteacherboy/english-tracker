@@ -4486,10 +4486,13 @@ let mesajlar = Array.isArray(cevap)
                 async function ogretmenSohbetListesiniYukle() {
                     let alan = document.getElementById('ogretmenSohbetListeAlani');
                     try {
-                        let res = await fetch(`${apiURL}?islem=ogretmenSohbetListesi`);
-                        let liste = await res.json();
-        
-                        if (!liste || liste.length === 0) {
+                       let res = await fetch(`${apiURL}?islem=ogretmenSohbetListesi`);
+let cevap = await res.json();
+let liste = Array.isArray(cevap)
+    ? cevap
+    : (cevap.messages || []);
+
+if (!liste || liste.length === 0) {
                             alan.innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:12px; padding:20px;">Henüz hiç mesaj yok.</p>`;
                             return;
                         }
@@ -4529,11 +4532,14 @@ let mesajlar = Array.isArray(cevap)
                     if (!ogretmenAktifSohbetOgrenci) return;
                     let mesajAlani = document.getElementById('ogretmenSohbetMesajAlani');
                     try {
-                        let res = await fetch(`${apiURL}?islem=ogretmenSohbetAc&ogrenci=${encodeURIComponent(ogretmenAktifSohbetOgrenci)}`);
-                        let mesajlar = await res.json();
-        
-                        mesajAlani.innerHTML = "";
-                        mesajlar.forEach(m => {
+                       let res = await fetch(`${apiURL}?islem=ogretmenSohbetAc&ogrenci=${encodeURIComponent(ogretmenAktifSohbetOgrenci)}`);
+let cevap = await res.json();
+let mesajlar = Array.isArray(cevap)
+    ? cevap
+    : (cevap.messages || []);
+
+mesajAlani.innerHTML = "";
+mesajlar.forEach(m => {
                             let sinif = m.gonderen === 'ogretmen' ? 'user' : 'bot';
                             mesajAlani.innerHTML += `<div class="ai-msg ${sinif}">${guvenliMetin(m.mesaj)}</div>`;
                         });
@@ -4571,8 +4577,12 @@ let mesajlar = Array.isArray(cevap)
                     let rozetGenel = document.getElementById('ogretmenGenelRozet');
                     let rozetMenu = document.getElementById('ogretmenMenuOkunmamis');
                     if (sayi === undefined) {
-                        fetch(`${apiURL}?islem=ogretmenSohbetListesi`).then(r => r.json()).then(liste => {
-                            let toplam = liste.reduce((acc, i) => acc + (i.okunmamis || 0), 0);
+                       fetch(`${apiURL}?islem=ogretmenSohbetListesi`).then(r => r.json()).then(cevap => {
+    let liste = Array.isArray(cevap)
+        ? cevap
+        : (cevap.messages || []);
+
+    let toplam = liste.reduce((acc, i) => acc + (i.okunmamis || 0), 0);
                             ogretmenMenuOkunmamisGuncelle(toplam);
                         }).catch(() => {});
                         return;
