@@ -14,17 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Patch API endpoint and temporary maintenance UI
+      - name: Patch API endpoint
         shell: python
         run: |
           from pathlib import Path
           p = Path("ingilizce/index.html")
           s = p.read_text(encoding="utf-8")
           old = s
-
           supabase = "https://nxfqlutulxqzqgwewssd.supabase.co"
           api = supabase + "/functions/v1/diji-api"
-
           s = s.replace(
               "connect-src 'self' https://script.google.com https://script.googleusercontent.com;",
               "connect-src 'self' " + supabase + ";"
@@ -45,131 +43,6 @@ jobs:
               'const apiURL = "https://script.google.com/macros/s/AKfycbxSfB0NNJW8L3g-i39jX7QJCkHnhaNsoYfGpC7jFYzA8eyRLpEruRl4jZP9BQQptVUQCQ/exec";',
               'const apiURL = "' + api + '";'
           )
-
-          marker = '<!-- DIJI-MEDU-MAINTENANCE-UI -->'
-          if marker not in s:
-              maintenance = r'''
-<!-- DIJI-MEDU-MAINTENANCE-UI -->
-<style id="diji-maintenance-style">
-#diji-maintenance-badge{
-  position:fixed; right:18px; bottom:18px; z-index:2147483000;
-  display:flex; align-items:center; gap:9px; padding:11px 15px;
-  border:1px solid rgba(255,255,255,.72); border-radius:999px;
-  background:linear-gradient(135deg,#7c5cff,#ff72a8);
-  color:#fff; font:700 14px/1.1 'Fredoka','Nunito',system-ui,sans-serif;
-  box-shadow:0 12px 35px rgba(55,35,120,.28);
-  cursor:pointer; user-select:none; backdrop-filter:blur(10px);
-  animation:dijiBadgeIn .8s cubic-bezier(.2,.8,.2,1) both,
-            dijiFloat 3.2s ease-in-out .8s infinite;
-}
-#diji-maintenance-badge .diji-mini-icon{font-size:18px; animation:dijiWrench 1.8s ease-in-out infinite}
-#diji-maintenance-backdrop{
-  position:fixed; inset:0; z-index:2147482999; display:none;
-  align-items:center; justify-content:center; padding:22px;
-  background:rgba(20,16,40,.48); backdrop-filter:blur(8px);
-}
-#diji-maintenance-backdrop.diji-open{display:flex; animation:dijiFade .22s ease both}
-#diji-maintenance-card{
-  width:min(520px,100%); position:relative; overflow:hidden;
-  border:1px solid rgba(255,255,255,.82); border-radius:30px;
-  padding:34px 30px 28px; text-align:center;
-  background:linear-gradient(145deg,#fff 0%,#f8f5ff 52%,#fff0f7 100%);
-  box-shadow:0 30px 90px rgba(25,15,70,.30);
-  color:#30254a; font-family:'Fredoka','Nunito',system-ui,sans-serif;
-  animation:dijiCardIn .5s cubic-bezier(.16,1,.3,1) both;
-}
-#diji-maintenance-card:before,#diji-maintenance-card:after{
-  content:""; position:absolute; width:130px; height:130px; border-radius:50%;
-  filter:blur(2px); opacity:.28; pointer-events:none;
-}
-#diji-maintenance-card:before{background:#a98cff; left:-65px; top:-65px}
-#diji-maintenance-card:after{background:#ff8db7; right:-65px; bottom:-65px}
-#diji-maintenance-close{
-  position:absolute; right:13px; top:12px; width:36px; height:36px;
-  border:0; border-radius:50%; background:rgba(70,50,110,.08);
-  color:#55456f; font-size:22px; cursor:pointer;
-}
-#diji-maintenance-hero{
-  width:92px; height:92px; margin:0 auto 17px; border-radius:28px;
-  display:grid; place-items:center; font-size:48px;
-  background:linear-gradient(135deg,#eee7ff,#ffe8f1);
-  box-shadow:inset 0 0 0 1px rgba(120,90,190,.10);
-  animation:dijiHero 2.2s ease-in-out infinite;
-}
-#diji-maintenance-card h2{margin:0 0 9px;font-size:28px;letter-spacing:-.4px}
-#diji-maintenance-card p{margin:0 auto 20px;max-width:430px;color:#685c7e;font-size:16px;line-height:1.55}
-#diji-maintenance-card .diji-progress{
-  height:8px; border-radius:999px; overflow:hidden; margin:0 auto 19px;
-  background:#ece7f7;
-}
-#diji-maintenance-card .diji-progress span{
-  display:block; width:62%; height:100%; border-radius:inherit;
-  background:linear-gradient(90deg,#7c5cff,#ff72a8,#7c5cff);
-  background-size:200% 100%; animation:dijiProgress 2.1s linear infinite;
-}
-#diji-maintenance-ok{
-  border:0; border-radius:15px; padding:12px 21px; cursor:pointer;
-  background:#30254a; color:#fff; font:700 15px 'Fredoka','Nunito',system-ui,sans-serif;
-  box-shadow:0 8px 20px rgba(48,37,74,.20);
-}
-@keyframes dijiBadgeIn{from{opacity:0;transform:translateY(25px) scale(.92)}to{opacity:1;transform:none}}
-@keyframes dijiFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@keyframes dijiWrench{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(12deg)}}
-@keyframes dijiFade{from{opacity:0}to{opacity:1}}
-@keyframes dijiCardIn{from{opacity:0;transform:translateY(22px) scale(.94)}to{opacity:1;transform:none}}
-@keyframes dijiHero{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
-@keyframes dijiProgress{from{background-position:0 0}to{background-position:200% 0}}
-@media(max-width:600px){
-  #diji-maintenance-badge{right:12px;bottom:12px;font-size:13px;padding:10px 13px}
-  #diji-maintenance-card{padding:30px 20px 24px;border-radius:25px}
-  #diji-maintenance-card h2{font-size:24px}
-}
-</style>
-
-<div id="diji-maintenance-badge" role="button" tabindex="0" aria-label="Yapım aşaması bilgisi">
-  <span class="diji-mini-icon">🚧</span><span>Yapım Aşamasında</span>
-</div>
-
-<div id="diji-maintenance-backdrop" aria-hidden="true">
-  <div id="diji-maintenance-card" role="dialog" aria-modal="true" aria-labelledby="diji-maintenance-title">
-    <button id="diji-maintenance-close" type="button" aria-label="Kapat">×</button>
-    <div id="diji-maintenance-hero">🛠️</div>
-    <h2 id="diji-maintenance-title">Diji-Medu yenileniyor! ✨</h2>
-    <p>
-      İngilizce portalımızın yeni veri merkezi ve altyapısı hazırlanıyor.
-      Daha hızlı, daha güvenli ve daha tatlı bir deneyim için son dokunuşları yapıyoruz. 💜
-    </p>
-    <div class="diji-progress" aria-hidden="true"><span></span></div>
-    <button id="diji-maintenance-ok" type="button">Tamam, bekliyorum 😊</button>
-  </div>
-</div>
-
-<script>
-(function(){
-  function initDijiMaintenance(){
-    var badge=document.getElementById('diji-maintenance-badge');
-    var back=document.getElementById('diji-maintenance-backdrop');
-    var close=document.getElementById('diji-maintenance-close');
-    var ok=document.getElementById('diji-maintenance-ok');
-    if(!badge||!back) return;
-    function open(){back.classList.add('diji-open');back.setAttribute('aria-hidden','false');}
-    function shut(){back.classList.remove('diji-open');back.setAttribute('aria-hidden','true');}
-    badge.addEventListener('click',open);
-    badge.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
-    if(close) close.addEventListener('click',shut);
-    if(ok) ok.addEventListener('click',shut);
-    back.addEventListener('click',function(e){if(e.target===back) shut();});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape') shut();});
-    window.setTimeout(open,900);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initDijiMaintenance);
-  else initDijiMaintenance();
-})();
-</script>
-'''
-              maintenance = maintenance.strip()
-              s = s.replace('</body>', maintenance + '\n</body>', 1)
-
           if s != old:
               p.write_text(s, encoding="utf-8")
           else:
@@ -179,11 +52,11 @@ jobs:
         shell: bash
         run: |
           if git diff --quiet -- ingilizce/index.html; then
-            echo "HTML already up to date."
+            echo "HTML already points to Supabase."
             exit 0
           fi
           git config user.name "Diji-Medu Bot"
           git config user.email "diji-medu-bot@users.noreply.github.com"
           git add ingilizce/index.html
-          git commit -m "Add temporary animated maintenance notice [skip ci]"
+          git commit -m "Connect English portal to Supabase API [skip ci]"
           git push
