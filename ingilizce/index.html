@@ -17628,7 +17628,22 @@ function odulUret(k, o) {
     return `Q ${kontrolX} ${kontrolY} ${p.x} ${p.y}`;
 }).join(' ');
     noktalar.forEach((p, i) => {
-      let sv = i + 1, bitti = baSet.includes(sv), T = TEMALAR[Math.floor(i / 10) % TEMALAR.length];
+      let sv = i + 1,
+    bitti = baSet.includes(sv),
+    T = TEMALAR[Math.floor(i / 10) % TEMALAR.length];
+
+let adaRenkleri = [
+    ['#fff4a8', '#ffd84d'],
+    ['#b9f3d0', '#55c98a'],
+    ['#b9e5ff', '#5da9f5'],
+    ['#dcc7ff', '#9b72e8'],
+    ['#ffc9dc', '#ef79aa'],
+    ['#ffd5ae', '#f49b54']
+];
+
+let adaRenk = adaRenkleri[
+    Math.floor(i / 10) % adaRenkleri.length
+];
       let cls = sv === simdi ? 'simdi' : bitti ? 'bitti' : 'kilit', ic = bitti ? '✓' : sv;
       if (sv % 10 === 0) { dugum += `<button class="bc-d boss ${cls}" data-sv="${sv}" style="left:${p.x}%;top:${p.y}px;--boss:${T.boss}" aria-label="${sv}. seviye, ${T.bossAd}">${T.bossIkon}<small>${sv}. ${T.bossAd}</small>${sv === simdi ? `<span class="oyuncu">${kahramanSvg}</span>` : ''}</button>`; return; }
       if (sv % 3 === 0) {
@@ -17642,11 +17657,13 @@ function odulUret(k, o) {
     class="bc-d ${cls}"
     data-sv="${sv}"
     style="
-        left:${p.x}%;
-        top:${p.y}px;
-        --dugum:${T.dugum};
-        --golge:${T.golge};
-    "
+    left:${p.x}%;
+    top:${p.y}px;
+    --dugum:${T.dugum};
+    --golge:${T.golge};
+    --ada-acik:${adaRenk[0]};
+    --ada-koyu:${adaRenk[1]};
+"
     aria-label="${sv}. seviye${bitti ? ', tamamlandı' : sv === simdi ? ', sıradaki' : ', kilitli'}"
 >
     <span class="ada-icerik">
@@ -18502,226 +18519,258 @@ function odulUret(k, o) {
         height: 90px !important;
     }
 }
-
-        /* =====================================================
-   ☁️ UÇAN ADALAR
-   ===================================================== */
+/* =========================================================
+   🌈 GERÇEK UÇAN RENKLİ ADALAR
+   ========================================================= */
 
 .bc-d {
     overflow: visible !important;
-
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff 0%,
-            #f8faff 48%,
-            #dce5ff 100%
-        ) !important;
-
-    border-radius:
-        28px 28px 22px 22px !important;
-
-    position: absolute;
-
+    position: absolute !important;
     isolation: isolate;
+    
+    width: 76px !important;
+    height: 58px !important;
+
+    transform: translate(-50%, -50%);
+
+        background:
+    radial-gradient(
+        circle at 35% 25%,
+        #ffffff 0%,
+        var(--ada-acik) 25%,
+        var(--ada-koyu) 100%
+    ) !important;
+    
+    border: 5px solid rgba(255,255,255,.95) !important;
+    border-radius: 50% 50% 46% 46% / 58% 58% 42% 42% !important;
+
+    box-shadow:
+        0 9px 0 rgba(70,70,130,.28),
+        0 15px 22px rgba(60,70,140,.20) !important;
+
+    z-index: 10;
+    
+    transition:
+        transform .25s ease,
+        filter .25s ease;
 }
 
-/* Adanın altındaki gerçek yüzen parça */
+
+/* ---------------------------------------------------------
+   🪨 ADANIN ALTINDAKİ KAYA
+   --------------------------------------------------------- */
+
 .bc-d::before {
     content: "";
-
     position: absolute;
 
     left: 50%;
-    bottom: -16px;
+    bottom: -32px;
 
-    width: 70px;
-    height: 25px;
+    width: 72px;
+    height: 42px;
 
     transform: translateX(-50%);
 
     background:
         linear-gradient(
             180deg,
-            #aebcf0 0%,
-            #8292d8 55%,
-            #6878c2 100%
+            #aeb9e8 0%,
+            #8c99d0 45%,
+            #6978b5 100%
         );
 
     clip-path: polygon(
-        7% 0,
-        93% 0,
-        78% 38%,
-        65% 46%,
-        57% 100%,
-        43% 100%,
-        35% 46%,
-        21% 38%
+        5% 0,
+        95% 0,
+        82% 30%,
+        68% 42%,
+        58% 100%,
+        42% 100%,
+        32% 42%,
+        18% 30%
     );
 
     filter:
         drop-shadow(
-            0 8px 5px rgba(66,78,153,.25)
+            0 8px 5px rgba(55,65,125,.28)
         );
 
-    z-index: -1;
+    z-index: -2;
 }
 
-/* Adanın üst beyaz kenarı */
+
+/* ---------------------------------------------------------
+   ☁️ ADANIN ÜSTÜNDE PARLAKLIK
+   --------------------------------------------------------- */
+
 .bc-d::after {
     content: "";
 
     position: absolute;
 
-    left: 7px;
-    right: 7px;
+    left: 9px;
+    right: 9px;
     top: 5px;
 
-    height: 15px;
+    height: 18px;
 
     border-radius: 50%;
 
     background:
         linear-gradient(
             180deg,
-            rgba(255,255,255,.95),
+            rgba(255,255,255,.9),
             rgba(255,255,255,0)
         );
 
     pointer-events: none;
+
+    z-index: 3;
 }
 
-/* =====================================================
-   NUMARA
-   ===================================================== */
 
-.ada-icerik {
-    position: relative;
+/* =========================================================
+   🎨 TAMAMLANMIŞ ADALAR
+   ========================================================= */
 
-    z-index: 5;
+.bc-d.bitti {
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #ffffff 0%,
+            #dcffe9 18%,
+            #72d99d 55%,
+            #39b879 100%
+        ) !important;
 
-    display: flex;
+    border-color: #ffffff !important;
 
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
-    height: 100%;
+    box-shadow:
+        0 9px 0 #31945f,
+        0 15px 24px rgba(40,150,90,.28),
+        0 0 0 5px rgba(255,255,255,.25) !important;
 }
 
-.ada-numara {
-    font:
-        900 22px 'Fredoka',
-        sans-serif;
 
-    color: #4b3c88;
+/* =========================================================
+   🔵 SIRADAKİ ADA
+   ========================================================= */
 
-    text-shadow:
-        0 2px 0 #fff;
+.bc-d.simdi {
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #ffffff 0%,
+            #e5f2ff 18%,
+            #75baff 55%,
+            #4c82e8 100%
+        ) !important;
+
+    border-color: #ffffff !important;
+
+    box-shadow:
+        0 10px 0 #4167ba,
+        0 18px 32px rgba(55,90,190,.35),
+        0 0 0 7px rgba(255,255,255,.30) !important;
+
+    animation: adaUcuyor 2s ease-in-out infinite;
 }
 
-/* =====================================================
+
+/* =========================================================
+   🔒 KİLİTLİ ADALAR
+   ========================================================= */
+
+.bc-d.kilit {
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #ffffff 0%,
+            #f1f3ff 20%,
+            #c7cde9 55%,
+            #9ba6d0 100%
+        ) !important;
+
+    border-color: rgba(255,255,255,.9) !important;
+
+    opacity: .92;
+
+    box-shadow:
+        0 9px 0 #717da8,
+        0 13px 20px rgba(65,70,120,.18) !important;
+}
+
+
+/* =========================================================
    ⭐ 3 YILDIZ
-   ===================================================== */
+   ========================================================= */
 
 .ada-yildizlar {
     position: absolute;
 
     left: 50%;
-    top: -22px;
+    top: -28px;
 
     transform: translateX(-50%);
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     gap: 1px;
 
-    white-space: nowrap;
+    width: 72px;
 
-    z-index: 20;
+    z-index: 30;
 
     filter:
         drop-shadow(
-            0 2px 2px rgba(80,66,150,.25)
+            0 2px 3px rgba(70,60,130,.25)
         );
 }
 
 .ada-yildizlar span {
-    color: #ffd54a;
+    color: #ffd83d;
 
-    font-size: 13px;
+    font-size: 15px;
 
     line-height: 1;
 
     text-shadow:
         0 1px 0 #fff,
-        0 2px 3px rgba(82,65,140,.25);
+        0 2px 3px rgba(90,70,120,.25);
 
     animation:
-        yildizParla 2.2s ease-in-out infinite;
+        yildizUc 2.2s ease-in-out infinite;
 }
 
 .ada-yildizlar span:nth-child(1) {
-    transform: translateY(3px) rotate(-10deg);
+    transform:
+        translateY(4px)
+        rotate(-12deg);
 }
 
 .ada-yildizlar span:nth-child(2) {
-    font-size: 16px;
-
-    animation-delay: .15s;
+    font-size: 19px;
 }
 
 .ada-yildizlar span:nth-child(3) {
-    transform: translateY(3px) rotate(10deg);
-
-    animation-delay: .3s;
+    transform:
+        translateY(4px)
+        rotate(12deg);
 }
 
-@keyframes yildizParla {
-    0%,100% {
-        transform:
-            translateY(0)
-            scale(1);
-    }
 
-    50% {
-        transform:
-            translateY(-2px)
-            scale(1.15);
-    }
-}
-
-/* =====================================================
-   ✅ TAMAMLANMIŞ SEVİYE
-   ===================================================== */
-
-.bc-d.bitti {
-    background:
-        linear-gradient(
-            180deg,
-            #f8fff9 0%,
-            #dcfce9 52%,
-            #bcefd1 100%
-        ) !important;
-
-    border-color:
-        rgba(255,255,255,.98) !important;
-
-    box-shadow:
-        0 9px 0 #70bd91,
-        0 15px 25px rgba(42,135,88,.20),
-        0 0 0 5px rgba(255,255,255,.25);
-}
+/* =========================================================
+   ✓ TAMAMLANAN SEVİYE TİKİ
+   ========================================================= */
 
 .ada-tik {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
@@ -18730,139 +18779,142 @@ function odulUret(k, o) {
     background:
         linear-gradient(
             180deg,
-            #43d58b,
-            #20ad68
+            #4de18d,
+            #19ad65
         );
 
-    color: #fff;
+    color: white;
 
     font:
         900 27px 'Nunito',
         sans-serif;
 
     box-shadow:
-        0 4px 0 #148c55,
-        0 5px 10px rgba(24,135,79,.25);
+        0 4px 0 #13864f,
+        0 5px 10px rgba(20,130,75,.25);
 
     text-shadow:
         0 1px 1px rgba(0,0,0,.12);
+
+    position: relative;
+    z-index: 8;
 }
 
-/* =====================================================
+
+/* =========================================================
+   🔢 SEVİYE NUMARASI
+   ========================================================= */
+
+.ada-numara {
+    font:
+        900 23px 'Fredoka',
+        sans-serif;
+
+    color: #4b4387;
+
+    text-shadow:
+        0 2px 0 white;
+
+    position: relative;
+    z-index: 8;
+}
+
+
+/* =========================================================
    🔒 KİLİT
-   ===================================================== */
+   ========================================================= */
 
 .ada-kilit {
     position: absolute;
 
-    top: 8px;
-    right: 9px;
+    right: 5px;
+    top: 5px;
 
     width: 21px;
     height: 21px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     border-radius: 50%;
 
     background:
-        rgba(255,255,255,.72);
+        rgba(255,255,255,.85);
 
     font-size: 11px;
 
-    z-index: 10;
+    z-index: 20;
 
     box-shadow:
-        0 2px 5px rgba(60,65,120,.12);
+        0 2px 5px rgba(60,65,120,.15);
 }
 
-/* =====================================================
-   🧑‍🎓 OYUNCU
-   ===================================================== */
 
-.bc-d.simdi {
-    z-index: 50 !important;
+/* =========================================================
+   🪄 AKTİF ADA UÇUŞ ANİMASYONU
+   ========================================================= */
 
-    border-color: #fff !important;
+@keyframes adaUcuyor {
 
-    box-shadow:
-        0 10px 0 #8795dc,
-        0 18px 30px rgba(65,73,150,.28),
-        0 0 0 7px rgba(255,255,255,.35),
-        0 0 28px rgba(255,255,255,.35);
-
-    animation:
-        aktifAdaUc 1.8s ease-in-out infinite;
-}
-
-@keyframes aktifAdaUc {
     0%,100% {
         transform:
-            translate(-50%,-50%)
+            translate(-50%, -50%)
             translateY(0);
     }
 
     50% {
         transform:
-            translate(-50%,-50%)
-            translateY(-7px);
+            translate(-50%, -50%)
+            translateY(-8px);
     }
+
 }
 
-/* Aktif seviyenin altındaki ada */
-.bc-d.simdi::before {
-    background:
-        linear-gradient(
-            180deg,
-            #aebcf5,
-            #7385d2
-        );
 
-    filter:
-        drop-shadow(
-            0 9px 6px rgba(64,77,160,.30)
-        );
+/* =========================================================
+   ⭐ YILDIZ ANİMASYONU
+   ========================================================= */
+
+@keyframes yildizUc {
+
+    0%,100% {
+        margin-top: 0;
+    }
+
+    50% {
+        margin-top: -4px;
+    }
+
 }
 
-/* =====================================================
-   ☁️ BULUTLAR / UÇAN DEKORLAR
-   ===================================================== */
 
-.bc-harita .amb {
-    z-index: 3;
-
-    pointer-events: none;
-
-    filter:
-        drop-shadow(
-            0 5px 5px rgba(75,85,150,.12)
-        );
-}
-
-/* Bulut gibi görünen dekorlar biraz daha yavaş */
-.bc-harita .amb:nth-child(3n) {
-    animation-duration: 9s !important;
-}
-
-.bc-harita .amb:nth-child(4n) {
-    animation-duration: 11s !important;
-}
-
-/* =====================================================
+/* =========================================================
    🎁 SANDIKLAR
-   ===================================================== */
+   ========================================================= */
 
 .bc-sandikr {
-    z-index: 25 !important;
+    z-index: 35 !important;
 
-    font-size: 33px !important;
+    font-size: 32px !important;
 
     filter:
         drop-shadow(
-            0 6px 4px rgba(60,66,135,.25)
+            0 5px 4px rgba(60,65,130,.25)
+        );
+}
+
+
+/* =========================================================
+   ☁️ BULUTLAR
+   ========================================================= */
+
+.bc-harita .amb {
+    z-index: 2 !important;
+
+    filter:
+        drop-shadow(
+            0 5px 5px rgba(80,90,150,.12)
         );
 }
 
