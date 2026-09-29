@@ -1,0 +1,61 @@
+name: Switch Diji API to Supabase
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch API endpoint
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path("ingilizce/index.html")
+          s = p.read_text(encoding="utf-8")
+          old = s
+          supabase = "https://nxfqlutulxqzqgwewssd.supabase.co"
+          api = supabase + "/functions/v1/diji-api"
+          s = s.replace(
+              "connect-src 'self' https://script.google.com https://script.googleusercontent.com;",
+              "connect-src 'self' " + supabase + ";"
+          )
+          s = s.replace(
+              '<link rel="preconnect" href="https://script.google.com">',
+              '<link rel="preconnect" href="' + supabase + '">'
+          )
+          s = s.replace(
+              '<link rel="preconnect" href="https://script.googleusercontent.com">',
+              ''
+          )
+          s = s.replace(
+              r"var API = /script\.google(usercontent)?\.com\/macros\//;",
+              r"var API = /nxfqlutulxqzqgwewssd\.supabase\.co\/functions\/v1\/diji-api/;"
+          )
+          s = s.replace(
+              'const apiURL = "https://script.google.com/macros/s/AKfycbxSfB0NNJW8L3g-i39jX7QJCkHnhaNsoYfGpC7jFYzA8eyRLpEruRl4jZP9BQQptVUQCQ/exec";',
+              'const apiURL = "' + api + '";'
+          )
+          if s != old:
+              p.write_text(s, encoding="utf-8")
+          else:
+              print("No changes needed.")
+
+      - name: Commit patched HTML
+        shell: bash
+        run: |
+          if git diff --quiet -- ingilizce/index.html; then
+            echo "HTML already points to Supabase."
+            exit 0
+          fi
+          git config user.name "Diji-Medu Bot"
+          git config user.email "diji-medu-bot@users.noreply.github.com"
+          git add ingilizce/index.html
+          git commit -m "Connect English portal to Supabase API [skip ci]"
+          git push
