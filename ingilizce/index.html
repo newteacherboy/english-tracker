@@ -4709,8 +4709,12 @@ async function dijiKelimeHavuzunuYukle() {
                                ogretmenSelectDoldur();
                     rubricGridleriOlustur();
                     ozellikSecDoldur();
-                    ogretmenMenuOkunmamisGuncelle();
-                    setInterval(ogretmenMenuOkunmamisGuncelle, 60000);
+                   ogretmenMenuOkunmamisGuncelle();
+
+setInterval(() => {
+    if (document.hidden) return;
+    ogretmenMenuOkunmamisGuncelle();
+}, 300000);
                 };
         
                 // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
@@ -6902,16 +6906,208 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
         }
         
         function dcCalisBaslat() { dersCalisBaslat(); }
-        function dersCalisBaslat() {
-            document.getElementById('dcSesUS').classList.toggle('active', dcSesTercihi === 'us');
-            document.getElementById('dcSesUK').classList.toggle('active', dcSesTercihi === 'uk');
-            if (dcTumKonularCache.length === 0 && !dcYuklemePromise) {
-                dcYuklemePromise = fetch(`${apiURL}?islem=dersKonulariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "")}`)
-                .then(res => res.json())
-                .then(liste => { dcTumKonularCache = liste || []; dcYuklemePromise = null; })
-                .catch(() => { dcYuklemePromise = null; });
+       function dersCalisBaslat() {
+
+    document.getElementById('dcSesUS').classList.toggle(
+        'active',
+        dcSesTercihi === 'us'
+    );
+
+    document.getElementById('dcSesUK').classList.toggle(
+        'active',
+        dcSesTercihi === 'uk'
+    );
+
+
+    /* =====================================================
+       DERS KONULARI CİHAZ CACHE
+       ===================================================== */
+
+    const CACHE_KEY =
+        "diji_ders_konulari_v1_" +
+        String(aktifOgrenciAdi || "").trim().toLowerCase();
+
+    const CACHE_SURESI =
+        24 * 60 * 60 * 1000; // 24 saat
+
+
+    /* =====================================================
+       1. CİHAZDA KAYITLI KONU VARSA ÖNCE ONU KULLAN
+       ===================================================== */
+
+    try {
+
+        const ham =
+            localStorage.getItem(CACHE_KEY);
+
+        if (ham) {
+
+            const kayit =
+                JSON.parse(ham);
+
+            if (
+                kayit &&
+                kayit.zaman &&
+                Array.isArray(kayit.veri)
+            ) {
+
+                const cacheYasi =
+                    Date.now() -
+                    Number(kayit.zaman);
+
+
+                if (
+                    cacheYasi <= CACHE_SURESI &&
+                    kayit.veri.length
+                ) {
+
+                    dcTumKonularCache =
+                        kayit.veri;
+
+                    console.log(
+                        "📦 Ders konuları cihaz cache'inden açıldı:",
+                        dcTumKonularCache.length
+                    );
+
+
+                    /* Cache eskiyse arka planda yenile */
+                    if (
+                        cacheYasi > 60 * 60 * 1000 &&
+                        navigator.onLine &&
+                        !dcYuklemePromise
+                    ) {
+
+                        dcYuklemePromise =
+                            fetch(
+                                `${apiURL}?islem=dersKonulariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "")}`
+                            )
+                            .then(res => {
+
+                                if (!res.ok) {
+                                    throw new Error(
+                                        "HTTP " + res.status
+                                    );
+                                }
+
+                                return res.json();
+                            })
+                            .then(liste => {
+
+                                dcTumKonularCache =
+                                    Array.isArray(liste)
+                                        ? liste
+                                        : [];
+
+                                localStorage.setItem(
+                                    CACHE_KEY,
+                                    JSON.stringify({
+                                        zaman: Date.now(),
+                                        veri: dcTumKonularCache
+                                    })
+                                );
+
+                                console.log(
+                                    "🔄 Ders konuları arka planda yenilendi:",
+                                    dcTumKonularCache.length
+                                );
+                            })
+                            .catch(() => {})
+                            .finally(() => {
+
+                                dcYuklemePromise =
+                                    null;
+                            });
+                    }
+
+                    return;
+                }
             }
         }
+
+    } catch (e) {
+
+        console.warn(
+            "Ders konu cache okunamadı:",
+            e
+        );
+    }
+
+
+    /* =====================================================
+       2. CACHE YOKSA SUPABASE'DEN AL
+       ===================================================== */
+
+    if (
+        dcTumKonularCache.length === 0 &&
+        !dcYuklemePromise
+    ) {
+
+        dcYuklemePromise =
+            fetch(
+                `${apiURL}?islem=dersKonulariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi || "")}`
+            )
+            .then(res => {
+
+                if (!res.ok) {
+                    throw new Error(
+                        "HTTP " + res.status
+                    );
+                }
+
+                return res.json();
+            })
+            .then(liste => {
+
+                dcTumKonularCache =
+                    Array.isArray(liste)
+                        ? liste
+                        : [];
+
+
+                /* Yeni veriyi cihaza kaydet */
+
+                if (dcTumKonularCache.length) {
+
+                    try {
+
+                        localStorage.setItem(
+                            CACHE_KEY,
+                            JSON.stringify({
+                                zaman: Date.now(),
+                                veri: dcTumKonularCache
+                            })
+                        );
+
+                    } catch (e) {
+
+                        console.warn(
+                            "Ders konu cache yazılamadı:",
+                            e
+                        );
+                    }
+                }
+
+
+                console.log(
+                    "☁️ Ders konuları Supabase'den alındı ve cache'lendi:",
+                    dcTumKonularCache.length
+                );
+            })
+            .catch(e => {
+
+                console.warn(
+                    "Ders konuları alınamadı:",
+                    e
+                );
+
+            })
+            .finally(() => {
+
+                dcYuklemePromise =
+                    null;
+            });
+    }
+}
         
         function dcEkranGoster(id) {
             document.querySelectorAll('.dc-screen').forEach(s => s.classList.remove('active'));
@@ -8747,7 +8943,10 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                             arkaPlanVeriYenilemeBaslat();
                            
                             setTimeout(puanBildirimKontrolEt, 1400);
-                            setInterval(puanBildirimKontrolEt, 45000);
+                            setInterval(() => {
+    if (document.hidden) return;
+    puanBildirimKontrolEt();
+}, 180000);
                     
                                             anaPanelDuyuruBildirimleriYukle();
                      
@@ -8767,32 +8966,99 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
         
                         let arkaPlanVeriYenilemePolling = null;
         
-                        function arkaPlanVeriYenilemeBaslat() {
-    if (arkaPlanVeriYenilemePolling) clearInterval(arkaPlanVeriYenilemePolling);
-    let calisiyor = false, hataSayisi = 0, sonrakiDeneme = 0;
-    arkaPlanVeriYenilemePolling = setInterval(async () => {
-        if (!aktifOgrenciAdi || calisiyor || document.hidden || Date.now() < sonrakiDeneme) return;
+                      function arkaPlanVeriYenilemeBaslat() {
+    if (arkaPlanVeriYenilemePolling) {
+        clearInterval(arkaPlanVeriYenilemePolling);
+    }
+
+    let calisiyor = false;
+    let hataSayisi = 0;
+    let sonrakiDeneme = 0;
+
+    async function yenile() {
+        if (
+            !aktifOgrenciAdi ||
+            calisiyor ||
+            document.hidden ||
+            Date.now() < sonrakiDeneme
+        ) {
+            return;
+        }
+
         calisiyor = true;
+
         let kontrol = new AbortController();
         let zamanAsimi = setTimeout(() => kontrol.abort(), 20000);
+
         try {
-            let res = await fetch(apiURL, { signal: kontrol.signal, cache: 'no-store' });
-            if (!res.ok) throw new Error('HTTP ' + res.status);
+            let res = await fetch(apiURL, {
+                signal: kontrol.signal,
+                cache: 'no-store'
+            });
+
+            if (!res.ok) {
+                throw new Error('HTTP ' + res.status);
+            }
+
             let yeniVeri = await res.json();
-            if (!Array.isArray(yeniVeri)) throw new Error('Beklenmeyen yanıt');
+
+            if (!Array.isArray(yeniVeri)) {
+                throw new Error('Beklenmeyen yanıt');
+            }
+
             globalDataCache = yeniVeri;
-            let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
-            if (user) veriArayuzeIsle(user);
+
+            let user = globalDataCache.find(
+                u =>
+                    String(u.ogrenci).trim().toLowerCase() ===
+                    String(aktifOgrenciAdi).trim().toLowerCase()
+            );
+
+            if (user) {
+                veriArayuzeIsle(user);
+            }
+
             hataSayisi = 0;
+            sonrakiDeneme = 0;
+
         } catch (err) {
             hataSayisi++;
-            sonrakiDeneme = Date.now() + Math.min(120000, 15000 * hataSayisi);
-            if (hataSayisi >= 3) console.warn('Arka plan yenileme ' + hataSayisi + ' kez üst üste başarısız:', err && err.message);
+
+            sonrakiDeneme =
+                Date.now() +
+                Math.min(300000, 30000 * hataSayisi);
+
+            if (hataSayisi >= 3) {
+                console.warn(
+                    'Arka plan yenileme ' +
+                    hataSayisi +
+                    ' kez üst üste başarısız:',
+                    err && err.message
+                );
+            }
+
         } finally {
             clearTimeout(zamanAsimi);
             calisiyor = false;
         }
-    }, 300000);
+    }
+
+    /* İlk açılışta bekleme yapmadan bir kez kontrol et */
+    setTimeout(yenile, 3000);
+
+    /* Sonrasında 5 dakikada bir */
+    arkaPlanVeriYenilemePolling = setInterval(yenile, 300000);
+
+    /* Kullanıcı sekmeye geri döndüğünde ayrıca kontrol et */
+    document.addEventListener(
+        'visibilitychange',
+        () => {
+            if (!document.hidden) {
+                yenile();
+            }
+        },
+        { passive: true }
+    );
 }
         
                       function baslatSayac() {
@@ -15588,23 +15854,214 @@ async function maCiz() {
 function maSekmeSec(s) { maSekme = s; maProfilId = null; maCiz(); document.getElementById('tab-meduakis').scrollTop = 0; }
 function maProfilAc(id) { if (id === 'ben') { maSekmeSec('vitrin'); return; } maProfilId = id; maCiz(); document.getElementById('tab-meduakis').scrollTop = 0; }
 
-let maAkisVeri = [], maAkisYuklendi = false;
-try { maAkisVeri = JSON.parse(localStorage.getItem('ing_ma_akis') || '[]'); } catch (e) {}
+let maAkisVeri = [];
+let maAkisYuklendi = false;
 let maAkisSoz = null;
+
+const DIJI_AKIS_CACHE_SURESI = 5 * 60 * 1000;
+
+const DIJI_AKIS_CACHE_KEY = "diji_ma_akis_v1";
+
+
+function dijiAkisCacheOku() {
+
+    try {
+
+        const ham =
+            localStorage.getItem(DIJI_AKIS_CACHE_KEY);
+
+        if (!ham) return null;
+
+        const kayit =
+            JSON.parse(ham);
+
+        if (
+            !kayit ||
+            !kayit.zaman ||
+            !Array.isArray(kayit.veri)
+        ) {
+
+            localStorage.removeItem(
+                DIJI_AKIS_CACHE_KEY
+            );
+
+            return null;
+        }
+
+        return kayit;
+
+    } catch (e) {
+
+        return null;
+    }
+}
+
+
+function dijiAkisCacheYaz(veri) {
+
+    try {
+
+        if (!Array.isArray(veri)) return;
+
+        /*
+         * Akışın tamamını değil,
+         * ekranda kullanılacak son 60 kaydı tut.
+         */
+
+        const kayitlikVeri =
+            veri.slice(0, 60);
+
+        localStorage.setItem(
+            DIJI_AKIS_CACHE_KEY,
+            JSON.stringify({
+                zaman: Date.now(),
+                veri: kayitlikVeri
+            })
+        );
+
+    } catch (e) {
+
+        console.warn(
+            "Akış cache yazılamadı:",
+            e
+        );
+    }
+}
+
+
+async function dijiAkisSunucudanGuncelle() {
+
+    try {
+
+        console.log(
+            "☁️ Medu Akış Supabase'den alınıyor..."
+        );
+
+        const r =
+            await fetch(
+                `${apiURL}?islem=akisTumu`
+            );
+
+        if (!r.ok) {
+            throw new Error(
+                "HTTP " + r.status
+            );
+        }
+
+        const d =
+            await r.json();
+
+        if (
+            d &&
+            Array.isArray(d.liste)
+        ) {
+
+            maAkisVeri =
+                d.liste;
+
+            dijiAkisCacheYaz(
+                maAkisVeri
+            );
+
+            console.log(
+                "☁️ Akış güncellendi ve cache'lendi:",
+                maAkisVeri.length
+            );
+
+            return maAkisVeri;
+        }
+
+    } catch (e) {
+
+        console.warn(
+            "Akış Supabase'den alınamadı:",
+            e
+        );
+    }
+
+    return maAkisVeri;
+}
+
+
 async function maAkisYukle() {
-    if (maAkisSoz) return maAkisSoz;
-    maAkisSoz = (async () => {
-        try {
-            let r = await fetch(`${apiURL}?islem=akisTumu`);
-            let d = await r.json();
-            if (d && Array.isArray(d.liste)) {
-                maAkisVeri = d.liste;
-                try { localStorage.setItem('ing_ma_akis', JSON.stringify(d.liste.slice(0, 60))); } catch (e) {}
+
+    if (maAkisSoz) {
+        return maAkisSoz;
+    }
+
+
+    maAkisSoz =
+        (async () => {
+
+            const cache =
+                dijiAkisCacheOku();
+
+
+            /*
+             * 1. CACHE VARSA
+             */
+
+            if (
+                cache &&
+                Array.isArray(cache.veri) &&
+                cache.veri.length
+            ) {
+
+                maAkisVeri =
+                    cache.veri;
+
+                console.log(
+                    "📦 Medu Akış cihaz cache'inden açıldı:",
+                    maAkisVeri.length
+                );
+
+
+                const cacheYasi =
+                    Date.now() -
+                    Number(cache.zaman || 0);
+
+
+                /*
+                 * Cache 5 dakikadan eskiyse
+                 * kullanıcıyı bekletmeden
+                 * arka planda güncelle.
+                 */
+
+                if (
+                    cacheYasi >
+                        DIJI_AKIS_CACHE_SURESI &&
+                    navigator.onLine
+                ) {
+
+                    dijiAkisSunucudanGuncelle()
+                        .catch(() => {});
+
+                }
+
             }
-        } catch (e) {}
-        maAkisYuklendi = true;
-        maAkisSoz = null;
-    })();
+
+
+            /*
+             * 2. CACHE YOKSA
+             * SUPABASE'DEN AL
+             */
+
+            else {
+
+                await dijiAkisSunucudanGuncelle();
+
+            }
+
+
+            maAkisYuklendi = true;
+
+            maAkisSoz = null;
+
+            return maAkisVeri;
+
+        })();
+
+
     return maAkisSoz;
 }
 function maZamanOnce(e) {
@@ -15891,14 +16348,32 @@ function dcAnaEkranaDon() {
   };
 })();
 
-/* ---- Medu Akış: canlı akış (20 saniyede bir yenilenir) ---- */
+/* ---- Medu Akış: cache + 5 dakikalık canlı kontrol ---- */
 setInterval(async () => {
-  let el = document.getElementById('tab-meduakis');
-  if (!el || !el.classList.contains('active') || maSekme !== 'akis' || maProfilId || document.hidden) return;
-  await maAkisYukle();
-  let l = document.getElementById('maAkisListe');
-  if (l && maSekme === 'akis' && !maProfilId) l.innerHTML = maAkisListeHtml();
-}, 20000);
+    let el = document.getElementById('tab-meduakis');
+
+    if (
+        !el ||
+        !el.classList.contains('active') ||
+        maSekme !== 'akis' ||
+        maProfilId ||
+        document.hidden
+    ) {
+        return;
+    }
+
+    await maAkisYukle();
+
+    let l = document.getElementById('maAkisListe');
+
+    if (
+        l &&
+        maSekme === 'akis' &&
+        !maProfilId
+    ) {
+        l.innerHTML = maAkisListeHtml();
+    }
+}, 300000);
 </script>
 
                 <!-- ===================== SAĞ DOK + ENERJİ/ALTIN + YENİ ALT MENÜ ===================== -->
@@ -17170,7 +17645,10 @@ if (typeof orgXp === 'function') {
     });
     if (degisti) yoKaydet();
   }
-  setInterval(ogretmenPuanlari, 60000);
+  setInterval(() => {
+    if (document.hidden) return;
+    ogretmenPuanlari();
+}, 300000);
   setTimeout(ogretmenPuanlari, 20000);
 
   /* ================= GRUP 8: DÜELLO ================= */
@@ -17418,7 +17896,7 @@ if (typeof orgXp === 'function') {
       if (n > zilSayi) { let b = $('zlBtn'); if (b) { b.classList.remove('sallan'); void b.offsetWidth; b.classList.add('sallan'); } }
       zilSayi = n; zilCiz();
     } catch (e) {}
-  }, 60000);
+ }, 300000);
   function zamanOnce(t) {
     let s = Math.max(0, Math.round((Date.now() - t) / 1000));
     if (s < 60) return 'az önce'; if (s < 3600) return Math.floor(s / 60) + ' dk önce';
