@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
         <html lang="tr">
         <head>
@@ -3871,8 +3869,7 @@ function raporlarimKapat() {
             let hedefSoruSayisi = 10 + (Number(kyAktifSinif) - 1) * 5;
         
             // Kelimeleri karıştır ve yeni turda aynı kelimelerin gelmemesini sağla (Fisher-Yates Shuffle)
-            let karisikHavuz = [...filtrelenmis].sort(() => Math.random() - 0.5);
-            kySorularListesi = karisikHavuz.slice(0, Math.min(hedefSoruSayisi, karisikHavuz.length));
+            kySorularListesi = OC.kelimeSec('ky', filtrelenmis, OC.SORU); OC.basla('ky');
         
                 kySoruIndex = 0;
             kyDogruSayisi = 0;
@@ -3954,10 +3951,7 @@ function raporlarimKapat() {
         
                 if (secilenIndex === dogruIdx) {
                 kyDogruSayisi++;
-                        let kazanc = Math.max(3, 10 - gecenSaniyeSoru) + (kyKombo * 2);
-                kyKombo++;
-                       kazanc *= jokerCiftCarpan();
-                kyToplamPuan += kazanc;
+                        OC.dogru(1); kyKombo++; kyToplamPuan = OC.puan();
                                 genelSesEfektiCal('dogru');
                 genelKomboGoster(kyKombo, document.querySelector('#kelimeYarismaOverlay .game-modal-content'));
                 document.getElementById('kySik' + secilenIndex).style.background = "#16a34a";
@@ -3966,8 +3960,7 @@ function raporlarimKapat() {
                 } else {
                 genelSesEfektiCal('yanlis');
                 kyYanlisSayisi++;
-                      if (!jokerKalkanTuket()) kyKombo = 0;
-                kyToplamPuan -= 5;
+                      let ocKor = jokerKalkanTuket(); if (!ocKor) kyKombo = 0; OC.yanlis(ocKor); kyToplamPuan = OC.puan();
                 document.getElementById('kySik' + secilenIndex).style.background = "#dc2626";
                 document.getElementById('kySik' + secilenIndex).style.color = "#ffffff";
                 document.getElementById('kySik' + secilenIndex).style.borderColor = "#b91c1c";
@@ -5338,8 +5331,7 @@ mesajlar.forEach(m => {
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             let havuz = oyunHavuzGetir(hafizaAktifSinif, hafizaSecilenUniteler);
                     if (havuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
-                    let ciftSayisi = Math.min(8, havuz.length);
-                    let secilenler = [...havuz].sort(() => Math.random() - 0.5).slice(0, ciftSayisi);
+                    let secilenler = OC.kelimeSec('hafiza', havuz, OC.SORU); let ciftSayisi = secilenler.length; OC.basla('hafiza'); window.hafizaOcHata = 0;
                     hafizaKartlar = [];
                     secilenler.forEach((k, i) => {
                         hafizaKartlar.push({ tip:'en', metin:(k.ingilizce||k.en||''), pairId:i, acik:false, eslesti:false });
@@ -5384,6 +5376,7 @@ mesajlar.forEach(m => {
                                 if (hafizaKartlar[i1].pairId === hafizaKartlar[i2].pairId) {
                     hafizaKartlar[i1].eslesti = true; hafizaKartlar[i2].eslesti = true;
                                hafizaEslesenSayi++;
+                    OC.dogru(window.hafizaOcHata <= 1 ? 1 : window.hafizaOcHata <= 3 ? 0.5 : 0); window.hafizaOcHata = 0;
                     hafizaKombo++;
                     hafizaKomboBonus += hafizaKombo * 2;
                                          genelSesEfektiCal('dogru');
@@ -5396,7 +5389,7 @@ mesajlar.forEach(m => {
                     if (hafizaEslesenSayi === hafizaKartlar.length / 2) setTimeout(() => hafizaOyunuBitir(), 500);
                         } else {
                     genelSesEfektiCal('yanlis');
-                    hafizaYanlisSayisi++;
+                    hafizaYanlisSayisi++; OC.hataSay(); if (!(typeof jk !== 'undefined' && jk.kalkan)) window.hafizaOcHata = (window.hafizaOcHata || 0) + 1;
                                 if (!jokerKalkanTuket()) hafizaKombo = 0;
                             hafizaSesCal(false);
                             setTimeout(() => {
@@ -5416,7 +5409,7 @@ mesajlar.forEach(m => {
                     let sinifStr = hafizaAktifSinif + ". Sınıf";
                     let ciftSayisi = hafizaKartlar.length / 2;
                     // Süre geçtikçe ve yanlış eşleştirme yaptıkça puan düşer
-                              let puan = Math.max(5, Math.round(ciftSayisi * 12 - hafizaYanlisSayisi * 4 - hafizaSure * 0.4) + hafizaKomboBonus);
+                              let puan = OC.puan();
                     document.getElementById('hzResIsim').innerText = isim;
                     document.getElementById('hzResHamle').innerText = hafizaHamle;
                     document.getElementById('hzResSure').innerText = hafizaSure + " saniye";
@@ -5545,7 +5538,7 @@ mesajlar.forEach(m => {
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             yagmurHavuz = oyunHavuzGetir(yagmurAktifSinif, yagmurSecilenUniteler);
 if (yagmurHavuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
-yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
+yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                         yagmurAktifIndex = 0; yagmurPuan = 0; yagmurDogru = 0; yagmurCan = 3; yagmurLevel = 1; yagmurBaslangic = Date.now(); yagmurKombo = 0;
                         genelEnerjiHarca(-1);
             document.getElementById('yagmurGirisEkrani').style.display = 'none';
@@ -5599,11 +5592,9 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                                        if (yagmurPozisyon >= 90) {
                             clearInterval(yagmurInterval);
                             document.querySelectorAll('.yg-secenek-btn').forEach(b => b.disabled = true);
-                            yagmurKombo = 0;
-                            yagmurPuan = Math.max(0, yagmurPuan - 5); // süresi dolan kelime de puan kaybettirir
-                            yagmurCan--;
+                            let ocKor = jokerKalkanTuket(); if (!ocKor) yagmurKombo = 0; OC.yanlis(ocKor); yagmurPuan = OC.puan();
+                            yagmurCan = Math.max(0, yagmurCan - 1);
                             document.getElementById('yagmurPuanInfo').innerText = `Puan: ${yagmurPuan}`;
-                            if (yagmurCan <= 0) { setTimeout(() => yagmurOyunuBitir(), 400); return; }
                             yagmurAktifIndex++;
                             setTimeout(() => yagmurYeniKelimeDusur(), 400);
                         }
@@ -5618,9 +5609,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                         if (secilenIndex === dogruIndex) {
                 btnEl.classList.add('dogru');
                 // Süre geçtikçe kazanılan puan azalır, kombo arttıkça bonus büyür
-                       let kazanc = Math.max(5, (12 + yagmurLevel * 2) - gecenSaniyeKelime * 2) + (yagmurKombo * 2);
-                yagmurKombo++;
-                yagmurPuan += kazanc;
+                       OC.dogru(1); yagmurKombo++; yagmurPuan = OC.puan();
                                genelSesEfektiCal('dogru');
                 genelKomboGoster(yagmurKombo, document.querySelector('#yagmurOyunOverlay .game-modal-content'));
                 yagmurDogru++;
@@ -5631,13 +5620,12 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                } else {
                 genelSesEfektiCal('yanlis');
                 btnEl.classList.add('yanlis');
-                yagmurKombo = 0;
+                let ocKor = jokerKalkanTuket(); if (!ocKor) yagmurKombo = 0; OC.yanlis(ocKor);
                 let dogruBtn = document.querySelectorAll('.yg-secenek-btn')[dogruIndex];
                 if (dogruBtn) dogruBtn.classList.add('dogru');
-                yagmurPuan = Math.max(0, yagmurPuan - 5);
+                yagmurPuan = OC.puan();
                         document.getElementById('yagmurPuanInfo').innerText = `Puan: ${yagmurPuan}`;
-                        yagmurCan--;
-                        if (yagmurCan <= 0) { setTimeout(() => yagmurOyunuBitir(), 700); return; }
+                        yagmurCan = Math.max(0, yagmurCan - 1);
                         yagmurAktifIndex++;
                         setTimeout(() => yagmurYeniKelimeDusur(), 700);
                     }
@@ -5728,8 +5716,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             let isim = document.getElementById('asmacaIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             let havuz = oyunHavuzGetir(asmacaAktifSinif, asmacaSecilenUniteler).filter(k => (k.ingilizce||k.en||'').replace(/[^a-zA-Z]/g,'').length >= 3); if (havuz.length < 3) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
-                    let hedefSayisi = 10 + (Number(asmacaAktifSinif) - 1) * 5;
-                    asmacaKelimeler = [...havuz].sort(() => Math.random() - 0.5).slice(0, Math.min(hedefSayisi, havuz.length));
+                    asmacaKelimeler = OC.kelimeSec('asmaca', havuz, OC.SORU); OC.basla('asmaca');
                                asmacaAktifIndex = 0; asmacaPuan = 0; asmacaCan = 5; asmacaKombo = 0;
                            asmacaDogruSayi = 0; asmacaYanlisSayi = 0; asmacaBaslangic = Date.now();
                         genelEnerjiHarca(-1);
@@ -5740,7 +5727,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             asmacaSonrakiKelime();
         }
                 function asmacaSonrakiKelime() {
-                    if (asmacaAktifIndex >= asmacaKelimeler.length || asmacaCan <= 0) { asmacaOyunuBitir(); return; }
+                    if (asmacaAktifIndex >= asmacaKelimeler.length) { asmacaOyunuBitir(); return; }
                     let k = asmacaKelimeler[asmacaAktifIndex];
                     asmacaAktifKelime = (k.ingilizce || k.en || '').toUpperCase();
                     asmacaTahminEdilenHarfler = [];
@@ -5785,9 +5772,9 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                         let tamamMi = sadeceHarfler.every(ch => asmacaTahminEdilenHarfler.includes(ch));
                                if (tamamMi) {
                     let gecenSaniye = Math.floor((Date.now() - asmacaKelimeBaslangicZamani) / 1000);
-                                asmacaPuan += Math.max(5, 20 - asmacaYanlisSayisi * 3 - gecenSaniye) + (asmacaKombo * 2);
+                                OC.dogru(asmacaYanlisSayisi <= 2 ? 1 : 0.5); asmacaPuan = OC.puan();
                     if (asmacaYanlisSayisi === 0) asmacaKombo++; else asmacaKombo = 0;
-                                                   asmacaYanlisSayi++;
+                    asmacaDogruSayi++;
                                          genelSesEfektiCal('dogru');
                     genelKomboGoster(asmacaKombo, document.querySelector('#asmacaOyunOverlay .game-modal-content'));
                     document.getElementById('asmacaPuanInfo').innerText = `Puan: ${asmacaPuan}`;
@@ -5800,9 +5787,9 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                 if (asmacaYanlisSayisi >= 6) {
                     asmacaKombo = 0;
                     document.getElementById('asmacaIpucu').innerText = "Doğrusu: " + asmacaAktifKelime;
-                    asmacaCan--;
+                    asmacaCan = Math.max(0, asmacaCan - 1); asmacaYanlisSayi++; OC.yanlis(false);
                             asmacaCanGoster();
-                            asmacaPuan = Math.max(0, asmacaPuan - 8);
+                            asmacaPuan = OC.puan();
                             document.getElementById('asmacaPuanInfo').innerText = `Puan: ${asmacaPuan}`;
                             setTimeout(() => { asmacaAktifIndex++; asmacaSonrakiKelime(); }, 1400);
                         }
@@ -5880,8 +5867,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                         return /^[a-zA-Z]{3,9}$/.test(en);
                     });
                     if (havuz.length < 2) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
-                    let hedefSayisi = 10 + (Number(kelimebulAktifSinif) - 1) * 5;
-                    kelimebulKelimeler = [...havuz].sort(() => Math.random() - 0.5).slice(0, Math.min(hedefSayisi, havuz.length));
+                    kelimebulKelimeler = OC.kelimeSec('kelimebul', havuz, OC.SORU); OC.basla('kelimebul');
                               kelimebulAktifIndex = 0; kelimebulPuan = 0; kelimebulCan = 5; kelimebulKombo = 0;
                            kelimebulDogruSayi = 0; kelimebulYanlisSayi = 0; kelimebulBaslangic = Date.now();
                         genelEnerjiHarca(-1);
@@ -5892,7 +5878,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             kelimebulSonrakiKelime();
         }
                 function kelimebulSonrakiKelime() {
-                    if (kelimebulAktifIndex >= kelimebulKelimeler.length || kelimebulCan <= 0) { kelimebulOyunuBitir(); return; }
+                    if (kelimebulAktifIndex >= kelimebulKelimeler.length) { kelimebulOyunuBitir(); return; }
                     let k = kelimebulKelimeler[kelimebulAktifIndex];
                     kelimebulHedef = (k.ingilizce || k.en || '').toUpperCase();
                     kelimebulDenemeSayisi = 0;
@@ -5937,10 +5923,10 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
         
                               if (tahmin === kelimebulHedef) {
                         let gecenSaniye = Math.floor((Date.now() - kelimebulKelimeBaslangicZamani) / 1000);
-                                        let puanKazanc = Math.max(5, (7 - kelimebulDenemeSayisi) * 10 - gecenSaniye) + (kelimebulKombo * 3);
+                                        OC.dogru(kelimebulDenemeSayisi <= 3 ? 1 : 0.5); let puanKazanc = 0;
                         kelimebulKombo++;
                                                       kelimebulDogruSayi++;
-                        kelimebulPuan += puanKazanc;
+                        kelimebulPuan = OC.puan();
                                                       genelSesEfektiCal('dogru');
                         genelKomboGoster(kelimebulKombo, document.querySelector('#kelimebulOyunOverlay .game-modal-content'));
                         document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
@@ -5949,10 +5935,10 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                         genelSesEfektiCal('yanlis');
                         kelimebulKombo = 0;
                         document.getElementById('kbIpucu').innerHTML = "❌ Doğrusu: <b>" + kelimebulHedef + "</b>";
-                        kelimebulCan--;
+                        kelimebulCan = Math.max(0, kelimebulCan - 1); OC.yanlis(false);
                                                       kelimebulYanlisSayi++;
                         kelimebulCanGoster();
-                        kelimebulPuan = Math.max(0, kelimebulPuan - 8);
+                        kelimebulPuan = OC.puan();
                         document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
                         setTimeout(() => { kelimebulAktifIndex++; kelimebulSonrakiKelime(); }, 1600);
                     }
@@ -9253,9 +9239,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                 return;
             }
         
-            let hedefSoruSayisi = 10 + (Number(jpAktifSinif) - 1) * 5;
-            let karisikHavuz = [...filtrelenmis].sort(() => Math.random() - 0.5);
-            jpBalonlarListesi = karisikHavuz.slice(0, Math.min(hedefSoruSayisi, karisikHavuz.length));
+            jpBalonlarListesi = OC.kelimeSec('jp', filtrelenmis, OC.SORU); OC.basla('jp');
         
                jpDogruSayisi = 0;
             jpYanlisSayisi = 0;
@@ -9290,7 +9274,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                 let puanDegeri = (index + 1) * 10;
                 let balonBtn = document.createElement('button');
                 balonBtn.style.cssText = "background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%); color: white; border: none; border-radius: 50%; width: 65px; height: 65px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); margin: auto; transition: transform 0.2s;";
-                balonBtn.innerText = `🎈\n+${puanDegeri}P`;
+                balonBtn.innerText = `🎈\n${index + 1}`;
                 balonBtn.onclick = function() {
                     jpBalonSecildi(index, puanDegeri);
                 };
@@ -9314,7 +9298,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             document.getElementById('jpBalonEkrani').style.display = 'none';
             document.getElementById('jpSoruEkrani').style.display = 'block';
         
-            document.getElementById('jpSoruPuanBadge').innerText = `Puan Değeri: ${puanDegeri}`;
+            document.getElementById('jpSoruPuanBadge').innerText = `İlk denemede 100 puan`; window.jpOcIkinci = false;
             document.getElementById('jpKalanBalonInfo').innerText = `Kalan Balon: ${jpBalonlarListesi.length}`;
         
             let ingilizceMi = Math.random() > 0.5;
@@ -9369,6 +9353,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                 b.disabled = true; b.style.background = '#fee2e2'; b.style.borderColor = '#dc2626'; b.style.color = '#7f1d1d';
                 genelSesEfektiCal('yanlis');
                 jokerMesaj('🎯 İkinci şans! Bir kez daha dene.');
+                window.jpOcIkinci = true;
                 return;
             }
             let gecenSaniyeSoru = Math.floor((Date.now() - jpSoruBaslangicZamani) / 1000);
@@ -9379,11 +9364,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
         
                if (secilenIndex === dogruIdx) {
                 jpDogruSayisi++;
-                let minPuan = Math.max(2, Math.floor(jpAktifSoru.puanDegeri / 3));
-                        let kazanc = Math.max(minPuan, jpAktifSoru.puanDegeri - gecenSaniyeSoru * 2) + (jpKombo * 2);
-                jpKombo++;
-                        kazanc *= jokerCiftCarpan();
-                jpToplamPuan += kazanc;
+                OC.dogru(window.jpOcIkinci ? 0.5 : 1); jpKombo++; jpToplamPuan = OC.puan();
                               genelSesEfektiCal('dogru');
                 genelKomboGoster(jpKombo, document.querySelector('#jpOyunOverlay .game-modal-content'));
                 document.getElementById('jpSik' + secilenIndex).style.background = "#16a34a";
@@ -9392,8 +9373,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                 } else {
                 genelSesEfektiCal('yanlis');
                 jpYanlisSayisi++;
-                jpKombo = 0;
-                jpToplamPuan -= Math.max(3, Math.floor(jpAktifSoru.puanDegeri / 2));
+                let ocKor = jokerKalkanTuket(); if (!ocKor) jpKombo = 0; OC.yanlis(ocKor); jpToplamPuan = OC.puan();
                 document.getElementById('jpSik' + secilenIndex).style.background = "#dc2626";
                 document.getElementById('jpSik' + secilenIndex).style.color = "#ffffff";
                 document.getElementById('jpSik' + secilenIndex).style.borderColor = "#b91c1c";
@@ -9632,8 +9612,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             }
         
             // Her seferinde tamamen rastgele (karışık) sıralayıp ilk 8 tanesini seçiyoruz
-            let rastgeleKarisik = [...uygunlar].sort(() => Math.random() - 0.5);
-            boslukAktifKelimeler = rastgeleKarisik.slice(0, Math.min(8, rastgeleKarisik.length));
+            boslukAktifKelimeler = OC.kelimeSec('bosluk', uygunlar, OC.SORU); OC.basla('bosluk'); window.boslukIlkYanlis = null; genelEnerjiHarca(-1);
         
                boslukBaslangicZamani = Date.now();
             boslukGecenSaniye = 0;
@@ -9734,6 +9713,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             if (jkYanlislar.length > 0 && jokerIkinciTuket()) {
                 jkYanlislar.forEach(inp => { inp.value = ''; inp.classList.remove('shake-error'); void inp.offsetWidth; inp.classList.add('shake-error'); });
                 genelSesEfektiCal('yanlis');
+                window.boslukIlkYanlis = new Set(jkYanlislar.map(inp => { let sat = inp.closest('#boslukSatirlarContainer > div'); return [...document.querySelectorAll('#boslukSatirlarContainer > div')].indexOf(sat); }));
                 jokerMesaj('🎯 İkinci şans! Kırmızı kutuları yeniden doldur.');
                 return;
             }
@@ -9790,12 +9770,14 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
                 });
         
                      if (kelimeDogruMu) {
+                    OC.dogru(window.boslukIlkYanlis && window.boslukIlkYanlis.has(satirIndex) ? 0.5 : 1);
                     dogruKelimeSayisi++;
                     boslukKomboSayaci++;
                     boslukKomboBonus += boslukKomboSayaci * 2;
                     satir.style.borderColor = "#22c55e";
                     satir.style.background = "#f0fdf4";
                 } else {
+                    OC.yanlis(false);
                     toplamYanlisYapilan++;
                     boslukKomboSayaci = 0;
                     satir.style.borderColor = "#dc2626";
@@ -9831,12 +9813,10 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             let sinifStr = boslukAktifSinif + ". Sınıf";
             let uniteStr = boslukSecilenUniteler.join(",") + ". Ünite";
             let tarihStr = new Date().toISOString().split('T')[0];
-                       let kelimeBasiPuan = Math.max(5, 15 - Math.floor(boslukGecenSaniye / 10));
-            let puan = (dogruSayisi * kelimeBasiPuan) - (yanlisSayisi * 8) + boslukKomboBonus;
+                       let puan = OC.puan();
                genelSesEfektiCal(dogruSayisi >= yanlisSayisi ? 'dogru' : 'yanlis');
                 let boslukSonKombo = window.boslukSonKombo || 0;
             if (boslukSonKombo >= 5) genelKomboGoster(boslukSonKombo, document.querySelector('#boslukOyunOverlay .game-modal-content'));
-            genelEnerjiHarca(-1);
             document.getElementById('bpResIsim').innerText = isim;
             document.getElementById('bpResSinifUnite').innerText = `${sinifStr} (${uniteStr})`;
             document.getElementById('bpResDogruYanlis').innerText = `${dogruSayisi} Doğru / ${yanlisSayisi} Hata`;
@@ -21053,7 +21033,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   }, true);
 
   /* ================= KELİME YAĞMURU: 15 soru ================= */
-  const YAGMUR_SORU = 15;
+  const YAGMUR_SORU = 8;
   let ygSay = 0;
   let orgYgBas = window.yagmurOyunuBaslat;
   if (typeof orgYgBas === 'function') window.yagmurOyunuBaslat = function () { ygSay = 0; return orgYgBas.apply(this, arguments); };
@@ -21094,6 +21074,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     let o = OYUN[oyun], org = window[o.f];
     if (typeof org !== 'function') return;
     window[o.f] = function () {
+      if (window.OC) return org.apply(this, arguments);   /* yeni ortak çekirdek devrede */
       let s, u, once;
       try { [s, u] = o.sec(); once = ozet(o.liste()); } catch (e) { return org.apply(this, arguments); }
       let master = window.masterKelimeHavuzu || [];
@@ -22407,7 +22388,7 @@ font-size:40px;
 
 <script>
 /* ============ EŞLEŞTİRME OYUNU ============ */
-const ES_KELIME = 12, ES_TUR_BOYU = 6;
+const ES_KELIME = 8, ES_TUR_BOYU = 4;
 let esAktifSinif = 1, esSecilenUniteler = [1];
 let esTurlar = [], esTurNo = 0, esKalan = 0, esDogru = 0, esYanlis = 0, esSure = 0, esTimer = null;
 let esKombo = 0, esKomboBonus = 0, esCiftBonus = 0, esHatalilar = [], esSecEn = null, esSecTr = null, esKilit = false;
@@ -22459,11 +22440,11 @@ function esOyunuBaslat() {
     gorulen.add(en); return true;
   });
   if (havuz.length < 6) { alert('Bu ünitelerde yeterli kelime yok (en az 6 gerekli). Başka ünite de seç.'); return; }
-  let secilen = [...havuz].sort(() => Math.random() - 0.5).slice(0, ES_KELIME)
+  let secilen = OC.kelimeSec('eslestirme', havuz, ES_KELIME)
     .map((k, i) => ({ id: i, en: String(k.ingilizce || k.en).trim(), tr: String(k.turkce || k.tr).trim(), kaynak: k }));
   esTurlar = [];
   for (let i = 0; i < secilen.length; i += ES_TUR_BOYU) esTurlar.push(secilen.slice(i, i + ES_TUR_BOYU));
-  esTurNo = 0; esDogru = 0; esYanlis = 0; esSure = 0; esKombo = 0; esKomboBonus = 0; esCiftBonus = 0; esHatalilar = [];
+  esTurNo = 0; esDogru = 0; esYanlis = 0; esSure = 0; esKombo = 0; esKomboBonus = 0; esCiftBonus = 0; esHatalilar = []; OC.basla('eslestirme');
 
   if (typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-1);
   esEl('esGirisEkrani').style.display = 'none';
@@ -22517,8 +22498,7 @@ function esSec(b, dil) {
   if (a.dataset.id === t.dataset.id) {
     a.classList.add('tamam'); t.classList.add('tamam');
     esDogru++; esKalan--; esKombo++;
-    esKomboBonus += Math.max(0, esKombo - 1) * 2;
-    if (typeof jk !== 'undefined' && jk && jk.cift) { esCiftBonus += 12; jk.cift = false; if (typeof jokerBarCiz === 'function') jokerBarCiz(); }
+    OC.dogru(esHatalilar.some(x => x.id === k.id) ? 0.5 : 1);
     esSeslendir(k.en);
     if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('dogru');
     if (esKombo >= 3 && typeof genelKomboGoster === 'function') genelKomboGoster(esKombo, document.querySelector('#esOyunOverlay .game-modal-content'));
@@ -22534,6 +22514,7 @@ function esSec(b, dil) {
     }
   } else {
     let kalkan = typeof jokerKalkanTuket === 'function' && jokerKalkanTuket();
+    OC.yanlis(kalkan);
     if (!kalkan) {
       esYanlis++; esKombo = 0;
       if (k && !esHatalilar.some(x => x.id === k.id)) esHatalilar.push(k);
@@ -22552,8 +22533,8 @@ async function esOyunuBitir() {
   let isim = esEl('esIsimInput').value.trim();
   let sinifStr = esAktifSinif + '. Sınıf';
   let toplam = esToplam();
-  let puan = Math.max(5, Math.round(toplam * 12 - esYanlis * 4 - esSure * 0.4) + esKomboBonus + esCiftBonus);
-  let yildiz = esYanlis <= 1 ? 3 : esYanlis <= 4 ? 2 : 1;
+  let puan = OC.puan();
+  let yildiz = OC.yildiz(puan);
 
   esEl('esYildiz').innerText = '⭐'.repeat(yildiz) + '☆'.repeat(3 - yildiz);
   esEl('esResIsim').innerText = isim;
@@ -22674,7 +22655,7 @@ async function esOyunuBitir() {
       <div class="tr-istasyon"><span style="font-size:24px" aria-hidden="true">🚉</span><div class="tr-tabela" id="trenTabela"></div></div>
       <div class="tr-hat" id="trenHat" aria-label="Kurduğun cümle"></div>
       <div class="tr-havuz" id="trenHavuz" aria-label="Vagonlar"></div>
-      <div class="tr-alt"><button class="tr-ipucu" id="trenIpucuBtn" onclick="trenIpucu()">💡 İlk vagonu bağla (−5)</button><span class="tr-puan" id="trenPuan">0 puan</span></div>
+      <div class="tr-alt"><button class="tr-ipucu" id="trenIpucuBtn" onclick="trenIpucu()">💡 İlk vagonu bağla (yarım puan)</button><span class="tr-puan" id="trenPuan">0 puan</span></div>
       <button class="tr-kontrol" id="trenKontrolBtn" onclick="trenKontrol()" disabled>🚂 Treni Kaldır</button>
       <div class="tr-panel" id="trenPanel" role="status" aria-live="polite"><h4 id="trenPanelBaslik"></h4><p id="trenPanelMetin"></p><button id="trenDevamBtn" onclick="trenSonraki()">Devam et</button></div>
     </div>
@@ -22698,7 +22679,7 @@ async function esOyunuBitir() {
 
 <script>
 /* ============ KELİME TRENİ ============ */
-const TREN_SORU = 12;
+const TREN_SORU = 8;
 let trenAktifSinif = 1, trenSecilenUniteler = [1];
 let trenKuyruk = [], trenToplam = 0, trenBitti = 0, trenDogru = 0, trenYanlis = 0, trenSeri = 0, trenPuanD = 0, trenSureD = 0, trenTimer = null;
 let trenSoruD = null, trenCevap = [], trenVagonlar = [], trenKilit = false, trenHatalar = [];
@@ -22766,16 +22747,12 @@ async function trenOyunuBaslat() {
   btn.disabled = false; btn.innerText = eskiYazi;
   if (!veri || !veri.ok) { alert('Cümleler yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.'); return; }
 
-  let gorulen = new Set(), secilen = [];
-  for (let s of [...trKaristir(veri.banka || []), ...(veri.ders || [])]) {
-    let k = trNorm(s.en); if (gorulen.has(k)) continue;
-    gorulen.add(k); secilen.push(s);
-    if (secilen.length >= TREN_SORU) break;
-  }
+  let banka = OC.kelimeSec('tren', veri.banka || [], TREN_SORU, { anahtar: s => trNorm(s.en), zk: false });
+  let secilen = banka.concat(OC.kelimeSec('tren_ders', (veri.ders || []).filter(s => !banka.some(b => trNorm(b.en) === trNorm(s.en))), TREN_SORU - banka.length, { anahtar: s => trNorm(s.en), zk: false })).slice(0, TREN_SORU);
   if (secilen.length < 4) { alert('Bu sınıf ve ünitede henüz yeterli cümle yok. Başka bir ünite seç ya da öğretmenine haber ver.'); return; }
 
   trenKuyruk = secilen.map((s, i) => ({ ...s, id: i, tekrar: false }));
-  trenToplam = trenKuyruk.length; trenBitti = 0; trenDogru = 0; trenYanlis = 0; trenSeri = 0; trenPuanD = 0; trenSureD = 0; trenHatalar = [];
+  trenToplam = trenKuyruk.length; trenBitti = 0; trenDogru = 0; trenYanlis = 0; trenSeri = 0; trenPuanD = 0; trenSureD = 0; trenHatalar = []; OC.basla('tren'); window.trenOcIkinci = false;
 
   if (typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-1);
   trEl('trenGirisEkrani').style.display = 'none';
@@ -22834,7 +22811,7 @@ function trenIpucu() {
   trenVagonlar.forEach(v => v.kullanildi = false); trenCevap = [];
   let v = trenVagonlar.find(x => x.k === ilk);
   if (v) { v.kullanildi = true; trenCevap.push(v); }
-  trenPuanD = Math.max(0, trenPuanD - 5);
+  window.trenOcIkinci = true;  /* ipucu alınan cümle yarım puan */
   trEl('trenIpucuBtn').disabled = true;
   trBilgi(); trCiz();
 }
@@ -22845,7 +22822,7 @@ function trenKontrol() {
   let dogruMu = [s.en, ...(s.alt || [])].some(k => trNorm(k) === verilen);
 
   if (!dogruMu && typeof jk !== 'undefined' && jk && jk.ikinci) {          /* 🎯 İkinci Şans */
-    jk.ikinci = false; if (typeof jokerBarCiz === 'function') jokerBarCiz();
+    jk.ikinci = false; window.trenOcIkinci = true; if (typeof jokerBarCiz === 'function') jokerBarCiz();
     if (typeof jokerMesaj === 'function') jokerMesaj('🎯 İkinci şans kullanıldı, bir daha dene!');
     let hat = trEl('trenHat'); hat.classList.remove('sars'); void hat.offsetWidth; hat.classList.add('sars');
     if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('yanlis');
@@ -22856,9 +22833,8 @@ function trenKontrol() {
   let hat = trEl('trenHat');
   if (dogruMu) {
     trenDogru++; trenBitti++; trenSeri++;
-    let kazanc = 10 + Math.min(trenSeri - 1, 5) * 2;
-    if (typeof jk !== 'undefined' && jk && jk.cift) { kazanc *= 2; jk.cift = false; if (typeof jokerBarCiz === 'function') jokerBarCiz(); }
-    trenPuanD += kazanc;
+    let kazanc = OC.dogru(s.tekrar || window.trenOcIkinci ? 0.5 : 1); window.trenOcIkinci = false;
+    trenPuanD = OC.puan();
     hat.classList.add('kalkis');
     trKonus(s.en, 0.9);
     if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('dogru');
@@ -22869,6 +22845,7 @@ function trenKontrol() {
     trenYanlis++;
     let kalkan = typeof jokerKalkanTuket === 'function' && jokerKalkanTuket();
     if (!kalkan) trenSeri = 0;
+    OC.yanlis(kalkan); window.trenOcIkinci = false;
     if (!s.tekrar) { trenKuyruk.push({ ...s, tekrar: true }); if (!trenHatalar.includes(s)) trenHatalar.push(s); }
     else trenBitti++;
     hat.classList.remove('sars'); void hat.offsetWidth; hat.classList.add('sars');
@@ -22891,8 +22868,8 @@ async function trenOyunuBitir() {
   trEl('trenOyunEkrani').style.display = 'none';
   trEl('trenBitisEkrani').style.display = 'block';
   let isim = trEl('trenIsimInput').value.trim(), sinifStr = trenAktifSinif + '. Sınıf';
-  let yildiz = trenYanlis <= 1 ? 3 : trenYanlis <= 4 ? 2 : 1;
-  let puan = Math.max(5, trenPuanD + Math.max(0, Math.round((trenToplam * 12 - trenSureD) / 4)));
+  let yildiz = OC.yildiz(puan);
+  let puan = OC.puan();
   trEl('trenYildiz').innerText = '⭐'.repeat(yildiz) + '☆'.repeat(3 - yildiz);
   trEl('trenResIsim').innerText = isim;
   trEl('trenResDogru').innerText = `${trenDogru} / ${trenToplam}`;
@@ -22941,5 +22918,175 @@ document.addEventListener('keydown', e => {
 </script>
 
                 
-        </body>
+        
+<!-- ===================== ORTAK OYUN ÇEKİRDEĞİ (OC) · Aşama 1 =====================
+     9 oyun için: 8 soru, tekrar etmeyen kelimeler (+1 Zor Kelime), 1000'lik adil puan,
+     süre yalnızca eşitlik bozucu, haftalık / tüm zamanlar liderlik sekmeleri.
+     ============================================================================== -->
+<style>
+.oc-sekmeler{display:flex;gap:6px;margin:0 0 6px}
+.oc-sekme{flex:1;border:1.5px solid #e2e8f0;background:#fff;border-radius:999px;padding:5px 8px;font-family:inherit;font-weight:800;font-size:11px;color:#64748b;cursor:pointer}
+.oc-sekme.aktif{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.oc-bilgi{font-size:10px;font-weight:700;color:#94a3b8;margin:0 0 4px}
+</style>
+<script>
+window.OC = (function () {
+  const SORU = 8, TAM = 100, YARIM = 50;
+  const SERI_BONUS = { 3: 50, 5: 50, 8: 100 };          /* en fazla 200 → en yüksek puan 1000 */
+  const KAYIT_OYUN = { kelimeLiderlikKaydet: 'ky', jeopardyLiderlikKaydet: 'jp', boslukLiderlikKaydet: 'bosluk',
+    hafizaLiderlikKaydet: 'hafiza', yagmurLiderlikKaydet: 'yagmur', asmacaLiderlikKaydet: 'asmaca',
+    kelimebulLiderlikKaydet: 'kelimebul', eslestirmeLiderlikKaydet: 'eslestirme', trenLiderlikKaydet: 'tren' };
+  const GETIR_ADIL = /^(kelime|jeopardy|bosluk|hafiza|yagmur|asmaca|kelimebul|eslestirme|tren)LiderlikTumunuGetir$/;
+  let d = null;                     /* aktif oyun durumu */
+  const sonuclar = {};              /* oyunKey → dondurulmuş sonuç */
+  let donem = 'hafta';
+
+  /* ---------- yardımcılar ---------- */
+  const karistir = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const enAnahtar = k => String((k && (k.ingilizce || k.en)) || '').trim().toLowerCase();
+  const sinifModu = () => typeof siniftaOynananOgrenci !== 'undefined' && !!siniftaOynananOgrenci;
+  const bugun = () => (typeof yoBugun === 'function' ? yoBugun() : new Date().toISOString().slice(0, 10));
+  function kullanici() { try { return (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher') ? aktifOgrenciAdi : ''; } catch (e) { return ''; } }
+
+  /* ---------- görülen kelimeler (öğrenci + oyun başına) ---------- */
+  function gkOku(oyun) {
+    try {
+      if (typeof yoHazirMi === 'function' && yoHazirMi()) { yo.gk = yo.gk || {}; return new Set(yo.gk[oyun] || []); }
+      let v = JSON.parse(localStorage.getItem('oc_gk_' + kullanici()) || '{}'); return new Set(v[oyun] || []);
+    } catch (e) { return new Set(); }
+  }
+  function gkYaz(oyun, set) {
+    let liste = [...set].slice(-700);
+    try {
+      if (typeof yoHazirMi === 'function' && yoHazirMi()) { yo.gk = yo.gk || {}; yo.gk[oyun] = liste; if (typeof yoKaydet === 'function') yoKaydet(); return; }
+      let v = JSON.parse(localStorage.getItem('oc_gk_' + kullanici()) || '{}'); v[oyun] = liste; localStorage.setItem('oc_gk_' + kullanici(), JSON.stringify(v));
+    } catch (e) {}
+  }
+
+  /* Havuzdan `adet` öğe: önce görülmemişler, varsa 1 tane vadesi gelmiş Zor Kelime.
+     Havuz bitince bu havuzun kaydı sıfırlanır ve yeni tur başlar. */
+  function kelimeSec(oyun, havuz, adet, opt) {
+    opt = opt || {}; adet = adet || SORU;
+    const anahtar = opt.anahtar || enAnahtar;
+    let tekil = [], gorulenAnahtar = new Set();
+    for (const k of havuz || []) { let a = anahtar(k); if (!a || gorulenAnahtar.has(a)) continue; gorulenAnahtar.add(a); tekil.push(k); }
+    if (sinifModu() || !kullanici()) return karistir(tekil).slice(0, adet);
+
+    let gorulen = gkOku(oyun), secim = [];
+    if (opt.zk !== false && typeof yo !== 'undefined' && yo && yo.zk) {
+      yo.gkZk = yo.gkZk || {};
+      let vadeli = tekil.filter(k => { let a = anahtar(k), z = yo.zk[a]; return z && (!z.sonraki || z.sonraki <= bugun()) && a !== yo.gkZk[oyun]; });
+      if (vadeli.length) { let t = vadeli[Math.floor(Math.random() * vadeli.length)]; t._tekrar = true; secim.push(t); yo.gkZk[oyun] = anahtar(t); }
+      else yo.gkZk[oyun] = '';     /* bir sonraki oyunda aynı zor kelime yeniden gelebilir */
+    }
+    let yeni = karistir(tekil.filter(k => !gorulen.has(anahtar(k)) && !secim.includes(k)));
+    secim.push(...yeni.slice(0, adet - secim.length));
+    if (secim.length < adet) {                             /* tur tamamlandı: bu havuzu sıfırla */
+      tekil.forEach(k => gorulen.delete(anahtar(k)));
+      secim.push(...karistir(tekil.filter(k => !secim.includes(k))).slice(0, adet - secim.length));
+    }
+    secim.forEach(k => gorulen.add(anahtar(k)));
+    gkYaz(oyun, gorulen);
+    return karistir(secim);
+  }
+
+  /* ---------- puanlama ---------- */
+  function basla(oyun) {
+    d = { oyun, puan: 0, dogru: 0, yanlis: 0, seri: 0, enSeri: 0, verilenBonus: {}, bas: Date.now(), odulCarpan: 1, bitti: false };
+    delete sonuclar[oyun];
+  }
+  /* oran: 1 = ilk denemede doğru (100), 0.5 = ikinci denemede (50), 0 = bulundu ama puansız */
+  function dogru(oran) {
+    if (!d) return 0;
+    if (oran === undefined || oran === true) oran = 1;
+    if (oran === false) oran = 1;
+    let kazanc = Math.round(TAM * oran);
+    d.dogru++;
+    if (oran >= 1) {
+      d.seri++; d.enSeri = Math.max(d.enSeri, d.seri);
+      let b = SERI_BONUS[d.seri];
+      if (b && !d.verilenBonus[d.seri]) { d.verilenBonus[d.seri] = 1; kazanc += b; }
+    } else d.seri = 0;
+    try { if (typeof jokerCiftCarpan === 'function' && jokerCiftCarpan() > 1) d.odulCarpan = 2; } catch (e) {}   /* çift puan → ödül ×2, liderlik değişmez */
+    d.puan = Math.min(1000, d.puan + kazanc);
+    return kazanc;
+  }
+  function yanlis(korundu) { if (!d) return; d.yanlis++; if (!korundu) d.seri = 0; }
+  function hataSay() { if (d) d.yanlis++; }
+  function puan() { return d ? d.puan : 0; }
+  function sure() { return d ? Math.max(0, Math.round((Date.now() - d.bas) / 1000)) : 0; }
+  function yildiz(p) { return p >= 800 ? 3 : p >= 500 ? 2 : 1; }
+  function sonlandir(oyun) {
+    if (!d || d.oyun !== oyun) return sonuclar[oyun] || null;
+    if (!d.bitti) { d.bitti = true; d.sure = sure(); sonuclar[oyun] = { puan: d.puan, dogru: d.dogru, yanlis: d.yanlis, sure: d.sure, yildiz: yildiz(d.puan), enSeri: d.enSeri, odulCarpan: d.odulCarpan }; }
+    return sonuclar[oyun];
+  }
+
+  /* ---------- sonuç ekranı: puan ve süre her zaman çekirdekten ---------- */
+  function sonucEkraniniSar() {
+    if (typeof window.genelSonucEkraniGoster !== 'function' || window.genelSonucEkraniGoster._oc) return;
+    const org = window.genelSonucEkraniGoster;
+    window.genelSonucEkraniGoster = function (o) {
+      if (o && o.oyunKey && d && d.oyun === o.oyunKey) {
+        let s = sonlandir(o.oyunKey);
+        o = Object.assign({}, o, { puan: s.puan, dogru: s.dogru, yanlis: s.yanlis, sureSaniye: s.sure, yildiz: s.yildiz, odulCarpan: s.odulCarpan });
+      }
+      return org.call(this, o);
+    };
+    window.genelSonucEkraniGoster._oc = true;
+  }
+
+  /* ---------- ağ: kayıtta çekirdek sonucu, listede dönem ---------- */
+  const orgFetch = window.fetch;
+  window.fetch = function (url, opt) {
+    try {
+      if (opt && opt.method === 'POST' && typeof opt.body === 'string' && opt.body.indexOf('LiderlikKaydet') !== -1) {
+        let b = JSON.parse(opt.body), oyun = KAYIT_OYUN[b.islem];
+        let s = oyun ? (sonuclar[oyun] || (d && d.oyun === oyun ? sonlandir(oyun) : null)) : null;
+        if (s) {
+          Object.assign(b, { puan: s.puan, dogru: s.dogru, yanlis: s.yanlis, suresaniye: s.sure, sure: s.sure + 's', puanSurum: 2 });
+          opt = Object.assign({}, opt, { body: JSON.stringify(b) });
+        }
+      }
+      let u = typeof url === 'string' ? url : '';
+      let m = u.match(/[?&]islem=([A-Za-z]+LiderlikTumunuGetir)/);
+      if (m && GETIR_ADIL.test(m[1]) && u.indexOf('donem=') === -1) url = u + '&donem=' + donem;
+    } catch (e) {}
+    return orgFetch.call(this, url, opt);
+  };
+
+  /* ---------- liderlik: Bu hafta / Tüm zamanlar sekmeleri ---------- */
+  function liderlikSar(ad) {
+    const org = window[ad];
+    if (typeof org !== 'function' || org._oc) return;
+    const sarili = function (islem, sinifStr, isim, konteynerId) {
+      let args = arguments, kutu = document.getElementById(konteynerId);
+      if (kutu && GETIR_ADIL.test(islem)) {
+        let id = konteynerId + '_ocSekme', bar = document.getElementById(id);
+        if (!bar) {
+          bar = document.createElement('div'); bar.id = id; bar.className = 'oc-sekmeler';
+          bar.innerHTML = '<button type="button" class="oc-sekme" data-d="hafta">📅 Bu hafta</button><button type="button" class="oc-sekme" data-d="tum">🏛️ Tüm zamanlar</button>';
+          let not = document.createElement('div'); not.className = 'oc-bilgi'; not.id = konteynerId + '_ocNot';
+          not.innerText = 'Eşit puanda daha kısa sürede bitiren önde. Herkesin en iyi skoru.';
+          kutu.parentNode.insertBefore(bar, kutu); kutu.parentNode.insertBefore(not, kutu);
+          bar.querySelectorAll('.oc-sekme').forEach(b => b.onclick = () => { donem = b.dataset.d; sarili.apply(null, bar._args); });
+        }
+        bar._args = args;
+        bar.querySelectorAll('.oc-sekme').forEach(b => b.classList.toggle('aktif', b.dataset.d === donem));
+      }
+      return org.apply(this, args);
+    };
+    sarili._oc = true;
+    window[ad] = sarili;
+  }
+
+  function kur() { sonucEkraniniSar(); liderlikSar('oyunLiderlikGoster'); liderlikSar('oyunLiderlikGosterDetayli'); }
+  kur(); setTimeout(kur, 1500);
+
+  return { SORU, kelimeSec, basla, dogru, yanlis, hataSay, puan, sure, yildiz, sonlandir,
+           get aktif() { return d; }, sonuc: oyun => sonuclar[oyun] || null };
+})();
+</script>
+
+</body>
         </html>
