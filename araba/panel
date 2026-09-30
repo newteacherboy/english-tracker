@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kabalı Ortaokulu - Canlı Lig Tablosu</title>
+<style>
+:root{
+  --bg:#0f1522; --card:#171f30; --card2:#1e2740; --line:#2a3552;
+  --gold:#ffd54a; --silver:#cfd8e3; --bronze:#e0975a; --accent:#4f8dff; --green:#3ecf8e; --red:#ff6b6b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#eef1f8;font-family:'Segoe UI',Arial,sans-serif;min-height:100vh}
+header{padding:22px 16px 14px;text-align:center;border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:1.4rem;letter-spacing:.5px}
+header p{margin:4px 0 0;color:#93a0bf;font-size:.85rem}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+#status-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+#round-badge{display:inline-block;padding:4px 12px;border-radius:20px;background:var(--card2);font-size:.72rem;color:var(--accent);border:1px solid var(--accent)}
+#refresh-btn{background:var(--card2);border:1px solid var(--line);color:#c7d0e8;font-size:.72rem;padding:4px 12px;border-radius:20px;cursor:pointer}
+#refresh-btn:hover{border-color:var(--accent)}
+.row{
+  display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;padding:10px 14px;margin-bottom:8px;transition:transform .7s cubic-bezier(.2,.8,.2,1);
+  position:relative;
+}
+.row.top3{background:linear-gradient(90deg,var(--card2),var(--card))}
+.rank{width:34px;text-align:center;font-weight:700;font-size:1.05rem;color:#c7d0e8;flex-shrink:0}
+.medal{font-size:1.3rem}
+.info{flex:1;min-width:0}
+.name{font-weight:600;font-size:.98rem}
+.school{font-size:.72rem;color:#8492b3}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.chip{font-size:.62rem;background:#111a2d;border:1px solid var(--line);border-radius:6px;padding:2px 5px;color:#a9b4d0;white-space:nowrap}
+.chip b{color:#e7ebfa}
+.net{width:78px;text-align:right;flex-shrink:0}
+.net .val{font-size:1.15rem;font-weight:800;color:var(--green)}
+.net .lbl{font-size:.6rem;color:#8492b3}
+.delta{width:22px;text-align:center;font-size:.9rem;flex-shrink:0}
+.up{color:var(--green)} .down{color:var(--red)} .same{color:#657090}
+.empty-state{text-align:center;color:#7d8ac0;padding:40px 10px;font-size:.9rem}
+footer{text-align:center;color:#5a6690;font-size:.72rem;padding:20px 0 30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏆 KABALI ORTAOKULU</h1>
+  <p>Deneme Sınavı Lig Tablosu — Canlı</p>
+  <div id="status-bar">
+    <span id="round-badge">Bağlanılıyor...</span>
+    <button id="refresh-btn">↻ Şimdi yenile</button>
+  </div>
+</header>
+<div class="wrap"><div id="table"></div></div>
+<footer>Google Sheets'e bağlı • otomatik günceller</footer>
+<script>
+/* ================================================================
+   BURAYI DOLDURUN: Apps Script'i "Web App" olarak yayınladığınızda
+   size verilen URL'yi aşağıya, tırnakların içine yapıştırın.
+   Örnek: "https://script.google.com/macros/s/AKfycb.../exec"
+   ================================================================ */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw5LT6eO3fyhn_7TVDaEyW5Rz_IocPxL8glJYrFtIXEFeGtaD6VYEFiGQs2xV9NBBB0/exec";
+const REFRESH_MS = 15000; // 15 saniyede bir kontrol eder
+
+const Q={"Türkçe":20,"Matematik":20,"Fen Bilimleri":20,"Sosyal Bilgiler":10,"Din Kültürü":10,"İngilizce":10,"Müzik":10,"Resim":10};
+const SUBJ=Object.keys(Q);
+function net(d,y){return Math.round((d-y/4)*100)/100}
+
+function buildStudents(rawRows){
+  const students=[];
+  for(const row of rawRows){
+    const ad=String(row['Ad']||'').trim();
+    const soyad=String(row['Soyad']||'').trim();
+    if(!ad && !soyad) continue;
+    const okul=String(row['Okul']||'Kabalı Ortaokulu').trim();
+    const visible={}; let total=0, any=false;
+    for(const subj of SUBJ){
+      const dRaw=row[subj+' Doğru'], yRaw=row[subj+' Yanlış'];
+      const dEmpty = dRaw===undefined || dRaw===null || dRaw==='';
+      const yEmpty = yRaw===undefined || yRaw===null || yRaw==='';
+      if(dEmpty && yEmpty) continue;
+      const d=parseFloat(dRaw)||0, y=parseFloat(yRaw)||0;
+      const b=Math.max(0,Q[subj]-d-y), n=net(d,y);
+      visible[subj]={d,y,b,n}; total+=n; any=true;
+    }
+    students.push({id:ad+'|'+soyad, ad, soyad, okul, visible, total:Math.round(total*100)/100, any});
+  }
+  return students;
+}
+function medal(rank){
+  if(rank===1)return '<span class="medal">🥇</span>';
+  if(rank===2)return '<span class="medal">🥈</span>';
+  if(rank===3)return '<span class="medal">🥉</span>';
+  if(rank<=10)return '<span class="medal">⭐</span>';
+  return '';
+}
+let prevRankMap={};
+function render(rows){
+  const el=document.getElementById('table');
+  if(!rows.length){
+    el.innerHTML='<div class="empty-state">Henüz öğrenci verisi girilmedi.</div>';
+    return;
+  }
+  rows.sort((a,b)=>b.total-a.total);
+  const oldTops={};
+  [...el.children].forEach(r=>{if(r.dataset.id)oldTops[r.dataset.id]=r.getBoundingClientRect().top});
+  el.innerHTML='';
+  rows.forEach((r,idx)=>{
+    const rank=idx+1;
+    const prevRank=prevRankMap[r.id];
+    let d='<span class="delta same">–</span>';
+    if(prevRank!==undefined){
+      if(prevRank>rank)d=`<span class="delta up">▲${prevRank-rank}</span>`;
+      else if(prevRank<rank)d=`<span class="delta down">▼${rank-prevRank}</span>`;
+    }
+    const chips=Object.entries(r.visible).map(([s,v])=>`<span class="chip"><b>${s.slice(0,3)}</b> ${v.d}D-${v.y}Y-${v.b}B (Net ${v.n})</span>`).join('');
+    const row=document.createElement('div');
+    row.className='row'+(rank<=3?' top3':'');
+    row.dataset.id=r.id;
+    row.innerHTML=`<div class="rank">${medal(rank)||rank}</div>
+      <div class="info"><div class="name">${r.ad} ${r.soyad}</div><div class="school">${r.okul}</div>
+      <div class="chips">${chips||'<span class="chip">Henüz ders verisi yok</span>'}</div></div>
+      <div class="net"><div class="val">${r.any?r.total.toFixed(2):'-'}</div><div class="lbl">NET</div></div>
+      <div class="delta">${d}</div>`;
+    el.appendChild(row);
+  });
+  requestAnimationFrame(()=>{
+    [...el.children].forEach(r=>{
+      const old=oldTops[r.dataset.id];
+      if(old!==undefined){
+        const diff=old-r.getBoundingClientRect().top;
+        if(diff){r.style.transform=`translateY(${diff}px)`;r.style.transition='none';
+          requestAnimationFrame(()=>{r.style.transition='transform .7s cubic-bezier(.2,.8,.2,1)';r.style.transform='translateY(0)'});}
+      }
+    });
+  });
+  rows.forEach((r,idx)=>prevRankMap[r.id]=idx+1);
+}
+const statusEl=document.getElementById('round-badge');
+async function fetchAndRender(){
+  if(APPS_SCRIPT_URL.indexOf('BURAYA_') === 0){
+    statusEl.textContent='⚠ Apps Script linki henüz girilmedi';
+    return;
+  }
+  try{
+    statusEl.textContent='↻ Kontrol ediliyor...';
+    const res=await fetch(APPS_SCRIPT_URL, {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const rawRows=await res.json();
+    const students=buildStudents(rawRows);
+    render(students);
+    statusEl.textContent='✓ Canlı — son güncelleme '+new Date().toLocaleTimeString('tr-TR');
+  }catch(err){
+    statusEl.textContent='⚠ Veri alınamadı ('+err.message+')';
+  }
+}
+document.getElementById('refresh-btn').addEventListener('click',fetchAndRender);
+fetchAndRender();
+setInterval(fetchAndRender, REFRESH_MS);
+</script>
+</body>
+</html>
