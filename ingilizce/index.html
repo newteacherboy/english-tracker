@@ -28970,5 +28970,217 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
 })();
 </script>
 
+                <!-- ===================== UYGULAMA KURULUM REHBERİ (ilk açılış) =====================
+     Siteyi telefon, tablet ve bilgisayarda "uygulama gibi" eklemeyi cihaza göre gösterir.
+     "Uyguladım, oldu" → bir daha gösterilmez. ✕ ya da "Sonra" → 2. girişte bir kez daha gösterilir, sonra hiç.
+     Uygulama olarak açıldıysa (zaten yüklü) hiç gösterilmez.
+     Gerekli dosyalar (index.html ile aynı klasöre): ingilizce-manifest.json, ingilizce-icon-192.png, ingilizce-icon-512.png, ingilizce-apple-touch-icon.png
+     ================================================================================== -->
+<style>
+.kr-perde{position:fixed;inset:0;z-index:2147483000;background:linear-gradient(160deg,#4c1d95,#7c3aed 45%,#db2777);overflow-y:auto;font-family:Nunito,system-ui,sans-serif;color:#2d2350;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 16px);animation:krGel .35s ease-out}
+.kr-kart{position:relative;max-width:520px;margin:0 auto;background:#fff;border-radius:28px;padding:20px 18px 18px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.kr-x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:12px;border:0;background:#f5f3ff;color:#6d28d9;font-size:18px;font-weight:900;cursor:pointer}
+.kr-bas{text-align:center;padding:4px 30px 6px}
+.kr-bas img{width:84px;height:84px;border-radius:22px;box-shadow:0 10px 24px rgba(124,58,237,.35)}
+.kr-bas h2{margin:10px 0 4px;font-size:22px;font-weight:900;line-height:1.2;color:#2d2350}
+.kr-bas p{margin:0;color:#6b5b95;font-weight:700;font-size:14px;line-height:1.5}
+.kr-faydalar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.kr-faydalar span{background:#f5f3ff;color:#5b21b6;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800}
+.kr-sekmeler{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 12px;background:#f5f3ff;border-radius:16px;padding:5px}
+.kr-sekme{border:0;background:none;border-radius:12px;padding:9px 4px;font-family:inherit;font-weight:900;font-size:12.5px;color:#6d28d9;cursor:pointer;line-height:1.2}
+.kr-sekme b{display:block;font-size:20px}
+.kr-sekme[aria-selected="true"]{background:#fff;box-shadow:0 3px 10px rgba(124,58,237,.18);color:#2d2350}
+.kr-tarayici{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.kr-tarayici button{border:2px solid #e9e2ff;background:#fff;border-radius:999px;padding:6px 11px;font-family:inherit;font-weight:800;font-size:12px;color:#5b21b6;cursor:pointer}
+.kr-tarayici button[aria-pressed="true"]{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.kr-senin{display:inline-block;margin-left:4px;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 7px;font-size:10.5px;font-weight:900}
+.kr-adimlar{display:grid;gap:12px}
+.kr-adim{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:center;background:#faf8ff;border:1px solid #efe8ff;border-radius:18px;padding:10px}
+.kr-adim .no{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#7c3aed;color:#fff;font-weight:900;font-size:13px;margin-bottom:4px}
+.kr-adim .bsl{display:block;font-size:14.5px;line-height:1.35;font-weight:900;color:#2d2350}
+.kr-perde b{color:inherit;font-weight:900}
+.kr-adim small{display:block;color:#6b5b95;font-weight:700;font-size:12px;margin-top:3px;line-height:1.4}
+.kr-ikon{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:6px;background:#ede9fe;color:#5b21b6;font-weight:900;font-size:13px;padding:0 4px;vertical-align:middle}
+/* cihaz çizimleri */
+.kr-cihaz{position:relative;width:118px;height:150px;border-radius:18px;background:#1e1b4b;padding:7px;box-shadow:inset 0 0 0 2px #4338ca}
+.kr-cihaz.pc{height:96px;border-radius:10px;padding:5px}
+.kr-cihaz.pc::after{content:"";position:absolute;left:38%;right:38%;bottom:-12px;height:12px;background:#4338ca;border-radius:0 0 6px 6px}
+.kr-ekran{position:relative;width:100%;height:100%;border-radius:12px;background:#fff;overflow:hidden}
+.kr-cihaz.pc .kr-ekran{border-radius:5px}
+.kr-cubuk{position:absolute;left:0;right:0;height:18px;background:#f1f5f9;display:flex;align-items:center;padding:0 5px;gap:4px;font-size:9px;font-weight:900;color:#475569}
+.kr-cubuk.ust{top:0}.kr-cubuk.alt{bottom:0;justify-content:space-around}
+.kr-cubuk .adres{flex:1;height:10px;border-radius:5px;background:#e2e8f0}
+.kr-icerik{position:absolute;left:8px;right:8px;top:26px;display:grid;gap:5px}
+.kr-icerik i{display:block;height:8px;border-radius:4px;background:#ede9fe}
+.kr-vurgu{position:absolute;display:grid;place-items:center;min-width:18px;height:18px;border-radius:6px;background:#fbbf24;color:#78350f;font-size:11px;font-weight:900;box-shadow:0 0 0 4px rgba(251,191,36,.45);animation:krNabiz 1.3s ease-in-out infinite;padding:0 3px}
+.kr-menu{position:absolute;background:#fff;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.2);padding:4px;display:grid;gap:3px;font-size:8.5px;font-weight:800;color:#334155;min-width:76px}
+.kr-menu span{padding:3px 5px;border-radius:5px;line-height:1.2}
+.kr-menu span.on{background:#fbbf24;color:#78350f}
+.kr-ana{position:absolute;inset:18px 6px 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-content:start;padding-top:6px}
+.kr-ana span{aspect-ratio:1;border-radius:9px;background:#e2e8f0}
+.kr-ana img{width:100%;aspect-ratio:1;border-radius:9px;box-shadow:0 0 0 3px #fbbf24}
+.kr-alt{margin-top:14px;display:grid;gap:8px}
+.kr-btn{width:100%;border:0;border-radius:16px;padding:14px;font-family:inherit;font-weight:900;font-size:16px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#22c55e,#15803d);box-shadow:0 5px 0 #166534}
+.kr-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #166534}
+.kr-btn.yukle{background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:0 5px 0 #6d28d9}
+.kr-btn.ikincil{background:#f5f3ff;color:#6d28d9;box-shadow:none;font-size:14px;padding:11px}
+.kr-uyari{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:10px 12px;font-size:12.5px;font-weight:800;line-height:1.45;margin-bottom:12px}
+.kr-not{text-align:center;color:#8a78b8;font-size:11.5px;font-weight:700;margin-top:10px;line-height:1.4}
+.kr-perde button:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+@keyframes krGel{from{opacity:0}}
+@keyframes krNabiz{0%,100%{box-shadow:0 0 0 3px rgba(251,191,36,.55)}50%{box-shadow:0 0 0 8px rgba(251,191,36,0)}}
+@media (max-width:380px){.kr-adim{grid-template-columns:96px 1fr}.kr-cihaz{width:96px;height:124px}.kr-cihaz.pc{height:80px}}
+@media (prefers-reduced-motion:reduce){.kr-perde,.kr-vurgu{animation:none}}
+</style>
+<script>
+(function () {
+  const ANAHTAR = 'diji_kurulum_rehberi_v1';
+  const durum = () => { try { return JSON.parse(localStorage.getItem(ANAHTAR) || '{}'); } catch (e) { return {}; } };
+  const yaz = d => { try { localStorage.setItem(ANAHTAR, JSON.stringify(d)); } catch (e) {} };
+
+  /* ---- Uygulama kimliği ve simgeler (sayfanın başına eklenir) ---- */
+  function basaEkle(tag, attrs) { if (document.head.querySelector(`${tag}[${Object.keys(attrs)[0]}="${Object.values(attrs)[0]}"]`)) return; let e = document.createElement(tag); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); document.head.appendChild(e); }
+  basaEkle('link', { rel: 'manifest', href: 'ingilizce-manifest.json' });
+  basaEkle('link', { rel: 'apple-touch-icon', href: 'ingilizce-apple-touch-icon.png' });
+  basaEkle('meta', { name: 'theme-color', content: '#7c3aed' });
+  basaEkle('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
+  basaEkle('meta', { name: 'mobile-web-app-capable', content: 'yes' });
+  basaEkle('meta', { name: 'apple-mobile-web-app-title', content: 'Diji İngilizce' });
+  basaEkle('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'default' });
+
+  /* ---- Tek dokunuşla yükleme (Android Chrome, bilgisayarda Chrome/Edge) ---- */
+  let yuklemeIstegi = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); yuklemeIstegi = e; let b = document.getElementById('krYukle'); if (b) b.style.display = ''; });
+  window.addEventListener('appinstalled', () => { let d = durum(); d.ok = 1; yaz(d); kapat(); });
+
+  /* ---- Cihaz ve tarayıcı ---- */
+  const ua = navigator.userAgent || '';
+  const ios = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  const ipad = /iPad/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  const android = /Android/i.test(ua);
+  const uygulamaIci = /FBAN|FBAV|Instagram|Line\/|WhatsApp|Snapchat|TikTok|MicroMessenger/i.test(ua);
+  const tarayici = /SamsungBrowser/i.test(ua) ? 'samsung' : /Edg\//i.test(ua) ? 'edge' : /Firefox|FxiOS/i.test(ua) ? 'firefox' : /CriOS|Chrome/i.test(ua) ? 'chrome' : /Safari/i.test(ua) ? 'safari' : 'chrome';
+  const yuklu = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  let cihaz = ios ? 'ios' : android ? 'android' : 'pc';
+
+  /* ---- Mini cihaz çizimleri ---- */
+  const icerik = '<div class="kr-icerik"><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div>';
+  const tel = (ust, alt, ek) => `<div class="kr-cihaz"><div class="kr-ekran">${ust ? `<div class="kr-cubuk ust">${ust}</div>` : ''}${icerik}${alt ? `<div class="kr-cubuk alt">${alt}</div>` : ''}${ek || ''}</div></div>`;
+  const pc = (ust, ek) => `<div class="kr-cihaz pc"><div class="kr-ekran"><div class="kr-cubuk ust">${ust}</div>${icerik}${ek || ''}</div></div>`;
+  const anaEkran = (pcMi) => pcMi ? pc('<span>●●●</span><span class="adres"></span>', '<div class="kr-ana" style="grid-template-columns:repeat(5,1fr);inset:20px 8px 8px"><span></span><img src="ingilizce-icon-192.png" alt=""><span></span><span></span><span></span></div>') : `<div class="kr-cihaz"><div class="kr-ekran" style="background:linear-gradient(160deg,#c4b5fd,#f9a8d4)"><div class="kr-ana"><span></span><span></span><img src="ingilizce-icon-192.png" alt=""><span></span><span></span><span></span></div></div></div>`;
+  const menu = (ogeler, stil) => `<div class="kr-menu" style="${stil}">${ogeler.map(([t, on]) => `<span class="${on ? 'on' : ''}">${t}</span>`).join('')}</div>`;
+
+  /* ---- Rehberler ---- */
+  const REHBER = {
+    ios: {
+      safari: { ad: 'Safari', adimlar: ipad ? [
+          [tel('<span class="adres"></span><span class="kr-vurgu" style="position:static">⬆︎</span>'), 'Sağ üstteki <span class="kr-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Adres çubuğunun yanındaki kare ve ok simgesi.'],
+          [tel('<span class="adres"></span>', '', menu([['Kopyala'], ['Ana Ekrana Ekle ⊕', 1], ['Yer İmi Ekle']], 'right:6px;top:22px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'Görmüyorsan menüyü biraz aşağı kaydır.'],
+          [anaEkran(), 'Sağ üstte <b>Ekle</b> de', 'Papi simgesi ana ekranında! Artık oradan aç.']]
+        : [
+          [tel('<span class="adres"></span>', '<span>‹</span><span>›</span><span class="kr-vurgu" style="position:static">⬆︎</span><span>▢</span><span>⧉</span>'), 'Alttaki <span class="kr-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Kare ve yukarı ok simgesi. Adres çubuğu üstteyse düğme de üsttedir.'],
+          [tel('', '', menu([['Kopyala'], ['Yer İmi Ekle'], ['Ana Ekrana Ekle ⊕', 1]], 'left:8px;right:8px;bottom:6px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'Görmüyorsan listeyi yukarı kaydır. Gerekirse "Diğer…" ya da "Daha fazla" menüsünde olabilir.'],
+          [anaEkran(), 'Sağ üstte <b>Ekle</b> de', 'Papi simgesi ana ekranında! Artık oradan aç.']] },
+      chrome: { ad: 'Chrome', adimlar: [
+          [tel('<span class="adres"></span><span class="kr-vurgu" style="position:static">⬆︎</span>'), 'Adres çubuğundaki <span class="kr-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Bazı sürümlerde sağ alttaki <span class="kr-ikon">···</span> menüsünde "Paylaş…" yazar.'],
+          [tel('', '', menu([['Kopyala'], ['Ana Ekrana Ekle ⊕', 1], ['Okuma Listesi']], 'left:8px;right:8px;bottom:6px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'iOS 16.4 ve üstünde çalışır. Görünmüyorsa siteyi Safari\'de açıp oradan ekle.'],
+          [anaEkran(), '<b>Ekle</b> de', 'Papi simgesi ana ekranında!']] }
+    },
+    android: {
+      chrome: { ad: 'Chrome', adimlar: [
+          [tel('<span class="adres"></span><span class="kr-vurgu" style="position:static">⋮</span>'), 'Sağ üstteki <span class="kr-ikon">⋮</span> menüye dokun', 'Üç nokta simgesi, adres çubuğunun yanında.'],
+          [tel('<span class="adres"></span><span>⋮</span>', '', menu([['Yeni sekme'], ['Uygulamayı yükle', 1], ['Ana ekrana ekle']], 'right:4px;top:20px')), '<b>Uygulamayı yükle</b> ya da <b>Ana ekrana ekle</b>', 'Hangisi görünüyorsa ona dokun.'],
+          [anaEkran(), '<b>Yükle</b> düğmesine dokun', 'Papi simgesi ana ekrana ve uygulamalar listesine gelir.']] },
+      samsung: { ad: 'Samsung Internet', adimlar: [
+          [tel('<span class="adres"></span>', '<span>‹</span><span>›</span><span>⌂</span><span>▢</span><span class="kr-vurgu" style="position:static">≡</span>'), 'Sağ alttaki <span class="kr-ikon">≡</span> menüye dokun', 'Üç çizgi simgesi.'],
+          [tel('', '', menu([['Yer imleri'], ['Sayfayı ekle ⊕', 1], ['Ayarlar']], 'left:8px;right:8px;bottom:6px')), '<b>Sayfayı ekle</b> seçeneğine dokun', ''],
+          [anaEkran(), '<b>Ana ekran</b>ı seç, sonra <b>Ekle</b>', 'Papi simgesi ana ekranında!']] },
+      firefox: { ad: 'Firefox', adimlar: [
+          [tel('<span class="adres"></span><span class="kr-vurgu" style="position:static">⋮</span>'), 'Menüye <span class="kr-ikon">⋮</span> dokun', 'Sağ üstte ya da sağ altta olabilir.'],
+          [tel('<span class="adres"></span><span>⋮</span>', '', menu([['Paylaş'], ['Yükle', 1], ['Ana ekrana ekle']], 'right:4px;top:20px')), '<b>Yükle</b> ya da <b>Ana ekrana ekle</b>', ''],
+          [anaEkran(), '<b>Ekle</b> de', 'Papi simgesi ana ekranında!']] }
+    },
+    pc: {
+      chrome: { ad: 'Chrome', adimlar: [
+          [pc('<span>●●●</span><span class="adres"></span><span class="kr-vurgu" style="position:static">⊕</span>'), 'Adres çubuğunun sağındaki <span class="kr-ikon">⊕</span> yükle simgesine tıkla', 'Ekran ve aşağı ok şeklinde de görünebilir.'],
+          [pc('<span>●●●</span><span class="adres"></span><span>⋮</span>', menu([['Yeni sekme'], ['Kaydet ve paylaş ›'], ['Sayfayı uygulama olarak yükle', 1]], 'left:5px;right:5px;top:18px')), 'Simge yoksa: <span class="kr-ikon">⋮</span> → <b>Kaydet ve paylaş</b> → <b>Uygulama olarak yükle</b>', ''],
+          [anaEkran(true), '<b>Yükle</b>\'ye tıkla', 'Masaüstünde ve başlat menüsünde Papi simgesi olur, kendi penceresinde açılır.']] },
+      edge: { ad: 'Edge', adimlar: [
+          [pc('<span>●●●</span><span class="adres"></span><span class="kr-vurgu" style="position:static">⊕</span>'), 'Adres çubuğundaki <span class="kr-ikon">⊕</span> "Uygulama kullanılabilir" simgesine tıkla', ''],
+          [pc('<span>●●●</span><span class="adres"></span><span>···</span>', menu([['Sık kullanılanlar'], ['Uygulamalar ›'], ['Bu siteyi uygulama olarak yükle', 1]], 'left:5px;right:5px;top:18px')), 'Ya da <span class="kr-ikon">···</span> → <b>Uygulamalar</b> → <b>Bu siteyi uygulama olarak yükle</b>', ''],
+          [anaEkran(true), '<b>Yükle</b>\'ye tıkla', 'Görev çubuğuna sabitleyebilirsin.']] },
+      safari: { ad: 'Safari (Mac)', adimlar: [
+          [pc('<span class="kr-vurgu" style="position:static">Dosya</span><span class="adres"></span>'), 'Üst menüden <b>Dosya</b>\'ya tıkla', 'macOS Sonoma ve üstü gerekir.'],
+          [pc('<span>Dosya</span><span class="adres"></span>', menu([['Yeni pencere'], ['Dock\'a Ekle…', 1], ['Paylaş']], 'left:5px;right:5px;top:18px')), '<b>Dock\'a Ekle…</b> seçeneğine tıkla', ''],
+          [anaEkran(true), '<b>Ekle</b>\'ye tıkla', 'Papi simgesi Dock\'ta!']] },
+      firefox: { ad: 'Firefox', adimlar: [
+          [pc('<span>●●●</span><span class="adres"></span><span class="kr-vurgu" style="position:static">☆</span>'), 'Firefox bilgisayarda uygulama yüklemeyi desteklemiyor', 'En kolayı: siteyi <b>Chrome</b> ya da <b>Edge</b> ile açıp oradan yüklemek.'],
+          [pc('<span>●●●</span><span class="adres"></span><span>☆</span>'), 'Ya da <span class="kr-ikon">☆</span> ile yer imlerine ekle', 'Yer imleri çubuğundan tek tıkla açılır.'],
+          [anaEkran(true), 'Yer imi çubuğunda hazır!', '']] }
+    }
+  };
+  const VARSAYILAN = { ios: ['safari', 'chrome'], android: ['chrome', 'samsung', 'firefox'], pc: ['chrome', 'edge', 'safari', 'firefox'] };
+
+  /* ---- Ekran ---- */
+  let perde = null, secili = { cihaz, tarayici: null };
+  function tarayiciSec(c) { let l = VARSAYILAN[c]; return l.includes(tarayici) && c === cihaz ? tarayici : l[0]; }
+  function ciz() {
+    let c = secili.cihaz, t = secili.tarayici || tarayiciSec(c), R = REHBER[c][t];
+    let uyari = uygulamaIci ? `<div class="kr-uyari">⚠️ Siteyi bir uygulamanın içinden (WhatsApp, Instagram…) açmışsın. Önce sağ üstteki menüden <b>"Tarayıcıda aç"</b> seçeneğine dokun, sonra aşağıdaki adımları uygula.</div>`
+      : (c === 'ios' && cihaz === 'ios' && t === 'safari' && tarayici !== 'safari') ? `<div class="kr-uyari">💡 iPhone ve iPad'de en sorunsuz yöntem Safari'dir.</div>` : '';
+    perde.innerHTML = `<div class="kr-kart">
+      <button class="kr-x" id="krX" aria-label="Kapat">✕</button>
+      <div class="kr-bas"><img src="ingilizce-icon-192.png" alt="Diji İngilizce simgesi" onerror="this.style.display='none'"><h2 id="krBaslik">Diji İngilizce'yi uygulama gibi kullan!</h2><p>Ana ekranına ekle, tek dokunuşla tam ekran aç. İndirme yok, yer kaplamaz.</p></div>
+      <div class="kr-faydalar"><span>⚡ Tek dokunuşla açılır</span><span>📴 İnternetsiz de açılır</span><span>🖥️ Tam ekran</span></div>
+      <div class="kr-sekmeler" role="tablist">${[['android', '🤖', 'Android'], ['ios', '🍎', 'iPhone · iPad'], ['pc', '💻', 'Bilgisayar']].map(([k, ik, ad]) => `<button class="kr-sekme" role="tab" data-c="${k}" aria-selected="${c === k}"><b>${ik}</b>${ad}${k === cihaz ? '<br><span class="kr-senin">senin cihazın</span>' : ''}</button>`).join('')}</div>
+      <div class="kr-tarayici" aria-label="Tarayıcı">${VARSAYILAN[c].map(k => `<button data-t="${k}" aria-pressed="${k === t}">${REHBER[c][k].ad}${c === cihaz && k === tarayici ? ' ✓' : ''}</button>`).join('')}</div>
+      ${uyari}
+      <div class="kr-adimlar">${R.adimlar.map(([cizim, baslik, alt], i) => `<div class="kr-adim">${cizim}<div><span class="no">${i + 1}</span><span class="bsl">${baslik}</span>${alt ? `<small>${alt}</small>` : ''}</div></div>`).join('')}</div>
+      <div class="kr-alt">
+        <button class="kr-btn yukle" id="krYukle" style="${yuklemeIstegi ? '' : 'display:none'}">📲 Tek dokunuşla yükle</button>
+        <button class="kr-btn" id="krTamam">✅ Uyguladım, oldu</button>
+        <button class="kr-btn ikincil" id="krSonra">Şimdi değil</button>
+      </div>
+      <div class="kr-not">Bu rehberi daha sonra Profil ya da Yardım bölümünden tekrar açabilirsin.</div></div>`;
+    perde.querySelectorAll('.kr-sekme').forEach(b => b.onclick = () => { secili = { cihaz: b.dataset.c, tarayici: null }; ciz(); });
+    perde.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { secili.tarayici = b.dataset.t; ciz(); });
+    document.getElementById('krX').onclick = kapat;
+    document.getElementById('krSonra').onclick = kapat;
+    document.getElementById('krTamam').onclick = () => { let d = durum(); d.ok = 1; yaz(d); kapat(); };
+    document.getElementById('krYukle').onclick = async () => {
+      if (!yuklemeIstegi) return;
+      yuklemeIstegi.prompt();
+      try { let s = await yuklemeIstegi.userChoice; if (s && s.outcome === 'accepted') { let d = durum(); d.ok = 1; yaz(d); kapat(); } } catch (e) {}
+      yuklemeIstegi = null;
+    };
+  }
+  function kapat() { if (perde) perde.remove(); perde = null; document.removeEventListener('keydown', esc); }
+  function esc(e) { if (e.key === 'Escape') kapat(); }
+  function ac(elle) {
+    if (perde) return;
+    if (!elle) { let d = durum(); d.g = (d.g || 0) + 1; yaz(d); }         /* gösterim sayısı: 2. girişte bir kez daha, sonra hiç */
+    perde = document.createElement('div'); perde.className = 'kr-perde'; perde.setAttribute('role', 'dialog'); perde.setAttribute('aria-modal', 'true'); perde.setAttribute('aria-labelledby', 'krBaslik');
+    document.body.appendChild(perde); secili = { cihaz, tarayici: null }; ciz();
+    document.addEventListener('keydown', esc);
+    setTimeout(() => { let b = document.getElementById('krTamam'); if (b) b.focus({ preventScroll: true }); if (perde) perde.scrollTop = 0; }, 80);
+  }
+  window.kurulumRehberiAc = () => ac(true);   /* istediğin yerden elle açmak için */
+
+  /* ---- Ne zaman gösterilir? ---- */
+  let d = durum();
+  if (yuklu()) { if (!d.ok) { d.ok = 1; yaz(d); } }
+  else if (!d.ok && (d.g || 0) < 2) ac(false);
+
+  /* Yardım/Profil'de tekrar açma düğmesi */
+  setInterval(() => {
+    let yer = document.querySelector('#tab-profil .dc-focus-card, #tab-profil');
+    if (!yer || document.getElementById('krProfilBtn') || yuklu()) return;
+    let b = document.createElement('button'); b.id = 'krProfilBtn'; b.type = 'button'; b.textContent = '📲 Uygulamayı ana ekrana ekle';
+    b.style.cssText = 'display:block;margin:12px auto;border:0;border-radius:14px;padding:11px 16px;font-family:inherit;font-weight:900;font-size:14px;color:#fff;background:linear-gradient(135deg,#7c3aed,#db2777);cursor:pointer';
+    b.onclick = () => ac(true); yer.appendChild(b);
+  }, 3000);
+})();
+</script>
+
 </body>
         </html>
