@@ -25316,6 +25316,325 @@ window.ocEnerjiHarca = async function (n) {
 .so-btn.sari{background:linear-gradient(135deg,#f59e0b,#ea580c);box-shadow:0 4px 0 #c2410c}
 .so-btn:focus-visible,.so-hedef button:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
 
+/* =========================================================
+   SANA ÖZEL · AŞAMA 5 — GÖRSEL DÜZELTME
+   ========================================================= */
+
+#soPanel{
+  width:100%;
+  display:grid;
+  gap:16px;
+  margin:0 0 20px;
+}
+
+#soPanel .so-kart{
+  box-sizing:border-box;
+  width:100%;
+  padding:18px;
+  border-radius:20px;
+  background:#fff;
+  border:1px solid #eee7ff;
+  box-shadow:0 5px 18px rgba(91,33,182,.06);
+}
+
+#soPanel .so-kart h3{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin:0 0 14px;
+  font-size:15px;
+  line-height:1.3;
+  font-weight:900;
+}
+
+#soPanel .so-kart h3 small{
+  margin-left:auto;
+  font-size:11px;
+  font-weight:800;
+  opacity:.65;
+}
+
+
+/* -------------------------
+   GÜNLÜK GÖREVLER
+   ------------------------- */
+
+#soPanel .so-gorev{
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) 42px;
+  align-items:center;
+  gap:9px;
+  min-height:44px;
+  padding:5px 0;
+  border-bottom:1px dashed #eee7ff;
+}
+
+#soPanel .so-gorev:last-of-type{
+  border-bottom:0;
+}
+
+#soPanel .so-gorev .i{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:21px;
+}
+
+#soPanel .so-gorev .m{
+  min-width:0;
+}
+
+#soPanel .so-gorev .m b{
+  display:block;
+  margin-bottom:5px;
+  font-size:13px;
+  line-height:1.25;
+}
+
+#soPanel .so-gorev .s{
+  text-align:right;
+  font-size:12px;
+  font-weight:900;
+  color:#7c3aed;
+}
+
+#soPanel .so-cubuk{
+  width:100%;
+  height:7px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#eee7ff;
+}
+
+#soPanel .so-cubuk i{
+  display:block;
+  height:100%;
+  min-width:0;
+  border-radius:inherit;
+  background:linear-gradient(
+    90deg,
+    #7c3aed,
+    #ec4899
+  );
+  transition:width .3s ease;
+}
+
+
+/* -------------------------
+   ANA BUTONLAR
+   ------------------------- */
+
+#soPanel .so-btn{
+  width:100%;
+  min-height:42px;
+  margin-top:12px;
+  padding:10px 14px;
+  border:0;
+  border-radius:13px;
+  cursor:pointer;
+
+  background:linear-gradient(
+    90deg,
+    #7c3aed,
+    #ec4899
+  );
+
+  color:#fff;
+  font-size:13px;
+  line-height:1.25;
+  font-weight:900;
+
+  box-shadow:0 4px 0 #6327c8;
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    opacity .15s ease;
+}
+
+#soPanel .so-btn:hover:not(:disabled){
+  transform:translateY(-1px);
+}
+
+#soPanel .so-btn:active:not(:disabled){
+  transform:translateY(2px);
+  box-shadow:0 2px 0 #6327c8;
+}
+
+#soPanel .so-btn:disabled{
+  cursor:not-allowed;
+  opacity:.48;
+  box-shadow:none;
+}
+
+#soPanel .so-btn.sari{
+  background:linear-gradient(
+    90deg,
+    #f59e0b,
+    #f97316
+  );
+  box-shadow:0 4px 0 #d97706;
+}
+
+
+/* -------------------------
+   RADAR + SAĞ KOLON
+   ------------------------- */
+
+#soPanel .so-iki{
+  display:grid;
+  grid-template-columns:
+    minmax(0,1.08fr)
+    minmax(0,.92fr);
+  gap:16px;
+  align-items:stretch;
+}
+
+#soPanel .so-radar{
+  width:100%;
+  max-width:330px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#soPanel .so-radar svg{
+  display:block;
+  width:100%;
+  max-width:300px !important;
+  height:auto;
+  margin:0 auto;
+}
+
+#soPanel .so-ipucu{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:#f7f3ff;
+  color:#4c1d95;
+  font-size:12px;
+  line-height:1.45;
+  font-weight:700;
+}
+
+
+/* -------------------------
+   HAFTALIK HEDEF
+   ------------------------- */
+
+#soPanel .so-hedef{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+
+#soPanel .so-hedef button{
+  appearance:none;
+  -webkit-appearance:none;
+
+  min-height:45px;
+  padding:8px 5px;
+
+  border:1px solid #ddd2ff;
+  border-radius:12px;
+
+  background:#f8f5ff;
+  color:#5b21b6;
+
+  cursor:pointer;
+
+  font-family:inherit;
+  font-size:12px;
+  font-weight:900;
+
+  transition:
+    transform .15s ease,
+    background .15s ease,
+    border-color .15s ease;
+}
+
+#soPanel .so-hedef button:hover{
+  transform:translateY(-2px);
+  border-color:#a78bfa;
+  background:#ede9fe;
+}
+
+
+/* -------------------------
+   ÖDEVLER
+   ------------------------- */
+
+#soPanel .so-odev{
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+
+  padding:11px 0;
+
+  border-top:1px solid #eee7ff;
+
+  font-size:12px;
+  font-weight:700;
+}
+
+#soPanel .so-odev:first-child{
+  border-top:0;
+}
+
+#soPanel .so-bos{
+  padding:18px 8px;
+  text-align:center;
+  color:#8a78b8;
+  font-size:12px;
+  line-height:1.4;
+  font-weight:700;
+}
+
+
+/* -------------------------
+   TABLET / TELEFON
+   ------------------------- */
+
+@media(max-width:760px){
+
+  #soPanel{
+    gap:12px;
+  }
+
+  #soPanel .so-kart{
+    padding:14px;
+    border-radius:17px;
+  }
+
+  #soPanel .so-iki{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  #soPanel .so-radar{
+    max-width:275px;
+  }
+
+  #soPanel .so-radar svg{
+    max-width:260px !important;
+  }
+
+  #soPanel .so-hedef{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:420px){
+
+  #soPanel .so-hedef{
+    grid-template-columns:1fr;
+  }
+
+}
+        
 </style>
                 <script>
 (function () {
