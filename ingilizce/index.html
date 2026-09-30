@@ -8446,7 +8446,7 @@ yagmurHavuz = [...yagmurHavuz].sort(() => Math.random() - 0.5);
             clearTimeout(zamanAsimi);
             calisiyor = false;
         }
-    }, 30000);
+    }, 120000);
 }
         
                       function baslatSayac() {
@@ -21214,7 +21214,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   setInterval(() => {
     let p = $('panel-alani');
     if (pbKuruldu || !p || p.style.display !== 'block' || typeof puanBildirimKontrolEt !== 'function') return;
-    pbKuruldu = true; setTimeout(puanBildirimKontrolEt, 2000); setInterval(puanBildirimKontrolEt, 45000);
+    pbKuruldu = true; setTimeout(puanBildirimKontrolEt, 2000); setInterval(puanBildirimKontrolEt, 120000);
   }, 1500);
 
   /* ================= 4) ENERJİ: parkur girişi 2, oyun girişi 1, her 3 soruda 1 ================= */
