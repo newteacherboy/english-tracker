@@ -22117,7 +22117,7 @@ font-size:40px;
 
 </div>
 
-        <!-- ===================== SUPABASE UYUM BLOĞU (v3) =====================
+   <!-- ===================== SUPABASE UYUM BLOĞU (v3) =====================
      </body> etiketinin hemen ÜSTÜNE, en sona yapıştır.
      Medu Akış, Keşfet ve Lig'in öğrenci listesini sunucudan (sosyalOgrencilerGetir) alır.
      Eski sürüm, veritabanına anahtarsız doğrudan bağlanmaya çalışıyordu ve boş liste dönüyordu.
@@ -22147,6 +22147,105 @@ font-size:40px;
     })();
     return soz;
   };
+})();
+</script>
+
+<script>
+/* ===== [2] AVATAR VE OYUN VERİSİ: girişte sunucudaki kayıt esas alınsın ===== */
+(function () {
+  try { sessionStorage.setItem('ing_ka_soruldu', '1'); } catch (e) {}   /* sunucu verisi gelmeden "karakterini seç" sorulmasın */
+  let ilk = {};
+  let org = window.yoSunucudanAl;
+  if (typeof org !== 'function') return;
+  window.yoSunucudanAl = async function () {
+    let isim = typeof yoIsim !== 'undefined' ? yoIsim : '', yerelLig = null;
+    if (isim && !ilk[isim] && typeof yo !== 'undefined' && yo) { ilk[isim] = 1; yerelLig = yo.lig ? { ...yo.lig } : null; yo.guncelleme = 0; }
+    try { await org.apply(this, arguments); } catch (e) {}
+    try {
+      if (yerelLig && yo && yo.lig && yo.lig.hafta === yerelLig.hafta && (yerelLig.xp || 0) > (yo.lig.xp || 0)) { yo.lig.xp = yerelLig.xp; yoKaydet(); }
+      if (typeof yoAvatarUygula === 'function') yoAvatarUygula();
+      if (yo && !yo.karakter) sessionStorage.removeItem('ing_ka_soruldu');   /* sunucuda da karakter yoksa şimdi sorulabilir */
+    } catch (e) {}
+  };
+})();
+
+/* ===== [3] ÜNİTE SEÇİMİ: seçilen çipin gerçek ünite numarası kullanılsın ===== */
+(function () {
+  const secili = kutu => [...document.querySelectorAll('#' + kutu + ' .unite-chip.selected')].map(c => parseInt(c.innerText)).filter(n => !isNaN(n));
+  window.kyUniteSecimleriniGuncelle = function () { kySecilenUniteler = secili('kyUniteBox'); };
+  window.jpUniteSecimleriniGuncelle = function () { jpSecilenUniteler = secili('jpUniteBox'); };
+  window.boslukUniteSecimGuncelle = function () { boslukSecilenUniteler = secili('boslukUniteBox'); };
+})();
+
+/* ===== [4] DİKTE düğmesi + DÜELLO kartlarının tekrarı ===== */
+(function () {
+  setInterval(() => {
+    let d = document.getElementById('yoDikteKart');
+    if (d && !d.dataset.uyum && typeof dikteAc === 'function') {
+      d.dataset.uyum = '1';
+      d.removeAttribute('onclick');
+      d.onclick = () => {
+        dikteAc();
+        setTimeout(() => { let m = document.getElementById('yoModal'); if (m && m.classList.contains('acik') && typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-1); }, 150);
+      };
+    }
+    let gorulen = new Set();
+    document.querySelectorAll('#tab-meduakis .dl-kart').forEach(k => {
+      let h = k.querySelector('h4'), anahtar = h ? h.innerText.replace(/\d+ aktif/, '').trim() : '';
+      if (!anahtar) return;
+      if (gorulen.has(anahtar)) k.remove(); else gorulen.add(anahtar);
+    });
+    let davetler = document.querySelectorAll('.dv-perde');
+    for (let i = 1; i < davetler.length; i++) davetler[i].remove();
+  }, 400);
+})();
+</script>
+
+<script>
+/* ===== [5] RUBRİK: kaydın sonucu ekranda görünsün, başarılıysa veriler yenilensin ===== */
+(function () {
+  const orgFetch = window.fetch;
+  function bildir(metin, iyi) {
+    let d = document.createElement('div');
+    d.setAttribute('role', 'status');
+    d.style.cssText = 'position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:100000080;max-width:92vw;padding:12px 16px;border-radius:14px;font:800 13.5px Nunito,sans-serif;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.3);background:' + (iyi ? '#16a34a' : '#dc2626');
+    d.innerText = metin;
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), iyi ? 3500 : 9000);
+  }
+  window.fetch = function (url, opt) {
+    let u = typeof url === 'string' ? url : (url && url.url) || '';
+    let p = orgFetch.apply(this, arguments);
+    if (!/islem=rubrikKaydet/.test(u)) return p;
+    return p.then(r => {
+      r.clone().json().then(d => {
+        if (d && d.status === 'success') {
+          let m = d.mail === 'kuyrukta' ? ' · 📧 Veli raporu birkaç dakika içinde ' + (d.email || 'e-postaya') + ' adresine gidecek'
+                : d.mail === 'eposta_yok' ? ' · ⚠️ Veli e-postası kayıtlı değil, rapor gönderilmedi' : '';
+          bildir('✅ Rubrik ' + (d.guncellendi ? 'güncellendi' : 'kaydedildi') + m + (d.uyari ? ' · ⚠️ ' + d.uyari : ''), !d.uyari && d.mail !== 'eposta_yok');
+          orgFetch(apiURL).then(x => x.json()).then(l => { if (Array.isArray(l) && l.length) { globalDataCache = l; try { ogretmenSelectDoldur(); } catch (e) {} } }).catch(() => {});
+        } else bildir('⚠️ Rubrik kaydedilemedi: ' + ((d && (d.message || d.mesaj)) || ('HTTP ' + r.status)), false);
+      }).catch(() => bildir('⚠️ Rubrik kaydedilemedi (HTTP ' + r.status + ')', false));
+      return r;
+    }).catch(e => { bildir('⚠️ Sunucuya ulaşılamadı, rubrik kaydedilmedi.', false); throw e; });
+  };
+})();
+</script>
+
+<script>
+/* ===== [6] WHATSAPP KAPALI: rapor artık sadece e-postayla gider ===== */
+(function () {
+  const orgOpen = window.open;
+  window.open = function (url) {
+    if (/wa\.me|api\.whatsapp|whatsapp:/i.test(String(url || ''))) return null;   /* WhatsApp hiç açılmaz */
+    return orgOpen.apply(window, arguments);
+  };
+  setInterval(() => {
+    let b = document.getElementById('rubricKaydetBtn');
+    if (b && b.innerText.indexOf('📧') === -1) b.innerText = '💾 Kaydet ve Veliye 📧 E-posta Gönder';
+    let s = document.getElementById('rubricMailSonuc');
+    if (s && /WhatsApp açılıyor/.test(s.innerText)) s.innerText = s.innerText.replace(/ ?· ?WhatsApp açılıyor\.?/, '');
+  }, 1000);
 })();
 </script>
 
