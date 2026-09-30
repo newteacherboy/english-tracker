@@ -2286,35 +2286,351 @@ if(BAKIM_MODU){
         
             <div id="dcAnaIcerik">
                 <!-- EKRAN: SEVİYE SEÇİMİ -->
-                <div class="dc-screen active" id="dcScreenLevels">
-                    <div class="dc-hero">
-                        <span class="dc-hero-owl">🦜</span>
-                        <h1>Ders Çalış</h1>
-                        <p>Seviyeni seç, konuları patika boyunca ilerleyerek öğren. Her durakta anlatım, örnek, uygulama ve test seni bekliyor.</p>
-                        <div class="dc-voice-toggle">
-                            <button class="dc-ses-btn active" id="dcSesUS" onclick="dcSesSecimiYap('us')">🇺🇸 American</button>
-                            <button class="dc-ses-btn" id="dcSesUK" onclick="dcSesSecimiYap('uk')">🇬🇧 British</button>
-                        </div>
-                    </div>
-                    <div class="dc-level-grid">
-                        <button class="dc-level-card dc-lc-a1" onclick="dcSeviyeSec('A1','Başlangıç')">
-                            <div class="dc-lv-ring"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.4 5.7 21l2.3-7.2-6-4.6h7.6z"/></svg></div>
-                            <div class="dc-lv-code">A1</div><div class="dc-lv-name">Başlangıç</div>
-                        </button>
-                        <button class="dc-level-card dc-lc-a2" onclick="dcSeviyeSec('A2','Temel')">
-                            <div class="dc-lv-ring"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></div>
-                            <div class="dc-lv-code">A2</div><div class="dc-lv-name">Temel Seviye</div>
-                        </button>
-                        <button class="dc-level-card dc-lc-b1" onclick="dcSeviyeSec('B1','Orta')">
-                            <div class="dc-lv-ring"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
-                            <div class="dc-lv-code">B1</div><div class="dc-lv-name">Orta Seviye</div>
-                        </button>
-                        <button class="dc-level-card dc-lc-b2" onclick="dcSeviyeSec('B2','Orta-Üstü')">
-                            <div class="dc-lv-ring"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-                            <div class="dc-lv-code">B2</div><div class="dc-lv-name">Orta-Üstü</div>
-                        </button>
+                <!-- =====================================================
+     DERS ÇALIŞ · YENİ MACERA ANA EKRANI
+     ===================================================== -->
+<div class="dc-screen active" id="dcScreenLevels">
+
+    <!-- HERO -->
+    <section class="dc-adventure-hero">
+
+        <div class="dc-adventure-glow dc-glow-one"></div>
+        <div class="dc-adventure-glow dc-glow-two"></div>
+
+        <div class="dc-adventure-hero-content">
+
+            <div class="dc-adventure-kicker">
+                <span>✨</span>
+                İNGİLİZCE MACERAN
+            </div>
+
+            <h1>
+                Bugün biraz daha<br>
+                <span>ileri gidelim!</span>
+            </h1>
+
+            <p>
+                Seviyeni seç, görevleri tamamla ve İngilizce
+                yolculuğunda yeni durakların kilidini aç.
+            </p>
+
+            <div class="dc-adventure-actions">
+
+                <div class="dc-adventure-mini">
+                    <span class="dc-adventure-mini-icon">🔥</span>
+
+                    <div>
+                        <strong id="dcAdventureStreak">Hazırsın!</strong>
+                        <small>Bugünün macerası</small>
                     </div>
                 </div>
+
+                <div class="dc-voice-toggle dc-adventure-voice">
+                    <button
+                        class="dc-ses-btn active"
+                        id="dcSesUS"
+                        onclick="dcSesSecimiYap('us')">
+                        🇺🇸 American
+                    </button>
+
+                    <button
+                        class="dc-ses-btn"
+                        id="dcSesUK"
+                        onclick="dcSesSecimiYap('uk')">
+                        🇬🇧 British
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="dc-adventure-mascot">
+            <div class="dc-mascot-bubble">
+                Let's go!
+            </div>
+
+            <div class="dc-mascot-parrot">🦜</div>
+        </div>
+
+    </section>
+
+
+    <!-- GENEL İLERLEME -->
+    <section class="dc-adventure-progress">
+
+        <div class="dc-adventure-progress-head">
+
+            <div>
+                <span class="dc-progress-eyebrow">YOLCULUĞUN</span>
+                <strong>İngilizce Haritan</strong>
+            </div>
+
+            <div class="dc-progress-percent"
+                 id="dcAdventurePercent">
+                0%
+            </div>
+
+        </div>
+
+        <div class="dc-adventure-progress-track">
+            <div
+                class="dc-adventure-progress-fill"
+                id="dcAdventureProgressFill">
+            </div>
+        </div>
+
+        <div class="dc-adventure-progress-bottom">
+            <span id="dcAdventureDone">
+                🚀 Yolculuğa başla
+            </span>
+
+            <span id="dcAdventureTopicCount">
+                A1 → B2
+            </span>
+        </div>
+
+    </section>
+
+
+    <!-- BAŞLIK -->
+    <div class="dc-map-heading">
+
+        <div>
+            <span class="dc-map-mini-title">
+                MACERA HARİTASI
+            </span>
+
+            <h2>Bir durak seç</h2>
+        </div>
+
+        <div class="dc-map-legend">
+            <span></span>
+            Her seviye yeni bir dünya
+        </div>
+
+    </div>
+
+
+    <!-- MACERA YOLU -->
+    <div class="dc-adventure-map">
+
+
+        <!-- A1 -->
+        <button
+            class="dc-adventure-level dc-adventure-a1"
+            onclick="dcSeviyeSec('A1','Başlangıç')">
+
+            <div class="dc-map-line dc-map-line-right"></div>
+
+            <div class="dc-adventure-node">
+
+                <div class="dc-node-pulse"></div>
+
+                <div class="dc-node-icon">
+                    🌱
+                </div>
+
+            </div>
+
+            <div class="dc-adventure-card">
+
+                <div class="dc-adventure-card-top">
+
+                    <div>
+                        <span class="dc-adventure-level-label">
+                            BAŞLANGIÇ
+                        </span>
+
+                        <strong>A1</strong>
+                    </div>
+
+                    <span class="dc-adventure-arrow">
+                        →
+                    </span>
+
+                </div>
+
+                <h3>İlk Adımlar</h3>
+
+                <p>
+                    Temel kelimeler ve günlük İngilizceyle
+                    maceraya başla.
+                </p>
+
+                <div class="dc-level-status">
+                    <span>🌟</span>
+                    Yolculuğa başla
+                </div>
+
+            </div>
+
+        </button>
+
+
+        <!-- A2 -->
+        <button
+            class="dc-adventure-level dc-adventure-a2 dc-map-right"
+            onclick="dcSeviyeSec('A2','Temel')">
+
+            <div class="dc-map-line dc-map-line-left"></div>
+
+            <div class="dc-adventure-node">
+                <div class="dc-node-icon">
+                    🚀
+                </div>
+            </div>
+
+            <div class="dc-adventure-card">
+
+                <div class="dc-adventure-card-top">
+
+                    <div>
+                        <span class="dc-adventure-level-label">
+                            TEMEL SEVİYE
+                        </span>
+
+                        <strong>A2</strong>
+                    </div>
+
+                    <span class="dc-adventure-arrow">
+                        →
+                    </span>
+
+                </div>
+
+                <h3>Keşif Başlıyor</h3>
+
+                <p>
+                    Daha uzun cümlelerle kendini
+                    ifade etmeye başla.
+                </p>
+
+                <div class="dc-level-status">
+                    <span>⚡</span>
+                    Yeni görevler seni bekliyor
+                </div>
+
+            </div>
+
+        </button>
+
+
+        <!-- B1 -->
+        <button
+            class="dc-adventure-level dc-adventure-b1"
+            onclick="dcSeviyeSec('B1','Orta')">
+
+            <div class="dc-map-line dc-map-line-right"></div>
+
+            <div class="dc-adventure-node">
+                <div class="dc-node-icon">
+                    🏆
+                </div>
+            </div>
+
+            <div class="dc-adventure-card">
+
+                <div class="dc-adventure-card-top">
+
+                    <div>
+                        <span class="dc-adventure-level-label">
+                            ORTA SEVİYE
+                        </span>
+
+                        <strong>B1</strong>
+                    </div>
+
+                    <span class="dc-adventure-arrow">
+                        →
+                    </span>
+
+                </div>
+
+                <h3>Gücünü Göster</h3>
+
+                <p>
+                    Gerçek konuşmalara ve daha güçlü
+                    yapılara geç.
+                </p>
+
+                <div class="dc-level-status">
+                    <span>💜</span>
+                    Yeni dünyaları keşfet
+                </div>
+
+            </div>
+
+        </button>
+
+
+        <!-- B2 -->
+        <button
+            class="dc-adventure-level dc-adventure-b2 dc-map-right"
+            onclick="dcSeviyeSec('B2','Orta-Üstü')">
+
+            <div class="dc-adventure-node">
+                <div class="dc-node-icon">
+                    👑
+                </div>
+            </div>
+
+            <div class="dc-adventure-card">
+
+                <div class="dc-adventure-card-top">
+
+                    <div>
+                        <span class="dc-adventure-level-label">
+                            ORTA-ÜSTÜ
+                        </span>
+
+                        <strong>B2</strong>
+                    </div>
+
+                    <span class="dc-adventure-arrow">
+                        →
+                    </span>
+
+                </div>
+
+                <h3>Zirveye Ulaş</h3>
+
+                <p>
+                    Karmaşık konuları öğren ve İngilizceni
+                    bir üst seviyeye taşı.
+                </p>
+
+                <div class="dc-level-status">
+                    <span>👑</span>
+                    Son büyük macera
+                </div>
+
+            </div>
+
+        </button>
+
+    </div>
+
+
+    <!-- ALT MOTİVASYON -->
+    <div class="dc-adventure-footer">
+
+        <div class="dc-adventure-footer-icon">
+            💡
+        </div>
+
+        <div>
+            <strong>Küçük adımlar büyük fark yaratır.</strong>
+
+            <p>
+                Her gün birkaç konu tamamlamak bile seni
+                hedefine yaklaştırır.
+            </p>
+        </div>
+
+    </div>
+
+</div>
         
                 <!-- EKRAN: KATEGORİLER -->
                 <div class="dc-screen" id="dcScreenCats">
@@ -3259,6 +3575,957 @@ if(BAKIM_MODU){
         #tab-konusmapratigi .kp-step-name { font-size:13px; font-weight:800; color:#fff; margin-top:1px; }
         #tab-konusmapratigi .kp-step-name.locked-txt { color:#587179; }
         #tab-konusmapratigi .kp-step-sub { font-size:9.5px; color:#8fb9c2; margin-top:1px; }
+
+                /* =========================================================
+   DERS ÇALIŞ — MACERA HARİTASI 2026
+   ========================================================= */
+
+#dcScreenLevels {
+    --dc-green: #20b486;
+    --dc-blue: #3974f6;
+    --dc-purple: #8b4cf6;
+    --dc-orange: #ff7a22;
+
+    padding-bottom: 35px;
+}
+
+
+/* ================= HERO ================= */
+
+.dc-adventure-hero {
+    min-height: 230px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    padding: 26px 25px;
+
+    background:
+        radial-gradient(circle at 85% 20%,
+            rgba(71, 221, 210, .24),
+            transparent 32%),
+        linear-gradient(135deg,
+            #073d4b 0%,
+            #07566a 52%,
+            #087487 100%);
+
+    color: #fff;
+
+    box-shadow:
+        0 14px 35px rgba(6, 70, 83, .18);
+
+    margin-bottom: 15px;
+}
+
+
+/* dekoratif ışıklar */
+
+.dc-adventure-glow {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.dc-glow-one {
+    width: 170px;
+    height: 170px;
+    right: -60px;
+    top: -80px;
+
+    background:
+        rgba(91, 231, 217, .13);
+}
+
+.dc-glow-two {
+    width: 120px;
+    height: 120px;
+    left: 45%;
+    bottom: -80px;
+
+    background:
+        rgba(255,255,255,.07);
+}
+
+
+.dc-adventure-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 72%;
+}
+
+
+.dc-adventure-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 5px 9px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,.12);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: .9px;
+
+    margin-bottom: 10px;
+}
+
+
+.dc-adventure-hero h1 {
+    margin: 0 0 8px;
+
+    font-family:
+        'Fredoka',
+        'Segoe UI',
+        sans-serif;
+
+    font-size: 27px;
+    line-height: 1.08;
+    font-weight: 700;
+
+    letter-spacing: -.4px;
+}
+
+
+.dc-adventure-hero h1 span {
+    color: #5ce0d0;
+}
+
+
+.dc-adventure-hero p {
+    max-width: 340px;
+
+    color:
+        rgba(255,255,255,.82);
+
+    font-size: 11px;
+    line-height: 1.55;
+
+    margin: 0 0 17px;
+}
+
+
+.dc-adventure-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+
+.dc-adventure-mini {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    background:
+        rgba(255,255,255,.1);
+
+    border:
+        1px solid rgba(255,255,255,.13);
+
+    border-radius: 12px;
+
+    padding: 7px 10px;
+}
+
+
+.dc-adventure-mini-icon {
+    font-size: 18px;
+}
+
+
+.dc-adventure-mini div {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.dc-adventure-mini strong {
+    font-size: 10px;
+    color: #fff;
+}
+
+
+.dc-adventure-mini small {
+    color:
+        rgba(255,255,255,.6);
+
+    font-size: 7px;
+    margin-top: 1px;
+}
+
+
+/* ses seçimi */
+
+.dc-adventure-voice {
+    background:
+        rgba(0,0,0,.12);
+}
+
+
+.dc-adventure-voice .dc-ses-btn {
+    color:
+        rgba(255,255,255,.7);
+}
+
+
+.dc-adventure-voice .dc-ses-btn.active {
+    color: #07566a;
+    background: #fff;
+}
+
+
+/* maskot */
+
+.dc-adventure-mascot {
+    position: absolute;
+
+    right: 15px;
+    bottom: 15px;
+
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.dc-mascot-parrot {
+    font-size: 72px;
+
+    filter:
+        drop-shadow(
+            0 8px 10px
+            rgba(0,0,0,.18)
+        );
+
+    transform:
+        rotate(-4deg);
+}
+
+
+.dc-mascot-bubble {
+    position: relative;
+
+    background: #fff;
+    color: #07566a;
+
+    padding: 5px 9px;
+
+    border-radius:
+        10px 10px 3px 10px;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    margin-right: 30px;
+    margin-bottom: -4px;
+
+    box-shadow:
+        0 5px 12px
+        rgba(0,0,0,.12);
+}
+
+
+/* ================= PROGRESS ================= */
+
+.dc-adventure-progress {
+    background: #fff;
+
+    border:
+        1px solid #edf1f5;
+
+    border-radius: 18px;
+
+    padding: 14px 16px;
+
+    margin-bottom: 22px;
+
+    box-shadow:
+        0 5px 18px
+        rgba(34,45,70,.05);
+}
+
+
+.dc-adventure-progress-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 9px;
+}
+
+
+.dc-adventure-progress-head > div:first-child {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.dc-progress-eyebrow {
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: .8px;
+    color: #94a3b8;
+
+    margin-bottom: 1px;
+}
+
+
+.dc-adventure-progress-head strong {
+    font-size: 12px;
+    color: #26334d;
+}
+
+
+.dc-progress-percent {
+    min-width: 43px;
+
+    text-align: center;
+
+    padding: 5px 8px;
+
+    border-radius: 20px;
+
+    background: #eafaf5;
+    color: #15966f;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.dc-adventure-progress-track {
+    width: 100%;
+    height: 8px;
+
+    background: #edf2f5;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+
+.dc-adventure-progress-fill {
+    width: 0%;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #23b789,
+            #49d9bd
+        );
+
+    transition:
+        width .6s
+        cubic-bezier(.2,.8,.3,1);
+}
+
+
+.dc-adventure-progress-bottom {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 7px;
+
+    color: #8793a6;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+
+/* ================= MAP HEADER ================= */
+
+.dc-map-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    padding: 0 4px;
+
+    margin-bottom: 14px;
+}
+
+
+.dc-map-mini-title {
+    font-size: 7px;
+    font-weight: 900;
+
+    color: #9aa5b5;
+
+    letter-spacing: 1px;
+}
+
+
+.dc-map-heading h2 {
+    margin: 2px 0 0;
+
+    color: #25324a;
+
+    font-family:
+        'Fredoka',
+        sans-serif;
+
+    font-size: 18px;
+}
+
+
+.dc-map-legend {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    font-size: 8px;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+
+.dc-map-legend span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #22b889;
+}
+
+
+/* ================= MAP ================= */
+
+.dc-adventure-map {
+    position: relative;
+
+    padding:
+        6px 3px
+        10px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+
+/* merkez yol */
+
+.dc-adventure-map::before {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 30px;
+    bottom: 35px;
+
+    width: 3px;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            #d8e2e8 0,
+            #d8e2e8 7px,
+            transparent 7px,
+            transparent 13px
+        );
+
+    z-index: 0;
+}
+
+
+/* level */
+
+.dc-adventure-level {
+    width: calc(50% + 26px);
+
+    position: relative;
+    z-index: 2;
+
+    border: 0;
+    padding: 0;
+
+    background: transparent;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    font-family: inherit;
+}
+
+
+.dc-adventure-level.dc-map-right {
+    margin-left: auto;
+
+    flex-direction:
+        row-reverse;
+}
+
+
+/* node */
+
+.dc-adventure-node {
+    position: relative;
+
+    width: 52px;
+    height: 52px;
+
+    min-width: 52px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff;
+
+    border:
+        5px solid
+        var(--level-color);
+
+    box-shadow:
+        0 6px 15px
+        rgba(0,0,0,.1);
+
+    z-index: 3;
+
+    transition:
+        transform .2s ease;
+}
+
+
+.dc-node-icon {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        var(--level-soft);
+
+    font-size: 18px;
+}
+
+
+/* card */
+
+.dc-adventure-card {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 13px 13px 11px;
+
+    background: #fff;
+
+    border:
+        1.5px solid
+        var(--level-border);
+
+    border-radius: 17px;
+
+    box-shadow:
+        0 5px 15px
+        rgba(34,45,70,.055);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+
+.dc-adventure-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.dc-adventure-card-top > div {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.dc-adventure-level-label {
+    color:
+        var(--level-color);
+
+    font-size: 6.5px;
+
+    font-weight: 900;
+
+    letter-spacing: .7px;
+}
+
+
+.dc-adventure-card-top strong {
+    color:
+        var(--level-color);
+
+    font-family:
+        'Fredoka',
+        sans-serif;
+
+    font-size: 22px;
+
+    line-height: 1;
+}
+
+
+.dc-adventure-arrow {
+    width: 25px;
+    height: 25px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        var(--level-soft);
+
+    color:
+        var(--level-color);
+
+    font-size: 14px;
+    font-weight: 900;
+
+    transition:
+        transform .2s ease;
+}
+
+
+.dc-adventure-card h3 {
+    margin: 7px 0 3px;
+
+    color: #27344c;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+
+.dc-adventure-card p {
+    margin: 0;
+
+    color: #8490a2;
+
+    font-size: 8.5px;
+    line-height: 1.4;
+}
+
+
+.dc-level-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    margin-top: 8px;
+
+    padding-top: 7px;
+
+    border-top:
+        1px dashed #edf0f4;
+
+    color:
+        var(--level-color);
+
+    font-size: 7.5px;
+    font-weight: 900;
+}
+
+
+/* hover */
+
+.dc-adventure-level:hover
+.dc-adventure-card {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        var(--level-color);
+
+    box-shadow:
+        0 10px 25px
+        rgba(34,45,70,.10);
+}
+
+
+.dc-adventure-level:hover
+.dc-adventure-node {
+    transform:
+        scale(1.07);
+}
+
+
+.dc-adventure-level:hover
+.dc-adventure-arrow {
+    transform:
+        translateX(3px);
+}
+
+
+/* LEVEL COLORS */
+
+.dc-adventure-a1 {
+    --level-color: #21aa79;
+    --level-soft: #e6f8f1;
+    --level-border: #ccefe2;
+}
+
+
+.dc-adventure-a2 {
+    --level-color: #3674ef;
+    --level-soft: #eaf1ff;
+    --level-border: #d5e2ff;
+}
+
+
+.dc-adventure-b1 {
+    --level-color: #8a4bea;
+    --level-soft: #f1eaff;
+    --level-border: #e3d5ff;
+}
+
+
+.dc-adventure-b2 {
+    --level-color: #f27622;
+    --level-soft: #fff0e6;
+    --level-border: #ffdfca;
+}
+
+
+/* A1 pulse */
+
+.dc-node-pulse {
+    position: absolute;
+
+    inset: -8px;
+
+    border:
+        2px solid
+        rgba(33,170,121,.25);
+
+    border-radius: 50%;
+
+    animation:
+        dcAdventurePulse
+        2s infinite;
+}
+
+
+@keyframes dcAdventurePulse {
+
+    0% {
+        transform: scale(.8);
+        opacity: .7;
+    }
+
+    70% {
+        transform: scale(1.25);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1.25);
+        opacity: 0;
+    }
+
+}
+
+
+/* ================= FOOTER ================= */
+
+.dc-adventure-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 15px;
+
+    padding: 12px 14px;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff9e9,
+            #fff4cf
+        );
+
+    border:
+        1px solid #f5e3a9;
+}
+
+
+.dc-adventure-footer-icon {
+    width: 35px;
+    height: 35px;
+
+    min-width: 35px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff;
+
+    font-size: 17px;
+
+    box-shadow:
+        0 3px 8px
+        rgba(124,92,20,.08);
+}
+
+
+.dc-adventure-footer strong {
+    color: #6d571b;
+    font-size: 9px;
+}
+
+
+.dc-adventure-footer p {
+    margin: 2px 0 0;
+
+    color: #9b8449;
+
+    font-size: 7.5px;
+    line-height: 1.35;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 560px) {
+
+    .dc-adventure-hero {
+        min-height: 215px;
+        padding: 21px 18px;
+        border-radius: 22px;
+    }
+
+    .dc-adventure-hero-content {
+        max-width: 78%;
+    }
+
+    .dc-adventure-hero h1 {
+        font-size: 23px;
+    }
+
+    .dc-mascot-parrot {
+        font-size: 58px;
+    }
+
+    .dc-adventure-mascot {
+        right: 8px;
+        bottom: 14px;
+    }
+
+    .dc-mascot-bubble {
+        display: none;
+    }
+
+    .dc-adventure-level {
+        width: calc(50% + 20px);
+        gap: 6px;
+    }
+
+    .dc-adventure-node {
+        width: 43px;
+        height: 43px;
+        min-width: 43px;
+
+        border-width: 4px;
+    }
+
+    .dc-node-icon {
+        width: 29px;
+        height: 29px;
+
+        font-size: 15px;
+    }
+
+    .dc-adventure-card {
+        padding: 11px 9px;
+        border-radius: 14px;
+    }
+
+    .dc-adventure-card-top strong {
+        font-size: 19px;
+    }
+
+    .dc-adventure-card h3 {
+        font-size: 10px;
+    }
+
+    .dc-adventure-card p {
+        font-size: 7.5px;
+    }
+
+    .dc-level-status {
+        font-size: 6.8px;
+    }
+
+}
+
+
+/* çok dar telefon */
+
+@media (max-width: 390px) {
+
+    .dc-adventure-map::before {
+        left: 25px;
+    }
+
+    .dc-adventure-level,
+    .dc-adventure-level.dc-map-right {
+
+        width: 100%;
+        margin-left: 0;
+
+        flex-direction: row;
+    }
+
+    .dc-adventure-node {
+        min-width: 46px;
+    }
+
+    .dc-adventure-card {
+        width: calc(100% - 55px);
+    }
+
+}
                 
         </style>
         
@@ -7167,7 +8434,158 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
             if (dcAktifKonu) parts.push(dcAktifKonu);
             document.getElementById('dcCrumb').innerText = parts.join(' / ');
         }
-        
+
+                    /* =========================================================
+   DERS ÇALIŞ — ANA MACERA İLERLEMESİ
+   Mevcut dcTumKonularCache verisini kullanır.
+   Yeni backend / Supabase isteği oluşturmaz.
+   ========================================================= */
+
+function dcMaceraAnaEkranGuncelle() {
+
+    try {
+
+        const yuzdeEl =
+            document.getElementById('dcAdventurePercent');
+
+        const barEl =
+            document.getElementById('dcAdventureProgressFill');
+
+        const doneEl =
+            document.getElementById('dcAdventureDone');
+
+        const countEl =
+            document.getElementById('dcAdventureTopicCount');
+
+
+        if (
+            !yuzdeEl ||
+            !barEl ||
+            !doneEl ||
+            !countEl
+        ) {
+            return;
+        }
+
+
+        const konular =
+            Array.isArray(dcTumKonularCache)
+                ? dcTumKonularCache
+                : [];
+
+
+        if (!konular.length) {
+
+            yuzdeEl.textContent = '0%';
+
+            barEl.style.width = '0%';
+
+            doneEl.textContent =
+                '🚀 Yolculuğa başla';
+
+            countEl.textContent =
+                'A1 → B2';
+
+            return;
+        }
+
+
+        const tamamlanan =
+            konular.filter(
+                konu =>
+                    konu &&
+                    konu.durum === 'tamamlandi'
+            ).length;
+
+
+        const toplam =
+            konular.length;
+
+
+        const yuzde =
+            toplam > 0
+                ? Math.round(
+                    (tamamlanan / toplam) * 100
+                )
+                : 0;
+
+
+        yuzdeEl.textContent =
+            yuzde + '%';
+
+
+        barEl.style.width =
+            yuzde + '%';
+
+
+        doneEl.textContent =
+            tamamlanan > 0
+                ? '⭐ ' +
+                  tamamlanan +
+                  ' konu tamamlandı'
+                : '🚀 Yolculuğa başla';
+
+
+        countEl.textContent =
+            tamamlanan +
+            ' / ' +
+            toplam +
+            ' konu';
+
+
+    } catch (err) {
+
+        console.warn(
+            'Macera ilerlemesi çizilemedi:',
+            err
+        );
+
+    }
+
+}
+
+                    function dcMaceraGuncellemeyiBekle() {
+
+    let deneme = 0;
+
+    const kontrol = setInterval(() => {
+
+        deneme++;
+
+        if (
+            Array.isArray(dcTumKonularCache) &&
+            dcTumKonularCache.length > 0
+        ) {
+
+            clearInterval(kontrol);
+
+            dcMaceraAnaEkranGuncelle();
+
+            return;
+        }
+
+
+        if (deneme >= 20) {
+
+            clearInterval(kontrol);
+
+            dcMaceraAnaEkranGuncelle();
+
+        }
+
+    }, 250);
+
+}
+
+                    document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
+        dcMaceraGuncellemeyiBekle();
+
+    }
+);
+                    
         function dcSeviyeSec(kod, ad) {
             dcAktifSeviye = kod;
             let renkler = { A1:'#2f855a', A2:'#2563eb', B1:'#7c3aed', B2:'#ea580c' };
@@ -16466,6 +17884,7 @@ function dcAnaEkranaDon() {
   dcDurumuSifirla();
   let h = document.getElementById('dcHomeBtn');
   if (h) h.classList.add('hidden');
+        dcMaceraAnaEkranGuncelle();
 }
 (function () {
   let org = window.dcEkranGoster;
