@@ -4189,6 +4189,381 @@ function raporlarimKapat() {
                 }
                 const apiURL = "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api";
 
+                    /* =========================================================
+   DIJI GLOBAL CACHE v1
+   Kullanıcı/genel verileri cihazda kısa süreli tutar.
+   ========================================================= */
+
+const DIJI_GLOBAL_CACHE_SURESI = 10 * 60 * 1000; // 10 dakika
+
+function dijiGlobalCacheOku() {
+    try {
+        const ham = localStorage.getItem("diji_global_cache_v1");
+
+        if (!ham) return null;
+
+        const kayit = JSON.parse(ham);
+
+        if (!kayit || !Array.isArray(kayit.veri)) {
+            localStorage.removeItem("diji_global_cache_v1");
+            return null;
+        }
+
+        return kayit;
+    } catch (e) {
+        return null;
+    }
+}
+
+function dijiGlobalCacheYaz(veri) {
+    try {
+        if (!Array.isArray(veri) || !veri.length) return;
+
+        localStorage.setItem(
+            "diji_global_cache_v1",
+            JSON.stringify({
+                zaman: Date.now(),
+                veri: veri
+            })
+        );
+    } catch (e) {
+        console.warn("Global cache yazılamadı:", e);
+    }
+}
+
+async function dijiGlobalVeriYukle() {
+
+    const cache = dijiGlobalCacheOku();
+
+    /* -----------------------------------------
+       1) CACHE VARSA HEMEN KULLAN
+       ----------------------------------------- */
+
+    if (cache && Array.isArray(cache.veri) && cache.veri.length) {
+
+        globalDataCache = cache.veri;
+
+        console.log(
+            "📦 Global veri cihaz cache'inden açıldı:",
+            globalDataCache.length
+        );
+
+        /* -----------------------------------------
+           2) CACHE ESKİYSE ARKA PLANDA YENİLE
+           ----------------------------------------- */
+
+        const cacheYasi = Date.now() - Number(cache.zaman || 0);
+
+        if (
+            cacheYasi > DIJI_GLOBAL_CACHE_SURESI &&
+            navigator.onLine
+        ) {
+            fetch(apiURL)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("HTTP " + res.status);
+                    }
+
+                    return res.json();
+                })
+                .then(data => {
+
+                    if (Array.isArray(data) && data.length) {
+
+                        globalDataCache = data;
+
+                        dijiGlobalCacheYaz(data);
+
+                        console.log(
+                            "🔄 Global veri arka planda yenilendi:",
+                            data.length
+                        );
+
+                        /* Güncel kullanıcı bilgisi varsa ekrana uygula */
+                        if (typeof aktifOgrenciAdi !== "undefined" &&
+                            aktifOgrenciAdi) {
+
+                            const guncelUser = data.find(
+                                u =>
+                                    String(u.ogrenci || "")
+                                        .trim()
+                                        .toLowerCase()
+                                    ===
+                                    String(aktifOgrenciAdi || "")
+                                        .trim()
+                                        .toLowerCase()
+                            );
+
+                            if (guncelUser &&
+                                typeof veriArayuzeIsle === "function") {
+                                veriArayuzeIsle(guncelUser);
+                            }
+                        }
+                    }
+                })
+                .catch(() => {});
+        }
+
+        return globalDataCache;
+    }
+
+    /* -----------------------------------------
+       3) CACHE YOKSA SUNUCUDAN AL
+       ----------------------------------------- */
+
+    try {
+
+        const res = await fetch(apiURL);
+
+        if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+        }
+
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+
+            globalDataCache = data;
+
+            dijiGlobalCacheYaz(data);
+
+            console.log(
+                "☁️ Global veri sunucudan alındı ve cache'lendi:",
+                data.length
+            );
+
+            return data;
+        }
+
+    } catch (e) {
+
+        console.warn(
+            "Global veri alınamadı:",
+            e
+        );
+
+        /* Offline durumda süresi geçmiş cache bile kullanılabilir */
+        if (cache &&
+            Array.isArray(cache.veri) &&
+            cache.veri.length) {
+
+            globalDataCache = cache.veri;
+
+            console.log(
+                "📴 Offline: eski global cache kullanılıyor:",
+                globalDataCache.length
+            );
+
+            return globalDataCache;
+        }
+    }
+
+    globalDataCache = [];
+
+    return [];
+}
+
+
+/* =========================================================
+   DIJI KONU CACHE v1
+   ========================================================= */
+
+const DIJI_KONU_CACHE_SURESI = 24 * 60 * 60 * 1000; // 24 saat
+
+function dijiKonuCacheOku(anahtar) {
+
+    try {
+
+        const ham =
+            localStorage.getItem(
+                "diji_konu_cache_v1_" + anahtar
+            );
+
+        if (!ham) return null;
+
+        const kayit = JSON.parse(ham);
+
+        if (
+            !kayit ||
+            !kayit.zaman ||
+            !("veri" in kayit)
+        ) {
+            localStorage.removeItem(
+                "diji_konu_cache_v1_" + anahtar
+            );
+
+            return null;
+        }
+
+        return kayit;
+
+    } catch (e) {
+
+        return null;
+
+    }
+}
+
+
+function dijiKonuCacheYaz(anahtar, veri) {
+
+    try {
+
+        localStorage.setItem(
+            "diji_konu_cache_v1_" + anahtar,
+
+            JSON.stringify({
+                zaman: Date.now(),
+                veri: veri
+            })
+        );
+
+    } catch (e) {
+
+        console.warn(
+            "Konu cache yazılamadı:",
+            e
+        );
+
+    }
+}
+                    
+/* =========================================================
+   DIJI CACHE v1 — STATİK VERİLER
+   Supabase'i gereksiz tekrar sorgulamayı engeller.
+   ========================================================= */
+
+const DIJI_CACHE_SURUM = "v1";
+
+function dijiCacheOku(anahtar, maxYasMs) {
+    try {
+        const ham = localStorage.getItem("diji_cache_" + DIJI_CACHE_SURUM + "_" + anahtar);
+        if (!ham) return null;
+
+        const kayit = JSON.parse(ham);
+
+        if (!kayit || !kayit.zaman || !("veri" in kayit)) {
+            localStorage.removeItem("diji_cache_" + DIJI_CACHE_SURUM + "_" + anahtar);
+            return null;
+        }
+
+        if (Date.now() - Number(kayit.zaman) > maxYasMs) {
+            return null;
+        }
+
+        return kayit.veri;
+    } catch (e) {
+        return null;
+    }
+}
+
+function dijiCacheYaz(anahtar, veri) {
+    try {
+        localStorage.setItem(
+            "diji_cache_" + DIJI_CACHE_SURUM + "_" + anahtar,
+            JSON.stringify({
+                zaman: Date.now(),
+                veri: veri
+            })
+        );
+    } catch (e) {
+        console.warn("Diji cache yazılamadı:", anahtar, e);
+    }
+}
+
+function dijiCacheSil(anahtar) {
+    try {
+        localStorage.removeItem(
+            "diji_cache_" + DIJI_CACHE_SURUM + "_" + anahtar
+        );
+    } catch (e) {}
+}
+
+/* Kelime havuzu:
+   7 gün cihazdan kullanılabilir.
+   İnternet varsa arka planda yenilenebilir. */
+async function dijiKelimeHavuzunuYukle() {
+
+    const CACHE_SURESI = 7 * 24 * 60 * 60 * 1000;
+
+    const eski = dijiCacheOku("kelime_havuzu", CACHE_SURESI);
+
+    if (Array.isArray(eski) && eski.length) {
+        window.masterKelimeHavuzu = eski;
+
+        console.log(
+            "📦 Kelime havuzu cihaz cache'inden açıldı:",
+            eski.length
+        );
+
+        /* Cache varken kullanıcı beklemesin.
+           İnternet varsa arka planda güncelle. */
+        if (navigator.onLine) {
+            fetch(apiURL + "?islem=kelimelerGetir")
+                .then(res => {
+                    if (!res.ok) throw new Error("HTTP " + res.status);
+                    return res.json();
+                })
+                .then(data => {
+                    if (Array.isArray(data) && data.length) {
+                        window.masterKelimeHavuzu = data;
+                        dijiCacheYaz("kelime_havuzu", data);
+
+                        console.log(
+                            "🔄 Kelime havuzu arka planda yenilendi:",
+                            data.length
+                        );
+                    }
+                })
+                .catch(() => {});
+        }
+
+        return eski;
+    }
+
+    /* İlk kez giriyorsa sunucudan al */
+    try {
+        const res = await fetch(apiURL + "?islem=kelimelerGetir");
+
+        if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+        }
+
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+            window.masterKelimeHavuzu = data;
+            dijiCacheYaz("kelime_havuzu", data);
+
+            console.log(
+                "☁️ Kelime havuzu Supabase'den alındı ve cache'lendi:",
+                data.length
+            );
+
+            return data;
+        }
+    } catch (e) {
+        console.warn("Kelime havuzu alınamadı:", e);
+
+        /* İnternet yoksa süresi geçmiş cache'i bile kullan */
+        const eskiHerhangi = dijiCacheOku(
+            "kelime_havuzu",
+            365 * 24 * 60 * 60 * 1000
+        );
+
+        if (Array.isArray(eskiHerhangi) && eskiHerhangi.length) {
+            window.masterKelimeHavuzu = eskiHerhangi;
+            console.log(
+                "📴 Offline: eski kelime havuzu kullanılıyor:",
+                eskiHerhangi.length
+            );
+            return eskiHerhangi;
+        }
+    }
+
+    window.masterKelimeHavuzu = [];
+    return [];
+}
                 
 
                             let toplamSaniye = 0, timerInterval = null, aktifOgrenciAdi = "", globalDataCache = [];
@@ -4284,12 +4659,7 @@ function raporlarimKapat() {
                     girisBtn.innerText = "Giriş Yap";
                     girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
         
-                            fetch(apiURL + "?islem=kelimelerGetir")
-                .then(res => res.json())
-                .then(data => {
-                    window.masterKelimeHavuzu = data;
-                    console.log("Kelime havuzu yüklendi:", data.length);
-                }).catch(err => console.error("Kelime havuzu yüklenemedi", err));
+                           dijiKelimeHavuzunuYukle();
         
                                 const oturumAcik = localStorage.getItem("ing_oturumAcik");
         const kayitliOgrenci = localStorage.getItem("ing_aktifOgrenci");
@@ -4301,14 +4671,7 @@ function raporlarimKapat() {
                         document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
                     }
         
-                    try {
-                        let res = await fetch(apiURL);
-                        globalDataCache = await res.json();
-                    } catch(e) {
-                        console.error("Veri çekme hatası", e);
-                        girisSubtitle.innerText = "Sunucu bağlantısı kurulamadı. Sayfayı yenileyin.";
-                        globalDataCache = [];
-                    }
+                   await dijiGlobalVeriYukle();
         
                     if (otomatikGirisYapilacak) {
                         aktifOgrenciAdi = kayitliOgrenci;
@@ -8339,13 +8702,8 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
         
                     // YENİ: 6 saniye sonunda hâlâ veri gelmediyse, son bir kez doğrudan tekrar dene
                     if (!globalDataCache || globalDataCache.length === 0) {
-                        try {
-                            let sonRes = await fetch(apiURL);
-                            globalDataCache = await sonRes.json();
-                        } catch (sonErr) {
-                            console.error("Giriş öncesi veri tekrar çekilemedi:", sonErr);
-                        }
-                    }
+    await dijiGlobalVeriYukle();
+}
         
                                 let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === ogr.toLowerCase() && String(u.sifre).trim() === sifre);
         
@@ -8434,7 +8792,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
             clearTimeout(zamanAsimi);
             calisiyor = false;
         }
-    }, 120000);
+    }, 300000);
 }
         
                       function baslatSayac() {
@@ -14902,56 +15260,252 @@ function maKisiKur(u, b) {
 function maBen(){const u=maSosyalListe.find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||(globalDataCache||[]).find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||{ogrenci:aktifOgrenciAdi||"Sen"};const yerel=(typeof yo!=="undefined"&&yo)?yo:{},o=maKisiKur({ogrenci:u.ogrenci,Sinif:u.sinif??u.Sinif??"",genelOrtalama:u.genelOrtalama??u.genelPuan??0,rozetListesi:u.rozetListesi||[]},Object.keys(yerel).length?yerel:u);o.id="ben";o.av=(yerel.takili&&yerel.takili.renk)||"#bdeef6";o.seri=parseInt(localStorage.getItem("ing_girisSerisiSayisi")||"0");return o;}
 let maTumListe = [], maTumZaman = 0, maTumSoz = null, maSosyalListe = [];
 async function maTumVeriHaritasi(){try{const r=await fetch(apiURL+"?islem=sosyalOgrencilerGetir&ogrenci="+encodeURIComponent(aktifOgrenciAdi||""));const d=await r.json();if(Array.isArray(d)){maSosyalListe=d;const h={__students:d};d.forEach(x=>h[String(x.ogrenci).trim().toLowerCase()]=x);return h;}}catch(e){}maSosyalListe=[];try{return await yoTumVeri();}catch(e){return {};}}
-async function maTumGetir(){
+const DIJI_LIG_CACHE_SURESI = 5 * 60 * 1000;
+
+function dijiLigCacheOku(hafta) {
+    try {
+        const key = "diji_lig_cache_v1_" + hafta;
+        const ham = localStorage.getItem(key);
+
+        if (!ham) return null;
+
+        const kayit = JSON.parse(ham);
+
+        if (
+            !kayit ||
+            !kayit.zaman ||
+            !Array.isArray(kayit.veri)
+        ) {
+            localStorage.removeItem(key);
+            return null;
+        }
+
+        return kayit;
+
+    } catch (e) {
+        return null;
+    }
+}
+
+function dijiLigCacheYaz(hafta, veri) {
+    try {
+        if (!Array.isArray(veri) || !veri.length) return;
+
+        const key = "diji_lig_cache_v1_" + hafta;
+
+        localStorage.setItem(
+            key,
+            JSON.stringify({
+                zaman: Date.now(),
+                veri: veri
+            })
+        );
+
+    } catch (e) {
+        console.warn("Lig cache yazılamadı:", e);
+    }
+}
+
+
+async function maTumGetir() {
 
     const aktifHafta = yoHaftaKodu();
 
-    console.log("Lig verisi çekiliyor:", aktifHafta);
-
-    const { data, error } = await supabaseClient
-        .from("student_xp_weekly")
-        .select(`
-            student_id,
-            student_name,
-            week_code,
-            week_xp,
-            total_xp,
-            gold,
-            freeze_count,
-            unlocked_character_count
-        `)
-        .eq("week_code", aktifHafta)
-        .order("week_xp", { ascending:false });
+    console.log("🏆 Lig verisi:", aktifHafta);
 
 
-    if(error){
-        console.error("Lig veri hatası:", error);
-        return [];
+    /* =====================================================
+       1. ÖNCE CİHAZ CACHE'İNE BAK
+       ===================================================== */
+
+    const cache = dijiLigCacheOku(aktifHafta);
+
+    if (
+        cache &&
+        Array.isArray(cache.veri) &&
+        cache.veri.length
+    ) {
+
+        maTumListe = cache.veri;
+
+        console.log(
+            "📦 Lig cihaz cache'inden açıldı:",
+            maTumListe.length
+        );
+
+
+        /* Cache 5 dakikadan eskiyse
+           Supabase'den arka planda yenile */
+
+        const cacheYasi =
+            Date.now() - Number(cache.zaman || 0);
+
+        if (
+            cacheYasi > DIJI_LIG_CACHE_SURESI &&
+            navigator.onLine
+        ) {
+
+            dijiLigSunucudanGuncelle(aktifHafta);
+
+        }
+
+
+        /* Kullanıcı beklemeden mevcut listeyi döndür */
+
+        return maTumListe;
     }
 
 
-    maTumListe = data.map((ogrenci,index)=>({
+    /* =====================================================
+       2. CACHE YOKSA SUPABASE'DEN AL
+       ===================================================== */
 
-        id: ogrenci.student_name,
-
-        ogrenci: ogrenci.student_name,
-
-        ad: ogrenci.student_name,
-
-        xp: Number(ogrenci.week_xp || 0),
-
-        toplamXP: Number(ogrenci.total_xp || 0),
-
-        altin: Number(ogrenci.gold || 0),
-
-        ligSirasi:index + 1,
-
-        lig:null
-
-    }));
+    return await dijiLigSunucudanGuncelle(aktifHafta);
+}
 
 
-    return maTumListe;
+async function dijiLigSunucudanGuncelle(aktifHafta) {
+
+    try {
+
+        console.log(
+            "☁️ Lig Supabase'den alınıyor:",
+            aktifHafta
+        );
+
+
+        const { data, error } = await supabaseClient
+
+            .from("student_xp_weekly")
+
+            .select(`
+                student_id,
+                student_name,
+                week_code,
+                week_xp,
+                total_xp,
+                gold,
+                freeze_count,
+                unlocked_character_count
+            `)
+
+            .eq("week_code", aktifHafta)
+
+            .order("week_xp", {
+                ascending: false
+            });
+
+
+        if (error) {
+
+            console.error(
+                "Lig veri hatası:",
+                error
+            );
+
+
+            /* Supabase başarısızsa eski cache'i kullan */
+
+            const eski =
+                dijiLigCacheOku(aktifHafta);
+
+            if (
+                eski &&
+                Array.isArray(eski.veri)
+            ) {
+
+                maTumListe = eski.veri;
+
+                return maTumListe;
+            }
+
+            return [];
+        }
+
+
+        /* =================================================
+           SUPABASE VERİSİNİ UYGULAMANIN FORMATINA ÇEVİR
+           ================================================= */
+
+        maTumListe = (data || []).map(
+            (ogrenci, index) => {
+
+                const sira = index + 1;
+
+                return {
+
+                    id: ogrenci.student_name,
+
+                    ogrenci: ogrenci.student_name,
+
+                    ad: ogrenci.student_name,
+
+                    xp: Number(
+                        ogrenci.week_xp || 0
+                    ),
+
+                    toplamXP: Number(
+                        ogrenci.total_xp || 0
+                    ),
+
+                    altin: Number(
+                        ogrenci.gold || 0
+                    ),
+
+                    ligSirasi: sira,
+
+                    lig: null,
+
+                    hafta: ogrenci.week_code
+                };
+            }
+        );
+
+
+        /* =================================================
+           YENİ LİSTEYİ CİHAZA KAYDET
+           ================================================= */
+
+        dijiLigCacheYaz(
+            aktifHafta,
+            maTumListe
+        );
+
+
+        console.log(
+            "☁️ Lig güncellendi ve cache'lendi:",
+            maTumListe.length
+        );
+
+
+        return maTumListe;
+
+
+    } catch (e) {
+
+        console.error(
+            "Lig yükleme hatası:",
+            e
+        );
+
+
+        /* İnternet/Supabase yoksa eski cache */
+
+        const eski =
+            dijiLigCacheOku(aktifHafta);
+
+        if (
+            eski &&
+            Array.isArray(eski.veri)
+        ) {
+
+            maTumListe = eski.veri;
+
+            return maTumListe;
+        }
+
+        return [];
+    }
 }
 async function maSinifGetir() { await maTumGetir(); return maSinifListeSon; }
 function maBul(id) { return id === 'ben' ? maBen() : (maTumListe.find(o => o.id === id) || maSinifListeSon.find(o => o.id === id)); }
