@@ -4435,6 +4435,45 @@ function dijiKonuCacheYaz(anahtar, veri) {
 
 const DIJI_CACHE_SURUM = "v1";
 
+                    function dijiCacheTemizligi() {
+    try {
+        const simdi = Date.now();
+
+        const kurallar = [
+            { prefix: 'diji_lig_cache_v1_', maxAge: 14 * 24 * 60 * 60 * 1000 },
+            { prefix: 'diji_ma_akis_v1', maxAge: 7 * 24 * 60 * 60 * 1000 },
+            { prefix: 'diji_ders_konulari_v1_', maxAge: 30 * 24 * 60 * 60 * 1000 },
+            { prefix: 'diji_rubric_etkinlik_v1', maxAge: 30 * 24 * 60 * 60 * 1000 },
+            { prefix: 'diji_ozellikler_v1', maxAge: 30 * 24 * 60 * 60 * 1000 }
+        ];
+
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (!key) continue;
+
+            const kural = kurallar.find(x => key.startsWith(x.prefix));
+            if (!kural) continue;
+
+            try {
+                const kayit = JSON.parse(localStorage.getItem(key));
+
+                if (
+                    kayit &&
+                    kayit.zaman &&
+                    simdi - Number(kayit.zaman) > kural.maxAge
+                ) {
+                    localStorage.removeItem(key);
+                }
+            } catch (e) {
+                localStorage.removeItem(key);
+            }
+        }
+    } catch (e) {
+        console.warn('Cache temizliği başarısız:', e);
+    }
+}
+                    dijiCacheTemizligi();
+
 function dijiCacheOku(anahtar, maxYasMs) {
     try {
         const ham = localStorage.getItem("diji_cache_" + DIJI_CACHE_SURUM + "_" + anahtar);
@@ -8939,19 +8978,24 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                             document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                             document.getElementById('panel-alani').style.display = 'block';
                             girisSerisiGuncelleVeGetir();
-                            baslatSayac(); 
-                            arkaPlanVeriYenilemeBaslat();
-                           
-                            setTimeout(puanBildirimKontrolEt, 1400);
-                            setInterval(() => {
-    if (document.hidden) return;
+baslatSayac();
+arkaPlanVeriYenilemeBaslat();
+
+setTimeout(() => {
     puanBildirimKontrolEt();
-}, 180000);
-                    
-                                            anaPanelDuyuruBildirimleriYukle();
-                     
-                        meduAkisAc();
-                        gunlukEnerjiBonusuKontrolEt();
+}, 1500);
+
+setTimeout(() => {
+    anaPanelDuyuruBildirimleriYukle();
+}, 2500);
+
+setTimeout(() => {
+    meduAkisAc();
+}, 3200);
+
+setTimeout(() => {
+    gunlukEnerjiBonusuKontrolEt();
+}, 4000);
                     }, 600);
                     } else {
                         // Hatalı giriş durumunda tekrar giriş ekranına dön
@@ -10769,34 +10813,120 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
         }
         
                 // ===== RUBRİK PANELİ: ETKİNLİK & VİDEO ATAMA =====
-        function rubricEtkinlikSecDoldur() {
-            let sel = document.getElementById('rubricEtkinlikSec');
-            if (!sel) return;
-            sel.innerHTML = '<option value="">-- Etkinlik Seçin --</option>';
-        
-            fetch(`${apiURL}?islem=etkinlikTanimlariGetir`)
-            .then(res => res.json())
-            .then(liste => {
-                window.rubricEtkinlikTanimlari = liste || [];
+        const DIJI_RUBRIC_CACHE_SURESI = 24 * 60 * 60 * 1000;
+
+function rubricEtkinlikSecDoldur() {
+    let sel = document.getElementById('rubricEtkinlikSec');
+    if (!sel) return;
+
+    sel.innerHTML = '<option value="">-- Etkinlik Seçin --</option>';
+
+    const key = 'diji_rubric_etkinlik_v1';
+
+    try {
+        const ham = localStorage.getItem(key);
+
+        if (ham) {
+            const kayit = JSON.parse(ham);
+
+            if (
+                kayit &&
+                kayit.zaman &&
+                Array.isArray(kayit.veri)
+            ) {
+                window.rubricEtkinlikTanimlari = kayit.veri;
                 rubricEtkinlikListesiFiltreliCiz();
-            })
-            .catch(() => { sel.innerHTML = '<option value="">Yüklenemedi</option>'; });
+
+                if (Date.now() - kayit.zaman < DIJI_RUBRIC_CACHE_SURESI) {
+                    return;
+                }
+            }
         }
-        
-                function ozellikSecDoldur() {
-            let sel = document.getElementById('ozellikSec');
-            if (!sel) return;
-            fetch(`${apiURL}?islem=ozellikListesiGetir`)
-            .then(res => res.json())
-            .then(liste => {
+    } catch (e) {}
+
+    fetch(`${apiURL}?islem=etkinlikTanimlariGetir`)
+        .then(res => res.json())
+        .then(liste => {
+            window.rubricEtkinlikTanimlari = Array.isArray(liste) ? liste : [];
+
+            try {
+                localStorage.setItem(
+                    key,
+                    JSON.stringify({
+                        zaman: Date.now(),
+                        veri: window.rubricEtkinlikTanimlari
+                    })
+                );
+            } catch (e) {}
+
+            rubricEtkinlikListesiFiltreliCiz();
+        })
+        .catch(() => {
+            if (!window.rubricEtkinlikTanimlari) {
+                window.rubricEtkinlikTanimlari = [];
+            }
+            sel.innerHTML = '<option value="">Yüklenemedi</option>';
+        });
+}
+             const DIJI_OZELLIK_CACHE_SURESI = 24 * 60 * 60 * 1000;
+
+function ozellikSecDoldur() {
+    let sel = document.getElementById('ozellikSec');
+    if (!sel) return;
+
+    const key = 'diji_ozellikler_v1';
+
+    try {
+        const ham = localStorage.getItem(key);
+
+        if (ham) {
+            const kayit = JSON.parse(ham);
+
+            if (
+                kayit &&
+                kayit.zaman &&
+                Array.isArray(kayit.veri)
+            ) {
                 sel.innerHTML = '<option value="">-- Özellik Seçin --</option>';
-                liste.forEach(o => {
-                    sel.innerHTML += `<option value="${o.kod}">${guvenliMetin(o.ad)}</option>`;
+
+                kayit.veri.forEach(o => {
+                    sel.innerHTML +=
+                        `<option value="${o.kod}">${guvenliMetin(o.ad)}</option>`;
                 });
-            })
-            .catch(() => { sel.innerHTML = '<option value="">Yüklenemedi</option>'; });
+
+                if (Date.now() - kayit.zaman < DIJI_OZELLIK_CACHE_SURESI) {
+                    return;
+                }
+            }
         }
-        
+    } catch (e) {}
+
+    fetch(`${apiURL}?islem=ozellikListesiGetir`)
+        .then(res => res.json())
+        .then(liste => {
+            liste = Array.isArray(liste) ? liste : [];
+
+            sel.innerHTML = '<option value="">-- Özellik Seçin --</option>';
+
+            liste.forEach(o => {
+                sel.innerHTML +=
+                    `<option value="${o.kod}">${guvenliMetin(o.ad)}</option>`;
+            });
+
+            try {
+                localStorage.setItem(
+                    key,
+                    JSON.stringify({
+                        zaman: Date.now(),
+                        veri: liste
+                    })
+                );
+            } catch (e) {}
+        })
+        .catch(() => {
+            sel.innerHTML = '<option value="">Yüklenemedi</option>';
+        });
+}
         function ozellikHedefAlaniGuncelle() {
             let tip = document.getElementById('ozellikHedefTipiSec').value;
             document.getElementById('ozellikHedefDegeri').style.display = (tip === 'tumogrenciler') ? 'none' : 'block';
