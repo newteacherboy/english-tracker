@@ -14483,6 +14483,7 @@ function sohbetMikDur() {
           // Oyun sonu: XP ve altın
           yoSar('genelSonucEkraniGoster', null, (c, a) => {
             if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return;
+            if (a[0] && a[0].yildiz && typeof ocOdulVer === 'function') { ocOdulVer(a[0]); return; }
             let d = Number(a[0] && a[0].dogru) || 0;
             if (d > 0) yoXpEkle(d * 10, d);
           });
@@ -16470,12 +16471,17 @@ function avatarSVG(s, stil, px, cins) {
       let alan = $('tab-derscalis'), metin = alan ? alan.innerText : '';
       let basarili = /tebrik|geçtin|başarı|tamamland/i.test(metin) && !/tekrar dene|başarısız|kaldın/i.test(metin);
       if (!basarili || !yoVar()) return;
-      yo.dcOdul = yo.dcOdul || [];
-      if (yo.dcOdul.includes(konu)) return;
-      yo.dcOdul.push(konu); if (yo.dcOdul.length > 500) yo.dcOdul.shift();
-            yoXpEkle(30, 2);
-      if (typeof enerjiHediye === 'function') enerjiHediye(2);
-      ODUL({ ikon: '📘', baslik: 'Konuyu geçtin!', alt: konu, enerji: 2, xp: 30, altin: 2 });
+      yo.dcOdul = yo.dcOdul || []; yo.dcTekrar = yo.dcTekrar || {};
+      let bugunK = typeof yoBugun === 'function' ? yoBugun() : new Date().toISOString().slice(0, 10);
+      let ilk = !yo.dcOdul.includes(konu);
+      if (!ilk && yo.dcTekrar[konu] === bugunK) return;              /* tekrar ödülü konu başına günde bir */
+      let bilmiyordu = (yo.dcBilmiyor || []).includes(konu);
+      let xp = ilk ? (bilmiyordu ? 100 : 80) : 30, al = ilk ? (bilmiyordu ? 30 : 25) : 8, en = ilk ? 6 : 2;
+      if (ilk) { yo.dcOdul.push(konu); if (yo.dcOdul.length > 500) yo.dcOdul.shift(); }
+      else { Object.keys(yo.dcTekrar).forEach(x => { if (yo.dcTekrar[x] !== bugunK) delete yo.dcTekrar[x]; }); yo.dcTekrar[konu] = bugunK; }
+      yoXpEkle(xp, al);
+      if (typeof enerjiKazan === 'function') enerjiKazan(en, 'ders'); else if (typeof enerjiHediye === 'function') enerjiHediye(en);
+      ODUL({ ikon: bilmiyordu && ilk ? '💡' : '📘', baslik: ilk ? (bilmiyordu ? 'Bilmediğin konuyu öğrendin!' : 'Konuyu geçtin!') : 'Konuyu tekrar ettin!', alt: konu, enerji: en, xp: xp, altin: al });
     }, 1500);
     return r;
   };
@@ -19660,10 +19666,10 @@ let adaRenk = adaRenkleri[
       if (baHarcandi) return;
       baHarcandi = true;
       try {
-        let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: aktifOgrenciAdi, fark: -5 }) });
+        let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: aktifOgrenciAdi, fark: -4, sebep: 'parkur' }) });
         let d = await r.json();
         if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
-        if (typeof genelEnerjiDegisimGoster === 'function') genelEnerjiDegisimGoster(-5);
+        if (typeof genelEnerjiDegisimGoster === 'function') genelEnerjiDegisimGoster(-4);
       } catch (e) {}
       return;
     }
@@ -20079,27 +20085,23 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
       if (typeof odulGoster === 'function') odulGoster({ ikon: n === 5 ? '🎁' : '🌞', baslik: n === 5 ? `${seri}. gün hediyesi!` : 'Günaydın! Günlük hediyen', alt: n === 5 ? 'Her 7. gün sürpriz: +5 enerji!' : 'Her gün +3 enerji. 7. günde +5!', enerji: n });
     }, 1500);
   };
-  async function enerjiPaketiAl() {
+  async function enerjiPaketiAl(tam) {
     if (!yoVar()) return false;
-    let k = window.genelEnerjiKalan || 0, m = window.genelEnerjiMax || 20;
+    let k = window.genelEnerjiKalan || 0, m = window.genelEnerjiMax || 30;
     if (k >= m) { toast('⚡ Enerjin zaten dolu!'); return false; }
-    if ((yo.altin || 0) < 25) { toast(`5 enerji için ${25 - (yo.altin || 0)} altın daha lazım 🪙`); return false; }
-    yo.altin -= 25; yoKaydet();
-    try {
-      let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: aktifOgrenciAdi, fark: 5 }) });
-      let d = await r.json();
-      if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
-      if (typeof kpEnerjiKalan !== 'undefined') { kpEnerjiKalan = d.enerjiKalan; kpEnerjiMax = d.enerjiMax; if (typeof kpEnerjiSatiriniGuncelle === 'function') kpEnerjiSatiriniGuncelle(); }
-      if (typeof genelEnerjiDegisimGoster === 'function') genelEnerjiDegisimGoster(Math.min(5, m - k));
-    } catch (e) {}
-    toast(`⚡ +${Math.min(5, m - k)} enerji! Hadi oyuna 🚀`);
+    let miktar = tam ? (m - k) : Math.min(5, m - k), fiyat = tam ? 60 : 15;
+    if ((yo.altin || 0) < fiyat) { toast(`Bunun için ${fiyat - (yo.altin || 0)} altın daha lazım 🪙`); return false; }
+    yo.altin -= fiyat; yoKaydet();
+    let d = typeof enerjiKazan === 'function' ? await enerjiKazan(miktar, 'satin') : null;
+    if (!d || !d.ok || !(d.eklenen > 0)) { yo.altin += fiyat; yoKaydet(); toast((d && d.mesaj) || 'Enerji alınamadı, altının iade edildi.'); return false; }
+    toast(`⚡ +${d.eklenen} enerji! Hadi oyuna 🚀`);
     return true;
   }
   window.enerjiPaketiAl = enerjiPaketiAl;
   window.genelEnerjiBittiGoster = function () {
     if (document.querySelector('.sa-perde')) return;
     let c = window._kpEnerjiCache || {}, dk = c.sonrakiDk || 60;
-    onayKarti({ gorsel: '🪫', z: '#fee2e2', baslik: 'Enerjin bitti!', metin: `${dk} dakika sonra +1 enerji dolacak. Beklemek istemezsen:`, fiyat: 25, alt: 'Paket: 5 enerji', evet: '⚡ 5 enerji al', hayir: '📘 Ders çalış (+2 ⚡)',
+    onayKarti({ gorsel: '🪫', z: '#fee2e2', baslik: 'Enerjin yetmiyor!', metin: `Her oyun 3 ⚡. ${dk || 15} dakika içinde +1 enerji dolacak. Beklemek istemezsen:`, fiyat: 15, alt: 'Paket: 5 enerji · günde en fazla 3 paket', evet: '⚡ 5 enerji al', hayir: '📘 Ders çalış (+6 ⚡)',
       al: enerjiPaketiAl, vazgec: () => { document.querySelectorAll('.game-modal-overlay').forEach(m => { if (getComputedStyle(m).display !== 'none') m.style.display = 'none'; }); if (typeof dersCalisTamEkranAc === 'function') dersCalisTamEkranAc(); } });
   };
 
@@ -20209,8 +20211,8 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
   setInterval(() => {
     if (!girisli() || oyunda() || !yoVar()) return;
     let k = window.genelEnerjiKalan;
-    if (typeof k === 'number' && k <= 3 && (yo.altin || 0) >= 25 && !gosterilen.has('enerji' + k))
-      if (tavsiye({ ikon: '🪫', metin: `Enerjin azalıyor (${k} kaldı)!`, alt: '5 enerji = 🪙 25 · oyun bölünmesin', btn: '⚡ Al', fn: () => onayKarti({ gorsel: '🔋', z: '#dcfce7', baslik: 'Enerji paketi', metin: '5 enerji hemen hesabına eklenir.', fiyat: 25, evet: '⚡ Satın al', al: enerjiPaketiAl }) })) gosterilen.add('enerji' + k);
+    if (typeof k === 'number' && k <= 3 && (yo.altin || 0) >= 15 && !gosterilen.has('enerji' + k))
+      if (tavsiye({ ikon: '🪫', metin: `Enerjin azalıyor (${k} kaldı)!`, alt: '5 enerji = 🪙 15 · oyun bölünmesin', btn: '⚡ Al', fn: () => onayKarti({ gorsel: '🔋', z: '#dcfce7', baslik: 'Enerji paketi', metin: '5 enerji hemen hesabına eklenir.', fiyat: 25, evet: '⚡ Satın al', al: enerjiPaketiAl }) })) gosterilen.add('enerji' + k);
   }, 20000);
   /* Oyunda jokerler bitince (ya da bitmeden, nadiren) */
   let oyunNo = 0, oyundaydi = false, buOyunOneri = false;
@@ -20390,7 +20392,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   /* ================= 5) YARDIM ================= */
   const YARDIM = [
     ['🧭', 'Uygulamada nerede ne var?', `<table><tr><td>🧙 <b>Parkur</b></td><td>Açılış ekranı. Üstteki 4 sekmeyle Büyü Akademisi, Kelime Modu, Sohbet ve Kelime Kartları parkurları arasında geçersin.</td></tr><tr><td>🎡 <b>Medu Akış</b></td><td>Herkesin başarıları (Akış), haftanın yıldızları ve düellolar (Keşfet), vitrinin ve lig.</td></tr><tr><td>✨ <b>Sana Özel</b></td><td>Ödevlerin, Zor Kelimelerim, Seviye Tespit.</td></tr><tr><td>🎮 <b>Aktivite</b></td><td>Mini oyunlar, Dikte, Cümle Kur, Okuma Stüdyosu, etkinlik ve videolar.</td></tr><tr><td>📘 <b>Ders Çalış</b></td><td>Konu anlatımları ve konu testleri.</td></tr><tr><td>🛍️ <b>Mağaza</b></td><td>Karakter Atölyesi, Koleksiyon, Sandıklar, Jokerler.</td></tr><tr><td>👤 <b>Profil</b></td><td>Puanların, grafiklerin ve karakterlerin.</td></tr></table>Sağdaki soluk butonlar: ⚡ enerji ve altın, 🎯 günlük hedef / ❓ yardım / 🤖 AI Koç. Medu Akış'taki 🔔 zil tüm bildirimlerini gösterir.`],
-    ['⚡', 'Enerji', `Oyunlara girmek için enerji gerekir. Tavan <b>20</b>. Bazı günler <b>25</b> olur: 3 gün üst üste girip 3 seviye geçersen ya da bir mini oyunda günün ilk 10'una girersen. Hiçbir kazanç tavanı aşamaz.<table><tr><th>Kazanç</th><th>Enerji</th></tr><tr><td>Her saat</td><td>+1</td></tr><tr><td>Günlük ilk giriş (7. günde +5)</td><td>+3</td></tr><tr><td>Ders Çalış'ta konu testini geçmek</td><td>+2</td></tr><tr><td>Etkinlik tamamlamak</td><td>+1</td></tr><tr><td>Seviye tespit (başarıya göre)</td><td>en fazla +3</td></tr><tr><td>Üst lige çıkmak / sıra yükselmek</td><td>+5 / +1</td></tr><tr><td>Düello kazanmak</td><td>+2</td></tr><tr><td>Gümüş, Altın, Efsane sandık</td><td>+2 / +3 / +5</td></tr><tr><td>Arkadaşın gönderirse</td><td>+2</td></tr><tr><td>Mağazadan paket</td><td>5 ⚡ = 25 🪙</td></tr></table><b>Harcama:</b> Parkurlara (Büyü Akademisi, Kelime Modu, Sohbet, Kelime Kartları) girişte 2 ⚡; mini oyunlara, Dikte'ye ve Cümle Kur'a girişte 1 ⚡. Ayrıca tüm oyun ve parkurlarda her 3 soruda 1 ⚡ harcanır. Öğretmenin sınıfta oynattığı oyunlar enerji harcamaz. Ders Çalış, konu anlatımları, okuma, videolar, etkinlikler ve mağaza hiç enerji harcamaz.`],
+    ['⚡', 'Enerji', `Oyunlara girmek için enerji gerekir. Tavan <b>30</b>. Enerji kendiliğinden dolar: <b>her 15 dakikada +1</b>.<table><tr><th>Kazanç</th><th>Enerji</th></tr><tr><td>Kendiliğinden dolum</td><td>15 dakikada +1</td></tr><tr><td>Günlük ilk giriş (7. günde +10)</td><td>+5</td></tr><tr><td>Ders Çalış'ta konuyu ilk kez geçmek</td><td>+6</td></tr><tr><td>Geçtiğin konuyu tekrar etmek (günde bir)</td><td>+2</td></tr><tr><td>Düello kazanmak, sandıklar</td><td>+2 / +5</td></tr><tr><td>Arkadaşın gönderirse</td><td>+2</td></tr><tr><td>Mağazadan paket (günde 3 kez)</td><td>5 ⚡ = 15 🪙 · tam dolum = 60 🪙</td></tr></table><b>Harcama:</b> Her oyun <b>3 ⚡</b> (Kelime Ezber, Jeopardy, Boşluk Doldurma, Hafıza, Kelime Yağmuru, Adam Asmaca, Kelime Bul, Eşleştirme, Kelime Treni, Dikte, Cümle Kur). Parkurlar <b>4 ⚡</b> (Büyü Akademisi, Kelime Modu, Sohbet, Kelime Kartları). Oyunun ortasında enerji düşmez. Öğretmenin sınıfta oynattığı oyunlar, Ders Çalış, okuma, videolar ve etkinlikler enerji harcamaz.<br><br><b>Ödül (her oyunda aynı):</b> ⭐ 4 🪙 · 20 XP, ⭐⭐ 7 🪙 · 35 XP, ⭐⭐⭐ 10 🪙 · 50 XP. Günün ilk 3 oyunu <b>×2</b>; 12. oyundan sonra ödül yarıya iner.`],
     ['⭐', 'XP ve haftalık lig', `XP en kolay kazanılan puandır. Her doğru cevap <b>+10 XP</b> (Büyü Akademisi'nde +20). Konu testi +30, etkinlik ve video +10, seviye tespit en fazla +50 XP verir.<br><b>Lig:</b> Haftalık XP'ye göre sıralanırsın. İlk 10 🏆 Şampiyonlar Ligi, 11–30 ⭐ Süper Lig, diğerleri 🌱 Yerel Lig. Lig atlarsan +5 ⚡ +10 XP +5 🪙, her yeni sıra için +1 ⚡ +10 XP (günde en fazla 5 basamak). Lig her hafta yeniden başlar. Toplam XP'n ise hiç silinmez.`],
     ['🪙', 'Altın', `Her doğru cevap <b>+1 🪙</b> (Büyü Akademisi'nde +2). Günlük hedefi tamamlamak +5, art arda 4 doğru (kombo) +3 🪙 (günde 5 kez). Etkinlik ve video +2, konu testi +2 🪙.<br><b>Seri çarpanı:</b> 3 gün üst üste girersen altınlar ×1.25, 7 gün olursa ×1.5.<br><b>Harcama:</b> Karakter Atölyesi (10–120), karakter satın alma (50–130), jokerler (10–30), sandık (150–700), enerji paketi (25), seri dondurucu (10).`],
     ['🎁', 'Sandıklar ve karakterler', `Her parkurda <b>her 3 seviyede bir sandık</b> kazanırsın. Sıra: Bronz → Gümüş → Altın → Efsane, her sandığın %15 bir üst kademeye çıkma şansı var. İçinden XP, altın, enerji, ekstra joker, hediye hakkı ve nadir kıyafet çıkar. Sandığa 3 kez dokunarak açarsın.<br><b>Karakterler:</b> Her parkurda her 3 seviyede yeni bir karakter açılır (toplam 36). Mağaza › Koleksiyon ya da Profil › Karakterlerim'den profil fotoğrafın yaparsın. Beklemek istemezsen altınla da alabilirsin.`],
@@ -21210,10 +21212,10 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     let g = [...document.querySelectorAll('.game-modal-overlay')].find(gor);
     return g ? 'O:' + (g.id || 'oyun') : '';
   }
-  const ucret = k => PARKUR[k] ? 2 : 1;
+  const ucret = k => PARKUR[k] ? 4 : 3;
   async function enerjiSunucu(fark) {
     try {
-      let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: aktifOgrenciAdi, fark }) });
+      let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: aktifOgrenciAdi, fark, sebep: fark < 0 ? 'oyun' : '' }) });
       let d = await r.json();
       if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
       try { kpEnerjiKalan = d.enerjiKalan; kpEnerjiMax = d.enerjiMax; kpEnerjiSatiriniGuncelle(); } catch (e) {}
@@ -21234,7 +21236,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   function soru(n) {
     if (sinifModu() || !baglam()) return;
     soruSayac += (n || 1);
-    while (soruSayac >= 3) { soruSayac -= 3; if ((window.genelEnerjiKalan || 0) > 0) enerjiSunucu(-1); }
+    soruSayac = 0;   /* v2: soru başına enerji düşmez, giriş ücreti sabit */
   }
   window.enerjiSoruSay = soru;
 
@@ -21253,7 +21255,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   let orgBaSev = window.baSeviyeBaslat;
   if (typeof orgBaSev === 'function') window.baSeviyeBaslat = function () {
     let k = window.genelEnerjiKalan;
-    if (!sinifModu() && typeof k === 'number' && k < 2) { if (typeof genelEnerjiBittiGoster === 'function') genelEnerjiBittiGoster(); return; }
+    if (!sinifModu() && typeof k === 'number' && k < 4) { if (typeof genelEnerjiBittiGoster === 'function') genelEnerjiBittiGoster(); return; }
     let hile = typeof k === 'number' && k < 5;
     if (hile) window.genelEnerjiKalan = 5;
     try { return orgBaSev.apply(this, arguments); } finally { if (hile && window.genelEnerjiKalan === 5) window.genelEnerjiKalan = k; }
@@ -23085,6 +23087,107 @@ window.OC = (function () {
 
   return { SORU, kelimeSec, basla, dogru, yanlis, hataSay, puan, sure, yildiz, sonlandir,
            get aktif() { return d; }, sonuc: oyun => sonuclar[oyun] || null };
+})();
+</script>
+
+
+<!-- ===================== EKONOMİ v2 · Aşama 2 =====================
+     Oyun ödülü yıldıza göre (her oyunda aynı), günün ilk 3 oyunu ×2, 12. oyundan sonra ×½,
+     Çift Puan jokeri ödülü ×2. Enerji sunucuda: tavan 30, 15 dakikada +1.
+     =============================================================== -->
+<style>
+.ek-odul{margin:8px 0 2px;padding:9px 12px;border-radius:14px;background:linear-gradient(135deg,#fef3c7,#fce7f3);text-align:center;font-weight:900;font-size:14px;color:#7c2d12;animation:ekGel .5s cubic-bezier(.2,.9,.3,1.3) both}
+.ek-odul small{display:block;font-size:11px;font-weight:800;color:#9a3412;margin-top:2px}
+@keyframes ekGel{from{opacity:0;transform:scale(.8)}}
+@media (prefers-reduced-motion:reduce){.ek-odul{animation:none}}
+</style>
+<script>
+(function () {
+  const ODUL = { 1: [4, 20], 2: [7, 35], 3: [10, 50] };   /* yıldız → [altın, XP] */
+  const sinifModu = () => typeof siniftaOynananOgrenci !== 'undefined' && !!siniftaOynananOgrenci;
+  const ogrenci = () => (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher') ? aktifOgrenciAdi : '';
+
+  function enerjiGoster(d) {
+    if (!d || typeof d.enerjiKalan !== 'number') return;
+    window._kpEnerjiCache = d;
+    if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
+    try { kpEnerjiKalan = d.enerjiKalan; kpEnerjiMax = d.enerjiMax; if (typeof kpEnerjiSatiriniGuncelle === 'function') kpEnerjiSatiriniGuncelle(); } catch (e) {}
+  }
+
+  /* Enerji kazanımı: sebep sunucuda kurala bağlı (gunluk, satin, ders, hediye) */
+  window.enerjiKazan = async function (miktar, sebep) {
+    if (!ogrenci() || sinifModu()) return null;
+    try {
+      let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: ogrenci(), fark: miktar, sebep: sebep }) });
+      let d = await r.json();
+      enerjiGoster(d);
+      if (d && d.eklenen > 0 && typeof genelEnerjiDegisimGoster === 'function') genelEnerjiDegisimGoster(d.eklenen);
+      return d;
+    } catch (e) { return null; }
+  };
+
+  /* Oyun ödülü (9 adil oyun) */
+  window.ocOdulVer = function (o) {
+    if (sinifModu() || typeof yoHazirMi !== 'function' || !yoHazirMi()) return null;
+    let y = o.yildiz || (window.OC ? OC.yildiz(o.puan || 0) : 1);
+    let [al, xp] = ODUL[y] || ODUL[1];
+    let bugun = typeof yoBugun === 'function' ? yoBugun() : new Date().toISOString().slice(0, 10);
+    if (!yo.oyunGun || yo.oyunGun.t !== bugun) yo.oyunGun = { t: bugun, n: 0 };
+    yo.oyunGun.n++;
+    let n = yo.oyunGun.n, carpan = n <= 3 ? 2 : n > 12 ? 0.5 : 1, notlar = [];
+    if (n <= 3) notlar.push(`Günün ${n}. oyunu ×2`);
+    if (n > 12) notlar.push('12 oyunu geçtin, ödül yarıya indi · biraz mola? 🌿');
+    if (o.odulCarpan > 1) { carpan *= 2; notlar.push('✨ Çift Puan jokeri ×2'); }
+    al = Math.max(1, Math.round(al * carpan)); xp = Math.max(5, Math.round(xp * carpan));
+    yoXpEkle(xp, al);
+    setTimeout(() => odulSeridi(y, al, xp, notlar.join(' · ')), 350);
+    return { al, xp };
+  };
+  function odulSeridi(y, al, xp, not) {
+    let kart = document.querySelector('#genelSonucOverlay .gso-kart'); if (!kart) return;
+    let el = document.getElementById('ekOdulSerit');
+    if (!el) { el = document.createElement('div'); el.id = 'ekOdulSerit'; el.className = 'ek-odul'; el.setAttribute('role', 'status'); let p = document.getElementById('gsoPuan'); let hedef = p ? (p.closest('.gso-puan, .gso-ust, div') || p) : null; (hedef && hedef.parentNode === kart ? hedef : kart.firstElementChild).insertAdjacentElement('afterend', el); }
+    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+    el.innerHTML = `${'⭐'.repeat(y)}${'☆'.repeat(3 - y)} &nbsp; +${al} 🪙 &nbsp; +${xp} XP${not ? `<small>${not}</small>` : ''}`;
+  }
+  /* Ödül şeridi sadece adil oyunlarda görünsün */
+  let orgGso = window.genelSonucEkraniGoster;
+  if (typeof orgGso === 'function') { window.genelSonucEkraniGoster = function (o) { let el = document.getElementById('ekOdulSerit'); if (el) el.remove(); return orgGso.apply(this, arguments); }; window.genelSonucEkraniGoster._oc = orgGso._oc; }
+
+  /* Enerji: dakikada bir sunucudan tazele (15 dakikada +1 dolumu görünsün) */
+  async function tazele() {
+    if (!ogrenci() || document.hidden) return;
+    try { let r = await fetch(`${apiURL}?islem=enerjiDurumuGetir&ogrenci=${encodeURIComponent(ogrenci())}`); enerjiGoster(await r.json()); } catch (e) {}
+  }
+  setInterval(tazele, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tazele(); });
+  setTimeout(tazele, 4000);
+
+  /* Günlük giriş hediyesi: miktarı sunucu belirler (+5, her 7. günde +10) */
+  window.gunlukEnerjiBonusuKontrolEt = function () {
+    let bugun = new Date().toISOString().split('T')[0];
+    if (localStorage.getItem('ing_gunlukEnerjiBonusTarih_v2') === bugun) return;
+    setTimeout(async () => {
+      let d = await enerjiKazan(5, 'gunluk');
+      if (!d || !d.ok) return;
+      localStorage.setItem('ing_gunlukEnerjiBonusTarih_v2', bugun);
+      if (d.eklenen > 0 && typeof odulGoster === 'function')
+        odulGoster({ ikon: d.eklenen >= 10 ? '🎁' : '🌞', baslik: d.eklenen >= 10 ? '7. gün hediyesi!' : 'Günaydın! Günlük hediyen', alt: `+${d.eklenen} ⚡ enerji`, enerji: d.eklenen });
+    }, 1500);
+  };
+  setTimeout(() => { if (ogrenci()) window.gunlukEnerjiBonusuKontrolEt(); }, 5000);
+
+  /* "Bilmiyordum" işaretlenen konular: sonradan geçilince daha büyük ödül */
+  const orgFetch = window.fetch;
+  window.fetch = function (url, opt) {
+    try {
+      if (opt && typeof opt.body === 'string' && opt.body.indexOf('dersBilmiyordumToggle') !== -1 && typeof yo !== 'undefined' && yo) {
+        let c = document.getElementById('dcCrumb'), konu = c ? c.innerText.trim() : '';
+        if (konu) { yo.dcBilmiyor = yo.dcBilmiyor || []; if (!yo.dcBilmiyor.includes(konu)) { yo.dcBilmiyor.push(konu); if (yo.dcBilmiyor.length > 300) yo.dcBilmiyor.shift(); if (typeof yoKaydet === 'function') yoKaydet(); } }
+      }
+    } catch (e) {}
+    return orgFetch.apply(this, arguments);
+  };
 })();
 </script>
 
