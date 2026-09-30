@@ -25945,22 +25945,59 @@ window.ocEnerjiHarca = async function (n) {
     Daha önce hatalı oluşturulmuş görev kaydı
     varsa onu da güvenli şekilde temizle.
   */
-  if (
-    yo.gorev &&
-    Array.isArray(yo.gorev.liste)
-  ) {
+/* Hatalı/eski günlük görev kaydını kontrol et */
+if (
+  yo.gorev &&
+  Array.isArray(yo.gorev.liste)
+) {
 
-    yo.gorev.liste =
-      yo.gorev.liste.filter(
-        x =>
-          x &&
-          typeof x.id === 'string'
+  yo.gorev.liste =
+    yo.gorev.liste.filter(
+      x =>
+        x &&
+        typeof x.id === 'string' &&
+        GOREV_HAVUZ.some(g => g.id === x.id)
+    );
+
+  /*
+    Eski hatalı sürümden 1 veya 2 görev kaldıysa,
+    mevcut görevleri SİLMEDEN eksikleri tamamla.
+  */
+  if (yo.gorev.liste.length < 3) {
+
+    const mevcut =
+      new Set(
+        yo.gorev.liste.map(x => x.id)
       );
-  }
 
-  return yo.gorev;
+    for (const aday of GOREV_HAVUZ) {
+
+      if (yo.gorev.liste.length >= 3) {
+        break;
+      }
+
+      if (
+        aday &&
+        aday.id &&
+        !mevcut.has(aday.id)
+      ) {
+
+        yo.gorev.liste.push({
+          id: aday.id,
+          ilerleme: 0
+        });
+
+        mevcut.add(aday.id);
+      }
+    }
+
+    if (typeof yoKaydet === 'function') {
+      yoKaydet();
+    }
+  }
 }
 
+return yo.gorev;
 
   function olay(tur) {
 
