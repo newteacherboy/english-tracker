@@ -22593,6 +22593,353 @@ async function esOyunuBitir() {
   if (!dene()) { let n = 0, t = setInterval(() => { if (dene() || ++n > 40) clearInterval(t); }, 500); }
 })();
 </script>
+
+                <!-- ===================== KELİME TRENİ (Cümle Çevir) =====================
+     </body> etiketinin hemen ÜSTÜNE yapıştır. Aktiviteler'e kartını kendisi ekler.
+     Cümleler: önce Supabase "sentence_bank" (sınıf + ünite), eksik kalırsa Ders Çalış örnekleri.
+     ======================================================================= -->
+<style>
+#trenOyunOverlay .game-modal-content{max-width:540px}
+.tr-ust{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tr-bar{flex:1;height:12px;border-radius:99px;background:#ede9fe;overflow:hidden}
+.tr-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#f59e0b,#ec4899);transition:width .4s}
+.tr-seri{font-weight:900;font-size:13px;color:#db2777;min-width:40px;text-align:right}
+.tr-sure{font-weight:900;font-size:12px;color:#7c3aed}
+.tr-rozet{display:inline-flex;gap:6px;font-weight:900;font-size:12px;color:#ea580c;margin:0 0 4px}
+.tr-kaynak{font-weight:800;font-size:11px;color:#94a3b8;margin-left:6px}
+.tr-gorev{font-size:16px;font-weight:900;color:#312e81;margin:2px 0 8px}
+.tr-istasyon{display:flex;align-items:center;gap:10px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:10px 12px;margin-bottom:6px}
+.tr-tabela{background:#1e3a8a;color:#fff;border-radius:10px;padding:8px 12px;font-weight:900;font-size:clamp(15px,4.2vw,18px);line-height:1.3;box-shadow:inset 0 0 0 2px #93c5fd}
+.tr-hat{position:relative;display:flex;flex-wrap:wrap;align-items:flex-end;align-content:flex-end;gap:6px;min-height:104px;padding:8px 2px 26px;margin:4px 0 12px;overflow:hidden;
+  background:linear-gradient(transparent calc(100% - 14px),#78716c calc(100% - 14px) calc(100% - 11px),transparent calc(100% - 11px)),
+  repeating-linear-gradient(90deg,transparent 0 16px,#a8a29e 16px 22px) bottom 4px left 0/100% 12px no-repeat}
+.tr-lok{font-size:40px;line-height:1;transform:scaleX(-1);margin-right:2px}
+.tr-v{position:relative;border:2px solid #f59e0b;background:#fde68a;color:#78350f;border-radius:10px 10px 6px 6px;padding:9px 12px;margin-bottom:10px;
+  font-family:inherit;font-weight:900;font-size:clamp(14px,4vw,17px);box-shadow:0 3px 0 #d97706;cursor:pointer;user-select:none;transition:transform .12s,opacity .15s}
+.tr-v::before,.tr-v::after{content:"";position:absolute;bottom:-12px;width:12px;height:12px;border-radius:50%;background:#44403c;border:3px solid #a8a29e}
+.tr-v::before{left:7px}.tr-v::after{right:7px}
+.tr-v:active{transform:translateY(2px)}
+.tr-v:focus-visible{outline:3px solid #7c3aed;outline-offset:2px}
+.tr-hat .tr-v:nth-of-type(3n){background:#bfdbfe;border-color:#3b82f6;color:#1e3a8a;box-shadow:0 3px 0 #2563eb}
+.tr-hat .tr-v:nth-of-type(3n+1){background:#fbcfe8;border-color:#ec4899;color:#831843;box-shadow:0 3px 0 #db2777}
+.tr-v.bos{visibility:hidden}
+.tr-havuz{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 9px;padding:4px 0 10px;min-height:60px}
+.tr-hat.kalkis>*{animation:trKalkis 1.1s ease-in forwards}
+@keyframes trKalkis{to{transform:translateX(130%)}}
+.tr-hat.sars{animation:trSars .4s}
+@keyframes trSars{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.tr-alt{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.tr-ipucu{border:0;background:none;color:#7c3aed;font-family:inherit;font-weight:900;font-size:12.5px;cursor:pointer;padding:4px 0}
+.tr-puan{font-weight:900;font-size:12px;color:#64748b}
+.tr-kontrol{width:100%;border:0;border-radius:14px;padding:13px;font-family:inherit;font-weight:900;font-size:15px;color:#fff;cursor:pointer;background:linear-gradient(135deg,#f59e0b,#ea580c);box-shadow:0 4px 0 #c2410c}
+.tr-kontrol:disabled{background:#e2e8f0;color:#94a3b8;box-shadow:none;cursor:default}
+.tr-panel{display:none;border-radius:16px;padding:12px 14px;margin-top:10px}
+.tr-panel.iyi{display:block;background:#dcfce7;color:#15803d}
+.tr-panel.kotu{display:block;background:#fee2e2;color:#b91c1c}
+.tr-panel h4{margin:0 0 3px;font-size:17px;font-weight:900}
+.tr-panel p{margin:0 0 10px;font-weight:800;font-size:14px;line-height:1.4}
+.tr-panel button{width:100%;border:0;border-radius:12px;padding:11px;font-family:inherit;font-weight:900;font-size:14.5px;color:#fff;cursor:pointer}
+.tr-panel.iyi button{background:#16a34a}.tr-panel.kotu button{background:#dc2626}
+.tr-tekrar-liste{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:5px;text-align:left}
+.tr-tekrar-liste li{background:#fff7ed;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:800;color:#9a3412;line-height:1.35}
+.tr-tekrar-liste li span{display:block;color:#64748b;font-weight:700}
+@media (prefers-reduced-motion:reduce){.tr-hat.kalkis>*,.tr-hat.sars{animation:none}.tr-bar i{transition:none}}
+</style>
+
+<div class="game-modal-overlay" id="trenOyunOverlay">
+  <div class="game-modal-content">
+    <button class="game-close-btn" onclick="trenOyunKapat()" aria-label="Kapat">✕</button>
+    <div class="game-title" style="color:#ea580c;">🚂 Kelime Treni</div>
+    <div class="game-subtitle">Türkçe cümleyi oku, İngilizce vagonları doğru sırayla bağla!</div>
+
+    <div id="trenGirisEkrani">
+      <div style="margin-bottom:10px;"><label for="trenIsimInput" style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:2px;">ÖĞRENCİ ADI</label>
+        <input type="text" id="trenIsimInput" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;font-weight:700;background:#f8fafc;text-align:center;"></div>
+      <div style="margin-bottom:10px;"><label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;">SINIF SEÇİNİZ:</label>
+        <div class="sinif-secim-grid" id="trenSinifGrid">
+          <button class="sinif-btn active" onclick="trenSinifSec(1,this)">1. Sınıf</button><button class="sinif-btn" onclick="trenSinifSec(2,this)">2. Sınıf</button>
+          <button class="sinif-btn" onclick="trenSinifSec(3,this)">3. Sınıf</button><button class="sinif-btn" onclick="trenSinifSec(4,this)">4. Sınıf</button>
+          <button class="sinif-btn" onclick="trenSinifSec(5,this)">5. Sınıf</button><button class="sinif-btn" onclick="trenSinifSec(6,this)">6. Sınıf</button>
+          <button class="sinif-btn" onclick="trenSinifSec(7,this)">7. Sınıf</button><button class="sinif-btn" onclick="trenSinifSec(8,this)">8. Sınıf</button>
+        </div></div>
+      <div style="margin-bottom:14px;"><label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;">ÜNİTE SEÇİNİZ (birden fazla olabilir):</label>
+        <div class="unite-secim-box" id="trenUniteBox"></div></div>
+      <button class="btn-giris" id="trenBaslaBtn" onclick="trenOyunuBaslat()" style="background:linear-gradient(135deg,#f59e0b,#ea580c);font-size:13px;font-weight:800;padding:10px;">🚂 Trene Bin</button>
+    </div>
+
+    <div id="trenOyunEkrani" style="display:none;">
+      <div class="tr-ust"><div class="tr-bar"><i id="trenBar"></i></div><span class="tr-sure" id="trenSure">⏱️ 0s</span><span class="tr-seri" id="trenSeri">🔥 0</span></div>
+      <div id="trenRozet"></div>
+      <div class="tr-gorev">Vagonları doğru sırayla bağla <span class="tr-kaynak" id="trenKaynak"></span></div>
+      <div class="tr-istasyon"><span style="font-size:24px" aria-hidden="true">🚉</span><div class="tr-tabela" id="trenTabela"></div></div>
+      <div class="tr-hat" id="trenHat" aria-label="Kurduğun cümle"></div>
+      <div class="tr-havuz" id="trenHavuz" aria-label="Vagonlar"></div>
+      <div class="tr-alt"><button class="tr-ipucu" id="trenIpucuBtn" onclick="trenIpucu()">💡 İlk vagonu bağla (−5)</button><span class="tr-puan" id="trenPuan">0 puan</span></div>
+      <button class="tr-kontrol" id="trenKontrolBtn" onclick="trenKontrol()" disabled>🚂 Treni Kaldır</button>
+      <div class="tr-panel" id="trenPanel" role="status" aria-live="polite"><h4 id="trenPanelBaslik"></h4><p id="trenPanelMetin"></p><button id="trenDevamBtn" onclick="trenSonraki()">Devam et</button></div>
+    </div>
+
+    <div id="trenBitisEkrani" style="display:none;text-align:center;padding:10px;">
+      <div style="font-size:44px;" id="trenYildiz">⭐⭐⭐</div>
+      <h3 style="font-size:18px;font-weight:900;color:#c2410c;margin:6px 0;">Tren istasyona ulaştı!</h3>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:10px;margin-bottom:10px;text-align:left;font-size:11.5px;color:#7c2d12;">
+        <div>👤 İsim: <span id="trenResIsim">-</span></div><div>✅ Doğru: <span id="trenResDogru">-</span></div>
+        <div>⏱️ Süre: <span id="trenResSure">-</span></div><div>🏆 Puan: <span id="trenResPuan">-</span></div></div>
+      <div id="trenTekrarKutu" style="display:none;text-align:left;">
+        <div style="font-size:11px;font-weight:800;color:#c2410c;margin-bottom:4px;">🔁 Tekrar etmen gereken cümleler:</div>
+        <ul class="tr-tekrar-liste" id="trenTekrarListe"></ul>
+      </div>
+      <div style="text-align:left;margin-bottom:12px;"><div style="font-size:11px;font-weight:800;color:#c2410c;margin-bottom:4px;">🏆 Liderlik Tablosu:</div>
+        <div id="trenGecmisSkorlar" style="max-height:130px;overflow-y:auto;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:6px;font-size:10.5px;"></div></div>
+      <button class="btn-giris" onclick="trenOyunAc()" style="background:#ea580c;font-size:12px;font-weight:700;padding:8px;">🔁 Tekrar Oyna</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ KELİME TRENİ ============ */
+const TREN_SORU = 12;
+let trenAktifSinif = 1, trenSecilenUniteler = [1];
+let trenKuyruk = [], trenToplam = 0, trenBitti = 0, trenDogru = 0, trenYanlis = 0, trenSeri = 0, trenPuanD = 0, trenSureD = 0, trenTimer = null;
+let trenSoruD = null, trenCevap = [], trenVagonlar = [], trenKilit = false, trenHatalar = [];
+
+try { if (typeof OYUN_JOKERLERI === 'object') OYUN_JOKERLERI.tren = ['ikinci', 'kalkan', 'cift']; } catch (e) {}
+
+function trEl(id) { return document.getElementById(id); }
+function trKacir(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function trNorm(s) { return String(s).replace(/[’`]/g, "'").toLocaleLowerCase('tr').replace(/[.,!?;:"]/g, '').replace(/\s+/g, ' ').trim(); }
+function trKaristir(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function trKonus(metin, hiz) { try { let u = new SpeechSynthesisUtterance(metin); u.lang = 'en-US'; u.rate = hiz || 0.9; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {} }
+function trParcala(en) { return String(en).replace(/[.,!?;:"]/g, ' ').trim().split(/\s+/).filter(Boolean); }
+
+function trenOyunAc() {
+  if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
+  let modal = trEl('trenOyunOverlay');
+  document.body.appendChild(modal);
+  modal.style.display = 'flex';
+  trEl('trenGirisEkrani').style.display = 'block';
+  trEl('trenOyunEkrani').style.display = 'none';
+  trEl('trenBitisEkrani').style.display = 'none';
+  let isim = trEl('trenIsimInput');
+  if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) { isim.value = siniftaOynananOgrenci; isim.disabled = true; }
+  else if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher') { isim.value = aktifOgrenciAdi; isim.disabled = false; }
+  else { isim.value = ''; isim.disabled = false; }
+  sinifGridKisitlamaUygula('trenSinifGrid', function (s) { trenAktifSinif = s; }, function (s) { genericSinifGuncelle(s, 'trenUniteBox', function (u) { trenSecilenUniteler = u; }); });
+}
+function trenSinifSec(sinif, btn) {
+  trenAktifSinif = sinif;
+  trEl('trenSinifGrid').querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  genericSinifGuncelle(sinif, 'trenUniteBox', function (u) { trenSecilenUniteler = u; });
+}
+function trenOyunKapat() {
+  if (typeof liderlikKilitliMiKontrolEt === 'function' && liderlikKilitliMiKontrolEt('tren', 'trenBitisEkrani')) return;
+  trEl('trenOyunOverlay').style.display = 'none';
+  if (trenTimer) clearInterval(trenTimer);
+}
+
+/* Çeldirici: cümlede yoksa bankadan, yoksa seçilen sınıfın kelimelerinden */
+function trCeldiriciler(s, adet) {
+  let icinde = new Set(trParcala(s.en).map(w => w.toLowerCase()));
+  let ce = (s.ce || []).map(x => x.trim()).filter(x => x && !icinde.has(x.toLowerCase()));
+  if (ce.length < adet) {
+    let aday = (window.masterKelimeHavuzu || []).filter(k => Number(k.sinif) === Number(trenAktifSinif))
+      .map(k => String(k.ingilizce || k.en || '').trim()).filter(w => w && !/\s/.test(w) && !icinde.has(w.toLowerCase()) && !ce.includes(w));
+    ce = ce.concat(trKaristir([...new Set(aday)]).slice(0, adet - ce.length));
+  }
+  if (ce.length < adet) ce = ce.concat(trKaristir(['is', 'are', 'the', 'my', 'your', 'have', 'has', 'in', 'on', 'to'].filter(w => !icinde.has(w))).slice(0, adet - ce.length));
+  return ce.slice(0, adet);
+}
+
+async function trenOyunuBaslat() {
+  if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
+  let isim = trEl('trenIsimInput').value.trim();
+  if (!isim) { alert('Lütfen adınızı giriniz!'); return; }
+  if (!trenSecilenUniteler || !trenSecilenUniteler.length) { alert('En az bir ünite seçmelisin.'); return; }
+  let btn = trEl('trenBaslaBtn'), eskiYazi = btn.innerText;
+  btn.disabled = true; btn.innerText = '🚉 Cümleler yükleniyor...';
+  let veri = null;
+  try {
+    let r = await fetch(`${apiURL}?islem=cumleleriGetir&sinif=${trenAktifSinif}&uniteler=${encodeURIComponent(trenSecilenUniteler.join(','))}`);
+    veri = await r.json();
+  } catch (e) {}
+  btn.disabled = false; btn.innerText = eskiYazi;
+  if (!veri || !veri.ok) { alert('Cümleler yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.'); return; }
+
+  let gorulen = new Set(), secilen = [];
+  for (let s of [...trKaristir(veri.banka || []), ...(veri.ders || [])]) {
+    let k = trNorm(s.en); if (gorulen.has(k)) continue;
+    gorulen.add(k); secilen.push(s);
+    if (secilen.length >= TREN_SORU) break;
+  }
+  if (secilen.length < 4) { alert('Bu sınıf ve ünitede henüz yeterli cümle yok. Başka bir ünite seç ya da öğretmenine haber ver.'); return; }
+
+  trenKuyruk = secilen.map((s, i) => ({ ...s, id: i, tekrar: false }));
+  trenToplam = trenKuyruk.length; trenBitti = 0; trenDogru = 0; trenYanlis = 0; trenSeri = 0; trenPuanD = 0; trenSureD = 0; trenHatalar = [];
+
+  if (typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-1);
+  trEl('trenGirisEkrani').style.display = 'none';
+  trEl('trenOyunEkrani').style.display = 'block';
+  if (typeof jokerTuruBaslat === 'function') jokerTuruBaslat('tren', 'trenOyunEkrani');
+  if (trenTimer) clearInterval(trenTimer);
+  trenTimer = setInterval(() => {
+    if (typeof jk !== 'undefined' && jk && jk.donuk) return;
+    trenSureD++; trEl('trenSure').innerText = `⏱️ ${trenSureD}s`;
+  }, 1000);
+  trenSonraki();
+}
+
+function trenSonraki() {
+  trEl('trenPanel').className = 'tr-panel';
+  if (!trenKuyruk.length) return trenOyunuBitir();
+  let s = trenSoruD = trenKuyruk.shift();
+  trenCevap = []; trenKilit = false;
+  let kelimeler = trParcala(s.en);
+  let ce = trCeldiriciler(s, kelimeler.length > 5 ? 2 : 3);
+  trenVagonlar = trKaristir([...kelimeler, ...ce]).map((k, i) => ({ k, i, kullanildi: false }));
+  trEl('trenRozet').innerHTML = s.tekrar ? '<div class="tr-rozet">🔁 Önceki hatan, bir daha dene</div>' : '';
+  trEl('trenKaynak').innerText = s.kaynak === 'ders' ? '📘 Ders Çalış\'tan' : '';
+  trEl('trenTabela').innerText = s.tr;
+  trEl('trenIpucuBtn').disabled = false;
+  let hat = trEl('trenHat'); hat.classList.remove('kalkis', 'sars');
+  trBilgi();
+  trCiz();
+}
+function trBilgi() {
+  trEl('trenBar').style.width = (trenBitti / trenToplam * 100) + '%';
+  trEl('trenSeri').innerText = '🔥 ' + trenSeri;
+  trEl('trenPuan').innerText = trenPuanD + ' puan';
+}
+function trCiz() {
+  let hat = trEl('trenHat'), havuz = trEl('trenHavuz');
+  hat.innerHTML = '<span class="tr-lok" aria-hidden="true">🚂</span>';
+  trenCevap.forEach((v, sira) => {
+    let b = document.createElement('button'); b.type = 'button'; b.className = 'tr-v'; b.innerText = v.k;
+    b.setAttribute('aria-label', v.k + ' vagonunu çöz');
+    b.onclick = () => { if (trenKilit) return; trenCevap.splice(sira, 1); v.kullanildi = false; trCiz(); };
+    hat.appendChild(b);
+  });
+  havuz.innerHTML = '';
+  trenVagonlar.forEach(v => {
+    let b = document.createElement('button'); b.type = 'button'; b.className = 'tr-v' + (v.kullanildi ? ' bos' : ''); b.innerText = v.k;
+    b.tabIndex = v.kullanildi ? -1 : 0;
+    b.onclick = () => { if (trenKilit || v.kullanildi) return; v.kullanildi = true; trenCevap.push(v); trCiz(); trKonus(v.k, 1); };
+    havuz.appendChild(b);
+  });
+  trEl('trenKontrolBtn').disabled = !trenCevap.length || trenKilit;
+}
+function trenIpucu() {
+  if (trenKilit) return;
+  let ilk = trParcala(trenSoruD.en)[0];
+  trenVagonlar.forEach(v => v.kullanildi = false); trenCevap = [];
+  let v = trenVagonlar.find(x => x.k === ilk);
+  if (v) { v.kullanildi = true; trenCevap.push(v); }
+  trenPuanD = Math.max(0, trenPuanD - 5);
+  trEl('trenIpucuBtn').disabled = true;
+  trBilgi(); trCiz();
+}
+
+function trenKontrol() {
+  if (trenKilit || !trenCevap.length) return;
+  let s = trenSoruD, verilen = trNorm(trenCevap.map(v => v.k).join(' '));
+  let dogruMu = [s.en, ...(s.alt || [])].some(k => trNorm(k) === verilen);
+
+  if (!dogruMu && typeof jk !== 'undefined' && jk && jk.ikinci) {          /* 🎯 İkinci Şans */
+    jk.ikinci = false; if (typeof jokerBarCiz === 'function') jokerBarCiz();
+    if (typeof jokerMesaj === 'function') jokerMesaj('🎯 İkinci şans kullanıldı, bir daha dene!');
+    let hat = trEl('trenHat'); hat.classList.remove('sars'); void hat.offsetWidth; hat.classList.add('sars');
+    if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('yanlis');
+    return;
+  }
+  trenKilit = true; trEl('trenKontrolBtn').disabled = true;
+  if (typeof window.enerjiSoruSay === 'function' && !s.tekrar) window.enerjiSoruSay(1);
+  let hat = trEl('trenHat');
+  if (dogruMu) {
+    trenDogru++; trenBitti++; trenSeri++;
+    let kazanc = 10 + Math.min(trenSeri - 1, 5) * 2;
+    if (typeof jk !== 'undefined' && jk && jk.cift) { kazanc *= 2; jk.cift = false; if (typeof jokerBarCiz === 'function') jokerBarCiz(); }
+    trenPuanD += kazanc;
+    hat.classList.add('kalkis');
+    trKonus(s.en, 0.9);
+    if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('dogru');
+    if (trenSeri >= 3 && typeof genelKomboGoster === 'function') genelKomboGoster(trenSeri, document.querySelector('#trenOyunOverlay .game-modal-content'));
+    if (navigator.vibrate) navigator.vibrate(60);
+    trPanel(true, ['Tren kalktı!', 'Süper!', 'Aynen böyle!', 'Mükemmel!'][Math.floor(Math.random() * 4)] + ` +${kazanc}`, `${s.tr} = ${s.en}`);
+  } else {
+    trenYanlis++;
+    let kalkan = typeof jokerKalkanTuket === 'function' && jokerKalkanTuket();
+    if (!kalkan) trenSeri = 0;
+    if (!s.tekrar) { trenKuyruk.push({ ...s, tekrar: true }); if (!trenHatalar.includes(s)) trenHatalar.push(s); }
+    else trenBitti++;
+    hat.classList.remove('sars'); void hat.offsetWidth; hat.classList.add('sars');
+    if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('yanlis');
+    if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
+    trPanel(false, 'Doğrusu:', s.en + (s.tekrar ? '' : '  (Bu cümle sonda tekrar gelecek)'));
+  }
+  trBilgi();
+}
+function trPanel(iyi, baslik, metin) {
+  let p = trEl('trenPanel');
+  p.className = 'tr-panel ' + (iyi ? 'iyi' : 'kotu');
+  trEl('trenPanelBaslik').innerText = (iyi ? '✅ ' : '❌ ') + baslik;
+  trEl('trenPanelMetin').innerText = metin;
+  setTimeout(() => { let b = trEl('trenDevamBtn'); if (b) { b.focus(); b.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } }, 250);
+}
+
+async function trenOyunuBitir() {
+  if (trenTimer) clearInterval(trenTimer);
+  trEl('trenOyunEkrani').style.display = 'none';
+  trEl('trenBitisEkrani').style.display = 'block';
+  let isim = trEl('trenIsimInput').value.trim(), sinifStr = trenAktifSinif + '. Sınıf';
+  let yildiz = trenYanlis <= 1 ? 3 : trenYanlis <= 4 ? 2 : 1;
+  let puan = Math.max(5, trenPuanD + Math.max(0, Math.round((trenToplam * 12 - trenSureD) / 4)));
+  trEl('trenYildiz').innerText = '⭐'.repeat(yildiz) + '☆'.repeat(3 - yildiz);
+  trEl('trenResIsim').innerText = isim;
+  trEl('trenResDogru').innerText = `${trenDogru} / ${trenToplam}`;
+  trEl('trenResSure').innerText = trenSureD + ' saniye';
+  trEl('trenResPuan').innerText = puan + ' Puan';
+  trEl('trenTekrarKutu').style.display = trenHatalar.length ? 'block' : 'none';
+  trEl('trenTekrarListe').innerHTML = trenHatalar.map(s => `<li>${trKacir(s.tr)}<span>${trKacir(s.en)}</span></li>`).join('');
+
+  if (typeof genelSonucEkraniGoster === 'function')
+    genelSonucEkraniGoster({ oyunAdi: '🚂 Kelime Treni', isim: isim, puan: puan, dogru: trenDogru, yanlis: trenYanlis, sureSaniye: trenSureD, oyunKey: 'tren', devamFn: trenOyunKapat, tekrarFn: trenOyunAc });
+  try {
+    await fetch(apiURL, { method: 'POST', body: JSON.stringify({
+      islem: 'trenLiderlikKaydet', tarih: new Date().toISOString().split('T')[0], isim: isim, sinif: sinifStr,
+      unite: trenSecilenUniteler.join(',') + '. Ünite', dogru: trenDogru, yanlis: trenYanlis,
+      detay: trenYanlis + ' yanlış', sure: trenSureD + 's', suresaniye: trenSureD, puan: puan }) });
+  } catch (e) {}
+  if (typeof liderlikKilitBaslat === 'function') liderlikKilitBaslat('tren');
+  if (typeof oyunLiderlikGoster === 'function') oyunLiderlikGoster('trenLiderlikTumunuGetir', sinifStr, isim, 'trenGecmisSkorlar', 'Kelime Treni', 'tren');
+}
+
+/* Enter: kontrol et / devam et (klavyeli cihazlar için) */
+document.addEventListener('keydown', e => {
+  let ekran = trEl('trenOyunEkrani');
+  if (e.key !== 'Enter' || !ekran || ekran.style.display === 'none' || trEl('trenOyunOverlay').style.display === 'none') return;
+  if (trEl('trenPanel').className.indexOf('iyi') !== -1 || trEl('trenPanel').className.indexOf('kotu') !== -1) { e.preventDefault(); trenSonraki(); }
+  else if (!trEl('trenKontrolBtn').disabled && document.activeElement === document.body) { e.preventDefault(); trenKontrol(); }
+});
+
+/* Aktiviteler'e kart (Eşleştirme'nin, yoksa Hafıza Kartları'nın yanına) */
+(function trenKartEkle() {
+  let dene = () => {
+    if (document.getElementById('trenAktiviteKart')) return true;
+    let komsu = document.getElementById('esAktiviteKart') || document.querySelector('#tab-aktiviteler [onclick="hafizaOyunAc()"]');
+    let izgara = komsu ? komsu.parentElement : document.querySelector('#tab-aktiviteler .az-grid2x2');
+    if (!izgara) return false;
+    let b = document.createElement('button');
+    b.className = 'az-gcard'; b.id = 'trenAktiviteKart'; b.type = 'button';
+    b.style.background = 'linear-gradient(160deg,#fbbf24,#ea580c)';
+    b.setAttribute('onclick', 'trenOyunAc()');
+    b.innerHTML = '<div class="az-gcard-icon">🚂</div><div class="az-gcard-title">Kelime Treni</div>';
+    if (komsu) komsu.insertAdjacentElement('afterend', b); else izgara.appendChild(b);
+    return true;
+  };
+  if (!dene()) { let n = 0, t = setInterval(() => { if (dene() || ++n > 40) clearInterval(t); }, 500); }
+})();
+</script>
+
                 
         </body>
         </html>
