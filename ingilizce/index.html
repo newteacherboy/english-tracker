@@ -13634,6 +13634,272 @@ const YO_SOHBET = [
     { p:"Would you recommend it to your friends? Why?", tr:"Arkadaşlarına önerir misin? Neden?", ornek:"Yes, I would, because it is funny and touching.", k:["yes","no","i would","because","recommend"], min:4 },
     { p:"Thanks for the great chat! Goodbye!", tr:"Sohbeti güzelce bitir.", ornek:"Thank you too! It was a pleasure. Goodbye!", k:["thank","bye","goodbye","see you","pleasure"] } ] }
 ];
+        <!-- ===================== EŞLEŞTİRME OYUNU (İki Sütun) =====================
+     </body> etiketinin hemen ÜSTÜNE yapıştır (uyum bloğunun altına da olur).
+     Aktiviteler'e "Eşleştirme" kartını kendisi ekler; başka bir yere dokunmana gerek yok.
+     ========================================================================= -->
+<style>
+.es-ust{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:900;color:#6d28d9;margin-bottom:6px}
+.es-ust span{background:#f5f3ff;border-radius:10px;padding:4px 8px}
+.es-bar{height:9px;border-radius:99px;background:#ede9fe;overflow:hidden;margin-bottom:8px}
+.es-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c3aed,#ec4899);transition:width .35s}
+.es-tur{text-align:center;font-size:12px;font-weight:900;color:#8b5cf6;margin:2px 0 8px}
+.es-sutunlar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.es-sutun{display:flex;flex-direction:column;gap:8px}
+.es-sutun-baslik{text-align:center;font-size:11px;font-weight:900;color:#94a3b8;margin-bottom:-2px}
+.es-k{border:0;border-radius:14px;padding:12px 6px;min-height:50px;font-family:inherit;font-weight:900;font-size:clamp(13px,3.8vw,16px);line-height:1.2;cursor:pointer;
+  transition:transform .12s,background .2s,opacity .3s,box-shadow .2s;-webkit-tap-highlight-color:transparent;word-break:break-word}
+.es-k.en{background:#ede9fe;color:#5b21b6;box-shadow:0 3px 0 #c4b5fd}
+.es-k.tr{background:#fce7f3;color:#9d174d;box-shadow:0 3px 0 #f9a8d4}
+.es-k:active{transform:translateY(2px)}
+.es-k.secili{outline:3px solid #7c3aed;transform:scale(1.04)}
+.es-k.tr.secili{outline-color:#ec4899}
+.es-k.tamam{background:#22c55e!important;color:#fff!important;box-shadow:none!important;opacity:.55;pointer-events:none}
+.es-k.hata{background:#ef4444!important;color:#fff!important;box-shadow:none!important;animation:esTitre .35s}
+.es-k:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+@keyframes esTitre{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.es-tekrar-liste{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:4px;text-align:left}
+.es-tekrar-liste li{background:#fdf2f8;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:800;color:#9d174d}
+@media (prefers-reduced-motion:reduce){.es-k,.es-bar i{transition:none}.es-k.hata{animation:none}}
+</style>
+
+<div class="game-modal-overlay" id="esOyunOverlay">
+  <div class="game-modal-content" style="max-width:520px;">
+    <button class="game-close-btn" onclick="esOyunKapat()" aria-label="Kapat">✕</button>
+    <div class="game-title" style="color:#7c3aed;">🧩 Eşleştirme</div>
+    <div class="game-subtitle">İngilizce kelimeyi Türkçe anlamıyla eşleştir!</div>
+
+    <div id="esGirisEkrani">
+      <div style="margin-bottom:10px;"><label for="esIsimInput" style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:2px;">ÖĞRENCİ ADI</label>
+        <input type="text" id="esIsimInput" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;font-weight:700;background:#f8fafc;text-align:center;"></div>
+      <div style="margin-bottom:10px;"><label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;">SINIF SEÇİNİZ:</label>
+        <div class="sinif-secim-grid" id="esSinifGrid">
+          <button class="sinif-btn active" onclick="esSinifSec(1,this)">1. Sınıf</button><button class="sinif-btn" onclick="esSinifSec(2,this)">2. Sınıf</button>
+          <button class="sinif-btn" onclick="esSinifSec(3,this)">3. Sınıf</button><button class="sinif-btn" onclick="esSinifSec(4,this)">4. Sınıf</button>
+          <button class="sinif-btn" onclick="esSinifSec(5,this)">5. Sınıf</button><button class="sinif-btn" onclick="esSinifSec(6,this)">6. Sınıf</button>
+          <button class="sinif-btn" onclick="esSinifSec(7,this)">7. Sınıf</button><button class="sinif-btn" onclick="esSinifSec(8,this)">8. Sınıf</button>
+        </div></div>
+      <div style="margin-bottom:14px;"><label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;">ÜNİTE SEÇİNİZ (birden fazla olabilir):</label>
+        <div class="unite-secim-box" id="esUniteBox"></div></div>
+      <button class="btn-giris" onclick="esOyunuBaslat()" style="background:linear-gradient(135deg,#7c3aed,#ec4899);font-size:13px;font-weight:800;padding:10px;">🧩 Eşleştirmeye Başla</button>
+    </div>
+
+    <div id="esOyunEkrani" style="display:none;">
+      <div class="es-ust"><span id="esTurInfo">Tur 1/2</span><span id="esDogruInfo">✅ 0/12</span><span id="esSureInfo">⏱️ 0s</span></div>
+      <div class="es-bar"><i id="esBar"></i></div>
+      <div class="es-sutunlar">
+        <div class="es-sutun" id="esSol"></div>
+        <div class="es-sutun" id="esSag"></div>
+      </div>
+    </div>
+
+    <div id="esBitisEkrani" style="display:none;text-align:center;padding:10px;">
+      <div style="font-size:46px;" id="esYildiz">⭐⭐⭐</div>
+      <h3 style="font-size:18px;font-weight:900;color:#6d28d9;margin:6px 0;">Tebrikler!</h3>
+      <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;padding:10px;margin-bottom:10px;text-align:left;font-size:11.5px;color:#4c1d95;">
+        <div>👤 İsim: <span id="esResIsim">-</span></div><div>❌ Hata: <span id="esResHata">-</span></div>
+        <div>⏱️ Süre: <span id="esResSure">-</span></div><div>🏆 Puan: <span id="esResPuan">-</span></div></div>
+      <div id="esTekrarKutu" style="display:none;text-align:left;">
+        <div style="font-size:11px;font-weight:800;color:#be185d;margin-bottom:4px;">🔁 Tekrar etmen gereken kelimeler:</div>
+        <ul class="es-tekrar-liste" id="esTekrarListe"></ul>
+      </div>
+      <div style="text-align:left;margin-bottom:12px;"><div style="font-size:11px;font-weight:800;color:#6d28d9;margin-bottom:4px;">🏆 Liderlik Tablosu:</div>
+        <div id="esGecmisSkorlarListesi" style="max-height:130px;overflow-y:auto;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:6px;font-size:10.5px;"></div></div>
+      <button class="btn-giris" onclick="esOyunAc()" style="background:#7c3aed;font-size:12px;font-weight:700;padding:8px;">🔁 Tekrar Oyna</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ EŞLEŞTİRME OYUNU ============ */
+const ES_KELIME = 12, ES_TUR_BOYU = 6;
+let esAktifSinif = 1, esSecilenUniteler = [1];
+let esTurlar = [], esTurNo = 0, esKalan = 0, esDogru = 0, esYanlis = 0, esSure = 0, esTimer = null;
+let esKombo = 0, esKomboBonus = 0, esCiftBonus = 0, esHatalilar = [], esSecEn = null, esSecTr = null, esKilit = false;
+
+/* Joker seti: zaman dondur, kombo kalkanı, çift puan */
+try { if (typeof OYUN_JOKERLERI === 'object') OYUN_JOKERLERI.eslestirme = ['dondur', 'kalkan', 'cift']; } catch (e) {}
+
+function esEl(id) { return document.getElementById(id); }
+function esSeslendir(metin) {
+  try { let u = new SpeechSynthesisUtterance(metin); u.lang = 'en-US'; u.rate = 0.9; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+}
+
+function esOyunAc() {
+  if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
+  let modal = esEl('esOyunOverlay');
+  document.body.appendChild(modal);
+  modal.style.display = 'flex';
+  esEl('esGirisEkrani').style.display = 'block';
+  esEl('esOyunEkrani').style.display = 'none';
+  esEl('esBitisEkrani').style.display = 'none';
+  let isim = esEl('esIsimInput');
+  if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) { isim.value = siniftaOynananOgrenci; isim.disabled = true; }
+  else if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher') { isim.value = aktifOgrenciAdi; isim.disabled = false; }
+  else { isim.value = ''; isim.disabled = false; }
+  sinifGridKisitlamaUygula('esSinifGrid', function (s) { esAktifSinif = s; }, function (s) { genericSinifGuncelle(s, 'esUniteBox', function (u) { esSecilenUniteler = u; }); });
+}
+function esSinifSec(sinif, btn) {
+  esAktifSinif = sinif;
+  esEl('esSinifGrid').querySelectorAll('.sinif-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  genericSinifGuncelle(sinif, 'esUniteBox', function (u) { esSecilenUniteler = u; });
+}
+function esOyunKapat() {
+  if (typeof liderlikKilitliMiKontrolEt === 'function' && liderlikKilitliMiKontrolEt('eslestirme', 'esBitisEkrani')) return;
+  esEl('esOyunOverlay').style.display = 'none';
+  if (esTimer) clearInterval(esTimer);
+}
+
+function esOyunuBaslat() {
+  if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
+  let isim = esEl('esIsimInput').value.trim();
+  if (!isim) { alert('Lütfen adınızı giriniz!'); return; }
+  if (!esSecilenUniteler || !esSecilenUniteler.length) { alert('En az bir ünite seçmelisin.'); return; }
+  /* Aynı İngilizce kelime iki kez gelmesin */
+  let gorulen = new Set();
+  let havuz = oyunHavuzGetir(esAktifSinif, esSecilenUniteler).filter(k => {
+    let en = String(k.ingilizce || k.en || '').trim().toLowerCase(), tr = String(k.turkce || k.tr || '').trim();
+    if (!en || !tr || gorulen.has(en)) return false;
+    gorulen.add(en); return true;
+  });
+  if (havuz.length < 6) { alert('Bu ünitelerde yeterli kelime yok (en az 6 gerekli). Başka ünite de seç.'); return; }
+  let secilen = [...havuz].sort(() => Math.random() - 0.5).slice(0, ES_KELIME)
+    .map((k, i) => ({ id: i, en: String(k.ingilizce || k.en).trim(), tr: String(k.turkce || k.tr).trim(), kaynak: k }));
+  esTurlar = [];
+  for (let i = 0; i < secilen.length; i += ES_TUR_BOYU) esTurlar.push(secilen.slice(i, i + ES_TUR_BOYU));
+  esTurNo = 0; esDogru = 0; esYanlis = 0; esSure = 0; esKombo = 0; esKomboBonus = 0; esCiftBonus = 0; esHatalilar = [];
+
+  if (typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-1);
+  esEl('esGirisEkrani').style.display = 'none';
+  esEl('esOyunEkrani').style.display = 'block';
+  if (typeof jokerTuruBaslat === 'function') jokerTuruBaslat('eslestirme', 'esOyunEkrani');
+  esTurCiz();
+  if (esTimer) clearInterval(esTimer);
+  esTimer = setInterval(() => {
+    if (typeof jk !== 'undefined' && jk && jk.donuk) return;
+    esSure++; esEl('esSureInfo').innerText = `⏱️ ${esSure}s`;
+  }, 1000);
+}
+
+function esToplam() { return esTurlar.reduce((t, x) => t + x.length, 0); }
+function esBilgiGuncelle() {
+  esEl('esTurInfo').innerText = `Tur ${esTurNo + 1}/${esTurlar.length}`;
+  esEl('esDogruInfo').innerText = `✅ ${esDogru}/${esToplam()}`;
+  esEl('esBar').style.width = (esDogru / esToplam() * 100) + '%';
+}
+function esTurCiz() {
+  let liste = esTurlar[esTurNo];
+  esKalan = liste.length; esSecEn = esSecTr = null; esKilit = false;
+  let karistir = a => [...a].sort(() => Math.random() - 0.5);
+  let sol = esEl('esSol'), sag = esEl('esSag');
+  sol.innerHTML = '<div class="es-sutun-baslik">🇬🇧 İngilizce</div>';
+  sag.innerHTML = '<div class="es-sutun-baslik">🇹🇷 Türkçe</div>';
+  const dugme = (k, dil) => {
+    let b = document.createElement('button');
+    b.type = 'button'; b.className = 'es-k ' + dil; b.innerText = k[dil]; b.dataset.id = k.id;
+    b.setAttribute('aria-label', (dil === 'en' ? 'İngilizce: ' : 'Türkçe: ') + k[dil]);
+    b.onclick = () => esSec(b, dil);
+    return b;
+  };
+  karistir(liste).forEach(k => sol.appendChild(dugme(k, 'en')));
+  karistir(liste).forEach(k => sag.appendChild(dugme(k, 'tr')));
+  esBilgiGuncelle();
+}
+function esKelime(id) { for (let t of esTurlar) for (let k of t) if (String(k.id) === String(id)) return k; return null; }
+
+function esSec(b, dil) {
+  if (esKilit || b.classList.contains('tamam')) return;
+  if (dil === 'en') { if (esSecEn) esSecEn.classList.remove('secili'); esSecEn = b; }
+  else { if (esSecTr) esSecTr.classList.remove('secili'); esSecTr = b; }
+  b.classList.add('secili');
+  if (!esSecEn || !esSecTr) return;
+
+  let a = esSecEn, t = esSecTr; esSecEn = esSecTr = null;
+  a.classList.remove('secili'); t.classList.remove('secili');
+  let k = esKelime(a.dataset.id);
+
+  if (a.dataset.id === t.dataset.id) {
+    a.classList.add('tamam'); t.classList.add('tamam');
+    esDogru++; esKalan--; esKombo++;
+    esKomboBonus += Math.max(0, esKombo - 1) * 2;
+    if (typeof jk !== 'undefined' && jk && jk.cift) { esCiftBonus += 12; jk.cift = false; if (typeof jokerBarCiz === 'function') jokerBarCiz(); }
+    esSeslendir(k.en);
+    if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('dogru');
+    if (esKombo >= 3 && typeof genelKomboGoster === 'function') genelKomboGoster(esKombo, document.querySelector('#esOyunOverlay .game-modal-content'));
+    if (navigator.vibrate) navigator.vibrate(60);
+    if (typeof window.enerjiSoruSay === 'function') window.enerjiSoruSay(1);
+    esBilgiGuncelle();
+    if (esKalan === 0) {
+      esKilit = true;
+      setTimeout(() => {
+        esTurNo++;
+        if (esTurNo < esTurlar.length) esTurCiz(); else esOyunuBitir();
+      }, 650);
+    }
+  } else {
+    let kalkan = typeof jokerKalkanTuket === 'function' && jokerKalkanTuket();
+    if (!kalkan) {
+      esYanlis++; esKombo = 0;
+      if (k && !esHatalilar.some(x => x.id === k.id)) esHatalilar.push(k);
+      if (k && typeof zkEkle === 'function') { try { zkEkle(k.kaynak || { en: k.en, tr: k.tr, sinif: esAktifSinif }); } catch (e) {} }
+    }
+    if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('yanlis');
+    if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
+    [a, t].forEach(x => { x.classList.remove('hata'); void x.offsetWidth; x.classList.add('hata'); setTimeout(() => x.classList.remove('hata'), 450); });
+  }
+}
+
+async function esOyunuBitir() {
+  if (esTimer) clearInterval(esTimer);
+  esEl('esOyunEkrani').style.display = 'none';
+  esEl('esBitisEkrani').style.display = 'block';
+  let isim = esEl('esIsimInput').value.trim();
+  let sinifStr = esAktifSinif + '. Sınıf';
+  let toplam = esToplam();
+  let puan = Math.max(5, Math.round(toplam * 12 - esYanlis * 4 - esSure * 0.4) + esKomboBonus + esCiftBonus);
+  let yildiz = esYanlis <= 1 ? 3 : esYanlis <= 4 ? 2 : 1;
+
+  esEl('esYildiz').innerText = '⭐'.repeat(yildiz) + '☆'.repeat(3 - yildiz);
+  esEl('esResIsim').innerText = isim;
+  esEl('esResHata').innerText = esYanlis;
+  esEl('esResSure').innerText = esSure + ' saniye';
+  esEl('esResPuan').innerText = puan + ' Puan';
+  esEl('esTekrarKutu').style.display = esHatalilar.length ? 'block' : 'none';
+  esEl('esTekrarListe').innerHTML = esHatalilar.map(k => `<li>${String(k.en).replace(/</g, '&lt;')} = ${String(k.tr).replace(/</g, '&lt;')}</li>`).join('');
+
+  if (typeof genelSonucEkraniGoster === 'function')
+    genelSonucEkraniGoster({ oyunAdi: '🧩 Eşleştirme', isim: isim, puan: puan, dogru: esDogru, yanlis: esYanlis, sureSaniye: esSure, oyunKey: 'eslestirme', devamFn: esOyunKapat, tekrarFn: esOyunAc });
+  try {
+    await fetch(apiURL, { method: 'POST', body: JSON.stringify({
+      islem: 'eslestirmeLiderlikKaydet', tarih: new Date().toISOString().split('T')[0], isim: isim, sinif: sinifStr,
+      unite: esSecilenUniteler.join(',') + '. Ünite', dogru: esDogru, yanlis: esYanlis,
+      detay: esYanlis + ' yanlış', sure: esSure + 's', suresaniye: esSure, puan: puan }) });
+  } catch (e) {}
+  if (typeof liderlikKilitBaslat === 'function') liderlikKilitBaslat('eslestirme');
+  if (typeof oyunLiderlikGoster === 'function') oyunLiderlikGoster('eslestirmeLiderlikTumunuGetir', sinifStr, isim, 'esGecmisSkorlarListesi', 'Eşleştirme', 'eslestirme');
+}
+
+/* Aktiviteler'e kartı ekle (Hafıza Kartları'nın hemen yanına) */
+(function esKartEkle() {
+  let dene = () => {
+    if (document.getElementById('esAktiviteKart')) return true;
+    let hafiza = document.querySelector('#tab-aktiviteler [onclick="hafizaOyunAc()"]');
+    let izgara = hafiza ? hafiza.parentElement : document.querySelector('#tab-aktiviteler .az-grid2x2');
+    if (!izgara) return false;
+    let b = document.createElement('button');
+    b.className = 'az-gcard'; b.id = 'esAktiviteKart'; b.type = 'button';
+    b.style.background = 'linear-gradient(160deg,#c084fc,#db2777)';
+    b.setAttribute('onclick', 'esOyunAc()');
+    b.innerHTML = '<div class="az-gcard-icon">🧩</div><div class="az-gcard-title">Eşleştirme</div>';
+    if (hafiza) hafiza.insertAdjacentElement('afterend', b); else izgara.appendChild(b);
+    return true;
+  };
+  if (!dene()) { let n = 0, t = setInterval(() => { if (dene() || ++n > 40) clearInterval(t); }, 500); }
+})();
+</script>
+
+        
         
         /* ========== DURUM VE KAYIT ========== */
         let yo = null, yoIsim = null, yoKayitZaman = null, yoModalKapaninca = null;
