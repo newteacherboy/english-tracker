@@ -25605,7 +25605,7 @@ window.ocEnerjiHarca = async function (n) {
 
     border-radius:22px !important;
 
-    border:1px solid rgba(255,255,255,.65) !important;
+    border:1px solid rgba(255,255,255,.58) !important;
 
     color:#fff !important;
 
@@ -25613,23 +25613,24 @@ window.ocEnerjiHarca = async function (n) {
 
     isolation:isolate;
 
-    /* Cam yüzey */
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.38),
-            rgba(255,255,255,.10)
-        ) !important;
+    /*
+       ÖNEMLİ:
+       background BURADA YOK.
+       Böylece kartların mevcut inline
+       renkli gradientleri korunuyor.
+    */
 
-    /* 3D derinlik */
     box-shadow:
-        0 18px 35px rgba(44,62,110,.18),
-        0 7px 14px rgba(44,62,110,.12),
-        inset 0 1px 1px rgba(255,255,255,.85),
-        inset 0 -1px 1px rgba(255,255,255,.16) !important;
+        0 18px 32px rgba(30,45,100,.22),
+        0 7px 12px rgba(30,45,100,.14),
+        inset 0 1px 1px rgba(255,255,255,.75),
+        inset 0 -2px 3px rgba(30,40,90,.10) !important;
 
-    backdrop-filter:blur(15px) saturate(135%);
-    -webkit-backdrop-filter:blur(15px) saturate(135%);
+    backdrop-filter:
+        saturate(125%);
+
+    -webkit-backdrop-filter:
+        saturate(125%);
 
     transform:
         translateY(0)
@@ -25639,8 +25640,6 @@ window.ocEnerjiHarca = async function (n) {
         transform .22s cubic-bezier(.2,.8,.2,1),
         box-shadow .22s ease,
         filter .22s ease;
-
-    text-align:left !important;
 }
 
 
@@ -25655,25 +25654,25 @@ window.ocEnerjiHarca = async function (n) {
     position:absolute;
 
     left:-25%;
-    top:-65%;
+    top:-70%;
 
     width:150%;
-    height:100%;
+    height:105%;
 
     background:
         linear-gradient(
             115deg,
             transparent 25%,
-            rgba(255,255,255,.34) 45%,
-            rgba(255,255,255,.10) 55%,
-            transparent 72%
+            rgba(255,255,255,.28) 44%,
+            rgba(255,255,255,.08) 52%,
+            transparent 70%
         );
 
     transform:rotate(-8deg);
 
     pointer-events:none;
 
-    z-index:0;
+    z-index:1;
 }
 
 
