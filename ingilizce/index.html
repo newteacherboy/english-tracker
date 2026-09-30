@@ -25488,57 +25488,159 @@ window.ocEnerjiHarca = async function (n) {
   }
 
 
-  function gunGorevleri() {
+ function gunGorevleri() {
 
-    if (!yoVar()) return null;
+  if (!yoVar()) return null;
 
-    const b = bugun();
+  const b = bugun();
 
-    if (!yo.gorev || yo.gorev.t !== b) {
+  if (!yo.gorev || yo.gorev.t !== b) {
 
-      const h = tohum(
-        b +
+    const h = tohum(
+      b +
+      (
+        typeof aktifOgrenciAdi !== 'undefined'
+          ? aktifOgrenciAdi
+          : ''
+      )
+    );
+
+    /* 1. görev: oyun */
+    const oyunG = GOREV_HAVUZ.filter(
+      g =>
+        g &&
         (
-          typeof aktifOgrenciAdi !== 'undefined'
-            ? aktifOgrenciAdi
-            : ''
+          g.olay === 'oyun' ||
+          g.olay === 'yildiz3'
         )
+    );
+
+    /* 2. görev: ders */
+    const dersG = GOREV_HAVUZ.find(
+      g => g && g.id === 'ders1'
+    );
+
+    /* 3. görev: beceri veya zor kelime */
+    const cesit = GOREV_HAVUZ.filter(
+      g =>
+        g &&
+        (
+          String(g.olay || '').startsWith('beceri') ||
+          g.id === 'zk'
+        )
+    );
+
+    const secim = [];
+
+    /* Oyun görevi */
+    if (oyunG.length) {
+      secim.push(
+        oyunG[h % oyunG.length]
+      );
+    }
+
+    /* Ders görevi */
+    if (dersG) {
+      secim.push(dersG);
+    }
+
+    /* Beceri / tekrar görevi */
+    if (cesit.length) {
+      secim.push(
+        cesit[
+          (h >> 3) % cesit.length
+        ]
+      );
+    }
+
+    /*
+      Herhangi bir nedenle yukarıdan 3 görev çıkmazsa
+      güvenli yedek görevlerle tamamla.
+    */
+    const kullanilan =
+      new Set(
+        secim
+          .filter(Boolean)
+          .map(g => g.id)
       );
 
-      const oyunG = GOREV_HAVUZ.filter(
-        g => g.olay === 'oyun' || g.olay === 'yildiz3'
-      );
+    for (const aday of GOREV_HAVUZ) {
 
-      const dersG = GOREV_HAVUZ.find(
-        g => g.id === 'ders1'
-      );
+      if (secim.length >= 3) break;
 
-      const cesit = GOREV_HAVUZ.filter(
-        g => /^beceri|^zk/.test(g.olay)
-      );
+      if (
+        aday &&
+        aday.id &&
+        !kullanilan.has(aday.id)
+      ) {
 
-      const secim = [
-        oyunG[h % oyunG.length],
-        dersG,
-        cesit[(h >> 3) % cesit.length]
-      ];
-
-      yo.gorev = {
-        t: b,
-        liste: secim.map(g => ({
-          id: g.id,
-          ilerleme: 0
-        })),
-        alindi: false
-      };
-
-      if (typeof yoKaydet === 'function') {
-        yoKaydet();
+        secim.push(aday);
+        kullanilan.add(aday.id);
       }
     }
 
-    return yo.gorev;
+    /*
+      Son güvenlik:
+      undefined/null elemanları temizle.
+    */
+    const temizSecim =
+      secim
+        .filter(
+          g =>
+            g &&
+            typeof g.id === 'string'
+        )
+        .slice(0, 3);
+
+    /*
+      Görev havuzu ciddi şekilde bozulmuşsa
+      uygulamayı çökertme.
+    */
+    if (!temizSecim.length) {
+
+      console.warn(
+        'Sana Özel: Günlük görev oluşturulamadı.',
+        GOREV_HAVUZ
+      );
+
+      return null;
+    }
+
+    yo.gorev = {
+      t: b,
+
+      liste: temizSecim.map(g => ({
+        id: g.id,
+        ilerleme: 0
+      })),
+
+      alindi: false
+    };
+
+    if (typeof yoKaydet === 'function') {
+      yoKaydet();
+    }
   }
+
+  /*
+    Daha önce hatalı oluşturulmuş görev kaydı
+    varsa onu da güvenli şekilde temizle.
+  */
+  if (
+    yo.gorev &&
+    Array.isArray(yo.gorev.liste)
+  ) {
+
+    yo.gorev.liste =
+      yo.gorev.liste.filter(
+        x =>
+          x &&
+          typeof x.id === 'string'
+      );
+  }
+
+  return yo.gorev;
+}
 
 
   function olay(tur) {
