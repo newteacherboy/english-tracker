@@ -25958,6 +25958,40 @@ window.ocEnerjiHarca = async function (n) {
       );
   }
 
+         /* Eksik üçüncü görevi güvenli şekilde tamamla */
+if (
+  yo.gorev &&
+  Array.isArray(yo.gorev.liste) &&
+  yo.gorev.liste.length === 2
+) {
+
+  const mevcutIdler = new Set(
+    yo.gorev.liste.map(x => x && x.id)
+  );
+
+  /* Öncelikle eksik bir beceri görevi seç */
+  const yeniGorev = GOREV_HAVUZ.find(g =>
+    g &&
+    g.id &&
+    !mevcutIdler.has(g.id) &&
+    (
+      String(g.olay || '').startsWith('beceri') ||
+      g.id === 'zk'
+    )
+  );
+
+  if (yeniGorev) {
+
+    yo.gorev.liste.push({
+      id: yeniGorev.id,
+      ilerleme: 0
+    });
+
+    if (typeof yoKaydet === 'function') {
+      yoKaydet();
+    }
+  }
+}
   return yo.gorev;
 }
 
