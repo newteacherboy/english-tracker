@@ -4,159 +4,1381 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kabalı Ortaokulu - Canlı Lig Tablosu</title>
+
 <style>
 :root{
-  --bg:#0f1522; --card:#171f30; --card2:#1e2740; --line:#2a3552;
-  --gold:#ffd54a; --silver:#cfd8e3; --bronze:#e0975a; --accent:#4f8dff; --green:#3ecf8e; --red:#ff6b6b;
+  --bg:#0f1522;
+  --card:#171f30;
+  --card2:#1e2740;
+  --line:#2a3552;
+  --gold:#ffd54a;
+  --silver:#cfd8e3;
+  --bronze:#e0975a;
+  --accent:#4f8dff;
+  --green:#3ecf8e;
+  --red:#ff6b6b;
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#eef1f8;font-family:'Segoe UI',Arial,sans-serif;min-height:100vh}
-header{padding:22px 16px 14px;text-align:center;border-bottom:1px solid var(--line)}
-header h1{margin:0;font-size:1.4rem;letter-spacing:.5px}
-header p{margin:4px 0 0;color:#93a0bf;font-size:.85rem}
-.wrap{max-width:760px;margin:0 auto;padding:16px}
-#status-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap}
-#round-badge{display:inline-block;padding:4px 12px;border-radius:20px;background:var(--card2);font-size:.72rem;color:var(--accent);border:1px solid var(--accent)}
-#refresh-btn{background:var(--card2);border:1px solid var(--line);color:#c7d0e8;font-size:.72rem;padding:4px 12px;border-radius:20px;cursor:pointer}
-#refresh-btn:hover{border-color:var(--accent)}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:auto;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:#eef1f8;
+  font-family:'Segoe UI',Arial,sans-serif;
+  min-height:100vh;
+}
+
+header{
+  padding:22px 16px 14px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+}
+
+header h1{
+  margin:0;
+  font-size:1.4rem;
+  letter-spacing:.5px;
+}
+
+header p{
+  margin:4px 0 0;
+  color:#93a0bf;
+  font-size:.85rem;
+}
+
+.wrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:16px;
+}
+
+#status-bar{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+
+#round-badge{
+  display:inline-block;
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--card2);
+  font-size:.72rem;
+  color:var(--accent);
+  border:1px solid var(--accent);
+}
+
+#refresh-btn{
+  background:var(--card2);
+  border:1px solid var(--line);
+  color:#c7d0e8;
+  font-size:.72rem;
+  padding:4px 12px;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+#refresh-btn:hover{
+  border-color:var(--accent);
+}
+
 .row{
-  display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
-  border-radius:14px;padding:10px 14px;margin-bottom:8px;transition:transform .7s cubic-bezier(.2,.8,.2,1);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 14px;
+  margin-bottom:8px;
+  transition:transform .7s cubic-bezier(.2,.8,.2,1);
   position:relative;
 }
-.row.top3{background:linear-gradient(90deg,var(--card2),var(--card))}
-.rank{width:34px;text-align:center;font-weight:700;font-size:1.05rem;color:#c7d0e8;flex-shrink:0}
-.medal{font-size:1.3rem}
-.info{flex:1;min-width:0}
-.name{font-weight:600;font-size:.98rem}
-.school{font-size:.72rem;color:#8492b3}
-.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-.chip{font-size:.62rem;background:#111a2d;border:1px solid var(--line);border-radius:6px;padding:2px 5px;color:#a9b4d0;white-space:nowrap}
-.chip b{color:#e7ebfa}
-.net{width:78px;text-align:right;flex-shrink:0}
-.net .val{font-size:1.15rem;font-weight:800;color:var(--green)}
-.net .lbl{font-size:.6rem;color:#8492b3}
-.delta{width:22px;text-align:center;font-size:.9rem;flex-shrink:0}
-.up{color:var(--green)} .down{color:var(--red)} .same{color:#657090}
-.empty-state{text-align:center;color:#7d8ac0;padding:40px 10px;font-size:.9rem}
-footer{text-align:center;color:#5a6690;font-size:.72rem;padding:20px 0 30px}
+
+.row.top3{
+  background:linear-gradient(90deg,var(--card2),var(--card));
+}
+
+.rank{
+  width:34px;
+  text-align:center;
+  font-weight:700;
+  font-size:1.05rem;
+  color:#c7d0e8;
+  flex-shrink:0;
+}
+
+.medal{
+  font-size:1.3rem;
+}
+
+.info{
+  flex:1;
+  min-width:0;
+}
+
+.name{
+  font-weight:600;
+  font-size:.98rem;
+}
+
+.school{
+  font-size:.72rem;
+  color:#8492b3;
+}
+
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:5px;
+}
+
+.chip{
+  font-size:.62rem;
+  background:#111a2d;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:2px 5px;
+  color:#a9b4d0;
+  white-space:nowrap;
+}
+
+.chip b{
+  color:#e7ebfa;
+}
+
+.net{
+  width:78px;
+  text-align:right;
+  flex-shrink:0;
+}
+
+.net .val{
+  font-size:1.15rem;
+  font-weight:800;
+  color:var(--green);
+}
+
+.net .lbl{
+  font-size:.6rem;
+  color:#8492b3;
+}
+
+.delta{
+  width:22px;
+  text-align:center;
+  font-size:.9rem;
+  flex-shrink:0;
+}
+
+.up{
+  color:var(--green);
+}
+
+.down{
+  color:var(--red);
+}
+
+.same{
+  color:#657090;
+}
+
+.empty-state{
+  text-align:center;
+  color:#7d8ac0;
+  padding:40px 10px;
+  font-size:.9rem;
+}
+
+footer{
+  text-align:center;
+  color:#5a6690;
+  font-size:.72rem;
+  padding:20px 0 30px;
+}
+
+
+/* =========================================================
+   İLK 3 KUTLAMA
+   ========================================================= */
+
+.row.top3.celebrate{
+  animation:topCelebrate 1.15s ease-in-out infinite alternate;
+  z-index:2;
+}
+
+.row.top3:nth-child(1).celebrate{
+  border-color:var(--gold);
+  box-shadow:0 0 25px rgba(255,213,74,.35);
+}
+
+.row.top3:nth-child(2).celebrate{
+  border-color:var(--silver);
+  box-shadow:0 0 22px rgba(207,216,227,.25);
+}
+
+.row.top3:nth-child(3).celebrate{
+  border-color:var(--bronze);
+  box-shadow:0 0 22px rgba(224,151,90,.25);
+}
+
+@keyframes topCelebrate{
+
+  from{
+    transform:scale(1);
+    filter:brightness(1);
+  }
+
+  to{
+    transform:scale(1.018);
+    filter:brightness(1.12);
+  }
+
+}
+
+
+/* =========================================================
+   KONFETİ
+   ========================================================= */
+
+#celebration-layer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:9999;
+}
+
+.confetti{
+  position:absolute;
+  top:-20px;
+  width:8px;
+  height:14px;
+  border-radius:3px;
+  opacity:.9;
+  animation:confettiFall linear forwards;
+}
+
+@keyframes confettiFall{
+
+  0%{
+    transform:translateY(-20px) rotate(0deg);
+    opacity:0;
+  }
+
+  10%{
+    opacity:1;
+  }
+
+  100%{
+    transform:translateY(105vh) rotate(540deg);
+    opacity:0;
+  }
+
+}
+
 </style>
 </head>
-<body>
-<header>
-  <h1>🏆 KABALI ORTAOKULU</h1>
-  <p>Deneme Sınavı Lig Tablosu — Canlı</p>
-  <div id="status-bar">
-    <span id="round-badge">Bağlanılıyor...</span>
-    <button id="refresh-btn">↻ Şimdi yenile</button>
-  </div>
-</header>
-<div class="wrap"><div id="table"></div></div>
-<footer>Google Sheets'e bağlı • otomatik günceller</footer>
-<script>
-/* ================================================================
-   BURAYI DOLDURUN: Apps Script'i "Web App" olarak yayınladığınızda
-   size verilen URL'yi aşağıya, tırnakların içine yapıştırın.
-   Örnek: "https://script.google.com/macros/s/AKfycb.../exec"
-   ================================================================ */
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw5LT6eO3fyhn_7TVDaEyW5Rz_IocPxL8glJYrFtIXEFeGtaD6VYEFiGQs2xV9NBBB0/exec";
-const REFRESH_MS = 15000; // 15 saniyede bir kontrol eder
 
-const Q={"Türkçe":20,"Matematik":20,"Fen Bilimleri":20,"Sosyal Bilgiler":10,"Din Kültürü":10,"İngilizce":10,"Müzik":10,"Resim":10};
+<body>
+
+<header>
+
+  <h1>🏆 KABALI ORTAOKULU</h1>
+
+  <p>Deneme Sınavı Lig Tablosu — Canlı</p>
+
+  <div id="status-bar">
+
+    <span id="round-badge">
+      Bağlanılıyor...
+    </span>
+
+    <button id="refresh-btn">
+      ↻ Şimdi yenile
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="wrap">
+
+  <div id="table"></div>
+
+</div>
+
+
+<footer>
+  Google Sheets'e bağlı • otomatik günceller
+</footer>
+
+
+<!-- KONFETİ ALANI -->
+
+<div id="celebration-layer"></div>
+
+
+<script>
+
+/* ================================================================
+   GOOGLE APPS SCRIPT
+   ================================================================ */
+
+const APPS_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbw5LT6eO3fyhn_7TVDaEyW5Rz_IocPxL8glJYrFtIXEFeGtaD6VYEFiGQs2xV9NBBB0/exec";
+
+
+const REFRESH_MS = 15000;
+
+
+/* ================================================================
+   DERSLER
+   ================================================================ */
+
+const Q={
+  "Türkçe":20,
+  "Matematik":20,
+  "Fen Bilimleri":20,
+  "Sosyal Bilgiler":10,
+  "Din Kültürü":10,
+  "İngilizce":10,
+  "Müzik":10,
+  "Resim":10
+};
+
 const SUBJ=Object.keys(Q);
-function net(d,y){return Math.round((d-y/4)*100)/100}
+
+
+function net(d,y){
+
+  return Math.round((d-y/4)*100)/100;
+
+}
+
+
+/* ================================================================
+   ÖĞRENCİ VERİLERİNİ HAZIRLA
+   ================================================================ */
 
 function buildStudents(rawRows){
+
   const students=[];
+
   for(const row of rawRows){
+
     const ad=String(row['Ad']||'').trim();
+
     const soyad=String(row['Soyad']||'').trim();
+
     if(!ad && !soyad) continue;
-    const okul=String(row['Okul']||'Kabalı Ortaokulu').trim();
-    const visible={}; let total=0, any=false;
+
+
+    const okul=
+      String(row['Okul']||'Kabalı Ortaokulu').trim();
+
+
+    const visible={};
+
+    let total=0;
+
+    let any=false;
+
+
     for(const subj of SUBJ){
-      const dRaw=row[subj+' Doğru'], yRaw=row[subj+' Yanlış'];
-      const dEmpty = dRaw===undefined || dRaw===null || dRaw==='';
-      const yEmpty = yRaw===undefined || yRaw===null || yRaw==='';
+
+      const dRaw=row[subj+' Doğru'];
+
+      const yRaw=row[subj+' Yanlış'];
+
+
+      const dEmpty=
+        dRaw===undefined ||
+        dRaw===null ||
+        dRaw==='';
+
+
+      const yEmpty=
+        yRaw===undefined ||
+        yRaw===null ||
+        yRaw==='';
+
+
       if(dEmpty && yEmpty) continue;
-      const d=parseFloat(dRaw)||0, y=parseFloat(yRaw)||0;
-      const b=Math.max(0,Q[subj]-d-y), n=net(d,y);
-      visible[subj]={d,y,b,n}; total+=n; any=true;
+
+
+      const d=parseFloat(dRaw)||0;
+
+      const y=parseFloat(yRaw)||0;
+
+
+      const b=Math.max(
+        0,
+        Q[subj]-d-y
+      );
+
+
+      const n=net(d,y);
+
+
+      visible[subj]={
+        d,
+        y,
+        b,
+        n
+      };
+
+
+      total+=n;
+
+      any=true;
+
     }
-    students.push({id:ad+'|'+soyad, ad, soyad, okul, visible, total:Math.round(total*100)/100, any});
-  }
-  return students;
-}
-function medal(rank){
-  if(rank===1)return '<span class="medal">🥇</span>';
-  if(rank===2)return '<span class="medal">🥈</span>';
-  if(rank===3)return '<span class="medal">🥉</span>';
-  if(rank<=10)return '<span class="medal">⭐</span>';
-  return '';
-}
-let prevRankMap={};
-function render(rows){
-  const el=document.getElementById('table');
-  if(!rows.length){
-    el.innerHTML='<div class="empty-state">Henüz öğrenci verisi girilmedi.</div>';
-    return;
-  }
-  rows.sort((a,b)=>b.total-a.total);
-  const oldTops={};
-  [...el.children].forEach(r=>{if(r.dataset.id)oldTops[r.dataset.id]=r.getBoundingClientRect().top});
-  el.innerHTML='';
-  rows.forEach((r,idx)=>{
-    const rank=idx+1;
-    const prevRank=prevRankMap[r.id];
-    let d='<span class="delta same">–</span>';
-    if(prevRank!==undefined){
-      if(prevRank>rank)d=`<span class="delta up">▲${prevRank-rank}</span>`;
-      else if(prevRank<rank)d=`<span class="delta down">▼${rank-prevRank}</span>`;
-    }
-    const chips=Object.entries(r.visible).map(([s,v])=>`<span class="chip"><b>${s.slice(0,3)}</b> ${v.d}D-${v.y}Y-${v.b}B (Net ${v.n})</span>`).join('');
-    const row=document.createElement('div');
-    row.className='row'+(rank<=3?' top3':'');
-    row.dataset.id=r.id;
-    row.innerHTML=`<div class="rank">${medal(rank)||rank}</div>
-      <div class="info"><div class="name">${r.ad} ${r.soyad}</div><div class="school">${r.okul}</div>
-      <div class="chips">${chips||'<span class="chip">Henüz ders verisi yok</span>'}</div></div>
-      <div class="net"><div class="val">${r.any?r.total.toFixed(2):'-'}</div><div class="lbl">NET</div></div>
-      <div class="delta">${d}</div>`;
-    el.appendChild(row);
-  });
-  requestAnimationFrame(()=>{
-    [...el.children].forEach(r=>{
-      const old=oldTops[r.dataset.id];
-      if(old!==undefined){
-        const diff=old-r.getBoundingClientRect().top;
-        if(diff){r.style.transform=`translateY(${diff}px)`;r.style.transition='none';
-          requestAnimationFrame(()=>{r.style.transition='transform .7s cubic-bezier(.2,.8,.2,1)';r.style.transform='translateY(0)'});}
-      }
+
+
+    students.push({
+
+      id:ad+'|'+soyad,
+
+      ad,
+
+      soyad,
+
+      okul,
+
+      visible,
+
+      total:
+        Math.round(total*100)/100,
+
+      any
+
     });
-  });
-  rows.forEach((r,idx)=>prevRankMap[r.id]=idx+1);
+
+  }
+
+
+  return students;
+
 }
-const statusEl=document.getElementById('round-badge');
-async function fetchAndRender(){
-  if(APPS_SCRIPT_URL.indexOf('BURAYA_') === 0){
-    statusEl.textContent='⚠ Apps Script linki henüz girilmedi';
+
+
+/* ================================================================
+   MADALYALAR
+   ================================================================ */
+
+function medal(rank){
+
+  if(rank===1)
+    return '<span class="medal">🥇</span>';
+
+  if(rank===2)
+    return '<span class="medal">🥈</span>';
+
+  if(rank===3)
+    return '<span class="medal">🥉</span>';
+
+  if(rank<=10)
+    return '<span class="medal">⭐</span>';
+
+  return '';
+
+}
+
+
+/* ================================================================
+   TABLOYU ÇİZ
+   ================================================================ */
+
+let prevRankMap={};
+
+
+function render(rows){
+
+  const el=
+    document.getElementById('table');
+
+
+  if(!rows.length){
+
+    el.innerHTML=
+      '<div class="empty-state">Henüz öğrenci verisi girilmedi.</div>';
+
     return;
+
   }
-  try{
-    statusEl.textContent='↻ Kontrol ediliyor...';
-    const res=await fetch(APPS_SCRIPT_URL, {cache:'no-store'});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const rawRows=await res.json();
-    const students=buildStudents(rawRows);
-    render(students);
-    statusEl.textContent='✓ Canlı — son güncelleme '+new Date().toLocaleTimeString('tr-TR');
-  }catch(err){
-    statusEl.textContent='⚠ Veri alınamadı ('+err.message+')';
-  }
+
+
+  rows.sort(
+    (a,b)=>b.total-a.total
+  );
+
+
+  const oldTops={};
+
+
+  [...el.children].forEach(r=>{
+
+    if(r.dataset.id)
+
+      oldTops[r.dataset.id]=
+        r.getBoundingClientRect().top;
+
+  });
+
+
+  el.innerHTML='';
+
+
+  rows.forEach((r,idx)=>{
+
+    const rank=idx+1;
+
+    const prevRank=
+      prevRankMap[r.id];
+
+
+    let d=
+      '<span class="delta same">–</span>';
+
+
+    if(prevRank!==undefined){
+
+      if(prevRank>rank)
+
+        d=
+          `<span class="delta up">▲${prevRank-rank}</span>`;
+
+      else if(prevRank<rank)
+
+        d=
+          `<span class="delta down">▼${rank-prevRank}</span>`;
+
+    }
+
+
+    const chips=
+      Object.entries(r.visible)
+
+      .map(([s,v])=>
+
+        `<span class="chip">
+          <b>${s.slice(0,3)}</b>
+          ${v.d}D-${v.y}Y-${v.b}B
+          (Net ${v.n})
+        </span>`
+
+      ).join('');
+
+
+    const row=
+      document.createElement('div');
+
+
+    row.className=
+      'row'+
+      (rank<=3?' top3':'');
+
+
+    row.dataset.id=r.id;
+
+
+    row.innerHTML=`
+
+      <div class="rank">
+        ${medal(rank)||rank}
+      </div>
+
+      <div class="info">
+
+        <div class="name">
+          ${r.ad} ${r.soyad}
+        </div>
+
+        <div class="school">
+          ${r.okul}
+        </div>
+
+        <div class="chips">
+
+          ${
+            chips ||
+            '<span class="chip">Henüz ders verisi yok</span>'
+          }
+
+        </div>
+
+      </div>
+
+      <div class="net">
+
+        <div class="val">
+
+          ${
+            r.any
+            ? r.total.toFixed(2)
+            : '-'
+          }
+
+        </div>
+
+        <div class="lbl">
+          NET
+        </div>
+
+      </div>
+
+      <div class="delta">
+        ${d}
+      </div>
+
+    `;
+
+
+    el.appendChild(row);
+
+  });
+
+
+  requestAnimationFrame(()=>{
+
+    [...el.children].forEach(r=>{
+
+      const old=
+        oldTops[r.dataset.id];
+
+
+      if(old!==undefined){
+
+        const diff=
+          old-r.getBoundingClientRect().top;
+
+
+        if(diff){
+
+          r.style.transform=
+            `translateY(${diff}px)`;
+
+          r.style.transition='none';
+
+
+          requestAnimationFrame(()=>{
+
+            r.style.transition=
+              'transform .7s cubic-bezier(.2,.8,.2,1)';
+
+            r.style.transform=
+              'translateY(0)';
+
+          });
+
+        }
+
+      }
+
+    });
+
+  });
+
+
+  rows.forEach(
+    (r,idx)=>
+      prevRankMap[r.id]=idx+1
+  );
+
 }
-document.getElementById('refresh-btn').addEventListener('click',fetchAndRender);
+
+
+/* ================================================================
+   OTOMATİK LİG GÖSTERİM AYARLARI
+   ================================================================ */
+
+/*
+  İstersen sadece buradaki değerleri değiştir.
+
+  5000 = İlk 3 beş saniye
+  18 = Kaydırma hızı
+  3000 = Son öğrencide üç saniye
+*/
+
+const SHOW_TOP_MS = 5000;
+
+const BOTTOM_WAIT_MS = 3000;
+
+const SCROLL_SPEED = 18;
+
+const RETURN_DURATION = 1400;
+
+
+let leagueShowStarted=false;
+
+let leagueShowRunning=false;
+
+let leagueShowToken=0;
+
+
+function sleep(ms){
+
+  return new Promise(
+    resolve=>setTimeout(resolve,ms)
+  );
+
+}
+
+
+/* ================================================================
+   SAYFANIN EN ALT NOKTASI
+   ================================================================ */
+
+function maxScrollY(){
+
+  return Math.max(
+
+    0,
+
+    document.documentElement.scrollHeight
+    -
+    window.innerHeight
+
+  );
+
+}
+
+
+/* ================================================================
+   İLK 3 KUTLAMA
+   ================================================================ */
+
+function celebrateTop3(){
+
+  const rows=
+    [...document.querySelectorAll('#table .row')]
+    .slice(0,3);
+
+
+  rows.forEach(
+    row=>
+      row.classList.add('celebrate')
+  );
+
+
+  createConfetti();
+
+
+  setTimeout(()=>{
+
+    rows.forEach(
+      row=>
+        row.classList.remove('celebrate')
+    );
+
+  },SHOW_TOP_MS-300);
+
+}
+
+
+/* ================================================================
+   KONFETİ
+   ================================================================ */
+
+function createConfetti(){
+
+  const layer=
+    document.getElementById(
+      'celebration-layer'
+    );
+
+
+  if(!layer)
+    return;
+
+
+  layer.innerHTML='';
+
+
+  const colors=[
+
+    '#ffd54a',
+
+    '#cfd8e3',
+
+    '#e0975a',
+
+    '#4f8dff',
+
+    '#3ecf8e'
+
+  ];
+
+
+  for(let i=0;i<35;i++){
+
+    const piece=
+      document.createElement('span');
+
+
+    piece.className=
+      'confetti';
+
+
+    piece.style.left=
+      (Math.random()*100)+'vw';
+
+
+    piece.style.background=
+      colors[
+        Math.floor(
+          Math.random()*colors.length
+        )
+      ];
+
+
+    piece.style.animationDuration=
+      (2.5+Math.random()*2)+'s';
+
+
+    piece.style.animationDelay=
+      (Math.random()*.7)+'s';
+
+
+    layer.appendChild(piece);
+
+  }
+
+
+  setTimeout(()=>{
+
+    layer.innerHTML='';
+
+  },5000);
+
+}
+
+
+/* ================================================================
+   YAVAŞÇA AŞAĞI KAYDIR
+   ================================================================ */
+
+function scrollDownSlowly(token){
+
+  return new Promise(resolve=>{
+
+    let lastTime=null;
+
+
+    function step(time){
+
+      if(token!==leagueShowToken){
+
+        resolve();
+
+        return;
+
+      }
+
+
+      if(lastTime===null)
+
+        lastTime=time;
+
+
+      const delta=
+        (time-lastTime)/1000;
+
+
+      lastTime=time;
+
+
+      /*
+        ÖNEMLİ:
+
+        Her karede tekrar hesaplandığı için
+        15 saniyelik veri güncellemesinde
+        öğrenci sayısı değişirse bile
+        gerçek sayfa yüksekliği kullanılır.
+      */
+
+      const bottom=
+        maxScrollY();
+
+
+      if(
+        window.scrollY >=
+        bottom-2
+      ){
+
+        window.scrollTo(
+          0,
+          bottom
+        );
+
+        resolve();
+
+        return;
+
+      }
+
+
+      const nextY=
+        Math.min(
+
+          bottom,
+
+          window.scrollY+
+          SCROLL_SPEED*delta
+
+        );
+
+
+      window.scrollTo(
+        0,
+        nextY
+      );
+
+
+      requestAnimationFrame(step);
+
+    }
+
+
+    requestAnimationFrame(step);
+
+  });
+
+}
+
+
+/* ================================================================
+   BAŞA YUMUŞAK DÖN
+   ================================================================ */
+
+function returnToTop(token){
+
+  return new Promise(resolve=>{
+
+    const startY=
+      window.scrollY;
+
+
+    if(startY<=1){
+
+      window.scrollTo(0,0);
+
+      resolve();
+
+      return;
+
+    }
+
+
+    const startTime=
+      performance.now();
+
+
+    function step(now){
+
+      if(token!==leagueShowToken){
+
+        resolve();
+
+        return;
+
+      }
+
+
+      const progress=
+        Math.min(
+
+          (now-startTime)
+          /
+          RETURN_DURATION,
+
+          1
+
+        );
+
+
+      const eased=
+
+        progress<.5
+
+        ?
+
+        4*
+        progress*
+        progress*
+        progress
+
+        :
+
+        1-
+        Math.pow(
+          -2*progress+2,
+          3
+        )/2;
+
+
+      window.scrollTo(
+
+        0,
+
+        startY*
+        (1-eased)
+
+      );
+
+
+      if(progress<1){
+
+        requestAnimationFrame(step);
+
+      }
+
+      else{
+
+        window.scrollTo(
+          0,
+          0
+        );
+
+        resolve();
+
+      }
+
+    }
+
+
+    requestAnimationFrame(step);
+
+  });
+
+}
+
+
+/* ================================================================
+   ANA SONSUZ DÖNGÜ
+   ================================================================ */
+
+async function leagueShowLoop(){
+
+  /*
+    Aynı anda ikinci bir otomatik
+    kaydırma döngüsü açılmasını engeller.
+  */
+
+  if(leagueShowRunning)
+    return;
+
+
+  leagueShowRunning=true;
+
+
+  const token=
+    ++leagueShowToken;
+
+
+  try{
+
+    while(
+      token===leagueShowToken
+    ){
+
+      /*
+        1 — BAŞLANGIÇ
+      */
+
+      window.scrollTo(
+        0,
+        0
+      );
+
+
+      await sleep(400);
+
+
+      if(
+        token!==leagueShowToken
+      )
+        break;
+
+
+      /*
+        2 — İLK 3'Ü KUTLA
+      */
+
+      celebrateTop3();
+
+
+      await sleep(
+        SHOW_TOP_MS
+      );
+
+
+      if(
+        token!==leagueShowToken
+      )
+        break;
+
+
+      /*
+        3 — BÜTÜN ÖĞRENCİLERİ
+        YAVAŞÇA GEZ
+      */
+
+      await scrollDownSlowly(
+        token
+      );
+
+
+      if(
+        token!==leagueShowToken
+      )
+        break;
+
+
+      /*
+        4 — SON ÖĞRENCİDE BEKLE
+      */
+
+      await sleep(
+        BOTTOM_WAIT_MS
+      );
+
+
+      if(
+        token!==leagueShowToken
+      )
+        break;
+
+
+      /*
+        5 — BAŞA DÖN
+      */
+
+      await returnToTop(
+        token
+      );
+
+
+      if(
+        token!==leagueShowToken
+      )
+        break;
+
+
+      /*
+        Çok kısa bekleme.
+        Ardından ilk 3 tekrar kutlanır.
+      */
+
+      await sleep(500);
+
+    }
+
+  }
+
+  finally{
+
+    leagueShowRunning=false;
+
+  }
+
+}
+
+
+/* ================================================================
+   OTOMATİK GÖSTERİMİ BAŞLAT
+   ================================================================ */
+
+function startLeagueShow(){
+
+  /*
+    15 saniyede bir fetchAndRender
+    tekrar çalışsa bile ikinci döngü
+    oluşturulmaz.
+  */
+
+  if(leagueShowStarted)
+    return;
+
+
+  const rows=
+    document.querySelectorAll(
+      '#table .row'
+    );
+
+
+  /*
+    Veri henüz gelmediyse başlatma.
+  */
+
+  if(!rows.length)
+    return;
+
+
+  leagueShowStarted=true;
+
+
+  setTimeout(()=>{
+
+    leagueShowLoop();
+
+  },500);
+
+}
+
+
+/* ================================================================
+   GOOGLE SHEETS VERİSİNİ ÇEK
+   ================================================================ */
+
+const statusEl=
+  document.getElementById(
+    'round-badge'
+  );
+
+
+async function fetchAndRender(){
+
+  if(
+    APPS_SCRIPT_URL.indexOf(
+      'BURAYA_'
+    )===0
+  ){
+
+    statusEl.textContent=
+      '⚠ Apps Script linki henüz girilmedi';
+
+    return;
+
+  }
+
+
+  try{
+
+    statusEl.textContent=
+      '↻ Kontrol ediliyor...';
+
+
+    const res=
+      await fetch(
+
+        APPS_SCRIPT_URL,
+
+        {
+          cache:'no-store'
+        }
+
+      );
+
+
+    if(!res.ok)
+
+      throw new Error(
+        'HTTP '+res.status
+      );
+
+
+    const rawRows=
+      await res.json();
+
+
+    const students=
+      buildStudents(
+        rawRows
+      );
+
+
+    /*
+      Mevcut tablo çizme sistemi
+    */
+
+    render(students);
+
+
+    /*
+      İlk veri geldikten sonra
+      otomatik lig gösterimini başlat.
+    */
+
+    startLeagueShow();
+
+
+    statusEl.textContent=
+
+      '✓ Canlı — son güncelleme '
+
+      +
+
+      new Date()
+      .toLocaleTimeString(
+        'tr-TR'
+      );
+
+  }
+
+  catch(err){
+
+    statusEl.textContent=
+
+      '⚠ Veri alınamadı ('
+
+      +
+
+      err.message
+
+      +
+
+      ')';
+
+  }
+
+}
+
+
+/* ================================================================
+   MANUEL YENİLE
+   ================================================================ */
+
+document
+.getElementById(
+  'refresh-btn'
+)
+.addEventListener(
+  'click',
+  fetchAndRender
+);
+
+
+/* ================================================================
+   İLK VERİ ÇEKME
+   ================================================================ */
+
 fetchAndRender();
-setInterval(fetchAndRender, REFRESH_MS);
+
+
+/* ================================================================
+   15 SANİYEDE BİR GOOGLE SHEETS KONTROLÜ
+   ================================================================ */
+
+setInterval(
+  fetchAndRender,
+  REFRESH_MS
+);
+
 </script>
+
 </body>
 </html>
