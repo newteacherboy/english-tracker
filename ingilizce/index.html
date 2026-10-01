@@ -28409,12 +28409,21 @@ body.dc-ada .ma-klasik-don{display:none}
 })();
 </script>
 
-                <!-- ===================== BÜYÜ AKADEMİSİ · YENİ TASARIM =====================
+              <!-- ===================== BÜYÜ AKADEMİSİ · YENİ TASARIM · v2 =====================
+     v2: Büyü Akademisi artık PARKUR sekmesinin kendisi. Parkur'da kale haritası, "Bölümler" ile kapılar.
+     Oyun bitince ya da X'e basınca her zaman Parkur haritasına dönülür. Eski seviye haritası gizlenir (silinmez).
      Koridor (4 bölüm kapısı) → Kale haritası (10 durak) → Durak kartı → 11 soruluk büyü
      Her durakta Aktiviteler'deki 11 mini oyunun her birinden bir soru gelir.
      İlerleme eski sistemle aynı yerde (buyuSeviyeTamamla) saklanır: kimsenin ilerlemesi kaybolmaz.
      ======================================================================== -->
 <style>
+.bz-parkur{position:absolute;inset:0;overflow-y:auto;background:#1e1446;color:#fff;font-family:Nunito,system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);-webkit-overflow-scrolling:touch}
+.bz-parkur .bz-ic{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+#tab-dunya.bz-yeni #dunyaAlan{display:none!important}
+#tab-dunya:not(.bz-yeni) .bz-parkur{display:none!important}
+.bz-ust-btn{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:8px 12px;font-family:inherit;font-weight:900;font-size:13px;cursor:pointer;white-space:nowrap}
+.bz-ust-btn:focus-visible{outline:3px solid #fde68a;outline-offset:2px}
+.bz-yeni-don{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99995;border:0;border-radius:999px;padding:10px 16px;font-family:Nunito,system-ui,sans-serif;font-weight:900;font-size:13px;color:#fff;background:linear-gradient(135deg,#8b5cf6,#db2777);box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:pointer}
 .bz-perde{position:fixed;inset:0;z-index:100000040;overflow-y:auto;background:#1e1446;color:#fff;font-family:Nunito,system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .bz-ic{max-width:560px;margin:0 auto;padding:10px 12px 28px}
 .bz-bas{display:flex;align-items:center;gap:8px;margin-bottom:10px}
@@ -28618,6 +28627,22 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (!perde) { perde = document.createElement('div'); perde.className = 'bz-perde'; perde.id = 'bzPerde'; perde.setAttribute('role', 'dialog'); perde.setAttribute('aria-modal', 'true'); perde.setAttribute('aria-label', 'Büyü Akademisi'); document.body.appendChild(perde); }
     return perde;
   }
+  const eskiGorunum = () => localStorage.getItem('bz_eski_parkur') === '1';
+  function parkurAlani() {
+    let tab = $('tab-dunya'); if (!tab) return perdeAc();
+    tab.classList.add('bz-yeni');
+    let k = $('bzParkur'); if (!k) { k = document.createElement('div'); k.id = 'bzParkur'; k.className = 'bz-parkur'; tab.appendChild(k); }
+    return k;
+  }
+  let gorunum = { ad: 'harita', b: null };
+  function goster(ad, b) {
+    if (eskiGorunum()) { if (typeof orgDunya === 'function') orgDunya(); return; }
+    gorunum = { ad, b: b === undefined ? null : b };
+    let tab = $('tab-dunya');
+    if (tab && !tab.classList.contains('active') && typeof orgDunya === 'function') { parkurAcikTut = true; orgDunya(); }
+    if (ad === 'koridor') koridor(); else harita(gorunum.b === null ? aktifBolum() : gorunum.b);
+  }
+  function aktifBolum() { for (let b = 0; b < 4; b++) if (bolumAcik(b) && bolumTamam(b) < DURAK_SAYISI) return b; for (let b = 3; b >= 0; b--) if (bolumAcik(b)) return b; return 0; }
   function kapat() { try { speechSynthesis.cancel(); } catch (e) {} if (zamanlayici) clearInterval(zamanlayici); if (perde) perde.remove(); perde = null; document.querySelectorAll('.bz-alt').forEach(x => x.remove()); }
   function avatar(px) { try { let s = typeof karakterSvg === 'function' ? karakterSvg(isim(), px) : ''; if (s) return s; } catch (e) {} return `<span style="display:grid;place-items:center;width:100%;height:100%;font-size:${Math.round(px * .7)}px;line-height:1">🧙</span>`; }
   function ust(geriHtml) {
@@ -28630,8 +28655,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
 
   /* ================= 1) KORİDOR (bölüm kapıları) ================= */
   function koridor() {
-    let p = perdeAc();
-    p.innerHTML = `<div class="bz-ic">${ust()}
+    let p = parkurAlani(); gorunum = { ad: 'koridor', b: null };
+    p.innerHTML = `<div class="bz-ic">${ust('<button class="kapat" id="bzKapat" aria-label="Parkur haritasına dön">✕</button>')}
       <div class="bz-afis"><b>Büyü Akademisi</b><small>Bir kapı seç, maceraya başla</small></div>
       <div class="bz-koridor"><span class="bz-mesale" style="left:10px" aria-hidden="true">🔥</span><span class="bz-mesale" style="right:10px" aria-hidden="true">🔥</span>
         <div class="bz-kapilar">${BOLUM.map((B, b) => { let acik = bolumAcik(b), n = bolumTamam(b);
@@ -28640,14 +28665,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
             <span class="yil">${acik ? `⭐ ${bolumYildiz(b)}/30` : `Önceki bölümde ${ACMA_ESIGI} durak`}</span></button>`; }).join('')}</div>
         <div class="bz-kitap"><span aria-hidden="true">📖</span><div>Her kapı yeni bir beceri… Her durakta 11 mini oyundan birer büyü sorusu seni bekliyor!</div></div>
       </div>
-      <button class="bz-eski" id="bzEski">Eski Büyü Akademisi görünümü</button></div>`;
-    kapatBagla();
+      <button class="bz-eski" id="bzEski">Eski parkur görünümüne geç</button></div>`;
+    $('bzKapat').onclick = () => harita(aktifBolum());
     p.querySelectorAll('.bz-kapi').forEach(k => k.onclick = () => {
       let b = +k.dataset.b;
       if (!bolumAcik(b)) { toast(`🔒 Bu kapıyı açmak için ${b}. bölümde ${ACMA_ESIGI} durak bitir (şu an ${bolumTamam(b - 1)}).`); return; }
       harita(b);
     });
-    $('bzEski').onclick = () => { kapat(); if (typeof eskiAc === 'function') eskiAc(); };
+    $('bzEski').onclick = () => { localStorage.setItem('bz_eski_parkur', '1'); let t = $('tab-dunya'); if (t) t.classList.remove('bz-yeni'); yeniDonDugmesi(); if (typeof orgDunya === 'function') orgDunya(); };
     p.scrollTop = 0;
   }
 
@@ -28667,15 +28692,17 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       <path d="M115 -8 L115 -20 L128 -15 L115 -11" fill="#f43f5e"/></svg>`;
   }
   function harita(b) {
-    let p = perdeAc(), B = BOLUM[b], sira = siradakiDurak(b), n = bolumTamam(b), hepsi = n === DURAK_SAYISI;
+    let p = parkurAlani(), B = BOLUM[b], sira = siradakiDurak(b), n = bolumTamam(b), hepsi = n === DURAK_SAYISI;
+    gorunum = { ad: 'harita', b };
     let yol = YER.map(([x, y]) => `${x},${y}`).join(' ');
     let [hx, hy] = YER[sira];
     let g = yoVar() && yo.gorev && yo.gorev.liste ? yo.gorev.liste : [];
     const GAD = { oyun3: '3 oyun oyna', oyun5: '5 oyun oyna', yildiz3: 'Bir oyunda ⭐⭐⭐', ders1: '1 konu bitir', dinleme: 'Kulak Dedektifi oyna', yazim: 'Yazım oyununda ⭐⭐', cumle: 'Cümle oyunu oyna', hiz: 'Hız Fırtınası ⭐⭐', zk: 'Zor kelime tekrarı' };
     const GHEDEF = { oyun3: 3, oyun5: 5 };
     let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b];
-    p.innerHTML = `<div class="bz-ic">${ust('<button class="bz-geri" id="bzGeri">← Koridor</button>')}
+    p.innerHTML = `<div class="bz-ic">${ust('<button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button>')}
       <div class="bz-afis"><b>${B.ik} ${b + 1}. Bölüm · ${B.ad}</b><small>${B.alt} · ${n}/10 durak</small></div>
+      <div style="display:flex;gap:8px;justify-content:center;margin:-6px 0 12px"><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki bölüm</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki bölüm →</button>' : ''}</div>
       <div class="bz-harita">
         <span class="bulut" style="left:6%;top:14%" aria-hidden="true">☁️</span><span class="bulut" style="right:8%;top:28%;animation-delay:1.5s" aria-hidden="true">☁️</span>
         <span class="bulut" style="left:10%;top:44%;font-size:22px;animation-delay:.8s" aria-hidden="true">✨</span>
@@ -28694,6 +28721,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         <div class="bz-kutu"><h4>📈 Bölüm ilerlemesi</h4><div style="font-weight:900;font-size:22px">%${n * 10}</div><div class="bz-cubuk"><i style="width:${n * 10}%"></i></div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd;margin-top:6px">⭐ ${bolumYildiz(b)}/30 yıldız</div></div>
       </div></div>`;
     $('bzGeri').onclick = koridor;
+    $('bzAkis').onclick = () => { if (typeof meduAkisAc === 'function') { try { maSekme = 'akis'; } catch (e) {} meduAkisAc(); } };
+    if ($('bzOnceki')) $('bzOnceki').onclick = () => harita(b - 1);
+    if ($('bzSonraki')) $('bzSonraki').onclick = () => harita(b + 1);
     p.querySelectorAll('.bz-tas').forEach(t => t.onclick = () => durakKarti(b, +t.dataset.d));
     let sb = $('bzSandik'); if (sb) sb.onclick = () => { yo.baSandik = yo.baSandik || {}; yo.baSandik[b] = 1; if (typeof yoKaydet === 'function') yoKaydet(); if (typeof dolapSandikAc === 'function') dolapSandikAc(b < 2 ? 1 : 2, true); else { yoXpEkle(100, 100); toast('🎁 +100 🪙'); } harita(b); };
     p.scrollTop = 0;
@@ -28776,7 +28806,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (O.i >= O.sorular.length) return bitir();
     let p = perdeAc(), s = O.sorular[O.i];
     p.innerHTML = `<div class="bz-oyun">${oyunUst()}<div id="bzAlan"></div></div></div>`;
-    $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) harita(O.b); };
+    $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { let b = O.b; kapat(); goster('harita', b); } };
     let alan = $('bzAlan');
     ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte })[s.tip](s, alan);
     p.scrollTop = 0;
@@ -28943,94 +28973,108 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       if (yoVar()) { yo.baYildiz = yo.baYildiz || {}; yo.baYildiz[no] = Math.max(yo.baYildiz[no] || 0, yil); if (typeof yoKaydet === 'function') yoKaydet(); }
       yeniAcildi = O.b < 3 && !onceAcik && bolumAcik(O.b + 1);
     }
-    let b = O.b;
-    if (typeof genelSonucEkraniGoster === 'function') {
-      genelSonucEkraniGoster({ oyunAdi: `🧙 ${BOLUM[b].duraklar[O.d]}`, isim: isim(), puan, dogru: O.dogru, yanlis: O.yanlis, sureSaniye: sure, oyunKey: 'ba',
-        siralamaYok: true, devamFn: () => harita(b), tekrarFn: () => oyunBaslat(b, O.d) });
-      /* sonuç ekranının üstünde harita beklesin */
-      harita(b);
-      if (perde) perde.style.zIndex = '99999990';   /* ortak sonuç ekranı (100000001) üstte görünsün */
-      let gso = document.getElementById('genelSonucOverlay');
-      if (gso) { let obs = new MutationObserver(() => { if (getComputedStyle(gso).display === 'none') { if (perde) perde.style.zIndex = ''; obs.disconnect(); } }); obs.observe(gso, { attributes: true, attributeFilter: ['style', 'class'] }); }
-    } else harita(b);
+    let b = O.b, d = O.d;
+    kapat();                                   /* oyun penceresi kapanır, altta Parkur haritası */
+    goster('harita', b);
+    if (typeof genelSonucEkraniGoster === 'function')
+      genelSonucEkraniGoster({ oyunAdi: `🧙 ${BOLUM[b].duraklar[d]}`, isim: isim(), puan, dogru: O.dogru, yanlis: O.yanlis, sureSaniye: sure, oyunKey: 'ba',
+        siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
     setTimeout(() => toast(gecti ? (yeniAcildi ? `🚪 ${b + 2}. bölümün kapısı açıldı!` : `✨ ${O.d + 1}. durak geçildi! ${'⭐'.repeat(yil)}`) : `💪 ${O.dogru}/${O.sorular.length} doğru. Geçmek için ${GECME} doğru lazım, tekrar dene!`), 700);
   }
 
-  /* ================= GİRİŞ NOKTASI ================= */
+  /* ================= GİRİŞ NOKTALARI: Parkur sekmesi = Büyü Akademisi ================= */
+  let orgDunya = window.dunyaAc, parkurAcikTut = false;
+  function yeniDonDugmesi() {
+    if ($('bzYeniDon')) return;
+    let b = document.createElement('button'); b.id = 'bzYeniDon'; b.className = 'bz-yeni-don'; b.textContent = '✨ Yeni Büyü Akademisi görünümüne dön';
+    b.onclick = () => { localStorage.removeItem('bz_eski_parkur'); b.remove(); goster('harita'); };
+    let t = $('tab-dunya'); (t || document.body).appendChild(b);
+  }
+  window.dunyaAc = async function () {
+    if (eskiGorunum()) { let r = orgDunya && orgDunya.apply(this, arguments); setTimeout(yeniDonDugmesi, 300); return r; }
+    if (!parkurAcikTut && typeof orgDunya === 'function') orgDunya.apply(this, arguments);   /* sekmeyi açar, alt menüyü günceller */
+    parkurAcikTut = false;
+    if (!yuklendi) { parkurAlani().innerHTML = `<div class="bz-ic" style="text-align:center;padding-top:30vh"><div style="font-size:54px">🧙</div><b>Akademinin kapıları açılıyor…</b></div>`; await ilerlemeYukle(); }
+    else ilerlemeYukle().then(() => { if (gorunum.ad === 'harita' && $('bzParkur') && !perde) harita(gorunum.b === null ? aktifBolum() : gorunum.b); });
+    if (gorunum.ad === 'koridor') koridor(); else harita(gorunum.b === null ? aktifBolum() : gorunum.b);
+  };
+  /* Aktiviteler'deki Büyü Akademisi kartı ve eski çağrılar: Parkur'u kapılarla açar */
   let eskiAc = window.baModuAc;
   window.baModuAc = async function () {
-    try { if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat(); } catch (e) {}
     if (!isim()) { toast('Önce giriş yapmalısın.'); return; }
-    perdeAc().innerHTML = `<div class="bz-ic" style="text-align:center;padding-top:30vh"><div style="font-size:54px">🧙</div><b>Akademinin kapıları açılıyor…</b></div>`;
-    if (!yuklendi) await ilerlemeYukle(); else ilerlemeYukle().then(() => { if (perde && perde.querySelector('.bz-koridor')) koridor(); });
-    koridor();
+    if (eskiGorunum()) return eskiAc && eskiAc.apply(this, arguments);
+    gorunum = { ad: 'koridor', b: null };
+    await window.dunyaAc();
   };
   window.buyuAkademisiYeniAc = window.baModuAc;
+  /* Eski seviye haritasından gelen "oyna" çağrısı yeni durak kartına yönlenir */
+  window.dunyaSeviyeAc = function (n) { let b = Math.min(3, Math.floor((Number(n) - 1) / DURAK_SAYISI)), d = (Number(n) - 1) % DURAK_SAYISI; goster('harita', b); setTimeout(() => durakKarti(b, d), 300); };
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { let a = document.querySelector('.bz-alt'); if (a) a.remove(); } });
 })();
 </script>
 
-                <!-- ===================== UYGULAMA KURULUM REHBERİ (ilk açılış) =====================
+              <!-- ===================== UYGULAMA KURULUM REHBERİ (ilk açılış) · v2 =====================
+     v2: sınıf adları "kur-" ile başlar ("Hoş geldin" kartının "kr-" stilleriyle çakışmaz).
      Siteyi telefon, tablet ve bilgisayarda "uygulama gibi" eklemeyi cihaza göre gösterir.
      "Uyguladım, oldu" → bir daha gösterilmez. ✕ ya da "Sonra" → 2. girişte bir kez daha gösterilir, sonra hiç.
      Uygulama olarak açıldıysa (zaten yüklü) hiç gösterilmez.
      Gerekli dosyalar (index.html ile aynı klasöre): ingilizce-manifest.json, ingilizce-icon-192.png, ingilizce-icon-512.png, ingilizce-apple-touch-icon.png
      ================================================================================== -->
 <style>
-.kr-perde{position:fixed;inset:0;z-index:2147483000;background:linear-gradient(160deg,#4c1d95,#7c3aed 45%,#db2777);overflow-y:auto;font-family:Nunito,system-ui,sans-serif;color:#2d2350;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 16px);animation:krGel .35s ease-out}
-.kr-kart{position:relative;max-width:520px;margin:0 auto;background:#fff;border-radius:28px;padding:20px 18px 18px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
-.kr-x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:12px;border:0;background:#f5f3ff;color:#6d28d9;font-size:18px;font-weight:900;cursor:pointer}
-.kr-bas{text-align:center;padding:4px 30px 6px}
-.kr-bas img{width:84px;height:84px;border-radius:22px;box-shadow:0 10px 24px rgba(124,58,237,.35)}
-.kr-bas h2{margin:10px 0 4px;font-size:22px;font-weight:900;line-height:1.2;color:#2d2350}
-.kr-bas p{margin:0;color:#6b5b95;font-weight:700;font-size:14px;line-height:1.5}
-.kr-faydalar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0}
-.kr-faydalar span{background:#f5f3ff;color:#5b21b6;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800}
-.kr-sekmeler{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 12px;background:#f5f3ff;border-radius:16px;padding:5px}
-.kr-sekme{border:0;background:none;border-radius:12px;padding:9px 4px;font-family:inherit;font-weight:900;font-size:12.5px;color:#6d28d9;cursor:pointer;line-height:1.2}
-.kr-sekme b{display:block;font-size:20px}
-.kr-sekme[aria-selected="true"]{background:#fff;box-shadow:0 3px 10px rgba(124,58,237,.18);color:#2d2350}
-.kr-tarayici{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.kr-tarayici button{border:2px solid #e9e2ff;background:#fff;border-radius:999px;padding:6px 11px;font-family:inherit;font-weight:800;font-size:12px;color:#5b21b6;cursor:pointer}
-.kr-tarayici button[aria-pressed="true"]{background:#7c3aed;border-color:#7c3aed;color:#fff}
-.kr-senin{display:inline-block;margin-left:4px;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 7px;font-size:10.5px;font-weight:900}
-.kr-adimlar{display:grid;gap:12px}
-.kr-adim{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:center;background:#faf8ff;border:1px solid #efe8ff;border-radius:18px;padding:10px}
-.kr-adim .no{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#7c3aed;color:#fff;font-weight:900;font-size:13px;margin-bottom:4px}
-.kr-adim .bsl{display:block;font-size:14.5px;line-height:1.35;font-weight:900;color:#2d2350}
-.kr-perde b{color:inherit;font-weight:900}
-.kr-adim small{display:block;color:#6b5b95;font-weight:700;font-size:12px;margin-top:3px;line-height:1.4}
-.kr-ikon{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:6px;background:#ede9fe;color:#5b21b6;font-weight:900;font-size:13px;padding:0 4px;vertical-align:middle}
+.kur-perde{position:fixed;inset:0;z-index:2147483000;background:linear-gradient(160deg,#4c1d95,#7c3aed 45%,#db2777);overflow-y:auto;font-family:Nunito,system-ui,sans-serif;color:#2d2350;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 16px);animation:kurGel .35s ease-out}
+.kur-kart{position:relative;max-width:520px;margin:0 auto;background:#fff;border-radius:28px;padding:20px 18px 18px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.kur-x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:12px;border:0;background:#f5f3ff;color:#6d28d9;font-size:18px;font-weight:900;cursor:pointer}
+.kur-bas{text-align:center;padding:4px 30px 6px}
+.kur-bas img{width:84px;height:84px;border-radius:22px;box-shadow:0 10px 24px rgba(124,58,237,.35)}
+.kur-bas h2{margin:10px 0 4px;font-size:22px;font-weight:900;line-height:1.2;color:#2d2350}
+.kur-bas p{margin:0;color:#6b5b95;font-weight:700;font-size:14px;line-height:1.5}
+.kur-faydalar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.kur-faydalar span{background:#f5f3ff;color:#5b21b6;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800}
+.kur-sekmeler{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 12px;background:#f5f3ff;border-radius:16px;padding:5px}
+.kur-sekme{border:0;background:none;border-radius:12px;padding:9px 4px;font-family:inherit;font-weight:900;font-size:12.5px;color:#6d28d9;cursor:pointer;line-height:1.2}
+.kur-sekme b{display:block;font-size:20px}
+.kur-sekme[aria-selected="true"]{background:#fff;box-shadow:0 3px 10px rgba(124,58,237,.18);color:#2d2350}
+.kur-tarayici{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.kur-tarayici button{border:2px solid #e9e2ff;background:#fff;border-radius:999px;padding:6px 11px;font-family:inherit;font-weight:800;font-size:12px;color:#5b21b6;cursor:pointer}
+.kur-tarayici button[aria-pressed="true"]{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.kur-senin{display:inline-block;margin-left:4px;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 7px;font-size:10.5px;font-weight:900}
+.kur-adimlar{display:grid;gap:12px}
+.kur-adim{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:center;background:#faf8ff;border:1px solid #efe8ff;border-radius:18px;padding:10px}
+.kur-adim .no{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#7c3aed;color:#fff;font-weight:900;font-size:13px;margin-bottom:4px}
+.kur-adim .bsl{display:block;font-size:14.5px;line-height:1.35;font-weight:900;color:#2d2350}
+.kur-perde b{color:inherit;font-weight:900}
+.kur-adim small{display:block;color:#6b5b95;font-weight:700;font-size:12px;margin-top:3px;line-height:1.4}
+.kur-ikon{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:6px;background:#ede9fe;color:#5b21b6;font-weight:900;font-size:13px;padding:0 4px;vertical-align:middle}
 /* cihaz çizimleri */
-.kr-cihaz{position:relative;width:118px;height:150px;border-radius:18px;background:#1e1b4b;padding:7px;box-shadow:inset 0 0 0 2px #4338ca}
-.kr-cihaz.pc{height:96px;border-radius:10px;padding:5px}
-.kr-cihaz.pc::after{content:"";position:absolute;left:38%;right:38%;bottom:-12px;height:12px;background:#4338ca;border-radius:0 0 6px 6px}
-.kr-ekran{position:relative;width:100%;height:100%;border-radius:12px;background:#fff;overflow:hidden}
-.kr-cihaz.pc .kr-ekran{border-radius:5px}
-.kr-cubuk{position:absolute;left:0;right:0;height:18px;background:#f1f5f9;display:flex;align-items:center;padding:0 5px;gap:4px;font-size:9px;font-weight:900;color:#475569}
-.kr-cubuk.ust{top:0}.kr-cubuk.alt{bottom:0;justify-content:space-around}
-.kr-cubuk .adres{flex:1;height:10px;border-radius:5px;background:#e2e8f0}
-.kr-icerik{position:absolute;left:8px;right:8px;top:26px;display:grid;gap:5px}
-.kr-icerik i{display:block;height:8px;border-radius:4px;background:#ede9fe}
-.kr-vurgu{position:absolute;display:grid;place-items:center;min-width:18px;height:18px;border-radius:6px;background:#fbbf24;color:#78350f;font-size:11px;font-weight:900;box-shadow:0 0 0 4px rgba(251,191,36,.45);animation:krNabiz 1.3s ease-in-out infinite;padding:0 3px}
-.kr-menu{position:absolute;background:#fff;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.2);padding:4px;display:grid;gap:3px;font-size:8.5px;font-weight:800;color:#334155;min-width:76px}
-.kr-menu span{padding:3px 5px;border-radius:5px;line-height:1.2}
-.kr-menu span.on{background:#fbbf24;color:#78350f}
-.kr-ana{position:absolute;inset:18px 6px 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-content:start;padding-top:6px}
-.kr-ana span{aspect-ratio:1;border-radius:9px;background:#e2e8f0}
-.kr-ana img{width:100%;aspect-ratio:1;border-radius:9px;box-shadow:0 0 0 3px #fbbf24}
-.kr-alt{margin-top:14px;display:grid;gap:8px}
-.kr-btn{width:100%;border:0;border-radius:16px;padding:14px;font-family:inherit;font-weight:900;font-size:16px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#22c55e,#15803d);box-shadow:0 5px 0 #166534}
-.kr-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #166534}
-.kr-btn.yukle{background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:0 5px 0 #6d28d9}
-.kr-btn.ikincil{background:#f5f3ff;color:#6d28d9;box-shadow:none;font-size:14px;padding:11px}
-.kr-uyari{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:10px 12px;font-size:12.5px;font-weight:800;line-height:1.45;margin-bottom:12px}
-.kr-not{text-align:center;color:#8a78b8;font-size:11.5px;font-weight:700;margin-top:10px;line-height:1.4}
-.kr-perde button:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
-@keyframes krGel{from{opacity:0}}
-@keyframes krNabiz{0%,100%{box-shadow:0 0 0 3px rgba(251,191,36,.55)}50%{box-shadow:0 0 0 8px rgba(251,191,36,0)}}
-@media (max-width:380px){.kr-adim{grid-template-columns:96px 1fr}.kr-cihaz{width:96px;height:124px}.kr-cihaz.pc{height:80px}}
-@media (prefers-reduced-motion:reduce){.kr-perde,.kr-vurgu{animation:none}}
+.kur-cihaz{position:relative;width:118px;height:150px;border-radius:18px;background:#1e1b4b;padding:7px;box-shadow:inset 0 0 0 2px #4338ca}
+.kur-cihaz.pc{height:96px;border-radius:10px;padding:5px}
+.kur-cihaz.pc::after{content:"";position:absolute;left:38%;right:38%;bottom:-12px;height:12px;background:#4338ca;border-radius:0 0 6px 6px}
+.kur-ekran{position:relative;width:100%;height:100%;border-radius:12px;background:#fff;overflow:hidden}
+.kur-cihaz.pc .kur-ekran{border-radius:5px}
+.kur-cubuk{position:absolute;left:0;right:0;height:18px;background:#f1f5f9;display:flex;align-items:center;padding:0 5px;gap:4px;font-size:9px;font-weight:900;color:#475569}
+.kur-cubuk.ust{top:0}.kur-cubuk.alt{bottom:0;justify-content:space-around}
+.kur-cubuk .adres{flex:1;height:10px;border-radius:5px;background:#e2e8f0}
+.kur-icerik{position:absolute;left:8px;right:8px;top:26px;display:grid;gap:5px}
+.kur-icerik i{display:block;height:8px;border-radius:4px;background:#ede9fe}
+.kur-vurgu{position:absolute;display:grid;place-items:center;min-width:18px;height:18px;border-radius:6px;background:#fbbf24;color:#78350f;font-size:11px;font-weight:900;box-shadow:0 0 0 4px rgba(251,191,36,.45);animation:kurNabiz 1.3s ease-in-out infinite;padding:0 3px}
+.kur-menu{position:absolute;background:#fff;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.2);padding:4px;display:grid;gap:3px;font-size:8.5px;font-weight:800;color:#334155;min-width:76px}
+.kur-menu span{padding:3px 5px;border-radius:5px;line-height:1.2}
+.kur-menu span.on{background:#fbbf24;color:#78350f}
+.kur-ana{position:absolute;inset:18px 6px 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-content:start;padding-top:6px}
+.kur-ana span{aspect-ratio:1;border-radius:9px;background:#e2e8f0}
+.kur-ana img{width:100%;aspect-ratio:1;border-radius:9px;box-shadow:0 0 0 3px #fbbf24}
+.kur-alt{margin-top:14px;display:grid;gap:8px}
+.kur-btn{width:100%;border:0;border-radius:16px;padding:14px;font-family:inherit;font-weight:900;font-size:16px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#22c55e,#15803d);box-shadow:0 5px 0 #166534}
+.kur-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #166534}
+.kur-btn.yukle{background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:0 5px 0 #6d28d9}
+.kur-btn.ikincil{background:#f5f3ff;color:#6d28d9;box-shadow:none;font-size:14px;padding:11px}
+.kur-uyari{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:10px 12px;font-size:12.5px;font-weight:800;line-height:1.45;margin-bottom:12px}
+.kur-not{text-align:center;color:#8a78b8;font-size:11.5px;font-weight:700;margin-top:10px;line-height:1.4}
+.kur-perde button:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+@keyframes kurGel{from{opacity:0}}
+@keyframes kurNabiz{0%,100%{box-shadow:0 0 0 3px rgba(251,191,36,.55)}50%{box-shadow:0 0 0 8px rgba(251,191,36,0)}}
+@media (max-width:380px){.kur-adim{grid-template-columns:96px 1fr}.kur-cihaz{width:96px;height:124px}.kur-cihaz.pc{height:80px}}
+@media (prefers-reduced-motion:reduce){.kur-perde,.kur-vurgu{animation:none}}
 </style>
 <script>
 (function () {
@@ -29050,7 +29094,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
 
   /* ---- Tek dokunuşla yükleme (Android Chrome, bilgisayarda Chrome/Edge) ---- */
   let yuklemeIstegi = null;
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); yuklemeIstegi = e; let b = document.getElementById('krYukle'); if (b) b.style.display = ''; });
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); yuklemeIstegi = e; let b = document.getElementById('kurYukle'); if (b) b.style.display = ''; });
   window.addEventListener('appinstalled', () => { let d = durum(); d.ok = 1; yaz(d); kapat(); });
 
   /* ---- Cihaz ve tarayıcı ---- */
@@ -29064,58 +29108,58 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   let cihaz = ios ? 'ios' : android ? 'android' : 'pc';
 
   /* ---- Mini cihaz çizimleri ---- */
-  const icerik = '<div class="kr-icerik"><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div>';
-  const tel = (ust, alt, ek) => `<div class="kr-cihaz"><div class="kr-ekran">${ust ? `<div class="kr-cubuk ust">${ust}</div>` : ''}${icerik}${alt ? `<div class="kr-cubuk alt">${alt}</div>` : ''}${ek || ''}</div></div>`;
-  const pc = (ust, ek) => `<div class="kr-cihaz pc"><div class="kr-ekran"><div class="kr-cubuk ust">${ust}</div>${icerik}${ek || ''}</div></div>`;
-  const anaEkran = (pcMi) => pcMi ? pc('<span>●●●</span><span class="adres"></span>', '<div class="kr-ana" style="grid-template-columns:repeat(5,1fr);inset:20px 8px 8px"><span></span><img src="ingilizce-icon-192.png" alt=""><span></span><span></span><span></span></div>') : `<div class="kr-cihaz"><div class="kr-ekran" style="background:linear-gradient(160deg,#c4b5fd,#f9a8d4)"><div class="kr-ana"><span></span><span></span><img src="ingilizce-icon-192.png" alt=""><span></span><span></span><span></span></div></div></div>`;
-  const menu = (ogeler, stil) => `<div class="kr-menu" style="${stil}">${ogeler.map(([t, on]) => `<span class="${on ? 'on' : ''}">${t}</span>`).join('')}</div>`;
+  const icerik = '<div class="kur-icerik"><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div>';
+  const tel = (ust, alt, ek) => `<div class="kur-cihaz"><div class="kur-ekran">${ust ? `<div class="kur-cubuk ust">${ust}</div>` : ''}${icerik}${alt ? `<div class="kur-cubuk alt">${alt}</div>` : ''}${ek || ''}</div></div>`;
+  const pc = (ust, ek) => `<div class="kur-cihaz pc"><div class="kur-ekran"><div class="kur-cubuk ust">${ust}</div>${icerik}${ek || ''}</div></div>`;
+  const anaEkran = (pcMi) => pcMi ? pc('<span>●●●</span><span class="adres"></span>', '<div class="kur-ana" style="grid-template-columns:repeat(5,1fr);inset:20px 8px 8px"><span></span><img src="ingilizce-icon-192.png" alt=""><span></span><span></span><span></span></div>') : `<div class="kur-cihaz"><div class="kur-ekran" style="background:linear-gradient(160deg,#c4b5fd,#f9a8d4)"><div class="kur-ana"><span></span><span></span><img src="ingilizce-icon-192.png" alt=""><span></span><span></span><span></span></div></div></div>`;
+  const menu = (ogeler, stil) => `<div class="kur-menu" style="${stil}">${ogeler.map(([t, on]) => `<span class="${on ? 'on' : ''}">${t}</span>`).join('')}</div>`;
 
   /* ---- Rehberler ---- */
   const REHBER = {
     ios: {
       safari: { ad: 'Safari', adimlar: ipad ? [
-          [tel('<span class="adres"></span><span class="kr-vurgu" style="position:static">⬆︎</span>'), 'Sağ üstteki <span class="kr-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Adres çubuğunun yanındaki kare ve ok simgesi.'],
+          [tel('<span class="adres"></span><span class="kur-vurgu" style="position:static">⬆︎</span>'), 'Sağ üstteki <span class="kur-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Adres çubuğunun yanındaki kare ve ok simgesi.'],
           [tel('<span class="adres"></span>', '', menu([['Kopyala'], ['Ana Ekrana Ekle ⊕', 1], ['Yer İmi Ekle']], 'right:6px;top:22px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'Görmüyorsan menüyü biraz aşağı kaydır.'],
           [anaEkran(), 'Sağ üstte <b>Ekle</b> de', 'Papi simgesi ana ekranında! Artık oradan aç.']]
         : [
-          [tel('<span class="adres"></span>', '<span>‹</span><span>›</span><span class="kr-vurgu" style="position:static">⬆︎</span><span>▢</span><span>⧉</span>'), 'Alttaki <span class="kr-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Kare ve yukarı ok simgesi. Adres çubuğu üstteyse düğme de üsttedir.'],
+          [tel('<span class="adres"></span>', '<span>‹</span><span>›</span><span class="kur-vurgu" style="position:static">⬆︎</span><span>▢</span><span>⧉</span>'), 'Alttaki <span class="kur-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Kare ve yukarı ok simgesi. Adres çubuğu üstteyse düğme de üsttedir.'],
           [tel('', '', menu([['Kopyala'], ['Yer İmi Ekle'], ['Ana Ekrana Ekle ⊕', 1]], 'left:8px;right:8px;bottom:6px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'Görmüyorsan listeyi yukarı kaydır. Gerekirse "Diğer…" ya da "Daha fazla" menüsünde olabilir.'],
           [anaEkran(), 'Sağ üstte <b>Ekle</b> de', 'Papi simgesi ana ekranında! Artık oradan aç.']] },
       chrome: { ad: 'Chrome', adimlar: [
-          [tel('<span class="adres"></span><span class="kr-vurgu" style="position:static">⬆︎</span>'), 'Adres çubuğundaki <span class="kr-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Bazı sürümlerde sağ alttaki <span class="kr-ikon">···</span> menüsünde "Paylaş…" yazar.'],
+          [tel('<span class="adres"></span><span class="kur-vurgu" style="position:static">⬆︎</span>'), 'Adres çubuğundaki <span class="kur-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Bazı sürümlerde sağ alttaki <span class="kur-ikon">···</span> menüsünde "Paylaş…" yazar.'],
           [tel('', '', menu([['Kopyala'], ['Ana Ekrana Ekle ⊕', 1], ['Okuma Listesi']], 'left:8px;right:8px;bottom:6px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'iOS 16.4 ve üstünde çalışır. Görünmüyorsa siteyi Safari\'de açıp oradan ekle.'],
           [anaEkran(), '<b>Ekle</b> de', 'Papi simgesi ana ekranında!']] }
     },
     android: {
       chrome: { ad: 'Chrome', adimlar: [
-          [tel('<span class="adres"></span><span class="kr-vurgu" style="position:static">⋮</span>'), 'Sağ üstteki <span class="kr-ikon">⋮</span> menüye dokun', 'Üç nokta simgesi, adres çubuğunun yanında.'],
+          [tel('<span class="adres"></span><span class="kur-vurgu" style="position:static">⋮</span>'), 'Sağ üstteki <span class="kur-ikon">⋮</span> menüye dokun', 'Üç nokta simgesi, adres çubuğunun yanında.'],
           [tel('<span class="adres"></span><span>⋮</span>', '', menu([['Yeni sekme'], ['Uygulamayı yükle', 1], ['Ana ekrana ekle']], 'right:4px;top:20px')), '<b>Uygulamayı yükle</b> ya da <b>Ana ekrana ekle</b>', 'Hangisi görünüyorsa ona dokun.'],
           [anaEkran(), '<b>Yükle</b> düğmesine dokun', 'Papi simgesi ana ekrana ve uygulamalar listesine gelir.']] },
       samsung: { ad: 'Samsung Internet', adimlar: [
-          [tel('<span class="adres"></span>', '<span>‹</span><span>›</span><span>⌂</span><span>▢</span><span class="kr-vurgu" style="position:static">≡</span>'), 'Sağ alttaki <span class="kr-ikon">≡</span> menüye dokun', 'Üç çizgi simgesi.'],
+          [tel('<span class="adres"></span>', '<span>‹</span><span>›</span><span>⌂</span><span>▢</span><span class="kur-vurgu" style="position:static">≡</span>'), 'Sağ alttaki <span class="kur-ikon">≡</span> menüye dokun', 'Üç çizgi simgesi.'],
           [tel('', '', menu([['Yer imleri'], ['Sayfayı ekle ⊕', 1], ['Ayarlar']], 'left:8px;right:8px;bottom:6px')), '<b>Sayfayı ekle</b> seçeneğine dokun', ''],
           [anaEkran(), '<b>Ana ekran</b>ı seç, sonra <b>Ekle</b>', 'Papi simgesi ana ekranında!']] },
       firefox: { ad: 'Firefox', adimlar: [
-          [tel('<span class="adres"></span><span class="kr-vurgu" style="position:static">⋮</span>'), 'Menüye <span class="kr-ikon">⋮</span> dokun', 'Sağ üstte ya da sağ altta olabilir.'],
+          [tel('<span class="adres"></span><span class="kur-vurgu" style="position:static">⋮</span>'), 'Menüye <span class="kur-ikon">⋮</span> dokun', 'Sağ üstte ya da sağ altta olabilir.'],
           [tel('<span class="adres"></span><span>⋮</span>', '', menu([['Paylaş'], ['Yükle', 1], ['Ana ekrana ekle']], 'right:4px;top:20px')), '<b>Yükle</b> ya da <b>Ana ekrana ekle</b>', ''],
           [anaEkran(), '<b>Ekle</b> de', 'Papi simgesi ana ekranında!']] }
     },
     pc: {
       chrome: { ad: 'Chrome', adimlar: [
-          [pc('<span>●●●</span><span class="adres"></span><span class="kr-vurgu" style="position:static">⊕</span>'), 'Adres çubuğunun sağındaki <span class="kr-ikon">⊕</span> yükle simgesine tıkla', 'Ekran ve aşağı ok şeklinde de görünebilir.'],
-          [pc('<span>●●●</span><span class="adres"></span><span>⋮</span>', menu([['Yeni sekme'], ['Kaydet ve paylaş ›'], ['Sayfayı uygulama olarak yükle', 1]], 'left:5px;right:5px;top:18px')), 'Simge yoksa: <span class="kr-ikon">⋮</span> → <b>Kaydet ve paylaş</b> → <b>Uygulama olarak yükle</b>', ''],
+          [pc('<span>●●●</span><span class="adres"></span><span class="kur-vurgu" style="position:static">⊕</span>'), 'Adres çubuğunun sağındaki <span class="kur-ikon">⊕</span> yükle simgesine tıkla', 'Ekran ve aşağı ok şeklinde de görünebilir.'],
+          [pc('<span>●●●</span><span class="adres"></span><span>⋮</span>', menu([['Yeni sekme'], ['Kaydet ve paylaş ›'], ['Sayfayı uygulama olarak yükle', 1]], 'left:5px;right:5px;top:18px')), 'Simge yoksa: <span class="kur-ikon">⋮</span> → <b>Kaydet ve paylaş</b> → <b>Uygulama olarak yükle</b>', ''],
           [anaEkran(true), '<b>Yükle</b>\'ye tıkla', 'Masaüstünde ve başlat menüsünde Papi simgesi olur, kendi penceresinde açılır.']] },
       edge: { ad: 'Edge', adimlar: [
-          [pc('<span>●●●</span><span class="adres"></span><span class="kr-vurgu" style="position:static">⊕</span>'), 'Adres çubuğundaki <span class="kr-ikon">⊕</span> "Uygulama kullanılabilir" simgesine tıkla', ''],
-          [pc('<span>●●●</span><span class="adres"></span><span>···</span>', menu([['Sık kullanılanlar'], ['Uygulamalar ›'], ['Bu siteyi uygulama olarak yükle', 1]], 'left:5px;right:5px;top:18px')), 'Ya da <span class="kr-ikon">···</span> → <b>Uygulamalar</b> → <b>Bu siteyi uygulama olarak yükle</b>', ''],
+          [pc('<span>●●●</span><span class="adres"></span><span class="kur-vurgu" style="position:static">⊕</span>'), 'Adres çubuğundaki <span class="kur-ikon">⊕</span> "Uygulama kullanılabilir" simgesine tıkla', ''],
+          [pc('<span>●●●</span><span class="adres"></span><span>···</span>', menu([['Sık kullanılanlar'], ['Uygulamalar ›'], ['Bu siteyi uygulama olarak yükle', 1]], 'left:5px;right:5px;top:18px')), 'Ya da <span class="kur-ikon">···</span> → <b>Uygulamalar</b> → <b>Bu siteyi uygulama olarak yükle</b>', ''],
           [anaEkran(true), '<b>Yükle</b>\'ye tıkla', 'Görev çubuğuna sabitleyebilirsin.']] },
       safari: { ad: 'Safari (Mac)', adimlar: [
-          [pc('<span class="kr-vurgu" style="position:static">Dosya</span><span class="adres"></span>'), 'Üst menüden <b>Dosya</b>\'ya tıkla', 'macOS Sonoma ve üstü gerekir.'],
+          [pc('<span class="kur-vurgu" style="position:static">Dosya</span><span class="adres"></span>'), 'Üst menüden <b>Dosya</b>\'ya tıkla', 'macOS Sonoma ve üstü gerekir.'],
           [pc('<span>Dosya</span><span class="adres"></span>', menu([['Yeni pencere'], ['Dock\'a Ekle…', 1], ['Paylaş']], 'left:5px;right:5px;top:18px')), '<b>Dock\'a Ekle…</b> seçeneğine tıkla', ''],
           [anaEkran(true), '<b>Ekle</b>\'ye tıkla', 'Papi simgesi Dock\'ta!']] },
       firefox: { ad: 'Firefox', adimlar: [
-          [pc('<span>●●●</span><span class="adres"></span><span class="kr-vurgu" style="position:static">☆</span>'), 'Firefox bilgisayarda uygulama yüklemeyi desteklemiyor', 'En kolayı: siteyi <b>Chrome</b> ya da <b>Edge</b> ile açıp oradan yüklemek.'],
-          [pc('<span>●●●</span><span class="adres"></span><span>☆</span>'), 'Ya da <span class="kr-ikon">☆</span> ile yer imlerine ekle', 'Yer imleri çubuğundan tek tıkla açılır.'],
+          [pc('<span>●●●</span><span class="adres"></span><span class="kur-vurgu" style="position:static">☆</span>'), 'Firefox bilgisayarda uygulama yüklemeyi desteklemiyor', 'En kolayı: siteyi <b>Chrome</b> ya da <b>Edge</b> ile açıp oradan yüklemek.'],
+          [pc('<span>●●●</span><span class="adres"></span><span>☆</span>'), 'Ya da <span class="kur-ikon">☆</span> ile yer imlerine ekle', 'Yer imleri çubuğundan tek tıkla açılır.'],
           [anaEkran(true), 'Yer imi çubuğunda hazır!', '']] }
     }
   };
@@ -29126,28 +29170,28 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function tarayiciSec(c) { let l = VARSAYILAN[c]; return l.includes(tarayici) && c === cihaz ? tarayici : l[0]; }
   function ciz() {
     let c = secili.cihaz, t = secili.tarayici || tarayiciSec(c), R = REHBER[c][t];
-    let uyari = uygulamaIci ? `<div class="kr-uyari">⚠️ Siteyi bir uygulamanın içinden (WhatsApp, Instagram…) açmışsın. Önce sağ üstteki menüden <b>"Tarayıcıda aç"</b> seçeneğine dokun, sonra aşağıdaki adımları uygula.</div>`
-      : (c === 'ios' && cihaz === 'ios' && t === 'safari' && tarayici !== 'safari') ? `<div class="kr-uyari">💡 iPhone ve iPad'de en sorunsuz yöntem Safari'dir.</div>` : '';
-    perde.innerHTML = `<div class="kr-kart">
-      <button class="kr-x" id="krX" aria-label="Kapat">✕</button>
-      <div class="kr-bas"><img src="ingilizce-icon-192.png" alt="Diji İngilizce simgesi" onerror="this.style.display='none'"><h2 id="krBaslik">Diji İngilizce'yi uygulama gibi kullan!</h2><p>Ana ekranına ekle, tek dokunuşla tam ekran aç. İndirme yok, yer kaplamaz.</p></div>
-      <div class="kr-faydalar"><span>⚡ Tek dokunuşla açılır</span><span>📴 İnternetsiz de açılır</span><span>🖥️ Tam ekran</span></div>
-      <div class="kr-sekmeler" role="tablist">${[['android', '🤖', 'Android'], ['ios', '🍎', 'iPhone · iPad'], ['pc', '💻', 'Bilgisayar']].map(([k, ik, ad]) => `<button class="kr-sekme" role="tab" data-c="${k}" aria-selected="${c === k}"><b>${ik}</b>${ad}${k === cihaz ? '<br><span class="kr-senin">senin cihazın</span>' : ''}</button>`).join('')}</div>
-      <div class="kr-tarayici" aria-label="Tarayıcı">${VARSAYILAN[c].map(k => `<button data-t="${k}" aria-pressed="${k === t}">${REHBER[c][k].ad}${c === cihaz && k === tarayici ? ' ✓' : ''}</button>`).join('')}</div>
+    let uyari = uygulamaIci ? `<div class="kur-uyari">⚠️ Siteyi bir uygulamanın içinden (WhatsApp, Instagram…) açmışsın. Önce sağ üstteki menüden <b>"Tarayıcıda aç"</b> seçeneğine dokun, sonra aşağıdaki adımları uygula.</div>`
+      : (c === 'ios' && cihaz === 'ios' && t === 'safari' && tarayici !== 'safari') ? `<div class="kur-uyari">💡 iPhone ve iPad'de en sorunsuz yöntem Safari'dir.</div>` : '';
+    perde.innerHTML = `<div class="kur-kart">
+      <button class="kur-x" id="kurX" aria-label="Kapat">✕</button>
+      <div class="kur-bas"><img src="ingilizce-icon-192.png" alt="Diji İngilizce simgesi" onerror="this.style.display='none'"><h2 id="kurBaslik">Diji İngilizce'yi uygulama gibi kullan!</h2><p>Ana ekranına ekle, tek dokunuşla tam ekran aç. İndirme yok, yer kaplamaz.</p></div>
+      <div class="kur-faydalar"><span>⚡ Tek dokunuşla açılır</span><span>📴 İnternetsiz de açılır</span><span>🖥️ Tam ekran</span></div>
+      <div class="kur-sekmeler" role="tablist">${[['android', '🤖', 'Android'], ['ios', '🍎', 'iPhone · iPad'], ['pc', '💻', 'Bilgisayar']].map(([k, ik, ad]) => `<button class="kur-sekme" role="tab" data-c="${k}" aria-selected="${c === k}"><b>${ik}</b>${ad}${k === cihaz ? '<br><span class="kur-senin">senin cihazın</span>' : ''}</button>`).join('')}</div>
+      <div class="kur-tarayici" aria-label="Tarayıcı">${VARSAYILAN[c].map(k => `<button data-t="${k}" aria-pressed="${k === t}">${REHBER[c][k].ad}${c === cihaz && k === tarayici ? ' ✓' : ''}</button>`).join('')}</div>
       ${uyari}
-      <div class="kr-adimlar">${R.adimlar.map(([cizim, baslik, alt], i) => `<div class="kr-adim">${cizim}<div><span class="no">${i + 1}</span><span class="bsl">${baslik}</span>${alt ? `<small>${alt}</small>` : ''}</div></div>`).join('')}</div>
-      <div class="kr-alt">
-        <button class="kr-btn yukle" id="krYukle" style="${yuklemeIstegi ? '' : 'display:none'}">📲 Tek dokunuşla yükle</button>
-        <button class="kr-btn" id="krTamam">✅ Uyguladım, oldu</button>
-        <button class="kr-btn ikincil" id="krSonra">Şimdi değil</button>
+      <div class="kur-adimlar">${R.adimlar.map(([cizim, baslik, alt], i) => `<div class="kur-adim">${cizim}<div><span class="no">${i + 1}</span><span class="bsl">${baslik}</span>${alt ? `<small>${alt}</small>` : ''}</div></div>`).join('')}</div>
+      <div class="kur-alt">
+        <button class="kur-btn yukle" id="kurYukle" style="${yuklemeIstegi ? '' : 'display:none'}">📲 Tek dokunuşla yükle</button>
+        <button class="kur-btn" id="kurTamam">✅ Uyguladım, oldu</button>
+        <button class="kur-btn ikincil" id="kurSonra">Şimdi değil</button>
       </div>
-      <div class="kr-not">Bu rehberi daha sonra Profil ya da Yardım bölümünden tekrar açabilirsin.</div></div>`;
-    perde.querySelectorAll('.kr-sekme').forEach(b => b.onclick = () => { secili = { cihaz: b.dataset.c, tarayici: null }; ciz(); });
+      <div class="kur-not">Bu rehberi daha sonra Profil ya da Yardım bölümünden tekrar açabilirsin.</div></div>`;
+    perde.querySelectorAll('.kur-sekme').forEach(b => b.onclick = () => { secili = { cihaz: b.dataset.c, tarayici: null }; ciz(); });
     perde.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { secili.tarayici = b.dataset.t; ciz(); });
-    document.getElementById('krX').onclick = kapat;
-    document.getElementById('krSonra').onclick = kapat;
-    document.getElementById('krTamam').onclick = () => { let d = durum(); d.ok = 1; yaz(d); kapat(); };
-    document.getElementById('krYukle').onclick = async () => {
+    document.getElementById('kurX').onclick = kapat;
+    document.getElementById('kurSonra').onclick = kapat;
+    document.getElementById('kurTamam').onclick = () => { let d = durum(); d.ok = 1; yaz(d); kapat(); };
+    document.getElementById('kurYukle').onclick = async () => {
       if (!yuklemeIstegi) return;
       yuklemeIstegi.prompt();
       try { let s = await yuklemeIstegi.userChoice; if (s && s.outcome === 'accepted') { let d = durum(); d.ok = 1; yaz(d); kapat(); } } catch (e) {}
@@ -29159,10 +29203,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function ac(elle) {
     if (perde) return;
     if (!elle) { let d = durum(); d.g = (d.g || 0) + 1; yaz(d); }         /* gösterim sayısı: 2. girişte bir kez daha, sonra hiç */
-    perde = document.createElement('div'); perde.className = 'kr-perde'; perde.setAttribute('role', 'dialog'); perde.setAttribute('aria-modal', 'true'); perde.setAttribute('aria-labelledby', 'krBaslik');
+    perde = document.createElement('div'); perde.className = 'kur-perde'; perde.setAttribute('role', 'dialog'); perde.setAttribute('aria-modal', 'true'); perde.setAttribute('aria-labelledby', 'kurBaslik');
     document.body.appendChild(perde); secili = { cihaz, tarayici: null }; ciz();
     document.addEventListener('keydown', esc);
-    setTimeout(() => { let b = document.getElementById('krTamam'); if (b) b.focus({ preventScroll: true }); if (perde) perde.scrollTop = 0; }, 80);
+    setTimeout(() => { let b = document.getElementById('kurTamam'); if (b) b.focus({ preventScroll: true }); if (perde) perde.scrollTop = 0; }, 80);
   }
   window.kurulumRehberiAc = () => ac(true);   /* istediğin yerden elle açmak için */
 
@@ -29174,13 +29218,150 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* Yardım/Profil'de tekrar açma düğmesi */
   setInterval(() => {
     let yer = document.querySelector('#tab-profil .dc-focus-card, #tab-profil');
-    if (!yer || document.getElementById('krProfilBtn') || yuklu()) return;
-    let b = document.createElement('button'); b.id = 'krProfilBtn'; b.type = 'button'; b.textContent = '📲 Uygulamayı ana ekrana ekle';
+    if (!yer || document.getElementById('kurProfilBtn') || yuklu()) return;
+    let b = document.createElement('button'); b.id = 'kurProfilBtn'; b.type = 'button'; b.textContent = '📲 Uygulamayı ana ekrana ekle';
     b.style.cssText = 'display:block;margin:12px auto;border:0;border-radius:14px;padding:11px 16px;font-family:inherit;font-weight:900;font-size:14px;color:#fff;background:linear-gradient(135deg,#7c3aed,#db2777);cursor:pointer';
     b.onclick = () => ac(true); yer.appendChild(b);
   }, 3000);
 })();
 </script>
+<!-- ===================== DÜZELTMELER · KARAKTER + VERİ BOYUTU + DERS ÇALIŞ ADA TEMASI =====================
+     1) Karakter seçimi hesaba bağlı: "Karakterini seç" sadece sunucu bu hesapta karakter OLMADIĞINI
+        kesin söylerse açılır. Bağlantı hatasında asla sorulmaz, sunucudaki seçim ezilmez.
+     2) Oyun verisi sunucu sınırını (200.000 karakter) aşmasın: cihaza özel büyük listeler sunucuya gönderilmez.
+     3) Ders Çalış konu ekranı (anlatım, örnek cümleler, test) Macera Adaları temasında.
+     ================================================================================================= -->
+<style>
+/* ---------- Ders Çalış konu ekranı · Macera Adaları teması (sadece ada görünümü açıkken) ---------- */
+body.dc-ada #tab-derscalis #dcScreenDetail{background:linear-gradient(180deg,#bae6fd 0,#7dd3fc 140px,#fef3c7 141px,#fde68a 100%)!important;border-radius:26px;padding:12px 10px 20px!important;position:relative;overflow:hidden}
+body.dc-ada #tab-derscalis #dcScreenDetail::before{content:"";position:absolute;left:0;right:0;top:118px;height:30px;background:radial-gradient(circle at 10px -4px,transparent 12px,#fde68a 13px) 0 0/28px 30px repeat-x;opacity:.9;pointer-events:none}
+body.dc-ada #tab-derscalis #dcScreenDetail > *{position:relative}
+body.dc-ada #tab-derscalis .dc-topic-header{background:#fff7ed!important;border:4px solid #92400e!important;border-radius:18px!important;box-shadow:0 6px 0 #92400e!important;padding:12px 14px!important;margin-bottom:14px!important;color:#78350f!important}
+body.dc-ada #tab-derscalis .dc-topic-header::before{content:"🪵";position:absolute;left:-6px;top:-14px;font-size:22px;transform:rotate(-20deg)}
+body.dc-ada #tab-derscalis .dc-th-eyebrow{color:#b45309!important;font-weight:900!important;letter-spacing:.3px}
+body.dc-ada #tab-derscalis #dcThTitle{color:#78350f!important;font-weight:900!important}
+body.dc-ada #tab-derscalis .dc-bilmiyordum-btn{background:#fef3c7!important;color:#92400e!important;border:2px solid #d97706!important;border-radius:999px!important;font-weight:900!important}
+body.dc-ada #tab-derscalis .dc-bilmiyordum-btn.aktif,body.dc-ada #tab-derscalis .dc-bilmiyordum-btn.active{background:#f59e0b!important;color:#fff!important}
+body.dc-ada #tab-derscalis .dc-topic-img{border-radius:20px!important;border:4px solid #fff!important;box-shadow:0 8px 0 rgba(3,105,161,.25)!important}
+/* sekmeler: üç tahta tabela */
+body.dc-ada #tab-derscalis .dc-tabbar{background:transparent!important;gap:8px!important;padding:0!important;margin:6px 0 12px!important;border:0!important;box-shadow:none!important}
+body.dc-ada #tab-derscalis .dc-tab-btn{background:linear-gradient(180deg,#d6a26b,#b7793f)!important;color:#fff7ed!important;border:3px solid #78350f!important;border-radius:14px!important;box-shadow:0 4px 0 #78350f!important;font-weight:900!important;text-shadow:0 1px 0 #78350f}
+body.dc-ada #tab-derscalis .dc-tab-btn.active{background:linear-gradient(180deg,#4ade80,#16a34a)!important;border-color:#14532d!important;box-shadow:0 4px 0 #14532d!important;transform:translateY(-2px)}
+body.dc-ada #tab-derscalis .dc-tab-btn svg{stroke:currentColor}
+/* anlatım: parşömen */
+body.dc-ada #tab-derscalis #dcAnlatimIcerik.dc-content-card{background:linear-gradient(180deg,#fffbeb,#fef3c7)!important;border:2px dashed #b45309!important;border-radius:22px!important;box-shadow:0 8px 0 rgba(146,64,14,.25),inset 0 0 40px rgba(217,119,6,.12)!important;color:#3f2a14!important;padding:18px 16px!important;position:relative}
+body.dc-ada #tab-derscalis #dcAnlatimIcerik.dc-content-card::before{content:"📜";position:absolute;right:12px;top:-16px;font-size:28px}
+body.dc-ada #tab-derscalis #dcAnlatimIcerik h1,body.dc-ada #tab-derscalis #dcAnlatimIcerik h2,body.dc-ada #tab-derscalis #dcAnlatimIcerik h3,body.dc-ada #tab-derscalis #dcAnlatimIcerik h4{color:#92400e!important;font-weight:900!important}
+body.dc-ada #tab-derscalis #dcAnlatimIcerik b,body.dc-ada #tab-derscalis #dcAnlatimIcerik strong{color:#b45309!important}
+body.dc-ada #tab-derscalis #dcAnlatimIcerik li::marker{color:#16a34a}
+body.dc-ada #tab-derscalis .dc-uyg-kontrol-btn#dcOkudumBtn:not([disabled]){background:linear-gradient(135deg,#22c55e,#15803d)!important;box-shadow:0 5px 0 #14532d!important;border-radius:16px!important;font-weight:900!important}
+body.dc-ada #tab-derscalis .dc-uyg-kontrol-btn#dcOkudumBtn.dz-bekliyor,body.dc-ada #tab-derscalis .dc-uyg-kontrol-btn#dcOkudumBtn[disabled]{border-radius:16px!important;font-weight:900!important;background:#e7e5e4!important;box-shadow:0 4px 0 #a8a29e!important;color:#57534e!important;cursor:not-allowed!important}
+/* Örnekler ve Test panelleri sayfada konu ekranının dışında duruyor: aynı kumsal zemini onlara da ver */
+body.dc-ada #tab-derscalis #dcTab-ornek.active,body.dc-ada #tab-derscalis #dcTab-test.active{background:linear-gradient(180deg,#fef3c7,#fde68a)!important;border-radius:0 0 26px 26px;padding:14px 10px 20px!important;margin-top:-14px}
+/* örnek cümleler: şişedeki mesajlar */
+body.dc-ada #tab-derscalis #dcOrnekIcerik.dc-content-card{background:linear-gradient(180deg,#e0f2fe,#bae6fd)!important;border:3px solid #0284c7!important;border-radius:22px!important;box-shadow:0 8px 0 rgba(3,105,161,.3)!important;padding:16px 14px!important}
+body.dc-ada #tab-derscalis #dcOrnekIcerik h3{color:#075985!important;font-weight:900!important}
+body.dc-ada #tab-derscalis #dcOrnekIcerik h3::before{content:"🍾 "}
+body.dc-ada #tab-derscalis .dc-example-row{background:#fff!important;border:0!important;border-radius:18px 18px 18px 6px!important;box-shadow:0 4px 0 #7dd3fc!important;padding:12px 12px 12px 60px!important;margin-bottom:10px!important;position:relative;min-height:56px}
+body.dc-ada #tab-derscalis .dc-ex-play{position:absolute!important;left:10px;top:50%;transform:translateY(-50%);width:40px!important;height:40px!important;border-radius:50%!important;border:6px solid #f97316!important;background:#fff!important;box-shadow:0 0 0 3px #fff,0 4px 8px rgba(0,0,0,.15)!important;font-size:14px!important;display:grid!important;place-items:center}
+body.dc-ada #tab-derscalis .dc-ex-en{color:#0c4a6e!important;font-weight:900!important;font-size:15px!important}
+body.dc-ada #tab-derscalis .dc-ex-tr{color:#0369a1!important;font-weight:700!important}
+/* test: taş tabletler */
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-q{background:linear-gradient(180deg,#f1f5f9,#e2e8f0)!important;border:3px solid #64748b!important;border-radius:20px!important;box-shadow:0 6px 0 #475569!important;padding:14px!important;margin-bottom:14px!important}
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-q-text{color:#1e293b!important;font-weight:900!important;font-size:15px!important}
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-q-text::before{content:"🗿 "}
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-opt{background:#fff!important;border:2.5px solid #cbd5e1!important;border-radius:14px!important;box-shadow:0 3px 0 #94a3b8!important;color:#1e293b!important;font-weight:800!important}
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-opt:hover{background:#fefce8!important;border-color:#facc15!important}
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-opt.dogru{background:#dcfce7!important;border-color:#16a34a!important;color:#14532d!important;box-shadow:0 3px 0 #16a34a!important}
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-opt.yanlis{background:#fee2e2!important;border-color:#dc2626!important;color:#7f1d1d!important;box-shadow:0 3px 0 #dc2626!important}
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-bitir-btn{background:linear-gradient(135deg,#f59e0b,#ea580c)!important;color:#fff!important;border:0!important;border-radius:16px!important;box-shadow:0 5px 0 #9a3412!important;font-weight:900!important}
+body.dc-ada #tab-derscalis #dcTestIcerik .dc-quiz-bitir-btn::after{content:" 🧰"}
+/* Konu Macerası kartı: hazine haritası */
+body.dc-ada #tab-derscalis .km-baslangic{background:linear-gradient(135deg,#0ea5e9,#16a34a)!important;border:3px solid #fff;box-shadow:0 8px 0 rgba(3,105,161,.3)!important}
+body.dc-ada #tab-derscalis .km-baslangic .i::after{content:"🗺️"}
+body.dc-ada #tab-derscalis .km-baslangic .i{font-size:0!important}
+body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
+@media (prefers-reduced-motion:reduce){body.dc-ada #tab-derscalis .dc-tab-btn.active{transform:none}}
+</style>
+<script>
+(function () {
+  const kucuk = x => String(x || '').trim().toLocaleLowerCase('tr');
 
+  /* ================= 1) KARAKTER: hesaba bağlı, cihaza değil ================= */
+  /* "Sor" izni sadece sunucunun kesin cevabıyla verilir */
+  let sorIzni = false;
+  const orgSil = Storage.prototype.removeItem;
+  Storage.prototype.removeItem = function (k) {
+    if (this === window.sessionStorage && k === 'ing_ka_soruldu' && !sorIzni) return;   /* eski kodun erken izni yok sayılır */
+    return orgSil.apply(this, arguments);
+  };
+  try { sessionStorage.setItem('ing_ka_soruldu', '1'); } catch (e) {}
+  let dogrulanan = '';
+  async function karakterDogrula() {
+    let ad = (typeof yoIsim !== 'undefined' && yoIsim) || '';
+    if (!ad || kucuk(ad) === 'teacher' || dogrulanan === kucuk(ad)) return;
+    if (typeof yo === 'undefined' || !yo) return;
+    let r, d;
+    try { r = await fetch(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(ad)}&anahtar=yo&_=${Date.now()}`); if (!r.ok) return; d = await r.json(); }
+    catch (e) { return; }                                   /* bağlantı yok: karar verme, sonra tekrar dene */
+    if (r.headers && r.headers.get('X-Diji-Cevrimdisi')) return;   /* çevrimdışı yedekten gelen cevaba güvenme */
+    let sunucu = null; try { sunucu = d && d.deger ? JSON.parse(d.deger) : null; } catch (e) { sunucu = null; }
+    let sk = sunucu && sunucu.karakter && sunucu.karakter.cins ? sunucu.karakter : null;
+    dogrulanan = kucuk(ad);
+    if (sk) {
+      /* Sunucuda karakter var: bu cihazda yoksa ya da farklıysa sunucudakini kullan */
+      if (!yo.karakter || !yo.karakter.cins || yo.karakter.cins !== sk.cins) {
+        yo.karakter = sk;
+        try { localStorage.setItem('ing_yo_' + ad, JSON.stringify(yo)); } catch (e) {}
+        if (typeof window.yoAvatarUygula === 'function') window.yoAvatarUygula();
+      }
+      try { sessionStorage.setItem('ing_ka_soruldu', '1'); } catch (e) {}
+      document.querySelectorAll('.ka-perde').forEach(p => { if (p.querySelector('.ka-cins')) p.remove(); });   /* yanlışlıkla açılmışsa kapat */
+    } else if (yo.karakter && yo.karakter.cins) {
+      /* Bu cihazda seçilmiş ama sunucuya hiç ulaşmamış: şimdi gönder */
+      if (typeof yoSunucuyaGonder === 'function') yoSunucuyaGonder();
+    } else if (d === null || (d && !sk)) {
+      /* Sunucu kesin olarak "karakter yok" dedi: artık sorulabilir */
+      sorIzni = true; try { sessionStorage.removeItem('ing_ka_soruldu'); } catch (e) {} sorIzni = false;
+    }
+  }
+  setInterval(() => { let p = document.getElementById('panel-alani'); if (p && p.style.display === 'block') karakterDogrula(); }, 2500);
+  /* Kişi değişirse (çıkış / başka hesap) yeniden doğrula */
+  let sonKisi = '';
+  setInterval(() => { let a = kucuk(typeof yoIsim !== 'undefined' ? yoIsim : ''); if (a !== sonKisi) { sonKisi = a; dogrulanan = ''; try { sessionStorage.setItem('ing_ka_soruldu', '1'); } catch (e) {} } }, 1000);
+
+  /* "En az 30 saniye oku" geri sayımı sürerken düğme pasif görünsün */
+  setInterval(() => { let b = document.getElementById('dcOkudumBtn'); if (b) b.classList.toggle('dz-bekliyor', /⏳/.test(b.textContent || '')); }, 500);
+
+  /* ================= 2) VERİ BOYUTU: sunucuya giden oyun verisi küçük kalsın ================= */
+  const CIHAZA_OZEL = ['gk', 'gkZk', 'dcTekrar'];        /* tekrar etmeyen kelime listeleri vb. sadece bu cihazda */
+  /* Sunucudan gelen veri bu cihazın listelerini silmesin */
+  let orgAl = window.yoSunucudanAl;
+  if (typeof orgAl === 'function') window.yoSunucudanAl = async function () {
+    let sakla = {};
+    try { if (typeof yo !== 'undefined' && yo) CIHAZA_OZEL.forEach(k => { if (yo[k]) sakla[k] = yo[k]; }); } catch (e) {}
+    let r = await orgAl.apply(this, arguments);
+    try { if (typeof yo !== 'undefined' && yo) { let ek = false; Object.keys(sakla).forEach(k => { if (!yo[k]) { yo[k] = sakla[k]; ek = true; } }); if (ek && typeof yoIsim !== 'undefined') localStorage.setItem('ing_yo_' + yoIsim, JSON.stringify(yo)); } } catch (e) {}
+    return r;
+  };
+  const orgFetch = window.fetch;
+  window.fetch = function (url, opt) {
+    try {
+      if (opt && typeof opt.body === 'string' && opt.body.indexOf('"ekVeriKaydet"') !== -1) {
+        let b = JSON.parse(opt.body);
+        if (b.islem === 'ekVeriKaydet' && b.anahtar === 'yo' && typeof b.deger === 'string') {
+          let v = JSON.parse(b.deger), degisti = false;
+          CIHAZA_OZEL.forEach(k => { if (k in v) { delete v[k]; degisti = true; } });
+          if (Array.isArray(v.dcOdul) && v.dcOdul.length > 300) { v.dcOdul = v.dcOdul.slice(-300); degisti = true; }
+          if (degisti) { b.deger = JSON.stringify(v); opt = Object.assign({}, opt, { body: JSON.stringify(b) }); }
+          if (b.deger.length > 190000) console.warn('Oyun verisi sınıra yaklaştı:', b.deger.length);
+        }
+      }
+    } catch (e) {}
+    return orgFetch.call(this, url, opt);
+  };
+})();
+</script>
+                
 </body>
         </html>
