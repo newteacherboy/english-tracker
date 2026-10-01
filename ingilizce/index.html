@@ -24808,11 +24808,26 @@ window.ocEnerjiHarca = async function (n) {
 </script>
 
 
-<!-- ===================== DOLAP · Aşama 6 =====================
+<!-- ===================== DOLAP · v2: KARAKTER & GİYİM (Atölye ile birleşik) =====================
+     • Ayrı Dolap girişi yok: Mağaza'daki Atölye artık tek "Karakter & Giyim" bölümü (saç, yüz, şapka, dost, kıyafetler, kombinler, sandıklar).
+     • Sahip olunan öğeye dokununca hemen giyilir ve kaydedilir; profil resmi ve Vitrinim tam boy giydirilmiş karakteri gösterir.
+     • Kombinlerde başörtüsü yok: baş (saç ya da başörtüsü) öğrencinin kendi seçimi.
      Tam boy karakter, ~140 öğe (başörtüleri, etekler, elbiseler…), kombinler, sandıklar, çıkartmalar.
      Karakter hiçbir zaman kıyafetsiz çizilmez: üst ve alt her zaman bir kıyafetle doldurulur.
      ============================================================ -->
 <style>
+.dl-gomulu{font-family:Nunito,system-ui,sans-serif;color:#2d2350;background:linear-gradient(180deg,#f6f2ff,#fdf2f8);border-radius:22px;padding:4px 0 10px}
+.dl-gomulu .dl-ana{min-height:0;padding:0 10px 10px}
+.dl-gomulu .dl-izgara{max-height:none;overflow:visible}
+.dl-gomulu .dl-ust{padding:10px}
+.dl-alt-baslik{grid-column:1/-1;font-size:12.5px;font-weight:900;color:#6d28d9;margin:6px 2px 0}
+.dl-oge .mini{width:56px;height:56px;border-radius:14px;overflow:hidden;background:#f5f3ff;display:grid;place-items:center}
+.dl-oge .mini svg{width:56px;height:56px}
+.dl-kart{grid-column:1/-1;background:#fff;border:2px solid #efe8ff;border-radius:16px;padding:12px;display:flex;gap:10px;align-items:center;font-size:13px;font-weight:800}
+.dl-kart button{margin-left:auto;border:0;border-radius:12px;padding:9px 12px;font-family:inherit;font-weight:900;font-size:13px;color:#fff;background:linear-gradient(135deg,#0ea5e9,#2563eb);cursor:pointer;white-space:nowrap}
+.dl-kart small{display:block;color:#8a78b8;font-weight:700}
+.yildiz-maskot.dl-tamboy{width:auto!important;height:auto!important;border-radius:0!important;background:none!important;box-shadow:none!important;overflow:visible!important;display:flex;justify-content:center}
+.yildiz-maskot.dl-tamboy svg{filter:drop-shadow(0 8px 10px rgba(76,29,149,.25))}
 .dl-perde{position:fixed;inset:0;z-index:100000070;background:linear-gradient(180deg,#f6f2ff,#fdf2f8);display:flex;flex-direction:column;font-family:Nunito,system-ui,sans-serif;color:#2d2350;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .dl-ust{display:flex;align-items:center;gap:10px;padding:10px 14px;max-width:760px;width:100%;margin:0 auto}
 .dl-ust h2{margin:0;font-size:20px;font-weight:900;flex:1;color:#2d2350}
@@ -24965,11 +24980,15 @@ window.ocEnerjiHarca = async function (n) {
     ['🎨', 'Ressam', 'ozel', [bul('ust', 'tunik', 'turkuaz'), bul('alt', 'kot', 'mavi'), bul('bas', 'klasik', 'pembe', 'cicek'), bul('ayak', 'sandalet', 'krem')]],
     ['❄️', 'Kış kombini', 'ozel', [bul('ust', 'kazak', 'bordo'), bul('alt', 'uzunetek', 'siyah'), bul('dis', 'mont', 'lacivert'), bul('ayak', 'bot', 'kahve'), bul('aks', 'atki', 'kirmizi')]],
     ['🌧️', 'Yağmurlu gün', 'ozel', [bul('ust', 'tisort', 'mavi'), bul('alt', 'kot', 'lacivert'), bul('dis', 'yagmurluk', 'sari'), bul('ayak', 'bot', 'siyah')]],
-    ['🧕', 'Şık başörtülü', 'ozel', [bul('bas', 'sal', 'bordo'), bul('tek', 'ferace', 'lacivert'), bul('ayak', 'babet', 'krem'), bul('aks', 'canta', 'mor')]],
+    ['✨', 'Şık kombin', 'ozel', [bul('tek', 'ferace', 'lacivert'), bul('ayak', 'babet', 'krem'), bul('aks', 'canta', 'mor')]],
     ['🚒', 'İtfaiyeci', 'efsane', [bul('dis', 'itfaiye', 'kirmizi'), bul('ust', 'tisort', 'kirmizi'), bul('alt', 'pantolon', 'siyah'), bul('ayak', 'bot', 'siyah')]],
     ['🪡', 'Yöresel', 'efsane', [bul('ust', 'yoresel', 'bordo'), bul('alt', 'uzunetek', 'bordo'), bul('bas', 'sal', 'krem'), bul('ayak', 'babet', 'kirmizi')]],
     ['🎉', 'Bayramlık', 'efsane', [bul('tek', 'elbise', 'mor', 'yildiz'), bul('bas', 'sal', 'sari', 'yildiz'), bul('ayak', 'bot', 'mor', 'yildiz'), bul('aks', 'rozet', 'sari')]]
-  ].map(([ikon, ad, sv, parca]) => ({ id: 'k:' + ad, ikon, ad, sv, parca: parca.filter(Boolean), f: KOMBIN_FIYAT[sv] }));
+  ].map(([ikon, ad, sv, parca]) => {
+    parca = parca.filter(p => p && p.kat !== 'bas');             /* baş seçimi öğrencinin: kombinde başörtüsü yok */
+    let f = Math.max(150, Math.round(parca.reduce((t, p) => t + p.f, 0) * 0.75 / 10) * 10);
+    return { id: 'k:' + ad, ikon, ad, sv, parca, f };
+  });
 
   /* ================= ÇİZİM =================
      Büst (200×200) avatarSVG'nin içinden çağrılır; tam boy (200×390) sadece Dolap'ta. */
@@ -25095,12 +25114,26 @@ window.ocEnerjiHarca = async function (n) {
 
   /* ================= DURUM ================= */
   const kk = () => (yoVar() && yo.karakter && yo.karakter.cins) ? yo.karakter : null;
-  const sahip = id => { let k = kk(); return !!(k && (k.sahip || []).includes('d:' + id)); };
-  function sahiplen(id) { let k = kk(); k.sahip = k.sahip || []; if (!k.sahip.includes('d:' + id)) k.sahip.push('d:' + id); }
-  function giyiliMi(o) { let s = kk() && kk().s; return !!(s && s[o.kat] === o.id); }
+  const ATOLYE = { sac: ['sac', 'sacRenk'], yuz: ['ten', 'goz', 'agiz', 'detay'], sapka: ['sapka', 'gozluk'], dost: ['dost', 'arka', 'cerceve'], klasik: ['kiyafet'] };
+  const KATALOG_ = () => window.KA_KATALOG || {};
+  /* Atölye öğesi kimliği: "a|kat|id" (sahiplik Atölye ile aynı: "kat:id") */
+  function atolyeOgeleri(grup) {
+    let K = KATALOG_(), cins = kk() ? kk().cins : 'k', out = [];
+    (ATOLYE[grup] || []).forEach(kat => { let k = K[kat]; if (!k) return;
+      out.push({ baslik: `${k.ikon} ${k.ad}`, liste: k.liste.filter(x => !x.c || x.c === cins).map(x => ({ id: `a|${kat}|${x.id}`, atolye: true, kat, itemId: x.id, ad: x.ad, f: x.f || 0, sv: !x.f ? 'temel' : x.f <= 100 ? 'temel' : x.f <= 250 ? 'ozel' : 'efsane' })) }); });
+    return out;
+  }
+  function ogeBul(id) {
+    if (OGE_ID[id]) return OGE_ID[id];
+    if (String(id).startsWith('a|')) { let [, kat, itemId] = id.split('|'), k = KATALOG_()[kat], x = k && k.liste.find(y => y.id === itemId); if (x) return { id, atolye: true, kat, itemId, ad: x.ad, f: x.f || 0, sv: !x.f ? 'temel' : x.f <= 100 ? 'temel' : x.f <= 250 ? 'ozel' : 'efsane' }; }
+    return KOMBIN.find(x => x.id === id) || null;
+  }
+  const sahip = id => { let k = kk(); if (!k) return false; let o = ogeBul(id); if (o && o.atolye) return o.f === 0 || (k.sahip || []).includes(o.kat + ':' + o.itemId); return (k.sahip || []).includes('d:' + id); };
+  function sahiplen(id) { let k = kk(); k.sahip = k.sahip || []; let o = ogeBul(id), anahtar = o && o.atolye ? o.kat + ':' + o.itemId : 'd:' + id; if (!k.sahip.includes(anahtar)) k.sahip.push(anahtar); }
+  function giyiliMi(o, s) { s = s || (kk() && kk().s) || {}; if (o.atolye) return o.kat === 'kiyafet' ? (s.kiyafet === o.itemId && !s.ust && !s.tek) : s[o.kat] === o.itemId; return s[o.kat] === o.id; }
   function giy(s, o) {
+    if (o.atolye) { s[o.kat] = o.itemId; if (o.kat === 'kiyafet') { s.ust = ''; s.tek = ''; } return; }
     s[o.kat] = o.id;
-    if (o.kat === 'tek') { /* üst ve alt korunur ama gizlenir */ }
     if (o.kat === 'ust' || o.kat === 'alt') s.tek = '';
   }
   function cikar(s, kat) { s[kat] = ''; }
@@ -25112,9 +25145,9 @@ window.ocEnerjiHarca = async function (n) {
   }
   function fiyatHesapla(o, kombinMi) {
     let f = o.f, notlar = [];
-    if (yoVar()) {
+    if (yoVar() && f > 0) {
       yo.dolapIlkAlim = yo.dolapIlkAlim || {};
-      let kat = kombinMi ? 'kombin' : o.kat;
+      let kat = kombinMi ? 'kombin' : (o.atolye ? 'a-' + o.kat : o.kat);
       if (!yo.dolapIlkAlim[kat]) { f = Math.round(f / 2); notlar.push('İlk alım %50'); }
       let v = vitrinOgesi(); if (!kombinMi && v && v.id === o.id) { f = Math.round(f * 0.7); notlar.push('Günün vitrini %30'); }
     }
@@ -25123,116 +25156,134 @@ window.ocEnerjiHarca = async function (n) {
   function hosGeldinUygun() {
     if (!yoVar()) return false;
     if (!yo.dolapIlkGun) { yo.dolapIlkGun = bugun(); if (typeof yoKaydet === 'function') yoKaydet(); }
-    let gun = (Date.parse(bugun()) - Date.parse(yo.dolapIlkGun)) / 86400000;
-    return gun <= 7 && !yo.dolapHosGeldin;
+    return (Date.parse(bugun()) - Date.parse(yo.dolapIlkGun)) / 86400000 <= 7 && !yo.dolapHosGeldin;
   }
 
-  /* ================= ARAYÜZ ================= */
-  let D = null;   /* { sekme, deneme (s kopyası), secili } */
-  function ac() {
+  /* ================= ARAYÜZ (Mağaza'daki Atölye alanına gömülü) ================= */
+  let D = null;
+  function ac(hedef) {
     if (!yoVar()) { toast('Önce giriş yapmalısın.'); return; }
-    if (!kk()) { toast('Önce karakterini seç! 🎨'); if (typeof magazaAc === 'function') magazaAc(); return; }
-    let s = Object.assign({}, kk().s);
-    D = { sekme: 'vitrin', deneme: s, secili: null };
-    let p = document.createElement('div'); p.className = 'dl-perde'; p.id = 'dlPerde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Dolap');
-    p.innerHTML = `<div class="dl-ust"><button class="dl-kapat" id="dlKapat" aria-label="Dolabı kapat">✕</button><h2>👗 Dolap</h2><span class="dl-altin" id="dlAltin"></span></div>
-      <div class="dl-ana"><div class="dl-sahne"><div class="dl-onizleme" id="dlOnizleme"></div><div class="dl-dugmeler"><button class="dl-sahne-btn kaydet" id="dlKaydet">✓ Böyle kalsın</button><button class="dl-sahne-btn geri" id="dlGeriAl">↺ Geri al</button></div></div>
-      <div class="dl-sag"><div class="dl-sekmeler" id="dlSekmeler" role="tablist"></div><div class="dl-izgara" id="dlIzgara"></div><div class="dl-eylem" id="dlEylem" style="display:none"></div></div></div>`;
-    document.body.appendChild(p);
-    $('dlKapat').onclick = kapat;
-    $('dlKaydet').onclick = kaydet;
+    if (!hedef) { if (typeof magazaAc === 'function') magazaAc(); return; }   /* tek yer: Mağaza */
+    if (!kk()) { eskiAtolye && eskiAtolye(); return; }                          /* önce kız/erkek seçimi */
+    if (!D || D.hedef !== hedef) D = { sekme: 'vitrin', deneme: Object.assign({}, kk().s), secili: null, hedef };
+    hedef.innerHTML = `<div class="dl-gomulu">
+      <div class="dl-ust"><h2>🎨 Karakter & Giyim</h2><span class="dl-altin" id="dlAltin"></span></div>
+      <div class="dl-ana"><div class="dl-sahne"><div class="dl-onizleme" id="dlOnizleme"></div><div class="dl-dugmeler"><button class="dl-sahne-btn geri" id="dlGeriAl">↺ Denemeyi bırak</button></div></div>
+      <div class="dl-sag"><div class="dl-sekmeler" id="dlSekmeler" role="tablist"></div><div class="dl-izgara" id="dlIzgara"></div><div class="dl-eylem" id="dlEylem" style="display:none"></div></div></div></div>`;
     $('dlGeriAl').onclick = () => { D.deneme = Object.assign({}, kk().s); D.secili = null; ciz(); };
     ciz();
   }
-  function kapat() { let p = $('dlPerde'); if (p) p.remove(); D = null; }
-  function kaydet() {
-    /* sadece sahip olunan öğeler kaydedilir; olmayanlar eski hâline döner */
-    let s = D.deneme, gercek = kk().s, kalanlar = [];
-    ['bas', 'ust', 'alt', 'tek', 'dis', 'ayak', 'aks', 'cik'].forEach(k => { if (s[k] && !sahip(s[k])) { kalanlar.push(OGE_ID[s[k]] ? OGE_ID[s[k]].ad : s[k]); s[k] = gercek[k] || ''; } });
+  function kaydet(mesaj) {
+    let s = D.deneme, gercek = kk().s;
+    /* sadece sahip olunanlar kalıcı olur */
+    ['bas', 'ust', 'alt', 'tek', 'dis', 'ayak', 'aks', 'cik'].forEach(k => { if (s[k] && !sahip(s[k])) s[k] = gercek[k] || ''; });
+    Object.keys(ATOLYE).forEach(g => ATOLYE[g].forEach(kat => { if (s[kat] && !sahip(`a|${kat}|${s[kat]}`)) s[kat] = gercek[kat]; }));
     Object.assign(gercek, s); delete gercek._tamBoy;
+    /* profil resmi giydirilen karakter olsun (koleksiyon karakteri seçiliyse ona dönülmez, Profil'den yeniden seçilebilir) */
+    let profilDegisti = false;
+    if (yo.profilKrk) { yo.profilKrk = ''; profilDegisti = true; }
     if (typeof yoKaydet === 'function') yoKaydet();
     if (typeof yoAvatarUygula === 'function') yoAvatarUygula();
-    toast(kalanlar.length ? `✓ Kaydedildi. Satın almadığın ${kalanlar.length} parça çıkarıldı.` : '✓ Yeni görünümün kaydedildi!');
+    if (mesaj !== false) toast(mesaj || (profilDegisti ? '✓ Kaydedildi. Profil resmin artık giydirdiğin karakterin!' : '✓ Görünümün kaydedildi!'));
+    D.deneme = Object.assign({}, gercek);
     ciz();
   }
   function onizle() { $('dlOnizleme').innerHTML = dolapTamBoySVG(D.deneme, kk().cins, 300); $('dlAltin').innerText = `🪙 ${yo.altin || 0}`; }
-  const SEKMELER = [['vitrin', '⭐ Vitrin'], ['bas', '🧕 Baş'], ['ust', '👕 Üst'], ['alt', '👖 Alt'], ['tek', '👗 Tek parça'], ['dis', '🧥 Dış'], ['ayak', '👟 Ayak'], ['aks', '🎒 Aksesuar'], ['kombin', '🧥 Kombinler'], ['cik', '🏷️ Çıkartma'], ['sandik', '🎁 Sandıklar']];
-  function ogeKart(o, kombinMi) {
-    let has = kombinMi ? o.parca.every(p => sahip(p.id)) : sahip(o.id), fh = fiyatHesapla(o, kombinMi);
-    let ikon = kombinMi ? o.ikon : o.kat === 'cik' ? o.emoji : `<span style="display:inline-block;width:34px;height:34px;border-radius:10px;background:${o.renk};border:2px solid ${renkK(o.renk, .2)}"></span>`;
-    let giyili = !kombinMi && giyiliMi(o);
-    return `<button type="button" class="dl-oge${D.secili && D.secili.id === o.id ? ' secili' : ''}${giyili ? ' giyili' : ''}" data-id="${kac(o.id)}" aria-label="${kac(o.ad)}${has ? ', sende var' : ', ' + fh.f + ' altın'}">
-      <span class="seviye sv-${o.sv}">${o.sv === 'efsane' ? 'EFSANE' : o.sv === 'ozel' ? 'ÖZEL' : 'TEMEL'}</span>
-      <span style="font-size:28px;line-height:1.2">${ikon}</span><span class="ad">${kac(o.ad)}</span>
-      <span class="fiyat${has ? ' sahip' : ''}">${has ? '✓ Sende' : (fh.f < o.f ? `<s style="opacity:.6">${o.f}</s> ` : '') + fh.f + ' 🪙'}</span></button>`;
+  const SEKMELER = [['vitrin', '⭐ Vitrin'], ['sac', '💇 Saç'], ['bas', '🧕 Başörtüsü'], ['ust', '👕 Üst'], ['alt', '👖 Alt'], ['tek', '👗 Tek parça'], ['dis', '🧥 Dış'], ['ayak', '👟 Ayak'],
+    ['sapka', '🎩 Şapka · gözlük'], ['aks', '🎒 Aksesuar'], ['yuz', '🙂 Yüz'], ['dost', '🐾 Dost · arka plan'], ['kombin', '🧥 Kombinler'], ['cik', '🏷️ Çıkartma'], ['sandik', '🎁 Sandıklar']];
+  function ikonHtml(o) {
+    if (o.parca) return `<span style="font-size:28px;line-height:1.2">${o.ikon}</span>`;
+    if (o.kat === 'cik') return `<span style="font-size:28px;line-height:1.2">${o.emoji}</span>`;
+    if (o.atolye) { try { let V = window.KA_VARSAYILAN[kk().cins], s = Object.assign({}, V, D.deneme, { [o.kat]: o.itemId, bas: '' }); if (o.kat === 'kiyafet') { s.ust = ''; s.tek = ''; } return `<span class="mini">${window.avatarSVG(s, 'c', 56, kk().cins)}</span>`; } catch (e) { return '<span class="mini">🎨</span>'; } }
+    return `<span style="display:inline-block;width:34px;height:34px;border-radius:10px;background:${o.renk};border:2px solid ${renkK(o.renk, .2)}"></span>`;
+  }
+  function ogeKart(o) {
+    let kombinMi = !!o.parca, has = kombinMi ? o.parca.every(p => sahip(p.id)) : sahip(o.id), fh = fiyatHesapla(o, kombinMi);
+    let giyili = !kombinMi && giyiliMi(o, D.deneme);
+    let etiket = o.f === 0 ? 'Ücretsiz' : has ? '✓ Sende' : (fh.f < o.f ? `<s style="opacity:.6">${o.f}</s> ` : '') + fh.f + ' 🪙';
+    return `<button type="button" class="dl-oge${D.secili && D.secili.id === o.id ? ' secili' : ''}${giyili ? ' giyili' : ''}" data-id="${kac(o.id)}" aria-label="${kac(o.ad)}${has || o.f === 0 ? ', sende var' : ', ' + fh.f + ' altın'}">
+      ${o.f > 0 ? `<span class="seviye sv-${o.sv}">${o.sv === 'efsane' ? 'EFSANE' : o.sv === 'ozel' ? 'ÖZEL' : 'TEMEL'}</span>` : ''}
+      ${ikonHtml(o)}<span class="ad">${kac(o.ad)}</span><span class="fiyat${has || o.f === 0 ? ' sahip' : ''}">${etiket}</span></button>`;
   }
   function ciz() {
-    if (!D) return;
+    if (!D || !D.hedef || !document.body.contains(D.hedef)) return;
     onizle();
     $('dlSekmeler').innerHTML = SEKMELER.map(([k, ad]) => `<button type="button" role="tab" class="dl-sekme${D.sekme === k ? ' aktif' : ''}" aria-selected="${D.sekme === k}" data-s="${k}">${ad}</button>`).join('');
     $('dlSekmeler').querySelectorAll('.dl-sekme').forEach(b => b.onclick = () => { D.sekme = b.dataset.s; D.secili = null; ciz(); });
-    let G = $('dlIzgara'), html = '';
-    if (D.sekme === 'vitrin') {
+    let G = $('dlIzgara'), html = '', S = D.sekme;
+    const bolum = (baslik, liste) => (baslik ? `<div class="dl-alt-baslik">${baslik}</div>` : '') + liste.map(ogeKart).join('');
+    if (S === 'vitrin') {
       let v = vitrinOgesi();
-      if (hosGeldinUygun()) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)"><span style="font-size:34px">🎁</span><span><b>Hoş Geldin Paketi</b><small>Okul kombini (4 parça) · normalde 900 🪙 · ilk haftana özel</small></span><button type="button" id="dlHosGeldin">120 🪙</button></div>`;
+      if (yo.profilKrk) html += `<div class="dl-kart"><span style="font-size:28px">🐉</span><span>Profilinde şu an koleksiyon karakterin görünüyor.<small>Giydirdiğin karakterin profilde görünsün mü?</small></span><button type="button" id="dlProfilBen">Kendi karakterim</button></div>`;
+      if (hosGeldinUygun()) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)"><span style="font-size:34px">🎁</span><span><b>Hoş Geldin Paketi</b><small>Okul kombini · ilk haftana özel</small></span><button type="button" id="dlHosGeldin">120 🪙</button></div>`;
       if (v) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#f59e0b,#ec4899)"><span style="font-size:34px">🛍️</span><span><b>Günün Vitrini: ${kac(v.ad)}</b><small>Bugün %30 indirimli · yarın değişir</small></span><button type="button" data-id="${kac(v.id)}" class="dlVitrinBtn">Göz at</button></div>`;
-      html += `<div class="dl-not">Her kategoride ilk alımın %50 indirimli! Bir kıyafeti denemek bedava: dokun, karakterinde gör.</div>`;
-      html += KOMBIN.slice(0, 4).map(k => ogeKart(k, true)).join('');
-    } else if (D.sekme === 'kombin') html += `<div class="dl-not">Kombin, parçaları tek tek almaktan yaklaşık %25 ucuz. Sahip olduğun parçalar da düşülmez, hepsi birden gelir.</div>` + KOMBIN.map(k => ogeKart(k, true)).join('');
-    else if (D.sekme === 'sandik') html += `<div class="dl-not">Sandıktan ne çıkacağı yazıyor. Zaten sahip olduğun bir öğe çıkarsa değerinin yarısı altın olarak geri gelir.</div>` +
+      html += `<div class="dl-kart"><span style="font-size:28px">🧊</span><span>Seri dondurucu · elinde ${yo.dondurucu || 0}/2<small>Bir gün giremezsen serin bozulmaz</small></span><button type="button" id="dlDondurucu">Al</button></div>`;
+      html += `<div class="dl-not">Sahip olduğun bir şeye dokun: hemen giyilir. Almadığın şeyleri bedava dene, beğenirsen al. Her kategoride ilk alım %50 indirimli!</div>`;
+      html += bolum('🧥 Öne çıkan kombinler', KOMBIN.slice(0, 4));
+    } else if (ATOLYE[S]) {
+      if (S === 'sapka' && D.deneme.bas) html += `<div class="dl-not">🧕 Başörtüsü takılıyken şapka görünmez.</div>`;
+      atolyeOgeleri(S).forEach(g => { html += bolum(g.baslik, g.liste); });
+    } else if (S === 'kombin') html += `<div class="dl-not">Kombin, parçaları tek tek almaktan %25 ucuz. Baş (saç ya da başörtüsü) senin seçimin, kombine dahil değil.</div>` + KOMBIN.map(ogeKart).join('');
+    else if (S === 'sandik') html += `<div class="dl-not">Sandıktan ne çıkacağı yazıyor. Zaten sahip olduğun bir öğe çıkarsa değerinin yarısı altın olarak geri gelir.</div>` +
       SANDIK.map((s, i) => `<button type="button" class="dl-oge dl-sandik" data-sandik="${i}" style="background:${s.renk}"><span style="font-size:34px">${s.ikon}</span><span class="ad">${s.ad}</span><span style="font-size:10.5px;font-weight:700;color:#64748b">${s.alt}</span><span class="fiyat">${s.f} 🪙</span></button>`).join('');
     else {
-      let liste = OGE.filter(o => o.kat === D.sekme);
-      let kat = KAT[D.sekme];
-      if (['bas', 'dis', 'aks', 'cik', 'tek'].includes(D.sekme)) html += `<button type="button" class="dl-oge" data-cikar="${D.sekme}"><span style="font-size:28px">🚫</span><span class="ad">${D.sekme === 'bas' ? 'Başörtüsü yok' : 'Çıkar'}</span><span class="fiyat sahip">Bedava</span></button>`;
-      if (D.sekme === 'ust' || D.sekme === 'alt') html += `<div class="dl-not">${kat.ikon} Karakterin hiçbir zaman kıyafetsiz kalmaz: ${D.sekme === 'ust' ? 'üst' : 'alt'} çıkarılınca okul kıyafetine döner.</div><button type="button" class="dl-oge" data-cikar="${D.sekme}"><span style="font-size:28px">🏫</span><span class="ad">Okul kıyafeti</span><span class="fiyat sahip">Bedava</span></button>`;
-      html += liste.map(o => ogeKart(o)).join('');
+      if (S === 'bas') html += `<button type="button" class="dl-oge${!D.deneme.bas ? ' giyili' : ''}" data-cikar="bas"><span style="font-size:28px">💇</span><span class="ad">Başörtüsü yok · saçım görünsün</span><span class="fiyat sahip">Bedava</span></button><div class="dl-not">Saç modelini "💇 Saç" sekmesinden seçebilirsin. Başörtüsü takınca saç görünmez.</div>`;
+      else if (['dis', 'aks', 'cik', 'tek'].includes(S)) html += `<button type="button" class="dl-oge" data-cikar="${S}"><span style="font-size:28px">🚫</span><span class="ad">Çıkar</span><span class="fiyat sahip">Bedava</span></button>`;
+      if (S === 'ust') html += `<div class="dl-not">👕 Karakterin hiçbir zaman kıyafetsiz kalmaz: üst çıkarılınca klasik kıyafete döner.</div>`;
+      if (S === 'alt') html += `<div class="dl-not">👖 Alt çıkarılınca okul pantolonuna döner.</div><button type="button" class="dl-oge" data-cikar="alt"><span style="font-size:28px">🏫</span><span class="ad">Okul pantolonu</span><span class="fiyat sahip">Bedava</span></button>`;
+      html += OGE.filter(o => o.kat === S).map(ogeKart).join('');
+      if (S === 'ust') atolyeOgeleri('klasik').forEach(g => { html += bolum('👕 Klasik üstler', g.liste); });
     }
     G.innerHTML = html;
     G.querySelectorAll('[data-id]').forEach(b => b.onclick = () => sec(b.dataset.id));
-    G.querySelectorAll('[data-cikar]').forEach(b => b.onclick = () => { cikar(D.deneme, b.dataset.cikar); D.secili = null; ciz(); });
+    G.querySelectorAll('[data-cikar]').forEach(b => b.onclick = () => { let k = b.dataset.cikar; cikar(D.deneme, k); let g = kk().s; g[k] = ''; if (k === 'ust' || k === 'alt') {} D.secili = null; kaydet(false); });
     G.querySelectorAll('[data-sandik]').forEach(b => b.onclick = () => sandikSor(+b.dataset.sandik));
     let hg = $('dlHosGeldin'); if (hg) hg.onclick = hosGeldinAl;
+    let pb = $('dlProfilBen'); if (pb) pb.onclick = () => { yo.profilKrk = ''; if (typeof yoKaydet === 'function') yoKaydet(); if (typeof yoAvatarUygula === 'function') yoAvatarUygula(); toast('✓ Profilinde artık giydirdiğin karakter görünüyor'); ciz(); };
+    let dd = $('dlDondurucu'); if (dd) dd.onclick = () => { if (typeof yoDondurucuAl === 'function') { yoDondurucuAl(); setTimeout(ciz, 400); } };
     eylemCiz();
   }
   function sec(id) {
-    let k = KOMBIN.find(x => x.id === id), o = k || OGE_ID[id]; if (!o) return;
-    D.secili = o;
-    if (k) k.parca.forEach(p => giy(D.deneme, p)); else giy(D.deneme, o);
+    let o = ogeBul(id); if (!o) return;
+    let kombinMi = !!o.parca, has = kombinMi ? o.parca.every(p => sahip(p.id)) : sahip(o.id);
+    if (has) {                                       /* sahip olunan: hemen giy ve kaydet */
+      (kombinMi ? o.parca : [o]).forEach(p => giy(D.deneme, p));
+      D.secili = null; kaydet(false);
+      if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('dogru');
+      return;
+    }
+    D.secili = o;                                    /* sahip olunmayan: dene */
+    (kombinMi ? o.parca : [o]).forEach(p => giy(D.deneme, p));
     ciz();
   }
   function eylemCiz() {
     let E = $('dlEylem'), o = D.secili;
     if (!o) { E.style.display = 'none'; return; }
     E.style.display = 'flex';
-    let kombin = !!o.parca, has = kombin ? o.parca.every(p => sahip(p.id)) : sahip(o.id), fh = fiyatHesapla(o, kombin);
-    if (has) { E.innerHTML = `<span class="bilgi">${kac(o.ad)}<small>Sende var · "Böyle kalsın" ile kaydet</small></span><button type="button" class="giy" id="dlEylemBtn">✓ Giy ve kaydet</button>`; $('dlEylemBtn').onclick = kaydet; return; }
-    let yeter = (yo.altin || 0) >= fh.f;
-    E.innerHTML = `<span class="bilgi">${kac(o.ad)} · ${fh.f} 🪙<small>${fh.not || (kombin ? o.parca.length + ' parça birden' : 'Deniyorsun, beğenirsen al')}${yeter ? '' : ` · ${fh.f - (yo.altin || 0)} altın daha lazım`}</small></span><button type="button" id="dlEylemBtn" ${yeter ? '' : 'disabled'}>🛍️ Satın al</button>`;
-    $('dlEylemBtn').onclick = () => satinAl(o, kombin);
+    let kombinMi = !!o.parca, fh = fiyatHesapla(o, kombinMi), yeter = (yo.altin || 0) >= fh.f;
+    E.innerHTML = `<span class="bilgi">${kac(o.ad)} · ${fh.f} 🪙<small>${fh.not || (kombinMi ? o.parca.length + ' parça birden' : 'Deniyorsun, beğenirsen al')}${yeter ? '' : ` · ${fh.f - (yo.altin || 0)} altın daha lazım`}</small></span><button type="button" id="dlEylemBtn" ${yeter ? '' : 'disabled'}>🛍️ Satın al</button>`;
+    $('dlEylemBtn').onclick = () => satinAl(o, kombinMi);
   }
-  function satinAl(o, kombin) {
-    let fh = fiyatHesapla(o, kombin);
+  function satinAl(o, kombinMi) {
+    let fh = fiyatHesapla(o, kombinMi);
     if ((yo.altin || 0) < fh.f) return toast('Yeterli altının yok 🪙');
     yo.altin -= fh.f;
-    yo.dolapIlkAlim = yo.dolapIlkAlim || {}; yo.dolapIlkAlim[kombin ? 'kombin' : o.kat] = 1;
-    (kombin ? o.parca : [o]).forEach(p => sahiplen(p.id));
-    (kombin ? o.parca : [o]).forEach(p => giy(D.deneme, p));
-    kaydet();
+    yo.dolapIlkAlim = yo.dolapIlkAlim || {}; yo.dolapIlkAlim[kombinMi ? 'kombin' : (o.atolye ? 'a-' + o.kat : o.kat)] = 1;
+    (kombinMi ? o.parca : [o]).forEach(p => { sahiplen(p.id); giy(D.deneme, p); });
+    D.secili = null;
+    kaydet(`🎉 ${o.ad} artık senin!`);
     if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('dogru');
-    toast(`🎉 ${o.ad} artık senin!`);
   }
   function hosGeldinAl() {
     if ((yo.altin || 0) < 120) return toast(`Hoş Geldin Paketi için ${120 - (yo.altin || 0)} altın daha lazım 🪙`);
     let k = KOMBIN[0]; yo.altin -= 120; yo.dolapHosGeldin = 1;
     k.parca.forEach(p => { sahiplen(p.id); giy(D.deneme, p); });
-    kaydet(); toast('🎁 Okul kombini senin! Hoş geldin!');
+    kaydet('🎁 Okul kombini senin! Hoş geldin!');
   }
   /* ---------- Sandık ---------- */
   function rastgeleOge(sv, haric) {
-    let aday = OGE.filter(o => o.sv === sv && !haric.includes(o.id));
-    let yeni = aday.filter(o => !sahip(o.id));
-    let havuz = yeni.length && Math.random() < 0.8 ? yeni : aday;          /* çoğunlukla sahip olunmayandan */
+    let aday = OGE.filter(o => o.sv === sv && !haric.includes(o.id)), yeni = aday.filter(o => !sahip(o.id));
+    let havuz = yeni.length && Math.random() < 0.8 ? yeni : aday;
     return havuz[Math.floor(Math.random() * havuz.length)];
   }
   function svSec(sans) { let r = Math.random() * 100; return r < sans[0] ? 'temel' : r < sans[0] + sans[1] ? 'ozel' : 'efsane'; }
@@ -25240,7 +25291,7 @@ window.ocEnerjiHarca = async function (n) {
     let s = SANDIK[i];
     if ((yo.altin || 0) < s.f) return toast(`${s.ad} için ${s.f - (yo.altin || 0)} altın daha lazım 🪙`);
     let p = document.createElement('div'); p.className = 'dl-acilis'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
-    p.innerHTML = `<div class="dl-acilis-kart"><div style="font-size:54px">${s.ikon}</div><h3>${s.ad}</h3><p style="margin:0 0 14px;font-weight:700;color:#64748b">${s.alt}<br>${s.f} 🪙 harcansın mı?</p><button class="km-btn" id="dlSandikEvet" style="width:100%;border:0;border-radius:14px;padding:12px;font-weight:900;color:#fff;background:linear-gradient(135deg,#f59e0b,#ea580c);cursor:pointer;font-family:inherit;font-size:15px">🎁 Aç</button><button id="dlSandikHayir" style="width:100%;margin-top:8px;border:0;background:none;font-weight:800;color:#6d28d9;cursor:pointer;font-family:inherit;padding:8px">Vazgeç</button></div>`;
+    p.innerHTML = `<div class="dl-acilis-kart"><div style="font-size:54px">${s.ikon}</div><h3>${s.ad}</h3><p style="margin:0 0 14px;font-weight:700;color:#64748b">${s.alt}<br>${s.f} 🪙 harcansın mı?</p><button id="dlSandikEvet" style="width:100%;border:0;border-radius:14px;padding:12px;font-weight:900;color:#fff;background:linear-gradient(135deg,#f59e0b,#ea580c);cursor:pointer;font-family:inherit;font-size:15px">🎁 Aç</button><button id="dlSandikHayir" style="width:100%;margin-top:8px;border:0;background:none;font-weight:800;color:#6d28d9;cursor:pointer;font-family:inherit;padding:8px">Vazgeç</button></div>`;
     document.body.appendChild(p);
     $('dlSandikHayir').onclick = () => p.remove();
     $('dlSandikEvet').onclick = () => { p.remove(); window.dolapSandikAc(i, false); };
@@ -25252,8 +25303,7 @@ window.ocEnerjiHarca = async function (n) {
     if (!bedava) { if ((yo.altin || 0) < s.f) return toast('Yeterli altının yok 🪙'); yo.altin -= s.f; }
     let cikan = [], iade = 0;
     for (let n = 0; n < s.adet; n++) {
-      let sv = n === 0 && s.garanti ? s.garanti : svSec(s.sans);
-      let o = rastgeleOge(sv, cikan.map(c => c.id)); if (!o) continue;
+      let sv = n === 0 && s.garanti ? s.garanti : svSec(s.sans), o = rastgeleOge(sv, cikan.map(c => c.id)); if (!o) continue;
       let vardi = sahip(o.id); if (vardi) iade += Math.round(o.f / 2); else sahiplen(o.id);
       cikan.push(Object.assign({}, o, { vardi }));
     }
@@ -25268,29 +25318,46 @@ window.ocEnerjiHarca = async function (n) {
     $('dlSandikTamam').onclick = () => { p.remove(); if (D) ciz(); };
     setTimeout(() => $('dlSandikTamam') && $('dlSandikTamam').focus(), 50);
   };
-  window.dolapAc = ac;
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('dlPerde') && !document.querySelector('.dl-acilis')) kapat(); });
 
-  /* ================= MEVCUT MAĞAZAYA BAĞLANTI ================= */
-  /* Atölye fiyatları yeni tabloya: temel 100 · özel 250 · efsane 600 (bedava olanlar bedava kalır) */
-  try { Object.values(window.KA_KATALOG || {}).forEach(k => k.liste.forEach(u => { if (u.f > 0 && !u._eskiF) { u._eskiF = u.f; u.f = u.f <= 30 ? 100 : u.f <= 60 ? 250 : 600; } })); } catch (e) {}
-  /* Koleksiyon karakterleri: özel 1200 · efsane 2500 */
-  window.krkFiyat = k => (Number(k && k.sv) || 0) >= 20 ? 2500 : 1200;
-  /* Sana Özel'e ve mağazaya Dolap kartı */
-  function kartEkle() {
-    let so = document.querySelector('#tab-sanaozel .az-grid2x2');
-    if (so && !$('dlSanaOzelKart')) {
-      let b = document.createElement('button'); b.className = 'az-gcard'; b.id = 'dlSanaOzelKart'; b.type = 'button'; b.style.background = 'linear-gradient(160deg,#f472b6,#7c3aed)';
-      b.innerHTML = '<div class="az-gcard-badge">YENİ</div><div class="az-gcard-icon">👗</div><div class="az-gcard-title">Dolap</div>'; b.onclick = ac; so.appendChild(b);
-    }
-    let mg = $('tab-magaza');
-    if (mg && !$('dlMagazaBanner') && mg.firstElementChild) {
-      let d = document.createElement('div'); d.id = 'dlMagazaBanner'; d.className = 'dl-vitrin'; d.style.cssText = 'background:linear-gradient(135deg,#f472b6,#7c3aed);margin:10px 12px;cursor:pointer';
-      d.innerHTML = '<span style="font-size:34px">👗</span><span><b>Dolap</b><small>Başörtüleri, etekler, elbiseler, kombinler ve sandıklar · baştan ayağa giydir</small></span><button type="button">Aç</button>';
-      d.onclick = ac; let hedef = mg.querySelector('.dc-exit-btn'); (hedef ? hedef : mg.firstElementChild).insertAdjacentElement('afterend', d);
-    }
+  /* ================= BAĞLANTILAR ================= */
+  /* Atölye = Karakter & Giyim: Mağaza'nın Atölye alanına (ve Medu Akış'taki mağazaya) çizilir */
+  let eskiAtolye = window.yoMagazaAc;
+  window.yoMagazaAc = function () {
+    if (typeof yoHazirMi === 'function' && !yoHazirMi()) return;
+    let hedef = window.yoGomuluHedef && document.getElementById(window.yoGomuluHedef);
+    if (!hedef || !kk()) return eskiAtolye && eskiAtolye.apply(this, arguments);   /* hedef yoksa ya da kız/erkek seçilmediyse eski akış */
+    ac(hedef);
+  };
+  /* Kız/erkek seçimi yapıldıktan sonra eski Atölye çizilirse yerine yenisini koy */
+  setInterval(() => {
+    let h = window.yoGomuluHedef && document.getElementById(window.yoGomuluHedef);
+    if (h && kk() && h.querySelector('.ka-wrap') && !h.querySelector('.dl-gomulu')) ac(h);
+  }, 600);
+  window.dolapAc = () => ac(null);                       /* eski bağlantılar Mağaza'yı açar */
+  document.querySelectorAll('#dlSanaOzelKart, #dlMagazaBanner').forEach(e => e.remove());
+
+  /* Vitrinim: tam boy giydirilmiş karakter */
+  function karakterOf(ad) {
+    let a = String(ad || '').trim().toLowerCase(), ben = String(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '').trim().toLowerCase();
+    if (a && a === ben) return kk();
+    try { let h = JSON.parse(localStorage.getItem('ing_ka_harita') || '{}'); return h[a] || null; } catch (e) { return null; }
   }
-  kartEkle(); setInterval(kartEkle, 3000);
+  let orgVitrin = window.maVitrinHtml;
+  if (typeof orgVitrin === 'function') window.maVitrinHtml = function (id, benimMi) {
+    let html = orgVitrin.apply(this, arguments);
+    try {
+      let o = typeof maBul === 'function' ? maBul(id) : null, ad = o ? (o.id === 'ben' ? aktifOgrenciAdi : o.ad) : '', k = karakterOf(ad);
+      let profilKrkVar = (o && o.id === 'ben') ? (yoVar() && yo.profilKrk) : false;
+      if (k && k.cins && k.s && !profilKrkVar) {
+        let svg = dolapTamBoySVG(Object.assign({}, window.KA_VARSAYILAN[k.cins], k.s), k.cins, 230);
+        html = html.replace(/<div class="yildiz-maskot">[\s\S]*?<\/div><div class="kurs">/, `<div class="yildiz-maskot dl-tamboy">${svg}</div><div class="kurs">`);
+      }
+    } catch (e) {}
+    return html;
+  };
+  /* Atölye fiyatları yeni tabloya (bedava olanlar bedava kalır) ve koleksiyon karakter fiyatı */
+  try { Object.values(window.KA_KATALOG || {}).forEach(k => k.liste.forEach(u => { if (u.f > 0 && !u._eskiF) { u._eskiF = u.f; u.f = u.f <= 30 ? 100 : u.f <= 60 ? 250 : 600; } })); } catch (e) {}
+  window.krkFiyat = k => (Number(k && k.sv) || 0) >= 20 ? 2500 : 1200;
 })();
 </script>
 
@@ -29657,6 +29724,330 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     n.textContent = gecildi ? '🔁 Tekrar oynayınca enerji ödülü yok; yıldızını yükseltebilirsin.' : '🎁 Bu durağı ilk kez geçersen +6 ⚡ kazanırsın! (4 ⚡ harcar, net +2)';
     let btn = kart.querySelector('#bzOyna'); if (btn) btn.insertAdjacentElement('beforebegin', n);
   }, 300);
+})();
+</script>
+
+                <!-- ===================== ÖDEV SİSTEMİ + PAPİ TANITIMI DÜZELTMESİ =====================
+     Öğretmen: menüde "📝 Ödev Ver" → sınıf + şube seç → Ders Çalış konuları ve/veya mini oyunlar (ünite + hedef yıldız).
+     Öğrenci: Sana Özel'de "📝 Ödevlerim" → "Başla" ile doğrudan konuya/oyuna gider; bitirince ödev kendiliğinden tamamlanır.
+     Yapılmayan ödev 5 günde bir −1 puan (sunucu otomasyonu) ve veliye hatırlatma.
+     Papi tanıtımı: sadece yeni hesaplara, bir kez. Daha önce kullanılan hesaplarda hiç çıkmaz.
+     ================================================================================== -->
+<style>
+#odModal .rubric-content{max-width:520px;text-align:left}
+.od-satir{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.od-etiket{display:block;font-size:11.5px;font-weight:800;color:#475569;margin:0 0 4px}
+.od-sec,.od-girdi{width:100%;box-sizing:border-box;border:2px solid #e2e8f0;border-radius:12px;padding:9px 10px;font:700 13.5px Nunito,system-ui,sans-serif;background:#fff;color:#1e293b}
+.od-bolum{border:2px solid #eef2ff;border-radius:16px;padding:10px;margin-bottom:10px;background:#fafbff}
+.od-bolum h4{margin:0 0 8px;font-size:13.5px;color:#1e293b;display:flex;align-items:center;gap:6px}
+.od-bolum h4 small{margin-left:auto;font-size:11px;color:#64748b;font-weight:800}
+.od-liste{max-height:190px;overflow-y:auto;display:grid;gap:4px;padding-right:2px}
+.od-cb{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700;color:#1e293b;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:7px 9px;cursor:pointer}
+.od-cb input{width:18px;height:18px;accent-color:#7c3aed;flex:none}
+.od-cb.sec{border-color:#7c3aed;background:#f5f3ff}
+.od-oyunlar{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.od-cipler{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.od-cip{border:1.5px solid #e2e8f0;background:#fff;border-radius:999px;padding:5px 10px;font:800 12px Nunito,system-ui,sans-serif;color:#475569;cursor:pointer}
+.od-cip.sec{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.od-ver{width:100%;border:0;border-radius:14px;padding:13px;font:900 15px Nunito,system-ui,sans-serif;color:#fff;background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:0 4px 0 #6d28d9;cursor:pointer}
+.od-ver:disabled{opacity:.6;cursor:default}
+.od-sonuc{display:none;border-radius:12px;padding:10px;font-size:13px;font-weight:800;margin-top:8px}
+.od-sonuc.iyi{display:block;background:#dcfce7;color:#14532d}.od-sonuc.kotu{display:block;background:#fee2e2;color:#7f1d1d}
+.od-verilen{border-top:2px dashed #e2e8f0;margin-top:14px;padding-top:12px}
+.od-verilen-kart{border:1.5px solid #e2e8f0;border-radius:12px;padding:9px 10px;margin-bottom:6px;font-size:12.5px;font-weight:700;color:#1e293b;background:#fff}
+.od-verilen-kart b{display:block;font-size:13px}
+.od-verilen-kart .ilerleme{height:6px;border-radius:9px;background:#eef2ff;overflow:hidden;margin:6px 0 4px}
+.od-verilen-kart .ilerleme i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#16a34a)}
+.od-verilen-kart details{margin-top:4px;font-size:11.5px;color:#475569}
+.od-verilen-kart summary{cursor:pointer;font-weight:800;color:#6d28d9}
+.od-verilen-kart button{border:0;background:none;color:#dc2626;font:800 11.5px Nunito,system-ui,sans-serif;cursor:pointer;float:right}
+.od-sekmeler{display:flex;gap:6px;margin-bottom:10px}
+.od-sekmeler button{flex:1;border:2px solid #e2e8f0;background:#fff;border-radius:12px;padding:8px;font:900 12.5px Nunito,system-ui,sans-serif;color:#475569;cursor:pointer}
+.od-sekmeler button.aktif{background:#7c3aed;border-color:#7c3aed;color:#fff}
+#odModal button:focus-visible,#odModal input:focus-visible,#odModal select:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+/* öğrenci kartı */
+.odo-kart{background:#fff;border-radius:20px;padding:14px;border:2px solid #efe8ff;box-shadow:0 4px 14px rgba(91,33,182,.06);color:#2d2350;font-family:inherit;margin-bottom:12px;text-align:left}
+.odo-kart h3{margin:0 0 10px;font-size:15px;font-weight:900;display:flex;align-items:center;gap:6px}
+.odo-kart h3 small{margin-left:auto;font-size:11.5px;font-weight:800;color:#8a78b8}
+.odo-satir{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed #efe8ff}
+.odo-satir:first-of-type{border-top:0}
+.odo-satir .m{flex:1;min-width:0;display:block!important}
+.odo-satir b{display:block;font-size:13.5px;font-weight:800;overflow-wrap:anywhere}
+.odo-satir small{display:block;font-size:11.5px;font-weight:700;color:#8a78b8}
+.odo-satir button{border:0;border-radius:12px;padding:8px 12px;font:900 12.5px Nunito,system-ui,sans-serif;color:#fff;background:linear-gradient(135deg,#7c3aed,#db2777);cursor:pointer;white-space:nowrap}
+.odo-satir.bitti b{color:#16a34a;text-decoration:line-through}
+.odo-satir.bitti button{background:#dcfce7;color:#15803d}
+</style>
+<div class="rubric-modal" id="odModal" role="dialog" aria-modal="true" aria-labelledby="odBaslik">
+  <div class="rubric-content">
+    <button class="game-close-btn" type="button" aria-label="Kapat" onclick="document.getElementById('odModal').style.display='none';document.getElementById('ogretmenMenuModal').style.display='flex'">✕</button>
+    <h3 id="odBaslik" style="color:#1e293b;margin:0 0 10px;font-size:16px">📝 Ödev Ver</h3>
+    <div class="od-sekmeler"><button type="button" class="aktif" data-g="yeni">➕ Yeni ödev</button><button type="button" data-g="liste">📋 Verilen ödevler</button></div>
+    <div id="odYeni">
+      <div class="od-satir">
+        <div><label class="od-etiket" for="odSinif">Sınıf</label><select class="od-sec" id="odSinif"></select></div>
+        <div><label class="od-etiket" for="odSube">Şube</label><select class="od-sec" id="odSube"></select></div>
+      </div>
+      <div class="od-etiket" id="odHedefSayi" style="margin:-4px 0 10px"></div>
+      <div class="od-bolum"><h4>📘 Ders Çalış konuları <small id="odKonuSay"></small></h4>
+        <div class="od-satir"><select class="od-sec" id="odSeviye" aria-label="Seviye"><option>A1</option><option>A2</option><option>B1</option><option>B2</option></select>
+          <select class="od-sec" id="odKategori" aria-label="Kategori"><option value="grammar">Dil Bilgisi</option><option value="vocab">Kelime</option><option value="comm">İletişim</option><option value="pron">Telaffuz</option></select></div>
+        <div class="od-liste" id="odKonular"><div class="od-etiket">Konular yükleniyor…</div></div></div>
+      <div class="od-bolum"><h4>🎮 Mini oyunlar <small id="odOyunSay"></small></h4>
+        <div class="od-oyunlar" id="odOyunlar"></div>
+        <label class="od-etiket" style="margin-top:8px">Üniteler (seçmezsen tüm üniteler)</label><div class="od-cipler" id="odUniteler"></div>
+        <label class="od-etiket" style="margin-top:8px">Hedef</label><div class="od-cipler" id="odHedef"><button type="button" class="od-cip" data-y="1">⭐ en az 1 yıldız</button><button type="button" class="od-cip sec" data-y="2">⭐⭐ en az 2</button><button type="button" class="od-cip" data-y="3">⭐⭐⭐ 3 yıldız</button></div></div>
+      <div class="od-satir">
+        <div><label class="od-etiket" for="odSon">Son tarih (isteğe bağlı)</label><input type="date" class="od-girdi" id="odSon"></div>
+        <div><label class="od-etiket" for="odNot">Not (isteğe bağlı)</label><input class="od-girdi" id="odNot" maxlength="300" placeholder="ör. Cuma'ya kadar"></div>
+      </div>
+      <button type="button" class="od-ver" id="odVer">📝 Ödevi ver</button>
+      <div class="od-sonuc" id="odSonuc" role="status"></div>
+    </div>
+    <div id="odListe" style="display:none"></div>
+  </div>
+</div>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const kac = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const kucuk = x => String(x || '').trim().toLocaleLowerCase('tr');
+  const yoVar = () => typeof yo !== 'undefined' && yo && typeof yoHazirMi === 'function' && yoHazirMi();
+  const OGRT = () => { try { return sessionStorage.getItem('ing_ogr_token') || ''; } catch (e) { return ''; } };
+  const toast = m => { if (typeof yoToast === 'function') yoToast(m); };
+  const OYUN = [['ky', '🔬', 'Kelime Laboratuvarı', 'kelimeYarismasiAc'], ['jp', '🎈', 'Risk Balonları', 'jpOyunAc'], ['bosluk', '✏️', 'Eksik Harf', 'boslukOyunAc'], ['hafiza', '🃏', 'Hafıza Sandığı', 'hafizaOyunAc'],
+    ['yagmur', '🌪️', 'Hız Fırtınası', 'yagmurOyunAc'], ['asmaca', '🔤', 'Harf Avı', 'asmacaOyunAc'], ['kelimebul', '🔐', 'Şifre Kırıcı', 'kelimebulOyunAc'], ['eslestirme', '🔗', 'Eş Bul', 'esOyunAc'],
+    ['tren', '🚂', 'Kelime Treni', 'trenOyunAc'], ['dikte', '🎧', 'Kulak Dedektifi', 'dikteAc'], ['cumle', '🧱', 'Cümle Ustası', 'cumleAc']];
+  const KAT_AD = { grammar: 'Dil Bilgisi', vocab: 'Kelime', comm: 'İletişim', pron: 'Telaffuz' };
+  const kisaTarih = t => { try { return new Date(t).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
+
+  /* ===================================================================
+     1) PAPİ TANITIMI: sadece yeni hesaplara, bir kez
+     =================================================================== */
+  let turKarar = '';                                   /* '' = henüz bilinmiyor → tur gösterilmez */
+  let orgTurBitti = window.turBitti;
+  if (typeof orgTurBitti === 'function') window.turBitti = function (ad) {
+    if (turKarar !== 'yeni') return true;                  /* karar yoksa ya da eski hesapsa: "görüldü" say */
+    return orgTurBitti.apply(this, arguments);
+  };
+  let turKisi = '';
+  async function turKarariVer() {
+    let ad = (typeof yoIsim !== 'undefined' && yoIsim) || '';
+    if (!ad || kucuk(ad) === 'teacher') return;
+    if (turKisi === kucuk(ad) && turKarar) return;
+    if (turKisi !== kucuk(ad)) { turKisi = kucuk(ad); turKarar = ''; }
+    let d;
+    try { let r = await fetch(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(ad)}&anahtar=yo&_=${Date.now()}`); if (!r.ok) return; if (r.headers.get('X-Diji-Cevrimdisi')) return; d = await r.json(); }
+    catch (e) { return; }                                  /* bağlantı yok: tur gösterme, sonra tekrar dene */
+    let sunucu = null; try { sunucu = d && d.deger ? JSON.parse(d.deger) : null; } catch (e) {}
+    let turlar = (sunucu && sunucu.turlar) || [];
+    let kullanilmis = !!(sunucu && (turlar.length || sunucu.karakter || (sunucu.altin || 0) > 0 || sunucu.oyunGun || sunucu.lig || sunucu.dcOdul || sunucu.xpGun));
+    if (!sunucu || (!kullanilmis && !turlar.length)) { turKarar = 'yeni'; return; }   /* hiç verisi olmayan yeni hesap → tur bir kez */
+    turKarar = 'eski';
+    /* eski hesap: turları "görüldü" olarak işaretle ki bir daha hiçbir cihazda çıkmasın */
+    if (yoVar()) {
+      yo.turlar = Array.from(new Set([...(yo.turlar || []), ...turlar, 'ana', 'v2:ana']));
+      if (typeof yoKaydet === 'function') yoKaydet();
+    }
+  }
+  setInterval(() => { let p = $('panel-alani'); if (p && p.style.display === 'block') turKarariVer(); }, 2000);
+
+  /* ===================================================================
+     2) ÖĞRETMEN: Ödev Ver
+     =================================================================== */
+  let konuCache = null, secKonu = new Set(), secOyun = new Set(), secUnite = new Set(), hedefYildiz = 2;
+  function menuyeEkle() {
+    let menu = document.querySelector('#ogretmenMenuModal .rubric-content');
+    if (!menu || $('odMenuBtn')) return;
+    let b = document.createElement('button'); b.className = 'ogretmen-menu-btn'; b.id = 'odMenuBtn'; b.type = 'button';
+    b.innerHTML = '<span>📝 Ödev Ver (sınıf · şube)</span>'; b.onclick = odevEkraniAc;
+    let ilk = menu.querySelector('.ogretmen-menu-btn'); if (ilk) ilk.insertAdjacentElement('beforebegin', b); else menu.appendChild(b);
+  }
+  menuyeEkle(); setInterval(menuyeEkle, 3000);
+  function ogrenciler() { return (Array.isArray(globalDataCache) ? globalDataCache : []).filter(u => u && u.ogrenci && kucuk(u.ogrenci) !== 'teacher' && (!u.durum || /approved|onay|aktif/i.test(u.durum) || u.durum === 'approved')); }
+  function subeleriDoldur() {
+    let s = Number($('odSinif').value), subeler = [...new Set(ogrenciler().filter(u => Number(u.Sinif || u.sinif) === s).map(u => String(u.sube || u.Sube || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'tr'));
+    $('odSube').innerHTML = '<option value="">Tüm şubeler</option>' + subeler.map(x => `<option value="${kac(x)}">${kac(x)} şubesi</option>`).join('');
+    hedefSay(); uniteleriDoldur();
+  }
+  function hedefSay() {
+    let s = Number($('odSinif').value), sb = kucuk($('odSube').value);
+    let n = ogrenciler().filter(u => Number(u.Sinif || u.sinif) === s && (!sb || kucuk(u.sube || u.Sube) === sb)).length;
+    $('odHedefSayi').innerText = `👥 Bu ödev ${n} öğrenciye gidecek`;
+  }
+  function uniteleriDoldur() {
+    let s = Number($('odSinif').value);
+    let u = [...new Set((window.masterKelimeHavuzu || []).filter(k => Number(k.sinif) === s).map(k => Number(k.unite)).filter(x => x > 0))].sort((a, b) => a - b);
+    secUnite = new Set([...secUnite].filter(x => u.includes(x)));
+    $('odUniteler').innerHTML = u.length ? u.map(x => `<button type="button" class="od-cip${secUnite.has(x) ? ' sec' : ''}" data-u="${x}">${x}. ünite</button>`).join('') : '<span class="od-etiket">Bu sınıfın kelimeleri yüklenmedi.</span>';
+    $('odUniteler').querySelectorAll('[data-u]').forEach(b => b.onclick = () => { let x = +b.dataset.u; secUnite.has(x) ? secUnite.delete(x) : secUnite.add(x); b.classList.toggle('sec'); });
+  }
+  async function konulariDoldur() {
+    if (!konuCache) {
+      $('odKonular').innerHTML = '<div class="od-etiket">Konular yükleniyor…</div>';
+      try { let r = await fetch(`${apiURL}?islem=dersKonulariGetir`); let d = await r.json(); konuCache = Array.isArray(d) ? d : []; } catch (e) { konuCache = []; }
+      if (!konuCache.length && typeof dcTumKonularCache !== 'undefined' && Array.isArray(dcTumKonularCache)) konuCache = dcTumKonularCache;
+    }
+    let sv = $('odSeviye').value, kt = $('odKategori').value;
+    let l = konuCache.filter(k => String(k.seviye) === sv && String(k.kategori) === kt).sort((a, b) => (Number(a.siraNo) || 0) - (Number(b.siraNo) || 0));
+    $('odKonular').innerHTML = l.length ? l.map(k => { let anahtar = `${sv}|${kt}|${k.konuAdi}`; return `<label class="od-cb${secKonu.has(anahtar) ? ' sec' : ''}"><input type="checkbox" data-k="${kac(anahtar)}" ${secKonu.has(anahtar) ? 'checked' : ''}>${kac(k.konuAdi)}</label>`; }).join('') : '<div class="od-etiket">Bu seviye ve kategoride konu yok.</div>';
+    $('odKonular').querySelectorAll('input').forEach(c => c.onchange = () => { c.checked ? secKonu.add(c.dataset.k) : secKonu.delete(c.dataset.k); c.parentElement.classList.toggle('sec', c.checked); sayac(); });
+    sayac();
+  }
+  function sayac() { $('odKonuSay').innerText = secKonu.size ? `${secKonu.size} konu seçili` : ''; $('odOyunSay').innerText = secOyun.size ? `${secOyun.size} oyun seçili` : ''; }
+  async function odevEkraniAc() {
+    if (!OGRT()) { if (typeof ogretmenPaneliAc === 'function') ogretmenPaneliAc(); return; }
+    if (!Array.isArray(globalDataCache) || globalDataCache.length <= 1) { if (typeof listeYenile === 'function') await listeYenile(); }
+    secKonu = new Set(); secOyun = new Set(); secUnite = new Set(); hedefYildiz = 2;
+    $('odSinif').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8].map(s => `<option value="${s}">${s}. sınıf</option>`).join('');
+    let sk = ogrenciler().map(u => Number(u.Sinif || u.sinif)).filter(Boolean); if (sk.length) $('odSinif').value = String(sk.sort((a, b) => sk.filter(x => x === b).length - sk.filter(x => x === a).length)[0]);
+    $('odOyunlar').innerHTML = OYUN.map(([k, ik, ad]) => `<label class="od-cb"><input type="checkbox" data-o="${k}">${ik} ${ad}</label>`).join('');
+    $('odOyunlar').querySelectorAll('input').forEach(c => c.onchange = () => { c.checked ? secOyun.add(c.dataset.o) : secOyun.delete(c.dataset.o); c.parentElement.classList.toggle('sec', c.checked); sayac(); });
+    $('odHedef').querySelectorAll('[data-y]').forEach(b => { b.classList.toggle('sec', +b.dataset.y === hedefYildiz); b.onclick = () => { hedefYildiz = +b.dataset.y; $('odHedef').querySelectorAll('[data-y]').forEach(x => x.classList.toggle('sec', x === b)); }; });
+    $('odSonuc').className = 'od-sonuc'; $('odNot').value = ''; $('odSon').value = '';
+    subeleriDoldur(); konulariDoldur(); gorunum('yeni');
+    $('ogretmenMenuModal').style.display = 'none'; $('odModal').style.display = 'flex';
+  }
+  window.odevEkraniAc = odevEkraniAc;
+  function gorunum(g) {
+    $('odModal').querySelectorAll('.od-sekmeler button').forEach(b => b.classList.toggle('aktif', b.dataset.g === g));
+    $('odYeni').style.display = g === 'yeni' ? '' : 'none'; $('odListe').style.display = g === 'liste' ? '' : 'none';
+    if (g === 'liste') verilenleriGoster();
+  }
+  $('odModal').querySelectorAll('.od-sekmeler button').forEach(b => b.onclick = () => gorunum(b.dataset.g));
+  $('odSinif').onchange = subeleriDoldur; $('odSube').onchange = hedefSay;
+  $('odSeviye').onchange = konulariDoldur; $('odKategori').onchange = konulariDoldur;
+  $('odVer').onclick = async () => {
+    let odevler = [...secKonu].map(x => { let [seviye, kategori, ...k] = x.split('|'); return { tur: 'ders', seviye, kategori, konu: k.join('|') }; })
+      .concat([...secOyun].map(o => ({ tur: 'oyun', oyun: o, uniteler: [...secUnite].sort((a, b) => a - b), hedefYildiz })));
+    let sonuc = $('odSonuc');
+    if (!odevler.length) { sonuc.className = 'od-sonuc kotu'; sonuc.textContent = 'En az bir konu ya da oyun seç.'; return; }
+    let sinif = $('odSinif').value, sube = $('odSube').value;
+    if (!confirm(`${sinif}. sınıf ${sube ? sube + ' şubesi' : '(tüm şubeler)'} için ${odevler.length} ödev verilsin mi?`)) return;
+    let b = $('odVer'); b.disabled = true; b.textContent = 'Gönderiliyor…';
+    let d = null; try { let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'odevVer', sinif, sube, odevler, sonTarih: $('odSon').value, not: $('odNot').value }) }); d = await r.json(); } catch (e) {}
+    b.disabled = false; b.textContent = '📝 Ödevi ver';
+    if (d && d.ok) { sonuc.className = 'od-sonuc iyi'; sonuc.textContent = `✅ ${d.eklenen} ödev ${d.ogrenciSayisi} öğrenciye verildi. Öğrenciler Sana Özel → Ödevlerim'de görecek.`; secKonu.clear(); secOyun.clear(); konulariDoldur(); $('odOyunlar').querySelectorAll('input').forEach(c => { c.checked = false; c.parentElement.classList.remove('sec'); }); sayac(); }
+    else { sonuc.className = 'od-sonuc kotu'; sonuc.textContent = (d && (d.mesaj || d.message)) || 'Ödev verilemedi. Öğretmen oturumunu ve internetini kontrol et.'; }
+  };
+  async function verilenleriGoster() {
+    let alan = $('odListe'); alan.innerHTML = '<div class="od-etiket">Yükleniyor…</div>';
+    let d = null; try { let r = await fetch(`${apiURL}?islem=odevListesiOgretmen&_=${Date.now()}`); d = await r.json(); } catch (e) {}
+    let l = (d && d.liste) || [];
+    if (!l.length) { alan.innerHTML = '<div class="od-etiket" style="padding:10px">Henüz verilmiş aktif ödev yok.</div>'; return; }
+    alan.innerHTML = l.map(o => { let y = o.yapanlar.length, h = o.hedef || 0, p = h ? Math.round(y / h * 100) : 0;
+      return `<div class="od-verilen-kart"><button type="button" data-sil="${o.id}" aria-label="Ödevi kaldır">🗑️ Kaldır</button><b>${kac(o.baslik)}</b>
+        ${o.sinif}. sınıf ${o.sube ? kac(o.sube) + ' şubesi' : '· tüm şubeler'} · ${kisaTarih(o.atandi)}${o.sonTarih ? ' · son: ' + kisaTarih(o.sonTarih) : ''}
+        <div class="ilerleme"><i style="width:${p}%"></i></div>✅ ${y}/${h} öğrenci yaptı
+        <details><summary>Kimler yaptı / yapmadı</summary>✅ ${o.yapanlar.map(kac).join(', ') || '—'}<br>⏳ ${o.yapmayanlar.map(kac).join(', ') || '—'}</details></div>`; }).join('');
+    alan.querySelectorAll('[data-sil]').forEach(b => b.onclick = async () => {
+      if (!confirm('Bu ödev kaldırılsın mı? Öğrencilerin listesinden de silinir.')) return;
+      try { await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'odevSil', id: b.dataset.sil }) }); } catch (e) {}
+      verilenleriGoster();
+    });
+  }
+
+  /* ===================================================================
+     3) ÖĞRENCİ: Ödevlerim + otomatik tamamlama
+     =================================================================== */
+  let odevler = [], odevZaman = 0;
+  const ogrenciAdi = () => (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi) || '';
+  async function odevleriYukle(zorla) {
+    if (!ogrenciAdi() || kucuk(ogrenciAdi()) === 'teacher') return odevler;
+    if (!zorla && Date.now() - odevZaman < 120000) return odevler;
+    try { let r = await fetch(`${apiURL}?islem=odevlerim&ogrenci=${encodeURIComponent(ogrenciAdi())}&_=${Date.now()}`); let d = await r.json(); if (d && d.ok) { odevler = d.liste || []; odevZaman = Date.now(); } } catch (e) {}
+    return odevler;
+  }
+  function kalanGun(o) {
+    let gecen = Math.floor((Date.now() - Date.parse(o.atandi)) / 86400000), kalan = 5 - (gecen % 5);
+    return kalan <= 1 ? '⚠️ yarın −1 puan' : `−1 puana ${kalan} gün`;
+  }
+  async function kartCiz() {
+    let p = $('soPanel'); if (!p) return;
+    let k = $('odoKart'); if (!k) { k = document.createElement('div'); k.id = 'odoKart'; k.className = 'odo-kart'; p.insertBefore(k, p.firstChild); }
+    let l = await odevleriYukle();
+    if (!l.length) { k.style.display = 'none'; return; }
+    k.style.display = '';
+    let bekleyen = l.filter(o => !o.yapildi).length;
+    k.innerHTML = `<h3>📝 Ödevlerim <small>${bekleyen ? bekleyen + ' bekliyor' : 'hepsi tamam 🎉'}</small></h3>` + l.map(o => `<div class="odo-satir${o.yapildi ? ' bitti' : ''}"><span class="m"><b>${kac(o.baslik)}</b>
+      <small>${o.yapildi ? '✅ Tamamlandı' + (o.yildiz ? ' · ' + '⭐'.repeat(o.yildiz) : '') : kalanGun(o)}${o.sonTarih ? ' · son gün ' + kisaTarih(o.sonTarih) : ''}${o.not ? ' · ' + kac(o.not) : ''}</small></span>
+      <button type="button" data-od="${o.id}">${o.yapildi ? 'Tekrar' : 'Başla'}</button></div>`).join('');
+    k.querySelectorAll('[data-od]').forEach(b => b.onclick = () => odevBaslat(l.find(o => String(o.id) === b.dataset.od)));
+  }
+  let sonGor = false;
+  setInterval(() => {
+    let t = $('tab-sanaozel'), gor = !!(t && t.getClientRects().length && getComputedStyle(t).display !== 'none');
+    if (gor && (!sonGor || !$('odoKart'))) kartCiz();
+    sonGor = gor;
+  }, 1200);
+  const bekle = ms => new Promise(r => setTimeout(r, ms));
+  async function odevBaslat(o) {
+    if (!o) return;
+    window.__aktifOdev = o;
+    if (typeof sanaOzelTamEkranKapat === 'function') try { sanaOzelTamEkranKapat(); } catch (e) {}
+    if (o.tur === 'ders') {
+      let v = o.veri || {};
+      if (typeof dersCalisTamEkranAc === 'function') dersCalisTamEkranAc();
+      for (let i = 0; i < 30 && !(typeof dcTumKonularCache !== 'undefined' && dcTumKonularCache.length); i++) await bekle(200);
+      try {
+        dcAktifSeviye = v.seviye; dcAktifKategori = v.kategori;
+        if (typeof dcSeviyeSec === 'function') dcSeviyeSec(v.seviye, v.seviye);
+        await bekle(250);
+        if (typeof dcKategoriSec === 'function') await dcKategoriSec(v.kategori, KAT_AD[v.kategori] || v.kategori);
+        await bekle(250);
+        if (typeof dcKonuAc === 'function') dcKonuAc(v.konu);
+      } catch (e) { toast(`📘 Ödev konusu: ${v.konu} (${v.seviye} · ${KAT_AD[v.kategori] || v.kategori})`); }
+      return;
+    }
+    let v = o.veri || {}, oy = OYUN.find(x => x[0] === v.oyun);
+    if (!oy || typeof window[oy[3]] !== 'function') { toast('Bu oyun şu an açılamadı.'); return; }
+    window[oy[3]]();
+    if (['dikte', 'cumle'].includes(v.oyun)) { toast(`📝 Ödev: ${oy[2]} · hedef ${'⭐'.repeat(v.hedefYildiz || 1)}`); return; }
+    await bekle(450);
+    /* ödevin sınıf ve ünitelerini oyunda seç */
+    let kat = [...document.querySelectorAll('.game-modal-overlay')].filter(x => x.getClientRects().length && getComputedStyle(x).display !== 'none').pop();
+    if (kat) {
+      let sb = [...kat.querySelectorAll('.sinif-btn')].find(b => b.textContent.trim().startsWith(v.sinif + '.'));
+      if (sb && !sb.disabled) { sb.click(); await bekle(250); }
+      if (v.uniteler && v.uniteler.length) {
+        kat.querySelectorAll('.unite-secim-box .unite-chip, .unite-secim-box button').forEach(c => {
+          let n = parseInt(c.textContent), ist = v.uniteler.includes(n), secili = c.classList.contains('selected') || c.classList.contains('active');
+          if (!isNaN(n) && ist !== secili) c.click();
+        });
+      }
+    }
+    toast(`📝 Ödev: ${v.sinif}. sınıf${v.uniteler && v.uniteler.length ? ' · ' + v.uniteler.join(', ') + '. ünite' : ''} · hedef ${'⭐'.repeat(v.hedefYildiz || 1)}`);
+  }
+  async function tamamla(o, puan, yildiz) {
+    try {
+      let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'odevTamamla', ogrenci: ogrenciAdi(), id: o.id, puan, yildiz }) });
+      let d = await r.json();
+      if (d && d.ok) { o.yapildi = true; o.yildiz = yildiz || 0; toast(`✅ Ödev tamamlandı: ${o.baslik}`); if (typeof odulGoster === 'function') setTimeout(() => odulGoster({ ikon: '📝', baslik: 'Ödevini tamamladın!', alt: o.baslik }), 2800); kartCiz(); }
+    } catch (e) {}
+  }
+  /* Ders Çalış: konu geçilince */
+  let orgDc = window.dcOdulVer;
+  if (typeof orgDc === 'function') window.dcOdulVer = function () {
+    let r = orgDc.apply(this, arguments);
+    try {
+      let sv = typeof dcAktifSeviye !== 'undefined' ? dcAktifSeviye : '', kt = typeof dcAktifKategori !== 'undefined' ? dcAktifKategori : '', kn = typeof dcAktifKonu !== 'undefined' ? dcAktifKonu : '';
+      odevleriYukle().then(l => l.filter(o => !o.yapildi && o.tur === 'ders' && o.veri && o.veri.konu === kn && (!o.veri.seviye || o.veri.seviye === sv) && (!o.veri.kategori || o.veri.kategori === kt)).forEach(o => tamamla(o, 0, 0)));
+    } catch (e) {}
+    return r;
+  };
+  /* Mini oyunlar: hedef yıldıza ulaşılınca */
+  let orgGso = window.genelSonucEkraniGoster;
+  if (typeof orgGso === 'function') {
+    window.genelSonucEkraniGoster = function (o) {
+      let r = orgGso.apply(this, arguments);
+      try {
+        let key = o && o.oyunKey, s = key && window.OC ? OC.sonuc(key) : null;
+        if (key && s && s.yildiz) odevleriYukle().then(l => l.filter(x => !x.yapildi && x.tur === 'oyun' && x.veri && x.veri.oyun === key && s.yildiz >= (x.veri.hedefYildiz || 1)).forEach(x => tamamla(x, s.puan, s.yildiz)));
+      } catch (e) {}
+      return r;
+    };
+    window.genelSonucEkraniGoster._oc = orgGso._oc;
+  }
 })();
 </script>
                 
