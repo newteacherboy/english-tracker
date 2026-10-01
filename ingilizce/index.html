@@ -30050,6 +30050,276 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   }
 })();
 </script>
+
+                <!-- ===================== ÇOK ÖĞRETMENLİ YAPI + DÜZELTMELER =====================
+     • Kayıt ol: önce "Öğrenciyim / Öğretmenim". Öğrenci formu aynı, sadece isteğe bağlı "Öğretmen kodu" alanı eklendi.
+     • Öğretmen kaydı: hesap hemen açılır, kendine özel kod verilir. Öğretmen aynı giriş ekranından girer.
+     • Öğretmen paneli: "Öğretmen kodum" kartı; yöneticiye "👥 Öğretmenler" listesi.
+     • Bağımsız öğrenci sonradan öğretmen koduyla bağlanabilir (Sana Özel).
+     • Düzeltme: düello davetleri her girişte yeniden açılmaz.
+     • Düzeltme: Ders Çalış'ta testten geri dönünce test paneli seviye ekranında kalmaz.
+     ============================================================================ -->
+<style>
+.cog-perde{position:fixed;inset:0;z-index:100000080;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;font-family:Nunito,system-ui,sans-serif}
+.cog-kart{background:#fff;border-radius:22px;max-width:400px;width:100%;max-height:92vh;overflow-y:auto;padding:20px 18px;position:relative;color:#1e293b;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.cog-kart h3{margin:0 0 4px;font-size:18px;font-weight:900;text-align:center}
+.cog-kart p.alt{margin:0 0 14px;font-size:12.5px;color:#64748b;font-weight:700;text-align:center;line-height:1.45}
+.cog-x{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:10px;border:0;background:#f1f5f9;color:#475569;font-weight:900;cursor:pointer}
+.cog-rol{display:grid;gap:10px}
+.cog-rol button{display:flex;align-items:center;gap:12px;text-align:left;border:2px solid #e2e8f0;background:#fff;border-radius:18px;padding:14px;cursor:pointer;font-family:inherit;color:#1e293b}
+.cog-rol button:hover,.cog-rol button:focus-visible{border-color:#7c3aed;background:#faf5ff;outline:none}
+.cog-rol .ik{font-size:34px}
+.cog-rol b{display:block;font-size:16px;font-weight:900}
+.cog-rol small{font-size:12px;color:#64748b;font-weight:700}
+.cog-alan{margin-bottom:9px}
+.cog-alan label{display:block;font-size:11.5px;font-weight:800;color:#475569;margin-bottom:4px}
+.cog-alan input{width:100%;box-sizing:border-box;border:2px solid #e2e8f0;border-radius:12px;padding:10px;font:700 14px Nunito,system-ui,sans-serif;color:#1e293b}
+.cog-alan input:focus{border-color:#7c3aed;outline:none}
+.cog-onay{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;font-weight:700;color:#475569;margin:6px 0 12px;line-height:1.4}
+.cog-onay input{width:18px!important;height:18px!important;min-width:18px;flex:none;margin:1px 0 0!important;padding:0!important;accent-color:#0d9488}
+.cog-btn{width:100%;border:0;border-radius:14px;padding:13px;font:900 15px Nunito,system-ui,sans-serif;color:#fff;background:linear-gradient(135deg,#0d9488,#0f766e);box-shadow:0 4px 0 #115e59;cursor:pointer}
+.cog-btn:disabled{opacity:.6;cursor:default}
+.cog-btn.ikincil{background:#f1f5f9;color:#334155;box-shadow:none;margin-top:8px}
+.cog-mesaj{display:none;border-radius:12px;padding:10px;font-size:12.5px;font-weight:800;margin-top:10px}
+.cog-mesaj.kotu{display:block;background:#fee2e2;color:#7f1d1d}
+.cog-kod{font-size:34px;font-weight:900;letter-spacing:6px;text-align:center;background:#f0fdfa;border:2px dashed #14b8a6;border-radius:16px;padding:14px;margin:12px 0;color:#0f766e}
+.cog-ogretmen-kart{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-radius:16px;padding:12px 14px;margin:0 0 12px;text-align:left;font-family:Nunito,system-ui,sans-serif}
+.cog-ogretmen-kart b{font-size:14.5px}
+.cog-ogretmen-kart .kod{display:inline-block;background:#fff;color:#0f766e;border-radius:10px;padding:3px 10px;font-weight:900;letter-spacing:3px;font-size:16px;margin:6px 6px 0 0}
+.cog-ogretmen-kart button{border:0;border-radius:10px;background:rgba(255,255,255,.2);color:#fff;font:800 12px Nunito,system-ui,sans-serif;padding:6px 10px;margin:6px 6px 0 0;cursor:pointer}
+.cog-ogretmen-kart small{display:block;font-size:11.5px;opacity:.9;margin-top:4px;font-weight:700}
+.cog-liste-satir{border:1.5px solid #e2e8f0;border-radius:12px;padding:9px 10px;margin-bottom:6px;font-size:12.5px;font-weight:700;display:flex;gap:8px;align-items:center}
+.cog-liste-satir .m{flex:1;min-width:0}
+.cog-liste-satir b{display:block;font-size:13.5px}
+.cog-liste-satir small{display:block;color:#64748b}
+.cog-liste-satir button{border:0;border-radius:10px;padding:6px 10px;font:800 11.5px Nunito,system-ui,sans-serif;cursor:pointer}
+.cog-bagla{background:#fff;border-radius:20px;padding:14px;border:2px solid #ccfbf1;margin-bottom:12px;font-family:inherit;color:#134e4a;text-align:left}
+.cog-bagla h3{margin:0 0 6px;font-size:15px;font-weight:900}
+.cog-bagla p{margin:0 0 8px;font-size:12.5px;font-weight:700;color:#475569}
+.cog-bagla .satir{display:flex!important;flex-direction:row!important;gap:6px}
+.cog-bagla input{flex:1;border:2px solid #e2e8f0;border-radius:12px;padding:9px;font:900 14px Nunito,system-ui,sans-serif;text-transform:uppercase;letter-spacing:2px}
+.cog-bagla button{border:0;border-radius:12px;padding:0 14px;font:900 13px Nunito,system-ui,sans-serif;color:#fff;background:#0d9488;cursor:pointer}
+.cog-perde button:focus-visible,.cog-perde input:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const kac = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const kucuk = x => String(x || '').trim().toLocaleLowerCase('tr');
+  const OGRT = () => { try { return sessionStorage.getItem('ing_ogr_token') || ''; } catch (e) { return ''; } };
+  const PORTAL = location.origin + location.pathname;
+  const kopyala = (metin, btn) => { try { navigator.clipboard.writeText(metin); if (btn) { let e = btn.textContent; btn.textContent = '✓ Kopyalandı'; setTimeout(() => btn.textContent = e, 1500); } } catch (e) { prompt('Kopyala:', metin); } };
+  const jsonYanit = obj => new Response(JSON.stringify(obj), { status: 200, headers: { 'Content-Type': 'application/json' } });
+
+  /* =====================================================================
+     1) AĞ KATMANI: giriş, kayıt, panel şifresi, bildirimler
+     ===================================================================== */
+  const DUELLO_ANAHTAR = () => 'diji_duello_gosterilen_' + kucuk(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '');
+  const orgFetch = window.fetch;
+  window.fetch = async function (url, opt) {
+    let u = typeof url === 'string' ? url : (url && url.url) || '';
+    let govde = null;
+    if (opt && typeof opt.body === 'string' && opt.body[0] === '{') { try { govde = JSON.parse(opt.body); } catch (e) {} }
+    let islem = (govde && govde.islem) || (u.match(/[?&]islem=(\w+)/) || [])[1] || '';
+    /* Öğrenci kaydı: isteğe bağlı öğretmen kodu */
+    if (islem === 'kayitOl' && govde) {
+      let k = $('kayitOlOgretmenKodu'); govde.ogretmenKodu = k ? k.value.trim() : '';
+      opt = Object.assign({}, opt, { body: JSON.stringify(govde) });
+    }
+    /* Panel şifresi: başka bir öğretmen kullanıcı adı yazdıysa */
+    if (islem === 'ogretmenGiris' && govde) {
+      let k = $('cogPanelKullanici'); if (k && k.value.trim()) { govde.kullanici = k.value.trim(); opt = Object.assign({}, opt, { body: JSON.stringify(govde) }); }
+    }
+    let r = await orgFetch.call(this, url, opt);
+    try {
+      /* Öğretmen girişi: sayfa içinde her öğretmen "teacher" kimliğiyle çalışır (gerçek adı ayrıca saklanır).
+         Hangi öğrencilerin görüneceğini sunucu, oturum anahtarından belirler. */
+      if (islem === 'giris') {
+        let d = await r.clone().json();
+        if (d && d.ok && d.rol === 'ogretmen') {
+          try { sessionStorage.setItem('ing_ogr_ad', d.ogrenci || ''); sessionStorage.setItem('ing_ogr_yonetici', d.yonetici ? '1' : ''); } catch (e) {}
+          return jsonYanit(Object.assign({}, d, { ogrenci: 'teacher' }));
+        }
+      }
+      if (islem === 'ogretmenGiris') {
+        let d = await r.clone().json();
+        if (d && d.ok) { try { sessionStorage.setItem('ing_ogr_ad', d.ogretmen || ''); sessionStorage.setItem('ing_ogr_yonetici', d.yonetici ? '1' : ''); } catch (e) {} setTimeout(ogretmenKartiCiz, 300); }
+      }
+      if (islem === 'kayitOl') {
+        let d = await r.clone().json();
+        if (d && d.status === 'success') setTimeout(() => { let m = $('kayitOlSonucMesaj'); if (m) m.innerText += d.ogretmen ? `\n👩‍🏫 Öğretmenin: ${d.ogretmen}. Kaydın ona iletildi.` : '\n🎒 Bağımsız öğrenci olarak kayıt oldun.'; }, 50);
+      }
+      /* Düello davetleri: bir kez açılır pencere olarak gösterilen davet bir daha pencere olarak açılmaz (zilde durur) */
+      if (islem === 'bildirimlerim' && !/[?&]tumu=1/.test(u) && !(govde && govde.tumu)) {
+        let d = await r.clone().json();
+        if (d && Array.isArray(d.liste)) {
+          let gor = new Set(); try { gor = new Set(JSON.parse(localStorage.getItem(DUELLO_ANAHTAR()) || '[]')); } catch (e) {}
+          let degisti = false;
+          d.liste.forEach(b => { if (b.tur === 'duello') { let k = String(b.sat); if (gor.has(k)) { b.tur = 'duello_gosterildi'; degisti = true; } else gor.add(k); } });
+          try { localStorage.setItem(DUELLO_ANAHTAR(), JSON.stringify([...gor].slice(-200))); } catch (e) {}
+          if (degisti) return jsonYanit(d);
+        }
+      }
+    } catch (e) {}
+    return r;
+  };
+
+  /* =====================================================================
+     2) KAYIT OL: önce rol seçimi
+     ===================================================================== */
+  function kodAlaniEkle() {
+    if ($('kayitOlOgretmenKodu')) return;
+    let email = $('kayitOlEmail'); if (!email) return;
+    let alan = email.closest('.rubric-field');
+    let d = document.createElement('div'); d.className = 'rubric-field';
+    d.innerHTML = `<label for="kayitOlOgretmenKodu">Öğretmen kodu (varsa):</label><input type="text" id="kayitOlOgretmenKodu" maxlength="10" autocomplete="off" autocapitalize="characters" placeholder="Örn: K7M4QX" style="text-transform:uppercase;letter-spacing:2px">
+      <small style="display:block;font-size:10.5px;color:#64748b;margin-top:3px">Öğretmenin sana bir kod verdiyse yaz. Yoksa boş bırak, bağımsız kayıt olursun.</small>`;
+    alan.parentNode.insertBefore(d, alan);
+    let kod = new URLSearchParams(location.search).get('kod'); if (kod) $('kayitOlOgretmenKodu').value = kod.toUpperCase();
+  }
+  kodAlaniEkle(); setInterval(kodAlaniEkle, 2000);
+  let orgKayitAc = window.kayitOlAc;
+  function perde(html, kapatFn) {
+    let p = document.createElement('div'); p.className = 'cog-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
+    p.innerHTML = `<div class="cog-kart"><button class="cog-x" type="button" aria-label="Kapat">✕</button>${html}</div>`;
+    document.body.appendChild(p);
+    const kapat = () => { p.remove(); if (kapatFn) kapatFn(); };
+    p.querySelector('.cog-x').onclick = kapat; p.onclick = e => { if (e.target === p) kapat(); };
+    document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape' && document.body.contains(p)) { kapat(); document.removeEventListener('keydown', esc); } });
+    return p;
+  }
+  window.kayitOlAc = function () {
+    let p = perde(`<h3>📝 Kayıt Ol</h3><p class="alt">Portala kim olarak katılıyorsun?</p>
+      <div class="cog-rol"><button type="button" data-r="ogr"><span class="ik">🎒</span><span><b>Öğrenciyim</b><small>Oyunlarla İngilizce öğren, herkesle yarış</small></span></button>
+      <button type="button" data-r="ogrt"><span class="ik">👩‍🏫</span><span><b>Öğretmenim</b><small>Kendi öğrencilerini takip et, değerlendir, ödev ver</small></span></button></div>`);
+    p.querySelector('[data-r="ogr"]').onclick = () => { p.remove(); kodAlaniEkle(); if (typeof orgKayitAc === 'function') orgKayitAc.apply(this, arguments); setTimeout(kodAlaniEkle, 100); };
+    p.querySelector('[data-r="ogrt"]').onclick = () => { p.remove(); ogretmenKayit(); };
+    setTimeout(() => p.querySelector('[data-r="ogr"]').focus(), 50);
+  };
+  /* Davet linkiyle gelen (…/?kod=XXXX) doğrudan öğrenci kaydına */
+  if (new URLSearchParams(location.search).get('kod')) setTimeout(() => { if (typeof girisli === 'function' ? !girisli() : !localStorage.getItem('ing_token')) { kodAlaniEkle(); if (typeof orgKayitAc === 'function') orgKayitAc(); } }, 1500);
+
+  function ogretmenKayit() {
+    let p = perde(`<h3>👩‍🏫 Öğretmen Kaydı</h3><p class="alt">Hesabın hemen açılır ve sana özel bir öğretmen kodu verilir. Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır.</p>
+      <div class="cog-alan"><label for="cogAd">Ad Soyad</label><input id="cogAd" autocomplete="name" placeholder="Örn: Ayşe Yılmaz"></div>
+      <div class="cog-alan"><label for="cogKul">Kullanıcı adı (girişte kullanacaksın)</label><input id="cogKul" autocomplete="username" autocapitalize="off" placeholder="Örn: ayseogretmen"></div>
+      <div class="cog-alan"><label for="cogEposta">E-posta (öğrenci bildirimleri buraya gelir)</label><input id="cogEposta" type="email" autocomplete="email" placeholder="ornek@okul.k12.tr"></div>
+      <div class="cog-alan"><label for="cogKurum">Okul / kurum (isteğe bağlı)</label><input id="cogKurum" placeholder="Örn: Atatürk İlkokulu"></div>
+      <div class="cog-alan"><label for="cogS1">Şifre (en az 8 karakter)</label><input id="cogS1" type="password" autocomplete="new-password"></div>
+      <div class="cog-alan"><label for="cogS2">Şifre (tekrar)</label><input id="cogS2" type="password" autocomplete="new-password"></div>
+      <label class="cog-onay"><input type="checkbox" id="cogOnay"><span>Öğrencilerimin bilgilerini yalnızca eğitim amacıyla, KVKK'ya uygun olarak kullanacağımı kabul ediyorum.</span></label>
+      <button type="button" class="cog-btn" id="cogGonder">Öğretmen hesabımı aç</button><div class="cog-mesaj" id="cogMesaj" role="alert"></div>`);
+    const hata = m => { let e = $('cogMesaj'); e.className = 'cog-mesaj kotu'; e.textContent = m; };
+    $('cogGonder').onclick = async () => {
+      let ad = $('cogAd').value.trim(), kul = $('cogKul').value.trim(), ep = $('cogEposta').value.trim(), kurum = $('cogKurum').value.trim(), s1 = $('cogS1').value, s2 = $('cogS2').value;
+      if (!ad || !kul || !ep || !s1) return hata('Ad soyad, kullanıcı adı, e-posta ve şifre zorunlu.');
+      if (s1.length < 8) return hata('Şifre en az 8 karakter olmalı.');
+      if (s1 !== s2) return hata('Şifreler birbiriyle uyuşmuyor.');
+      if (!$('cogOnay').checked) return hata('Devam etmek için onay kutusunu işaretle.');
+      let b = $('cogGonder'); b.disabled = true; b.textContent = 'Hesap açılıyor…';
+      let d = null; try { let r = await orgFetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'ogretmenKayitOl', adSoyad: ad, kullaniciAdi: kul, email: ep, kurum, sifre: s1 }) }); d = await r.json(); } catch (e) {}
+      b.disabled = false; b.textContent = 'Öğretmen hesabımı aç';
+      if (!d || !d.ok) return hata((d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol et.');
+      p.remove();
+      let link = `${PORTAL}?kod=${d.kod}`;
+      let p2 = perde(`<h3>🎉 Hesabın hazır!</h3><p class="alt">Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır. Kod e-posta adresine de gönderildi.</p>
+        <div class="cog-kod" aria-label="Öğretmen kodun">${kac(d.kod)}</div>
+        <button type="button" class="cog-btn" id="cogKodKopya">📋 Kodu kopyala</button>
+        <button type="button" class="cog-btn ikincil" id="cogLinkKopya">🔗 Öğrenci davet linkini kopyala</button>
+        <button type="button" class="cog-btn ikincil" id="cogGiris">➡️ Şimdi giriş yap</button>`);
+      $('cogKodKopya').onclick = e => kopyala(d.kod, e.target);
+      $('cogLinkKopya').onclick = e => kopyala(link, e.target);
+      $('cogGiris').onclick = () => { p2.remove(); if (typeof kayitOlKapat === 'function') try { kayitOlKapat(); } catch (e) {} let o = $('ogrenci'); if (o) { o.value = d.kullanici; let s = $('sifre'); if (s) s.focus(); } };
+    };
+    setTimeout(() => $('cogAd').focus(), 50);
+  }
+
+  /* =====================================================================
+     3) ÖĞRETMEN PANELİ: kodum kartı, yönetici için öğretmen listesi, başka öğretmen girişi
+     ===================================================================== */
+  async function ogretmenKartiCiz() {
+    let menu = document.querySelector('#ogretmenMenuModal .rubric-content'); if (!menu || !OGRT()) return;
+    let k = $('cogOgretmenKart');
+    if (!k) { k = document.createElement('div'); k.id = 'cogOgretmenKart'; k.className = 'cog-ogretmen-kart'; let h = menu.querySelector('h3'); (h || menu.firstElementChild).insertAdjacentElement('afterend', k); }
+    k.innerHTML = '<small>Öğretmen bilgilerin yükleniyor…</small>';
+    let d = null; try { let r = await fetch(`${apiURL}?islem=ogretmenBilgim&_=${Date.now()}`); d = await r.json(); } catch (e) {}
+    if (!d || !d.ok) { k.innerHTML = '<small>Öğretmen bilgileri alınamadı.</small>'; return; }
+    let link = `${PORTAL}?kod=${d.kod}`;
+    k.innerHTML = `<b>👩‍🏫 ${kac(d.adSoyad || d.kullanici)}${d.yonetici ? ' · Yönetici' : ''}</b>${d.kurum ? `<small>${kac(d.kurum)}</small>` : ''}
+      <div><span class="kod" aria-label="Öğretmen kodun">${kac(d.kod || '—')}</span><button type="button" id="cogK1">📋 Kodu kopyala</button><button type="button" id="cogK2">🔗 Davet linki</button>${d.yonetici ? '<button type="button" id="cogK3">👥 Öğretmenler</button>' : ''}</div>
+      <small>${d.yonetici ? 'Yönetici olarak tüm öğrencileri görüyorsun' : `${d.ogrenciSayisi} öğrencin var · sadece sana kayıtlı öğrencileri görürsün`}${d.email ? ' · bildirimler: ' + kac(d.email) : ''}</small>`;
+    $('cogK1').onclick = e => kopyala(d.kod, e.target);
+    $('cogK2').onclick = e => kopyala(link, e.target);
+    if ($('cogK3')) $('cogK3').onclick = ogretmenListesi;
+  }
+  let sonMenu = false;
+  setInterval(() => {
+    let m = $('ogretmenMenuModal'), acik = !!(m && getComputedStyle(m).display !== 'none');
+    if (acik && (!sonMenu || !$('cogOgretmenKart'))) ogretmenKartiCiz();
+    sonMenu = acik;
+    /* panel şifre penceresine "başka öğretmen" alanı */
+    let sm = $('sifreModal'), inp = $('yoneticiSifreInput');
+    if (sm && inp && !$('cogPanelKullaniciKutu')) {
+      let d = document.createElement('div'); d.id = 'cogPanelKullaniciKutu'; d.style.cssText = 'margin:0 0 8px;text-align:left';
+      d.innerHTML = `<button type="button" id="cogBaskaOgrt" style="border:0;background:none;color:#0f766e;font:800 12px Nunito,system-ui,sans-serif;cursor:pointer;padding:2px 0">👩‍🏫 Bu öğrencinin öğretmeni değil misin? Kullanıcı adını yaz</button>
+        <input id="cogPanelKullanici" placeholder="Öğretmen kullanıcı adın" autocomplete="username" style="display:none;width:100%;box-sizing:border-box;margin-top:6px;border:2px solid #e2e8f0;border-radius:10px;padding:9px;font:700 13px Nunito,system-ui,sans-serif">`;
+      inp.parentNode.insertBefore(d, inp);
+      $('cogBaskaOgrt').onclick = () => { let i = $('cogPanelKullanici'); i.style.display = 'block'; i.focus(); };
+    }
+  }, 700);
+  async function ogretmenListesi() {
+    let p = perde(`<h3>👥 Öğretmenler</h3><p class="alt">Her öğretmen sadece kendi kodunu giren öğrencileri görür. Pasif yapılan öğretmen giriş yapamaz.</p><div id="cogListe">Yükleniyor…</div>`);
+    const ciz = async () => {
+      let d = null; try { let r = await fetch(`${apiURL}?islem=ogretmenleriGetir&_=${Date.now()}`); d = await r.json(); } catch (e) {}
+      let alan = $('cogListe'); if (!alan) return;
+      if (!d || !d.ok) { alan.textContent = (d && d.mesaj) || 'Liste alınamadı.'; return; }
+      alan.innerHTML = `<div class="cog-liste-satir" style="background:#f8fafc"><span class="m"><b>🎒 Bağımsız öğrenciler</b><small>Öğretmen kodu girmeden kayıt olanlar · senin sorumluluğunda</small></span><b>${d.bagimsiz}</b></div>` +
+        d.liste.map(t => `<div class="cog-liste-satir"><span class="m"><b>${kac(t.adSoyad || t.kullanici)}${t.yonetici ? ' · 👑' : ''}${t.aktif ? '' : ' · ⛔ pasif'}</b>
+          <small>${kac(t.kullanici)}${t.kurum ? ' · ' + kac(t.kurum) : ''} · kod <b style="display:inline;letter-spacing:1px">${kac(t.kod || '—')}</b> · ${t.ogrenci} öğrenci${t.email ? ' · ' + kac(t.email) : ''}</small></span>
+          ${t.yonetici ? '' : `<button type="button" data-id="${kac(t.id)}" data-a="${t.aktif ? 0 : 1}" style="background:${t.aktif ? '#fee2e2;color:#991b1b' : '#dcfce7;color:#166534'}">${t.aktif ? 'Pasif yap' : 'Aktif yap'}</button>`}</div>`).join('');
+      alan.querySelectorAll('[data-id]').forEach(b => b.onclick = async () => {
+        if (b.dataset.a === '0' && !confirm('Bu öğretmen pasif yapılsın mı? Giriş yapamaz; öğrencileri ve verileri silinmez.')) return;
+        try { await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'ogretmenAktifPasif', id: b.dataset.id, aktif: b.dataset.a === '1' }) }); } catch (e) {}
+        ciz();
+      });
+    };
+    ciz();
+  }
+
+  /* =====================================================================
+     4) BAĞIMSIZ ÖĞRENCİ: öğretmen koduyla sonradan bağlan
+     ===================================================================== */
+  function baglaKarti() {
+    let p = $('soPanel'); if (!p || $('cogBagla')) return;
+    let ad = typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '';
+    if (!ad || kucuk(ad) === 'teacher') return;
+    let u = (Array.isArray(globalDataCache) ? globalDataCache : []).find(x => kucuk(x.ogrenci) === kucuk(ad));
+    if (!u || u.ogretmenBagli !== false) return;            /* bilgi yoksa ya da zaten bağlıysa gösterme */
+    let k = document.createElement('div'); k.id = 'cogBagla'; k.className = 'cog-bagla';
+    k.innerHTML = `<h3>👩‍🏫 Öğretmenine bağlan</h3><p>Öğretmenin sana bir kod verdiyse yaz: değerlendirmelerini, ödevlerini ve mesajlarını o takip eder. Ligde herkesle yarışmaya devam edersin.</p>
+      <div class="satir"><input id="cogBaglaKod" maxlength="10" placeholder="KOD" aria-label="Öğretmen kodu"><button type="button" id="cogBaglaBtn">Bağlan</button></div><div class="cog-mesaj" id="cogBaglaMesaj" role="status"></div>`;
+    p.insertBefore(k, p.firstChild);
+    $('cogBaglaBtn').onclick = async () => {
+      let kod = $('cogBaglaKod').value.trim(); if (!kod) return;
+      let d = null; try { let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'ogretmenKoduBagla', ogrenci: ad, kod }) }); d = await r.json(); } catch (e) {}
+      let m = $('cogBaglaMesaj');
+      if (d && d.ok) { k.innerHTML = `<h3>✅ ${kac(d.ogretmen)} artık öğretmenin!</h3><p>Mesajların ve ödevlerin artık ona gidecek.</p>`; u.ogretmenBagli = true; }
+      else { m.className = 'cog-mesaj kotu'; m.textContent = (d && d.mesaj) || 'Bağlanılamadı, internetini kontrol et.'; }
+    };
+  }
+  setInterval(baglaKarti, 2500);
+
+  /* =====================================================================
+     5) DERS ÇALIŞ: testten geri dönünce Örnekler/Test panelleri seviye ekranında kalmasın
+        (bu iki panel sayfada konu ekranının dışında duruyor; konu ekranı kapalıyken gizlenir)
+     ===================================================================== */
+  setInterval(() => {
+    let detay = $('dcScreenDetail'); if (!detay) return;
+    let acik = detay.classList.contains('active') && getComputedStyle(detay).display !== 'none';
+    ['dcTab-ornek', 'dcTab-test'].forEach(id => { let p = $(id); if (!p) return; if (!acik) { if (p.style.display !== 'none') p.style.display = 'none'; } else if (p.style.display === 'none') p.style.display = ''; });
+  }, 250);
+})();
+</script>
                 
 </body>
         </html>
