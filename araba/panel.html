@@ -490,11 +490,10 @@ function medal(rank){
   if(rank===3)
     return '<span class="medal">🥉</span>';
 
-  if(rank<=10)
-    return '<span class="medal">⭐</span>';
+  if(rank>=4 && rank<=10)
+    return `<span class="medal">🏅</span><span class="rank-number">${rank}</span>`;
 
   return '';
-
 }
 
 
