@@ -30051,7 +30051,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 })();
 </script>
 
-                <!-- ===================== ÇOK ÖĞRETMENLİ YAPI + DÜZELTMELER =====================
+              <!-- ===================== ÇOK ÖĞRETMENLİ YAPI + DÜZELTMELER · v2 =====================
+     v2: telefon ve e-posta zorunlu · öğretmenin gerçek adı ("teacher" yerine) · duyurular öğrencide görünür
+         · öğretmenler sadece kendi öğrencilerine (tümü / sınıf / şube / seçili) duyuru yapar; genel duyuru sadece yöneticide
      • Kayıt ol: önce "Öğrenciyim / Öğretmenim". Öğrenci formu aynı, sadece isteğe bağlı "Öğretmen kodu" alanı eklendi.
      • Öğretmen kaydı: hesap hemen açılır, kendine özel kod verilir. Öğretmen aynı giriş ekranından girer.
      • Öğretmen paneli: "Öğretmen kodum" kartı; yöneticiye "👥 Öğretmenler" listesi.
@@ -30124,6 +30126,15 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     /* Öğrenci kaydı: isteğe bağlı öğretmen kodu */
     if (islem === 'kayitOl' && govde) {
       let k = $('kayitOlOgretmenKodu'); govde.ogretmenKodu = k ? k.value.trim() : '';
+      let tl = String(govde.telefon || '').replace(/\D/g, ''), ep = String(govde.email || '').trim();
+      if (!/^(0?5\d{9}|905\d{9})$/.test(tl)) return jsonYanit({ status: 'error', message: 'Geçerli bir veli cep telefonu yaz (05XX XXX XX XX).' });
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(ep)) return jsonYanit({ status: 'error', message: 'Geçerli bir veli e-posta adresi yaz. Onay ve gelişim raporları bu adrese gelecek.' });
+      opt = Object.assign({}, opt, { body: JSON.stringify(govde) });
+    }
+    /* Duyuru: sınıf / şube hedefi */
+    if (islem === 'duyuruEkle' && govde && (duyuruHedef.tip === 'sinif' || duyuruHedef.tip === 'sube')) {
+      if (!duyuruHedef.liste.length) return jsonYanit({ status: 'error', message: duyuruHedef.tip === 'sinif' ? 'En az bir sınıf seç.' : 'En az bir şube seç.' });
+      govde.hedefTipi = duyuruHedef.tip; govde.hedefListesi = duyuruHedef.liste.slice();
       opt = Object.assign({}, opt, { body: JSON.stringify(govde) });
     }
     /* Panel şifresi: başka bir öğretmen kullanıcı adı yazdıysa */
@@ -30178,6 +30189,15 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     let kod = new URLSearchParams(location.search).get('kod'); if (kod) $('kayitOlOgretmenKodu').value = kod.toUpperCase();
   }
   kodAlaniEkle(); setInterval(kodAlaniEkle, 2000);
+  /* Telefon ve e-posta artık zorunlu: etiketleri güncelle */
+  function zorunluEtiketler() {
+    [['kayitOlTelefon', 'Veli cep telefonu (zorunlu):', '05XX XXX XX XX'], ['kayitOlEmail', 'Veli e-posta adresi (zorunlu):', 'ornek@mail.com']].forEach(([id, etiket, ph]) => {
+      let i = $(id); if (!i || i.dataset.zorunlu) return; i.dataset.zorunlu = '1'; i.placeholder = ph; i.required = true;
+      if (id === 'kayitOlTelefon') { i.type = 'tel'; i.inputMode = 'tel'; } else i.type = 'email';
+      let l = i.closest('.rubric-field') && i.closest('.rubric-field').querySelector('label'); if (l) l.textContent = etiket;
+    });
+  }
+  zorunluEtiketler(); setInterval(zorunluEtiketler, 2000);
   let orgKayitAc = window.kayitOlAc;
   function perde(html, kapatFn) {
     let p = document.createElement('div'); p.className = 'cog-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
@@ -30204,6 +30224,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       <div class="cog-alan"><label for="cogAd">Ad Soyad</label><input id="cogAd" autocomplete="name" placeholder="Örn: Ayşe Yılmaz"></div>
       <div class="cog-alan"><label for="cogKul">Kullanıcı adı (girişte kullanacaksın)</label><input id="cogKul" autocomplete="username" autocapitalize="off" placeholder="Örn: ayseogretmen"></div>
       <div class="cog-alan"><label for="cogEposta">E-posta (öğrenci bildirimleri buraya gelir)</label><input id="cogEposta" type="email" autocomplete="email" placeholder="ornek@okul.k12.tr"></div>
+      <div class="cog-alan"><label for="cogTel">Cep telefonu</label><input id="cogTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05XX XXX XX XX"></div>
       <div class="cog-alan"><label for="cogKurum">Okul / kurum (isteğe bağlı)</label><input id="cogKurum" placeholder="Örn: Atatürk İlkokulu"></div>
       <div class="cog-alan"><label for="cogS1">Şifre (en az 8 karakter)</label><input id="cogS1" type="password" autocomplete="new-password"></div>
       <div class="cog-alan"><label for="cogS2">Şifre (tekrar)</label><input id="cogS2" type="password" autocomplete="new-password"></div>
@@ -30211,13 +30232,15 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       <button type="button" class="cog-btn" id="cogGonder">Öğretmen hesabımı aç</button><div class="cog-mesaj" id="cogMesaj" role="alert"></div>`);
     const hata = m => { let e = $('cogMesaj'); e.className = 'cog-mesaj kotu'; e.textContent = m; };
     $('cogGonder').onclick = async () => {
-      let ad = $('cogAd').value.trim(), kul = $('cogKul').value.trim(), ep = $('cogEposta').value.trim(), kurum = $('cogKurum').value.trim(), s1 = $('cogS1').value, s2 = $('cogS2').value;
-      if (!ad || !kul || !ep || !s1) return hata('Ad soyad, kullanıcı adı, e-posta ve şifre zorunlu.');
+      let tel = $('cogTel').value.trim(), ad = $('cogAd').value.trim(), kul = $('cogKul').value.trim(), ep = $('cogEposta').value.trim(), kurum = $('cogKurum').value.trim(), s1 = $('cogS1').value, s2 = $('cogS2').value;
+      if (!ad || !kul || !ep || !s1 || !tel) return hata('Ad soyad, kullanıcı adı, e-posta, telefon ve şifre zorunlu.');
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(ep)) return hata('Geçerli bir e-posta adresi yaz.');
+      if (!/^(0?5\d{9}|905\d{9})$/.test(tel.replace(/\D/g, ''))) return hata('Geçerli bir cep telefonu yaz (05XX XXX XX XX).');
       if (s1.length < 8) return hata('Şifre en az 8 karakter olmalı.');
       if (s1 !== s2) return hata('Şifreler birbiriyle uyuşmuyor.');
       if (!$('cogOnay').checked) return hata('Devam etmek için onay kutusunu işaretle.');
       let b = $('cogGonder'); b.disabled = true; b.textContent = 'Hesap açılıyor…';
-      let d = null; try { let r = await orgFetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'ogretmenKayitOl', adSoyad: ad, kullaniciAdi: kul, email: ep, kurum, sifre: s1 }) }); d = await r.json(); } catch (e) {}
+      let d = null; try { let r = await orgFetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'ogretmenKayitOl', adSoyad: ad, kullaniciAdi: kul, email: ep, telefon: tel, kurum, sifre: s1 }) }); d = await r.json(); } catch (e) {}
       b.disabled = false; b.textContent = 'Öğretmen hesabımı aç';
       if (!d || !d.ok) return hata((d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol et.');
       p.remove();
@@ -30308,6 +30331,79 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     };
   }
   setInterval(baglaKarti, 2500);
+
+  /* =====================================================================
+     6) DUYURULAR ÖĞRENCİDE GÖRÜNSÜN
+        (sayfadaki "her girişte duyuru kontrolü" yanlış fonksiyonu çağırıyordu; duyuru penceresi hiç açılmıyordu)
+     ===================================================================== */
+  let duyuruIlk = false, duyuruSon = 0, duyuruAcikti = false;
+  const ogrenciGirisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher'); };
+  const duyuruAcik = () => { let o = $('duyuruOverlay'); return !!(o && getComputedStyle(o).display !== 'none' && o.getClientRects().length); };
+  setInterval(() => {
+    if (!ogrenciGirisli() || typeof window.duyuruKontrolEt !== 'function') return;
+    let acik = duyuruAcik();
+    if (duyuruAcikti && !acik) duyuruSon = Date.now() - 5 * 60000 + 3000;   /* biri kapandıysa sıradakine 3 sn sonra bak */
+    duyuruAcikti = acik;
+    if (acik) return;
+    if (!duyuruIlk) { duyuruIlk = true; duyuruSon = Date.now(); setTimeout(() => window.duyuruKontrolEt(), 3500); return; }
+    if (Date.now() - duyuruSon > 5 * 60000) { duyuruSon = Date.now(); window.duyuruKontrolEt(); }
+  }, 1500);
+
+  /* =====================================================================
+     7) DUYURU HEDEFİ: yönetici → herkes / sınıf / şube / seçili
+                       öğretmen → tüm öğrencilerim / sınıf / şube / seçili
+     ===================================================================== */
+  const duyuruHedef = { tip: 'herkes', liste: [] };
+  const yoneticiMi = () => { try { return sessionStorage.getItem('ing_ogr_yonetici') === '1'; } catch (e) { return false; } };
+  function duyuruHedefCiz() {
+    let cb = $('duyuruHerkesCb'); if (!cb) return;
+    let kutu = $('cogDuyuruHedef');
+    if (!kutu) {
+      kutu = document.createElement('div'); kutu.id = 'cogDuyuruHedef'; kutu.style.cssText = 'margin:6px 0 10px;text-align:left';
+      let yer = cb.closest('label') || cb.parentElement; yer.parentNode.insertBefore(kutu, yer); yer.style.display = 'none';
+    }
+    let ogr = (Array.isArray(globalDataCache) ? globalDataCache : []).filter(u => u && u.ogrenci && kucuk(u.ogrenci) !== 'teacher');
+    let siniflar = [...new Set(ogr.map(u => String(u.Sinif || u.sinif || '')).filter(Boolean))].sort((a, b) => a - b);
+    let subeler = [...new Set(ogr.map(u => `${u.Sinif || u.sinif || ''}|${String(u.sube || u.Sube || '').trim()}`).filter(x => !/^\||\|$/.test(x)))].sort();
+    const SEC = [['herkes', yoneticiMi() ? '🌍 Herkes (tüm portal)' : '👩‍🏫 Tüm öğrencilerim'], ['sinif', '🏫 Sınıf'], ['sube', '🚪 Şube'], ['secili', '🙋 Seçili öğrenciler']];
+    let imza = duyuruHedef.tip + '|' + duyuruHedef.liste.join(',') + '|' + siniflar.join(',') + '|' + subeler.join(',') + '|' + yoneticiMi();
+    if (kutu.dataset.imza === imza) return; kutu.dataset.imza = imza;
+    const cip = (deger, etiket, secili, veri) => `<button type="button" ${veri}="${kac(deger)}" style="border:1.5px solid ${secili ? '#7c3aed' : '#e2e8f0'};background:${secili ? '#7c3aed' : '#fff'};color:${secili ? '#fff' : '#334155'};border-radius:999px;padding:6px 11px;font:800 12px Nunito,system-ui,sans-serif;margin:0 5px 5px 0;cursor:pointer">${etiket}</button>`;
+    kutu.innerHTML = `<div style="font:800 11.5px Nunito,system-ui,sans-serif;color:#475569;margin-bottom:5px">Kime gönderilsin?</div>` + SEC.map(([k, e]) => cip(k, e, duyuruHedef.tip === k, 'data-tip')).join('') +
+      (duyuruHedef.tip === 'sinif' ? `<div style="margin-top:4px">${siniflar.map(x => cip(x, x + '. sınıf', duyuruHedef.liste.includes(x), 'data-deger')).join('') || '<small>Öğrenci yok</small>'}</div>` : '') +
+      (duyuruHedef.tip === 'sube' ? `<div style="margin-top:4px">${subeler.map(x => cip(x, x.replace('|', '/') + ' şubesi', duyuruHedef.liste.includes(x), 'data-deger')).join('') || '<small>Şube bilgisi olan öğrenci yok</small>'}</div>` : '') +
+      (!yoneticiMi() && duyuruHedef.tip === 'herkes' ? '<div style="font:700 11px Nunito,system-ui,sans-serif;color:#64748b">Genel (tüm portal) duyuruyu sadece yönetici yapabilir.</div>' : '');
+    kutu.querySelectorAll('[data-tip]').forEach(b => b.onclick = () => { duyuruHedef.tip = b.dataset.tip; duyuruHedef.liste = []; uygula(); });
+    kutu.querySelectorAll('[data-deger]').forEach(b => b.onclick = () => { let v = b.dataset.deger, i = duyuruHedef.liste.indexOf(v); i >= 0 ? duyuruHedef.liste.splice(i, 1) : duyuruHedef.liste.push(v); uygula(); });
+    function uygula() {
+      /* "Seçili öğrenciler" dışındaki seçimlerde sayfanın kendi "Herkes" kutusu işaretli kalır (doğrulama geçsin), hedef gönderirken değiştirilir */
+      cb.checked = duyuruHedef.tip !== 'secili';
+      cb.dispatchEvent(new Event('change', { bubbles: true })); try { if (typeof cb.onchange === 'function') cb.onchange(); } catch (e) {}
+      kutu.dataset.imza = ''; duyuruHedefCiz();
+    }
+  }
+  setInterval(duyuruHedefCiz, 1000);
+
+  /* =====================================================================
+     8) ÖĞRETMENİN GERÇEK ADI: sayfa içinde öğretmen "teacher" kimliğiyle çalışır; ekranda gerçek adı görünür
+     ===================================================================== */
+  let gercekAd = ''; try { gercekAd = sessionStorage.getItem('ing_ogr_ad') || ''; } catch (e) {}
+  let adSoruldu = false;
+  async function gercekAdiAl() {
+    if (adSoruldu) return; adSoruldu = true;
+    try { let r = await fetch(`${apiURL}?islem=ogretmenBilgim&_=${Date.now()}`); let d = await r.json(); if (d && d.ok && (d.adSoyad || d.kullanici)) { gercekAd = d.adSoyad || d.kullanici; sessionStorage.setItem('ing_ogr_ad', gercekAd); sessionStorage.setItem('ing_ogr_yonetici', d.yonetici ? '1' : ''); } } catch (e) {}
+    setTimeout(() => { adSoruldu = false; }, 60000);   /* alınamadıysa bir dakika sonra yeniden dene */
+  }
+  const ADI_DEGIS = /^(\s*)teacher(\s*\(sen\))?(\s*)$/i;
+  setInterval(() => {
+    if (typeof aktifOgrenciAdi === 'undefined' || kucuk(aktifOgrenciAdi) !== 'teacher') return;
+    if (!gercekAd || kucuk(gercekAd) === 'teacher') { try { gercekAd = sessionStorage.getItem('ing_ogr_ad') || ''; } catch (e) {} }
+    if (!gercekAd || kucuk(gercekAd) === 'teacher') { gercekAdiAl(); return; }
+    let kok = $('panel-alani') || document.body;
+    let w = document.createTreeWalker(kok, NodeFilter.SHOW_TEXT, { acceptNode: n => ADI_DEGIS.test(n.nodeValue) && !(n.parentElement && /^(INPUT|TEXTAREA|SCRIPT|STYLE|OPTION)$/.test(n.parentElement.tagName)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+    let l = []; while (w.nextNode()) l.push(w.currentNode);
+    l.forEach(n => { n.nodeValue = n.nodeValue.replace(ADI_DEGIS, (m, a, sen, b) => `${a}${gercekAd}${sen || ''}${b}`); });
+  }, 1500);
 
   /* =====================================================================
      5) DERS ÇALIŞ: testten geri dönünce Örnekler/Test panelleri seviye ekranında kalmasın
