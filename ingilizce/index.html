@@ -30611,120 +30611,127 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 })();
 </script>
 
-<!-- ===================== VERİ KORUMA: ALTIN / XP KAYBOLMASIN =====================
-     Sorun: oyun verisi değişiklikten 3 sn sonra sunucuya gidiyordu. Bu sürede çıkış yapılır,
-     uygulama kapatılır ya da arka plana atılırsa son kazanç kayboluyordu.
-     • Çıkışta: önce sunucuya kaydedilir, sonra çıkış yapılır.
-     • Uygulama kapanırken / arka plana geçerken / oyun bitince: hemen kaydedilir.
-     • Öğretmen hesapları: altın, XP ve karakter artık sunucuda saklanır (her cihazda aynı).
-     • Güvenlik: sadece bu cihaz sunucudaki veriyi başarıyla okuduysa gönderilir
-       (boş bir cihaz, sunucudaki gerçek veriyi asla ezemez).
-     ============================================================================= -->
+<!-- ===================== VERİ KORUMA v2: ALTIN / XP ASLA SİLİNMESİN =====================
+     Sorun: yeni bir cihazda sunucudaki veri gelmeden önce bazı kodlar cihazdaki BOŞ veriyi
+     "şimdi" tarihiyle kaydediyordu; boş veri "daha yeni" sayılıp sunucudaki gerçek verinin üzerine yazılıyordu.
+     1) Her girişte sunucudaki veri, cihazdaki ne olursa olsun ÖNCE kabul edilir.
+     2) Sunucudaki veri kabul edilmeden hiçbir şey sunucuya gönderilmez.
+     3) Her kayıt "hangi sürümün üzerine yazdığını" söyler; sunucu eski kaydı reddeder (409),
+        sayfa da sunucudaki güncel veriyi yeniden yükler.
+     4) Çıkışta / uygulama kapanırken / arka plana geçerken / oyun bitince hemen kaydeder.
+     5) "X karakter açtın!" bildirimi hesap başına bir kez gösterilir.
+     ===================================================================================== -->
 <script>
 (function () {
   const kucuk = x => String(x || '').trim().toLocaleLowerCase('tr');
   const isimAl = () => (typeof yoIsim !== 'undefined' && yoIsim) || '';
   const yoVar = () => typeof yo !== 'undefined' && yo && typeof yo === 'object';
+  const benimsendi = new Set();          /* bu sayfada sunucudaki verisi kabul edilmiş kişiler */
+  const taban = {};                      /* kişi → sunucudaki sürüm (guncelleme) */
+  const zorlaBekleyen = new Set();
 
-  /* Bu cihaz kimin verisini sunucudan başarıyla okudu? */
-  const okundu = new Set();
+  /* ---------- Ağ katmanı ---------- */
   const orgFetch = window.fetch;
   window.fetch = async function (url, opt) {
+    let u = typeof url === 'string' ? url : (url && url.url) || '';
+    let govde = null;
+    if (opt && typeof opt.body === 'string' && opt.body.indexOf('"ekVeriKaydet"') !== -1) { try { govde = JSON.parse(opt.body); } catch (e) {} }
+    /* Kaydetme: kabul edilmeden gönderme; sürümü ekle */
+    if (govde && govde.islem === 'ekVeriKaydet' && govde.anahtar === 'yo') {
+      let ad = kucuk(govde.ogrenci);
+      if (!benimsendi.has(ad)) return new Response(JSON.stringify({ status: 'bekliyor', message: 'Sunucudaki veri henüz yüklenmedi.' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      if (taban[ad] !== undefined) { govde._taban = taban[ad]; opt = Object.assign({}, opt, { body: JSON.stringify(govde) }); }
+      let r = await orgFetch.call(this, url, opt);
+      try {
+        if (r.status === 409) { benimsendi.delete(ad); yenidenYukle(); }
+        else if (r.ok) { let v = JSON.parse(govde.deger); if (v && v.guncelleme) taban[ad] = v.guncelleme; }
+      } catch (e) {}
+      return r;
+    }
     let r = await orgFetch.apply(this, arguments);
+    /* Yükleme (sayfanın kendi yükleyicisi; "_=" içermeyen): ilk yüklemede sunucudaki veri mutlaka kabul edilsin */
     try {
-      let u = typeof url === 'string' ? url : (url && url.url) || '';
-      if (/[?&]islem=ekVeriGetir/.test(u) && /[?&]anahtar=yo(&|$)/.test(u) && r.ok && !r.headers.get('X-Diji-Cevrimdisi')) {
-        let ad = decodeURIComponent((u.match(/[?&]ogrenci=([^&]*)/) || [])[1] || '');
+      if (/[?&]islem=ekVeriGetir/.test(u) && /[?&]anahtar=yo(&|$)/.test(u) && !/[?&]_=/.test(u) && r.ok && !r.headers.get('X-Diji-Cevrimdisi')) {
+        let ad = kucuk(decodeURIComponent((u.match(/[?&]ogrenci=([^&]*)/) || [])[1] || ''));
         let d = await r.clone().json().catch(() => undefined);
-        if (d !== undefined && !(d && (d.hata || d.status === 'error'))) okundu.add(kucuk(ad));
+        if (d === undefined || (d && (d.hata || d.status === 'error'))) return r;
+        if (d && d.deger) {
+          let s = JSON.parse(d.deger);
+          taban[ad] = s.guncelleme || 0;
+          if (!benimsendi.has(ad)) {
+            s.guncelleme = Date.now() + 60000;                   /* cihazdaki her şeyden "daha yeni" → kabul edilir */
+            zorlaBekleyen.add(ad);
+            return new Response(JSON.stringify(Object.assign({}, d, { deger: JSON.stringify(s) })), { status: 200, headers: { 'Content-Type': 'application/json' } });
+          }
+        } else { taban[ad] = 0; benimsendi.add(ad); }           /* sunucuda hiç veri yok: yeni hesap */
       }
     } catch (e) {}
     return r;
   };
 
-  /* Hemen kaydet */
+  /* Sayfanın yükleyicisi bitince: veri kabul edildi */
+  let orgAl = window.yoSunucudanAl;
+  if (typeof orgAl === 'function') window.yoSunucudanAl = async function () {
+    let r = await orgAl.apply(this, arguments);
+    let ad = kucuk(isimAl());
+    if (zorlaBekleyen.has(ad)) { zorlaBekleyen.delete(ad); benimsendi.add(ad); }
+    return r;
+  };
+  function yenidenYukle() { if (typeof window.yoSunucudanAl === 'function') setTimeout(() => window.yoSunucudanAl(), 300); }
+
+  /* ---------- Hemen kaydet ---------- */
   let sonGonderim = 0, sonGovde = '';
   async function hemenKaydet(bekle) {
     let ad = isimAl();
-    if (!ad || !yoVar() || !okundu.has(kucuk(ad))) return;
-    if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return;   /* sınıf modunda dokunma */
+    if (!ad || !yoVar() || !benimsendi.has(kucuk(ad))) return;
+    if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return;
     let govde = JSON.stringify({ islem: 'ekVeriKaydet', ogrenci: ad, anahtar: 'yo', deger: JSON.stringify(yo) });
-    if (govde === sonGovde && Date.now() - sonGonderim < 2000) return;   /* aynı veri az önce gönderildi */
+    if (govde === sonGovde && Date.now() - sonGonderim < 2000) return;
     sonGovde = govde; sonGonderim = Date.now();
     let p = window.fetch(apiURL, { method: 'POST', body: govde, keepalive: govde.length < 60000 }).catch(() => {});
     if (bekle) await Promise.race([p, new Promise(r => setTimeout(r, 2500))]);
   }
   window.yoHemenKaydet = hemenKaydet;
 
-  /* Öğretmen hesabı: eskiden hiç gönderilmiyordu; artık gönderilir (sunucu öğretmenin kendi satırına yazar) */
+  /* Sayfanın kendi gönderimi: kabul edilmeden çalışmasın; öğretmen hesabı da gönderilsin */
   let orgGonder = window.yoSunucuyaGonder;
   if (typeof orgGonder === 'function') window.yoSunucuyaGonder = function () {
-    if (kucuk(isimAl()) === 'teacher') return hemenKaydet(false);
+    let ad = kucuk(isimAl());
+    if (!benimsendi.has(ad)) return;
+    if (ad === 'teacher') return hemenKaydet(false);
     return orgGonder.apply(this, arguments);
   };
-
-  /* Uygulama kapanırken ya da arka plana geçerken */
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') hemenKaydet(false); });
   window.addEventListener('pagehide', () => hemenKaydet(false));
-
-  /* Oyun bitince (ödüller eklendikten sonra) */
   let orgGso = window.genelSonucEkraniGoster;
   if (typeof orgGso === 'function') {
     window.genelSonucEkraniGoster = function () { let r = orgGso.apply(this, arguments); setTimeout(() => hemenKaydet(false), 800); return r; };
     window.genelSonucEkraniGoster._oc = orgGso._oc;
   }
-
-  /* Çıkışta: önce kaydet, sonra çık */
   let orgCikis = window.cikisYap;
   if (typeof orgCikis === 'function') window.cikisYap = async function () {
     let a = arguments, self = this;
     try { await hemenKaydet(true); } catch (e) {}
+    benimsendi.clear();
     return orgCikis.apply(self, a);
   };
+
+  /* ---------- "X karakter açtın!" bildirimi: veri yüklenmeden gösterme, hesap başına bir kez ---------- */
+  let orgOdul = window.odulGoster;
+  if (typeof orgOdul === 'function') window.odulGoster = function (o) {
+    try {
+      if (o && /karakter açtın!$/.test(String(o.baslik || '')) && /Koleksiyon/.test(String(o.alt || ''))) {
+        let ad = kucuk(isimAl()), anahtar = 'diji_krk_toplu_' + ad;
+        if (!benimsendi.has(ad)) return;                                   /* veri gelmeden: gösterme */
+        if (localStorage.getItem(anahtar) || (yoVar() && yo.krkTopluGoruldu)) return;
+        try { localStorage.setItem(anahtar, '1'); } catch (e) {}
+        if (yoVar()) yo.krkTopluGoruldu = 1;
+      }
+    } catch (e) {}
+    return orgOdul.apply(this, arguments);
+  };
 })();
-</script>
-
-            <!-- ===================== BÖLÜM GİRİŞİNDE ENERJİ =====================
-     Herhangi bir bölümü açan fonksiyona giriş ücreti ekler.
-     KULLANIM: en alttaki "AYARLAR" listesine satır ekle / sil:
-         girisEnerjisi('fonksiyonAdi', ENERJİ, 'Bölümün adı');
-     Kurallar:
-       • Enerji yetmezse bölüm açılmaz, "Enerjin yetmiyor" penceresi çıkar (enerji satın alınabilir).
-       • Aynı bölüme 10 dakika içinde tekrar girmek ücretsizdir (yanlışlıkla iki kez ödenmez).
-       • Öğretmen hesabı ve sınıf modu ücret ödemez.
-     ================================================================== -->
-<script>
-(function () {
-  const SURE_DK = 3;                                   /* aynı bölüme bu kadar dakika içinde tekrar giriş bedava */
-  const son = {};
-  function girisEnerjisi(ad, miktar, etiket) {
-    let org = window[ad];
-    if (typeof org !== 'function') { console.warn('Giriş enerjisi: fonksiyon bulunamadı →', ad); return; }
-    window[ad] = function () {
-      let self = this, a = arguments;
-      let ogretmen = String(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '').toLowerCase() === 'teacher';
-      let sinifModu = typeof siniftaOynananOgrenci !== 'undefined' && !!siniftaOynananOgrenci;
-      if (ogretmen || sinifModu || Date.now() - (son[ad] || 0) < SURE_DK * 60000) return org.apply(self, a);
-      let kalan = window.genelEnerjiKalan;
-      if (typeof kalan === 'number' && kalan < miktar) { if (typeof genelEnerjiBittiGoster === 'function') genelEnerjiBittiGoster(); return; }
-      son[ad] = Date.now();
-      if (typeof ocEnerjiHarca === 'function') ocEnerjiHarca(miktar);
-      if (typeof yoToast === 'function') yoToast(`⚡ ${etiket || 'Bölüm'} girişi: −${miktar} enerji`);
-      return org.apply(self, a);
-    };
-  }
-  window.girisEnerjisi = girisEnerjisi;
-
-  /* ======================= AYARLAR =======================
-     İstediğin satırın başındaki // işaretini sil, enerji miktarını değiştir.
-     (Aktivite oyunları 3 ⚡, Kelime Modu / Sohbet / Kelime Kartları 4 ⚡ zaten girişte ödüyor.) */
-
-  // girisEnerjisi('dersCalisTamEkranAc', 2, 'Ders Çalış');
-  // girisEnerjisi('baModuAc',            4, 'Büyü Akademisi');
-  // girisEnerjisi('meduAkisAc',          1, 'Medu Akış');
-  // girisEnerjisi('sanaOzelTamEkranAc',  1, 'Sana Özel');
-})();
-</script>    
+</script>  
 
 
                 <!-- ===================== "SEVİYENİ ÖLÇ" DAVETİ: SADECE İLK 2 GİRİŞ =====================
