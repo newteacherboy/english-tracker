@@ -30418,4 +30418,78 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                 
 </body>
+
+<!-- ===================== VERİ KORUMA: ALTIN / XP KAYBOLMASIN =====================
+     Sorun: oyun verisi değişiklikten 3 sn sonra sunucuya gidiyordu. Bu sürede çıkış yapılır,
+     uygulama kapatılır ya da arka plana atılırsa son kazanç kayboluyordu.
+     • Çıkışta: önce sunucuya kaydedilir, sonra çıkış yapılır.
+     • Uygulama kapanırken / arka plana geçerken / oyun bitince: hemen kaydedilir.
+     • Öğretmen hesapları: altın, XP ve karakter artık sunucuda saklanır (her cihazda aynı).
+     • Güvenlik: sadece bu cihaz sunucudaki veriyi başarıyla okuduysa gönderilir
+       (boş bir cihaz, sunucudaki gerçek veriyi asla ezemez).
+     ============================================================================= -->
+<script>
+(function () {
+  const kucuk = x => String(x || '').trim().toLocaleLowerCase('tr');
+  const isimAl = () => (typeof yoIsim !== 'undefined' && yoIsim) || '';
+  const yoVar = () => typeof yo !== 'undefined' && yo && typeof yo === 'object';
+
+  /* Bu cihaz kimin verisini sunucudan başarıyla okudu? */
+  const okundu = new Set();
+  const orgFetch = window.fetch;
+  window.fetch = async function (url, opt) {
+    let r = await orgFetch.apply(this, arguments);
+    try {
+      let u = typeof url === 'string' ? url : (url && url.url) || '';
+      if (/[?&]islem=ekVeriGetir/.test(u) && /[?&]anahtar=yo(&|$)/.test(u) && r.ok && !r.headers.get('X-Diji-Cevrimdisi')) {
+        let ad = decodeURIComponent((u.match(/[?&]ogrenci=([^&]*)/) || [])[1] || '');
+        let d = await r.clone().json().catch(() => undefined);
+        if (d !== undefined && !(d && (d.hata || d.status === 'error'))) okundu.add(kucuk(ad));
+      }
+    } catch (e) {}
+    return r;
+  };
+
+  /* Hemen kaydet */
+  let sonGonderim = 0, sonGovde = '';
+  async function hemenKaydet(bekle) {
+    let ad = isimAl();
+    if (!ad || !yoVar() || !okundu.has(kucuk(ad))) return;
+    if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return;   /* sınıf modunda dokunma */
+    let govde = JSON.stringify({ islem: 'ekVeriKaydet', ogrenci: ad, anahtar: 'yo', deger: JSON.stringify(yo) });
+    if (govde === sonGovde && Date.now() - sonGonderim < 2000) return;   /* aynı veri az önce gönderildi */
+    sonGovde = govde; sonGonderim = Date.now();
+    let p = window.fetch(apiURL, { method: 'POST', body: govde, keepalive: govde.length < 60000 }).catch(() => {});
+    if (bekle) await Promise.race([p, new Promise(r => setTimeout(r, 2500))]);
+  }
+  window.yoHemenKaydet = hemenKaydet;
+
+  /* Öğretmen hesabı: eskiden hiç gönderilmiyordu; artık gönderilir (sunucu öğretmenin kendi satırına yazar) */
+  let orgGonder = window.yoSunucuyaGonder;
+  if (typeof orgGonder === 'function') window.yoSunucuyaGonder = function () {
+    if (kucuk(isimAl()) === 'teacher') return hemenKaydet(false);
+    return orgGonder.apply(this, arguments);
+  };
+
+  /* Uygulama kapanırken ya da arka plana geçerken */
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') hemenKaydet(false); });
+  window.addEventListener('pagehide', () => hemenKaydet(false));
+
+  /* Oyun bitince (ödüller eklendikten sonra) */
+  let orgGso = window.genelSonucEkraniGoster;
+  if (typeof orgGso === 'function') {
+    window.genelSonucEkraniGoster = function () { let r = orgGso.apply(this, arguments); setTimeout(() => hemenKaydet(false), 800); return r; };
+    window.genelSonucEkraniGoster._oc = orgGso._oc;
+  }
+
+  /* Çıkışta: önce kaydet, sonra çık */
+  let orgCikis = window.cikisYap;
+  if (typeof orgCikis === 'function') window.cikisYap = async function () {
+    let a = arguments, self = this;
+    try { await hemenKaydet(true); } catch (e) {}
+    return orgCikis.apply(self, a);
+  };
+})();
+</script>
+                
         </html>
