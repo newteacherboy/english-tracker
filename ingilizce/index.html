@@ -15109,6 +15109,7 @@ function sohbetMikDur() {
         async function yoRaporYukle() {
           let sinif = document.getElementById('yoRaporSinif').value, alan = document.getElementById('yoRaporAlan');
           if (!sinif) return;
+          if(yoRaporTip==='veli')return window.dmVeliRaporYukle(sinif,alan);
           alan.innerHTML = '<div class="yo-bos">Veriler yükleniyor...</div>';
           let veri;
           try { veri = await yoTumVeri(); } catch (e) { alan.innerHTML = '<div class="yo-bos">Veriler alınamadı. Apps Script eklemesinin yapıldığından ve yeni sürümün dağıtıldığından emin ol.</div>'; return; }
@@ -15133,19 +15134,7 @@ function sohbetMikDur() {
               : '<div class="yo-bos">Bu sınıfta henüz kayıtlı zor kelime yok.</div>') +
               (calismayan.length ? `<div class="yo-bolum">Bu hafta hiç çalışmayanlar (${calismayan.length})</div><div class="yo-bos" style="text-align:left">${calismayan.map(yoGuvenliMetin).join(', ')}</div>` : '');
           } else {
-            alan.innerHTML = ogrenciler.map(u => {
-              let b = veri[String(u.ogrenci).trim().toLowerCase()] || {};
-              let xp = b.lig && b.lig.hafta === buHafta ? (b.lig.xp || 0) : 0;
-              let gun = Object.keys(b.log || {}).filter(t => t >= haftaBas && b.log[t] > 0).length;
-              let zor = Object.values(b.zk || {}).filter(v => v.kutu < 5).sort((x, y) => y.yanlis - x.yanlis).slice(0, 3).map(v => v.en);
-              let mesaj = `🦜 *Diji-Medu Haftalık Özet*\n\nSevgili velimiz, öğrencimiz *${u.ogrenci}* bu hafta:\n📅 ${gun} gün çalıştı\n⭐ ${xp} XP topladı\n` +
-                (zor.length ? `🔁 Tekrar etmesi gereken kelimeler: ${zor.join(', ')}\n` : `🎉 Bu hafta zorlandığı bir kelime yok!\n`) +
-                (b.seviye ? `📋 Seviye tespit sonucu: ${b.seviye.sonuc}\n` : '') +
-                `\nDestekleriniz için teşekkür ederiz. 🌻`;
-              let tel = String(u.telefon || '').replace(/\D/g, '');
-              let buton = tel ? `<a class="yo-wa" href="https://wa.me/${tel}?text=${encodeURIComponent(mesaj)}" target="_blank" rel="noopener">WhatsApp</a>` : '<small>Telefon yok</small>';
-              return `<div class="yo-satir"><span class="ad">${yoGuvenliMetin(u.ogrenci)}<br><small>${gun} gün · ${xp} XP${zor.length ? ' · ' + zor.length + ' zor kelime' : ''}</small></span>${buton}</div>`;
-            }).join('') || '<div class="yo-bos">Bu sınıfta öğrenci bulunamadı.</div>';
+            return window.dmVeliRaporYukle(sinif, alan);
           }
         }
         
@@ -17418,6 +17407,7 @@ function avatarSVG(s, stil, px, cins) {
   const GUNLUK_SIRA_ODUL_TAVANI = 5;
   let ligKontrolEdiliyor = false;
   async function ligOdulKontrol() {
+    return; // Haftalık ödüller artık sunucuda tek sefer hesaplanır.
     if (ligKontrolEdiliyor || !girisli() || !yoVar() || oyunda()) return;
     if (typeof maTumGetir !== 'function' || typeof maLigSiralama !== 'function') return;
     ligKontrolEdiliyor = true;
@@ -21541,7 +21531,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   const YARDIM = [
     ['🧭', 'Uygulamada nerede ne var?', `<table><tr><td>🧙 <b>Parkur</b></td><td>Açılış ekranı. Üstteki 4 sekmeyle Büyü Akademisi, Kelime Modu, Sohbet ve Kelime Kartları parkurları arasında geçersin.</td></tr><tr><td>🎡 <b>Medu Akış</b></td><td>Herkesin başarıları (Akış), haftanın yıldızları ve düellolar (Keşfet), vitrinin ve lig.</td></tr><tr><td>✨ <b>Sana Özel</b></td><td>Ödevlerin, Zor Kelimelerim, Seviye Tespit.</td></tr><tr><td>🎮 <b>Aktivite</b></td><td>Mini oyunlar, Dikte, Cümle Kur, Okuma Stüdyosu, etkinlik ve videolar.</td></tr><tr><td>📘 <b>Ders Çalış</b></td><td>Konu anlatımları ve konu testleri.</td></tr><tr><td>🛍️ <b>Mağaza</b></td><td>Karakter Atölyesi, Koleksiyon, Sandıklar, Jokerler.</td></tr><tr><td>👤 <b>Profil</b></td><td>Puanların, grafiklerin ve karakterlerin.</td></tr></table>Sağdaki soluk butonlar: ⚡ enerji ve altın, 🎯 günlük hedef / ❓ yardım / 🤖 AI Koç. Medu Akış'taki 🔔 zil tüm bildirimlerini gösterir.`],
     ['⚡', 'Enerji', `Oyunlara girmek için enerji gerekir. Tavan <b>30</b>. Enerji kendiliğinden dolar: <b>her 15 dakikada +1</b>.<table><tr><th>Kazanç</th><th>Enerji</th></tr><tr><td>Kendiliğinden dolum</td><td>15 dakikada +1</td></tr><tr><td>Günlük ilk giriş (7. günde +10)</td><td>+5</td></tr><tr><td>Ders Çalış'ta konuyu ilk kez geçmek</td><td>+6</td></tr><tr><td>Geçtiğin konuyu tekrar etmek (günde bir)</td><td>+2</td></tr><tr><td>Düello kazanmak, sandıklar</td><td>+2 / +5</td></tr><tr><td>Arkadaşın gönderirse</td><td>+2</td></tr><tr><td>Mağazadan paket (günde 3 kez)</td><td>5 ⚡ = 15 🪙 · tam dolum = 60 🪙</td></tr></table><b>Harcama:</b> Her oyun <b>3 ⚡</b> (Kelime Laboratuvarı, Jeopardy, Eksik Harf, Hafıza, Hız Fırtınası, Harf Avı, Şifre Kırıcı, Eşleştirme, Kelime Treni, Dikte, Cümle Kur). Parkurlar <b>4 ⚡</b> (Büyü Akademisi, Kelime Modu, Sohbet, Kelime Kartları). Oyunun ortasında enerji düşmez. Öğretmenin sınıfta oynattığı oyunlar, Ders Çalış, okuma, videolar ve etkinlikler enerji harcamaz.<br><br><b>Ödül (her oyunda aynı):</b> ⭐ 4 🪙 · 20 XP, ⭐⭐ 7 🪙 · 35 XP, ⭐⭐⭐ 10 🪙 · 50 XP. Günün ilk 3 oyunu <b>×2</b>; 12. oyundan sonra ödül yarıya iner.`],
-    ['⭐', 'XP ve haftalık lig', `XP en kolay kazanılan puandır. Her doğru cevap <b>+10 XP</b> (Büyü Akademisi'nde +20). Konu testi +30, etkinlik ve video +10, seviye tespit en fazla +50 XP verir.<br><b>Lig:</b> Haftalık XP'ye göre sıralanırsın. İlk 10 🏆 Şampiyonlar Ligi, 11–30 ⭐ Süper Lig, diğerleri 🌱 Yerel Lig. Lig atlarsan +5 ⚡ +10 XP +5 🪙, her yeni sıra için +1 ⚡ +10 XP (günde en fazla 5 basamak). Lig her hafta yeniden başlar. Toplam XP'n ise hiç silinmez.`],
+    ['⭐', 'XP ve haftalık lig', `XP en kolay kazanılan puandır. Her doğru cevap <b>+10 XP</b> (Büyü Akademisi'nde +20). Konu testi +30, etkinlik ve video +10, seviye tespit en fazla +50 XP verir.<br><b>Lig:</b> Haftalık XP'ye göre sıralanırsın. İlk 10 🏆 Şampiyonlar Ligi, 11–30 ⭐ Süper Lig, diğerleri 🌱 Yerel Lig. Hafta sonu yalnızca Şampiyonlar Ligi’ndeki ilk 10, aktif katılım şartıyla dereceye göre altın ve enerji kazanır. Ödüller Lig ekranında listelenir. Lig her hafta yeniden başlar. Toplam XP'n ise hiç silinmez.`],
     ['🪙', 'Altın', `Her doğru cevap <b>+1 🪙</b> (Büyü Akademisi'nde +2). Günlük hedefi tamamlamak +5, art arda 4 doğru (kombo) +3 🪙 (günde 5 kez). Etkinlik ve video +2, konu testi +2 🪙.<br><b>Seri çarpanı:</b> 3 gün üst üste girersen altınlar ×1.25, 7 gün olursa ×1.5.<br><b>Harcama:</b> Karakter Atölyesi (10–120), karakter satın alma (50–130), jokerler (10–30), sandık (150–700), enerji paketi (25), seri dondurucu (10).`],
     ['🎁', 'Sandıklar ve karakterler', `Her parkurda <b>her 3 seviyede bir sandık</b> kazanırsın. Sıra: Bronz → Gümüş → Altın → Efsane, her sandığın %15 bir üst kademeye çıkma şansı var. İçinden XP, altın, enerji, ekstra joker, hediye hakkı ve nadir kıyafet çıkar. Sandığa 3 kez dokunarak açarsın.<br><b>Karakterler:</b> Her parkurda her 3 seviyede yeni bir karakter açılır (toplam 36). Mağaza › Koleksiyon ya da Profil › Karakterlerim'den profil fotoğrafın yaparsın. Beklemek istemezsen altınla da alabilirsin.`],
     ['🃏', 'Jokerler', `Her oyunda her jokerin <b>1 bedava</b> hakkı var. Mağaza › Jokerler'den aldıkların ekstra hak verir. Oyun sırasında joker çubuğundaki 🛒 düğmesiyle de alabilirsin. Güçlendiriciler (XP Tılsımı, Altın Mıknatısı, Bedava Bilet, Şans Yoncası) sıradaki oyunda kendiliğinden çalışır.`],
@@ -30831,9 +30821,13 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="parkur-theme.js?v=4"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=2"></script>
-<link rel="stylesheet" href="activity-ui.css?v=3">
-<script src="activity-ui.js?v=3"></script>
+<link rel="stylesheet" href="activity-ui.css?v=4">
+<script src="activity-ui.js?v=4"></script>
 <link rel="stylesheet" href="bottom-nav.css?v=1">
 <script src="bottom-nav.js?v=1"></script>
+
+<link rel="stylesheet" href="weekly-ui.css?v=1">
+<script src="feature-catalog.js?v=1"></script>
+<script src="weekly-ui.js?v=1"></script>
 </body>      
         </html>

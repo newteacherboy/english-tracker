@@ -1,8 +1,10 @@
+import { releaseAPI } from './release-api.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 const keys=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")||"{}");
 const supabase=createClient(Deno.env.get("SUPABASE_URL")!,keys.default);
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization,apikey,content-type,x-diji-token","Access-Control-Allow-Methods":"GET,POST,OPTIONS"};
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{...cors,"Content-Type":"application/json"}});
+const release=releaseAPI(supabase,json);
 const num=(v:any)=>Number.isFinite(Number(v))?Number(v):0;
 const val=(body:any,q:URLSearchParams,key:string)=>body[key]??q.get(key)??"";
 async function studentByNameGenel(name:string){const n=String(name).trim().replace(/[\\%_]/g,m=>"\\"+m);const {data,error}=await supabase.from("students").select("id,username").eq("status","approved").ilike("username",n).limit(2);if(error)throw error;return data?.length===1?data[0]:null;}
@@ -31,9 +33,10 @@ async function dmPresence(op:string,body:any,a:any){
   const names=Array.isArray(body.isimler)?[...new Set(body.isimler.filter((n:any)=>typeof n==='string'&&n.length<=150))].slice(0,120):[];
   if(names.length){const {data,error}=await supabase.from('students').select('id,username').in('username',names).eq('status','approved');if(error)throw error;students=(data||[]).filter((s:any)=>!blocked.has(s.id));}
  }
+ const showOnline=await release.on('cevrimici');
  const online=new Map<string,string>();
- if(students.length){const {data,error}=await supabase.from('portal_sessions').select('student_id,last_seen_at').eq('role','student').in('student_id',students.map(s=>s.id)).gt('expires_at',now.toISOString()).gte('last_seen_at',new Date(now.getTime()-300000).toISOString());if(error)throw error;for(const s of data||[]){const t=online.get(s.student_id);if(!t||s.last_seen_at>t)online.set(s.student_id,s.last_seen_at);}}
- return json({ok:true,serverNow:now.toISOString(),liste:students.map(s=>({ad:s.username,sinif:s.class_no,online:online.has(s.id),seenAt:online.get(s.id)||null})).sort((a,b)=>Number(b.online)-Number(a.online)||a.ad.localeCompare(b.ad,'tr'))});
+ if(students.length&&showOnline){const {data,error}=await supabase.from('portal_sessions').select('student_id,last_seen_at').eq('role','student').in('student_id',students.map(s=>s.id)).gt('expires_at',now.toISOString()).gte('last_seen_at',new Date(now.getTime()-300000).toISOString());if(error)throw error;for(const s of data||[]){const t=online.get(s.student_id);if(!t||s.last_seen_at>t)online.set(s.student_id,s.last_seen_at);}}
+ return json({ok:true,serverNow:now.toISOString(),liste:students.map(s=>({ad:s.username,sinif:s.class_no,online:showOnline&&online.has(s.id),seenAt:showOnline?(online.get(s.id)||null):null})).sort((a,b)=>Number(b.online)-Number(a.online)||a.ad.localeCompare(b.ad,'tr'))});
 }
 async function dmGiftMerge(id:string,value:any){
  let v=value||{};if(typeof v==='string'){try{v=JSON.parse(v);}catch{return value;}}
@@ -76,6 +79,7 @@ Deno.serve(async(req:Request)=>{
  const q=new URL(req.url).searchParams;let body:any={};if(req.method!=="GET"){try{body=await req.json()}catch{return json({ok:false,mesaj:"Geçersiz istek."},400)}}
  const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  const op=String(val(body,q,"islem"));
+ const denied=await release.guard(op,body,q,a);if(denied)return denied;
  if(['aktifDurum','takipDavetListesi'].includes(op))return await dmPresence(op,body,a);
  if(["duelloGonder","duelloYanit","duellolarim"].includes(op)){
   let arg:any={},action="list";
@@ -90,3 +94,4 @@ Deno.serve(async(req:Request)=>{
  return await dmExtension(op,body,q,a)||json({ok:false,mesaj:"Bilinmeyen işlem."},404);
  }catch(e){console.error(e);return json({ok:false,mesaj:"İşlem tamamlanamadı. Tekrar dene."},500)}
 });
+

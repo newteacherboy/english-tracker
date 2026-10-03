@@ -3,6 +3,7 @@
 // Yamalar "[YAMA n]" etiketiyle işaretlidir. İşlem adları ve cevap
 // biçimleri önceki sürümle aynıdır; sayfa kodunda değişiklik gerekmez.
 // =====================================================================
+import { releaseAPI } from './release-api.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -14,6 +15,7 @@ const corsHeaders = {
 const secretKeys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
 const adminKey = secretKeys.default;
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, adminKey);
+const release = releaseAPI(supabase,json);
 
 const OGRENCI_OTURUM_GUN = 30;
 const OGRETMEN_OTURUM_SAAT = 8;           // [YAMA 1] öğretmen oturumu 30 gün değil 8 saat
@@ -1052,6 +1054,8 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
+  const releaseResult=await release.handle(op,body,q,a);if(releaseResult)return releaseResult;
+  const releaseDeny=await release.guard(op,body,q,a);if(releaseDeny)return releaseDeny;
   /* [v4.0] Bu istekte öğrenci aramaları öğretmenin kapsamıyla sınırlı (yönetici herkesi görür) */
   const studentByName = async (n: string) => { const s = await studentByNameGenel(n); return kapsamda(a, s) ? s : null; };
   const ogrFiltre = (sorgu: any) => yoneticiOlmayan(a) ? sorgu.eq("teacher_id", a.teacher_id) : sorgu;
@@ -1952,6 +1956,8 @@ async function handle(req: Request) {
     }
     await supabase.from("extra_data").upsert({ student_id: s.id, key_name: key, value, updated_at: new Date().toISOString() }, { onConflict: "student_id,key_name" });
     if (key === "yo" && value && typeof value === "object") {
+      const {data: kept}=await supabase.from("extra_data").select("value").eq("student_id",s.id).eq("key_name","yo").maybeSingle();
+      if(kept?.value)value=kept.value;
       const patch: any = {};
       if (num(value.altin, -1) >= 0) patch.gold = num(value.altin);
       if (value.lig && typeof value.lig === "object") { const p = (s.profile && typeof s.profile === "object") ? { ...s.profile } : {}; p.lig = { ...(p.lig || {}), xp: num(value.lig.xp), hafta: value.lig.hafta }; patch.profile = p; }
@@ -2326,3 +2332,4 @@ Deno.serve(async (req) => {
   try { return await handle(req); }
   catch (e) { console.error(e); return json({ status: "error", ok: false, mesaj: "Sunucu hatası, tekrar dene.", message: "Sunucu hatası" }, 500); }
 });
+

@@ -1,0 +1,11 @@
+# Weekly reports, league awards and feature release controls
+
+Medu Akış tabs use the existing pastel template at a compact size; feed presence appears beside the student name. A scoped teacher endpoint assembles weekly game/test/level/activity/video/homework/reading metrics plus cumulative progress and recent teacher feedback. Private credentials, peer messages and other students' private information are excluded. Reports can be reviewed/copied or shared using the existing teacher mail flow.
+
+The authenticated administrator has a searchable catalog of 65 optional learning, game, social, reward, development and teacher features, including group and individual game switches. All default to open; existing class/student permissions still apply. Closing a feature preserves stored progress. Settings propagate within a minute, while both APIs enforce switches for mapped operations. Account access, privacy, account deletion and blocking remain available.
+
+Weekly XP is captured before client week rollover. Only the completed week's first ten, with positive XP, receive gold/energy (100/15, 75/12, 50/10, 35/8, 25/6, 20/5, 15/4, 10/3, 8/2, 5/1). Rankings use XP, recorded general average, then name/id. Settlement is Monday 00:05 Europe/Istanbul. Every approved student receives an individual once-only performance panel at their next visit; awards are credited atomically at that visit. Offline students can see their pending summary when they return. Prior instantaneous rank-up gifts are retired. The first tracked week is the deployment week; incomplete earlier weeks receive no retroactive awards.
+
+Tables use RLS with no client policies and no anon/authenticated grants. RPCs are SECURITY INVOKER and service-role-only. Existing session validation and gateway configuration are preserved byte-for-byte. Feature changes require the authenticated teacher's server-side is_admin flag; report data is restricted to that teacher's students (administrator may see all).
+
+Validation: TypeScript and 65 inline scripts parsed; actor/admin/feature guard tests; SQL rollback fixtures covering rank 1, rank 10, lower-league exclusion, repeated settlement, repeat claim, stale-device reward preservation and RPC permissions. Hosted mobile preview uses synthetic data and performs no production writes.
