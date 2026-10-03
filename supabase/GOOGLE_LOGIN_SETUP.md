@@ -1,32 +1,18 @@
-# Google login rollout — not enabled yet
+# Google ile İngilizce öğrenci girişi ve kayıt
 
-This branch adds student Google login alongside the current password login. It does not migrate, delete, copy or recreate students. First login requires the existing student's password. Subsequent logins use the same student ID through a separate, one-to-one mapping. Teacher login stays on the existing flow.
+Google ile giriş / kayıt düğmesi mevcut hesap bağlamayı ve yeni öğrenci kaydını destekler. Google kimliği sunucuda auth.getUser ile doğrulanır. Mevcut öğrenci hesabı yalnız mevcut şifre doğrulandıktan sonra bağlanır; aynı ad veya e-posta hesabı otomatik bağlamaz ve mevcut kayıtları değiştirmez.
 
-## Required configuration
+Yeni Google kaydı öğrenci adı, sınıf/şube, veli cep telefonu, veli e-postası, isteğe bağlı öğretmen kodu ve veli bilgilendirme beyanını ister. Şifre oluşturulmaz; uyumluluk için sunucuda bilinmeyen rastgele bir parola hash'i tutulur. Yeni öğrenci ve Google eşleştirmesi tek veritabanı işlemiyle oluşturulur. Kullanıcının isteğiyle yeni Google öğrencileri approved durumunda açılır ve doğrudan portal oturumu alır. Mevcut bekleyen/engelli hesaplar otomatik onaylanmaz. Normal kullanıcı adı/şifre kaydı değişmez.
 
-The live project `nxfqlutulxqzqgwewssd` currently reports `external.google: false`. A Google Cloud OAuth client and Supabase provider configuration are required before this feature can be tested end to end.
+Sorumlu öğretmene, kod yoksa yöneticiye kayıt bilgisi bildirim kuyruğuna eklenir; onay talebi değildir. E-posta teslimatı mevcut kuyruk/gönderici sistemine bağlıdır.
 
-1. In Google Auth Platform, select the owner's project; configure branding, audience and scopes `openid`, email and profile. For external users, testing mode restricts access to listed test accounts. Choose the intended audience and finish any Google verification requirements before general rollout.
-2. Create a Web application OAuth client. Authorized JavaScript origin: `https://panel.ogretmencocuk.com`. Authorized redirect URI: `https://nxfqlutulxqzqgwewssd.supabase.co/auth/v1/callback`.
-3. Enter the Client ID and Client Secret in Supabase Authentication → Sign In / Providers → Google. Keep the secret out of source control and chat.
-4. Add `https://panel.ogretmencocuk.com/ingilizce/?google_return=1` to Supabase Authentication → URL Configuration → Redirect URLs. Confirm the Site URL matches the intended live domain. Add a separate staging callback for testing; do not widen redirects with general wildcards.
+SQL: google-login.sql eşleştirme tablosunu; google-signup.sql sunucuya özel SECURITY INVOKER register_google_student işlevini oluşturur. İkisi de anon/authenticated erişimine kapalıdır. JWT doğrulaması Edge Function içinde yapılır; fonksiyonun önceki verify_jwt=false ayarı korunur.
 
-## Safe release order
+Google OAuth origin: https://panel.ogretmencocuk.com
+Google OAuth callback: https://nxfqlutulxqzqgwewssd.supabase.co/auth/v1/callback
+Supabase izinli uygulama dönüşü: https://panel.ogretmencocuk.com/ingilizce/
+İngilizceye ait Auth storageKey: diji-ingilizce-google-auth
 
-1. Test the additive SQL in `google-login.sql` on a development database. It creates only the mapping table, denies all anon/authenticated access and grants the backend service role select/insert. Both foreign keys and unique keys preserve one-to-one ownership. Do not execute the script twice; it intentionally fails if the table already exists.
-2. Deploy `functions/diji-api/index.ts` to development with JWT verification disabled as in the current production function. Existing custom portal tokens continue to authorize old routes. The new Google routes validate OAuth JWTs server-side with `auth.getUser` and require a Google identity.
-3. Test Google consent, first linking with a real existing student, a second login, cancellation, blocked/pending students, password fallback, and logout in Safari and Chrome. Validate the same student ID, points, progress, gifts and duels before and after. Do not test with a real student's password unless that user explicitly participates.
-4. Re-fetch the live Edge Function before deployment and reconcile changes against the version 47 snapshot used here. Do not overwrite concurrent server updates. Apply the additive SQL and reviewed function only after staging passes; then publish the frontend and enable the Google provider.
-5. The frontend shows the button only when both the Google provider and mapping backend are ready. Refresh service worker caches/version when revising `google-login.js`; its URL is explicitly versioned.
+Doğrulama: 18 Node testi geçti (7 mevcut hesap bağlama, 7 yeni kayıt, 4 frontend). Veritabanında başarılı aktif kayıt/eşleştirme, tekrar çağrı ve başarısız eşleştirmede rollback test edildi; test verileri işlem sonunda geri alındı. RPC erişim izinleri doğrulandı. Gerçek Google OAuth ile yeni kullanıcı kaydı henüz kullanıcıyla uçtan uca test edilmedi.
 
-## Validation performed
-
-`node --test tests/google-login.test.cjs` covers invalid JWTs, non-Google identities, unlinked accounts, wrong passwords, lockout, approved linking, subsequent login, pending accounts, conflicting mappings and POST-only behavior. These are mocked backend tests, not live OAuth or database integration tests.
-
-`node --check ingilizce/google-login.js` and `git diff --check` pass. A browser smoke test could not run because this environment has no Chromium executable. Real OAuth, database permissions/constraints and full portal UI still require staging validation. Do not merge this draft as a tested production release.
-
-## Recovery
-
-Disable Google in Supabase and remove the new script tag to restore the original frontend. Keep the mapping table to preserve linked accounts; no learning data rollback is needed. Removing a mapping requires an authenticated support process and must never accept a supplied student name alone. A self-service unlink/delete flow is outside this change.
-
-Reference: https://supabase.com/docs/guides/auth/social-login/auth-google
+Geri dönüş: Google sağlayıcısını kapatmak düğmeyi gizler; mevcut şifreli giriş çalışmaya devam eder. Oluşturulan öğrenci veya Google eşleştirmelerini silmeyin. Frontend, API ve veritabanı değişiklikleri yayınlandı; API mevcut sürüm 48 üzerine yalnız Google kayıt dalı eklenerek sürüm 49'a çıkarıldı.

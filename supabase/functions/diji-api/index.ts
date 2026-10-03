@@ -931,7 +931,7 @@ async function handle(req: Request) {
     const { error } = await supabase.from("student_google_accounts").select("auth_user_id").limit(0);
     return json({ hazir: !error });
   }
-  if (op === "googleGiris" || op === "googleBagla") {
+  if (op === "googleGiris" || op === "googleBagla" || op === "googleKayit") {
     if (req.method !== "POST") return json({ ok: false, mesaj: "POST gerekli." }, 405);
     const bearer = req.headers.get("authorization")?.match(/^Bearer (.+)$/i)?.[1];
     if (!bearer) return json({ ok: false, mesaj: "Google oturumu gerekli." }, 401);
@@ -944,6 +944,54 @@ async function handle(req: Request) {
       .select("student_id").eq("auth_user_id", user.id).maybeSingle();
     if (mappingError) return json({ ok: false, mesaj: "Google girişi henüz hazır değil." }, 503);
     let studentId = mapping?.student_id;
+    if (op === "googleKayit") {
+      if (studentId) return json({ ok: false, mesaj: "Bu Google hesabı zaten kayıtlı. Google ile giriş düğmesini kullan; onay bekliyorsa öğretmenin onayını bekle." }, 409);
+      const username = String(body.ogrenciAdi || "").trim().replace(/\s+/g, " ");
+      if (!/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,50}$/.test(username))
+        return json({ ok: false, mesaj: "Öğrenci ad soyadı sadece harflerden oluşmalı (3-50 karakter)." }, 400);
+      const telHam = String(body.telefon || "").replace(/\D/g, "");
+      const tel = /^5\d{9}$/.test(telHam) ? "0" + telHam : /^05\d{9}$/.test(telHam) ? telHam : /^905\d{9}$/.test(telHam) ? "0" + telHam.slice(2) : "";
+      const email = String(body.email || "").trim();
+      const sinif = Number(body.sinif), sube = temizMetin(body.sube, 10).trim();
+      if (!tel) return json({ ok: false, mesaj: "Geçerli bir veli cep telefonu yaz (05XX XXX XX XX)." }, 400);
+      if (email.length > 120 || !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email))
+        return json({ ok: false, mesaj: "Geçerli bir veli e-posta adresi yaz." }, 400);
+      if (!Number.isInteger(sinif) || sinif < 1 || sinif > 8 || !sube)
+        return json({ ok: false, mesaj: "Öğrencinin sınıfını ve şubesini belirt." }, 400);
+      if (body.kvkkOnay !== true) return json({ ok: false, mesaj: "Veli ve bilgilendirme beyanını işaretlemelisin." }, 400);
+      if (await denemeSay("google_kayit", user.id, 60) >= 5 || await denemeSay("kayit", "genel", 60) >= 20)
+        return json({ ok: false, mesaj: "Çok fazla kayıt denemesi. Bir saat sonra tekrar dene." }, 429);
+      await denemeYaz("google_kayit", user.id);
+      await denemeYaz("kayit", "genel", { ad: username });
+      if (await studentByNameGenel(username))
+        return json({ ok: false, mesaj: "Bu öğrenci zaten kayıtlı. Mevcut hesabını kullanıcı adı ve şifresiyle bağla." }, 409);
+      const { data: ayniOgrt } = await supabase.from("teachers").select("id").ilike("username", likeKacir(username)).limit(1);
+      if (ayniOgrt?.length) return json({ ok: false, mesaj: "Bu kullanıcı adı zaten kayıtlı." }, 409);
+      const kod = String(body.ogretmenKodu || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+      const ogretmen = kod ? (await supabase.from("teachers").select("id,email,full_name,username,active").ilike("invite_code", kod).limit(1)).data?.[0] || null : null;
+      if (kod && (!ogretmen || ogretmen.active === false))
+        return json({ ok: false, mesaj: "Öğretmen kodu bulunamadı. Kodu kontrol et veya boş bırak." }, 400);
+      const payload = { username, password_hash: await hashPassword((crypto.randomUUID() + crypto.randomUUID()).replace(/-/g, "")),
+        phone: tel, class_no: sinif, branch: sube, email, teacher_id: ogretmen?.id || null };
+      // One transaction: failure to bind the Google identity rolls back the new student.
+      const { data: createdId, error: createError } = await supabase.rpc("register_google_student", { p_auth_user_id: user.id, p_payload: payload });
+      if (createError || !createdId) return json({ ok: false, mesaj: createError?.code === "23505"
+        ? "Bu ad soyad zaten kayıtlı. Mevcut hesabını bağla veya öğretmeninle görüş."
+        : "Kayıt tamamlanamadı. Biraz sonra tekrar dene." }, createError?.code === "23505" ? 409 : 503);
+      try {
+        const alicilar = await sorumluEpostalar({ teacher_id: payload.teacher_id });
+        for (const e of alicilar) await kuyrugaEkle({ to_email: e, kind: "kayit", student_id: createdId,
+          subject: `Google ile yeni öğrenci kaydı – ${username}`,
+          html: mailKabugu("Yeni Öğrenci Kaydı", `<p><b>${hk(username)}</b> Google hesabıyla kayıt oldu. Hesabı aktif; bu bildirim kayıt bilgisi içindir.</p><p>Sınıf / şube: ${hk(sinif)} ${hk(sube)}</p><p>Veli telefonu: ${hk(tel)}</p><p>Veli e-postası: ${hk(email)}</p>`) });
+      } catch (_) { console.error("Google signup notification could not be queued"); }
+      const { data: createdStudent, error: createdStudentError } = await supabase.from("students")
+        .select("id,username,status").eq("id", createdId).maybeSingle();
+      if (createdStudentError || !createdStudent || createdStudent.status !== "approved")
+        return json({ ok: false, mesaj: "Hesabın aktif değil. Öğretmeninle görüş." }, 403);
+      const token = await issueSession("student", createdStudent.id);
+      return json({ ok: true, kayitOlustu: true, token, rol: "ogrenci", ogrenci: createdStudent.username,
+        mesaj: "Google ile kaydın tamamlandı. Hoş geldin!" });
+    }
     if (op === "googleBagla") {
       // Linking ALWAYS verifies the existing password, including repeat requests.
       const username = String(body.ogrenci || "").trim();
