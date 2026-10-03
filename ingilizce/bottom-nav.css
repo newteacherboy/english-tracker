@@ -1,0 +1,63 @@
+/* Approved design 2: white pastel dock, tactile 3D icons, lavender selected tab. */
+#bottomNavMobile.bottom-nav-mobile {
+ --dm-nav-height:82px;
+ box-sizing:border-box !important;
+ left:0 !important; right:0 !important; bottom:0 !important;
+ transform:none !important; width:100% !important; max-width:none !important;
+ border:1px solid #e2eeee !important; border-bottom:0 !important;
+ border-radius:28px 28px 0 0 !important;
+ background:linear-gradient(180deg,#fff 60%,#f8fcfc) !important;
+ box-shadow:0 -4px 24px #145e6820, inset 0 2px 0 #fff !important;
+ padding:5px 4px calc(5px + env(safe-area-inset-bottom,0px)) !important;
+ gap:0 !important; align-items:center !important;
+}
+#bottomNavMobile .bn-item {
+ box-sizing:border-box; flex:1 1 0 !important; min-width:0 !important;
+ min-height:72px !important; margin:0 !important; padding:3px 1px !important;
+ border:1px solid transparent !important; border-radius:18px !important;
+ background:transparent !important; box-shadow:none !important;
+ gap:0 !important; transform:none !important;
+ transition:background .18s ease,box-shadow .18s ease,transform .18s ease !important;
+}
+#bottomNavMobile .bn-icon {
+ display:block !important; width:46px !important; height:43px !important;
+ line-height:1 !important; font-size:0 !important; animation:none !important;
+ transform:none !important; flex-shrink:0;
+}
+#bottomNavMobile .dm-nav-art {
+ display:block; width:100%; height:100%;
+ background-image:url('bottom-nav-icons.webp?v=1');
+ background-size:300% 300%; background-repeat:no-repeat;
+ filter:drop-shadow(0 2px 2px #32646718);
+}
+#bottomNavMobile .bn-label {
+ display:flex !important; align-items:center; justify-content:center;
+ min-height:24px; max-width:100%; width:100%;
+ color:#21596b !important; font-size:10px !important; line-height:1.1 !important;
+ font-weight:900 !important; white-space:normal !important;
+ word-break:normal !important; overflow:visible !important;
+ text-overflow:clip !important; text-align:center;
+}
+#bottomNavMobile .bn-item:hover { background:#f1f7f8 !important; }
+#bottomNavMobile .bn-item.active {
+ background:linear-gradient(145deg,#f2e9ff,#e2d1fc) !important;
+ border-color:#dbc8f7 !important;
+ box-shadow:inset 0 2px 0 #fff9,0 3px 0 #ccb6ec,0 5px 12px #8261b529 !important;
+ transform:translateY(-4px) !important;
+}
+#bottomNavMobile .bn-item.active .bn-label { color:#552286 !important; }
+#bottomNavMobile .bn-item.active::after { display:none !important; }
+#bottomNavMobile .bn-item:focus-visible { outline:3px solid #078c97 !important; outline-offset:1px; }
+#bottomNavMobile .bn-item:active { transform:translateY(1px) !important; }
+@media (min-width:400px) {
+ #bottomNavMobile .bn-icon { width:50px !important; height:46px !important; }
+ #bottomNavMobile .bn-label { font-size:11px !important; }
+}
+@media (min-width:769px) {
+ #bottomNavMobile.bottom-nav-mobile { left:50% !important; right:auto !important; transform:translateX(-50%) !important; max-width:640px !important; }
+ #bottomNavMobile .bn-label { font-size:12px !important; }
+}
+@media (prefers-reduced-motion:reduce) { #bottomNavMobile .bn-item { transition:none !important; } }
+/* Keep fixed-page content reachable above the dock and iOS home indicator. */
+.dc-fullscreen-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
+body.kk-acik .seviye-harita-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
