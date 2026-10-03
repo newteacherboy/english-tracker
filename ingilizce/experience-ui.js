@@ -31,8 +31,9 @@
  const musicButton=document.createElement('button');musicButton.id='dmMusicToggle';musicButton.type='button';musicButton.className='dm-music-toggle';document.body.append(musicButton);
  function musicPaint(){musicButton.textContent=musicOn?'♫ Müzik açık':'♫ Müzik kapalı';musicButton.setAttribute('aria-pressed',String(musicOn));musicButton.setAttribute('aria-label',musicOn?'Parkur müziğini kapat':'Parkur müziğini aç');musicButton.hidden=!playing();}
  musicButton.onclick=()=>{gesture=true;musicOn=!musicOn;safeStore('dm_parkur_music',musicOn?'on':'off');musicPaint();if(musicOn)start();else stop();};
- document.addEventListener('pointerdown',()=>{gesture=true;start();},{passive:true});
- document.addEventListener('keydown',()=>{gesture=true;start();},{passive:true});
+ function unlock(){gesture=true;if(musicOn&&logged()){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(!master){master=audio.createGain();master.gain.value=.38;master.connect(audio.destination);}audio.resume().catch(()=>{});}catch{}}start();}
+ document.addEventListener('pointerdown',unlock,{passive:true});
+ document.addEventListener('keydown',unlock,{passive:true});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else start();});
  /* The existing island buttons keep their original click handlers and data. */
  function study(){
@@ -56,7 +57,7 @@
   parkur:[['Yeni bir durak seni bekliyor','Kaldığın yerden devam etmek ister misin?'],['Her doğru bir adım','Hızlanmak zorunda değilsin; dikkatle ilerle.'],['Sandığa giden yol öğrenmekten geçer','Parkurdaki tamamlanma hedeflerine göz at.'],['Küçük molalar iyi gelir','İstersen ara ver; ilerlemen kaldığın yerde seni bekler.']]
  };
  const flags={ders:'ders',aktiviteler:'aktiviteler',magaza:'magaza',dolap:'dolap',akis:'akis',sana:'sana_ozel',parkur:'parkur'};
- const messages=Object.entries(MESSAGE_GROUPS).flatMap(([target,rows])=>rows.map(([title,text],i)=>({id:target+i,target,title,text,flag:flags[target]})));
+ const messages=Object.entries(MESSAGE_GROUPS).flatMap(([target,rows])=>rows.map(([title,text],i)=>({id:target+i,target,title,text,flag:target==='aktiviteler'&&i===4?'iki_kisilik':target==='parkur'&&i===2?'sandik':flags[target]})));
  function energy(){const e=$('headerEnerjiNum')||$('kpEnerjiSatiri');const m=e?.textContent.match(/(\d+)\s*\/\s*(\d+)/);return m?Number(m[1]):null;}
  const busy=()=>playing()||[...document.querySelectorAll('.game-modal-overlay,.dm-perde,.rubric-modal,.rubric-overlay,.modal-overlay,[role="dialog"],.pomodoro-overlay,.seviye-harita-overlay,.km-perde,.t2-perde,.kur-perde,.kr-perde,.od-perde,.tv-kart,.sa-perde,.gso-perde,#dmWeeklyPanel')].some(visible)||!!document.querySelector('input:focus,textarea:focus,select:focus')||window.turAcik;
  let session='',activeMs=0,count=0,next=210000,lastPulse=performance.now(),idleAt=Date.now(),shown=null,closedCount=0;
