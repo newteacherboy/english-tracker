@@ -12,7 +12,7 @@ body.dm-parkur-open #bzParkur>.bz-ic{display:flex;flex-direction:column;height:1
 .dm-parkur-welcome img{width:86px;height:100px;object-fit:contain;flex:none;}
 .dm-parkur-welcome b{display:block;color:#183b4b;font:700 19px/1.25 Fredoka,system-ui,sans-serif;}
 .dm-parkur-welcome p{margin:7px 0 0;color:#718695;font-size:13px;line-height:1.4;font-weight:600;}
-.dm-parkur-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
+.dm-parkur-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:10px;}
 .dm-parkur-tabs button{display:flex;align-items:center;justify-content:center;gap:5px;min-height:42px;border:1px solid #dcebee;border-radius:14px;background:#fff;color:#758996;font:700 11px Nunito,system-ui,sans-serif;cursor:pointer;}
 .dm-parkur-tabs button[aria-selected=true]{background:#078c9c;border-color:#078c9c;color:#fff;box-shadow:0 0 0 3px #fff;}
 .dm-icon{width:21px;height:21px;display:inline-block;flex:none;}
@@ -44,13 +44,6 @@ body.dm-parkur-open #bzParkur .bz-kutu [style*='color:']{color:#728996!important
 body.dm-parkur-open #bzParkur .bz-cubuk{background:#e3efef;}
 body.dm-parkur-open #bzParkur .bz-cubuk i{background:#53b79e;}
 body.dm-parkur-open #pkSekmeler,body.dm-parkur-open #ybEnerji,body.dm-parkur-open #ybArac,body.dm-parkur-open .bk-kart{display:none!important;}
-body.dm-parkur-open #bottomNavMobile.bottom-nav-mobile{background:#fff!important;border:1px solid #e0ecef!important;border-radius:22px 22px 0 0!important;box-shadow:0 -4px 20px #356c7412!important;max-width:600px!important;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))!important;font-family:Nunito,system-ui,sans-serif;}
-body.dm-parkur-open #bottomNavMobile .bn-item{background:transparent!important;color:#7a849c!important;transform:none!important;box-shadow:none!important;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;min-height:50px;}
-body.dm-parkur-open #bottomNavMobile .bn-item.active{background:#e6f8f6!important;color:#057f8f!important;}
-body.dm-parkur-open #bottomNavMobile .bn-icon{font-size:0!important;width:23px;height:23px;animation:none!important;filter:none!important;}
-body.dm-parkur-open #bottomNavMobile .bn-icon svg{display:block;}
-body.dm-parkur-open #bottomNavMobile .bn-label{font-size:9px!important;font-weight:800!important;white-space:nowrap;}
-body.dm-parkur-open #bottomNavMobile .bn-item::before,body.dm-parkur-open #bottomNavMobile .bn-item::after{display:none!important;}
 body.dm-parkur-open .bz-alt{background:#183b4b66;backdrop-filter:blur(4px);}
 body.dm-parkur-open .bz-alt-kart{color:#1d4655;max-height:90dvh;overflow:auto;}
 body.dm-parkur-open .bz-alt-kart .alt{color:#718995;}

@@ -17758,7 +17758,7 @@ if (typeof orgXp === 'function') {
   setTimeout(ogretmenPuanlari, 20000);
 
   /* ================= GRUP 8: DÜELLO ================= */
-  const DL_OYUNLAR = { Kelime_Liderlik: '🔬 Kelime Laboratuvarı', Jeopardy_Liderlik: '🎈 Risk Balonları', Bosluk_Tablosu: '✏️ Eksik Harf', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '🌪️ Hız Fırtınası', Asmaca_Liderlik: '🔤 Harf Avı', KelimeBul_Liderlik: '🔐 Şifre Kırıcı' };
+  const DL_OYUNLAR = { Kelime_Liderlik: '🔬 Kelime Laboratuvarı', Jeopardy_Liderlik: '🎈 Risk Balonları', Bosluk_Tablosu: '✏️ Eksik Harf', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '🌪️ Hız Fırtınası', Asmaca_Liderlik: '🔤 Harf Avı', KelimeBul_Liderlik: '🔐 Şifre Kırıcı', "Konusma_Liderlik": "🎤 Kelime Modu", "Eslesme_Liderlik": "🔗 Eş Bul", "Tren_Liderlik": "🚂 Kelime Treni", "Dikte_Liderlik": "🎧 Kulak Dedektifi", "Cumle_Liderlik": "🧱 Cümle Ustası" };
   let dlListe = [];
   async function duellolarGetir() {
     try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); dlListe = (d && d.liste) || []; } catch (e) {}
@@ -20169,8 +20169,8 @@ let adaRenk = adaRenkleri[
   }
 
   /* ===== 6) Canlı bildirimler + düello daveti ===== */
-  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc' };
-  const OYUN_AD = { Kelime_Liderlik: '🔬 Kelime Laboratuvarı', Jeopardy_Liderlik: '🎈 Risk Balonları', Bosluk_Tablosu: '✏️ Eksik Harf', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '🌪️ Hız Fırtınası', Asmaca_Liderlik: '🔤 Harf Avı', KelimeBul_Liderlik: '🔐 Şifre Kırıcı' };
+  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc', "Konusma_Liderlik": "kpModuAc", "Eslesme_Liderlik": "esOyunAc", "Tren_Liderlik": "trenOyunAc", "Dikte_Liderlik": "dikteAc", "Cumle_Liderlik": "cumleAc" };
+  const OYUN_AD = { Kelime_Liderlik: '🔬 Kelime Laboratuvarı', Jeopardy_Liderlik: '🎈 Risk Balonları', Bosluk_Tablosu: '✏️ Eksik Harf', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '🌪️ Hız Fırtınası', Asmaca_Liderlik: '🔤 Harf Avı', KelimeBul_Liderlik: '🔐 Şifre Kırıcı', "Konusma_Liderlik": "🎤 Kelime Modu", "Eslesme_Liderlik": "🔗 Eş Bul", "Tren_Liderlik": "🚂 Kelime Treni", "Dikte_Liderlik": "🎧 Kulak Dedektifi", "Cumle_Liderlik": "🧱 Cümle Ustası" };
   window.duelloOyununuAc = function (oyun) {
     let f = window[OYUN_AC[oyun]];
     if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat();
@@ -20355,7 +20355,7 @@ let adaRenk = adaRenkleri[
   if (typeof orgBaK === 'function') window.baModuKapat = function () { let ov = $('tab-buyuakademisi'); if (ov) ov.classList.remove('bc-dunyadan'); return orgBaK.apply(this, arguments); };
 
   /* ===== 4) Düello: kabul edince oyun gerçekten açılsın (oyunlar Aktivite içinde) ===== */
-  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc' };
+  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc', "Konusma_Liderlik": "kpModuAc", "Eslesme_Liderlik": "esOyunAc", "Tren_Liderlik": "trenOyunAc", "Dikte_Liderlik": "dikteAc", "Cumle_Liderlik": "cumleAc" };
   window.duelloOyununuAc = function (oyun) {
     if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
     setTimeout(() => {
@@ -20494,7 +20494,7 @@ let adaRenk = adaRenkleri[
   sar('dcKonuAc', a => ({ ikon: '📘', ad: 'Konuyu çalış', renk: 'linear-gradient(145deg,#93c5fd,#2563eb)', cip: ['📖 Konu anlatımı ve örnekler', '📝 Sonunda kısa test', '🏁 Testi geçersen: +30 XP · +2 ⚡ · +2 🪙', '⚡ Enerji harcamaz'] }));
 
   /* ===== 5) Şifre Kırıcı düellosu doğru oyunu açsın ===== */
-  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimebulOyunAc' };
+  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimebulOyunAc', "Konusma_Liderlik": "kpModuAc", "Eslesme_Liderlik": "esOyunAc", "Tren_Liderlik": "trenOyunAc", "Dikte_Liderlik": "dikteAc", "Cumle_Liderlik": "cumleAc" };
   window.duelloOyununuAc = function (oyun) {
     if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
     setTimeout(() => { let f = window[OYUN_AC[oyun]]; if (typeof f === 'function') { try { f(); } catch (e) { console.error(e); } } }, 400);
@@ -20975,7 +20975,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     let goster = !!p && !oyunIci && !document.querySelector('.bs-perde, .ab-perde, .bc-perde, .kr-perde, .od-perde, .dv-perde');
     bar.classList.toggle('gor', goster);
     document.body.classList.toggle('pk-sekmeli', goster);
-    bar.querySelectorAll('button').forEach(b => { b.classList.toggle('aktif', b.dataset.p === p); b.setAttribute('aria-selected', b.dataset.p === p ? 'true' : 'false'); });
+    bar.querySelectorAll('button').forEach(b => { let selected=b.dataset.p===p || (b.dataset.p==='pro' && p && p!=='ba'); b.classList.toggle('aktif',selected); b.setAttribute('aria-selected',selected?'true':'false'); });
   }, 400);
 
   /* ================= 2) JOKER MAĞAZASI (30 joker) ================= */
@@ -21716,7 +21716,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   const TURLAR = {
     ana: [
       [null, "Merhaba! Ben Papi 🦜", "Senin rehber papağanınım! Diji-Medu'da İngilizceyi oynayarak öğreneceğiz. Sana her köşeyi gezdireyim. İstersen 'Geç' diyebilirsin, turları Yardım'dan tekrar izleyebilirsin."],
-      ['#pkSekmeler', "🗺️ 4 macera parkuru", "🧙 Büyü Akademisi: büyülü sorular. 🔤 Kelime Modu: kelimeyi sesli söyle. 🦜 Sohbet: benimle konuş! 🃏 Kelime Kartları: ada ada kelime yolculuğu. Dokununca o parkura geçersin."],
+      ['#pkSekmeler', "🗺️ Parkur & MeduPro", "🧙 Büyü Akademisi: büyülü sorular. 🔤 Kelime Modu: kelimeyi sesli söyle. 🦜 Sohbet: benimle konuş! 🃏 Kelime Kartları: ada ada kelime yolculuğu. MeduPro sekmesinden diğer üç parkura geçersin."],
       ['.bc-hud', "🧙 Rütben ve ilerlemen", "Soldaki simge büyücü rütben. Çubuk kaç seviye geçtiğini gösterir. Her 10 seviyede yeni bir dünyaya geçersin ve rütben yükselir."],
       ['.bc-d.simdi', "▶ Sıradaki seviyen", "Karakterin burada zıplıyor! Dokun, başlat kartında kazanacaklarını gör ve oyna. Parkur girişi 2 ⚡, sonra her 3 soruda 1 ⚡. Büyü Akademisi'nde XP ve altınlar 2 kat!"],
       ['.bc-sandikr', "🎁 Hazine sandıkları", "Her 3 seviyede bir sandık kazanırsın: Bronz, Gümüş, Altın, Efsane. İçinden XP, altın, enerji, joker ve nadir kıyafet çıkar. 3 kez dokunup açarsın!"],
@@ -21739,7 +21739,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
       ['#maSegment [data-s="akis"]', "📰 Akış", "Okuldaki herkesin yaptıkları anlık akar: oyun bitirenler, seviye geçenler, rozet kazananlar. 20 saniyede bir kendiliğinden yenilenir."],
       ['#tab-meduakis .filtre', "🔍 Filtre", "Herkesi ya da sadece takip ettiklerini görebilirsin. ● Canlı yazısı akışın o an çalıştığını gösterir."],
       ['#tab-meduakis .akis-kart .aksiyon', "❤️ Beğen, 🎉 tebrik et", "Arkadaşının başarısını beğen ya da tebrik et. Ona anında bildirim gider! Yanındaki sayılar herkesin kaç beğeni aldığını gösterir."],
-      ['#tab-meduakis .akis-kart .akis-ust', "👤 Profile git", "Bir öğrencinin adına dokunursan vitrinini açarsın. Orada takip edebilir, enerji hediye edebilir, düello yollayabilirsin."],
+      ['#tab-meduakis .akis-kart .akis-ust', "👤 Profile git", "Bir öğrencinin adına dokunursan vitrinini açarsın. Orada takip edebilir, hazır mesaj ve aksesuar gönderebilir, düello yollayabilir veya engelleyebilirsin."],
       ['#zlBtn', "🔔 Bildirim zili", "Beğeni, tebrik, takip, enerji hediyesi ve düello haberlerinin hepsi burada. Kırmızı sayı okunmamışları gösterir."],
       ['#maSegment [data-s="kesfet"]', "🧭 Keşfet", "Haftanın yıldızlarını, seninle aynı seviyedekileri görür, istediğin öğrenciyi ararsın.", MS('kesfet')],
       ['#tab-meduakis .dl-kart', "⚔️ Düellolarım", "Düello davetlerin ve sonuçların burada. Kazanan +2 ⚡ ve +30 XP alır, kaybeden bile +5 XP kazanır!"],
@@ -22739,9 +22739,9 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   const girisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci)); };
   const oyunda = () => (typeof odulOyunda === 'function' && odulOyunda()) || !!document.querySelector('.dv-perde');
 
-  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc' };
-  const OYUN_AD = { Kelime_Liderlik: '🔬 Kelime Laboratuvarı', Jeopardy_Liderlik: '🎈 Risk Balonları', Bosluk_Tablosu: '✏️ Eksik Harf', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '🌪️ Hız Fırtınası', Asmaca_Liderlik: '🔤 Harf Avı', KelimeBul_Liderlik: '🔐 Şifre Kırıcı' };
-  const DL_OYUNLAR = { Kelime_Liderlik: '🔬 Kelime Laboratuvarı', Jeopardy_Liderlik: '🎈 Risk Balonları', Bosluk_Tablosu: '✏️ Eksik Harf', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '🌪️ Hız Fırtınası', Asmaca_Liderlik: '🔤 Harf Avı', KelimeBul_Liderlik: '🔐 Şifre Kırıcı' };
+  const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimeBulOyunAc', "Konusma_Liderlik": "kpModuAc", "Eslesme_Liderlik": "esOyunAc", "Tren_Liderlik": "trenOyunAc", "Dikte_Liderlik": "dikteAc", "Cumle_Liderlik": "cumleAc" };
+  const OYUN_AD = { Kelime_Liderlik: '🔬 Kelime Laboratuvarı', Jeopardy_Liderlik: '🎈 Risk Balonları', Bosluk_Tablosu: '✏️ Eksik Harf', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '🌪️ Hız Fırtınası', Asmaca_Liderlik: '🔤 Harf Avı', KelimeBul_Liderlik: '🔐 Şifre Kırıcı', "Konusma_Liderlik": "🎤 Kelime Modu", "Eslesme_Liderlik": "🔗 Eş Bul", "Tren_Liderlik": "🚂 Kelime Treni", "Dikte_Liderlik": "🎧 Kulak Dedektifi", "Cumle_Liderlik": "🧱 Cümle Ustası" };
+  const DL_OYUNLAR = { Kelime_Liderlik: '🔬 Kelime Laboratuvarı', Jeopardy_Liderlik: '🎈 Risk Balonları', Bosluk_Tablosu: '✏️ Eksik Harf', Hafiza_Liderlik: '🧠 Hafıza', Yagmur_Liderlik: '🌪️ Hız Fırtınası', Asmaca_Liderlik: '🔤 Harf Avı', KelimeBul_Liderlik: '🔐 Şifre Kırıcı', "Konusma_Liderlik": "🎤 Kelime Modu", "Eslesme_Liderlik": "🔗 Eş Bul", "Tren_Liderlik": "🚂 Kelime Treni", "Dikte_Liderlik": "🎧 Kulak Dedektifi", "Cumle_Liderlik": "🧱 Cümle Ustası" };
 
   window.duelloOyununuAc = function (oyun) {
     let f = window[OYUN_AC[oyun]];
@@ -30827,7 +30827,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=5"></script>
-<link rel="stylesheet" href="parkur-theme.css?v=2">
-<script src="parkur-theme.js?v=2"></script>
+<link rel="stylesheet" href="parkur-theme.css?v=3">
+<script src="parkur-theme.js?v=3"></script>
+<link rel="stylesheet" href="medupro.css?v=1">
+<script src="medupro.js?v=1"></script>
 </body>      
         </html>
