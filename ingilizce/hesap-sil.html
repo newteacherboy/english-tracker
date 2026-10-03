@@ -7,25 +7,35 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://nxfqlutulxqzqgwewssd.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
   <title>Hesabımı sil · Diji-Medu İngilizce</title>
-  <link rel="stylesheet" href="hesap-sil.css?v=1">
+  <link rel="stylesheet" href="hesap-sil.css?v=2">
   <script src="hesap-sil.js?v=1" defer></script>
 </head>
 <body>
   <main>
     <a class="brand" href="./"><img src="ingilizce-icon-192.png" alt="">Diji-Medu <span>İngilizce</span></a>
     <section class="card">
+      <div class="farewell">
+        <div class="mascot-scene">
+          <span class="heart heart-one" aria-hidden="true">♥</span>
+          <img class="farewell-parrot" src="farewell-parrot.webp" width="1145" height="1374" alt="El sallayarak veda eden şirin papağan">
+          <span class="heart heart-two" aria-hidden="true">♥</span>
+        </div>
+        <h2>Seni özleyeceğiz…</h2>
+        <p>Birlikte öğrendiğimiz kelimeler çok güzeldi.<br>Yeniden görüşmeyi umuyoruz.</p>
+      </div>
       <p class="eyebrow">HESAP AYARLARI</p>
       <h1>Hesabımı sil</h1>
-      <p>Bu işlem yalnızca İngilizce portalındaki hesabını kapsar. Koçluk hesabın etkilenmez.</p>
+      <p>İngilizce portalındaki hesabını silmek için önce hesabını doğrula. Bu işlem yalnızca İngilizce hesabını kapsar; koçluk hesabın etkilenmez.</p>
       <form id="verifyForm">
         <label for="role">Hesap türün</label>
         <select id="role" name="role"><option value="student">Öğrenci</option><option value="teacher">Öğretmen</option></select>
         <label for="username">Kullanıcı adın</label>
-        <input id="username" name="username" autocomplete="username" maxlength="100" required>
+        <input id="username" name="username" autocomplete="username" placeholder="Kullanıcı adını gir" maxlength="100" required>
         <label for="password">Güncel şifren</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" maxlength="256" required>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Güncel şifreni gir" maxlength="256" required>
         <button id="verifyButton" type="submit">Hesabımı doğrula</button>
       </form>
+      <aside class="deletion-note"><span aria-hidden="true">ⓘ</span><p>Doğrulamanın ardından silinecek verileri görebilir ve son onayını verebilirsin. Kalıcı silme işlemi geri alınamaz.</p></aside>
       <form id="confirmForm" hidden>
         <h2 id="accountLabel"></h2>
         <div class="warning">
@@ -41,7 +51,7 @@
       </form>
       <div id="result" role="status" aria-live="polite"></div>
       <p class="small"><a href="gizlilik.html">Gizlilik politikası ve saklama süreleri</a><br>Giriş yapamıyorsan veya veli olarak başvuruyorsan: <a href="mailto:official.dijimedu@gmail.com?subject=Diji-Medu%20Silme%20Talebi">official.dijimedu@gmail.com</a>. Parolanı e-postayla gönderme.</p>
-      <a id="backLink" class="back" href="./">İngilizce portalına dön</a>
+      <a id="backLink" class="back" href="./">Vazgeç, öğrenmeye devam et</a>
     </section>
   </main>
 </body>
