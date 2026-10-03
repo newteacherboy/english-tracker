@@ -1,0 +1,57 @@
+/* Approved mint learning map. Presentation only. */
+body.dm-parkur-open #tab-dunya{background:#f2fbfc!important}
+body.dm-parkur-open #bzParkur{background:#f2fbfc!important;color:#183b4b;overflow:hidden;padding-top:env(safe-area-inset-top,0px);}
+body.dm-parkur-open #bzParkur>.bz-ic{display:flex;flex-direction:column;height:100%;max-width:600px;padding:0 14px!important;margin:auto;}
+.dm-parkur-head{flex:none;background:#f2fbfc;padding:10px 0 0;position:relative;z-index:3;font-family:Nunito,system-ui,sans-serif;}
+.dm-parkur-brand{text-align:center;color:#078393;font-size:18px;font-weight:900;line-height:24px;margin:0 0 8px;}
+.dm-parkur-title-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.dm-parkur-title-row h1{flex:1;margin:0;font:700 24px/1.15 Fredoka,system-ui,sans-serif;color:#183b4b;}
+.dm-parkur-wallet{display:flex;gap:6px;flex:none;}
+.dm-parkur-wallet button{border:1px solid #d7eaee;border-radius:13px;background:#fff;color:#365669;min-height:40px;padding:7px 9px;font:900 12px Nunito,system-ui,sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 6px #24647608;}
+.dm-parkur-welcome{display:flex;align-items:center;gap:14px;min-height:100px;background:#e2f5f2;border-radius:22px;padding:6px 14px;margin-bottom:12px;}
+.dm-parkur-welcome img{width:86px;height:100px;object-fit:contain;flex:none;}
+.dm-parkur-welcome b{display:block;color:#183b4b;font:700 19px/1.25 Fredoka,system-ui,sans-serif;}
+.dm-parkur-welcome p{margin:7px 0 0;color:#718695;font-size:13px;line-height:1.4;font-weight:600;}
+.dm-parkur-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:10px;}
+.dm-parkur-tabs button{display:flex;align-items:center;justify-content:center;gap:5px;min-height:42px;border:1px solid #dcebee;border-radius:14px;background:#fff;color:#758996;font:700 11px Nunito,system-ui,sans-serif;cursor:pointer;}
+.dm-parkur-tabs button[aria-selected=true]{background:#078c9c;border-color:#078c9c;color:#fff;box-shadow:0 0 0 3px #fff;}
+.dm-icon{width:21px;height:21px;display:inline-block;flex:none;}
+.dm-icon svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.dm-parkur-scroll{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));scrollbar-width:none;}
+.dm-parkur-scroll::-webkit-scrollbar{display:none;}
+.dm-map-controls{display:flex;gap:6px;justify-content:center;padding:4px 0 10px;flex-wrap:wrap;}
+body.dm-parkur-open .dm-map-controls .bz-ust-btn{color:#56808a;background:#e9f5f6;padding:6px 10px;font-size:10px;border:1px solid #d9ecef;}
+body.dm-parkur-open #bzParkur .bz-harita{border-radius:0;background:#f2fbfc url('parkur-landscape.webp') center center/100% auto no-repeat!important;overflow:hidden;}
+body.dm-parkur-open #bzParkur .bz-kale,body.dm-parkur-open #bzParkur .bulut,body.dm-parkur-open #bzParkur .bz-tabela{display:none;}
+body.dm-parkur-open #bzParkur .bz-sinif-etiket{background:#fff0bf;border:1px solid #f5d58b;color:#9a5a12;box-shadow:0 2px 0 #f5d58b;font:900 13px Nunito,system-ui,sans-serif;padding:8px 12px;z-index:1;}
+body.dm-parkur-open #bzParkur .bz-tas{width:60px;height:60px;background:linear-gradient(150deg,#f3fff9,#baf0d9)!important;border:2px solid #8fdcbf;color:#174954;box-shadow:0 3px 0 #80c9b3,0 0 0 3px #ffffff90;font:700 26px Fredoka,system-ui,sans-serif;transition:box-shadow .15s;animation:none;}
+body.dm-parkur-open #bzParkur .bz-tas.bitti::after{content:'✓';position:absolute;right:-3px;top:-6px;background:#42b58e;color:#fff;border:2px solid #fff;border-radius:50%;width:23px;height:23px;font:900 15px/20px Nunito,sans-serif;}
+body.dm-parkur-open #bzParkur .bz-tas.kilit{background:linear-gradient(150deg,#f0f5fa,#d8e5ef)!important;border-color:#dce8f1;color:#8294a6;box-shadow:0 3px 0 #bbd2e2;}
+.dm-step-lock{display:block;position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:13px;filter:grayscale(1);opacity:.55;line-height:1;}
+body.dm-parkur-open #bzParkur .bz-tas.kilit .dm-step-number{padding-top:17px;font-size:22px;}
+body.dm-parkur-open #bzParkur .bz-tas.sonraki{width:76px;height:76px;border:10px solid #129dac;color:#173f4e;background:#fff!important;box-shadow:0 0 0 5px #c4f0f290,0 3px 0 #078696;animation:dm-step-glow 3s ease-in-out infinite;z-index:2;}
+body.dm-parkur-open #bzParkur .bz-tas .y{top:58px;font-size:14px;letter-spacing:-2px;text-shadow:0 1px 0 #fff;}
+body.dm-parkur-open #bzParkur .bz-kahraman{width:46px;height:46px;transform:translate(-50%,-100%);background:#fff;border:3px solid #fff;border-radius:50%;box-shadow:0 4px 10px #42777b25;filter:none;animation:none;z-index:2;overflow:hidden;}
+.dm-start-card{position:absolute;z-index:2;width:124px;transform:translateY(-50%);background:#fff;border:1px solid #e4f0f1;border-radius:17px;padding:11px;text-align:left;box-shadow:0 8px 22px #326c7617;cursor:pointer;font-family:Nunito,system-ui,sans-serif;color:#1d4655;}
+.dm-start-card small{display:block;color:#7c8d9f;font-size:10px;font-weight:600;}
+.dm-start-card strong{display:block;font:700 18px Fredoka,system-ui,sans-serif;margin:4px 0 8px;}
+.dm-start-card .dm-start-cta{display:block;text-align:center;background:#078f9f;color:#fff;border-radius:10px;padding:9px 4px;font-size:13px;font-weight:900;}
+.dm-map-detail{margin:8px 0 0;color:#607f8d;}
+.dm-map-detail summary{padding:12px;background:#e8f6f5;border:1px solid #d8eeea;border-radius:13px;cursor:pointer;font-size:12px;font-weight:800;}
+body.dm-parkur-open #bzParkur .bz-yan{gap:10px;}
+body.dm-parkur-open #bzParkur .bz-kutu{background:#fff;border:1px solid #dfebed;color:#365c68;}
+body.dm-parkur-open #bzParkur .bz-kutu [style*='color:']{color:#728996!important;}
+body.dm-parkur-open #bzParkur .bz-cubuk{background:#e3efef;}
+body.dm-parkur-open #bzParkur .bz-cubuk i{background:#53b79e;}
+body.dm-parkur-open #pkSekmeler,body.dm-parkur-open #ybEnerji,body.dm-parkur-open #ybArac,body.dm-parkur-open .bk-kart{display:none!important;}
+body.dm-parkur-open .bz-alt{background:#183b4b66;backdrop-filter:blur(4px);}
+body.dm-parkur-open .bz-alt-kart{color:#1d4655;max-height:90dvh;overflow:auto;}
+body.dm-parkur-open .bz-alt-kart .alt{color:#718995;}
+body.dm-parkur-open .bz-alt-kart .bz-tipler div{background:#eff8f8;color:#527580;}
+body.dm-parkur-open .bz-alt-kart .bz-btn.mor{background:#088e9c;box-shadow:0 3px 0 #067d88;}
+body.dm-parkur-open .bz-alt-kart .bz-btn:disabled{background:#dfe9ed;color:#7d909b;box-shadow:none;}
+.dm-parkur-head button:focus-visible,.dm-start-card:focus-visible,body.dm-parkur-open .bz-tas:focus-visible{outline:3px solid #086e82;outline-offset:4px;}
+@keyframes dm-step-glow{50%{box-shadow:0 0 0 8px #c4f0f260,0 3px 0 #078696;}}
+@media(max-width:380px){.dm-parkur-title-row h1{font-size:20px}.dm-parkur-wallet button{font-size:10px;padding:6px}.dm-parkur-welcome{gap:10px;padding:4px 10px;min-height:88px}.dm-parkur-welcome img{width:70px;height:86px}.dm-parkur-welcome b{font-size:17px}.dm-parkur-welcome p{font-size:11px}.dm-parkur-tabs{gap:5px}.dm-parkur-tabs button{font-size:10px;gap:3px}.dm-icon{width:18px;height:18px}.dm-start-card{width:116px}}
+@media(max-height:650px){.dm-parkur-welcome{min-height:70px}.dm-parkur-welcome img{height:70px;width:64px}.dm-parkur-brand{margin-bottom:3px}.dm-parkur-title-row{margin-bottom:6px}}
+@media(prefers-reduced-motion:reduce){body.dm-parkur-open #bzParkur .bz-tas.sonraki{animation:none}}
