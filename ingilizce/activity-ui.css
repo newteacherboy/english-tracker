@@ -1,4 +1,4 @@
-/* Selected design 2: pastel toy buttons. Scoped to activities; original footer stays intact. */
+/* Selected design 2: pastel toy buttons and player-count tabs. */
 #tab-aktiviteler{background:#edfaf6!important}
 #tab-aktiviteler .dc-focus-card{background:transparent!important;border:0!important;box-shadow:none!important;padding:16px 12px 100px!important;max-width:760px!important;width:100%!important;box-sizing:border-box}
 .dm-activity-hero{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 8px 8px;color:#064d5c;min-height:104px;font-family:Nunito,system-ui,sans-serif}
@@ -35,3 +35,13 @@
 @media(min-width:600px){#tab-aktiviteler .dm-toy-card{min-height:185px!important}#tab-aktiviteler .dm-toy-card .az-gcard-title{font-size:19px!important}#tab-aktiviteler .dm-toy-card .ak-etiket{font-size:12px!important}}
 @media(max-width:370px){#tab-aktiviteler .az-gcard.dm-toy-card{min-height:142px!important;padding:18px 8px 10px!important;border-radius:23px!important}#tab-aktiviteler .dm-toy-card .az-gcard-title{font-size:13px!important}.dm-parkur-tabs{gap:9px!important}.dm-parkur-tabs button{padding:9px 7px!important;gap:6px!important}.dm-tab-art{width:36px;height:36px}.dm-parkur-tabs b{font-size:15px}.dm-parkur-tabs small{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.dm-parkur-tabs button{transition:none}}
+/* Player-count navigation: retain every original game's own action. */
+#tab-aktiviteler .dm-party-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:5px;margin:14px 0 22px;background:#dfefed;border:1px solid #d1e7e3;border-radius:20px;font-family:Nunito,system-ui,sans-serif}
+#tab-aktiviteler .dm-party-tabs button{min-height:50px;padding:10px 6px;background:transparent;border:1px solid transparent;border-radius:15px;color:#42616b;font:900 14px Nunito,system-ui,sans-serif;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:6px;box-shadow:none}
+#tab-aktiviteler .dm-party-tabs button span{font-size:20px}
+#tab-aktiviteler .dm-party-tabs button[aria-selected=true]{background:#fff;border-color:#b8ded8;color:#075562;box-shadow:0 3px 0 #b9d7d3,0 5px 10px #235a6210}
+#tab-aktiviteler .dm-party-tabs button[data-party=duo][aria-selected=true]{background:#f1e7ff;border-color:#d6c2f3;color:#5b3388;box-shadow:0 3px 0 #cbb4e9,0 5px 10px #573b7c15}
+#tab-aktiviteler .dm-party-tabs button:focus-visible{outline:3px solid #078c97;outline-offset:2px}
+#tab-aktiviteler [data-dm-party=solo] .az-grid2x2>[data-dm-party=duo],#tab-aktiviteler [data-dm-party=duo] .az-grid2x2>[data-dm-party=solo]{display:none!important}
+/* Override the parkur's generic white h2 rule on this light panel. */
+#bzParkur .dm-pro-panel>h2{color:#164f60!important;text-shadow:none!important;background:none!important;-webkit-text-fill-color:#164f60!important}

@@ -697,24 +697,26 @@ body {
 <div id="welcomePortalScreen" class="welcome-overlay">
   <div class="welcome-container">
         <div class="welcome-badge">🎓 Diji-Medu Eğitim Portalı</div>
+    <img class="welcome-mascot" src="ingilizce/mascot-welcome.webp" alt="Seni karşılayan Diji-Medu papağanı" width="138" height="150">
     <h1 class="welcome-title">Diji<span>Medu</span></h1>
     <p class="welcome-subtitle">İngilizce Öğrenme ve Bireysel Eğitim Koçluğu Sistemi</p>
 
+       <p class="welcome-prompt">Bugün ne öğrenmek istersin?</p>
        <div class="welcome-card-grid">
       <a class="welcome-card card-english" href="https://panel.ogretmencocuk.com/ingilizce" style="cursor: pointer; text-decoration: none; color: inherit;">
-         <div class="welcome-card-icon ing">🗣️</div>
+         <div class="welcome-card-icon ing" aria-hidden="true"></div>
          <div class="welcome-card-body">
             <h3>İngilizce Dersim</h3>
-            <p>Öğrenci Gelişim Raporları, İngilizce Öğretimi ve Çeşitli yarışmalar</p>
+            <p>Oyunlarla İngilizce öğren, ders çalış ve gelişimini takip et.</p>
          </div>
          <div class="welcome-card-arrow">Giriş Yap ➔</div>
       </a>
 
       <a class="welcome-card card-coach" href="https://panel.ogretmencocuk.com/kocluk" style="cursor: pointer; text-decoration: none; color: inherit;">
-        <div class="welcome-card-icon koc">🎯</div>
+        <div class="welcome-card-icon koc" aria-hidden="true"></div>
         <div class="welcome-card-body">
           <h3>Eğitim Koçum</h3>
-          <p>Haftalık hedef yönetimi, Bireysel Ödev ve Sınav stratejileri</p>
+          <p>Haftalık hedeflerini planla, ödevlerini ve sınav hazırlığını takip et.</p>
         </div>
         <div class="welcome-card-arrow">Giriş Yap ➔</div>
       </a>
@@ -3161,5 +3163,6 @@ function siradakiDersTarihiniHesapla(sabitGunlerMetni) {
     return `${gun}.${ay}.${yil}`;
 }
 </script>
+<link rel="stylesheet" href="portal-theme.css?v=1">
 </body>
 </html>
