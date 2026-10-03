@@ -21,7 +21,7 @@ body.dm-parkur-open #bzParkur>.bz-ic{display:flex;flex-direction:column;height:1
 .dm-parkur-scroll::-webkit-scrollbar{display:none;}
 .dm-map-controls{display:flex;gap:6px;justify-content:center;padding:4px 0 10px;flex-wrap:wrap;}
 body.dm-parkur-open .dm-map-controls .bz-ust-btn{color:#56808a;background:#e9f5f6;padding:6px 10px;font-size:10px;border:1px solid #d9ecef;}
-body.dm-parkur-open #bzParkur .bz-harita{border-radius:0;background:#f2fbfc url('parkur-landscape.webp') center center/100% 100% no-repeat!important;overflow:hidden;}
+body.dm-parkur-open #bzParkur .bz-harita{border-radius:0;background:#f2fbfc url('parkur-landscape.webp') center center/100% auto no-repeat!important;overflow:hidden;}
 body.dm-parkur-open #bzParkur .bz-kale,body.dm-parkur-open #bzParkur .bulut,body.dm-parkur-open #bzParkur .bz-tabela{display:none;}
 body.dm-parkur-open #bzParkur .bz-sinif-etiket{background:#fff0bf;border:1px solid #f5d58b;color:#9a5a12;box-shadow:0 2px 0 #f5d58b;font:900 13px Nunito,system-ui,sans-serif;padding:8px 12px;z-index:1;}
 body.dm-parkur-open #bzParkur .bz-tas{width:60px;height:60px;background:linear-gradient(150deg,#f3fff9,#baf0d9)!important;border:2px solid #8fdcbf;color:#174954;box-shadow:0 3px 0 #80c9b3,0 0 0 3px #ffffff90;font:700 26px Fredoka,system-ui,sans-serif;transition:box-shadow .15s;animation:none;}
@@ -49,7 +49,7 @@ body.dm-parkur-open #bottomNavMobile .bn-item{background:transparent!important;c
 body.dm-parkur-open #bottomNavMobile .bn-item.active{background:#e6f8f6!important;color:#057f8f!important;}
 body.dm-parkur-open #bottomNavMobile .bn-icon{font-size:0!important;width:23px;height:23px;animation:none!important;filter:none!important;}
 body.dm-parkur-open #bottomNavMobile .bn-icon svg{display:block;}
-body.dm-parkur-open #bottomNavMobile .bn-label{font-size:9px!important;font-weight:800!important;}
+body.dm-parkur-open #bottomNavMobile .bn-label{font-size:9px!important;font-weight:800!important;white-space:nowrap;}
 body.dm-parkur-open #bottomNavMobile .bn-item::before,body.dm-parkur-open #bottomNavMobile .bn-item::after{display:none!important;}
 body.dm-parkur-open .bz-alt{background:#183b4b66;backdrop-filter:blur(4px);}
 body.dm-parkur-open .bz-alt-kart{color:#1d4655;max-height:90dvh;overflow:auto;}
