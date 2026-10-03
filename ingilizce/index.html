@@ -921,6 +921,7 @@ if(BAKIM_MODU){
                     
             </style>
         <link rel="stylesheet" href="auth-dialogs.css?v=1">
+<link rel="stylesheet" href="mascot-panels.css?v=1">
 </head>
         <body>
         
@@ -942,7 +943,7 @@ if(BAKIM_MODU){
             <div class="pb-toast-overlay" id="pbToastOverlay">
                 <div class="pb-toast-card" id="pbToastCard">
                     <button class="pb-toast-close" onclick="pbToastKapat()">✕</button>
-                    <span class="pb-toast-ok" id="pbToastOk">▲</span>
+                    <div class="dm-points-mascot"><img class="dm-reward-state" src="mascot-reward.webp" width="1145" height="1374" alt="Başarını kutlayan papağan"><img class="dm-help-state" src="mascot-help.webp" width="1145" height="1374" alt="Sana destek olan papağan"></div><span class="pb-toast-ok" id="pbToastOk">▲</span>
                     <div class="pb-toast-baslik" id="pbToastBaslik">Harika iş çıkardın!</div>
                     <div class="pb-toast-sebep" id="pbToastSebep">Sebep</div>
                     <div class="pb-toast-puan" id="pbToastPuan">+0.3 puan</div>
@@ -2409,7 +2410,7 @@ if(BAKIM_MODU){
         
         <div id="dcHoverBalon" class="dc-hover-balon"></div>
         <div class="dc-toast" id="dcToast">
-            <span class="dc-toast-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="#78350f"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.4 5.7 21l2.3-7.2-6-4.6h7.6z"/></svg></span>
+            <span class="dc-toast-icon"><img src="mascot-help.webp" width="1145" height="1374" alt="" aria-hidden="true"></span>
             <span id="dcToastText">+0.2 puan kazandın!</span>
         </div>
         
@@ -2644,7 +2645,7 @@ if(BAKIM_MODU){
                 <div class="duy3-card">
                     <div class="duy3-glow" id="duyuruGlow"></div>
                     <button class="duy3-close" onclick="duyuruKapat()">✕</button>
-                    <div class="duy3-medal" id="duyuruMedal">🎉</div>
+                    <div class="duy3-medal" id="duyuruMedal"><img src="mascot-welcome.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
                     <span class="duy3-tag" id="duyuruTag">DUYURU</span>
                     <h3 class="duy3-title" id="duyuruBaslik">Başlık</h3>
                     <img id="duyuruGorsel" class="duy3-img" src="">
@@ -6403,6 +6404,11 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     let toast = document.createElement('div');
                     toast.style.cssText = "position:fixed; top:16px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#78350f; padding:12px 22px; border-radius:14px; font-weight:900; font-size:13px; box-shadow:0 8px 24px rgba(245,158,11,.4); z-index:100000002; font-family:'Fredoka',sans-serif; text-align:center;";
                     toast.innerText = `🥇 Sınıfında ${sira}. sıraya girdin! +${bonus} bonus puan!`;
+                    toast.className = 'dm-leader-bonus';
+                    const mascot = document.createElement('img');
+                    mascot.src = 'mascot-reward.webp'; mascot.alt = 'Başarını kutlayan papağan';
+                    mascot.width = 60; mascot.height = 72;
+                    toast.prepend(mascot);
                     document.body.appendChild(toast);
                     setTimeout(() => { toast.style.transition = 'opacity .4s'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 4000);
                 }
@@ -6951,6 +6957,8 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
         
                 function dcToastGoster(msg) {
             document.getElementById('dcToastText').innerText = msg;
+            const mascot = document.querySelector('#dcToast .dc-toast-icon img');
+            if (mascot) mascot.src = /kazand|harika|tamam|tebrik|✅|puan|bonus/i.test(msg) ? 'mascot-reward.webp' : 'mascot-help.webp';
             let t = document.getElementById('dcToast');
             t.classList.add('show');
             clearTimeout(window._dcToastTimeout);
@@ -11674,7 +11682,7 @@ function ozellikSecDoldur() {
                     document.getElementById('duyuruBaslik').innerText = duyuru.baslik;
                     document.getElementById('duyuruMesaj').innerText = duyuru.mesaj;
                     document.getElementById('duyuruMedal').style.background = t.medal;
-                    document.getElementById('duyuruMedal').innerText = t.icon;
+                    document.getElementById('duyuruMedal').innerHTML = '<img src="mascot-welcome.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor">';
                     document.getElementById('duyuruTag').style.background = t.tagBg;
                     document.getElementById('duyuruTag').style.border = '1px solid ' + t.tagBorder;
                     document.getElementById('duyuruTag').style.color = t.tagColor;
@@ -11992,7 +12000,7 @@ function ozellikSecDoldur() {
             wrap.innerHTML = `
                 <div class="gek-battery-row">
                     <div class="gek-battery"><div class="gek-fill"></div></div>
-                    <div class="gek-mascot">🦜</div>
+                    <div class="gek-mascot"><img src="mascot-reward.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"></div>
                     <div class="gek-spark" style="top:10%; right:-6px; --sx:14px; --sy:-14px;">✨</div>
                     <div class="gek-spark" style="top:70%; right:-2px; --sx:10px; --sy:16px; animation-delay:.1s;">⭐</div>
                 </div>
@@ -12985,7 +12993,7 @@ function ozellikSecDoldur() {
             let wrap = document.getElementById('kpCardWrap');
             let el = document.createElement('div');
             el.className = 'kp-bonus-parrot';
-            el.innerHTML = '🦜<span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
+            el.innerHTML = '<img src="mascot-reward.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"><span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
             wrap.appendChild(el);
             setTimeout(() => el.remove(), 1800);
         }
@@ -22968,7 +22976,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     let p = document.createElement('div');
     p.className = 'od-perde kr-perde';
     p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Hoş geldin');
-    p.innerHTML = `<div class="kr-kart">
+    p.innerHTML = `<div class="kr-kart"><div class="dm-welcome-hero"><img src="mascot-welcome.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
       <div class="kr-ust"><div class="kr-av">${av}</div><div><h3>Hoş geldin, ${guvenliMetin(String(isim).split(' ')[0])}! 👋</h3><small>${seri() > 1 ? `🔥 ${seri()} günlük serin var!` : 'Bugün harika bir gün olacak!'}</small></div></div>
       <div class="kr-cipler">
         <div class="kr-cip" style="--g:.2s">⚡ ${window.genelEnerjiKalan ?? '–'}<small>Enerji</small></div>

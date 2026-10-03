@@ -13,13 +13,19 @@
   "states": {
     "welcome": "mascot-welcome.webp",
     "help": "mascot-help.webp",
-    "farewell": "farewell-parrot.webp"
+    "farewell": "farewell-parrot.webp",
+    "reward": "mascot-reward.webp"
   },
   "usage": {
     "registration": "welcome",
     "brand": "welcome",
     "passwordHelp": "help",
-    "accountDeletion": "farewell"
+    "accountDeletion": "farewell",
+    "bonus": "reward",
+    "welcomePanel": "welcome",
+    "announcements": "welcome",
+    "positivePoints": "reward",
+    "reminders": "help"
   },
   "motion": "gentle CSS animation; respect prefers-reduced-motion"
 }

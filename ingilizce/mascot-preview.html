@@ -1,0 +1,55 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Diji-Medu · Maskot panel önizlemesi</title><link rel="stylesheet" href="mascot-panels.css?v=1"><style>
+*{box-sizing:border-box}body{margin:0;background:#eef6f7;font-family:Arial,sans-serif;color:#244655}header{padding:18px;text-align:center}header p{font-size:12px;color:#6a7e8b}.preview-menu{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 12px 18px}.preview-menu button{padding:10px 14px;border:1px solid #dce9ed;background:white;color:#217982;border-radius:10px;cursor:pointer}.preview-stage{display:flex;justify-content:center;padding:12px}.duy3-card,.kr-kart{position:relative;width:min(100%,420px)}.duy3-close{position:absolute;right:12px;top:12px;border:0}.duy3-title{text-align:center}.duy3-msg{text-align:center}.duy3-tag{display:block;width:max-content;margin:0 auto 12px;color:#217982;background:#eef8f8;padding:5px 12px;border-radius:20px}.kr-ust{display:flex;align-items:center}.kr-av{display:flex;justify-content:center;align-items:center}.kr-cipler{display:grid;grid-template-columns:repeat(4,1fr)}.kr-cip{text-align:center}.kr-cip small{display:block}.kr-lig,.kr-btnler{display:flex;gap:10px;margin-top:14px;padding:12px}.kr-btnler button{flex:1;border:0;padding:12px}.dm-points-mascot{text-align:center}#pbToastCard{width:300px;padding:18px;text-align:center;position:relative}.pb-toast-puan{display:inline-block;margin-top:10px;padding:6px 12px;border-radius:20px}.pb-toast-close{position:absolute;right:8px;top:8px;border:0}.gek-battery{position:relative;padding:4px}.gek-fill{height:100%}#kpCardWrap{position:relative;min-height:240px}.kp-bonus-parrot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}.kp-bonus-parrot-txt{display:block}
+</style></head><body><header><h2>Diji-Medu maskot panelleri</h2><p>Tasarım örnekleri · Burada gösterilen puanlar gerçek hesabına işlenmez.</p></header><nav class="preview-menu"><button data-view="welcome">Karşılama</button><button data-view="announcement">Duyuru</button><button data-view="points">Puan ödülü</button><button data-view="reminder">Hatırlatma</button><button data-view="energy">Enerji bonusu</button><button data-view="leader">Liderlik bonusu</button><button data-view="speech">Oyun bonusu</button></nav><main class="preview-stage" id="stage"></main><script>
+function genelEnerjiKazanimAnimasyonuGoster(miktar, sebep) {
+            let wrap = document.createElement('div');
+            wrap.className = 'genel-enerji-kazanim-wrap';
+            wrap.innerHTML = `
+                <div class="gek-battery-row">
+                    <div class="gek-battery"><div class="gek-fill"></div></div>
+                    <div class="gek-mascot"><img src="mascot-reward.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"></div>
+                    <div class="gek-spark" style="top:10%; right:-6px; --sx:14px; --sy:-14px;">✨</div>
+                    <div class="gek-spark" style="top:70%; right:-2px; --sx:10px; --sy:16px; animation-delay:.1s;">⭐</div>
+                </div>
+                <div class="gek-txt">${sebep} <b>+${miktar} ⚡</b></div>`;
+            document.body.appendChild(wrap);
+            setTimeout(() => wrap.remove(), 2200);
+        }
+function liderlikBonusToastGoster(bonus, sira) {
+                    let toast = document.createElement('div');
+                    toast.style.cssText = "position:fixed; top:16px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#78350f; padding:12px 22px; border-radius:14px; font-weight:900; font-size:13px; box-shadow:0 8px 24px rgba(245,158,11,.4); z-index:100000002; font-family:'Fredoka',sans-serif; text-align:center;";
+                    toast.innerText = `🥇 Sınıfında ${sira}. sıraya girdin! +${bonus} bonus puan!`;
+                    toast.className = 'dm-leader-bonus';
+                    const mascot = document.createElement('img');
+                    mascot.src = 'mascot-reward.webp'; mascot.alt = 'Başarını kutlayan papağan';
+                    mascot.width = 60; mascot.height = 72;
+                    toast.prepend(mascot);
+                    document.body.appendChild(toast);
+                    setTimeout(() => { toast.style.transition = 'opacity .4s'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 4000);
+                }
+        
+                        // ===== PUAN BİLDİRİM SİSTEMİ =====
+                let pbBildirimKuyrugu = [];
+                let pbGosteriliyorMu = false;
+function kpBonusPapaganGoster() {
+            let wrap = document.getElementById('kpCardWrap');
+            let el = document.createElement('div');
+            el.className = 'kp-bonus-parrot';
+            el.innerHTML = '<img src="mascot-reward.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"><span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
+            wrap.appendChild(el);
+            setTimeout(() => el.remove(), 1800);
+        }
+const stage=document.getElementById('stage');
+function show(view){
+stage.innerHTML='';
+if(view==='energy')return genelEnerjiKazanimAnimasyonuGoster(2,'Günlük giriş bonusu!');
+if(view==='leader')return liderlikBonusToastGoster(1.5,1);
+if(view==='speech'){stage.innerHTML='<div id="kpCardWrap" style="width:300px"></div>';return kpBonusPapaganGoster();}
+const img='<img class="dm-panel-mascot" src="mascot-welcome.webp" alt="Karşılama papağanı">';
+if(view==='announcement') stage.innerHTML='<div id="duyuruOverlay"><div class="duy3-card"><button class="duy3-close" aria-label="Kapat">✕</button><div class="duy3-medal">'+img+'</div><span class="duy3-tag">DUYURU</span><h3 class="duy3-title">Yeni bir macera seni bekliyor!</h3><p class="duy3-msg">Bugünün konusunu keşfet, yeni kelimeler öğren ve hedeflerine bir adım daha yaklaş.</p><button class="duy3-btn">Anladım, kapat</button></div></div>';
+else if(view==='points'||view==='reminder')stage.innerHTML='<div id="pbToastCard" class="'+(view==='points'?'pozitif':'negatif')+'"><button class="pb-toast-close" aria-label="Kapat">✕</button><div class="dm-points-mascot"><img class="dm-reward-state" src="mascot-reward.webp" alt="Kutlayan papağan"><img class="dm-help-state" src="mascot-help.webp" alt="Destekleyen papağan"></div><h3 class="pb-toast-baslik">'+(view==='points'?'Harika iş çıkardın!':'Küçük bir hatırlatma')+'</h3><p class="pb-toast-sebep">'+(view==='points'?'Çalışmanı tamamladın, tebrikler!':'Sorun değil, bir dahaki sefere telafi edersin!')+'</p><span class="pb-toast-puan">'+(view==='points'?'+0.3':'−0.1')+' puan</span></div>';
+else stage.innerHTML='<div class="kr-perde" style="background:transparent!important"><div class="kr-kart"><div class="dm-welcome-hero">'+img+'</div><div class="kr-ust"><div class="kr-av">🎒</div><div><h3>Hoş geldin, öğrenci!</h3><small>Bugün harika bir gün olacak!</small></div></div><div class="kr-cipler"><div class="kr-cip">⚡ 8<small>Enerji</small></div><div class="kr-cip">🪙 120<small>Altın</small></div><div class="kr-cip">⭐ 45<small>Haftalık XP</small></div><div class="kr-cip">🎯 %60<small>Günlük hedef</small></div></div><div class="kr-lig"><span>🏅</span><span><b>Lig sıralaman</b>Son girişinden beri 2 sıra yükseldin!</span></div><div class="kr-bolum"><h4>Duyuru</h4>Yeni kelimelerle öğrenmeye devam edelim.</div><div class="kr-btnler"><button class="kr-ana">Parkura devam</button><button class="kr-ikinci">Akışa bak</button></div></div></div>';
+stage.querySelectorAll('button').forEach(b=>b.onclick=()=>stage.innerHTML='');
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>show(b.dataset.view));show('welcome');
+</script></body></html>
