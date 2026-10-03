@@ -1062,6 +1062,7 @@ if(BAKIM_MODU){
                         <span>💬 Öğrenci Sohbetleri</span>
                         <span class="ogretmen-menu-rozet" id="ogretmenMenuOkunmamis" style="display:none;">0</span>
                     </button>
+                    <a class="ogretmen-menu-btn" href="hesap-sil.html?role=teacher" style="justify-content:center;text-decoration:none;color:#a72134;">Öğretmen hesabımı sil</a>
                 </div>
             </div>
         
@@ -1451,6 +1452,7 @@ if(BAKIM_MODU){
                     <button type="submit" id="girisBtn" class="btn-giris" disabled>Veriler Yükleniyor...</button>
                         </form>
                        <div id="mesaj"></div>
+                <a href="hesap-sil.html" style="display:block;margin-top:12px;font-size:11px;">Hesap silme</a>
                 <div style="text-align:center; margin-top:10px; display:flex; justify-content:center; gap:14px;">
                     <a href="javascript:void(0)" onclick="kayitOlAc()" style="font-size:11.5px; color:#2f855a; font-weight:700; text-decoration:none;">Hesabım yok, kayıt ol</a>
                     <span style="color:#cbd5e1;">|</span>
@@ -20426,7 +20428,7 @@ let adaRenk = adaRenkleri[
 @keyframes abGel { from { opacity:0; transform:translateY(40px); } }
 @media (prefers-reduced-motion: reduce) { .ab-kart { animation:none; } }
 </style>
-<div id="tab-profil" class="dc-fullscreen-overlay"><div class="pr-kap"><div id="profilAlan"></div><div class="pr-baslik">🎭 Karakterlerim</div><div id="profilKoleksiyon"></div></div></div>
+<div id="tab-profil" class="dc-fullscreen-overlay"><div class="pr-kap"><div id="profilAlan"></div><div class="pr-baslik">🎭 Karakterlerim</div><div id="profilKoleksiyon"></div><a href="hesap-sil.html" style="display:block;margin:24px 0;padding:12px;text-align:center;color:#a72134;font-size:13px;font-weight:700;">Hesabımı sil</a></div></div>
 <script>
 (function () {
   const $ = id => document.getElementById(id);

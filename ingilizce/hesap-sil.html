@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://nxfqlutulxqzqgwewssd.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+  <title>Hesabımı sil · Diji-Medu İngilizce</title>
+  <link rel="stylesheet" href="hesap-sil.css?v=1">
+  <script src="hesap-sil.js?v=1" defer></script>
+</head>
+<body>
+  <main>
+    <a class="brand" href="./"><img src="ingilizce-icon-192.png" alt="">Diji-Medu <span>İngilizce</span></a>
+    <section class="card">
+      <p class="eyebrow">HESAP AYARLARI</p>
+      <h1>Hesabımı sil</h1>
+      <p>Bu işlem yalnızca İngilizce portalındaki hesabını kapsar. Koçluk hesabın etkilenmez.</p>
+      <form id="verifyForm">
+        <label for="role">Hesap türün</label>
+        <select id="role" name="role"><option value="student">Öğrenci</option><option value="teacher">Öğretmen</option></select>
+        <label for="username">Kullanıcı adın</label>
+        <input id="username" name="username" autocomplete="username" maxlength="100" required>
+        <label for="password">Güncel şifren</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" maxlength="256" required>
+        <button id="verifyButton" type="submit">Hesabımı doğrula</button>
+      </form>
+      <form id="confirmForm" hidden>
+        <h2 id="accountLabel"></h2>
+        <div class="warning">
+          <p id="deleteDetails"></p>
+          <p><strong>Bu işlem geri alınamaz.</strong> Daha önce alıcılara gönderilmiş e-postaları geri çağırmaz; bağımsız yedek ve eski kaynak kopyalarını silmez.</p>
+        </div>
+        <label class="check"><input type="checkbox" id="consent" required><span>Silinecek verileri okudum ve hesabımın kalıcı olarak silinmesini istiyorum.</span></label>
+        <label for="confirmation">Son onay için <strong>HESABIMI SİL</strong> yaz</label>
+        <input id="confirmation" autocomplete="off" spellcheck="false" required>
+        <button class="danger" id="deleteButton" type="submit">Hesabımı kalıcı olarak sil</button>
+        <button class="secondary" id="cancelButton" type="button">Vazgeç</button>
+        <p class="small">Bu onay 5 dakika geçerlidir.</p>
+      </form>
+      <div id="result" role="status" aria-live="polite"></div>
+      <a id="backLink" class="back" href="./">İngilizce portalına dön</a>
+    </section>
+  </main>
+</body>
+</html>
