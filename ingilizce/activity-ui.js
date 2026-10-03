@@ -47,7 +47,7 @@
   if(!host.querySelector('.dm-activity-hero')){const h=document.createElement('header');h.className='dm-activity-hero';h.innerHTML='<div><h1>Aktiviteler</h1><p>Bugün hangi oyunu oynayalım?</p></div><img src="mascot-welcome.webp" alt="Oynamaya hazır Diji-Medu papağanı" width="100" height="110">';host.prepend(h);}
   const grid=host.querySelector('.az-grid2x2');if(!grid)return;
   cards.forEach(([fn,idx,color,edge])=>{const b=grid.querySelector('[onclick*="'+fn+'"]')||document.getElementById(fn==='dikteAc'?'yoDikteKart':fn);if(!b||!grid.contains(b))return;
-   b.classList.add('dm-toy-card');b.style.setProperty('--toy-bg',color);b.style.setProperty('--toy-edge',edge);
+   if(fn==='kelimeYarismasiAc')b.querySelector('.az-gcard-title').textContent='Kelime Laboratu\u00advarı';b.classList.add('dm-toy-card');b.style.setProperty('--toy-bg',color);b.style.setProperty('--toy-edge',edge);
    const icon=b.querySelector('.az-gcard-icon');if(icon&&!icon.querySelector('.dm-toy-art')){const art=document.createElement('span');art.className='dm-toy-art';art.setAttribute('aria-hidden','true');art.style.backgroundPosition=(idx%4)*100/3+'% '+Math.floor(idx/4)*100/3+'%';icon.replaceChildren(art);}
    if(['dmUcusteKart','dmRotaKart'].includes(fn)){b.onclick=()=>window.dmInviteAc(fn==='dmUcusteKart'?'ucus':'rota');if(!b.querySelector('.ak-etiket')){const t=document.createElement('div');t.className='ak-etiket';t.textContent='8 soru · 4 ⚡';b.append(t);}}
   });
