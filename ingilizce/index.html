@@ -920,7 +920,8 @@ if(BAKIM_MODU){
                    
                     
             </style>
-        </head>
+        <link rel="stylesheet" href="auth-dialogs.css?v=1">
+</head>
         <body>
         
                         <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay">
@@ -1435,7 +1436,7 @@ if(BAKIM_MODU){
             <!-- GİRİŞ EKRANI -->
                 <div class="login-card" id="login-container">
                         <div class="dm-logo-row">
-                            <div class="dm-logo-icon"><img src="/icon-512.png?v=3" alt="Diji-Medu"></div>
+                            <div class="dm-logo-icon"><img src="mascot-welcome.webp" alt="Diji-Medu"></div>
                     <div class="dm-logo-text">
                         <div class="dm-logo-word"><span class="dm-diji">Diji</span>-<span class="dm-medu">Medu</span></div>
                         <div class="dm-logo-tag">İngilizce Portalı</div>
@@ -2522,8 +2523,9 @@ if(BAKIM_MODU){
             <!-- ŞİFRE İŞLEM MODALI (Şifremi Unuttum / Şifre Değiştir ortak) -->
         <div class="rubric-modal" id="sifreIslemModal">
             <div class="rubric-content" style="max-width: 360px;">
+<div class="dm-auth-mascot"><img src="mascot-help.webp" width="1145" height="1374" alt="Şifre yardımında yanında olan Diji-Medu papağanı"></div>
                 <button class="game-close-btn" onclick="sifreIslemKapat()">✕</button>
-                <h3 id="sifreIslemBaslik" style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">🔑 Şifremi Unuttum</h3>
+                <h3 id="sifreIslemBaslik" style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">Şifremi unuttum</h3>
                 <p style="font-size:10.5px; color:#64748b; text-align:center; margin-bottom:14px;">Kimliğini doğrulamak için aşağıdaki bilgileri eksiksiz doldur.</p>
         
                 <div class="rubric-field">
@@ -2556,8 +2558,9 @@ if(BAKIM_MODU){
             <!-- KAYIT OL MODALI -->
         <div class="rubric-modal" id="kayitOlModal">
             <div class="rubric-content" style="max-width: 380px;">
+<div class="dm-auth-mascot"><img src="mascot-welcome.webp" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div>
                 <button class="game-close-btn" onclick="kayitOlKapat()">✕</button>
-                <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">📝 Kayıt Ol</h3>
+                <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">Öğrenci kaydı</h3>
                 <p style="font-size:10.5px; color:#64748b; text-align:center; margin-bottom:14px;">Kayıt talebin öğretmenine iletilecek. Onaylandıktan sonra giriş yapabilirsin.</p>
         
                 <div class="rubric-field">
@@ -5273,7 +5276,7 @@ mesajlar.forEach(m => {
         
                 // ===== ŞİFRE İŞLEMLERİ (Şifremi Unuttum / Şifre Değiştir ortak) =====
                 function sifremiUnuttumAc() {
-                    document.getElementById('sifreIslemBaslik').innerText = "🔑 Şifremi Unuttum";
+                    document.getElementById('sifreIslemBaslik').innerText = "Şifremi unuttum";
                     document.getElementById('sifreIslemKullaniciAdi').value = "";
                     document.getElementById('sifreIslemKullaniciAdi').readOnly = false;
                     document.getElementById('sifreIslemKullaniciAdi').style.background = "#edf2f7";
@@ -30347,7 +30350,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   zorunluEtiketler(); setInterval(zorunluEtiketler, 2000);
   let orgKayitAc = window.kayitOlAc;
   function perde(html, kapatFn) {
-    let p = document.createElement('div'); p.className = 'cog-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
+    let p = document.createElement('div'); p.className = 'cog-perde'; if (html.includes('dm-auth-mascot')) p.classList.add('dm-auth-dialog'); p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
     p.innerHTML = `<div class="cog-kart"><button class="cog-x" type="button" aria-label="Kapat">✕</button>${html}</div>`;
     document.body.appendChild(p);
     const kapat = () => { p.remove(); if (kapatFn) kapatFn(); };
@@ -30356,7 +30359,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     return p;
   }
   window.kayitOlAc = function () {
-    let p = perde(`<h3>📝 Kayıt Ol</h3><p class="alt">Portala kim olarak katılıyorsun?</p>
+    let p = perde(`<div class="dm-auth-mascot"><img src="mascot-welcome.webp" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div><h3>Aramıza hoş geldin</h3><p class="alt">Portala kim olarak katılıyorsun?</p>
       <div class="cog-rol"><button type="button" data-r="ogr"><span class="ik">🎒</span><span><b>Öğrenciyim</b><small>Oyunlarla İngilizce öğren, herkesle yarış</small></span></button>
       <button type="button" data-r="ogrt"><span class="ik">👩‍🏫</span><span><b>Öğretmenim</b><small>Kendi öğrencilerini takip et, değerlendir, ödev ver</small></span></button></div>`);
     p.querySelector('[data-r="ogr"]').onclick = () => { p.remove(); kodAlaniEkle(); if (typeof orgKayitAc === 'function') orgKayitAc.apply(this, arguments); setTimeout(kodAlaniEkle, 100); };
@@ -30367,7 +30370,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   if (new URLSearchParams(location.search).get('kod')) setTimeout(() => { if (typeof girisli === 'function' ? !girisli() : !localStorage.getItem('ing_token')) { kodAlaniEkle(); if (typeof orgKayitAc === 'function') orgKayitAc(); } }, 1500);
 
   function ogretmenKayit() {
-    let p = perde(`<h3>👩‍🏫 Öğretmen Kaydı</h3><p class="alt">Hesabın hemen açılır ve sana özel bir öğretmen kodu verilir. Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır.</p>
+    let p = perde(`<div class="dm-auth-mascot"><img src="mascot-welcome.webp" width="1145" height="1374" alt="Öğretmenleri karşılayan Diji-Medu papağanı"></div><h3>Öğretmen kaydı</h3><p class="alt">Hesabın hemen açılır ve sana özel bir öğretmen kodu verilir. Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır.</p>
       <div class="cog-alan"><label for="cogAd">Ad Soyad</label><input id="cogAd" autocomplete="name" placeholder="Örn: Ayşe Yılmaz"></div>
       <div class="cog-alan"><label for="cogKul">Kullanıcı adı (girişte kullanacaksın)</label><input id="cogKul" autocomplete="username" autocapitalize="off" placeholder="Örn: ayseogretmen"></div>
       <div class="cog-alan"><label for="cogEposta">E-posta (öğrenci bildirimleri buraya gelir)</label><input id="cogEposta" type="email" autocomplete="email" placeholder="ornek@okul.k12.tr"></div>
