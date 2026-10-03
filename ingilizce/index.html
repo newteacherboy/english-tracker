@@ -1063,6 +1063,7 @@ if(BAKIM_MODU){
                         <span class="ogretmen-menu-rozet" id="ogretmenMenuOkunmamis" style="display:none;">0</span>
                     </button>
                     <a class="ogretmen-menu-btn" href="hesap-sil.html?role=teacher" style="justify-content:center;text-decoration:none;color:#a72134;">Öğretmen hesabımı sil</a>
+                    <a class="ogretmen-menu-btn" href="gizlilik.html" style="justify-content:center;text-decoration:none;">Gizlilik Politikası & KVKK</a>
                 </div>
             </div>
         
@@ -1453,6 +1454,7 @@ if(BAKIM_MODU){
                         </form>
                        <div id="mesaj"></div>
                 <a href="hesap-sil.html" style="display:block;margin-top:12px;font-size:11px;">Hesap silme</a>
+                <a href="gizlilik.html" style="display:block;margin-top:8px;font-size:11px;">Gizlilik Politikası & KVKK</a>
                 <div style="text-align:center; margin-top:10px; display:flex; justify-content:center; gap:14px;">
                     <a href="javascript:void(0)" onclick="kayitOlAc()" style="font-size:11.5px; color:#2f855a; font-weight:700; text-decoration:none;">Hesabım yok, kayıt ol</a>
                     <span style="color:#cbd5e1;">|</span>
@@ -2447,7 +2449,7 @@ if(BAKIM_MODU){
                 <div class="site-footer">
                     <div class="site-footer-brand">🦜 Diji-Medu İngilizce Portalı</div>
                     <div class="site-footer-links">
-                        <a href="javascript:void(0)" onclick="gizlilikModaliniAc()">🔒 Gizlilik & KVKK Aydınlatma Metni</a>
+                        <a href="gizlilik.html">🔒 Gizlilik Politikası & KVKK</a>
                         <a href="javascript:void(0)" onclick="kullanimKosullariModaliniAc()">📄 Kullanım Koşulları</a>
                     </div>
                     <div class="site-footer-copy">© 2026-2027 Diji-Medu. Tüm hakları saklıdır. Bu platformun tasarımı, kodu ve içeriği izinsiz kopyalanamaz.</div>
@@ -2594,13 +2596,13 @@ if(BAKIM_MODU){
                     </div>
                 </div>
                 <div class="rubric-field">
-                    <label>E-posta (isteğe bağlı):</label>
+                    <label>Veli e-postası (zorunlu):</label>
                     <input type="text" id="kayitOlEmail" placeholder="ornek@mail.com">
                 </div>
         
                                <label class="kayit-onay-kutu">
                     <input type="checkbox" id="kayitOlKvkkOnay">
-                    <span><a href="javascript:void(0)" onclick="gizlilikModaliniAc()">KVKK Aydınlatma Metni'ni</a> okudum ve anladım. Yasal temsilcisi (velisi) olarak öğrencimin bilgilerinin işlenmesine ve yurt dışındaki bulut sunucularına aktarılmasına, bilgilendirilmiş olarak <b>AÇIK RIZA VERİYORUM.</b></span>
+                    <span><a href="javascript:void(0)" onclick="gizlilikModaliniAc()">Gizlilik Politikası ve KVKK Aydınlatma Metni'ni</a> okudum ve bilgi edindim. Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum. Bu beyan genel açık rıza veya yurt dışı aktarım izni değildir.</span>
                 </label>
         
                 <button class="btn-giris" id="kayitOlGonderBtn" onclick="kayitOlGonder()" style="background:#2563eb;">Kayıt Talebi Gönder</button>
@@ -5393,7 +5395,7 @@ mesajlar.forEach(m => {
                         mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen zorunlu alanları doldurun."; return;
                     }
                     if (!kvkkOnay) {
-                        mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Devam edebilmek için veli onayı kutucuğunu işaretlemelisiniz."; return;
+                        mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Devam edebilmek için veli ve bilgilendirme beyanını işaretlemelisiniz."; return;
                     }
                     if (sifre1.length < 4) {
                         mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Şifre en az 4 karakter olmalı."; return;
@@ -13187,69 +13189,17 @@ function ozellikSecDoldur() {
             <!-- GİZLİLİK / KVKK AYDINLATMA METNİ MODALI -->
         <div class="rubric-modal" id="gizlilikModal">
             <div class="rubric-content legal-modal-content">
-                <button class="game-close-btn" onclick="document.getElementById('gizlilikModal').style.display='none'">✕</button>
-                <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px;">🔒 Gizlilik ve KVKK Aydınlatma Metni</h3>
-                       <p style="font-size:11px; font-weight:800; color:#334155; margin-bottom:2px;">DİJİ MEDU</p>
-                <p style="font-size:10.5px; color:#64748b;">Bu Aydınlatma Metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu'nun ("KVKK") 10. maddesi uyarınca, Diji Medu tarafından işletilen İngilizce eğitim uygulamasını kullanan öğrencilerin ve yasal temsilcilerinin (velilerinin) kişisel verilerinin işlenme amaçları, hukuki sebepleri ve hakları konusunda bilgilendirilmesi amacıyla hazırlanmıştır.</p>
-                <p style="font-size:10.5px; color:#64748b;">Uygulamamız tamamen ticari amaç gütmeyen, ücretsiz bir eğitim faaliyeti olarak yürütülmekte olup, toplanan veriler yalnızca öğrencilerin İngilizce dil gelişim süreçlerinin takibi amacıyla kullanılmaktadır.</p>
-        
-                <h4>1. Veri Sorumlusu</h4>
-                <p>KVKK uyarınca veri sorumlusu Diji Medu olup, veri işleme süreçlerine ilişkin her türlü soru ve talebiniz için iletişim kanalı official.dijimedu@gmail.com e-posta adresidir. Faaliyetin ticari nitelikte olmaması ve veri sorumlusunun fiziki adresi yerine dijital iletişim tercih edilmesi nedeniyle yasal yazışmalar bu e-posta adresi üzerinden yürütülecektir.</p>
-        
-                <h4>2. İşlenen Kişisel Veriler</h4>
-                <p>Uygulama kapsamında yalnızca aşağıdaki sınırlı ve amaca uygun veriler işlenmektedir:</p>
-                <ul>
-                    <li><b>Öğrenciye Ait Veriler:</b> Adı ve soyadı, cinsiyeti, uygulama içi oyun oynama verileri, ders içi performans ve İngilizce dil gelişim takip bilgileri.</li>
-                    <li><b>Veliye Ait Veriler:</b> Telefon numarası ve e-posta adresi.</li>
-                </ul>
-        
-                <h4>3. Kişisel Verilerin İşlenme Amaçları ve Hukuki Sebepleri</h4>
-                <p>Söz konusu kişisel veriler, KVKK'nın 5. maddesinde belirtilen "Bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması kaydıyla, sözleşmenin taraflarına ait kişisel verilerin işlenmesinin gerekli olması" ve "Veri sorumlusunun meşru menfaati" hukuki sebeplerine dayalı olarak aşağıdaki amaçlarla işlenmektedir:</p>
-                <ul>
-                    <li>Öğrencinin uygulamaya kaydının yapılması ve kullanıcı profilinin oluşturulması,</li>
-                    <li>İngilizce eğitim oyunlarının oynatılması ve ders içi performans analizlerinin yapılması,</li>
-                    <li>Öğrencinin dil gelişim sürecinin takip edilmesi ve velisine raporlanabilmesi,</li>
-                    <li>Uygulama içi güvenliğin sağlanması ve olası teknik aksaklıkların giderilmesi,</li>
-                    <li>Veli ile iletişim kurulması (bilgilendirme, teknik destek veya sistem bildirimleri).</li>
-                </ul>
-        
-                <h4>4. İşlenen Kişisel Verilerin Aktarılması</h4>
-                <p>Toplanan kişisel veriler, ticari amaçla asla üçüncü kişilere satılmamakta, kiralanmamakta veya paylaşılmamaktadır. Veriler yalnızca uygulamanın teknik altyapısını (hosting, veri tabanı ve bulut sunucu servisleri) sağlayan hizmet sağlayıcı altyapılarında muhafaza edilmektedir. Kullanılan bulut altyapısı servislerinin sunucularının yurt dışında bulunması ihtimaline binaen, bu aktarım işlemi aşağıdaki "Açık Rıza Beyanı" kapsamında velinin onayına tabi tutulmaktadır.</p>
-        
-                <h4>5. Kişisel Verilerin Toplanma Yöntemi</h4>
-                <p>Kişisel verileriniz, veli tarafından uygulamanın kayıt ekranında bilgilerin manuel olarak girilmesi ve öğrencinin uygulama içerisindeki oyun/ders aktivitelerini gerçekleştirmesi suretiyle tamamen otomatik yollarla dijital ortamda toplanmaktadır.</p>
-        <h4>6. Ses, E-posta ve Üçüncü Taraf Hizmetler</h4>
-<ul>
-    <li><b>Konuşma tanıma:</b> Mikrofonlu alıştırmalarda öğrencinin sesi, tarayıcının konuşma tanıma özelliği aracılığıyla (Google/Apple) metne çevrilir. Ses kaydı tarafımızca saklanmaz; yalnızca tanınan metin anlık olarak değerlendirilir.</li>
-    <li><b>E-posta raporları:</b> Öğrencinin gelişim raporu, velinin verdiği e-posta adresine Google (Gmail) altyapısıyla gönderilir.</li>
-    <li><b>Dış etkinlikler:</b> Öğretmenin atadığı bazı etkinlik ve videolar üçüncü taraf sitelerde (ör. YouTube, Wordwall) açılır; bu sitelerin kendi gizlilik politikaları geçerlidir.</li>
-    <li><b>Cihazda saklanan veriler:</b> Oturumun açık kalması ve oyun ilerlemesi için tarayıcının yerel hafızası kullanılır. Çıkış yapıldığında bu bilgiler cihazdan silinir.</li>
-</ul>
-<h4>7. Saklama Süresi ve Güvenlik</h4>
-<p>Veriler, öğrenci eğitim sürecinde bulunduğu süre boyunca ve ayrılmasından sonra en fazla 1 yıl saklanır; ardından silinir veya anonimleştirilir. Veriler Google altyapısında, erişimi yalnızca veri sorumlusuyla sınırlı biçimde tutulur. Şifreler şifrelenmiş olarak saklanır, oturumlar süreli anahtarlarla korunur, yetkisiz erişim denemeleri kayıt altına alınır ve veriler haftalık olarak yedeklenir. Silme talepleri official.dijimedu@gmail.com adresine iletildiğinde en geç 30 gün içinde yerine getirilir.</p>
-                <h4>8. İlgili Kişinin (Velinin ve Öğrencinin) KVKK Kapsamındaki Hakları</h4>
-                <p>KVKK'nın 11. maddesi uyarınca veliler, hem kendileri hem de yasal temsilcisi oldukları çocukları adına official.dijimedu@gmail.com adresine e-posta göndererek aşağıdaki haklarını kullanabilirler:</p>
-                <ul>
-                    <li>Kişisel veri işlenip işlenmediğini öğrenme,</li>
-                    <li>Kişisel verileri işlenmişse buna ilişkin bilgi talep etme,</li>
-                    <li>Kişisel verilerin işlenme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme,</li>
-                    <li>Yurt içinde veya yurt dışında kişisel verilerin aktarıldığı üçüncü kişileri bilme,</li>
-                    <li>Kişisel verilerin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme,</li>
-                    <li>KVKK'da öngörülen şartlar çerçevesinde kişisel verilerin silinmesini veya yok edilmesini isteme,</li>
-                    <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle kişinin kendisi aleyhine bir sonucun ortaya çıkmasına itiraz etme.</li>
-                </ul>
-        
-                <hr style="border:0; border-top:1.5px dashed #e2e8f0; margin:16px 0;">
-        
-                <p style="font-size:11px; font-weight:800; color:#334155; margin-bottom:2px;">DİJİ MEDU UYGULAMASI</p>
-                <h4 style="margin-top:2px;">VELİ AÇIK RIZA BEYANI</h4>
-                <p>Diji Medu tarafından yukarıda sunulan Aydınlatma Metni'ni okudum ve anladım. Yasal temsilcisi (velisi) olduğum öğrencimin uygulamayı kullanabilmesi, İngilizce ders içi performansının ve oyun başarılarının takip edilerek eğitim süreçlerinin iyileştirilmesi amacıyla;</p>
-                <p>Öğrencimin adı, soyadı, yaşı, cinsiyeti ve uygulama içi performans bilgileri ile şahsıma ait telefon numarası ve e-posta adresinin işlenmesine, uygulamanın kesintisiz çalışmasını sağlayan küresel bulut tabanlı veri tabanı sistemlerinin sunucularının yurt dışında bulunması ihtimali nedeniyle verilerin yurt dışına aktarılmasına hiçbir baskı altında kalmadan, bilgilendirilmiş olarak <b>AÇIK RIZA VERİYORUM.</b></p>
-        
-                <div class="legal-last-updated">Bu metin Diji Medu eğitim uygulaması kullanıcıları için hazırlanmıştır.<br>İletişim: official.dijimedu@gmail.com</div>
+                <button class="game-close-btn" aria-label="Gizlilik bilgisini kapat" onclick="document.getElementById('gizlilikModal').style.display='none'">✕</button>
+                <h3>Gizlilik Politikası ve KVKK Aydınlatma Metni</h3>
+                <p><b>Diji-Medu İngilizce · Öğretmen Çocuk</b><br>Veri sorumlusu: Mert Akkayaoğlu<br>Son güncelleme: 3 Ekim 2026</p>
+                <p>Hesap, veli iletişimi ve öğrenme bilgileri eğitim hizmeti için işlenir. Öğretmenler/yöneticiler yetkileri kapsamında kayıtları görebilir. Sosyal profil, sınıf, başarı göstergeleri ve paylaşımlar diğer uygulama kullanıcılarına görünebilir.</p>
+                <p>Veritabanı Supabase'in Almanya bölgesindedir; web barındırma, e-posta, konuşma tanıma ve dış etkinlik hizmetleri başka ülkelerde de veri işleyebilir. Konuşma alıştırmasındaki ham ses Diji-Medu sunucusunda saklanmaz; tarayıcının tanıma sağlayıcısı sesi işleyebilir.</p>
+                <p>Bu bilgilendirmeyi okumak açık rıza vermek değildir. Ayrı izin gerektiren işlemler için ilgili tercihin ayrıca alınması gerekir.</p>
+                <p><a href="gizlilik.html" target="_blank" rel="noopener noreferrer" style="font-weight:800;">Tam gizlilik politikasını oku ↗</a><br>İşlenen veriler, hukuki sebepler, sağlayıcılar, saklama süreleri, çocuk verileri ve başvuru hakları tam metinde açıklanır.</p>
+                <p><a href="hesap-sil.html" target="_blank" rel="noopener noreferrer">İngilizce hesabımı sil ↗</a><br>Gizlilik ve veli talepleri: <a href="mailto:official.dijimedu@gmail.com">official.dijimedu@gmail.com</a>. KVKK başvuruları en geç 30 gün içinde cevaplanır.</p>
             </div>
         </div>
-        
+
         <!-- KULLANIM KOŞULLARI MODALI -->
         <div class="rubric-modal" id="kullanimKosullariModal">
             <div class="rubric-content legal-modal-content">
@@ -20428,7 +20378,7 @@ let adaRenk = adaRenkleri[
 @keyframes abGel { from { opacity:0; transform:translateY(40px); } }
 @media (prefers-reduced-motion: reduce) { .ab-kart { animation:none; } }
 </style>
-<div id="tab-profil" class="dc-fullscreen-overlay"><div class="pr-kap"><div id="profilAlan"></div><div class="pr-baslik">🎭 Karakterlerim</div><div id="profilKoleksiyon"></div><a href="hesap-sil.html" style="display:block;margin:24px 0;padding:12px;text-align:center;color:#a72134;font-size:13px;font-weight:700;">Hesabımı sil</a></div></div>
+<div id="tab-profil" class="dc-fullscreen-overlay"><div class="pr-kap"><div id="profilAlan"></div><div class="pr-baslik">🎭 Karakterlerim</div><div id="profilKoleksiyon"></div><a href="hesap-sil.html" style="display:block;margin:24px 0;padding:12px;text-align:center;color:#a72134;font-size:13px;font-weight:700;">Hesabımı sil</a><a href="gizlilik.html" style="display:block;margin:12px 0;padding:12px;text-align:center;font-size:13px;">Gizlilik Politikası & KVKK</a></div></div>
 <script>
 (function () {
   const $ = id => document.getElementById(id);
