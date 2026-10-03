@@ -194,7 +194,7 @@ let yo={altin:88,gorev:{liste:[]}},genelEnerjiKalan=37;window.genelEnerjiKalan=3
 const aktarGerekirse=()=>{},parkurAlani=()=>$('bzParkur'),durakSayisi=()=>16,bolumTamam=()=>tamam.size,siradakiDurak=()=>DURAK[0].findIndex(d=>!tamam.has(d.no)),yoVar=()=>true,yildiz=no=>no===1106?3:1,toplamDurak=()=>16,bolumAcik=()=>false,rutbe=()=>'Çırak Büyücü',bolumYildiz=()=>9,durakBilgi=(b,d)=>DURAK[0][d],durakAdi=()=> 'Yıldız Çeşmesi';
 const avatar=()=>'<span style="font-size:32px;display:grid;place-items:center;height:100%;background:#f3e8f7">👩🏻</span>';
 const kaleSVG=()=>'',koridor=()=>{$('previewStatus').textContent='Bölüm seçimine bağlı mevcut düğme.';},oyunBaslat=()=>{$('previewStatus').textContent='Bu bir tasarım önizlemesi; oyun veya veri kaydı başlatılmadı.';};
-window.magazaAc=()=>{$('previewStatus').textContent='Mağaza bağlantısı çalışıyor (önizleme).';};window.dijiEnerjiPaneliAc=()=>{$('previewStatus').textContent='Enerji paneli bağlantısı çalışıyor (önizleme).';};
+window.dijiAracPaneliAc=()=>{$('previewStatus').textContent='Araçlar bağlantısı çalışıyor (önizleme).';};window.magazaAc=()=>{$('previewStatus').textContent='Mağaza bağlantısı çalışıyor (önizleme).';};window.dijiEnerjiPaneliAc=()=>{$('previewStatus').textContent='Enerji paneli bağlantısı çalışıyor (önizleme).';};
   const ADIM = 96;
   function yerHesapla(n) { let H = 260 + n * ADIM; return { H, l: Array.from({ length: n }, (_, i) => [50 + Math.sin(i * 1.15) * 24, H - 62 - i * ADIM]) }; }
   function harita(b) {
@@ -208,7 +208,7 @@ window.magazaAc=()=>{$('previewStatus').textContent='Mağaza bağlantısı çal�
     let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b], yuzde = Math.round(n / N * 100), T = toplamDurak();
     let etiketler = DURAK[b].map((D, d) => (d === 0 || DURAK[b][d - 1].sinif !== D.sinif) ? `<span class="bz-sinif-etiket" style="top:${YER[d][1] + (d ? -18 : 30)}px">🎓 ${D.sinif}. Sınıf</span>` : '').join('');
     p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy: window.genelEnerjiKalan ?? '–', max: window.genelEnerjiMax || 30, gold: yoVar() ? yo.altin || 0 : 0})}
-      <div class="dm-parkur-scroll" id="dmParkurScroll"><div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
+      <div class="dm-parkur-scroll" id="dmParkurScroll"><div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button><button type="button" class="bz-ust-btn" onclick="dijiAracPaneliAc()">Araçlar</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
       <div class="bz-harita" id="bzHarita" style="height:${H}px">
         <span class="bulut" style="left:6%;top:140px" aria-hidden="true">☁️</span><span class="bulut" style="right:8%;top:230px;animation-delay:1.5s" aria-hidden="true">☁️</span>
         ${kaleSVG(b)}

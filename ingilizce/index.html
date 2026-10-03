@@ -16792,7 +16792,8 @@ setInterval(async () => {
     fw.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tiklaninca(); } });
   }
   surukle($('ybOyun'), () => kartlarAc('oyun'));
-  surukle($('ybArac'), () => kartlarAc('arac'));
+  window.dijiAracPaneliAc = () => kartlarAc('arac');
+  surukle($('ybArac'), window.dijiAracPaneliAc);
   window.dijiEnerjiPaneliAc = () => { $('ybPerde').dataset.tur = 'enerji'; enerjiKarti(false); $('ybPerde').classList.add('acik'); };
   surukle($('ybEnerji'), window.dijiEnerjiPaneliAc);
   function tumKonumlar() { ['ybOyun', 'ybEnerji', 'ybArac'].forEach(konumYukle); }
@@ -28842,7 +28843,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b], yuzde = Math.round(n / N * 100), T = toplamDurak();
     let etiketler = DURAK[b].map((D, d) => (d === 0 || DURAK[b][d - 1].sinif !== D.sinif) ? `<span class="bz-sinif-etiket" style="top:${YER[d][1] + (d ? -18 : 30)}px">🎓 ${D.sinif}. Sınıf</span>` : '').join('');
     p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy: window.genelEnerjiKalan ?? '–', max: window.genelEnerjiMax || 30, gold: yoVar() ? yo.altin || 0 : 0})}
-      <div class="dm-parkur-scroll" id="dmParkurScroll"><div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
+      <div class="dm-parkur-scroll" id="dmParkurScroll"><div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button><button type="button" class="bz-ust-btn" onclick="dijiAracPaneliAc()">Araçlar</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
       <div class="bz-harita" id="bzHarita" style="height:${H}px">
         <span class="bulut" style="left:6%;top:140px" aria-hidden="true">☁️</span><span class="bulut" style="right:8%;top:230px;animation-delay:1.5s" aria-hidden="true">☁️</span>
         ${kaleSVG(b)}
