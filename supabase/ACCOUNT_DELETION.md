@@ -4,7 +4,7 @@
 
 This change adds self-service deletion to the English portal only. It does not change Coaching files or call Coaching Apps Script endpoints. It is separate from the draft Google login change.
 
-**Not deployed.** Automatic approval review rejected running the installation plus destructive synthetic tests on the production Supabase database, even inside a rollback transaction. No production deletion test or schema change ran. Tests were completed instead in a local PGlite database using a schema-only snapshot; no production rows were copied.
+**Backend deployed on 2026-10-03 after explicit user approval.** The additive migration and separate account-delete Edge Function are installed. Live denied-request checks passed (405 for GET, 400 for missing confirmation, 403 for unauthenticated worker, 401 for nonexistent credentials). New tables have RLS and no anon/authenticated read access; the deletion RPC is not executable by these roles. The cleanup cron is active. Account counts remained 86 students and 2 teachers. No existing account was deleted for testing. Destructive tests were completed locally using a schema-only snapshot; no production rows were copied. Frontend publication is managed through merged PR #3.
 
 ## User flow
 
