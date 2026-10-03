@@ -9,12 +9,32 @@ async function studentByNameGenel(name:string){const n=String(name).trim().repla
 async function session(req:Request,body:any,q:URLSearchParams){
  const token=String(body.t||q.get("t")||req.headers.get("x-diji-token")||"");if(!token)return null;
  const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,"0")).join("");
- const {data,error}=await supabase.from("portal_sessions").select("role,student_id,expires_at").eq("token_hash",hash).maybeSingle();if(error)throw error;
+ const {data,error}=await supabase.from("portal_sessions").select("id,role,student_id,expires_at,last_seen_at").eq("token_hash",hash).maybeSingle();if(error)throw error;
  if(!data||data.role!=="student"||!data.student_id||Date.parse(data.expires_at)<=Date.now())return null;
  const {data:s}=await supabase.from("students").select("id,status").eq("id",data.student_id).maybeSingle();if(s?.status!=="approved")return null;return data;
 }
 const DM_GAMES: Record<string,string> = {Kelime_Liderlik:'kelime',Jeopardy_Liderlik:'jeopardy',Bosluk_Tablosu:'bosluk',Hafiza_Liderlik:'hafiza',Yagmur_Liderlik:'yagmur',Asmaca_Liderlik:'asmaca',KelimeBul_Liderlik:'kelimebul',Konusma_Liderlik:'konusma',Eslesme_Liderlik:'eslestirme',Tren_Liderlik:'tren',Dikte_Liderlik:'dikte',Cumle_Liderlik:'cumle'};
 async function dmBlocked(a:string,b:string){const {data,error}=await supabase.rpc('dm_blocked',{a,b});if(error)throw error;return !!data;}
+async function dmPresence(op:string,body:any,a:any){
+ const now=new Date(),actor=a.student_id;
+ if(op==='aktifDurum'&&(!a.last_seen_at||now.getTime()-Date.parse(a.last_seen_at)>55000)){
+  const {error}=await supabase.from('portal_sessions').update({last_seen_at:now.toISOString()}).eq('id',a.id);if(error)throw error;
+ }
+ const {data:blocks,error:be}=await supabase.from('student_blocks').select('blocker_id,blocked_id').or('blocker_id.eq.'+actor+',blocked_id.eq.'+actor);if(be)throw be;
+ const blocked=new Set((blocks||[]).map((b:any)=>b.blocker_id===actor?b.blocked_id:b.blocker_id));
+ let students:any[]=[];
+ if(op==='takipDavetListesi'){
+  const {data:follows,error}=await supabase.from('feed_events').select('target_student_id').eq('student_id',actor).eq('event_type','takip').limit(1000);if(error)throw error;
+  const ids=[...new Set((follows||[]).map((f:any)=>f.target_student_id).filter((id:any)=>id&&id!==actor&&!blocked.has(id)))];
+  if(ids.length){const {data,error}=await supabase.from('students').select('id,username,class_no').in('id',ids).eq('status','approved');if(error)throw error;students=data||[];}
+ }else{
+  const names=Array.isArray(body.isimler)?[...new Set(body.isimler.filter((n:any)=>typeof n==='string'&&n.length<=150))].slice(0,120):[];
+  if(names.length){const {data,error}=await supabase.from('students').select('id,username').in('username',names).eq('status','approved');if(error)throw error;students=(data||[]).filter((s:any)=>!blocked.has(s.id));}
+ }
+ const online=new Map<string,string>();
+ if(students.length){const {data,error}=await supabase.from('portal_sessions').select('student_id,last_seen_at').eq('role','student').in('student_id',students.map(s=>s.id)).gt('expires_at',now.toISOString()).gte('last_seen_at',new Date(now.getTime()-300000).toISOString());if(error)throw error;for(const s of data||[]){const t=online.get(s.student_id);if(!t||s.last_seen_at>t)online.set(s.student_id,s.last_seen_at);}}
+ return json({ok:true,serverNow:now.toISOString(),liste:students.map(s=>({ad:s.username,sinif:s.class_no,online:online.has(s.id),seenAt:online.get(s.id)||null})).sort((a,b)=>Number(b.online)-Number(a.online)||a.ad.localeCompare(b.ad,'tr'))});
+}
 async function dmGiftMerge(id:string,value:any){
  let v=value||{};if(typeof v==='string'){try{v=JSON.parse(v);}catch{return value;}}
  const {data,error}=await supabase.from('dm_accessory_gifts').select('item_id').eq('recipient_id',id);if(error)throw error;
@@ -56,6 +76,7 @@ Deno.serve(async(req:Request)=>{
  const q=new URL(req.url).searchParams;let body:any={};if(req.method!=="GET"){try{body=await req.json()}catch{return json({ok:false,mesaj:"Geçersiz istek."},400)}}
  const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  const op=String(val(body,q,"islem"));
+ if(['aktifDurum','takipDavetListesi'].includes(op))return await dmPresence(op,body,a);
  if(["duelloGonder","duelloYanit","duellolarim"].includes(op)){
   let arg:any={},action="list";
   if(op==="duelloGonder"){const target=await studentByNameGenel(String(val(body,q,"alici"))),game=String(val(body,q,"oyun"));if(!target||!DM_GAMES[game])return json({ok:false,mesaj:"Geçersiz rakip veya oyun."},400);action="create";arg={target:target.id,game};}
