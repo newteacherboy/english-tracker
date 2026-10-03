@@ -1,0 +1,262 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Diji-Medu · Yeni Parkur Önizlemesi</title><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}body{margin:0;background:#e7f2f3}button{cursor:pointer}#previewTools{text-align:center;font:13px Nunito,sans-serif;padding:12px;color:#476a77}#previewTools button{border:1px solid #c8e3e6;background:#fff;border-radius:8px;padding:5px 10px;color:#476a77}#previewStatus{margin:6px 0 0}#previewFrame{position:relative;width:390px;max-width:100vw;height:844px;max-height:calc(100dvh - 74px);margin:0 auto;overflow:hidden;box-shadow:0 8px 30px #42777b20}#tab-dunya{position:absolute;inset:0}#bottomNavMobile{position:absolute!important;display:grid!important;grid-template-columns:repeat(7,1fr);bottom:0;left:0;right:0;z-index:99999;width:100%;transform:none!important}.bn-item{border:0}.bz-yol{pointer-events:none}.dm-parkur-brand::after{content:' ✦';color:#f2c351}#pkSekmeler{display:none}.bz-parkur{position:absolute;inset:0;overflow-y:auto;background:#1e1446;color:#fff;font-family:Nunito,system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);-webkit-overflow-scrolling:touch}
+.bz-parkur .bz-ic{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+.bz-parkur.pk-var .bz-ic{padding-top:calc(var(--pk-h,56px) + 8px)}   /* parkurlar arası geçiş şeridinin altında kalmasın */
+#tab-dunya.bz-yeni #dunyaAlan{display:none!important}
+#tab-dunya:not(.bz-yeni) .bz-parkur{display:none!important}
+.bz-ust-btn{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:8px 12px;font-family:inherit;font-weight:900;font-size:13px;cursor:pointer;white-space:nowrap}
+.bz-ust-btn:focus-visible{outline:3px solid #fde68a;outline-offset:2px}
+.bz-yeni-don{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99995;border:0;border-radius:999px;padding:10px 16px;font-family:Nunito,system-ui,sans-serif;font-weight:900;font-size:13px;color:#fff;background:linear-gradient(135deg,#8b5cf6,#db2777);box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:pointer}
+.bz-sinif-etiket{position:absolute;left:10px;z-index:1;background:#fde68a;color:#78350f;border-radius:999px;padding:5px 12px;font-weight:900;font-size:12.5px;box-shadow:0 3px 0 #b45309;white-space:nowrap}
+.bz-govde{padding-bottom:6px}
+.bz-oyun .bz-govde{flex:none}
+.bz-oyun{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+#bzAlan{background:#fff;color:#2d2350;border-radius:24px;padding:18px 16px;box-shadow:0 12px 32px rgba(0,0,0,.28);margin:2px 14px 0;max-width:532px}
+@media (min-width:561px){#bzAlan{margin:2px auto 0}}
+:is(#bzAlan,.bz-inceleme-govde) .bz-soru{color:#1e1b4b;margin-top:0}
+:is(#bzAlan,.bz-inceleme-govde) .bz-ipucu{color:#4c1d95!important;background:#f5f3ff;border-radius:14px;padding:10px 12px;font-size:14px!important;font-weight:800;margin:0 0 14px;line-height:1.45}
+:is(#bzAlan,.bz-inceleme-govde) .bz-ipucu b{color:#7c3aed}
+:is(#bzAlan,.bz-inceleme-govde) small{color:#6d28d9!important}
+:is(#bzAlan,.bz-inceleme-govde) .bz-sec{border:2px solid #ddd6fe;box-shadow:0 4px 0 #c4b5fd}
+:is(#bzAlan,.bz-inceleme-govde) .bz-sec:disabled:not(.dogru):not(.yanlis){opacity:.35;text-decoration:line-through}
+:is(#bzAlan,.bz-inceleme-govde) .bz-slot{background:#f5f3ff;border-color:#a78bfa;color:#4c1d95}
+:is(#bzAlan,.bz-inceleme-govde) .bz-slot.sabit{background:#ede9fe;color:#4c1d95}
+:is(#bzAlan,.bz-inceleme-govde) .bz-slot.dolu{background:#fde68a;color:#78350f}
+:is(#bzAlan,.bz-inceleme-govde) .bz-cip2{border:2px solid #ddd6fe;box-shadow:0 3px 0 #c4b5fd}
+:is(#bzAlan,.bz-inceleme-govde) .bz-cevap{background:#f5f3ff;border:2px dashed #a78bfa;min-height:64px;align-items:center}
+:is(#bzAlan,.bz-inceleme-govde) .bz-wordle .h{background:#ede9fe;color:#1e1b4b}
+:is(#bzAlan,.bz-inceleme-govde) .bz-wordle .h.g,:is(#bzAlan,.bz-inceleme-govde) .bz-wordle .h.s,:is(#bzAlan,.bz-inceleme-govde) .bz-wordle .h.x{color:#fff}
+:is(#bzAlan,.bz-inceleme-govde) .bz-asma{color:#1e1b4b}
+:is(#bzAlan,.bz-inceleme-govde) .bz-sure{background:#ede9fe}
+:is(#bzAlan,.bz-inceleme-govde) .bz-input{border:2px solid #ddd6fe;background:#faf5ff;color:#1e1b4b}
+.bz-etiket{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:900;color:#7c3aed;margin:2px 0 6px;letter-spacing:.2px}
+.bz-bos-vagon{display:inline-grid;place-items:center;min-width:44px;height:44px;border-radius:12px;border:2px dashed #c4b5fd;color:#a78bfa;font-weight:900;font-size:14px;background:#fff}
+.bz-tr-anlam{font-size:13px;font-weight:800;color:#6d28d9;margin:-8px 0 12px}
+/* jokerler */
+.bz-jokerler{display:flex;gap:6px;align-items:stretch;margin:12px 14px 0;max-width:532px;flex-wrap:wrap}
+@media (min-width:561px){.bz-jokerler{margin:12px auto 0}}
+.bz-jk{flex:1;min-width:64px;border:0;border-radius:14px;padding:7px 4px;background:rgba(255,255,255,.12);color:#fff;font-family:inherit;font-weight:900;font-size:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative;border:1px solid rgba(255,255,255,.18)}
+.bz-jk span{font-size:20px;line-height:1}
+.bz-jk b{position:absolute;top:-6px;right:-4px;background:#fbbf24;color:#78350f;border-radius:999px;min-width:20px;height:20px;display:grid;place-items:center;font-size:11px}
+.bz-jk:disabled{opacity:.35;cursor:default}
+.bz-jk.al{flex:0 0 auto;min-width:58px;background:linear-gradient(135deg,#f59e0b,#ea580c);border:0}
+.bz-jk:focus-visible{outline:3px solid #fde68a;outline-offset:2px}
+/* inceleme (geri) */
+.bz-inceleme{margin:2px 14px 0;max-width:532px}
+@media (min-width:561px){.bz-inceleme{margin:2px auto 0}}
+.bz-inceleme-bas{display:flex;align-items:center;gap:8px;background:#fde68a;color:#78350f;border-radius:16px 16px 0 0;padding:9px 12px;font-weight:900;font-size:13px}
+.bz-inceleme-bas button{border:0;border-radius:10px;background:#fff;color:#78350f;font-family:inherit;font-weight:900;font-size:13px;padding:6px 10px;cursor:pointer}
+.bz-inceleme-bas button:disabled{opacity:.4;cursor:default}
+.bz-inceleme-govde{background:#fff;color:#2d2350;border-radius:0 0 24px 24px;padding:16px;pointer-events:none;box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.bz-inceleme-govde .bz-btn{display:none}
+.bz-enerji-pill{background:rgba(255,255,255,.14);border-radius:999px;padding:5px 9px;font-weight:900;font-size:12px;white-space:nowrap}
+.bz-geri-soru{width:38px;height:38px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:900;font-size:16px;cursor:pointer;flex:none}
+.bz-geri-soru:disabled{opacity:.3;cursor:default}
+.bz-alt-kart .ek-parkur-not{display:none!important}
+.bz-panel{position:fixed;inset:0;z-index:100000048;background:rgba(10,5,30,.65);display:flex;align-items:center;justify-content:center;padding:16px}
+.bz-panel-kart{background:#fff;color:#2d2350;border-radius:22px;padding:18px;max-width:360px;width:100%;text-align:center;font-family:Nunito,system-ui,sans-serif}
+.bz-panel-kart h3{margin:4px 0 6px;font-size:18px;font-weight:900}
+.bz-panel-kart p{margin:0 0 14px;font-size:13px;font-weight:700;color:#6b5b95}
+.bz-dukkan{display:grid;gap:8px;text-align:left;margin-bottom:12px}
+.bz-dukkan div{display:flex;align-items:center;gap:10px;border:2px solid #ede9fe;border-radius:14px;padding:8px 10px;font-size:13px;font-weight:800}
+.bz-dukkan div span.e{font-size:24px}
+.bz-dukkan div small{display:block;color:#7c6ba8;font-weight:700}
+.bz-dukkan div button{margin-left:auto;border:0;border-radius:10px;padding:8px 10px;font-family:inherit;font-weight:900;font-size:12.5px;color:#fff;background:linear-gradient(135deg,#f59e0b,#ea580c);cursor:pointer;white-space:nowrap}
+.bz-perde{position:fixed;inset:0;z-index:100000040;overflow-y:auto;background:#1e1446;color:#fff;font-family:Nunito,system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bz-ic{max-width:560px;margin:0 auto;padding:10px 12px 28px}
+.bz-bas{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.bz-bas .kapat{width:40px;height:40px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:18px;font-weight:900;cursor:pointer;flex:none}
+.bz-profil{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:5px 10px 5px 5px;min-width:0}
+.bz-profil .av{width:38px;height:38px;border-radius:12px;background:#fde68a;display:grid;place-items:center;font-size:22px;overflow:hidden;flex:none}
+.bz-profil .av svg{width:100%;height:100%}
+.bz-profil b{display:block;font-size:13.5px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bz-profil small{font-size:11px;font-weight:800;color:#fde68a}
+.bz-cip{margin-left:auto;display:flex;gap:6px}
+.bz-cip span{background:rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;font-weight:900;font-size:12.5px;white-space:nowrap}
+.bz-afis{text-align:center;margin:6px auto 14px;background:linear-gradient(135deg,#6d28d9,#a855f7);border:3px solid #fbbf24;border-radius:18px;padding:8px 16px;width:max-content;max-width:100%;box-shadow:0 0 30px rgba(168,85,247,.5)}
+.bz-afis b{display:block;font-size:19px;font-weight:900;color:#fde68a;text-shadow:0 2px 0 #4c1d95}
+.bz-afis small{font-size:12px;font-weight:800;color:#e9d5ff}
+button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
+/* ---- Koridor ---- */
+.bz-koridor{position:relative;border-radius:26px;padding:18px 12px 14px;background:radial-gradient(ellipse at 50% 0%,#f59e0b44,transparent 60%),linear-gradient(180deg,#3b2a1a,#2a1d12 40%,#1c130c);border:2px solid #5b3a1e;box-shadow:inset 0 0 60px rgba(0,0,0,.5)}
+.bz-mesale{position:absolute;top:18px;font-size:24px;animation:bzTitre 1.6s ease-in-out infinite}
+.bz-kapilar{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative}
+.bz-kapi{position:relative;border:0;cursor:pointer;color:#fff;border-radius:80px 80px 14px 14px;padding:22px 10px 14px;min-height:190px;text-align:center;box-shadow:inset 0 0 0 5px rgba(0,0,0,.25),0 0 26px var(--isik);transition:transform .2s}
+.bz-kapi:hover,.bz-kapi:focus-visible{transform:translateY(-3px)}
+.bz-kapi:focus-visible{outline:3px solid #fde68a;outline-offset:3px}
+.bz-kapi .no{display:grid;place-items:center;width:46px;height:46px;margin:0 auto 8px;border-radius:50%;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.55);font-size:22px;font-weight:900}
+.bz-kapi b{display:block;font-size:15px;font-weight:900;line-height:1.2}
+.bz-kapi small{display:block;font-size:11.5px;font-weight:800;opacity:.9;margin-top:3px}
+.bz-kapi .yil{margin-top:8px;font-size:12.5px;font-weight:900;background:rgba(0,0,0,.25);border-radius:999px;display:inline-block;padding:3px 10px}
+.bz-kapi.kilit{filter:grayscale(.7) brightness(.7)}
+.bz-kapi.kilit .no{font-size:20px}
+.bz-kitap{display:flex;gap:10px;align-items:center;margin-top:16px;background:#fef3c7;color:#78350f;border-radius:16px;padding:10px 12px;font-weight:800;font-size:13px;box-shadow:0 4px 0 #b45309}
+.bz-kitap span{font-size:30px}
+.bz-eski{display:block;margin:14px auto 0;border:0;background:none;color:#c4b5fd;font-weight:800;font-size:12px;cursor:pointer;text-decoration:underline}
+/* ---- Kale haritası ---- */
+.bz-geri{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:8px 12px;font-weight:900;font-size:13px;cursor:pointer}
+.bz-harita{position:relative;height:600px;border-radius:26px;overflow:hidden;background:linear-gradient(180deg,#312e81 0%,#7c3aed 38%,#f0abfc 62%,#86efac 63%,#22c55e 100%)}
+.bz-harita .bulut{position:absolute;font-size:30px;opacity:.85;animation:bzSuz 5s ease-in-out infinite}
+.bz-kale{position:absolute;left:50%;top:10px;transform:translateX(-50%);width:230px}
+.bz-yol{position:absolute;inset:0;width:100%;height:100%}
+.bz-tas{position:absolute;transform:translate(-50%,-50%);border:0;cursor:pointer;width:52px;height:46px;border-radius:50%;font-weight:900;font-size:17px;display:grid;place-items:center;color:#4c1d95;box-shadow:0 6px 0 rgba(0,0,0,.28);transition:transform .15s}
+.bz-tas:hover,.bz-tas:focus-visible{transform:translate(-50%,-50%) scale(1.1)}
+.bz-tas:focus-visible{outline:3px solid #fde68a;outline-offset:3px}
+.bz-tas .y{position:absolute;top:44px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;letter-spacing:-1px}
+.bz-tas.sonraki{animation:bzNabiz 1.4s ease-in-out infinite}
+.bz-kahraman{position:absolute;width:62px;height:62px;transform:translate(-50%,-100%);pointer-events:none;animation:bzSuz 2.4s ease-in-out infinite;filter:drop-shadow(0 6px 4px rgba(0,0,0,.35))}
+.bz-kahraman svg{width:100%;height:100%;border-radius:50%}
+.bz-tabela{position:absolute;right:10px;bottom:12px;background:#fef3c7;color:#78350f;border:3px solid #92400e;border-radius:12px;padding:6px 10px;font-weight:900;font-size:12px;transform:rotate(-3deg);box-shadow:0 4px 0 #92400e}
+.bz-yan{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.bz-kutu{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:12px}
+.bz-kutu h4{margin:0 0 8px;font-size:13.5px;font-weight:900;display:flex;gap:6px;align-items:center}
+.bz-kutu .gorev{display:flex;gap:6px;align-items:center;font-size:12px;font-weight:800;margin:5px 0}
+.bz-cubuk{height:8px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:6px}
+.bz-cubuk i{display:block;height:100%;background:linear-gradient(90deg,#fbbf24,#f472b6);border-radius:99px}
+.bz-sandik{display:flex;gap:8px;align-items:center}
+.bz-sandik span{font-size:30px}
+.bz-btn{border:0;border-radius:14px;padding:12px;font-weight:900;font-size:15px;color:#fff;cursor:pointer;background:linear-gradient(135deg,#f59e0b,#ea580c);box-shadow:0 4px 0 #9a3412;width:100%}
+.bz-btn:disabled{background:rgba(255,255,255,.18);box-shadow:none;color:#c4b5fd;cursor:default}
+.bz-btn.mor{background:linear-gradient(135deg,#8b5cf6,#db2777);box-shadow:0 4px 0 #6d28d9}
+.bz-btn:focus-visible,.bz-sec:focus-visible,.bz-cip2:focus-visible,.bz-kart2:focus-visible{outline:3px solid #fde68a;outline-offset:2px}
+/* ---- Durak kartı ---- */
+.bz-alt{position:fixed;inset:0;z-index:100000045;background:rgba(10,5,30,.6);display:flex;align-items:flex-end;justify-content:center;animation:bzGel .2s}
+.bz-alt-kart{background:#fff;color:#2d2350;width:100%;max-width:560px;border-radius:26px 26px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));animation:bzYuk .3s cubic-bezier(.2,.9,.3,1.1)}
+.bz-alt-kart h3{margin:0;font-size:20px;font-weight:900}
+.bz-alt-kart .alt{color:#7c6ba8;font-weight:800;font-size:12.5px;margin:2px 0 12px}
+.bz-tipler{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.bz-tipler div{background:#f5f3ff;border-radius:12px;padding:7px 3px;text-align:center;font-size:10.5px;font-weight:800;color:#5b21b6;line-height:1.2}
+.bz-tipler div span{display:block;font-size:20px}
+/* ---- Oyun ---- */
+.bz-oyun{min-height:100dvh;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 0%,#7c3aed55,transparent 60%),#1e1446}
+.bz-oyun-ust{display:flex;align-items:center;gap:10px;padding:12px 14px 6px;max-width:560px;width:100%;margin:0 auto}
+.bz-noktalar{flex:1;display:flex;gap:4px}
+.bz-noktalar i{flex:1;height:8px;border-radius:9px;background:rgba(255,255,255,.18)}
+.bz-noktalar i.d{background:#22c55e}.bz-noktalar i.y{background:#ef4444}.bz-noktalar i.a{background:#fbbf24}
+.bz-govde{flex:1;max-width:560px;width:100%;margin:0 auto;padding:6px 14px 16px}
+.bz-tip{display:inline-flex;gap:6px;align-items:center;background:rgba(255,255,255,.14);border-radius:999px;padding:5px 12px;font-weight:900;font-size:12.5px;margin-bottom:10px}
+.bz-soru{font-size:clamp(20px,6vw,28px);font-weight:900;margin:4px 0 6px;line-height:1.25;overflow-wrap:anywhere}
+.bz-ipucu{color:#c4b5fd;font-weight:800;font-size:13.5px;margin-bottom:14px}
+.bz-secenekler{display:grid;gap:9px}
+.bz-sec{border:0;border-radius:16px;padding:14px;font-weight:900;font-size:16px;background:#fff;color:#2d2350;text-align:left;cursor:pointer;box-shadow:0 4px 0 #a78bfa}
+.bz-sec.dogru{background:#bbf7d0;box-shadow:0 4px 0 #16a34a}.bz-sec.yanlis{background:#fecaca;box-shadow:0 4px 0 #dc2626}
+.bz-sec:disabled{cursor:default}
+.bz-ses{border:0;border-radius:14px;background:#fbbf24;color:#78350f;font-weight:900;font-size:15px;padding:10px 14px;cursor:pointer;box-shadow:0 4px 0 #b45309}
+.bz-slotlar{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.bz-slot{width:40px;height:48px;border-radius:12px;background:rgba(255,255,255,.14);border:2px dashed rgba(255,255,255,.35);display:grid;place-items:center;font-size:22px;font-weight:900;text-transform:uppercase}
+.bz-slot.sabit{background:#fff;color:#4c1d95;border:0}
+.bz-slot.dolu{background:#fde68a;color:#78350f;border:0;cursor:pointer}
+.bz-harfler{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.bz-cip2{border:0;border-radius:12px;background:#fff;color:#4c1d95;font-weight:900;font-size:17px;min-width:42px;height:44px;padding:0 10px;cursor:pointer;box-shadow:0 3px 0 #a78bfa;text-transform:uppercase}
+.bz-cip2:disabled{opacity:.35;cursor:default}
+.bz-cip2.bos{visibility:hidden}
+.bz-cip2.iyi{background:#bbf7d0;box-shadow:0 3px 0 #16a34a}.bz-cip2.kotu{background:#fecaca;box-shadow:0 3px 0 #dc2626}
+.bz-kartlar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bz-kart2{border:0;border-radius:14px;height:78px;font-weight:900;font-size:14px;cursor:pointer;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;box-shadow:0 4px 0 #4c1d95;padding:4px;overflow-wrap:anywhere}
+.bz-kart2.acik{background:#fff;color:#2d2350;box-shadow:0 4px 0 #a78bfa}
+.bz-kart2.tamam{background:#bbf7d0;color:#14532d;box-shadow:none;pointer-events:none}
+.bz-es{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bz-es div{display:flex;flex-direction:column;gap:8px}
+.bz-es .bz-cip2{text-transform:none;font-size:14.5px;height:auto;min-height:46px;padding:6px}
+.bz-es .bz-cip2.secili{outline:3px solid #fbbf24}
+.bz-es .bz-cip2.tamam{background:#bbf7d0;box-shadow:none;pointer-events:none;opacity:.7}
+.bz-cevap{min-height:58px;display:flex;flex-wrap:wrap;gap:6px;padding:8px;margin-bottom:14px;border-radius:14px;background:rgba(255,255,255,.08);border:2px dashed rgba(255,255,255,.25)}
+.bz-cevap .bz-cip2,.bz-tren-havuz .bz-cip2{text-transform:none;font-size:15px}
+.bz-tren-havuz{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.bz-sure{height:10px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden;margin-bottom:14px}
+.bz-sure i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#fbbf24,#ef4444);transition:width linear}
+.bz-wordle{display:grid;gap:5px;justify-content:center;margin-bottom:12px}
+.bz-wordle .satir{display:flex;gap:5px}
+.bz-wordle .h{width:44px;height:46px;border-radius:10px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-weight:900;font-size:21px;text-transform:uppercase}
+.bz-wordle .h.g{background:#22c55e}.bz-wordle .h.s{background:#eab308}.bz-wordle .h.x{background:#475569}
+.bz-klavye{display:grid;gap:5px}
+.bz-klavye div{display:flex;gap:4px;justify-content:center}
+.bz-klavye .bz-cip2{min-width:28px;height:42px;padding:0 6px;font-size:15px}
+.bz-input{width:100%;border:0;border-radius:14px;padding:14px;font-family:inherit;font-weight:900;font-size:20px;text-align:center;margin:10px 0 12px;text-transform:lowercase}
+.bz-geri-bildirim{border-radius:16px;padding:12px 14px;margin-top:14px;font-weight:800;font-size:15px}
+.bz-geri-bildirim.iyi{background:#bbf7d0;color:#14532d}.bz-geri-bildirim.kotu{background:#fecaca;color:#7f1d1d}
+.bz-asma{font-size:34px;letter-spacing:4px;text-align:center;margin:8px 0}
+.bz-can{text-align:center;font-size:18px;margin-bottom:10px}
+@keyframes bzSuz{0%,100%{transform:translate(-50%,-100%)}50%{transform:translate(-50%,calc(-100% - 6px))}}
+.bz-harita .bulut{animation-name:bzBulut}
+@keyframes bzBulut{0%,100%{transform:translateX(0)}50%{transform:translateX(10px)}}
+@keyframes bzNabiz{0%,100%{box-shadow:0 6px 0 rgba(0,0,0,.28),0 0 0 0 rgba(251,191,36,.7)}50%{box-shadow:0 6px 0 rgba(0,0,0,.28),0 0 0 12px rgba(251,191,36,0)}}
+@keyframes bzTitre{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.08) rotate(3deg)}}
+@keyframes bzGel{from{opacity:0}}
+@keyframes bzYuk{from{transform:translateY(100%)}}
+@media (max-width:380px){.bz-kapilar{gap:10px}.bz-kapi{min-height:176px}.bz-tipler{grid-template-columns:repeat(3,1fr)}}
+@media (prefers-reduced-motion:reduce){.bz-perde *{animation:none!important;transition:none!important}}
+</style><link rel="stylesheet" href="parkur-theme.css?v=1"></head><body><div id="previewTools">Tasarım önizlemesi · Örnek ilerleme <button data-w="360">360 px</button> <button data-w="390">390 px</button> <button data-w="560">560 px</button><div id="previewStatus" role="status">Gerçek hesaba puan veya ilerleme kaydedilmez.</div></div><div id="previewFrame"><div id="tab-dunya" class="active bz-yeni"><div id="bzParkur" class="bz-parkur"></div></div><nav id="bottomNavMobile" class="bottom-nav-mobile"><button class="bn-item active" data-ekran="tab-dunya"><span class="bn-icon">○</span><span class="bn-label">Parkur</span></button><button class="bn-item " data-ekran="tab-meduakis"><span class="bn-icon">○</span><span class="bn-label">Medu Akış</span></button><button class="bn-item " data-ekran="tab-sanaozel"><span class="bn-icon">○</span><span class="bn-label">Sana Özel</span></button><button class="bn-item " data-ekran="tab-aktiviteler"><span class="bn-icon">○</span><span class="bn-label">Aktivite</span></button><button class="bn-item " data-ekran="tab-derscalis"><span class="bn-icon">○</span><span class="bn-label">Ders Çalış</span></button><button class="bn-item " data-ekran="tab-magaza"><span class="bn-icon">○</span><span class="bn-label">Mağaza</span></button><button class="bn-item " data-ekran="tab-profil"><span class="bn-icon">○</span><span class="bn-label">Profil</span></button></nav></div><script src="parkur-theme.js?v=1"></script><script>const $=id=>document.getElementById(id),kac=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DURAK=[Array.from({length:16},(_,i)=>({sinif:i<8?1:2,unite:i%8+1,no:1100+i}))];
+const BOLUM=[{ad:'Temel Kelimeler',alt:'1. ve 2. Sınıf',ik:'📜'}];
+const TIPLER=[['','🔬','Kelime Laboratuvarı'],['','🎈','Risk Balonları'],['','✏️','Eksik Harf'],['','🃏','Hafıza Sandığı'],['','🌪️','Hız Fırtınası'],['','🔤','Harf Avı'],['','🔐','Şifre Kırıcı'],['','🔗','Eş Bul'],['','🚂','Kelime Treni'],['','🧱','Cümle Ustası'],['','🎧','Kulak Dedektifi']],GECME=7;
+let tamam=new Set(DURAK[0].slice(0,7).map(d=>d.no)),gorunum={};
+let yo={altin:88,gorev:{liste:[]}},genelEnerjiKalan=37;window.genelEnerjiKalan=37;window.genelEnerjiMax=30;
+const aktarGerekirse=()=>{},parkurAlani=()=>$('bzParkur'),durakSayisi=()=>16,bolumTamam=()=>tamam.size,siradakiDurak=()=>DURAK[0].findIndex(d=>!tamam.has(d.no)),yoVar=()=>true,yildiz=no=>no===1106?3:1,toplamDurak=()=>16,bolumAcik=()=>false,rutbe=()=>'Çırak Büyücü',bolumYildiz=()=>9,durakBilgi=(b,d)=>DURAK[0][d],durakAdi=()=> 'Yıldız Çeşmesi';
+const avatar=()=>'<span style="font-size:32px;display:grid;place-items:center;height:100%;background:#f3e8f7">👩🏻</span>';
+const kaleSVG=()=>'',koridor=()=>{$('previewStatus').textContent='Bölüm seçimine bağlı mevcut düğme.';},oyunBaslat=()=>{$('previewStatus').textContent='Bu bir tasarım önizlemesi; oyun veya veri kaydı başlatılmadı.';};
+window.magazaAc=()=>{$('previewStatus').textContent='Mağaza bağlantısı çalışıyor (önizleme).';};window.dijiEnerjiPaneliAc=()=>{$('previewStatus').textContent='Enerji paneli bağlantısı çalışıyor (önizleme).';};
+  const ADIM = 96;
+  function yerHesapla(n) { let H = 260 + n * ADIM; return { H, l: Array.from({ length: n }, (_, i) => [50 + Math.sin(i * 1.15) * 24, H - 62 - i * ADIM]) }; }
+  function harita(b) {
+    aktarGerekirse();
+    let p = parkurAlani(), B = BOLUM[b], N = durakSayisi(b), sira = siradakiDurak(b), n = bolumTamam(b), hepsi = n === N;
+    gorunum = { ad: 'harita', b };
+    let { H, l: YER } = yerHesapla(N), yol = YER.map(([x, y], i) => i ? `C ${YER[i-1][0]} ${(YER[i-1][1]+y)/2} ${x} ${(YER[i-1][1]+y)/2} ${x} ${y}` : `M ${x} ${y}`).join(' '), [hx, hy] = YER[sira];
+    let g = yoVar() && yo.gorev && yo.gorev.liste ? yo.gorev.liste : [];
+    const GAD = { oyun3: '3 oyun oyna', oyun5: '5 oyun oyna', yildiz3: 'Bir oyunda ⭐⭐⭐', ders1: '1 konu bitir', dinleme: 'Kulak Dedektifi oyna', yazim: 'Yazım oyununda ⭐⭐', cumle: 'Cümle oyunu oyna', hiz: 'Hız Fırtınası ⭐⭐', zk: 'Zor kelime tekrarı' };
+    const GHEDEF = { oyun3: 3, oyun5: 5 };
+    let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b], yuzde = Math.round(n / N * 100), T = toplamDurak();
+    let etiketler = DURAK[b].map((D, d) => (d === 0 || DURAK[b][d - 1].sinif !== D.sinif) ? `<span class="bz-sinif-etiket" style="top:${YER[d][1] + 30}px">🎓 ${D.sinif}. Sınıf</span>` : '').join('');
+    p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy: window.genelEnerjiKalan ?? '–', max: window.genelEnerjiMax || 30, gold: yoVar() ? yo.altin || 0 : 0})}
+      <div class="dm-parkur-scroll" id="dmParkurScroll"><div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
+      <div class="bz-harita" id="bzHarita" style="height:${H}px">
+        <span class="bulut" style="left:6%;top:140px" aria-hidden="true">☁️</span><span class="bulut" style="right:8%;top:230px;animation-delay:1.5s" aria-hidden="true">☁️</span>
+        ${kaleSVG(b)}
+        <svg class="bz-yol" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${yol}" fill="none" stroke="#d7f2f1" stroke-width="18" vector-effect="non-scaling-stroke" stroke-linecap="round"/><path d="${yol}" fill="none" stroke="#88d5d7" stroke-width="5" vector-effect="non-scaling-stroke" stroke-dasharray="1 12" stroke-linecap="round"/></svg>
+        ${etiketler}
+        ${YER.map(([x, y], d) => { let D = DURAK[b][d], bitti = tamam.has(D.no), y2 = yildiz(D.no), son = d === sira && !hepsi;
+          return `<button class="bz-tas${son ? ' sonraki' : bitti ? ' bitti' : ' kilit'}" data-d="${d}" style="left:${x}%;top:${y}px;background:${bitti ? 'linear-gradient(180deg,#fef3c7,#fbbf24)' : son ? '#fff' : '#cbd5e1'}" aria-label="${D.sinif}. sınıf ${D.unite}. ünite${bitti ? ', ' + y2 + ' yıldız' : son ? ', sıradaki' : ''}"><span class="dm-step-number">${D.unite}</span>${!bitti && !son ? '<span class="dm-step-lock" aria-hidden="true">🔒</span>' : ''}${bitti ? `<span class="y">${'⭐'.repeat(y2)}</span>` : ''}</button>`; }).join('')}
+        <span class="bz-kahraman" style="left:${hx > 50 ? hx - 14 : hx + 14}%;top:${hy - 25}px" aria-hidden="true">${avatar(46)}</span>
+        ${!hepsi ? `<button type="button" class="dm-start-card" data-d="${sira}" style="${hx > 50 ? `left:calc(${hx}% - 178px)` : `left:calc(${hx}% + 50px)`};top:${hy}px" aria-label="${DURAK[b][sira].sinif}. sınıf ${DURAK[b][sira].unite}. üniteyi başlat"><small>Sıradaki ders</small><strong>${DURAK[b][sira].unite}. adım</strong><span class="dm-start-cta">Başla ›</span></button>` : ''}
+        <span class="bz-tabela">${hepsi ? '🏆 Kapı fethedildi!' : `🎯 Sıradaki: ${DURAK[b][sira].sinif}. sınıf ${DURAK[b][sira].unite}. ünite`}</span>
+      </div>
+      <details class="dm-map-detail"><summary>${B.ad} · ${n}/${N} durak · İlerleme ve ödüller</summary><div class="bz-yan">
+        <div class="bz-kutu"><h4>🧙 Profil</h4><div style="font-weight:900;font-size:14px">${rutbe()}</div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd">Toplam ${tamam.size}/${T} durak</div><div class="bz-cubuk"><i style="width:${Math.round(tamam.size / T * 100)}%"></i></div></div>
+        <div class="bz-kutu"><h4>📋 Günlük görev</h4>${g.length ? g.map(x => { let h = GHEDEF[x.id] || 1, ok = x.ilerleme >= h; return `<div class="gorev">${ok ? '✅' : '⬜'} ${kac(GAD[x.id] || x.id)}</div>`; }).join('') : '<div class="gorev">Sana Özel\'de görevlerin seni bekliyor</div>'}</div>
+        <div class="bz-kutu"><h4>🎁 Kapı ödülü</h4><div class="bz-sandik"><span aria-hidden="true">${sandikAlindi ? '📭' : '🧰'}</span><div style="font-size:11.5px;font-weight:800">${sandikAlindi ? 'Bu kapının sandığını açtın' : hepsi ? 'Sandığın hazır!' : `${N} durağın hepsini bitir: ${b < 2 ? 'Gümüş' : 'Altın'} Sandık`}</div></div>
+          ${hepsi && !sandikAlindi ? '<button class="bz-btn" id="bzSandik" style="margin-top:8px;padding:9px;font-size:13px">🎁 Aç</button>' : ''}</div>
+        <div class="bz-kutu"><h4>📈 Kapı ilerlemesi</h4><div style="font-weight:900;font-size:22px">%${yuzde}</div><div class="bz-cubuk"><i style="width:${yuzde}%"></i></div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd;margin-top:6px">⭐ ${bolumYildiz(b)}/${N * 3} yıldız</div></div>
+      </div></details></div></div>`;
+    $('bzGeri').onclick = koridor;
+    $('bzAkis').onclick = () => { if (typeof meduAkisAc === 'function') { try { maSekme = 'akis'; } catch (e) {} meduAkisAc(); } };
+    if ($('bzOnceki')) $('bzOnceki').onclick = () => harita(b - 1);
+    if ($('bzSonraki')) $('bzSonraki').onclick = () => harita(b + 1);
+    p.querySelectorAll('.bz-tas,.dm-start-card').forEach(t => t.onclick = () => durakKarti(b, +t.dataset.d));
+    let sb = $('bzSandik'); if (sb) sb.onclick = () => { yo.baSandik = yo.baSandik || {}; yo.baSandik[b] = 1; if (typeof yoKaydet === 'function') yoKaydet(); if (typeof dolapSandikAc === 'function') dolapSandikAc(b < 2 ? 1 : 2, true); else { yoXpEkle(100, 100); toast('🎁 +100 🪙'); } harita(b); };
+    /* sıradaki durak ekranın ortasında görünsün */
+    requestAnimationFrame(() => { let el = p.querySelector('.bz-tas.sonraki') || p.querySelector('.bz-tas'); if (el) { let sc = $('dmParkurScroll'), hr = $('bzHarita').getBoundingClientRect(), pr = sc.getBoundingClientRect(); sc.scrollTop = Math.max(0, hr.top - pr.top + sc.scrollTop + (parseFloat(el.style.top) || 0) - sc.clientHeight * .55); } });
+  }
+
+  /* ================= 3) DURAK KARTI ================= */
+  function durakKarti(b, d) {
+    let B = BOLUM[b], D = durakBilgi(b, d), no = D.no, N = durakSayisi(b), bitti = tamam.has(no), y = yildiz(no), n = bolumTamam(b);
+    let ileride = d > siradakiDurak(b) && !bitti;
+    let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
+    k.innerHTML = `<div class="bz-alt-kart"><h3>${D.sinif}. Sınıf · ${D.unite}. Ünite</h3>
+      <div class="alt">${B.ik} ${kac(durakAdi(b, d))} · ${bitti ? '⭐'.repeat(y) + '☆'.repeat(3 - y) + ' en iyi sonucun' : ileride ? '🔒 Önce ' + DURAK[b][siradakiDurak(b)].sinif + '. sınıf ' + DURAK[b][siradakiDurak(b)].unite + '. üniteyi geç' : 'Sıradaki durak!'}</div>
+      <div class="bz-tipler">${TIPLER.map(([, ik, ad]) => `<div><span>${ik}</span>${ad}</div>`).join('')}<div><span>🏆</span>11 soru</div></div>
+      <div style="font-size:12.5px;font-weight:800;color:#7c6ba8;margin-bottom:6px">8 soru bu üniteden, 3 soru önceki ünitelerden 🔁 · geçmek için ${GECME} doğru</div>
+      <div style="font-size:12px;font-weight:800;color:#7c6ba8;margin-bottom:6px">Kapı ilerlemesi: ${n}/${N}</div>
+      <div class="bz-cubuk" style="background:#ede9fe;margin-bottom:14px"><i style="width:${Math.round(n / N * 100)}%"></i></div>
+      <div style="margin:-4px 0 10px;padding:8px 10px;border-radius:12px;font-size:12.5px;font-weight:800;background:${bitti ? '#f1f5f9;color:#475569' : '#dcfce7;color:#14532d'}">⚡ Her 2 soruda 1 enerji (bu durak 5 ⚡)${bitti ? ' · tekrar oynayınca enerji ödülü yok' : ' · 🎁 ilk geçişte +6 ⚡'} · 🃏 jokerler her durakta 1 bedava</div>
+      <button class="bz-btn mor" id="bzOyna" ${ileride ? 'disabled' : ''}>${bitti ? '🔁 Tekrar oyna' : '✨ Büyüyü başlat'}</button>
+      <button class="bz-btn" id="bzVazgec" style="background:#f5f3ff;color:#6d28d9;box-shadow:none;margin-top:8px">Vazgeç</button></div>`;
+    document.body.appendChild(k);
+    const kap = () => k.remove();
+    k.onclick = e => { if (e.target === k) kap(); };
+    $('bzVazgec').onclick = kap;
+    $('bzOyna').onclick = () => { kap(); oyunBaslat(b, d); };
+    setTimeout(() => $('bzOyna') && !$('bzOyna').disabled && $('bzOyna').focus(), 50);
+  }
+
+harita(0);document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{$('previewFrame').style.width=b.dataset.w+'px';});</script></body></html>

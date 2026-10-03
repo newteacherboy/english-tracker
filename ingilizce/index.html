@@ -16793,7 +16793,8 @@ setInterval(async () => {
   }
   surukle($('ybOyun'), () => kartlarAc('oyun'));
   surukle($('ybArac'), () => kartlarAc('arac'));
-  surukle($('ybEnerji'), () => { $('ybPerde').dataset.tur = 'enerji'; enerjiKarti(false); $('ybPerde').classList.add('acik'); });
+  window.dijiEnerjiPaneliAc = () => { $('ybPerde').dataset.tur = 'enerji'; enerjiKarti(false); $('ybPerde').classList.add('acik'); };
+  surukle($('ybEnerji'), window.dijiEnerjiPaneliAc);
   function tumKonumlar() { ['ybOyun', 'ybEnerji', 'ybArac'].forEach(konumYukle); }
   addEventListener('resize', tumKonumlar);
 
@@ -28828,46 +28829,46 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       ${[[31, 70], [187, 70], [108, 44], [122, 44]].map(([x, y]) => `<rect x="${x}" y="${y}" width="8" height="12" rx="4" fill="#fde68a"/>`).join('')}
       <path d="M115 -8 L115 -20 L128 -15 L115 -11" fill="#f43f5e"/></svg>`;
   }
-  const ADIM = 66;
+  const ADIM = 96;
   function yerHesapla(n) { let H = 260 + n * ADIM; return { H, l: Array.from({ length: n }, (_, i) => [50 + Math.sin(i * 1.15) * 24, H - 62 - i * ADIM]) }; }
   function harita(b) {
     aktarGerekirse();
     let p = parkurAlani(), B = BOLUM[b], N = durakSayisi(b), sira = siradakiDurak(b), n = bolumTamam(b), hepsi = n === N;
     gorunum = { ad: 'harita', b };
-    let { H, l: YER } = yerHesapla(N), yol = YER.map(([x, y]) => `${x},${y}`).join(' '), [hx, hy] = YER[sira];
+    let { H, l: YER } = yerHesapla(N), yol = YER.map(([x, y], i) => i ? `C ${YER[i-1][0]} ${(YER[i-1][1]+y)/2} ${x} ${(YER[i-1][1]+y)/2} ${x} ${y}` : `M ${x} ${y}`).join(' '), [hx, hy] = YER[sira];
     let g = yoVar() && yo.gorev && yo.gorev.liste ? yo.gorev.liste : [];
     const GAD = { oyun3: '3 oyun oyna', oyun5: '5 oyun oyna', yildiz3: 'Bir oyunda ⭐⭐⭐', ders1: '1 konu bitir', dinleme: 'Kulak Dedektifi oyna', yazim: 'Yazım oyununda ⭐⭐', cumle: 'Cümle oyunu oyna', hiz: 'Hız Fırtınası ⭐⭐', zk: 'Zor kelime tekrarı' };
     const GHEDEF = { oyun3: 3, oyun5: 5 };
     let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b], yuzde = Math.round(n / N * 100), T = toplamDurak();
     let etiketler = DURAK[b].map((D, d) => (d === 0 || DURAK[b][d - 1].sinif !== D.sinif) ? `<span class="bz-sinif-etiket" style="top:${YER[d][1] + 30}px">🎓 ${D.sinif}. Sınıf</span>` : '').join('');
-    p.innerHTML = `<div class="bz-ic">${ust('<button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Kapılar</button>')}
-      <div class="bz-afis"><b>${B.ik} ${b + 1}. Kapı · ${B.ad}</b><small>${B.alt} · ${n}/${N} durak</small></div>
-      <div style="display:flex;gap:8px;justify-content:center;margin:-6px 0 12px;flex-wrap:wrap"><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
+    p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy: window.genelEnerjiKalan ?? '–', max: window.genelEnerjiMax || 30, gold: yoVar() ? yo.altin || 0 : 0})}
+      <div class="dm-parkur-scroll" id="dmParkurScroll"><div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
       <div class="bz-harita" id="bzHarita" style="height:${H}px">
         <span class="bulut" style="left:6%;top:140px" aria-hidden="true">☁️</span><span class="bulut" style="right:8%;top:230px;animation-delay:1.5s" aria-hidden="true">☁️</span>
         ${kaleSVG(b)}
-        <svg class="bz-yol" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${yol}" fill="none" stroke="#fef3c7" stroke-width="16" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/><polyline points="${yol}" fill="none" stroke="#d6a26b" stroke-width="6" vector-effect="non-scaling-stroke" stroke-dasharray="2 10" stroke-linecap="round"/></svg>
+        <svg class="bz-yol" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${yol}" fill="none" stroke="#d7f2f1" stroke-width="18" vector-effect="non-scaling-stroke" stroke-linecap="round"/><path d="${yol}" fill="none" stroke="#88d5d7" stroke-width="5" vector-effect="non-scaling-stroke" stroke-dasharray="1 12" stroke-linecap="round"/></svg>
         ${etiketler}
         ${YER.map(([x, y], d) => { let D = DURAK[b][d], bitti = tamam.has(D.no), y2 = yildiz(D.no), son = d === sira && !hepsi;
-          return `<button class="bz-tas${son ? ' sonraki' : ''}" data-d="${d}" style="left:${x}%;top:${y}px;background:${bitti ? 'linear-gradient(180deg,#fef3c7,#fbbf24)' : son ? '#fff' : '#cbd5e1'}" aria-label="${D.sinif}. sınıf ${D.unite}. ünite${bitti ? ', ' + y2 + ' yıldız' : son ? ', sıradaki' : ''}">${D.unite}${bitti ? `<span class="y">${'⭐'.repeat(y2)}</span>` : ''}</button>`; }).join('')}
-        <span class="bz-kahraman" style="left:${hx > 50 ? hx - 14 : hx + 14}%;top:${hy + 20}px" aria-hidden="true">${avatar(62)}</span>
+          return `<button class="bz-tas${son ? ' sonraki' : bitti ? ' bitti' : ' kilit'}" data-d="${d}" style="left:${x}%;top:${y}px;background:${bitti ? 'linear-gradient(180deg,#fef3c7,#fbbf24)' : son ? '#fff' : '#cbd5e1'}" aria-label="${D.sinif}. sınıf ${D.unite}. ünite${bitti ? ', ' + y2 + ' yıldız' : son ? ', sıradaki' : ''}"><span class="dm-step-number">${D.unite}</span>${!bitti && !son ? '<span class="dm-step-lock" aria-hidden="true">🔒</span>' : ''}${bitti ? `<span class="y">${'⭐'.repeat(y2)}</span>` : ''}</button>`; }).join('')}
+        <span class="bz-kahraman" style="left:${hx > 50 ? hx - 14 : hx + 14}%;top:${hy - 25}px" aria-hidden="true">${avatar(46)}</span>
+        ${!hepsi ? `<button type="button" class="dm-start-card" data-d="${sira}" style="${hx > 50 ? `left:calc(${hx}% - 178px)` : `left:calc(${hx}% + 50px)`};top:${hy}px" aria-label="${DURAK[b][sira].sinif}. sınıf ${DURAK[b][sira].unite}. üniteyi başlat"><small>Sıradaki ders</small><strong>${DURAK[b][sira].unite}. adım</strong><span class="dm-start-cta">Başla ›</span></button>` : ''}
         <span class="bz-tabela">${hepsi ? '🏆 Kapı fethedildi!' : `🎯 Sıradaki: ${DURAK[b][sira].sinif}. sınıf ${DURAK[b][sira].unite}. ünite`}</span>
       </div>
-      <div class="bz-yan">
+      <details class="dm-map-detail"><summary>${B.ad} · ${n}/${N} durak · İlerleme ve ödüller</summary><div class="bz-yan">
         <div class="bz-kutu"><h4>🧙 Profil</h4><div style="font-weight:900;font-size:14px">${rutbe()}</div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd">Toplam ${tamam.size}/${T} durak</div><div class="bz-cubuk"><i style="width:${Math.round(tamam.size / T * 100)}%"></i></div></div>
         <div class="bz-kutu"><h4>📋 Günlük görev</h4>${g.length ? g.map(x => { let h = GHEDEF[x.id] || 1, ok = x.ilerleme >= h; return `<div class="gorev">${ok ? '✅' : '⬜'} ${kac(GAD[x.id] || x.id)}</div>`; }).join('') : '<div class="gorev">Sana Özel\'de görevlerin seni bekliyor</div>'}</div>
         <div class="bz-kutu"><h4>🎁 Kapı ödülü</h4><div class="bz-sandik"><span aria-hidden="true">${sandikAlindi ? '📭' : '🧰'}</span><div style="font-size:11.5px;font-weight:800">${sandikAlindi ? 'Bu kapının sandığını açtın' : hepsi ? 'Sandığın hazır!' : `${N} durağın hepsini bitir: ${b < 2 ? 'Gümüş' : 'Altın'} Sandık`}</div></div>
           ${hepsi && !sandikAlindi ? '<button class="bz-btn" id="bzSandik" style="margin-top:8px;padding:9px;font-size:13px">🎁 Aç</button>' : ''}</div>
         <div class="bz-kutu"><h4>📈 Kapı ilerlemesi</h4><div style="font-weight:900;font-size:22px">%${yuzde}</div><div class="bz-cubuk"><i style="width:${yuzde}%"></i></div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd;margin-top:6px">⭐ ${bolumYildiz(b)}/${N * 3} yıldız</div></div>
-      </div></div>`;
+      </div></details></div></div>`;
     $('bzGeri').onclick = koridor;
     $('bzAkis').onclick = () => { if (typeof meduAkisAc === 'function') { try { maSekme = 'akis'; } catch (e) {} meduAkisAc(); } };
     if ($('bzOnceki')) $('bzOnceki').onclick = () => harita(b - 1);
     if ($('bzSonraki')) $('bzSonraki').onclick = () => harita(b + 1);
-    p.querySelectorAll('.bz-tas').forEach(t => t.onclick = () => durakKarti(b, +t.dataset.d));
+    p.querySelectorAll('.bz-tas,.dm-start-card').forEach(t => t.onclick = () => durakKarti(b, +t.dataset.d));
     let sb = $('bzSandik'); if (sb) sb.onclick = () => { yo.baSandik = yo.baSandik || {}; yo.baSandik[b] = 1; if (typeof yoKaydet === 'function') yoKaydet(); if (typeof dolapSandikAc === 'function') dolapSandikAc(b < 2 ? 1 : 2, true); else { yoXpEkle(100, 100); toast('🎁 +100 🪙'); } harita(b); };
     /* sıradaki durak ekranın ortasında görünsün */
-    requestAnimationFrame(() => { let el = p.querySelector('.bz-tas.sonraki') || p.querySelector('.bz-tas'); if (el) { let hr = $('bzHarita').getBoundingClientRect(), pr = p.getBoundingClientRect(); p.scrollTop = Math.max(0, hr.top - pr.top + p.scrollTop + (parseFloat(el.style.top) || 0) - p.clientHeight / 2); } });
+    requestAnimationFrame(() => { let el = p.querySelector('.bz-tas.sonraki') || p.querySelector('.bz-tas'); if (el) { let sc = $('dmParkurScroll'), hr = $('bzHarita').getBoundingClientRect(), pr = sc.getBoundingClientRect(); sc.scrollTop = Math.max(0, hr.top - pr.top + sc.scrollTop + (parseFloat(el.style.top) || 0) - sc.clientHeight * .55); } });
   }
 
   /* ================= 3) DURAK KARTI ================= */
@@ -30825,5 +30826,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=5"></script>
+<link rel="stylesheet" href="parkur-theme.css?v=1">
+<script src="parkur-theme.js?v=1"></script>
 </body>      
         </html>
