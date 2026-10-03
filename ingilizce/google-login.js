@@ -13,7 +13,7 @@
   area.style.marginTop = '14px';
   const button = document.createElement('button');
   button.type = 'button';
-  button.textContent = 'Google ile devam et';
+  button.textContent = 'Google ile giriş';
   button.style.cssText = 'width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;color:#1f2937;font:700 14px inherit;cursor:pointer';
   const cancel = document.createElement('button');
   cancel.type = 'button';
@@ -83,7 +83,6 @@
     try {
       sessionStorage.setItem('diji_google_pending', '1');
       const callback = new URL(location.pathname, location.origin);
-      callback.searchParams.set('google_return', '1');
       const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google', options: { redirectTo: callback.href, queryParams: { prompt: 'select_account' } }
       });
@@ -128,7 +127,7 @@
   };
   (async function initialize() {
     const parameters = new URLSearchParams(location.search);
-    if (parameters.get('google_return') === '1') {
+    if (parameters.get('google_return') === '1' || sessionStorage.getItem('diji_google_pending') === '1') {
       // Let supabase-js parse the OAuth callback before removing URL parameters.
       await supabaseClient.auth.getSession();
       history.replaceState(null, '', location.pathname);
