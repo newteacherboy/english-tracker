@@ -13,8 +13,21 @@
   area.style.marginTop = '14px';
   const button = document.createElement('button');
   button.type = 'button';
-  button.textContent = 'Google ile giriş / kayıt';
-  button.style.cssText = 'width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;color:#1f2937;font:700 14px inherit;cursor:pointer';
+  button.className = 'dm-google-login';
+  button.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.24c1.9-1.75 2.98-4.33 2.98-7.36Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.41l-3.24-2.51c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.76-5.59-4.12H3.07v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.41 13.92A6 6 0 0 1 6.1 12c0-.67.11-1.31.31-1.92V7.49H3.07A10 10 0 0 0 2 12c0 1.61.39 3.14 1.07 4.51l3.34-2.59Z"/><path fill="#EA4335" d="M12 5.96c1.47 0 2.79.5 3.82 1.49l2.87-2.87A9.6 9.6 0 0 0 12 2a10 10 0 0 0-8.93 5.49l3.34 2.59C7.2 7.72 9.4 5.96 12 5.96Z"/></svg><span>Google ile giriş / kayıt</span>';
+  button.style.cssText = 'width:100%;min-height:52px;padding:14px 16px;border:2px solid #4285f4;border-radius:14px;background:#fff;color:#202124;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 4px 16px rgba(66,133,244,.25)';
+  const loginStyle = document.createElement('style');
+  loginStyle.textContent = `
+    #login-container .dm-google-login:hover { background:#f0f5ff!important; }
+    #login-container .dm-google-login:disabled { opacity:.65;cursor:wait; }
+    #login-container .dm-login-actions { display:flex;flex-direction:column;gap:10px;margin-top:12px; }
+    #login-container .dm-login-actions button { width:100%;min-height:46px;padding:12px 14px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer; }
+    #login-container .dm-register-action { background:#22d3ee!important;color:#083344!important;border:2px solid #67e8f9!important; }
+    #login-container .dm-forgot-action { background:rgba(255,255,255,.1)!important;color:#fff!important;border:2px solid #a5e5ef!important; }
+    #login-container .dm-login-actions button:hover { filter:brightness(1.08); }
+    #login-container .dm-login-actions button:focus-visible,#login-container .dm-google-login:focus-visible { outline:3px solid #fbbc05;outline-offset:3px; }
+  `;
+  document.head.append(loginStyle);
   const cancel = document.createElement('button');
   cancel.type = 'button';
   cancel.textContent = 'Vazgeç, mevcut girişe dön';
@@ -41,6 +54,28 @@
     <p id="googleYeniMesaj" role="status" style="font-size:12px"></p>`;
   area.append(button, create, registration, cancel);
   $('loginForm').after(area);
+  // Keep existing registration/password handlers and place their controls directly after Google.
+  const loginCard = $('login-container');
+  const registerLink = loginCard.querySelector('[onclick="kayitOlAc()"]');
+  const forgotLink = loginCard.querySelector('[onclick="sifremiUnuttumAc()"]');
+  if (registerLink && forgotLink) {
+    const oldActions = registerLink.parentElement;
+    const actions = document.createElement('div');
+    actions.className = 'dm-login-actions';
+    for (const [link, className] of [[registerLink, 'dm-register-action'], [forgotLink, 'dm-forgot-action']]) {
+      const action = document.createElement('button');
+      action.type = 'button';
+      action.className = className;
+      action.textContent = link.textContent;
+      action.onclick = () => link.click();
+      actions.append(action);
+    }
+    area.after(actions);
+    oldActions.hidden = true;
+    oldActions.style.display = 'none';
+  }
+  loginCard.querySelectorAll('a[href="hesap-sil.html"]').forEach(link => link.remove());
+
 
   function message(text) {
     $('mesaj').className = 'error';
