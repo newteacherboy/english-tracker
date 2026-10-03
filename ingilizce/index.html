@@ -16,7 +16,8 @@ const SUPABASE_ANON_KEY = "sb_publishable_K9h4CnyaL8xb8B98o8aaFw_s9cMikuF";
 
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_ANON_KEY
+  SUPABASE_ANON_KEY,
+  { auth: { storageKey: 'diji-ingilizce-google-auth' } }
 );
 </script>
           
@@ -13417,7 +13418,8 @@ function ozellikSecDoldur() {
         </style>
         <!-- ===================================================================
              ORTAK SONUÇ EKRANI + JOKER SİSTEMİ
-             Bu bloğun TAMAMINI dosyanın en sonundaki </body> etiketinin
+             Bu bloğun TAMAMINI dosyanın en sonundaki <script src="google-login.js?v=2"></script>
+</body> etiketinin
              hemen ÜSTÜNE yapıştır.
              =================================================================== -->
         <style>
