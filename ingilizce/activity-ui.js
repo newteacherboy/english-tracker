@@ -18,6 +18,7 @@
   fetching=true;try{const d=await m.api('aktifDurum',{isimler:names});if(owner!==who())return;skew=Date.parse(d.serverNow)-Date.now();for(const p of names)stamp.set(p,{online:false});for(const p of d.liste)stamp.set(p.ad,p);lastRefresh=Date.now();paint();}catch(e){}finally{fetching=false;}
  }
  function queue(){clearTimeout(scheduled);scheduled=setTimeout(()=>{attach();refresh();},200);}
+ attach();
  const profile=document.getElementById('tab-meduakis');if(profile)new MutationObserver(queue).observe(profile,{childList:true,subtree:true});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){lastRefresh=0;refresh(true);}});
  setInterval(()=>{if(currentAccount!==who()){currentAccount=who();stamp.clear();lastRefresh=0;}attach();refresh();},60000);setTimeout(()=>refresh(true),2000);
