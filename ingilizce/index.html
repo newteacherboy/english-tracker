@@ -5,7 +5,7 @@
                 <!-- ===================== GÜVENLİK + PERFORMANS (HEAD) — <head> etiketinin HEMEN ALTINA ===================== -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<script src="guest-platform.js?v=1"></script>
+<script src="guest-platform.js?v=2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -104,8 +104,8 @@ if(BAKIM_MODU){
         <meta property="og:description" content="Öğrenci gelişim raporları, seviyeye göre ders çalışma sistemi ve kelime yarışmaları.">
         <meta property="og:url" content="https://panel.ogretmencocuk.com/ingilizce/">
         <meta property="og:locale" content="tr_TR">
-            <link rel="icon" type="image/png" href="mascot-favicon-32.png?v=2">
-            <link rel="apple-touch-icon" sizes="180x180" href="mascot-icon-180.png?v=2">
+            <link rel="icon" type="image/png" href="papi-welcome-v2.png">
+            <link rel="apple-touch-icon" sizes="180x180" href="papi-welcome-v2.png">
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -944,7 +944,7 @@ if(BAKIM_MODU){
             <div class="pb-toast-overlay" id="pbToastOverlay">
                 <div class="pb-toast-card" id="pbToastCard">
                     <button class="pb-toast-close" onclick="pbToastKapat()">✕</button>
-                    <div class="dm-points-mascot"><img class="dm-reward-state" src="mascot-reward.webp" width="1145" height="1374" alt="Başarını kutlayan papağan"><img class="dm-help-state" src="mascot-help.webp" width="1145" height="1374" alt="Sana destek olan papağan"></div><span class="pb-toast-ok" id="pbToastOk">▲</span>
+                    <div class="dm-points-mascot"><img class="dm-reward-state" src="papi-reward-v2.png" width="1145" height="1374" alt="Başarını kutlayan papağan"><img class="dm-help-state" src="papi-help-v2.png" width="1145" height="1374" alt="Sana destek olan papağan"></div><span class="pb-toast-ok" id="pbToastOk">▲</span>
                     <div class="pb-toast-baslik" id="pbToastBaslik">Harika iş çıkardın!</div>
                     <div class="pb-toast-sebep" id="pbToastSebep">Sebep</div>
                     <div class="pb-toast-puan" id="pbToastPuan">+0.3 puan</div>
@@ -1438,7 +1438,7 @@ if(BAKIM_MODU){
             <!-- GİRİŞ EKRANI -->
                 <div class="login-card" id="login-container">
                         <div class="dm-logo-row">
-                            <div class="dm-logo-icon"><img src="mascot-welcome.webp" alt="Diji-Medu"></div>
+                            <div class="dm-logo-icon"><img src="papi-welcome-v2.png" alt="Diji-Medu"></div>
                     <div class="dm-logo-text">
                         <div class="dm-logo-word"><span class="dm-diji">Diji</span>-<span class="dm-medu">Medu</span></div>
                         <div class="dm-logo-tag">İngilizce Portalı</div>
@@ -2411,7 +2411,7 @@ if(BAKIM_MODU){
         
         <div id="dcHoverBalon" class="dc-hover-balon"></div>
         <div class="dc-toast" id="dcToast">
-            <span class="dc-toast-icon"><img src="mascot-help.webp" width="1145" height="1374" alt="" aria-hidden="true"></span>
+            <span class="dc-toast-icon"><img src="papi-help-v2.png" width="1145" height="1374" alt="" aria-hidden="true"></span>
             <span id="dcToastText">+0.2 puan kazandın!</span>
         </div>
         
@@ -2525,7 +2525,7 @@ if(BAKIM_MODU){
             <!-- ŞİFRE İŞLEM MODALI (Şifremi Unuttum / Şifre Değiştir ortak) -->
         <div class="rubric-modal" id="sifreIslemModal">
             <div class="rubric-content" style="max-width: 360px;">
-<div class="dm-auth-mascot"><img src="mascot-help.webp" width="1145" height="1374" alt="Şifre yardımında yanında olan Diji-Medu papağanı"></div>
+<div class="dm-auth-mascot"><img src="papi-help-v2.png" width="1145" height="1374" alt="Şifre yardımında yanında olan Diji-Medu papağanı"></div>
                 <button class="game-close-btn" onclick="sifreIslemKapat()">✕</button>
                 <h3 id="sifreIslemBaslik" style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">Şifremi unuttum</h3>
                 <p style="font-size:10.5px; color:#64748b; text-align:center; margin-bottom:14px;">Kimliğini doğrulamak için aşağıdaki bilgileri eksiksiz doldur.</p>
@@ -2560,7 +2560,7 @@ if(BAKIM_MODU){
             <!-- KAYIT OL MODALI -->
         <div class="rubric-modal" id="kayitOlModal">
             <div class="rubric-content" style="max-width: 380px;">
-<div class="dm-auth-mascot"><img src="mascot-welcome.webp" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div>
+<div class="dm-auth-mascot"><img src="papi-welcome-v2.png" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div>
                 <button class="game-close-btn" onclick="kayitOlKapat()">✕</button>
                 <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">Öğrenci kaydı</h3>
                 <p style="font-size:10.5px; color:#64748b; text-align:center; margin-bottom:14px;">Kayıt talebin öğretmenine iletilecek. Onaylandıktan sonra giriş yapabilirsin.</p>
@@ -2608,7 +2608,7 @@ if(BAKIM_MODU){
         
                                <label class="kayit-onay-kutu">
                     <input type="checkbox" id="kayitOlKvkkOnay">
-                    <span><a href="javascript:void(0)" onclick="gizlilikModaliniAc()">Gizlilik Politikası ve KVKK Aydınlatma Metni'ni</a> okudum ve bilgi edindim. Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum. Bu beyan genel açık rıza veya yurt dışı aktarım izni değildir.</span>
+                    <span><a href="javascript:void(0)" onclick="gizlilikModaliniAc()">Gizlilik Politikası ve KVKK Aydınlatma Metni'ni</a> okudum ve bilgi edindim. <a href='kullanim-kosullari.html' target='_blank' rel='noopener'>Kullanım koşullarını</a> kabul ediyorum. Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum. Bu beyan genel açık rıza veya yurt dışı aktarım izni değildir.</span>
                 </label>
         
                 <button class="btn-giris" id="kayitOlGonderBtn" onclick="kayitOlGonder()" style="background:#2563eb;">Ücretsiz Kayıt Ol</button>
@@ -2646,7 +2646,7 @@ if(BAKIM_MODU){
                 <div class="duy3-card">
                     <div class="duy3-glow" id="duyuruGlow"></div>
                     <button class="duy3-close" onclick="duyuruKapat()">✕</button>
-                    <div class="duy3-medal" id="duyuruMedal"><img src="mascot-welcome.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
+                    <div class="duy3-medal" id="duyuruMedal"><img src="papi-welcome-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
                     <span class="duy3-tag" id="duyuruTag">DUYURU</span>
                     <h3 class="duy3-title" id="duyuruBaslik">Başlık</h3>
                     <img id="duyuruGorsel" class="duy3-img" src="">
@@ -3474,7 +3474,7 @@ if(BAKIM_MODU){
           </div>
         </div>
         
-        <!-- KELİME BUL (WORDLE) -->
+        <!-- ŞİFRE KIRICI: Diji-Medu kelime tahmini -->
         <div class="game-modal-overlay" id="kelimebulOyunOverlay">
           <div class="game-modal-content" style="max-width:480px;">
             <button class="game-close-btn" onclick="kelimebulOyunKapat()">✕</button>
@@ -3833,7 +3833,7 @@ function raporlarimKapat() {
         function kelimeMuzikBaslat() {
             if (!kyMuzikAcik) return;
             if (!kyAudioElement) {
-                kyAudioElement = new Audio('https://panel.ogretmencocuk.com/ingilizce/muzik/1.mp3'); // Arka plan müzik akışı
+                kyAudioElement = new Audio('ozgun/tema-1.mp3'); // Arka plan müzik akışı
                 kyAudioElement.loop = true;
                 kyAudioElement.volume = 0.25;
             }
@@ -4154,7 +4154,7 @@ function raporlarimKapat() {
                     clearInterval(pomodoroInterval);
                     pomodoroCalisiyorMu = false;
         
-                    let ses = new Audio('muzik.mp3');
+                    let ses = new Audio('ozgun/tema-4.mp3');
                     ses.play().catch(() => {});
                     setTimeout(() => { ses.pause(); }, 2500);
         
@@ -5699,7 +5699,7 @@ mesajlar.forEach(m => {
                 function hafizaMuzikBaslat() {
                     if (!hafizaMuzikAcik) return;
                     if (!hafizaAudioElement) {
-                        hafizaAudioElement = new Audio('https://panel.ogretmencocuk.com/ingilizce/muzik/1.mp3');
+                        hafizaAudioElement = new Audio('ozgun/tema-1.mp3');
                         hafizaAudioElement.loop = true;
                         hafizaAudioElement.volume = 0.22;
                     }
@@ -5919,7 +5919,7 @@ mesajlar.forEach(m => {
                 function yagmurMuzikBaslat() {
                     if (!yagmurMuzikAcik) return;
                     if (!yagmurAudioElement) {
-                        yagmurAudioElement = new Audio('https://panel.ogretmencocuk.com/ingilizce/muzik/2.mp3');
+                        yagmurAudioElement = new Audio('ozgun/tema-2.mp3');
                         yagmurAudioElement.loop = true;
                         yagmurAudioElement.volume = 0.22;
                     }
@@ -6083,7 +6083,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 function asmacaMuzikBaslat() {
                     if (!asmacaMuzikAcik) return;
                     if (!asmacaAudioElement) {
-                        asmacaAudioElement = new Audio('https://panel.ogretmencocuk.com/ingilizce/muzik/3.mp3');
+                        asmacaAudioElement = new Audio('ozgun/tema-3.mp3');
                         asmacaAudioElement.loop = true;
                         asmacaAudioElement.volume = 0.22;
                     }
@@ -6234,7 +6234,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     oyunLiderlikGoster('asmacaLiderlikTumunuGetir', sinifStr, isim, 'asGecmisSkorlarListesi', 'Harf Avı', 'asmaca');
                 }
         
-                // ============ 4) KELİME BUL (5 CAN + SÜRE/YANLIŞ CEZALI - WORDLE) ============
+                // ============ 4) KELİME BUL (5 CAN + SÜRE/YANLIŞ CEZALI - KELİME TAHMİNİ) ============
                        let kelimebulAktifSinif = 1, kelimebulSecilenUniteler = [1];
                 let kelimebulKelimeler = [], kelimebulAktifIndex = 0, kelimebulHedef = "", kelimebulDenemeSayisi = 0, kelimebulPuan = 0, kelimebulSatirlarArr = [], kelimebulCan = 5, kelimebulKelimeBaslangicZamani = 0;
         
@@ -6244,7 +6244,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 function kelimebulMuzikBaslat() {
                     if (!kelimebulMuzikAcik) return;
                     if (!kelimebulAudioElement) {
-                        kelimebulAudioElement = new Audio('https://panel.ogretmencocuk.com/ingilizce/muzik/1.mp3');
+                        kelimebulAudioElement = new Audio('ozgun/tema-1.mp3');
                         kelimebulAudioElement.loop = true;
                         kelimebulAudioElement.volume = 0.22;
                     }
@@ -6407,7 +6407,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     toast.innerText = `🥇 Sınıfında ${sira}. sıraya girdin! +${bonus} bonus puan!`;
                     toast.className = 'dm-leader-bonus';
                     const mascot = document.createElement('img');
-                    mascot.src = 'mascot-reward.webp'; mascot.alt = 'Başarını kutlayan papağan';
+                    mascot.src = 'papi-reward-v2.png'; mascot.alt = 'Başarını kutlayan papağan';
                     mascot.width = 60; mascot.height = 72;
                     toast.prepend(mascot);
                     document.body.appendChild(toast);
@@ -6959,7 +6959,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 function dcToastGoster(msg) {
             document.getElementById('dcToastText').innerText = msg;
             const mascot = document.querySelector('#dcToast .dc-toast-icon img');
-            if (mascot) mascot.src = /kazand|harika|tamam|tebrik|✅|puan|bonus/i.test(msg) ? 'mascot-reward.webp' : 'mascot-help.webp';
+            if (mascot) mascot.src = /kazand|harika|tamam|tebrik|✅|puan|bonus/i.test(msg) ? 'papi-reward-v2.png' : 'papi-help-v2.png';
             let t = document.getElementById('dcToast');
             t.classList.add('show');
             clearTimeout(window._dcToastTimeout);
@@ -9896,7 +9896,7 @@ setTimeout(() => {
         function jeopardyMuzikBaslat() {
             if (!jpMuzikAcik) return;
             if (!jpAudioElement) {
-                jpAudioElement = new Audio('https://panel.ogretmencocuk.com/ingilizce/muzik/2.mp3');
+                jpAudioElement = new Audio('ozgun/tema-2.mp3');
                 jpAudioElement.loop = true;
                 jpAudioElement.volume = 0.25;
             }
@@ -10258,7 +10258,7 @@ setTimeout(() => {
         function boslukMuzikBaslat() {
             if (!boslukMuzikAcik) return;
             if (!boslukAudioElement) {
-                boslukAudioElement = new Audio('https://panel.ogretmencocuk.com/ingilizce/muzik/3.mp3');
+                boslukAudioElement = new Audio('ozgun/tema-3.mp3');
                 boslukAudioElement.loop = true;
                 boslukAudioElement.volume = 0.2;
             }
@@ -11683,7 +11683,7 @@ function ozellikSecDoldur() {
                     document.getElementById('duyuruBaslik').innerText = duyuru.baslik;
                     document.getElementById('duyuruMesaj').innerText = duyuru.mesaj;
                     document.getElementById('duyuruMedal').style.background = t.medal;
-                    document.getElementById('duyuruMedal').innerHTML = '<img src="mascot-welcome.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor">';
+                    document.getElementById('duyuruMedal').innerHTML = '<img src="papi-welcome-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor">';
                     document.getElementById('duyuruTag').style.background = t.tagBg;
                     document.getElementById('duyuruTag').style.border = '1px solid ' + t.tagBorder;
                     document.getElementById('duyuruTag').style.color = t.tagColor;
@@ -12001,7 +12001,7 @@ function ozellikSecDoldur() {
             wrap.innerHTML = `
                 <div class="gek-battery-row">
                     <div class="gek-battery"><div class="gek-fill"></div></div>
-                    <div class="gek-mascot"><img src="mascot-reward.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"></div>
+                    <div class="gek-mascot"><img src="papi-reward-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"></div>
                     <div class="gek-spark" style="top:10%; right:-6px; --sx:14px; --sy:-14px;">✨</div>
                     <div class="gek-spark" style="top:70%; right:-2px; --sx:10px; --sy:16px; animation-delay:.1s;">⭐</div>
                 </div>
@@ -12994,7 +12994,7 @@ function ozellikSecDoldur() {
             let wrap = document.getElementById('kpCardWrap');
             let el = document.createElement('div');
             el.className = 'kp-bonus-parrot';
-            el.innerHTML = '<img src="mascot-reward.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"><span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
+            el.innerHTML = '<img src="papi-reward-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"><span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
             wrap.appendChild(el);
             setTimeout(() => el.remove(), 1800);
         }
@@ -13434,6 +13434,9 @@ function ozellikSecDoldur() {
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=2"></script>
 <script src="onboarding-ui.js?v=1"></script>
+
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+
 </body> etiketinin
              hemen ÜSTÜNE yapıştır.
              =================================================================== -->
@@ -13985,6 +13988,9 @@ function ozellikSecDoldur() {
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=2"></script>
 <script src="onboarding-ui.js?v=1"></script>
+
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+
 </body> etiketinin hemen ÜSTÜNE yapıştır.
              Mevcut fonksiyonların hiçbirini değiştirmez; onları dışarıdan sarar.
              Bu bloğu silersen portal eski haline döner.
@@ -15264,6 +15270,9 @@ function sohbetMikDur() {
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=2"></script>
 <script src="onboarding-ui.js?v=1"></script>
+
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+
 </body>'nin hemen ÜSTÜNE yapıştır.
              Buradaki fonksiyonlar, sayfadaki aynı isimli eski fonksiyonların yerine geçer;
              eski kodu silmene gerek yok.
@@ -22047,6 +22056,9 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=2"></script>
 <script src="onboarding-ui.js?v=1"></script>
+
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+
 </body> etiketinin hemen üstüne, EN SONA ===================== -->
 <script>
 (function () {
@@ -22981,7 +22993,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     let p = document.createElement('div');
     p.className = 'od-perde kr-perde';
     p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Hoş geldin');
-    p.innerHTML = `<div class="kr-kart"><div class="dm-welcome-hero"><img src="mascot-welcome.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
+    p.innerHTML = `<div class="kr-kart"><div class="dm-welcome-hero"><img src="papi-welcome-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
       <div class="kr-ust"><div class="kr-av">${av}</div><div><h3>Hoş geldin, ${guvenliMetin(String(isim).split(' ')[0])}! 👋</h3><small>${seri() > 1 ? `🔥 ${seri()} günlük serin var!` : 'Bugün harika bir gün olacak!'}</small></div></div>
       <div class="kr-cipler">
         <div class="kr-cip" style="--g:.2s">⚡ ${window.genelEnerjiKalan ?? '–'}<small>Enerji</small></div>
@@ -23256,6 +23268,9 @@ font-size:40px;
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=2"></script>
 <script src="onboarding-ui.js?v=1"></script>
+
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+
 </body> etiketinin hemen ÜSTÜNE, en sona yapıştır.
      Medu Akış, Keşfet ve Lig'in öğrenci listesini sunucudan (sosyalOgrencilerGetir) alır.
      Eski sürüm, veritabanına anahtarsız doğrudan bağlanmaya çalışıyordu ve boş liste dönüyordu.
@@ -23472,6 +23487,9 @@ font-size:40px;
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=2"></script>
 <script src="onboarding-ui.js?v=1"></script>
+
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+
 </body> etiketinin hemen ÜSTÜNE yapıştır (uyum bloğunun altına da olur).
      Aktiviteler'e "Eşleştirme" kartını kendisi ekler; başka bir yere dokunmana gerek yok.
      ========================================================================= -->
@@ -23741,6 +23759,9 @@ async function esOyunuBitir() {
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=2"></script>
 <script src="onboarding-ui.js?v=1"></script>
+
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+
 </body> etiketinin hemen ÜSTÜNE yapıştır. Aktiviteler'e kartını kendisi ekler.
      Cümleler: önce Supabase "sentence_bank" (sınıf + ünite), eksik kalırsa Ders Çalış örnekleri.
      ======================================================================= -->
@@ -29337,7 +29358,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
      Siteyi telefon, tablet ve bilgisayarda "uygulama gibi" eklemeyi cihaza göre gösterir.
      "Uyguladım, oldu" → bir daha gösterilmez. ✕ ya da "Sonra" → 2. girişte bir kez daha gösterilir, sonra hiç.
      Uygulama olarak açıldıysa (zaten yüklü) hiç gösterilmez.
-     Gerekli dosyalar (index.html ile aynı klasöre): ingilizce-manifest.json, ingilizce-icon-192.png, ingilizce-icon-512.png, ingilizce-apple-touch-icon.png
+     Gerekli dosyalar (index.html ile aynı klasöre): ingilizce-manifest.json, papi-welcome-v2.png, papi-welcome-v2.png, papi-welcome-v2.png
      ================================================================================== -->
 <style>
 .kur-perde{position:fixed;inset:0;z-index:2147483000;background:linear-gradient(160deg,#4c1d95,#7c3aed 45%,#db2777);overflow-y:auto;font-family:Nunito,system-ui,sans-serif;color:#2d2350;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 16px);animation:kurGel .35s ease-out}
@@ -29404,7 +29425,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ---- Uygulama kimliği ve simgeler (sayfanın başına eklenir) ---- */
   function basaEkle(tag, attrs) { if (document.head.querySelector(`${tag}[${Object.keys(attrs)[0]}="${Object.values(attrs)[0]}"]`)) return; let e = document.createElement(tag); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); document.head.appendChild(e); }
   basaEkle('link', { rel: 'manifest', href: 'ingilizce-manifest.json?v=2' });
-  basaEkle('link', { rel: 'apple-touch-icon', href: 'ingilizce-apple-touch-icon.png' });
+  basaEkle('link', { rel: 'apple-touch-icon', href: 'papi-welcome-v2.png' });
   basaEkle('meta', { name: 'theme-color', content: '#7c3aed' });
   basaEkle('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
   basaEkle('meta', { name: 'mobile-web-app-capable', content: 'yes' });
@@ -29430,7 +29451,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const icerik = '<div class="kur-icerik"><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div>';
   const tel = (ust, alt, ek) => `<div class="kur-cihaz"><div class="kur-ekran">${ust ? `<div class="kur-cubuk ust">${ust}</div>` : ''}${icerik}${alt ? `<div class="kur-cubuk alt">${alt}</div>` : ''}${ek || ''}</div></div>`;
   const pc = (ust, ek) => `<div class="kur-cihaz pc"><div class="kur-ekran"><div class="kur-cubuk ust">${ust}</div>${icerik}${ek || ''}</div></div>`;
-  const anaEkran = (pcMi) => pcMi ? pc('<span>●●●</span><span class="adres"></span>', '<div class="kur-ana" style="grid-template-columns:repeat(5,1fr);inset:20px 8px 8px"><span></span><img src="ingilizce-icon-192.png" alt=""><span></span><span></span><span></span></div>') : `<div class="kur-cihaz"><div class="kur-ekran" style="background:linear-gradient(160deg,#c4b5fd,#f9a8d4)"><div class="kur-ana"><span></span><span></span><img src="ingilizce-icon-192.png" alt=""><span></span><span></span><span></span></div></div></div>`;
+  const anaEkran = (pcMi) => pcMi ? pc('<span>●●●</span><span class="adres"></span>', '<div class="kur-ana" style="grid-template-columns:repeat(5,1fr);inset:20px 8px 8px"><span></span><img src="papi-welcome-v2.png" alt=""><span></span><span></span><span></span></div>') : `<div class="kur-cihaz"><div class="kur-ekran" style="background:linear-gradient(160deg,#c4b5fd,#f9a8d4)"><div class="kur-ana"><span></span><span></span><img src="papi-welcome-v2.png" alt=""><span></span><span></span><span></span></div></div></div>`;
   const menu = (ogeler, stil) => `<div class="kur-menu" style="${stil}">${ogeler.map(([t, on]) => `<span class="${on ? 'on' : ''}">${t}</span>`).join('')}</div>`;
 
   /* ---- Rehberler ---- */
@@ -29493,7 +29514,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       : (c === 'ios' && cihaz === 'ios' && t === 'safari' && tarayici !== 'safari') ? `<div class="kur-uyari">💡 iPhone ve iPad'de en sorunsuz yöntem Safari'dir.</div>` : '';
     perde.innerHTML = `<div class="kur-kart">
       <button class="kur-x" id="kurX" aria-label="Kapat">✕</button>
-      <div class="kur-bas"><img src="ingilizce-icon-192.png" alt="Diji İngilizce simgesi" onerror="this.style.display='none'"><h2 id="kurBaslik">Diji İngilizce'yi uygulama gibi kullan!</h2><p>Ana ekranına ekle, tek dokunuşla tam ekran aç. İndirme yok, yer kaplamaz.</p></div>
+      <div class="kur-bas"><img src="papi-welcome-v2.png" alt="Diji İngilizce simgesi" onerror="this.style.display='none'"><h2 id="kurBaslik">Diji İngilizce'yi uygulama gibi kullan!</h2><p>Ana ekranına ekle, tek dokunuşla tam ekran aç. İndirme yok, yer kaplamaz.</p></div>
       <div class="kur-faydalar"><span>⚡ Tek dokunuşla açılır</span><span>📴 İnternetsiz de açılır</span><span>🖥️ Tam ekran</span></div>
       <div class="kur-sekmeler" role="tablist">${[['android', '🤖', 'Android'], ['ios', '🍎', 'iPhone · iPad'], ['pc', '💻', 'Bilgisayar']].map(([k, ik, ad]) => `<button class="kur-sekme" role="tab" data-c="${k}" aria-selected="${c === k}"><b>${ik}</b>${ad}${k === cihaz ? '<br><span class="kur-senin">senin cihazın</span>' : ''}</button>`).join('')}</div>
       <div class="kur-tarayici" aria-label="Tarayıcı">${VARSAYILAN[c].map(k => `<button data-t="${k}" aria-pressed="${k === t}">${REHBER[c][k].ad}${c === cihaz && k === tarayici ? ' ✓' : ''}</button>`).join('')}</div>
@@ -30394,7 +30415,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     return p;
   }
   window.kayitOlAc = function () {
-    let p = perde(`<div class="dm-auth-mascot"><img src="mascot-welcome.webp" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div><h3>Aramıza hoş geldin</h3><p class="alt">Portala kim olarak katılıyorsun?</p>
+    let p = perde(`<div class="dm-auth-mascot"><img src="papi-welcome-v2.png" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div><h3>Aramıza hoş geldin</h3><p class="alt">Portala kim olarak katılıyorsun?</p>
       <div class="cog-rol"><button type="button" data-r="ogr"><span class="ik">🎒</span><span><b>Öğrenciyim</b><small>Oyunlarla İngilizce öğren, herkesle yarış</small></span></button>
       <button type="button" data-r="ogrt"><span class="ik">👩‍🏫</span><span><b>Öğretmenim</b><small>Kendi öğrencilerini takip et, değerlendir, ödev ver</small></span></button></div>`);
     p.querySelector('[data-r="ogr"]').onclick = () => { p.remove(); kodAlaniEkle(); if (typeof orgKayitAc === 'function') orgKayitAc.apply(this, arguments); setTimeout(kodAlaniEkle, 100); };
@@ -30405,7 +30426,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   if (new URLSearchParams(location.search).get('kod')) setTimeout(() => { if (typeof girisli === 'function' ? !girisli() : !localStorage.getItem('ing_token')) { kodAlaniEkle(); if (typeof orgKayitAc === 'function') orgKayitAc(); } }, 1500);
 
   function ogretmenKayit() {
-    let p = perde(`<div class="dm-auth-mascot"><img src="mascot-welcome.webp" width="1145" height="1374" alt="Öğretmenleri karşılayan Diji-Medu papağanı"></div><h3>Öğretmen kaydı</h3><p class="alt">Hesabın hemen açılır ve sana özel bir öğretmen kodu verilir. Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır.</p>
+    let p = perde(`<div class="dm-auth-mascot"><img src="papi-welcome-v2.png" width="1145" height="1374" alt="Öğretmenleri karşılayan Diji-Medu papağanı"></div><h3>Öğretmen kaydı</h3><p class="alt">Hesabın hemen açılır ve sana özel bir öğretmen kodu verilir. Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır.</p>
       <div class="cog-alan"><label for="cogAd">Ad Soyad</label><input id="cogAd" autocomplete="name" placeholder="Örn: Ayşe Yılmaz"></div>
       <div class="cog-alan"><label for="cogKul">Kullanıcı adı (girişte kullanacaksın)</label><input id="cogKul" autocomplete="username" autocapitalize="off" placeholder="Örn: ayseogretmen"></div>
       <div class="cog-alan"><label for="cogEposta">E-posta (öğrenci bildirimleri buraya gelir)</label><input id="cogEposta" type="email" autocomplete="email" placeholder="ornek@okul.k12.tr"></div>
@@ -30851,7 +30872,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 })();
 </script>
                                 
-<script src="google-login.js?v=5"></script>
+<script src="google-login.js?v=rights-5"></script>
 <link rel="stylesheet" href="parkur-theme.css?v=3">
 <script src="parkur-theme.js?v=4"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
@@ -30872,6 +30893,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="game-experience.css?v=1">
 <script src="game-experience.js?v=1"></script>
 <script src="onboarding-ui.js?v=2"></script>
+<script src="rights-ui.js?v=1"></script>
+
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+
 </body>      
         </html>
 

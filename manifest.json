@@ -7,16 +7,10 @@
   "theme_color": "#1D9E75",
   "icons": [
     {
-      "src": "mascot-icon-192.png?v=2",
-      "sizes": "192x192",
+      "src": "ingilizce/papi-welcome-v2.png",
+      "sizes": "1254x1254",
       "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "mascot-icon-512.png?v=2",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

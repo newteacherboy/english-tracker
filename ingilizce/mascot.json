@@ -11,10 +11,10 @@
     "style": "yumuşak 3D illüstrasyon"
   },
   "states": {
-    "welcome": "mascot-welcome.webp",
-    "help": "mascot-help.webp",
-    "farewell": "farewell-parrot.webp",
-    "reward": "mascot-reward.webp"
+    "welcome": "papi-welcome-v2.png",
+    "help": "papi-help-v2.png",
+    "farewell": "papi-farewell-v2.png",
+    "reward": "papi-reward-v2.png"
   },
   "usage": {
     "registration": "welcome",

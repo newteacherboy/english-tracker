@@ -60,7 +60,7 @@
  }
  function upgradeCards(){
   const host=document.querySelector('#tab-aktiviteler .dc-focus-card')||document.getElementById('tab-aktiviteler');if(!host)return;
-  if(!host.querySelector('.dm-activity-hero')){const h=document.createElement('header');h.className='dm-activity-hero';h.innerHTML='<div><h1>Aktiviteler</h1><p>Bugün hangi oyunu oynayalım?</p></div><img src="mascot-welcome.webp" alt="Oynamaya hazır Diji-Medu papağanı" width="100" height="110">';host.prepend(h);}
+  if(!host.querySelector('.dm-activity-hero')){const h=document.createElement('header');h.className='dm-activity-hero';h.innerHTML='<div><h1>Aktiviteler</h1><p>Bugün hangi oyunu oynayalım?</p></div><img src="papi-welcome-v2.png" alt="Oynamaya hazır Diji-Medu papağanı" width="100" height="110">';host.prepend(h);}
   const grid=host.querySelector('.az-grid2x2');if(!grid)return;
   cards.forEach(([fn,idx,color,edge])=>{const b=grid.querySelector('[onclick*="'+fn+'"]')||document.getElementById(fn==='dikteAc'?'yoDikteKart':fn);if(!b||!grid.contains(b))return;
    if(fn==='kelimeYarismasiAc')b.querySelector('.az-gcard-title').textContent='Kelime Laboratu\u00advarı';b.classList.add('dm-toy-card');b.style.setProperty('--toy-bg',color);b.style.setProperty('--toy-edge',edge);
