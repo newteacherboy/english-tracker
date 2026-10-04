@@ -50,6 +50,13 @@
       "mode": "generate",
       "reference": null,
       "prompt": "Use case: stylized-concept. Asset type: original tall portrait decorative learning landscape for Diji-Medu app's progress map. A soft mint and turquoise fantasy countryside, distant pale blue mountains and sparse wispy clouds, a few rounded soft green hills, a winding pale turquoise stream, a small uniquely designed mint-roof learning cottage and a tiny bridge in the lower quarter. Calm abundant very pale mint open sky in the upper two-thirds so the app's own progress nodes remain readable. Polished soft dimensional painted miniature world, subtle light, warm approachable atmosphere. Portrait composition, all scenery inside frame, no UI, no buttons, no dotted routes, no letters or numbers, no logos, no recognizable buildings, no copied franchise scenery, no watermark. Opaque pale mint background. Independent new illustration without reference images."
+    },
+    {
+      "file": "ingilizce/papi-growth.webp",
+      "mode": "generate",
+      "reference": null,
+      "prompt": "Approved Diji-Medu Papi growth sheet: same turquoise and yellow parrot identity in four stages, baby in an egg, reading learner, young explorer with a gold star, mature crowned master with open wings. Transparent background. Orange beak and feet, brown eyes, purple wing tips. Original character illustration for the 40-level learning journey.",
+      "processing": "Approved generated PNG encoded as WebP quality 85; no artwork changes."
     }
   ]
 }

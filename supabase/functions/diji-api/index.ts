@@ -1,4 +1,5 @@
 import './score-rules.js';
+import { progressionAPI } from './progression-api.ts';
 import { onboardingAPI } from './onboarding-api.ts';
 // =====================================================================
 // DİJİ-MEDU API — Supabase Edge Function (YAMALI SÜRÜM v3)
@@ -18,6 +19,7 @@ const secretKeys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
 const adminKey = secretKeys.default;
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, adminKey);
 const release = releaseAPI(supabase,json);
+const progression = progressionAPI(supabase,json);
 
 const OGRENCI_OTURUM_GUN = 30;
 const OGRETMEN_OTURUM_SAAT = 8;           // [YAMA 1] öğretmen oturumu 30 gün değil 8 saat
@@ -1084,6 +1086,8 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
+  const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
+  const progressionResult=await progression.handle(op,body,q,a);if(progressionResult)return progressionResult;
   const releaseResult=await release.handle(op,body,q,a);if(releaseResult)return releaseResult;
   const releaseDeny=await release.guard(op,body,q,a);if(releaseDeny)return releaseDeny;
   /* [v4.0] Bu istekte öğrenci aramaları öğretmenin kapsamıyla sınırlı (yönetici herkesi görür) */
@@ -1808,7 +1812,7 @@ async function handle(req: Request) {
         fark = Math.min(fark, max - s.energy);
         if (fark <= 0) return json({ ok: false, status: "error", mesaj: "Enerjin zaten dolu!", enerjiKalan: s.energy, enerjiMax: max, ...dolumBilgi(s) });
       } else if (sebep === "ders") {
-        fark = Math.max(0, Math.min(fark, 6, 30 - topla("ders"))); tavan = max + 10;
+        return json({ok:false,mesaj:"Ders enerjisi başarılı ilk test kaydında verilir."},403);
       } else if (sebep === "hediye") {
         fark = Math.max(0, Math.min(fark, 5, 15 - topla("hediye"))); tavan = max + 10;
       } else {
@@ -1817,6 +1821,7 @@ async function handle(req: Request) {
     }
     if (hb) fark = -3;
     if (fark < -25) fark = -25;
+    if(fark<0 && Number(s.energy)<Math.abs(fark))return json({ok:false,mesaj:"Bu işlem için yeterli enerji yok.",enerjiKalan:s.energy,enerjiMax:max},409);
     const once = s.energy;
     const next = fark >= 0 ? Math.max(once, Math.min(tavan, once + fark)) : Math.max(0, once + fark);
     const patch: any = { energy: next, updated_at: new Date().toISOString() };
@@ -1909,21 +1914,11 @@ async function handle(req: Request) {
       .eq("class_no", kayit.class_no).eq("unit_no", kayit.unit_no).eq("level_no", kayit.level_no).limit(1);
     await supabase.from("level_completions").upsert(kayit, { onConflict: "student_id,mode,class_no,unit_no,level_no" });
     let eklenen = 0, enerjiKalan: number | undefined, enerjiMax: number | undefined;
-    if (!(vardi && vardi.length) && a.role === "student") {
-      let st = await enerjiYenile(s);
-      const max = Number(st.energy_max || ENERJI_TAVAN);
-      const { data: bugun } = await supabase.from("energy_transactions").select("change_amount").eq("student_id", s.id).eq("reason", "parkur").gte("created_at", bugunBasi());
-      const verilen = (bugun || []).reduce((t: number, x: any) => t + Number(x.change_amount || 0), 0);
-      const hak = Math.max(0, Math.min(6, 36 - verilen));
-      const once = Number(st.energy || 0), sonra = Math.min(max + 10, once + hak);
-      eklenen = sonra - once;
-      if (eklenen > 0) {
-        await supabase.from("students").update({ energy: sonra, updated_at: new Date().toISOString() }).eq("id", s.id);
-        await supabase.from("energy_transactions").insert({ student_id: s.id, change_amount: eklenen, balance_after: sonra, reason: "parkur" });
-      }
-      enerjiKalan = sonra; enerjiMax = max;
+    let stageReward:any={gold:0};
+    if (!(vardi && vardi.length) && a.role==='student' && kayit.mode==='buyu') {
+      const reward=await supabase.rpc('dm_progress_award_stop',{actor:s.id,stop:kayit.level_no});if(reward.error)throw reward.error;stageReward=reward.data;
     }
-    return json({ status: "success", ilkKez: !(vardi && vardi.length), eklenenEnerji: eklenen, enerjiKalan, enerjiMax });
+    return json({ status: "success", ilkKez: !(vardi && vardi.length), eklenenEnerji: eklenen, enerjiKalan, enerjiMax, ...stageReward });
   }
   if (op === "ilerlemeOzet") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
@@ -1948,8 +1943,9 @@ async function handle(req: Request) {
   if (op === "dersTestSonucKaydet") {
     const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
-    await supabase.from("lesson_progress").insert({ student_id: s.id, level: body.seviye, category: body.kategori, topic_name: body.konuAdi, test_success: !!body.basariliMi });
-    return json({ status: "success" });
+    const ins=await supabase.from("lesson_progress").insert({ student_id: s.id, level: body.seviye, category: body.kategori, topic_name: body.konuAdi, test_success: !!body.basariliMi });if(ins.error)throw ins.error;
+    let reward:any={};if(body.basariliMi&&a.role==='student'){const r=await supabase.rpc('dm_progress_lesson_energy',{actor:s.id,cefr:String(body.seviye),category_name:String(body.kategori),topic:String(body.konuAdi)});if(r.error)throw r.error;reward=r.data;}
+    return json({status:'success',...reward});
   }
 
   // ============================================================ EK VERİ (oyun ilerlemesi)

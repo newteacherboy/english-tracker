@@ -5,10 +5,10 @@
  const day=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
  function member(){if(window.dmGuestMode)return '';if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi||!visible(document.getElementById('panel-alani')))return '';if(typeof yo==='undefined'||!yo)return '';return String(aktifOgrenciAdi).trim().toLocaleLowerCase('tr');}
  function save(){try{localStorage.setItem(key,JSON.stringify(record));}catch{}}
- function blocked(){return document.hidden||[...document.querySelectorAll('.game-modal-overlay,.yo-modal.acik,.duy3-overlay,.kr-perde,#oturumYuklemeOverlay,#sifreIslemModal,#dmAccountSettings,#dmNudge,#genelSonucOverlay,#bzAlan,#baOyunEkrani,#kpKelimeOyunEkrani,#seviyeDisLinkOverlay,.kart-oyun-overlay,#kmPanel .km-sec')].some(visible);}
+ function blocked(){return document.hidden||[...document.querySelectorAll('.game-modal-overlay,.yo-modal.acik,.duy3-overlay,.kr-perde,#oturumYuklemeOverlay,#sifreIslemModal,#dmAccountSettings,#dmNudge,#dmLevelUp,#genelSonucOverlay,#bzAlan,#baOyunEkrani,#kpKelimeOyunEkrani,#seviyeDisLinkOverlay,.kart-oyun-overlay,#kmPanel .km-sec')].some(visible);}
  async function show(kind){
   busy=true;window.soPanelCiz?.()?.catch?.(()=>{});busy=false;
-  if(!member()||blocked()||open)return;
+  if(!member()||blocked()||open||window.dmProgression&&!window.dmProgression.allowed(kind==='daily'?'gunluk_gorev':'haftalik_hedef'))return;
   const source=document.querySelector('#soPanel [data-dm-goals="'+kind+'"]');if(!source)return;
   const prior=document.activeElement,p=document.createElement('div');p.id='dmGoalAnnouncement';p.className='dm-goal-announcement';p.dataset.kind=kind;
   p.innerHTML='<section class="dm-goal-card" role="dialog" aria-modal="true" aria-labelledby="dmGoalTitle"><button class="dm-goal-close" aria-label="Duyuruyu kapat">×</button><header><img src="papi-welcome-v2.png" alt="Papi"><div><small>PAPİ’DEN SANA</small><h2 id="dmGoalTitle"></h2></div></header><p class="dm-goal-intro"></p><div class="dm-goal-content"></div><button class="dm-goal-continue">Tamam, hazırım!</button></section>';
@@ -23,7 +23,9 @@
   const name=member();if(!name){if(open)open.querySelector('.dm-goal-close').click();actor='';return;}
   const nextKey='dm_goal_announcements_v1:'+encodeURIComponent(name)+':'+day();
   if(actor!==name||key!==nextKey){if(open)open.querySelector('.dm-goal-close').click();actor=name;key=nextKey;try{record=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch{record={};}due=Math.max(Date.now()+DELAY,Number(record.nextAt)||0);}
-  if(open||busy||Date.now()<due||record.weekly||blocked())return;
-  show(record.daily?'weekly':'daily').catch(()=>{busy=false;due=Date.now()+2000;});
+  const eligible=kind=>!window.dmProgression||window.dmProgression.allowed(kind==='daily'?'gunluk_gorev':'haftalik_hedef');
+  const kind=!record.daily&&eligible('daily')?'daily':!record.weekly&&eligible('weekly')?'weekly':null;
+  if(open||busy||Date.now()<due||!kind||blocked())return;
+  show(kind).catch(()=>{busy=false;due=Date.now()+2000;});
  },500);
 })();
