@@ -1,0 +1,53 @@
+name: Diji-Medu Android bundle
+on:
+  push:
+    branches: [main, 'codex/diji-harf-bahcesi-play']
+    paths: ['android/**', '.github/workflows/android-build.yml']
+  workflow_dispatch:
+    inputs:
+      signed_release:
+        description: 'Create signed release (requires signing secrets)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Install Android 16 SDK
+        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - name: Build and lint unsigned bundle and debug APK
+        if: ${{ inputs.signed_release != true }}
+        working-directory: android
+        run: gradle --no-daemon :app:lint :app:assembleDebug :app:bundleRelease
+      - name: Build signed release
+        if: ${{ inputs.signed_release == true }}
+        working-directory: android
+        env:
+          DIJI_KEYSTORE_BASE64: ${{ secrets.DIJI_KEYSTORE_BASE64 }}
+          DIJI_KEYSTORE_PASSWORD: ${{ secrets.DIJI_KEYSTORE_PASSWORD }}
+          DIJI_KEY_ALIAS: ${{ secrets.DIJI_KEY_ALIAS }}
+          DIJI_KEY_PASSWORD: ${{ secrets.DIJI_KEY_PASSWORD }}
+          DIJI_KEYSTORE_PATH: ${{ runner.temp }}/diji-upload.jks
+        run: |
+          test -n "$DIJI_KEYSTORE_BASE64"
+          printf '%s' "$DIJI_KEYSTORE_BASE64" | base64 --decode > "$DIJI_KEYSTORE_PATH"
+          gradle --no-daemon :app:requireReleaseSigning :app:lint :app:bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: diji-android-${{ inputs.signed_release == true && 'signed' || 'unsigned-review' }}
+          path: |
+            android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/reports/lint-results-*.html
+          if-no-files-found: error

@@ -1,0 +1,37 @@
+plugins { id 'com.android.application' }
+def signingReady = ['DIJI_KEYSTORE_PATH','DIJI_KEYSTORE_PASSWORD','DIJI_KEY_ALIAS','DIJI_KEY_PASSWORD'].every { System.getenv(it) }
+android {
+    namespace 'com.ogretmencocuk.dijimedu'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.ogretmencocuk.dijimedu'
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+    signingConfigs {
+        if (signingReady) {
+            release {
+                storeFile file(System.getenv('DIJI_KEYSTORE_PATH'))
+                storePassword System.getenv('DIJI_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('DIJI_KEY_ALIAS')
+                keyPassword System.getenv('DIJI_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (signingReady) signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+dependencies { implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4' }
+tasks.register('requireReleaseSigning') {
+    doLast { if (!signingReady) throw new GradleException('Release signing requires all four DIJI_KEY* environment variables. Never upload an unsigned AAB to Play Console.') }
+}
