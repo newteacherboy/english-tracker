@@ -27128,7 +27128,9 @@ if (
        HTML
        ========================================================= */
 
-    kok.innerHTML = `
+    let daily = document.getElementById('dmDailyTasks');
+    if (!daily) { daily = document.createElement('section'); daily.id='dmDailyTasks'; daily.hidden=true; document.body.append(daily); }
+    daily.innerHTML = `
 
       <div class="so-kart">
 
@@ -27144,6 +27146,8 @@ if (
       </div>
 
 
+`;
+    kok.innerHTML = `
       <div class="so-iki">
 
 
@@ -30888,6 +30892,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=1"></script>
+<link rel="stylesheet" href="daily-goals.css?v=1"><script src="daily-goals.js?v=1"></script>
 </body>      
         </html>
 

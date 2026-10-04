@@ -1,0 +1,16 @@
+#dmDailyTasks[hidden]{display:none!important}
+#dmDailyTasks{margin:12px 0 20px;font-family:Nunito,system-ui,sans-serif;color:#24545c}
+#dmDailyTasks .so-kart{display:block!important;width:100%;box-sizing:border-box;cursor:default;background:#effaf5;border:2px solid #c1e3d1;border-radius:20px;padding:16px}
+#dmDailyTasks h3{display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;color:#24545c!important;font-size:17px;gap:8px}
+#dmDailyTasks h3 small{flex:none;border-radius:12px;padding:5px 8px;background:#d2eee0;font-size:12px}
+#dmDailyTasks .so-gorev{display:flex;align-items:center;gap:10px;margin:10px 0;padding:12px 10px;background:#fff;border:1px solid #d7e9e0;border-radius:14px}
+#dmDailyTasks .so-gorev .i{font-size:22px;flex:none}
+#dmDailyTasks .so-gorev .m{flex:1;min-width:0}
+#dmDailyTasks .so-gorev b{display:block;font-size:13px;line-height:1.4;color:#24545c}
+#dmDailyTasks .so-gorev .s{font-size:12px;font-weight:900;flex:none}
+#dmDailyTasks .so-cubuk{height:7px;background:#e3f0e9;border-radius:9px;margin-top:7px;overflow:hidden}
+#dmDailyTasks .so-cubuk i{display:block;height:100%;background:#3caa89;border-radius:9px}
+#dmDailyTasks .bitti{border-color:#65bfa2;background:#f5fff9}
+#dmDailyTasks .so-btn{display:block;width:100%;padding:12px;border:2px solid #d6b85f;border-radius:14px;background:#ffedb3;color:#624619;font:900 13px Nunito,system-ui;line-height:1.5;cursor:pointer}
+#dmDailyTasks .so-btn:disabled{background:#edf1ed;color:#627569;border-color:#d8e1d9;cursor:default}
+#dmDailyTasks .so-btn:focus-visible{outline:3px solid #078c96;outline-offset:3px}
