@@ -6,7 +6,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v22';
+const SURUM = 'diji-v23';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 
@@ -21,7 +21,7 @@ self.addEventListener('fetch', e => {
   if (r.method !== 'GET') return;
   const url = new URL(r.url);
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
-  if (/\/(hesap-sil|gizlilik)\.html$/.test(url.pathname)) return;              /* Hukuki/silme sayfaları ana sayfanın çevrimdışı kopyasını değiştirmesin */
+  if (/\/(hesap-sil|gizlilik|telif|lisanslar|kullanim-kosullari|kelime-atolyesi)\.html$/.test(url.pathname)) return;              /* Hukuki/silme sayfaları ana sayfanın çevrimdışı kopyasını değiştirmesin */
 
   if (/\/(misafir|hesap-dogrula)\.html$/.test(url.pathname)) return; /* Deneme ve doğrulama ana sayfa önbelleğini değiştirmesin. */
 

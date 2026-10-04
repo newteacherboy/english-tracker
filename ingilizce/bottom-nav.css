@@ -26,7 +26,7 @@
 }
 #bottomNavMobile .dm-nav-art {
  display:block; width:100%; height:100%;
- background-image:url('bottom-nav-icons.webp?v=1');
+ background-image:url('bottom-nav-icons-v2.png');
  background-size:300% 300%; background-repeat:no-repeat;
  filter:drop-shadow(0 2px 2px #32646718);
 }
@@ -61,3 +61,5 @@
 /* Keep fixed-page content reachable above the dock and iOS home indicator. */
 .dc-fullscreen-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
 body.kk-acik .seviye-harita-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
+
+#bottomNavMobile [data-ekran=tab-profil] .dm-nav-art{background-image:url('papi-welcome-v2.png');background-size:contain;background-position:center!important}

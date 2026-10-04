@@ -1,0 +1,17 @@
+/* Diji-Medu: original practice and transparent outbound links. */
+(function(){'use strict';
+ const sameHost=u=>u.origin===location.origin, safeURL=s=>{try{const u=new URL(s,location.href);return ['http:','https:'].includes(u.protocol)?u:null;}catch(e){return null;}};
+ function outbound(url,type){const u=safeURL(url);if(!u)return;const prefix=type==='cards'?'seviyeDisLink':'disLink';const loading=document.getElementById(prefix+'YukleniyorAlani'),warning=document.getElementById(prefix+'EngelliUyari'),frame=document.getElementById(prefix+'Iframe');
+  if(frame)frame.src='about:blank';if(loading)loading.style.display='none';if(!warning)return;warning.style.display='flex';warning.replaceChildren();const h=document.createElement('h3');h.textContent='Dış eğitim kaynağı';const text=document.createElement('p');text.textContent=u.hostname+' ayrı bir hizmettir. Açarsan bu sitenin kullanım ve gizlilik koşulları geçerli olur. Bu içerik Diji-Medu tarafından hazırlanmış değildir.';text.style.cssText='max-width:450px;line-height:1.6;color:#dce8ec';const link=document.createElement('a');link.textContent='Kaynağın kendi sitesini aç ↗';link.href=u.href;link.target='_blank';link.rel='noopener noreferrer';link.style.cssText='padding:14px 20px;background:#e3f3eb;color:#234e45;border-radius:15px;text-decoration:none;font-weight:800';warning.append(h,text,link);
+ }
+ const oldCards=window.seviyeDisLinkIframeYukle;
+ if(typeof oldCards==='function')window.seviyeDisLinkIframeYukle=function(url){const u=safeURL(url);if(!u)return;
+  if(/(^|\.)vocablitz\.com$/i.test(u.hostname)){
+   const q=new URLSearchParams({sinif:String(seviyeDisLinkAktifSinif),unite:String(seviyeDisLinkAktifUnite),seviye:String(seviyeDisLinkAktifSeviye)});const native='kelime-atolyesi.html?'+q;const frame=document.getElementById('seviyeDisLinkIframe');frame.style.cssText+=';box-sizing:border-box;padding-top:64px;background:#effaf5';const link=document.getElementById('seviyeDisLinkYeniSekmeBtn');if(link){link.removeAttribute('href');link.style.display='none';}const title=document.getElementById('seviyeDisLinkBaslikAlani');if(title)title.textContent='Diji-Medu · Kelime Atölyesi';seviyeDisLinkAktifUrl=native;return oldCards.call(this,native);
+  }
+  if(sameHost(u))return oldCards.call(this,u.href);outbound(u.href,'cards');
+ };
+ const oldExternal=window.disLinkIframeYukle;if(typeof oldExternal==='function')window.disLinkIframeYukle=function(url){const u=safeURL(url);if(!u)return;if(sameHost(u))return oldExternal.call(this,u.href);outbound(u.href,'activity');};
+ const links=()=>{for(const host of [document.getElementById('login-container'),document.getElementById('tab-profil'),document.getElementById('ogretmenMenuModal')]){if(!host||host.querySelector('.dm-legal-links'))continue;const nav=document.createElement('nav');nav.className='dm-legal-links';nav.setAttribute('aria-label','Kullanım ve haklar');nav.style.cssText='display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:14px 0;font-size:11px;line-height:1.6';for(const [file,title] of [['kullanim-kosullari.html','Kullanım koşulları'],['telif.html','Telif ve bildirim'],['lisanslar.html','Lisanslar']]){const a=document.createElement('a');a.href=file;a.target='_blank';a.rel='noopener';a.textContent=title;a.style.color='#356a72';nav.append(a);}host.append(nav);}};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',links);else links();
+})();

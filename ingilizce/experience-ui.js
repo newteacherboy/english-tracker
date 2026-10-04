@@ -38,7 +38,7 @@
  /* The existing island buttons keep their original click handlers and data. */
  function study(){
   const map=$('maHarita');if(map){
-   if(!map.querySelector('.dm-study-hero')){const h=document.createElement('header');h.className='dm-study-hero';h.innerHTML='<div><h2>Ders Çalış</h2><p>Her küçük adım,<br>yeni bir keşif.</p></div><img src="mascot-welcome.webp" alt="Öğrenme arkadaşın Papi"><span class="dm-study-mode">Öğrenme Haritası</span>';map.prepend(h);const old=map.querySelector('.ma-tabela');if(old)old.hidden=true;}
+   if(!map.querySelector('.dm-study-hero')){const h=document.createElement('header');h.className='dm-study-hero';h.innerHTML='<div><h2>Ders Çalış</h2><p>Her küçük adım,<br>yeni bir keşif.</p></div><img src="papi-welcome-v2.png" alt="Öğrenme arkadaşın Papi"><span class="dm-study-mode">Öğrenme Haritası</span>';map.prepend(h);const old=map.querySelector('.ma-tabela');if(old)old.hidden=true;}
    map.querySelectorAll('.ma-ada').forEach((b,i)=>{if(b.querySelector('.dm-island-art'))return;const art=document.createElement('span');art.className='dm-island-art';art.setAttribute('aria-hidden','true');art.style.backgroundPosition=(i%2)*100+'% '+Math.floor(i/2)*100+'%';b.querySelector('svg')?.replaceWith(art);b.style.setProperty('--island-color',['#e4f9ef','#f0e5ff','#fff0df','#e5f4ff'][i]);});
    if(!map.querySelector('.dm-study-resume')){const b=document.createElement('button');b.type='button';b.className='dm-study-resume';b.textContent='🗺️ Kaldığın yerden devam et →';b.onclick=()=>{const candidates=[...map.querySelectorAll('.ma-ada')],target=candidates.find(x=>!x.getAttribute('aria-label')?.includes('yüzde 100'))||candidates[0];target?.click();};map.querySelector('.ma-alt')?.before(b);}
   }

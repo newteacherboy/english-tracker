@@ -20,7 +20,7 @@
       entry.classList.add('dm-garden-entry');
       if (!entry.querySelector('.dm-entry-intro')) {
         const intro=document.createElement('div');intro.className='dm-entry-intro';
-        intro.innerHTML='<img src="mascot-welcome.webp" alt="Papi"><p></p>';
+        intro.innerHTML='<img src="papi-welcome-v2.png" alt="Papi"><p></p>';
         const heading=document.createElement('header');heading.className='dm-entry-heading';heading.innerHTML='<small>PAPİ İLE OYUN ZAMANI</small><h2></h2>';heading.querySelector('h2').textContent=title;heading.querySelector('h2').style.setProperty('color','#234e45','important');entry.prepend(heading);
         intro.querySelector('p').textContent=description;entry.querySelector('.dm-entry-heading').after(intro);
         const content=entry.closest('.game-modal-content'),music=content?.querySelector('[id$="MuzikBtn"]');if(music){const box=music.parentElement;box.classList.add('dm-entry-music');entry.append(box);}
@@ -41,7 +41,7 @@
       if(typeof genelOyunGirisEngelliMi==='function'&&genelOyunGirisEngelliMi())return;
       document.getElementById('dmGameIntro')?.remove();
       const overlay=document.createElement('div');overlay.id='dmGameIntro';overlay.className='hb-overlay';
-      overlay.innerHTML='<section class="hb-card" role="dialog" aria-modal="true" aria-labelledby="dmIntroTitle"><header><div><small>PAPİ İLE OYUN ZAMANI</small><h2 id="dmIntroTitle"></h2></div><button data-close aria-label="Kapat">×</button></header><div class="hb-body"><div class="hb-intro"><img src="mascot-welcome.webp" alt="Papi"><p></p></div><p class="dm-entry-rules"></p><h3>Sınıfını seç</h3><div id="dmIntroClasses" class="hb-classes"></div><div data-units><h3>Ünitelerini seç</h3><div id="dmIntroUnits" class="hb-units unite-secim-box"></div></div><p class="hb-status" role="status"></p><button data-start class="hb-primary">Oyuna başla 🌱</button></div></section>';
+      overlay.innerHTML='<section class="hb-card" role="dialog" aria-modal="true" aria-labelledby="dmIntroTitle"><header><div><small>PAPİ İLE OYUN ZAMANI</small><h2 id="dmIntroTitle"></h2></div><button data-close aria-label="Kapat">×</button></header><div class="hb-body"><div class="hb-intro"><img src="papi-welcome-v2.png" alt="Papi"><p></p></div><p class="dm-entry-rules"></p><h3>Sınıfını seç</h3><div id="dmIntroClasses" class="hb-classes"></div><div data-units><h3>Ünitelerini seç</h3><div id="dmIntroUnits" class="hb-units unite-secim-box"></div></div><p class="hb-status" role="status"></p><button data-start class="hb-primary">Oyuna başla 🌱</button></div></section>';
       overlay.querySelector('h2').textContent=title;overlay.querySelector('.hb-intro p').textContent=description;overlay.querySelector('.dm-entry-rules').textContent=ruleText;
       const state={key,classNo:1,units:[1]},previous=document.activeElement;
       function close(){overlay.remove();previous?.focus?.();}

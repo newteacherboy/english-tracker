@@ -63,11 +63,11 @@
 <meta http-equiv="Expires" content="0">
 
 <!-- iOS (iPhone & iPad) Ana Ekran Simgesi -->
-<link rel="apple-touch-icon" href="mascot-icon-180.png?v=2">
+<link rel="apple-touch-icon" href="ingilizce/papi-welcome-v2.png">
 
 <!-- Favicon -->
-<link rel="icon" type="image/png" sizes="192x192" href="mascot-icon-180.png?v=2">
-<link rel="icon" type="image/png" sizes="512x512" href="mascot-icon-512.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="ingilizce/papi-welcome-v2.png">
+<link rel="icon" type="image/png" sizes="512x512" href="ingilizce/papi-welcome-v2.png">
     
 <style>
 
@@ -672,7 +672,7 @@ body {
         <div class="splash-word"><span class="sw-diji">Diji</span><span class="sw-medu">Medu</span></div>
 
         <div class="splash-logo-wrap">
-            <img src="mascot-icon-512.png?v=2" alt="Diji-Medu">
+            <img src="ingilizce/papi-welcome-v2.png" alt="Diji-Medu">
         </div>
 
         <div class="splash-alt-yazi">Akıllı Eğitim Stüdyosu</div>
@@ -697,7 +697,7 @@ body {
 <div id="welcomePortalScreen" class="welcome-overlay">
   <div class="welcome-container">
         <div class="welcome-badge">🎓 Diji-Medu Eğitim Portalı</div>
-    <img class="welcome-mascot" src="ingilizce/mascot-welcome.webp" alt="Seni karşılayan Diji-Medu papağanı" width="138" height="150">
+    <img class="welcome-mascot" src="ingilizce/papi-welcome-v2.png" alt="Seni karşılayan Diji-Medu papağanı" width="138" height="150">
     <h1 class="welcome-title">Diji<span>Medu</span></h1>
     <p class="welcome-subtitle">İngilizce Öğrenme ve Bireysel Eğitim Koçluğu Sistemi</p>
 
@@ -745,7 +745,7 @@ body {
 <!-- KELİME EZBER AÇILIR POPUP KUTUSU -->
 <div id="ezberKartIcerik" class="ezber-popup-box" style="display: none;">
     <button class="popup-kapat-btn" onclick="ezberKartToggle()">✕</button>
-    <audio id="ezberMuzik" loop preload="auto" playsinline src="muzik.mp3"></audio>
+    <audio id="ezberMuzik" loop preload="auto" playsinline src="ingilizce/ozgun/tema-4.mp3"></audio>
 
     <div id="ezberGirisEkrani" style="text-align: center;">
         <h3 style="color: #1a73e8; margin-bottom: 10px; font-size: 17px;">🏆 Kelime Ezber Yarışması</h3>
@@ -1070,7 +1070,7 @@ body {
 
     <div id="soruSesKutusu" style="display: none; background: #EAE3D2; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 12px;">
       <p style="font-size: 10px; font-weight: 800; color: #2C3E50; margin: 0 0 6px 0;">🎧 LISTENING TRACK (SESİ DİNLEYİNİZ)</p>
-      <audio id="soruSesOynatici" controls style="width: 100%; max-width: 280px; height: 30px; margin: 0 auto; display: block;"></audio>
+      <button id="soruSesOynatici" type="button" style="padding:12px 18px;border-radius:12px;border:1px solid #c8dfd6;background:#edf7f2;color:#234e45;cursor:pointer">🔊 Metni dinle</button><details style="margin-top:10px;font-size:12px"><summary>Dinleme metnini göster</summary><p id="soruSesMetni"></p></details><p style="font-size:10px;color:#66756f">Özgün Diji-Medu metni · Cihazının sesli okuma hizmeti</p>
     </div>
 
     <p id="soruMetni" style="font-size: 13.5px; color: #2C3E50; font-weight: 600; margin-bottom: 14px; line-height: 1.45; white-space: pre-line;"></p>
@@ -2412,13 +2412,13 @@ function ezberYenidenBaslat() {
 }
 
 const hamSoruHavuzu = [
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel1.png", q: "Look at the picture. What is the person doing at the moment?", a: ["She is preparing a traditional dinner in the kitchen.", "She is working on his laptop and writing some notes.", "She is buying a new tablet from the tech store.", "She is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel2.png", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
-  { type: "image", mediaUrl: "https://raw.githubusercontent.com/newteacherboy/english-tracker/refs/heads/main/gorsel3.png", q: "Look at the traffic sign in the picture. Which of the following is CORRECT?", a: ["Drivers are allowed to park their cars here overnight.", "Drivers must not exceed the maximum speed limit shown.", "The road is completely closed due to maintenance.", "Pedestrians have the absolute right of way here."], c: 1, lvl: "B1 - Sign Analysis" },
-  { type: "audio", mediaUrl: "ses1.mp3", q: "Listen to the speaker talking about his daily routine. What time does he usually have breakfast?", a: ["At quarter to seven in the morning.", "Right after he leaves the office.", "At half past eight with his parents.", "He prefers to skip breakfast on weekdays."], c: 2, lvl: "A1 - Listening Routine" },
-  { type: "audio", mediaUrl: "ses2.mp3", q: "Listen to the audio presentation. What will the weather be like in the northern area tomorrow afternoon?", a: ["Unseasonably warm and completely dry.", "Rainy with a strong chance of thunderstorms.", "Clear enough for a family picnic.", "Snowy and freezing throughout the day."], c: 1, lvl: "A2 - Listening Weather" },
-  { type: "audio", mediaUrl: "ses3.mp3", q: "Listen to the phone conversation. Why is the woman calling the customer service center?", a: ["To complain about a broken tablet adapter.", "To change the date of her private coaching session.", "To ask for a discount on a long-sleeve shirt.", "To report a technical bug on the exam portal."], c: 1, lvl: "B1 - Listening Management" },
-  { type: "audio", mediaUrl: "ses4.mp3", q: "Listen to the educational coordinator's interview. What is her main argument regarding language acquisition?", a: ["Grammar structures must be memorized before practicing listening.", "Continuous exposure to authentic media accelerates fluency significantly.", "Passing international placement tests is the only proof of success.", "Vocabulary lists are completely useless for high school students."], c: 1, lvl: "B2 - Advanced Listening" },
+  { type: "image", mediaUrl: "ingilizce/ozgun/calisma-masasi.svg", q: "Look at the picture. What is the person doing at the moment?", a: ["She is preparing a traditional dinner in the kitchen.", "She is working on her laptop and writing some notes.", "She is buying a new tablet from the tech store.", "She is waiting for a bus to go to the city center."], c: 1, lvl: "A1 - Visual Vocabulary" },
+  { type: "image", mediaUrl: "ingilizce/ozgun/ucus-panosi.svg", q: "Imagine you are at the terminal and you see this screen. What information can you get from it?", a: ["The price of a round-trip ticket to London.", "The exact weight of your luggage.", "The departure times and gate numbers of flights.", "The current weather conditions in Oxford."], c: 2, lvl: "A2 - Information Reading" },
+  { type: "image", mediaUrl: "ingilizce/ozgun/hiz-siniri.svg", q: "Look at the traffic sign in the picture. Which of the following is CORRECT?", a: ["Drivers are allowed to park their cars here overnight.", "Drivers must not exceed the maximum speed limit shown.", "The road is completely closed due to maintenance.", "Pedestrians have the absolute right of way here."], c: 1, lvl: "B1 - Sign Analysis" },
+  { type: "audio", speechText: "My name is Leo. On school days I leave home at nine. Before that, I have breakfast with my parents at half past eight. We usually eat bread, cheese and fruit.", q: "Listen to the speaker talking about his daily routine. What time does he usually have breakfast?", a: ["At quarter to seven in the morning.", "Right after he leaves the office.", "At half past eight with his parents.", "He prefers to skip breakfast on weekdays."], c: 2, lvl: "A1 - Listening Routine" },
+  { type: "audio", speechText: "Here is tomorrow\u2019s weather. The south will be sunny in the morning. In the northern area, the afternoon will bring rain and possible thunderstorms. Remember to take a coat.", q: "Listen to the audio presentation. What will the weather be like in the northern area tomorrow afternoon?", a: ["Unseasonably warm and completely dry.", "Rainy with a strong chance of thunderstorms.", "Clear enough for a family picnic.", "Snowy and freezing throughout the day."], c: 1, lvl: "A2 - Listening Weather" },
+  { type: "audio", speechText: "Hello. I have a private coaching session booked for Thursday. I cannot attend because my bus arrives too late. Could you move my session to Friday afternoon, please?", q: "Listen to the phone conversation. Why is the woman calling the customer service center?", a: ["To complain about a broken tablet adapter.", "To change the date of her private coaching session.", "To ask for a discount on a long-sleeve shirt.", "To report a technical bug on the exam portal."], c: 1, lvl: "B1 - Listening Management" },
+  { type: "audio", speechText: "Grammar and vocabulary both matter, but learners need regular contact with the language. Listening to meaningful conversations and reading texts every day can help them become more fluent. A test result alone does not show every skill.", q: "Listen to the educational coordinator's interview. What is her main argument regarding language acquisition?", a: ["Grammar structures must be memorized before practicing listening.", "Continuous exposure to authentic media accelerates fluency significantly.", "Passing international placement tests is the only proof of success.", "Vocabulary lists are completely useless for high school students."], c: 1, lvl: "B2 - Advanced Listening" },
   { type: "text", mediaUrl: "", q: "My sister _______ a book in her room at the moment, so please be quiet.", a: ["reads", "is reading", "read", "has read"], c: 1, lvl: "A1 - Grammar Structure" },
   { type: "text", mediaUrl: "", q: "We _______ each other since we were in the same primary school classroom.", a: ["know", "are knowing", "have known", "knew"], c: 2, lvl: "A2 - Tense Structure" },
   { type: "text", mediaUrl: "", q: "If our team _______ the national science project last week, we would be in London now.", a: ["won", "had won", "would win", "wins"], c: 1, lvl: "B1 - Conditionals" },
@@ -2477,7 +2477,8 @@ function dinamikSoruGoster() {
 
     const sKutu = document.getElementById("soruSesKutusu");
     const oynatici = document.getElementById("soruSesOynatici");
-    if(veri.type === "audio") { oynatici.src = veri.mediaUrl; oynatici.load(); sKutu.style.display = "block"; } else { oynatici.pause(); sKutu.style.display = "none"; }
+    window.speechSynthesis?.cancel();
+    if(veri.type === "audio") { document.getElementById("soruSesMetni").textContent = veri.speechText; oynatici.onclick = function(){ if(!window.speechSynthesis){ alert("Bu cihazda sesli okuma desteklenmiyor. Dinleme metnini açabilirsin."); return; } speechSynthesis.cancel(); const ses = new SpeechSynthesisUtterance(veri.speechText); ses.lang="en-GB"; ses.rate=.9; speechSynthesis.speak(ses); }; sKutu.style.display="block"; } else { sKutu.style.display="none"; }
 
     const sAlan = document.getElementById("seceneklerAlani");
     sAlan.innerHTML = "";
@@ -3164,6 +3165,6 @@ function siradakiDersTarihiniHesapla(sabitGunlerMetni) {
 }
 </script>
 <link rel="stylesheet" href="portal-theme.css?v=2">
-</body>
+<nav style="text-align:center;padding:20px;font:12px sans-serif"><a href="ingilizce/kullanim-kosullari.html">Kullanım koşulları</a> · <a href="ingilizce/telif.html">Telif ve bildirim</a> · <a href="ingilizce/lisanslar.html">Lisanslar</a></nav></body>
 </html>
 

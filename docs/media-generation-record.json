@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-04",
+  "tool": "Built-in ImageGen",
+  "note": "Production record; not a legal guarantee of originality, exclusivity, or registrability.",
+  "assets": [
+    {
+      "file": "ingilizce/papi-welcome-v2.png",
+      "mode": "generate",
+      "reference": null,
+      "prompt": "Use case: stylized-concept. Asset type: original Diji-Medu educational app mascot, standalone full body welcome pose on genuinely transparent background. Create a brand new charming small parrot character from scratch, with turquoise plumage, warm yellow cheek patches and belly, orange curved beak and feet, brown expressive eyes, three distinctive rounded teal crown feathers, elegant short purple-tipped tail feathers. Give it a tiny mint explorer shoulder pouch bearing a simple cream open-book symbol, no lettering. Pose: smiling, one wing raised in a friendly welcoming wave. Style: polished soft dimensional illustration with carefully painted feather layers, toy-like rounded form, subtle studio lighting and beautiful smooth shading suitable for a children's language learning app. Palette: turquoise, yellow, mint, subtle plum. Composition: one character centered, entire body and tail visible with generous clear margins, square image, no props beyond its pouch. Requirements: original independent character design, no use of existing franchise characters, no trademarks, no recognizable logos, no words, no watermark, no background, no reference image."
+    },
+    {
+      "file": "ingilizce/papi-help-v2.png",
+      "mode": "edit",
+      "reference": "ingilizce/papi-welcome-v2.png",
+      "prompt": "Edit target: the attached original Diji-Medu turquoise and yellow parrot mascot. Preserve its exact character identity, three rounded teal crown feathers, brown eyes, orange beak and feet, purple tipped tail, mint explorer shoulder pouch with cream open book symbol, painted feather texture and polished soft dimensional rendering. Change only pose and expression into a helpful guide: standing calmly, smiling encouragingly, looking toward the viewer, one wing holding a small unbranded magnifying glass beside the pouch, the other wing relaxed. Whole body and tail visible, centered, clear margins in a square composition. Genuinely transparent background. No words, no watermarks, no background, no other character or logo."
+    },
+    {
+      "file": "ingilizce/papi-reward-v2.png",
+      "mode": "edit",
+      "reference": "ingilizce/papi-welcome-v2.png",
+      "prompt": "Edit target: the original Diji-Medu turquoise and yellow parrot mascot. Preserve exact character identity, three rounded teal crown feathers, brown eyes, orange beak and feet, purple-tipped tail, mint explorer shoulder pouch with cream open-book symbol, texture and polished soft dimensional rendering. Change only pose and expression into a modest success celebration: upright, joyful smile, one wing raised holding a small golden five-point star, other wing gently open. Whole body and tail visible, centered, generous clear margins in a square composition. Genuinely transparent background. No words, watermarks, confetti, background, other characters or logos."
+    },
+    {
+      "file": "ingilizce/papi-farewell-v2.png",
+      "mode": "edit",
+      "reference": "ingilizce/papi-welcome-v2.png",
+      "prompt": "Edit target: the original Diji-Medu turquoise and yellow parrot mascot. Preserve exact character identity, three rounded teal crown feathers, brown eyes, orange beak and feet, purple-tipped tail, mint explorer shoulder pouch with cream open-book symbol, texture and polished soft dimensional rendering. Change only pose and expression into a gentle reassuring farewell: standing, one wing lifted in a small goodbye wave, a calm closed-beak smile, warm kind gaze, no sadness or tears. Whole body and tail visible, centered, generous clear margins in a square composition. Genuinely transparent background. No words, watermarks, background, other characters or logos."
+    },
+    {
+      "file": "ingilizce/activity-icons-v2.png",
+      "mode": "generate",
+      "reference": null,
+      "prompt": "Use case: stylized-concept. Asset type: single original sprite atlas for Diji-Medu educational app, 4 by 4 exact equal square grid of 16 icons, transparent background. Each icon centered inside its cell with generous margins, no borders or background tiles, no typography or numbers. Order left to right, top to bottom: row1 laboratory glass flask with turquoise liquid, bunch of pastel balloons, chunky pastel pencil, small wooden learning treasure chest; row2 swirling silver-blue mini tornado, three soft alphabet tiles with A B C (only these letters), golden padlock and key, two interlocking purple and gold rings; row3 friendly toy steam train, lavender headphones, three rounded colorful word tablets stacked diagonally WITHOUT studs or construction brick shape, delicate pair of feathered wings; row4 tiny winding path with map pin, open blue learning book, friendly mint compass, purple pointed astronomy hat with small golden stars. Style: independently designed soft polished dimensional toy icons, consistent lighting, rounded beautiful shapes, clear readable silhouettes. Colors turquoise, mint, lavender, yellow, warm peach. Entire atlas exactly square, grid aligned at 25% boundaries. Original independent illustrations, no existing brand icon references, no recognizable trademarks, no logos, no watermark. Genuine transparent background."
+    },
+    {
+      "file": "ingilizce/bottom-nav-icons-v2.png",
+      "mode": "generate",
+      "reference": "ingilizce/papi-welcome-v2.png",
+      "prompt": "Use case: stylized-concept. Asset type: single original sprite atlas for the seven bottom navigation icons of Diji-Medu learning app. One square transparent image arranged in an exact 3 by 3 grid of equal cells. Icons centered in cells with very generous margins, entirely separate, no background tile shapes. Order: top row: miniature winding mint path with coral map pin; lavender and teal tiny ferris wheel; warm golden achievement star. Middle row: turquoise game controller with lavender and yellow buttons; open blue learning book with yellow page marks; soft pink school bag with a simple golden star badge. Bottom row: left cell the friendly turquoise yellow Diji-Medu parrot from the reference image, with mint book-symbol explorer pouch and purple tail, scaled to fit completely inside its cell; center and right cells completely empty and transparent. Style consistent polished soft dimensional toy icons, warm readable child-friendly original design. Preserve the referenced parrot's identity only; invent the other icons independently. Exact rows/cell grid at one-third boundaries, no text, no logos, no brand icon copying, no watermark. Genuine transparent background."
+    },
+    {
+      "file": "ingilizce/study-islands-v2.png",
+      "mode": "generate",
+      "reference": null,
+      "prompt": "Use case: stylized-concept. Asset type: one original four-learning-islands sprite atlas for Diji-Medu educational app, square image on genuinely transparent background, exact 2 by 2 grid equal square cells. Each island separately centered within its own cell, generous transparent margins, no tile backgrounds. Top left: little floating tropical island with a rounded mint-roof learning cottage, palm tree, flowers and small open book on a bench. Top right: floating violet rocky island with an original rounded observatory-library building, little telescope dome, lavender trees and a tiny stream, not a princess castle. Bottom left: warm sandy floating island with an oasis, an unbranded adobe learning workshop, cactus and a little stone bridge. Bottom right: icy turquoise floating island with a cozy round blue-roof workshop, crystal formations and snowy pine trees. Style: soft dimensional miniature diorama illustrations, beautiful readable sculpted forms and warm illumination, playful original educational world. No recognizable buildings, trademarks, copyrighted franchise structures, characters, words, letters, logos, UI, watermark. Exact grid alignment at 50% boundaries."
+    },
+    {
+      "file": "ingilizce/parkur-landscape-v2.png",
+      "mode": "generate",
+      "reference": null,
+      "prompt": "Use case: stylized-concept. Asset type: original tall portrait decorative learning landscape for Diji-Medu app's progress map. A soft mint and turquoise fantasy countryside, distant pale blue mountains and sparse wispy clouds, a few rounded soft green hills, a winding pale turquoise stream, a small uniquely designed mint-roof learning cottage and a tiny bridge in the lower quarter. Calm abundant very pale mint open sky in the upper two-thirds so the app's own progress nodes remain readable. Polished soft dimensional painted miniature world, subtle light, warm approachable atmosphere. Portrait composition, all scenery inside frame, no UI, no buttons, no dotted routes, no letters or numbers, no logos, no recognizable buildings, no copied franchise scenery, no watermark. Opaque pale mint background. Independent new illustration without reference images."
+    }
+  ]
+}

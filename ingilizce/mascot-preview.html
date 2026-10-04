@@ -8,7 +8,7 @@ function genelEnerjiKazanimAnimasyonuGoster(miktar, sebep) {
             wrap.innerHTML = `
                 <div class="gek-battery-row">
                     <div class="gek-battery"><div class="gek-fill"></div></div>
-                    <div class="gek-mascot"><img src="mascot-reward.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"></div>
+                    <div class="gek-mascot"><img src="papi-reward-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"></div>
                     <div class="gek-spark" style="top:10%; right:-6px; --sx:14px; --sy:-14px;">✨</div>
                     <div class="gek-spark" style="top:70%; right:-2px; --sx:10px; --sy:16px; animation-delay:.1s;">⭐</div>
                 </div>
@@ -22,7 +22,7 @@ function liderlikBonusToastGoster(bonus, sira) {
                     toast.innerText = `🥇 Sınıfında ${sira}. sıraya girdin! +${bonus} bonus puan!`;
                     toast.className = 'dm-leader-bonus';
                     const mascot = document.createElement('img');
-                    mascot.src = 'mascot-reward.webp'; mascot.alt = 'Başarını kutlayan papağan';
+                    mascot.src = 'papi-reward-v2.png'; mascot.alt = 'Başarını kutlayan papağan';
                     mascot.width = 60; mascot.height = 72;
                     toast.prepend(mascot);
                     document.body.appendChild(toast);
@@ -36,7 +36,7 @@ function kpBonusPapaganGoster() {
             let wrap = document.getElementById('kpCardWrap');
             let el = document.createElement('div');
             el.className = 'kp-bonus-parrot';
-            el.innerHTML = '<img src="mascot-reward.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"><span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
+            el.innerHTML = '<img src="papi-reward-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"><span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
             wrap.appendChild(el);
             setTimeout(() => el.remove(), 1800);
         }
@@ -46,9 +46,9 @@ stage.innerHTML='';
 if(view==='energy')return genelEnerjiKazanimAnimasyonuGoster(2,'Günlük giriş bonusu!');
 if(view==='leader')return liderlikBonusToastGoster(1.5,1);
 if(view==='speech'){stage.innerHTML='<div id="kpCardWrap" style="width:300px"></div>';return kpBonusPapaganGoster();}
-const img='<img class="dm-panel-mascot" src="mascot-welcome.webp" alt="Karşılama papağanı">';
+const img='<img class="dm-panel-mascot" src="papi-welcome-v2.png" alt="Karşılama papağanı">';
 if(view==='announcement') stage.innerHTML='<div id="duyuruOverlay"><div class="duy3-card"><button class="duy3-close" aria-label="Kapat">✕</button><div class="duy3-medal">'+img+'</div><span class="duy3-tag">DUYURU</span><h3 class="duy3-title">Yeni bir macera seni bekliyor!</h3><p class="duy3-msg">Bugünün konusunu keşfet, yeni kelimeler öğren ve hedeflerine bir adım daha yaklaş.</p><button class="duy3-btn">Anladım, kapat</button></div></div>';
-else if(view==='points'||view==='reminder')stage.innerHTML='<div id="pbToastCard" class="'+(view==='points'?'pozitif':'negatif')+'"><button class="pb-toast-close" aria-label="Kapat">✕</button><div class="dm-points-mascot"><img class="dm-reward-state" src="mascot-reward.webp" alt="Kutlayan papağan"><img class="dm-help-state" src="mascot-help.webp" alt="Destekleyen papağan"></div><h3 class="pb-toast-baslik">'+(view==='points'?'Harika iş çıkardın!':'Küçük bir hatırlatma')+'</h3><p class="pb-toast-sebep">'+(view==='points'?'Çalışmanı tamamladın, tebrikler!':'Sorun değil, bir dahaki sefere telafi edersin!')+'</p><span class="pb-toast-puan">'+(view==='points'?'+0.3':'−0.1')+' puan</span></div>';
+else if(view==='points'||view==='reminder')stage.innerHTML='<div id="pbToastCard" class="'+(view==='points'?'pozitif':'negatif')+'"><button class="pb-toast-close" aria-label="Kapat">✕</button><div class="dm-points-mascot"><img class="dm-reward-state" src="papi-reward-v2.png" alt="Kutlayan papağan"><img class="dm-help-state" src="papi-help-v2.png" alt="Destekleyen papağan"></div><h3 class="pb-toast-baslik">'+(view==='points'?'Harika iş çıkardın!':'Küçük bir hatırlatma')+'</h3><p class="pb-toast-sebep">'+(view==='points'?'Çalışmanı tamamladın, tebrikler!':'Sorun değil, bir dahaki sefere telafi edersin!')+'</p><span class="pb-toast-puan">'+(view==='points'?'+0.3':'−0.1')+' puan</span></div>';
 else stage.innerHTML='<div class="kr-perde" style="background:transparent!important"><div class="kr-kart"><div class="dm-welcome-hero">'+img+'</div><div class="kr-ust"><div class="kr-av">🎒</div><div><h3>Hoş geldin, öğrenci!</h3><small>Bugün harika bir gün olacak!</small></div></div><div class="kr-cipler"><div class="kr-cip">⚡ 8<small>Enerji</small></div><div class="kr-cip">🪙 120<small>Altın</small></div><div class="kr-cip">⭐ 45<small>Haftalık XP</small></div><div class="kr-cip">🎯 %60<small>Günlük hedef</small></div></div><div class="kr-lig"><span>🏅</span><span><b>Lig sıralaman</b>Son girişinden beri 2 sıra yükseldin!</span></div><div class="kr-bolum"><h4>Duyuru</h4>Yeni kelimelerle öğrenmeye devam edelim.</div><div class="kr-btnler"><button class="kr-ana">Parkura devam</button><button class="kr-ikinci">Akışa bak</button></div></div></div>';
 stage.querySelectorAll('button').forEach(b=>b.onclick=()=>stage.innerHTML='');
 }
