@@ -330,12 +330,12 @@ async function audit(a: any, operation: string, target: string, payload: any = {
 const leaderboardKey: Record<string, string> = {
   kelimeLiderlikKaydet: "kelime", hafizaLiderlikKaydet: "hafiza", yagmurLiderlikKaydet: "yagmur",
   asmacaLiderlikKaydet: "asmaca", kelimebulLiderlikKaydet: "kelimebul", jeopardyLiderlikKaydet: "jeopardy",
-  boslukLiderlikKaydet: "bosluk", konusmaLiderlikKaydet: "konusma", eslestirmeLiderlikKaydet: "eslestirme", trenLiderlikKaydet: "tren"
+  boslukLiderlikKaydet: "bosluk", konusmaLiderlikKaydet: "konusma", eslestirmeLiderlikKaydet: "eslestirme", trenLiderlikKaydet: "tren", harfBahcesiLiderlikKaydet: "harfbahcesi"
 };
 const leaderboardGetKey: Record<string, string> = {
   kelimeLiderlikTumunuGetir: "kelime", hafizaLiderlikTumunuGetir: "hafiza", yagmurLiderlikTumunuGetir: "yagmur",
   asmacaLiderlikTumunuGetir: "asmaca", kelimebulLiderlikTumunuGetir: "kelimebul", jeopardyLiderlikTumunuGetir: "jeopardy",
-  boslukLiderlikTumunuGetir: "bosluk", konusmaLiderlikTumunuGetir: "konusma", eslestirmeLiderlikTumunuGetir: "eslestirme", trenLiderlikTumunuGetir: "tren"
+  boslukLiderlikTumunuGetir: "bosluk", konusmaLiderlikTumunuGetir: "konusma", eslestirmeLiderlikTumunuGetir: "eslestirme", trenLiderlikTumunuGetir: "tren", harfBahcesiLiderlikTumunuGetir: "harfbahcesi"
 };
 const legacyClassNo = (v: any) => { const m = String(v ?? "").match(/(\d+)/); return m ? Number(m[1]) : null; };
 const scoreRow = (r: any) => ({
@@ -348,6 +348,13 @@ async function leaderboardSave(op: string, body: any, a: any) {
   const key = leaderboardKey[op];
   const name = String(body.isim || body.ogrenci || "");
   const s = await hedefOgrenci(a, name);
+  if (key === "harfbahcesi") {
+    if (!s?.id) return bulunamadi();
+    if (!/^[0-9a-f-]{36}$/i.test(String(body.runId || ""))) return json({status:"error",message:"Geçersiz oyun kaydı."},400);
+    const prior = await supabase.from("game_scores").select("id").eq("student_id",s.id).eq("game_key",key).contains("extra",{run_id:body.runId}).limit(1);
+    if (prior.error) return json({status:"error",message:"Kayıt doğrulanamadı."},500);
+    if (prior.data?.length) return json({status:"success"});
+  }
   const v2 = Number(body.puanSurum) === 2 && ADIL_OYUNLAR.has(key);
   const puan = Math.max(0, Math.min(v2 ? 1000 : 100000, num(body.puan)));
   const row = {
@@ -356,7 +363,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
     unit_name: temizMetin(body.unite, 80) || null, score: puan, correct_count: Math.max(0, num(body.dogru)),
     wrong_count: Math.max(0, num(body.yanlis)), duration_seconds: Math.max(0, num(body.suresaniye)),
     detail: temizMetin(body.detay || body.sure, 200) || null, played_on: body.tarih || new Date().toISOString().slice(0, 10),
-    extra: { legacy_class: body.sinif || null, v: v2 ? 2 : 1 }
+    extra: { legacy_class: body.sinif || null, v: v2 ? 2 : 1, ...(key === "harfbahcesi" ? {run_id:body.runId} : {}) }
   };
   const ins = await supabase.from("game_scores").insert(row);
   if (ins.error) return json({ status: "error", message: ins.error.message }, 500);
@@ -368,7 +375,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
 }
 // [v3.5] Adil puanlama: 9 oyun 1000'lik ölçekte. Sıralama: puan ↓, süre ↑, tarih ↑.
 // Her öğrencinin sadece en iyi skoru listelenir. donem=hafta → bu pazartesiden beri.
-const ADIL_OYUNLAR = new Set(["kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren"]);
+const ADIL_OYUNLAR = new Set(["kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi"]);
 function haftaBasi() {
   const tr = new Date(Date.now() + 3 * 3600000);               // İstanbul saati
   const gun = (tr.getUTCDay() + 6) % 7;                         // pazartesi = 0
@@ -1064,7 +1071,7 @@ async function handle(req: Request) {
   // =================================================================
   // [v3] ESKİ ARAYÜZLE UYUMLU CEVAPLAR (aşağıdaki eski sürümlerin yerine geçer)
   // =================================================================
-  const OYUN_ADI: Record<string, string> = { kelime: "Kelime Laboratuvarı", bosluk: "Eksik Harf", jeopardy: "Risk Balonları", hafiza: "Hafıza Sandığı", yagmur: "Hız Fırtınası", asmaca: "Harf Avı", kelimebul: "Şifre Kırıcı", konusma: "Konuşma", cekilis: "Çekiliş", eslestirme: "Eş Bul", tren: "Kelime Treni" };
+  const OYUN_ADI: Record<string, string> = { kelime: "Kelime Laboratuvarı", bosluk: "Eksik Harf", jeopardy: "Risk Balonları", hafiza: "Hafıza Sandığı", yagmur: "Hız Fırtınası", asmaca: "Harf Avı", kelimebul: "Şifre Kırıcı", konusma: "Konuşma", cekilis: "Çekiliş", eslestirme: "Eş Bul", tren: "Kelime Treni", harfbahcesi: "Harf Bahçesi" };
   const SOSYAL = new Set(["takip", "begeni", "tebrik", "like", "congrats"]);
   const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const metinVer = (v: any) => v == null ? "" : typeof v === "string" ? v : JSON.stringify(v);
@@ -1753,6 +1760,17 @@ async function handle(req: Request) {
     const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
     let s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
     s = await enerjiYenile(s);
+    const hb = body.oyun === "harfbahcesi";
+    let hbReason = "";
+    if (hb) {
+      if (!await release.on("oyun_harfbahcesi")) return json({ok:false,status:"error",mesaj:"Bu oyun şu anda kapalı."},403);
+      if (!/^[0-9a-f-]{36}$/i.test(String(body.runId || ""))) return json({ok:false,status:"error",mesaj:"Geçersiz oyun kimliği."},400);
+      hbReason = "harfbahcesi:" + body.runId;
+      const prior = await supabase.from("energy_transactions").select("id").eq("student_id",s.id).eq("reason",hbReason).limit(1);
+      if (prior.error) return json({ok:false,status:"error",mesaj:"Enerji doğrulanamadı."},500);
+      if (prior.data?.length) return json({ok:true,status:"success",enerjiKalan:s.energy,enerjiMax:s.energy_max,eklenen:-3});
+      if (Number(s.energy) < 3) return json({ok:false,status:"error",mesaj:"Oynamak için 3 enerji gerekli.",enerjiKalan:s.energy},409);
+    }
     let fark = Math.trunc(num(body.fark));
     const sebep = String(body.sebep || (bool(body.hediye) ? "hediye" : (fark < 0 ? "oyun" : ""))).toLowerCase().slice(0, 20);
     const max = Number(s.energy_max || ENERJI_TAVAN);
@@ -1779,13 +1797,17 @@ async function handle(req: Request) {
         fark = Math.max(0, Math.min(fark, 3, 6 - topla(sebep || "diger")));
       }
     }
+    if (hb) fark = -3;
     if (fark < -25) fark = -25;
     const once = s.energy;
     const next = fark >= 0 ? Math.max(once, Math.min(tavan, once + fark)) : Math.max(0, once + fark);
     const patch: any = { energy: next, updated_at: new Date().toISOString() };
     if (once >= max && next < max) patch.energy_updated_at = new Date().toISOString();   // dolum sayacı harcamayla başlar
-    await supabase.from("students").update(patch).eq("id", s.id);
-    if (next !== once) await supabase.from("energy_transactions").insert({ student_id: s.id, change_amount: next - once, balance_after: next, reason: sebep || (fark < 0 ? "oyun" : "diger") });
+    if (hb) {
+      const changed = await supabase.from("students").update(patch).eq("id",s.id).eq("energy",once).select("id");
+      if (changed.error || !changed.data?.length) return json({ok:false,status:"error",mesaj:"Enerji başka bir işlemde değişti. Tekrar dene."},409);
+    } else await supabase.from("students").update(patch).eq("id", s.id);
+    if (next !== once) await supabase.from("energy_transactions").insert({ student_id: s.id, change_amount: next - once, balance_after: next, reason: hbReason || sebep || (fark < 0 ? "oyun" : "diger") });
     s.energy = next; if (patch.energy_updated_at) s.energy_updated_at = patch.energy_updated_at;
     return json({ ok: true, status: "success", enerjiKalan: next, enerjiMax: max, eklenen: next - once, mesaj, ...dolumBilgi(s) });
   }
@@ -2332,4 +2354,3 @@ Deno.serve(async (req) => {
   try { return await handle(req); }
   catch (e) { console.error(e); return json({ status: "error", ok: false, mesaj: "Sunucu hatası, tekrar dene.", message: "Sunucu hatası" }, 500); }
 });
-
