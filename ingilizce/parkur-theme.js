@@ -17,6 +17,8 @@
   function sync(){
     const tab=document.getElementById('tab-dunya');
     const open=!!(tab&&tab.classList.contains('active')&&tab.classList.contains('bz-yeni')&&tab.querySelector('.dm-parkur-head'));
+    const gates=!!(tab&&tab.classList.contains('active')&&tab.classList.contains('bz-yeni')&&tab.querySelector('.bz-kapilar'));
+    document.body.classList.toggle('dm-parkur-gates',gates);
     if(document.body.classList.contains('dm-parkur-open')!==open)document.body.classList.toggle('dm-parkur-open',open);
 
   }

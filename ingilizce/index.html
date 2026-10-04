@@ -1522,7 +1522,7 @@ if(BAKIM_MODU){
         
                                <div class="user-actions">
                         <a href="https://panel.ogretmencocuk.com" class="header-btn btn-portal">Ana Portal</a>
-                        <button onclick="sifreDegistirAc()" class="header-btn btn-portal">🔑 Şifre</button>
+                        <button onclick="dmHesapAyarlariAc()" class="header-btn btn-portal">⚙️ Hesap</button>
                         <button onclick="cikisYap()" class="header-btn btn-cikis">Çıkış Yap</button>
                     </div>
                 </div>
@@ -20405,7 +20405,7 @@ let adaRenk = adaRenkleri[
 @keyframes abGel { from { opacity:0; transform:translateY(40px); } }
 @media (prefers-reduced-motion: reduce) { .ab-kart { animation:none; } }
 </style>
-<div id="tab-profil" class="dc-fullscreen-overlay"><div class="pr-kap"><div id="profilAlan"></div><div class="pr-baslik">🎭 Karakterlerim</div><div id="profilKoleksiyon"></div><a href="hesap-sil.html" style="display:block;margin:24px 0;padding:12px;text-align:center;color:#a72134;font-size:13px;font-weight:700;">Hesabımı sil</a><a href="gizlilik.html" style="display:block;margin:12px 0;padding:12px;text-align:center;font-size:13px;">Gizlilik Politikası & KVKK</a></div></div>
+<div id="tab-profil" class="dc-fullscreen-overlay"><div class="pr-kap"><div id="profilAlan"></div><div id="profilKoleksiyon"></div><a href="gizlilik.html" style="display:block;margin:12px 0;padding:12px;text-align:center;font-size:13px;">Gizlilik Politikası & KVKK</a></div></div>
 <script>
 (function () {
   const $ = id => document.getElementById(id);
@@ -28842,14 +28842,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function koridor() {
     aktarGerekirse();
     let p = parkurAlani(); gorunum = { ad: 'koridor', b: null };
-    p.innerHTML = `<div class="bz-ic">${ust('<button class="kapat" id="bzKapat" aria-label="Parkur haritasına dön">✕</button>')}
-      <div class="bz-afis"><b>Büyü Akademisi</b><small>Bir kapı seç, maceraya başla</small></div>
-      <div class="bz-koridor"><span class="bz-mesale" style="left:10px" aria-hidden="true">🔥</span><span class="bz-mesale" style="right:10px" aria-hidden="true">🔥</span>
+    p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy:window.genelEnerjiKalan ?? "–",max:window.genelEnerjiMax || 30,gold:yoVar()?yo.altin || 0:0})}<button type="button" class="dm-gates-back" id="bzKapat">← Parkur haritasına dön</button>
+      <div class="bz-afis"><b>Papi’nin Keşif Kapıları</b><small>Bir kapı seç, Keşif Sarayı’na doğru ilerle</small></div>
+      <div class="bz-koridor">
         <div class="bz-kapilar">${BOLUM.map((B, b) => { let acik = bolumAcik(b), n = bolumTamam(b);
           return `<button class="bz-kapi${acik ? '' : ' kilit'}" data-b="${b}" style="background:${B.renk};--isik:${B.isik}" aria-label="${b + 1}. bölüm ${B.ad}${acik ? ', ' + n + ' / ' + durakSayisi(b) + ' durak' : ', kilitli'}">
             <span class="no">${acik ? b + 1 : '🔒'}</span><b>${B.ik} ${B.ad}</b><small>${B.alt}</small>
             <span class="yil">${acik ? `⭐ ${bolumYildiz(b)}/${durakSayisi(b) * 3} · ${n}/${durakSayisi(b)}` : `Önceki kapıyı bitir`}</span></button>`; }).join('')}</div>
-        <div class="bz-kitap"><span aria-hidden="true">📖</span><div>Her kapı iki sınıf, her durak bir ünite… 1. sınıftan 8. sınıfa kadar her şeyi öğren! Her durakta 11 mini oyundan birer büyü sorusu var.</div></div>
+        <div class="bz-kitap"><span aria-hidden="true">📖</span><div>Her kapı yeni bir keşif! İki sınıfın ünitelerini tamamla, bir sonraki kapıyı aç ve Papi ile Keşif Sarayı’na ulaş. Her durakta farklı oyunlardan kelime soruları seni bekliyor.</div></div>
       </div>
       <button class="bz-eski" id="bzEski">Eski parkur görünümüne geç</button></div>`;
     $('bzKapat').onclick = () => harita(aktifBolum());
@@ -28864,17 +28864,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
 
   /* ================= 2) KALE HARİTASI (10 durak) ================= */
   function kaleSVG(b) {
-    let ren = ['#fcd34d', '#93c5fd', '#d8b4fe', '#94a3b8'][b], koyu = ['#b45309', '#1e40af', '#6b21a8', '#1e293b'][b];
-    return `<svg class="bz-kale" viewBox="0 0 230 150" aria-hidden="true">
-      <ellipse cx="115" cy="140" rx="110" ry="14" fill="#15803d" opacity=".5"/>
-      <rect x="40" y="70" width="150" height="70" fill="${ren}" stroke="${koyu}" stroke-width="3"/>
-      ${[40, 72, 104, 136, 168].map(x => `<rect x="${x}" y="62" width="14" height="10" fill="${ren}" stroke="${koyu}" stroke-width="2"/>`).join('')}
-      <rect x="20" y="40" width="34" height="100" fill="${ren}" stroke="${koyu}" stroke-width="3"/><path d="M14 42 L37 6 L60 42Z" fill="${koyu}"/>
-      <rect x="176" y="40" width="34" height="100" fill="${ren}" stroke="${koyu}" stroke-width="3"/><path d="M170 42 L193 6 L216 42Z" fill="${koyu}"/>
-      <rect x="95" y="24" width="40" height="60" fill="${ren}" stroke="${koyu}" stroke-width="3"/><path d="M88 26 L115 -8 L142 26Z" fill="${koyu}"/>
-      <path d="M100 140 L100 110 Q115 92 130 110 L130 140Z" fill="${koyu}"/>
-      ${[[31, 70], [187, 70], [108, 44], [122, 44]].map(([x, y]) => `<rect x="${x}" y="${y}" width="8" height="12" rx="4" fill="#fde68a"/>`).join('')}
-      <path d="M115 -8 L115 -20 L128 -15 L115 -11" fill="#f43f5e"/></svg>`;
+    return `<div class="dm-palace" role="img" aria-label="Papi’nin Keşif Sarayı, bölümün son hedefi"><svg viewBox="0 0 300 190" aria-hidden="true"><defs><linearGradient id="palaceWall" x2="0" y2="1"><stop stop-color="#fff8dc"/><stop offset="1" stop-color="#eac987"/></linearGradient><linearGradient id="palaceRoof" x2="0" y2="1"><stop stop-color="#55c6ba"/><stop offset="1" stop-color="#177c83"/></linearGradient></defs><ellipse cx="150" cy="177" rx="130" ry="11" fill="#19685e" opacity=".18"/><path d="M24 174h252" stroke="#559e84" stroke-width="12" stroke-linecap="round"/><rect x="64" y="92" width="172" height="77" rx="10" fill="url(#palaceWall)" stroke="#b79860" stroke-width="3"/><path d="M58 95l29-31h126l29 31z" fill="url(#palaceRoof)" stroke="#166970" stroke-width="3"/><g fill="url(#palaceWall)" stroke="#b79860" stroke-width="3"><rect x="32" y="68" width="44" height="102" rx="12"/><rect x="224" y="68" width="44" height="102" rx="12"/><rect x="117" y="48" width="66" height="120" rx="14"/></g><g fill="url(#palaceRoof)" stroke="#166970" stroke-width="3"><path d="M25 70q29-64 58 0z"/><path d="M217 70q29-64 58 0z"/><path d="M108 50q42-75 84 0z"/></g><g fill="#fff6b3" stroke="#bf9b58" stroke-width="3"><path d="M45 113V95q9-15 18 0v18z"/><path d="M237 113V95q9-15 18 0v18z"/><circle cx="150" cy="77" r="16"/></g><path d="M138 75q6-5 12-1q6-4 12 1v11q-6-4-12 0q-6-4-12 0z" fill="#248b85"/><path d="M128 170v-35q22-35 44 0v35z" fill="#277e80" stroke="#e7ad49" stroke-width="4"/><path d="M150 130v38" stroke="#8ad5c2" stroke-width="2"/><circle cx="157" cy="151" r="3" fill="#ffd66e"/><path d="M117 173h66m-74 8h82" stroke="#e7d5ac" stroke-width="7" stroke-linecap="round"/><path d="M150 14V0l25 6-25 6" fill="#a76bd0" stroke="#775296" stroke-width="2"/><g fill="#5aa783"><ellipse cx="30" cy="160" rx="17" ry="10"/><ellipse cx="272" cy="160" rx="17" ry="10"/></g><g fill="#fff1a3"><circle cx="21" cy="151" r="4"/><circle cx="281" cy="151" r="4"/></g></svg><strong>Keşif Sarayı</strong><small>Papi ile bu bölümün zirvesine ulaş!</small></div>`;
   }
   const ADIM = 96;
   function yerHesapla(n) { let H = 260 + n * ADIM; return { H, l: Array.from({ length: n }, (_, i) => [50 + Math.sin(i * 1.15) * 24, H - 62 - i * ADIM]) }; }
@@ -30873,8 +30863,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=rights-5"></script>
-<link rel="stylesheet" href="parkur-theme.css?v=4">
-<script src="parkur-theme.js?v=4"></script>
+<link rel="stylesheet" href="parkur-theme.css?v=5">
+<script src="parkur-theme.js?v=5"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
@@ -30897,6 +30887,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
+<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=1"></script>
 </body>      
         </html>
 
