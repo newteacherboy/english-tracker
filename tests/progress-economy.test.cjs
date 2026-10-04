@@ -1,6 +1,16 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),r=require('../ingilizce/progress-rules.js'),score=require('../ingilizce/score-rules.js');
 test('40 levels: easy first five, increasing costs, boundary and cap',()=>{assert.equal(r.thresholds.length,40);assert.deepEqual(r.thresholds.slice(0,5),[0,40,100,180,300]);assert.equal(r.thresholds[14],5950);assert.equal(r.thresholds[39],47200);let prev=0;for(let i=1;i<40;i++){const gap=r.thresholds[i]-r.thresholds[i-1];assert(gap>prev);prev=gap;assert.equal(r.progress(r.thresholds[i]).level,i+1);assert.equal(r.progress(r.thresholds[i]-1).level,i);}assert.equal(r.progress(999999).level,40);assert.equal(r.progress(999999).remaining,0);});
 test('weekly rollover and gold spending never lower lifetime XP',()=>{const state={log:{a:100,b:200},lig:{xp:250},altin:1000};assert.equal(r.migrate(state),300);state.log={};state.lig={xp:0};state.altin=0;assert.equal(r.migrate(state),300);assert.equal(r.migrate({totalXp:800,log:{a:100}}),800);});
+test('server parkur rebase survives old XP logs, refresh and later earned XP',()=>{
+ const state={totalXp:360,dmParkurMigration:{version:1,seedXp:360},altin:1200,log:{a:9000},lig:{xp:5000},xpGun:{xp:800},sahip:['owned'],karakter:{sahip:['papi']}};
+ const before=structuredClone(state);assert.equal(r.migrate(state),360);assert.equal(r.progress(state.totalXp).level,5);assert.equal(state.dmProgressProtocol,1);
+ state.totalXp+=118;assert.equal(r.migrate(state),478);assert.equal(r.migrate(JSON.parse(JSON.stringify(state))),478);
+ for(const key of ['altin','log','lig','xpGun','sahip','karakter','dmParkurMigration'])assert.deepEqual(state[key],before[key]);
+});
+test('parkur seed uses recorded stars and conservative missing-star fallback',()=>{
+ assert.deepEqual([undefined,0,1,2,3,99].map(r.parkurBaseXp),[42,42,42,48,60,60]);
+ assert.equal(r.parkurBaseXp(1)*6,252);assert.equal(r.parkurBaseXp(3)*6,360);
+});
 test('failed games never mint gold; malformed inputs cannot mint XP',()=>{for(const o of [{dogru:0,xp:0},{dogru:1,xp:0},{dogru:9,xp:100},{dogru:1,xp:Infinity}])assert.deepEqual(r.gameReward(o),{xp:0,gold:0,bonus:1});});
 test('daily bonus, streak and late-game half reward',()=>{const o=score.calculate({correct:8,seconds:25});assert.deepEqual(r.gameReward(o,{ordinal:1,streak:1.5}),{xp:118,gold:30,bonus:1});assert.equal(r.gameReward(o,{ordinal:13,streak:1.5}).xp,30);});
 test('boosts do not stack and cannot be used before level 15',()=>{const o={...score.calculate({correct:8,seconds:25}),odulCarpan:2};assert.equal(r.gameReward(o,{level:14,xpBoost:true,goldBoost:true}).xp,118);const b=r.gameReward(o,{level:15,xpBoost:true,goldBoost:true,streak:1.5});assert.equal(b.xp,236);assert.equal(b.gold,60);assert.equal(r.gameReward({...o,xp:9999},{level:15}).xp,384);});
