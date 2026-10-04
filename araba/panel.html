@@ -158,6 +158,17 @@ header p{
   color:#e7ebfa;
 }
 
+/* YARIN KİMİNLE GİDECEĞİNİ GÖSTEREN CHIP STİLİ */
+.chip.teacher{
+  background:#1e293b;
+  border-color:var(--accent);
+  color:#93c5fd;
+}
+
+.chip.teacher b{
+  color:var(--gold);
+}
+
 .net{
   width:78px;
   text-align:right;
@@ -389,6 +400,9 @@ function buildStudents(rawRows){
     const okul=
       String(row['Okul']||'Kabalı Ortaokulu').trim();
 
+    // Yarın kiminle gideceğini gösteren sütunu okuyoruz
+    const ogretmen=
+      String(row['Gideceği Öğretmen'] || row['Kiminle Gidecek'] || row['Refakatçi'] || row['Görevli Öğretmen'] || '').trim();
 
     const visible={};
 
@@ -457,6 +471,8 @@ function buildStudents(rawRows){
       soyad,
 
       okul,
+
+      ogretmen,
 
       visible,
 
@@ -581,6 +597,10 @@ function render(rows){
 
       ).join('');
 
+    const teacherChip = r.ogretmen 
+      ? `<span class="chip teacher">👨‍🏫 Refakatçi: <b>${r.ogretmen}</b></span>`
+      : '';
+
 
     const row=
       document.createElement('div');
@@ -611,6 +631,8 @@ function render(rows){
         </div>
 
         <div class="chips">
+
+          ${teacherChip}
 
           ${
             chips ||
@@ -703,14 +725,6 @@ function render(rows){
 /* ================================================================
    OTOMATİK LİG GÖSTERİM AYARLARI
    ================================================================ */
-
-/*
-  İstersen sadece buradaki değerleri değiştir.
-
-  5000 = İlk 3 beş saniye
-  18 = Kaydırma hızı
-  3000 = Son öğrencide üç saniye
-*/
 
 const SHOW_TOP_MS = 5000;
 
@@ -900,15 +914,6 @@ function scrollDownSlowly(token){
       lastTime=time;
 
 
-      /*
-        ÖNEMLİ:
-
-        Her karede tekrar hesaplandığı için
-        15 saniyelik veri güncellemesinde
-        öğrenci sayısı değişirse bile
-        gerçek sayfa yüksekliği kullanılır.
-      */
-
       const bottom=
         maxScrollY();
 
@@ -1072,11 +1077,6 @@ function returnToTop(token){
 
 async function leagueShowLoop(){
 
-  /*
-    Aynı anda ikinci bir otomatik
-    kaydırma döngüsü açılmasını engeller.
-  */
-
   if(leagueShowRunning)
     return;
 
@@ -1094,10 +1094,6 @@ async function leagueShowLoop(){
       token===leagueShowToken
     ){
 
-      /*
-        1 — BAŞLANGIÇ
-      */
-
       window.scrollTo(
         0,
         0
@@ -1113,10 +1109,6 @@ async function leagueShowLoop(){
         break;
 
 
-      /*
-        2 — İLK 3'Ü KUTLA
-      */
-
       celebrateTop3();
 
 
@@ -1131,11 +1123,6 @@ async function leagueShowLoop(){
         break;
 
 
-      /*
-        3 — BÜTÜN ÖĞRENCİLERİ
-        YAVAŞÇA GEZ
-      */
-
       await scrollDownSlowly(
         token
       );
@@ -1146,10 +1133,6 @@ async function leagueShowLoop(){
       )
         break;
 
-
-      /*
-        4 — SON ÖĞRENCİDE BEKLE
-      */
 
       await sleep(
         BOTTOM_WAIT_MS
@@ -1162,10 +1145,6 @@ async function leagueShowLoop(){
         break;
 
 
-      /*
-        5 — BAŞA DÖN
-      */
-
       await returnToTop(
         token
       );
@@ -1176,11 +1155,6 @@ async function leagueShowLoop(){
       )
         break;
 
-
-      /*
-        Çok kısa bekleme.
-        Ardından ilk 3 tekrar kutlanır.
-      */
 
       await sleep(500);
 
@@ -1203,12 +1177,6 @@ async function leagueShowLoop(){
 
 function startLeagueShow(){
 
-  /*
-    15 saniyede bir fetchAndRender
-    tekrar çalışsa bile ikinci döngü
-    oluşturulmaz.
-  */
-
   if(leagueShowStarted)
     return;
 
@@ -1218,10 +1186,6 @@ function startLeagueShow(){
       '#table .row'
     );
 
-
-  /*
-    Veri henüz gelmediyse başlatma.
-  */
 
   if(!rows.length)
     return;
@@ -1300,17 +1264,8 @@ async function fetchAndRender(){
       );
 
 
-    /*
-      Mevcut tablo çizme sistemi
-    */
-
     render(students);
 
-
-    /*
-      İlk veri geldikten sonra
-      otomatik lig gösterimini başlat.
-    */
 
     startLeagueShow();
 
