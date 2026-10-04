@@ -42,7 +42,7 @@
  const cards=[
  ['kelimeYarismasiAc',0,'#d9c7f9','#b99be5'],['jpOyunAc',1,'#ffd3e5','#e6abc5'],['boslukOyunAc',2,'#ffe69d','#e3c678'],['hafizaOyunAc',3,'#ffd2d9','#e4a6b0'],
  ['yagmurOyunAc',4,'#b5e6ff','#8fc5e7'],['asmacaOyunAc',5,'#ffbcbf','#dc8f97'],['kelimebulOyunAc',6,'#cdf29e','#a0cf73'],['esOyunAc',7,'#debbfa','#be94e2'],
- ['trenOyunAc',8,'#ffe795','#e5c66b'],['dikteAc',9,'#c8d5ff','#a2b1e4'],['cumleAc',10,'#e8c7f4','#c59bd4'],['dmUcusteKart',11,'#b8e7ff','#8bc7e7'],['dmRotaKart',12,'#e5c4fb','#c294df'],['yolculuguAc',12,'#bde8de','#96cbbd']];
+ ['trenOyunAc',8,'#ffe795','#e5c66b'],['dikteAc',9,'#c8d5ff','#a2b1e4'],['cumleAc',10,'#e8c7f4','#c59bd4'],['dmUcusteKart',11,'#b8e7ff','#8bc7e7'],['dmRotaKart',12,'#e5c4fb','#c294df'],['yolculuguAc',12,'#bde8de','#96cbbd'],['harfBahcesiAc',null,'#cdeeb6','#99c57d']];
  let party='solo',partyObserver,observedGrid;
  function partyTabs(host,grid){
   let tabs=host.querySelector('.dm-party-tabs');
@@ -64,7 +64,7 @@
   const grid=host.querySelector('.az-grid2x2');if(!grid)return;
   cards.forEach(([fn,idx,color,edge])=>{const b=grid.querySelector('[onclick*="'+fn+'"]')||document.getElementById(fn==='dikteAc'?'yoDikteKart':fn);if(!b||!grid.contains(b))return;
    if(fn==='kelimeYarismasiAc')b.querySelector('.az-gcard-title').textContent='Kelime Laboratu\u00advarı';b.classList.add('dm-toy-card');b.style.setProperty('--toy-bg',color);b.style.setProperty('--toy-edge',edge);
-   const icon=b.querySelector('.az-gcard-icon');if(icon&&!icon.querySelector('.dm-toy-art')){const art=document.createElement('span');art.className='dm-toy-art';art.setAttribute('aria-hidden','true');art.style.backgroundPosition=(idx%4)*100/3+'% '+Math.floor(idx/4)*100/3+'%';icon.replaceChildren(art);}
+   const icon=b.querySelector('.az-gcard-icon');if(icon&&idx!==null&&!icon.querySelector('.dm-toy-art')){const art=document.createElement('span');art.className='dm-toy-art';art.setAttribute('aria-hidden','true');art.style.backgroundPosition=(idx%4)*100/3+'% '+Math.floor(idx/4)*100/3+'%';icon.replaceChildren(art);}
    if(['dmUcusteKart','dmRotaKart'].includes(fn)){b.onclick=()=>window.dmInviteAc(fn==='dmUcusteKart'?'ucus':'rota');if(!b.querySelector('.ak-etiket')){const t=document.createElement('div');t.className='ak-etiket';t.textContent='8 soru · 4 ⚡';b.append(t);}}
   });
   partyTabs(host,grid);

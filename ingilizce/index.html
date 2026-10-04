@@ -5811,7 +5811,7 @@ mesajlar.forEach(m => {
                     if (hafizaEslesenSayi === hafizaKartlar.length / 2) setTimeout(() => hafizaOyunuBitir(), 500);
                         } else {
                     genelSesEfektiCal('yanlis');
-                    hafizaYanlisSayisi++; OC.hataSay(); if (!(typeof jk !== 'undefined' && jk.kalkan)) window.hafizaOcHata = (window.hafizaOcHata || 0) + 1;
+                    hafizaYanlisSayisi++; OC.yanlis(typeof jk !== 'undefined' && !!jk.kalkan); if (!(typeof jk !== 'undefined' && jk.kalkan)) window.hafizaOcHata = (window.hafizaOcHata || 0) + 1;
                                 if (!jokerKalkanTuket()) hafizaKombo = 0;
                             hafizaSesCal(false);
                             setTimeout(() => {
@@ -12929,7 +12929,7 @@ function ozellikSecDoldur() {
             kpSoruListesi = [...seviye.kelimeler];
         
             kpSoruIndex = 0; kpDogruSayisi = 0; kpYanlisSayisi = 0; kpToplamPuan = 0; kpKombo = 0;
-            kpBaslangicZamani = Date.now(); kpGecenSaniye = 0;
+            kpBaslangicZamani = Date.now(); kpGecenSaniye = 0; OC.basla('kp');
         
             document.getElementById('kpKelimeGirisEkrani').style.display = 'none';
             document.getElementById('kpKelimeOyunEkrani').style.display = 'flex';
@@ -13008,7 +13008,7 @@ function ozellikSecDoldur() {
         }
         function kpSonrakineGec() {
             kpDinlemeyiDurdur();
-            kpYanlisSayisi++;
+            OC.yanlis(false); kpToplamPuan = OC.puan(); kpYanlisSayisi++;
             kpKombo = 0;
             kpSoruIndex++;
             kpSoruGoster();
@@ -13092,8 +13092,8 @@ function ozellikSecDoldur() {
             if (dogruMu) {
                 kpDogruSayisi++;
                 kpArkaArkayaDogru++;
-                let kazanc = 10 + (kpKombo * 3);
-                kpToplamPuan += kazanc;
+                let kazanc = OC.dogru(kpAktifSoruYanlisDeneme ? .5 : 1);
+                kpToplamPuan = OC.puan();
                 kpKombo++;
                 kart.classList.add('kp-ok');
                 kpKonfetiPatlat();
@@ -13111,7 +13111,7 @@ function ozellikSecDoldur() {
                 kpEnerjiDegistir(-1);
                 setTimeout(function(){ kpSoruIndex++; kpSoruGoster(); }, 1600);
             } else {
-                kpAktifSoruYanlisDeneme++;
+                kpAktifSoruYanlisDeneme++; OC.yanlis(false); kpToplamPuan = OC.puan();
                 if (kpAktifSoruYanlisDeneme < 3) {
                     if (!jokerKalkanTuket()) kpKombo = 0;
                     document.getElementById('kpKomboText').innerText = 'KOMBO x' + kpKombo;
@@ -13172,7 +13172,7 @@ function ozellikSecDoldur() {
             }
         
                     genelSonucEkraniGoster({
-                oyunAdi: '🎤 Konuşma Pratiği — ' + seviyeAdi,
+                oyunAdi: '🎤 Konuşma Pratiği — ' + seviyeAdi, oyunKey:'kp',
                 baslik: enerjiBittiMi ? 'Enerjin bitti!' : (basariliMi ? '🏆 Seviye geçildi!' : 'Neredeyse oldu!'),
                 isim: isim, puan: kpToplamPuan, dogru: kpDogruSayisi, yanlis: kpYanlisSayisi, sureSaniye: kpGecenSaniye, oyunKey: 'kp',
                 devamFn: function() { document.getElementById('kpKelimeBitisEkrani').style.display = 'none'; kpParkurCiz(); kpKelimeGirisGoster(); },
@@ -13519,7 +13519,7 @@ function ozellikSecDoldur() {
         
             let sn = Number(o.sureSaniye);
             document.getElementById('gsoSure').innerText = (o.sureSaniye === null || o.sureSaniye === undefined || isNaN(sn))
-                ? '—' : (Math.floor(sn / 60) + ':' + String(sn % 60).padStart(2, '0'));
+                ? '—' : (Math.floor(sn / 60) + ':' + String(Math.floor(sn % 60)).padStart(2, '0'));
         
             document.getElementById('gsoTekrarBtn').style.display = o.tekrarFn ? '' : 'none';
             document.querySelector('#genelSonucOverlay .gso-sira-baslik').style.display = o.siralamaYok ? 'none' : '';
@@ -14480,6 +14480,7 @@ const YO_SOHBET = [
           return true;
         }
         function yoOrnekKelimeHavuzu(regex) {
+          if (window.dmSelectedIntro?.key === 'dikte') return oyunHavuzGetir(window.dmSelectedIntro.classNo,window.dmSelectedIntro.units).filter(k=>regex.test(String(k.ingilizce||k.en||''))&&(k.turkce||k.tr));
           let s = Number(yoSinif(yoIsim)) || 0;
           let tum = (window.masterKelimeHavuzu || []).filter(k => regex.test(String(k.ingilizce || k.en || '').trim()) && (k.turkce || k.tr));
           let uygun = s ? tum.filter(k => [s - 1, s].includes(Number(k.sinif))) : tum;
@@ -14715,7 +14716,7 @@ const YO_SOHBET = [
         let cml = null;
         function cumleAc() {
           if (!yoHazirMi()) return;
-          let s = Number(yoSinif(yoIsim)) || 0;
+          let s = window.dmSelectedIntro?.key === 'cumle' ? window.dmSelectedIntro.classNo : Number(yoSinif(yoIsim)) || 0;
           let seviyeler = !s ? ['A1','A2','B1'] : s <= 4 ? ['A1'] : s <= 6 ? ['A1','A2'] : ['A2','B1'];
           let liste = OC.kelimeSec('cumle', YO_CUMLE.filter(c => seviyeler.includes(c[2])), OC.SORU, { anahtar: c => c[0], zk: false });
           if (!yoEnerjiKontrol()) return;
@@ -20484,12 +20485,7 @@ let adaRenk = adaRenkleri[
       kart(typeof meta === 'function' ? meta(a) : meta, () => { onay = true; window[ad].apply(self, a); });
     };
   }
-  [['kelimeYarismasiBaslat', '🔬', 'Kelime Laboratuvarı', '#ffd166,#f59e0b'], ['jeopardyOyunuBaslat', '🎈', 'Risk Balonları', '#ff8fb8,#ff5d8f'],
-   ['boslukOyunuBaslat', '✏️', 'Eksik Harf', '#a5b4fc,#6366f1'], ['hafizaOyunuBaslat', '🃏', 'Hafıza Sandığı', '#c4b5fd,#8b5cf6'],
-   ['yagmurOyunuBaslat', '🌪️', 'Hız Fırtınası', '#7dd3fc,#0ea5e9'], ['asmacaOyunuBaslat', '🔤', 'Harf Avı', '#fdba74,#f97316'], ['kelimebulOyunuBaslat', '🔐', 'Şifre Kırıcı', '#86efac,#16a34a']]
-    .forEach(([ad, ikon, isim, r]) => sar(ad, () => ({ ikon, ad: isim, renk: `linear-gradient(145deg,${r})`, cip: OYUN_CIP() })));
-  sar('', () => ({ ikon: '🎧', ad: 'Dikte (Dinle-Yaz)', renk: 'linear-gradient(145deg,#38bdf8,#6d28d9)', cip: OYUN_CIP() }));
-  sar('cumleAc', () => ({ ikon: '🧱', ad: 'Cümle Kur', renk: 'linear-gradient(145deg,#f472b6,#9333ea)', cip: OYUN_CIP() }));
+  /* Oyunlar yeni ortak giriş panelinden doğrudan başlar; ikinci onay kartı açılmaz. */
   sar('dcKonuAc', a => ({ ikon: '📘', ad: 'Konuyu çalış', renk: 'linear-gradient(145deg,#93c5fd,#2563eb)', cip: ['📖 Konu anlatımı ve örnekler', '📝 Sonunda kısa test', '🏁 Testi geçersen: +30 XP · +2 ⚡ · +2 🪙', '⚡ Enerji harcamaz'] }));
 
   /* ===== 5) Şifre Kırıcı düellosu doğru oyunu açsın ===== */
@@ -21778,7 +21774,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
       ['#tab-sanaozel [onclick="seviyeTestAc()"]', "📋 Seviye Tespit", "20 soruluk sınav A1, A2, B1 ya da B2 seviyeni bulur. Günde bir kez +3 ⚡ ve +50 XP'ye kadar bonus kazandırır."]
     ],
     'tab-aktiviteler': [
-      [null, "🎮 Oyun zamanı!", "Burada 11 oyun var. Hepsi 8 sorudur, girişte 3 ⚡ gider ve oyunun ortasında enerji düşmez. Her oyunda en fazla 1000 puan alınır; 800 puan ⭐⭐⭐, 500 puan ⭐⭐ getirir. Ödül yıldıza göre: ⭐⭐⭐ 10 🪙 + 50 XP. Günün ilk 3 oyunu çift ödül!"],
+      [null, "🎮 Oyun zamanı!", "Burada 11 oyun var. Hepsi 8 sorudur, girişte 3 ⚡ gider ve oyunun ortasında enerji düşmez. Doğru ve seri puanlarına hız bonusu eklenir; yanlışlar puanı ve o tur kazanılacak XP’yi azaltır. Puan 1000’de kesilmez. Ödül yıldıza göre: ⭐⭐⭐ 10 🪙 + 50 XP. Günün ilk 3 oyunu çift ödül!"],
       ['#tab-aktiviteler [onclick="kelimeYarismasiAc()"]', "🔬 Kelime Laboratuvarı", "Kelimeyi gör ve dinle, iki şıktan doğru anlamını seç. İlk denemede doğru her soru 100 puan."],
       ['#tab-aktiviteler [onclick="jpOyunAc()"]', "🎈 Risk Balonları", "Bir balon seç, sonra zorluğu seç: kolay 50, orta 75, zor 100 puan. Cesur ol ama dikkatli!"],
       ['#tab-aktiviteler [onclick="boslukOyunAc()"]', "✏️ Eksik Harf", "Kelimelerin eksik harflerini tamamla, sonra hepsini birden kontrol et."],
@@ -24090,14 +24086,15 @@ document.addEventListener('keydown', e => {
 .oc-sekme.aktif{background:#7c3aed;border-color:#7c3aed;color:#fff}
 .oc-bilgi{font-size:10px;font-weight:700;color:#94a3b8;margin:0 0 4px}
 </style>
+<script src="score-rules.js?v=1"></script>
 <script>
 window.OC = (function () {
   const SORU = 8, TAM = 100, YARIM = 50;
   const SERI_BONUS = { 3: 50, 5: 50, 8: 100 };          /* en fazla 200 → en yüksek puan 1000 */
   const KAYIT_OYUN = { kelimeLiderlikKaydet: 'ky', jeopardyLiderlikKaydet: 'jp', boslukLiderlikKaydet: 'bosluk',
     hafizaLiderlikKaydet: 'hafiza', yagmurLiderlikKaydet: 'yagmur', asmacaLiderlikKaydet: 'asmaca',
-    kelimebulLiderlikKaydet: 'kelimebul', eslestirmeLiderlikKaydet: 'eslestirme', trenLiderlikKaydet: 'tren' };
-  const GETIR_ADIL = /^(kelime|jeopardy|bosluk|hafiza|yagmur|asmaca|kelimebul|eslestirme|tren)LiderlikTumunuGetir$/;
+    kelimebulLiderlikKaydet: 'kelimebul', eslestirmeLiderlikKaydet: 'eslestirme', trenLiderlikKaydet: 'tren', harfBahcesiLiderlikKaydet: 'harfbahcesi', konusmaLiderlikKaydet: 'kp' };
+  const GETIR_ADIL = /^(kelime|jeopardy|bosluk|hafiza|yagmur|asmaca|kelimebul|eslestirme|tren|harfBahcesi|konusma)LiderlikTumunuGetir$/;
   let d = null;                     /* aktif oyun durumu */
   const sonuclar = {};              /* oyunKey → dondurulmuş sonuç */
   let donem = 'hafta';
@@ -24153,12 +24150,12 @@ window.OC = (function () {
 
   /* ---------- puanlama ---------- */
   function basla(oyun) {
-    d = { oyun, puan: 0, dogru: 0, yanlis: 0, seri: 0, enSeri: 0, verilenBonus: {}, bas: Date.now(), odulCarpan: 1, bitti: false };
+    d = { oyun, runId: oyun + '_' + Date.now() + '_' + Math.random().toString(36).slice(2), temelPuan: 0, puan: 0, dogru: 0, yanlis: 0, seri: 0, enSeri: 0, verilenBonus: {}, bas: Date.now(), odulCarpan: 1, bitti: false };
     delete sonuclar[oyun];
   }
   /* oran: 1 = ilk denemede doğru (100), 0.5 = ikinci denemede (50), 0 = bulundu ama puansız */
   function dogru(oran, ilkDeneme) {
-    if (!d) return 0;
+    if (!d || d.bitti) return 0;
     if (oran === undefined || oran === true) oran = 1;
     if (oran === false) oran = 1;
     if (ilkDeneme === undefined) ilkDeneme = oran >= 1;
@@ -24170,17 +24167,18 @@ window.OC = (function () {
       if (b && !d.verilenBonus[d.seri]) { d.verilenBonus[d.seri] = 1; kazanc += b; }
     } else d.seri = 0;
     try { if (typeof jokerCiftCarpan === 'function' && jokerCiftCarpan() > 1) d.odulCarpan = 2; } catch (e) {}   /* çift puan → ödül ×2, liderlik değişmez */
-    d.puan = Math.min(1000, d.puan + kazanc);
+    d.temelPuan += kazanc; d.puan = puan();
     return kazanc;
   }
-  function yanlis(korundu) { if (!d) return; d.yanlis++; if (!korundu) d.seri = 0; }
-  function hataSay() { if (d) d.yanlis++; }
-  function puan() { return d ? d.puan : 0; }
-  function sure() { return d ? Math.max(0, Math.round((Date.now() - d.bas) / 1000)) : 0; }
+  function yanlis(korundu) { if (!d || d.bitti) return; if (!korundu) { d.yanlis++; d.seri = 0; } d.puan = puan(); }
+  function hataSay() { yanlis(false); }
+  function hesapla() { return DijiScoreRules.calculate({base:d.temelPuan, correct:d.dogru, wrong:d.yanlis, seconds:sure()}); }
+  function puan() { return d ? (d.bitti ? d.puan : hesapla().puan) : 0; }
+  function sure() { return d ? (d.bitti ? d.sure : Math.max(0, Math.round((Date.now() - d.bas) / 10) / 100)) : 0; }
   function yildiz(p) { return p >= 800 ? 3 : p >= 500 ? 2 : 1; }
   function sonlandir(oyun) {
     if (!d || d.oyun !== oyun) return sonuclar[oyun] || null;
-    if (!d.bitti) { d.bitti = true; d.sure = sure(); sonuclar[oyun] = { puan: d.puan, dogru: d.dogru, yanlis: d.yanlis, sure: d.sure, yildiz: yildiz(d.puan), enSeri: d.enSeri, odulCarpan: d.odulCarpan }; }
+    if (!d.bitti) { const s = hesapla(); d.sure = s.sure; d.puan = s.puan; d.bitti = true; sonuclar[oyun] = Object.assign(s, {runId:d.runId, enSeri:d.enSeri, odulCarpan:d.odulCarpan}); }
     return sonuclar[oyun];
   }
 
@@ -24191,9 +24189,11 @@ window.OC = (function () {
     window.genelSonucEkraniGoster = function (o) {
       if (o && o.oyunKey && d && d.oyun === o.oyunKey) {
         let s = sonlandir(o.oyunKey);
-        o = Object.assign({}, o, { puan: s.puan, dogru: s.dogru, yanlis: s.yanlis, sureSaniye: s.sure, yildiz: s.yildiz, odulCarpan: s.odulCarpan });
+        Object.assign(o, s, { sureSaniye: s.sure });
       }
-      return org.call(this, o);
+      const result=org.call(this, o);
+      if(o?.puanSurum===3){let detail=document.getElementById('dmScoreBreakdown');if(!detail){detail=document.createElement('p');detail.id='dmScoreBreakdown';detail.className='dm-score-breakdown';document.querySelector('#genelSonucOverlay .gso-istat')?.after(detail);}detail.textContent='Doğru + seri: '+o.temelPuan+' · Hız: +'+o.hizBonusu+' · Yanlış: −'+o.hataCezasi+' puan';}
+      return result;
     };
     window.genelSonucEkraniGoster._oc = true;
   }
@@ -24206,13 +24206,13 @@ window.OC = (function () {
         let b = JSON.parse(opt.body), oyun = KAYIT_OYUN[b.islem];
         let s = oyun ? (sonuclar[oyun] || (d && d.oyun === oyun ? sonlandir(oyun) : null)) : null;
         if (s) {
-          Object.assign(b, { puan: s.puan, dogru: s.dogru, yanlis: s.yanlis, suresaniye: s.sure, sure: s.sure + 's', puanSurum: 2 });
+          Object.assign(b, { puan: s.puan, dogru: s.dogru, yanlis: s.yanlis, suresaniye: s.sure, sure: s.sure + 's', puanTemel: s.temelPuan, puanSurum: 3 });
           opt = Object.assign({}, opt, { body: JSON.stringify(b) });
         }
       }
       let u = typeof url === 'string' ? url : '';
       let m = u.match(/[?&]islem=([A-Za-z]+LiderlikTumunuGetir)/);
-      if (m && GETIR_ADIL.test(m[1]) && u.indexOf('donem=') === -1) url = u + '&donem=' + donem;
+      if (m && GETIR_ADIL.test(m[1]) && u.indexOf('donem=') === -1) url = u + '&donem=' + donem + '&puanSurum=3';
     } catch (e) {}
     return orgFetch.call(this, url, opt);
   };
@@ -24229,7 +24229,7 @@ window.OC = (function () {
           bar = document.createElement('div'); bar.id = id; bar.className = 'oc-sekmeler';
           bar.innerHTML = '<button type="button" class="oc-sekme" data-d="hafta">📅 Bu hafta</button><button type="button" class="oc-sekme" data-d="tum">🏛️ Tüm zamanlar</button>';
           let not = document.createElement('div'); not.className = 'oc-bilgi'; not.id = konteynerId + '_ocNot';
-          not.innerText = 'Eşit puanda daha kısa sürede bitiren önde. Herkesin en iyi skoru.';
+          not.innerText = 'Hız bonusu puana dahildir; yanlışlar puan ve tur XP’sini azaltır. Yeni sistemde herkesin en iyi skoru.';
           kutu.parentNode.insertBefore(bar, kutu); kutu.parentNode.insertBefore(not, kutu);
           bar.querySelectorAll('.oc-sekme').forEach(b => b.onclick = () => { donem = b.dataset.d; sarili.apply(null, bar._args); });
         }
@@ -24263,6 +24263,7 @@ window.OC = (function () {
 </style>
 <script>
 (function () {
+  const rewardedRuns = new Set();
   const ODUL = { 1: [4, 20], 2: [7, 35], 3: [10, 50] };   /* yıldız → [altın, XP] */
   const sinifModu = () => typeof siniftaOynananOgrenci !== 'undefined' && !!siniftaOynananOgrenci;
   const ogrenci = () => (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher') ? aktifOgrenciAdi : '';
@@ -24289,16 +24290,20 @@ window.OC = (function () {
   /* Oyun ödülü (9 adil oyun) */
   window.ocOdulVer = function (o) {
     if (sinifModu() || typeof yoHazirMi !== 'function' || !yoHazirMi()) return null;
+    const rewardKey = o.runId ? ogrenci() + ':' + o.runId : '';
+    if (rewardKey && rewardedRuns.has(rewardKey)) return null;
+    if (rewardKey) rewardedRuns.add(rewardKey);
     let y = o.yildiz || (window.OC ? OC.yildiz(o.puan || 0) : 1);
     let [al, xp] = ODUL[y] || ODUL[1];
     let bugun = typeof yoBugun === 'function' ? yoBugun() : new Date().toISOString().slice(0, 10);
     if (!yo.oyunGun || yo.oyunGun.t !== bugun) yo.oyunGun = { t: bugun, n: 0 };
     yo.oyunGun.n++;
     let n = yo.oyunGun.n, carpan = n <= 3 ? 2 : n > 12 ? 0.5 : 1, notlar = [];
+    if (o.puanSurum === 3) { xp = o.xp; notlar.push('Hız +' + o.hizBonusu + ' · Hata −' + o.hataCezasi + ' puan · Yanlış başına −3 XP'); }
     if (n <= 3) notlar.push(`Günün ${n}. oyunu ×2`);
     if (n > 12) notlar.push('12 oyunu geçtin, ödül yarıya indi · biraz mola? 🌿');
     if (o.odulCarpan > 1) { carpan *= 2; notlar.push('✨ Çift Puan jokeri ×2'); }
-    al = Math.max(1, Math.round(al * carpan)); xp = Math.max(5, Math.round(xp * carpan));
+    al = Math.max(1, Math.round(al * carpan)); xp = Math.max(0, Math.round(xp * carpan));
     yoXpEkle(xp, al);
     setTimeout(() => odulSeridi(y, al, xp, notlar.join(' · ')), 350);
     return { al, xp };
@@ -24448,7 +24453,7 @@ window.ocEnerjiHarca = async function (n) {
     let kap = document.querySelector('#jpOyunOverlay .game-modal-content') || document.body;
     if (getComputedStyle(kap).position === 'static') kap.style.position = 'relative';
     let p = document.createElement('div'); p.className = 'rb-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Zorluk seç');
-    p.innerHTML = `<div class="rb-kart"><h4>🎈 Ne kadar risk alıyorsun?</h4><p>Zor soru daha çok puan getirir. Yanlış cevap 0 puan.</p>
+    p.innerHTML = `<div class="rb-kart"><h4>🎈 Ne kadar risk alıyorsun?</h4><p>Zor soru daha çok puan getirir. Yanlış cevap −40 puan ve tur ödülünden −3 XP.</p>
       ${Object.keys(Z).map(k => `<button type="button" class="rb-sec" data-z="${k}" style="background:${Z[k].renk}"><span><b>${Z[k].ad}</b><small>${Z[k].alt}</small></span><span class="rb-p">${Z[k].oran * 100}</span></button>`).join('')}</div>`;
     kap.appendChild(p);
     p.querySelectorAll('.rb-sec').forEach(b => b.onclick = () => { p.remove(); sonra(b.dataset.z); });
@@ -30844,7 +30849,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
-<script src="activity-ui.js?v=5"></script>
+<script src="activity-ui.js?v=6"></script>
 <link rel="stylesheet" href="bottom-nav.css?v=1">
 <script src="bottom-nav.js?v=1"></script>
 
@@ -30855,7 +30860,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=2"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
-<script src="harf-bahcesi.js?v=1"></script>
+<script src="harf-bahcesi.js?v=2"></script>
+<link rel="stylesheet" href="game-experience.css?v=1">
+<script src="game-experience.js?v=1"></script>
 </body>      
         </html>
 
