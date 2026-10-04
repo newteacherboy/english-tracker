@@ -54,4 +54,33 @@ body.dm-parkur-open .bz-alt-kart .bz-btn:disabled{background:#dfe9ed;color:#7d90
 @keyframes dm-step-glow{50%{box-shadow:0 0 0 8px #c4f0f260,0 3px 0 #078696;}}
 @media(max-width:380px){.dm-parkur-title-row h1{font-size:20px}.dm-parkur-wallet button{font-size:10px;padding:6px}.dm-parkur-welcome{gap:10px;padding:4px 10px;min-height:88px}.dm-parkur-welcome img{width:70px;height:86px}.dm-parkur-welcome b{font-size:17px}.dm-parkur-welcome p{font-size:11px}.dm-parkur-tabs{gap:5px}.dm-parkur-tabs button{font-size:10px;gap:3px}.dm-icon{width:18px;height:18px}.dm-start-card{width:116px}}
 @media(max-height:650px){.dm-parkur-welcome{min-height:70px}.dm-parkur-welcome img{height:70px;width:64px}.dm-parkur-brand{margin-bottom:3px}.dm-parkur-title-row{margin-bottom:6px}}
-@media(prefers-reduced-motion:reduce){body.dm-parkur-open #bzParkur .bz-tas.sonraki{animation:none}}
+@media(prefers-reduced-motion:reduce){body.dm-parkur-open #bzParkur .bz-tas.sonraki{animation:none}}/* Papi's learning destinations and clearly labelled map actions. */
+.dm-palace{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:min(260px,90%);z-index:1;text-align:center;color:#194f59;pointer-events:none;font-family:Nunito,system-ui,sans-serif}
+.dm-palace svg{display:block;width:100%;height:166px;filter:drop-shadow(0 7px 5px #265c6425)}
+.dm-palace strong{display:block;width:max-content;max-width:100%;margin:2px auto 0;padding:5px 18px;background:#fff3c7;border:2px solid #e9cf82;border-radius:18px;font:700 20px Fredoka,system-ui,sans-serif;box-shadow:0 3px 0 #d7b96b}
+.dm-palace small{display:block;margin:6px auto;font-size:11px;font-weight:900;color:#174e58}
+body.dm-parkur-open .dm-map-controls{gap:8px;padding:8px 0 16px}
+body.dm-parkur-open .dm-map-controls .bz-ust-btn{min-height:44px;background:#fff;color:#165563;border:2px solid #65b8bd;border-radius:15px;padding:10px 13px;font-size:13px;font-weight:900;box-shadow:0 3px 0 #94d0ca;cursor:pointer}
+body.dm-parkur-open .dm-map-controls .bz-ust-btn:first-child{background:#087f8c;color:#fff;border-color:#087f8c;box-shadow:0 3px 0 #065e6b}
+body.dm-parkur-gates #tab-dunya,body.dm-parkur-gates #bzParkur{background:#f2fbfc!important;color:#194e59}
+body.dm-parkur-gates #bzParkur>.bz-ic{max-width:600px;padding:0 14px calc(105px + env(safe-area-inset-bottom,0px));margin:auto;font-family:Nunito,system-ui,sans-serif}
+body.dm-parkur-gates #pkSekmeler,body.dm-parkur-gates #ybEnerji,body.dm-parkur-gates #ybArac{display:none!important}
+.dm-gates-back{display:block;margin:14px 0;padding:11px 15px;border:2px solid #a9d5d0;border-radius:14px;color:#195f69;background:#fff;font:900 13px Nunito,system-ui;cursor:pointer}
+body.dm-parkur-gates .bz-afis{width:100%;box-sizing:border-box;background:#e2f5f2;border:2px solid #8fcbbd;border-radius:20px;box-shadow:0 4px 0 #c6e5db;padding:15px 10px;margin:10px 0 18px}
+body.dm-parkur-gates .bz-afis b{color:#174f5d;text-shadow:none;font:700 23px Fredoka,system-ui}
+body.dm-parkur-gates .bz-afis small{display:block;margin-top:5px;color:#356972;font-size:12px}
+body.dm-parkur-gates .bz-koridor{padding:0;background:none;border:0;box-shadow:none}
+body.dm-parkur-gates .bz-kapilar{gap:16px 12px}
+body.dm-parkur-gates .bz-kapi{min-height:205px;padding:20px 9px 16px;border:3px solid #fff;border-radius:60px 60px 22px 22px;color:#194e59;background:linear-gradient(160deg,#effcf5,#bde8d4)!important;box-shadow:0 5px 0 #8dc5b0,0 7px 18px #276c6615;opacity:1;filter:none}
+body.dm-parkur-gates .bz-kapi:nth-child(2){background:linear-gradient(160deg,#f0faff,#c9eaf6)!important;box-shadow:0 5px 0 #a4cadc}
+body.dm-parkur-gates .bz-kapi:nth-child(3){background:linear-gradient(160deg,#faf2ff,#e5d4f6)!important;box-shadow:0 5px 0 #c2a7de}
+body.dm-parkur-gates .bz-kapi:nth-child(4){background:linear-gradient(160deg,#fffbeb,#f8e4ac)!important;box-shadow:0 5px 0 #d9bd77}
+body.dm-parkur-gates .bz-kapi .no{display:grid;place-items:center;margin:0 auto 12px;width:42px;height:42px;border:2px solid #ffffff;background:#ffffffa8;color:#175763;font-size:22px}
+body.dm-parkur-gates .bz-kapi b{display:block;font-size:17px;color:#194e59;line-height:1.25;text-shadow:none}
+body.dm-parkur-gates .bz-kapi small{display:block;margin-top:6px;font-size:12px;font-weight:900;color:#406977}
+body.dm-parkur-gates .bz-kapi .yil{display:block;padding:8px 5px;margin-top:12px;border-radius:14px;background:#ffffffce;color:#245767;font-size:11px;line-height:1.35}
+body.dm-parkur-gates .bz-kapi.kilit{opacity:1;filter:none}
+body.dm-parkur-gates .bz-kapi.kilit .no{color:#677d8b;background:#f6fafb}
+body.dm-parkur-gates .bz-kitap{background:#fff;border:2px solid #d9eae4;box-shadow:none;color:#365f6a;padding:14px;border-radius:20px;margin-top:22px;font-size:12px;line-height:1.6}
+body.dm-parkur-gates .bz-eski{display:block;margin:18px auto;color:#356976;font-size:12px}
+.dm-map-controls button:focus-visible,.dm-gates-back:focus-visible,body.dm-parkur-gates .bz-kapi:focus-visible{outline:3px solid #087e89;outline-offset:4px}

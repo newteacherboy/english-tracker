@@ -1,0 +1,10 @@
+.dm-account-overlay{position:fixed;inset:0;z-index:100000010;background:#183b4b85;backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+.dm-account-card{position:relative;width:100%;max-width:360px;max-height:85dvh;overflow:auto;padding:27px 22px;border:3px solid #d8eee4;border-radius:26px;background:#f7fcf9;color:#194f59;box-sizing:border-box;box-shadow:0 10px 0 #1b65532b;font-family:Nunito,system-ui,sans-serif}
+.dm-account-card h2{margin:0 35px 10px 0;font:700 23px Fredoka,system-ui}
+.dm-account-card p{font-size:13px;line-height:1.5;margin:0 0 18px;color:#486e75}
+.dm-account-close{position:absolute;right:13px;top:13px;width:34px;height:34px;border:1px solid #b4d5c7;border-radius:12px;background:white;color:#245b50;font-size:24px;cursor:pointer}
+.dm-account-password,.dm-account-privacy,.dm-account-delete{display:block;box-sizing:border-box;width:100%;padding:14px 10px;margin:10px 0;border:2px solid #c4e3d4;border-radius:15px;background:#e4f6ee;color:#245b50;text-align:center;text-decoration:none;font:900 14px Nunito,system-ui;cursor:pointer}
+.dm-account-delete{margin-top:24px;background:#fff5f4;color:#9b3440;border-color:#f0d1d0}
+.dm-account-card small{display:block;text-align:center;font-size:11px;line-height:1.5;color:#5b7279}
+.dm-account-card button:focus-visible,.dm-account-card a:focus-visible{outline:3px solid #168997;outline-offset:3px}
+.dm-account-card h2{color:#194f59!important;text-shadow:none!important}
