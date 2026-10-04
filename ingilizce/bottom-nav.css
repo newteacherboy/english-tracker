@@ -62,4 +62,4 @@
 .dc-fullscreen-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
 body.kk-acik .seviye-harita-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
 
-#bottomNavMobile [data-ekran=tab-profil] .dm-nav-art{background-image:url('papi-welcome-v2.png');background-size:contain;background-position:center!important}
+#bottomNavMobile [data-ekran=tab-profil] .dm-nav-art{background-image:url('papi-welcome-v2.png');background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important}
