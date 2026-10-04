@@ -31,3 +31,5 @@ test('cache upgrade removes only old English caches and preserves Coaching cache
 test('guest and email confirmation navigation preserve the main offline page',()=>{
  for(const name of ['misafir','hesap-dogrula']){const {listeners}=fixture();let intercepted=false;listeners.fetch({request:{method:'GET',url:'https://panel.ogretmencocuk.com/ingilizce/'+name+'.html',mode:'navigate'},respondWith:()=>{intercepted=true}});assert.equal(intercepted,false);}
 });
+
+test('guest query route never replaces the offline member home page',()=>{const {listeners}=fixture();let intercepted=false;listeners.fetch({request:{method:'GET',url:'https://panel.ogretmencocuk.com/ingilizce/?misafir=1',mode:'navigate'},respondWith:()=>intercepted=true});assert.equal(intercepted,false);});
