@@ -1,3 +1,4 @@
+import './score-rules.js';
 // =====================================================================
 // DİJİ-MEDU API — Supabase Edge Function (YAMALI SÜRÜM v3)
 // Yamalar "[YAMA n]" etiketiyle işaretlidir. İşlem adları ve cevap
@@ -344,6 +345,13 @@ const scoreRow = (r: any) => ({
   sure: String(r.detail || "").match(/\d+\s*s/)?.[0] || (r.duration_seconds || 0) + "s",
   suresaniye: r.duration_seconds || 0, puan: Number(r.score || 0), tarih: r.played_on
 });
+
+function scoreV3(body:any, seconds:any) {
+  const correct=Number(body.dogru),wrong=Number(body.yanlis),base=Number(body.puanTemel),time=Number(seconds);
+  if (!Number.isInteger(correct)||correct<0||correct>32||!Number.isInteger(wrong)||wrong<0||wrong>10000||!Number.isFinite(base)||base<0||base>correct*200+200||!Number.isFinite(time)||time<0||(correct>0&&time<=0)) return null;
+  return (globalThis as any).DijiScoreRules.calculate({base,correct,wrong,seconds:time});
+}
+
 async function leaderboardSave(op: string, body: any, a: any) {
   const key = leaderboardKey[op];
   const name = String(body.isim || body.ogrenci || "");
@@ -355,15 +363,18 @@ async function leaderboardSave(op: string, body: any, a: any) {
     if (prior.error) return json({status:"error",message:"Kayıt doğrulanamadı."},500);
     if (prior.data?.length) return json({status:"success"});
   }
+  const v3 = Number(body.puanSurum)===3;
+  const scored=v3?scoreV3(body,body.suresaniye):null;
+  if(v3&&!scored)return json({status:"error",message:"Geçersiz süre veya puan verisi."},400);
   const v2 = Number(body.puanSurum) === 2 && ADIL_OYUNLAR.has(key);
-  const puan = Math.max(0, Math.min(v2 ? 1000 : 100000, num(body.puan)));
+  const puan = scored ? scored.puan : Math.max(0, Math.min(v2 ? 1000 : 100000, num(body.puan)));
   const row = {
     game_key: key, student_id: s?.id || null, student_name: s?.username || temizMetin(name, 60),
     class_no: legacyClassNo(body.sinif) ?? s?.class_no ?? null, unit_no: legacyClassNo(body.unite),
     unit_name: temizMetin(body.unite, 80) || null, score: puan, correct_count: Math.max(0, num(body.dogru)),
-    wrong_count: Math.max(0, num(body.yanlis)), duration_seconds: Math.max(0, num(body.suresaniye)),
+    wrong_count: Math.max(0, num(body.yanlis)), duration_seconds: Math.max(0, Math.round(num(body.suresaniye))),
     detail: temizMetin(body.detay || body.sure, 200) || null, played_on: body.tarih || new Date().toISOString().slice(0, 10),
-    extra: { legacy_class: body.sinif || null, v: v2 ? 2 : 1, ...(key === "harfbahcesi" ? {run_id:body.runId} : {}) }
+    extra: { legacy_class: body.sinif || null, v: v3 ? 3 : v2 ? 2 : 1, ...(scored ? {base:scored.temelPuan,speed:scored.hizBonusu,penalty:scored.hataCezasi}:{}), ...(key === "harfbahcesi" ? {run_id:body.runId} : {}) }
   };
   const ins = await supabase.from("game_scores").insert(row);
   if (ins.error) return json({ status: "error", message: ins.error.message }, 500);
@@ -375,7 +386,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
 }
 // [v3.5] Adil puanlama: 9 oyun 1000'lik ölçekte. Sıralama: puan ↓, süre ↑, tarih ↑.
 // Her öğrencinin sadece en iyi skoru listelenir. donem=hafta → bu pazartesiden beri.
-const ADIL_OYUNLAR = new Set(["kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi"]);
+const ADIL_OYUNLAR = new Set(["kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi", "konusma"]);
 function haftaBasi() {
   const tr = new Date(Date.now() + 3 * 3600000);               // İstanbul saati
   const gun = (tr.getUTCDay() + 6) % 7;                         // pazartesi = 0
@@ -389,7 +400,7 @@ async function leaderboardGet(op: string, body: any, q: URLSearchParams) {
   const adil = ADIL_OYUNLAR.has(key);
   let query = supabase.from("game_scores").select("*").eq("game_key", key)
     .order("score", { ascending: false }).order("duration_seconds", { ascending: true }).order("played_on", { ascending: true }).limit(adil ? 1000 : 100);
-  if (adil) query = query.contains("extra", { v: 2 });
+  if (adil) query = query.contains("extra", { v: Number(val(body,q,"puanSurum"))===3 ? 3 : 2 });
   if (adil && donem === "hafta") query = query.gte("played_on", haftaBasi());
   const cn = legacyClassNo(cls);
   if (cn !== null && !/^Büyü/i.test(cls)) query = query.eq("class_no", cn);

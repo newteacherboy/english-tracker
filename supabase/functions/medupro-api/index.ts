@@ -1,3 +1,4 @@
+import './score-rules.js';
 import { releaseAPI } from './release-api.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 const keys=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")||"{}");
@@ -15,7 +16,7 @@ async function session(req:Request,body:any,q:URLSearchParams){
  if(!data||data.role!=="student"||!data.student_id||Date.parse(data.expires_at)<=Date.now())return null;
  const {data:s}=await supabase.from("students").select("id,status").eq("id",data.student_id).maybeSingle();if(s?.status!=="approved")return null;return data;
 }
-const DM_GAMES: Record<string,string> = {Kelime_Liderlik:'kelime',Jeopardy_Liderlik:'jeopardy',Bosluk_Tablosu:'bosluk',Hafiza_Liderlik:'hafiza',Yagmur_Liderlik:'yagmur',Asmaca_Liderlik:'asmaca',KelimeBul_Liderlik:'kelimebul',Konusma_Liderlik:'konusma',Eslesme_Liderlik:'eslestirme',Tren_Liderlik:'tren',Dikte_Liderlik:'dikte',Cumle_Liderlik:'cumle'};
+const DM_GAMES: Record<string,string> = {Kelime_Liderlik:'kelime',Jeopardy_Liderlik:'jeopardy',Bosluk_Tablosu:'bosluk',Hafiza_Liderlik:'hafiza',Yagmur_Liderlik:'yagmur',Asmaca_Liderlik:'asmaca',KelimeBul_Liderlik:'kelimebul',Konusma_Liderlik:'konusma',Eslesme_Liderlik:'eslestirme',Tren_Liderlik:'tren',Dikte_Liderlik:'dikte',Cumle_Liderlik:'cumle',HarfBahcesi_Liderlik:'harfbahcesi'};
 async function dmBlocked(a:string,b:string){const {data,error}=await supabase.rpc('dm_blocked',{a,b});if(error)throw error;return !!data;}
 async function dmPresence(op:string,body:any,a:any){
  const now=new Date(),actor=a.student_id;
@@ -43,6 +44,13 @@ async function dmGiftMerge(id:string,value:any){
  const {data,error}=await supabase.from('dm_accessory_gifts').select('item_id').eq('recipient_id',id);if(error)throw error;
  if(data?.length&&v.karakter){v.karakter.sahip=[...new Set([...(v.karakter.sahip||[]),...data.map(x=>'d:'+x.item_id)])];}return v;
 }
+
+function scoreV3(body:any, seconds:any) {
+  const correct=Number(body.dogru),wrong=Number(body.yanlis),base=Number(body.puanTemel),time=Number(seconds);
+  if (!Number.isInteger(correct)||correct<0||correct>32||!Number.isInteger(wrong)||wrong<0||wrong>10000||!Number.isFinite(base)||base<0||base>correct*200+200||!Number.isFinite(time)||time<0||(correct>0&&time<=0)) return null;
+  return (globalThis as any).DijiScoreRules.calculate({base,correct,wrong,seconds:time});
+}
+
 async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
  const social=new Set(['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','aksesuarKatalog','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim','duelloSonucKaydet']);
  if(!social.has(op))return null;
@@ -55,7 +63,9 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
  }
  if(op==='duelloSonucKaydet'){
   const game=String(val(body,q,'oyun'));if(!DM_GAMES[game])return json({ok:false,mesaj:'Geçersiz oyun.'},400);
-  const {data,error}=await supabase.rpc('dm_classic_result',{actor,game,score:Math.min(1000,Math.max(0,num(body.puan))),seconds:Math.max(0,num(body.sure))});if(error)return json({ok:false,mesaj:error.message},400);return json({ok:true,liste:data});
+  const scored=Number(body.puanSurum)===3?scoreV3(body,body.sure):null;
+  if(Number(body.puanSurum)===3&&!scored)return json({ok:false,mesaj:'Geçersiz süre veya puan verisi.'},400);
+  const {data,error}=await supabase.rpc(scored?'dm_classic_result_v3':'dm_classic_result',{actor,game,score:scored?scored.puan:Math.min(1000,Math.max(0,num(body.puan))),seconds:Math.max(0,num(body.sure))});if(error)return json({ok:false,mesaj:error.message},400);return json({ok:true,liste:data});
  }
  let target:any=null;
  if(['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur'].includes(op)){
