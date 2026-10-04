@@ -198,6 +198,13 @@
       "bytes": 2964474,
       "status": "ai-generated",
       "source": "Generated with OpenAI imagegen on 2026-10-04 from the user-approved Diji-Medu concept; original woodland and palace scene, no third-party source image."
+    },
+    {
+      "path": "ingilizce/papi-growth.webp",
+      "sha256": "15ba96355494bc1fd7a26e7790dfbce2b243cb2f6cbb7ca15f5158a647f9f8c0",
+      "bytes": 295028,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
     }
   ]
 }

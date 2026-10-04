@@ -1,4 +1,5 @@
 import './score-rules.js';
+import { progressionAPI } from './progression-api.ts';
 import { releaseAPI } from './release-api.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
 const keys=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")||"{}");
@@ -6,6 +7,7 @@ const supabase=createClient(Deno.env.get("SUPABASE_URL")!,keys.default);
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization,apikey,content-type,x-diji-token","Access-Control-Allow-Methods":"GET,POST,OPTIONS"};
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{...cors,"Content-Type":"application/json"}});
 const release=releaseAPI(supabase,json);
+const progression=progressionAPI(supabase,json);
 const num=(v:any)=>Number.isFinite(Number(v))?Number(v):0;
 const val=(body:any,q:URLSearchParams,key:string)=>body[key]??q.get(key)??"";
 async function studentByNameGenel(name:string){const n=String(name).trim().replace(/[\\%_]/g,m=>"\\"+m);const {data,error}=await supabase.from("students").select("id,username").eq("status","approved").ilike("username",n).limit(2);if(error)throw error;return data?.length===1?data[0]:null;}
@@ -89,6 +91,7 @@ Deno.serve(async(req:Request)=>{
  const q=new URL(req.url).searchParams;let body:any={};if(req.method!=="GET"){try{body=await req.json()}catch{return json({ok:false,mesaj:"Geçersiz istek."},400)}}
  const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  const op=String(val(body,q,"islem"));
+ const levelDeny=await progression.guard(op,body,q,a);if(levelDeny)return levelDeny;
  const denied=await release.guard(op,body,q,a);if(denied)return denied;
  if(['aktifDurum','takipDavetListesi'].includes(op))return await dmPresence(op,body,a);
  if(["duelloGonder","duelloYanit","duellolarim"].includes(op)){

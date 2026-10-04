@@ -6,6 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="progress-rules.js?v=2"></script>
+<script src="progression-catalog.js?v=1"></script>
 <script src="guest-platform.js?v=2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 
@@ -3865,8 +3866,6 @@ function raporlarimKapat() {
             let isim = document.getElementById('kyIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             if (kySecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
-            genelEnerjiHarca(-1);
-        
             let havuz = window.masterKelimeHavuzu || [];
             // Seçilen sınıf ve çoklu ünitelere ait kelimeleri filtrele
             let filtrelenmis = havuz.filter(k => Number(k.sinif) === Number(kyAktifSinif) && kySecilenUniteler.includes(Number(k.unite)));
@@ -3880,7 +3879,7 @@ function raporlarimKapat() {
             let hedefSoruSayisi = 10 + (Number(kyAktifSinif) - 1) * 5;
         
             // Kelimeleri karıştır ve yeni turda aynı kelimelerin gelmemesini sağla (Fisher-Yates Shuffle)
-            kySorularListesi = OC.kelimeSec('ky', filtrelenmis, OC.SORU); OC.basla('ky');
+            kySorularListesi = OC.kelimeSec('ky', filtrelenmis, OC.SORU); OC.basla('ky'); genelEnerjiHarca(-3);
         
                 kySoruIndex = 0;
             kyDogruSayisi = 0;
@@ -5764,7 +5763,7 @@ mesajlar.forEach(m => {
                     hafizaKartlar.sort(() => Math.random() - 0.5);
                                hafizaAcikIndexler = []; hafizaHamle = 0; hafizaEslesenSayi = 0; hafizaSure = 0; hafizaYanlisSayisi = 0; hafizaKombo = 0; hafizaKomboBonus = 0;
         
-                        genelEnerjiHarca(-1);
+                        genelEnerjiHarca(-3);
             document.getElementById('hafizaGirisEkrani').style.display = 'none';
             document.getElementById('hafizaOyunEkrani').style.display = 'block';
                         jokerTuruBaslat('hafiza', 'hafizaOyunEkrani');
@@ -5964,7 +5963,7 @@ mesajlar.forEach(m => {
 if (yagmurHavuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
 yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                         yagmurAktifIndex = 0; yagmurPuan = 0; yagmurDogru = 0; yagmurCan = 3; yagmurLevel = 1; yagmurBaslangic = Date.now(); yagmurKombo = 0;
-                        genelEnerjiHarca(-1);
+                        genelEnerjiHarca(-3);
             document.getElementById('yagmurGirisEkrani').style.display = 'none';
             document.getElementById('yagmurOyunEkrani').style.display = 'block';
                         jokerTuruBaslat('yagmur', 'yagmurOyunEkrani');
@@ -6143,7 +6142,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     asmacaKelimeler = OC.kelimeSec('asmaca', havuz, OC.SORU); OC.basla('asmaca');
                                asmacaAktifIndex = 0; asmacaPuan = 0; asmacaCan = 5; asmacaKombo = 0;
                            asmacaDogruSayi = 0; asmacaYanlisSayi = 0; asmacaBaslangic = Date.now();
-                        genelEnerjiHarca(-1);
+                        genelEnerjiHarca(-3);
             document.getElementById('asmacaGirisEkrani').style.display = 'none';
             document.getElementById('asmacaOyunEkrani').style.display = 'block';
                        jokerTuruBaslat('asmaca', 'asmacaOyunEkrani');
@@ -6294,7 +6293,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     kelimebulKelimeler = OC.kelimeSec('kelimebul', havuz, OC.SORU); OC.basla('kelimebul');
                               kelimebulAktifIndex = 0; kelimebulPuan = 0; kelimebulCan = 5; kelimebulKombo = 0;
                            kelimebulDogruSayi = 0; kelimebulYanlisSayi = 0; kelimebulBaslangic = Date.now();
-                        genelEnerjiHarca(-1);
+                        genelEnerjiHarca(-3);
             document.getElementById('kelimebulGirisEkrani').style.display = 'none';
             document.getElementById('kelimebulOyunEkrani').style.display = 'block';
                        jokerTuruBaslat('kelimebul', 'kelimebulOyunEkrani');
@@ -9928,7 +9927,6 @@ setTimeout(() => {
             let isim = document.getElementById('jpIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             if (jpSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
-            genelEnerjiHarca(-1);
             let havuz = window.masterKelimeHavuzu || [];
             let filtrelenmis = havuz.filter(k => Number(k.sinif) === Number(jpAktifSinif) && jpSecilenUniteler.includes(Number(k.unite)));
             
@@ -9937,7 +9935,7 @@ setTimeout(() => {
                 return;
             }
         
-            jpBalonlarListesi = OC.kelimeSec('jp', filtrelenmis, OC.SORU); OC.basla('jp');
+            jpBalonlarListesi = OC.kelimeSec('jp', filtrelenmis, OC.SORU); OC.basla('jp'); genelEnerjiHarca(-3);
         
                jpDogruSayisi = 0;
             jpYanlisSayisi = 0;
@@ -10310,7 +10308,7 @@ setTimeout(() => {
             }
         
             // Her seferinde tamamen rastgele (karışık) sıralayıp ilk 8 tanesini seçiyoruz
-            boslukAktifKelimeler = OC.kelimeSec('bosluk', uygunlar, OC.SORU); OC.basla('bosluk'); window.boslukIlkYanlis = null; genelEnerjiHarca(-1);
+            boslukAktifKelimeler = OC.kelimeSec('bosluk', uygunlar, OC.SORU); OC.basla('bosluk'); window.boslukIlkYanlis = null; genelEnerjiHarca(-3);
         
                boslukBaslangicZamani = Date.now();
             boslukGecenSaniye = 0;
@@ -11420,7 +11418,7 @@ function ozellikSecDoldur() {
                 alert("Bu seviye için henüz bir etkinlik eklenmemiş.");
                 return;
             }
-            genelEnerjiHarca(-1);
+            genelEnerjiHarca(-3);
         
             seviyeDisLinkAktifSinif = sinif;
             seviyeDisLinkAktifUnite = unite;
@@ -15943,12 +15941,14 @@ async function maCiz() {
         return;
     }
     if (maSekme === 'magaza' && !maProfilId) {
+        if(!window.dmProgression?.require('magaza')) return;
         ekran.innerHTML = '<div class="ma-gir" style="padding:14px 12px"><div id="maGomuluAlan"></div></div>';
         window.yoGomuluHedef = 'maGomuluAlan';
         if (typeof yoMagazaAc === 'function') yoMagazaAc();
         return;
     }
         if (maSekme === 'lig' && !maProfilId) {
+        if(!window.dmProgression?.require('lig')) return;
         if (!maTumListe.length) ekran.innerHTML = '<div class="ma-bos">Lig yükleniyor...</div>';
         await maTumGetir();
         if (no !== maCizNo) return;
@@ -15956,6 +15956,7 @@ async function maCiz() {
         return;
     }
     if (maSekme === 'akis' && !maProfilId) {
+        if(!window.dmProgression?.require('akis')) return;
         ekran.innerHTML = `<div class="ma-gir">${maAkisHtml()}</div>`;
         maAkisYukle().then(() => {
             if (no !== maCizNo) return;
@@ -16262,20 +16263,16 @@ function maKesfetListe() {
 function maLigHtml() {
     let { liste } = maLigSiralama();
     let ben = liste.find(x => x.benMi);
-    let secili = maLigSekme || (ben ? ben.kod : 'sampiyon');
+    let secili = maLigSekme || (ben ? ben.kod : 'yerel');
+    const studentLevel=window.dmProgression?.level()||1;if(studentLevel<({sampiyon:15,super:10,yerel:5}[secili]))secili='yerel';
     let ozet = '';
     if (ben) {
-        let L = MA_LIGLER[ben.kod], esik = ben.kod === 'super' ? liste[9] : ben.kod === 'yerel' ? liste[29] : null, hedef;
-        if (esik) {
-            let fark = Math.max(0, esik.xp - ben.xp + 1);
-            let H = MA_LIGLER[ben.kod === 'super' ? 'sampiyon' : 'super'];
-            hedef = `${H.ikon} ${H.yon} yükselmek için bu hafta <b>${fark} XP</b> daha kazanmalısın`;
-        } else hedef = '👑 En üst ligdesin, yerini koru!';
+        let L=MA_LIGLER[ben.kod], hedef=ben.kod==='sampiyon'?'👑 Şampiyonlar Ligi’nde yerini koru!':ben.kod==='super'?'Şampiyonlar Ligi: 15. seviye ve bu hafta en az 1800 yarışma XP’si':'Süper Lig: 10. seviye ve bu hafta en az 750 yarışma XP’si';
         ozet = `<div class="ml-ben" style="--lg:${L.grad}"><div class="ml-ben-ikon">${L.ikon}</div><div><small>${L.de}</small><b>${ben.sira}. sıra</b><span>Bu hafta: ${ben.xp} XP</span></div></div><div class="ml-hedef">${hedef}</div>`;
     }
     let sekmeler = ['sampiyon', 'super', 'yerel'].map(k => {
         let L = MA_LIGLER[k], n = liste.filter(x => x.kod === k).length;
-        return `<button class="${k === secili ? 'aktif' : ''}" style="--lg:${L.grad}" onclick="maLigSekme='${k}'; maCiz()">${L.ikon} ${L.kisa}<small>${n} kişi</small></button>`;
+        return `<button data-dm-league-level="${{sampiyon:15,super:10,yerel:5}[k]}" class="${k === secili ? 'aktif' : ''}" style="--lg:${L.grad}" onclick="maLigSekme='${k}'; maCiz()">${L.ikon} ${L.kisa}<small>${n} kişi</small></button>`;
     }).join('');
     let madalya = ['🥇', '🥈', '🥉'];
     let satirlar = liste.filter(x => x.kod === secili).slice(0, 120).map(x =>
@@ -16286,7 +16283,7 @@ function maLigHtml() {
           <span class="ml-puan">${x.xp} <small style="font-size:11px">XP</small></span></div>`).join('');
     return `<div class="bolum">${ozet}<div class="ml-sekme">${sekmeler}</div>
       <div class="ml-liste">${satirlar || '<div class="ma-bos">Bu ligde henüz kimse yok.</div>'}</div>
-      <div class="ml-kural">Ligler bu haftaki XP'ye göre belirlenir: ilk 10 öğrenci 🏆 Şampiyonlar Ligi, 11–30. sıralar ⭐ Süper Lig, diğerleri 🌱 Yerel Lig. XP'yi oyunlarda, derslerde ve etkinliklerde kazanırsın. Her hafta yeniden başlar.</div></div>`;
+      <div class="ml-kural">Yerel Lig 5. seviyede açılır. Süper Lig: 10. seviye + bu hafta 750 yarışma XP’si. Şampiyonlar Ligi: 15. seviye + bu hafta 1800 yarışma XP’si. Yarışma XP’sine joker ve günlük çarpanlar eklenmez. Her hafta katılım yeniden değerlendirilir; öğrenci seviyen kalıcıdır.</div></div>`;
 }
 function maVitrinHtml(id, benimMi) {
     let o = maBul(id), t = maTakip.has(id);
@@ -17165,9 +17162,10 @@ function avatarSVG(s, stil, px, cins) {
   }
   function cinsBagla(kap, sonra) {
     kap.querySelectorAll('.ka-cins').forEach(b => b.onclick = () => {
+      if(!window.dmProgression?.require('karakter')) return;
       let c = b.dataset.c;
-      let iade = eskiIade();
-      yo.karakter = { cins: c, s: Object.assign({}, VARSAYILAN[c]), sahip: [] };
+      let iade = 0; // Existing balances are preserved; selecting a gender is not a reward.
+      yo.karakter = { cins: c, s: Object.assign({}, VARSAYILAN[c],yo.karakter?.s||{}), sahip: [...(yo.karakter?.sahip||[])] };
       yoKaydet();
       window.yoAvatarUygula();
       if (typeof yoToast === 'function') yoToast(iade > 0 ? `🎉 Karakterin hazır! Hoş geldin hediyesi: +${iade} altın 🪙` : '🎉 Karakterin hazır! Altınlarınla süsleyebilirsin.');
@@ -17210,14 +17208,16 @@ function avatarSVG(s, stil, px, cins) {
   }
   function buyukPop() { let b = document.getElementById('kaBuyuk'); if (b) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); } }
   function urunTikla(id) {
+    const u=KATALOG[kaKat].liste.find(x=>x.id===id);if(!window.dmProgression?.itemAllowed({kat:kaKat,sv:u?.dmTier||'temel'}))return;
     if (sahipMi(kaKat, id)) {
       kaDeneme = null; yo.karakter.s[kaKat] = id; yoKaydet(); window.yoAvatarUygula(); atolyeCiz(); buyukPop();
       return;
     }
     kaDeneme = { kat: kaKat, id }; atolyeCiz();
   }
-  function satinAl() {
+  async function satinAl() {
     if (!kaDeneme) return;
+    try { await window.dmProgression.sync(); const r=await fetch(apiURL,{method:"POST",body:JSON.stringify({islem:"seviyeUrunAl",ogrenci:aktifOgrenciAdi,item:"a|"+kaDeneme.kat+"|"+kaDeneme.id})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||"Satın alma tamamlanamadı");Object.assign(yo,d.yo);kaDeneme=null;window.yoAvatarUygula();atolyeCiz();buyukPop();return; }catch(e){yoToast(e.message);return;}
     let u = KATALOG[kaDeneme.kat].liste.find(x => x.id === kaDeneme.id);
     if ((yo.altin || 0) < u.f) { if (typeof yoToast === 'function') yoToast(`Bunun için ${u.f - (yo.altin || 0)} altın daha lazım 🪙`); return; }
     patlat(document.getElementById('kaAl'), ['🎉', '✨', '🪙', '⭐'], 16);
@@ -18112,7 +18112,7 @@ if (typeof orgXp === 'function') {
     let p = document.createElement('div');
     p.className = 'bs-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', meta.ad);
     let cipler = [`⭐ Her doğru +10 XP`, `🪙 Her doğru +1${carpanYazi()}`, `🔥 4'lü kombo +5 🪙`].concat(meta.ekstra || []);
-    if (meta.enerji !== false) cipler.push(`⚡ Giriş: 1 enerji${enerji !== undefined ? ` (sende ${enerji})` : ''}`);
+    if (meta.enerji !== false) cipler.push(`⚡ Giriş: 3 enerji${enerji !== undefined ? ` (sende ${enerji})` : ''}`);
     p.innerHTML = `<div class="bs-kart" style="--r:${meta.renk}"><div class="bs-ust"><div class="bs-ikon">${meta.ikon}</div><div><b>${meta.ad}</b><small>${meta.alt || 'Hazır mısın? Kazanacakların:'}</small></div></div>
       <div class="bs-oduller">${cipler.map((c, i) => `<span style="--g:${0.05 + i * 0.06}s">${c}</span>`).join('')}</div>
       <div class="bs-btnler"><button class="bs-vaz">Vazgeç</button><button class="bs-basla">▶ Başlat</button></div></div>`;
@@ -18680,6 +18680,7 @@ function odulUret(k, o) {
     if (!at || !al) return;
     at.style.display = mgSekme === 'atolye' ? '' : 'none';
     al.style.display = mgSekme === 'atolye' ? 'none' : '';
+    if (mgSekme === 'koleksiyon' && !window.dmProgression?.require('koleksiyon')) {mgSekme='atolye';return;}
     if (mgSekme === 'koleksiyon') al.innerHTML = koleksiyonHtml(), kolBagla(al);
     if (mgSekme === 'sandik') al.innerHTML = sandikOzetHtml();
   }
@@ -20494,7 +20495,7 @@ let adaRenk = adaRenkleri[
     p.querySelector('.ab-basla').onclick = () => { kapat(); devam(); };
     setTimeout(() => p.querySelector('.ab-basla').focus({ preventScroll: true }), 250);
   }
-  const OYUN_CIP = () => { let c = typeof seriCarpani === 'function' ? seriCarpani() : 1; return ['⭐ Her doğru +10 XP', `🪙 Her doğru +1${c > 1 ? ` (seri ${c}x)` : ''}`, "🔥 4'lü kombo +5 🪙", `⚡ Giriş: 1 enerji${window.genelEnerjiKalan !== undefined ? ` (sende ${window.genelEnerjiKalan})` : ''}`]; };
+  const OYUN_CIP = () => { let c = typeof seriCarpani === 'function' ? seriCarpani() : 1; return ['⭐ Her doğru +10 XP', `🪙 Her doğru +1${c > 1 ? ` (seri ${c}x)` : ''}`, "🔥 4'lü kombo +5 🪙", `⚡ Giriş: 3 enerji${window.genelEnerjiKalan !== undefined ? ` (sende ${window.genelEnerjiKalan})` : ''}`]; };
   function sar(ad, meta) {
     let org = window[ad]; if (typeof org !== 'function') return;
     let onay = false;
@@ -21067,7 +21068,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     bar.classList.add('jk4');
     if (!bar.querySelector('[data-jm]')) {
       let b = document.createElement('button'); b.dataset.jm = '1'; b.innerText = '🃏 Jokerler';
-      b.onclick = () => { jmAcik = true; bar.querySelectorAll('button').forEach(x => x.classList.toggle('aktif', x === b)); ['magazaAlan', 'bcMgAlan'].forEach(id => { if ($(id)) $(id).style.display = 'none'; }); jmCiz(); $('jmAlan').style.display = ''; };
+      b.onclick = () => { if(!window.dmProgression?.require('joker_magaza'))return; jmAcik = true; bar.querySelectorAll('button').forEach(x => x.classList.toggle('aktif', x === b)); ['magazaAlan', 'bcMgAlan'].forEach(id => { if ($(id)) $(id).style.display = 'none'; }); jmCiz(); $('jmAlan').style.display = ''; };
       bar.appendChild(b);
       bar.querySelectorAll('button:not([data-jm])').forEach(x => x.addEventListener('click', () => { jmAcik = false; if ($('jmAlan')) $('jmAlan').style.display = 'none'; }));
       if (jmAcik) b.click();
@@ -21102,6 +21103,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     return r;
   };
   function oyunIciMagaza(turler) {
+    if(!window.dmProgression?.require("joker_magaza"))return;
     let p = document.createElement('div'); p.className = 'jm-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Joker dükkânı');
     let ciz = () => { p.innerHTML = magazaHtml(turler) + ''; let k = p.querySelector('.jm-kutu'); k.insertAdjacentHTML('beforeend', '<button class="jm-al" style="width:100%;margin-top:12px;background:#f1e9ff;color:#7c3aed;box-shadow:none" id="jmKapat">Oyuna dön</button>'); bagla(p, () => { ciz(); if (typeof jokerBarCiz === 'function') jokerBarCiz(); }); p.querySelector('#jmKapat').onclick = () => p.remove(); };
     ciz(); document.body.appendChild(p);
@@ -23632,7 +23634,7 @@ function esOyunuBaslat() {
   for (let i = 0; i < secilen.length; i += ES_TUR_BOYU) esTurlar.push(secilen.slice(i, i + ES_TUR_BOYU));
   esTurNo = 0; esDogru = 0; esYanlis = 0; esSure = 0; esKombo = 0; esKomboBonus = 0; esCiftBonus = 0; esHatalilar = []; OC.basla('eslestirme');
 
-  if (typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-1);
+  if (typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-3);
   esEl('esGirisEkrani').style.display = 'none';
   esEl('esOyunEkrani').style.display = 'block';
   if (typeof jokerTuruBaslat === 'function') jokerTuruBaslat('eslestirme', 'esOyunEkrani');
@@ -23947,7 +23949,7 @@ async function trenOyunuBaslat() {
   trenKuyruk = secilen.map((s, i) => ({ ...s, id: i, tekrar: false }));
   trenToplam = trenKuyruk.length; trenBitti = 0; trenDogru = 0; trenYanlis = 0; trenSeri = 0; trenPuanD = 0; trenSureD = 0; trenHatalar = []; OC.basla('tren'); window.trenOcIkinci = false;
 
-  if (typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-1);
+  if (typeof genelEnerjiHarca === 'function') genelEnerjiHarca(-3);
   trEl('trenGirisEkrani').style.display = 'none';
   trEl('trenOyunEkrani').style.display = 'block';
   if (typeof jokerTuruBaslat === 'function') jokerTuruBaslat('tren', 'trenOyunEkrani');
@@ -24334,9 +24336,10 @@ window.OC = (function () {
     yo.oyunOdulKayit.push(o.runId); yo.oyunOdulKayit = yo.oyunOdulKayit.slice(-200);
     let bugun = typeof yoBugun === 'function' ? yoBugun() : new Date().toISOString().slice(0, 10);
     if (!yo.oyunGun || yo.oyunGun.t !== bugun) yo.oyunGun = { t: bugun, n: 0 };
-    const n = ++yo.oyunGun.n;
+    const isParkur=o.oyunKey==='ba';
+    const n = isParkur?yo.oyunGun.n:++yo.oyunGun.n;
     const level = DijiProgressRules.progress(DijiProgressRules.migrate(yo)).level;
-    const reward = DijiProgressRules.gameReward(o, { ordinal:n, level,
+    const reward = isParkur?{xp:o.parkurGecti?(o.parkurIlk?DijiProgressRules.parkurBaseXp(o.parkurYildiz):12):0,gold:0,bonus:1}:DijiProgressRules.gameReward(o, { ordinal:n, level,
       streak:typeof window.seriCarpani === 'function' ? window.seriCarpani() : 1,
       ...(window.dmGameBonusFlags?.() || {}) });
     const al = reward.gold, xp = reward.xp, y = o.yildiz || 1, notlar = [];
@@ -24405,7 +24408,7 @@ window.ocEnerjiHarca = async function (n) {
   let isim = (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi) || '';
   if (!isim || isim.toLowerCase() === 'teacher') return;
   try {
-    let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: isim, fark: -Math.abs(n), sebep: 'oyun' }) });
+    let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'enerjiDegistir', ogrenci: isim, fark: -Math.abs(n), sebep: window.OC?.aktif?.oyun==='ba'?'parkur':'oyun' }) });
     let d = await r.json();
     if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
     if (typeof genelEnerjiDegisimGoster === 'function') genelEnerjiDegisimGoster(-Math.abs(n));
@@ -24597,17 +24600,17 @@ window.ocEnerjiHarca = async function (n) {
 
   /* ---------- Ortak Ders Çalış ödülü (klasik test ve macera aynı kuralı kullanır) ---------- */
   window.dcOdulVer = function (konu) {
-    if (!yoVar()) return null;
+    if (!yoVar() || !window.dmProgression?.allowed('ders')) return null;
     yo.dcOdul = yo.dcOdul || []; yo.dcTekrar = yo.dcTekrar || {};
     let bugunK = typeof yoBugun === 'function' ? yoBugun() : new Date().toISOString().slice(0, 10);
     let ilk = !yo.dcOdul.includes(konu);
     if (!ilk && yo.dcTekrar[konu] === bugunK) return { tekrarBugun: true };
     let bilmiyordu = (yo.dcBilmiyor || []).includes(konu);
-    let xp = ilk ? (bilmiyordu ? 100 : 80) : 30, al = ilk ? (bilmiyordu ? 30 : 25) : 8, en = ilk ? 6 : 2;
-    if (ilk) { yo.dcOdul.push(konu); if (yo.dcOdul.length > 500) yo.dcOdul.shift(); }
+    let xp = ilk ? (bilmiyordu ? 100 : 80) : 30, al = ilk ? (bilmiyordu ? 30 : 25) : 8, en = 0;
+    if (ilk) { yo.dcOdul.push(konu); /* First-clear ledger is permanent. */ }
     else { Object.keys(yo.dcTekrar).forEach(x => { if (yo.dcTekrar[x] !== bugunK) delete yo.dcTekrar[x]; }); yo.dcTekrar[konu] = bugunK; }
     yoXpEkle(xp, al);
-    if (typeof enerjiKazan === 'function') enerjiKazan(en, 'ders');
+    /* Energy is awarded by the validated lesson result on the server. */
     return { ilk, bilmiyordu, xp, al, en };
   };
 
@@ -24909,9 +24912,9 @@ window.ocEnerjiHarca = async function (n) {
   const renkA = (c, k) => { try { return window.kaAcik(c, k); } catch (e) { return c; } };
 
   /* ================= FİYATLAR ================= */
-  const FIYAT = { temel: 300, ozel: 750, efsane: 1500 };
-  const KOMBIN_FIYAT = { ozel: 2000, efsane: 3500 };
-  const CIK_FIYAT = { temel: 150, ozel: 400, efsane: 900 };
+  const FIYAT = { temel: 850, ozel: 3000, efsane: 5500 };
+  const KOMBIN_FIYAT = { ozel: 9000, efsane: 13500 };
+  const CIK_FIYAT = { temel: 400, ozel: 3000, efsane: 5500 };
   const SANDIK = [
     { ad: 'Bronz Sandık', ikon: '🧰', f: 200, adet: 1, sans: [85, 15, 0], alt: '1 öğe · %85 temel, %15 özel', renk: '#fdf2e9' },
     { ad: 'Gümüş Sandık', ikon: '🗃️', f: 450, adet: 2, sans: [65, 30, 5], garanti: 'ozel', alt: '2 öğe · en az 1 özel · %5 efsane', renk: '#f1f5f9' },
@@ -24991,7 +24994,7 @@ window.ocEnerjiHarca = async function (n) {
   [['⭐', 'Yıldız', 'temel'], ['🌈', 'Gökkuşağı', 'temel'], ['🦜', 'Papi', 'temel'], ['📚', 'Kitap kurdu', 'temel'], ['🎧', 'Müzik', 'temel'],
    ['⚽', 'Futbol', 'temel'], ['🌸', 'Çiçek', 'temel'], ['🚀', 'Roket', 'ozel'], ['🧠', 'Beyin', 'ozel'], ['🏆', 'Kupa', 'ozel'], ['🦄', 'Unicorn', 'ozel'],
    ['🐉', 'Ejderha', 'efsane'], ['👑', 'Taç', 'efsane'], ['💎', 'Elmas', 'efsane'], ['🔥', 'Seri ateşi', 'efsane']].forEach(([e, ad, sv]) => OGE.push({ id: 'c:' + e, kat: 'cik', tip: 'cik', emoji: e, ad, sv }));
-  OGE.forEach(o => { o.f = o.kat === 'cik' ? CIK_FIYAT[o.sv] : o.kat === 'aks' && o.sv === 'temel' ? 150 : FIYAT[o.sv]; });
+  OGE.forEach(o => { o.f = DijiProgressionCatalog.price(o); });
   const OGE_ID = Object.fromEntries(OGE.map(o => [o.id, o]));
   const bul = (kat, tip, r, desen) => OGE.find(o => o.kat === kat && o.tip === tip && o.renk === R[r][0] && (!desen || o.desen === desen));
 
@@ -25144,12 +25147,12 @@ window.ocEnerjiHarca = async function (n) {
   function atolyeOgeleri(grup) {
     let K = KATALOG_(), cins = kk() ? kk().cins : 'k', out = [];
     (ATOLYE[grup] || []).forEach(kat => { let k = K[kat]; if (!k) return;
-      out.push({ baslik: `${k.ikon} ${k.ad}`, liste: k.liste.filter(x => !x.c || x.c === cins).map(x => ({ id: `a|${kat}|${x.id}`, atolye: true, kat, itemId: x.id, ad: x.ad, f: x.f || 0, sv: !x.f ? 'temel' : x.f <= 100 ? 'temel' : x.f <= 250 ? 'ozel' : 'efsane' })) }); });
+      out.push({ baslik: `${k.ikon} ${k.ad}`, liste: k.liste.filter(x => !x.c || x.c === cins).map(x => ({ id: `a|${kat}|${x.id}`, atolye: true, kat, itemId: x.id, ad: x.ad, f: x.f || 0, sv: x.dmTier || 'temel' })) }); });
     return out;
   }
   function ogeBul(id) {
     if (OGE_ID[id]) return OGE_ID[id];
-    if (String(id).startsWith('a|')) { let [, kat, itemId] = id.split('|'), k = KATALOG_()[kat], x = k && k.liste.find(y => y.id === itemId); if (x) return { id, atolye: true, kat, itemId, ad: x.ad, f: x.f || 0, sv: !x.f ? 'temel' : x.f <= 100 ? 'temel' : x.f <= 250 ? 'ozel' : 'efsane' }; }
+    if (String(id).startsWith('a|')) { let [, kat, itemId] = id.split('|'), k = KATALOG_()[kat], x = k && k.liste.find(y => y.id === itemId); if (x) return { id, atolye: true, kat, itemId, ad: x.ad, f: x.f || 0, sv: x.dmTier || 'temel' }; }
     return KOMBIN.find(x => x.id === id) || null;
   }
   const sahip = id => { let k = kk(); if (!k) return false; let o = ogeBul(id); if (o && o.atolye) return o.f === 0 || (k.sahip || []).includes(o.kat + ':' + o.itemId); return (k.sahip || []).includes('d:' + id); };
@@ -25181,7 +25184,7 @@ window.ocEnerjiHarca = async function (n) {
     return { f, not: notlar.join(' · ') };
   }
   function hosGeldinUygun() {
-    if (!yoVar()) return false;
+    return false;
     if (!yo.dolapIlkGun) { yo.dolapIlkGun = bugun(); if (typeof yoKaydet === 'function') yoKaydet(); }
     return (Date.parse(bugun()) - Date.parse(yo.dolapIlkGun)) / 86400000 <= 7 && !yo.dolapHosGeldin;
   }
@@ -25190,6 +25193,7 @@ window.ocEnerjiHarca = async function (n) {
   let D = null;
   function ac(hedef) {
     if (!yoVar()) { toast('Önce giriş yapmalısın.'); return; }
+    if(!window.dmProgression?.require('magaza')) return;
     if (!hedef) { if (typeof magazaAc === 'function') magazaAc(); return; }   /* tek yer: Mağaza */
     if (!kk()) { eskiAtolye && eskiAtolye(); return; }                          /* önce kız/erkek seçimi */
     if (!D || D.hedef !== hedef) D = { sekme: 'vitrin', deneme: Object.assign({}, kk().s), secili: null, hedef };
@@ -25226,6 +25230,7 @@ window.ocEnerjiHarca = async function (n) {
   }
   function ogeKart(o) {
     let kombinMi = !!o.parca, has = kombinMi ? o.parca.every(p => sahip(p.id)) : sahip(o.id), fh = fiyatHesapla(o, kombinMi);
+    if(!window.dmProgression?.itemAllowed(o,true)) return `<button type="button" class="dl-oge dm-level-locked" data-id="${kac(o.id)}"><span style="font-size:28px">🔒</span><span class="ad">Gizemli ürün</span><span class="fiyat">Seviye ${DijiProgressionCatalog.itemLevel(o)}</span></button>`;
     let giyili = !kombinMi && giyiliMi(o, D.deneme);
     let etiket = o.f === 0 ? 'Ücretsiz' : has ? '✓ Sende' : (fh.f < o.f ? `<s style="opacity:.6">${o.f}</s> ` : '') + fh.f + ' 🪙';
     return `<button type="button" class="dl-oge${D.secili && D.secili.id === o.id ? ' secili' : ''}${giyili ? ' giyili' : ''}" data-id="${kac(o.id)}" aria-label="${kac(o.ad)}${has || o.f === 0 ? ', sende var' : ', ' + fh.f + ' altın'}">
@@ -25241,18 +25246,26 @@ window.ocEnerjiHarca = async function (n) {
     const bolum = (baslik, liste) => (baslik ? `<div class="dl-alt-baslik">${baslik}</div>` : '') + liste.map(ogeKart).join('');
     if (S === 'vitrin') {
       let v = vitrinOgesi();
+      const l=window.dmProgression?.level()||1;
+      html += '<div class="dm-store-slots">'+[15,20,25,30,35,40].map((n,i)=>`<div class="dm-store-slot ${l>=n?'open':''}">${l>=n?'✨ Vitrin '+(i+1):'🔒 Gizemli vitrin · Sv. '+n}</div>`).join('')+'</div>';
+      html += bolum('🎨 Başlangıç koleksiyonu', OGE.filter(o=>DijiProgressionCatalog.itemLevel(o)===15));
       if (yo.profilKrk) html += `<div class="dl-kart"><span style="font-size:28px">🐉</span><span>Profilinde şu an koleksiyon karakterin görünüyor.<small>Giydirdiğin karakterin profilde görünsün mü?</small></span><button type="button" id="dlProfilBen">Kendi karakterim</button></div>`;
       if (hosGeldinUygun()) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)"><span style="font-size:34px">🎁</span><span><b>Hoş Geldin Paketi</b><small>Okul kombini · ilk haftana özel</small></span><button type="button" id="dlHosGeldin">120 🪙</button></div>`;
       if (v) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#f59e0b,#ec4899)"><span style="font-size:34px">🛍️</span><span><b>Günün Vitrini: ${kac(v.ad)}</b><small>Bugün %30 indirimli · yarın değişir</small></span><button type="button" data-id="${kac(v.id)}" class="dlVitrinBtn">Göz at</button></div>`;
       html += `<div class="dl-kart"><span style="font-size:28px">🧊</span><span>Seri dondurucu · elinde ${yo.dondurucu || 0}/2<small>Bir gün giremezsen serin bozulmaz</small></span><button type="button" id="dlDondurucu">Al</button></div>`;
-      html += `<div class="dl-not">Sahip olduğun bir şeye dokun: hemen giyilir. Almadığın şeyleri bedava dene, beğenirsen al. Her kategoride ilk alım %50 indirimli!</div>`;
-      html += bolum('🧥 Öne çıkan kombinler', KOMBIN.slice(0, 4));
+      html += `<div class="dl-not">Sahip olduğun bir şeye dokun: hemen giyilir. Almadığın şeyleri bedava dene, beğenirsen al. İlk alışverişin %25 indirimli. İndirimler birleşmez!</div>`;
+      let h=0;for(const c of bugun()+(typeof aktifOgrenciAdi!=='undefined'?aktifOgrenciAdi:''))h=(h*31+c.charCodeAt(0))>>>0;
+      html += bolum('🧥 Günün kombini', [KOMBIN[h%KOMBIN.length]]);
+      if(l>=20)html+=bolum('✨ İkinci vitrin · Temel giyim',OGE.filter(o=>['ust','dis'].includes(o.kat)&&o.sv==='temel').slice(0,4));
+      if(l>=25)html+=bolum('✨ Üçüncü vitrin · Orta koleksiyon',OGE.filter(o=>o.sv==='ozel'&&window.dmProgression.itemAllowed(o,true)).slice(0,4));
+      if(l>=30)html+=bolum('✨ Dördüncü vitrin · Pro koleksiyon',OGE.filter(o=>o.sv==='efsane'&&window.dmProgression.itemAllowed(o,true)).slice(0,4));
+      if(l>=35)html+=bolum('✨ Beşinci vitrin · Kombinler',KOMBIN.slice(0,4));
+      if(l>=40)html+=bolum('✨ Altıncı vitrin · Efsane görünüm',KOMBIN.filter(o=>o.sv==='efsane'));
     } else if (ATOLYE[S]) {
       if (S === 'sapka' && D.deneme.bas) html += `<div class="dl-not">🧕 Başörtüsü takılıyken şapka görünmez.</div>`;
       atolyeOgeleri(S).forEach(g => { html += bolum(g.baslik, g.liste); });
     } else if (S === 'kombin') html += `<div class="dl-not">Kombin, parçaları tek tek almaktan %25 ucuz. Baş (saç ya da başörtüsü) senin seçimin, kombine dahil değil.</div>` + KOMBIN.map(ogeKart).join('');
-    else if (S === 'sandik') html += `<div class="dl-not">Sandıktan ne çıkacağı yazıyor. Zaten sahip olduğun bir öğe çıkarsa değerinin yarısı altın olarak geri gelir.</div>` +
-      SANDIK.map((s, i) => `<button type="button" class="dl-oge dl-sandik" data-sandik="${i}" style="background:${s.renk}"><span style="font-size:34px">${s.ikon}</span><span class="ad">${s.ad}</span><span style="font-size:10.5px;font-weight:700;color:#64748b">${s.alt}</span><span class="fiyat">${s.f} 🪙</span></button>`).join('');
+    else if (S === 'sandik') html += '<div class="dl-not">Sandıklar parkur ilerlemenle kazanılır. Altın harcanmaz.</div><button class="dl-oge" data-sandik="0">🧰 Sandıklarımı gör</button>';
     else {
       if (S === 'bas') html += `<button type="button" class="dl-oge${!D.deneme.bas ? ' giyili' : ''}" data-cikar="bas"><span style="font-size:28px">💇</span><span class="ad">Başörtüsü yok · saçım görünsün</span><span class="fiyat sahip">Bedava</span></button><div class="dl-not">Saç modelini "💇 Saç" sekmesinden seçebilirsin. Başörtüsü takınca saç görünmez.</div>`;
       else if (['dis', 'aks', 'cik', 'tek'].includes(S)) html += `<button type="button" class="dl-oge" data-cikar="${S}"><span style="font-size:28px">🚫</span><span class="ad">Çıkar</span><span class="fiyat sahip">Bedava</span></button>`;
@@ -25272,6 +25285,7 @@ window.ocEnerjiHarca = async function (n) {
   }
   function sec(id) {
     let o = ogeBul(id); if (!o) return;
+    if(!window.dmProgression?.itemAllowed(o)) return;
     let kombinMi = !!o.parca, has = kombinMi ? o.parca.every(p => sahip(p.id)) : sahip(o.id);
     if (has) {                                       /* sahip olunan: hemen giy ve kaydet */
       (kombinMi ? o.parca : [o]).forEach(p => giy(D.deneme, p));
@@ -25291,18 +25305,14 @@ window.ocEnerjiHarca = async function (n) {
     E.innerHTML = `<span class="bilgi">${kac(o.ad)} · ${fh.f} 🪙<small>${fh.not || (kombinMi ? o.parca.length + ' parça birden' : 'Deniyorsun, beğenirsen al')}${yeter ? '' : ` · ${fh.f - (yo.altin || 0)} altın daha lazım`}</small></span><button type="button" id="dlEylemBtn" ${yeter ? '' : 'disabled'}>🛍️ Satın al</button>`;
     $('dlEylemBtn').onclick = () => satinAl(o, kombinMi);
   }
-  function satinAl(o, kombinMi) {
-    let fh = fiyatHesapla(o, kombinMi);
-    if ((yo.altin || 0) < fh.f) return toast('Yeterli altının yok 🪙');
-    yo.altin -= fh.f;
-    yo.dolapIlkIndirimKullanildi = true;
-    yo.dolapIlkAlim = yo.dolapIlkAlim || {}; yo.dolapIlkAlim[kombinMi ? 'kombin' : (o.atolye ? 'a-' + o.kat : o.kat)] = 1;
-    (kombinMi ? o.parca : [o]).forEach(p => { sahiplen(p.id); giy(D.deneme, p); });
-    D.secili = null;
-    kaydet(`🎉 ${o.ad} artık senin!`);
-    if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('dogru');
+  async function satinAl(o, kombinMi) {
+    if(!window.dmProgression?.itemAllowed(o)) return;
+    const btn=$('dlEylemBtn');if(btn)btn.disabled=true;
+    try { await window.dmProgression.sync(); const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeUrunAl',ogrenci:aktifOgrenciAdi,item:o.id})});const result=await r.json();if(!r.ok||!result.ok)throw Error(result.mesaj||'Satın alma tamamlanamadı');Object.assign(yo,result.yo);D.deneme=Object.assign({},kk().s);D.secili=null;window.yoAvatarUygula?.();window.dmProgression.refresh(true);ciz();toast(`🎉 ${o.ad} artık senin!`); }
+    catch(e){toast(e.message);if(btn)btn.disabled=false;}
   }
   function hosGeldinAl() {
+    return toast("🎨 Başlangıç ürünleri Vitrin’de. Kombinler 35. seviyede açılır.");
     if ((yo.altin || 0) < 120) return toast(`Hoş Geldin Paketi için ${120 - (yo.altin || 0)} altın daha lazım 🪙`);
     let k = KOMBIN[0]; yo.altin -= 120; yo.dolapHosGeldin = 1;
     k.parca.forEach(p => { sahiplen(p.id); giy(D.deneme, p); });
@@ -25316,6 +25326,7 @@ window.ocEnerjiHarca = async function (n) {
   }
   function svSec(sans) { let r = Math.random() * 100; return r < sans[0] ? 'temel' : r < sans[0] + sans[1] ? 'ozel' : 'efsane'; }
   function sandikSor(i) {
+    return window.dmProgression?.chests();
     let s = SANDIK[i];
     if ((yo.altin || 0) < s.f) return toast(`${s.ad} için ${s.f - (yo.altin || 0)} altın daha lazım 🪙`);
     let p = document.createElement('div'); p.className = 'dl-acilis'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
@@ -25326,6 +25337,7 @@ window.ocEnerjiHarca = async function (n) {
     setTimeout(() => $('dlSandikEvet') && $('dlSandikEvet').focus(), 50);
   }
   window.dolapSandikAc = function (i, bedava) {
+    return window.dmProgression?.chests();
     if (!yoVar() || !kk()) { toast('Önce karakterini seç! 🎨'); return; }
     let s = SANDIK[i];
     if (!bedava) { if ((yo.altin || 0) < s.f) return toast('Yeterli altının yok 🪙'); yo.altin -= s.f; }
@@ -25384,7 +25396,7 @@ window.ocEnerjiHarca = async function (n) {
     return html;
   };
   /* Atölye fiyatları yeni tabloya (bedava olanlar bedava kalır) ve koleksiyon karakter fiyatı */
-  try { Object.values(window.KA_KATALOG || {}).forEach(k => k.liste.forEach(u => { if (u.f > 0 && !u._eskiF) { u._eskiF = u.f; u.f = u.f <= 30 ? 300 : u.f <= 60 ? 750 : 1500; } })); } catch (e) {}
+  try { Object.values(window.KA_KATALOG || {}).forEach(k => k.liste.forEach(u => { if (u.f > 0 && !u._eskiF) { u._eskiF = u.f; u.dmTier=u.f<=30?'temel':u.f<=60?'ozel':'efsane';u.f=DijiProgressionCatalog.price({kat:Object.keys(window.KA_KATALOG).find(key=>window.KA_KATALOG[key]===k),sv:u.dmTier}); } })); } catch (e) {}
   window.krkFiyat = k => (Number(k && k.sv) || 0) >= 20 ? 2500 : 1200;
 })();
 </script>
@@ -25914,7 +25926,7 @@ window.ocEnerjiHarca = async function (n) {
 
  function gunGorevleri() {
 
-  if (!yoVar()) return null;
+  if (!yoVar() || !window.dmProgression?.allowed('gunluk_gorev')) return null;
 
   const b = bugun();
 
@@ -25945,15 +25957,16 @@ window.ocEnerjiHarca = async function (n) {
     );
 
     /* 3. görev: beceri veya zor kelime */
-    const cesit = GOREV_HAVUZ.filter(
+    let cesit = GOREV_HAVUZ.filter(
       g =>
         g &&
         (
-          String(g.olay || '').startsWith('beceri') ||
-          g.id === 'zk'
+          (String(g.olay || '').startsWith('beceri') && window.dmProgression?.allowed(({dinleme:'oyun_dikte',cumle:'oyun_tren',hiz:'oyun_yagmur',yazim:'oyun_bosluk'})[g.id] || 'aktiviteler')) ||
+          (g.id === 'zk' && window.dmProgression?.allowed('zor_kelimeler'))
         )
     );
 
+    if(!cesit.length) cesit=oyunG;
     const secim = [];
 
     /* Oyun görevi */
@@ -26203,7 +26216,7 @@ if (
 
 
     if (
-      haftaIlk &&
+      false && haftaIlk &&
       typeof dolapSandikAc === 'function'
     ) {
 
@@ -26460,6 +26473,7 @@ if (
 
   function hedefKontrol() {
 
+    if (!window.dmProgression?.allowed("haftalik_hedef")) return;
     if (
       !yoVar() ||
       !yo.haftaHedef ||
@@ -27352,6 +27366,7 @@ if (
 
         b.onclick = () => {
 
+          if(!window.dmProgression?.require('haftalik_hedef')) return;
           yo.haftaHedef = {
             h: haftaKodu(),
             xp: +b.dataset.h,
@@ -28764,7 +28779,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const toplamDurak = () => { duraklariKur(); return DURAK.reduce((t, l) => t + l.length, 0); };
   let tamam = new Set(), hamTamam = new Set(), aktarimYildiz = {}, yuklendi = false, aktarImza = -1;
   const bolumTamam = b => { let n = 0; for (let d = 0; d < durakSayisi(b); d++) if (tamam.has(durakNo(b, d))) n++; return n; };
-  const bolumAcik = b => b === 0 || bolumTamam(b - 1) >= durakSayisi(b - 1);
+  const bolumAcik = b => (!window.dmProgression || window.dmProgression.parkur(b)) && (b === 0 || bolumTamam(b - 1) >= durakSayisi(b - 1));
   const yildiz = no => (yoVar() && yo.baYildiz && yo.baYildiz[no]) || aktarimYildiz[no] || (tamam.has(no) ? 1 : 0);
   const bolumYildiz = b => { let t = 0; for (let d = 0; d < durakSayisi(b); d++) t += yildiz(durakNo(b, d)); return t; };
   const siradakiDurak = b => { for (let d = 0; d < durakSayisi(b); d++) if (!tamam.has(durakNo(b, d))) return d; return durakSayisi(b) - 1; };
@@ -28797,7 +28812,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     tamam.add(no); hamTamam.add(no);
     let anahtar = 'bz_bekleyen_' + isim().toLowerCase();
     fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'buyuSeviyeTamamla', ogrenci: isim(), seviyeNo: no }) })
-      .then(r => { if (!r.ok) throw 0; bekleyenSil(anahtar, no); })
+      .then(async r => { if (!r.ok) throw 0; const d = await r.json(); bekleyenSil(anahtar, no); if(d.yo && d.gold>0 && yoVar()) { yo.altin=(yo.altin||0)+d.gold; yo.dmRewardVersion=d.yo.dmRewardVersion; window.yoKaydet?.(); } if(d.gold>0) toast(`🎁 Parkur hediyesi: +${d.gold} altın`); window.dmProgression?.refresh(true); })
       .catch(() => { try { let l = JSON.parse(localStorage.getItem(anahtar) || '[]'); if (!l.includes(no)) l.push(no); localStorage.setItem(anahtar, JSON.stringify(l)); } catch (e) {} });
   }
   function bekleyenSil(anahtar, no) { try { let l = JSON.parse(localStorage.getItem(anahtar) || '[]').filter(x => x !== no); localStorage.setItem(anahtar, JSON.stringify(l)); } catch (e) {} }
@@ -28829,7 +28844,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (!perde) { perde = document.createElement('div'); perde.className = 'bz-perde'; perde.id = 'bzPerde'; perde.setAttribute('role', 'dialog'); perde.setAttribute('aria-modal', 'true'); perde.setAttribute('aria-label', 'Büyü Akademisi'); document.body.appendChild(perde); }
     return perde;
   }
-  const eskiGorunum = () => localStorage.getItem('bz_eski_parkur') === '1';
+  const eskiGorunum = () => String(isim()).toLowerCase()==='teacher' && localStorage.getItem('bz_eski_parkur') === '1';
   function parkurAlani() {
     let tab = $('tab-dunya'); if (!tab) return perdeAc();
     tab.classList.add('bz-yeni');
@@ -28872,7 +28887,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzKapat').onclick = () => harita(aktifBolum());
     p.querySelectorAll('.bz-kapi').forEach(k => k.onclick = () => {
       let b = +k.dataset.b;
-      if (!bolumAcik(b)) { toast(`🔒 Bu kapıyı açmak için ${b}. kapının tüm duraklarını bitir (${bolumTamam(b - 1)}/${durakSayisi(b - 1)}).`); return; }
+      if (!bolumAcik(b)) { toast(`🔒 Bu kapı için ${[1,10,20,30][b]}. seviyeye ulaş ve ${b}. kapının tüm duraklarını bitir (${bolumTamam(b - 1)}/${durakSayisi(b - 1)}).`); return; }
       harita(b);
     });
     $('bzEski').onclick = () => { localStorage.setItem('bz_eski_parkur', '1'); let t = $('tab-dunya'); if (t) t.classList.remove('bz-yeni'); yeniDonDugmesi(); if (typeof orgDunya === 'function') orgDunya(); };
@@ -28886,11 +28901,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const ADIM = 96;
   function yerHesapla(n) { let H = 260 + n * ADIM; return { H, l: Array.from({ length: n }, (_, i) => [50 + Math.sin(i * 1.15) * 24, H - 62 - i * ADIM]) }; }
   function harita(b) {
+    if (!bolumAcik(b)) { toast(`🔒 Bu parkur ${[1,10,20,30][b]}. seviyede, önceki parkur tamamlanınca açılır.`); return; }
     aktarGerekirse();
     let p = parkurAlani(), B = BOLUM[b], N = durakSayisi(b), sira = siradakiDurak(b), n = bolumTamam(b), hepsi = n === N;
     gorunum = { ad: 'harita', b };
     let { H, l: YER } = yerHesapla(N), yol = YER.map(([x, y], i) => i ? `C ${YER[i-1][0]} ${(YER[i-1][1]+y)/2} ${x} ${(YER[i-1][1]+y)/2} ${x} ${y}` : `M ${x} ${y}`).join(' '), [hx, hy] = YER[sira];
-    let g = yoVar() && yo.gorev && yo.gorev.liste ? yo.gorev.liste : [];
+    let g = window.dmProgression?.allowed('gunluk_gorev') && yoVar() && yo.gorev && yo.gorev.liste ? yo.gorev.liste : [];
     const GAD = { oyun3: '3 oyun oyna', oyun5: '5 oyun oyna', yildiz3: 'Bir oyunda ⭐⭐⭐', ders1: '1 konu bitir', dinleme: 'Kulak Dedektifi oyna', yazim: 'Yazım oyununda ⭐⭐', cumle: 'Cümle oyunu oyna', hiz: 'Hız Fırtınası ⭐⭐', zk: 'Zor kelime tekrarı' };
     const GHEDEF = { oyun3: 3, oyun5: 5 };
     let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b], yuzde = Math.round(n / N * 100), T = toplamDurak();
@@ -28910,9 +28926,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       </div>
       </details><details class="dm-map-detail"><summary>${B.ad} · ${n}/${N} durak · İlerleme ve ödüller</summary><div class="bz-yan">
         <div class="bz-kutu"><h4>🧙 Profil</h4><div style="font-weight:900;font-size:14px">${rutbe()}</div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd">Toplam ${tamam.size}/${T} durak</div><div class="bz-cubuk"><i style="width:${Math.round(tamam.size / T * 100)}%"></i></div></div>
-        <div class="bz-kutu"><h4>📋 Günlük görev</h4>${g.length ? g.map(x => { let h = GHEDEF[x.id] || 1, ok = x.ilerleme >= h; return `<div class="gorev">${ok ? '✅' : '⬜'} ${kac(GAD[x.id] || x.id)}</div>`; }).join('') : '<div class="gorev">Sana Özel\'de görevlerin seni bekliyor</div>'}</div>
-        <div class="bz-kutu"><h4>🎁 Kapı ödülü</h4><div class="bz-sandik"><span aria-hidden="true">${sandikAlindi ? '📭' : '🧰'}</span><div style="font-size:11.5px;font-weight:800">${sandikAlindi ? 'Bu kapının sandığını açtın' : hepsi ? 'Sandığın hazır!' : `${N} durağın hepsini bitir: ${b < 2 ? 'Gümüş' : 'Altın'} Sandık`}</div></div>
-          ${hepsi && !sandikAlindi ? '<button class="bz-btn" id="bzSandik" style="margin-top:8px;padding:9px;font-size:13px">🎁 Aç</button>' : ''}</div>
+        <div class="bz-kutu"><h4>📋 Günlük görev</h4>${g.length ? g.map(x => { let h = GHEDEF[x.id] || 1, ok = x.ilerleme >= h; return `<div class="gorev">${ok ? '✅' : '⬜'} ${kac(GAD[x.id] || x.id)}</div>`; }).join('') : '<div class="gorev">'+(window.dmProgression?.allowed('gunluk_gorev')?'Sana Özel’de görevlerin seni bekliyor':'🔒 Günlük görevler 12. seviyede açılır')+'</div>'}</div>
+        <div class="bz-kutu"><h4>🎁 Parkur sandıkları</h4><div class="bz-sandik"><span aria-hidden="true">${sandikAlindi ? '📭' : '🧰'}</span><div style="font-size:11.5px;font-weight:800">${sandikAlindi ? 'Bu kapının sandığını açtın' : hepsi ? 'Sandığın hazır!' : 'Sandıklar seviyene ve tamamladığın parkurlara göre açılır'}</div></div>
+          <button class="bz-btn" id="bzSandik" style="margin-top:8px;padding:9px;font-size:13px">🎁 Sandıklarım</button></div>
         <div class="bz-kutu"><h4>📈 Kapı ilerlemesi</h4><div style="font-weight:900;font-size:22px">%${yuzde}</div><div class="bz-cubuk"><i style="width:${yuzde}%"></i></div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd;margin-top:6px">⭐ ${bolumYildiz(b)}/${N * 3} yıldız</div></div>
       </div></details></div></div>`;
     $('bzGeri').onclick = koridor;
@@ -28920,13 +28936,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if ($('bzOnceki')) $('bzOnceki').onclick = () => harita(b - 1);
     if ($('bzSonraki')) $('bzSonraki').onclick = () => harita(b + 1);
     p.querySelectorAll('.bz-tas,.dm-start-card,.dm-adventure-node,.dm-adventure-go').forEach(t => t.onclick = () => durakKarti(b, +t.dataset.d));
-    let sb = $('bzSandik'); if (sb) sb.onclick = () => { yo.baSandik = yo.baSandik || {}; yo.baSandik[b] = 1; if (typeof yoKaydet === 'function') yoKaydet(); if (typeof dolapSandikAc === 'function') dolapSandikAc(b < 2 ? 1 : 2, true); else { yoXpEkle(100, 100); toast('🎁 +100 🪙'); } harita(b); };
+    let sb = $('bzSandik'); if (sb) sb.onclick = () => window.dmProgression?.chests();
     /* sıradaki durak ekranın ortasında görünsün */
     requestAnimationFrame(() => { const sc = $('dmParkurScroll'); if(sc) sc.scrollTop = 0; });
   }
 
   /* ================= 3) DURAK KARTI ================= */
   function durakKarti(b, d) {
+    if (!bolumAcik(b)) return toast(`🔒 Parkur ${[1,10,20,30][b]}. seviyede açılır.`);
     let B = BOLUM[b], D = durakBilgi(b, d), no = D.no, N = durakSayisi(b), bitti = tamam.has(no), y = yildiz(no), n = bolumTamam(b);
     let ileride = d > siradakiDurak(b) && !bitti;
     let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
@@ -28936,7 +28953,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       <div style="font-size:12.5px;font-weight:800;color:#7c6ba8;margin-bottom:6px">8 soru bu üniteden, 3 soru önceki ünitelerden 🔁 · geçmek için ${GECME} doğru</div>
       <div style="font-size:12px;font-weight:800;color:#7c6ba8;margin-bottom:6px">Kapı ilerlemesi: ${n}/${N}</div>
       <div class="bz-cubuk" style="background:#ede9fe;margin-bottom:14px"><i style="width:${Math.round(n / N * 100)}%"></i></div>
-      <div style="margin:-4px 0 10px;padding:8px 10px;border-radius:12px;font-size:12.5px;font-weight:800;background:${bitti ? '#f1f5f9;color:#475569' : '#dcfce7;color:#14532d'}">⚡ Her 2 soruda 1 enerji (bu durak 5 ⚡)${bitti ? ' · tekrar oynayınca enerji ödülü yok' : ' · 🎁 ilk geçişte +6 ⚡'} · 🃏 jokerler her durakta 1 bedava</div>
+      <div style="margin:-4px 0 10px;padding:8px 10px;border-radius:12px;font-size:12.5px;font-weight:800;background:${bitti ? '#f1f5f9;color:#475569' : '#dcfce7;color:#14532d'}">⚡ Her 2 soruda 1 enerji (bu durak 5 ⚡) · 🃏 Jokerler 15. seviyede açılır</div>
       <button class="bz-btn mor" id="bzOyna" ${ileride ? 'disabled' : ''}>${bitti ? '🔁 Tekrar oyna' : '✨ Büyüyü başlat'}</button>
       <button class="bz-btn" id="bzVazgec" style="background:#f5f3ff;color:#6d28d9;box-shadow:none;margin-top:8px">Vazgeç</button></div>`;
     document.body.appendChild(k);
@@ -28950,6 +28967,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ================= 4) OYUN: 11 mini oyundan birer soru ================= */
   let O = null, zamanlayici = null;
   async function oyunBaslat(b, d) {
+    if (!bolumAcik(b)) return toast(`🔒 Parkur ${[1,10,20,30][b]}. seviyede açılır.`);
     if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
     if (!sinifModu()) {
       let k = window.genelEnerjiKalan;
@@ -28987,7 +29005,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (trenC) ekle('tren', { c: trenC });
     if (cumleC) ekle('cumle', { c: cumleC });
     sorular = karistir(sorular);
-    O = { b, d, D, sorular, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 1, harf: 1, pas: 1, ikinci: 1 }, harcanan: 0 };
+    O = { b, d, D, sorular, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0 };
     if (window.OC) OC.basla('ba');
     try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
     soruCiz();
@@ -29006,6 +29024,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const canta = () => (yoVar() && yo.jokerEnv) ? yo.jokerEnv : {};
   const jkSay = t => (O.jkBedava[t] || 0) + (canta()[t] || 0);
   function jkHarca(t) {
+    if(!window.dmProgression?.require("joker") || O.jokerKullanim >= window.dmProgression.quota()) return false;
+    O.jokerKullanim++;
     if ((O.jkBedava[t] || 0) > 0) { O.jkBedava[t]--; return true; }
     let E = canta(); if ((E[t] || 0) > 0) { E[t]--; if (typeof yoKaydet === 'function') yoKaydet(); return true; }
     return false;
@@ -29022,6 +29042,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   function jokerKullan(t) {
     if (O._cevaplandi || jkSay(t) <= 0) return;
+    if(!window.dmProgression?.require('joker') || O.jokerKullanim >= window.dmProgression.quota()) return toast('🃏 Bu duraktaki joker hakkın doldu.');
     if (t === 'pas') { jkHarca('pas'); O._pas = true; $('bzAlan').querySelectorAll('button,input').forEach(x => x.disabled = true); cevap(true, ''); return; }
     let f = O.jk[t]; if (typeof f !== 'function') return;
     if (f() === false) { toast('Bu soruda bu joker artık işe yaramaz.'); return; }
@@ -29029,6 +29050,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   /* 🛒 Oyun içinden joker ve enerji satın alma (Joker Dükkânı fiyatlarıyla, aynı çantaya) */
   function dukkanAc() {
+    if(!window.dmProgression?.require("joker_magaza")) return;
     let urunler = (window.JOKER_MAGAZA || []).filter(j => ['yari', 'harf', 'pas', 'ikinci'].includes(j.tur));
     let p = document.createElement('div'); p.className = 'bz-panel'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
     const ciz = () => {
@@ -29302,7 +29324,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function bitir() {
     let no = durakNo(O.b, O.d), gecti = O.dogru >= GECME, sure = Math.round((Date.now() - O.bas) / 1000);
     let puan = window.OC ? OC.puan() : O.dogru * 90, yil = gecti ? (O.dogru >= 10 ? 3 : O.dogru >= 8 ? 2 : 1) : 0;
-    let yeniAcildi = false;
+    let yeniAcildi = false, parkurIlk=!tamam.has(no);
     if (gecti) {
       let onceAcik = bolumAcik(O.b + 1);
       if (!tamam.has(no)) ilerlemeKaydet(no);
@@ -29314,7 +29336,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     goster('harita', b);
     if (typeof genelSonucEkraniGoster === 'function')
       genelSonucEkraniGoster({ oyunAdi: `🧙 ${durakBilgi(b, d).sinif}. Sınıf ${durakBilgi(b, d).unite}. Ünite`, isim: isim(), puan, dogru: O.dogru, yanlis: O.yanlis, sureSaniye: sure, oyunKey: 'ba',
-        siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
+        parkurIlk,parkurGecti:gecti,parkurYildiz:yil,siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
     setTimeout(() => toast(gecti ? (yeniAcildi ? `🚪 ${b + 2}. bölümün kapısı açıldı!` : `✨ ${O.d + 1}. durak geçildi! ${'⭐'.repeat(yil)}`) : `💪 ${O.dogru}/${O.sorular.length} doğru. Geçmek için ${GECME} doğru lazım, tekrar dene!`), 700);
   }
 
@@ -30670,6 +30692,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     let r = await orgFetch.apply(this, arguments);
     /* Yükleme (sayfanın kendi yükleyicisi; "_=" içermeyen): ilk yüklemede sunucudaki veri mutlaka kabul edilsin */
     try {
+      if(opt && typeof opt.body==='string' && /"(seviyeUrunAl|seviyeSandikAc|seviyeEkJokerAl|buyuSeviyeTamamla)"/.test(opt.body) && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json();if(reward.yo?.guncelleme)taban[kucuk(request.ogrenci||aktifOgrenciAdi)]=reward.yo.guncelleme; }
       if (/[?&]islem=ekVeriGetir/.test(u) && /[?&]anahtar=yo(&|$)/.test(u) && !/[?&]_=/.test(u) && r.ok && !r.headers.get('X-Diji-Cevrimdisi')) {
         let ad = kucuk(decodeURIComponent((u.match(/[?&]ogrenci=([^&]*)/) || [])[1] || ''));
         let d = await r.clone().json().catch(() => undefined);
@@ -30908,6 +30931,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=1"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=1"></script>
+<link rel="stylesheet" href="progression-ui.css?v=1"><script src="progression-ui.js?v=1"></script>
 </body>      
         </html>
 
