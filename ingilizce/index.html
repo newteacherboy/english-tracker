@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="progress-rules.js?v=2"></script>
-<script src="progression-catalog.js?v=1"></script>
+<script src="progression-catalog.js?v=2"></script>
 <script src="guest-platform.js?v=2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 
@@ -12190,6 +12190,7 @@ function ozellikSecDoldur() {
         }
         
         async function kpModuAc() {
+            if (!(window.masterKelimeHavuzu || []).length && typeof dijiKelimeHavuzunuYukle === 'function') await dijiKelimeHavuzunuYukle();
             dcTumTamEkranlariKapat();
             document.getElementById('tab-konusmapratigi').classList.add('active');
             dcBottomNavSenkronize();
@@ -15639,7 +15640,7 @@ function maKisiKur(u, b) {
         maskot: (typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(u.ogrenci) : '🦜'),
         av: (b.takili && b.takili.renk) || '#e5e7eb', aks: (b.takili && b.takili.aks) || '',
         lig: L.ad, ligKisa: L.kisa, ligIkon: L.ikon, ligRenk: L.renk, sira: L.sira, puan: L.puan,
-        xp, hafta: xp, seviye: (b.seviye && b.seviye.sonuc) || '—', seri: 0,
+        playerLevel: DijiProgressRules.progress(Number(b.totalXp||0)).level, xp, hafta: xp, seviye: (b.seviye && b.seviye.sonuc) || '—', seri: 0,
         rozetler: (u.rozetListesi ? u.rozetListesi.filter(r => (u.genelOrtalama || 0) >= r.gerekliPuan) : []).map(r => [r.emoji, r.rozetAdi])
     };
 }
@@ -15963,7 +15964,7 @@ async function maCiz() {
             let l = document.getElementById('maAkisListe');
             if (l) l.innerHTML = maAkisListeHtml();
         });
-        maTumGetir();
+        maTumGetir().then(() => {if (no !== maCizNo) return;const list=document.getElementById('maAkisListe');if(list){list.innerHTML=maAkisListeHtml();window.dmProgression?.paint?.();}});
         return;
     }
 
@@ -30931,7 +30932,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=1"></script>
-<link rel="stylesheet" href="progression-ui.css?v=1"><script src="progression-ui.js?v=2"></script>
+<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=3"></script>
 </body>      
         </html>
 

@@ -1125,7 +1125,7 @@ async function handle(req: Request) {
     const deny = await requireStudent(a, ""); if (deny) return deny;
     const [{ data: st }, { data: yo }, { data: sc }] = await Promise.all([
       supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile").eq("status", "approved").order("username"),
-      supabase.from("extra_data").select("student_id,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo"),
+      supabase.from("extra_data").select("student_id,totalXp:value->totalXp,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo"),
       supabase.from("teacher_reports").select("student_id,report_date,reading_score,writing_score,vocabulary_score,speaking_score,grammar_score,genel_score,exam_score").order("report_date")
     ]);
     const ym = new Map((yo || []).map((x: any) => [x.student_id, x]));
@@ -1135,7 +1135,7 @@ async function handle(req: Request) {
       return {
         id: s.id, ogrenci: s.username, sinif: s.class_no || "", Sinif: s.class_no || "", durum: "approved",
         genelPuan: Number(s.points || 0) > 0 ? Number(s.points) : ortala(r, "genel"), genelOrtalama: Number(s.points || 0) > 0 ? Number(s.points) : ortala(r, "genel"), puan: Number(s.points || 0), xp: Number(s.xp || 0), altin: Number(s.gold || 0), streak: Number(s.streak || 0),
-        lig: y.lig || p.lig || { hafta: "", xp: 0 }, karakter: y.karakter || null, takili: y.takili || null, seviye: y.seviye || null, profilKrk: y.profilKrk || "",
+        totalXp: Number(y.totalXp || 0), lig: y.lig || p.lig || { hafta: "", xp: 0 }, karakter: y.karakter || null, takili: y.takili || null, seviye: y.seviye || null, profilKrk: y.profilKrk || "",
         rozetListesi: [], gelisimSerisi: r.map((x: any) => ({ tarih: x.tarih, genel: x.genel })), denemeSerisi: r.filter((x: any) => x.deneme > 0).map((x: any) => ({ tarih: x.tarih, deneme: x.deneme })),
         okumaOrt: ortala(r, "okuma"), yazmaOrt: ortala(r, "yazma"), vocabOrt: ortala(r, "vocabulary"), konusmaOrt: ortala(r, "konusma"), grammarOrt: ortala(r, "grammar")
       };
