@@ -191,6 +191,13 @@
       "bytes": 2518923,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-palace-forest-v3.png",
+      "sha256": "eba9cebe3575d618a1e1e2eb9739c56995b38296e53ad6102f0d80a95ac72b52",
+      "bytes": 2964474,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI imagegen on 2026-10-04 from the user-approved Diji-Medu concept; original woodland and palace scene, no third-party source image."
     }
   ]
 }

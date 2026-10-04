@@ -5,6 +5,7 @@
                 <!-- ===================== GÜVENLİK + PERFORMANS (HEAD) — <head> etiketinin HEMEN ALTINA ===================== -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<script src="progress-rules.js?v=1"></script>
 <script src="guest-platform.js?v=2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 
@@ -14382,6 +14383,7 @@ const YO_SOHBET = [
           yoIsim = isim;
           try { yo = Object.assign(yoVarsayilan(), JSON.parse(localStorage.getItem('ing_yo_' + isim) || '{}')); }
           catch (e) { yo = yoVarsayilan(); }
+          DijiProgressRules.migrate(yo);
           yoGunKontrol();
           return true;
         }
@@ -14420,7 +14422,7 @@ const YO_SOHBET = [
             if (d && d.deger) {
               let s = JSON.parse(d.deger);
               if ((s.guncelleme || 0) > (yo.guncelleme || 0)) {
-                yo = Object.assign(yoVarsayilan(), s); yoGunKontrol();
+                yo = Object.assign(yoVarsayilan(), s); DijiProgressRules.migrate(yo); yoGunKontrol();
                 try { localStorage.setItem('ing_yo_' + yoIsim, JSON.stringify(yo)); } catch (e) {}
                 yoArayuzTazele();
               }
@@ -14499,6 +14501,9 @@ const YO_SOHBET = [
         /* ========== 1) XP, GÜNLÜK HEDEF, ALTIN ========== */
         function yoXpEkle(xp, altin) {
           if (!yoHazirMi()) return;
+          DijiProgressRules.migrate(yo);
+          xp = DijiProgressRules.positive(xp); altin = DijiProgressRules.positive(altin);
+          yo.totalXp += xp;
           yoGunKontrol();
           let b = yoBugun();
           yo.xpGun.xp += xp; yo.lig.xp += xp;
@@ -14510,6 +14515,7 @@ const YO_SOHBET = [
           }
           yoKaydet(); yoHedefHalkaCiz();
         }
+        window.dmBaseXpAdd = yoXpEkle;
         function yoHedefHalkaCiz() {
           let b = document.getElementById('yoHedefBtn');
           if (!b || !yo) return;
@@ -21107,7 +21113,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
   setInterval(() => {
     let simdi = typeof odulOyunda === 'function' && odulOyunda();
     let E = env();
-    if (simdi && !oyundaydi) {
+    if (simdi && !oyundaydi && DijiProgressRules.progress(DijiProgressRules.migrate(yo)).level >= 15) {
       buOyunXp = (E.m_xp || 0) > 0; if (buOyunXp) { E.m_xp--; yoKaydet(); if (typeof yoToast === 'function') yoToast('📜 XP Tılsımı aktif: bu oyunda XP ×2!'); }
       buOyunAltin = (E.m_altin || 0) > 0; if (buOyunAltin) { E.m_altin--; yoKaydet(); if (typeof yoToast === 'function') setTimeout(() => yoToast('🧲 Altın Mıknatısı aktif: bu oyunda altın ×2!'), 1500); }
       buOyunKombo = (E.m_kombo || 0) > 0; if (buOyunKombo) { E.m_kombo--; yoKaydet(); }
@@ -21115,6 +21121,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     if (!simdi && oyundaydi) { buOyunXp = buOyunAltin = buOyunKombo = false; }
     oyundaydi = simdi;
   }, 700);
+  window.dmGameBonusFlags = () => ({ xpBoost: buOyunXp, goldBoost: buOyunAltin });
   let orgXp = window.yoXpEkle;
   if (typeof orgXp === 'function') window.yoXpEkle = function (xp, altin) {
     if (buOyunXp) xp = (xp || 0) * 2;
@@ -24319,21 +24326,27 @@ window.OC = (function () {
   /* Oyun ödülü (9 adil oyun) */
   window.ocOdulVer = function (o) {
     if (sinifModu() || typeof yoHazirMi !== 'function' || !yoHazirMi()) return null;
-    const rewardKey = o.runId ? ogrenci() + ':' + o.runId : '';
-    if (rewardKey && rewardedRuns.has(rewardKey)) return null;
-    if (rewardKey) rewardedRuns.add(rewardKey);
-    let y = o.yildiz || (window.OC ? OC.yildiz(o.puan || 0) : 1);
-    let [al, xp] = ODUL[y] || ODUL[1];
+    if (!o || !o.runId || o.puanSurum !== 3) return null;
+    const rewardKey = ogrenci() + ':' + o.runId;
+    yo.oyunOdulKayit = Array.isArray(yo.oyunOdulKayit) ? yo.oyunOdulKayit : [];
+    if (rewardedRuns.has(rewardKey) || yo.oyunOdulKayit.includes(o.runId)) return null;
+    rewardedRuns.add(rewardKey);
+    yo.oyunOdulKayit.push(o.runId); yo.oyunOdulKayit = yo.oyunOdulKayit.slice(-200);
     let bugun = typeof yoBugun === 'function' ? yoBugun() : new Date().toISOString().slice(0, 10);
     if (!yo.oyunGun || yo.oyunGun.t !== bugun) yo.oyunGun = { t: bugun, n: 0 };
-    yo.oyunGun.n++;
-    let n = yo.oyunGun.n, carpan = n <= 3 ? 2 : n > 12 ? 0.5 : 1, notlar = [];
-    if (o.puanSurum === 3) { xp = o.xp; notlar.push('Hız +' + o.hizBonusu + ' · Hata −' + o.hataCezasi + ' puan · Yanlış başına −3 XP'); }
+    const n = ++yo.oyunGun.n;
+    const level = DijiProgressRules.progress(DijiProgressRules.migrate(yo)).level;
+    const reward = DijiProgressRules.gameReward(o, { ordinal:n, level,
+      streak:typeof window.seriCarpani === 'function' ? window.seriCarpani() : 1,
+      ...(window.dmGameBonusFlags?.() || {}) });
+    const al = reward.gold, xp = reward.xp, y = o.yildiz || 1, notlar = [];
+    notlar.push('Hız +' + o.hizBonusu + ' · Yanlış başına −3 XP');
     if (n <= 3) notlar.push(`Günün ${n}. oyunu ×2`);
-    if (n > 12) notlar.push('12 oyunu geçtin, ödül yarıya indi · biraz mola? 🌿');
-    if (o.odulCarpan > 1) { carpan *= 2; notlar.push('✨ Çift Puan jokeri ×2'); }
-    al = Math.max(1, Math.round(al * carpan)); xp = Math.max(0, Math.round(xp * carpan));
-    yoXpEkle(xp, al);
+    if (n > 12) notlar.push('12 oyundan sonra yarım ödül');
+    if (reward.bonus > 1) notlar.push('Güçlendirici ×2 · çarpanlar birleşmez');
+    if (!xp) notlar.push('Bu tur ödül kazanamadın. Doğru cevaplarla tekrar dene.');
+    // Canonical reward is already fully calculated; bypass the legacy multiplier wrappers.
+    window.dmBaseXpAdd(xp, al);
     setTimeout(() => odulSeridi(y, al, xp, notlar.join(' · ')), 350);
     return { al, xp };
   };
@@ -24896,9 +24909,9 @@ window.ocEnerjiHarca = async function (n) {
   const renkA = (c, k) => { try { return window.kaAcik(c, k); } catch (e) { return c; } };
 
   /* ================= FİYATLAR ================= */
-  const FIYAT = { temel: 100, ozel: 250, efsane: 600 };
-  const KOMBIN_FIYAT = { ozel: 900, efsane: 1500 };
-  const CIK_FIYAT = { temel: 60, ozel: 150, efsane: 300 };
+  const FIYAT = { temel: 300, ozel: 750, efsane: 1500 };
+  const KOMBIN_FIYAT = { ozel: 2000, efsane: 3500 };
+  const CIK_FIYAT = { temel: 150, ozel: 400, efsane: 900 };
   const SANDIK = [
     { ad: 'Bronz Sandık', ikon: '🧰', f: 200, adet: 1, sans: [85, 15, 0], alt: '1 öğe · %85 temel, %15 özel', renk: '#fdf2e9' },
     { ad: 'Gümüş Sandık', ikon: '🗃️', f: 450, adet: 2, sans: [65, 30, 5], garanti: 'ozel', alt: '2 öğe · en az 1 özel · %5 efsane', renk: '#f1f5f9' },
@@ -24978,7 +24991,7 @@ window.ocEnerjiHarca = async function (n) {
   [['⭐', 'Yıldız', 'temel'], ['🌈', 'Gökkuşağı', 'temel'], ['🦜', 'Papi', 'temel'], ['📚', 'Kitap kurdu', 'temel'], ['🎧', 'Müzik', 'temel'],
    ['⚽', 'Futbol', 'temel'], ['🌸', 'Çiçek', 'temel'], ['🚀', 'Roket', 'ozel'], ['🧠', 'Beyin', 'ozel'], ['🏆', 'Kupa', 'ozel'], ['🦄', 'Unicorn', 'ozel'],
    ['🐉', 'Ejderha', 'efsane'], ['👑', 'Taç', 'efsane'], ['💎', 'Elmas', 'efsane'], ['🔥', 'Seri ateşi', 'efsane']].forEach(([e, ad, sv]) => OGE.push({ id: 'c:' + e, kat: 'cik', tip: 'cik', emoji: e, ad, sv }));
-  OGE.forEach(o => { o.f = o.kat === 'cik' ? CIK_FIYAT[o.sv] : FIYAT[o.sv]; });
+  OGE.forEach(o => { o.f = o.kat === 'cik' ? CIK_FIYAT[o.sv] : o.kat === 'aks' && o.sv === 'temel' ? 150 : FIYAT[o.sv]; });
   const OGE_ID = Object.fromEntries(OGE.map(o => [o.id, o]));
   const bul = (kat, tip, r, desen) => OGE.find(o => o.kat === kat && o.tip === tip && o.renk === R[r][0] && (!desen || o.desen === desen));
 
@@ -24997,7 +25010,7 @@ window.ocEnerjiHarca = async function (n) {
     ['🎉', 'Bayramlık', 'efsane', [bul('tek', 'elbise', 'mor', 'yildiz'), bul('bas', 'sal', 'sari', 'yildiz'), bul('ayak', 'bot', 'mor', 'yildiz'), bul('aks', 'rozet', 'sari')]]
   ].map(([ikon, ad, sv, parca]) => {
     parca = parca.filter(p => p && p.kat !== 'bas');             /* baş seçimi öğrencinin: kombinde başörtüsü yok */
-    let f = Math.max(150, Math.round(parca.reduce((t, p) => t + p.f, 0) * 0.75 / 10) * 10);
+    let f = KOMBIN_FIYAT[sv];
     return { id: 'k:' + ad, ikon, ad, sv, parca, f };
   });
 
@@ -25159,8 +25172,11 @@ window.ocEnerjiHarca = async function (n) {
     if (yoVar() && f > 0) {
       yo.dolapIlkAlim = yo.dolapIlkAlim || {};
       let kat = kombinMi ? 'kombin' : (o.atolye ? 'a-' + o.kat : o.kat);
-      if (!yo.dolapIlkAlim[kat]) { f = Math.round(f / 2); notlar.push('İlk alım %50'); }
-      let v = vitrinOgesi(); if (!kombinMi && v && v.id === o.id) { f = Math.round(f * 0.7); notlar.push('Günün vitrini %30'); }
+      const first = !yo.dolapIlkIndirimKullanildi && !Object.keys(yo.dolapIlkAlim).length;
+      const v = vitrinOgesi(), showcase = !kombinMi && v && v.id === o.id;
+      f = DijiProgressRules.discount(f, {first, showcase});
+      if (first) notlar.push('İlk alışveriş %25');
+      else if (showcase) notlar.push('Günün vitrini %30');
     }
     return { f, not: notlar.join(' · ') };
   }
@@ -25279,6 +25295,7 @@ window.ocEnerjiHarca = async function (n) {
     let fh = fiyatHesapla(o, kombinMi);
     if ((yo.altin || 0) < fh.f) return toast('Yeterli altının yok 🪙');
     yo.altin -= fh.f;
+    yo.dolapIlkIndirimKullanildi = true;
     yo.dolapIlkAlim = yo.dolapIlkAlim || {}; yo.dolapIlkAlim[kombinMi ? 'kombin' : (o.atolye ? 'a-' + o.kat : o.kat)] = 1;
     (kombinMi ? o.parca : [o]).forEach(p => { sahiplen(p.id); giy(D.deneme, p); });
     D.secili = null;
@@ -25367,7 +25384,7 @@ window.ocEnerjiHarca = async function (n) {
     return html;
   };
   /* Atölye fiyatları yeni tabloya (bedava olanlar bedava kalır) ve koleksiyon karakter fiyatı */
-  try { Object.values(window.KA_KATALOG || {}).forEach(k => k.liste.forEach(u => { if (u.f > 0 && !u._eskiF) { u._eskiF = u.f; u.f = u.f <= 30 ? 100 : u.f <= 60 ? 250 : 600; } })); } catch (e) {}
+  try { Object.values(window.KA_KATALOG || {}).forEach(k => k.liste.forEach(u => { if (u.f > 0 && !u._eskiF) { u._eskiF = u.f; u.f = u.f <= 30 ? 300 : u.f <= 60 ? 750 : 1500; } })); } catch (e) {}
   window.krkFiyat = k => (Number(k && k.sv) || 0) >= 20 ? 2500 : 1200;
 })();
 </script>
@@ -28879,8 +28896,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b], yuzde = Math.round(n / N * 100), T = toplamDurak();
     let etiketler = DURAK[b].map((D, d) => (d === 0 || DURAK[b][d - 1].sinif !== D.sinif) ? `<span class="bz-sinif-etiket" style="top:${YER[d][1] + (d ? -18 : 30)}px">🎓 ${D.sinif}. Sınıf</span>` : '').join('');
     p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy: window.genelEnerjiKalan ?? '–', max: window.genelEnerjiMax || 30, gold: yoVar() ? yo.altin || 0 : 0})}
-      <div class="dm-parkur-scroll" id="dmParkurScroll"><div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button><button type="button" class="bz-ust-btn" onclick="dijiAracPaneliAc()">Araçlar</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
-      <div class="bz-harita" id="bzHarita" style="height:${H}px">
+      <div class="dm-parkur-scroll" id="dmParkurScroll">${window.dmParkurSahne({next:sira,total:N,complete:n,section:B.ad,steps:DURAK[b].map((D,index)=>({index,label:D.sinif+'. sınıf '+D.unite+'. ünite',done:tamam.has(D.no)}))})}<div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button><button type="button" class="bz-ust-btn" onclick="dijiAracPaneliAc()">Araçlar</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
+      <details class="dm-adventure-full-map"><summary>🗺️ Tüm durakları görüntüle</summary><div class="bz-harita" id="bzHarita" style="height:${H}px">
         <span class="bulut" style="left:6%;top:140px" aria-hidden="true">☁️</span><span class="bulut" style="right:8%;top:230px;animation-delay:1.5s" aria-hidden="true">☁️</span>
         ${kaleSVG(b)}
         <svg class="bz-yol" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${yol}" fill="none" stroke="#d7f2f1" stroke-width="18" vector-effect="non-scaling-stroke" stroke-linecap="round"/><path d="${yol}" fill="none" stroke="#88d5d7" stroke-width="5" vector-effect="non-scaling-stroke" stroke-dasharray="1 12" stroke-linecap="round"/></svg>
@@ -28891,7 +28908,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         ${!hepsi ? `<button type="button" class="dm-start-card" data-d="${sira}" style="${hx > 50 ? `left:calc(${hx}% - 178px)` : `left:calc(${hx}% + 50px)`};top:${hy}px" aria-label="${DURAK[b][sira].sinif}. sınıf ${DURAK[b][sira].unite}. üniteyi başlat"><small>Sıradaki ders</small><strong>${DURAK[b][sira].unite}. adım</strong><span class="dm-start-cta">Başla ›</span></button>` : ''}
         <span class="bz-tabela">${hepsi ? '🏆 Kapı fethedildi!' : `🎯 Sıradaki: ${DURAK[b][sira].sinif}. sınıf ${DURAK[b][sira].unite}. ünite`}</span>
       </div>
-      <details class="dm-map-detail"><summary>${B.ad} · ${n}/${N} durak · İlerleme ve ödüller</summary><div class="bz-yan">
+      </details><details class="dm-map-detail"><summary>${B.ad} · ${n}/${N} durak · İlerleme ve ödüller</summary><div class="bz-yan">
         <div class="bz-kutu"><h4>🧙 Profil</h4><div style="font-weight:900;font-size:14px">${rutbe()}</div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd">Toplam ${tamam.size}/${T} durak</div><div class="bz-cubuk"><i style="width:${Math.round(tamam.size / T * 100)}%"></i></div></div>
         <div class="bz-kutu"><h4>📋 Günlük görev</h4>${g.length ? g.map(x => { let h = GHEDEF[x.id] || 1, ok = x.ilerleme >= h; return `<div class="gorev">${ok ? '✅' : '⬜'} ${kac(GAD[x.id] || x.id)}</div>`; }).join('') : '<div class="gorev">Sana Özel\'de görevlerin seni bekliyor</div>'}</div>
         <div class="bz-kutu"><h4>🎁 Kapı ödülü</h4><div class="bz-sandik"><span aria-hidden="true">${sandikAlindi ? '📭' : '🧰'}</span><div style="font-size:11.5px;font-weight:800">${sandikAlindi ? 'Bu kapının sandığını açtın' : hepsi ? 'Sandığın hazır!' : `${N} durağın hepsini bitir: ${b < 2 ? 'Gümüş' : 'Altın'} Sandık`}</div></div>
@@ -28902,10 +28919,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzAkis').onclick = () => { if (typeof meduAkisAc === 'function') { try { maSekme = 'akis'; } catch (e) {} meduAkisAc(); } };
     if ($('bzOnceki')) $('bzOnceki').onclick = () => harita(b - 1);
     if ($('bzSonraki')) $('bzSonraki').onclick = () => harita(b + 1);
-    p.querySelectorAll('.bz-tas,.dm-start-card').forEach(t => t.onclick = () => durakKarti(b, +t.dataset.d));
+    p.querySelectorAll('.bz-tas,.dm-start-card,.dm-adventure-node,.dm-adventure-go').forEach(t => t.onclick = () => durakKarti(b, +t.dataset.d));
     let sb = $('bzSandik'); if (sb) sb.onclick = () => { yo.baSandik = yo.baSandik || {}; yo.baSandik[b] = 1; if (typeof yoKaydet === 'function') yoKaydet(); if (typeof dolapSandikAc === 'function') dolapSandikAc(b < 2 ? 1 : 2, true); else { yoXpEkle(100, 100); toast('🎁 +100 🪙'); } harita(b); };
     /* sıradaki durak ekranın ortasında görünsün */
-    requestAnimationFrame(() => { let el = p.querySelector('.bz-tas.sonraki') || p.querySelector('.bz-tas'); if (el) { let sc = $('dmParkurScroll'), hr = $('bzHarita').getBoundingClientRect(), pr = sc.getBoundingClientRect(); sc.scrollTop = Math.max(0, hr.top - pr.top + sc.scrollTop + (parseFloat(el.style.top) || 0) - sc.clientHeight * .55); } });
+    requestAnimationFrame(() => { const sc = $('dmParkurScroll'); if(sc) sc.scrollTop = 0; });
   }
 
   /* ================= 3) DURAK KARTI ================= */
@@ -30863,8 +30880,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=rights-5"></script>
-<link rel="stylesheet" href="parkur-theme.css?v=5">
-<script src="parkur-theme.js?v=5"></script>
+<link rel="stylesheet" href="parkur-theme.css?v=6">
+<script src="parkur-theme.js?v=6"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
@@ -30889,6 +30906,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=1"></script>
+<link rel="stylesheet" href="progress-ui.css?v=1">
+<script src="progress-ui.js?v=1"></script>
 </body>      
         </html>
 
