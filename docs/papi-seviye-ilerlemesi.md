@@ -13,7 +13,7 @@ Mevcut altın, enerji, kazanılmış ürünler ve karakterler korunur. Kalıcı 
 | 7 | 720 | Cesur Yavru | Cesur Yavru rozeti |
 | 8 | 1,040 | Hikâye Kuşu | Okuma Stüdyosu |
 | 9 | 1,450 | Sözcük Çırağı | A2 dersleri · A1 tamamlanınca |
-| 10 | 1,950 | Kâşif Papağan | İkinci parkur; Keşfet; Beğeni ve tebrik; Süper Lig · haftalık 750 XP |
+| 10 | 1,950 | Kâşif Papağan | İkinci parkur; MeduPro ve Kelime Modu; Keşfet; Beğeni ve tebrik; Süper Lig · haftalık 750 XP |
 | 11 | 2,550 | Dikkatli Gaga | Eksik Harf |
 | 12 | 3,250 | Görev Kanadı | Günlük görevler |
 | 13 | 4,050 | Sabırlı Papağan | Pomodoro |
@@ -23,7 +23,7 @@ Mevcut altın, enerji, kazanılmış ürünler ve karakterler korunur. Kalıcı 
 | 17 | 8,100 | Süslü Tepe | Saç stilleri |
 | 18 | 9,250 | Sihirli Gaga | Joker dükkânı |
 | 19 | 10,450 | Uyumlu Kanat | Eşini Bul |
-| 20 | 11,700 | Meydan Okuyan Papi | Üçüncü parkur; Düello; Karakter koleksiyonu; İkinci vitrin; Üst giyim; Oyun başına 2 joker |
+| 20 | 11,700 | Meydan Okuyan Papi | Üçüncü parkur; Papağanla Sohbet; Düello; Karakter koleksiyonu; İkinci vitrin; Üst giyim; Oyun başına 2 joker |
 | 21 | 13,000 | Yıldız Tüy | Yıldız Tüy rozeti |
 | 22 | 14,350 | Cesur Gaga | Risk Balonları |
 | 23 | 15,750 | Bilge Papağan | B2 dersleri · B1 tamamlanınca; Alt giyim |
@@ -33,7 +33,7 @@ Mevcut altın, enerji, kazanılmış ürünler ve karakterler korunur. Kalıcı 
 | 27 | 21,850 | Sözcük Avcısı | Şifre Kırıcı |
 | 28 | 23,500 | Işıltılı Tüy | Hız Fırtınası; Işıltılı Tüy rozeti |
 | 29 | 25,200 | Zarif Kanat | Aksesuarlar |
-| 30 | 26,950 | Dost Kanat | Dördüncü parkur; İki kişilik oyunlar; Enerji hediyesi; Pro ürünler; Dördüncü vitrin; Oyun başına 3 joker |
+| 30 | 26,950 | Dost Kanat | Dördüncü parkur; Kelime Kartları; İki kişilik oyunlar; Enerji hediyesi; Pro ürünler; Dördüncü vitrin; Oyun başına 3 joker |
 | 31 | 28,750 | Gezgin Papağan | Kelime Treni |
 | 32 | 30,600 | Taçlı Tepe | Baş aksesuarları |
 | 33 | 32,500 | Usta Gaga | Usta Gaga rozeti |
