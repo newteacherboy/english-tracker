@@ -34,7 +34,7 @@
     overlay.innerHTML=`<section class="hb-card"><header><div><small>PAPİ'NİN KELİME BAHÇESİ</small><h2 id="hbTitle">🌿 Harf Bahçesi</h2></div><button type="button" data-close aria-label="Oyunu kapat">×</button></header><div class="hb-body"></div></section>`;
     document.body.append(overlay);body=overlay.querySelector('.hb-body');overlay.querySelector('[data-close]').onclick=close;
     overlay.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const a=[...overlay.querySelectorAll('button:not(:disabled),input,select')].filter(x=>x.getClientRects().length);if(!a.length)return;const first=a[0],last=a.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
-    state={classNo:1,units:[1],ended:false};
+    state={classNo:1,units:[1],ended:false,runId:crypto.randomUUID()};
     body.innerHTML=`<div class="hb-intro"><img src="mascot-welcome.webp" alt="Papi"><p>Türkçe ipucundan İngilizce kelimeyi bul. Bitişik harflere sırayla dokun ya da parmağını kaydır!</p></div><p>8 kelime · En fazla 1000 puan · 3 ⚡<br><small>İlk denemede +100; düzeltince +50. Seri bonusları diğer oyunlarla aynı.</small></p><h3>Sınıfını seç</h3><div id="hbClasses" class="hb-classes">${Array.from({length:8},(_,i)=>`<button type="button" class="sinif-btn" data-class="${i+1}">${i+1}. Sınıf</button>`).join('')}</div><h3>Ünitelerini seç</h3><div id="hbUnits" class="unite-secim-box hb-units"></div><p class="hb-status" role="status"></p><button class="hb-primary" type="button" data-start>Bahçeye gir 🌱</button>`;
     overlay.querySelectorAll('[data-class]').forEach(b=>b.onclick=()=>chooseClass(Number(b.dataset.class)));
     sinifGridKisitlamaUygula('hbClasses',n=>state.classNo=n,chooseClass);
@@ -51,13 +51,13 @@
     try {
       if(!classroom()) {
         if(typeof window.genelEnerjiKalan==='number'&&window.genelEnerjiKalan<3)throw Error('Oynamak için 3 enerji gerekli.');
-        const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'enerjiDegistir',ogrenci:student,fark:-3,sebep:'oyun'})});
+        const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'enerjiDegistir',ogrenci:student,fark:-3,sebep:'oyun',oyun:KEY,runId:current.runId})});
         const d=await r.json();if(!r.ok||d.ok===false||d.status==='error'||Number(d.eklenen)!==-3)throw Error(d.mesaj||'Enerji doğrulanamadı. Tekrar dene.');
         if(typeof headerEnerjiGoster==='function')headerEnerjiGoster(d.enerjiKalan,d.enerjiMax);
         if(typeof genelEnerjiDegisimGoster==='function')genelEnerjiDegisimGoster(-3);
       }
       if(state!==current||overlay!==currentOverlay||who()!==owner)return;
-      Object.assign(state,{words:OC.kelimeSec(KEY,available,8),index:0,done:0,solved:new Set(),selected:[],misses:new Set(),started:Date.now(),runId:crypto.randomUUID(),student});
+      Object.assign(state,{words:OC.kelimeSec(KEY,available,8),index:0,done:0,solved:new Set(),selected:[],misses:new Set(),started:Date.now(),student});
       OC.basla(KEY);newBoard();
       timer=setInterval(()=>{if(who()!==owner||!overlay){close();return;}const t=overlay.querySelector('[data-time]');if(t)t.textContent=OC.sure()+' sn';},1000);
     } catch(e) { if(state===current&&overlay===currentOverlay){message(e.message);button.disabled=false;} }

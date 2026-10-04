@@ -31,7 +31,7 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 }
-dependencies { implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4' }
+dependencies { implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.3' }
 tasks.register('requireReleaseSigning') {
     doLast { if (!signingReady) throw new GradleException('Release signing requires all four DIJI_KEY* environment variables. Never upload an unsigned AAB to Play Console.') }
 }

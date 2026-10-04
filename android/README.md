@@ -5,7 +5,7 @@ Bu proje mevcut HTTPS uygulamasını Trusted Web Activity ile açar. Google giri
 - Paket: `com.ogretmencocuk.dijimedu` (ilk mağaza kaydından sonra değiştirilemez).
 - Başlangıç: `https://panel.ogretmencocuk.com/ingilizce/`
 - Android 16 / API 36, minimum API 24, JDK 17, Gradle 8.13, AGP 8.13.2.
-- Android Browser Helper 2.7.4; Apache-2.0 lisansı.
+- Android Browser Helper 2.7.3; Apache-2.0 lisansı.
 
 ## Derleme
 

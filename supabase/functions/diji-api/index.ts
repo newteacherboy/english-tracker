@@ -1760,6 +1760,17 @@ async function handle(req: Request) {
     const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
     let s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
     s = await enerjiYenile(s);
+    const hb = body.oyun === "harfbahcesi";
+    let hbReason = "";
+    if (hb) {
+      if (!await release.on("oyun_harfbahcesi")) return json({ok:false,status:"error",mesaj:"Bu oyun şu anda kapalı."},403);
+      if (!/^[0-9a-f-]{36}$/i.test(String(body.runId || ""))) return json({ok:false,status:"error",mesaj:"Geçersiz oyun kimliği."},400);
+      hbReason = "harfbahcesi:" + body.runId;
+      const prior = await supabase.from("energy_transactions").select("id").eq("student_id",s.id).eq("reason",hbReason).limit(1);
+      if (prior.error) return json({ok:false,status:"error",mesaj:"Enerji doğrulanamadı."},500);
+      if (prior.data?.length) return json({ok:true,status:"success",enerjiKalan:s.energy,enerjiMax:s.energy_max,eklenen:-3});
+      if (Number(s.energy) < 3) return json({ok:false,status:"error",mesaj:"Oynamak için 3 enerji gerekli.",enerjiKalan:s.energy},409);
+    }
     let fark = Math.trunc(num(body.fark));
     const sebep = String(body.sebep || (bool(body.hediye) ? "hediye" : (fark < 0 ? "oyun" : ""))).toLowerCase().slice(0, 20);
     const max = Number(s.energy_max || ENERJI_TAVAN);
@@ -1786,13 +1797,17 @@ async function handle(req: Request) {
         fark = Math.max(0, Math.min(fark, 3, 6 - topla(sebep || "diger")));
       }
     }
+    if (hb) fark = -3;
     if (fark < -25) fark = -25;
     const once = s.energy;
     const next = fark >= 0 ? Math.max(once, Math.min(tavan, once + fark)) : Math.max(0, once + fark);
     const patch: any = { energy: next, updated_at: new Date().toISOString() };
     if (once >= max && next < max) patch.energy_updated_at = new Date().toISOString();   // dolum sayacı harcamayla başlar
-    await supabase.from("students").update(patch).eq("id", s.id);
-    if (next !== once) await supabase.from("energy_transactions").insert({ student_id: s.id, change_amount: next - once, balance_after: next, reason: sebep || (fark < 0 ? "oyun" : "diger") });
+    if (hb) {
+      const changed = await supabase.from("students").update(patch).eq("id",s.id).eq("energy",once).select("id");
+      if (changed.error || !changed.data?.length) return json({ok:false,status:"error",mesaj:"Enerji başka bir işlemde değişti. Tekrar dene."},409);
+    } else await supabase.from("students").update(patch).eq("id", s.id);
+    if (next !== once) await supabase.from("energy_transactions").insert({ student_id: s.id, change_amount: next - once, balance_after: next, reason: hbReason || sebep || (fark < 0 ? "oyun" : "diger") });
     s.energy = next; if (patch.energy_updated_at) s.energy_updated_at = patch.energy_updated_at;
     return json({ ok: true, status: "success", enerjiKalan: next, enerjiMax: max, eklenen: next - once, mesaj, ...dolumBilgi(s) });
   }
