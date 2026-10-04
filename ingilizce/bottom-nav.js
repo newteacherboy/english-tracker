@@ -16,7 +16,6 @@
     art.className = 'dm-nav-art';
     art.setAttribute('aria-hidden','true');
     art.style.backgroundPosition = positions[index];
-    if(index===6) art.style.backgroundSize='280% 280%';
     icon.replaceChildren(art);
    }
    const label = button.querySelector('.bn-label');

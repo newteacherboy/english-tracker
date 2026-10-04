@@ -16,9 +16,9 @@
 #welcomePortalScreen .welcome-card{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px 14px;align-items:center;position:relative;min-width:0;padding:16px;border:2px solid #fff;border-radius:24px;text-align:left;text-decoration:none;box-shadow:0 4px 0 var(--edge),0 8px 15px #366c6b10;transition:transform .15s,box-shadow .15s;background:var(--panel);color:#164f60}
 #welcomePortalScreen .card-english{--panel:#dff6ef;--edge:#b7dfd1;--cta:#087f87}
 #welcomePortalScreen .card-coach{--panel:#eee5ff;--edge:#d2c0ed;--cta:#7850a0}
-#welcomePortalScreen .welcome-card-icon{height:64px;width:64px;padding:0;background:transparent;border-radius:0;display:block;background-image:url('ingilizce/bottom-nav-icons.webp?v=1');background-repeat:no-repeat;background-size:300% 300%}
-#welcomePortalScreen .welcome-card-icon.ing{background-color:transparent;background-size:340% 300%;background-position:51% 59%}
-#welcomePortalScreen .welcome-card-icon.koc{background-color:transparent;background-position:98% 10%}
+#welcomePortalScreen .welcome-card-icon{height:64px;width:64px;padding:0;background:transparent;border-radius:0;display:block;background-image:url('ingilizce/bottom-nav-icons-v2.png');background-repeat:no-repeat;background-size:300% 300%}
+#welcomePortalScreen .welcome-card-icon.ing{background-color:transparent;background-size:300% 300%;background-position:50% 56%}
+#welcomePortalScreen .welcome-card-icon.koc{background-color:transparent;background-position:100% 0%}
 #welcomePortalScreen .welcome-card-body{min-width:0}
 #welcomePortalScreen .welcome-card-body h3{font-size:20px;line-height:1.2;font-weight:900;color:#164f60;margin:0 0 5px}
 #welcomePortalScreen .welcome-card-body p{font-size:12px;line-height:1.5;font-weight:500;color:#58757e;margin:0}
