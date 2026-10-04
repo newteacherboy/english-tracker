@@ -1,4 +1,5 @@
 import './score-rules.js';
+import { onboardingAPI } from './onboarding-api.ts';
 // =====================================================================
 // DİJİ-MEDU API — Supabase Edge Function (YAMALI SÜRÜM v3)
 // Yamalar "[YAMA n]" etiketiyle işaretlidir. İşlem adları ve cevap
@@ -489,14 +490,24 @@ async function epostaGonder(m: any): Promise<{ ok: boolean, hata?: string }> {
   } catch (e) { return { ok: false, hata: String(e).slice(0, 250) }; }
 }
 async function kuyrukSatiriGonder(id: number, m: any) {
+  const {data:slot,error:slotError}=await supabase.rpc("dm_mail_slot");
+  if(slotError||!slot){
+    const retry=new Date();retry.setUTCHours(24,1,0,0);
+    await supabase.from("mail_queue").update({send_after:retry.toISOString(),error:"Günlük e-posta kotası: gönderim ertelendi."}).eq("id",id);
+    return {ok:false,hata:"Günlük e-posta kotası: gönderim ertelendi."};
+  }
   const g = await epostaGonder(m);
-  if (g.ok) await supabase.from("mail_queue").update({ sent_at: new Date().toISOString(), error: null }).eq("id", id);
+  if (g.ok) {
+    if(m.kind==="dogrulama"&&m.student_id) await supabase.from("dm_email_verifications").update({expires_at:new Date(Date.now()+86400000).toISOString()}).eq("student_id",m.student_id).eq("email",m.to_email).is("consumed_at",null);
+    await supabase.from("mail_queue").update({ sent_at: new Date().toISOString(), error: null }).eq("id", id);
+  }
+  else if (/429|not_enough_credits|quota|daily.*limit/i.test(g.hata||"")) await supabase.from("mail_queue").update({send_after:new Date(Date.now()+3600000).toISOString(),error:"E-posta sağlayıcı kotası: gönderim ertelendi."}).eq("id",id);
   else { const { data: x } = await supabase.from("mail_queue").select("attempts").eq("id", id).maybeSingle(); await supabase.from("mail_queue").update({ attempts: num(x?.attempts) + 1, error: String(g.hata || "").slice(0, 300) }).eq("id", id); }
   return g;
 }
 /* Bekleyen e-postaları gönder (zamanlayıcı 5 dakikada bir çağırır) */
 async function kuyruguIsle(limit = 40) {
-  const { data } = await supabase.from("mail_queue").select("id,to_email,subject,html,text_body").is("sent_at", null).lt("attempts", 5).lte("send_after", new Date().toISOString()).order("id").limit(limit);
+  const { data } = await supabase.from("mail_queue").select("id,student_id,kind,to_email,subject,html,text_body").is("sent_at", null).lt("attempts", 5).lte("send_after", new Date().toISOString()).order("priority",{ascending:false}).order("id").limit(limit);
   let gonderilen = 0, hata = 0, sonHata = "";
   for (const m of data || []) { const g = await kuyrukSatiriGonder(m.id, m); if (g.ok) gonderilen++; else { hata++; sonHata = g.hata || ""; } }
   return { ok: true, bekleyen: (data || []).length, gonderilen, hata, sonHata };
@@ -639,7 +650,7 @@ async function otomasyonIslem(req: Request, body: any) {
     return json(await epostaGonder({ to_email: alici, subject: "Diji-Medu e-posta testi ✅", html: mailKabugu("E-posta testi", "<p>Bu e-postayı görüyorsan Supabase e-posta gönderimi çalışıyor. 🎉</p>") }));
   }
   if (is === "mailKuyrugu") {
-    const { data, error } = await supabase.from("mail_queue").select("id,to_email,subject,html,text_body").is("sent_at", null).lt("attempts", 5).lte("send_after", new Date().toISOString()).order("id").limit(Math.min(80, num(body.limit, 40)));
+    const { data, error } = await supabase.from("mail_queue").select("id,student_id,kind,to_email,subject,html,text_body").is("sent_at", null).lt("attempts", 5).lte("send_after", new Date().toISOString()).order("priority",{ascending:false}).order("id").limit(Math.min(80, num(body.limit, 40)));
     if (error) return json({ ok: false, mesaj: error.message }, 500);
     return json({ ok: true, liste: data || [] });
   }
@@ -936,6 +947,8 @@ async function iceAktar(body: any) {
   return json({ ok: true, ...r });
 }
 
+const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,verifyPassword,attempts:denemeSay,audit:denemeYaz,sendQueued:kuyrukSatiriGonder,mailShell:mailKabugu,escape:hk});
+
 async function handle(req: Request) {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   const url = new URL(req.url);
@@ -945,6 +958,9 @@ async function handle(req: Request) {
   }
   const q = url.searchParams;
   const op = String(body.islem || q.get("islem") || "").trim();
+
+  const onboardingResponse = await onboarding.handle(req,op,body);
+  if(onboardingResponse)return onboardingResponse;
 
   // Google Auth is an additional student login method; legacy login stays intact.
   if (op === "googleDurum") {
@@ -998,12 +1014,8 @@ async function handle(req: Request) {
       if (createError || !createdId) return json({ ok: false, mesaj: createError?.code === "23505"
         ? "Bu ad soyad zaten kayıtlı. Mevcut hesabını bağla veya öğretmeninle görüş."
         : "Kayıt tamamlanamadı. Biraz sonra tekrar dene." }, createError?.code === "23505" ? 409 : 503);
-      try {
-        const alicilar = await sorumluEpostalar({ teacher_id: payload.teacher_id });
-        for (const e of alicilar) await kuyrugaEkle({ to_email: e, kind: "kayit", student_id: createdId,
-          subject: `Google ile yeni öğrenci kaydı – ${username}`,
-          html: mailKabugu("Yeni Öğrenci Kaydı", `<p><b>${hk(username)}</b> Google hesabıyla kayıt oldu. Hesabı aktif; bu bildirim kayıt bilgisi içindir.</p><p>Sınıf / şube: ${hk(sinif)} ${hk(sube)}</p><p>Veli telefonu: ${hk(tel)}</p><p>Veli e-postası: ${hk(email)}</p>`) });
-      } catch (_) { console.error("Google signup notification could not be queued"); }
+      try { await onboarding.welcome({id:createdId,username,email}); }
+      catch (_) { console.error("Google welcome verification could not be queued"); }
       const { data: createdStudent, error: createdStudentError } = await supabase.from("students")
         .select("id,username,status").eq("id", createdId).maybeSingle();
       if (createdStudentError || !createdStudent || createdStudent.status !== "approved")
@@ -1459,7 +1471,7 @@ async function handle(req: Request) {
       await denemeYaz("giris_hata", hedef);
       return json({ ok: false, mesaj: "Hatalı kullanıcı adı veya şifre." });
     }
-    if (s.status === "pending") return json({ ok: false, mesaj: "Hesabın henüz öğretmen onayı bekliyor. Onaylandığında giriş yapabilirsin." });
+    if (s.status === "pending") return json({ ok: false, emailDogrulamaGerekli:!!s.email_verification_required, mesaj:s.email_verification_required ? "E-posta adresine gönderdiğimiz bağlantıyla hesabını doğrula. Spam klasörünü de kontrol et." : "Hesabın henüz öğretmen onayı bekliyor. Onaylandığında giriş yapabilirsin." });
     if (s.status !== "approved") return json({ ok: false, mesaj: "Hesabın aktif değil. Öğretmeninle görüş." });
     const token = await issueSession("student", s.id);
     await supabase.from("students").update({ last_login_at: new Date().toISOString() }).eq("id", s.id);
@@ -1582,26 +1594,21 @@ async function handle(req: Request) {
       ogretmen = (await supabase.from("teachers").select("id,email,full_name,username,active").ilike("invite_code", kod).limit(1)).data?.[0] || null;
       if (!ogretmen || ogretmen.active === false) return json({ status: "error", message: "Öğretmen kodu bulunamadı. Kodu kontrol et ya da boş bırakıp bağımsız kayıt ol." });
     }
+    if (!body.kvkkOnayTarihi || !Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()) return json({status:"error",message:"Sınıf, şube ve veli bilgilendirme beyanı gerekli."},400);
     const payload = {
       username, password_hash: await hashPassword(password), phone: tel || null,
       class_no: num(body.sinif, 0) || null, branch: temizMetin(body.sube, 10) || null,
-      email: String(body.email || "").trim().slice(0, 120), status: "pending",
+      email: String(body.email || "").trim().slice(0, 120), status: "pending", email_verification_required:true, email_verified_at:null,
       kvkk_approved_at: body.kvkkOnayTarihi || new Date().toISOString()
     };
     (payload as any).teacher_id = ogretmen ? ogretmen.id : null;
-    if (existing) await supabase.from("students").update(payload).eq("id", existing.id);
-    else await supabase.from("students").insert(payload);
-    /* Sorumlu öğretmene (yoksa yöneticiye) e-posta: yeni kayıt onay bekliyor */
-    const alicilar = ogretmen && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(ogretmen.email || "").trim()) ? [String(ogretmen.email).trim()] : (await yoneticiler()).epostalar;
-    for (const e of alicilar) await kuyrugaEkle({ to_email: e, kind: "kayit", subject: `Yeni öğrenci kaydı onay bekliyor – ${username}`,
-      html: mailKabugu("Yeni Öğrenci Kaydı", `<p><b>${hk(username)}</b> portala kayıt oldu ve onayını bekliyor.</p><table style="border-collapse:collapse">
-<tr><td style="padding:4px 10px">Sınıf / şube</td><td style="padding:4px 10px"><b>${hk(payload.class_no || "-")} ${hk(payload.branch || "")}</b></td></tr>
-<tr><td style="padding:4px 10px">Veli telefonu</td><td style="padding:4px 10px">${hk(payload.phone || "-")}</td></tr>
-<tr><td style="padding:4px 10px">Veli e-postası</td><td style="padding:4px 10px">${hk(payload.email || "-")}</td></tr>
-<tr><td style="padding:4px 10px">Bağlantı</td><td style="padding:4px 10px">${ogretmen ? "Senin öğretmen kodunla kayıt oldu" : "Bağımsız öğrenci (öğretmen kodu girmedi)"}</td></tr></table>
-<p>Onaylamak için portalda <b>Öğretmen Paneli → Onay Bekleyen Kayıtlar</b> bölümüne gir.</p>`) });
-    return json({ status: "success", ogretmen: ogretmen ? (ogretmen.full_name || ogretmen.username) : "" });
+    const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
+    if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
+    try { await onboarding.welcome(saved.data); }
+    catch (_) { return json({status:"success",emailDogrulamaGerekli:true,message:"Kaydın oluştu. E-posta hazırlanamadı; giriş ekranından kullanıcı adı ve şifrenle yeni bağlantı iste."}); }
+    return json({status:"success",emailDogrulamaGerekli:true,message:"Hoş geldin! Hesabını açmak için e-postandaki doğrulama bağlantısına dokun. Spam klasörünü de kontrol et."});
   }
+
   if (op === "sifreDegistir") {
     const username = String(body.ogrenciAdi || "").trim(), phone = String(body.telefon || "").trim();
     // [YAMA 10] saatte 5 deneme sınırı
