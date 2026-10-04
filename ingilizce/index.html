@@ -27128,11 +27128,9 @@ if (
        HTML
        ========================================================= */
 
-    let daily = document.getElementById('dmDailyTasks');
-    if (!daily) { daily = document.createElement('section'); daily.id='dmDailyTasks'; daily.hidden=true; document.body.append(daily); }
-    daily.innerHTML = `
+    kok.innerHTML = `
 
-      <div class="so-kart">
+      <div class="so-kart" data-dm-goals="daily">
 
         <h3>
           📋 Günün 3 Görevi
@@ -27146,8 +27144,6 @@ if (
       </div>
 
 
-`;
-    kok.innerHTML = `
       <div class="so-iki">
 
 
@@ -27226,7 +27222,7 @@ if (
           </div>
 
 
-          <div class="so-kart">
+          <div class="so-kart" data-dm-goals="weekly">
 
             <h3>
               🏅 Haftalık Hedef
@@ -30892,7 +30888,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=1"></script>
-<link rel="stylesheet" href="daily-goals.css?v=1"><script src="daily-goals.js?v=1"></script>
+<link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=1"></script>
 </body>      
         </html>
 
