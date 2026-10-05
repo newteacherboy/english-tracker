@@ -98,3 +98,11 @@ body.dm-parkur-open #bottomNavMobile{background:#0d4a3d!important;border:1px sol
 @media(prefers-reduced-motion:reduce){.dm-adventure-node.current{animation:none}}
 
 .dm-adventure-profile{overflow:hidden;padding:0;flex-shrink:0}.dm-adventure-avatar{display:grid;place-items:center;width:100%;height:100%;font-size:27px;line-height:1;pointer-events:none}.dm-adventure-avatar>svg,.dm-adventure-avatar>img{width:100%!important;height:100%!important;display:block;object-fit:cover}.dm-adventure-avatar svg{max-width:100%;max-height:100%}
+
+/* Compact Parkur tabs: leave more of the forest visible on phones. */
+.dm-parkur-head .dm-parkur-tabs{gap:10px!important;padding:4px 0 6px!important;margin-bottom:8px}
+.dm-parkur-head .dm-parkur-tabs button{min-height:44px!important;padding:6px 10px!important;gap:6px!important;border-radius:15px!important;font-size:12px!important;box-shadow:0 3px 0 #b7d9ec!important}
+.dm-parkur-head .dm-parkur-tabs button[aria-selected=true]{box-shadow:0 3px 0 #0791a4!important}
+.dm-parkur-head .dm-parkur-tabs button[data-dm-tab=pro]{box-shadow:0 3px 0 #c6b1e4!important}
+.dm-parkur-head .dm-parkur-tabs .dm-tab-art{width:28px;height:28px}
+.dm-parkur-head .dm-parkur-tabs b{font-size:13px}

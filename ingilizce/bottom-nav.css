@@ -63,3 +63,14 @@
 body.kk-acik .seviye-harita-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
 
 #bottomNavMobile [data-ekran=tab-profil] .dm-nav-art{background-image:url('papi-welcome-v2.png');background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important}
+
+/* Compact dock with readable labels and the same seven touch targets. */
+@media(max-width:768px){
+ #bottomNavMobile.bottom-nav-mobile{--dm-nav-height:70px;border-radius:22px 22px 0 0!important;padding:4px 3px calc(4px + env(safe-area-inset-bottom,0px))!important}
+ #bottomNavMobile .bn-item{position:relative;min-height:60px!important;padding:3px 1px!important;border-radius:14px!important}
+ #bottomNavMobile .bn-icon{width:36px!important;height:32px!important}
+ #bottomNavMobile .bn-label{min-height:20px;font-size:10px!important}
+ #bottomNavMobile .bn-item.active{transform:translateY(-2px)!important}
+ #bottomNavMobile .bn-item.dm-level-locked::after{position:absolute;top:2px;right:3px;font-size:10px;line-height:12px}
+ body.dm-parkur-open .dm-parkur-scroll{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+}
