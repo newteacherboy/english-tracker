@@ -93,6 +93,7 @@ if(BAKIM_MODU){
 }
         
 </script>
+<script src="request-budget.js?v=1"></script>
                 <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>İngilizce Portal Giriş - Diji-Medu</title>
@@ -30802,96 +30803,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   };
 })();
 </script>
-
-                <!-- ===================== İSTEK TASARRUFU (Supabase aylık çağrı sınırı için) =====================
-     Sayfa açıkken bildirim, düello, enerji, akış, duyuru gibi bilgiler birkaç dakikada bir soruluyor.
-     1) Sekme / uygulama ARKA PLANDAYKEN bu yoklamalar sunucuya gitmez (son cevap kullanılır).
-     2) Aynı yoklama 1 dakika içinde tekrar edilirse sunucuya gitmez (farklı kodlar aynı şeyi soruyordu).
-     Kullanıcı bir şey yaptığında (oyun kaydı, mesaj, satın alma…) giden istekler ETKİLENMEZ;
-     sadece aşağıdaki listedeki "okuma" yoklamaları etkilenir. "_=" içeren (zorla yenile) istekler hep gider.
-     ============================================================================================= -->
-<script>
-(function () {
-  const YOKLAMA = { bildirimlerim: 60, duellolarim: 60, ilerlemeOzet: 120, enerjiDurumuGetir: 60, akisTumu: 60, yeniPuanBildirimleriGetir: 60, duyurulariGetir: 60, sosyalOgrencilerGetir: 120, KOK: 60 };
-  const son = new Map();                                     /* anahtar → { z, govde, durum } */
-  const kisi = () => String(localStorage.getItem('ing_aktifOgrenci') || '').toLowerCase();
-  function anahtar(u) {
-    try { let x = new URL(u, location.href), p = [...x.searchParams].filter(([k]) => k !== 't').sort(); return kisi() + '|' + p.map(([k, v]) => k + '=' + v).join('&'); } catch (e) { return ''; }
-  }
-  const orgFetch = window.fetch;
-  window.fetch = async function (url, opt) {
-    let u = typeof url === 'string' ? url : (url && url.url) || '';
-    let get = !opt || !opt.method || String(opt.method).toUpperCase() === 'GET';
-    if (!get || typeof apiURL === 'undefined' || u.indexOf(apiURL) !== 0 || /[?&]_=/.test(u)) return orgFetch.apply(this, arguments);
-    let islem = (u.match(/[?&]islem=(\w+)/) || [])[1] || 'KOK';
-    let sure = YOKLAMA[islem]; if (!sure) return orgFetch.apply(this, arguments);
-    let k = anahtar(u), kayit = son.get(k);
-    let gizli = document.visibilityState === 'hidden';
-    if (kayit && (gizli || Date.now() - kayit.z < sure * 1000))
-      return new Response(kayit.govde, { status: kayit.durum, headers: { 'Content-Type': 'application/json', 'X-Diji-Tasarruf': '1' } });
-    let r = await orgFetch.apply(this, arguments);
-    try { if (r.ok) { let govde = await r.clone().text(); if (govde.length < 300000) son.set(k, { z: Date.now(), govde, durum: r.status }); } } catch (e) {}
-    return r;
-  };
-  /* Kullanıcı bir şey değiştirince ilgili yoklama hemen yenilensin */
-  const GECERSIZ = { bildirimOkundu: ['bildirimlerim'], duelloKabul: ['duellolarim', 'bildirimlerim'], duelloRed: ['duellolarim', 'bildirimlerim'], duelloSonuc: ['duellolarim'], enerjiDegistir: ['enerjiDurumuGetir'], duyuruGorulduIsaretle: ['duyurulariGetir'], akisOlayToggle: ['akisTumu', 'sosyalOgrencilerGetir'] };
-  const ust = window.fetch;
-  window.fetch = function (url, opt) {
-    try {
-      let g = opt && typeof opt.body === 'string' && opt.body[0] === '{' ? JSON.parse(opt.body) : null;
-      let u = typeof url === 'string' ? url : '', islem = (g && g.islem) || (u.match(/[?&]islem=(\w+)/) || [])[1] || '';
-      (GECERSIZ[islem] || []).forEach(t => { for (const k of son.keys()) if (k.includes('islem=' + t)) son.delete(k); });
-      if (islem === 'cikis') son.clear();
-    } catch (e) {}
-    return ust.apply(this, arguments);
-  };
-})();
-</script>
-
-                <!-- ===================== İSTEK TASARRUFU (Supabase aylık çağrı sınırı için) =====================
-     Sayfa açıkken bildirim, düello, enerji, akış, duyuru gibi bilgiler birkaç dakikada bir soruluyor.
-     1) Sekme / uygulama ARKA PLANDAYKEN bu yoklamalar sunucuya gitmez (son cevap kullanılır).
-     2) Aynı yoklama 1 dakika içinde tekrar edilirse sunucuya gitmez (farklı kodlar aynı şeyi soruyordu).
-     Kullanıcı bir şey yaptığında (oyun kaydı, mesaj, satın alma…) giden istekler ETKİLENMEZ;
-     sadece aşağıdaki listedeki "okuma" yoklamaları etkilenir. "_=" içeren (zorla yenile) istekler hep gider.
-     ============================================================================================= -->
-<script>
-(function () {
-  const YOKLAMA = { bildirimlerim: 60, duellolarim: 60, ilerlemeOzet: 120, enerjiDurumuGetir: 60, akisTumu: 60, yeniPuanBildirimleriGetir: 60, duyurulariGetir: 60, sosyalOgrencilerGetir: 120, KOK: 60 };
-  const son = new Map();                                     /* anahtar → { z, govde, durum } */
-  const kisi = () => String(localStorage.getItem('ing_aktifOgrenci') || '').toLowerCase();
-  function anahtar(u) {
-    try { let x = new URL(u, location.href), p = [...x.searchParams].filter(([k]) => k !== 't').sort(); return kisi() + '|' + p.map(([k, v]) => k + '=' + v).join('&'); } catch (e) { return ''; }
-  }
-  const orgFetch = window.fetch;
-  window.fetch = async function (url, opt) {
-    let u = typeof url === 'string' ? url : (url && url.url) || '';
-    let get = !opt || !opt.method || String(opt.method).toUpperCase() === 'GET';
-    if (!get || typeof apiURL === 'undefined' || u.indexOf(apiURL) !== 0 || /[?&]_=/.test(u)) return orgFetch.apply(this, arguments);
-    let islem = (u.match(/[?&]islem=(\w+)/) || [])[1] || 'KOK';
-    let sure = YOKLAMA[islem]; if (!sure) return orgFetch.apply(this, arguments);
-    let k = anahtar(u), kayit = son.get(k);
-    let gizli = document.visibilityState === 'hidden';
-    if (kayit && (gizli || Date.now() - kayit.z < sure * 1000))
-      return new Response(kayit.govde, { status: kayit.durum, headers: { 'Content-Type': 'application/json', 'X-Diji-Tasarruf': '1' } });
-    let r = await orgFetch.apply(this, arguments);
-    try { if (r.ok) { let govde = await r.clone().text(); if (govde.length < 300000) son.set(k, { z: Date.now(), govde, durum: r.status }); } } catch (e) {}
-    return r;
-  };
-  /* Kullanıcı bir şey değiştirince ilgili yoklama hemen yenilensin */
-  const GECERSIZ = { bildirimOkundu: ['bildirimlerim'], duelloKabul: ['duellolarim', 'bildirimlerim'], duelloRed: ['duellolarim', 'bildirimlerim'], duelloSonuc: ['duellolarim'], enerjiDegistir: ['enerjiDurumuGetir'], duyuruGorulduIsaretle: ['duyurulariGetir'], akisOlayToggle: ['akisTumu', 'sosyalOgrencilerGetir'] };
-  const ust = window.fetch;
-  window.fetch = function (url, opt) {
-    try {
-      let g = opt && typeof opt.body === 'string' && opt.body[0] === '{' ? JSON.parse(opt.body) : null;
-      let u = typeof url === 'string' ? url : '', islem = (g && g.islem) || (u.match(/[?&]islem=(\w+)/) || [])[1] || '';
-      (GECERSIZ[islem] || []).forEach(t => { for (const k of son.keys()) if (k.includes('islem=' + t)) son.delete(k); });
-      if (islem === 'cikis') son.clear();
-    } catch (e) {}
-    return ust.apply(this, arguments);
-  };
-})();
-</script>
                                 
 <script src="google-login.js?v=rights-5"></script>
 <link rel="stylesheet" href="parkur-theme.css?v=6">
@@ -30905,7 +30816,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script src="feature-catalog.js?v=2"></script>
-<script src="weekly-ui.js?v=3"></script>
+<script src="weekly-ui.js?v=4"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=3"></script>
@@ -30922,7 +30833,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=1"></script>
-<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=4"></script>
+<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=5"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=1"></script>
 </body>      
         </html>

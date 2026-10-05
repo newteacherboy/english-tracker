@@ -1,4 +1,5 @@
 import './score-rules.js';
+import { readBatch, contentCache } from './request-budget.ts';
 import { progressionAPI } from './progression-api.ts';
 import { onboardingAPI } from './onboarding-api.ts';
 // =====================================================================
@@ -20,6 +21,7 @@ const adminKey = secretKeys.default;
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, adminKey);
 const release = releaseAPI(supabase,json);
 const progression = progressionAPI(supabase,json);
+const cachedContent = contentCache(json);
 
 const OGRENCI_OTURUM_GUN = 30;
 const OGRETMEN_OTURUM_SAAT = 8;           // [YAMA 1] öğretmen oturumu 30 gün değil 8 saat
@@ -961,6 +963,8 @@ async function handle(req: Request) {
   const q = url.searchParams;
   const op = String(body.islem || q.get("islem") || "").trim();
 
+  if(op === "okumaGrubu") return readBatch(req,body,handle,json);
+
   const onboardingResponse = await onboarding.handle(req,op,body);
   if(onboardingResponse)return onboardingResponse;
 
@@ -1297,9 +1301,13 @@ async function handle(req: Request) {
     return json((data || []).map((x: any) => ({ seviye: x.level, kategori: x.category, konuAdi: x.topic_name, siraNo: x.sort_no, durum: tamam.has(x.topic_name) ? "tamamlandi" : basarisiz.has(x.topic_name) ? "basarisiz" : "", bilmiyordum: bilmiyor.has(x.topic_name) })));
   }
   if (op === "dersKonuDetayGetir") {
-    const { data } = await supabase.from("lesson_topics").select("content").eq("level", String(val(body, q, "seviye"))).eq("category", String(val(body, q, "kategori"))).eq("topic_name", String(val(body, q, "konu"))).maybeSingle();
-    const c: any = (data && data.content) || {};
-    return json({ ...c, anlatimHTML: c.anlatimHTML || "", gorselLink: c.gorselLink || "", kelimeSozlugu: metinVer(c.kelimeSozlugu) || "{}", ornekler: metinVer(c.ornekler) || "[]", testJSON: metinVer(c.testJSON ?? c.test) || "[]", uygulamaJSON: metinVer(c.uygulamaJSON ?? c.uygulama) || "[]" });
+    const level=String(val(body,q,"seviye")),category=String(val(body,q,"kategori")),topic=String(val(body,q,"konu"));
+    return cachedContent(req,JSON.stringify([level,category,topic]),async()=>{
+      const { data,error } = await supabase.from("lesson_topics").select("content").eq("level",level).eq("category",category).eq("topic_name",topic).maybeSingle();
+      if(error)throw error;
+      const c:any=(data&&data.content)||{};
+      return { ...c, anlatimHTML: c.anlatimHTML || "", gorselLink: c.gorselLink || "", kelimeSozlugu: metinVer(c.kelimeSozlugu) || "{}", ornekler: metinVer(c.ornekler) || "[]", testJSON: metinVer(c.testJSON ?? c.test) || "[]", uygulamaJSON: metinVer(c.uygulamaJSON ?? c.uygulama) || "[]" };
+    });
   }
   if (op === "dersBilmiyordumToggle") {
     const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
@@ -1712,8 +1720,10 @@ async function handle(req: Request) {
 
   // ============================================================ HERKESE AÇIK İÇERİK
   if (op === "kelimelerGetir") {
-    const data = await hepsiniGetir(() => supabase.from("word_bank").select("class_no,unit_no,english,turkish,extra").eq("active", true).order("class_no").order("unit_no").order("english"));
-    return json((data || []).map(x => ({ sinif: x.class_no, unite: x.unit_no, ingilizce: x.english, turkce: x.turkish, ...(x.extra || {}) })));
+    return cachedContent(req,"words",async()=>{
+      const data = await hepsiniGetir(() => supabase.from("word_bank").select("class_no,unit_no,english,turkish,extra").eq("active", true).order("class_no").order("unit_no").order("english"));
+      return (data || []).map(x => ({ sinif: x.class_no, unite: x.unit_no, ingilizce: x.english, turkce: x.turkish, ...(x.extra || {}) }));
+    });
   }
   if (op === "etkinlikTanimlariGetir") {
     const { data } = await supabase.from("activities").select("*").eq("active", true).order("display_name");

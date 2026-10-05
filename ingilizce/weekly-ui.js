@@ -23,7 +23,7 @@ function apply(){
  if(!admin)$('dmReleaseMenu')?.remove();
  document.querySelectorAll('.dm-game option').forEach(o=>{const map={Kelime_Liderlik:'kelime',Jeopardy_Liderlik:'jeopardy',Hafiza_Liderlik:'hafiza',Yagmur_Liderlik:'yagmur',Asmaca_Liderlik:'asmaca',KelimeBul_Liderlik:'kelimebul',Eslesme_Liderlik:'eslestirme',Tren_Liderlik:'tren',Dikte_Liderlik:'dikte',Cumle_Liderlik:'cumle',ucus:'ucus',rota:'rota'};o.disabled=!admin&&map[o.value]&&!enabled('oyun_'+map[o.value]);o.hidden=o.disabled;});
 }
-async function refresh(){if(refreshing)return;refreshing=true;try{const d=await api('yayinOzellikleri');flags=d.flags;admin=d.admin===true;apply();}catch(e){}finally{refreshing=false;}}
+async function refresh(){if(document.hidden||refreshing)return;refreshing=true;try{const d=await api('yayinOzellikleri');flags=d.flags;admin=d.admin===true;apply();}catch(e){}finally{refreshing=false;}}
 window.dmReleasePanelAc=async function(){
  if(!admin){await refresh();if(!admin)return unavailable();}
  $('ogretmenMenuModal').style.display='none';
