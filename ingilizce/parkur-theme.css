@@ -96,3 +96,5 @@ body.dm-parkur-open #bottomNavMobile{background:#0d4a3d!important;border:1px sol
 @keyframes dm-adventure-glow{50%{box-shadow:0 6px 0 #a66f19,0 0 0 9px #fff1a530}}
 @media(min-width:800px){.dm-adventure-scene{height:700px}.dm-parkur-head{padding:18px 24px 0}}@media(max-width:360px){.dm-parkur-head{padding:12px 12px 0}.dm-parkur-brand{font-size:26px}.dm-parkur-head>h1{font-size:22px}.dm-parkur-wallet{gap:6px}.dm-parkur-wallet button{font-size:12px}.dm-adventure-go{font-size:19px}.dm-adventure-node{width:48px}}
 @media(prefers-reduced-motion:reduce){.dm-adventure-node.current{animation:none}}
+
+.dm-adventure-profile{overflow:hidden;padding:0;flex-shrink:0}.dm-adventure-avatar{display:grid;place-items:center;width:100%;height:100%;font-size:27px;line-height:1;pointer-events:none}.dm-adventure-avatar>svg,.dm-adventure-avatar>img{width:100%!important;height:100%!important;display:block;object-fit:cover}.dm-adventure-avatar svg{max-width:100%;max-height:100%}

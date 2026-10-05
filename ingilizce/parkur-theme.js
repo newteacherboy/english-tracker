@@ -23,12 +23,38 @@
     return `<section class="dm-adventure-scene" aria-label="${safe(section)}, saraya uzanan öğrenme yolu"><div class="dm-adventure-palace-label">🏰 Keşif Sarayı</div><div class="dm-adventure-route-name">${safe(section)} · ${complete}/${total} durak</div><img class="dm-adventure-papi" src="papi-welcome-v2.png" alt="Öğrenme arkadaşın Papi"><div class="dm-adventure-papi-note">Haydi keşfedelim!</div>${shown.map((step,i)=>{const [x,y]=places[i],active=step.index===next&&!step.done;return `<button type="button" data-d="${step.index}" class="dm-adventure-node${active?' current':step.done?' done':' locked'}" style="left:${x}%;top:${y}%" aria-label="${safe(step.label)}${step.done?', tamamlandı':active?', sıradaki':', kilitli'}"><span>${step.done?'✓':active?'★':'🔒'}</span><small>${step.index+1}. durak</small></button>`;}).join('')}<button type="button" class="dm-adventure-go" data-d="${next}">${complete===total?'Son durağı tekrar et':'Parkura devam et'} <span aria-hidden="true">›</span></button></section>`;
   };
   function sync(){
+    profileAvatar();
     const tab=document.getElementById('tab-dunya');
     const open=!!(tab&&tab.classList.contains('active')&&tab.classList.contains('bz-yeni')&&tab.querySelector('.dm-parkur-head'));
     const gates=!!(tab&&tab.classList.contains('active')&&tab.classList.contains('bz-yeni')&&tab.querySelector('.bz-kapilar'));
     document.body.classList.toggle('dm-parkur-gates',gates);
     if(document.body.classList.contains('dm-parkur-open')!==open)document.body.classList.toggle('dm-parkur-open',open);
 
+  }
+  // Reuse the avatar already rendered for the signed-in user's profile.
+  // Clone its visual only; preserve the original profile node and button action.
+  let avatarVersion=0;
+  const avatarSignatures=new WeakMap();
+  function profileAvatar(){
+    const source=document.getElementById('userAvatarLetter');
+    if(!source || !source.childNodes.length)return;
+    document.querySelectorAll('.dm-adventure-profile').forEach(button=>{
+      const signature=source.innerHTML;
+      if(avatarSignatures.get(button)===signature)return;
+      const visual=document.createElement('span');visual.className='dm-adventure-avatar';visual.setAttribute('aria-hidden','true');
+      source.childNodes.forEach(node=>visual.append(node.cloneNode(true)));
+      // SVG avatars may contain gradients/clip paths: keep IDs unique in the copy.
+      const ids=new Map(),prefix='dm-parkur-avatar-'+(++avatarVersion)+'-';
+      visual.querySelectorAll('[id]').forEach(el=>{const old=el.id;ids.set(old,prefix+old);el.id=prefix+old;});
+      visual.querySelectorAll('*').forEach(el=>{
+        for(const attr of [...el.attributes]){
+          let value=attr.value;
+          ids.forEach((next,old)=>{value=value.split('url(#'+old+')').join('url(#'+next+')');if((attr.name==='href'||attr.name==='xlink:href')&&value==='#'+old)value='#'+next;});
+          if(value!==attr.value)el.setAttribute(attr.name,value);
+        }
+      });
+      button.replaceChildren(visual);avatarSignatures.set(button,signature);
+    });
   }
   function wallet(){
     const e=document.querySelector('[data-dm-energy]'),g=document.querySelector('[data-dm-gold]');
@@ -39,5 +65,6 @@
   document.addEventListener('click',e=>{const b=e.target.closest('button[data-dm-tab],button[data-dm-wallet]');if(!b)return;if(b.dataset.dmTab==='pro'){window.dmMeduProAc?.();}else if(b.dataset.dmTab){const target=document.querySelector('#pkSekmeler [data-p="'+b.dataset.dmTab+'"]');if(target)target.click();}else if(b.dataset.dmWallet==='level'){window.dmProgressPanel?.open();}else if(b.dataset.dmWallet==='energy'){if(typeof window.dijiEnerjiPaneliAc==='function')window.dijiEnerjiPaneliAc();}else if(typeof window.magazaAc==='function')window.magazaAc();});
   const tab=document.getElementById('tab-dunya');if(tab)new MutationObserver(sync).observe(tab,{attributes:true,attributeFilter:['class'],childList:true,subtree:true});
 
+  const avatar=document.getElementById('userAvatarLetter');if(avatar)new MutationObserver(profileAvatar).observe(avatar,{childList:true,subtree:true,characterData:true,attributes:true});
   sync();setInterval(wallet,1000);
 })();

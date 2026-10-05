@@ -43,5 +43,17 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
  assert(await page.evaluate(()=>forestOriginalNodes.every(n=>document.getElementById(n.id)===n)));
  await page.evaluate(()=>grafikliCiz([],{},[]));assert(await page.locator('#gelisimGrafik').isHidden());assert(await page.locator('#gelisimGrafikKutusu .dm-chart-empty').isVisible());assert(await page.locator('#denemeGrafik').isHidden());
  await page.evaluate(()=>dcTumTamEkranlariKapat());assert(await page.locator('#gelisimGrafik').evaluate(e=>!e.hidden),'empty state must not leak outside profile');
- assert.deepEqual(errors.filter(e=>!e.includes('pdf')),[]);await browser.close();console.log('PASS forest profile real charts, preserved nodes/data, badges, account modal, empty states, reopen/live level and 360/390/768 layouts');
+ await page.evaluate(()=>{dunyaAc();yoAvatarUygula();});
+ await page.locator('.dm-adventure-avatar svg').waitFor({state:'visible'});
+ assert(await page.locator('.dm-adventure-profile').evaluate(button=>{const source=document.getElementById('userAvatarLetter');return button.querySelectorAll('svg path').length===source.querySelectorAll('svg path').length && !button.contains(source);}));
+ await page.evaluate(()=>{document.getElementById('userAvatarLetter').innerHTML='<svg viewBox="0 0 50 50"><defs><linearGradient id="avatarPaint"><stop stop-color="red"/></linearGradient></defs><circle cx="25" cy="25" r="25" fill="url(#avatarPaint)"/></svg>';});
+ await page.waitForFunction(()=>document.querySelector('.dm-adventure-avatar circle')?.getAttribute('fill')?.startsWith('url(#dm-parkur-avatar-'));
+ assert.equal(await page.locator('#avatarPaint').count(),1,'cloned SVG gradient IDs must stay unique');
+ await page.evaluate(()=>{document.getElementById('userAvatarLetter').innerHTML='<img src="papi-welcome-v2.png" alt="Profil resmi">';});
+ await page.locator('.dm-adventure-avatar img').waitFor({state:'visible'});
+ assert.equal(await page.locator('.dm-adventure-avatar img').getAttribute('src'),'papi-welcome-v2.png');
+ const size=await page.locator('.dm-adventure-profile').boundingBox(),photo=await page.locator('.dm-adventure-avatar img').boundingBox();assert(photo.width<=size.width && photo.height<=size.height,'photo fits circular button');
+ await page.evaluate(()=>document.getElementById('dmLevelUp')?.remove());await page.locator('.dm-adventure-profile').click();assert(await page.locator('#dmForestGrowth').isVisible());
+ assert.equal(await page.locator('#userAvatarLetter img').getAttribute('src'),'papi-welcome-v2.png');
+ assert.deepEqual(errors.filter(e=>!e.includes('pdf')),[]);await browser.close();console.log('PASS forest profile real charts, preserved nodes/data, badges, account modal, empty states, reopen/live level and 360/390/768 layouts; live parkur SVG/photo avatar, unique gradient IDs and profile navigation');
 })().catch(e=>{console.error(e);process.exit(1)});
