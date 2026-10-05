@@ -8,3 +8,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 scripts/check-media-rights.py
+      - run: node --test tests/portal-integrity.test.cjs

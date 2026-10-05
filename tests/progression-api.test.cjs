@@ -10,3 +10,5 @@ test('existing inventory is accepted intact, new ownership uses atomic purchase 
 test('frontend and both API catalogs remain identical',()=>{const a=fs.readFileSync('ingilizce/progression-catalog.js');for(const dir of ['diji-api','medupro-api'])assert.deepEqual(a,fs.readFileSync('supabase/functions/'+dir+'/progression-catalog.js'));});
 
 test('MeduPro word-mode routes enforce level 10 on the server',async()=>{const {api,ctx}=fixture(2);for(const op of ['konusmaSeviyeIlerlemeGetir','konusmaSeviyeTamamla','konusmaLiderlikKaydet'])assert.equal((await api.guard(op,{},new URLSearchParams(),student)).status,403);ctx.level=10;assert.equal(await api.guard('konusmaSeviyeIlerlemeGetir',{},new URLSearchParams(),student),null);});
+
+test('reward claims reject locked games and anonymous sessions',async()=>{const {api}=fixture(7);assert.equal((await api.handle('seviyeOyunOdulu',{game:'dikte'},new URLSearchParams(),student)).status,403);assert.equal((await api.handle('seviyeOyunOdulu',{game:'ky'},new URLSearchParams(),null)).status,401);});

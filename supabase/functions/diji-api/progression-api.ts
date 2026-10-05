@@ -6,8 +6,16 @@ export function progressionAPI(db:any,json:any){
  async function context(a:any){const {data,error}=await db.rpc('dm_progress_context',{actor:a.student_id});if(error)throw error;return data;}
  const deny=(n:any)=>json({ok:false,status:'kilitli',mesaj:typeof n==='number'?`Bu özellik ${n}. seviyede açılır.`:n},403);
  async function handle(op:string,body:any,q:URLSearchParams,a:any){
-  if(!['seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi'].includes(op))return null;
+  if(!['seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi','seviyeOyunOdulu'].includes(op))return null;
   if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+  if(op==='seviyeOyunOdulu'){
+   const ctx=await context(a),game=String(body.game||''),code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur',harfbahcesi:'oyun_harfbahcesi',eslestirme:'oyun_eslestirme'} as any)[game]||'oyun_'+game;
+   if(!Object.hasOwn(C.gates,code)||ctx.level<C.gates[code])return deny(C.gates[code]||40);
+   const units=Array.isArray(body.units)?body.units.map(Number):[];
+   if(game==='ba'){const stop=1000+Number(body.classNo)*100+Number(units[0]),door=ctx.units.findIndex((u:any[])=>u.includes(stop));if(door<0||ctx.level<[1,10,20,30][door]||door>0&&!ctx.complete[door-1])return deny('Geçerli ve açık parkur durağı gerekli.');}
+   const {data,error}=await db.rpc('dm_game_reward_claim',{actor:a.student_id,run_key:String(body.runId||''),game,class_id:Number(body.classNo),unit_ids:units,correct:Number(body.correct),wrong:Number(body.wrong),seconds:Number(body.seconds),first_clear:!!body.firstClear,stars:Number(body.stars||1),boost:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
+   if(error)return json({ok:false,mesaj:error.message},400);return json(data);
+  }
   if(op==='seviyeDurumu')return json({ok:true,...await context(a)});
   if(op==='seviyeLigListesi'){const {data,error}=await db.rpc('dm_progress_league');if(error)throw error;return json({ok:true,liste:data});}
   if(op==='seviyeSandikAc'){const {data,error}=await db.rpc('dm_progress_chest',{actor:a.student_id,chest:String(body.sandik||'')});if(error)return deny(error.message);return json({ok:true,...data});}

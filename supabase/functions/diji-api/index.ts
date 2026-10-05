@@ -334,12 +334,12 @@ async function audit(a: any, operation: string, target: string, payload: any = {
 const leaderboardKey: Record<string, string> = {
   kelimeLiderlikKaydet: "kelime", hafizaLiderlikKaydet: "hafiza", yagmurLiderlikKaydet: "yagmur",
   asmacaLiderlikKaydet: "asmaca", kelimebulLiderlikKaydet: "kelimebul", jeopardyLiderlikKaydet: "jeopardy",
-  boslukLiderlikKaydet: "bosluk", konusmaLiderlikKaydet: "konusma", eslestirmeLiderlikKaydet: "eslestirme", trenLiderlikKaydet: "tren", harfBahcesiLiderlikKaydet: "harfbahcesi"
+  boslukLiderlikKaydet: "bosluk", konusmaLiderlikKaydet: "konusma", eslestirmeLiderlikKaydet: "eslestirme", trenLiderlikKaydet: "tren", harfBahcesiLiderlikKaydet: "harfbahcesi", dikteLiderlikKaydet: "dikte", cumleLiderlikKaydet: "cumle"
 };
 const leaderboardGetKey: Record<string, string> = {
   kelimeLiderlikTumunuGetir: "kelime", hafizaLiderlikTumunuGetir: "hafiza", yagmurLiderlikTumunuGetir: "yagmur",
   asmacaLiderlikTumunuGetir: "asmaca", kelimebulLiderlikTumunuGetir: "kelimebul", jeopardyLiderlikTumunuGetir: "jeopardy",
-  boslukLiderlikTumunuGetir: "bosluk", konusmaLiderlikTumunuGetir: "konusma", eslestirmeLiderlikTumunuGetir: "eslestirme", trenLiderlikTumunuGetir: "tren", harfBahcesiLiderlikTumunuGetir: "harfbahcesi"
+  boslukLiderlikTumunuGetir: "bosluk", konusmaLiderlikTumunuGetir: "konusma", eslestirmeLiderlikTumunuGetir: "eslestirme", trenLiderlikTumunuGetir: "tren", harfBahcesiLiderlikTumunuGetir: "harfbahcesi", dikteLiderlikTumunuGetir: "dikte", cumleLiderlikTumunuGetir: "cumle"
 };
 const legacyClassNo = (v: any) => { const m = String(v ?? "").match(/(\d+)/); return m ? Number(m[1]) : null; };
 const scoreRow = (r: any) => ({
@@ -359,9 +359,9 @@ async function leaderboardSave(op: string, body: any, a: any) {
   const key = leaderboardKey[op];
   const name = String(body.isim || body.ogrenci || "");
   const s = await hedefOgrenci(a, name);
-  if (key === "harfbahcesi") {
+  if (key === "harfbahcesi" || body.runId) {
     if (!s?.id) return bulunamadi();
-    if (!/^[0-9a-f-]{36}$/i.test(String(body.runId || ""))) return json({status:"error",message:"Geçersiz oyun kaydı."},400);
+    if (!(key === "harfbahcesi" ? /^[0-9a-f-]{36}$/i : /^[a-zA-Z0-9_-]{8,100}$/).test(String(body.runId || ""))) return json({status:"error",message:"Geçersiz oyun kaydı."},400);
     const prior = await supabase.from("game_scores").select("id").eq("student_id",s.id).eq("game_key",key).contains("extra",{run_id:body.runId}).limit(1);
     if (prior.error) return json({status:"error",message:"Kayıt doğrulanamadı."},500);
     if (prior.data?.length) return json({status:"success"});
@@ -377,7 +377,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
     unit_name: temizMetin(body.unite, 80) || null, score: puan, correct_count: Math.max(0, num(body.dogru)),
     wrong_count: Math.max(0, num(body.yanlis)), duration_seconds: Math.max(0, Math.round(num(body.suresaniye))),
     detail: temizMetin(body.detay || body.sure, 200) || null, played_on: body.tarih || new Date().toISOString().slice(0, 10),
-    extra: { legacy_class: body.sinif || null, v: v3 ? 3 : v2 ? 2 : 1, ...(scored ? {base:scored.temelPuan,speed:scored.hizBonusu,penalty:scored.hataCezasi}:{}), ...(key === "harfbahcesi" ? {run_id:body.runId} : {}) }
+    extra: { legacy_class: body.sinif || null, v: v3 ? 3 : v2 ? 2 : 1, ...(scored ? {base:scored.temelPuan,speed:scored.hizBonusu,penalty:scored.hataCezasi}:{}), ...(body.runId ? {run_id:body.runId,reward_protocol:1} : {}) }
   };
   const ins = await supabase.from("game_scores").insert(row);
   if (ins.error) return json({ status: "error", message: ins.error.message }, 500);
@@ -389,7 +389,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
 }
 // [v3.5] Adil puanlama: 9 oyun 1000'lik ölçekte. Sıralama: puan ↓, süre ↑, tarih ↑.
 // Her öğrencinin sadece en iyi skoru listelenir. donem=hafta → bu pazartesiden beri.
-const ADIL_OYUNLAR = new Set(["kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi", "konusma"]);
+const ADIL_OYUNLAR = new Set(["kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi", "konusma", "dikte", "cumle"]);
 function haftaBasi() {
   const tr = new Date(Date.now() + 3 * 3600000);               // İstanbul saati
   const gun = (tr.getUTCDay() + 6) % 7;                         // pazartesi = 0

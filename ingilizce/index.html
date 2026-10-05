@@ -14404,14 +14404,14 @@ const YO_SOHBET = [
         }
         function yoKaydet() {
           if (!yo || !yoIsim) return;
-          yo.guncelleme = Date.now();
+          DijiProgressRules.migrate(yo); yo.guncelleme = Date.now();
           try { localStorage.setItem('ing_yo_' + yoIsim, JSON.stringify(yo)); } catch (e) {}
           clearTimeout(yoKayitZaman);
           yoKayitZaman = setTimeout(yoSunucuyaGonder, 3000);
         }
         function yoSunucuyaGonder() {
           if (!yo || !yoIsim || yoIsim.toLowerCase() === 'teacher') return;
-          fetch(apiURL, { method:'POST', body: JSON.stringify({ islem:'ekVeriKaydet', ogrenci:yoIsim, anahtar:'yo', deger: JSON.stringify(yo) }) }).catch(() => {});
+          fetch(apiURL, { method:'POST', body: JSON.stringify({ islem:'ekVeriKaydet', ogrenci:yoIsim, anahtar:'yo', deger: JSON.stringify((DijiProgressRules.migrate(yo),yo)) }) }).catch(() => {});
         }
         async function yoSunucudanAl() {
           if (!yoIsim) return;
@@ -24132,8 +24132,8 @@ window.OC = (function () {
   const SERI_BONUS = { 3: 50, 5: 50, 8: 100 };          /* en fazla 200 → en yüksek puan 1000 */
   const KAYIT_OYUN = { kelimeLiderlikKaydet: 'ky', jeopardyLiderlikKaydet: 'jp', boslukLiderlikKaydet: 'bosluk',
     hafizaLiderlikKaydet: 'hafiza', yagmurLiderlikKaydet: 'yagmur', asmacaLiderlikKaydet: 'asmaca',
-    kelimebulLiderlikKaydet: 'kelimebul', eslestirmeLiderlikKaydet: 'eslestirme', trenLiderlikKaydet: 'tren', harfBahcesiLiderlikKaydet: 'harfbahcesi', konusmaLiderlikKaydet: 'kp' };
-  const GETIR_ADIL = /^(kelime|jeopardy|bosluk|hafiza|yagmur|asmaca|kelimebul|eslestirme|tren|harfBahcesi|konusma)LiderlikTumunuGetir$/;
+    kelimebulLiderlikKaydet: 'kelimebul', eslestirmeLiderlikKaydet: 'eslestirme', trenLiderlikKaydet: 'tren', harfBahcesiLiderlikKaydet: 'harfbahcesi', konusmaLiderlikKaydet: 'kp', dikteLiderlikKaydet: 'dikte', cumleLiderlikKaydet: 'cumle' };
+  const GETIR_ADIL = /^(kelime|jeopardy|bosluk|hafiza|yagmur|asmaca|kelimebul|eslestirme|tren|harfBahcesi|konusma|dikte|cumle)LiderlikTumunuGetir$/;
   let d = null;                     /* aktif oyun durumu */
   const sonuclar = {};              /* oyunKey → dondurulmuş sonuç */
   let donem = 'hafta';
@@ -24169,27 +24169,27 @@ window.OC = (function () {
     for (const k of havuz || []) { let a = anahtar(k); if (!a || gorulenAnahtar.has(a)) continue; gorulenAnahtar.add(a); tekil.push(k); }
     if (sinifModu() || !kullanici()) return karistir(tekil).slice(0, adet);
 
-    let gorulen = gkOku(oyun), secim = [];
+    let gorulen = gkOku(oyun), secim = [], lastKey='oc_last:'+kullanici()+':'+oyun,last=new Set((()=>{try{return JSON.parse(localStorage.getItem(lastKey)||'[]');}catch{return [];}})());
     if (opt.zk !== false && typeof yo !== 'undefined' && yo && yo.zk) {
       yo.gkZk = yo.gkZk || {};
-      let vadeli = tekil.filter(k => { let a = anahtar(k), z = yo.zk[a]; return z && (!z.sonraki || z.sonraki <= bugun()) && a !== yo.gkZk[oyun]; });
+      let vadeli = tekil.filter(k => { let a = anahtar(k), z = yo.zk[a]; return z && (!z.sonraki || z.sonraki <= bugun()) && a !== yo.gkZk[oyun] && !last.has(a); });
       if (vadeli.length) { let t = vadeli[Math.floor(Math.random() * vadeli.length)]; t._tekrar = true; secim.push(t); yo.gkZk[oyun] = anahtar(t); }
       else yo.gkZk[oyun] = '';     /* bir sonraki oyunda aynı zor kelime yeniden gelebilir */
     }
-    let yeni = karistir(tekil.filter(k => !gorulen.has(anahtar(k)) && !secim.includes(k)));
+    let yeni = karistir(tekil.filter(k => !gorulen.has(anahtar(k)) && !last.has(anahtar(k)) && !secim.includes(k)));
     secim.push(...yeni.slice(0, adet - secim.length));
     if (secim.length < adet) {                             /* tur tamamlandı: bu havuzu sıfırla */
       tekil.forEach(k => gorulen.delete(anahtar(k)));
-      secim.push(...karistir(tekil.filter(k => !secim.includes(k))).slice(0, adet - secim.length));
+      secim.push(...karistir(tekil.filter(k => !secim.includes(k)&&!last.has(anahtar(k)))).slice(0,adet-secim.length));if(secim.length<adet)secim.push(...karistir(tekil.filter(k=>!secim.includes(k))).slice(0,adet-secim.length));
     }
     secim.forEach(k => gorulen.add(anahtar(k)));
-    gkYaz(oyun, gorulen);
+    gkYaz(oyun, gorulen);localStorage.setItem(lastKey,JSON.stringify(secim.map(anahtar)));
     return karistir(secim);
   }
 
   /* ---------- puanlama ---------- */
   function basla(oyun) {
-    d = { oyun, runId: oyun + '_' + Date.now() + '_' + Math.random().toString(36).slice(2), temelPuan: 0, puan: 0, dogru: 0, yanlis: 0, seri: 0, enSeri: 0, verilenBonus: {}, bas: Date.now(), odulCarpan: 1, bitti: false };
+    d = { rewardScope:window.dmGameScope?.(oyun), oyun, runId: oyun + '_' + Date.now() + '_' + Math.random().toString(36).slice(2), temelPuan: 0, puan: 0, dogru: 0, yanlis: 0, seri: 0, enSeri: 0, verilenBonus: {}, bas: Date.now(), odulCarpan: 1, bitti: false };
     delete sonuclar[oyun];
   }
   /* oran: 1 = ilk denemede doğru (100), 0.5 = ikinci denemede (50), 0 = bulundu ama puansız */
@@ -24217,7 +24217,7 @@ window.OC = (function () {
   function yildiz(p) { return p >= 800 ? 3 : p >= 500 ? 2 : 1; }
   function sonlandir(oyun) {
     if (!d || d.oyun !== oyun) return sonuclar[oyun] || null;
-    if (!d.bitti) { const s = hesapla(); d.sure = s.sure; d.puan = s.puan; d.bitti = true; sonuclar[oyun] = Object.assign(s, {runId:d.runId, enSeri:d.enSeri, odulCarpan:d.odulCarpan}); }
+    if (!d.bitti) { const s = hesapla(); d.sure = s.sure; d.puan = s.puan; d.bitti = true; sonuclar[oyun] = Object.assign(s, {runId:d.runId, enSeri:d.enSeri, odulCarpan:d.odulCarpan,rewardScope:d.rewardScope}); }
     return sonuclar[oyun];
   }
 
@@ -24228,7 +24228,7 @@ window.OC = (function () {
     window.genelSonucEkraniGoster = function (o) {
       if (o && o.oyunKey && d && d.oyun === o.oyunKey) {
         let s = sonlandir(o.oyunKey);
-        Object.assign(o, s, { sureSaniye: s.sure });
+        const explicitScope=o.rewardScope;Object.assign(o, s, { sureSaniye: s.sure });if(explicitScope)o.rewardScope=explicitScope;
       }
       const result=org.call(this, o);
       if(o?.puanSurum===3){let detail=document.getElementById('dmScoreBreakdown');if(!detail){detail=document.createElement('p');detail.id='dmScoreBreakdown';detail.className='dm-score-breakdown';document.querySelector('#genelSonucOverlay .gso-istat')?.after(detail);}detail.textContent='Doğru + seri: '+o.temelPuan+' · Hız: +'+o.hizBonusu+' · Yanlış: −'+o.hataCezasi+' puan';}
@@ -24245,7 +24245,7 @@ window.OC = (function () {
         let b = JSON.parse(opt.body), oyun = KAYIT_OYUN[b.islem];
         let s = oyun ? (sonuclar[oyun] || (d && d.oyun === oyun ? sonlandir(oyun) : null)) : null;
         if (s) {
-          Object.assign(b, { puan: s.puan, dogru: s.dogru, yanlis: s.yanlis, suresaniye: s.sure, sure: s.sure + 's', puanTemel: s.temelPuan, puanSurum: 3 });
+          Object.assign(b, { puan: s.puan, dogru: s.dogru, yanlis: s.yanlis, suresaniye: s.sure, sure: s.sure + 's', runId:s.runId, puanTemel: s.temelPuan, puanSurum: 3 });
           opt = Object.assign({}, opt, { body: JSON.stringify(b) });
         }
       }
@@ -28734,7 +28734,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const isim = () => (typeof oyunIcinAktifIsim === 'function' ? oyunIcinAktifIsim() : (typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '')) || '';
   const yoVar = () => typeof yo !== 'undefined' && yo && typeof yoHazirMi === 'function' && yoHazirMi();
   const ses = t => { if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal(t); };
-  function oku(metin, hiz) { try { let u = new SpeechSynthesisUtterance(metin); u.lang = 'en-US'; u.rate = hiz || .85; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {} }
+  function oku(metin, hiz) { if(window.dmListen){window.dmListen(metin,hiz<.7);return;}try { let u = new SpeechSynthesisUtterance(metin); u.lang = 'en-US'; u.rate = hiz || .85; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {} }
   function toast(m) { if (typeof yoToast === 'function') yoToast(m); else alert(m); }
 
   /* ================= BÖLÜMLER ve DURAKLAR ================= */
@@ -28914,17 +28914,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let etiketler = DURAK[b].map((D, d) => (d === 0 || DURAK[b][d - 1].sinif !== D.sinif) ? `<span class="bz-sinif-etiket" style="top:${YER[d][1] + (d ? -18 : 30)}px">🎓 ${D.sinif}. Sınıf</span>` : '').join('');
     p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy: window.genelEnerjiKalan ?? '–', max: window.genelEnerjiMax || 30, gold: yoVar() ? yo.altin || 0 : 0})}
       <div class="dm-parkur-scroll" id="dmParkurScroll">${window.dmParkurSahne({next:sira,total:N,complete:n,section:B.ad,steps:DURAK[b].map((D,index)=>({index,label:D.sinif+'. sınıf '+D.unite+'. ünite',done:tamam.has(D.no)}))})}<div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button><button type="button" class="bz-ust-btn" onclick="dijiAracPaneliAc()">Araçlar</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
-      <details class="dm-adventure-full-map"><summary>🗺️ Tüm durakları görüntüle</summary><div class="bz-harita" id="bzHarita" style="height:${H}px">
-        <span class="bulut" style="left:6%;top:140px" aria-hidden="true">☁️</span><span class="bulut" style="right:8%;top:230px;animation-delay:1.5s" aria-hidden="true">☁️</span>
-        ${kaleSVG(b)}
-        <svg class="bz-yol" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${yol}" fill="none" stroke="#d7f2f1" stroke-width="18" vector-effect="non-scaling-stroke" stroke-linecap="round"/><path d="${yol}" fill="none" stroke="#88d5d7" stroke-width="5" vector-effect="non-scaling-stroke" stroke-dasharray="1 12" stroke-linecap="round"/></svg>
-        ${etiketler}
-        ${YER.map(([x, y], d) => { let D = DURAK[b][d], bitti = tamam.has(D.no), y2 = yildiz(D.no), son = d === sira && !hepsi;
-          return `<button class="bz-tas${son ? ' sonraki' : bitti ? ' bitti' : ' kilit'}" data-d="${d}" style="left:${x}%;top:${y}px;background:${bitti ? 'linear-gradient(180deg,#fef3c7,#fbbf24)' : son ? '#fff' : '#cbd5e1'}" aria-label="${D.sinif}. sınıf ${D.unite}. ünite${bitti ? ', ' + y2 + ' yıldız' : son ? ', sıradaki' : ''}"><span class="dm-step-number">${D.unite}</span>${!bitti && !son ? '<span class="dm-step-lock" aria-hidden="true">🔒</span>' : ''}${bitti ? `<span class="y">${'⭐'.repeat(y2)}</span>` : ''}</button>`; }).join('')}
-        <span class="bz-kahraman" style="left:${hx}%;top:${hy - 42}px" aria-hidden="true">${avatar(46)}</span>
-        ${!hepsi ? `<button type="button" class="dm-start-card" data-d="${sira}" style="${hx > 50 ? `left:calc(${hx}% - 178px)` : `left:calc(${hx}% + 50px)`};top:${hy}px" aria-label="${DURAK[b][sira].sinif}. sınıf ${DURAK[b][sira].unite}. üniteyi başlat"><small>Sıradaki ders</small><strong>${DURAK[b][sira].unite}. adım</strong><span class="dm-start-cta">Başla ›</span></button>` : ''}
-        <span class="bz-tabela">${hepsi ? '🏆 Kapı fethedildi!' : `🎯 Sıradaki: ${DURAK[b][sira].sinif}. sınıf ${DURAK[b][sira].unite}. ünite`}</span>
-      </div>
+      <details class="dm-adventure-full-map"><summary>🗺️ Tüm durakları görüntüle</summary><div class="dm-full-route" id="bzHarita">${Array.from({length:Math.ceil(N/4)},(_,page)=>window.dmParkurSahne({next:sira,total:N,complete:n,section:B.ad+' · '+(page*4+1)+'–'+Math.min(N,page*4+4)+'. durak',steps:DURAK[b].slice(page*4,page*4+4).map((D,i)=>({index:page*4+i,label:D.sinif+'. sınıf '+D.unite+'. ünite',done:tamam.has(D.no)})),full:true})).join('')}</div>
       </details><details class="dm-map-detail"><summary>${B.ad} · ${n}/${N} durak · İlerleme ve ödüller</summary><div class="bz-yan">
         <div class="bz-kutu"><h4>🧙 Profil</h4><div style="font-weight:900;font-size:14px">${rutbe()}</div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd">Toplam ${tamam.size}/${T} durak</div><div class="bz-cubuk"><i style="width:${Math.round(tamam.size / T * 100)}%"></i></div></div>
         <div class="bz-kutu"><h4>📋 Günlük görev</h4>${g.length ? g.map(x => { let h = GHEDEF[x.id] || 1, ok = x.ilerleme >= h; return `<div class="gorev">${ok ? '✅' : '⬜'} ${kac(GAD[x.id] || x.id)}</div>`; }).join('') : '<div class="gorev">'+(window.dmProgression?.allowed('gunluk_gorev')?'Sana Özel’de görevlerin seni bekliyor':'🔒 Günlük görevler 12. seviyede açılır')+'</div>'}</div>
@@ -29001,8 +28991,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let yoC = (typeof YO_CUMLE !== 'undefined' ? YO_CUMLE : []).map(c => ({ en: c[0], tr: c[1], sv: c[2] }));
     let sv = D.sinif <= 4 ? ['A1'] : D.sinif <= 6 ? ['A1', 'A2'] : ['A2', 'B1'];
     let yoUygun = yoC.filter(c => sv.includes(c.sv));
-    let trenC = karistir(cumleler.filter(c => c.en && c.tr && c.en.split(' ').length <= 8))[0] || karistir(yoUygun)[0];
-    let cumleC = karistir(yoUygun.filter(c => !trenC || c.en !== trenC.en))[0] || karistir(cumleler.filter(c => c.en && (!trenC || c.en !== trenC.en)))[0];
+    let trenC = OC.kelimeSec('ba_tren_'+D.no,cumleler.filter(c=>c.en&&c.tr&&c.en.split(' ').length<=8).length?cumleler.filter(c=>c.en&&c.tr&&c.en.split(' ').length<=8):yoUygun,1,{anahtar:c=>c.en,zk:false})[0];
+    let cumleC = OC.kelimeSec('ba_cumle_'+D.no,yoUygun.filter(c=>!trenC||c.en!==trenC.en),1,{anahtar:c=>c.en,zk:false})[0] || karistir(cumleler.filter(c => c.en && (!trenC || c.en !== trenC.en)))[0];
     if (trenC) ekle('tren', { c: trenC });
     if (cumleC) ekle('cumle', { c: cumleC });
     sorular = karistir(sorular);
@@ -29281,7 +29271,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       <div style="display:flex;gap:8px;justify-content:center"><button class="bz-ses" id="bzD1">🔊 Dinle</button><button class="bz-ses" id="bzD2" aria-label="Yavaş dinle">🐢</button></div>
       <input class="bz-input" id="bzYaz" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="buraya yaz" aria-label="Duyduğun kelime">
       <button class="bz-btn mor" id="bzKontrol">Kontrol et</button>`;
-    $('bzD1').onclick = () => oku(w, .85); $('bzD2').onclick = () => oku(w, .5); setTimeout(() => oku(w, .85), 300);
+    let auto=setTimeout(()=>oku(w,.85),300);$('bzD1').onclick=()=>{clearTimeout(auto);oku(w,.85);};$('bzD2').onclick=()=>{clearTimeout(auto);oku(w,.35);};
     O.jk.harf = () => { let y = $('bzYaz'); if (!y || y.disabled) return false; let n = Math.ceil(w.length / 2); y.placeholder = w.slice(0, n) + '…'; let ip = alan.querySelector('.bz-ipucu'); if (ip) ip.innerHTML += `<br>💡 İlk harfler: <b lang="en">${kac(w.slice(0, n))}</b>… (${w.length} harf)`; };
     const kontrol = () => { let v = $('bzYaz').value; if (!v.trim()) return; $('bzYaz').disabled = true; $('bzKontrol').disabled = true; let iyi = norm(v) === norm(w); cevap(iyi, iyi ? '' : `${w} (${TR(s.k)})`); };
     $('bzKontrol').onclick = kontrol; $('bzYaz').onkeydown = e => { if (e.key === 'Enter') kontrol(); };
@@ -29337,7 +29327,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     goster('harita', b);
     if (typeof genelSonucEkraniGoster === 'function')
       genelSonucEkraniGoster({ oyunAdi: `🧙 ${durakBilgi(b, d).sinif}. Sınıf ${durakBilgi(b, d).unite}. Ünite`, isim: isim(), puan, dogru: O.dogru, yanlis: O.yanlis, sureSaniye: sure, oyunKey: 'ba',
-        parkurIlk,parkurGecti:gecti,parkurYildiz:yil,siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
+        rewardScope:{classNo:durakBilgi(b,d).sinif,units:[durakBilgi(b,d).unite]},parkurIlk,parkurGecti:gecti,parkurYildiz:yil,siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
     setTimeout(() => toast(gecti ? (yeniAcildi ? `🚪 ${b + 2}. bölümün kapısı açıldı!` : `✨ ${O.d + 1}. durak geçildi! ${'⭐'.repeat(yil)}`) : `💪 ${O.dogru}/${O.sorular.length} doğru. Geçmek için ${GECME} doğru lazım, tekrar dene!`), 700);
   }
 
@@ -30693,7 +30683,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     let r = await orgFetch.apply(this, arguments);
     /* Yükleme (sayfanın kendi yükleyicisi; "_=" içermeyen): ilk yüklemede sunucudaki veri mutlaka kabul edilsin */
     try {
-      if(opt && typeof opt.body==='string' && /"(seviyeUrunAl|seviyeSandikAc|seviyeEkJokerAl|buyuSeviyeTamamla)"/.test(opt.body) && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json();if(reward.yo?.guncelleme)taban[kucuk(request.ogrenci||aktifOgrenciAdi)]=reward.yo.guncelleme; }
+      if(opt && typeof opt.body==='string' && /"(seviyeUrunAl|seviyeSandikAc|seviyeEkJokerAl|seviyeOyunOdulu|buyuSeviyeTamamla)"/.test(opt.body) && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json();if(reward.yo?.guncelleme)taban[kucuk(request.ogrenci||aktifOgrenciAdi)]=reward.yo.guncelleme; }
       if (/[?&]islem=ekVeriGetir/.test(u) && /[?&]anahtar=yo(&|$)/.test(u) && !/[?&]_=/.test(u) && r.ok && !r.headers.get('X-Diji-Cevrimdisi')) {
         let ad = kucuk(decodeURIComponent((u.match(/[?&]ogrenci=([^&]*)/) || [])[1] || ''));
         let d = await r.clone().json().catch(() => undefined);
@@ -30905,7 +30895,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
                                 
 <script src="google-login.js?v=rights-5"></script>
 <link rel="stylesheet" href="parkur-theme.css?v=6">
-<script src="parkur-theme.js?v=6"></script>
+<script src="parkur-theme.js?v=7"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
@@ -30932,7 +30922,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=1"></script>
-<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=3"></script>
+<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=4"></script>
+<link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=1"></script>
 </body>      
         </html>
 
