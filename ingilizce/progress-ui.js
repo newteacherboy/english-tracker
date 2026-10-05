@@ -14,7 +14,7 @@
     el.onkeydown=e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const buttons=[...el.querySelectorAll('button')],i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length].focus();}};
     document.body.append(el);el.querySelector('.dm-progress-close').focus();
   }
-  function paint(){const bar=document.querySelector('#panel-alani .header-right-widgets');if(!bar)return;
+  function paint(){const bar=document.querySelector('#panel-alani .header-right-widgets, #profilAlan .header-right-widgets');if(!bar)return;
     if(!ready()){document.getElementById('dmLevelBadge')?.remove();close();last='';owner='';return;}
     if(owner!==aktifOgrenciAdi){close();last='';owner=aktifOgrenciAdi;}
     let button=document.getElementById('dmLevelBadge');if(!button){button=document.createElement('button');button.id='dmLevelBadge';button.className='dm-level-badge';button.type='button';button.onclick=open;bar.prepend(button);}
