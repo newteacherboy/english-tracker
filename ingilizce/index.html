@@ -2544,6 +2544,10 @@ if(BAKIM_MODU){
                     <input type="text" id="sifreIslemTelefon" placeholder="05XXXXXXXXX">
                 </div>
                 <div class="rubric-field">
+                    <label>Kayıtlı Veli E-postası:</label>
+                    <input type="email" id="sifreIslemEmail" placeholder="ornek@mail.com" autocomplete="email">
+                </div>
+                <div class="rubric-field">
                     <label>Neden değiştiriyorsun? (en az 10 karakter):</label>
                     <textarea id="sifreIslemNeden" rows="2" placeholder="Örn: Şifremi unuttum, yeni bir şifre belirlemek istiyorum."></textarea>
                     <div id="sifreIslemNedenSayac" style="font-size:9.5px; color:#94a3b8; margin-top:2px; text-align:right;">0 / 10</div>
@@ -2576,7 +2580,7 @@ if(BAKIM_MODU){
                 </div>
                 <div class="rubric-field">
                     <label>Şifre:</label>
-                    <input type="password" id="kayitOlSifre1" placeholder="En az 4 karakter">
+                    <input type="password" id="kayitOlSifre1" placeholder="En az 6 karakter">
                 </div>
                 <div class="rubric-field">
                     <label>Şifre (Tekrar):</label>
@@ -5301,6 +5305,7 @@ mesajlar.forEach(m => {
         
                 function sifreIslemFormuSifirla() {
                     document.getElementById('sifreIslemTelefon').value = "";
+                    document.getElementById('sifreIslemEmail').value = "";
                     document.getElementById('sifreIslemNeden').value = "";
                     document.getElementById('sifreIslemNedenSayac').innerText = "0 / 10";
                     document.getElementById('sifreIslemNedenSayac').style.color = "#94a3b8";
@@ -5328,19 +5333,20 @@ mesajlar.forEach(m => {
                 async function sifreIslemGonder() {
                     let kullaniciAdi = document.getElementById('sifreIslemKullaniciAdi').value.trim();
                     let telefon = document.getElementById('sifreIslemTelefon').value.trim();
+                    let email = document.getElementById('sifreIslemEmail').value.trim();
                     let neden = document.getElementById('sifreIslemNeden').value.trim();
                     let yeni1 = document.getElementById('sifreIslemYeniSifre1').value;
                     let yeni2 = document.getElementById('sifreIslemYeniSifre2').value;
                     let mesajDiv = document.getElementById('sifreIslemSonucMesaj');
         
-                    if (!kullaniciAdi || !telefon || !neden || !yeni1 || !yeni2) {
+                    if (!kullaniciAdi || !telefon || !email || !neden || !yeni1 || !yeni2) {
                         mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen tüm alanları doldurun."; return;
                     }
                     if (neden.length < 10) {
                         mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Açıklama en az 10 karakter olmalı."; return;
                     }
-                    if (yeni1.length < 4) {
-                        mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Şifre en az 4 karakter olmalı."; return;
+                    if (yeni1.length < 6) {
+                        mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Şifre en az 6 karakter olmalı."; return;
                     }
                     if (yeni1 !== yeni2) {
                         mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Girdiğiniz yeni şifreler birbiriyle uyuşmuyor."; return;
@@ -5353,7 +5359,7 @@ mesajlar.forEach(m => {
                     try {
                         let res = await fetch(apiURL, {
                             method: "POST",
-                            body: JSON.stringify({ islem: "sifreDegistir", ogrenciAdi: kullaniciAdi, telefon: telefon, neden: neden, yeniSifre: yeni1 })
+                            body: JSON.stringify({ islem: "sifreDegistir", ogrenciAdi: kullaniciAdi, telefon: telefon, email: email, neden: neden, yeniSifre: yeni1 })
                         });
                         let data = await res.json();
                         if (data.status === "success") {
@@ -5406,8 +5412,8 @@ mesajlar.forEach(m => {
                     if (!kvkkOnay) {
                         mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Devam edebilmek için veli ve bilgilendirme beyanını işaretlemelisiniz."; return;
                     }
-                    if (sifre1.length < 4) {
-                        mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Şifre en az 4 karakter olmalı."; return;
+                    if (sifre1.length < 6) {
+                        mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Şifre en az 6 karakter olmalı."; return;
                     }
                     if (sifre1 !== sifre2) {
                         mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Girdiğiniz şifreler birbiriyle uyuşmuyor."; return;
