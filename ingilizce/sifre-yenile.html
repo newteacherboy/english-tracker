@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src https://nxfqlutulxqzqgwewssd.supabase.co; base-uri 'none'; form-action 'none'">
+<title>Yeni şifre belirle · Diji-Medu</title>
+<style>
+  :root{--mor:#7c3aed;--koyu:#2d2350;--soluk:#6b5ca0;--zemin:#f6f2ff;--cizgi:#ddd3ff}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--zemin);color:var(--koyu);font-family:Nunito,"Segoe UI",Roboto,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom))}
+  main{width:100%;max-width:400px;background:#fff;border-radius:24px;padding:24px 20px;box-shadow:0 14px 40px rgba(76,29,149,.14);text-align:center}
+  img{width:96px;height:auto;display:block;margin:0 auto 6px}
+  h1{font-size:22px;margin:4px 0 6px;font-weight:900}
+  p{margin:0 0 16px;color:var(--soluk);font-size:14px;line-height:1.5}
+  .alan{text-align:left;margin-bottom:12px}
+  label{display:block;font-size:12.5px;font-weight:800;margin-bottom:5px;color:#4b3f72}
+  input{width:100%;border:1.5px solid var(--cizgi);border-radius:12px;padding:12px;font-size:16px;font-family:inherit;color:var(--koyu)}
+  input:focus{outline:none;border-color:var(--mor);box-shadow:0 0 0 3px rgba(124,58,237,.18)}
+  button,a.dugme{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:900;color:#fff;background:var(--mor);cursor:pointer;font-family:inherit;text-decoration:none}
+  button:disabled{opacity:.55;cursor:default}
+  button:focus-visible,a.dugme:focus-visible{outline:3px solid #f0abfc;outline-offset:2px}
+  #mesaj{min-height:20px;font-size:13.5px;font-weight:700;margin:4px 0 12px;line-height:1.45}
+  .hata{color:#dc2626}.tamam{color:#15803d}
+</style>
+</head>
+<body>
+<main>
+  <img src="papi-welcome-v2.png" alt="" width="1145" height="1374">
+  <h1 id="baslik">Yeni şifre belirle</h1>
+  <p id="aciklama">En az 6 karakterlik yeni bir şifre seç. Bu bağlantı bir kez kullanılabilir.</p>
+  <div id="form">
+    <div class="alan"><label for="y1">Yeni şifre</label><input id="y1" type="password" autocomplete="new-password"></div>
+    <div class="alan"><label for="y2">Yeni şifre (tekrar)</label><input id="y2" type="password" autocomplete="new-password"></div>
+    <div id="mesaj" role="status" aria-live="polite"></div>
+    <button id="kaydet" type="button">Şifremi kaydet</button>
+  </div>
+  <a class="dugme" id="portal" href="./" hidden>Giriş ekranına git</a>
+</main>
+<script>
+(function () {
+  var API = "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api";
+  var token = "";
+  try { token = decodeURIComponent((location.hash.match(/token=([^&]+)/) || [])[1] || ""); } catch (e) {}
+  /* Bağlantıyı adres çubuğundan ve geçmişten temizle */
+  try { history.replaceState(null, "", location.pathname); } catch (e) {}
+  var $ = function (id) { return document.getElementById(id); };
+  function mesaj(t, tur) { var m = $("mesaj"); m.textContent = t || ""; m.className = tur || ""; }
+  function bitti(baslik, metin) { $("baslik").textContent = baslik; $("aciklama").textContent = metin; $("form").hidden = true; $("portal").hidden = false; }
+  if (!/^[a-f0-9-]{72}$/i.test(token)) {
+    bitti("Bağlantı geçersiz", "Bu bağlantı eksik ya da bozuk. Giriş ekranındaki \"Şifremi unuttum\" ile yeni bağlantı iste.");
+    return;
+  }
+  $("y1").focus();
+  $("kaydet").onclick = function () {
+    var y1 = $("y1").value, y2 = $("y2").value;
+    if (y1.length < 6) return mesaj("Şifre en az 6 karakter olmalı.", "hata");
+    if (y1 !== y2) return mesaj("İki şifre birbiriyle aynı değil.", "hata");
+    var b = $("kaydet"); b.disabled = true; b.textContent = "Kaydediliyor…"; mesaj("");
+    fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ islem: "sifreSifirla", token: token, yeniSifre: y1 }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok) { bitti("Şifren yenilendi 🎉", (d.ogrenci ? d.ogrenci + " hesabının" : "Hesabının") + " şifresi değişti. Artık yeni şifrenle giriş yapabilirsin."); return; }
+        b.disabled = false; b.textContent = "Şifremi kaydet";
+        mesaj((d && d.mesaj) || "Şifre kaydedilemedi.", "hata");
+      })
+      .catch(function () { b.disabled = false; b.textContent = "Şifremi kaydet"; mesaj("Sunucuya ulaşılamadı. İnternet bağlantını kontrol et.", "hata"); });
+  };
+})();
+</script>
+</body>
+</html>
