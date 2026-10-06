@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="progress-rules.js?v=2"></script>
-<script src="progression-catalog.js?v=2"></script>
+<script src="progression-catalog.js?v=3"></script>
 <script src="guest-platform.js?v=2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 
@@ -2575,8 +2575,14 @@ if(BAKIM_MODU){
                 <p style="font-size:10.5px; color:#64748b; text-align:center; margin-bottom:14px;">Kayıt talebin öğretmenine iletilecek. Onaylandıktan sonra giriş yapabilirsin.</p>
         
                 <div class="rubric-field">
-                    <label>Kullanıcı Adı (Ad Soyad):</label>
-                    <input type="text" id="kayitOlKullaniciAdi" placeholder="Örn: Ahmet Yılmaz">
+                    <label>Kullanıcı Adı (takma ad):</label>
+                    <input type="text" id="kayitOlKullaniciAdi" placeholder="Örn: yildiz42" maxlength="20" autocapitalize="off" spellcheck="false">
+                    <div style="font-size:10px; color:#64748b; margin-top:3px;">Liderlik tablolarında herkes bunu görür. Gerçek adını yazma; harf, rakam, nokta ya da alt çizgi kullan.</div>
+                </div>
+                <div class="rubric-field">
+                    <label>Öğrencinin Adı Soyadı:</label>
+                    <input type="text" id="kayitOlAdSoyad" placeholder="Örn: Ahmet Yılmaz" maxlength="60" autocomplete="name">
+                    <div style="font-size:10px; color:#64748b; margin-top:3px;">Sadece öğretmenin görür.</div>
                 </div>
                 <div class="rubric-field">
                     <label>Şifre:</label>
@@ -5381,6 +5387,7 @@ mesajlar.forEach(m => {
                         // ===== KAYIT OL =====
                 function kayitOlAc() {
                     document.getElementById('kayitOlKullaniciAdi').value = "";
+                    document.getElementById('kayitOlAdSoyad').value = "";
                     document.getElementById('kayitOlSifre1').value = "";
                     document.getElementById('kayitOlSifre2').value = "";
                     document.getElementById('kayitOlTelefon').value = "";
@@ -5397,6 +5404,7 @@ mesajlar.forEach(m => {
         
                        async function kayitOlGonder() {
                     let kullaniciAdi = document.getElementById('kayitOlKullaniciAdi').value.trim();
+                    let adSoyad = document.getElementById('kayitOlAdSoyad').value.trim();
                     let sifre1 = document.getElementById('kayitOlSifre1').value;
                     let sifre2 = document.getElementById('kayitOlSifre2').value;
                     let telefon = document.getElementById('kayitOlTelefon').value.trim();
@@ -5406,7 +5414,7 @@ mesajlar.forEach(m => {
                     let kvkkOnay = document.getElementById('kayitOlKvkkOnay').checked;
                     let mesajDiv = document.getElementById('kayitOlSonucMesaj');
         
-                    if (!kullaniciAdi || !sifre1 || !sifre2 || !telefon || !sinif || !sube) {
+                    if (!kullaniciAdi || !adSoyad || !sifre1 || !sifre2 || !telefon || !sinif || !sube) {
                         mesajDiv.style.color = "#dc2626"; mesajDiv.innerText = "Lütfen zorunlu alanları doldurun."; return;
                     }
                     if (!kvkkOnay) {
@@ -5426,7 +5434,7 @@ mesajlar.forEach(m => {
                     try {
                                         let res = await fetch(apiURL, {
                             method: "POST",
-                            body: JSON.stringify({ islem: "kayitOl", ogrenciAdi: kullaniciAdi, sifre: sifre1, telefon: telefon, sinif: sinif, sube: sube, email: email, kvkkOnayTarihi: new Date().toISOString() })
+                            body: JSON.stringify({ islem: "kayitOl", ogrenciAdi: kullaniciAdi, adSoyad: adSoyad, sifre: sifre1, telefon: telefon, sinif: sinif, sube: sube, email: email, kvkkOnayTarihi: new Date().toISOString() })
                         });
                         let data = await res.json();
                         if (data.status === "success") {
@@ -5475,7 +5483,7 @@ mesajlar.forEach(m => {
                             let kart = document.createElement('div');
                             kart.style.cssText = "background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px;";
                             kart.innerHTML = `
-                                <div style="font-weight:800; font-size:13px; color:#1e293b; margin-bottom:4px;">${guvenliMetin(k.ogrenciAdi)}</div>
+                                <div style="font-weight:800; font-size:13px; color:#1e293b; margin-bottom:4px;">${guvenliMetin(k.ogrenciAdi)}${k.adSoyad ? ` <span style="font-weight:600; color:#64748b;">(${guvenliMetin(k.adSoyad)})</span>` : ''}</div>
                                 <div style="font-size:11px; color:#64748b; line-height:1.7; margin-bottom:10px;">
                                     📚 Sınıf: ${guvenliMetin(String(k.sinif))} / ${guvenliMetin(String(k.sube))}<br>
                                     📞 Veli Telefon: ${guvenliMetin(String(k.telefon))}<br>
@@ -30837,7 +30845,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
-<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=1"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=1"></script><script src="sifre-islem.js?v=1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=2"></script>
