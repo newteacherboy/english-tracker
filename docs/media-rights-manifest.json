@@ -219,6 +219,13 @@
       "bytes": 2518923,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-river-world-v1.svg",
+      "sha256": "734e66a06e18ce13f50c7842217484d8af35195df619440f246fab1176d3ac12",
+      "bytes": 648613,
+      "status": "ai-generated",
+      "source": "Original river landscape generated with OpenAI imagegen on 2026-10-07 for the user-approved Diji-Medu river concept; converted to WebP and embedded in SVG. No third-party source artwork."
     }
   ]
 }
