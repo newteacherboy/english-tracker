@@ -1190,7 +1190,8 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
-  if(op==='iletisimDurumu' && a?.role!=='student')return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
+  if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
+  if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
   const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;

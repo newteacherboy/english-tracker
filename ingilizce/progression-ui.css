@@ -7,3 +7,27 @@
 :is(#bzAlan,.bz-inceleme-govde) .bz-ipucu{font-size:16px!important;line-height:1.55;color:#263f46!important}
 :is(#bzAlan,.bz-inceleme-govde) .bz-ipucu b{font-size:18px;color:#143a34!important;background:#fff1ad;padding:2px 5px;border-radius:5px}
 :is(#bzAlan,.bz-inceleme-govde) .bz-ipucu small{color:#405966!important}
+
+/* Compact level detail sheet; celebrations and chest panels keep their own layout. */
+#dmProgressOverlay{box-sizing:border-box;align-items:center;padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(10px + env(safe-area-inset-bottom,0px));overflow:hidden}
+#dmProgressOverlay .dm-progress-sheet{box-sizing:border-box;width:min(420px,100%);max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));padding:14px 16px;border-radius:22px;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
+#dmProgressOverlay .dm-progress-close{width:32px;height:32px;top:10px;right:10px;font-size:22px;z-index:2}
+#dmProgressOverlay .dm-papi-stage{position:relative;width:270px;max-width:100%;height:88px;transform:none;margin:0 auto 4px}
+#dmProgressOverlay .dm-papi-stage i{position:absolute;top:0;left:50%;transform:translateX(-50%) scale(.35);transform-origin:50% 0}
+#dmProgressOverlay .dm-papi-prop{bottom:4px;right:64px;font-size:17px;padding:5px;box-shadow:0 3px 12px #0a606c20}
+#dmProgressOverlay .dm-progress-sheet h2{font-size:22px;line-height:1.15;margin:4px 0}
+#dmProgressOverlay .dm-progress-caption-v2{font-size:11px;line-height:1.35;margin:5px 0 7px}
+#dmProgressOverlay .dm-progress-sheet>b{font-size:13px}
+#dmProgressOverlay .dm-progress-numbers{gap:7px;margin:8px 0}
+#dmProgressOverlay .dm-progress-numbers span{font-size:10px;line-height:1.3;padding:8px 6px;border-radius:12px}
+#dmProgressOverlay .dm-progress-numbers b{font-size:20px;line-height:1.2;margin-bottom:3px}
+#dmProgressOverlay .dm-progress-track{height:8px;margin:8px 0}
+#dmProgressOverlay .dm-progress-track+p{font-size:12px;line-height:1.3;margin:6px 0}
+#dmProgressOverlay .dm-next-unlocks{padding:6px 10px;border-radius:12px}
+#dmProgressOverlay .dm-next-unlocks p{font-size:11px;line-height:1.35;margin:5px 0}
+#dmProgressOverlay .dm-earned-badges{padding:8px 10px;margin-top:8px;border-radius:12px;font-size:11px}
+#dmProgressOverlay .dm-earned-badges small,#dmProgressOverlay .dm-earned-badges p{font-size:10px;line-height:1.4;margin:6px 0}
+#dmProgressOverlay .dm-mystery{font-size:11px;gap:12px;margin:6px 0 3px}
+#dmProgressOverlay .dm-mystery-caption{font-size:10px;line-height:1.3;margin:3px 0 8px}
+#dmProgressOverlay .dm-progress-go{min-height:40px;padding:10px 12px;border-radius:12px;font-size:13px}
+@media(max-height:560px){#dmProgressOverlay .dm-papi-stage{height:64px}#dmProgressOverlay .dm-papi-stage i{transform:translateX(-50%) scale(.26)}#dmProgressOverlay .dm-progress-caption-v2{margin:3px 0}}

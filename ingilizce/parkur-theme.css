@@ -174,3 +174,18 @@ body.dm-parkur-open .dm-map-controls{gap:12px;padding:6px 12px!important}
 body.dm-parkur-open .dm-map-controls .bz-ust-btn.dm-map-round{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;font-size:0;border-width:2px;box-shadow:0 2px 0 #94d0ca}
 body.dm-parkur-open .dm-map-controls .dm-map-round .dm-icon{width:23px;height:23px}
 body.dm-parkur-open .dm-map-controls .dm-map-round:first-child{box-shadow:0 2px 0 #065e6b}
+
+/* The four doors use the Parkur viewport as their scroll container. */
+body.dm-parkur-gates #bzParkur{overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scroll-padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+body.dm-parkur-gates #bzParkur>.bz-ic{display:block;height:auto;min-height:100%;box-sizing:border-box;padding:0 14px calc(76px + env(safe-area-inset-bottom,0px))!important}
+body.dm-parkur-gates .dm-gates-back{width:100%;margin:8px 0;padding:9px 12px;font-size:12px;min-height:40px}
+body.dm-parkur-gates .bz-afis{margin:8px 0 14px;padding:11px 10px}
+body.dm-parkur-gates .bz-afis b{font-size:20px}
+body.dm-parkur-gates .bz-afis small{font-size:11px;line-height:1.4}
+body.dm-parkur-gates .bz-kapilar{gap:14px 10px}
+body.dm-parkur-gates .bz-kapi{min-height:166px;padding:14px 8px 12px;border-radius:46px 46px 20px 20px}
+body.dm-parkur-gates .bz-kapi .no{width:34px;height:34px;font-size:19px;margin-bottom:9px}
+body.dm-parkur-gates .bz-kapi b{font-size:16px}
+body.dm-parkur-gates .bz-kapi small{font-size:11px;margin-top:5px}
+body.dm-parkur-gates .bz-kapi .yil{font-size:10px;margin-top:9px;padding:6px 4px}
+body.dm-parkur-gates .bz-kitap{margin-top:16px;padding:12px;font-size:11px}

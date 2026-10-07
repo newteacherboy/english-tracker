@@ -34,34 +34,36 @@ const supabaseClient = supabase.createClient(
       ['ing_oturumAcik', 'ing_aktifOgrenci', 'ing_toplamSaniye'].forEach(function (k) { localStorage.removeItem(k); });
   } catch (e) {}
 
-  /* Tüm API isteklerine oturum anahtarını otomatik ekle */
+  /* Attach a token and bind expiry responses to that exact session. */
   var API = /nxfqlutulxqzqgwewssd\.supabase\.co\/functions\/v1\/diji-api/;
   var orgFetch = window.fetch.bind(window);
   window.fetch = function (url, opt) {
     var u = typeof url === 'string' ? url : (url && url.url) || '';
     if (!API.test(u)) return orgFetch(url, opt);
-    var tok = OGRT() || TOKEN();
+    var tok = OGRT() || TOKEN(), usedToken = '';
     opt = Object.assign({}, opt || {});
     if (opt.method && String(opt.method).toUpperCase() === 'POST' && typeof opt.body === 'string') {
-      try { var b = JSON.parse(opt.body); if (tok && !b.t) b.t = tok; opt.body = JSON.stringify(b); } catch (e) {}
-    } else if (tok && typeof url === 'string' && !/[?&]t=/.test(u)) {
-      url = u + (u.indexOf('?') === -1 ? '?' : '&') + 't=' + encodeURIComponent(tok);
+      try { var b = JSON.parse(opt.body); if (tok && !b.t) b.t = tok; usedToken = b.t || ''; opt.body = JSON.stringify(b); } catch (e) {}
+    } else {
+      if (tok && typeof url === 'string' && !/[?&]t=/.test(u)) url = u + (u.indexOf('?') === -1 ? '?' : '&') + 't=' + encodeURIComponent(tok);
+      try { usedToken = new URL(typeof url === 'string' ? url : u, location.href).searchParams.get('t') || new Headers(opt.headers || {}).get('x-diji-token') || ''; } catch(e) {}
     }
     return orgFetch(url, opt).then(function (r) {
-      try { r.clone().json().then(function (d) { if (d && !Array.isArray(d)) oturumKontrol(d); }).catch(function () {}); } catch (e) {}
+      try { r.clone().json().then(function (d) { if (d && !Array.isArray(d)) oturumKontrol(d, usedToken); }).catch(function () {}); } catch (e) {}
       return r;
     });
   };
-  function oturumKontrol(d) {
-    if(d.token) document.dispatchEvent(new Event('dm:login'));
-    if (d.hata === 'iletisim') document.dispatchEvent(new CustomEvent('dm:contact-block',{detail:d}));
-    if (d.hata === 'oturum' && TOKEN() && !sessionStorage.getItem('ing_oturum_bitti')) {
+  function oturumKontrol(d, usedToken) {
+    if (d.hata === 'iletisim' && usedToken === TOKEN()) document.dispatchEvent(new CustomEvent('dm:contact-block',{detail:d}));
+    if (d.hata === 'oturum' && usedToken && usedToken === OGRT() && usedToken !== TOKEN()) sessionStorage.removeItem('ing_ogr_token');
+    if (d.hata === 'oturum' && usedToken && usedToken === TOKEN() && !sessionStorage.getItem('ing_oturum_bitti')) {
       sessionStorage.setItem('ing_oturum_bitti', '1');
+      if(usedToken === OGRT())sessionStorage.removeItem('ing_ogr_token');
       ['ing_token', 'ing_oturumAcik', 'ing_aktifOgrenci', 'ing_toplamSaniye'].forEach(function (k) { localStorage.removeItem(k); });
       alert('Oturumunun süresi doldu. Lütfen tekrar giriş yap.');
       location.reload();
     }
-    if (d.hata === 'yetki' && OGRT() && /öğretmen/i.test(d.mesaj || '')) {
+    if (d.hata === 'yetki' && usedToken && usedToken === OGRT() && /öğretmen/i.test(d.mesaj || '')) {
       sessionStorage.removeItem('ing_ogr_token');
       alert('Öğretmen oturumunun süresi doldu. Öğretmen paneline tekrar şifreyle gir.');
     }
@@ -22060,9 +22062,9 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     btn.disabled = false; btn.innerText = 'Giriş Yap';
     if (!d || !d.ok) { m.className = 'error'; m.innerText = (d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol edip tekrar dene.'; return; }
     localStorage.setItem('ing_token', d.token);
-    setTimeout(()=>document.dispatchEvent(new Event('dm:login')),0);
     sessionStorage.removeItem('ing_oturum_bitti');
-    if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token);
+    if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token); else sessionStorage.removeItem('ing_ogr_token');
+    setTimeout(()=>document.dispatchEvent(new Event('dm:login')),0);
     await listeYenile();
     $('ogrenci').value = d.ogrenci || ogr;
     let u = (globalDataCache || []).find(x => String(x.ogrenci).trim().toLowerCase() === String(d.ogrenci || ogr).trim().toLowerCase());
@@ -22324,7 +22326,8 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     if (!d || !d.ok) { btn.disabled = false; btn.innerText = 'Giriş Yap'; m.className = 'error'; m.innerText = (d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol edip tekrar dene.'; return; }
     localStorage.setItem('ing_token', d.token);
     sessionStorage.removeItem('ing_oturum_bitti');
-    if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token);
+    if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token); else sessionStorage.removeItem('ing_ogr_token');
+    setTimeout(()=>document.dispatchEvent(new Event('dm:login')),0);
     localStorage.setItem('ing_oturumAcik', 'true');
     localStorage.setItem('ing_aktifOgrenci', d.ogrenci || ogr);
           setTimeout(function () {
@@ -30728,7 +30731,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=rights-5"></script>
-<link rel="stylesheet" href="parkur-theme.css?v=11">
+<link rel="stylesheet" href="parkur-theme.css?v=12">
 <script src="parkur-theme.js?v=11"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=2"></script>
@@ -30756,7 +30759,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=3"></script>
-<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=8"></script>
+<link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=8"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script src="profile-forest.js?v=1"></script>
