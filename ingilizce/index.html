@@ -28810,9 +28810,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let current=steps.findIndex(s=>s.b===b&&s.d===siradakiDurak(b));if(current<0)current=0;
     gorunum={ad:'harita',b};
     p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page})+'</div></div>';
-    window.dmParkurBookOpen=(chapter,nextPage)=>harita(chapter,nextPage);
-    p.querySelectorAll('.dm-adventure-node,.dm-book-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
-    requestAnimationFrame(()=>{const sc=$('dmParkurScroll');if(sc)sc.scrollTop=0;});
+    p.querySelectorAll('.dm-adventure-node,.dm-map-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
+    requestAnimationFrame(()=>window.dmParkurMapMount?.($('dmParkurScroll')));
   }
 
   /* ================= 3) DURAK KARTI ================= */
@@ -30722,8 +30721,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=rights-7"></script>
-<link rel="stylesheet" href="parkur-theme.css?v=16">
-<script src="parkur-theme.js?v=14"></script>
+<link rel="stylesheet" href="parkur-map-theme-v1.css?v=2">
+<script src="parkur-map-theme-v1.js?v=2"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=3"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
