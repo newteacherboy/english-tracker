@@ -281,8 +281,8 @@
     },
     {
       "path": "ingilizce/assets/forest-answer-frame-v1.svg",
-      "sha256": "080e048f62cef970a1607729ac3ce8755b086ea899afc8c853a0fb09bf895b41",
-      "bytes": 392995,
+      "sha256": "1f3ec522b8ff38cfe0a2a0f8a0b44e9b0ce3dcbeef98692098e317c6ae61c06b",
+      "bytes": 393022,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     },
@@ -295,15 +295,15 @@
     },
     {
       "path": "ingilizce/assets/forest-question-plaque-v1.svg",
-      "sha256": "9e89c68192faa6886434ac0a2ee52a8d6e088d500e44893103d4fee9fdbb3ed3",
-      "bytes": 392994,
+      "sha256": "7b426aeac099e49f1c992707caba7e38289741292088e8894a4098c09fad08c8",
+      "bytes": 393021,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     },
     {
       "path": "ingilizce/assets/forest-helper-button-v1.svg",
-      "sha256": "c85a6a5d02a4ce37ea2b56c87891002f151690db0f21ee1e0fa16c0332d4261e",
-      "bytes": 392994,
+      "sha256": "b51bb773ee28fc6dec29781173d9102b0ab1ebf349377e29f5206d1542448188",
+      "bytes": 393021,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     },
@@ -316,8 +316,8 @@
     },
     {
       "path": "ingilizce/assets/forest-back-disc-v1.svg",
-      "sha256": "db894f5ab0bf306664945cb8c8802768ce0244b6e30fa0bd685f6c7379ab6aa6",
-      "bytes": 392995,
+      "sha256": "3188c26635161c4ea908d1534b5e2f94145f567d0c669371d0e4f47fa583e23d",
+      "bytes": 393022,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     }
