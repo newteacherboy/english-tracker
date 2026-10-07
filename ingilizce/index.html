@@ -107,8 +107,8 @@ if(BAKIM_MODU){
         <meta property="og:description" content="Öğrenci gelişim raporları, seviyeye göre ders çalışma sistemi ve kelime yarışmaları.">
         <meta property="og:url" content="https://app.dijimedu.com/ingilizce/">
         <meta property="og:locale" content="tr_TR">
-            <link rel="icon" type="image/png" href="papi-welcome-v2.png">
-            <link rel="apple-touch-icon" sizes="180x180" href="papi-welcome-v2.png">
+            <link rel="icon" type="image/png" href="papi-app-icon-v3.png">
+            <link rel="apple-touch-icon" sizes="1254x1254" href="papi-welcome-v2.png">
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -936,7 +936,7 @@ if(BAKIM_MODU){
                     <path d="M0,45 C50,12 100,78 150,45 C200,12 250,78 300,45 C350,12 400,78 400,45 L400,100 L0,100 Z" fill="#2ed7ea" opacity="0.4"/>
                     <path d="M200,45 C250,12 300,78 350,45 C400,12 450,78 500,45 C550,12 600,78 600,45 L600,100 L200,100 Z" fill="#0c9bb5" opacity="0.32"/>
                 </svg>
-                <img class="oturum-yukleme-logo" src="papi-welcome-v2.png" alt="Diji-Medu">
+                <img class="oturum-yukleme-logo" src="papi-app-icon-v3.png" alt="Diji-Medu">
                 <div class="oturum-yukleme-yazi">Oturumun yükleniyor<span class="oturum-yukleme-nokta"></span></div>
             </div>
         
@@ -1443,7 +1443,7 @@ if(BAKIM_MODU){
             <!-- GİRİŞ EKRANI -->
                 <div class="login-card" id="login-container">
                         <div class="dm-logo-row">
-                            <div class="dm-logo-icon"><img src="papi-welcome-v2.png" alt="Diji-Medu"></div>
+                            <div class="dm-logo-icon"><img src="papi-app-icon-v3.png" alt="Diji-Medu"></div>
                     <div class="dm-logo-text">
                         <div class="dm-logo-word"><span class="dm-diji">Diji</span>-<span class="dm-medu">Medu</span></div>
                         <div class="dm-logo-tag">İngilizce Portalı</div>
@@ -29340,12 +29340,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
 
   /* ---- Uygulama kimliği ve simgeler (sayfanın başına eklenir) ---- */
   function basaEkle(tag, attrs) { if (document.head.querySelector(`${tag}[${Object.keys(attrs)[0]}="${Object.values(attrs)[0]}"]`)) return; let e = document.createElement(tag); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); document.head.appendChild(e); }
-  basaEkle('link', { rel: 'manifest', href: 'ingilizce-manifest.json?v=2' });
-  basaEkle('link', { rel: 'apple-touch-icon', href: 'papi-welcome-v2.png' });
+  basaEkle('link', { rel: 'manifest', href: 'ingilizce-manifest.json?v=3' });
+  basaEkle('link', { rel: 'apple-touch-icon', href: 'papi-app-icon-v3.png' });
   basaEkle('meta', { name: 'theme-color', content: '#7c3aed' });
   basaEkle('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
   basaEkle('meta', { name: 'mobile-web-app-capable', content: 'yes' });
-  basaEkle('meta', { name: 'apple-mobile-web-app-title', content: 'Diji İngilizce' });
+  basaEkle('meta', { name: 'apple-mobile-web-app-title', content: 'Diji-Medu' });
   basaEkle('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'default' });
 
   /* ---- Tek dokunuşla yükleme (Android Chrome, bilgisayarda Chrome/Edge) ---- */

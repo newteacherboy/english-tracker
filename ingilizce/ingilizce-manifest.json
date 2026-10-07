@@ -1,6 +1,6 @@
 {
   "name": "Diji-Medu İngilizce",
-  "short_name": "Diji İngilizce",
+  "short_name": "Diji-Medu",
   "description": "Oyunlarla İngilizce: kelimeler, dersler, Büyü Akademisi ve daha fazlası.",
   "lang": "tr",
   "start_url": "./",
@@ -11,7 +11,7 @@
   "theme_color": "#7c3aed",
   "icons": [
     {
-      "src": "papi-welcome-v2.png",
+      "src": "papi-app-icon-v3.png",
       "sizes": "1254x1254",
       "type": "image/png",
       "purpose": "any"
