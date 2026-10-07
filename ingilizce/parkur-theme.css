@@ -143,3 +143,28 @@ body.dm-parkur-open #bottomNavMobile{background:#0d4a3d!important;border:1px sol
  .dm-parkur-head>h1{font-size:16px;margin-bottom:6px}
  .dm-adventure-papi-note{display:none}
 }
+
+/* Keep the wallet beside the brand so the route gains the old wallet row. */
+.dm-parkur-head .dm-adventure-brand-row{gap:10px;align-items:center;margin-bottom:7px}
+.dm-adventure-brand{min-width:0;flex:1}
+.dm-parkur-head .dm-parkur-wallet.dm-parkur-top-status{display:grid;grid-template-columns:1fr 1.15fr 1.05fr;gap:5px;width:clamp(166px,48vw,228px);flex:none;margin:0}
+.dm-parkur-top-status button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;min-width:0;min-height:42px;padding:3px 4px;font-size:12px;line-height:1.15;border-radius:12px}
+.dm-parkur-top-status button>span:first-child{font-size:14px;line-height:1}
+.dm-parkur-wallet.dm-parkur-top-status .dm-adventure-level{padding:5px 4px}
+.dm-parkur-top-status .dm-adventure-level>span{font-size:12px!important;white-space:nowrap}
+.dm-parkur-top-status .dm-adventure-level-track{width:100%;height:4px;margin-top:5px}
+.dm-parkur-top-status [data-dm-energy],.dm-parkur-top-status [data-dm-gold]{font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:600px){
+ .dm-parkur-head .dm-parkur-brand{font-size:22px;white-space:nowrap}
+ .dm-parkur-head .dm-parkur-brand span{font-size:14px}
+ .dm-parkur-head .dm-adventure-brand-row small{display:none}
+ .dm-parkur-head>h1{margin-bottom:7px}
+}
+@media(max-width:360px){
+ body.dm-parkur-open .dm-parkur-head{padding-left:12px;padding-right:12px}
+ .dm-parkur-head .dm-adventure-brand-row{gap:7px}
+ .dm-parkur-head .dm-parkur-brand{font-size:18px}
+ .dm-parkur-head .dm-parkur-brand span{font-size:11px}
+ .dm-parkur-top-status button{font-size:10px;padding-left:2px;padding-right:2px}
+ .dm-parkur-top-status .dm-adventure-level>span{font-size:11px!important}
+}
