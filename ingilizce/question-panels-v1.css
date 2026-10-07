@@ -1,0 +1,100 @@
+/* Papi's adventure: eleven native question layouts, shared readable controls. */
+#bzPerde:has(.dm-question-panel){background:#edf0dc;overscroll-behavior:contain;overflow-y:auto}
+#bzPerde .dm-question-panel{--q-ink:#244e40;--q-accent:#387d5d;--q-soft:#e5f1de;--q-edge:#a8c9a5;min-height:100dvh;background:radial-gradient(ellipse at 0 0,var(--q-soft),transparent 65%),#fff8e7;color:var(--q-ink);font-family:Nunito,system-ui,sans-serif;padding:env(safe-area-inset-top,0px) 0 calc(22px + env(safe-area-inset-bottom,0px));box-sizing:border-box}
+#bzPerde .dm-question-panel *,#bzPerde .dm-question-review *{box-sizing:border-box}
+#bzPerde [data-question-type="risk"]{--q-accent:#987049;--q-soft:#ffedd3;--q-edge:#d9ba83}
+#bzPerde [data-question-type="eksik"]{--q-accent:#317e87;--q-soft:#dff3f4;--q-edge:#a4ced1}
+#bzPerde [data-question-type="hafiza"]{--q-accent:#79629a;--q-soft:#eee6f8;--q-edge:#c7b6dc}
+#bzPerde [data-question-type="hiz"]{--q-accent:#ac6727;--q-soft:#fff0c9;--q-edge:#dfbd7c}
+#bzPerde [data-question-type="harf"]{--q-accent:#457859;--q-soft:#e6f1d9;--q-edge:#a9c59a}
+#bzPerde [data-question-type="sifre"]{--q-accent:#566f9a;--q-soft:#e4edf9;--q-edge:#acbdd8}
+#bzPerde [data-question-type="es"]{--q-accent:#3c8183;--q-soft:#ddf1e8;--q-edge:#a2ccc5}
+#bzPerde [data-question-type="tren"]{--q-accent:#9a6843;--q-soft:#f8ead7;--q-edge:#d2b998}
+#bzPerde [data-question-type="cumle"]{--q-accent:#946a83;--q-soft:#f6e7ee;--q-edge:#d4b0c3}
+#bzPerde [data-question-type="dikte"]{--q-accent:#536c9c;--q-soft:#e6edf9;--q-edge:#aebfdc}
+#bzPerde .dm-question-panel .bz-oyun-ust{padding:12px 16px;gap:8px;color:var(--q-ink);background:#fffdf3;border-bottom:1px solid #e2d4b9}
+#bzPerde .dm-question-panel :is(.kapat,.bz-geri-soru){color:var(--q-ink)!important;background:var(--q-soft)!important;border:1px solid var(--q-edge)!important;border-radius:50%!important;min-width:36px;min-height:36px}
+#bzPerde .dm-question-panel .bz-noktalar{gap:3px;min-width:0}
+#bzPerde .dm-question-panel .bz-noktalar i{background:#e3dac6;height:7px}
+#bzPerde .dm-question-panel .bz-noktalar i.d{background:#438461}
+#bzPerde .dm-question-panel .bz-noktalar i.y{background:#c66758}
+#bzPerde .dm-question-panel .bz-noktalar i.a{background:#d9ab44;box-shadow:0 0 0 2px #f9e8ac}
+#bzPerde .dm-question-panel .bz-enerji-pill{color:#725622;background:#fff0c2;border:1px solid #d9c383}
+#bzPerde .dm-question-panel .bz-govde{position:relative;padding:22px 82px 16px 18px;min-height:87px}
+#bzPerde .dm-question-panel .bz-govde::after{content:"";position:absolute;right:16px;top:10px;width:57px;height:65px;background:url('parkur-map-papi-v1.svg') center/contain no-repeat;pointer-events:none}
+#bzPerde .dm-question-panel .bz-tip{color:var(--q-ink);background:var(--q-soft);border:1px solid var(--q-edge);font:600 clamp(14px,4vw,18px)/1.35 Fredoka,Nunito,system-ui;border-radius:18px;padding:9px 13px;margin:0}
+#bzPerde .dm-question-panel #bzAlan,#bzPerde .dm-question-review{position:relative;isolation:isolate;background:linear-gradient(135deg,#fffef7,#fff5de);color:var(--q-ink);border:2px solid #decaa1;border-radius:26px;box-shadow:0 5px 0 #cfba91,0 10px 24px #6b55311a;padding:22px 18px;margin:0 auto;width:calc(100% - 28px);max-width:532px;min-width:0;overflow-wrap:anywhere}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-etiket{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#746548;font-weight:900;margin:0 0 8px}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-soru{font:600 clamp(24px,7vw,34px)/1.2 Fredoka,Nunito,system-ui;color:var(--q-ink);margin:10px 0 16px}
+#bzPerde :is(.dm-question-panel,.dm-question-review) :is(.bz-ipucu,.bz-tr-anlam){background:var(--q-soft);color:var(--q-ink)!important;border:1px solid var(--q-edge);border-radius:16px;padding:12px;font-size:13px!important;line-height:1.55;margin-bottom:18px}
+#bzPerde :is(.dm-question-panel,.dm-question-review) :is(.bz-ipucu b,small){color:var(--q-ink)!important}
+#bzPerde :is(.dm-question-panel,.dm-question-review) :is(.bz-sec,.bz-cip2,.bz-slot){border:2px solid var(--q-edge);color:var(--q-ink);background:#fffdf2;box-shadow:0 3px 0 var(--q-edge);font-weight:900}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-sec{position:relative;min-height:58px;border-radius:18px;padding:15px 16px;font-size:16px;overflow-wrap:anywhere}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-btn{min-height:48px;background:linear-gradient(#4d9769,#2a6d4a);color:#fff;border:2px solid #286144;box-shadow:0 4px 0 #21503a;border-radius:18px;font-size:15px}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-btn:disabled{background:#ebe7dd;color:#817b6e;border-color:#d9d1bf;box-shadow:none}
+#bzPerde :is(.dm-question-panel,.dm-question-review) button:focus-visible,#bzPerde .dm-question-panel input:focus-visible{outline:3px solid #167d92;outline-offset:3px}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-ses{background:#f7dfa1;border:2px solid #c7a66a;color:#664c23;border-radius:50px;box-shadow:0 3px 0 #c7a66a;min-height:44px}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-sec.dogru,#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-cip2:is(.iyi,.tamam){background:#d5efdb;border-color:#438c59;color:#215b34;box-shadow:0 3px 0 #438c59;opacity:1}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-sec.yanlis,#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-cip2.kotu{background:#ffe0d8;border-color:#c97967;color:#8a392b;box-shadow:0 3px 0 #c97967;opacity:1}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-geri-bildirim{font-size:17px;border:2px solid #91ba95;border-radius:16px;background:#e4f4df;color:#255938;padding:14px}
+#bzPerde :is(.dm-question-panel,.dm-question-review) .bz-geri-bildirim.kotu{background:#fff0e7;border-color:#d1a18a;color:#873f2b}
+#bzPerde .dm-question-panel .bz-jokerler{max-width:532px;width:calc(100% - 28px);margin:18px auto 0;gap:6px}
+#bzPerde .dm-question-panel .bz-jk{color:#365748;background:#eef2e4;border:1px solid #b5c6a8;border-radius:14px;font-size:10px}
+#bzPerde .dm-question-panel .bz-jk:disabled{opacity:.5}
+/* Laboratory: specimen labels and two generous answer plaques. */
+#bzPerde [data-question-type="lab"] .bz-soru{text-align:center;padding:24px 10px;border:2px solid #b6c9a1;border-radius:22px;background:radial-gradient(circle at 20% 10%,#fff,#eaf3d8);box-shadow:inset 0 0 0 5px #fffffa}
+#bzPerde [data-question-type="lab"] .bz-sec{border-left:7px solid var(--q-accent)}
+/* Balloon answers are native buttons: words and correctness remain readable. */
+#bzPerde [data-question-type="risk"] .bz-secenekler{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 14px;padding:8px 4px 25px}
+#bzPerde [data-question-type="risk"] .bz-sec{--balloon:#d9ecdb;min-height:114px;border-radius:49% 49% 44% 44%;background:radial-gradient(ellipse at 25% 15%,#fff9,var(--balloon) 55%,#aac7b6);text-align:center;color:#244c43;padding:18px 9px;box-shadow:inset -5px -6px 8px #657c3b18,0 4px 0 #849e8744}
+#bzPerde [data-question-type="risk"] .bz-sec:nth-child(2){--balloon:#e9d9f3;background:radial-gradient(ellipse at 25% 15%,#fff9,var(--balloon) 55%,#c5acd9)}
+#bzPerde [data-question-type="risk"] .bz-sec:nth-child(3){--balloon:#fff0b7;background:radial-gradient(ellipse at 25% 15%,#fff9,var(--balloon) 55%,#d8c181)}
+#bzPerde [data-question-type="risk"] .bz-sec:nth-child(4){--balloon:#f6d8df;background:radial-gradient(ellipse at 25% 15%,#fff9,var(--balloon) 55%,#d8acb6)}
+#bzPerde [data-question-type="risk"] .bz-sec::after{content:"";position:absolute;width:1px;height:22px;bottom:-23px;left:50%;background:#ad9570}
+#bzPerde [data-question-type="risk"] .bz-sec.dogru{background:#cdebd1;border-color:#438c59}
+#bzPerde [data-question-type="risk"] .bz-sec.yanlis{background:#ffdcd5;border-color:#bd6b56}
+/* Missing letters and alphabet hunt: tactile letter tiles. */
+#bzPerde :is([data-question-type="eksik"],[data-question-type="harf"]) .bz-slot{width:36px;height:43px;font-size:20px;border-radius:10px}
+#bzPerde [data-question-type="eksik"] .bz-slot:not(.sabit):not(.dolu){border-style:dashed;box-shadow:none;background:#dfedf0}
+#bzPerde [data-question-type="eksik"] .bz-slot.dolu{background:#fbdf99;border-color:#c8a665}
+#bzPerde [data-question-type="harf"] .bz-asma{font-size:clamp(18px,6vw,28px);color:#315343;overflow-wrap:anywhere;letter-spacing:1px;padding:17px 8px;background:#e6efdb;border:2px dashed #b1c499;border-radius:18px}
+#bzPerde [data-question-type="harf"] .bz-harfler{gap:7px}
+#bzPerde [data-question-type="harf"] .bz-cip2{min-width:36px;padding:0 8px;font-size:16px;border-radius:9px}
+/* Memory: illustrated medallion backs, text fronts. */
+#bzPerde [data-question-type="hafiza"] .bz-kart2{height:104px;border:2px solid #c6b2d6;border-radius:18px;background:linear-gradient(#8f74a9,#655780);box-shadow:0 4px 0 #65517a;color:#fff;position:relative;font-size:25px}
+#bzPerde [data-question-type="hafiza"] .bz-kart2:not(.acik){background:linear-gradient(#fff2,#fff0),url('parkur-map-stops-v1.svg') 50% 50%/500% 100% no-repeat,#655780}
+#bzPerde [data-question-type="hafiza"] .bz-kart2.acik{background:#fff9ea;font-size:14px;color:#48375b}
+#bzPerde [data-question-type="hafiza"] .bz-kart2.tamam{background:#d5efdb;color:#215b34;border-color:#438c59;box-shadow:none}
+/* Speed: amber hourglass rail, stable answers without movement. */
+#bzPerde [data-question-type="hiz"] .bz-sure{height:13px;border:2px solid #d5b877;background:#f0e5c9;border-radius:20px;margin:4px 0 20px}
+#bzPerde [data-question-type="hiz"] .bz-sure i{background:linear-gradient(90deg,#d0953a,#f1c96f);border-radius:20px}
+/* Cipher: crystal ledger and a keyboard that fits narrow screens. */
+#bzPerde [data-question-type="sifre"] .bz-wordle{max-width:100%;overflow-x:auto;padding:4px 2px 10px}
+#bzPerde [data-question-type="sifre"] .bz-wordle .satir{gap:4px}
+#bzPerde [data-question-type="sifre"] .bz-wordle .h{width:32px;height:35px;flex:none;border:1px solid #aabbd5;background:#e8edf4;color:#304c74;border-radius:7px;font-size:19px}
+#bzPerde [data-question-type="sifre"] .bz-wordle .h.g{background:#43835a;color:white}
+#bzPerde [data-question-type="sifre"] .bz-wordle .h.s{background:#ad8329;color:white}
+#bzPerde [data-question-type="sifre"] .bz-wordle .h.x{background:#667083;color:white}
+#bzPerde [data-question-type="sifre"] .bz-klavye>div{gap:3px}
+#bzPerde [data-question-type="sifre"] .bz-klavye .bz-cip2{min-width:0;flex:1;padding:0;max-width:39px;height:43px;font-size:14px;border-radius:8px}
+/* Matching: facing parchment cards and unmistakable selected pairs. */
+#bzPerde [data-question-type="es"] .bz-es{gap:14px}
+#bzPerde [data-question-type="es"] .bz-cip2{height:auto;min-height:58px;font-size:14px;text-transform:none;border-radius:17px;padding:12px 8px;overflow-wrap:anywhere}
+#bzPerde [data-question-type="es"] .bz-cip2.secili{background:#cfebe6;border:3px solid #377c79;box-shadow:0 3px 0 #377c79}
+/* Train and sentence builder: wagon rails versus building blocks. */
+#bzPerde :is([data-question-type="tren"],[data-question-type="cumle"]) .bz-cevap{background:var(--q-soft);border:2px dashed var(--q-edge);border-radius:18px;min-height:78px;padding:14px 10px;gap:8px;flex-wrap:wrap}
+#bzPerde [data-question-type="tren"] .bz-cevap{border-bottom:5px double #95734b}
+#bzPerde [data-question-type="tren"] .bz-cevap .bz-cip2{position:relative;border-radius:11px 11px 5px 5px;margin-bottom:9px;text-transform:none}
+#bzPerde [data-question-type="tren"] .bz-cevap .bz-cip2::after{content:"● ●";position:absolute;bottom:-14px;left:0;width:100%;font-size:13px;color:#6d563c;letter-spacing:7px;pointer-events:none}
+#bzPerde [data-question-type="cumle"] .bz-cevap .bz-cip2{border-radius:5px;box-shadow:0 4px 0 #b58d9f;text-transform:none}
+#bzPerde :is([data-question-type="tren"],[data-question-type="cumle"]) .bz-tren-havuz{gap:9px}
+#bzPerde :is([data-question-type="tren"],[data-question-type="cumle"]) .bz-tren-havuz .bz-cip2{height:auto;min-height:44px;text-transform:none;padding:8px 12px;overflow-wrap:anywhere}
+#bzPerde :is([data-question-type="tren"],[data-question-type="cumle"]) .bz-bos-vagon{background:#fff9ed;color:#80684a;border-color:var(--q-edge)}
+/* Listening: twin audio controls and a notebook writing line. */
+#bzPerde [data-question-type="dikte"] .bz-ses{min-width:68px;min-height:64px;font-size:22px;margin:8px 0 18px}
+#bzPerde [data-question-type="dikte"] .bz-input{width:100%;min-height:58px;font-size:20px;border:2px solid #a8bbd4;border-radius:16px;color:#304c74;background:repeating-linear-gradient(#fffef7 0 30px,#dae4f2 31px 32px);margin:6px 0 18px;padding:12px}
+#bzPerde .dm-question-panel .bz-inceleme{margin:0 auto;width:calc(100% - 28px);max-width:532px}
+#bzPerde .dm-question-panel .bz-inceleme-bas{flex-wrap:wrap;background:#edf0e0;color:#315343;border-radius:18px;margin-bottom:10px;padding:9px}
+@media(max-width:360px){#bzPerde .dm-question-panel #bzAlan{padding:17px 12px;width:calc(100% - 20px)}#bzPerde .dm-question-panel .bz-oyun-ust{padding:10px;gap:5px}#bzPerde [data-question-type="hafiza"] .bz-kart2{height:87px}#bzPerde [data-question-type="risk"] .bz-sec{min-height:98px;font-size:14px}#bzPerde .dm-question-panel .bz-tip{font-size:13px}}
+@media(max-height:500px) and (orientation:landscape){#bzPerde .dm-question-panel .bz-govde{padding-top:10px;padding-bottom:10px;min-height:65px}#bzPerde .dm-question-panel #bzAlan{padding:16px}#bzPerde .dm-question-panel .bz-govde::after{height:49px}#bzPerde .dm-question-panel .bz-soru{font-size:24px}}
+@media(prefers-reduced-motion:reduce){#bzPerde .dm-question-panel *{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
