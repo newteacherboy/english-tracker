@@ -3,6 +3,14 @@
   'use strict';
   const $ = id => document.getElementById(id);
   let linking = false;
+  // Play Store (TWA) içinde Google girişi gösterilmez: Aileler politikası çocuklara yönelik uygulamada OAuth girişini kısıtlıyor.
+  const androidUygulama = (() => {
+    try {
+      if (document.referrer.startsWith('android-app://') || new URLSearchParams(location.search).get('kaynak') === 'android') sessionStorage.setItem('dm_android_uygulama', '1');
+      return sessionStorage.getItem('dm_android_uygulama') === '1';
+    } catch (_) { return false; }
+  })();
+  window.dmAndroidUygulama = androidUygulama;
   let busy = false;
   const legacyLogin = window.girisYap;
   const legacyLogout = window.cikisYap;
@@ -261,6 +269,7 @@
       history.replaceState(null, '', location.pathname);
       if (sessionStorage.getItem('diji_google_pending') === '1') return receive();
     }
+    if (androidUygulama) { area.hidden = true; return; }
     try {
       const [settings, readiness] = await Promise.all([
         fetch(SUPABASE_URL + '/auth/v1/settings', { headers: { apikey: SUPABASE_ANON_KEY } }).then(r => r.json()),
