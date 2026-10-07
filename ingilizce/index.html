@@ -14525,8 +14525,9 @@ const YO_SOHBET = [
           yo.xpGun.xp += xp; yo.lig.xp += xp;
           yo.log[b] = (yo.log[b] || 0) + xp;
           yo.altin += altin;
+          if (altin > 0) window.dmEkonomi?.kazan(altin);   /* [v4.8] altın sunucuda */
           if (yo.xpGun.xp >= yo.hedef && yo.hedefOdul !== b) {
-            yo.hedefOdul = b; yo.altin += 5;
+            yo.hedefOdul = b; yo.altin += 5; window.dmEkonomi?.kazan(5);
             setTimeout(() => yoToast('🎯 Günlük hedefini tamamladın! +5 🪙'), 2300);
           }
           yoKaydet(); yoHedefHalkaCiz();
@@ -14580,8 +14581,8 @@ const YO_SOHBET = [
         function yoDondurucuAl() {
           if (yo.dondurucu >= 2) { yoToast('En fazla 2 dondurucu taşıyabilirsin.'); return; }
           if (yo.altin < YO_DONDURUCU_FIYAT) { yoToast(`${YO_DONDURUCU_FIYAT - yo.altin} altın daha lazım 🪙`); return; }
-          yo.altin -= YO_DONDURUCU_FIYAT; yo.dondurucu++;
-          yoKaydet(); yoToast('🧊 Seri dondurucu alındı!'); yoMagazaAc();
+          /* [v4.8] satın alma sunucuda */
+          window.dmEkonomi.islem('dondurucuAl').then(d => { if (!d.ok) { yoToast(d.mesaj || 'Satın alma tamamlanamadı.'); return; } yoToast('🧊 Seri dondurucu alındı!'); yoMagazaAc(); });
         }
         
         /* ========== 4) HAFTALIK SINIF LİGİ ========== */
@@ -20916,13 +20917,13 @@ let adaRenk = adaRenkleri[
     let f = krkFiyat(k);
     if ((yo.altin || 0) < f) { if (typeof yoToast === 'function') yoToast(`🔒 ${k.ad} için ${f} altın gerekiyor. ${f - (yo.altin || 0)} altın daha lazım! Ya da ${k.sv}. seviyeye ulaşınca bedava açılır.`); return; }
     if (!confirm(`${k.ad} karakterini ${f} altına satın almak istiyor musun?\n(${k.sv}. seviyeye ulaşınca zaten bedava açılacak)`)) return;
-    yo.altin -= f;
-    yo.krkSatin = yo.krkSatin || []; if (!yo.krkSatin.includes(k.ad)) yo.krkSatin.push(k.ad);
-    yo.krkGoruldu = yo.krkGoruldu || []; if (!yo.krkGoruldu.includes(k.ad)) yo.krkGoruldu.push(k.ad);
-    yoKaydet();
-    if (typeof yoToast === 'function') yoToast(`🎉 ${k.ad} artık senin! Dokunup profil fotoğrafın yapabilirsin.`);
-    if (typeof bcMgCiz === 'function' && $('tab-magaza') && $('tab-magaza').classList.contains('active')) bcMgCiz();
-    if ($('tab-profil') && $('tab-profil').classList.contains('active') && typeof bcKoleksiyonCiz === 'function') bcKoleksiyonCiz($('profilKoleksiyon'));
+    window.dmEkonomi.islem('karakterAl', { ad: k.ad }).then(d => {
+      if (!d.ok) { if (typeof yoToast === 'function') yoToast(d.mesaj || 'Satın alma tamamlanamadı.'); return; }
+      yo.krkGoruldu = yo.krkGoruldu || []; if (!yo.krkGoruldu.includes(k.ad)) { yo.krkGoruldu.push(k.ad); yoKaydet(); }
+      if (typeof yoToast === 'function') yoToast(`🎉 ${k.ad} artık senin! Dokunup profil fotoğrafın yapabilirsin.`);
+      if (typeof bcMgCiz === 'function' && $('tab-magaza') && $('tab-magaza').classList.contains('active')) bcMgCiz();
+      if ($('tab-profil') && $('tab-profil').classList.contains('active') && typeof bcKoleksiyonCiz === 'function') bcKoleksiyonCiz($('profilKoleksiyon'));
+    });
   };
 })();
 </script>
@@ -21051,16 +21052,13 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
   function satinAl(j, sonra) {
     if (!yoVar()) return;
     if ((yo.altin || 0) < j.f) { if (typeof yoToast === 'function') yoToast(`${j.ad} için ${j.f - (yo.altin || 0)} altın daha lazım 🪙`); return; }
-    yo.altin -= j.f;
-    let E = env();
-    if (j.tur === 'm_seri') yo.dondurucu = Math.min(2, (yo.dondurucu || 0) + 1);
-    else if (j.tur === 'm_xp') E.m_xp = (E.m_xp || 0) + 1;
-    else if (j.tur === 'm_xp3') E.m_xp = (E.m_xp || 0) + 3;
-    else E[j.tur] = (E[j.tur] || 0) + j.adet;
-    yoKaydet();
-    if (typeof yoToast === 'function') yoToast(`${j.e} ${j.ad} çantana eklendi!`);
-    if (typeof yoSes === 'function') yoSes('dogru');
-    if (sonra) sonra();
+    /* [v4.8] satın alma sunucuda */
+    window.dmEkonomi.islem('jokerAl', { id: j.id }).then(d => {
+      if (!d.ok) { if (typeof yoToast === 'function') yoToast(d.mesaj || 'Satın alma tamamlanamadı.'); return; }
+      if (typeof yoToast === 'function') yoToast(`${j.e} ${j.ad} çantana eklendi!`);
+      if (typeof yoSes === 'function') yoSes('dogru');
+      if (sonra) sonra();
+    });
   }
   let jmFiltre = 'hepsi', jmAcik = false;
   function magazaHtml(sadeceTurler) {
@@ -21273,9 +21271,11 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     if (k >= m) { toast('⚡ Enerjin zaten dolu!'); return false; }
     let miktar = tam ? (m - k) : Math.min(5, m - k), fiyat = tam ? 60 : 15;
     if ((yo.altin || 0) < fiyat) { toast(`Bunun için ${fiyat - (yo.altin || 0)} altın daha lazım 🪙`); return false; }
-    yo.altin -= fiyat; yoKaydet();
-    let d = typeof enerjiKazan === 'function' ? await enerjiKazan(miktar, 'satin') : null;
-    if (!d || !d.ok || !(d.eklenen > 0)) { yo.altin += fiyat; yoKaydet(); toast((d && d.mesaj) || 'Enerji alınamadı, altının iade edildi.'); return false; }
+    /* [v4.8] altın düşme ve enerji ekleme sunucuda, tek işlemde */
+    let d = await window.dmEkonomi.islem('enerjiAl', { tam: !!tam });
+    if (!d || !d.ok || !(d.eklenen > 0)) { toast((d && d.mesaj) || 'Enerji alınamadı.'); return false; }
+    if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(d.enerjiKalan, d.enerjiMax);
+    try { window.genelEnerjiKalan = d.enerjiKalan; } catch (e) {}
     toast(`⚡ +${d.eklenen} enerji! Hadi oyuna 🚀`);
     return true;
   }
@@ -21321,12 +21321,13 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     let f = typeof krkFiyat === 'function' ? krkFiyat(k) : 50;
     onayKarti({ gorsel: krkGorsel(k), baslik: k.ad, metin: `Bu karakteri hemen açmak ister misin? (${k.sv}. seviyeye ulaşınca zaten bedava açılacak.)`, fiyat: f, evet: '🎭 Satın al',
       al: () => {
-        yo.altin -= f;
-        yo.krkSatin = yo.krkSatin || []; if (!yo.krkSatin.includes(k.ad)) yo.krkSatin.push(k.ad);
-        yo.krkGoruldu = yo.krkGoruldu || []; if (!yo.krkGoruldu.includes(k.ad)) yo.krkGoruldu.push(k.ad);
-        yoKaydet(); toast(`🎉 ${k.ad} artık senin! Dokunup profil fotoğrafın yap.`);
-        if (typeof bcMgCiz === 'function' && $('tab-magaza') && $('tab-magaza').classList.contains('active')) bcMgCiz();
-        if ($('tab-profil') && $('tab-profil').classList.contains('active') && typeof bcKoleksiyonCiz === 'function') bcKoleksiyonCiz($('profilKoleksiyon'));
+        window.dmEkonomi.islem('karakterAl', { ad: k.ad }).then(d => {
+          if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); return; }
+          yo.krkGoruldu = yo.krkGoruldu || []; if (!yo.krkGoruldu.includes(k.ad)) { yo.krkGoruldu.push(k.ad); yoKaydet(); }
+          toast(`🎉 ${k.ad} artık senin! Dokunup profil fotoğrafın yap.`);
+          if (typeof bcMgCiz === 'function' && $('tab-magaza') && $('tab-magaza').classList.contains('active')) bcMgCiz();
+          if ($('tab-profil') && $('tab-profil').classList.contains('active') && typeof bcKoleksiyonCiz === 'function') bcKoleksiyonCiz($('profilKoleksiyon'));
+        });
       } });
   };
 
@@ -21413,7 +21414,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     let aday = J.filter(j => turler.includes(j.tur) && j.kad === 1 && j.f <= (yo.altin || 0));
     if (!aday.length) return;
     let j = aday[Math.floor(Math.random() * aday.length)];
-    if (hepsiBitti && Math.random() < 0.6) { buOyunOneri = true; tavsiye({ ikon: j.e, metin: 'Jokerlerin bitti! 🎒', alt: `${j.ad} · 🪙 ${j.f} — ${j.ac}`, btn: 'Al', fn: () => onayKarti({ gorsel: j.e, baslik: j.ad, metin: j.ac + ' Hemen kullanabilirsin.', fiyat: j.f, evet: 'Al ve kullan', al: () => { yo.altin -= j.f; yo.jokerEnv = yo.jokerEnv || {}; yo.jokerEnv[j.tur] = (yo.jokerEnv[j.tur] || 0) + 1; yoKaydet(); if (typeof jokerBarCiz === 'function') jokerBarCiz(); toast(`${j.e} ${j.ad} çantanda!`); } }) }); }
+    if (hepsiBitti && Math.random() < 0.6) { buOyunOneri = true; tavsiye({ ikon: j.e, metin: 'Jokerlerin bitti! 🎒', alt: `${j.ad} · 🪙 ${j.f} — ${j.ac}`, btn: 'Al', fn: () => onayKarti({ gorsel: j.e, baslik: j.ad, metin: j.ac + ' Hemen kullanabilirsin.', fiyat: j.f, evet: 'Al ve kullan', al: () => { window.dmEkonomi.islem('jokerAl', { id: j.id }).then(d => { if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); return; } if (typeof jokerBarCiz === 'function') jokerBarCiz(); toast(`${j.e} ${j.ad} çantanda!`); }); } }) }); }
     else if (!hepsiBitti && oyunNo % 4 === 0 && Math.random() < 0.15) { buOyunOneri = true; tavsiye({ ikon: j.e, metin: `İpucu: ${j.ad} bu oyunda çok işe yarar!`, alt: `🪙 ${j.f} · Mağaza › Jokerler` }); }
   }, 3000);
 })();
@@ -22416,6 +22417,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   let sonGiris = { k: '', t: 0 }, soruSayac = 0;
   function girisUcreti() {
     if (sinifModu()) return Promise.resolve();
+    if (window.dmOdevEnerjiMuaf?.()) return Promise.resolve();   /* [v4.8] ödev oyunu */
     let k = baglam(); if (!k) return Promise.resolve();
     if (sonGiris.k === k && Date.now() - sonGiris.t < 4000) return Promise.resolve();
     sonGiris = { k, t: Date.now() }; soruSayac = 0;
@@ -22436,6 +22438,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   if (typeof orgKpE === 'function') window.kpEnerjiDegistir = function (f) { return Number(f) < 0 ? Promise.resolve() : orgKpE.apply(this, arguments); };
   window.genelOyunGirisEngelliMi = function () {
     if (sinifModu()) return false;
+    if (window.dmOdevEnerjiMuaf?.()) return false;   /* [v4.8] ödev oyunu */
     let k = baglam(); if (!k) return false;
     let kal = window.genelEnerjiKalan;
     if (typeof kal === 'number' && kal < ucret(k)) { if (typeof genelEnerjiBittiGoster === 'function') genelEnerjiBittiGoster(); return true; }
@@ -29069,8 +29072,11 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         <button class="bz-btn" id="bzDukkanKapat" style="background:#f5f3ff;color:#6d28d9;box-shadow:none">Oyuna dön</button></div>`;
       p.querySelectorAll('[data-u]').forEach(b => b.onclick = () => {
         let j = urunler[+b.dataset.u]; if (!yoVar() || (yo.altin || 0) < j.f) return;
-        yo.altin -= j.f; let E = yo.jokerEnv = yo.jokerEnv || {}; E[j.tur] = (E[j.tur] || 0) + (j.adet || 1);
-        if (typeof yoKaydet === 'function') yoKaydet(); ses('dogru'); toast(`${j.e} ${j.ad} çantana eklendi!`); ciz(); jokerBarCiz();
+        b.disabled = true;
+        window.dmEkonomi.islem('jokerAl', { id: j.id }).then(d => {
+          if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); b.disabled = false; return; }
+          ses('dogru'); toast(`${j.e} ${j.ad} çantana eklendi!`); ciz(); jokerBarCiz();
+        });
       });
       $('bzEnerjiAl').onclick = () => { if (typeof window.enerjiPaketiAl === 'function') window.enerjiPaketiAl(); setTimeout(() => { ciz(); ustTazele(); }, 1500); };
       $('bzDukkanKapat').onclick = () => p.remove();
@@ -30224,6 +30230,23 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     sonGor = gor;
   }, 1200);
   const bekle = ms => new Promise(r => setTimeout(r, ms));
+  /* [v4.8] Ödevden açılan oyun enerji harcamaz. Muafiyet, ödevin açtığı oyun penceresi açık kaldığı sürece geçerli. */
+  const pencereAcik = x => !!x && x.isConnected && x.getClientRects().length > 0 && getComputedStyle(x).display !== 'none';
+  function odevMuafBaslat() {
+    const m = { bitis: Date.now() + 3600000, el: null, uyarildi: false };
+    window.__odevEnerjiMuaf = m;
+    setTimeout(() => {
+      m.el = [...document.querySelectorAll('.game-modal-overlay, #yoModal.acik')].filter(pencereAcik).pop() || null;
+      if (!m.el) m.bitis = Date.now() + 180000;   /* pencere bulunamazsa 3 dakika */
+    }, 500);
+  }
+  window.dmOdevEnerjiMuaf = function () {
+    const m = window.__odevEnerjiMuaf;
+    if (!m || Date.now() > m.bitis) return false;
+    if (m.el && !pencereAcik(m.el)) { window.__odevEnerjiMuaf = null; return false; }
+    if (!m.uyarildi) { m.uyarildi = true; toast('📝 Ödev oyunu: enerji harcanmaz'); }
+    return true;
+  };
   async function odevBaslat(o) {
     if (!o) return;
     window.__aktifOdev = o;
@@ -30245,6 +30268,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     let v = o.veri || {}, oy = OYUN.find(x => x[0] === v.oyun);
     if (!oy || typeof window[oy[3]] !== 'function') { toast('Bu oyun şu an açılamadı.'); return; }
     window[oy[3]]();
+    odevMuafBaslat();
     if (['dikte', 'cumle'].includes(v.oyun)) { toast(`📝 Ödev: ${oy[2]} · hedef ${'⭐'.repeat(v.hedefYildiz || 1)}`); return; }
     await bekle(450);
     /* ödevin sınıf ve ünitelerini oyunda seç */
@@ -30845,11 +30869,11 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
-<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=1"></script><script src="sifre-islem.js?v=1"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=1"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=2"></script>
-<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=5"></script>
+<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=6"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script src="profile-forest.js?v=1"></script>
