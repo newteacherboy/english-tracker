@@ -4496,7 +4496,7 @@ const DIJI_CACHE_SURUM = "v1";
             { prefix: 'diji_ma_akis_v1', maxAge: 7 * 24 * 60 * 60 * 1000 },
             { prefix: 'diji_ders_konulari_v1_', maxAge: 30 * 24 * 60 * 60 * 1000 },
             { prefix: 'diji_rubric_etkinlik_v1', maxAge: 30 * 24 * 60 * 60 * 1000 },
-            { prefix: 'diji_ozellikler_v1', maxAge: 30 * 24 * 60 * 60 * 1000 }
+            { prefix: 'diji_ozellikler_v2', maxAge: 30 * 24 * 60 * 60 * 1000 }
         ];
 
         for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -10964,7 +10964,7 @@ function ozellikSecDoldur() {
     let sel = document.getElementById('ozellikSec');
     if (!sel) return;
 
-    const key = 'diji_ozellikler_v1';
+    const key = 'diji_ozellikler_v2';
 
     try {
         const ham = localStorage.getItem(key);
@@ -10994,7 +10994,7 @@ function ozellikSecDoldur() {
     fetch(`${apiURL}?islem=ozellikListesiGetir`)
         .then(res => res.json())
         .then(liste => {
-            liste = Array.isArray(liste) ? liste : [];
+            if (!Array.isArray(liste)) return;   /* öğretmen oturumu yoksa sunucu liste vermez; boş listeyi önbelleğe yazma */
 
             sel.innerHTML = '<option value="">-- Özellik Seçin --</option>';
 
@@ -11348,6 +11348,8 @@ function ozellikSecDoldur() {
         let disLinkYuklendiMi = false;
         
         function disLinkOyunAc(url, baslik, yorum, satirIndex) {
+            /* Sadece https bağlantıları açılır (javascript:, data: vb. engellenir) */
+            try { if (new URL(String(url || ''), location.href).protocol !== 'https:') { if (typeof yoToast === 'function') yoToast('Bu etkinlik bağlantısı açılamıyor. Öğretmenine haber ver.'); return; } } catch (e) { return; }
             disLinkAktifSatirIndex = satirIndex;
             disLinkAktifUrl = url;
             genelSureKilitBaslat();
@@ -29698,6 +29700,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   if (typeof orgPanel === 'function') window.ogretmenPaneliAc = function () {
     let r = orgPanel.apply(this, arguments);
     if (OGRT() && (!Array.isArray(globalDataCache) || globalDataCache.length <= 1)) ogretmenVerisiniYukle();
+    if (OGRT() && typeof ozellikSecDoldur === 'function') try { ozellikSecDoldur(); } catch (e) {}
     return r;
   };
 
@@ -30375,12 +30378,12 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       if (!d || !d.ok) return hata((d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol et.');
       p.remove();
       let link = `${PORTAL}?kod=${d.kod}`;
-      let p2 = perde(`<h3>🎉 Hesabın hazır!</h3><p class="alt">Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır. Kod e-posta adresine de gönderildi.</p>
+      let p2 = perde(`<h3>${d.onayBekliyor ? '📨 Başvurun alındı!' : '🎉 Hesabın hazır!'}</h3><p class="alt">${d.onayBekliyor ? 'Hesabın yönetici onayından sonra açılacak; onaylanınca e-posta alacaksın. Onaydan sonra öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır.' : 'Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır. Kod e-posta adresine de gönderildi.'}</p>
         <div class="cog-kod" aria-label="Öğretmen kodun">${kac(d.kod)}</div>
         <button type="button" class="cog-btn" id="cogKodKopya">📋 Kodu kopyala</button>
         <button type="button" class="cog-btn ikincil" id="cogLinkKopya">🔗 Öğrenci davet linkini kopyala</button>
-        <button type="button" class="cog-btn ikincil" id="cogCreateAfterSignup">🎒 İstersen öğrenci hesaplarını şimdi ekle</button><div id="cogCreateSignupMessage" role="status"></div>
-        <button type="button" class="cog-btn ikincil" id="cogGiris">➡️ Şimdi giriş yap</button>`);
+        <button type="button" class="cog-btn ikincil" id="cogCreateAfterSignup"${d.onayBekliyor ? ' hidden' : ''}>🎒 İstersen öğrenci hesaplarını şimdi ekle</button><div id="cogCreateSignupMessage" role="status"></div>
+        <button type="button" class="cog-btn ikincil" id="cogGiris"${d.onayBekliyor ? ' hidden' : ''}>➡️ Şimdi giriş yap</button>`);
       $('cogCreateAfterSignup').onclick = async () => {
         const b=$('cogCreateAfterSignup');b.disabled=true;
         let r;try{r=await (await orgFetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:'giris',ogrenci:kul,sifre:s1})})).json();}catch{}
@@ -30717,7 +30720,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 })();
 </script>
                                 
-<script src="google-login.js?v=rights-5"></script>
+<script src="google-login.js?v=rights-6"></script>
 <link rel="stylesheet" href="parkur-theme.css?v=13">
 <script src="parkur-theme.js?v=12"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
@@ -30742,7 +30745,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
-<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=1"></script><script src="contact-policy.js?v=2"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=2"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=2"></script><script src="contact-policy.js?v=2"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=9"></script>

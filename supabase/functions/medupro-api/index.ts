@@ -5,7 +5,7 @@ import { contactPolicyAPI } from "./contact-policy-api.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 const keys=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")||"{}");
 const supabase=createClient(Deno.env.get("SUPABASE_URL")!,keys.default);
-const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization,apikey,content-type,x-diji-token","Access-Control-Allow-Methods":"GET,POST,OPTIONS"};
+const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization,apikey,content-type,x-diji-token","Access-Control-Allow-Methods":"GET,POST,OPTIONS","Access-Control-Max-Age":"86400"};
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{...cors,"Content-Type":"application/json"}});
 const release=releaseAPI(supabase,json);
 const progression=progressionAPI(supabase,json);
