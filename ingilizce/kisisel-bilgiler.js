@@ -40,30 +40,32 @@
     const s = document.createElement("style"); s.id = "kbStil"; s.textContent = css; document.head.appendChild(s);
   }
   async function istek(govde) {
-    const r = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(govde) });
+    let r; try { r = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({...govde,t:localStorage.getItem('ing_token')||''}) }); } catch(e) { return {ok:false,mesaj:'İnternet bağlantını kontrol edip tekrar dene.'}; }
     let d = null; try { d = await r.json(); } catch (e) {}
     return d || { ok: false, mesaj: "Sunucuya ulaşılamadı. İnternet bağlantını kontrol et." };
   }
   const telGoster = t => { const d = String(t || "").replace(/\D/g, ""); return d.length === 11 ? `${d.slice(0, 4)} ${d.slice(4, 7)} ${d.slice(7, 9)} ${d.slice(9)}` : String(t || ""); };
   const telSade = t => String(t || "").replace(/\D/g, "");
 
-  window.kisiselBilgilerAc = async function () {
+  window.kisiselBilgilerAc = async function (secenek = {}) {
     stilEkle();
     document.querySelectorAll(".kb-perde").forEach(x => x.remove());
     const perde = document.createElement("div");
     perde.className = "kb-perde";
+    if(secenek.zorunlu) perde.style.zIndex='100000001';
     perde.setAttribute("role", "dialog"); perde.setAttribute("aria-modal", "true"); perde.setAttribute("aria-labelledby", "kbBaslik");
     perde.innerHTML = `<div class="kb-kutu"><div class="kb-bas"><h3 id="kbBaslik">👤 Kişisel bilgiler</h3><button class="kb-x" aria-label="Kapat">✕</button></div><div class="kb-yukleniyor">Bilgilerin yükleniyor…</div></div>`;
     document.body.appendChild(perde);
-    const kapat = () => { perde.remove(); document.removeEventListener("keydown", esc); };
-    const esc = e => { if (e.key === "Escape") kapat(); };
+    const kapat = () => { if(secenek.zorunlu && window.dmContactFrozen)return; perde.remove(); document.removeEventListener("keydown", esc); };
+    const esc = e => { if (e.key === "Escape") kapat(); if(e.key==='Tab' && secenek.zorunlu && window.dmContactFrozen){const list=[...perde.querySelectorAll('button:not([hidden]):not([disabled]),input:not([readonly]),select')];const first=list[0],last=list[list.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}} };
     document.addEventListener("keydown", esc);
     perde.addEventListener("click", e => { if (e.target === perde) kapat(); });
     perde.querySelector(".kb-x").onclick = kapat;
+    if(secenek.zorunlu)perde.querySelector('.kb-x').hidden=true;
 
     const d = await istek({ islem: "kisiselBilgilerim" });
     const kutu = perde.querySelector(".kb-kutu");
-    if (!d.ok) { kutu.querySelector(".kb-yukleniyor").textContent = d.mesaj || "Bilgiler alınamadı."; return; }
+    if (!d.ok) { kutu.querySelector(".kb-yukleniyor").textContent = d.mesaj || "Bilgiler alınamadı."; const tekrar=document.createElement('button');tekrar.className='kb-kaydet';tekrar.textContent='Tekrar dene';tekrar.onclick=()=>window.kisiselBilgilerAc(secenek);kutu.appendChild(tekrar);return; }
 
     kutu.innerHTML = `
       <div class="kb-bas"><h3 id="kbBaslik">👤 Kişisel bilgiler</h3><button class="kb-x" aria-label="Kapat">✕</button></div>
@@ -92,6 +94,7 @@
       <div class="kb-mesaj" id="kbMesaj" role="status" aria-live="polite"></div>
       <button class="kb-kaydet" id="kbKaydet">Kaydet</button>`;
     kutu.querySelector(".kb-x").onclick = kapat;
+    if(secenek.zorunlu)kutu.querySelector('.kb-x').hidden=true;
 
     const $ = id => kutu.querySelector("#" + id);
     let mevcut = d;
@@ -108,7 +111,7 @@
       if (x.googleBagli) $("kbSifreIpucu").textContent = "Google ile kayıt olduysan şifren yoktur; öğretmeninden şifre belirlemesini iste.";
       sifreGoster();
     }
-    const iletisimDegisti = () => telSade($("kbTel").value) !== telSade(mevcut.telefon) || $("kbMail").value.trim().toLowerCase() !== String(mevcut.email || "").trim().toLowerCase();
+    const iletisimDegisti = () => (Boolean(telSade(mevcut.telefon)) && telSade($("kbTel").value) !== telSade(mevcut.telefon)) || (Boolean(String(mevcut.email||'').trim()) && $("kbMail").value.trim().toLowerCase() !== String(mevcut.email || "").trim().toLowerCase());
     function sifreGoster() { $("kbSifreGrup").classList.toggle("acik", iletisimDegisti()); }
     $("kbTel").addEventListener("input", sifreGoster);
     $("kbMail").addEventListener("input", sifreGoster);
@@ -136,6 +139,7 @@
       mevcut = r; doldur(r);
       mesaj(r.mesaj || "Bilgilerin kaydedildi.", "tamam");
       try { document.dispatchEvent(new CustomEvent("dm:kisisel-bilgiler", { detail: r })); } catch (e) {}
+      if(secenek.zorunlu) { window.dmContactFrozen=false; kapat(); }
     };
     $("kbAd").focus();
   };

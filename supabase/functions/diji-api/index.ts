@@ -2,10 +2,17 @@ import './score-rules.js';
 import { readBatch, contentCache } from './request-budget.ts';
 import { progressionAPI } from './progression-api.ts';
 import { onboardingAPI } from './onboarding-api.ts';
+import { adminStudentsAPI } from './admin-students-api.ts';
+import { contactPolicyAPI } from './contact-policy-api.ts';
 // =====================================================================
-// DİJİ-MEDU API — Supabase Edge Function (YAMALI SÜRÜM v3)
-// Yamalar "[YAMA n]" etiketiyle işaretlidir. İşlem adları ve cevap
-// biçimleri önceki sürümle aynıdır; sayfa kodunda değişiklik gerekmez.
+// DİJİ-MEDU API — Supabase Edge Function (YAMALI SÜRÜM v4.6)
+// Yamalar "[YAMA n]" / "[v4.x]" etiketiyle işaretlidir. İşlem adları ve cevap
+// biçimleri önceki sürümle aynıdır.
+// v4.8: altın, joker, dondurucu, karakter ve enerji paketi sunucuda; ödev oyunu enerji harcamaz.
+// v4.7: e-postayla şifre yenileme, takma adlı kayıt, giriş yapmışken şifre değiştirme.
+// v4.6: hile açıkları kapatıldı, öğretmen değerlendirmeleri gizlendi,
+//       şifre sıfırlamaya e-posta eklendi, ödev cezasına tatil ve katılım
+//       tarihi eklendi, kişisel bilgiler eklendi, çalışmayan kopya kodlar silindi.
 // =====================================================================
 import { releaseAPI } from './release-api.ts';
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -22,9 +29,17 @@ const supabase = createClient(Deno.env.get("SUPABASE_URL")!, adminKey);
 const release = releaseAPI(supabase,json);
 const progression = progressionAPI(supabase,json);
 const cachedContent = contentCache(json);
+const studentManagement = adminStudentsAPI(supabase,json,hashPassword);
+const contacts = contactPolicyAPI(supabase,json);
 
 const OGRENCI_OTURUM_GUN = 30;
 const OGRETMEN_OTURUM_SAAT = 8;           // [YAMA 1] öğretmen oturumu 30 gün değil 8 saat
+
+/* [v4.6] Hile sınırları (Supabase → Edge Functions → Secrets ile değiştirilebilir) */
+const GUNLUK_ALTIN_TAVAN = Number(Deno.env.get("GUNLUK_ALTIN_TAVAN") || 2000);       // öğrencinin bir günde kazanabileceği en fazla altın
+const GUNLUK_XP_TAVAN = Number(Deno.env.get("GUNLUK_XP_TAVAN") || 10000);            // bir günde kazanılabilecek en fazla lig XP'si
+const LIDERLIK_BONUS_GUNLUK = Number(Deno.env.get("LIDERLIK_BONUS_GUNLUK") || 3);    // liderlik bonusuyla günde en fazla kaç ders puanı
+const OGRENCI_SIFRE_MIN = 6;
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -97,6 +112,9 @@ function temizMetin(v: any, max = 500) {
 function bugunBasi() {
   const d = new Date(); d.setUTCHours(0, 0, 0, 0); return d.toISOString();
 }
+function trBugun() {
+  return new Date(Date.now() + 3 * 3600000).toISOString().slice(0, 10);   // İstanbul tarihi
+}
 
 // ---------------------------------------------------------------------
 // Deneme sınırı (kaba kuvvet koruması): audit_logs üzerinden sayılır
@@ -161,6 +179,7 @@ async function issueSession(role: "student" | "teacher", studentId?: string, tea
     token_hash: th, role, student_id: studentId || null, teacher_id: teacherId || null,
     expires_at: new Date(Date.now() + ms).toISOString()
   });
+  if(role==="student" && studentId){contacts.invalidate(studentId);await contacts.state(studentId);}
   return token;
 }
 async function requireStudent(a: any, requested: string) {
@@ -304,6 +323,7 @@ function profileFor(s: any, o: any, b: any) {
   return {
     ogrenci: s.username, Sinif: s.class_no || "", sinif: s.class_no || "", sube: s.branch || "", Sube: s.branch || "",
     ogretmenBagli: !!s.teacher_id,
+    adSoyad: s.full_name || "", okul: s.school || "",
     telefon: s.phone || "", email: s.email || "", durum: s.status === "pending" ? "onay bekliyor" : s.status, toplamsure: s.total_seconds || 0,
     enerji: s.energy, enerjiMax: s.energy_max, streak: s.streak, puan: s.points, altin: s.gold, xp: s.xp,
     genelPuan: son ? son.genel : genelOrtalama, genelOrtalama,
@@ -330,7 +350,7 @@ async function audit(a: any, operation: string, target: string, payload: any = {
 }
 
 // ---------------------------------------------------------------------
-// Liderlik (önceki sürümde iki kopya vardı; eski arayüzle uyumlu olanı tutuldu)
+// Liderlik
 // [YAMA 5] Öğrencinin skor kaydı her seferinde 403 "Oyuncu uyuşmuyor" dönüyordu
 // ---------------------------------------------------------------------
 const leaderboardKey: Record<string, string> = {
@@ -438,16 +458,21 @@ async function rootData(a: any) {
 const PUBLIC_BADGES: any[] = [];
 
 // =====================================================================
-// [v3] GOOGLE SHEETS → SUPABASE AKTARIMI
-// Sadece Supabase'de IMPORT_TOKEN gizli değeri tanımlıysa çalışır.
-// Aktarım bitince bu gizli değeri silin.
-// =====================================================================
-// =====================================================================
 // [v3.2] OTOMASYON: ödev cezası, ödev hatırlatma e-postası, veli raporu
-// E-postalar mail_queue tablosuna yazılır, Apps Script (Gmail) gönderir.
 // =====================================================================
 const ODEV_CEZA_GUN = Number(Deno.env.get("ODEV_CEZA_GUN") || 5);      // kaç günde bir
 const ODEV_CEZA_PUAN = Number(Deno.env.get("ODEV_CEZA_PUAN") || 1);    // kaç puan düşülür
+/* [v4.6] Tatillerde ödev cezası işlemez. Secret: ODEV_TATILLER
+   Biçim: başlangıç:bitiş;başlangıç:bitiş   örnek: 2026-06-27:2026-09-06;2027-01-16:2027-01-31 */
+const ODEV_TATILLER: [number, number][] = String(Deno.env.get("ODEV_TATILLER") || "")
+  .split(/[;\n]/).map(x => x.trim().split(":")).filter(p => p.length === 2)
+  .map(([a, b]) => [Date.parse(a.trim() + "T00:00:00+03:00"), Date.parse(b.trim() + "T23:59:59+03:00")] as [number, number])
+  .filter(([a, b]) => Number.isFinite(a) && Number.isFinite(b) && b > a);
+function etkinSureMs(bas: number, son: number) {
+  let ms = Math.max(0, son - bas);
+  for (const [a, b] of ODEV_TATILLER) ms -= Math.max(0, Math.min(son, b) - Math.max(bas, a));
+  return Math.max(0, ms);
+}
 const PORTAL_URL = "https://app.dijimedu.com/ingilizce/";
 const hk = (v: any) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const epostaGecerli = (e: any) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(e || "").trim());
@@ -530,9 +555,9 @@ async function kuyrugaEkle(m: any) {
 
 async function odevOtomasyonu(deneme: boolean) {
   const simdi = Date.now(), gunMs = 86400000, periyot = ODEV_CEZA_GUN * gunMs;
-  const ozet: any = { deneme, cezaGun: ODEV_CEZA_GUN, cezaPuan: ODEV_CEZA_PUAN, bekleyenOdev: 0, yeniCeza: 0, cezaAlanOgrenci: 0, hatirlatmaMaili: 0, epostasiOlmayan: 0, detay: [] as any[] };
+  const ozet: any = { deneme, cezaGun: ODEV_CEZA_GUN, cezaPuan: ODEV_CEZA_PUAN, tatilSayisi: ODEV_TATILLER.length, bekleyenOdev: 0, yeniCeza: 0, cezaAlanOgrenci: 0, hatirlatmaMaili: 0, epostasiOlmayan: 0, detay: [] as any[] };
   const [ogr, sa, sv, eskiCeza] = await Promise.all([
-    hepsiniGetir(() => supabase.from("students").select("id,username,email,points,class_no,branch,teacher_id").eq("status", "approved").order("username")),
+    hepsiniGetir(() => supabase.from("students").select("id,username,email,points,class_no,branch,teacher_id,created_at").eq("status", "approved").order("username")),
     hepsiniGetir(() => supabase.from("student_activities").select("id,student_id,status,assigned_at,activities(display_name,active)").neq("status", "completed").order("id")),
     hepsiniGetir(() => supabase.from("student_videos").select("id,student_id,watched_at,assigned_at,videos(title,active)").is("watched_at", null).order("id")),
     hepsiniGetir(() => supabase.from("points_transactions").select("auto_key").like("auto_key", "odev:%").order("auto_key"))
@@ -542,7 +567,11 @@ async function odevOtomasyonu(deneme: boolean) {
   const kisi = new Map<string, { bekleyen: any[], yeni: any[] }>();
   const isle = (tur: string, id: any, sid: string, ad: string, aktif: boolean, atanma: any) => {
     if (!ogrMap.has(sid) || aktif === false || !atanma) return;
-    const gun = Math.floor((simdi - Date.parse(atanma)) / gunMs), donem = Math.floor((simdi - Date.parse(atanma)) / periyot);
+    /* [v4.6] Süre, ödevin verildiği gün ile öğrencinin kayıt olduğu günden hangisi daha yeniyse ondan başlar; tatil günleri sayılmaz */
+    const st: any = ogrMap.get(sid);
+    const bas = Math.max(Date.parse(atanma) || 0, Date.parse(st?.created_at || "") || 0);
+    const sure = etkinSureMs(bas, simdi);
+    const gun = Math.floor(sure / gunMs), donem = Math.floor(sure / periyot);
     if (!kisi.has(sid)) kisi.set(sid, { bekleyen: [], yeni: [] });
     const k = kisi.get(sid)!;
     k.bekleyen.push({ tur, ad, gun });
@@ -590,7 +619,7 @@ async function odevOtomasyonu(deneme: boolean) {
       const satirlar = k.bekleyen.sort((a, b) => b.gun - a.gun).map(b => `<li><b>${hk(b.ad)}</b> <span style="color:#8a78b8">(${b.tur})</span> · <b style="color:${b.gun >= ODEV_CEZA_GUN ? "#dc2626" : "#2d2350"}">${b.gun} gündür bekliyor</b></li>`).join("");
       await kuyrugaEkle({ student_id: sid, to_email: String(s.email).trim(), kind: "hatirlatma", subject: `Ödev hatırlatması – ${s.username}`,
         html: mailKabugu("Ödev Hatırlatması", `<p>Sayın Veli,</p><p><b>${hk(s.username)}</b> için portalda tamamlanmamış ödevler var:</p><ul style="padding-left:18px">${satirlar}</ul>
-<p>Her ödev, verildiği günden itibaren <b>${ODEV_CEZA_GUN} günde bir</b> yapılmadığında genel puandan <b>${ODEV_CEZA_PUAN} puan</b> düşülmektedir. Ödev tamamlanınca puan düşümü durur.</p>
+<p>Her ödev, verildiği günden itibaren <b>${ODEV_CEZA_GUN} günde bir</b> yapılmadığında genel puandan <b>${ODEV_CEZA_PUAN} puan</b> düşülmektedir. Tatil günleri hesaba katılmaz. Ödev tamamlanınca puan düşümü durur.</p>
 <p style="text-align:center;margin:22px 0"><a href="${PORTAL_URL}" style="background:#7c3aed;color:#fff;text-decoration:none;padding:12px 22px;border-radius:12px;font-weight:bold">Portala git ve ödevi tamamla</a></p>`) });
     }
   }
@@ -618,7 +647,9 @@ const TEMIZLIK_KURALLARI: { ad: string, tablo: string, gun: number, filtre: (q: 
   /* [v4.3] eklenenler */
   { ad: "Bir yıldan eski sohbet mesajları", tablo: "chat_messages", gun: 365, filtre: (q, t) => q.lt("created_at", t) },
   { ad: "Kaldırılmış eski ödevler", tablo: "assignments", gun: 90, filtre: (q, t) => q.eq("active", false).lt("created_at", t) },
-  { ad: "Gönderilmiş e-postaların içeriği (başlık ve alıcı kalır)", tablo: "mail_queue", gun: 3, filtre: (q, t) => q.not("sent_at", "is", null).not("html", "is", null).lt("sent_at", t) }
+  { ad: "Gönderilmiş e-postaların içeriği (başlık ve alıcı kalır)", tablo: "mail_queue", gun: 3, filtre: (q, t) => q.not("sent_at", "is", null).not("html", "is", null).lt("sent_at", t) },
+  /* [v4.7] */
+  { ad: "Eski şifre yenileme bağlantıları", tablo: "dm_password_resets", gun: 7, filtre: (q, t) => q.lt("created_at", t) }
 ];
 
 async function temizlikCalistir(deneme: boolean) {
@@ -643,7 +674,7 @@ async function temizlikCalistir(deneme: boolean) {
 async function otomasyonIslem(req: Request, body: any) {
   const beklenen = String(Deno.env.get("OTOMASYON_TOKEN") || "").trim(), gelen = String(req.headers.get("x-diji-otomasyon") || "").trim();
   if (beklenen.length < 20) return json({ ok: false, mesaj: "Sunucuda OTOMASYON_TOKEN yok ya da 20 karakterden kısa." }, 403);
-  if (gelen !== beklenen) return json({ ok: false, mesaj: `Otomasyon anahtarı eşleşmiyor (sunucu ${beklenen.length}, gelen ${gelen.length} karakter).` }, 403);
+  if (gelen !== beklenen) return json({ ok: false, mesaj: "Otomasyon anahtarı eşleşmiyor." }, 403);   /* [v4.6] anahtar hakkında ipucu verilmez */
   const is = String(body.is || "");
   if (is === "odevKontrol") return json({ ok: true, ...(await odevOtomasyonu(!!body.deneme)) });
   if (is === "temizlik") return json(await temizlikCalistir(!!body.deneme));
@@ -683,6 +714,12 @@ async function enerjiYenile(s: any) {
     }
     return s;
   }
+  /* [v4.6] Sayaç hiç başlamamışsa şimdi başlat (yoksa dolum hiç işlemiyordu) */
+  if (!s.energy_updated_at) {
+    s.energy_updated_at = new Date(simdi).toISOString();
+    await supabase.from("students").update({ energy_updated_at: s.energy_updated_at }).eq("id", s.id);
+    return s;
+  }
   const adim = Math.floor((simdi - son) / adimMs);
   if (adim <= 0) return s;
   const yeni = Math.min(max, Number(s.energy) + adim);
@@ -692,6 +729,67 @@ async function enerjiYenile(s: any) {
   s.energy = yeni; s.energy_updated_at = zaman;
   return s;
 }
+
+// =====================================================================
+// [v4.8] EKONOMİ SUNUCUDA: altın, joker çantası, seri dondurucu, satın alınan
+// karakterler ve 4. joker hakkı. Öğrenci kaydı bu alanları ARTIRAMAZ, sadece
+// harcayabilir (joker kullanmak, dondurucu kullanmak). Artış yalnızca sunucu
+// işlemleriyle olur (altın kazanma, mağaza satın alma, sandık, parkur hediyesi).
+// =====================================================================
+const JOKER_KATALOG: Record<string, [string, number, number]> = {"sihirli-makas":["yari",1,10],"cift-makas":["yari",2,18],"makas-firtinasi":["yari",3,25],"ikinci-sans":["ikinci",1,12],"yanki-tilsim":["ikinci",2,22],"altin-yildiz":["cift",1,14],"yildiz-yagmuru":["cift",2,26],"ucan-halı":["pas",1,10],"roket-pas":["pas",2,18],"isinlanma":["pas",3,25],"kristal-kalkan":["kalkan",1,12],"ejder-pulu":["kalkan",2,22],"titan-kalkan":["kalkan",3,30],"harf-fener":["harf",1,10],"harf-kandili":["harf",2,18],"alfabe-anahtar":["harf",3,25],"papagan-fisiltisi":["papagan",1,12],"papagan-korosu":["papagan",2,22],"kalp-iksiri":["can",1,14],"anka-tuyu":["can",2,26],"baykus-gozu":["bakis",1,12],"kartal-bakisi":["bakis",2,22],"buz-kristali":["dondur",1,12],"zaman-kum-saati":["dondur",2,22],"xp-tilsimi":["m_xp",1,20],"buyuk-xp":["m_xp3",1,30],"altin-miknatis":["m_altin",1,20],"bedava-bilet":["m_bilet",1,30],"seri-kalkani":["m_seri",1,10],"sans-yoncasi":["m_kombo",1,16]};   // id: [tür, adet, fiyat]
+const KARAKTER_SIRA: Record<string, number> = {"Pofuduk Çırak":0,"Zıpzıp":1,"Kristal Kedi":2,"Profesör Hu":3,"Yıldız Tozu":4,"Ay Hayaleti":5,"Kazan Kıpır":6,"Asa Ustası":7,"Ejderhacık":8,"Alfi":0,"Zıpır Z":1,"Hece Böceği":2,"Yankı":3,"Mikro Mimi":4,"Kafiye":5,"Tekerleme":6,"Nokta Hanım":7,"Alfabe Kral":8,"Cıvıl":0,"Kaktüs Koko":1,"Ananas Nana":2,"Mercan":3,"Dalga":4,"Tukan Tuki":5,"Hindistan Coco":6,"Lagün":7,"Gökkuşağı Papağan":8,"Kaptan Yengeç":0,"Pusula":1,"Pofi Balon":2,"Deniz Yıldızı":3,"Martı Mert":4,"Korsan Tavşan":5,"Ahtapot Oki":6,"Zümrüt Kaplumbağa":7,"Efsane Kraken":8};   // ad: sıra → fiyat 50 + sıra × 10
+const DONDURUCU_FIYAT = 10, DONDURUCU_MAX = 2;
+const ENERJI_PAKET_KUCUK = { fiyat: 15, miktar: 5 }, ENERJI_PAKET_TAM_FIYAT = 60, ENERJI_SATIN_GUNLUK = 3;
+const TEK_SEFERDE_ALTIN = 500;
+function ekonomiAl(y: any) {
+  y = y && typeof y === "object" ? y : {};
+  const j: any = {}; const jy = y.jokerEnv && typeof y.jokerEnv === "object" ? y.jokerEnv : {};
+  for (const k of Object.keys(jy)) { const v = Math.max(0, Math.floor(num(jy[k]))); if (v > 0) j[k] = v; }
+  return { altin: Math.max(0, Math.floor(num(y.altin))), jokerEnv: j, dondurucu: Math.max(0, Math.floor(num(y.dondurucu))),
+    dmExtraJoker: Math.max(0, Math.floor(num(y.dmExtraJoker))), krkSatin: Array.isArray(y.krkSatin) ? y.krkSatin.map(String) : [], ekoSurum: Math.max(0, Math.floor(num(y.ekoSurum))) };
+}
+/* Öğrencinin gönderdiği kayıtta ekonomi alanlarını sunucudaki değerlere göre düzelt */
+function ekonomiKoru(value: any, e: any) {
+  const s = ekonomiAl(e), c = ekonomiAl(value);
+  /* Cihaz yeni sürümü kullanıyorsa (ekoV 2) ve son sunucu işlemini görmüşse harcamalarını (joker/dondurucu kullanımı) kabul et.
+     Eski sürümdeki cihazların ekonomi alanları tamamen yok sayılır: ne harcayabilir ne kazanabilir, sunucudaki değer korunur. */
+  const guncel = !!e && value.ekoV === 2 && c.ekoSurum >= s.ekoSurum;
+  value.altin = guncel ? Math.min(c.altin, s.altin) : s.altin;
+  value.dondurucu = guncel ? Math.min(c.dondurucu, s.dondurucu) : s.dondurucu;
+  value.dmExtraJoker = guncel ? Math.min(c.dmExtraJoker, s.dmExtraJoker) : s.dmExtraJoker;
+  const j: any = {};
+  for (const k of Object.keys(s.jokerEnv)) { const v = guncel ? Math.min(s.jokerEnv[k], c.jokerEnv[k] || 0) : s.jokerEnv[k]; if (v > 0) j[k] = v; }
+  value.jokerEnv = j;
+  value.krkSatin = s.krkSatin;
+  value.ekoSurum = s.ekoSurum;
+  if (e && e.dmAltinGun) value.dmAltinGun = e.dmAltinGun; else delete value.dmAltinGun;
+}
+const ekonomiCevap = (y: any) => { const x = ekonomiAl(y); return { altin: x.altin, jokerEnv: x.jokerEnv, dondurucu: x.dondurucu, dmExtraJoker: x.dmExtraJoker, krkSatin: x.krkSatin, ekoSurum: x.ekoSurum }; };
+async function yoOku(sid: string) {
+  const { data } = await supabase.from("extra_data").select("value,updated_at").eq("student_id", sid).eq("key_name", "yo").maybeSingle();
+  let y: any = data?.value || null; if (typeof y === "string") { try { y = JSON.parse(y); } catch (_) { y = null; } }
+  return { y, satir: data };
+}
+/* Kayıt üzerinde güvenli değişiklik: arada başka bir yazma olduysa yeniden dener (iyimser kilit) */
+async function ekonomiGuncelle(sid: string, fn: (y: any) => any, surumArttir = true): Promise<any> {
+  for (let deneme = 0; deneme < 4; deneme++) {
+    const { y: okunan, satir } = await yoOku(sid);
+    const y: any = { ...(okunan || {}) };
+    const sonuc = await fn(y);
+    if (sonuc && sonuc.hata) return { ...sonuc, y: okunan || {} };
+    if (surumArttir) y.ekoSurum = Math.max(0, Math.floor(num(y.ekoSurum))) + 1;
+    const simdi = new Date().toISOString();
+    const q = satir
+      ? supabase.from("extra_data").update({ value: y, updated_at: simdi }).eq("student_id", sid).eq("key_name", "yo").eq("updated_at", satir.updated_at).select("student_id")
+      : supabase.from("extra_data").insert({ student_id: sid, key_name: "yo", value: y, updated_at: simdi }).select("student_id");
+    const { data, error } = await q;
+    if (!error && data && data.length) {
+      await supabase.from("students").update({ gold: Math.max(0, Math.floor(num(y.altin))) }).eq("id", sid);
+      return { ...(sonuc || {}), ok: true, y };
+    }
+  }
+  return { hata: "Şu anda işlem yapılamadı, tekrar dene.", y: {} };
+}
 function dolumBilgi(s: any) {
   const max = Number(s.energy_max || ENERJI_TAVAN);
   if (Number(s.energy) >= max) return { sonrakiDk: 0, sonrakiSn: 0, dolumDk: ENERJI_DOLUM_DK };
@@ -700,6 +798,11 @@ function dolumBilgi(s: any) {
   return { sonrakiDk: Math.ceil(kalanMs / 60000), sonrakiSn: Math.ceil(kalanMs / 1000), dolumDk: ENERJI_DOLUM_DK };
 }
 
+// =====================================================================
+// [v3] GOOGLE SHEETS → SUPABASE AKTARIMI
+// Sadece Supabase'de IMPORT_TOKEN gizli değeri tanımlıysa çalışır.
+// Aktarım bitince bu gizli değeri silin.
+// =====================================================================
 async function iceAktar(body: any) {
   const tablo = String(body.tablo || ""), rows: any[] = Array.isArray(body.satirlar) ? body.satirlar : [], ilk = !!body.ilkParca;
   const r = { tablo, gelen: rows.length, eklenen: 0, guncellenen: 0, atlanan: 0, hatalar: [] as string[] };
@@ -1064,18 +1167,15 @@ async function handle(req: Request) {
     return json({ ok: true, token, rol: "ogrenci", ogrenci: student.username });
   }
 
-  // [YAMA 7] Apps Script "gölge" uç noktası KAPATILDI. Gizli yönetici anahtarını
-  // parola olarak kullanıyordu. Apps Script devre dışı olduğu için gerek kalmadı.
+  // [YAMA 7] Apps Script "gölge" uç noktası KAPATILDI.
 
   // [v3.2] Zamanlanmış görevler (Apps Script tetikleyicisi çağırır)
   if (op === "otomasyon") return otomasyonIslem(req, body);
   // [v3] Sheets aktarımı (IMPORT_TOKEN tanımlı değilse kapalı)
   if (op === "iceAktar") {
     const beklenen = String(Deno.env.get("IMPORT_TOKEN") || "").trim(), gelen = String(req.headers.get("x-diji-import") || "").trim();
-    if (!beklenen) return json({ ok: false, mesaj: "Sunucuda IMPORT_TOKEN bulunamadı (Supabase → Edge Functions → Secrets)." }, 403);
-    if (beklenen.length < 20) return json({ ok: false, mesaj: `Sunucudaki IMPORT_TOKEN çok kısa (${beklenen.length} karakter, en az 20 olmalı).` }, 403);
-    if (!gelen) return json({ ok: false, mesaj: "Apps Script anahtarı göndermedi." }, 403);
-    if (gelen !== beklenen) return json({ ok: false, mesaj: `Anahtarlar eşleşmiyor (sunucu ${beklenen.length} karakter, Apps Script ${gelen.length} karakter; ilk 3: ${beklenen.slice(0, 3)} / ${gelen.slice(0, 3)}).` }, 403);
+    /* [v4.6] Hata mesajları anahtar hakkında ipucu vermez */
+    if (beklenen.length < 20 || !gelen || gelen !== beklenen) return json({ ok: false, mesaj: "Aktarım kapalı ya da anahtar geçersiz." }, 403);
     if (body.islem2 === "ogretmenSifre") {
       const yeni = String(body.yeniSifre || "");
       if (yeni.length < 8) return json({ ok: false, mesaj: "Şifre en az 8 karakter olmalı." }, 400);
@@ -1090,6 +1190,9 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
+  if(op==='iletisimDurumu' && a?.role!=='student')return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
+  const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
+  const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
   const progressionResult=await progression.handle(op,body,q,a);if(progressionResult)return progressionResult;
   const releaseResult=await release.handle(op,body,q,a);if(releaseResult)return releaseResult;
@@ -1099,8 +1202,185 @@ async function handle(req: Request) {
   const ogrFiltre = (sorgu: any) => yoneticiOlmayan(a) ? sorgu.eq("teacher_id", a.teacher_id) : sorgu;
   if (!op) return rootData(a);
 
+  // [v4.5] KİŞİSEL BİLGİLER: öğrenci kendi bilgilerini görür ve günceller.
+  // Kullanıcı adı değişmez. Telefon ve e-posta silinemez, değiştirmek için mevcut şifre gerekir.
+  if (op === "kisiselBilgilerim" || op === "kisiselBilgiGuncelle") {
+    if (!a || a.role !== "student" || !a.student_id) return json({ ok: false, hata: "oturum", mesaj: "Önce giriş yapmalısın." }, 401);
+    const ALANLAR = "id,username,full_name,phone,email,class_no,branch,school,teacher_id";
+    const { data: s } = await supabase.from("students").select(ALANLAR + ",password_hash").eq("id", a.student_id).maybeSingle();
+    if (!s) return bulunamadi();
+    const { data: gb } = await supabase.from("student_google_accounts").select("student_id").eq("student_id", s.id).limit(1);
+    const googleBagli = !!(gb && gb.length);
+    const bilgi = (x: any) => ({
+      ok: true, kullaniciAdi: x.username, adSoyad: x.full_name || "", telefon: x.phone || "", email: x.email || "",
+      sinif: x.class_no || "", sube: x.branch || "", okul: x.school || "", ogretmenBagli: !!x.teacher_id, googleBagli
+    });
+    if (op === "kisiselBilgilerim") return json(bilgi(s));
+
+    if (req.method !== "POST") return json({ ok: false, mesaj: "POST gerekli." }, 405);
+    if (await denemeSay("kisisel_guncelle", s.id, 60) >= 10) return json({ ok: false, mesaj: "Çok fazla değişiklik denemesi. Bir saat sonra tekrar dene." }, 429);
+    const var_ = (k: string) => body[k] !== undefined && body[k] !== null;
+    const hata = (mesaj: string) => json({ ok: false, mesaj }, 400);
+    const patch: any = {}, degisen: string[] = [];
+
+    if (var_("adSoyad")) {
+      const v = String(body.adSoyad).trim().replace(/\s+/g, " ");
+      if (v && !/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,60}$/.test(v)) return hata("Ad soyad sadece harflerden oluşmalı (3-60 karakter).");
+      if ((v || null) !== (s.full_name || null)) { patch.full_name = v || null; degisen.push("ad soyad"); }
+    }
+    if (var_("okul")) {
+      const v = temizMetin(body.okul, 120).replace(/\s+/g, " ");
+      if (v && v.length < 3) return hata("Okul adı en az 3 karakter olmalı.");
+      if ((v || null) !== (s.school || null)) { patch.school = v || null; degisen.push("okul"); }
+    }
+    if (var_("sinif") || var_("sube")) {
+      const sinif = var_("sinif") ? Number(body.sinif) : Number(s.class_no);
+      const sube = var_("sube") ? temizMetin(body.sube, 10).toLocaleUpperCase("tr") : String(s.branch || "");
+      if (!Number.isInteger(sinif) || sinif < 1 || sinif > 8) return hata("Sınıf 1 ile 8 arasında olmalı.");
+      if (!sube) return hata("Şube boş bırakılamaz.");
+      if (sinif !== Number(s.class_no)) { patch.class_no = sinif; degisen.push("sınıf"); }
+      if (encName(sube) !== encName(s.branch)) { patch.branch = sube; degisen.push("şube"); }
+    }
+    let telDegisti = false, mailDegisti = false;
+    if (var_("telefon")) {
+      const ham = String(body.telefon).replace(/\D/g, "");
+      const tel = /^5\d{9}$/.test(ham) ? "0" + ham : /^05\d{9}$/.test(ham) ? ham : /^905\d{9}$/.test(ham) ? "0" + ham.slice(2) : "";
+      if (!tel) return hata("Telefon numarası silinemez. Geçerli bir cep telefonu yaz (05XX XXX XX XX).");
+      if (tel !== String(s.phone || "").replace(/\D/g, "")) { patch.phone = tel; telDegisti = true; degisen.push("telefon"); }
+    }
+    if (var_("email")) {
+      const e = String(body.email).trim();
+      if (e.length > 120 || !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(e)) return hata("E-posta adresi silinemez. Geçerli bir e-posta adresi yaz.");
+      if (e.toLowerCase() !== String(s.email || "").trim().toLowerCase()) { patch.email = e; mailDegisti = true; degisen.push("e-posta"); }
+    }
+    if (!degisen.length) return json({ ...bilgi(s), mesaj: "Değişiklik yok." });
+    await denemeYaz("kisisel_guncelle", s.id);
+
+    /* Telefon ve e-posta şifre sıfırlamada kullanılıyor; değiştirmek için şifre şart */
+    if ((telDegisti && Boolean(String(s.phone || "").trim())) || (mailDegisti && Boolean(String(s.email || "").trim()))) {
+      const hedef = encName(s.username);
+      if (await denemeSay("giris_hata", hedef, 15) >= 5) return json({ ok: false, mesaj: "Çok fazla hatalı şifre denemesi. 15 dakika sonra tekrar dene." }, 429);
+      if (!(await verifyPassword(String(body.mevcutSifre || ""), s.password_hash))) {
+        await denemeYaz("giris_hata", hedef);
+        return json({ ok: false, sifreGerekli: true, mesaj: googleBagli
+          ? "Şifre doğrulanamadı. Google ile kayıt olduysan bir şifren yok; öğretmeninden şifre belirlemesini iste."
+          : "Telefon veya e-postayı değiştirmek için mevcut şifreni doğru yazmalısın." }, 403);
+      }
+    }
+
+    patch.updated_at = new Date().toISOString();
+    const up = await supabase.from("students").update(patch).eq("id", s.id).select(ALANLAR).single();
+    if (up.error || !up.data) { console.error("kisiselBilgiGuncelle", up.error); return json({ ok: false, mesaj: "Kaydedilemedi. Biraz sonra tekrar dene." }, 500); }
+    contacts.invalidate(s.id);
+    await audit(a, "kisiselBilgiGuncelle", s.username, { alanlar: degisen });
+
+    const eskiMail = String(s.email || "").trim(), yeniMail = String(up.data.email || "").trim();
+    const zaman = trTarih(new Date().toISOString());
+    if (mailDegisti && epostaGecerli(eskiMail)) await kuyrugaEkle({ student_id: s.id, to_email: eskiMail, kind: "kayit", subject: `Veli e-posta adresi değişti – ${s.username}`,
+      html: mailKabugu("Güvenlik Bildirimi", `<p>Sayın Veli,</p><p><b>${hk(s.username)}</b> hesabının veli e-posta adresi ${zaman} tarihinde değiştirildi. Bundan sonraki raporlar yeni adrese gönderilecek.</p><p>Bu değişikliği siz yapmadıysanız lütfen öğretmenle hemen iletişime geçin.</p>`) });
+    if ((telDegisti || mailDegisti) && epostaGecerli(yeniMail)) await kuyrugaEkle({ student_id: s.id, to_email: yeniMail, kind: "kayit", subject: `Hesap bilgileri güncellendi – ${s.username}`,
+      html: mailKabugu("Hesap Bilgileri", `<p>Sayın Veli,</p><p><b>${hk(s.username)}</b> hesabında şu bilgiler ${zaman} tarihinde güncellendi: <b>${hk(degisen.join(", "))}</b>.</p><p>Bu değişikliği siz yapmadıysanız lütfen öğretmenle hemen iletişime geçin.</p>`) });
+    if ((patch.class_no !== undefined || patch.branch !== undefined) && s.teacher_id) {
+      for (const e of await sorumluEpostalar(up.data)) await kuyrugaEkle({ student_id: s.id, to_email: e, kind: "kayit", subject: `${s.username} sınıf bilgisini güncelledi`,
+        html: mailKabugu("Sınıf Bilgisi", `<p><b>${hk(s.username)}</b> sınıf bilgisini <b>${hk(up.data.class_no)}. sınıf / ${hk(up.data.branch || "")} şubesi</b> olarak güncelledi. Ödevler artık bu sınıfa göre gösterilir.</p>`) });
+    }
+    return json({ ...bilgi(up.data), mesaj: "Bilgilerin kaydedildi." });
+  }
+
+  // [v4.8] EKONOMİ İŞLEMLERİ
+  if (op === "ekonomi") {
+    if (!a || a.role !== "student" || !a.student_id) return json({ ok: false, hata: "oturum", mesaj: "Önce giriş yapmalısın." }, 401);
+    if (req.method !== "POST") return json({ ok: false, mesaj: "POST gerekli." }, 405);
+    const sid = a.student_id, is = String(body.is || "");
+    const hataVer = async (mesaj: string, kod = 400) => json({ ok: false, mesaj, ekonomi: ekonomiCevap((await yoOku(sid)).y) }, kod);
+    if (is === "durum") return json({ ok: true, ekonomi: ekonomiCevap((await yoOku(sid)).y) });
+    if (is === "altinKazan") {
+      const istenen = Math.floor(num(body.miktar));
+      if (istenen <= 0) return json({ ok: true, eklenen: 0, ekonomi: ekonomiCevap((await yoOku(sid)).y) });
+      const bugun = trBugun();
+      const r = await ekonomiGuncelle(sid, (y: any) => {
+        const g = y.dmAltinGun && y.dmAltinGun.tarih === bugun ? y.dmAltinGun : { tarih: bugun, altin: 0 };
+        const izin = Math.max(0, Math.min(istenen, TEK_SEFERDE_ALTIN, GUNLUK_ALTIN_TAVAN - num(g.altin)));
+        y.altin = Math.max(0, Math.floor(num(y.altin))) + izin;
+        y.dmAltinGun = { tarih: bugun, altin: num(g.altin) + izin };
+        return { eklenen: izin, sinir: izin < istenen };
+      }, false);
+      if (r.hata) return hataVer(r.hata, 503);
+      if (r.sinir) await audit(a, "gunluk_sinir", "altin", { istenen, eklenen: r.eklenen });
+      return json({ ok: true, eklenen: r.eklenen, sinir: !!r.sinir, ekonomi: ekonomiCevap(r.y) });
+    }
+    if (await denemeSay("ekonomi_alim", String(sid), 1) >= 20) return hataVer("Çok hızlı işlem yapıyorsun, biraz bekle.", 429);
+    await denemeYaz("ekonomi_alim", String(sid));
+    let r: any;
+    if (is === "dondurucuAl") {
+      r = await ekonomiGuncelle(sid, (y: any) => {
+        const d = Math.max(0, Math.floor(num(y.dondurucu))), al = Math.max(0, Math.floor(num(y.altin)));
+        if (d >= DONDURUCU_MAX) return { hata: `En fazla ${DONDURUCU_MAX} dondurucu taşıyabilirsin.` };
+        if (al < DONDURUCU_FIYAT) return { hata: `${DONDURUCU_FIYAT - al} altın daha lazım 🪙` };
+        y.altin = al - DONDURUCU_FIYAT; y.dondurucu = d + 1; return { fiyat: DONDURUCU_FIYAT };
+      });
+    } else if (is === "jokerAl") {
+      const urun = JOKER_KATALOG[String(body.id || "")];
+      if (!urun) return hataVer("Bu ürün bulunamadı.");
+      const [tur, adet, fiyat] = urun;
+      r = await ekonomiGuncelle(sid, (y: any) => {
+        const al = Math.max(0, Math.floor(num(y.altin)));
+        if (al < fiyat) return { hata: `${fiyat - al} altın daha lazım 🪙` };
+        const E: any = { ...(y.jokerEnv && typeof y.jokerEnv === "object" ? y.jokerEnv : {}) };
+        if (tur === "m_seri") {
+          const d = Math.max(0, Math.floor(num(y.dondurucu)));
+          if (d >= DONDURUCU_MAX) return { hata: `En fazla ${DONDURUCU_MAX} seri kalkanı taşıyabilirsin.` };
+          y.dondurucu = d + 1;
+        } else if (tur === "m_xp3") E.m_xp = Math.max(0, num(E.m_xp)) + 3;
+        else E[tur] = Math.max(0, num(E[tur])) + adet;
+        y.jokerEnv = E; y.altin = al - fiyat; return { fiyat };
+      });
+    } else if (is === "karakterAl") {
+      const ad = String(body.ad || "");
+      if (!(ad in KARAKTER_SIRA)) return hataVer("Bu karakter bulunamadı.");
+      const fiyat = 50 + KARAKTER_SIRA[ad] * 10;
+      r = await ekonomiGuncelle(sid, (y: any) => {
+        const liste = Array.isArray(y.krkSatin) ? y.krkSatin.map(String) : [];
+        if (liste.includes(ad)) return { hata: "Bu karakter zaten senin." };
+        const al = Math.max(0, Math.floor(num(y.altin)));
+        if (al < fiyat) return { hata: `${ad} için ${fiyat - al} altın daha lazım 🪙` };
+        y.krkSatin = [...liste, ad]; y.altin = al - fiyat; return { fiyat };
+      });
+    } else if (is === "enerjiAl") {
+      let { data: st } = await supabase.from("students").select("*").eq("id", sid).maybeSingle();
+      if (!st) return bulunamadi();
+      st = await enerjiYenile(st);
+      const max = Number(st.energy_max || ENERJI_TAVAN), once = Number(st.energy || 0);
+      if (once >= max) return hataVer("Enerjin zaten dolu!");
+      const { count } = await supabase.from("energy_transactions").select("id", { count: "exact", head: true }).eq("student_id", sid).eq("reason", "satin").gte("created_at", bugunBasi());
+      if ((count || 0) >= ENERJI_SATIN_GUNLUK) return hataVer(`Bugün en fazla ${ENERJI_SATIN_GUNLUK} kez enerji alabilirsin. Yarın yine gel!`);
+      const tam = bool(body.tam), miktar = tam ? max - once : Math.min(ENERJI_PAKET_KUCUK.miktar, max - once), fiyat = tam ? ENERJI_PAKET_TAM_FIYAT : ENERJI_PAKET_KUCUK.fiyat;
+      r = await ekonomiGuncelle(sid, (y: any) => {
+        const al = Math.max(0, Math.floor(num(y.altin)));
+        if (al < fiyat) return { hata: `Bunun için ${fiyat - al} altın daha lazım 🪙` };
+        y.altin = al - fiyat; return { fiyat };
+      });
+      if (r.hata) return json({ ok: false, mesaj: r.hata, ekonomi: ekonomiCevap(r.y) }, 400);
+      const next = Math.min(max, once + miktar);
+      const patch: any = { energy: next, updated_at: new Date().toISOString() };
+      if (next >= max) patch.energy_updated_at = new Date().toISOString();
+      const up = await supabase.from("students").update(patch).eq("id", sid).eq("energy", once).select("id");
+      if (up.error || !up.data?.length) {
+        const iade = await ekonomiGuncelle(sid, (y: any) => { y.altin = Math.max(0, Math.floor(num(y.altin))) + fiyat; return {}; });
+        return json({ ok: false, mesaj: "Enerji başka bir işlemde değişti. Altının iade edildi, tekrar dene.", ekonomi: ekonomiCevap(iade.y) }, 409);
+      }
+      await supabase.from("energy_transactions").insert({ student_id: sid, change_amount: next - once, balance_after: next, reason: "satin" });
+      await audit(a, "ekonomi", "enerjiAl", { fiyat, eklenen: next - once });
+      st.energy = next; if (patch.energy_updated_at) st.energy_updated_at = patch.energy_updated_at;
+      return json({ ok: true, eklenen: next - once, enerjiKalan: next, enerjiMax: max, ...dolumBilgi(st), ekonomi: ekonomiCevap(r.y) });
+    } else return hataVer("Bilinmeyen işlem.");
+    if (r.hata) return json({ ok: false, mesaj: r.hata, ekonomi: ekonomiCevap(r.y) }, 400);
+    await audit(a, "ekonomi", is, { fiyat: r.fiyat, id: body.id || body.ad || "" });
+    return json({ ok: true, ekonomi: ekonomiCevap(r.y) });
+  }
+
   // =================================================================
-  // [v3] ESKİ ARAYÜZLE UYUMLU CEVAPLAR (aşağıdaki eski sürümlerin yerine geçer)
+  // [v3] ESKİ ARAYÜZLE UYUMLU CEVAPLAR
   // =================================================================
   const OYUN_ADI: Record<string, string> = { kelime: "Kelime Laboratuvarı", bosluk: "Eksik Harf", jeopardy: "Risk Balonları", hafiza: "Hafıza Sandığı", yagmur: "Hız Fırtınası", asmaca: "Harf Avı", kelimebul: "Şifre Kırıcı", konusma: "Konuşma", cekilis: "Çekiliş", eslestirme: "Eş Bul", tren: "Kelime Treni", harfbahcesi: "Harf Bahçesi" };
   const SOSYAL = new Set(["takip", "begeni", "tebrik", "like", "congrats"]);
@@ -1127,18 +1407,24 @@ async function handle(req: Request) {
   }
   if (op === "sosyalOgrencilerGetir") {
     const deny = await requireStudent(a, ""); if (deny) return deny;
-    const [{ data: st }, { data: yo }, { data: sc }] = await Promise.all([
-      supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile").eq("status", "approved").order("username"),
-      supabase.from("extra_data").select("student_id,totalXp:value->totalXp,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo"),
-      supabase.from("teacher_reports").select("student_id,report_date,reading_score,writing_score,vocabulary_score,speaking_score,grammar_score,genel_score,exam_score").order("report_date")
+    const [{ data: st }, { data: yo }] = await Promise.all([
+      supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile,teacher_id").eq("status", "approved").order("username"),
+      supabase.from("extra_data").select("student_id,totalXp:value->totalXp,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo")
     ]);
+    /* [v4.6] Öğretmen değerlendirmeleri ve ders puanı sadece öğrencinin kendisine ve kendi öğretmenine gider */
+    const gorebilir = (s: any) => (a.role === "student" && s.id === a.student_id) || (a.role === "teacher" && kapsamda(a, s));
+    const ozelIds = (st || []).filter(gorebilir).map((s: any) => s.id);
+    const { data: sc } = ozelIds.length
+      ? await supabase.from("teacher_reports").select("student_id,report_date,reading_score,writing_score,vocabulary_score,speaking_score,grammar_score,genel_score,exam_score").in("student_id", ozelIds).order("report_date")
+      : { data: [] as any[] };
     const ym = new Map((yo || []).map((x: any) => [x.student_id, x]));
     const rm = new Map<string, any[]>(); for (const r of sc || []) { if (!rm.has(r.student_id)) rm.set(r.student_id, []); rm.get(r.student_id)!.push(raporSatiri(r)); }
     return json((st || []).filter((s: any) => encName(s.username) !== "teacher").map((s: any) => {
       const p = (s.profile && typeof s.profile === "object") ? s.profile : {}, y: any = ym.get(s.id) || {}, r = rm.get(s.id) || [];
+      const ozel = gorebilir(s), dersPuani = ozel ? (Number(s.points || 0) > 0 ? Number(s.points) : ortala(r, "genel")) : 0;
       return {
         id: s.id, ogrenci: s.username, sinif: s.class_no || "", Sinif: s.class_no || "", durum: "approved",
-        genelPuan: Number(s.points || 0) > 0 ? Number(s.points) : ortala(r, "genel"), genelOrtalama: Number(s.points || 0) > 0 ? Number(s.points) : ortala(r, "genel"), puan: Number(s.points || 0), xp: Number(s.xp || 0), altin: Number(s.gold || 0), streak: Number(s.streak || 0),
+        genelPuan: dersPuani, genelOrtalama: dersPuani, puan: ozel ? Number(s.points || 0) : 0, xp: Number(s.xp || 0), altin: Number(s.gold || 0), streak: Number(s.streak || 0),
         totalXp: Number(y.totalXp || 0), lig: y.lig || p.lig || { hafta: "", xp: 0 }, karakter: y.karakter || null, takili: y.takili || null, seviye: y.seviye || null, profilKrk: y.profilKrk || "",
         rozetListesi: [], gelisimSerisi: r.map((x: any) => ({ tarih: x.tarih, genel: x.genel })), denemeSerisi: r.filter((x: any) => x.deneme > 0).map((x: any) => ({ tarih: x.tarih, deneme: x.deneme })),
         okumaOrt: ortala(r, "okuma"), yazmaOrt: ortala(r, "yazma"), vocabOrt: ortala(r, "vocabulary"), konusmaOrt: ortala(r, "konusma"), grammarOrt: ortala(r, "grammar")
@@ -1211,8 +1497,8 @@ async function handle(req: Request) {
   }
   if (op === "bekleyenKayitlariGetir") {
     const deny = await requireTeacher(a); if (deny) return deny;
-    const { data } = await ogrFiltre(supabase.from("students").select("username,phone,class_no,branch,email,created_at,teacher_id").eq("status", "pending").order("created_at"));
-    return json({ liste: (data || []).map((x: any) => ({ ogrenciAdi: x.username, sinif: x.class_no || "", sube: x.branch || "", telefon: x.phone || "", email: x.email || "", tarih: x.created_at, bagimsiz: !x.teacher_id })) });
+    const { data } = await ogrFiltre(supabase.from("students").select("username,full_name,phone,class_no,branch,email,created_at,teacher_id").eq("status", "pending").order("created_at"));
+    return json({ liste: (data || []).map((x: any) => ({ ogrenciAdi: x.username, adSoyad: x.full_name || "", sinif: x.class_no || "", sube: x.branch || "", telefon: x.phone || "", email: x.email || "", tarih: x.created_at, bagimsiz: !x.teacher_id })) });
   }
   if (op === "duyuruListesiGetir") {
     const deny = await requireTeacher(a); if (deny) return deny;
@@ -1550,7 +1836,7 @@ async function handle(req: Request) {
     const deny = await requireTeacher(a); if (deny) return deny;
     const [{ data: t }, { count }] = await Promise.all([supabase.from("teachers").select("username,full_name,email,school,invite_code,is_admin").eq("id", a.teacher_id).maybeSingle(),
       ogrFiltre(supabase.from("students").select("id", { count: "exact", head: true }).eq("status", "approved"))]);
-    return json({ ok: true, kullanici: t?.username, adSoyad: t?.full_name, email: t?.email, kurum: t?.school, kod: t?.invite_code, yonetici: !!t?.is_admin, ogrenciSayisi: count || 0 });
+    return json({ ok: true, kullanici: t?.username, adSoyad: t?.full_name, email: t?.email, kurum: t?.school, kod: t?.invite_code, yonetici: !!t?.is_admin, ogrenciYonetimi: studentManagement.allowed(a), ogrenciSayisi: count || 0 });
   }
   if (op === "ogretmenleriGetir") {
     const deny = await requireTeacher(a); if (deny) return deny;
@@ -1586,8 +1872,12 @@ async function handle(req: Request) {
     // [YAMA 9] doğrulama + saatte 20 kayıt sınırı (zararlı kod ve sahte kayıt koruması)
     const username = String(body.ogrenciAdi || "").trim().replace(/\s+/g, " ");
     const password = String(body.sifre || "");
-    if (!/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,50}$/.test(username)) return json({ status: "error", message: "Ad soyad sadece harflerden oluşmalı (3-50 karakter)." });
-    if (password.length < 4 || password.length > 64) return json({ status: "error", message: "Şifre 4-64 karakter olmalı." });
+    /* [v4.7] Kullanıcı adı artık takma ad: herkese görünür, gerçek ad olmamalı. Gerçek ad ayrı alanda, sadece öğretmen görür. */
+    if (!/^[A-Za-zÇĞİÖŞÜçğıöşü0-9._-]{3,20}$/.test(username)) return json({ status: "error", message: "Kullanıcı adı 3-20 karakter olmalı; harf, rakam, nokta, alt çizgi ya da tire kullanabilirsin. Boşluk olmaz." });
+    const adSoyad = String(body.adSoyad || "").trim().replace(/\s+/g, " ");
+    if (!/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,60}$/.test(adSoyad)) return json({ status: "error", message: "Öğrencinin adını ve soyadını yaz (sadece harf, 3-60 karakter)." });
+    if (encName(username).replace(/[^a-zçğıöşü]/g, "") === encName(adSoyad).replace(/[^a-zçğıöşü]/g, "")) return json({ status: "error", message: "Kullanıcı adın gerçek adınla aynı olmasın. Herkesin göreceği bir takma ad seç." });
+    if (password.length < OGRENCI_SIFRE_MIN || password.length > 64) return json({ status: "error", message: `Şifre ${OGRENCI_SIFRE_MIN}-64 karakter olmalı.` });
     /* [v4.1] Yeni kayıtlarda geçerli veli telefonu ve e-postası zorunlu */
     const telHam = String(body.telefon || "").replace(/\D/g, "");
     const tel = telHam.length === 10 && telHam[0] === "5" ? "0" + telHam : telHam.length === 11 && telHam.startsWith("05") ? telHam : telHam.length === 12 && telHam.startsWith("905") ? "0" + telHam.slice(2) : "";
@@ -1608,7 +1898,7 @@ async function handle(req: Request) {
     }
     if (!body.kvkkOnayTarihi || !Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()) return json({status:"error",message:"Sınıf, şube ve veli bilgilendirme beyanı gerekli."},400);
     const payload = {
-      username, password_hash: await hashPassword(password), phone: tel || null,
+      username, full_name: adSoyad, password_hash: await hashPassword(password), phone: tel || null,
       class_no: num(body.sinif, 0) || null, branch: temizMetin(body.sube, 10) || null,
       email: String(body.email || "").trim().slice(0, 120), status: "pending", email_verification_required:true, email_verified_at:null,
       kvkk_approved_at: body.kvkkOnayTarihi || new Date().toISOString()
@@ -1621,20 +1911,68 @@ async function handle(req: Request) {
     return json({status:"success",emailDogrulamaGerekli:true,message:"Hoş geldin! Hesabını açmak için e-postandaki doğrulama bağlantısına dokun. Spam klasörünü de kontrol et."});
   }
 
+  /* [v4.7] ŞİFRE: telefonla sıfırlama kapatıldı (telefonu bilen biri hesabı ele geçirebiliyordu).
+     Unutulan şifre → veli e-postasına tek kullanımlık, 1 saat geçerli bağlantı.
+     Giriş yapmışken değiştirme → mevcut şifre gerekir. */
   if (op === "sifreDegistir") {
-    const username = String(body.ogrenciAdi || "").trim(), phone = String(body.telefon || "").trim();
-    // [YAMA 10] saatte 5 deneme sınırı
-    if (await denemeSay("sifre_hata", encName(username), 60) >= 5) return json({ status: "error", message: "Çok fazla deneme. Bir saat sonra tekrar dene." });
-    const yeni = String(body.yeniSifre || "");
-    if (yeni.length < 4 || yeni.length > 64) return json({ status: "error", message: "Yeni şifre 4-64 karakter olmalı." });
-    const s = await studentByName(username);
-    if (!s || !phone || String(s.phone || "").replace(/\D/g, "") !== phone.replace(/\D/g, "")) {
-      await denemeYaz("sifre_hata", encName(username));
-      return json({ status: "error", message: "Kullanıcı bilgileri eşleşmedi." });
-    }
+    return json({ status: "error", message: "Bu yöntem güvenlik nedeniyle kapatıldı. Giriş ekranındaki \"Şifremi unuttum\" ile veli e-postasına bağlantı iste." }, 410);
+  }
+  if (op === "sifreSifirlamaIste") {
+    const username = String(body.ogrenciAdi || "").trim(), email = String(body.email || "").trim().toLowerCase();
+    if (!username || !epostaGecerli(email)) return json({ ok: false, mesaj: "Kullanıcı adını ve kayıtlı veli e-postasını yaz." }, 400);
+    if (await denemeSay("sifre_link", encName(username), 60) >= 3 || await denemeSay("sifre_link", "genel", 60) >= 60) return json({ ok: false, mesaj: "Çok fazla istek. Bir saat sonra tekrar dene." }, 429);
+    await denemeYaz("sifre_link", encName(username)); await denemeYaz("sifre_link", "genel");
+    const genel = { ok: true, mesaj: "Bilgiler doğruysa veli e-postasına şifre yenileme bağlantısı gönderdik. Gelen kutusunu ve spam klasörünü kontrol et. Bağlantı 1 saat geçerli." };
+    const s = await studentByNameGenel(username);
+    /* Kimin kayıtlı olduğu belli olmasın diye eşleşmese de aynı cevap verilir */
+    if (!s || s.status !== "approved" || String(s.email || "").trim().toLowerCase() !== email) return json(genel);
+    const token = crypto.randomUUID() + crypto.randomUUID(), simdi = new Date().toISOString();
+    await supabase.from("dm_password_resets").update({ used_at: simdi }).eq("student_id", s.id).is("used_at", null);
+    const ins = await supabase.from("dm_password_resets").insert({ student_id: s.id, token_hash: await sha256(token), expires_at: new Date(Date.now() + 3600000).toISOString() });
+    if (ins.error) { console.error("dm_password_resets", ins.error.message); return json({ ok: false, mesaj: "Şu anda bağlantı gönderilemiyor. Öğretmeninden şifreni sıfırlamasını iste." }, 503); }
+    const link = PORTAL_URL + "sifre-yenile.html#token=" + encodeURIComponent(token);
+    await kuyrugaEkle({ student_id: s.id, to_email: String(s.email).trim(), kind: "kayit", subject: `Şifre yenileme – ${s.username}`,
+      text_body: `${s.username} hesabı için şifre yenileme bağlantısı: ${link}\nBağlantı 1 saat geçerli ve tek kullanımlıktır. Bu isteği siz yapmadıysanız bu e-postayı yok sayın.`,
+      html: mailKabugu("Şifre Yenileme", `<p>Sayın Veli,</p><p><b>${hk(s.username)}</b> hesabı için şifre yenileme istendi. Yeni şifre belirlemek için aşağıdaki düğmeye dokunun.</p><p style="text-align:center;margin:24px 0"><a href="${link}" style="display:inline-block;background:#7c3aed;color:#fff;padding:14px 22px;border-radius:12px;text-decoration:none;font-weight:bold">Yeni şifre belirle</a></p><p>Bağlantı <b>1 saat</b> geçerlidir ve bir kez kullanılabilir. Bu isteği siz yapmadıysanız e-postayı yok sayabilirsiniz; şifre değişmez.</p>`) });
+    await audit(null, "sifreSifirlamaIste", s.username, {});
+    return json(genel);
+  }
+  if (op === "sifreSifirla") {
+    const token = String(body.token || ""), yeni = String(body.yeniSifre || "");
+    if (!/^[a-f0-9-]{72}$/i.test(token)) return json({ ok: false, mesaj: "Bağlantı geçersiz. Yeni bağlantı iste." }, 400);
+    if (yeni.length < OGRENCI_SIFRE_MIN || yeni.length > 64) return json({ ok: false, mesaj: `Yeni şifre ${OGRENCI_SIFRE_MIN}-64 karakter olmalı.` }, 400);
+    if (await denemeSay("sifre_token", "genel", 15) >= 100) return json({ ok: false, mesaj: "Çok fazla deneme. Biraz sonra tekrar dene." }, 429);
+    const gecersiz = () => json({ ok: false, mesaj: "Bağlantının süresi dolmuş ya da daha önce kullanılmış. Giriş ekranından yeni bağlantı iste." }, 400);
+    const { data: r } = await supabase.from("dm_password_resets").select("id,student_id,expires_at,used_at").eq("token_hash", await sha256(token)).maybeSingle();
+    if (!r || r.used_at || Date.parse(r.expires_at) <= Date.now()) { await denemeYaz("sifre_token", "genel"); return gecersiz(); }
+    const kullan = await supabase.from("dm_password_resets").update({ used_at: new Date().toISOString() }).eq("id", r.id).is("used_at", null).select("id");
+    if (kullan.error || !kullan.data?.length) return gecersiz();
+    const { data: s } = await supabase.from("students").select("id,username,email,status").eq("id", r.student_id).maybeSingle();
+    if (!s || s.status !== "approved") return json({ ok: false, mesaj: "Hesap aktif değil. Öğretmeninle görüş." }, 403);
     await supabase.from("students").update({ password_hash: await hashPassword(yeni), updated_at: new Date().toISOString() }).eq("id", s.id);
-    await supabase.from("portal_sessions").delete().eq("student_id", s.id);   // eski oturumları kapat
-    return json({ status: "success" });
+    await supabase.from("portal_sessions").delete().eq("student_id", s.id);
+    await audit(null, "sifreSifirla", s.username, {});
+    if (epostaGecerli(s.email)) await kuyrugaEkle({ student_id: s.id, to_email: String(s.email).trim(), kind: "kayit", subject: `Şifre değiştirildi – ${s.username}`,
+      html: mailKabugu("Güvenlik Bildirimi", `<p>Sayın Veli,</p><p><b>${hk(s.username)}</b> hesabının şifresi e-posta bağlantısıyla ${trTarih(new Date().toISOString())} tarihinde yenilendi.</p><p>Bu işlemi siz yapmadıysanız lütfen öğretmenle hemen iletişime geçin.</p>`) });
+    return json({ ok: true, ogrenci: s.username, mesaj: "Şifren yenilendi. Yeni şifrenle giriş yapabilirsin." });
+  }
+  if (op === "sifremiDegistir") {
+    if (!a || a.role !== "student" || !a.student_id) return json({ ok: false, hata: "oturum", mesaj: "Önce giriş yapmalısın." }, 401);
+    const { data: s } = await supabase.from("students").select("id,username,email,password_hash").eq("id", a.student_id).maybeSingle();
+    if (!s) return bulunamadi();
+    const hedef = encName(s.username), yeni = String(body.yeniSifre || "");
+    if (await denemeSay("giris_hata", hedef, 15) >= 5) return json({ ok: false, mesaj: "Çok fazla hatalı deneme. 15 dakika sonra tekrar dene." }, 429);
+    if (!(await verifyPassword(String(body.mevcutSifre || ""), s.password_hash))) {
+      await denemeYaz("giris_hata", hedef);
+      return json({ ok: false, mesaj: "Mevcut şifren yanlış. Hatırlamıyorsan \"Şifremi unuttum\" ile e-posta bağlantısı iste." }, 403);
+    }
+    if (yeni.length < OGRENCI_SIFRE_MIN || yeni.length > 64) return json({ ok: false, mesaj: `Yeni şifre ${OGRENCI_SIFRE_MIN}-64 karakter olmalı.` }, 400);
+    await supabase.from("students").update({ password_hash: await hashPassword(yeni), updated_at: new Date().toISOString() }).eq("id", s.id);
+    await supabase.from("portal_sessions").delete().eq("student_id", s.id).neq("id", a.id);   /* bu cihaz açık kalır, diğerleri kapanır */
+    await audit(a, "sifremiDegistir", s.username, {});
+    if (epostaGecerli(s.email)) await kuyrugaEkle({ student_id: s.id, to_email: String(s.email).trim(), kind: "kayit", subject: `Şifre değiştirildi – ${s.username}`,
+      html: mailKabugu("Güvenlik Bildirimi", `<p>Sayın Veli,</p><p><b>${hk(s.username)}</b> hesabının şifresi ${trTarih(new Date().toISOString())} tarihinde değiştirildi.</p><p>Bu değişikliği siz yapmadıysanız lütfen öğretmenle hemen iletişime geçin.</p>`) });
+    return json({ ok: true, mesaj: "Şifren değiştirildi." });
   }
 
   // [v3.7] Öğretmen panelinden öğrenci şifresi sıfırlama (eski şifre görülmez, yenisi belirlenir)
@@ -1725,37 +2063,9 @@ async function handle(req: Request) {
       return (data || []).map(x => ({ sinif: x.class_no, unite: x.unit_no, ingilizce: x.english, turkce: x.turkish, ...(x.extra || {}) }));
     });
   }
-  if (op === "etkinlikTanimlariGetir") {
-    const { data } = await supabase.from("activities").select("*").eq("active", true).order("display_name");
-    return json((data || []).map((x: any) => ({ etkinlikKodu: x.code, gorunenAd: x.display_name, kategori: x.category, disLink: x.external_link, ogretmenYorumu: x.teacher_comment, siraNo: x.content?.siraNo, satirIndex: x.content?._sourceRow || x.content?.siraNo, ogrenciAdi: x.content?.ogrenciAdi, yapildiMi: false, ...(x.content || {}) })));
-  }
-  if (op === "kategorileriGetir") {
-    const { data } = await supabase.from("lesson_topics").select("category").eq("active", true);
-    return json([...new Set((data || []).map(x => x.category))]);
-  }
-  if (op === "konusmaEsAnlamlarGetir") return json([]);
-  if (op === "tumVideolariGetir") {
-    const { data } = await supabase.from("videos").select("*").eq("active", true).order("title");
-    return json((data || []).map(v => ({ satirIndex: v.external_row_index, baslik: v.title, kategori: v.category, link: v.url, aciklama: v.description, ...(v.content || {}) })));
-  }
   if (op === "ozellikListesiGetir") {
     const { data } = await supabase.from("feature_flags").select("code,name,target_type,target_value,enabled").order("name");
     return json((data || []).map(x => ({ kod: x.code, ad: x.name || x.code, hedefTipi: x.target_type, hedefDegeri: x.target_value, durum: x.enabled })));
-  }
-  if (op === "dersKonulariGetir") {
-    const { data } = await supabase.from("lesson_topics").select("id,level,category,topic_name,sort_no,content").eq("active", true).order("sort_no");
-    const done = new Set<string>();
-    if (a) {
-      const s = await hedefOgrenci(a, String(val(body, q, "ogrenci")));
-      // [YAMA 11] "tamamlandı" sadece test geçilince; "bilmiyordum" işareti tamamlandı sayılmıyordu ama sayılıyordu
-      if (s) { const p = await supabase.from("lesson_progress").select("topic_name").eq("student_id", s.id).eq("test_success", true); for (const x of p.data || []) if (x.topic_name) done.add(String(x.topic_name)); }
-    }
-    return json((data || []).map((x: any) => ({ seviye: x.level, kategori: x.category, konuAdi: x.topic_name, siraNo: x.sort_no, durum: done.has(x.topic_name) ? "tamamlandi" : "", ...(x.content || {}) })));
-  }
-  if (op === "dersKonuDetayGetir") {
-    const level = String(val(body, q, "seviye")), category = String(val(body, q, "kategori")), topic = String(val(body, q, "konu"));
-    const { data } = await supabase.from("lesson_topics").select("*").eq("level", level).eq("category", category).eq("topic_name", topic).maybeSingle();
-    return json(data?.content || data || {});
   }
   if (op === "dogruYanlisSorulariGetir") {
     const code = String(val(body, q, "etkinlikKodu"));
@@ -1765,11 +2075,6 @@ async function handle(req: Request) {
   if (op === "gununKonusuGetir") return json(null);
 
   // ============================================================ ÖĞRETMEN: KAYIT ONAYI
-  if (op === "bekleyenKayitlariGetir") {
-    const deny = await requireTeacher(a); if (deny) return deny;
-    const { data } = await supabase.from("students").select("id,username,phone,class_no,branch,email,created_at").eq("status", "pending").order("created_at");
-    return json({ liste: data || [] });
-  }
   if (op === "kayitOnayla" || op === "kayitReddet") {
     const deny = await requireTeacher(a); if (deny) return deny;
     const s = await studentByName(String(body.ogrenciAdi || ""));
@@ -1804,7 +2109,11 @@ async function handle(req: Request) {
       if (Number(s.energy) < 3) return json({ok:false,status:"error",mesaj:"Oynamak için 3 enerji gerekli.",enerjiKalan:s.energy},409);
     }
     let fark = Math.trunc(num(body.fark));
-    const sebep = String(body.sebep || (bool(body.hediye) ? "hediye" : (fark < 0 ? "oyun" : ""))).toLowerCase().slice(0, 20);
+    /* [v4.6] Enerji kazanma sebebi sadece bilinen yollardan biri olabilir; bilinmeyen her sebep tek bir "diger" kotasını paylaşır.
+       (Önceden her farklı sebep yazısı ayrı kota açıyordu ve enerji sınırsız doldurulabiliyordu.) */
+    const IZINLI_SEBEP = ["gunluk", "satin", "ders", "hediye"];
+    const sebepHam = String(body.sebep || (bool(body.hediye) ? "hediye" : (fark < 0 ? "oyun" : ""))).toLowerCase().slice(0, 20);
+    const sebep = fark > 0 && !IZINLI_SEBEP.includes(sebepHam) ? "diger" : sebepHam;
     const max = Number(s.energy_max || ENERJI_TAVAN);
     let tavan = max, mesaj = "";
     /* [v3.6] Öğrenci enerjiyi sadece tanımlı yollardan kazanabilir; her yolun kendi günlük sınırı var */
@@ -1818,15 +2127,14 @@ async function handle(req: Request) {
         if (say("gunluk") > 0) { fark = 0; mesaj = "Günlük hediyeni bugün zaten aldın."; }
         else { const seri = Number(s.streak || 0); fark = seri > 0 && seri % 7 === 0 ? 10 : 5; tavan = max + 10; }
       } else if (sebep === "satin") {
-        if (say("satin") >= 3) return json({ ok: false, status: "error", mesaj: "Bugün en fazla 3 kez enerji alabilirsin. Yarın yine gel!", enerjiKalan: s.energy, enerjiMax: max, ...dolumBilgi(s) });
-        fark = Math.min(fark, max - s.energy);
-        if (fark <= 0) return json({ ok: false, status: "error", mesaj: "Enerjin zaten dolu!", enerjiKalan: s.energy, enerjiMax: max, ...dolumBilgi(s) });
+        /* [v4.8] Enerji paketi artık "ekonomi" işlemiyle alınıyor (altın sunucuda düşülüyor) */
+        return json({ ok: false, status: "error", mesaj: "Enerji paketleri yenilendi. Sayfayı yenileyip tekrar dene.", enerjiKalan: s.energy, enerjiMax: max, ...dolumBilgi(s) }, 410);
       } else if (sebep === "ders") {
         return json({ok:false,mesaj:"Ders enerjisi başarılı ilk test kaydında verilir."},403);
       } else if (sebep === "hediye") {
         fark = Math.max(0, Math.min(fark, 5, 15 - topla("hediye"))); tavan = max + 10;
       } else {
-        fark = Math.max(0, Math.min(fark, 3, 6 - topla(sebep || "diger")));
+        fark = Math.max(0, Math.min(fark, 3, 6 - topla("diger")));
       }
     }
     if (hb) fark = -3;
@@ -1844,23 +2152,6 @@ async function handle(req: Request) {
     s.energy = next; if (patch.energy_updated_at) s.energy_updated_at = patch.energy_updated_at;
     return json({ ok: true, status: "success", enerjiKalan: next, enerjiMax: max, eklenen: next - once, mesaj, ...dolumBilgi(s) });
   }
-  if (op === "enerjiGonder") {
-    const g = String(val(body, q, "gonderen")), al = String(val(body, q, "alici"));
-    const deny = await requireStudent(a, g); if (deny) return deny;
-    const gs = await hedefOgrenci(a, g), as = await studentByName(al);
-    if (!gs || !as) return json({ status: "error", message: "Öğrenci bulunamadı." });
-    // [YAMA 13] kendine gönderme yok, miktar her zaman 1, günde 1 gönderim
-    if (gs.id === as.id) return json({ status: "error", message: "Kendine enerji gönderemezsin. 😄" });
-    const { count } = await supabase.from("feed_events").select("id", { count: "exact", head: true })
-      .eq("student_id", gs.id).eq("event_type", "energy_send").gte("created_at", bugunBasi());
-    if ((count || 0) >= 1) return json({ status: "error", message: "Bugün enerji hediyeni zaten gönderdin. Yarın yine gönderebilirsin!" });
-    const next = Math.min(as.energy_max, as.energy + 1);
-    await supabase.from("students").update({ energy: next }).eq("id", as.id);
-    await supabase.from("energy_transactions").insert({ student_id: as.id, change_amount: next - as.energy, balance_after: next, reason: "öğrenci hediyesi" });
-    await supabase.from("feed_events").insert({ student_id: gs.id, target_student_id: as.id, event_type: "energy_send", payload: { amount: 1, student_name: gs.username, target_name: as.username, icon: "⚡", message: "enerji gönderdi" } });
-    await supabase.from("notifications").insert({ recipient_student_id: as.id, sender_student_id: gs.id, type: "enerji", message: `${gs.username} sana 1 ⚡ enerji gönderdi!` });
-    return json({ status: "success", enerjiKalan: next });
-  }
 
   // ============================================================ LİDERLİK
   if (leaderboardKey[op]) { const deny = await requireStudent(a, String(body.isim || body.ogrenci || "")); if (deny) return deny; return leaderboardSave(op, body, a); }
@@ -1873,8 +2164,15 @@ async function handle(req: Request) {
     let amount = num(body.puan);
     // [YAMA 14] Öğrenci kendi ders puanını sınırsız artırabiliyordu: en fazla 1,5 ve tek seferlik anahtar zorunlu
     if (a.role === "student") {
-      if (!unique) return json({ status: "error", message: "Geçersiz bonus." }, 400);
+      /* [v4.6] Anahtar bugünün tarihiyle bitmeli ve öğrenci günde toplam en fazla LIDERLIK_BONUS_GUNLUK puan alabilir.
+         (Önceden her istekte farklı anahtar yollanarak puan 100'e kadar çıkarılabiliyordu.) */
+      const bugun = new Date().toISOString().slice(0, 10);
+      if (!unique || !unique.endsWith("_" + bugun)) return json({ status: "error", message: "Geçersiz bonus." }, 400);
       amount = Math.max(0, Math.min(1.5, amount));
+      const { data: bugunku } = await supabase.from("points_transactions").select("change_amount").eq("student_id", s.id).like("unique_key", "%" + bugun).gt("change_amount", 0);
+      const alinan = (bugunku || []).reduce((t: number, x: any) => t + Number(x.change_amount || 0), 0);
+      amount = Math.round(Math.max(0, Math.min(amount, LIDERLIK_BONUS_GUNLUK - alinan)) * 10) / 10;
+      if (amount <= 0) return json({ status: "success", verildiMi: false });
     }
     if (unique) {
       const { data: old } = await supabase.from("points_transactions").select("id").eq("student_id", s.id).eq("unique_key", unique).maybeSingle();
@@ -1913,7 +2211,7 @@ async function handle(req: Request) {
     const { data } = await supabase.from("level_completions").select("level_no").eq("student_id", s.id).eq("mode", mode);
     return json([...new Set((data || []).map(x => x.level_no))].sort((x: any, y: any) => x - y));
   }
-  // [v3.8] Parkur durağını İLK kez geçen öğrenciye sunucu +6 ⚡ verir (tekrar oynamada verilmez, günde en fazla 36)
+  // [v3.8] Parkur durağını İLK kez geçen öğrenciye ödül
   if (op === "buyuSeviyeTamamla" || op === "konusmaSeviyeTamamla" || op === "seviyeTamamla") {
     const name = String(val(body, q, "ogrenci") || ""); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
@@ -1926,7 +2224,14 @@ async function handle(req: Request) {
     let eklenen = 0, enerjiKalan: number | undefined, enerjiMax: number | undefined;
     let stageReward:any={gold:0};
     if (!(vardi && vardi.length) && a.role==='student' && kayit.mode==='buyu') {
+      const onceAltin = ekonomiAl((await yoOku(s.id)).y).altin;
       const reward=await supabase.rpc('dm_progress_award_stop',{actor:s.id,stop:kayit.level_no});if(reward.error)throw reward.error;stageReward=reward.data;
+      /* [v4.8] Parkur hediyesi altını sunucudaki kayda yazılmadıysa ekle (iki kez eklenmez) */
+      const hediye = Math.max(0, Math.floor(num(stageReward?.gold)));
+      if (hediye > 0) {
+        const sonraAltin = ekonomiAl((await yoOku(s.id)).y).altin;
+        if (sonraAltin < onceAltin + hediye) await ekonomiGuncelle(s.id, (y: any) => { y.altin = Math.max(0, Math.floor(num(y.altin))) + (onceAltin + hediye - sonraAltin); return {}; }, false);
+      }
     }
     return json({ status: "success", ilkKez: !(vardi && vardi.length), eklenenEnerji: eklenen, enerjiKalan, enerjiMax, ...stageReward });
   }
@@ -1941,15 +2246,6 @@ async function handle(req: Request) {
   }
 
   // ============================================================ DERS ÇALIŞ
-  if (op === "dersBilmiyordumToggle") {
-    const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
-    // [YAMA 17] gerçek aç/kapa: her basışta yeni satır açıyordu
-    const { data: var_ } = await supabase.from("lesson_progress").select("id").eq("student_id", s.id).eq("topic_name", body.konuAdi).eq("knew_it", false).limit(1);
-    if (var_ && var_.length) { await supabase.from("lesson_progress").delete().eq("id", var_[0].id); return json({ status: "success", durum: false }); }
-    await supabase.from("lesson_progress").insert({ student_id: s.id, level: body.seviye, category: body.kategori, topic_name: body.konuAdi, knew_it: false });
-    return json({ status: "success", durum: true });
-  }
   if (op === "dersTestSonucKaydet") {
     const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
@@ -1959,14 +2255,10 @@ async function handle(req: Request) {
   }
 
   // ============================================================ EK VERİ (oyun ilerlemesi)
-  if (op === "ekVeriGetir") {
-    const name = String(val(body, q, "ogrenci")), key = String(val(body, q, "anahtar")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return json(null);
-    const { data } = await supabase.from("extra_data").select("value").eq("student_id", s.id).eq("key_name", key).maybeSingle();
-    return json(data?.value ?? null);
-  }
   if (op === "ekVeriKaydet") {
     const name = String(body.ogrenci || ""), key = temizMetin(body.anahtar, 60); const deny = await requireStudent(a, name); if (deny) return deny;
+    /* [v4.6] Sunucunun kendi tuttuğu anahtarlara öğrenci yazamaz */
+    if (a?.role === "student" && ["yo_gunluk", "puan_gorulen"].includes(key)) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
     if (a?.role === "teacher" && encName(name) === "teacher" && key === "yo") {
       let tv: any = null; try { tv = typeof body.deger === "string" ? JSON.parse(body.deger) : body.deger; } catch (_) { tv = null; }
       if (!tv || typeof tv !== "object") return json({ status: "error", message: "Geçersiz veri." }, 400);
@@ -1985,7 +2277,7 @@ async function handle(req: Request) {
       const { data: eski } = await supabase.from("extra_data").select("value").eq("student_id", s.id).eq("key_name", "yo").maybeSingle();
       let e: any = eski?.value || {}; if (typeof e === "string") { try { e = JSON.parse(e); } catch (_) { e = {}; } }
       const taban = num(body._taban, -1);
-      const eskiSurum = taban >= 0 && num(e.guncelleme) > taban;                                           /* başka cihaz bu arada daha yeni kaydetti */
+      const eskiSurum = taban >= 0 && num(e.guncelleme) > taban;
       const ligGeri = e.lig && value.lig && e.lig.hafta && e.lig.hafta === value.lig.hafta && num(value.lig.xp) < num(e.lig.xp);
       const gunGeri = e.xpGun && value.xpGun && e.xpGun.tarih && e.xpGun.tarih === value.xpGun.tarih && num(value.xpGun.xp) < num(e.xpGun.xp);
       if (eskiSurum || ligGeri || gunGeri) {
@@ -1993,14 +2285,38 @@ async function handle(req: Request) {
         return json({ status: "eski", message: "Bu cihazdaki veri eski; sunucudaki yeniden yükleniyor." }, 409);
       }
     }
-    // [YAMA 18] Hile sınırı: tek kayıtta haftalık XP en fazla +3000, altın en fazla +1000 artabilir
+    // [YAMA 18] Hile sınırı: tek kayıtta haftalık XP en fazla +3000. Günlük XP tavanı. [v4.8] Ekonomi alanları sunucuda.
     if (key === "yo" && a.role === "student" && value && typeof value === "object") {
-      const { data: eski } = await supabase.from("extra_data").select("value").eq("student_id", s.id).eq("key_name", "yo").maybeSingle();
-      let e: any = eski?.value || {}; if (typeof e === "string") { try { e = JSON.parse(e); } catch (_) { e = {}; } }
-      if (e.lig && value.lig && e.lig.hafta === value.lig.hafta && num(value.lig.xp) > num(e.lig.xp) + 3000) { value.lig.xp = num(e.lig.xp) + 3000; await audit(a, "hile_sinir", "lig.xp"); }
-      if (num(value.altin) > num(e.altin) + 1000) { value.altin = num(e.altin) + 1000; await audit(a, "hile_sinir", "altin"); }
+      const { y: e } = await yoOku(s.id);
+      const ex: any = e || {};
+      if (ex.lig && value.lig && ex.lig.hafta === value.lig.hafta && num(value.lig.xp) > num(ex.lig.xp) + 3000) { value.lig.xp = num(ex.lig.xp) + 3000; await audit(a, "hile_sinir", "lig.xp"); }
+      if (ex.lig && value.lig && ex.lig.hafta === value.lig.hafta) {
+        const bugun = trBugun();
+        const { data: gk } = await supabase.from("extra_data").select("value").eq("student_id", s.id).eq("key_name", "yo_gunluk").maybeSingle();
+        const g: any = gk?.value && gk.value.tarih === bugun ? { ...gk.value } : { tarih: bugun, altin: 0, xp: 0 };
+        const xpArtis = Math.max(0, num(value.lig.xp) - num(ex.lig.xp));
+        if (xpArtis > 0) {
+          const izin = Math.max(0, GUNLUK_XP_TAVAN - num(g.xp));
+          if (xpArtis > izin) { value.lig.xp = num(ex.lig.xp) + izin; await audit(a, "gunluk_sinir", "lig.xp", { istenen: xpArtis, izin }); }
+          g.xp = num(g.xp) + Math.min(xpArtis, izin);
+          await supabase.from("extra_data").upsert({ student_id: s.id, key_name: "yo_gunluk", value: g, updated_at: new Date().toISOString() }, { onConflict: "student_id,key_name" });
+        }
+      }
     }
-    await supabase.from("extra_data").upsert({ student_id: s.id, key_name: key, value, updated_at: new Date().toISOString() }, { onConflict: "student_id,key_name" });
+    if (key === "yo" && a.role === "student" && value && typeof value === "object") {
+      /* [v4.8] Ekonomi alanlarını en güncel sunucu kaydına göre düzelt ve arada başka bir yazma olduysa yeniden dene */
+      let yazildi = false;
+      for (let i = 0; i < 4 && !yazildi; i++) {
+        const { y: e2, satir } = await yoOku(s.id);
+        ekonomiKoru(value, e2);
+        const simdi = new Date().toISOString();
+        const w = satir
+          ? await supabase.from("extra_data").update({ value, updated_at: simdi }).eq("student_id", s.id).eq("key_name", "yo").eq("updated_at", satir.updated_at).select("student_id")
+          : await supabase.from("extra_data").insert({ student_id: s.id, key_name: "yo", value, updated_at: simdi }).select("student_id");
+        yazildi = !w.error && !!w.data?.length;
+      }
+      if (!yazildi) return json({ status: "error", message: "Kayıt şu anda yapılamadı, birazdan tekrar denenecek." }, 409);
+    } else await supabase.from("extra_data").upsert({ student_id: s.id, key_name: key, value, updated_at: new Date().toISOString() }, { onConflict: "student_id,key_name" });
     if (key === "yo" && value && typeof value === "object") {
       const {data: kept}=await supabase.from("extra_data").select("value").eq("student_id",s.id).eq("key_name","yo").maybeSingle();
       if(kept?.value)value=kept.value;
@@ -2011,33 +2327,10 @@ async function handle(req: Request) {
     }
     return json({ status: "success" });
   }
-  if (op === "ekVeriTumu") {
-    const deny = await requireTeacher(a); if (deny) return deny;
-    const { data } = await supabase.from("extra_data").select("student_id,key_name,value");
-    return json(data || []);
-  }
   if (op === "ekVeriOzet") {
     const deny = await requireTeacher(a); if (deny) return deny;
     const { data } = await supabase.from("extra_data").select("student_id,key_name");
     return json({ toplam: (data || []).length });
-  }
-  if (op === "sosyalOgrencilerGetir") {
-    const deny = await requireStudent(a, ""); if (deny) return deny;
-    const { data: students } = await supabase.from("students").select("id,username,class_no,status,points,xp,gold,streak,profile").eq("role", "student").eq("status", "approved").order("username");
-    const { data: scores } = await supabase.from("game_scores").select("student_id,score,played_on,created_at").order("played_on", { ascending: true }).limit(5000);
-    const by = new Map<string, any[]>();
-    for (const r of scores || []) { if (!r.student_id) continue; if (!by.has(r.student_id)) by.set(r.student_id, []); by.get(r.student_id)!.push(r); }
-    const list = (students || []).map((s: any) => {
-      const p = (s.profile && typeof s.profile === "object") ? s.profile : {}, rows = by.get(s.id) || [], daily = new Map<string, number[]>();
-      for (const r of rows) { const d = String(r.played_on || r.created_at || "").slice(0, 10); if (!daily.has(d)) daily.set(d, []); daily.get(d)!.push(Number(r.score || 0)); }
-      const hist = [...daily.entries()].sort((x, y) => x[0].localeCompare(y[0])).map(([t, v]) => ({ tarih: t, genel: Math.round(v.reduce((x, n) => x + n, 0) / Math.max(1, v.length) * 10) / 10 }));
-      const avg = rows.length ? Math.round(rows.reduce((x, r) => x + Number(r.score || 0), 0) / rows.length * 10) / 10 : Number(p.genelOrtalama || 0);
-      const lig = p.lig && typeof p.lig === "object" ? p.lig : { hafta: "", xp: Number(s.xp || 0) };
-      const rozetListesi = Array.isArray(p.rozetListesi) && p.rozetListesi.length ? p.rozetListesi : PUBLIC_BADGES;
-      // Not: telefon, e-posta, şifre ve öğretmen notları bu listede YOK (herkese açık)
-      return { id: s.id, ogrenci: s.username, sinif: s.class_no || "", Sinif: s.class_no || "", durum: s.status, genelPuan: Number(p.genelPuan ?? avg), genelOrtalama: Number(p.genelOrtalama ?? avg) || avg, puan: Number(s.points || 0), xp: Number(s.xp || 0), altin: Number(s.gold || 0), streak: Number(s.streak || 0), lig, rozetListesi, gelisimSerisi: Array.isArray(p.gelisimSerisi) && p.gelisimSerisi.length ? p.gelisimSerisi : hist, denemeSerisi: Array.isArray(p.denemeSerisi) ? p.denemeSerisi : [], seviyeIlerleme: Array.isArray(p.seviyeIlerleme) ? p.seviyeIlerleme : [], okumaOrt: Number(p.okumaOrt || 0), yazmaOrt: Number(p.yazmaOrt || 0), vocabOrt: Number(p.vocabOrt || 0), konusmaOrt: Number(p.konusmaOrt || 0), grammarOrt: Number(p.grammarOrt || 0) };
-    });
-    return json(list);
   }
 
   // ============================================================ BİLDİRİMLER
@@ -2073,67 +2366,8 @@ async function handle(req: Request) {
     await supabase.from("notifications").insert({ recipient_student_id: receiver.id, sender_student_id: sender?.id || null, type: tur, message: temizMetin(val(body, q, "metin"), 300) });
     return json({ status: "success" });
   }
-  if (op === "yeniPuanBildirimleriGetir") {
-    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return json([]);
-    const { data } = await supabase.from("points_transactions").select("id,change_amount,reason,created_at").eq("student_id", s.id).order("created_at", { ascending: false }).limit(20);
-    return json((data || []).map(x => ({ id: x.id, degisim: x.change_amount, sebep: x.reason, tarih: x.created_at })));
-  }
-
-  // ============================================================ MEDU AKIŞ
-  if (op === "akisTumu") {
-    const deny = await requireStudent(a, ""); if (deny) return deny;
-    const { data } = await supabase.from("feed_events").select("id,student_id,event_type,target_student_id,payload,created_at,students!feed_events_student_id_fkey(username)").order("created_at", { ascending: false }).limit(200);
-    const liste = (data || []).map((e: any) => {
-      const p = e.payload || {}, ad = e.students?.username || p.student_name || "";
-      let ikon = p.icon || "✨", metin = p.message || "Yeni bir hareket yaptı";
-      if (e.event_type === "game_score") metin = `${p.game_name || p.game_key || "Oyunda"} ${p.score ?? 0} puan kazandı`;
-      else if (e.event_type === "energy_send") metin = `${p.amount ?? 1} enerji gönderdi`;
-      else if (e.event_type === "duel_invite") metin = `⚔️ ${p.game_name || "bir oyun"} düellosuna çağırdı`;
-      else if (e.event_type === "level_complete") metin = `${p.mode_name || "Parkurda"} ${p.level ?? ""}. seviyeyi tamamladı`;
-      return { k: e.id, t: e.created_at, ogr: ad, ad, tur: "arti", ikon, metin, g: false };
-    }).filter((x: any) => x.ogr && !["takip", "begeni", "tebrik", "like", "congrats"].includes(String(x.tur)));
-    return json({ liste });
-  }
-  if (op === "akisOlaylariGetir") {
-    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return json({ takip: [], begeni: [], tebrik: [] });
-    const { data } = await supabase.from("feed_events").select("event_type,target_student_id,payload").or("student_id.eq." + s.id + ",target_student_id.eq." + s.id).order("created_at", { ascending: false }).limit(300);
-    const out: any = { takip: [], begeni: [], tebrik: [] };
-    for (const e of data || []) { const p = e.payload || {}, target = p.target_name || ""; if (e.event_type === "takip" && target) out.takip.push(target); if ((e.event_type === "begeni" || e.event_type === "like") && target) out.begeni.push(target); if ((e.event_type === "tebrik" || e.event_type === "congrats") && target) out.tebrik.push(target); }
-    return json(out);
-  }
-  if (op === "akisOlayToggle") {
-    const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name);
-    const hedef = String(body.hedef || "").trim(), tur = String(body.tur || "").trim().toLowerCase();
-    if (!["takip", "begeni", "tebrik"].includes(tur)) return json({ status: "error", aktif: false, message: "Geçersiz tür." }, 400);
-    const target = await studentByName(hedef);
-    if (!s || !target) return json({ status: "error", aktif: false });
-    const { data: existing } = await supabase.from("feed_events").select("id").eq("student_id", s.id).eq("event_type", tur).eq("target_student_id", target.id).maybeSingle();
-    if (existing?.id) { await supabase.from("feed_events").delete().eq("id", existing.id); return json({ status: "success", aktif: false }); }
-    await supabase.from("feed_events").insert({ student_id: s.id, event_type: tur, target_student_id: target.id, payload: { target_name: target.username, active: true } });
-    return json({ status: "success", aktif: true });
-  }
 
   // ============================================================ DUYURULAR
-  if (op === "duyuruListesiGetir") {
-    const deny = await requireTeacher(a); if (deny) return deny;
-    const { data } = await supabase.from("announcements").select("*").order("created_at", { ascending: false }); return json(data || []);
-  }
-  if (op === "duyurulariGetir") {
-    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return json(null);
-    const { data } = await supabase.from("announcements").select("*").eq("active", true).order("created_at", { ascending: false });
-    const { data: okunan } = await supabase.from("announcement_reads").select("announcement_id").eq("student_id", s.id);
-    const gordu = new Set((okunan || []).map((x: any) => x.announcement_id));
-    const hedefMi = (d: any) => d.target_type === "all" || d.target_type === "tumogrenciler" ||
-      (d.target_type === "sinif" && Array.isArray(d.target_list) && d.target_list.map(String).includes(String(s.class_no))) ||
-      (Array.isArray(d.target_list) && d.target_list.map(String).map(encName).includes(encName(s.username)));
-    // [YAMA 21] görülmemiş ilk duyuru gelir (önceden hep en yenisi, görülmüş olsa da)
-    const d = (data || []).filter(hedefMi).find((x: any) => !gordu.has(x.id));
-    return json(d ? { id: d.id, baslik: d.title, mesaj: d.message, hedefTipi: d.target_type, hedefDegeri: Array.isArray(d.target_list) ? d.target_list.join(",") : "", gosterimSinir: d.display_limit || 0, tema: d.theme || "mavi", aktif: d.active ? "evet" : "hayir", tarih: d.created_at, gorselLink: d.image_link || "" } : null);
-  }
   if (op === "duyuruGecmisiGetir") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return json([]);
@@ -2144,11 +2378,6 @@ async function handle(req: Request) {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
     await supabase.from("announcement_reads").upsert({ announcement_id: val(body, q, "duyuruId"), student_id: s.id }, { onConflict: "announcement_id,student_id" });
-    return json({ status: "success" });
-  }
-  if (op === "duyuruEkle") {
-    const deny = await requireTeacher(a); if (deny) return deny;
-    await supabase.from("announcements").insert({ title: temizMetin(body.baslik, 120), message: temizMetin(body.mesaj, 2000), image_link: body.gorselLink || null, target_type: body.hedefTipi || "all", target_list: arr(body.hedefListesi), display_limit: num(body.gosterimSinir) || null, theme: body.tema || null });
     return json({ status: "success" });
   }
   if (op === "duyuruAktifPasif") {
@@ -2186,7 +2415,7 @@ async function handle(req: Request) {
     const code = String(body.etkinlikKodu || ("external_" + Date.now()));
     let activity: any = null;
     if (op === "disLinkEtkinlikAta") {
-      // [YAMA 23] var olmayan sütunlarla (target_type, target_value) upsert ediliyordu; dış link hiç atanamıyordu
+      // [YAMA 23] var olmayan sütunlarla upsert ediliyordu; dış link hiç atanamıyordu
       const r = await supabase.from("activities").upsert({ code, display_name: temizMetin(body.gorunenAd, 120) || code, category: temizMetin(body.kategori, 60), external_link: String(body.disLink || ""), teacher_comment: temizMetin(body.ogretmenYorumu, 500) }, { onConflict: "code" }).select().single();
       activity = r.data;
     } else {
@@ -2199,12 +2428,6 @@ async function handle(req: Request) {
       await supabase.from("student_activities").insert({ student_id: s.id, activity_id: activity.id, assigned_by: a.teacher_id, status: "assigned" }); n++;
     }
     return json({ status: "success", atanan: n });
-  }
-  if (op === "videolariGetir") {
-    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return json([]);
-    const { data } = await supabase.from("student_videos").select("video_id,watched_at,videos(*)").eq("student_id", s.id);
-    return json((data || []).map((x: any) => ({ satirIndex: x.videos?.external_row_index, baslik: x.videos?.title, kategori: x.videos?.category, link: x.videos?.url, izlendiMi: !!x.watched_at, ...(x.videos?.content || {}) })));
   }
   if (op === "videoIzlendiIsaretle") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
@@ -2226,32 +2449,8 @@ async function handle(req: Request) {
     await supabase.from("reading_results").insert({ student_id: s.id, class_label: temizMetin(body.sinif, 20), words_read: Math.max(0, num(body.okunanKelime)), duration_seconds: Math.max(0, num(body.gecenSure)), wpm: Math.max(0, Math.min(400, num(body.wpm))), text_title: temizMetin(body.metinBasligi, 120) });
     return json({ status: "success" });
   }
-  if (op === "okumaGecmisGetir") {
-    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return json([]);
-    const { data } = await supabase.from("reading_results").select("*").eq("student_id", s.id).order("created_at", { ascending: false }).limit(100); return json(data || []);
-  }
 
   // ============================================================ ÖĞRETMEN: RAPOR
-  if (op === "raporVeriGetir") {
-    const deny = await requireTeacher(a); if (deny) return deny;
-    const s = await studentByName(String(val(body, q, "ogrenci"))); if (!s) return json({});
-    const { data } = await supabase.from("teacher_reports").select("*").eq("student_id", s.id).order("report_date", { ascending: false });
-    return json({ ogrenci: s.username, raporlar: data || [], kitapBilgi: (s.profile || {}).kitapBilgi || {} });
-  }
-  if (op === "rubrikKaydet") {
-    const deny = await requireTeacher(a); if (deny) return deny;
-    const s = await studentByName(String(val(body, q, "ogrenci"))); if (!s) return json({ status: "error" });
-    await supabase.from("teacher_reports").insert({
-      student_id: s.id, teacher_id: a.teacher_id, report_date: val(body, q, "tarih") || new Date().toISOString().slice(0, 10),
-      next_report_date: val(body, q, "sonrakitarih") || null, book_name: val(body, q, "kitapadi"), page_no: num(val(body, q, "sayfa")),
-      target: val(body, q, "hedef"), read_count: num(val(body, q, "okunansayisi")), last_attempt: bool(val(body, q, "sondeneme")),
-      reading_score: num(val(body, q, "okuma")), writing_score: num(val(body, q, "yazma")), vocabulary_score: num(val(body, q, "vocab")),
-      speaking_score: num(val(body, q, "konusma")), grammar_score: num(val(body, q, "grammar")),
-      homework_feedback: val(body, q, "odevdonut"), next_homework: val(body, q, "sonrakiodev")
-    });
-    return json({ status: "success" });
-  }
   if (op === "raporMail") {
     const deny = await requireTeacher(a); if (deny) return deny;
     const metin = String(body.metin || ""), tel = String(body.telefon || "").replace(/\D/g, "").slice(-10);
@@ -2290,11 +2489,6 @@ async function handle(req: Request) {
   }
 
   // ============================================================ MESAJLAŞMA
-  if (op === "sohbetGetir") {
-    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return json([]);
-    const { data } = await supabase.from("chat_messages").select("*").eq("student_id", s.id).order("created_at"); return json(data || []);
-  }
   if (op === "sohbetMesajGonder") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
@@ -2309,42 +2503,17 @@ async function handle(req: Request) {
     } catch (e) { console.error("mesaj e-postası", e); }
     return json({ status: "success" });
   }
-  if (op === "ogretmenSohbetListesi") {
-    const deny = await requireTeacher(a); if (deny) return deny;
-    const { data } = await supabase.from("chat_messages").select("student_id,created_at,message,sender_role,read_at,students(username)").order("created_at", { ascending: false }).limit(500);
-    const map = new Map<string, any>(), okunmamis = new Map<string, number>();
-    for (const m of data || []) { if (!map.has(m.student_id)) map.set(m.student_id, m); if (m.sender_role === "student" && !m.read_at) okunmamis.set(m.student_id, (okunmamis.get(m.student_id) || 0) + 1); }
-    return json([...map.values()].map((x: any) => ({ ogrenci: x.students?.username, mesaj: x.message, tarih: x.created_at, okunmamis: okunmamis.get(x.student_id) || 0 })));
-  }
-  if (op === "ogretmenSohbetAc") {
-    const deny = await requireTeacher(a); if (deny) return deny; const s = await studentByName(String(val(body, q, "ogrenci"))); if (!s) return json([]);
-    const { data } = await supabase.from("chat_messages").select("*").eq("student_id", s.id).order("created_at");
-    await supabase.from("chat_messages").update({ read_at: new Date().toISOString() }).eq("student_id", s.id).eq("sender_role", "student").is("read_at", null);
-    return json(data || []);
-  }
   if (op === "ogretmenCevapGonder") {
     const deny = await requireTeacher(a); if (deny) return deny; const s = await studentByName(String(val(body, q, "ogrenci"))); if (!s) return json({ status: "error" });
     await supabase.from("chat_messages").insert({ student_id: s.id, sender_role: "teacher", message: temizMetin(val(body, q, "mesaj"), 2000) }); return json({ status: "success" });
   }
 
-  // ============================================================ DÜELLO (eski basit sürüm; yeni Düello Arenası 4. aşamada)
+  // ============================================================ DÜELLO
   if (op === "duellolarim") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return json({ liste: [] });
     const { data } = await supabase.from("duels").select("*,sender:students!duels_sender_student_id_fkey(username),receiver:students!duels_receiver_student_id_fkey(username)").or("sender_student_id.eq." + s.id + ",receiver_student_id.eq." + s.id).order("created_at", { ascending: false }).limit(50);
     return json({ liste: (data || []).map((x: any) => ({ id: x.id, gonderen: x.sender?.username || "", alici: x.receiver?.username || "", durum: x.status === "accepted" ? "kabul" : x.status === "rejected" ? "red" : "bekliyor", oyun: x.sender_payload?.oyun || "", kazanan: x.receiver_payload?.kazanan || x.sender_payload?.kazanan || "", benPuan: x.sender_payload?.benPuan ?? null, rakipPuan: x.sender_payload?.rakipPuan ?? null, kalanDk: Math.max(0, 1440 - Math.round((Date.now() - new Date(x.created_at).getTime()) / 60000)) })) });
-  }
-  if (op === "duelloGonder") {
-    const g = String(val(body, q, "gonderen")), al = String(val(body, q, "alici")); const deny = await requireStudent(a, g); if (deny) return deny;
-    const gs = await hedefOgrenci(a, g), as = await studentByName(al); if (!gs || !as) return json({ status: "error" });
-    // [YAMA 26] kendine düello yok, günde en fazla 5 düello
-    if (gs.id === as.id) return json({ status: "error", message: "Kendinle düello yapamazsın. 😄" });
-    const { count } = await supabase.from("duels").select("id", { count: "exact", head: true }).eq("sender_student_id", gs.id).gte("created_at", bugunBasi());
-    if ((count || 0) >= 5) return json({ status: "error", message: "Bugün 5 düello gönderdin. Yarın yine gel! ⚔️" });
-    const oyun = temizMetin(val(body, q, "oyun"), 40);
-    await supabase.from("duels").insert({ sender_student_id: gs.id, receiver_student_id: as.id, sender_payload: { oyun } });
-    await supabase.from("feed_events").insert({ student_id: gs.id, target_student_id: as.id, event_type: "duel_invite", payload: { game_name: oyun, student_name: gs.username, target_name: as.username, icon: "⚔️" } });
-    return json({ status: "success" });
   }
   if (op === "duelloYanit") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
@@ -2353,12 +2522,6 @@ async function handle(req: Request) {
   }
 
   // ============================================================ SINIF İÇİ PUAN
-  if (op === "sinifIciPuanVer") {
-    const deny = await requireTeacher(a); if (deny) return deny; const list = arr(body.ogrenciler), applied: any[] = [], skipped: any[] = [];
-    for (const name of list) { const s = await studentByName(String(name)); if (!s) continue; const next = Math.max(0, Math.min(100, Number(s.points || 0) + num(body.degisim))); if (next === Number(s.points || 0)) { skipped.push(s.username); continue; } await supabase.from("students").update({ points: next }).eq("id", s.id); await supabase.from("points_transactions").insert({ student_id: s.id, change_amount: next - Number(s.points || 0), balance_after: next, reason: temizMetin(body.sebep, 120) || "Sınıf içi puan" }); applied.push(s.username); }
-    const action = await supabase.from("class_point_actions").insert({ teacher_id: a.teacher_id, student_ids: applied, change_amount: num(body.degisim), reason: body.sebep || "" }).select().single();
-    return json({ status: "success", uygulanan: applied, atlanan: skipped, zamanDamgasi: action.data?.action_at || new Date().toISOString() });
-  }
   if (op === "sinifIciGeriAl") {
     const deny = await requireTeacher(a); if (deny) return deny;
     // [YAMA 27] .eq("undone_at", null) hiçbir satırla eşleşmez; geri alma hiç çalışmıyordu

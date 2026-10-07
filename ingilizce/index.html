@@ -53,6 +53,8 @@ const supabaseClient = supabase.createClient(
     });
   };
   function oturumKontrol(d) {
+    if(d.token) document.dispatchEvent(new Event('dm:login'));
+    if (d.hata === 'iletisim') document.dispatchEvent(new CustomEvent('dm:contact-block',{detail:d}));
     if (d.hata === 'oturum' && TOKEN() && !sessionStorage.getItem('ing_oturum_bitti')) {
       sessionStorage.setItem('ing_oturum_bitti', '1');
       ['ing_token', 'ing_oturumAcik', 'ing_aktifOgrenci', 'ing_toplamSaniye'].forEach(function (k) { localStorage.removeItem(k); });
@@ -22058,6 +22060,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     btn.disabled = false; btn.innerText = 'Giriş Yap';
     if (!d || !d.ok) { m.className = 'error'; m.innerText = (d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol edip tekrar dene.'; return; }
     localStorage.setItem('ing_token', d.token);
+    setTimeout(()=>document.dispatchEvent(new Event('dm:login')),0);
     sessionStorage.removeItem('ing_oturum_bitti');
     if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token);
     await listeYenile();
@@ -30386,7 +30389,15 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
         <div class="cog-kod" aria-label="Öğretmen kodun">${kac(d.kod)}</div>
         <button type="button" class="cog-btn" id="cogKodKopya">📋 Kodu kopyala</button>
         <button type="button" class="cog-btn ikincil" id="cogLinkKopya">🔗 Öğrenci davet linkini kopyala</button>
+        <button type="button" class="cog-btn ikincil" id="cogCreateAfterSignup">🎒 İstersen öğrenci hesaplarını şimdi ekle</button><div id="cogCreateSignupMessage" role="status"></div>
         <button type="button" class="cog-btn ikincil" id="cogGiris">➡️ Şimdi giriş yap</button>`);
+      $('cogCreateAfterSignup').onclick = async () => {
+        const b=$('cogCreateAfterSignup');b.disabled=true;
+        let r;try{r=await (await orgFetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:'giris',ogrenci:kul,sifre:s1})})).json();}catch{}
+        b.disabled=false;
+        if(!r?.ok || r.rol!=='ogretmen'){$('cogCreateSignupMessage').textContent=r?.mesaj||'Giriş kurulamadı. Öğretmen panelinden öğrenci ekleyebilirsin.';return;}
+        sessionStorage.setItem('ing_ogr_token',r.token);p2.remove();window.dmStudentManagement.openCreate();
+      };
       $('cogKodKopya').onclick = e => kopyala(d.kod, e.target);
       $('cogLinkKopya').onclick = e => kopyala(link, e.target);
       $('cogGiris').onclick = () => { p2.remove(); if (typeof kayitOlKapat === 'function') try { kayitOlKapat(); } catch (e) {} let o = $('ogrenci'); if (o) { o.value = d.kullanici; let s = $('sifre'); if (s) s.focus(); } };
@@ -30406,11 +30417,13 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     if (!d || !d.ok) { k.innerHTML = '<small>Öğretmen bilgileri alınamadı.</small>'; return; }
     let link = `${PORTAL}?kod=${d.kod}`;
     k.innerHTML = `<b>👩‍🏫 ${kac(d.adSoyad || d.kullanici)}${d.yonetici ? ' · Yönetici' : ''}</b>${d.kurum ? `<small>${kac(d.kurum)}</small>` : ''}
-      <div><span class="kod" aria-label="Öğretmen kodun">${kac(d.kod || '—')}</span><button type="button" id="cogK1">📋 Kodu kopyala</button><button type="button" id="cogK2">🔗 Davet linki</button>${d.yonetici ? '<button type="button" id="cogK3">👥 Öğretmenler</button>' : ''}</div>
+      <div><span class="kod" aria-label="Öğretmen kodun">${kac(d.kod || '—')}</span><button type="button" id="cogK1">📋 Kodu kopyala</button><button type="button" id="cogK2">🔗 Davet linki</button>${d.yonetici ? '<button type="button" id="cogK3">👥 Öğretmenler</button>' : ''}<button type="button" id="cogCreateStudents">🎒 Öğrenci hesabı ekle</button>${d.ogrenciYonetimi ? '<button type="button" id="cogManageStudents">🔐 Öğrenci hesaplarını yönet</button>' : ''}</div>
       <small>${d.yonetici ? 'Yönetici olarak tüm öğrencileri görüyorsun' : `${d.ogrenciSayisi} öğrencin var · sadece sana kayıtlı öğrencileri görürsün`}${d.email ? ' · bildirimler: ' + kac(d.email) : ''}</small>`;
     $('cogK1').onclick = e => kopyala(d.kod, e.target);
     $('cogK2').onclick = e => kopyala(link, e.target);
     if ($('cogK3')) $('cogK3').onclick = ogretmenListesi;
+    $('cogCreateStudents').onclick = () => window.dmStudentManagement.openCreate();
+    if($('cogManageStudents')) $('cogManageStudents').onclick = () => window.dmStudentManagement.openAdmin();
   }
   let sonMenu = false;
   setInterval(() => {
@@ -30739,7 +30752,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
-<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=1"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=1"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=2"></script><script src="student-management.js?v=1"></script><script src="contact-policy.js?v=1"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=2"></script>
