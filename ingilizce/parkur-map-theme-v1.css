@@ -1,0 +1,332 @@
+/* Approved mint learning map. Presentation only. */
+body.dm-parkur-open #tab-dunya{background:#f2fbfc!important}
+body.dm-parkur-open #bzParkur{background:#f2fbfc!important;color:#183b4b;overflow:hidden;padding-top:env(safe-area-inset-top,0px);}
+body.dm-parkur-open #bzParkur>.bz-ic{display:flex;flex-direction:column;height:100%;max-width:600px;padding:0 14px!important;margin:auto;}
+.dm-parkur-head{flex:none;background:#f2fbfc;padding:10px 0 0;position:relative;z-index:3;font-family:Nunito,system-ui,sans-serif;}
+.dm-parkur-brand{text-align:center;color:#078393;font-size:18px;font-weight:900;line-height:24px;margin:0 0 8px;}
+.dm-parkur-title-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.dm-parkur-title-row h1{flex:1;margin:0;font:700 24px/1.15 Fredoka,system-ui,sans-serif;color:#183b4b;}
+.dm-parkur-wallet{display:flex;gap:6px;flex:none;}
+.dm-parkur-wallet button{border:1px solid #d7eaee;border-radius:13px;background:#fff;color:#365669;min-height:40px;padding:7px 9px;font:900 12px Nunito,system-ui,sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 6px #24647608;}
+.dm-parkur-welcome{display:flex;align-items:center;gap:14px;min-height:100px;background:#e2f5f2;border-radius:22px;padding:6px 14px;margin-bottom:12px;}
+.dm-parkur-welcome img{width:86px;height:100px;object-fit:contain;flex:none;}
+.dm-parkur-welcome b{display:block;color:#183b4b;font:700 19px/1.25 Fredoka,system-ui,sans-serif;}
+.dm-parkur-welcome p{margin:7px 0 0;color:#718695;font-size:13px;line-height:1.4;font-weight:600;}
+.dm-parkur-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:10px;}
+.dm-parkur-tabs button{display:flex;align-items:center;justify-content:center;gap:5px;min-height:42px;border:1px solid #dcebee;border-radius:14px;background:#fff;color:#758996;font:700 11px Nunito,system-ui,sans-serif;cursor:pointer;}
+.dm-parkur-tabs button[aria-selected=true]{background:#078c9c;border-color:#078c9c;color:#fff;box-shadow:0 0 0 3px #fff;}
+.dm-icon{width:21px;height:21px;display:inline-block;flex:none;}
+.dm-icon svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.dm-parkur-scroll{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));scrollbar-width:none;}
+.dm-parkur-scroll::-webkit-scrollbar{display:none;}
+.dm-map-controls{display:flex;gap:6px;justify-content:center;padding:4px 0 10px;flex-wrap:wrap;}
+body.dm-parkur-open .dm-map-controls .bz-ust-btn{color:#56808a;background:#e9f5f6;padding:6px 10px;font-size:10px;border:1px solid #d9ecef;}
+body.dm-parkur-open #bzParkur .bz-harita{border-radius:0;background:#f2fbfc url('parkur-landscape-v2.png') center top/100% auto repeat-y!important;overflow:hidden;}
+body.dm-parkur-open #bzParkur .bz-kale,body.dm-parkur-open #bzParkur .bulut,body.dm-parkur-open #bzParkur .bz-tabela{display:none;}
+body.dm-parkur-open #bzParkur .bz-sinif-etiket{background:#fff0bf;border:1px solid #f5d58b;color:#9a5a12;box-shadow:0 2px 0 #f5d58b;font:900 13px Nunito,system-ui,sans-serif;padding:8px 12px;z-index:1;}
+body.dm-parkur-open #bzParkur .bz-tas{width:60px;height:60px;background:linear-gradient(150deg,#f3fff9,#baf0d9)!important;border:2px solid #8fdcbf;color:#174954;box-shadow:0 3px 0 #80c9b3,0 0 0 3px #ffffff90;font:700 26px Fredoka,system-ui,sans-serif;transition:box-shadow .15s;animation:none;}
+body.dm-parkur-open #bzParkur .bz-tas.bitti::after{content:'✓';position:absolute;right:-3px;top:-6px;background:#42b58e;color:#fff;border:2px solid #fff;border-radius:50%;width:23px;height:23px;font:900 15px/20px Nunito,sans-serif;}
+body.dm-parkur-open #bzParkur .bz-tas.kilit{background:linear-gradient(150deg,#f0f5fa,#d8e5ef)!important;border-color:#dce8f1;color:#8294a6;box-shadow:0 3px 0 #bbd2e2;}
+.dm-step-lock{display:block;position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:13px;filter:grayscale(1);opacity:.55;line-height:1;}
+body.dm-parkur-open #bzParkur .bz-tas.kilit .dm-step-number{padding-top:17px;font-size:22px;}
+body.dm-parkur-open #bzParkur .bz-tas.sonraki{width:76px;height:76px;border:10px solid #129dac;color:#173f4e;background:#fff!important;box-shadow:0 0 0 5px #c4f0f290,0 3px 0 #078696;animation:dm-step-glow 3s ease-in-out infinite;z-index:2;}
+body.dm-parkur-open #bzParkur .bz-tas .y{top:58px;font-size:14px;letter-spacing:-2px;text-shadow:0 1px 0 #fff;}
+body.dm-parkur-open #bzParkur .bz-kahraman{width:46px;height:46px;transform:translate(-50%,-100%);background:#fff;border:3px solid #fff;border-radius:50%;box-shadow:0 4px 10px #42777b25;filter:none;animation:none;z-index:2;overflow:hidden;}
+.dm-start-card{position:absolute;z-index:2;width:124px;transform:translateY(-50%);background:#fff;border:1px solid #e4f0f1;border-radius:17px;padding:11px;text-align:left;box-shadow:0 8px 22px #326c7617;cursor:pointer;font-family:Nunito,system-ui,sans-serif;color:#1d4655;}
+.dm-start-card small{display:block;color:#7c8d9f;font-size:10px;font-weight:600;}
+.dm-start-card strong{display:block;font:700 18px Fredoka,system-ui,sans-serif;margin:4px 0 8px;}
+.dm-start-card .dm-start-cta{display:block;text-align:center;background:#078f9f;color:#fff;border-radius:10px;padding:9px 4px;font-size:13px;font-weight:900;}
+.dm-map-detail{margin:8px 0 0;color:#607f8d;}
+.dm-map-detail summary{padding:12px;background:#e8f6f5;border:1px solid #d8eeea;border-radius:13px;cursor:pointer;font-size:12px;font-weight:800;}
+body.dm-parkur-open #bzParkur .bz-yan{gap:10px;}
+body.dm-parkur-open #bzParkur .bz-kutu{background:#fff;border:1px solid #dfebed;color:#365c68;}
+body.dm-parkur-open #bzParkur .bz-kutu [style*='color:']{color:#728996!important;}
+body.dm-parkur-open #bzParkur .bz-cubuk{background:#e3efef;}
+body.dm-parkur-open #bzParkur .bz-cubuk i{background:#53b79e;}
+body.dm-parkur-open #pkSekmeler,body.dm-parkur-open #ybEnerji,body.dm-parkur-open #ybArac,body.dm-parkur-open .bk-kart{display:none!important;}
+body.dm-parkur-open .bz-alt{background:#183b4b66;backdrop-filter:blur(4px);}
+body.dm-parkur-open .bz-alt-kart{color:#1d4655;max-height:90dvh;overflow:auto;}
+body.dm-parkur-open .bz-alt-kart .alt{color:#718995;}
+body.dm-parkur-open .bz-alt-kart .bz-tipler div{background:#eff8f8;color:#527580;}
+body.dm-parkur-open .bz-alt-kart .bz-btn.mor{background:#088e9c;box-shadow:0 3px 0 #067d88;}
+body.dm-parkur-open .bz-alt-kart .bz-btn:disabled{background:#dfe9ed;color:#7d909b;box-shadow:none;}
+.dm-parkur-head button:focus-visible,.dm-start-card:focus-visible,body.dm-parkur-open .bz-tas:focus-visible{outline:3px solid #086e82;outline-offset:4px;}
+@keyframes dm-step-glow{50%{box-shadow:0 0 0 8px #c4f0f260,0 3px 0 #078696;}}
+@media(max-width:380px){.dm-parkur-title-row h1{font-size:20px}.dm-parkur-wallet button{font-size:10px;padding:6px}.dm-parkur-welcome{gap:10px;padding:4px 10px;min-height:88px}.dm-parkur-welcome img{width:70px;height:86px}.dm-parkur-welcome b{font-size:17px}.dm-parkur-welcome p{font-size:11px}.dm-parkur-tabs{gap:5px}.dm-parkur-tabs button{font-size:10px;gap:3px}.dm-icon{width:18px;height:18px}.dm-start-card{width:116px}}
+@media(max-height:650px){.dm-parkur-welcome{min-height:70px}.dm-parkur-welcome img{height:70px;width:64px}.dm-parkur-brand{margin-bottom:3px}.dm-parkur-title-row{margin-bottom:6px}}
+@media(prefers-reduced-motion:reduce){body.dm-parkur-open #bzParkur .bz-tas.sonraki{animation:none}}/* Papi's learning destinations and clearly labelled map actions. */
+.dm-palace{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:min(260px,90%);z-index:1;text-align:center;color:#194f59;pointer-events:none;font-family:Nunito,system-ui,sans-serif}
+.dm-palace svg{display:block;width:100%;height:166px;filter:drop-shadow(0 7px 5px #265c6425)}
+.dm-palace strong{display:block;width:max-content;max-width:100%;margin:2px auto 0;padding:5px 18px;background:#fff3c7;border:2px solid #e9cf82;border-radius:18px;font:700 20px Fredoka,system-ui,sans-serif;box-shadow:0 3px 0 #d7b96b}
+.dm-palace small{display:block;margin:6px auto;font-size:11px;font-weight:900;color:#174e58}
+body.dm-parkur-open .dm-map-controls{gap:8px;padding:8px 0 16px}
+body.dm-parkur-open .dm-map-controls .bz-ust-btn{min-height:44px;background:#fff;color:#165563;border:2px solid #65b8bd;border-radius:15px;padding:10px 13px;font-size:13px;font-weight:900;box-shadow:0 3px 0 #94d0ca;cursor:pointer}
+body.dm-parkur-open .dm-map-controls .bz-ust-btn:first-child{background:#087f8c;color:#fff;border-color:#087f8c;box-shadow:0 3px 0 #065e6b}
+body.dm-parkur-gates #tab-dunya,body.dm-parkur-gates #bzParkur{background:#f2fbfc!important;color:#194e59}
+body.dm-parkur-gates #bzParkur>.bz-ic{max-width:600px;padding:0 14px calc(105px + env(safe-area-inset-bottom,0px));margin:auto;font-family:Nunito,system-ui,sans-serif}
+body.dm-parkur-gates #pkSekmeler,body.dm-parkur-gates #ybEnerji,body.dm-parkur-gates #ybArac{display:none!important}
+.dm-gates-back{display:block;margin:14px 0;padding:11px 15px;border:2px solid #a9d5d0;border-radius:14px;color:#195f69;background:#fff;font:900 13px Nunito,system-ui;cursor:pointer}
+body.dm-parkur-gates .bz-afis{width:100%;box-sizing:border-box;background:#e2f5f2;border:2px solid #8fcbbd;border-radius:20px;box-shadow:0 4px 0 #c6e5db;padding:15px 10px;margin:10px 0 18px}
+body.dm-parkur-gates .bz-afis b{color:#174f5d;text-shadow:none;font:700 23px Fredoka,system-ui}
+body.dm-parkur-gates .bz-afis small{display:block;margin-top:5px;color:#356972;font-size:12px}
+body.dm-parkur-gates .bz-koridor{padding:0;background:none;border:0;box-shadow:none}
+body.dm-parkur-gates .bz-kapilar{gap:16px 12px}
+body.dm-parkur-gates .bz-kapi{min-height:205px;padding:20px 9px 16px;border:3px solid #fff;border-radius:60px 60px 22px 22px;color:#194e59;background:linear-gradient(160deg,#effcf5,#bde8d4)!important;box-shadow:0 5px 0 #8dc5b0,0 7px 18px #276c6615;opacity:1;filter:none}
+body.dm-parkur-gates .bz-kapi:nth-child(2){background:linear-gradient(160deg,#f0faff,#c9eaf6)!important;box-shadow:0 5px 0 #a4cadc}
+body.dm-parkur-gates .bz-kapi:nth-child(3){background:linear-gradient(160deg,#faf2ff,#e5d4f6)!important;box-shadow:0 5px 0 #c2a7de}
+body.dm-parkur-gates .bz-kapi:nth-child(4){background:linear-gradient(160deg,#fffbeb,#f8e4ac)!important;box-shadow:0 5px 0 #d9bd77}
+body.dm-parkur-gates .bz-kapi .no{display:grid;place-items:center;margin:0 auto 12px;width:42px;height:42px;border:2px solid #ffffff;background:#ffffffa8;color:#175763;font-size:22px}
+body.dm-parkur-gates .bz-kapi b{display:block;font-size:17px;color:#194e59;line-height:1.25;text-shadow:none}
+body.dm-parkur-gates .bz-kapi small{display:block;margin-top:6px;font-size:12px;font-weight:900;color:#406977}
+body.dm-parkur-gates .bz-kapi .yil{display:block;padding:8px 5px;margin-top:12px;border-radius:14px;background:#ffffffce;color:#245767;font-size:11px;line-height:1.35}
+body.dm-parkur-gates .bz-kapi.kilit{opacity:1;filter:none}
+body.dm-parkur-gates .bz-kapi.kilit .no{color:#677d8b;background:#f6fafb}
+body.dm-parkur-gates .bz-kitap{background:#fff;border:2px solid #d9eae4;box-shadow:none;color:#365f6a;padding:14px;border-radius:20px;margin-top:22px;font-size:12px;line-height:1.6}
+body.dm-parkur-gates .bz-eski{display:block;margin:18px auto;color:#356976;font-size:12px}
+.dm-map-controls button:focus-visible,.dm-gates-back:focus-visible,body.dm-parkur-gates .bz-kapi:focus-visible{outline:3px solid #087e89;outline-offset:4px}
+/* Approved forest-and-palace adventure concept. Existing complete map and handlers retained. */
+body.dm-parkur-open #tab-dunya,body.dm-parkur-open #bzParkur{background:#fffdf7!important}
+body.dm-parkur-open #bzParkur>.bz-ic{padding:0!important;max-width:560px}
+.dm-parkur-head{background:#fffdf7;padding:14px 18px 0}
+.dm-adventure-brand-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.dm-parkur-brand{text-align:left;color:#087d57;font:900 30px/1.15 Fredoka,Nunito,system-ui;margin:0}.dm-parkur-brand span{font-size:21px}.dm-adventure-brand-row small{font-size:11px;color:#345747}.dm-adventure-profile{width:42px;height:42px;border:1px solid #e4e8da;border-radius:50%;background:#f0eee5;color:#326343;display:grid;place-items:center;cursor:pointer}.dm-parkur-head>h1{margin:0 0 12px;color:#123d32;font:800 24px/1.2 Fredoka,Nunito,system-ui}.dm-parkur-wallet{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:8px;margin-bottom:12px}.dm-parkur-wallet button{border:1px solid #eedab2;border-radius:17px;background:#fff5df;color:#254436;min-height:47px;font-size:14px;box-shadow:0 2px 0 #f1e3c2;padding:8px 6px}.dm-parkur-wallet button>span:first-child{font-size:20px}.dm-parkur-wallet .dm-adventure-level{background:linear-gradient(135deg,#975ed4,#6330a8);border:2px solid #edcb72;color:white;box-shadow:0 0 0 3px #eee0f9,0 3px 0 #bba2d1;padding:5px 9px}.dm-adventure-level>span{font-size:14px!important}.dm-adventure-level-track{display:block;overflow:hidden;margin-top:5px;height:5px;background:#fff5;border-radius:10px}.dm-adventure-level-track>i{display:block;height:100%;background:#ffe190;border-radius:10px}.dm-parkur-tabs{margin-bottom:10px;gap:8px}.dm-parkur-tabs button{min-height:34px;background:#f6f2e8;color:#527460;border:1px solid #e3e6d7;border-radius:11px}.dm-parkur-tabs button[aria-selected=true]{background:#e8f3e4;color:#246444;border-color:#bcdbb3;box-shadow:none}
+.dm-adventure-scene{position:relative;height:clamp(400px,calc(100dvh - 290px),640px);width:100%;overflow:hidden;background:#417e3d url('parkur-palace-forest-v3.png') center center/cover no-repeat;isolation:isolate}
+.dm-adventure-scene::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 65%,#123d2270);z-index:-1}.dm-adventure-palace-label{position:absolute;top:12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#fff6daed;border:1px solid #e6c26f;border-radius:15px;padding:5px 12px;font:800 12px Nunito;box-shadow:0 3px 12px #47300e24}.dm-adventure-route-name{position:absolute;top:42px;left:50%;transform:translateX(-50%);font:800 10px Nunito;color:#18412f;background:#fffce6d9;border-radius:9px;padding:4px 9px;white-space:nowrap}.dm-adventure-papi{position:absolute;width:clamp(125px,41%,200px);height:auto;left:-1%;bottom:17%;pointer-events:none;filter:drop-shadow(0 8px 5px #12261160);z-index:3}.dm-adventure-papi-note{position:absolute;left:16px;top:42%;background:#fff9d6;border:2px solid #d7bb74;border-radius:15px 15px 15px 3px;padding:8px 11px;font:900 11px Nunito;color:#6c461e;transform:rotate(-4deg);box-shadow:0 3px 0 #b58f51}
+.dm-adventure-node{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;width:55px;height:39px;background:linear-gradient(160deg,#9664df,#652daa);border:3px solid #efc65f;border-radius:50%;color:#ffe799;font:900 24px Nunito;box-shadow:0 5px 0 #b88025,0 8px 9px #543b434f;cursor:pointer;z-index:2}.dm-adventure-node small{position:absolute;top:49px;font-size:10px;white-space:nowrap;color:#2d452c;background:#fff6d9ed;padding:2px 7px;border-radius:8px}.dm-adventure-node.current{width:77px;height:52px;font-size:32px;border-width:4px;box-shadow:0 6px 0 #a66f19,0 0 0 5px #fff1a54d;animation:dm-adventure-glow 3s ease-in-out infinite}.dm-adventure-node.current small{top:64px}.dm-adventure-node.locked{background:linear-gradient(160deg,#9b76c5,#765b94);border-color:#dabb78;color:#e9cf91;font-size:18px}.dm-adventure-node.done{background:linear-gradient(160deg,#5cab74,#2c724c)}.dm-adventure-node:hover{filter:brightness(1.12)}.dm-adventure-go{position:absolute;bottom:22px;left:5%;width:90%;min-height:58px;background:linear-gradient(180deg,#2ba574,#087b4d);border:2px solid #dff2c9;border-radius:30px;box-shadow:0 4px 0 #074b32,0 7px 18px #12321c70;color:white;font:900 21px Fredoka,Nunito,system-ui;cursor:pointer;z-index:4}.dm-adventure-go span{font-size:32px;line-height:20px;margin-left:8px}.dm-adventure-full-map{margin:4px 14px 12px}.dm-adventure-full-map>summary{padding:12px;background:#f3f1e5;border:1px solid #dce0ce;border-radius:14px;color:#2b5944;font:800 13px Nunito;cursor:pointer}.dm-adventure-full-map>.bz-harita{margin-top:12px}.dm-map-detail{margin:8px 14px 20px}.dm-map-controls{padding:10px 12px!important}.dm-adventure-node:focus-visible,.dm-adventure-go:focus-visible,.dm-adventure-profile:focus-visible{outline:3px solid white;outline-offset:5px}
+body.dm-parkur-open #bottomNavMobile{background:#0d4a3d!important;border:1px solid #277258!important;border-radius:24px 24px 0 0;box-shadow:0 -5px 16px #072c303b}body.dm-parkur-open #bottomNavMobile .bn-item{background:transparent!important;color:#d5e8dd!important;border:0!important;box-shadow:none!important}body.dm-parkur-open #bottomNavMobile .bn-item.active{background:#1d694f!important;border-radius:17px;color:white!important}body.dm-parkur-open #bottomNavMobile .bn-label{color:inherit!important;font-size:10px}body.dm-parkur-open #bottomNavMobile .dm-nav-art{filter:drop-shadow(0 2px 2px #021f12a0)}
+@keyframes dm-adventure-glow{50%{box-shadow:0 6px 0 #a66f19,0 0 0 9px #fff1a530}}
+@media(min-width:800px){.dm-adventure-scene{height:700px}.dm-parkur-head{padding:18px 24px 0}}@media(max-width:360px){.dm-parkur-head{padding:12px 12px 0}.dm-parkur-brand{font-size:26px}.dm-parkur-head>h1{font-size:22px}.dm-parkur-wallet{gap:6px}.dm-parkur-wallet button{font-size:12px}.dm-adventure-go{font-size:19px}.dm-adventure-node{width:48px}}
+@media(prefers-reduced-motion:reduce){.dm-adventure-node.current{animation:none}}
+
+.dm-adventure-profile{overflow:hidden;padding:0;flex-shrink:0}.dm-adventure-avatar{display:grid;place-items:center;width:100%;height:100%;font-size:27px;line-height:1;pointer-events:none}.dm-adventure-avatar>svg,.dm-adventure-avatar>img{width:100%!important;height:100%!important;display:block;object-fit:cover}.dm-adventure-avatar svg{max-width:100%;max-height:100%}
+
+/* Compact Parkur tabs: leave more of the forest visible on phones. */
+.dm-parkur-head .dm-parkur-tabs{gap:10px!important;padding:4px 0 6px!important;margin-bottom:8px}
+.dm-parkur-head .dm-parkur-tabs button{min-height:44px!important;padding:6px 10px!important;gap:6px!important;border-radius:15px!important;font-size:12px!important;box-shadow:0 3px 0 #b7d9ec!important}
+.dm-parkur-head .dm-parkur-tabs button[aria-selected=true]{box-shadow:0 3px 0 #0791a4!important}
+.dm-parkur-head .dm-parkur-tabs button[data-dm-tab=pro]{box-shadow:0 3px 0 #c6b1e4!important}
+.dm-parkur-head .dm-parkur-tabs .dm-tab-art{width:28px;height:28px}
+.dm-parkur-head .dm-parkur-tabs b{font-size:13px}
+/* Fit the adventure into the visible area above the mobile dock. */
+@media(max-width:768px){
+ body.dm-parkur-open #bzParkur{box-sizing:border-box}
+ body.dm-parkur-open #bzParkur>.bz-ic{box-sizing:border-box;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
+ body.dm-parkur-open .dm-parkur-head{padding:8px 14px 0}
+ .dm-adventure-brand-row{margin-bottom:5px}
+ .dm-parkur-brand{font-size:24px;line-height:1.1}
+ .dm-parkur-brand span{font-size:16px}
+ .dm-adventure-brand-row small{font-size:10px}
+ .dm-adventure-profile{width:36px;height:36px}
+ .dm-parkur-head>h1{font-size:18px;line-height:1.2;margin-bottom:8px}
+ .dm-parkur-wallet{gap:7px;margin-bottom:7px}
+ .dm-parkur-wallet button{min-height:40px;padding:5px 6px;border-radius:12px;font-size:13px}
+ .dm-parkur-wallet button>span:first-child{font-size:16px}
+ .dm-parkur-wallet .dm-adventure-level{padding:4px 8px;box-shadow:0 0 0 2px #eee0f9,0 2px 0 #bba2d1}
+ .dm-adventure-level>span{font-size:12px!important}
+ .dm-adventure-level-track{height:4px;margin-top:3px}
+ .dm-parkur-head .dm-parkur-tabs{gap:8px!important;padding:0 0 3px!important;margin-bottom:7px}
+ .dm-parkur-head .dm-parkur-tabs button{min-height:36px!important;padding:4px 8px!important;border-radius:11px!important;font-size:11px!important}
+ .dm-parkur-head .dm-parkur-tabs .dm-tab-art{width:22px;height:22px}
+ .dm-parkur-head .dm-parkur-tabs b{font-size:12px}
+ body.dm-parkur-open .dm-parkur-scroll{box-sizing:border-box;padding-bottom:0}
+ .dm-parkur-scroll>.dm-adventure-scene:first-child{height:100%;min-height:280px;max-height:640px;box-sizing:border-box}
+ .dm-adventure-go{bottom:12px;min-height:46px;left:7%;width:86%;font-size:18px;border-radius:24px}
+ .dm-adventure-go span{font-size:26px}
+ .dm-adventure-papi{width:clamp(110px,34%,170px);bottom:18%}
+ .dm-adventure-papi-note{left:12px;top:39%;font-size:10px;padding:6px 8px}
+ .dm-adventure-palace-label{top:9px;font-size:11px;padding:4px 10px}
+ .dm-adventure-route-name{top:35px;font-size:9px}
+}
+@media(max-width:768px) and (max-height:600px){
+ .dm-adventure-brand-row small{display:none}
+ .dm-adventure-brand-row{margin-bottom:4px}
+ .dm-parkur-head>h1{font-size:16px;margin-bottom:6px}
+ .dm-adventure-papi-note{display:none}
+}
+
+/* Keep the wallet beside the brand so the route gains the old wallet row. */
+.dm-parkur-head .dm-adventure-brand-row{gap:10px;align-items:center;margin-bottom:7px}
+.dm-adventure-brand{min-width:0;flex:1}
+.dm-parkur-head .dm-parkur-wallet.dm-parkur-top-status{display:grid;grid-template-columns:1fr 1.15fr 1.05fr;gap:5px;width:clamp(166px,48vw,228px);flex:none;margin:0}
+.dm-parkur-top-status button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;min-width:0;min-height:42px;padding:3px 4px;font-size:12px;line-height:1.15;border-radius:12px}
+.dm-parkur-top-status button>span:first-child{font-size:14px;line-height:1}
+.dm-parkur-wallet.dm-parkur-top-status .dm-adventure-level{padding:5px 4px}
+.dm-parkur-top-status .dm-adventure-level>span{font-size:12px!important;white-space:nowrap}
+.dm-parkur-top-status .dm-adventure-level-track{width:100%;height:4px;margin-top:5px}
+.dm-parkur-top-status [data-dm-energy],.dm-parkur-top-status [data-dm-gold]{font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:600px){
+ .dm-parkur-head .dm-parkur-brand{font-size:22px;white-space:nowrap}
+ .dm-parkur-head .dm-parkur-brand span{font-size:14px}
+ .dm-parkur-head .dm-adventure-brand-row small{display:none}
+ .dm-parkur-head>h1{margin-bottom:7px}
+}
+@media(max-width:360px){
+ body.dm-parkur-open .dm-parkur-head{padding-left:12px;padding-right:12px}
+ .dm-parkur-head .dm-adventure-brand-row{gap:7px}
+ .dm-parkur-head .dm-parkur-brand{font-size:18px}
+ .dm-parkur-head .dm-parkur-brand span{font-size:11px}
+ .dm-parkur-top-status button{font-size:10px;padding-left:2px;padding-right:2px}
+ .dm-parkur-top-status .dm-adventure-level>span{font-size:11px!important}
+}
+
+/* Compact round route tools retain their original actions and accessible names. */
+body.dm-parkur-open .dm-map-controls{gap:12px;padding:6px 12px!important}
+body.dm-parkur-open .dm-map-controls .bz-ust-btn.dm-map-round{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;font-size:0;border-width:2px;box-shadow:0 2px 0 #94d0ca}
+body.dm-parkur-open .dm-map-controls .dm-map-round .dm-icon{width:23px;height:23px}
+body.dm-parkur-open .dm-map-controls .dm-map-round:first-child{box-shadow:0 2px 0 #065e6b}
+
+/* The four doors use the Parkur viewport as their scroll container. */
+body.dm-parkur-gates #bzParkur{overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scroll-padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+body.dm-parkur-gates #bzParkur>.bz-ic{display:block;height:auto;min-height:100%;box-sizing:border-box;padding:0 14px calc(76px + env(safe-area-inset-bottom,0px))!important}
+body.dm-parkur-gates .dm-gates-back{width:100%;margin:8px 0;padding:9px 12px;font-size:12px;min-height:40px}
+body.dm-parkur-gates .bz-afis{margin:8px 0 14px;padding:11px 10px}
+body.dm-parkur-gates .bz-afis b{font-size:20px}
+body.dm-parkur-gates .bz-afis small{font-size:11px;line-height:1.4}
+body.dm-parkur-gates .bz-kapilar{gap:14px 10px}
+body.dm-parkur-gates .bz-kapi{min-height:166px;padding:14px 8px 12px;border-radius:46px 46px 20px 20px}
+body.dm-parkur-gates .bz-kapi .no{width:34px;height:34px;font-size:19px;margin-bottom:9px}
+body.dm-parkur-gates .bz-kapi b{font-size:16px}
+body.dm-parkur-gates .bz-kapi small{font-size:11px;margin-top:5px}
+body.dm-parkur-gates .bz-kapi .yil{font-size:10px;margin-top:9px;padding:6px 4px}
+body.dm-parkur-gates .bz-kitap{margin-top:16px;padding:12px;font-size:11px}
+/* One continuous world, all real unit IDs retained. */
+.dm-unified-scene{position:relative;width:100%;overflow:hidden;background:#478c62 url('parkur-continuous-world-v1.svg') center/100% 100% no-repeat;isolation:isolate}
+.dm-unified-path{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;filter:drop-shadow(0 3px 2px #583c3740)}
+.dm-unified-palace-label{position:absolute;top:24px;left:50%;transform:translateX(-50%);background:#fff6dbed;border:2px solid #dac072;border-radius:18px;padding:7px 14px;white-space:nowrap;font:900 14px Nunito;z-index:2;color:#174b3c}
+.dm-unified-scene .dm-adventure-node{width:62px;height:43px;z-index:2}
+.dm-unified-scene .dm-adventure-node small{white-space:nowrap;font-size:11px;top:50px;max-width:none;background:#fff7dbe8;padding:4px 7px}
+.dm-unified-papi{position:absolute;bottom:25px;left:1%;width:30%;max-width:160px;z-index:2;pointer-events:none}
+.dm-parkur-head .dm-adventure-brand-row{gap:6px;margin-bottom:6px}
+.dm-parkur-head .dm-adventure-brand{min-width:0;flex:1}
+.dm-parkur-head .dm-adventure-brand-row small{display:none}
+.dm-parkur-head .dm-parkur-brand{font-size:clamp(17px,4.8vw,27px);white-space:nowrap}
+.dm-parkur-head .dm-parkur-brand span{font-size:14px}
+.dm-parkur-head .dm-parkur-top-status{width:clamp(138px,42vw,200px)}
+.dm-parkur-head .dm-adventure-profile{width:34px;height:34px}
+body.dm-parkur-open .dm-parkur-scroll{padding-bottom:0}
+
+/* Papi's single river expedition: real unit targets on timber docks. */
+.dm-unified-scene.dm-river-world{background:#508e68 url('parkur-river-world-v1.svg') center/100% 100% no-repeat}
+.dm-river-water{filter:drop-shadow(0 3px 3px #204d3c35)}
+.dm-river-world .dm-adventure-node.dm-river-dock{width:76px;height:46px;border:4px solid #885730;border-radius:9px;background:repeating-linear-gradient(180deg,#ddac70 0 8px,#b5814f 9px 11px);box-shadow:0 7px 0 #784723,0 10px 12px #173d4050;overflow:visible}
+.dm-river-dock::before,.dm-river-dock::after{content:'';position:absolute;top:-10px;width:7px;height:66px;border-radius:4px;background:linear-gradient(90deg,#744a2b,#d7a96c,#855931);box-shadow:0 2px 2px #38574760;pointer-events:none}
+.dm-river-dock::before{left:-5px}.dm-river-dock::after{right:-5px}
+.dm-river-dock>span{position:absolute;top:-13px;display:grid;place-items:center;width:41px;height:41px;border:3px solid #f3e8c2;border-radius:50%;font:900 26px Nunito;box-shadow:0 3px 4px #2e42684a}
+.dm-river-dock.done>span{background:linear-gradient(#64d18d,#239863);color:#fff}
+.dm-river-dock.current>span{background:linear-gradient(#b280ed,#7535c0);color:#ffe485;box-shadow:0 0 0 5px #fff1a552,0 0 19px #fdd64d}
+.dm-river-dock.locked>span{background:linear-gradient(#e7d6fb,#b492db);color:#6c46a4;font-size:20px}
+.dm-river-world .dm-river-dock small{top:51px;max-width:180px;font-size:10px;line-height:1.2;background:#fff6dbf2;border:1px solid #e8d69c;border-radius:10px;color:#23483c;padding:4px 8px}
+.dm-river-raft{position:absolute;z-index:3;transform:translateX(-50%);width:69px;height:20px;border:3px solid #8c582e;border-radius:50%;background:repeating-linear-gradient(90deg,#c78b47 0 9px,#946037 10px 12px);box-shadow:0 4px 0 #165c7880;pointer-events:none}
+.dm-river-raft img{position:absolute;width:72px;max-width:none;bottom:5px;left:-4px;filter:drop-shadow(0 3px 2px #10303c40)}
+@media(prefers-reduced-motion:no-preference){.dm-river-dock.current>span{animation:dmRiverGlow 2s ease-in-out infinite}}
+@keyframes dmRiverGlow{50%{box-shadow:0 0 0 7px #fff1a542,0 0 24px #fdd64d}}
+
+/* The illustrated river is the only waterway; docks follow its banks. */
+.dm-river-world .dm-river-water{display:none}
+
+/* Approved open storybook layout. Dock and navigation styles remain untouched. */
+.dm-book-world{padding:10px 9px 22px;background:radial-gradient(ellipse at 5% 8%,#b9d49a40,transparent 35%),radial-gradient(ellipse at 95% 92%,#c7d58e45,transparent 38%),#f6f0d9;font-family:Nunito,system-ui;color:#264b33}
+.dm-adventure-book{position:relative;display:grid;grid-template-columns:44% 56%;border:6px solid #795334;border-bottom-width:9px;border-radius:18px 21px 19px 17px;background:#a17748;box-shadow:0 5px 0 #c3a980,0 10px 17px #5a482738;overflow:visible;min-height:390px}
+.dm-adventure-book::after{content:'';position:absolute;left:44%;top:0;bottom:0;width:12px;transform:translateX(-50%);background:linear-gradient(90deg,#80654450,#4b2e1d55,#fff5d850);pointer-events:none;z-index:4}
+.dm-book-page{position:relative;overflow:hidden;background:#fff3d6;border:2px solid #d0af7a}
+.dm-book-art-page{border-radius:13px 0 0 13px;padding:7px}
+.dm-book-art{position:absolute;inset:7px;border-radius:9px 2px 2px 9px;background-image:url('parkur-story-atlas-v1.svg');background-size:200% 200%;background-repeat:no-repeat}
+.chapter-0{background-position:0 0}.chapter-1{background-position:100% 0}.chapter-2{background-position:0 100%}.chapter-3{background-position:100% 100%}
+.dm-book-sign{position:absolute;top:16px;left:8%;right:8%;padding:7px 3px;background:#ead2a1ef;border:2px solid #b79252;border-radius:7px;box-shadow:0 3px 0 #68562e50;text-align:center;color:#533b25;font:800 12px/1.2 Fredoka,Nunito}
+.dm-book-learning{border-radius:0 16px 16px 0;padding:13px 9px 11px;background:radial-gradient(ellipse at 80% 80%,#e9d7a747,transparent 70%),linear-gradient(90deg,#e6d1a440,#fff4d9 9%,#fff4d9 92%,#d2b68655)}
+.dm-book-learning::after{content:'🌿';position:absolute;bottom:3px;right:2px;font-size:26px;opacity:.55;pointer-events:none}
+.dm-book-emblem{display:block;text-align:center;font-size:22px;margin-bottom:3px}
+.dm-book-learning h2{font:800 clamp(16px,4.5vw,23px)/1.15 Fredoka,Nunito;color:#194b35;text-align:center;margin:0 0 5px}
+.dm-book-learning p{font:700 10px/1.35 Nunito;color:#82623b;text-align:center;margin:0 0 7px}
+.dm-book-count{background:#f3deb0;border-radius:9px;text-align:center;font:900 11px Nunito;padding:6px 2px;margin-bottom:9px;color:#5c442c}
+.dm-book-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.dm-book-grid .dm-adventure-node.dm-book-stop{position:relative;left:auto;top:auto;transform:none;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;width:100%;min-width:0;height:55px;min-height:44px;box-sizing:border-box;border:1.5px solid #dbc18d;border-radius:11px;background:linear-gradient(#fff9e4,#f7e6bf);box-shadow:0 2px 0 #c8a97055;font:800 10px Nunito;color:#295238;padding:3px;animation:none;box-shadow:0 2px 0 #c8a97055}
+.dm-book-stop b{font-size:9px;line-height:1.12;text-align:center;overflow-wrap:anywhere;max-width:100%}
+.dm-book-grid .dm-book-stop>span{font-size:19px;line-height:1;color:#9d936f}
+.dm-book-grid .dm-book-stop.done>span{color:#389d58}
+.dm-book-grid .dm-book-stop.current{background:linear-gradient(#b47fed,#8250ca);border:2px solid #f0cc6e;color:white;box-shadow:0 0 0 2px #f4d37965,0 2px 0 #98632f}
+.dm-book-grid .dm-book-stop.current>span{color:#ffe170}
+.dm-book-grid .dm-book-stop.locked{opacity:.8}
+.dm-book-pages{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0 6px;font:900 10px Nunito;color:#846942}
+.dm-book-pages button{background:#f5e4b9;color:#3b7650;border:1px solid #d2ba85;border-radius:50%;width:29px;height:29px;padding:0;font:900 22px Nunito;cursor:pointer}
+.dm-book-pages button:disabled{opacity:.3;cursor:default}
+.dm-book-continue{display:block;width:100%;min-height:36px;padding:7px 2px;font:900 12px Nunito;background:linear-gradient(#46934c,#1c662f);border:2px solid #aac47b;color:#fff9db;border-radius:22px;box-shadow:0 3px 0 #2c592b55;cursor:pointer}
+.dm-book-locked{font:800 10px/1.4 Nunito;text-align:center;background:#eadebf;border-radius:10px;padding:9px 5px;color:#796449}
+.dm-book-covers{display:flex;gap:10px;overflow-x:auto;overscroll-behavior-x:contain;padding:17px 3px 8px;scroll-snap-type:x proximity}
+.dm-book-cover{position:relative;flex:0 0 84px;height:117px;background:#725631;border:3px solid #948154;border-left:6px solid #574126;border-radius:6px 9px 9px 6px;padding:0;box-shadow:2px 4px 0 #523f2940;overflow:hidden;cursor:pointer;scroll-snap-align:center}
+.dm-book-cover-art{position:absolute;inset:0;background-image:url('parkur-story-atlas-v1.svg');background-repeat:no-repeat;background-size:200% 200%}
+.dm-book-cover b{position:absolute;bottom:8px;left:3px;right:3px;padding:5px 2px;background:#f1d9a3e8;border-radius:5px;color:#563d25;font:900 10px/1.2 Nunito}
+.dm-cover-lock{position:absolute;right:3px;top:3px;background:#fff3d9d9;border-radius:50%;font-size:12px;padding:3px}
+.dm-book-cover.selected{border-color:#c79e39;box-shadow:0 0 0 3px #f1d98770,0 4px 0 #80662e40}
+.dm-book-world button:focus-visible{outline:3px solid #187d66;outline-offset:3px}
+@media(min-width:520px){.dm-adventure-book{min-height:455px}.dm-book-learning{padding:20px 15px}.dm-book-sign{font-size:17px}.dm-book-grid .dm-adventure-node.dm-book-stop{height:62px}.dm-book-stop b{font-size:11px}.dm-book-continue{font-size:15px}.dm-book-cover{flex-basis:104px;height:143px}}
+@media(max-width:360px){.dm-adventure-book{grid-template-columns:40% 60%;border-width:4px}.dm-adventure-book::after{left:40%}.dm-book-learning{padding:10px 6px}.dm-book-sign{font-size:10px}.dm-book-learning h2{font-size:16px}.dm-book-cover{flex-basis:78px;height:108px}.dm-book-grid{gap:5px}}
+
+/* Keep the complete chapter illustration visible at its original proportions. */
+.dm-book-art{inset:auto 7px;top:50%;aspect-ratio:3/4;transform:translateY(-50%);background-size:200% 200%}
+body.dm-parkur-open .dm-parkur-scroll{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));scroll-padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+.dm-book-world{padding-bottom:28px}
+@media(max-width:519px){
+ .dm-adventure-book{min-height:342px}
+ .dm-book-learning{padding:10px 8px}
+ .dm-book-emblem{display:none}
+ .dm-book-learning h2{font-size:17px;margin-bottom:4px}
+ .dm-book-learning p{font-size:9px;margin-bottom:6px}
+ .dm-book-count{padding:5px 2px;margin-bottom:7px}
+ .dm-book-grid{gap:5px}
+ .dm-book-grid .dm-adventure-node.dm-book-stop{height:48px}
+ .dm-book-grid .dm-book-stop>span{font-size:17px}
+ .dm-book-covers{gap:8px;padding-top:14px}
+ .dm-book-cover{flex-basis:76px;height:100px}
+ .dm-book-cover b{font-size:9px;bottom:5px}
+}
+
+/* Approved concept 1: watercolor parchment adventure map. */
+body.dm-parkur-open #bzParkur>.bz-ic{max-width:600px;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
+body.dm-parkur-open .dm-parkur-scroll{position:relative;overflow:hidden;padding:0!important}
+.dm-parkur-head{background:#fff9ec}
+body.dm-parkur-open .dm-parkur-head{padding:10px 12px 0}
+.dm-parkur-head>h1,.dm-adventure-brand-row small{display:none}
+.dm-parkur-head .dm-adventure-brand-row{gap:7px;margin-bottom:7px}
+.dm-parkur-head .dm-adventure-brand{flex:0 1 auto;min-width:0}
+.dm-parkur-head .dm-parkur-brand{font:700 clamp(18px,5.5vw,28px)/1.05 Fredoka,Nunito;color:#0f3d2f;letter-spacing:-.7px}
+.dm-parkur-head .dm-parkur-brand span{display:none}
+.dm-parkur-head .dm-parkur-top-status{flex:1;min-width:0;width:auto;max-width:270px;display:grid;grid-template-columns:1fr 1.16fr 1fr;gap:5px;margin:0}
+.dm-parkur-top-status button{display:flex;align-items:center;justify-content:center;gap:3px;min-height:32px;padding:4px 3px;font:900 clamp(10px,2.8vw,15px)/1 Nunito;border-radius:18px;box-shadow:inset 0 1px 0 #fff,0 2px 0 #e2cda950}
+.dm-parkur-top-status button>span:first-child{font-size:17px}
+.dm-parkur-top-status .dm-adventure-level{display:block;border-width:1px;padding:3px 5px;background:linear-gradient(#a15de2,#743ac0);border-radius:16px;box-shadow:0 2px 0 #d4b4e3}
+.dm-parkur-top-status .dm-adventure-level>span{font-size:clamp(11px,3vw,16px)!important}
+.dm-parkur-top-status .dm-adventure-level>span::before{content:'⭐';font-size:.9em;margin-right:2px}
+.dm-parkur-top-status .dm-adventure-level-track{height:3px;margin-top:3px}
+.dm-parkur-head .dm-adventure-profile{width:31px;height:31px}
+.dm-parkur-head .dm-parkur-tabs{gap:7px!important;margin-bottom:0;padding:0 0 7px!important}
+.dm-parkur-head .dm-parkur-tabs button{min-height:34px!important;padding:4px!important;font-size:13px!important;border-radius:20px!important;box-shadow:0 2px 0 #e2d9c9!important}
+.dm-parkur-head .dm-parkur-tabs button[aria-selected=true]{background:linear-gradient(100deg,#6bd6d8,#92e3e4);border:1px solid #c3eced;color:#0b4c48;box-shadow:0 2px 0 #a6dad5!important}
+.dm-parkur-head .dm-parkur-tabs button[data-dm-tab=pro]{background:linear-gradient(#eeeae2,#e5e0d7);color:#99958d;box-shadow:0 2px 0 #d9d1c4!important}
+.dm-parchment-map{position:relative;width:100%;height:100%;min-height:0;overflow:hidden;isolation:isolate;background:#f0e3b5 url('parkur-map-landscape-v1.svg') center top/cover no-repeat;font-family:Nunito,system-ui}
+.dm-map-heading{position:absolute;left:16px;top:10px;margin:0;color:#49341e;font:600 clamp(18px,5vw,26px)/1.2 Fredoka,Nunito;z-index:4;pointer-events:none;text-shadow:0 1px 2px #fff4cf}
+.dm-map-heading::after{content:'';display:block;width:72%;height:2px;margin-top:4px;background:linear-gradient(90deg,#c79d40,transparent)}
+.dm-map-track{position:absolute;inset:0 0 62px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.dm-map-track::-webkit-scrollbar{display:none}
+.dm-map-route{position:relative;width:100%;min-height:100%}
+.dm-map-trail{position:absolute;inset:0;width:100%;pointer-events:none;overflow:visible}
+.dm-map-trail path{fill:none;stroke-linecap:round}
+.dm-map-trail-shadow{stroke:#98652b;stroke-width:4.5;stroke-dasharray:2 11;opacity:.72;transform:translateY(1px)}
+.dm-map-trail-dots{stroke:#e8b53c;stroke-width:4;stroke-dasharray:2 11}
+.dm-map-route .dm-adventure-node.dm-map-stop{width:var(--dm-map-medallion,78px);height:var(--dm-map-medallion,78px);display:block;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;transform:translate(-50%,-50%);animation:none;overflow:visible;color:#263d28;z-index:2;cursor:pointer}
+.dm-map-location{position:absolute;inset:0;background-image:url('parkur-map-stops-v1.svg');background-size:500% 100%;background-repeat:no-repeat;filter:drop-shadow(0 3px 2px #80653440)}
+.dm-map-location.art-0{background-position:0% 50%}.dm-map-location.art-1{background-position:25% 50%}.dm-map-location.art-2{background-position:50% 50%}.dm-map-location.art-3{background-position:75% 50%}.dm-map-location.art-4{background-position:100% 50%}
+.dm-map-badge{position:absolute;top:-2%;right:-7%;width:34%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:linear-gradient(#9c9e97,#747d78);border:2px solid #fff6d8;color:#fff9de;box-shadow:0 0 0 1px #ada27b,0 2px 3px #63573740}
+.dm-map-badge svg{width:76%;height:76%;display:block}
+.dm-map-stop.done .dm-map-badge{background:linear-gradient(#5ebe61,#2f9638);box-shadow:0 0 0 1px #9fc567,0 2px 3px #63573740}
+.dm-map-stop.current .dm-map-badge{background:linear-gradient(#b36be8,#742ac0);color:#ffdf52;box-shadow:0 0 0 2px #e8bc48,0 0 11px #e9c54c90}
+.dm-map-stop.current .dm-map-location{filter:drop-shadow(0 0 6px #d6a74c)}
+.dm-map-stop.locked .dm-map-location{filter:saturate(.65) drop-shadow(0 3px 2px #80653440)}
+.dm-map-name{position:absolute;left:50%;top:91%;transform:translateX(-50%) rotate(-1deg);min-width:106%;max-width:155%;width:max-content;padding:4px 8px;box-sizing:border-box;border:1px solid #cfb173;border-radius:7px 5px 8px 4px;background:linear-gradient(#fff1cd,#f6dfae);box-shadow:0 2px 0 #b8985540;color:#43351f;font:900 clamp(10px,2.7vw,13px)/1.08 Nunito;text-align:center;white-space:normal;overflow-wrap:normal}
+.dm-map-papi{position:absolute;left:2%;bottom:48px;width:29%;height:auto;max-height:32%;object-fit:contain;object-position:left bottom;pointer-events:none;z-index:3}
+.dm-map-continue{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);min-width:36%;max-width:70%;min-height:40px;display:flex;gap:9px;align-items:center;justify-content:center;padding:5px 20px;border:2px solid #cbe3a6;border-radius:24px;background:linear-gradient(#38ad45,#158a2e);box-shadow:0 3px 0 #45773360,inset 0 2px 3px #fff3;color:#fffde5;font:700 17px/1 Fredoka,Nunito;z-index:5;cursor:pointer}
+.dm-map-continue span{font:700 27px/1 Nunito}
+.dm-map-stop:focus-visible,.dm-map-continue:focus-visible{outline:3px solid #0b7765;outline-offset:5px}
+.dm-map-track:focus-visible{outline:2px solid #187d66;outline-offset:-2px}
+@media(max-width:360px){.dm-parkur-head .dm-adventure-brand-row{gap:4px}.dm-parkur-head .dm-parkur-top-status{gap:3px}.dm-parkur-head .dm-parkur-brand{font-size:18px}.dm-parkur-head .dm-adventure-profile{width:27px;height:27px}.dm-map-name{font-size:10px;padding:4px 5px}.dm-map-continue{font-size:15px;min-height:36px}}
+@media(min-width:769px){body.dm-parkur-open #bzParkur>.bz-ic{padding-bottom:16px!important}}
+

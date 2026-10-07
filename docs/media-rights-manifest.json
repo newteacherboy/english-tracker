@@ -257,6 +257,27 @@
       "status": "ai-generated",
       "source": "docs/media-generation-record.json",
       "derived_from": "ingilizce/papi-app-icon-v3.png"
+    },
+    {
+      "path": "ingilizce/parkur-map-landscape-v1.svg",
+      "sha256": "0308c9c7daba716f07e1d242cdb443a54724accec2fc07f985be9be2c0df3f10",
+      "bytes": 664951,
+      "status": "ai-generated",
+      "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
+    },
+    {
+      "path": "ingilizce/parkur-map-stops-v1.svg",
+      "sha256": "d1a86ef8c53f2df40010ec332d0d6b239addb31d50bee942234048f0305db2f3",
+      "bytes": 432286,
+      "status": "ai-generated",
+      "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
+    },
+    {
+      "path": "ingilizce/parkur-map-papi-v1.svg",
+      "sha256": "b5f63c3af056febcc8069b279d7ac5b62279828babd113e28dd17452352b925a",
+      "bytes": 305443,
+      "status": "ai-generated",
+      "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
     }
   ]
 }
