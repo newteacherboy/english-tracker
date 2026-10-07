@@ -9614,7 +9614,7 @@ setTimeout(() => {
                 y += 2.5;
                 doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "normal"); doc.setFontSize(5.5);
                 doc.text("Bu rapor Ingilizce Ogrenci Portali tarafindan hazirlanmistir.", M, y);
-                doc.text("www.app.dijimedu.com", W - M, y, { align: 'right' });
+                doc.text("app.dijimedu.com", W - M, y, { align: 'right' });
         
                 let dosyaAdi = `${ogrenciAdi.replace(/\s+/g, '_')}_Rapor_${baslangic}_${bitis}.pdf`;
                 doc.save(dosyaAdi);
