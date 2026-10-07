@@ -233,6 +233,30 @@
       "bytes": 517309,
       "status": "ai-generated",
       "source": "Original four chapter illustration atlas generated with OpenAI imagegen on 2026-10-07 using the user-approved storybook UI as a style reference; WebP embedded in SVG. No third-party source image."
+    },
+    {
+      "path": "ingilizce/app-icons/papi-192.png",
+      "sha256": "a231e93ea8d468afee9c15545377681991272002f53ac76ad3c5dd541fd9b1cd",
+      "bytes": 43101,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-app-icon-v3.png"
+    },
+    {
+      "path": "ingilizce/app-icons/papi-512.png",
+      "sha256": "7c47944e4c5ad304d9ed111e23aed432460b6cda1a1ae8bd32a6d7b07bd7e46e",
+      "bytes": 232171,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-app-icon-v3.png"
+    },
+    {
+      "path": "ingilizce/app-icons/papi-maskable-512.png",
+      "sha256": "2e3503fb0824036285411be41d6519a2bde34d88fe0e82eb38ef2e6b7025e848",
+      "bytes": 98833,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-app-icon-v3.png"
     }
   ]
 }
