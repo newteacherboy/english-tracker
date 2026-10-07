@@ -100,12 +100,12 @@ if(BAKIM_MODU){
                 <meta name="description" content="Diji-Medu İngilizce Portalı — öğrenci gelişim raporları, seviyeye göre ders çalışma sistemi, kelime yarışmaları ve öğretmen takip paneli.">
         <meta name="keywords" content="Diji-Medu ingilizce, diji medu ingilizce portalı, öğrenci ingilizce takip, ingilizce kelime oyunu">
         <meta name="robots" content="index, follow">
-        <link rel="canonical" href="https://panel.ogretmencocuk.com/ingilizce/">
+        <link rel="canonical" href="https://app.dijimedu.com/ingilizce/">
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="Diji-Medu">
         <meta property="og:title" content="Diji-Medu İngilizce Portalı">
         <meta property="og:description" content="Öğrenci gelişim raporları, seviyeye göre ders çalışma sistemi ve kelime yarışmaları.">
-        <meta property="og:url" content="https://panel.ogretmencocuk.com/ingilizce/">
+        <meta property="og:url" content="https://app.dijimedu.com/ingilizce/">
         <meta property="og:locale" content="tr_TR">
             <link rel="icon" type="image/png" href="papi-welcome-v2.png">
             <link rel="apple-touch-icon" sizes="180x180" href="papi-welcome-v2.png">
@@ -941,7 +941,7 @@ if(BAKIM_MODU){
             </div>
         
             <!-- Sol Üst Küçük Ana Portala Dön Butonu -->
-            <a href="https://panel.ogretmencocuk.com" class="portal-back-btn">← Ana Portala Dön</a>
+            <a href="https://app.dijimedu.com" class="portal-back-btn">← Ana Portala Dön</a>
         
            
         
@@ -1526,7 +1526,7 @@ if(BAKIM_MODU){
                     </div>
         
                                <div class="user-actions">
-                        <a href="https://panel.ogretmencocuk.com" class="header-btn btn-portal">Ana Portal</a>
+                        <a href="https://app.dijimedu.com" class="header-btn btn-portal">Ana Portal</a>
                         <button onclick="dmHesapAyarlariAc()" class="header-btn btn-portal">⚙️ Hesap</button>
                         <button onclick="cikisYap()" class="header-btn btn-cikis">Çıkış Yap</button>
                     </div>
@@ -9614,7 +9614,7 @@ setTimeout(() => {
                 y += 2.5;
                 doc.setTextColor(148, 163, 184); doc.setFont("helvetica", "normal"); doc.setFontSize(5.5);
                 doc.text("Bu rapor Ingilizce Ogrenci Portali tarafindan hazirlanmistir.", M, y);
-                doc.text("www.panel.ogretmencocuk.com", W - M, y, { align: 'right' });
+                doc.text("www.app.dijimedu.com", W - M, y, { align: 'right' });
         
                 let dosyaAdi = `${ogrenciAdi.replace(/\s+/g, '_')}_Rapor_${baslangic}_${bitis}.pdf`;
                 doc.save(dosyaAdi);
