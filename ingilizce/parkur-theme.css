@@ -229,7 +229,7 @@ body.dm-parkur-open .dm-parkur-scroll{padding-bottom:0}
 .dm-adventure-book::after{content:'';position:absolute;left:44%;top:0;bottom:0;width:12px;transform:translateX(-50%);background:linear-gradient(90deg,#80654450,#4b2e1d55,#fff5d850);pointer-events:none;z-index:4}
 .dm-book-page{position:relative;overflow:hidden;background:#fff3d6;border:2px solid #d0af7a}
 .dm-book-art-page{border-radius:13px 0 0 13px;padding:7px}
-.dm-book-art{position:absolute;inset:7px;border-radius:9px 2px 2px 9px;background-image:url('parkur-story-atlas-v1.svg');background-size:auto 200%;background-repeat:no-repeat}
+.dm-book-art{position:absolute;inset:7px;border-radius:9px 2px 2px 9px;background-image:url('parkur-story-atlas-v1.svg');background-size:200% 200%;background-repeat:no-repeat}
 .chapter-0{background-position:0 0}.chapter-1{background-position:100% 0}.chapter-2{background-position:0 100%}.chapter-3{background-position:100% 100%}
 .dm-book-sign{position:absolute;top:16px;left:8%;right:8%;padding:7px 3px;background:#ead2a1ef;border:2px solid #b79252;border-radius:7px;box-shadow:0 3px 0 #68562e50;text-align:center;color:#533b25;font:800 12px/1.2 Fredoka,Nunito}
 .dm-book-learning{border-radius:0 16px 16px 0;padding:13px 9px 11px;background:radial-gradient(ellipse at 80% 80%,#e9d7a747,transparent 70%),linear-gradient(90deg,#e6d1a440,#fff4d9 9%,#fff4d9 92%,#d2b68655)}
@@ -260,3 +260,22 @@ body.dm-parkur-open .dm-parkur-scroll{padding-bottom:0}
 .dm-book-world button:focus-visible{outline:3px solid #187d66;outline-offset:3px}
 @media(min-width:520px){.dm-adventure-book{min-height:455px}.dm-book-learning{padding:20px 15px}.dm-book-sign{font-size:17px}.dm-book-grid .dm-adventure-node.dm-book-stop{height:62px}.dm-book-stop b{font-size:11px}.dm-book-continue{font-size:15px}.dm-book-cover{flex-basis:104px;height:143px}}
 @media(max-width:360px){.dm-adventure-book{grid-template-columns:40% 60%;border-width:4px}.dm-adventure-book::after{left:40%}.dm-book-learning{padding:10px 6px}.dm-book-sign{font-size:10px}.dm-book-learning h2{font-size:16px}.dm-book-cover{flex-basis:78px;height:108px}.dm-book-grid{gap:5px}}
+
+/* Keep the complete chapter illustration visible at its original proportions. */
+.dm-book-art{inset:auto 7px;top:50%;aspect-ratio:3/4;transform:translateY(-50%);background-size:200% 200%}
+body.dm-parkur-open .dm-parkur-scroll{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));scroll-padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+.dm-book-world{padding-bottom:28px}
+@media(max-width:519px){
+ .dm-adventure-book{min-height:342px}
+ .dm-book-learning{padding:10px 8px}
+ .dm-book-emblem{display:none}
+ .dm-book-learning h2{font-size:17px;margin-bottom:4px}
+ .dm-book-learning p{font-size:9px;margin-bottom:6px}
+ .dm-book-count{padding:5px 2px;margin-bottom:7px}
+ .dm-book-grid{gap:5px}
+ .dm-book-grid .dm-adventure-node.dm-book-stop{height:48px}
+ .dm-book-grid .dm-book-stop>span{font-size:17px}
+ .dm-book-covers{gap:8px;padding-top:14px}
+ .dm-book-cover{flex-basis:76px;height:100px}
+ .dm-book-cover b{font-size:9px;bottom:5px}
+}
