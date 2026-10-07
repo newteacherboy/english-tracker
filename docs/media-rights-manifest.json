@@ -151,9 +151,23 @@
       "source": "scripts/create-original-media.py"
     },
     {
+      "path": "ingilizce/papi-app-icon-v3.png",
+      "sha256": "b9756c12cbbaad6a1cf1752f8e6e1ea50eb62a88cdc0854145ff0901b6ea4dff",
+      "bytes": 1415298,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
       "path": "ingilizce/papi-farewell-v2.png",
       "sha256": "94b50763417a6fb94197d20cb1caa46256ae3aabc0ff8735a0892d15a37fdfa6",
       "bytes": 1337172,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/papi-growth.webp",
+      "sha256": "15ba96355494bc1fd7a26e7790dfbce2b243cb2f6cbb7ca15f5158a647f9f8c0",
+      "bytes": 295028,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
     },
@@ -186,13 +200,6 @@
       "source": "docs/media-generation-record.json"
     },
     {
-      "path": "ingilizce/study-islands-v2.png",
-      "sha256": "49a0c8d3bd38c4e3629a00234ae9cd884303afc4d1a37ea0fc04a06a5a507de7",
-      "bytes": 2518923,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
       "path": "ingilizce/parkur-palace-forest-v3.png",
       "sha256": "eba9cebe3575d618a1e1e2eb9739c56995b38296e53ad6102f0d80a95ac72b52",
       "bytes": 2964474,
@@ -200,9 +207,9 @@
       "source": "Generated with OpenAI imagegen on 2026-10-04 from the user-approved Diji-Medu concept; original woodland and palace scene, no third-party source image."
     },
     {
-      "path": "ingilizce/papi-growth.webp",
-      "sha256": "15ba96355494bc1fd7a26e7790dfbce2b243cb2f6cbb7ca15f5158a647f9f8c0",
-      "bytes": 295028,
+      "path": "ingilizce/study-islands-v2.png",
+      "sha256": "49a0c8d3bd38c4e3629a00234ae9cd884303afc4d1a37ea0fc04a06a5a507de7",
+      "bytes": 2518923,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
     }
