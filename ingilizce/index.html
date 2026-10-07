@@ -28806,7 +28806,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b], yuzde = Math.round(n / N * 100), T = toplamDurak();
     let etiketler = DURAK[b].map((D, d) => (d === 0 || DURAK[b][d - 1].sinif !== D.sinif) ? `<span class="bz-sinif-etiket" style="top:${YER[d][1] + (d ? -18 : 30)}px">🎓 ${D.sinif}. Sınıf</span>` : '').join('');
     p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy: window.genelEnerjiKalan ?? '–', max: window.genelEnerjiMax || 30, gold: yoVar() ? yo.altin || 0 : 0})}
-      <div class="dm-parkur-scroll" id="dmParkurScroll">${window.dmParkurSahne({next:sira,total:N,complete:n,section:B.ad,steps:DURAK[b].map((D,index)=>({index,label:D.sinif+'. sınıf '+D.unite+'. ünite',done:tamam.has(D.no)}))})}<div class="dm-map-controls"><button class="bz-ust-btn" id="bzGeri" aria-label="Bölüm kapıları">🚪 Bölümler</button><button class="bz-ust-btn" id="bzAkis">🎡 Akışa bak</button><button type="button" class="bz-ust-btn" onclick="dijiAracPaneliAc()">Araçlar</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
+      <div class="dm-parkur-scroll" id="dmParkurScroll">${window.dmParkurSahne({next:sira,total:N,complete:n,section:B.ad,steps:DURAK[b].map((D,index)=>({index,label:D.sinif+'. sınıf '+D.unite+'. ünite',done:tamam.has(D.no)}))})}<div class="dm-map-controls"><button type="button" class="bz-ust-btn dm-map-round" id="bzGeri" aria-label="Bölümler" title="Bölümler">${window.dmParkurIcon('door')}</button><button type="button" class="bz-ust-btn dm-map-round" id="bzAkis" aria-label="Akışa bak" title="Akışa bak">${window.dmParkurIcon('flow')}</button><button type="button" class="bz-ust-btn dm-map-round" onclick="dijiAracPaneliAc()" aria-label="Araçlar" title="Araçlar">${window.dmParkurIcon('tools')}</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
       <details class="dm-adventure-full-map"><summary>🗺️ Tüm durakları görüntüle</summary><div class="dm-full-route" id="bzHarita">${Array.from({length:Math.ceil(N/4)},(_,page)=>window.dmParkurSahne({next:sira,total:N,complete:n,section:B.ad+' · '+(page*4+1)+'–'+Math.min(N,page*4+4)+'. durak',steps:DURAK[b].slice(page*4,page*4+4).map((D,i)=>({index:page*4+i,label:D.sinif+'. sınıf '+D.unite+'. ünite',done:tamam.has(D.no)})),full:true})).join('')}</div>
       </details><details class="dm-map-detail"><summary>${B.ad} · ${n}/${N} durak · İlerleme ve ödüller</summary><div class="bz-yan">
         <div class="bz-kutu"><h4>🧙 Profil</h4><div style="font-weight:900;font-size:14px">${rutbe()}</div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd">Toplam ${tamam.size}/${T} durak</div><div class="bz-cubuk"><i style="width:${Math.round(tamam.size / T * 100)}%"></i></div></div>
@@ -30728,8 +30728,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=rights-5"></script>
-<link rel="stylesheet" href="parkur-theme.css?v=10">
-<script src="parkur-theme.js?v=10"></script>
+<link rel="stylesheet" href="parkur-theme.css?v=11">
+<script src="parkur-theme.js?v=11"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
@@ -30755,8 +30755,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=2"></script><script src="student-management.js?v=1"></script><script src="contact-policy.js?v=1"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
-<script src="progress-ui.js?v=2"></script>
-<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=7"></script>
+<script src="progress-ui.js?v=3"></script>
+<link rel="stylesheet" href="progression-ui.css?v=2"><script src="progression-ui.js?v=8"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script src="profile-forest.js?v=1"></script>

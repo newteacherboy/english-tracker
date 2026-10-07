@@ -168,3 +168,9 @@ body.dm-parkur-open #bottomNavMobile{background:#0d4a3d!important;border:1px sol
  .dm-parkur-top-status button{font-size:10px;padding-left:2px;padding-right:2px}
  .dm-parkur-top-status .dm-adventure-level>span{font-size:11px!important}
 }
+
+/* Compact round route tools retain their original actions and accessible names. */
+body.dm-parkur-open .dm-map-controls{gap:12px;padding:6px 12px!important}
+body.dm-parkur-open .dm-map-controls .bz-ust-btn.dm-map-round{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;font-size:0;border-width:2px;box-shadow:0 2px 0 #94d0ca}
+body.dm-parkur-open .dm-map-controls .dm-map-round .dm-icon{width:23px;height:23px}
+body.dm-parkur-open .dm-map-controls .dm-map-round:first-child{box-shadow:0 2px 0 #065e6b}

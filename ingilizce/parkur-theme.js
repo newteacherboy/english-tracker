@@ -1,6 +1,8 @@
 (function(){
   'use strict';
   const paths={
+    door:'<path d="M5 21V4a1 1 0 0 1 1-1h12v18M3 21h18M7 21V6h9v15"/><circle cx="13" cy="13" r=".8"/>',
+    tools:'<path d="m14 3-2 3 2 4 4 2 3-2a7 7 0 0 1-8 8l-5 4a3 3 0 0 1-4-4l4-5a7 7 0 0 1 6-10Z"/>',
     path:'<path d="M6 20c0-7 12-3 12-10S6 12 6 5"/><circle cx="6" cy="4" r="2"/><circle cx="18" cy="5" r="2"/>',
     book:'<path d="M12 5C8 2 3 4 3 4v15s5-2 9 1c4-3 9-1 9-1V4s-5-2-9 1Z"/><path d="M12 5v15"/>',
     chat:'<path d="M21 11a9 8 0 0 1-9 8H5l-3 3 1-7a8 8 0 1 1 18-4Z"/>',
