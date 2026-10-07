@@ -448,7 +448,7 @@ const PUBLIC_BADGES: any[] = [];
 // =====================================================================
 const ODEV_CEZA_GUN = Number(Deno.env.get("ODEV_CEZA_GUN") || 5);      // kaç günde bir
 const ODEV_CEZA_PUAN = Number(Deno.env.get("ODEV_CEZA_PUAN") || 1);    // kaç puan düşülür
-const PORTAL_URL = "https://panel.ogretmencocuk.com/ingilizce/";
+const PORTAL_URL = "https://app.dijimedu.com/ingilizce/";
 const hk = (v: any) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const epostaGecerli = (e: any) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(e || "").trim());
 const trTarih = (v: any) => { const d = new Date(String(v || "")); return isNaN(d.getTime()) ? String(v || "") : d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Istanbul" }); };

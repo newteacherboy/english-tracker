@@ -15,12 +15,12 @@ function fixture() {
 }
 test('account deletion navigation never replaces the main offline page', () => {
   const { listeners } = fixture(); let intercepted = false;
-  listeners.fetch({ request: { method: 'GET', url: 'https://panel.ogretmencocuk.com/ingilizce/hesap-sil.html', mode: 'navigate' }, respondWith: () => { intercepted = true; } });
+  listeners.fetch({ request: { method: 'GET', url: 'https://app.dijimedu.com/ingilizce/hesap-sil.html', mode: 'navigate' }, respondWith: () => { intercepted = true; } });
   assert.equal(intercepted, false);
 });
 test('privacy navigation never replaces the main offline page', () => {
   const { listeners } = fixture(); let intercepted = false;
-  listeners.fetch({ request: { method: 'GET', url: 'https://panel.ogretmencocuk.com/ingilizce/gizlilik.html', mode: 'navigate' }, respondWith: () => { intercepted = true; } });
+  listeners.fetch({ request: { method: 'GET', url: 'https://app.dijimedu.com/ingilizce/gizlilik.html', mode: 'navigate' }, respondWith: () => { intercepted = true; } });
   assert.equal(intercepted, false);
 });
 test('cache upgrade removes only old English caches and preserves Coaching caches', async () => {
@@ -29,7 +29,7 @@ test('cache upgrade removes only old English caches and preserves Coaching cache
   assert.deepEqual(removed, ['sayfa-diji-v11', 'kaynak-diji-v11', 'sayfa-diji-v12', 'sayfa-diji-v13', 'kaynak-diji-v13']);
 });
 test('guest and email confirmation navigation preserve the main offline page',()=>{
- for(const name of ['misafir','hesap-dogrula']){const {listeners}=fixture();let intercepted=false;listeners.fetch({request:{method:'GET',url:'https://panel.ogretmencocuk.com/ingilizce/'+name+'.html',mode:'navigate'},respondWith:()=>{intercepted=true}});assert.equal(intercepted,false);}
+ for(const name of ['misafir','hesap-dogrula']){const {listeners}=fixture();let intercepted=false;listeners.fetch({request:{method:'GET',url:'https://app.dijimedu.com/ingilizce/'+name+'.html',mode:'navigate'},respondWith:()=>{intercepted=true}});assert.equal(intercepted,false);}
 });
 
-test('guest query route never replaces the offline member home page',()=>{const {listeners}=fixture();let intercepted=false;listeners.fetch({request:{method:'GET',url:'https://panel.ogretmencocuk.com/ingilizce/?misafir=1',mode:'navigate'},respondWith:()=>intercepted=true});assert.equal(intercepted,false);});
+test('guest query route never replaces the offline member home page',()=>{const {listeners}=fixture();let intercepted=false;listeners.fetch({request:{method:'GET',url:'https://app.dijimedu.com/ingilizce/?misafir=1',mode:'navigate'},respondWith:()=>intercepted=true});assert.equal(intercepted,false);});

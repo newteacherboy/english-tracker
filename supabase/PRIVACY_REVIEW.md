@@ -1,7 +1,7 @@
 # English privacy policy release — 2026-10-03
 
-Public policy: https://panel.ogretmencocuk.com/ingilizce/gizlilik.html
-External account deletion: https://panel.ogretmencocuk.com/ingilizce/hesap-sil.html
+Public policy: https://app.dijimedu.com/ingilizce/gizlilik.html
+External account deletion: https://app.dijimedu.com/ingilizce/hesap-sil.html
 Privacy contact: official.dijimedu@gmail.com (existing published address).
 
 ## Verified basis

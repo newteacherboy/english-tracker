@@ -23,7 +23,7 @@ function fixture(options={}) {
     }
   };
   return {
-    async request(body,{method='POST',origin='https://panel.ogretmencocuk.com'}={}){
+    async request(body,{method='POST',origin='https://app.dijimedu.com'}={}){
       const req=new Request('https://example.test/account-delete',{method,headers:{origin,'Content-Type':'application/json'},body:method==='POST'?JSON.stringify(body):undefined});
       const response=await handleRequest(req,db);return {status:response.status,data:await response.json()};
     },counts:()=>({deleted,created,lookup})

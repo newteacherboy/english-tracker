@@ -1,5 +1,5 @@
 export const CONFIRMATION = 'HESABIMI SİL';
-const allowedOrigins = new Set(['https://panel.ogretmencocuk.com']);
+const allowedOrigins = new Set(['https://app.dijimedu.com']);
 export async function sha256(value) {
   return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))), x => x.toString(16).padStart(2, '0')).join('');
 }

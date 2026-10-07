@@ -1,7 +1,7 @@
 import {guestContent} from './guest-content.ts';
 export function onboardingAPI(d:any){
  const {db,json,hash,studentByName,verifyPassword,attempts,audit,sendQueued,mailShell,escape}=d;
- const portal='https://panel.ogretmencocuk.com/ingilizce/';
+ const portal='https://app.dijimedu.com/ingilizce/';
  async function welcome(s:any){
   const token=crypto.randomUUID()+crypto.randomUUID(),link=portal+'hesap-dogrula.html#token='+encodeURIComponent(token);
   const html=mailShell('Diji-Medu’ya hoş geldin! 🦜',`<p>Merhaba <b>${escape(s.username)}</b>,</p><p>Ben Papi! Kelimeleri keşfedeceğin, oyunlarla İngilizce öğreneceğin yolculuğuna hoş geldin.</p><p>Öğrenci hesabının e-posta adresini doğrulamak için aşağıdaki düğmeye dokun. Yeni şifreli kayıtlarda hesabın bu işlemden sonra açılır.</p><p style="text-align:center;margin:28px 0"><a href="${link}" style="display:inline-block;background:#347b62;color:white;padding:16px 24px;border-radius:16px;text-decoration:none;font-weight:bold">Hesabımı doğrula ve başla 🦜</a></p><p>Bağlantı 24 saat geçerlidir ve bir kez kullanılır. Bu kaydı sen oluşturmadıysan e-postayı yok sayabilirsin.</p><p>Bu e-posta adresine erişimin doğrulanır; öğrenci ve veli bilgileri kayıt beyanına göre saklanır.</p>`);

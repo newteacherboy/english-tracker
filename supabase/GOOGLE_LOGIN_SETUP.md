@@ -8,9 +8,9 @@ Sorumlu öğretmene, kod yoksa yöneticiye kayıt bilgisi bildirim kuyruğuna ek
 
 SQL: google-login.sql eşleştirme tablosunu; google-signup.sql sunucuya özel SECURITY INVOKER register_google_student işlevini oluşturur. İkisi de anon/authenticated erişimine kapalıdır. JWT doğrulaması Edge Function içinde yapılır; fonksiyonun önceki verify_jwt=false ayarı korunur.
 
-Google OAuth origin: https://panel.ogretmencocuk.com
+Google OAuth origin: https://app.dijimedu.com
 Google OAuth callback: https://nxfqlutulxqzqgwewssd.supabase.co/auth/v1/callback
-Supabase izinli uygulama dönüşü: https://panel.ogretmencocuk.com/ingilizce/
+Supabase izinli uygulama dönüşü: https://app.dijimedu.com/ingilizce/
 İngilizceye ait Auth storageKey: diji-ingilizce-google-auth
 
 Doğrulama: 18 Node testi geçti (7 mevcut hesap bağlama, 7 yeni kayıt, 4 frontend). Veritabanında başarılı aktif kayıt/eşleştirme, tekrar çağrı ve başarısız eşleştirmede rollback test edildi; test verileri işlem sonunda geri alındı. RPC erişim izinleri doğrulandı. Gerçek Google OAuth ile yeni kullanıcı kaydı henüz kullanıcıyla uçtan uca test edilmedi.

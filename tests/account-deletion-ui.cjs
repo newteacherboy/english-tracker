@@ -22,15 +22,15 @@ const { chromium } = require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES + '/
         : { ok: true, message: 'İngilizce hesabın ve ona bağlı aktif kayıtlar silindi.' };
       if (!data.ok) status = 409;
     }
-    await route.fulfill({ status, headers: { 'Access-Control-Allow-Origin': 'https://panel.ogretmencocuk.com' }, contentType: 'application/json', body: JSON.stringify(data) });
+    await route.fulfill({ status, headers: { 'Access-Control-Allow-Origin': 'https://app.dijimedu.com' }, contentType: 'application/json', body: JSON.stringify(data) });
   });
-  await page.route('https://panel.ogretmencocuk.com/**', async route => {
+  await page.route('https://app.dijimedu.com/**', async route => {
     const name = new URL(route.request().url()).pathname.split('/').pop();
     const file = path.join(__dirname, '../ingilizce', name);
     const contentType = name.endsWith('.js') ? 'application/javascript' : name.endsWith('.css') ? 'text/css' : name.endsWith('.png') ? 'image/png' : 'text/html';
     await route.fulfill({ body: fs.readFileSync(file), contentType });
   });
-  await page.goto('https://panel.ogretmencocuk.com/ingilizce/hesap-sil.html');
+  await page.goto('https://app.dijimedu.com/ingilizce/hesap-sil.html');
   await page.evaluate(() => {
     localStorage.setItem('aktifOgrenci', 'coaching-account');
     localStorage.setItem('dijimuallim_aktif_ogrenci', 'coaching-profile');
@@ -72,7 +72,7 @@ const { chromium } = require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES + '/
   assert.deepEqual(storage, { coaching: 'coaching-account', coachProfile: 'coaching-profile', coachContact: 'coaching-contact', own: null, other: 'other-profile', token: null, pending: null });
   console.log('PASS: mobile layout, password error, two-stage confirmation, cancellation, exact final confirmation and Coaching/other-account storage preservation');
   lastAdmin = true;
-  await page.goto('https://panel.ogretmencocuk.com/ingilizce/hesap-sil.html?role=teacher');
+  await page.goto('https://app.dijimedu.com/ingilizce/hesap-sil.html?role=teacher');
   assert.equal(await page.locator('#role').inputValue(), 'teacher');
   await page.locator('#username').fill('Synthetic user');
   await page.locator('#password').fill('correct');

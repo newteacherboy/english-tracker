@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://panel.ogretmencocuk.com/sitemap.xml
+Sitemap: https://app.dijimedu.com/sitemap.xml

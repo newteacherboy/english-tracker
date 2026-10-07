@@ -42,7 +42,7 @@ Test-only dependencies live outside the repository: `@electric-sql/pglite@0.5.8`
 3. Deploy the separate `account-delete` Edge Function with `index.ts` plus `core.mjs`. SDK is pinned to 2.117.2. JWT gateway verification must be disabled because the established portal uses custom sessions; the public deletion route independently reauthenticates passwords and validates one-use tickets. The worker independently validates a server-side secret. The existing `diji-api` function is unchanged.
 4. Run Supabase security advisors; verify new tables use RLS and anon/authenticated roles cannot read them or execute the deletion RPC. Verify cron exists without displaying its secret. Use health/denied-request checks; do not delete an existing account for testing. A production synthetic deletion test needs separate explicit authorization.
 5. Publish the reviewed HTML/CSS/JS and index links. Service worker v12 excludes the deletion page from the main offline-page cache and clears only old English cache names.
-6. Verify the page at `https://panel.ogretmencocuk.com/ingilizce/hesap-sil.html` and links in student profile, teacher menu and logged-out login card. Activate only when the backend installation succeeds.
+6. Verify the page at `https://app.dijimedu.com/ingilizce/hesap-sil.html` and links in student profile, teacher menu and logged-out login card. Activate only when the backend installation succeeds.
 
 ## Recovery
 
