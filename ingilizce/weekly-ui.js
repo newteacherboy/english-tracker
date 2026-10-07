@@ -23,7 +23,7 @@ function apply(){
  if(!admin)$('dmReleaseMenu')?.remove();
  document.querySelectorAll('.dm-game option').forEach(o=>{const map={Kelime_Liderlik:'kelime',Jeopardy_Liderlik:'jeopardy',Hafiza_Liderlik:'hafiza',Yagmur_Liderlik:'yagmur',Asmaca_Liderlik:'asmaca',KelimeBul_Liderlik:'kelimebul',Eslesme_Liderlik:'eslestirme',Tren_Liderlik:'tren',Dikte_Liderlik:'dikte',Cumle_Liderlik:'cumle',ucus:'ucus',rota:'rota'};o.disabled=!admin&&map[o.value]&&!enabled('oyun_'+map[o.value]);o.hidden=o.disabled;});
 }
-async function refresh(){if(document.hidden||refreshing)return;refreshing=true;try{const d=await api('yayinOzellikleri');flags=d.flags;admin=d.admin===true;apply();}catch(e){}finally{refreshing=false;}}
+async function refresh(){if(document.hidden||refreshing)return;refreshing=true;try{const d=await api('yayinOzellikleri');flags=d.flags||flags;admin=d.admin===true;apply();}catch(e){}finally{refreshing=false;}}
 window.dmReleasePanelAc=async function(){
  if(!admin){await refresh();if(!admin)return unavailable();}
  $('ogretmenMenuModal').style.display='none';
@@ -31,7 +31,7 @@ window.dmReleasePanelAc=async function(){
  m.body.innerHTML='<div class="dm-release-intro"><img src="papi-welcome-v2.png" alt="Papağan"><div><h3>Yenilikler senin elinde</h3><p>İstediğin özelliği hazır olduğunda aç. Açık öğrencinin ekranında görünür, kapalı görünmez.</p></div></div><input class="dm-release-search" type="search" placeholder="Özellik ara…" aria-label="Özellik ara"><div class="dm-release-tools"><button data-all="false">Tümünü kapat</button><button data-all="true">Tümünü aç</button></div><p class="dm-release-status" role="status"></p><div class="dm-release-list"></div>';
  const status=m.body.querySelector('.dm-release-status'),list=m.body.querySelector('.dm-release-list'),search=m.body.querySelector('input');
  function render(){const term=search.value.toLocaleLowerCase('tr');list.innerHTML=[...new Set(catalog.map(f=>f.group))].map(g=>{const l=catalog.filter(f=>f.group===g&&f.name.toLocaleLowerCase('tr').includes(term));return l.length?'<h3 class="dm-feature-group">'+esc(g)+'</h3>'+l.map(f=>`<div class="dm-feature-row"><span>${esc(f.name)}${f.parent&&!enabled(f.parent)?'<small>Üst bölüm kapalı · açıldığında görünür</small>':''}</span><button class="dm-feature-toggle" data-code="${f.code}" aria-label="${esc(f.name)}" aria-pressed="${flags[f.code]!==false}">${flags[f.code]!==false?'Açık ✓':'Kapalı'}</button></div>`).join(''):'';}).join('');}
- let saving=false;async function save(changes){if(saving)return;saving=true;m.body.querySelectorAll('button').forEach(b=>b.disabled=true);status.textContent='Kaydediliyor…';try{const d=await api('yayinOzellikKaydet',{degisiklikler:changes});flags=d.flags;apply();render();status.textContent='Kaydedildi. Açık uygulamalar en geç 1 dakika içinde güncellenir.';}catch(e){status.textContent=e.message;}finally{saving=false;m.body.querySelectorAll('button').forEach(b=>b.disabled=false);}}
+ let saving=false;async function save(changes){if(saving)return;saving=true;m.body.querySelectorAll('button').forEach(b=>b.disabled=true);status.textContent='Kaydediliyor…';try{const d=await api('yayinOzellikKaydet',{degisiklikler:changes});flags=d.flags||flags;apply();render();status.textContent='Kaydedildi. Açık uygulamalar en geç 1 dakika içinde güncellenir.';}catch(e){status.textContent=e.message;}finally{saving=false;m.body.querySelectorAll('button').forEach(b=>b.disabled=false);}}
  search.oninput=render;list.onclick=e=>{const b=e.target.closest('[data-code]');if(b)save([{code:b.dataset.code,enabled:flags[b.dataset.code]===false}]);};m.body.querySelectorAll('[data-all]').forEach(b=>b.onclick=()=>save(catalog.map(f=>({code:f.code,enabled:b.dataset.all==='true'}))));render();
 };
 const gameNames={harfbahcesi:'Harf Bahçesi',kelime:'Kelime Laboratuvarı',jeopardy:'Risk Balonları',bosluk:'Eksik Harf',hafiza:'Hafıza Sandığı',yagmur:'Hız Fırtınası',asmaca:'Harf Avı',kelimebul:'Şifre Kırıcı',konusma:'Kelime Modu',eslestirme:'Eş Bul',tren:'Kelime Treni',dikte:'Kulak Dedektifi',cumle:'Cümle Ustası',ucus:'Kelime Uçuşu',rota:'Cümle Rotası'};
@@ -64,7 +64,7 @@ window.dmVeliRaporYukle=async function(cl,area){area.innerHTML='<div class="yo-b
 const gold=[500,350,250,180,140,110,90,75,60,50],energy=[0,0,0,0,0,0,0,0,0,0];
 const oldLeague=window.maLigHtml;if(typeof oldLeague==='function')window.maLigHtml=function(){return oldLeague.apply(this,arguments)+`<section class="dm-league-prizes"><details><summary>🎁 Şampiyonlar Ligi haftalık ödülleri</summary><p>Yalnızca haftayı ilk 10’da tamamlayan ve 15. seviyeye ulaşmış ve o hafta en az 1800 yarışma XP’si kazanan öğrenciler hediye alır. Süper Lig’in ilk 2 sırasına 30 ve 20 altın verilir. Yerel Lig’de katılım rozeti kazanılır. Her pazartesi yeni hafta başlar; sonuçlar 00.05’te kesinleşir. Kazandığın hediye ilk girişinde hesabına bir kez eklenir.</p><table><thead><tr><th>Sıra</th><th>Altın</th><th>Enerji</th></tr></thead><tbody>${gold.map((g,i)=>`<tr><td>${i+1}.</td><td>${g} 🪙</td><td>${energy[i]} ⚡</td></tr>`).join('')}</tbody></table></details></section>`;};
 async function weekly(){
- if(!token()||!who()||who().toLowerCase()==='teacher'||document.hidden||weeklyBusy||$('dmWeeklyPanel')||Date.now()-lastWeekly<60000)return;
+ if(!token()||!who()||who().toLowerCase()==='teacher'||document.hidden||weeklyBusy||$('dmWeeklyPanel')||Date.now()-lastWeekly<21600000)return;
  const blocking=[...document.querySelectorAll('.rubric-modal,.game-overlay,.dm-perde,#dmLevelUp')].some(e=>getComputedStyle(e).display!=='none');if(blocking)return;
  weeklyBusy=true;lastWeekly=Date.now();const owner=who();
  try{const d=await api('haftalikPerformans');if(owner!==who()||!d.rapor)return;const r=d.rapor;
@@ -80,5 +80,5 @@ async function weekly(){
 document.addEventListener('click',e=>{if(admin)return;const b=e.target.closest('[data-s],[data-ekran],[data-mode],[data-social]');if(!b)return;const code=b.dataset.s==='lig'?'lig':b.dataset.s==='kesfet'?'kesfet':b.dataset.s==='vitrin'?'vitrin':b.dataset.s==='akis'?'akis':navCodes[b.dataset.ekran];if(code&&!enabled(code)){e.preventDefault();e.stopImmediatePropagation();unavailable();}},true);
 let queue;new MutationObserver(()=>{clearTimeout(queue);queue=setTimeout(apply,150);}).observe(document.body,{childList:true,subtree:true});
 setInterval(()=>{if(weeklyAccount!==who()){weeklyAccount=who();lastWeekly=0;admin=false;refresh();}apply();weekly();},15000);
-setInterval(refresh,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh();weekly();}});refresh();setTimeout(weekly,10000);
+setInterval(refresh,600000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh();weekly();}});refresh();setTimeout(weekly,10000);
 })();

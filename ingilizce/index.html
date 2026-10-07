@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="progress-rules.js?v=2"></script>
-<script src="progression-catalog.js?v=3"></script>
+<script src="progression-catalog.js?v=4"></script>
 <script src="guest-platform.js?v=2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 
@@ -97,7 +97,7 @@ if(BAKIM_MODU){
 }
         
 </script>
-<script src="request-budget.js?v=1"></script>
+<script src="request-budget.js?v=2"></script>
                 <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
             <title>İngilizce Portal Giriş - Diji-Medu</title>
@@ -4792,7 +4792,7 @@ async function dijiKelimeHavuzunuYukle() {
                         gununKonusuYukle();
                         anaPanelDuyuruBildirimleriYukle();
                                                        
-                            meduAkisAc();
+                            (window.dmOtomatikAkisAc || meduAkisAc)();
                               gunlukEnerjiBonusuKontrolEt();
                         }
                           
@@ -9053,7 +9053,7 @@ setTimeout(() => {
 }, 2500);
 
 setTimeout(() => {
-    meduAkisAc();
+    (window.dmOtomatikAkisAc || meduAkisAc)();
 }, 3200);
 
 setTimeout(() => {
@@ -9179,7 +9179,7 @@ setTimeout(() => {
                     timerInterval = setInterval(() => {
                         if (dcSayacDurduMu) return;
                         toplamSaniye++; sessionStorage.setItem("toplamSaniye", toplamSaniye); guncelleArayuz();
-                        if(toplamSaniye % 30 === 0) googleSheetseKaydet();
+                        if(toplamSaniye % 300 === 0) googleSheetseKaydet();   /* 5 dakikada bir; sekme gizlenince ve sayfa kapanırken de kaydedilir */
                     }, 1000);
                 }
         
@@ -9192,8 +9192,10 @@ setTimeout(() => {
                     document.getElementById('progressBar').style.width = `${((toplamSaniye%600)/600)*100}%`;
                 }
         
+                document.addEventListener('visibilitychange', function () { if (document.hidden && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && toplamSaniye > 0) googleSheetseKaydet(); });
+                window.addEventListener('pagehide', function () { if (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && toplamSaniye > 0) googleSheetseKaydet(); });
                 function googleSheetseKaydet() {
-                    fetch(`${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${Math.floor(toplamSaniye/600)}`).catch(()=>{});
+                    fetch(`${apiURL}?islem=kaydet&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}&toplamsure=${toplamSaniye}&rozet=${Math.floor(toplamSaniye/600)}`, { keepalive: true }).catch(()=>{});
                 }
         
                 // --- YILLIK PLAN TAKİP SİSTEMİ ---
@@ -14540,6 +14542,7 @@ const YO_SOHBET = [
         }
         function yoEnerjiKontrol() {
           if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return true;
+          if (window.dmOdevEnerjiMuaf && window.dmOdevEnerjiMuaf()) return true;   /* ödev oyunu enerji harcamaz */
           let k = window.genelEnerjiKalan;
           if (typeof k === 'number' && k < 3) { if (typeof genelEnerjiBittiGoster === 'function') genelEnerjiBittiGoster(); return false; }
           if (typeof ocEnerjiHarca === 'function') ocEnerjiHarca(3);
@@ -16464,7 +16467,7 @@ function sonEkranaDon() {
   if (document.querySelector('.dc-fullscreen-overlay.active')) return;
   let el = sonEkran && document.getElementById(sonEkran);
   let maBos = sonEkran === 'tab-meduakis' && !document.getElementById('maEkran').innerHTML.trim();
-  if (!el || maBos) { if (typeof meduAkisAc === 'function') meduAkisAc(); return; }
+  if (!el || maBos) { if (typeof window.dmOtomatikAkisAc === 'function') window.dmOtomatikAkisAc(true); else if (typeof meduAkisAc === 'function') meduAkisAc(); return; }
   el.classList.add('active');
   if (typeof dcBottomNavSenkronize === 'function') dcBottomNavSenkronize();
 }
@@ -17306,6 +17309,7 @@ function avatarSVG(s, stil, px, cins) {
   /* ---- İlk girişte karakter seçimi ---- */
   let sorulduZaman = 0;
   setInterval(() => {
+    if (window.dmGuestMode) return;   /* misafir denemesinde karakter penceresi açılmaz */
     if (!yoVar() || sessionStorage.getItem('ing_ka_soruldu')) return;
     let panel = document.getElementById('panel-alani');
     if (!panel || panel.style.display !== 'block') return;
@@ -22364,7 +22368,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   setInterval(() => {
     let p = $('panel-alani');
     if (pbKuruldu || !p || p.style.display !== 'block' || typeof puanBildirimKontrolEt !== 'function') return;
-    pbKuruldu = true; setTimeout(puanBildirimKontrolEt, 2000); setInterval(puanBildirimKontrolEt, 120000);
+    pbKuruldu = true; setTimeout(puanBildirimKontrolEt, 2000); setInterval(() => { if (!document.hidden) puanBildirimKontrolEt(); }, 600000);
   }, 1500);
 
   /* ================= 4) ENERJİ: parkur girişi 2, oyun girişi 1, her 3 soruda 1 ================= */
@@ -22857,7 +22861,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
       }
     } catch (e) {}
   }
-  setInterval(duelloBildirimYokla, 15000);
+  setInterval(duelloBildirimYokla, 60000);
 
   async function davetGoster(b) {
     let liste = [];
@@ -23115,7 +23119,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     } catch (e) {}
   }
 
-  setInterval(akisBildirimKontrol, 20000);
+  setInterval(akisBildirimKontrol, 60000);
 
   // Kullanıcı Medu Akış'a gittiğinde (sekme açıldığında) rozeti sıfırla ve okundu işaretle
   let orgMeduAc = window.meduAkisAc;
@@ -29537,6 +29541,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   try { sessionStorage.setItem('ing_ka_soruldu', '1'); } catch (e) {}
   let dogrulanan = '';
   async function karakterDogrula() {
+    if (window.dmGuestMode) return;
     let ad = (typeof yoIsim !== 'undefined' && yoIsim) || '';
     if (!ad || kucuk(ad) === 'teacher' || dogrulanan === kucuk(ad)) return;
     if (typeof yo === 'undefined' || !yo) return;
@@ -30106,6 +30111,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   async function odevBaslat(o) {
     if (!o) return;
     window.__aktifOdev = o;
+    /* Ödevden açılan konu ve oyun seviye kilidine takılmaz (öğretmen bilerek verdi) */
+    window.__odevAcilisBitis = Date.now() + 8000;
     if (typeof sanaOzelTamEkranKapat === 'function') try { sanaOzelTamEkranKapat(); } catch (e) {}
     if (o.tur === 'ders') {
       let v = o.veri || {};
@@ -30123,8 +30130,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     }
     let v = o.veri || {}, oy = OYUN.find(x => x[0] === v.oyun);
     if (!oy || typeof window[oy[3]] !== 'function') { toast('Bu oyun şu an açılamadı.'); return; }
-    window[oy[3]]();
     odevMuafBaslat();
+    window[oy[3]]();
     if (['dikte', 'cumle'].includes(v.oyun)) { toast(`📝 Ödev: ${oy[2]} · hedef ${'⭐'.repeat(v.hedefYildiz || 1)}`); return; }
     await bekle(450);
     /* ödevin sınıf ve ünitelerini oyunda seç */
@@ -30714,7 +30721,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-theme.css?v=13">
 <script src="parkur-theme.js?v=12"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
-<script src="medupro.js?v=2"></script>
+<script src="medupro.js?v=3"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
 <script src="activity-ui.js?v=6"></script>
 <link rel="stylesheet" href="bottom-nav.css?v=4">
@@ -30722,7 +30729,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script src="feature-catalog.js?v=2"></script>
-<script src="weekly-ui.js?v=4"></script>
+<script src="weekly-ui.js?v=5"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script src="experience-ui.js?v=4"></script>
@@ -30735,11 +30742,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
-<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=1"></script><script src="contact-policy.js?v=1"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=1"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=1"></script><script src="contact-policy.js?v=2"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
-<script src="progress-ui.js?v=3"></script>
-<link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=8"></script>
+<link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=9"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script src="profile-forest.js?v=1"></script>
