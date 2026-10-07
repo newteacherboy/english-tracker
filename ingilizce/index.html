@@ -18671,12 +18671,12 @@ function odulUret(k, o) {
   window.bcKoleksiyonCiz = function (el) {
     let ciz = () => {
       el.innerHTML = koleksiyonHtml(); kolBagla(el);
-      el.querySelectorAll('.bc-filtre button, .bc-krk, #bcKendi').forEach(b => { let o = b.onclick; b.onclick = e => { if (o) o(e); setTimeout(ciz, 40); }; });
+      el.querySelectorAll('.bc-filtre button, .bc-krk, #bcKendi').forEach(b => { let o = b.onclick; b.onclick = e => { if (o) o(e); ciz(); }; });
     };
     ilerlemeGetir().then(ciz); ciz();
   };
   let orgMg = window.magazaAc;
-  if (typeof orgMg === 'function') window.magazaAc = function () { let r = orgMg.apply(this, arguments); setTimeout(mgCiz, 60); return r; };
+  if (typeof orgMg === 'function') window.magazaAc = function () { let r = orgMg.apply(this, arguments); mgCiz(); return r; };
 
   /* ================= DÜNYA PARKURU (Büyü Akademisi) ================= */
   const RUTBELER = ['🥚 Çırak', '🪄 Büyü Öğrencisi', '📜 Büyücü', '🔮 Başbüyücü', '🐉 Ejder Ustası', '🌟 Efsane Büyücü'];
