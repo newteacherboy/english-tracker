@@ -28788,28 +28788,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function kapatBagla() { let k = $('bzKapat'); if (k) k.onclick = kapat; }
 
   /* ================= 1) KORİDOR (bölüm kapıları) ================= */
-  function koridor() {
-    aktarGerekirse();
-    let p = parkurAlani(); gorunum = { ad: 'koridor', b: null };
-    p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy:window.genelEnerjiKalan ?? "–",max:window.genelEnerjiMax || 30,gold:yoVar()?yo.altin || 0:0})}<button type="button" class="dm-gates-back" id="bzKapat">← Parkur haritasına dön</button>
-      <div class="bz-afis"><b>Papi’nin Keşif Kapıları</b><small>Bir kapı seç, Keşif Sarayı’na doğru ilerle</small></div>
-      <div class="bz-koridor">
-        <div class="bz-kapilar">${BOLUM.map((B, b) => { let acik = bolumAcik(b), n = bolumTamam(b);
-          return `<button class="bz-kapi${acik ? '' : ' kilit'}" data-b="${b}" style="background:${B.renk};--isik:${B.isik}" aria-label="${b + 1}. bölüm ${B.ad}${acik ? ', ' + n + ' / ' + durakSayisi(b) + ' durak' : ', kilitli'}">
-            <span class="no">${acik ? b + 1 : '🔒'}</span><b>${B.ik} ${B.ad}</b><small>${B.alt}</small>
-            <span class="yil">${acik ? `⭐ ${bolumYildiz(b)}/${durakSayisi(b) * 3} · ${n}/${durakSayisi(b)}` : `Önceki kapıyı bitir`}</span></button>`; }).join('')}</div>
-        <div class="bz-kitap"><span aria-hidden="true">📖</span><div>Her kapı yeni bir keşif! İki sınıfın ünitelerini tamamla, bir sonraki kapıyı aç ve Papi ile Keşif Sarayı’na ulaş. Her durakta farklı oyunlardan kelime soruları seni bekliyor.</div></div>
-      </div>
-      <button class="bz-eski" id="bzEski">Eski parkur görünümüne geç</button></div>`;
-    $('bzKapat').onclick = () => harita(aktifBolum());
-    p.querySelectorAll('.bz-kapi').forEach(k => k.onclick = () => {
-      let b = +k.dataset.b;
-      if (!bolumAcik(b)) { toast(`🔒 Bu kapı için ${[1,10,20,30][b]}. seviyeye ulaş ve ${b}. kapının tüm duraklarını bitir (${bolumTamam(b - 1)}/${durakSayisi(b - 1)}).`); return; }
-      harita(b);
-    });
-    $('bzEski').onclick = () => { localStorage.setItem('bz_eski_parkur', '1'); let t = $('tab-dunya'); if (t) t.classList.remove('bz-yeni'); yeniDonDugmesi(); if (typeof orgDunya === 'function') orgDunya(); };
-    p.scrollTop = 0;
-  }
+  function koridor() { harita(aktifBolum()); }
 
   /* ================= 2) KALE HARİTASI (10 durak) ================= */
   function kaleSVG(b) {
@@ -28818,34 +28797,15 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const ADIM = 96;
   function yerHesapla(n) { let H = 260 + n * ADIM; return { H, l: Array.from({ length: n }, (_, i) => [50 + Math.sin(i * 1.15) * 24, H - 62 - i * ADIM]) }; }
   function harita(b) {
-    if (!bolumAcik(b)) { toast(`🔒 Bu parkur ${[1,10,20,30][b]}. seviyede, önceki parkur tamamlanınca açılır.`); return; }
-    aktarGerekirse();
-    let p = parkurAlani(), B = BOLUM[b], N = durakSayisi(b), sira = siradakiDurak(b), n = bolumTamam(b), hepsi = n === N;
-    gorunum = { ad: 'harita', b };
-    let { H, l: YER } = yerHesapla(N), yol = YER.map(([x, y], i) => i ? `C ${YER[i-1][0]} ${(YER[i-1][1]+y)/2} ${x} ${(YER[i-1][1]+y)/2} ${x} ${y}` : `M ${x} ${y}`).join(' '), [hx, hy] = YER[sira];
-    let g = window.dmProgression?.allowed('gunluk_gorev') && yoVar() && yo.gorev && yo.gorev.liste ? yo.gorev.liste : [];
-    const GAD = { oyun3: '3 oyun oyna', oyun5: '5 oyun oyna', yildiz3: 'Bir oyunda ⭐⭐⭐', ders1: '1 konu bitir', dinleme: 'Kulak Dedektifi oyna', yazim: 'Yazım oyununda ⭐⭐', cumle: 'Cümle oyunu oyna', hiz: 'Hız Fırtınası ⭐⭐', zk: 'Zor kelime tekrarı' };
-    const GHEDEF = { oyun3: 3, oyun5: 5 };
-    let sandikAlindi = yoVar() && yo.baSandik && yo.baSandik[b], yuzde = Math.round(n / N * 100), T = toplamDurak();
-    let etiketler = DURAK[b].map((D, d) => (d === 0 || DURAK[b][d - 1].sinif !== D.sinif) ? `<span class="bz-sinif-etiket" style="top:${YER[d][1] + (d ? -18 : 30)}px">🎓 ${D.sinif}. Sınıf</span>` : '').join('');
-    p.innerHTML = `<div class="bz-ic">${window.dmParkurBaslik({energy: window.genelEnerjiKalan ?? '–', max: window.genelEnerjiMax || 30, gold: yoVar() ? yo.altin || 0 : 0})}
-      <div class="dm-parkur-scroll" id="dmParkurScroll">${window.dmParkurSahne({next:sira,total:N,complete:n,section:B.ad,steps:DURAK[b].map((D,index)=>({index,label:D.sinif+'. sınıf '+D.unite+'. ünite',done:tamam.has(D.no)}))})}<div class="dm-map-controls"><button type="button" class="bz-ust-btn dm-map-round" id="bzGeri" aria-label="Bölümler" title="Bölümler">${window.dmParkurIcon('door')}</button><button type="button" class="bz-ust-btn dm-map-round" id="bzAkis" aria-label="Akışa bak" title="Akışa bak">${window.dmParkurIcon('flow')}</button><button type="button" class="bz-ust-btn dm-map-round" onclick="dijiAracPaneliAc()" aria-label="Araçlar" title="Araçlar">${window.dmParkurIcon('tools')}</button>${b > 0 ? '<button class="bz-ust-btn" id="bzOnceki">← Önceki kapı</button>' : ''}${b < 3 && bolumAcik(b + 1) ? '<button class="bz-ust-btn" id="bzSonraki">Sonraki kapı →</button>' : ''}</div>
-      <details class="dm-adventure-full-map"><summary>🗺️ Tüm durakları görüntüle</summary><div class="dm-full-route" id="bzHarita">${Array.from({length:Math.ceil(N/4)},(_,page)=>window.dmParkurSahne({next:sira,total:N,complete:n,section:B.ad+' · '+(page*4+1)+'–'+Math.min(N,page*4+4)+'. durak',steps:DURAK[b].slice(page*4,page*4+4).map((D,i)=>({index:page*4+i,label:D.sinif+'. sınıf '+D.unite+'. ünite',done:tamam.has(D.no)})),full:true})).join('')}</div>
-      </details><details class="dm-map-detail"><summary>${B.ad} · ${n}/${N} durak · İlerleme ve ödüller</summary><div class="bz-yan">
-        <div class="bz-kutu"><h4>🧙 Profil</h4><div style="font-weight:900;font-size:14px">${rutbe()}</div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd">Toplam ${tamam.size}/${T} durak</div><div class="bz-cubuk"><i style="width:${Math.round(tamam.size / T * 100)}%"></i></div></div>
-        <div class="bz-kutu"><h4>📋 Günlük görev</h4>${g.length ? g.map(x => { let h = GHEDEF[x.id] || 1, ok = x.ilerleme >= h; return `<div class="gorev">${ok ? '✅' : '⬜'} ${kac(GAD[x.id] || x.id)}</div>`; }).join('') : '<div class="gorev">'+(window.dmProgression?.allowed('gunluk_gorev')?'Sana Özel’de görevlerin seni bekliyor':'🔒 Günlük görevler 12. seviyede açılır')+'</div>'}</div>
-        <div class="bz-kutu"><h4>🎁 Parkur sandıkları</h4><div class="bz-sandik"><span aria-hidden="true">${sandikAlindi ? '📭' : '🧰'}</span><div style="font-size:11.5px;font-weight:800">${sandikAlindi ? 'Bu kapının sandığını açtın' : hepsi ? 'Sandığın hazır!' : 'Sandıklar seviyene ve tamamladığın parkurlara göre açılır'}</div></div>
-          <button class="bz-btn" id="bzSandik" style="margin-top:8px;padding:9px;font-size:13px">🎁 Sandıklarım</button></div>
-        <div class="bz-kutu"><h4>📈 Kapı ilerlemesi</h4><div style="font-weight:900;font-size:22px">%${yuzde}</div><div class="bz-cubuk"><i style="width:${yuzde}%"></i></div><div style="font-size:11.5px;font-weight:800;color:#c4b5fd;margin-top:6px">⭐ ${bolumYildiz(b)}/${N * 3} yıldız</div></div>
-      </div></details></div></div>`;
-    $('bzGeri').onclick = koridor;
-    $('bzAkis').onclick = () => { if (typeof meduAkisAc === 'function') { try { maSekme = 'akis'; } catch (e) {} meduAkisAc(); } };
-    if ($('bzOnceki')) $('bzOnceki').onclick = () => harita(b - 1);
-    if ($('bzSonraki')) $('bzSonraki').onclick = () => harita(b + 1);
-    p.querySelectorAll('.bz-tas,.dm-start-card,.dm-adventure-node,.dm-adventure-go').forEach(t => t.onclick = () => durakKarti(b, +t.dataset.d));
-    let sb = $('bzSandik'); if (sb) sb.onclick = () => window.dmProgression?.chests();
-    /* sıradaki durak ekranın ortasında görünsün */
-    requestAnimationFrame(() => { const sc = $('dmParkurScroll'); if(sc) sc.scrollTop = 0; });
+    aktarGerekirse();duraklariKur();
+    b=aktifBolum();
+    const p=parkurAlani(),steps=[];
+    DURAK.forEach((list,section)=>list.forEach((D,d)=>steps.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+D.unite+'. ünite',short:D.sinif+'. sınıf',done:tamam.has(D.no),available:bolumAcik(section)&&d<=siradakiDurak(section)})));
+    let current=steps.findIndex(s=>s.b===b&&s.d===siradakiDurak(b));if(current<0)current=0;
+    gorunum={ad:'harita',b};
+    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,complete:steps.filter(s=>s.done).length})+'</div></div>';
+    p.querySelectorAll('.dm-adventure-node').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
+    requestAnimationFrame(()=>{const sc=$('dmParkurScroll'),node=sc?.querySelector('[data-route-index="'+current+'"]');if(sc&&node)sc.scrollTop=Math.max(0,parseFloat(node.style.top)-sc.clientHeight*.58);});
   }
 
   /* ================= 3) DURAK KARTI ================= */
@@ -30751,8 +30711,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=rights-5"></script>
-<link rel="stylesheet" href="parkur-theme.css?v=12">
-<script src="parkur-theme.js?v=11"></script>
+<link rel="stylesheet" href="parkur-theme.css?v=13">
+<script src="parkur-theme.js?v=12"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">

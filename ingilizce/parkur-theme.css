@@ -106,7 +106,6 @@ body.dm-parkur-open #bottomNavMobile{background:#0d4a3d!important;border:1px sol
 .dm-parkur-head .dm-parkur-tabs button[data-dm-tab=pro]{box-shadow:0 3px 0 #c6b1e4!important}
 .dm-parkur-head .dm-parkur-tabs .dm-tab-art{width:28px;height:28px}
 .dm-parkur-head .dm-parkur-tabs b{font-size:13px}
-
 /* Fit the adventure into the visible area above the mobile dock. */
 @media(max-width:768px){
  body.dm-parkur-open #bzParkur{box-sizing:border-box}
@@ -189,3 +188,18 @@ body.dm-parkur-gates .bz-kapi b{font-size:16px}
 body.dm-parkur-gates .bz-kapi small{font-size:11px;margin-top:5px}
 body.dm-parkur-gates .bz-kapi .yil{font-size:10px;margin-top:9px;padding:6px 4px}
 body.dm-parkur-gates .bz-kitap{margin-top:16px;padding:12px;font-size:11px}
+/* One continuous world, all real unit IDs retained. */
+.dm-unified-scene{position:relative;width:100%;overflow:hidden;background:#478c62 url('parkur-continuous-world-v1.svg') center/100% 100% no-repeat;isolation:isolate}
+.dm-unified-path{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;filter:drop-shadow(0 3px 2px #583c3740)}
+.dm-unified-palace-label{position:absolute;top:24px;left:50%;transform:translateX(-50%);background:#fff6dbed;border:2px solid #dac072;border-radius:18px;padding:7px 14px;white-space:nowrap;font:900 14px Nunito;z-index:2;color:#174b3c}
+.dm-unified-scene .dm-adventure-node{width:62px;height:43px;z-index:2}
+.dm-unified-scene .dm-adventure-node small{white-space:nowrap;font-size:11px;top:50px;max-width:none;background:#fff7dbe8;padding:4px 7px}
+.dm-unified-papi{position:absolute;bottom:25px;left:1%;width:30%;max-width:160px;z-index:2;pointer-events:none}
+.dm-parkur-head .dm-adventure-brand-row{gap:6px;margin-bottom:6px}
+.dm-parkur-head .dm-adventure-brand{min-width:0;flex:1}
+.dm-parkur-head .dm-adventure-brand-row small{display:none}
+.dm-parkur-head .dm-parkur-brand{font-size:clamp(17px,4.8vw,27px);white-space:nowrap}
+.dm-parkur-head .dm-parkur-brand span{font-size:14px}
+.dm-parkur-head .dm-parkur-top-status{width:clamp(138px,42vw,200px)}
+.dm-parkur-head .dm-adventure-profile{width:34px;height:34px}
+body.dm-parkur-open .dm-parkur-scroll{padding-bottom:0}
