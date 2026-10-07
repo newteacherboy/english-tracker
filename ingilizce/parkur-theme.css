@@ -106,3 +106,40 @@ body.dm-parkur-open #bottomNavMobile{background:#0d4a3d!important;border:1px sol
 .dm-parkur-head .dm-parkur-tabs button[data-dm-tab=pro]{box-shadow:0 3px 0 #c6b1e4!important}
 .dm-parkur-head .dm-parkur-tabs .dm-tab-art{width:28px;height:28px}
 .dm-parkur-head .dm-parkur-tabs b{font-size:13px}
+
+/* Fit the adventure into the visible area above the mobile dock. */
+@media(max-width:768px){
+ body.dm-parkur-open #bzParkur{box-sizing:border-box}
+ body.dm-parkur-open #bzParkur>.bz-ic{box-sizing:border-box;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
+ body.dm-parkur-open .dm-parkur-head{padding:8px 14px 0}
+ .dm-adventure-brand-row{margin-bottom:5px}
+ .dm-parkur-brand{font-size:24px;line-height:1.1}
+ .dm-parkur-brand span{font-size:16px}
+ .dm-adventure-brand-row small{font-size:10px}
+ .dm-adventure-profile{width:36px;height:36px}
+ .dm-parkur-head>h1{font-size:18px;line-height:1.2;margin-bottom:8px}
+ .dm-parkur-wallet{gap:7px;margin-bottom:7px}
+ .dm-parkur-wallet button{min-height:40px;padding:5px 6px;border-radius:12px;font-size:13px}
+ .dm-parkur-wallet button>span:first-child{font-size:16px}
+ .dm-parkur-wallet .dm-adventure-level{padding:4px 8px;box-shadow:0 0 0 2px #eee0f9,0 2px 0 #bba2d1}
+ .dm-adventure-level>span{font-size:12px!important}
+ .dm-adventure-level-track{height:4px;margin-top:3px}
+ .dm-parkur-head .dm-parkur-tabs{gap:8px!important;padding:0 0 3px!important;margin-bottom:7px}
+ .dm-parkur-head .dm-parkur-tabs button{min-height:36px!important;padding:4px 8px!important;border-radius:11px!important;font-size:11px!important}
+ .dm-parkur-head .dm-parkur-tabs .dm-tab-art{width:22px;height:22px}
+ .dm-parkur-head .dm-parkur-tabs b{font-size:12px}
+ body.dm-parkur-open .dm-parkur-scroll{box-sizing:border-box;padding-bottom:0}
+ .dm-parkur-scroll>.dm-adventure-scene:first-child{height:100%;min-height:280px;max-height:640px;box-sizing:border-box}
+ .dm-adventure-go{bottom:12px;min-height:46px;left:7%;width:86%;font-size:18px;border-radius:24px}
+ .dm-adventure-go span{font-size:26px}
+ .dm-adventure-papi{width:clamp(110px,34%,170px);bottom:18%}
+ .dm-adventure-papi-note{left:12px;top:39%;font-size:10px;padding:6px 8px}
+ .dm-adventure-palace-label{top:9px;font-size:11px;padding:4px 10px}
+ .dm-adventure-route-name{top:35px;font-size:9px}
+}
+@media(max-width:768px) and (max-height:600px){
+ .dm-adventure-brand-row small{display:none}
+ .dm-adventure-brand-row{margin-bottom:4px}
+ .dm-parkur-head>h1{font-size:16px;margin-bottom:6px}
+ .dm-adventure-papi-note{display:none}
+}

@@ -74,3 +74,13 @@ body.kk-acik .seviye-harita-overlay { padding-bottom:calc(98px + env(safe-area-i
  #bottomNavMobile .bn-item.dm-level-locked::after{position:absolute;top:2px;right:3px;font-size:10px;line-height:12px}
  body.dm-parkur-open .dm-parkur-scroll{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 }
+
+/* A smaller dock keeps the route visible while preserving seven touch targets. */
+@media(max-width:768px){
+ #bottomNavMobile.bottom-nav-mobile{--dm-nav-height:56px;padding:3px 2px calc(3px + env(safe-area-inset-bottom,0px))!important;border-radius:18px 18px 0 0!important}
+ #bottomNavMobile .bn-item{min-height:50px!important;padding:2px 1px!important;border-radius:11px!important}
+ #bottomNavMobile .bn-icon{width:28px!important;height:26px!important}
+ #bottomNavMobile .bn-label{min-height:18px;font-size:9px!important;line-height:1.1!important}
+ #bottomNavMobile .bn-item.active{transform:none!important}
+ #bottomNavMobile .bn-item.dm-level-locked::after{top:1px;right:2px;font-size:9px}
+}
