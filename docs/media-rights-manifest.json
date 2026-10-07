@@ -327,6 +327,30 @@
       "bytes": 667704,
       "status": "ai-generated",
       "source": "OpenAI image generation 2026-10-08, user-approved concept 1; SVG viewport of original comparison image."
+    },
+    {
+      "path": "ingilizce/ders-vadi/papi-kitap.png",
+      "sha256": "adaddb043f9893297737c263bfe2ecfe82cf1ecab9c49fc79d15a93d0f27d935",
+      "bytes": 67086,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-growth.webp"
+    },
+    {
+      "path": "ingilizce/ders-vadi/papi-buyutec.png",
+      "sha256": "9efaffd3d776d93f3cd7a47212c0585f4496d7d9d0496d7629f3edfb5c70d53c",
+      "bytes": 106599,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-help-v2.png"
+    },
+    {
+      "path": "ingilizce/ders-vadi/papi-yildiz.png",
+      "sha256": "901730ec1e9fd62bb0284c8a81eaee582a67f4712dcad0def5bf6bf9b3758fa4",
+      "bytes": 110307,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-reward-v2.png"
     }
   ]
 }

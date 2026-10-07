@@ -1,0 +1,91 @@
+/* Ders Çalış konu sayfası · "Vadi Defteri" görünümü.
+   Ada görünümü açıkken (body.dc-ada) ve ders-vadi.js body'ye dc-vadi eklediğinde geçerlidir.
+   Davranışa dokunmaz: kilitler, sayaç, sesler ve Konu Macerası aynen çalışır. */
+body.dc-ada.dc-vadi #tab-derscalis #dcScreenDetail{background:#FFF9EE!important;border-radius:26px!important;padding:0 0 18px!important;overflow:hidden!important;position:relative}
+body.dc-ada.dc-vadi #tab-derscalis #dcScreenDetail::before,
+body.dc-ada.dc-vadi #tab-derscalis .dc-topic-header::before,
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik.dc-content-card::before,
+body.dc-ada.dc-vadi #tab-derscalis #dcOrnekIcerik h3::before,
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dc-quiz-q-text::before,
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dc-quiz-bitir-btn::after{content:none!important;display:none!important}
+
+/* Vadi manzarası */
+body.dc-ada.dc-vadi #tab-derscalis .dv-vadi{height:190px;background:#dff3ea url(ders-vadi/vadi.jpg) center 70%/cover no-repeat;display:flex;justify-content:flex-end;align-items:flex-start;padding:12px 14px;box-sizing:border-box}
+body.dc-ada.dc-vadi #tab-derscalis .dv-vadi .dc-bilmiyordum-btn{position:static!important;display:inline-flex!important;align-items:center;gap:7px;min-height:44px;padding:0 16px!important;border:0!important;border-radius:999px!important;background:#fff!important;color:#2B2350!important;box-shadow:0 3px 0 rgba(43,35,80,.18)!important;font-weight:900!important;font-size:14px!important;cursor:pointer}
+body.dc-ada.dc-vadi #tab-derscalis .dv-vadi .dc-bilmiyordum-btn svg{width:17px;height:17px;color:#F2B705}
+body.dc-ada.dc-vadi #tab-derscalis .dv-vadi .dc-bilmiyordum-btn.aktif,
+body.dc-ada.dc-vadi #tab-derscalis .dv-vadi .dc-bilmiyordum-btn.active{background:#FFD166!important;color:#2B2350!important}
+body.dc-ada.dc-vadi #tab-derscalis .dv-vadi .dc-bilmiyordum-btn.aktif svg,
+body.dc-ada.dc-vadi #tab-derscalis .dv-vadi .dc-bilmiyordum-btn.active svg{color:#2B2350}
+
+/* Başlık kartı ve kitap okuyan Papi */
+body.dc-ada.dc-vadi #tab-derscalis .dc-topic-header{position:relative!important;overflow:visible!important;margin:-58px 14px 0!important;background:#fff!important;border:2px solid #F6E7C6!important;border-radius:26px!important;box-shadow:0 6px 0 #F0DDB4!important;padding:16px 16px 16px!important;color:#2B2350!important;display:block!important}
+body.dc-ada.dc-vadi #tab-derscalis .dv-papi-kitap{position:absolute;right:4px;top:-60px;width:96px;height:96px;object-fit:contain;pointer-events:none}
+body.dc-ada.dc-vadi #tab-derscalis .dc-th-eyebrow{display:inline-block!important;background:#DFF5E8!important;color:#166B46!important;border-radius:999px;padding:5px 12px!important;font-size:12px!important;font-weight:900!important;letter-spacing:.5px!important;margin:0!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcThTitle{font-family:'Fredoka',inherit;color:#2B2350!important;font-weight:700!important;font-size:25px!important;line-height:1.15!important;margin:10px 0 0!important;padding-right:64px}
+body.dc-ada.dc-vadi #tab-derscalis #dcTopicImg{display:none!important}
+
+/* Sekmeler: renkli basılabilir düğmeler */
+body.dc-ada.dc-vadi #tab-derscalis .dc-tabbar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px!important;margin:18px 14px 6px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+body.dc-ada.dc-vadi #tab-derscalis .dc-tab-btn{--dv-yumusak:#DFF5E8;--dv-dolu:#2BB673;--dv-koyu:#1E8F57;--dv-yazi:#14532D;min-height:60px;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:#fff!important;color:var(--dv-yazi)!important;border:2px solid var(--dv-yumusak)!important;border-radius:18px!important;box-shadow:0 4px 0 var(--dv-yumusak)!important;font-weight:900!important;font-size:14px!important;text-shadow:none!important;transform:none!important}
+body.dc-ada.dc-vadi #tab-derscalis .dc-tab-btn[data-tab="ornek"]{--dv-yumusak:#E2F1FF;--dv-dolu:#3B8FE0;--dv-koyu:#2A6FB3;--dv-yazi:#1E3A5F}
+body.dc-ada.dc-vadi #tab-derscalis .dc-tab-btn[data-tab="test"]{--dv-yumusak:#FFF0B8;--dv-dolu:#E9A800;--dv-koyu:#B98500;--dv-yazi:#5B3A06}
+body.dc-ada.dc-vadi #tab-derscalis .dc-tab-btn svg{width:22px;height:22px;stroke:currentColor}
+body.dc-ada.dc-vadi #tab-derscalis .dc-tab-btn.active{background:var(--dv-dolu)!important;color:#fff!important;border-color:var(--dv-dolu)!important;box-shadow:0 4px 0 var(--dv-koyu)!important}
+body.dc-ada.dc-vadi #tab-derscalis .dc-tab-btn[data-tab="test"].active{color:#3D2604!important}
+
+/* Papi anlatıyor */
+body.dc-ada.dc-vadi #tab-derscalis .dv-papi-anlatir{display:flex;align-items:flex-end;gap:6px;margin:10px 14px 12px}
+body.dc-ada.dc-vadi #tab-derscalis .dv-papi-anlatir img{width:78px;height:84px;object-fit:contain;flex-shrink:0}
+body.dc-ada.dc-vadi #tab-derscalis .dv-papi-anlatir p{flex:1;margin:0 0 12px;background:#fff;border:2px solid #E9E2FF;border-radius:22px 22px 22px 6px;padding:12px 14px;font-weight:800;font-size:15px;line-height:1.5;color:#2B2350}
+
+/* Anlatım kartı */
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik.dc-content-card{margin:0 14px!important;background:#fff!important;border:2px solid #EFE6FF!important;border-radius:24px!important;box-shadow:0 5px 0 #E6DCFA!important;padding:18px 16px!important;color:#2B2350!important;font-size:16px;line-height:1.65}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik :is(h1,h2,h3,h4){font-family:'Fredoka',inherit;color:#5B2DB8!important;font-weight:700!important;line-height:1.25}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik :is(b,strong){color:#7C3AED!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik li::marker{color:#2BB673}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik table{border-collapse:separate;border-spacing:0 6px;width:100%}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik :is(td,th){background:#F7F3FF;padding:8px 10px;vertical-align:top}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik :is(td,th):first-child{border-radius:12px 0 0 12px}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik :is(td,th):last-child{border-radius:0 12px 12px 0}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik img{max-width:100%;height:auto;border-radius:16px}
+
+/* Okudum düğmesi */
+body.dc-ada.dc-vadi #tab-derscalis .dc-uyg-kontrol-btn#dcOkudumBtn{display:block;width:calc(100% - 28px)!important;margin:16px 14px 0!important;min-height:56px;border:0!important;border-radius:20px!important;font-family:'Fredoka',inherit;font-weight:700!important;font-size:18px!important}
+body.dc-ada.dc-vadi #tab-derscalis .dc-uyg-kontrol-btn#dcOkudumBtn:not([disabled]){background:#22A06B!important;box-shadow:0 5px 0 #157A4F!important;color:#fff!important}
+body.dc-ada.dc-vadi #tab-derscalis .dc-uyg-kontrol-btn#dcOkudumBtn[disabled],
+body.dc-ada.dc-vadi #tab-derscalis .dc-uyg-kontrol-btn#dcOkudumBtn.dz-bekliyor{background:#EFE9DA!important;box-shadow:0 4px 0 #DCD2BC!important;color:#6B5E44!important}
+
+/* Örnekler ve Test panelleri */
+body.dc-ada.dc-vadi #tab-derscalis :is(#dcTab-ornek.active,#dcTab-test.active){background:#FFF9EE!important;border-radius:0 0 26px 26px!important;padding:14px 14px 20px!important;margin-top:-14px!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcOrnekIcerik.dc-content-card{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcOrnekIcerik h3{font-family:'Fredoka',inherit;color:#1E3A5F!important;font-weight:700!important;font-size:20px!important;margin:0 0 6px!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcOrnekIlerleme{display:inline-block;background:#E2F1FF;color:#1E3A5F!important;border-radius:999px;padding:5px 12px;font-size:12.5px!important}
+body.dc-ada.dc-vadi #tab-derscalis .dc-example-row{--dv-renk:#E5484D;display:block!important;background:#fff!important;border:2px solid #EEE8FF!important;border-radius:20px!important;box-shadow:0 3px 0 #EEE8FF!important;padding:12px 12px 12px 66px!important;margin-bottom:10px!important;position:relative;min-height:58px}
+body.dc-ada.dc-vadi #tab-derscalis .dc-example-row:nth-child(5n+2){--dv-renk:#E8590C}
+body.dc-ada.dc-vadi #tab-derscalis .dc-example-row:nth-child(5n+3){--dv-renk:#8E4EC6}
+body.dc-ada.dc-vadi #tab-derscalis .dc-example-row:nth-child(5n+4){--dv-renk:#1C7ED6}
+body.dc-ada.dc-vadi #tab-derscalis .dc-example-row:nth-child(5n){--dv-renk:#0F9D58}
+body.dc-ada.dc-vadi #tab-derscalis .dc-ex-play{position:absolute!important;left:10px;top:50%;transform:translateY(-50%);width:44px!important;height:44px!important;border-radius:50%!important;border:0!important;background:var(--dv-renk)!important;box-shadow:0 3px 0 rgba(0,0,0,.18)!important;font-size:16px!important;display:grid!important;place-items:center;color:#fff}
+body.dc-ada.dc-vadi #tab-derscalis .dc-ex-en{color:#2B2350!important;font-weight:900!important;font-size:15.5px!important}
+body.dc-ada.dc-vadi #tab-derscalis .dc-ex-tr{color:#6A6290!important;font-weight:700!important;font-size:13px!important;margin-top:2px}
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dc-quiz-q{background:#fff!important;border:2px solid #FFE7A3!important;border-radius:22px!important;box-shadow:0 5px 0 #F3D98B!important;padding:14px!important;margin-bottom:14px!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dc-quiz-q-text{color:#2B2350!important;font-weight:900!important;font-size:15.5px!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dc-quiz-opt{background:#FFFBEF!important;border:2px solid #F1E3BC!important;border-radius:14px!important;box-shadow:0 3px 0 #F1E3BC!important;color:#2B2350!important;font-weight:800!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dc-quiz-opt.dogru{background:#DCFCE7!important;border-color:#16A34A!important;color:#14532D!important;box-shadow:0 3px 0 #16A34A!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dc-quiz-opt.yanlis{background:#FEE2E2!important;border-color:#DC2626!important;color:#7F1D1D!important;box-shadow:0 3px 0 #DC2626!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dc-quiz-bitir-btn{background:#F97316!important;color:#fff!important;border:0!important;border-radius:18px!important;box-shadow:0 5px 0 #C2560C!important;font-weight:900!important}
+
+/* Konu Macerası: yıldızlı Papi'li sarı kart */
+body.dc-ada.dc-vadi #tab-derscalis .km-baslangic{position:relative;display:block!important;margin:26px 14px 4px!important;padding:16px 108px 16px 18px!important;background:#FFE7A3!important;border:0!important;border-radius:26px!important;box-shadow:0 6px 0 #E9B949!important;color:#5B3A06!important}
+body.dc-ada.dc-vadi #tab-derscalis .km-baslangic .i{display:none!important}
+body.dc-ada.dc-vadi #tab-derscalis .km-baslangic b{font-family:'Fredoka',inherit;font-size:20px!important;font-weight:700!important;color:#5B3A06}
+body.dc-ada.dc-vadi #tab-derscalis .km-baslangic small{display:block;margin-top:2px;font-size:13px!important;font-weight:800!important;color:#7A5410;opacity:1!important}
+body.dc-ada.dc-vadi #tab-derscalis .km-baslangic button{display:block;margin:12px 0 0!important;min-height:48px;padding:0 20px!important;border:0!important;border-radius:16px!important;background:#F97316!important;box-shadow:0 5px 0 #C2560C!important;color:#fff!important;font-family:'Fredoka',inherit;font-weight:700!important;font-size:17px!important}
+body.dc-ada.dc-vadi #tab-derscalis .dv-papi-yildiz{position:absolute;right:2px;bottom:6px;width:104px;height:104px;object-fit:contain;pointer-events:none}
+
+@media (max-width:360px){
+  body.dc-ada.dc-vadi #tab-derscalis .dc-tab-btn{font-size:12.5px!important}
+  body.dc-ada.dc-vadi #tab-derscalis .km-baslangic{padding-right:88px!important}
+  body.dc-ada.dc-vadi #tab-derscalis .dv-papi-yildiz{width:84px;height:84px}
+}
