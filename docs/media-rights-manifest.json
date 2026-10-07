@@ -196,8 +196,8 @@
       "path": "ingilizce/parkur-continuous-world-v1.svg",
       "sha256": "e80b6853a499c9cffc2cc9f9d47222b4817626d71f8515fa83e9646047f4252d",
       "bytes": 327384,
-      "status": "kaynak-dogrulanacak",
-      "source": "SVG wrapper embedding a WebP raster, added in 01cdc74. Real origin (tool or author) must be recorded here by the owner."
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the unified Diji-Medu parkur world; original scene, no third-party source image. Stored as an SVG wrapper around an embedded WebP."
     },
     {
       "path": "ingilizce/parkur-landscape-v2.png",
