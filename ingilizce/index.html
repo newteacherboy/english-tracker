@@ -28802,16 +28802,17 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   const ADIM = 96;
   function yerHesapla(n) { let H = 260 + n * ADIM; return { H, l: Array.from({ length: n }, (_, i) => [50 + Math.sin(i * 1.15) * 24, H - 62 - i * ADIM]) }; }
-  function harita(b) {
+  function harita(b, page) {
     aktarGerekirse();duraklariKur();
-    b=aktifBolum();
+    if(!Number.isInteger(b)||b<0||b>3)b=aktifBolum();
     const p=parkurAlani(),steps=[];
     DURAK.forEach((list,section)=>list.forEach((D,d)=>steps.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+D.unite+'. ünite',short:D.sinif+'. sınıf',done:tamam.has(D.no),available:bolumAcik(section)&&d<=siradakiDurak(section)})));
     let current=steps.findIndex(s=>s.b===b&&s.d===siradakiDurak(b));if(current<0)current=0;
     gorunum={ad:'harita',b};
-    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,complete:steps.filter(s=>s.done).length})+'</div></div>';
-    p.querySelectorAll('.dm-adventure-node').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
-    requestAnimationFrame(()=>{const sc=$('dmParkurScroll'),node=sc?.querySelector('[data-route-index="'+current+'"]');if(sc&&node)sc.scrollTop=Math.max(0,parseFloat(node.style.top)-sc.clientHeight*.58);});
+    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page})+'</div></div>';
+    window.dmParkurBookOpen=(chapter,nextPage)=>harita(chapter,nextPage);
+    p.querySelectorAll('.dm-adventure-node,.dm-book-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
+    requestAnimationFrame(()=>{const sc=$('dmParkurScroll');if(sc)sc.scrollTop=0;});
   }
 
   /* ================= 3) DURAK KARTI ================= */
@@ -28820,7 +28821,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let B = BOLUM[b], D = durakBilgi(b, d), no = D.no, N = durakSayisi(b), bitti = tamam.has(no), y = yildiz(no), n = bolumTamam(b);
     let ileride = d > siradakiDurak(b) && !bitti;
     let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
-    k.innerHTML = `<div class="bz-alt-kart"><h3>${D.sinif}. Sınıf · ${D.unite}. Ünite</h3>
+    k.innerHTML = `<div class="bz-alt-kart"><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3>
       <div class="alt">${B.ik} ${kac(durakAdi(b, d))} · ${bitti ? '⭐'.repeat(y) + '☆'.repeat(3 - y) + ' en iyi sonucun' : ileride ? '🔒 Önce ' + DURAK[b][siradakiDurak(b)].sinif + '. sınıf ' + DURAK[b][siradakiDurak(b)].unite + '. üniteyi geç' : 'Sıradaki durak!'}</div>
       <div class="bz-tipler">${TIPLER.map(([, ik, ad]) => `<div><span>${ik}</span>${ad}</div>`).join('')}<div><span>🏆</span>11 soru</div></div>
       <div style="font-size:12.5px;font-weight:800;color:#7c6ba8;margin-bottom:6px">8 soru bu üniteden, 3 soru önceki ünitelerden 🔁 · geçmek için ${GECME} doğru</div>
@@ -30721,8 +30722,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=rights-6"></script>
-<link rel="stylesheet" href="parkur-theme.css?v=14">
-<script src="parkur-theme.js?v=13"></script>
+<link rel="stylesheet" href="parkur-theme.css?v=15">
+<script src="parkur-theme.js?v=14"></script>
 <link rel="stylesheet" href="medupro.css?v=1">
 <script src="medupro.js?v=3"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">

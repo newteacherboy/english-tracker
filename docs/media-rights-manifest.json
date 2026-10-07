@@ -226,6 +226,13 @@
       "bytes": 648613,
       "status": "ai-generated",
       "source": "Original river landscape generated with OpenAI imagegen on 2026-10-07 for the user-approved Diji-Medu river concept; converted to WebP and embedded in SVG. No third-party source artwork."
+    },
+    {
+      "path": "ingilizce/parkur-story-atlas-v1.svg",
+      "sha256": "a6157891e44c3d8c1ff39447bf673507f1439d512bdcaaf38b60fb7f0ed9bf56",
+      "bytes": 517309,
+      "status": "ai-generated",
+      "source": "Original four chapter illustration atlas generated with OpenAI imagegen on 2026-10-07 using the user-approved storybook UI as a style reference; WebP embedded in SVG. No third-party source image."
     }
   ]
 }
