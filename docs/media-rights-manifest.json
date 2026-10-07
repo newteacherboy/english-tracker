@@ -320,6 +320,13 @@
       "bytes": 393022,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+    },
+    {
+      "path": "ingilizce/assets/forest-reference-v1.svg",
+      "sha256": "d650eeea164b6a756576bebc5d19ff7ea547a4830cf4c5ade8bf0ae70d3ca6d9",
+      "bytes": 667704,
+      "status": "ai-generated",
+      "source": "OpenAI image generation 2026-10-08, user-approved concept 1; SVG viewport of original comparison image."
     }
   ]
 }
