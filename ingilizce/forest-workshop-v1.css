@@ -1,8 +1,8 @@
 /* Illustrated Orman Atölyesi assets, with real native game controls above them. */
 #bzPerde:has(.fw-panel){padding:0;background:#254923}
-#bzPerde .dm-question-panel.fw-panel{position:relative;isolation:isolate;--q-ink:#432613;--q-accent:#496e2f;--q-soft:#f7e9ba;--q-edge:#9b713e;background:#234823 url('forest-scene-v1.svg') center top/auto max(100svh,150vw) no-repeat;color:#fff6dc;padding:calc(8px + env(safe-area-inset-top,0px)) 0 calc(24px + env(safe-area-inset-bottom,0px));min-height:100svh}
+#bzPerde .dm-question-panel.fw-panel{position:relative;isolation:isolate;--q-ink:#432613;--q-accent:#496e2f;--q-soft:#f7e9ba;--q-edge:#9b713e;background:#234823 url('assets/forest-scene-v1.svg') center top/auto max(100svh,150vw) no-repeat;color:#fff6dc;padding:calc(8px + env(safe-area-inset-top,0px)) 0 calc(24px + env(safe-area-inset-bottom,0px));min-height:100svh}
 #bzPerde .fw-panel .bz-oyun-ust{position:relative;max-width:580px;border:0;background:transparent;padding:0 12px;color:#fff8de;height:48px;gap:7px;text-shadow:0 2px 3px #132b0d}
-#bzPerde .fw-panel :is(.kapat,.bz-geri-soru){background:transparent url('forest-back-disc-v1.svg') center/100% 100% no-repeat!important;border:0!important;color:#fff6d9!important;width:42px!important;height:42px!important;min-width:34px;border-radius:50%!important;font-size:22px;filter:drop-shadow(0 3px 2px #1b260b80)}
+#bzPerde .fw-panel :is(.kapat,.bz-geri-soru){background:transparent url('assets/forest-back-disc-v1.svg') center/100% 100% no-repeat!important;border:0!important;color:#fff6d9!important;width:42px!important;height:42px!important;min-width:34px;border-radius:50%!important;font-size:22px;filter:drop-shadow(0 3px 2px #1b260b80)}
 #bzPerde .fw-panel .bz-geri-soru{width:30px!important;height:30px!important;font-size:20px}
 #bzPerde .fw-panel .bz-geri-soru:disabled{opacity:.55}
 #bzPerde .fw-panel .bz-noktalar{padding:4px;gap:2px;background:#263119e0;border:2px solid #b39348;border-radius:999px;min-height:20px;box-shadow:inset 0 1px 4px #0008}
@@ -13,10 +13,10 @@
 #bzPerde .fw-panel .bz-enerji-pill{background:#392916c9;border:2px solid #bc9b55;color:#fff6d0;padding:5px 7px;white-space:nowrap}
 #bzPerde .fw-panel .bz-govde{display:none}
 #bzPerde .fw-hero{position:relative;width:100%;max-width:580px;height:clamp(155px,30svh,290px);margin:0 auto;pointer-events:none}
-#bzPerde .fw-hero-art{position:absolute;right:7%;bottom:-2%;width:31%;height:47%;background-image:url('forest-icons-v1.svg');background-size:400% 400%;background-position:var(--fw-art-x) var(--fw-art-y);background-repeat:no-repeat;display:none;filter:drop-shadow(0 6px 4px #51371655)}
+#bzPerde .fw-hero-art{position:absolute;right:7%;bottom:-2%;width:31%;height:47%;background-image:url('assets/forest-icons-v1.svg');background-size:400% 400%;background-position:var(--fw-art-x) var(--fw-art-y);background-repeat:no-repeat;display:none;filter:drop-shadow(0 6px 4px #51371655)}
 #bzPerde .fw-hero-art.fw-has-art{display:block}
 #bzPerde .fw-panel #bzAlan,#bzPerde .fw-panel .dm-question-review{width:calc(100% - 26px);max-width:550px;margin:0 auto;padding:0;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;color:#432613}
-#bzPerde .fw-panel .fw-question-board{position:relative;text-align:center;background:url('forest-question-plaque-v1.svg') center/100% 100% no-repeat;padding:24px 34px 24px;min-height:112px;margin:0 0 10px;color:#432613;filter:drop-shadow(0 4px 2px #26360b66)}
+#bzPerde .fw-panel .fw-question-board{position:relative;text-align:center;background:url('assets/forest-question-plaque-v1.svg') center/100% 100% no-repeat;padding:24px 34px 24px;min-height:112px;margin:0 0 10px;color:#432613;filter:drop-shadow(0 4px 2px #26360b66)}
 #bzPerde .fw-panel .fw-question-label{font:600 18px/1.2 Fredoka,Nunito,system-ui,sans-serif;color:#245821;margin:0 0 6px}
 #bzPerde .fw-panel .fw-question-board .bz-etiket{display:none}
 #bzPerde .fw-panel .fw-question-board .bz-soru{font:600 clamp(22px,6.2vw,30px)/1.16 Fredoka,Nunito,system-ui,sans-serif;color:#432613;margin:3px 0 0;text-shadow:0 1px #fff8}
@@ -24,27 +24,27 @@
 #bzPerde .fw-panel[data-question-type="lab"] .fw-question-board .bz-ipucu,#bzPerde .fw-panel[data-question-type="risk"] .fw-question-board .bz-ipucu{font-size:0!important;line-height:0;margin:0;padding:0;height:0}
 #bzPerde .fw-panel[data-question-type="lab"] .fw-question-board .bz-ipucu .bz-ses{position:absolute;right:25px;top:15px;min-height:30px;padding:2px 5px!important;background:#fff0!important;border:0;box-shadow:none;font-size:17px!important}
 #bzPerde .fw-panel :is(.bz-secenekler,.bz-kartlar){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0;margin:0}
-#bzPerde .fw-panel .bz-sec{position:relative;border:0;border-radius:0;min-height:111px;padding:22px 22px 19px;background:transparent url('forest-answer-frame-v1.svg') center/100% 100% no-repeat!important;box-shadow:none;text-align:center;font:600 clamp(17px,4.7vw,22px)/1.12 Fredoka,Nunito,system-ui,sans-serif;color:#432613;filter:drop-shadow(0 3px 1px #24330b66);overflow-wrap:anywhere;transition:transform .12s}
+#bzPerde .fw-panel .bz-sec{position:relative;border:0;border-radius:0;min-height:111px;padding:22px 22px 19px;background:transparent url('assets/forest-answer-frame-v1.svg') center/100% 100% no-repeat!important;box-shadow:none;text-align:center;font:600 clamp(17px,4.7vw,22px)/1.12 Fredoka,Nunito,system-ui,sans-serif;color:#432613;filter:drop-shadow(0 3px 1px #24330b66);overflow-wrap:anywhere;transition:transform .12s}
 #bzPerde .fw-panel .bz-sec::after{content:none}
-#bzPerde .fw-panel .bz-sec.fw-has-art::before{content:"";display:block;width:86px;max-width:95%;height:72px;margin:-7px auto 3px;background-image:url('forest-icons-v1.svg');background-size:400% 400%;background-position:var(--fw-art-x) var(--fw-art-y);background-repeat:no-repeat}
+#bzPerde .fw-panel .bz-sec.fw-has-art::before{content:"";display:block;width:86px;max-width:95%;height:72px;margin:-7px auto 3px;background-image:url('assets/forest-icons-v1.svg');background-size:400% 400%;background-position:var(--fw-art-x) var(--fw-art-y);background-repeat:no-repeat}
 #bzPerde .fw-panel .bz-sec:active:not(:disabled){transform:scale(.97)}
-#bzPerde .fw-panel .bz-sec.dogru,#bzPerde .fw-panel .bz-sec.yanlis{background:transparent url('forest-answer-frame-v1.svg') center/100% 100% no-repeat!important;box-shadow:none;color:#1d5d25;opacity:1!important;outline:4px solid #78bd47;outline-offset:-7px;border-radius:18px}
+#bzPerde .fw-panel .bz-sec.dogru,#bzPerde .fw-panel .bz-sec.yanlis{background:transparent url('assets/forest-answer-frame-v1.svg') center/100% 100% no-repeat!important;box-shadow:none;color:#1d5d25;opacity:1!important;outline:4px solid #78bd47;outline-offset:-7px;border-radius:18px}
 #bzPerde .fw-panel .bz-sec.yanlis{color:#9a3825;outline-color:#dc7758}
 #bzPerde .fw-panel .bz-sec:is(.dogru,.yanlis)::after{content:"✓";position:absolute;top:10px;right:12px;width:27px;height:27px;border-radius:50%;color:white;background:#368b34;display:grid;place-items:center;font:900 21px/1 Nunito,system-ui}
 #bzPerde .fw-panel .bz-sec.yanlis::after{content:"×";background:#ba5540}
 #bzPerde .fw-panel .bz-sec:disabled:not(.dogru):not(.yanlis){opacity:.65;text-decoration:none}
-#bzPerde .fw-panel :is(.bz-btn,.bz-jk,.bz-ses){background:transparent url('forest-helper-button-v1.svg') center/100% 100% no-repeat!important;border:0;box-shadow:none;color:#fff3d4!important;text-shadow:0 1px 2px #42200e;border-radius:0;min-height:49px;padding:11px 17px;font:800 14px/1.25 Nunito,system-ui,sans-serif;filter:drop-shadow(0 3px 1px #20310a70)}
+#bzPerde .fw-panel :is(.bz-btn,.bz-jk,.bz-ses){background:transparent url('assets/forest-helper-button-v1.svg') center/100% 100% no-repeat!important;border:0;box-shadow:none;color:#fff3d4!important;text-shadow:0 1px 2px #42200e;border-radius:0;min-height:49px;padding:11px 17px;font:800 14px/1.25 Nunito,system-ui,sans-serif;filter:drop-shadow(0 3px 1px #20310a70)}
 #bzPerde .fw-panel .bz-btn:disabled{opacity:.65;color:#e6d1a6!important}
 #bzPerde .fw-panel .bz-jokerler{display:flex;flex-wrap:wrap;justify-content:center;width:calc(100% - 26px);max-width:550px;margin:12px auto 0;gap:6px}
 #bzPerde .fw-panel .bz-jk{flex:1 1 70px;min-width:0;min-height:46px;padding:7px 10px;font-size:10px}
 #bzPerde .fw-panel .bz-jk span{font-size:18px}
 #bzPerde .fw-panel .bz-jk:disabled{opacity:.65}
 #bzPerde .fw-panel .bz-kartlar{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
-#bzPerde .fw-panel .bz-kart2{height:105px;border:0;border-radius:0;background:transparent url('forest-answer-frame-v1.svg') center/100% 100% no-repeat!important;box-shadow:none;color:#432613!important;font-size:14px;padding:20px 14px;filter:drop-shadow(0 3px 1px #20310a70)}
+#bzPerde .fw-panel .bz-kart2{height:105px;border:0;border-radius:0;background:transparent url('assets/forest-answer-frame-v1.svg') center/100% 100% no-repeat!important;box-shadow:none;color:#432613!important;font-size:14px;padding:20px 14px;filter:drop-shadow(0 3px 1px #20310a70)}
 #bzPerde .fw-panel .bz-kart2:not(.acik){font-size:0}
-#bzPerde .fw-panel .bz-kart2:not(.acik)::before{content:"";display:block;width:55px;height:55px;margin:auto;background:url('forest-icons-v1.svg') 33.333% 0/400% 400% no-repeat}
+#bzPerde .fw-panel .bz-kart2:not(.acik)::before{content:"";display:block;width:55px;height:55px;margin:auto;background:url('assets/forest-icons-v1.svg') 33.333% 0/400% 400% no-repeat}
 #bzPerde .fw-panel .bz-kart2.tamam{outline:3px solid #89b74b;outline-offset:-10px}
-#bzPerde .fw-panel :is(.bz-cip2,.bz-slot){border:0;border-radius:0;background:transparent url('forest-answer-frame-v1.svg') center/100% 100% no-repeat;box-shadow:none;color:#432613;min-height:44px;padding:8px 12px}
+#bzPerde .fw-panel :is(.bz-cip2,.bz-slot){border:0;border-radius:0;background:transparent url('assets/forest-answer-frame-v1.svg') center/100% 100% no-repeat;box-shadow:none;color:#432613;min-height:44px;padding:8px 12px}
 #bzPerde .fw-panel .bz-slot{padding:3px;width:38px;min-width:0}
 #bzPerde .fw-panel .bz-cip2:is(.iyi,.tamam,.secili),#bzPerde .fw-panel .bz-slot.dolu{outline:3px solid #78ab46;outline-offset:-5px}
 #bzPerde .fw-panel .bz-cip2.kotu{outline:3px solid #d37555;outline-offset:-5px}

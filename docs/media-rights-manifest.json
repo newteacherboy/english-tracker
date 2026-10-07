@@ -280,42 +280,42 @@
       "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
     },
     {
-      "path": "ingilizce/forest-answer-frame-v1.svg",
+      "path": "ingilizce/assets/forest-answer-frame-v1.svg",
       "sha256": "080e048f62cef970a1607729ac3ce8755b086ea899afc8c853a0fb09bf895b41",
       "bytes": 392995,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     },
     {
-      "path": "ingilizce/forest-icons-v1.svg",
+      "path": "ingilizce/assets/forest-icons-v1.svg",
       "sha256": "35360570c56c57487d4899120d39f98c1a88ffe41546ec1bf4e1f66db5e00cac",
       "bytes": 857019,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     },
     {
-      "path": "ingilizce/forest-question-plaque-v1.svg",
+      "path": "ingilizce/assets/forest-question-plaque-v1.svg",
       "sha256": "9e89c68192faa6886434ac0a2ee52a8d6e088d500e44893103d4fee9fdbb3ed3",
       "bytes": 392994,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     },
     {
-      "path": "ingilizce/forest-helper-button-v1.svg",
+      "path": "ingilizce/assets/forest-helper-button-v1.svg",
       "sha256": "c85a6a5d02a4ce37ea2b56c87891002f151690db0f21ee1e0fa16c0332d4261e",
       "bytes": 392994,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     },
     {
-      "path": "ingilizce/forest-scene-v1.svg",
+      "path": "ingilizce/assets/forest-scene-v1.svg",
       "sha256": "84ec6d0952e9da8c781ff3fe5bad5ffcfc8ec8d2802ff6c2a1e7be7935579924",
       "bytes": 732363,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
     },
     {
-      "path": "ingilizce/forest-back-disc-v1.svg",
+      "path": "ingilizce/assets/forest-back-disc-v1.svg",
       "sha256": "db894f5ab0bf306664945cb8c8802768ce0244b6e30fa0bd685f6c7379ab6aa6",
       "bytes": 392995,
       "status": "ai-generated",
