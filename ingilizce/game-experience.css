@@ -20,3 +20,35 @@
 .dm-entry-name-auto{display:none!important}.dm-entry-music{margin-top:16px;border-bottom:0!important;justify-content:flex-end!important;gap:8px!important}.dm-entry-music>div{display:none!important}
 .dm-garden-match .dm-sheet{background:#f4faf2!important;color:#234e45!important;border:3px solid #bfdcc9!important;border-radius:28px!important}.dm-garden-match .dm-sheet header{background:#dbeeda!important;color:#234e45!important}.dm-garden-match .dm-primary{background:#38785f!important;color:#fff!important;border:2px solid #2c624d!important;box-shadow:0 3px 0 #234e45!important}.dm-entry-open #kpKelimeGirisEkrani{width:min(100%,540px);margin:auto;border:3px solid #bfdcc9;border-radius:28px;background:#f4faf2;padding:18px 20px 24px;color:#234e45;overflow:hidden}
 .dm-score-breakdown{font:800 12px Nunito,system-ui,sans-serif;color:#386653;line-height:1.5;text-align:center;margin:10px auto 14px;max-width:330px}
+
+/* Risk Balloons: tactile pastel balloons in Papi's learning garden. */
+#jpOyunOverlay .game-modal-content{background:#f8fbf1}
+#jpBalonEkrani{padding:8px 4px}
+.dm-risk-hero{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;margin:0 0 12px}
+.dm-risk-hero small{font:900 9px/1.3 Nunito,system-ui;color:#6d8e68;letter-spacing:.5px}
+.dm-risk-hero h3{margin:4px 0;color:#244f40;font:800 23px/1.2 Fredoka,Nunito,system-ui}
+.dm-risk-hero p{margin:4px 0;font:700 11px/1.4 Nunito,system-ui;color:#648273}
+.dm-risk-hero img{object-fit:contain;flex:none}
+.dm-risk-hud{display:flex;justify-content:space-between;gap:5px;margin:0 0 12px;padding:9px 8px;border:1px solid #d4e5cf;border-radius:14px;background:#fffef5;color:#315844;font:800 11px Nunito,system-ui}
+#jpBalonlarGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px 4px!important;padding:14px 5px 3px;background:radial-gradient(ellipse at 50% 0,#e6f5e8,transparent 75%);border-radius:22px}
+.dm-risk-balloon{--balloon-light:#b1edf1;--balloon-mid:#58c6d4;--balloon-dark:#228d9f;position:relative;display:flex;flex-direction:column;align-items:center;width:100%;padding:0;background:none;border:0;cursor:pointer;color:#164b56;min-height:124px;transition:transform .15s}
+.dm-risk-balloon[data-color="1"]{--balloon-light:#ebd5ff;--balloon-mid:#b48be5;--balloon-dark:#7954b2;color:#513a80}
+.dm-risk-balloon[data-color="2"]{--balloon-light:#fff1b7;--balloon-mid:#f0d36f;--balloon-dark:#c49b32;color:#795d1e}
+.dm-risk-balloon[data-color="3"]{--balloon-light:#ffdeea;--balloon-mid:#eca7c6;--balloon-dark:#c57499;color:#814262}
+.dm-balloon-body{position:relative;display:grid;place-content:center;width:64px;height:82px;border:2px solid #fff9;border-radius:48% 48% 46% 46%/44% 44% 56% 56%;background:radial-gradient(ellipse at 30% 20%,var(--balloon-light),var(--balloon-mid) 55%,var(--balloon-dark));box-shadow:inset -5px -5px 12px #0001,0 5px 8px #25472b1a;animation:dm-balloon-float 3.8s ease-in-out infinite;animation-delay:var(--float-delay);transform-origin:50% 100%}
+.dm-balloon-body::before{content:"";position:absolute;top:11px;left:11px;width:10px;height:21px;border-radius:50%;background:#fff8;transform:rotate(25deg)}
+.dm-balloon-body::after{content:"";position:absolute;bottom:-7px;left:calc(50% - 5px);border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--balloon-dark)}
+.dm-balloon-body b{font:900 23px/1.1 Fredoka,Nunito,system-ui;text-shadow:0 1px #fff5}
+.dm-balloon-star{font-size:17px;line-height:1.2;color:#fff9}
+.dm-balloon-string{width:32px;height:32px;margin-top:6px;fill:none;stroke:#8eaa92;stroke-width:1.5;pointer-events:none}
+.dm-risk-balloon:hover{transform:translateY(-3px)}
+.dm-risk-balloon:active{transform:scale(.94)}
+.dm-risk-balloon:focus-visible{outline:3px solid #087f85;outline-offset:2px;border-radius:16px}
+.dm-risk-rule{margin:8px 0 0;color:#648273;font:700 10px/1.5 Nunito,system-ui}
+#jpSoruEkrani>div:first-child{gap:7px;flex-wrap:wrap;color:#315844!important}
+.dm-risk-time{white-space:nowrap;color:#315844}
+#jpSoruKelimeText{color:#244f40!important}
+#jpSeceneklerGrid .jp-sik-btn{min-height:48px;border-radius:14px!important;box-shadow:0 3px 0 #d6e3d2;font-family:Nunito,system-ui}
+@keyframes dm-balloon-float{50%{transform:translateY(-5px) rotate(3deg)}}
+@media(max-width:360px){.dm-balloon-body{width:55px;height:72px}.dm-risk-balloon{min-height:114px}.dm-risk-hud{font-size:10px}.dm-risk-hero h3{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.dm-balloon-body{animation:none}.dm-risk-balloon{transition:none}}

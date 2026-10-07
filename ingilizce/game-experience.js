@@ -2,7 +2,7 @@
   'use strict';
   const entries = [
     ['kyGirisEkrani','kelimeYarismaOverlay','Kelime Laboratuvarı','Kelimeyi gör ve dinle; doğru anlamını seç.'],
-    ['jpGirisEkrani','jpOyunOverlay','Risk Balonları','Zorluğunu seç; balonların içindeki kelimeleri çöz.'],
+    ['jpGirisEkrani','jpOyunOverlay','Risk Balonları','Bir balon seç; kelimenin anlamını bul. Süre ve doğruluk birlikte puanını belirler.'],
     ['boslukGirisEkrani','boslukOyunOverlay','Eksik Harf','Eksik harfleri tamamla, kelimeleri birlikte kontrol et.'],
     ['hafizaGirisEkrani','hafizaOyunOverlay','Hafıza Sandığı','İngilizce kelimeleri Türkçe anlamlarıyla eşleştir.'],
     ['yagmurGirisEkrani','yagmurOyunOverlay','Hız Fırtınası','Kelime düşmeden doğru anlamını yakala.'],

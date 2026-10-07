@@ -3318,15 +3318,15 @@ if(BAKIM_MODU){
         
                 <!-- 2. BALON SEÇİM EKRANI -->
                 <div id="jpBalonEkrani" style="display:none; text-align: center;">
-                    <div style="font-size: 11px; font-weight: 800; color: #9f1239; margin-bottom: 10px;">🎈 Patlatmak İçin Bir Balon Seç!</div>
+                    <header class="dm-risk-hero"><div><small>PAPİ İLE BALON MACERASI</small><h3>Bir balon seç!</h3><p>İçindeki kelimeyi çöz, maceraya devam et.</p></div><img src="papi-welcome-v2.png" alt="" width="72" height="72"></header><div class="dm-risk-hud"><span>⏱️ <b data-jp-clock>0 sn</b></span><span>🎈 <b id="jpBalonKalan">8</b> balon</span><span>⭐ <b id="jpAnlikPuan">0</b> puan</span></div>
                     <div id="jpBalonlarGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;"></div>
-                    <div style="font-size: 11px; color: #64748b; font-weight: 700;">Toplam Puanın: <span id="jpAnlikPuan" style="color: #e11d48; font-size: 14px;">0</span></div>
+                    <p class="dm-risk-rule">Hız bonusu · Doğru +100 · Yanlış −40 puan / turdan −3 XP</p>
                 </div>
         
                 <!-- 3. SORU EKRANI (4 Şıklı) -->
                 <div id="jpSoruEkrani" style="display:none;">
                     <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #9f1239; margin-bottom: 8px;">
-                        <span id="jpSoruPuanBadge">Puan Değeri: 10</span>
+                        <span id="jpSoruPuanBadge">İlk denemede 100 puan</span><span class="dm-risk-time">⏱️ <b data-jp-clock>0 sn</b></span>
                         <span id="jpKalanBalonInfo">Kalan Balon: 10</span>
                     </div>
         
@@ -9808,9 +9808,13 @@ setTimeout(() => {
         let jpAudioElement = null;
                 let jpSoruBaslangicZamani = 0;
         let jpKombo = 0;
+        let jpGeriDonTimeout = null;
         
         function jpOyunAc() {
             if (genelOyunGirisEngelliMi()) return;
+            clearTimeout(jpGeriDonTimeout);
+            if (jpTimerInterval) clearInterval(jpTimerInterval);
+            jpAktifSoru = null;
             let modal = document.getElementById('jpOyunOverlay');
             if (!modal) return;
         
@@ -9851,6 +9855,8 @@ setTimeout(() => {
         // İster jpOyunKapat ister jpOyunuKapat çağrılsın, ikisi de çalışır
         function jpOyunKapat() {
             if (liderlikKilitliMiKontrolEt('jp', 'jpBitisEkrani')) return;
+            clearTimeout(jpGeriDonTimeout);
+            jpAktifSoru = null;
             let modal = document.getElementById('jpOyunOverlay');
             if (modal) {
                 modal.style.display = 'none';
@@ -9952,7 +9958,9 @@ setTimeout(() => {
                 return;
             }
         
-            jpBalonlarListesi = OC.kelimeSec('jp', filtrelenmis, OC.SORU); OC.basla('jp'); genelEnerjiHarca(-3);
+            jpBalonlarListesi = OC.kelimeSec('jp', filtrelenmis, OC.SORU).map((k, i) => ({ ...k, _jpNo: i + 1 })); OC.basla('jp'); genelEnerjiHarca(-3);
+            clearTimeout(jpGeriDonTimeout);
+            jpAktifSoru = null;
         
                jpDogruSayisi = 0;
             jpYanlisSayisi = 0;
@@ -9967,35 +9975,42 @@ setTimeout(() => {
         
             if (jpTimerInterval) clearInterval(jpTimerInterval);
             jpTimerInterval = setInterval(() => {
-                jpGecenSaniye = Math.floor((Date.now() - jpBaslangicZamani) / 1000);
+                jpGecenSaniye = Math.floor(OC.sure());
+                jpDurumCiz();
             }, 1000);
         
             jpBalonlariCiz();
         }
         
+        function jpDurumCiz() {
+            jpToplamPuan = OC.puan();
+            document.querySelectorAll('[data-jp-clock]').forEach(e => e.textContent = Math.floor(OC.sure()) + ' sn');
+            const score = document.getElementById('jpAnlikPuan');
+            if (score) score.textContent = jpToplamPuan;
+            const remaining = document.getElementById('jpBalonKalan');
+            if (remaining) remaining.textContent = jpBalonlarListesi.length;
+        }
         function jpBalonlariCiz() {
-            let grid = document.getElementById('jpBalonlarGrid');
-            grid.innerHTML = "";
-            document.getElementById('jpAnlikPuan').innerText = jpToplamPuan;
-        
-            if (jpBalonlarListesi.length === 0) {
-                jeopardyOyunuBitir();
-                return;
-            }
-        
+            const grid = document.getElementById('jpBalonlarGrid');
+            grid.replaceChildren();
+            jpDurumCiz();
+            if (jpBalonlarListesi.length === 0) { jeopardyOyunuBitir(); return; }
             jpBalonlarListesi.forEach((kelimeObj, index) => {
-                let puanDegeri = (index + 1) * 10;
-                let balonBtn = document.createElement('button');
-                balonBtn.style.cssText = "background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%); color: white; border: none; border-radius: 50%; width: 65px; height: 65px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); margin: auto; transition: transform 0.2s;";
-                balonBtn.innerText = `🎈\n${index + 1}`;
-                balonBtn.onclick = function() {
-                    jpBalonSecildi(index, puanDegeri);
-                };
+                const balonBtn = document.createElement('button');
+                const no = kelimeObj._jpNo || index + 1;
+                balonBtn.type = 'button';
+                balonBtn.className = 'dm-risk-balloon';
+                balonBtn.dataset.color = (no - 1) % 4;
+                balonBtn.style.setProperty('--float-delay', '-' + (no % 4) + 's');
+                balonBtn.setAttribute('aria-label', no + '. balonu aç');
+                balonBtn.innerHTML = '<span class="dm-balloon-body" aria-hidden="true"><span class="dm-balloon-star">✦</span><b>' + no + '</b></span><svg class="dm-balloon-string" viewBox="0 0 40 35" aria-hidden="true"><path d="M20 0C7 12 34 19 18 35"/></svg>';
+                balonBtn.onclick = () => jpBalonSecildi(index, 100);
                 grid.appendChild(balonBtn);
             });
         }
-        
+
         function jpBalonSecildi(index, puanDegeri) {
+            if (jpAktifSoru || !Number.isInteger(index) || !jpBalonlarListesi[index]) return;
             let kelimeObj = jpBalonlarListesi.splice(index, 1)[0];
             
             // Doğru anahtar adlarını güvenli bir şekilde alıyoruz (ingilizce / turkce)
@@ -10014,7 +10029,7 @@ setTimeout(() => {
             document.getElementById('jpSoruPuanBadge').innerText = `İlk denemede 100 puan`; window.jpOcIkinci = false;
             document.getElementById('jpKalanBalonInfo').innerText = `Kalan balon: ${jpBalonlarListesi.length}`;
         
-            let ingilizceMi = window.jpZorluk === 'zor' ? false : window.jpZorluk === 'orta' ? true : Math.random() > 0.5;
+            let ingilizceMi = Math.random() > 0.5;
             if (ingilizceMi) {
                 document.getElementById('jpSoruYonEtiket').innerText = "Bu kelimenin Türkçe anlamı nedir?";
                 document.getElementById('jpSoruKelimeText').innerText = jpAktifSoru.ingilizce;
@@ -10060,6 +10075,7 @@ setTimeout(() => {
         }
         
         function jpCevapVer(secilenIndex) {
+            if (!jpAktifSoru || !Number.isInteger(secilenIndex) || secilenIndex < 0 || secilenIndex > 3 || document.getElementById('jpSik' + secilenIndex).disabled) return;
             let dogruIdx = jpAktifSoru._dogruIndex;
                     if (secilenIndex !== dogruIdx && jokerIkinciTuket()) {
                 let b = document.getElementById('jpSik' + secilenIndex);
@@ -10077,7 +10093,7 @@ setTimeout(() => {
         
                if (secilenIndex === dogruIdx) {
                 jpDogruSayisi++;
-                OC.dogru((window.jpZorlukOran || 1) * (window.jpOcIkinci ? 0.5 : 1), !window.jpOcIkinci); jpKombo++; jpToplamPuan = OC.puan();
+                OC.dogru(window.jpOcIkinci ? 0.5 : 1, !window.jpOcIkinci); jpKombo++; jpToplamPuan = OC.puan();
                               genelSesEfektiCal('dogru');
                 genelKomboGoster(jpKombo, document.querySelector('#jpOyunOverlay .game-modal-content'));
                 document.getElementById('jpSik' + secilenIndex).style.background = "#16a34a";
@@ -10096,7 +10112,10 @@ setTimeout(() => {
                 document.getElementById('jpSik' + dogruIdx).style.borderColor = "#15803d";
             }
         
-            setTimeout(() => {
+            jpDurumCiz();
+            clearTimeout(jpGeriDonTimeout);
+            jpGeriDonTimeout = setTimeout(() => {
+                jpAktifSoru = null;
                 document.getElementById('jpSoruEkrani').style.display = 'none';
                 document.getElementById('jpBalonEkrani').style.display = 'block';
                 jpBalonlariCiz();
@@ -10104,6 +10123,8 @@ setTimeout(() => {
         }
         
         async function jeopardyOyunuBitir() {
+            clearTimeout(jpGeriDonTimeout);
+            jpAktifSoru = null;
             if (jpTimerInterval) clearInterval(jpTimerInterval);
             if (typeof jeopardyMuzikDurdur === 'function') {
                 jeopardyMuzikDurdur();
@@ -24332,7 +24353,7 @@ window.ocEnerjiHarca = async function (n) {
 (function () {
   const KART = [
     ['kelimeYarismasiAc()', '🔬', 'Kelime Laboratuvarı', 'Kelimeyi gör ve dinle, iki şıktan doğru anlamını seç', '📚 Anlam'],
-    ['jpOyunAc()', '🎈', 'Risk Balonları', 'Her soruda zorluğu sen seç: kolay 50, orta 75, zor 100 puan', '🎲 Strateji'],
+    ['jpOyunAc()', '🎈', 'Risk Balonları', 'Bir balon seç, kelimenin anlamını bul; hızlı ve doğru cevaplarla puan kazan', '🎲 Strateji'],
     ['boslukOyunAc()', '✏️', 'Eksik Harf', 'Kelimelerin eksik harflerini tamamla, hepsini birden kontrol et', '✏️ Yazım'],
     ['hafizaOyunAc()', '🃏', 'Hafıza Sandığı', 'Kartları çevir, İngilizce-Türkçe çiftleri az hamlede bul', '🧠 Hafıza'],
     ['yagmurOyunAc()', '🌪️', 'Hız Fırtınası', 'Kelime yere düşmeden 3 şıktan doğrusunu yakala', '⏱️ Hız'],
@@ -24379,38 +24400,14 @@ window.ocEnerjiHarca = async function (n) {
   }
   basliklar(); setTimeout(basliklar, 2500);
 
-  /* ===== Risk Balonları: her balonda zorluk seçimi ===== */
-  const Z = {
-    kolay: { oran: 0.5, ad: 'Kolay', alt: '2 şık · yönü karışık', renk: 'linear-gradient(135deg,#34d399,#16a34a)' },
-    orta: { oran: 0.75, ad: 'Orta', alt: '4 şık · İngilizce → Türkçe', renk: 'linear-gradient(135deg,#fbbf24,#ea580c)' },
-    zor: { oran: 1, ad: 'Zor', alt: '4 şık · Türkçe → İngilizce', renk: 'linear-gradient(135deg,#fb7185,#be123c)' }
-  };
-  window.jpZorluk = 'kolay'; window.jpZorlukOran = 0.5;
-  function secimGoster(sonra) {
-    let kap = document.querySelector('#jpOyunOverlay .game-modal-content') || document.body;
-    if (getComputedStyle(kap).position === 'static') kap.style.position = 'relative';
-    let p = document.createElement('div'); p.className = 'rb-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Zorluk seç');
-    p.innerHTML = `<div class="rb-kart"><h4>🎈 Ne kadar risk alıyorsun?</h4><p>Zor soru daha çok puan getirir. Yanlış cevap −40 puan ve tur ödülünden −3 XP.</p>
-      ${Object.keys(Z).map(k => `<button type="button" class="rb-sec" data-z="${k}" style="background:${Z[k].renk}"><span><b>${Z[k].ad}</b><small>${Z[k].alt}</small></span><span class="rb-p">${Z[k].oran * 100}</span></button>`).join('')}</div>`;
-    kap.appendChild(p);
-    p.querySelectorAll('.rb-sec').forEach(b => b.onclick = () => { p.remove(); sonra(b.dataset.z); });
-    setTimeout(() => { let b = p.querySelector('[data-z="orta"]'); if (b) b.focus(); }, 50);
-  }
+  /* Risk Balonları: balon seçimi doğrudan ortak kurallı soruyu açar. */
   let orgSec = window.jpBalonSecildi;
   if (typeof orgSec === 'function') window.jpBalonSecildi = function (index, deger) {
-    let ctx = this, tekrar = !!((typeof jpBalonlarListesi !== 'undefined' && jpBalonlarListesi[index]) || {})._tekrar;
-    secimGoster(z => {
-      window.jpZorluk = z; window.jpZorlukOran = Z[z].oran;
-      for (let i = 0; i < 4; i++) { let b = document.getElementById('jpSik' + i); if (b) b.style.display = ''; }
-      orgSec.call(ctx, index, deger);
-      if (z === 'kolay' && typeof jpAktifSoru !== 'undefined' && jpAktifSoru) {
-        let yanlis = [0, 1, 2, 3].filter(i => i !== jpAktifSoru._dogruIndex).sort(() => Math.random() - 0.5).slice(0, 2);
-        yanlis.forEach(i => { let b = document.getElementById('jpSik' + i); if (b) b.style.display = 'none'; });
-      }
-      let r = document.getElementById('jpSoruPuanBadge');
-      if (r) r.innerText = `${Z[z].ad} · ilk denemede ${Z[z].oran * 100} puan`;
-      if (tekrar) { let e = document.getElementById('jpSoruYonEtiket'); if (e) e.innerText = '🔁 Tekrar kelimesi · ' + e.innerText; }
-    });
+    if (jpAktifSoru || !jpBalonlarListesi[index]) return;
+    const tekrar = !!jpBalonlarListesi[index]._tekrar;
+    for (let i = 0; i < 4; i++) { const b = document.getElementById('jpSik' + i); if (b) b.style.display = ''; }
+    orgSec.call(this, index, deger);
+    if (tekrar) { const e = document.getElementById('jpSoruYonEtiket'); if (e) e.innerText = '🔁 Tekrar kelimesi · ' + e.innerText; }
   };
 })();
 </script>
@@ -30735,8 +30732,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="experience-ui.js?v=4"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <script src="harf-bahcesi.js?v=2"></script>
-<link rel="stylesheet" href="game-experience.css?v=1">
-<script src="game-experience.js?v=1"></script>
+<link rel="stylesheet" href="game-experience.css?v=2">
+<script src="game-experience.js?v=2"></script>
 <script src="onboarding-ui.js?v=2"></script>
 <script src="rights-ui.js?v=1"></script>
 
