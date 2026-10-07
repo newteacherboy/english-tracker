@@ -89,3 +89,15 @@ body.dc-ada.dc-vadi #tab-derscalis .dv-papi-yildiz{position:absolute;right:2px;b
   body.dc-ada.dc-vadi #tab-derscalis .km-baslangic{padding-right:88px!important}
   body.dc-ada.dc-vadi #tab-derscalis .dv-papi-yildiz{width:84px;height:84px}
 }
+
+/* Anlatım metni: okunaklı yazı boyutu, alt alta maddeler, düzenli tablolar */
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik h3{display:block!important;font-size:18px!important;margin:20px 0 8px!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik h3:first-child{margin-top:0!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik p{font-size:15.5px!important;line-height:1.65!important;color:#3A3360!important;margin:0 0 8px!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik ul{margin:4px 0 6px!important;padding:0!important;list-style:none!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik ul li{display:block!important;position:relative;font-size:15px!important;line-height:1.6!important;color:#3A3360!important;padding:7px 0 7px 22px!important;border-bottom:1px dashed #EEE8FF!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik ul li:last-child{border-bottom:0!important}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik ul li::before{content:"";position:absolute;left:4px;top:15px;width:9px;height:9px;border-radius:50%;background:#2BB673}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik i{color:#5B2DB8}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik th{background:#EDE4FF!important;color:#4B2A99;font-size:13px;font-weight:900;text-align:left}
+body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik td{font-size:15px}
