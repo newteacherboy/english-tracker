@@ -24,11 +24,10 @@ test('real reward hook uses canonical writer and keeps a duplicate guard across 
   assert.equal(ctx.ocOdulVer(input),null);vm.runInContext(source,ctx);assert.equal(ctx.ocOdulVer(input),null);
   ctx.ocOdulVer({...score.calculate({correct:0,wrong:8,seconds:96}),runId:'failed'});assert.equal(state.altin,20);assert.equal(state.totalXp,118);
 });
-test('adventure templates escape names and retain all step identifiers',()=>{
+test('parkur header escapes the student name and keeps wallet controls',()=>{
  const fs=require('fs'),vm=require('vm'),ctx={DijiProgressRules:r,yo:{totalXp:260},aktifOgrenciAdi:'<Mert>',document:{getElementById:()=>null,addEventListener(){},body:{classList:{toggle(){},contains:()=>false}}},setInterval(){}};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync(__dirname+'/../ingilizce/parkur-theme.js','utf8'),ctx);
  const head=ctx.dmParkurBaslik({energy:24,max:30,gold:320});assert(head.includes('&lt;Mert&gt;'));assert(head.includes('data-dm-wallet="level"'));assert(head.includes('Sv. <b data-dm-level>4'));
- const scene=ctx.dmParkurSahne({next:3,total:10,complete:3,section:'Example',steps:Array.from({length:10},(_,index)=>({index,label:'Step '+index,done:index<3}))});assert(scene.includes('data-d="3"'));assert(scene.includes('dm-adventure-go'));assert(scene.includes('current'));assert(scene.includes('locked'));
- const html=fs.readFileSync(__dirname+'/../ingilizce/index.html','utf8');assert(html.includes("p.querySelectorAll('.bz-tas,.dm-start-card,.dm-adventure-node,.dm-adventure-go')"));assert(html.includes('class="dm-adventure-full-map"'));
+ // The unified scene markup is covered by tests/unified-parkur.test.cjs.
 });
 test('perfect 11-question parkur earns star XP, repeat is reduced, failure gives no gold',()=>{
  const fs=require('fs'),vm=require('vm'),html=fs.readFileSync('ingilizce/index.html','utf8').replace(/<!--[\s\S]*?-->/g,''),source=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(x=>x.includes('window.ocOdulVer = function (o)'));

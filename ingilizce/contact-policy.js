@@ -43,7 +43,7 @@
     if(token!==t){clear();token=t;}
     checking=true;
     try{
-      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:'iletisimDurumu',t})});const s=await r.json();
+      const r=await fetch(API,{method:'POST',body:JSON.stringify({islem:'iletisimDurumu',t})});const s=await r.json();
       if(studentToken()===t&&s.ok)show(s);
     }catch{}finally{checking=false;}
   }
@@ -52,5 +52,5 @@
   document.addEventListener('dm:kisisel-bilgiler',()=>{clear();check();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});
   window.addEventListener('storage',check);
-  setInterval(check,60000);setTimeout(check,500);
+  setInterval(()=>{if(!document.hidden)check();},600000);setTimeout(check,500);
 })();

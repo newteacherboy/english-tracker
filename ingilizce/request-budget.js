@@ -8,9 +8,11 @@
     'yayinOzellikleri','dersKonulariGetir','akisTumu','duellolarim','sosyalDurum',
     'aksesuarKatalog','oyunEslesmelerim','takipDavetListesi','kategorileriGetir','KOK']);
   const liveReads=new Set(['oyunEslesmeDurum','aktifDurum']);
+  // Requests that change nothing other cached reads depend on: send them, but keep the cache.
+  const passive=new Set(['kaydet','iletisimDurumu','yeniPuanBildirimleriGetir','sonGirisGuncelle']);
   const batchable=new Set(['bildirimlerim','ilerlemeOzet','enerjiDurumuGetir','duyurulariGetir',
     'sosyalOgrencilerGetir','ekVeriGetir','seviyeDurumu','seviyeLigListesi','yayinOzellikleri','dersKonulariGetir']);
-  const ttl={bildirimlerim:15000,ilerlemeOzet:30000,enerjiDurumuGetir:15000,
+  const ttl={bildirimlerim:55000,ilerlemeOzet:30000,enerjiDurumuGetir:15000,
     duyurulariGetir:60000,sosyalOgrencilerGetir:60000,seviyeDurumu:30000,
     seviyeLigListesi:60000,yayinOzellikleri:30000,akisTumu:15000,KOK:20000,
     sosyalDurum:30000,takipDavetListesi:30000,oyunEslesmelerim:10000,aksesuarKatalog:300000};
@@ -81,7 +83,7 @@
     let d;try{d=describe(input,opt);}catch{return native(input,opt);}
     if(!d)return native(input,opt);
     const current=actor();if(current!==identity){identity=current;clear();}
-    if(liveReads.has(d.op))return native(input,opt);
+    if(liveReads.has(d.op)||passive.has(d.op))return native(input,opt);
     if(!reads.has(d.op)&&!content.has(d.op)){
       // All writes, rewards, login and live match/presence requests go straight
       // through. Invalidate before AND after to avoid a read/write race.

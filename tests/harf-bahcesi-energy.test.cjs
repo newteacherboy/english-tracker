@@ -1,6 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{stripTypeScriptTypes}=require('node:module');
 const ts=fs.readFileSync(__dirname+'/../supabase/functions/diji-api/index.ts','utf8');
-const wrapped=stripTypeScriptTypes('async function extracted(){'+ts.slice(ts.indexOf('  if (op === "enerjiDegistir")'),ts.lastIndexOf('  if (op === "enerjiGonder")'))+'}',{mode:'transform'});
+const wrapped=stripTypeScriptTypes('async function extracted(){'+ts.slice(ts.indexOf('  if (op === "enerjiDegistir")'),ts.indexOf('// ============================================================ LİDERLİK'))+'}',{mode:'transform'});
 const block=wrapped.slice(wrapped.indexOf('{')+1,wrapped.lastIndexOf('}'));
 const run=new(Object.getPrototypeOf(async function(){}).constructor)('op','body','a','supabase','requireStudent','hedefOgrenci','enerjiYenile','release','json','bulunamadi','num','bool','ENERJI_TAVAN','dolumBilgi',block);
 async function fixture({energy=20,prior=false,race=false}={}){

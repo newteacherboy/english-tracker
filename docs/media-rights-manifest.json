@@ -193,6 +193,13 @@
       "source": "docs/media-generation-record.json"
     },
     {
+      "path": "ingilizce/parkur-continuous-world-v1.svg",
+      "sha256": "e80b6853a499c9cffc2cc9f9d47222b4817626d71f8515fa83e9646047f4252d",
+      "bytes": 327384,
+      "status": "kaynak-dogrulanacak",
+      "source": "SVG wrapper embedding a WebP raster, added in 01cdc74. Real origin (tool or author) must be recorded here by the owner."
+    },
+    {
       "path": "ingilizce/parkur-landscape-v2.png",
       "sha256": "09405c1e1ee93b84f4d2a9ca8a5e68736119cae8fcfb25a94882698d4bd9d1ba",
       "bytes": 1977692,

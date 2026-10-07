@@ -92,13 +92,13 @@
     if (d.ok && d.ekonomi) uygula(d.ekonomi);
   }
 
-  /* Girişte ve sonra 2 dakikada bir ekranı sunucuyla eşitle */
+  /* Girişte ve sonra 10 dakikada bir ekranı sunucuyla eşitle */
   setInterval(() => {
     if (!hazir()) { ilkDurum = ''; return; }
     if (yo.ekoV !== 2) yo.ekoV = 2;   /* sunucuya "yeni ekonomi sürümündeyim" der */
     if (ilkDurum !== ogrenci()) { ilkDurum = ogrenci(); durum(); }
   }, 1500);
-  setInterval(() => { if (!document.hidden) durum(); }, 120000);
+  setInterval(() => { if (!document.hidden) durum(); }, 600000);   /* 10 dakikada bir */
   document.addEventListener('visibilitychange', () => { if (document.hidden && bekleyen > 0) gonder(); });
 
   window.dmEkonomi = { kazan, islem, uygula, durum };
