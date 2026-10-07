@@ -99,7 +99,7 @@ if(BAKIM_MODU){
 </script>
 <script src="request-budget.js?v=1"></script>
                 <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
             <title>İngilizce Portal Giriş - Diji-Medu</title>
                 <meta name="description" content="Diji-Medu İngilizce Portalı — öğrenci gelişim raporları, seviyeye göre ders çalışma sistemi, kelime yarışmaları ve öğretmen takip paneli.">
         <meta name="keywords" content="Diji-Medu ingilizce, diji medu ingilizce portalı, öğrenci ingilizce takip, ingilizce kelime oyunu">
@@ -932,6 +932,26 @@ if(BAKIM_MODU){
             </style>
         <link rel="stylesheet" href="auth-dialogs.css?v=1">
 <link rel="stylesheet" href="mascot-panels.css?v=1">
+
+<style id="dm-mobile-form-size">
+@media (max-width: 640px) and (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]), select, textarea { font-size: 16px !important; }
+}
+</style>
+
+<style id="dm-fixed-mobile-scale">
+html, body { touch-action: pan-x pan-y; }
+</style>
+<script>
+(function () {
+  function preventZoom(e) { if (e.cancelable) e.preventDefault(); }
+  document.addEventListener('gesturestart', preventZoom, {passive:false});
+  document.addEventListener('gesturechange', preventZoom, {passive:false});
+  function preventPinch(e) { if (e.touches && e.touches.length > 1) preventZoom(e); }
+  document.addEventListener('touchstart', preventPinch, {passive:false});
+  document.addEventListener('touchmove', preventPinch, {passive:false});
+})();
+</script>
 </head>
         <body>
         
@@ -30755,7 +30775,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
-<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=2"></script><script src="student-management.js?v=1"></script><script src="contact-policy.js?v=1"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=1"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=1"></script><script src="contact-policy.js?v=1"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <script src="progress-ui.js?v=3"></script>

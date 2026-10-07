@@ -21,7 +21,7 @@
   .kb-alan{margin-bottom:10px}
   .kb-alan:last-child{margin-bottom:0}
   .kb-alan label{display:block;font-size:12px;font-weight:800;margin-bottom:4px;color:#4b3f72}
-  .kb-alan input,.kb-alan select{width:100%;box-sizing:border-box;border:1.5px solid #ddd3ff;border-radius:12px;padding:11px 12px;font-size:15px;font-family:inherit;color:#2d2350;background:#fff}
+  .kb-alan input,.kb-alan select{width:100%;box-sizing:border-box;border:1.5px solid #ddd3ff;border-radius:12px;padding:11px 12px;font-size:16px;font-family:inherit;color:#2d2350;background:#fff}
   .kb-alan input:focus,.kb-alan select:focus{outline:none;border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.18)}
   .kb-alan input[readonly]{background:#f6f4fb;color:#7a6ca8}
   .kb-ipucu{font-size:11.5px;color:#8a7cb8;margin-top:4px}
@@ -45,7 +45,10 @@
     return d || { ok: false, mesaj: "Sunucuya ulaşılamadı. İnternet bağlantını kontrol et." };
   }
   const telGoster = t => { const d = String(t || "").replace(/\D/g, ""); return d.length === 11 ? `${d.slice(0, 4)} ${d.slice(4, 7)} ${d.slice(7, 9)} ${d.slice(9)}` : String(t || ""); };
-  const telSade = t => String(t || "").replace(/\D/g, "");
+  const telSade = t => {
+    const d = String(t || "").replace(/\D/g, "");
+    return /^5\d{9}$/.test(d) ? "0"+d : /^905\d{9}$/.test(d) ? "0"+d.slice(2) : d;
+  };
 
   window.kisiselBilgilerAc = async function (secenek = {}) {
     stilEkle();
@@ -97,7 +100,7 @@
     if(secenek.zorunlu)kutu.querySelector('.kb-x').hidden=true;
 
     const $ = id => kutu.querySelector("#" + id);
-    let mevcut = d;
+    let mevcut = d, sifreZorunlu = false;
     function doldur(x) {
       $("kbKul").value = x.kullaniciAdi || "";
       $("kbAd").value = x.adSoyad || "";
@@ -112,7 +115,17 @@
       sifreGoster();
     }
     const iletisimDegisti = () => (Boolean(telSade(mevcut.telefon)) && telSade($("kbTel").value) !== telSade(mevcut.telefon)) || (Boolean(String(mevcut.email||'').trim()) && $("kbMail").value.trim().toLowerCase() !== String(mevcut.email || "").trim().toLowerCase());
-    function sifreGoster() { $("kbSifreGrup").classList.toggle("acik", iletisimDegisti()); }
+    function sifreGoster() {
+      const gerekli = sifreZorunlu || iletisimDegisti(), grup = $("kbSifreGrup");
+      grup.classList.toggle("acik", gerekli);
+      grup.hidden = !gerekli;
+      grup.style.display = gerekli ? "block" : "none";
+    }
+    function sifreIste() {
+      sifreZorunlu = true; sifreGoster();
+      $("kbSifre").scrollIntoView?.({block:"center",behavior:"smooth"});
+      $("kbSifre").focus();
+    }
     $("kbTel").addEventListener("input", sifreGoster);
     $("kbMail").addEventListener("input", sifreGoster);
     doldur(d);
@@ -128,15 +141,16 @@
       if (!telSade(govde.telefon)) return mesaj("Telefon numarası boş bırakılamaz.", "hata");
       if (!govde.email) return mesaj("E-posta adresi boş bırakılamaz.", "hata");
       if (!govde.sube) return mesaj("Şube boş bırakılamaz.", "hata");
-      if (iletisimDegisti()) {
+      sifreGoster();
+      if (sifreZorunlu || iletisimDegisti() || $("kbSifre").value) {
         govde.mevcutSifre = $("kbSifre").value;
-        if (!govde.mevcutSifre) { $("kbSifre").focus(); return mesaj("Telefon veya e-postayı değiştirmek için mevcut şifreni yaz.", "hata"); }
+        if (!govde.mevcutSifre) { sifreIste(); return mesaj("Telefon veya e-postayı değiştirmek için mevcut şifreni yaz.", "hata"); }
       }
       const b = $("kbKaydet"); b.disabled = true; b.textContent = "Kaydediliyor…"; mesaj("");
       const r = await istek(govde);
       b.disabled = false; b.textContent = "Kaydet";
-      if (!r.ok) { if (r.sifreGerekli) { $("kbSifre").value = ""; $("kbSifre").focus(); } return mesaj(r.mesaj || "Kaydedilemedi.", "hata"); }
-      mevcut = r; doldur(r);
+      if (!r.ok) { if (r.sifreGerekli) { $("kbSifre").value = ""; sifreIste(); } return mesaj(r.mesaj || "Kaydedilemedi.", "hata"); }
+      mevcut = r; sifreZorunlu = false; doldur(r);
       mesaj(r.mesaj || "Bilgilerin kaydedildi.", "tamam");
       try { document.dispatchEvent(new CustomEvent("dm:kisisel-bilgiler", { detail: r })); } catch (e) {}
       if(secenek.zorunlu) { window.dmContactFrozen=false; kapat(); }
