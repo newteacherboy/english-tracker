@@ -281,7 +281,7 @@ body.dm-parkur-open .dm-parkur-scroll{padding-bottom:calc(24px + env(safe-area-i
 }
 
 /* Approved concept 1: watercolor parchment adventure map. */
-body.dm-parkur-open #bzParkur>.bz-ic{max-width:600px;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))!important}
+body.dm-parkur-open #bzParkur>.bz-ic{max-width:600px;padding-bottom:var(--dm-map-dock,64px)!important}
 body.dm-parkur-open .dm-parkur-scroll{position:relative;overflow:hidden;padding:0!important}
 .dm-parkur-head{background:#fff9ec}
 body.dm-parkur-open .dm-parkur-head{padding:10px 12px 0}
@@ -291,7 +291,7 @@ body.dm-parkur-open .dm-parkur-head{padding:10px 12px 0}
 .dm-parkur-head .dm-parkur-brand{font:700 clamp(18px,5.5vw,28px)/1.05 Fredoka,Nunito;color:#0f3d2f;letter-spacing:-.7px}
 .dm-parkur-head .dm-parkur-brand span{display:none}
 .dm-parkur-head .dm-parkur-top-status{flex:1;min-width:0;width:auto;max-width:270px;display:grid;grid-template-columns:1fr 1.16fr 1fr;gap:5px;margin:0}
-.dm-parkur-top-status button{display:flex;align-items:center;justify-content:center;gap:3px;min-height:32px;padding:4px 3px;font:900 clamp(10px,2.8vw,15px)/1 Nunito;border-radius:18px;box-shadow:inset 0 1px 0 #fff,0 2px 0 #e2cda950}
+.dm-parkur-top-status button{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:3px;min-height:32px;padding:4px 3px;font:900 clamp(10px,2.8vw,15px)/1 Nunito;border-radius:18px;box-shadow:inset 0 1px 0 #fff,0 2px 0 #e2cda950}
 .dm-parkur-top-status button>span:first-child{font-size:17px}
 .dm-parkur-top-status .dm-adventure-level{display:block;border-width:1px;padding:3px 5px;background:linear-gradient(#a15de2,#743ac0);border-radius:16px;box-shadow:0 2px 0 #d4b4e3}
 .dm-parkur-top-status .dm-adventure-level>span{font-size:clamp(11px,3vw,16px)!important}
@@ -328,5 +328,6 @@ body.dm-parkur-open .dm-parkur-head{padding:10px 12px 0}
 .dm-map-stop:focus-visible,.dm-map-continue:focus-visible{outline:3px solid #0b7765;outline-offset:5px}
 .dm-map-track:focus-visible{outline:2px solid #187d66;outline-offset:-2px}
 @media(max-width:360px){.dm-parkur-head .dm-adventure-brand-row{gap:4px}.dm-parkur-head .dm-parkur-top-status{gap:3px}.dm-parkur-head .dm-parkur-brand{font-size:18px}.dm-parkur-head .dm-adventure-profile{width:27px;height:27px}.dm-map-name{font-size:10px;padding:4px 5px}.dm-map-continue{font-size:15px;min-height:36px}}
-@media(min-width:769px){body.dm-parkur-open #bzParkur>.bz-ic{padding-bottom:16px!important}}
+@media(min-width:769px){body.dm-parkur-open #bzParkur>.bz-ic{padding-bottom:var(--dm-map-dock,16px)!important}}
+body.dm-parkur-open #bottomNavMobile .bn-item.active .bn-label{color:#fff!important}
 

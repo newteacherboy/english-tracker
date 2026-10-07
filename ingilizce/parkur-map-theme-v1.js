@@ -40,8 +40,10 @@
     let firstLayout=true,lastGap=0;
     function layout(){
       if(!map.isConnected){observer?.disconnect();return;}
+      const dock=document.getElementById('bottomNavMobile'),dockHeight=Math.ceil(dock?.getBoundingClientRect().height||0);
+      root.parentElement?.style.setProperty('--dm-map-dock',dockHeight+'px');
       const W=map.clientWidth,H=map.clientHeight;if(W<1||H<1)return;
-      const size=Math.max(50,Math.min(92,W*.20,H*.16)),first=Math.max(H*.16,48+size/2),last=H-62-size/2-23;
+      const size=Math.max(50,Math.min(92,W*.20,H*.16)),first=Math.max(H*.16,56+size/2),last=H-62-size/2-23;
       const gap=Math.max(size*.58,(last-first)/4),height=first+Math.max(0,nodes.length-1)*gap+H*.35;
       const oldIndex=lastGap?track.scrollTop/lastGap:Math.max(0,current-2);
       map.style.setProperty('--dm-map-medallion',size+'px');
@@ -49,10 +51,11 @@
       const points=nodes.map((node,i)=>{const x=i%2?70:i%4===0?37:47,y=first+i*gap;node.style.left=x+'%';node.style.top=y+'px';return [x*W/100,y];});
       let d='';points.forEach(([x,y],i)=>{if(!i)d='M '+x+' '+y;else {const [px,py]=points[i-1],mid=(py+y)/2;d+=' C '+px+' '+mid+' '+x+' '+mid+' '+x+' '+y;}});
       const svg=map.querySelector('.dm-map-trail');svg.setAttribute('viewBox','0 0 '+W+' '+height);svg.setAttribute('height',height);svg.querySelectorAll('path').forEach(p=>p.setAttribute('d',d));
-      track.scrollTop=Math.max(0,(firstLayout?Math.max(0,current-2):oldIndex)*gap);firstLayout=false;lastGap=gap;
+      track.scrollTop=Math.max(0,(firstLayout?Math.max(0,current-2):oldIndex)*gap);firstLayout=false;lastGap=gap;visible();
     }
+    function visible(){const size=parseFloat(map.style.getPropertyValue('--dm-map-medallion'))||50;nodes.forEach(node=>{const y=parseFloat(node.style.top)-track.scrollTop;node.style.visibility=y<52+size/2||y>map.clientHeight-62-size/2-18?'hidden':'visible';});}
     const observer=typeof ResizeObserver==='function'?new ResizeObserver(layout):null;
-    observer?.observe(map);layout();
+    observer?.observe(map);const dock=document.getElementById('bottomNavMobile');if(dock)observer?.observe(dock);track.addEventListener('scroll',visible,{passive:true});layout();
     nodes.forEach(node=>node.addEventListener('focus',()=>{const top=parseFloat(node.style.top)-track.scrollTop;if(top<50||top>map.clientHeight-90)track.scrollTo({top:Math.max(0,parseFloat(node.style.top)-map.clientHeight*.45),behavior:'smooth'});}));
   };
   function sync(){
