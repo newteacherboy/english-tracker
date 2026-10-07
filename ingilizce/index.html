@@ -28356,6 +28356,8 @@ body.dc-ada .ma-klasik-don{display:none}
       if (hero && s2) hero.appendChild(s2);
       klasikDugmesi('dcScreenLevels');
     };
+    // Apply the current presentation before this rebuilt map can paint.
+    if (typeof window.dmStudyDecorate === 'function') window.dmStudyDecorate();
   }
 
   /* ---------- 2) Kategoriler: adanın içi ---------- */
@@ -28405,7 +28407,7 @@ body.dc-ada .ma-klasik-don{display:none}
   }
   ['dcSeviyeSec', 'dcKategoriIcerikCiz', 'dcGeriGit', 'dcAnaEkranaDon', 'dersCalisBaslat', 'dcTestSonrasiKonuListesineDon'].forEach(ad => {
     let org = window[ad]; if (typeof org !== 'function') return;
-    window[ad] = function () { let r = org.apply(this, arguments); setTimeout(() => ciz(true), 30); return r; };
+    window[ad] = function () { let r = org.apply(this, arguments); ciz(true); return r; };
   });
   setInterval(() => { let t = $('tab-derscalis'); if (t && t.getClientRects().length) ciz(false); }, 800);
   if (acik()) document.body.classList.add('dc-ada');
@@ -30730,7 +30732,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="weekly-ui.js?v=4"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=1">
-<script src="experience-ui.js?v=3"></script>
+<script src="experience-ui.js?v=4"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <script src="harf-bahcesi.js?v=2"></script>
 <link rel="stylesheet" href="game-experience.css?v=1">

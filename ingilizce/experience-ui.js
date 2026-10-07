@@ -74,5 +74,6 @@
  // Future commercial copy, intentionally not part of the active student rotation.
  window.dmFutureOfferCopy={energy:{title:'Ek enerji seçeneklerini incele',text:'Ücretsiz konu çalışması ve normal yenilenme devam eder. Ücretli seçenekler açıldığında fiyat ve veli onayı satın alma ekranında gösterilir.'},gold:{title:'Koleksiyonun için altın seçenekleri',text:'Altınla kıyafet ve aksesuar alabilirsin. Ücretli altın XP veya lig puanı kazandırmaz.'}};
  setInterval(()=>{study();musicPaint();if(master&&audio)master.gain.setTargetAtTime(window.speechSynthesis?.speaking ? .02 : .38,audio.currentTime,.1);if(!playing()||document.hidden||shown)stop();else start();},1000);
+ window.dmStudyDecorate=study;
  study();musicPaint();
 })();
