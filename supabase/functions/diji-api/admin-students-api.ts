@@ -9,7 +9,9 @@ export function adminStudentsAPI(db: any, json: any, hashPassword: any) {
       if (!Array.isArray(body.ogrenciler) || body.ogrenciler.length<1 || body.ogrenciler.length>50) return json({ok:false,mesaj:'Bir istekte 1–50 öğrenci eklenebilir.'},400);
       const rows:any[] = [], seen = new Set<string>();
       for (const [i,x] of body.ogrenciler.entries()) {
-        const username=String(x.kullanici||'').trim().replace(/\s+/g,' '), password=String(x.sifre||''), classNo=Number(x.sinif);
+        const username=String(x.kullanici||'').trim(), password=String(x.sifre||''), classNo=Number(x.sinif);
+        /* [v5.0] Herkese görünen kullanıcı adı takma ad olmalı: boşluksuz, 3-20 karakter */
+        if (!/^[A-Za-z0-9çğıöşüÇĞİÖŞÜ._-]{3,20}$/.test(username)) return json({ok:false,mesaj:`${i+1}. satır: kullanıcı adı takma ad olmalı (3-20 karakter, boşluksuz; harf, rakam, nokta, alt çizgi, tire). Öğrencinin gerçek adını yazma.`},400);
         const branch=String(x.sube||'').trim().toLocaleUpperCase('tr'), school=String(x.okul||'').trim();
         if (username.length<3 || username.length>50 || /[<>\x00-\x1f]/.test(username) || seen.has(username.toLowerCase()) || password.length<6 || password.length>64 || !Number.isInteger(classNo) || classNo<1 || classNo>8 || !branch || branch.length>10 || /[<>\x00-\x1f]/.test(branch) || (school && school.length<3) || school.length>120 || /[<>\x00-\x1f]/.test(school)) return json({ok:false,mesaj:`${i+1}. satır geçersiz: kullanıcı 3–50, şifre 6–64 karakter; sınıf 1–8 ve şube gerekli. Aynı kullanıcı iki kez eklenemez.`},400);
         seen.add(username.toLowerCase()); rows.push({username,password_hash:await hashPassword(password),class_no:classNo,branch,school:school||null});

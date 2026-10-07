@@ -20,7 +20,8 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-diji-token, x-diji-import, x-diji-otomasyon",
-  "Access-Control-Allow-Methods": "GET,POST,OPTIONS"
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Max-Age": "86400"
 };
 
 const secretKeys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
@@ -124,6 +125,17 @@ async function denemeSay(operation: string, target: string, dakika: number) {
     .eq("operation", operation).eq("target", target)
     .gte("created_at", new Date(Date.now() - dakika * 60000).toISOString());
   return count || 0;
+}
+/* [v5.0] Takma ad kuralı: herkese görünen kullanıcı adı gerçek ad olmasın */
+const TAKMA_AD = /^[A-Za-z0-9çğıöşüÇĞİÖŞÜ._-]{3,20}$/;
+const sadeHarf = (v: string) => String(v || "").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g, (c) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" } as any)[c]).replace(/[^a-z]/g, "");
+const AD_SOYAD = /^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,60}$/;
+/* Gerçek istemci IP'si: Cloudflare'in yazdığı başlık; yoksa x-forwarded-for'un SON değeri (ilk değerini istemci uydurabilir) */
+function istemciIp(req: Request) {
+  const cf = (req.headers.get("cf-connecting-ip") || "").trim();
+  if (cf) return cf.slice(0, 64);
+  const xff = (req.headers.get("x-forwarded-for") || "").split(",").map(x => x.trim()).filter(Boolean);
+  return (xff[xff.length - 1] || req.headers.get("x-real-ip") || "").slice(0, 64) || "bilinmiyor";
 }
 async function denemeYaz(operation: string, target: string, payload: any = {}) {
   await supabase.from("audit_logs").insert({ actor_role: "public", operation, target, payload });
@@ -388,6 +400,8 @@ async function leaderboardSave(op: string, body: any, a: any) {
     if (prior.error) return json({status:"error",message:"Kayıt doğrulanamadı."},500);
     if (prior.data?.length) return json({status:"success"});
   }
+  /* [v5.0] Sadece gerçek bir öğrenci adına skor yazılır (öğretmen hesabı istediği adla tabloya satır ekleyemesin) */
+  if (!s?.id) return bulunamadi();
   const v3 = Number(body.puanSurum)===3;
   const scored=v3?scoreV3(body,body.suresaniye):null;
   if(v3&&!scored)return json({status:"error",message:"Geçersiz süre veya puan verisi."},400);
@@ -402,7 +416,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
     extra: { legacy_class: body.sinif || null, v: v3 ? 3 : v2 ? 2 : 1, ...(scored ? {base:scored.temelPuan,speed:scored.hizBonusu,penalty:scored.hataCezasi}:{}), ...(body.runId ? {run_id:body.runId,reward_protocol:1} : {}) }
   };
   const ins = await supabase.from("game_scores").insert(row);
-  if (ins.error) return json({ status: "error", message: ins.error.message }, 500);
+  if (ins.error) { console.error("leaderboardSave", ins.error); return json({ status: "error", message: "Skor kaydedilemedi." }, 500); }
   if (row.student_id) await supabase.from("feed_events").insert({
     student_id: row.student_id, event_type: "game_score",
     payload: { game_name: key, game_key: key, score: row.score, unit_name: row.unit_name, icon: key === "konusma" ? "🗣️" : key === "eslestirme" ? "🧩" : key === "tren" ? "🚂" : "🎮", student_name: row.student_name }
@@ -1091,9 +1105,15 @@ async function handle(req: Request) {
     let studentId = mapping?.student_id;
     if (op === "googleKayit") {
       if (studentId) return json({ ok: false, mesaj: "Bu Google hesabı zaten kayıtlı. Google ile giriş düğmesini kullan; onay bekliyorsa öğretmenin onayını bekle." }, 409);
-      const username = String(body.ogrenciAdi || "").trim().replace(/\s+/g, " ");
-      if (!/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,50}$/.test(username))
-        return json({ ok: false, mesaj: "Öğrenci ad soyadı sadece harflerden oluşmalı (3-50 karakter)." }, 400);
+      /* [v5.0] Kullanıcı adı takma ad; gerçek ad ayrı alanda, sadece öğretmen görür */
+      const username = String(body.ogrenciAdi || "").trim();
+      if (!TAKMA_AD.test(username))
+        return json({ ok: false, mesaj: "Kullanıcı adı 3-20 karakter olmalı; harf, rakam, nokta, alt çizgi ya da tire kullanabilirsin. Boşluk olmaz." }, 400);
+      const adSoyad = String(body.adSoyad || "").trim().replace(/\s+/g, " ");
+      if (!AD_SOYAD.test(adSoyad))
+        return json({ ok: false, mesaj: "Öğrencinin adını ve soyadını yaz (sadece harf, 3-60 karakter)." }, 400);
+      if (sadeHarf(username) === sadeHarf(adSoyad))
+        return json({ ok: false, mesaj: "Kullanıcı adın gerçek adınla aynı olmasın. Herkesin göreceği bir takma ad seç." }, 400);
       const telHam = String(body.telefon || "").replace(/\D/g, "");
       const tel = /^5\d{9}$/.test(telHam) ? "0" + telHam : /^05\d{9}$/.test(telHam) ? telHam : /^905\d{9}$/.test(telHam) ? "0" + telHam.slice(2) : "";
       const email = String(body.email || "").trim();
@@ -1121,8 +1141,10 @@ async function handle(req: Request) {
       // One transaction: failure to bind the Google identity rolls back the new student.
       const { data: createdId, error: createError } = await supabase.rpc("register_google_student", { p_auth_user_id: user.id, p_payload: payload });
       if (createError || !createdId) return json({ ok: false, mesaj: createError?.code === "23505"
-        ? "Bu ad soyad zaten kayıtlı. Mevcut hesabını bağla veya öğretmeninle görüş."
+        ? "Bu kullanıcı adı zaten kayıtlı. Başka bir takma ad seç ya da mevcut hesabını bağla."
         : "Kayıt tamamlanamadı. Biraz sonra tekrar dene." }, createError?.code === "23505" ? 409 : 503);
+      const adYaz = await supabase.from("students").update({ full_name: adSoyad }).eq("id", createdId);
+      if (adYaz.error) console.error("googleKayit full_name", adYaz.error);
       try { await onboarding.welcome({id:createdId,username,email}); }
       catch (_) { console.error("Google welcome verification could not be queued"); }
       const { data: createdStudent, error: createdStudentError } = await supabase.from("students")
@@ -1513,7 +1535,8 @@ async function handle(req: Request) {
     if (["herkes", "all", "tumogrenciler", ""].includes(tip)) tip = a.yonetici ? "all" : "ogretmen";
     else if (!["ogretmen", "sinif", "sube", "secili"].includes(tip)) tip = "secili";
     const ek = await supabase.from("announcements").insert({ title: temizMetin(body.baslik, 120), message: temizMetin(body.mesaj, 2000), image_link: body.gorselLink || null, target_type: tip, target_list: arr(body.hedefListesi).map((x: any) => String(x)).slice(0, 500), display_limit: num(body.gosterimSinir) || null, theme: body.tema || null, active: true, teacher_id: a.teacher_id || null });
-    return json(ek.error ? { status: "error", message: ek.error.message } : { status: "success" });
+    if (ek.error) console.error("duyuruEkle", ek.error);
+    return json(ek.error ? { status: "error", message: "Duyuru kaydedilemedi." } : { status: "success" });
   }
   if (op === "duyurulariGetir") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
@@ -1554,11 +1577,13 @@ async function handle(req: Request) {
     return json([...son.values()].filter((m: any) => ad.has(m.student_id)).map((m: any) => ({ ogrenci: ad.get(m.student_id), sonMesaj: m.message, mesaj: m.message, tarih: m.created_at, okunmamis: say.get(m.student_id) || 0 })));
   }
   if (op === "etkinlikTanimlariGetir" || op === "tumVideolariGetir") {
+    /* [v5.0] Öğretmen paneli içindir: atanan öğrenci adları içerdiği için oturumsuz çağrılamaz; öğretmen sadece kendi öğrencilerini görür */
+    const deny = await requireTeacher(a); if (deny) return deny;
     const video = op === "tumVideolariGetir";
     const [{ data }, { data: at }, { data: st }] = await Promise.all([
       video ? supabase.from("videos").select("*").eq("active", true).order("title") : supabase.from("activities").select("*").eq("active", true).order("display_name"),
       video ? supabase.from("student_videos").select("student_id,video_id") : supabase.from("student_activities").select("student_id,activity_id"),
-      supabase.from("students").select("id,username")
+      ogrFiltre(supabase.from("students").select("id,username"))
     ]);
     const ad = new Map((st || []).map((x: any) => [x.id, encName(x.username)])), atanan = new Map<string, string[]>();
     for (const r of at || []) { const k = video ? r.video_id : r.activity_id; if (!atanan.has(k)) atanan.set(k, []); if (ad.has(r.student_id)) atanan.get(k)!.push(String(ad.get(r.student_id))); }
@@ -1750,24 +1775,29 @@ async function handle(req: Request) {
   if (op === "giris") {
     const username = String(body.ogrenci || "").trim();
     const password = String(body.sifre || "");
-    const hedef = encName(username);
-    // [YAMA 8] 15 dakikada 5 hatalı denemeden sonra kilit
+    const hedef = encName(username), ipHam = istemciIp(req), ip = "ip:" + ipHam, ipBilinir = ipHam !== "bilinmiyor";
+    // [YAMA 8] 15 dakikada 5 hatalı denemeden sonra kilit.
+    // [v5.0] Aynı ağdan 15 dakikada 200 hatalı deneme sınırı (okullar tek IP paylaştığı için yüksek tutuldu)
     if (await denemeSay("giris_hata", hedef, 15) >= 5) return json({ ok: false, mesaj: "Çok fazla hatalı deneme. 15 dakika sonra tekrar dene." });
+    if (ipBilinir && await denemeSay("giris_hata_ip", ip, 15) >= 200) return json({ ok: false, mesaj: "Bu bağlantıdan çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar dene." });
+    const hataYaz = async () => { await denemeYaz("giris_hata", hedef); if (ipBilinir) await denemeYaz("giris_hata_ip", ip); };
     /* [v4.0] Kullanıcı adı bir öğretmene aitse öğretmen oturumu (yönetici "teacher" dahil) */
     const { data: ogrt } = await supabase.from("teachers").select("*").ilike("username", likeKacir(username)).limit(2);
     if (ogrt && ogrt.length === 1) {
       const t = ogrt[0];
-      if (t.active !== false && await verifyPassword(password, t.password_hash)) {
+      const dogru = await verifyPassword(password, t.password_hash);
+      if (dogru && t.active === false) return json({ ok: false, mesaj: "Öğretmen hesabın henüz aktif değil. Yönetici onayından sonra giriş yapabilirsin." });
+      if (dogru) {
         const token = await issueSession("teacher", undefined, t.id);
         await supabase.from("teachers").update({ last_login_at: new Date().toISOString() }).eq("id", t.id);
         return json({ ok: true, token, rol: "ogretmen", ogrenci: t.username, yonetici: !!t.is_admin });
       }
-      await denemeYaz("giris_hata", hedef);
-      return json({ ok: false, mesaj: t.active === false ? "Öğretmen hesabın aktif değil." : "Hatalı kullanıcı adı veya şifre." });
+      await hataYaz();
+      return json({ ok: false, mesaj: "Hatalı kullanıcı adı veya şifre." });
     }
     const s = await studentByName(username);
     if (!s || !(await verifyPassword(password, s.password_hash))) {
-      await denemeYaz("giris_hata", hedef);
+      await hataYaz();
       return json({ ok: false, mesaj: "Hatalı kullanıcı adı veya şifre." });
     }
     if (s.status === "pending") return json({ ok: false, emailDogrulamaGerekli:!!s.email_verification_required, mesaj:s.email_verification_required ? "E-posta adresine gönderdiğimiz bağlantıyla hesabını doğrula. Spam klasörünü de kontrol et." : "Hesabın henüz öğretmen onayı bekliyor. Onaylandığında giriş yapabilirsin." });
@@ -1778,7 +1808,11 @@ async function handle(req: Request) {
   }
   if (op === "ogretmenGiris") {
     const password = String(body.sifre || "");
-    if (await denemeSay("ogretmen_hata", "teacher", 15) >= 5) return json({ ok: false, mesaj: "Çok fazla hatalı deneme. 15 dakika bekle." });
+    /* [v5.0] İki kilit: bağlantı başına (15 dk'da 10) ve hedef hesap başına (15 dk'da 20) */
+    const ogrtIpHam = istemciIp(req), ogrtIp = "ip:" + ogrtIpHam;
+    const ogrtHedef = "hedef:" + (encName(String(body.kullanici || "").trim()) || "panel");
+    if (ogrtIpHam !== "bilinmiyor" && await denemeSay("ogretmen_hata", ogrtIp, 15) >= 10) return json({ ok: false, mesaj: "Çok fazla hatalı deneme. 15 dakika bekle." });
+    if (await denemeSay("ogretmen_hata", ogrtHedef, 15) >= 20) return json({ ok: false, mesaj: "Çok fazla hatalı deneme. 15 dakika bekle." });
     let t: any = null;
     const kul = String(body.kullanici || "").trim();
     if (kul) t = (await supabase.from("teachers").select("*").ilike("username", likeKacir(kul)).eq("active", true).limit(2)).data?.[0] || null;
@@ -1791,7 +1825,7 @@ async function handle(req: Request) {
     /* sınıftaki tablette: öğrencinin öğretmeni değilse yönetici şifresi de kabul edilir */
     let gecti = !!t && await verifyPassword(password, t.password_hash);
     if (!gecti && !kul) { const y = (await supabase.from("teachers").select("*").eq("username", "teacher").eq("active", true).maybeSingle()).data; if (y && y.id !== t?.id && await verifyPassword(password, y.password_hash)) { t = y; gecti = true; } }
-    if (!gecti) { await denemeYaz("ogretmen_hata", "teacher"); return json({ ok: false, mesaj: "Öğretmen şifresi hatalı." }); }
+    if (!gecti) { if (ogrtIpHam !== "bilinmiyor") await denemeYaz("ogretmen_hata", ogrtIp); await denemeYaz("ogretmen_hata", ogrtHedef); return json({ ok: false, mesaj: "Öğretmen şifresi hatalı." }); }
     const token = await issueSession("teacher", undefined, t.id);
     await supabase.from("teachers").update({ last_login_at: new Date().toISOString() }).eq("id", t.id);
     return json({ ok: true, token, rol: "ogretmen", ogretmen: t.full_name || t.username, yonetici: !!t.is_admin });
@@ -1801,7 +1835,8 @@ async function handle(req: Request) {
     return json({ status: "success", ok: true });
   }
 
-  /* [v4.0] Öğretmen kaydı: hesap hemen açılır, kendine özel öğretmen kodu verilir, yöneticiye e-posta gider */
+  /* [v4.0] Öğretmen kaydı: kendine özel öğretmen kodu verilir, yöneticiye e-posta gider.
+     [v5.0] Hesap yönetici onaylayana kadar pasif kalır (herkesin öğretmen yetkisi alamaması için). */
   if (op === "ogretmenKayitOl") {
     const kullanici = String(body.kullaniciAdi || "").trim().replace(/\s+/g, " ");
     const adSoyad = temizMetin(body.adSoyad, 80), eposta = String(body.email || "").trim(), kurum = temizMetin(body.kurum, 120), sifre = String(body.sifre || "");
@@ -1823,14 +1858,14 @@ async function handle(req: Request) {
       const { data: var_ } = await supabase.from("teachers").select("id").ilike("invite_code", aday).limit(1);
       if (!var_ || !var_.length) kod = aday;
     }
-    const ek = await supabase.from("teachers").insert({ username: kullanici, full_name: adSoyad, email: eposta, phone: oTel, school: kurum || null, password_hash: await hashPassword(sifre), invite_code: kod, is_admin: false, active: true }).select("id").single();
-    if (ek.error) return json({ ok: false, mesaj: "Kayıt yapılamadı: " + ek.error.message }, 500);
+    const ek = await supabase.from("teachers").insert({ username: kullanici, full_name: adSoyad, email: eposta, phone: oTel, school: kurum || null, password_hash: await hashPassword(sifre), invite_code: kod, is_admin: false, active: false }).select("id").single();
+    if (ek.error) { console.error("ogretmenKayitOl", ek.error); return json({ ok: false, mesaj: "Kayıt yapılamadı. Biraz sonra tekrar dene." }, 500); }
     _yoneticiler.t = 0;
     for (const e of (await yoneticiler()).epostalar) await kuyrugaEkle({ to_email: e, kind: "ogretmen_kayit", subject: `Yeni öğretmen kaydı – ${adSoyad}`,
-      html: mailKabugu("Yeni Öğretmen Kaydı", `<p><b>${hk(adSoyad)}</b> (${hk(kullanici)}) öğretmen olarak kayıt oldu.</p><p>Kurum: <b>${hk(kurum || "-")}</b><br>E-posta: ${hk(eposta)}<br>Öğretmen kodu: <b>${kod}</b></p><p>Hesap hemen açıldı. Bu öğretmen sadece kendi kodunu giren öğrencileri görebilir. Hesabı kapatmak için Öğretmen Paneli → Öğretmenler bölümünü kullanabilirsin.</p>`) });
-    await kuyrugaEkle({ to_email: eposta, kind: "ogretmen_kayit", subject: "Diji-Medu İngilizce öğretmen hesabın hazır",
-      html: mailKabugu("Hoş geldiniz", `<p>Merhaba ${hk(adSoyad)},</p><p>Öğretmen hesabınız açıldı. Kullanıcı adınız: <b>${hk(kullanici)}</b></p><p style="font-size:18px">Öğretmen kodunuz: <b style="letter-spacing:3px">${kod}</b></p><p>Öğrencileriniz kayıt olurken bu kodu yazarsa size bağlanır. Onların değerlendirmelerini, mesajlarını, ödevlerini sadece siz görürsünüz; öğrenciler diğer tüm öğrencilerle lig ve yarışmalarda birlikte yarışmaya devam eder.</p>`) });
-    return json({ ok: true, kod, kullanici });
+      html: mailKabugu("Yeni Öğretmen Kaydı", `<p><b>${hk(adSoyad)}</b> (${hk(kullanici)}) öğretmen olarak kayıt oldu.</p><p>Kurum: <b>${hk(kurum || "-")}</b><br>E-posta: ${hk(eposta)}<br>Öğretmen kodu: <b>${kod}</b></p><p><b>Hesap onay bekliyor.</b> Onaylamak için Öğretmen Paneli → Öğretmenler bölümünde bu öğretmenin yanındaki <b>Aktif yap</b> düğmesine bas. Onaylanana kadar giriş yapamaz ve kodu öğrenci kaydında çalışmaz.</p>`) });
+    await kuyrugaEkle({ to_email: eposta, kind: "ogretmen_kayit", subject: "Diji-Medu İngilizce öğretmen başvurunuz alındı",
+      html: mailKabugu("Hoş geldiniz", `<p>Merhaba ${hk(adSoyad)},</p><p>Öğretmen hesabınız oluşturuldu ve <b>yönetici onayı bekliyor</b>. Onaylandığında ayrıca e-posta alacaksınız. Kullanıcı adınız: <b>${hk(kullanici)}</b></p><p style="font-size:18px">Öğretmen kodunuz: <b style="letter-spacing:3px">${kod}</b></p><p>Öğrencileriniz kayıt olurken bu kodu yazarsa size bağlanır. Onların değerlendirmelerini, mesajlarını, ödevlerini sadece siz görürsünüz; öğrenciler diğer tüm öğrencilerle lig ve yarışmalarda birlikte yarışmaya devam eder.</p>`) });
+    return json({ ok: true, kod, kullanici, onayBekliyor: true });
   }
   /* [v4.0] Öğretmenin kendi bilgileri (kodunu panelde görmek için) ve yöneticinin öğretmen listesi */
   if (op === "ogretmenBilgim") {
@@ -1849,9 +1884,13 @@ async function handle(req: Request) {
   if (op === "ogretmenAktifPasif") {
     const deny = await requireTeacher(a); if (deny) return deny;
     if (!a.yonetici) return json({ ok: false, mesaj: "Sadece yönetici." }, 403);
-    const { data: t } = await supabase.from("teachers").select("id,is_admin").eq("id", String(body.id || "")).maybeSingle();
+    const { data: t } = await supabase.from("teachers").select("id,is_admin,active,last_login_at,email,full_name,username,invite_code").eq("id", String(body.id || "")).maybeSingle();
     if (!t || t.is_admin) return json({ ok: false, mesaj: "Bu hesap değiştirilemez." });
     await supabase.from("teachers").update({ active: bool(body.aktif) }).eq("id", t.id);
+    /* [v5.0] İlk onayda öğretmene "hesabınız açıldı" e-postası */
+    if (bool(body.aktif) && t.active === false && !t.last_login_at && epostaGecerli(t.email))
+      await kuyrugaEkle({ to_email: String(t.email).trim(), kind: "ogretmen_kayit", subject: "Diji-Medu İngilizce öğretmen hesabınız açıldı",
+        html: mailKabugu("Hesabınız açıldı", `<p>Merhaba ${hk(t.full_name || t.username)},</p><p>Öğretmen hesabınız onaylandı. Artık <b>${hk(t.username)}</b> kullanıcı adıyla giriş yapabilirsiniz.</p><p style="font-size:18px">Öğretmen kodunuz: <b style="letter-spacing:3px">${hk(t.invite_code || "")}</b></p><p>Öğrencileriniz kayıt olurken bu kodu yazarsa size bağlanır.</p><p style="text-align:center"><a href="${PORTAL_URL}" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 22px;border-radius:12px;text-decoration:none;font-weight:bold">Portala git</a></p>`) });
     if (!bool(body.aktif)) await supabase.from("portal_sessions").delete().eq("teacher_id", t.id);
     await audit(a, "ogretmenAktifPasif", String(t.id), { aktif: bool(body.aktif) });
     return json({ ok: true });
@@ -1877,7 +1916,7 @@ async function handle(req: Request) {
     if (!/^[A-Za-zÇĞİÖŞÜçğıöşü0-9._-]{3,20}$/.test(username)) return json({ status: "error", message: "Kullanıcı adı 3-20 karakter olmalı; harf, rakam, nokta, alt çizgi ya da tire kullanabilirsin. Boşluk olmaz." });
     const adSoyad = String(body.adSoyad || "").trim().replace(/\s+/g, " ");
     if (!/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,60}$/.test(adSoyad)) return json({ status: "error", message: "Öğrencinin adını ve soyadını yaz (sadece harf, 3-60 karakter)." });
-    if (encName(username).replace(/[^a-zçğıöşü]/g, "") === encName(adSoyad).replace(/[^a-zçğıöşü]/g, "")) return json({ status: "error", message: "Kullanıcı adın gerçek adınla aynı olmasın. Herkesin göreceği bir takma ad seç." });
+    if (sadeHarf(username) === sadeHarf(adSoyad)) return json({ status: "error", message: "Kullanıcı adın gerçek adınla aynı olmasın. Herkesin göreceği bir takma ad seç." });
     if (password.length < OGRENCI_SIFRE_MIN || password.length > 64) return json({ status: "error", message: `Şifre ${OGRENCI_SIFRE_MIN}-64 karakter olmalı.` });
     /* [v4.1] Yeni kayıtlarda geçerli veli telefonu ve e-postası zorunlu */
     const telHam = String(body.telefon || "").replace(/\D/g, "");
@@ -2065,6 +2104,7 @@ async function handle(req: Request) {
     });
   }
   if (op === "ozellikListesiGetir") {
+    const deny = await requireTeacher(a); if (deny) return deny;   /* [v5.0] öğrenci adları içerebilir */
     const { data } = await supabase.from("feature_flags").select("code,name,target_type,target_value,enabled").order("name");
     return json((data || []).map(x => ({ kod: x.code, ad: x.name || x.code, hedefTipi: x.target_type, hedefDegeri: x.target_value, durum: x.enabled })));
   }
@@ -2080,7 +2120,10 @@ async function handle(req: Request) {
     const deny = await requireTeacher(a); if (deny) return deny;
     const s = await studentByName(String(body.ogrenciAdi || ""));
     if (!s) return json({ status: "error", message: "Öğrenci bulunamadı." });
+    /* [v5.0] Sadece onay bekleyen kayıt reddedilebilir; böylece verisi olan bir hesap "reddedilip" başkasına devredilemez */
+    if (op === "kayitReddet" && s.status !== "pending") return json({ status: "error", message: "Sadece onay bekleyen kayıtlar reddedilebilir." }, 409);
     await supabase.from("students").update({ status: op === "kayitOnayla" ? "approved" : "rejected", updated_at: new Date().toISOString() }).eq("id", s.id);
+    if (op === "kayitReddet") await supabase.from("portal_sessions").delete().eq("student_id", s.id);
     await audit(a, op, s.username);
     if (op === "kayitOnayla" && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s.email || "").trim())) await kuyrugaEkle({ student_id: s.id, to_email: String(s.email).trim(), kind: "onay", subject: `Kaydınız onaylandı – ${s.username}`,
       html: mailKabugu("Kayıt Onayı", `<p>Sayın Veli,</p><p><b>${hk(s.username)}</b> adına yapılan Diji-Medu İngilizce Portalı kaydı <b>${hk(a.ogretmenAdi || "öğretmen")}</b> tarafından onaylandı. 🎉</p><p>Artık kayıtta belirlenen kullanıcı adı ve şifreyle giriş yapılabilir:</p><p style="text-align:center"><a href="${PORTAL_URL}" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 22px;border-radius:12px;text-decoration:none;font-weight:bold">Portala git</a></p>`) });
@@ -2363,8 +2406,13 @@ async function handle(req: Request) {
     if (sender) {
       const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).eq("sender_student_id", sender.id).gte("created_at", new Date(Date.now() - 3600000).toISOString());
       if ((count || 0) >= 40) return json({ status: "error", message: "Çok fazla bildirim gönderdin, biraz bekle." });
+      /* [v5.0] Engellenen öğrenciye bildirim gitmez */
+      try { const { data: engel } = await supabase.rpc("dm_blocked", { a: sender.id, b: receiver.id }); if (engel) return json({ status: "success" }); } catch (_) {}
     }
-    await supabase.from("notifications").insert({ recipient_student_id: receiver.id, sender_student_id: sender?.id || null, type: tur, message: temizMetin(val(body, q, "metin"), 300) });
+    /* [v5.0] Öğrencinin yazdığı metin kısa tutulur; bağlantılar ve telefon numarası gibi uzun sayılar çıkarılır */
+    let metin = temizMetin(val(body, q, "metin"), 300);
+    if (a?.role === "student") metin = metin.replace(/(https?:\/\/|www\.)\S+/gi, "").replace(/\S+\.(com|net|org|me|io|tr|ly|gg)\b(\/\S*)?/gi, "").replace(/\d[\d\s-]{4,}\d/g, "").replace(/\s+/g, " ").trim().slice(0, 100);
+    await supabase.from("notifications").insert({ recipient_student_id: receiver.id, sender_student_id: sender?.id || null, type: tur, message: metin });
     return json({ status: "success" });
   }
 
@@ -2416,8 +2464,16 @@ async function handle(req: Request) {
     const code = String(body.etkinlikKodu || ("external_" + Date.now()));
     let activity: any = null;
     if (op === "disLinkEtkinlikAta") {
+      /* [v5.0] Link sadece https olabilir; yönetici olmayan öğretmen başkasının etkinliğini değiştiremez */
+      const link = String(body.disLink || "").trim();
+      let u: URL | null = null; try { u = new URL(link); } catch (_) { u = null; }
+      if (!u || u.protocol !== "https:") return json({ status: "error", message: "Link https:// ile başlayan geçerli bir adres olmalı." }, 400);
+      if (!a.yonetici) {
+        const { data: varOlan } = await supabase.from("activities").select("id").eq("code", code).limit(1);
+        if (varOlan && varOlan.length) return json({ status: "error", message: "Bu etkinlik kodu kullanılıyor. Yeni bir kod ile tekrar dene." }, 409);
+      }
       // [YAMA 23] var olmayan sütunlarla upsert ediliyordu; dış link hiç atanamıyordu
-      const r = await supabase.from("activities").upsert({ code, display_name: temizMetin(body.gorunenAd, 120) || code, category: temizMetin(body.kategori, 60), external_link: String(body.disLink || ""), teacher_comment: temizMetin(body.ogretmenYorumu, 500) }, { onConflict: "code" }).select().single();
+      const r = await supabase.from("activities").upsert({ code, display_name: temizMetin(body.gorunenAd, 120) || code, category: temizMetin(body.kategori, 60), external_link: link, teacher_comment: temizMetin(body.ogretmenYorumu, 500) }, { onConflict: "code" }).select().single();
       activity = r.data;
     } else {
       activity = (await supabase.from("activities").select("*").eq("code", code).maybeSingle()).data;

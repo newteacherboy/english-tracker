@@ -38,7 +38,7 @@
     <div class="dm-verified">✓ Google hesabın doğrulandı.</div>
     <p class="dm-form-intro">Öğrenci ve veli bilgilerini tamamla.</p>
     <h3 class="dm-section">ÖĞRENCİ BİLGİLERİ</h3>
-    <div class="form-group"><label for="googleYeniAd">Öğrenci ad soyadı</label><input id="googleYeniAd" required minlength="3" maxlength="50" autocomplete="name" placeholder="Ad ve soyad"></div>
+    <div class="form-group"><label for="googleYeniKullanici">Kullanıcı adı (takma ad)</label><input id="googleYeniKullanici" required minlength="3" maxlength="20" pattern="[A-Za-z0-9çğıöşüÇĞİÖŞÜ._\\-]{3,20}" autocapitalize="off" spellcheck="false" placeholder="ör. yildiz42" title="3-20 karakter, boşluksuz; harf, rakam, nokta, alt çizgi ya da tire"><small style="display:block;font-size:11px;color:#64748b;margin-top:3px">Liglerde herkes bunu görür. Gerçek adını yazma.</small></div><div class="form-group"><label for="googleYeniAd">Öğrencinin adı soyadı</label><input id="googleYeniAd" required minlength="3" maxlength="60" autocomplete="name" placeholder="Ad ve soyad"><small style="display:block;font-size:11px;color:#64748b;margin-top:3px">Sadece öğretmen görür.</small></div>
     <div class="dm-field-row">
       <div class="form-group"><label for="googleYeniSinif">Sınıf</label><select id="googleYeniSinif" required><option value="">Seçin</option>${Array.from({length:8}, (_, i) => `<option value="${i+1}">${i+1}. sınıf</option>`).join('')}</select></div>
       <div class="form-group"><label for="googleYeniSube">Şube</label><input id="googleYeniSube" required maxlength="10" placeholder="Örn: A"></div>
@@ -186,9 +186,9 @@
     const { data } = await supabaseClient.auth.getSession();
     const name = data?.session?.user?.user_metadata?.full_name || '';
     // Display-only suggestion; identity and account ownership are verified by the server.
-    $('googleYeniAd').value = String(name).slice(0,50);
+    $('googleYeniAd').value = String(name).slice(0,60);
     $('googleYeniKod').value = new URLSearchParams(location.search).get('kod') || '';
-    $('googleYeniAd').focus();
+    $('googleYeniKullanici').focus();
   };
   $('googleMevcutHesap').onclick = function () {
     linking = true;
@@ -210,7 +210,7 @@
     resultText.textContent = 'Kaydın oluşturuluyor…';
     try {
       const result = await googleRequest('googleKayit', {
-        ogrenciAdi: $('googleYeniAd').value.trim(), sinif: $('googleYeniSinif').value,
+        ogrenciAdi: $('googleYeniKullanici').value.trim(), adSoyad: $('googleYeniAd').value.trim(), sinif: $('googleYeniSinif').value,
         sube: $('googleYeniSube').value.trim(), telefon: $('googleYeniTelefon').value.trim(),
         email: $('googleYeniEmail').value.trim(), ogretmenKodu: $('googleYeniKod').value.trim(),
         kvkkOnay: $('googleYeniOnay').checked

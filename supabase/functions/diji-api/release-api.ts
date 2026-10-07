@@ -2,7 +2,7 @@ import { FEATURES } from './feature-catalog.ts';
 export function releaseAPI(db:any,json:any){
  let flags:any=null,at=0;
  async function state(force=false){
-  if(!force&&flags&&Date.now()-at<5000)return flags;
+  if(!force&&flags&&Date.now()-at<60000)return flags;   // [v5.0] 60 sn önbellek: her istekte veritabanı sorgusu yapılmasın
   const {data,error}=await db.from('dm_release_flags').select('code,enabled,updated_at');if(error)throw error;
   flags=Object.fromEntries(FEATURES.map(f=>[f.code,true]));for(const f of data||[])flags[f.code]=f.enabled;at=Date.now();return flags;
  }
