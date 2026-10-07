@@ -72,9 +72,9 @@
 #bzPerde [data-question-type="sifre"] .bz-wordle{max-width:100%;overflow-x:auto;padding:4px 2px 10px}
 #bzPerde [data-question-type="sifre"] .bz-wordle .satir{gap:4px}
 #bzPerde [data-question-type="sifre"] .bz-wordle .h{width:32px;height:35px;flex:none;border:1px solid #aabbd5;background:#e8edf4;color:#304c74;border-radius:7px;font-size:19px}
-#bzPerde [data-question-type="sifre"] .bz-wordle .h.g{background:#43835a;color:white}
-#bzPerde [data-question-type="sifre"] .bz-wordle .h.s{background:#ad8329;color:white}
-#bzPerde [data-question-type="sifre"] .bz-wordle .h.x{background:#667083;color:white}
+#bzPerde [data-question-type="sifre"] .bz-wordle .h.g{background:#43835a!important;color:white}
+#bzPerde [data-question-type="sifre"] .bz-wordle .h.s{background:#ad8329!important;color:white}
+#bzPerde [data-question-type="sifre"] .bz-wordle .h.x{background:#667083!important;color:white}
 #bzPerde [data-question-type="sifre"] .bz-klavye>div{gap:3px}
 #bzPerde [data-question-type="sifre"] .bz-klavye .bz-cip2{min-width:0;flex:1;padding:0;max-width:39px;height:43px;font-size:14px;border-radius:8px}
 /* Matching: facing parchment cards and unmistakable selected pairs. */

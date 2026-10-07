@@ -28956,7 +28956,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let [, ik, ad] = TIPLER.find(t => t[0] === g.tip);
     $('bzAlan').style.display = 'none'; $('bzJokerler').style.display = 'none'; let tip = document.querySelector('#bzGovde .bz-tip'); if (tip) tip.style.visibility = 'hidden';
     let inc = $('bzInceleme'); inc.style.display = '';
-    inc.innerHTML = `<div class="bz-inceleme-bas"><button type="button" id="bzIncOnce" ${k > 0 ? '' : 'disabled'} aria-label="Daha önceki soru">‹</button><span style="flex:1">👀 ${k + 1}. soru · ${ik} ${ad} ${O.sonuclar[k] ? '✅' : '❌'}</span><button type="button" id="bzIncSonra" ${k < son ? '' : 'disabled'} aria-label="Sonraki soru">›</button><button type="button" id="bzIncKapat">Soruya dön</button></div><div class="bz-inceleme-govde">${g.html}</div>`;
+    inc.innerHTML = `<div class="bz-inceleme-bas"><button type="button" id="bzIncOnce" ${k > 0 ? '' : 'disabled'} aria-label="Daha önceki soru">‹</button><span style="flex:1">👀 ${k + 1}. soru · ${ik} ${ad} ${O.sonuclar[k] ? '✅' : '❌'}</span><button type="button" id="bzIncSonra" ${k < son ? '' : 'disabled'} aria-label="Sonraki soru">›</button><button type="button" id="bzIncKapat">Soruya dön</button></div><div class="bz-inceleme-govde dm-question-review" data-question-type="${g.tip}">${g.html}</div>`;
     $('bzIncOnce').onclick = () => incelemeAc(k - 1); $('bzIncSonra').onclick = () => incelemeAc(k + 1);
     $('bzIncKapat').onclick = () => { inc.style.display = 'none'; inc.innerHTML = ''; $('bzAlan').style.display = ''; $('bzJokerler').style.display = ''; if (tip) tip.style.visibility = ''; };
   }
@@ -28965,7 +28965,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (O.i >= O.sorular.length) return bitir();
     let p = perdeAc(), s = O.sorular[O.i];
     O.jk = {};
-    p.innerHTML = `<div class="bz-oyun">${oyunUst()}</div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div><div class="bz-jokerler" id="bzJokerler"></div></div>`;
+    p.innerHTML = `<div class="bz-oyun dm-question-panel" data-question-type="${s.tip}">${oyunUst()}</div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div><div class="bz-jokerler" id="bzJokerler"></div></div>`;
     $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { let b = O.b; kapat(); goster('harita', b); } };
     $('bzGeriSoru').onclick = () => incelemeAc();
     let alan = $('bzAlan');
@@ -30752,6 +30752,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script src="profile-forest.js?v=1"></script>
+
+<link rel="stylesheet" href="question-panels-v1.css?v=1">
 </body>      
         </html>
 
