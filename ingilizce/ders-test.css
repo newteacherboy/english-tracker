@@ -1,0 +1,28 @@
+/* Ders Çalış testi: yeni soru türleri (ders-test.js) */
+#dcTestIcerik .dt-q .dc-quiz-q-text{display:flex;align-items:center;gap:8px}
+#dcTestIcerik .dt-no{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:#EDE4FF;color:#4B2A99;font-size:13px;font-weight:900;display:inline-flex;align-items:center;justify-content:center}
+#dcTestIcerik .dt-baslik{font-size:13px;font-weight:900;color:#6A6290;letter-spacing:.2px}
+#dcTestIcerik .dt-soru-metni{font-size:16px;font-weight:800;color:#2B2350;line-height:1.5;margin:10px 0 12px}
+#dcTestIcerik .dt-secenekler{display:flex;flex-direction:column;gap:8px}
+#dcTestIcerik .dt-secenekler.dt-dy{flex-direction:row}
+#dcTestIcerik .dt-secenekler.dt-dy .dc-quiz-opt{flex:1;text-align:center}
+#dcTestIcerik .dt-cumle{font-size:18px;font-weight:800;color:#2B2350;line-height:1.7;margin:12px 0 2px}
+#dcTestIcerik .dt-bosluk{display:inline-block;min-width:72px;margin:0 4px;padding:0 8px;border-bottom:3px dashed #A78BFA;text-align:center;color:#5B2DB8}
+#dcTestIcerik .dt-bosluk.dogru{border-bottom-style:solid;border-color:#16A34A;color:#15803D}
+#dcTestIcerik .dt-bosluk.yanlis{border-bottom-style:solid;border-color:#DC2626;color:#B91C1C}
+#dcTestIcerik .dt-tr{font-size:13.5px;font-weight:700;color:#6A6290;margin:2px 0 12px}
+#dcTestIcerik .dt-cipler{display:flex;flex-wrap:wrap;gap:8px}
+#dcTestIcerik .dt-cip{width:auto!important;min-height:44px;padding:8px 14px!important;border-radius:14px!important;font-weight:800;font-size:15px;cursor:pointer}
+#dcTestIcerik .dt-cip[hidden]{display:none!important}
+#dcTestIcerik .dt-cevap{min-height:56px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px;margin-bottom:12px;border:2px dashed #D8CCF5;border-radius:16px;background:#FBF9FF}
+#dcTestIcerik .dt-cevap.dogru{border-style:solid;border-color:#16A34A;background:#F0FDF4}
+#dcTestIcerik .dt-cevap.yanlis{border-style:solid;border-color:#DC2626;background:#FEF2F2}
+#dcTestIcerik .dt-yerlesen{background:#7C3AED;color:#fff;border:0}
+#dcTestIcerik .dt-ipucu{font-size:13px;font-weight:700;color:#9A90BE;padding:0 6px}
+#dcTestIcerik .dt-aciklama{margin-top:10px;padding:10px 12px;border-radius:14px;background:#ECFDF3;color:#14532D;font-size:14px;font-weight:700;line-height:1.5}
+#dcTestIcerik .dt-aciklama.dt-yanlis{background:#FEF2F2;color:#7F1D1D}
+/* Vadi görünümündeki geniş şık düğmelerinin üstüne yaz: kelime kartları yan yana, gizlenenler gizli */
+body #tab-derscalis #dcTestIcerik .dt-cipler .dt-cip,
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dt-cipler .dt-cip{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;margin:0!important}
+body #tab-derscalis #dcTestIcerik .dt-cipler .dt-cip[hidden],
+body.dc-ada.dc-vadi #tab-derscalis #dcTestIcerik .dt-cipler .dt-cip[hidden]{display:none!important}
