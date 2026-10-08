@@ -17,7 +17,7 @@
     for (const [node, marker] of placements) { marker.replaceWith(node); }
     placements.clear();
     badgeObserver?.disconnect(); badgeObserver=null;
-    document.querySelectorAll('.dm-forest-caption,.dm-forest-papi,.dm-forest-tools,#dmForestBadgeToggle,#dmForestBadgeEmpty,.dm-chart-empty').forEach(n=>n.remove());
+    document.querySelectorAll('.dm-forest-caption,.dm-forest-papi,.dm-forest-tools,#dmForestBadgeToggle,#dmForestBadgeEmpty,.dm-chart-empty,#dmMyWorldTasks').forEach(n=>n.remove());
     ['gelisimGrafik','kriterGrafik','denemeGrafik'].forEach(id=>{if($(id))$(id).hidden=false;});
     $('rozetlerGridKonteyner')?.classList.remove('dm-badges-expanded');
     $('dmForestGrowth')?.remove(); $('dmForestActions')?.remove();
@@ -90,6 +90,12 @@
       if($('rozetlerGridKonteyner')) {badgeObserver=new MutationObserver(badgeState);badgeObserver.observe($('rozetlerGridKonteyner'),{childList:true});}
     }
     badgeState();
+    // Unified dashboard entry: reuse the existing Sana Ozel screen and its live data.
+    if(!$('dmMyWorldTasks')){
+      const tasks=document.createElement('section');tasks.id='dmMyWorldTasks';tasks.className='dm-my-world-tasks';
+      tasks.innerHTML='<div class="dm-forest-section-heading"><h2>🎯 Sana Özel</h2><span>Görevlerim ve haftalık hedefim</span></div><p>Günlük görevlerini, haftalık hedeflerini ve ödüllerini aynı merkezden yönet.</p><button type="button" class="dm-my-world-open">Günün 3 Görevini ve Hedefimi Gör →</button>';
+      const summary=$('tab-ozet');if(summary){summary.prepend(tasks);tasks.querySelector('button').addEventListener('click',()=>{const target=document.querySelector('#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"]');if(target){target.click();}else{document.querySelector('[data-ekran="tab-sanaozel"]')?.click();}});}
+    }
     const growth=document.createElement('section');growth.id='dmForestGrowth';growth.setAttribute('aria-labelledby','dmForestGrowthTitle');
     growth.innerHTML='<div class="dm-forest-section-heading"><h2 id="dmForestGrowthTitle">🌿 Gelişimim</h2><span>Her adım bir keşif</span></div>';
     badges ? badges.after(growth) : summary.append(growth);
