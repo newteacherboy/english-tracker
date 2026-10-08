@@ -43,6 +43,65 @@
     if (!kart || !panel) return;
     if (kart.parentElement !== panel) panel.appendChild(kart);
     if (!kart.querySelector('.dv-papi-yildiz')) kart.appendChild(gorsel('ders-vadi/papi-yildiz.png', 'dv-papi-yildiz', ''));
+    kart.hidden = true; // Eski macera tetikleyicisi DOM'da kalsın, derste görünmesin.
+  }
+
+  /* Konunun testi başarıyla tamamlandığında maceraya tam ekran geçiş. */
+  function maceraGecisi() {
+    if (document.getElementById('dvMaceraGecisi')) return;
+    const kart = $('kmBaslangic');
+    const eskiBasla = kart && kart.querySelector('button');
+    if (!eskiBasla) return;
+    const perde = document.createElement('div');
+    perde.id = 'dvMaceraGecisi';
+    perde.className = 'dv-macera-gecisi';
+    perde.setAttribute('role', 'dialog');
+    perde.setAttribute('aria-modal', 'true');
+    perde.setAttribute('aria-label', 'Ders çalışma tamamlandı');
+    perde.innerHTML = '<div class="dv-macera-isilti" aria-hidden="true">✦ ✧ ✦ ✧ ✦</div>' +
+      '<div class="dv-macera-panel">' +
+      '<img class="dv-macera-papi" src="ders-vadi/papi-yildiz.png" alt="Kutlayan Papi">' +
+      '<span class="dv-macera-onay">🎉 Harika iş çıkardın!</span>' +
+      '<h2>Ders çalışma bitti!</h2>' +
+      '<p>Şimdi uygulama zamanı!</p>' +
+      '<span class="dv-macera-bilgi">🃏 4 kart &nbsp;·&nbsp; ❓ 6 soru &nbsp;·&nbsp; 🏆 final</span>' +
+      '<button class="dv-macera-basla" type="button">Başla <span aria-hidden="true">➜</span></button>' +
+      '<button class="dv-macera-sonra" type="button">Daha sonra</button>' +
+      '</div>';
+    const kapat = () => { document.removeEventListener('keydown', tus); perde.remove(); };
+    const tus = e => { if (e.key === 'Escape') kapat(); };
+    perde.querySelector('.dv-macera-basla').addEventListener('click', () => {
+      kapat();
+      eskiBasla.click(); // Var olan Konu Macerası ve ödül akışı korunur.
+    });
+    perde.querySelector('.dv-macera-sonra').addEventListener('click', kapat);
+    document.body.appendChild(perde);
+    document.addEventListener('keydown', tus);
+    perde.querySelector('.dv-macera-basla').focus();
+  }
+
+  function testBitisiniBagla() {
+    const eski = window.dcTestiBitir;
+    if (typeof eski !== 'function' || eski.__dvSarildi) return;
+    const sarili = function (soruSayisi) {
+      const toplam = Number(soruSayisi);
+      const dogru = typeof dcQuizDogruSayisi !== 'undefined' ? Number(dcQuizDogruSayisi) : -1;
+      const cevaplandi = typeof dcQuizCevaplari !== 'undefined' &&
+        Array.isArray(dcQuizCevaplari) && dcQuizCevaplari.length === toplam &&
+        dcQuizCevaplari.every(x => x !== -1);
+      const tamamlandi = toplam > 0 && cevaplandi && dogru === toplam;
+      const sonuc = eski.apply(this, arguments);
+      // Testte eksik/yanlış cevap varsa eski doğrulama akışını değiştirme.
+      if (tamamlandi) {
+        if (sonuc && typeof sonuc.then === 'function') {
+          return sonuc.then(deger => { maceraGecisi(); return deger; });
+        }
+        maceraGecisi();
+      }
+      return sonuc;
+    };
+    sarili.__dvSarildi = true;
+    window.dcTestiBitir = sarili;
   }
 
   function bagla() {
@@ -57,8 +116,8 @@
     window.dcKonuDetayiCiz = sarili;
   }
 
-  function basla() { kur(); bagla(); maceraYerlestir(); }
+  function basla() { kur(); bagla(); maceraYerlestir(); testBitisiniBagla(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', basla);
   else basla();
-  window.addEventListener('load', bagla);
+  window.addEventListener('load', () => { bagla(); testBitisiniBagla(); });
 })();
