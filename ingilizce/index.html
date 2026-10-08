@@ -954,6 +954,7 @@ html, body { touch-action: pan-x pan-y; }
 </script>
 
 <style id="dm-papi-transitions">
+#bzParkur .dm-parkur-loading{background:#f0faf8!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:65vh;padding:32px 20px!important;text-align:center} .dm-parkur-retry{border:0;border-radius:14px;padding:12px 20px;background:#198e76;color:#fff;font:700 14px system-ui;margin-top:12px}
 #dmBootSplash,#oturumYuklemeOverlay{position:fixed!important;inset:0!important;background:#f0faf8!important;z-index:2147483000!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;padding:24px!important;text-align:center!important}
 #dmBootSplash{display:flex;transition:opacity .25s ease}#dmBootSplash.dm-ready{opacity:0;pointer-events:none}
 .dm-papi-loading{font-family:Nunito,system-ui,sans-serif;color:#214c52;display:flex;align-items:center;flex-direction:column;gap:12px}
@@ -28750,7 +28751,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function aktarGerekirse() { let n = havuzTum().length; if (n !== aktarImza) { aktarImza = n; aktar(); } }
 
   async function ilerlemeYukle() {
-    try { let r = await fetch(`${apiURL}?islem=buyuSeviyeIlerlemeGetir&ogrenci=${encodeURIComponent(isim())}`); let l = await r.json(); if (Array.isArray(l)) hamTamam = new Set(l.map(Number)); } catch (e) {}
+    const controller=new AbortController(), deadline=setTimeout(()=>controller.abort(),12000);
+    try {
+      let r=await fetch(`${apiURL}?islem=buyuSeviyeIlerlemeGetir&ogrenci=${encodeURIComponent(isim())}`,{signal:controller.signal});
+      if(!r.ok)throw new Error('Parkur bilgileri alınamadı');
+      let l=await r.json();
+      if(!Array.isArray(l))throw new Error('Parkur yanıtı geçersiz');
+      hamTamam=new Set(l.map(Number));
+    } finally { clearTimeout(deadline); }
     try { (JSON.parse(localStorage.getItem('bz_bekleyen_' + isim().toLowerCase()) || '[]')).forEach(n => hamTamam.add(Number(n))); } catch (e) {}
     aktar(); aktarImza = havuzTum().length;
     yuklendi = true;
@@ -29253,8 +29261,17 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (eskiGorunum()) { let r = orgDunya && orgDunya.apply(this, arguments); setTimeout(yeniDonDugmesi, 300); return r; }
     if (!parkurAcikTut && typeof orgDunya === 'function') orgDunya.apply(this, arguments);   /* sekmeyi açar, alt menüyü günceller */
     parkurAcikTut = false;
-    if (!yuklendi) { parkurAlani().innerHTML = `<div class="bz-ic" style="text-align:center;padding-top:30vh"><div style="font-size:54px">🧙</div><b>Akademinin kapıları açılıyor…</b></div>`; await ilerlemeYukle(); }
-    else ilerlemeYukle().then(() => { if (gorunum.ad === 'harita' && $('bzParkur') && !perde) harita(gorunum.b === null ? aktifBolum() : gorunum.b); });
+    if (!yuklendi) {
+      parkurAlani().innerHTML = `<div class="bz-ic dm-parkur-loading"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Papağan Papi"></div><strong>Parkurunu hazırlıyorum</strong><p>Birazdan macerana devam edeceğiz…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div><button type="button" class="dm-parkur-retry" hidden>Tekrar dene</button></div></div>`;
+      try { await ilerlemeYukle(); } catch (e) {
+        const host=$('bzParkur'), message=host?.querySelector('.dm-papi-loading p'), retry=host?.querySelector('.dm-parkur-retry');
+        if(message)message.textContent='Parkur bilgileri alınamadı. Bağlantını kontrol edip tekrar dene.';
+        if(retry){retry.hidden=false;retry.onclick=()=>window.dunyaAc();}
+        host?.querySelector('.dm-papi-dots')?.remove();
+        return;
+      }
+    }
+    else ilerlemeYukle().then(() => { if (gorunum.ad === 'harita' && $('bzParkur') && !perde) harita(gorunum.b === null ? aktifBolum() : gorunum.b); }).catch(() => {});
     if (gorunum.ad === 'koridor') koridor(); else harita(gorunum.b === null ? aktifBolum() : gorunum.b);
   };
   /* Aktiviteler'deki Büyü Akademisi kartı ve eski çağrılar: Parkur'u kapılarla açar */
