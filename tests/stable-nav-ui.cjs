@@ -17,19 +17,19 @@ for(const width of [320,390,600,1024]){
  await page.setViewportSize({width,height:844});await page.goto('https://nav.test/');
  const first=await state();assert.equal(first.row.length,5);assert(Math.abs(first.play.x+first.play.w/2-width/2)<1,'cold start centered');
  assert(first.play.bottom<=Math.min(...first.row.map(r=>r.y)),'no overlap');
- assert(first.background.includes('linear-gradient'));assert(first.playBg.includes('radial-gradient'));
+ assert(first.background.includes('linear-gradient'));assert.equal(first.playBg,'none');
  await page.addScriptTag({url:'https://nav.test/bottom-nav.js'});
  await page.evaluate(()=>{document.body.classList.add('dm-parkur-open');document.querySelector('[data-ekran="tab-dunya"]').classList.add('active');});
- const parkur=await state();assert.deepEqual(parkur.play,first.play,'parkur style must never move play');assert.equal(parkur.background,first.background);assert(parkur.playBg.includes('radial-gradient'));
+ const parkur=await state();assert.deepEqual(parkur.play,first.play,'parkur style must never move play');assert.equal(parkur.background,first.background);assert(parkur.playBg.includes('linear-gradient'));
  await page.evaluate(()=>{document.body.classList.remove('dm-parkur-open');document.querySelector('[data-ekran="tab-dunya"]').classList.remove('active');document.querySelector('[data-ekran="tab-dunyam"]').classList.add('active');});
- const world=await state();assert.deepEqual(world.play,first.play);assert(world.selected.includes('rgb(242, 233, 255)'));assert.equal(world.labelColor,'rgb(48, 36, 134)');
+ const world=await state();assert.deepEqual(world.play,first.play);assert(world.selected.includes('rgb(242, 233, 255)'));assert.equal(world.labelColor,'rgb(85, 34, 134)');
  await page.evaluate(()=>{window.dunyaAc=()=>window.called='play';window.magazaAc=()=>window.called='store';window.benimDunyamAc=()=>window.called='world';});
  for(const [id,expected] of [['tab-dunya','play'],['tab-magaza','store'],['tab-dunyam','world']]){await page.locator('[data-ekran="'+id+'"]').click();assert.equal(await page.evaluate(()=>called),expected);}
 
  console.log('PASS '+width+'px: static cold start, actual page/theme styles, stable selected states, original navigation');
 }
 for(const m of index.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){if(/src=|application\/ld\+json/.test(m[1]))continue;new vm.Script(m[2]);}
-assert(index.indexOf('bottom-nav.css?v=6')<index.indexOf('</head>'));
+assert(index.indexOf('bottom-nav.css?v=7')<index.indexOf('</head>'));
 assert(markup.includes('data-bc="parkur"'));assert(markup.includes('onclick="benimDunyamAc()"'));
 assert.deepEqual(errors,[]);await browser.close();console.log('PASS inline script parse and early menu stylesheet');
 })().catch(e=>{console.error(e);process.exit(1);});

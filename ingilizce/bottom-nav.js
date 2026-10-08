@@ -4,8 +4,7 @@
  const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':2,'tab-aktiviteler':3,'tab-derscalis':4,'tab-magaza':5,'tab-profil':6,'tab-dunyam':6};
  const positions = ['3% 7%','50% 7%','98% 10%','3% 58%','50% 59%','98% 56%','5% 100%'];
  const layout = [['tab-meduakis','Arkadaşlar'],['tab-aktiviteler','Oyunlar'],['tab-dunya','Oyna'],['tab-derscalis','Ders Çalış'],['tab-magaza','Mağaza'],['tab-dunyam','Benim Dünyam']];
- const sprite = {'tab-meduakis':'0% 0%','tab-aktiviteler':'50% 0%','tab-derscalis':'100% 0%','tab-magaza':'0% 100%','tab-dunyam':'50% 100%','tab-dunya':'100% 100%'};
- let observer;
+  let observer;
  function decorate() {
   const nav = document.getElementById('bottomNavMobile');
   if (!nav) return;
@@ -26,9 +25,11 @@
     const art = document.createElement('span');
     art.className = 'dm-nav-art';
     art.setAttribute('aria-hidden','true');
-    art.style.backgroundPosition = sprite[button.dataset.ekran] || positions[index];
+    art.style.backgroundPosition = positions[index];
     icon.replaceChildren(art);
    }
+   const existingArt = icon.querySelector('.dm-nav-art');
+   if (existingArt && existingArt.style.backgroundPosition !== positions[index]) existingArt.style.backgroundPosition = positions[index];
    const label = button.querySelector('.bn-label');
    if (label) button.setAttribute('aria-label',label.textContent.trim());
    if (button.classList.contains('active')) button.setAttribute('aria-current','page');
