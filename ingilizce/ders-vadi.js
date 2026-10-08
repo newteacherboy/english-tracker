@@ -158,11 +158,11 @@
     }
     if (document.documentElement.dataset.kmFixBound) return;
     document.documentElement.dataset.kmFixBound='1';
-    let active=null, footerObserver=null, lastContinue=null, used=new WeakSet();
+    let active=null, footerObserver=null, lastContinue=null;
     function watch(perde) {
       if (perde===active) return;
       if (footerObserver) footerObserver.disconnect();
-      active=perde;lastContinue=null;used=new WeakSet();
+      active=perde;lastContinue=null;
       if (!perde) return;
       const footer=perde.querySelector('#kmAlt');
       const body=perde.querySelector('#kmGovde');
@@ -179,14 +179,7 @@
     }
     new MutationObserver(()=>watch(document.getElementById('kmPerde'))).observe(document.body,{childList:true,subtree:true});
     watch(document.getElementById('kmPerde'));
-    document.addEventListener('click',e=>{
-      const button=e.target.closest?.('#kmPerde #kmIleri');
-      if(!button)return;
-      if(used.has(button)){e.preventDefault();e.stopImmediatePropagation();return;}
-      used.add(button);
-      // Mevcut onclick işleyicisini devre dışı bırakmadan çift tıklamayı önle.
-      button.dataset.kmPending='1';
-    },true);
+    // Yerel soru ilerleme işleyicisine müdahale etme: aynı düğüm yeniden kullanılabiliyor.
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);
   else install();
