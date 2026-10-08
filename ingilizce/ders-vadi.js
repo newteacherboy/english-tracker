@@ -43,7 +43,25 @@
     if (!kart || !panel) return;
     if (kart.parentElement !== panel) panel.appendChild(kart);
     if (!kart.querySelector('.dv-papi-yildiz')) kart.appendChild(gorsel('ders-vadi/papi-yildiz.png', 'dv-papi-yildiz', ''));
-    kart.hidden = true; // Eski macera tetikleyicisi DOM'da kalsın, derste görünmesin.
+    kart.hidden = true; // Özgün Konu Macerası butonu ve işleyicisi korunur.
+    // Başlığın hemen altında kısa bir giriş düğmesi; animasyonlu bitiş ekranı da kalır.
+    const baslik = $('dcTopicHeader');
+    if (!baslik) return;
+    let giris = $('dvMaceraKisayol');
+    if (!giris) {
+      giris = document.createElement('button');
+      giris.id = 'dvMaceraKisayol';
+      giris.type = 'button';
+      giris.className = 'dv-macera-kisayol';
+      giris.innerHTML = '<span aria-hidden="true">🌟</span><span>Konu Macerası</span><span class="dv-kisayol-basla">Başla →</span>';
+      giris.addEventListener('click', () => {
+        const asil = $('kmBaslangic')?.querySelector('button');
+        if (asil && !asil.disabled) asil.click();
+      });
+    }
+    if (giris.previousElementSibling !== baslik) baslik.insertAdjacentElement('afterend', giris);
+    const asil = kart.querySelector('button');
+    giris.disabled = !asil || asil.disabled;
   }
 
   /* Konunun testi başarıyla tamamlandığında maceraya tam ekran geçiş. */
