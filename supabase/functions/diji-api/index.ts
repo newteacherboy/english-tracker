@@ -1,3 +1,4 @@
+import { meteorAPI } from './meteor-api.ts';
 import { wordWheelAPI } from './word-wheel-api.ts';
 import { papiCardsAPI } from './papi-cards-api.ts';
 import './score-rules.js';
@@ -30,6 +31,7 @@ const corsHeaders = {
 const secretKeys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
 const adminKey = secretKeys.default;
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, adminKey);
+const meteor = meteorAPI(supabase,json);
 const wordWheel = wordWheelAPI(supabase,json);
 const papiCards = papiCardsAPI(supabase,json);
 const release = releaseAPI(supabase,json);
@@ -1225,6 +1227,7 @@ async function handle(req: Request) {
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
   const progressionResult=await progression.handle(op,body,q,a);if(progressionResult)return progressionResult;
+  const meteorResult=await meteor.handle(op,body,q,a,req.method);if(meteorResult)return meteorResult;
   const wheelResult=await wordWheel.handle(op,body,q,a,req.method);if(wheelResult)return wheelResult;
   const papiResult=await papiCards.handle(op,body,q,a,req.method);if(papiResult)return papiResult;
   const releaseResult=await release.handle(op,body,q,a);if(releaseResult)return releaseResult;

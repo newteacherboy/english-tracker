@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="progress-rules.js?v=2"></script>
-<script src="progression-catalog.js?v=4"></script>
+<script src="progression-catalog.js?v=5"></script>
 <script src="guest-platform.js?v=2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 
@@ -1735,7 +1735,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                     </div>
                 </div>
         
-              <!-- AKTİVİTELER SEKMESİ (Sadece Aktiviteler sekmesine basınca görünür) -->
+              <!-- AKTİVİTELER SEKMESİ (Sadece Oyunlar sekmesine basınca görünür) -->
         <div id="tab-aktiviteler" class="dc-fullscreen-overlay">
             <button class="dc-exit-btn" onclick="aktivitelerTamEkranKapat()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -20360,7 +20360,7 @@ let adaRenk = adaRenkleri[
     setTimeout(() => {
       let f = window[OYUN_AC[oyun]];
       if (typeof f === 'function') { try { f(); } catch (e) { console.error(e); } }
-      else if (typeof yoToast === 'function') yoToast('Oyunu Aktivite sekmesinden açabilirsin ⚔️');
+      else if (typeof yoToast === 'function') yoToast('Oyunu Oyunlar sekmesinden açabilirsin ⚔️');
     }, 400);
   };
 })();
@@ -21453,7 +21453,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 @media (prefers-reduced-motion: reduce) { .mik-dalga i, .pk-sekmeler i, .pk-sekmeler button::after, .ba-sik-btn, .tr-delik, .tr-el, .bk-kart .i { animation:none !important; } .tr-delik, .tr-balon, .bk-kart { transition:none !important; } }
 </style>
 <div class="mik-durum" id="mikDurum" role="status" aria-live="polite"><span class="mik-dalga"><i></i><i></i><i></i><i></i></span><span id="mikDurumMetin">Dinliyorum…</span></div>
-<script src="papi-guide-content.js?v=2"></script>
+<script src="papi-guide-content.js?v=3"></script>
 <style>
 .yd-level-scroll{overflow-x:auto}.yd-level-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.yd-level-table caption{font-weight:900;padding:10px}.yd-level-table th,.yd-level-table td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top}.yd-level-table thead{background:#eee7fb;color:#302447}
 .t2-balon p{max-height:38vh;overflow-y:auto;overscroll-behavior:contain}.t2-noktalar{flex-wrap:wrap;max-height:30px;overflow-y:auto}.t2-adim-sayisi{display:block;text-align:center;font-size:12px;font-weight:800;color:#574077;margin:5px 0}.t2-balon{max-height:calc(100dvh - 24px);overflow-y:auto}
@@ -23295,7 +23295,7 @@ font-size:40px;
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
 </body> etiketinin hemen ÜSTÜNE yapıştır (uyum bloğunun altına da olur).
-     Aktiviteler'e "Eşleştirme" kartını kendisi ekler; başka bir yere dokunmana gerek yok.
+     Oyunlar'e "Eşleştirme" kartını kendisi ekler; başka bir yere dokunmana gerek yok.
      ========================================================================= -->
 <style>
 .es-ust{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:900;color:#6d28d9;margin-bottom:6px}
@@ -23539,7 +23539,7 @@ async function esOyunuBitir() {
   if (typeof oyunLiderlikGoster === 'function') oyunLiderlikGoster('eslestirmeLiderlikTumunuGetir', sinifStr, isim, 'esGecmisSkorlarListesi', 'Eş Bul', 'eslestirme');
 }
 
-/* Aktiviteler'e kartı ekle (Hafıza Sandığı'nın hemen yanına) */
+/* Oyunlar'e kartı ekle (Hafıza Sandığı'nın hemen yanına) */
 (function esKartEkle() {
   let dene = () => {
     if (document.getElementById('esAktiviteKart')) return true;
@@ -23563,7 +23563,7 @@ async function esOyunuBitir() {
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
-</body> etiketinin hemen ÜSTÜNE yapıştır. Aktiviteler'e kartını kendisi ekler.
+</body> etiketinin hemen ÜSTÜNE yapıştır. Oyunlar'e kartını kendisi ekler.
      Cümleler: önce Supabase "sentence_bank" (sınıf + ünite), eksik kalırsa Ders Çalış örnekleri.
      ======================================================================= -->
 <style>
@@ -23885,7 +23885,7 @@ document.addEventListener('keydown', e => {
   else if (!trEl('trenKontrolBtn').disabled && document.activeElement === document.body) { e.preventDefault(); trenKontrol(); }
 });
 
-/* Aktiviteler'e kart (Eşleştirme'nin, yoksa Hafıza Sandığı'nın yanına) */
+/* Oyunlar'e kart (Eşleştirme'nin, yoksa Hafıza Sandığı'nın yanına) */
 (function trenKartEkle() {
   let dene = () => {
     if (document.getElementById('trenAktiviteKart')) return true;
@@ -28300,7 +28300,7 @@ body.dc-ada .ma-klasik-don{display:none}
      v2: Büyü Akademisi artık PARKUR sekmesinin kendisi. Parkur'da kale haritası, "Bölümler" ile kapılar.
      Oyun bitince ya da X'e basınca her zaman Parkur haritasına dönülür. Eski seviye haritası gizlenir (silinmez).
      Koridor (4 bölüm kapısı) → Kale haritası (10 durak) → Durak kartı → 11 soruluk büyü
-     Her durakta Aktiviteler'deki 11 mini oyunun her birinden bir soru gelir.
+     Her durakta Oyunlar'deki 11 mini oyunun her birinden bir soru gelir.
      İlerleme eski sistemle aynı yerde (buyuSeviyeTamamla) saklanır: kimsenin ilerlemesi kaybolmaz.
      ======================================================================== -->
 <style>
@@ -28748,7 +28748,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span></div>
       <div class="bz-govde" id="bzGovde"><span class="bz-tip">${ik} ${ad}${s.tekrarMi ? ' · 🔁 Önceki üniteden' : ''}</span>`;
   }
-  /* ---------- Jokerler: her durakta her jokerin 1 bedava hakkı + çantadakiler (Aktiviteler'le ortak çanta) ---------- */
+  /* ---------- Jokerler: her durakta her jokerin 1 bedava hakkı + çantadakiler (Oyunlar'le ortak çanta) ---------- */
   const JK = [['yari', '✂️', 'Yarıya indir'], ['harf', '💡', 'İpucu'], ['pas', '🔄', 'Pas'], ['ikinci', '🎯', 'İkinci şans']];
   const canta = () => (yoVar() && yo.jokerEnv) ? yo.jokerEnv : {};
   const jkSay = t => (O.jkBedava[t] || 0) + (canta()[t] || 0);
@@ -29098,7 +29098,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     else ilerlemeYukle().then(() => { if (gorunum.ad === 'harita' && $('bzParkur') && !perde) harita(gorunum.b === null ? aktifBolum() : gorunum.b); }).catch(() => {});
     if (gorunum.ad === 'koridor') koridor(); else harita(gorunum.b === null ? aktifBolum() : gorunum.b);
   };
-  /* Aktiviteler'deki Büyü Akademisi kartı ve eski çağrılar: Parkur'u kapılarla açar */
+  /* Oyunlar'deki Büyü Akademisi kartı ve eski çağrılar: Parkur'u kapılarla açar */
   let eskiAc = window.baModuAc;
   window.baModuAc = async function () {
     if (!isim()) { toast('Önce giriş yapmalısın.'); return; }
@@ -30590,14 +30590,14 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=2">
 <script src="parkur-map-theme-v1.js?v=2"></script>
 <link rel="stylesheet" href="medupro.css?v=2">
-<script src="medupro.js?v=4"></script>
-<link rel="stylesheet" href="activity-ui.css?v=4">
-<script src="activity-ui.js?v=6"></script>
+<script src="medupro.js?v=5"></script>
+<link rel="stylesheet" href="activity-ui.css?v=5">
+<script src="activity-ui.js?v=7"></script>
 <link rel="stylesheet" href="bottom-nav.css?v=5">
 <script src="bottom-nav.js?v=4"></script>
 
 <link rel="stylesheet" href="weekly-ui.css?v=2">
-<script src="feature-catalog.js?v=2"></script>
+<script src="feature-catalog.js?v=3"></script>
 <script src="weekly-ui.js?v=5"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=1">
@@ -30623,9 +30623,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="question-calm-v1.css?v=3"><script src="question-calm-v1.js?v=3"></script>
 <link rel="stylesheet" href="ders-vadi.css?v=2"><script src="ders-vadi.js?v=1"></script>
 <link rel="stylesheet" href="ders-test.css?v=2"><script src="ders-test.js?v=2"></script>
-<link rel="stylesheet" href="papi-cards.css?v=2"><script src="papi-cards.js?v=3"></script>
+<link rel="stylesheet" href="papi-cards.css?v=2"><script src="papi-cards.js?v=4"></script>
 <link rel="stylesheet" href="benim-dunyam.css?v=6"><script src="benim-dunyam.js?v=5"></script>
-<link rel="stylesheet" href="word-wheel.css?v=1"><script src="word-wheel.js?v=1"></script>
+<link rel="stylesheet" href="meteor.css?v=1"><script src="meteor.js?v=1"></script>
+<link rel="stylesheet" href="word-wheel.css?v=1"><script src="word-wheel.js?v=2"></script>
 </body>      
         </html>
 

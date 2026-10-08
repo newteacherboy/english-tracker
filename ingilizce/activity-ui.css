@@ -36,7 +36,7 @@
 @media(max-width:370px){#tab-aktiviteler .az-gcard.dm-toy-card{min-height:142px!important;padding:18px 8px 10px!important;border-radius:23px!important}#tab-aktiviteler .dm-toy-card .az-gcard-title{font-size:13px!important}.dm-parkur-tabs{gap:9px!important}.dm-parkur-tabs button{padding:9px 7px!important;gap:6px!important}.dm-tab-art{width:36px;height:36px}.dm-parkur-tabs b{font-size:15px}.dm-parkur-tabs small{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.dm-parkur-tabs button{transition:none}}
 /* Player-count navigation: retain every original game's own action. */
-#tab-aktiviteler .dm-party-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:5px;margin:14px 0 22px;background:#dfefed;border:1px solid #d1e7e3;border-radius:20px;font-family:Nunito,system-ui,sans-serif}
+#tab-aktiviteler .dm-party-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:5px;margin:14px 0 22px;background:#dfefed;border:1px solid #d1e7e3;border-radius:20px;font-family:Nunito,system-ui,sans-serif}
 #tab-aktiviteler .dm-party-tabs button{min-height:50px;padding:10px 6px;background:transparent;border:1px solid transparent;border-radius:15px;color:#42616b;font:900 14px Nunito,system-ui,sans-serif;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:6px;box-shadow:none}
 #tab-aktiviteler .dm-party-tabs button span{font-size:20px}
 #tab-aktiviteler .dm-party-tabs button[aria-selected=true]{background:#fff;border-color:#b8ded8;color:#075562;box-shadow:0 3px 0 #b9d7d3,0 5px 10px #235a6210}
@@ -45,3 +45,7 @@
 #tab-aktiviteler [data-dm-party=solo] .az-grid2x2>[data-dm-party=duo],#tab-aktiviteler [data-dm-party=duo] .az-grid2x2>[data-dm-party=solo]{display:none!important}
 /* Override the parkur's generic white h2 rule on this light panel. */
 #bzParkur .dm-pro-panel>h2{color:#164f60!important;text-shadow:none!important;background:none!important;-webkit-text-fill-color:#164f60!important}
+
+#tab-aktiviteler [data-dm-party=solo] .az-grid2x2>[data-dm-party=free],#tab-aktiviteler [data-dm-party=duo] .az-grid2x2>[data-dm-party=free],#tab-aktiviteler [data-dm-party=free] .az-grid2x2>[data-dm-party=solo],#tab-aktiviteler [data-dm-party=free] .az-grid2x2>[data-dm-party=duo]{display:none!important}
+#tab-aktiviteler .dm-party-tabs button[data-party=free][aria-selected=true]{background:#fff2c9;color:#65521d;border-color:#e6cf83}
+@media(max-width:440px){#tab-aktiviteler .dm-party-tabs button{font-size:11px;gap:3px;padding:9px 3px}#tab-aktiviteler .dm-party-tabs button span{font-size:16px}}

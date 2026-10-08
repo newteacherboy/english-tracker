@@ -555,6 +555,34 @@
       "bytes": 173930,
       "status": "ai-generated",
       "source": "docs/raised-navigation-generation.json"
+    },
+    {
+      "path": "ingilizce/meteor-sky.png",
+      "sha256": "151f2d61767705e1034aeb9fd306676cd906f8b3b8cbc5b1b5a03288c4dc37fc",
+      "bytes": 2080152,
+      "status": "ai-generated",
+      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
+    },
+    {
+      "path": "ingilizce/meteor-sprite.png",
+      "sha256": "fa19426cad2a02c88a7cbb4f61a3548765d04146c5d56eb0051db8e6f946799e",
+      "bytes": 1417185,
+      "status": "ai-generated",
+      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
+    },
+    {
+      "path": "ingilizce/meteor-target.png",
+      "sha256": "8c8148a26c6adbb39f23dbc1956c5a1cf1191e7886510ab52d2d65af652eb2cb",
+      "bytes": 2046422,
+      "status": "ai-generated",
+      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
+    },
+    {
+      "path": "ingilizce/meteor-title.png",
+      "sha256": "23858d6b3ff1f93bc84981740d27cf14006e8301431cb4e5c0ea27944cc15f48",
+      "bytes": 1000088,
+      "status": "ai-generated",
+      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
     }
   ]
 }

@@ -47,20 +47,20 @@
  function partyTabs(host,grid){
   let tabs=host.querySelector('.dm-party-tabs');
   if(!tabs){
-   tabs=document.createElement('div');tabs.className='dm-party-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Oyuncu sayısı');
-   tabs.innerHTML='<button type="button" id="dmSoloTab" role="tab" data-party="solo" aria-controls="dmActivityGames"><span aria-hidden="true">🎮</span> Tek Kişilik</button><button type="button" id="dmDuoTab" role="tab" data-party="duo" aria-controls="dmActivityGames"><span aria-hidden="true">🤝</span> İki Kişilik</button>';
+   tabs=document.createElement('div');tabs.className='dm-party-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Oyun kategorisi');
+   tabs.innerHTML='<button type="button" id="dmSoloTab" role="tab" data-party="solo" aria-controls="dmActivityGames"><span aria-hidden="true">🎮</span> Tek Kişilik</button><button type="button" id="dmDuoTab" role="tab" data-party="duo" aria-controls="dmActivityGames"><span aria-hidden="true">🤝</span> İki Kişilik</button><button type="button" id="dmFreeTab" role="tab" data-party="free" aria-controls="dmActivityGames"><span aria-hidden="true">🦜</span> Serbest Oyunlar</button>';
    grid.before(tabs);
-   tabs.querySelectorAll('button').forEach(b=>{b.onclick=()=>{party=b.dataset.party;partyTabs(host,grid);};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const next=tabs.querySelector('[data-party="'+(e.key==='Home'?'solo':e.key==='End'?'duo':party==='solo'?'duo':'solo')+'"]');next.click();next.focus();};});
+   tabs.querySelectorAll('button').forEach(b=>{b.onclick=()=>{party=b.dataset.party;partyTabs(host,grid);};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const all=[...tabs.querySelectorAll('button')],i=all.indexOf(b),next=all[e.key==='Home'?0:e.key==='End'?all.length-1:(i+(e.key==='ArrowRight'?1:-1)+all.length)%all.length];next.click();next.focus();};});
   }
   host.dataset.dmParty=party;
   tabs.querySelectorAll('button').forEach(b=>{const active=b.dataset.party===party;b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});
-  grid.id='dmActivityGames';grid.setAttribute('role','tabpanel');grid.setAttribute('aria-labelledby',party==='solo'?'dmSoloTab':'dmDuoTab');
-  grid.querySelectorAll('.az-gcard').forEach(b=>{b.dataset.dmParty=b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';});
+  grid.id='dmActivityGames';grid.setAttribute('role','tabpanel');grid.setAttribute('aria-labelledby',party==='solo'?'dmSoloTab':party==='duo'?'dmDuoTab':'dmFreeTab');
+  grid.querySelectorAll('.az-gcard').forEach(b=>{b.dataset.dmParty=['papiCardsActivity','wordWheelActivity','meteorActivity'].includes(b.id)?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';});
   if(observedGrid!==grid){partyObserver?.disconnect();observedGrid=grid;partyObserver=new MutationObserver(upgradeCards);partyObserver.observe(grid,{childList:true});}
  }
  function upgradeCards(){
   const host=document.querySelector('#tab-aktiviteler .dc-focus-card')||document.getElementById('tab-aktiviteler');if(!host)return;
-  if(!host.querySelector('.dm-activity-hero')){const h=document.createElement('header');h.className='dm-activity-hero';h.innerHTML='<div><h1>Aktiviteler</h1><p>Bugün hangi oyunu oynayalım?</p></div><img src="papi-welcome-v2.png" alt="Oynamaya hazır Diji-Medu papağanı" width="100" height="110">';host.prepend(h);}
+  if(!host.querySelector('.dm-activity-hero')){const h=document.createElement('header');h.className='dm-activity-hero';h.innerHTML='<div><h1>Oyunlar</h1><p>Bugün hangi oyunu oynayalım?</p></div><img src="papi-welcome-v2.png" alt="Oynamaya hazır Diji-Medu papağanı" width="100" height="110">';host.prepend(h);}
   const grid=host.querySelector('.az-grid2x2');if(!grid)return;
   cards.forEach(([fn,idx,color,edge])=>{const b=grid.querySelector('[onclick*="'+fn+'"]')||document.getElementById(fn==='dikteAc'?'yoDikteKart':fn);if(!b||!grid.contains(b))return;
    if(fn==='kelimeYarismasiAc')b.querySelector('.az-gcard-title').textContent='Kelime Laboratu\u00advarı';b.classList.add('dm-toy-card');b.style.setProperty('--toy-bg',color);b.style.setProperty('--toy-edge',edge);
