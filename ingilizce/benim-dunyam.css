@@ -148,3 +148,12 @@
 #tab-dunyam .bd-rozet.resimli .bd-kilit-ikon{position:absolute;right:0;bottom:0;font-size:18px;opacity:.9}
 #tab-dunyam .bd-yuvarlak.bd-cikis{color:#E5484D}
 #tab-dunyam .bd-yuvarlak.bd-ogretmen{color:#7C3AED}
+
+/* Bilgisayar ve tablet: genel tam ekran kuralı (min-width:769px) içeriği yan yana diziyordu.
+   Benim Dünyam tek sütun kalır, ortada durur, arka plan ekranı tamamen kaplar. */
+@media (min-width:769px){
+  #tab-dunyam.dc-fullscreen-overlay.active{display:block!important;background:#F6F2FF;padding:0 0 110px!important;overflow-y:auto}
+  #tab-dunyam>*{width:100%;max-width:720px;margin-left:auto;margin-right:auto}
+  #tab-dunyam .bd-sahne[style*="sahne-"]{height:380px;border-radius:0 0 32px 32px}
+  #tab-dunyam .bd-kart,#tab-dunyam .bd-sekmeler{max-width:692px;margin-left:auto;margin-right:auto}
+}

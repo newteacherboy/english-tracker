@@ -7,7 +7,7 @@ const g = n => new Date(Date.now() - n * 864e5).toLocaleDateString('sv-SE', { ti
 const ISTAT = { ok: true, bugun: g(0), gunler: { [g(0)]: { o: 3, d: 20, y: 4, m: 1, l: 1, p: 2 }, [g(1)]: { o: 2, d: 12, y: 2, m: 0, l: 0, p: 1 }, [g(40)]: { o: 5, d: 30, y: 10, m: 0, l: 2, p: 0 } }, oyunTur: {} };
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.DIJI_CHROMIUM, args: ['--no-sandbox'] });
-  const page = await browser.newPage({ viewport: { width: 390, height: Number(process.env.DV_H || 844) } }), errors = [];
+  const page = await browser.newPage({ viewport: { width: Number(process.env.DV_W || 390), height: Number(process.env.DV_H || 844) } }), errors = [];
   page.on('pageerror', e => errors.push(e.message)); page.on('dialog', d => d.dismiss());
   await page.route('**/*', async route => {
     const u = new URL(route.request().url()), b = route.request().postDataJSON?.();
