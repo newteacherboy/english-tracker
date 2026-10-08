@@ -6,7 +6,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v62';
+const SURUM = 'diji-v61';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 
@@ -35,11 +35,6 @@ self.addEventListener('fetch', e => {
   if (r.mode === 'navigate') {
     e.respondWith(fetch(r).then(y => { const k = y.clone(); caches.open(SAYFA).then(c => c.put('./', k)); return y; })
       .catch(() => caches.match('./').then(y => y || caches.match(r))));
-    return;
-  }
-  /* Yerel arayüz kodları: her zaman ağdan güncel sürüm; çevrimdışıyken önbellek. */
-  if (url.origin === self.location.origin && /\/(profile-forest|bottom-nav|mascot-panels|medupro)\.(js|css)$/.test(url.pathname)) {
-    e.respondWith(fetch(r).then(y => {if(y.ok){const k=y.clone();caches.open(KAYNAK).then(c=>c.put(r,k));}return y;}).catch(()=>caches.match(r)));
     return;
   }
   /* Yazı tipleri, kütüphaneler ve aynı klasördeki dosyalar: önce cihaz */
