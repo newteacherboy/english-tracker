@@ -184,7 +184,8 @@
       if(!button)return;
       if(used.has(button)){e.preventDefault();e.stopImmediatePropagation();return;}
       used.add(button);
-      button.disabled=true;
+      // Mevcut onclick işleyicisini devre dışı bırakmadan çift tıklamayı önle.
+      button.dataset.kmPending='1';
     },true);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);
