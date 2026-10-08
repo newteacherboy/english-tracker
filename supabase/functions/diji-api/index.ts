@@ -5,6 +5,7 @@ import { progressionAPI } from './progression-api.ts';
 import { onboardingAPI } from './onboarding-api.ts';
 import { adminStudentsAPI } from './admin-students-api.ts';
 import { contactPolicyAPI } from './contact-policy-api.ts';
+import { myWorldAPI } from './my-world-api.ts';
 // =====================================================================
 // DİJİ-MEDU API — Supabase Edge Function (YAMALI SÜRÜM v4.6)
 // Yamalar "[YAMA n]" / "[v4.x]" etiketiyle işaretlidir. İşlem adları ve cevap
@@ -34,6 +35,7 @@ const progression = progressionAPI(supabase,json);
 const cachedContent = contentCache(json);
 const studentManagement = adminStudentsAPI(supabase,json,hashPassword);
 const contacts = contactPolicyAPI(supabase,json);
+const myWorld = myWorldAPI(supabase,json);
 
 const OGRENCI_OTURUM_GUN = 30;
 const OGRETMEN_OTURUM_SAAT = 8;           // [YAMA 1] öğretmen oturumu 30 gün değil 8 saat
@@ -1217,6 +1219,7 @@ async function handle(req: Request) {
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
   const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
+  const myWorldResult=await myWorld.handle(op,body,q,a);if(myWorldResult)return myWorldResult;
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
   const progressionResult=await progression.handle(op,body,q,a);if(progressionResult)return progressionResult;

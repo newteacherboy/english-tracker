@@ -9,7 +9,7 @@
     'aksesuarKatalog','oyunEslesmelerim','takipDavetListesi','kategorileriGetir','KOK']);
   const liveReads=new Set(['oyunEslesmeDurum','aktifDurum']);
   // Requests that change nothing other cached reads depend on: send them, but keep the cache.
-  const passive=new Set(['kaydet','iletisimDurumu','yeniPuanBildirimleriGetir','sonGirisGuncelle']);
+  const passive=new Set(['kaydet','benimIstatistik','iletisimDurumu','yeniPuanBildirimleriGetir','sonGirisGuncelle']);
   const batchable=new Set(['bildirimlerim','ilerlemeOzet','enerjiDurumuGetir','duyurulariGetir',
     'sosyalOgrencilerGetir','ekVeriGetir','seviyeDurumu','seviyeLigListesi','yayinOzellikleri','dersKonulariGetir']);
   const ttl={bildirimlerim:55000,ilerlemeOzet:30000,enerjiDurumuGetir:15000,

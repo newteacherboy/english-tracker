@@ -351,6 +351,14 @@
       "status": "ai-generated",
       "source": "docs/media-generation-record.json",
       "derived_from": "ingilizce/papi-reward-v2.png"
+    },
+    {
+      "path": "ingilizce/benim-dunyam/papi-selam.png",
+      "sha256": "9c61746c17f96b0d8b1392b6b2963fc9dded2fe600fd2734aec7635f7b8b8ca5",
+      "bytes": 113365,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-welcome-v2.png"
     }
   ]
 }

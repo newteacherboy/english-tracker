@@ -1,7 +1,7 @@
 /* Diji-Medu: approved pastel toy navigation. Existing button handlers stay in place. */
 (() => {
  'use strict';
- const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':2,'tab-aktiviteler':3,'tab-derscalis':4,'tab-magaza':5,'tab-profil':6};
+ const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':2,'tab-aktiviteler':3,'tab-derscalis':4,'tab-magaza':5,'tab-profil':6,'tab-dunyam':6};
  const positions = ['3% 7%','50% 7%','98% 10%','3% 58%','50% 59%','98% 56%','5% 100%'];
  let observer;
  function decorate() {
