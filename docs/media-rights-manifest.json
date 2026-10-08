@@ -583,6 +583,13 @@
       "bytes": 1000088,
       "status": "ai-generated",
       "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
+    },
+    {
+      "path": "ingilizce/bottom-nav-forest-v1.webp",
+      "sha256": "2310442e4994b076777894df98002412b15c74420670bb408914c6f097d046ca",
+      "bytes": 235324,
+      "status": "ai-generated",
+      "source": "docs/forest-navigation-generation.json"
     }
   ]
 }

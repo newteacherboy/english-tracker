@@ -1,99 +1,41 @@
-/* Approved design 2: white pastel dock, tactile 3D icons, lavender selected tab. */
-#bottomNavMobile#bottomNavMobile.bottom-nav-mobile {
- --dm-nav-height:82px;
- box-sizing:border-box !important;
- left:0 !important; right:0 !important; bottom:0 !important;
- transform:none !important; width:100% !important; max-width:none !important;
- border:1px solid #e2eeee !important; border-bottom:0 !important;
- border-radius:28px 28px 0 0 !important;
- background:linear-gradient(180deg,#fff 60%,#f8fcfc) !important;
- box-shadow:0 -4px 24px #145e6820, inset 0 2px 0 #fff !important;
- padding:5px 4px calc(5px + env(safe-area-inset-bottom,0px)) !important;
- gap:0 !important; align-items:center !important;
+/* Minimal forest-and-gold dock: five destinations and one compact centered action. */
+#bottomNavMobile#bottomNavMobile.bottom-nav-mobile{
+ --dm-nav-height:104px;box-sizing:border-box!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:none!important;
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:0!important;align-items:center!important;overflow:visible!important;
+ min-height:74px;padding:18px 5px calc(4px + env(safe-area-inset-bottom,0px))!important;
+ border:1px solid #b99a53!important;border-bottom:0!important;border-radius:20px 20px 0 0!important;
+ background:linear-gradient(180deg,#164e3d,#0c342a)!important;box-shadow:0 -3px 14px #092e2426,inset 0 1px 0 #ffe4a04d!important;
 }
-#bottomNavMobile#bottomNavMobile .bn-item {
- box-sizing:border-box; flex:1 1 0 !important; min-width:0 !important;
- min-height:72px !important; margin:0 !important; padding:3px 1px !important;
- border:1px solid transparent !important; border-radius:18px !important;
- background:transparent !important; box-shadow:none !important;
- gap:0 !important; transform:none !important;
- transition:background .18s ease,box-shadow .18s ease,transform .18s ease !important;
-}
-#bottomNavMobile#bottomNavMobile .bn-icon {
- display:block !important; width:46px !important; height:43px !important;
- line-height:1 !important; font-size:0 !important; animation:none !important;
- transform:none !important; flex-shrink:0;
-}
-#bottomNavMobile#bottomNavMobile .dm-nav-art {
- display:block; width:100%; height:100%;
- background-image:url('bottom-nav-icons-v2.png');
- background-size:300% 300%; background-repeat:no-repeat;
- filter:drop-shadow(0 2px 2px #32646718);
-}
-#bottomNavMobile#bottomNavMobile .bn-label {
- display:flex !important; align-items:center; justify-content:center;
- min-height:24px; max-width:100%; width:100%;
- color:#21596b !important; font-size:10px !important; line-height:1.1 !important;
- font-weight:900 !important; white-space:normal !important;
- word-break:normal !important; overflow:visible !important;
- text-overflow:clip !important; text-align:center;
-}
-#bottomNavMobile#bottomNavMobile .bn-item:hover { background:#f1f7f8 !important; }
-#bottomNavMobile#bottomNavMobile .bn-item.active {
- background:linear-gradient(145deg,#f2e9ff,#e2d1fc) !important;
- border-color:#dbc8f7 !important;
- box-shadow:inset 0 2px 0 #fff9,0 3px 0 #ccb6ec,0 5px 12px #8261b529 !important;
- transform:translateY(-4px) !important;
-}
-#bottomNavMobile#bottomNavMobile .bn-item.active .bn-label { color:#552286 !important; }
-#bottomNavMobile#bottomNavMobile .bn-item.active::after { display:none !important; }
-#bottomNavMobile#bottomNavMobile .bn-item:focus-visible { outline:3px solid #078c97 !important; outline-offset:1px; }
-#bottomNavMobile#bottomNavMobile .bn-item:active { transform:translateY(1px) !important; }
-@media (min-width:400px) {
- #bottomNavMobile#bottomNavMobile .bn-icon { width:50px !important; height:46px !important; }
- #bottomNavMobile#bottomNavMobile .bn-label { font-size:11px !important; }
-}
-@media (min-width:769px) {
- #bottomNavMobile#bottomNavMobile.bottom-nav-mobile { left:50% !important; right:auto !important; transform:translateX(-50%) !important; max-width:640px !important; }
- #bottomNavMobile#bottomNavMobile .bn-label { font-size:12px !important; }
-}
-@media (prefers-reduced-motion:reduce) { #bottomNavMobile#bottomNavMobile .bn-item { transition:none !important; } }
-/* Keep fixed-page content reachable above the dock and iOS home indicator. */
-.dc-fullscreen-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
-body.kk-acik .seviye-harita-overlay { padding-bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important; }
-
-#bottomNavMobile#bottomNavMobile [data-ekran=tab-profil] .dm-nav-art{background-image:url('papi-welcome-v2.png');background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important}
-
-/* Compact dock with readable labels and the same seven touch targets. */
-@media(max-width:768px){
- #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{--dm-nav-height:70px;border-radius:22px 22px 0 0!important;padding:4px 3px calc(4px + env(safe-area-inset-bottom,0px))!important}
- #bottomNavMobile#bottomNavMobile .bn-item{position:relative;min-height:60px!important;padding:3px 1px!important;border-radius:14px!important}
- #bottomNavMobile#bottomNavMobile .bn-icon{width:36px!important;height:32px!important}
- #bottomNavMobile#bottomNavMobile .bn-label{min-height:20px;font-size:10px!important}
- #bottomNavMobile#bottomNavMobile .bn-item.active{transform:translateY(-2px)!important}
- #bottomNavMobile#bottomNavMobile .bn-item.dm-level-locked::after{position:absolute;top:2px;right:3px;font-size:10px;line-height:12px}
- body.dm-parkur-open .dm-parkur-scroll{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
-}
-
-/* A smaller dock keeps the route visible while preserving seven touch targets. */
-@media(max-width:768px){
- #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{--dm-nav-height:56px;padding:3px 2px calc(3px + env(safe-area-inset-bottom,0px))!important;border-radius:18px 18px 0 0!important}
- #bottomNavMobile#bottomNavMobile .bn-item{min-height:50px!important;padding:2px 1px!important;border-radius:11px!important}
- #bottomNavMobile#bottomNavMobile .bn-icon{width:28px!important;height:26px!important}
- #bottomNavMobile#bottomNavMobile .bn-label{min-height:18px;font-size:9px!important;line-height:1.1!important}
- #bottomNavMobile#bottomNavMobile .bn-item.active{transform:none!important}
- #bottomNavMobile#bottomNavMobile .bn-item.dm-level-locked::after{top:1px;right:2px;font-size:9px}
-}
-
-/* Keep the approved destination order while restoring the original visual theme. */
-#bottomNavMobile#bottomNavMobile.bottom-nav-mobile{--dm-nav-height:140px;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));overflow:visible!important}
 #bottomNavMobile#bottomNavMobile::before{content:none!important}
-#bottomNavMobile#bottomNavMobile .bn-item{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;position:relative;transform:none!important}
+#bottomNavMobile#bottomNavMobile .bn-item{
+ box-sizing:border-box!important;position:relative;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;flex:1 1 0!important;
+ width:100%!important;min-width:0!important;min-height:52px!important;margin:0!important;padding:2px 1px!important;gap:1px!important;
+ border:1px solid transparent!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;transform:none!important;transition:background .15s ease!important;color:#fff0cb!important;
+}
+#bottomNavMobile#bottomNavMobile .bn-icon{display:block!important;width:34px!important;height:28px!important;font-size:0!important;line-height:1!important;animation:none!important;transform:none!important;flex-shrink:0}
+#bottomNavMobile#bottomNavMobile .dm-nav-art{display:block;width:100%;height:100%;background-image:url('bottom-nav-forest-v1.webp');background-size:300% 200%;background-repeat:no-repeat;filter:drop-shadow(0 1px 1px #001c1b44)}
+#bottomNavMobile#bottomNavMobile .bn-label{display:flex!important;align-items:center;justify-content:center;width:100%;max-width:100%;min-height:16px;color:#fff0cb!important;font-size:10px!important;font-weight:800!important;line-height:1.1!important;text-align:center;white-space:normal!important;word-break:normal!important;overflow:visible!important;text-overflow:clip!important}
+#bottomNavMobile#bottomNavMobile .bn-item:hover{background:#ffffff0c!important}
+#bottomNavMobile#bottomNavMobile .bn-item.active{background:#fff0bd12!important;border-color:#d7b66e80!important;box-shadow:none!important;transform:none!important}
+#bottomNavMobile#bottomNavMobile .bn-item.active .bn-label{color:#ffe3a0!important}
+#bottomNavMobile#bottomNavMobile .bn-item.active::after{display:none!important}
+#bottomNavMobile#bottomNavMobile .bn-item:focus-visible{outline:3px solid #f6d581!important;outline-offset:1px}
 #bottomNavMobile#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"],#bottomNavMobile#bottomNavMobile .bn-item[data-ekran="tab-profil"]{display:none!important}
-#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play{position:absolute!important;left:50%!important;top:-76px!important;transform:translateX(-50%)!important;width:88px!important;height:72px!important;min-height:72px!important;border-radius:18px!important}
-#bottomNavMobile#bottomNavMobile .dm-nav-play .bn-icon{width:46px!important;height:43px!important}
-#bottomNavMobile#bottomNavMobile .dm-nav-play .bn-label{font-size:14px!important;min-height:20px!important}
-.dc-fullscreen-overlay,body #tab-dunyam.bd-kok.dc-fullscreen-overlay.active,body.kk-acik .seviye-harita-overlay,body.dm-parkur-open .dm-parkur-scroll{padding-bottom:calc(148px + env(safe-area-inset-bottom,0px))!important}
+#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play{
+ position:absolute!important;left:50%!important;top:-28px!important;transform:translateX(-50%)!important;display:flex!important;flex-direction:row!important;gap:4px!important;
+ width:94px!important;height:44px!important;min-height:44px!important;padding:4px 9px!important;border:2px solid #eac66c!important;border-radius:23px!important;
+ background:linear-gradient(180deg,#ffe7a7,#e5bd62)!important;box-shadow:0 3px 8px #042b2940,inset 0 1px 0 #fff4d4!important;z-index:2;
+}
+#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play .bn-icon{width:28px!important;height:28px!important}
+#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play .bn-label{width:auto!important;min-height:18px!important;color:#214735!important;font-size:13px!important;font-weight:900!important}
+#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play.active,#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play:active{transform:translateX(-50%)!important;background:linear-gradient(180deg,#fff0be,#efd181)!important;border-color:#ffe6a0!important}
+#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play.active .bn-label{color:#214735!important}
+#bottomNavMobile#bottomNavMobile .bn-item.dm-level-locked::after{position:absolute;top:2px;right:3px;font-size:9px;line-height:11px}
+.dc-fullscreen-overlay,body #tab-dunyam.bd-kok.dc-fullscreen-overlay.active,body.kk-acik .seviye-harita-overlay{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
+@media(min-width:400px){#bottomNavMobile#bottomNavMobile .bn-label{font-size:11px!important}#bottomNavMobile#bottomNavMobile .bn-icon{width:38px!important;height:28px!important}}
+@media(min-width:769px){#bottomNavMobile#bottomNavMobile.bottom-nav-mobile{left:50%!important;right:auto!important;transform:translateX(-50%)!important;max-width:640px!important}}
+@media(max-width:360px){#bottomNavMobile#bottomNavMobile .bn-label{font-size:9px!important}}
+@media(prefers-reduced-motion:reduce){#bottomNavMobile#bottomNavMobile .bn-item{transition:none!important}}
 
-#bottomNavMobile#bottomNavMobile .bn-item.active{transform:none!important}
-#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play.active,#bottomNavMobile#bottomNavMobile .bn-item.dm-nav-play:active{transform:translateX(-50%)!important}
+/* The parchment route is a fixed scene; reserve space on its outer frame. */
+body.dm-parkur-open #bzParkur#bzParkur>.bz-ic{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}

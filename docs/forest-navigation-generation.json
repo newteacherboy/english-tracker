@@ -1,0 +1,8 @@
+{
+  "tool": "image_gen.imagegen",
+  "date": "2026-10-09",
+  "reference": "Original imagegen proposal 2, Orman ve altın, approved by owner in this conversation",
+  "prompt": "Six transparent original forest-and-gold navigation icons in a 3x2 atlas: friends, controller, book, forest shop, yellow-beaked turquoise parrot, winding golden forest path. Original reference proposal used only as style reference. Simplified silhouettes, no labels or whole menu.",
+  "encoding": "PNG RGBA to WebP quality 92 method 6; dimensions and transparency preserved",
+  "asset": "ingilizce/bottom-nav-forest-v1.webp"
+}

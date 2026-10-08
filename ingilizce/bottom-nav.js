@@ -1,8 +1,8 @@
-/* Diji-Medu: approved pastel toy navigation. Existing button handlers stay in place. */
+/* Diji-Medu: compact forest-and-gold navigation. Existing button handlers stay in place. */
 (() => {
  'use strict';
  const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':2,'tab-aktiviteler':3,'tab-derscalis':4,'tab-magaza':5,'tab-profil':6,'tab-dunyam':6};
- const positions = ['3% 7%','50% 7%','98% 10%','3% 58%','50% 59%','98% 56%','5% 100%'];
+ const positions = ['100% 100%','0% 0%','0% 0%','50% 0%','100% 0%','0% 100%','50% 100%'];
  const layout = [['tab-meduakis','Arkadaşlar'],['tab-aktiviteler','Oyunlar'],['tab-dunya','Oyna'],['tab-derscalis','Ders Çalış'],['tab-magaza','Mağaza'],['tab-dunyam','Benim Dünyam']];
   let observer;
  function decorate() {

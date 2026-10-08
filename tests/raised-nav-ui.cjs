@@ -20,10 +20,10 @@ return {display:getComputedStyle(nav).display,play:rect(play),nav:rect(nav),labe
 assert.equal(state.display,'grid');assert.deepEqual(state.labels,['Arkadaşlar','Oyunlar','Ders Çalış','Mağaza','Benim Dünyam']);
 assert(Math.abs(state.play.x+state.play.w/2-width/2)<1);
 assert(state.play.bottom<=Math.min(...state.others.map(r=>r.y))+1,'raised control must not overlap lower row');
-assert(state.play.w>state.others[0].h,'Oyna visibly larger');
+assert(state.play.w>state.others[0].h,'Oyna wider than standard targets');assert.equal(state.play.h,44,'compact primary action');
 for(const r of state.others){assert(r.w>=44&&r.h>=44);assert(r.x>=0&&r.right<=width+.1);}
 const widths=state.others.map(r=>r.w);assert(Math.max(...widths)-Math.min(...widths)<1);
-assert(state.sprite.every(x=>x.includes('bottom-nav-icons-v2.png')));
+assert(state.sprite.every(x=>x.includes('bottom-nav-forest-v1.webp')));
 await page.locator('[data-ekran="tab-dunya"]').click();assert.equal(await page.evaluate(()=>called),'tab-dunya');
 await page.locator('[data-ekran="tab-magaza"]').click();assert.equal(await page.evaluate(()=>called),'tab-magaza');
 if(width===390)await page.screenshot({path:'/workspace/scratch/3b1e0e84cae5/nav-approved/mobile-nav.png',clip:{x:0,y:620,width:390,height:224}});
@@ -37,7 +37,7 @@ assert.equal(await page.locator('[data-ekran="tab-dunya"]').getAttribute('aria-c
 assert.equal(await page.locator('[data-ekran="tab-dunyam"]').evaluate(e=>e===e.parentElement.lastElementChild),true);
 console.log('PASS dynamic menu updates keep names, keyboard order and selected state');checks++;
 const index=fs.readFileSync(root+'/index.html','utf8');for(const m of index.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){if(/src=|application\/ld\+json/.test(m[1]))continue;new vm.Script(m[2]);}
-assert(!index.includes('Medu Akış'));assert(index.includes('bottom-nav.css?v=7'));assert(index.includes('papi-guide-content.js?v=2'));
+assert(!index.includes('Medu Akış'));assert(index.includes('bottom-nav.css?v=8'));assert(index.includes('papi-guide-content.js?v=2'));
 const guide=require(root+'/papi-guide-content.js');assert(guide.sections.find(s=>s.id==='navigation').text.includes('Mağaza’nın kendi alt menü düğmesi'));
 assert.equal(guide.sections.length,56);assert.equal(guide.tours['level-guide'].length,40);
 console.log('PASS renamed UI, Help and tours preserve all existing content');checks++;
