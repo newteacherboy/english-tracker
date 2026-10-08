@@ -100,7 +100,9 @@
         <img class="bd-papi" id="bdPapi" alt="" decoding="async">
         <div class="bd-tabela" id="bdTabela" hidden></div>
         <p class="bd-balon" id="bdBalon"></p>
-        <div class="bd-ust"><button type="button" class="bd-yuvarlak" id="bdAyar" aria-label="Hesap ayarları">
+        <div class="bd-ust"><button type="button" class="bd-yuvarlak bd-cikis" id="bdCikis" aria-label="Çıkış yap" title="Çıkış yap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button><button type="button" class="bd-yuvarlak" id="bdAyar" aria-label="Hesap ayarları">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
         </button></div>
       </div>
@@ -115,6 +117,10 @@
     const yer = $('tab-profil') || $('tab-sanaozel');
     (yer && yer.parentNode ? yer.parentNode : document.body).appendChild(ov);
     ov.querySelectorAll('.bd-sekme').forEach(b => b.onclick = () => sekmeSec(b.dataset.bd));
+    $('bdCikis').onclick = () => {
+      if (!window.confirm('Çıkış yapmak istediğine emin misin?')) return;
+      if (typeof window.cikisYap === 'function') window.cikisYap();
+    };
     $('bdAyar').onclick = () => { if (typeof window.dmHesapAyarlariAc === 'function') window.dmHesapAyarlariAc(); };
     return ov;
   }
