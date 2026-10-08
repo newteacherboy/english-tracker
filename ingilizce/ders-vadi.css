@@ -101,3 +101,25 @@ body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik ul li::before{content:"";pos
 body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik i{color:#5B2DB8}
 body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik th{background:#EDE4FF!important;color:#4B2A99;font-size:13px;font-weight:900;text-align:left}
 body.dc-ada.dc-vadi #tab-derscalis #dcAnlatimIcerik td{font-size:15px}
+
+
+/* Konu Macerası artık ders altında kart olarak görünmez; test bitince tam ekran açılır. */
+body.dc-vadi #tab-derscalis #kmBaslangic,
+body.dc-ada.dc-vadi #tab-derscalis #kmBaslangic { display:none!important; }
+.dv-macera-gecisi{position:fixed;inset:0;z-index:2147483640;display:grid;place-items:center;overflow-y:auto;padding:24px;box-sizing:border-box;background:radial-gradient(circle at 50% 25%,#fff6bd 0%,#c8f6df 45%,#7ecadb 100%);animation:dv-perde-giris .4s ease both;font-family:'Fredoka',system-ui,sans-serif}
+.dv-macera-panel{width:min(100%,520px);text-align:center;position:relative;background:rgba(255,255,255,.94);border:3px solid #fff;border-radius:34px;box-shadow:0 22px 65px #215b6d38;padding:28px 22px 25px;box-sizing:border-box;animation:dv-panel-giris .65s cubic-bezier(.2,1.5,.5,1) both}
+.dv-macera-papi{width:min(50vw,205px);height:min(50vw,205px);object-fit:contain;filter:drop-shadow(0 10px 9px #2b826b44);animation:dv-papi-kutla 1.9s ease-in-out infinite}
+.dv-macera-onay{display:block;margin:4px auto 12px;color:#138653;font-size:16px;font-weight:800}
+.dv-macera-panel h2{margin:0 0 8px;color:#263d68;font-size:clamp(27px,6vw,40px);line-height:1.15;font-weight:900}
+.dv-macera-panel p{margin:0 0 15px;color:#e26a19;font-weight:900;font-size:clamp(20px,5vw,29px)}
+.dv-macera-bilgi{display:block;color:#45617c;font-size:13px;font-weight:800;margin:0 auto 18px}
+.dv-macera-basla{display:block;margin:auto;width:min(100%,290px);min-height:59px;border:0;border-radius:19px;background:linear-gradient(135deg,#fc962c,#f46c1c);box-shadow:0 6px 0 #ae4b15;color:#fff;font:900 24px 'Fredoka',system-ui,sans-serif;cursor:pointer;transition:transform .18s}
+.dv-macera-basla:active{transform:translateY(4px);box-shadow:0 2px 0 #ae4b15}
+.dv-macera-sonra{display:block;margin:17px auto 0;padding:9px 16px;border:0;background:transparent;color:#566d81;text-decoration:underline;font:700 14px system-ui,sans-serif;cursor:pointer}
+.dv-macera-isilti{position:absolute;inset:6% 5%;pointer-events:none;display:flex;align-items:flex-start;justify-content:space-around;color:#ffd437;font-size:clamp(24px,7vw,58px);letter-spacing:2vw;text-shadow:0 3px 14px #f69e41;animation:dv-isilti 3s ease-in-out infinite}
+@keyframes dv-perde-giris{from{opacity:0}to{opacity:1}}
+@keyframes dv-panel-giris{from{opacity:0;transform:translateY(38px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes dv-papi-kutla{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(5deg)}}
+@keyframes dv-isilti{0%,100%{opacity:.55;transform:scale(.98)}50%{opacity:1;transform:scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.dv-macera-gecisi,.dv-macera-panel,.dv-macera-papi,.dv-macera-isilti{animation:none!important}}
+@media(max-height:650px){.dv-macera-panel{padding:12px 18px}.dv-macera-papi{width:110px;height:110px}.dv-macera-onay{margin:0 0 5px}.dv-macera-bilgi{margin-bottom:8px}}
