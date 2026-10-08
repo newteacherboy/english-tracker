@@ -139,3 +139,18 @@
   else basla();
   window.addEventListener('load', () => { bagla(); testBitisiniBagla(); });
 })();
+
+
+/* Konu Macerası: tamamlanmış eşleştirmelerin yeniden seçilmesini önle.
+   Orijinal skor ve Devam et onclick kodu korunur. */
+(function () {
+  'use strict';
+  document.addEventListener('click', function (event) {
+    const btn = event.target.closest?.('#kmPerde .km-es .km-cip');
+    if (!btn) return;
+    if (btn.classList.contains('eslesti') || btn.disabled) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
+})();
