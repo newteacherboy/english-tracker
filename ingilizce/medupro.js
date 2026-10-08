@@ -1,5 +1,27 @@
 (function(){
  'use strict';
+ // Dismissible offline notice: does not block navigation or imply successful saving.
+ (function(){
+   if(window.__meduOfflineNoticeReady)return;
+   window.__meduOfflineNoticeReady=true;
+   let notice=null, dismissed=false;
+   function close(){if(notice){notice.remove();notice=null;}dismissed=true;}
+   function show(){
+     if(navigator.onLine||dismissed||notice)return;
+     notice=document.createElement('aside');
+     notice.id='medu-offline-notice';
+     notice.setAttribute('role','status');
+     notice.setAttribute('aria-live','polite');
+     notice.style.cssText='position:fixed;z-index:2147483000;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:440px;margin:auto;padding:14px 44px 14px 15px;background:#25204b;color:#fff;border:2px solid #bba9ff;border-radius:20px;box-shadow:0 12px 32px #0005;font:600 14px/1.5 system-ui,sans-serif;';
+     notice.innerHTML='<strong style="display:block;font-size:16px">🦜 Medu: Bağlantı kesildi</strong><span>Uygulamayı gezebilirsin. İnternet gerektiren işlemler çalışmayabilir; kaydedilmemiş ilerleme korunmuş sayılmaz.</span><button type="button" aria-label="Çevrimdışı uyarısını kapat" style="position:absolute;right:9px;top:9px;border:0;border-radius:50%;background:#fff;color:#25204b;width:32px;height:32px;font-size:22px;cursor:pointer">×</button>';
+     notice.querySelector('button').addEventListener('click',close);
+     document.body.appendChild(notice);
+   }
+   window.addEventListener('offline',()=>{dismissed=false;show();});
+   window.addEventListener('online',()=>{notice?.remove();notice=null;dismissed=false;});
+   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',show,{once:true});else show();
+ })();
+
  const $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const name=()=>typeof aktifOgrenciAdi!=='undefined'?aktifOgrenciAdi:'',logged=()=>name()&&name().toLowerCase()!=='teacher'&&!!localStorage.getItem('ing_token');
  const presets=['Merhaba! 👋','Beni takip eder misin? 🌟','Birlikte Kelime Uçuşu oynayalım! 🪽','Cümle Rotası düellosuna var mısın? 🧩','Kelime Laboratuvarı oynayalım! 🔬','Risk Balonları için hazır mısın? 🎈','Hafıza Sandığı oynayalım! 🧠','Hız Fırtınası yarışına katıl! 🌪️','Eş Bul oynayalım! 🔗','Kelime Treni düellosu yapalım! 🚂','Harf Avı oynayalım! 🔤','Şifre Kırıcı oynayalım! 🔐','Harika oynadın, tebrikler! 🎉','Rövanş yapalım mı? ⚔️','Bugün birlikte ders çalışalım! 📚'];
