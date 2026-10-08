@@ -91,6 +91,9 @@
 #bzPerde .cq-panel[data-question-type=dikte] .bz-ses{min-height:60px;min-width:0;font-size:16px;margin:4px 0 13px}
 #bzPerde .cq-panel .cq-listen-main{display:block;width:92px;height:92px;min-height:92px;margin:3px auto 17px;border:1px solid #bacbad;border-radius:50%;background:#edf1e3;color:#214c35;font-size:35px;box-shadow:none}
 #bzPerde .cq-panel .cq-counter{display:table;margin:11px auto 0;border:1px solid #d0d8c6;border-radius:18px;padding:6px 14px;color:#56714f;font-size:13px;font-weight:800}
+#bzPerde .cq-panel .cq-timer{font:800 23px/1.2 Nunito,system-ui;color:#315440;background:#edf1e3;border-radius:16px;display:table;margin:0 auto 13px;padding:9px 18px}
+#bzPerde .cq-panel .bz-can span{display:block;font-size:13px;font-weight:700;letter-spacing:0;color:#6b7568;margin-bottom:7px}
+#bzPerde .cq-panel .bz-can div{color:#8ca384;font-size:22px;letter-spacing:7px}
 #bzPerde .cq-panel .bz-input{width:100%;min-height:70px;border:1px solid #bdcbb4;background:#fffefa;box-shadow:none;border-radius:16px;color:#173e35;font:700 18px/1.4 Nunito,system-ui;padding:14px;margin:8px 0 18px}
 #bzPerde .cq-panel .bz-input::placeholder{color:#919b91;font-weight:500}
 #bzPerde .cq-panel .bz-geri-bildirim{border:1px solid #a1c298;background:#edf5e7;color:#315738;box-shadow:none;font-size:17px;border-radius:17px}
