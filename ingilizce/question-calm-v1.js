@@ -23,6 +23,7 @@
     }
     area.prepend(board);
    }
+   if(type==='tren'){const check=area.querySelector('#bzKontrol'),answer=area.querySelector('.bz-cevap');if(check&&answer&&check.nextElementSibling!==answer)answer.before(check);}
    const input=area.querySelector('#bzYaz');if(input&&!input.dataset.cqInput){input.dataset.cqInput='1';input.placeholder='Duyduğun kelimeyi yaz';}
    const listen=area.querySelector('#bzD1'),slow=area.querySelector('#bzD2');
    if(listen&&listen.textContent!=='🔊 Tekrar dinle')listen.textContent='🔊 Tekrar dinle';

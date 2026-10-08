@@ -103,3 +103,19 @@
 @media(max-width:360px){#bzPerde .cq-panel #bzAlan,#bzPerde .cq-panel .bz-jokerler{width:calc(100% - 28px)}#bzPerde .cq-panel .bz-oyun-ust{padding:4px 10px;gap:4px}#bzPerde .cq-panel .bz-sec{min-height:76px;font-size:19px}#bzPerde .cq-panel[data-question-type=risk] .bz-sec{min-height:112px;font-size:17px}#bzPerde .cq-panel .bz-kart2{height:105px}#bzPerde .cq-panel .bz-es .bz-cip2{min-height:75px;font-size:17px}#bzPerde .cq-panel .bz-wordle .h{width:33px;height:36px}}
 @media(max-height:650px){#bzPerde .cq-mascot{width:48px;height:48px;background-size:38px 43px;margin:6px auto}#bzPerde .cq-label{margin-bottom:10px;padding:5px 12px}#bzPerde .cq-question{margin-bottom:17px}#bzPerde .cq-panel .bz-jokerler{padding-top:16px}#bzPerde .cq-panel :is(.bz-soru,.cq-title){font-size:23px}}
 @media(prefers-reduced-motion:reduce){#bzPerde .cq-panel *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Compact word train: keep the existing check handler above the wagons. */
+#bzPerde .cq-panel[data-question-type=tren] .cq-mascot{width:38px;height:38px;background-size:30px 34px;margin:4px auto}
+#bzPerde .cq-panel[data-question-type=tren] .cq-label{font-size:12px;padding:4px 12px;margin-bottom:8px}
+#bzPerde .cq-panel[data-question-type=tren] .cq-question{margin-bottom:8px}
+#bzPerde .cq-panel[data-question-type=tren] .bz-soru{font-size:clamp(18px,4.8vw,23px);line-height:1.22;margin-bottom:5px}
+#bzPerde .cq-panel[data-question-type=tren] .cq-help{margin:2px 0 0;font-size:11px}
+#bzPerde .cq-panel[data-question-type=tren] #bzKontrol{min-height:40px;padding:8px 12px;font-size:15px;margin:4px 0 8px!important}
+#bzPerde .cq-panel[data-question-type=tren] .bz-cevap{min-height:44px;padding:2px 0 7px;margin-bottom:6px;gap:6px}
+#bzPerde .cq-panel[data-question-type=tren] :is(.bz-cevap .bz-cip2,.bz-bos-vagon){min-height:36px;min-width:34px;padding:7px 9px;font-size:15px;line-height:1.2;margin-bottom:5px;border-radius:9px}
+#bzPerde .cq-panel[data-question-type=tren] :is(.bz-cevap .bz-cip2,.bz-bos-vagon)::after{bottom:-7px;font-size:7px;letter-spacing:5px}
+#bzPerde .cq-panel[data-question-type=tren] .bz-tren-havuz{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+#bzPerde .cq-panel[data-question-type=tren] .bz-tren-havuz .bz-cip2{min-height:40px;max-width:100%;padding:8px 10px;font-size:15px}
+#bzPerde .cq-panel[data-question-type=tren] .bz-tren-havuz .bz-cip2.bos{display:none}
+#bzPerde .cq-panel[data-question-type=tren] .bz-etiket{margin:4px 0;font-size:10px}
+#bzPerde .cq-panel[data-question-type=tren] .bz-jokerler{margin:14px auto 0;padding-top:0}
