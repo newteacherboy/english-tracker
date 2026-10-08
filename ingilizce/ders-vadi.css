@@ -142,3 +142,19 @@ body.dc-ada.dc-vadi #tab-derscalis #kmBaslangic { display:none!important; }
   overflow-y:auto!important;overscroll-behavior:contain;
 }
 #kmPerde #kmAlt .km-btn{min-height:48px!important;touch-action:manipulation}
+
+/* Konu başlığının hemen altındaki Konu Macerası kısayolu.
+   Ders bitimindeki tam ekran Papi geçişinden bağımsızdır. */
+body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol{
+  display:flex!important;align-items:center;justify-content:space-between;gap:10px;
+  width:calc(100% - 28px)!important;margin:14px 14px 0!important;padding:11px 14px!important;
+  min-height:56px;border:2px solid #f1da91;border-radius:18px;
+  background:#fff0bb;color:#5b3a06;font:800 15px 'Nunito',system-ui,sans-serif;
+  box-shadow:0 4px 0 #dfbf62;cursor:pointer;text-align:left;
+}
+body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol .dv-kisayol-basla{
+  border-radius:12px;padding:9px 13px;background:#f97316;color:white;white-space:nowrap;
+  font-weight:900;box-shadow:0 3px 0 #c2560c;
+}
+body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol:disabled{opacity:.55;cursor:not-allowed}
+body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol:focus-visible{outline:3px solid #35845e;outline-offset:3px}
