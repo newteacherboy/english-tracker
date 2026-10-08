@@ -16,6 +16,51 @@ const oldResult=window.genelSonucEkraniGoster;window.genelSonucEkraniGoster=func
 card.querySelector('#dmRewardCards')?.remove();card.querySelector('#dmRewardStatus')?.remove();card.querySelector('#dmLeaderboardStatus')?.remove();card.querySelector('#ekOdulSerit')?.remove();const xp=document.createElement('div');xp.id='dmRewardCards';xp.className='dm-reward-cards';xp.hidden=false;xp.innerHTML='<div><small>KAZANILAN XP</small><strong data-xp>…</strong><div class="dm-earned-track"><i class="dm-earned-fill"></i></div></div><div><small>KAZANILAN ALTIN</small><strong data-gold>…</strong></div>';card.querySelector('.gso-istat')?.before(xp);const status=document.createElement('p');status.id='dmRewardStatus';status.className='dm-result-status';status.setAttribute('role','status');status.textContent=student()?'Ödülün hesabına kaydediliyor…':'Sınıf etkinliği · öğrenci hesabına ödül yazılmaz.';xp.after(status);const lb=document.createElement('p');lb.id='dmLeaderboardStatus';lb.className='dm-result-status';lb.textContent=o?.siralamaYok?'Parkur ilerlemen durak haritasında gösterilir.':scoreStatus.get(activeRun)|| (o?.leaderboardSaved?'✓ Sonucun liderlik tablosuna kaydedildi.':'Sonucun sıralamaya kaydediliyor…');status.after(lb);count(document.getElementById('gsoPuan'),Number(o?.puan)||0);if(['dikte','cumle'].includes(o?.oyunKey)&&student())saveExtraLeaderboard(o);if(!student()){count(xp.querySelector('[data-xp]'),0,'+');count(xp.querySelector('[data-gold]'),0,'+');}return r;};window.genelSonucEkraniGoster._oc=oldResult._oc;
 async function saveExtraLeaderboard(o){const run=o.runId,s=o.rewardScope||scope(o.oyunKey);try{const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:o.oyunKey+'LiderlikKaydet',isim:name(),runId:run,sinif:s.classNo+'. Sınıf',unite:s.units.join(','),dogru:o.dogru,yanlis:o.yanlis,puan:o.puan,puanTemel:o.temelPuan,puanSurum:3,suresaniye:o.sureSaniye})});const d=await r.json();if(!r.ok||d.status!=='success')return;const list=await fetch(apiURL+'?islem='+o.oyunKey+'LiderlikTumunuGetir&sinif='+encodeURIComponent(s.classNo+'. Sınıf')+'&donem=hafta&puanSurum=3&_='+Date.now()).then(r=>r.json());if(activeRun===run)window.genelSonucSiralamaCiz?.(Array.isArray(list)?list:list.liste||[],name());}catch{if(activeRun===run){const e=document.getElementById('dmLeaderboardStatus');if(e)e.textContent='Sıralama bağlantısı tamamlanamadı. Sonucun tekrar denenecek.';}}}
 window.genelKomboGoster=function(n){if(!n||n%5!==0)return;document.querySelector('.dm-combo-celebration')?.remove();window.genelSesEfektiCal?.('kombo',n);const e=document.createElement('div');e.className='dm-combo-celebration';e.setAttribute('role','status');e.innerHTML='<div class="dm-combo-orbit"></div><img src="papi-reward-v2.png" alt="Kutlayan Papi"><div><small>HARİKA SERİ!</small><strong>'+n+' KOMBO</strong><span>Papi seninle gurur duyuyor!</span></div>';document.body.append(e);setTimeout(()=>e.remove(),2100);};
-window.dmListen=function(text,slow=false){if(!('speechSynthesis'in window))return;voiceGeneration++;clearTimeout(speechTimer);const ticket=voiceGeneration;speechSynthesis.cancel();speechSynthesis.resume();speechTimer=setTimeout(()=>{if(ticket!==voiceGeneration)return;const u=new SpeechSynthesisUtterance(String(text));u.lang='en-US';u.rate=slow?.35:.85;u.pitch=1;const voices=speechSynthesis.getVoices();u.voice=voices.find(v=>/^en[-_]US/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang))||null;window.dmCurrentUtterance=u;speechSynthesis.speak(u);},80);};
+// Start speech in the click handler: deferring speak can lose mobile user activation.
+function listeningStatus(message){
+ const target=document.getElementById('bzD1')?.parentElement||document.querySelector('.yo-dikte-dinle');
+ if(!target){if(message)window.yoToast?.(message);return;}
+ let el=target.parentElement.querySelector('.dm-listening-status');
+ if(!el){el=document.createElement('p');el.className='dm-listening-status';el.setAttribute('role','status');el.style.cssText='font-size:13px;line-height:1.4;color:inherit;margin:8px 0';target.after(el);}
+ el.textContent=message;el.hidden=!message;
+}
+function englishVoice(){
+ try{const voices=window.speechSynthesis.getVoices();return voices.find(v=>/^en[-_]US/i.test(v.lang)&&v.localService)||voices.find(v=>/^en/i.test(v.lang)&&v.localService)||voices.find(v=>/^en[-_]US/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang))||null;}catch{return null;}
+}
+if('speechSynthesis'in window){englishVoice();window.speechSynthesis.addEventListener?.('voiceschanged',englishVoice);}
+// All existing cards, games and lessons use this shared native speech path.
+if('speechSynthesis'in window&&typeof window.SpeechSynthesisUtterance==='function'){
+ const synth=window.speechSynthesis,nativeSpeak=window.dmNativeSpeechSpeak||synth.speak.bind(synth);
+ synth.speak=function(u){
+  if(!u||!String(u.text||'').trim())return;
+  voiceGeneration++;clearTimeout(speechTimer);const ticket=voiceGeneration;
+  try{
+   synth.resume();
+   if(!/^tr/i.test(u.lang||'')){
+    const voice=englishVoice();u.lang=voice?.lang||u.lang||'en-US';u.voice=voice;
+   }
+   u.volume=1;
+   const onstart=u.onstart,onend=u.onend,onerror=u.onerror;let started=false;
+   u.onstart=function(e){if(ticket===voiceGeneration){started=true;clearTimeout(speechTimer);listeningStatus('');}onstart?.call(this,e);};
+   u.onend=function(e){if(ticket===voiceGeneration)clearTimeout(speechTimer);onend?.call(this,e);};
+   u.onerror=function(e){
+    if(ticket===voiceGeneration&&!['canceled','interrupted'].includes(e.error)){
+     clearTimeout(speechTimer);
+     listeningStatus(e.error==='not-allowed'?'Sesi başlatmak için Dinle düğmesine tekrar dokun.':['voice-unavailable','language-unavailable','synthesis-unavailable'].includes(e.error)?'İngilizce okuma sesi bulunamadı. Telefonun metinden sese ayarlarında İngilizce sesini etkinleştirip tekrar dene.':'Ses açılamadı. Telefonun medya sesini kontrol edip Dinle düğmesine tekrar dokun.');
+    }
+    onerror?.call(this,e);
+   };
+   window.dmCurrentUtterance=u;listeningStatus('');nativeSpeak(u);
+   if(!started)speechTimer=setTimeout(()=>{if(ticket===voiceGeneration&&!started)listeningStatus('Ses başlamadı. Medya sesini ve telefonun İngilizce metinden sese ayarını kontrol edip Dinle düğmesine tekrar dokun.');},4000);
+  }catch{listeningStatus('Ses açılamadı. Dinle düğmesine tekrar dokun.');}
+ };
+}
+window.dmListen=function(text,slow=false){
+ const value=String(text||'').trim();if(!value)return;
+ if(!('speechSynthesis'in window)||typeof window.SpeechSynthesisUtterance!=='function'){listeningStatus('Bu cihazda sesli okuma desteklenmiyor. Chrome ile açıp tekrar dene.');return;}
+ const u=new window.SpeechSynthesisUtterance(value);u.lang='en-US';u.rate=slow?.35:.85;u.pitch=1;
+ window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
+};
+
 window.addEventListener('online',()=>read().forEach(claim));setInterval(()=>{if(navigator.onLine&&student())read().forEach(claim);},15000);
 })();
