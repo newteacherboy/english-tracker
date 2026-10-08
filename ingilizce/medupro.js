@@ -12,8 +12,8 @@
      notice.id='medu-offline-notice';
      notice.setAttribute('role','status');
      notice.setAttribute('aria-live','polite');
-     notice.style.cssText='position:fixed;z-index:2147483000;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:440px;margin:auto;padding:14px 44px 14px 15px;background:#25204b;color:#fff;border:2px solid #bba9ff;border-radius:20px;box-shadow:0 12px 32px #0005;font:600 14px/1.5 system-ui,sans-serif;';
-     notice.innerHTML='<strong style="display:block;font-size:16px">🦜 Medu: Bağlantı kesildi</strong><span>Uygulamayı gezebilirsin. İnternet gerektiren işlemler çalışmayabilir; kaydedilmemiş ilerleme korunmuş sayılmaz.</span><button type="button" aria-label="Çevrimdışı uyarısını kapat" style="position:absolute;right:9px;top:9px;border:0;border-radius:50%;background:#fff;color:#25204b;width:32px;height:32px;font-size:22px;cursor:pointer">×</button>';
+     notice.style.cssText='position:fixed;z-index:2147483000;left:12px;right:12px;top:calc(72px + env(safe-area-inset-top,0px));bottom:auto;max-width:360px;margin:auto;padding:10px 42px 10px 12px;background:#25204b;color:#fff;border:2px solid #bba9ff;border-radius:20px;box-shadow:0 12px 32px #0005;font:500 12px/1.35 system-ui,sans-serif;';
+     notice.innerHTML='<strong style="display:block;font-size:13px">🦜 Çevrimdışı mod</strong><span>Uygulamayı gezebilirsin. Çevrimiçi işlemler için internet gerekli.</span><button type="button" aria-label="Çevrimdışı uyarısını kapat" style="position:absolute;right:9px;top:9px;border:0;border-radius:50%;background:#fff;color:#25204b;width:32px;height:32px;font-size:22px;cursor:pointer">×</button>';
      notice.querySelector('button').addEventListener('click',close);
      document.body.appendChild(notice);
    }
