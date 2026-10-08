@@ -351,6 +351,203 @@
       "status": "ai-generated",
       "source": "docs/media-generation-record.json",
       "derived_from": "ingilizce/papi-reward-v2.png"
+    },
+    {
+      "path": "ingilizce/benim-dunyam/papi-selam.png",
+      "sha256": "9c61746c17f96b0d8b1392b6b2963fc9dded2fe600fd2734aec7635f7b8b8ca5",
+      "bytes": 113365,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-welcome-v2.png"
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-ilk-adim.webp",
+      "sha256": "28cedba4f025329e0c4ddf9f7fb49be0e740a5f5e88d83128f557ed0cbf488e8",
+      "bytes": 18142,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-01-ilk-adim.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-ilk-zafer.webp",
+      "sha256": "c3e00260f644374ee863f9fec3dca5eac3ff879ac20fc98d9b93c8b4c982d4d5",
+      "bytes": 19268,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-02-ilk-zafer.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seri-3.webp",
+      "sha256": "2f5e206a106ca13772b5a5a694c8f57a4d4ce177b97dd24d7b2356e5664049ff",
+      "bytes": 17904,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-03-3-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seri-7.webp",
+      "sha256": "9f5126a51b95a5c65363a354a5043c95506648f62ad0d13fd744511903c77eb3",
+      "bytes": 18802,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-04-7-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seri-30.webp",
+      "sha256": "fb6e0476257ed79ecc28f89af6d4f1c8ad7ffbcc154f04b09dd7a5e2ce9bf95a",
+      "bytes": 19324,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-05-30-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-kelime-avcisi.webp",
+      "sha256": "50f2ab89d561cd1d5c9e56c60abf6942c2a12eb79232041bfedd0bd06d9ddaa1",
+      "bytes": 22618,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-06-kelime-avcisi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-kelime-ustasi.webp",
+      "sha256": "7382293da7897520b74a6b8132416dc75d54fd984bbb84dcbbdf67e75362274e",
+      "bytes": 19176,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-07-kelime-ustasi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-tam-isabet.webp",
+      "sha256": "a2a9b630dcf4deac024adefaa1f5def4c7b9665c03b17fa3f5f651b4e6de3c4c",
+      "bytes": 20852,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-08-tam-isabet.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-keskin-goz.webp",
+      "sha256": "6002b2a41ba130bd6ba3a8c58a1c3e094c9a3d21edcd753437693d22c4b7fc69",
+      "bytes": 20272,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-09-keskin-goz.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-ders-kurdu.webp",
+      "sha256": "38c8aa3d55e6839426ddc7d04b1f561bb3e289cf5bb7e4191454a9931a6b07da",
+      "bytes": 21242,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-10-ders-kurdu.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-konu-ustasi.webp",
+      "sha256": "c2f6649bc61e14b71dc908f9691ab6371fe17b5f88cda6760464a3b0816bd569",
+      "bytes": 19628,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-11-konu-ustasi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-yildiz-toplayici.webp",
+      "sha256": "8c50df506c3e98bbe6e1d8b509223210e4eaa829e075bbb5922f21ef0df945a8",
+      "bytes": 18178,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-12-yildiz-toplayici.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-parkurcu.webp",
+      "sha256": "fde6e66176c661e1c7d5b84c39e8e4254394afd9cd9c90e1775f5519955922cf",
+      "bytes": 21472,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-13-parkurcu.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-kasif.webp",
+      "sha256": "a3867ec8f0945f49a3848b797a15418743b69d0c33970b1a200bf7d2b14dea6b",
+      "bytes": 20900,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-14-kasif.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-sampiyon.webp",
+      "sha256": "df2a0261a0207c1dd434e14efc8a05aa53937ffd3426b2d40b30874e4415011b",
+      "bytes": 20098,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-15-sampiyon.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-gorev-avcisi.webp",
+      "sha256": "be9d86221ad1cbb9404f1f5cde491e560025d92b3428f230813861b43d1d31cb",
+      "bytes": 20246,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-16-gorev-avcisi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seviye-5.webp",
+      "sha256": "a8f9c7acede2be02b448e8effeddaad2e967d3a330dc10e73acd3a326f7347a4",
+      "bytes": 20210,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-17-seviye-5.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seviye-10.webp",
+      "sha256": "47d2947b3a2984b4401feb9676da883a2232e6856e798b6bdfd8c86020dd43f6",
+      "bytes": 21000,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-18-seviye-10.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seviye-20.webp",
+      "sha256": "f9387dd432239c44215342f0eb6169180bb9f7c9b702a9b5dbeb0dde28e3a240",
+      "bytes": 22570,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-19-seviye-20.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-koleksiyoncu.webp",
+      "sha256": "b60c003d602e368ce3233e8cf96175ab8b3e2d9d7dcd69579fe4bdcd8c32fc3d",
+      "bytes": 22156,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-20-koleksiyoncu.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-puan-avcisi.webp",
+      "sha256": "12c42ba4a32962460a4567e2f8f91834a73936735a05c8f57789afe844ed9e43",
+      "bytes": 23294,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-21-puan-avcisi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-puan-efsanesi.webp",
+      "sha256": "57f093516a8b4e4fb8741c99c051505bd15b0ad8ca1d13a801d5eadb66801a5f",
+      "bytes": 18518,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-22-puan-efsanesi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-altin-kumbara.webp",
+      "sha256": "ec33362630327cf7d23e66343dc61b016671e141d590fa6abd8197dd957faf9f",
+      "bytes": 21596,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-23-altin-kumbara.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-dinleme-ustasi.webp",
+      "sha256": "6b7e5c26e301fda3c9d11def020c3c20de1d3ab652f810faf9ee93e965474363",
+      "bytes": 20428,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-24-dinleme-ustasi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/sahne-sana-ozel.webp",
+      "sha256": "75402db2305ced9c039ed4b264b027f20f0f127647672133d39a080618ae19ad",
+      "bytes": 174212,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-sana-ozel.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/sahne-istatistik.webp",
+      "sha256": "2af1f68594522e7a7851d6b181d82abf1d43843c036af51b4fc83b0c603393a2",
+      "bytes": 144170,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-istatistik.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/sahne-rozetler.webp",
+      "sha256": "c610879f729b0f20569eed911bae4ad107f25363fe31e2cb2c81ad49a3adfa2d",
+      "bytes": 137410,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-rozetler.png and resized/converted to WebP."
     }
   ]
 }
