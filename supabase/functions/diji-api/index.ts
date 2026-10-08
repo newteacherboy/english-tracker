@@ -1,3 +1,4 @@
+import { papiCardsAPI } from './papi-cards-api.ts';
 import './score-rules.js';
 import { readBatch, contentCache } from './request-budget.ts';
 import { progressionAPI } from './progression-api.ts';
@@ -27,6 +28,7 @@ const corsHeaders = {
 const secretKeys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
 const adminKey = secretKeys.default;
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, adminKey);
+const papiCards = papiCardsAPI(supabase,json);
 const release = releaseAPI(supabase,json);
 const progression = progressionAPI(supabase,json);
 const cachedContent = contentCache(json);
@@ -1218,6 +1220,7 @@ async function handle(req: Request) {
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
   const progressionResult=await progression.handle(op,body,q,a);if(progressionResult)return progressionResult;
+  const papiResult=await papiCards.handle(op,body,q,a,req.method);if(papiResult)return papiResult;
   const releaseResult=await release.handle(op,body,q,a);if(releaseResult)return releaseResult;
   const releaseDeny=await release.guard(op,body,q,a);if(releaseDeny)return releaseDeny;
   /* [v4.0] Bu istekte öğrenci aramaları öğretmenin kapsamıyla sınırlı (yönetici herkesi görür) */
