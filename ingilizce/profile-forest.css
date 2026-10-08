@@ -79,37 +79,3 @@
 @media(min-width:600px){#tab-profil .user-info-area{min-height:175px}#tab-profil .dm-forest-papi{width:190px;height:190px;top:105px}#tab-profil .user-details h3{font-size:26px!important}#tab-profil .summary-card{padding:20px!important}#tab-profil .card-title{font-size:13px!important}}
 @media(max-width:380px){#tab-profil .user-details h3{font-size:17px!important}#tab-profil .dm-forest-papi{width:120px;height:120px;top:100px}#tab-profil .header-right-widgets{grid-template-columns:73px minmax(0,1fr) 58px!important}#tab-profil .header-energy-badge{padding:8px 5px!important}#tab-profil .dm-forest-tools{margin-top:0;justify-content:flex-start}}
 @media(prefers-reduced-motion:reduce){#tab-profil *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-
-/* My World unified profile entry */
-#tab-profil .dm-my-world-tasks{margin:12px 0 18px;padding:16px;border-radius:22px;background:linear-gradient(135deg,#fffaf0,#f0e9ff);border:2px solid #e2d2ff;box-shadow:0 5px 0 #e9defa;color:#392765}
-#tab-profil .dm-my-world-tasks .dm-forest-section-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
-#tab-profil .dm-my-world-tasks h2{color:#392765;margin:0;font-size:20px}
-#tab-profil .dm-my-world-tasks p{font-size:13px;line-height:1.5;margin:10px 0;color:#66568b}
-#tab-profil .dm-my-world-open{width:100%;padding:13px 12px;border:0;border-radius:15px;background:linear-gradient(110deg,#8549ee,#6645d6);color:white;font-weight:850;font-size:14px;box-shadow:0 4px 0 #4e34a5;cursor:pointer}
-
-/* Approved adventure profile: tabbed My World layout */
-#tab-profil.dc-fullscreen-overlay.active{background:linear-gradient(180deg,#f3eaff,#fdf9ff 44%,#f5f0ff)!important;color:#38275f}
-#tab-profil .user-header-bar{background:linear-gradient(0deg,#f7efff 0%,transparent 60%),url('parkur-palace-forest-v3.png') center top/cover no-repeat!important;border-color:#d8baff!important;box-shadow:0 5px 0 #e6d5fb!important}
-#tab-profil .dm-forest-caption{background:#fff9e9e8;color:#6d40ad}
-#tab-profil .dm-world-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:8px 0 16px}
-#tab-profil .dm-world-tabs button{border:0;border-radius:16px;background:#ede7ff;color:#685a91;padding:11px 3px;font-size:clamp(10px,2.8vw,13px);font-weight:850;cursor:pointer}
-#tab-profil .dm-world-tabs button[aria-pressed=true]{background:linear-gradient(120deg,#9459ff,#7047dc);color:#fff;box-shadow:0 4px 0 #e2d5ff}
-#tab-profil #dmMyWorldTasks[hidden],#tab-profil #dmForestGrowth[hidden],#tab-profil #rozetlerBolumu[hidden],#tab-profil #dmForestActions[hidden]{display:none!important}
-#tab-profil .dm-forest-papi{width:140px;height:140px}
-
-#tab-profil .dm-world-live{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
-#tab-profil .dm-world-live:empty{display:none}
-#tab-profil .dm-world-live-card{background:#fff;border:1px solid #e4d8fb;border-radius:16px;padding:12px;min-width:0}
-#tab-profil .dm-world-live-card strong{display:block;font-size:13px;color:#6042a4;margin-bottom:6px}
-#tab-profil .dm-world-live-card p{font-size:12px;color:#685e7b;line-height:1.4;overflow-wrap:anywhere;margin:0}
-@media(max-width:390px){#tab-profil .dm-world-live{grid-template-columns:1fr}}
-
-/* Adventure-center hero: existing independent mascot and castle assets */
-#tab-profil .user-header-bar{min-height:300px!important;background:linear-gradient(180deg,#c4eaff 0%,#dfd0ff 34%,#f6edff 78%,#fff9ee 100%)!important;position:relative!important;isolation:isolate}
-#tab-profil .user-header-bar:before{content:"";position:absolute;inset:0 0 auto;height:210px;background:url('parkur-palace-forest-v3.png') center 35%/cover no-repeat;opacity:.88;pointer-events:none;z-index:-1}
-#tab-profil .user-header-bar:after{content:"";position:absolute;left:0;right:0;bottom:0;height:95px;background:linear-gradient(0deg,#f9f1ff 10%,transparent);pointer-events:none;z-index:-1}
-#tab-profil .dm-forest-caption{background:#fff7e8!important;color:#7041a2!important;border:1px solid #e4c9ff;box-shadow:0 3px 0 #d9bdf3;font-size:12px}
-#tab-profil .dm-forest-papi{top:74px!important;right:3px!important;width:145px!important;height:145px!important;animation:dmWorldFloat 3.6s ease-in-out infinite}
-@keyframes dmWorldFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@media(prefers-reduced-motion:reduce){#tab-profil .dm-forest-papi{animation:none}}
-#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"]{display:none!important}
