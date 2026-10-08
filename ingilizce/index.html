@@ -952,17 +952,41 @@ html, body { touch-action: pan-x pan-y; }
   document.addEventListener('touchmove', preventPinch, {passive:false});
 })();
 </script>
+
+<style id="dm-papi-transitions">
+#dmBootSplash,#oturumYuklemeOverlay{position:fixed!important;inset:0!important;background:#f0faf8!important;z-index:2147483000!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;padding:24px!important;text-align:center!important}
+#dmBootSplash{display:flex;transition:opacity .25s ease}#dmBootSplash.dm-ready{opacity:0;pointer-events:none}
+.dm-papi-loading{font-family:Nunito,system-ui,sans-serif;color:#214c52;display:flex;align-items:center;flex-direction:column;gap:12px}
+.dm-papi-halo{position:relative;width:180px;height:200px;display:grid;place-items:center}
+.dm-papi-halo:before{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:#d9f3e7;animation:dmPapiHalo 2.4s ease-in-out infinite}
+.dm-papi-halo img{position:relative;width:150px;height:180px;object-fit:contain;animation:dmPapiFloat 2.4s ease-in-out infinite;filter:drop-shadow(0 8px 8px #17655016)}
+.dm-papi-loading strong{font-size:22px}.dm-papi-loading p{font-size:14px;color:#6c8589;margin:0;line-height:1.5}
+.dm-papi-dots{display:flex;gap:7px;height:20px;align-items:center}.dm-papi-dots i{width:7px;height:7px;background:#25a284;border-radius:50%;animation:dmPapiDot 1.2s ease-in-out infinite}.dm-papi-dots i:nth-child(2){animation-delay:.15s}.dm-papi-dots i:nth-child(3){animation-delay:.3s}
+#dmBootRetry{border:0;border-radius:14px;padding:12px 20px;font:700 14px system-ui;background:#198e76;color:#fff;margin-top:16px}
+@keyframes dmPapiFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+@keyframes dmPapiHalo{0%,100%{transform:scale(.94);opacity:.65}50%{transform:scale(1.04);opacity:1}}
+@keyframes dmPapiDot{0%,70%,100%{transform:translateY(0);opacity:.4}35%{transform:translateY(-5px);opacity:1}}
+@media(prefers-reduced-motion:reduce){.dm-papi-halo img,.dm-papi-halo:before,.dm-papi-dots i{animation:none!important}#dmBootSplash{transition:none}}
+</style>
 </head>
         <body>
+<div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
+<script>(function(){
+const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false;
+function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
+function finish(){if(done)return;done=true;clearInterval(timer);clearTimeout(deadline);splash.classList.add('dm-ready');setTimeout(()=>splash.remove(),250);}
+function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
+const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
+let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
+if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'))finish();
+}
+window.addEventListener('load',()=>{loaded=true;check();},{once:true});
+document.addEventListener('dm:login',check);timer=setInterval(check,150);
+const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
+document.getElementById('dmBootRetry').onclick=()=>location.reload();
+})();</script>
         
-                        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay">
-                <svg class="oturum-yukleme-wave" viewBox="0 0 400 100" preserveAspectRatio="none">
-                    <path d="M0,45 C50,12 100,78 150,45 C200,12 250,78 300,45 C350,12 400,78 400,45 L400,100 L0,100 Z" fill="#2ed7ea" opacity="0.4"/>
-                    <path d="M200,45 C250,12 300,78 350,45 C400,12 450,78 500,45 C550,12 600,78 600,45 L600,100 L200,100 Z" fill="#0c9bb5" opacity="0.32"/>
-                </svg>
-                <img class="oturum-yukleme-logo" src="papi-app-icon-v3.png" alt="Diji-Medu">
-                <div class="oturum-yukleme-yazi">Oturumun yükleniyor<span class="oturum-yukleme-nokta"></span></div>
-            </div>
+                        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p >Hesabını hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
         
             <!-- Sol Üst Küçük Ana Portala Dön Butonu -->
             <a href="https://app.dijimedu.com" class="portal-back-btn">← Ana Portala Dön</a>
@@ -30724,8 +30748,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="google-login.js?v=rights-7"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=2">
 <script src="parkur-map-theme-v1.js?v=2"></script>
-<link rel="stylesheet" href="medupro.css?v=1">
-<script src="medupro.js?v=3"></script>
+<link rel="stylesheet" href="medupro.css?v=2">
+<script src="medupro.js?v=4"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
 <script src="activity-ui.js?v=6"></script>
 <link rel="stylesheet" href="bottom-nav.css?v=4">
