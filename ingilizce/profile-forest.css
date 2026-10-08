@@ -103,3 +103,13 @@
 #tab-profil .dm-world-live-card strong{display:block;font-size:13px;color:#6042a4;margin-bottom:6px}
 #tab-profil .dm-world-live-card p{font-size:12px;color:#685e7b;line-height:1.4;overflow-wrap:anywhere;margin:0}
 @media(max-width:390px){#tab-profil .dm-world-live{grid-template-columns:1fr}}
+
+/* Adventure-center hero: existing independent mascot and castle assets */
+#tab-profil .user-header-bar{min-height:300px!important;background:linear-gradient(180deg,#c4eaff 0%,#dfd0ff 34%,#f6edff 78%,#fff9ee 100%)!important;position:relative!important;isolation:isolate}
+#tab-profil .user-header-bar:before{content:"";position:absolute;inset:0 0 auto;height:210px;background:url('parkur-palace-forest-v3.png') center 35%/cover no-repeat;opacity:.88;pointer-events:none;z-index:-1}
+#tab-profil .user-header-bar:after{content:"";position:absolute;left:0;right:0;bottom:0;height:95px;background:linear-gradient(0deg,#f9f1ff 10%,transparent);pointer-events:none;z-index:-1}
+#tab-profil .dm-forest-caption{background:#fff7e8!important;color:#7041a2!important;border:1px solid #e4c9ff;box-shadow:0 3px 0 #d9bdf3;font-size:12px}
+#tab-profil .dm-forest-papi{top:74px!important;right:3px!important;width:145px!important;height:145px!important;animation:dmWorldFloat 3.6s ease-in-out infinite}
+@keyframes dmWorldFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media(prefers-reduced-motion:reduce){#tab-profil .dm-forest-papi{animation:none}}
+#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"]{display:none!important}
