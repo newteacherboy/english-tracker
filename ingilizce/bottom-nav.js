@@ -8,16 +8,6 @@
   const nav = document.getElementById('bottomNavMobile');
   if (!nav) return;
   nav.setAttribute('aria-label','Ana menü');
-  const personal=nav.querySelector('.bn-item[data-ekran="tab-sanaozel"]');
-  const profile=nav.querySelector('.bn-item[data-ekran="tab-profil"]');
-  if(personal&&profile){
-    personal.hidden=true;
-    personal.setAttribute('aria-hidden','true');
-    personal.style.display='none';
-    profile.querySelector('.bn-label')?.replaceChildren(document.createTextNode('Benim Dünyam'));
-    profile.setAttribute('aria-label','Benim Dünyam');
-  }
-
   nav.querySelectorAll('.bn-item').forEach(button => {
    const index = icons[button.dataset.ekran], icon = button.querySelector('.bn-icon');
    if (index === undefined || !icon) return;
@@ -29,7 +19,7 @@
     icon.replaceChildren(art);
    }
    const label = button.querySelector('.bn-label');
-   if (label) button.setAttribute('aria-label',button.dataset.ekran==='tab-profil'?'Benim Dünyam':label.textContent.trim());
+   if (label) button.setAttribute('aria-label',label.textContent.trim());
    if (button.classList.contains('active')) button.setAttribute('aria-current','page');
    else button.removeAttribute('aria-current');
   });
