@@ -13525,6 +13525,30 @@ function ozellikSecDoldur() {
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
+<!-- Diji-Medu Benim Dünyam: geç oluşan mobil menü için güvenli yedek bağlantı -->
+<style id="dm-my-world-nav-inline">
+#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"]{display:none!important}
+#bottomNavMobile .bn-item[data-ekran="tab-profil"] .bn-label{font-size:11px!important}
+</style>
+<script id="dm-my-world-nav-bootstrap">
+(function(){
+ 'use strict';
+ function sync(){
+  var nav=document.getElementById('bottomNavMobile');if(!nav)return;
+  var old=nav.querySelector('.bn-item[data-ekran="tab-sanaozel"]');
+  if(old){old.hidden=true;old.setAttribute('aria-hidden','true');}
+  var profile=nav.querySelector('.bn-item[data-ekran="tab-profil"]');
+  if(profile){
+   var label=profile.querySelector('.bn-label');
+   if(label&&label.textContent.trim()!=='Benim Dünyam')label.textContent='Benim Dünyam';
+   profile.setAttribute('aria-label','Benim Dünyam');
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync,{once:true});else sync();
+ var nav=document.getElementById('bottomNavMobile');
+ if(nav){var observer=new MutationObserver(sync);observer.observe(nav,{childList:true,subtree:true});}
+})();
+</script>
 </body> etiketinin
              hemen ÜSTÜNE yapıştır.
              =================================================================== -->
