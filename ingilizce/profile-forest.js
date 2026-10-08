@@ -17,10 +17,10 @@
     for (const [node, marker] of placements) { marker.replaceWith(node); }
     placements.clear();
     badgeObserver?.disconnect(); badgeObserver=null;
-    document.querySelectorAll('.dm-forest-caption,.dm-forest-papi,.dm-forest-tools,#dmForestBadgeToggle,#dmForestBadgeEmpty,.dm-chart-empty,#dmMyWorldTasks').forEach(n=>n.remove());
+    document.querySelectorAll('.dm-forest-caption,.dm-forest-papi,.dm-forest-tools,#dmForestBadgeToggle,#dmForestBadgeEmpty,.dm-chart-empty').forEach(n=>n.remove());
     ['gelisimGrafik','kriterGrafik','denemeGrafik'].forEach(id=>{if($(id))$(id).hidden=false;});
     $('rozetlerGridKonteyner')?.classList.remove('dm-badges-expanded');
-    $('dmForestGrowth')?.remove(); $('dmForestActions')?.remove(); $('dmWorldTabs')?.remove();
+    $('dmForestGrowth')?.remove(); $('dmForestActions')?.remove();
     document.body.classList.remove('dm-profile-open');
     styleCharts(false);
   }
@@ -90,29 +90,6 @@
       if($('rozetlerGridKonteyner')) {badgeObserver=new MutationObserver(badgeState);badgeObserver.observe($('rozetlerGridKonteyner'),{childList:true});}
     }
     badgeState();
-    // Unified dashboard entry: reuse the existing Sana Ozel screen and its live data.
-    if(!$('dmMyWorldTasks')){
-      const tasks=document.createElement('section');tasks.id='dmMyWorldTasks';tasks.className='dm-my-world-tasks';
-      tasks.innerHTML='<div class="dm-forest-section-heading"><h2>🎯 Sana Özel</h2><span>Görevlerim ve haftalık hedefim</span></div><p>Günlük görevlerini, haftalık hedeflerini ve ödüllerini aynı merkezden yönet.</p><button type="button" class="dm-my-world-open">Günün 3 Görevini ve Hedefimi Gör →</button>';
-      const summary=$('tab-ozet');if(summary){summary.prepend(tasks);tasks.querySelector('button').addEventListener('click',()=>{const target=document.querySelector('#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"]')||document.querySelector('[data-ekran="tab-sanaozel"]');target?.click();});const source=document.getElementById('tab-sanaozel');if(source){const preview=document.createElement('div');preview.className='dm-world-live';preview.setAttribute('aria-label','Günlük görevler ve haftalık hedefler');tasks.insertBefore(preview,tasks.querySelector('button'));const refresh=()=>{if(!tasks.isConnected)return;const cards=[...source.querySelectorAll('[id],[class]')].filter(el=>/gun.*gorev|gorev.*gun|hafta.*hedef|weekly|daily/i.test((el.id||'')+' '+(typeof el.className==='string'?el.className:''))&&el.textContent.trim().length>12&&el.textContent.trim().length<1500);const picked=[];for(const el of cards){if(picked.some(x=>x.contains(el)||el.contains(x)))continue;picked.push(el);if(picked.length===2)break;}preview.replaceChildren();for(const el of picked){const item=document.createElement('article');item.className='dm-world-live-card';const title=document.createElement('strong');title.textContent=/hafta/i.test(el.id+' '+el.className)?'Haftalık Hedefim':'Günün Görevleri';const body=document.createElement('p');body.textContent=el.textContent.trim().replace(/\\s+/g,' ').slice(0,320);item.append(title,body);preview.append(item);}tasks.querySelector('button').hidden=picked.length===0?false:false;};refresh();const observer=new MutationObserver(()=>{if(!tasks.isConnected){observer.disconnect();return;}refresh();});observer.observe(source,{subtree:true,childList:true,characterData:true});}}
-    }
-    // My World: switch existing profile content without cloning charts or student state.
-    if(!$('dmWorldTabs')){
-      const nav=document.createElement('nav');nav.id='dmWorldTabs';nav.className='dm-world-tabs';nav.setAttribute('aria-label','Benim Dünyam bölümleri');
-      nav.innerHTML='<button type="button" data-world="tasks" aria-pressed="true">Sana Özel</button><button type="button" data-world="stats" aria-pressed="false">İstatistik</button><button type="button" data-world="badges" aria-pressed="false">Rozetler</button><button type="button" data-world="character" aria-pressed="false">Karakter</button>';
-      summary.prepend(nav);
-      const task=$('dmMyWorldTasks');
-      const setWorld=mode=>{
-        nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.world===mode)));
-        if(task)task.hidden=mode!=='tasks';
-        if($('dmForestGrowth'))$('dmForestGrowth').hidden=mode!=='stats';
-        if(badges)badges.hidden=mode!=='badges';
-        if($('dmForestActions'))$('dmForestActions').hidden=mode!=='character';
-        if(mode==='stats')requestAnimationFrame(()=>styleCharts(true));
-      };
-      nav.querySelectorAll('button').forEach(b=>b.onclick=()=>setWorld(b.dataset.world));
-      setWorld('tasks');
-    }
     const growth=document.createElement('section');growth.id='dmForestGrowth';growth.setAttribute('aria-labelledby','dmForestGrowthTitle');
     growth.innerHTML='<div class="dm-forest-section-heading"><h2 id="dmForestGrowthTitle">🌿 Gelişimim</h2><span>Her adım bir keşif</span></div>';
     badges ? badges.after(growth) : summary.append(growth);
@@ -122,10 +99,6 @@
       details.addEventListener('toggle',()=>{if(details.open)requestAnimationFrame(()=>styleCharts(true));});
     });
     const actions=document.createElement('div');actions.id='dmForestActions';summary.after(actions);move(head.querySelector('.user-actions'),actions);
-    const current=$('dmWorldTabs')?.querySelector('[aria-pressed="true"]')?.dataset.world||'tasks';
-    if($('dmForestGrowth'))$('dmForestGrowth').hidden=current!=='stats';
-    if(badges)badges.hidden=current!=='badges';
-    if($('dmForestActions'))$('dmForestActions').hidden=current!=='character';
     emptyStates();requestAnimationFrame(()=>styleCharts(true));
   }
   const open=window.profilAc,close=window.dcTumTamEkranlariKapat;
