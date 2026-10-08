@@ -331,3 +331,12 @@ body.dm-parkur-open .dm-parkur-head{padding:10px 12px 0}
 @media(min-width:769px){body.dm-parkur-open #bzParkur>.bz-ic{padding-bottom:var(--dm-map-dock,16px)!important}}
 body.dm-parkur-open #bottomNavMobile .bn-item.active .bn-label{color:#fff!important}
 
+
+/* One continuous scene extends through the reserved space above the dock. */
+body.dm-parkur-open #bzParkur>.bz-ic.dm-map-extended{position:relative;isolation:isolate}
+body.dm-parkur-open #bzParkur>.dm-map-extended:has(.dm-parchment-map)::before{
+ content:"";position:absolute;left:var(--dm-scene-left);top:var(--dm-scene-top);width:var(--dm-scene-width);height:var(--dm-scene-height);
+ background:#f0e3b5 url('parkur-map-landscape-v1.svg') center top/cover no-repeat;pointer-events:none;z-index:0;
+}
+body.dm-parkur-open .dm-map-extended .dm-parkur-scroll{z-index:1}
+body.dm-parkur-open .dm-map-extended .dm-parchment-map{background:transparent}

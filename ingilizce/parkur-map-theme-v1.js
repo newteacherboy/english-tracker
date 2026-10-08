@@ -43,6 +43,17 @@
       const dock=document.getElementById('bottomNavMobile'),dockHeight=Math.ceil(dock?.getBoundingClientRect().height||0);
       root.parentElement?.style.setProperty('--dm-map-dock',dockHeight+'px');
       const W=map.clientWidth,H=map.clientHeight;if(W<1||H<1)return;
+      // Paint the map and the safety gap as one image, keeping controls in the original scene.
+      const frame=root.parentElement;
+      if(frame){
+        const sceneRect=map.getBoundingClientRect(),frameRect=frame.getBoundingClientRect();
+        const sceneBottom=dock?dock.getBoundingClientRect().top:sceneRect.bottom;
+        frame.style.setProperty('--dm-scene-left',(sceneRect.left-frameRect.left)+'px');
+        frame.style.setProperty('--dm-scene-top',(sceneRect.top-frameRect.top)+'px');
+        frame.style.setProperty('--dm-scene-width',sceneRect.width+'px');
+        frame.style.setProperty('--dm-scene-height',Math.max(sceneRect.height,sceneBottom-sceneRect.top)+'px');
+        frame.classList.add('dm-map-extended');
+      }
       const size=Math.max(50,Math.min(92,W*.20,H*.16)),first=Math.max(H*.16,56+size/2),last=H-62-size/2-23;
       const gap=Math.max(size*.58,(last-first)/4),height=first+Math.max(0,nodes.length-1)*gap+H*.35;
       const oldIndex=lastGap?track.scrollTop/lastGap:Math.max(0,current-2);
