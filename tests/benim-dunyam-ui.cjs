@@ -49,6 +49,11 @@ const ISTAT = { ok: true, bugun: g(0), gunler: { [g(0)]: { o: 3, d: 20, y: 4, m:
   assert(await page.locator('#tab-dunyam .bd-sekme[data-bd="sanaozel"]').evaluate(e => e.classList.contains('active')));
   assert(await page.locator('#bdDiger .dc-focus-card').count() === 1, 'old Sana Özel cards moved in');
   assert(await page.locator('#soPanel').count() === 1, 'task panel stays in the DOM');
+  /* Çıkış düğmesi: onay sorar, vazgeçilirse çıkış yapılmaz, onaylanırsa cikisYap çağrılır */
+  const cikis = await page.evaluate(() => { let n = 0; const eski = window.cikisYap, onay = window.confirm; window.cikisYap = () => { n++; };
+    window.confirm = () => false; document.getElementById('bdCikis').click(); const once = n;
+    window.confirm = () => true; document.getElementById('bdCikis').click(); window.cikisYap = eski; window.confirm = onay; return [once, n]; });
+  assert.deepEqual(cikis, [0, 1], 'logout button asks before calling cikisYap');
   await page.evaluate(() => { const t = document.getElementById('tab-dunyam'); document.querySelectorAll('body *').forEach(e => { if (e.contains(t) || t.contains(e)) return; if (getComputedStyle(e).position === 'fixed') e.style.setProperty('display', 'none', 'important'); }); });
   await page.screenshot({ path: '/tmp/bd-sanaozel.png', fullPage: true });
   /* İstatistik */
