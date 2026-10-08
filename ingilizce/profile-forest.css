@@ -96,3 +96,10 @@
 #tab-profil .dm-world-tabs button[aria-pressed=true]{background:linear-gradient(120deg,#9459ff,#7047dc);color:#fff;box-shadow:0 4px 0 #e2d5ff}
 #tab-profil #dmMyWorldTasks[hidden],#tab-profil #dmForestGrowth[hidden],#tab-profil #rozetlerBolumu[hidden],#tab-profil #dmForestActions[hidden]{display:none!important}
 #tab-profil .dm-forest-papi{width:140px;height:140px}
+
+#tab-profil .dm-world-live{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+#tab-profil .dm-world-live:empty{display:none}
+#tab-profil .dm-world-live-card{background:#fff;border:1px solid #e4d8fb;border-radius:16px;padding:12px;min-width:0}
+#tab-profil .dm-world-live-card strong{display:block;font-size:13px;color:#6042a4;margin-bottom:6px}
+#tab-profil .dm-world-live-card p{font-size:12px;color:#685e7b;line-height:1.4;overflow-wrap:anywhere;margin:0}
+@media(max-width:390px){#tab-profil .dm-world-live{grid-template-columns:1fr}}
