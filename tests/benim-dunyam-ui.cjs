@@ -54,6 +54,15 @@ const ISTAT = { ok: true, bugun: g(0), gunler: { [g(0)]: { o: 3, d: 20, y: 4, m:
     window.confirm = () => false; document.getElementById('bdCikis').click(); const once = n;
     window.confirm = () => true; document.getElementById('bdCikis').click(); window.cikisYap = eski; window.confirm = onay; return [once, n]; });
   assert.deepEqual(cikis, [0, 1], 'logout button asks before calling cikisYap');
+  /* Öğretmen paneli düğmesi şifre penceresini Benim Dünyam'ın üstünde açar */
+  await page.evaluate(() => { try { sessionStorage.removeItem('ing_ogr_token'); } catch (e) {} document.getElementById('bdOgretmen').click(); });
+  const sifre = await page.evaluate(() => { const m = document.getElementById('sifreModal'), r = m.getBoundingClientRect();
+    const d = document.getElementById('tab-dunyam');
+    return { gorunur: getComputedStyle(m).display !== 'none' && r.height > 0, ustte: !d.classList.contains('active') && getComputedStyle(d).display === 'none' }; });
+  await page.screenshot({ path: '/tmp/bd-ogretmen.png' });
+  assert.deepEqual(sifre, { gorunur: true, ustte: true }, 'teacher button closes Benim Dünyam and opens the password modal');
+
+  await page.evaluate(() => { document.getElementById('sifreModal').style.display = 'none'; window.benimDunyamAc('sanaozel'); });
   await page.evaluate(() => { const t = document.getElementById('tab-dunyam'); document.querySelectorAll('body *').forEach(e => { if (e.contains(t) || t.contains(e)) return; if (getComputedStyle(e).position === 'fixed') e.style.setProperty('display', 'none', 'important'); }); });
   await page.screenshot({ path: '/tmp/bd-sanaozel.png', fullPage: true });
   /* İstatistik */
