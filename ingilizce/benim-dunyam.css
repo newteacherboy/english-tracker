@@ -136,3 +136,13 @@
   #tab-dunyam .bd-papi{width:140px;height:140px}
 }
 @media (min-width:700px){#tab-dunyam .bd-kok,#tab-dunyam>*{max-width:640px;margin-left:auto;margin-right:auto}}
+
+/* Sahne görselleri (Papi resmin içinde): tüm resim görünsün, balon sağ üstte dursun */
+#tab-dunyam .bd-sahne[style*="sahne-"]{background-position:center 55%;background-color:#9fd3f5}
+#tab-dunyam .bd-sahne[style*="sahne-"] .bd-balon{top:58px;right:10px;max-width:47%;font-size:13px;padding:10px 12px}
+@media (min-width:600px){#tab-dunyam .bd-sahne[style*="sahne-"]{height:300px}}
+
+/* Resimli rozetler: altıgen kesim ve renkli zemin yok; kilitliler soluk görünür */
+#tab-dunyam .bd-rozet.resimli .bd-rozet-sekil{position:relative;width:66px;height:66px;background:none!important;clip-path:none}
+#tab-dunyam .bd-rozet.resimli.kilitli .bd-rozet-sekil img{filter:grayscale(1) brightness(1.15);opacity:.4}
+#tab-dunyam .bd-rozet.resimli .bd-kilit-ikon{position:absolute;right:0;bottom:0;font-size:18px;opacity:.9}

@@ -11,12 +11,12 @@
   const ogrenci = () => typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && String(aktifOgrenciAdi).toLowerCase() !== 'teacher';
   const izin = kod => !window.dmProgression || window.dmProgression.allowed(kod);
   const SEKMELER = [['sanaozel', 'Sana Özel'], ['istatistik', 'İstatistik'], ['rozetler', 'Rozetler'], ['karakter', 'Karakter']];
-  /* Sahne görselleri gelene kadar mevcut Papi çizimleri kullanılır. Yeni görseller gelince sadece burası değişir. */
+  /* Her sekmenin sahnesi. Papi sahne görselinin içinde çizili; ayrı Papi resmi sadece sahne yoksa gösterilir. */
   const SAHNE = {
-    sanaozel: { papi: 'benim-dunyam/papi-selam.png', sahne: '' },
-    istatistik: { papi: 'ders-vadi/papi-buyutec.png', sahne: '' },
-    rozetler: { papi: 'ders-vadi/papi-yildiz.png', sahne: '' },
-    karakter: { papi: 'ders-vadi/papi-kitap.png', sahne: '' }
+    sanaozel: { papi: 'benim-dunyam/papi-selam.png', sahne: 'benim-dunyam/sahne-sana-ozel.webp' },
+    istatistik: { papi: 'ders-vadi/papi-buyutec.png', sahne: 'benim-dunyam/sahne-istatistik.webp' },
+    rozetler: { papi: 'ders-vadi/papi-yildiz.png', sahne: 'benim-dunyam/sahne-rozetler.webp' },
+    karakter: { papi: 'ders-vadi/papi-kitap.png', sahne: 'benim-dunyam/sahne-sana-ozel.webp' }
   };
   let sekme = 'sanaozel', aralik = 'hafta', istat = null, istatZaman = 0, istatYukleniyor = false;
 
@@ -46,7 +46,7 @@
     ['puan-efsanesi', 'Puan Efsanesi', '✨', '10.000 XP topla', c => c.xp >= 10000],
     ['altin-kumbara', 'Altın Kumbara', '🐷', '1.000 altın biriktir', c => c.altin >= 1000],
     ['dinleme-ustasi', 'Dinleme Ustası', '🎧', 'Dinleme oyunlarında 5 kez %80 üstü yap', c => c.dinleme >= 5]
-  ].map(([id, ad, ikon, kosul, kontrol]) => ({ id, ad, ikon, kosul, kontrol }));
+  ].map(([id, ad, ikon, kosul, kontrol]) => ({ id, ad, ikon, kosul, kontrol, resim: `benim-dunyam/rozet-${id}.webp` }));
   window.dmRozetKatalogu = ROZETLER;
 
   function seviyeBilgi() {
@@ -307,7 +307,8 @@
   /* ------------------------------------------------------------------ Rozetler */
   function rozetHtml(r, kazanildi) {
     const resim = r.resim ? `<img src="${kac(r.resim)}" alt="" loading="lazy">` : `<span class="bd-rozet-emoji" aria-hidden="true">${r.ikon}</span>`;
-    return `<li class="bd-rozet${kazanildi ? '' : ' kilitli'}" title="${kac(r.kosul)}"><span class="bd-rozet-sekil">${kazanildi ? resim : '<span class="bd-kilit-ikon" aria-hidden="true">🔒</span>'}</span><b>${kac(r.ad)}</b>${kazanildi ? '' : `<small>${kac(r.kosul)}</small>`}</li>`;
+    const kilit = '<span class="bd-kilit-ikon" aria-hidden="true">🔒</span>';
+    return `<li class="bd-rozet${kazanildi ? '' : ' kilitli'}${r.resim ? ' resimli' : ''}" title="${kac(r.kosul)}"><span class="bd-rozet-sekil">${kazanildi ? resim : (r.resim ? resim + kilit : kilit)}</span><b>${kac(r.ad)}</b>${kazanildi ? '' : `<small>${kac(r.kosul)}</small>`}</li>`;
   }
   function rozetCiz() {
     const rb = $('rozetlerBolumu'); if (rb) tasi(rb, $('bdOgretmenRozet'));
