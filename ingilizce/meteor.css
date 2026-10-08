@@ -46,3 +46,13 @@ body.mt-active{overflow:hidden!important}
 @keyframes mt-feedback-pop{from{opacity:0;transform:translate(-50%,-50%) scale(.7)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @media(max-width:700px){.mt-audio{margin-left:auto}#meteorGame .mt-audio button{padding:5px 7px;font-size:10px}.mt-feedback{font-size:30px;padding:7px 10px}}
 @media(prefers-reduced-motion:reduce){.mt-feedback{animation:none}}
+
+/* Bound every answer to the cream label, including long translations. */
+#meteorGame .mt-meteor span{left:24%;right:24%;top:56%;height:20%;display:flex;align-items:center;justify-content:center;transform:none;font-size:clamp(9px,1.15vw,16px);line-height:1.05;overflow:hidden;box-sizing:border-box}
+#meteorGame .mt-target strong{max-height:64px;overflow:hidden}
+@media(max-width:700px){
+ #meteorGame .mt-meteor span,#meteorGame .mt-solo .mt-meteor span{font-size:clamp(8px,2.2vw,12px)}
+ #meteorGame .mt-target{background:linear-gradient(180deg,#fff4dc,#f3dfb9);border:3px solid #9b8064;border-radius:14px;box-shadow:0 3px 0 #695544;box-sizing:border-box;width:calc(100% - 8px);min-height:78px;height:78px;padding:8px 6px;margin:4px 4px 6px;flex-shrink:0}
+ #meteorGame .mt-target strong{font-size:clamp(14px,3.7vw,24px);line-height:1.1;height:36px;max-height:36px;display:flex;align-items:center;justify-content:center;margin:0 0 4px}
+ #meteorGame .mt-target span{font-size:9px;line-height:1.2;white-space:normal}
+}
