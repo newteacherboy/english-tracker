@@ -20,7 +20,7 @@
     document.querySelectorAll('.dm-forest-caption,.dm-forest-papi,.dm-forest-tools,#dmForestBadgeToggle,#dmForestBadgeEmpty,.dm-chart-empty,#dmMyWorldTasks').forEach(n=>n.remove());
     ['gelisimGrafik','kriterGrafik','denemeGrafik'].forEach(id=>{if($(id))$(id).hidden=false;});
     $('rozetlerGridKonteyner')?.classList.remove('dm-badges-expanded');
-    $('dmForestGrowth')?.remove(); $('dmForestActions')?.remove();
+    $('dmForestGrowth')?.remove(); $('dmForestActions')?.remove(); $('dmWorldTabs')?.remove();
     document.body.classList.remove('dm-profile-open');
     styleCharts(false);
   }
@@ -96,6 +96,23 @@
       tasks.innerHTML='<div class="dm-forest-section-heading"><h2>🎯 Sana Özel</h2><span>Görevlerim ve haftalık hedefim</span></div><p>Günlük görevlerini, haftalık hedeflerini ve ödüllerini aynı merkezden yönet.</p><button type="button" class="dm-my-world-open">Günün 3 Görevini ve Hedefimi Gör →</button>';
       const summary=$('tab-ozet');if(summary){summary.prepend(tasks);tasks.querySelector('button').addEventListener('click',()=>{const target=document.querySelector('#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"]');if(target){target.click();}else{document.querySelector('[data-ekran="tab-sanaozel"]')?.click();}});}
     }
+    // My World: switch existing profile content without cloning charts or student state.
+    if(!$('dmWorldTabs')){
+      const nav=document.createElement('nav');nav.id='dmWorldTabs';nav.className='dm-world-tabs';nav.setAttribute('aria-label','Benim Dünyam bölümleri');
+      nav.innerHTML='<button type="button" data-world="tasks" aria-pressed="true">Sana Özel</button><button type="button" data-world="stats" aria-pressed="false">İstatistik</button><button type="button" data-world="badges" aria-pressed="false">Rozetler</button><button type="button" data-world="character" aria-pressed="false">Karakter</button>';
+      summary.prepend(nav);
+      const task=$('dmMyWorldTasks');
+      const setWorld=mode=>{
+        nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.world===mode)));
+        if(task)task.hidden=mode!=='tasks';
+        if($('dmForestGrowth'))$('dmForestGrowth').hidden=mode!=='stats';
+        if(badges)badges.hidden=mode!=='badges';
+        if($('dmForestActions'))$('dmForestActions').hidden=mode!=='character';
+        if(mode==='stats')requestAnimationFrame(()=>styleCharts(true));
+      };
+      nav.querySelectorAll('button').forEach(b=>b.onclick=()=>setWorld(b.dataset.world));
+      setWorld('tasks');
+    }
     const growth=document.createElement('section');growth.id='dmForestGrowth';growth.setAttribute('aria-labelledby','dmForestGrowthTitle');
     growth.innerHTML='<div class="dm-forest-section-heading"><h2 id="dmForestGrowthTitle">🌿 Gelişimim</h2><span>Her adım bir keşif</span></div>';
     badges ? badges.after(growth) : summary.append(growth);
@@ -105,6 +122,10 @@
       details.addEventListener('toggle',()=>{if(details.open)requestAnimationFrame(()=>styleCharts(true));});
     });
     const actions=document.createElement('div');actions.id='dmForestActions';summary.after(actions);move(head.querySelector('.user-actions'),actions);
+    const current=$('dmWorldTabs')?.querySelector('[aria-pressed="true"]')?.dataset.world||'tasks';
+    if($('dmForestGrowth'))$('dmForestGrowth').hidden=current!=='stats';
+    if(badges)badges.hidden=current!=='badges';
+    if($('dmForestActions'))$('dmForestActions').hidden=current!=='character';
     emptyStates();requestAnimationFrame(()=>styleCharts(true));
   }
   const open=window.profilAc,close=window.dcTumTamEkranlariKapat;
