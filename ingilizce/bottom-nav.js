@@ -3,7 +3,7 @@
  'use strict';
  const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':2,'tab-aktiviteler':3,'tab-derscalis':4,'tab-magaza':5,'tab-profil':6,'tab-dunyam':6};
  const positions = ['100% 100%','0% 0%','0% 0%','50% 0%','100% 0%','0% 100%','50% 100%'];
- const layout = [['tab-meduakis','Arkadaşlar'],['tab-aktiviteler','Oyunlar'],['tab-dunya','Oyna'],['tab-derscalis','Ders Çalış'],['tab-magaza','Mağaza'],['tab-dunyam','Benim Dünyam']];
+ const layout = [['tab-dunya','Oyna'],['tab-meduakis','Arkadaşlar'],['tab-aktiviteler','Oyunlar'],['tab-derscalis','Ders Çalış'],['tab-magaza','Mağaza'],['tab-dunyam','Benim Dünyam']];
   let observer;
  function decorate() {
   const nav = document.getElementById('bottomNavMobile');
@@ -11,12 +11,12 @@
   nav.setAttribute('aria-label','Ana menü');
   const ordered = layout.map(([id]) => nav.querySelector('[data-ekran="'+id+'"]')).filter(Boolean);
   const hidden = [...nav.children].filter(b => !ordered.includes(b));
-  // World stays last for existing menu hooks; CSS places Oyna above the five destinations.
+  // Keep the same six equal buttons; World stays last for existing menu hooks.
   [...hidden,...ordered].forEach((b,i) => { if (nav.children[i] !== b) nav.insertBefore(b,nav.children[i] || null); });
   for (const [id,name] of layout) {
     const b = nav.querySelector('[data-ekran="'+id+'"]'); if (!b) continue;
     const label = b.querySelector('.bn-label'); if (label && label.textContent !== name) label.textContent = name;
-    if (id === 'tab-dunya' && !b.classList.contains('dm-nav-play')) b.classList.add('dm-nav-play');
+    if (b.classList.contains('dm-nav-play')) b.classList.remove('dm-nav-play');
   }
   nav.querySelectorAll('.bn-item').forEach(button => {
    const index = icons[button.dataset.ekran], icon = button.querySelector('.bn-icon');

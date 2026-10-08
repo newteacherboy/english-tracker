@@ -186,3 +186,9 @@
 @keyframes bdPapiTebrik{50%{transform:translateY(-5px) rotate(4deg)}}
 @media(max-height:660px){.bd-kutlama-kart{padding:18px}.bd-kutlama-rozet{width:110px;height:110px}.bd-kutlama-kart h2{font-size:20px}.bd-kutlama-papi{margin:10px 0}.bd-kutlama-papi img{height:60px}}
 @media(prefers-reduced-motion:reduce){.bd-kutlama-kart,.bd-kutlama-rozet,.bd-kutlama-rozet::before,.bd-kutlama-isilti,.bd-kutlama-papi img{animation:none!important}.bd-kutlama{backdrop-filter:none}}
+
+/* Compact header actions stay clear of Papi's speech bubble. */
+#tab-dunyam .bd-ust{top:10px;right:10px;gap:6px}
+#tab-dunyam .bd-ust .bd-yuvarlak{width:38px;height:38px;padding:8px;box-shadow:0 2px 0 rgba(43,35,80,.15)}
+#tab-dunyam .bd-ust .bd-yuvarlak svg{width:20px;height:20px;flex-shrink:0}
+#tab-dunyam .bd-sahne .bd-balon{top:60px}
