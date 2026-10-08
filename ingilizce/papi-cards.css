@@ -1,0 +1,47 @@
+body.pc-active{overflow:hidden!important}
+#papiCards{position:fixed;inset:0;z-index:2147483000;background:#fcfaf3;color:#173e35;overflow:auto;overscroll-behavior:contain;font-family:Nunito,system-ui,sans-serif;text-align:center;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#papiCards *{box-sizing:border-box}
+#papiCards .pc-shell{max-width:480px;margin:auto;min-height:100%;padding:14px 20px 20px}
+#papiCards button,#papiCards select{font-family:inherit;cursor:pointer;touch-action:manipulation}
+#papiCards button:focus-visible,#papiCards select:focus-visible{outline:3px solid #3b806b;outline-offset:3px}
+#papiCards button:disabled{opacity:.4;cursor:default}
+#papiCards .pc-header{display:flex;align-items:center;justify-content:space-between;text-align:left;margin-bottom:16px}
+#papiCards .pc-brand{font-size:12px;font-weight:900;color:#46836b}
+#papiCards h1{font:600 25px/1.2 Fredoka,Nunito,sans-serif;margin:3px 0 0}
+#papiCards .pc-close{width:44px;height:44px;border:1px solid #cbd8c6;border-radius:50%;background:#fffefa;color:#21483d;font-size:21px}
+#papiCards .pc-sub{font-size:16px;line-height:1.5;color:#456456}
+#papiCards .pc-setup-papi{object-fit:contain;height:110px;margin:4px auto 12px}
+#papiCards .pc-setup{text-align:left;display:grid;gap:16px}
+#papiCards label{font-size:14px;font-weight:800;display:grid;gap:7px}
+#papiCards select{width:100%;min-height:48px;border:1px solid #c3d1b8;border-radius:12px;background:#fffefa;font-size:16px;color:#173e35;padding:10px 12px}
+#papiCards .pc-count{text-align:center;font-size:14px;margin:0;color:#55704d}
+#papiCards .pc-start{border:0;border-radius:15px;background:#357654;color:white;min-height:48px;padding:12px 16px;font-size:16px;font-weight:900;width:100%}
+#papiCards .pc-progress{display:flex;gap:8px;justify-content:space-between;font-size:12px;align-items:center}
+#papiCards .pc-progress span{color:#657365}
+#papiCards progress{width:100%;height:7px;border:0;border-radius:20px;overflow:hidden;background:#e4e7dd;margin-top:9px;accent-color:#498265}
+#papiCards progress::-webkit-progress-bar{background:#e4e7dd}#papiCards progress::-webkit-progress-value{background:#498265}
+#papiCards .pc-hint{font-size:13px;color:#476052;margin:13px 0 0}
+#papiCards .pc-deck{position:relative;margin:65px 7px 21px;isolation:isolate}
+#papiCards .pc-deck::before,#papiCards .pc-deck::after{content:'';position:absolute;inset:0;border:1px solid #c6d4bf;border-radius:24px;background:#e6eddd;z-index:-1;transform:rotate(-3deg)}
+#papiCards .pc-deck::after{background:#f2ead7;transform:rotate(3deg)}
+#papiCards .pc-perched{position:absolute;width:90px;height:99px;object-fit:contain;top:-65px;left:calc(50% - 45px);z-index:2;pointer-events:none}
+#papiCards .pc-card{border:1px solid #b9c9a9;border-radius:24px;background:#fffdf4;box-shadow:0 6px 16px #29442b12;padding:32px 16px 24px;position:relative;min-height:345px}
+#papiCards .pc-leaf{position:absolute;font-size:20px;opacity:.65;pointer-events:none}.pc-leaf-top{top:12px;left:13px}.pc-leaf-bottom{bottom:8px;right:12px;transform:rotate(180deg)}
+#papiCards .pc-reveal{border:0;background:transparent;color:#173e35;width:100%;min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:17px;padding:15px 2px}
+#papiCards .pc-reveal strong{font:600 clamp(27px,8vw,44px)/1.15 Fredoka,Nunito,sans-serif;overflow-wrap:anywhere;word-break:normal;max-width:100%}
+#papiCards .pc-speaker{display:grid;place-items:center;background:#e3ecd8;width:44px;height:44px;border-radius:50%;font-size:22px}
+#papiCards .pc-answer{border-top:1px solid #d2dac8;margin-top:10px;padding-top:16px}
+#papiCards .pc-meaning{font-size:14px;line-height:1.3;min-height:32px;display:grid;place-items:center;margin:0 0 18px;color:#788476;overflow-wrap:anywhere}
+#papiCards .pc-revealed .pc-meaning{font-size:24px;color:#21483d}
+#papiCards .pc-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#papiCards .pc-actions button{min-height:72px;border-radius:15px;padding:9px 5px;font-size:13px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;line-height:1.2}
+#papiCards .pc-actions span{font-size:28px;line-height:1}
+#papiCards .pc-again{background:#fff0e7;border:1px solid #d6a18e;color:#aa4f3a}
+#papiCards .pc-known{background:#e2edda;border:1px solid #9fb58e;color:#285c3c}
+#papiCards .pc-note{font-size:12px;color:#657664;line-height:1.4;margin:12px 0}
+#papiCards .pc-change{border:0;background:transparent;color:#3c7460;text-decoration:underline;font-size:13px;min-height:40px;padding:8px}
+#papiCards .pc-notice{font-size:12px;color:#885c41;line-height:1.4;margin:6px 0;min-height:0}
+#papiCards .pc-finish-papi{object-fit:contain;margin:30px auto 10px}
+#papiCards h2{font:600 28px/1.2 Fredoka,Nunito,sans-serif}
+@media(max-height:700px){#papiCards .pc-shell{padding-top:8px}#papiCards .pc-header{margin-bottom:10px}#papiCards h1{font-size:22px}#papiCards .pc-hint{margin-top:8px}#papiCards .pc-deck{margin-top:48px;margin-bottom:15px}#papiCards .pc-perched{width:70px;height:77px;top:-48px;left:calc(50% - 35px)}#papiCards .pc-card{min-height:285px;padding:20px 12px 20px}#papiCards .pc-reveal{min-height:95px;gap:10px;padding:10px 0}#papiCards .pc-actions button{min-height:64px}#papiCards .pc-meaning{margin-bottom:12px}#papiCards .pc-note{margin:8px 0}}
+@media(prefers-reduced-motion:no-preference){#papiCards .pc-card{animation:pcAppear .18s ease-out}@keyframes pcAppear{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
