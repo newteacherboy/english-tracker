@@ -1,6 +1,6 @@
 /* Benim Dünyam: "Sana Özel" ve "Profil" tek ekranda, dört sekme (Sana Özel, İstatistik, Rozetler, Karakter).
    Yeni bir .dc-fullscreen-overlay ekler; eski ekranların içeriğini (görev paneli, gelişim grafikleri,
-   öğretmen rozetleri, karakter koleksiyonu) silmeden taşır ve ekran kapanınca yerlerine geri koyar.
+   karakter koleksiyonu) silmeden taşır ve ekran kapanınca yerlerine geri koyar.
    Eski açılış fonksiyonları (sanaOzelTamEkranAc, profilAc) bu ekrana yönlenir. */
 (function () {
   'use strict';
@@ -19,6 +19,7 @@
     karakter: { papi: 'ders-vadi/papi-kitap.png', sahne: 'benim-dunyam/sahne-sana-ozel.webp' }
   };
   let sekme = 'sanaozel', aralik = 'hafta', istat = null, istatZaman = 0, istatYukleniyor = false;
+  let rozetKisi = '', istatDeneme = 0, yenileT = null, rozetSirasi = [], kutlama = null;
 
   /* ------------------------------------------------------------------ rozet kataloğu */
   const ROZETLER = [
@@ -60,8 +61,8 @@
     const t = { oyun: 0, dogru: 0, yanlis: 0, mukemmel: 0, ders: 0, parkur: 0, aktif: 0 };
     Object.entries(gunler || {}).forEach(([g, v]) => {
       if (bas && g < bas) return;
-      t.oyun += v.o; t.dogru += v.d; t.yanlis += v.y; t.mukemmel += v.m; t.ders += v.l; t.parkur += v.p;
-      if (v.o + v.l + v.p > 0) t.aktif++;
+      ['oyun','dogru','yanlis','mukemmel','ders','parkur'].forEach((k,i) => { t[k] += Number(v[['o','d','y','m','l','p'][i]]) || 0; });
+      if ((Number(v.o)||0) + (Number(v.l)||0) + (Number(v.p)||0) > 0) t.aktif++;
     });
     return t;
   }
@@ -90,6 +91,119 @@
     };
   }
 
+
+  /* Earned badges stay earned; initialize old achievements silently, then queue new awards. */
+  function rozetOturumu() {
+    const kisi = ogrenci() && !window.dmGuestMode && yoVar() &&
+      (typeof yoHazirMi !== 'function' || yoHazirMi()) &&
+      (typeof yoIsim === 'undefined' || !yoIsim || String(yoIsim).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase())
+      ? String(aktifOgrenciAdi).trim().toLowerCase() : '';
+    if (kisi !== rozetKisi) {
+      rozetKisi = kisi; istat = null; istatZaman = 0; istatDeneme = 0; istatYukleniyor = false;
+      clearTimeout(yenileT); yenileT = null; rozetSirasi = []; kutlama?.remove(); kutlama = null;
+      if (kisi) { try { rozetSirasi = JSON.parse(localStorage.getItem('bd_rozet_bekleyen:' + kisi) || '[]').filter(id => ROZETLER.some(r => r.id === id)); } catch (e) {} }
+    }
+    return !!kisi;
+  }
+  function kazanilanRozetler(c) {
+    const kayit = yoVar() && yo.dmWorldBadges;
+    return new Set([...(kayit?.ids || []).filter(id => ROZETLER.some(r => r.id === id)), ...ROZETLER.filter(r => r.kontrol(c)).map(r => r.id)]);
+  }
+  function kuyrukKaydet() {
+    if (!rozetKisi) return;
+    try { localStorage.setItem('bd_rozet_bekleyen:' + rozetKisi, JSON.stringify(rozetSirasi)); } catch (e) {}
+  }
+  function rozetleriKontrolEt() {
+    if (!rozetOturumu()) return;
+    gorevGunleriniKaydet();
+    // Wait for historical game statistics before establishing the first baseline.
+    if (!istat) return;
+    const eski = yo.dmWorldBadges, sahip = kazanilanRozetler(rozetBaglami());
+    const yeni = [...sahip].filter(id => !(eski?.ids || []).includes(id));
+    if (!eski || yeni.length) {
+      yo.dmWorldBadges = { version: 1, ids: [...sahip] };
+      if (eski?.version === 1) {
+        yeni.forEach(id => { if (!rozetSirasi.includes(id)) rozetSirasi.push(id); });
+        kuyrukKaydet();
+      }
+      if (typeof yoKaydet === 'function') yoKaydet();
+      if ($('tab-dunyam')?.classList.contains('active') && sekme === 'rozetler') rozetCiz();
+    }
+  }
+  function gorunur(el) {
+    return !!el && !el.hidden && getComputedStyle(el).display !== 'none' &&
+      getComputedStyle(el).visibility !== 'hidden' && !!el.getClientRects().length;
+  }
+  function kutlamaMesgul() {
+    if (document.hidden || window.turAcikMi?.() || window.turAcik) return true;
+    if (typeof odulOyunda === 'function' && odulOyunda()) return true;
+    return [...document.querySelectorAll('[role="dialog"],.rubric-modal,.game-modal-overlay,.gso-overlay,.yo-modal,.hb-overlay,.bz-perde,.dv-perde,#genelSonucOverlay,#dmLevelUp,#dmGoalAnnouncement,.cog-perde,.pc-overlay,.ww-overlay')].some(gorunur);
+  }
+  function rozetKutla() {
+    if (!rozetKisi || kutlama || !rozetSirasi.length || kutlamaMesgul()) return;
+    const r = ROZETLER.find(r => r.id === rozetSirasi[0]); if (!r) { rozetSirasi.shift(); kuyrukKaydet(); return; }
+    const kisi = rozetKisi, once = document.activeElement, el = document.createElement('div');
+    el.className = 'bd-kutlama'; el.id = 'bdRozetKutlama';
+    el.innerHTML = `<section class="bd-kutlama-kart" role="dialog" aria-modal="true" aria-labelledby="bdRozetTebrik" aria-describedby="bdRozetAciklama">
+      <button type="button" class="bd-kutlama-kapat" aria-label="Kutlamayı kapat">×</button>
+      <div class="bd-kutlama-isilti" aria-hidden="true">✦ ✧ ✦ ✧</div>
+      <p class="bd-kutlama-etiket">YENİ ROZET KAZANDIN</p><h2 id="bdRozetTebrik">Tebrikler, ${kac((typeof yoIsim !== 'undefined' && yoIsim) || aktifOgrenciAdi)}!</h2>
+      <div class="bd-kutlama-rozet"><img src="${kac(r.resim)}" alt="${kac(r.ad)} rozeti"><span hidden aria-hidden="true">${r.ikon}</span></div>
+      <h3>${kac(r.ad)}</h3><p id="bdRozetAciklama">Başardığın hedef: ${kac(r.kosul)}.</p>
+      <div class="bd-kutlama-papi"><img src="papi-reward-v2.png" alt=""><p>Harikasın! Emeğin yeni bir rozetle taçlandı. Maceraya devam!</p></div>
+      <small>Rozetin Benim Dünyam → Rozetler bölümüne eklendi.</small>
+      <button type="button" class="bd-kutlama-devam">Harika! Devam et ✨</button>
+    </section>`;
+    document.body.append(el); kutlama = el;
+    const resim = el.querySelector('.bd-kutlama-rozet img'); resim.onerror = () => { resim.hidden = true; resim.nextElementSibling.hidden = false; };
+    const kapat = () => {
+      if (kutlama !== el) return;
+      el.remove(); kutlama = null;
+      if (kisi === rozetKisi) { rozetSirasi.shift(); kuyrukKaydet(); }
+      if (once?.isConnected) once.focus?.({ preventScroll: true });
+      setTimeout(rozetKutla, 250);
+    };
+    el.querySelector('.bd-kutlama-kapat').onclick = kapat; el.querySelector('.bd-kutlama-devam').onclick = kapat;
+    el.onkeydown = e => {
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); kapat(); }
+      if (e.key === 'Tab') { const b = [...el.querySelectorAll('button')]; if (e.shiftKey && document.activeElement === b[0]) { e.preventDefault(); b.at(-1).focus(); } else if (!e.shiftKey && document.activeElement === b.at(-1)) { e.preventDefault(); b[0].focus(); } }
+    };
+    el.querySelector('.bd-kutlama-devam').focus();
+  }
+  // Refresh game counts after a successful save, preserving the original fetch response.
+  const oncekiFetch = window.fetch;
+  if (typeof oncekiFetch === 'function') window.fetch = function (url, opt) {
+    const istek = oncekiFetch.apply(this, arguments);
+    try {
+      const b = typeof opt?.body === 'string' ? JSON.parse(opt.body) : null;
+      if (typeof url === 'string' && typeof apiURL !== 'undefined' && url.split('?')[0] === apiURL.split('?')[0] &&
+        b && (/LiderlikKaydet$/.test(b.islem) || ['seviyeOyunOdulu','buyuSeviyeTamamla','dersTestSonucKaydet','seviyeUrunAl'].includes(b.islem))) {
+        const kisi = String(b.ogrenci || (typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '')).trim().toLowerCase();
+        istek.then(async r => {
+          if (!r.ok || kisi !== rozetKisi) return;
+          const d = await r.clone().json();
+          if (d?.ok === false || d?.hata) return;
+          clearTimeout(yenileT); yenileT = setTimeout(() => { yenileT = null; if (kisi === rozetKisi) istatGetir(true); }, 1200);
+        }).catch(() => {});
+      }
+    } catch (e) {}
+    return istek;
+  };
+  // Password cancellation and teacher-menu closure leave the same world tab visible.
+  ['sifreModal','ogretmenMenuModal'].forEach(id => {
+    const m = $(id); if (!m) return;
+    new MutationObserver(() => {
+      if (getComputedStyle(m).display !== 'none' || !$('tab-dunyam')?.classList.contains('active')) return;
+      if ([...document.querySelectorAll('.rubric-modal,.cog-perde')].some(gorunur)) return;
+      $('bdOgretmen')?.focus({ preventScroll: true });
+    }).observe(m, { attributes: true, attributeFilter: ['style'] });
+    m.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); m.style.display = 'none'; } });
+  });
+  setInterval(() => {
+    if (!rozetOturumu()) return;
+    if (!document.hidden) { if (!istat) istatGetir(); rozetleriKontrolEt(); rozetKutla(); }
+  }, 1000);
+
   /* ------------------------------------------------------------------ iskelet */
   function iskelet() {
     if ($('tab-dunyam')) return $('tab-dunyam');
@@ -113,7 +227,7 @@
       <div class="bd-govde">
         <section class="bd-panel" data-panel="sanaozel"><div id="bdGorevler"></div><div id="bdHafta"></div><div id="bdDiger"></div></section>
         <section class="bd-panel" data-panel="istatistik" hidden><div id="bdIstat"></div><div id="bdGelisim"></div></section>
-        <section class="bd-panel" data-panel="rozetler" hidden><div id="bdRozet"></div><div id="bdOgretmenRozet"></div></section>
+        <section class="bd-panel" data-panel="rozetler" hidden><div id="bdRozet"></div></section>
         <section class="bd-panel" data-panel="karakter" hidden><div id="bdKarakterUst"></div><div id="bdKarakterAlan"></div><div id="bdKoleksiyon"></div></section>
       </div>`;
     const yer = $('tab-profil') || $('tab-sanaozel');
@@ -121,8 +235,7 @@
     ov.querySelectorAll('.bd-sekme').forEach(b => b.onclick = () => sekmeSec(b.dataset.bd));
     /* Öğretmen paneli şifreyle açılır; öğrenci basarsa sadece şifre sorulur */
     $('bdOgretmen').onclick = () => {
-      /* Öğretmen pencereleri ana sayfanın üstünde açılır; önce bu ekranı kapat ki pencere arkada kalmasın */
-      if (typeof window.dcTumTamEkranlariKapat === 'function') window.dcTumTamEkranlariKapat();
+      // Keep the selected world tab and scroll position beneath the teacher dialog.
       if (typeof window.ogretmenPaneliAc === 'function') window.ogretmenPaneliAc();
     };
     $('bdCikis').onclick = () => {
@@ -181,7 +294,7 @@
     $('bdPapi').src = s.papi; $('bdPapi').hidden = !!s.sahne;
     const g = window.dmGunGorevleri && izin('gunluk_gorev') ? window.dmGunGorevleri() : null;
     const kalan = g ? g.liste.filter(x => { const t = (window.dmGorevHavuz || []).find(y => y.id === x.id); return t && x.ilerleme < t.hedef; }).length : 0;
-    const rozetSay = ROZETLER.filter(r => r.kontrol(rozetBaglami())).length;
+    const rozetSay = kazanilanRozetler(rozetBaglami()).size;
     const metin = {
       sanaozel: `Merhaba ${ad}! ` + (g ? (kalan ? `Bugün ${kalan} görevin var. Hadi maceraya devam edelim!` : 'Bugünkü görevlerin bitti, harikasın!') : 'Hadi maceraya devam edelim!'),
       istatistik: 'Harika gidiyorsun! İlerlemeni aşağıda görebilirsin.',
@@ -249,16 +362,24 @@
 
   /* ------------------------------------------------------------------ İstatistik */
   async function istatGetir(zorla) {
-    if (istatYukleniyor || (!zorla && istat && Date.now() - istatZaman < 60000)) return;
-    if (!ogrenci() || typeof apiURL === 'undefined') return;
-    istatYukleniyor = true;
+    if (!rozetOturumu()) return;
+    if (istatYukleniyor || (!zorla && Date.now() - istatDeneme < 60000)) return;
+    if (typeof apiURL === 'undefined') return;
+    const kisi = rozetKisi;
+    istatYukleniyor = true; istatDeneme = Date.now();
     try {
       const r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'benimIstatistik', ogrenci: aktifOgrenciAdi }) });
       const d = await r.json();
-      if (d && d.ok) { istat = d; istatZaman = Date.now(); }
-    } catch (e) {} finally { istatYukleniyor = false; }
-    if ($('tab-dunyam') && $('tab-dunyam').classList.contains('active')) { if (sekme === 'istatistik') istatCiz(); if (sekme === 'rozetler') rozetCiz(); sahneCiz(); }
+      if (kisi !== rozetKisi || kisi !== String(aktifOgrenciAdi || '').trim().toLowerCase()) return;
+      if (r.ok && d && d.ok) { istat = d; istatZaman = Date.now(); rozetleriKontrolEt(); }
+    } catch (e) {} finally { if (kisi === rozetKisi) istatYukleniyor = false; }
+    if ($('tab-dunyam')?.classList.contains('active')) {
+      if (sekme === 'istatistik') istatCiz();
+      if (sekme === 'rozetler') rozetCiz();
+      sahneCiz();
+    }
   }
+
   const gunStr = d => d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
   function aralikBas() {
     const bugun = new Date();
@@ -310,7 +431,7 @@
     /* Öğretmenin gördüğü gelişim grafikleri (deneme, gelişim, kriter) eski profilden buraya taşınır */
     const oz = $('tab-ozet');
     if (oz) {
-      const rb = $('rozetlerBolumu'); if (rb) tasi(rb, $('bdOgretmenRozet'));
+      // The retired general-score badge section is not part of statistics.
       oz.classList.add('active'); oz.style.display = 'block'; tasi(oz, $('bdGelisim'));
       setTimeout(() => ['gelisimChartInstance', 'kriterChartInstance', 'denemeChartInstance'].forEach(n => { try { const ch = window[n] || (0, eval)(n); if (ch && ch.resize) ch.resize(); } catch (e) {} }), 80);
     }
@@ -322,12 +443,13 @@
   function rozetHtml(r, kazanildi) {
     const resim = r.resim ? `<img src="${kac(r.resim)}" alt="" loading="lazy">` : `<span class="bd-rozet-emoji" aria-hidden="true">${r.ikon}</span>`;
     const kilit = '<span class="bd-kilit-ikon" aria-hidden="true">🔒</span>';
-    return `<li class="bd-rozet${kazanildi ? '' : ' kilitli'}${r.resim ? ' resimli' : ''}" title="${kac(r.kosul)}"><span class="bd-rozet-sekil">${kazanildi ? resim : (r.resim ? resim + kilit : kilit)}</span><b>${kac(r.ad)}</b>${kazanildi ? '' : `<small>${kac(r.kosul)}</small>`}</li>`;
+    return `<li class="bd-rozet${kazanildi ? '' : ' kilitli'}${r.resim ? ' resimli' : ''}" title="${kac(r.kosul)}"><span class="bd-rozet-sekil">${kazanildi ? resim : (r.resim ? resim + kilit : kilit)}</span><b>${kac(r.ad)}</b><small>${kac(r.kosul)}</small></li>`;
   }
   function rozetCiz() {
-    const rb = $('rozetlerBolumu'); if (rb) tasi(rb, $('bdOgretmenRozet'));
+    rozetleriKontrolEt();
     const c = rozetBaglami();
-    const kaz = ROZETLER.filter(r => r.kontrol(c)), kalan = ROZETLER.filter(r => !r.kontrol(c));
+    const sahip = kazanilanRozetler(c);
+    const kaz = ROZETLER.filter(r => sahip.has(r.id)), kalan = ROZETLER.filter(r => !sahip.has(r.id));
     $('bdRozet').innerHTML = `
       <div class="bd-baslik-satir"><h3>Kazandığım Rozetler</h3><span>${kaz.length} rozet</span></div>
       ${kaz.length ? `<ul class="bd-rozetler">${kaz.map(r => rozetHtml(r, true)).join('')}</ul>` : '<p class="bd-not">Henüz rozetin yok. İlk oyununu bitirince ilk rozetini alacaksın!</p>'}

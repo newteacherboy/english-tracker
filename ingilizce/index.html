@@ -1671,27 +1671,11 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                         </div>
                     </div>
         
-                    <div id="rozetlerBolumu">
-                        <div class="badges-header-box">
-                            <div class="badges-header-title">🏆 Kazanılan Rozetler</div>
-                            <div id="kazanilanSayacBadge" style="font-weight: 800; color: #b45309; background: #fef08a; padding: 2px 8px; border-radius: 8px; font-size: 11.5px;">0 / 0</div>
-                        </div>
-                        <div class="badges-grid" id="rozetlerGridKonteyner"></div>
-                        <div class="badge-progress-box">
-                            <div class="badge-progress-top">
-                                <span>🚀 Rozet Tamamlama Seviyesi</span>
-                                <span class="badge-progress-badge" id="rozetYuzdeBadge">%0</span>
-                            </div>
-                            <div class="badge-bar-bg">
-                                <div class="badge-bar-fill" id="rozetBarFill"></div>
-                            </div>
-                        </div>
                         <div class="chart-box" style="margin-top: 15px;">
                             <div class="chart-title">🎯 Deneme Puanları Gelişim Grafiği</div>
                             <canvas id="denemeGrafik" height="90"></canvas>
                         </div>
-                    </div>
-        
+
                     <div class="book-tracker-box" id="okumaKulturuKutusu">
                         <div class="book-tracker-header">
                             <div class="book-header-left">
@@ -7906,40 +7890,8 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     });
                 }
         
-                function rozetleriIsle(rozetListesi, guncelPuan) {
-                    let konteyner = document.getElementById('rozetlerGridKonteyner');
-                    konteyner.innerHTML = "";
-                    if (!rozetListesi || rozetListesi.length === 0) return { kazanilan: 0, toplam: 0 };
-                    rozetListesi.sort((a, b) => a.gerekliPuan - b.gerekliPuan);
-                    let kazanilan = 0, toplam = rozetListesi.length;
-                       rozetListesi.forEach(r => {
-                let unlocked = guncelPuan >= r.gerekliPuan;
-                if (unlocked) kazanilan++;
-                let emojiHtml;
-                if (!unlocked) {
-                    emojiHtml = `<div class="badge-emoji">🔒</div>`;
-                } else if (String(r.emoji || '').trim().startsWith('http')) {
-                    emojiHtml = `<img src="${r.emoji}" alt="${guvenliMetin(r.rozetAdi)}" style="width:26px; height:19px; object-fit:cover; border-radius:3px; margin-bottom:1px; box-shadow:0 1px 2px rgba(0,0,0,0.15);">`;
-                } else {
-                    emojiHtml = `<div class="badge-emoji">${r.emoji}</div>`;
-                }
-                konteyner.innerHTML += `
-                    <div class="badge-card ${unlocked ? 'unlocked' : ''}">
-                        ${emojiHtml}
-                        <div class="badge-name">${guvenliMetin(r.rozetAdi)}</div>
-                        <div class="badge-target">${r.gerekliPuan}p</div>
-                    </div>
-                `;
-            });            let yuzde = Math.round((kazanilan / toplam) * 100);
-                    document.getElementById('kazanilanSayacBadge').innerText = `${kazanilan} / ${toplam}`;
-                    document.getElementById('rozetYuzdeBadge').innerText = `%${yuzde}`;
-                    document.getElementById('rozetBarFill').style.width = `${yuzde}%`;
-                    return { kazanilan, toplam };
-                }
-        
-               
-        
-        
+                // Legacy general-score badges retired; teacher assessment charts remain.
+
                // --- AKICI OKUMA VE HIZ ÖLÇER STÜDYOSU MİMARİSİ (İNGİLİZCE - ZENGİNLEŞTİRİLMİŞ HAVUZ) ---
         const sinirsizMetinHavuzu = {
             1: [
@@ -9768,7 +9720,6 @@ setTimeout(() => {
             dersRaporlariniOlustur(user.arsivListesi || user.dersler || [], user.kitapBilgi || {});
             dersTakviminiIsle(user.dersler || []);
             grafikliCiz(user.gelisimSerisi || user.arsivListesi || [], user, user.denemeSerisi || user.arsivListesi || []);
-            rozetleriIsle(user.rozetListesi || [], genelPuan);
             planKartiniGuncelle(user);
             teacherPaneliKontrolEt();
                       ozellikGorunurlukleriniUygula(user.izinler || {});
@@ -30673,7 +30624,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="ders-vadi.css?v=2"><script src="ders-vadi.js?v=1"></script>
 <link rel="stylesheet" href="ders-test.css?v=2"><script src="ders-test.js?v=2"></script>
 <link rel="stylesheet" href="papi-cards.css?v=2"><script src="papi-cards.js?v=3"></script>
-<link rel="stylesheet" href="benim-dunyam.css?v=5"><script src="benim-dunyam.js?v=4"></script>
+<link rel="stylesheet" href="benim-dunyam.css?v=6"><script src="benim-dunyam.js?v=5"></script>
 <link rel="stylesheet" href="word-wheel.css?v=1"><script src="word-wheel.js?v=1"></script>
 </body>      
         </html>
