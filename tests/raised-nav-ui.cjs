@@ -37,7 +37,7 @@ assert.equal(await page.locator('[data-ekran="tab-dunya"]').getAttribute('aria-c
 assert.equal(await page.locator('[data-ekran="tab-dunyam"]').evaluate(e=>e===e.parentElement.lastElementChild),true);
 console.log('PASS dynamic menu updates keep names, keyboard order and selected state');checks++;
 const index=fs.readFileSync(root+'/index.html','utf8');for(const m of index.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){if(/src=|application\/ld\+json/.test(m[1]))continue;new vm.Script(m[2]);}
-assert(!index.includes('Medu Akış'));assert(index.includes('bottom-nav.css?v=5'));assert(index.includes('papi-guide-content.js?v=2'));
+assert(!index.includes('Medu Akış'));assert(index.includes('bottom-nav.css?v=6'));assert(index.includes('papi-guide-content.js?v=2'));
 const guide=require(root+'/papi-guide-content.js');assert(guide.sections.find(s=>s.id==='navigation').text.includes('Mağaza’nın kendi alt menü düğmesi'));
 assert.equal(guide.sections.length,56);assert.equal(guide.tours['level-guide'].length,40);
 console.log('PASS renamed UI, Help and tours preserve all existing content');checks++;

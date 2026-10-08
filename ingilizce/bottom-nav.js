@@ -39,6 +39,6 @@
    observer.observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});
   }
  }
+ decorate();
  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',decorate,{once:true});
- else decorate();
 })();
