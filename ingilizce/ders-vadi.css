@@ -124,61 +124,21 @@ body.dc-ada.dc-vadi #tab-derscalis #kmBaslangic { display:none!important; }
 @media(prefers-reduced-motion:reduce){.dv-macera-gecisi,.dv-macera-panel,.dv-macera-papi,.dv-macera-isilti{animation:none!important}}
 @media(max-height:650px){.dv-macera-panel{padding:12px 18px}.dv-macera-papi{width:110px;height:110px}.dv-macera-onay{margin:0 0 5px}.dv-macera-bilgi{margin-bottom:8px}}
 
-
-/* Konu Macerası: Papi Kartları ile uyumlu, okunaklı ve güvenli mobil yerleşim */
-body .km-perde{
-  background:#fcfaf3!important;color:#173e35!important;
-  height:100dvh!important;max-height:100dvh!important;min-height:0!important;
-  overflow:hidden!important;box-sizing:border-box!important;
+/* Konu Macerası — yalnızca Devam/Kontrol alanını üstte tut.
+   Orijinal soru işleyicileri, buton düğümleri ve olaylar değiştirilmez. */
+#kmPerde.km-perde{
+  display:flex!important;
+  flex-direction:column!important;
 }
-body .km-perde .km-ust{flex:0 0 auto;background:#fffefa;border-bottom:1px solid #e1e9dd;padding:12px 16px!important}
-body .km-perde .km-kapat{color:#366b56!important;min-width:40px;min-height:40px}
-body .km-perde .km-bar{background:#e3e9db!important;height:9px!important}
-body .km-perde .km-bar i{background:linear-gradient(90deg,#347d59,#68ad83)!important}
-body .km-perde .km-adim{color:#347d59!important}
-body .km-perde .km-govde{
-  flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;
-  overscroll-behavior:contain;padding:18px 18px 24px!important;
-  scrollbar-gutter:stable;
+#kmPerde .km-ust{order:0!important;flex-shrink:0!important}
+#kmPerde #kmAlt.km-alt{
+  order:1!important;flex-shrink:0!important;max-width:640px!important;
+  padding:10px 14px!important;margin:0 auto!important;
+  background:inherit;
 }
-body .km-perde .km-alt{
-  flex:0 0 auto!important;margin:0 auto!important;
-  display:block!important;visibility:visible!important;opacity:1!important;
-  position:relative!important;z-index:3!important;
-  min-height:70px;box-sizing:border-box!important;
-  background:#fffefa!important;border-top:1px solid #d9e6d8;
-  padding:12px 18px calc(16px + env(safe-area-inset-bottom,0px))!important;
-  box-shadow:0 -7px 22px rgba(20,61,45,.07);
+#kmPerde #kmAlt.km-alt:empty{padding:0!important}
+#kmPerde #kmGovde.km-govde{
+  order:2!important;flex:1 1 auto!important;min-height:0!important;
+  overflow-y:auto!important;overscroll-behavior:contain;
 }
-body .km-perde .km-alt:empty{min-height:0!important;padding:0!important;border:0!important;box-shadow:none!important}
-body .km-perde .km-btn{
-  display:block!important;width:100%!important;min-height:53px!important;
-  background:#357654!important;color:#fff!important;
-  border-radius:16px!important;box-shadow:0 4px 0 #204e37!important;
-  font-size:17px!important;touch-action:manipulation;
-}
-body .km-perde .km-btn:disabled{background:#e1e7de!important;color:#7b917f!important;box-shadow:none!important}
-body .km-perde .km-btn.ikincil{background:#fff!important;color:#357654!important;border:2px solid #b7cfbb!important;box-shadow:none!important}
-body .km-perde .km-soru-tip{color:#438166!important;font-weight:900;font-size:13px;margin:0 0 12px!important}
-body .km-perde .km-soru{
-  background:#fffefa!important;border:1px solid #d5e4d4!important;
-  border-radius:22px!important;padding:20px 18px!important;
-  box-shadow:0 6px 18px rgba(21,70,50,.06);
-  color:#173e35!important;font-size:clamp(18px,4.5vw,23px)!important;
-  line-height:1.42!important;margin-bottom:18px!important;
-}
-body .km-perde .km-soru small{color:#607d6c!important}
-body .km-perde .km-sec,body .km-perde .km-cip{
-  background:#fffefa!important;color:#173e35!important;border:2px solid #c9d9c5!important;
-  border-radius:15px!important;box-shadow:0 3px 0 #d6e2d2!important;
-  min-height:46px;touch-action:manipulation;
-}
-body .km-perde .km-sec.dogru,body .km-perde .km-cip.eslesti{background:#dcfce7!important;border-color:#22a566!important}
-body .km-perde .km-sec.yanlis{background:#fee6e6!important;border-color:#de5c5c!important}
-body .km-perde .km-cevap{background:repeating-linear-gradient(transparent 0 48px,#d4e5d6 48px 50px)!important;min-height:76px!important}
-body .km-perde .km-geri{border-radius:17px!important;padding:15px 16px!important;margin-top:20px!important}
-body .km-perde .km-geri.iyi{background:#ddf6e6!important;color:#196340!important}
-body .km-perde .km-geri.kotu{background:#ffe5e2!important;color:#9b3732!important}
-body .km-perde .km-havuz{justify-content:flex-start!important;gap:10px!important}
-body .km-perde .km-es{gap:12px!important}
-@media(max-width:480px){body .km-perde .km-govde{padding:16px!important}body .km-perde .km-soru{padding:16px!important}}
+#kmPerde #kmAlt .km-btn{min-height:48px!important;touch-action:manipulation}
