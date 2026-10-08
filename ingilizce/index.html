@@ -1601,9 +1601,9 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
         
                 <!-- SADECE MOBİLDE GÖRÜNEN ALT NAVİGASYON -->
                <div class="bottom-nav-mobile" id="bottomNavMobile">
-    <button class="bn-item" data-ekran="tab-meduakis" onclick="meduAkisAc()"><span class="bn-icon">🎡</span><span class="bn-label">Medu Akış</span></button>
+    <button class="bn-item" data-ekran="tab-meduakis" onclick="meduAkisAc()"><span class="bn-icon">🎡</span><span class="bn-label">Arkadaşlar</span></button>
     <button class="bn-item" data-ekran="tab-sanaozel" onclick="sanaOzelTamEkranAc()"><span class="bn-icon">✨</span><span class="bn-label">Sana Özel</span></button>
-    <button class="bn-item" data-ekran="tab-aktiviteler" onclick="aktivitelerTamEkranAc()"><span class="bn-icon">🎮</span><span class="bn-label">Aktivite</span></button>
+    <button class="bn-item" data-ekran="tab-aktiviteler" onclick="aktivitelerTamEkranAc()"><span class="bn-icon">🎮</span><span class="bn-label">Oyunlar</span></button>
   
     <button class="bn-item" data-ekran="tab-derscalis" onclick="dersCalisTamEkranAc()"><span class="bn-icon">📘</span><span class="bn-label">Ders Çalış</span></button>
                        
@@ -15567,7 +15567,7 @@ function sohbetMikDur() {
 </button>
 <div class="ma-wrap">
   <div class="akis-baslik">
-    <h2><span>🎡</span>Medu Akış</h2>
+    <h2><span>🎡</span>Arkadaşlar</h2>
      <div class="segment" id="maSegment">
   <i id="maSegmentIz"></i>
 
@@ -16093,7 +16093,7 @@ async function dijiAkisSunucudanGuncelle() {
     try {
 
         console.log(
-            "☁️ Medu Akış Supabase'den alınıyor..."
+            "☁️ Arkadaşlar Supabase'den alınıyor..."
         );
 
         const r =
@@ -16170,7 +16170,7 @@ async function maAkisYukle() {
                     cache.veri;
 
                 console.log(
-                    "📦 Medu Akış cihaz cache'inden açıldı:",
+                    "📦 Arkadaşlar cihaz cache'inden açıldı:",
                     maAkisVeri.length
                 );
 
@@ -16379,7 +16379,7 @@ function maTakipDegistir(id, btn) {
     btn.classList.toggle('takipte', t); maTekrarOyna(btn, 'ma-pop');
     if (btn.classList.contains('takip-btn')) btn.innerHTML = t ? '✓ Takip ediliyor' : '🎈 Takip et';
     else btn.innerText = t ? 'Takipte' : 'Takip et';
-    if (t) { maPatlat(btn, ['🎈','⭐','✨'], 10); maToast('Artık Medu Akış\'ında takip ediyorsun 🎡'); }
+    if (t) { maPatlat(btn, ['🎈','⭐','✨'], 10); maToast('Artık Arkadaşlar\'ında takip ediyorsun 🎡'); }
     maOlayGonder(id, 'takip');
 }
 
@@ -16389,7 +16389,7 @@ function maTakipDegistir(id, btn) {
 
                
 
-<!-- ===================== SON BLOK (Medu Akış düzeltmeleri + Sohbet butonu) ===================== -->
+<!-- ===================== SON BLOK (Arkadaşlar düzeltmeleri + Sohbet butonu) ===================== -->
 <style>
 /* Tüm alt sekmeler gömülü ve tam ekran (ayrı panel görünümü yok) */
 #tab-meduakis.dc-fullscreen-overlay, #tab-sanaozel.dc-fullscreen-overlay, #tab-aktiviteler.dc-fullscreen-overlay,
@@ -16503,7 +16503,7 @@ function dcAnaEkranaDon() {
   };
 })();
 
-/* ---- Medu Akış: cache + 5 dakikalık canlı kontrol ---- */
+/* ---- Arkadaşlar: cache + 5 dakikalık canlı kontrol ---- */
 setInterval(async () => {
     let el = document.getElementById('tab-meduakis');
 
@@ -17315,7 +17315,7 @@ function avatarSVG(s, stil, px, cins) {
 <style>
 /* Mağaza kategorileri alt alta sarılsın (hepsi görünsün) */
 .ka-kat { flex-wrap:wrap !important; overflow:visible !important; }
-/* Medu Akış artık 5 sekme */
+/* Arkadaşlar artık 5 sekme */
 #tab-meduakis .segment { grid-template-columns:repeat(5,1fr) !important; }
 #tab-meduakis .segment i { width:calc((100% - 8px)/5) !important; }
 /* Mağaza tam ekran */
@@ -17975,7 +17975,7 @@ if (typeof orgXp === 'function') {
     } catch (e) {}
   }, 1500);
 
-  /* ---- Medu Akış: 🔔 bildirim merkezi ---- */
+  /* ---- Arkadaşlar: 🔔 bildirim merkezi ---- */
   let zilSayi = 0, zilFiltre = 'hepsi';
   function zilCiz() {
     let h2 = document.querySelector('#tab-meduakis .akis-baslik h2');
@@ -20072,7 +20072,7 @@ let adaRenk = adaRenkleri[
   const girisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci)); };
   const oyunda = () => (typeof odulOyunda === 'function' && odulOyunda()) || !!document.querySelector('.bc-perde, .bs-perde, .dv-perde, .kr-perde');
 
-  /* ===== 1) Alt menü: Medu Akış → Dünya Parkuru ===== */
+  /* ===== 1) Alt menü: Arkadaşlar → Dünya Parkuru ===== */
   setInterval(() => {
     let b = document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
    
@@ -20288,13 +20288,13 @@ let adaRenk = adaRenkleri[
 (function () {
   const $ = id => document.getElementById(id);
 
-  /* ===== 1) Alt menü: en başta "Parkur", Medu Akış yine akışı açsın ===== */
+  /* ===== 1) Alt menü: en başta "Parkur", Arkadaşlar yine akışı açsın ===== */
   setInterval(() => {
     let nav = $('bottomNavMobile'); if (!nav) return;
     if (!nav.querySelector('[data-ekran="tab-dunya"][data-bc="parkur"]') && typeof dunyaAc === 'function') {
       let b = document.createElement('button');
       b.className = 'bn-item'; b.dataset.ekran = 'tab-dunya'; b.dataset.bc = 'parkur';
-      b.innerHTML = '<span class="bn-icon">🧙</span><span class="bn-label">Parkur</span>';
+      b.innerHTML = '<span class="bn-icon">🧙</span><span class="bn-label">Oyna</span>';
       b.onclick = () => dunyaAc();
       nav.insertBefore(b, nav.firstChild);
     }
@@ -20432,7 +20432,7 @@ let adaRenk = adaRenkleri[
       let mg = nav.querySelector('[data-ekran="tab-magaza"]');
       mg ? mg.insertAdjacentElement('afterend', b) : nav.appendChild(b);
     }
-    /* Medu Akış profil sekmesindeyse akışa çevir */
+    /* Arkadaşlar profil sekmesindeyse akışa çevir */
     if (typeof maSekme !== 'undefined' && maSekme === 'profil') { maSekme = 'akis'; if (typeof maCiz === 'function' && $('tab-meduakis') && $('tab-meduakis').classList.contains('active')) maCiz(); }
     /* Mağaza sekme çubuğu yoksa çiz */
     let mgv = $('tab-magaza');
@@ -21453,7 +21453,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 @media (prefers-reduced-motion: reduce) { .mik-dalga i, .pk-sekmeler i, .pk-sekmeler button::after, .ba-sik-btn, .tr-delik, .tr-el, .bk-kart .i { animation:none !important; } .tr-delik, .tr-balon, .bk-kart { transition:none !important; } }
 </style>
 <div class="mik-durum" id="mikDurum" role="status" aria-live="polite"><span class="mik-dalga"><i></i><i></i><i></i><i></i></span><span id="mikDurumMetin">Dinliyorum…</span></div>
-<script src="papi-guide-content.js?v=1"></script>
+<script src="papi-guide-content.js?v=2"></script>
 <style>
 .yd-level-scroll{overflow-x:auto}.yd-level-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.yd-level-table caption{font-weight:900;padding:10px}.yd-level-table th,.yd-level-table td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top}.yd-level-table thead{background:#eee7fb;color:#302447}
 .t2-balon p{max-height:38vh;overflow-y:auto;overscroll-behavior:contain}.t2-noktalar{flex-wrap:wrap;max-height:30px;overflow-y:auto}.t2-adim-sayisi{display:block;text-align:center;font-size:12px;font-weight:800;color:#574077;margin:5px 0}.t2-balon{max-height:calc(100dvh - 24px);overflow-y:auto}
@@ -21719,7 +21719,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     'tab-sohbet': () => window.sohbetEkraniAc && sohbetEkraniAc(),
     kk: () => { window.dcTumTamEkranlariKapat && dcTumTamEkranlariKapat(); window.seviyeHaritasiAc && seviyeHaritasiAc(); }
   };
-  const TUR_ADLARI = [['ana', '🧭 Genel tur'], ['tab-meduakis', '🎡 Medu Akış'], ['tab-magaza', '🛍️ Mağaza'], ['tab-sanaozel', '✨ Sana Özel'], ['tab-aktiviteler', '🎮 Aktivite'], ['tab-derscalis', '📘 Ders Çalış'], ['tab-profil', '👤 Profil'], ['tab-konusmapratigi', '🔤 Kelime Modu'], ['tab-sohbet', '🦜 Sohbet'], ['kk', '🃏 Kelime Kartları'], ['papi-cards', '🦜 Papi Kartları'], ['word-wheel', '🎡 Kelime Çarkı'], ['level-guide', '🌟 40 Seviye']];
+  const TUR_ADLARI = [['ana', '🧭 Genel tur'], ['tab-meduakis', '🎡 Arkadaşlar'], ['tab-magaza', '🛍️ Mağaza'], ['tab-sanaozel', '✨ Sana Özel'], ['tab-aktiviteler', '🎮 Oyunlar'], ['tab-derscalis', '📘 Ders Çalış'], ['tab-profil', '👤 Profil'], ['tab-konusmapratigi', '🔤 Kelime Modu'], ['tab-sohbet', '🦜 Sohbet'], ['kk', '🃏 Kelime Kartları'], ['papi-cards', '🦜 Papi Kartları'], ['word-wheel', '🎡 Kelime Çarkı'], ['level-guide', '🌟 40 Seviye']];
   const OYUN_ICI = ['oyun', 'ba-oyun', 'kp-oyun'];
 
   /* ================= MOTOR ================= */
@@ -22902,7 +22902,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 
                 <!-- ===================== ALT MENÜ MEDU AKIŞ BİLDİRİM NOKTASI ===================== -->
 <style>
-/* Alt menüdeki Medu Akış ikonunun üzerinde kırmızı rozet/nokta */
+/* Alt menüdeki Arkadaşlar ikonunun üzerinde kırmızı rozet/nokta */
 #bottomNavMobile [data-ekran="tab-meduakis"] {
   position: relative;
 }
@@ -22935,7 +22935,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   const $ = id => document.getElementById(id);
   let okunmamisAkisSayisi = 0;
 
-  // Alt menüdeki Medu Akış butonuna rozet ekleme / güncelleme
+  // Alt menüdeki Arkadaşlar butonuna rozet ekleme / güncelleme
   function navAkisRozetCiz() {
     let btn = document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
     if (!btn) return;
@@ -22970,7 +22970,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
 
   setInterval(akisBildirimKontrol, 60000);
 
-  // Kullanıcı Medu Akış'a gittiğinde (sekme açıldığında) rozeti sıfırla ve okundu işaretle
+  // Kullanıcı Arkadaşlar'a gittiğinde (sekme açıldığında) rozeti sıfırla ve okundu işaretle
   let orgMeduAc = window.meduAkisAc;
   if (typeof orgMeduAc === 'function') {
     window.meduAkisAc = function () {
@@ -23128,7 +23128,7 @@ font-size:40px;
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
 </body> etiketinin hemen ÜSTÜNE, en sona yapıştır.
-     Medu Akış, Keşfet ve Lig'in öğrenci listesini sunucudan (sosyalOgrencilerGetir) alır.
+     Arkadaşlar, Keşfet ve Lig'in öğrenci listesini sunucudan (sosyalOgrencilerGetir) alır.
      Eski sürüm, veritabanına anahtarsız doğrudan bağlanmaya çalışıyordu ve boş liste dönüyordu.
      ===================================================================== -->
 <script>
@@ -25128,7 +25128,7 @@ window.ocEnerjiHarca = async function (n) {
   };
 
   /* ================= BAĞLANTILAR ================= */
-  /* Atölye = Karakter & Giyim: Mağaza'nın Atölye alanına (ve Medu Akış'taki mağazaya) çizilir */
+  /* Atölye = Karakter & Giyim: Mağaza'nın Atölye alanına (ve Arkadaşlar'taki mağazaya) çizilir */
   let eskiAtolye = window.yoMagazaAc;
   window.yoMagazaAc = function () {
     if (typeof yoHazirMi === 'function' && !yoHazirMi()) return;
@@ -30593,8 +30593,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="medupro.js?v=4"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
 <script src="activity-ui.js?v=6"></script>
-<link rel="stylesheet" href="bottom-nav.css?v=4">
-<script src="bottom-nav.js?v=3"></script>
+<link rel="stylesheet" href="bottom-nav.css?v=5">
+<script src="bottom-nav.js?v=4"></script>
 
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script src="feature-catalog.js?v=2"></script>

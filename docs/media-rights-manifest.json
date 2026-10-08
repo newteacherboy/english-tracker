@@ -548,6 +548,13 @@
       "bytes": 137410,
       "status": "ai-generated",
       "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-rozetler.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/bottom-nav-icons-v3.webp",
+      "sha256": "20c9e725f64c37c11f190fea103601b837178f2a2c5b4bcac3b8a61158887f7d",
+      "bytes": 173930,
+      "status": "ai-generated",
+      "source": "docs/raised-navigation-generation.json"
     }
   ]
 }

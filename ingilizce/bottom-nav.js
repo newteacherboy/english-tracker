@@ -3,11 +3,22 @@
  'use strict';
  const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':2,'tab-aktiviteler':3,'tab-derscalis':4,'tab-magaza':5,'tab-profil':6,'tab-dunyam':6};
  const positions = ['3% 7%','50% 7%','98% 10%','3% 58%','50% 59%','98% 56%','5% 100%'];
+ const layout = [['tab-meduakis','Arkadaşlar'],['tab-aktiviteler','Oyunlar'],['tab-dunya','Oyna'],['tab-derscalis','Ders Çalış'],['tab-magaza','Mağaza'],['tab-dunyam','Benim Dünyam']];
+ const sprite = {'tab-meduakis':'0% 0%','tab-aktiviteler':'50% 0%','tab-derscalis':'100% 0%','tab-magaza':'0% 100%','tab-dunyam':'50% 100%','tab-dunya':'100% 100%'};
  let observer;
  function decorate() {
   const nav = document.getElementById('bottomNavMobile');
   if (!nav) return;
   nav.setAttribute('aria-label','Ana menü');
+  const ordered = layout.map(([id]) => nav.querySelector('[data-ekran="'+id+'"]')).filter(Boolean);
+  const hidden = [...nav.children].filter(b => !ordered.includes(b));
+  // World stays last for existing menu hooks; CSS places Oyna above the five destinations.
+  [...hidden,...ordered].forEach((b,i) => { if (nav.children[i] !== b) nav.insertBefore(b,nav.children[i] || null); });
+  for (const [id,name] of layout) {
+    const b = nav.querySelector('[data-ekran="'+id+'"]'); if (!b) continue;
+    const label = b.querySelector('.bn-label'); if (label && label.textContent !== name) label.textContent = name;
+    if (id === 'tab-dunya' && !b.classList.contains('dm-nav-play')) b.classList.add('dm-nav-play');
+  }
   nav.querySelectorAll('.bn-item').forEach(button => {
    const index = icons[button.dataset.ekran], icon = button.querySelector('.bn-icon');
    if (index === undefined || !icon) return;
@@ -15,7 +26,7 @@
     const art = document.createElement('span');
     art.className = 'dm-nav-art';
     art.setAttribute('aria-hidden','true');
-    art.style.backgroundPosition = positions[index];
+    art.style.backgroundPosition = sprite[button.dataset.ekran] || positions[index];
     icon.replaceChildren(art);
    }
    const label = button.querySelector('.bn-label');
