@@ -79,3 +79,10 @@
 @media(min-width:600px){#tab-profil .user-info-area{min-height:175px}#tab-profil .dm-forest-papi{width:190px;height:190px;top:105px}#tab-profil .user-details h3{font-size:26px!important}#tab-profil .summary-card{padding:20px!important}#tab-profil .card-title{font-size:13px!important}}
 @media(max-width:380px){#tab-profil .user-details h3{font-size:17px!important}#tab-profil .dm-forest-papi{width:120px;height:120px;top:100px}#tab-profil .header-right-widgets{grid-template-columns:73px minmax(0,1fr) 58px!important}#tab-profil .header-energy-badge{padding:8px 5px!important}#tab-profil .dm-forest-tools{margin-top:0;justify-content:flex-start}}
 @media(prefers-reduced-motion:reduce){#tab-profil *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* My World unified profile entry */
+#tab-profil .dm-my-world-tasks{margin:12px 0 18px;padding:16px;border-radius:22px;background:linear-gradient(135deg,#fffaf0,#f0e9ff);border:2px solid #e2d2ff;box-shadow:0 5px 0 #e9defa;color:#392765}
+#tab-profil .dm-my-world-tasks .dm-forest-section-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#tab-profil .dm-my-world-tasks h2{color:#392765;margin:0;font-size:20px}
+#tab-profil .dm-my-world-tasks p{font-size:13px;line-height:1.5;margin:10px 0;color:#66568b}
+#tab-profil .dm-my-world-open{width:100%;padding:13px 12px;border:0;border-radius:15px;background:linear-gradient(110deg,#8549ee,#6645d6);color:white;font-weight:850;font-size:14px;box-shadow:0 4px 0 #4e34a5;cursor:pointer}
