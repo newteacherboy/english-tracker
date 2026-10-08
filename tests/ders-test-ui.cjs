@@ -85,6 +85,10 @@ const TEST = JSON.parse(DETAY.testJSON);
   await page.locator('#dcTestIcerik button[data-s]', { hasText: /^c$/ }).click();
   assert.equal(await page.evaluate(() => dcQuizDogruSayisi), 1);
 
+  /* Sözlük işaretleme: anlamı başka bir sözlük kelimesi içerse de metin bozulmaz */
+  const isaret = await page.evaluate(() => { const d = document.createElement('div'); d.innerHTML = dcKelimeleriIsle("<p>I wouldn't go. I would stay.</p>", { "wouldn't": { tr: 'would not' }, would: { tr: '-erdi' } }); return { metin: d.textContent, adet: d.querySelectorAll('.dc-word').length, tr: d.querySelector('.dc-word').dataset.tr }; });
+  assert.deepEqual(isaret, { metin: "I wouldn't go. I would stay.", adet: 2, tr: 'would not' });
+
   const bad = errors.filter(x => !x.includes('Chart') && !x.includes('pdf'));
   assert.deepEqual(bad, []);
   await browser.close();

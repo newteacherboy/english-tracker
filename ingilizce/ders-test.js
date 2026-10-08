@@ -110,3 +110,39 @@
   window.dcTestCiz = dcTestCizYeni;
   window.dcTestCizYeni = dcTestCizYeni;
 })();
+
+/* Sözlük kelimelerini sadece metnin içinde işaretle.
+   Eski sürüm düz metin üzerinde değiştirme yapıyordu; bir kelimenin anlamı başka bir sözlük kelimesi
+   içerdiğinde (ör. "wouldn't" → "would not") HTML özniteliğinin içine yeni etiket yazıp metni bozuyordu. */
+(function () {
+  'use strict';
+  window.dcKelimeleriIsle = function (text, sozlukObj) {
+    if (!text) return '';
+    const sozluk = sozlukObj || {};
+    const anahtarlar = Object.keys(sozluk).filter(k => k && k.trim()).sort((a, b) => b.length - a.length);
+    if (!anahtarlar.length) return text;
+    const kucuk = {}; anahtarlar.forEach(k => { kucuk[k.toLowerCase()] = sozluk[k]; });
+    const desen = new RegExp('\\b(' + anahtarlar.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'gi');
+    const kap = document.createElement('template'); kap.innerHTML = String(text);
+    const gezgin = document.createTreeWalker(kap.content, NodeFilter.SHOW_TEXT);
+    const dugumler = []; while (gezgin.nextNode()) dugumler.push(gezgin.currentNode);
+    dugumler.forEach(n => {
+      if (n.parentElement && n.parentElement.closest('.dc-word')) return;
+      const metin = n.nodeValue; desen.lastIndex = 0; if (!desen.test(metin)) return;
+      desen.lastIndex = 0;
+      const parca = document.createDocumentFragment(); let son = 0, m;
+      while ((m = desen.exec(metin))) {
+        if (m.index > son) parca.appendChild(document.createTextNode(metin.slice(son, m.index)));
+        const veri = kucuk[m[0].toLowerCase()] || {};
+        const s = document.createElement('span'); s.className = 'dc-word';
+        s.dataset.tr = (veri && (veri.tr || (typeof veri === 'string' ? veri : ''))) || '';
+        s.dataset.alt = (veri && veri.alt) || '';
+        s.setAttribute('onclick', `dcSesOku('${m[0].replace(/'/g, '')}')`);
+        s.textContent = m[0]; parca.appendChild(s); son = m.index + m[0].length;
+      }
+      if (son < metin.length) parca.appendChild(document.createTextNode(metin.slice(son)));
+      n.parentNode.replaceChild(parca, n);
+    });
+    return kap.innerHTML;
+  };
+})();
