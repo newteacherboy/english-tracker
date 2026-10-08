@@ -10,3 +10,7 @@ body.ww-active{overflow:hidden!important}
 #tab-aktiviteler [data-dm-party=duo] .az-grid2x2>#wordWheelActivity{display:flex!important;flex-direction:column}
 
 #wordWheel .ww-header-papi{width:45px;height:50px;object-fit:contain;flex-shrink:0}
+
+#wordWheel .ww-question h2,#wordWheel .ww-results h3,#wordWheel .ww-body>h2{color:#173f32!important;-webkit-text-fill-color:#173f32!important;text-shadow:none!important}
+#wordWheel .ww-wheel text{font-size:13px}
+#wordWheel .ww-sound{border:1px solid #b8ac88;background:#fff9e8;color:#335a36;border-radius:12px;padding:8px 14px;min-height:40px;margin-top:8px}
