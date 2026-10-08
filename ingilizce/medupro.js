@@ -26,6 +26,7 @@
   if(student&&Array.isArray(student.aktiviteKartlari)&&student.aktiviteKartlari.length)return;
   e.preventDefault();e.stopImmediatePropagation();
   const notice=sheet('Kelime kartların henüz hazır değil','Öğretmenin kart eklediğinde burada görebileceksin.');
+  notice.p.classList.add('dm-empty-notice');
   notice.body.innerHTML='<p>Şimdilik MeduPro’daki diğer etkinliklerle devam edebilirsin.</p><button class="dm-primary" type="button">Kapat</button>';
   notice.body.querySelector('button').onclick=notice.close;
  },true);
