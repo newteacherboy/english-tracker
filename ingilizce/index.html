@@ -21009,6 +21009,9 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     ba: () => { kartlariKapat(); if (typeof dunyaAc === 'function') dunyaAc(); },
     kp: () => { kartlariKapat(); if (typeof kpModuAc === 'function') kpModuAc(); },
     sh: () => { kartlariKapat(); if (typeof sohbetEkraniAc === 'function') sohbetEkraniAc(); },
+    'papi-cards': () => { window.aktivitelerTamEkranAc && aktivitelerTamEkranAc(); },
+    'word-wheel': () => { window.aktivitelerTamEkranAc && aktivitelerTamEkranAc(); },
+    'level-guide': () => window.dunyaAc && dunyaAc(),
     kk: () => { if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat(); if (typeof seviyeHaritasiAc === 'function') seviyeHaritasiAc(); }
   };
   $('pkSekmeler').querySelectorAll('button').forEach(b => b.onclick = () => { if (hangiParkur() !== b.dataset.p) AC[b.dataset.p](); });
@@ -21499,6 +21502,11 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 @media (prefers-reduced-motion: reduce) { .mik-dalga i, .pk-sekmeler i, .pk-sekmeler button::after, .ba-sik-btn, .tr-delik, .tr-el, .bk-kart .i { animation:none !important; } .tr-delik, .tr-balon, .bk-kart { transition:none !important; } }
 </style>
 <div class="mik-durum" id="mikDurum" role="status" aria-live="polite"><span class="mik-dalga"><i></i><i></i><i></i><i></i></span><span id="mikDurumMetin">Dinliyorum…</span></div>
+<script src="papi-guide-content.js?v=1"></script>
+<style>
+.yd-level-scroll{overflow-x:auto}.yd-level-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.yd-level-table caption{font-weight:900;padding:10px}.yd-level-table th,.yd-level-table td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top}.yd-level-table thead{background:#eee7fb;color:#302447}
+.t2-balon p{max-height:38vh;overflow-y:auto;overscroll-behavior:contain}.t2-noktalar{flex-wrap:wrap;max-height:30px;overflow-y:auto}.t2-adim-sayisi{display:block;text-align:center;font-size:12px;font-weight:800;color:#574077;margin:5px 0}.t2-balon{max-height:calc(100dvh - 24px);overflow-y:auto}
+</style>
 <script>
 (function () {
   const $ = id => document.getElementById(id);
@@ -21583,20 +21591,8 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   };
 
   /* ================= 5) YARDIM ================= */
-  const YARDIM = [
-    ['🧭', 'Uygulamada nerede ne var?', `<table><tr><td>🧙 <b>Parkur</b></td><td>Açılış ekranı. Üstteki 4 sekmeyle Büyü Akademisi, Kelime Modu, Sohbet ve Kelime Kartları parkurları arasında geçersin.</td></tr><tr><td>🎡 <b>Medu Akış</b></td><td>Herkesin başarıları (Akış), haftanın yıldızları ve düellolar (Keşfet), vitrinin ve lig.</td></tr><tr><td>✨ <b>Sana Özel</b></td><td>Ödevlerin, Zor Kelimelerim, Seviye Tespit.</td></tr><tr><td>🎮 <b>Aktivite</b></td><td>Mini oyunlar, Dikte, Cümle Kur, Okuma Stüdyosu, etkinlik ve videolar.</td></tr><tr><td>📘 <b>Ders Çalış</b></td><td>Konu anlatımları ve konu testleri.</td></tr><tr><td>🛍️ <b>Mağaza</b></td><td>Karakter Atölyesi, Koleksiyon, Sandıklar, Jokerler.</td></tr><tr><td>👤 <b>Profil</b></td><td>Puanların, grafiklerin ve karakterlerin.</td></tr></table>Sağdaki soluk butonlar: ⚡ enerji ve altın, 🎯 günlük hedef / ❓ yardım / 🤖 AI Koç. Medu Akış'taki 🔔 zil tüm bildirimlerini gösterir.`],
-    ['⚡', 'Enerji', `Oyunlara girmek için enerji gerekir. Tavan <b>30</b>. Enerji kendiliğinden dolar: <b>her 15 dakikada +1</b>.<table><tr><th>Kazanç</th><th>Enerji</th></tr><tr><td>Kendiliğinden dolum</td><td>15 dakikada +1</td></tr><tr><td>Günlük ilk giriş (7. günde +10)</td><td>+5</td></tr><tr><td>Ders Çalış'ta konuyu ilk kez geçmek</td><td>+6</td></tr><tr><td>Geçtiğin konuyu tekrar etmek (günde bir)</td><td>+2</td></tr><tr><td>Düello kazanmak, sandıklar</td><td>+2 / +5</td></tr><tr><td>Arkadaşın gönderirse</td><td>+2</td></tr><tr><td>Mağazadan paket (günde 3 kez)</td><td>5 ⚡ = 15 🪙 · tam dolum = 60 🪙</td></tr></table><b>Harcama:</b> Her oyun <b>3 ⚡</b> (Kelime Laboratuvarı, Jeopardy, Eksik Harf, Hafıza, Hız Fırtınası, Harf Avı, Şifre Kırıcı, Eşleştirme, Kelime Treni, Dikte, Cümle Kur). Parkurlar <b>4 ⚡</b> (Büyü Akademisi, Kelime Modu, Sohbet, Kelime Kartları). Oyunun ortasında enerji düşmez. Öğretmenin sınıfta oynattığı oyunlar, Ders Çalış, okuma, videolar ve etkinlikler enerji harcamaz.<br><br><b>Ödül (her oyunda aynı):</b> ⭐ 4 🪙 · 20 XP, ⭐⭐ 7 🪙 · 35 XP, ⭐⭐⭐ 10 🪙 · 50 XP. Günün ilk 3 oyunu <b>×2</b>; 12. oyundan sonra ödül yarıya iner.`],
-    ['⭐', 'XP ve haftalık lig', `XP en kolay kazanılan puandır. Her doğru cevap <b>+10 XP</b> (Büyü Akademisi'nde +20). Konu testi +30, etkinlik ve video +10, seviye tespit en fazla +50 XP verir.<br><b>Lig:</b> Haftalık XP'ye göre sıralanırsın. İlk 10 🏆 Şampiyonlar Ligi, 11–30 ⭐ Süper Lig, diğerleri 🌱 Yerel Lig. Hafta sonu yalnızca Şampiyonlar Ligi’ndeki ilk 10, aktif katılım şartıyla dereceye göre altın ve enerji kazanır. Ödüller Lig ekranında listelenir. Lig her hafta yeniden başlar. Toplam XP'n ise hiç silinmez.`],
-    ['🪙', 'Altın', `Her doğru cevap <b>+1 🪙</b> (Büyü Akademisi'nde +2). Günlük hedefi tamamlamak +5, art arda 4 doğru (kombo) +3 🪙 (günde 5 kez). Etkinlik ve video +2, konu testi +2 🪙.<br><b>Seri çarpanı:</b> 3 gün üst üste girersen altınlar ×1.25, 7 gün olursa ×1.5.<br><b>Harcama:</b> Karakter Atölyesi (10–120), karakter satın alma (50–130), jokerler (10–30), sandık (150–700), enerji paketi (25), seri dondurucu (10).`],
-    ['🎁', 'Sandıklar ve karakterler', `Her parkurda <b>her 3 seviyede bir sandık</b> kazanırsın. Sıra: Bronz → Gümüş → Altın → Efsane, her sandığın %15 bir üst kademeye çıkma şansı var. İçinden XP, altın, enerji, ekstra joker, hediye hakkı ve nadir kıyafet çıkar. Sandığa 3 kez dokunarak açarsın.<br><b>Karakterler:</b> Her parkurda her 3 seviyede yeni bir karakter açılır (toplam 36). Mağaza › Koleksiyon ya da Profil › Karakterlerim'den profil fotoğrafın yaparsın. Beklemek istemezsen altınla da alabilirsin.`],
-    ['🃏', 'Jokerler', `Her oyunda her jokerin <b>1 bedava</b> hakkı var. Mağaza › Jokerler'den aldıkların ekstra hak verir. Oyun sırasında joker çubuğundaki 🛒 düğmesiyle de alabilirsin. Güçlendiriciler (XP Tılsımı, Altın Mıknatısı, Bedava Bilet, Şans Yoncası) sıradaki oyunda kendiliğinden çalışır.`],
-    ['⚔️', 'Düello ve arkadaşlar', `Takip ettiğin biri arkadaşın sayılır. Vitrininden <b>düello</b> yollayabilirsin (günde 3). Davet 24 saat geçerli. Kabul edince ikiniz de 24 saat içinde o oyunu oynarsınız, en yüksek puan kazanır: <b>+2 ⚡ +30 XP</b>, berabere +10 XP, kaybeden +5 XP. Takip ettiğin birine günde 1 kez <b>2 enerji</b> hediye edebilirsin, senden eksilmez.`],
-    ['🔥', 'Seri, günlük hedef, kombo', `Her gün girersen serin büyür. Seri altınlarını katlar. Bir gün giremeyeceksen 🧊 seri dondurucu al (10 🪙). Günlük hedef 🎯 halkası dolunca +5 🪙. Oyunda art arda 4 doğru yaparsan papağan uçar, +3 🪙.`],
-    ['⚖️', 'Adil puan kuralı', `Tüm mini oyunlarda puan aynı kuralla verilir: her doğru +10 XP +1 🪙. Bir oyunda en fazla <b>12 doğru</b> sayılır ve her doğru için en az <b>6 saniye</b> oynamış olmak gerekir. Böylece çok hızlı ya da çok uzun oyunlar diğerlerinden avantajlı olmaz. Kendi liderlik tablolarındaki puanın aynen kalır.`],
-    ['👩‍🏫', 'Öğretmen puanları ve genel puan', `Genel puan öğrenmeyi gösterir: konu testleri, etkinlikler, videolar ve öğretmeninin derste verdiği artı/eksi puanlar. Öğretmenin verdiği her 1 puan haftalık XP'ne de 10 XP olarak yansır.`],
-    ['🔔', 'Bildirimler', `Beğeni, tebrik, takip, enerji hediyesi ve düello haberleri uygulama açıkken sağdan kayan kartlarla gelir. Hepsi Medu Akış'taki 🔔 zilde birikir. Girişte karşılama panelinde de gösterilir.`],
-    ['🎤', 'Mikrofon', `Mikrofona dokununca kırmızıya döner ve "Dinliyorum…" yazar, konuş. Bitince mora döner ve "Dinleme bitti" yazar. Kelimeyi net söylemen gerekir, anlamsız sesler kabul edilmez.`]
-  ];
+  const YARDIM = window.DijiPapiGuide.sections.map(s => [s.icon, s.title, s.html]);
+
   function yardimHtml(q) {
     q = kucuk(q);
     let l = YARDIM.filter(y => !q || kucuk(y[1] + ' ' + y[2].replace(/<[^>]+>/g, ' ')).includes(q));
@@ -21758,135 +21754,8 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 
   /* ================= TURLAR ================= */
   const MS = s => () => { if (typeof maSekmeSec === 'function') maSekmeSec(s); };
-  const TURLAR = {
-    ana: [
-      [null, "Merhaba! Ben Papi 🦜", "Senin rehber papağanınım! Diji-Medu'da İngilizceyi oynayarak öğreneceğiz. Sana her köşeyi gezdireyim. İstersen 'Geç' diyebilirsin, turları Yardım'dan tekrar izleyebilirsin."],
-      ['#pkSekmeler', "🗺️ Parkur & MeduPro", "🧙 Büyü Akademisi: büyülü sorular. 🔤 Kelime Modu: kelimeyi sesli söyle. 🦜 Sohbet: benimle konuş! 🃏 Kelime Kartları: ada ada kelime yolculuğu. MeduPro sekmesinden diğer üç parkura geçersin."],
-      ['.bc-hud', "🧙 Rütben ve ilerlemen", "Soldaki simge büyücü rütben. Çubuk kaç seviye geçtiğini gösterir. Her 10 seviyede yeni bir dünyaya geçersin ve rütben yükselir."],
-      ['.bc-d.simdi', "▶ Sıradaki seviyen", "Karakterin burada zıplıyor! Dokun, başlat kartında kazanacaklarını gör ve oyna. Parkur girişi 2 ⚡, sonra her 3 soruda 1 ⚡. Büyü Akademisi'nde XP ve altınlar 2 kat!"],
-      ['.bc-sandikr', "🎁 Hazine sandıkları", "Her 3 seviyede bir sandık kazanırsın: Bronz, Gümüş, Altın, Efsane. İçinden XP, altın, enerji, joker ve nadir kıyafet çıkar. 3 kez dokunup açarsın!"],
-      ['.bc-kr', "🎭 Karakter gölgeleri", "Yol kenarındaki gölgeler açılacak karakterler. O seviyeyi geçince karakter senin olur, profil fotoğrafın yapabilirsin."],
-      ['.bc-d.boss', "👾 Boss seviyeleri", "Her 10. seviyede dünyanın bekçisi seni bekler. Onu geçersen yeni dünyanın kapısı açılır: Orman, Kristal Mağara, Uzay, Denizaltı, Ejder Dağı!"],
-      ['#ybEnerji', "⚡ Enerji ve altın", "Sıvı dolu yuvarlak enerjin, köşedeki sarı para altının. Enerji her saat +1 dolar, en fazla 20. Dokununca ayrıntıları görürsün. Parmağınla başka yere de sürükleyebilirsin."],
-      ['#ybArac', "🧰 Araçlar", "Burada üç araç sırayla döner: 🎯 günlük hedef halkan, ❓ yardım ve 🤖 AI Koç. AI Koç'tan öğretmenine mesaj bırakabilirsin."],
-      ['#bottomNavMobile', "📱 Alt menü", "Uygulamanın kapıları burada. Hadi tek tek bakalım!"],
-      ['[data-bc="parkur"]', "🧙 Parkur", "Nerede olursan ol, buraya dokunup maceraya geri dönersin."],
-      ['#bottomNavMobile [data-ekran="tab-meduakis"]', "🎡 Medu Akış", "Arkadaşlarının başarılarını canlı izle, beğen, tebrik et, düello yolla. Haftalık lig de burada."],
-      ['#bottomNavMobile [data-ekran="tab-dunyam"]', "🦜 Benim Dünyam", "Günün görevlerin, ödevlerin, istatistiklerin, rozetlerin ve karakterin hepsi burada. Burası enerji harcamaz!"],
-      ['#bottomNavMobile [data-ekran="tab-aktiviteler"]', "🎮 Aktivite", "7 mini oyun, Dikte ve Cümle Kur. Girişi 1 ⚡, her 3 soruda 1 ⚡; her doğru +10 XP ve +1 🪙."],
-      ['#bottomNavMobile [data-ekran="tab-derscalis"]', "📘 Ders Çalış", "Konu anlatımları ve testler. Testi geçince +30 XP +2 ⚡ +2 🪙. Enerji istemez!"],
-      ['#bottomNavMobile [data-ekran="tab-magaza"]', "🛍️ Mağaza", "Altınlarınla karakterini süsle; yeni karakterler, sandıklar ve jokerler al."],
-      [null, "Hazırsın! 🎉", "Her gün gel, serini büyüt: 3 günde altınlar ×1.25, 7 günde ×1.5! Bir bölüme ilk kez girdiğinde orayı da sana anlatacağım. Hadi ilk seviyene!"]
-    ],
-    'tab-meduakis': [
-      ['#maSegment', "🎡 Medu Akış", "4 bölüm var: Akış, Keşfet, Vitrinim ve Lig. Hepsini birlikte gezelim!", MS('akis')],
-      ['#maSegment [data-s="akis"]', "📰 Akış", "Okuldaki herkesin yaptıkları anlık akar: oyun bitirenler, seviye geçenler, rozet kazananlar. 20 saniyede bir kendiliğinden yenilenir."],
-      ['#tab-meduakis .filtre', "🔍 Filtre", "Herkesi ya da sadece takip ettiklerini görebilirsin. ● Canlı yazısı akışın o an çalıştığını gösterir."],
-      ['#tab-meduakis .akis-kart .aksiyon', "❤️ Beğen, 🎉 tebrik et", "Arkadaşının başarısını beğen ya da tebrik et. Ona anında bildirim gider! Yanındaki sayılar herkesin kaç beğeni aldığını gösterir."],
-      ['#tab-meduakis .akis-kart .akis-ust', "👤 Profile git", "Bir öğrencinin adına dokunursan vitrinini açarsın. Orada takip edebilir, hazır mesaj ve aksesuar gönderebilir, düello yollayabilir veya engelleyebilirsin."],
-      ['#zlBtn', "🔔 Bildirim zili", "Beğeni, tebrik, takip, enerji hediyesi ve düello haberlerinin hepsi burada. Kırmızı sayı okunmamışları gösterir."],
-      ['#maSegment [data-s="kesfet"]', "🧭 Keşfet", "Haftanın yıldızlarını, seninle aynı seviyedekileri görür, istediğin öğrenciyi ararsın.", MS('kesfet')],
-      ['#tab-meduakis .dl-kart', "⚔️ Düellolarım", "Düello davetlerin ve sonuçların burada. Kazanan +2 ⚡ ve +30 XP alır, kaybeden bile +5 XP kazanır!"],
-      ['#tab-meduakis .podyum', "🏆 Haftanın yıldızları", "Bu hafta en çok XP toplayan 3 öğrenci podyumda. Sıradaki sen olabilirsin!"],
-      ['#maSegment [data-s="vitrin"]', "🎪 Vitrinim", "Senin sahnen! Arkadaşların seni burada böyle görür: serin, ligin, puanın ve rozetlerin.", MS('vitrin')],
-      ['#tab-meduakis .yaris', "🎈 Balon yarışı", "Bu haftaki XP'n balonunu yükseltir. Bir arkadaşının vitrinine girersen balonlarınız yarışır."],
-      ['#tab-meduakis .duzen-kart', "🏅 Rozet vitrini", "Vitrinde gösterilecek 3 rozetini buradan seçersin."],
-      ['#maSegment [data-s="lig"]', "🏆 Lig", "Haftalık XP'ye göre sıralama. İlk 10 🏆 Şampiyonlar, 11-30 ⭐ Süper Lig, diğerleri 🌱 Yerel Lig.", MS('lig')],
-      ['#tab-meduakis .ml-ben', "📍 Senin yerin", "Hangi ligde ve kaçıncı sırada olduğunu gösterir. Lig atlarsan +5 ⚡ +10 XP +5 🪙!"],
-      ['#tab-meduakis .ml-hedef', "🎯 Hedefin", "Bir üst lige çıkmak için kaç XP daha gerektiğini söyler. Lig her pazartesi yeniden başlar."],
-      [null, "Harika! 🎉", "Artık Medu Akış'ın ustasısın. Arkadaşlarını tebrik etmeyi unutma, onlar da seni tebrik eder!", MS('akis')]
-    ],
-    'tab-magaza': [
-      ['#bcMgBar', "🛍️ Mağaza", "4 bölüm var: Atölye, Karakterlerim, Sandıklar ve Jokerler. Hepsine bakalım!"],
-      ['#bcMgBar [data-k="atolye"]', "🎨 Atölye", "Kendi karakterini burada süslersin.", tikla('#bcMgBar [data-k="atolye"]')],
-      ['.ka-sahne', "🧍 Karakterin", "Bir eşyaya dokununca önce karakterinin üstünde denersin. Beğenirsen satın alırsın. 🎲 ile sahip olduklarını karıştırabilirsin."],
-      ['.ka-kat', "🗂️ Kategoriler", "Ten, saç, saç rengi, göz, ağız, kıyafet, şapka, gözlük, minik dost, arka plan ve çerçeve..."],
-      ['.ka-urunler', "🧢 Ürünler", "🔒 kilitli olanlar altınla alınır. Sahip olduklarına dokunup hemen takarsın."],
-      ['.ka-dondurucu', "🧊 Seri dondurucu", "Bir gün giremeyeceksen al: serin bozulmaz. En fazla 2 tane taşıyabilirsin."],
-      ['#bcMgBar [data-k="koleksiyon"]', "🎭 Karakterlerim", "36 karakterlik koleksiyon. Her parkurda her 3 seviyede bir karakter açılır.", tikla('#bcMgBar [data-k="koleksiyon"]')],
-      ['#bcMgAlan .bc-filtre', "🔍 Filtre", "Parkura göre ya da sadece açtıklarını görebilirsin."],
-      ['#bcMgAlan .bc-krk', "🃏 Karakter kartları", "Açık bir karaktere dokun, profil fotoğrafın olsun. Kilitli olanları beklemeden altınla da alabilirsin."],
-      ['#bcMgBar [data-k="sandik"]', "🎁 Sandıklar", "Her parkurda sıradaki sandığa kaç seviye kaldığını ve çantandaki ekstra hakları görürsün.", tikla('#bcMgBar [data-k="sandik"]')],
-      ['#sdKutu', "🛒 Sandık Dükkânı", "Beklemek istemezsen sandık al: Bronz 150, Gümüş 250, Altın 400, Efsane 700 🪙."],
-      ['#bcMgBar [data-jm]', "🃏 Jokerler", "30 joker ve güçlendirici! Her jokerin oyunda 1 bedava hakkı var, satın aldıkların ekstra hak verir.", tikla('#bcMgBar [data-jm]')],
-      ['.jm-filtre', "✨ Joker türleri", "🎮 Oyun jokerleri oyun içinde yardım eder. ✨ Güçlendiriciler (XP Tılsımı, Bedava Bilet...) sıradaki oyunda kendiliğinden çalışır."],
-      [null, "Alışverişe hazırsın! 🪙", "Altınları oyunlarda her doğru cevapla kazanırsın. Akıllıca harca!", tikla('#bcMgBar [data-k="atolye"]')]
-    ],
-    'tab-sanaozel': [
-      ['#kartGununKonusu', "🎯 Günün Konusu", "Öğretmeninin bugün çalışmanı önerdiği konu. Dokununca doğrudan konuya gidersin."],
-      ['#kartRaporlarim', "📝 Raporlarım", "Öğretmeninin her dersten sonra yazdığı karneler: 5 beceri puanın ve yorumlar."],
-      ['#kartOkumaStudyosu', "📖 Okuma Stüdyosu", "Süreyi başlat, İngilizce metni oku, son okuduğun kelimeye dokun. Okuma hızını (dakikada kelime) ölçer. Süre durunca kelimelere dokunup anlamlarını görürsün."],
-      ['#kartPomodoro', "🍅 Pomodoro", "Odaklanma sayacı: 25 dakika çalış, 5 dakika mola. Süreleri kendin ayarlayabilirsin."],
-      ['#tab-dunyam [onclick="etkinliklerModalAc()"]', "🎯 Etkinlikler", "Öğretmeninin sana atadığı etkinlikler. Tamamlayınca +10 XP +2 🪙."],
-      ['#tab-dunyam [onclick="videolarModalAc()"]', "🎬 Videolar", "Öğretmeninin seçtiği videolar. En az 1 dakika izlersen +10 XP +2 🪙."],
-      ['#tab-dunyam [onclick="yoZkAc()"]', "🔁 Zor Kelimelerim", "Oyunlarda yanlış yaptığın kelimeler buraya gelir ve 1, 3, 7, 14 gün arayla tekrar sorulur. Böylece hiç unutmazsın!"],
-      ['#tab-dunyam [onclick="seviyeTestAc()"]', "📋 Seviye Tespit", "20 soruluk sınav A1, A2, B1 ya da B2 seviyeni bulur. Günde bir kez +3 ⚡ ve +50 XP'ye kadar bonus kazandırır."]
-    ],
-    'tab-aktiviteler': [
-      [null, "🎮 Oyun zamanı!", "Burada 11 oyun var. Hepsi 8 sorudur, girişte 3 ⚡ gider ve oyunun ortasında enerji düşmez. Doğru ve seri puanlarına hız bonusu eklenir; yanlışlar puanı ve o tur kazanılacak XP’yi azaltır. Puan 1000’de kesilmez. Ödül yıldıza göre: ⭐⭐⭐ 10 🪙 + 50 XP. Günün ilk 3 oyunu çift ödül!"],
-      ['#tab-aktiviteler [onclick="kelimeYarismasiAc()"]', "🔬 Kelime Laboratuvarı", "Kelimeyi gör ve dinle, iki şıktan doğru anlamını seç. İlk denemede doğru her soru 100 puan."],
-      ['#tab-aktiviteler [onclick="jpOyunAc()"]', "🎈 Risk Balonları", "Bir balon seç, sonra zorluğu seç: kolay 50, orta 75, zor 100 puan. Cesur ol ama dikkatli!"],
-      ['#tab-aktiviteler [onclick="boslukOyunAc()"]', "✏️ Eksik Harf", "Kelimelerin eksik harflerini tamamla, sonra hepsini birden kontrol et."],
-      ['#tab-aktiviteler [onclick="hafizaOyunAc()"]', "🃏 Hafıza Sandığı", "Kartları çevir, İngilizce ve Türkçe çiftleri bul. Az yanlış açış, tam puan!"],
-      ['#tab-aktiviteler [onclick="yagmurOyunAc()"]', "🌪️ Hız Fırtınası", "Kelime yere düşmeden 3 şıktan doğru anlamına dokun. Doğru bildikçe hızlanır!"],
-      ['#tab-aktiviteler [onclick="asmacaOyunAc()"]', "🔤 Harf Avı", "Harflere dokunarak gizli kelimeyi bul. En fazla 2 yanlış harfle çözersen tam puan."],
-      ['#tab-aktiviteler [onclick="kelimebulOyunAc()"]', "🔐 Şifre Kırıcı", "Kelimeyi tahmin et. 🟩 doğru harf doğru yerde, 🟨 doğru harf yanlış yerde, ⬜ harf yok. İlk 3 tahminde bulursan tam puan."],
-      ['#yoDikteKart', "🎧 Kulak Dedektifi", "Duyduğun kelimeyi yaz. 🐢 düğmesiyle yavaş dinleyebilirsin."],
-      ['#tab-aktiviteler [onclick="cumleAc()"]', "🧱 Cümle Ustası", "Kelimeleri doğru sıraya dizerek cümle kur."],
-      [null, "Oyun bitince 🏁", "Sonuç ekranında puanını, yıldızını ve sınıfındaki sıralamanı görürsün. Eşit puanda kısa sürede bitiren önde. Haftalık tabloda ilk 15'e girersen bonus puan!"]
-    ],
-    'tab-derscalis': [
-      ['#tab-derscalis .dc-hero', "📘 Ders Çalış", "Konuları patika boyunca öğren. Her konuda 🚀 Konu Macerası var: kısa kartlar, 6 soru ve 👑 final. Konuyu ilk kez geçmek +6 ⚡ +25 🪙 +80 XP kazandırır!"],
-      ['#tab-derscalis .dc-voice-toggle', "🔊 Aksan", "Örnek cümleleri 🇺🇸 Amerikan ya da 🇬🇧 İngiliz aksanıyla dinle."],
-      ['#tab-derscalis .dc-level-grid', "🎚️ Seviyeler", "A1'den B2'ye 4 seviye. Seviye tespit sonucun hangisinden başlaman gerektiğini söyler."],
-      ['#dcAramaInput', "🔍 Konu ara", "Bir konunun adını yaz, hemen bul."],
-      [null, "Nasıl çalışır? 🤓", "Önce anlatımı en az 30 saniye oku ve 'Okudum, anladım'a bas. Sonra tüm örnek cümleleri dinle, en son testi çöz. Yanlış yaparsan test baştan başlar. Geçince +30 XP +2 ⚡ +2 🪙! Altı noktalı kelimelere dokununca anlamını gösterir. 🏠 ile başa dönersin."]
-    ],
-    'tab-profil': [
-      ['#bdKart', "🪪 Kimlik kartın", "Karakterin, adın, enerjin ve günlük serin. Buradan şifreni değiştirebilir ya da çıkış yapabilirsin."],
-      ['#bdGelisim .timer-card', "⏱️ Oturum süresi", "Uygulamada geçirdiğin süre. Her 10 dakikada bir 🌟 kazanırsın."],
-      ['#bdGelisim .summary-grid', "📊 Puan kartların", "Genel puanın, etkinlik başarın, son deneme sonucun ve performans durumun."],
-      ['#rozetlerBolumu', "🏅 Rozetler", "Genel puanın yükseldikçe yeni rozetler açılır. Çubuk ne kadarını topladığını gösterir."],
-      ['#okumaKulturuKutusu', "📚 Okuma kültürü", "Okuduğun kitap ve haftalık sayfa hedefin."],
-      ['#gelisimGrafikKutusu', "📈 Gelişim grafiği", "Puanının zamanla nasıl değiştiğini gösterir."],
-      ['#kriterGrafikKutusu', "🧩 5 beceri", "Okuma, yazma, kelime, konuşma ve grammar ortalamaların."],
-      ['#profilKoleksiyon', "🎭 Karakterlerim", "Açtığın karakterler. Birine dokun, profil fotoğrafın olsun."]
-    ],
-    'tab-konusmapratigi': [
-      ['#kpEnerjiSatiri', "⚡ Enerji", "Kelime Modu girişi 2 ⚡, sonra her 3 kelimede 1 ⚡."],
-      ['#kpParkurAlani .kp-node-outer.active', "🔤 Sıradaki seviye", "Her seviyede 8 kelime var. %60 doğruyla geçersen sıradaki açılır. Üstünde ben zıplıyorsam oradasın! Dokun ve başla."],
-      ['#kpParkurAlani .kp-node-outer.done', "✅ Geçtiklerin", "Yeşil tikli seviyeleri istediğin zaman tekrar oynayabilirsin."]
-    ],
-    'kp-oyun': [
-      ['#kpCard', "🗣️ Kelime kartı", "Kartta Türkçe bir kelime var. İngilizcesini söyle!"],
-      ['#kpMikBtn', "🎤 Mikrofon", "Dokun: kırmızı olunca dinliyorum, konuş! Mora dönünce dinleme biter. Her kelimede 3 hakkın var."],
-      ['#tab-konusmapratigi .kp-skip-btn', "⏭ Atla", "Bilmiyorsan geç. Kelime Zor Kelimelerim'e eklenir, sonra tekrar çalışırsın."],
-      ['#tab-konusmapratigi .kp-yaz-toggle', "✍️ Yazarak cevapla", "Mikrofon çalışmazsa yazarak da cevap verebilirsin."],
-      ['#jkBar', "🃏 Jokerler", "🦜 Papağan kelimeyi fısıldar, 🔄 pas geçer, 🛡️ kalkan komboyu korur."]
-    ],
-    'ba-oyun': [
-      ['#tab-buyuakademisi .ba-top', "🔥 Kombo", "Çubuk soruları, KOMBO art arda doğrularını gösterir. 4 doğruda bir ben uçarım ve altın kazanırsın!"],
-      ['#jkBar', "🃏 Jokerler", "✂️ yanlış şıkların yarısını keser, 💡 bir harf açar, 🦜 ben cevabı fısıldarım!"],
-      [null, "7 büyü tipi ✨", "Kristal Küre, Balon, Formül, İkiz Ayna, Yıldız Tozu, Kayıp Harfler ve Ses Büyüsü. %60 doğruyla seviyeyi geçersin. Bol şans büyücü!"]
-    ],
-    oyun: [
-      ['.game-modal-overlay [id$="MuzikBtn"]', "🎵 Müzik", "Oyunun müziğini buradan açıp kapatabilirsin."],
-      ['#jkBar', "🃏 Jokerler", "Her jokerin 1 bedava hakkı var, dokununca kullanırsın. Üstünde +2 yazanlar çantandaki ekstra haklar."],
-      ['.jm-oyun-al', "🛒 Joker al", "Jokerin mi bitti? Buradan hemen al, oyuna devam et."],
-      [null, "Kombo! 🔥", "Art arda 4 doğru yaparsan ben uçarım ve +3 🪙 kazanırsın. Hadi oyna!"]
-    ],
-    'tab-sohbet': [
-      ['#tab-sohbet .ys-ust', "🦜 Sohbet haritası", "Benimle 20 gerçek diyalog! Çubuk ne kadarını bitirdiğini gösterir."],
-      ['#tab-sohbet .ys-bant', "🌱 Seviyeler", "A1'den B2'ye 4 seviye. Her seviyede yeni ve daha zor konular var."],
-      ['#tab-sohbet .ys-dugum.aktif', "💬 Sıradaki sohbet", "Dokun, ben soru sorarım, sen yazarak ya da 🎤 konuşarak cevap verirsin. İpuçları ve örnek cevaplar sana yardım eder."],
-      ['#tab-sohbet .ys-yildizlar', "⭐ Yıldızlar", "Hepsini ilk denemede bilirsen 3 yıldız! %60 doğru yaparsan sıradaki sohbet açılır."]
-    ],
-    kk: [
-      ['#seviyeYolAlani', "🏝️ Takımadalar", "Her ada bir ünite. Turuncu ★ ada sıradaki, yeşil ✓ adalar bitti, 🔒 olanlar kilitli."],
-      ['#sinifDegistirBtn', "🔄 Sınıf", "Kendi sınıfını ya da bir altını seçebilirsin."],
-      [null, "Kurallar 📜", "Bir seviyeyi açınca en az 60 saniye çalış, sonra 'Bitirdim' de. Her seviye 2 ⚡. Her 3 seviyede sandık ve yeni karakter!"]
-    ]
-  };
+  const TURLAR = window.DijiPapiGuide.tours;
+
   const ACICI = {
     ana: () => window.dunyaAc && dunyaAc(),
     'tab-meduakis': () => { if (typeof maSekme !== 'undefined') maSekme = 'akis'; window.meduAkisAc && meduAkisAc(); },
@@ -21899,7 +21768,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     'tab-sohbet': () => window.sohbetEkraniAc && sohbetEkraniAc(),
     kk: () => { window.dcTumTamEkranlariKapat && dcTumTamEkranlariKapat(); window.seviyeHaritasiAc && seviyeHaritasiAc(); }
   };
-  const TUR_ADLARI = [['ana', '🧭 Genel tur'], ['tab-meduakis', '🎡 Medu Akış'], ['tab-magaza', '🛍️ Mağaza'], ['tab-sanaozel', '✨ Sana Özel'], ['tab-aktiviteler', '🎮 Aktivite'], ['tab-derscalis', '📘 Ders Çalış'], ['tab-profil', '👤 Profil'], ['tab-konusmapratigi', '🔤 Kelime Modu'], ['tab-sohbet', '🦜 Sohbet'], ['kk', '🃏 Kelime Kartları']];
+  const TUR_ADLARI = [['ana', '🧭 Genel tur'], ['tab-meduakis', '🎡 Medu Akış'], ['tab-magaza', '🛍️ Mağaza'], ['tab-sanaozel', '✨ Sana Özel'], ['tab-aktiviteler', '🎮 Aktivite'], ['tab-derscalis', '📘 Ders Çalış'], ['tab-profil', '👤 Profil'], ['tab-konusmapratigi', '🔤 Kelime Modu'], ['tab-sohbet', '🦜 Sohbet'], ['kk', '🃏 Kelime Kartları'], ['papi-cards', '🦜 Papi Kartları'], ['word-wheel', '🎡 Kelime Çarkı'], ['level-guide', '🌟 40 Seviye']];
   const OYUN_ICI = ['oyun', 'ba-oyun', 'kp-oyun'];
 
   /* ================= MOTOR ================= */
@@ -21940,7 +21809,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     let p = document.createElement('div');
     p.className = 't2-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Papi ile tanıtım turu');
     p.innerHTML = `<div class="t2-delik"></div><div class="t2-halka"></div><div class="t2-ok">⬇</div><div class="t2-kus">${PAPI}</div><button class="t2-kapat" aria-label="Turu kapat">✕ Turu kapat</button>
-      <div class="t2-balon"><div class="t2-ust"><b></b><button class="t2-ses" aria-label="Sesi aç/kapat">${ses ? '🔊' : '🔇'}</button></div><p aria-live="polite"></p><div class="t2-noktalar">${adimlar.map(() => '<i></i>').join('')}</div>
+      <div class="t2-balon"><div class="t2-ust"><b></b><button class="t2-ses" aria-label="Sesi aç/kapat">${ses ? '🔊' : '🔇'}</button></div><p aria-live="polite"></p><span class="t2-adim-sayisi" role="status"></span><div class="t2-noktalar">${adimlar.map(() => '<i></i>').join('')}</div>
       <div class="t2-btn"><button class="t2-gec">Geç</button><button class="t2-geri" aria-label="Geri">‹</button><button class="t2-ileri">İleri ›</button></div></div>`;
     document.body.appendChild(p);
     const E = s => p.querySelector(s);
@@ -21997,11 +21866,13 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
         let a = adimlar[yeni];
         if (a[3]) { try { a[3](); } catch (e) {} await bekle(380); }
         let h = a[0] ? [...document.querySelectorAll(a[0])].find(gor) : null;
-        if (a[0] && !h) { if (yon < 0 && yeni === 0) { yon = 1; } continue; }
+        // Locked or hidden controls still get their explanation, centered on screen.
         i = yeni; hedef = h; break;
       }
       let a = adimlar[i];
       E('.t2-ust b').textContent = a[1];
+      E('.t2-adim-sayisi').textContent = (i + 1) + ' / ' + adimlar.length;
+      yazi.scrollTop = 0;
       p.querySelectorAll('.t2-noktalar i').forEach((n, j) => { n.className = j === i ? 'on' : j < i ? 'gecti' : ''; });
       E('.t2-ileri').textContent = i === adimlar.length - 1 ? 'Başlayalım 🚀' : 'İleri ›';
       E('.t2-geri').style.visibility = i > 0 ? '' : 'hidden';
