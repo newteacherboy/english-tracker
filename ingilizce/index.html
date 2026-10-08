@@ -974,31 +974,16 @@ html, body { touch-action: pan-x pan-y; }
 <div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
 <script>(function(){
 const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false;
-const started=Date.now();
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
 function finish(){if(done)return;done=true;clearInterval(timer);clearTimeout(deadline);splash.classList.add('dm-ready');setTimeout(()=>splash.remove(),250);}
-function check(){
- if(!loaded)return;
- const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
- const loading=document.getElementById('oturumYuklemeOverlay');
- if(visible(loading))return;
- // A ready student panel is enough: do not restrict dismissal to teacher accounts.
- if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||visible(panel)){finish();return;}
- // A stale remembered session must not permanently conceal a usable login screen.
- if(visible(login)&&Date.now()-started>2500)finish();
+function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
+const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
+let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
+if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'))finish();
 }
-function ready(){loaded=true;check();}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
-window.addEventListener('load',ready,{once:true});
-document.addEventListener('dm:login',check);
-timer=setInterval(check,200);
-const deadline=setTimeout(()=>{
- if(done)return;
- document.getElementById('dmBootText').textContent='Başlatma uzun sürüyor. Yeniden deneyebilirsin.';
- document.getElementById('dmBootRetry').hidden=false;
- // Never strand the user behind the decorative splash if login or panel has rendered.
- if(visible(document.getElementById('login-container'))||visible(document.getElementById('panel-alani')))finish();
-},12000);
+window.addEventListener('load',()=>{loaded=true;check();},{once:true});
+document.addEventListener('dm:login',check);timer=setInterval(check,150);
+const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
 document.getElementById('dmBootRetry').onclick=()=>location.reload();
 })();</script>
         
@@ -30784,8 +30769,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="medupro.js?v=4"></script>
 <link rel="stylesheet" href="activity-ui.css?v=4">
 <script src="activity-ui.js?v=6"></script>
-<link rel="stylesheet" href="bottom-nav.css?v=8">
-<script src="bottom-nav.js?v=8"></script>
+<link rel="stylesheet" href="bottom-nav.css?v=4">
+<script src="bottom-nav.js?v=2"></script>
 
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script src="feature-catalog.js?v=2"></script>
@@ -30807,8 +30792,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=9"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=1"></script>
-<link rel="stylesheet" href="profile-forest.css?v=8">
-<script src="profile-forest.js?v=8"></script>
+<link rel="stylesheet" href="profile-forest.css?v=1">
+<script src="profile-forest.js?v=1"></script>
 
 <link rel="stylesheet" href="question-panels-v1.css?v=2">
 <link rel="stylesheet" href="question-calm-v1.css?v=3"><script src="question-calm-v1.js?v=3"></script>
