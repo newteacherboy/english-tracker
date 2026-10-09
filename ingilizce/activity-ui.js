@@ -65,7 +65,7 @@
   cards.forEach(([fn,idx,color,edge])=>{const b=grid.querySelector('[onclick*="'+fn+'"]')||document.getElementById(fn==='dikteAc'?'yoDikteKart':fn);if(!b||!grid.contains(b))return;
    if(fn==='kelimeYarismasiAc')b.querySelector('.az-gcard-title').textContent='Kelime Laboratu\u00advarı';b.classList.add('dm-toy-card');b.style.setProperty('--toy-bg',color);b.style.setProperty('--toy-edge',edge);
    const icon=b.querySelector('.az-gcard-icon');if(icon&&idx!==null&&!icon.querySelector('.dm-toy-art')){const art=document.createElement('span');art.className='dm-toy-art';art.setAttribute('aria-hidden','true');art.style.backgroundPosition=(idx%4)*100/3+'% '+Math.floor(idx/4)*100/3+'%';icon.replaceChildren(art);}
-   if(['dmUcusteKart','dmRotaKart'].includes(fn)){b.onclick=()=>window.dmInviteAc(fn==='dmUcusteKart'?'ucus':'rota');if(!b.querySelector('.ak-etiket')){const t=document.createElement('div');t.className='ak-etiket';t.textContent='8 soru · 4 ⚡';b.append(t);}}
+   if(['dmUcusteKart','dmRotaKart'].includes(fn)){b.onclick=()=>window.dmInviteAc(fn==='dmUcusteKart'?'ucus':'rota');if(!b.querySelector('.ak-etiket')){const t=document.createElement('div');t.className='ak-etiket';t.textContent='12 soru · 4 ⚡';b.append(t);}}
   });
   partyTabs(host,grid);
  }
