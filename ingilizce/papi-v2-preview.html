@@ -47,7 +47,7 @@ function start(){
  if(!c||!Array.isArray(c.steps)){el('feedback').textContent='Bu bölümde kullanılabilir etkinlik bulunamadı.';el('next').disabled=true;return}
  // Generated dialogue/cloze are prototypes; no live rewards or server calls.
  steps=[...c.steps.filter(x=>x.kind!=='scene'&&x.kind!=='teach')];
- try{const dlg=buildDialogue(c,43);steps.splice(2,0,dlg)}catch(e){console.warn('Optional dialogue unavailable',e)}
+ try{const dlg=buildDialogue(c,43);if(dlg)steps.splice(2,0,dlg)}catch(e){console.warn('Optional dialogue unavailable',e)}
  try{const cloze=buildCloze(c,57);if(cloze)steps.splice(4,0,cloze)}catch(e){console.warn('Optional cloze unavailable',e)}
  if(!steps.length){el('feedback').textContent='Bu bölümün soruları henüz hazır değil.';el('next').disabled=true;return}
  at=0;completed=false;render();
