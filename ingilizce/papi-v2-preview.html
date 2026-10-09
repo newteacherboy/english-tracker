@@ -46,14 +46,14 @@ function start(){
  at=0;render();
 }
 function render(){
- speechSynthesis?.cancel?.();
+ if ('speechSynthesis' in window) window.speechSynthesis.cancel();
  active=prepareActivity(steps[at],(at+1)*173);answered=false;orderTokens=[];
  el('next').disabled=true;el('translation').classList.add('hidden');
  el('translation').textContent=active.tr||active.translation||active.hint||'';
  el('counter').textContent='Etkinlik '+(at+1)+' / '+steps.length;
  el('progress').style.width=(100*at/steps.length)+'%';
  el('heading').textContent=active.label||'Papi görevi';
- el('question').textContent=active.instruction?active.instruction+'\n'+(active.prompt||''):active.prompt||'';
+ el('question').textContent=active.instruction?active.instruction+' — '+(active.prompt||''):active.prompt||'';
  el('answers').replaceChildren();el('feedback').textContent='Cevabını seç.';
  if(active.kind==='order'){renderOrder();return}
  (active.options||[]).forEach((answer,i)=>{
