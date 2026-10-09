@@ -1,4 +1,12 @@
-import { STORY_CHAPTERS } from './story-curriculum.js';
+import { STORY_CHAPTERS as LEGACY_CHAPTERS } from './story-curriculum.js';
+import { STORY_V2_CHAPTERS } from './story-v2-curriculum.js';
+const STORY_CHAPTERS=[...LEGACY_CHAPTERS,...STORY_V2_CHAPTERS];
+const previousChapter=(chapter:number):number|null=>{
+ if(chapter===0)return null;
+ if(chapter<40)return chapter%10===0?chapter+39:chapter-1;
+ if(chapter<80)return chapter%10===0?chapter-31:chapter-1;
+ return null;
+};
 const normStory=(x:any)=>String(x??'').normalize('NFKC').trim().toLocaleLowerCase('en-US').replace(/[.!?,;:]/g,'').replace(/\s+/g,' ');
 export function storyAPI(db:any,json:any){
  const key=(a:any)=>a?.role==='student'&&a.student_id?'s:'+a.student_id:a?.role==='teacher'&&a.teacher_id?'t:'+a.teacher_id:'';
@@ -11,7 +19,8 @@ export function storyAPI(db:any,json:any){
   const chapter=Number(b.chapter),C=STORY_CHAPTERS[chapter];if(!Number.isInteger(chapter)||!C)return json({ok:false,mesaj:'Geçersiz durak.'},400);
   const read=()=>db.from('papi_story_progress').select('*').eq('actor_key',owner).eq('chapter',chapter).maybeSingle();
   const {data:existing,error}=await read();if(error)return json({ok:false,mesaj:'Durak yüklenemedi.'},503);
-  if(!existing&&chapter>0){const {data:prev,error:err}=await db.from('papi_story_progress').select('completed').eq('actor_key',owner).eq('chapter',chapter-1).maybeSingle();if(err)return json({ok:false,mesaj:'Önceki durak kontrol edilemedi.'},503);if(!prev?.completed)return json({ok:false,mesaj:'Önce önceki öğrenme durağını tamamla.'},403);}
+  const predecessor=previousChapter(chapter);
+  if(!existing&&predecessor!==null){const {data:prev,error:err}=await db.from('papi_story_progress').select('completed').eq('actor_key',owner).eq('chapter',predecessor).maybeSingle();if(err)return json({ok:false,mesaj:'Önceki durak kontrol edilemedi.'},503);if(!prev?.completed)return json({ok:false,mesaj:'Önce önceki öğrenme durağını tamamla.'},403);}
   if(op==='storyOpen'){
    if(existing){
     if(existing.completed&&existing.cursor>=C.steps.length){const {error:e}=await db.from('papi_story_progress').update({cursor:0,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},version:existing.version+1,updated_at:new Date().toISOString()}).eq('actor_key',owner).eq('chapter',chapter).eq('version',existing.version);if(e)return json({ok:false,mesaj:'Tekrar turu açılamadı.'},503);const {data:r,error:er}=await read();return er||!r?json({ok:false,mesaj:'Durak yüklenemedi.'},503):json(view(r));}
