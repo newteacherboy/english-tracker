@@ -158,3 +158,49 @@ body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol .dv-kisayol-basla{
 }
 body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol:disabled{opacity:.55;cursor:not-allowed}
 body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol:focus-visible{outline:3px solid #35845e;outline-offset:3px}
+
+/* Çalışma Defteri: yalnızca seviye, kategori ve konu menüleri. */
+body.dc-defter.dc-ada #tab-derscalis .ma-kap{background:repeating-linear-gradient(0deg,transparent 0 29px,#b6aa8920 30px 31px),#fff9ed!important;border:1px solid #e5d7ba!important;border-radius:22px!important;box-shadow:0 5px 18px #6d593b12!important;color:#204e3b!important}
+body.dc-defter.dc-ada #tab-derscalis #maPatika{padding:0 10px 14px 19px!important;overflow:hidden!important}
+body.dc-defter #maPatika::before{content:'';position:absolute;left:5px;top:12px;bottom:10px;width:8px;background:radial-gradient(ellipse,#b2a081 0 3px,transparent 4px) center top/8px 30px repeat-y;pointer-events:none}
+body.dc-defter #maPatika .ma-ust{position:relative;display:flex;align-items:center;padding:14px 6px 10px!important;min-height:90px;gap:6px}
+body.dc-defter.dc-ada #tab-derscalis #maPatika .ma-tabela{flex:1;padding:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;color:#204e3b!important;min-width:0}
+body.dc-defter #maPatika .ma-tabela strong{display:block;font:700 clamp(21px,5vw,28px)/1.2 Fredoka,Nunito,system-ui;letter-spacing:.1px}
+body.dc-defter #maPatika .ma-tabela strong::after{content:'';display:block;width:72px;height:4px;border-radius:50%;background:#e9b933;margin:7px 0}
+body.dc-defter #maPatika .ma-tabela small{font-size:12px!important;color:#667c68!important}
+body.dc-defter #maPatika .dn-menu-papi{width:68px;height:76px;object-fit:contain;flex:none;align-self:flex-end}
+body.dc-defter #maPatika .dn-progress{position:absolute;left:6px;right:6px;bottom:0;height:5px;background:#e8e3d4;border-radius:9px;overflow:hidden}
+body.dc-defter #maPatika .dn-progress span{display:block;height:100%;border-radius:9px;background:#36946b}
+body.dc-defter #maPatika .ma-patika{padding:14px 0 0!important}
+body.dc-defter.dc-ada #tab-derscalis #maPatika .ma-tas{display:flex!important;flex-direction:row!important;text-align:left!important;align-items:center;gap:10px;margin:0 0 10px!important;padding:13px 11px!important;width:100%;min-height:90px;border:1px solid #e3dac8!important;border-radius:17px!important;background:#fffdf5ed!important;box-shadow:0 3px 6px #8465410c!important;color:#204e3b!important;box-sizing:border-box}
+body.dc-defter.dc-ada #tab-derscalis #maPatika .ma-tas.dn-next{border:2px solid #eac34c!important;background:#fff6d9!important;box-shadow:0 3px 0 #e7ce7e55!important}
+body.dc-defter #maPatika .ma-tas .tas{width:32px!important;height:32px!important;border-radius:50%!important;font-size:14px!important;background:#e5ebda!important;color:#476443!important;box-shadow:none!important;outline:none!important}
+body.dc-defter #maPatika .dn-done .tas{background:#a8d6ad!important;color:#174d37!important}
+body.dc-defter #maPatika .dn-next .tas{background:#ffdc69!important;color:#73561d!important}
+body.dc-defter.dc-ada #tab-derscalis #maPatika .ma-tas .et{background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;flex:1;min-width:0}
+body.dc-defter #maPatika .ma-tas .et b{font:800 15px/1.3 Nunito,system-ui!important;color:#204e3b!important;overflow-wrap:break-word!important}
+body.dc-defter #maPatika .dn-en{display:block;font:600 11px/1.4 Nunito,system-ui;color:#788375;margin-top:3px}
+body.dc-defter #maPatika .ma-tas .et small{display:block;font-size:11px!important;line-height:1.4;margin-top:4px;color:#788375!important}
+body.dc-defter #maPatika .ma-tas .et .dn-go{display:inline-block!important;padding:5px 10px;border-radius:9px;background:#246e4f;color:#fff!important;font-weight:800;margin-top:7px}
+body.dc-defter #maPatika .dn-doodle{font:700 18px/1.3 Fredoka,Nunito,system-ui;color:#b68a33;transform:rotate(-8deg);width:43px;text-align:center;flex:none;overflow-wrap:break-word}
+body.dc-defter #maPatika .ma-hazine{font-size:12px;padding-top:9px;color:#6e7959}
+body.dc-defter #maPatika .ma-hazine span{font-size:25px}
+body.dc-defter.dc-ada #tab-derscalis #maPatika .ma-tas[hidden],body.dc-defter #maPatika .dn-empty[hidden]{display:none!important}
+body.dc-defter #maPatika .dn-empty{font-size:13px;text-align:center;padding:20px 8px;color:#667c68}
+body.dc-defter #maPatika .ma-tas:focus-visible{outline:3px solid #368360!important;outline-offset:2px}
+body.dc-defter #tab-derscalis .dc-topbar{flex-wrap:wrap;gap:9px!important}
+body.dc-defter #tab-derscalis .dc-arama-kutu{flex:1 0 100%!important;margin:0!important;width:100%;order:5}
+body.dc-defter #tab-derscalis #dcAramaInput{box-sizing:border-box;width:100%!important;border:1px solid #e0d5be!important;background:#fffcf4!important;color:#204e3b!important;border-radius:14px!important;padding:12px 15px!important;font-size:14px!important;min-height:44px;box-shadow:none!important}
+body.dc-defter #tab-derscalis #dcAramaInput:focus{outline:2px solid #4c9374;outline-offset:1px}
+body.dc-defter #maHarita .dm-study-mode{background:#2b6e51!important;border:0;color:#fff;font-size:13px}
+body.dc-defter #maHarita .dm-study-hero h2{color:#204e3b!important;-webkit-text-fill-color:#204e3b!important}
+body.dc-defter #maHarita .dm-study-hero p{color:#667c68!important}
+body.dc-defter #maHarita .dm-island-art{display:none!important}
+body.dc-defter #maHarita .ma-ada svg{display:none!important}
+body.dc-defter #maHarita .ma-ada::before{content:'✎';display:block;color:#d7af4d;font-size:35px;line-height:1.1}
+body.dc-defter #maHarita .ma-isim{margin:7px 3px 0!important;background:#fffdf4!important;border:1px solid #e2d6bd!important;border-radius:15px!important}
+body.dc-defter #maHarita .ma-isim b{color:#205139!important}
+body.dc-defter #maHarita .ma-harita{gap:12px!important}
+body.dc-defter #maAdaIc .ma-yapi{background:#fffdf4!important;border:1px solid #e2d6bd!important;border-radius:17px!important}
+body.dc-defter #maAdaIc .ma-tabela{background:none!important;border:0!important;color:#204e3b!important}
+@media(min-width:700px){body.dc-defter #maPatika .ma-tas .et b{font-size:17px!important}body.dc-defter #maPatika .dn-en{font-size:13px}body.dc-defter #maPatika .dn-doodle{width:65px}}

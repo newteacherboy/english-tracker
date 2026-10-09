@@ -140,6 +140,84 @@
   window.addEventListener('load', () => { bagla(); testBitisiniBagla(); });
 })();
 
+/* Çalışma Defteri menüleri. Özgün konu düğümleri ve işleyicileri korunur. */
+(function () {
+  'use strict';
+  const norm = s => String(s || '').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ı/g, 'i');
+  const $ = id => document.getElementById(id);
+  function filtrele(q) {
+    const kartlar = document.querySelectorAll('#maPatika .ma-tas');
+    let adet = 0;
+    kartlar.forEach(b => { b.hidden = !norm(b.dataset.arama || b.textContent).includes(norm(q).trim()); if (!b.hidden) adet++; });
+    const bos = $('dnAramaBos');
+    if (bos) bos.hidden = !kartlar.length || adet > 0;
+  }
+  function susle() {
+    document.body.classList.add('dc-defter');
+    const k = $('maPatika');
+    if (!k) return;
+    const tabela = k.querySelector('.ma-tabela');
+    if (tabela && !tabela.dataset.defter) {
+      tabela.dataset.defter = '1';
+      const alt = tabela.querySelector('small');
+      const baslik = document.createElement('strong');
+      baslik.textContent = tabela.childNodes[0]?.textContent.replace(/ patikası$/, '').replace(/^[^\p{L}]+/u, '') || 'Konular';
+      tabela.replaceChildren(baslik);
+      if (alt) { alt.textContent = alt.textContent.replace(' Adası', '').replace(' taş', ' konu'); tabela.append(alt); }
+      const papi = document.createElement('img'); papi.src = 'ders-vadi/papi-kitap.png'; papi.alt = ''; papi.className = 'dn-menu-papi'; tabela.parentElement.append(papi);
+      const bar = document.createElement('div'); bar.className = 'dn-progress';
+      const fill = document.createElement('span');
+      const txt = alt?.textContent.match(/(\d+)\/(\d+)/);
+      fill.style.width = txt && +txt[2] ? (+txt[1] / +txt[2] * 100) + '%' : '0%';
+      bar.append(fill); tabela.parentElement.append(bar);
+    }
+    k.querySelectorAll('.ma-tas').forEach((b, i) => {
+      if (b.dataset.defter) return;
+      b.dataset.defter = '1';
+      const titre = b.querySelector('.et b'), alt = b.querySelector('.et small'), tas = b.querySelector('.tas');
+      if (!titre || !alt || !tas) return;
+      b.dataset.arama = titre.textContent;
+      const parts = titre.textContent.split(/\s+[—–]\s+/);
+      if (parts.length > 1) {
+        const en = parts.shift(); titre.textContent = parts.join(' — ');
+        const sub = document.createElement('span'); sub.className = 'dn-en'; sub.textContent = en; titre.after(sub);
+      }
+      const next = !!b.querySelector('.bayrak'); b.querySelector('.bayrak')?.remove();
+      b.classList.toggle('dn-next', next); b.classList.toggle('dn-done', tas.textContent === '✓');
+      tas.removeAttribute('style'); tas.textContent = String(i + 1);
+      if (next) { alt.textContent = 'Devam et →'; alt.classList.add('dn-go'); }
+      else if (alt.textContent.includes('Keşfedilmedi')) alt.textContent = 'Henüz çalışılmadı';
+      if (b.classList.contains('dn-done')) alt.textContent = alt.textContent.replace(/⭐/g, '★');
+      const doodle = document.createElement('span'); doodle.className = 'dn-doodle'; doodle.setAttribute('aria-hidden', 'true');
+      const text = norm(b.dataset.arama);
+      doodle.textContent = /alphabet|alfabe/.test(text) ? 'ABC' : /pronoun|zamir/.test(text) ? 'I · you' : /article|a \/ an/.test(text) ? 'a / an' : /possessive|iyelik/.test(text) ? 'my ♡' : /have|sahiplik/.test(text) ? 'have got' : /\bbe\b|olmak/.test(text) ? 'I am' : ['✎', '✦', 'Aa'][i % 3];
+      b.append(doodle);
+    });
+    if (!$('dnAramaBos')) { const e = document.createElement('p'); e.id = 'dnAramaBos'; e.className = 'dn-empty'; e.setAttribute('role', 'status'); e.textContent = 'Bu aramayla eşleşen konu bulunamadı.'; e.hidden = true; k.querySelector('.ma-patika')?.append(e); }
+    filtrele($('dcAramaInput')?.value || '');
+  }
+  function basla() {
+    susle();
+    const alan = $('dcAnaIcerik');
+    if (alan) new MutationObserver(() => {
+      if (document.querySelector('#maPatika .ma-tas:not([data-defter])') || document.querySelector('#maPatika .ma-tabela:not([data-defter])')) susle();
+    }).observe(alan, {childList:true, subtree:true});
+    const org = window.dcAramaYap;
+    window.dcAramaYap = function(q) {
+      if ($('dcScreenTopics')?.classList.contains('active') && document.body.classList.contains('dc-ada')) {
+        const sonuclar = $('dcAramaSonuclari'); if (sonuclar) sonuclar.style.display = 'none';
+        filtrele(q); return;
+      }
+      return org?.apply(this, arguments);
+    };
+    ['dcKategoriIcerikCiz', 'dcSeviyeSec', 'dcKategoriSec', 'dcGeriGit', 'dcAnaEkranaDon', 'dersCalisBaslat', 'dcTestSonrasiKonuListesineDon'].forEach(ad => {
+      const org = window[ad]; if (typeof org !== 'function') return;
+      window[ad] = function() { const result = org.apply(this, arguments); susle(); return result; };
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', basla); else basla();
+})();
+
 
 /* Konu Macerası: tamamlanmış eşleştirmelerin yeniden seçilmesini önle.
    Orijinal skor ve Devam et onclick kodu korunur. */
