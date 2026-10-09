@@ -6,7 +6,7 @@ const student=()=>!!who()&&who().toLowerCase()!=='teacher'&&!window.dmGuestMode;
 const ready=()=>student()&&typeof yo!=='undefined'&&!!yo&&typeof yoHazirMi==='function'&&yoHazirMi();
 const level=()=>ready()?R.progress(R.migrate(yo)).level:1;
 const toast=m=>window.yoToast?.(m);
-function allowed(code){if(!student())return true;if(!ready())return false;if(code==='akis')return !!status?.feed;return level()>=(C.gates[code]||1);}
+function allowed(code){if(window.dmPapiTour?.preview())return true;if(!student())return true;if(!ready())return false;if(code==='akis')return !!status?.feed;return level()>=(C.gates[code]||1);}
 function need(code){return code==='akis'?'Ana parkurda 3. durağa ulaşınca açılır.':(C.gates[code]||1)+'. seviyede açılır.';}
 const odevAcilisi=()=>Date.now()<(window.__odevAcilisBitis||0);
 function requireFeature(code){if(allowed(code)||odevAcilisi())return true;toast('🔒 '+need(code));return false;}
