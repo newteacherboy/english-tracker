@@ -611,6 +611,13 @@
       "bytes": 422706,
       "status": "ai-generated",
       "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/bottom-nav-open-forest-v1.webp",
+      "sha256": "6e3a2e15feced9fb97c70978d65151b918d565a37f33805ec9fe55bb2fbf04a3",
+      "bytes": 144948,
+      "status": "ai-generated",
+      "source": "docs/open-forest-navigation-generation.json"
     }
   ]
 }

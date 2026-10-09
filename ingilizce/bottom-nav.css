@@ -1,25 +1,25 @@
-/* Minimal forest-and-gold dock: six equal destinations in one row. */
+/* Approved light forest dock: six equal destinations in one row. */
 #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{
  --dm-nav-height:68px;box-sizing:border-box!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:none!important;
  display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:0!important;align-items:center!important;overflow:visible!important;
  min-height:60px;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))!important;
- border:1px solid #b99a53!important;border-bottom:0!important;border-radius:20px 20px 0 0!important;
- background:linear-gradient(180deg,#164e3d,#0c342a)!important;box-shadow:0 -3px 14px #092e2426,inset 0 1px 0 #ffe4a04d!important;
+ border:1px solid #cfbd8f!important;border-bottom:0!important;border-radius:20px 20px 0 0!important;
+ background:linear-gradient(180deg,#fff9e8,#f5ecd5)!important;box-shadow:0 -3px 12px #63562c14,inset 0 1px 0 #fffdf1!important;
 }
 #bottomNavMobile#bottomNavMobile::before{content:none!important}
 #bottomNavMobile#bottomNavMobile .bn-item{
  box-sizing:border-box!important;position:relative;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;flex:1 1 0!important;
  width:100%!important;min-width:0!important;min-height:52px!important;margin:0!important;padding:2px 1px!important;gap:1px!important;
- border:1px solid transparent!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;transform:none!important;transition:background .15s ease!important;color:#fff0cb!important;
+ border:1px solid transparent!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;transform:none!important;transition:background .15s ease!important;color:#284b35!important;
 }
 #bottomNavMobile#bottomNavMobile .bn-icon{display:block!important;width:34px!important;height:28px!important;font-size:0!important;line-height:1!important;animation:none!important;transform:none!important;flex-shrink:0}
-#bottomNavMobile#bottomNavMobile .dm-nav-art{display:block;width:100%;height:100%;background-image:url('bottom-nav-forest-v1.webp');background-size:300% 200%;background-repeat:no-repeat;filter:drop-shadow(0 1px 1px #001c1b44)}
-#bottomNavMobile#bottomNavMobile .bn-label{display:flex!important;align-items:center;justify-content:center;width:100%;max-width:100%;min-height:16px;color:#fff0cb!important;font-size:10px!important;font-weight:800!important;line-height:1.1!important;text-align:center;white-space:normal!important;word-break:normal!important;overflow:visible!important;text-overflow:clip!important}
-#bottomNavMobile#bottomNavMobile .bn-item:hover{background:#ffffff0c!important}
-#bottomNavMobile#bottomNavMobile .bn-item.active{background:#fff0bd12!important;border-color:#d7b66e80!important;box-shadow:none!important;transform:none!important}
-#bottomNavMobile#bottomNavMobile .bn-item.active .bn-label{color:#ffe3a0!important}
+#bottomNavMobile#bottomNavMobile .dm-nav-art{display:block;width:100%;height:100%;background-image:url('bottom-nav-open-forest-v1.webp');background-size:300% 200%;background-repeat:no-repeat;filter:none}
+#bottomNavMobile#bottomNavMobile .bn-label{display:flex!important;align-items:center;justify-content:center;width:100%;max-width:100%;min-height:16px;color:#284b35!important;font-size:10px!important;font-weight:800!important;line-height:1.1!important;text-align:center;white-space:normal!important;word-break:normal!important;overflow:visible!important;text-overflow:clip!important}
+#bottomNavMobile#bottomNavMobile .bn-item:hover{background:#ebe6cc!important}
+#bottomNavMobile#bottomNavMobile .bn-item.active{background:#f3df9b70!important;border-color:#c3a15b70!important;box-shadow:none!important;transform:none!important}
+#bottomNavMobile#bottomNavMobile .bn-item.active .bn-label{color:#705322!important}
 #bottomNavMobile#bottomNavMobile .bn-item.active::after{display:none!important}
-#bottomNavMobile#bottomNavMobile .bn-item:focus-visible{outline:3px solid #f6d581!important;outline-offset:1px}
+#bottomNavMobile#bottomNavMobile .bn-item:focus-visible{outline:3px solid #4b7953!important;outline-offset:1px}
 #bottomNavMobile#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"],#bottomNavMobile#bottomNavMobile .bn-item[data-ekran="tab-profil"]{display:none!important}
 #bottomNavMobile#bottomNavMobile .bn-item.dm-level-locked::after{position:absolute;top:2px;right:3px;font-size:9px;line-height:11px}
 .dc-fullscreen-overlay,body #tab-dunyam.bd-kok.dc-fullscreen-overlay.active,body.kk-acik .seviye-harita-overlay{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
@@ -30,3 +30,7 @@
 
 /* The parchment route is a fixed scene; reserve space on its outer frame. */
 body.dm-parkur-open #bzParkur#bzParkur>.bz-ic{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+
+/* Fine dividers echo the approved parchment menu without adding height. */
+#bottomNavMobile#bottomNavMobile .bn-item:not([data-ekran="tab-dunya"])::before{content:"";position:absolute;left:-1px;top:7px;bottom:7px;width:1px;background:#cabd9860;pointer-events:none}
+

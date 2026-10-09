@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-09",
+  "tool": "image_gen.imagegen",
+  "reference": "Original imagegen concept 3 Açık orman approved by owner in this conversation",
+  "prompt": "Transparent 3x2 icon atlas matching selected light forest concept: green winding path with gold flag; green and sage people; green controller with gold buttons; cream open book with green cover; green shopping bag with gold star; simple turquoise parrot head with yellow beak. Warm flat outlined illustrations, no text, no panel backgrounds, no scenery.",
+  "encoding": "PNG RGBA to WebP quality 92 method 6; dimensions and transparency unchanged",
+  "asset": "ingilizce/bottom-nav-open-forest-v1.webp"
+}

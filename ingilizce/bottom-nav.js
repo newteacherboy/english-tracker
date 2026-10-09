@@ -2,7 +2,7 @@
 (() => {
  'use strict';
  const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':2,'tab-aktiviteler':3,'tab-derscalis':4,'tab-magaza':5,'tab-profil':6,'tab-dunyam':6};
- const positions = ['100% 100%','0% 0%','0% 0%','50% 0%','100% 0%','0% 100%','50% 100%'];
+ const positions = ['0% 0%','50% 0%','50% 0%','100% 0%','0% 100%','50% 100%','100% 100%'];
  const layout = [['tab-dunya','Oyna'],['tab-meduakis','Arkadaşlar'],['tab-aktiviteler','Oyunlar'],['tab-derscalis','Ders Çalış'],['tab-magaza','Mağaza'],['tab-dunyam','Benim Dünyam']];
   let observer;
  function decorate() {
@@ -43,3 +43,4 @@
  decorate();
  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',decorate,{once:true});
 })();
+
