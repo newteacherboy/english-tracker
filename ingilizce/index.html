@@ -11711,6 +11711,7 @@ function ozellikSecDoldur() {
                 }
         
                         function duyuruGoster(duyuru) {
+                    if(window.dmPapiNotices?.defer('teacher:'+duyuru.id,()=>duyuruGoster(duyuru)))return;
                     duyuruAktifId = duyuru.id;
                     let temalar = {
                         mavi:    { medal: 'linear-gradient(145deg,#60a5fa,#2563eb)', tagBg: 'rgba(96,165,250,.14)', tagBorder: 'rgba(96,165,250,.35)', tagColor: '#93c5fd', btn: 'linear-gradient(120deg,#60a5fa,#3b82f6)', glow1: 'rgba(96,165,250,.22)', glow2: 'rgba(37,99,235,.20)', icon: '📘' },
@@ -14479,10 +14480,11 @@ const YO_SOHBET = [
         
         /* ========== ORTAK ARAYÜZ ========== */
         function yoToast(metin) {
+          if(window.dmPapiNotices?.defer('toast:'+metin,()=>yoToast(metin)))return;
           let e = document.createElement('div'); e.className = 'yo-toast'; e.innerText = metin;
           document.body.appendChild(e);
           setTimeout(() => e.classList.add('gor'), 20);
-          setTimeout(() => { e.classList.remove('gor'); setTimeout(() => e.remove(), 400); }, 3200);
+          (window.dmPapiNotices?.later||((el,fn,ms)=>setTimeout(fn,ms)))(e,()=>{ e.classList.remove('gor'); setTimeout(() => e.remove(), 400); },3200);
         }
                function yoModalAc(baslik, html, kapaninca) {
           if (window.yoGomuluHedef) {
@@ -14852,6 +14854,7 @@ const YO_SOHBET = [
             } });
         }
         function seviyeDavetGoster() {
+          if(window.dmPapiNotices?.defer('placement-invite',seviyeDavetGoster))return;
           if (!yo || yo.seviye || !yoIsim || yoIsim.toLowerCase() === 'teacher') return;
           let anahtar = 'ing_yo_svtDavet_' + yoIsim;
           if (localStorage.getItem(anahtar)) return;
@@ -14864,7 +14867,7 @@ const YO_SOHBET = [
           let kapat = () => { d.classList.remove('gor'); setTimeout(() => d.remove(), 400); };
           d.querySelector('#yoDavetEvet').onclick = () => { kapat(); seviyeTestAc(); };
           d.querySelector('#yoDavetHayir').onclick = kapat;
-          setTimeout(kapat, 15000);
+          (window.dmPapiNotices?.later||((el,fn,ms)=>setTimeout(fn,ms)))(d,kapat,15000);
         }
         
         /* ========== 9) SOHBET MODU — SEVİYELİ HARİTA ========== */
@@ -17417,6 +17420,7 @@ function avatarSVG(s, stil, px, cins) {
     return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci));
   }
   function oyunda() {
+    if(window.dmPapiNotices?.blocked())return true;
     let secici = ['.game-modal-overlay', '.seviye-harita-overlay', '.kart-oyun-overlay', '.pomodoro-overlay', '#genelSonucOverlay', '#yoModal', '.duy3-overlay', '.bd-perde', '.ka-perde', '.od-perde', '.yb-perde.acik'];
     for (let s of secici) for (let el of document.querySelectorAll(s)) if (getComputedStyle(el).display !== 'none') return true;
     let bo = $('baOyunEkrani'), ko = $('kpKelimeOyunEkrani');
@@ -18122,6 +18126,7 @@ if (typeof orgXp === 'function') {
 
   /* ================= 3) UYARI ŞERİDİ ================= */
   function serit(tur, ikon, metin, btnYazi, btnFn) {
+    if(window.dmPapiNotices?.defer('banner:'+metin,()=>serit(tur,ikon,metin,btnYazi,btnFn)))return;
     let eski = document.querySelector('.uy-serit'); if (eski) eski.remove();
     let s = document.createElement('div');
     s.className = 'uy-serit ' + tur; s.setAttribute('role', 'status');
@@ -18131,7 +18136,7 @@ if (typeof orgXp === 'function') {
     let kapat = () => { s.classList.remove('gor'); setTimeout(() => s.remove(), 500); };
     s.querySelector('.x').onclick = kapat;
     if (btnYazi) s.querySelector('.b').onclick = () => { kapat(); btnFn && btnFn(); };
-    setTimeout(kapat, 9000);
+    (window.dmPapiNotices?.later||((el,fn,ms)=>setTimeout(fn,ms)))(s,kapat,9000);
   }
     const parkuraGit = () => { (window.dunyaAc || baModuAc)(); };
 
@@ -20182,6 +20187,7 @@ let adaRenk = adaRenkleri[
   }[b.tur] || `${b.gonderen}: ${b.metin}`);
   let kuyruk = [], gorulen = new Set(JSON.parse(sessionStorage.getItem('ing_cb_gor') || '[]')), ilkTur = true, cbAcik = false;
   function kartGoster(b) {
+    if(window.dmPapiNotices?.defer('social:'+b.sat,()=>kartGoster(b)))return;
     cbAcik = true;
     let k = document.createElement('div'); k.className = 'cb-kart'; k.setAttribute('role', 'status');
     let av = (typeof karakterSvg === 'function' && b.gonderen && karakterSvg(b.gonderen, 44)) || ICON[b.tur] || '🔔';
@@ -20193,13 +20199,15 @@ let adaRenk = adaRenkleri[
     let kapat = () => { k.classList.remove('gor'); setTimeout(() => { k.remove(); cbAcik = false; }, 500); };
     k.querySelector('.cb-x').onclick = kapat;
     let g = k.querySelector('.cb-git'); if (g) g.onclick = () => { kapat(); let d = (window._dlSon || []).find(x => x.durum === 'kabul'); if (d) duelloOyununuAc(d.oyun); };
-    setTimeout(kapat, 7000);
+    (window.dmPapiNotices?.later||((el,fn,ms)=>setTimeout(fn,ms)))(k,kapat,7000);
   }
   async function davetGoster(b) {
+    if(window.dmPapiNotices?.defer('duel:'+b.sat,()=>davetGoster(b)))return;
     let liste = [];
     try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); liste = (d && d.liste) || []; window._dlSon = liste; } catch (e) {}
     let dl = liste.find(x => x.durum === 'bekliyor' && kucuk(x.alici) === kucuk(aktifOgrenciAdi) && kucuk(x.gonderen) === kucuk(b.gonderen));
     if (!dl) return;
+    if(window.dmPapiNotices?.defer('duel:'+b.sat,()=>davetGoster(b)))return;
     let p = document.createElement('div'); p.className = 'dv-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Düello daveti');
     p.innerHTML = `<div class="dv-kart"><div class="dv-kilic">⚔️</div><h3>Düello daveti!</h3><p><b>${guvenliMetin(b.gonderen)}</b> seni <b>${OYUN_AD[dl.oyun] || dl.oyun}</b> düellosuna çağırıyor.<br>Kazanan +3 ⚡ ve +20 XP alır!</p><button class="dv-kabul">⚔️ Kabul et ve oyna</button><button class="dv-vaz">Sonra</button></div>`;
     document.body.appendChild(p);
@@ -21316,6 +21324,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
   /* ================= 4) TAVSİYE KARTLARI (nadiren) ================= */
   let sonTavsiye = 0, oturumSay = 0, gosterilen = new Set();
   function tavsiye(o, zorla) {
+    if(window.dmPapiNotices?.defer('recommendation:'+o.metin,()=>tavsiye(o,zorla)))return true;
     if (!zorla && (Date.now() - sonTavsiye < 5 * 60000 || oturumSay >= 6)) return false;
     if (document.querySelector('.tv-kart, .sa-perde')) return false;
     sonTavsiye = Date.now(); oturumSay++;
@@ -21326,7 +21335,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     let kapat = () => { k.classList.remove('gor'); setTimeout(() => k.remove(), 500); };
     k.querySelector('.tv-x').onclick = kapat;
     if (o.btn) k.querySelector('.tv-al').onclick = () => { kapat(); o.fn(); };
-    setTimeout(kapat, 9000);
+    (window.dmPapiNotices?.later||((el,fn,ms)=>setTimeout(fn,ms)))(k,kapat,9000);
     return true;
   }
   /* Mağaza sekmesine girince hemen öneri */
@@ -21582,7 +21591,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     return l;
   }
   setInterval(() => {
-    if (window.dmNudgeSystemActive || !girisli() || !yoVar() || oyunda() || window.turAcik || !turBitti('ana') || document.hidden) return;
+    if (window.dmPapiNotices?.blocked() || window.dmNudgeSystemActive || !girisli() || !yoVar() || oyunda() || window.turAcik || !turBitti('ana') || document.hidden) return;
     let gecen = Date.now() - bkBas;
     if (bkSay >= 3 || gecen < 3 * 60000 || Date.now() - bkSon < 12 * 60000) return;
     if (document.querySelector('.tv-kart, .sa-perde, .kr-perde, .od-perde, .bc-perde, .cb-kart, .bk-kart')) return;
@@ -21594,13 +21603,14 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     requestAnimationFrame(() => requestAnimationFrame(() => k.classList.add('gor')));
     let kapat = () => { k.classList.remove('gor'); setTimeout(() => k.remove(), 600); };
     k.onclick = () => { kapat(); if (s[3]) s[3](); };
-    setTimeout(kapat, 8000);
+    (window.dmPapiNotices?.later||((el,fn,ms)=>setTimeout(fn,ms)))(k,kapat,8000);
   }, 20000);
 })();
 </script>
 
-<link rel="stylesheet" href="papi-onboarding.css?v=2">
-<script src="papi-onboarding.js?v=2"></script>
+<link rel="stylesheet" href="papi-onboarding.css?v=3">
+<script src="papi-flow.js?v=1"></script>
+<script src="papi-onboarding.js?v=3"></script>
 
                 <!-- ===================== GÜVENLİK (GÖVDE) — <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 
@@ -22220,17 +22230,6 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   /* 1) Duyuru açıkken diğer katmanları beklet */
   setInterval(() => document.body.classList.toggle('duyuru-acik', gor($('duyuruOverlay')) || gor($('duyuruGecmisModal'))), 300);
 
-  /* 2) Papi turu, duyuru varken otomatik başlamasın; duyuru kapanınca başlasın */
-  let orgTur = window.turBaslat;
-  if (typeof orgTur === 'function') window.turBaslat = function (k, zorla) {
-    if (!zorla && (gor($('duyuruOverlay')) || duyuruBekleniyor)) {
-      let a = arguments, self = this;
-      let t = setInterval(() => { if (!gor($('duyuruOverlay')) && !duyuruBekleniyor) { clearInterval(t); setTimeout(() => orgTur.apply(self, a), 600); } }, 500);
-      return;
-    }
-    return orgTur.apply(this, arguments);
-  };
-
   /* 3) Her girişte duyuru kontrolü mutlaka yapılsın */
   let duyuruBekleniyor = false, kontrolYapildi = false;
   let orgKontrol = window.duyuruKontrolEt;
@@ -22405,10 +22404,12 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   setInterval(duelloBildirimYokla, 60000);
 
   async function davetGoster(b) {
+    if(window.dmPapiNotices?.defer('duel:'+b.sat,()=>davetGoster(b)))return;
     let liste = [];
     try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); liste = (d && d.liste) || []; window._dlSon = liste; } catch (e) {}
     let dl = liste.find(x => x.durum === 'bekliyor' && kucuk(x.alici) === kucuk(aktifOgrenciAdi) && kucuk(x.gonderen) === kucuk(b.gonderen));
     if (!dl) return;
+    if(window.dmPapiNotices?.defer('duel:'+b.sat,()=>davetGoster(b)))return;
     let p = document.createElement('div'); p.className = 'dv-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Düello daveti');
     p.innerHTML = `<div class="dv-kart"><div class="dv-kilic">⚔️</div><h3>Düello daveti!</h3><p><b>${guvenliMetin(b.gonderen)}</b> seni <b>${OYUN_AD[dl.oyun] || dl.oyun}</b> düellosuna çağırıyor.<br>Kazanan +3 ⚡ ve +20 XP alır!</p><button class="dv-kabul">⚔️ Kabul et ve oyna</button><button class="dv-vaz">Sonra</button></div>`;
     document.body.appendChild(p);
@@ -22502,6 +22503,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   const gor = el => el && getComputedStyle(el).display !== 'none' && el.getClientRects().length > 0;
 
   async function karsilamaGoster() {
+    if(window.dmPapiNotices?.defer('welcome',()=>karsilamaGoster()))return;
     if (!girisli() || !yoVar()) return;
 
     let isim = aktifOgrenciAdi;
@@ -28388,6 +28390,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ================= 4) OYUN: 11 mini oyundan birer soru ================= */
   let O = null, zamanlayici = null;
   async function oyunBaslat(b, d) {
+    const ownerAtStart=isim();
     if (!bolumAcik(b)) return toast(`🔒 Parkur ${[1,10,20,30][b]}. seviyede açılır.`);
     if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
     if (!sinifModu()) {
@@ -28418,6 +28421,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     /* cümleler: Kelime Treni → cümle bankası, Cümle Ustası → hazır cümle listesi */
     let cumleler = [];
     try { let r = await fetch(`${apiURL}?islem=cumleleriGetir&sinif=${D.sinif}&uniteler=${D.unite}`); let v = await r.json(); cumleler = [...(v.banka || []), ...(v.ders || [])]; } catch (e) {}
+    if(ownerAtStart!==isim())return;
     let yoC = (typeof YO_CUMLE !== 'undefined' ? YO_CUMLE : []).map(c => ({ en: c[0], tr: c[1], sv: c[2] }));
     let sv = D.sinif <= 4 ? ['A1'] : D.sinif <= 6 ? ['A1', 'A2'] : ['A2', 'B1'];
     let yoUygun = yoC.filter(c => sv.includes(c.sv));
@@ -28434,7 +28438,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function oyunUst() {
     let s = O.sorular[O.i], [, ik, ad] = TIPLER.find(t => t[0] === s.tip);
     let enerji = typeof window.genelEnerjiKalan === 'number' ? window.genelEnerjiKalan : '–';
-    return `<div class="bz-oyun-ust"><button class="kapat" id="bzCik" aria-label="Oyundan çık" style="width:38px;height:38px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:900;cursor:pointer;flex:none">✕</button>
+    return `<div class="bz-oyun-ust"><button class="kapat" id="bzCik" ${window.dmPapiFirstPractice?.locked('school')?'disabled title="İlk çalışmanı tamamla"':''} aria-label="Oyundan çık" style="width:38px;height:38px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:900;cursor:pointer;flex:none">✕</button>
       <button class="bz-geri-soru" id="bzGeriSoru" aria-label="Önceki soruları gör" ${O.gecmis.some(Boolean) ? '' : 'disabled'}>←</button>
       <div class="bz-noktalar" aria-label="İlerleme">${O.sorular.map((_, j) => `<i class="${j < O.i ? (O.sonuclar[j] ? 'd' : 'y') : j === O.i ? 'a' : ''}"></i>`).join('')}</div>
       <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span></div>
@@ -28514,7 +28518,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let p = perdeAc(), s = O.sorular[O.i];
     O.jk = {};
     p.innerHTML = `<div class="bz-oyun dm-question-panel" data-question-type="${s.tip}">${oyunUst()}</div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div><div class="bz-jokerler" id="bzJokerler"></div></div>`;
-    $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { let b = O.b; kapat(); goster('harita', b); } };
+    $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { window.dmPapiFirstPractice?.complete('school');let b = O.b; kapat(); goster('harita', b); } };
     $('bzGeriSoru').onclick = () => incelemeAc();
     let alan = $('bzAlan');
     ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte })[s.tip](s, alan);
@@ -28533,12 +28537,13 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     ilerle();
   }
   function enerjiBitti(ilerle) {
+    window.dmPapiFirstPractice?.recover('school');
     let p = document.createElement('div'); p.className = 'bz-panel'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
     p.innerHTML = `<div class="bz-panel-kart"><div style="font-size:44px">🪫</div><h3>Enerjin bitti!</h3><p>Devam etmek için 1 ⚡ lazım. 15 dakikada bir +1 enerji dolar.</p>
       <button class="bz-btn" id="bzEnAl">⚡ 5 enerji al · 15 🪙</button>
       <button class="bz-btn" id="bzEnBirak" style="margin-top:8px;background:#f5f3ff;color:#6d28d9;box-shadow:none">Durağı bırak</button></div>`;
     document.body.appendChild(p);
-    $('bzEnBirak').onclick = () => { p.remove(); let b = O.b; kapat(); goster('harita', b); };
+    $('bzEnBirak').onclick = () => { window.dmPapiFirstPractice?.complete('school');p.remove(); let b = O.b; kapat(); goster('harita', b); };
     $('bzEnAl').onclick = () => {
       if (typeof window.enerjiPaketiAl === 'function') window.enerjiPaketiAl();
       let deneme = 0, t = setInterval(() => {
@@ -28747,6 +28752,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
 
   /* ================= 5) SONUÇ ================= */
   function bitir() {
+    window.dmPapiFirstPractice?.complete('school');
     let no = durakNo(O.b, O.d), gecti = O.dogru >= GECME, sure = Math.round((Date.now() - O.bas) / 1000);
     let puan = window.OC ? OC.puan() : O.dogru * 90, yil = gecti ? (O.dogru >= 10 ? 3 : O.dogru >= 8 ? 2 : 1) : 0;
     let yeniAcildi = false, parkurIlk=!tamam.has(no);
@@ -28799,6 +28805,18 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     await window.dunyaAc();
   };
   window.buyuAkademisiYeniAc = window.baModuAc;
+  window.dmPapiStartAdventure = async function () {
+    const owner=isim();
+    if(!yuklendi)await ilerlemeYukle();
+    if(owner!==isim())return false;
+    duraklariKur();
+    let target=null;
+    for(let b=0;b<4&&!target;b++)if(bolumAcik(b))for(let d=0;d<=siradakiDurak(b)&&d<durakSayisi(b);d++)if(!tamam.has(durakNo(b,d))&&durakHavuzu(b,d).havuz.length>=8){target={b,d};break;}
+    if(!target&&durakHavuzu(0,0).havuz.length>=8)target={b:0,d:0};
+    if(!target)return false;
+    await oyunBaslat(target.b,target.d);
+    return owner===isim()&&!!document.querySelector('.bz-oyun');
+  };
   /* Parkur sekmesinin üstündeki "Büyü Akademisi · Kelime Modu · Sohbet · Kelime Kartları" şeridi içeriği örtmesin */
   setInterval(() => {
     let k = $('bzParkur'), sr = $('pkSekmeler'); if (!k) return;
@@ -30325,7 +30343,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="google-login.js?v=rights-7"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=3">
 <script src="parkur-map-theme-v1.js?v=3"></script>
-<link rel="stylesheet" href="story-path.css?v=2"><script src="story-curriculum.js?v=2"></script><script src="story-path.js?v=3"></script>
+<link rel="stylesheet" href="story-path.css?v=2"><script src="story-curriculum.js?v=2"></script><script src="story-path.js?v=4"></script>
 <link rel="stylesheet" href="medupro.css?v=2">
 <script src="medupro.js?v=5"></script>
 <link rel="stylesheet" href="activity-ui.css?v=5">
@@ -30335,10 +30353,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script src="feature-catalog.js?v=3"></script>
-<script src="weekly-ui.js?v=5"></script>
+<script src="weekly-ui.js?v=6"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=1">
-<script src="experience-ui.js?v=4"></script>
+<script src="experience-ui.js?v=5"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <script src="harf-bahcesi.js?v=2"></script>
 <link rel="stylesheet" href="game-experience.css?v=2">
@@ -30349,9 +30367,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=2"></script><script src="contact-policy.js?v=2"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=2"></script>
-<link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=2"></script>
+<link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
-<link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=10"></script>
+<link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=11"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=2"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script src="profile-forest.js?v=1"></script>
