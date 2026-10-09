@@ -53,6 +53,21 @@
 #tab-dunyam .bd-not{font-weight:700;color:#7C6FA6;font-size:14px;margin:8px 2px}
 
 /* Günün 3 Görevi */
+#bdOdevler #odoKart{margin:0 0 18px;padding:14px;background:#fff9e9;border:2px solid #e4cc8b;border-radius:20px;box-shadow:0 4px 0 #cdb37333}
+#bdOdevler #odoKart[hidden]{display:none!important}
+#bdOdevler #odoKart h3{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 10px;font:800 18px/1.3 Nunito,system-ui;color:#31513d}
+#bdOdevler #odoKart h3 small{font-size:11px;font-weight:800;padding:5px 9px;border-radius:9px;color:#7d601d;background:#f6e7b9}
+#bdOdevler #odoKart .odo-satir{display:flex;align-items:center;gap:10px;padding:12px;margin:8px 0 0;border:1px solid #eee3c8;border-radius:15px;background:white}
+#bdOdevler #odoKart .m{flex:1;min-width:0}
+#bdOdevler #odoKart .m b{display:block;font-size:14px;line-height:1.4;color:#284b38;overflow-wrap:anywhere}
+#bdOdevler #odoKart .m small{display:block;margin-top:5px;font-size:12px;line-height:1.4;color:#69806b;overflow-wrap:anywhere}
+#bdOdevler #odoKart .odo-sayac{display:inline-block;color:#916814;font-variant-numeric:tabular-nums;font-weight:900}
+#bdOdevler #odoKart .odo-sayac.gecikti{color:#b34b35}
+#bdOdevler #odoKart .odo-satir button{flex:none;min-height:44px;min-width:64px;padding:10px 12px;border:0;border-radius:12px;background:#30784e;color:#fff;font:900 13px Nunito,system-ui;box-shadow:0 3px 0 #1f5737;cursor:pointer}
+#bdOdevler #odoKart .odo-satir button:disabled{opacity:.6;cursor:wait}
+#bdOdevler #odoKart .odo-satir.bitti{background:#f2f7ee;opacity:1}
+#bdOdevler #odoKart .odo-satir.bitti button{background:#e3ecdc;color:#456745;box-shadow:none}
+
 #tab-dunyam .bd-tahta{position:relative;margin:6px 0 -6px;padding:10px 16px;background:linear-gradient(180deg,#c47a3c,#9a5a2b);border:3px solid #6e3b16;border-radius:16px;box-shadow:0 5px 0 #5a2e10;z-index:1}
 #tab-dunyam .bd-tahta h2{margin:0;color:#fff;font-family:'Fredoka',inherit;font-size:24px;font-weight:700;text-shadow:0 2px 0 #5a2e10}
 #tab-dunyam .bd-gorevler{list-style:none;margin:0;padding:18px 10px 8px;background:#FFF7E8;border-radius:0 0 22px 22px;display:flex;flex-direction:column;gap:8px}

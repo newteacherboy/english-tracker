@@ -29929,36 +29929,78 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   /* ===================================================================
      3) ÖĞRENCİ: Ödevlerim + otomatik tamamlama
      =================================================================== */
-  let odevler = [], odevZaman = 0;
+  let odevler = [], odevZaman = 0, odevKisi = '', odevIstek = null;
   const ogrenciAdi = () => (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi) || '';
   async function odevleriYukle(zorla) {
-    if (!ogrenciAdi() || kucuk(ogrenciAdi()) === 'teacher') return odevler;
-    if (!zorla && Date.now() - odevZaman < 120000) return odevler;
-    try { let r = await fetch(`${apiURL}?islem=odevlerim&ogrenci=${encodeURIComponent(ogrenciAdi())}&_=${Date.now()}`); let d = await r.json(); if (d && d.ok) { odevler = d.liste || []; odevZaman = Date.now(); } } catch (e) {}
-    return odevler;
+    const kisi = ogrenciAdi();
+    if (kisi !== odevKisi) { odevKisi = kisi; odevler = []; odevZaman = 0; odevIstek = null; $('odoKart')?.remove(); }
+    if (!kisi || kucuk(kisi) === 'teacher') return [];
+    if (!zorla && Date.now() - odevZaman < 30000) return odevler;
+    if (odevIstek) return odevIstek;
+    const istek = (async () => {
+      try {
+        let r = await fetch(`${apiURL}?islem=odevlerim&ogrenci=${encodeURIComponent(kisi)}&_=${Date.now()}`), d = await r.json();
+        if (kisi === odevKisi && kisi === ogrenciAdi()) { if (r.ok && d && d.ok) odevler = Array.isArray(d.liste) ? d.liste : []; odevZaman = Date.now(); }
+      } catch (e) { if (kisi === odevKisi) odevZaman = Date.now(); }
+      return kisi === ogrenciAdi() ? odevler : [];
+    })();
+    odevIstek = istek;
+    try { return await istek; } finally { if (odevIstek === istek) odevIstek = null; }
   }
   function kalanGun(o) {
     let gecen = Math.floor((Date.now() - Date.parse(o.atandi)) / 86400000), kalan = 5 - (gecen % 5);
     return kalan <= 1 ? '⚠️ yarın −1 puan' : `−1 puana ${kalan} gün`;
   }
-  async function kartCiz() {
-    let p = $('soPanel'); if (!p) return;
-    let k = $('odoKart'); if (!k) { k = document.createElement('div'); k.id = 'odoKart'; k.className = 'odo-kart'; p.insertBefore(k, p.firstChild); }
-    let l = await odevleriYukle();
-    if (!l.length) { k.style.display = 'none'; return; }
-    k.style.display = '';
-    let bekleyen = l.filter(o => !o.yapildi).length;
-    k.innerHTML = `<h3>📝 Ödevlerim <small>${bekleyen ? bekleyen + ' bekliyor' : 'hepsi tamam 🎉'}</small></h3>` + l.map(o => `<div class="odo-satir${o.yapildi ? ' bitti' : ''}"><span class="m"><b>${kac(o.baslik)}</b>
-      <small>${o.yapildi ? '✅ Tamamlandı' + (o.yildiz ? ' · ' + '⭐'.repeat(o.yildiz) : '') : kalanGun(o)}${o.sonTarih ? ' · son gün ' + kisaTarih(o.sonTarih) : ''}${o.not ? ' · ' + kac(o.not) : ''}</small></span>
-      <button type="button" data-od="${o.id}">${o.yapildi ? 'Tekrar' : 'Başla'}</button></div>`).join('');
-    k.querySelectorAll('[data-od]').forEach(b => b.onclick = () => odevBaslat(l.find(o => String(o.id) === b.dataset.od)));
+  function odevBitis(o) {
+    if (!o.sonTarih) return null;
+    // Tarih alanı Türkiye'de belirtilen günün sonuna kadar geçerlidir.
+    const tarih = String(o.sonTarih);
+    const bitis = Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(tarih) ? tarih + 'T23:59:59+03:00' : tarih);
+    return Number.isFinite(bitis) ? bitis : null;
   }
+  function odevSayaclariniGuncelle() {
+    document.querySelectorAll('#odoKart [data-od-bitis]').forEach(e => {
+      const kalan = Math.max(0, Math.ceil((Number(e.dataset.odBitis) - Date.now()) / 1000));
+      const gun = Math.floor(kalan / 86400), saat = Math.floor(kalan % 86400 / 3600), dakika = Math.floor(kalan % 3600 / 60), saniye = kalan % 60;
+      e.textContent = kalan ? `${gun ? gun + ' gün · ' : ''}${String(saat).padStart(2,'0')}:${String(dakika).padStart(2,'0')}:${String(saniye).padStart(2,'0')} kaldı` : 'Teslim süresi doldu';
+      e.classList.toggle('gecikti', kalan === 0);
+    });
+  }
+  async function kartCiz() {
+    const kisi = ogrenciAdi();
+    const p = $('bdOdevler') || $('soPanel'); if (!p) return;
+    let k = $('odoKart');
+    if (!k) { k = document.createElement('div'); k.id = 'odoKart'; k.className = 'odo-kart'; k.hidden = true; p.prepend(k); }
+    else if (k.parentElement !== p) p.prepend(k);
+    let l = await odevleriYukle();
+    if (kisi !== ogrenciAdi()) return;
+    // Hesap değişimi önbelleği temizlerken eski kart da kaldırılmış olabilir.
+    if (!k.isConnected) { k = $('odoKart'); if (!k) { k = document.createElement('div'); k.id = 'odoKart'; k.className = 'odo-kart'; p.prepend(k); } }
+    k.hidden = !l.length;
+    if (!l.length) { k.replaceChildren(); return; }
+    let bekleyen = l.filter(o => !o.yapildi).length;
+    k.innerHTML = `<h3>Öğretmenimin Ödevleri <small>${bekleyen ? bekleyen + ' bekliyor' : 'Hepsi tamamlandı'}</small></h3>` + [...l].sort((a,b) => Number(!!a.yapildi) - Number(!!b.yapildi)).map(o => {
+      const bitis = odevBitis(o);
+      const durum = o.yapildi ? '✓ Tamamlandı' : bitis !== null ? `<span class="odo-sayac" data-od-bitis="${bitis}" role="timer" aria-label="Ödev teslimine kalan süre"></span>` : 'Son tarih belirtilmedi';
+      return `<div class="odo-satir${o.yapildi ? ' bitti' : ''}"><span class="m"><b>${kac(o.baslik)}</b><small>${durum}</small>${o.not ? '<small class="odo-not">' + kac(o.not) + '</small>' : ''}</span><button type="button" data-od="${kac(o.id)}">${o.yapildi ? 'Tekrar' : 'Başla'}</button></div>`;
+    }).join('');
+    odevSayaclariniGuncelle();
+    k.querySelectorAll('[data-od]').forEach(b => b.onclick = async () => {
+      b.disabled = true;
+      try { await odevBaslat(l.find(o => String(o.id) === b.dataset.od)); } finally { if (b.isConnected) b.disabled = false; }
+    });
+  }
+  window.dmOdevKartCiz = kartCiz;
   let sonGor = false;
   setInterval(() => {
-    let t = $('tab-sanaozel'), gor = !!(t && t.getClientRects().length && getComputedStyle(t).display !== 'none');
-    if (gor && (!sonGor || !$('odoKart'))) kartCiz();
+    const yeni = $('tab-dunyam')?.classList.contains('active') && document.querySelector('#tab-dunyam [data-panel="sanaozel"]')?.hidden === false;
+    const eski = $('tab-sanaozel'), gor = !!(yeni || (eski && eski.getClientRects().length && getComputedStyle(eski).display !== 'none'));
+    if (gor) {
+      if (!sonGor || !$('odoKart') || Date.now() - odevZaman >= 30000) kartCiz();
+      odevSayaclariniGuncelle();
+    }
     sonGor = gor;
-  }, 1200);
+  }, 1000);
   const bekle = ms => new Promise(r => setTimeout(r, ms));
   /* [v4.8] Ödevden açılan oyun enerji harcamaz. Muafiyet, ödevin açtığı oyun penceresi açık kaldığı sürece geçerli. */
   const pencereAcik = x => !!x && x.isConnected && x.getClientRects().length > 0 && getComputedStyle(x).display !== 'none';
@@ -29983,6 +30025,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     /* Ödevden açılan konu ve oyun seviye kilidine takılmaz (öğretmen bilerek verdi) */
     window.__odevAcilisBitis = Date.now() + 8000;
     if (typeof sanaOzelTamEkranKapat === 'function') try { sanaOzelTamEkranKapat(); } catch (e) {}
+    $('tab-dunyam')?.classList.remove('active');
     if (o.tur === 'ders') {
       let v = o.veri || {};
       if (typeof dersCalisTamEkranAc === 'function') dersCalisTamEkranAc();
@@ -30625,7 +30668,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="ders-vadi.css?v=3"><script src="ders-vadi.js?v=2"></script>
 <link rel="stylesheet" href="ders-test.css?v=2"><script src="ders-test.js?v=2"></script>
 <link rel="stylesheet" href="papi-cards.css?v=2"><script src="papi-cards.js?v=4"></script>
-<link rel="stylesheet" href="benim-dunyam.css?v=7"><script src="benim-dunyam.js?v=5"></script>
+<link rel="stylesheet" href="benim-dunyam.css?v=8"><script src="benim-dunyam.js?v=6"></script>
 <link rel="stylesheet" href="meteor.css?v=3"><script src="meteor.js?v=3"></script>
 <link rel="stylesheet" href="word-wheel.css?v=2"><script src="word-wheel.js?v=3"></script>
 </body>      

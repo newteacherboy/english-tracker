@@ -225,7 +225,7 @@
       <div class="bd-kart" id="bdKart"></div>
       <div class="bd-sekmeler" role="tablist" aria-label="Benim Dünyam">${SEKMELER.map(([k, ad]) => `<button type="button" role="tab" class="bd-sekme" data-bd="${k}" aria-selected="false">${ad}</button>`).join('')}</div>
       <div class="bd-govde">
-        <section class="bd-panel" data-panel="sanaozel"><div id="bdGorevler"></div><div id="bdHafta"></div><div id="bdDiger"></div></section>
+        <section class="bd-panel" data-panel="sanaozel"><div id="bdOdevler"></div><div id="bdGorevler"></div><div id="bdHafta"></div><div id="bdDiger"></div></section>
         <section class="bd-panel" data-panel="istatistik" hidden><div id="bdIstat"></div><div id="bdGelisim"></div></section>
         <section class="bd-panel" data-panel="rozetler" hidden><div id="bdRozet"></div></section>
         <section class="bd-panel" data-panel="karakter" hidden><div id="bdKarakterUst"></div><div id="bdKarakterAlan"></div><div id="bdKoleksiyon"></div></section>
@@ -486,7 +486,7 @@
   function ciz() {
     if (!$('tab-dunyam') || !$('tab-dunyam').classList.contains('active')) return;
     kartCiz(); sahneCiz();
-    if (sekme === 'sanaozel') { if (typeof window.soPanelCiz === 'function') { try { window.soPanelCiz(); } catch (e) {} } gorevlerCiz(); haftaCiz(); digerleriniTasi(); }
+    if (sekme === 'sanaozel') { if (typeof window.soPanelCiz === 'function') { try { window.soPanelCiz(); } catch (e) {} } gorevlerCiz(); haftaCiz(); digerleriniTasi(); if (typeof window.dmOdevKartCiz === 'function') window.dmOdevKartCiz(); }
     if (sekme === 'istatistik') istatCiz();
     if (sekme === 'rozetler') rozetCiz();
     if (sekme === 'karakter') karakterCiz();
