@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {buildDialogue,buildCloze,prepareActivity,evaluateActivity,getSpeechRequest,normalizeAnswer} from './papi-v2-activity-engine.mjs';
 const chapter={phrases:[{en:'May I borrow a pencil?',tr:'Bir kalem ödünç alabilir miyim?'},{en:'Here is your pencil.',tr:'İşte kalemin.'}],curatedDialogue:{prompt:'May I borrow a pencil?',reply:'Here is your pencil.',translation:'İşte kalemin.',distractors:['I have a cat.','It is raining.']},curatedCloze:{prompt:'May I _____ a pencil?',correctText:'borrow',translation:'Ödünç almak',fullSentence:'May I borrow a pencil?',distractors:['borrows','borrowing']}};
 const dlg=buildDialogue(chapter,7);
-assert.equal(dlg.options.length,2);
+assert.equal(dlg.options.length,3);
 assert.equal(evaluateActivity(dlg,'Here is your pencil.').correct,true);
 assert.equal(evaluateActivity(dlg,'May I borrow a pencil?').correct,false);
 assert.equal(dlg.speakingAssessment,false);
