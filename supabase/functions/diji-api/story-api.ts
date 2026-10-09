@@ -20,6 +20,8 @@ export function storyAPI(db:any,json:any){
   if(method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
   if(op==='storyStatus'){const {data,error}=await db.from('papi_story_progress').select('chapter,cursor,completed,version').eq('actor_key',owner).order('chapter');return error?json({ok:false,mesaj:'Öğrenme yolu yüklenemedi.'},503):json({ok:true,progress:data||[]});}
   const chapter=Number(b.chapter),C=STORY_CHAPTERS[chapter];if(!Number.isInteger(chapter)||!C)return json({ok:false,mesaj:'Geçersiz durak.'},400);
+  // Fail closed until the 0–79 migration, QA and backup verification are complete.
+  if(chapter>=40 && (typeof Deno==='undefined'||Deno.env.get('PAPI_STORY_V2_ENABLED')!=='true'))return json({ok:false,mesaj:'Yeni öğrenme bölümleri henüz açılmadı.'},403);
   const read=()=>db.from('papi_story_progress').select('*').eq('actor_key',owner).eq('chapter',chapter).maybeSingle();
   const {data:existing,error}=await read();if(error)return json({ok:false,mesaj:'Durak yüklenemedi.'},503);
   const predecessor=previousChapter(chapter);
