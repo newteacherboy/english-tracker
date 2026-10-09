@@ -22,11 +22,11 @@ button:focus-visible,select:focus-visible{outline:3px solid #23463b;outline-offs
 <small id="counter" aria-live="polite"></small><h2 id="heading"></h2><p id="question"></p>
 <div class="tools"><button id="speak" type="button">🔊 Papi'yi dinle</button><button id="slow" type="button">🐢 Yavaş dinle</button><button id="translate" type="button">Türkçeyi göster</button></div>
 <p id="translation" class="hidden"></p><div id="answers"></div><div id="feedback" role="status" aria-live="polite">Bir cevap seçerek başla.</div>
-<button id="next" class="primary" type="button" disabled>Devam et →</button></section></main>
+<button id="retry" type="button" class="hidden">↺ Cümleyi yeniden oluştur</button><button id="next" class="primary" type="button" disabled>Devam et →</button></section></main>
 <script type="module">
 import {buildDialogue,buildCloze,prepareActivity,evaluateActivity,getSpeechRequest} from '../scripts/papi-v2-activity-engine.mjs';
 const el=id=>document.getElementById(id);
-let chapters=[],steps=[],at=0,active=null,answered=false,orderTokens=[];
+let chapters=[],steps=[],at=0,active=null,answered=false,orderTokens=[],completed=false;
 const make=(tag,text,cls)=>{const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;return n};
 async function load(){
  try{
@@ -43,12 +43,12 @@ function start(){
  steps=[...c.steps.filter(x=>x.kind!=='scene'&&x.kind!=='teach')];
  const dlg=buildDialogue(c,43);steps.splice(2,0,dlg);
  const cloze=buildCloze(c,57);if(cloze)steps.splice(4,0,cloze);
- at=0;render();
+ at=0;completed=false;render();
 }
 function render(){
  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
  active=prepareActivity(steps[at],(at+1)*173);answered=false;orderTokens=[];
- el('next').disabled=true;el('translation').classList.add('hidden');
+ el('next').disabled=true;el('next').textContent='Devam et →';el('retry').classList.toggle('hidden',active.kind!=='order');el('translation').classList.add('hidden');
  el('translation').textContent=active.tr||active.translation||active.hint||'';
  el('counter').textContent='Etkinlik '+(at+1)+' / '+steps.length;
  el('progress').style.width=(100*at/steps.length)+'%';
@@ -75,16 +75,22 @@ function renderOrder(){
 function choose(button,response){
  if(answered)return;answered=true;
  const result=evaluateActivity(active,response);
- el('feedback').textContent=result.correct?'Harika! Doğru cevap.':'Tekrar bakalım: '+(result.explanation||active.answer||active.correctText||'');
+ const correctText=(active.kind==='order'?active.answer:active.kind==='choice'||active.kind==='listen'?active.options[active.answer]:active.correctText);
+ el('feedback').textContent=result.correct?'Harika! Doğru cevap.':'Doğru cevap: '+String(correctText||'')+' — '+String(result.explanation||active.translation||active.tr||'');
+ el('next').textContent=at===steps.length-1?'Bölümü tamamla ✓':'Devam et →';
  el('translation').classList.remove('hidden');
  for(const b of el('answers').querySelectorAll('button'))b.disabled=true;
  if(button)button.classList.add(result.correct?'correct':'wrong');
  el('next').disabled=false;
 }
 el('next').addEventListener('click',()=>{
- if(!answered)return;if(at===steps.length-1){el('feedback').textContent='Bölümün önizlemesi bitti; puan veya ilerleme kaydedilmedi.';el('next').disabled=true;return}at++;render();
+ if(!answered||completed)return;
+ if(at===steps.length-1){completed=true;el('progress').style.width='100%';el('feedback').textContent='Bölüm tamamlandı. Bu önizlemede puan, enerji veya ilerleme kaydedilmedi.';el('next').disabled=true;return}
+ at++;render();
 });
 el('translate').addEventListener('click',()=>el('translation').classList.toggle('hidden'));
+el('retry').addEventListener('click',()=>{if(active?.kind!=='order'||answered)return;renderOrderReset()});
+function renderOrderReset(){orderTokens=[];el('answers').replaceChildren();renderOrder()}
 function speak(speed){
  if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){el('feedback').textContent='Bu tarayıcıda seslendirme desteklenmiyor.';return}
  const request=getSpeechRequest(active,speed);if(!request)return;
