@@ -1,0 +1,82 @@
+/* Concept 5 map chrome + concept 3 illustrated dialogue scenes. */
+.dm-parkur-scroll.ds-host{display:flex;flex-direction:column;min-height:0}
+.ds-host>.dm-parchment-map{flex:1;min-height:0;height:auto}
+.ds-host>[hidden]{display:none!important}
+.dm-story-mode{display:flex;flex:none;gap:3px;padding:4px;background:#104e3e;border:1px solid #c9a95d;border-radius:24px;margin:4px 10px 6px;z-index:6;box-shadow:0 2px 5px #193e2828}
+.dm-story-mode button{flex:1;min-width:0;min-height:36px;border:0;border-radius:20px;background:transparent;color:#fff4d5;font:900 12px Nunito,system-ui;padding:6px;cursor:pointer}
+.dm-story-mode button[aria-pressed=true]{background:linear-gradient(#fff0ba,#f4d789);color:#173b2d;box-shadow:inset 0 1px #fff8db,0 2px 3px #082c2630}
+.dm-story-map{position:relative;flex:1;min-height:0;overflow:hidden;background:#f2e2a6 url('story-garden-map.webp') center/cover no-repeat;font-family:Nunito,system-ui;isolation:isolate}
+.ds-map-status{position:absolute;z-index:5;top:7px;left:10px;right:10px;text-align:center;font:900 12px Nunito;color:#153f31;background:#fff4d8e8;border:1px solid #e0be74;border-radius:12px;padding:6px}
+.ds-map-track{position:absolute;inset:35px 0 63px;overflow:auto;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-y}
+.ds-map-route{position:relative;background:repeating-linear-gradient(180deg,transparent 0 20px,#f0cb7780 20px 26px,transparent 26px 44px) center/4px 100% no-repeat}
+.ds-node{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;flex-direction:column;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;width:120px;cursor:pointer;color:#163e2f}
+.ds-medallion{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;background:linear-gradient(#fff8db,#e8d29e);border:3px solid #c7a563;box-shadow:0 3px 0 #866b3d,0 0 0 3px #fff4be;font-size:27px}
+.ds-node.current .ds-medallion{background:linear-gradient(#fffbe3,#ffe7a2);border-color:#e7b535;box-shadow:0 0 0 4px #ffefa1,0 0 18px #ffe483}
+.ds-node.done .ds-medallion{background:linear-gradient(#e3f5c7,#a9d984);color:#16582b}
+.ds-node.locked .ds-medallion{background:linear-gradient(#dad4c3,#aba796);border-color:#938670;box-shadow:0 3px 0 #766a54,0 0 0 2px #e8dfc1;font-size:22px}
+.ds-node:disabled{opacity:.9;cursor:default}
+.ds-cefr{margin-top:-6px;padding:2px 7px;border-radius:8px;background:#124d3d;color:#fff2ca;z-index:1;font:900 10px Nunito}
+.ds-node b{padding:4px 7px;background:linear-gradient(#fff8dd,#f5e7c5);border:1px solid #c2a777;border-radius:9px;box-shadow:0 2px 0 #977d4940;font:900 12px/1.15 Nunito;text-align:center;max-width:140px;margin-top:2px}
+.ds-world{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;background:#fff3d2;border:1px solid #d2b374;border-radius:12px;padding:5px 12px;color:#214b34;font:900 12px Nunito}
+.ds-map-papi{position:absolute;left:0;bottom:64px;width:28%;max-height:34%;object-fit:contain;z-index:3;pointer-events:none}
+.ds-map-continue{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);min-width:48%;max-width:90%;border:2px solid #d4e8b0;border-radius:25px;background:linear-gradient(#3db842,#14862c);box-shadow:0 3px 0 #5b7846;color:#fff9de;padding:9px 18px;font:700 19px Fredoka,Nunito;z-index:5;cursor:pointer}
+body.dm-story-open{overflow:hidden!important}
+#dmStoryLesson{position:fixed;inset:0;z-index:1000010;overflow:auto;overscroll-behavior:contain;background:#164d3d;font-family:Nunito,system-ui;color:#163d2d;-webkit-text-fill-color:initial;display:flex;justify-content:center;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#dmStoryLesson *{box-sizing:border-box}
+#dmStoryLesson button{cursor:pointer;font-family:Nunito,system-ui;font-weight:900;touch-action:manipulation}
+#dmStoryLesson .ds-lesson-shell{width:100%;max-width:660px;min-height:100%;display:flex;flex-direction:column;background:#efdfab url('story-garden-map.webp') center/cover no-repeat;position:relative;padding-bottom:12px}
+#dmStoryLesson .ds-lesson-header{display:flex;align-items:center;gap:10px;padding:10px 12px;position:relative;z-index:4;background:linear-gradient(#fff3d5f0,#fff3d5c0)}
+#dmStoryLesson .ds-lesson-header>div{flex:1;min-width:0;text-align:center}
+#dmStoryLesson .ds-lesson-header h2{color:#153f2f!important;-webkit-text-fill-color:#153f2f!important;background:none!important;text-shadow:none!important;font:700 18px/1.15 Fredoka,Nunito;margin:3px 0 6px;overflow-wrap:anywhere}
+#dmStoryLesson .ds-lesson-header small{font:900 11px Nunito;color:#25513d}
+#dmStoryLesson .ds-back,#dmStoryLesson .ds-voice{width:42px;height:42px;border:1px solid #c4a568;border-radius:50%;background:#fff1c8;color:#21462e;flex:none;box-shadow:0 2px 0 #a88857;font-size:22px}
+#dmStoryLesson .ds-progress{height:5px;border-radius:8px;background:#c8c5a8;max-width:190px;margin:auto;overflow:hidden}
+#dmStoryLesson .ds-progress i{display:block;height:100%;background:#299942}
+#dmStoryLesson .ds-scene{position:relative;flex:none;height:clamp(260px,43dvh,380px);background:#c9e5c8 url('story-scene-boy.webp') center/cover no-repeat}
+#dmStoryLesson .ds-scene.girl{background-image:url('story-scene-girl.webp')}
+#dmStoryLesson .ds-scene.neutral{background-image:url('story-garden-map.webp');background-position:center 30%}
+#dmStoryLesson .ds-neutral-papi{position:absolute;left:9%;bottom:0;height:70%;width:45%;object-fit:contain}
+#dmStoryLesson .ds-speech{position:absolute;left:8%;top:5%;max-width:65%;background:#fff9e5;border:1px solid #dfc78d;box-shadow:0 3px 0 #b6a77d50;border-radius:28px;padding:12px 16px;font:700 clamp(18px,4.8vw,28px)/1.2 Fredoka,Nunito;color:#103d30;z-index:2;overflow-wrap:anywhere}
+#dmStoryLesson .ds-speech:after{content:'';position:absolute;bottom:-12px;left:35%;border-top:13px solid #fff9e5;border-left:12px solid transparent;border-right:3px solid transparent}
+#dmStoryLesson .ds-panel{position:relative;z-index:3;margin:-15px 10px 0;padding:15px 17px 12px;background:linear-gradient(#fff5d9,#f7e8c0);border:2px solid #d3b16a;border-radius:26px;box-shadow:0 4px 0 #8b754960;flex:none;min-width:0}
+#dmStoryLesson .ds-step-label{font-size:11px;font-weight:900;color:#396143;margin-bottom:8px}
+#dmStoryLesson .ds-task p{font:700 14px/1.45 Nunito;margin:8px 0;color:#234635}
+#dmStoryLesson .ds-task h3,#dmStoryLesson .ds-complete h3{font:700 20px/1.2 Fredoka,Nunito;color:#123e2c;margin:8px 0;background:none;text-shadow:none}
+#dmStoryLesson .ds-audio{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap;margin:10px 0}
+#dmStoryLesson .ds-audio button{padding:7px 12px;border:1px solid #d4b56f;border-radius:20px;background:#fff6dc;color:#224b34;min-height:38px;font-size:12px;box-shadow:0 2px 0 #b79b6040}
+#dmStoryLesson .ds-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+#dmStoryLesson .ds-options button{min-height:55px;padding:12px 10px;border:1px solid #cfb479;border-radius:18px;background:#fffdf0;color:#183f30;font:900 16px/1.25 Nunito;box-shadow:0 3px 0 #b4975d50;overflow-wrap:anywhere}
+#dmStoryLesson .ds-options button:last-child:nth-child(odd){grid-column:1/-1}
+#dmStoryLesson .ds-options .ds-correct{background:#dbf5bc;border:2px solid #36a83e;color:#17482b}
+#dmStoryLesson .ds-options .ds-wrong{border-color:#c3684f;background:#fff0df}
+#dmStoryLesson .ds-options button:disabled{opacity:.85}
+#dmStoryLesson .ds-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#dmStoryLesson .ds-cards button{padding:12px;min-height:85px;background:#fffaf0;border:1px solid #d1b77c;border-radius:15px;color:#234b36;text-align:left}
+#dmStoryLesson .ds-cards b{display:block;font-size:14px;line-height:1.3}
+#dmStoryLesson .ds-cards span{display:block;font-size:12px;margin-top:7px}
+#dmStoryLesson .ds-cards [hidden]{display:none!important}
+#dmStoryLesson .ds-cards small{font-size:10px;display:block;margin-top:6px;color:#48634b}
+#dmStoryLesson .ds-cards .discovered{border-color:#69a85b;background:#f1f8dc}
+#dmStoryLesson .ds-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+#dmStoryLesson .ds-actions button{flex:1;min-height:43px;border:1px solid #caab6d;border-radius:23px;padding:9px 12px;background:#fff2d4;color:#214b32;font-size:13px}
+#dmStoryLesson .ds-actions .ds-primary{background:linear-gradient(#3ab744,#168a2c);border:2px solid #bbd99a;color:#fffce9;font:700 17px Fredoka,Nunito;box-shadow:0 3px 0 #567d38}
+#dmStoryLesson .ds-feedback{font:800 13px/1.4 Nunito;color:#77513a;min-height:18px;margin-top:9px}
+#dmStoryLesson .ds-feedback.correct{color:#176733}
+#dmStoryLesson .ds-save-note{display:block;font:700 10px/1.3 Nunito;color:#526544;text-align:center;margin-top:12px}
+#dmStoryLesson .ds-tokens{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+#dmStoryLesson .ds-tokens button{background:#fff9e6;border:1px solid #c7ac70;box-shadow:0 2px 0 #b7996650;border-radius:10px;padding:8px 11px;color:#153f2e;min-height:42px;font-size:14px}
+#dmStoryLesson .ds-tokens button:disabled{opacity:.35}
+#dmStoryLesson .ds-sentence{padding:12px;background:#fffbe8;border:1px dashed #bba468;border-radius:12px;min-height:55px;font:900 16px/1.4 Nunito;color:#234c34;overflow-wrap:anywhere}
+#dmStoryLesson textarea{display:block;width:100%;min-height:100px;max-height:220px;padding:12px;border:1px solid #b99d61;border-radius:12px;background:#fffdf1;color:#163e30;font:16px/1.4 Nunito;resize:vertical}
+#dmStoryLesson label{font:900 12px Nunito;color:#315c3e}
+#dmStoryLesson .ds-complete{text-align:center}
+#dmStoryLesson .ds-complete>span{font-size:54px;display:block;animation:ds-leaf .6s ease-out}
+#dmStoryLesson .ds-loading{background:#fff5d6;border-radius:20px;padding:25px;margin:20vh 15px auto;text-align:center;color:#193e2e}
+#dmStoryLesson .ds-loading button{background:#268b3a;color:white;border:0;border-radius:20px;padding:12px 20px}
+#dmStoryLesson [hidden]{display:none!important}
+@keyframes ds-leaf{from{transform:scale(.3) rotate(-25deg);opacity:0}to{transform:scale(1);opacity:1}}
+@media(max-height:550px) and (min-width:650px){#dmStoryLesson .ds-lesson-shell{max-width:100%;display:grid;grid-template-columns:42% 58%;grid-template-rows:auto 1fr;padding:0}#dmStoryLesson .ds-lesson-header{grid-column:1/-1}#dmStoryLesson .ds-scene{height:100%;min-height:240px}#dmStoryLesson .ds-panel{margin:0;border-radius:18px}#dmStoryLesson .ds-speech{font-size:20px;max-width:85%}}
+@media(max-width:360px){#dmStoryLesson .ds-panel{padding:12px;margin-left:7px;margin-right:7px}#dmStoryLesson .ds-options button{font-size:14px}#dmStoryLesson .ds-scene{height:clamp(260px,43dvh,360px)}.dm-story-mode button{font-size:11px}}
+@media(prefers-reduced-motion:reduce){#dmStoryLesson .ds-complete>span{animation:none}}
+
+body.dm-parkur-open #bzParkur>.dm-map-extended:has(.ds-learning)::before{background-image:url('story-garden-map.webp')}

@@ -28667,7 +28667,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     gorunum={ad:'harita',b};
     p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page})+'</div></div>';
     p.querySelectorAll('.dm-adventure-node,.dm-map-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
-    requestAnimationFrame(()=>window.dmParkurMapMount?.($('dmParkurScroll')));
+    requestAnimationFrame(()=>{window.dmParkurMapMount?.($('dmParkurScroll'));window.dmStoryPath?.mount($('dmParkurScroll'));});
   }
 
   /* ================= 3) DURAK KARTI ================= */
@@ -30589,6 +30589,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="google-login.js?v=rights-7"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=3">
 <script src="parkur-map-theme-v1.js?v=3"></script>
+<link rel="stylesheet" href="story-path.css?v=1"><script src="story-curriculum.js?v=1"></script><script src="story-path.js?v=1"></script>
 <link rel="stylesheet" href="medupro.css?v=2">
 <script src="medupro.js?v=5"></script>
 <link rel="stylesheet" href="activity-ui.css?v=5">

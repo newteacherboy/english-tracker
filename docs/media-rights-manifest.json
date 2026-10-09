@@ -590,6 +590,27 @@
       "bytes": 235324,
       "status": "ai-generated",
       "source": "docs/forest-navigation-generation.json"
+    },
+    {
+      "path": "ingilizce/story-garden-map.webp",
+      "sha256": "24b2f224f6f3efd3055a685b23a799d159cccd53f1cb8fc7907c8333424fbba1",
+      "bytes": 543354,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/story-scene-boy.webp",
+      "sha256": "16e1c98f4709037340ba1383a9c4c7a545528c00e8e388de5696e68ffd9ce39a",
+      "bytes": 436932,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/story-scene-girl.webp",
+      "sha256": "49089fad5bbd79cda59a923b268a12a2be261b3d37ba37504fc22e89e9e28ed4",
+      "bytes": 422706,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
     }
   ]
 }
