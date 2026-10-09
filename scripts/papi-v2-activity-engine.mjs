@@ -3,7 +3,7 @@ import {seededShuffle, shuffledChoice} from './papi-v2-question-helpers.mjs';
 
 export function normalizeAnswer(value) {
   return String(value ?? '').normalize('NFKC').replace(/[\u2018\u2019]/g, "'")
-    .replace(/[.!?,;:]+$/g,'').replace(/\s+/g,' ').trim().toLocaleLowerCase('en');
+    .replace(/\s+/g,' ').trim().replace(/[.!?,;:]+$/g,'').toLocaleLowerCase('en');
 }
 export function buildDialogue(chapter, seed=1) {
   const cards=chapter?.phrases;
