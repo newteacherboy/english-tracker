@@ -1,3 +1,4 @@
+import { selectWordBankRound } from './word-bank-rotation.ts';
 export const WHEEL_POINTS=[50,100,150,200,250,300,400,500,600,750,900,1000];
 const LEGACY_POINTS=[50,100,150,200,250,300,100,200];
 const pointsFor=(r:any)=>r.state.wheelPoints||LEGACY_POINTS;
@@ -23,7 +24,7 @@ export function wordWheelAPI(db:any,json:any){
    const cls=Number(b.sinif),unit=Number(b.unite),mode=Number(b.mode);if(!Number.isInteger(cls)||cls<1||cls>12||!Number.isInteger(unit)||unit<1||unit>100||![1,2].includes(mode))return json({ok:false,mesaj:'Sınıf, ünite ve oyuncu sayısı seç.'},400);
    const {data,error}=await db.from('word_bank').select('english,turkish').eq('active',true).eq('class_no',cls).eq('unit_no',unit).limit(2001);if(error)return json({ok:false,mesaj:'Kelimeler yüklenemedi.'},503);
    const seen=new Set(),words=[...(data||[])].map((r:any)=>({en:String(r.english||'').trim(),tr:String(r.turkish||'').trim()})).filter((w:any)=>{const k=w.en.toLocaleLowerCase('en');if(!w.en||!w.tr||seen.has(k))return false;seen.add(k);return true;});if(!words.length)return json({ok:false,mesaj:'Seçilen ünitede kelime yok.'},404);if(words.length>2000)return json({ok:false,mesaj:'Bu ünite çok büyük.'},400);
-   const meanings=[...new Set(words.map((w:any)=>w.tr))];let deck=shuffle(words).slice(0,12);if(deck.length>1&&deck[0].en===String(b.previousFirst||'')){[deck[0],deck[1]]=[deck[1],deck[0]];}deck=deck.map((w:any)=>({...w,options:shuffle([w.tr,...shuffle(meanings.filter(t=>normalize(t)!==normalize(w.tr))).slice(0,3)])}));
+   const meanings=[...new Set(words.map((w:any)=>w.tr))];let deck;try{deck=await selectWordBankRound(db,owner,cls,unit,words,12);}catch{return json({ok:false,mesaj:'Kelime geçmişi yüklenemedi.'},503);}if(deck.length>1&&deck[0].en===String(b.previousFirst||'')){[deck[0],deck[1]]=[deck[1],deck[0]];}deck=deck.map((w:any)=>({...w,options:shuffle([w.tr,...shuffle(meanings.filter(t=>normalize(t)!==normalize(w.tr))).slice(0,3)])}));
    const state={wheelPoints:WHEEL_POINTS,index:0,pending:null,last:null,players:Array.from({length:mode},(_,i)=>({name:clean(b.names?.[i])||'Oyuncu '+(i+1),score:0,correct:0,wrong:0}))};
    const {data:row,error:err}=await db.from('papi_wheel_sessions').insert({actor_key:owner,student_id:a.role==='student'?a.student_id:null,teacher_id:a.role==='teacher'?a.teacher_id:null,class_no:cls,unit_no:unit,mode,deck,state}).select('*').single();if(err||!row)return json({ok:false,mesaj:'Oyun başlatılamadı.'},503);return json(view(row));
   }
