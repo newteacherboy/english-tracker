@@ -22,4 +22,4 @@ jobs:
         with:
           node-version: '22'
       - name: Validate shared rotation
-        run: node --test tests/word-bank-rotation.test.cjs tests/harf-bahcesi-round-size.test.cjs
+        run: node --test tests/word-bank-rotation.test.cjs tests/harf-bahcesi-round-size.test.cjs tests/dm-matches-12-rounds.test.cjs
