@@ -20,3 +20,5 @@ body.dm-papi-preview .dm-level-locked{filter:none!important;opacity:1!important}
 @keyframes papiFloat{50%{transform:translateX(-50%) translateY(-12px) rotate(3deg)}}@keyframes papiFlight{0%{transform:translate(-160%,-15%) rotate(-18deg);opacity:0}35%{opacity:1}65%{transform:translate(-45%,-5%) rotate(6deg)}100%{transform:translate(-50%,0)}}@keyframes papiSpark{50%{opacity:.55;transform:scale(1.06)}}@keyframes papiOrbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @media(max-height:740px){#dmPapiTour .papi-mascot{top:10%;height:29dvh}#dmPapiTour .papi-sheet{padding:14px 16px}#dmPapiTour h2{font-size:24px}#dmPapiTour p{font-size:13px;margin-bottom:10px}.papi-choices{margin:10px 0;gap:7px}.papi-choices button{padding:9px}.papi-progress{margin:8px 0}}
 @media(prefers-reduced-motion:reduce){#dmPapiTour *,#dmPapiTour *:before{animation:none!important;transition:none!important}}
+
+.papi-never{display:flex;align-items:center;gap:10px;padding:10px 0 16px;font-size:14px;font-weight:800;cursor:pointer}.papi-never input{width:22px;height:22px;accent-color:#237b5d;flex-shrink:0}

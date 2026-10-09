@@ -21599,8 +21599,8 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 })();
 </script>
 
-<link rel="stylesheet" href="papi-onboarding.css?v=1">
-<script src="papi-onboarding.js?v=1"></script>
+<link rel="stylesheet" href="papi-onboarding.css?v=2">
+<script src="papi-onboarding.js?v=2"></script>
 
                 <!-- ===================== GÜVENLİK (GÖVDE) — <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 
@@ -29106,7 +29106,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     if (!ad || kucuk(ad) === 'teacher' || dogrulanan === kucuk(ad)) return;
     if (typeof yo === 'undefined' || !yo) return;
     let r, d;
-    try { r = await fetch(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(ad)}&anahtar=yo&_=${Date.now()}`); if (!r.ok) return; d = await r.json(); }
+    try { r = await fetch(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(ad)}&anahtar=yo&tanitim=1&_=${Date.now()}`); if (!r.ok) return; d = await r.json(); }
     catch (e) { return; }                                   /* bağlantı yok: karar verme, sonra tekrar dene */
     if (r.headers && r.headers.get('X-Diji-Cevrimdisi')) return;   /* çevrimdışı yedekten gelen cevaba güvenme */
     let sunucu = null; try { sunucu = d && d.deger ? JSON.parse(d.deger) : null; } catch (e) { sunucu = null; }
@@ -29493,7 +29493,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   const kisaTarih = t => { try { return new Date(t).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
 
   /* ===================================================================
-     1) PAPİ TANITIMI: sadece yeni hesaplara, bir kez
+     1) PAPİ TANITIMI: yeni hesaplarda en fazla iki giriş
      =================================================================== */
   let turKarar = '';                                   /* '' = henüz bilinmiyor → tur gösterilmez */
   let orgTurBitti = window.turBitti;
@@ -29502,24 +29502,25 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     return orgTurBitti.apply(this, arguments);
   };
   let turKisi = '';
+  window.dmPapiIntroEligible = () => ['yeni', 'mevcut'].includes(turKarar) && turKisi === kucuk(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '');
+  window.dmPapiIntroPolicy = () => turKarar === 'mevcut' ? 'existing' : 'new';
   async function turKarariVer() {
     let ad = (typeof yoIsim !== 'undefined' && yoIsim) || '';
     if (!ad || kucuk(ad) === 'teacher') return;
     if (turKisi === kucuk(ad) && turKarar) return;
     if (turKisi !== kucuk(ad)) { turKisi = kucuk(ad); turKarar = ''; }
     let d;
-    try { let r = await fetch(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(ad)}&anahtar=yo&_=${Date.now()}`); if (!r.ok) return; if (r.headers.get('X-Diji-Cevrimdisi')) return; d = await r.json(); }
+    try { let r = await fetch(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(ad)}&anahtar=yo&tanitim=1&_=${Date.now()}`); if (!r.ok) return; if (r.headers.get('X-Diji-Cevrimdisi')) return; d = await r.json(); }
     catch (e) { return; }                                  /* bağlantı yok: tur gösterme, sonra tekrar dene */
     let sunucu = null; try { sunucu = d && d.deger ? JSON.parse(d.deger) : null; } catch (e) {}
     let turlar = (sunucu && sunucu.turlar) || [];
-    let kullanilmis = !!(sunucu && (turlar.length || sunucu.karakter || (sunucu.altin || 0) > 0 || sunucu.oyunGun || sunucu.lig || sunucu.dcOdul || sunucu.xpGun));
-    if (!sunucu || (!kullanilmis && !turlar.length)) { turKarar = 'yeni'; return; }   /* hiç verisi olmayan yeni hesap → tur bir kez */
-    turKarar = 'eski';
-    /* eski hesap: turları "görüldü" olarak işaretle ki bir daha hiçbir cihazda çıkmasın */
-    if (yoVar()) {
-      yo.turlar = Array.from(new Set([...(yo.turlar || []), ...turlar, 'ana', 'v2:ana']));
-      if (typeof yoKaydet === 'function') yoKaydet();
-    }
+    const intro = sunucu && sunucu.dmPapiIntro;
+    const registered = Date.parse(d && d.kayitTarihi || '');
+    const cutoff = Date.parse('2026-10-09T17:06:40.000Z');
+    const used = !!(sunucu && (turlar.length || sunucu.karakter || (sunucu.altin || 0) > 0 || sunucu.oyunGun || sunucu.lig || sunucu.dcOdul || sunucu.xpGun));
+    const existing = Number.isFinite(registered) ? registered <= cutoff : intro?.audience === 'existing' || (!intro?.automatic && used);
+    if (existing) { turKarar = intro?.rolloutSeen ? 'eski' : 'mevcut'; return; }
+    turKarar = intro?.disabled || Number(intro?.shown || 0) >= 2 ? 'eski' : 'yeni';
   }
   setInterval(() => { let p = $('panel-alani'); if (p && p.style.display === 'block') turKarariVer(); }, 2000);
 

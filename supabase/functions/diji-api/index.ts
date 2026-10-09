@@ -1434,6 +1434,8 @@ async function handle(req: Request) {
     }
     const s = await hedefOgrenci(a, name); if (!s) return json(null);
     const { data } = await supabase.from("extra_data").select("value,updated_at").eq("student_id", s.id).eq("key_name", key).maybeSingle();
+    // Only the authenticated student's introduction request receives its registration date.
+    if (key === "yo" && String(val(body, q, "tanitim")) === "1") return json({ deger: data ? metinVer(data.value) : null, guncelleme: data?.updated_at || null, kayitTarihi: s.created_at || null });
     return json(data ? { deger: metinVer(data.value), guncelleme: data.updated_at } : null);
   }
   if (op === "ekVeriTumu") {
