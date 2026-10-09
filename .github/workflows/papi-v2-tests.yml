@@ -30,6 +30,7 @@ jobs:
           node --test tests/papi-v2-server-order.test.mjs
           node --test tests/papi-v2-curated-content.test.mjs
           node --test tests/papi-v2-release-gates.test.mjs
+          node --test tests/papi-v2-real-path.test.mjs
       - name: Check existing story regression tests
         run: node --test tests/story-api.test.cjs
 
