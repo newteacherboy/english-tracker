@@ -1,11 +1,14 @@
 import { STORY_CHAPTERS as LEGACY_CHAPTERS } from './story-curriculum.js';
 import { STORY_V2_CHAPTERS } from './story-v2-curriculum.js';
 const STORY_CHAPTERS=[...LEGACY_CHAPTERS,...STORY_V2_CHAPTERS];
+/* Keep all old unlock prerequisites exactly as before; extra V2 chapters are optional side quests.
+ * Otherwise a learner already on chapter 10 could be retroactively blocked by chapter 49. */
 export const previousChapter=(chapter:number):number|null=>{
+ if(!Number.isInteger(chapter)||chapter<0||chapter>=80)return null;
  if(chapter===0)return null;
- if(chapter<40)return chapter%10===0?chapter+39:chapter-1;
- if(chapter<80)return chapter%10===0?chapter-31:chapter-1;
- return null;
+ if(chapter<40)return chapter-1;
+ if(chapter%10===0)return Math.floor((chapter-40)/10)*10+9;
+ return chapter-1;
 };
 const normStory=(x:any)=>String(x??'').normalize('NFKC').trim().toLocaleLowerCase('en-US').replace(/[.!?,;:]/g,'').replace(/\s+/g,' ');
 export function storyAPI(db:any,json:any){
