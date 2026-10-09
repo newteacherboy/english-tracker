@@ -1629,7 +1629,26 @@
           "hint": "Parti için biraz suya ihtiyacımız var."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Would you like to join us?",
+        "reply": "I'd love to, but I have another plan.",
+        "translation": "I'd love to, but başka bir planım var.",
+        "distractors": [
+          "I'd love to join yesterday.",
+          "It costs three liras."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "I would _____ to join you.",
+        "correctText": "love",
+        "distractors": [
+          "loves",
+          "loving"
+        ],
+        "translation": "Bize katılmak ister misin?",
+        "fullSentence": "I would love to join you."
+      }
     },
     {
       "id": 51,
@@ -1763,7 +1782,26 @@
           "hint": "Bize katılmak ister misin?"
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "How do I get to the bank?",
+        "reply": "Walk past the museum and turn right.",
+        "translation": "Müzeyi geçip sağa dön.",
+        "distractors": [
+          "I travelled by train.",
+          "It is very tasty."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Walk _____ the museum.",
+        "correctText": "past",
+        "distractors": [
+          "passed",
+          "passing"
+        ],
+        "translation": "Müzeyi geç ve sağa dön.",
+        "fullSentence": "Walk past the museum."
+      }
     },
     {
       "id": 52,
@@ -1895,7 +1933,26 @@
           "hint": "Müzeyi geç ve sağa dön."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "I feel tired today. What should I do?",
+        "reply": "You should get some rest.",
+        "translation": "Biraz dinlenmelisin.",
+        "distractors": [
+          "The museum is open.",
+          "I bought new shoes."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "You _____ get some rest.",
+        "correctText": "should",
+        "distractors": [
+          "shouldn't",
+          "mustn't"
+        ],
+        "translation": "Biraz dinlenmelisin.",
+        "fullSentence": "You should get some rest."
+      }
     },
     {
       "id": 53,
@@ -2028,7 +2085,26 @@
           "hint": "Biraz dinlenmelisin."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What did you do last summer?",
+        "reply": "We visited the castle.",
+        "translation": "Kaleyi ziyaret ettik.",
+        "distractors": [
+          "We are visiting it tomorrow.",
+          "We visit it every day."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "We _____ the castle last summer.",
+        "correctText": "visited",
+        "distractors": [
+          "visit",
+          "visiting"
+        ],
+        "translation": "Geçen yaz kaleyi ziyaret ettik.",
+        "fullSentence": "We visited the castle last summer."
+      }
     },
     {
       "id": 54,
@@ -2162,7 +2238,26 @@
           "hint": "Geçen yaz kaleyi ziyaret ettik."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Is this jacket expensive?",
+        "reply": "No, it is cheaper than that one.",
+        "translation": "Hayır, diğerinden daha ucuz.",
+        "distractors": [
+          "I went to the cinema.",
+          "It's next to the hospital."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "This jacket is _____ than that one.",
+        "correctText": "cheaper",
+        "distractors": [
+          "cheap",
+          "cheapest"
+        ],
+        "translation": "Bu ceket diğerinden daha ucuz.",
+        "fullSentence": "This jacket is cheaper than that one."
+      }
     },
     {
       "id": 55,
@@ -2296,7 +2391,26 @@
           "hint": "Bu ceket diğerinden daha ucuz."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What are you doing tomorrow?",
+        "reply": "We are meeting at the station.",
+        "translation": "İstasyonda buluşacağız.",
+        "distractors": [
+          "We met there last year.",
+          "We never meet anyone."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "We are _____ at the station tomorrow.",
+        "correctText": "meeting",
+        "distractors": [
+          "meet",
+          "met"
+        ],
+        "translation": "Yarın istasyonda buluşuyoruz.",
+        "fullSentence": "We are meeting at the station tomorrow."
+      }
     },
     {
       "id": 56,
@@ -2428,7 +2542,26 @@
           "hint": "Yarın istasyonda buluşuyoruz."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What do we do after cutting the vegetables?",
+        "reply": "Then add a little water.",
+        "translation": "Sonra biraz su ekle.",
+        "distractors": [
+          "We were on holiday.",
+          "It is on the left."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Then _____ a little water.",
+        "correctText": "add",
+        "distractors": [
+          "adds",
+          "adding"
+        ],
+        "translation": "Önce sebzeleri dikkatlice doğra.",
+        "fullSentence": "Then add a little water."
+      }
     },
     {
       "id": 57,
@@ -2561,7 +2694,26 @@
           "hint": "Önce sebzeleri dikkatlice doğra."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Have you seen my backpack?",
+        "reply": "No, but let's look for it.",
+        "translation": "Hayır ama birlikte arayalım.",
+        "distractors": [
+          "I am going to the zoo.",
+          "It is a beautiful day."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "I have _____ my blue backpack.",
+        "correctText": "lost",
+        "distractors": [
+          "lose",
+          "losing"
+        ],
+        "translation": "Mavi sırt çantamı kaybettim.",
+        "fullSentence": "I have lost my blue backpack."
+      }
     },
     {
       "id": 58,
@@ -2694,7 +2846,26 @@
           "hint": "Mavi sırt çantamı kaybettim."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Have you ever travelled by train?",
+        "reply": "Yes, I have travelled by train twice.",
+        "translation": "Evet, iki kez trenle seyahat ettim.",
+        "distractors": [
+          "I will take a train tomorrow.",
+          "I am not travelling today."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Have you _____ travelled by train?",
+        "correctText": "ever",
+        "distractors": [
+          "never",
+          "always"
+        ],
+        "translation": "Hiç trenle seyahat ettin mi?",
+        "fullSentence": "Have you ever travelled by train?"
+      }
     },
     {
       "id": 59,
@@ -2829,7 +3000,26 @@
           "hint": "Hiç trenle seyahat ettin mi?"
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What happened during your walk?",
+        "reply": "It began to snow while we were walking.",
+        "translation": "Biz yürürken kar yağmaya başladı.",
+        "distractors": [
+          "We will walk tomorrow.",
+          "We walk there every week."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "While we _____ walking, it began to snow.",
+        "correctText": "were",
+        "distractors": [
+          "was",
+          "are"
+        ],
+        "translation": "Biz yürürken kar yağmaya başladı.",
+        "fullSentence": "While we were walking, it began to snow."
+      }
     },
     {
       "id": 60,
@@ -2963,7 +3153,26 @@
           "hint": "Biz yürürken kar yağmaya başladı."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Why might improving public transport be difficult?",
+        "reply": "Because building new routes can be expensive.",
+        "translation": "Çünkü yeni güzergâhlar yapmak maliyetli olabilir.",
+        "distractors": [
+          "Because trains are always blue.",
+          "Because I missed breakfast."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Public transport _____ be improved.",
+        "correctText": "should",
+        "distractors": [
+          "shouldn't",
+          "wouldn't"
+        ],
+        "translation": "Bence toplu taşıma geliştirilmelidir.",
+        "fullSentence": "Public transport should be improved."
+      }
     },
     {
       "id": 61,
@@ -3098,7 +3307,26 @@
           "hint": "Bence toplu taşıma geliştirilmelidir."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What did the reporter ask?",
+        "reply": "The reporter asked where the map had gone.",
+        "translation": "Haritanın nereye gittiğini sordu.",
+        "distractors": [
+          "The map will arrive tomorrow.",
+          "She is asking about the weather."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "He said that he _____ seen the map.",
+        "correctText": "had",
+        "distractors": [
+          "has",
+          "have"
+        ],
+        "translation": "Muhabir haritanın nereye gittiğini sordu.",
+        "fullSentence": "He said that he had seen the map."
+      }
     },
     {
       "id": 62,
@@ -3233,7 +3461,26 @@
           "hint": "Muhabir haritanın nereye gittiğini sordu."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What could happen if we don't reduce waste?",
+        "reply": "The river could suffer more pollution.",
+        "translation": "Nehir daha çok kirlenebilir.",
+        "distractors": [
+          "The bus will arrive late.",
+          "The new park is beautiful."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Unless we _____ waste, the river will suffer.",
+        "correctText": "reduce",
+        "distractors": [
+          "reduced",
+          "reducing"
+        ],
+        "translation": "Atıkları azaltmazsak nehir zarar görecek.",
+        "fullSentence": "Unless we reduce waste, the river will suffer."
+      }
     },
     {
       "id": 63,
@@ -3368,7 +3615,26 @@
           "hint": "Atıkları azaltmazsak nehir zarar görecek."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "How could the city save energy?",
+        "reply": "Solar panels could reduce energy costs.",
+        "translation": "Güneş panelleri enerji maliyetlerini azaltabilir.",
+        "distractors": [
+          "The river was cleaned yesterday.",
+          "The museum opens at eight."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "The city _____ become greener.",
+        "correctText": "might",
+        "distractors": [
+          "mustn't",
+          "did"
+        ],
+        "translation": "Şehir gelecekte daha yeşil olabilir.",
+        "fullSentence": "The city might become greener."
+      }
     },
     {
       "id": 64,
@@ -3501,7 +3767,26 @@
           "hint": "Şehir gelecekte daha yeşil olabilir."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "How did people travel in the past?",
+        "reply": "They used to travel by horse.",
+        "translation": "Eskiden atla seyahat ederlerdi.",
+        "distractors": [
+          "They are riding trains now.",
+          "They will take a plane tomorrow."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "People _____ to travel by horse.",
+        "correctText": "used",
+        "distractors": [
+          "use",
+          "using"
+        ],
+        "translation": "İnsanlar eskiden atla seyahat ederdi.",
+        "fullSentence": "People used to travel by horse."
+      }
     },
     {
       "id": 65,
@@ -3635,7 +3920,26 @@
           "hint": "İnsanlar eskiden atla seyahat ederdi."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Do you agree with my suggestion?",
+        "reply": "I see your point, but I disagree.",
+        "translation": "Ne demek istediğini anlıyorum ama katılmıyorum.",
+        "distractors": [
+          "The library is beside the bank.",
+          "I lost my backpack."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "I see your point, _____ I disagree.",
+        "correctText": "but",
+        "distractors": [
+          "because",
+          "so"
+        ],
+        "translation": "Ne demek istediğini anlıyorum ama katılmıyorum.",
+        "fullSentence": "I see your point, but I disagree."
+      }
     },
     {
       "id": 66,
@@ -3770,7 +4074,26 @@
           "hint": "Ne demek istediğini anlıyorum ama katılmıyorum."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Which scientist found the clue?",
+        "reply": "The scientist who lives nearby found it.",
+        "translation": "Yakında yaşayan bilim insanı buldu.",
+        "distractors": [
+          "The river is too wide.",
+          "We should leave earlier."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "The scientist _____ found the clue lives nearby.",
+        "correctText": "who",
+        "distractors": [
+          "where",
+          "when"
+        ],
+        "translation": "İpucunu bulan bilim insanı yakında yaşıyor.",
+        "fullSentence": "The scientist who found the clue lives nearby."
+      }
     },
     {
       "id": 67,
@@ -3905,7 +4228,26 @@
           "hint": "İpucunu bulan bilim insanı yakında yaşıyor."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "How can we assess this news report?",
+        "reply": "We should check whether its sources are reliable.",
+        "translation": "Kaynaklarının güvenilir olup olmadığını kontrol etmeliyiz.",
+        "distractors": [
+          "The park is next to the school.",
+          "I usually take the bus."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "We should check _____ the information is reliable.",
+        "correctText": "whether",
+        "distractors": [
+          "although",
+          "unless"
+        ],
+        "translation": "Rapora göre hava kalitesi iyileşti.",
+        "fullSentence": "We should check whether the information is reliable."
+      }
     },
     {
       "id": 68,
@@ -4041,7 +4383,26 @@
           "hint": "Rapora göre hava kalitesi iyileşti."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Why did you miss the train?",
+        "reply": "It had already left when we arrived.",
+        "translation": "Biz vardığımızda çoktan ayrılmıştı.",
+        "distractors": [
+          "We will catch it tomorrow.",
+          "We always use the train."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "The train had _____ when we arrived.",
+        "correctText": "left",
+        "distractors": [
+          "leave",
+          "leaving"
+        ],
+        "translation": "Biz vardığımızda tren ayrılmıştı.",
+        "fullSentence": "The train had left when we arrived."
+      }
     },
     {
       "id": 69,
@@ -4176,7 +4537,26 @@
           "hint": "Biz vardığımızda tren ayrılmıştı."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What should the council do next?",
+        "reply": "It should test the river water every month.",
+        "translation": "Her ay nehir suyunu test etmeli.",
+        "distractors": [
+          "It should paint the buses green.",
+          "It should close the library."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "The evidence _____ that the river is recovering.",
+        "correctText": "suggests",
+        "distractors": [
+          "suggest",
+          "suggesting"
+        ],
+        "translation": "Kanıtlar nehrin iyileştiğini gösteriyor.",
+        "fullSentence": "The evidence suggests that the river is recovering."
+      }
     },
     {
       "id": 70,
@@ -4312,7 +4692,26 @@
           "hint": "Kanıtlar nehrin iyileştiğini gösteriyor."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Does the proposal have any drawbacks?",
+        "reply": "Yes. Its environmental impact still needs reviewing.",
+        "translation": "Evet. Çevresel etkisi hâlâ incelenmeli.",
+        "distractors": [
+          "No, it was raining yesterday.",
+          "Yes, I enjoy cycling."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Although the proposal is _____, it offers benefits.",
+        "correctText": "costly",
+        "distractors": [
+          "cost",
+          "costing"
+        ],
+        "translation": "Öneri maliyetli olsa da kalıcı faydalar sunuyor.",
+        "fullSentence": "Although the proposal is costly, it offers benefits."
+      }
     },
     {
       "id": 71,
@@ -4450,7 +4849,26 @@
           "hint": "Öneri maliyetli olsa da kalıcı faydalar sunuyor."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What would have changed if we had invested earlier?",
+        "reply": "The city would be safer now.",
+        "translation": "Şehir şimdi daha güvenli olurdu.",
+        "distractors": [
+          "The city is growing quickly.",
+          "We will invest next week."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "If we had invested earlier, the city _____ be safer now.",
+        "correctText": "would",
+        "distractors": [
+          "will",
+          "has"
+        ],
+        "translation": "Daha önce yatırım yapsaydık şehir şimdi daha güvenli olurdu.",
+        "fullSentence": "If we had invested earlier, the city would be safer now."
+      }
     },
     {
       "id": 72,
@@ -4585,7 +5003,26 @@
           "hint": "Daha önce yatırım yapsaydık şehir şimdi daha güvenli olurdu."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Why should we question that article?",
+        "reply": "It makes a claim without presenting evidence.",
+        "translation": "Kanıt sunmadan iddiada bulunuyor.",
+        "distractors": [
+          "It includes a weather forecast.",
+          "It is printed in colour."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "We should distinguish facts _____ assumptions.",
+        "correctText": "from",
+        "distractors": [
+          "for",
+          "by"
+        ],
+        "translation": "Makale kanıt sunmadan bir iddiada bulunuyor.",
+        "fullSentence": "We should distinguish facts from assumptions."
+      }
     },
     {
       "id": 73,
@@ -4720,7 +5157,26 @@
           "hint": "Makale kanıt sunmadan bir iddiada bulunuyor."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "How can we compare these two communities fairly?",
+        "reply": "We should consider each culture in its own context.",
+        "translation": "Her kültürü kendi bağlamında değerlendirmeliyiz.",
+        "distractors": [
+          "We should ignore their traditions.",
+          "We should decide without listening."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Whereas some communities favour tradition, _____ embrace change.",
+        "correctText": "others",
+        "distractors": [
+          "other",
+          "another"
+        ],
+        "translation": "Bazı topluluklar geleneği tercih ederken diğerleri değişimi benimsiyor.",
+        "fullSentence": "Whereas some communities favour tradition, others embrace change."
+      }
     },
     {
       "id": 74,
@@ -4852,7 +5308,26 @@
           "hint": "Bazı topluluklar geleneği tercih ederken diğerleri değişimi benimsiyor."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Is the initial cost the only factor?",
+        "reply": "No, long-term benefits also matter.",
+        "translation": "Hayır, uzun vadeli faydalar da önemlidir.",
+        "distractors": [
+          "Yes, the project starts tomorrow.",
+          "No, the river is very deep."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "The benefits may _____ the initial investment.",
+        "correctText": "outweigh",
+        "distractors": [
+          "outweighs",
+          "outweighed"
+        ],
+        "translation": "Sürdürülebilir politikalar uzun vadeli bağlılık gerektirir.",
+        "fullSentence": "The benefits may outweigh the initial investment."
+      }
     },
     {
       "id": 75,
@@ -4989,7 +5464,26 @@
           "hint": "Sürdürülebilir politikalar uzun vadeli bağlılık gerektirir."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Was the plan definitely approved?",
+        "reply": "No. Her response suggested uncertainty.",
+        "translation": "Hayır. Yanıtı belirsizlik içeriyordu.",
+        "distractors": [
+          "Yes, the bus arrived early.",
+          "The weather is excellent."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Her response _____ the plan was not yet approved.",
+        "correctText": "implied",
+        "distractors": [
+          "imply",
+          "implying"
+        ],
+        "translation": "Yanıtı planın henüz onaylanmadığını ima ediyordu.",
+        "fullSentence": "Her response implied the plan was not yet approved."
+      }
     },
     {
       "id": 76,
@@ -5126,7 +5620,26 @@
           "hint": "Yanıtı planın henüz onaylanmadığını ima ediyordu."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Under what condition can we reach an agreement?",
+        "reply": "Provided that the costs are shared fairly.",
+        "translation": "Masrafların adilce paylaşılması koşuluyla.",
+        "distractors": [
+          "After the library opens.",
+          "Because the bus is late."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "We can agree _____ that costs are shared.",
+        "correctText": "provided",
+        "distractors": [
+          "providing",
+          "provides"
+        ],
+        "translation": "Maliyetler paylaşılırsa bir anlaşmaya varabiliriz.",
+        "fullSentence": "We can agree provided that costs are shared."
+      }
     },
     {
       "id": 77,
@@ -5261,7 +5774,26 @@
           "hint": "Maliyetler paylaşılırsa bir anlaşmaya varabiliriz."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Do these results prove the hypothesis beyond doubt?",
+        "reply": "No. Further research is still needed.",
+        "translation": "Hayır. Daha fazla araştırma gerekiyor.",
+        "distractors": [
+          "Yes, every result is perfect.",
+          "No, the museum is closed."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Further research is needed to _____ out alternatives.",
+        "correctText": "rule",
+        "distractors": [
+          "rules",
+          "ruled"
+        ],
+        "translation": "Bulgular ilk hipotezi destekliyor gibi görünüyor.",
+        "fullSentence": "Further research is needed to rule out alternatives."
+      }
     },
     {
       "id": 78,
@@ -5395,7 +5927,26 @@
           "hint": "Bulgular ilk hipotezi destekliyor gibi görünüyor."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "Does the report mention its weaknesses?",
+        "reply": "Yes, it acknowledges important limitations.",
+        "translation": "Evet, önemli sınırlılıklarını kabul ediyor.",
+        "distractors": [
+          "No, it describes tomorrow's weather.",
+          "Yes, the station is nearby."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "The report _____ several limitations.",
+        "correctText": "acknowledges",
+        "distractors": [
+          "acknowledge",
+          "acknowledging"
+        ],
+        "translation": "Birlikte değerlendirildiğinde bu bulgular kademeli iyileşmeye işaret ediyor.",
+        "fullSentence": "The report acknowledges several limitations."
+      }
     },
     {
       "id": 79,
@@ -5530,7 +6081,26 @@
           "hint": "Birlikte değerlendirildiğinde bu bulgular kademeli iyileşmeye işaret ediyor."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "contextual practice authored; independent pedagogical review pending",
+      "curatedDialogue": {
+        "prompt": "What might have happened if we had ignored the warnings?",
+        "reply": "The damage might have been worse.",
+        "translation": "Hasar daha kötü olabilirdi.",
+        "distractors": [
+          "The council will vote tomorrow.",
+          "Our proposal is very short."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "Had we ignored the warnings, damage _____ have been worse.",
+        "correctText": "might",
+        "distractors": [
+          "mustn't",
+          "has"
+        ],
+        "translation": "Önerimiz çevresel hedeflerle yerel ihtiyaçları dengeliyor.",
+        "fullSentence": "Had we ignored the warnings, damage might have been worse."
+      }
     }
   ]
 }
