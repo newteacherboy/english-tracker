@@ -117,7 +117,26 @@
           "hint": "İşte kalemin."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "May I borrow a pencil?",
+        "reply": "Of course. Here you are.",
+        "translation": "Tabii. Buyur.",
+        "distractors": [
+          "It is raining outside.",
+          "I visited the zoo."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "May I _____ a pencil?",
+        "correctText": "borrow",
+        "distractors": [
+          "drinking",
+          "borrows"
+        ],
+        "translation": "Bir kalem ödünç alabilir miyim?",
+        "fullSentence": "May I borrow a pencil?"
+      }
     },
     {
       "id": 41,
@@ -249,7 +268,26 @@
           "hint": "Bir kalem ödünç alabilir miyim?"
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "What time does school start?",
+        "reply": "It starts at nine o'clock.",
+        "translation": "Saat dokuzda başlıyor.",
+        "distractors": [
+          "It is very tall.",
+          "I have two cats."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "School _____ at nine o'clock.",
+        "correctText": "starts",
+        "distractors": [
+          "start",
+          "starting"
+        ],
+        "translation": "Okul saat kaçta başlıyor?",
+        "fullSentence": "School starts at nine o'clock."
+      }
     },
     {
       "id": 42,
@@ -381,7 +419,26 @@
           "hint": "Okul saat kaçta başlıyor?"
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "What is your friend like?",
+        "reply": "She is kind and helpful.",
+        "translation": "O nazik ve yardımsever.",
+        "distractors": [
+          "She is in the kitchen.",
+          "It costs five pounds."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "My friend _____ curly hair.",
+        "correctText": "has",
+        "distractors": [
+          "have",
+          "having"
+        ],
+        "translation": "Arkadaşımın kıvırcık saçları var.",
+        "fullSentence": "My friend has curly hair."
+      }
     },
     {
       "id": 43,
@@ -514,7 +571,26 @@
           "hint": "Arkadaşımın kıvırcık saçları var."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "How much is the milk?",
+        "reply": "It is two pounds.",
+        "translation": "İki sterlin.",
+        "distractors": [
+          "The bus is late.",
+          "I can swim."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "I would _____ two apples, please.",
+        "correctText": "like",
+        "distractors": [
+          "likes",
+          "liking"
+        ],
+        "translation": "İki elma istiyorum, lütfen.",
+        "fullSentence": "I would like two apples, please."
+      }
     },
     {
       "id": 44,
@@ -645,7 +721,26 @@
           "hint": "İki elma istiyorum, lütfen."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "What is the weather like today?",
+        "reply": "It is cloudy and cold.",
+        "translation": "Hava bulutlu ve soğuk.",
+        "distractors": [
+          "I read every night.",
+          "It is under the chair."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "It is _____ today.",
+        "correctText": "cloudy",
+        "distractors": [
+          "cloud",
+          "clouds"
+        ],
+        "translation": "Bugün hava bulutlu.",
+        "fullSentence": "It is cloudy today."
+      }
     },
     {
       "id": 45,
@@ -776,7 +871,26 @@
           "hint": "Bugün hava bulutlu."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "Where is the library?",
+        "reply": "It is opposite the park.",
+        "translation": "Parkın karşısında.",
+        "distractors": [
+          "My name is Alex.",
+          "I love pasta."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "The library is _____ the park.",
+        "correctText": "opposite",
+        "distractors": [
+          "opposites",
+          "opposing"
+        ],
+        "translation": "Kütüphane nerede?",
+        "fullSentence": "The library is opposite the park."
+      }
     },
     {
       "id": 46,
@@ -908,7 +1022,26 @@
           "hint": "Kütüphane nerede?"
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "What do you enjoy doing?",
+        "reply": "I enjoy riding my bike.",
+        "translation": "Bisiklete binmekten hoşlanıyorum.",
+        "distractors": [
+          "I am ten years old.",
+          "It is in the bag."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "My sister likes _____ pictures.",
+        "correctText": "drawing",
+        "distractors": [
+          "draw",
+          "draws"
+        ],
+        "translation": "Bisiklete binmekten hoşlanırım.",
+        "fullSentence": "My sister likes drawing pictures."
+      }
     },
     {
       "id": 47,
@@ -1040,7 +1173,26 @@
           "hint": "Bisiklete binmekten hoşlanırım."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "Can a penguin fly?",
+        "reply": "No, it cannot.",
+        "translation": "Hayır, uçamaz.",
+        "distractors": [
+          "Yes, it is cloudy.",
+          "It starts at nine."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "A dolphin can _____ fast.",
+        "correctText": "swim",
+        "distractors": [
+          "swims",
+          "swimming"
+        ],
+        "translation": "Bir yunus hızlı yüzebilir.",
+        "fullSentence": "A dolphin can swim fast."
+      }
     },
     {
       "id": 48,
@@ -1172,7 +1324,26 @@
           "hint": "Bir yunus hızlı yüzebilir."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "What is Papi doing?",
+        "reply": "He is watering the flowers.",
+        "translation": "Çiçekleri suluyor.",
+        "distractors": [
+          "He watered them yesterday.",
+          "He waters them every day."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "The children are _____ outside.",
+        "correctText": "playing",
+        "distractors": [
+          "plays",
+          "play"
+        ],
+        "translation": "Papi çiçekleri suluyor.",
+        "fullSentence": "The children are playing outside."
+      }
     },
     {
       "id": 49,
@@ -1306,7 +1477,26 @@
           "hint": "Papi çiçekleri suluyor."
         }
       ],
-      "reviewStatus": "author-draft; needs pedagogical editing"
+      "reviewStatus": "curated A1 practice sample; still requires full editorial sign-off",
+      "curatedDialogue": {
+        "prompt": "When does the party begin?",
+        "reply": "It begins at three.",
+        "translation": "Saat üçte başlıyor.",
+        "distractors": [
+          "It is green.",
+          "I cannot drive."
+        ]
+      },
+      "curatedCloze": {
+        "prompt": "We _____ some water for the party.",
+        "correctText": "need",
+        "distractors": [
+          "needs",
+          "needing"
+        ],
+        "translation": "Parti için biraz suya ihtiyacımız var.",
+        "fullSentence": "We need some water for the party."
+      }
     },
     {
       "id": 50,
