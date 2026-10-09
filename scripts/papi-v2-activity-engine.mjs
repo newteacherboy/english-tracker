@@ -6,37 +6,30 @@ export function normalizeAnswer(value) {
     .replace(/\s+/g,' ').trim().replace(/[.!?,;:]+$/g,'').toLocaleLowerCase('en');
 }
 export function buildDialogue(chapter, seed=1) {
-  const cards=chapter?.phrases;
-  if (!Array.isArray(cards)||cards.length<2) throw new TypeError('Two phrases required');
-  const [prompt,response]=cards;
-  if (!prompt.en||!response.en) throw new TypeError('English dialogue required');
+  // Never invent a conversation from two unrelated phrase cards.
+  const dialogue=chapter?.curatedDialogue;
+  if(!dialogue) return null;
+  const {prompt,reply,translation,distractors=[]}=dialogue;
+  if(!prompt||!reply||!translation||!Array.isArray(distractors)||distractors.length<2
+      ||new Set([reply,...distractors].map(normalizeAnswer)).size!==distractors.length+1)
+    throw new TypeError('Curated dialogue requires a prompt, reply and two distinct distractors');
   return {
-    kind:'dialogue', label:'Papi ile konuş',
-    prompt:prompt.en, promptTranslation:prompt.tr,
-    instruction:'Papi’nin cümlesini dinle ve uygun yanıtı seç.',
-    options:seededShuffle([response.en,prompt.en],seed),
-    correctText:response.en, translation:response.tr, spokenText:prompt.en,
-    // This is a practice activity, not assessed speech recognition.
-    speakingAssessment:false
+    kind:'dialogue',label:'Papi ile konuş',prompt,instruction:'Papi’ye uygun yanıtı seç.',
+    options:seededShuffle([reply,...distractors],seed),correctText:reply,
+    translation,spokenText:prompt,speakingAssessment:false
   };
 }
-export function buildCloze(chapter,seed=1) {
-  const phrase=chapter?.phrases?.[0];
-  if (!phrase?.en) throw new TypeError('A phrase is required');
-  const parts=phrase.en.trim().split(/\s+/);
-  const candidates=parts.map((p,i)=>({p,i})).filter(x=>x.p.replace(/[^A-Za-z]/g,'').length>=3);
-  if(candidates.length===0) return null;
-  const chosen=candidates[(Number(seed)>>>0)%candidates.length];
-  const correct=chosen.p;
-  const prompt=parts.map((p,i)=>i===chosen.i?'_____':p).join(' ');
-  const fillers=chapter.phrases.slice(1).flatMap(x=>x.en.split(/\s+/))
-    .filter(x=>normalizeAnswer(x)!==normalizeAnswer(correct)&&/^[a-zA-Z]{3,}[!?.,]?$/.test(x));
-  const opts=[correct];
-  for(const f of fillers){if(!opts.some(o=>normalizeAnswer(o)===normalizeAnswer(f)))opts.push(f);if(opts.length===3)break;}
-  if(opts.length<2) return null;
-  return {kind:'cloze',label:'Eksik sözcüğü bul',prompt,translation:phrase.tr,
-    instruction:'Cümlede eksik olan sözcüğü seç.',options:seededShuffle(opts,seed+19),
-    correctText:correct,fullSentence:phrase.en,spokenText:phrase.en};
+export function buildCloze(chapter,seed=1){
+  // Only publish authored gaps with reviewed alternatives.
+  const gap=chapter?.curatedCloze;
+  if(!gap)return null;
+  if(!gap.prompt||!gap.correctText||!gap.translation||!Array.isArray(gap.distractors)||gap.distractors.length<2
+      ||new Set([gap.correctText,...gap.distractors].map(normalizeAnswer)).size!==gap.distractors.length+1)
+    throw new TypeError('Cloze requires reviewed alternatives');
+  return {kind:'cloze',label:'Eksik sözcüğü bul',instruction:'Eksik kelimeyi seç.',
+    prompt:gap.prompt,translation:gap.translation,correctText:gap.correctText,
+    fullSentence:gap.fullSentence||'',options:seededShuffle([gap.correctText,...gap.distractors],seed),
+    spokenText:gap.fullSentence||''};
 }
 export function prepareActivity(step,seed=1) {
   if(['choice','listen'].includes(step?.kind))return shuffledChoice(step,seed);
