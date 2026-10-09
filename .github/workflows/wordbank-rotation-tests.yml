@@ -6,6 +6,8 @@ on:
       - 'supabase/functions/diji-api/word-wheel-api.ts'
       - 'supabase/functions/diji-api/meteor-api.ts'
       - 'tests/word-bank-rotation.test.cjs'
+      - 'tests/harf-bahcesi-round-size.test.cjs'
+      - 'ingilizce/harf-bahcesi.js'
       - '.github/workflows/wordbank-rotation-tests.yml'
   workflow_dispatch:
 jobs:
@@ -17,4 +19,4 @@ jobs:
         with:
           node-version: '22'
       - name: Validate shared rotation
-        run: node --test tests/word-bank-rotation.test.cjs
+        run: node --test tests/word-bank-rotation.test.cjs tests/harf-bahcesi-round-size.test.cjs
