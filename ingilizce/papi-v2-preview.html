@@ -34,7 +34,12 @@ async function load(){
   if(!r.ok)throw Error('HTTP '+r.status);
   chapters=(await r.json()).chapters;
   chapters.forEach((c,i)=>{const op=document.createElement('option');op.value=String(i);op.textContent=c.cefr+' · '+c.title;el('chapter').append(op)});
-  el('chapter').addEventListener('change',start);start();
+  el('chapter').addEventListener('change',()=>{history.replaceState(null,'',location.pathname+'?chapter='+encodeURIComponent(chapters[Number(el('chapter').value)].id));start()});
+  const requested=Number(new URLSearchParams(location.search).get('chapter'));
+  if(new URLSearchParams(location.search).has('chapter')&&Number.isInteger(requested)){
+   const index=chapters.findIndex(c=>c.id===requested);if(index>=0)el('chapter').value=String(index);
+  }
+  start();
  }catch(e){el('heading').textContent='İçerik okunamadı';el('feedback').textContent='Önizlemeyi web sunucusunda açın: '+e.message}
 }
 function start(){
