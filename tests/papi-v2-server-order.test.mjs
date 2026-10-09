@@ -14,3 +14,5 @@ test('new chapters unlock after final chapter of corresponding legacy track',()=
      assert.equal(previousChapter(chapter),i===0?track*10+9:chapter-1,'V2 chapter '+chapter);}
  for(const bad of [-1,80,NaN])assert.equal(previousChapter(bad),null);
 });
+
+test('new chapters require explicit production launch flag',()=>{assert.match(source,/PAPI_STORY_V2_ENABLED/);assert.match(source,/chapter>=40/);assert.match(source,/Deno\.env\.get\('PAPI_STORY_V2_ENABLED'\)!=='true'/);});
