@@ -16,3 +16,5 @@ test('old eight-question sessions still work',()=>{
 test('multiplayer interface reads variable session total',()=>{
  assert.match(ui,/\$\{d\.index\+1\}\/\$\{d\.total\|\|12\} soru/);
 });
+
+test('sentence route and word flight both use word_bank',()=>{assert.doesNotMatch(migration,/from public\.sentence_bank/);assert.match(migration,/from public\.word_bank/);});
