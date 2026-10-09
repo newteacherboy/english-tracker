@@ -4,7 +4,7 @@
 <style>
 :root{font-family:system-ui,sans-serif;color:#23463b;background:#eef8f1}*{box-sizing:border-box}
 body{margin:0;padding:18px}main{max-width:650px;margin:auto}.head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.papi{width:64px;height:64px;border-radius:50%;background:#a7e9c2;display:grid;place-items:center;font-size:38px}
+.papi{width:78px;height:78px;border-radius:24px;background:linear-gradient(150deg,#e3ffd7,#a6e1c1);display:grid;place-items:center;overflow:hidden;flex-shrink:0}.papi img{height:75px;max-width:100%;object-fit:contain;animation:papi-bob 3s ease-in-out infinite}@keyframes papi-bob{50%{transform:translateY(-4px) rotate(-2deg)}}@media(prefers-reduced-motion:reduce){.papi img{animation:none}}@media(max-width:420px){body{padding:10px}.panel{padding:14px;border-radius:18px}.tools{display:grid;grid-template-columns:1fr 1fr}.tools button:last-child{grid-column:1/-1}.option{min-height:50px}.head h1{font-size:1.15rem}.papi{width:60px;height:60px}.papi img{height:57px}}
 .panel{background:#fff;border:2px solid #d7eadc;border-radius:24px;padding:22px;box-shadow:0 12px 32px #1d46331a}
 h1{font-size:1.45rem;margin:0}h2{font-size:1.25rem}p{line-height:1.5}label{font-weight:700}
 select,button{font:inherit;border-radius:14px;padding:12px;border:2px solid #b4d8be;background:white;color:#23463b;cursor:pointer}
@@ -16,7 +16,7 @@ select{width:100%;margin-top:8px}.tools{display:flex;flex-wrap:wrap;gap:8px;marg
 small{color:#546a5d}.hidden{display:none}.tokens{display:flex;gap:8px;flex-wrap:wrap}.tokens button{flex:1 1 auto}.meter{height:8px;background:#dfece1;border-radius:15px;overflow:hidden;margin:15px 0}.meter div{background:#4ab27b;height:100%;width:0}
 button:focus-visible,select:focus-visible{outline:3px solid #23463b;outline-offset:2px}
 </style></head><body><main>
-<div class="head"><div class="papi" aria-label="Papi">🦜</div><div><h1>Papi'nin Keşif Atölyesi</h1><small>Sadece geliştirme önizlemesi · XP / enerji kaydetmez</small></div></div>
+<div class="head"><div class="papi"><img src="papi-welcome-v2.png" alt="DijiMedu maskotu Papi" width="70" height="75"></div><div><h1>Papi'nin Keşif Atölyesi</h1><small>Sadece geliştirme önizlemesi · XP / enerji kaydetmez</small></div></div>
 <section class="panel"><label for="chapter">Denenecek bölüm</label><select id="chapter"></select>
 <div class="meter"><div id="progress"></div></div>
 <small id="counter" aria-live="polite"></small><h2 id="heading"></h2><p id="question"></p>
@@ -39,10 +39,12 @@ async function load(){
 }
 function start(){
  const c=chapters[Number(el('chapter').value)||0];
+ if(!c||!Array.isArray(c.steps)){el('feedback').textContent='Bu bölümde kullanılabilir etkinlik bulunamadı.';el('next').disabled=true;return}
  // Generated dialogue/cloze are prototypes; no live rewards or server calls.
  steps=[...c.steps.filter(x=>x.kind!=='scene'&&x.kind!=='teach')];
- const dlg=buildDialogue(c,43);steps.splice(2,0,dlg);
- const cloze=buildCloze(c,57);if(cloze)steps.splice(4,0,cloze);
+ try{const dlg=buildDialogue(c,43);steps.splice(2,0,dlg)}catch(e){console.warn('Optional dialogue unavailable',e)}
+ try{const cloze=buildCloze(c,57);if(cloze)steps.splice(4,0,cloze)}catch(e){console.warn('Optional cloze unavailable',e)}
+ if(!steps.length){el('feedback').textContent='Bu bölümün soruları henüz hazır değil.';el('next').disabled=true;return}
  at=0;completed=false;render();
 }
 function render(){
