@@ -152,9 +152,36 @@
     const bos = $('dnAramaBos');
     if (bos) bos.hidden = !kartlar.length || adet > 0;
   }
+  function kategorileriSusle() {
+    const defter = $('maAdaIc');
+    if (!defter) return;
+    const tabela = defter.querySelector('.ma-tabela');
+    if (tabela && !tabela.dataset.defterKategori) {
+      tabela.dataset.defterKategori = '1';
+      const alt = tabela.querySelector('small');
+      const baslik = document.createElement('strong');
+      baslik.textContent = (tabela.childNodes[0]?.textContent || 'A1').replace(' Adası', '') + ' Çalışma Defteri';
+      tabela.replaceChildren(baslik);
+      if (alt) { alt.textContent = alt.textContent.replace('keşfedildi', 'tamamlandı'); tabela.append(alt); }
+      const papi = document.createElement('span'); papi.className = 'dn-category-papi'; papi.setAttribute('aria-hidden', 'true'); tabela.parentElement.append(papi);
+      const aciklama = document.createElement('p'); aciklama.className = 'dn-category-intro'; aciklama.textContent = 'Bugün hangi bölümü çalışalım?'; tabela.parentElement.append(aciklama);
+    }
+    const resimler = {grammar:0, vocab:6, comm:3, pron:1};
+    const ingilizce = {grammar:'Grammar', vocab:'Vocabulary', comm:'Communication', pron:'Pronunciation'};
+    defter.querySelectorAll('.ma-yapi').forEach(kart => {
+      if (kart.dataset.defterKategori) return;
+      kart.dataset.defterKategori = '1';
+      const resim = kart.querySelector('.ev'), etiket = kart.querySelector('.et');
+      const key = kart.dataset.k, i = resimler[key] ?? 8;
+      if (resim) { resim.textContent = ''; resim.setAttribute('aria-hidden', 'true'); resim.style.backgroundPosition = `${i % 3 * 50}% ${Math.floor(i / 3) * 50}%`; }
+      if (etiket) { const sub = document.createElement('span'); sub.className = 'dn-category-en'; sub.textContent = ingilizce[key] || ''; etiket.querySelector('small')?.before(sub); }
+      const ok = document.createElement('span'); ok.className = 'dn-category-open'; ok.textContent = 'Keşfet ›'; ok.setAttribute('aria-hidden', 'true'); kart.append(ok);
+    });
+  }
   let aramaYeri, aramaNode;
   function susle() {
     document.body.classList.add('dc-defter');
+    kategorileriSusle();
     const aktif = $('dcScreenTopics')?.classList.contains('active') && document.body.classList.contains('dc-ada');
     document.body.classList.toggle('dn-topics', !!aktif);
     const arama = aramaNode || $('dcAramaInput')?.parentElement;
@@ -175,7 +202,7 @@
       const papi = document.createElement('span'); papi.setAttribute('aria-hidden', 'true'); papi.className = 'dn-menu-papi'; tabela.parentElement.append(papi);
       const bar = document.createElement('div'); bar.className = 'dn-progress';
       const fill = document.createElement('span');
-      const txt = alt?.textContent.match(/(\d+)\/(\d+)/);
+      const txt = alt?.textContent.match(/(\d+)\s*\/\s*(\d+)/);
       fill.style.width = txt && +txt[2] ? (+txt[1] / +txt[2] * 100) + '%' : '0%';
       bar.append(fill); tabela.parentElement.append(bar);
     }
@@ -235,7 +262,7 @@
     susle();
     const alan = $('dcAnaIcerik');
     if (alan) new MutationObserver(() => {
-      if (document.querySelector('#maPatika .ma-tas:not([data-defter])') || document.querySelector('#maPatika .ma-tabela:not([data-defter])')) susle();
+      if (document.querySelector('#maAdaIc .ma-yapi:not([data-defter-kategori])') || document.querySelector('#maAdaIc .ma-tabela:not([data-defter-kategori])') || document.querySelector('#maPatika .ma-tas:not([data-defter])') || document.querySelector('#maPatika .ma-tabela:not([data-defter])')) susle();
     }).observe(alan, {childList:true, subtree:true});
     const org = window.dcAramaYap;
     window.dcAramaYap = function(q) {

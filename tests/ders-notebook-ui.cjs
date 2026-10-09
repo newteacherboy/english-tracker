@@ -69,6 +69,22 @@ const TEST = JSON.parse(DETAY.testJSON);
   await page.evaluate(()=>dcAnaEkranaDon());
   assert(await page.locator('.dc-topbar #dcAramaInput').isVisible(), 'global search restored on level screen');
   assert.equal(await page.locator('#maHarita .dm-island-art:visible').count(),4);
+  await page.evaluate(()=>dcSeviyeSec('A1', 'Başlangıç'));
+  assert.equal(await page.locator('#maAdaIc .ma-yapi:visible').count(),4);
+  assert.equal(await page.locator('#maAdaIc .dn-category-en').count(),4);
+  assert.match(await page.locator('#maAdaIc .ma-tabela').innerText(), /A1 Çalışma Defteri/);
+  assert.equal(await page.locator('#maAdaIc .ma-yapi').first().getAttribute('aria-label'),'Dil Bilgisi, 1 / 6 konu');
+  await page.evaluate(()=>dcSeviyeSec('A1', 'Başlangıç'));
+  assert.equal(await page.locator('#maAdaIc .dn-category-papi').count(),1);
+  for (const width of [390,320,768]) {
+    await page.setViewportSize({width,height:844});
+    assert(await page.evaluate(()=>{const t=document.getElementById('tab-derscalis');return t.scrollWidth<=t.clientWidth+1;}), 'category notebook fits '+width);
+    await page.waitForTimeout(650);
+    await page.screenshot({path:'/tmp/ders-category-notebook-'+width+'.png'});
+  }
+  await page.evaluate(()=>window.dcKategoriSec=(key,name)=>window.__category={key,name});
+  await page.locator('#maAdaIc .ma-yapi[data-k="vocab"]').click();
+  assert.equal(await page.evaluate(()=>window.__category.key),'vocab');
   console.log('PASS notebook menu: search Turkish/English, empty/reset, redraw, original topic handler, 320/390/768px.');
   console.log('Page errors:',errors);
   await browser.close();
