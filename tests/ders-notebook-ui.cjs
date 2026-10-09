@@ -46,6 +46,14 @@ const TEST = JSON.parse(DETAY.testJSON);
   await page.waitForTimeout(100);
   assert.equal(await page.locator('.dn-menu-papi').count(),1);
   assert.equal(await page.locator('.dn-doodle').count(),6);
+  assert(await page.locator('#maPatika #dcAramaInput').isVisible(), 'search survives redraw inside notebook');
+  assert.equal(await page.locator('#maPatika .dn-stars span').count(),15);
+  assert.equal(await page.locator('#maPatika .dn-stars .earned').count(),1);
+  await page.locator('#dcAramaInput').fill('zamir');
+  assert.equal(await page.locator('#maPatika .ma-tas:visible').count(),1);
+  await page.locator('#dcAramaInput').fill('');
+  assert.equal(await page.locator('#dnLevelTabs button').count(),4);
+
   const name=await page.locator('#maPatika .ma-tas').nth(2).getAttribute('data-arama');
   await page.evaluate(()=>window.dcKonuAc=n=>window.__opened=n);
   await page.locator('#maPatika .ma-tas').nth(2).click();
@@ -55,6 +63,12 @@ const TEST = JSON.parse(DETAY.testJSON);
     assert(await page.evaluate(()=>{const t=document.getElementById('tab-derscalis');return t.scrollWidth<=t.clientWidth+1;}),'no horizontal overflow '+width);
     await page.screenshot({path:'/tmp/ders-notebook-'+width+'.png'});
   }
+  await page.locator('#dnLevelTabs button').nth(1).click();
+  assert.equal(await page.evaluate(()=>dcAktifSeviye),'A2');
+  assert(await page.locator('#maPatika #dcAramaInput').isVisible());
+  await page.evaluate(()=>dcAnaEkranaDon());
+  assert(await page.locator('.dc-topbar #dcAramaInput').isVisible(), 'global search restored on level screen');
+  assert.equal(await page.locator('#maHarita .dm-island-art:visible').count(),4);
   console.log('PASS notebook menu: search Turkish/English, empty/reset, redraw, original topic handler, 320/390/768px.');
   console.log('Page errors:',errors);
   await browser.close();

@@ -152,8 +152,16 @@
     const bos = $('dnAramaBos');
     if (bos) bos.hidden = !kartlar.length || adet > 0;
   }
+  let aramaYeri, aramaNode;
   function susle() {
     document.body.classList.add('dc-defter');
+    const aktif = $('dcScreenTopics')?.classList.contains('active') && document.body.classList.contains('dc-ada');
+    document.body.classList.toggle('dn-topics', !!aktif);
+    const arama = aramaNode || $('dcAramaInput')?.parentElement;
+    if (arama) aramaNode = arama;
+    if (arama && !aramaYeri) { aramaYeri = document.createComment('konu araması'); arama.before(aramaYeri); }
+    if (!aktif && aramaYeri?.parentElement && arama) aramaYeri.after(arama);
+
     const k = $('maPatika');
     if (!k) return;
     const tabela = k.querySelector('.ma-tabela');
@@ -163,8 +171,8 @@
       const baslik = document.createElement('strong');
       baslik.textContent = tabela.childNodes[0]?.textContent.replace(/ patikası$/, '').replace(/^[^\p{L}]+/u, '') || 'Konular';
       tabela.replaceChildren(baslik);
-      if (alt) { alt.textContent = alt.textContent.replace(' Adası', '').replace(' taş', ' konu'); tabela.append(alt); }
-      const papi = document.createElement('img'); papi.src = 'ders-vadi/papi-kitap.png'; papi.alt = ''; papi.className = 'dn-menu-papi'; tabela.parentElement.append(papi);
+      if (alt) { const sayi = alt.textContent.match(/(\d+)\/(\d+)/); alt.textContent = sayi ? `${sayi[1]} / ${sayi[2]} tamamlandı` : alt.textContent; tabela.append(alt); }
+      const papi = document.createElement('span'); papi.setAttribute('aria-hidden', 'true'); papi.className = 'dn-menu-papi'; tabela.parentElement.append(papi);
       const bar = document.createElement('div'); bar.className = 'dn-progress';
       const fill = document.createElement('span');
       const txt = alt?.textContent.match(/(\d+)\/(\d+)/);
@@ -182,17 +190,44 @@
         const en = parts.shift(); titre.textContent = parts.join(' — ');
         const sub = document.createElement('span'); sub.className = 'dn-en'; sub.textContent = en; titre.after(sub);
       }
+      const earned = Math.min(3, (alt.textContent.match(/⭐|★/g) || []).length);
       const next = !!b.querySelector('.bayrak'); b.querySelector('.bayrak')?.remove();
       b.classList.toggle('dn-next', next); b.classList.toggle('dn-done', tas.textContent === '✓');
       tas.removeAttribute('style'); tas.textContent = String(i + 1);
-      if (next) { alt.textContent = 'Devam et →'; alt.classList.add('dn-go'); }
-      else if (alt.textContent.includes('Keşfedilmedi')) alt.textContent = 'Henüz çalışılmadı';
-      if (b.classList.contains('dn-done')) alt.textContent = alt.textContent.replace(/⭐/g, '★');
-      const doodle = document.createElement('span'); doodle.className = 'dn-doodle'; doodle.setAttribute('aria-hidden', 'true');
+      alt.hidden = true;
       const text = norm(b.dataset.arama);
-      doodle.textContent = /alphabet|alfabe/.test(text) ? 'ABC' : /pronoun|zamir/.test(text) ? 'I · you' : /article|a \/ an/.test(text) ? 'a / an' : /possessive|iyelik/.test(text) ? 'my ♡' : /have|sahiplik/.test(text) ? 'have got' : /\bbe\b|olmak/.test(text) ? 'I am' : ['✎', '✦', 'Aa'][i % 3];
+      const kind = /alphabet|alfabe/.test(text) ? 0 : /possessive adjective|iyelik sifat/.test(text) ? 4 : /pronoun|zamir/.test(text) ? 3 : /article|a \/ an/.test(text) ? 5 : /have|sahiplik/.test(text) ? 2 : /\bbe\b|olmak/.test(text) ? 1 : 8;
+      const titles = ['Alfabe ve Heceleme', 'Olmak Fiili', 'Sahiplik Bildirme', 'Zamirler', 'İyelik Sıfatları', 'A / An'];
+      const subtitles = ['Alphabet & Spelling', 'Am / Is / Are', 'Have / Has Got', 'Pronouns', 'Possessive Adjectives', 'Articles'];
+      if (kind < 6) { titre.textContent = titles[kind]; let sub = b.querySelector('.dn-en'); if (!sub) { sub = document.createElement('span'); sub.className = 'dn-en'; titre.after(sub); } sub.textContent = subtitles[kind]; }
+      const doodle = document.createElement('span'); doodle.className = 'dn-doodle dn-sprite'; doodle.setAttribute('aria-hidden', 'true');
+      doodle.style.backgroundPosition = `${kind % 3 * 50}% ${Math.floor(kind / 3) * 50}%`;
       b.append(doodle);
+      if (next) {
+        const go = document.createElement('span'); go.className = 'dn-go'; go.textContent = 'Devam et'; b.append(go);
+      } else {
+        const stars = document.createElement('span'); stars.className = 'dn-stars'; stars.setAttribute('aria-label', `${earned} / 3 yıldız`);
+        for (let j = 0; j < 3; j++) { const star = document.createElement('span'); star.textContent = '★'; star.className = j < earned ? 'earned' : ''; star.setAttribute('aria-hidden', 'true'); stars.append(star); }
+        b.append(stars);
+      }
+      const arrow = document.createElement('span'); arrow.className = 'dn-chevron'; arrow.textContent = '›'; arrow.setAttribute('aria-hidden', 'true'); b.append(arrow);
+
     });
+    if (aktif) {
+      let tabs = $('dnLevelTabs');
+      if (!tabs) {
+        tabs = document.createElement('nav'); tabs.id = 'dnLevelTabs'; tabs.setAttribute('aria-label', 'Ders seviyesi');
+        ['A1', 'A2', 'B1', 'B2'].forEach(level => {
+          const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = level;
+          btn.onclick = () => { const kategori = dcAktifKategori; dcSeviyeSec(level, {A1:'Başlangıç', A2:'Temel', B1:'Orta', B2:'Orta-Üstü'}[level]); dcKategoriSec(kategori, dcKategoriRenkleri[kategori]?.label || kategori); };
+          tabs.append(btn);
+        }); k.before(tabs);
+      }
+      tabs.querySelectorAll('button').forEach(btn => { const selected = btn.textContent === dcAktifSeviye; btn.classList.toggle('active', selected); btn.setAttribute('aria-current', selected ? 'page' : 'false'); });
+      let search = k.querySelector('.dn-search');
+      if (!search) { search = document.createElement('div'); search.className = 'dn-search'; const books = document.createElement('span'); books.className = 'dn-books dn-sprite'; books.setAttribute('aria-hidden', 'true'); search.append(books); k.querySelector('.ma-ust')?.after(search); }
+      if (arama) search.prepend(arama);
+    }
     if (!$('dnAramaBos')) { const e = document.createElement('p'); e.id = 'dnAramaBos'; e.className = 'dn-empty'; e.setAttribute('role', 'status'); e.textContent = 'Bu aramayla eşleşen konu bulunamadı.'; e.hidden = true; k.querySelector('.ma-patika')?.append(e); }
     filtrele($('dcAramaInput')?.value || '');
   }
@@ -210,7 +245,7 @@
       }
       return org?.apply(this, arguments);
     };
-    ['dcKategoriIcerikCiz', 'dcSeviyeSec', 'dcKategoriSec', 'dcGeriGit', 'dcAnaEkranaDon', 'dersCalisBaslat', 'dcTestSonrasiKonuListesineDon'].forEach(ad => {
+    ['dcIleriGit', 'dcKategoriIcerikCiz', 'dcSeviyeSec', 'dcKategoriSec', 'dcGeriGit', 'dcAnaEkranaDon', 'dersCalisBaslat', 'dcTestSonrasiKonuListesineDon'].forEach(ad => {
       const org = window[ad]; if (typeof org !== 'function') return;
       window[ad] = function() { const result = org.apply(this, arguments); susle(); return result; };
     });
