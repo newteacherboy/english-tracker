@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Papi V2 | Geliştirme Önizlemesi</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#23463b;background:#eef8f1}*{box-sizing:border-box}
+body{margin:0;padding:18px}main{max-width:650px;margin:auto}.head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.papi{width:64px;height:64px;border-radius:50%;background:#a7e9c2;display:grid;place-items:center;font-size:38px}
+.panel{background:#fff;border:2px solid #d7eadc;border-radius:24px;padding:22px;box-shadow:0 12px 32px #1d46331a}
+h1{font-size:1.45rem;margin:0}h2{font-size:1.25rem}p{line-height:1.5}label{font-weight:700}
+select,button{font:inherit;border-radius:14px;padding:12px;border:2px solid #b4d8be;background:white;color:#23463b;cursor:pointer}
+select{width:100%;margin-top:8px}.tools{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}
+.option{width:100%;display:block;text-align:left;margin:8px 0;padding:14px}.option:disabled{cursor:default;opacity:.85}
+.option.correct{background:#dcf7e0;border-color:#219855}.option.wrong{background:#fff1df;border-color:#ba7c25}
+.primary{background:#2e815a;color:#fff;border-color:#2e815a;width:100%;margin-top:12px}
+#feedback{min-height:48px;background:#f4f8f0;border-radius:14px;padding:12px;margin-top:12px}
+small{color:#546a5d}.hidden{display:none}.tokens{display:flex;gap:8px;flex-wrap:wrap}.tokens button{flex:1 1 auto}.meter{height:8px;background:#dfece1;border-radius:15px;overflow:hidden;margin:15px 0}.meter div{background:#4ab27b;height:100%;width:0}
+button:focus-visible,select:focus-visible{outline:3px solid #23463b;outline-offset:2px}
+</style></head><body><main>
+<div class="head"><div class="papi" aria-label="Papi">🦜</div><div><h1>Papi'nin Keşif Atölyesi</h1><small>Sadece geliştirme önizlemesi · XP / enerji kaydetmez</small></div></div>
+<section class="panel"><label for="chapter">Denenecek bölüm</label><select id="chapter"></select>
+<div class="meter"><div id="progress"></div></div>
+<small id="counter" aria-live="polite"></small><h2 id="heading"></h2><p id="question"></p>
+<div class="tools"><button id="speak" type="button">🔊 Papi'yi dinle</button><button id="slow" type="button">🐢 Yavaş dinle</button><button id="translate" type="button">Türkçeyi göster</button></div>
+<p id="translation" class="hidden"></p><div id="answers"></div><div id="feedback" role="status" aria-live="polite">Bir cevap seçerek başla.</div>
+<button id="next" class="primary" type="button" disabled>Devam et →</button></section></main>
+<script type="module">
+import {buildDialogue,buildCloze,prepareActivity,evaluateActivity,getSpeechRequest} from '../scripts/papi-v2-activity-engine.mjs';
+const el=id=>document.getElementById(id);
+let chapters=[],steps=[],at=0,active=null,answered=false,orderTokens=[];
+const make=(tag,text,cls)=>{const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;return n};
+async function load(){
+ try{
+  const r=await fetch('../docs/papi-v2-new-chapters-draft.json',{cache:'no-store'});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  chapters=(await r.json()).chapters;
+  chapters.forEach((c,i)=>{const op=document.createElement('option');op.value=String(i);op.textContent=c.cefr+' · '+c.title;el('chapter').append(op)});
+  el('chapter').addEventListener('change',start);start();
+ }catch(e){el('heading').textContent='İçerik okunamadı';el('feedback').textContent='Önizlemeyi web sunucusunda açın: '+e.message}
+}
+function start(){
+ const c=chapters[Number(el('chapter').value)||0];
+ // Generated dialogue/cloze are prototypes; no live rewards or server calls.
+ steps=[...c.steps.filter(x=>x.kind!=='scene'&&x.kind!=='teach')];
+ const dlg=buildDialogue(c,43);steps.splice(2,0,dlg);
+ const cloze=buildCloze(c,57);if(cloze)steps.splice(4,0,cloze);
+ at=0;render();
+}
+function render(){
+ speechSynthesis?.cancel?.();
+ active=prepareActivity(steps[at],(at+1)*173);answered=false;orderTokens=[];
+ el('next').disabled=true;el('translation').classList.add('hidden');
+ el('translation').textContent=active.tr||active.translation||active.hint||'';
+ el('counter').textContent='Etkinlik '+(at+1)+' / '+steps.length;
+ el('progress').style.width=(100*at/steps.length)+'%';
+ el('heading').textContent=active.label||'Papi görevi';
+ el('question').textContent=active.instruction?active.instruction+'\n'+(active.prompt||''):active.prompt||'';
+ el('answers').replaceChildren();el('feedback').textContent='Cevabını seç.';
+ if(active.kind==='order'){renderOrder();return}
+ (active.options||[]).forEach((answer,i)=>{
+  const b=make('button',answer,'option');b.type='button';
+  b.addEventListener('click',()=>choose(b,active.kind==='choice'||active.kind==='listen'?i:answer));el('answers').append(b)
+ });
+}
+function renderOrder(){
+ const chosen=make('p','Cümleyi oluştur: '+orderTokens.join(' '));el('answers').append(chosen);
+ const tokens=[...active.tokens].map((text,i)=>({text,i})); // retain duplicate word identities
+ tokens.sort((a,b)=>((a.i*13+7)%17)-((b.i*13+7)%17));
+ for(const token of tokens){
+  const b=make('button',token.text);b.type='button';b.addEventListener('click',()=>{
+   if(answered)return;orderTokens.push(token.text);chosen.textContent=orderTokens.join(' ');b.disabled=true;
+   if(orderTokens.length===active.tokens.length)choose(null,orderTokens);
+  });el('answers').append(b)
+ }
+}
+function choose(button,response){
+ if(answered)return;answered=true;
+ const result=evaluateActivity(active,response);
+ el('feedback').textContent=result.correct?'Harika! Doğru cevap.':'Tekrar bakalım: '+(result.explanation||active.answer||active.correctText||'');
+ el('translation').classList.remove('hidden');
+ for(const b of el('answers').querySelectorAll('button'))b.disabled=true;
+ if(button)button.classList.add(result.correct?'correct':'wrong');
+ el('next').disabled=false;
+}
+el('next').addEventListener('click',()=>{
+ if(!answered)return;if(at===steps.length-1){el('feedback').textContent='Bölümün önizlemesi bitti; puan veya ilerleme kaydedilmedi.';el('next').disabled=true;return}at++;render();
+});
+el('translate').addEventListener('click',()=>el('translation').classList.toggle('hidden'));
+function speak(speed){
+ if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){el('feedback').textContent='Bu tarayıcıda seslendirme desteklenmiyor.';return}
+ const request=getSpeechRequest(active,speed);if(!request)return;
+ window.speechSynthesis.cancel();const utter=new SpeechSynthesisUtterance(request.text);
+ utter.lang=request.lang;utter.rate=request.rate;window.speechSynthesis.speak(utter);
+}
+el('speak').addEventListener('click',()=>speak('normal'));el('slow').addEventListener('click',()=>speak('slow'));
+load();
+</script></body></html>
