@@ -44,7 +44,7 @@
     if(starting||!state||state.ended||!overlay)return;
     if(window.dmFeatureEnabled?.('oyun_harfbahcesi')===false)return message('Bu oyun şu anda kapalı.');
     const available=pool(oyunHavuzGetir(state.classNo,state.units));
-    if(available.length<12)return message('Seçtiğin ünitelerde en az 8 farklı, tek sözcüklü kelime gerekli. Başka bir ünite daha seç.');
+    if(available.length<12)return message('Seçtiğin ünitelerde en az 12 farklı, tek sözcüklü kelime gerekli. Başka bir ünite daha seç.');
     if(!name())return message('Önce öğrenci hesabına giriş yap veya Sınıf Oyun Modu’nda öğrenci seç.');
     const current=state,currentOverlay=overlay,student=name(),button=overlay.querySelector('[data-start]');
     starting=true;button.disabled=true;message('Bahçe hazırlanıyor…');
