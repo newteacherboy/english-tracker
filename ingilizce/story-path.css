@@ -80,3 +80,59 @@ body.dm-story-open{overflow:hidden!important}
 @media(prefers-reduced-motion:reduce){#dmStoryLesson .ds-complete>span{animation:none}}
 
 body.dm-parkur-open #bzParkur>.dm-map-extended:has(.ds-learning)::before{background-image:url('story-garden-map.webp')}
+
+/* Approved option 2 — Papi Uzay Akademisi. Learning route only; dock unchanged. */
+body.dm-parkur-open #bzParkur:has(.ds-learning){background:#031331!important}
+body.dm-parkur-open #bzParkur>.bz-ic.ds-space-shell{background:#031331 url('story-space-background.png') center/cover no-repeat}
+body.dm-parkur-open #bzParkur>.ds-space-shell.dm-map-extended::before{background:#031331 url('story-space-background.png') center/cover no-repeat!important}
+.ds-space-shell .dm-parkur-head{background:transparent!important}
+.ds-space-shell .dm-parkur-head .dm-parkur-brand{color:#eef6ff!important}
+.ds-space-shell .dm-parkur-head .dm-parkur-wallet button{background:linear-gradient(#142d62,#071b3f)!important;border-color:#4262a2!important;color:#f3f8ff!important;box-shadow:inset 0 1px 0 #718baf40!important}
+.ds-space-shell .dm-parkur-head .dm-parkur-tabs button{background:#0e2349!important;border-color:#425787!important;color:#b6caed!important;box-shadow:none!important}
+.ds-space-shell .dm-parkur-head .dm-parkur-tabs button[aria-selected=true]{background:#173e65!important;color:#5be8ff!important}
+.ds-host.ds-learning .dm-story-mode{background:#081d43;border-color:#344e81;box-shadow:none}
+.ds-host.ds-learning .dm-story-mode button{color:#b4c7e9}
+.ds-host.ds-learning .dm-story-mode button[aria-pressed=true]{background:linear-gradient(#21dff5,#12accf);color:#03203c;box-shadow:0 2px 5px #06bed133}
+.ds-space-map.dm-story-map{background:#031331 url('story-space-background.png') center center/cover no-repeat;color:#f6f9ff;font-family:Nunito,system-ui}
+.ds-space-shell .ds-space-map.dm-story-map{background:transparent}
+.ds-space-heading{position:relative;display:flex;align-items:center;gap:9px;margin:6px 12px 7px;min-height:49px;z-index:3}
+.ds-space-symbol{font-size:32px;line-height:1;flex:none}
+.ds-space-heading h2{font:700 clamp(24px,6vw,32px)/1.05 Fredoka,Nunito,system-ui!important;color:#f7faff!important;-webkit-text-fill-color:#f7faff!important;background:none!important;text-shadow:0 2px 3px #0004;margin:0!important}
+.ds-space-heading p{font:900 13px/1.2 Nunito,system-ui;color:#95b7f1;margin:5px 0 0}
+.ds-space-progress{display:flex;align-items:center;gap:10px;position:relative;margin:0 16px;z-index:3;height:24px}
+.ds-space-map .ds-map-status{position:static;background:none;border:0;border-radius:0;color:#d9e8ff;font:800 10px/1.2 Nunito;padding:0;flex:none;max-width:53%;text-align:right}
+.ds-total-progress{height:11px;flex:1;min-width:0;border:1px solid #4669a2;border-radius:20px;background:#182c55;overflow:hidden;box-shadow:inset 0 2px 4px #0004}
+.ds-total-progress i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#05aecd,#08e6ff);box-shadow:0 0 10px #00e4ff70;transition:width .3s}
+.ds-space-map .ds-map-track{inset:89px 0 0;scroll-padding-top:20px;outline-offset:-4px}
+.ds-space-map .ds-map-route{background:none;position:relative;isolation:isolate}
+.ds-orbit{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible}
+.ds-orbit path{fill:none;stroke:#80aeef;stroke-width:2;vector-effect:non-scaling-stroke;stroke-dasharray:7 8;filter:drop-shadow(0 0 3px #538ef5);opacity:.82}
+.ds-space-map .ds-node{position:absolute;width:146px;transform:translateX(-50%);color:#f6f9ff;z-index:1;gap:0}
+.ds-space-map .ds-node:disabled{opacity:1}
+.ds-planet-art{display:block;width:146px;height:130px;background-image:url('story-space-sprites.png');background-size:300% 300%;background-repeat:no-repeat;filter:drop-shadow(0 6px 9px #0005)}
+.ds-space-map .ds-node.locked .ds-planet-art{filter:saturate(.55) hue-rotate(18deg) brightness(.77) drop-shadow(0 4px 8px #0004)}
+.ds-space-map .ds-node b{position:relative;z-index:2;background:linear-gradient(#16305af5,#061333f5);border:1px solid #4c6194;border-radius:14px;color:#f9fbff;box-shadow:0 2px 5px #0004;padding:5px 9px;margin:-15px 0 0;font:700 12px/1.15 Fredoka,Nunito,system-ui;max-width:155px;overflow-wrap:anywhere}
+.ds-space-map .ds-cefr{position:absolute;top:7px;right:5px;font:900 8px Nunito;background:#132e60;border:1px solid #45649c;color:#c8dcff;z-index:3;margin:0;padding:2px 5px}
+.ds-planet-number{position:absolute;top:3px;left:12px;display:grid;place-items:center;min-width:24px;height:24px;padding:0 3px;box-sizing:border-box;background:#eff7ff;border:1px solid #cadaf7;border-radius:50%;color:#0b2454;font:900 15px Nunito;z-index:3;box-shadow:0 2px 4px #0002}
+.ds-space-map .ds-medallion{position:absolute;top:32px;left:8px;width:27px;height:27px;border:1px solid #5b7aac;box-shadow:0 2px 4px #0004;border-radius:50%;font-size:15px;background:#162f5a;color:#cee5ff;z-index:3}
+.ds-space-map .ds-node.done .ds-medallion{background:linear-gradient(#83e865,#39a64d);border:1px solid #96e879;color:#fff;font:900 20px Nunito}
+.ds-space-map .ds-node.current .ds-medallion{display:none}
+.ds-space-map .ds-active-planet{width:220px;z-index:2}
+.ds-space-map .ds-active-planet .ds-planet-art{width:220px;height:165px;filter:drop-shadow(0 0 9px #06d9ff70)}
+.ds-space-map .ds-active-planet .ds-map-papi{display:block;position:absolute;left:16px;top:-4px;bottom:auto;width:160px;height:145px;max-height:none;background:url('story-space-sprites.png') 0 100%/300% 300% no-repeat;z-index:2}
+.ds-space-map .ds-active-planet .ds-planet-number{left:12px;top:89px;width:28px;height:28px;font-size:17px}
+.ds-space-map .ds-active-planet .ds-cefr{right:10px;top:123px}
+.ds-space-map .ds-active-planet b{display:none}
+.ds-you-are-here{position:absolute;top:24px;right:0;border-radius:15px;padding:5px 8px;background:linear-gradient(#39efff,#06bfe9);color:#052644;box-shadow:0 0 10px #19c8ee60;font:900 11px Nunito;z-index:4}
+.ds-space-map .ds-map-continue{position:absolute;bottom:auto;left:50%;transform:translateX(-50%);width:min(250px,80%);min-width:0;max-width:none;display:flex;flex-direction:column;gap:3px;padding:10px 12px 12px;background:linear-gradient(#0e335fe8,#061333f2);border:1.5px solid #29dcff;border-radius:20px;color:#fff;box-shadow:0 0 15px #0cd6ff30;z-index:4;box-sizing:border-box;cursor:pointer}
+.ds-space-map .ds-map-continue strong{font:700 19px/1.15 Fredoka,Nunito;color:#fff;overflow-wrap:anywhere}
+.ds-space-map .ds-map-continue small{font:800 11px/1.2 Nunito;color:#a3c9f8;margin:1px 0 6px}
+.ds-space-map .ds-map-continue>span{display:block;padding:10px;border-radius:14px;background:linear-gradient(110deg,#46eeff,#11c9e8);color:#05284b;font:900 17px Nunito;box-shadow:inset 0 1px #b3faff}
+.ds-space-map .ds-node:focus-visible,.ds-space-map .ds-map-continue:focus-visible{outline:3px solid #a2f6ff;outline-offset:4px}
+.ds-space-map .ds-world{color:#cadfff;background:#0c224bd9;border:1px solid #425d96;border-radius:12px;font:800 10px Nunito;padding:4px 10px;z-index:1}
+@media(max-width:350px){.ds-space-map .ds-node{width:125px}.ds-space-map .ds-planet-art{width:125px;height:118px}.ds-space-map .ds-active-planet{width:220px}.ds-space-heading{gap:6px;margin-left:10px}.ds-space-heading h2{font-size:24px!important}.ds-space-map .ds-node b{font-size:11px}.ds-space-progress{gap:7px;margin:0 12px}.ds-space-map .ds-map-status{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.ds-total-progress i{transition:none}}
+
+.ds-space-map .ds-map-continue[hidden]{display:none!important}
+
+.ds-space-symbol svg{display:block;width:36px;height:36px}.ds-space-map .ds-medallion svg{width:16px;height:16px}

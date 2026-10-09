@@ -618,6 +618,27 @@
       "bytes": 144948,
       "status": "ai-generated",
       "source": "docs/open-forest-navigation-generation.json"
+    },
+    {
+      "path": "ingilizce/story-space-background.png",
+      "sha256": "8b144fb7b4d1a676855af0c48d12417e56ed44200586af72394818573587ba44",
+      "bytes": 1937229,
+      "status": "ai-generated",
+      "source": "docs/space-learning-design.md"
+    },
+    {
+      "path": "ingilizce/story-space-sprites.png",
+      "sha256": "d3539c992164628d4281155b2e05b9c454c69a988dad1ad864c91d98936d144d",
+      "bytes": 1672426,
+      "status": "ai-generated",
+      "source": "docs/space-learning-design.md"
+    },
+    {
+      "path": "ingilizce/ders-vadi/notebook-doodles.png",
+      "sha256": "f53bbe688f7afe017d833c9682a62f457f2f74144e86e61fe647f38bb158adb5",
+      "bytes": 1483429,
+      "status": "ai-generated",
+      "source": "docs/notebook-design-assets.md"
     }
   ]
 }
