@@ -639,6 +639,13 @@
       "bytes": 1483429,
       "status": "ai-generated",
       "source": "docs/notebook-design-assets.md"
+    },
+    {
+      "path": "ingilizce/bottom-nav-stickers-v1.png",
+      "sha256": "6bf912592bec232837c0938e1ed771efcdbad70398d654b0fb4cf15421ccda13",
+      "bytes": 1930268,
+      "status": "ai-generated",
+      "source": "docs/sticker-navigation-design.md"
     }
   ]
 }

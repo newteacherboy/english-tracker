@@ -1,8 +1,8 @@
-/* Diji-Medu: compact forest-and-gold navigation. Existing button handlers stay in place. */
+/* Diji-Medu: approved compact sticker navigation. Existing button handlers stay in place. */
 (() => {
  'use strict';
- const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':2,'tab-aktiviteler':3,'tab-derscalis':4,'tab-magaza':5,'tab-profil':6,'tab-dunyam':6};
- const positions = ['0% 0%','50% 0%','50% 0%','100% 0%','0% 100%','50% 100%','100% 100%'];
+ const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':5,'tab-aktiviteler':2,'tab-derscalis':3,'tab-magaza':4,'tab-profil':5,'tab-dunyam':5};
+ const positions = ['0% 0%','50% 0%','100% 0%','0% 100%','50% 100%','100% 100%'];
  const layout = [['tab-dunya','Oyna'],['tab-meduakis','Arkadaşlar'],['tab-aktiviteler','Oyunlar'],['tab-derscalis','Ders Çalış'],['tab-magaza','Mağaza'],['tab-dunyam','Benim Dünyam']];
   let observer;
  function decorate() {

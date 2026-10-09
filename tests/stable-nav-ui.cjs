@@ -15,6 +15,13 @@ assert.deepEqual(state.map(x=>x.id),['tab-dunya','tab-meduakis','tab-aktiviteler
 assert(Math.max(...state.map(x=>x.center))-Math.min(...state.map(x=>x.center))<1,'all buttons in same row');
 assert(Math.max(...state.map(x=>x.w))-Math.min(...state.map(x=>x.w))<1,'equal widths');assert(state.every(x=>x.w>=44&&x.h>=44));
 await p.addScriptTag({url:'https://flat.test/bottom-nav.js'});assert.equal(await p.locator('.dm-nav-play').count(),0);
+assert.deepEqual(await p.locator('#bottomNavMobile .bn-label:visible').allTextContents(),['Oyna','Arkadaşlar','Oyunlar','Ders Çalış','Mağaza','Benim Dünyam']);
+assert.deepEqual(await p.locator('#bottomNavMobile .dm-nav-art:visible').evaluateAll(es=>es.map(e=>e.style.backgroundPosition)),['0% 0%','50% 0%','100% 0%','0% 100%','50% 100%','100% 100%']);
+const compact=await p.locator('#bottomNavMobile').evaluate(e=>({height:e.getBoundingClientRect().height,overflow:e.scrollWidth>e.clientWidth}));assert(compact.height<=84);assert(!compact.overflow);
+await p.evaluate(()=>{document.querySelectorAll('#bottomNavMobile .bn-item').forEach(e=>e.classList.toggle('active',e.dataset.ekran==='tab-dunya'));});
+assert.equal(await p.locator('[data-ekran="tab-dunya"] .bn-icon').evaluate(e=>getComputedStyle(e,'::after').backgroundColor),'rgb(0, 165, 171)');
+await p.locator('#bottomNavMobile').screenshot({path:'/tmp/sticker-nav-'+w+'.png'});
+
 for(const [id,v] of [['tab-dunya','play'],['tab-magaza','store'],['tab-dunyam','world']]){await p.locator('[data-ekran="'+id+'"]').click();assert.equal(await p.evaluate(()=>called),v);}
 const head=await p.evaluate(()=>{const a=document.querySelector('.bd-ust'),ball=document.querySelector('.bd-balon');return{bottom:a.getBoundingClientRect().bottom,ballTop:ball.getBoundingClientRect().top,sizes:[...a.children].map(e=>e.getBoundingClientRect().width)};});assert(head.bottom+8<=head.ballTop,'header buttons clear speech bubble');assert(head.sizes.every(x=>x===38));await p.locator('.bd-yuvarlak').first().click();assert.equal(await p.evaluate(()=>headerClicked),true);
 await p.evaluate(()=>{const n=document.getElementById('bottomNavMobile');n.append(n.firstElementChild);});await p.waitForTimeout(50);assert.equal(await p.locator('#bottomNavMobile').evaluate(n=>n.firstElementChild.dataset.ekran),'tab-dunya');

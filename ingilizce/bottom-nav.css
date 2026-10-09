@@ -1,4 +1,4 @@
-/* Approved light forest dock: six equal destinations in one row. */
+/* Approved sticker dock: six equal destinations in one row. */
 #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{
  --dm-nav-height:68px;box-sizing:border-box!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:none!important;
  display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:0!important;align-items:center!important;overflow:visible!important;
@@ -13,7 +13,7 @@
  border:1px solid transparent!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;transform:none!important;transition:background .15s ease!important;color:#284b35!important;
 }
 #bottomNavMobile#bottomNavMobile .bn-icon{display:block!important;width:34px!important;height:28px!important;font-size:0!important;line-height:1!important;animation:none!important;transform:none!important;flex-shrink:0}
-#bottomNavMobile#bottomNavMobile .dm-nav-art{display:block;width:100%;height:100%;background-image:url('bottom-nav-open-forest-v1.webp');background-size:300% 200%;background-repeat:no-repeat;filter:none}
+#bottomNavMobile#bottomNavMobile .dm-nav-art{display:block;width:100%;height:100%;background-image:url('bottom-nav-stickers-v1.png');background-size:300% 200%;background-repeat:no-repeat;filter:none}
 #bottomNavMobile#bottomNavMobile .bn-label{display:flex!important;align-items:center;justify-content:center;width:100%;max-width:100%;min-height:16px;color:#284b35!important;font-size:10px!important;font-weight:800!important;line-height:1.1!important;text-align:center;white-space:normal!important;word-break:normal!important;overflow:visible!important;text-overflow:clip!important}
 #bottomNavMobile#bottomNavMobile .bn-item:hover{background:#ebe6cc!important}
 #bottomNavMobile#bottomNavMobile .bn-item.active{background:#f3df9b70!important;border-color:#c3a15b70!important;box-shadow:none!important;transform:none!important}
@@ -34,3 +34,18 @@ body.dm-parkur-open #bzParkur#bzParkur>.bz-ic{padding-bottom:calc(84px + env(saf
 /* Fine dividers echo the approved parchment menu without adding height. */
 #bottomNavMobile#bottomNavMobile .bn-item:not([data-ekran="tab-dunya"])::before{content:"";position:absolute;left:-1px;top:7px;bottom:7px;width:1px;background:#cabd9860;pointer-events:none}
 
+
+/* Option 1: white die-cut stickers, peach selection and tiny turquoise dot. */
+#bottomNavMobile#bottomNavMobile.bottom-nav-mobile{--dm-nav-height:74px;min-height:72px!important;padding:4px 5px calc(4px + env(safe-area-inset-bottom,0px))!important;background:linear-gradient(180deg,#fff,#fffefe)!important;border:1px solid #e7e9ee!important;border-bottom:0!important;border-radius:23px 23px 0 0!important;box-shadow:0 -3px 15px #18344614!important}
+#bottomNavMobile#bottomNavMobile .bn-item{min-height:63px!important;padding:3px 1px!important;gap:5px!important;border:0!important;border-radius:17px!important;color:#123d3d!important;overflow:visible!important}
+#bottomNavMobile#bottomNavMobile .bn-icon{position:relative;width:37px!important;height:34px!important}
+#bottomNavMobile#bottomNavMobile .dm-nav-art{background-image:url('bottom-nav-stickers-v1.png');filter:drop-shadow(0 1px 1px #31405718)}
+#bottomNavMobile#bottomNavMobile .bn-label{height:22px!important;min-height:22px!important;color:#123d3d!important;font:900 10px/1.05 Nunito,system-ui,sans-serif!important}
+#bottomNavMobile#bottomNavMobile .bn-item:not([data-ekran="tab-dunya"])::before{content:none!important}
+#bottomNavMobile#bottomNavMobile .bn-item.active{background:#fff0e4!important;border:0!important;box-shadow:none!important}
+#bottomNavMobile#bottomNavMobile .bn-item.active .bn-label{color:#103e40!important}
+#bottomNavMobile#bottomNavMobile .bn-item.active .bn-icon::after{content:'';position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);width:6px;height:6px;border:2px solid white;border-radius:50%;background:#00a5ab;box-shadow:0 1px 2px #047b7e20;pointer-events:none}
+#bottomNavMobile#bottomNavMobile .bn-item:hover{background:#fff6ee!important}
+#bottomNavMobile#bottomNavMobile .bn-item:focus-visible{outline:3px solid #18a9ac!important;outline-offset:0}
+@media(max-width:360px){#bottomNavMobile#bottomNavMobile .bn-label{font-size:9px!important}#bottomNavMobile#bottomNavMobile .bn-icon{width:34px!important;height:32px!important}}
+@media(min-width:400px){#bottomNavMobile#bottomNavMobile .bn-label{font-size:11px!important}#bottomNavMobile#bottomNavMobile .bn-icon{width:40px!important;height:36px!important}}
