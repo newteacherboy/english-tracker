@@ -30466,7 +30466,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     let r = await orgFetch.apply(this, arguments);
     /* Yükleme (sayfanın kendi yükleyicisi; "_=" içermeyen): ilk yüklemede sunucudaki veri mutlaka kabul edilsin */
     try {
-      if(opt && typeof opt.body==='string' && /"(seviyeUrunAl|seviyeSandikAc|seviyeEkJokerAl|seviyeOyunOdulu|buyuSeviyeTamamla)"/.test(opt.body) && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json();if(reward.yo?.guncelleme)taban[kucuk(request.ogrenci||aktifOgrenciAdi)]=reward.yo.guncelleme; }
+      if(opt && typeof opt.body==='string' && /"(seviyeUrunAl|seviyeSandikAc|seviyeEkJokerAl|seviyeOyunOdulu|buyuSeviyeTamamla|storyAdvance)"/.test(opt.body) && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json();if(reward.yo?.guncelleme)taban[kucuk(request.ogrenci||aktifOgrenciAdi)]=reward.yo.guncelleme; }
       if (/[?&]islem=ekVeriGetir/.test(u) && /[?&]anahtar=yo(&|$)/.test(u) && !/[?&]_=/.test(u) && r.ok && !r.headers.get('X-Diji-Cevrimdisi')) {
         let ad = kucuk(decodeURIComponent((u.match(/[?&]ogrenci=([^&]*)/) || [])[1] || ''));
         let d = await r.clone().json().catch(() => undefined);
@@ -30589,7 +30589,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="google-login.js?v=rights-7"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=3">
 <script src="parkur-map-theme-v1.js?v=3"></script>
-<link rel="stylesheet" href="story-path.css?v=1"><script src="story-curriculum.js?v=1"></script><script src="story-path.js?v=1"></script>
+<link rel="stylesheet" href="story-path.css?v=1"><script src="story-curriculum.js?v=2"></script><script src="story-path.js?v=2"></script>
 <link rel="stylesheet" href="medupro.css?v=2">
 <script src="medupro.js?v=5"></script>
 <link rel="stylesheet" href="activity-ui.css?v=5">
