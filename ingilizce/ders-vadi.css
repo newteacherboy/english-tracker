@@ -160,7 +160,7 @@ body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol:disabled{opacity:.55;cursor:
 body.dc-ada.dc-vadi #tab-derscalis #dvMaceraKisayol:focus-visible{outline:3px solid #35845e;outline-offset:3px}
 
 /* Çalışma Defteri: yalnızca seviye, kategori ve konu menüleri. */
-body.dc-defter.dc-ada #tab-derscalis .ma-kap{background:repeating-linear-gradient(0deg,transparent 0 29px,#b6aa8920 30px 31px),#fff9ed!important;border:1px solid #e5d7ba!important;border-radius:22px!important;box-shadow:0 5px 18px #6d593b12!important;color:#204e3b!important}
+body.dc-defter.dc-ada #tab-derscalis .ma-kap:not(#maHarita){background:repeating-linear-gradient(0deg,transparent 0 29px,#b6aa8920 30px 31px),#fff9ed!important;border:1px solid #e5d7ba!important;border-radius:22px!important;box-shadow:0 5px 18px #6d593b12!important;color:#204e3b!important}
 body.dc-defter.dc-ada #tab-derscalis #maPatika{padding:0 10px 14px 19px!important;overflow:hidden!important}
 body.dc-defter #maPatika::before{content:'';position:absolute;left:5px;top:12px;bottom:10px;width:8px;background:radial-gradient(ellipse,#b2a081 0 3px,transparent 4px) center top/8px 30px repeat-y;pointer-events:none}
 body.dc-defter #maPatika .ma-ust{position:relative;display:flex;align-items:center;padding:14px 6px 10px!important;min-height:90px;gap:6px}
@@ -192,15 +192,6 @@ body.dc-defter #tab-derscalis .dc-topbar{flex-wrap:wrap;gap:9px!important}
 body.dc-defter #tab-derscalis .dc-arama-kutu{flex:1 0 100%!important;margin:0!important;width:100%;order:5}
 body.dc-defter #tab-derscalis #dcAramaInput{box-sizing:border-box;width:100%!important;border:1px solid #e0d5be!important;background:#fffcf4!important;color:#204e3b!important;border-radius:14px!important;padding:12px 15px!important;font-size:14px!important;min-height:44px;box-shadow:none!important}
 body.dc-defter #tab-derscalis #dcAramaInput:focus{outline:2px solid #4c9374;outline-offset:1px}
-body.dc-defter #maHarita .dm-study-mode{background:#2b6e51!important;border:0;color:#fff;font-size:13px}
-body.dc-defter #maHarita .dm-study-hero h2{color:#204e3b!important;-webkit-text-fill-color:#204e3b!important}
-body.dc-defter #maHarita .dm-study-hero p{color:#667c68!important}
-body.dc-defter #maHarita .dm-island-art{display:none!important}
-body.dc-defter #maHarita .ma-ada svg{display:none!important}
-body.dc-defter #maHarita .ma-ada::before{content:'✎';display:block;color:#d7af4d;font-size:35px;line-height:1.1}
-body.dc-defter #maHarita .ma-isim{margin:7px 3px 0!important;background:#fffdf4!important;border:1px solid #e2d6bd!important;border-radius:15px!important}
-body.dc-defter #maHarita .ma-isim b{color:#205139!important}
-body.dc-defter #maHarita .ma-harita{gap:12px!important}
 body.dc-defter #maAdaIc .ma-yapi{background:#fffdf4!important;border:1px solid #e2d6bd!important;border-radius:17px!important}
 body.dc-defter #maAdaIc .ma-tabela{background:none!important;border:0!important;color:#204e3b!important}
 @media(min-width:700px){body.dc-defter #maPatika .ma-tas .et b{font-size:17px!important}body.dc-defter #maPatika .dn-en{font-size:13px}body.dc-defter #maPatika .dn-doodle{width:65px}}
