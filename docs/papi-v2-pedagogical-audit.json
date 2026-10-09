@@ -1,15 +1,14 @@
 {
-  "status": "automated-first-pass; not human pedagogical approval",
+  "status": "All 40 chapters have authored context exercises; full independent review still required",
   "date": "2026-10-10",
   "total": 40,
   "reviewedStructure": 40,
   "approved": 0,
   "findings": [
-    "All 40 new chapters rely primarily on two example sentences; vocabulary breadth is insufficient for finished lessons.",
-    "Automatically generated two-sentence 'dialogues' are not context-validated and can be incoherent.",
-    "Multiple-choice distractors frequently come from unrelated topics and need contextual distractors.",
-    "No real pronunciation/speech evaluation exists; browser TTS is not a recorded Papi voice.",
-    "Reading/listening activities often re-use very short phrases, not graded passages."
+    "All 40 drafts now have contextual practice dialogue plus grammar cloze, but these are not an independent pedagogical approval.",
+    "Original lesson steps still rely on short phrases and need more extended graded listening/reading tasks.",
+    "All distractors and translations need human accuracy/age-level review before production.",
+    "No browser/speech assessment or production launch sign-off has occurred."
   ],
   "chapterFindings": [
     {
@@ -17,8 +16,8 @@
       "level": "A1",
       "title": "Okulun İlk Günü",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -28,8 +27,8 @@
       "level": "A1",
       "title": "Günlük Saatler",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -39,9 +38,8 @@
       "level": "A1",
       "title": "Papi'nin Arkadaşları",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -51,8 +49,8 @@
       "level": "A1",
       "title": "Minik Market",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -62,9 +60,8 @@
       "level": "A1",
       "title": "Hava Günlüğü",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -74,8 +71,8 @@
       "level": "A1",
       "title": "Şehirde Yolculuk",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -85,9 +82,8 @@
       "level": "A1",
       "title": "Hobiler Panosu",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -97,8 +93,8 @@
       "level": "A1",
       "title": "Hayvan Dostlar",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -108,9 +104,8 @@
       "level": "A1",
       "title": "Bugün Neler Oluyor?",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -120,9 +115,8 @@
       "level": "A1",
       "title": "Bahçe Şenliği Hazırlığı",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -132,8 +126,8 @@
       "level": "A2",
       "title": "Yol Arkadaşım",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -143,9 +137,8 @@
       "level": "A2",
       "title": "Şehir Haritası",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -155,8 +148,8 @@
       "level": "A2",
       "title": "Sağlıklı Günler",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -166,9 +159,8 @@
       "level": "A2",
       "title": "Tatil Albümü",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -178,9 +170,8 @@
       "level": "A2",
       "title": "Pazar Sohbeti",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -190,9 +181,8 @@
       "level": "A2",
       "title": "Hafta Sonu Planı",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -202,9 +192,8 @@
       "level": "A2",
       "title": "Papi'nin Tarifleri",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -214,9 +203,8 @@
       "level": "A2",
       "title": "Kayıp Eşyalar",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -226,8 +214,8 @@
       "level": "A2",
       "title": "Sürpriz Haber",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -237,9 +225,8 @@
       "level": "A2",
       "title": "Kuzey Günlüğü",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -249,8 +236,8 @@
       "level": "B1",
       "title": "İki Farklı Görüş",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -260,9 +247,8 @@
       "level": "B1",
       "title": "Gizemli Röportaj",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -272,9 +258,8 @@
       "level": "B1",
       "title": "Doğaya Katkı",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -284,9 +269,8 @@
       "level": "B1",
       "title": "Yarınki Şehir",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -296,9 +280,8 @@
       "level": "B1",
       "title": "Bir Zamanlar",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -308,9 +291,8 @@
       "level": "B1",
       "title": "Uzlaşma Köprüsü",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -320,9 +302,8 @@
       "level": "B1",
       "title": "Şaşırtıcı Keşif",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -332,9 +313,8 @@
       "level": "B1",
       "title": "Toplumun Sesi",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -344,9 +324,8 @@
       "level": "B1",
       "title": "Neden Böyle Oldu?",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -356,9 +335,8 @@
       "level": "B1",
       "title": "Kristal Şehir Dosyası",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -368,9 +346,8 @@
       "level": "B2",
       "title": "Konseyde Tartışma",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -380,8 +357,8 @@
       "level": "B2",
       "title": "Kararların Etkisi",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -391,9 +368,8 @@
       "level": "B2",
       "title": "Güvenilir Kaynak",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -403,9 +379,8 @@
       "level": "B2",
       "title": "Farklı Kültürler",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -415,9 +390,8 @@
       "level": "B2",
       "title": "Gezegenin Geleceği",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -427,9 +401,8 @@
       "level": "B2",
       "title": "Karmaşık Mesajlar",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -439,8 +412,8 @@
       "level": "B2",
       "title": "Çözüm Arayışı",
       "issues": [
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -450,9 +423,8 @@
       "level": "B2",
       "title": "Bilim Kulübü",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -462,9 +434,8 @@
       "level": "B2",
       "title": "Son Rapor",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
@@ -474,12 +445,12 @@
       "level": "B2",
       "title": "Yeni Dünyanın Kapısı",
       "issues": [
-        "Automatically paired expressions are not necessarily a dialogue",
-        "Distractor from unrelated chapter",
-        "Teaching quality not independently validated"
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
       ],
       "review": "requires qualified English educator",
       "approved": false
     }
-  ]
+  ],
+  "curatedPracticeChapters": 40
 }
