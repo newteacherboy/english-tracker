@@ -1,7 +1,7 @@
 import { STORY_CHAPTERS as LEGACY_CHAPTERS } from './story-curriculum.js';
 import { STORY_V2_CHAPTERS } from './story-v2-curriculum.js';
 const STORY_CHAPTERS=[...LEGACY_CHAPTERS,...STORY_V2_CHAPTERS];
-const previousChapter=(chapter:number):number|null=>{
+export const previousChapter=(chapter:number):number|null=>{
  if(chapter===0)return null;
  if(chapter<40)return chapter%10===0?chapter+39:chapter-1;
  if(chapter<80)return chapter%10===0?chapter-31:chapter-1;
