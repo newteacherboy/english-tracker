@@ -96,4 +96,4 @@ begin
  idx:=floor(elapsed/12);q:=case when idx between 0 and jsonb_array_length(m.questions)-1 then m.questions->idx else null end;
  ra:=case when actor=m.player_a then m.result_a else m.result_b end;rb:=case when actor=m.player_a then m.result_b else m.result_a end;
  return jsonb_build_object('ok',true,'id',m.id,'game',m.game,'mode',m.mode,'status',m.status,'serverNow',now(),'start',start_at,'ready',case when actor=m.player_a then m.ready_a else m.ready_b end,'opponentReady',case when actor=m.player_a then m.ready_b else m.ready_a end,'index',idx,'total',jsonb_array_length(m.questions),'seconds',greatest(0,ceil(12-mod(greatest(elapsed,0),12))),'question',case when q is null then null else q-'answer' end,'answered',ans ? idx::text,'feedback',case when ans ? idx::text then q->>'answer' else null end,'myScore',(case when m.questions->0->>'puanSurum'='3' then public.dm_round_score_v3(ans,m.questions,false) else public.dm_round_score(ans,m.questions) end)->'puan','myResult',ra,'opponentResult',rb,'opponent',(select username from public.students where id=case when actor=m.player_a then m.player_b else m.player_a end));
-end $function$
+end $function$;
