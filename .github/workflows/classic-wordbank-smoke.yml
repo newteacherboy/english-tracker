@@ -1,0 +1,18 @@
+name: Classic Word Bank Smoke
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ingilizce/index.html'
+      - 'tests/classic-wordbank-rotation-smoke.test.cjs'
+      - '.github/workflows/classic-wordbank-smoke.yml'
+  workflow_dispatch:
+jobs:
+  classic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/classic-wordbank-rotation-smoke.test.cjs
