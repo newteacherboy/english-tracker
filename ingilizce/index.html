@@ -28340,7 +28340,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const TIPLER = [
     ['lab', '🔬', 'Kelime Laboratuvarı'], ['risk', '🎈', 'Risk Balonları'], ['eksik', '✏️', 'Eksik Harf'], ['hafiza', '🃏', 'Hafıza Sandığı'],
     ['hiz', '🌪️', 'Hız Fırtınası'], ['harf', '🔤', 'Harf Avı'], ['sifre', '🔐', 'Şifre Kırıcı'], ['es', '🔗', 'Eş Bul'],
-    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['sesliFinal', '🎙️', 'Papi ile Konuş']
+    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['sesliFinal', '🎙️', 'Papi ile Konuş'], ['dinleAnlam','🎧','Dinle ve Anlamı Yakala'], ['hata','🦜',"Papi'nin Hatası"], ['hatirla','🧠','Aklında Kaldı mı?'], ['miniDiyalog','💬','Papi ile Diyalog']
   ];
   /* 4 kapı × 2 sınıf; her ünite bir durak. Durak numarası = 1000 + sınıf×100 + ünite (ör. 1203 = 2. sınıf 3. ünite) */
   const KAPI_SINIF = [[1, 2], [3, 4], [5, 6], [7, 8]];
@@ -28562,7 +28562,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let cumleC = OC.kelimeSec('ba_cumle_'+D.no,cumleler.filter(c=>!trenC||c.en!==trenC.en),1,{anahtar:c=>c.en,zk:false})[0];
     if (trenC) ekle('tren', { c: trenC });
     if (cumleC) ekle('cumle', { c: cumleC });
-    sorular = karistir(sorular);
+    // Bölümlere göre farklılaşan görevler: yalnızca sırayı değil görev seçimini de değiştir.
+    // Eksik cümle/kalıp bulunan ünitelerde 11 görevi aynı veri havuzundan tamamla.
+    const ekGorev = [
+      ...kel.slice(0, 8).map((k,i)=>({tip:i%3===0?'dinleAnlam':i%3===1?'hata':'hatirla',k})),
+      ...kel.slice(0, 5).map(k=>({tip:'miniDiyalog',k}))
+    ];
+    sorular = karistir([...sorular,...ekGorev]).slice(0,11);
+    while(sorular.length<11) sorular.push({tip:sorular.length%2===0?'dinleAnlam':'hatirla',k:kel[sorular.length%kel.length]});
     // Finale alınan kelimeler bu duraktaki öğretim görevlerinden çıkarılır.
     // Aynı kelimenin farklı temsillerini tek kart olarak kullan.
     const finalKelimeler = [...new Map(sorular.flatMap(s => s.k ? [s.k] : (s.l || []))
@@ -28660,7 +28667,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { window.dmPapiFirstPractice?.complete('school');let b = O.b; kapat(); goster('harita', b); } };
     $('bzGeriSoru').onclick = () => incelemeAc();
     let alan = $('bzAlan');
-    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal })[s.tip](s, alan);
+    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog })[s.tip](s, alan);
     window.dmCalmQuestion?.(p);
     jokerBarCiz();
     p.scrollTop = 0;
@@ -28735,6 +28742,37 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     alan.innerHTML = `<div class="bz-etiket">🇬🇧 İngilizce kelime</div><div class="bz-soru">${kac(EN(s.k))}</div><div class="bz-ipucu">👉 Bu kelimenin Türkçe anlamını seç <button class="bz-ses" id="bzDinle" style="margin-left:6px;padding:6px 10px;font-size:13px">🔊</button></div>`;
     $('bzDinle').onclick = () => oku(EN(s.k)); oku(EN(s.k));
     secenekler(alan, karistir([TR(s.k), ...celdirici(s.k, TR, 1)]), TR(s.k));
+  }
+  /* Yeni öğretim görevleri: tüm yanıtlar mevcut cevap/XP işleyicisini kullanır. */
+  function dinleAnlam(s, alan) {
+    const en=EN(s.k), tr=TR(s.k);
+    alan.innerHTML='<div class="bz-etiket">🎧 Dinle ve seç</div><div class="bz-soru">Papi hangi kelimeyi söylüyor?</div>'+
+      '<button type="button" class="bz-ses" id="bzDinle">🔊 Tekrar dinle</button>'+
+      '<div class="bz-ipucu">Dinlediğin kelimenin Türkçe anlamını seç.</div>';
+    $('bzDinle').onclick=()=>oku(en);oku(en);
+    secenekler(alan,karistir([tr,...celdirici(s.k,TR,3)]),tr);
+  }
+  function hata(s, alan) {
+    const en=EN(s.k),tr=TR(s.k),yan=celdirici(s.k,TR,1)[0];
+    const yanlis=!!yan && Math.random()<0.5,anlam=yanlis?yan:tr;
+    alan.innerHTML='<div class="bz-etiket">🦜 Papi doğru mu söyledi?</div>'+
+      '<div class="bz-soru">'+kac(en)+' = '+kac(anlam)+'</div>'+
+      '<div class="bz-ipucu">Eşleştirmeyi kontrol et, sonra seç.</div>';
+    secenekler(alan,['Doğru','Yanlış'],yanlis?'Yanlış':'Doğru');
+  }
+  function hatirla(s, alan) {
+    const en=EN(s.k),tr=TR(s.k);
+    alan.innerHTML='<div class="bz-etiket">🧠 Hatırlama görevi</div>'+
+      '<div class="bz-soru">'+kac(tr)+'</div>'+
+      '<div class="bz-ipucu">Kelimenin İngilizce karşılığını hatırla.</div>';
+    secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
+  }
+  function miniDiyalog(s, alan) {
+    const en=EN(s.k),tr=TR(s.k);
+    alan.innerHTML='<div class="bz-etiket">💬 Papi ile konuşma</div>'+
+      '<div class="bz-soru">Papi: How do you say "'+kac(tr)+'" in English?</div>'+
+      '<div class="bz-ipucu">Papi\'ye İngilizce doğru cevabı ver.</div>';
+    secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
   }
   /* 🎙️ 12. görev: cihazda konuşma tanıma, kartlar bitince tek cevap.
      Ses kayıtları depolanmaz. Konuşma tanıma desteği yoksa klavye eşdeğeri sunulur. */
