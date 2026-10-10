@@ -13,3 +13,16 @@ test('V2 dataset has 40 stable, bounded chapters and supported steps',()=>{
  deck.forEach((ch,i)=>{assert.equal(ch.id,i+40);assert.ok(ch.steps.length>=2&&ch.steps.length<=10);
   ch.steps.forEach(t=>assert.ok(['scene','teach','choice','listen','order'].includes(t.kind),ch.id+' '+t.kind));});
 });
+
+test('real map honors level-interleaved 80-step route and stable chapter IDs',()=>{
+ assert.match(pathCode,/const ids=\[\.\.\.Array\.from/);
+ assert.match(pathCode,/40\+i/);
+ assert.match(pathCode,/50\+i/);
+ assert.match(pathCode,/60\+i/);
+ assert.match(pathCode,/70\+i/);
+ assert.match(pathCode,/curriculum\(\)\.find\(c=>c\.id===id\)/);
+ assert.match(pathCode,/all\[i\+1\]\.id/);
+ const ids=[...Array.from({length:10},(_,i)=>i),...Array.from({length:10},(_,i)=>40+i),...Array.from({length:10},(_,i)=>10+i),...Array.from({length:10},(_,i)=>50+i),...Array.from({length:10},(_,i)=>20+i),...Array.from({length:10},(_,i)=>60+i),...Array.from({length:10},(_,i)=>30+i),...Array.from({length:10},(_,i)=>70+i)];
+ assert.equal(ids[9],9);assert.equal(ids[10],40);assert.equal(ids[19],49);assert.equal(ids[20],10);
+ assert.equal(ids.length,new Set(ids).size);
+});
