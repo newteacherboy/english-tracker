@@ -1,0 +1,22 @@
+name: Parkur Learning Tests
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/index.html'
+      - 'tests/parkur-learning.test.cjs'
+      - '.github/workflows/parkur-learning-tests.yml'
+  push:
+    paths:
+      - 'ingilizce/index.html'
+      - 'tests/parkur-learning.test.cjs'
+      - '.github/workflows/parkur-learning-tests.yml'
+jobs:
+  parkur:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test parkur learning and speaking finale
+        run: node --test tests/parkur-learning.test.cjs

@@ -2124,6 +2124,26 @@ async function handle(req: Request) {
   }
 
   // ============================================================ HERKESE AÇIK İÇERİK
+  // Kelime parkuru: word_bank ünite kapsamı ile speech_synonyms alternatiflerini birleştir.
+  // Kullanıcının kişisel bilgilerini döndürmez; yalnızca etkin ders içeriği.
+  if (op === "parkurSozlukGetir") {
+    const cls=Number(val(body,q,"sinif")), unit=Number(val(body,q,"unite"));
+    if(!Number.isInteger(cls)||cls<1||cls>12||!Number.isInteger(unit)||unit<1||unit>100)
+      return json({ok:false,mesaj:"Geçersiz sınıf veya ünite."},400);
+    const {data:wb,error:we}=await supabase.from("word_bank").select("english")
+      .eq("active",true).eq("class_no",cls).eq("unit_no",unit).limit(1500);
+    if(we)return json({ok:false,mesaj:"Kelime havuzu yüklenemedi."},503);
+    const terms=[...new Set((wb||[]).map((w:any)=>String(w.english||"").trim()).filter(Boolean))];
+    if(!terms.length)return json({ok:true,entries:[]});
+    const entries:any[]=[];
+    for(let i=0;i<terms.length;i+=100) {
+      const {data,error}=await supabase.from("speech_synonyms")
+        .select("english,alternatives").in("english",terms.slice(i,i+100)).limit(1000);
+      if(error)return json({ok:false,mesaj:"Alternatif sözcükler yüklenemedi."},503);
+      entries.push(...(data||[]));
+    }
+    return json({ok:true,entries});
+  }
   if (op === "kelimelerGetir") {
     return cachedContent(req,"words",async()=>{
       const data = await hepsiniGetir(() => supabase.from("word_bank").select("class_no,unit_no,english,turkish,extra").eq("active", true).order("class_no").order("unit_no").order("english"));

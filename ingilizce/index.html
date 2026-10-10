@@ -28340,7 +28340,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const TIPLER = [
     ['lab', '🔬', 'Kelime Laboratuvarı'], ['risk', '🎈', 'Risk Balonları'], ['eksik', '✏️', 'Eksik Harf'], ['hafiza', '🃏', 'Hafıza Sandığı'],
     ['hiz', '🌪️', 'Hız Fırtınası'], ['harf', '🔤', 'Harf Avı'], ['sifre', '🔐', 'Şifre Kırıcı'], ['es', '🔗', 'Eş Bul'],
-    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi']
+    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['sesliFinal', '🎙️', 'Papi ile Konuş'], ['dinleAnlam','🎧','Dinle ve Anlamı Yakala'], ['hata','🦜',"Papi'nin Hatası"], ['hatirla','🧠','Aklında Kaldı mı?'], ['miniDiyalog','💬','Papi ile Diyalog']
   ];
   /* 4 kapı × 2 sınıf; her ünite bir durak. Durak numarası = 1000 + sınıf×100 + ünite (ör. 1203 = 2. sınıf 3. ünite) */
   const KAPI_SINIF = [[1, 2], [3, 4], [5, 6], [7, 8]];
@@ -28537,6 +28537,20 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let { havuz, tekrar, tum, D } = durakHavuzu(b, d);
     if (havuz.length < 8) { toast('Bu durak için yeterli kelime bulunamadı. Kelime bankası yükleniyor olabilir, birazdan tekrar dene.'); return; }
     let kel = window.OC ? OC.kelimeSec('ba' + D.no, havuz, 16) : karistir(havuz).slice(0, 16);
+    // Sunucuda eşleştirilen speech_synonyms alternatifleri: API eski sürümdeyse ana kelimelerle devam eder.
+    let speechAlternatives = {};
+    try {
+      const response=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({islem:'parkurSozlukGetir',sinif:D.sinif,unite:D.unite})});
+      if(response.ok) {
+        const data=await response.json();
+        if(data.ok && Array.isArray(data.entries)) for(const row of data.entries) {
+          const key=String(row.english||'').toLocaleLowerCase('en').trim();
+          if(key && row.alternatives) speechAlternatives[key]=String(row.alternatives);
+        }
+      }
+    } catch (_) { /* eş anlamlar yüklenmezse öğretim kilitlenmesin */ }
+    if(ownerAtStart!==isim())return;
     let harfli = kel.filter(k => harfMi(EN(k)));
     let yedek = karistir(tum.filter(k => harfMi(EN(k)) && !kel.includes(k)));
     const al = (f, adet) => { let out = []; for (const k of [...harfli, ...yedek]) { if (out.length >= adet) break; if (f(EN(k)) && !out.includes(k) && !kullanildi.has(k)) out.push(k); } out.forEach(k => kullanildi.add(k)); return out; };
@@ -28562,14 +28576,37 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let cumleC = OC.kelimeSec('ba_cumle_'+D.no,cumleler.filter(c=>!trenC||c.en!==trenC.en),1,{anahtar:c=>c.en,zk:false})[0];
     if (trenC) ekle('tren', { c: trenC });
     if (cumleC) ekle('cumle', { c: cumleC });
-    sorular = karistir(sorular);
-    O = { b, d, D, sorular, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0 };
+    // Öğretim planı: 11 göreve 5 odak kelime dağıtılır.
+    // İlk sorular tanıtır, ortadakiler pekiştirir, son sorular ipucusuz hatırlatır.
+    const scoped = havuzTum().filter(k=>Number(k.sinif)===Number(D.sinif)
+      && Number(k.unite)===Number(D.unite) && EN(k) && TR(k));
+    const targets=karistir([...new Map(scoped.map(k=>[EN(k).toLocaleLowerCase('en'),k])).values()]).slice(0,5);
+    const active=targets;
+    if(!active.length){toast('Bu durakta seçilen ünitenin kelimeleri bulunamadı. Word bank verisini kontrol edin.');return;}
+    const pick=(i)=>active[i%active.length];
+    const from = types => types[Math.floor(Math.random()*types.length)];
+    const build=[
+      {tip:'dinleAnlam',k:pick(0)}, {tip:from(['lab','dinleAnlam']),k:pick(1)},
+      {tip:from(['risk','hatirla']),k:pick(2)},
+      {tip:'hata',k:pick(3)}, {tip:'miniDiyalog',k:pick(4)},
+      {tip:from(['hatirla','risk']),k:pick(0)}, {tip:'dinleAnlam',k:pick(1)},
+      {tip:from(['miniDiyalog','risk']),k:pick(2)}, {tip:from(['hata','lab']),k:pick(3)},
+      {tip:'hatirla',k:pick(4)}, {tip:from(['risk','miniDiyalog','lab']),k:pick(Math.floor(Math.random()*active.length))}
+    ];
+    // Değişken görevler ve aynı kelimenin birden fazla biçimde görülmesi.
+    const first=karistir(build.slice(0,3));
+    const middle=karistir(build.slice(3,8));
+    const last=karistir(build.slice(8));
+    sorular=[...first,...middle,...last];
+    // Son görevde görselle değil konuşmayla bütün hedef kelimeler geri çağrılır.
+    sorular.push({tip:'sesliFinal',l:karistir(active)});
+    O = { b, d, D, sorular, speechAlternatives, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0 };
     if (window.OC) OC.basla('ba');
     try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
     soruCiz();
   }
   function oyunUst() {
-    let s = O.sorular[O.i], [, ik, ad] = TIPLER.find(t => t[0] === s.tip);
+    let s = O.sorular[O.i], [, ik, ad] = TIPLER.find(t => t[0] === s.tip) || ['sesliFinal','🎙️','Papi ile Konuş'];
     let enerji = typeof window.genelEnerjiKalan === 'number' ? window.genelEnerjiKalan : '–';
     return `<div class="bz-oyun-ust"><button class="kapat" id="bzCik" ${window.dmPapiFirstPractice?.locked('school')?'disabled title="İlk çalışmanı tamamla"':''} aria-label="Oyundan çık" style="width:38px;height:38px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:900;cursor:pointer;flex:none">✕</button>
       <button class="bz-geri-soru" id="bzGeriSoru" aria-label="Önceki soruları gör" ${O.gecmis.some(Boolean) ? '' : 'disabled'}>←</button>
@@ -28591,7 +28628,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function jokerBarCiz() {
     let bar = $('bzJokerler'); if (!bar) return;
     bar.innerHTML = JK.map(([t, ik, ad]) => {
-      let n = jkSay(t), uygun = !O._cevaplandi && (t === 'pas' || (t !== 'ikinci' && typeof O.jk[t] === 'function'));
+      let n = jkSay(t), uygun = !O._cevaplandi && O.sorular[O.i]?.tip!=='sesliFinal' && (t === 'pas' || (t !== 'ikinci' && typeof O.jk[t] === 'function'));
       let bilgi = t === 'ikinci' ? 'Yanlış yapınca sorar' : '';
       return `<button class="bz-jk" data-jk="${t}" ${n > 0 && uygun ? '' : 'disabled'} aria-label="${ad}, ${n} hak${bilgi ? ', ' + bilgi : ''}"><span>${ik}</span>${ad}${n ? `<b>${n}</b>` : ''}</button>`;
     }).join('') + `<button class="bz-jk al" id="bzJkAl" aria-label="Joker ve enerji satın al"><span>🛒</span>Al</button>`;
@@ -28599,7 +28636,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzJkAl').onclick = dukkanAc;
   }
   function jokerKullan(t) {
-    if (O._cevaplandi || jkSay(t) <= 0) return;
+    if (O._cevaplandi || O.sorular[O.i]?.tip==='sesliFinal' || jkSay(t) <= 0) return;
     if(!window.dmProgression?.require('joker') || O.jokerKullanim >= window.dmProgression.quota()) return toast('🃏 Bu duraktaki joker hakkın doldu.');
     if (t === 'pas') { jkHarca('pas'); O._pas = true; $('bzAlan').querySelectorAll('button,input').forEach(x => x.disabled = true); cevap(true, ''); return; }
     let f = O.jk[t]; if (typeof f !== 'function') return;
@@ -28638,7 +28675,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     k = Math.max(0, Math.min(son, k === undefined ? son : k));
     while (k > 0 && !O.gecmis[k]) k--;
     let g = O.gecmis[k]; if (!g) return;
-    let [, ik, ad] = TIPLER.find(t => t[0] === g.tip);
+    let [, ik, ad] = TIPLER.find(t => t[0] === g.tip) || ['sesliFinal','🎙️','Papi ile Konuş'];
     $('bzAlan').style.display = 'none'; $('bzJokerler').style.display = 'none'; let tip = document.querySelector('#bzGovde .bz-tip'); if (tip) tip.style.visibility = 'hidden';
     let inc = $('bzInceleme'); inc.style.display = '';
     inc.innerHTML = `<div class="bz-inceleme-bas"><button type="button" id="bzIncOnce" ${k > 0 ? '' : 'disabled'} aria-label="Daha önceki soru">‹</button><span style="flex:1">👀 ${k + 1}. soru · ${ik} ${ad} ${O.sonuclar[k] ? '✅' : '❌'}</span><button type="button" id="bzIncSonra" ${k < son ? '' : 'disabled'} aria-label="Sonraki soru">›</button><button type="button" id="bzIncKapat">Soruya dön</button></div><div class="bz-inceleme-govde dm-question-review" data-question-type="${g.tip}">${g.html}</div>`;
@@ -28654,7 +28691,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { window.dmPapiFirstPractice?.complete('school');let b = O.b; kapat(); goster('harita', b); } };
     $('bzGeriSoru').onclick = () => incelemeAc();
     let alan = $('bzAlan');
-    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte })[s.tip](s, alan);
+    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog })[s.tip](s, alan);
     window.dmCalmQuestion?.(p);
     jokerBarCiz();
     p.scrollTop = 0;
@@ -28729,6 +28766,92 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     alan.innerHTML = `<div class="bz-etiket">🇬🇧 İngilizce kelime</div><div class="bz-soru">${kac(EN(s.k))}</div><div class="bz-ipucu">👉 Bu kelimenin Türkçe anlamını seç <button class="bz-ses" id="bzDinle" style="margin-left:6px;padding:6px 10px;font-size:13px">🔊</button></div>`;
     $('bzDinle').onclick = () => oku(EN(s.k)); oku(EN(s.k));
     secenekler(alan, karistir([TR(s.k), ...celdirici(s.k, TR, 1)]), TR(s.k));
+  }
+  /* Yeni öğretim görevleri: tüm yanıtlar mevcut cevap/XP işleyicisini kullanır. */
+  function dinleAnlam(s, alan) {
+    const en=EN(s.k), tr=TR(s.k);
+    alan.innerHTML='<div class="bz-etiket">🎧 Dinle ve seç</div><div class="bz-soru">Papi hangi kelimeyi söylüyor?</div>'+
+      '<button type="button" class="bz-ses" id="bzDinle">🔊 Tekrar dinle</button>'+
+      '<div class="bz-ipucu">Dinlediğin kelimenin Türkçe anlamını seç.</div>';
+    $('bzDinle').onclick=()=>oku(en);oku(en);
+    secenekler(alan,karistir([tr,...celdirici(s.k,TR,3)]),tr);
+  }
+  function hata(s, alan) {
+    const en=EN(s.k),tr=TR(s.k),yan=celdirici(s.k,TR,1)[0];
+    const yanlis=!!yan && Math.random()<0.5,anlam=yanlis?yan:tr;
+    alan.innerHTML='<div class="bz-etiket">🦜 Papi doğru mu söyledi?</div>'+
+      '<div class="bz-soru">'+kac(en)+' = '+kac(anlam)+'</div>'+
+      '<div class="bz-ipucu">Eşleştirmeyi kontrol et, sonra seç.</div>';
+    secenekler(alan,['Doğru','Yanlış'],yanlis?'Yanlış':'Doğru');
+  }
+  function hatirla(s, alan) {
+    const en=EN(s.k),tr=TR(s.k);
+    alan.innerHTML='<div class="bz-etiket">🧠 Hatırlama görevi</div>'+
+      '<div class="bz-soru">'+kac(tr)+'</div>'+
+      '<div class="bz-ipucu">Kelimenin İngilizce karşılığını hatırla.</div>';
+    secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
+  }
+  function miniDiyalog(s, alan) {
+    const en=EN(s.k),tr=TR(s.k);
+    alan.innerHTML='<div class="bz-etiket">💬 Papi ile konuşma</div>'+
+      '<div class="bz-soru">Papi: How do you say "'+kac(tr)+'" in English?</div>'+
+      '<div class="bz-ipucu">Papi\'ye İngilizce doğru cevabı ver.</div>';
+    secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
+  }
+  /* 🎙️ 12. görev: cihazda konuşma tanıma, kartlar bitince tek cevap.
+     Ses kayıtları depolanmaz. Konuşma tanıma desteği yoksa klavye eşdeğeri sunulur. */
+  function sesliFinal(s, alan) {
+    const list = s.l.map(k => ({ en:EN(k), tr:TR(k) }));
+    let remaining = list.map((_, i) => i), recognition=null, listening=false, finished=false;
+    const normalizeVoice = x => String(x||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
+      .toLocaleLowerCase('en').replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
+    const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let denied=false;
+    alan.innerHTML = '<div class="bz-etiket">🎙️ 12. Görev · Papi ile konuş</div>' +
+      '<div class="bz-ipucu">Türkçe anlamı gör, İngilizcesini sesli söyle. Doğru kart kaybolur; tüm kartları bitirince kapı açılır.</div>' +
+      '<div id="bzMicStatus" role="status" aria-live="polite"></div><div id="bzMicCards"></div>' +
+      '<button type="button" class="bz-btn" id="bzMicStart">🎤 Mikrofonla cevapla</button>' +
+      '<details style="margin-top:12px"><summary>🎹 Mikrofon çalışmıyor mu? Yazarak cevapla</summary>' +
+      '<label for="bzMicText">İngilizce cevap</label><input id="bzMicText" class="bz-input" autocomplete="off" autocapitalize="none">' +
+      '<button type="button" id="bzMicCheck" class="bz-btn">Cevabımı kontrol et</button></details>';
+    const status = alan.querySelector('#bzMicStatus'), cards=alan.querySelector('#bzMicCards');
+    const mic=alan.querySelector('#bzMicStart'), input=alan.querySelector('#bzMicText');
+    const render = () => {
+      cards.innerHTML=remaining.map((id,n)=>'<div class="bz-slot" style="display:inline-block;margin:5px;padding:12px"><b>'+
+        kac(list[id].tr)+'</b> <small>'+(n+1)+'/'+remaining.length+'</small></div>').join('');
+      mic.disabled=finished||listening||!SpeechAPI||denied;
+      if(!SpeechAPI){mic.textContent='Mikrofon bu tarayıcıda desteklenmiyor';status.textContent='Klavye ile cevaplayabilirsin.';}
+    };
+    const accept = spoken => {
+      if(finished || !remaining.length)return;
+      const expected=list[remaining[0]].en;
+      const allowed=(O.speechAlternatives?.[expected.toLocaleLowerCase('en').trim()]||'')
+        .split(/[;,|\n]+/).map(normalizeVoice).filter(Boolean);
+      const heard=normalizeVoice(spoken), correct=heard===normalizeVoice(expected)||allowed.includes(heard);
+      if(correct){
+        remaining.shift();ses('dogru');status.textContent='✅ '+expected+' — doğru! Kart tamamlandı.';
+        input.value='';render();
+        if(!remaining.length){finished=true; mic.disabled=true;status.textContent='🎉 Bütün kelimeleri tamamladın!';
+          cevap(true,'Tüm kelimeler sesli finalde tamamlandı');}
+      } else {status.textContent='Bir daha dene! Söylediğin: '+String(spoken||'algılanamadı').slice(0,75);
+        oku(expected);}
+    };
+    mic.onclick=()=>{
+      if(!SpeechAPI||listening||finished)return;
+      try{
+        recognition=new SpeechAPI();recognition.lang='en-US';recognition.interimResults=false;
+        recognition.maxAlternatives=5;listening=true;mic.disabled=true;status.textContent='🎙️ Dinliyorum…';
+        recognition.onresult=e=>{const alts=Array.from(e.results[0]||[]).map(x=>x.transcript);
+          accept(alts.find(x=>{const target=list[remaining[0]]?.en||'';return normalizeVoice(x)===normalizeVoice(target)||(O.speechAlternatives?.[target.toLocaleLowerCase('en').trim()]||'').split(/[;,|\n]+/).map(normalizeVoice).includes(normalizeVoice(x));})||alts[0]||'');};
+        recognition.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')denied=true;
+          status.textContent='Mikrofon algılayamadı ('+e.error+'). Tekrar dene ya da klavyeyi kullan.';};
+        recognition.onend=()=>{listening=false;render();};
+        recognition.start();
+      }catch(e){listening=false;status.textContent='Mikrofon başlatılamadı. Klavye seçeneğini kullan.';render();}
+    };
+    alan.querySelector('#bzMicCheck').onclick=()=>accept(input.value);
+    input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();accept(input.value);}});
+    render();
   }
   /* 🎈 Risk Balonları: Türkçeden İngilizceye, 4 şık */
   function risk(s, alan) {
@@ -28887,8 +29010,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ================= 5) SONUÇ ================= */
   function bitir() {
     window.dmPapiFirstPractice?.complete('school');
-    let no = durakNo(O.b, O.d), gecti = O.dogru >= GECME, sure = Math.round((Date.now() - O.bas) / 1000);
-    let puan = window.OC ? OC.puan() : O.dogru * 90, yil = gecti ? (O.dogru >= 10 ? 3 : O.dogru >= 8 ? 2 : 1) : 0;
+    let no = durakNo(O.b, O.d), gecti = O.dogru >= GECME && O.sonuclar[O.sorular.length-1]===true, sure = Math.round((Date.now() - O.bas) / 1000);
+    let puan = window.OC ? OC.puan() : O.dogru * 90, yil = gecti ? (O.dogru >= 11 ? 3 : O.dogru >= 9 ? 2 : 1) : 0;
     let yeniAcildi = false, parkurIlk=!tamam.has(no);
     if (gecti) {
       let onceAcik = bolumAcik(O.b + 1);
@@ -28902,7 +29025,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (typeof genelSonucEkraniGoster === 'function')
       genelSonucEkraniGoster({ oyunAdi: `🧙 ${durakBilgi(b, d).sinif}. Sınıf ${durakBilgi(b, d).unite}. Ünite`, isim: isim(), puan, dogru: O.dogru, yanlis: O.yanlis, sureSaniye: sure, oyunKey: 'ba',
         rewardScope:{classNo:durakBilgi(b,d).sinif,units:[durakBilgi(b,d).unite]},parkurIlk,parkurGecti:gecti,parkurYildiz:yil,siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
-    setTimeout(() => toast(gecti ? (yeniAcildi ? `🚪 ${b + 2}. bölümün kapısı açıldı!` : `✨ ${O.d + 1}. durak geçildi! ${'⭐'.repeat(yil)}`) : `💪 ${O.dogru}/${O.sorular.length} doğru. Geçmek için ${GECME} doğru lazım, tekrar dene!`), 700);
+    setTimeout(() => toast(gecti ? (yeniAcildi ? `🚪 ${b + 2}. bölümün kapısı açıldı!` : `✨ ${O.d + 1}. durak geçildi! ${'⭐'.repeat(yil)}`) : `💪 ${O.dogru}/${O.sorular.length} doğru. Geçmek için ${GECME} doğru ve sesli finalin tamamlanması gerekiyor!`), 700);
   }
 
   /* ================= GİRİŞ NOKTALARI: Parkur sekmesi = Büyü Akademisi ================= */
@@ -30482,9 +30605,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script src="papi-feedback.js?v=3"></script><script src="papi-haptics.js?v=1"></script><link rel="stylesheet" href="papi-wallet.css?v=2"><script src="papi-wallet.js?v=3"></script>
 <link rel="stylesheet" href="story-path.css?v=3"><script src="story-curriculum.js?v=2"></script><script src="story-path.js?v=6"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
-<script src="medupro.js?v=20261011-hud"></script>
+<script src="medupro.js?v=20261011-profix"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261010-games-restored">
-<script src="activity-ui.js?v=7"></script>
+<script src="activity-ui.js?v=20261011-cardfix"></script>
 
 <script src="bottom-nav.js?v=10"></script>
 
