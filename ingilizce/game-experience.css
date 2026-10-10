@@ -52,3 +52,6 @@
 @keyframes dm-balloon-float{50%{transform:translateY(-5px) rotate(3deg)}}
 @media(max-width:360px){.dm-balloon-body{width:55px;height:72px}.dm-risk-balloon{min-height:114px}.dm-risk-hud{font-size:10px}.dm-risk-hero h3{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.dm-balloon-body{animation:none}.dm-risk-balloon{transition:none}}
+
+/* Score clock occupies its own row; never float over question titles. */
+.dm-game-clock{position:relative!important;inset:auto!important;top:auto!important;left:auto!important;transform:none!important;display:table;max-width:calc(100% - 24px);width:max-content;margin:6px auto 10px;z-index:2!important;box-sizing:border-box;text-align:center}
