@@ -28587,9 +28587,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     // Finale alınan kelimeler bu duraktaki öğretim görevlerinden çıkarılır.
     // Aynı kelimenin farklı temsillerini tek kart olarak kullan.
     const finalKelimeler = [...new Map(sorular.flatMap(s => s.k ? [s.k] : (s.l || []))
-      .filter(k => EN(k) && TR(k))
+      .filter(k => EN(k) && TR(k) && Number(k.sinif)===Number(D.sinif) && Number(k.unite)===Number(D.unite))
       .map(k => [EN(k).toLocaleLowerCase('en'), k])).values()];
-    if (finalKelimeler.length) sorular.push({ tip:'sesliFinal', l:karistir(finalKelimeler) });
+    const finale = finalKelimeler.length ? finalKelimeler : kel.filter(k=>EN(k)&&TR(k)).slice(0,5);
+    sorular.push({ tip:'sesliFinal', l:karistir(finale) });
     O = { b, d, D, sorular, speechAlternatives, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0 };
     if (window.OC) OC.basla('ba');
     try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
