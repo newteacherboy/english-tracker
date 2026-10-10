@@ -12236,17 +12236,34 @@ function ozellikSecDoldur() {
         }
         
         async function kpModuAc() {
-            if (!(window.masterKelimeHavuzu || []).length && typeof dijiKelimeHavuzunuYukle === 'function') await dijiKelimeHavuzunuYukle();
+            // Open the real entry panel immediately; word-bank networking must not leave a blank screen.
             dcTumTamEkranlariKapat();
-            document.getElementById('tab-konusmapratigi').classList.add('active');
+            const page = document.getElementById('tab-konusmapratigi');
+            if (!page) return;
+            page.classList.add('active');
             dcBottomNavSenkronize();
-            kpSekmeSec('kelime');
-            kpKelimeGirisGoster();
-            kpEnerjiYukleVeGoster();
-            kpEsAnlamlariYukle();
-            kpParkurHazirla();
-            await kpTamamlananSeviyeleriYukle();
-            kpParkurCiz();
+            const card = document.getElementById('kp-panel-kelime');
+            const entry = document.getElementById('kpKelimeGirisEkrani');
+            if (card) { card.classList.add('active'); card.style.display = 'block'; }
+            if (entry) entry.style.display = 'block';
+            try { kpSekmeSec('kelime'); } catch (err) { console.warn('Kelime Modu tab:', err); }
+            try { kpKelimeGirisGoster(); } catch (err) { console.warn('Kelime Modu giriş:', err); }
+            try { kpEnerjiYukleVeGoster(); } catch (err) { console.warn('Kelime Modu enerji:', err); }
+            const load = async () => {
+                try {
+                    if (!(window.masterKelimeHavuzu || []).length && typeof dijiKelimeHavuzunuYukle === 'function') await dijiKelimeHavuzunuYukle();
+                    if (!page.classList.contains('active')) return;
+                    if (typeof kpEsAnlamlariYukle === 'function') kpEsAnlamlariYukle();
+                    kpParkurHazirla();
+                    try { await kpTamamlananSeviyeleriYukle(); } catch (err) { console.warn('Kelime Modu ilerleme:', err); }
+                    if (page.classList.contains('active')) kpParkurCiz();
+                } catch (err) {
+                    console.warn('Kelime Modu veri yüklenemedi:', err);
+                    const map = document.getElementById('kpParkurAlani');
+                    if (map && page.classList.contains('active')) map.textContent = 'Kelimeler şu anda yüklenemedi. Sayfayı yenileyip tekrar dene.';
+                }
+            };
+            void load();
         }
         
               const BA_SEVIYE_BOYUTU = 8;
@@ -30427,7 +30444,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 </script>
                                 
 <script src="google-login.js?v=rights-7"></script>
-<link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-clean2">
+<link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script src="papi-feedback.js?v=3"></script><script src="papi-haptics.js?v=1"></script><link rel="stylesheet" href="papi-wallet.css?v=2"><script src="papi-wallet.js?v=3"></script>
 <link rel="stylesheet" href="story-path.css?v=3"><script src="story-curriculum.js?v=2"></script><script src="story-path.js?v=6"></script>
