@@ -64,3 +64,27 @@
 #tab-konusmapratigi .dm-word-rules span{font-size:10px}
 #tab-konusmapratigi.active .dm-word-home .kp-step-row{padding:10px 8px!important;min-height:85px!important}
 }
+
+/* Papi Word Mode: no duplicated parkour tabs or modal chrome. */
+body:has(#tab-konusmapratigi.active) #pkSekmeler{display:none!important}
+#tab-konusmapratigi.active .kp-tabbar{display:none!important}
+#tab-konusmapratigi.active:has(#kpKelimeGirisEkrani[style*="display: block"]) .kp-topbar,
+#tab-konusmapratigi.active:has(#kpKelimeGirisEkrani[style*="display: block"]) #kpEnerjiSatiri{display:none!important}
+#tab-konusmapratigi .dm-word-intro{position:relative}
+#tab-konusmapratigi .dm-word-intro-top{padding-right:0}
+#tab-konusmapratigi .dm-kp-hud{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;position:absolute;right:12px;top:47px;width:clamp(145px,38%,205px);z-index:5}
+#tab-konusmapratigi .dm-kp-hud>*{display:flex;align-items:center;justify-content:center;min-width:0;min-height:35px;padding:5px;border:1px solid #d6e7dc;border-radius:999px;background:#fff;font:900 12px Nunito,system-ui;color:#1f5549;box-shadow:0 3px 9px #21452a16;white-space:nowrap}
+#tab-konusmapratigi .dm-kp-hud button{cursor:pointer;background:#e9f1ff;border-color:#cfddf7}
+#tab-konusmapratigi .dm-kp-hud .dm-kp-combo{background:#fff0e9;color:#a85526}
+#tab-konusmapratigi .dm-kp-hud .dm-kp-energy{background:#f1ffec;color:#25703e}
+#tab-konusmapratigi .dm-kp-hud .dm-kp-gold{background:#fff7db;color:#85600a}
+#tab-konusmapratigi .dm-word-hero{margin-top:28px}
+@media(max-width:430px){#tab-konusmapratigi .dm-kp-hud{top:44px;right:8px;width:51%;gap:4px}#tab-konusmapratigi .dm-kp-hud>*{font-size:10px;min-height:31px}#tab-konusmapratigi .dm-word-hero{margin-top:32px}}
+
+/* Memory Chest two-zone layout; preserve existing card shape and scoring. */
+#hafizaKartGrid.hz-half-open-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px!important}
+#hafizaKartGrid.hz-half-open-grid .hz-grid-divider{grid-column:1/-1;text-align:center;background:#fff8ed;color:#805b2c;border-radius:12px;padding:8px;font:900 13px Nunito,system-ui}
+#hafizaKartGrid.hz-half-open-grid .hz-open-fixed{background:#e4fbf0!important;border:2px solid #76bfa7!important;color:#125d4b!important;box-shadow:0 3px 0 #9cd5bb!important;overflow-wrap:anywhere;font-size:clamp(10px,2.5vw,15px)!important}
+#hafizaKartGrid.hz-half-open-grid .hz-open-fixed.hz-selected{outline:4px solid #f7b34e!important;outline-offset:-4px;transform:scale(.97)}
+#hafizaKartGrid.hz-half-open-grid .hz-hidden-match{overflow-wrap:anywhere;font-size:clamp(10px,2.5vw,15px)!important}
+#hafizaKartGrid.hz-half-open-grid .hz-kart.eslesti{opacity:.48;cursor:default}
