@@ -108,3 +108,61 @@ window.dmPapiTour={start,active:()=>!!root,preview};
 document.addEventListener('dm:login',()=>{sessionOwner='';sessionShown=false;if(root)cleanup();});
 setInterval(()=>{if(!ready()){if(root)cleanup();sessionOwner='';sessionShown=false;return;}if(sessionOwner!==name()){sessionOwner=name();sessionShown=false;}if(root){if(owner!==name())cleanup();return;}const help=$('ydTur');if(help){help.textContent='🦜 Papi ile tanıtımı tekrar izle';help.onclick=window.uygulamaTuru;}if(document.hidden||!canAutoStart())return;const blockers=['karakterModal'];if(blockers.some(id=>$(id)?.getClientRects().length&&getComputedStyle($(id)).display!=='none'))return;window.turBaslat('ana',false);},1500);
 })();
+
+
+/* Papi's level-unlock discovery tour. Presentation only: progression and reward grants remain unchanged. */
+(()=>{'use strict';
+const catalog={
+2:[['Ders Çalış açıldı!','A1 konularını Papi ile keşfet.','dersCalisTamEkranAc']],
+3:[['Kelime Laboratuvarı açıldı!','Yeni sözcükleri oyunlarla pekiştir.','aktivitelerTamEkranAc']],
+5:[['Lig yolculuğu başladı!','Haftalık ligde ilerlemeni izle.','benimDunyamAc']],
+6:[['Hafıza Sandığı açıldı!','Hatırlama becerini güçlendirecek oyunlar seni bekliyor.','aktivitelerTamEkranAc']],
+8:[['Okuma Stüdyosu açıldı!','Kısa metinlerle İngilizce okuma zamanı.','dersCalisTamEkranAc']],
+9:[['A2 derslerinin kapısı açıldı!','A1 tamamlandığında A2 konularına geçebilirsin.','dersCalisTamEkranAc']],
+10:[['Yeni parkur keşfedildi!','İkinci parkur için önceki parkuru tamamlama koşulu devam ediyor.','dunyaAc'],['MeduPro seni bekliyor!','Kelime Modu ve yeni keşifleri incele.','dunyaAc']],
+11:[['Eksik Harf açıldı!','Kelimeleri tamamlayarak çalış.','aktivitelerTamEkranAc']],
+12:[['Günlük görevler açıldı!','Yeni hedeflerini Benim Dünyam bölümünde gör.','benimDunyamAc']],
+13:[['Pomodoro açıldı!','Kısa çalışma aralarıyla odaklan.','dersCalisTamEkranAc']],
+14:[['Harf Avı açıldı!','Gümüş sandık fırsatını da keşfet.','aktivitelerTamEkranAc']],
+15:[['Mağaza açıldı!','Altınlarını ve avatar seçeneklerini keşfet.','magazaAc'],['İlk jokerin açıldı!','Oyunlarda bir joker hakkını kullanabilirsin.','aktivitelerTamEkranAc']],
+16:[['Haftalık hedefler açıldı!','Yeni hedeflerine göz at.','benimDunyamAc'],['B1 kapısı açıldı!','A2 konularını bitirince B1 derslerini keşfet.','dersCalisTamEkranAc']],
+18:[['Joker dükkânı açıldı!','Yeni yardımcı seçeneklerini keşfet.','magazaAc']],
+19:[['Eşini Bul açıldı!','Yeni oyunu dene.','aktivitelerTamEkranAc']],
+20:[['Üçüncü parkur keşfedildi!','Önceki parkurun tamamlanma şartı geçerli.','dunyaAc'],['Düello açıldı!','Arkadaşlarınla meydan okumaya hazırlan.','aktivitelerTamEkranAc'],['İkinci joker hakkı!','Oyunlarda artık iki joker kullanabilirsin.','aktivitelerTamEkranAc']],
+22:[['Risk Balonları açıldı!','Yeni oyunu incele.','aktivitelerTamEkranAc']],
+23:[['B2 kapısı açıldı!','B1 bittiğinde B2 derslerine geçebilirsin.','dersCalisTamEkranAc']],
+24:[['Dikte açıldı!','Yeni çalışma etkinliğini keşfet.','dersCalisTamEkranAc']],
+25:[['Arkadaşlarla iletişim açıldı!','Yeni sosyal özelliklerini keşfet.','meduAkisAc']],
+27:[['Şifre Kırıcı açıldı!','Kelimeleri çözerek ilerle.','aktivitelerTamEkranAc']],
+28:[['Hız Fırtınası açıldı!','Yeni hız oyununu keşfet.','aktivitelerTamEkranAc']],
+30:[['Dördüncü parkur keşfedildi!','Parkur tamamlama koşulu geçerli.','dunyaAc'],['İki kişilik oyunlar açıldı!','Arkadaşınla eş zamanlı oyna.','aktivitelerTamEkranAc'],['Üçüncü joker hakkı!','Oyunlarda artık üç joker kullanabilirsin.','aktivitelerTamEkranAc']],
+31:[['Kelime Treni açıldı!','Yeni oyun seni bekliyor.','aktivitelerTamEkranAc']],
+35:[['Kombinler açıldı!','Mağazadaki yeni seçeneklere göz at.','magazaAc']],
+36:[['Cümle Kurma açıldı!','Kelime ve cümle becerini geliştir.','aktivitelerTamEkranAc']],
+39:[['Harf Bahçesi açıldı!','Harfleri keşfetmeye devam et.','aktivitelerTamEkranAc']],
+40:[['Efsane Papağan!','40. seviyeye ulaştın. Efsane ödüllerini keşfet.','benimDunyamAc']]
+};
+let root=null,entries=[],step=0,owner='',activeLevel=0,seenLevel=0,lastDetected=0;
+const currentUser=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
+const ready=()=>!!currentUser()&&currentUser()!=='teacher'&&!window.dmGuestMode&&document.getElementById('panel-alani')?.style.display==='block';
+const savedKey=(level)=>'dm:papi:unlock:v1:'+encodeURIComponent(currentUser())+':'+level;
+const busy=()=>document.hidden||!!window.dmPapiTour?.active?.()||!!window.dmPapiFirstPractice?.active?.()||!!document.querySelector('#dmStoryLesson:not([hidden]),.oyun-modal[style*="block"],.game-modal-overlay[style*="flex"]');
+const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const oldStyle=document.createElement('style');
+oldStyle.textContent='#dmPapiUnlock{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#22618c,#102a56 68%,#0b173c);color:white;text-align:center;overflow:auto;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);box-sizing:border-box;font-family:inherit}#dmPapiUnlock .dpu-scene{width:min(100%,540px);padding:25px 16px;box-sizing:border-box}#dmPapiUnlock img{height:min(33vh,240px);max-width:80%;object-fit:contain;filter:drop-shadow(0 15px 22px #0019)}#dmPapiUnlock h2{font-size:clamp(26px,7vw,39px);margin:8px 0 12px}#dmPapiUnlock p{font-size:clamp(15px,4vw,19px);line-height:1.6}#dmPapiUnlock .dpu-tag{display:inline-block;padding:7px 17px;border-radius:30px;background:#ffffff25}#dmPapiUnlock .dpu-track{height:7px;background:#ffffff33;border-radius:10px;margin:22px auto;overflow:hidden}#dmPapiUnlock .dpu-track i{display:block;background:#a5f36b;height:100%;transition:width .35s}#dmPapiUnlock button{min-height:48px;border:0;border-radius:16px;padding:12px 20px;font-weight:800;background:#b8f76e;color:#17344c;cursor:pointer}#dmPapiUnlock button:focus-visible{outline:3px solid white;outline-offset:4px}body.dm-papi-unlock #duyuruOverlay,body.dm-papi-unlock .dm-toast,body.dm-papi-unlock .toast,body.dm-papi-unlock .dm-papi-feedback{visibility:hidden!important}';
+(document.head||document.documentElement).append(oldStyle);
+function close(){root?.remove();root=null;document.body.classList.remove('dm-papi-unlock');window.dmPapiNotices?.resume();window.dmProgression?.paint();}
+function navigate(fn){const f=window[fn];if(typeof f==='function')try{Promise.resolve(f(fn==='benimDunyamAc'?'sanaozel':undefined)).catch(()=>{});}catch{}}
+function display(){if(!root||!entries[step])return;const [title,description]=entries[step];root.querySelector('.dpu-count').textContent=(step+1)+' / '+entries.length;root.querySelector('h2').textContent=title;root.querySelector('p').textContent=description;root.querySelector('.dpu-track i').style.width=((step+1)/entries.length*100)+'%';root.querySelector('img').src=step===0?'papi-reward-v2.png':'papi-help-v2.png';root.querySelector('button').textContent=step===entries.length-1?'Özelliğe git →':'Keşfet →';}
+function next(){const entry=entries[step];if(!entry)return;if(step<entries.length-1){step++;display();navigate(entries[step][2]);return;}const fn=entry[2];close();navigate(fn);}
+function start(level,force=false){level=Number(level);if(!ready()||root||!catalog[level]||window.dmPapiTour?.active?.()||(!force&&localStorage.getItem(savedKey(level))))return false;
+owner=currentUser();activeLevel=level;seenLevel=level;entries=catalog[level];step=0;
+if(!force)localStorage.setItem(savedKey(level),'1');
+root=document.createElement('div');root.id='dmPapiUnlock';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','Papi yeni özellik tanıtımı');root.innerHTML='<div class="dpu-scene"><span class="dpu-tag">Yeni seviye · <b class="dpu-level"></b></span><div><img src="papi-reward-v2.png" alt="Papi maskotu"></div><h2></h2><p></p><div class="dpu-count"></div><div class="dpu-track"><i></i></div><button type="button"></button></div>';root.querySelector('.dpu-level').textContent=String(level);
+document.body.append(root);document.body.classList.add('dm-papi-unlock');window.dmPapiNotices?.suspend();display();root.querySelector('button').onclick=next;root.querySelector('button').focus({preventScroll:true});root.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='Tab'){e.preventDefault();if(e.key==='Tab')root.querySelector('button').focus({preventScroll:true});}});return true;}
+window.dmPapiUnlockTour={show:(level)=>start(level,true),active:()=>!!root};
+const parseLevel=()=>{const el=document.getElementById('dmLevelUp');if(!el||!el.getClientRects().length)return 0;const text=(el.textContent||'').slice(0,500);const hit=text.match(/(?:seviye|level)\s*(\d{1,2})|(\d{1,2})\s*\.?\s*(?:seviye|level)/i);return hit?Number(hit[1]||hit[2]):0;};
+let pending=0;
+setInterval(()=>{if(!ready()){if(root)close();owner='';pending=0;return;}if(root&&owner!==currentUser()){close();pending=0;}const found=parseLevel();if(found&&catalog[found]&&found!==lastDetected){lastDetected=found;pending=found;}if(pending&&(!busy()||!!document.getElementById('dmLevelUp')?.getClientRects().length)&&!root){if(start(pending)){pending=0;}else if(localStorage.getItem(savedKey(pending)))pending=0;}},800);
+document.addEventListener('dm:login',()=>{if(root)close();pending=0;lastDetected=0;});
+})();
