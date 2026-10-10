@@ -14551,8 +14551,8 @@ const YO_SOHBET = [
         
         /* ========== ORTAK ARAYÜZ ========== */
         function yoToast(metin) {
-          if(window.DijiMeduPapiFeedback && !window.dmPapiNotices?.isTourActive?.()){window.DijiMeduPapiFeedback.notice(metin);return;}
           if(window.dmPapiNotices?.defer('toast:'+metin,()=>yoToast(metin)))return;
+          if(window.DijiMeduPapiFeedback){window.DijiMeduPapiFeedback.notice(metin);return;}
           let e = document.createElement('div'); e.className = 'yo-toast'; e.innerText = metin;
           document.body.appendChild(e);
           setTimeout(() => e.classList.add('gor'), 20);
