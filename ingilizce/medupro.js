@@ -50,6 +50,38 @@
    const sc=host.querySelector('.dm-parkur-scroll');if(sc)sc.hidden=true;panel.hidden=false;host.querySelectorAll('[data-dm-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.dmTab==='pro')));
   };if(document.body.classList.contains('dm-parkur-open'))show();else{window.dunyaAc?.();setTimeout(show,250);}
  };
+
+ // Recover the existing Word Mode entry if legacy asynchronous UI resets leave it blank.
+ (function(){
+   let misses=0;
+   function check(){
+     const page=document.getElementById('tab-konusmapratigi');
+     if(!page||!page.classList.contains('active')){misses=0;return;}
+     const game=document.getElementById('kpKelimeOyunEkrani');
+     const end=document.getElementById('kpKelimeBitisEkrani');
+     if((game&&getComputedStyle(game).display!=='none')||(end&&getComputedStyle(end).display!=='none')){misses=0;return;}
+     const shell=page.querySelector('.kp-shell');
+     const card=document.getElementById('kp-panel-kelime');
+     const entry=document.getElementById('kpKelimeGirisEkrani');
+     if(!shell||!card||!entry)return;
+     const visible=entry.getClientRects().length>0&&entry.getBoundingClientRect().height>36&&getComputedStyle(entry).visibility!=='hidden';
+     if(visible){misses=0;return;}
+     if(++misses<2)return;
+     misses=0;
+     card.classList.add('active');
+     card.style.setProperty('display','block','important');
+     card.style.setProperty('visibility','visible','important');
+     card.style.setProperty('opacity','1','important');
+     entry.style.setProperty('display','block','important');
+     entry.style.setProperty('visibility','visible','important');
+     entry.style.setProperty('opacity','1','important');
+     shell.style.setProperty('overflow','visible','important');
+     const map=document.getElementById('kpParkurAlani');
+     if(map&&!map.textContent.trim())map.textContent='Kelime seviyelerin yükleniyor…';
+     console.warn('[DijiMedu] Restored hidden MeduPro entry panel');
+   }
+   setInterval(check,900);
+ })();
  document.addEventListener('click',e=>{if(e.target.closest('[data-dm-tab="ba"]')){const host=document.querySelector('#bzParkur .bz-ic');host?.querySelector('.dm-pro-panel')?.remove();const sc=host?.querySelector('.dm-parkur-scroll');if(sc)sc.hidden=false;}});
  // Keep the current screen open when there are no assigned word cards.
  const cardsButton=$('pkSekmeler')?.querySelector('[data-p="kk"]');
