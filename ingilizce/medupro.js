@@ -107,10 +107,10 @@
    function refresh(){
      const hud=document.querySelector('#kpKelimeGirisEkrani .dm-kp-hud');if(!hud)return;
      const combo=document.getElementById('kpKomboText')?.textContent||'';
-     const match=combo.match(/x\\s*(\\d+)/i);
+     const match=combo.match(/x\s*(\d+)/i);
      hud.querySelector('.dm-kp-combo').textContent='🔥 x'+(match?match[1]:'0');
      const energy=document.getElementById('kpEnerjiSatiri')?.textContent||'';
-     const e=energy.match(/(\\d+)\\s*\\/\\s*(\\d+)/);
+     const e=energy.match(/(\d+)\s*\/\s*(\d+)/);
      if(e)hud.querySelector('.dm-kp-energy').textContent='⚡ '+e[1]+'/'+e[2];
      const gold=typeof yo!=='undefined'&&yo?yo.altin:window.yo?.altin;
      if(gold!=null&&Number.isFinite(Number(gold)))hud.querySelector('.dm-kp-gold').textContent='🪙 '+Math.floor(Number(gold)).toLocaleString('tr-TR');
