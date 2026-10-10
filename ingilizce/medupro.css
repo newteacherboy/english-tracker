@@ -88,3 +88,24 @@ body:has(#tab-konusmapratigi.active) #pkSekmeler{display:none!important}
 #hafizaKartGrid.hz-half-open-grid .hz-open-fixed.hz-selected{outline:4px solid #f7b34e!important;outline-offset:-4px;transform:scale(.97)}
 #hafizaKartGrid.hz-half-open-grid .hz-hidden-match{overflow-wrap:anywhere;font-size:clamp(10px,2.5vw,15px)!important}
 #hafizaKartGrid.hz-half-open-grid .hz-kart.eslesti{opacity:.48;cursor:default}
+
+/* MeduPro Papi learning cards v1: consistent with pastel games catalogue. */
+#bzParkur .dm-pro-panel{box-sizing:border-box!important;display:block;position:relative;z-index:3;flex:1 1 auto;min-width:0;width:100%;min-height:0;overflow-y:auto;overflow-x:hidden;padding:18px 12px calc(115px + env(safe-area-inset-bottom))!important;background:linear-gradient(180deg,#fff9e5,#f4fff1 65%,#f4edff)!important;color:#123c4a!important;opacity:1!important;visibility:visible!important}
+#bzParkur .dm-pro-panel[hidden]{display:none!important}
+#bzParkur .dm-pro-scene{position:relative;min-height:168px;border:3px solid #ffffffb8;border-radius:26px;background:linear-gradient(120deg,#d0f5ef,#ecddff 65%,#ffeabd);padding:27px 17px 20px 130px;box-shadow:0 6px 0 #c6decf,0 8px 19px #2b68711a;display:flex;flex-direction:column;justify-content:center;margin:0 0 19px;overflow:hidden}
+#bzParkur .dm-pro-scene img{position:absolute;left:7px;bottom:0;width:126px;height:150px;object-fit:contain;filter:drop-shadow(0 6px 5px #183b4a24)}
+#bzParkur .dm-pro-scene h2{font:900 clamp(24px,6vw,34px)/1.12 Fredoka,Nunito,system-ui!important;color:#124d4c!important;margin:0 0 6px!important;text-shadow:none!important}
+#bzParkur .dm-pro-scene p{font:800 14px/1.5 Nunito,system-ui!important;color:#32676b!important;margin:0!important}
+#bzParkur .dm-pro-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;align-items:stretch}
+#bzParkur .dm-pro-cards .dm-pro-mode{--bg:#efe3ff;--edge:#ccb4f7;--ink:#33265e;position:relative;display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;min-height:206px;min-width:0;width:100%;padding:13px 7px 45px!important;margin:0!important;background:linear-gradient(155deg,#fff9,var(--bg) 35%,var(--bg))!important;color:var(--ink)!important;border:2px solid #fff!important;border-radius:25px!important;box-shadow:0 4px 0 var(--edge),0 7px 15px #194b4b1c!important;opacity:1!important;visibility:visible!important;filter:none!important;transform:none!important;overflow:hidden}
+#bzParkur .dm-pro-cards .dm-pro-mode[data-mode=sh]{--bg:#ffecab;--edge:#f3c35f;--ink:#5e441a}
+#bzParkur .dm-pro-cards .dm-pro-mode[data-mode=kk]{--bg:#c6ffe0;--edge:#94dbb3;--ink:#175944}
+#bzParkur .dm-pro-cards .dm-pro-mode>i{display:flex!important;align-items:center;justify-content:center;width:100%;height:88px;margin:0 0 8px;font-size:56px!important;font-style:normal!important;filter:drop-shadow(0 5px 4px #214d5420)}
+#bzParkur .dm-pro-cards .dm-pro-mode>i img{height:90px;width:100%;object-fit:contain;filter:none}
+#bzParkur .dm-pro-cards .dm-pro-mode>span{display:block!important;min-width:0;width:100%;padding:0!important}
+#bzParkur .dm-pro-cards .dm-pro-mode b{font:900 clamp(12px,3vw,17px)/1.2 Fredoka,Nunito,system-ui!important;color:var(--ink)!important;overflow-wrap:anywhere}
+#bzParkur .dm-pro-cards .dm-pro-mode small{font:700 clamp(10px,2.45vw,12px)/1.35 Nunito,system-ui!important;color:var(--ink)!important;margin:7px 0 0!important;opacity:.95!important;overflow-wrap:anywhere}
+#bzParkur .dm-pro-cards .dm-pro-mode em{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:grid;place-items:center;width:31px;height:31px;border-radius:50%;background:#fff;color:var(--ink);font:900 30px/1 system-ui;box-shadow:0 2px 8px #0001;font-style:normal}
+#bzParkur .dm-pro-cards .dm-pro-mode:focus-visible{outline:3px solid #7443ce!important;outline-offset:3px}
+@media(min-width:600px){#bzParkur .dm-pro-panel{padding:24px 24px 110px!important}#bzParkur .dm-pro-cards{gap:15px}#bzParkur .dm-pro-cards .dm-pro-mode{min-height:235px;padding-top:20px!important}}
+@media(max-width:360px){#bzParkur .dm-pro-cards{gap:5px}#bzParkur .dm-pro-cards .dm-pro-mode{border-radius:18px!important;min-height:192px;padding:12px 4px 42px!important}#bzParkur .dm-pro-cards .dm-pro-mode>i{height:67px;font-size:43px!important}#bzParkur .dm-pro-cards .dm-pro-mode>i img{height:74px}#bzParkur .dm-pro-scene{padding-left:96px;min-height:136px}#bzParkur .dm-pro-scene img{width:95px;height:115px}}
