@@ -120,3 +120,17 @@
  #tab-aktiviteler .dm-showcase-card .ak-etiket{font-size:9px!important;padding:4px 5px!important}
  #tab-aktiviteler .dm-showcase-card .dm-game-chevron{width:23px!important;height:23px!important;font-size:22px!important}
 }
+
+/* Seviye kilidi: mevcut kilit koşullarını değiştirmeden görsel pasifleştirme. */
+#tab-aktiviteler .az-grid2x2>.az-gcard.dm-showcase-card:is(.kilitli,.locked,.az-kilitli,.az-gcard-locked,.seviye-kilitli,[aria-disabled="true"],[data-locked="true"],[disabled]){
+  opacity:.72!important;
+  filter:saturate(.40) grayscale(.24)!important;
+  box-shadow:0 3px 0 #bec4ca,0 6px 13px #30405012!important;
+}
+#tab-aktiviteler .az-grid2x2>.az-gcard.dm-showcase-card:is(.kilitli,.locked,.az-kilitli,.az-gcard-locked,.seviye-kilitli,[aria-disabled="true"],[data-locked="true"],[disabled]) .az-gcard-title{
+  color:#45545d!important;
+}
+#tab-aktiviteler .az-grid2x2>.az-gcard.dm-showcase-card:is(.kilitli,.locked,.az-kilitli,.az-gcard-locked,.seviye-kilitli,[aria-disabled="true"],[data-locked="true"],[disabled]) .dm-game-chevron{
+  color:#858c97!important;
+  background:#eef0f2!important;
+}
