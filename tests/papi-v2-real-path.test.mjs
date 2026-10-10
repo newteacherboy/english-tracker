@@ -31,5 +31,5 @@ test('80-chapter map cannot use array index in place of stable chapter id',()=>{
  assert.doesNotMatch(pathCode,/chapter=curriculum\(\)\[id\]/);
  assert.doesNotMatch(pathCode,/if\(busy\|\|!curriculum\(\)\[id\]/);
  assert.match(pathCode,/chapter=curriculum\(\)\.find\(c=>c\.id===id\)/);
- assert.match(pathCode,/const nextChapter\(\)/) ;
+ assert.match(pathCode,/function nextChapter\(\)/);
 });
