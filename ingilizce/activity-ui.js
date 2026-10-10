@@ -66,7 +66,25 @@
    // Preserve the original legible game card artwork and sizing.
    // The two-column toy-card override made locked cards unreadable on phones.
    b.classList.remove('dm-toy-card');
+   b.classList.add('dm-showcase-card');
    b.style.removeProperty('--toy-bg');b.style.removeProperty('--toy-edge');
+   b.style.setProperty('--dm-card-bg',color);
+   b.style.setProperty('--dm-card-edge',edge);
+   const existingIcon=b.querySelector('.az-gcard-icon');
+   if(existingIcon&&idx!==null&&!existingIcon.querySelector('.dm-showcase-icon')){
+     const art=document.createElement('span');art.className='dm-showcase-icon';art.setAttribute('aria-hidden','true');
+     art.style.backgroundPosition=(idx%4)*100/3+'% '+Math.floor(idx/4)*100/3+'%';
+     existingIcon.replaceChildren(art);
+   }
+   const title=b.querySelector('.az-gcard-title');
+   const desc=b.querySelector('.ak-acik');
+   const tag=b.querySelector('.ak-etiket');
+   if(title&&!title.closest('.dm-game-copy')){
+     const copy=document.createElement('span');copy.className='dm-game-copy';title.before(copy);copy.append(title);
+     if(desc)copy.append(desc);
+     if(tag)copy.append(tag);
+   }
+   if(!b.querySelector('.dm-game-chevron')){const arrow=document.createElement('span');arrow.className='dm-game-chevron';arrow.setAttribute('aria-hidden','true');arrow.textContent='›';b.append(arrow);}
    if(['dmUcusteKart','dmRotaKart'].includes(fn)){b.onclick=()=>window.dmInviteAc(fn==='dmUcusteKart'?'ucus':'rota');if(!b.querySelector('.ak-etiket')){const t=document.createElement('div');t.className='ak-etiket';t.textContent='12 soru · 4 ⚡';b.append(t);}}
   });
   partyTabs(host,grid);
