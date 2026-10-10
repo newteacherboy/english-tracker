@@ -28376,8 +28376,22 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let unite = tum.filter(k => Number(k.sinif) === D.sinif && Number(k.unite) === D.unite);
     let onceki = tum.filter(k => Number(k.sinif) * 100 + Number(k.unite) < sira);
     let havuz = unite.slice();
-    if (havuz.length < 16) havuz = havuz.concat(karistir(onceki.filter(k => Number(k.sinif) === D.sinif)).slice(0, 16 - havuz.length));
-    if (havuz.length < 16) havuz = havuz.concat(karistir(onceki.filter(k => !havuz.includes(k))).slice(0, 16 - havuz.length));
+    // İlk duraklarda önceki ünite olmayabilir. Aynı kapıdaki komşu sınıf ve
+    // ünitelerden güvenli tekrar havuzu kur; kapıyı 8 kelime sınırında kilitleme.
+    const bolumSiniflari = KAPI_SINIF[b] || [D.sinif];
+    const ekleEksikleri = adaylar => {
+      const mevcut = new Set(havuz.map(k => EN(k).trim().toLocaleLowerCase('en')));
+      for (const k of karistir(adaylar)) {
+        if (havuz.length >= 16) break;
+        const key = EN(k).trim().toLocaleLowerCase('en');
+        if (!key || mevcut.has(key)) continue;
+        havuz.push(k); mevcut.add(key);
+      }
+    };
+    if (havuz.length < 16) ekleEksikleri(onceki.filter(k => Number(k.sinif) === D.sinif));
+    if (havuz.length < 16) ekleEksikleri(onceki);
+    if (havuz.length < 16) ekleEksikleri(tum.filter(k => bolumSiniflari.includes(Number(k.sinif))));
+    if (havuz.length < 8) ekleEksikleri(tum);
     /* tekrar: önce öğrencinin zorlandığı (Zor Kelimeler) önceki kelimeler, sonra rastgele önceki kelimeler */
     let zk = (yoVar() && yo.zk) ? yo.zk : {};
     let zor = onceki.filter(k => zk[EN(k).toLowerCase()]);
