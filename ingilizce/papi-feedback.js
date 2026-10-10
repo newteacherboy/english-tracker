@@ -8,10 +8,11 @@ function successSound(){try{const Audio=window.AudioContext||window.webkitAudioC
 function remove(){if(timer)clearTimeout(timer);timer=null;root?.remove();root=null;}
 function mount(kind,title,detail){
  if(window.dmPapiTour?.active?.()){return null;}
- remove();root=document.createElement('div');root.className='dm-papi-feedback '+(kind==='energy'?'is-energy':'is-success');root.setAttribute('role',kind==='energy'?'dialog':'status');if(kind==='energy')root.setAttribute('aria-modal','true');
+ remove();root=document.createElement('div');root.className='dm-papi-feedback '+(kind==='energy'?'is-energy':kind==='wrong'?'is-wrong':'is-success');root.setAttribute('role',kind==='energy'?'dialog':'status');if(kind==='energy')root.setAttribute('aria-modal','true');
  const card=document.createElement('div');card.className='dm-papi-feedback-card';
+ if(kind!=='energy'){root.style.cssText='position:fixed!important;left:50%!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom, 0px) + 76px)!important;transform:translateX(-50%)!important;max-width:min(92vw,340px)!important;width:max-content!important;pointer-events:none!important;z-index:2147483000!important';card.style.cssText='max-width:min(92vw,340px)!important;padding:8px 14px!important;min-height:0!important';}
  const mascot=document.createElement('img');mascot.className='dm-papi-feedback-mascot';mascot.src=PAPI;mascot.alt='Papi papağanı';mascot.onerror=()=>{mascot.style.display='none'};
- const mark=document.createElement('span');mark.className='dm-papi-feedback-mark';mark.textContent=kind==='energy'?'⚡':'✓';mark.setAttribute('aria-hidden','true');
+ const mark=document.createElement('span');mark.className='dm-papi-feedback-mark';mark.textContent=kind==='energy'?'⚡':kind==='wrong'?'↻':'✓';mark.setAttribute('aria-hidden','true');
  const heading=document.createElement('strong');heading.textContent=title;
  const copy=document.createElement('p');copy.textContent=detail;
  card.append(mark,mascot,heading,copy);root.append(card);document.body.append(root);
@@ -19,13 +20,15 @@ function mount(kind,title,detail){
  return card;
 }
 function correct({detail='',anchor=null,duration=1000}={}){
+ if(window.dmPapiTour?.active?.())return;
  const at=Date.now();if(at-lastCorrectAt<450)return;lastCorrectAt=at;
  successSound();
  anchor?.classList.add('dm-papi-correct-pulse');if(anchor)setTimeout(()=>anchor.classList.remove('dm-papi-correct-pulse'),650);
  mount('correct','Harika!',detail||'Doğru cevap!');
  timer=setTimeout(remove,Math.max(650,Math.min(duration,1800)));
 }
-function energy(){if(window.dmPapiNotices?.defer('papi-energy',energy))return;mount('energy','Papi ile enerji molası!','Enerjin yenilenince aynı sorudan devam edebileceksin. İlerlemen güvende!');}
+function wrong({detail='Tekrar dene!',duration=1100}={}){if(window.dmPapiTour?.active?.())return;mount('wrong','Bir daha deneyelim!',detail);timer=setTimeout(remove,Math.max(700,Math.min(duration,1800)));}
+function energy(){if(window.dmPapiNotices?.defer('papi-energy',energy,1))return;mount('energy','Papi ile enerji molası!','Enerjin yenilenince aynı sorudan devam edebileceksin. İlerlemen güvende!');}
 function notice(message){const text=String(message||'').slice(0,300);if(window.dmPapiNotices?.defer('papi-notice:'+text,()=>notice(text)))return;mount('energy','Papi sana sesleniyor!',text);}
-window.DijiMeduPapiFeedback={correct,energy,notice,close:remove};
+window.DijiMeduPapiFeedback={correct,wrong,energy,notice,close:remove};
 })();
