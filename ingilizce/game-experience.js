@@ -9,8 +9,7 @@
     ['asmacaGirisEkrani','asmacaOyunOverlay','Harf Avı','Harfleri tahmin et, gizli kelimeyi bul.'],
     ['kelimebulGirisEkrani','kelimebulOyunOverlay','Şifre Kırıcı','Renkli ipuçlarından gizli kelimeyi çöz.'],
     ['esGirisEkrani','esOyunOverlay','Eş Bul','İngilizce ve Türkçe kelimelerin eşlerini bul.'],
-    ['trenGirisEkrani','trenOyunOverlay','Kelime Treni','Vagonları sırala, doğru İngilizce cümleyi kur.'],
-    ['kpKelimeGirisEkrani','tab-konusmapratigi','Kelime Modu','Kelimeyi İngilizce söyle veya yazarak cevapla.']
+    ['trenGirisEkrani','trenOyunOverlay','Kelime Treni','Vagonları sırala, doğru İngilizce cümleyi kur.']
   ];
   const ruleText = 'Doğru +100 · Seri bonusları · Hız bonusu · Yanlış −40 puan / turdan −3 XP';
   function decorate() {
