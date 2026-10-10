@@ -70,3 +70,29 @@
 @media(hover:hover){#tab-aktiviteler .az-gcard:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 18px #284f4b20!important}}
 @media(max-width:350px){#tab-aktiviteler .az-grid2x2{gap:8px!important}#tab-aktiviteler .az-grid2x2>.az-gcard{min-height:143px!important;padding:12px 9px!important}}
 @media(prefers-reduced-motion:reduce){#tab-aktiviteler .az-grid2x2>.az-gcard{transition:none!important}}
+
+
+/* Clean Friends feed: only #tab-meduakis internals, no bottom bar changes. */
+#tab-meduakis .ma-wrap{background:linear-gradient(180deg,#faf7ff,#fff 48%)!important}
+#tab-meduakis .akis-baslik{padding:14px 16px 10px!important}
+#tab-meduakis .segment{border:1px solid #e9e2f8!important;border-radius:19px!important;background:#f4effb!important;box-shadow:none!important}
+#tab-meduakis .segment i{background:#fff!important;box-shadow:0 2px 7px #5b3c861a!important;border:1px solid #e8ddfa!important}
+#tab-meduakis .segment button{font-weight:900!important;color:#746b8b!important}
+#tab-meduakis .segment button.aktif{color:#4a2c76!important}
+#tab-meduakis .filtre{gap:8px!important;padding:12px 16px 15px!important}
+#tab-meduakis .filtre button{border:1px solid #e9e0f6!important;background:#fff!important;border-radius:16px!important;min-height:39px!important;padding:8px 14px!important;color:#6a568a!important;box-shadow:none!important}
+#tab-meduakis .filtre button.aktif{background:#513284!important;color:#fff!important;border-color:#513284!important}
+#tab-meduakis .akis-kart{margin:0 13px 13px!important;padding:16px 14px 14px!important;border:1px solid #eee8f8!important;border-radius:23px!important;background:#fff!important;box-shadow:0 5px 18px #44326a0d!important}
+#tab-meduakis .akis-kart::before{height:3px!important;opacity:.76}
+#tab-meduakis .akis-ust{gap:10px!important;padding-right:34px!important;min-height:47px!important}
+#tab-meduakis .akis-ust b{font-size:15px!important;color:#432a65!important;overflow-wrap:anywhere}
+#tab-meduakis .akis-ust small{font-size:11.5px!important;color:#8b82a0!important}
+#tab-meduakis .akis-ikon{font-size:27px!important;right:14px!important;top:16px!important;transform:none!important}
+#tab-meduakis .akis-metin{margin-top:11px!important;font-size:clamp(14px,3.6vw,16px)!important;line-height:1.43!important;color:#3e305d!important}
+#tab-meduakis .aksiyon{gap:8px!important;margin-top:13px!important}
+#tab-meduakis .aksiyon button{flex:1;justify-content:center;min-width:0;min-height:38px!important;padding:7px 8px!important;border:1px solid #e6dff0!important;border-radius:14px!important;background:#fff!important;color:#716486!important;box-shadow:none!important;font-size:12px!important}
+#tab-meduakis .aksiyon button.basili{border-color:#e6a2bc!important;color:#b73e75!important;background:#fff5fa!important}
+#tab-meduakis .akis-kart .avatar{width:44px!important;height:44px!important;box-shadow:0 0 0 2px #fff,0 0 0 3px #eee5f8}
+#tab-meduakis .akis-kart:focus-within{outline:2px solid #ab8adf;outline-offset:1px}
+@media(max-width:360px){#tab-meduakis .akis-kart{margin:0 9px 11px!important;padding:13px 10px!important}#tab-meduakis .aksiyon button{font-size:11px!important}}
+@media(prefers-reduced-motion:reduce){#tab-meduakis .ma-gir,#tab-meduakis .ma-pop{animation:none!important}}
