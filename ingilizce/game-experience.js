@@ -61,8 +61,13 @@
   function updateClock(){
     const d=window.OC?.aktif;if(!d||d.bitti){badge.hidden=true;return;}
     const visible=[...document.querySelectorAll('.game-modal-overlay,.yo-modal,.hb-overlay,.bc-perde,.bz-perde,#kpKelimeOyunEkrani')].some(x=>x.getClientRects().length&&getComputedStyle(x).visibility!=='hidden');
-    badge.hidden=!d||d.bitti||!visible;
-    if(!badge.hidden)badge.textContent='⏱ '+OC.sure().toFixed(1)+' sn · '+OC.puan()+' puan';
+    const intro=[...document.querySelectorAll('#dmGameIntro,.dm-entry-open')].some(el=>el.getClientRects().length>0);
+    const root=[...document.querySelectorAll('.game-modal-content,#baOyunEkrani,#kpKelimeOyunEkrani,.oyun-modal')].find(el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
+    badge.hidden=!d||d.bitti||!visible||intro||!root;
+    if(!badge.hidden){
+      if(badge.parentElement!==root)root.prepend(badge);
+      badge.textContent='⏱ '+OC.sure().toFixed(1)+' sn · '+OC.puan()+' puan';
+    }
   }
   setInterval(updateClock,200);
   window.dmGameExperience={decorate,updateClock};
