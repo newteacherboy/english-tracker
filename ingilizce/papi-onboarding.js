@@ -3,12 +3,12 @@
 // Unified non-blocking notice coordinator. Runs before the onboarding tour.
 (()=>{
  const queue=[],seen=new Set();
- let paused=false,flushing=false;
+ let paused=false,flushing=false,invoking=false;
  const tour=()=>paused||document.body.classList.contains('dm-papi-preview')||!!window.dmPapiTour?.active?.();
  const selectors=['#dmStoryLesson','.ds-lesson-shell','#baOyunEkrani','.oyun-modal','.game-modal-content','.duello-oyun','#dcTestIcerik','.dt-q','#dmGameIntro','.hb-overlay','#kpKelimeOyunEkrani'];
  const playing=()=>selectors.some(s=>[...document.querySelectorAll(s)].some(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden'));
  function defer(key,fn,priority=5){
-  if(!tour()&&!playing()&&!flushing)return false;
+  if(invoking||(!tour()&&!playing()&&!flushing))return false;
   const id=String(key||'notice');
   if(!seen.has(id)){seen.add(id);queue.push({id,fn,priority:Number(priority)||5});}
   return true;
@@ -18,7 +18,7 @@
   queue.sort((a,b)=>a.priority-b.priority);
   const item=queue.shift();seen.delete(item.id);
   flushing=true;
-  try{item.fn();}catch(e){console.warn('Papi notice',e)}
+  try{invoking=true;item.fn();}catch(e){console.warn('Papi notice',e)}finally{invoking=false;}
   setTimeout(()=>{flushing=false;},1800);
  }
  setInterval(flush,500);
