@@ -7436,6 +7436,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 return;
             }
             dcQuizDogruSayisi++;
+            window.DijiMeduPapiFeedback?.correct({anchor:document.getElementById(`dcQOpt${qi}_${secilenIndex}`),duration:900});
         }
         let dcTestBitiriliyor = false, dcKonuBaslangicZamani = 0;
         function dcTestiBitir(toplamSoru) {
@@ -11268,6 +11269,7 @@ function ozellikSecDoldur() {
             yBtn.style.cursor = 'default';
         
             if (secilenCevap === soru.dogruCevap) {
+                window.DijiMeduPapiFeedback?.correct({anchor:secilenBtn,duration:850});
                 dyDogruSayisi++;
                 secilenBtn.style.background = '#dcfce7';
                 secilenBtn.style.borderColor = '#22c55e';
@@ -12458,6 +12460,7 @@ function ozellikSecDoldur() {
             else if (soru.tip === 'asmaca') baAsmacaGoster(soru.kelime);
         }
         function baDogruIsle() {
+            window.DijiMeduPapiFeedback?.correct({duration:850});
             genelSesEfektiCal('dogru');
             baDogruSayisi++;
             let kazanc = 10 + baKombo * 3;
@@ -14768,6 +14771,7 @@ const YO_SOHBET = [
           butonlar[o.dogruIdx].classList.add('dogru');
           yoSoyle(w.en);
           if (dogruMu) {
+            window.DijiMeduPapiFeedback?.correct({anchor:butonlar[i],duration:850});
             o.d++;
             if (kayit) { let eski = kayit.kutu; kayit.kutu = Math.min(5, eski + 1); kayit.sonraki = kayit.kutu >= 5 ? '9999-12-31' : yoBugun(YO_ZK_GUN[eski]); }
             yoSes('dogru');
@@ -14910,7 +14914,7 @@ const YO_SOHBET = [
           if (!butonlar.length || butonlar[0].disabled) return;
           butonlar.forEach(b => b.disabled = true);
           butonlar[i].classList.add(i === svt.dogruIdx ? 'dogru' : 'yanlis');
-          if (i === svt.dogruIdx) { svt.puan[YO_SEVIYE[svt.i].s]++; svt.d++; }
+          if (i === svt.dogruIdx) { window.DijiMeduPapiFeedback?.correct({anchor:butonlar[i],duration:650}); svt.puan[YO_SEVIYE[svt.i].s]++; svt.d++; }
           setTimeout(() => { svt.i++; seviyeSoru(); }, 550);
         }
         function seviyeBitir() {
@@ -24226,6 +24230,7 @@ window.ocEnerjiHarca = async function (n) {
     setTimeout(() => $('kmIleri') && $('kmIleri').focus(), 50);
   }
   function geriBildirim(iyi, metin, finalMi) {
+    if(iyi)window.DijiMeduPapiFeedback?.correct({duration:900});
     let g = document.createElement('div'); g.className = 'km-geri ' + (iyi ? 'iyi' : 'kotu'); g.setAttribute('role', 'status'); g.innerHTML = metin;
     $('kmGovde').appendChild(g); g.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     ses(iyi ? 'dogru' : 'yanlis');
@@ -28618,7 +28623,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     };
   }
   function cevap(iyi, dogruMetin) {
-    if (O._cevaplandi) return; O._cevaplandi = true;
+    if (O._cevaplandi) return;
+    if(iyi)window.DijiMeduPapiFeedback?.correct({detail:dogruMetin||'Doğru cevap!',duration:850}); O._cevaplandi = true;
     if (zamanlayici) { clearInterval(zamanlayici); zamanlayici = null; }
     O.sonuclar[O.i] = iyi;
     if (iyi) { O.dogru++; if (window.OC) OC.dogru(O._ikinci || O._pas ? 2 : 1); } else { O.yanlis++; if (window.OC) OC.yanlis(false); }
