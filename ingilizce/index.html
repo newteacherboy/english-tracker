@@ -1898,13 +1898,19 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
           <!-- KELİME MODU -->
           <div class="kp-panel active" id="kp-panel-kelime">
         
-               <div id="kpKelimeGirisEkrani">
-              <div id="kpMikUyari" class="kp-uyari" style="display:none;">⚠️ Tarayıcın mikrofonla konuşma tanımayı desteklemiyor. Yine de açabilir, cevapları yazarak verebilirsin.</div>
-              <label class="kp-label">Öğrenci Adı</label>
-              <input type="text" id="kpIsimInput" placeholder="Adınız" class="kp-input">
-        
-              <label class="kp-label" style="margin-top:20px;">🗺️ Seviye Parkuru</label>
-              <div id="kpParkurAlani"></div>
+               <div id="kpKelimeGirisEkrani" class="dm-word-home">
+              <section class="dm-word-intro" aria-label="Kelime Modu tanıtımı">
+                <div class="dm-word-intro-top"><span>PAPİ İLE OYUN ZAMANI</span><h2>Kelime Modu</h2></div>
+                <div class="dm-word-hero"><img src="papi-welcome-v2.png" alt="Papi maskotu" loading="eager"><p>Kelimeyi İngilizce söyle veya yazarak cevapla.</p></div>
+                <div class="dm-word-rules" aria-label="Oyun puanlama bilgileri"><span>⭐ <b>Doğru</b><small>+100 puan</small></span><span>🔥 <b>Seri</b><small>Bonusları</small></span><span>⚡ <b>Hız</b><small>Bonusları</small></span><span>❌ <b>Yanlış</b><small>−40 puan · −3 XP</small></span></div>
+              </section>
+              <div class="dm-word-home-body">
+                <div id="kpMikUyari" class="kp-uyari" style="display:none;">⚠️ Tarayıcın mikrofonla konuşma tanımayı desteklemiyor. Yine de açabilir, cevapları yazarak verebilirsin.</div>
+                <label class="kp-label" for="kpIsimInput">Öğrenci Adı</label>
+                <div class="dm-word-name-wrap"><span aria-hidden="true">👤</span><input type="text" id="kpIsimInput" placeholder="Adınız" class="kp-input"><span aria-hidden="true">✎</span></div>
+                <h3 class="dm-word-route-title">🗺️ Seviye Parkuru</h3>
+                <div id="kpParkurAlani"></div>
+              </div>
             </div>
         
             <div id="kpKelimeOyunEkrani" style="display:none;" class="kp-oyun-alani">
@@ -30448,7 +30454,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script src="papi-feedback.js?v=3"></script><script src="papi-haptics.js?v=1"></script><link rel="stylesheet" href="papi-wallet.css?v=2"><script src="papi-wallet.js?v=3"></script>
 <link rel="stylesheet" href="story-path.css?v=3"><script src="story-curriculum.js?v=2"></script><script src="story-path.js?v=6"></script>
-<link rel="stylesheet" href="medupro.css?v=20261010-wordmode2">
+<link rel="stylesheet" href="medupro.css?v=20261010-design3">
 <script src="medupro.js?v=20261010-wordmode3"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261010-games-restored">
 <script src="activity-ui.js?v=7"></script>
