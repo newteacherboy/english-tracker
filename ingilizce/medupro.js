@@ -51,6 +51,49 @@
   };if(document.body.classList.contains('dm-parkur-open'))show();else{window.dunyaAc?.();setTimeout(show,250);}
  };
 
+
+ // Apply the approved Papi Word Mode design to the real legacy entry, without altering game state.
+ (function(){
+   function decorateWordMode(){
+     const entry=document.getElementById('kpKelimeGirisEkrani');
+     const card=document.getElementById('kp-panel-kelime');
+     if(!entry||!card||entry.closest('.dm-word-home'))return;
+     const home=document.createElement('section');
+     home.className='dm-word-home';
+     home.setAttribute('aria-label','Papi Kelime Modu');
+     const intro=document.createElement('div');
+     intro.className='dm-word-intro';
+     intro.innerHTML='<div class="dm-word-intro-top"><span>🦜 MEDUPRO İLE ÖĞREN</span><h2>Kelime Macerası</h2></div><div class="dm-word-hero"><img src="papi-help-v2.png" alt="Papi papağan"><p>Hazır mısın? Kelimeleri keşfet, dinle ve her adımda güçlen!</p></div><div class="dm-word-rules"><span>🎧<b>Dinle</b><small>Keşfet</small></span><span>🎙️<b>Söyle</b><small>Pratik yap</small></span><span>⭐<b>Öğren</b><small>Pekiştir</small></span><span>🏆<b>İlerle</b><small>Seviye atla</small></span></div>';
+     const body=document.createElement('div');
+     body.className='dm-word-home-body';
+     entry.parentNode.insertBefore(home,entry);
+     home.append(intro,body);
+     body.append(entry);
+     // Original inputs and buttons remain in their original order and retain listeners.
+     const nameInput=entry.querySelector('input.kp-input');
+     if(nameInput&&!nameInput.closest('.dm-word-name-wrap')){
+       const wrap=document.createElement('div');
+       wrap.className='dm-word-name-wrap';
+       wrap.innerHTML='<span aria-hidden="true">✏️</span>';
+       nameInput.parentNode.insertBefore(wrap,nameInput);
+       wrap.append(nameInput);
+     }
+     const route=document.getElementById('kpParkurKapsayici');
+     if(route&&home.contains(route)&&!route.previousElementSibling?.classList.contains('dm-word-route-title')){
+       const heading=document.createElement('h3');
+       heading.className='dm-word-route-title';
+       heading.textContent='🌈 Kelime Yolculuğum';
+       route.parentNode.insertBefore(heading,route);
+     }
+   }
+   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorateWordMode,{once:true});
+   else decorateWordMode();
+   // Legacy mode is rendered lazily on some accounts.
+   let retries=0;
+   const clock=setInterval(()=>{decorateWordMode();if(++retries>=25||document.querySelector('#kpKelimeGirisEkrani.dm-word-home'))clearInterval(clock);},400);
+   document.addEventListener('click',e=>{if(e.target.closest('[data-mode="kp"],[data-p="kp"]'))setTimeout(decorateWordMode,0);},true);
+ })();
+
  // Recover the existing Word Mode entry if legacy asynchronous UI resets leave it blank.
  (function(){
    let misses=0;
