@@ -8,7 +8,7 @@
  const selectors=['#dmStoryLesson','.ds-lesson-shell','#baOyunEkrani','.oyun-modal','.game-modal-content','.duello-oyun','#dcTestIcerik','.dt-q','#dmGameIntro','.hb-overlay','#kpKelimeOyunEkrani'];
  const playing=()=>selectors.some(s=>[...document.querySelectorAll(s)].some(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden'));
  function defer(key,fn,priority=5){
-  if(invoking||(!tour()&&!playing()&&!flushing))return false;
+  if(invoking||(!tour()&&!(playing()&&Number(priority)>1)&&!flushing))return false;
   const id=String(key||'notice');
   if(!seen.has(id)){seen.add(id);queue.push({id,fn,priority:Number(priority)||5});}
   return true;
