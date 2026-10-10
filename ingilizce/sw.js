@@ -6,7 +6,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v98-papi-first-practice';
+const SURUM = 'diji-v99-wordmode-cache-refresh';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 
@@ -40,6 +40,14 @@ self.addEventListener('fetch', e => {
     return;
   }
   /* Yazı tipleri, kütüphaneler ve aynı klasördeki dosyalar: önce cihaz */
+  if (url.origin === self.location.origin && /\.(?:js|css)$/.test(url.pathname)) {
+    // Always try current scripts and styles first, fall back to cached assets offline.
+    e.respondWith(fetch(r).then(y => {
+      if (y && y.ok) { const k=y.clone(); caches.open(KAYNAK).then(c=>c.put(r,k)); }
+      return y;
+    }).catch(() => caches.match(r)));
+    return;
+  }
   if (DIS_KAYNAK.test(r.url) || url.origin === self.location.origin) {
     e.respondWith(caches.match(r).then(v => v || fetch(r).then(y => {
       if (y && (y.ok || y.type === 'opaque')) { const k = y.clone(); caches.open(KAYNAK).then(c => c.put(r, k)); }
