@@ -26,3 +26,10 @@ test('real map honors level-interleaved 80-step route and stable chapter IDs',()
  assert.equal(ids[9],9);assert.equal(ids[10],40);assert.equal(ids[19],49);assert.equal(ids[20],10);
  assert.equal(ids.length,new Set(ids).size);
 });
+
+test('80-chapter map cannot use array index in place of stable chapter id',()=>{
+ assert.doesNotMatch(pathCode,/chapter=curriculum\(\)\[id\]/);
+ assert.doesNotMatch(pathCode,/if\(busy\|\|!curriculum\(\)\[id\]/);
+ assert.match(pathCode,/chapter=curriculum\(\)\.find\(c=>c\.id===id\)/);
+ assert.match(pathCode,/const nextChapter\(\)/) ;
+});
