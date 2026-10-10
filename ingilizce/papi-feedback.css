@@ -1,0 +1,18 @@
+/* Shared Papi success + energy screens */
+.dm-papi-feedback{position:fixed;inset:0;z-index:2147482000;display:flex;align-items:center;justify-content:center;pointer-events:none;padding:16px}
+.dm-papi-feedback.is-energy{background:rgba(8,24,51,.62);backdrop-filter:blur(5px);pointer-events:auto}
+.dm-papi-feedback-card{position:relative;display:flex;align-items:center;flex-direction:column;gap:6px;width:min(90vw,310px);padding:20px 16px 18px;border:3px solid #d0f6cc;border-radius:28px;background:linear-gradient(#fffdf3,#e8ffed);box-shadow:0 14px 40px #143e2f40;text-align:center;animation:dm-papi-pop .45s cubic-bezier(.18,1.5,.35,1) both}
+.dm-papi-feedback.is-energy .dm-papi-feedback-card{width:min(90vw,370px);border-color:#ffe2a0;background:linear-gradient(#fffbeb,#fff1d8)}
+.dm-papi-feedback-mark{display:grid;place-items:center;width:66px;height:66px;border-radius:50%;background:#24b973;box-shadow:0 0 0 8px #9debab85;color:white;font:bold 48px/1 system-ui;animation:dm-papi-badge .55s ease-out both}
+.dm-papi-feedback.is-energy .dm-papi-feedback-mark{background:#f3ac35;font-size:40px}
+.dm-papi-feedback-mascot{height:95px;max-width:115px;object-fit:contain;animation:dm-papi-flutter .58s ease-out .1s both}
+.dm-papi-feedback-card strong{font:900 24px/1.2 system-ui;color:#117e4a}
+.dm-papi-feedback.is-energy strong{color:#a76016}
+.dm-papi-feedback-card p{margin:2px 0;font:600 14px/1.45 system-ui;color:#245345}
+.dm-papi-feedback-close{background:#f5ad3d;color:#432900;border:0;border-radius:15px;padding:11px 25px;font:800 16px system-ui;cursor:pointer;margin-top:9px}
+.dm-papi-correct-pulse{animation:dm-papi-answer-glow .65s ease both}
+@keyframes dm-papi-pop{0%{opacity:0;transform:translateY(22px) scale(.65)}70%{opacity:1;transform:translateY(-5px) scale(1.04)}100%{opacity:1;transform:none}}
+@keyframes dm-papi-badge{0%{transform:scale(.25) rotate(-30deg)}65%{transform:scale(1.2) rotate(8deg)}100%{transform:none}}
+@keyframes dm-papi-flutter{0%{opacity:0;transform:translateY(22px) rotate(-12deg)}75%{opacity:1;transform:translateY(-4px) rotate(5deg)}100%{opacity:1;transform:none}}
+@keyframes dm-papi-answer-glow{40%{box-shadow:0 0 0 9px #51df9d8c;transform:scale(1.03)}}
+@media(prefers-reduced-motion:reduce){.dm-papi-feedback *, .dm-papi-correct-pulse{animation:none!important}}
