@@ -136,3 +136,14 @@ body.dm-parkur-open #bzParkur>.ds-space-shell.dm-map-extended::before{background
 .ds-space-map .ds-map-continue[hidden]{display:none!important}
 
 .ds-space-symbol svg{display:block;width:36px;height:36px}.ds-space-map .ds-medallion svg{width:16px;height:16px}
+
+/* Papi learning path: animated answer confirmation, no blocking overlay */
+.ds-feedback.correct{display:flex;align-items:center;gap:10px}
+.ds-success-tick{width:42px;height:42px;flex:none;display:inline-grid;place-items:center;animation:ds-tick-pop .42s cubic-bezier(.2,1.5,.45,1) both}
+.ds-success-tick svg{width:42px;height:42px;overflow:visible;filter:drop-shadow(0 3px 5px rgba(16,142,88,.18))}
+.ds-tick-circle{fill:#e6fff2;stroke:#21b978;stroke-width:3;stroke-dasharray:114;stroke-dashoffset:114;animation:ds-tick-ring .48s ease-out forwards}
+.ds-tick-mark{stroke:#078d56;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:28;stroke-dashoffset:28;animation:ds-tick-draw .32s ease-out .23s forwards}
+@keyframes ds-tick-pop{0%{transform:scale(.45) rotate(-12deg);opacity:0}75%{transform:scale(1.13) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@keyframes ds-tick-ring{to{stroke-dashoffset:0}}
+@keyframes ds-tick-draw{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.ds-success-tick,.ds-tick-circle,.ds-tick-mark{animation:none;opacity:1;transform:none;stroke-dashoffset:0}}
