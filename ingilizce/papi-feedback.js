@@ -7,6 +7,7 @@ function successSound(){try{const Audio=window.AudioContext||window.webkitAudioC
 
 function remove(){if(timer)clearTimeout(timer);timer=null;root?.remove();root=null;}
 function mount(kind,title,detail){
+ if(window.dmPapiTour?.active?.()){return null;}
  remove();root=document.createElement('div');root.className='dm-papi-feedback '+(kind==='energy'?'is-energy':'is-success');root.setAttribute('role',kind==='energy'?'dialog':'status');if(kind==='energy')root.setAttribute('aria-modal','true');
  const card=document.createElement('div');card.className='dm-papi-feedback-card';
  const mascot=document.createElement('img');mascot.className='dm-papi-feedback-mascot';mascot.src=PAPI;mascot.alt='Papi papağanı';mascot.onerror=()=>{mascot.style.display='none'};
@@ -24,7 +25,7 @@ function correct({detail='',anchor=null,duration=1000}={}){
  mount('correct','Harika!',detail||'Doğru cevap!');
  timer=setTimeout(remove,Math.max(650,Math.min(duration,1800)));
 }
-function energy(){mount('energy','Papi ile enerji molası!','Enerjin yenilenince aynı sorudan devam edebileceksin. İlerlemen güvende!');}
-function notice(message){const text=String(message||'').slice(0,300);mount('energy','Papi sana sesleniyor!',text);}
+function energy(){if(window.dmPapiNotices?.defer('papi-energy',energy))return;mount('energy','Papi ile enerji molası!','Enerjin yenilenince aynı sorudan devam edebileceksin. İlerlemen güvende!');}
+function notice(message){const text=String(message||'').slice(0,300);if(window.dmPapiNotices?.defer('papi-notice:'+text,()=>notice(text)))return;mount('energy','Papi sana sesleniyor!',text);}
 window.DijiMeduPapiFeedback={correct,energy,notice,close:remove};
 })();
