@@ -12093,17 +12093,23 @@ function ozellikSecDoldur() {
         let kpArkaArkayaDogru = 0;
         
         let kpEsAnlamMap = {};
+        let kpEsAnlamYukleme = null;
         async function kpEsAnlamlariYukle() {
-            try {
-                let res = await fetch(`${apiURL}?islem=konusmaEsAnlamlarGetir`);
-                let liste = await res.json();
-                kpEsAnlamMap = {};
+            if (kpEsAnlamYukleme) return kpEsAnlamYukleme;
+            kpEsAnlamYukleme = (async () => {
+                const res = await fetch(`${apiURL}?islem=konusmaEsAnlamlarGetir`);
+                if (!res.ok) throw new Error('Alternatif cevap veritabanı alınamadı');
+                const liste = await res.json();
+                if (!Array.isArray(liste)) throw new Error('Alternatif cevap verisi geçersiz');
+                const next = Object.create(null);
                 liste.forEach(item => {
-                    let anahtar = kpNormallestir(item.kelime);
-                    let altlar = String(item.alternatifler || "").split(",").map(a => kpNormallestir(a)).filter(a => a);
-                    kpEsAnlamMap[anahtar] = altlar;
+                    const anahtar = kpNormallestir(item.kelime);
+                    const altlar = String(item.alternatifler || '').split(/[,;|\n]+/).map(kpNormallestir).filter(Boolean);
+                    if (anahtar) next[anahtar] = [...new Set([...(next[anahtar] || []), ...altlar])];
                 });
-            } catch(e) {}
+                kpEsAnlamMap = next;
+            })().catch(err => { kpEsAnlamYukleme = null; console.warn('Kelime Modu eş anlam verileri:', err); throw err; });
+            return kpEsAnlamYukleme;
         }
         const KP_SEVIYE_BOYUTU = 8;
         const KP_SEVIYE_ISIMLERI = ["Sahil Başlangıcı","Mercan Koyu","Yelken Tepesi","Fırtına Burnu","Ada Gizemi","Deniz Feneri","Korsan Koyu","İnci Mağarası","Rüzgar Geçidi","Gün Batımı Limanı","Kayıp Hazine","Dalga Tepesi","Yıldız Adası","Mavi Lagün","Kaptan Köşkü","Gökkuşağı Resifi","Ejder Kayalıkları","Sis Denizi","Altın Kumsal","Okyanus Kalbi","Balina Yolu","Fener Adası","Kristal Koy","Bulut Limanı"];
@@ -12987,8 +12993,9 @@ function ozellikSecDoldur() {
             kpParkurCiz();
         }
         
-        function kpSeviyeBaslat(seviyeNo) {
+        async function kpSeviyeBaslat(seviyeNo) {
             if (genelOyunGirisEngelliMi()) return;
+            try { await kpEsAnlamlariYukle(); } catch (err) { console.warn('Kelime Modu alternatifleri eksik; normal cevaplarla devam ediliyor', err); }
             let isim = document.getElementById('kpIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
         
@@ -28893,8 +28900,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (!parkurAcikTut && typeof orgDunya === 'function') orgDunya.apply(this, arguments);   /* sekmeyi açar, alt menüyü günceller */
     parkurAcikTut = false;
     if (!yuklendi) {
-      parkurAlani().innerHTML = `<div class="bz-ic dm-parkur-loading"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Papağan Papi"></div><strong>Parkurunu hazırlıyorum</strong><p>Birazdan macerana devam edeceğiz…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div><button type="button" class="dm-parkur-retry" hidden>Tekrar dene</button></div></div>`;
-      try { await ilerlemeYukle(); } catch (e) {
+      const parkurYuklemeZamani = setTimeout(() => { if (!yuklendi && parkurAlani() && !parkurAlani().querySelector('.bz-harita')) parkurAlani().innerHTML = `<div class="bz-ic dm-parkur-loading"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Papağan Papi"></div><strong>Parkurunu hazırlıyorum</strong><p>Birazdan macerana devam edeceğiz…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div><button type="button" class="dm-parkur-retry" hidden>Tekrar dene</button></div></div>`; }, 350);
+      try { await ilerlemeYukle(); clearTimeout(parkurYuklemeZamani); } catch (e) {
+        clearTimeout(parkurYuklemeZamani);
+        if (!parkurAlani().querySelector('.dm-papi-loading')) parkurAlani().innerHTML = '<div class="bz-ic dm-parkur-loading"><div class="dm-papi-loading"><strong>Parkur yüklenemedi</strong><p></p><button type="button" class="dm-parkur-retry">Tekrar dene</button></div></div>';
         const host=$('bzParkur'), message=host?.querySelector('.dm-papi-loading p'), retry=host?.querySelector('.dm-parkur-retry');
         if(message)message.textContent='Parkur bilgileri alınamadı. Bağlantını kontrol edip tekrar dene.';
         if(retry){retry.hidden=false;retry.onclick=()=>window.dunyaAc();}
