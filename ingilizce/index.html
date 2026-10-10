@@ -14914,8 +14914,9 @@ const YO_SOHBET = [
           if (!butonlar.length || butonlar[0].disabled) return;
           butonlar.forEach(b => b.disabled = true);
           butonlar[i].classList.add(i === svt.dogruIdx ? 'dogru' : 'yanlis');
+          if(i!==svt.dogruIdx){butonlar[svt.dogruIdx].classList.add('dogru');butonlar[svt.dogruIdx].style.cssText+=';background:#dcfce7!important;border:2px solid #16a34a!important;color:#166534!important;box-shadow:0 0 0 2px #86efac';}
           if (i === svt.dogruIdx) { window.DijiMeduPapiFeedback?.correct({anchor:butonlar[i],duration:650}); svt.puan[YO_SEVIYE[svt.i].s]++; svt.d++; }
-          setTimeout(() => { svt.i++; seviyeSoru(); }, 550);
+          setTimeout(() => { svt.i++; seviyeSoru(); }, 1150);
         }
         function seviyeBitir() {
           let sonuc = 'A1';
