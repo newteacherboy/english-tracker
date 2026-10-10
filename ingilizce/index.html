@@ -29010,8 +29010,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ================= 5) SONUÇ ================= */
   function bitir() {
     window.dmPapiFirstPractice?.complete('school');
-    let no = durakNo(O.b, O.d), gecti = O.dogru >= GECME, sure = Math.round((Date.now() - O.bas) / 1000);
-    let puan = window.OC ? OC.puan() : O.dogru * 90, yil = gecti ? (O.dogru >= 10 ? 3 : O.dogru >= 8 ? 2 : 1) : 0;
+    let no = durakNo(O.b, O.d), gecti = O.dogru >= GECME && O.sonuclar[O.sorular.length-1]===true, sure = Math.round((Date.now() - O.bas) / 1000);
+    let puan = window.OC ? OC.puan() : O.dogru * 90, yil = gecti ? (O.dogru >= 11 ? 3 : O.dogru >= 9 ? 2 : 1) : 0;
     let yeniAcildi = false, parkurIlk=!tamam.has(no);
     if (gecti) {
       let onceAcik = bolumAcik(O.b + 1);
@@ -29025,7 +29025,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (typeof genelSonucEkraniGoster === 'function')
       genelSonucEkraniGoster({ oyunAdi: `🧙 ${durakBilgi(b, d).sinif}. Sınıf ${durakBilgi(b, d).unite}. Ünite`, isim: isim(), puan, dogru: O.dogru, yanlis: O.yanlis, sureSaniye: sure, oyunKey: 'ba',
         rewardScope:{classNo:durakBilgi(b,d).sinif,units:[durakBilgi(b,d).unite]},parkurIlk,parkurGecti:gecti,parkurYildiz:yil,siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
-    setTimeout(() => toast(gecti ? (yeniAcildi ? `🚪 ${b + 2}. bölümün kapısı açıldı!` : `✨ ${O.d + 1}. durak geçildi! ${'⭐'.repeat(yil)}`) : `💪 ${O.dogru}/${O.sorular.length} doğru. Geçmek için ${GECME} doğru lazım, tekrar dene!`), 700);
+    setTimeout(() => toast(gecti ? (yeniAcildi ? `🚪 ${b + 2}. bölümün kapısı açıldı!` : `✨ ${O.d + 1}. durak geçildi! ${'⭐'.repeat(yil)}`) : `💪 ${O.dogru}/${O.sorular.length} doğru. Geçmek için ${GECME} doğru ve sesli finalin tamamlanması gerekiyor!`), 700);
   }
 
   /* ================= GİRİŞ NOKTALARI: Parkur sekmesi = Büyü Akademisi ================= */
