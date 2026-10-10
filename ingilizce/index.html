@@ -970,6 +970,20 @@ html, body { touch-action: pan-x pan-y; }
 @media(prefers-reduced-motion:reduce){.dm-papi-halo img,.dm-papi-halo:before,.dm-papi-dots i{animation:none!important}#dmBootSplash{transition:none}}
 </style>
 <link rel="stylesheet" href="bottom-nav.css?v=11">
+<style id="dm-parkur-final-layout">
+#bzMicCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:10px;width:100%;max-width:560px;margin:18px auto;align-items:stretch}
+#bzMicCards .dm-final-card{box-sizing:border-box;min-width:0;width:100%;min-height:114px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#f2f7ea;color:#193f35;border:2px solid #d9e6cc;border-radius:18px;padding:14px 10px;white-space:normal;overflow-wrap:break-word;word-break:normal;text-align:center;line-height:1.3}
+#bzMicCards .dm-final-card strong{display:block;font-size:clamp(15px,3.7vw,19px);font-weight:800;letter-spacing:0;text-transform:none;line-height:1.25;overflow-wrap:anywhere}
+#bzMicCards .dm-final-card small{font-size:12px;font-weight:600;opacity:.7}
+#bzMicCards .dm-final-card-label{font-size:11px;font-weight:700;opacity:.75}
+#bzMicCards .dm-final-current{border-color:#599c6b;background:#e2f3df;box-shadow:0 4px 14px rgba(38,90,53,.12)}
+#bzMicStatus{font-size:14px;min-height:20px;text-align:center;margin:12px 0}
+#bzMicStart{display:block;width:100%;max-width:560px;margin:12px auto}
+.dm-parkur-letters{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;min-height:52px;margin:12px auto;font-weight:800}
+.dm-parkur-letter{border:2px solid #bfddca;background:#eef8ef;color:#214738;border-radius:12px;padding:10px 13px;min-width:38px;min-height:43px;font-size:16px;font-weight:800;cursor:pointer}
+.dm-parkur-letter:disabled{opacity:.3}
+@media(max-width:420px){#bzMicCards{grid-template-columns:repeat(2,minmax(0,1fr))}#bzMicCards .dm-final-card{min-height:98px;padding:9px 6px}}
+</style>
 </head>
         <body>
 <div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
@@ -28340,7 +28354,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const TIPLER = [
     ['lab', '🔬', 'Kelime Laboratuvarı'], ['risk', '🎈', 'Risk Balonları'], ['eksik', '✏️', 'Eksik Harf'], ['hafiza', '🃏', 'Hafıza Sandığı'],
     ['hiz', '🌪️', 'Hız Fırtınası'], ['harf', '🔤', 'Harf Avı'], ['sifre', '🔐', 'Şifre Kırıcı'], ['es', '🔗', 'Eş Bul'],
-    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['sesliFinal', '🎙️', 'Papi ile Konuş'], ['dinleAnlam','🎧','Dinle ve Anlamı Yakala'], ['hata','🦜',"Papi'nin Hatası"], ['hatirla','🧠','Aklında Kaldı mı?'], ['miniDiyalog','💬','Papi ile Diyalog']
+    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['cumleTamamla','📝','Cümleyi Tamamla'], ['kelimeKur','🔤','Kelimeyi Kur'], ['cumleSirala','🧩','Cümleyi Sırala'], ['duydugunuBul','👂','Duyduğunu Bul'], ['sesliFinal', '🎙️', 'Papi ile Konuş'], ['dinleAnlam','🎧','Dinle ve Anlamı Yakala'], ['hata','🦜',"Papi'nin Hatası"], ['hatirla','🧠','Aklında Kaldı mı?'], ['miniDiyalog','💬','Papi ile Diyalog']
   ];
   /* 4 kapı × 2 sınıf; her ünite bir durak. Durak numarası = 1000 + sınıf×100 + ünite (ör. 1203 = 2. sınıf 3. ünite) */
   const KAPI_SINIF = [[1, 2], [3, 4], [5, 6], [7, 8]];
@@ -28585,13 +28599,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if(!active.length){toast('Bu durakta seçilen ünitenin kelimeleri bulunamadı. Word bank verisini kontrol edin.');return;}
     const pick=(i)=>active[i%active.length];
     const from = types => types[Math.floor(Math.random()*types.length)];
+    // Her bölümde 11 ayrı görev mekaniği; hedef sözcükler tekrar eder.
     const build=[
-      {tip:'dinleAnlam',k:pick(0)}, {tip:from(['lab','dinleAnlam']),k:pick(1)},
-      {tip:from(['risk','hatirla']),k:pick(2)},
-      {tip:'hata',k:pick(3)}, {tip:'miniDiyalog',k:pick(4)},
-      {tip:from(['hatirla','risk']),k:pick(0)}, {tip:'dinleAnlam',k:pick(1)},
-      {tip:from(['miniDiyalog','risk']),k:pick(2)}, {tip:from(['hata','lab']),k:pick(3)},
-      {tip:'hatirla',k:pick(4)}, {tip:from(['risk','miniDiyalog','lab']),k:pick(Math.floor(Math.random()*active.length))}
+      {tip:'dinleAnlam',k:pick(0)}, {tip:'lab',k:pick(1)},
+      {tip:'hata',k:pick(2)}, {tip:'cumleTamamla',k:pick(3)},
+      {tip:'miniDiyalog',k:pick(4)}, {tip:'kelimeKur',k:pick(0)},
+      {tip:'hatirla',k:pick(1)}, {tip:'cumleSirala',k:pick(2)},
+      {tip:'duydugunuBul',k:pick(3)}, {tip:'risk',k:pick(4)},
+      {tip:'dinleAnlam',k:pick(Math.floor(Math.random()*active.length))}
     ];
     // Değişken görevler ve aynı kelimenin birden fazla biçimde görülmesi.
     const first=karistir(build.slice(0,3));
@@ -28691,7 +28706,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { window.dmPapiFirstPractice?.complete('school');let b = O.b; kapat(); goster('harita', b); } };
     $('bzGeriSoru').onclick = () => incelemeAc();
     let alan = $('bzAlan');
-    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog })[s.tip](s, alan);
+    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, cumleSirala, duydugunuBul })[s.tip](s, alan);
     window.dmCalmQuestion?.(p);
     jokerBarCiz();
     p.scrollTop = 0;
@@ -28798,6 +28813,37 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       '<div class="bz-ipucu">Papi\'ye İngilizce doğru cevabı ver.</div>';
     secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
   }
+  function cumleTamamla(s,alan) {
+    const en=EN(s.k),tr=TR(s.k);
+    alan.innerHTML='<div class="bz-etiket">📝 Cümleyi tamamla</div><div class="bz-soru">How do you say "'+kac(tr)+'" in English?<br>— ______</div><div class="bz-ipucu">Diyalogdaki boşluğa uygun sözcüğü seç.</div>';
+    secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
+  }
+  function kelimeKur(s,alan) {
+    const en=EN(s.k),letters=Array.from(en), chosen=[];
+    const tokens=karistir(letters.map((letter,id)=>({letter,id})));
+    alan.innerHTML='<div class="bz-etiket">🔤 Kelimeyi kur</div><div class="bz-soru">'+kac(TR(s.k))+'</div><div class="bz-ipucu">Harfleri doğru sıraya dokunarak yerleştir. Geri al ile düzeltebilirsin.</div><div class="dm-parkur-letters" id="bzLetterAnswer" aria-live="polite"></div><div class="dm-parkur-letters" id="bzLetterPool"></div><button class="bz-btn" id="bzLetterUndo" type="button">↶ Son harfi geri al</button>';
+    const answer=alan.querySelector('#bzLetterAnswer'),pool=alan.querySelector('#bzLetterPool');
+    const draw=()=>{
+      answer.textContent=chosen.map(i=>tokens[i].letter).join('')||'…';
+      pool.innerHTML='';tokens.forEach((t,i)=>{const b=document.createElement('button');b.type='button';b.className='dm-parkur-letter';b.textContent=t.letter;b.disabled=chosen.includes(i);b.onclick=()=>{chosen.push(i);draw();if(chosen.length===tokens.length){const good=chosen.map(j=>tokens[j].letter).join('')===en;pool.querySelectorAll('button').forEach(x=>x.disabled=true);cevap(good,good?'':en);}};pool.appendChild(b);});
+    };alan.querySelector('#bzLetterUndo').onclick=()=>{if(!O._cevaplandi){chosen.pop();draw();}};draw();
+  }
+  function cumleSirala(s,alan) {
+    const en=EN(s.k),tr=TR(s.k),parts=['The','English','word','is',en],chosen=[];
+    const tokens=karistir(parts.map((word,id)=>({word,id})));
+    alan.innerHTML='<div class="bz-etiket">🧩 Cümleyi sırala</div><div class="bz-soru">'+kac(tr)+'</div><div class="bz-ipucu">"İngilizce kelime ...dır" anlamındaki cümleyi sıraya koy.</div><div class="dm-parkur-letters" id="bzSentenceAnswer" aria-live="polite"></div><div class="dm-parkur-letters" id="bzSentencePool"></div><button class="bz-btn" id="bzSentenceUndo" type="button">↶ Son sözcüğü geri al</button>';
+    const answer=alan.querySelector('#bzSentenceAnswer'),pool=alan.querySelector('#bzSentencePool');
+    const draw=()=>{
+      answer.textContent=chosen.map(i=>tokens[i].word).join(' ')||'…';
+      pool.innerHTML='';tokens.forEach((t,i)=>{const b=document.createElement('button');b.type='button';b.className='dm-parkur-letter';b.textContent=t.word;b.disabled=chosen.includes(i);b.onclick=()=>{chosen.push(i);draw();if(chosen.length===tokens.length){const good=chosen.map(j=>tokens[j].id).every((v,j)=>v===j);pool.querySelectorAll('button').forEach(x=>x.disabled=true);cevap(good,good?'':parts.join(' '));}};pool.appendChild(b);});
+    };alan.querySelector('#bzSentenceUndo').onclick=()=>{if(!O._cevaplandi){chosen.pop();draw();}};draw();
+  }
+  function duydugunuBul(s,alan) {
+    const en=EN(s.k);
+    alan.innerHTML='<div class="bz-etiket">👂 Duyduğunu bul</div><div class="bz-soru">🔊 Hangi İngilizce sözcüğü duydun?</div><button type="button" class="bz-ses" id="bzDuyTekrar">Tekrar dinle</button><div class="bz-ipucu">Sesi dinleyip doğru İngilizceyi seç.</div>';
+    alan.querySelector('#bzDuyTekrar').onclick=()=>oku(en);oku(en);
+    secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
+  }
   /* 🎙️ 12. görev: cihazda konuşma tanıma, kartlar bitince tek cevap.
      Ses kayıtları depolanmaz. Konuşma tanıma desteği yoksa klavye eşdeğeri sunulur. */
   function sesliFinal(s, alan) {
@@ -28817,8 +28863,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const status = alan.querySelector('#bzMicStatus'), cards=alan.querySelector('#bzMicCards');
     const mic=alan.querySelector('#bzMicStart'), input=alan.querySelector('#bzMicText');
     const render = () => {
-      cards.innerHTML=remaining.map((id,n)=>'<div class="bz-slot" style="display:inline-block;margin:5px;padding:12px"><b>'+
-        kac(list[id].tr)+'</b> <small>'+(n+1)+'/'+remaining.length+'</small></div>').join('');
+      cards.innerHTML=remaining.map((id,n)=>'<div class="dm-final-card'+(n===0?' dm-final-current':'')+'"><span class="dm-final-card-label">'+(n===0?'Şimdi söyle':'Sıradaki kart')+'</span><strong>'+kac(list[id].tr)+'</strong><small>'+(n+1)+' / '+remaining.length+'</small></div>').join('');
       mic.disabled=finished||listening||!SpeechAPI||denied;
       if(!SpeechAPI){mic.textContent='Mikrofon bu tarayıcıda desteklenmiyor';status.textContent='Klavye ile cevaplayabilirsin.';}
     };
