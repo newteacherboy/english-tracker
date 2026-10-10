@@ -432,3 +432,15 @@ body.dm-parkur-open #bzParkur .dm-map-continue:active{
     transition:none;
   }
 }
+
+
+/* Keep two-digit and three-digit level values legible without moving the dock. */
+body.dm-parkur-open #bzParkur .dm-adventure-brand-row{min-width:0;gap:5px!important}
+body.dm-parkur-open #bzParkur .dm-adventure-brand{min-width:0;flex:0 1 auto}
+body.dm-parkur-open #bzParkur .dm-parkur-brand{font-size:clamp(16px,4.3vw,26px)!important;white-space:nowrap}
+body.dm-parkur-open #bzParkur .dm-parkur-wallet.dm-parkur-top-status{min-width:0;flex:1 1 auto;display:flex!important;align-items:center;justify-content:flex-end;gap:5px}
+body.dm-parkur-open #bzParkur .dm-parkur-top-status button{min-width:0;flex:0 0 auto}
+body.dm-parkur-open #bzParkur .dm-parkur-top-status .dm-adventure-level{min-width:clamp(76px,20vw,105px)!important;width:auto!important;max-width:none!important;overflow:visible!important;flex-shrink:0!important;padding:5px 9px!important}
+body.dm-parkur-open #bzParkur .dm-parkur-top-status .dm-adventure-level>span{display:block;white-space:nowrap!important;overflow:visible!important;font-variant-numeric:tabular-nums;letter-spacing:0!important;font-size:clamp(12px,3vw,16px)!important;line-height:1.15!important}
+body.dm-parkur-open #bzParkur .dm-adventure-profile{flex:0 0 30px}
+@media(max-width:390px){body.dm-parkur-open #bzParkur .dm-adventure-brand-row{gap:3px!important}body.dm-parkur-open #bzParkur .dm-parkur-brand{font-size:clamp(15px,4vw,20px)!important}body.dm-parkur-open #bzParkur .dm-parkur-top-status .dm-adventure-level{min-width:70px!important;padding:4px 5px!important}body.dm-parkur-open #bzParkur .dm-parkur-top-status button{font-size:11px!important}}
