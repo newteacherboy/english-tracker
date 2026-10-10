@@ -6,8 +6,13 @@ function run(){
  if(!document.body)return;
  if(!hud.isConnected)document.body.appendChild(hud);
  const selectors=['#dmStoryLesson','.ds-lesson-shell','.game-modal-content','#baOyunEkrani','.oyun-modal','[id*="OyunModal"]','[id*="oyunModal"]','[id*="OyunEkrani"]','.duello-oyun'];const inGame=selectors.some(sel=>{const el=document.querySelector(sel);return !!el&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';});
- hud.hidden=!inGame;
- if(!inGame)return;
+ const introVisible=[...document.querySelectorAll('#dmGameIntro,.dm-entry-open,.hb-overlay')].some(el=>el.getClientRects().length>0 && getComputedStyle(el).visibility!=='hidden');
+ const roots=['#dmStoryLesson','.ds-lesson-shell','.game-modal-content','#baOyunEkrani','.oyun-modal','[id*="OyunEkrani"]','.duello-oyun'];
+ const activeRoot=roots.map(sel=>[...document.querySelectorAll(sel)].find(el=>el.getClientRects().length>0 && getComputedStyle(el).visibility!=='hidden')).find(Boolean);
+ const show=inGame&&!introVisible&&!!activeRoot;
+ hud.hidden=!show;
+ if(!show)return;
+ if(hud.parentElement!==activeRoot)activeRoot.prepend(hud);
  let y=typeof yo!=='undefined'?yo:null;
  const values={energy:typeof window.genelEnerjiKalan==='number'?'⚡ '+window.genelEnerjiKalan+'/'+(window.genelEnerjiMax||30):'⚡ —',gold:'🪙 '+(y&&Number.isFinite(Number(y.altin))?Math.round(Number(y.altin)):'—'),xp:'✨ '+(y&&Number.isFinite(Number(y.totalXp))?Math.round(Number(y.totalXp)):'—')+' XP'};
  for(const [kind,value] of Object.entries(values)){const el=hud.querySelector('[data-pw="'+kind+'"]');if(el&&el.textContent!==value){el.textContent=value;el.classList.remove('dm-pw-change');void el.offsetWidth;el.classList.add('dm-pw-change');}}
