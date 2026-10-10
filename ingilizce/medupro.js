@@ -94,6 +94,31 @@
    document.addEventListener('click',e=>{if(e.target.closest('[data-mode="kp"],[data-p="kp"]'))setTimeout(decorateWordMode,0);},true);
  })();
 
+ // Compact Word Mode HUD: values come from the existing game state; no duplicate economy.
+ (function(){
+   function mount(){
+     const intro=document.querySelector('#kpKelimeGirisEkrani .dm-word-intro');
+     if(!intro||intro.querySelector('.dm-kp-hud'))return;
+     const hud=document.createElement('div');hud.className='dm-kp-hud';
+     hud.innerHTML='<button type="button" class="dm-kp-back" title="Ana parkura dön" aria-label="Ana parkura dön">🏰</button><span class="dm-kp-combo">🔥 x0</span><span class="dm-kp-energy">⚡ --/--</span><span class="dm-kp-gold">🪙 --</span>';
+     intro.append(hud);
+     hud.querySelector('button').onclick=()=>{const close=window.kpModuKapat;if(typeof close==='function')close();if(typeof window.dunyaAc==='function')window.dunyaAc();};
+   }
+   function refresh(){
+     const hud=document.querySelector('#kpKelimeGirisEkrani .dm-kp-hud');if(!hud)return;
+     const combo=document.getElementById('kpKomboText')?.textContent||'';
+     const match=combo.match(/x\\s*(\\d+)/i);
+     hud.querySelector('.dm-kp-combo').textContent='🔥 x'+(match?match[1]:'0');
+     const energy=document.getElementById('kpEnerjiSatiri')?.textContent||'';
+     const e=energy.match(/(\\d+)\\s*\\/\\s*(\\d+)/);
+     if(e)hud.querySelector('.dm-kp-energy').textContent='⚡ '+e[1]+'/'+e[2];
+     const gold=typeof yo!=='undefined'&&yo?yo.altin:window.yo?.altin;
+     if(gold!=null&&Number.isFinite(Number(gold)))hud.querySelector('.dm-kp-gold').textContent='🪙 '+Math.floor(Number(gold)).toLocaleString('tr-TR');
+   }
+   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+   setInterval(()=>{mount();refresh();},800);
+ })();
+
  // Recover the existing Word Mode entry if legacy asynchronous UI resets leave it blank.
  (function(){
    let misses=0;
