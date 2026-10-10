@@ -5812,12 +5812,14 @@ mesajlar.forEach(m => {
                     if (havuz.length < 4) { alert("Yeterli kelime bulunamadı, farklı ünite seçin."); return; }
                     let secilenler = OC.kelimeSec('hafiza', havuz, OC.SORU); let ciftSayisi = secilenler.length; OC.basla('hafiza'); window.hafizaOcHata = 0;
                     hafizaKartlar = [];
+                    const enCards=[], trCards=[];
                     secilenler.forEach((k, i) => {
-                        hafizaKartlar.push({ tip:'en', metin:(k.ingilizce||k.en||''), pairId:i, acik:false, eslesti:false });
-                        hafizaKartlar.push({ tip:'tr', metin:(k.turkce||k.tr||''), pairId:i, acik:false, eslesti:false });
+                        enCards.push({tip:'en', metin:(k.ingilizce||k.en||''), pairId:i, acik:true, sabit:true, eslesti:false});
+                        trCards.push({tip:'tr', metin:(k.turkce||k.tr||''), pairId:i, acik:false, sabit:false, eslesti:false});
                     });
-                    hafizaKartlar.sort(() => Math.random() - 0.5);
-                               hafizaAcikIndexler = []; hafizaHamle = 0; hafizaEslesenSayi = 0; hafizaSure = 0; hafizaYanlisSayisi = 0; hafizaKombo = 0; hafizaKomboBonus = 0;
+                    const karistir = arr => { for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr; };
+                    hafizaKartlar = [...karistir(enCards), ...karistir(trCards)];
+                               hafizaAcikIndexler = []; hafizaSeciliAcik=-1; hafizaKilitli=false; hafizaHamle = 0; hafizaEslesenSayi = 0; hafizaSure = 0; hafizaYanlisSayisi = 0; hafizaKombo = 0; hafizaKomboBonus = 0;
         
                         genelEnerjiHarca(-3);
             document.getElementById('hafizaGirisEkrani').style.display = 'none';
@@ -5830,53 +5832,69 @@ mesajlar.forEach(m => {
                     if (hafizaTimer) clearInterval(hafizaTimer);
                     hafizaTimer = setInterval(() => { if (jk.donuk) return; hafizaSure++; document.getElementById('hafizaSureInfo').innerText = `⏱️ ${hafizaSure}s`; }, 1000);
                 }
+                let hafizaSeciliAcik = -1, hafizaKilitli = false;
                 function hafizaKartlariCiz() {
-                    let grid = document.getElementById('hafizaKartGrid');
-                    grid.innerHTML = "";
-                    hafizaKartlar.forEach((k, idx) => {
-                        let btn = document.createElement('button');
-                        btn.className = 'hz-kart' + (k.eslesti ? ' eslesti' : (k.acik ? ' acik' : ''));
-                        btn.innerText = (k.acik || k.eslesti) ? k.metin : '❓';
-                        btn.onclick = function() { hafizaKartTikla(idx); };
-                        grid.appendChild(btn);
+                    const grid=document.getElementById('hafizaKartGrid');
+                    grid.innerHTML='';
+                    grid.classList.add('hz-half-open-grid');
+                    const half=hafizaKartlar.length/2;
+                    hafizaKartlar.forEach((k,idx)=>{
+                        const btn=document.createElement('button');
+                        btn.type='button';
+                        btn.className='hz-kart'+(k.eslesti?' eslesti':(k.acik?' acik':''))+(k.sabit?' hz-open-fixed':' hz-hidden-match')+(idx===hafizaSeciliAcik?' hz-selected':'');
+                        btn.textContent=(k.acik||k.eslesti)?k.metin:'❓';
+                        btn.disabled=k.eslesti||hafizaKilitli;
+                        btn.setAttribute('aria-label',k.sabit?'Açık kelime: '+k.metin:(k.acik?'Açılan anlam: '+k.metin:'Gizli eş kartı'));
+                        btn.onclick=()=>hafizaKartTikla(idx);
+                        if(idx===half){const sep=document.createElement('div');sep.className='hz-grid-divider';sep.textContent='🔎 Eşini bul';grid.append(sep);}
+                        grid.append(btn);
                     });
                 }
                 function hafizaKartTikla(idx) {
-                                    if (jk.bakis) return;
-                    let kart = hafizaKartlar[idx];
-                    if (kart.acik || kart.eslesti || hafizaAcikIndexler.length >= 2) return;
-                    kart.acik = true;
-                    hafizaAcikIndexler.push(idx);
+                    if(jk.bakis||hafizaKilitli)return;
+                    const kart=hafizaKartlar[idx];
+                    if(!kart||kart.eslesti)return;
+                    if(kart.sabit){
+                        hafizaSeciliAcik=idx===hafizaSeciliAcik?-1:idx;
+                        hafizaKartlariCiz();
+                        return;
+                    }
+                    if(hafizaSeciliAcik<0||kart.acik)return;
+                    hafizaKilitli=true;
+                    kart.acik=true;
+                    const secilen=hafizaKartlar[hafizaSeciliAcik];
+                    hafizaHamle++;
+                    document.getElementById('hafizaHamleInfo').innerText='Hamle: '+hafizaHamle;
                     hafizaKartlariCiz();
-                    if (hafizaAcikIndexler.length === 2) {
-                        hafizaHamle++;
-                        document.getElementById('hafizaHamleInfo').innerText = `Hamle: ${hafizaHamle}`;
-                        let [i1, i2] = hafizaAcikIndexler;
-                                if (hafizaKartlar[i1].pairId === hafizaKartlar[i2].pairId) {
-                    hafizaKartlar[i1].eslesti = true; hafizaKartlar[i2].eslesti = true;
-                               hafizaEslesenSayi++;
-                    OC.dogru(window.hafizaOcHata <= 1 ? 1 : window.hafizaOcHata <= 3 ? 0.5 : 0); window.hafizaOcHata = 0;
-                    hafizaKombo++;
-                    hafizaKomboBonus += hafizaKombo * 2;
-                                         genelSesEfektiCal('dogru');
-                    genelKomboGoster(hafizaKombo, document.querySelector('#hafizaOyunOverlay .game-modal-content'));
-                    hafizaAcikIndexler = [];
-                    if (navigator.vibrate) navigator.vibrate(80);
-                    hafizaSesCal(true);
-                    document.getElementById('hafizaKalanInfo').innerText = `Kalan: ${(hafizaKartlar.length/2) - hafizaEslesenSayi} çift`;
-                    hafizaKartlariCiz();
-                    if (hafizaEslesenSayi === hafizaKartlar.length / 2) setTimeout(() => hafizaOyunuBitir(), 500);
-                        } else {
-                    genelSesEfektiCal('yanlis');
-                    hafizaYanlisSayisi++; OC.yanlis(typeof jk !== 'undefined' && !!jk.kalkan); if (!(typeof jk !== 'undefined' && jk.kalkan)) window.hafizaOcHata = (window.hafizaOcHata || 0) + 1;
-                                if (!jokerKalkanTuket()) hafizaKombo = 0;
-                            hafizaSesCal(false);
-                            setTimeout(() => {
-                                hafizaKartlar[i1].acik = false; hafizaKartlar[i2].acik = false;
-                                hafizaAcikIndexler = [];
-                                hafizaKartlariCiz();
-                            }, 800);
-                        }
+                    if(kart.pairId===secilen.pairId){
+                        kart.eslesti=secilen.eslesti=true;
+                        hafizaEslesenSayi++;
+                        OC.dogru(window.hafizaOcHata<=1?1:window.hafizaOcHata<=3?0.5:0);
+                        window.hafizaOcHata=0;
+                        hafizaKombo++;
+                        hafizaKomboBonus+=hafizaKombo*2;
+                        genelSesEfektiCal('dogru');
+                        genelKomboGoster(hafizaKombo,document.querySelector('#hafizaOyunOverlay .game-modal-content'));
+                        if(navigator.vibrate)navigator.vibrate(80);
+                        hafizaSesCal(true);
+                        document.getElementById('hafizaKalanInfo').innerText='Kalan: '+((hafizaKartlar.length/2)-hafizaEslesenSayi)+' çift';
+                        hafizaSeciliAcik=-1;
+                        hafizaKilitli=false;
+                        hafizaKartlariCiz();
+                        if(hafizaEslesenSayi===hafizaKartlar.length/2)setTimeout(()=>hafizaOyunuBitir(),500);
+                    }else{
+                        genelSesEfektiCal('yanlis');
+                        hafizaYanlisSayisi++;
+                        OC.yanlis(typeof jk!=='undefined'&&!!jk.kalkan);
+                        if(!(typeof jk!=='undefined'&&jk.kalkan))window.hafizaOcHata=(window.hafizaOcHata||0)+1;
+                        if(!jokerKalkanTuket())hafizaKombo=0;
+                        hafizaSesCal(false);
+                        setTimeout(()=>{
+                            kart.acik=false;
+                            hafizaSeciliAcik=-1;
+                            hafizaKilitli=false;
+                            if(document.getElementById('hafizaOyunEkrani')?.style.display!=='none')hafizaKartlariCiz();
+                        },900);
                     }
                 }
                 async function hafizaOyunuBitir() {
