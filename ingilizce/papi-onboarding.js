@@ -1,4 +1,34 @@
 /* Papi's full-screen, read-only introduction. Real account progress is never replaced. */
+
+// Unified non-blocking notice coordinator. Runs before the onboarding tour.
+(()=>{
+ const queue=[],seen=new Set();
+ let paused=false,flushing=false;
+ const tour=()=>paused||document.body.classList.contains('dm-papi-preview')||!!window.dmPapiTour?.active?.();
+ const selectors=['#dmStoryLesson','.ds-lesson-shell','#baOyunEkrani','.oyun-modal','.game-modal-content','.duello-oyun','#dcTestIcerik','.dt-q','#dmGameIntro','.hb-overlay','#kpKelimeOyunEkrani'];
+ const playing=()=>selectors.some(s=>[...document.querySelectorAll(s)].some(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden'));
+ function defer(key,fn,priority=5){
+  if(!tour()&&!playing()&&!flushing)return false;
+  const id=String(key||'notice');
+  if(!seen.has(id)){seen.add(id);queue.push({id,fn,priority:Number(priority)||5});}
+  return true;
+ }
+ function flush(){
+  if(tour()||playing()||flushing||!queue.length)return;
+  queue.sort((a,b)=>a.priority-b.priority);
+  const item=queue.shift();seen.delete(item.id);
+  flushing=true;
+  try{item.fn();}catch(e){console.warn('Papi notice',e)}
+  setTimeout(()=>{flushing=false;},1800);
+ }
+ setInterval(flush,500);
+ window.dmPapiNotices={defer,suspend:()=>{paused=true;},resume:()=>{paused=false;},queued:()=>queue.length,clear:()=>{queue.length=0;seen.clear();}};
+ document.addEventListener('dm:login',()=>{queue.length=0;seen.clear();});
+ const style=document.createElement('style');
+ style.textContent='body.dm-papi-preview #duyuruOverlay,body.dm-papi-preview .duy3-overlay,body.dm-papi-preview .dm-papi-feedback,body.dm-papi-preview .dm-toast,body.dm-papi-preview .toast,body.dm-papi-preview .genel-enerji-kazanim-wrap{visibility:hidden!important;pointer-events:none!important}body.dm-papi-preview #dmPapiTour{z-index:2147483647!important}';
+ (document.head||document.documentElement).append(style);
+})();
+
 (()=>{'use strict';
 const $=id=>document.getElementById(id),reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const name=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
@@ -17,7 +47,7 @@ const steps=[
 function preview(){return !!root&&root.isConnected&&window.dmPapiPreview===true;}
 function introState(){const state=typeof yo!=='undefined'&&yo?.dmPapiIntro;return {shown:Math.max(0,Number(state?.shown)||(yo?.turlar?.includes('papi:v3')?1:0)),disabled:state?.disabled===true,automatic:state?.automatic===true||(!state&&yo?.turlar?.includes('papi:v3')),audience:state?.audience||window.dmPapiIntroPolicy?.()||'new',rolloutSeen:state?.rolloutSeen===true};}
 function canAutoStart(){const state=introState(),eligible=typeof window.dmPapiIntroEligible==='function'?window.dmPapiIntroEligible():!window.turBitti?.('v2:ana');return !sessionShown&&eligible&&(state.audience==='existing'?!state.rolloutSeen:!state.disabled&&state.shown<2);}
-function cleanup(){epoch++;root?.remove();root=null;busy=false;window.dmPapiPreview=false;document.body.classList.remove('dm-papi-preview');window.dmProgression?.paint();}
+function cleanup(){epoch++;root?.remove();root=null;busy=false;window.dmPapiPreview=false;document.body.classList.remove('dm-papi-preview');window.dmPapiNotices?.resume();window.dmProgression?.paint();}
 async function route(){await window.dunyaAc?.();for(let tries=0;tries<20;tries++){if(owner!==name())return;const b=document.querySelector('.dm-story-mode [data-path="'+(purpose==='school'?'game':'learn')+'"]');if(b){navigating=true;try{b.click();}finally{navigating=false;}return;}await new Promise(r=>setTimeout(r,100));}}
 function finish(){if(!root||busy)return;const current=owner,state=introState(),disabled=root.querySelector('.papi-never input').checked;cleanup();if(current!==name())return;if(typeof yo!=='undefined'&&yo){yo.turlar=Array.from(new Set([...(yo.turlar||[]),'ana','v2:ana','papi:v3']));yo.dmLearningPurpose=purpose;yo.dmPapiIntro={...state,disabled:state.disabled||disabled};window.yoKaydet?.();}if(window.dmPapiFirstPractice)window.dmPapiFirstPractice.start(purpose,route);else{route();previousFocus?.focus?.({preventScroll:true});}}
 async function openTab(id){if(id==='route')return route();const fn={'tab-derscalis':'dersCalisTamEkranAc','tab-aktiviteler':'aktivitelerTamEkranAc','tab-meduakis':'meduAkisAc','tab-dunyam':'benimDunyamAc','tab-magaza':'magazaAc'}[id];if(fn&&typeof window[fn]==='function')await window[fn](id==='tab-dunyam'?'sanaozel':undefined);}
