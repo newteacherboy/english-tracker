@@ -10,3 +10,11 @@
 @keyframes dmNoticeFade{from{opacity:0}to{opacity:1}}
 @keyframes dmNoticePapi{0%,100%{transform:rotate(-2deg) translateY(0)}50%{transform:rotate(2deg) translateY(-5px)}}
 @media(prefers-reduced-motion:reduce){.dm-empty-notice,.dm-empty-notice .dm-sheet,.dm-empty-notice .dm-mascot{animation:none!important}}
+
+
+/* Keep the genuine word-mode entry visible after leaving the MeduPro menu. */
+#tab-konusmapratigi.dc-fullscreen-overlay.active{overflow-y:auto!important;align-items:stretch!important;justify-content:flex-start!important}
+#tab-konusmapratigi.active .kp-shell{width:100%!important;min-height:100%!important;height:auto!important;overflow:visible!important;flex:0 0 auto!important}
+#tab-konusmapratigi.active #kp-panel-kelime.active{display:block!important;visibility:visible!important;opacity:1!important;min-height:110px}
+#tab-konusmapratigi.active #kpKelimeGirisEkrani{visibility:visible!important;opacity:1!important;min-height:120px}
+#tab-konusmapratigi.active #kpParkurAlani{min-height:100px}
