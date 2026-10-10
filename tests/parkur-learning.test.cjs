@@ -26,3 +26,20 @@ test('voice finale has alternatives and a keyboard fallback', () => {
   assert.match(script,/remaining\.shift\(\)/);
   assert.match(script,/cevap\(true,'Tüm kelimeler sesli finalde tamamlandı'\)/);
 });
+
+test('speech finale cannot be bypassed using jokers', () => {
+  const script=html.slice(start,end);
+  assert.match(script,/O\.sorular\[O\.i\]\?\.tip==='sesliFinal'/);
+});
+test('speech permission errors leave a keyboard alternative', () => {
+  const script=html.slice(start,end);
+  assert.match(script,/not-allowed/);
+  assert.match(script,/denied=true/);
+  assert.match(script,/bzMicCheck/);
+});
+test('all active target words come from selected unit', () => {
+  const script=html.slice(start,end);
+  assert.match(script,/Number\(k\.sinif\)===Number\(D\.sinif\)/);
+  assert.match(script,/Number\(k\.unite\)===Number\(D\.unite\)/);
+  assert.match(script,/const active=targets/);
+});
