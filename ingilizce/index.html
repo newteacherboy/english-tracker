@@ -28581,8 +28581,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const scoped = havuzTum().filter(k=>Number(k.sinif)===Number(D.sinif)
       && Number(k.unite)===Number(D.unite) && EN(k) && TR(k));
     const targets=karistir([...new Map(scoped.map(k=>[EN(k).toLocaleLowerCase('en'),k])).values()]).slice(0,5);
-    const active=targets.length ? targets : kel.filter(k=>EN(k)&&TR(k)).slice(0,5);
-    if(!active.length){toast('Bu durakta çalışılacak kelime bulunamadı.');return;}
+    const active=targets;
+    if(!active.length){toast('Bu durakta seçilen ünitenin kelimeleri bulunamadı. Word bank verisini kontrol edin.');return;}
     const pick=(i)=>active[i%active.length];
     const build=[
       {tip:'dinleAnlam',k:pick(0)}, {tip:'lab',k:pick(1)}, {tip:'risk',k:pick(2)},
