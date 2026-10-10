@@ -979,12 +979,12 @@ function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle
 function finish(){if(done)return;done=true;clearInterval(timer);clearTimeout(deadline);splash.classList.add('dm-ready');setTimeout(()=>splash.remove(),250);}
 function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
-let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
-if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'))finish();
+// The visible screen is the source of truth. A stale stored session must not trap the splash.
+if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||visible(login)||visible(panel))finish();
 }
 window.addEventListener('load',()=>{loaded=true;check();},{once:true});
 document.addEventListener('dm:login',check);timer=setInterval(check,150);
-const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
+const deadline=setTimeout(()=>{if(done)return;check();if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
 document.getElementById('dmBootRetry').onclick=()=>location.reload();
 })();</script>
         
