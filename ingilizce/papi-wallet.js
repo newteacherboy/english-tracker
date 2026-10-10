@@ -9,7 +9,11 @@ function run(){
  const introVisible=[...document.querySelectorAll('#dmGameIntro,.dm-entry-open,.hb-overlay')].some(el=>el.getClientRects().length>0 && getComputedStyle(el).visibility!=='hidden');
  const roots=['#dmStoryLesson','.ds-lesson-shell','.game-modal-content','#baOyunEkrani','.oyun-modal','[id*="OyunEkrani"]','.duello-oyun'];
  const activeRoot=roots.map(sel=>[...document.querySelectorAll(sel)].find(el=>el.getClientRects().length>0 && getComputedStyle(el).visibility!=='hidden')).find(Boolean);
- const show=inGame&&!introVisible&&!!activeRoot;
+ // Story lessons use a full-screen flex layout: never insert the wallet as a flex child.
+ // Disable this extra overlay on the story screen rather than shrinking the lesson.
+ const storyActive=[...document.querySelectorAll('#dmStoryLesson,.ds-lesson-shell')].some(el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
+ if(storyActive&&hud.parentElement!==document.body)document.body.appendChild(hud);
+ const show=inGame&&!storyActive&&!introVisible&&!!activeRoot;
  hud.hidden=!show;
  if(!show)return;
  if(hud.parentElement!==activeRoot)activeRoot.prepend(hud);
