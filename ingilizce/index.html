@@ -28584,12 +28584,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const active=targets;
     if(!active.length){toast('Bu durakta seçilen ünitenin kelimeleri bulunamadı. Word bank verisini kontrol edin.');return;}
     const pick=(i)=>active[i%active.length];
+    const from = types => types[Math.floor(Math.random()*types.length)];
     const build=[
-      {tip:'dinleAnlam',k:pick(0)}, {tip:'lab',k:pick(1)}, {tip:'risk',k:pick(2)},
+      {tip:'dinleAnlam',k:pick(0)}, {tip:from(['lab','dinleAnlam']),k:pick(1)},
+      {tip:from(['risk','hatirla']),k:pick(2)},
       {tip:'hata',k:pick(3)}, {tip:'miniDiyalog',k:pick(4)},
-      {tip:'hatirla',k:pick(0)}, {tip:'dinleAnlam',k:pick(1)},
-      {tip:'miniDiyalog',k:pick(2)}, {tip:'hata',k:pick(3)},
-      {tip:'hatirla',k:pick(4)}, {tip:'risk',k:pick(Math.floor(Math.random()*active.length))}
+      {tip:from(['hatirla','risk']),k:pick(0)}, {tip:'dinleAnlam',k:pick(1)},
+      {tip:from(['miniDiyalog','risk']),k:pick(2)}, {tip:from(['hata','lab']),k:pick(3)},
+      {tip:'hatirla',k:pick(4)}, {tip:from(['risk','miniDiyalog','lab']),k:pick(Math.floor(Math.random()*active.length))}
     ];
     // Değişken görevler ve aynı kelimenin birden fazla biçimde görülmesi.
     const first=karistir(build.slice(0,3));
@@ -28626,7 +28628,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function jokerBarCiz() {
     let bar = $('bzJokerler'); if (!bar) return;
     bar.innerHTML = JK.map(([t, ik, ad]) => {
-      let n = jkSay(t), uygun = !O._cevaplandi && (t === 'pas' || (t !== 'ikinci' && typeof O.jk[t] === 'function'));
+      let n = jkSay(t), uygun = !O._cevaplandi && O.sorular[O.i]?.tip!=='sesliFinal' && (t === 'pas' || (t !== 'ikinci' && typeof O.jk[t] === 'function'));
       let bilgi = t === 'ikinci' ? 'Yanlış yapınca sorar' : '';
       return `<button class="bz-jk" data-jk="${t}" ${n > 0 && uygun ? '' : 'disabled'} aria-label="${ad}, ${n} hak${bilgi ? ', ' + bilgi : ''}"><span>${ik}</span>${ad}${n ? `<b>${n}</b>` : ''}</button>`;
     }).join('') + `<button class="bz-jk al" id="bzJkAl" aria-label="Joker ve enerji satın al"><span>🛒</span>Al</button>`;
@@ -28634,7 +28636,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzJkAl').onclick = dukkanAc;
   }
   function jokerKullan(t) {
-    if (O._cevaplandi || jkSay(t) <= 0) return;
+    if (O._cevaplandi || O.sorular[O.i]?.tip==='sesliFinal' || jkSay(t) <= 0) return;
     if(!window.dmProgression?.require('joker') || O.jokerKullanim >= window.dmProgression.quota()) return toast('🃏 Bu duraktaki joker hakkın doldu.');
     if (t === 'pas') { jkHarca('pas'); O._pas = true; $('bzAlan').querySelectorAll('button,input').forEach(x => x.disabled = true); cevap(true, ''); return; }
     let f = O.jk[t]; if (typeof f !== 'function') return;
@@ -28804,6 +28806,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const normalizeVoice = x => String(x||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
       .toLocaleLowerCase('en').replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
     const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let denied=false;
     alan.innerHTML = '<div class="bz-etiket">🎙️ 12. Görev · Papi ile konuş</div>' +
       '<div class="bz-ipucu">Türkçe anlamı gör, İngilizcesini sesli söyle. Doğru kart kaybolur; tüm kartları bitirince kapı açılır.</div>' +
       '<div id="bzMicStatus" role="status" aria-live="polite"></div><div id="bzMicCards"></div>' +
@@ -28816,7 +28819,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const render = () => {
       cards.innerHTML=remaining.map((id,n)=>'<div class="bz-slot" style="display:inline-block;margin:5px;padding:12px"><b>'+
         kac(list[id].tr)+'</b> <small>'+(n+1)+'/'+remaining.length+'</small></div>').join('');
-      mic.disabled=finished||listening||!SpeechAPI;
+      mic.disabled=finished||listening||!SpeechAPI||denied;
       if(!SpeechAPI){mic.textContent='Mikrofon bu tarayıcıda desteklenmiyor';status.textContent='Klavye ile cevaplayabilirsin.';}
     };
     const accept = spoken => {
@@ -28840,7 +28843,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         recognition.maxAlternatives=5;listening=true;mic.disabled=true;status.textContent='🎙️ Dinliyorum…';
         recognition.onresult=e=>{const alts=Array.from(e.results[0]||[]).map(x=>x.transcript);
           accept(alts.find(x=>{const target=list[remaining[0]]?.en||'';return normalizeVoice(x)===normalizeVoice(target)||(O.speechAlternatives?.[target.toLocaleLowerCase('en').trim()]||'').split(/[;,|\n]+/).map(normalizeVoice).includes(normalizeVoice(x));})||alts[0]||'');};
-        recognition.onerror=e=>{status.textContent='Mikrofon algılayamadı ('+e.error+'). Tekrar dene ya da klavyeyi kullan.';};
+        recognition.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')denied=true;
+          status.textContent='Mikrofon algılayamadı ('+e.error+'). Tekrar dene ya da klavyeyi kullan.';};
         recognition.onend=()=>{listening=false;render();};
         recognition.start();
       }catch(e){listening=false;status.textContent='Mikrofon başlatılamadı. Klavye seçeneğini kullan.';render();}
