@@ -1,5 +1,6 @@
 name: Papi V2 safety tests
 on:
+  workflow_dispatch:
   push:
     branches: [feature/papi-learning-v2-80]
   pull_request:
@@ -7,6 +8,8 @@ on:
       - 'scripts/papi-v2-*'
       - 'tests/papi-v2-*'
       - 'ingilizce/papi-v2-*'
+      - 'ingilizce/story-path.js'
+      - 'ingilizce/story-v2-curriculum.json'
       - 'docs/papi-v2-*'
       - 'supabase/functions/diji-api/story-*'
       - '.github/workflows/papi-v2-tests.yml'
