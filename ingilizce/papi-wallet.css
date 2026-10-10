@@ -4,3 +4,8 @@
 .dm-papi-wallet .dm-pw-change{animation:dm-wallet-pop .5s ease-out}
 @keyframes dm-wallet-pop{0%{transform:scale(1);filter:brightness(1)}40%{transform:scale(1.18);filter:brightness(1.65)}100%{transform:scale(1);filter:brightness(1)}}
 @media(prefers-reduced-motion:reduce){.dm-papi-wallet .dm-pw-change{animation:none}}
+
+/* In-game status participates in the layout instead of covering lesson artwork or dialogs. */
+.dm-papi-wallet{position:relative!important;top:auto!important;left:auto!important;transform:none!important;z-index:2!important;display:flex;justify-content:center;flex-wrap:wrap;width:100%;max-width:100%;margin:6px auto 12px;box-sizing:border-box}
+.dm-papi-wallet span{font-size:clamp(10px,2.8vw,12px);padding:6px 8px}
+@media(max-width:380px){.dm-papi-wallet{gap:4px}.dm-papi-wallet span{padding:5px 6px}}
