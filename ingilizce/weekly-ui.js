@@ -64,7 +64,7 @@ window.dmVeliRaporYukle=async function(cl,area){area.innerHTML='<div class="yo-b
 const gold=[500,350,250,180,140,110,90,75,60,50],energy=[0,0,0,0,0,0,0,0,0,0];
 const oldLeague=window.maLigHtml;if(typeof oldLeague==='function')window.maLigHtml=function(){return oldLeague.apply(this,arguments)+`<section class="dm-league-prizes"><details><summary>🎁 Şampiyonlar Ligi haftalık ödülleri</summary><p>Yalnızca haftayı ilk 10’da tamamlayan ve 15. seviyeye ulaşmış ve o hafta en az 1800 yarışma XP’si kazanan öğrenciler hediye alır. Süper Lig’in ilk 2 sırasına 30 ve 20 altın verilir. Yerel Lig’de katılım rozeti kazanılır. Her pazartesi yeni hafta başlar; sonuçlar 00.05’te kesinleşir. Kazandığın hediye ilk girişinde hesabına bir kez eklenir.</p><table><thead><tr><th>Sıra</th><th>Altın</th><th>Enerji</th></tr></thead><tbody>${gold.map((g,i)=>`<tr><td>${i+1}.</td><td>${g} 🪙</td><td>${energy[i]} ⚡</td></tr>`).join('')}</tbody></table></details></section>`;};
 async function weekly(){
- if(window.dmPapiNotices?.blocked()||!token()||!who()||who().toLowerCase()==='teacher'||document.hidden||weeklyBusy||$('dmWeeklyPanel')||Date.now()-lastWeekly<21600000)return;
+ if((typeof window.dmPapiNotices?.blocked === 'function' && window.dmPapiNotices.blocked())||!token()||!who()||who().toLowerCase()==='teacher'||document.hidden||weeklyBusy||$('dmWeeklyPanel')||Date.now()-lastWeekly<21600000)return;
  const blocking=[...document.querySelectorAll('.rubric-modal,.game-overlay,.dm-perde,#dmLevelUp')].some(e=>getComputedStyle(e).display!=='none');if(blocking)return;
  weeklyBusy=true;lastWeekly=Date.now();const owner=who();
  try{const d=await api('haftalikPerformans');if(owner!==who()||!d.rapor)return;const r=d.rapor;
