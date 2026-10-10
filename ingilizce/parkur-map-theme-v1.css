@@ -340,3 +340,95 @@ body.dm-parkur-open #bzParkur>.dm-map-extended:has(.dm-parchment-map)::before{
 }
 body.dm-parkur-open .dm-map-extended .dm-parkur-scroll{z-index:1}
 body.dm-parkur-open .dm-map-extended .dm-parchment-map{background:transparent}
+
+
+/* DijiMedu clean map pass 1: scoped to adventure map; bottom navigation remains untouched. */
+body.dm-parkur-open #bzParkur .dm-parkur-head{
+  background:#fffaf0;
+  box-shadow:0 2px 12px #37533b0b;
+}
+body.dm-parkur-open #bzParkur .dm-adventure-brand-row{
+  margin-bottom:6px;
+  gap:8px;
+}
+body.dm-parkur-open #bzParkur .dm-parkur-top-status{
+  gap:5px;
+}
+body.dm-parkur-open #bzParkur .dm-parkur-top-status button{
+  min-height:32px;
+  border-radius:15px;
+  box-shadow:0 1px 3px #24493514;
+}
+body.dm-parkur-open #bzParkur .dm-parkur-tabs{
+  margin-bottom:7px;
+  gap:6px;
+}
+body.dm-parkur-open #bzParkur .dm-parkur-tabs button{
+  border-radius:16px;
+  min-height:37px;
+  font-weight:800;
+  transition:background-color .18s ease,border-color .18s ease;
+}
+body.dm-parkur-open #bzParkur .dm-map-heading{
+  left:clamp(13px,4vw,23px);
+  top:clamp(12px,3vh,22px);
+  font-size:clamp(20px,5vw,27px);
+  font-weight:700;
+  color:#3b3426;
+  text-shadow:0 1px 3px #fff9e7;
+}
+body.dm-parkur-open #bzParkur .dm-map-heading::after{
+  height:3px;
+  border-radius:6px;
+  background:linear-gradient(90deg,#e6bb55,transparent);
+}
+body.dm-parkur-open #bzParkur .dm-map-stop .dm-map-name{
+  min-width:max-content;
+  max-width:132px;
+  padding:5px 9px;
+  border-radius:11px;
+  border:1px solid #d8bd82;
+  color:#2e362b;
+  background:#fff8e6;
+  box-shadow:0 2px 6px #45391b21;
+  font-size:clamp(10px,2.9vw,12px);
+  font-weight:900;
+  line-height:1.2;
+  text-align:center;
+}
+body.dm-parkur-open #bzParkur .dm-map-stop.current .dm-map-name{
+  border-color:#af84d8;
+  background:#fcf4ff;
+}
+body.dm-parkur-open #bzParkur .dm-map-badge{
+  box-shadow:0 0 0 2px #fff8e8,0 2px 5px #23381c40;
+}
+body.dm-parkur-open #bzParkur .dm-map-continue{
+  min-height:45px;
+  min-width:42%;
+  padding:8px 23px;
+  border-radius:28px;
+  border-color:#e4f0c6;
+  background:linear-gradient(180deg,#3cb94c,#168a34);
+  box-shadow:0 3px 0 #135c2f,0 7px 17px #15492e43;
+  font-size:clamp(16px,4vw,19px);
+  letter-spacing:.01em;
+}
+body.dm-parkur-open #bzParkur .dm-map-continue:active{
+  filter:brightness(.96);
+}
+@media(max-width:360px){
+  body.dm-parkur-open #bzParkur .dm-map-stop .dm-map-name{
+    max-width:100px;
+    padding:4px 6px;
+    font-size:10px;
+  }
+  body.dm-parkur-open #bzParkur .dm-parkur-tabs button{
+    min-height:34px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  body.dm-parkur-open #bzParkur .dm-parkur-tabs button{
+    transition:none;
+  }
+}
