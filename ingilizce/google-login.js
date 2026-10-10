@@ -293,3 +293,61 @@
     } catch (_) { area.hidden = true; }
   })().catch(() => { reset(); message('Google ile giriş tamamlanamadı. Mevcut girişini kullanabilirsin.'); });
 })();
+
+/* Papi mail invitation for existing Google accounts. Once per login, no gameplay interruptions. */
+(function(){
+ 'use strict';
+ let shown=false,busy=false;
+ const ID='dmPapiMailInvite';
+ const api='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/papi-progress-optin';
+ function blocked(){
+  if(window.dmPapiTour?.active?.()||document.body.classList.contains('dm-papi-preview'))return true;
+  const selectors=['#dmStoryLesson','.ds-lesson-shell','#baOyunEkrani','.game-modal-content','.oyun-modal','.duello-oyun','#dmGameIntro','.hb-overlay'];
+  return selectors.some(sel=>[...document.querySelectorAll(sel)].some(el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden'));
+ }
+ function close(){document.getElementById(ID)?.remove();}
+ async function tick(){
+  if(shown||busy||blocked()||document.hidden||document.getElementById(ID))return;
+  if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi||aktifOgrenciAdi==='teacher'||window.dmGuestMode)return;
+  const client=window.supabaseClient;
+  if(!client?.auth?.getSession)return;
+  busy=true;
+  try{
+   const {data}=await client.auth.getSession();
+   const token=data?.session?.access_token;
+   if(!token)return;
+   const key='dm:papi:invite:'+data.session.user.id;
+   if(sessionStorage.getItem(key))return;
+   // Existing users who already accepted are not prompted again.
+   const {data:user}=await client.auth.getUser();
+   if(!user?.user)return;
+   const panel=document.createElement('div');
+   panel.id=ID;
+   panel.setAttribute('role','dialog');
+   panel.setAttribute('aria-label','Papi e-posta haberleri');
+   panel.style.cssText='position:fixed;z-index:2147483000;inset:auto 12px calc(75px + env(safe-area-inset-bottom)) 12px;margin:auto;max-width:380px;border:2px solid #b9ecd0;border-radius:22px;background:#f4fff7;box-shadow:0 12px 50px #17473144;padding:18px;font:15px/1.4 system-ui;color:#245142';
+   const title=document.createElement('strong');title.textContent='🦜 Papi’den haberlerin var!';title.style.fontSize='19px';
+   const text=document.createElement('p');text.textContent='İngilizce ilerlemeni, lig haberlerini ve yeni maceraları renkli e-postalarla takip etmek ister misin? Tamamen isteğe bağlı!';
+   const buttons=document.createElement('div');buttons.style.cssText='display:flex;gap:10px';
+   const yes=document.createElement('button');yes.type='button';yes.textContent='💚 Abone ol';yes.style.cssText='flex:1;border:0;background:#15803d;color:white;border-radius:12px;padding:12px;font-weight:800';
+   const later=document.createElement('button');later.type='button';later.textContent='Şimdi değil';later.style.cssText='border:1px solid #abd9bb;background:white;color:#245142;border-radius:12px;padding:12px';
+   later.onclick=()=>{sessionStorage.setItem(key,'1');close()};
+   yes.onclick=async()=>{
+    yes.disabled=true;yes.textContent='E-posta hazırlanıyor…';
+    try{
+     const response=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({subscribe:true})});
+     const result=await response.json();
+     if(!response.ok||!result.ok)throw Error(result.message||'E-posta isteği tamamlanamadı.');
+     text.textContent=result.requested?'Onay bağlantısı e-posta adresine gönderildi. Aboneliğin bağlantıya basınca başlar.':'Daha önce bir onay bağlantısı gönderilmiş olabilir. Gelen kutunu kontrol et.';
+     buttons.remove();sessionStorage.setItem(key,'1');setTimeout(close,7000);
+    }catch(e){text.textContent=String(e.message||'Şu an bağlanılamıyor. Daha sonra tekrar deneyebilirsin.');yes.disabled=false;yes.textContent='Yeniden dene';}
+   };
+   buttons.append(yes,later);panel.append(title,text,buttons);
+   if(blocked())return;
+   document.body.append(panel);
+   shown=true;
+  }catch{}finally{busy=false;}
+ }
+ setInterval(tick,3500);
+ window.addEventListener('dm:login',()=>{shown=false;close()});
+})();
