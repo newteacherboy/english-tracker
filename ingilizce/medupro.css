@@ -47,3 +47,20 @@
 #tab-konusmapratigi .dm-word-home .kp-step-row .kp-step-num{color:#8e57c6!important}
 #tab-konusmapratigi .dm-word-home .kp-step-row .kp-step-name{color:#184a42!important}
 @media(max-width:370px){#tab-konusmapratigi .dm-word-intro{padding:15px 9px 11px}#tab-konusmapratigi .dm-word-home-body{padding:10px 9px 16px}#tab-konusmapratigi .dm-word-hero{grid-template-columns:38% 62%;min-height:120px}#tab-konusmapratigi .dm-word-hero img{height:120px}#tab-konusmapratigi .dm-word-rules small{font-size:9px}}
+
+
+/* Word Mode design finish: visual-only scenic level card and mobile spacing. */
+#tab-konusmapratigi.active .dm-word-home #kpParkurAlani{width:100%;min-width:0}
+#tab-konusmapratigi.active .dm-word-home .kp-step-row{background:linear-gradient(90deg,#e5f9f7d9,#fffaf9d9),url('parkur-map-landscape-v1.svg') center/cover no-repeat!important;border:2px solid #fff!important;box-shadow:0 4px 13px #4666811c!important;min-height:94px!important}
+#tab-konusmapratigi.active .dm-word-home .kp-step-row .kp-node-outer{filter:drop-shadow(0 2px 5px #513e7927)}
+#tab-konusmapratigi.active .dm-word-home .kp-step-row .kp-step-name{font-weight:900!important;text-shadow:0 1px 0 #fff9}
+#tab-konusmapratigi.active .dm-word-home .kp-step-row .kp-step-sub{color:#486c73!important}
+#tab-konusmapratigi.active .dm-word-home .dm-word-name-wrap .kp-input:disabled{opacity:1!important;-webkit-text-fill-color:#513487!important}
+@media(max-width:430px){
+#tab-konusmapratigi.active .kp-shell{padding-left:9px!important;padding-right:9px!important}
+#tab-konusmapratigi.active .dm-word-home{border-width:3px;border-radius:24px}
+#tab-konusmapratigi .dm-word-hero img{height:clamp(110px,32vw,170px)}
+#tab-konusmapratigi .dm-word-intro-top h2{font-size:clamp(27px,8vw,36px)!important}
+#tab-konusmapratigi .dm-word-rules span{font-size:10px}
+#tab-konusmapratigi.active .dm-word-home .kp-step-row{padding:10px 8px!important;min-height:85px!important}
+}
