@@ -1,0 +1,6 @@
+.dm-papi-wallet{position:fixed;z-index:2147481000;top:max(10px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:flex;gap:7px;align-items:center;max-width:94vw;pointer-events:none}
+.dm-papi-wallet[hidden]{display:none!important}
+.dm-papi-wallet span{background:#13365eef;color:white;border:1px solid #acd5ec77;border-radius:14px;padding:6px 8px;white-space:nowrap;font:800 12px/1.4 system-ui;box-shadow:0 4px 12px #001d4055}
+.dm-papi-wallet .dm-pw-change{animation:dm-wallet-pop .5s ease-out}
+@keyframes dm-wallet-pop{0%{transform:scale(1);filter:brightness(1)}40%{transform:scale(1.18);filter:brightness(1.65)}100%{transform:scale(1);filter:brightness(1)}}
+@media(prefers-reduced-motion:reduce){.dm-papi-wallet .dm-pw-change{animation:none}}
