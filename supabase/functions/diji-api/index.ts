@@ -1753,8 +1753,18 @@ async function handle(req: Request) {
     return json({ ok: true, banka, ders: ders.slice(0, 60), seviyeler });
   }
   if (op === "konusmaEsAnlamlarGetir") {
-    const { data } = await supabase.from("speech_synonyms").select("english,alternatives");
-    return json((data || []).map((x: any) => ({ kelime: x.english, alternatifler: x.alternatives })));
+    // Supabase's default API row cap can silently truncate larger synonym dictionaries.
+    // Page through the full teacher-maintained table, preserving the existing client response.
+    const all: any[] = [];
+    const pageSize = 1000;
+    for (let offset = 0; ; offset += pageSize) {
+      const { data, error } = await supabase.from("speech_synonyms")
+        .select("english,alternatives").order("english").range(offset, offset + pageSize - 1);
+      if (error) return json({ ok: false, mesaj: "Alternatif cevaplar yüklenemedi." }, 503);
+      all.push(...(data || []));
+      if (!data || data.length < pageSize) break;
+    }
+    return json(all.map((x: any) => ({ kelime: x.english, alternatifler: x.alternatives })));
   }
   if (op === "kategorileriGetir") {
     const { data } = await supabase.from("activity_categories").select("name").order("name");
