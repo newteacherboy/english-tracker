@@ -15,6 +15,7 @@
  }
  function flush(){
   if(tour()||playing()||flushing||!queue.length)return;
+  if(['duyuruOverlay','dmGoalAnnouncement','dmLevelUp','dmDailyMissionAnnouncement','dmWeeklyGoalAnnouncement'].some(id=>{const el=document.getElementById(id);return el&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden';}))return;
   queue.sort((a,b)=>a.priority-b.priority);
   const item=queue.shift();seen.delete(item.id);
   flushing=true;
