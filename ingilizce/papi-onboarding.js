@@ -21,7 +21,43 @@
   try{invoking=true;item.fn();}catch(e){console.warn('Papi notice',e)}finally{invoking=false;}
   setTimeout(()=>{flushing=false;},1800);
  }
- setInterval(flush,500);
+ // Legacy announcements retain their original dialogs and callbacks, but their
+ // visibility is postponed while the introduction or an exercise is active.
+ const legacy=[
+  {id:'duyuruOverlay',priority:3},
+  {id:'dmGoalAnnouncement',priority:4},
+  {id:'dmLevelUp',priority:2},
+  {id:'dmDailyMissionAnnouncement',priority:4},
+  {id:'dmWeeklyGoalAnnouncement',priority:5}
+ ];
+ const restoring=new WeakSet();
+ function visible(el){return !!el&&el.isConnected&&!!el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden';}
+ function capture(){
+  if(!tour()&&!playing())return;
+  for(const {id,priority} of legacy){
+   const el=document.getElementById(id);
+   if(!visible(el)||restoring.has(el))continue;
+   const display=el.style.display,visibility=el.style.visibility;
+   // Hide synchronously in the mutation observer before the next paint.
+   el.style.setProperty('display','none','important');
+   const key='legacy:'+id;
+   if(!seen.has(key)){
+    seen.add(key);
+    queue.push({id:key,priority,fn:()=>{
+     if(!el.isConnected)return;
+     restoring.add(el);
+     el.style.removeProperty('display');
+     if(display)el.style.display=display;
+     el.style.visibility=visibility;
+     setTimeout(()=>restoring.delete(el),50);
+    }});
+   }
+  }
+ }
+ const observer=new MutationObserver(capture);
+ function observe(){if(document.body)observer.observe(document.body,{attributes:true,attributeFilter:['class','style','hidden'],childList:true,subtree:true});}
+ if(document.body)observe();else document.addEventListener('DOMContentLoaded',observe,{once:true});
+ setInterval(()=>{capture();flush();},500);
  window.dmPapiNotices={defer,suspend:()=>{paused=true;},resume:()=>{paused=false;},queued:()=>queue.length,clear:()=>{queue.length=0;seen.clear();}};
  document.addEventListener('dm:login',()=>{queue.length=0;seen.clear();});
  const style=document.createElement('style');
