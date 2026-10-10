@@ -1,4 +1,15 @@
-import { STORY_CHAPTERS } from './story-curriculum.js';
+import { STORY_CHAPTERS as LEGACY_CHAPTERS } from './story-curriculum.js';
+import { STORY_V2_CHAPTERS } from './story-v2-curriculum.js';
+const STORY_CHAPTERS=[...LEGACY_CHAPTERS,...STORY_V2_CHAPTERS];
+/* Keep all old unlock prerequisites exactly as before; extra V2 chapters are optional side quests.
+ * Otherwise a learner already on chapter 10 could be retroactively blocked by chapter 49. */
+export const previousChapter=(chapter:number):number|null=>{
+ if(!Number.isInteger(chapter)||chapter<0||chapter>=80)return null;
+ if(chapter===0)return null;
+ if(chapter<40)return chapter-1;
+ if(chapter%10===0)return Math.floor((chapter-40)/10)*10+9;
+ return chapter-1;
+};
 const normStory=(x:any)=>String(x??'').normalize('NFKC').trim().toLocaleLowerCase('en-US').replace(/[.!?,;:]/g,'').replace(/\s+/g,' ');
 export function storyAPI(db:any,json:any){
  const key=(a:any)=>a?.role==='student'&&a.student_id?'s:'+a.student_id:a?.role==='teacher'&&a.teacher_id?'t:'+a.teacher_id:'';
@@ -7,11 +18,14 @@ export function storyAPI(db:any,json:any){
   if(!['storyStatus','storyOpen','storyAdvance'].includes(op))return null;
   const owner=key(a);if(!owner)return json({ok:false,mesaj:'Öğrenme ilerlemesini kaydetmek için giriş yapmalısın.'},401);
   if(method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
-  if(op==='storyStatus'){const {data,error}=await db.from('papi_story_progress').select('chapter,cursor,completed,version').eq('actor_key',owner).order('chapter');return error?json({ok:false,mesaj:'Öğrenme yolu yüklenemedi.'},503):json({ok:true,progress:data||[]});}
+  if(op==='storyStatus'){const {data,error}=await db.from('papi_story_progress').select('chapter,cursor,completed,version').eq('actor_key',owner).order('chapter');return error?json({ok:false,mesaj:'Öğrenme yolu yüklenemedi.'},503):json({ok:true,progress:data||[],v2Enabled:typeof Deno!=='undefined'&&Deno.env.get('PAPI_STORY_V2_ENABLED')==='true'});}
   const chapter=Number(b.chapter),C=STORY_CHAPTERS[chapter];if(!Number.isInteger(chapter)||!C)return json({ok:false,mesaj:'Geçersiz durak.'},400);
+  // Fail closed until the 0–79 migration, QA and backup verification are complete.
+  if(chapter>=40 && (typeof Deno==='undefined'||Deno.env.get('PAPI_STORY_V2_ENABLED')!=='true'))return json({ok:false,mesaj:'Yeni öğrenme bölümleri henüz açılmadı.'},403);
   const read=()=>db.from('papi_story_progress').select('*').eq('actor_key',owner).eq('chapter',chapter).maybeSingle();
   const {data:existing,error}=await read();if(error)return json({ok:false,mesaj:'Durak yüklenemedi.'},503);
-  if(!existing&&chapter>0){const {data:prev,error:err}=await db.from('papi_story_progress').select('completed').eq('actor_key',owner).eq('chapter',chapter-1).maybeSingle();if(err)return json({ok:false,mesaj:'Önceki durak kontrol edilemedi.'},503);if(!prev?.completed)return json({ok:false,mesaj:'Önce önceki öğrenme durağını tamamla.'},403);}
+  const predecessor=previousChapter(chapter);
+  if(!existing&&predecessor!==null){const {data:prev,error:err}=await db.from('papi_story_progress').select('completed').eq('actor_key',owner).eq('chapter',predecessor).maybeSingle();if(err)return json({ok:false,mesaj:'Önceki durak kontrol edilemedi.'},503);if(!prev?.completed)return json({ok:false,mesaj:'Önce önceki öğrenme durağını tamamla.'},403);}
   if(op==='storyOpen'){
    if(existing){
     if(existing.completed&&existing.cursor>=C.steps.length){const {error:e}=await db.from('papi_story_progress').update({cursor:0,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},version:existing.version+1,updated_at:new Date().toISOString()}).eq('actor_key',owner).eq('chapter',chapter).eq('version',existing.version);if(e)return json({ok:false,mesaj:'Tekrar turu açılamadı.'},503);const {data:r,error:er}=await read();return er||!r?json({ok:false,mesaj:'Durak yüklenemedi.'},503):json(view(r));}

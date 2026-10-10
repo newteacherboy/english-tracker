@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 1,
+  "status": "design-only; not wired into app or rewards",
+  "compatibility": "IDs 0-39 preserved; additional IDs 40-79 reserved. Do not infer unlock order from numeric IDs; use track and sequence. Live database must be migrated and tested before launch.",
+  "levels": [
+    {
+      "cefr": "A1",
+      "chapters": [
+        {
+          "track": "A1",
+          "sequence": 1,
+          "chapterId": 0,
+          "legacy": true,
+          "title": "Papi ile Tanış",
+          "source": "story-curriculum.js",
+          "activityCount": 9
+        },
+        {
+          "track": "A1",
+          "sequence": 2,
+          "chapterId": 1,
+          "legacy": true,
+          "title": "İsim Yaprağı",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 3,
+          "chapterId": 2,
+          "legacy": true,
+          "title": "Sayı Köprüsü",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 4,
+          "chapterId": 3,
+          "legacy": true,
+          "title": "Harf Feneri",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 5,
+          "chapterId": 4,
+          "legacy": true,
+          "title": "Renkli Yapraklar",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 6,
+          "chapterId": 5,
+          "legacy": true,
+          "title": "Çantadaki Sır",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 7,
+          "chapterId": 6,
+          "legacy": true,
+          "title": "Papi’nin Ailesi",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 8,
+          "chapterId": 7,
+          "legacy": true,
+          "title": "Bahçe Evi",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 9,
+          "chapterId": 8,
+          "legacy": true,
+          "title": "Güneşli Sabah",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 10,
+          "chapterId": 9,
+          "legacy": true,
+          "title": "İlk Bahçe Şenliği",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A1",
+          "sequence": 11,
+          "chapterId": 40,
+          "legacy": false,
+          "title": "Okulun İlk Günü",
+          "focus": "Classroom objects; asking for help",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 12,
+          "chapterId": 41,
+          "legacy": false,
+          "title": "Günlük Saatler",
+          "focus": "Telling time and days",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 13,
+          "chapterId": 42,
+          "legacy": false,
+          "title": "Papi'nin Arkadaşları",
+          "focus": "People and simple descriptions",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 14,
+          "chapterId": 43,
+          "legacy": false,
+          "title": "Minik Market",
+          "focus": "Food and quantities",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 15,
+          "chapterId": 44,
+          "legacy": false,
+          "title": "Hava Günlüğü",
+          "focus": "Weather and clothes",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 16,
+          "chapterId": 45,
+          "legacy": false,
+          "title": "Şehirde Yolculuk",
+          "focus": "Places and directions",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 17,
+          "chapterId": 46,
+          "legacy": false,
+          "title": "Hobiler Panosu",
+          "focus": "Likes and dislikes",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 18,
+          "chapterId": 47,
+          "legacy": false,
+          "title": "Hayvan Dostlar",
+          "focus": "Animals and abilities",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 19,
+          "chapterId": 48,
+          "legacy": false,
+          "title": "Bugün Neler Oluyor?",
+          "focus": "Present continuous",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A1",
+          "sequence": 20,
+          "chapterId": 49,
+          "legacy": false,
+          "title": "Bahçe Şenliği Hazırlığı",
+          "focus": "A1 integrated listening and reading",
+          "status": "curriculum-outline-only"
+        }
+      ]
+    },
+    {
+      "cefr": "A2",
+      "chapters": [
+        {
+          "track": "A2",
+          "sequence": 1,
+          "chapterId": 10,
+          "legacy": true,
+          "title": "Kuzeye Yolculuk",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 2,
+          "chapterId": 11,
+          "legacy": true,
+          "title": "Yoldaki İşaretler",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 3,
+          "chapterId": 12,
+          "legacy": true,
+          "title": "Karlı Pazar",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 4,
+          "chapterId": 13,
+          "legacy": true,
+          "title": "Dün Ne Oldu?",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 5,
+          "chapterId": 14,
+          "legacy": true,
+          "title": "Fırtına Başlarken",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 6,
+          "chapterId": 15,
+          "legacy": true,
+          "title": "Sıcak Kulübe",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 7,
+          "chapterId": 16,
+          "legacy": true,
+          "title": "İki Patika",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 8,
+          "chapterId": 17,
+          "legacy": true,
+          "title": "Kayıp Fener Bulundu",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 9,
+          "chapterId": 18,
+          "legacy": true,
+          "title": "Kuzeyden Mektup",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 10,
+          "chapterId": 19,
+          "legacy": true,
+          "title": "Dönüş Planı",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "A2",
+          "sequence": 11,
+          "chapterId": 50,
+          "legacy": false,
+          "title": "Yol Arkadaşım",
+          "focus": "Making invitations and responding",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 12,
+          "chapterId": 51,
+          "legacy": false,
+          "title": "Şehir Haritası",
+          "focus": "Giving detailed directions",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 13,
+          "chapterId": 52,
+          "legacy": false,
+          "title": "Sağlıklı Günler",
+          "focus": "Health advice",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 14,
+          "chapterId": 53,
+          "legacy": false,
+          "title": "Tatil Albümü",
+          "focus": "Past events and sequencing",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 15,
+          "chapterId": 54,
+          "legacy": false,
+          "title": "Pazar Sohbeti",
+          "focus": "Comparatives and shopping",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 16,
+          "chapterId": 55,
+          "legacy": false,
+          "title": "Hafta Sonu Planı",
+          "focus": "Future plans and arrangements",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 17,
+          "chapterId": 56,
+          "legacy": false,
+          "title": "Papi'nin Tarifleri",
+          "focus": "Recipes and instructions",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 18,
+          "chapterId": 57,
+          "legacy": false,
+          "title": "Kayıp Eşyalar",
+          "focus": "Describing belongings",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 19,
+          "chapterId": 58,
+          "legacy": false,
+          "title": "Sürpriz Haber",
+          "focus": "Describing experiences",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "A2",
+          "sequence": 20,
+          "chapterId": 59,
+          "legacy": false,
+          "title": "Kuzey Günlüğü",
+          "focus": "A2 integrated story and review",
+          "status": "curriculum-outline-only"
+        }
+      ]
+    },
+    {
+      "cefr": "B1",
+      "chapters": [
+        {
+          "track": "B1",
+          "sequence": 1,
+          "chapterId": 20,
+          "legacy": true,
+          "title": "Kristal Şehrin Sırrı",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 2,
+          "chapterId": 21,
+          "legacy": true,
+          "title": "Kütüphanedeki İpucu",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 3,
+          "chapterId": 22,
+          "legacy": true,
+          "title": "Eski Köprü",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 4,
+          "chapterId": 23,
+          "legacy": true,
+          "title": "Baykuşun Sözü",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 5,
+          "chapterId": 24,
+          "legacy": true,
+          "title": "Birlikte Çözüm",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 6,
+          "chapterId": 25,
+          "legacy": true,
+          "title": "Hayal Edilen Şehir",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 7,
+          "chapterId": 26,
+          "legacy": true,
+          "title": "İpuçlarını Tart",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 8,
+          "chapterId": 27,
+          "legacy": true,
+          "title": "Bahçenin Eski Günleri",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 9,
+          "chapterId": 28,
+          "legacy": true,
+          "title": "Şehre Mesaj",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 10,
+          "chapterId": 29,
+          "legacy": true,
+          "title": "Kristal Şehir Meclisi",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B1",
+          "sequence": 11,
+          "chapterId": 60,
+          "legacy": false,
+          "title": "İki Farklı Görüş",
+          "focus": "Expressing and supporting opinions",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 12,
+          "chapterId": 61,
+          "legacy": false,
+          "title": "Gizemli Röportaj",
+          "focus": "Reported statements and questions",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 13,
+          "chapterId": 62,
+          "legacy": false,
+          "title": "Doğaya Katkı",
+          "focus": "Environmental causes and consequences",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 14,
+          "chapterId": 63,
+          "legacy": false,
+          "title": "Yarınki Şehir",
+          "focus": "Predictions and possibilities",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 15,
+          "chapterId": 64,
+          "legacy": false,
+          "title": "Bir Zamanlar",
+          "focus": "Past habits",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 16,
+          "chapterId": 65,
+          "legacy": false,
+          "title": "Uzlaşma Köprüsü",
+          "focus": "Agreement and disagreement",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 17,
+          "chapterId": 66,
+          "legacy": false,
+          "title": "Şaşırtıcı Keşif",
+          "focus": "Defining relative clauses",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 18,
+          "chapterId": 67,
+          "legacy": false,
+          "title": "Toplumun Sesi",
+          "focus": "News and evidence",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 19,
+          "chapterId": 68,
+          "legacy": false,
+          "title": "Neden Böyle Oldu?",
+          "focus": "Past perfect sequencing",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B1",
+          "sequence": 20,
+          "chapterId": 69,
+          "legacy": false,
+          "title": "Kristal Şehir Dosyası",
+          "focus": "B1 integrated evidence and argument",
+          "status": "curriculum-outline-only"
+        }
+      ]
+    },
+    {
+      "cefr": "B2",
+      "chapters": [
+        {
+          "track": "B2",
+          "sequence": 1,
+          "chapterId": 30,
+          "legacy": true,
+          "title": "Orman Konseyi",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 2,
+          "chapterId": 31,
+          "legacy": true,
+          "title": "Kaçırılan Fırsat",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 3,
+          "chapterId": 32,
+          "legacy": true,
+          "title": "Bugünü Değiştiren Dün",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 4,
+          "chapterId": 33,
+          "legacy": true,
+          "title": "Kanıt mı Tahmin mi?",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 5,
+          "chapterId": 34,
+          "legacy": true,
+          "title": "Dolaylı ve Nazik",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 6,
+          "chapterId": 35,
+          "legacy": true,
+          "title": "Görüşün Dayanağı",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 7,
+          "chapterId": 36,
+          "legacy": true,
+          "title": "İki Metin Bir Karar",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 8,
+          "chapterId": 37,
+          "legacy": true,
+          "title": "Resmî Başvuru",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 9,
+          "chapterId": 38,
+          "legacy": true,
+          "title": "Uzlaşma Masası",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 10,
+          "chapterId": 39,
+          "legacy": true,
+          "title": "Papi’nin Büyük Hikâyesi",
+          "source": "story-curriculum.js",
+          "activityCount": 10
+        },
+        {
+          "track": "B2",
+          "sequence": 11,
+          "chapterId": 70,
+          "legacy": false,
+          "title": "Konseyde Tartışma",
+          "focus": "Concession and counterargument",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 12,
+          "chapterId": 71,
+          "legacy": false,
+          "title": "Kararların Etkisi",
+          "focus": "Mixed conditionals",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 13,
+          "chapterId": 72,
+          "legacy": false,
+          "title": "Güvenilir Kaynak",
+          "focus": "Evaluating claims and sources",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 14,
+          "chapterId": 73,
+          "legacy": false,
+          "title": "Farklı Kültürler",
+          "focus": "Nuanced comparisons",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 15,
+          "chapterId": 74,
+          "legacy": false,
+          "title": "Gezegenin Geleceği",
+          "focus": "Sustainability and policy",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 16,
+          "chapterId": 75,
+          "legacy": false,
+          "title": "Karmaşık Mesajlar",
+          "focus": "Inference and implied meaning",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 17,
+          "chapterId": 76,
+          "legacy": false,
+          "title": "Çözüm Arayışı",
+          "focus": "Negotiation and compromise",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 18,
+          "chapterId": 77,
+          "legacy": false,
+          "title": "Bilim Kulübü",
+          "focus": "Cause, effect and hedging",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 19,
+          "chapterId": 78,
+          "legacy": false,
+          "title": "Son Rapor",
+          "focus": "Synthesizing information",
+          "status": "curriculum-outline-only"
+        },
+        {
+          "track": "B2",
+          "sequence": 20,
+          "chapterId": 79,
+          "legacy": false,
+          "title": "Yeni Dünyanın Kapısı",
+          "focus": "B2 cumulative reading/listening",
+          "status": "curriculum-outline-only"
+        }
+      ]
+    }
+  ]
+}

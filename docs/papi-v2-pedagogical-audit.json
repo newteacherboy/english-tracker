@@ -1,0 +1,456 @@
+{
+  "status": "All 40 chapters have authored context exercises; full independent review still required",
+  "date": "2026-10-10",
+  "total": 40,
+  "reviewedStructure": 40,
+  "approved": 0,
+  "findings": [
+    "All 40 drafts now have contextual practice dialogue plus grammar cloze, but these are not an independent pedagogical approval.",
+    "Original lesson steps still rely on short phrases and need more extended graded listening/reading tasks.",
+    "All distractors and translations need human accuracy/age-level review before production.",
+    "No browser/speech assessment or production launch sign-off has occurred."
+  ],
+  "chapterFindings": [
+    {
+      "id": 40,
+      "level": "A1",
+      "title": "Okulun İlk Günü",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 41,
+      "level": "A1",
+      "title": "Günlük Saatler",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 42,
+      "level": "A1",
+      "title": "Papi'nin Arkadaşları",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 43,
+      "level": "A1",
+      "title": "Minik Market",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 44,
+      "level": "A1",
+      "title": "Hava Günlüğü",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 45,
+      "level": "A1",
+      "title": "Şehirde Yolculuk",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 46,
+      "level": "A1",
+      "title": "Hobiler Panosu",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 47,
+      "level": "A1",
+      "title": "Hayvan Dostlar",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 48,
+      "level": "A1",
+      "title": "Bugün Neler Oluyor?",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 49,
+      "level": "A1",
+      "title": "Bahçe Şenliği Hazırlığı",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 50,
+      "level": "A2",
+      "title": "Yol Arkadaşım",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 51,
+      "level": "A2",
+      "title": "Şehir Haritası",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 52,
+      "level": "A2",
+      "title": "Sağlıklı Günler",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 53,
+      "level": "A2",
+      "title": "Tatil Albümü",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 54,
+      "level": "A2",
+      "title": "Pazar Sohbeti",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 55,
+      "level": "A2",
+      "title": "Hafta Sonu Planı",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 56,
+      "level": "A2",
+      "title": "Papi'nin Tarifleri",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 57,
+      "level": "A2",
+      "title": "Kayıp Eşyalar",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 58,
+      "level": "A2",
+      "title": "Sürpriz Haber",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 59,
+      "level": "A2",
+      "title": "Kuzey Günlüğü",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 60,
+      "level": "B1",
+      "title": "İki Farklı Görüş",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 61,
+      "level": "B1",
+      "title": "Gizemli Röportaj",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 62,
+      "level": "B1",
+      "title": "Doğaya Katkı",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 63,
+      "level": "B1",
+      "title": "Yarınki Şehir",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 64,
+      "level": "B1",
+      "title": "Bir Zamanlar",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 65,
+      "level": "B1",
+      "title": "Uzlaşma Köprüsü",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 66,
+      "level": "B1",
+      "title": "Şaşırtıcı Keşif",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 67,
+      "level": "B1",
+      "title": "Toplumun Sesi",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 68,
+      "level": "B1",
+      "title": "Neden Böyle Oldu?",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 69,
+      "level": "B1",
+      "title": "Kristal Şehir Dosyası",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 70,
+      "level": "B2",
+      "title": "Konseyde Tartışma",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 71,
+      "level": "B2",
+      "title": "Kararların Etkisi",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 72,
+      "level": "B2",
+      "title": "Güvenilir Kaynak",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 73,
+      "level": "B2",
+      "title": "Farklı Kültürler",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 74,
+      "level": "B2",
+      "title": "Gezegenin Geleceği",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 75,
+      "level": "B2",
+      "title": "Karmaşık Mesajlar",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 76,
+      "level": "B2",
+      "title": "Çözüm Arayışı",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 77,
+      "level": "B2",
+      "title": "Bilim Kulübü",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 78,
+      "level": "B2",
+      "title": "Son Rapor",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    },
+    {
+      "id": 79,
+      "level": "B2",
+      "title": "Yeni Dünyanın Kapısı",
+      "issues": [
+        "Contextual practice added; original lesson remains draft",
+        "Independent teaching review and proofreading outstanding"
+      ],
+      "review": "requires qualified English educator",
+      "approved": false
+    }
+  ],
+  "curatedPracticeChapters": 40
+}

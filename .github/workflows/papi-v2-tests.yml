@@ -1,0 +1,59 @@
+name: Papi V2 safety tests
+on:
+  push:
+    branches: [feature/papi-learning-v2-80]
+  pull_request:
+    paths:
+      - 'scripts/papi-v2-*'
+      - 'tests/papi-v2-*'
+      - 'ingilizce/papi-v2-*'
+      - 'docs/papi-v2-*'
+      - 'supabase/functions/diji-api/story-*'
+      - '.github/workflows/papi-v2-tests.yml'
+permissions:
+  contents: read
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check Papi V2 standalone tests
+        run: |
+          node --test scripts/papi-v2-question-helpers.test.mjs
+          node --test scripts/papi-v2-activity-engine.test.mjs
+          node --test scripts/papi-v2-content.test.mjs
+          node --test tests/papi-v2-route.test.mjs
+          node --test tests/papi-v2-server-order.test.mjs
+          node --test tests/papi-v2-curated-content.test.mjs
+          node --test tests/papi-v2-release-gates.test.mjs
+          node --test tests/papi-v2-real-path.test.mjs
+      - name: Check existing story regression tests
+        run: node --test tests/story-api.test.cjs
+
+  free-postgres-rehearsal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: papi_test_only
+          POSTGRES_USER: papi_test
+          POSTGRES_DB: papi_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U papi_test -d papi_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify chapter constraint and untouched synthetic balances
+        env:
+          PGPASSWORD: papi_test_only
+        run: |
+          psql -h localhost -U papi_test -d papi_test -v ON_ERROR_STOP=1 -f tests/papi-v2-free-postgres-rehearsal.sql

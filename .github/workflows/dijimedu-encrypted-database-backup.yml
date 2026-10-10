@@ -1,0 +1,48 @@
+name: DijiMedu encrypted database backup
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  encrypted-backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Confirm backup credentials are present
+        env:
+          DB_PASSWORD: ${{ secrets.DIJIMEDU_DB_PASSWORD }}
+          BACKUP_PASSPHRASE: ${{ secrets.DIJIMEDU_BACKUP_PASSPHRASE }}
+        run: |
+          test -n "$DB_PASSWORD" || { echo "Missing DIJIMEDU_DB_PASSWORD"; exit 1; }
+          test -n "$BACKUP_PASSPHRASE" || { echo "Missing DIJIMEDU_BACKUP_PASSPHRASE"; exit 1; }
+          test "${#BACKUP_PASSPHRASE}" -ge 20 || { echo "Backup passphrase must be at least 20 characters"; exit 1; }
+      - name: Export and encrypt before uploading
+        env:
+          PGPASSWORD: ${{ secrets.DIJIMEDU_DB_PASSWORD }}
+          BACKUP_PASSPHRASE: ${{ secrets.DIJIMEDU_BACKUP_PASSPHRASE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "$RUNNER_TEMP/backup"
+          cd "$RUNNER_TEMP/backup"
+          trap 'rm -f full.dump' EXIT
+          docker run --rm --network host -e PGPASSWORD -v "$PWD:/backup" postgres:18 \
+            pg_dump "host=aws-1-eu-central-1.pooler.supabase.com port=5432 dbname=postgres user=postgres.nxfqlutulxqzqgwewssd sslmode=require connect_timeout=12" \
+              --format=custom --file=/backup/full.dump
+          test -s full.dump
+          docker run --rm -v "$PWD:/backup:ro" postgres:18 pg_restore --list /backup/full.dump >/dev/null
+          openssl enc -aes-256-cbc -pbkdf2 -iter 250000 -salt \
+            -in full.dump -out diji-medu-db.dump.enc -pass env:BACKUP_PASSPHRASE
+          test -s diji-medu-db.dump.enc
+          sha256sum diji-medu-db.dump.enc > diji-medu-db.dump.enc.sha256
+          rm -f full.dump
+      - name: Upload encrypted archive only
+        uses: actions/upload-artifact@v4
+        with:
+          name: diji-medu-encrypted-db
+          path: |
+            ${{ runner.temp }}/backup/diji-medu-db.dump.enc
+            ${{ runner.temp }}/backup/diji-medu-db.dump.enc.sha256
+          if-no-files-found: error
+          retention-days: 1
