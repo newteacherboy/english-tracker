@@ -28537,6 +28537,20 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let { havuz, tekrar, tum, D } = durakHavuzu(b, d);
     if (havuz.length < 8) { toast('Bu durak için yeterli kelime bulunamadı. Kelime bankası yükleniyor olabilir, birazdan tekrar dene.'); return; }
     let kel = window.OC ? OC.kelimeSec('ba' + D.no, havuz, 16) : karistir(havuz).slice(0, 16);
+    // Sunucuda eşleştirilen speech_synonyms alternatifleri: API eski sürümdeyse ana kelimelerle devam eder.
+    let speechAlternatives = {};
+    try {
+      const response=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({islem:'parkurSozlukGetir',sinif:D.sinif,unite:D.unite})});
+      if(response.ok) {
+        const data=await response.json();
+        if(data.ok && Array.isArray(data.entries)) for(const row of data.entries) {
+          const key=String(row.english||'').toLocaleLowerCase('en').trim();
+          if(key && row.alternatives) speechAlternatives[key]=String(row.alternatives);
+        }
+      }
+    } catch (_) { /* eş anlamlar yüklenmezse öğretim kilitlenmesin */ }
+    if(ownerAtStart!==isim())return;
     let harfli = kel.filter(k => harfMi(EN(k)));
     let yedek = karistir(tum.filter(k => harfMi(EN(k)) && !kel.includes(k)));
     const al = (f, adet) => { let out = []; for (const k of [...harfli, ...yedek]) { if (out.length >= adet) break; if (f(EN(k)) && !out.includes(k) && !kullanildi.has(k)) out.push(k); } out.forEach(k => kullanildi.add(k)); return out; };
@@ -28576,7 +28590,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       .filter(k => EN(k) && TR(k))
       .map(k => [EN(k).toLocaleLowerCase('en'), k])).values()];
     if (finalKelimeler.length) sorular.push({ tip:'sesliFinal', l:karistir(finalKelimeler) });
-    O = { b, d, D, sorular, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0 };
+    O = { b, d, D, sorular, speechAlternatives, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0 };
     if (window.OC) OC.basla('ba');
     try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
     soruCiz();
@@ -28800,7 +28814,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const accept = spoken => {
       if(finished || !remaining.length)return;
       const expected=list[remaining[0]].en;
-      const heard=normalizeVoice(spoken), correct=heard===normalizeVoice(expected);
+      const allowed=(O.speechAlternatives?.[expected.toLocaleLowerCase('en').trim()]||'')
+        .split(/[;,|\n]+/).map(normalizeVoice).filter(Boolean);
+      const heard=normalizeVoice(spoken), correct=heard===normalizeVoice(expected)||allowed.includes(heard);
       if(correct){
         remaining.shift();ses('dogru');status.textContent='✅ '+expected+' — doğru! Kart tamamlandı.';
         input.value='';render();
@@ -28815,7 +28831,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         recognition=new SpeechAPI();recognition.lang='en-US';recognition.interimResults=false;
         recognition.maxAlternatives=5;listening=true;mic.disabled=true;status.textContent='🎙️ Dinliyorum…';
         recognition.onresult=e=>{const alts=Array.from(e.results[0]||[]).map(x=>x.transcript);
-          accept(alts.find(x=>normalizeVoice(x)===normalizeVoice(list[remaining[0]]?.en))||alts[0]||'');};
+          accept(alts.find(x=>{const target=list[remaining[0]]?.en||'';return normalizeVoice(x)===normalizeVoice(target)||(O.speechAlternatives?.[target.toLocaleLowerCase('en').trim()]||'').split(/[;,|\n]+/).map(normalizeVoice).includes(normalizeVoice(x));})||alts[0]||'');};
         recognition.onerror=e=>{status.textContent='Mikrofon algılayamadı ('+e.error+'). Tekrar dene ya da klavyeyi kullan.';};
         recognition.onend=()=>{listening=false;render();};
         recognition.start();
