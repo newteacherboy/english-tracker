@@ -5,7 +5,7 @@ hud.innerHTML='<span data-pw="energy">⚡ —</span><span data-pw="gold">🪙 �
 function run(){
  if(!document.body)return;
  if(!hud.isConnected)document.body.appendChild(hud);
- const inGame=!!document.querySelector('#dmStoryLesson,.ds-lesson-shell,[id*="OyunModal"]:not([hidden]),[id*="oyunModal"]:not([hidden]),.oyun-modal:not([hidden])');
+ const selectors=['#dmStoryLesson','.ds-lesson-shell','.game-modal-content','#baOyunEkrani','.oyun-modal','[id*="OyunModal"]','[id*="oyunModal"]','[id*="OyunEkrani"]','.duello-oyun'];const inGame=selectors.some(sel=>{const el=document.querySelector(sel);return !!el&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';});
  hud.hidden=!inGame;
  if(!inGame)return;
  let y=typeof yo!=='undefined'?yo:null;
