@@ -28576,21 +28576,28 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let cumleC = OC.kelimeSec('ba_cumle_'+D.no,cumleler.filter(c=>!trenC||c.en!==trenC.en),1,{anahtar:c=>c.en,zk:false})[0];
     if (trenC) ekle('tren', { c: trenC });
     if (cumleC) ekle('cumle', { c: cumleC });
-    // Bölümlere göre farklılaşan görevler: yalnızca sırayı değil görev seçimini de değiştir.
-    // Eksik cümle/kalıp bulunan ünitelerde 11 görevi aynı veri havuzundan tamamla.
-    const ekGorev = [
-      ...kel.slice(0, 8).map((k,i)=>({tip:i%3===0?'dinleAnlam':i%3===1?'hata':'hatirla',k})),
-      ...kel.slice(0, 5).map(k=>({tip:'miniDiyalog',k}))
+    // Öğretim planı: 11 göreve 5 odak kelime dağıtılır.
+    // İlk sorular tanıtır, ortadakiler pekiştirir, son sorular ipucusuz hatırlatır.
+    const scoped = havuzTum().filter(k=>Number(k.sinif)===Number(D.sinif)
+      && Number(k.unite)===Number(D.unite) && EN(k) && TR(k));
+    const targets=karistir([...new Map(scoped.map(k=>[EN(k).toLocaleLowerCase('en'),k])).values()]).slice(0,5);
+    const active=targets.length ? targets : kel.filter(k=>EN(k)&&TR(k)).slice(0,5);
+    if(!active.length){toast('Bu durakta çalışılacak kelime bulunamadı.');return;}
+    const pick=(i)=>active[i%active.length];
+    const build=[
+      {tip:'dinleAnlam',k:pick(0)}, {tip:'lab',k:pick(1)}, {tip:'risk',k:pick(2)},
+      {tip:'hata',k:pick(3)}, {tip:'miniDiyalog',k:pick(4)},
+      {tip:'hatirla',k:pick(0)}, {tip:'dinleAnlam',k:pick(1)},
+      {tip:'miniDiyalog',k:pick(2)}, {tip:'hata',k:pick(3)},
+      {tip:'hatirla',k:pick(4)}, {tip:'risk',k:pick(Math.floor(Math.random()*active.length))}
     ];
-    sorular = karistir([...sorular,...ekGorev]).slice(0,11);
-    while(sorular.length<11) sorular.push({tip:sorular.length%2===0?'dinleAnlam':'hatirla',k:kel[sorular.length%kel.length]});
-    // Finale alınan kelimeler bu duraktaki öğretim görevlerinden çıkarılır.
-    // Aynı kelimenin farklı temsillerini tek kart olarak kullan.
-    const finalKelimeler = [...new Map(sorular.flatMap(s => s.k ? [s.k] : (s.l || []))
-      .filter(k => EN(k) && TR(k) && Number(k.sinif)===Number(D.sinif) && Number(k.unite)===Number(D.unite))
-      .map(k => [EN(k).toLocaleLowerCase('en'), k])).values()];
-    const finale = finalKelimeler.length ? finalKelimeler : kel.filter(k=>EN(k)&&TR(k)).slice(0,5);
-    sorular.push({ tip:'sesliFinal', l:karistir(finale) });
+    // Değişken görevler ve aynı kelimenin birden fazla biçimde görülmesi.
+    const first=karistir(build.slice(0,3));
+    const middle=karistir(build.slice(3,8));
+    const last=karistir(build.slice(8));
+    sorular=[...first,...middle,...last];
+    // Son görevde görselle değil konuşmayla bütün hedef kelimeler geri çağrılır.
+    sorular.push({tip:'sesliFinal',l:karistir(active)});
     O = { b, d, D, sorular, speechAlternatives, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0 };
     if (window.OC) OC.basla('ba');
     try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
