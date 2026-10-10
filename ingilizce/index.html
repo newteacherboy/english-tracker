@@ -17526,7 +17526,7 @@ function avatarSVG(s, stil, px, cins) {
     return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci));
   }
   function oyunda() {
-    if(window.dmPapiNotices?.blocked())return true;
+    if((typeof window.dmPapiNotices?.blocked === 'function' && window.dmPapiNotices.blocked()))return true;
     let secici = ['.game-modal-overlay', '.seviye-harita-overlay', '.kart-oyun-overlay', '.pomodoro-overlay', '#genelSonucOverlay', '#yoModal', '.duy3-overlay', '.bd-perde', '.ka-perde', '.od-perde', '.yb-perde.acik'];
     for (let s of secici) for (let el of document.querySelectorAll(s)) if (getComputedStyle(el).display !== 'none') return true;
     let bo = $('baOyunEkrani'), ko = $('kpKelimeOyunEkrani');
@@ -21697,7 +21697,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     return l;
   }
   setInterval(() => {
-    if (window.dmPapiNotices?.blocked() || window.dmNudgeSystemActive || !girisli() || !yoVar() || oyunda() || window.turAcik || !turBitti('ana') || document.hidden) return;
+    if ((typeof window.dmPapiNotices?.blocked === 'function' && window.dmPapiNotices.blocked()) || window.dmNudgeSystemActive || !girisli() || !yoVar() || oyunda() || window.turAcik || !turBitti('ana') || document.hidden) return;
     let gecen = Date.now() - bkBas;
     if (bkSay >= 3 || gecen < 3 * 60000 || Date.now() - bkSon < 12 * 60000) return;
     if (document.querySelector('.tv-kart, .sa-perde, .kr-perde, .od-perde, .bc-perde, .cb-kart, .bk-kart')) return;
@@ -21715,7 +21715,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 </script>
 
 <link rel="stylesheet" href="papi-onboarding.css?v=3">
-<script src="papi-flow.js?v=1"></script>
+<script src="papi-flow.js?v=20261011-repair"></script>
 <script src="papi-onboarding.js?v=3"></script>
 
                 <!-- ===================== GÜVENLİK (GÖVDE) — <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
