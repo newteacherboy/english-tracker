@@ -56,6 +56,7 @@
     <div class="form-group"><label for="googleYeniEmail">Veli e-posta adresi</label><input id="googleYeniEmail" type="email" required maxlength="120" autocomplete="email" placeholder="ornek@email.com"></div>
     <div class="form-group"><label for="googleYeniKod">Öğretmen kodu <span class="dm-optional">İsteğe bağlı</span></label><input id="googleYeniKod" maxlength="10" placeholder="Varsa öğretmeninin kodu"></div>
     <label class="dm-consent"><input id="googleYeniOnay" type="checkbox" required><span><a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası ve KVKK Aydınlatma Metni’ni</a> okudum ve bilgi edindim. <a href="kullanim-kosullari.html" target="_blank" rel="noopener">Kullanım koşullarını</a> kabul ediyorum. Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum.<small>Bu beyan genel açık rıza veya yurt dışı aktarım izni değildir.</small></span></label>
+    <label class="dm-consent"><input id="googleYeniPapiMail" type="checkbox"><span>🦜 Papi'den İngilizce ilerleme özetleri, haftalık lig haberleri ve öğrenme hatırlatmaları almak istiyorum.<small>İsteğe bağlıdır. Öğrenci ve veli e-posta adresleri ayrıca doğrulanır; istediğimiz zaman abonelikten çıkabiliriz.</small></span></label>
     <button id="googleYeniGonder" type="submit" class="btn-giris">Kaydı tamamla ve giriş yap</button>
     <p id="googleYeniMesaj" role="status" style="font-size:12px"></p>
     <button id="googleMevcutHesap" type="button" class="dm-link-button dm-existing-account">Zaten hesabım var, Google ile bağla</button>`;
@@ -224,6 +225,19 @@
         kvkkOnay: $('googleYeniOnay').checked
       });
       if (!result.ok || !result.kayitOlustu) throw new Error(result.mesaj || 'Kayıt tamamlanamadı.');
+      if ($('googleYeniPapiMail')?.checked) {
+        try {
+          const auth = await supabaseClient.auth.getSession();
+          const token = auth.data?.session?.access_token;
+          if (token) {
+            await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/papi-progress-optin', {
+              method:'POST',
+              headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+              body:JSON.stringify({subscribe:true})
+            });
+          }
+        } catch (err) { console.warn('Papi abonelik isteği sonraki girişte yeniden denenebilir.',err); }
+      }
       enter(result);
     } catch (error) { resultText.textContent = error.message || 'Bağlantı hatası. Tekrar dene.'; }
     finally { busy = false; submit.disabled = false; cancel.disabled = false; }
