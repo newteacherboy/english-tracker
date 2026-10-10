@@ -49,3 +49,24 @@
 #tab-aktiviteler [data-dm-party=solo] .az-grid2x2>[data-dm-party=free],#tab-aktiviteler [data-dm-party=duo] .az-grid2x2>[data-dm-party=free],#tab-aktiviteler [data-dm-party=free] .az-grid2x2>[data-dm-party=solo],#tab-aktiviteler [data-dm-party=free] .az-grid2x2>[data-dm-party=duo]{display:none!important}
 #tab-aktiviteler .dm-party-tabs button[data-party=free][aria-selected=true]{background:#fff2c9;color:#65521d;border-color:#e6cf83}
 @media(max-width:440px){#tab-aktiviteler .dm-party-tabs button{font-size:11px;gap:3px;padding:9px 3px}#tab-aktiviteler .dm-party-tabs button span{font-size:16px}}
+
+
+/* Simplified DijiMedu game hub, visual-only and scoped away from bottom navigation. */
+#tab-aktiviteler{--dm-clean-ink:#164b4a;--dm-clean-paper:#f7fcfb}
+#tab-aktiviteler .dc-focus-card{background:linear-gradient(180deg,#f6faff,#fbfdf9)!important;border-radius:24px!important;box-shadow:none!important}
+#tab-aktiviteler .dm-party-tabs{padding:5px!important;gap:4px!important;background:#eaf4f2!important;border:1px solid #d7e9e5!important;border-radius:19px!important;box-shadow:none!important}
+#tab-aktiviteler .dm-party-tabs button{min-width:0;flex:1;border-radius:15px!important;min-height:44px!important;font-weight:900!important;line-height:1.2!important;box-shadow:none!important}
+#tab-aktiviteler .dm-party-tabs button[aria-selected=true]{background:#fff!important;border-color:#d4eae3!important;color:#126c59!important;box-shadow:0 3px 8px #1b665a17!important}
+#tab-aktiviteler .az-grid2x2{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch!important;gap:12px!important;padding:10px 3px 20px!important}
+#tab-aktiviteler .az-grid2x2>.az-gcard{position:relative;min-width:0!important;min-height:156px!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:space-between!important;gap:8px!important;padding:16px 12px!important;border:1px solid #e4eee9!important;border-radius:24px!important;background:linear-gradient(155deg,#e9faf1,#f9fff7)!important;box-shadow:0 4px 12px #284f4b12!important;text-align:left!important;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}
+#tab-aktiviteler .az-grid2x2>.az-gcard:nth-child(4n+2){background:linear-gradient(155deg,#f1e8ff,#fbf8ff)!important}
+#tab-aktiviteler .az-grid2x2>.az-gcard:nth-child(4n+3){background:linear-gradient(155deg,#e8f5ff,#f7fbff)!important}
+#tab-aktiviteler .az-grid2x2>.az-gcard:nth-child(4n){background:linear-gradient(155deg,#fff0e7,#fffaf7)!important}
+#tab-aktiviteler .az-gcard-icon{font-size:clamp(28px,8vw,45px)!important;line-height:1.2!important;min-height:42px!important;align-self:flex-start!important}
+#tab-aktiviteler .az-gcard-title{color:#203b46!important;font-size:clamp(14px,3.8vw,19px)!important;line-height:1.22!important;font-weight:900!important;overflow-wrap:anywhere}
+#tab-aktiviteler .az-gcard .ak-etiket{display:inline-flex!important;max-width:100%;align-self:flex-start;flex-wrap:wrap;font-size:10px!important;font-weight:800!important;border-radius:999px!important;padding:5px 8px!important;background:#ffffffb8!important;color:#60727a!important}
+#tab-aktiviteler .az-gcard:disabled,#tab-aktiviteler .az-gcard[aria-disabled=true],#tab-aktiviteler .az-gcard.locked,#tab-aktiviteler .az-gcard.kilitli{filter:grayscale(.65)!important;opacity:.72!important;box-shadow:none!important}
+#tab-aktiviteler .az-gcard:focus-visible{outline:3px solid #198e75!important;outline-offset:3px!important}
+@media(hover:hover){#tab-aktiviteler .az-gcard:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 18px #284f4b20!important}}
+@media(max-width:350px){#tab-aktiviteler .az-grid2x2{gap:8px!important}#tab-aktiviteler .az-grid2x2>.az-gcard{min-height:143px!important;padding:12px 9px!important}}
+@media(prefers-reduced-motion:reduce){#tab-aktiviteler .az-grid2x2>.az-gcard{transition:none!important}}
