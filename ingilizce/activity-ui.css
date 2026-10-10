@@ -75,3 +75,48 @@
 #tab-meduakis .akis-kart:focus-within{outline:2px solid #ab8adf;outline-offset:1px}
 @media(max-width:360px){#tab-meduakis .akis-kart{margin:0 9px 11px!important;padding:13px 10px!important}#tab-meduakis .aksiyon button{font-size:11px!important}}
 @media(prefers-reduced-motion:reduce){#tab-meduakis .ma-gir,#tab-meduakis .ma-pop{animation:none!important}}
+
+/* Diji-Medu pastel showcase v1. Scoped to game catalogue only; bottom navigation unchanged. */
+#tab-aktiviteler{background:linear-gradient(180deg,#fffdf3 0%,#f4fff6 35%,#f8f0ff 100%)!important}
+#tab-aktiviteler .dc-focus-card{max-width:940px!important;padding:10px 12px calc(105px + env(safe-area-inset-bottom))!important}
+#tab-aktiviteler .dm-activity-hero{min-height:70px;padding:2px 6px!important}
+#tab-aktiviteler .dm-activity-hero h1{font-size:clamp(23px,5vw,30px)!important;color:#064939!important}
+#tab-aktiviteler .dm-activity-hero img{height:74px;width:74px}
+#tab-aktiviteler .dm-party-tabs{background:transparent!important;border:0!important;padding:2px!important;gap:7px!important;margin:8px 0 14px!important}
+#tab-aktiviteler .dm-party-tabs button{min-height:46px!important;border:1.5px solid #d9e9f4!important;border-radius:22px!important;background:#fff!important;color:#125069!important;font-size:clamp(10px,2.7vw,14px)!important;box-shadow:0 4px 9px #45627b13!important}
+#tab-aktiviteler .dm-party-tabs button[aria-selected=true]{background:linear-gradient(145deg,#bb79ff,#8739e5)!important;border-color:#ba83f8!important;color:white!important;box-shadow:0 4px 0 #b192db,0 6px 11px #5b268c23!important}
+#tab-aktiviteler .az-grid2x2{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;margin-top:0!important;align-items:stretch!important}
+#tab-aktiviteler .az-grid2x2>.az-gcard.dm-showcase-card{
+ --dm-card-bg:#e7d8ff;
+ display:grid!important;grid-template-columns:minmax(54px,34%) minmax(0,1fr)!important;
+ grid-template-rows:1fr!important;position:relative!important;isolation:isolate!important;
+ min-height:150px!important;height:auto!important;min-width:0!important;gap:5px!important;
+ padding:14px 10px 18px!important;margin:0!important;
+ border:2px solid #ffffffdf!important;border-radius:23px!important;
+ background:linear-gradient(145deg,#ffffff44,var(--dm-card-bg) 67%)!important;
+ color:#123e49!important;text-align:left!important;opacity:1!important;visibility:visible!important;
+ box-shadow:0 4px 0 var(--dm-card-edge),0 8px 18px #174c5a18!important;
+ overflow:hidden!important;filter:none!important;backdrop-filter:none!important;
+ transform:none!important;text-shadow:none!important;
+}
+#tab-aktiviteler .dm-showcase-card::before,#tab-aktiviteler .dm-showcase-card::after{display:none!important}
+#tab-aktiviteler .dm-showcase-card .az-gcard-icon{position:relative!important;inset:auto!important;grid-column:1!important;grid-row:1!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:100%!important;height:100%!important;min-height:82px!important;margin:0!important;border:0!important;box-shadow:none!important;background:transparent!important;color:#284e74!important;transform:none!important;filter:none!important}
+#tab-aktiviteler .dm-showcase-icon{display:block!important;width:100%!important;aspect-ratio:1;max-height:126px;background-image:url('activity-icons-v2.png');background-size:400% 400%;background-repeat:no-repeat;filter:drop-shadow(0 5px 4px #16435b20)}
+#tab-aktiviteler .dm-showcase-card .dm-game-copy{grid-column:2!important;grid-row:1!important;display:flex!important;flex-direction:column!important;gap:5px!important;min-width:0!important;align-self:center!important;padding-bottom:20px!important;position:relative!important}
+#tab-aktiviteler .dm-showcase-card .az-gcard-title{display:block!important;position:static!important;color:#09394a!important;font:900 clamp(12px,2.8vw,18px)/1.17 Nunito,system-ui,sans-serif!important;margin:0!important;padding:0!important;letter-spacing:0!important;text-shadow:none!important;opacity:1!important;overflow-wrap:anywhere!important}
+#tab-aktiviteler .dm-showcase-card .ak-acik{display:block!important;position:static!important;font:700 clamp(10px,2.3vw,13px)/1.38 Nunito,system-ui,sans-serif!important;color:#28505e!important;margin:0!important;padding:0!important;opacity:1!important;text-shadow:none!important;overflow-wrap:anywhere!important}
+#tab-aktiviteler .dm-showcase-card .ak-etiket{display:inline-block!important;position:static!important;align-self:flex-start!important;max-width:100%!important;padding:5px 8px!important;margin:3px 0 0!important;border:1px solid #ffffffa3!important;border-radius:30px!important;background:#ffffffb8!important;color:#19495b!important;font:900 clamp(9px,2vw,11px)/1.25 Nunito,system-ui,sans-serif!important;text-shadow:none!important;white-space:normal!important;overflow-wrap:anywhere!important;box-shadow:none!important}
+#tab-aktiviteler .dm-showcase-card .dm-game-chevron{position:absolute!important;right:8px!important;bottom:8px!important;display:flex!important;align-items:center!important;justify-content:center!important;width:28px!important;height:28px!important;border-radius:50%!important;background:#fff!important;color:#7651ad!important;font:900 27px/1 Nunito,system-ui!important;box-shadow:0 2px 5px #00000016!important;pointer-events:none!important}
+#tab-aktiviteler .dm-showcase-card .az-gcard-badge{z-index:2!important;top:5px!important;left:7px!important;right:auto!important;background:#ffffffdc!important;color:#395368!important;font-size:9px!important}
+#tab-aktiviteler .dm-showcase-card:is([disabled],[aria-disabled=true],.kilitli,.locked){opacity:.78!important;filter:saturate(.65)!important}
+#tab-aktiviteler .dm-showcase-card:focus-visible{outline:3px solid #7043d5!important;outline-offset:3px}
+@media(max-width:390px){
+ #tab-aktiviteler .dc-focus-card{padding-inline:8px!important}
+ #tab-aktiviteler .az-grid2x2{gap:8px!important}
+ #tab-aktiviteler .az-grid2x2>.az-gcard.dm-showcase-card{grid-template-columns:minmax(38px,29%) minmax(0,1fr)!important;min-height:136px!important;padding:12px 6px 14px!important;border-radius:18px!important}
+ #tab-aktiviteler .dm-showcase-card .az-gcard-icon{min-height:70px!important}
+ #tab-aktiviteler .dm-showcase-card .az-gcard-title{font-size:12px!important}
+ #tab-aktiviteler .dm-showcase-card .ak-acik{font-size:10px!important}
+ #tab-aktiviteler .dm-showcase-card .ak-etiket{font-size:9px!important;padding:4px 5px!important}
+ #tab-aktiviteler .dm-showcase-card .dm-game-chevron{width:23px!important;height:23px!important;font-size:22px!important}
+}
