@@ -31,3 +31,41 @@ export function storyV2Grade(task:any,answer:any){
  const correct=storyV2Norm(answer)===storyV2Norm(expected);
  return {valid:true,correct};
 }
+
+const cardsOf=(chapter:any)=>(chapter?.cards||[]).filter((c:any)=>typeof c?.en==='string'&&typeof c?.tr==='string'&&c.en.trim()&&c.tr.trim()).map((c:any)=>({en:c.en.trim(),tr:c.tr.trim()})).filter((c:any,i:number,a:any[])=>a.findIndex((x:any)=>storyV2Norm(x.en)===storyV2Norm(c.en))===i);
+const rotate=(a:any[],n:number)=>a.length?a.map((_:any,i:number)=>a[(i+n)%a.length]):[];
+const tokens=(s:string)=>String(s||'').trim().split(/\s+/).filter(Boolean);
+const norm=storyV2Norm;
+export  function storyV3Steps(chapter:any){
+  const cards=cardsOf(chapter);
+  if(!cards.length)return [];
+  const pool=cards.map((c,i)=>({...c,index:i,words:tokens(c.en)}));
+  const tasks:any[]=[],seen=new Set<string>();
+  const add=(t:any)=>{const id=t.kind+'|'+norm(t.tr||'')+'|'+norm(t.stem||t.en||'')+'|'+norm(t.answer||'');if(seen.has(id))return false;seen.add(id);tasks.push(t);return true};
+  const opts=pool.map(c=>c.en);
+  const offset=Math.abs(Number(chapter.id)||0)%pool.length;
+  const ordered=rotate(pool,offset);
+  add({kind:'match',label:'Kelimeleri tanı',pairs:cards.map(c=>({...c}))});
+  ordered.forEach(c=>add({kind:'choose',label:'Türkçesinden bul',...c,options:rotate(opts,c.index),answer:c.en}));
+  ordered.forEach(c=>add({kind:'repeat',label:'Dinle ve İngilizce söyle',...c}));
+  const sentences=pool.filter(c=>c.words.length>1);
+  // Target a distinct missing word in each context. Do not repeat identical blanks.
+  for(let turn=0;tasks.length<12&&turn<48;turn++){
+   const c=(sentences.length?sentences:pool)[turn%(sentences.length||pool.length)];
+   const n=c.words.length,at=turn%n,word=c.words[at];
+   const stem=c.words.map((w,i)=>i===at?'___':w).join(' ');
+   add({kind:'complete',label:'Eksik kelimeyi tamamla',en:c.en,tr:c.tr,stem,answer:word,options:[...new Set([word,...pool.flatMap(x=>x.words).filter(w=>norm(w)!==norm(word)).slice(turn%3,turn%3+3)])]});
+  }
+  for(let turn=0;tasks.length<12&&turn<24;turn++){
+   const c=ordered[turn%ordered.length];
+   add({kind:'order',label:'Cümleyi sıraya koy',en:c.en,tr:c.tr,tokens:c.words});
+   add({kind:'translate',label:'İngilizcesini yaz veya söyle',en:c.en,tr:c.tr,from:'tr',answer:c.en});
+  }
+  // A minimum of twelve different tasks even for very short two-card chapters.
+  for(let turn=0;tasks.length<12&&turn<60;turn++){
+   const c=ordered[turn%ordered.length];
+   add({kind:'complete',label:'Eksik kelimeyi tamamla',en:c.en,tr:c.tr,stem:c.words.map((w,i)=>i===turn%c.words.length?'___':w).join(' ')+' ('+(Math.floor(turn/c.words.length)+1)+')',answer:c.words[turn%c.words.length],options:[...new Set([c.words[turn%c.words.length],...pool.flatMap(x=>x.words).slice(0,3)])]});
+  }
+  // Always finish with every taught card, independent of the twelve practice items.
+  return [...tasks.slice(0,12),...cards.map(c=>({kind:'final',label:'Papi’nin Büyük Finali',...c,maxAttempts:2}))];
+ }
