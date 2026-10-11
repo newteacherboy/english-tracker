@@ -381,7 +381,13 @@
     position:relative; z-index:1; width:100%;
 }
         
-    </style>
+    
+/* Yönetici alt pencereleri ana öğretmen menüsünün üstünde kalır. */
+#ogretmenMenuModal{z-index:21000!important}
+body > .modal-overlay:not(#ogretmenMenuModal):not(#okumaModalOverlay){z-index:21020!important}
+body > #ogretmenSohbetModal,body > #duyuruYonetimModal,body > #rubricModal,body > #sinifIciModal{z-index:21030!important}
+
+</style>
 </head>
 <body>
 
