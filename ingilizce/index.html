@@ -30720,6 +30720,28 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 #bzAlan .dm-final-write-panel #bzMicCheck{min-height:48px!important;font-size:16px!important;margin-top:7px!important}
 #bzAlan:has(#bzMicCards) #bzMicStatus{font-size:clamp(12px,3vw,15px);padding:4px 10px;margin:0!important}
 @media(max-height:740px){#bzAlan #bzMicStart{min-height:62px!important}#bzAlan #bzMicCards .dm-final-card{min-height:70px!important}}
+
+/* Adventure question viewport layout, separate from adventure map and dialogs. */
+#bzPerde:has(> .bz-oyun.dm-question-panel){height:100dvh!important;max-height:100dvh!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:calc(env(safe-area-inset-top,0px) + 4px) 0 calc(env(safe-area-inset-bottom,0px) + 5px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>.bz-oyun{flex:0 0 auto!important;padding:0!important;margin:0 auto!important;width:min(100%,640px)!important;min-height:0}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>.bz-oyun .bz-oyun-ust{margin:0!important;padding:3px 8px!important;min-height:38px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;box-sizing:border-box!important;margin:4px auto!important;width:min(calc(100% - 16px),610px)!important;max-width:610px!important;padding:clamp(8px,1.5vh,15px)!important;border-radius:19px!important;scrollbar-width:thin}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler{flex:0 0 auto!important;box-sizing:border-box!important;display:flex!important;flex-wrap:nowrap!important;gap:clamp(2px,1vw,7px)!important;width:min(calc(100% - 16px),610px)!important;max-width:610px!important;margin:3px auto!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{flex:1 1 0!important;min-width:0!important;padding:5px 1px!important;font-size:clamp(9px,2vw,12px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk span{font-size:clamp(15px,3vw,22px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-soru{font-size:clamp(17px,3.1vh,25px)!important;line-height:1.3!important;margin:5px 0 9px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{padding:6px 10px!important;margin:3px 0 8px!important;font-size:clamp(11px,1.65vh,14px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-secenekler{gap:clamp(5px,1vh,10px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-sec{padding:clamp(8px,1.35vh,14px)!important;min-height:40px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-slotlar{margin:5px 0 9px!important;gap:clamp(2px,0.8vw,6px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-slot{width:clamp(25px,5.3vw,40px)!important;height:clamp(31px,6vh,47px)!important;font-size:clamp(15px,2.8vh,21px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-harfler{gap:clamp(3px,.8vw,7px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-cip2{min-width:34px!important;height:39px!important;padding:0 7px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan #bzMicStart{min-height:clamp(58px,9vh,84px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .dm-final-write-panel{margin-top:8px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzInceleme{max-height:80dvh}
+@media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
+@media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
 
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=2"></script><script src="contact-policy.js?v=2"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=2"></script>
