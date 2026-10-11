@@ -15,21 +15,28 @@ test('failed games never mint gold; malformed inputs cannot mint XP',()=>{for(co
 test('daily bonus, streak and late-game half reward',()=>{const o=score.calculate({correct:8,seconds:25});assert.deepEqual(r.gameReward(o,{ordinal:1,streak:1.5}),{xp:118,gold:30,bonus:1});assert.equal(r.gameReward(o,{ordinal:13,streak:1.5}).xp,30);});
 test('boosts do not stack and cannot be used before level 15',()=>{const o={...score.calculate({correct:8,seconds:25}),odulCarpan:2};assert.equal(r.gameReward(o,{level:14,xpBoost:true,goldBoost:true}).xp,118);const b=r.gameReward(o,{level:15,xpBoost:true,goldBoost:true,streak:1.5});assert.equal(b.xp,236);assert.equal(b.gold,60);assert.equal(r.gameReward({...o,xp:9999},{level:15}).xp,384);});
 test('one account first-purchase discount never stacks with showcase',()=>{assert.equal(r.discount(1000,{first:true,showcase:true}),750);assert.equal(r.discount(1000,{showcase:true}),700);});
-test('real reward hook uses canonical writer and keeps a duplicate guard across reload',()=>{
-  const fs=require('fs'),vm=require('vm'),html=fs.readFileSync(__dirname+'/../ingilizce/index.html','utf8').replace(/<!--[\s\S]*?-->/g,'');
-  const source=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(x=>x.includes('window.ocOdulVer = function (o)'));
-  const state={altin:0,totalXp:0,hedef:50},ctx={yo:state,aktifOgrenciAdi:'QA',DijiProgressRules:r,Math,Date,Set,JSON,document:{addEventListener(){},hidden:false},setTimeout(){},setInterval(){},yoHazirMi:()=>true,yoBugun:()=> '2026-10-04',fetch(){},dmBaseXpAdd:(xp,al)=>{state.totalXp+=xp;state.altin+=al;}};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(source,ctx);
-  const input={...score.calculate({correct:8,seconds:25}),runId:'good'};
-  assert.equal(ctx.ocOdulVer(input).xp,118);assert.equal(state.altin,20);assert.equal(state.totalXp,118);
-  assert.equal(ctx.ocOdulVer(input),null);vm.runInContext(source,ctx);assert.equal(ctx.ocOdulVer(input),null);
-  ctx.ocOdulVer({...score.calculate({correct:0,wrong:8,seconds:96}),runId:'failed'});assert.equal(state.altin,20);assert.equal(state.totalXp,118);
+function rewardClient(handler,state={altin:0,totalXp:0}) {
+ const fs=require('fs'),vm=require('vm'),store=new Map(),events={},requests=[];
+ const ctx={yo:state,aktifOgrenciAdi:'QA',DijiProgressRules:r,Math,Date,Set,Map,JSON,Number,String,Response,navigator:{onLine:true},apiURL:'https://example.test',localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},document:{getElementById:()=>null,querySelector:()=>null,addEventListener(){}},setTimeout(){},setInterval(){},addEventListener:(k,fn)=>events[k]=fn,matchMedia:()=>({matches:true}),genelSonucEkraniGoster(){},dmBaseXpAdd(){throw Error('The removed client reward path must never mint balances.');},fetch:async(url,opt)=>{const body=JSON.parse(opt.body);requests.push(body);return new Response(JSON.stringify(await handler(body)),{status:200});}};
+ ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync('ingilizce/game-feedback.js','utf8'),ctx);
+ return {ctx,store,events,requests,settle:()=>new Promise(resolve=>setTimeout(resolve,30))};
+}
+test('active reward hook waits for the server and retries without locally minting XP or gold',async()=>{
+ let release;const f=rewardClient(()=>new Promise(resolve=>release=resolve));
+ const input={...score.calculate({correct:8,seconds:25}),runId:'good',oyunKey:'ky'};
+ assert.equal(f.ctx.ocOdulVer(input).pending,true);f.ctx.ocOdulVer(input);
+ assert.equal(f.requests.length,1);assert.equal(f.ctx.yo.totalXp,0);assert.equal(f.ctx.yo.altin,0);
+ release({ok:true,xp:118,gold:20,yo:{totalXp:118,altin:20,dmRewardVersion:1}});await f.settle();
+ assert.equal(f.ctx.yo.totalXp,118);assert.equal(f.ctx.yo.altin,20);assert.equal(JSON.parse(f.store.get('dm_game_pending:qa')).length,0);
 });
 test('parkur header escapes the student name and keeps wallet controls',()=>{
  const fs=require('fs'),vm=require('vm'),ctx={DijiProgressRules:r,yo:{totalXp:260},aktifOgrenciAdi:'<Mert>',document:{getElementById:()=>null,addEventListener(){},body:{classList:{toggle(){},contains:()=>false}}},setInterval(){}};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync(__dirname+'/../ingilizce/parkur-theme.js','utf8'),ctx);
  const head=ctx.dmParkurBaslik({energy:24,max:30,gold:320});assert(head.includes('&lt;Mert&gt;'));assert(head.includes('data-dm-wallet="level"'));assert(head.includes('Sv. <b data-dm-level>4'));
  // The unified scene markup is covered by tests/unified-parkur.test.cjs.
 });
-test('perfect 11-question parkur earns star XP, repeat is reduced, failure gives no gold',()=>{
- const fs=require('fs'),vm=require('vm'),html=fs.readFileSync('ingilizce/index.html','utf8').replace(/<!--[\s\S]*?-->/g,''),source=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(x=>x.includes('window.ocOdulVer = function (o)'));
- const state={totalXp:0,dmParkurMigration:{version:1},altin:500},ctx={yo:state,aktifOgrenciAdi:'Fixture',DijiProgressRules:r,yoHazirMi:()=>true,yoBugun:()=> '2026-10-04',dmBaseXpAdd:(xp,gold)=>{state.totalXp+=xp;state.altin+=gold;},yoKaydet(){},setTimeout(){},setInterval(){},fetch(){},window:null,document:{addEventListener(){},querySelector(){return null}}};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(source,ctx);const result={...score.calculate({correct:11,wrong:0,seconds:30}),runId:'parkur-first',oyunKey:'ba',parkurIlk:true,parkurGecti:true,parkurYildiz:3};assert.equal(ctx.ocOdulVer(result).xp,60);assert.equal(ctx.ocOdulVer({...result,runId:'parkur-repeat',parkurIlk:false}).xp,12);assert.equal(ctx.ocOdulVer({...result,runId:'parkur-fail',parkurGecti:false}).xp,0);assert.equal(state.altin,500);assert.equal(state.totalXp,72);
+test('parkur first-clear and replay use the server-confirmed reward, with no legacy 12-XP repeat grant',async()=>{
+ const f=rewardClient(body=>body.runId==='first'?{ok:true,xp:60,gold:5,yo:{totalXp:60,altin:505,dmRewardVersion:1}}:{ok:true,xp:0,gold:0,reason:'already_completed',yo:{totalXp:60,altin:505,dmRewardVersion:2}},{totalXp:0,altin:500});
+ const input={...score.calculate({correct:11,seconds:30}),runId:'first',oyunKey:'ba',parkurIlk:true,parkurGecti:true,parkurYildiz:3,parkurStopNo:1201};
+ f.ctx.ocOdulVer(input);await f.settle();assert.equal(f.ctx.yo.totalXp,60);assert.equal(f.ctx.yo.altin,505);assert.equal(f.requests[0].stopNo,1201);
+ f.ctx.ocOdulVer({...input,runId:'replay',parkurIlk:false});await f.settle();assert.equal(f.ctx.yo.totalXp,60);assert.equal(f.ctx.yo.altin,505);
 });

@@ -16,8 +16,8 @@ function surfaceCriticalNotices(){
   if(!visible(el)||!criticalNotice(el))continue;
   const text=(el.textContent||'').trim();
   if(!/enerji|energy|hata|error|başarısız|yetersiz|bağlantı/i.test(text))continue;
-  el.style.setProperty('z-index','2147483647','important');
-  el.style.setProperty('position','fixed','important');
+  if(el.style.getPropertyValue('z-index')!=='2147483647'||el.style.getPropertyPriority('z-index')!=='important')el.style.setProperty('z-index','2147483647','important');
+  if(el.style.getPropertyValue('position')!=='fixed'||el.style.getPropertyPriority('position')!=='important')el.style.setProperty('position','fixed','important');
   for(const id of overlays){const modal=document.getElementById(id);if(!modal||modal.getClientRects().length===0)continue;
    const entry=modal.querySelector('[id$="GirisEkrani"]');
    if(entry&&entry.getClientRects().length){modal.style.display='none';modal.classList.remove('dm-entry-open');}
