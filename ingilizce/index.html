@@ -993,7 +993,29 @@ html, body { touch-action: pan-x pan-y; }
 .dm-match-option{border:2px solid #b4d9c0;border-radius:13px;background:#f0f8ed;color:#184c3c;font-size:15px;font-weight:800;min-height:48px;padding:8px 7px;overflow-wrap:anywhere}
 .dm-match-option.selected{outline:3px solid #f0c46b}.dm-match-option.dm-right{background:#ccefd7;border-color:#50aa71}.dm-match-option.dm-wrong{background:#ffe1e1;border-color:#e65a5a}
 </style>
-</head>
+<style id="dm-play-dashboard-style">
+#bzParkur .dm-play-board{position:relative;z-index:2;display:grid;gap:14px;padding:14px 12px 110px;max-width:700px;margin:0 auto;background:linear-gradient(#f7f4e9,#fff9ec);font-family:Nunito,system-ui,sans-serif}
+#bzParkur .dm-play-card{background:#fffdf7;border:1px solid #e8dec6;border-radius:24px;padding:16px;box-shadow:0 6px 16px #61532c16;color:#214b38}
+#bzParkur .dm-play-title{display:flex;align-items:center;gap:8px;margin-bottom:13px}
+#bzParkur .dm-play-title>span{font-size:25px}
+#bzParkur .dm-play-title h3{font-size:19px;margin:0;font-weight:900;flex:1;color:#175b37}
+#bzParkur .dm-play-title small{color:#677667;font-size:10px;font-weight:800}
+#bzParkur .dm-play-task{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #ece9db;border-radius:17px;padding:11px;margin:7px 0;box-shadow:0 3px 9px #382d180b}
+#bzParkur .dm-play-task-icon{font-size:26px;display:grid;place-items:center;background:#ecf8e9;border-radius:13px;min-width:49px;height:49px}
+#bzParkur .dm-play-task-main{flex:1;min-width:0}
+#bzParkur .dm-play-task-main strong{font-size:12.5px;line-height:1.4;display:block}
+#bzParkur .dm-play-task>b{font-size:12px;color:#23835a}
+#bzParkur .dm-play-task-bar,#bzParkur .dm-play-weekbar{height:8px;border-radius:99px;background:#e8e7dd;overflow:hidden;margin-top:7px}
+#bzParkur .dm-play-task-bar span,#bzParkur .dm-play-weekbar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8bd742,#12a759)}
+#bzParkur .dm-play-card>strong{font-size:14px}
+#bzParkur .dm-play-weekbar{height:12px;margin:13px 0}
+#bzParkur .dm-play-card>small{color:#708075;font-weight:700}
+#bzParkur .dm-play-claim,#bzParkur .dm-play-weekopts button{border:0;background:linear-gradient(#55c96c,#15984c);color:#fff;border-radius:15px;padding:11px;font-size:12px;font-weight:900}
+#bzParkur .dm-play-claim{width:100%;margin-top:10px}#bzParkur .dm-play-claim:disabled{opacity:.45}
+#bzParkur .dm-play-weekopts{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+#bzParkur .dm-play-claimed{color:#168047;font-weight:900;text-align:center;margin-top:8px}
+@media(max-width:400px){#bzParkur .dm-play-title h3{font-size:16px}#bzParkur .dm-play-title small{font-size:9px}}
+</style></head>
         <body>
 <div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
 <script>(function(){
@@ -28541,6 +28563,40 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     gorunum={ad:'harita',b};
     p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page})+'</div></div>';
     p.querySelectorAll('.dm-adventure-node,.dm-map-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
+    // Oyna paneli: mevcut parkur sahnesine eklenen görev/hedef panosu; alt navigasyona dokunmaz.
+    try {
+      const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const tasks=window.dmGunGorevleri?.();
+      const pool=window.dmGorevHavuz||[];
+      const available=id=>{
+        const gate={dinleme:'oyun_dikte',yazim:'oyun_bosluk',cumle:'oyun_tren',hiz:'oyun_yagmur',zk:'zor_kelimeler',oyun3:'aktiviteler',oyun5:'aktiviteler',yildiz3:'aktiviteler',ders1:'ders'}[id];
+        return !gate || !window.dmProgression || window.dmProgression.allowed(gate);
+      };
+      let list=(tasks?.liste||[]).filter(x=>pool.some(y=>y.id===x.id)&&available(x.id)).slice(0,3);
+      const opts=list.map(x=>{
+        const def=pool.find(g=>g.id===x.id), goal=Math.max(1,Number(def.hedef)||1), now=Math.max(0,Number(x.ilerleme)||0);
+        return '<div class="dm-play-task"><span class="dm-play-task-icon">'+esc(def.i)+'</span><div class="dm-play-task-main"><strong>'+esc(def.ad)+'</strong><div class="dm-play-task-bar"><span style="width:'+Math.min(100,Math.round(now/goal*100))+'%"></span></div></div><b>'+Math.min(now,goal)+'/'+goal+'</b></div>';
+      }).join('');
+      const h=typeof yo!=='undefined'&&yo?yo.haftaHedef:null;
+      const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7));
+      const wk=d.toISOString().slice(0,10);
+      const weeklyXP=Number(yo?.lig?.xp)||0;
+      const hasGoal=h&&h.h===wk&&Number(h.xp)>0;
+      const weekly=hasGoal?'<strong>Bu hafta '+Number(h.xp).toLocaleString('tr-TR')+' XP kazan!</strong><div class="dm-play-weekbar"><span style="width:'+Math.min(100,Math.round(weeklyXP/h.xp*100))+'%"></span></div><small>'+Math.min(weeklyXP,h.xp).toLocaleString('tr-TR')+' / '+Number(h.xp).toLocaleString('tr-TR')+' XP · 🎁 Hedef ödülü</small>':'<strong>Haftalık hedefini seç</strong><div class="dm-play-weekopts">'+[1000,1500,2500].map(v=>'<button type="button" data-play-target="'+v+'">'+v.toLocaleString('tr-TR')+' XP</button>').join('')+'</div>';
+      const board=document.createElement('section');board.className='dm-play-board';board.innerHTML='<div class="dm-play-card"><div class="dm-play-title"><span>📋</span><h3>Günün 3 Görevi</h3><small>Her gün yenilenir</small></div>'+(opts||'<p>Şu an seviyene uygun görev hazırlanıyor.</p>')+(tasks?.alindi?'<div class="dm-play-claimed">🎉 Bugünün ödülü alındı</div>':'<button class="dm-play-claim" '+(list.length===3&&list.every(x=>{const d=pool.find(g=>g.id===x.id);return Number(x.ilerleme)>=Number(d.hedef)})?'':'disabled')+'>🎁 Görev ödülünü al · +40 XP · +30 🪙</button>')+'</div><div class="dm-play-card"><div class="dm-play-title"><span>🎯</span><h3>Haftalık Hedef</h3><small>Pazartesi – Pazar</small></div>'+weekly+'</div>';
+      p.querySelector('.bz-ic')?.appendChild(board);
+      board.querySelector('.dm-play-claim')?.addEventListener('click',()=>document.querySelector('#soGorevOdul')?.click());
+      board.querySelectorAll('[data-play-target]').forEach(btn=>btn.addEventListener('click',()=>{
+        const selected=Number(btn.dataset.playTarget);
+        const source=document.querySelector('#soPanel .so-hedef button[data-h="'+selected+'"]');
+        if(source)source.click();
+        else if(typeof yo!=='undefined'&&yo&&typeof haftaKodu==='function'){
+          yo.haftaHedef={h:haftaKodu(),xp:selected,odul:false};window.yoKaydet?.();
+        }
+        harita(b);
+      }));
+    } catch(boardError) { console.warn('[Oyna] görev paneli çizilemedi',boardError); }
+
     requestAnimationFrame(()=>{window.dmParkurMapMount?.($('dmParkurScroll'));window.dmStoryPath?.mount($('dmParkurScroll'));});
   }
 
