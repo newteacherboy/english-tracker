@@ -40,66 +40,58 @@
    draw();s.body.querySelector('input').oninput=e=>draw(e.target.value);s.body.querySelector('.dm-open-matches').onclick=()=>{s.close();window.dmArenaAc();};
   }catch(e){if(stopped)return;s.body.textContent=e.message;}
  };
- const cards=[
- ['kelimeYarismasiAc',0,'#d9c7f9','#b99be5'],['jpOyunAc',1,'#ffd3e5','#e6abc5'],['boslukOyunAc',2,'#ffe69d','#e3c678'],['hafizaOyunAc',3,'#ffd2d9','#e4a6b0'],
- ['yagmurOyunAc',4,'#b5e6ff','#8fc5e7'],['asmacaOyunAc',5,'#ffbcbf','#dc8f97'],['kelimebulOyunAc',6,'#cdf29e','#a0cf73'],['esOyunAc',7,'#debbfa','#be94e2'],
- ['trenOyunAc',8,'#ffe795','#e5c66b'],['dikteAc',9,'#c8d5ff','#a2b1e4'],['cumleAc',10,'#e8c7f4','#c59bd4'],['dmUcusteKart',11,'#b8e7ff','#8bc7e7'],['dmRotaKart',12,'#e5c4fb','#c294df'],['yolculuguAc',12,'#bde8de','#96cbbd'],['harfBahcesiAc',null,'#cdeeb6','#99c57d']];
- let party='solo';
- function partyTabs(host,grid){
-  let tabs=host.querySelector('.dm-party-tabs');
-  if(!tabs){
-   tabs=document.createElement('div');tabs.className='dm-party-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Oyun kategorisi');
-   tabs.innerHTML='<button type="button" id="dmSoloTab" role="tab" data-party="solo" aria-controls="dmActivityGames"><span aria-hidden="true">🎮</span> Tek Kişilik</button><button type="button" id="dmDuoTab" role="tab" data-party="duo" aria-controls="dmActivityGames"><span aria-hidden="true">🤝</span> İki Kişilik</button><button type="button" id="dmFreeTab" role="tab" data-party="free" aria-controls="dmActivityGames"><span aria-hidden="true">⚔️</span> Kapışma Oyunları</button>';
-   grid.before(tabs);
-   tabs.querySelectorAll('button').forEach(b=>{b.onclick=()=>{party=b.dataset.party;partyTabs(host,grid);};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const all=[...tabs.querySelectorAll('button')],i=all.indexOf(b),next=all[e.key==='Home'?0:e.key==='End'?all.length-1:(i+(e.key==='ArrowRight'?1:-1)+all.length)%all.length];next.click();next.focus();};});
+ const defs=[
+ ['kelimeYarismasiAc',0,'Kelime','oyun_kelime'],['hafizaOyunAc',1,'Hafıza','oyun_hafiza'],['okumaStudyosunuAc',2,'Okuma','okuma_hizi'],['boslukOyunAc',3,'Kelime','oyun_bosluk'],['asmacaOyunAc',4,'Kelime','oyun_asmaca'],['jpOyunAc',5,'Kelime','oyun_jeopardy'],['yagmurOyunAc',6,'Kelime','oyun_yagmur'],['kelimebulOyunAc',7,'Kelime','oyun_kelimebul'],['esOyunAc',8,'Kelime','oyun_eslestirme'],['trenOyunAc',9,'Cümle','oyun_tren'],['dikteAc',10,'Dinleme','oyun_dikte'],['cumleAc',11,'Cümle','oyun_cumle'],['harfBahcesiAc',15,'Kelime','oyun_harfbahcesi']];
+ const free={papiCardsActivity:[12,'Kelime kartlarını dinle ve öğren.','Kartları Aç'],meteorActivity:[13,'Aynı cihazda kelimeleri yakala, rakibini geç.','Oyunu Aç'],wordWheelActivity:[14,'Çarkı çevir, doğru kelimeyi bul.','Çarkı Aç']};
+ const icon=name=>'<svg class="gg-icon" aria-hidden="true"><use href="games-assets/ui-icons.svg#'+name+'"></use></svg>';
+ let party='solo',skill='Tümü',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
+ const account=()=>String(who()||'guest');
+ const level=()=>window.dmProgression?.level?.()||1;
+ const allowed=code=>!code||!window.dmProgression||window.dmProgression.allowed(code);
+ const img=(i,cls='')=>'<span class="gg-art '+cls+'" style="--gx:'+(i%4)*100/3+'%;--gy:'+Math.floor(i/4)*100/3+'%" aria-hidden="true"></span>';
+ function game(b){const rule=defs.find(d=>(b.getAttribute('onclick')||'').includes(d[0]))||defs.find(d=>b.id===d[0]||b.id==='yoDikteKart'&&d[0]==='dikteAc');return rule||[null,8,'Kelime',b.dataset.dmLevelLock||window.DijiProgressionCatalog?.functions[(b.getAttribute('onclick')||'').match(/([A-Za-z_$][\w$]*)\s*\(/)?.[1]]||''];}
+ function lastGame(){try{return localStorage.getItem('dm_last_game:'+account())||'';}catch{return '';}}
+ function remember(b){try{localStorage.setItem('dm_last_game:'+account(),b.dataset.ggId);}catch{}}
+ function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);
+  b.classList.add('gg-game');b.classList.remove('dm-toy-card','dm-showcase-card');
+  const title=b.querySelector('.az-gcard-title')?.textContent.trim()||b.textContent.trim();b.dataset.ggTitle=title;
+  const description=f?f[1]:d[2]+(d[0]==='okumaStudyosunuAc'?' • Okuma çalışması':' • 12 soru');
+  b.innerHTML=img(+b.dataset.ggIndex)+'<span class="gg-copy"><strong>'+esc(title)+'</strong><small>'+esc(description)+'</small><span class="gg-play">'+(f?f[2]:b.dataset.ggCategory==='duo'?'Davet Et':'Oyna')+' ›</span></span>';
+  b.addEventListener('click',e=>{if(!allowed(b.dataset.ggGate)){e.preventDefault();e.stopImmediatePropagation();window.dmProgression?.require(b.dataset.ggGate);return;}remember(b);},true);
+  if(['dmUcusteKart','dmRotaKart'].includes(b.id))b.onclick=()=>window.dmInviteAc(b.id==='dmUcusteKart'?'ucus':'rota');
+ }
+ function render(host,grid){
+  const all=[...grid.querySelectorAll('.az-gcard')];all.forEach(prepare);
+  host.dataset.dmParty=party;host.dataset.ggParty=party;const active=party==='solo'?'solo':'free';
+  host.querySelectorAll('[data-gg-party]').forEach(b=>{const on=b.dataset.ggParty===active;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;});
+  host.querySelectorAll('.gg-filters [data-gg-skill]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ggSkill===skill)));
+  host.querySelector('.gg-banner h2').textContent=party==='solo'?'Oynayarak öğren!':'Birlikte kapışalım!';host.querySelector('.gg-banner p').textContent=party==='solo'?'Sana açık oyunlarla becerilerini geliştir.':party==='free'?'Kartlarla öğren, aynı cihazda kapış.':'Arkadaşına çevrimiçi oyun daveti gönder.';
+  host.querySelector('.gg-filters').hidden=party!=='solo';host.querySelector('.gg-social').hidden=party==='solo';host.querySelector('.gg-heading').textContent=party==='solo'?'Sana Açık Oyunlar':party==='free'?'Kapışma Oyunları':'İki Kişilik Oyunlar';
+  grid.setAttribute('aria-labelledby',active==='solo'?'ggSoloTab':'ggFreeTab');
+  let count=0;all.forEach(b=>{const open=allowed(b.dataset.ggGate),show=b.dataset.ggCategory===party&&(party!=='solo'||open&&(skill==='Tümü'||b.dataset.ggGameSkill===skill||skill==='Kelime'&&b.dataset.ggGameSkill==='Hafıza'));b.classList.toggle('gg-locked',!open);b.setAttribute('aria-disabled',String(!open));const play=b.querySelector('.gg-play');if(play)play.textContent=!open?(window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||30)+'. seviyede açılır':free[b.id]?free[b.id][2]+' ›':b.dataset.ggCategory==='duo'?'Davet Et ›':'Oyna ›';b.hidden=!show;b.style.setProperty('display',show?'grid':'none','important');if(show)count++;});
+  host.querySelector('.gg-empty').hidden=count!==0;
+  const locked=all.filter(b=>b.dataset.ggCategory==='solo'&&!allowed(b.dataset.ggGate)).sort((a,b)=>(window.DijiProgressionCatalog?.gates[a.dataset.ggGate]||40)-(window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||40));
+  const next=host.querySelector('.gg-next');next.hidden=party!=='solo'||!locked.length;
+  if(!next.hidden){const b=locked[0],need=window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||40;next.innerHTML='<h3>Sıradaki Oyun</h3><div>'+img(+b.dataset.ggIndex)+'<span><b>'+esc(b.dataset.ggTitle)+'</b><small>'+icon('lock')+need+'. seviyede açılır</small></span><label>Seviye '+level()+' → '+need+'<progress value="'+Math.min(level(),need)+'" max="'+need+'"></progress></label></div>';}
+  const last=all.find(b=>b.dataset.ggId===lastGame()&&b.dataset.ggCategory==='solo'&&allowed(b.dataset.ggGate)),resume=host.querySelector('.gg-resume');resume.hidden=party!=='solo'||!last;
+  if(last){resume.innerHTML='<small>Son oynadığın oyun</small><div>'+img(+last.dataset.ggIndex)+'<b>'+esc(last.dataset.ggTitle)+'</b><button type="button">Tekrar Oyna ›</button></div>';resume.querySelector('button').onclick=()=>last.click();}
+  const xp=typeof yo!=='undefined'?yo:null;host.querySelector('[data-gg-gold]').textContent=xp?.altin||0;host.querySelector('[data-gg-energy]').textContent=(typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():'–')+'/'+(typeof genelEnerjiMax==='number'?genelEnerjiMax:typeof genelEnerjiMax==='function'?genelEnerjiMax():30);
+ }
+ async function loadFriends(host){if(friendsLoaded)return;if(!logged()){host.querySelector('.gg-friends').textContent='Arkadaşlarını görmek için giriş yap.';return;}friendsLoaded=true;const row=host.querySelector('.gg-friends');row.innerHTML='<span role="status">Arkadaşların yükleniyor…</span>';const owner=account();try{const d=await m.api('takipDavetListesi');if(account()!==owner)return;skew=Date.parse(d.serverNow)-Date.now();d.liste.forEach(p=>stamp.set(p.ad,p));row.innerHTML=d.liste.length?d.liste.slice(0,5).map(p=>'<button type="button" data-gg-person="'+esc(p.ad)+'" title="'+esc(p.ad)+'"><span class="gg-avatar">'+(window.karakterSvg?.(p.ad,38)||esc(p.ad.slice(0,1).toLocaleUpperCase('tr')))+'</span><small>'+esc(p.ad)+'</small><i class="'+(isOnline(p.ad)?'online':'')+'" aria-label="'+(isOnline(p.ad)?'Çevrimiçi':'Çevrimdışı')+'"></i></button>').join(''):'<span>Henüz takip ettiğin arkadaş yok.</span>';row.querySelectorAll('button').forEach(b=>b.onclick=async()=>{await window.meduAkisAc?.();window.maProfilAc?.(b.dataset.ggPerson);});}catch{row.innerHTML='<button type="button">Arkadaşlar yüklenemedi · Tekrar dene</button>';row.querySelector('button').onclick=()=>{friendsLoaded=false;loadFriends(host);};}}
+ function install(){const host=document.querySelector('#tab-aktiviteler .dc-focus-card'),grid=host?.querySelector('.az-grid2x2');if(!grid)return;
+  if(typeof window.okumaStudyosunuAc==='function'&&!grid.querySelector('[onclick*="okumaStudyosunuAc"]')){const b=document.createElement('button');b.type='button';b.className='az-gcard';b.setAttribute('onclick','okumaStudyosunuAc()');b.innerHTML='<div class="az-gcard-title">Okuma Stüdyosu</div>';grid.append(b);}
+  if(!host.classList.contains('gg-page')){host.classList.add('gg-page');host.querySelectorAll('.dm-activity-hero,.dm-party-tabs').forEach(e=>e.remove());
+   const top=document.createElement('div');top.className='gg-top';top.innerHTML='<div class="gg-brand"><b>DijiMedu</b><span>'+icon('energy')+'<b data-gg-energy>Enerji</b></span><span>'+icon('coin')+'<b data-gg-gold>0</b></span></div><div class="gg-title"><h1>Oyunlar</h1><div class="gg-tabs" role="tablist" aria-label="Oyun kategorisi"><button id="ggSoloTab" type="button" role="tab" data-gg-party="solo" aria-controls="dmActivityGames">Tek Kişilik</button><button id="ggFreeTab" type="button" role="tab" data-gg-party="free" aria-controls="dmActivityGames">Kapışma Oyunları</button></div></div><div class="gg-banner"><img src="oyna-assets/oyna-papi-fly.png" alt="Papi"><div><h2>Oynayarak öğren!</h2><p>Sana açık oyunlarla becerilerini geliştir.</p></div></div><div class="gg-filters" aria-label="Beceri filtresi">'+['Tümü','Kelime','Dinleme','Cümle'].map(s=>'<button type="button" data-gg-skill="'+s+'">'+s+'</button>').join('')+'</div><div class="gg-social" hidden><b>Arkadaşların</b><div class="gg-friends"></div><button type="button" class="gg-friends-all">'+icon('users')+' Tümü ›</button></div><section class="gg-resume" hidden></section><h2 class="gg-heading">Sana Açık Oyunlar</h2><p class="gg-empty" hidden>Bu beceride açık oyunun henüz yok. Diğer filtreleri deneyebilirsin.</p>';
+   grid.before(top);const bottom=document.createElement('div');bottom.className='gg-bottom';bottom.innerHTML='<section class="gg-next" hidden></section><div class="gg-matches" hidden><h3>Karşılaşmalarım</h3><div><span>'+icon('users')+' Davetlerini ve sonuçlarını gör</span><button type="button" data-gg-matches>Gör ›</button></div><button type="button" data-gg-duo>Çevrimiçi iki kişilik oyunlar ›</button></div>';grid.after(bottom);
+   top.querySelectorAll('[data-gg-party]').forEach(b=>{b.onclick=()=>{party=b.dataset.ggParty;render(host,grid);host.querySelector('.gg-matches').hidden=party==='solo';if(party!=='solo')loadFriends(host);};b.onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const buttons=[...top.querySelectorAll('[data-gg-party]')];const other=e.key==='Home'?buttons[0]:e.key==='End'?buttons[1]:buttons.find(x=>x!==b);other.click();other.focus();}};});
+   top.querySelectorAll('[data-gg-skill]').forEach(b=>b.onclick=()=>{skill=b.dataset.ggSkill;render(host,grid);});top.querySelector('.gg-friends-all').onclick=()=>window.meduAkisAc?.();bottom.querySelector('[data-gg-matches]').onclick=()=>window.dmArenaAc?.();bottom.querySelector('[data-gg-duo]').onclick=()=>{party='duo';render(host,grid);};grid.id='dmActivityGames';grid.setAttribute('role','tabpanel');
+   new MutationObserver(()=>{key='';install();}).observe(grid,{childList:true});
   }
-  host.dataset.dmParty=party;
-  tabs.querySelectorAll('button').forEach(b=>{const active=b.dataset.party===party;b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});
-  grid.id='dmActivityGames';grid.setAttribute('role','tabpanel');grid.setAttribute('aria-labelledby',party==='solo'?'dmSoloTab':party==='duo'?'dmDuoTab':'dmFreeTab');
-  grid.querySelectorAll('.az-gcard').forEach(b=>{
-   const label=(b.textContent||'').toLocaleLowerCase('tr');
-   const freeIds=['papiCardsActivity','wordWheelActivity','meteorActivity'];
-   const isFree=freeIds.includes(b.id)||/papi kartları|papi’nin meteor düellosu|papi'nin meteor düellosu|papi’nin kelime çarkı|papi'nin kelime çarkı/.test(label);
-   b.dataset.dmParty=isFree?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';
-   // Filter cards directly: legacy card display!important rules can override CSS-only filters.
-   const shouldShow=b.dataset.dmParty===party;
-   b.hidden=!shouldShow;
-   if(shouldShow){b.style.removeProperty('display');}
-   else{b.style.setProperty('display','none','important');}
-  });
-  // No grid MutationObserver: upgrading cards itself moves child nodes.
+  if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party='solo';skill='Tümü';key='';}
+  host.querySelector('.gg-matches').hidden=party==='solo';
+  const nextKey=[party,skill,level(),grid.children.length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
  }
- function upgradeCards(){
-  const host=document.querySelector('#tab-aktiviteler .dc-focus-card')||document.getElementById('tab-aktiviteler');if(!host)return;
-  if(!host.querySelector('.dm-activity-hero')){const h=document.createElement('header');h.className='dm-activity-hero';h.innerHTML='<div><h1>Oyunlar</h1><p>Bugün hangi oyunu oynayalım?</p></div><img src="papi-welcome-v2.png" alt="Oynamaya hazır Diji-Medu papağanı" width="100" height="110">';host.prepend(h);}
-  const grid=host.querySelector('.az-grid2x2');if(!grid)return;
-  cards.forEach(([fn,idx,color,edge])=>{const b=grid.querySelector('[onclick*="'+fn+'"]')||document.getElementById(fn==='dikteAc'?'yoDikteKart':fn);if(!b||!grid.contains(b))return;
-   // Preserve the original legible game card artwork and sizing.
-   // The two-column toy-card override made locked cards unreadable on phones.
-   b.classList.remove('dm-toy-card');
-   b.classList.add('dm-showcase-card');
-   b.style.removeProperty('--toy-bg');b.style.removeProperty('--toy-edge');
-   b.style.setProperty('--dm-card-bg',color);
-   b.style.setProperty('--dm-card-edge',edge);
-   const existingIcon=b.querySelector('.az-gcard-icon');
-   if(existingIcon&&idx!==null&&!existingIcon.querySelector('.dm-showcase-icon')){
-     const art=document.createElement('span');art.className='dm-showcase-icon';art.setAttribute('aria-hidden','true');
-     art.style.backgroundPosition=(idx%4)*100/3+'% '+Math.floor(idx/4)*100/3+'%';
-     existingIcon.replaceChildren(art);
-   }
-   const title=b.querySelector('.az-gcard-title');
-   const desc=b.querySelector('.ak-acik');
-   const tag=b.querySelector('.ak-etiket');
-   if(title&&!title.closest('.dm-game-copy')){
-     const copy=document.createElement('span');copy.className='dm-game-copy';title.before(copy);copy.append(title);
-     if(desc)copy.append(desc);
-     if(tag)copy.append(tag);
-   }
-   if(!b.querySelector('.dm-game-chevron')){const arrow=document.createElement('span');arrow.className='dm-game-chevron';arrow.setAttribute('aria-hidden','true');arrow.textContent='›';b.append(arrow);}
-   if(['dmUcusteKart','dmRotaKart'].includes(fn)){b.onclick=()=>window.dmInviteAc(fn==='dmUcusteKart'?'ucus':'rota');if(!b.querySelector('.ak-etiket')){const t=document.createElement('div');t.className='ak-etiket';t.textContent='12 soru · 4 ⚡';b.append(t);}}
-  });
-  partyTabs(host,grid);
- }
- upgradeCards();let n=0;const retry=setInterval(()=>{upgradeCards();if(++n>=10)clearInterval(retry);},800);
+ install();setInterval(install,1500);
+ window.dmGamesUI={refresh:()=>{key='';install();}};
  window.dmActivityPresence={refresh,isOnline};
 })();

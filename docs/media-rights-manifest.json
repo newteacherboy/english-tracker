@@ -765,6 +765,20 @@
       "bytes": 36482,
       "status": "ai-generated",
       "source": "OpenAI imagegen, 2026-10-11; original Papi parrot generated for the approved Friends UI; resized transparent PNG export"
+    },
+    {
+      "path": "ingilizce/games-assets/game-atlas-v1.png",
+      "sha256": "5c05e627b50165f1ae42d5d2871325286368b9f623cf5d1a32b83481902ad7da",
+      "bytes": 2491892,
+      "status": "ai-generated",
+      "source": "Built-in image generation, 2026-10-11; original sixteen game illustrations in a 4x4 sprite atlas"
+    },
+    {
+      "path": "ingilizce/games-assets/ui-icons.svg",
+      "sha256": "22f9c5d3dc183c7faae8806f7e2dde42548550816f2bc827c190270c1b43689e",
+      "bytes": 958,
+      "status": "code-native",
+      "source": "Original repository-authored SVG controls, 2026-10-11"
     }
   ]
 }
