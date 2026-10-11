@@ -984,6 +984,7 @@ html, body { touch-action: pan-x pan-y; }
 .dm-parkur-letter:disabled{opacity:.3}
 @media(max-width:420px){#bzMicCards{grid-template-columns:repeat(2,minmax(0,1fr))}#bzMicCards .dm-final-card{min-height:98px;padding:9px 6px}}
 </style>
+<style id="dm-parkur-interaction-fix">.dm-parkur-letter.dm-right{background:#d8f5de!important;color:#176334!important;border-color:#3fa56a!important}.dm-parkur-letter.dm-wrong{background:#ffe0e0!important;color:#ac2020!important;border-color:#df4c4c!important;animation:dmWrongShake .25s linear}.dm-auto-space{display:inline-block;width:16px}.dm-auto-punctuation{display:inline-flex;align-items:center;font-size:20px;margin:0 3px}.dm-letter-notice{min-height:22px;text-align:center;font-weight:800}@keyframes dmWrongShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}</style>
 </head>
         <body>
 <div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
@@ -18658,6 +18659,7 @@ function odulUret(k, o) {
   }
     function sandikTorenAc(g, idx, zorK) {
     let o = SOYUN[SK[g]], k = zorK !== undefined ? zorK : kademe(idx), oduller = odulUret(k, o), dokunus = 0;
+    if(document.querySelector('.bc-perde'))return;
     let p = document.createElement('div');
     p.className = 'bc-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', o.sandik[k]);
     p.style.setProperty('--parla', KADEME[k].parla);
@@ -18680,6 +18682,7 @@ function odulUret(k, o) {
       setTimeout(() => p.classList.add('bitti'), 300 + oduller.length * 220);
     };
     p.querySelector('.bc-topla').onclick = () => {
+      if(p.dataset.claimed==='1')return;p.dataset.claimed='1';
       let xp = 0, al = 0, en = 0;
       oduller.forEach(x => {
         if (x.tur === 'xp') xp += x.m; else if (x.tur === 'altin') al += x.m; else if (x.tur === 'enerji') en += x.m;
@@ -18714,7 +18717,7 @@ function odulUret(k, o) {
     return true;
   }
   function kontrolEt() {
-    if (!girisli() || oyunda()) return;
+    if (!girisli() || oyunda() || document.querySelector('.bc-perde')) return;
     let s = sandikKontrol();
     if (s) { sandikTorenAc(s.g, s.idx); return; }
     karakterKontrol();
@@ -28705,6 +28708,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     p.innerHTML = `<div class="bz-oyun dm-question-panel" data-question-type="${s.tip}">${oyunUst()}</div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div><div class="bz-jokerler" id="bzJokerler"></div></div>`;
     $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { window.dmPapiFirstPractice?.complete('school');let b = O.b; kapat(); goster('harita', b); } };
     $('bzGeriSoru').onclick = () => incelemeAc();
+    const nav=p.querySelector('.bz-oyun-ust');if(nav){const next=document.createElement('button');next.type='button';next.className='bz-geri-soru';next.textContent='→';next.title='Cevaplanan soruları ileri/geri incele';next.setAttribute('aria-label','Sonraki cevaplanmış soruyu incele');next.disabled=!O.gecmis.some(Boolean);next.onclick=()=>incelemeAc(0);nav.insertBefore(next,nav.querySelector('.bz-noktalar'));}
     let alan = $('bzAlan');
     ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, cumleSirala, duydugunuBul })[s.tip](s, alan);
     window.dmCalmQuestion?.(p);
@@ -28745,7 +28749,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (iyi) { O.dogru++; if (window.OC) OC.dogru(O._ikinci || O._pas ? 2 : 1); } else { O.yanlis++; if (window.OC) OC.yanlis(false); }
     ses(iyi ? 'dogru' : 'yanlis');
     let g = document.createElement('div'); g.className = 'bz-geri-bildirim ' + (iyi ? 'iyi' : 'kotu'); g.setAttribute('role', 'status');
-    g.innerHTML = (O._pas ? '🔄 Pas geçtin (doğru sayıldı)' : iyi ? ['✨ Büyü tuttu!', '✨ Harika!', '✨ Mükemmel!'][Math.floor(Math.random() * 3)] : '💨 Olmadı!') + (dogruMetin ? `<div style="font-size:13.5px;margin-top:4px">Doğrusu: <b>${kac(dogruMetin)}</b></div>` : '');
+    const target=O.sorular[O.i], word=target.k||(target.l&&target.l[0]);
+    const translated=word&&typeof TR==='function'?TR(word):'';
+    const english=word&&typeof EN==='function'?EN(word):'';
+    g.innerHTML = (O._pas ? '🔄 Pas geçtin (doğru sayıldı)' : iyi ? ['✨ Büyü tuttu!', '✨ Harika!', '✨ Mükemmel!'][Math.floor(Math.random() * 3)] : '💨 Olmadı!') + (!iyi ? `<div style="font-size:13.5px;margin-top:4px">Doğru kelime: <b>${kac(english||dogruMetin||'')}</b><br>Türkçesi: <b>${kac(translated||'')}</b></div>` : dogruMetin ? `<div style="font-size:13.5px;margin-top:4px">${kac(dogruMetin)}</div>` : '');
     let alan = $('bzAlan'); alan.appendChild(g);
     O.gecmis[O.i] = { tip: O.sorular[O.i].tip, html: alan.innerHTML };
     let kalanSoru = O.i + 1 < O.sorular.length, enerjiNotu = kalanSoru && !sinifModu() && (O.i + 1) % 2 === 0 ? ' · ⚡ −1' : '';
@@ -28819,15 +28826,25 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
   }
   function kelimeKur(s,alan) {
-    const en=EN(s.k),letters=Array.from(en), chosen=[];
-    const tokens=karistir(letters.map((letter,id)=>({letter,id})));
-    alan.innerHTML='<div class="bz-etiket">🔤 Kelimeyi kur</div><div class="bz-soru">'+kac(TR(s.k))+'</div><div class="bz-ipucu">Harfleri doğru sıraya dokunarak yerleştir. Geri al ile düzeltebilirsin.</div><div class="dm-parkur-letters" id="bzLetterAnswer" aria-live="polite"></div><div class="dm-parkur-letters" id="bzLetterPool"></div><button class="bz-btn" id="bzLetterUndo" type="button">↶ Son harfi geri al</button>';
-    const answer=alan.querySelector('#bzLetterAnswer'),pool=alan.querySelector('#bzLetterPool');
+    const en=EN(s.k), letters=Array.from(en), positions=letters.map((c,i)=>/[a-z]/i.test(c)?i:-1).filter(i=>i>=0);
+    const tokens=karistir(positions.map(i=>({letter:letters[i],position:i}))),used=new Set(),chosen=[];
+    alan.innerHTML='<div class="bz-etiket">🔤 Kelimeyi keşfet</div><div class="bz-soru">'+kac(TR(s.k))+'</div><div class="bz-ipucu">Doğru harfe dokun: yeşilse yerine yerleşir, kırmızıysa tekrar deneyebilirsin. Boşluk ve noktalama otomatik.</div><div class="dm-parkur-letters" id="bzLetterAnswer" aria-live="polite"></div><div class="dm-parkur-letters" id="bzLetterPool"></div><p class="dm-letter-notice" id="bzLetterHint" role="status"></p><button class="bz-btn" id="bzLetterUndo" type="button">↶ Son harfi geri al</button>';
+    const answer=alan.querySelector('#bzLetterAnswer'),pool=alan.querySelector('#bzLetterPool'),hint=alan.querySelector('#bzLetterHint');
     const draw=()=>{
-      answer.textContent=chosen.map(i=>tokens[i].letter).join('')||'…';
-      pool.innerHTML='';tokens.forEach((t,i)=>{const b=document.createElement('button');b.type='button';b.className='dm-parkur-letter';b.textContent=t.letter;b.disabled=chosen.includes(i);b.onclick=()=>{chosen.push(i);draw();if(chosen.length===tokens.length){const good=chosen.map(j=>tokens[j].letter).join('')===en;pool.querySelectorAll('button').forEach(x=>x.disabled=true);cevap(good,good?'':en);}};pool.appendChild(b);});
-    };alan.querySelector('#bzLetterUndo').onclick=()=>{if(!O._cevaplandi){chosen.pop();draw();}};draw();
+      answer.innerHTML=letters.map((ch,i)=>positions.includes(i)?'<span class="dm-parkur-letter '+(chosen.some(t=>t.position===i)?'dm-right':'')+'">'+(chosen.find(t=>t.position===i)?.letter||'＿')+'</span>':ch===' '?' <span class="dm-auto-space"> </span> ':'<span class="dm-auto-punctuation">'+kac(ch)+'</span>').join('');
+      pool.innerHTML='';tokens.forEach((t,i)=>{const btn=document.createElement('button');btn.type='button';btn.className='dm-parkur-letter';btn.textContent=t.letter;btn.disabled=used.has(i);btn.onclick=()=>{
+        if(O._cevaplandi)return;
+        const expected=positions[chosen.length];if(expected===undefined)return;
+        if(t.letter.toLocaleLowerCase('en')!==letters[expected].toLocaleLowerCase('en')){
+          btn.classList.add('dm-wrong');hint.textContent='🔴 Bu sıradaki harf değil. Tekrar dene!';setTimeout(()=>{if(btn.isConnected)btn.classList.remove('dm-wrong')},700);return;
+        }
+        used.add(i);chosen.push({letter:t.letter,position:expected,index:i});hint.textContent='🟢 Harika, doğru sırada!';draw();
+        if(chosen.length===positions.length)cevap(true,'');
+      };pool.appendChild(btn);});
+    };
+    alan.querySelector('#bzLetterUndo').onclick=()=>{if(O._cevaplandi)return;const item=chosen.pop();if(item)used.delete(item.index);hint.textContent='';draw();};draw();
   }
+  
   function cumleSirala(s,alan) {
     const en=EN(s.k),tr=TR(s.k),parts=['The','English','word','is',en],chosen=[];
     const tokens=karistir(parts.map((word,id)=>({word,id})));
@@ -28852,7 +28869,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const normalizeVoice = x => String(x||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
       .toLocaleLowerCase('en').replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
     const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let denied=false;
+    let denied=false,shouldListen=false,stoppedByUser=false;
     alan.innerHTML = '<div class="bz-etiket">🎙️ 12. Görev · Papi ile konuş</div>' +
       '<div class="bz-ipucu">Türkçe anlamı gör, İngilizcesini sesli söyle. Doğru kart kaybolur; tüm kartları bitirince kapı açılır.</div>' +
       '<div id="bzMicStatus" role="status" aria-live="polite"></div><div id="bzMicCards"></div>' +
@@ -28864,7 +28881,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const mic=alan.querySelector('#bzMicStart'), input=alan.querySelector('#bzMicText');
     const render = () => {
       cards.innerHTML=remaining.map((id,n)=>'<div class="dm-final-card'+(n===0?' dm-final-current':'')+'"><span class="dm-final-card-label">'+(n===0?'Şimdi söyle':'Sıradaki kart')+'</span><strong>'+kac(list[id].tr)+'</strong><small>'+(n+1)+' / '+remaining.length+'</small></div>').join('');
-      mic.disabled=finished||listening||!SpeechAPI||denied;
+      mic.disabled=finished||!SpeechAPI||denied;
+      mic.textContent=shouldListen?'⏹ Mikrofonu kapat':'🎤 Mikrofonu aç';
       if(!SpeechAPI){mic.textContent='Mikrofon bu tarayıcıda desteklenmiyor';status.textContent='Klavye ile cevaplayabilirsin.';}
     };
     const accept = spoken => {
@@ -28876,24 +28894,26 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       if(correct){
         remaining.shift();ses('dogru');status.textContent='✅ '+expected+' — doğru! Kart tamamlandı.';
         input.value='';render();
-        if(!remaining.length){finished=true; mic.disabled=true;status.textContent='🎉 Bütün kelimeleri tamamladın!';
+        if(!remaining.length){finished=true;shouldListen=false;recognition?.stop(); mic.disabled=true;status.textContent='🎉 Bütün kelimeleri tamamladın!';
           cevap(true,'Tüm kelimeler sesli finalde tamamlandı');}
       } else {status.textContent='Bir daha dene! Söylediğin: '+String(spoken||'algılanamadı').slice(0,75);
         oku(expected);}
     };
-    mic.onclick=()=>{
-      if(!SpeechAPI||listening||finished)return;
+    const startMic=()=>{
+      if(!SpeechAPI||listening||finished||!shouldListen||denied||!alan.isConnected)return;
       try{
         recognition=new SpeechAPI();recognition.lang='en-US';recognition.interimResults=false;
-        recognition.maxAlternatives=5;listening=true;mic.disabled=true;status.textContent='🎙️ Dinliyorum…';
+        recognition.maxAlternatives=5;recognition.continuous=true;listening=true;status.textContent='🎙️ Dinliyorum…';render();
         recognition.onresult=e=>{const alts=Array.from(e.results[0]||[]).map(x=>x.transcript);
           accept(alts.find(x=>{const target=list[remaining[0]]?.en||'';return normalizeVoice(x)===normalizeVoice(target)||(O.speechAlternatives?.[target.toLocaleLowerCase('en').trim()]||'').split(/[;,|\n]+/).map(normalizeVoice).includes(normalizeVoice(x));})||alts[0]||'');};
-        recognition.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')denied=true;
-          status.textContent='Mikrofon algılayamadı ('+e.error+'). Tekrar dene ya da klavyeyi kullan.';};
-        recognition.onend=()=>{listening=false;render();};
+        recognition.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){denied=true;shouldListen=false;}
+          if(e.error==='audio-capture'){shouldListen=false;}
+          status.textContent='Mikrofon: '+e.error+'. Gerekirse klavyeyi kullan.';};
+        recognition.onend=()=>{listening=false;render();if(shouldListen&&!finished&&!denied&&alan.isConnected)setTimeout(startMic,300);};
         recognition.start();
-      }catch(e){listening=false;status.textContent='Mikrofon başlatılamadı. Klavye seçeneğini kullan.';render();}
+      }catch(e){listening=false;shouldListen=false;status.textContent='Mikrofon başlatılamadı. Klavye seçeneğini kullan.';render();}
     };
+    mic.onclick=()=>{if(shouldListen){shouldListen=false;stoppedByUser=true;recognition?.stop();render();status.textContent='Mikrofon kapalı.';}else{shouldListen=true;stoppedByUser=false;startMic();}};
     alan.querySelector('#bzMicCheck').onclick=()=>accept(input.value);
     input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();accept(input.value);}});
     render();
