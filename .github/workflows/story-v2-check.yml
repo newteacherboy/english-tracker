@@ -1,0 +1,26 @@
+name: Learning route v2
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/story-*'
+      - 'supabase/functions/diji-api/story-*'
+      - 'tests/story-*'
+      - '.github/workflows/story-v2-check.yml'
+  push:
+    branches:
+      - feature/learning-path-speaking-feedback-20261011
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node tests/story-final-cards.cjs
+          node tests/story-exercises.cjs
+          node tests/story-exercises-all-chapters.cjs
+          node tests/story-v2-parity.cjs
