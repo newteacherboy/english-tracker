@@ -69,7 +69,7 @@ actions.innerHTML=task.kind==='order'?button('Yeniden sırala','clear')+button('
 modal.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action));modal.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>advance(Number(b.dataset.answer),b));modal.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.card);selectedCards.add(i);b.querySelector('span').hidden=false;b.classList.add('discovered');speak(task.cards[i].en)});modal.querySelectorAll('[data-token]').forEach(b=>b.onclick=()=>{if(busy||accepted||b.disabled)return;b.disabled=true;built.push(Number(b.dataset.token));modal.querySelector('.ds-sentence').textContent=built.map(i=>task.tokens[i]).join(' ')});
 }
 function renderNewExercises(){
- const steps=window.DMStoryExercises.build(chapter);
+ const steps=session?.deckVersion===3?window.DMStoryExercises.buildV3(chapter):window.DMStoryExercises.build(chapter);
  if(displayCursor>=steps.length){finish();return}
  shell();accepted=false;
  const task=steps[displayCursor],area=modal.querySelector('.ds-task'),actions=modal.querySelector('.ds-actions');
