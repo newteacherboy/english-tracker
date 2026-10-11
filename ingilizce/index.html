@@ -28848,7 +28848,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         if(O._cevaplandi)return;
         const expected=positions[chosen.length];if(expected===undefined)return;
         if(t.letter.toLocaleLowerCase('en')!==letters[expected].toLocaleLowerCase('en')){
-          wrong++;btn.classList.add('dm-wrong');hint.textContent='🔴 Yanlış harf ('+wrong+'/3).';if(wrong>=3){hint.textContent='Doğru cevap: '+en+' · Türkçesi: '+TR(s.k);pool.querySelectorAll('button').forEach(x=>x.disabled=true);setTimeout(()=>cevap(false,en),900);return;}setTimeout(()=>{if(btn.isConnected)btn.classList.remove('dm-wrong')},700);return;
+          wrong++;btn.classList.add('dm-wrong');hint.textContent='🔴 Yanlış harf ('+wrong+'/3).';if(wrong>=3){hint.textContent='Doğru cevap: '+en+' · Türkçesi: '+TR(s.k);pool.querySelectorAll('button').forEach(x=>x.disabled=true);setTimeout(()=>{if(O._cevaplandi)return;cevap(false,en);setTimeout(()=>{if(O._cevaplandi)devamEt();},1300);},900);return;}setTimeout(()=>{if(btn.isConnected)btn.classList.remove('dm-wrong')},700);return;
         }
         used.add(i);chosen.push({letter:t.letter,position:expected,index:i});hint.textContent='🟢 Harika, doğru sırada!';draw();
         if(chosen.length===positions.length)cevap(true,'');

@@ -16,7 +16,7 @@ test('11 structured questions and 12th voice finale remain connected', () => {
   assert.match(script,/sorular=\[\.\.\.first,\.\.\.middle,\.\.\.last\]/);
   assert.match(script,/sorular\.push\(\{tip:'sesliFinal',l:karistir\(active\)\}\)/);
   assert.match(script,/function sesliFinal\(/);
-  assert.match(script,/const scoped = havuzTum\(\)\.filter/);
+  assert.match(script,/const targets=D\.kelimeler\.slice\(\)/);
 });
 test('voice finale has alternatives and a keyboard fallback', () => {
   const script=html.slice(start,end);
@@ -39,7 +39,9 @@ test('speech permission errors leave a keyboard alternative', () => {
 });
 test('all active target words come from selected unit', () => {
   const script=html.slice(start,end);
-  assert.match(script,/Number\(k\.sinif\)===Number\(D\.sinif\)/);
-  assert.match(script,/Number\(k\.unite\)===Number\(D\.unite\)/);
+  assert.match(script,/Number\(k\.sinif\)===sn/);
+  assert.match(script,/Number\(k\.unite\)===un/);
   assert.match(script,/const active=targets/);
 });
+
+test('word bank progresses in groups of four, with matching rather than artificial sentence ordering',()=>{const script=html.slice(start,end);assert.match(script,/PARKUR_KELIME_ADEDI=4/);assert.match(script,/parcaToplam:groups/);assert.match(script,/\{tip:'eslestir'/);assert.match(script,/function eslestir\(/);assert.doesNotMatch(script,/\{tip:'cumleSirala'/);});
