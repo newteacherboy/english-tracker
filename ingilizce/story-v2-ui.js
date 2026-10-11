@@ -27,7 +27,7 @@ window.DMStoryV2UI={
    task.tokens.map((t,i)=>({t,i})).reverse().forEach(({t,i})=>{const b=button(t,()=>{selected.push(i);b.disabled=true;area.querySelector('.ds-sentence').textContent=selected.map(n=>task.tokens[n]).join(' ')});tray.append(b)});area.append(tray);
    actions.append(button('Temizle',()=>{selected=[];tray.querySelectorAll('button').forEach(b=>b.disabled=false);area.querySelector('.ds-sentence').textContent='Cümlen burada oluşacak…'}));
   }else if(['choose','complete'].includes(task.kind)){
-   put('<p class="papi-subtitle">'+(task.kind==='complete'?'Eksik kısmı seç':'Papi’yi dinle, doğru cevabı seç')+'</p><p class="papi-question">'+esc(task.kind==='complete'?task.stem+' ___':task.tr)+'</p><div class="ds-options"></div>');
+   put('<p class="papi-subtitle">'+(task.kind==='complete'?'Eksik kısmı seç':'Papi’yi dinle, doğru cevabı seç')+'</p><p class="papi-question">'+esc(task.kind==='complete'?task.stem:task.tr)+'</p><div class="ds-options"></div>');
    [...new Set([...task.options,task.answer])].forEach(v=>{const b=button(v,()=>{picked=v;area.querySelectorAll('.ds-options button').forEach(x=>x.classList.toggle('selected',x===b))});area.querySelector('.ds-options').append(b)});
   }else{
    put('<p class="papi-subtitle">'+(task.kind==='final'?'🦜 Kelime tekrarı · Türkçesini oku, İngilizcesini söyle':'🎤 Papi seni dinliyor')+'</p><p class="papi-question">'+esc(task.kind==='final'?task.tr:task.kind==='translate'?task.tr:task.en)+'</p><input class="papi-text-answer" aria-label="İngilizce cevabın" autocomplete="off" placeholder="İngilizce söyle veya yaz">');
