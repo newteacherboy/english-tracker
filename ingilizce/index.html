@@ -28904,7 +28904,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       try{
         recognition=new SpeechAPI();recognition.lang='en-US';recognition.interimResults=false;
         recognition.maxAlternatives=5;recognition.continuous=true;listening=true;status.textContent='🎙️ Dinliyorum…';render();
-        recognition.onresult=e=>{const alts=Array.from(e.results[0]||[]).map(x=>x.transcript);
+        recognition.onresult=e=>{const latest=e.results[e.resultIndex]||e.results[e.results.length-1];if(!latest||!latest.isFinal)return;const alts=Array.from(latest).map(x=>x.transcript);
           accept(alts.find(x=>{const target=list[remaining[0]]?.en||'';return normalizeVoice(x)===normalizeVoice(target)||(O.speechAlternatives?.[target.toLocaleLowerCase('en').trim()]||'').split(/[;,|\n]+/).map(normalizeVoice).includes(normalizeVoice(x));})||alts[0]||'');};
         recognition.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){denied=true;shouldListen=false;}
           if(e.error==='audio-capture'){shouldListen=false;}
