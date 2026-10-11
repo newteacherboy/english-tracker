@@ -25,3 +25,6 @@
 .rt-profile-grid img{width:44px;height:44px}
 .rt-profile-grid b{font-size:12px;line-height:1.1}
 @media(max-width:390px){.rt-profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rt-profile-grid button{min-height:92px}}
+
+/* Retire the old top Parkur/MeduPro selector and its launcher, without moving the chosen route. */
+#tab-dunya #pkSekmeler,#tab-dunya #ybArac,#ybArac{display:none!important}
