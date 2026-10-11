@@ -60,6 +60,11 @@
    const freeIds=['papiCardsActivity','wordWheelActivity','meteorActivity'];
    const isFree=freeIds.includes(b.id)||/papi kartları|papi’nin meteor düellosu|papi'nin meteor düellosu|papi’nin kelime çarkı|papi'nin kelime çarkı/.test(label);
    b.dataset.dmParty=isFree?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';
+   // Filter cards directly: legacy card display!important rules can override CSS-only filters.
+   const shouldShow=b.dataset.dmParty===party;
+   b.hidden=!shouldShow;
+   if(shouldShow){b.style.removeProperty('display');}
+   else{b.style.setProperty('display','none','important');}
   });
   if(observedGrid!==grid){partyObserver?.disconnect();observedGrid=grid;partyObserver=new MutationObserver(upgradeCards);partyObserver.observe(grid,{childList:true});}
  }
