@@ -30,7 +30,7 @@
       const card=current(),correct=normalize(answer)===normalize(card.en);
       if(correct){state.attempts=0;state.index++;state.done=state.index>=deck.length;return {status:'correct',spoken:card.en,done:state.done,state:snapshot()};}
       state.attempts++;
-      if(state.attempts<2)return {status:'hint',hint:card.en.length>1?card.en[0]+'…':'Tekrar dinle.',remaining:1,state:snapshot()};
+      if(state.attempts<2)return {status:'hint',hint:card.en,spoken:card.en,translation:card.tr,remaining:1,state:snapshot()};
       if(!state.missed.includes(state.index))state.missed.push(state.index);
       state.attempts=0;state.index++;state.done=state.index>=deck.length;
       return {status:'reveal',spoken:card.en,translation:card.tr,done:state.done,state:snapshot()};
