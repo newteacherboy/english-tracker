@@ -993,7 +993,27 @@ html, body { touch-action: pan-x pan-y; }
 .dm-match-option{border:2px solid #b4d9c0;border-radius:13px;background:#f0f8ed;color:#184c3c;font-size:15px;font-weight:800;min-height:48px;padding:8px 7px;overflow-wrap:anywhere}
 .dm-match-option.selected{outline:3px solid #f0c46b}.dm-match-option.dm-right{background:#ccefd7;border-color:#50aa71}.dm-match-option.dm-wrong{background:#ffe1e1;border-color:#e65a5a}
 </style>
-</head>
+<style id="dm-adventure-one-screen-v1">
+/* All adventure question types: one responsive viewport, no body/page scrolling. */
+#bzPerde:has(>.bz-oyun){height:100dvh;box-sizing:border-box;overflow:hidden!important;overscroll-behavior:contain;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important}
+#bzPerde>.bz-oyun{height:100%;max-height:100%;min-height:0;box-sizing:border-box;display:grid!important;grid-template-rows:auto minmax(0,1fr) auto;align-items:stretch;padding:clamp(4px,1vh,10px) 0!important;gap:clamp(4px,.7vh,9px)}
+#bzPerde>.bz-oyun>.bz-oyun-ust{max-width:760px;width:100%;box-sizing:border-box;padding:2px clamp(8px,2vw,16px)!important;min-height:34px;margin:0 auto}
+#bzPerde>.bz-oyun>#bzAlan{box-sizing:border-box;margin:0 auto!important;max-width:min(760px,calc(100% - 16px))!important;width:calc(100% - 16px);min-height:0;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:clamp(8px,1.5vh,18px)!important;box-shadow:0 5px 18px #102b3640}
+#bzPerde>.bz-oyun>#bzJokerler{box-sizing:border-box;max-width:760px;width:calc(100% - 16px);margin:0 auto!important;padding:2px 0 max(3px,env(safe-area-inset-bottom,0px));gap:clamp(3px,1vw,8px)!important;flex-wrap:nowrap!important;align-items:stretch}
+#bzPerde>.bz-oyun>#bzJokerler .bz-jk{min-width:0!important;flex:1 1 0!important;font-size:clamp(10px,2.3vw,13px)!important;min-height:43px;padding:5px 2px}
+#bzPerde #bzAlan .bz-soru{font-size:clamp(16px,2.8vh,24px)!important;line-height:1.25!important;margin:4px 0 8px!important}
+#bzPerde #bzAlan .bz-ipucu{padding:6px 9px!important;font-size:clamp(11px,1.9vh,14px)!important;margin:5px 0!important}
+#bzPerde #bzAlan .bz-secenekler{gap:clamp(5px,1vh,10px)!important}
+#bzPerde #bzAlan .bz-sec{padding:clamp(8px,1.4vh,15px)!important;min-height:40px;font-size:clamp(14px,2vh,18px)!important}
+#bzPerde #bzAlan .bz-slotlar{gap:clamp(3px,.7vw,7px);margin:5px 0 8px!important}
+#bzPerde #bzAlan .bz-slot{width:clamp(27px,4vh,42px);height:clamp(31px,4.9vh,48px);font-size:clamp(14px,2.5vh,22px)}
+#bzPerde #bzAlan .bz-harfler{gap:clamp(3px,.65vw,7px)!important}
+#bzPerde #bzAlan .bz-cip2{min-width:clamp(30px,4vh,42px);height:clamp(34px,4.8vh,44px)!important}
+#bzPerde #bzAlan .bz-btn{min-height:clamp(41px,6vh,54px);padding:8px!important}
+#bzPerde .bz-inceleme{min-height:0;overflow:auto}
+@media(min-width:820px){#bzPerde>.bz-oyun{max-width:820px;margin:0 auto}#bzPerde #bzAlan .bz-sec{font-size:18px!important}}
+@media(max-height:660px){#bzPerde>.bz-oyun{gap:3px}#bzPerde #bzAlan .bz-soru{margin:2px 0 4px!important}#bzPerde #bzAlan .bz-kart2{height:60px}#bzPerde #bzAlan .bz-slot{height:31px}}
+</style></head>
         <body>
 <div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
 <script>(function(){
