@@ -141,3 +141,19 @@
 @media(max-width:360px){.gg-title{gap:6px}.gg-title h1{font-size:24px}.gg-tabs button{font-size:9px;padding:8px 3px}.gg-banner img{height:110px}.gg-banner{min-height:110px}.gg-copy strong{font-size:11px}.gg-copy small{font-size:9px}.gg-game .gg-play{font-size:10px}.gg-next label{font-size:9px}}
 
 #tab-aktiviteler#tab-aktiviteler .gg-page .az-grid2x2>.gg-game.gg-locked{filter:grayscale(.65)!important;opacity:.7!important}.gg-locked .gg-play{background:#dedbd3;color:#746e66;box-shadow:none}
+
+/* Isolate the Games hub from legacy card decorators and global heading colours. */
+#tab-aktiviteler#tab-aktiviteler{background:#fbf5e9!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page :is(h1,h2,h3),#tab-aktiviteler#tab-aktiviteler .gg-copy .az-gcard-title{color:#382316!important;text-shadow:none!important}
+#tab-aktiviteler#tab-aktiviteler .gg-copy .az-gcard-title{font:900 clamp(12px,2.9vw,18px)/1.15 'Baloo 2',Nunito,sans-serif!important;position:static!important;margin:0!important;padding:0!important;letter-spacing:0!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party=free] .gg-copy .az-gcard-title{font-size:clamp(16px,4vw,23px)!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page .az-grid2x2>:not(.gg-game),
+#tab-aktiviteler#tab-aktiviteler .gg-page .az-grid2x2>.gg-game[hidden],
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-game>:not(.gg-art):not(.gg-copy),
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-game :is(.ak-acik,.ak-etiket,.dm-game-picture,.dm-play-visual){display:none!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party=free] .az-grid2x2>:not(#papiCardsActivity):not(#meteorActivity):not(#wordWheelActivity){display:none!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page .az-grid2x2{padding-bottom:0!important}
+#tab-aktiviteler#tab-aktiviteler .gg-friends{flex-wrap:wrap;overflow:visible}
+#tab-aktiviteler#tab-aktiviteler .gg-friends>span{line-height:1.35;color:#80513b}
+#tab-aktiviteler#tab-aktiviteler .gg-friends>button:only-child:not([data-gg-person]){max-width:none;text-align:left;font-size:12px;line-height:1.35;color:#80513b}
+body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}

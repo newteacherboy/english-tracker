@@ -1,9 +1,9 @@
 name: Games hub
 on:
   push:
-    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-hub-ui.cjs', '.github/workflows/games-hub.yml']
+    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', '.github/workflows/games-hub.yml']
   pull_request:
-    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-hub-ui.cjs', '.github/workflows/games-hub.yml']
+    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', '.github/workflows/games-hub.yml']
 jobs:
   games:
     runs-on: ubuntu-latest
@@ -16,5 +16,9 @@ jobs:
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
       - run: node tests/games-hub-ui.cjs
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ github.workspace }}/node_modules
+
+      - run: node tests/games-hub-integration.cjs
         env:
           CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ github.workspace }}/node_modules
