@@ -22738,14 +22738,8 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     }, 700);
   }
 
-  let krGosterilen = '';
-  setInterval(() => {
-    if (!girisli() || !yoVar() || krGosterilen === kucuk(aktifOgrenciAdi)) return;
-    krGosterilen = kucuk(aktifOgrenciAdi);
-    setTimeout(() => {
-      karsilamaGoster();
-    }, 1200);
-  }, 1000);
+  // Karşılama paneli kullanıcı isteğiyle kapatıldı. Girişte otomatik açılmaz.
+
 })();
 </script>
 
