@@ -15738,18 +15738,12 @@ function sohbetMikDur() {
 <div class="ma-wrap">
   <div class="akis-baslik">
     <h2><span>🎡</span>Arkadaşlar</h2>
-     <div class="segment" id="maSegment">
-  <i id="maSegmentIz"></i>
-
-               <button data-s="akis" onclick="maSekmeSec('akis')">Akış</button>
-             <button data-s="kesfet" onclick="maSekmeSec('kesfet')">Keşfet</button>
-             <button data-s="vitrin" onclick="maSekmeSec('vitrin')">Vitrinim</button>
-    
-  <button data-s="lig" onclick="maSekmeSec('lig')">Lig</button>
-
-  
-  <button data-s="profil" onclick="maSekmeSec('profil')">Profil</button>
-</div>
+     <button type="button" class="fr-back" data-friend-action="home">‹ Arkadaşlar'a dön</button>
+     <div class="segment" id="maSegment" role="tablist" aria-label="Arkadaşlar ayrıntıları">
+       <button type="button" data-s="akis" role="tab" onclick="maSekmeSec('akis')">Akış</button>
+       <button type="button" data-s="vitrin" role="tab" onclick="maSekmeSec('vitrin')">Vitrinim</button>
+       <button type="button" data-s="lig" role="tab" onclick="maSekmeSec('lig')">Lig</button>
+     </div>
   </div>
   <div class="ma-ekran" id="maEkran"></div>
 </div>
@@ -17985,17 +17979,7 @@ if (typeof orgXp === 'function') {
   setTimeout(ogretmenPuanlari, 20000);
 
   /* [v4.9] Eski düello modülü kaldırıldı; güncel sürümü aşağıdaki "Düello" bölümünde. */
-  /* ================= GRUP 7: PARKUR SEKMESİ + KARŞILAMA ================= */
-  setInterval(() => {
-    let s = $('maSegment');
-    if (s && !s.querySelector('[data-s="parkur"]')) {
-      let b = document.createElement('button');
-      b.dataset.s = 'parkur'; b.innerText = '🧙 Parkur';
-      b.onclick = () => { if (typeof baModuAc === 'function') baModuAc(); };
-      let ilk = s.querySelector('button'); s.insertBefore(b, ilk);
-    }
-  }, 1000);
-
+  /* Arkadaşlar bölümünde parkur bulunmaz; parkurlar Oyna'da açılır. */
   let krBildirim = null, krAcik = null;
   window.karsilamaBildirim = function (liste) {
     krBildirim = liste;
@@ -30784,5 +30768,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <!-- OYNA SEKMESI v2 -->
 <link rel="stylesheet" href="oyna-v2.css?v=20261011-roomier">
 <script src="oyna-v2.js?v=20261011-roomier"></script>
+<link rel="stylesheet" href="friends-ui.css?v=20261011-1">
+<script src="friends-ui.js?v=20261011-1"></script>
 </body>      
         </html>
