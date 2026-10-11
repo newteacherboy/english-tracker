@@ -225,7 +225,7 @@
       <div class="bd-kart" id="bdKart"></div>
       <div class="bd-sekmeler" role="tablist" aria-label="Benim Dünyam">${SEKMELER.map(([k, ad]) => `<button type="button" role="tab" class="bd-sekme" data-bd="${k}" aria-selected="false">${ad}</button>`).join('')}</div>
       <div class="bd-govde">
-        <section class="bd-panel" data-panel="sanaozel"><div id="bdOdevler"></div><div class="bw-review bw-card"><span class="bw-review-art bw-art" aria-hidden="true"></span><div><h2>Tekrar Zamanı</h2><p id="bwReviewText"></p><span class="bw-pill" id="bwReviewCount"></span><span class="bw-pill">Kısa bir tekrar</span></div><button type="button" id="bwReviewStart" class="bw-green">Tekrara başla <span>▶</span></button></div><div class="bw-showcase"><article class="bw-badges bw-card"><div class="bw-heading"><h2>Rozetlerim</h2><span id="bwBadgeCount" class="bw-pill"></span></div><p>Başarıların burada parlıyor!</p><div id="bwBadgePreview" class="bw-podiums"></div><button type="button" data-world-page="rozetler">Tümünü gör <span>›</span></button></article><article class="bw-character bw-card"><h2>Karakterim</h2><p>Senin dünyan, senin tarzın!</p><div id="bwCharacterPreview"></div><button type="button" data-world-page="karakter">Karakterini düzenle <span>›</span></button></article></div><article class="bw-stats bw-card"><div class="bw-heading"><h2>İstatistiklerim</h2><button type="button" data-world-page="istatistik" aria-label="Tüm istatistikler">Tümü ›</button></div><div id="bwStats" class="bw-stat-track" tabindex="0" aria-label="İstatistikler, yatay kaydır"></div></article><article class="bw-exam bw-card"><img src="world-assets/compass.svg" alt=""><div><h2>Seviye Tespit Sınavı</h2><p>Seviyeni keşfet, sana uygun yerden başla.</p></div><button type="button" id="bwExamStart">Sınava başla <span>›</span></button></article></section>
+        <section class="bd-panel" data-panel="sanaozel"><div id="bdOdevler"></div><div class="bw-review bw-card"><svg class="bw-review-art" viewBox="0 0 810 680" aria-hidden="true"><image href="world-assets/papi-atlas.png" width="2048" height="680"/></svg><div><h2>Tekrar Zamanı</h2><p id="bwReviewText"></p><span class="bw-pill" id="bwReviewCount"></span><span class="bw-pill">Kısa bir tekrar</span></div><button type="button" id="bwReviewStart" class="bw-green">Tekrara başla <span>▶</span></button></div><div class="bw-showcase"><article class="bw-badges bw-card"><div class="bw-heading"><h2>Rozetlerim</h2><span id="bwBadgeCount" class="bw-pill"></span></div><p>Başarıların burada parlıyor!</p><div id="bwBadgePreview" class="bw-podiums"></div><button type="button" data-world-page="rozetler">Tümünü gör <span>›</span></button></article><article class="bw-character bw-card"><h2>Karakterim</h2><p>Senin dünyan, senin tarzın!</p><div id="bwCharacterPreview"></div><button type="button" data-world-page="karakter">Karakterini düzenle <span>›</span></button></article></div><article class="bw-stats bw-card"><div class="bw-heading"><h2>İstatistiklerim</h2><button type="button" data-world-page="istatistik" aria-label="Tüm istatistikler">Tümü ›</button></div><div id="bwStats" class="bw-stat-track" tabindex="0" aria-label="İstatistikler, yatay kaydır"></div></article><article class="bw-exam bw-card"><img src="world-assets/compass.svg" alt=""><div><h2>Seviye Tespit Sınavı</h2><p>Seviyeni keşfet, sana uygun yerden başla.</p></div><button type="button" id="bwExamStart">Sınava başla <span>›</span></button></article></section>
         <section class="bd-panel" data-panel="istatistik" hidden><div id="bdIstat"></div><div id="bdGelisim"></div></section>
         <section class="bd-panel" data-panel="rozetler" hidden><div id="bdRozet"></div></section>
         <section class="bd-panel" data-panel="karakter" hidden><div id="bdKarakterUst"></div><div id="bdKarakterAlan"></div><div id="bdKoleksiyon"></div></section>
@@ -278,6 +278,9 @@
     new MutationObserver(records => {
       if (!records.some(r => [...r.addedNodes].some(n => n.nodeType === 1 && (n.matches?.('.odo-satir,#odoKart') || n.querySelector?.('.odo-satir'))))) return;
       const card = $('odoKart'); if (!card || card.hidden) return;
+      if (!card.querySelector('.bw-homework-clipboard')) {
+        const art = document.createElement('div'); art.className = 'bw-homework-art'; art.innerHTML = '<svg class="bw-homework-clipboard" viewBox="1430 0 618 680" aria-hidden="true"><image href="world-assets/papi-atlas.png" width="2048" height="680"/></svg><svg class="bw-homework-book" viewBox="810 0 590 680" aria-hidden="true"><image href="world-assets/papi-atlas.png" width="2048" height="680"/></svg>'; card.appendChild(art);
+      }
       const rows = [...card.querySelectorAll('.odo-satir')];
       if (!rows.length) return;
       let index = rows.findIndex(r => r.querySelector('[data-od]')?.dataset.od === selectedHomework);
@@ -301,6 +304,9 @@
     const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     const rect = nav && nav.getBoundingClientRect();
     const bottom = rect && rect.height && getComputedStyle(nav).display !== 'none' ? Math.max(0, vh - rect.top) : 12;
+    const guest = $('dmGuestBar'), gr = guest && guest.getBoundingClientRect();
+    const top = gr && gr.height && getComputedStyle(guest).display !== 'none' ? gr.bottom : 0;
+    ov.style.setProperty('--bw-top', top + 'px');
     ov.style.setProperty('--bw-height', vh + 'px');
     ov.style.setProperty('--bw-nav', bottom + 'px');
   }
@@ -311,7 +317,7 @@
     let count = 0;
     try { count = typeof zkVadesiGelen === 'function' ? zkVadesiGelen().length : 0; } catch(e) {}
     const c = rozetBaglami(), earned = kazanilanRozetler(c), t = toplamlar(istat && istat.gunler, '');
-    const character = window.dmStoreWardrobe?.character(260) || '<img src="benim-dunyam/papi-selam.png" alt="Papi">';
+    const character = window.dmStoreWardrobe?.character(260) || window.karakterSvg?.(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '',260) || '<img src="benim-dunyam/papi-selam.png" alt="Papi">';
     const signature = JSON.stringify([count,[...earned],t,character,istatYukleniyor,!!istat]);
     if (signature === homeSignature) return;
     homeSignature = signature;

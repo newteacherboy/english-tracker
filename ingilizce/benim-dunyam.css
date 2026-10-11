@@ -386,3 +386,18 @@
 #tab-dunyam.bd-design-one .bd-kart{max-width:none;margin:0}
 #tab-dunyam.bd-design-one .bw-review-art{background-size:253% 100%}
 @media(max-width:600px){#tab-dunyam.bd-design-one.active{padding-top:9px!important}}
+#tab-dunyam.bd-design-one.active{padding-top:calc(var(--bw-top,0px) + 12px)!important}
+#tab-dunyam.bd-design-one .bw-review-art{background:url(world-assets/review.svg) center/contain no-repeat}
+#tab-dunyam.bd-design-one #odoKart::before{background:url(world-assets/clipboard.svg) center/contain no-repeat}
+#tab-dunyam.bd-design-one #odoKart::after{background:url(world-assets/book.svg) center/contain no-repeat}
+#tab-dunyam.bd-design-one .bw-character{background-image:url(world-assets/dressing-room.png)}
+#tab-dunyam.bd-design-one .bw-stat-track>button{column-gap:8px}
+#tab-dunyam.bd-design-one .bw-stat-track small{font-size:12px}
+#tab-dunyam.bd-design-one .bw-stat-track b{font:900 26px/1.15 Nunito,sans-serif}
+@media(max-width:600px){#tab-dunyam.bd-design-one.active{padding-top:calc(var(--bw-top,0px) + 9px)!important}#tab-dunyam.bd-design-one .bw-stat-track small{font-size:9px}#tab-dunyam.bd-design-one .bw-stat-track b{font-size:19px}}
+#tab-dunyam.bd-design-one .bw-review-art{background:none}
+#tab-dunyam.bd-design-one #odoKart::before,#tab-dunyam.bd-design-one #odoKart::after{display:none}
+#tab-dunyam.bd-design-one .bw-homework-art{position:absolute;inset:0;pointer-events:none}
+#tab-dunyam.bd-design-one .bw-homework-clipboard{position:absolute;left:7px;top:8%;height:84%;width:55px}
+#tab-dunyam.bd-design-one .bw-homework-book{position:absolute;right:110px;bottom:0;height:97%;width:85px}
+@media(max-width:600px){#tab-dunyam.bd-design-one .bw-homework-clipboard{width:35px;left:5px}#tab-dunyam.bd-design-one .bw-homework-book{display:none}}

@@ -842,6 +842,41 @@
       "bytes": 45526,
       "status": "ai-generated",
       "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/store-assets/shop-icons.png",
+      "sha256": "72abe82a694bba5de9b52023b645cc8789f347f88d13c51b1c6e4b79e6af9d04",
+      "bytes": 1735600,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
+    },
+    {
+      "path": "ingilizce/store-assets/dressing-room.png",
+      "sha256": "32a421d1ccfaf67d94c8c8419e96a2767030f057d86fc1f1a17ece0596453a25",
+      "bytes": 1799018,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
+    },
+    {
+      "path": "ingilizce/world-assets/compass.svg",
+      "sha256": "773e41d95f85d78fc1770d061716c7a9d4f88041440c4a3efc9396dad935dc14",
+      "bytes": 925,
+      "status": "original-code",
+      "source": "Original SVG authored for approved world design 1"
+    },
+    {
+      "path": "ingilizce/world-assets/dressing-room.png",
+      "sha256": "75cb47f8076569506f32ab83816ba18c961a1d4f56e1b1fa3293d5615ad396e5",
+      "bytes": 1749492,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
+    },
+    {
+      "path": "ingilizce/world-assets/papi-atlas.png",
+      "sha256": "12c676659342db3c0c15d1133cdf9a88434732ceea2f1766bec7f12ef938ac71",
+      "bytes": 1443020,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
     }
   ]
 }
