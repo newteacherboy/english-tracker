@@ -18796,7 +18796,7 @@ function odulUret(k, o) {
       kap.insertBefore(bar, kap.firstChild);
       let k = document.createElement('div'); k.id = 'bcMgAlan'; kap.appendChild(k);
     }
-    bar.innerHTML = [['atolye', '🎨 Atölye'], ['koleksiyon', '🎭 Karakterlerim'], ['sandik', '🎁 Sandıklar']].map(([k, t]) => `<button class="${k === mgSekme ? 'aktif' : ''}" data-k="${k}">${t}</button>`).join('');
+    bar.innerHTML = [['atolye', '👕 Giyim'], ['sandik', '🎁 Sandıklar']].map(([k, t]) => `<button class="${k === mgSekme ? 'aktif' : ''}" data-k="${k}">${t}</button>`).join('');
     bar.querySelectorAll('button').forEach(b => b.onclick = () => { mgSekme = b.dataset.k; mgCiz(); });
   }
   function mgCiz() {
@@ -24791,6 +24791,56 @@ window.ocEnerjiHarca = async function (n) {
     return (Date.parse(bugun()) - Date.parse(yo.dolapIlkGun)) / 86400000 <= 7 && !yo.dolapHosGeldin;
   }
 
+  /* Storefront uses the same wardrobe catalog, discounts and server purchase. */
+  window.dmStoreWardrobe = {
+    ready: () => !!kk(),
+    character: (px = 220) => {
+      if (!kk()) return '';
+      if (yo.profilKrk && typeof window.karakterSvg === 'function') return window.karakterSvg(aktifOgrenciAdi, px);
+      return dolapTamBoySVG(Object.assign({}, window.KA_VARSAYILAN[kk().cins], kk().s), kk().cins, px);
+    },
+    preview: (id, px = 150) => {
+      const o = ogeBul(id); if (!o || !kk()) return '';
+      const s = Object.assign({}, window.KA_VARSAYILAN[kk().cins], kk().s);
+      (o.parca || [o]).forEach(p => giy(s, p));
+      return dolapTamBoySVG(s, kk().cins, px);
+    },
+    parts: id => { const o = ogeBul(id); return (o?.parca || (o ? [o] : [])).slice(0, 3).map(p => ({id:p.id, category:p.kat, color:p.renk || '#9b64ef', tip:p.tip || p.kat, emoji:p.emoji || ''})); },
+    offers: () => {
+      if (!kk()) return [];
+      const allowed = o => !!window.dmProgression?.itemAllowed(o, true);
+      let h = 0; for (const ch of bugun() + aktifOgrenciAdi) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+      const combos = KOMBIN.filter(o => allowed(o) && !o.parca.every(p => sahip(p.id)));
+      const combo = (combos.length ? combos : KOMBIN)[h % (combos.length || KOMBIN.length)];
+      let daily = vitrinOgesi();
+      const alternatives = OGE.filter(o => allowed(o) && !sahip(o.id));
+      if (!daily || !allowed(daily)) daily = alternatives[h % (alternatives.length || 1)] || OGE.find(allowed) || OGE[0];
+      return [combo, daily].filter(Boolean).map((o, i) => ({
+        id: o.id, name: o.ad, title: i === 0 ? 'Sana özel kombin' : 'Günün fırsatı',
+        price: fiyatHesapla(o, !!o.parca).f, note: fiyatHesapla(o, !!o.parca).not,
+        level: DijiProgressionCatalog.itemLevel(o), allowed: allowed(o),
+        owned: o.parca ? o.parca.every(p => sahip(p.id)) : sahip(o.id),
+        equipped: o.parca ? o.parca.every(p => giyiliMi(p)) : giyiliMi(o),
+        count: o.parca ? o.parca.length : 1
+      }));
+    },
+    buy: async id => {
+      const o = ogeBul(id); if (!o || !kk()) throw Error('Önce karakterini oluşturmalısın.');
+      if (!window.dmProgression?.itemAllowed(o)) return false;
+      const has = o.parca ? o.parca.every(p => sahip(p.id)) : sahip(o.id);
+      if (has) {
+        (o.parca || [o]).forEach(p => giy(kk().s, p)); yo.profilKrk = '';
+        window.yoKaydet?.(); window.yoAvatarUygula?.(); toast('✓ Görünümün kaydedildi!'); return true;
+      }
+      if (Number(yo.altin || 0) < fiyatHesapla(o, !!o.parca).f) throw Error('Bu ürün için yeterli altının yok.');
+      await window.dmProgression.sync();
+      const r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'seviyeUrunAl', ogrenci: aktifOgrenciAdi, t: localStorage.getItem('ing_token') || '', item: o.id }) });
+      const result = await r.json(); if (!r.ok || !result.ok) throw Error(result.mesaj || 'Satın alma tamamlanamadı.');
+      Object.assign(yo, result.yo); window.yoAvatarUygula?.(); window.dmProgression.refresh(true);
+      toast(`🎉 ${o.ad} artık senin!`); return true;
+    }
+  };
+
   /* ================= ARAYÜZ (Mağaza'daki Atölye alanına gömülü) ================= */
   let D = null;
   function ac(hedef) {
@@ -30760,5 +30810,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="friends-ui.js?v=20261011-1"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261011-3">
 <script src="study-ui.js?v=20261011-3"></script>
+<link rel="stylesheet" href="storefront.css?v=20261011-4">
+<script src="storefront.js?v=20261011-4"></script>
 </body>      
         </html>
