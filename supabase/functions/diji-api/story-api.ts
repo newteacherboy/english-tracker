@@ -27,14 +27,21 @@ export function storyAPI(db:any,json:any){
   if(existing.cursor>=stepsFor(chapter,existing).length)return json({...view(existing),correct:true,alreadyCompleted:true});
   if(Number(b.cursor)!==existing.cursor||Number(b.version)!==existing.version)return json({...view(existing),stale:true});
   const steps=stepsFor(chapter,existing),task=steps[existing.cursor];if(!task)return json({ok:false,mesaj:'Geçersiz adım.'},400);
-  let correct=true;const question=existing.deck_version===2||['choice','listen','order'].includes(task.kind);
-  if(existing.deck_version===2){const grade=storyV2Grade(task,b.answer);if(!grade.valid)return json({ok:false,mesaj:'Bu görev için geçerli bir cevap gönder.'},400);correct=grade.correct;}
+  let correct=true;let revealed=false;const question=existing.deck_version===2||['choice','listen','order'].includes(task.kind);
+  if(existing.deck_version===2){const grade=storyV2Grade(task,b.answer);if(!grade.valid)return json({ok:false,mesaj:'Bu görev için geçerli bir cevap gönder.'},400);correct=grade.correct;if(task.kind==='final'&&!correct&&existing.attempt_cursor===existing.cursor&&existing.attempt_count>=1){correct=true;revealed=true;}}
   else if(['choice','listen'].includes(task.kind)){if(!Number.isInteger(b.answer)||b.answer<0||b.answer>=task.options.length)return json({ok:false,mesaj:'Bir seçenek seç.'},400);correct=b.answer===task.answer;}
   else if(task.kind==='order')correct=normStory(b.answer)===normStory(task.answer);
   else if(!['scene','teach'].includes(task.kind))return json({ok:false,mesaj:'İçerik güncellendi. Sayfayı yenile.'},400);
   const {data:r,error:err}=await db.rpc('dm_story_apply',{owner_key:owner,chapter_no:chapter,expected_cursor:existing.cursor,expected_version:existing.version,answer_correct:correct,is_question:question,step_count:steps.length,question_count:existing.deck_version===2?steps.length:steps.filter((t:any)=>['choice','listen','order'].includes(t.kind)).length});
   if(err)return json({ok:false,mesaj:'İlerlemen kaydedilemedi. Yeniden dene.'},503);
   if(!r.ok)return json(r,r.energyEmpty?409:503);
-  return json({...view(r.progress),...r,progress:undefined,hint:correct?'':task.hint||task.en||''});
+  if(existing.deck_version===2&&task.kind==='final'){
+   const patch:any={attempt_cursor:correct?-1:existing.cursor,attempt_count:correct?0:1};
+   if(revealed)patch.review_cards=[...new Set([...(Array.isArray(existing.review_cards)?existing.review_cards:[]),existing.cursor])];
+   const {error:attemptError}=await db.from('papi_story_progress').update(patch).eq('actor_key',owner).eq('chapter',chapter).eq('version',r.progress.version);
+   if(attemptError)return json({ok:false,mesaj:'Kart denemesi kaydedilemedi. Bölümü yeniden aç.'},503);
+   Object.assign(r.progress,patch);
+  }
+  return json({...view(r.progress),...r,progress:undefined,hint:correct?'':task.hint||task.en||'',revealed,correct:revealed?false:r.correct,accepted:revealed||r.correct});
  }};
 }
