@@ -146,3 +146,54 @@ body.dm-study-design:has(#tab-derscalis.su-active) #tab-derscalis.su-active[data
 body.dm-study-design:has(#tab-derscalis.su-active) #tab-derscalis.su-active[data-study-screen] #dcScreenDetail{margin-top:0!important;padding-top:0!important}
 body.dm-study-design:has(#tab-derscalis.su-active) #tab-derscalis.su-active[data-study-screen] .dc-example-row{min-height:84px!important;margin-bottom:8px!important;padding:8px 10px!important}
 body.dm-study-design:has(#tab-derscalis.su-active) #tab-derscalis.su-active[data-study-screen] .su-example-footer{margin-top:12px!important}
+/* Approved level hub; live lesson counts and existing unlock rules. */
+body.dm-study-design #tab-derscalis[data-study-screen="dcScreenLevels"]{background:#faf7ff!important;color:#321563!important;padding:12px 12px calc(var(--su-dock,94px) + env(safe-area-inset-bottom,0px))!important;overflow-y:auto!important;scroll-padding-bottom:var(--su-dock,94px)}
+body.dm-study-design #tab-derscalis[data-study-screen="dcScreenLevels"] .dc-focus-card{max-width:740px!important;width:100%!important;margin:auto!important;padding:0!important;background:none!important;box-shadow:none!important;border:0!important;overflow:visible!important}
+body.dm-study-design #tab-derscalis[data-study-screen="dcScreenLevels"] .dc-topbar,body.dm-study-design #dcScreenLevels>:not(#suLevels){display:none!important}
+body.dm-study-design #tab-derscalis[data-study-screen="dcScreenLevels"] .dc-exit-btn{top:10px!important;right:10px!important;width:32px!important;height:32px!important;background:#ece3ff!important;color:#56339b!important;box-shadow:none!important}
+body.dm-study-design #suLevels,body.dm-study-design #suLevels *{box-sizing:border-box;font-family:Nunito,system-ui,sans-serif!important}
+body.dm-study-design #suLevels{max-width:680px;margin:auto}
+body.dm-study-design #suLevels .su-icon{width:22px;height:22px;display:inline-block;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;vertical-align:middle}
+body.dm-study-design #suLevels h1{display:flex;gap:9px;align-items:center;font-size:23px!important;margin:0 36px 12px 0!important;color:#3c246a!important;background:none!important;padding:0!important}
+body.dm-study-design #suLevels .su-levels-welcome{display:flex;align-items:center;gap:8px;background:linear-gradient(120deg,#ccf9e9,#e7fff1);border:1px solid #b8efdb;border-radius:22px;padding:10px;min-height:116px}
+body.dm-study-design #suLevels .su-levels-welcome .su-papi{order:-1;width:112px;height:112px;object-fit:contain;flex-shrink:0;margin:-8px 0}
+body.dm-study-design #suLevels h2{font-size:21px!important;line-height:1.2!important;color:#234f45!important;margin:0 0 7px!important;padding:0!important;background:none!important}
+body.dm-study-design #suLevels p{font-size:12px!important;line-height:1.4!important;margin:0!important;color:#57796a!important;background:none!important;padding:0!important}
+body.dm-study-design #suLevels .su-levels-progress{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;background:#fff;border:1px solid #e8dff7;border-radius:15px;padding:12px;margin:12px 0;font-size:13px}
+body.dm-study-design #suLevels .su-levels-progress>span{font-size:12px;color:#8366a8}
+body.dm-study-design #suLevels .su-bar{width:100%;height:8px;background:#eee6fa;border-radius:20px;overflow:hidden}
+body.dm-study-design #suLevels .su-bar i{display:block;height:100%;background:linear-gradient(90deg,#67d2ac,#a790ed);border-radius:inherit}
+body.dm-study-design #suLevels .su-level-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+body.dm-study-design #suLevels .su-level-card{position:relative;display:flex!important;flex-direction:column;align-items:center;gap:5px;min-width:0;width:100%;padding:10px!important;border:2px solid white!important;background:var(--su-level-color)!important;color:#3b2567!important;border-radius:22px!important;box-shadow:0 4px 0 #d5cae8!important;cursor:pointer;overflow:hidden;white-space:normal!important;margin:0!important}
+body.dm-study-design #suLevels .su-island{display:block;width:100%;height:104px;object-fit:contain;margin-top:6px}
+body.dm-study-design #suLevels .su-level-card>b{position:absolute;top:9px;left:10px;display:block;padding:4px 10px;border-radius:10px;background:#fff9;font-size:18px;line-height:1.2}
+body.dm-study-design #suLevels .su-level-card>strong{font-size:17px;line-height:1.2}
+body.dm-study-design #suLevels .su-level-count{font-size:11px;color:#775b90}
+body.dm-study-design #suLevels .su-level-bar{display:block;height:6px;width:90%;border-radius:20px;background:#fff9;overflow:hidden;margin:2px 0 4px}
+body.dm-study-design #suLevels .su-level-bar i{display:block;height:100%;background:#88c8a9;border-radius:inherit}
+body.dm-study-design #suLevels .su-level-action{display:flex;align-items:center;justify-content:center;min-height:34px;width:100%;padding:6px 3px;background:#ffffffa8;border-radius:10px;font-size:12px;font-weight:900;line-height:1.25}
+body.dm-study-design #suLevels .su-level-locked .su-level-action{color:#837198}
+body.dm-study-design #suLevels .su-level-action .su-icon{width:13px;height:13px;margin-right:4px}
+body.dm-study-design #suLevels .su-levels-steps{display:flex;align-items:center;justify-content:center;gap:6px;margin:16px 0 12px!important;color:#816b9f!important;font-size:11px!important}
+body.dm-study-design #suLevels .su-levels-steps .su-icon{width:16px;height:16px}
+body.dm-study-design #suLevels .su-levels-resume{display:block;width:100%;min-height:47px;padding:11px 7px!important;border:1px solid #50ba99!important;border-radius:15px!important;background:linear-gradient(#a5edcc,#7ad9b2)!important;color:#175c44!important;font-size:15px!important;font-weight:900!important;box-shadow:0 4px 0 #4fa985!important;margin:0!important;cursor:pointer}
+body.dm-study-design #suLevels button:focus-visible{outline:3px solid #9b67d7!important;outline-offset:3px!important}
+body.dm-study-design #suStudyResult{position:fixed;inset:0;z-index:2147483550;background:#2d194773;backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;color:#3d2568;font-family:Nunito,system-ui,sans-serif}
+body.dm-study-design #suStudyResult .su-result-card{width:100%;max-width:410px;max-height:calc(100dvh - 32px);overflow-y:auto;box-sizing:border-box;text-align:center;background:linear-gradient(150deg,#fff,#f5edff);border:3px solid white;border-radius:30px;padding:20px;box-shadow:0 10px 35px #35125733}
+body.dm-study-design #suStudyResult .su-papi{width:160px;height:145px;object-fit:contain}
+body.dm-study-design #suStudyResult h2{font-family:inherit;margin:5px 0;font-size:25px;color:#553088}
+body.dm-study-design #suStudyResult p{margin:5px 0 18px;color:#82619d;font-size:14px;overflow-wrap:anywhere}
+body.dm-study-design #suStudyResult .su-result-score{display:flex;justify-content:center;gap:22px;font-size:12px;color:#7e669a}
+body.dm-study-design #suStudyResult .su-result-score b{display:block;font-size:21px;color:#5b3b84}
+body.dm-study-design #suStudyResult .su-result-rewards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0}
+body.dm-study-design #suStudyResult .su-result-rewards span{background:#e9e0ff;border:1px solid #dcccf8;border-radius:15px;padding:12px 3px;font-size:12px;font-weight:800}
+body.dm-study-design #suStudyResult .su-result-rewards span:nth-child(2){background:#fff0bc;border-color:#f0dfa3;color:#98701c}
+body.dm-study-design #suStudyResult .su-result-rewards span:nth-child(3){background:#d6f9e7;border-color:#b7e9cf;color:#287758}
+body.dm-study-design #suStudyResult .su-result-rewards b{display:block;font-size:24px}
+body.dm-study-design #suStudyResult small{display:block;font-size:12px;color:#826998;line-height:1.4}
+body.dm-study-design #suStudyResult button{display:block;width:100%;border:0;background:#8ddfbc;color:#175b42;border-radius:14px;padding:14px;margin-top:19px;font-family:inherit;font-size:15px;font-weight:900;box-shadow:0 3px 0 #59ac89;cursor:pointer}
+body.dm-study-design #suStudyResult button:focus-visible{outline:3px solid #9462ce;outline-offset:3px}
+@media(min-width:650px){body.dm-study-design #suLevels .su-island{height:145px}body.dm-study-design #suLevels .su-levels-welcome{padding:16px 30px;gap:20px}body.dm-study-design #suLevels .su-levels-welcome .su-papi{width:140px;height:130px}body.dm-study-design #suLevels h2{font-size:28px!important}}
+@media(max-width:359px){body.dm-study-design #suLevels .su-island{height:86px}body.dm-study-design #suLevels .su-level-cards{gap:9px}body.dm-study-design #suLevels .su-level-card{padding:8px!important}body.dm-study-design #suLevels .su-levels-welcome .su-papi{width:88px;height:96px}body.dm-study-design #suLevels h2{font-size:18px!important}body.dm-study-design #suLevels .su-level-action{font-size:10px}body.dm-study-design #suLevels .su-levels-steps{gap:4px;font-size:10px!important}}
+
+body.dm-study-design:has(#tab-derscalis.active[data-study-screen="dcScreenLevels"]) .yb-fw{display:none!important}

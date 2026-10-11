@@ -782,8 +782,8 @@
     },
     {
       "path": "ingilizce/study-assets/icons.svg",
-      "sha256": "4f8d168de4181967d4c8c8aa7607206cbe30ab07e8899560475378dd696b394a",
-      "bytes": 1946,
+      "sha256": "f8effa1bdd09e744178353bcfb434e7eeb3e868620c5ba475053f3870b393871",
+      "bytes": 2210,
       "status": "code-native",
       "source": "Repository-authored study interface SVG; original source retained in Git"
     },
@@ -814,6 +814,34 @@
       "bytes": 253,
       "status": "code-native",
       "source": "Repository-authored study interface SVG; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/study-assets/island-a1.png",
+      "sha256": "5b844e607cd9c6d4356cc2cbbcc0b869cb4c7c92ad2e0988f14b6dc02932073f",
+      "bytes": 46516,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-a2.png",
+      "sha256": "41c3e3a6c46895b7f1c3efd1ff9273bdb0a35156222e07615ee31e8f9d98d7ca",
+      "bytes": 42876,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-b1.png",
+      "sha256": "b603cede93e49c19071012ba393066bdea4ec8ce3ceb504a161aace6d5a6e465",
+      "bytes": 45596,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-b2.png",
+      "sha256": "75fa55915514473e71cdf57ed17558e78f0b0882649820986e86ed2f309eadf2",
+      "bytes": 45526,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
     }
   ]
 }

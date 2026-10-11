@@ -17837,21 +17837,8 @@ function avatarSVG(s, stil, px, cins) {
 
   
 
-  /* Ders Çalış: başarıyla geçilen her konu +2 ⚡ +10 XP (konu başına bir kez) */
-  let orgDc = window.dcTestiBitir;
-  if (typeof orgDc === 'function') window.dcTestiBitir = function () {
-    let konu = ($('dcCrumb') && $('dcCrumb').innerText.trim()) || 'konu';
-    let r = orgDc.apply(this, arguments);
-    setTimeout(() => {
-      let alan = $('tab-derscalis'), metin = alan ? alan.innerText : '';
-      let basarili = /tebrik|geçtin|başarı|tamamland/i.test(metin) && !/tekrar dene|başarısız|kaldın/i.test(metin);
-      if (!basarili || !yoVar()) return;
-      let o = typeof dcOdulVer === 'function' ? dcOdulVer(konu) : null;
-      if (!o || o.tekrarBugun) return;
-      ODUL({ ikon: o.bilmiyordu && o.ilk ? '💡' : '📘', baslik: o.ilk ? (o.bilmiyordu ? 'Bilmediğin konuyu öğrendin!' : 'Konuyu geçtin!') : 'Konuyu tekrar ettin!', alt: konu, enerji: o.en, xp: o.xp, altin: o.al });
-    }, 1500);
-    return r;
-  };
+  /* Ders ödülü gerçek sonuç kaydından sonra study-ui.js tarafından bağlanır. */
+
 })();
 </script>
 
@@ -30771,7 +30758,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="oyna-v2.js?v=20261011-roomier"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261011-1">
 <script src="friends-ui.js?v=20261011-1"></script>
-<link rel="stylesheet" href="study-ui.css?v=20261011-1">
-<script src="study-ui.js?v=20261011-1"></script>
+<link rel="stylesheet" href="study-ui.css?v=20261011-2">
+<script src="study-ui.js?v=20261011-2"></script>
 </body>      
         </html>

@@ -19,5 +19,17 @@
       "pose": "Cheering with both wings raised and golden sparkles",
       "generation": "exec-c658acd5-0c90-4c74-aecc-6fa71b56cc6f"
     }
-  ]
+  ],
+  "levelHub": {
+    "brief": "Four original pastel floating islands: mint cottage, lavender observatory, peach desert home, blue snowy cabin. Transparent 2x2 atlas, matching approved level-selection mockup.",
+    "generation": "exec-e5fbac39-5b67-4dcd-9ad3-5d1a0bf31c81",
+    "export": "Each 627x627 quadrant exported to a separate transparent 384x384 palette PNG with Sharp, quality 95.",
+    "assets": [
+      "ingilizce/study-assets/island-a1.png",
+      "ingilizce/study-assets/island-a2.png",
+      "ingilizce/study-assets/island-b1.png",
+      "ingilizce/study-assets/island-b2.png"
+    ],
+    "svg": "Existing original icons.svg extended with a code-native lock symbol."
+  }
 }

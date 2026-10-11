@@ -12,7 +12,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   let launch={args:['--no-sandbox']};
   if(process.env.FRIENDS_BROWSER_PATH)launch={executablePath:process.env.FRIENDS_BROWSER_PATH,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'],env:{...process.env,LD_LIBRARY_PATH:path.dirname(process.env.FRIENDS_BROWSER_PATH)}};
   if(process.env.FRIENDS_CHROMIUM){const pkg=require(process.env.FRIENDS_CHROMIUM),c=pkg.default||pkg;launch={executablePath:await c.executablePath(),args:c.args,headless:true};}
-  const browser=await chromium.launch(launch),page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],writes=[];
+  const browser=await chromium.launch(launch),page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],writes=[];let failNextSave=false;
   page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.dismiss());
   await page.route('**/*',async r=>{
     const u=new URL(r.request().url());let body={};try{body=r.request().postDataJSON()||{};}catch{}
@@ -20,7 +20,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     if(op){let d={ok:true};
       if(op==='dersKonulariGetir')d=topics;
       else if(op==='dersKonuDetayGetir')d=detail;
-      else if(op==='dersTestSonucKaydet'){writes.push(body);d={ok:true};}
+      else if(op==='dersTestSonucKaydet'){writes.push(body);if(failNextSave){failNextSave=false;return r.fulfill({status:503,json:{status:'error',message:'Fixture offline'}});}d={status:'success',eklenenEnerji:body.konuAdi==='Saatler'?0:2,enerjiKalan:32,enerjiMax:30};}
       else if(op==='seviyeDurumu')d={ok:true,level:30,feed:true,lessons:{},chests:{}};
       else if(op==='seviyeLigListesi')d={ok:true,liste:league};
       else if(op==='sosyalOgrencilerGetir')d=people;
@@ -62,6 +62,10 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   await page.evaluate(()=>{window.dmGuestMode=false;dersCalisTamEkranAc();});
   await page.waitForTimeout(500);
   const navBefore=await page.locator('#bottomNavMobile').innerHTML();
+  await page.waitForSelector('#suLevels');assert.equal(await page.locator('.su-level-card').count(),4);
+  assert.equal(await page.getByText('Klasik görünüm',{exact:true}).filter({visible:true}).count(),0);
+  for(const [w,h] of [[320,667],[390,844],[768,1024],[1180,820]]){await page.setViewportSize({width:w,height:h});assert(await page.locator('#tab-derscalis').evaluate(e=>e.scrollWidth<=innerWidth),'Level overflow '+w);console.log('PASS levels layout '+w+'x'+h);}
+  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>document.getElementById('tab-derscalis').scrollTop=0);await page.screenshot({path:path.join(artifacts,'study-levels-mobile.png')});
   await page.evaluate(()=>dcSeviyeSec('A1','Başlangıç'));
   await page.waitForSelector('.su-topic');
   assert.equal(await page.locator('.su-topic').count(),5);
@@ -98,22 +102,31 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   for(const word of ['I','wake','up'])await page.locator('.dc-quiz-q:visible .dt-kelime').filter({hasText:new RegExp('^'+word+'$')}).click();
 
   assert(await page.locator('#suQuizNext').isEnabled());
-  await page.evaluate(()=>{window.genelSonucEkraniGoster=d=>{window.studyResult=d;};});
-  await page.locator('#suQuizNext').click();await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),true);assert(await page.evaluate(()=>studyResult.dogru===2));
+  await page.locator('#suQuizNext').click();await page.waitForSelector('#suStudyResult');assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),true);
+  assert(await page.evaluate(()=>dmStudyUI.lastResult.correct===2&&dmStudyUI.lastResult.xp===80&&dmStudyUI.lastResult.gold===25&&dmStudyUI.lastResult.energy===2));
   assert(writes.some(x=>x.islem==='dersTestSonucKaydet'&&x.konuAdi==='Günlük Rutinler'));
-  if(await page.locator('.dv-macera-sonra').count())await page.locator('.dv-macera-sonra').click();
-  await page.evaluate(()=>dcTestSonrasiKonuListesineDon());assert(await page.locator('#suTopics').isVisible());
+  const saveCount=writes.filter(x=>x.islem==='dersTestSonucKaydet').length;await page.evaluate(()=>dcTestiBitir(2));assert.equal(writes.filter(x=>x.islem==='dersTestSonucKaydet').length,saveCount,'single run cannot award twice');
+  await page.screenshot({path:path.join(artifacts,'study-result-mobile.png')});
+  await page.locator('.su-result-done').click();assert(await page.locator('#suTopics').isVisible());
   assert.equal(await page.locator('#bottomNavMobile').innerHTML(),navBefore,'bottom nav unchanged');
-  // Wrong answers keep the existing restart rule and cannot advance.
+  // Wrong answers reveal the answer, wait five seconds and preserve test progress.
   await page.locator('[data-topic="A1|grammar|Saatler"]').last().click();await page.waitForTimeout(250);
   await page.evaluate(()=>{dcAnlatimOnaylandiMi=true;dcOrnekDinlenenSet=new Set([0,1,2,3]);dcSekmeSec('test',document.querySelector('[data-tab="test"]'));});
-  await page.locator('.dc-quiz-q:visible .dc-quiz-opt').filter({hasText:/^went$/}).click();assert(await page.locator('#suQuizNext').isDisabled());await page.waitForTimeout(2100);assert((await page.locator('#suQuizProgress').innerText()).includes('1 / 2'));
+  await page.locator('.dc-quiz-q:visible .dc-quiz-opt').filter({hasText:/^went$/}).click();assert(await page.locator('#suQuizNext').isDisabled());await page.waitForTimeout(2100);assert((await page.locator('#suQuizProgress').innerText()).includes('1 / 2'));assert(await page.locator('#suQuizNext').isDisabled());assert((await page.locator('.dc-quiz-q:visible .dt-aciklama').innerText()).includes('goes'));assert(await page.evaluate(()=>dcQuizCevaplari[0]!==-1&&dcQuizDogruSayisi===0),'wrong answer is preserved');
+  await page.screenshot({path:path.join(artifacts,'study-wrong-mobile.png')});await page.waitForTimeout(3000);assert(await page.locator('#suQuizNext').isEnabled());assert((await page.locator('#suQuizNext').innerText()).includes('Devam et'));
+
   for(const [w,h] of [[320,667],[390,844],[768,1024],[1180,820]]){
     await page.setViewportSize({width:w,height:h});assert(await page.locator('#tab-derscalis').evaluate(e=>e.scrollWidth<=innerWidth),'Detail overflow '+w);
     await page.evaluate(()=>{const e=document.getElementById('tab-derscalis');e.scrollTop=e.scrollHeight;});
     const b=await page.locator('#suQuizNext').boundingBox(),dock=await page.locator('#bottomNavMobile').boundingBox();assert(b.y+b.height<=dock.y+1,'Footer above dock '+w);console.log('PASS detail layout '+w+'x'+h);
   }
+  await page.locator('#suQuizNext').click();assert((await page.locator('#suQuizProgress').innerText()).includes('2 / 2'));
+  for(const word of ['I','wake','up'])await page.locator('.dc-quiz-q:visible .dt-kelime').filter({hasText:new RegExp('^'+word+'$')}).click();
+  await page.evaluate(()=>{yo.dcOdul.push('Saatler');yo.dcTekrar['Saatler']=typeof yoBugun==='function'?yoBugun():new Date().toISOString().slice(0,10);});
+  const xpBefore=await page.evaluate(()=>yo.totalXp);failNextSave=true;
+  await page.locator('#suQuizNext').click();await page.waitForTimeout(250);assert.equal(await page.locator('#suStudyResult').count(),0,'failed save does not show success');assert.equal(await page.evaluate(()=>yo.totalXp),xpBefore,'failed save does not award');assert(await page.locator('#suQuizNext').isEnabled(),'failed save can retry');assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),false);
+  await page.locator('#suQuizNext').click();await page.waitForSelector('#suStudyResult');assert(await page.evaluate(()=>dmStudyUI.lastResult.correct===1&&dmStudyUI.lastResult.wrong===1));assert(await page.evaluate(()=>dmStudyUI.lastResult.xp===0&&dmStudyUI.lastResult.gold===0&&dmStudyUI.lastResult.energy===0),'existing daily award is preserved without duplicate first-clear reward');
   assert.deepEqual(errors.filter(x=>!x.includes('Chart')&&!x.includes('pdf')),[]);
-  console.log('PASS study filters/search, real topic loading, reading/listening gates, slow voice, dictionary, single-question test, ordering, completion, wrong-answer restart and preserved dock');
+  console.log('PASS study filters/search, real topic loading, reading/listening gates, slow voice, dictionary, single-question test, ordering, completion, five-second wrong-answer review, actual rewards and duplicate prevention and preserved dock');
   await browser.close();
 })().catch(e=>{console.error(e);process.exit(1);});
