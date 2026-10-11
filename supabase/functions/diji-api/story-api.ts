@@ -26,7 +26,7 @@ export function storyAPI(db:any,json:any){
   if(!existing&&previousChapter(chapter)!==null){const {data:prev,error:err}=await db.from('papi_story_progress').select('completed').eq('actor_key',owner).eq('chapter',previousChapter(chapter)!).maybeSingle();if(err)return json({ok:false,mesaj:'Önceki durak kontrol edilemedi.'},503);if(!prev?.completed)return json({ok:false,mesaj:'Önce önceki öğrenme durağını tamamla.'},403);}
   if(op==='storyUpgrade'){
    if(!existing)return json({ok:false,mesaj:'Önce bölümü aç.'},409);
-   if(existing.completed)return json({ok:false,mesaj:'Tamamlanan bölümü tekrar açarak çalış.'},409);
+   if(existing.completed&&!existing.replay)return json({ok:false,mesaj:'Tamamlanan bölümü yeniden açıp yeni sorulara geç.'},409);
    if(existing.deck_version===3)return json(view(existing));
    if(Number(b.version)!==existing.version)return json({...view(existing),stale:true},409);
    // Only the selected chapter restarts; historical rewards and student accounts are untouched.
