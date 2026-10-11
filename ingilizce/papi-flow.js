@@ -1,12 +1,14 @@
 /* Serialize notices around Papi's tour and the first real exercise. */
 (()=>{'use strict';
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
-const noticeSelector='#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmWeeklyPanel,#dmLevelUp,#dmNudge,.od-perde,.kr-perde,.dv-perde,.cb-kart,.bk-kart,.yo-toast,.uy-serit,.yo-davet,.tv-kart,.sa-perde,.cog-perde,.kur-perde';
+const noticeSelector='#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmWeeklyPanel,#dmLevelUp,#dmNudge,.od-perde,.kr-perde,.dv-perde,.cb-kart,.bk-kart,.yo-toast,.uy-serit,.yo-davet,.tv-kart,.sa-perde,.cog-perde,.kur-perde,[role="dialog"]:not(#dmPapiTour):not(#dmPapiFirstStart):not(#dmStoryLesson),[aria-modal="true"]:not(#dmPapiTour):not(#dmPapiFirstStart):not(#dmStoryLesson)';
 const visible=e=>!!e&&e.isConnected&&!e.classList.contains('dm-papi-held')&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden'&&getComputedStyle(e).display!=='none';
 let queue=[],actor=who(),pending=false,executing='',nextAt=0,held=[],practice=null;
 const exercise=()=>!!document.querySelector('#dmStoryLesson,.bz-oyun,#genelSonucOverlay.acik')||!!practice;
 const holding=()=>!!window.dmPapiTour?.active()||exercise();
 const shown=()=>[...document.querySelectorAll(noticeSelector)].some(visible);
+// Suppress late-mounted dialogs while the onboarding tour owns the screen.
+const tourOverlay=()=>!!window.dmPapiTour?.active();
 function blocked(){return document.hidden||holding()||pending||shown()||Date.now()<nextAt;}
 function defer(key,run){if(!document.hidden&&!holding()&&!shown()&&(!pending||executing===key)&&Date.now()>=nextAt)return false;const existing=queue.find(x=>x.key===key&&x.owner===who());if(existing)existing.run=run;else queue.push({key,run,owner:who()});return true;}
 function suspend(){for(const e of document.querySelectorAll(noticeSelector)){if(e.isConnected&&!e.classList.contains('dm-papi-held')&&e.getClientRects().length>0&&getComputedStyle(e).display!=='none'){e.classList.add('dm-papi-held');if(!held.some(x=>x.el===e))held.push({el:e,owner:who()});}}document.body.classList.toggle('dm-papi-notices-paused',holding());}
