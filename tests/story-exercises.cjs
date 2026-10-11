@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const E=require('../ingilizce/story-exercises.js');
+const chapter={cards:[{en:'Hello!',tr:'Merhaba!'},{en:'My name is Papi.',tr:'Benim adım Papi.'},{en:'Thank you!',tr:'Teşekkür ederim!'}]};
+const tasks=E.build(chapter);
+assert.deepEqual(tasks.map(x=>x.kind),['match','repeat','order','choose','complete','translate','final','final','final']);
+assert.equal(E.checkPairs(tasks[0],chapter.cards),true);
+assert.equal(E.checkPairs(tasks[0],chapter.cards.slice(1)),false);
+assert.equal(E.evaluate(tasks[2],'My name is Papi').status,'correct');
+assert.equal(E.evaluate(tasks[3],'My name is Papi.').status,'correct');
+assert.equal(E.evaluate(tasks[4],tasks[4].answer).status,'correct');
+assert.equal(E.evaluate(tasks.at(-1),'wrong',0).status,'retry');
+assert.equal(E.evaluate(tasks.at(-1),'wrong',1).status,'reveal');
+assert.equal(E.evaluate(tasks.at(-1),'',1).status,'empty');
+assert.equal(E.evaluate(tasks[1],'Hello!').status,'needs-speech-verification');
+assert.equal(E.listen instanceof Function,true);
+assert.deepEqual(E.languages(),{en:'en-US',tr:'tr-TR'});
+console.log('PASS original contents, seven exercises, matching, sentence, options, final attempts');

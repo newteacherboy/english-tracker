@@ -1,0 +1,59 @@
+<!doctype html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Papi — Öğrenme Yolu soru önizlemesi</title><style>
+:root{font-family:system-ui,Arial,sans-serif;color:#234a3a;background:#eef8e9}body{margin:0;padding:20px}.wrap{max-width:640px;margin:auto;background:#fff;padding:22px;border-radius:25px;box-shadow:0 8px 25px #2d574d22}h1{font-size:1.5rem;margin:0 0 9px}h2{font-size:1.2rem}p{line-height:1.5}select,button,input{font:inherit;border-radius:12px;padding:12px;border:1px solid #8bb59f}select,input{max-width:100%;box-sizing:border-box}button{background:#e6f5df;cursor:pointer}button:disabled{opacity:.45}button.primary{background:#176945;color:white}button:focus-visible,input:focus-visible{outline:3px solid orange}.row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.row>*{flex:1}#status{min-height:60px;background:#f5f8f0;border-radius:14px;padding:12px;margin:12px 0;white-space:pre-wrap}#task{padding:12px 0}#task button{margin:4px}#tokens{display:flex;flex-wrap:wrap}.chip.selected{background:#f7ce73}.muted{opacity:.75;font-size:.9rem}.progress{height:8px;background:#d7e5d7;border-radius:9px;overflow:hidden}.progress>div{height:100%;background:#1b9a64;width:0}.hint{border-left:3px solid #73ab77;padding-left:10px}nav{margin:18px 0}#speech{font-size:1.18rem;font-weight:650}#task>input{width:100%}#deck{margin:12px 0}</style></head><body><main class="wrap">
+<h1>🦜 Papi — Öğrenme Yolu</h1><p class="muted">Geliştirme önizlemesi. Öğrenci ilerlemesi, enerji, XP veya altın kaydedilmez.</p><label for="chapter">Bölüm seç</label><div class="row"><select id="chapter" aria-label="Bölüm"></select><button id="start" class="primary">Başlat</button></div>
+<div id="exercise" hidden><div class="progress"><div id="bar"></div></div><p id="counter"></p><h2 id="heading"></h2><div id="speech"></div><nav class="row"><button id="hear">🔊 Papi'yi dinle</button><button id="hearTr">🇹🇷 Türkçesini dinle</button></nav><section id="task"></section><div id="status" role="status" aria-live="polite"></div><div class="row"><button id="check" class="primary">Kontrol Et</button><button id="next" hidden>Devam ›</button></div></div></main>
+<script src="story-curriculum.js"></script><script src="story-exercises.js"></script><script src="story-final-cards.js"></script><script>
+(()=>{'use strict';
+const E=window.DMStoryExercises, F=window.DMStoryFinalCards, $=s=>document.getElementById(s);
+const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const chapters=window.DMStoryCurriculum||[],selector=$('chapter');chapters.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+c.title+' ('+c.cefr+')';selector.append(o)});
+let tasks=[],position=0,attempt=0,chosen=[],matches=[],en='',tr='',complete=false,final=null;
+function current(){return tasks[position]}
+function message(s){$('status').textContent=s}
+function btn(text,on){const b=document.createElement('button');b.textContent=text;b.onclick=on;return b}
+function render(){
+ const t=current();if(!t){$('exercise').hidden=true;return}
+ attempt=0;chosen=[];matches=[];complete=false;final=t.kind==='final'?F.create([{en:t.en,tr:t.tr}]):null;
+ $('exercise').hidden=false;$('next').hidden=true;$('check').hidden=false;$('check').disabled=false;
+ $('bar').style.width=(position/tasks.length*100)+'%';$('counter').textContent=(position+1)+' / '+tasks.length;
+ $('heading').textContent=t.label;$('speech').textContent=t.kind==='match'?'İfadeleri eşleştir.':t.kind==='choose'?t.tr:t.kind==='complete'?t.stem+' ___':t.kind==='final'?t.tr:t.en;
+ const root=$('task');root.replaceChildren();message('');
+ if(t.kind==='match'){
+ const a=document.createElement('div'),b=document.createElement('div');a.className=b.className='row';const selections={en:null,tr:null};
+ const select=(side,v,button)=>{selections[side]=v;if(selections.en&&selections.tr){const ok=E.norm(selections.en)===E.norm(t.pairs.find(p=>E.norm(p.tr)===E.norm(selections.tr))?.en);if(ok){matches.push({en:selections.en,tr:selections.tr});[...a.children,...b.children].filter(x=>x.dataset.value===selections.en||x.dataset.value===selections.tr).forEach(x=>x.disabled=true);E.speak(selections.en);message('✓ Eşleştirdin: '+selections.en+' — '+selections.tr)}else message('Bu ikili eşleşmiyor, tekrar dene.');selections.en=selections.tr=null}};
+ t.pairs.forEach(c=>{const x=btn(c.en,()=>select('en',c.en,x));x.dataset.value=c.en;a.append(x)});
+ t.pairs.map(c=>c.tr).reverse().forEach(v=>{const x=btn(v,()=>select('tr',v,x));x.dataset.value=v;b.append(x)});
+ root.append(a,b);$('check').textContent='Eşleştirmeleri kontrol et';
+ }else if(t.kind==='order'){
+ const phrase=document.createElement('div');phrase.className='hint';phrase.textContent='Cümlen: ';const tiles=document.createElement('div');tiles.id='tokens';t.tokens.map((token,i)=>({token,i})).reverse().forEach(({token,i})=>{const x=btn(token,()=>{if(x.disabled)return;x.disabled=true;chosen.push(i);phrase.textContent='Cümlen: '+chosen.map(n=>t.tokens[n]).join(' ')});tiles.append(x)});root.append(phrase,tiles);
+ }else if(t.kind==='choose'||t.kind==='complete'){
+ const list=t.kind==='choose'?t.options:t.options;
+ [...new Set(list.concat(t.answer))].forEach(v=>{const b=btn(v,()=>{chosen=[v];root.querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x===b))});root.append(b)});
+ }else{
+ const input=document.createElement('input');input.id='response';input.placeholder=t.kind==='repeat'?'Mikrofonla tekrar et veya yaz':'İngilizce karşılığını yaz';input.autocomplete='off';root.append(input);
+ const mic=btn('🎤 Mikrofona konuş',async()=>{mic.disabled=true;message('Dinliyorum…');const v=await E.listen('en');mic.disabled=false;if(v.status==='heard'){input.value=v.text;message('Duyduğum: '+v.text+' — Kontrol Et ile değerlendir.')}else message('Mikrofon kullanılamadı veya ses anlaşılamadı. Yazarak devam edebilirsin; deneme hakkın azalmadı.')});root.append(mic);
+ }
+ $('check').textContent='Kontrol Et';
+}
+function advance(){position++;if(position>=tasks.length){$('bar').style.width='100%';$('task').replaceChildren();$('speech').textContent='Tebrikler!';$('heading').textContent='Önizleme tamamlandı';$('counter').textContent=tasks.length+' / '+tasks.length;$('check').hidden=true;$('next').hidden=true;message('Öğrenme turu tamamlandı. Bu önizlemede ödül veya ilerleme kaydı yapılmadı.');return}render()}
+$('check').onclick=()=>{
+ const t=current();if(!t||complete)return;
+ if(t.kind==='match'){if(!E.checkPairs(t,matches)){message('Tüm çiftleri doğru eşleştir.');return}complete=true}
+ else{
+ let answer=t.kind==='order'?chosen.map(n=>t.tokens[n]).join(' '):['choose','complete'].includes(t.kind)?chosen[0]:$('response')?.value;
+ if(t.kind==='repeat'&&answer){const good=E.norm(answer)===E.norm(t.en);if(good){message('✓ Harika!');E.speak(t.en);complete=true}else{message('Tekrar deneyelim. Papi: '+t.en);E.speak(t.en)}return showNextIfDone();}
+ const result=t.kind==='final'?final.submit(answer):E.evaluate(t,answer,attempt);
+ if(result.status==='empty'){message('Bir cevap ver veya mikrofonla konuş.');return}
+ if(result.status==='correct'){message('✓ Doğru! '+t.en+' — '+t.tr);E.speak(t.en);complete=true}
+ else if(result.status==='reveal'){message('İki deneme tamamlandı. Doğru cevap: '+result.spoken+' — '+result.translation+'. Bu kart tekrar çalışılacak.');E.speak(result.spoken);complete=true}
+ else{attempt++;message('Birlikte tekrar deneyelim. '+(result.hint||'')+(t.kind==='order'?'\nDoğrusu: '+t.en+' — '+t.tr:''));if(t.kind==='order')E.speak(t.en)}
+ }
+ showNextIfDone();
+};
+function showNextIfDone(){if(complete){$('check').hidden=true;$('next').hidden=false}}
+$('next').onclick=advance;
+$('hear').onclick=()=>{const t=current();if(t)E.speak(t.en,'en')};
+$('hearTr').onclick=()=>{const t=current();if(t)E.speak(t.tr||'','tr')};
+$('start').onclick=()=>{const c=chapters[Number(selector.value)];if(!c)return;tasks=E.build(c);position=0;render()};
+})();
+</script></body></html>

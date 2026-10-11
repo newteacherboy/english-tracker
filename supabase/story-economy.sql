@@ -13,7 +13,7 @@ create or replace function public.dm_story_apply(owner_key text,chapter_no int,e
 returns jsonb language plpgsql security invoker set search_path='' as $$
 declare p public.papi_story_progress; s public.students; v jsonb; reward jsonb:='{}'; regen int; e int; cap int; costs int:=0; seen int; cur int; finished boolean; first_done boolean; stars int; l int; n int; g int:=0;
 begin
- if owner_key is null or owner_key !~ '^[st]:[0-9a-f-]{36}$' or chapter_no not between 0 and 39 or step_count not between 2 and 10 or question_count not between 1 and 8 or answer_correct is null or is_question is null then raise exception 'Geçersiz öğrenme işlemi';end if;
+ if owner_key is null or owner_key !~ '^[st]:[0-9a-f-]{36}$' or chapter_no not between 0 and 39 or step_count not between 2 and 80 or question_count not between 1 and 80 or question_count>step_count or answer_correct is null or is_question is null then raise exception 'Geçersiz öğrenme işlemi';end if;
  if left(owner_key,2)='s:' then
   perform pg_advisory_xact_lock(hashtextextended(substring(owner_key from 3),17));
   select * into s from public.students where id=substring(owner_key from 3)::uuid for update;
