@@ -994,6 +994,7 @@ html, body { touch-action: pan-x pan-y; }
 .dm-match-option.selected{outline:3px solid #f0c46b}.dm-match-option.dm-right{background:#ccefd7;border-color:#50aa71}.dm-match-option.dm-wrong{background:#ffe1e1;border-color:#e65a5a}
 </style>
 <style id="dm-play-dashboard-style">
+#tab-dunyam #bdGorevler,#tab-dunyam #bdHafta{display:none!important;}
 #bzParkur .dm-play-board{position:relative;z-index:2;display:grid;gap:14px;padding:14px 12px 110px;max-width:700px;margin:0 auto;background:linear-gradient(#f7f4e9,#fff9ec);font-family:Nunito,system-ui,sans-serif}
 #bzParkur .dm-play-card{background:#fffdf7;border:1px solid #e8dec6;border-radius:24px;padding:16px;box-shadow:0 6px 16px #61532c16;color:#214b38}
 #bzParkur .dm-play-title{display:flex;align-items:center;gap:8px;margin-bottom:13px}
@@ -28590,8 +28591,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         const selected=Number(btn.dataset.playTarget);
         const source=document.querySelector('#soPanel .so-hedef button[data-h="'+selected+'"]');
         if(source)source.click();
-        else if(typeof yo!=='undefined'&&yo&&typeof haftaKodu==='function'){
-          yo.haftaHedef={h:haftaKodu(),xp:selected,odul:false};window.yoKaydet?.();
+        else if(typeof yo!=='undefined'&&yo){
+          yo.haftaHedef={h:wk,xp:selected,odul:false};if(typeof yoKaydet==='function')yoKaydet();
         }
         harita(b);
       }));
