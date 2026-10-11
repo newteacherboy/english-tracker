@@ -28588,33 +28588,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       }
     } catch (_) { /* eş anlamlar yüklenmezse öğretim kilitlenmesin */ }
     if(ownerAtStart!==isim())return;
-    let harfli = kel.filter(k => harfMi(EN(k)));
-    let yedek = karistir(tum.filter(k => harfMi(EN(k)) && !kel.includes(k)));
-    const al = (f, adet) => { let out = []; for (const k of [...harfli, ...yedek]) { if (out.length >= adet) break; if (f(EN(k)) && !out.includes(k) && !kullanildi.has(k)) out.push(k); } out.forEach(k => kullanildi.add(k)); return out; };
-    let kullanildi = new Set();
-    let sorular = [];
-    const ekle = (tip, veri) => { if (veri) sorular.push(Object.assign({ tip }, veri)); };
-    let kullan = kel.slice();
-    const tekKelime = () => { let k = kullan.find(x => !kullanildi.has(x)) || kel[0]; kullanildi.add(k); return k; };
-    ekle('eksik', (() => { let k = al(w => w.length >= 4 && w.length <= 9, 1)[0]; return k && { k }; })());
-    ekle('harf', (() => { let k = al(w => w.length >= 3 && w.length <= 8, 1)[0]; return k && { k }; })());
-    ekle('sifre', (() => { let k = al(w => w.length >= 4 && w.length <= 5, 1)[0] || al(w => w.length === 3 || w.length === 6, 1)[0]; return k && { k }; })());
-    ekle('dikte', (() => { let k = al(w => w.length >= 3 && w.length <= 8, 1)[0]; return k && { k }; })());
-    /* 3 tekrar sorusu önceki ünitelerden (ilk durakta yoksa bu üniteden) */
-    ekle('lab', tekrar[0] ? { k: tekrar[0], tekrarMi: true } : { k: tekKelime() });
-    ekle('risk', tekrar[1] ? { k: tekrar[1], tekrarMi: true } : { k: tekKelime() });
-    ekle('hiz', tekrar[2] ? { k: tekrar[2], tekrarMi: true } : { k: tekKelime() });
-    ekle('hafiza', { l: [tekKelime(), tekKelime(), tekKelime()] });
-    ekle('es', { l: [tekKelime(), tekKelime(), tekKelime()] });
-    /* Kelime Treni / Cümle Ustası: yalnızca seçilen sınıf ve ünitenin word_bank kalıpları */
-    let cumleler = (window.masterKelimeHavuzu || []).filter(k => Number(k.sinif) === Number(D.sinif) && Number(k.unite) === Number(D.unite) && k.ingilizce && k.turkce && k.ingilizce.trim().split(/\s+/).length >= 3 && k.ingilizce.trim().split(/\s+/).length <= 8).map(k => ({en:k.ingilizce.trim(),tr:k.turkce.trim(),sinif:Number(k.sinif),unite:Number(k.unite)}));
-    if(ownerAtStart!==isim())return;
-    let trenC = OC.kelimeSec('ba_tren_'+D.no,cumleler,1,{anahtar:c=>c.en,zk:false})[0];
-    let cumleC = OC.kelimeSec('ba_cumle_'+D.no,cumleler.filter(c=>!trenC||c.en!==trenC.en),1,{anahtar:c=>c.en,zk:false})[0];
-    if (trenC) ekle('tren', { c: trenC });
-    if (cumleC) ekle('cumle', { c: cumleC });
-    // Öğretim planı: 11 göreve 5 odak kelime dağıtılır.
-    // İlk sorular tanıtır, ortadakiler pekiştirir, son sorular ipucusuz hatırlatır.
+    // Eski soru motorunun 11+1 plana ait olmayan işlemleri kaldırıldı.
+    // Her hedef kelime yalnızca seçilen word_bank mikro-durağından gelir.
+    let sorular=[];
     const targets=D.kelimeler.slice();
     const active=targets;
     if(!active.length){toast('Bu durakta seçilen ünitenin kelimeleri bulunamadı. Word bank verisini kontrol edin.');return;}
@@ -28728,9 +28704,20 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzGeriSoru').onclick = () => incelemeAc();
     const nav=p.querySelector('.bz-oyun-ust');if(nav){const next=document.createElement('button');next.type='button';next.className='bz-geri-soru';next.textContent='→';next.title='Cevaplanan soruları ileri/geri incele';next.setAttribute('aria-label','Sonraki cevaplanmış soruyu incele');next.disabled=!O.gecmis.some(Boolean);next.onclick=()=>incelemeAc(0);nav.insertBefore(next,nav.querySelector('.bz-noktalar'));}
     let alan = $('bzAlan');
-    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, cumleSirala, duydugunuBul, eslestir })[s.tip](s, alan);
-    window.dmCalmQuestion?.(p);
-    jokerBarCiz();
+    try {
+      const renderers={ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, cumleSirala, duydugunuBul, eslestir };
+      if(typeof renderers[s.tip]!=='function')throw new Error('Bilinmeyen soru: '+s.tip);
+      renderers[s.tip](s,alan);
+      if(!alan.textContent.trim())throw new Error('Soru içeriği boş');
+      try { window.dmCalmQuestion?.(p); } catch(layoutError) { console.warn('[Parkur] görünüm',layoutError); }
+      if(!alan.textContent.trim())throw new Error('Soru görünümü boşaltıldı');
+      jokerBarCiz();
+    } catch(err) {
+      console.error('[DijiMedu parkur] Soru çizimi başarısız:',s.tip,err);
+      alan.innerHTML='<div class="bz-etiket">🦜 Papi yardım ediyor</div><div class="bz-soru">Bu soruyu gösteremedik.</div><p class="bz-ipucu">İlerlemen korunuyor. Soruyu yeniden yükleyebilir veya haritaya dönebilirsin.</p><button type="button" class="bz-btn" id="bzRetryQuestion">↻ Soruyu yeniden dene</button><button type="button" class="bz-btn" id="bzReturnMap">🏰 Haritaya dön</button>';
+      alan.querySelector('#bzRetryQuestion').onclick=()=>soruCiz();
+      alan.querySelector('#bzReturnMap').onclick=()=>{let b=O.b;kapat();goster('harita',b);};
+    }
     p.scrollTop = 0;
   }
   /* ---------- Enerji: her 2 soruda 1 ⚡ ---------- */
