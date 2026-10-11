@@ -61,7 +61,8 @@
   if(['dmUcusteKart','dmRotaKart'].includes(b.id))b.onclick=()=>window.dmInviteAc(b.id==='dmUcusteKart'?'ucus':'rota');
  }
  function render(host,grid){
-  const all=[...grid.querySelectorAll('.az-gcard')];all.forEach(prepare);
+  grid.querySelectorAll('[onclick*="yolculuguAc"]').forEach(b=>{b.hidden=true;b.style.setProperty('display','none','important');});
+  const all=[...grid.querySelectorAll('.az-gcard')].filter(b=>!(b.getAttribute('onclick')||'').includes('yolculuguAc'));all.forEach(prepare);
   host.dataset.dmParty=party;host.dataset.ggParty=party;const active=party==='solo'?'solo':'free';
   host.querySelectorAll('[data-gg-party]').forEach(b=>{const on=b.dataset.ggParty===active;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;});
   host.querySelectorAll('.gg-filters [data-gg-skill]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ggSkill===skill)));

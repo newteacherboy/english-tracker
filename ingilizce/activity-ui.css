@@ -157,3 +157,6 @@
 #tab-aktiviteler#tab-aktiviteler .gg-friends>span{line-height:1.35;color:#80513b}
 #tab-aktiviteler#tab-aktiviteler .gg-friends>button:only-child:not([data-gg-person]){max-width:none;text-align:left;font-size:12px;line-height:1.35;color:#80513b}
 body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
+
+/* Journey is accessed through Oyna, not the Games catalogue. */
+#tab-aktiviteler#tab-aktiviteler .az-grid2x2>[onclick*="yolculuguAc"]{display:none!important}
