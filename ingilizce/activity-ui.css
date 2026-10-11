@@ -134,3 +134,12 @@
   color:#858c97!important;
   background:#eef0f2!important;
 }
+
+/* Kapışma Oyunları: whitelist only the three Papi cards.
+   Selector matches active tab itself, independent of legacy party attributes. */
+#tab-aktiviteler:has(#dmFreeTab[aria-selected="true"]) .az-grid2x2 > :not(#papiCardsActivity):not(#meteorActivity):not(#wordWheelActivity){
+  display:none!important;
+}
+#tab-aktiviteler:has(#dmFreeTab[aria-selected="true"]) .az-grid2x2 > :is(#papiCardsActivity,#meteorActivity,#wordWheelActivity){
+  display:grid!important;
+}
