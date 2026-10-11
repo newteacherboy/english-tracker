@@ -8,7 +8,8 @@
  if(root)root.DMStoryExercises=value;
 })(typeof window!=='undefined'?window:null,function(){
  'use strict';
- const norm=x=>String(x??'').normalize('NFKC').toLocaleLowerCase('en-US').replace(/[\u2018\u2019]/g,"'").replace(/[^\p{L}\p{N}\s']/gu,' ').replace(/\s+/g,' ').trim();
+ const norm=x=>expandSpeech(x);
+ const expandSpeech=x=>String(x??'').normalize('NFKC').toLocaleLowerCase('en-US').replace(/[\u2018\u2019]/g,"'").replace(/\b(i'm)\b/g,'i am').replace(/\b(you're)\b/g,'you are').replace(/\b(we're)\b/g,'we are').replace(/\b(they're)\b/g,'they are').replace(/\b(he's)\b/g,'he is').replace(/\b(she's)\b/g,'she is').replace(/\b(it's)\b/g,'it is').replace(/\b(that's)\b/g,'that is').replace(/\b(what's)\b/g,'what is').replace(/\b(where's)\b/g,'where is').replace(/\b(here's)\b/g,'here is').replace(/\b(there's)\b/g,'there is').replace(/\b(don't)\b/g,'do not').replace(/\b(doesn't)\b/g,'does not').replace(/\b(didn't)\b/g,'did not').replace(/\b(can't)\b/g,'cannot').replace(/\b(cannot)\b/g,'can not').replace(/\b(won't)\b/g,'will not').replace(/\b(isn't)\b/g,'is not').replace(/\b(aren't)\b/g,'are not').replace(/\b(wasn't)\b/g,'was not').replace(/\b(weren't)\b/g,'were not').replace(/\b(i've)\b/g,'i have').replace(/\b(we've)\b/g,'we have').replace(/\b(they've)\b/g,'they have').replace(/\b(i'll)\b/g,'i will').replace(/\b(you'll)\b/g,'you will').replace(/\b(i'd)\b/g,'i would').replace(/[^\p{L}\p{N}\s']/gu,' ').replace(/\s+/g,' ').trim();
  const cardsOf=chapter=>(chapter?.cards||[]).filter(c=>typeof c?.en==='string'&&typeof c?.tr==='string'&&c.en.trim()&&c.tr.trim()).map(c=>({en:c.en.trim(),tr:c.tr.trim()})).filter((c,i,a)=>a.findIndex(x=>norm(x.en)===norm(c.en))===i);
  const rotate=(arr,n)=>arr.length?arr.map((_,i)=>arr[(i+n)%arr.length]):[];
  const tokens=x=>String(x||'').trim().split(/\s+/).filter(Boolean);
