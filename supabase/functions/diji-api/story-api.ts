@@ -1,4 +1,6 @@
-import { STORY_CHAPTERS } from './story-curriculum.js';
+import { STORY_CHAPTERS as LEGACY_CHAPTERS } from './story-curriculum.js';
+import { STORY_V2_CHAPTERS } from './story-v2-curriculum.js';
+const STORY_CHAPTERS=[...LEGACY_CHAPTERS,...STORY_V2_CHAPTERS];
 import {storyV2Steps,storyV2Grade} from './story-v2.ts';
 const useNewDeck=()=>typeof Deno!=='undefined'&&Deno.env.get('DM_STORY_V2')==='true';
 const stepsFor=(chapter:number,record:any)=>record?.deck_version===2?storyV2Steps(STORY_CHAPTERS[chapter]):STORY_CHAPTERS[chapter].steps;
