@@ -877,6 +877,13 @@
       "bytes": 1443020,
       "status": "ai-generated",
       "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
+    },
+    {
+      "path": "ingilizce/play-assets/soft-stars.svg",
+      "sha256": "54644092cb106bb64b4d42bb364ef65d35e906e877b072701a5376ad1ee97088",
+      "bytes": 356,
+      "status": "code-native",
+      "source": "Original repository-authored subtle star SVG; docs/selected-play-design.md"
     }
   ]
 }

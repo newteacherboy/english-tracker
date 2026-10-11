@@ -1,0 +1,22 @@
+name: Selected play panels
+on:
+  push:
+    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', '.github/workflows/selected-play.yml']
+  pull_request:
+    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', '.github/workflows/selected-play.yml']
+permissions:
+  contents: read
+jobs:
+  panels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/selected-play-ui.cjs
+      - run: node tests/selected-game-entry.cjs
+      - run: node --test tests/portal-integrity.test.cjs
+      - run: python scripts/check-media-rights.py

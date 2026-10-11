@@ -13641,6 +13641,7 @@ function start(){update();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
+<link rel="stylesheet" href="selected-play.css?v=20261011-1"><script src="selected-play.js?v=20261011-1"></script>
 </body> etiketinin
              hemen ÜSTÜNE yapıştır.
              =================================================================== -->
@@ -14192,6 +14193,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
+<link rel="stylesheet" href="selected-play.css?v=20261011-1"><script src="selected-play.js?v=20261011-1"></script>
 </body> etiketinin hemen ÜSTÜNE yapıştır.
              Mevcut fonksiyonların hiçbirini değiştirmez; onları dışarıdan sarar.
              Bu bloğu silersen portal eski haline döner.
@@ -15485,6 +15487,7 @@ function sohbetMikDur() {
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
+<link rel="stylesheet" href="selected-play.css?v=20261011-1"><script src="selected-play.js?v=20261011-1"></script>
 </body>'nin hemen ÜSTÜNE yapıştır.
              Buradaki fonksiyonlar, sayfadaki aynı isimli eski fonksiyonların yerine geçer;
              eski kodu silmene gerek yok.
@@ -21763,6 +21766,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
+<link rel="stylesheet" href="selected-play.css?v=20261011-1"><script src="selected-play.js?v=20261011-1"></script>
 </body> etiketinin hemen üstüne, EN SONA ===================== -->
 <script>
 (function () {
@@ -22962,6 +22966,7 @@ font-size:40px;
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
+<link rel="stylesheet" href="selected-play.css?v=20261011-1"><script src="selected-play.js?v=20261011-1"></script>
 </body> etiketinin hemen ÜSTÜNE, en sona yapıştır.
      Arkadaşlar, Keşfet ve Lig'in öğrenci listesini sunucudan (sosyalOgrencilerGetir) alır.
      Eski sürüm, veritabanına anahtarsız doğrudan bağlanmaya çalışıyordu ve boş liste dönüyordu.
@@ -23129,6 +23134,7 @@ font-size:40px;
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
+<link rel="stylesheet" href="selected-play.css?v=20261011-1"><script src="selected-play.js?v=20261011-1"></script>
 </body> etiketinin hemen ÜSTÜNE yapıştır (uyum bloğunun altına da olur).
      Oyunlar'e "Eşleştirme" kartını kendisi ekler; başka bir yere dokunmana gerek yok.
      ========================================================================= -->
@@ -23398,6 +23404,7 @@ async function esOyunuBitir() {
 
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
 
+<link rel="stylesheet" href="selected-play.css?v=20261011-1"><script src="selected-play.js?v=20261011-1"></script>
 </body> etiketinin hemen ÜSTÜNE yapıştır. Oyunlar'e kartını kendisi ekler.
      Cümleler: önce Supabase "sentence_bank" (sınıf + ünite), eksik kalırsa Ders Çalış örnekleri.
      ======================================================================= -->
@@ -28586,15 +28593,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let B = BOLUM[b], D = durakBilgi(b, d), no = D.no, N = durakSayisi(b), bitti = tamam.has(no), y = yildiz(no), n = bolumTamam(b);
     let ileride = d > siradakiDurak(b) && !bitti;
     let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
-    k.innerHTML = `<div class="bz-alt-kart"><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3>
-      <div class="alt">${B.ik} ${kac(durakAdi(b, d))} · ${bitti ? '⭐'.repeat(y) + '☆'.repeat(3 - y) + ' en iyi sonucun' : ileride ? '🔒 Önce ' + DURAK[b][siradakiDurak(b)].sinif + '. sınıf ' + DURAK[b][siradakiDurak(b)].unite + '. üniteyi geç' : 'Sıradaki durak!'}</div>
-      <div class="bz-tipler">${TIPLER.map(([, ik, ad]) => `<div><span>${ik}</span>${ad}</div>`).join('')}<div><span>🏆</span>13 görev</div></div>
-      <div style="font-size:12.5px;font-weight:800;color:#7c6ba8;margin-bottom:6px">12 farklı soru türü + mikrofon/yazma finali · geçmek için ${GECME} doğru</div>
-      <div style="font-size:12px;font-weight:800;color:#7c6ba8;margin-bottom:6px">Kapı ilerlemesi: ${n}/${N}</div>
-      <div class="bz-cubuk" style="background:#ede9fe;margin-bottom:14px"><i style="width:${Math.round(n / N * 100)}%"></i></div>
-      <div style="margin:-4px 0 10px;padding:8px 10px;border-radius:12px;font-size:12.5px;font-weight:800;background:${bitti ? '#f1f5f9;color:#475569' : '#dcfce7;color:#14532d'}">⚡ İlk 12 sorunun her biri 1 enerji · son görev ücretsiz · 🃏 Jokerler 15. seviyede açılır</div>
-      <button class="bz-btn mor" id="bzOyna" ${ileride ? 'disabled' : ''}>${bitti ? '🔁 Tekrar oyna' : '✨ Büyüyü başlat'}</button>
-      <button class="bz-btn" id="bzVazgec" style="background:#f5f3ff;color:#6d28d9;box-shadow:none;margin-top:8px">Vazgeç</button></div>`;
+    k.classList.add('sp-entry','sp-adventure-entry');
+    const possibleXp=bitti?12:(window.DijiProgressRules?.parkurBaseXp(3)||60);
+    k.innerHTML = `<div class="bz-alt-kart sp-start-card"><button id="bzVazgec" class="sp-close" aria-label="Kapat">✕</button><img class="sp-entry-papi" src="study-assets/papi-celebrate.png" alt="Papi"><small>MACERA HARİTASI · ${d+1}. DURAK</small><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3><p>${kac(durakAdi(b,d))}</p><div class="sp-prize"><span>Olası ödül</span><strong>⭐ ${bitti?'': 'En çok '}${possibleXp} XP</strong><small>🪙 Altın ödülü yok · ${bitti?'Tekrar turu':'Başarıya göre ödül'}</small></div><p class="sp-entry-note">${ileride?'🔒 Önce sıradaki durağı tamamla':bitti?'⭐'.repeat(y)+' · En iyi sonucun':'12 soru + konuşma görevi · Sorularda enerji kullanılır'}</p><button class="bz-btn mor" id="bzOyna" ${ileride?'disabled':''}>${bitti?'Tekrar başlat':'Başlat'} →</button></div>`;
     document.body.appendChild(k);
     const kap = () => k.remove();
     k.onclick = e => { if (e.target === k) kap(); };
@@ -28650,7 +28651,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     return `<div class="bz-oyun-ust"><button class="kapat" id="bzCik" ${window.dmPapiFirstPractice?.locked('school')?'disabled title="İlk çalışmanı tamamla"':''} aria-label="Oyundan çık" style="width:38px;height:38px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:900;cursor:pointer;flex:none">✕</button>
       <button class="bz-geri-soru" id="bzGeriSoru" aria-label="Önceki soruları gör" ${O.gecmis.some(Boolean) ? '' : 'disabled'}>←</button>
       <div class="bz-noktalar" aria-label="İlerleme">${O.sorular.map((_, j) => `<i class="${j < O.i ? (O.sonuclar[j] ? 'd' : 'y') : j === O.i ? 'a' : ''}"></i>`).join('')}</div>
-      <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span></div>
+      <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="sp-combo" aria-label="Kombo">🔥 ${O.kombo||0}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span><span class="sp-gold" aria-label="Altın">🪙 ${yoVar()?yo.altin||0:0}</span></div>
       <div class="bz-govde" id="bzGovde"><span class="bz-tip">${ik} ${ad}${s.tekrarMi ? ' · 🔁 Önceki üniteden' : ''}</span>`;
   }
   /* ---------- Jokerler: her durakta her jokerin 1 bedava hakkı + çantadakiler (Oyunlar'le ortak çanta) ---------- */
@@ -28707,7 +28708,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     ciz(); document.body.appendChild(p);
     p.addEventListener('click', e => { if (e.target === p) p.remove(); });
   }
-  function ustTazele() { let e = document.querySelector('.bz-enerji-pill'); if (e && typeof window.genelEnerjiKalan === 'number') e.textContent = '⚡ ' + window.genelEnerjiKalan; }
+  function ustTazele() { let e = document.querySelector('.bz-enerji-pill'); if (e && typeof window.genelEnerjiKalan === 'number') e.textContent = '⚡ ' + window.genelEnerjiKalan; const c=document.querySelector('.sp-combo'),g=document.querySelector('.sp-gold');if(c)c.textContent='🔥 '+(O.kombo||0);if(g)g.textContent='🪙 '+(yoVar()?yo.altin||0:0); }
   /* ---------- ← Önceki soruları gör ---------- */
   function incelemeAc(k) {
     let son = O._cevaplandi ? O.i : O.i - 1; if (son < 0) return;
@@ -28726,7 +28727,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (O.i >= O.sorular.length) return bitir();
     let p = perdeAc(), s = O.sorular[O.i];
     O.jk = {};
-    p.innerHTML = `<div class="bz-oyun dm-question-panel" data-question-type="${s.tip}">${oyunUst()}</div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div><div class="bz-jokerler" id="bzJokerler"></div></div>`;
+    p.innerHTML = `<div class="bz-oyun dm-question-panel" data-question-type="${s.tip}">${oyunUst()}</div></div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div><div class="bz-jokerler" id="bzJokerler"></div>`;
     $('bzCik').onclick = () => { if (confirm('Büyüden çıkarsan bu durağın ilerlemesi kaydedilmez. Çıkılsın mı?')) { window.dmPapiFirstPractice?.complete('school');let b = O.b; kapat(); goster('harita', b); } };
     $('bzGeriSoru').onclick = () => incelemeAc();
     const nav=p.querySelector('.bz-oyun-ust');if(nav){const next=document.createElement('button');next.type='button';next.className='bz-geri-soru';next.textContent='→';next.title='Cevaplanan soruları ileri/geri incele';next.setAttribute('aria-label','Sonraki cevaplanmış soruyu incele');next.disabled=!O.gecmis.some(Boolean);next.onclick=()=>incelemeAc(0);nav.insertBefore(next,nav.querySelector('.bz-noktalar'));}
@@ -28793,6 +28794,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         return d;
       });
     }
+    ustTazele();
     ses(iyi ? 'dogru' : 'yanlis');
     let g = document.createElement('div'); g.className = 'bz-geri-bildirim ' + (iyi ? 'iyi' : 'kotu'); g.setAttribute('role', 'status');
     const target=O.sorular[O.i], word=target.k||(target.l&&target.l[0]);
@@ -28812,7 +28814,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     dev.onclick = devamEt;
     alan.appendChild(dev);
     jokerBarCiz(); let gs = $('bzGeriSoru'); if (gs) gs.disabled = false;
-    setTimeout(() => { dev.focus(); dev.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 60);
+    setTimeout(() => { dev.focus({preventScroll:true}); window.dmSelectedPlayFit?.(); }, 60);
   }
   const celdirici = (k, f, adet) => karistir(O.tum.filter(x => x !== k && norm(f(x)) !== norm(f(k)))).map(f).filter((v, i, a) => a.indexOf(v) === i).slice(0, adet);
   function secenekler(alan, liste, dogru, gosterilecek) {
@@ -30716,7 +30718,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script src="papi-feedback.js?v=3"></script><script src="papi-haptics.js?v=1"></script><link rel="stylesheet" href="papi-wallet.css?v=2"><script src="papi-wallet.js?v=3"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script src="story-curriculum.js?v=2"></script><script src="story-path.js?v=roomier-20261011-7"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script src="story-curriculum.js?v=2"></script><script src="story-path.js?v=selected-play-20261011-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script src="medupro.js?v=20261011-profix"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261011-hubfix2">
@@ -30733,7 +30735,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <script src="harf-bahcesi.js?v=2"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
-<script src="game-experience.js?v=20261011-memory"></script>
+<script src="game-experience.js?v=selected-play-20261011-1"></script>
 <script src="onboarding-ui.js?v=2"></script>
 <script src="rights-ui.js?v=1"></script>
 
@@ -30813,5 +30815,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="study-ui.js?v=20261011-3"></script>
 <link rel="stylesheet" href="storefront.css?v=20261011-4">
 <script src="storefront.js?v=20261011-4"></script>
+<link rel="stylesheet" href="selected-play.css?v=20261011-1"><script src="selected-play.js?v=20261011-1"></script>
 </body>      
         </html>

@@ -20,7 +20,7 @@
       if (!entry.querySelector('.dm-entry-intro')) {
         const intro=document.createElement('div');intro.className='dm-entry-intro';
         intro.innerHTML='<img src="papi-welcome-v2.png" alt="Papi"><p></p>';
-        const heading=document.createElement('header');heading.className='dm-entry-heading';heading.innerHTML='<small>PAPİ İLE OYUN ZAMANI</small><h2></h2>';heading.querySelector('h2').textContent=title;heading.querySelector('h2').style.setProperty('color','#234e45','important');entry.prepend(heading);
+        const heading=document.createElement('header');heading.className='dm-entry-heading';heading.innerHTML='<small>PAPİ İLE OYUN ZAMANI</small><h2></h2>';heading.querySelector('h2').textContent=title;heading.querySelector('h2').style.setProperty('color','#43266b','important');entry.prepend(heading);
         intro.querySelector('p').textContent=description;entry.querySelector('.dm-entry-heading').after(intro);
         const content=entry.closest('.game-modal-content'),music=content?.querySelector('[id$="MuzikBtn"]');if(music){const box=music.parentElement;box.classList.add('dm-entry-music');entry.append(box);}
         const rules=document.createElement('p');rules.className='dm-entry-rules';rules.textContent=ruleText;intro.after(rules);

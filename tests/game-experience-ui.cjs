@@ -12,7 +12,7 @@ const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwr
   await page.setViewportSize({width,height:844});
   for(const [fn,id,modal] of entries){
    await page.evaluate(fn=>window[fn](),fn);await page.waitForSelector('#'+id+' .dm-entry-intro');assert(await page.locator('#'+id).isVisible(),id);
-   const metrics=await page.locator('#'+id).evaluate(e=>{e=e.closest('.game-modal-content');return {background:getComputedStyle(e).backgroundColor,width:e.getBoundingClientRect().width,scroll:e.scrollWidth,client:e.clientWidth}});assert.equal(metrics.background,'rgb(244, 250, 242)',id);assert(metrics.width<=width,id);assert(metrics.scroll<=metrics.client+1,id);
+   const metrics=await page.locator('#'+id).evaluate(e=>{e=e.closest('.game-modal-content');return {background:getComputedStyle(e).backgroundColor,width:e.getBoundingClientRect().width,scroll:e.scrollWidth,client:e.clientWidth}});assert.equal(metrics.background,'rgb(252, 249, 255)',id);assert(metrics.width<=width,id);assert(metrics.scroll<=metrics.client+1,id);
    if(width===390&&fn==='kelimeYarismasiAc')await page.screenshot({path:'/tmp/game-entry-qa.png'});
    await page.evaluate(modal=>document.getElementById(modal).style.display='none',modal);
   }
