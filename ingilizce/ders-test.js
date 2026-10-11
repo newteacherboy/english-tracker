@@ -1,7 +1,7 @@
 /* Ders Çalış testi: çoktan seçmeli, boşluk doldurma, cümle kurma ve doğru/yanlış soruları.
    Eski biçimdeki sorular ({soru, secenekler, dogru}) çoktan seçmeli olarak gösterilir.
-   Şıklar her açılışta karıştırılır. Cevap kontrolü ve "yanlışta test baştan başlar" kuralı
-   eski dcQuizCevapVer fonksiyonunda kalır; bu dosya sadece soruları çizer. */
+   Şıklar her açılışta karıştırılır. Cevap kontrolü study-ui.js tarafından yönetilir;
+   bu dosya soruları ve doğru cevap açıklamalarını çizer. */
 (function () {
   'use strict';
   const kac = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -52,7 +52,7 @@
   function acikla(qi, dogruMu, h) {
     const el = document.getElementById('dtAciklama' + qi); if (!el) return;
     let ek = '';
-    if (!dogruMu) ek = h.tip === 'siralama' ? `Doğrusu: <b>${kac(h.cevap)}</b>. ` : h.tip === 'bosluk' || h.tip === 'secim' ? `Doğrusu: <b>${kac(h.secenekler[h.dogru])}</b>. ` : '';
+    if (!dogruMu) ek = h.tip === 'siralama' ? `Doğrusu: <b>${kac(h.cevap)}</b>. ` : h.tip === 'bosluk' || h.tip === 'secim' || h.tip === 'dogruyanlis' ? `Doğrusu: <b>${kac(h.secenekler[h.dogru])}</b>. ` : '';
     el.innerHTML = ek + kac(h.aciklama || (dogruMu ? 'Harika!' : ''));
     el.classList.toggle('dt-yanlis', !dogruMu);
     el.hidden = !el.textContent.trim();

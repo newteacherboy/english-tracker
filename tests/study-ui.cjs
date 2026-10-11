@@ -126,6 +126,14 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   const xpBefore=await page.evaluate(()=>yo.totalXp);failNextSave=true;
   await page.locator('#suQuizNext').click();await page.waitForTimeout(250);assert.equal(await page.locator('#suStudyResult').count(),0,'failed save does not show success');assert.equal(await page.evaluate(()=>yo.totalXp),xpBefore,'failed save does not award');assert(await page.locator('#suQuizNext').isEnabled(),'failed save can retry');assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),false);
   await page.locator('#suQuizNext').click();await page.waitForSelector('#suStudyResult');assert(await page.evaluate(()=>dmStudyUI.lastResult.correct===1&&dmStudyUI.lastResult.wrong===1));assert(await page.evaluate(()=>dmStudyUI.lastResult.xp===0&&dmStudyUI.lastResult.gold===0&&dmStudyUI.lastResult.energy===0),'existing daily award is preserved without duplicate first-clear reward');
+  await page.locator('.su-result-done').click();await page.locator('[data-topic="A1|grammar|Saatler"]').last().click();await page.waitForTimeout(250);
+  await page.evaluate(()=>{dcAnlatimOnaylandiMi=true;dcOrnekDinlenenSet=new Set([0,1,2,3]);dcSekmeSec('test',document.querySelector('[data-tab="test"]'));});
+  for(const q of [{tip:'bosluk',soru:'I ___ every day.',secenekler:['walk','walks'],dogru:0,wrong:'walks',answer:'walk'},{tip:'dogruyanlis',soru:'She go to school.',dogru:false,wrong:'Doğru',answer:'Yanlış'},{tip:'siralama',soru:'Cümleyi kur',parcalar:['I','wake','up'],cevap:'I wake up',answer:'I wake up'}]){
+    await page.evaluate(q=>dcTestCiz([q]),q);
+    if(q.tip==='siralama'){for(const word of ['wake','I','up'])await page.locator('.dc-quiz-q:visible .dt-kelime').filter({hasText:new RegExp('^'+word+'$')}).click();}
+    else await page.locator('.dc-quiz-q:visible .dc-quiz-opt').filter({hasText:new RegExp('^'+q.wrong+'$')}).click();
+    assert((await page.locator('.dc-quiz-q:visible .dt-aciklama').innerText()).includes('Doğrusu: '+q.answer),'correct answer shown for '+q.tip);assert(await page.locator('#suQuizNext').isDisabled());await page.waitForTimeout(5100);assert(await page.locator('#suQuizNext').isEnabled());assert.equal(await page.evaluate(()=>dcQuizDogruSayisi),0);console.log('PASS wrong answer review '+q.tip);
+  }
   assert.deepEqual(errors.filter(x=>!x.includes('Chart')&&!x.includes('pdf')),[]);
   console.log('PASS study filters/search, real topic loading, reading/listening gates, slow voice, dictionary, single-question test, ordering, completion, five-second wrong-answer review, actual rewards and duplicate prevention and preserved dock');
   await browser.close();
