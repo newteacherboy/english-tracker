@@ -12,7 +12,7 @@ export function storyAPI(db:any,json:any){
   if(!['storyStatus','storyOpen','storyAdvance'].includes(op))return null;
   const owner=key(a);if(!owner)return json({ok:false,mesaj:'Öğrenme ilerlemesini kaydetmek için giriş yapmalısın.'},401);
   if(method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
-  if(op==='storyStatus'){const {data,error}=await db.from('papi_story_progress').select('chapter,cursor,completed,version').eq('actor_key',owner).order('chapter');return error?json({ok:false,mesaj:'Öğrenme yolu yüklenemedi.'},503):json({ok:true,progress:data||[]});}
+  if(op==='storyStatus'){const {data,error}=await db.from('papi_story_progress').select('chapter,cursor,completed,version').eq('actor_key',owner).order('chapter');return error?json({ok:false,mesaj:'Öğrenme yolu yüklenemedi.'},503):json({ok:true,progress:data||[],v2Enabled:true});}
   const chapter=Number(b.chapter),C=STORY_CHAPTERS[chapter];if(!Number.isInteger(chapter)||!C)return json({ok:false,mesaj:'Geçersiz durak.'},400);
   const read=()=>db.from('papi_story_progress').select('*').eq('actor_key',owner).eq('chapter',chapter).maybeSingle();
   const {data:existing,error}=await read();if(error)return json({ok:false,mesaj:'Durak yüklenemedi.'},503);
