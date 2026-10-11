@@ -9,7 +9,7 @@ export const previousChapter=(chapter:number):number|null=>{
  return chapter-1;
 };
 import {storyV2Steps,storyV2Grade} from './story-v2.ts';
-const useNewDeck=()=>typeof Deno!=='undefined'&&Deno.env.get('DM_STORY_V2')==='true';
+const useNewDeck=()=>typeof Deno!=='undefined'&&Deno.env.get('DM_STORY_V2')!=='false';
 const stepsFor=(chapter:number,record:any)=>record?.deck_version===2?storyV2Steps(STORY_CHAPTERS[chapter]):STORY_CHAPTERS[chapter].steps;
 const normStory=(x:any)=>String(x??'').normalize('NFKC').trim().toLocaleLowerCase('en-US').replace(/[.!?,;:]/g,'').replace(/\s+/g,' ');
 export function storyAPI(db:any,json:any){
