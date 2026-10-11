@@ -9,14 +9,14 @@ export function storyV2Steps(chapter:any){
  if(!cards.length)return [];
  const sentence=sentences[0]||cards[0],chosen=cards[Math.min(1,cards.length-1)],translate=cards[Math.min(2,cards.length-1)];
  const steps:any[]=[
- {kind:'match',pairs:cards},
- {kind:'repeat',...cards[0]},
- {kind:'order',...sentence,tokens:words(sentence.en)},
- {kind:'choose',...chosen,options:rotate(cards.map((c:any)=>c.en),1),answer:chosen.en}
+ {kind:'match',label:'Eşleştir ve öğren',pairs:cards},
+ {kind:'repeat',label:"Papi'yi dinle ve tekrar et",...cards[0]},
+ {kind:'order',label:'Duyduğun cümleyi oluştur',...sentence,tokens:words(sentence.en)},
+ {kind:'choose',label:'Türkçesini dinle, İngilizcesini bul',...chosen,options:rotate(cards.map((c:any)=>c.en),1),answer:chosen.en}
  ];
- if(sentences.length){const c=sentences[Math.min(1,sentences.length-1)],parts=words(c.en),mid=Math.max(1,Math.floor(parts.length/2));steps.push({kind:'complete',...c,stem:parts.slice(0,mid).join(' '),answer:parts.slice(mid).join(' '),options:rotate(sentences.map((s:any)=>words(s.en).slice(mid).join(' ')).filter(Boolean),1)})}
- steps.push({kind:'translate',...translate,from:'tr',answer:translate.en});
- for(const card of cards)steps.push({kind:'final',...card,maxAttempts:2});
+ if(sentences.length){const c=sentences[Math.min(1,sentences.length-1)],parts=words(c.en),mid=Math.max(1,Math.floor(parts.length/2));steps.push({kind:'complete',label:'Cümleyi tamamla',...c,stem:parts.slice(0,mid).join(' '),answer:parts.slice(mid).join(' '),options:rotate(sentences.map((s:any)=>words(s.en).slice(mid).join(' ')).filter(Boolean),1)})}
+ steps.push({kind:'translate',label:'Çeviri zamanı',...translate,from:'tr',answer:translate.en});
+ for(const card of cards)steps.push({kind:'final',label:'Büyük final',...card,maxAttempts:2});
  return steps;
 }
 export function storyV2Grade(task:any,answer:any){
