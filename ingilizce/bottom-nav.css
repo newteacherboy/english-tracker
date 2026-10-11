@@ -45,3 +45,8 @@ body.dm-parkur-open #bzParkur#bzParkur>.bz-ic{padding-bottom:calc(84px + env(saf
 
 body:has(#rtProfileBackdrop) #bottomNavMobile#bottomNavMobile{z-index:2147483550!important}
 #tab-dunya #dmParkurScroll:has(.rt-root){padding-bottom:0!important}
+
+/* Always draw the actual profile SVG above the old sticker atlas. */
+#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon{display:grid!important;place-items:center!important}
+#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon .dm-nav-art{display:none!important}
+#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon img{display:block!important;position:relative!important;width:38px!important;height:38px!important;object-fit:contain!important;opacity:1!important;visibility:visible!important}
