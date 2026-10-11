@@ -63,3 +63,6 @@ body:has(#rtProfileBackdrop) #bottomNavMobile#bottomNavMobile{z-index:2147483550
 .dm-chat-form textarea{flex:1;min-width:0;resize:none;font:14px Nunito,system-ui;padding:9px;border-radius:12px;border:1px solid #cfd5e1}
 .dm-chat-form button{border:0;border-radius:13px;background:#16afa0;color:white;padding:0 16px;font-weight:800}
 .dm-chat-form button:disabled{opacity:.5}.dm-chat-status{font-size:12px;color:#9c2941;margin:0 13px 9px}
+
+/* Retire both old learning header switch variants, including cached markup. */
+#tab-dunya .dm-parkur-tabs,#tab-dunya #pkSekmeler,#bzParkur .dm-parkur-tabs,#bzParkur #pkSekmeler,body.dm-parkur-open .dm-parkur-tabs,body.dm-parkur-open #pkSekmeler{display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important;margin:0!important;border:0!important;overflow:hidden!important}
