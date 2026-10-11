@@ -10,7 +10,7 @@ let v2ExerciseAssets=null;
 async function loadV2ExerciseAssets(){
  if(v2ExerciseAssets)return v2ExerciseAssets;
  v2ExerciseAssets=Promise.all(['story-exercises.js','story-v2-ui.js'].map(src=>new Promise((resolve,reject)=>{
-  const el=document.createElement('script');el.src=src;el.onload=resolve;el.onerror=()=>reject(Error('Yeni soru ekranı yüklenemedi.'));document.head.append(el);
+  const el=document.createElement('script');el.src=src+'?v=story-v3-20261011';el.onload=resolve;el.onerror=()=>reject(Error('Yeni soru ekranı yüklenemedi.'));document.head.append(el);
  }))).catch(e=>{v2ExerciseAssets=null;throw e});
  return v2ExerciseAssets;
 }
