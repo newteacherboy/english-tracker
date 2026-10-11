@@ -995,7 +995,7 @@ html, body { touch-action: pan-x pan-y; }
 </style>
 <style id="dm-play-dashboard-style">
 #tab-dunyam #bdGorevler,#tab-dunyam #bdHafta{display:none!important;}
-#bzParkur .dm-play-board{position:relative;z-index:2;display:grid;gap:14px;padding:16px 10px 20px;max-width:560px;margin:12px auto 0;background:linear-gradient(180deg,#f5efd9,#fff9ec);font-family:Nunito,system-ui,sans-serif}
+#bzParkur .dm-play-board{position:relative;z-index:2;display:grid;gap:14px;padding:14px 12px 110px;max-width:700px;margin:0 auto;background:linear-gradient(#f7f4e9,#fff9ec);font-family:Nunito,system-ui,sans-serif}
 #bzParkur .dm-play-card{background:#fffdf7;border:1px solid #e8dec6;border-radius:24px;padding:16px;box-shadow:0 6px 16px #61532c16;color:#214b38}
 #bzParkur .dm-play-title{display:flex;align-items:center;gap:8px;margin-bottom:13px}
 #bzParkur .dm-play-title>span{font-size:25px}
@@ -25566,28 +25566,193 @@ window.ocEnerjiHarca = async function (n) {
 
  window.dmGunGorevleri = () => gunGorevleri(); /* Benim Dünyam için */
  function gunGorevleri() {
-   if (!yoVar()) return null;
-   const today=bugun();
-   const gate={dinleme:'oyun_dikte',yazim:'oyun_bosluk',cumle:'oyun_tren',hiz:'oyun_yagmur',zk:'zor_kelimeler',oyun3:'aktiviteler',oyun5:'aktiviteler',yildiz3:'aktiviteler',ders1:'ders'};
-   const eligible=g=>g&&g.id&&(!window.dmProgression||!gate[g.id]||window.dmProgression.allowed(gate[g.id]));
-   const options=GOREV_HAVUZ.filter(eligible);
-   // Her gün ve öğrenci için kararlı farklı sıra; kilitli etkinlikler görev havuzuna girmez.
-   const seed=tohum(today+(typeof aktifOgrenciAdi!=='undefined'?aktifOgrenciAdi:''));
-   const ordered=options.slice().sort((a,b)=>tohum(today+seed+a.id)-tohum(today+seed+b.id));
-   const existing=yo.gorev?.t===today&&Array.isArray(yo.gorev.liste)?yo.gorev:null;
-   const previous=new Map((existing?.liste||[]).filter(x=>x&&typeof x.id==='string').map(x=>[x.id,x]));
-   const valid=(existing?.liste||[]).filter(x=>eligible(GOREV_HAVUZ.find(g=>g.id===x?.id)));
-   const selected=[];
-   for(const x of valid){if(!selected.some(y=>y.id===x.id)&&selected.length<3)selected.push({id:x.id,ilerleme:Math.max(0,Number(x.ilerleme)||0)});}
-   for(const g of ordered){if(selected.length>=3)break;if(!selected.some(x=>x.id===g.id))selected.push({id:g.id,ilerleme:Math.max(0,Number(previous.get(g.id)?.ilerleme)||0)});}
-   if(!selected.length)return null;
-   const next={t:today,liste:selected,alindi:existing?.alindi===true};
-   if(!existing||JSON.stringify(existing.liste)!==JSON.stringify(next.liste)){
-     yo.gorev=next;
-     if(typeof yoKaydet==='function')yoKaydet();
-   }
-   return yo.gorev;
- }
+
+  if (!yoVar() || !window.dmProgression?.allowed('gunluk_gorev')) return null;
+
+  const b = bugun();
+
+  if (!yo.gorev || yo.gorev.t !== b) {
+
+    const h = tohum(
+      b +
+      (
+        typeof aktifOgrenciAdi !== 'undefined'
+          ? aktifOgrenciAdi
+          : ''
+      )
+    );
+
+    /* 1. görev: oyun */
+    const oyunG = GOREV_HAVUZ.filter(
+      g =>
+        g &&
+        (
+          g.olay === 'oyun' ||
+          g.olay === 'yildiz3'
+        )
+    );
+
+    /* 2. görev: ders */
+    const dersG = GOREV_HAVUZ.find(
+      g => g && g.id === 'ders1'
+    );
+
+    /* 3. görev: beceri veya zor kelime */
+    let cesit = GOREV_HAVUZ.filter(
+      g =>
+        g &&
+        (
+          (String(g.olay || '').startsWith('beceri') && window.dmProgression?.allowed(({dinleme:'oyun_dikte',cumle:'oyun_tren',hiz:'oyun_yagmur',yazim:'oyun_bosluk'})[g.id] || 'aktiviteler')) ||
+          (g.id === 'zk' && window.dmProgression?.allowed('zor_kelimeler'))
+        )
+    );
+
+    if(!cesit.length) cesit=oyunG;
+    const secim = [];
+
+    /* Oyun görevi */
+    if (oyunG.length) {
+      secim.push(
+        oyunG[h % oyunG.length]
+      );
+    }
+
+    /* Ders görevi */
+    if (dersG) {
+      secim.push(dersG);
+    }
+
+    /* Beceri / tekrar görevi */
+    if (cesit.length) {
+      secim.push(
+        cesit[
+          (h >> 3) % cesit.length
+        ]
+      );
+    }
+
+    /*
+      Herhangi bir nedenle yukarıdan 3 görev çıkmazsa
+      güvenli yedek görevlerle tamamla.
+    */
+    const kullanilan =
+      new Set(
+        secim
+          .filter(Boolean)
+          .map(g => g.id)
+      );
+
+    for (const aday of GOREV_HAVUZ) {
+
+      if (secim.length >= 3) break;
+
+      if (
+        aday &&
+        aday.id &&
+        !kullanilan.has(aday.id)
+      ) {
+
+        secim.push(aday);
+        kullanilan.add(aday.id);
+      }
+    }
+
+    /*
+      Son güvenlik:
+      undefined/null elemanları temizle.
+    */
+    const temizSecim =
+      secim
+        .filter(
+          g =>
+            g &&
+            typeof g.id === 'string'
+        )
+        .slice(0, 3);
+
+    /*
+      Görev havuzu ciddi şekilde bozulmuşsa
+      uygulamayı çökertme.
+    */
+    if (!temizSecim.length) {
+
+      console.warn(
+        'Sana Özel: Günlük görev oluşturulamadı.',
+        GOREV_HAVUZ
+      );
+
+      return null;
+    }
+
+    yo.gorev = {
+      t: b,
+
+      liste: temizSecim.map(g => ({
+        id: g.id,
+        ilerleme: 0
+      })),
+
+      alindi: false
+    };
+
+    if (typeof yoKaydet === 'function') {
+      yoKaydet();
+    }
+  }
+
+  /*
+    Daha önce hatalı oluşturulmuş görev kaydı
+    varsa onu da güvenli şekilde temizle.
+  */
+  if (
+    yo.gorev &&
+    Array.isArray(yo.gorev.liste)
+  ) {
+
+    yo.gorev.liste =
+      yo.gorev.liste.filter(
+        x =>
+          x &&
+          typeof x.id === 'string'
+      );
+  }
+
+         /* Eksik üçüncü görevi güvenli şekilde tamamla */
+if (
+  yo.gorev &&
+  Array.isArray(yo.gorev.liste) &&
+  yo.gorev.liste.length === 2
+) {
+
+  const mevcutIdler = new Set(
+    yo.gorev.liste.map(x => x && x.id)
+  );
+
+  /* Öncelikle eksik bir beceri görevi seç */
+  const yeniGorev = GOREV_HAVUZ.find(g =>
+    g &&
+    g.id &&
+    !mevcutIdler.has(g.id) &&
+    (
+      String(g.olay || '').startsWith('beceri') ||
+      g.id === 'zk'
+    )
+  );
+
+  if (yeniGorev) {
+
+    yo.gorev.liste.push({
+      id: yeniGorev.id,
+      ilerleme: 0
+    });
+
+    if (typeof yoKaydet === 'function') {
+      yoKaydet();
+    }
+  }
+}
+  return yo.gorev;
+}
 
 
   function olay(tur) {
@@ -28420,7 +28585,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       const hasGoal=h&&h.h===wk&&Number(h.xp)>0;
       const weekly=hasGoal?'<strong>Bu hafta '+Number(h.xp).toLocaleString('tr-TR')+' XP kazan!</strong><div class="dm-play-weekbar"><span style="width:'+Math.min(100,Math.round(weeklyXP/h.xp*100))+'%"></span></div><small>'+Math.min(weeklyXP,h.xp).toLocaleString('tr-TR')+' / '+Number(h.xp).toLocaleString('tr-TR')+' XP · 🎁 Hedef ödülü</small>':'<strong>Haftalık hedefini seç</strong><div class="dm-play-weekopts">'+[1000,1500,2500].map(v=>'<button type="button" data-play-target="'+v+'">'+v.toLocaleString('tr-TR')+' XP</button>').join('')+'</div>';
       const board=document.createElement('section');board.className='dm-play-board';board.innerHTML='<div class="dm-play-card"><div class="dm-play-title"><span>📋</span><h3>Günün 3 Görevi</h3><small>Her gün yenilenir</small></div>'+(opts||'<p>Şu an seviyene uygun görev hazırlanıyor.</p>')+(tasks?.alindi?'<div class="dm-play-claimed">🎉 Bugünün ödülü alındı</div>':'<button class="dm-play-claim" '+(list.length===3&&list.every(x=>{const d=pool.find(g=>g.id===x.id);return Number(x.ilerleme)>=Number(d.hedef)})?'':'disabled')+'>🎁 Görev ödülünü al · +40 XP · +30 🪙</button>')+'</div><div class="dm-play-card"><div class="dm-play-title"><span>🎯</span><h3>Haftalık Hedef</h3><small>Pazartesi – Pazar</small></div>'+weekly+'</div>';
-      p.querySelector('.bz-ic')?.appendChild(board);
+      p.querySelector('#dmParkurScroll')?.appendChild(board);
       board.querySelector('.dm-play-claim')?.addEventListener('click',()=>document.querySelector('#soGorevOdul')?.click());
       board.querySelectorAll('[data-play-target]').forEach(btn=>btn.addEventListener('click',()=>{
         const selected=Number(btn.dataset.playTarget);
