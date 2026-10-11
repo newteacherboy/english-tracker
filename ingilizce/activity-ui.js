@@ -43,7 +43,7 @@
  ['kelimeYarismasiAc',0,'#d9c7f9','#b99be5'],['jpOyunAc',1,'#ffd3e5','#e6abc5'],['boslukOyunAc',2,'#ffe69d','#e3c678'],['hafizaOyunAc',3,'#ffd2d9','#e4a6b0'],
  ['yagmurOyunAc',4,'#b5e6ff','#8fc5e7'],['asmacaOyunAc',5,'#ffbcbf','#dc8f97'],['kelimebulOyunAc',6,'#cdf29e','#a0cf73'],['esOyunAc',7,'#debbfa','#be94e2'],
  ['trenOyunAc',8,'#ffe795','#e5c66b'],['dikteAc',9,'#c8d5ff','#a2b1e4'],['cumleAc',10,'#e8c7f4','#c59bd4'],['dmUcusteKart',11,'#b8e7ff','#8bc7e7'],['dmRotaKart',12,'#e5c4fb','#c294df'],['yolculuguAc',12,'#bde8de','#96cbbd'],['harfBahcesiAc',null,'#cdeeb6','#99c57d']];
- let party='solo',partyObserver,observedGrid;
+ let party='solo';
  function partyTabs(host,grid){
   let tabs=host.querySelector('.dm-party-tabs');
   if(!tabs){
@@ -66,7 +66,7 @@
    if(shouldShow){b.style.removeProperty('display');}
    else{b.style.setProperty('display','none','important');}
   });
-  if(observedGrid!==grid){partyObserver?.disconnect();observedGrid=grid;partyObserver=new MutationObserver(upgradeCards);partyObserver.observe(grid,{childList:true});}
+  // No grid MutationObserver: upgrading cards itself moves child nodes.
  }
  function upgradeCards(){
   const host=document.querySelector('#tab-aktiviteler .dc-focus-card')||document.getElementById('tab-aktiviteler');if(!host)return;
