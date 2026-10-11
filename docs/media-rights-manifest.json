@@ -737,6 +737,34 @@
       "bytes": 137184,
       "status": "existing-upload-provenance-unverified",
       "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/friends-assets/icons.svg",
+      "sha256": "8d57136b6d2c54dd30c9117911df6245c8b1faacc9d2af2760976205f71a61aa",
+      "bytes": 1375,
+      "status": "code-native",
+      "source": "Repository-authored Friends interface SVG; source retained in Git"
+    },
+    {
+      "path": "ingilizce/friends-assets/meadow.svg",
+      "sha256": "f5e525d13b49197984a5775e1599edf3e4fd53c7051d63dcbb0f96d2432c2fdb",
+      "bytes": 729,
+      "status": "code-native",
+      "source": "Repository-authored Friends interface SVG; source retained in Git"
+    },
+    {
+      "path": "ingilizce/friends-assets/papi-friends.png",
+      "sha256": "cd7488a8b3f8c2fd35636e8991ac8743cc76e0b62834bc9e9e699043ee590190",
+      "bytes": 29575,
+      "status": "ai-generated",
+      "source": "OpenAI imagegen, 2026-10-11; original Papi parrot generated for the approved Friends UI; resized transparent PNG export"
+    },
+    {
+      "path": "ingilizce/friends-assets/papi-league.png",
+      "sha256": "3c0fadb74c3ce49c642d365a1e24b137c441bca5ca60268a2eebc621fe38c471",
+      "bytes": 36482,
+      "status": "ai-generated",
+      "source": "OpenAI imagegen, 2026-10-11; original Papi parrot generated for the approved Friends UI; resized transparent PNG export"
     }
   ]
 }
