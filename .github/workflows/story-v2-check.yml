@@ -24,4 +24,5 @@ jobs:
           node tests/story-exercises.cjs
           node tests/story-exercises-all-chapters.cjs
           node tests/story-v2-parity.cjs
+          node tests/story-v3-parity.cjs
           node tests/story-v2-release-guard.cjs
