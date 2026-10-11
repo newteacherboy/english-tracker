@@ -28887,7 +28887,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       '<div class="bz-ipucu">Türkçe anlamı gör, İngilizcesini sesli söyle. Doğru kart kaybolur; tüm kartları bitirince kapı açılır.</div>' +
       '<div id="bzMicStatus" role="status" aria-live="polite"></div><div id="bzMicCards"></div>' +
       '<button type="button" class="bz-btn" id="bzMicStart">🎤 Mikrofonla cevapla</button>' +
-      '<details style="margin-top:12px"><summary>🎹 Mikrofon çalışmıyor mu? Yazarak cevapla</summary>' +
+      '<details open class="dm-final-write-panel"><summary>✍️ Yazarak cevapla · Mikrofon kullanmadan da yanıt verebilirsin</summary>' +
       '<label for="bzMicText">İngilizce cevap</label><input id="bzMicText" class="bz-input" autocomplete="off" autocapitalize="none">' +
       '<button type="button" id="bzMicCheck" class="bz-btn">Cevabımı kontrol et</button></details>';
     const status = alan.querySelector('#bzMicStatus'), cards=alan.querySelector('#bzMicCards');
@@ -28947,7 +28947,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ✏️ Eksik Harf: eksik harfleri yerleştir */
   function eksik(s, alan) {
     let w = EN(s.k).toLowerCase(), n = Math.max(1, Math.round(w.length / 3));
-    let gizli = karistir([...Array(w.length).keys()]).slice(0, n).sort((a, b) => a - b);
+    let gizli = karistir([...Array(w.length).keys()].filter(i => /[a-z]/i.test(w[i]))).slice(0, n).sort((a, b) => a - b);
     let dolu = {}, harfler = karistir([...gizli.map(i => w[i]), ...karistir('aeioulnrst'.split('').filter(h => !w.includes(h))).slice(0, 2)]).map((h, i) => ({ h, i, k: false }));
     O.jk.yari = () => { let f = harfler.filter(x => !x.k && !gizli.some(i => w[i] === x.h)); if (!f.length) return false; f.forEach(x => x.k = true); ciz(); };
     O.jk.harf = () => { let bos = gizli.find(i => !dolu[i] || dolu[i].h !== w[i]); if (bos === undefined) return false; if (dolu[bos]) { dolu[bos].k = false; delete dolu[bos]; } let x = harfler.find(y => !y.k && y.h === w[bos]); if (!x) return false; dolu[bos] = x; x.k = true; ciz(); };
@@ -30700,7 +30700,17 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="onboarding-ui.js?v=2"></script>
 <script src="rights-ui.js?v=1"></script>
 
-<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}</style>
+<style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}
+/* Adventure questions: preserve spaces/punctuation and foreground keyboard fallback. */
+.bz-slot.sabit:not(button){white-space:pre;flex:0 0 auto}
+.bz-slotlar .bz-slot.sabit{user-select:none}
+.dm-final-write-panel{margin-top:18px!important;padding:16px;border:2px solid #6ba17a;border-radius:18px;background:#edf9ee;box-shadow:0 5px 0 #d2e9d4}
+.dm-final-write-panel>summary{cursor:pointer;padding:10px 12px;font-size:18px;line-height:1.4;font-weight:900;color:#155333;border-radius:12px;background:#d7f0df}
+.dm-final-write-panel>label{display:block!important;font-size:17px!important;font-weight:850!important;margin:14px 0 7px;color:#14452f}
+.dm-final-write-panel #bzMicText{box-sizing:border-box;width:100%;min-height:64px;font-size:21px;border:3px solid #56a66a;border-radius:15px;background:white;color:#183923;padding:14px}
+.dm-final-write-panel #bzMicCheck{min-height:58px;width:100%;font-size:18px;font-weight:900;margin-top:12px;box-shadow:0 5px 0 #39794d}
+.dm-final-write-panel #bzMicText:focus-visible,.dm-final-write-panel>summary:focus-visible{outline:3px solid #ffc83b;outline-offset:3px}
+</style>
 
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=2"></script><script src="contact-policy.js?v=2"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=3"></script>
