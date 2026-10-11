@@ -207,3 +207,182 @@
 #tab-dunyam .bd-ust .bd-yuvarlak{width:38px;height:38px;padding:8px;box-shadow:0 2px 0 rgba(43,35,80,.15)}
 #tab-dunyam .bd-ust .bd-yuvarlak svg{width:20px;height:20px;flex-shrink:0}
 #tab-dunyam .bd-sahne .bd-balon{top:60px}
+
+/* Approved design 1: a viewport-sized world, with horizontal statistics. */
+#tab-dunyam.bd-design-one{--bw-height:100dvh;--bw-nav:90px;height:var(--bw-height)!important;padding:12px max(14px,calc((100vw - 1050px)/2)) calc(var(--bw-nav) + 10px)!important;overflow:hidden;background:radial-gradient(ellipse at 20% 10%,#fff 0,#faf8ff 40%,#f0eafa 100%)}
+#tab-dunyam.bd-design-one.active{display:flex!important;flex-direction:column;gap:10px}
+#tab-dunyam.bd-design-one .bd-sahne{height:42px;flex:0 0 42px;background:none!important;border-radius:0;overflow:visible;display:flex;align-items:center}
+#tab-dunyam.bd-design-one .bd-sahne h1{font:700 clamp(20px,3vw,30px)/1.1 Fredoka,Nunito,sans-serif;margin:0;color:#433765}
+#tab-dunyam.bd-design-one .bd-papi,#tab-dunyam.bd-design-one .bd-balon,#tab-dunyam.bd-design-one .bd-tabela{display:none!important}
+#tab-dunyam.bd-design-one .bd-ust{top:0;right:0;gap:7px}
+#tab-dunyam.bd-design-one .bd-yuvarlak{width:40px;height:38px;border-radius:12px;border:1px solid #ebe5f5;box-shadow:0 3px 0 #e6dff0;color:#736296}
+#tab-dunyam.bd-design-one #bdOgretmen{order:0}#tab-dunyam.bd-design-one #bdAyar{order:1}#tab-dunyam.bd-design-one #bdCikis{order:2}
+#tab-dunyam.bd-design-one .bd-kart{flex:0 0 65px;min-height:0;margin:0;padding:8px 12px;border-radius:18px;display:flex;align-items:center;gap:14px;border:1px solid #e9e4f0;box-shadow:0 3px 0 #eae4f2}
+#tab-dunyam.bd-design-one .bd-kimlik{flex:1;gap:9px;min-width:0}
+#tab-dunyam.bd-design-one .bd-avatar{width:42px;height:42px;font-size:28px;border:2px solid #e8dcfa}
+#tab-dunyam.bd-design-one .bd-ad-satir b{font-size:16px;max-width:100%}
+#tab-dunyam.bd-design-one .bd-cevrimici,#tab-dunyam.bd-design-one .bd-kalem,#tab-dunyam.bd-design-one .bd-kalkan,#tab-dunyam.bd-design-one .bd-xp-yazi{display:none}
+#tab-dunyam.bd-design-one .bd-seviye-satir{position:absolute;left:47%;top:13px}
+#tab-dunyam.bd-design-one .bd-sv{font-size:12px;padding:4px 10px;margin:0}
+#tab-dunyam.bd-design-one .bd-xp{height:5px;margin-top:6px;max-width:100px}
+#tab-dunyam.bd-design-one .bd-cipler{margin:0;gap:10px;flex:1}
+#tab-dunyam.bd-design-one .bd-cip{padding:0;background:none;font-size:13px;min-height:32px;gap:3px}
+#tab-dunyam.bd-design-one .bd-sekmeler{display:none}
+#tab-dunyam.bd-design-one .bd-govde{flex:1;min-height:0;padding:0;overflow:hidden}
+#tab-dunyam.bd-design-one [data-panel="sanaozel"]{height:100%;display:grid;grid-template-rows:minmax(0,.9fr) minmax(0,2.1fr) minmax(0,1fr) minmax(0,.6fr);gap:10px}
+#tab-dunyam.bd-design-one [data-panel="sanaozel"]:has(#odoKart:not([hidden])){grid-template-rows:minmax(0,1fr) minmax(0,.95fr) minmax(0,2.2fr) minmax(0,1fr) minmax(0,.65fr)}
+#tab-dunyam.bd-design-one #bdOdevler:empty,#tab-dunyam.bd-design-one #bdOdevler:has(#odoKart[hidden]){display:none}
+#tab-dunyam.bd-design-one .bw-card{border-radius:20px;border:1px solid #e5daed;box-shadow:0 4px 0 #e7ddef;min-height:0;overflow:hidden;padding:12px 16px}
+#tab-dunyam.bd-design-one h2{margin:0;font:700 clamp(16px,2.4vw,25px)/1.15 Fredoka,Nunito,sans-serif;color:#483665}
+#tab-dunyam.bd-design-one .bw-card p{font-size:clamp(11px,1.4vw,15px);line-height:1.3;margin:5px 0;color:#827494;font-weight:700}
+#tab-dunyam.bd-design-one button{font-family:inherit;cursor:pointer}
+#tab-dunyam.bd-design-one .bw-pill{display:inline-block;border:1px solid #e1d8ed;background:#fff9;padding:3px 7px;border-radius:8px;font-size:11px;font-weight:800;margin:3px 4px 0 0;white-space:nowrap}
+#tab-dunyam.bd-design-one .bw-review{background:linear-gradient(110deg,#ede1fb,#f6effd);display:flex;align-items:center;gap:12px;position:relative}
+#tab-dunyam.bd-design-one .bw-review-art{height:110%;width:22%;object-fit:contain;align-self:center;filter:drop-shadow(0 5px 3px #80739e22)}
+#tab-dunyam.bd-design-one .bw-review>div{flex:1;min-width:0}
+#tab-dunyam.bd-design-one .bw-green{background:linear-gradient(#8fd594,#66b96c);color:#fff;border:1px solid #64ab67;border-radius:12px;box-shadow:0 4px 0 #4b9b52;padding:10px 14px;font-weight:900;font-size:14px;white-space:nowrap}
+#tab-dunyam.bd-design-one button:disabled{opacity:.6;cursor:default}
+#tab-dunyam.bd-design-one .bw-showcase{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:0}
+#tab-dunyam.bd-design-one .bw-showcase article{display:flex;flex-direction:column;position:relative}
+#tab-dunyam.bd-design-one .bw-badges{background:radial-gradient(ellipse at 50% 65%,#fff7c3,#fff1cf 65%,#fbe6b9);border-color:#efdaad;box-shadow:0 4px 0 #ebd3a3}
+#tab-dunyam.bd-design-one .bw-character{background:#ebe1f9 url(store-assets/dressing-room.png) center/cover}
+#tab-dunyam.bd-design-one .bw-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#tab-dunyam.bd-design-one .bw-podiums{flex:1;min-height:0;display:flex;align-items:end;justify-content:space-around;gap:5px;padding:4px 0 9px}
+#tab-dunyam.bd-design-one .bw-podium{height:95%;width:31%;min-height:0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+#tab-dunyam.bd-design-one .bw-podium::after{content:"";height:17%;min-height:12px;width:100%;border-radius:50% 50% 6px 6px;background:linear-gradient(#fff8d8,#ebc579);box-shadow:0 4px 5px #9f6c2722}
+#tab-dunyam.bd-design-one .bw-podium img{width:95%;max-height:76%;object-fit:contain;filter:drop-shadow(0 4px 3px #a9763c33)}
+#tab-dunyam.bd-design-one .bw-podium small{font-size:10px;font-weight:900;color:#9c7343;text-align:center;line-height:1.2}
+#tab-dunyam.bd-design-one .bw-first-badge{align-self:center;text-align:center}
+#tab-dunyam.bd-design-one #bwCharacterPreview{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#tab-dunyam.bd-design-one #bwCharacterPreview svg,#tab-dunyam.bd-design-one #bwCharacterPreview img{height:100%;width:auto;max-width:95%;object-fit:contain;filter:drop-shadow(0 6px 3px #68508726)}
+#tab-dunyam.bd-design-one .bw-showcase article>button{min-height:35px;width:100%;border:1px solid #e6cf9c;background:#fff4d4;color:#8c7044;box-shadow:0 2px 0 #dcc69f;border-radius:10px;font-weight:900;font-size:13px}
+#tab-dunyam.bd-design-one .bw-showcase .bw-character>button{background:#e6d5fa;border-color:#cbb4e6;color:#715499;box-shadow:0 2px 0 #bc9edc}
+#tab-dunyam.bd-design-one .bw-stats{background:#fff;display:flex;flex-direction:column;padding:9px 13px;gap:7px}
+#tab-dunyam.bd-design-one .bw-stats h2{font-size:18px}
+#tab-dunyam.bd-design-one .bw-heading>button{background:none;border:0;color:#998aaa;font-size:11px;font-weight:800;padding:3px}
+#tab-dunyam.bd-design-one .bw-stat-track{display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;flex:1;min-height:0;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#d8cbe8 transparent}
+#tab-dunyam.bd-design-one .bw-stat-track>button{flex:0 0 calc((100% - 27px)/4);background:#f2ebfc;border:1px solid #e5dcf0;border-radius:12px;display:grid;grid-template-columns:30px 1fr;align-content:center;text-align:left;padding:6px 10px;color:#665084;scroll-snap-align:start}
+#tab-dunyam.bd-design-one .bw-stat-track>button:nth-child(2){background:#e7f4e8;color:#599167;border-color:#d1e6d4}
+#tab-dunyam.bd-design-one .bw-stat-track>button:nth-child(3){background:#fff0df;color:#c28643;border-color:#eed9bf}
+#tab-dunyam.bd-design-one .bw-stat-track>button:nth-child(4){background:#e8effb;color:#6a8ab4;border-color:#d3def0}
+#tab-dunyam.bd-design-one .bw-stat-track span{grid-row:span 2;font-size:23px;align-self:center}
+#tab-dunyam.bd-design-one .bw-stat-track b{font-size:20px;line-height:1.1}
+#tab-dunyam.bd-design-one .bw-stat-track small{font-size:9px;font-weight:800;line-height:1.2}
+#tab-dunyam.bd-design-one .bw-exam{background:linear-gradient(100deg,#e9edf9,#f8f9fe);display:flex;align-items:center;gap:12px;padding:7px 16px}
+#tab-dunyam.bd-design-one .bw-exam img{height:100%;width:60px;object-fit:contain}
+#tab-dunyam.bd-design-one .bw-exam>div{flex:1;min-width:0}
+#tab-dunyam.bd-design-one .bw-exam h2{font-size:18px}
+#tab-dunyam.bd-design-one .bw-exam button{border:1px solid #c5b5df;border-radius:11px;background:#f5f1fc;color:#88729f;font-size:12px;font-weight:900;padding:9px 14px;white-space:nowrap;box-shadow:0 2px 0 #d0c0e4}
+#tab-dunyam.bd-design-one #bdOdevler{min-height:0;overflow:hidden}
+#tab-dunyam.bd-design-one #odoKart{height:100%;margin:0;padding:9px 13px 9px 65px;border-radius:20px;border:1px solid #e8cc8b;background:linear-gradient(110deg,#ffedbc,#fff6de);box-shadow:0 4px 0 #ead6a7;display:flex;flex-wrap:wrap;gap:4px;position:relative;overflow-x:auto;overflow-y:hidden;align-content:center}
+#tab-dunyam.bd-design-one #odoKart::before{content:"";position:absolute;left:10px;top:15%;width:45px;height:70%;background:url(benim-dunyam/papi-selam.png) center/contain no-repeat}
+#tab-dunyam.bd-design-one #odoKart h3{width:100%;flex:none;margin:0;font:700 clamp(16px,2vw,22px)/1.1 Fredoka,Nunito;color:#745c41;justify-content:flex-start;gap:10px}
+#tab-dunyam.bd-design-one #odoKart h3 small{padding:3px 6px;font-size:10px}
+#tab-dunyam.bd-design-one #odoKart .odo-satir{flex:0 0 100%;min-width:100%;margin:0;padding:0;border:0;background:none;gap:10px}
+#tab-dunyam.bd-design-one #odoKart .odo-satir~.odo-satir{display:none}
+#tab-dunyam.bd-design-one #odoKart .odo-satir .m{min-width:0;flex:1}
+#tab-dunyam.bd-design-one #odoKart .odo-satir b{font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tab-dunyam.bd-design-one #odoKart .odo-satir small{font-size:11px;margin-top:2px}
+#tab-dunyam.bd-design-one #odoKart .odo-satir button{padding:9px 22px;min-height:35px;background:linear-gradient(#a786d9,#8967c2);border:1px solid #9474c7;box-shadow:0 3px 0 #7651ae;border-radius:11px;color:white;font-size:13px}
+#tab-dunyam.bd-design-one .bw-back{border:0;background:none;font-size:13px;color:#796294;font-weight:800;padding:5px 0}
+#tab-dunyam.bd-design-one[data-world-page]:not([data-world-page="sanaozel"]) .bd-govde{overflow-y:auto;padding-bottom:10px}
+#tab-dunyam.bd-design-one[data-world-page]:not([data-world-page="sanaozel"]) .bd-sahne h1{display:none}
+@media(max-width:600px){
+#tab-dunyam.bd-design-one{padding-top:9px!important}
+#tab-dunyam.bd-design-one.active{gap:8px}
+#tab-dunyam.bd-design-one .bd-kart{flex-basis:56px;padding:6px 8px;gap:4px}
+#tab-dunyam.bd-design-one .bd-cipler{gap:3px;flex:1.3}
+#tab-dunyam.bd-design-one .bd-cip{font-size:10px}
+#tab-dunyam.bd-design-one .bd-ad-satir b{font-size:13px}
+#tab-dunyam.bd-design-one .bd-avatar{width:34px;height:34px}
+#tab-dunyam.bd-design-one .bd-seviye-satir{display:none}
+#tab-dunyam.bd-design-one .bw-card{padding:9px 10px;border-radius:16px}
+#tab-dunyam.bd-design-one [data-panel="sanaozel"]{gap:8px}
+#tab-dunyam.bd-design-one .bw-review{gap:5px}
+#tab-dunyam.bd-design-one .bw-green{font-size:11px;padding:9px 8px}
+#tab-dunyam.bd-design-one .bw-showcase{gap:9px}
+#tab-dunyam.bd-design-one .bw-heading{gap:3px}
+#tab-dunyam.bd-design-one .bw-pill{font-size:9px;padding:2px 4px}
+#tab-dunyam.bd-design-one .bw-showcase p{font-size:10px}
+#tab-dunyam.bd-design-one .bw-showcase article>button{font-size:11px;min-height:32px}
+#tab-dunyam.bd-design-one .bw-stat-track>button{flex-basis:calc((100% - 18px)/3);padding:5px 6px;grid-template-columns:25px 1fr}
+#tab-dunyam.bd-design-one .bw-exam{gap:7px;padding:5px 9px}
+#tab-dunyam.bd-design-one .bw-exam h2{font-size:14px}
+#tab-dunyam.bd-design-one .bw-exam p{font-size:9px;margin:2px 0}
+#tab-dunyam.bd-design-one .bw-exam img{width:36px}
+#tab-dunyam.bd-design-one .bw-exam button{font-size:10px;padding:8px}
+}
+@media(max-height:650px){
+#tab-dunyam.bd-design-one.active{gap:6px}
+#tab-dunyam.bd-design-one .bd-sahne{height:35px;flex-basis:35px}
+#tab-dunyam.bd-design-one .bd-kart{flex-basis:48px}
+#tab-dunyam.bd-design-one .bd-yuvarlak{height:32px;width:34px}
+#tab-dunyam.bd-design-one .bw-card{padding:5px 9px}
+#tab-dunyam.bd-design-one [data-panel="sanaozel"]{gap:6px}
+#tab-dunyam.bd-design-one h2{font-size:15px}
+#tab-dunyam.bd-design-one .bw-card p{font-size:10px;margin:2px 0}
+#tab-dunyam.bd-design-one .bw-podium small{font-size:8px}
+#tab-dunyam.bd-design-one .bw-pill{font-size:9px;margin-top:1px}
+#tab-dunyam.bd-design-one .bw-stats h2{font-size:14px}
+#tab-dunyam.bd-design-one .bw-stat-track b{font-size:16px}
+#tab-dunyam.bd-design-one .bw-showcase article>button{min-height:28px;font-size:10px}
+#tab-dunyam.bd-design-one #odoKart{padding-top:4px;padding-bottom:4px}
+#tab-dunyam.bd-design-one #odoKart h3{font-size:15px}
+}
+@media(max-height:450px) and (min-width:600px){
+#tab-dunyam.bd-design-one .bd-kart{display:none}
+#tab-dunyam.bd-design-one [data-panel="sanaozel"],#tab-dunyam.bd-design-one [data-panel="sanaozel"]:has(#odoKart:not([hidden])){grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,.65fr)}
+#tab-dunyam.bd-design-one .bw-showcase{grid-column:2;grid-row:1/4}
+#tab-dunyam.bd-design-one .bw-review{grid-column:1;grid-row:1}
+#tab-dunyam.bd-design-one #bdOdevler{grid-column:1;grid-row:2}
+#tab-dunyam.bd-design-one .bw-stats{display:none}
+#tab-dunyam.bd-design-one .bw-exam{grid-column:1;grid-row:3}
+}
+/* Reference artwork, saturated palette and compact profile. */
+#tab-dunyam.bd-design-one .bd-sahne h1{color:#321075;font-size:clamp(22px,3.5vw,38px)}
+#tab-dunyam.bd-design-one .bd-sahne h1::after{content:'⭐';font-size:.7em;margin-left:7px}
+#tab-dunyam.bd-design-one h2{color:#2e086c}
+#tab-dunyam.bd-design-one .bd-ust{height:100%}
+#tab-dunyam.bd-design-one .bd-yuvarlak{color:#6833c4;background:linear-gradient(#fff,#faf6ff)}
+#tab-dunyam.bd-design-one .bd-kart{padding:7px 13px;background:linear-gradient(100deg,#fff,#faf7ff);border-radius:20px}
+#tab-dunyam.bd-design-one .bw-profile-avatar{border:0;border-radius:50%;background:#ede0fa;width:46px;height:46px;flex:none;position:relative;padding:0;font-size:28px}
+#tab-dunyam.bd-design-one .bw-profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+#tab-dunyam.bd-design-one .bw-profile-avatar>span{position:absolute;right:-3px;bottom:0;font-size:18px;color:#a866ec}
+#tab-dunyam.bd-design-one .bw-profile-main{flex:1;min-width:0}
+#tab-dunyam.bd-design-one .bw-profile-top{display:flex;align-items:center;gap:clamp(7px,2vw,30px)}
+#tab-dunyam.bd-design-one .bw-profile-top>b{font:700 clamp(13px,2vw,22px)/1.2 Fredoka,Nunito;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#320975;flex:1}
+#tab-dunyam.bd-design-one .bw-level{background:linear-gradient(#ffdf7a,#ffc64e);border:1px solid #ffbf36;border-radius:10px;padding:4px 10px;font-size:12px;font-weight:900;color:#592f0a;white-space:nowrap}
+#tab-dunyam.bd-design-one .bw-profile-chip{font-weight:900;color:#321074;font-size:clamp(10px,1.7vw,18px);padding:4px 8px;border:1px solid #eee2fb;border-radius:12px;white-space:nowrap;background:#fff;box-shadow:0 2px 2px #c8b8db55}
+#tab-dunyam.bd-design-one .bw-progress-row{display:flex;align-items:center;gap:12px;margin-top:5px;font-size:11px;color:#7044ce;font-weight:800}
+#tab-dunyam.bd-design-one .bw-progress-row .bd-xp{flex:1;max-width:none;height:8px;margin:0;background:#e9defc;box-shadow:inset 0 1px 2px #bdabda66}
+#tab-dunyam.bd-design-one .bw-progress-row .bd-xp span{background:linear-gradient(#7fe19c,#45c973)}
+#tab-dunyam.bd-design-one .bw-review{background:linear-gradient(110deg,#e9d7ff,#eedffa);border-color:#d5b3f5;box-shadow:0 4px 0 #dfc8f0}
+#tab-dunyam.bd-design-one .bw-art{display:block;background-image:url(world-assets/papi-atlas.png);background-repeat:no-repeat;background-size:300% 100%;background-position:left center}
+#tab-dunyam.bd-design-one .bw-review-art{height:100%;width:28%;flex:none;align-self:center}
+#tab-dunyam.bd-design-one .bw-green{background:linear-gradient(#73ef9b,#39d569);color:#29066c;border-color:#33cc61;box-shadow:0 4px 0 #29b654;font-weight:900}
+#tab-dunyam.bd-design-one .bw-badges{background:radial-gradient(ellipse at 50% 65%,#fff1a6,#ffedb4 65%,#ffdf7a);border-color:#f5c958}
+#tab-dunyam.bd-design-one .bw-badges>button{color:#390376;border-color:#fff6cf;background:linear-gradient(#fff8d4,#ffeeb3)}
+#tab-dunyam.bd-design-one .bw-character>button{background:#fff!important;border:2px solid #963cf3!important;color:#440184!important;box-shadow:0 2px 0 #cdabef!important}
+#tab-dunyam.bd-design-one .bw-exam{background:linear-gradient(100deg,#c4e9ff,#e0f4ff);border-color:#b1dbfc}
+#tab-dunyam.bd-design-one .bw-exam button{background:#ffffffcc;border:2px solid #9742f7;color:#5101a0}
+#tab-dunyam.bd-design-one #odoKart{background:linear-gradient(110deg,#fff5c4,#fff89e);border-color:#f4d458;padding-left:70px;padding-right:110px}
+#tab-dunyam.bd-design-one #odoKart::before{background-image:url(world-assets/papi-atlas.png);background-size:300% 100%;background-position:right center;width:55px;height:90%;top:5%;left:5px}
+#tab-dunyam.bd-design-one #odoKart::after{content:'';pointer-events:none;position:absolute;right:105px;top:4%;height:95%;width:75px;background:url(world-assets/papi-atlas.png) center center/300% 100% no-repeat}
+#tab-dunyam.bd-design-one #odoKart h3{color:#320771}
+#tab-dunyam.bd-design-one #odoKart .odo-satir button{background:linear-gradient(#a044ff,#7120eb);border-color:#8f42e7;box-shadow:0 3px 0 #6423c2;position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+#tab-dunyam.bd-design-one #odoKart .odo-satir:not(.bw-selected){display:none}
+#tab-dunyam.bd-design-one #odoKart .odo-satir.bw-selected{display:flex}
+#tab-dunyam.bd-design-one .bw-homework-next{border:1px solid #dcc569;background:#fff8d7;border-radius:8px;color:#643799;font-size:11px;padding:3px 7px;white-space:nowrap}
+#tab-dunyam.bd-design-one .odo-not{display:none}
+@media(max-width:600px){#tab-dunyam.bd-design-one .bw-profile-top{gap:5px}#tab-dunyam.bd-design-one .bw-level{font-size:10px;padding:4px 6px}#tab-dunyam.bd-design-one .bw-profile-chip{padding:3px 5px}#tab-dunyam.bd-design-one .bw-profile-avatar{width:36px;height:36px}#tab-dunyam.bd-design-one .bw-progress-row{font-size:9px;gap:7px}#tab-dunyam.bd-design-one #odoKart{padding-left:47px;padding-right:75px}#tab-dunyam.bd-design-one #odoKart::before{width:36px}#tab-dunyam.bd-design-one #odoKart::after{display:none}#tab-dunyam.bd-design-one #odoKart .odo-satir button{right:9px;padding:8px 13px}#tab-dunyam.bd-design-one #odoKart h3 small{display:none}}
+@media(max-height:450px) and (min-width:600px){
+#tab-dunyam.bd-design-one [data-panel="sanaozel"],#tab-dunyam.bd-design-one [data-panel="sanaozel"]:has(#odoKart:not([hidden])){grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr) minmax(0,.7fr)}
+#tab-dunyam.bd-design-one .bw-showcase{grid-row:1/5}
+#tab-dunyam.bd-design-one .bw-stats{display:flex;grid-column:1;grid-row:3}
+#tab-dunyam.bd-design-one .bw-exam{grid-row:4}
+}
+#tab-dunyam.bd-design-one.active{padding:12px max(14px,calc((100vw - 1050px)/2)) calc(var(--bw-nav) + 10px)!important;overflow:hidden!important;background:radial-gradient(ellipse at 20% 10%,#fff 0,#faf8ff 40%,#f0eafa 100%);align-items:stretch;justify-content:flex-start}
+#tab-dunyam.bd-design-one>*{width:100%;max-width:none;margin-left:0;margin-right:0}
+#tab-dunyam.bd-design-one .bd-kart{max-width:none;margin:0}
+#tab-dunyam.bd-design-one .bw-review-art{background-size:253% 100%}
+@media(max-width:600px){#tab-dunyam.bd-design-one.active{padding-top:9px!important}}
