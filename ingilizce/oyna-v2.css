@@ -454,8 +454,11 @@ body.oy-aktif .yb-fw{display:none!important}
 .oy-wk-r h4{font-size:clamp(13px,4cqw,17px)}.oy-wk-r:has(.oy-pick){padding-right:0}.oy-weekly:has(.oy-pick) .oy-deco{display:none}
 .oy-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;flex-wrap:nowrap}.oy-pick button{min-width:0;padding:6px 2px;text-align:center;white-space:nowrap;font-size:clamp(9px,2.6cqw,12px);border-radius:10px}
 .oy-cta{padding-top:7px;padding-bottom:7px;margin-top:3px;font-size:clamp(16px,4.7cqw,20px)}.oy-cta .pp{width:clamp(48px,15cqw,64px);height:clamp(48px,15cqw,64px)}.oy-cta .t small{font-size:clamp(9px,2.6cqw,12px)}
-@media(min-width:640px){.oy-root .oy-route-track>.oy-hero{aspect-ratio:var(--oy-ar,1.7)}.oy-gk .go{padding:8px 12px}.oy-gk .ic{width:58px;height:58px}}
-@media(min-width:640px) and (orientation:portrait){.oy-root .oy-route-track>.oy-hero{aspect-ratio:2}.oy-gk .go{padding:7px 5px}}
+@media(min-width:640px){.oy-root .oy-route-track>.oy-hero{aspect-ratio:var(--oy-ar,1.3)}.oy-gk .go{padding:8px 12px}.oy-gk .ic{width:58px;height:58px}}
+@media(min-width:640px) and (orientation:portrait){.oy-root .oy-route-track>.oy-hero{aspect-ratio:var(--oy-ar,1.3)}.oy-gk .go{padding:7px 5px}}
 .oy-learning .oy-route-papi{top:25%;bottom:auto;height:25%}
 /* Keep the swipe controls clear of the compact task header. */
 .oy-tasks .oy-bubble,.oy-tasks .oy-peek{display:none}.oy-tasks .oy-h{padding-right:0}
+
+/* All three previews share the larger height, including before mount. */
+.oy-root .oy-route-track>.oy-hero{aspect-ratio:var(--oy-ar,1.3)}

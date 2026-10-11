@@ -474,12 +474,12 @@
   function fit(root) {
     if (!root || !root.isConnected) return;
     var host = root.closest('.bz-parkur'); if (host) host.scrollTop = 0;
-    root.style.zoom = ''; root.classList.remove('oy-tight'); root.style.setProperty('--oy-ar', '1.7');
+    root.style.zoom = ''; root.classList.remove('oy-tight'); root.style.setProperty('--oy-ar', '1.3');
     var nav = document.getElementById('bottomNavMobile'), navTop = window.innerHeight;
     try { if (nav && getComputedStyle(nav).display !== 'none') { var nr = nav.getBoundingClientRect(); if (nr.height > 0) navTop = nr.top; } } catch (e) {}
     function olc() { var r = root.getBoundingClientRect(); return { avail: navTop - r.top - 6, h: r.height }; }
     var o = olc(); if (o.h <= o.avail || o.avail < 200) return;
-    root.classList.add('oy-tight'); root.style.setProperty('--oy-ar', '1.9');
+    root.classList.add('oy-tight'); /* Keep the enlarged parkur when compacting lower cards. */
     o = olc(); if (o.h <= o.avail) return;
     root.style.zoom = Math.max(0.7, o.avail / o.h).toFixed(3);
   }
