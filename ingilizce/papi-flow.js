@@ -8,6 +8,22 @@ const exercise=()=>!!document.querySelector('#dmStoryLesson,.bz-oyun,#genelSonuc
 const holding=()=>!!window.dmPapiTour?.active()||exercise();
 const tourHolding=()=>!!window.dmPapiTour?.active();
 const criticalNotice=e=>!!e&&(e.matches('.uy-serit,.yo-toast,[role="alert"],[aria-live="assertive"]')||/enerji|energy|hata|error|başarısız|yetersiz|bağlantı/i.test((e.textContent||'').slice(0,350)));
+// Critical notices must escape game setup overlays instead of waiting behind them.
+function surfaceCriticalNotices(){
+ if(tourHolding())return;
+ const overlays=['kelimeYarismaOverlay','jpOyunOverlay','boslukOyunOverlay','hafizaOyunOverlay','yagmurOyunOverlay','asmacaOyunOverlay','kelimebulOyunOverlay','esOyunOverlay','trenOyunOverlay'];
+ for(const el of document.querySelectorAll('.uy-serit,.yo-toast,[role="alert"],[aria-live="assertive"]')){
+  if(!visible(el)||!criticalNotice(el))continue;
+  const text=(el.textContent||'').trim();
+  if(!/enerji|energy|hata|error|başarısız|yetersiz|bağlantı/i.test(text))continue;
+  el.style.setProperty('z-index','2147483647','important');
+  el.style.setProperty('position','fixed','important');
+  for(const id of overlays){const modal=document.getElementById(id);if(!modal||modal.getClientRects().length===0)continue;
+   const entry=modal.querySelector('[id$="GirisEkrani"]');
+   if(entry&&entry.getClientRects().length){modal.style.display='none';modal.classList.remove('dm-entry-open');}
+  }
+ }
+}
 const shown=()=>[...document.querySelectorAll(noticeSelector)].some(visible);
 // Suppress late-mounted dialogs while the onboarding tour owns the screen.
 const tourOverlay=()=>!!window.dmPapiTour?.active();
@@ -16,7 +32,7 @@ function defer(key,run){if(!document.hidden&&!holding()&&!shown()&&(!pending||ex
 function suspend(){for(const e of document.querySelectorAll(noticeSelector)){if(e.isConnected&&!e.classList.contains('dm-papi-held')&&e.getClientRects().length>0&&getComputedStyle(e).display!=='none'&&!(!tourHolding()&&criticalNotice(e))){e.classList.add('dm-papi-held');if(!held.some(x=>x.el===e))held.push({el:e,owner:who()});}}document.body.classList.toggle('dm-papi-notices-paused',tourHolding());}
 function reset(){for(const h of held){if(['duyuruOverlay','duyuruGecmisModal'].includes(h.el.id)){h.el.style.display='none';h.el.classList.remove('dm-papi-held');}else h.el.remove();}held=[];queue=[];pending=false;executing='';nextAt=0;practice=null;document.getElementById('dmPapiFirstStart')?.remove();document.body.classList.remove('dm-papi-notices-paused');}
 setInterval(async()=>{if(actor!==who()){reset();actor=who();return;}if(holding()){if(tourHolding())suspend();return;}document.body.classList.remove('dm-papi-notices-paused');if(blocked())return;const h=held.shift();if(h){if(h.owner===who()&&h.el.isConnected){h.el.classList.remove('dm-papi-held');nextAt=Date.now()+1000;}return;}const item=queue.shift();if(!item||item.owner!==who())return;const turn=actor;pending=true;executing=item.key;try{await item.run();}catch{}finally{if(turn===actor){executing='';pending=false;nextAt=Date.now()+1000;}}},350);
-new MutationObserver(()=>{if(tourHolding())suspend();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});
+new MutationObserver(()=>{if(tourHolding())suspend();else surfaceCriticalNotices();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});
 function later(el,run,delay){let paused=false;function tick(){if(!el.isConnected)return;if(holding()||el.classList.contains('dm-papi-held')){paused=true;setTimeout(tick,500);}else if(paused){paused=false;setTimeout(tick,delay);}else run();}setTimeout(tick,delay);}
 window.dmPapiNotices={blocked,defer,suspend,later};
 function loading(text){let el=document.getElementById('dmPapiFirstStart');if(!el){el=document.createElement('div');el.id='dmPapiFirstStart';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.innerHTML='<section><img src="papi-welcome-v2.png" alt="Papi"><h2>İlk keşfin başlıyor!</h2><p role="status"></p><button type="button" hidden>Tekrar dene</button><button type="button" class="papi-first-return" hidden>Parkura dön</button></section>';document.body.append(el);}el.querySelector('p').textContent=text;return el;}
