@@ -92,7 +92,7 @@ function renderNewExercises(){
    }
    accepted=true;
    if(r.revealed){note('İki deneme bitti. Doğrusu: '+task.en+' — '+task.tr+'. Bu kart tekrar çalışılacak.');window.DMStoryExercises.speak(task.en)}
-   else{note('✓ Doğru! '+(task.tr||''),true);window.DMStoryExercises.speak(task.en)}
+   else{note('✓ Doğru bildin! '+(task.tr||''),true);window.DMStoryExercises.speak(task.en);const badge=document.createElement('div');badge.className='papi-v3-celebration';badge.setAttribute('role','status');badge.innerHTML='<span aria-hidden="true">✨🦜⭐</span><strong>Doğru bildin!</strong><small>'+esc(task.en||'')+'</small>';modal.querySelector('.ds-panel')?.append(badge);setTimeout(()=>badge.remove(),1800)}
    actions.innerHTML=button('Tamam, devam et ›','next','ds-primary');
    actions.querySelector('button').onclick=()=>{if(busy)return;displayCursor=r.cursor;render()};
    return r;
