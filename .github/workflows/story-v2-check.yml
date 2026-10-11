@@ -8,7 +8,7 @@ on:
       - '.github/workflows/story-v2-check.yml'
   push:
     branches:
-      - feature/learning-path-speaking-feedback-20261011
+      - main
 jobs:
   parity:
     runs-on: ubuntu-latest
