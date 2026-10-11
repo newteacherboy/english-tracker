@@ -24,7 +24,7 @@ export function progressionAPI(db:any,json:any){
     const door=ctx.units.findIndex((u:any[])=>u.includes(stop));
     if(!Number.isInteger(stop)||door<0||Math.floor((stop-200000)/10000)!==Number(body.classNo)||Math.floor((stop-200000)%10000/100)!==Number(units[0])||ctx.level<[1,10,20,30][door]||door>0&&!ctx.complete[door-1])return deny('Geçerli ve açık parkur durağı gerekli.');
     const position=ctx.units[door].indexOf(stop);
-    if(position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');
+    if(!ctx.done.includes(stop)&&position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');
     units=[stop];
    }
    const {data,error}=await db.rpc('dm_game_reward_claim',{actor:a.student_id,run_key:String(body.runId||''),game,class_id:Number(body.classNo),unit_ids:units,correct:Number(body.correct),wrong:Number(body.wrong),seconds:Number(body.seconds),first_clear:!!body.firstClear,stars:Number(body.stars||1),boost:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
