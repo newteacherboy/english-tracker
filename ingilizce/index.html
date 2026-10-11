@@ -28569,6 +28569,16 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
 
   /* ================= 4) OYUN: 11 mini oyundan birer soru ================= */
   let O = null, zamanlayici = null;
+  async function parkurEnerjiAdim(runId, soru, dogru) {
+    const response=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'ekonomi',is:'parkurAdim',ogrenci:isim(),runId,soru,dogru})});
+    const data=await response.json();
+    if(!response.ok || !data.ok)throw new Error(data.mesaj||'Enerji işlemi onaylanmadı.');
+    if(typeof data.enerjiKalan==='number'){
+      window.genelEnerjiKalan=data.enerjiKalan;
+      if(typeof headerEnerjiGoster==='function')headerEnerjiGoster(data.enerjiKalan,data.enerjiMax||30);
+    }
+    return data;
+  }
   async function oyunBaslat(b, d) {
     const ownerAtStart=isim();
     if (!bolumAcik(b)) return toast(`🔒 Parkur ${[1,10,20,30][b]}. seviyede açılır.`);
@@ -28589,9 +28599,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       'hatirla','eslestir','duydugunuBul','risk','eksik','dikte'];
     const sorular=types.map((tip,i)=>({tip,k:active[i%active.length]}));
     sorular.push({tip:'sesliFinal',l:active.slice()});
-    O = { b, d, D, sorular, speechAlternatives:{}, kombo:0, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0 };
+    O = { b, d, D, sorular, speechAlternatives:{}, kombo:0, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0, runId:crypto.randomUUID(), pendingAnswer:null };
     if (window.OC) OC.basla('ba');
-    if (!sinifModu() && typeof ocEnerjiHarca==='function') { await ocEnerjiHarca(1); O.harcanan++; }
+    if(!sinifModu()){
+      try{await parkurEnerjiAdim(O.runId,1,null);O.harcanan++;}
+      catch(e){toast('⚡ '+e.message);window.dmEnerjiPaketPaneli?.();O=null;return;}
+    }
     try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
     soruCiz();
   }
@@ -28701,11 +28714,16 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ---------- Macera Haritası: her normal soru 1 ⚡; final ücretsiz ---------- */
   async function devamEt() {
     const ilerle = () => { O.i++; O._cevaplandi = false; O._ikinci = false; O._pas = false; soruCiz(); };
+    if(O.pendingAnswer){
+      try{await O.pendingAnswer;}catch(e){toast('Sunucuya cevap kaydedilemedi: '+e.message);return;}
+      O.pendingAnswer=null;
+    }
     const next=O.i+1;
     if(next>=O.sorular.length || sinifModu() || O.sorular[next].tip==='sesliFinal') return ilerle();
     if(typeof window.genelEnerjiKalan==='number' && window.genelEnerjiKalan<1)
       return enerjiBitti(ilerle);
-    if(typeof ocEnerjiHarca==='function') await ocEnerjiHarca(1);
+    try{await parkurEnerjiAdim(O.runId,next+1,null);}
+    catch(e){toast('⚡ '+e.message);window.dmEnerjiPaketPaneli?.();return;}
     O.harcanan++;
     ilerle();
   }
@@ -28733,13 +28751,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (iyi) {
       O.dogru++; O.kombo=(O.kombo||0)+1;
       if (window.OC) OC.dogru(O._ikinci || O._pas ? 2 : 1);
-      if(O.kombo%5===0 && !sinifModu() && typeof window.enerjiKazan==='function') {
-        // Sunucu kombo nedenini kabul etmezse hayali enerji gösterilmez.
-        window.enerjiKazan(1,'kombo').then(r=>{
-          if(r?.ok && r.eklenen>0)toast('⚡ 5 doğru kombo! +1 enerji');
-        });
-      }
+
     } else { O.yanlis++; O.kombo=0; if (window.OC) OC.yanlis(false); }
+    if(!sinifModu() && O.i<12){
+      O.pendingAnswer=parkurEnerjiAdim(O.runId,O.i+1,!!iyi).then(d=>{
+        if(d.eklenen>0)toast('⚡ 5 doğru kombo! +1 enerji');
+        return d;
+      });
+    }
     ses(iyi ? 'dogru' : 'yanlis');
     let g = document.createElement('div'); g.className = 'bz-geri-bildirim ' + (iyi ? 'iyi' : 'kotu'); g.setAttribute('role', 'status');
     const target=O.sorular[O.i], word=target.k||(target.l&&target.l[0]);
