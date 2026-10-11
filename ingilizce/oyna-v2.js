@@ -330,7 +330,7 @@
       return '<div class="oy-root"><div class="oy-empty">Parkur hazırlanıyor… 🌴</div></div>';
     }
     var current = Math.max(0, Math.min(steps.length - 1, Number(o.current) || 0));
-    return '<div class="oy-root">' + hero(steps, current) + gorevHtml() + bottomHtml(steps[current]) +
+    return '<div class="oy-root">' + carousel(steps, current) + gorevHtml() + bottomHtml(steps[current]) +
       sheetHtml(steps, current) + '</div>';
   }
 
@@ -393,6 +393,7 @@
             var yeni = tmp.firstChild;
             w.parentNode.replaceChild(yeni, w);
             var yc = yeni.querySelector('.oy-cta');
+            routeSync(root, routeIndex(root));
             if (yc) yc.onclick = cta.onclick; /* durakKarti bağlantısını koru */
           }
         }
@@ -413,19 +414,47 @@
   }
   function proGec() { var b = proDugme(); if (b) { b.click(); return true; } return false; }
 
-  /* ---- yatay kaydırma (swipe) ---- */
-  function kaydirmaBagla(host) {
-    if (host.__oySwipe) return; host.__oySwipe = 1;
-    var bas = null;
-    host.addEventListener('pointerdown', function (e) {
-      if (e.target.closest && e.target.closest('.oy-sheet')) { bas = null; return; }
-      bas = { x: e.clientX, y: e.clientY, t: Date.now() };
-    }, { passive: true });
-    host.addEventListener('pointerup', function (e) {
-      if (!bas) return; var dx = e.clientX - bas.x, dy = e.clientY - bas.y, dt = Date.now() - bas.t; bas = null;
-      if (Math.abs(dx) > 70 && Math.abs(dy) < 55 && Math.abs(dx) > Math.abs(dy) * 1.8 && dt < 700) proGec();
-    }, { passive: true });
-    host.addEventListener('pointercancel', function () { bas = null; }, { passive: true });
+  /* Native scroll-snap limits gestures to the hero, not the page. */
+  function kaydirmaBagla(host) {} // legacy whole-screen swipe intentionally removed
+
+  function alternateHero(kind) {
+    var learn = kind === 1;
+    return '<section class="oy-hero oy-alt-hero '+(learn?'oy-learning':'oy-pro')+'" role="tabpanel" aria-label="'+(learn?'Öğrenme Yolu':'MeduPro')+'">' +
+      '<button type="button" class="oy-sign" data-act="route-open"><span class="bk">'+(learn?'📖':'✨')+'</span><span><small>'+ (learn?'Papi ile adım adım öğren':'Papi’nin keşif akademisi')+'</small><b>'+ (learn?'Öğrenme Yolu':'MeduPro')+'</b><em class="oy-route-detail">'+(learn?'Dinle · Tekrarla · Konuş':'Kelime Modu · Sohbet · Kartlar')+'</em></span><span class="chev">›</span></button>'+
+      '<img class="oy-route-papi" src="'+(learn?'ders-vadi/papi-kitap.png':'papi-welcome-v2.png')+'" alt="Papi" draggable="false">'+
+      (learn?'<div class="oy-skill-nodes" aria-hidden="true"><img src="oyna-assets/oyna-learning-skills.svg" alt=""></div>':'<div class="oy-pro-modes"><button data-act="pro-mode" data-mode="kp">Kelime Modu</button><button data-act="pro-mode" data-mode="sh">Sohbet</button><button data-act="pro-mode" data-mode="kk">Kartlar</button></div>')+'</section>';
+  }
+  function carousel(steps,current) {
+    var names=['Macera','Öğrenme','MeduPro'];
+    return '<div class="oy-carousel" aria-label="Parkur seçimi"><div class="oy-route-tabs" role="tablist">'+names.map(function(n,i){return '<button type="button" role="tab" data-route="'+i+'" aria-selected="'+(i===0)+'" aria-label="'+n+' parkuru">'+n+'</button>';}).join('')+'</div><div class="oy-route-track">'+hero(steps,current)+alternateHero(1)+alternateHero(2)+'</div><div class="oy-route-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div></div>';
+  }
+  function routeIndex(root) { return Number(root.dataset.route)||0; }
+  function routeSync(root,index) {
+    root.dataset.route=index;
+    root.querySelectorAll('[data-route]').forEach(function(b,i){b.setAttribute('aria-selected',String(i===index));b.tabIndex=i===index?0:-1;});
+    root.querySelectorAll('.oy-route-dots i').forEach(function(b,i){b.classList.toggle('on',i===index);});
+    var text=root.querySelector('.oy-cta .t');if(text){text.innerHTML='Haydi Devam Edelim!<small>'+['Macera Haritasına devam','Öğrenme Yoluna devam','MeduPro’ya devam'][index]+'</small>';}
+  }
+  function routeOpen(root) {
+    if(routeIndex(root)===1){
+      if(window.dmStoryPath && window.dmStoryPath.continueRoute) window.dmStoryPath.continueRoute().catch(function(e){if(fn('toast'))toast(e.message);});
+    }else if(routeIndex(root)===2){proGec();}
+    else {var c=root.querySelector('.oy-node.is-cur');if(c)c.click();}
+  }
+  function carouselMount(root,kap) {
+    var track=root.querySelector('.oy-route-track');if(!track)return;
+    var frame=0;
+    track.addEventListener('scroll',function(){if(frame)return;frame=requestAnimationFrame(function(){frame=0;routeSync(root,Math.max(0,Math.min(2,Math.round(track.scrollLeft/track.clientWidth))));});},{passive:true});
+    function select(i){track.scrollTo({left:i*track.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});routeSync(root,i);}
+    root.querySelectorAll('[data-route]').forEach(function(b){b.onclick=function(){select(+b.dataset.route);};b.onkeydown=function(e){if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();var i=Math.max(0,Math.min(2,routeIndex(root)+(e.key==='ArrowRight'?1:-1)));select(i);root.querySelectorAll('[data-route]')[i].focus();}};});
+    if(!kap.__oyRouteCapture){kap.__oyRouteCapture=1;kap.addEventListener('click',function(e){var r=kap.querySelector('.oy-root'),b=e.target.closest('button');if(!r||!b)return;
+      if(b.matches('.oy-cta')&&routeIndex(r)!==0){e.preventDefault();e.stopImmediatePropagation();routeOpen(r);}
+      else if(b.dataset.act==='route-open'){e.preventDefault();e.stopImmediatePropagation();routeOpen(r);}
+      else if(b.dataset.act==='pro-mode'){e.preventDefault();e.stopImmediatePropagation();var mode=b.dataset.mode;if(mode==='kp'&&fn('kpModuAc'))kpModuAc();else{var t=document.querySelector('#pkSekmeler [data-p="'+mode+'"]');if(t)t.click();}}
+    },true);}
+    routeSync(root,0);
+    root.querySelectorAll('.oy-route-track > section').forEach(function(x){x.setAttribute('role','tabpanel');});
+    if(window.dmStoryPath && window.dmStoryPath.overview) window.dmStoryPath.overview().then(function(info){if(!root.isConnected)return;var d=root.querySelector('.oy-learning .oy-route-detail');if(d)d.textContent=info.cefr+' · '+info.title;}).catch(function(){});
   }
 
   /* ---- tek ekrana sığdırma ---- */
@@ -451,7 +480,7 @@
     if (!kap.__oyBagli) { kap.__oyBagli = 1; kap.addEventListener('click', tikla); }
     var root = el.querySelector('.oy-root');
     if (!root) return;
-    var pg = root.querySelector('.oy-pager'); if (pg) pg.hidden = !proDugme();
+    carouselMount(root, kap);
     [].slice.call(root.querySelectorAll('.oy-art img')).forEach(trimImg);
     fit(root);
     setTimeout(function () { fit(root); }, 350);
