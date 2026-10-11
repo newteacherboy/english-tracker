@@ -148,7 +148,15 @@
   }).join('')}</div><p class="su-levels-steps">${ico('book')} Anlatım <span>→</span> ${ico('sound')} Örnekler <span>→</span> ${ico('check')} Test</p><button class="su-levels-resume" data-su="resume" ${rows.length?'':'disabled'}>${target?'Kaldığın yerden devam et':'Öğrenmeye başla'} →</button>`;
  }
  function wordMeaning(w){const popup=$('dcHoverBalon');if(!popup)return;popup.innerHTML='<b>'+esc(w.textContent)+'</b> · '+esc(w.dataset.tr||'')+(w.dataset.alt?'<small>'+esc(w.dataset.alt)+'</small>':'');popup.style.display='block';const r=w.getBoundingClientRect(),width=Math.min(280,window.innerWidth-24);popup.style.width=width+'px';popup.style.left=Math.max(12,Math.min(r.left,window.innerWidth-width-12))+'px';popup.style.top=Math.max(12,Math.min(r.bottom+8,window.innerHeight-100))+'px';}
- function dockSpace(){const h=$('bottomNavMobile')?.getBoundingClientRect().height||76;root.style.setProperty('--su-dock',Math.max(84,h+16)+'px');}
+ function dockSpace(){
+  const dock=$('bottomNavMobile'),d=dock?.getBoundingClientRect(),h=d?.height||76;root.style.setProperty('--su-dock',Math.max(84,h+16)+'px');
+  const panel=$('suLevels');if(activeScreen()!=='dcScreenLevels'||!panel||!root.getClientRects().length)return;
+  const viewport=window.visualViewport,bottom=viewport?viewport.offsetTop+viewport.height:window.innerHeight;
+  const dockTop=d&&dock.getClientRects().length&&d.height?d.top:bottom;
+  const available=Math.floor(Math.min(bottom,dockTop,root.getBoundingClientRect().bottom)-panel.getBoundingClientRect().top-10);
+  if(available>0)panel.style.setProperty('--su-level-height',available+'px');
+  root.scrollTop=0;
+ }
  function install(){
   document.body.classList.add('dm-study-design');
   for(const id of ['dcTab-ornek','dcTab-test'])if($(id)&&$(id).parentElement!==$('dcScreenDetail'))$('dcScreenDetail').append($(id));
@@ -202,7 +210,7 @@
   document.addEventListener('click',e=>{if(!e.target.closest('.dc-word,#dcHoverBalon')&&$('dcHoverBalon'))$('dcHoverBalon').style.display='none';});
   // Observe only screen transitions; rendering a list or a question cannot retrigger the observer.
   const observer=new MutationObserver(refreshView);root.querySelectorAll('.dc-screen').forEach(s=>observer.observe(s,{attributes:true,attributeFilter:['class']}));
-  window.addEventListener('resize',dockSpace,{passive:true});if(window.ResizeObserver&&$('bottomNavMobile'))new ResizeObserver(dockSpace).observe($('bottomNavMobile'));
+  window.addEventListener('resize',dockSpace,{passive:true});window.visualViewport?.addEventListener('resize',dockSpace,{passive:true});window.visualViewport?.addEventListener('scroll',dockSpace,{passive:true});if(window.ResizeObserver)new ResizeObserver(dockSpace).observe(root);if(window.ResizeObserver&&$('bottomNavMobile'))new ResizeObserver(dockSpace).observe($('bottomNavMobile'));
   setInterval(()=>{if(root.getClientRects().length){if(activeScreen()==='dcScreenDetail')paintStages();else if(activeScreen()==='dcScreenLevels')renderLevels();else renderTopics();}},800);
   window.dmStudyUI={refresh:refreshView,topics:renderTopics};refreshView();
  }

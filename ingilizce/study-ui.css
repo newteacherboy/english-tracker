@@ -197,3 +197,26 @@ body.dm-study-design #suStudyResult button:focus-visible{outline:3px solid #9462
 @media(max-width:359px){body.dm-study-design #suLevels .su-island{height:86px}body.dm-study-design #suLevels .su-level-cards{gap:9px}body.dm-study-design #suLevels .su-level-card{padding:8px!important}body.dm-study-design #suLevels .su-levels-welcome .su-papi{width:88px;height:96px}body.dm-study-design #suLevels h2{font-size:18px!important}body.dm-study-design #suLevels .su-level-action{font-size:10px}body.dm-study-design #suLevels .su-levels-steps{gap:4px;font-size:10px!important}}
 
 body.dm-study-design:has(#tab-derscalis.active[data-study-screen="dcScreenLevels"]) .yb-fw{display:none!important}
+/* Size the whole level hub to the visible space above the existing navigation. */
+body.dm-study-design #tab-derscalis[data-study-screen="dcScreenLevels"]{padding:10px 12px!important}
+body.dm-study-design #suLevels{height:min(var(--su-level-height,calc(100dvh - 110px)),900px);min-height:0;display:grid;grid-template-rows:auto clamp(54px,12dvh,104px) auto minmax(0,1fr) auto auto;gap:8px}
+body.dm-study-design #suLevels h1{font-size:22px!important;line-height:1.2!important;margin:0 36px 0 0!important}
+body.dm-study-design #suLevels .su-levels-welcome{min-height:0;height:100%;padding:6px 10px;gap:8px;overflow:hidden;border-radius:18px}
+body.dm-study-design #suLevels .su-levels-welcome .su-papi{height:100%;width:clamp(64px,12dvh,108px);margin:0;max-height:110px}
+body.dm-study-design #suLevels h2{font-size:clamp(17px,2.5dvh,23px)!important;margin:0 0 4px!important}
+body.dm-study-design #suLevels p{font-size:11px!important}
+body.dm-study-design #suLevels .su-levels-progress{margin:0;padding:9px 11px;gap:6px;font-size:12px;border-radius:13px}
+body.dm-study-design #suLevels .su-levels-progress>span{font-size:11px}
+body.dm-study-design #suLevels .su-bar{height:6px}
+body.dm-study-design #suLevels .su-level-cards{min-height:0;grid-template-rows:repeat(2,minmax(0,1fr));gap:10px;padding-bottom:4px}
+body.dm-study-design #suLevels .su-level-card{min-height:0;padding:7px 9px!important;gap:3px;border-radius:19px!important}
+body.dm-study-design #suLevels .su-island{flex:1 1 0;width:100%;height:0;min-height:0;max-height:155px;margin:0;object-fit:contain}
+body.dm-study-design #suLevels .su-level-card>b{font-size:16px;top:7px;left:8px;padding:3px 8px}
+body.dm-study-design #suLevels .su-level-card>strong{font-size:16px;line-height:1.15;flex-shrink:0}
+body.dm-study-design #suLevels .su-level-count{font-size:10px;line-height:1.2;flex-shrink:0}
+body.dm-study-design #suLevels .su-level-bar{height:5px;margin:2px 0 3px;flex-shrink:0}
+body.dm-study-design #suLevels .su-level-action{min-height:34px;padding:5px 2px;font-size:11px;flex-shrink:0}
+body.dm-study-design #suLevels .su-levels-steps{margin:0!important;font-size:10px!important;min-height:18px}
+body.dm-study-design #suLevels .su-levels-resume{min-height:44px;line-height:1.2;padding:10px 6px!important;font-size:14px!important}
+@media(max-height:650px){body.dm-study-design #suLevels{gap:6px;grid-template-rows:auto 52px auto minmax(0,1fr) auto}body.dm-study-design #suLevels .su-levels-steps{display:none}body.dm-study-design #suLevels .su-levels-welcome p{display:none}body.dm-study-design #suLevels .su-levels-progress{padding:7px 10px}body.dm-study-design #suLevels .su-level-cards{gap:8px}body.dm-study-design #suLevels .su-level-action{min-height:30px;font-size:10px}body.dm-study-design #suLevels .su-level-card>strong{font-size:14px}body.dm-study-design #suLevels h1{font-size:20px!important}}
+@media(orientation:landscape) and (max-height:600px) and (min-width:550px){body.dm-study-design #suLevels{max-width:960px;grid-template-rows:24px 44px 38px minmax(0,1fr) 40px;gap:5px}body.dm-study-design #tab-derscalis[data-study-screen="dcScreenLevels"] .dc-focus-card{max-width:960px!important}body.dm-study-design #suLevels .su-level-cards{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:8px}body.dm-study-design #suLevels .su-levels-progress{padding:5px 10px;gap:3px}body.dm-study-design #suLevels .su-levels-welcome .su-papi{width:55px}body.dm-study-design #suLevels .su-level-action{min-height:28px}body.dm-study-design #suLevels .su-level-card{padding:5px 7px!important;gap:2px}body.dm-study-design #suLevels .su-levels-resume{min-height:40px;padding:8px!important}}

@@ -64,7 +64,14 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   const navBefore=await page.locator('#bottomNavMobile').innerHTML();
   await page.waitForSelector('#suLevels');assert.equal(await page.locator('.su-level-card').count(),4);
   assert.equal(await page.getByText('Klasik görünüm',{exact:true}).filter({visible:true}).count(),0);
-  for(const [w,h] of [[320,667],[390,844],[768,1024],[1180,820]]){await page.setViewportSize({width:w,height:h});assert(await page.locator('#tab-derscalis').evaluate(e=>e.scrollWidth<=innerWidth),'Level overflow '+w);console.log('PASS levels layout '+w+'x'+h);}
+  await page.addStyleTag({content:'body.su-safe-fixture #tab-derscalis{padding-top:54px!important}body.su-safe-fixture #bottomNavMobile{padding-bottom:34px!important}'});
+  for(const [w,h] of [[320,568],[320,667],[390,844],[393,700],[768,1024],[1180,820],[844,390]]){
+    await page.setViewportSize({width:w,height:h});await page.evaluate(safe=>document.body.classList.toggle('su-safe-fixture',safe),w===393);await page.waitForTimeout(150);
+    assert(await page.locator('#tab-derscalis').evaluate(e=>e.scrollWidth<=innerWidth),'Level overflow '+w);
+    const fit=await page.evaluate(()=>{const e=document.getElementById('tab-derscalis'),p=document.getElementById('suLevels'),b=document.querySelector('.su-levels-resume').getBoundingClientRect(),dock=document.getElementById('bottomNavMobile').getBoundingClientRect();return {top:b.top,bottom:b.bottom,dock:dock.top,scroll:e.scrollTop,overflow:p.scrollHeight-p.clientHeight};});
+    assert(fit.top>=0&&fit.bottom<=fit.dock-4,'Start button above dock without scrolling '+w+'x'+h+' '+JSON.stringify(fit));assert(fit.overflow<=1,'Level content fits '+JSON.stringify(fit));assert.equal(fit.scroll,0);
+    assert(await page.locator('.su-island').first().evaluate(e=>e.getBoundingClientRect().height>15),'island artwork remains visible');console.log('PASS levels fit '+w+'x'+h);
+  }
   await page.setViewportSize({width:390,height:844});await page.evaluate(()=>document.getElementById('tab-derscalis').scrollTop=0);await page.screenshot({path:path.join(artifacts,'study-levels-mobile.png')});
   await page.evaluate(()=>dcSeviyeSec('A1','Başlangıç'));
   await page.waitForSelector('.su-topic');
