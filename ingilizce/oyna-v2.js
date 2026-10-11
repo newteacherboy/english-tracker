@@ -475,13 +475,29 @@
     if (!root || !root.isConnected) return;
     var host = root.closest('.bz-parkur'); if (host) host.scrollTop = 0;
     root.style.zoom = ''; root.classList.remove('oy-tight'); root.style.setProperty('--oy-ar', '1.3');
-    var nav = document.getElementById('bottomNavMobile'), navTop = window.innerHeight;
-    try { if (nav && getComputedStyle(nav).display !== 'none') { var nr = nav.getBoundingClientRect(); if (nr.height > 0) navTop = nr.top; } } catch (e) {}
-    function olc() { var r = root.getBoundingClientRect(); return { avail: navTop - r.top - 6, h: r.height }; }
-    var o = olc(); if (o.h <= o.avail || o.avail < 200) return;
-    root.classList.add('oy-tight'); /* Keep the enlarged parkur when compacting lower cards. */
-    o = olc(); if (o.h <= o.avail) return;
-    root.style.zoom = Math.max(0.7, o.avail / o.h).toFixed(3);
+    var nav = document.getElementById('bottomNavMobile');
+    var viewport = window.visualViewport;
+    var navTop = viewport ? Math.min(window.innerHeight, viewport.height + viewport.offsetTop) : window.innerHeight;
+    try { if (nav && getComputedStyle(nav).display !== 'none') { var nr = nav.getBoundingClientRect(); if (nr.height > 0) navTop = Math.min(navTop, nr.top); } } catch (e) {}
+    /* Leave room for the CTA shadow and dock shadow, not just its border box. */
+    function olc() { var r = root.getBoundingClientRect(); return { avail: navTop - r.top - 18, h: r.height }; }
+    var o = olc(); if (o.h <= o.avail || o.avail < 120) return;
+    root.classList.add('oy-tight');
+    o = olc();
+    var hero = root.querySelector('.oy-route-track > .oy-hero');
+    if (hero && o.h > o.avail) {
+      var hr = hero.getBoundingClientRect();
+      /* Give the parkur all remaining height after the fixed lower cards. */
+      var height = Math.max(120, hr.height - (o.h - o.avail));
+      root.style.setProperty('--oy-ar', String(Math.max(1.3, hr.width / height)));
+    }
+    /* Zoom changes available width, so measure again after each adjustment. */
+    var scale = 1;
+    for (var i = 0; i < 8; i++) {
+      o = olc(); if (o.h <= o.avail + 1 || o.avail < 120) break;
+      scale *= Math.min(.98, o.avail / o.h);
+      root.style.zoom = scale.toFixed(4);
+    }
   }
 
   function mount(el) {
@@ -500,6 +516,8 @@
     setTimeout(function () { fit(root); }, 1400);
   }
   window.addEventListener('resize', function () { var r = document.querySelector('.oy-root'); if (r) fit(r); });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', function () { var r = document.querySelector('.oy-root'); if (r) fit(r); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { var r = document.querySelector('.oy-root'); if (r) fit(r); });
   window.addEventListener('orientationchange', function () { setTimeout(function () { var r = document.querySelector('.oy-root'); if (r) fit(r); }, 300); });
 
   /* Oyna açıkken: parkur şeridi + yüzen düğmeler gizli (MeduPro açıksa şerit geri gelir) */
