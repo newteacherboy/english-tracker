@@ -11,5 +11,5 @@ await page.locator('[data-route="0"]').click();await page.waitForTimeout(500);aw
 await page.evaluate(()=>{let t=document.querySelector('.oy-route-track');t.scrollLeft=t.clientWidth;});await page.waitForTimeout(100);assert.equal(await page.locator('.oy-root').getAttribute('data-route'),'1');assert.deepEqual(await positions(),initial);
 assert(await page.evaluate(()=>document.querySelector('.oy-route-track').scrollWidth>=document.querySelector('.oy-route-track').clientWidth*2.9));
 assert(await page.evaluate(()=>[...document.querySelectorAll('.oy-gk')].every(x=>x.getBoundingClientRect().width>0)));
-if(width===390)await page.screenshot({path:'/workspace/scratch/cf554b35bee1/carousel-mobile.png',fullPage:true});console.log('PASS '+width+'px: fixed sections, three routes, native swipe, correct CTA');}
+if(width===390)await page.screenshot({path:path.join(require('os').tmpdir(),'carousel-mobile.png'),fullPage:true});console.log('PASS '+width+'px: fixed sections, three routes, native swipe, correct CTA');}
 assert.deepEqual(errors,[]);await browser.close();})().catch(e=>{console.error(e);process.exit(1)});

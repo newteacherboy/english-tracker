@@ -646,6 +646,97 @@
       "bytes": 1930268,
       "status": "ai-generated",
       "source": "docs/sticker-navigation-design.md"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-hero.webp",
+      "sha256": "1d3b782595122a1bdf102f9ab91087382300738bb7c5e71b1ba0b9fe6419ab36",
+      "bytes": 195466,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-ico-dinle.png",
+      "sha256": "4014c0c6483363fc532cc15b0f6d37189c274f5fa152cbc646c63b42c4930352",
+      "bytes": 90581,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-ico-kelime.png",
+      "sha256": "178b930e9f59c2a973b90e2b21f5186cd2faa02e3dc192912e2466bdf1323b5b",
+      "bytes": 138522,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-ico-konus.png",
+      "sha256": "7e4d30af619a354526cf1160d83f0ae1fd78a0351d853ffba6e833afd4469ef0",
+      "bytes": 81709,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-ico-oyun.png",
+      "sha256": "0f906f6eb89d4755df6325053ff7d1dd9181151b90fe25ac0d8bfffda34c7d94",
+      "bytes": 96065,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-learning-hero.png",
+      "sha256": "42b5b929d89f7f2052b3fe3d41a471f0c84483b72af30e37a73f5e7771eba3b3",
+      "bytes": 196259,
+      "status": "ai-generated",
+      "source": "Built-in image generation, 2026-10-11; original forest learning garden / magical academy scenes; optimized PNG"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-learning-skills.svg",
+      "sha256": "a98c8d383fd135d5a05009571e381ce629853a1cc16221327a1944650b320e65",
+      "bytes": 854,
+      "status": "code-native",
+      "source": "Original authored SVG learning skill icons, 2026-10-11"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-papi-cta.png",
+      "sha256": "0bb58ef17f3f95013f36e1247c7f47dcb79baa1033d252c252c58782ca8620ae",
+      "bytes": 183876,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-papi-fly.png",
+      "sha256": "ef6a50d70d421e1d1a035c33dfebbaf42bf27e6f7ae12ff00cc859c5f539eda1",
+      "bytes": 188480,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-papi-peek.png",
+      "sha256": "7d010598d599ff341bbdfab3b3e16dcf57982a6b7e999672d0e5c95c865f22f2",
+      "bytes": 135373,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-pro-hero.png",
+      "sha256": "a70945fa8c1dff6504c7cbbad6dd4969c933b39880b1009a8be5fe1820682390",
+      "bytes": 167648,
+      "status": "ai-generated",
+      "source": "Built-in image generation, 2026-10-11; original forest learning garden / magical academy scenes; optimized PNG"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-sandik.png",
+      "sha256": "5883d1c8b0ffd04e9f21d1ef7334c6c66eab4cd1709722dff6653d7f97af79a5",
+      "bytes": 172104,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-weekly-bg.webp",
+      "sha256": "40fc8f35dd23d4d6458e5b1b4cafe3ecd9eb5e4c20bfa76fe998c31347da22a2",
+      "bytes": 137184,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
     }
   ]
 }
