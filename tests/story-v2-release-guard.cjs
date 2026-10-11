@@ -7,4 +7,9 @@ const second=JSON.parse(fs.readFileSync('ingilizce/story-v2-curriculum.json','ut
 assert.equal(second.length,40,'Second learning collection must include 40 stages.');
 assert(client.includes('loadV2Deck'),'Client has a second 40-stage learning collection.');
 assert(api.includes('story-v2-curriculum.js'),'Block release: story API must import the second 40-stage content before publication.');
-console.log('PASS both curriculum collections recognized by server');
+const secondServer=fs.readFileSync('supabase/functions/diji-api/story-v2-curriculum.js','utf8');
+assert(secondServer.startsWith('export const STORY_V2_CHAPTERS='));
+assert.equal(JSON.parse(secondServer.slice(secondServer.indexOf('=')+1).trim().replace(/;$/,'')).length,40);
+assert.equal(second[0].id,40);
+assert.equal(second.at(-1).id,79);
+console.log('PASS 80 learning chapters recognized by client and server');
