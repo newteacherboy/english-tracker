@@ -28,3 +28,6 @@
 
 /* Retire the old top Parkur/MeduPro selector and its launcher, without moving the chosen route. */
 #tab-dunya #pkSekmeler,#tab-dunya #ybArac,#ybArac{display:none!important}
+
+/* Legacy top Parkur/MeduPro switch: precise selector for old/new layouts */
+#tab-dunya .dm-parkur-tabs,#bzParkur .dm-parkur-tabs,.dm-parkur-head .dm-parkur-tabs{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important}
