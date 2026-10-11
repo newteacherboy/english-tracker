@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const client=fs.readFileSync('ingilizce/story-path.js','utf8');
+const api=fs.readFileSync('supabase/functions/diji-api/story-api.ts','utf8');
+const second=JSON.parse(fs.readFileSync('ingilizce/story-v2-curriculum.json','utf8'));
+assert.equal(second.length,40,'Second learning collection must include 40 stages.');
+assert(client.includes('loadV2Deck'),'Client has a second 40-stage learning collection.');
+assert(api.includes('story-v2-curriculum.js'),'Block release: story API must import the second 40-stage content before publication.');
+console.log('PASS both curriculum collections recognized by server');
