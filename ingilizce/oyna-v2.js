@@ -347,11 +347,15 @@
     if (!f) f = fn('aktivitelerTamEkranAc');
     if (f) f();
   }
-  function hedefKaydet(x) {
-    var y = Y(); if (!y) return false;
-    try { if (window.dmProgression && window.dmProgression.require && !window.dmProgression.require('haftalik_hedef')) return false; } catch (e) {}
-    y.haftaHedef = { h: haftaKodu(), xp: x, odul: 0 };
-    try { if (fn('yoKaydet')) yoKaydet(); if (fn('yoHemenKaydet')) yoHemenKaydet(true); } catch (e) {}
+  async function hedefKaydet(x) {
+    var y = Y(); if (!y || ![1000,1500,2500].includes(x)) return false;
+    if (window.dmProgression && window.dmProgression.require && !window.dmProgression.require('haftalik_hedef')) return false;
+    var ad = typeof yoIsim !== 'undefined' ? yoIsim : typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '';
+    var r = await fetch(apiURL, {method:'POST',body:JSON.stringify({islem:'haftalikHedefSec',ogrenci:ad,xp:x,t:localStorage.getItem('ing_token')||''})});
+    var result = await r.json();
+    if (!r.ok || !result.ok || !result.haftaHedef) throw Error(result.mesaj || result.message || 'Hedef kaydedilemedi. Tekrar dene.');
+    var current = Y(); if (current) current.haftaHedef = result.haftaHedef;
+    try { if (fn('yoKaydet')) yoKaydet(); } catch (e) {}
     return true;
   }
   function kaydirDurum(root) {
@@ -366,7 +370,7 @@
     if (l) l.disabled = row.scrollLeft <= 4;
     if (r) r.disabled = son;
   }
-  function tikla(e) {
+  async function tikla(e) {
     var root = e.currentTarget.querySelector('.oy-root');
     if (!root) return;
     var sheet = root.querySelector('.oy-sheet');
@@ -384,7 +388,11 @@
         break;
       case 'gorev': if (!t.disabled) gorevBaslat(t.getAttribute('data-olay')); break;
       case 'hedef':
-        if (hedefKaydet(+t.getAttribute('data-h'))) {
+        e.preventDefault(); e.stopPropagation();
+        if (t.disabled) return;
+        var picks = root.querySelectorAll('[data-act="hedef"]');
+        picks.forEach(function(b){b.disabled=true;});
+        try { if (await hedefKaydet(+t.getAttribute('data-h'))) {
           var w = root.querySelector('.oy-bottom'), cta = w && w.querySelector('.oy-cta');
           if (w && cta) {
             var b = cta.getAttribute('data-b'), d = cta.getAttribute('data-d');
@@ -395,8 +403,10 @@
             var yc = yeni.querySelector('.oy-cta');
             routeSync(root, routeIndex(root));
             if (yc) yc.onclick = cta.onclick; /* durakKarti bağlantısını koru */
+            fit(root);
           }
-        }
+        } } catch (error) { var tell = fn('yoToast') || fn('toast'); if (tell) tell(error.message); }
+        finally { picks.forEach(function(b){b.disabled=false;}); }
         break;
       case 'detay': if (fn('benimDunyamAc')) benimDunyamAc(); break;
       case 'store': if (fn('magazaAc')) magazaAc(); break;

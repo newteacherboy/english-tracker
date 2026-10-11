@@ -1,14 +1,12 @@
 import { storyAPI } from './story-api.ts';
 import { meteorAPI } from './meteor-api.ts';
 import { wordWheelAPI } from './word-wheel-api.ts';
-import { papiCardsAPI } from './papi-cards-api.ts';
 import './score-rules.js';
 import { readBatch, contentCache } from './request-budget.ts';
 import { progressionAPI } from './progression-api.ts';
 import { onboardingAPI } from './onboarding-api.ts';
 import { adminStudentsAPI } from './admin-students-api.ts';
 import { contactPolicyAPI } from './contact-policy-api.ts';
-import { myWorldAPI } from './my-world-api.ts';
 // =====================================================================
 // DİJİ-MEDU API — Supabase Edge Function (YAMALI SÜRÜM v4.6)
 // Yamalar "[YAMA n]" / "[v4.x]" etiketiyle işaretlidir. İşlem adları ve cevap
@@ -1345,6 +1343,14 @@ async function handle(req: Request) {
     if (req.method !== "POST") return json({ ok: false, mesaj: "POST gerekli." }, 405);
     const sid = a.student_id, is = String(body.is || "");
     const hataVer = async (mesaj: string, kod = 400) => json({ ok: false, mesaj, ekonomi: ekonomiCevap((await yoOku(sid)).y) }, kod);
+    if (is === "parkurAdim") {
+      const run = String(body.runId || ""), step = Number(body.soru);
+      const correct = body.dogru === null || body.dogru === undefined ? null : body.dogru === true;
+      if (!/^[a-zA-Z0-9_-]{16,100}$/.test(run) || !Number.isInteger(step) || step<1 || step>12) return hataVer("Geçersiz soru isteği.");
+      const {data,error} = await supabase.rpc("dm_parkur_question_step",{actor:sid,run_key:run,step_no:step,passed:correct});
+      if(error)return hataVer(error.message,409);
+      return json({ok:true, ...data, enerjiKalan:data.energy, enerjiMax:data.max, eklenen:data.gain||0});
+    }
     if (is === "durum") return json({ ok: true, ekonomi: ekonomiCevap((await yoOku(sid)).y) });
     if (is === "altinKazan") {
       const istenen = Math.floor(num(body.miktar));
@@ -1398,6 +1404,15 @@ async function handle(req: Request) {
         if (al < fiyat) return { hata: `${ad} için ${fiyat - al} altın daha lazım 🪙` };
         y.krkSatin = [...liste, ad]; y.altin = al - fiyat; return { fiyat };
       });
+    } else if (is === "enerjiPaketAl") {
+      const amount = Number(body.miktar);
+      const key = String(body.islemKimligi || "");
+      if (![5,10,15].includes(amount) || !/^[a-zA-Z0-9_-]{12,100}$/.test(key))
+        return hataVer("Geçersiz paket veya işlem kimliği.");
+      const { data: bought, error } = await supabase.rpc("dm_energy_shop_buy", { actor: sid, request_key: key, pack_amount: amount });
+      if (error) return hataVer(error.message, 400);
+      const { y } = await yoOku(sid);
+      return json({ ok:true, duplicate:!!bought.duplicate, eklenen:bought.added, enerjiKalan:bought.energy, altin:bought.gold, fiyat:bought.price, ekonomi:ekonomiCevap(y) });
     } else if (is === "enerjiAl") {
       let { data: st } = await supabase.from("students").select("*").eq("id", sid).maybeSingle();
       if (!st) return bulunamadi();
@@ -1447,8 +1462,16 @@ async function handle(req: Request) {
       return json(t && t.game_data ? { deger: metinVer(t.game_data), guncelleme: t.game_data_at } : null);
     }
     const s = await hedefOgrenci(a, name); if (!s) return json(null);
-    const { data } = await supabase.from("extra_data").select("value,updated_at").eq("student_id", s.id).eq("key_name", key).maybeSingle();
-    // Only the authenticated student's introduction request receives its registration date.
+    let { data } = await supabase.from("extra_data").select("value,updated_at").eq("student_id", s.id).eq("key_name", key).maybeSingle();
+    if (key === "yo") {
+      const {data:goal}=await supabase.from("extra_data").select("value").eq("student_id",s.id).eq("key_name","weekly_target").maybeSingle();
+      if(goal?.value?.h) {
+        let state:any=data?.value||{};if(typeof state==="string"){try{state=JSON.parse(state);}catch{state={};}}
+        if(!state.haftaHedef || goal.value.h>=state.haftaHedef.h) state={...state,haftaHedef:goal.value};
+        data={value:state,updated_at:data?.updated_at||null};
+      }
+    }
+    // Only the authenticated student\'s introduction request receives its registration date.
     if (key === "yo" && String(val(body, q, "tanitim")) === "1") return json({ deger: data ? metinVer(data.value) : null, guncelleme: data?.updated_at || null, kayitTarihi: s.created_at || null });
     return json(data ? { deger: metinVer(data.value), guncelleme: data.updated_at } : null);
   }
@@ -1767,18 +1790,8 @@ async function handle(req: Request) {
     return json({ ok: true, banka, ders: ders.slice(0, 60), seviyeler });
   }
   if (op === "konusmaEsAnlamlarGetir") {
-    // Supabase's default API row cap can silently truncate larger synonym dictionaries.
-    // Page through the full teacher-maintained table, preserving the existing client response.
-    const all: any[] = [];
-    const pageSize = 1000;
-    for (let offset = 0; ; offset += pageSize) {
-      const { data, error } = await supabase.from("speech_synonyms")
-        .select("english,alternatives").order("english").range(offset, offset + pageSize - 1);
-      if (error) return json({ ok: false, mesaj: "Alternatif cevaplar yüklenemedi." }, 503);
-      all.push(...(data || []));
-      if (!data || data.length < pageSize) break;
-    }
-    return json(all.map((x: any) => ({ kelime: x.english, alternatifler: x.alternatives })));
+    const { data } = await supabase.from("speech_synonyms").select("english,alternatives");
+    return json((data || []).map((x: any) => ({ kelime: x.english, alternatifler: x.alternatives })));
   }
   if (op === "kategorileriGetir") {
     const { data } = await supabase.from("activity_categories").select("name").order("name");
@@ -2660,3 +2673,102 @@ Deno.serve(async (req) => {
   try { return await handle(req); }
   catch (e) { console.error(e); return json({ status: "error", ok: false, mesaj: "Sunucu hatası, tekrar dene.", message: "Sunucu hatası" }, 500); }
 });
+
+// ---- papi-cards-api.ts (tek dosya deploy için içe alındı)
+// This module only reads words and writes separate self-assessment records.
+// It never calls game rewards, feed events, energy, goals, XP or gold APIs.
+function papiCardsAPI(db:any,json:any){
+ return {async handle(op:string,body:any,q:URLSearchParams,a:any,method:string){
+  if(!['papiKartSonucKaydet','papiKartSiralamaGetir'].includes(op))return null;
+  if(!a||!['student','teacher'].includes(a.role)||!(a.student_id||a.teacher_id))return json({ok:false,hata:'oturum',mesaj:'Sonuç kaydı ve sıralama için giriş yapmalısın.'},401);
+  const cls=Number(body.sinif??q.get('sinif')),unit=Number(body.unite??q.get('unite'));
+  if(!Number.isInteger(cls)||cls<1||cls>12||!Number.isInteger(unit)||unit<1||unit>100)return json({ok:false,mesaj:'Geçersiz sınıf veya ünite.'},400);
+  if(op==='papiKartSiralamaGetir'){
+   const {data,error}=await db.from('papi_card_results').select('owner_key,display_name,score,known_count,review_count,total,created_at').eq('class_no',cls).eq('unit_no',unit).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(2000);
+   if(error)return json({ok:false,mesaj:'Sıralama yüklenemedi.'},503);
+   const seen=new Set();const liste=(data||[]).filter((r:any)=>{const k=r.owner_key;if(seen.has(k))return false;seen.add(k);return true;}).slice(0,100).map((r:any)=>({isim:r.display_name,puan:r.score,biliyorum:r.known_count,tekrar:r.review_count,toplam:r.total,tarih:r.created_at}));
+   return json({ok:true,liste});
+  }
+  if(method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
+  const total=Number(body.toplam),known=Number(body.biliyorum),review=Number(body.tekrar),seconds=Number(body.suresaniye),run=String(body.runId||'');
+  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(run)||!Number.isInteger(total)||total<1||total>2000||!Number.isInteger(known)||known<0||known>total||!Number.isInteger(review)||review!==total-known||!Number.isInteger(seconds)||seconds<0||seconds>604800)return json({ok:false,mesaj:'Geçersiz kart sonucu.'},400);
+  const name=String(body.isim||'').replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,40)||'İsimsiz öğrenci';
+  // Display aliases never determine authorization or the account receiving the record.
+  const owner=a.role==='student'?'s:'+a.student_id:'t:'+a.teacher_id+':'+name.toLocaleLowerCase('tr');
+  const prior=await db.from('papi_card_results').select('display_name,score').eq('owner_key',owner).eq('run_id',run).limit(1);
+  if(prior.error)return json({ok:false,mesaj:'Kayıt doğrulanamadı.'},503);
+  if(prior.data?.length)return json({ok:true,isim:prior.data[0].display_name,puan:prior.data[0].score});
+  const bank=await db.from('word_bank').select('english,turkish').eq('active',true).eq('class_no',cls).eq('unit_no',unit).limit(2001);
+  if(bank.error)return json({ok:false,mesaj:'Kelime destesi doğrulanamadı.'},503);
+  const count=new Set((bank.data||[]).filter((r:any)=>String(r.english||'').trim()&&String(r.turkish||'').trim()).map((r:any)=>String(r.english).trim().toLocaleLowerCase('en'))).size;
+  if(count!==total)return json({ok:false,mesaj:'Kelime destesi değişmiş. Üniteyi yeniden açıp çalış.'},409);
+  const score=Math.round(known/total*100);
+  const {error}=await db.from('papi_card_results').upsert({owner_key:owner,run_id:run,student_id:a.role==='student'?a.student_id:null,teacher_id:a.role==='teacher'?a.teacher_id:null,display_name:name,class_no:cls,unit_no:unit,total,known_count:known,review_count:review,score,duration_seconds:seconds},{onConflict:'owner_key,run_id',ignoreDuplicates:true});
+  if(error)return json({ok:false,mesaj:'Sonuç kaydedilemedi. Tekrar dene.'},503);
+  return json({ok:true,isim:name,puan:score});
+ }};
+}
+
+// ---- my-world-api.ts (tek dosya deploy için içe alındı)
+/* Benim Dünyam · öğrencinin kendi istatistikleri.
+   Oyun skorları, tamamlanan konular ve parkur durakları gün gün özetlenir.
+   Sadece öğrenci oturumunda, sadece kendi verisi için çalışır. */
+function myWorldAPI(db: any, json: any) {
+  const cache = new Map<string, { at: number, body: any }>();
+  const gun = (v: any) => {
+    if (!v) return '';
+    const s = String(v);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    const d = new Date(s);
+    return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
+  };
+  async function hepsi(sorgu: () => any, sinir = 6000) {
+    const out: any[] = [];
+    for (let i = 0; i < sinir; i += 1000) {
+      const { data, error } = await sorgu().range(i, i + 999);
+      if (error) throw error;
+      out.push(...(data || []));
+      if (!data || data.length < 1000) break;
+    }
+    return out;
+  }
+  async function ozet(id: string) {
+    const bas = new Date(Date.now() - 366 * 864e5).toISOString();
+    const [oyunlar, dersler, duraklar] = await Promise.all([
+      hepsi(() => db.from('game_scores').select('game_key,correct_count,wrong_count,played_on').eq('student_id', id).gte('played_on', bas.slice(0, 10)).order('played_on', { ascending: true })),
+      hepsi(() => db.from('lesson_progress').select('completed_at').eq('student_id', id).eq('test_success', true).gte('completed_at', bas)),
+      hepsi(() => db.from('level_completions').select('completed_at').eq('student_id', id).gte('completed_at', bas)),
+    ]);
+    const gunler: Record<string, { o: number, d: number, y: number, m: number, l: number, p: number }> = {};
+    const al = (g: string) => (gunler[g] ||= { o: 0, d: 0, y: 0, m: 0, l: 0, p: 0 });
+    const oyunTur: Record<string, { o: number, d: number }> = {};
+    for (const r of oyunlar) {
+      const g = gun(r.played_on); if (!g) continue;
+      const d = Math.max(0, Number(r.correct_count) || 0), y = Math.max(0, Number(r.wrong_count) || 0), x = al(g);
+      x.o++; x.d += d; x.y += y; if (d > 0 && y === 0) x.m++;
+      const k = String(r.game_key || '').slice(0, 40); if (k) { const t = (oyunTur[k] ||= { o: 0, d: 0 }); t.o++; t.d += d; }
+    }
+    for (const r of dersler) { const g = gun(r.completed_at); if (g) al(g).l++; }
+    for (const r of duraklar) { const g = gun(r.completed_at); if (g) al(g).p++; }
+    return { ok: true, bugun: gun(new Date().toISOString()), gunler, oyunTur };
+  }
+  return {
+    async handle(op: string, _body: any, _q: any, a: any) {
+      if (op !== 'benimIstatistik') return null;
+      if (!a) return json({ ok: false, hata: 'oturum', mesaj: 'Oturum gerekli.' }, 401);
+      if (a.role !== 'student' || !a.student_id) return json({ ok: false, hata: 'yetki', mesaj: 'Bu ekran öğrenciler içindir.' }, 403);
+      const c = cache.get(a.student_id);
+      if (c && Date.now() - c.at < 60000) return json(c.body);
+      try {
+        const body = await ozet(a.student_id);
+        if (cache.size > 5000) cache.clear();
+        cache.set(a.student_id, { at: Date.now(), body });
+        return json(body);
+      } catch (e) {
+        console.error('benimIstatistik', e);
+        return json({ ok: false, mesaj: 'İstatistikler şu an alınamadı.' }, 500);
+      }
+    },
+    invalidate(id: string) { cache.delete(id); },
+  };
+}

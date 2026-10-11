@@ -6,8 +6,15 @@ export function progressionAPI(db:any,json:any){
  async function context(a:any){const {data,error}=await db.rpc('dm_progress_context',{actor:a.student_id});if(error)throw error;return data;}
  const deny=(n:any)=>json({ok:false,status:'kilitli',mesaj:typeof n==='number'?`Bu özellik ${n}. seviyede açılır.`:n},403);
  async function handle(op:string,body:any,q:URLSearchParams,a:any){
-  if(!['seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi','seviyeOyunOdulu'].includes(op))return null;
+  if(!['haftalikHedefSec','seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi','seviyeOyunOdulu'].includes(op))return null;
   if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+  if(op==='haftalikHedefSec'){
+   const xp=Number(body.xp);if(![1000,1500,2500].includes(xp))return json({ok:false,mesaj:'Geçerli haftalık hedef seç.'},400);
+   const date=new Date(Date.now()+3*3600000);date.setUTCDate(date.getUTCDate()-(date.getUTCDay()+6)%7);
+   const hedef={h:date.toISOString().slice(0,10),xp,odul:0,secildiAt:Date.now()};
+   const {error}=await db.from('extra_data').upsert({student_id:a.student_id,key_name:'weekly_target',value:hedef,updated_at:new Date().toISOString()},{onConflict:'student_id,key_name'});
+   if(error)throw error;return json({ok:true,haftaHedef:hedef});
+  }
   if(op==='seviyeOyunOdulu'){
    const ctx=await context(a),game=String(body.game||''),code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur',harfbahcesi:'oyun_harfbahcesi',eslestirme:'oyun_eslestirme'} as any)[game]||'oyun_'+game;
    if(!Object.hasOwn(C.gates,code)||ctx.level<C.gates[code])return deny(C.gates[code]||40);
