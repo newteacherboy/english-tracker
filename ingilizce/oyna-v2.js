@@ -351,7 +351,7 @@
     var y = Y(); if (!y) return false;
     try { if (window.dmProgression && window.dmProgression.require && !window.dmProgression.require('haftalik_hedef')) return false; } catch (e) {}
     y.haftaHedef = { h: haftaKodu(), xp: x, odul: 0 };
-    try { if (fn('yoKaydet')) yoKaydet(); } catch (e) {}
+    try { if (fn('yoKaydet')) yoKaydet(); if (fn('yoHemenKaydet')) yoHemenKaydet(true); } catch (e) {}
     return true;
   }
   function kaydirDurum(root) {
@@ -412,7 +412,7 @@
     var e = bt.filter(function (x) { return /✨|medu/i.test(x.textContent || ''); })[0];
     return e || (bt.length === 1 ? bt[0] : null);
   }
-  function proGec() { var b = proDugme(); if (b) { b.click(); return true; } return false; }
+  function proGec() { if (fn('dmMeduProAc')) { window.dmMeduProAc(); return true; } var b = proDugme(); if (b) { b.click(); return true; } return false; }
 
   /* Native scroll-snap limits gestures to the hero, not the page. */
   function kaydirmaBagla(host) {} // legacy whole-screen swipe intentionally removed
@@ -510,6 +510,7 @@
     var root = el.querySelector('.oy-root');
     if (!root) return;
     carouselMount(root, kap);
+    if (host && host.dataset.dmParkurView === 'pro' && fn('dmMeduProAc')) window.dmMeduProAc();
     [].slice.call(root.querySelectorAll('.oy-art img')).forEach(trimImg);
     fit(root);
     setTimeout(function () { fit(root); }, 350);

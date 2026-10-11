@@ -55,8 +55,8 @@ export function progressionAPI(db:any,json:any){
    if(!Array.isArray(newOwned)||newOwned.some((id:any)=>!oldOwned.has(id)))return deny('Yeni ürünler mağazanın satın alma işlemiyle kazanılır.');
    // Paid rights, weekly XP and reward ledgers can only be credited by the server.
    if(Number(incoming?.dmExtraJoker||0)>Number(before.dmExtraJoker||0))return deny('Ek joker hakkını mağazadan satın al.');
-   if(l<16&&incoming?.haftaHedef&&JSON.stringify(incoming?.haftaHedef)!==JSON.stringify(before.haftaHedef))return deny(16);
-   if(l<12&&incoming?.gorev&&JSON.stringify(incoming?.gorev)!==JSON.stringify(before.gorev))return deny(12);
+   if(l<(C.gates.haftalik_hedef||1)&&incoming?.haftaHedef&&JSON.stringify(incoming?.haftaHedef)!==JSON.stringify(before.haftaHedef))return deny(C.gates.haftalik_hedef||1);
+   if(l<(C.gates.gunluk_gorev||1)&&incoming?.gorev&&JSON.stringify(incoming?.gorev)!==JSON.stringify(before.gorev))return deny(C.gates.gunluk_gorev||1);
    if(incoming?.karakter&&before.karakter){for(const [kat,n] of Object.entries(C.category)){if(l<Number(n)&&incoming.karakter.s?.[kat]!==before.karakter.s?.[kat])return deny(Number(n));}}
   }
   return null;
