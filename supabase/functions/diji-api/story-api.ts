@@ -16,7 +16,7 @@ export function storyAPI(db:any,json:any){
  const key=(a:any)=>a?.role==='student'&&a.student_id?'s:'+a.student_id:a?.role==='teacher'&&a.teacher_id?'t:'+a.teacher_id:'';
  const view=(r:any)=>({ok:true,chapter:r.chapter,cursor:r.cursor,completed:r.completed,finished:r.cursor>=stepsFor(r.chapter,r).length,deckVersion:r.deck_version||1,replay:!!r.replay,version:r.version,mistakes:r.mistakes||0,reward:r.last_reward||{}});
  return {async handle(op:string,b:any,a:any,method:string){
-  if(!['storyStatus','storyOpen','storyAdvance'].includes(op))return null;
+  if(!['storyStatus','storyOpen','storyAdvance','storyUpgrade'].includes(op))return null;
   const owner=key(a);if(!owner)return json({ok:false,mesaj:'Öğrenme ilerlemesini kaydetmek için giriş yapmalısın.'},401);
   if(method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
   if(op==='storyStatus'){const {data,error}=await db.from('papi_story_progress').select('chapter,cursor,completed,version').eq('actor_key',owner).order('chapter');return error?json({ok:false,mesaj:'Öğrenme yolu yüklenemedi.'},503):json({ok:true,progress:data||[],v2Enabled:true});}
@@ -24,6 +24,16 @@ export function storyAPI(db:any,json:any){
   const read=()=>db.from('papi_story_progress').select('*').eq('actor_key',owner).eq('chapter',chapter).maybeSingle();
   const {data:existing,error}=await read();if(error)return json({ok:false,mesaj:'Durak yüklenemedi.'},503);
   if(!existing&&previousChapter(chapter)!==null){const {data:prev,error:err}=await db.from('papi_story_progress').select('completed').eq('actor_key',owner).eq('chapter',previousChapter(chapter)!).maybeSingle();if(err)return json({ok:false,mesaj:'Önceki durak kontrol edilemedi.'},503);if(!prev?.completed)return json({ok:false,mesaj:'Önce önceki öğrenme durağını tamamla.'},403);}
+  if(op==='storyUpgrade'){
+   if(!existing)return json({ok:false,mesaj:'Önce bölümü aç.'},409);
+   if(existing.completed)return json({ok:false,mesaj:'Tamamlanan bölümü tekrar açarak çalış.'},409);
+   if(existing.deck_version===3)return json(view(existing));
+   if(Number(b.version)!==existing.version)return json({...view(existing),stale:true},409);
+   // Only the selected chapter restarts; historical rewards and student accounts are untouched.
+   const {data:rows,error:e}=await db.from('papi_story_progress').update({deck_version:3,cursor:0,questions_seen:0,charged_cursor:-1,attempt_cursor:-1,attempt_count:0,review_cards:[],mistakes:0,version:existing.version+1,updated_at:new Date().toISOString()}).eq('actor_key',owner).eq('chapter',chapter).eq('version',existing.version).select('*');
+   if(e||!rows?.length)return json({ok:false,mesaj:'Bölüm yeniden başlatılamadı. Tekrar dene.'},503);
+   return json(view(rows[0]));
+  }
   if(op==='storyOpen'){
    if(existing){
     if(existing.completed&&existing.cursor>=stepsFor(chapter,existing).length){const {error:e}=await db.from('papi_story_progress').update({cursor:0,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},deck_version:useNewDeck()?3:(existing.deck_version||1),attempt_cursor:-1,attempt_count:0,review_cards:[],version:existing.version+1,updated_at:new Date().toISOString()}).eq('actor_key',owner).eq('chapter',chapter).eq('version',existing.version);if(e)return json({ok:false,mesaj:'Tekrar turu açılamadı.'},503);const {data:r,error:er}=await read();return er||!r?json({ok:false,mesaj:'Durak yüklenemedi.'},503):json(view(r));}
