@@ -48,14 +48,19 @@
   let tabs=host.querySelector('.dm-party-tabs');
   if(!tabs){
    tabs=document.createElement('div');tabs.className='dm-party-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Oyun kategorisi');
-   tabs.innerHTML='<button type="button" id="dmSoloTab" role="tab" data-party="solo" aria-controls="dmActivityGames"><span aria-hidden="true">🎮</span> Tek Kişilik</button><button type="button" id="dmDuoTab" role="tab" data-party="duo" aria-controls="dmActivityGames"><span aria-hidden="true">🤝</span> İki Kişilik</button><button type="button" id="dmFreeTab" role="tab" data-party="free" aria-controls="dmActivityGames"><span aria-hidden="true">🦜</span> Serbest Oyunlar</button>';
+   tabs.innerHTML='<button type="button" id="dmSoloTab" role="tab" data-party="solo" aria-controls="dmActivityGames"><span aria-hidden="true">🎮</span> Tek Kişilik</button><button type="button" id="dmDuoTab" role="tab" data-party="duo" aria-controls="dmActivityGames"><span aria-hidden="true">🤝</span> İki Kişilik</button><button type="button" id="dmFreeTab" role="tab" data-party="free" aria-controls="dmActivityGames"><span aria-hidden="true">⚔️</span> Kapışma Oyunları</button>';
    grid.before(tabs);
    tabs.querySelectorAll('button').forEach(b=>{b.onclick=()=>{party=b.dataset.party;partyTabs(host,grid);};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const all=[...tabs.querySelectorAll('button')],i=all.indexOf(b),next=all[e.key==='Home'?0:e.key==='End'?all.length-1:(i+(e.key==='ArrowRight'?1:-1)+all.length)%all.length];next.click();next.focus();};});
   }
   host.dataset.dmParty=party;
   tabs.querySelectorAll('button').forEach(b=>{const active=b.dataset.party===party;b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});
   grid.id='dmActivityGames';grid.setAttribute('role','tabpanel');grid.setAttribute('aria-labelledby',party==='solo'?'dmSoloTab':party==='duo'?'dmDuoTab':'dmFreeTab');
-  grid.querySelectorAll('.az-gcard').forEach(b=>{b.dataset.dmParty=['papiCardsActivity','wordWheelActivity','meteorActivity'].includes(b.id)?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';});
+  grid.querySelectorAll('.az-gcard').forEach(b=>{
+   const label=(b.textContent||'').toLocaleLowerCase('tr');
+   const freeIds=['papiCardsActivity','wordWheelActivity','meteorActivity'];
+   const isFree=freeIds.includes(b.id)||/papi kartları|papi’nin meteor düellosu|papi'nin meteor düellosu|papi’nin kelime çarkı|papi'nin kelime çarkı/.test(label);
+   b.dataset.dmParty=isFree?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';
+  });
   if(observedGrid!==grid){partyObserver?.disconnect();observedGrid=grid;partyObserver=new MutationObserver(upgradeCards);partyObserver.observe(grid,{childList:true});}
  }
  function upgradeCards(){
