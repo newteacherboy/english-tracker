@@ -28523,9 +28523,15 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function harita(b, page) {
     aktarGerekirse();duraklariKur();
     if(!Number.isInteger(b)||b<0||b>3)b=aktifBolum();
-    const p=parkurAlani(),steps=[];
-    DURAK.forEach((list,section)=>list.forEach((D,d)=>steps.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+D.unite+'. ünite',short:D.sinif+'. sınıf',done:tamam.has(D.no),available:bolumAcik(section)&&d<=siradakiDurak(section)})));
-    let current=steps.findIndex(s=>s.b===b&&s.d===siradakiDurak(b));if(current<0)current=0;
+    const p=parkurAlani();
+    // Performans: tüm 1–8. sınıf mikro duraklarını aynı anda çizme.
+    // Yalnızca etkin durağın yakın çevresi oluşturulur; ilerleme/ödül kayıtları değişmez.
+    const progress=DURAK.map((list,section)=>({open:bolumAcik(section),next:siradakiDurak(section)}));
+    const all=[];
+    DURAK.forEach((list,section)=>list.forEach((D,d)=>all.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+D.unite+'. ünite · '+D.parca+'/'+D.parcaToplam,short:D.sinif+'. sınıf',done:tamam.has(D.no),available:progress[section].open&&d<=progress[section].next})));
+    const focus=Math.max(0,all.findIndex(st=>st.b===b&&st.d===progress[b].next));
+    const start=Math.max(0,focus-8),steps=all.slice(start,Math.min(all.length,start+24));
+    const current=Math.max(0,focus-start);
     gorunum={ad:'harita',b};
     p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page})+'</div></div>';
     p.querySelectorAll('.dm-adventure-node,.dm-map-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
