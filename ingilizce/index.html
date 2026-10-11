@@ -985,6 +985,14 @@ html, body { touch-action: pan-x pan-y; }
 @media(max-width:420px){#bzMicCards{grid-template-columns:repeat(2,minmax(0,1fr))}#bzMicCards .dm-final-card{min-height:98px;padding:9px 6px}}
 </style>
 <style id="dm-parkur-interaction-fix">.dm-parkur-letter.dm-right{background:#d8f5de!important;color:#176334!important;border-color:#3fa56a!important}.dm-parkur-letter.dm-wrong{background:#ffe0e0!important;color:#ac2020!important;border-color:#df4c4c!important;animation:dmWrongShake .25s linear}.dm-auto-space{display:inline-block;width:16px}.dm-auto-punctuation{display:inline-flex;align-items:center;font-size:20px;margin:0 3px}.dm-letter-notice{min-height:22px;text-align:center;font-weight:800}@keyframes dmWrongShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}</style>
+<style id="dm-parkur-navigation-and-match">
+#bzGeriSoru,.bz-oyun-ust>.bz-geri-soru{width:43px!important;height:43px!important;flex:0 0 43px;display:grid;place-items:center;border-radius:15px!important;background:#e6f6df!important;color:#185b40!important;border:2px solid #7db891!important;box-shadow:0 3px 0 #a3cba6;font-size:24px!important;font-weight:900!important}
+#bzGeriSoru:disabled,.bz-oyun-ust>.bz-geri-soru:disabled{opacity:.4}
+.bz-inceleme-bas button{border:2px solid #83ba97!important;background:#eef7e8!important;color:#185b40!important;border-radius:12px!important;padding:9px 15px!important;font-weight:900!important;min-height:42px}
+.dm-match-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}.dm-match-grid>div{display:flex;flex-direction:column;gap:9px}
+.dm-match-option{border:2px solid #b4d9c0;border-radius:13px;background:#f0f8ed;color:#184c3c;font-size:15px;font-weight:800;min-height:48px;padding:8px 7px;overflow-wrap:anywhere}
+.dm-match-option.selected{outline:3px solid #f0c46b}.dm-match-option.dm-right{background:#ccefd7;border-color:#50aa71}.dm-match-option.dm-wrong{background:#ffe1e1;border-color:#e65a5a}
+</style>
 </head>
         <body>
 <div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
@@ -28357,11 +28365,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const TIPLER = [
     ['lab', '🔬', 'Kelime Laboratuvarı'], ['risk', '🎈', 'Risk Balonları'], ['eksik', '✏️', 'Eksik Harf'], ['hafiza', '🃏', 'Hafıza Sandığı'],
     ['hiz', '🌪️', 'Hız Fırtınası'], ['harf', '🔤', 'Harf Avı'], ['sifre', '🔐', 'Şifre Kırıcı'], ['es', '🔗', 'Eş Bul'],
-    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['cumleTamamla','📝','Cümleyi Tamamla'], ['kelimeKur','🔤','Kelimeyi Kur'], ['cumleSirala','🧩','Cümleyi Sırala'], ['duydugunuBul','👂','Duyduğunu Bul'], ['sesliFinal', '🎙️', 'Papi ile Konuş'], ['dinleAnlam','🎧','Dinle ve Anlamı Yakala'], ['hata','🦜',"Papi'nin Hatası"], ['hatirla','🧠','Aklında Kaldı mı?'], ['miniDiyalog','💬','Papi ile Diyalog']
+    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['cumleTamamla','📝','Cümleyi Tamamla'], ['kelimeKur','🔤','Kelimeyi Kur'], ['eslestir','🔗','Eşleştirme'], ['duydugunuBul','👂','Duyduğunu Bul'], ['sesliFinal', '🎙️', 'Papi ile Konuş'], ['dinleAnlam','🎧','Dinle ve Anlamı Yakala'], ['hata','🦜',"Papi'nin Hatası"], ['hatirla','🧠','Aklında Kaldı mı?'], ['miniDiyalog','💬','Papi ile Diyalog']
   ];
   /* 4 kapı × 2 sınıf; her ünite bir durak. Durak numarası = 1000 + sınıf×100 + ünite (ör. 1203 = 2. sınıf 3. ünite) */
   const KAPI_SINIF = [[1, 2], [3, 4], [5, 6], [7, 8]];
   const VARSAYILAN_UNITE = { 1: 8, 2: 8, 3: 10, 4: 10, 5: 8, 6: 8, 7: 8, 8: 8 };
+  const PARKUR_KELIME_ADEDI=4;
   let DURAK = [[], [], [], []], durakImza = -1;
   const havuzTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k));
   function duraklariKur() {
@@ -28373,7 +28382,11 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       siniflar.forEach(sn => {
         let u = [...new Set(tum.filter(k => Number(k.sinif) === sn).map(k => Number(k.unite) || 0))].filter(x => x > 0).sort((a, c) => a - c);
         if (!u.length) u = Array.from({ length: VARSAYILAN_UNITE[sn] }, (_, i) => i + 1);
-        u.forEach(un => l.push({ sinif: sn, unite: un, no: 1000 + sn * 100 + un }));
+        u.forEach(un => {
+          const words=[...new Map(tum.filter(k=>Number(k.sinif)===sn&&Number(k.unite)===un).map(k=>[EN(k).trim().toLocaleLowerCase('en'),k])).values()].sort((a,b)=>EN(a).localeCompare(EN(b),'en'));
+          const groups=Math.max(1,Math.ceil(words.length/PARKUR_KELIME_ADEDI));
+          for(let part=0;part<groups;part++)l.push({sinif:sn,unite:un,parca:part+1,parcaToplam:groups,kelimeler:words.slice(part*PARKUR_KELIME_ADEDI,(part+1)*PARKUR_KELIME_ADEDI),no:200000+sn*10000+un*100+part+1});
+        });
       });
       return l;
     });
@@ -28394,7 +28407,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
      fazlası eski seviyelerle geçildiyse o ünitenin durağı geçilmiş sayılır; yıldızı da taşınır. */
   function aktar() {
     duraklariKur();
-    tamam = new Set([...hamTamam].filter(n => n >= 1000));
+    tamam=new Set();
+    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||hamTamam.has(1000+d.sinif*100+d.unite))tamam.add(d.no);});
     aktarimYildiz = {};
     let eski = [...hamTamam].filter(n => n > 0 && n < 1000), tum = havuzTum();
     if (!eski.length || !tum.length) return;
@@ -28404,7 +28418,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       let y = (yoVar() && yo.baYildiz && yo.baYildiz[n]) || 1;
       tum.slice((n - 1) * 8, n * 8).forEach(k => { let a = Number(k.sinif) * 100 + Number(k.unite); kapsanan[a] = (kapsanan[a] || 0) + 1; yil[a] = Math.max(yil[a] || 0, y); });
     });
-    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); tamam.add(no); aktarimYildiz[no] = Math.min(3, yil[a]); } });
+    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
   }
   function aktarGerekirse() { let n = havuzTum().length; if (n !== aktarImza) { aktarImza = n; aktar(); } }
 
@@ -28438,7 +28452,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   function durakHavuzu(b, d) {
     let D = durakBilgi(b, d), tum = havuzTum(), sira = D.sinif * 100 + D.unite;
-    let unite = tum.filter(k => Number(k.sinif) === D.sinif && Number(k.unite) === D.unite);
+    let unite = D.kelimeler.slice();
     let onceki = tum.filter(k => Number(k.sinif) * 100 + Number(k.unite) < sira);
     let havuz = unite.slice();
     // İlk duraklarda önceki ünite olmayabilir. Aynı kapıdaki komşu sınıf ve
@@ -28552,7 +28566,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       if (typeof k === 'number' && k < 1) { if (typeof genelEnerjiBittiGoster === 'function') genelEnerjiBittiGoster(); return; }
     }
     let { havuz, tekrar, tum, D } = durakHavuzu(b, d);
-    if (havuz.length < 8) { toast('Bu durak için yeterli kelime bulunamadı. Kelime bankası yükleniyor olabilir, birazdan tekrar dene.'); return; }
+    if (!D.kelimeler.length) { toast('Bu durakta word_bank kelimeleri henüz bulunamadı.'); return; }
     let kel = window.OC ? OC.kelimeSec('ba' + D.no, havuz, 16) : karistir(havuz).slice(0, 16);
     // Sunucuda eşleştirilen speech_synonyms alternatifleri: API eski sürümdeyse ana kelimelerle devam eder.
     let speechAlternatives = {};
@@ -28595,9 +28609,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (cumleC) ekle('cumle', { c: cumleC });
     // Öğretim planı: 11 göreve 5 odak kelime dağıtılır.
     // İlk sorular tanıtır, ortadakiler pekiştirir, son sorular ipucusuz hatırlatır.
-    const scoped = havuzTum().filter(k=>Number(k.sinif)===Number(D.sinif)
-      && Number(k.unite)===Number(D.unite) && EN(k) && TR(k));
-    const targets=karistir([...new Map(scoped.map(k=>[EN(k).toLocaleLowerCase('en'),k])).values()]).slice(0,5);
+    const targets=D.kelimeler.slice();
     const active=targets;
     if(!active.length){toast('Bu durakta seçilen ünitenin kelimeleri bulunamadı. Word bank verisini kontrol edin.');return;}
     const pick=(i)=>active[i%active.length];
@@ -28607,7 +28619,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       {tip:'dinleAnlam',k:pick(0)}, {tip:'lab',k:pick(1)},
       {tip:'hata',k:pick(2)}, {tip:'cumleTamamla',k:pick(3)},
       {tip:'miniDiyalog',k:pick(4)}, {tip:'kelimeKur',k:pick(0)},
-      {tip:'hatirla',k:pick(1)}, {tip:'cumleSirala',k:pick(2)},
+      {tip:'hatirla',k:pick(1)}, {tip:'eslestir',k:pick(2)},
       {tip:'duydugunuBul',k:pick(3)}, {tip:'risk',k:pick(4)},
       {tip:'dinleAnlam',k:pick(Math.floor(Math.random()*active.length))}
     ];
@@ -28710,7 +28722,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     $('bzGeriSoru').onclick = () => incelemeAc();
     const nav=p.querySelector('.bz-oyun-ust');if(nav){const next=document.createElement('button');next.type='button';next.className='bz-geri-soru';next.textContent='→';next.title='Cevaplanan soruları ileri/geri incele';next.setAttribute('aria-label','Sonraki cevaplanmış soruyu incele');next.disabled=!O.gecmis.some(Boolean);next.onclick=()=>incelemeAc(0);nav.insertBefore(next,nav.querySelector('.bz-noktalar'));}
     let alan = $('bzAlan');
-    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, cumleSirala, duydugunuBul })[s.tip](s, alan);
+    ({ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, cumleSirala, duydugunuBul, eslestir })[s.tip](s, alan);
     window.dmCalmQuestion?.(p);
     jokerBarCiz();
     p.scrollTop = 0;
@@ -28822,12 +28834,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   function cumleTamamla(s,alan) {
     const en=EN(s.k),tr=TR(s.k);
-    alan.innerHTML='<div class="bz-etiket">📝 Cümleyi tamamla</div><div class="bz-soru">How do you say "'+kac(tr)+'" in English?<br>— ______</div><div class="bz-ipucu">Diyalogdaki boşluğa uygun sözcüğü seç.</div>';
+    alan.innerHTML='<div class="bz-etiket">📝 Cümlede boşluğu doldur</div><div class="bz-soru">I can use the word ______ in English.</div><div class="bz-ipucu">Türkçesi: '+kac(tr)+' · Boşluğu doğru kelimeyle tamamla.</div>';
     secenekler(alan,karistir([en,...celdirici(s.k,EN,3)]),en);
   }
   function kelimeKur(s,alan) {
     const en=EN(s.k), letters=Array.from(en), positions=letters.map((c,i)=>/[a-z]/i.test(c)?i:-1).filter(i=>i>=0);
-    const tokens=karistir(positions.map(i=>({letter:letters[i],position:i}))),used=new Set(),chosen=[];
+    const tokens=karistir(positions.map(i=>({letter:letters[i],position:i}))),used=new Set(),chosen=[];let wrong=0;
     alan.innerHTML='<div class="bz-etiket">🔤 Kelimeyi keşfet</div><div class="bz-soru">'+kac(TR(s.k))+'</div><div class="bz-ipucu">Doğru harfe dokun: yeşilse yerine yerleşir, kırmızıysa tekrar deneyebilirsin. Boşluk ve noktalama otomatik.</div><div class="dm-parkur-letters" id="bzLetterAnswer" aria-live="polite"></div><div class="dm-parkur-letters" id="bzLetterPool"></div><p class="dm-letter-notice" id="bzLetterHint" role="status"></p><button class="bz-btn" id="bzLetterUndo" type="button">↶ Son harfi geri al</button>';
     const answer=alan.querySelector('#bzLetterAnswer'),pool=alan.querySelector('#bzLetterPool'),hint=alan.querySelector('#bzLetterHint');
     const draw=()=>{
@@ -28836,7 +28848,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         if(O._cevaplandi)return;
         const expected=positions[chosen.length];if(expected===undefined)return;
         if(t.letter.toLocaleLowerCase('en')!==letters[expected].toLocaleLowerCase('en')){
-          btn.classList.add('dm-wrong');hint.textContent='🔴 Bu sıradaki harf değil. Tekrar dene!';setTimeout(()=>{if(btn.isConnected)btn.classList.remove('dm-wrong')},700);return;
+          wrong++;btn.classList.add('dm-wrong');hint.textContent='🔴 Yanlış harf ('+wrong+'/3).';if(wrong>=3){hint.textContent='Doğru cevap: '+en+' · Türkçesi: '+TR(s.k);pool.querySelectorAll('button').forEach(x=>x.disabled=true);setTimeout(()=>cevap(false,en),900);return;}setTimeout(()=>{if(btn.isConnected)btn.classList.remove('dm-wrong')},700);return;
         }
         used.add(i);chosen.push({letter:t.letter,position:expected,index:i});hint.textContent='🟢 Harika, doğru sırada!';draw();
         if(chosen.length===positions.length)cevap(true,'');
@@ -28845,15 +28857,18 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     alan.querySelector('#bzLetterUndo').onclick=()=>{if(O._cevaplandi)return;const item=chosen.pop();if(item)used.delete(item.index);hint.textContent='';draw();};draw();
   }
   
-  function cumleSirala(s,alan) {
-    const en=EN(s.k),tr=TR(s.k),parts=['The','English','word','is',en],chosen=[];
-    const tokens=karistir(parts.map((word,id)=>({word,id})));
-    alan.innerHTML='<div class="bz-etiket">🧩 Cümleyi sırala</div><div class="bz-soru">'+kac(tr)+'</div><div class="bz-ipucu">"İngilizce kelime ...dır" anlamındaki cümleyi sıraya koy.</div><div class="dm-parkur-letters" id="bzSentenceAnswer" aria-live="polite"></div><div class="dm-parkur-letters" id="bzSentencePool"></div><button class="bz-btn" id="bzSentenceUndo" type="button">↶ Son sözcüğü geri al</button>';
-    const answer=alan.querySelector('#bzSentenceAnswer'),pool=alan.querySelector('#bzSentencePool');
-    const draw=()=>{
-      answer.textContent=chosen.map(i=>tokens[i].word).join(' ')||'…';
-      pool.innerHTML='';tokens.forEach((t,i)=>{const b=document.createElement('button');b.type='button';b.className='dm-parkur-letter';b.textContent=t.word;b.disabled=chosen.includes(i);b.onclick=()=>{chosen.push(i);draw();if(chosen.length===tokens.length){const good=chosen.map(j=>tokens[j].id).every((v,j)=>v===j);pool.querySelectorAll('button').forEach(x=>x.disabled=true);cevap(good,good?'':parts.join(' '));}};pool.appendChild(b);});
-    };alan.querySelector('#bzSentenceUndo').onclick=()=>{if(!O._cevaplandi){chosen.pop();draw();}};draw();
+  function eslestir(s,alan) {
+    const target=s.k, items=[target,...O.tum.filter(k=>k!==target&&EN(k)&&TR(k))].filter((k,i,a)=>a.findIndex(x=>EN(x)===EN(k))===i).slice(0,4);
+    const shuffled=karistir(items.slice()),chosen=[];
+    alan.innerHTML='<div class="bz-etiket">🔗 Anlamları eşleştir</div><div class="bz-ipucu">Soldaki İngilizce kelimeyi sağdaki Türkçe anlamıyla eşleştir.</div><div class="dm-match-grid"><div id="bzMatchEn"></div><div id="bzMatchTr"></div></div><p id="bzMatchStatus" role="status"></p>';
+    const L=alan.querySelector('#bzMatchEn'),R=alan.querySelector('#bzMatchTr'),status=alan.querySelector('#bzMatchStatus');
+    let selected=null,matched=0,mistakes=0;
+    items.forEach((k,i)=>{const btn=document.createElement('button');btn.className='dm-match-option';btn.textContent=EN(k);btn.dataset.key=String(i);btn.onclick=()=>{if(btn.disabled)return;L.querySelectorAll('button').forEach(b=>b.classList.remove('selected'));selected=i;btn.classList.add('selected');};L.append(btn);});
+    shuffled.forEach(k=>{const index=items.indexOf(k),btn=document.createElement('button');btn.className='dm-match-option';btn.textContent=TR(k);btn.onclick=()=>{
+      if(selected===null||btn.disabled)return;
+      if(selected===index){const left=L.querySelector('[data-key="'+index+'"]');left.disabled=true;left.classList.add('dm-right');btn.disabled=true;btn.classList.add('dm-right');selected=null;matched++;status.textContent='🟢 Doğru eşleştirme!';if(matched===items.length)cevap(mistakes===0,mistakes?'':EN(target));}
+      else{mistakes++;btn.classList.add('dm-wrong');status.textContent='🔴 Eşleşmedi, tekrar dene.';setTimeout(()=>btn.classList.remove('dm-wrong'),650);}
+    };R.append(btn);});
   }
   function duydugunuBul(s,alan) {
     const en=EN(s.k);
