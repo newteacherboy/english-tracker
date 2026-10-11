@@ -28727,21 +28727,19 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     O.harcanan++;
     ilerle();
   }
-  function enerjiBitti(ilerle) {
+  function enerjiBitti() {
     window.dmPapiFirstPractice?.recover('school');
-    let p = document.createElement('div'); p.className = 'bz-panel'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
-    p.innerHTML = `<div class="bz-panel-kart"><div style="font-size:44px">🪫</div><h3>Enerjin bitti!</h3><p>Devam etmek için 1 ⚡ lazım. 15 dakikada bir +1 enerji dolar.</p>
-      <button class="bz-btn" id="bzEnAl">⚡ Enerji seçenekleri</button>
+    const old=document.getElementById('bzEnerjiDurdu');
+    if(old)return;
+    let p=document.createElement('div');p.className='bz-panel';p.id='bzEnerjiDurdu';p.setAttribute('role','dialog');p.setAttribute('aria-modal','true');
+    p.innerHTML=`<div class="bz-panel-kart"><div style="font-size:44px">🪫</div><h3>Enerjin bitti!</h3><p>Devam etmek için 1 ⚡ lazım. 15 dakikada bir +1 enerji dolar.</p>
+      <button class="bz-btn" id="bzEnAl">⚡ Enerji paketleri</button>
+      <button class="bz-btn" id="bzEnDevam" style="margin-top:8px">↻ Enerjim var, devam et</button>
       <button class="bz-btn" id="bzEnBirak" style="margin-top:8px;background:#f5f3ff;color:#6d28d9;box-shadow:none">Durağı bırak</button></div>`;
     document.body.appendChild(p);
-    $('bzEnBirak').onclick = () => { window.dmPapiFirstPractice?.complete('school');p.remove(); let b = O.b; kapat(); goster('harita', b); };
-    $('bzEnAl').onclick = () => {
-      toast('Yeni enerji paketleri için sunucu güncellemesi gerekiyor.');
-      let deneme = 0, t = setInterval(() => {
-        if (typeof window.genelEnerjiKalan === 'number' && window.genelEnerjiKalan >= 1) { clearInterval(t); p.remove(); if (typeof ocEnerjiHarca === 'function') ocEnerjiHarca(1); O.harcanan++; ilerle(); }
-        else if (++deneme > 40) clearInterval(t);
-      }, 500);
-    };
+    p.querySelector('#bzEnAl').onclick=()=>window.dmEnerjiPaketPaneli?.();
+    p.querySelector('#bzEnDevam').onclick=async()=>{p.remove();await devamEt();};
+    p.querySelector('#bzEnBirak').onclick=()=>{window.dmPapiFirstPractice?.complete('school');p.remove();let b=O.b;kapat();goster('harita',b);};
   }
   function cevap(iyi, dogruMetin) {
     if (O._cevaplandi) return;
