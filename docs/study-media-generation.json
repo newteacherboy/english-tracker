@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-11",
+  "tool": "OpenAI built-in ImageGen",
+  "brief": "Original turquoise-yellow Papi with purple feather accents, matching the approved study UI; transparent background; no words or third-party franchise references.",
+  "export": "Original generated PNG exported with Sharp to 384px PNG, palette quality 95; no new raster background.",
+  "assets": [
+    {
+      "file": "ingilizce/study-assets/papi-read.png",
+      "pose": "Sitting and reading an open purple book",
+      "generation": "exec-57e7aa6d-abbf-4da9-bb50-f3dad9d75468"
+    },
+    {
+      "file": "ingilizce/study-assets/papi-explain.png",
+      "pose": "Smiling with one wing raised to explain",
+      "generation": "exec-fa193d31-71e9-4c3b-a685-7c61bebbd205"
+    },
+    {
+      "file": "ingilizce/study-assets/papi-celebrate.png",
+      "pose": "Cheering with both wings raised and golden sparkles",
+      "generation": "exec-c658acd5-0c90-4c74-aecc-6fa71b56cc6f"
+    }
+  ]
+}

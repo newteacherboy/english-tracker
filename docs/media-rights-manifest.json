@@ -779,6 +779,41 @@
       "bytes": 958,
       "status": "code-native",
       "source": "Original repository-authored SVG controls, 2026-10-11"
+    },
+    {
+      "path": "ingilizce/study-assets/icons.svg",
+      "sha256": "4f8d168de4181967d4c8c8aa7607206cbe30ab07e8899560475378dd696b394a",
+      "bytes": 1946,
+      "status": "code-native",
+      "source": "Repository-authored study interface SVG; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-celebrate.png",
+      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
+      "bytes": 41534,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-explain.png",
+      "sha256": "746e4b63d970779f5f54c6adc9e06cd5f57c020d602f8352573da777121ea4ed",
+      "bytes": 32615,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-read.png",
+      "sha256": "b880af1f5f74996ff1280f87148ab0ac85da86c2ad08e99dbded00ea34627c46",
+      "bytes": 36011,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/topic-sun.svg",
+      "sha256": "5b792968fce75151b8e723443d785a86a0678f3a63c4096abccef9129ad8ba1f",
+      "bytes": 253,
+      "status": "code-native",
+      "source": "Repository-authored study interface SVG; original source retained in Git"
     }
   ]
 }

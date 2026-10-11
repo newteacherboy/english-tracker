@@ -7374,11 +7374,13 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
             }).join('');
         }
         
+        let dcDetayIstekNo = 0;
         function dcKonuAc(konuAdi) {
             if (genelOyunGirisEngelliMi()) return;
             genelEnerjiHarca(-1);
             dcSesDurdur();
             dcAktifKonu = konuAdi;
+            const detayIstekNo = ++dcDetayIstekNo, detayOgrenci = aktifOgrenciAdi;
                     dcKonuBaslangicZamani = Date.now(); dcTestBitiriliyor = false;
             let konuOzetErken = dcTumKonularCache.find(k => k.seviye === dcAktifSeviye && k.kategori === dcAktifKategori && k.konuAdi === konuAdi);
             dcAktifKonuTamamlanmisMi = !!(konuOzetErken && konuOzetErken.durum === 'tamamlandi');
@@ -7400,7 +7402,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
         
             fetch(`${apiURL}?islem=dersKonuDetayGetir&seviye=${dcAktifSeviye}&kategori=${dcAktifKategori}&konu=${encodeURIComponent(konuAdi)}`)
             .then(res => res.json())
-            .then(detay => { dcKonuDetayiCiz(detay, r.accent); })
+            .then(detay => { if(detayIstekNo === dcDetayIstekNo && detayOgrenci === aktifOgrenciAdi && dcAktifKonu === konuAdi) dcKonuDetayiCiz(detay, r.accent); })
             .catch(() => { document.getElementById('dcAnlatimIcerik').innerHTML = `<div>Yüklenirken hata oluştu.</div>`; });
         
             dcIleriGit('dcScreenDetail');
@@ -20646,7 +20648,6 @@ let adaRenk = adaRenkleri[
     };
   }
   /* Oyunlar yeni ortak giriş panelinden doğrudan başlar; ikinci onay kartı açılmaz. */
-  sar('dcKonuAc', a => ({ ikon: '📘', ad: 'Konuyu çalış', renk: 'linear-gradient(145deg,#93c5fd,#2563eb)', cip: ['📖 Konu anlatımı ve örnekler', '📝 Sonunda kısa test', '🏁 Testi geçersen: +30 XP · +2 ⚡ · +2 🪙', '⚡ Enerji harcamaz'] }));
 
   /* ===== 5) Şifre Kırıcı düellosu doğru oyunu açsın ===== */
   const OYUN_AC = { Kelime_Liderlik: 'kelimeYarismasiAc', Jeopardy_Liderlik: 'jpOyunAc', Bosluk_Tablosu: 'boslukOyunAc', Hafiza_Liderlik: 'hafizaOyunAc', Yagmur_Liderlik: 'yagmurOyunAc', Asmaca_Liderlik: 'asmacaOyunAc', KelimeBul_Liderlik: 'kelimebulOyunAc', "Konusma_Liderlik": "kpModuAc", "Eslesme_Liderlik": "esOyunAc", "Tren_Liderlik": "trenOyunAc", "Dikte_Liderlik": "dikteAc", "Cumle_Liderlik": "cumleAc" };
@@ -30770,5 +30771,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="oyna-v2.js?v=20261011-roomier"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261011-1">
 <script src="friends-ui.js?v=20261011-1"></script>
+<link rel="stylesheet" href="study-ui.css?v=20261011-1">
+<script src="study-ui.js?v=20261011-1"></script>
 </body>      
         </html>
