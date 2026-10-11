@@ -577,6 +577,19 @@ async function kuyrugaEkle(m: any) {
   return true;
 }
 
+async function yeniOgrenciYoneticiBildirimi(s: {id:string,username:string}, kaynak: 'normal'|'google') {
+  try {
+    const admins=[...new Set((await yoneticiler()).epostalar)];
+    for(const address of admins){
+      const queued=await kuyrugaEkle({
+        student_id:s.id,to_email:address,kind:"yeni_ogrenci_yonetici",
+        subject:"Diji-Medu · Yeni öğrenci kaydı",
+        html:mailKabugu("Yeni Öğrenci Kaydı",`<p><b>${hk(s.username)}</b> kullanıcı adıyla yeni bir öğrenci kayıt oldu.</p><p>Kayıt yolu: <b>${kaynak==="google"?"Google":"Standart kayıt"}</b>.</p><p>Öğrencileri yönetmek için yönetici panelini açabilirsiniz.</p>`)
+      });
+      if(!queued)console.error("admin registration notification could not be queued",kaynak);
+    }
+  }catch(e){console.error("admin registration notification failed",String(e).slice(0,160));}
+}
 async function odevOtomasyonu(deneme: boolean) {
   const simdi = Date.now(), gunMs = 86400000, periyot = ODEV_CEZA_GUN * gunMs;
   const ozet: any = { deneme, cezaGun: ODEV_CEZA_GUN, cezaPuan: ODEV_CEZA_PUAN, tatilSayisi: ODEV_TATILLER.length, bekleyenOdev: 0, yeniCeza: 0, cezaAlanOgrenci: 0, hatirlatmaMaili: 0, epostasiOlmayan: 0, detay: [] as any[] };
@@ -1155,6 +1168,7 @@ async function handle(req: Request) {
         : "Kayıt tamamlanamadı. Biraz sonra tekrar dene." }, createError?.code === "23505" ? 409 : 503);
       const adYaz = await supabase.from("students").update({ full_name: adSoyad }).eq("id", createdId);
       if (adYaz.error) console.error("googleKayit full_name", adYaz.error);
+      await yeniOgrenciYoneticiBildirimi({id:createdId,username},"google");
       try { await onboarding.welcome({id:createdId,username,email}); }
       catch (_) { console.error("Google welcome verification could not be queued"); }
       const { data: createdStudent, error: createdStudentError } = await supabase.from("students")
@@ -1973,6 +1987,7 @@ async function handle(req: Request) {
     (payload as any).teacher_id = ogretmen ? ogretmen.id : null;
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
+    await yeniOgrenciYoneticiBildirimi(saved.data,"normal");
     try { await onboarding.welcome(saved.data); }
     catch (_) { return json({status:"success",emailDogrulamaGerekli:true,message:"Kaydın oluştu. E-posta hazırlanamadı; giriş ekranından kullanıcı adı ve şifrenle yeni bağlantı iste."}); }
     return json({status:"success",emailDogrulamaGerekli:true,message:"Hoş geldin! Hesabını açmak için e-postandaki doğrulama bağlantısına dokun. Spam klasörünü de kontrol et."});
