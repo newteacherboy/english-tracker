@@ -457,3 +457,5 @@ body.oy-aktif .yb-fw{display:none!important}
 @media(min-width:640px){.oy-root .oy-route-track>.oy-hero{aspect-ratio:var(--oy-ar,1.7)}.oy-gk .go{padding:8px 12px}.oy-gk .ic{width:58px;height:58px}}
 @media(min-width:640px) and (orientation:portrait){.oy-root .oy-route-track>.oy-hero{aspect-ratio:2}.oy-gk .go{padding:7px 5px}}
 .oy-learning .oy-route-papi{top:25%;bottom:auto;height:25%}
+/* Keep the swipe controls clear of the compact task header. */
+.oy-tasks .oy-bubble,.oy-tasks .oy-peek{display:none}.oy-tasks .oy-h{padding-right:0}
