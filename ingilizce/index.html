@@ -28887,7 +28887,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const status = alan.querySelector('#bzMicStatus'), cards=alan.querySelector('#bzMicCards');
     const mic=alan.querySelector('#bzMicStart'), input=alan.querySelector('#bzMicText');
     const render = () => {
-      cards.innerHTML=remaining.map((id,n)=>'<div class="dm-final-card'+(n===0?' dm-final-current':'')+'"><span class="dm-final-card-label">'+(n===0?'Şimdi söyle':'Sıradaki kart')+'</span><strong>'+kac(list[id].tr)+'</strong><small>'+(n+1)+' / '+remaining.length+'</small></div>').join('');
+      cards.innerHTML=remaining.length?'<div class="dm-final-card dm-final-current"><span class="dm-final-card-label">Şimdi söyle · '+(list.length-remaining.length+1)+' / '+list.length+'</span><strong>'+kac(list[remaining[0]].tr)+'</strong><small>İngilizcesini mikrofona söyle</small></div>':'';
       mic.disabled=finished||!SpeechAPI||denied;
       mic.textContent=shouldListen?'⏹ Mikrofonu kapat':'🎤 Mikrofonu aç';
       if(!SpeechAPI){mic.textContent='Mikrofon bu tarayıcıda desteklenmiyor';status.textContent='Klavye ile cevaplayabilirsin.';}
@@ -30704,6 +30704,22 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 .dm-final-write-panel #bzMicText{box-sizing:border-box;width:100%;min-height:64px;font-size:21px;border:3px solid #56a66a;border-radius:15px;background:white;color:#183923;padding:14px}
 .dm-final-write-panel #bzMicCheck{min-height:58px;width:100%;font-size:18px;font-weight:900;margin-top:12px;box-shadow:0 5px 0 #39794d}
 .dm-final-write-panel #bzMicText:focus-visible,.dm-final-write-panel>summary:focus-visible{outline:3px solid #ffc83b;outline-offset:3px}
+
+/* One-screen mobile adventure final: focus on active card, no twelve-card wall. */
+#bzAlan:has(#bzMicCards){display:flex;flex-direction:column;gap:8px;box-sizing:border-box;min-width:0}
+#bzAlan:has(#bzMicCards)>.bz-ipucu{font-size:clamp(12px,3vw,15px);margin:0!important;padding:6px 12px}
+#bzAlan #bzMicCards{display:block!important;margin:4px auto!important;max-width:540px!important}
+#bzAlan #bzMicCards .dm-final-card{min-height:85px!important;padding:10px 14px!important;margin:0!important}
+#bzAlan #bzMicCards .dm-final-card strong{font-size:clamp(21px,5vw,30px)!important}
+#bzAlan #bzMicStart{display:flex!important;align-items:center;justify-content:center;margin:8px auto!important;width:min(100%,370px)!important;min-height:78px!important;border:3px solid #bbf5d1!important;border-radius:25px!important;background:linear-gradient(135deg,#0da962,#087a8f)!important;color:white!important;font-size:clamp(20px,5vw,27px)!important;box-shadow:0 7px 0 #075a56,0 0 0 5px #e0fae9!important;font-weight:900!important}
+#bzAlan #bzMicStart:active{transform:translateY(3px);box-shadow:0 3px 0 #075a56!important}
+#bzAlan .dm-final-write-panel{padding:10px 12px!important;margin:9px 0 0!important}
+#bzAlan .dm-final-write-panel>summary{font-size:clamp(14px,3.4vw,17px)!important;padding:8px!important}
+#bzAlan .dm-final-write-panel>label{font-size:14px!important;margin:7px 0 4px!important}
+#bzAlan .dm-final-write-panel #bzMicText{min-height:46px!important;font-size:18px!important;padding:8px 12px!important}
+#bzAlan .dm-final-write-panel #bzMicCheck{min-height:48px!important;font-size:16px!important;margin-top:7px!important}
+#bzAlan:has(#bzMicCards) #bzMicStatus{font-size:clamp(12px,3vw,15px);padding:4px 10px;margin:0!important}
+@media(max-height:740px){#bzAlan #bzMicStart{min-height:62px!important}#bzAlan #bzMicCards .dm-final-card{min-height:70px!important}}
 </style>
 
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=2"></script><script src="contact-policy.js?v=2"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=2"></script>
