@@ -81,7 +81,7 @@
     }
     let tools=head.querySelector('.dm-forest-tools');
     if(!tools){tools=document.createElement('div');tools.className='dm-forest-tools';head.append(tools);}
-    ['ybEnerji','ybArac'].forEach(id=>move($(id),tools));
+    ['ybEnerji'].forEach(id=>move($(id),tools));
     const badges=$('rozetlerBolumu');
     if(!$('dmForestBadgeToggle')){
       const button=document.createElement('button');button.id='dmForestBadgeToggle';button.type='button';button.className='dm-forest-link';button.textContent='Tüm rozetleri gör';button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls','rozetlerGridKonteyner');
