@@ -434,3 +434,26 @@ body.oy-aktif .yb-fw{display:none!important}
 .oy-skill-nodes img{display:block;width:100%;height:auto;filter:drop-shadow(0 3px 1px #42703e88)}
 /* Both native horizontal carousel gestures and page vertical gestures stay available. */
 .oy-root{touch-action:pan-x pan-y}.oy-route-track{touch-action:pan-x pan-y}
+/* Roomier parkur, compact daily and weekly cards. */
+.oy-route-tabs{display:none!important}
+.oy-carousel .oy-sign{top:8%;max-width:57%}.oy-carousel .oy-all{top:8%;font-size:clamp(10px,2.7cqw,15px)}
+.oy-route-controls{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:8px;background:#143a4d80;color:white;padding:2px 8px;border-radius:999px}
+.oy-route-controls button{border:0;background:none;color:white;font:900 22px/1 Nunito;cursor:pointer;padding:0 4px}.oy-route-controls button:disabled{opacity:.3;cursor:default}
+.oy-swipe-label{font:800 10px Nunito,sans-serif}.oy-route-controls .oy-route-dots{position:static;transform:none;background:none;padding:0;gap:4px}
+.oy-route-announcement{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.oy-root .oy-learning{background-size:100% 100%}
+.oy-learning .oy-route-papi{left:1%;bottom:36%;width:22%;height:39%}
+.oy-learning-stone{position:absolute;transform:translate(-50%,-85%);width:9%;padding:0;border:0;background:none;color:#fff;cursor:pointer;filter:drop-shadow(0 2px 2px #0006)}
+.oy-learning-stone svg{display:block;width:100%;height:auto}.oy-learning-stone small{display:block;font:900 clamp(9px,2.7cqw,15px) Nunito;text-shadow:0 1px 2px #000;line-height:1}.oy-learning-stone:disabled{cursor:default;opacity:.85}.oy-learning-stone.is-current svg{filter:drop-shadow(0 0 5px #ffd952)}
+.oy-learning-stone em{position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;background:#ffdb62;color:#3d411b;padding:2px 5px;border-radius:9px;font:800 9px Nunito}
+.oy-learning-summary{font:800 13px/1.4 Nunito;margin:0 4px 10px;color:#436645}
+.oy-list .oy-row:disabled{cursor:default}.oy-list .oy-row.is-cur{border-color:#fbbf24}.oy-list .oy-row.is-done .no{background:#209858}
+.oy-tasks{padding:8px 9px 7px}.oy-h h3{font-size:clamp(16px,4.8cqw,21px)}.oy-gk-row{padding-top:9px;gap:7px}.oy-gk{padding:8px 4px 6px;gap:2px;border-radius:18px}
+.oy-gk .ic{width:clamp(40px,15cqw,58px);height:clamp(40px,15cqw,58px)}.oy-gk h4{font-size:clamp(11px,3.4cqw,14px);min-height:2.2em}.oy-gk .go{font-size:clamp(12px,3.8cqw,15px);padding:6px 3px}
+.oy-weekly{padding:7px 10px 0}.oy-wk-top h3{font-size:clamp(16px,4.8cqw,20px)}.oy-wk-body{grid-template-columns:clamp(68px,21cqw,88px) minmax(0,1fr);gap:7px}.oy-ring{width:clamp(68px,21cqw,88px);height:clamp(68px,21cqw,88px)}
+.oy-wk-r h4{font-size:clamp(13px,4cqw,17px)}.oy-wk-r:has(.oy-pick){padding-right:0}.oy-weekly:has(.oy-pick) .oy-deco{display:none}
+.oy-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;flex-wrap:nowrap}.oy-pick button{min-width:0;padding:6px 2px;text-align:center;white-space:nowrap;font-size:clamp(9px,2.6cqw,12px);border-radius:10px}
+.oy-cta{padding-top:7px;padding-bottom:7px;margin-top:3px;font-size:clamp(16px,4.7cqw,20px)}.oy-cta .pp{width:clamp(48px,15cqw,64px);height:clamp(48px,15cqw,64px)}.oy-cta .t small{font-size:clamp(9px,2.6cqw,12px)}
+@media(min-width:640px){.oy-root .oy-route-track>.oy-hero{aspect-ratio:var(--oy-ar,1.7)}.oy-gk .go{padding:8px 12px}.oy-gk .ic{width:58px;height:58px}}
+@media(min-width:640px) and (orientation:portrait){.oy-root .oy-route-track>.oy-hero{aspect-ratio:2}.oy-gk .go{padding:7px 5px}}
+.oy-learning .oy-route-papi{top:25%;bottom:auto;height:25%}

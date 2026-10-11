@@ -422,51 +422,64 @@
     return '<section class="oy-hero oy-alt-hero '+(learn?'oy-learning':'oy-pro')+'" role="tabpanel" aria-label="'+(learn?'Öğrenme Yolu':'MeduPro')+'">' +
       '<button type="button" class="oy-sign" data-act="route-open"><span class="bk">'+(learn?'📖':'✨')+'</span><span><small>'+ (learn?'Papi ile adım adım öğren':'Papi’nin keşif akademisi')+'</small><b>'+ (learn?'Öğrenme Yolu':'MeduPro')+'</b><em class="oy-route-detail">'+(learn?'Dinle · Tekrarla · Konuş':'Kelime Modu · Sohbet · Kartlar')+'</em></span><span class="chev">›</span></button>'+
       '<img class="oy-route-papi" src="'+(learn?'ders-vadi/papi-kitap.png':'papi-welcome-v2.png')+'" alt="Papi" draggable="false">'+
-      (learn?'<div class="oy-skill-nodes" aria-hidden="true"><img src="oyna-assets/oyna-learning-skills.svg" alt=""></div>':'<div class="oy-pro-modes"><button data-act="pro-mode" data-mode="kp">Kelime Modu</button><button data-act="pro-mode" data-mode="sh">Sohbet</button><button data-act="pro-mode" data-mode="kk">Kartlar</button></div>')+'</section>';
+      (learn?'<button type="button" class="oy-all" data-act="learn-all">Tüm Parkuru Gör ›</button><div class="oy-learning-stones"></div>':'<div class="oy-pro-modes"><button data-act="pro-mode" data-mode="kp">Kelime Modu</button><button data-act="pro-mode" data-mode="sh">Sohbet</button><button data-act="pro-mode" data-mode="kk">Kartlar</button></div>')+'</section>';
   }
   function carousel(steps,current) {
-    var names=['Macera','Öğrenme','MeduPro'];
-    return '<div class="oy-carousel" aria-label="Parkur seçimi"><div class="oy-route-tabs" role="tablist">'+names.map(function(n,i){return '<button type="button" role="tab" data-route="'+i+'" aria-selected="'+(i===0)+'" aria-label="'+n+' parkuru">'+n+'</button>';}).join('')+'</div><div class="oy-route-track">'+hero(steps,current)+alternateHero(1)+alternateHero(2)+'</div><div class="oy-route-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div></div>';
+    return '<div class="oy-carousel" aria-label="Parkur seçimi"><div class="oy-route-track" tabindex="0" aria-label="Parkurlar; sağ ve sol oklarla veya kaydırarak değiştir">'+hero(steps,current)+alternateHero(1)+alternateHero(2)+'</div><div class="oy-route-controls"><button type="button" data-route-step="-1" aria-label="Önceki parkur">‹</button><span class="oy-swipe-label">Kaydır</span><div class="oy-route-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div><button type="button" data-route-step="1" aria-label="Sonraki parkur">›</button></div><span class="oy-route-announcement" role="status" aria-live="polite"></span></div>';
   }
+
   function routeIndex(root) { return Number(root.dataset.route)||0; }
   function routeSync(root,index) {
     root.dataset.route=index;
-    root.querySelectorAll('[data-route]').forEach(function(b,i){b.setAttribute('aria-selected',String(i===index));b.tabIndex=i===index?0:-1;});
+    root.querySelectorAll('[data-route-step]').forEach(function(b){b.disabled=(index===0 && +b.dataset.routeStep<0)||(index===2 && +b.dataset.routeStep>0);});
+    root.querySelectorAll('.oy-route-track > section').forEach(function(p,i){p.inert=i!==index;});
+    var note=root.querySelector('.oy-route-announcement');if(note)note.textContent=['Macera Haritası','Öğrenme Yolu','MeduPro'][index];
     root.querySelectorAll('.oy-route-dots i').forEach(function(b,i){b.classList.toggle('on',i===index);});
     var text=root.querySelector('.oy-cta .t');if(text){text.innerHTML='Haydi Devam Edelim!<small>'+['Macera Haritasına devam','Öğrenme Yoluna devam','MeduPro’ya devam'][index]+'</small>';}
   }
   function routeOpen(root) {
     if(routeIndex(root)===1){
-      if(window.dmStoryPath && window.dmStoryPath.continueRoute) window.dmStoryPath.continueRoute().catch(function(e){if(fn('toast'))toast(e.message);});
+      if(window.dmStoryPath && window.dmStoryPath.continueRoute) window.dmStoryPath.continueRoute().catch(function(e){var tell=fn('yoToast')||fn('toast');if(tell)tell(e.message);});
     }else if(routeIndex(root)===2){proGec();}
     else {var c=root.querySelector('.oy-node.is-cur');if(c)c.click();}
+  }
+  function paintLearning(root,info) {
+    var el=root.querySelector('.oy-learning-stones');if(!el||!info.chapters)return;
+    var active=Math.max(0,info.chapters.findIndex(function(c){return c.current;}));
+    var start=Math.max(0,Math.min(active-2,info.chapters.length-5));
+    var slots=[[14,60],[31,66],[51,70],[70,65],[87,60]];
+    el.innerHTML=info.chapters.slice(start,start+5).map(function(c,i){var icon=c.available?['book','headphones','speech'][i%3]:'lock';return '<button type="button" class="oy-learning-stone '+(c.current?'is-current':'')+(c.done?' is-done':'')+'" style="left:'+slots[i][0]+'%;top:'+slots[i][1]+'%" data-chapter="'+c.id+'" '+(!c.available?'disabled':'')+' aria-label="'+esc(c.cefr+' · '+c.title+(c.current?' · Buradasın':c.done?' · Tamamlandı':' · Kilitli'))+'"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="oyna-assets/oyna-learning-skills.svg#'+icon+'"></use></svg><small>'+ (start+i+1)+'</small>'+(c.current?'<em>Buradasın</em>':'')+'</button>';}).join('');
   }
   function carouselMount(root,kap) {
     var track=root.querySelector('.oy-route-track');if(!track)return;
     var frame=0;
     track.addEventListener('scroll',function(){if(frame)return;frame=requestAnimationFrame(function(){frame=0;routeSync(root,Math.max(0,Math.min(2,Math.round(track.scrollLeft/track.clientWidth))));});},{passive:true});
     function select(i){track.scrollTo({left:i*track.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});routeSync(root,i);}
-    root.querySelectorAll('[data-route]').forEach(function(b){b.onclick=function(){select(+b.dataset.route);};b.onkeydown=function(e){if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();var i=Math.max(0,Math.min(2,routeIndex(root)+(e.key==='ArrowRight'?1:-1)));select(i);root.querySelectorAll('[data-route]')[i].focus();}};});
+    root.querySelectorAll('[data-route-step]').forEach(function(b){b.onclick=function(){select(Math.max(0,Math.min(2,routeIndex(root)+Number(b.dataset.routeStep))));};});
+    track.addEventListener('keydown',function(e){if(e.target!==track)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();select(Math.max(0,Math.min(2,routeIndex(root)+(e.key==='ArrowRight'?1:-1))));}});
+
     if(!kap.__oyRouteCapture){kap.__oyRouteCapture=1;kap.addEventListener('click',function(e){var r=kap.querySelector('.oy-root'),b=e.target.closest('button');if(!r||!b)return;
       if(b.matches('.oy-cta')&&routeIndex(r)!==0){e.preventDefault();e.stopImmediatePropagation();routeOpen(r);}
       else if(b.dataset.act==='route-open'){e.preventDefault();e.stopImmediatePropagation();routeOpen(r);}
+      else if(b.dataset.act==='learn-all'){e.preventDefault();e.stopImmediatePropagation();if(window.dmStoryPath && window.dmStoryPath.openAll)window.dmStoryPath.openAll();}
+      else if(b.dataset.chapter!==undefined){e.preventDefault();e.stopImmediatePropagation();if(window.dmStoryPath)window.dmStoryPath.open(Number(b.dataset.chapter));}
       else if(b.dataset.act==='pro-mode'){e.preventDefault();e.stopImmediatePropagation();var mode=b.dataset.mode;if(mode==='kp'&&fn('kpModuAc'))kpModuAc();else{var t=document.querySelector('#pkSekmeler [data-p="'+mode+'"]');if(t)t.click();}}
     },true);}
     routeSync(root,0);
     root.querySelectorAll('.oy-route-track > section').forEach(function(x){x.setAttribute('role','tabpanel');});
-    if(window.dmStoryPath && window.dmStoryPath.overview) window.dmStoryPath.overview().then(function(info){if(!root.isConnected)return;var d=root.querySelector('.oy-learning .oy-route-detail');if(d)d.textContent=info.cefr+' · '+info.title;}).catch(function(){});
+    if(window.dmStoryPath && window.dmStoryPath.overview) window.dmStoryPath.overview().then(function(info){if(!root.isConnected)return;var d=root.querySelector('.oy-learning .oy-route-detail');if(d)d.textContent=info.cefr+' · '+info.title;paintLearning(root,info);}).catch(function(){});
   }
 
   /* ---- tek ekrana sığdırma ---- */
   function fit(root) {
     if (!root || !root.isConnected) return;
     var host = root.closest('.bz-parkur'); if (host) host.scrollTop = 0;
-    root.style.zoom = ''; root.classList.remove('oy-tight'); root.style.setProperty('--oy-ar', '2.1');
+    root.style.zoom = ''; root.classList.remove('oy-tight'); root.style.setProperty('--oy-ar', '1.7');
     var nav = document.getElementById('bottomNavMobile'), navTop = window.innerHeight;
     try { if (nav && getComputedStyle(nav).display !== 'none') { var nr = nav.getBoundingClientRect(); if (nr.height > 0) navTop = nr.top; } } catch (e) {}
     function olc() { var r = root.getBoundingClientRect(); return { avail: navTop - r.top - 6, h: r.height }; }
     var o = olc(); if (o.h <= o.avail || o.avail < 200) return;
-    root.classList.add('oy-tight'); root.style.setProperty('--oy-ar', '2.45');
+    root.classList.add('oy-tight'); root.style.setProperty('--oy-ar', '1.9');
     o = olc(); if (o.h <= o.avail) return;
     root.style.zoom = Math.max(0.7, o.avail / o.h).toFixed(3);
   }
