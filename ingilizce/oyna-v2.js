@@ -448,7 +448,7 @@
     var active=Math.max(0,info.chapters.findIndex(function(c){return c.current;}));
     var start=Math.max(0,Math.min(active-2,info.chapters.length-5));
     var slots=[[14,60],[31,66],[51,70],[70,65],[87,60]];
-    el.innerHTML=info.chapters.slice(start,start+5).map(function(c,i){var icon=c.available?['book','headphones','speech'][i%3]:'lock';return '<button type="button" class="oy-learning-stone '+(c.current?'is-current':'')+(c.done?' is-done':'')+'" style="left:'+slots[i][0]+'%;top:'+slots[i][1]+'%" data-chapter="'+c.id+'" '+(!c.available?'disabled':'')+' aria-label="'+esc(c.cefr+' · '+c.title+(c.current?' · Buradasın':c.done?' · Tamamlandı':' · Kilitli'))+'"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="oyna-assets/oyna-learning-skills.svg#'+icon+'"></use></svg><small>'+ (start+i+1)+'</small>'+(c.current?'<em>Buradasın</em>':'')+'</button>';}).join('');
+    el.innerHTML=info.chapters.slice(start,start+5).map(function(c,i){var icon=c.available?['book','headphones','speech'][i%3]:'lock';return '<button type="button" class="oy-learning-stone '+(c.current?'is-current':'')+(c.done?' is-done':'')+'" style="left:'+slots[i][0]+'%;top:'+slots[i][1]+'%" data-chapter="'+c.id+'" '+(!c.available?'disabled':'')+' aria-label="'+esc(c.cefr+' · '+c.title+(c.current?' · Buradasın':c.done?' · Tamamlandı':' · Kilitli'))+'"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="oyna-assets/oyna-learning-skills.svg?v=roomier-20261011#'+icon+'"></use></svg><small>'+ (start+i+1)+'</small>'+(c.current?'<em>Buradasın</em>':'')+'</button>';}).join('');
   }
   function carouselMount(root,kap) {
     var track=root.querySelector('.oy-route-track');if(!track)return;
