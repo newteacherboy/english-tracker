@@ -28486,9 +28486,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   function ilerlemeKaydet(no) {
     tamam.add(no); hamTamam.add(no);
-    let anahtar = 'bz_bekleyen_' + isim().toLowerCase();
+    const owner=isim(); let anahtar = 'bz_bekleyen_' + owner.toLowerCase();
     fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'buyuSeviyeTamamla', ogrenci: isim(), seviyeNo: no }) })
-      .then(async r => { if (!r.ok) throw 0; const d = await r.json(); bekleyenSil(anahtar, no); if(d.yo && d.gold>0 && yoVar()) { yo.altin=(yo.altin||0)+d.gold; yo.dmRewardVersion=d.yo.dmRewardVersion; window.yoKaydet?.(); } if(d.gold>0) toast(`🎁 Parkur hediyesi: +${d.gold} altın`); window.dmProgression?.refresh(true); })
+      .then(async r => { if (!r.ok) throw 0; const d = await r.json(); bekleyenSil(anahtar, no); if(owner!==isim())return; if(d.yo)window.dmApplyRewardState?.(d.yo,owner); if(d.gold>0) toast(`🎁 Parkur hediyesi: +${d.gold} altın`); window.dmProgression?.refresh(true); })
       .catch(() => { try { let l = JSON.parse(localStorage.getItem(anahtar) || '[]'); if (!l.includes(no)) l.push(no); localStorage.setItem(anahtar, JSON.stringify(l)); } catch (e) {} });
   }
   function bekleyenSil(anahtar, no) { try { let l = JSON.parse(localStorage.getItem(anahtar) || '[]').filter(x => x !== no); localStorage.setItem(anahtar, JSON.stringify(l)); } catch (e) {} }
@@ -29138,7 +29138,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     goster('harita', b);
     if (typeof genelSonucEkraniGoster === 'function')
       genelSonucEkraniGoster({ oyunAdi: `🧙 ${durakBilgi(b, d).sinif}. Sınıf ${durakBilgi(b, d).unite}. Ünite`, isim: isim(), puan, dogru: O.dogru, yanlis: O.yanlis, sureSaniye: sure, oyunKey: 'ba',
-        rewardScope:{classNo:durakBilgi(b,d).sinif,units:[durakBilgi(b,d).unite]},parkurIlk,parkurGecti:gecti,parkurYildiz:yil,siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
+        rewardScope:{classNo:durakBilgi(b,d).sinif,units:[durakBilgi(b,d).unite],stopNo:no},parkurIlk,parkurGecti:gecti,parkurYildiz:yil,siralamaYok: true, devamFn: () => goster('harita', b), tekrarFn: () => oyunBaslat(b, d) });
     setTimeout(() => toast(gecti ? (yeniAcildi ? `🚪 ${b + 2}. bölümün kapısı açıldı!` : `✨ ${O.d + 1}. durak geçildi! ${'⭐'.repeat(yil)}`) : `💪 ${O.dogru}/${O.sorular.length} doğru. Geçmek için ${GECME} doğru ve sesli finalin tamamlanması gerekiyor!`), 700);
   }
 
@@ -30792,8 +30792,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="account-settings.css?v=1"><script src="account-settings.js?v=2"></script><script src="kisisel-bilgiler.js?v=3"></script><script src="student-management.js?v=2"></script><script src="contact-policy.js?v=2"></script><script src="sifre-islem.js?v=1"></script><script src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
-<link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=11"></script>
-<link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=2"></script>
+<link rel="stylesheet" href="progression-ui.css?v=3"><script src="progression-ui.js?v=20261011-rewards12"></script>
+<link rel="stylesheet" href="game-feedback.css?v=1"><script src="game-feedback.js?v=20261011-rewards12"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script src="profile-forest.js?v=1"></script>
 

@@ -18,8 +18,15 @@ export function progressionAPI(db:any,json:any){
   if(op==='seviyeOyunOdulu'){
    const ctx=await context(a),game=String(body.game||''),code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur',harfbahcesi:'oyun_harfbahcesi',eslestirme:'oyun_eslestirme'} as any)[game]||'oyun_'+game;
    if(!Object.hasOwn(C.gates,code)||ctx.level<C.gates[code])return deny(C.gates[code]||40);
-   const units=Array.isArray(body.units)?body.units.map(Number):[];
-   if(game==='ba'){const stop=1000+Number(body.classNo)*100+Number(units[0]),door=ctx.units.findIndex((u:any[])=>u.includes(stop));if(door<0||ctx.level<[1,10,20,30][door]||door>0&&!ctx.complete[door-1])return deny('Geçerli ve açık parkur durağı gerekli.');}
+   let units=Array.isArray(body.units)?body.units.map(Number):[];
+   if(game==='ba'){
+    const stop=Number(body.stopNo||200000+Number(body.classNo)*10000+Number(units[0])*100+1);
+    const door=ctx.units.findIndex((u:any[])=>u.includes(stop));
+    if(!Number.isInteger(stop)||door<0||Math.floor((stop-200000)/10000)!==Number(body.classNo)||Math.floor((stop-200000)%10000/100)!==Number(units[0])||ctx.level<[1,10,20,30][door]||door>0&&!ctx.complete[door-1])return deny('Geçerli ve açık parkur durağı gerekli.');
+    const position=ctx.units[door].indexOf(stop);
+    if(position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');
+    units=[stop];
+   }
    const {data,error}=await db.rpc('dm_game_reward_claim',{actor:a.student_id,run_key:String(body.runId||''),game,class_id:Number(body.classNo),unit_ids:units,correct:Number(body.correct),wrong:Number(body.wrong),seconds:Number(body.seconds),first_clear:!!body.firstClear,stars:Number(body.stars||1),boost:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
    if(error)return json({ok:false,mesaj:error.message},400);return json(data);
   }
@@ -51,7 +58,7 @@ export function progressionAPI(db:any,json:any){
   const ctx=await context(a),l=ctx.level;
   if(code==='akis'&&!ctx.feed)return deny('Akış, ana parkurda 3. durağa ulaşınca açılır.');
   if(code&&l<(C.gates[code]||1))return deny(C.gates[code]);
-  if(op==='buyuSeviyeTamamla'){const no=Number(body.seviyeNo),door=ctx.units.findIndex((d:any[])=>d.includes(no));if(door<0)return deny('Geçerli parkur durağı gerekli.');const n=[1,10,20,30][door];if(l<n)return deny(n);if(door>0&&!ctx.complete[door-1])return deny('Önce önceki parkuru tamamla.');const position=ctx.units[door].indexOf(no);if(position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');}
+  if(op==='buyuSeviyeTamamla'){const supplied=Number(body.seviyeNo),no=supplied>=1000&&supplied<2000?200000+Math.floor((supplied-1000)/100)*10000+((supplied-1000)%100)*100+1:supplied,door=ctx.units.findIndex((d:any[])=>d.includes(no));if(door<0)return deny('Geçerli parkur durağı gerekli.');const n=[1,10,20,30][door];if(l<n)return deny(n);if(door>0&&!ctx.complete[door-1])return deny('Önce önceki parkuru tamamla.');const position=ctx.units[door].indexOf(no);if(position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');}
   if(lesson){const ce=String(value(body,q,'seviye')).toUpperCase(),n=({A1:2,A2:9,B1:16,B2:23} as any)[ce];if(!n)return deny('Geçerli ders seviyesi gerekli.');if(l<n)return deny(n);if(!ctx.lessons[ce])return deny('Önce önceki ders seviyesini tamamen bitir.');const topic=String(value(body,q,op==='dersKonuDetayGetir'?'konu':'konuAdi'));const cat=String(value(body,q,'kategori'));const check=await db.from('lesson_topics').select('id').eq('active',true).eq('level',ce).eq('category',cat).eq('topic_name',topic).limit(1);if(check.error)throw check.error;if(!check.data?.length)return deny('Yayımlanmış ders konusu gerekli.');}
   if(save){let incoming=body.deger;try{if(typeof incoming==='string')incoming=JSON.parse(incoming);}catch{return deny('Geçersiz veri.');}
    const before=ctx.yo||{};
