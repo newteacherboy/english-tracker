@@ -28696,7 +28696,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const nav=p.querySelector('.bz-oyun-ust');if(nav){const next=document.createElement('button');next.type='button';next.className='bz-geri-soru';next.textContent='→';next.title='Cevaplanan soruları ileri/geri incele';next.setAttribute('aria-label','Sonraki cevaplanmış soruyu incele');next.disabled=!O.gecmis.some(Boolean);next.onclick=()=>incelemeAc(0);nav.insertBefore(next,nav.querySelector('.bz-noktalar'));}
     let alan = $('bzAlan');
     try {
-      const renderers={ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, cumleSirala, duydugunuBul, eslestir };
+      const renderers={ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, duydugunuBul, eslestir };
       if(typeof renderers[s.tip]!=='function')throw new Error('Bilinmeyen soru: '+s.tip);
       renderers[s.tip](s,alan);
       if(!alan.textContent.trim())throw new Error('Soru içeriği boş');
