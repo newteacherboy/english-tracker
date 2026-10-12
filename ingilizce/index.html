@@ -17099,14 +17099,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     if (kapat) kapat.click(); else if (ov) ov.style.display = 'none';
     return metin;
   }
-  let krGosterilen = '';
-  setInterval(() => {
-    if (!girisli() || !yoVar() || krGosterilen === kucuk(aktifOgrenciAdi)) return;
-    krGosterilen = kucuk(aktifOgrenciAdi);
-    setTimeout(() => {
-         if (typeof baModuAc === 'function' && !(typeof odulOyunda === 'function' && odulOyunda())) (window.dunyaAc || baModuAc)();
-    }, 150);
-  }, 250);
+  // The login flow owns the home route; do not force-open and render Parkur on every page load.
 })();
 </script>
 <style>
@@ -17723,7 +17716,7 @@ function odulUret(k, o) {
     } catch (e) {}
     ilerlemeHazir = true;
     kontrolEt();
-    if ($('tab-dunya') && $('tab-dunya').classList.contains('active')) dunyaCiz();
+    if ($('tab-dunya') && $('tab-dunya').classList.contains('active') && !$('tab-dunya').classList.contains('bz-yeni')) dunyaCiz();
   }
   window.bcIlerleme = () => Object.assign({}, ilerleme);
 
@@ -17950,9 +17943,9 @@ function odulUret(k, o) {
     let el = $('tab-dunya');
     el.classList.add('active');
     if (typeof dcBottomNavSenkronize === 'function') dcBottomNavSenkronize();
-    dunyaCiz();
+    if (!el.classList.contains('bz-yeni')) dunyaCiz();
     await ilerlemeGetir();
-    dunyaCiz();
+    if (!el.classList.contains('bz-yeni')) dunyaCiz();
   };
   window.dunyaKapat = function () {
     $('tab-dunya').classList.remove('active');
