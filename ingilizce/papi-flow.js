@@ -1,7 +1,7 @@
 /* Serialize notices around Papi's tour and the first real exercise. */
 (()=>{'use strict';
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
-const noticeSelector='#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmWeeklyPanel,#dmLevelUp,#dmNudge,.od-perde,.kr-perde,.dv-perde,.cb-kart,.bk-kart,.yo-toast,.uy-serit,.yo-davet,.tv-kart,.sa-perde,.cog-perde,[role="dialog"]:not(#dmPapiTour):not(#dmPapiFirstStart):not(#dmStoryLesson),[aria-modal="true"]:not(#dmPapiTour):not(#dmPapiFirstStart):not(#dmStoryLesson)';
+const noticeSelector='#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmWeeklyPanel,#dmLevelUp,#dmNudge,.od-perde,.kr-perde,.dv-perde,.cb-kart,.bk-kart,.yo-toast,.uy-serit,.yo-davet,.tv-kart,.sa-perde,.cog-perde,.kur-perde,[role="dialog"]:not(#dmPapiTour):not(#dmPapiFirstStart):not(#dmStoryLesson),[aria-modal="true"]:not(#dmPapiTour):not(#dmPapiFirstStart):not(#dmStoryLesson)';
 const visible=e=>!!e&&e.isConnected&&!e.classList.contains('dm-papi-held')&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden'&&getComputedStyle(e).display!=='none';
 let queue=[],actor=who(),pending=false,executing='',nextAt=0,held=[],practice=null;
 const exercise=()=>!!document.querySelector('#dmStoryLesson,.bz-oyun,#genelSonucOverlay.acik')||!!practice;

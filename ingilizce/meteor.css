@@ -56,10 +56,3 @@ body.mt-active{overflow:hidden!important}
  #meteorGame .mt-target strong{font-size:clamp(14px,3.7vw,24px);line-height:1.1;height:36px;max-height:36px;display:flex;align-items:center;justify-content:center;margin:0 0 4px}
  #meteorGame .mt-target span{font-size:9px;line-height:1.2;white-space:normal}
 }
-
-/* Each player advances independently; the opponent keeps moving. */
-.mt-player-won .mt-meteor{animation-play-state:paused;pointer-events:none}
-.mt-progress{font-weight:900;color:#163d5b;padding:9px 6px 2px}
-.mt-wait{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:15px;color:#143e5b;font-weight:900}
-.mt-wait img{width:min(140px,65%);height:150px;object-fit:contain}
-.mt-wait span{font-size:14px}

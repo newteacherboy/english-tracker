@@ -24,7 +24,6 @@ function correct({detail='',anchor=null,duration=1000}={}){
  const at=Date.now();if(at-lastCorrectAt<450)return;lastCorrectAt=at;
  successSound();
  anchor?.classList.add('dm-papi-correct-pulse');if(anchor)setTimeout(()=>anchor.classList.remove('dm-papi-correct-pulse'),650);
- if([...document.querySelectorAll('#bzPerde.q-paper,#dmStoryLesson.q-sky')].some(el=>el.getClientRects().length))return;
  mount('correct','Harika!',detail||'Doğru cevap!');
  timer=setTimeout(remove,Math.max(650,Math.min(duration,1800)));
 }

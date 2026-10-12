@@ -55,6 +55,3 @@
 
 /* Score clock occupies its own row; never float over question titles. */
 .dm-game-clock{position:relative!important;inset:auto!important;top:auto!important;left:auto!important;transform:none!important;display:table;max-width:calc(100% - 24px);width:max-content;margin:6px auto 10px;z-index:2!important;box-sizing:border-box;text-align:center}
-
-/* Native learning panels already provide their own compact HUD. */
-body:has(#bzPerde.q-paper) .dm-clock-badge,body:has(#dmStoryLesson.q-sky) .dm-clock-badge{display:none}

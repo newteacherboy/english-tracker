@@ -401,7 +401,3 @@
 #tab-dunyam.bd-design-one .bw-homework-clipboard{position:absolute;left:7px;top:8%;height:84%;width:55px}
 #tab-dunyam.bd-design-one .bw-homework-book{position:absolute;right:110px;bottom:0;height:97%;width:85px}
 @media(max-width:600px){#tab-dunyam.bd-design-one .bw-homework-clipboard{width:35px;left:5px}#tab-dunyam.bd-design-one .bw-homework-book{display:none}}
-
-/* Yönetici ana paneli açıkken seçilen yönetim ekranları onun arkasında kalmasın. */
-body #ogretmenMenuModal{z-index:100000090!important}
-body .rubric-modal,body .cog-perde,body #duyuruYonetimModal,body #ogretmenSohbetModal,body #sinifIciModal,body #rubricModal{z-index:100000110!important}

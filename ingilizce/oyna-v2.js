@@ -1,34 +1,571 @@
-/* Diji-Medu: one account-selected route, using the existing two progress engines. */
-(()=>{'use strict';
-const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const Y=()=>typeof yo!=='undefined'&&yo?yo:null,who=()=>typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
-const img=(name,cls='')=>'<img class="'+cls+'" src="'+(name==='papi-school.png'?'parkur-okul-assets/papi-v1.webp':name==='papi-english.png'?'yol-assets/papi-v1.webp':'route-assets/'+name)+'" alt="" decoding="async">';
-const art=(name,cls='')=>img(name+'.svg',cls);
-const tell=m=>window.yoToast?.(m);
-const schoolScene=window.dmParkurSahne,schoolMount=window.dmParkurMapMount;let preview=null,latest=null,epoch=0;
-function purpose(){return preview||(Y()?.dmLearningPurpose==='independent'?'independent':'school');}
-function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
-function heading(o={}){return '<header class="rt-top"><h1>'+ (purpose()==='school'?'Okul Yolum':'İngilizce Yolum')+'</h1><div class="rt-wallet"><button type="button" data-dm-wallet="level" class="dm-adventure-level" aria-label="Seviye ilerlemesi">Sv. <b data-dm-level>'+esc(window.dmProgression?.level?.()||1)+'</b></button><button type="button" data-rt-wallet="energy" aria-label="Enerji bilgileri">⚡ <b data-dm-energy>'+esc(o.energy??'–')+'</b></button><button type="button" data-rt-wallet="gold" aria-label="Mağaza ve altın">🪙 <b data-dm-gold>'+esc(o.gold??Y()?.altin??0)+'</b></button></div></header>';}
-function weekly(){const h=Y()?.haftaHedef,hits=h&&h.h===week()&&h.xp>0,xp=Number(Y()?.lig?.xp)||0;return '<section class="rt-week rt-card" aria-label="Haftalık hedef">'+art('goal')+'<div><h2>Haftalık Hedef</h2>'+(hits?'<small>'+esc(h.xp)+' XP hedefi</small><progress value="'+Math.min(xp,h.xp)+'" max="'+h.xp+'"></progress><small>'+xp+' / '+h.xp+' XP</small>':'<small>Küçük adımlarla büyük ilerleme!</small>')+'</div><button type="button" data-rt="goal">'+(hits?'Değiştir':'Hedef seç')+'</button></section>';}
-function tasks(){let g;try{g=window.dmGunGorevleri?.();}catch{}const pool=window.dmGorevHavuz||[];return '<section class="rt-tasks rt-card"><h2>'+art('book')+'Günün 3 Görevi</h2><div class="rt-task-list">'+(g?.liste?.length?g.liste.slice(0,3).map(x=>{const t=pool.find(p=>p.id===x.id);if(!t)return '';const n=Math.max(0,Math.min(Number(x.ilerleme)||0,t.hedef||1)),target=t.hedef||1;return '<button type="button" data-rt="task" data-event="'+esc(t.olay)+'" '+(n>=target?'disabled':'')+'>'+art(t.olay==='ders'?'book':/oyun|yildiz/.test(t.olay)?'game':'path')+'<span>'+esc(t.ad)+'</span><span class="rt-task-progress" style="--ratio:'+n/target+'" aria-label="'+n+' / '+target+'">'+(n>=target?'✓':n+'/'+target)+'</span></button>';}).join(''):'<p role="status">Görevlerin hazırlanıyor…</p>')+'</div></section>';}
-function schoolInfo(s){const m=/(\d+)\.\s*sınıf\s+(\d+)\.\s*ünite\s*·\s*(\d+)\s*\/\s*(\d+)/i.exec(s?.label||'');return m?{grade:m[1],unit:m[2],part:m[3],count:m[4]}:{grade:1,unit:1,part:1,count:1};}
-function node(s,i,current,learn){const state=s.done?'done':s.current||i===current?'current':s.available?'open':'locked';const label=learn?s.cefr+' · '+s.title:s.label;const attrs=learn?'data-rt="chapter" data-chapter="'+s.id+'"':'data-b="'+s.b+'" data-d="'+s.d+'"';return '<button type="button" class="rt-node '+state+(learn?'':' dm-adventure-node')+'" '+attrs+' aria-label="'+esc(label||'Bölüm')+'" '+(!s.available?'disabled':'')+' '+(state==='current'?'aria-current="step"':'')+'><span aria-hidden="true">'+(s.done?'✓':state==='locked'?'🔒':'▶')+'</span></button>';}
-function pathMarkup(steps,current,learn){return schoolScene({steps,current,total:latest?.total||steps.length,offset:latest?.offset||0});}
-function banner(info,learn=false){return '<div class="rt-badge">'+esc(learn?info.cefr:info.grade+'. Sınıf')+'</div><div class="rt-banner">'+art(learn?'help':'book')+'<span><small>'+esc(learn?info.cefr+' · Öğrenme Yolu':'Ünite '+info.unit)+'</small><b>'+esc(learn?info.title:(Number(info.unit)===1?'İlk Kelimelerim':info.unit+'. Ünite Kelimelerim'))+'</b></span><button type="button" class="rt-parrot-btn" data-rt="all" aria-label="Geçmiş ve gelecek tüm bölümleri göster">'+img(learn?'papi-english.png':'papi-school.png','rt-banner-papi')+'</button><button type="button" class="rt-all-link" data-rt="all" aria-label="Bölüm listesi">›</button></div>';}
-function scene(o={}){latest=o;const steps=o.steps||[],current=Math.max(0,Math.min(steps.length-1,Number(o.current)||0)),learn=purpose()==='independent';return '<div class="rt-root '+(learn?'rt-english':'rt-school')+'">'+(learn?'<div class="rt-route-area" role="status">İngilizce yolun hazırlanıyor…</div>':banner(schoolInfo(steps[current])))+'<details class="rt-goals"><summary>Hedeflerim · Günlük ve haftalık</summary>'+weekly()+tasks()+'</details>'+(learn?'':pathMarkup(steps,current,false))+'</div>';}
-async function paintLearning(root){const owner=who(),turn=++epoch;try{const info=await window.dmStoryPath.overview();if(!root.isConnected||owner!==who()||turn!==epoch||purpose()!=='independent')return;const cur=Math.max(0,info.chapters.findIndex(c=>c.current));const area=root.querySelector('.rt-route-area');area.outerHTML=banner(info,true);root.insertAdjacentHTML('beforeend',window.dmStoryPath.view());window.dmStoryPath.paint(root.querySelector('.dm-story-map'));}catch(e){const area=root.querySelector('.rt-route-area');if(area){area.innerHTML='<p>İngilizce yolun yüklenemedi.</p><button type="button" data-rt="retry">Tekrar dene</button>';}}}
-function refreshCards(){document.querySelectorAll('.rt-week').forEach(el=>el.outerHTML=weekly());document.querySelectorAll('.rt-tasks').forEach(el=>el.outerHTML=tasks());}
-async function setPurpose(p,{save=true,reopen=true}={}){if(!['school','independent'].includes(p))return false;const state=Y(),owner=who();if(!state||!owner){tell('Öğrenme yolunu değiştirmek için hesabının açılmasını bekle.');return false;}const previous=state.dmLearningPurpose;preview=null;if(previous===p){if(reopen)await window.dunyaAc?.();return true;}state.dmLearningPurpose=p;try{if(save){if(typeof window.yoHemenKaydet!=='function')throw Error('Kaydetme bağlantısı hazır değil.');await window.yoHemenKaydet(true);if(owner!==who()||Y()!==state)return false;window.yoKaydet?.();}if(reopen)await window.dunyaAc?.();return true;}catch(e){if(owner===who()&&Y()===state){state.dmLearningPurpose=previous;window.yoKaydet?.();}tell('Öğrenme yolu kaydedilemedi. Lütfen tekrar dene.');return false;}}
-function dialog(title,html){document.getElementById('rtDialog')?.remove();const prior=document.activeElement,el=document.createElement('div');el.id='rtDialog';el.className='rt-overlay';el.innerHTML='<section class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="rtDialogTitle"><button type="button" class="rt-close" aria-label="Kapat">×</button><h2 id="rtDialogTitle">'+esc(title)+'</h2>'+html+'</section>';const close=()=>{el.remove();prior?.focus?.({preventScroll:true});};el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close'))close();};el.onkeydown=e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const f=[...el.querySelectorAll('button,a,input')].filter(b=>!b.disabled),i=f.indexOf(document.activeElement);e.preventDefault();f[(i+(e.shiftKey?-1:1)+f.length)%f.length]?.focus();}};document.body.append(el);el.querySelector('button').focus();return {el,close};}
-function goal(){const {el,close}=dialog('Haftalık hedefini seç','<p>Bu hafta ne kadar XP kazanmak istersin?</p><div class="rt-choices">'+[1000,1500,2500].map(n=>'<button type="button" data-goal="'+n+'">'+n+' XP</button>').join('')+'</div><p class="rt-status" role="status"></p>');el.querySelectorAll('[data-goal]').forEach(b=>b.onclick=async()=>{const owner=who();el.querySelectorAll('[data-goal]').forEach(x=>x.disabled=true);try{if(!Y()||!owner)throw Error('Hesap bilgilerin hazırlanıyor.');const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'haftalikHedefSec',ogrenci:owner,xp:Number(b.dataset.goal),t:localStorage.getItem('ing_token')||''})}),d=await r.json();if(!r.ok||!d.ok||!d.haftaHedef)throw Error(d.mesaj||'Hedef kaydedilemedi.');if(owner!==who()){close();return;}Y().haftaHedef=d.haftaHedef;window.yoKaydet?.();refreshCards();close();}catch(e){el.querySelector('.rt-status').textContent=e.message;el.querySelectorAll('[data-goal]').forEach(x=>x.disabled=false);}});}
-function allSchool(){const {el,close}=dialog('Okul Yolum','<div class="rt-all">'+(latest?.steps||[]).map(s=>'<button type="button" data-b="'+s.b+'" data-d="'+s.d+'" '+(!s.available?'disabled':'')+'>'+esc(s.label)+' '+(s.done?'✓':s.available?'▶':'🔒')+'</button>').join('')+'</div><small>İlerlemenin yakınındaki bölümler</small>');el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const original=document.querySelector('.rt-root .dm-adventure-node[data-b="'+b.dataset.b+'"][data-d="'+b.dataset.d+'"]');if(original){close();original.click();}else{const host=$('dmParkurScroll');const trigger=document.createElement('button');trigger.className='dm-adventure-node';trigger.dataset.b=b.dataset.b;trigger.dataset.d=b.dataset.d;host.append(trigger);window.dmSchoolStopOpen?.(+b.dataset.b,+b.dataset.d);trigger.remove();close();}});}
-function mount(host){const root=host?.querySelector('.rt-root');if(!root)return;if(!host.dataset.rtBound){host.dataset.rtBound='1';host.addEventListener('click',e=>{const b=e.target.closest('[data-rt]');if(!b||b.disabled)return;const action=b.dataset.rt;if(action==='all'){e.preventDefault();e.stopPropagation();if(purpose()==='independent'){if(typeof window.dmStoryPath?.openAll==='function')window.dmStoryPath.openAll();else tell('Bölüm listesi yüklenemedi.');}else allSchool();return;}if(action==='goal')goal();else if(action==='retry')window.dunyaAc?.();else if(action==='continue')window.dmStoryPath.continueRoute().catch(e=>tell(e.message));else if(action==='chapter')window.dmStoryPath.open(Number(b.dataset.chapter));else if(action==='all')purpose()==='independent'?window.dmStoryPath.openAll():allSchool();else if(action==='task'){const ev=b.dataset.event;if(ev==='ders')window.dersCalisTamEkranAc?.();else if(ev==='oyun'||ev==='yildiz3')window.aktivitelerTamEkranAc?.();else window.dmLearningRoute.continue();}});}if(purpose()==='independent')paintLearning(root);else schoolMount(host);fit();}
-function fit(){const host=$('dmParkurScroll');if(!host?.querySelector('.rt-root'))return;const nav=$('bottomNavMobile'),vp=window.visualViewport;host.style.setProperty('--rt-space',Math.max(280,(nav?.getBoundingClientRect().top||(vp?.height||innerHeight))-host.getBoundingClientRect().top-10)+'px');}
-/* Remove superseded header tabs even if legacy scripts regenerate them after login. */
-function removeLegacyTopTabs(){const screen=document.getElementById('tab-dunya');if(!screen)return;screen.querySelectorAll('.dm-parkur-tabs,#pkSekmeler').forEach(el=>el.remove());}
-const oldTabScreen=document.getElementById('tab-dunya');if(oldTabScreen){removeLegacyTopTabs();new MutationObserver(removeLegacyTopTabs).observe(oldTabScreen,{childList:true,subtree:true});}
-window.dmParkurBaslik=heading;window.dmParkurSahne=scene;window.dmParkurMapMount=mount;
-window.dmLearningRoute={purpose, set:setPurpose,preview:async p=>{preview=p;await window.dunyaAc?.();},continue:()=>purpose()==='independent'?window.dmStoryPath.continueRoute():document.querySelector('.rt-start')?.click(),settings:()=>{const {el,close}=dialog('Öğrenme Yolum','<p>Yolunu değiştirsen de iki parkurdaki ilerlemen korunur.</p><div class="rt-choices"><button data-purpose="school">'+art('book')+'Okul Yolum<small>1. sınıftan 8. sınıfa</small></button><button data-purpose="independent">'+art('path')+'İngilizce Yolum<small>Temelden B2’ye</small></button></div>');el.querySelectorAll('[data-purpose]').forEach(b=>{b.setAttribute('aria-pressed',String(purpose()===b.dataset.purpose));b.onclick=async()=>{close();await setPurpose(b.dataset.purpose);};});}};
-document.addEventListener('click',e=>{const b=e.target.closest('[data-rt-wallet]');if(b)(b.dataset.rtWallet==='gold'?window.magazaAc:window.dijiEnerjiPaneliAc)?.();});
-document.addEventListener('dm:state',()=>{preview=null;refreshCards();});document.addEventListener('dm:login',()=>{preview=null;latest=null;epoch++;});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
+/* =====================================================================
+   OYNA SEKMESİ · v2  —  oyna-v2.js
+   Büyü Akademisi parkur ekranının (tab-dunya) yeni görünümü.
+
+   Nasıl çalışır?
+   - index.html içindeki harita() fonksiyonu ekranı şu iki fonksiyonla çizer:
+       window.dmParkurBaslik({energy,max,gold})   → üst çubuk
+       window.dmParkurSahne({steps,current,...})  → sahne (hero + görevler + haftalık hedef + buton)
+     Bu dosya ikisini yeniler. Tıklanan düğümler `.dm-adventure-node`,
+     "Devam" butonu `.dm-map-continue` sınıfını korur; yani durakKarti() ve
+     oyun başlatma mantığı AYNEN çalışmaya devam eder.
+   - Veri kaynakları (hiçbiri değiştirilmez):
+       yo.lig.xp · yo.altin · yo.baYildiz · yo.haftaHedef · yo.gorev
+       dmGunGorevleri() · dmGorevHavuz · genelEnerjiKalan/genelEnerjiMax
+   - Eski tasarıma dönmek için konsolda:  localStorage.oy_eski='1'  (sonra yenile)
+   ===================================================================== */
+(function () {
+  'use strict';
+  if (window.__oyV2) return;
+  window.__oyV2 = 1;
+
+  var ASSET = 'oyna-assets/';
+  var origBaslik = window.dmParkurBaslik;
+  var origSahne = window.dmParkurSahne;
+
+  /* ---------------- yardımcılar ---------------- */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function Y() { try { return (typeof yo !== 'undefined' && yo) ? yo : null; } catch (e) { return null; } }
+  function ready() { try { return !!Y() && typeof yoHazirMi === 'function' && yoHazirMi(); } catch (e) { return false; } }
+  function ogrAdi() {
+    try {
+      if (typeof oyunIcinAktifIsim === 'function') return oyunIcinAktifIsim() || '';
+      if (typeof aktifOgrenciAdi !== 'undefined') return aktifOgrenciAdi || '';
+    } catch (e) {}
+    return '';
+  }
+  function eski() { try { return localStorage.getItem('oy_eski') === '1'; } catch (e) { return false; } }
+  function fn(name) { return typeof window[name] === 'function' ? window[name] : null; }
+
+  /* görsel + emoji yedeği: dosya yoksa emoji görünür */
+  var TRIM = {};   /* şeffaf kenarları kırpılmış görsellerin önbelleği */
+  function art(file, cls, fallback, alt) {
+    var src = ASSET + file;
+    return '<span class="oy-art ' + cls + '" data-fb="' + esc(fallback) + '">' +
+      '<img src="' + (TRIM[src] || src) + '" data-src="' + src + '" alt="' + esc(alt || '') + '" decoding="async" ' +
+      'onerror="this.parentNode.classList.add(\'oy-noimg\');this.remove()"></span>';
+  }
+  /* ChatGPT görsellerinin etrafındaki şeffaf boşluğu otomatik kırpar → ikonlar gerçekten büyük görünür */
+  function trimImg(img) {
+    var src = img.getAttribute('data-src'); if (!src || img.getAttribute('data-oyt')) return;
+    if (TRIM[src]) { img.setAttribute('data-oyt', '1'); img.src = TRIM[src]; return; }
+    function run() {
+      try {
+        var w = img.naturalWidth, h = img.naturalHeight; if (!w || !h) return;
+        var sc = Math.min(1, 256 / Math.max(w, h)), sw = Math.max(1, Math.round(w * sc)), sh = Math.max(1, Math.round(h * sc));
+        var c = document.createElement('canvas'); c.width = sw; c.height = sh;
+        var x = c.getContext('2d'); x.drawImage(img, 0, 0, sw, sh);
+        var d = x.getImageData(0, 0, sw, sh).data, t = sh, l = sw, r = -1, b = -1, yy, xx;
+        for (yy = 0; yy < sh; yy++) for (xx = 0; xx < sw; xx++) {
+          if (d[(yy * sw + xx) * 4 + 3] > 20) { if (xx < l) l = xx; if (xx > r) r = xx; if (yy < t) t = yy; if (yy > b) b = yy; }
+        }
+        if (r < 0) return;
+        var m = 1.5, X = Math.max(0, (l - m) / sw * w), Y = Math.max(0, (t - m) / sh * h),
+            W = Math.min(w - X, (r - l + 1 + 2 * m) / sw * w), H = Math.min(h - Y, (b - t + 1 + 2 * m) / sh * h);
+        if (W >= w * .96 && H >= h * .96) { img.setAttribute('data-oyt', '1'); return; }
+        var k = Math.min(1, 512 / Math.max(W, H)), c2 = document.createElement('canvas');
+        c2.width = Math.max(1, Math.round(W * k)); c2.height = Math.max(1, Math.round(H * k));
+        c2.getContext('2d').drawImage(img, X, Y, W, H, 0, 0, c2.width, c2.height);
+        TRIM[src] = c2.toDataURL('image/png'); img.setAttribute('data-oyt', '1'); img.src = TRIM[src];
+      } catch (e) { /* canvas yoksa/izin yoksa olduğu gibi kalır */ }
+    }
+    if (img.complete && img.naturalWidth) run(); else img.addEventListener('load', run, { once: true });
+  }
+
+  /* ---------------- hafta / XP ---------------- */
+  function haftaKodu() {
+    var d = new Date(Date.now() + 3 * 3600000);
+    d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7);
+    return d.toISOString().slice(0, 10);
+  }
+  function kalanGun() {
+    var d = new Date(Date.now() + 3 * 3600000);
+    return 6 - ((d.getUTCDay() + 6) % 7);
+  }
+  function haftaXp() { var y = Y(); return Number(y && y.lig && y.lig.xp) || 0; }
+  function izinli(k) {
+    try { return !window.dmProgression || !window.dmProgression.allowed || window.dmProgression.allowed(k); }
+    catch (e) { return true; }
+  }
+
+  /* =====================================================================
+     ÜST ÇUBUK
+     ===================================================================== */
+  function baslik(o) {
+    if (eski() && origBaslik) return origBaslik.apply(this, arguments);
+    o = o || {};
+    var y = Y();
+    var enerji = o.energy == null ? '–' : o.energy;
+    var max = o.max || 30;
+    var altin = o.gold != null ? o.gold : (y && y.altin) || 0;
+    var av = '';
+    try { if (fn('karakterSvg')) av = karakterSvg(ogrAdi(), 46) || ''; } catch (e) {}
+    if (!av) av = '🧒';
+    return '<div class="oy-top">' +
+      '<div class="oy-logo" aria-label="DijiMedu"><b><span>Diji</span>Medu</b><i>✦</i><small>İngilizce seninle.</small></div>' +
+      '<div class="oy-pills">' +
+        '<div class="oy-pill en" data-act="enerji" role="button" tabindex="0" title="Enerji ' + esc(enerji) + '/' + esc(max) + '"><span class="ic">⚡</span>' + esc(enerji) + '/' + esc(max) +
+          '<button type="button" class="plus" data-act="enerji" aria-label="Enerji paneli">+</button></div>' +
+        '<div class="oy-pill xp" title="Bu haftaki XP"><span class="ic">XP</span>' + haftaXp() + '</div>' +
+        '<div class="oy-pill" title="Altın"><span class="ic">🪙</span>' + esc(altin) + '</div>' +
+      '</div>' +
+      '<div class="oy-avatar" aria-label="Profil"><span>' + av + '</span></div>' +
+    '</div>';
+  }
+
+  /* =====================================================================
+     HERO · MACERA PARKURU
+     ===================================================================== */
+  var SLOT = [[18, 79], [35, 65], [54, 63], [71, 75], [90, 67]]; /* % (x, y) */
+  var HERO_ORAN = 1.88;
+
+  function parse(label) {
+    var m = /(\d+)\.\s*sınıf\s+(\d+)\.\s*ünite\s*·\s*(\d+)\s*\/\s*(\d+)/i.exec(label || '');
+    return m ? { sinif: m[1], unite: m[2], parca: m[3], toplam: m[4] } : null;
+  }
+  function pathD(pts) {
+    var d = 'M' + pts[0][0] + ',' + pts[0][1];
+    for (var i = 1; i < pts.length; i++) {
+      var x0 = pts[i - 1][0], y0 = pts[i - 1][1], x1 = pts[i][0], y1 = pts[i][1], mx = (x0 + x1) / 2;
+      d += ' C' + mx + ',' + y0 + ' ' + mx + ',' + y1 + ' ' + x1 + ',' + y1;
+    }
+    return d;
+  }
+  function yildizHtml(st) {
+    var y = Y(), n = 0;
+    if (st.done) { n = Math.max(1, Math.min(3, Number(y && y.baYildiz && y.baYildiz[st.no]) || 1)); }
+    var h = '';
+    for (var i = 0; i < 3; i++) h += '<i class="' + (i < n ? '' : 'off') + '">⭐</i>';
+    return '<span class="st" aria-hidden="true">' + h + '</span>';
+  }
+
+  /* kaç durak varsa hangi yuvalara oturacağı */
+  var YUVA = { 1: [2], 2: [1, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 2, 3, 4] };
+
+  function hero(steps, current) {
+    var cs = steps[current] || steps[0];
+    var info0 = parse(cs && cs.label);
+    /* Sadece SIRADAKİ ÜNİTENİN durakları: numaralar 1,2,3... ünite içi sırayı gösterir */
+    var unit = info0 ? steps.filter(function (st) {
+      var q = parse(st.label); return q && q.sinif === info0.sinif && q.unite === info0.unite;
+    }) : steps;
+    var ui = Math.max(0, unit.indexOf(cs));
+    var n = Math.min(5, unit.length);
+    var start = Math.max(0, Math.min(ui - 2, unit.length - n));
+    var list = unit.slice(start, start + n);
+    var cur = Math.max(0, Math.min(n - 1, ui - start));
+    var yuva = YUVA[n] || YUVA[5];
+
+    var pts = list.map(function (_, i) { return [SLOT[yuva[i]][0], SLOT[yuva[i]][1] / HERO_ORAN]; });
+    var svg = '<svg class="oy-path" viewBox="0 0 100 ' + (100 / HERO_ORAN).toFixed(2) + '" preserveAspectRatio="none" aria-hidden="true">' +
+      (pts.length > 1 ? '<path class="base" d="' + pathD(pts) + '"/><path class="dash" d="' + pathD(pts) + '"/>' : '') + '</svg>';
+
+    var nodes = list.map(function (st, i) {
+      var q = parse(st.label), numara = q ? q.parca : (start + i + 1);
+      var hal = i === cur ? 'is-cur' : (st.done ? 'is-done' : (st.available ? 'is-open' : 'is-lock'));
+      var ad = st.label || ('Durak ' + numara);
+      return '<button type="button" class="dm-adventure-node oy-node ' + hal + '" data-b="' + st.b + '" data-d="' + st.d + '"' +
+        ' style="left:' + SLOT[yuva[i]][0] + '%;top:' + SLOT[yuva[i]][1] + '%" aria-label="' + esc(ad) + (hal === 'is-lock' ? ' (kilitli)' : '') + '">' +
+        (hal === 'is-lock' ? '<span class="lk" aria-hidden="true">🔒</span>' : '') +
+        '<span class="n">' + esc(numara) + '</span>' +
+        (st.done ? yildizHtml(st) : '') + '</button>';
+    }).join('');
+
+    var info = info0;
+    var ad = '';
+    try { if (fn('dmParkurDurakAdi')) ad = dmParkurDurakAdi(cs.b, cs.d) || ''; } catch (e) {}
+    if (!ad) ad = info ? info.unite + '. Ünite' : 'Macera';
+    var ust = info ? info.sinif + '. Sınıf · ' + info.unite + '. Ünite' : 'Macera Parkuru';
+    var alt = info ? 'Bölüm ' + info.parca + '/' + info.toplam : '';
+
+    var px = Math.max(14, Math.min(86, SLOT[yuva[cur]][0])), py = SLOT[yuva[cur]][1] - 4;
+    return '<section class="oy-hero" aria-label="Macera parkuru">' +
+      '<div class="oy-hero-bg" aria-hidden="true"></div>' + svg +
+      '<button type="button" class="oy-sign" data-act="cur" aria-label="Sıradaki durağı aç">' +
+        '<span class="bk" aria-hidden="true">📗</span>' +
+        '<span><small>' + esc(ust) + '</small><b>' + esc(ad) + '</b><em>' + esc(alt) + '</em></span><span class="chev">›</span></button>' +
+      '<button type="button" class="oy-all" data-act="all">Tüm Parkuru Gör ›</button>' +
+      '<div class="oy-wood" aria-hidden="true">Daha kocaman maceralar seni bekliyor</div>' +
+      nodes +
+      '<div class="oy-pager" data-act="pro" aria-hidden="true" hidden><i class="on"></i><i></i></div>' +
+      '<div class="oy-parrot" style="left:' + px + '%;top:' + py + '%" aria-hidden="true">' + art('oyna-papi-fly.png', '', '🦜') + '</div>' +
+    '</section>';
+  }
+
+  /* =====================================================================
+     GÜNÜN 3 GÖREVİ
+     ===================================================================== */
+  function gorevler() {
+    var g = null;
+    try { g = fn('dmGunGorevleri') ? dmGunGorevleri() : null; } catch (e) { g = null; }
+    if (!g || !Array.isArray(g.liste)) return null;
+    var havuz = window.dmGorevHavuz || [];
+    return g.liste.slice(0, 3).map(function (x) {
+      var p = havuz.filter(function (h) { return h.id === x.id; })[0] || { id: x.id, ad: x.id, i: '⭐', hedef: 1, olay: '' };
+      var hedef = p.hedef || 1;
+      return { id: p.id, ad: p.ad, i: p.i, olay: String(p.olay || ''), hedef: hedef, il: Math.min(Number(x.ilerleme) || 0, hedef) };
+    });
+  }
+  function ikon(t) {
+    var o = t.olay;
+    if (o === 'ders') return ['oyna-ico-kelime.png', '📘'];
+    if (/dinleme/.test(o)) return ['oyna-ico-dinle.png', '🎧'];
+    if (/konusma/.test(o)) return ['oyna-ico-konus.png', '💬'];
+    if (o === 'oyun' || o === 'yildiz3') return ['oyna-ico-oyun.png', t.i || '🎮'];
+    return [null, t.i || '⭐'];
+  }
+  function gorevHtml() {
+    var L = gorevler();
+    var head = '<div class="oy-h"><span class="tg" aria-hidden="true">🎯</span><h3>Günün 3 Görevi</h3>' +
+      '<span class="oy-chip">✨ Bugün sana özel • seviyene uygun</span>' +
+      '<button type="button" class="oy-tools" data-act="tools" aria-label="Araçlar">🤖 <span>Araçlar</span></button></div>';
+    if (!L || !L.length) {
+      return '<section class="oy-tasks" aria-label="Günün görevleri">' + head +
+        '<div class="oy-empty">Günlük görevlerin hazırlanıyor. Biraz sonra burada olacak! 🌴</div></section>';
+    }
+    var bitenler = L.filter(function (t) { return t.il >= t.hedef; }).length;
+    var hepsi = bitenler === L.length;
+    var kart = L.map(function (t, i) {
+      var bitti = t.il >= t.hedef, ic = ikon(t);
+      var gorsel = ic[0] ? art(ic[0], 'ic', ic[1]) : '<span class="oy-art ic oy-noimg" data-fb="' + esc(ic[1]) + '"></span>';
+      return '<article class="oy-gk c' + (i % 3) + (bitti ? ' done' : '') + '">' +
+        '<span class="sb" aria-hidden="true">' + (bitti ? '✓' : '⭐') + '</span>' + gorsel +
+        '<h4>' + esc(t.ad) + '</h4><span class="pl">' + t.il + '/' + t.hedef + '</span>' +
+        '<button type="button" class="go" data-act="gorev" data-olay="' + esc(t.olay) + '"' + (bitti ? ' disabled' : '') + '>' +
+        (bitti ? 'Tamam ✓' : 'Başla ›') + '</button></article>';
+    }).join('');
+    return '<section class="oy-tasks" aria-label="Günün görevleri">' +
+      '<div class="oy-bubble">' + (hepsi ? 'Harika! Bugünün görevleri tamam 🎉' : 'Bugünün görevleri hazır! Hadi başlayalım!') + '</div>' +
+      '<div class="oy-peek" aria-hidden="true">' + art('oyna-papi-peek.png', '', '🦜') + '</div>' +
+      head +
+      '<div class="oy-gk-wrap"><div class="oy-gk-row">' + kart + '</div></div></section>';
+  }
+
+  /* =====================================================================
+     HAFTALIK HEDEF + DEVAM BUTONU
+     ===================================================================== */
+  function haftalikHtml() {
+    var y = Y(), hh = (y && y.haftaHedef && y.haftaHedef.h === haftaKodu()) ? y.haftaHedef : null;
+    var xp = haftaXp(), kilitli = !izinli('haftalik_hedef');
+    var hedef = hh ? hh.xp : 0;
+    var oran = hh && hedef ? Math.min(1, xp / hedef) : 0;
+    var C = 2 * Math.PI * 44, off = (C * (1 - oran)).toFixed(1);
+    var seg = '';
+    for (var i = 0; i < 10; i++) seg += '<i class="' + (i < Math.round(oran * 10) ? 'on' : '') + '"></i>';
+    var gun = kalanGun();
+    var gunMetni = gun <= 0 ? 'Bugün son gün!' : gun + ' gün kaldı';
+    var mesaj, buyuk, alt = '';
+    if (kilitli) {
+      mesaj = 'Haftalık hedef yakında!'; buyuk = 'Biraz daha oyna, kilit açılsın.';
+    } else if (!hh) {
+      mesaj = 'Yeni hafta, yeni macera!'; buyuk = 'Bu haftaki hedefini seç.';
+      alt = '<div class="oy-pick">' + [1000, 1500, 2500].map(function (x) {
+        return '<button type="button" data-act="hedef" data-h="' + x + '">' + (x === 1000 ? '🙂' : x === 1500 ? '💪' : '🔥') + ' ' + x + '</button>';
+      }).join('') + '</div>';
+    } else if (hh.odul || xp >= hedef) {
+      mesaj = 'Hedefine ulaştın! 🏅'; buyuk = 'Harikasın, ödülün hazır!';
+    } else {
+      mesaj = oran >= .5 ? 'Bu hafta harika gidiyorsun! 🎉' : 'Güzel bir başlangıç, devam!';
+      buyuk = 'Hedefine ' + Math.max(0, hedef - xp) + ' XP kaldı.';
+    }
+    var merkez = hh
+      ? '<b>' + xp + '</b><em>/ ' + hedef + ' XP</em>'
+      : '<b>' + xp + '</b><em>XP bu hafta</em>';
+    return '<div class="oy-weekly">' +
+      '<div class="oy-wk-top"><span class="bars" aria-hidden="true">📊</span><h3>Haftalık Hedef</h3>' +
+      '<button type="button" class="oy-detay" data-act="detay">Detayları Gör ›</button></div>' +
+      '<div class="oy-wk-body">' +
+        '<div class="oy-ring" role="img" aria-label="Haftalık XP: ' + xp + (hh ? '/' + hedef : '') + '">' +
+          '<svg viewBox="0 0 112 112"><defs><linearGradient id="oyRingGrad" x1="0" y1="0" x2="1" y2="1">' +
+          '<stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#15803d"/></linearGradient></defs>' +
+          '<circle class="bg" cx="56" cy="56" r="44"/>' +
+          '<circle class="fg" cx="56" cy="56" r="44" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off + '"/></svg>' +
+          '<div class="tx">' + merkez + '</div></div>' +
+        '<div class="oy-wk-r"><p>' + mesaj + '</p><h4>' + buyuk + '</h4>' +
+          (hh && !kilitli ? '<div class="oy-seg" aria-hidden="true">' + seg + '</div>' +
+            '<div class="oy-days"><span aria-hidden="true">🗓️</span>' + gunMetni + '</div>' : alt) +
+        '</div>' +
+      '</div>' +
+      '<div class="oy-deco" aria-hidden="true"><div class="oy-note">Küçük adımlar büyük başarılar getirir!</div>' +
+      '<div class="oy-chest">' + art('oyna-sandik.png', '', '🧰') + '</div></div></div>';
+  }
+  function bottomHtml(cs) {
+    return '<section class="oy-bottom" aria-label="Haftalık hedef">' + haftalikHtml() +
+      '<button type="button" class="dm-map-continue oy-cta" data-b="' + (cs ? cs.b : 0) + '" data-d="' + (cs ? cs.d : 0) + '">' +
+        '<span class="pp" aria-hidden="true">' + art('oyna-papi-cta.png', '', '🦜') + '</span>' +
+        '<span class="t">Haydi Devam Edelim!</span><span class="ar" aria-hidden="true">›</span></button>' +
+    '</section>';
+  }
+
+  /* =====================================================================
+     TÜM PARKURU GÖR (alt panel)
+     ===================================================================== */
+  function sheetHtml(steps, current) {
+    var satirlar = steps.map(function (st, i) {
+      var info = parse(st.label), no = info ? info.parca : (i + 1);
+      var hal = i === current ? 'is-cur' : (st.done ? 'is-done' : (st.available ? 'is-open' : 'is-lock'));
+      var durum = i === current ? '▶ Sıradaki' : st.done ? '✅ Bitti' : st.available ? 'Açık' : '🔒';
+      return '<button type="button" class="dm-adventure-node oy-row ' + hal + '" data-b="' + st.b + '" data-d="' + st.d + '">' +
+        '<span class="no">' + esc(no) + '</span><span>' + esc(info ? info.sinif + '. Sınıf · ' + info.unite + '. Ünite' : st.label) +
+        '<small>' + esc(info ? 'Bölüm ' + info.parca + '/' + info.toplam : '') + '</small></span><span class="rs">' + durum + '</span></button>';
+    }).join('');
+    return '<div class="oy-sheet" hidden><div class="oy-sheet-card" role="dialog" aria-modal="true" aria-label="Macera parkuru">' +
+      '<header><b>🗺️ Macera Parkuru</b><button type="button" data-act="sheet-x" aria-label="Kapat">✕</button></header>' +
+      '<div class="oy-list">' + satirlar + '</div></div></div>';
+  }
+
+  /* =====================================================================
+     SAHNE
+     ===================================================================== */
+  function sahne(o) {
+    if (eski() && origSahne) return origSahne.apply(this, arguments);
+    hook();
+    o = o || {};
+    var steps = Array.isArray(o.steps) ? o.steps : [];
+    if (!steps.length) {
+      return '<div class="oy-root"><div class="oy-empty">Parkur hazırlanıyor… 🌴</div></div>';
+    }
+    var current = Math.max(0, Math.min(steps.length - 1, Number(o.current) || 0));
+    return '<div class="oy-root">' + carousel(steps, current) + gorevHtml() + bottomHtml(steps[current]) +
+      sheetHtml(steps, current) + '</div>';
+  }
+
+  /* =====================================================================
+     ETKİLEŞİM  (harita() her çizimde dmParkurMapMount'u çağırır)
+     ===================================================================== */
+  var BECERI_OYUN = { anlam: 'esOyunAc', yazim: 'boslukOyunAc', dinleme: 'dikteAc', konusma: 'kpModuAc', cumle: 'trenOyunAc', hiz: 'yagmurOyunAc' };
+
+  function gorevBaslat(olay) {
+    var m = /^beceri2?:(\w+)/.exec(olay || '');
+    var f = null;
+    if (m && BECERI_OYUN[m[1]]) f = fn(BECERI_OYUN[m[1]]);
+    if (!f && olay === 'ders') f = fn('dersCalisTamEkranAc');
+    if (!f) f = fn('aktivitelerTamEkranAc');
+    if (f) f();
+  }
+  async function hedefKaydet(x) {
+    var y = Y(); if (!y || ![1000,1500,2500].includes(x)) return false;
+    if (window.dmProgression && window.dmProgression.require && !window.dmProgression.require('haftalik_hedef')) return false;
+    var ad = typeof yoIsim !== 'undefined' ? yoIsim : typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '';
+    var r = await fetch(apiURL, {method:'POST',body:JSON.stringify({islem:'haftalikHedefSec',ogrenci:ad,xp:x,t:localStorage.getItem('ing_token')||''})});
+    var result = await r.json();
+    if (!r.ok || !result.ok || !result.haftaHedef) throw Error(result.mesaj || result.message || 'Hedef kaydedilemedi. Tekrar dene.');
+    var current = Y(); if (current) current.haftaHedef = result.haftaHedef;
+    try { if (fn('yoKaydet')) yoKaydet(); } catch (e) {}
+    return true;
+  }
+  function kaydirDurum(root) {
+    var row = root.querySelector('.oy-gk-row'); if (!row) return;
+    var kart = row.querySelector('.oy-gk'); if (!kart) return;
+    var adim = kart.offsetWidth + 10, i = Math.round(row.scrollLeft / adim);
+    var son = row.scrollLeft + row.clientWidth >= row.scrollWidth - 4;
+    var dots = root.querySelectorAll('.oy-dots i');
+    var n = dots.length, idx = son ? n - 1 : Math.min(n - 1, i);
+    for (var k = 0; k < n; k++) dots[k].classList.toggle('on', k === idx);
+    var l = root.querySelector('.oy-arrow.l'), r = root.querySelector('.oy-arrow.r');
+    if (l) l.disabled = row.scrollLeft <= 4;
+    if (r) r.disabled = son;
+  }
+  async function tikla(e) {
+    var root = e.currentTarget.querySelector('.oy-root');
+    if (!root) return;
+    var sheet = root.querySelector('.oy-sheet');
+    if (sheet && e.target === sheet) { sheet.hidden = true; return; }
+    if (sheet && !sheet.hidden && e.target.closest && e.target.closest('.oy-row')) { sheet.hidden = true; return; }
+    var t = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!t) return;
+    switch (t.getAttribute('data-act')) {
+      case 'cur': var c = root.querySelector('.oy-node.is-cur'); if (c) c.click(); break;
+      case 'all': if (sheet) sheet.hidden = false; break;
+      case 'sheet-x': if (sheet) sheet.hidden = true; break;
+      case 'prev': case 'next':
+        var row = root.querySelector('.oy-gk-row'), k = row && row.querySelector('.oy-gk');
+        if (row && k) row.scrollBy({ left: (t.getAttribute('data-act') === 'next' ? 1 : -1) * (k.offsetWidth + 10), behavior: 'smooth' });
+        break;
+      case 'gorev': if (!t.disabled) gorevBaslat(t.getAttribute('data-olay')); break;
+      case 'hedef':
+        e.preventDefault(); e.stopPropagation();
+        if (t.disabled) return;
+        var picks = root.querySelectorAll('[data-act="hedef"]');
+        picks.forEach(function(b){b.disabled=true;});
+        try { if (await hedefKaydet(+t.getAttribute('data-h'))) {
+          var w = root.querySelector('.oy-bottom'), cta = w && w.querySelector('.oy-cta');
+          if (w && cta) {
+            var b = cta.getAttribute('data-b'), d = cta.getAttribute('data-d');
+            var tmp = document.createElement('div');
+            tmp.innerHTML = bottomHtml({ b: b, d: d });
+            var yeni = tmp.firstChild;
+            w.parentNode.replaceChild(yeni, w);
+            var yc = yeni.querySelector('.oy-cta');
+            routeSync(root, routeIndex(root));
+            if (yc) yc.onclick = cta.onclick; /* durakKarti bağlantısını koru */
+            fit(root);
+          }
+        } } catch (error) { var tell = fn('yoToast') || fn('toast'); if (tell) tell(error.message); }
+        finally { picks.forEach(function(b){b.disabled=false;}); }
+        break;
+      case 'detay': if (fn('benimDunyamAc')) benimDunyamAc(); break;
+      case 'store': if (fn('magazaAc')) magazaAc(); break;
+      case 'enerji': if (fn('dijiEnerjiPaneliAc')) dijiEnerjiPaneliAc(); else if (fn('magazaAc')) magazaAc(); break;
+      case 'tools': if (fn('dijiAracPaneliAc')) dijiAracPaneliAc(); break;
+      case 'pro': proGec(); break;
+    }
+  }
+  /* ---- MeduPro (öğrenme yolu) geçişi: üstteki gizlenen şeridin butonunu tetikler ---- */
+  function proDugme() {
+    var st = document.getElementById('pkSekmeler'); if (!st) return null;
+    var bt = [].slice.call(st.querySelectorAll('button,[role="tab"]')).filter(function (x) { return !/parkur/i.test(x.textContent || ''); });
+    var e = bt.filter(function (x) { return /✨|medu/i.test(x.textContent || ''); })[0];
+    return e || (bt.length === 1 ? bt[0] : null);
+  }
+  function proGec() { if (fn('dmMeduProAc')) { window.dmMeduProAc(); return true; } var b = proDugme(); if (b) { b.click(); return true; } return false; }
+
+  /* Native scroll-snap limits gestures to the hero, not the page. */
+  function kaydirmaBagla(host) {} // legacy whole-screen swipe intentionally removed
+
+  function alternateHero(kind) {
+    var learn = kind === 1;
+    return '<section class="oy-hero oy-alt-hero '+(learn?'oy-learning':'oy-pro')+'" role="tabpanel" aria-label="'+(learn?'Öğrenme Yolu':'MeduPro')+'">' +
+      '<button type="button" class="oy-sign" data-act="route-open"><span class="bk">'+(learn?'📖':'✨')+'</span><span><small>'+ (learn?'Papi ile adım adım öğren':'Papi’nin keşif akademisi')+'</small><b>'+ (learn?'Öğrenme Yolu':'MeduPro')+'</b><em class="oy-route-detail">'+(learn?'Dinle · Tekrarla · Konuş':'Kelime Modu · Sohbet · Kartlar')+'</em></span><span class="chev">›</span></button>'+
+      '<img class="oy-route-papi" src="'+(learn?'ders-vadi/papi-kitap.png':'papi-welcome-v2.png')+'" alt="Papi" draggable="false">'+
+      (learn?'<button type="button" class="oy-all" data-act="learn-all">Tüm Parkuru Gör ›</button><div class="oy-learning-stones"></div>':'<div class="oy-pro-modes"><button data-act="pro-mode" data-mode="kp">Kelime Modu</button><button data-act="pro-mode" data-mode="sh">Sohbet</button><button data-act="pro-mode" data-mode="kk">Kartlar</button></div>')+'</section>';
+  }
+  function carousel(steps,current) {
+    return '<div class="oy-carousel" aria-label="Parkur seçimi"><div class="oy-route-track" tabindex="0" aria-label="Parkurlar; sağ ve sol oklarla veya kaydırarak değiştir">'+hero(steps,current)+alternateHero(1)+alternateHero(2)+'</div><div class="oy-route-controls"><button type="button" data-route-step="-1" aria-label="Önceki parkur">‹</button><span class="oy-swipe-label">Kaydır</span><div class="oy-route-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div><button type="button" data-route-step="1" aria-label="Sonraki parkur">›</button></div><span class="oy-route-announcement" role="status" aria-live="polite"></span></div>';
+  }
+
+  function routeIndex(root) { return Number(root.dataset.route)||0; }
+  function routeSync(root,index) {
+    root.dataset.route=index;
+    root.querySelectorAll('[data-route-step]').forEach(function(b){b.disabled=(index===0 && +b.dataset.routeStep<0)||(index===2 && +b.dataset.routeStep>0);});
+    root.querySelectorAll('.oy-route-track > section').forEach(function(p,i){p.inert=i!==index;});
+    var note=root.querySelector('.oy-route-announcement');if(note)note.textContent=['Macera Haritası','Öğrenme Yolu','MeduPro'][index];
+    root.querySelectorAll('.oy-route-dots i').forEach(function(b,i){b.classList.toggle('on',i===index);});
+    var text=root.querySelector('.oy-cta .t');if(text){text.innerHTML='Haydi Devam Edelim!<small>'+['Macera Haritasına devam','Öğrenme Yoluna devam','MeduPro’ya devam'][index]+'</small>';}
+  }
+  function routeOpen(root) {
+    if(routeIndex(root)===1){
+      if(window.dmStoryPath && window.dmStoryPath.continueRoute) window.dmStoryPath.continueRoute().catch(function(e){var tell=fn('yoToast')||fn('toast');if(tell)tell(e.message);});
+    }else if(routeIndex(root)===2){proGec();}
+    else {var c=root.querySelector('.oy-node.is-cur');if(c)c.click();}
+  }
+  function paintLearning(root,info) {
+    var el=root.querySelector('.oy-learning-stones');if(!el||!info.chapters)return;
+    var active=Math.max(0,info.chapters.findIndex(function(c){return c.current;}));
+    var start=Math.max(0,Math.min(active-2,info.chapters.length-5));
+    var slots=[[14,60],[31,66],[51,70],[70,65],[87,60]];
+    el.innerHTML=info.chapters.slice(start,start+5).map(function(c,i){var icon=c.available?['book','headphones','speech'][i%3]:'lock';return '<button type="button" class="oy-learning-stone '+(c.current?'is-current':'')+(c.done?' is-done':'')+'" style="left:'+slots[i][0]+'%;top:'+slots[i][1]+'%" data-chapter="'+c.id+'" '+(!c.available?'disabled':'')+' aria-label="'+esc(c.cefr+' · '+c.title+(c.current?' · Buradasın':c.done?' · Tamamlandı':' · Kilitli'))+'"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="oyna-assets/oyna-learning-skills.svg?v=roomier-20261011#'+icon+'"></use></svg><small>'+ (start+i+1)+'</small>'+(c.current?'<em>Buradasın</em>':'')+'</button>';}).join('');
+  }
+  function carouselMount(root,kap) {
+    var track=root.querySelector('.oy-route-track');if(!track)return;
+    var frame=0;
+    track.addEventListener('scroll',function(){if(frame)return;frame=requestAnimationFrame(function(){frame=0;routeSync(root,Math.max(0,Math.min(2,Math.round(track.scrollLeft/track.clientWidth))));});},{passive:true});
+    function select(i){track.scrollTo({left:i*track.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});routeSync(root,i);}
+    root.querySelectorAll('[data-route-step]').forEach(function(b){b.onclick=function(){select(Math.max(0,Math.min(2,routeIndex(root)+Number(b.dataset.routeStep))));};});
+    track.addEventListener('keydown',function(e){if(e.target!==track)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();select(Math.max(0,Math.min(2,routeIndex(root)+(e.key==='ArrowRight'?1:-1))));}});
+
+    if(!kap.__oyRouteCapture){kap.__oyRouteCapture=1;kap.addEventListener('click',function(e){var r=kap.querySelector('.oy-root'),b=e.target.closest('button');if(!r||!b)return;
+      if(b.matches('.oy-cta')&&routeIndex(r)!==0){e.preventDefault();e.stopImmediatePropagation();routeOpen(r);}
+      else if(b.dataset.act==='route-open'){e.preventDefault();e.stopImmediatePropagation();routeOpen(r);}
+      else if(b.dataset.act==='learn-all'){e.preventDefault();e.stopImmediatePropagation();if(window.dmStoryPath && window.dmStoryPath.openAll)window.dmStoryPath.openAll();}
+      else if(b.dataset.chapter!==undefined){e.preventDefault();e.stopImmediatePropagation();if(window.dmStoryPath)window.dmStoryPath.open(Number(b.dataset.chapter));}
+      else if(b.dataset.act==='pro-mode'){e.preventDefault();e.stopImmediatePropagation();var mode=b.dataset.mode;if(mode==='kp'&&fn('kpModuAc'))kpModuAc();else{var t=document.querySelector('#pkSekmeler [data-p="'+mode+'"]');if(t)t.click();}}
+    },true);}
+    routeSync(root,0);
+    root.querySelectorAll('.oy-route-track > section').forEach(function(x){x.setAttribute('role','tabpanel');});
+    if(window.dmStoryPath && window.dmStoryPath.overview) window.dmStoryPath.overview().then(function(info){if(!root.isConnected)return;var d=root.querySelector('.oy-learning .oy-route-detail');if(d)d.textContent=info.cefr+' · '+info.title;paintLearning(root,info);}).catch(function(){});
+  }
+
+  /* ---- tek ekrana sığdırma ---- */
+  function fit(root) {
+    if (!root || !root.isConnected) return;
+    var host = root.closest('.bz-parkur'); if (host) host.scrollTop = 0;
+    root.style.zoom = ''; root.classList.remove('oy-tight'); root.style.setProperty('--oy-ar', '1.3');
+    var nav = document.getElementById('bottomNavMobile');
+    var viewport = window.visualViewport;
+    var navTop = viewport ? Math.min(window.innerHeight, viewport.height + viewport.offsetTop) : window.innerHeight;
+    try { if (nav && getComputedStyle(nav).display !== 'none') { var nr = nav.getBoundingClientRect(); if (nr.height > 0) navTop = Math.min(navTop, nr.top); } } catch (e) {}
+    /* Leave room for the CTA shadow and dock shadow, not just its border box. */
+    function olc() { var r = root.getBoundingClientRect(); return { avail: navTop - r.top - 18, h: r.height }; }
+    var o = olc(); if (o.h <= o.avail || o.avail < 120) return;
+    root.classList.add('oy-tight');
+    o = olc();
+    var hero = root.querySelector('.oy-route-track > .oy-hero');
+    if (hero && o.h > o.avail) {
+      var hr = hero.getBoundingClientRect();
+      /* Give the parkur all remaining height after the fixed lower cards. */
+      var height = Math.max(120, hr.height - (o.h - o.avail));
+      root.style.setProperty('--oy-ar', String(Math.max(1.3, hr.width / height)));
+    }
+    /* Zoom changes available width, so measure again after each adjustment. */
+    var scale = 1;
+    for (var i = 0; i < 8; i++) {
+      o = olc(); if (o.h <= o.avail + 1 || o.avail < 120) break;
+      scale *= Math.min(.98, o.avail / o.h);
+      root.style.zoom = scale.toFixed(4);
+    }
+  }
+
+  function mount(el) {
+    el.classList.add('oy-scroll');
+    var host = el.closest ? el.closest('.bz-parkur') : null;
+    if (host) { host.classList.add('oy-on'); kaydirmaBagla(host); }
+    /* üst çubuk (+ butonu) scroll alanının dışında olduğundan dinleyiciyi ortak üst elemana bağla */
+    var kap = el.parentNode || el;
+    if (!kap.__oyBagli) { kap.__oyBagli = 1; kap.addEventListener('click', tikla); }
+    var root = el.querySelector('.oy-root');
+    if (!root) return;
+    carouselMount(root, kap);
+    if (host && host.dataset.dmParkurView === 'pro' && fn('dmMeduProAc')) window.dmMeduProAc();
+    [].slice.call(root.querySelectorAll('.oy-art img')).forEach(trimImg);
+    fit(root);
+    setTimeout(function () { fit(root); }, 350);
+    setTimeout(function () { fit(root); }, 1400);
+  }
+  window.addEventListener('resize', function () { var r = document.querySelector('.oy-root'); if (r) fit(r); });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', function () { var r = document.querySelector('.oy-root'); if (r) fit(r); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { var r = document.querySelector('.oy-root'); if (r) fit(r); });
+  window.addEventListener('orientationchange', function () { setTimeout(function () { var r = document.querySelector('.oy-root'); if (r) fit(r); }, 300); });
+
+  /* Oyna açıkken: parkur şeridi + yüzen düğmeler gizli (MeduPro açıksa şerit geri gelir) */
+  setInterval(function () {
+    var root = document.querySelector('#tab-dunya.active .oy-root');
+    var on = !!(root && root.getClientRects().length);
+    if (on) {
+      var st = document.getElementById('pkSekmeler');
+      var a = st && st.querySelector('[aria-selected="true"],.aktif,.active,.on,.sel,.secili');
+      if (a && /✨|medu/i.test(a.textContent || '')) on = false;
+    }
+    document.body.classList.toggle('oy-aktif', on);
+  }, 400);
+
+  /* eski modüller bizim sahnemize dokunmasın */
+  function hook() {
+    var om = window.dmParkurMapMount;
+    if (om && !om.__oy) {
+      var w = function (el) {
+        if (el && el.querySelector && el.querySelector('.oy-root')) { mount(el); return; }
+        return om.apply(this, arguments);
+      };
+      w.__oy = 1; window.dmParkurMapMount = w;
+    } else if (!om) {
+      window.dmParkurMapMount = function (el) { if (el && el.querySelector && el.querySelector('.oy-root')) mount(el); };
+      window.dmParkurMapMount.__oy = 1;
+    }
+    var sp = window.dmStoryPath;
+    if (sp && typeof sp.mount === 'function' && !sp.mount.__oy) {
+      var os = sp.mount;
+      sp.mount = function (el) { if (el && el.querySelector && el.querySelector('.oy-root')) return; return os.apply(this, arguments); };
+      sp.mount.__oy = 1;
+    }
+  }
+
+  function kur() { window.dmParkurBaslik = baslik; window.dmParkurSahne = sahne; hook(); }
+  kur();
+  window.addEventListener('load', function () { kur(); setTimeout(kur, 1500); });
+  window.OyV2 = { surum: 1, kur: kur };
 })();

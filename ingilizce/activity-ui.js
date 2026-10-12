@@ -57,14 +57,12 @@
   const title=b.querySelector('.az-gcard-title')?.textContent.trim()||b.textContent.trim();b.dataset.ggTitle=title;
   const description=f?f[1]:d[2]+(d[0]==='okumaStudyosunuAc'?' • Okuma çalışması':' • 12 soru');
   b.innerHTML=img(+b.dataset.ggIndex)+'<span class="gg-copy"><strong class="az-gcard-title">'+esc(title)+'</strong><small>'+esc(description)+'</small><span class="gg-play">'+(f?f[2]:b.dataset.ggCategory==='duo'?'Davet Et':'Oyna')+' ›</span></span>';
-  b.addEventListener('click',()=>{if(b.dataset.ggCategory==='solo'&&allowed(b.dataset.ggGate))window.dmSoloStageRequested=Date.now();},true);
   b.addEventListener('click',e=>{if(!allowed(b.dataset.ggGate)){e.preventDefault();e.stopImmediatePropagation();window.dmProgression?.require(b.dataset.ggGate);return;}remember(b);},true);
   if(['dmUcusteKart','dmRotaKart'].includes(b.id))b.onclick=()=>window.dmInviteAc(b.id==='dmUcusteKart'?'ucus':'rota');
  }
  function render(host,grid){
-  const routeCard=b=>/yolculuguAc|baModuAc|buyuAkademisiYeniAc/.test(b.getAttribute('onclick')||'');
-  grid.querySelectorAll('.az-gcard').forEach(b=>{if(routeCard(b)){b.hidden=true;b.style.setProperty('display','none','important');}});
-  const all=[...grid.querySelectorAll('.az-gcard')].filter(b=>!routeCard(b));all.forEach(prepare);
+  grid.querySelectorAll('[onclick*="yolculuguAc"]').forEach(b=>{b.hidden=true;b.style.setProperty('display','none','important');});
+  const all=[...grid.querySelectorAll('.az-gcard')].filter(b=>!(b.getAttribute('onclick')||'').includes('yolculuguAc'));all.forEach(prepare);
   host.dataset.dmParty=party;host.dataset.ggParty=party;const active=party==='solo'?'solo':'free';
   host.querySelectorAll('[data-gg-party]').forEach(b=>{const on=b.dataset.ggParty===active;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;});
   host.querySelectorAll('.gg-filters [data-gg-skill]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ggSkill===skill)));
@@ -94,14 +92,6 @@
   host.querySelector('.gg-matches').hidden=party==='solo';
   const nextKey=[party,skill,level(),grid.children.length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
  }
- // Give solo games a self-contained stage without modifying game logic or other tabs.
- const soloStageObserver=new MutationObserver(()=>{
-   if(!window.dmSoloStageRequested||Date.now()-window.dmSoloStageRequested>5000)return;
-   document.querySelectorAll('.dc-fullscreen-overlay.active').forEach(el=>{
-     if(!el.classList.contains('dm-solo-fullstage'))el.classList.add('dm-solo-fullstage');
-   });
- });
- soloStageObserver.observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class','style'],childList:true});
  install();setInterval(install,1500);
  window.dmGamesUI={refresh:()=>{key='';install();}};
  window.dmActivityPresence={refresh,isOnline};

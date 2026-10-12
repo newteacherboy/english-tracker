@@ -1,10 +1,49 @@
-/* Presentation only: keep the native question, answer and joker nodes/listeners. */
+/* Only presentation: original question nodes and answer listeners stay intact. */
 (()=>{'use strict';
-window.dmFeatherSeries=function(n=0,theme="paper"){const count=Number(n)||0,filled=count>0?(count%4||4):0;return '<span class="q-feathers" aria-label="Tüy Serisi '+count+' doğru">'+Array.from({length:4},(_,i)=>'<svg class="q-feather '+(i<filled?'filled':'')+'" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21 19 5Q23 0 18 2L9 7 4 17ZM9 17l-1-5 5 1 1-5 4 1"/></svg>').join('')+(count>0&&count%4===0?'<img class="q-series-papi" src="'+(theme==='sky'?'yol-assets':'parkur-okul-assets')+'/papi-v1.webp" alt=""><span class="q-series-badge">4 tüy</span>':'')+'</span>';};
-window.dmCalmQuestion=function(root){const area=root?.querySelector('#bzAlan'),panel=root?.querySelector('.dm-question-panel');if(!area||!panel)return;root.classList.add('sp-adventure','q-paper');
-let row=panel.querySelector('.q-label-row');if(!row){row=document.createElement('div');row.className='q-label-row';const tip=panel.querySelector('.bz-tip'),combo=panel.querySelector('.sp-combo');if(tip)row.append(tip);if(combo)row.append(combo);panel.append(row);}
-if(!area.querySelector('.sp-question-board')){const board=document.createElement('section');board.className='sp-question-board cq-question';const leading=[];for(const el of area.children){if(!el.matches('.bz-etiket,.bz-soru,.bz-ipucu,.bz-tr-anlam'))break;leading.push(el);}leading.forEach(el=>{for(const prop of ['background','background-color','color','padding','font-size'])el.style.removeProperty(prop);board.append(el);});area.prepend(board);}
-const board=area.querySelector('.sp-question-board'),joker=root.querySelector('#bzJokerler');if(joker&&!area.querySelector('.q-joker-space')){const space=document.createElement('div');space.className='q-joker-space';space.setAttribute('aria-hidden','true');board.after(space);}area.querySelectorAll('.bz-cevap,.bz-btn,.bz-sec,.bz-ipucu').forEach(el=>{for(const prop of ['margin','margin-top','margin-bottom','background','background-color','color','border','box-shadow','font-size','min-height'])el.style.removeProperty(prop);});
-const combo=panel.querySelector('.sp-combo');if(combo&&!combo.querySelector('.q-feathers'))combo.innerHTML=window.dmFeatherSeries(Number(combo.textContent.match(/\d+/)?.[0]||0));
-};
+ const names={lab:'Kelime Laboratuvarı',risk:'Risk Balonları',eksik:'Eksik Harf',hafiza:'Hafıza Sandığı',hiz:'Hız Fırtınası',harf:'Harf Avı',sifre:'Şifre Kırıcı',es:'Eş Bul',tren:'Kelime Treni',cumle:'Cümle Ustası',dikte:'Kulak Dedektifi'};
+ const titles={hafiza:'Eş kartları bul',harf:'Kelimeyi bul',sifre:'Gizli kelimeyi çöz',es:'İngilizce ve Türkçeyi eşleştir',cumle:'Doğru cümleyi kur',dikte:'Dinle ve yaz'};
+ let observer,timerObserver;
+ window.dmCalmQuestion=function(root){
+  observer?.disconnect();timerObserver?.disconnect();const panel=root?.querySelector('.dm-question-panel'),area=panel?.querySelector('#bzAlan');if(!area)return;
+  const type=panel.dataset.questionType;panel.classList.add('cq-panel','cq-screen-fit');
+  if(!document.getElementById('cq-screen-fit-style')){const style=document.createElement('style');style.id='cq-screen-fit-style';style.textContent=`.dm-question-panel.cq-screen-fit{height:100dvh!important;max-height:100dvh!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;box-sizing:border-box!important;padding:clamp(8px,1.5vh,18px)!important}.cq-screen-fit .bz-oyun-ust{flex:0 0 auto!important}.cq-screen-fit .cq-mascot{flex:0 0 auto!important;max-height:clamp(38px,9vh,90px)!important}.cq-screen-fit #bzAlan{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:clamp(8px,1.6vh,18px)!important;width:100%!important;max-width:min(100%,960px)!important;margin:0 auto!important}.cq-screen-fit .cq-question{flex:0 0 auto!important;width:100%!important;padding:clamp(12px,2.2vh,28px)!important}.cq-screen-fit .bz-soru{font-size:clamp(22px,3.2vw,42px)!important;line-height:1.3!important;font-weight:800!important}.cq-screen-fit .bz-tr-anlam,.cq-screen-fit .bz-ipucu{font-size:clamp(15px,1.8vw,24px)!important;line-height:1.4!important}.cq-screen-fit .bz-secenek,.cq-screen-fit .bz-sik,.cq-screen-fit .bz-opt,.cq-screen-fit .bz-cip2{min-height:clamp(48px,7vh,78px)!important;font-size:clamp(18px,2vw,27px)!important}.cq-screen-fit button{touch-action:manipulation}@media(min-width:900px){.cq-screen-fit #bzAlan{max-width:min(88vw,1120px)!important}.cq-screen-fit .cq-question{padding:clamp(18px,3vh,36px)!important}}@media(max-height:650px){.cq-screen-fit .cq-mascot{max-height:38px!important}.cq-screen-fit #bzAlan{gap:6px!important}.cq-screen-fit .cq-question{padding:9px!important}}`;document.head.append(style);}
+  const top=panel.querySelector('.bz-oyun-ust');
+  if(!panel.querySelector('.cq-mascot')){const mascot=document.createElement('div');mascot.className='cq-mascot';mascot.setAttribute('aria-hidden','true');top.after(mascot);}
+  function decorate(){
+   if(!area.querySelector(':scope > .cq-question')){
+    const board=document.createElement('div');board.className='cq-question';
+    const label=document.createElement('div');label.className='cq-label';label.textContent=names[type]||'Papi ile keşfet';board.append(label);
+    const leading=[];for(const e of [...area.children]){if(!e.matches('.bz-etiket,.bz-soru,.bz-ipucu,.bz-tr-anlam'))break;leading.push(e);}
+    const question=leading.find(e=>e.matches('.bz-soru'));
+    if(question&&type==='lab')question.textContent+=' ne demek?';
+    if(question&&type==='risk')question.textContent+=' İngilizcede hangisi?';
+    if(question&&type==='hiz')question.textContent+=' ne demek?';
+    if(!question&&titles[type]){const title=document.createElement('h2');title.className='cq-title';title.textContent=titles[type];board.append(title);}
+    for(const e of leading){
+     if(e.matches('.bz-ipucu')&&['tren','cumle'].includes(type)){const help=document.createElement('details');help.className='cq-help';const summary=document.createElement('summary');summary.textContent='Nasıl oynanır?';help.append(summary,e);board.append(help);}else board.append(e);
+    }
+    area.prepend(board);
+   }
+   if(type==='tren'){const check=area.querySelector('#bzKontrol'),answer=area.querySelector('.bz-cevap');if(check&&answer&&check.nextElementSibling!==answer)answer.before(check);}
+   const input=area.querySelector('#bzYaz');if(input&&!input.dataset.cqInput){input.dataset.cqInput='1';input.placeholder='Duyduğun kelimeyi yaz';}
+   const listen=area.querySelector('#bzD1'),slow=area.querySelector('#bzD2');
+   if(listen&&listen.textContent!=='🔊 Tekrar dinle')listen.textContent='🔊 Tekrar dinle';
+   if(slow&&slow.textContent!=='🐢 Yavaş dinle')slow.textContent='🐢 Yavaş dinle';
+   if(listen&&!area.querySelector('.cq-listen-main')){const play=document.createElement('button');play.className='cq-listen-main';play.type='button';play.setAttribute('aria-label','Kelimeyi dinle');play.textContent='🔊';play.onclick=()=>listen.click();listen.parentElement.before(play);}
+   if(['hafiza','es'].includes(type)){
+    const board=area.querySelector('.cq-question');let counter=board.querySelector('.cq-counter');
+    if(!counter){counter=document.createElement('div');counter.className='cq-counter';counter.setAttribute('aria-live','polite');board.append(counter);}
+    const matched=area.querySelectorAll(type==='hafiza'?'.bz-kart2.tamam':'.bz-es .bz-cip2.tamam').length/2, text=matched+' / 3 eşleşme';if(counter.textContent!==text)counter.textContent=text;
+   }
+   const lives=area.querySelector('.bz-can');
+   if(lives&&!lives.dataset.cqLives){const remaining=(lives.textContent.match(/❤️/gu)||[]).length;lives.dataset.cqLives='1';lives.setAttribute('aria-label','Kalan hak: '+remaining);lives.innerHTML='<span>'+remaining+' hakkın var</span><div aria-hidden="true">'+'●'.repeat(remaining)+'○'.repeat(5-remaining)+'</div>';}
+   const rail=area.querySelector('#bzSure');
+   if(rail&&!area.querySelector('.cq-timer')){
+    const timer=document.createElement('div');timer.className='cq-timer';timer.setAttribute('aria-label','Kalan süre');rail.parentElement.before(timer);
+    const update=()=>{const text='⏱ '+Math.ceil(Math.max(0,parseFloat(rail.style.width)||0)*6/100)+' sn';if(timer.textContent!==text)timer.textContent=text;};update();
+    if(typeof MutationObserver==='function'){timerObserver=new MutationObserver(update);timerObserver.observe(rail,{attributes:true,attributeFilter:['style']});}
+   }
+  }
+  decorate();if(typeof MutationObserver==='function'){observer=new MutationObserver(decorate);observer.observe(area,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});}
+ };
 })();

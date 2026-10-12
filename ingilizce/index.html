@@ -891,7 +891,7 @@ html, body { touch-action: pan-x pan-y; }
 @keyframes dmPapiDot{0%,70%,100%{transform:translateY(0);opacity:.4}35%{transform:translateY(-5px);opacity:1}}
 @media(prefers-reduced-motion:reduce){.dm-papi-halo img,.dm-papi-halo:before,.dm-papi-dots i{animation:none!important}#dmBootSplash{transition:none}}
 </style>
-<link rel="stylesheet" href="bottom-nav.css?v=20261012-dual-path">
+<link rel="stylesheet" href="bottom-nav.css?v=11">
 <style id="dm-parkur-final-layout">
 #bzMicCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:10px;width:100%;max-width:560px;margin:18px auto;align-items:stretch}
 #bzMicCards .dm-final-card{box-sizing:border-box;min-width:0;width:100%;min-height:114px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#f2f7ea;color:#193f35;border:2px solid #d9e6cc;border-radius:18px;padding:14px 10px;white-space:normal;overflow-wrap:break-word;word-break:normal;text-align:center;line-height:1.3}
@@ -916,8 +916,25 @@ html, body { touch-action: pan-x pan-y; }
 .dm-match-option.selected{outline:3px solid #f0c46b}.dm-match-option.dm-right{background:#ccefd7;border-color:#50aa71}.dm-match-option.dm-wrong{background:#ffe1e1;border-color:#e65a5a}
 </style>
 <style id="dm-adventure-one-screen-v1">
-@media(min-width:820px){}
-@media(max-height:660px){}
+/* All adventure question types: one responsive viewport, no body/page scrolling. */
+#bzPerde:has(>.bz-oyun){height:100dvh;box-sizing:border-box;overflow:hidden!important;overscroll-behavior:contain;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important}
+#bzPerde>.bz-oyun{height:100%;max-height:100%;min-height:0;box-sizing:border-box;display:grid!important;grid-template-rows:auto minmax(0,1fr) auto;align-items:stretch;padding:clamp(4px,1vh,10px) 0!important;gap:clamp(4px,.7vh,9px)}
+#bzPerde>.bz-oyun>.bz-oyun-ust{max-width:760px;width:100%;box-sizing:border-box;padding:2px clamp(8px,2vw,16px)!important;min-height:34px;margin:0 auto}
+#bzPerde>.bz-oyun>#bzAlan{box-sizing:border-box;margin:0 auto!important;max-width:min(760px,calc(100% - 16px))!important;width:calc(100% - 16px);min-height:0;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:clamp(8px,1.5vh,18px)!important;box-shadow:0 5px 18px #102b3640}
+#bzPerde>.bz-oyun>#bzJokerler{box-sizing:border-box;max-width:760px;width:calc(100% - 16px);margin:0 auto!important;padding:2px 0 max(3px,env(safe-area-inset-bottom,0px));gap:clamp(3px,1vw,8px)!important;flex-wrap:nowrap!important;align-items:stretch}
+#bzPerde>.bz-oyun>#bzJokerler .bz-jk{min-width:0!important;flex:1 1 0!important;font-size:clamp(10px,2.3vw,13px)!important;min-height:43px;padding:5px 2px}
+#bzPerde #bzAlan .bz-soru{font-size:clamp(16px,2.8vh,24px)!important;line-height:1.25!important;margin:4px 0 8px!important}
+#bzPerde #bzAlan .bz-ipucu{padding:6px 9px!important;font-size:clamp(11px,1.9vh,14px)!important;margin:5px 0!important}
+#bzPerde #bzAlan .bz-secenekler{gap:clamp(5px,1vh,10px)!important}
+#bzPerde #bzAlan .bz-sec{padding:clamp(8px,1.4vh,15px)!important;min-height:40px;font-size:clamp(14px,2vh,18px)!important}
+#bzPerde #bzAlan .bz-slotlar{gap:clamp(3px,.7vw,7px);margin:5px 0 8px!important}
+#bzPerde #bzAlan .bz-slot{width:clamp(27px,4vh,42px);height:clamp(31px,4.9vh,48px);font-size:clamp(14px,2.5vh,22px)}
+#bzPerde #bzAlan .bz-harfler{gap:clamp(3px,.65vw,7px)!important}
+#bzPerde #bzAlan .bz-cip2{min-width:clamp(30px,4vh,42px);height:clamp(34px,4.8vh,44px)!important}
+#bzPerde #bzAlan .bz-btn{min-height:clamp(41px,6vh,54px);padding:8px!important}
+#bzPerde .bz-inceleme{min-height:0;overflow:auto}
+@media(min-width:820px){#bzPerde>.bz-oyun{max-width:820px;margin:0 auto}#bzPerde #bzAlan .bz-sec{font-size:18px!important}}
+@media(max-height:660px){#bzPerde>.bz-oyun{gap:3px}#bzPerde #bzAlan .bz-soru{margin:2px 0 4px!important}#bzPerde #bzAlan .bz-kart2{height:60px}#bzPerde #bzAlan .bz-slot{height:31px}}
 </style></head>
         <body>
 <div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
@@ -928,7 +945,7 @@ function finish(){if(done)return;done=true;clearInterval(timer);clearTimeout(dea
 function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
-if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&!!aktifOgrenciAdi))finish();
+if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'))finish();
 }
 window.addEventListener('load',()=>{loaded=true;check();},{once:true});
 document.addEventListener('dm:login',check);timer=setInterval(check,150);
@@ -1288,7 +1305,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
             </div>
             <div class="rubric-modal" id="duyuruYonetimModal">
                 <div class="rubric-content" style="max-width: 480px;">
-                           <button class="game-close-btn" onclick="document.getElementById('duyuruYonetimModal').style.display='none'; document.getElementById('ogretmenMenuModal').style.display='flex';">✕</button>
+                           <button class="game-close-btn" onclick="document.getElementById('duyuruYonetimModal').style.display='none'; document.getElementById('ogretmenMenuModal').style.display='flex';">✕</button>    
                     <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:12px; text-align:center;">📢 Duyuru Yönetimi</h3>
                     <div style="max-height:220px; overflow-y:auto; margin-bottom:14px;" id="duyuruListeAlani">
                         <div style="font-size:11px; color:#64748b; text-align:center; padding:10px;">Yükleniyor...</div>
@@ -1598,7 +1615,10 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                 <button class="az-gcard" style="background:linear-gradient(160deg,#a3e635,#65a30d);" onclick="kelimebulOyunAc()">
                     <div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Şifre Kırıcı</div>
                 </button>
-
+                <button class="az-gcard span2" style="background:linear-gradient(135deg,#c026d3,#a06bff);" onclick="baModuAc()">
+                    <div class="az-gcard-badge">YENİ</div>
+                    <div class="az-gcard-icon">🧙</div><div class="az-gcard-title">Medu Oyun Sihirbazı — Büyü Akademisi</div>
+                </button>
             </div>
             </div>
         </div>
@@ -2214,7 +2234,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                         </button>
                     </div>
                 </div>
-                    </div>
+                    </div>       
                 <div class="site-footer">
                     <div class="site-footer-brand">🦜 Diji-Medu İngilizce Portalı</div>
                     <div class="site-footer-links">
@@ -2730,7 +2750,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
         .dc-toast{position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-30px); opacity:0; background:#1e293b; color:#fff; padding:12px 18px; border-radius:15px; font-weight:700; font-size:12px; display:flex; align-items:center; gap:8px; z-index:100000010; transition:all .35s cubic-bezier(.2,.9,.3,1.3); box-shadow:0 10px 30px rgba(0,0,0,.25); pointer-events:none;}
         .dc-toast.show{transform:translateX(-50%) translateY(0); opacity:1;}
         .dc-toast-icon{width:22px; height:22px; border-radius:50%; background:#f59e0b; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
-                .bottom-nav-mobile {
+                .bottom-nav-mobile { 
                     display: flex;
                     position: fixed;
                     bottom: 0;
@@ -2875,7 +2895,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
           #tab-konusmapratigi .kp-card-word { font-size:32px; }
           #tab-konusmapratigi .kp-mik-btn { width:220px; height:74px; font-size:27px; }
           #tab-konusmapratigi .kp-yaz-row { max-width:460px; }
-        }
+        } 
         #tab-konusmapratigi .kp-step-row { display:flex; align-items:center; gap:14px; margin-bottom:6px; position:relative; }
         #tab-konusmapratigi .kp-step-row.right { flex-direction:row-reverse; text-align:right; }
         #tab-konusmapratigi .kp-step-connector { position:absolute; left:29px; top:-6px; width:3px; height:38px; background:repeating-linear-gradient(180deg,rgba(46,215,234,.5) 0 6px, transparent 6px 12px); z-index:0; }
@@ -4267,11 +4287,34 @@ async function dijiKelimeHavuzunuYukle() {
                     rubricGridDegerleriGuncelle();
                 }
 
-                function dmPortalOturumuAc(kayitliOgrenci, kayitliSure) {
-                    if (!kayitliOgrenci || localStorage.getItem('ing_oturumAcik') !== 'true') return;
-                    if (aktifOgrenciAdi === kayitliOgrenci && document.getElementById('panel-alani').style.display === 'block') return;
+                        window.onload = async function() {
+                    let girisBtn = document.getElementById('girisBtn');
+                    let girisSubtitle = document.getElementById('girisSubtitle');
+
+                    girisBtn.disabled = false;
+                    girisBtn.innerText = "Giriş Yap";
+                    girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
+
+                           dijiKelimeHavuzunuYukle();
+
+                                const oturumAcik = localStorage.getItem("ing_oturumAcik");
+        const kayitliOgrenci = localStorage.getItem("ing_aktifOgrenci");
+        const kayitliSure = localStorage.getItem("ing_toplamSaniye");
+                    const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
+
+                    if (otomatikGirisYapilacak) {
+                        document.getElementById('login-container').style.display = 'none';
+                        document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
+                    }
+
+                   await dijiGlobalVeriYukle();
+
+                    if (otomatikGirisYapilacak) {
                         aktifOgrenciAdi = kayitliOgrenci;
-                        toplamSaniye = Number(kayitliSure) || 0;
+                           setTimeout(function () {
+
+}, 1000);
+                        toplamSaniye = parseInt(kayitliSure);
 
                         let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
 
@@ -4296,33 +4339,7 @@ async function dijiKelimeHavuzunuYukle() {
 
                             (window.dmOtomatikAkisAc || meduAkisAc)();
                               gunlukEnerjiBonusuKontrolEt();
-
-                    document.dispatchEvent(new Event('dm:login'));
-                }
-
-                        window.onload = async function() {
-                    let girisBtn = document.getElementById('girisBtn');
-                    let girisSubtitle = document.getElementById('girisSubtitle');
-
-                    girisBtn.disabled = false;
-                    girisBtn.innerText = "Giriş Yap";
-                    girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
-
-                           dijiKelimeHavuzunuYukle();
-
-                                const oturumAcik = localStorage.getItem("ing_oturumAcik");
-        const kayitliOgrenci = localStorage.getItem("ing_aktifOgrenci");
-        const kayitliSure = localStorage.getItem("ing_toplamSaniye");
-                    const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
-
-                    if (otomatikGirisYapilacak) {
-                        document.getElementById('login-container').style.display = 'none';
-                        document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
-                    }
-
-                   await dijiGlobalVeriYukle();
-
-                    if (otomatikGirisYapilacak) dmPortalOturumuAc(kayitliOgrenci, kayitliSure);
+                        }
 
 
                                ogretmenSelectDoldur();
@@ -4337,8 +4354,8 @@ setInterval(() => {
                 };
 
                 // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
-                        function aiModalAc() {
-                    document.getElementById('aiChatModal').style.display = 'flex';
+                        function aiModalAc() { 
+                    document.getElementById('aiChatModal').style.display = 'flex'; 
                     document.getElementById('aiSoruHakInfo').innerHTML = "💬 Diji-Medu'ya doğrudan mesaj bırakabilirsin";
                     misafirBilgiKontrol();
                     sohbetGecmisiniYukle();
@@ -8379,7 +8396,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
             });
 
             document.getElementById('okumaBaslatBtn').innerText = "⏸ Duraklat / Bitir";
-            okumaTimer = setInterval(() => {
+            okumaTimer = setInterval(() => {    
                 okumaSaniye++;
                 let dk = String(Math.floor(okumaSaniye / 60)).padStart(2, '0');
                 let sn = String(okumaSaniye % 60).padStart(2, '0');
@@ -8536,13 +8553,13 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
 
                     // Eğer özel "teacher" veya veri tabanında eşleşen bir kullanıcı varsa
                     if(user || ogr.toLowerCase() === "teacher") {
-                        m.className="success";
+                        m.className="success"; 
                         m.innerText="Giriş başarılı!";
-                        aktifOgrenciAdi = ogr;
+                        aktifOgrenciAdi = ogr; 
                         toplamSaniye = user ? (Number(user.toplamsure) || 0) : 0;
 
-                                        localStorage.setItem("ing_oturumAcik", "true");
-        localStorage.setItem("ing_aktifOgrenci", aktifOgrenciAdi);
+                                        localStorage.setItem("ing_oturumAcik", "true"); 
+        localStorage.setItem("ing_aktifOgrenci", aktifOgrenciAdi); 
         localStorage.setItem("ing_toplamSaniye", toplamSaniye);
                                         fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`).catch(() => {});
 
@@ -8582,7 +8599,7 @@ setTimeout(() => {
                         // Hatalı giriş durumunda tekrar giriş ekranına dön
                         document.getElementById('oturumYuklemeOverlay').style.display = 'none';
                         document.getElementById('login-container').style.display = 'block';
-                        m.className="error";
+                        m.className="error"; 
                         m.innerText="Hatalı kullanıcı adı veya şifre!";
                     }
                 }
@@ -8903,8 +8920,8 @@ setTimeout(() => {
             }
 
             let detayliMetin = `Değerli Velimiz, \n\nBu rapor döneminde öğrencimiz ${ad} ile son derece verimli, disiplinli ve istikrarlı bir İngilizce öğrenim süreci geride bıraktık. Seçilen tarih aralığında toplam ${ders} ders başarıyla tamamlanmış olup, öğrencimizin genel başarı ortalaması ${puan} / 100 olarak kaydedilmiştir.\n\n` +
-                (gelisimYonu === "yukselen" ? "Ders içi performans ve puan seyrinde gözlenen düzenli yükseliş trendi, öğrencinin çalışma disiplinine sadık kaldığını ve konuları kalıcı olarak kavradığını açıkça göstermektedir. 📈\n" :
-                 gelisimYonu === "dusen" ? "Dönem içerisinde ufak çaplı dalgalanmalar gözlenmiş olup, eksik kalan beceri başlıklarının pekiştirilmesi amacıyla özel tekrarlar planlanmaktadır.\n" :
+                (gelisimYonu === "yukselen" ? "Ders içi performans ve puan seyrinde gözlenen düzenli yükseliş trendi, öğrencinin çalışma disiplinine sadık kaldığını ve konuları kalıcı olarak kavradığını açıkça göstermektedir. 📈\n" : 
+                 gelisimYonu === "dusen" ? "Dönem içerisinde ufak çaplı dalgalanmalar gözlenmiş olup, eksik kalan beceri başlıklarının pekiştirilmesi amacıyla özel tekrarlar planlanmaktadır.\n" : 
                  "Öğrencimiz dönem boyunca istikrarlı çizgisini koruyarak tüm çalışmalara gereken özeni göstermiştir.\n") +
                 `Ayrıca kelime bilgisi, okuma, yazma ve konuşma modüllerinde gerçekleştirilen dijital aktivite ve oyun maratonlarında aktif rol oynayarak becerilerini pratik etmiştir. Öğrencimizin dil gelişimine verdiği katkıdan ötürü tebrik eder, değerli destekleriniz ve iş birliğiniz için teşekkür ederiz. 🌻`;
 
@@ -9146,9 +9163,9 @@ setTimeout(() => {
                 doc.text("Ogretmen Degerlendirmesi", M + 2.5, y + 3.5);
                 doc.setTextColor(51, 65, 85); doc.setFont("helvetica", "normal"); doc.setFontSize(yorumFontBoyutu);
                 let yy = y + 6.5;
-                yorumSatirlari.forEach(satir => {
-                    doc.text(satir, M + 2.5, yy);
-                    yy += satirAraligi;
+                yorumSatirlari.forEach(satir => { 
+                    doc.text(satir, M + 2.5, yy); 
+                    yy += satirAraligi; 
                 });
                 y += yorumH + GAP - 0.5;
 
@@ -9323,17 +9340,17 @@ setTimeout(() => {
             ozellikGorunurlukAyarla('kartPomodoro', izinler.pomodoro_sayaci !== false);
               ozellikGorunurlukAyarla('kartRaporlarim', izinler.raporlar_sekmesi !== false);
 
-        }
-               function cikisYap() {
-            googleSheetseKaydet();
-            clearInterval(timerInterval);
+        }    
+               function cikisYap() { 
+            googleSheetseKaydet(); 
+            clearInterval(timerInterval); 
 
             // Sadece kendi oturum verilerini temizle, diğer uygulamalara (Eğitim Koçum vb.) dokunma
             localStorage.removeItem("ing_oturumAcik");
             localStorage.removeItem("ing_aktifOgrenci");
             localStorage.removeItem("ing_toplamSaniye");
 
-            window.location.reload();
+            window.location.reload(); 
         }
 
         // --- JEOPARDY BALONLARI OYUN MİMARİSİ (DÜZELTİLMİŞ) ---
@@ -9560,10 +9577,10 @@ setTimeout(() => {
             let ingKelime = kelimeObj.ingilizce || kelimeObj.en || "";
             let turkKelime = kelimeObj.turkce || kelimeObj.tr || "";
 
-            jpAktifSoru = {
-                ingilizce: ingKelime,
-                turkce: turkKelime,
-                puanDegeri: puanDegeri
+            jpAktifSoru = { 
+                ingilizce: ingKelime, 
+                turkce: turkKelime, 
+                puanDegeri: puanDegeri 
             };
 
             document.getElementById('jpBalonEkrani').style.display = 'none';
@@ -9880,7 +9897,7 @@ setTimeout(() => {
             });
 
             if (uygunlar.length < 5) {
-                uygunlar = filtrelenmis;
+                uygunlar = filtrelenmis; 
             }
 
             if (uygunlar.length < 4) {
@@ -11708,8 +11725,8 @@ function ozellikSecDoldur() {
             .kp-step-name { font-size:12.5px; font-weight:900; color:#553c9a; margin-top:1px; }
             .kp-step-name.locked-txt { color:#b3a4d9; }
             .kp-step-sub { font-size:9.5px; color:#9f7aea; margin-top:1px; }
-
-
+        
+        
         .header-energy-badge { position:relative; }
         .header-energy-bar-fill.enerji-doldu { animation: enerjiDolduPulse .7s ease; }
         @keyframes enerjiDolduPulse { 0%{filter:brightness(1);} 40%{filter:brightness(1.9);} 100%{filter:brightness(1);} }
@@ -11717,7 +11734,7 @@ function ozellikSecDoldur() {
         @keyframes enerjiAzaldiShake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-2px);} 75%{transform:translateX(2px);} }
         .enerji-degisim-ucan { position:absolute; top:-6px; right:2px; font-size:11px; font-weight:900; animation: enerjiDegisimYuz 1s ease-out forwards; pointer-events:none; white-space:nowrap; }
         @keyframes enerjiDegisimYuz { 0%{opacity:0; transform:translateY(0);} 20%{opacity:1;} 100%{opacity:0; transform:translateY(-20px);} }
-
+        
         .genel-enerji-kazanim-wrap { position:fixed; top:40%; left:50%; transform:translate(-50%,-50%); z-index:100000025; text-align:center; pointer-events:none; }
         .gek-battery-row { position:relative; display:inline-block; padding-right:34px; }
         .gek-battery { width:130px; height:60px; border:5px solid #fff; border-radius:10px; position:relative; padding:4px; background:#1e293b; box-shadow:0 14px 34px rgba(0,0,0,.4); }
@@ -11736,8 +11753,8 @@ function ozellikSecDoldur() {
         @keyframes gekSparkPop { 0%,55%{opacity:0; transform:translate(0,0) scale(.4);} 65%{opacity:1;} 100%{opacity:0; transform:translate(var(--sx),var(--sy)) scale(1.1);} }
         .gek-txt { margin-top:16px; color:#fbbf24; font-weight:900; font-size:14px; background:rgba(0,0,0,.5); padding:6px 16px; border-radius:14px; display:inline-block; animation:gekTxtFade 2.2s ease-out forwards; }
         @keyframes gekTxtFade { 0%{opacity:0;} 15%{opacity:1;} 85%{opacity:1;} 100%{opacity:0;} }
-
-
+        
+        
         #tab-buyuakademisi .ba-sonuc-ekrani { text-align:center; padding:20px 16px; }
         #tab-buyuakademisi .ba-sonuc-mascot { font-size:70px; margin-bottom:8px; }
         #tab-buyuakademisi .ba-sonuc-title { font-size:22px; font-weight:900; color:#7c3aed; margin-bottom:4px; }
@@ -11749,7 +11766,7 @@ function ozellikSecDoldur() {
         #tab-buyuakademisi .ba-sonuc-btn { width:100%; max-width:280px; padding:13px; border-radius:14px; border:none; font-weight:900; font-size:13px; margin-bottom:18px; background:linear-gradient(135deg,#a06bff,#ff6b9d); color:#fff; cursor:pointer; }
         #tab-buyuakademisi .ba-rank-title { font-size:12px; font-weight:900; text-align:left; margin-bottom:8px; color:#553c9a; max-width:280px; margin-left:auto; margin-right:auto; }
         #tab-buyuakademisi .ba-rank-row { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; margin-bottom:5px; font-size:11px; font-weight:800; max-width:280px; margin-left:auto; margin-right:auto; background:#f5f3ff; color:#553c9a; }
-
+            
             </style>`;
                 let html = stil + '<div id="kpParkurKapsayici">';
             html += '<div class="kp-confetti-bg" style="top:8px;right:14px;">🎊</div><div class="kp-confetti-bg" style="top:50px;left:4px;animation-delay:1s;">🎈</div>';kpTumSeviyeler.forEach((sv, idx) => {
@@ -12384,7 +12401,7 @@ function ozellikSecDoldur() {
             document.getElementById('baSonucEkrani').style.display = 'none';
             baEnerjiSatiriGuncelle();
             baGirisGoster();
-        }
+        }      
 
         async function kpEnerjiYukleVeGoster() {
             let isim = siniftaOynananOgrenci || aktifOgrenciAdi;
@@ -13179,7 +13196,7 @@ function ozellikSecDoldur() {
           if (jk.cift) rozetler += '<span class="jk-rozet">✨ Sonraki doğru x2</span>';
           bar.innerHTML = '<div class="jk-bar">' + OYUN_JOKERLERI[jk.oyun].map(j => {
             let J = JOKER_TANIM[j];
-            return `<button type="button" class="jk-btn${jk.kullanilan.has(j) ? ' kullanildi' : ''}${jokerUygunMu(j) ? '' : ' uygunsuz'}" id="jkb-${j}" ${jk.kullanilan.has(j)||!jokerUygunMu(j)?'disabled':''} style="--jr:${J.renk}" onclick="jokerKullan('${j}')" aria-label="${J.ad} jokeri"><span class="jk-daire"><img src="parkur-okul-assets/joker-${j}-v1.svg" alt=""></span>${J.ad}<b class="jk-rights">${jk.kullanilan.has(j)?0:1}</b></button>`;
+            return `<button type="button" class="jk-btn${jk.kullanilan.has(j) ? ' kullanildi' : ''}${jokerUygunMu(j) ? '' : ' uygunsuz'}" id="jkb-${j}" style="--jr:${J.renk}" onclick="jokerKullan('${j}')" aria-label="${J.ad} jokeri"><span class="jk-daire">${J.ikon}</span>${J.ad}</button>`;
           }).join('') + `</div><div class="jk-alt"><span>🃏 Kalan joker: ${3 - jk.kullanilan.size}/3</span>${rozetler}</div>` + mesajHtml;
         }
 
@@ -16685,7 +16702,7 @@ function avatarSVG(s, stil, px, cins) {
     p.querySelector('#kaSonra').onclick = kapat;
   }, 1000);
 })();
-</script>
+</script>    
 <style>
 /* Mağaza kategorileri alt alta sarılsın (hepsi görünsün) */
 .ka-kat { flex-wrap:wrap !important; overflow:visible !important; }
@@ -16997,12 +17014,31 @@ function avatarSVG(s, stil, px, cins) {
 .kb-yazi { position:fixed; z-index:100000016; left:50%; top:30%; transform:translateX(-50%); pointer-events:none; font:700 24px 'Fredoka',sans-serif; color:#fff; background:linear-gradient(135deg,#ff6b9d,#a06bff); padding:10px 18px; border-radius:18px; box-shadow:0 10px 30px rgba(160,107,255,.5); animation:kbYazi 2s ease forwards; white-space:nowrap; }
 @keyframes kbUc { 0% { transform:translate(0,0) rotate(-10deg); } 50% { transform:translate(55vw,-60px) rotate(10deg); } 100% { transform:translate(115vw,-20px) rotate(-5deg); } }
 @keyframes kbYazi { 0% { opacity:0; transform:translate(-50%,20px) scale(.6); } 20% { opacity:1; transform:translate(-50%,0) scale(1.1); } 80% { opacity:1; } 100% { opacity:0; transform:translate(-50%,-30px); } }
+.kr-kart { position:relative; width:min(94vw,440px); max-height:88vh; overflow-y:auto; border-radius:28px; padding:20px 16px 16px; color:#fff; text-align:left;
+  background:radial-gradient(circle at 15% 0%,rgba(255,107,157,.35),transparent 55%), radial-gradient(circle at 100% 20%,rgba(107,203,119,.25),transparent 50%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:odGel .55s cubic-bezier(.2,.9,.3,1.3) both; font-family:'Nunito',sans-serif; }
+.kr-ust { display:flex; align-items:center; gap:12px; }
+.kr-av { width:64px; height:64px; border-radius:50%; overflow:hidden; background:#3b2c66; display:flex; align-items:center; justify-content:center; font-size:34px; flex-shrink:0; animation:odZipla 2s ease-in-out infinite; }
+.kr-av svg { width:100%; height:100%; }
+.kr-ust h3 { font:700 21px 'Fredoka',sans-serif; }
+.kr-ust small { font-size:12.5px; font-weight:700; color:#d8cbff; }
+.kr-cipler { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:14px; }
+.kr-cip { text-align:center; padding:9px 2px; border-radius:14px; background:rgba(255,255,255,.08); font-weight:900; font-size:15px; animation:odCip .5s cubic-bezier(.2,.9,.3,1.6) both; animation-delay:var(--g); }
+.kr-cip small { display:block; font-size:10px; color:#c9b8f5; font-weight:800; }
+.kr-lig { display:flex; align-items:center; gap:12px; margin-top:12px; padding:12px 14px; border-radius:18px; background:var(--lg); color:#fff; }
+.kr-lig b { font:700 18px 'Fredoka',sans-serif; display:block; }
+.kr-ok { font-size:30px; margin-left:auto; animation:krOk 1s ease-in-out infinite; }
+.kr-ok.asagi { animation-name:krAsagi; }
+.kr-bolum { margin-top:12px; padding:12px; border-radius:16px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); font-size:13px; font-weight:700; line-height:1.5; }
+.kr-bolum h4 { font:700 14.5px 'Fredoka',sans-serif; margin-bottom:6px; }
 .kr-bolum .bd-satir { background:rgba(255,255,255,.06); margin-top:6px; }
 .kr-dl { display:flex; align-items:center; gap:8px; margin-top:6px; }
 .kr-dl span { flex:1; }
 .kr-dl button, .kr-btnler button, .dl-kart button { border:none; border-radius:11px; padding:8px 11px; font:900 12.5px 'Nunito',sans-serif; cursor:pointer; }
 .kr-evet { background:#6bcb77; color:#fff; } .kr-hayir { background:rgba(255,255,255,.15); color:#fff; }
+.kr-btnler { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
 .kr-btnler button { padding:13px; font-size:14px; }
+.kr-ana { background:linear-gradient(120deg,#ffd166,#f59e0b); color:#5a3a00; }
+.kr-ikinci { background:rgba(255,255,255,.14); color:#fff; }
 .dl-kart { margin:12px 12px 0; padding:12px 14px; border-radius:18px; background:#fff; box-shadow:0 3px 0 #eadcff; font:800 13px 'Nunito',sans-serif; color:#3b2c66; }
 .dl-kart h4 { font:700 15px 'Fredoka',sans-serif; margin-bottom:6px; }
 .dl-kart select { border:2px solid #eadcff; border-radius:10px; padding:7px; font:800 12.5px 'Nunito',sans-serif; color:#3b2c66; max-width:60%; }
@@ -17012,7 +17048,7 @@ function avatarSVG(s, stil, px, cins) {
 .dl-gonder { background:linear-gradient(135deg,#ff6b6b,#a06bff); color:#fff; }
 @keyframes krOk { 50% { transform:translateY(-6px); } }
 @keyframes krAsagi { 50% { transform:translateY(6px); } }
-@media (prefers-reduced-motion: reduce) { .kb-papagan, .kb-yazi { display:none; }  }
+@media (prefers-reduced-motion: reduce) { .kb-papagan, .kb-yazi { display:none; } .kr-kart *, .kr-kart { animation:none !important; } }
 </style>
 <script>
 (function () {
@@ -17045,9 +17081,9 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     if (yo.komboGun !== b) { yo.komboGun = b; yo.komboSay = 0; }
     let odullu = yo.komboSay < 5;
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      let p = document.createElement('div'); p.className = 'kb-papagan'; p.innerHTML = '<img src="parkur-okul-assets/papi-v1.webp" alt="Papi" width="72" height="72">'; document.body.appendChild(p); setTimeout(() => p.remove(), 2300);
+      let p = document.createElement('div'); p.className = 'kb-papagan'; p.innerText = '🦜'; document.body.appendChild(p); setTimeout(() => p.remove(), 2300);
     }
-    let y = document.createElement('div'); y.className = 'kb-yazi'; y.innerHTML = (window.dmFeatherSeries?.(kombo)||String(kombo)) + (odullu ? ' +3 🪙' : ''); document.body.appendChild(y); setTimeout(() => y.remove(), 2100);
+    let y = document.createElement('div'); y.className = 'kb-yazi'; y.innerText = `🔥 ${kombo} KOMBO!` + (odullu ? ' +3 🪙' : ''); document.body.appendChild(y); setTimeout(() => y.remove(), 2100);
         if (odullu) { yo.komboSay++; yoXpEkle(0, 5); }
   }
   new MutationObserver(ms => {
@@ -17114,12 +17150,14 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     if (kapat) kapat.click(); else if (ov) ov.style.display = 'none';
     return metin;
   }
+  async function karsilamaGoster(){return;}
   let krGosterilen = '';
   setInterval(() => {
     if (!girisli() || !yoVar() || krGosterilen === kucuk(aktifOgrenciAdi)) return;
     krGosterilen = kucuk(aktifOgrenciAdi);
     setTimeout(() => {
          if (typeof baModuAc === 'function' && !(typeof odulOyunda === 'function' && odulOyunda())) (window.dunyaAc || baModuAc)();
+            if ((yo.turlar || []).includes('ana')) karsilamaGoster();
     }, 150);
   }, 250);
 })();
@@ -19765,10 +19803,6 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
 @keyframes jmSal { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(6deg) scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .pk-sekmeler, .pk-sekmeler i, .jm-kart, .jm-kart .e, .jm-perde .jm-kutu { animation:none !important; } }
 </style>
-<style id="dm-hide-route-legacy-tabs">
-/* This legacy bar lives under body, outside the route panel. */
-body:has(#tab-dunya.active) #pkSekmeler{display:none!important}
-</style>
 <div class="pk-sekmeler" id="pkSekmeler" role="tablist" aria-label="Parkurlar">
   <button data-p="ba" role="tab"><i>🧙</i>Büyü Akademisi</button>
   <button data-p="kp" role="tab"><i>🔤</i>Kelime Modu</button>
@@ -19806,7 +19840,7 @@ body:has(#tab-dunya.active) #pkSekmeler{display:none!important}
   setInterval(() => {
     let p = hangiParkur(), bar = $('pkSekmeler');
     let oyunIci = typeof odulOyunda === 'function' && odulOyunda() && p !== 'kk';
-    let goster = !!p && !aktif('tab-dunya') && !oyunIci && !document.querySelector('.bs-perde, .ab-perde, .bc-perde, .kr-perde, .od-perde, .dv-perde');
+    let goster = !!p && !oyunIci && !document.querySelector('.bs-perde, .ab-perde, .bc-perde, .kr-perde, .od-perde, .dv-perde');
     bar.classList.toggle('gor', goster);
     document.body.classList.toggle('pk-sekmeli', goster);
     bar.querySelectorAll('button').forEach(b => { let selected=b.dataset.p===p || (b.dataset.p==='pro' && p && p!=='ba'); b.classList.toggle('aktif',selected); b.setAttribute('aria-selected',selected?'true':'false'); });
@@ -20427,7 +20461,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 </script>
 <link rel="stylesheet" href="papi-onboarding.css?v=3">
 <script src="papi-flow.js?v=20261012-cleanup"></script>
-<script src="papi-onboarding.js?v=dual-path-3"></script>
+<script src="papi-onboarding.js?v=3"></script>
 <script>
 (function () {
   const $ = id => document.getElementById(id);
@@ -20716,18 +20750,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(d.ogrenci || ogr)}`, { keepalive: true }).catch(() => {});
     $('login-container').style.display = 'none';
     $('oturumYuklemeOverlay').style.display = 'flex';
-    try {
-      await dijiGlobalVeriYukle();
-      dmPortalOturumuAc(d.ogrenci || ogr, localStorage.getItem('ing_toplamSaniye'));
-    } catch (error) {
-      console.error('Öğrenci paneli açılamadı:', error);
-      $('oturumYuklemeOverlay').style.display = 'none';
-      $('login-container').style.display = 'block';
-      m.className = 'error';
-      m.innerText = 'Panel yüklenemedi. Tekrar giriş yapmayı deneyebilirsin.';
-    } finally {
-      btn.disabled = false; btn.innerText = 'Giriş Yap'; $('sifre').value = '';
-    }
+    setTimeout(() => location.reload(), 120);
   };
   /* Otomatik girişte puan bildirimleri de çalışsın */
   let pbKuruldu = false;
@@ -21362,12 +21385,12 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
         tarih: bugun
     }));
     let kapat = () => { p.remove(); krAcik = null; };
-    p.querySelector('#krParkur').onclick = () => {
-  kapat();
+    p.querySelector('#krParkur').onclick = () => { 
+  kapat(); 
   if (typeof dunyaAc === 'function') {
-    dunyaAc();
+    dunyaAc(); 
   } else if (typeof baModuAc === 'function') {
-    baModuAc();
+    baModuAc(); 
   }
 };
     p.querySelector('#krAkis').onclick = () => { kapat(); if (typeof meduAkisAc === 'function') { maSekme = 'akis'; meduAkisAc(); } };
@@ -26778,12 +26801,11 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const start=Math.max(0,focus-8),steps=all.slice(start,Math.min(all.length,start+24));
     const current=Math.max(0,focus-start);
     gorunum={ad:'harita',b};
-    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page,total:all.length,offset:start})+'</div></div>';
+    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page})+'</div></div>';
     p.querySelectorAll('.dm-adventure-node,.dm-map-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
     requestAnimationFrame(()=>{window.dmParkurMapMount?.($('dmParkurScroll'));window.dmStoryPath?.mount($('dmParkurScroll'));});
   }
 
-  window.dmSchoolStopOpen = (b,d) => durakKarti(b,d);
   /* ================= 3) DURAK KARTI ================= */
   function durakKarti(b, d) {
     if (!bolumAcik(b)) return toast(`🔒 Parkur ${[1,10,20,30][b]}. seviyede açılır.`);
@@ -26792,7 +26814,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
     k.classList.add('sp-entry','sp-adventure-entry');
     const saved=checkpointRead(no);const possibleXp=bitti?0:192;
-    k.innerHTML = `<div class="bz-alt-kart sp-start-card"><button id="bzVazgec" class="sp-close" aria-label="Kapat">✕</button><img class="sp-entry-papi" src="parkur-okul-assets/papi-v1.webp" alt="Papi"><small>MACERA HARİTASI · ${d+1}. DURAK</small><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3><p>${kac(durakAdi(b,d))}</p><div class="sp-prize"><span>Olası ödül</span><strong>⭐ ${bitti?'': 'En çok '}${possibleXp} XP</strong><small>🪙 ${bitti?'İlk geçiş ödülü alındı':'En çok 40 altın · Başarı ve süreye göre'}</small></div><p class="sp-entry-note">${ileride?'🔒 Önce sıradaki durağı tamamla':bitti?'⭐'.repeat(y)+' · En iyi sonucun':'12 soru + konuşma görevi · Sorularda enerji kullanılır'}</p><button class="bz-btn mor" id="bzOyna" ${ileride?'disabled':''}>${saved?'Kaldığın yerden devam et':bitti?'Tekrar başlat':'Başlat'} →</button></div>`;
+    k.innerHTML = `<div class="bz-alt-kart sp-start-card"><button id="bzVazgec" class="sp-close" aria-label="Kapat">✕</button><img class="sp-entry-papi" src="study-assets/papi-celebrate.png" alt="Papi"><small>MACERA HARİTASI · ${d+1}. DURAK</small><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3><p>${kac(durakAdi(b,d))}</p><div class="sp-prize"><span>Olası ödül</span><strong>⭐ ${bitti?'': 'En çok '}${possibleXp} XP</strong><small>🪙 ${bitti?'İlk geçiş ödülü alındı':'En çok 40 altın · Başarı ve süreye göre'}</small></div><p class="sp-entry-note">${ileride?'🔒 Önce sıradaki durağı tamamla':bitti?'⭐'.repeat(y)+' · En iyi sonucun':'12 soru + konuşma görevi · Sorularda enerji kullanılır'}</p><button class="bz-btn mor" id="bzOyna" ${ileride?'disabled':''}>${saved?'Kaldığın yerden devam et':bitti?'Tekrar başlat':'Başlat'} →</button></div>`;
     document.body.appendChild(k);
     const kap = () => k.remove();
     k.onclick = e => { if (e.target === k) kap(); };
@@ -26853,10 +26875,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function oyunUst() {
     let s = O.sorular[O.i], [, ik, ad] = TIPLER.find(t => t[0] === s.tip) || ['sesliFinal','🎙️','Papi ile Konuş'];
     let enerji = typeof window.genelEnerjiKalan === 'number' ? window.genelEnerjiKalan : '–';
-    return `<div class="bz-oyun-ust"><button class="kapat" id="bzCik" ${window.dmPapiFirstPractice?.locked('school')?'disabled title="İlk çalışmanı tamamla"':''} aria-label="Oyundan çık" >✕</button>
+    return `<div class="bz-oyun-ust"><button class="kapat" id="bzCik" ${window.dmPapiFirstPractice?.locked('school')?'disabled title="İlk çalışmanı tamamla"':''} aria-label="Oyundan çık" style="width:38px;height:38px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:900;cursor:pointer;flex:none">✕</button>
       <button class="bz-geri-soru" id="bzGeriSoru" aria-label="Önceki soruları gör" ${O.gecmis.some(Boolean) ? '' : 'disabled'}>←</button>
       <div class="bz-noktalar" aria-label="İlerleme">${O.sorular.map((_, j) => `<i class="${j < O.i ? (O.sonuclar[j] ? 'd' : 'y') : j === O.i ? 'a' : ''}"></i>`).join('')}</div>
-      <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="sp-combo" aria-label="Tüy Serisi">${window.dmFeatherSeries?.(O.kombo||0)||O.kombo||0}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span><span class="sp-gold" aria-label="Altın">🪙 ${yoVar()?yo.altin||0:0}</span></div>
+      <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="sp-combo" aria-label="Kombo">🔥 ${O.kombo||0}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span><span class="sp-gold" aria-label="Altın">🪙 ${yoVar()?yo.altin||0:0}</span></div>
       <div class="bz-govde" id="bzGovde"><span class="bz-tip">${ik} ${ad}${s.tekrarMi ? ' · 🔁 Önceki üniteden' : ''}</span>`;
   }
   /* ---------- Jokerler: her durakta her jokerin 1 bedava hakkı + çantadakiler (Oyunlar'le ortak çanta) ---------- */
@@ -26875,7 +26897,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     bar.innerHTML = JK.map(([t, ik, ad]) => {
       let n = jkSay(t), uygun = !O._cevaplandi && O.sorular[O.i]?.tip!=='sesliFinal' && (t === 'pas' || (t !== 'ikinci' && typeof O.jk[t] === 'function'));
       let bilgi = t === 'ikinci' ? 'Yanlış yapınca sorar' : '';
-      return `<button class="bz-jk" data-jk="${t}" ${n > 0 && uygun ? '' : 'disabled'} aria-label="${ad}, ${n} hak${bilgi ? ', ' + bilgi : ''}"><span><img src="parkur-okul-assets/joker-${t}-v1.svg" alt=""></span>${ad}${n ? `<b>${n}</b>` : ''}</button>`;
+      return `<button class="bz-jk" data-jk="${t}" ${n > 0 && uygun ? '' : 'disabled'} aria-label="${ad}, ${n} hak${bilgi ? ', ' + bilgi : ''}"><span>${ik}</span>${ad}${n ? `<b>${n}</b>` : ''}</button>`;
     }).join('') + `<button class="bz-jk al" id="bzJkAl" aria-label="Joker ve enerji satın al"><span>🛒</span>Al</button>`;
     bar.querySelectorAll('[data-jk]').forEach(b => b.onclick = () => jokerKullan(b.dataset.jk));
     $('bzJkAl').onclick = dukkanAc;
@@ -26913,7 +26935,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     ciz(); document.body.appendChild(p);
     p.addEventListener('click', e => { if (e.target === p) p.remove(); });
   }
-  function ustTazele() { let e = document.querySelector('.bz-enerji-pill'); if (e && typeof window.genelEnerjiKalan === 'number') e.textContent = '⚡ ' + window.genelEnerjiKalan; const c=document.querySelector('.sp-combo'),g=document.querySelector('.sp-gold');if(c)c.innerHTML=window.dmFeatherSeries?.(O.kombo||0)||String(O.kombo||0);if(g)g.textContent='🪙 '+(yoVar()?yo.altin||0:0); }
+  function ustTazele() { let e = document.querySelector('.bz-enerji-pill'); if (e && typeof window.genelEnerjiKalan === 'number') e.textContent = '⚡ ' + window.genelEnerjiKalan; const c=document.querySelector('.sp-combo'),g=document.querySelector('.sp-gold');if(c)c.textContent='🔥 '+(O.kombo||0);if(g)g.textContent='🪙 '+(yoVar()?yo.altin||0:0); }
   /* ---------- ← Önceki soruları gör ---------- */
   function incelemeAc(k) {
     let son = O._cevaplandi ? O.i : O.i - 1; if (son < 0) return;
@@ -27000,17 +27022,17 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const target=O.sorular[O.i], word=target.k||(target.l&&target.l[0]);
     const translated=word&&typeof TR==='function'?TR(word):'';
     const english=word&&typeof EN==='function'?EN(word):'';
-    g.innerHTML = (O._pas ? '🔄 Pas geçtin (doğru sayıldı)' : iyi ? ['Harika!', 'Çok güzel!', 'Başardın!'][Math.floor(Math.random() * 3)] : 'Neredeyse!') + (!iyi ? `<div style="font-size:13.5px;margin-top:4px">Doğru kelime: <b>${kac(dogruMetin||english||'')}</b><br>Türkçesi: <b>${kac(target.c?.tr||translated||'')}</b></div>` : dogruMetin ? `<div style="font-size:13.5px;margin-top:4px">${kac(dogruMetin)}</div>` : '');
+    g.innerHTML = (O._pas ? '🔄 Pas geçtin (doğru sayıldı)' : iyi ? ['✨ Büyü tuttu!', '✨ Harika!', '✨ Mükemmel!'][Math.floor(Math.random() * 3)] : '💨 Olmadı!') + (!iyi ? `<div style="font-size:13.5px;margin-top:4px">Doğru kelime: <b>${kac(english||dogruMetin||'')}</b><br>Türkçesi: <b>${kac(translated||'')}</b></div>` : dogruMetin ? `<div style="font-size:13.5px;margin-top:4px">${kac(dogruMetin)}</div>` : '');
     let alan = $('bzAlan'); alan.appendChild(g);
     O.gecmis[O.i] = { tip: O.sorular[O.i].tip, html: alan.innerHTML };
     let kalanSoru = O.i + 1 < O.sorular.length, enerjiNotu = kalanSoru && !sinifModu() && O.sorular[O.i+1].tip!=='sesliFinal' ? ' · ⚡ −1' : '';
     if (!iyi && jkSay('ikinci') > 0 && !O._ikinci) {
-      let ik = document.createElement('button'); ik.className = 'bz-btn'; ik.style.marginTop = '0';
+      let ik = document.createElement('button'); ik.className = 'bz-btn'; ik.style.marginTop = '10px';
       ik.textContent = `🎯 İkinci şans kullan (${jkSay('ikinci')})`;
       ik.onclick = () => { if (!jkHarca('ikinci')) return; O.yanlis--; O.sonuclar[O.i] = undefined; O.gecmis[O.i] = undefined; O._cevaplandi = false; O._ikinci = true; soruCiz(); };
       alan.appendChild(ik);
     }
-    let dev = document.createElement('button'); dev.className = 'bz-btn mor'; dev.style.marginTop = '0'; dev.textContent = kalanSoru ? 'Devam →' + enerjiNotu : '🏁 Sonucu gör';
+    let dev = document.createElement('button'); dev.className = 'bz-btn mor'; dev.style.marginTop = '10px'; dev.textContent = kalanSoru ? 'Devam →' + enerjiNotu : '🏁 Sonucu gör';
     dev.onclick = devamEt;
     alan.appendChild(dev);
     checkpointSave();jokerBarCiz(); let gs = $('bzGeriSoru'); if (gs) gs.disabled = false;
@@ -27407,8 +27429,68 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { let a = document.querySelector('.bz-alt'); if (a) a.remove(); } });
 })();
 </script>
+<style>
+.kur-perde{position:fixed;inset:0;z-index:2147483000;background:linear-gradient(160deg,#4c1d95,#7c3aed 45%,#db2777);overflow-y:auto;font-family:Nunito,system-ui,sans-serif;color:#2d2350;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 16px);animation:kurGel .35s ease-out}
+.kur-kart{position:relative;max-width:520px;margin:0 auto;background:#fff;border-radius:28px;padding:20px 18px 18px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.kur-x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:12px;border:0;background:#f5f3ff;color:#6d28d9;font-size:18px;font-weight:900;cursor:pointer}
+.kur-bas{text-align:center;padding:4px 30px 6px}
+.kur-bas img{width:84px;height:84px;border-radius:22px;box-shadow:0 10px 24px rgba(124,58,237,.35)}
+.kur-bas h2{margin:10px 0 4px;font-size:22px;font-weight:900;line-height:1.2;color:#2d2350}
+.kur-bas p{margin:0;color:#6b5b95;font-weight:700;font-size:14px;line-height:1.5}
+.kur-faydalar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.kur-faydalar span{background:#f5f3ff;color:#5b21b6;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800}
+.kur-sekmeler{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 12px;background:#f5f3ff;border-radius:16px;padding:5px}
+.kur-sekme{border:0;background:none;border-radius:12px;padding:9px 4px;font-family:inherit;font-weight:900;font-size:12.5px;color:#6d28d9;cursor:pointer;line-height:1.2}
+.kur-sekme b{display:block;font-size:20px}
+.kur-sekme[aria-selected="true"]{background:#fff;box-shadow:0 3px 10px rgba(124,58,237,.18);color:#2d2350}
+.kur-tarayici{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.kur-tarayici button{border:2px solid #e9e2ff;background:#fff;border-radius:999px;padding:6px 11px;font-family:inherit;font-weight:800;font-size:12px;color:#5b21b6;cursor:pointer}
+.kur-tarayici button[aria-pressed="true"]{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.kur-senin{display:inline-block;margin-left:4px;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 7px;font-size:10.5px;font-weight:900}
+.kur-adimlar{display:grid;gap:12px}
+.kur-adim{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:center;background:#faf8ff;border:1px solid #efe8ff;border-radius:18px;padding:10px}
+.kur-adim .no{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#7c3aed;color:#fff;font-weight:900;font-size:13px;margin-bottom:4px}
+.kur-adim .bsl{display:block;font-size:14.5px;line-height:1.35;font-weight:900;color:#2d2350}
+.kur-perde b{color:inherit;font-weight:900}
+.kur-adim small{display:block;color:#6b5b95;font-weight:700;font-size:12px;margin-top:3px;line-height:1.4}
+.kur-ikon{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:6px;background:#ede9fe;color:#5b21b6;font-weight:900;font-size:13px;padding:0 4px;vertical-align:middle}
+/* cihaz çizimleri */
+.kur-cihaz{position:relative;width:118px;height:150px;border-radius:18px;background:#1e1b4b;padding:7px;box-shadow:inset 0 0 0 2px #4338ca}
+.kur-cihaz.pc{height:96px;border-radius:10px;padding:5px}
+.kur-cihaz.pc::after{content:"";position:absolute;left:38%;right:38%;bottom:-12px;height:12px;background:#4338ca;border-radius:0 0 6px 6px}
+.kur-ekran{position:relative;width:100%;height:100%;border-radius:12px;background:#fff;overflow:hidden}
+.kur-cihaz.pc .kur-ekran{border-radius:5px}
+.kur-cubuk{position:absolute;left:0;right:0;height:18px;background:#f1f5f9;display:flex;align-items:center;padding:0 5px;gap:4px;font-size:9px;font-weight:900;color:#475569}
+.kur-cubuk.ust{top:0}.kur-cubuk.alt{bottom:0;justify-content:space-around}
+.kur-cubuk .adres{flex:1;height:10px;border-radius:5px;background:#e2e8f0}
+.kur-icerik{position:absolute;left:8px;right:8px;top:26px;display:grid;gap:5px}
+.kur-icerik i{display:block;height:8px;border-radius:4px;background:#ede9fe}
+.kur-vurgu{position:absolute;display:grid;place-items:center;min-width:18px;height:18px;border-radius:6px;background:#fbbf24;color:#78350f;font-size:11px;font-weight:900;box-shadow:0 0 0 4px rgba(251,191,36,.45);animation:kurNabiz 1.3s ease-in-out infinite;padding:0 3px}
+.kur-menu{position:absolute;background:#fff;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.2);padding:4px;display:grid;gap:3px;font-size:8.5px;font-weight:800;color:#334155;min-width:76px}
+.kur-menu span{padding:3px 5px;border-radius:5px;line-height:1.2}
+.kur-menu span.on{background:#fbbf24;color:#78350f}
+.kur-ana{position:absolute;inset:18px 6px 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-content:start;padding-top:6px}
+.kur-ana span{aspect-ratio:1;border-radius:9px;background:#e2e8f0}
+.kur-ana img{width:100%;aspect-ratio:1;border-radius:9px;box-shadow:0 0 0 3px #fbbf24}
+.kur-alt{margin-top:14px;display:grid;gap:8px}
+.kur-btn{width:100%;border:0;border-radius:16px;padding:14px;font-family:inherit;font-weight:900;font-size:16px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#22c55e,#15803d);box-shadow:0 5px 0 #166534}
+.kur-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #166534}
+.kur-btn.yukle{background:linear-gradient(135deg,#7c3aed,#db2777);box-shadow:0 5px 0 #6d28d9}
+.kur-btn.ikincil{background:#f5f3ff;color:#6d28d9;box-shadow:none;font-size:14px;padding:11px}
+.kur-uyari{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:10px 12px;font-size:12.5px;font-weight:800;line-height:1.45;margin-bottom:12px}
+.kur-not{text-align:center;color:#8a78b8;font-size:11.5px;font-weight:700;margin-top:10px;line-height:1.4}
+.kur-perde button:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+@keyframes kurGel{from{opacity:0}}
+@keyframes kurNabiz{0%,100%{box-shadow:0 0 0 3px rgba(251,191,36,.55)}50%{box-shadow:0 0 0 8px rgba(251,191,36,0)}}
+@media (max-width:380px){.kur-adim{grid-template-columns:96px 1fr}.kur-cihaz{width:96px;height:124px}.kur-cihaz.pc{height:80px}}
+@media (prefers-reduced-motion:reduce){.kur-perde,.kur-vurgu{animation:none}}
+</style>
 <script>
 (function () {
+  const ANAHTAR = 'diji_kurulum_rehberi_v1';
+  const durum = () => { try { return JSON.parse(localStorage.getItem(ANAHTAR) || '{}'); } catch (e) { return {}; } };
+  const yaz = d => { try { localStorage.setItem(ANAHTAR, JSON.stringify(d)); } catch (e) {} };
+
   /* ---- Uygulama kimliği ve simgeler (sayfanın başına eklenir) ---- */
   function basaEkle(tag, attrs) { if (document.head.querySelector(`${tag}[${Object.keys(attrs)[0]}="${Object.values(attrs)[0]}"]`)) return; let e = document.createElement(tag); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); document.head.appendChild(e); }
   basaEkle('link', { rel: 'manifest', href: 'ingilizce-manifest.json?v=4' });
@@ -27419,6 +27501,137 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   basaEkle('meta', { name: 'apple-mobile-web-app-title', content: 'Diji-Medu' });
   basaEkle('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'default' });
 
+  /* ---- Tek dokunuşla yükleme (Android Chrome, bilgisayarda Chrome/Edge) ---- */
+  let yuklemeIstegi = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); yuklemeIstegi = e; let b = document.getElementById('kurYukle'); if (b) b.style.display = ''; });
+  window.addEventListener('appinstalled', () => { let d = durum(); d.ok = 1; yaz(d); kapat(); });
+
+  /* ---- Cihaz ve tarayıcı ---- */
+  const ua = navigator.userAgent || '';
+  const ios = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  const ipad = /iPad/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  const android = /Android/i.test(ua);
+  const uygulamaIci = /FBAN|FBAV|Instagram|Line\/|WhatsApp|Snapchat|TikTok|MicroMessenger/i.test(ua);
+  const tarayici = /SamsungBrowser/i.test(ua) ? 'samsung' : /Edg\//i.test(ua) ? 'edge' : /Firefox|FxiOS/i.test(ua) ? 'firefox' : /CriOS|Chrome/i.test(ua) ? 'chrome' : /Safari/i.test(ua) ? 'safari' : 'chrome';
+  const yuklu = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  let cihaz = ios ? 'ios' : android ? 'android' : 'pc';
+
+  /* ---- Mini cihaz çizimleri ---- */
+  const icerik = '<div class="kur-icerik"><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div>';
+  const tel = (ust, alt, ek) => `<div class="kur-cihaz"><div class="kur-ekran">${ust ? `<div class="kur-cubuk ust">${ust}</div>` : ''}${icerik}${alt ? `<div class="kur-cubuk alt">${alt}</div>` : ''}${ek || ''}</div></div>`;
+  const pc = (ust, ek) => `<div class="kur-cihaz pc"><div class="kur-ekran"><div class="kur-cubuk ust">${ust}</div>${icerik}${ek || ''}</div></div>`;
+  const anaEkran = (pcMi) => pcMi ? pc('<span>●●●</span><span class="adres"></span>', '<div class="kur-ana" style="grid-template-columns:repeat(5,1fr);inset:20px 8px 8px"><span></span><img src="papi-welcome-v2.png" alt=""><span></span><span></span><span></span></div>') : `<div class="kur-cihaz"><div class="kur-ekran" style="background:linear-gradient(160deg,#c4b5fd,#f9a8d4)"><div class="kur-ana"><span></span><span></span><img src="papi-welcome-v2.png" alt=""><span></span><span></span><span></span></div></div></div>`;
+  const menu = (ogeler, stil) => `<div class="kur-menu" style="${stil}">${ogeler.map(([t, on]) => `<span class="${on ? 'on' : ''}">${t}</span>`).join('')}</div>`;
+
+  /* ---- Rehberler ---- */
+  const REHBER = {
+    ios: {
+      safari: { ad: 'Safari', adimlar: ipad ? [
+          [tel('<span class="adres"></span><span class="kur-vurgu" style="position:static">⬆︎</span>'), 'Sağ üstteki <span class="kur-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Adres çubuğunun yanındaki kare ve ok simgesi.'],
+          [tel('<span class="adres"></span>', '', menu([['Kopyala'], ['Ana Ekrana Ekle ⊕', 1], ['Yer İmi Ekle']], 'right:6px;top:22px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'Görmüyorsan menüyü biraz aşağı kaydır.'],
+          [anaEkran(), 'Sağ üstte <b>Ekle</b> de', 'Papi simgesi ana ekranında! Artık oradan aç.']]
+        : [
+          [tel('<span class="adres"></span>', '<span>‹</span><span>›</span><span class="kur-vurgu" style="position:static">⬆︎</span><span>▢</span><span>⧉</span>'), 'Alttaki <span class="kur-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Kare ve yukarı ok simgesi. Adres çubuğu üstteyse düğme de üsttedir.'],
+          [tel('', '', menu([['Kopyala'], ['Yer İmi Ekle'], ['Ana Ekrana Ekle ⊕', 1]], 'left:8px;right:8px;bottom:6px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'Görmüyorsan listeyi yukarı kaydır. Gerekirse "Diğer…" ya da "Daha fazla" menüsünde olabilir.'],
+          [anaEkran(), 'Sağ üstte <b>Ekle</b> de', 'Papi simgesi ana ekranında! Artık oradan aç.']] },
+      chrome: { ad: 'Chrome', adimlar: [
+          [tel('<span class="adres"></span><span class="kur-vurgu" style="position:static">⬆︎</span>'), 'Adres çubuğundaki <span class="kur-ikon">⬆︎</span> Paylaş düğmesine dokun', 'Bazı sürümlerde sağ alttaki <span class="kur-ikon">···</span> menüsünde "Paylaş…" yazar.'],
+          [tel('', '', menu([['Kopyala'], ['Ana Ekrana Ekle ⊕', 1], ['Okuma Listesi']], 'left:8px;right:8px;bottom:6px')), '<b>Ana Ekrana Ekle</b> seçeneğine dokun', 'iOS 16.4 ve üstünde çalışır. Görünmüyorsa siteyi Safari\'de açıp oradan ekle.'],
+          [anaEkran(), '<b>Ekle</b> de', 'Papi simgesi ana ekranında!']] }
+    },
+    android: {
+      chrome: { ad: 'Chrome', adimlar: [
+          [tel('<span class="adres"></span><span class="kur-vurgu" style="position:static">⋮</span>'), 'Sağ üstteki <span class="kur-ikon">⋮</span> menüye dokun', 'Üç nokta simgesi, adres çubuğunun yanında.'],
+          [tel('<span class="adres"></span><span>⋮</span>', '', menu([['Yeni sekme'], ['Uygulamayı yükle', 1], ['Ana ekrana ekle']], 'right:4px;top:20px')), '<b>Uygulamayı yükle</b> ya da <b>Ana ekrana ekle</b>', 'Hangisi görünüyorsa ona dokun.'],
+          [anaEkran(), '<b>Yükle</b> düğmesine dokun', 'Papi simgesi ana ekrana ve uygulamalar listesine gelir.']] },
+      samsung: { ad: 'Samsung Internet', adimlar: [
+          [tel('<span class="adres"></span>', '<span>‹</span><span>›</span><span>⌂</span><span>▢</span><span class="kur-vurgu" style="position:static">≡</span>'), 'Sağ alttaki <span class="kur-ikon">≡</span> menüye dokun', 'Üç çizgi simgesi.'],
+          [tel('', '', menu([['Yer imleri'], ['Sayfayı ekle ⊕', 1], ['Ayarlar']], 'left:8px;right:8px;bottom:6px')), '<b>Sayfayı ekle</b> seçeneğine dokun', ''],
+          [anaEkran(), '<b>Ana ekran</b>ı seç, sonra <b>Ekle</b>', 'Papi simgesi ana ekranında!']] },
+      firefox: { ad: 'Firefox', adimlar: [
+          [tel('<span class="adres"></span><span class="kur-vurgu" style="position:static">⋮</span>'), 'Menüye <span class="kur-ikon">⋮</span> dokun', 'Sağ üstte ya da sağ altta olabilir.'],
+          [tel('<span class="adres"></span><span>⋮</span>', '', menu([['Paylaş'], ['Yükle', 1], ['Ana ekrana ekle']], 'right:4px;top:20px')), '<b>Yükle</b> ya da <b>Ana ekrana ekle</b>', ''],
+          [anaEkran(), '<b>Ekle</b> de', 'Papi simgesi ana ekranında!']] }
+    },
+    pc: {
+      chrome: { ad: 'Chrome', adimlar: [
+          [pc('<span>●●●</span><span class="adres"></span><span class="kur-vurgu" style="position:static">⊕</span>'), 'Adres çubuğunun sağındaki <span class="kur-ikon">⊕</span> yükle simgesine tıkla', 'Ekran ve aşağı ok şeklinde de görünebilir.'],
+          [pc('<span>●●●</span><span class="adres"></span><span>⋮</span>', menu([['Yeni sekme'], ['Kaydet ve paylaş ›'], ['Sayfayı uygulama olarak yükle', 1]], 'left:5px;right:5px;top:18px')), 'Simge yoksa: <span class="kur-ikon">⋮</span> → <b>Kaydet ve paylaş</b> → <b>Uygulama olarak yükle</b>', ''],
+          [anaEkran(true), '<b>Yükle</b>\'ye tıkla', 'Masaüstünde ve başlat menüsünde Papi simgesi olur, kendi penceresinde açılır.']] },
+      edge: { ad: 'Edge', adimlar: [
+          [pc('<span>●●●</span><span class="adres"></span><span class="kur-vurgu" style="position:static">⊕</span>'), 'Adres çubuğundaki <span class="kur-ikon">⊕</span> "Uygulama kullanılabilir" simgesine tıkla', ''],
+          [pc('<span>●●●</span><span class="adres"></span><span>···</span>', menu([['Sık kullanılanlar'], ['Uygulamalar ›'], ['Bu siteyi uygulama olarak yükle', 1]], 'left:5px;right:5px;top:18px')), 'Ya da <span class="kur-ikon">···</span> → <b>Uygulamalar</b> → <b>Bu siteyi uygulama olarak yükle</b>', ''],
+          [anaEkran(true), '<b>Yükle</b>\'ye tıkla', 'Görev çubuğuna sabitleyebilirsin.']] },
+      safari: { ad: 'Safari (Mac)', adimlar: [
+          [pc('<span class="kur-vurgu" style="position:static">Dosya</span><span class="adres"></span>'), 'Üst menüden <b>Dosya</b>\'ya tıkla', 'macOS Sonoma ve üstü gerekir.'],
+          [pc('<span>Dosya</span><span class="adres"></span>', menu([['Yeni pencere'], ['Dock\'a Ekle…', 1], ['Paylaş']], 'left:5px;right:5px;top:18px')), '<b>Dock\'a Ekle…</b> seçeneğine tıkla', ''],
+          [anaEkran(true), '<b>Ekle</b>\'ye tıkla', 'Papi simgesi Dock\'ta!']] },
+      firefox: { ad: 'Firefox', adimlar: [
+          [pc('<span>●●●</span><span class="adres"></span><span class="kur-vurgu" style="position:static">☆</span>'), 'Firefox bilgisayarda uygulama yüklemeyi desteklemiyor', 'En kolayı: siteyi <b>Chrome</b> ya da <b>Edge</b> ile açıp oradan yüklemek.'],
+          [pc('<span>●●●</span><span class="adres"></span><span>☆</span>'), 'Ya da <span class="kur-ikon">☆</span> ile yer imlerine ekle', 'Yer imleri çubuğundan tek tıkla açılır.'],
+          [anaEkran(true), 'Yer imi çubuğunda hazır!', '']] }
+    }
+  };
+  const VARSAYILAN = { ios: ['safari', 'chrome'], android: ['chrome', 'samsung', 'firefox'], pc: ['chrome', 'edge', 'safari', 'firefox'] };
+
+  /* ---- Ekran ---- */
+  let perde = null, secili = { cihaz, tarayici: null };
+  function tarayiciSec(c) { let l = VARSAYILAN[c]; return l.includes(tarayici) && c === cihaz ? tarayici : l[0]; }
+  function ciz() {
+    let c = secili.cihaz, t = secili.tarayici || tarayiciSec(c), R = REHBER[c][t];
+    let uyari = uygulamaIci ? `<div class="kur-uyari">⚠️ Siteyi bir uygulamanın içinden (WhatsApp, Instagram…) açmışsın. Önce sağ üstteki menüden <b>"Tarayıcıda aç"</b> seçeneğine dokun, sonra aşağıdaki adımları uygula.</div>`
+      : (c === 'ios' && cihaz === 'ios' && t === 'safari' && tarayici !== 'safari') ? `<div class="kur-uyari">💡 iPhone ve iPad'de en sorunsuz yöntem Safari'dir.</div>` : '';
+    perde.innerHTML = `<div class="kur-kart">
+      <button class="kur-x" id="kurX" aria-label="Kapat">✕</button>
+      <div class="kur-bas"><img src="papi-welcome-v2.png" alt="Diji İngilizce simgesi" onerror="this.style.display='none'"><h2 id="kurBaslik">Diji İngilizce'yi uygulama gibi kullan!</h2><p>Ana ekranına ekle, tek dokunuşla tam ekran aç. İndirme yok, yer kaplamaz.</p></div>
+      <div class="kur-faydalar"><span>⚡ Tek dokunuşla açılır</span><span>📴 İnternetsiz de açılır</span><span>🖥️ Tam ekran</span></div>
+      <div class="kur-sekmeler" role="tablist">${[['android', '🤖', 'Android'], ['ios', '🍎', 'iPhone · iPad'], ['pc', '💻', 'Bilgisayar']].map(([k, ik, ad]) => `<button class="kur-sekme" role="tab" data-c="${k}" aria-selected="${c === k}"><b>${ik}</b>${ad}${k === cihaz ? '<br><span class="kur-senin">senin cihazın</span>' : ''}</button>`).join('')}</div>
+      <div class="kur-tarayici" aria-label="Tarayıcı">${VARSAYILAN[c].map(k => `<button data-t="${k}" aria-pressed="${k === t}">${REHBER[c][k].ad}${c === cihaz && k === tarayici ? ' ✓' : ''}</button>`).join('')}</div>
+      ${uyari}
+      <div class="kur-adimlar">${R.adimlar.map(([cizim, baslik, alt], i) => `<div class="kur-adim">${cizim}<div><span class="no">${i + 1}</span><span class="bsl">${baslik}</span>${alt ? `<small>${alt}</small>` : ''}</div></div>`).join('')}</div>
+      <div class="kur-alt">
+        <button class="kur-btn yukle" id="kurYukle" style="${yuklemeIstegi ? '' : 'display:none'}">📲 Tek dokunuşla yükle</button>
+        <button class="kur-btn" id="kurTamam">✅ Uyguladım, oldu</button>
+        <button class="kur-btn ikincil" id="kurSonra">Şimdi değil</button>
+      </div>
+      <div class="kur-not">Bu rehberi daha sonra Profil ya da Yardım bölümünden tekrar açabilirsin.</div></div>`;
+    perde.querySelectorAll('.kur-sekme').forEach(b => b.onclick = () => { secili = { cihaz: b.dataset.c, tarayici: null }; ciz(); });
+    perde.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { secili.tarayici = b.dataset.t; ciz(); });
+    document.getElementById('kurX').onclick = kapat;
+    document.getElementById('kurSonra').onclick = kapat;
+    document.getElementById('kurTamam').onclick = () => { let d = durum(); d.ok = 1; yaz(d); kapat(); };
+    document.getElementById('kurYukle').onclick = async () => {
+      if (!yuklemeIstegi) return;
+      yuklemeIstegi.prompt();
+      try { let s = await yuklemeIstegi.userChoice; if (s && s.outcome === 'accepted') { let d = durum(); d.ok = 1; yaz(d); kapat(); } } catch (e) {}
+      yuklemeIstegi = null;
+    };
+  }
+  function kapat() { if (perde) perde.remove(); perde = null; document.removeEventListener('keydown', esc); }
+  function esc(e) { if (e.key === 'Escape') kapat(); }
+  function ac(elle) {
+    if (perde) return;
+    if (!elle) { let d = durum(); d.g = (d.g || 0) + 1; yaz(d); }         /* gösterim sayısı: 2. girişte bir kez daha, sonra hiç */
+    perde = document.createElement('div'); perde.className = 'kur-perde'; perde.setAttribute('role', 'dialog'); perde.setAttribute('aria-modal', 'true'); perde.setAttribute('aria-labelledby', 'kurBaslik');
+    document.body.appendChild(perde); secili = { cihaz, tarayici: null }; ciz();
+    document.addEventListener('keydown', esc);
+    setTimeout(() => { let b = document.getElementById('kurTamam'); if (b) b.focus({ preventScroll: true }); if (perde) perde.scrollTop = 0; }, 80);
+  }
+  window.kurulumRehberiAc = () => ac(true);   /* istediğin yerden elle açmak için */
+
+  /* ---- Ne zaman gösterilir? ---- */
+  let d = durum();
+  if (yuklu()) { if (!d.ok) { d.ok = 1; yaz(d); } }
+  else if (!d.ok && (d.g || 0) < 2) ac(false);
+
+  /* Yardım/Profil'de tekrar açma düğmesi */
+  setInterval(() => {
+    let yer = document.querySelector('#tab-profil .dc-focus-card, #tab-profil');
+    if (!yer || document.getElementById('kurProfilBtn') || yuklu()) return;
+    let b = document.createElement('button'); b.id = 'kurProfilBtn'; b.type = 'button'; b.textContent = '📲 Uygulamayı ana ekrana ekle';
+    b.style.cssText = 'display:block;margin:12px auto;border:0;border-radius:14px;padding:11px 16px;font-family:inherit;font-weight:900;font-size:14px;color:#fff;background:linear-gradient(135deg,#7c3aed,#db2777);cursor:pointer';
+    b.onclick = () => ac(true); yer.appendChild(b);
+  }, 3000);
 })();
 </script>
 <style>
@@ -28364,7 +28577,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       <small>${d.yonetici ? 'Yönetici olarak tüm öğrencileri görüyorsun' : `${d.ogrenciSayisi} öğrencin var · sadece sana kayıtlı öğrencileri görürsün`}${d.email ? ' · bildirimler: ' + kac(d.email) : ''}</small>`;
     $('cogK1').onclick = e => kopyala(d.kod, e.target);
     $('cogK2').onclick = e => kopyala(link, e.target);
-    if ($('cogK3')) $('cogK3').onclick = () => { $('ogretmenMenuModal').style.display = 'none'; ogretmenListesi(); };
+    if ($('cogK3')) $('cogK3').onclick = ogretmenListesi;
     $('cogCreateStudents').onclick = () => window.dmStudentManagement.openCreate();
     if($('cogManageStudents')) $('cogManageStudents').onclick = () => window.dmStudentManagement.openAdmin();
   }
@@ -28638,7 +28851,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     return orgOdul.apply(this, arguments);
   };
 })();
-</script>
+</script>  
 <script>
 (function () {
   const ENFAZLA = 2;                                    /* davetin gösterileceği giriş sayısı */
@@ -28669,15 +28882,15 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 })();
 </script>
 <script defer src="google-login.js?v=rights-7"></script>
-<link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261012-paper-sky-v1">
-<script defer src="parkur-map-theme-v1.js?v=20261012-paper-sky-v1"></script>
-<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261012-paper-sky-v1"></script><script defer src="papi-haptics.js?v=1"></script><link rel="stylesheet" href="papi-wallet.css?v=2"><script defer src="papi-wallet.js?v=3"></script>
-<link rel="stylesheet" href="story-path.css?v=20261012-paper-sky-v1"><script defer src="story-curriculum.js?v=2"></script><script defer src="story-path.js?v=20261012-paper-sky-v1"></script>
+<link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
+<script defer src="parkur-map-theme-v1.js?v=3"></script>
+<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><link rel="stylesheet" href="papi-wallet.css?v=2"><script defer src="papi-wallet.js?v=3"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><script defer src="story-path.js?v=selected-play-20261011-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261011-profix"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261011-hubfix2">
-<script defer src="activity-ui.js?v=20261012-no-academy"></script>
-<script defer src="bottom-nav.js?v=20261012-dual-path"></script>
+<script defer src="activity-ui.js?v=20261011-hubfix2"></script>
+<script defer src="bottom-nav.js?v=10"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=3"></script>
 <script defer src="weekly-ui.js?v=20261011-repair"></script>
@@ -28685,8 +28898,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script defer src="experience-ui.js?v=5"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
-<script defer src="lazy-games.js?v=20261012-independent"></script>
-<link rel="stylesheet" href="game-experience.css?v=20261012-paper-sky-v1">
+<script defer src="lazy-games.js?v=20261012-cleanup"></script>
+<link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
 <script defer src="game-experience.js?v=selected-play-20261011-1"></script>
 <script defer src="onboarding-ui.js?v=2"></script>
 <script defer src="rights-ui.js?v=1"></script>
@@ -28715,32 +28928,51 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 #bzAlan .dm-final-write-panel #bzMicCheck{min-height:48px!important;font-size:16px!important;margin-top:7px!important}
 #bzAlan:has(#bzMicCards) #bzMicStatus{font-size:clamp(12px,3vw,15px);padding:4px 10px;margin:0!important}
 @media(max-height:740px){#bzAlan #bzMicStart{min-height:62px!important}#bzAlan #bzMicCards .dm-final-card{min-height:70px!important}}
-@media(min-width:750px){}
-@media(max-height:680px){}
+/* Adventure question viewport layout, separate from adventure map and dialogs. */
+#bzPerde:has(> .bz-oyun.dm-question-panel){height:100dvh!important;max-height:100dvh!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:calc(env(safe-area-inset-top,0px) + 4px) 0 calc(env(safe-area-inset-bottom,0px) + 5px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>.bz-oyun{flex:0 0 auto!important;padding:0!important;margin:0 auto!important;width:min(100%,640px)!important;min-height:0}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>.bz-oyun .bz-oyun-ust{margin:0!important;padding:3px 8px!important;min-height:38px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;box-sizing:border-box!important;margin:4px auto!important;width:min(calc(100% - 16px),610px)!important;max-width:610px!important;padding:clamp(8px,1.5vh,15px)!important;border-radius:19px!important;scrollbar-width:thin}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler{flex:0 0 auto!important;box-sizing:border-box!important;display:flex!important;flex-wrap:nowrap!important;gap:clamp(2px,1vw,7px)!important;width:min(calc(100% - 16px),610px)!important;max-width:610px!important;margin:3px auto!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{flex:1 1 0!important;min-width:0!important;padding:5px 1px!important;font-size:clamp(9px,2vw,12px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk span{font-size:clamp(15px,3vw,22px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-soru{font-size:clamp(17px,3.1vh,25px)!important;line-height:1.3!important;margin:5px 0 9px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{padding:6px 10px!important;margin:3px 0 8px!important;font-size:clamp(11px,1.65vh,14px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-secenekler{gap:clamp(5px,1vh,10px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-sec{padding:clamp(8px,1.35vh,14px)!important;min-height:40px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-slotlar{margin:5px 0 9px!important;gap:clamp(2px,0.8vw,6px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-slot{width:clamp(25px,5.3vw,40px)!important;height:clamp(31px,6vh,47px)!important;font-size:clamp(15px,2.8vh,21px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-harfler{gap:clamp(3px,.8vw,7px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-cip2{min-width:34px!important;height:39px!important;padding:0 7px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan #bzMicStart{min-height:clamp(58px,9vh,84px)!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .dm-final-write-panel{margin-top:8px!important}
+#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzInceleme{max-height:80dvh}
+@media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
+@media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
-<link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261012-dual-path"></script><script defer src="kisisel-bilgiler.js?v=3"></script><script defer src="student-management.js?v=20261012-panel"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=2"></script><script defer src="kisisel-bilgiler.js?v=3"></script><script defer src="student-management.js?v=2"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=3"><script defer src="progression-ui.js?v=20261012-cleanup"></script>
-<link rel="stylesheet" href="game-feedback.css?v=20261012-paper-sky-v1"><script defer src="game-feedback.js?v=20261012-paper-sky-v1"></script>
+<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261012-cleanup"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script defer src="profile-forest.js?v=1"></script>
-<link rel="stylesheet" href="question-panels-v1.css?v=20261012-paper-sky-v1">
-<link rel="stylesheet" href="question-calm-v1.css?v=20261012-paper-sky-v1">
+<link rel="stylesheet" href="question-panels-v1.css?v=2">
+<link rel="stylesheet" href="question-calm-v1.css?v=3">
 <link rel="stylesheet" href="ders-vadi.css?v=6"><script defer src="ders-vadi.js?v=4"></script>
 <link rel="stylesheet" href="ders-test.css?v=2"><script defer src="ders-test.js?v=3"></script>
 <link rel="stylesheet" href="papi-cards.css?v=2">
 <link rel="stylesheet" href="benim-dunyam.css?v=20261011-design1-final"><script defer src="benim-dunyam.js?v=20261011-design1-final"></script>
-<link rel="stylesheet" href="meteor.css?v=20261012-independent">
-<link rel="stylesheet" href="word-wheel.css?v=20261012-dual-wheel">
-<link rel="stylesheet" href="oyna-v2.css?v=20261012-paper-sky-v1">
-<script defer src="oyna-v2.js?v=20261012-paper-sky-v1"></script>
+<link rel="stylesheet" href="meteor.css?v=3">
+<link rel="stylesheet" href="word-wheel.css?v=2">
+<link rel="stylesheet" href="oyna-v2.css?v=20261011-roomier">
+<script defer src="oyna-v2.js?v=20261011-roomier"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261011-1">
 <script defer src="friends-ui.js?v=20261011-1"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261011-3">
 <script defer src="study-ui.js?v=20261011-3"></script>
 <link rel="stylesheet" href="storefront.css?v=20261011-4">
 <script defer src="storefront.js?v=20261011-4"></script>
-<link rel="stylesheet" href="selected-play.css?v=20261012-paper-sky-v1"><script defer src="question-calm-v1.js?v=20261012-paper-sky-v1"></script><script defer src="selected-play.js?v=20261012-paper-sky-v1"></script>
-</body>
+<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261011-simple-resume"></script>
+</body>      
         </html>
