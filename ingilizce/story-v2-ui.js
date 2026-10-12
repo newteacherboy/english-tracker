@@ -30,6 +30,10 @@ window.DMStoryV2UI={
   }else if(['choose','complete'].includes(task.kind)){
    put('<p class="papi-subtitle">'+(task.kind==='complete'?'Eksik kısmı seç':'Papi’yi dinle, doğru cevabı seç')+'</p><p class="papi-question">'+esc(task.kind==='complete'?task.stem:task.tr)+'</p><div class="ds-options"></div>');
    [...new Set([...task.options,task.answer])].forEach(v=>{const b=button(v,()=>{picked=v;area.querySelectorAll('.ds-options button').forEach(x=>x.classList.toggle('selected',x===b))});area.querySelector('.ds-options').append(b)});
+  }else if(task.kind==='repeat'){
+   put('<p class="papi-subtitle">🎧 Dinle, yaz veya seç</p><p class="papi-question">Hangi İngilizce ifadeyi duydun?</p><input class="papi-text-answer" aria-label="Duyduğun İngilizce ifade" autocomplete="off" placeholder="Duyduğunu yaz veya aşağıdan seç"><div class="ds-options"></div>');
+   const options=[...new Set([task.en,...cards.map(c=>c.en),...(task.options||[])])].slice(0,3).sort(()=>Math.random()-.5);
+   options.forEach(value=>{const b=button(value,()=>{area.querySelector('input').value=value;area.querySelectorAll('.ds-options button').forEach(x=>x.classList.toggle('selected',x===b));submit(value)});area.querySelector('.ds-options').append(b)});
   }else if(task.kind==='final'){
    const wrong=cards.find(c=>norm(c.en)!==norm(task.en)&&norm(c.tr)!==norm(task.tr))?.en||'I do not know';
    put('<p class="papi-subtitle">🃏 Son görev · Kelime kartları</p><div class="dm-final-card"><span class="dm-final-card-label">İngilizce karşılığını seç</span><strong>'+esc(task.tr)+'</strong><span aria-hidden="true">♣</span></div><div class="ds-options"></div>');
@@ -38,10 +42,7 @@ window.DMStoryV2UI={
    put('<p class="papi-subtitle">'+(task.kind==='final'?'🦜 Türkçesini oku, İngilizcesini söyle':'🎤 Papi seni dinliyor')+'</p><p class="papi-question">'+esc(task.kind==='final'?task.tr:task.kind==='translate'?task.tr:task.en)+'</p><input class="papi-text-answer" aria-label="İngilizce cevabın" autocomplete="off" placeholder="İngilizce söyle veya yaz">');
    const mic=button('🎤',async()=>{mic.disabled=true;mic.classList.add('listening');onNote('🎤 Papi seni dinliyor…');const result=await E.listen('en');mic.disabled=false;mic.classList.remove('listening');if(result.status==='heard'){area.querySelector('input').value=result.text;onNote('Duyduğum: '+result.text);if(['final','repeat','translate'].includes(task.kind))await submit(result.text);}else onNote('Mikrofon kullanılamıyor; yazabilirsin. Deneme hakkın azalmaz.');});
    mic.className='papi-microphone';mic.setAttribute('aria-label','Mikrofona konuş');area.append(mic);const status=document.createElement('small');status.className='papi-microphone-status';status.textContent=task.kind==='final'?'🎤 Mikrofona dokun veya cevabını yaz':'🎤 Konuşmak için mikrofona dokun';area.append(status);
-   if(task.kind==='repeat'){
-    const options=[task.en,...cards.filter(c=>norm(c.en)!==norm(task.en)).map(c=>c.en)].slice(0,3).sort(()=>Math.random()-.5),choices=document.createElement('div');choices.className='ds-options';
-    options.forEach(value=>choices.append(button(value,()=>{area.querySelector('input').value=value;submit(value)})));area.append(choices);
-   }
+
   }
   if(task.kind==='final'){header.querySelector('.ds-audio button:first-child')?.remove();const hint=document.createElement('div');hint.className='papi-final-progress';hint.textContent='Son görev · Öğrendiklerini hatırla';area.prepend(hint);}area.prepend(header);if(task.kind!=='final')actions.append(check);
   if(['order','repeat'].includes(task.kind))E.speak(task.en);
