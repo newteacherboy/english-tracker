@@ -20,9 +20,10 @@ async function teacherPlacements(){const v=window.dmMemberUI.sheet('Seviye sına
 function maintain(){
  const menu=$('ogretmenMenuModal');if(!menu)return;if(!token()){active=false;menuSeen=false;return;}
  if(visible(menu))active=true;
+ // Move child dialogs out of hidden legacy containers and above every workspace layer.
  if(!active)return;
- menu.classList.add('dm-teacher-open');menu.style.display='flex';if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
- for(const el of children()){el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='100010030')el.style.setProperty('z-index','100010030','important');}
+ menu.classList.add('dm-teacher-open');if(menu.style.display!=='flex')menu.style.display='flex';if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
+ for(const el of children()){if(el.parentElement!==document.body)document.body.append(el);el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
  if(!menuSeen){menuSeen=true;api('teacherNotificationRead').then(()=>refresh(true)).catch(()=>{});}
  paintBadge();
 }
@@ -40,6 +41,7 @@ function installCatalog(){
  const help=$('yardimIcerikAlani');if(visible($('yardimModal'))&&help){const sig=items.map(x=>x.code+'|'+x.name+'|'+x.description).join(';');let box=$('dmFeatureHelp');if(!box){box=document.createElement('section');box.id='dmFeatureHelp';box.className='dm-catalog-help';help.prepend(box);helpSignature='';}if(sig!==helpSignature){helpSignature=sig;box.replaceChildren();for(const f of items){const a=document.createElement('article'),h=document.createElement('strong'),p=document.createElement('p');h.textContent=f.name;p.textContent=f.description||f.howTo||guide[f.code]||(f.group==='Oyunlar'?'Oyunlar sekmesinden '+f.name+' oyununu aç; varsa sınıf ve ünite seçip başlat.':f.group+' bölümündeki '+f.name+' özelliğini kullan.');a.append(h,p);box.append(a);}}const q=String($('yardimAramaInput')?.value||'').toLocaleLowerCase('tr');for(const a of box.children)a.hidden=!!q&&!a.textContent.toLocaleLowerCase('tr').includes(q);}
 }
 window.dmTeacherWorkspace={paintBadge,refresh};
+const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of document.querySelectorAll('.rubric-modal,.sm-overlay,#odModal,#omSifreModal'))watcher.observe(el,{attributes:true,attributeFilter:['style']});
 setInterval(()=>{if(document.hidden)return;maintain();refresh();installCatalog();},1200);
 document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;refresh(true);});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(true);});

@@ -1,9 +1,9 @@
 name: Selected play panels
 on:
   push:
-    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', '.github/workflows/selected-play.yml']
+    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', 'tests/member-activity-ui.cjs', 'ingilizce/member-experience.*', 'ingilizce/teacher-workspace.js', 'ingilizce/papi-flow.js', 'ingilizce/experience-ui.*', '.github/workflows/selected-play.yml']
   pull_request:
-    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', '.github/workflows/selected-play.yml']
+    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', 'tests/member-activity-ui.cjs', 'ingilizce/member-experience.*', 'ingilizce/teacher-workspace.js', 'ingilizce/papi-flow.js', 'ingilizce/experience-ui.*', '.github/workflows/selected-play.yml']
 permissions:
   contents: read
 jobs:
@@ -18,5 +18,6 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node tests/selected-play-ui.cjs
       - run: node tests/selected-game-entry.cjs
+      - run: node tests/member-activity-ui.cjs
       - run: node --test tests/portal-integrity.test.cjs
       - run: python scripts/check-media-rights.py

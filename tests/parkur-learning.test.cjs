@@ -10,7 +10,7 @@ test('parkur script parses as JavaScript', () => {
   assert.ok(anchor > 0 && start >= 0 && end > anchor);
   assert.doesNotThrow(() => new vm.Script(html.slice(start+8,end)));
 });
-test('current twelve-mechanism deck uses only the stop words and ends with their voice review', () => {
+test('current twelve-mechanism deck uses only the stop words and ends with their card review', () => {
   const script=html.slice(start,end),a=script.indexOf('    const active=D.kelimeler.slice();'),b=script.indexOf('    O =',a);
   const words=[{en:'apple',tr:'elma'},{en:'book',tr:'kitap'}],ctx={D:{kelimeler:words},toast(){}};
   vm.runInNewContext('(function(){'+script.slice(a,b)+';globalThis.deck=sorular;})();',ctx);
@@ -20,24 +20,22 @@ test('current twelve-mechanism deck uses only the stop words and ends with their
   assert.equal(ctx.deck.at(-1).tip,'sesliFinal');
   assert.deepEqual(Array.from(ctx.deck.at(-1).l),words);
 });
-test('voice finale has alternatives and a keyboard fallback', () => {
-  const script=html.slice(start,end);
-  assert.match(script,/webkitSpeechRecognition/);
-  assert.match(script,/speechAlternatives/);
-  assert.match(script,/bzMicText/);
-  assert.match(script,/remaining\.shift\(\)/);
-  assert.match(script,/cevap\(true,'Tüm kelimeler sesli finalde tamamlandı'\)/);
+test('card finale offers two choices without microphone controls', () => {
+  const script=html.slice(start,end),a=script.indexOf('  function sesliFinal('),b=script.indexOf('  /* 🎈 Risk',a),final=script.slice(a,b);
+  assert.match(final,/karistir\(\[word.en,wrong\]\)/);
+  assert.doesNotMatch(final,/SpeechRecognition|bzMicText|bzMicStart/);
+  assert.match(final,/cevap\(true,'Tüm kelime kartları tamamlandı'\)/);
 });
 
-test('speech finale cannot be bypassed using jokers', () => {
+test('card finale cannot be bypassed using jokers', () => {
   const script=html.slice(start,end);
   assert.match(script,/O\.sorular\[O\.i\]\?\.tip==='sesliFinal'/);
 });
-test('speech permission errors leave a keyboard alternative', () => {
-  const script=html.slice(start,end);
-  assert.match(script,/not-allowed/);
-  assert.match(script,/denied=true/);
-  assert.match(script,/bzMicCheck/);
+test('incorrect final cards stay pending and enter the student review queue', () => {
+  const script=html.slice(start,end),a=script.indexOf('  function sesliFinal('),b=script.indexOf('  /* 🎈 Risk',a),final=script.slice(a,b);
+  assert.match(final,/if\(good\)\{remaining.shift\(\)/);
+  assert.match(final,/dmWrongWords\?\.add/);
+  assert.match(final,/checkpointSave\(\)/);
 });
 test('stop chunks preserve selected grade/unit and cover its complete word bank without repeats',()=>{
  const script=html.slice(start,end),a=script.indexOf('  const PARKUR_KELIME_ADEDI='),b=script.indexOf('  const durakSayisi =',a);
