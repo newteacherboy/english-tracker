@@ -50,4 +50,3 @@ self.addEventListener('fetch', e => {
     })));
   }
 });
-4de0262783fb74e49c55cdccd1ceff7fbbc34cc1
