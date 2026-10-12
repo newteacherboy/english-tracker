@@ -26780,7 +26780,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const start=Math.max(0,focus-8),steps=all.slice(start,Math.min(all.length,start+24));
     const current=Math.max(0,focus-start);
     gorunum={ad:'harita',b};
-    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page})+'</div></div>';
+    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page,total:all.length,offset:start})+'</div></div>';
     p.querySelectorAll('.dm-adventure-node,.dm-map-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
     requestAnimationFrame(()=>{window.dmParkurMapMount?.($('dmParkurScroll'));window.dmStoryPath?.mount($('dmParkurScroll'));});
   }
