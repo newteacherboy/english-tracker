@@ -15,7 +15,7 @@ function chapters(){
 }
 function title(s){const names=['İlk Adımlar','Kelime Bahçesi','Keşif Yolu','Bilgi Köprüsü','Renkli Macera','Yeni Ufuklar','Başarı Yolu','Papi ile Öğren'];return names[(s.u-1)%names.length];}
 const state=()=>{const steps=chapters(),done=load().done||{},first=steps.findIndex(x=>!done[x.id]);return {steps,done,index:first<0?steps.length:first};};
-function wallet(){const y=typeof yo!=='undefined'?yo:{};const xp=Number(y?.lig?.xp??y?.xp??0),gold=Number(y?.altin??0),energy=typeof genelEnerjiKalan!=='undefined'?genelEnerjiKalan:'–';return '<div class="dmp-wallet"><button type="button" data-wallet="energy" aria-label="Enerji bilgileri">⚡ '+esc(energy)+'</button><button type="button" data-wallet="xp" aria-label="XP bilgileri">⭐ '+esc(xp)+'</button><button type="button" data-wallet="gold" aria-label="Altın ve mağaza">🪙 '+esc(gold)+'</button></div>';}
+function wallet(){const y=typeof yo!=='undefined'?yo:{};const xp=Number(y?.lig?.xp??y?.xp??0),gold=Number(y?.altin??0),energy=typeof genelEnerjiKalan!=='undefined'?genelEnerjiKalan:'–';return '<div class="dmp-wallet"><button type="button" data-wallet="energy" aria-label="Enerji bilgileri"><span class="dmp-wallet-icon">⚡</span><span>'+esc(energy)+'</span></button><button type="button" data-wallet="xp" aria-label="XP bilgileri"><span class="dmp-wallet-icon dmp-xp-icon">XP</span><span>'+esc(xp)+'</span></button><button type="button" data-wallet="gold" aria-label="Altın ve mağaza"><span class="dmp-wallet-icon dmp-coin-icon">🪙</span><span>'+esc(gold)+'</span></button></div>';}
 function header(s){return '<header class="dmp-head"><img src="route-assets/papi-school.png" alt="Papi" onerror="this.style.display=\'none\'">'+wallet()+'</header><div class="dmp-heading"><small>'+s.g+'. Sınıf • '+s.u+'. Ünite</small><h2>'+title(s)+'</h2><span>Seviye '+s.part+' / '+s.parts+' · 9 soru</span></div>';}
 function home(){
  const host=$('#dmNewParkur');if(!host)return;const {steps,done,index}=state(),current=steps[Math.min(index,steps.length-1)];
@@ -41,7 +41,29 @@ function drawQuestion(){const host=$('#dmNewParkur');if(!host||!selected)return;
  host.querySelector('[data-write]')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();answer(e.target.value)}});
  host.querySelector('.dmp-next').onclick=()=>{if(!answered)return;question++;drawQuestion();};
 }
-function answer(value){if(answered||!selected)return;const q=entries[question],correct=q.type==='en-tr'?q.w.tr:q.w.en;const norm=x=>String(x).trim().toLocaleLowerCase('tr');const ok=norm(value)===norm(correct);answered=true;if(ok)score++;const host=$('#dmNewParkur');host.querySelectorAll('[data-answer],[data-submit],[data-write]').forEach(b=>{b.disabled=true;if(b.dataset.answer)b.classList.add(norm(b.dataset.answer)===norm(correct)?'right':norm(b.dataset.answer)===norm(value)?'wrong':'');});host.querySelector('.dmp-feedback').textContent=ok?'✅ Harika, doğru cevap!':'Doğru cevap: '+correct;const next=host.querySelector('.dmp-next');next.hidden=false;next.style.setProperty('display','block','important');next.textContent=question===8?'Sonucu gör →':'Devam et →';}
+let feedbackTimer=null;
+function mascotFeedback(ok,message){
+ document.getElementById('dmpMascotFeedback')?.remove();
+ if(feedbackTimer)clearTimeout(feedbackTimer);
+ const box=document.createElement('div');box.id='dmpMascotFeedback';box.className='dmp-mascot-feedback '+(ok?'ok':'bad');
+ box.innerHTML='<div class="dmp-mascot-card"><img src="route-assets/papi-school.png" alt="Papi" onerror="this.textContent=\'🦜\';this.style.display=\'none\'"><div class="dmp-mascot-text"><strong>'+(ok?'Harika!':'Birlikte öğrenelim!')+'</strong><span>'+esc(message)+'</span></div></div>';
+ document.body.appendChild(box);requestAnimationFrame(()=>box.classList.add('show'));
+ feedbackTimer=setTimeout(()=>box.remove(),1900);
+}
+function answer(value){
+ if(answered||!selected)return;
+ const q=entries[question],correct=q.type==='en-tr'?q.w.tr:q.w.en;
+ const norm=x=>String(x??'').trim().toLocaleLowerCase('tr');
+ if(q.type==='write'&&!String(value??'').trim())return;
+ const ok=norm(value)===norm(correct),host=$('#dmNewParkur');if(!host)return;
+ answered=true;if(ok)score++;
+ host.querySelectorAll('[data-answer]').forEach(btn=>{btn.disabled=true;const v=norm(btn.dataset.answer);if(v===norm(correct))btn.classList.add('right');else if(v===norm(value))btn.classList.add('wrong');});
+ const submit=host.querySelector('[data-submit]'),input=host.querySelector('[data-write]');
+ if(submit)submit.disabled=true;if(input)input.disabled=true;
+ const result=host.querySelector('.dmp-feedback');if(result){result.textContent=ok?'✅ Harika, doğru cevap!':'❌ Doğru cevap: '+correct;result.classList.toggle('is-wrong',!ok);}
+ const next=host.querySelector('.dmp-next');if(next){next.hidden=false;next.disabled=false;next.style.setProperty('display','block','important');next.style.setProperty('visibility','visible','important');next.textContent=question===8?'Sonucu gör →':'Devam et →';}
+ mascotFeedback(ok,ok?'Doğru bildin! Devam et.':'Doğrusu: '+correct);
+}
 function finish(){const host=$('#dmNewParkur'),s=selected;if(!host||!s)return;const passed=score>=6;const history=load();if(passed){history.done={...(history.done||{}),[s.id]:true};save(history)}host.innerHTML='<div class="dmp-finish"><div class="dmp-medal">'+(passed?'🏆':'🦜')+'</div><h2>'+(passed?'Seviyeyi tamamladın!':'Bir kez daha deneyelim!')+'</h2><p>9 sorudan '+score+' doğru</p><small>'+(passed?'Sonraki seviye açıldı.':'Geçmek için en az 6 doğru cevap gerekiyor.')+'</small><button data-home>Parkura dön</button></div>';host.querySelector('[data-home]').onclick=()=>{selected=null;home()};}
 window.dmNewParkurOpen=function(){const host=$('#dmNewParkur');if(!host)return false;document.querySelectorAll('#panel-alani [id^="tab-"]').forEach(x=>{x.classList.remove('active');});document.querySelectorAll('#bottomNavMobile [data-ekran]').forEach(b=>b.classList.toggle('active',b.dataset.ekran==='tab-dunya'));document.body.classList.add('dm-new-parkur-open');host.hidden=false;host.classList.add('active');home();return true;};
 window.dmNewParkurClose=function(){const host=$('#dmNewParkur');if(host){host.hidden=true;host.classList.remove('active');}document.body.classList.remove('dm-new-parkur-open');selected=null;};
