@@ -77,3 +77,9 @@
 #dmNewParkur .dmp-intro-count{padding:16px 23px;border-radius:22px;background:#fffdf1;border:2px solid #e9ebc8;font-weight:1000;font-size:22px}
 #dmNewParkur .dmp-intro button{width:min(100%,340px);min-height:58px;background:#29a94e;color:#fff;border:0;border-radius:18px;font-weight:900;font-size:19px}
 #dmNewParkur .dmp-intro button[data-cancel]{background:#fff;color:#286245;border:1px solid #bdddbd;font-size:15px}
+
+#dmNewParkur .dmp-reward-pop{display:flex;flex-direction:column;gap:11px;font-size:19px;animation:dmp-reward-in .65s cubic-bezier(.2,1.5,.3,1) both}
+#dmNewParkur .dmp-reward-pop strong{font-size:22px;color:#258b42}
+#dmNewParkur .dmp-reward-pop>div{background:#fffef6;border:2px solid #f8d276;border-radius:18px;padding:13px 18px;color:#4e752d;font-weight:1000}
+@keyframes dmp-reward-in{from{opacity:0;transform:translateY(25px) scale(.8)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){#dmNewParkur .dmp-reward-pop{animation:none}}
