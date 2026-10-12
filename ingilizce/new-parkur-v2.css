@@ -46,3 +46,8 @@
 #dmpMascotFeedback .dmp-mascot-text strong{font-size:18px}
 #dmpMascotFeedback .dmp-mascot-text span{font-size:13px}
 @media(prefers-reduced-motion:reduce){#dmpMascotFeedback{transition:none}}
+
+/* Hard isolate answer actions from the older global theme. */
+#dmNewParkur .dmp-quiz{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))!important}
+#dmNewParkur .dmp-next.dmp-visible{display:flex!important;align-items:center!important;justify-content:center!important;position:fixed!important;left:16px!important;right:16px!important;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;width:calc(100% - 32px)!important;max-width:620px!important;margin-inline:auto!important;z-index:2147480000!important;background:#189647!important;color:#fff!important;-webkit-text-fill-color:#fff!important;pointer-events:auto!important;opacity:1!important;visibility:visible!important}
+#dmNewParkur .dmp-answers button[data-answer]{touch-action:manipulation!important;position:relative!important;z-index:5!important}
