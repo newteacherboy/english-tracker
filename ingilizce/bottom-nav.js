@@ -62,4 +62,18 @@ document.addEventListener('click',e=>{
 },true);
 decorate();const nav=document.getElementById('bottomNavMobile');if(nav){new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-dunyam')close();});}
 document.addEventListener('dm:login',close);
+// Keep installed PWA clients updated without requiring account logout.
+if('serviceWorker' in navigator){
+ let updating=false,lastCheck=0;
+ const check=async()=>{if(document.hidden||updating||Date.now()-lastCheck<60000)return;updating=true;lastCheck=Date.now();try{const reg=await navigator.serviceWorker.getRegistration();await reg?.update();}catch(e){console.warn('PWA güncellemesi kontrol edilemedi',e);}finally{updating=false}};
+ window.addEventListener('pageshow',check);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
+ setTimeout(check,2500);
+ let refreshed=false;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  if(refreshed||document.hidden)return;
+  const busy=!!document.querySelector('.dmp-quiz,.dm-solo-fullstage.active,#bzParkur.active,.game-modal-content:not([hidden])');
+  if(busy)return;refreshed=true;location.reload();
+ });
+}
 })();
