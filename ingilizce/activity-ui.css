@@ -178,3 +178,9 @@ body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
  .dc-fullscreen-overlay.dm-solo-fullstage.active{overscroll-behavior:contain}
  .dc-fullscreen-overlay.dm-solo-fullstage.active :is(button,input,select){touch-action:manipulation}
 }
+
+/* Keep Games hub's challenge actions reachable above the fixed bottom navigation. */
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-matches{
+  padding-bottom:calc(112px + env(safe-area-inset-bottom,0px));
+  scroll-margin-bottom:calc(112px + env(safe-area-inset-bottom,0px));
+}
