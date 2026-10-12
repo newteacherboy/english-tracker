@@ -1,46 +1,10 @@
-/* Diji-Medu: approved compact sticker navigation. Existing button handlers stay in place. */
-(() => {
- 'use strict';
- const icons = {'tab-dunya':0,'tab-meduakis':1,'tab-sanaozel':5,'tab-aktiviteler':2,'tab-derscalis':3,'tab-magaza':4,'tab-profil':5,'tab-dunyam':5};
- const positions = ['0% 0%','50% 0%','100% 0%','0% 100%','50% 100%','100% 100%'];
- const layout = [['tab-dunya','Oyna'],['tab-meduakis','Arkadaşlar'],['tab-aktiviteler','Oyunlar'],['tab-derscalis','Ders Çalış'],['tab-magaza','Mağaza'],['tab-dunyam','Benim Dünyam']];
-  let observer;
- function decorate() {
-  const nav = document.getElementById('bottomNavMobile');
-  if (!nav) return;
-  nav.setAttribute('aria-label','Ana menü');
-  const ordered = layout.map(([id]) => nav.querySelector('[data-ekran="'+id+'"]')).filter(Boolean);
-  const hidden = [...nav.children].filter(b => !ordered.includes(b));
-  // Keep the same six equal buttons; World stays last for existing menu hooks.
-  [...hidden,...ordered].forEach((b,i) => { if (nav.children[i] !== b) nav.insertBefore(b,nav.children[i] || null); });
-  for (const [id,name] of layout) {
-    const b = nav.querySelector('[data-ekran="'+id+'"]'); if (!b) continue;
-    const label = b.querySelector('.bn-label'); if (label && label.textContent !== name) label.textContent = name;
-    if (b.classList.contains('dm-nav-play')) b.classList.remove('dm-nav-play');
-  }
-  nav.querySelectorAll('.bn-item').forEach(button => {
-   const index = icons[button.dataset.ekran], icon = button.querySelector('.bn-icon');
-   if (index === undefined || !icon) return;
-   if (!icon.querySelector('.dm-nav-art')) {
-    const art = document.createElement('span');
-    art.className = 'dm-nav-art';
-    art.setAttribute('aria-hidden','true');
-    art.style.backgroundPosition = positions[index];
-    icon.replaceChildren(art);
-   }
-   const existingArt = icon.querySelector('.dm-nav-art');
-   if (existingArt && existingArt.style.backgroundPosition !== positions[index]) existingArt.style.backgroundPosition = positions[index];
-   const label = button.querySelector('.bn-label');
-   if (label) button.setAttribute('aria-label',label.textContent.trim());
-   if (button.classList.contains('active')) button.setAttribute('aria-current','page');
-   else button.removeAttribute('aria-current');
-  });
-  if (!observer) {
-   observer = new MutationObserver(decorate);
-   observer.observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});
-  }
- }
- decorate();
- if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',decorate,{once:true});
+/* Six icon-only destinations and the approved profile popover. */
+(()=>{'use strict';
+const layout=[['tab-dunya','Parkur','path'],['tab-meduakis','Arkadaşlar','friends'],['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-magaza','Mağaza','shop'],['tab-dunyam','Profil','profile']];
+function close(){const panel=document.getElementById('rtProfileBackdrop');if(!panel)return;panel.remove();document.getElementById('bottomNavMobile')?.querySelector('[data-ekran="tab-dunyam"]')?.setAttribute('aria-expanded','false');window.dcBottomNavSenkronize?.();}
+window.dmProfileMenuAc=function(){if(document.getElementById('rtProfileBackdrop')){close();return;}const nav=document.getElementById('bottomNavMobile'),last=nav?.querySelector('[data-ekran="tab-dunyam"]');if(!last)return;const el=document.createElement('div');el.id='rtProfileBackdrop';el.className='rt-profile-backdrop';const name=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||'Profilim'):'Profilim',level=window.dmProgression?.level?.()||1;
+const items=[['Profilim','user','profile'],['İlerlemem','chart','progress'],['Başarılarım','medal','badges'],['Dolabım','bag','closet'],['Ayarlar','gear','settings'],['Yardım & Destek','help','help']];el.innerHTML='<section class="rt-profile" role="dialog" aria-modal="true" aria-labelledby="rtProfileTitle"><header><img src="route-assets/papi-profile.png" alt=""><div><strong id="rtProfileTitle"></strong><small>Seviye '+level+'</small></div><button type="button" class="rt-close" aria-label="Profil menüsünü kapat">×</button></header><div class="rt-profile-grid">'+items.map(([label,art,action])=>'<button type="button" data-profile="'+action+'"><img src="route-assets/'+art+'.svg" alt=""><b>'+label+'</b>'+(action==='settings'?'<small>Öğrenme yolunu değiştir</small>':'')+'</button>').join('')+'</div></section>';el.querySelector('strong').textContent=name;el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close')){close();last.focus();return;}const b=e.target.closest('[data-profile]');if(!b)return;close();({profile:()=>window.kisiselBilgilerAc?.(),progress:()=>window.benimDunyamAc?.('istatistik'),badges:()=>window.benimDunyamAc?.('rozetler'),closet:()=>window.benimDunyamAc?.('karakter'),settings:()=>window.dmHesapAyarlariAc?.(),help:()=>window.yardimAc?.()})[b.dataset.profile]?.();};el.onkeydown=e=>{if(e.key==='Escape'){close();last.focus();}if(e.key==='Tab'){const buttons=[...el.querySelectorAll('button')],i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length].focus();}};document.body.append(el);nav.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active',b===last));last.setAttribute('aria-expanded','true');el.querySelector('.rt-close').focus();};
+function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav)return;for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const src='route-assets/'+(icon.endsWith('.png')?icon:icon+'.svg');if(slot&&!slot.querySelector('img'))slot.innerHTML='<img src="'+src+'" alt="" decoding="async">';if(id==='tab-dunyam'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
+decorate();const nav=document.getElementById('bottomNavMobile');if(nav){new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-dunyam')close();});}
+document.addEventListener('dm:login',close);
 })();
-
