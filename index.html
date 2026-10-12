@@ -615,11 +615,12 @@ body {
         .splash-logo-wrap { order: 1; width: clamp(190px,54vw,245px); height: clamp(210px,59vw,265px); }
         .splash-logo-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 12px 20px #0006); animation: splashLogoBreathe 2.8s ease-in-out infinite; }
         @keyframes splashLogoBreathe { 0%,100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-8px) rotate(1.5deg); } }
-        .splash-alt-yazi { order: 3; color: #a9c7c5; font: 500 12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; letter-spacing: .13em; text-transform: uppercase; margin-top: 4px; }
-        .splash-alt-yazi:after { content: ''; display: block; width: 76px; height: 3px; border-radius: 9px; margin: 14px auto 0; background: linear-gradient(90deg,#36cda7 50%,#315361 50%); background-size: 200% 100%; animation: splashLoad 1.3s linear infinite; }
-        @keyframes splashLoad { to { background-position: -200% 0; } }
+        .splash-dots { order: 3; display: flex; align-items: center; gap: 7px; height: 18px; margin-top: 4px; }
+        .splash-dots i { width: 6px; height: 6px; border-radius: 50%; background: #71f5d0; animation: splashDot 1.2s ease-in-out infinite; }
+        .splash-dots i:nth-child(2) { animation-delay: .15s; } .splash-dots i:nth-child(3) { animation-delay: .3s; }
+        @keyframes splashDot { 0%,70%,100% { transform: translateY(0); opacity: .45; } 35% { transform: translateY(-5px); opacity: 1; } }
         @media(max-height:620px) { .splash-logo-wrap { height: clamp(145px,35vh,205px); } }
-        @media(prefers-reduced-motion:reduce) { .splash-ekrani { transition:none; } .splash-word .sw-diji,.splash-word .sw-medu { width:9ch; border-right:0; animation:none; } .splash-logo-wrap img,.splash-alt-yazi:after { animation:none; } }</style>
+        @media(prefers-reduced-motion:reduce) { .splash-ekrani { transition:none; } .splash-word .sw-diji,.splash-word .sw-medu { width:9ch; border-right:0; animation:none; } .splash-logo-wrap img,.splash-dots i { animation:none; } }</style>
 </head>
 <body>
 
@@ -627,7 +628,7 @@ body {
         <svg class="splash-wave" aria-hidden="true"></svg>
         <div class="splash-logo-wrap"><img src="ingilizce/papi-welcome-v2.png" alt="Diji-Medu maskotu Papi"></div>
         <div class="splash-word" aria-label="Diji-Medu"><span class="sw-diji" aria-hidden="true">Diji-Medu</span></div>
-        <div class="splash-alt-yazi">OYUN DÜNYASI YÜKLENİYOR_</div>
+        <div class="splash-dots" aria-hidden="true"><i></i><i></i><i></i></div>
     </div>    <script>
         setTimeout(function() {
             var splash = document.getElementById('splashEkrani');
@@ -635,7 +636,7 @@ body {
                 splash.classList.add('splash-gizle');
                 setTimeout(function() { splash.style.display = 'none'; }, 500);
             }
-        }, 2900);
+        }, 1700);
     </script>
 
     
