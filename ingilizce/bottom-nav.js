@@ -29,37 +29,11 @@ window.dmTeacherChatOpen=function(){
 };
 
 function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav)return;
- // The previous release physically removed Parkur from the HTML; recreate its button.
- if(!nav.querySelector('[data-ekran="tab-dunya"]')){
-  const sample=nav.querySelector('[data-ekran="tab-aktiviteler"]');
-  if(sample){
-   const b=sample.cloneNode(true);
-   b.dataset.ekran='tab-dunya';b.classList.remove('active');b.removeAttribute('aria-current');
-   b.removeAttribute('onclick');b.onclick=null;
-   b.setAttribute('aria-label','Parkur');
-   const label=b.querySelector('.bn-label');if(label)label.textContent='Parkur';
-   const slot=b.querySelector('.bn-icon');if(slot)slot.innerHTML='<img src="route-assets/path.svg" alt="" decoding="async">';
-   nav.insertBefore(b,nav.firstElementChild);
-  }
- }
  nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const src='route-assets/'+(icon.endsWith('.png')?icon:icon+'.svg');if(slot&&!slot.querySelector('img'))slot.innerHTML='<img src="'+src+'" alt="" decoding="async">';if(id==='tab-dunyam'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
-// The new parkur is independent of the legacy story engines.
-(function loadNewParkur(){
- const css=document.createElement('link');css.rel='stylesheet';css.href='new-parkur-v2.css?v=10';document.head.append(css);
- const js=document.createElement('script');js.src='new-parkur-v2.js?v=10';document.head.append(js);
-})();
 window.dmOpenGamesHome=function(){
  const btn=document.querySelector('#bottomNavMobile [data-ekran="tab-aktiviteler"]');if(btn){btn.click();return true;}return false;
 };
-document.addEventListener('click',e=>{
- const b=e.target.closest?.('#bottomNavMobile [data-ekran="tab-dunya"]');
- if(!b)return;
- e.preventDefault();e.stopImmediatePropagation();window.dmNewParkurOpen?.();
-},true);
-document.addEventListener('click',e=>{
- const b=e.target.closest?.('#bottomNavMobile [data-ekran]:not([data-ekran="tab-dunya"])');
- if(b)window.dmNewParkurClose?.();
-},true);
+
 decorate();const nav=document.getElementById('bottomNavMobile');if(nav){new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-dunyam')close();});}
 document.addEventListener('dm:login',close);
 // Keep installed PWA clients updated without requiring account logout.
@@ -72,7 +46,7 @@ if('serviceWorker' in navigator){
  let refreshed=false;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{
   if(refreshed||document.hidden)return;
-  const busy=!!document.querySelector('.dmp-quiz,.dm-solo-fullstage.active,#bzParkur.active,.game-modal-content:not([hidden])');
+  const busy=!!document.querySelector('.dm-solo-fullstage.active,#bzParkur.active,.game-modal-content:not([hidden])');
   if(busy)return;refreshed=true;location.reload();
  });
 }
