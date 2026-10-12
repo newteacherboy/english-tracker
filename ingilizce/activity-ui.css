@@ -160,3 +160,21 @@ body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
 
 /* Journey is accessed through Oyna, not the Games catalogue. */
 #tab-aktiviteler#tab-aktiviteler .az-grid2x2>[onclick*="yolculuguAc"]{display:none!important}
+
+/* Single player games: fit the existing overlay to the current viewport.
+   Scope is added only for a solo game started from the Games tab. */
+.dc-fullscreen-overlay.dm-solo-fullstage.active{
+  position:fixed!important;inset:0!important;
+  width:100vw!important;height:100vh!important;height:100dvh!important;
+  max-width:none!important;max-height:none!important;
+  margin:0!important;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)!important;
+  box-sizing:border-box!important;overflow:hidden!important;
+  display:flex!important;flex-direction:column!important;
+}
+.dc-fullscreen-overlay.dm-solo-fullstage.active > :first-child{
+  flex:1 1 auto;min-height:0;max-height:100%;min-width:0;
+}
+@media (max-width:600px) {
+ .dc-fullscreen-overlay.dm-solo-fullstage.active{overscroll-behavior:contain}
+ .dc-fullscreen-overlay.dm-solo-fullstage.active :is(button,input,select){touch-action:manipulation}
+}
