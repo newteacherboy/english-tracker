@@ -1,0 +1,115 @@
+/* Shared day/night colors. Layout and game correctness states keep their own rules. */
+:root {
+  --dm-page:#f2fbfa;--dm-surface:#fff;--dm-soft:#eaf7f5;--dm-input:#fff;
+  --dm-text:#103e4d;--dm-muted:#506978;--dm-line:#c9dedd;
+  --dm-accent:#007e88;--dm-on-accent:#fff;--dm-link:#007780;
+  --dm-placeholder:#617988;--dm-shadow:0 15px 45px #093b4b14;
+  --dm-success:#166534;--dm-success-bg:#e8f8ed;--dm-error:#a92036;--dm-error-bg:#fff0f2;
+}
+:root[data-dm-theme="night"] {
+  --dm-page:#062c38;--dm-surface:#0b3e4c;--dm-soft:#104c59;--dm-input:#0b3b49;
+  --dm-text:#f0fcff;--dm-muted:#bad6df;--dm-line:#38717d;
+  --dm-accent:#69f2d2;--dm-on-accent:#053843;--dm-link:#83eee2;
+  --dm-placeholder:#a9cbd7;--dm-shadow:0 15px 45px #00182255;
+  --dm-success:#a1efb7;--dm-success-bg:#164c3b;--dm-error:#ffb6c0;--dm-error-bg:#582c3a;
+}
+html[data-dm-theme] body {background:var(--dm-page)!important;color:var(--dm-text);}
+html[data-dm-theme] body,html[data-dm-theme] button,html[data-dm-theme] input,html[data-dm-theme] select,html[data-dm-theme] textarea,
+html[data-dm-theme] #panel-alani,html[data-dm-theme] #panel-alani * {font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important;}
+/* Auth design is explicitly scoped; Google identity stays on its white button. */
+html[data-dm-theme] #login-container {
+  position:relative;background:var(--dm-surface)!important;color:var(--dm-text)!important;
+  border:1px solid var(--dm-line)!important;box-shadow:var(--dm-shadow)!important;
+  width:calc(100% - 24px)!important;max-width:490px!important;border-radius:25px!important;
+  margin:22px auto!important;padding:26px 28px 22px!important;text-align:left!important;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important;
+}
+html[data-dm-theme="night"] #login-container {background:linear-gradient(155deg,#073e4d,#042f3c)!important;}
+html[data-dm-theme] #login-container .dm-logo-row {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
+  margin:0 0 12px!important;min-height:116px;position:relative;
+}
+html[data-dm-theme] #login-container .dm-logo-icon {width:116px!important;height:130px!important;flex-shrink:0;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;}
+html[data-dm-theme] #login-container .dm-logo-icon img {width:100%;height:100%;object-fit:contain;}
+html[data-dm-theme="day"] #login-container .dm-logo-icon {order:2;}
+html[data-dm-theme] #login-container .dm-logo-word {font-size:clamp(25px,6vw,36px)!important;letter-spacing:-1px!important;color:var(--dm-text)!important;font-weight:850!important;white-space:nowrap;}
+html[data-dm-theme] #login-container .dm-diji {color:var(--dm-text)!important;}
+html[data-dm-theme] #login-container .dm-medu {color:var(--dm-link)!important;}
+html[data-dm-theme] #login-container .dm-logo-tag {font-size:10px!important;letter-spacing:2px!important;color:var(--dm-muted)!important;margin-top:5px;}
+html[data-dm-theme] #login-container h2 {color:var(--dm-text)!important;font-size:32px!important;line-height:1.25!important;font-weight:800!important;letter-spacing:-.6px!important;margin:6px 0 10px!important;}
+html[data-dm-theme] #login-container .subtitle {color:var(--dm-muted)!important;font-size:15px!important;line-height:1.5!important;margin-bottom:20px!important;}
+html[data-dm-theme] #login-container .form-group {margin:0 0 14px!important;}
+html[data-dm-theme] #login-container .form-group label {display:block;color:var(--dm-text)!important;font-size:14px!important;font-weight:650!important;margin-bottom:7px!important;}
+html[data-dm-theme] #login-container .form-group :is(input,select),html[data-dm-theme] #login-container textarea {
+  background:var(--dm-input)!important;color:var(--dm-text)!important;border:1.5px solid var(--dm-line)!important;
+  border-radius:14px!important;min-height:50px!important;padding:12px 15px!important;font-size:16px!important;
+}
+html[data-dm-theme="night"] #login-container .form-group :is(input,select) {border-color:#6adbd5!important;}
+html[data-dm-theme] #login-container input::placeholder {color:var(--dm-placeholder)!important;opacity:1!important;}
+html[data-dm-theme] #login-container input:focus,html[data-dm-theme] #login-container select:focus {outline:3px solid var(--dm-link)!important;outline-offset:2px;}
+html[data-dm-theme] #login-container .btn-giris {background:var(--dm-accent)!important;color:var(--dm-on-accent)!important;border-radius:15px!important;min-height:53px!important;font-size:18px!important;font-weight:800!important;box-shadow:0 3px 0 #003a4526!important;}
+html[data-dm-theme] #login-container .btn-giris:disabled {opacity:.55!important;cursor:wait;}
+html[data-dm-theme] #login-container .dm-google-login {background:#fff!important;color:#202124!important;border:1.5px solid #9bacbb!important;border-radius:14px!important;min-height:50px!important;box-shadow:none!important;font-size:15px!important;}
+html[data-dm-theme] #login-container .dm-google-login span {color:#202124!important;}
+html[data-dm-theme] #login-container #dmGuestEntry {background:var(--dm-soft)!important;color:var(--dm-link)!important;border:1.5px solid var(--dm-link)!important;min-height:42px;padding:10px 16px!important;font-size:13px!important;margin:12px auto 4px!important;}
+html[data-dm-theme] #login-container .dm-divider {color:var(--dm-muted)!important;margin:14px 0!important;}
+html[data-dm-theme] #login-container .dm-divider::before,html[data-dm-theme] #login-container .dm-divider::after {background:var(--dm-line)!important;}
+html[data-dm-theme] #login-container .dm-register-action {background:transparent!important;color:var(--dm-link)!important;border:1.5px solid var(--dm-link)!important;border-radius:12px!important;}
+html[data-dm-theme] #login-container .dm-forgot-action,html[data-dm-theme] #login-container a {color:var(--dm-muted)!important;}
+html[data-dm-theme] #login-container > a[href="gizlilik.html"] {color:var(--dm-muted)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme] #login-container :is(.dm-form-intro,.dm-section,.dm-registration small) {color:var(--dm-muted)!important;}
+html[data-dm-theme] #login-container :is(.dm-consent,.dm-optional) {background:var(--dm-soft)!important;color:var(--dm-muted)!important;}
+html[data-dm-theme] #login-container .dm-verified {background:var(--dm-success-bg)!important;color:var(--dm-success)!important;}
+html[data-dm-theme] #login-container #mesaj {color:var(--dm-error)!important;}
+html[data-dm-theme] #login-container [hidden] {display:none!important;}
+@media(max-width:380px){html[data-dm-theme] #login-container {padding:20px 18px!important;}html[data-dm-theme] #login-container .dm-logo-icon {width:90px!important;height:108px!important;}html[data-dm-theme] #login-container .dm-logo-word {font-size:27px!important;}}
+@media(max-height:740px){html[data-dm-theme] #login-container {margin:12px auto!important;padding-top:18px!important;}html[data-dm-theme] #login-container .dm-logo-row {min-height:92px!important;}html[data-dm-theme] #login-container .dm-logo-icon {height:100px!important;width:92px!important;}html[data-dm-theme] #login-container h2 {font-size:28px!important;}}
+/* Shared application shells, including independently opened dialogs. */
+html[data-dm-theme] :is(#panel-alani,.dc-focus-card,.rubric-content,.dm-auth-dialog,.cog-kart,.dm-account-card,.rt-dialog,.rt-profile,.dm-sheet,.dm-friend-dialog,.kr-kart,.duy3-card) {background:var(--dm-surface)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme] :is(#tab-dunya,#tab-dunyam,#tab-derscalis,#tab-meduakis,#tab-magaza) {background-color:var(--dm-page)!important;color:var(--dm-text)!important;}
+html[data-dm-theme] #bottomNavMobile#bottomNavMobile.bottom-nav-mobile {background:var(--dm-surface)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme] #bottomNavMobile#bottomNavMobile :is(.bn-item,.bn-label) {color:var(--dm-text)!important;}
+html[data-dm-theme] #bottomNavMobile#bottomNavMobile .bn-item.active {background:var(--dm-soft)!important;color:var(--dm-link)!important;}
+html[data-dm-theme] #welcomePortalScreen.welcome-overlay {background:var(--dm-page)!important;color:var(--dm-text)!important;}
+html[data-dm-theme] #welcomePortalScreen :is(.welcome-container,.welcome-card) {background:var(--dm-surface)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme] #welcomePortalScreen :is(.welcome-title,.welcome-prompt,.welcome-card-body h3) {color:var(--dm-text)!important;}
+html[data-dm-theme] #welcomePortalScreen :is(.welcome-subtitle,.welcome-card-body p) {color:var(--dm-muted)!important;}
+/* Night: change surfaces and their text together; do not recolor photos or answer states. */
+html[data-dm-theme="night"] :is(.rt-root,.rt-top,.rt-banner,.rt-card,.rt-path,.rt-route-area,.rt-profile-grid button,.rt-choices button,.rt-all button,.rt-wallet button,.rt-task-list>button,.rt-week,.rt-close) {background:var(--dm-surface)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme="night"] #tab-dunya .bz-ic:has(.rt-root) {background:var(--dm-page)!important;}
+html[data-dm-theme="night"] :is(.rt-card,.rt-banner) :is(h1,h2,h3,b,strong) {color:var(--dm-text)!important;}
+html[data-dm-theme="night"] :is(.rt-root,.rt-dialog,.rt-profile) :is(p,small,.rt-task-progress) {color:var(--dm-muted)!important;}
+html[data-dm-theme="night"] :is(.rt-start,.rt-badge) {background:var(--dm-accent)!important;color:var(--dm-on-accent)!important;}
+html[data-dm-theme="night"] :is(#tab-dunyam .bd-kok,#tab-dunyam .bw-root,#tab-dunyam .bw-home,.ds-home,#tab-meduakis .ma-wrap,#tab-magaza.ds-store,body.dm-study-design #tab-derscalis.su-active[data-study-screen]) {background:var(--dm-page)!important;color:var(--dm-text)!important;}
+html[data-dm-theme="night"] :is(.bd-kart,.bd-kutu,.bd-istat,.bd-cip,.bd-kilit,.bd-ogretmen,.bd-rozet,.bw-card,.bw-pill,.bw-back,.bw-profile-chip,.bw-homework-next,.bw-level,.bw-badges,.bw-podium,.fr-card,.fr-person,.fr-summary,.fr-showcase,.fr-invitation,.fr-search-person,.akis-kart,.ml-satir,.su-level-card,.su-levels-welcome,.su-levels-resume,.su-topic,.su-lesson-hero,.su-empty,.su-result-card,.dc-content-card,.dc-quiz-q,.rule-box,.formula,.ds-offer,.ds-joker,.ds-pack,.ds-energy,.ds-heading,.ds-opportunity,.ds-outfit,.ds-wallet,.ds-joker-intro,.ds-energy-intro,.ds-character-label) {background:var(--dm-surface)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;box-shadow:var(--dm-shadow)!important;}
+html[data-dm-theme="night"] :is(#tab-dunyam,#tab-meduakis,#tab-derscalis,#tab-magaza) :is(h1,h2,h3,h4,.bd-ad-satir b,.bw-heading,.su-topic-text,.ds-price,.ds-stock,.ml-ad,.fr-league-name,.fr-league-position) {color:var(--dm-text)!important;}
+html[data-dm-theme="night"] :is(#tab-dunyam,#tab-meduakis,#tab-derscalis,#tab-magaza) :is(p,small,.bd-not,.bd-xp-yazi,.su-level-count,.su-word-hint,.ds-offer-note,.fr-empty,.fr-streak,.dc-ex-tr) {color:var(--dm-muted)!important;}
+html[data-dm-theme="night"] :is(.bd-sekmeler,.bd-sv,.bd-avatar,.bd-cip,.bw-green,.fr-filters,.segment,.su-filters,.su-categories,.su-level-bar,.su-level-count,.dc-tabbar,.dc-word,.dc-example-row,.ds-parts,.ds-offer-footer,.ds-joker-bottom) {background:var(--dm-soft)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme="night"] :is(.bd-sekme,.bd-kalem,.fr-back,.fr-more,.su-back,.su-search,.su-slow,.ds-back,.ds-plus,.zl-btn,.dc-exit-btn) {background:var(--dm-soft)!important;color:var(--dm-link)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme="night"] :is(.bd-sekme.active,.su-primary,.su-complete,.ds-buy,.fr-add,.fr-open,.fr-link,.fr-invite-link) {background:var(--dm-accent)!important;color:var(--dm-on-accent)!important;}
+html[data-dm-theme="night"] :is(.rubric-content,.dm-auth-dialog,.cog-kart,.dm-account-card,.dm-sheet,.kr-kart,.duy3-card) :is(h2,h3,h4,label) {color:var(--dm-text)!important;}
+html[data-dm-theme="night"] :is(.rubric-content,.dm-auth-dialog,.cog-kart,.dm-account-card,.dm-sheet,.kr-kart,.duy3-card) :is(p,small,.alt) {color:var(--dm-muted)!important;}
+html[data-dm-theme="night"] :is(.rubric-content,.dm-auth-dialog,.cog-kart,.dm-account-card,.dm-sheet,#tab-meduakis,#tab-derscalis,#tab-magaza) :is(input,select,textarea) {background:var(--dm-input)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme="night"] :is(input,textarea)::placeholder {color:var(--dm-placeholder)!important;opacity:1;}
+/* Fullscreen adventure and learning route: same dimensions, adapted question surfaces. */
+html[data-dm-theme="night"] body #bzPerde#bzPerde.sp-adventure,html[data-dm-theme="night"] body #dmStoryLesson#dmStoryLesson.sp-story {background:var(--dm-page)!important;color:var(--dm-text)!important;}
+html[data-dm-theme="night"] body #bzPerde#bzPerde.sp-adventure #bzAlan,
+html[data-dm-theme="night"] body #dmStoryLesson#dmStoryLesson.sp-story .ds-panel {background:var(--dm-surface)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;box-shadow:0 5px 0 #021f2a!important;}
+html[data-dm-theme="night"] body #bzPerde#bzPerde.sp-adventure :is(.sp-question-board,.bz-soru,.bz-ipucu,.bz-tr-anlam,.dm-final-current,.dm-final-card,.dm-final-write-panel,.bz-slot,.bz-bos-vagon),
+html[data-dm-theme="night"] body #dmStoryLesson#dmStoryLesson.sp-story :is(.papi-question,.papi-subtitle,.papi-v2,.ds-step-label,.ds-sentence,.papi-text-answer,.ds-save-note,.ds-lesson-header,.ds-lesson-header h2) {background:var(--dm-soft)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme="night"] body #bzPerde#bzPerde.sp-adventure :is(.bz-sec,.bz-es,.bz-cip2):not(.dogru):not(.yanlis):not(.dm-right):not(.dm-wrong),
+html[data-dm-theme="night"] body #dmStoryLesson#dmStoryLesson.sp-story :is(.ds-options button,.ds-tokens button):not(.dogru):not(.yanlis):not(.selected):not(.papi-win) {background:var(--dm-input)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;box-shadow:0 3px 0 #021f2a!important;}
+html[data-dm-theme="night"] :is(.sp-entry,.sp-start-card,.mt-setup,.pc-setup,.ww-setup,.ab-kart,.hb-card,.game-modal-content) {background:var(--dm-surface)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme="night"] :is(.sp-entry,.sp-start-card,.mt-setup,.pc-setup,.ww-setup,.ab-kart,.hb-card) :is(h2,h3,label,strong) {color:var(--dm-text)!important;}
+html[data-dm-theme="night"] :is(.sp-entry,.sp-start-card,.mt-setup,.pc-setup,.ww-setup,.ab-kart,.hb-card) :is(p,small,.sp-entry-note) {color:var(--dm-muted)!important;}
+html[data-dm-theme="night"] :is(.sp-prize,.dm-entry-rules) {background:var(--dm-soft)!important;color:var(--dm-text)!important;}
+html[data-dm-theme="night"] :is(.ds-price,.ds-stock,.bw-showcase,.bw-stats,.bw-profile-top,.bw-profile-main) {background:var(--dm-soft)!important;color:var(--dm-text)!important;}
+html[data-dm-theme="night"] :is(.game-title,.game-subtitle) {color:var(--dm-text)!important;}
+html[data-dm-theme="night"] body :is(.pc-body:has(.pc-setup),.ww-body:has(.ww-setup)) {background:var(--dm-surface)!important;color:var(--dm-text)!important;}
+html[data-dm-theme="night"] body #bzPerde#bzPerde.sp-adventure :is(.bz-input,.bz-wordle .h,.bz-inceleme-govde,.bz-klavye) {background:var(--dm-input)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;}
+html[data-dm-theme="night"] :is(.sp-entry,.mt-setup,.pc-setup,.ww-setup) :is(input,select) {background:var(--dm-input)!important;color:var(--dm-text)!important;border-color:var(--dm-line)!important;}
+/* Correct/incorrect remain explicit green/red in both themes. */
+html[data-dm-theme="night"] body #bzPerde#bzPerde.sp-adventure :is(.bz-sec,.bz-es,.dm-match-option):is(.dogru,.dm-right),
+html[data-dm-theme="night"] body #dmStoryLesson#dmStoryLesson.sp-story .ds-options button.dogru {background:var(--dm-success-bg)!important;color:var(--dm-success)!important;border-color:var(--dm-success)!important;}
+html[data-dm-theme="night"] body #bzPerde#bzPerde.sp-adventure :is(.bz-sec,.bz-es,.dm-match-option):is(.yanlis,.dm-wrong),
+html[data-dm-theme="night"] body #dmStoryLesson#dmStoryLesson.sp-story .ds-options button.yanlis {background:var(--dm-error-bg)!important;color:var(--dm-error)!important;border-color:var(--dm-error)!important;}
