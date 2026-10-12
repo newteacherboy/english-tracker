@@ -45,3 +45,24 @@ body.dm-parkur-open #bzParkur#bzParkur>.bz-ic{padding-bottom:calc(84px + env(saf
 
 body:has(#rtProfileBackdrop) #bottomNavMobile#bottomNavMobile{z-index:2147483550!important}
 #tab-dunya #dmParkurScroll:has(.rt-root){padding-bottom:0!important}
+
+/* Always draw the actual profile SVG above the old sticker atlas. */
+#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon{display:grid!important;place-items:center!important}
+#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon .dm-nav-art{display:none!important}
+#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon img{display:block!important;position:relative!important;width:38px!important;height:38px!important;object-fit:contain!important;opacity:1!important;visibility:visible!important}
+
+.dm-teacher-chat-overlay{position:fixed;inset:0;z-index:2147483601;background:#192542aa;display:grid;place-items:center;padding:12px}
+.dm-teacher-chat{display:flex;flex-direction:column;width:min(100%,520px);height:min(76dvh,650px);border-radius:24px;background:#fff;overflow:hidden;box-shadow:0 20px 70px #15213955;font-family:Nunito,system-ui,sans-serif}
+.dm-teacher-chat header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px;background:#eee9ff;color:#2b2862}
+.dm-teacher-chat header button{border:0;border-radius:50%;width:37px;height:37px;font-size:27px;background:#fff;color:#3b366a}
+.dm-chat-log{flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:9px}
+.dm-chat-bubble{max-width:84%;border-radius:17px;padding:10px 13px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.dm-chat-bubble.teacher{align-self:flex-start;background:#eaf1ff;color:#253c64}
+.dm-chat-bubble.student{align-self:flex-end;background:#d9f8e9;color:#164b42}
+.dm-chat-form{display:flex;gap:8px;padding:10px 13px;border-top:1px solid #e9e9f0}
+.dm-chat-form textarea{flex:1;min-width:0;resize:none;font:14px Nunito,system-ui;padding:9px;border-radius:12px;border:1px solid #cfd5e1}
+.dm-chat-form button{border:0;border-radius:13px;background:#16afa0;color:white;padding:0 16px;font-weight:800}
+.dm-chat-form button:disabled{opacity:.5}.dm-chat-status{font-size:12px;color:#9c2941;margin:0 13px 9px}
+
+/* Retire both old learning header switch variants, including cached markup. */
+#tab-dunya .dm-parkur-tabs,#tab-dunya #pkSekmeler,#bzParkur .dm-parkur-tabs,#bzParkur #pkSekmeler,body.dm-parkur-open .dm-parkur-tabs,body.dm-parkur-open #pkSekmeler{display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important;margin:0!important;border:0!important;overflow:hidden!important}
