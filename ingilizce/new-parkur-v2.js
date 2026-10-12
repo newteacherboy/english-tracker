@@ -98,6 +98,7 @@ function finish(){
  const runId='dmp2-'+level.id+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);
  host.innerHTML='<div class="dmp-finish"><div class="dmp-medal">🏆</div><h2>'+(passed?'Seviyeyi tamamladın!':'Bir kez daha deneyelim!')+'</h2><p>9 sorudan '+score+' doğru</p><small>'+(passed?'Sonraki seviye açıldı.':'Geçmek için en az 6 doğru gerekiyor.')+'</small><div class="dmp-reward-status" role="status">'+(passed?'🪙 Ödül isteği gönderildi; doğrulanınca hesaba yansıyacak.':'Bir sonraki denemede başarabilirsin!')+'</div><button data-home>Parkura dön</button></div>';
  host.querySelector('[data-home]').onclick=()=>{selected=null;home()};
+ host.dataset.rewardRun=runId;
  if(passed&&first&&typeof window.ocOdulVer==='function'){
   try{window.ocOdulVer({runId,oyunKey:'ba',puanSurum:3,rewardScope:{classNo:level.g,units:[level.u],stopNo:level.g*100000+level.u*1000+level.part},dogru:score,yanlis:9-score,sureSaniye:Math.max(1,(Date.now()-startedAt)/1000),parkurGecti:true,parkurIlk:first,parkurYildiz:score>=9?3:score>=8?2:1});}
   catch(err){const el=host.querySelector('.dmp-reward-status');if(el)el.textContent='Ödül doğrulanamadı; öğrenci ilerlemesi korunuyor.';console.warn('Parkur ödülü',err);}
@@ -117,4 +118,10 @@ document.addEventListener('click',e=>{
  if(el.hasAttribute('data-answer'))answer(el.dataset.answer);
  else if(answered)advance();
 },true);
+document.addEventListener('dm:reward-result',e=>{
+ const d=e.detail||{},host=$('#dmNewParkur');if(!host||host.dataset.rewardRun!==d.runId)return;
+ const el=host.querySelector('.dmp-reward-status');if(!el)return;
+ if(!d.ok){el.textContent='Ödül henüz kaydedilemedi: '+(d.error||'Bağlantı hatası')+'. Sistem yeniden deneyecek.';return;}
+ el.innerHTML='<div class="dmp-reward-pop"><strong>🎉 Papi seni kutluyor!</strong><div>⭐ +'+esc(d.xp||0)+' XP &nbsp; 🪙 +'+esc(d.gold||0)+' Altın</div></div>';
+});
 window.dmNewParkur={chapters,open:window.dmNewParkurOpen,home};})();
