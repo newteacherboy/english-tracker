@@ -19782,6 +19782,10 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
 @keyframes jmSal { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(6deg) scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .pk-sekmeler, .pk-sekmeler i, .jm-kart, .jm-kart .e, .jm-perde .jm-kutu { animation:none !important; } }
 </style>
+<style id="dm-hide-route-legacy-tabs">
+/* This legacy bar lives under body, outside the route panel. */
+body:has(#tab-dunya.active) #pkSekmeler{display:none!important}
+</style>
 <div class="pk-sekmeler" id="pkSekmeler" role="tablist" aria-label="Parkurlar">
   <button data-p="ba" role="tab"><i>🧙</i>Büyü Akademisi</button>
   <button data-p="kp" role="tab"><i>🔤</i>Kelime Modu</button>
@@ -19819,7 +19823,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
   setInterval(() => {
     let p = hangiParkur(), bar = $('pkSekmeler');
     let oyunIci = typeof odulOyunda === 'function' && odulOyunda() && p !== 'kk';
-    let goster = !!p && !oyunIci && !document.querySelector('.bs-perde, .ab-perde, .bc-perde, .kr-perde, .od-perde, .dv-perde');
+    let goster = !!p && !aktif('tab-dunya') && !oyunIci && !document.querySelector('.bs-perde, .ab-perde, .bc-perde, .kr-perde, .od-perde, .dv-perde');
     bar.classList.toggle('gor', goster);
     document.body.classList.toggle('pk-sekmeli', goster);
     bar.querySelectorAll('button').forEach(b => { let selected=b.dataset.p===p || (b.dataset.p==='pro' && p && p!=='ba'); b.classList.toggle('aktif',selected); b.setAttribute('aria-selected',selected?'true':'false'); });
