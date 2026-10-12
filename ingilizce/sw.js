@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v111-map-art';
+const SURUM = 'diji-v112-emergency-map-rollback';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 /* Ana sayfanın çevrimdışı kopyasını ASLA değiştirmemesi gereken sayfalar:
@@ -50,3 +50,4 @@ self.addEventListener('fetch', e => {
     })));
   }
 });
+4de0262783fb74e49c55cdccd1ceff7fbbc34cc1
