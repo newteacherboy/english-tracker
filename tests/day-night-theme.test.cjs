@@ -14,26 +14,20 @@ function fixture(hour=12){
   vm.runInNewContext(source,context);
   return {window,document,attrs,meta,root,timers,docEvents,winEvents,context,setHour(h){now.setHours(h,0,0,0)}};
 }
-test('day starts at 07:00 and night starts at 19:00 in the device timezone',()=>{
-  for(const [h,t] of [[0,'night'],[6,'night'],[7,'day'],[12,'day'],[18,'day'],[19,'night'],[23,'night']]){
-    const f=fixture(h);assert.equal(f.attrs['data-dm-theme'],t);assert.equal(f.root.style.colorScheme,t==='night'?'dark':'light');
-    assert.equal(f.meta.content,t==='night'?'#063543':'#f2fbfa');
+test('the daytime design stays active at every hour',()=>{
+  for(let h=0;h<24;h++){
+    const f=fixture(h);assert.equal(f.attrs['data-dm-theme'],'day');assert.equal(f.root.style.colorScheme,'light');
+    assert.equal(f.meta.content,'#f2fbfa');assert.equal(f.window.dmDayNightTheme.themeFor(new Date(2026,9,12,h)),'day');
   }
 });
-test('exactly one timer targets the next boundary, including next morning',()=>{
-  for(const [h,hours] of [[6,1],[7,12],[18,1],[19,12],[23,8]]){
-    const f=fixture(h);assert.equal(f.timers.size,1);assert.equal([...f.timers.values()][0].ms,hours*3600000+50);
-    f.window.dmDayNightTheme.refresh();f.window.dmDayNightTheme.refresh();assert.equal(f.timers.size,1);
-  }
+test('fixed daytime theme never schedules a boundary timer',()=>{
+  const f=fixture(23);f.window.dmDayNightTheme.refresh();f.setHour(8);f.window.dmDayNightTheme.refresh();assert.equal(f.timers.size,0);
 });
-test('hidden pages pause, restored and focused pages refresh without rebuilding the DOM',()=>{
-  const f=fixture(18);f.document.hidden=true;f.docEvents.visibilitychange();assert.equal(f.timers.size,0);
-  f.setHour(20);f.document.hidden=false;f.docEvents.visibilitychange();assert.equal(f.attrs['data-dm-theme'],'night');assert.equal(f.timers.size,1);
-  f.winEvents.pagehide();assert.equal(f.timers.size,0);f.setHour(8);f.winEvents.pageshow();assert.equal(f.attrs['data-dm-theme'],'day');
-  f.setHour(20);f.winEvents.focus();assert.equal(f.attrs['data-dm-theme'],'night');assert.equal(f.timers.size,1);
+test('restored pages reapply the daytime design',()=>{
+  const f=fixture(23);f.attrs['data-dm-theme']='night';f.root.style.colorScheme='dark';f.winEvents.pageshow();assert.equal(f.attrs['data-dm-theme'],'day');assert.equal(f.root.style.colorScheme,'light');
 });
-test('loading theme script twice does not duplicate listeners or timers',()=>{
-  const f=fixture();const api=f.window.dmDayNightTheme;vm.runInNewContext(source,f.context);assert.equal(f.window.dmDayNightTheme,api);assert.equal(f.timers.size,1);
+test('loading theme script twice does not duplicate lifecycle listeners',()=>{
+  const f=fixture();const api=f.window.dmDayNightTheme;const listener=f.winEvents.pageshow;vm.runInNewContext(source,f.context);assert.equal(f.window.dmDayNightTheme,api);assert.equal(f.winEvents.pageshow,listener);assert.equal(f.timers.size,0);
 });
 function lum(hex){const c=hex.replace('#','').match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return c[0]*.2126+c[1]*.7152+c[2]*.0722}
 function ratio(a,b){const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
