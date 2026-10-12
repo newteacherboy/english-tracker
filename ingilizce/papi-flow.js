@@ -4,7 +4,7 @@ const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||''
 const noticeSelector='#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmWeeklyPanel,#dmLevelUp,#dmNudge,.od-perde,.kr-perde,.dv-perde,.cb-kart,.bk-kart,.yo-toast,.uy-serit,.yo-davet,.tv-kart,.sa-perde,.cog-perde,[role="dialog"]:not(#dmPapiTour):not(#dmPapiFirstStart):not(#dmStoryLesson),[aria-modal="true"]:not(#dmPapiTour):not(#dmPapiFirstStart):not(#dmStoryLesson)';
 const visible=e=>!!e&&e.isConnected&&!e.classList.contains('dm-papi-held')&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden'&&getComputedStyle(e).display!=='none';
 let queue=[],actor=who(),pending=false,executing='',nextAt=0,held=[],practice=null;
-const activitySelector='#dmStoryLesson,.bz-oyun,#bzAlan,#dcScreenDetail,#dcScreenTest,#yoModal.acik,.game-modal-overlay,.km-perde,.t2-perde,#meteorGame,#wordWheel,#papiCards,#genelSonucOverlay.acik';
+const activitySelector='#dmStoryLesson,.bz-oyun,#bzAlan,#baOyunEkrani,#kpKelimeOyunEkrani,#seviyeDisLinkOverlay,#dcScreenDetail,#dcScreenTest,#yoModal.acik,.game-modal-overlay,.km-perde,.t2-perde,#meteorGame,#wordWheel,#papiCards,#genelSonucOverlay.acik';
 const exercise=()=>[...document.querySelectorAll(activitySelector)].some(visible)||!!practice;
 const holding=()=>!!window.dmPapiTour?.active()||exercise();
 const tourHolding=()=>!!window.dmPapiTour?.active();

@@ -5,7 +5,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  await page.setContent('<style>.dm-papi-held{visibility:hidden!important}</style><div id="panel-alani" style="display:block"></div>');
  await page.evaluate(()=>{window.aktifOgrenciAdi='Fixture';window.yo={dmLearningPurpose:'school'};window.yoHazirMi=()=>true;window.apiURL='/api';window.fetch=async()=>({ok:true,json:async()=>({ok:true,emailVerified:true,hasPlacement:true})});});
  for(const f of ['papi-flow.js','experience-ui.js'])await page.addScriptTag({content:fs.readFileSync('ingilizce/'+f,'utf8')});
- for(const id of ['dcScreenDetail','meteorGame','wordWheel','papiCards','dmStoryLesson']){
+ for(const id of ['dcScreenDetail','meteorGame','wordWheel','papiCards','dmStoryLesson','baOyunEkrani','kpKelimeOyunEkrani','seviyeDisLinkOverlay']){
   await page.evaluate(id=>{const e=document.createElement('div');e.id=id;e.textContent='Activity';document.body.append(e);},id);
   assert(await page.evaluate(()=>dmPapiNotices.inActivity()),id);
   await page.evaluate(()=>dmNudgeSystem.showPreview({id:'test',title:'Test',text:'Test',target:'ders'}));assert.equal(await page.locator('#dmNudge').count(),0,id);
