@@ -93,7 +93,6 @@
   document.getElementById('dmGuestEntry')?.remove();
   // Existing onboarding tours use older reward copy; the guest tour has its own current introductions.
   window.turBaslat=()=>showTip('tab-aktiviteler');
-  document.querySelector('.kur-perde .kur-x')?.click();
   showTip('tab-meduakis');
   setInterval(()=>{if(!alive())return;const s=Math.ceil(Math.min(end-performance.now(),wallEnd-now())/1000);document.getElementById('dmGuestTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');},250);
  }
