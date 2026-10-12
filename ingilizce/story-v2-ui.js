@@ -12,7 +12,7 @@ window.DMStoryV2UI={
   const listenTr=button('🇹🇷 Türkçesini dinle',()=>E.speak(task.tr,'tr'));
   const header=document.createElement('div');header.className='ds-audio';header.append(listen,listenTr);
   actions.innerHTML='';
-  const submit=async answer=>{if(locked)return;locked=true;try{const result=await onSubmit(answer);area.classList.remove('papi-win','papi-error');void area.offsetWidth;if(result?.accepted||result?.correct){area.classList.add('papi-win');const tick=document.createElement('div');tick.className='papi-speech-tick';tick.setAttribute('role','status');tick.textContent='✅ Doğru söyledin!';area.append(tick);E.speak(task.en,'en');}else{area.classList.add('papi-error');locked=false;}}catch(e){locked=false;onNote(e.message||'Yeniden dene.');}};
+  const submit=async answer=>{if(locked)return;locked=true;try{const result=await onSubmit(answer);area.classList.remove('papi-win','papi-error');void area.offsetWidth;if(result?.accepted||result?.correct){area.classList.add('papi-win');E.speak(task.en,'en');}else{area.classList.add('papi-error');locked=false;}}catch(e){locked=false;onNote(e.message||'Yeniden dene.');}};
   const check=button('✓ Kontrol Et',()=>{if(task.kind==='match')return submit(pairs);if(task.kind==='order')return submit(selected.map(i=>task.tokens[i]).join(' '));if(['choose','complete'].includes(task.kind))return submit(picked);return submit(area.querySelector('input')?.value||'');});
   if(task.kind==='match'){
    put('<p class="papi-question">🧩 Doğru eşleştir!</p><p class="papi-subtitle">İngilizce ifadeyi Türkçe anlamıyla birleştir.</p>');

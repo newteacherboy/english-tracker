@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-12",
+  "source_reference": "ingilizce/papi-app-icon-v3.png",
+  "webp": "Unchanged reference character, resized to 300px, WebP quality 85. No new pose or character generated.",
+  "svg": "Original vector reconstruction from Paper Valley and Sky Islands concepts; backgrounds have no UI or text; centre kept calm.",
+  "limits": {
+    "per_asset_bytes": 250000,
+    "per_route_bytes": 1500000
+  }
+}

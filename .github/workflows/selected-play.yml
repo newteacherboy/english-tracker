@@ -1,9 +1,9 @@
 name: Selected play panels
 on:
   push:
-    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', '.github/workflows/selected-play.yml']
+    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', 'tests/paper-sky-ui.cjs', 'ingilizce/parkur-okul-assets/**', 'ingilizce/yol-assets/**', '.github/workflows/selected-play.yml']
   pull_request:
-    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', '.github/workflows/selected-play.yml']
+    paths: ['ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', 'tests/paper-sky-ui.cjs', 'ingilizce/parkur-okul-assets/**', 'ingilizce/yol-assets/**', '.github/workflows/selected-play.yml']
 permissions:
   contents: read
 jobs:
@@ -16,7 +16,17 @@ jobs:
           node-version: '22'
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
-      - run: node tests/selected-play-ui.cjs
+      - run: node tests/paper-sky-ui.cjs
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ github.workspace }}/node_modules
+          PARKUR_QA_DIR: ${{ runner.temp }}/parkur-qa
       - run: node tests/selected-game-entry.cjs
       - run: node --test tests/portal-integrity.test.cjs
       - run: python scripts/check-media-rights.py
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paper-sky-screenshots
+          path: ${{ runner.temp }}/parkur-qa
+          retention-days: 7

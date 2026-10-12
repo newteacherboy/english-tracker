@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const Y=()=>typeof yo!=='undefined'&&yo?yo:null,who=()=>typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
-const img=(name,cls='')=>'<img class="'+cls+'" src="route-assets/'+name+'" alt="" decoding="async">';
+const img=(name,cls='')=>'<img class="'+cls+'" src="'+(name==='papi-school.png'?'parkur-okul-assets/papi-v1.webp':name==='papi-english.png'?'yol-assets/papi-v1.webp':'route-assets/'+name)+'" alt="" decoding="async">';
 const art=(name,cls='')=>img(name+'.svg',cls);
 const tell=m=>window.yoToast?.(m);
 const schoolScene=window.dmParkurSahne,schoolMount=window.dmParkurMapMount;let preview=null,latest=null,epoch=0;
