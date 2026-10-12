@@ -1,3 +1,5 @@
+import { FEATURES } from './feature-catalog.ts';
+import { memberToolsAPI } from './member-tools-api.ts';
 import { storyAPI } from './story-api.ts';
 import { meteorAPI } from './meteor-api.ts';
 import { wordWheelAPI } from './word-wheel-api.ts';
@@ -189,6 +191,8 @@ async function sorumluEpostalar(s: any) {
     const e = String(t?.email || "").trim();
     if (t && t.active !== false && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return [e];
   }
+  const {data:owner}=await supabase.from("teachers").select("email").eq("username","teacher").eq("active",true).maybeSingle();
+  if(owner?.email&&/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(owner.email))return [owner.email];
   return (await yoneticiler()).epostalar;
 }
 async function issueSession(role: "student" | "teacher", studentId?: string, teacherId?: string) {
@@ -344,7 +348,7 @@ function profileFor(s: any, o: any, b: any) {
     ogrenci: s.username, Sinif: s.class_no || "", sinif: s.class_no || "", sube: s.branch || "", Sube: s.branch || "",
     ogretmenBagli: !!s.teacher_id,
     adSoyad: s.full_name || "", okul: s.school || "",
-    telefon: s.phone || "", email: s.email || "", durum: s.status === "pending" ? "onay bekliyor" : s.status, toplamsure: s.total_seconds || 0,
+    telefon: s.phone || "", email: s.email || "", emailDogrulandi:!!s.email_verified_at, durum: s.status === "pending" ? "onay bekliyor" : s.status, toplamsure: s.total_seconds || 0,
     enerji: s.energy, enerjiMax: s.energy_max, streak: s.streak, puan: s.points, altin: s.gold, xp: s.xp,
     genelPuan: son ? son.genel : genelOrtalama, genelOrtalama,
     etkinlikBasarisi: etk.length ? Math.round(etk.filter((x: any) => x.status === "completed").length / etk.length * 100) : (p.etkinlikBasarisi ?? 0),
@@ -1234,6 +1238,7 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
+  const memberResponse=await memberToolsAPI({db:supabase,json,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
   const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
@@ -1625,8 +1630,8 @@ async function handle(req: Request) {
   }
   if (op === "ogretmenSohbetListesi") {
     const deny = await requireTeacher(a); if (deny) return deny;
-    const [{ data }, { data: st }] = await Promise.all([supabase.from("chat_messages").select("student_id,created_at,message,sender_role,read_at").order("created_at", { ascending: false }).limit(800), ogrFiltre(supabase.from("students").select("id,username"))]);
-    const ad = new Map((st || []).map((x: any) => [x.id, x.username])), son = new Map<string, any>(), say = new Map<string, number>();
+    const [{ data }, { data: st }] = await Promise.all([supabase.from("chat_messages").select("student_id,created_at,message,sender_role,read_at").order("created_at", { ascending: false }).limit(800), ogrFiltre(supabase.from("students").select("id,username,teacher_id"))]);
+    const ad = new Map((st || []).filter((x:any)=>x.teacher_id===a.teacher_id||(a.yonetici&&!x.teacher_id)).map((x: any) => [x.id, x.username])), son = new Map<string, any>(), say = new Map<string, number>();
     for (const m of data || []) { if (!son.has(m.student_id)) son.set(m.student_id, m); if (m.sender_role === "student" && !m.read_at) say.set(m.student_id, (say.get(m.student_id) || 0) + 1); }
     return json([...son.values()].filter((m: any) => ad.has(m.student_id)).map((m: any) => ({ ogrenci: ad.get(m.student_id), sonMesaj: m.message, mesaj: m.message, tarih: m.created_at, okunmamis: say.get(m.student_id) || 0 })));
   }
@@ -1994,16 +1999,16 @@ async function handle(req: Request) {
     const payload = {
       username, full_name: adSoyad, password_hash: await hashPassword(password), phone: tel || null,
       class_no: num(body.sinif, 0) || null, branch: temizMetin(body.sube, 10) || null,
-      email: String(body.email || "").trim().slice(0, 120), status: "pending", email_verification_required:true, email_verified_at:null,
+      email: String(body.email || "").trim().slice(0, 120), status: "approved", email_verification_required:true, email_verified_at:null,
       kvkk_approved_at: body.kvkkOnayTarihi || new Date().toISOString()
     };
     (payload as any).teacher_id = ogretmen ? ogretmen.id : null;
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
     await yeniOgrenciYoneticiBildirimi(saved.data,"normal");
-    try { await onboarding.welcome(saved.data); }
-    catch (_) { return json({status:"success",emailDogrulamaGerekli:true,message:"Kaydın oluştu. E-posta hazırlanamadı; giriş ekranından kullanıcı adı ve şifrenle yeni bağlantı iste."}); }
-    return json({status:"success",emailDogrulamaGerekli:true,message:"Hoş geldin! Hesabını açmak için e-postandaki doğrulama bağlantısına dokun. Spam klasörünü de kontrol et."});
+    let mailQueued=true;try { await onboarding.welcome(saved.data); }catch(_){mailQueued=false;}
+    const token=await issueSession("student",saved.data.id);
+    return json({status:"success",token,ogrenci:saved.data.username,emailDogrulamaGerekli:true,mailQueued,message:"Hesabın hazır! Uygulamayı kullanabilirsin. E-posta adresini gelen bağlantıyla doğrulamayı unutma."});
   }
 
   /* [v4.7] ŞİFRE: telefonla sıfırlama kapatıldı (telefonu bilen biri hesabı ele geçirebiliyordu).
@@ -2085,6 +2090,7 @@ async function handle(req: Request) {
 
   // [v3.9] ÖDEVLER: öğretmen sınıf + şubeye Ders Çalış konusu ya da mini oyun verir
   const ODEV_OYUN: Record<string, string> = { ky: "Kelime Laboratuvarı", jp: "Risk Balonları", bosluk: "Eksik Harf", hafiza: "Hafıza Sandığı", yagmur: "Hız Fırtınası", asmaca: "Harf Avı", kelimebul: "Şifre Kırıcı", eslestirme: "Eş Bul", tren: "Kelime Treni", dikte: "Kulak Dedektifi", cumle: "Cümle Ustası" };
+  for(const f of FEATURES as any[]){const k=f.assignmentKey||(f.code.startsWith('oyun_')?f.code.slice(5):'');if(k&&!ODEV_OYUN[k])ODEV_OYUN[k]=f.name;}
   const hedefOgrenciler = async (sinifNo: number, sube: string) => {
     const { data } = await ogrFiltre(supabase.from("students").select("id,username,branch,class_no").eq("status", "approved").eq("class_no", sinifNo));
     return (data || []).filter((x: any) => !sube || encName(x.branch) === encName(sube));

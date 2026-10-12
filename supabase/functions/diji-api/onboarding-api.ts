@@ -4,7 +4,7 @@ export function onboardingAPI(d:any){
  const portal='https://app.dijimedu.com/ingilizce/';
  async function welcome(s:any){
   const token=crypto.randomUUID()+crypto.randomUUID(),link=portal+'hesap-dogrula.html#token='+encodeURIComponent(token);
-  const html=mailShell('Diji-Medu’ya hoş geldin! 🦜',`<p>Merhaba <b>${escape(s.username)}</b>,</p><p>Ben Papi! Kelimeleri keşfedeceğin, oyunlarla İngilizce öğreneceğin yolculuğuna hoş geldin.</p><p>Öğrenci hesabının e-posta adresini doğrulamak için aşağıdaki düğmeye dokun. Yeni şifreli kayıtlarda hesabın bu işlemden sonra açılır.</p><p style="text-align:center;margin:28px 0"><a href="${link}" style="display:inline-block;background:#347b62;color:white;padding:16px 24px;border-radius:16px;text-decoration:none;font-weight:bold">Hesabımı doğrula ve başla 🦜</a></p><p>Bağlantı 24 saat geçerlidir ve bir kez kullanılır. Bu kaydı sen oluşturmadıysan e-postayı yok sayabilirsin.</p><p>Bu e-posta adresine erişimin doğrulanır; öğrenci ve veli bilgileri kayıt beyanına göre saklanır.</p>`);
+  const html=mailShell('Diji-Medu’ya hoş geldin! 🦜',`<p>Merhaba <b>${escape(s.username)}</b>,</p><p>Ben Papi! Kelimeleri keşfedeceğin, oyunlarla İngilizce öğreneceğin yolculuğuna hoş geldin.</p><p>Öğrenci hesabının e-posta adresini doğrulamak için aşağıdaki düğmeye dokun. Uygulamayı hemen kullanabilirsin; bu işlem e-posta adresine erişimini doğrular.</p><p style="text-align:center;margin:28px 0"><a href="${link}" style="display:inline-block;background:#347b62;color:white;padding:16px 24px;border-radius:16px;text-decoration:none;font-weight:bold">Hesabımı doğrula ve başla 🦜</a></p><p>Bağlantı 24 saat geçerlidir ve bir kez kullanılır. Bu kaydı sen oluşturmadıysan e-postayı yok sayabilirsin.</p><p>Bu e-posta adresine erişimin doğrulanır; öğrenci ve veli bilgileri kayıt beyanına göre saklanır.</p>`);
   const text=`Merhaba ${s.username}, Diji-Medu’ya hoş geldin! Hesabını doğrula: ${link}\nBağlantı 24 saat geçerli ve tek kullanımlıktır.`;
   const {data,error}=await db.rpc('dm_email_issue',{actor:s.id,digest:await hash(token),mail:s.email,title:'Diji-Medu’ya hoş geldin! Hesabını doğrula 🦜',html_body:html,plain_body:text});
   if(error)throw Error(error.message);
@@ -22,7 +22,7 @@ export function onboardingAPI(d:any){
    if(await attempts('email_tekrar',name.toLowerCase(),60)>=5)return json({ok:false,mesaj:'Çok fazla deneme. Bir saat sonra tekrar dene.'},429);
    await audit('email_tekrar',name.toLowerCase());
    const s=await studentByName(name);
-   if(!s||!await verifyPassword(String(b.sifre||''),s.password_hash)||s.status!=='pending'||!s.email_verification_required)return json({ok:false,mesaj:'Bilgileri kontrol et. Bu işlem e-posta onayı bekleyen yeni kayıtlar içindir.'},400);
+   if(!s||!await verifyPassword(String(b.sifre||''),s.password_hash)||!['pending','approved'].includes(s.status)||!s.email_verification_required)return json({ok:false,mesaj:'Bilgileri kontrol et. Bu işlem e-posta onayı bekleyen yeni kayıtlar içindir.'},400);
    try{await welcome(s);return json({ok:true,mesaj:'Yeni bağlantı e-posta kuyruğuna alındı. Gelen kutunu ve spam klasörünü kontrol et.'});}catch(e){return json({ok:false,mesaj:String((e as Error).message)},429);}
   }
   if(!/^[a-f0-9-]{36}$/i.test(String(b.device||'')))return json({ok:false,mesaj:'Geçersiz deneme anahtarı.'},400);

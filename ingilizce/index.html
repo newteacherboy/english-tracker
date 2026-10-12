@@ -1023,7 +1023,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
             </div>
             <div class="ai-chat-modal" id="aiChatModal">
                 <div class="ai-chat-header">
-                    <span>🤖 Diji-Medu - AI Koç</span>
+                    <span>💬 Öğretmene Mesaj Gönder</span>
                     <button onclick="aiModalKapat()" style="background:none; border:none; color:white; font-weight:bold; cursor:pointer;">✕</button>
                 </div>
                 <div class="ai-chat-subinfo" id="aiSoruHakInfo">Günlük Soru Hakkı Yükleniyor...</div>
@@ -4984,7 +4984,8 @@ mesajlar.forEach(m => {
                         if (data.status === "success") {
                             mesajDiv.style.color = "#16a34a";
                             mesajDiv.innerText = data.message || "✅ Hoş geldin! E-postandaki bağlantıyla hesabını doğrula.";
-                            setTimeout(() => { kayitOlKapat(); }, 3200);
+                            if(data.token){localStorage.setItem('ing_token',data.token);localStorage.setItem('ing_oturumAcik','true');localStorage.setItem('ing_aktifOgrenci',data.ogrenci||kullaniciAdi);kayitOlKapat();await window.dmOpenPortalSession?.({student:data.ogrenci||kullaniciAdi,refreshProfile:true});}
+                            else setTimeout(() => { kayitOlKapat(); }, 3200);
                         } else {
                             mesajDiv.style.color = "#dc2626";
                             mesajDiv.innerText = "❌ " + (data.message || "Bir hata oluştu.");
@@ -14040,6 +14041,7 @@ const YO_SOHBET = [
         /* ========== 5) ZOR KELİMELERİM (akıllı tekrar) ========== */
         function zkEkle(k) {
           if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return;
+          window.dmWrongWords?.add(k);
           if (!k || !yoHazirMi()) return;
           let en = String(k.ingilizce || k.en || '').trim(), tr = String(k.turkce || k.tr || '').trim();
           if (!en || !tr) return;
@@ -14706,7 +14708,7 @@ function sohbetMikDur() {
             yoHazirla(owner);
             yoArayuzKur();
             const ok=await window.yoSunucudanAl();
-            if(owner===aktifOgrenciAdi)setTimeout(()=>yoGuvenli(seviyeDavetGoster),9000);
+            if(owner===aktifOgrenciAdi)setTimeout(()=>window.dmMemberExperience?.check(),120000);
             return ok;
           })().catch(e=>{console.warn('Öğrenci durumu yüklenemedi',e);return false;});
           return yoBaslatTask;
@@ -20345,8 +20347,8 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 })();
 </script>
 <link rel="stylesheet" href="papi-onboarding.css?v=3">
-<script src="papi-flow.js?v=20261012-stability-1"></script>
-<script src="papi-onboarding.js?v=20261012-stability-1"></script>
+<script src="papi-flow.js?v=20261013-member-1"></script>
+<script src="papi-onboarding.js?v=20261013-member-1"></script>
 <script>
 (function () {
   const $ = id => document.getElementById(id);
@@ -26912,6 +26914,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const target=O.sorular[O.i], word=target.k||(target.l&&target.l[0]);
     const translated=word&&typeof TR==='function'?TR(word):'';
     const english=word&&typeof EN==='function'?EN(word):'';
+    if(!iyi&&!sinifModu()&&word)window.dmWrongWords?.add({en:english,tr:translated,source:'macera-haritasi'});
     g.innerHTML = (O._pas ? '🔄 Pas geçtin (doğru sayıldı)' : iyi ? ['✨ Büyü tuttu!', '✨ Harika!', '✨ Mükemmel!'][Math.floor(Math.random() * 3)] : '💨 Olmadı!') + (!iyi ? `<div style="font-size:13.5px;margin-top:4px">Doğru kelime: <b>${kac(english||dogruMetin||'')}</b><br>Türkçesi: <b>${kac(translated||'')}</b></div>` : dogruMetin ? `<div style="font-size:13.5px;margin-top:4px">${kac(dogruMetin)}</div>` : '');
     let alan = $('bzAlan'); alan.appendChild(g);
     O.gecmis[O.i] = { tip: O.sorular[O.i].tip, html: alan.innerHTML };
@@ -27760,34 +27763,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   /* ===================================================================
      1) PAPİ TANITIMI: yeni hesaplarda en fazla iki giriş
      =================================================================== */
-  let turKarar = '';                                   /* '' = henüz bilinmiyor → tur gösterilmez */
-  let orgTurBitti = window.turBitti;
-  if (typeof orgTurBitti === 'function') window.turBitti = function (ad) {
-    if (turKarar !== 'yeni') return true;                  /* karar yoksa ya da eski hesapsa: "görüldü" say */
-    return orgTurBitti.apply(this, arguments);
-  };
-  let turKisi = '';
-  window.dmPapiIntroEligible = () => ['yeni', 'mevcut'].includes(turKarar) && turKisi === kucuk(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '');
-  window.dmPapiIntroPolicy = () => turKarar === 'mevcut' ? 'existing' : 'new';
-  async function turKarariVer() {
-    let ad = (typeof yoIsim !== 'undefined' && yoIsim) || '';
-    if (!ad || kucuk(ad) === 'teacher') return;
-    if (turKisi === kucuk(ad) && turKarar) return;
-    if (turKisi !== kucuk(ad)) { turKisi = kucuk(ad); turKarar = ''; }
-    let d;
-    try { let r = await fetch(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(ad)}&anahtar=yo&tanitim=1&_=${Date.now()}`); if (!r.ok) return; if (r.headers.get('X-Diji-Cevrimdisi')) return; d = await r.json(); }
-    catch (e) { return; }                                  /* bağlantı yok: tur gösterme, sonra tekrar dene */
-    let sunucu = null; try { sunucu = d && d.deger ? JSON.parse(d.deger) : null; } catch (e) {}
-    let turlar = (sunucu && sunucu.turlar) || [];
-    const intro = sunucu && sunucu.dmPapiIntro;
-    const registered = Date.parse(d && d.kayitTarihi || '');
-    const cutoff = Date.parse('2026-10-09T17:06:40.000Z');
-    const used = !!(sunucu && (turlar.length || sunucu.karakter || (sunucu.altin || 0) > 0 || sunucu.oyunGun || sunucu.lig || sunucu.dcOdul || sunucu.xpGun));
-    const existing = Number.isFinite(registered) ? registered <= cutoff : intro?.audience === 'existing' || (!intro?.automatic && used);
-    if (existing) { turKarar = intro?.rolloutSeen ? 'eski' : 'mevcut'; return; }
-    turKarar = intro?.disabled || Number(intro?.shown || 0) >= 2 ? 'eski' : 'yeni';
-  }
-  setInterval(() => { let p = $('panel-alani'); if (p && p.style.display === 'block') turKarariVer(); }, 2000);
+  // Guided onboarding retired; member-experience owns the route chooser.
 
   /* ===================================================================
      2) ÖĞRETMEN: Ödev Ver
@@ -27826,7 +27802,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       if (!konuCache.length && typeof dcTumKonularCache !== 'undefined' && Array.isArray(dcTumKonularCache)) konuCache = dcTumKonularCache;
     }
     let sv = $('odSeviye').value, kt = $('odKategori').value;
-    let l = konuCache.filter(k => String(k.seviye) === sv && String(k.kategori) === kt).sort((a, b) => (Number(a.siraNo) || 0) - (Number(b.siraNo) || 0));
+    const search=String($('odKonuAra')?.value||'').trim().toLocaleLowerCase('tr');
+    let l = konuCache.filter(k => String(k.seviye) === sv && String(k.kategori) === kt && (!search||String(k.konuAdi).toLocaleLowerCase('tr').includes(search))).sort((a, b) => (Number(a.siraNo) || 0) - (Number(b.siraNo) || 0));
     $('odKonular').innerHTML = l.length ? l.map(k => { let anahtar = `${sv}|${kt}|${k.konuAdi}`; return `<label class="od-cb${secKonu.has(anahtar) ? ' sec' : ''}"><input type="checkbox" data-k="${kac(anahtar)}" ${secKonu.has(anahtar) ? 'checked' : ''}>${kac(k.konuAdi)}</label>`; }).join('') : '<div class="od-etiket">Bu seviye ve kategoride konu yok.</div>';
     $('odKonular').querySelectorAll('input').forEach(c => c.onchange = () => { c.checked ? secKonu.add(c.dataset.k) : secKonu.delete(c.dataset.k); c.parentElement.classList.toggle('sec', c.checked); sayac(); });
     sayac();
@@ -27835,10 +27812,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   async function odevEkraniAc() {
     if (!OGRT()) { if (typeof ogretmenPaneliAc === 'function') ogretmenPaneliAc(); return; }
     if (!Array.isArray(globalDataCache) || globalDataCache.length <= 1) { if (typeof listeYenile === 'function') await listeYenile(); }
-    secKonu = new Set(); secOyun = new Set(); secUnite = new Set(); hedefYildiz = 2;
+    konuCache = null; secKonu = new Set(); secOyun = new Set(); secUnite = new Set(); hedefYildiz = 2;
     $('odSinif').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8].map(s => `<option value="${s}">${s}. sınıf</option>`).join('');
     let sk = ogrenciler().map(u => Number(u.Sinif || u.sinif)).filter(Boolean); if (sk.length) $('odSinif').value = String(sk.sort((a, b) => sk.filter(x => x === b).length - sk.filter(x => x === a).length)[0]);
-    $('odOyunlar').innerHTML = OYUN.map(([k, ik, ad]) => `<label class="od-cb"><input type="checkbox" data-o="${k}">${ik} ${ad}</label>`).join('');
+    $('odOyunlar').innerHTML = (window.dmAssignmentGames?.(OYUN)||OYUN).map(([k, ik, ad]) => `<label class="od-cb"><input type="checkbox" data-o="${k}">${ik} ${ad}</label>`).join('');
     $('odOyunlar').querySelectorAll('input').forEach(c => c.onchange = () => { c.checked ? secOyun.add(c.dataset.o) : secOyun.delete(c.dataset.o); c.parentElement.classList.toggle('sec', c.checked); sayac(); });
     $('odHedef').querySelectorAll('[data-y]').forEach(b => { b.classList.toggle('sec', +b.dataset.y === hedefYildiz); b.onclick = () => { hedefYildiz = +b.dataset.y; $('odHedef').querySelectorAll('[data-y]').forEach(x => x.classList.toggle('sec', x === b)); }; });
     $('odSonuc').className = 'od-sonuc'; $('odNot').value = ''; $('odSon').value = '';
@@ -27853,6 +27830,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   }
   $('odModal').querySelectorAll('.od-sekmeler button').forEach(b => b.onclick = () => gorunum(b.dataset.g));
   $('odSinif').onchange = subeleriDoldur; $('odSube').onchange = hedefSay;
+  const konuArama=document.createElement('input');konuArama.id='odKonuAra';konuArama.type='search';konuArama.placeholder='Ders konusu ara…';konuArama.setAttribute('aria-label','Ödev için ders konusu ara');$('odKonular').before(konuArama);konuArama.oninput=konulariDoldur;
   $('odSeviye').onchange = konulariDoldur; $('odKategori').onchange = konulariDoldur;
   $('odVer').onclick = async () => {
     let odevler = [...secKonu].map(x => { let [seviye, kategori, ...k] = x.split('|'); return { tur: 'ders', seviye, kategori, konu: k.join('|') }; })
@@ -27998,7 +27976,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       } catch (e) { toast(`📘 Ödev konusu: ${v.konu} (${v.seviye} · ${KAT_AD[v.kategori] || v.kategori})`); }
       return;
     }
-    let v = o.veri || {}, oy = OYUN.find(x => x[0] === v.oyun);
+    let v = o.veri || {}, oy = (window.dmAssignmentGames?.(OYUN)||OYUN).find(x => x[0] === v.oyun);
     if (!oy || typeof window[oy[3]] !== 'function') { toast('Bu oyun şu an açılamadı.'); return; }
     odevMuafBaslat();
     window[oy[3]]();
@@ -28025,6 +28003,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       if (d && d.ok) { o.yapildi = true; o.yildiz = yildiz || 0; toast(`✅ Ödev tamamlandı: ${o.baslik}`); if (typeof odulGoster === 'function') setTimeout(() => odulGoster({ ikon: '📝', baslik: 'Ödevini tamamladın!', alt: o.baslik }), 2800); kartCiz(); }
     } catch (e) {}
   }
+  window.dmGameAssignmentResult=async ({oyunKey,puan=0,yildiz=0,sinif,unite})=>{const list=await odevleriYukle();for(const o of list){if(!o.yapildi&&o.tur==='oyun'&&o.veri?.oyun===oyunKey&&yildiz>=(o.veri.hedefYildiz||1)&&(!sinif||Number(o.veri.sinif)===Number(sinif))&&(!o.veri.uniteler?.length||o.veri.uniteler.includes(Number(unite))))await tamamla(o,puan,yildiz);}};
   /* Ders Çalış: konu geçilince */
   let orgDc = window.dcOdulVer;
   if (typeof orgDc === 'function') window.dcOdulVer = function () {
@@ -28584,15 +28563,15 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="medupro.js?v=20261011-profix"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261011-hubfix2">
 <script defer src="activity-ui.js?v=20261012-stability-1"></script>
-<script defer src="bottom-nav.js?v=20261012-controllerchange-fix"></script>
+<script defer src="bottom-nav.js?v=20261013-member-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
-<script defer src="feature-catalog.js?v=3"></script>
+<script defer src="feature-catalog.js?v=20261013-catalog"></script>
 <script defer src="weekly-ui.js?v=20261012-stability-1"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=1">
 <script defer src="experience-ui.js?v=20261012-stability-1"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
-<script defer src="lazy-games.js?v=20261012-independent"></script>
+<script defer src="lazy-games.js?v=20261013-review"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
 <script defer src="game-experience.js?v=selected-play-20261011-1"></script>
 <script defer src="onboarding-ui.js?v=2"></script>
@@ -28644,7 +28623,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 @media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
 @media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
-<link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261012-dual-path"></script><script defer src="kisisel-bilgiler.js?v=3"></script><script defer src="student-management.js?v=20261012-panel"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261013-member-1"></script><script defer src="kisisel-bilgiler.js?v=3"></script><script defer src="student-management.js?v=20261012-panel"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=3"><script defer src="progression-ui.js?v=20261012-cleanup"></script>
@@ -28669,5 +28648,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="storefront.js?v=20261011-4"></script>
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261012-stability-1"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
+<link rel="stylesheet" href="member-experience.css?v=20261013-1">
+<script src="placement-bank.js?v=20261013-1"></script>
+<script src="member-experience.js?v=20261013-1"></script>
+<script src="teacher-workspace.js?v=20261013-1"></script>
 </body>      
         </html>

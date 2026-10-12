@@ -1,6 +1,6 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const files=['harf-bahcesi.js?v=2','papi-cards.js?v=4','meteor.js?v=20261012-independent','word-wheel.js?v=20261012-dual-wheel'];
+  const files=['harf-bahcesi.js?v=20261013-review','papi-cards.js?v=20261013-review','meteor.js?v=20261013-review','word-wheel.js?v=20261013-review'];
   const loaded=new Set();let pending=null;
   function script(src){return new Promise((resolve,reject)=>{
     if(loaded.has(src)){resolve();return;}
