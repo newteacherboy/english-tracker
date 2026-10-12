@@ -887,6 +887,7 @@ html, body { touch-action: pan-x pan-y; }
 .dm-brand-line{display:flex;align-items:center;justify-content:center;min-height:1.45em;color:#71f5d0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;font-size:clamp(27px,7.5vw,42px);letter-spacing:.01em;text-shadow:0 0 22px #42e9bd55}
 .dm-brand-prompt{color:#36cda7;margin-right:.18em}
 .dm-brand-type{display:inline-block;width:0;overflow:hidden;white-space:nowrap;border-right:3px solid #71f5d0;animation:dmBrandType 1.05s steps(9,end) .35s forwards,dmBrandCaret .7s step-end infinite}
+#dmBootText:empty{display:none!important}
 .dm-papi-loading p{font:500 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.13em;text-transform:uppercase;color:#a9c7c5;margin:8px 0 0;line-height:1.5}
 .dm-papi-dots{display:flex;gap:7px;height:16px;align-items:center;margin-top:5px}.dm-papi-dots i{width:6px;height:6px;background:#71f5d0;border-radius:50%;animation:dmPapiDot 1.2s ease-in-out infinite}.dm-papi-dots i:nth-child(2){animation-delay:.15s}.dm-papi-dots i:nth-child(3){animation-delay:.3s}
 #dmBootRetry{border:1px solid #71f5d0;border-radius:12px;padding:12px 20px;font:700 14px system-ui;background:#0d4450;color:#f1fffb;margin-top:16px}
@@ -942,11 +943,11 @@ html, body { touch-action: pan-x pan-y; }
 @media(max-height:660px){#bzPerde>.bz-oyun{gap:3px}#bzPerde #bzAlan .bz-soru{margin:2px 0 4px!important}#bzPerde #bzAlan .bz-kart2{height:60px}#bzPerde #bzAlan .bz-slot{height:31px}}
 </style></head>
         <body>
-<div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="220" height="240" alt="Diji-Medu papağanı Papi"></div><div class="dm-brand-line" aria-label="Diji-Medu"><span class="dm-brand-prompt" aria-hidden="true">&gt;</span><span class="dm-brand-type" aria-hidden="true">Diji-Medu</span></div><p id="dmBootText">OYUN DÜNYASI YÜKLENİYOR_</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
+<div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="220" height="240" alt="Diji-Medu papağanı Papi"></div><div class="dm-brand-line" aria-label="Diji-Medu"><span class="dm-brand-prompt" aria-hidden="true">&gt;</span><span class="dm-brand-type" aria-hidden="true">Diji-Medu</span></div><p id="dmBootText"></p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
 <script>(function(){
-const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false;
+const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false,finishTimer=0;const splashStartedAt=Date.now(),minSplashMs=1650;
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
-function finish(){if(done)return;done=true;clearInterval(timer);clearTimeout(deadline);splash.classList.add('dm-ready');setTimeout(()=>splash.remove(),250);}
+function finish(){if(done)return;const remaining=minSplashMs-(Date.now()-splashStartedAt);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}done=true;clearInterval(timer);clearTimeout(deadline);splash.classList.add('dm-ready');setTimeout(()=>splash.remove(),250);}
 function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
@@ -957,7 +958,7 @@ document.addEventListener('dm:login',check);timer=setInterval(check,150);
 const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
 document.getElementById('dmBootRetry').onclick=()=>location.reload();
 })();</script>
-                        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="220" height="240" alt="Diji-Medu papağanı Papi"></div><div class="dm-brand-line" aria-label="Diji-Medu"><span class="dm-brand-prompt" aria-hidden="true">&gt;</span><span class="dm-brand-type" aria-hidden="true">Diji-Medu</span></div><p>HESABIN HAZIRLANIYOR_</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
+                        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="220" height="240" alt="Diji-Medu papağanı Papi"></div><div class="dm-brand-line" aria-label="Diji-Medu"><span class="dm-brand-prompt" aria-hidden="true">&gt;</span><span class="dm-brand-type" aria-hidden="true">Diji-Medu</span></div><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
             <a href="https://app.dijimedu.com" class="portal-back-btn">← Ana Portala Dön</a>
             <div class="pb-toast-overlay" id="pbToastOverlay">
                 <div class="pb-toast-card" id="pbToastCard">
