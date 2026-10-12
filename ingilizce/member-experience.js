@@ -9,7 +9,7 @@ async function api(islem,data={}){const controller=new AbortController(),timeout
 function sheet(title,content,id='dmMemberDialog'){
  $(id)?.remove();const before=document.activeElement,el=document.createElement('div');el.id=id;el.className='dm-member-overlay';
  el.innerHTML='<section class="dm-member-sheet" role="dialog" aria-modal="true" aria-labelledby="'+id+'Title"><button type="button" class="dm-member-close" aria-label="Kapat">×</button><h2 id="'+id+'Title">'+esc(title)+'</h2><div class="dm-member-body">'+content+'</div></section>';
- const close=()=>{el.dispatchEvent(new Event('dm:sheet-close'));if(id==='dmPlacementExam')window.speechSynthesis?.cancel();el.remove();before?.focus?.({preventScroll:true});};el.onclick=e=>{if(e.target===el||e.target.closest('.dm-member-close'))close();};
+ const close=()=>{if(!el.isConnected)return;el.dispatchEvent(new Event('dm:sheet-close'));if(id==='dmPlacementExam')window.speechSynthesis?.cancel();el.remove();before?.focus?.({preventScroll:true});};el.onclick=e=>{if(e.target===el||e.target.closest('.dm-member-close'))close();};
  el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const list=[...el.querySelectorAll('button,input,textarea,a')].filter(x=>!x.disabled&&!x.hidden),i=list.indexOf(document.activeElement);e.preventDefault();list[(i+(e.shiftKey?-1:1)+list.length)%list.length]?.focus();}};
  document.body.append(el);el.querySelector('.dm-member-close').focus();return {el,body:el.querySelector('.dm-member-body'),close};
 }
