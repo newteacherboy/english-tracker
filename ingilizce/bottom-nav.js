@@ -1,6 +1,6 @@
 /* Six icon-only destinations and the approved profile popover. */
 (()=>{'use strict';
-const layout=[['tab-meduakis','Arkadaşlar','friends'],['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-magaza','Mağaza','shop'],['tab-dunyam','Profil','profile']];
+const layout=[['tab-dunya','Parkur','path'],['tab-meduakis','Arkadaşlar','friends'],['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-magaza','Mağaza','shop'],['tab-dunyam','Profil','profile']];
 function close(){const panel=document.getElementById('rtProfileBackdrop');if(!panel)return;panel.remove();document.getElementById('bottomNavMobile')?.querySelector('[data-ekran="tab-dunyam"]')?.setAttribute('aria-expanded','false');window.dcBottomNavSenkronize?.();}
 window.dmProfileMenuAc=function(){if(document.getElementById('rtProfileBackdrop')){close();return;}const nav=document.getElementById('bottomNavMobile'),last=nav?.querySelector('[data-ekran="tab-dunyam"]');if(!last)return;const el=document.createElement('div');el.id='rtProfileBackdrop';el.className='rt-profile-backdrop';const name=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||'Profilim'):'Profilim',level=window.dmProgression?.level?.()||1;
 const items=[['Profilim','user','profile'],['İlerlemem','chart','progress'],['Başarılarım','medal','badges'],['Dolabım','bag','closet'],['Öğretmen Paneli','teacher','teacher'],['Seviye Testi','exam','exam'],['Kelime Tekrarı','repeat','repeat'],['AI Koç','ai-coach','coach'],['Ayarlar','gear','settings'],['Yardım & Destek','help','help'],['Çıkış Yap','logout','logout']];el.innerHTML='<section class="rt-profile" role="dialog" aria-modal="true" aria-labelledby="rtProfileTitle"><header><img src="route-assets/papi-profile.png" alt=""><div><strong id="rtProfileTitle"></strong><small>Seviye '+level+'</small></div><button type="button" class="rt-close" aria-label="Profil menüsünü kapat">×</button></header><div class="rt-profile-grid">'+items.map(([label,art,action])=>'<button type="button" data-profile="'+action+'"><img src="route-assets/'+art+'.svg" alt=""><b>'+label+'</b>'+(action==='settings'?'<small>Öğrenme yolunu değiştir</small>':action==='repeat'?'<small>Yanlış kelimeler</small>':action==='exam'?'<small>Seviye belirleme</small>':'')+'</button>').join('')+'</div></section>';el.querySelector('strong').textContent=name;el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close')){close();last.focus();return;}const b=e.target.closest('[data-profile]');if(!b)return;close();({profile:()=>window.kisiselBilgilerAc?.(),progress:()=>window.benimDunyamAc?.('istatistik'),badges:()=>window.benimDunyamAc?.('rozetler'),closet:()=>window.benimDunyamAc?.('karakter'),teacher:()=>{if(typeof window.ogretmenPaneliAc==='function')window.ogretmenPaneliAc();else window.yoToast?.('Öğretmen paneli yüklenemedi.');},exam:()=>{if(typeof window.seviyeTestAc==='function')window.seviyeTestAc();else window.benimDunyamAc?.('sanaozel');},repeat:()=>{if(typeof window.yoZkAc==='function')window.yoZkAc();else window.benimDunyamAc?.('sanaozel');},coach:()=>window.dmTeacherChatOpen(),settings:()=>window.dmHesapAyarlariAc?.(),help:()=>window.yardimAc?.(),logout:()=>{if(window.confirm('Çıkış yapmak istiyor musun?'))window.cikisYap?.();}})[b.dataset.profile]?.();};el.onkeydown=e=>{if(e.key==='Escape'){close();last.focus();}if(e.key==='Tab'){const buttons=[...el.querySelectorAll('button')],i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length].focus();}};document.body.append(el);nav.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active',b===last));last.setAttribute('aria-expanded','true');el.querySelector('.rt-close').focus();};
@@ -28,21 +28,24 @@ window.dmTeacherChatOpen=function(){
   document.body.append(e);input.focus();load();
 };
 
-function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav)return;nav.querySelectorAll('[data-ekran="tab-dunya"]').forEach(b=>b.remove());nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const src='route-assets/'+(icon.endsWith('.png')?icon:icon+'.svg');if(slot&&!slot.querySelector('img'))slot.innerHTML='<img src="'+src+'" alt="" decoding="async">';if(id==='tab-dunyam'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
-// Parkur is retired: direct attempts to enter the old screen go to Games.
+function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav)return;nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const src='route-assets/'+(icon.endsWith('.png')?icon:icon+'.svg');if(slot&&!slot.querySelector('img'))slot.innerHTML='<img src="'+src+'" alt="" decoding="async">';if(id==='tab-dunyam'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
+// The new parkur is independent of the legacy story engines.
+(function loadNewParkur(){
+ const css=document.createElement('link');css.rel='stylesheet';css.href='new-parkur-v2.css?v=2';document.head.append(css);
+ const js=document.createElement('script');js.src='new-parkur-v2.js?v=2';document.head.append(js);
+})();
 window.dmOpenGamesHome=function(){
- const btn=document.querySelector('#bottomNavMobile [data-ekran="tab-aktiviteler"]');
- if(btn){btn.click();return true;}
- const games=document.getElementById('tab-aktiviteler');
- if(games){document.querySelectorAll('#panel-alani [id^="tab-"]').forEach(el=>{if(el!==games)el.classList.remove('active');});games.classList.add('active');games.style.display='block';return true;}
- return false;
+ const btn=document.querySelector('#bottomNavMobile [data-ekran="tab-aktiviteler"]');if(btn){btn.click();return true;}return false;
 };
-const retireParkur=()=>{const old=document.getElementById('tab-dunya');if(old){old.classList.remove('active');old.style.display='none';}document.querySelectorAll('[data-ekran="tab-dunya"]').forEach(b=>b.remove());};
-retireParkur();
-document.addEventListener('click',e=>{const b=e.target.closest?.('[data-ekran="tab-dunya"],[data-b][data-d].dm-adventure-node,[data-rt="continue"]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();window.dmOpenGamesHome?.();},true);
-const oldDunyaAc=window.dunyaAc;
-if(typeof oldDunyaAc==='function')window.dunyaAc=function(){retireParkur();return window.dmOpenGamesHome?.();};
-new MutationObserver(retireParkur).observe(document.documentElement,{childList:true,subtree:true});
+document.addEventListener('click',e=>{
+ const b=e.target.closest?.('#bottomNavMobile [data-ekran="tab-dunya"]');
+ if(!b)return;
+ e.preventDefault();e.stopImmediatePropagation();window.dmNewParkurOpen?.();
+},true);
+document.addEventListener('click',e=>{
+ const b=e.target.closest?.('#bottomNavMobile [data-ekran]:not([data-ekran="tab-dunya"])');
+ if(b)window.dmNewParkurClose?.();
+},true);
 decorate();const nav=document.getElementById('bottomNavMobile');if(nav){new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-dunyam')close();});}
 document.addEventListener('dm:login',close);
 })();
