@@ -30,11 +30,18 @@ window.dmTeacherChatOpen=function(){
 
 function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav)return;nav.querySelectorAll('[data-ekran="tab-dunya"]').forEach(b=>b.remove());nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const src='route-assets/'+(icon.endsWith('.png')?icon:icon+'.svg');if(slot&&!slot.querySelector('img'))slot.innerHTML='<img src="'+src+'" alt="" decoding="async">';if(id==='tab-dunyam'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
 // Parkur is retired: direct attempts to enter the old screen go to Games.
+window.dmOpenGamesHome=function(){
+ const btn=document.querySelector('#bottomNavMobile [data-ekran="tab-aktiviteler"]');
+ if(btn){btn.click();return true;}
+ const games=document.getElementById('tab-aktiviteler');
+ if(games){document.querySelectorAll('#panel-alani [id^="tab-"]').forEach(el=>{if(el!==games)el.classList.remove('active');});games.classList.add('active');games.style.display='block';return true;}
+ return false;
+};
 const retireParkur=()=>{const old=document.getElementById('tab-dunya');if(old){old.classList.remove('active');old.style.display='none';}document.querySelectorAll('[data-ekran="tab-dunya"]').forEach(b=>b.remove());};
 retireParkur();
-document.addEventListener('click',e=>{const b=e.target.closest?.('[data-ekran="tab-dunya"],[data-b][data-d].dm-adventure-node,[data-rt="continue"]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();window.aktivitelerAc?.();},true);
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-ekran="tab-dunya"],[data-b][data-d].dm-adventure-node,[data-rt="continue"]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();window.dmOpenGamesHome?.();},true);
 const oldDunyaAc=window.dunyaAc;
-if(typeof oldDunyaAc==='function')window.dunyaAc=function(){retireParkur();return window.aktivitelerAc?.();};
+if(typeof oldDunyaAc==='function')window.dunyaAc=function(){retireParkur();return window.dmOpenGamesHome?.();};
 new MutationObserver(retireParkur).observe(document.documentElement,{childList:true,subtree:true});
 decorate();const nav=document.getElementById('bottomNavMobile');if(nav){new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-dunyam')close();});}
 document.addEventListener('dm:login',close);
