@@ -75,10 +75,10 @@ function finish(){
  const runId='dmp2-'+level.id+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);
  host.innerHTML='<div class="dmp-finish"><div class="dmp-medal">🏆</div><h2>'+(passed?'Seviyeyi tamamladın!':'Bir kez daha deneyelim!')+'</h2><p>9 sorudan '+score+' doğru</p><small>'+(passed?'Sonraki seviye açıldı.':'Geçmek için en az 6 doğru gerekiyor.')+'</small><div class="dmp-reward-status" role="status">'+(passed?'🪙 Altın ve XP ödülü sunucuda kontrol ediliyor…':'Bir sonraki denemede başarabilirsin!')+'</div><button data-home>Parkura dön</button></div>';
  host.querySelector('[data-home]').onclick=()=>{selected=null;home()};
- if(passed&&typeof window.ocOdulVer==='function'){
+ if(passed&&first&&typeof window.ocOdulVer==='function'){
   try{window.ocOdulVer({runId,oyunKey:'ba',puanSurum:3,rewardScope:{classNo:level.g,units:[level.u],stopNo:level.g*100000+level.u*1000+level.part},dogru:score,yanlis:9-score,sureSaniye:Math.max(1,(Date.now()-startedAt)/1000),parkurGecti:true,parkurIlk:first,parkurYildiz:score>=9?3:score>=8?2:1});}
   catch(err){const el=host.querySelector('.dmp-reward-status');if(el)el.textContent='Ödül doğrulanamadı; öğrenci ilerlemesi korunuyor.';console.warn('Parkur ödülü',err);}
- }else if(passed){const el=host.querySelector('.dmp-reward-status');if(el)el.textContent='Ödül sistemi yüklenmedi; ilerleme kaydedildi.';}
+ }else if(passed){const el=host.querySelector('.dmp-reward-status');if(el)el.textContent=first?'Ödül sistemi yüklenmedi; ilerleme kaydedildi.':'Bu seviye daha önce tamamlandı; tekrar ödül verilmez.';}
 }
 window.dmNewParkurOpen=function(){const host=$('#dmNewParkur');if(!host)return false;document.querySelectorAll('#panel-alani [id^="tab-"]').forEach(x=>{x.classList.remove('active');});document.querySelectorAll('#bottomNavMobile [data-ekran]').forEach(b=>b.classList.toggle('active',b.dataset.ekran==='tab-dunya'));document.body.classList.add('dm-new-parkur-open');host.hidden=false;host.classList.add('active');home();return true;};
 window.dmNewParkurClose=function(){const host=$('#dmNewParkur');if(host){host.hidden=true;host.classList.remove('active');}document.body.classList.remove('dm-new-parkur-open');selected=null;};
