@@ -295,7 +295,7 @@
   })().catch(() => { reset(); message('Google ile giriş tamamlanamadı. Mevcut girişini kullanabilirsin.'); });
 })();
 
-/* Papi mail invitation for existing Google accounts. Once per login, no gameplay interruptions. */
+/* Papi mail invitation disabled temporarily; opt-in preferences remain unchanged.\n /* Papi mail invitation for existing Google accounts. Once per login, no gameplay interruptions. */
 (function(){
  'use strict';
  let shown=false,busy=false;
@@ -352,3 +352,4 @@
  setInterval(tick,3500);
  window.addEventListener('dm:login',()=>{shown=false;close()});
 })();
+*/;
