@@ -29,18 +29,25 @@ function home(){
 function shuffle(x){return [...x].sort(()=>Math.random()-.5)}
 function generate(s){const words=Array.from({length:3},(_,i)=>s.words[i%s.words.length]);return words.flatMap(w=>[{w,type:'en-tr'},{w,type:'tr-en'},{w,type:'write'}]);}
 function choices(right,others){return shuffle([right,...shuffle([...new Set(others.filter(x=>x!==right))]).slice(0,3)]);}
-function start(id){const {steps,done,index}=state(),idx=steps.findIndex(x=>x.id===id);if(idx<0||idx>index)return;selected=steps[idx];question=0;score=0;answered=false;entries=generate(selected);startedAt=Date.now();drawQuestion();}
+function start(id){const {steps,index}=state(),idx=steps.findIndex(x=>x.id===id);if(idx<0||idx>index)return;selected=steps[idx];question=0;score=0;answered=false;entries=generate(selected);const host=$('#dmNewParkur');host.innerHTML='<div class="dmp-intro"><div class="dmp-intro-papi">🦜</div><h2>'+esc(title(selected))+'</h2><p>'+selected.g+'. sınıf · '+selected.u+'. ünite · '+selected.part+'/'+selected.parts+'. aşama</p><div class="dmp-intro-count">9 soru · 3 kelime</div><p>Her 3 soruda 1 enerji kullanılır.</p><button type="button" data-begin>Başlat →</button><button type="button" data-cancel>Parkura dön</button></div>';host.querySelector('[data-begin]').onclick=()=>{startedAt=Date.now();drawQuestion()};host.querySelector('[data-cancel]').onclick=()=>{selected=null;home()};}
 function drawQuestion(){const host=$('#dmNewParkur');if(!host||!selected)return;const q=entries[question];if(!q){finish();return;}answered=false;
  const all=chapters().filter(x=>x.g===selected.g).flatMap(x=>x.words),t=q.type,right=t==='en-tr'?q.w.tr:q.w.en;
  const variants=t==='en-tr'?all.map(w=>w.tr):all.map(w=>w.en);
  const label=t==='en-tr'?'Bu kelimenin Türkçesi nedir?':t==='tr-en'?'İngilizce karşılığını seç:':'İngilizce kelimeyi yaz:';
- host.innerHTML='<div class="dmp-quiz"><div class="dmp-quiz-wallet">'+wallet()+'</div><div class="dmp-quiz-top"><button type="button" data-back>← Parkur</button><b>'+(question+1)+' / 9</b></div><div class="dmp-progress"><span style="width:'+((question+1)/9*100)+'%"></span></div><div class="dmp-question"><small>'+esc(label)+'</small><h2>'+esc(t==='en-tr'?q.w.en:q.w.tr)+'</h2></div><div class="dmp-answers">'+(t==='write'?'<input data-write autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Buraya yaz" aria-label="Cevabın"><button class="dmp-check" data-submit>Kontrol et</button>':choices(right,variants).map(v=>'<button data-answer="'+esc(v)+'">'+esc(v)+'</button>').join(''))+'</div><div class="dmp-feedback" role="status"></div><button class="dmp-next" hidden>Devam et →</button></div>';
+ host.innerHTML='<div class="dmp-quiz"><div class="dmp-quiz-wallet">'+wallet()+'</div><div class="dmp-quiz-top"><button type="button" data-back>← Parkur</button><b>'+(question+1)+' / 9</b></div><div class="dmp-progress"><span style="width:'+((question+1)/9*100)+'%"></span></div><div class="dmp-question"><small>'+esc(label)+'</small><h2>'+esc(t==='en-tr'?q.w.en:q.w.tr)+'</h2></div><div class="dmp-answers">'+(t==='write'?'<div class="dmp-write-row"><input data-write autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Buraya yaz" aria-label="Cevabın"><button type="button" class="dmp-mic" data-mic aria-label="Mikrofondan söyle">🎙️</button></div><button class="dmp-check" data-submit>Kontrol et</button>':choices(right,variants).map(v=>'<button data-answer="'+esc(v)+'">'+esc(v)+'</button>').join(''))+'</div><div class="dmp-feedback" role="status"></div><button class="dmp-next" hidden>Devam et →</button></div>';
  host.querySelector('[data-back]').onclick=()=>{selected=null;home();};
  host.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>answer(b.dataset.answer));
  host.querySelector('[data-submit]')?.addEventListener('click',()=>answer(host.querySelector('[data-write]').value));
  host.querySelector('[data-write]')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();answer(e.target.value)}});
- host.querySelector('.dmp-next').onclick=()=>{if(!answered)return;question++;drawQuestion();};
+ host.querySelector('[data-mic]')?.addEventListener('click',startDictation);
+ host.querySelector('.dmp-next').onclick=()=>{if(!answered)return;advance();};
 }
+function startDictation(){
+ const input=$('#dmNewParkur [data-write]'),button=$('#dmNewParkur [data-mic]'),Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!input||!button)return;
+ if(!Speech){const feedback=$('#dmNewParkur .dmp-feedback');if(feedback)feedback.textContent='Bu cihazda sesle yazma desteklenmiyor. Klavyeyi kullanabilirsin.';return;}
+ try{const rec=new Speech();rec.lang='en-US';rec.interimResults=false;rec.maxAlternatives=1;button.disabled=true;button.textContent='🔴';rec.onresult=e=>{input.value=e.results[0][0].transcript.replace(/[.!?]$/,'').trim();input.focus();};rec.onerror=()=>{const el=$('#dmNewParkur .dmp-feedback');if(el)el.textContent='Mikrofon erişilemedi; yazıyla devam edebilirsin.';};rec.onend=()=>{button.disabled=false;button.textContent='🎙️'};rec.start();}catch{button.disabled=false;button.textContent='🎙️';}
+}
+function advance(){question++;drawQuestion();}
 function celebrateCorrect(){
  try{if(navigator.vibrate)navigator.vibrate([90,35,140]);}catch{}
  try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ctx=new AC(),now=ctx.currentTime;[660,880,1047].forEach((freq,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.value=freq;gain.gain.setValueAtTime(0.0001,now+i*.085);gain.gain.exponentialRampToValueAtTime(.13,now+i*.085+.014);gain.gain.exponentialRampToValueAtTime(.0001,now+i*.085+.18);osc.connect(gain).connect(ctx.destination);osc.start(now+i*.085);osc.stop(now+i*.085+.19);});setTimeout(()=>ctx.close().catch(()=>{}),650);}catch{}
@@ -73,7 +80,7 @@ function finish(){
  const passed=score>=6,history=load(),first=!(history.done||{})[level.id];
  if(passed){history.done={...(history.done||{}),[level.id]:true};save(history);}
  const runId='dmp2-'+level.id+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);
- host.innerHTML='<div class="dmp-finish"><div class="dmp-medal">🏆</div><h2>'+(passed?'Seviyeyi tamamladın!':'Bir kez daha deneyelim!')+'</h2><p>9 sorudan '+score+' doğru</p><small>'+(passed?'Sonraki seviye açıldı.':'Geçmek için en az 6 doğru gerekiyor.')+'</small><div class="dmp-reward-status" role="status">'+(passed?'🪙 Altın ve XP ödülü sunucuda kontrol ediliyor…':'Bir sonraki denemede başarabilirsin!')+'</div><button data-home>Parkura dön</button></div>';
+ host.innerHTML='<div class="dmp-finish"><div class="dmp-medal">🏆</div><h2>'+(passed?'Seviyeyi tamamladın!':'Bir kez daha deneyelim!')+'</h2><p>9 sorudan '+score+' doğru</p><small>'+(passed?'Sonraki seviye açıldı.':'Geçmek için en az 6 doğru gerekiyor.')+'</small><div class="dmp-reward-status" role="status">'+(passed?'🪙 Ödül isteği gönderildi; doğrulanınca hesaba yansıyacak.':'Bir sonraki denemede başarabilirsin!')+'</div><button data-home>Parkura dön</button></div>';
  host.querySelector('[data-home]').onclick=()=>{selected=null;home()};
  if(passed&&first&&typeof window.ocOdulVer==='function'){
   try{window.ocOdulVer({runId,oyunKey:'ba',puanSurum:3,rewardScope:{classNo:level.g,units:[level.u],stopNo:level.g*100000+level.u*1000+level.part},dogru:score,yanlis:9-score,sureSaniye:Math.max(1,(Date.now()-startedAt)/1000),parkurGecti:true,parkurIlk:first,parkurYildiz:score>=9?3:score>=8?2:1});}
@@ -92,6 +99,6 @@ document.addEventListener('click',e=>{
  if(!el||!selected)return;
  e.preventDefault();e.stopImmediatePropagation();
  if(el.hasAttribute('data-answer'))answer(el.dataset.answer);
- else if(answered){question++;drawQuestion();}
+ else if(answered)advance();
 },true);
 window.dmNewParkur={chapters,open:window.dmNewParkurOpen,home};})();
