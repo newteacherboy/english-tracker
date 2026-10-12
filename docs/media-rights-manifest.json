@@ -1206,6 +1206,34 @@
       "bytes": 19702,
       "status": "user-reference-derived",
       "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/bolge4-kis-v2.svg",
+      "sha256": "1d012d4cec8fafa323f9bcd46b779b206e3ee79d89cd92f5aeb8d4a056fc3ad4",
+      "bytes": 3795,
+      "status": "original-vector",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/bolge3-sonbahar-v2.svg",
+      "sha256": "6b2560ff27ab781fa2c32ec9ada15fc04262703d42455c6899574dbd3a77f877",
+      "bytes": 2882,
+      "status": "original-vector",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/bolge2-yaz-v2.svg",
+      "sha256": "6d0af36f11feffec5d3f2bc27dcac0dfb274448e3280793d38fbaf36611e44de",
+      "bytes": 2882,
+      "status": "original-vector",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/bolge1-bahar-v2.svg",
+      "sha256": "59a3b02d217a5758c2e86c0b9045422559e04791ad68dfc9ea801bb9bd4f9fc1",
+      "bytes": 2882,
+      "status": "original-vector",
+      "source": "docs/paper-sky-assets.json"
     }
   ]
 }
