@@ -352,4 +352,4 @@
  setInterval(tick,3500);
  window.addEventListener('dm:login',()=>{shown=false;close()});
 })();
-*/;
+*/
