@@ -13,11 +13,12 @@ const SUPABASE_URL = "https://nxfqlutulxqzqgwewssd.supabase.co";
 
 const SUPABASE_ANON_KEY = "sb_publishable_K9h4CnyaL8xb8B98o8aaFw_s9cMikuF";
 
-const supabaseClient = supabase.createClient(
+const supabaseClient = window.supabase?.createClient?.(
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
   { auth: { storageKey: 'diji-ingilizce-google-auth' } }
-);
+) || null;
+window.supabaseClient=supabaseClient;
 </script>
 <script>
 (function () {
@@ -945,7 +946,7 @@ function finish(){if(done)return;done=true;clearInterval(timer);clearTimeout(dea
 function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
-if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'))finish();
+if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&!!aktifOgrenciAdi))finish();
 }
 window.addEventListener('load',()=>{loaded=true;check();},{once:true});
 document.addEventListener('dm:login',check);timer=setInterval(check,150);
@@ -3907,7 +3908,7 @@ async function dijiGlobalVeriYukle() {
 
     try {
 
-        const res = await fetch(apiURL);
+        const res = await (window.dmStartupFetch||fetch)(apiURL);
 
         if (!res.ok) {
             throw new Error("HTTP " + res.status);
@@ -4156,7 +4157,7 @@ async function dijiKelimeHavuzunuYukle() {
 
     /* İlk kez giriyorsa sunucudan al */
     try {
-        const res = await fetch(apiURL + "?islem=kelimelerGetir");
+        const res = await (window.dmStartupFetch||fetch)(apiURL + "?islem=kelimelerGetir");
 
         if (!res.ok) {
             throw new Error("HTTP " + res.status);
@@ -4307,37 +4308,8 @@ async function dijiKelimeHavuzunuYukle() {
                    await dijiGlobalVeriYukle();
 
                     if (otomatikGirisYapilacak) {
-                        aktifOgrenciAdi = kayitliOgrenci;
-                           setTimeout(function () {
-
-}, 1000);
-                        toplamSaniye = parseInt(kayitliSure);
-
-                        let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
-
-                                       document.getElementById('oturumYuklemeOverlay').style.display = 'none';
-                        document.getElementById('panel-alani').style.display = 'block';
-                        document.getElementById('ogrenciAdiText').innerText = aktifOgrenciAdi;
-                        document.getElementById('userAvatarLetter').innerText = ogrenciMaskotSec(aktifOgrenciAdi);
-                        girisSerisiGuncelleVeGetir();
-
-                        if (user) {
-                            toplamSaniye = Number(user.toplamsure) || toplamSaniye;
-                            sessionStorage.setItem("toplamSaniye", toplamSaniye);
-                            veriArayuzeIsle(user);
-                        } else {
-                            console.warn("Otomatik girişte kullanıcı bulunamadı:", aktifOgrenciAdi);
-                        }
-
-                                                                        baslatSayac();
-                        arkaPlanVeriYenilemeBaslat();
-                        gununKonusuYukle();
-                        anaPanelDuyuruBildirimleriYukle();
-
-                            (window.dmOtomatikAkisAc || meduAkisAc)();
-                              gunlukEnerjiBonusuKontrolEt();
-                        }
-
+                        await window.dmOpenPortalSession({student:kayitliOgrenci,seconds:kayitliSure});
+                    }
 
                                ogretmenSelectDoldur();
                     rubricGridleriOlustur();
@@ -7421,6 +7393,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef} sayfa`;
                 }
                 function grafikliCiz(grafikGecmis, user, denemeGecmis) {
+                    if(typeof Chart!=='function'||!['gelisimGrafik','kriterGrafik','denemeGrafik'].every(id=>document.getElementById(id)?.getContext('2d')))return;
                     let labels = grafikGecmis.map(item => tarihiDuzelt(item.tarih));
                     let veriler = grafikGecmis.map(item => item.genel);
                     if (gelisimChartInstance) gelisimChartInstance.destroy();
@@ -8706,6 +8679,7 @@ setTimeout(() => {
 }
 
                       function baslatSayac() {
+                    clearInterval(timerInterval);
                     guncelleArayuz();
                     dcSayacDurumGuncelle();
                     timerInterval = setInterval(() => {
@@ -11607,17 +11581,6 @@ function ozellikSecDoldur() {
             document.body.appendChild(wrap);
             setTimeout(() => wrap.remove(), 2200);
         }
-        function gunlukEnerjiBonusuKontrolEt() {
-            let bugun = new Date().toISOString().split('T')[0];
-            let sonBonus = localStorage.getItem('ing_gunlukEnerjiBonusTarih');
-            if (sonBonus === bugun) return;
-            localStorage.setItem('ing_gunlukEnerjiBonusTarih', bugun);
-            setTimeout(() => {
-
-                genelEnerjiKazanimAnimasyonuGoster(2, '🌙 Günlük giriş bonusu!');
-            }, 1200);
-        }
-
                     // ========= KONUŞMA PRATİĞİ MODÜLÜ =========
         let kpAktifSinif = 1;
         let kpSecilenUniteler = [];
@@ -13879,7 +13842,7 @@ const YO_SOHBET = [
           const owner = yoIsim;
           if (!owner) return false;
           try {
-            let r = await fetch(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(owner)}&anahtar=yo`);
+            let r = await (window.dmStartupFetch||fetch)(`${apiURL}?islem=ekVeriGetir&ogrenci=${encodeURIComponent(owner)}&anahtar=yo`);
             let d = await r.json();
             if (owner !== yoIsim || !r.ok || d?.hata || d?.status === 'error' || r.headers.get('X-Diji-Cevrimdisi')) return false;
             if (d && d.deger) {
@@ -14727,18 +14690,25 @@ function sohbetMikDur() {
         yoGuvenli(yoOgretmenButonlariEkle);
 
         // Giriş yapılınca (otomatik ya da elle) paketi başlat
-        let yoBaslatildi = false;
-        setInterval(() => {
-          if (yoBaslatildi || typeof aktifOgrenciAdi === 'undefined' || !aktifOgrenciAdi) return;
-          let panel = document.getElementById('panel-alani');
-          if (!panel || panel.style.display !== 'block') return;
-          yoBaslatildi = true;
-          yoGuvenli(() => {
-            yoHazirla(aktifOgrenciAdi);
+        let yoBaslatildi = '', yoBaslatTask = null;
+        window.dmPrepareMemberState = function () {
+          const owner=typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
+          if(!owner)return Promise.resolve(false);
+          if(yoBaslatildi===owner)return yoBaslatTask||Promise.resolve(true);
+          yoBaslatildi=owner;
+          yoBaslatTask=(async()=>{
+            yoHazirla(owner);
             yoArayuzKur();
-            yoSunucudanAl();
-            setTimeout(() => yoGuvenli(seviyeDavetGoster), 9000);
-          });
+            const ok=await window.yoSunucudanAl();
+            if(owner===aktifOgrenciAdi)setTimeout(()=>yoGuvenli(seviyeDavetGoster),9000);
+            return ok;
+          })().catch(e=>{console.warn('Öğrenci durumu yüklenemedi',e);return false;});
+          return yoBaslatTask;
+        };
+        setInterval(() => {
+          const panel=document.getElementById('panel-alani');
+          if(panel?.style.display==='block'&&typeof aktifOgrenciAdi!=='undefined'&&aktifOgrenciAdi)
+            window.dmPrepareMemberState();
         }, 1000);
         document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('yoModal').classList.contains('acik')) yoModalKapat(); });
         </script>
@@ -16245,7 +16215,7 @@ setInterval(async () => {
   /* ---- oyun sırasında sadece enerji kalsın ---- */
   function oyundaMi() {
     let secici = ['.game-modal-overlay', '.seviye-harita-overlay', '.kart-oyun-overlay', '.pomodoro-overlay', '#genelSonucOverlay', '#yoModal', '.rubric-modal', '.duy3-overlay', '.yardim-modal-overlay', '.ba-levelup-overlay', '#aiChatModal'];
-    for (let s of secici) for (let el of document.querySelectorAll(s)) if (getComputedStyle(el).display !== 'none') return true;
+    for (let s of secici) for (let el of document.querySelectorAll(s)) if (el.getClientRects().length&&getComputedStyle(el).display !== 'none'&&getComputedStyle(el).visibility!=='hidden') return true;
     let ba = $('tab-buyuakademisi'), bo = $('baOyunEkrani');
     if (ba && ba.classList.contains('active') && bo && bo.style.display !== 'none') return true;
     let kp = $('tab-konusmapratigi'), ko = $('kpKelimeOyunEkrani');
@@ -16798,6 +16768,7 @@ function avatarSVG(s, stil, px, cins) {
     return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci));
   }
   function oyunda() {
+    if(!$('panel-alani')||$('panel-alani').style.display!=='block')return false;
     if((typeof window.dmPapiNotices?.blocked === 'function' && window.dmPapiNotices.blocked()))return true;
     let secici = ['.game-modal-overlay', '.seviye-harita-overlay', '.kart-oyun-overlay', '.pomodoro-overlay', '#genelSonucOverlay', '#yoModal', '.duy3-overlay', '.bd-perde', '.ka-perde', '.od-perde', '.yb-perde.acik'];
     for (let s of secici) for (let el of document.querySelectorAll(s)) if (getComputedStyle(el).display !== 'none') return true;
@@ -19221,19 +19192,7 @@ let adaRenk = adaRenkleri[
 (function () {
   const $ = id => document.getElementById(id);
 
-  /* ===== 1) Alt menü: en başta "Parkur", Arkadaşlar yine akışı açsın ===== */
-  setInterval(() => {
-    let nav = $('bottomNavMobile'); if (!nav) return;
-    if (!nav.querySelector('[data-ekran="tab-dunya"][data-bc="parkur"]') && typeof dunyaAc === 'function') {
-      let b = document.createElement('button');
-      b.className = 'bn-item'; b.dataset.ekran = 'tab-dunya'; b.dataset.bc = 'parkur';
-      b.innerHTML = '<span class="bn-icon">🧙</span><span class="bn-label">Oyna</span>';
-      b.onclick = () => dunyaAc();
-      nav.insertBefore(b, nav.firstChild);
-    }
-    let m = nav.querySelector('.bn-item:not([data-bc="parkur"])[data-ekran="tab-dunya"]');
-    if (m) { m.dataset.ekran = 'tab-meduakis'; m.onclick = () => { if (typeof maSekme !== 'undefined') maSekme = 'akis'; window.yoGomuluHedef = null; meduAkisAc(); }; }
-  }, 700);
+  // Dock rendering is owned by bottom-nav.js.
 
   /* ===== 2) Mağaza kesin açılsın ===== */
   let orgMg = window.magazaAc;
@@ -19355,14 +19314,6 @@ let adaRenk = adaRenkleri[
 
   setInterval(() => {
     let nav = $('bottomNavMobile'); if (!nav) return;
-    if (!nav.querySelector('[data-bc="profil"]')) {
-      let b = document.createElement('button');
-      b.className = 'bn-item'; b.dataset.ekran = 'tab-profil'; b.dataset.bc = 'profil';
-      b.innerHTML = '<span class="bn-icon">​🧌​</span><span class="bn-label">Profil</span>';
-      b.onclick = () => profilAc();
-      let mg = nav.querySelector('[data-ekran="tab-magaza"]');
-      mg ? mg.insertAdjacentElement('afterend', b) : nav.appendChild(b);
-    }
     /* Arkadaşlar profil sekmesindeyse akışa çevir */
     if (typeof maSekme !== 'undefined' && maSekme === 'profil') { maSekme = 'akis'; if (typeof maCiz === 'function' && $('tab-meduakis') && $('tab-meduakis').classList.contains('active')) maCiz(); }
     /* Mağaza sekme çubuğu yoksa çiz */
@@ -19557,6 +19508,7 @@ let adaRenk = adaRenkleri[
     m.style.display = (aktif && aktif.muzik) || document.querySelector('audio') ? '' : 'none';
   }
   function aktifOyun() {
+    if(!$('panel-alani')||$('panel-alani').style.display!=='block')return null;
     for (let k of Object.keys(OYUN)) {
       let ekran = k === 'kp' ? $('kpKelimeOyunEkrani') : k === 'ba' ? document.querySelector('#tab-buyuakademisi.active .ba-oyun-alani') : $(k + 'OyunEkrani');
       if (!ekran || !gor(ekran)) continue;
@@ -19779,16 +19731,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
 @keyframes jmSal { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(6deg) scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .pk-sekmeler, .pk-sekmeler i, .jm-kart, .jm-kart .e, .jm-perde .jm-kutu { animation:none !important; } }
 </style>
-<style id="dm-hide-route-legacy-tabs">
-/* This legacy bar lives under body, outside the route panel. */
-body:has(#tab-dunya.active) #pkSekmeler{display:none!important}
-</style>
-<div class="pk-sekmeler" id="pkSekmeler" role="tablist" aria-label="Parkurlar">
-  <button data-p="ba" role="tab"><i>🧙</i>Büyü Akademisi</button>
-  <button data-p="kp" role="tab"><i>🔤</i>Kelime Modu</button>
-  <button data-p="sh" role="tab"><i>🦜</i>Sohbet</button>
-  <button data-p="kk" role="tab"><i>🃏</i>Kelime Kartları</button>
-</div>
+
 <script>
 (function () {
   const $ = id => document.getElementById(id);
@@ -19796,35 +19739,7 @@ body:has(#tab-dunya.active) #pkSekmeler{display:none!important}
   const yoVar = () => typeof yo !== 'undefined' && yo;
   const aktif = id => $(id) && $(id).classList.contains('active');
 
-  /* ================= 1) PARKUR SEKMELERİ ================= */
-  function kartlarOverlay() { return [...document.querySelectorAll('.seviye-harita-overlay')].find(gor); }
-  function hangiParkur() {
-    if (aktif('tab-dunya')) return 'ba';
-    if (aktif('tab-konusmapratigi') && !gor($('kpKelimeOyunEkrani'))) return 'kp';
-    if (aktif('tab-sohbet') && !document.querySelector('#tab-sohbet .ys-sohbet')) return 'sh';
-    if (kartlarOverlay() && !document.querySelector('.kart-oyun-overlay') ) return 'kk';
-    if (kartlarOverlay()) return 'kk';
-    return null;
-  }
-  function kartlariKapat() { document.querySelectorAll('.seviye-harita-overlay').forEach(e => { if (gor(e)) e.style.display = 'none'; }); }
-  const AC = {
-    ba: () => { kartlariKapat(); if (typeof dunyaAc === 'function') dunyaAc(); },
-    kp: () => { kartlariKapat(); if (typeof kpModuAc === 'function') kpModuAc(); },
-    sh: () => { kartlariKapat(); if (typeof sohbetEkraniAc === 'function') sohbetEkraniAc(); },
-    'papi-cards': () => { window.aktivitelerTamEkranAc && aktivitelerTamEkranAc(); },
-    'word-wheel': () => { window.aktivitelerTamEkranAc && aktivitelerTamEkranAc(); },
-    'level-guide': () => window.dunyaAc && dunyaAc(),
-    kk: () => { if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat(); if (typeof seviyeHaritasiAc === 'function') seviyeHaritasiAc(); }
-  };
-  $('pkSekmeler').querySelectorAll('button').forEach(b => b.onclick = () => { if (hangiParkur() !== b.dataset.p) AC[b.dataset.p](); });
-  setInterval(() => {
-    let p = hangiParkur(), bar = $('pkSekmeler');
-    let oyunIci = typeof odulOyunda === 'function' && odulOyunda() && p !== 'kk';
-    let goster = !!p && !aktif('tab-dunya') && !oyunIci && !document.querySelector('.bs-perde, .ab-perde, .bc-perde, .kr-perde, .od-perde, .dv-perde');
-    bar.classList.toggle('gor', goster);
-    document.body.classList.toggle('pk-sekmeli', goster);
-    bar.querySelectorAll('button').forEach(b => { let selected=b.dataset.p===p || (b.dataset.p==='pro' && p && p!=='ba'); b.classList.toggle('aktif',selected); b.setAttribute('aria-selected',selected?'true':'false'); });
-  }, 400);
+  // The account-selected route is changed only from profile settings.
 
   /* ================= 2) JOKER MAĞAZASI (30 joker) ================= */
   const KAD = { 1: ['Sıradan', '#8b9bb4', '#f8fafc'], 2: ['Nadir', '#4d96ff', '#eff6ff'], 3: ['Efsane', '#a06bff', '#f5f0ff'] };
@@ -19943,6 +19858,7 @@ body:has(#tab-dunya.active) #pkSekmeler{display:none!important}
   /* Güçlendiriciler: XP ×2, altın ×2, bedava bilet, şans yoncası */
   let oyundaydi = false, buOyunXp = false, buOyunAltin = false, buOyunKombo = false;
   setInterval(() => {
+    if(!yoVar())return;
     let simdi = typeof odulOyunda === 'function' && odulOyunda();
     let E = env();
     if (simdi && !oyundaydi && DijiProgressRules.progress(DijiProgressRules.migrate(yo)).level >= 15) {
@@ -20050,16 +19966,6 @@ body:has(#tab-dunya.active) #pkSekmeler{display:none!important}
   window.seriCarpani = () => { let s = parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0') || 0; return s >= 7 ? 1.5 : s >= 3 ? 1.25 : 1; };
 
 
-  window.gunlukEnerjiBonusuKontrolEt = function () {
-    let bugun = new Date().toISOString().split('T')[0];
-    if (localStorage.getItem('ing_gunlukEnerjiBonusTarih') === bugun) return;
-    localStorage.setItem('ing_gunlukEnerjiBonusTarih', bugun);
-    let seri = parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0') || 0, n = seri > 0 && seri % 7 === 0 ? 5 : 3;
-    setTimeout(() => {
-      if (typeof enerjiHediye === 'function') enerjiHediye(n);
-      if (typeof odulGoster === 'function') odulGoster({ ikon: n === 5 ? '🎁' : '🌞', baslik: n === 5 ? `${seri}. gün hediyesi!` : 'Günaydın! Günlük hediyen', alt: n === 5 ? 'Her 7. gün sürpriz: +5 enerji!' : 'Her gün +3 enerji. 7. günde +5!', enerji: n });
-    }, 1500);
-  };
   async function enerjiPaketiAl(miktar = 5) {
     if (!yoVar()) return false;
     const pack = [5,10,15].includes(Number(miktar)) ? Number(miktar) : 5;
@@ -20440,8 +20346,8 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 })();
 </script>
 <link rel="stylesheet" href="papi-onboarding.css?v=3">
-<script src="papi-flow.js?v=20261012-cleanup"></script>
-<script src="papi-onboarding.js?v=dual-path-3"></script>
+<script src="papi-flow.js?v=20261012-stability-1"></script>
+<script src="papi-onboarding.js?v=20261012-stability-1"></script>
 <script>
 (function () {
   const $ = id => document.getElementById(id);
@@ -20728,9 +20634,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
 }, 1000);
     if (localStorage.getItem('ing_toplamSaniye') === null) localStorage.setItem('ing_toplamSaniye', '0');
     fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(d.ogrenci || ogr)}`, { keepalive: true }).catch(() => {});
-    $('login-container').style.display = 'none';
-    $('oturumYuklemeOverlay').style.display = 'flex';
-    setTimeout(() => location.reload(), 120);
+    await window.dmOpenPortalSession({student:d.ogrenci||ogr,seconds:localStorage.getItem('ing_toplamSaniye')||0,refreshProfile:true});
   };
   /* Otomatik girişte puan bildirimleri de çalışsın */
   let pbKuruldu = false;
@@ -22498,16 +22402,22 @@ window.OC = (function () {
   setTimeout(tazele, 4000);
 
   /* Günlük giriş hediyesi: miktarı sunucu belirler (+5, her 7. günde +10) */
+  const dailyBonusPending=new Set();
   window.gunlukEnerjiBonusuKontrolEt = function () {
-    let bugun = new Date().toISOString().split('T')[0];
-    if (localStorage.getItem('ing_gunlukEnerjiBonusTarih_v2') === bugun) return;
-    setTimeout(async () => {
-      let d = await enerjiKazan(5, 'gunluk');
-      if (!d || !d.ok) return;
-      localStorage.setItem('ing_gunlukEnerjiBonusTarih_v2', bugun);
-      if (d.eklenen > 0 && typeof odulGoster === 'function')
-        odulGoster({ ikon: d.eklenen >= 10 ? '🎁' : '🌞', baslik: d.eklenen >= 10 ? '7. gün hediyesi!' : 'Günaydın! Günlük hediyen', alt: `+${d.eklenen} ⚡ enerji`, enerji: d.eklenen });
-    }, 1500);
+    if(window.dmGuestMode||!ogrenci())return;
+    const owner=ogrenci(),bugun=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    const key='ing_gunlukEnerjiBonusTarih_v3:'+owner;
+    if(localStorage.getItem(key)===bugun||dailyBonusPending.has(owner))return;
+    dailyBonusPending.add(owner);
+    setTimeout(async()=>{
+      try{
+        if(owner!==ogrenci())return;
+        const d=await enerjiKazan(5,'gunluk');
+        if(!d?.ok||owner!==ogrenci())return;
+        localStorage.setItem(key,bugun);
+        if(d.eklenen>0&&typeof odulGoster==='function')odulGoster({ikon:d.eklenen>=10?'🎁':'🌞',baslik:d.eklenen>=10?'7. gün hediyesi!':'Günaydın! Günlük hediyen',alt:`+${d.eklenen} ⚡ enerji`,enerji:d.eklenen});
+      }finally{dailyBonusPending.delete(owner);}
+    },1500);
   };
   setTimeout(() => { if (ogrenci()) window.gunlukEnerjiBonusuKontrolEt(); }, 5000);
 
@@ -27395,12 +27305,6 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     return owner===isim()&&!!document.querySelector('.bz-oyun');
   };
   /* Parkur sekmesinin üstündeki "Büyü Akademisi · Kelime Modu · Sohbet · Kelime Kartları" şeridi içeriği örtmesin */
-  setInterval(() => {
-    let k = $('bzParkur'), sr = $('pkSekmeler'); if (!k) return;
-    let gorunur = !!(sr && sr.getClientRects().length && getComputedStyle(sr).display !== 'none' && getComputedStyle(sr).visibility !== 'hidden');
-    k.classList.toggle('pk-var', gorunur);
-    if (gorunur) k.style.setProperty('--pk-h', Math.round(sr.getBoundingClientRect().bottom) + 'px');
-  }, 500);
   /* Eski seviye haritasından gelen "oyna" çağrısı yeni durak kartına yönlenir */
   window.dunyaSeviyeAc = function (n) {
     let k = havuzTum()[(Number(n) - 1) * 8], b = 0, d = 0;
@@ -28671,22 +28575,23 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   };
 })();
 </script>
-<script defer src="google-login.js?v=rights-7"></script>
+<script defer src="portal-bootstrap.js?v=20261012-stability-1"></script>
+<script defer src="google-login.js?v=20261012-stability-1"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
-<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><link rel="stylesheet" href="papi-wallet.css?v=2"><script defer src="papi-wallet.js?v=3"></script>
+<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><link rel="stylesheet" href="papi-wallet.css?v=2"><script defer src="papi-wallet.js?v=20261012-stability-1"></script>
 <link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><script defer src="story-path.js?v=selected-play-20261011-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261011-profix"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261011-hubfix2">
-<script defer src="activity-ui.js?v=20261012-no-academy"></script>
-<script defer src="bottom-nav.js?v=20261012-dual-path"></script>
+<script defer src="activity-ui.js?v=20261012-stability-1"></script>
+<script defer src="bottom-nav.js?v=20261012-stability-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=3"></script>
-<script defer src="weekly-ui.js?v=20261011-repair"></script>
+<script defer src="weekly-ui.js?v=20261012-stability-1"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=1">
-<script defer src="experience-ui.js?v=5"></script>
+<script defer src="experience-ui.js?v=20261012-stability-1"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <script defer src="lazy-games.js?v=20261012-independent"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
@@ -28763,6 +28668,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="study-ui.js?v=20261011-3"></script>
 <link rel="stylesheet" href="storefront.css?v=20261011-4">
 <script defer src="storefront.js?v=20261011-4"></script>
-<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261011-simple-resume"></script>
+<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261012-stability-1"></script>
 </body>      
         </html>

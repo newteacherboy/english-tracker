@@ -276,6 +276,7 @@
     return legacyLogout.apply(this, arguments);
   };
   (async function initialize() {
+    if(!supabaseClient?.auth){area.hidden=true;return;}
     const parameters = new URLSearchParams(location.search);
     if (parameters.get('google_return') === '1' || sessionStorage.getItem('diji_google_pending') === '1') {
       // Let supabase-js parse the OAuth callback before removing URL parameters.

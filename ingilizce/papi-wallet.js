@@ -4,6 +4,7 @@ const hud=document.createElement('div');hud.className='dm-papi-wallet';hud.setAt
 hud.innerHTML='<span data-pw="energy">⚡ —</span><span data-pw="gold">🪙 —</span><span data-pw="xp">✨ — XP</span>';
 function run(){
  if(!document.body)return;
+ if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi){hud.hidden=true;return;}
  if(!hud.isConnected)document.body.appendChild(hud);
  const selectors=['#dmStoryLesson','.ds-lesson-shell','.game-modal-content','#baOyunEkrani','.oyun-modal','[id*="OyunModal"]','[id*="oyunModal"]','[id*="OyunEkrani"]','.duello-oyun'];const inGame=selectors.some(sel=>{const el=document.querySelector(sel);return !!el&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';});
  const introVisible=[...document.querySelectorAll('#dmGameIntro,.dm-entry-open,.hb-overlay')].some(el=>el.getClientRects().length>0 && getComputedStyle(el).visibility!=='hidden');

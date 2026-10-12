@@ -78,7 +78,12 @@ async function weekly(){
 }
 // Block direct tab/function entry as well as hiding buttons; existing user records remain intact.
 document.addEventListener('click',e=>{if(admin)return;const b=e.target.closest('[data-s],[data-ekran],[data-mode],[data-social]');if(!b)return;const code=b.dataset.s==='lig'?'lig':b.dataset.s==='kesfet'?'kesfet':b.dataset.s==='vitrin'?'vitrin':b.dataset.s==='akis'?'akis':navCodes[b.dataset.ekran];if(code&&!enabled(code)){e.preventDefault();e.stopImmediatePropagation();unavailable();}},true);
-let queue;new MutationObserver(()=>{clearTimeout(queue);queue=setTimeout(apply,150);}).observe(document.body,{childList:true,subtree:true});
+const releaseControls='button,select,option,[onclick],[data-ekran],[data-social]';
+let queue;new MutationObserver(records=>{
+ if(!records.some(r=>[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches?.(releaseControls)||n.querySelector?.(releaseControls)))))return;
+ if(!queue)queue=setTimeout(()=>{queue=null;apply();},150);
+}).observe(document.body,{childList:true,subtree:true});
+document.addEventListener('dm:state',apply);
 setInterval(()=>{if(weeklyAccount!==who()){weeklyAccount=who();lastWeekly=0;admin=false;refresh();}apply();weekly();},15000);
 setInterval(refresh,600000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh();weekly();}});refresh();setTimeout(weekly,10000);
 })();
