@@ -15,7 +15,7 @@ function chapters(){
 }
 function title(s){const names=['İlk Adımlar','Kelime Bahçesi','Keşif Yolu','Bilgi Köprüsü','Renkli Macera','Yeni Ufuklar','Başarı Yolu','Papi ile Öğren'];return names[(s.u-1)%names.length];}
 const state=()=>{const steps=chapters(),done=load().done||{},first=steps.findIndex(x=>!done[x.id]);return {steps,done,index:first<0?steps.length:first};};
-function wallet(){const y=typeof yo!=='undefined'?yo:{};const xp=Number(y?.lig?.xp??y?.xp??0),gold=Number(y?.altin??0),energy=typeof genelEnerjiKalan!=='undefined'?genelEnerjiKalan:'–';return '<div class="dmp-wallet"><button type="button" data-wallet="energy" aria-label="Enerji bilgileri"><span class="dmp-wallet-icon">⚡</span><span>'+esc(energy)+'</span></button><button type="button" data-wallet="xp" aria-label="XP bilgileri"><span class="dmp-wallet-icon dmp-xp-icon">XP</span><span>'+esc(xp)+'</span></button><button type="button" data-wallet="gold" aria-label="Altın ve mağaza"><span class="dmp-wallet-icon dmp-coin-icon">🪙</span><span>'+esc(gold)+'</span></button></div>';}
+function wallet(){const y=typeof yo!=='undefined'?yo:{};const xp=Number(y?.lig?.xp??y?.xp??0),gold=Number(y?.altin??0),energy=window.dmNewParkurEnergy??(typeof genelEnerjiKalan!=='undefined'?genelEnerjiKalan:'–');return '<div class="dmp-wallet"><button type="button" data-wallet="energy" aria-label="Enerji bilgileri"><span class="dmp-wallet-icon">⚡</span><span>'+esc(energy)+'</span></button><button type="button" data-wallet="xp" aria-label="XP bilgileri"><span class="dmp-wallet-icon dmp-xp-icon">XP</span><span>'+esc(xp)+'</span></button><button type="button" data-wallet="gold" aria-label="Altın ve mağaza"><span class="dmp-wallet-icon dmp-coin-icon">🪙</span><span>'+esc(gold)+'</span></button></div>';}
 function header(s){return '<header class="dmp-head"><img src="route-assets/papi-school.png" alt="Papi" onerror="this.style.display=\'none\'">'+wallet()+'</header><div class="dmp-heading"><small>'+s.g+'. Sınıf • '+s.u+'. Ünite</small><h2>'+title(s)+'</h2><span>Seviye '+s.part+' / '+s.parts+' · 9 soru</span></div>';}
 function home(){
  const host=$('#dmNewParkur');if(!host)return;const {steps,done,index}=state(),current=steps[Math.min(index,steps.length-1)];
@@ -47,7 +47,23 @@ function startDictation(){
  if(!Speech){const feedback=$('#dmNewParkur .dmp-feedback');if(feedback)feedback.textContent='Bu cihazda sesle yazma desteklenmiyor. Klavyeyi kullanabilirsin.';return;}
  try{const rec=new Speech();rec.lang='en-US';rec.interimResults=false;rec.maxAlternatives=1;button.disabled=true;button.textContent='🔴';rec.onresult=e=>{input.value=e.results[0][0].transcript.replace(/[.!?]$/,'').trim();input.focus();};rec.onerror=()=>{const el=$('#dmNewParkur .dmp-feedback');if(el)el.textContent='Mikrofon erişilemedi; yazıyla devam edebilirsin.';};rec.onend=()=>{button.disabled=false;button.textContent='🎙️'};rec.start();}catch{button.disabled=false;button.textContent='🎙️';}
 }
-function advance(){question++;drawQuestion();}
+async function advance(){
+ if(busy)return;
+ const next=$('#dmNewParkur .dmp-next');
+ if(question%3===2){
+  busy=true;if(next){next.disabled=true;next.textContent='⚡ Enerji kontrol ediliyor…';}
+  try{
+   const api=typeof apiURL!=='undefined'?apiURL:window.apiURL;
+   if(!api||!who())throw Error('Enerji bağlantısı hazır değil.');
+   const r=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:'enerjiDegistir',ogrenci:who(),t:localStorage.getItem('ing_token')||'',fark:-1,sebep:'oyun'})});
+   const d=await r.json();if(!r.ok||d.ok===false||d.status==='error')throw Error(d.mesaj||'Enerji kullanılamadı.');
+   window.dmNewParkurEnergy=d.enerjiKalan;
+   if(typeof window.enerjiGuncelle==='function')window.enerjiGuncelle(d.enerjiKalan);
+  }catch(err){const message=err.message||'Enerji kullanılamadı.';const el=$('#dmNewParkur .dmp-feedback');if(el)el.textContent='⚡ '+message;if(next){next.disabled=false;next.textContent='Tekrar dene →';}busy=false;return;}
+  busy=false;
+ }
+ question++;drawQuestion();
+}
 function celebrateCorrect(){
  try{if(navigator.vibrate)navigator.vibrate([90,35,140]);}catch{}
  try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ctx=new AC(),now=ctx.currentTime;[660,880,1047].forEach((freq,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.value=freq;gain.gain.setValueAtTime(0.0001,now+i*.085);gain.gain.exponentialRampToValueAtTime(.13,now+i*.085+.014);gain.gain.exponentialRampToValueAtTime(.0001,now+i*.085+.18);osc.connect(gain).connect(ctx.destination);osc.start(now+i*.085);osc.stop(now+i*.085+.19);});setTimeout(()=>ctx.close().catch(()=>{}),650);}catch{}
