@@ -45,8 +45,8 @@ function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav
  nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const src='route-assets/'+(icon.endsWith('.png')?icon:icon+'.svg');if(slot&&!slot.querySelector('img'))slot.innerHTML='<img src="'+src+'" alt="" decoding="async">';if(id==='tab-dunyam'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
 // The new parkur is independent of the legacy story engines.
 (function loadNewParkur(){
- const css=document.createElement('link');css.rel='stylesheet';css.href='new-parkur-v2.css?v=5';document.head.append(css);
- const js=document.createElement('script');js.src='new-parkur-v2.js?v=5';document.head.append(js);
+ const css=document.createElement('link');css.rel='stylesheet';css.href='new-parkur-v2.css?v=7';document.head.append(css);
+ const js=document.createElement('script');js.src='new-parkur-v2.js?v=7';document.head.append(js);
 })();
 window.dmOpenGamesHome=function(){
  const btn=document.querySelector('#bottomNavMobile [data-ekran="tab-aktiviteler"]');if(btn){btn.click();return true;}return false;
