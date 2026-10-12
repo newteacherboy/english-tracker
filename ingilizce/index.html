@@ -916,25 +916,8 @@ html, body { touch-action: pan-x pan-y; }
 .dm-match-option.selected{outline:3px solid #f0c46b}.dm-match-option.dm-right{background:#ccefd7;border-color:#50aa71}.dm-match-option.dm-wrong{background:#ffe1e1;border-color:#e65a5a}
 </style>
 <style id="dm-adventure-one-screen-v1">
-/* All adventure question types: one responsive viewport, no body/page scrolling. */
-#bzPerde:has(>.bz-oyun){height:100dvh;box-sizing:border-box;overflow:hidden!important;overscroll-behavior:contain;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important}
-#bzPerde>.bz-oyun{height:100%;max-height:100%;min-height:0;box-sizing:border-box;display:grid!important;grid-template-rows:auto minmax(0,1fr) auto;align-items:stretch;padding:clamp(4px,1vh,10px) 0!important;gap:clamp(4px,.7vh,9px)}
-#bzPerde>.bz-oyun>.bz-oyun-ust{max-width:760px;width:100%;box-sizing:border-box;padding:2px clamp(8px,2vw,16px)!important;min-height:34px;margin:0 auto}
-#bzPerde>.bz-oyun>#bzAlan{box-sizing:border-box;margin:0 auto!important;max-width:min(760px,calc(100% - 16px))!important;width:calc(100% - 16px);min-height:0;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:clamp(8px,1.5vh,18px)!important;box-shadow:0 5px 18px #102b3640}
-#bzPerde>.bz-oyun>#bzJokerler{box-sizing:border-box;max-width:760px;width:calc(100% - 16px);margin:0 auto!important;padding:2px 0 max(3px,env(safe-area-inset-bottom,0px));gap:clamp(3px,1vw,8px)!important;flex-wrap:nowrap!important;align-items:stretch}
-#bzPerde>.bz-oyun>#bzJokerler .bz-jk{min-width:0!important;flex:1 1 0!important;font-size:clamp(10px,2.3vw,13px)!important;min-height:43px;padding:5px 2px}
-#bzPerde #bzAlan .bz-soru{font-size:clamp(16px,2.8vh,24px)!important;line-height:1.25!important;margin:4px 0 8px!important}
-#bzPerde #bzAlan .bz-ipucu{padding:6px 9px!important;font-size:clamp(11px,1.9vh,14px)!important;margin:5px 0!important}
-#bzPerde #bzAlan .bz-secenekler{gap:clamp(5px,1vh,10px)!important}
-#bzPerde #bzAlan .bz-sec{padding:clamp(8px,1.4vh,15px)!important;min-height:40px;font-size:clamp(14px,2vh,18px)!important}
-#bzPerde #bzAlan .bz-slotlar{gap:clamp(3px,.7vw,7px);margin:5px 0 8px!important}
-#bzPerde #bzAlan .bz-slot{width:clamp(27px,4vh,42px);height:clamp(31px,4.9vh,48px);font-size:clamp(14px,2.5vh,22px)}
-#bzPerde #bzAlan .bz-harfler{gap:clamp(3px,.65vw,7px)!important}
-#bzPerde #bzAlan .bz-cip2{min-width:clamp(30px,4vh,42px);height:clamp(34px,4.8vh,44px)!important}
-#bzPerde #bzAlan .bz-btn{min-height:clamp(41px,6vh,54px);padding:8px!important}
-#bzPerde .bz-inceleme{min-height:0;overflow:auto}
-@media(min-width:820px){#bzPerde>.bz-oyun{max-width:820px;margin:0 auto}#bzPerde #bzAlan .bz-sec{font-size:18px!important}}
-@media(max-height:660px){#bzPerde>.bz-oyun{gap:3px}#bzPerde #bzAlan .bz-soru{margin:2px 0 4px!important}#bzPerde #bzAlan .bz-kart2{height:60px}#bzPerde #bzAlan .bz-slot{height:31px}}
+@media(min-width:820px){}
+@media(max-height:660px){}
 </style></head>
         <body>
 <div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="150" height="180" alt="Diji-Medu papağanı Papi"></div><strong>Merhaba, ben Papi!</strong><p id="dmBootText">Maceranı hazırlıyorum…</p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
@@ -13196,7 +13179,7 @@ function ozellikSecDoldur() {
           if (jk.cift) rozetler += '<span class="jk-rozet">✨ Sonraki doğru x2</span>';
           bar.innerHTML = '<div class="jk-bar">' + OYUN_JOKERLERI[jk.oyun].map(j => {
             let J = JOKER_TANIM[j];
-            return `<button type="button" class="jk-btn${jk.kullanilan.has(j) ? ' kullanildi' : ''}${jokerUygunMu(j) ? '' : ' uygunsuz'}" id="jkb-${j}" style="--jr:${J.renk}" onclick="jokerKullan('${j}')" aria-label="${J.ad} jokeri"><span class="jk-daire">${J.ikon}</span>${J.ad}</button>`;
+            return `<button type="button" class="jk-btn${jk.kullanilan.has(j) ? ' kullanildi' : ''}${jokerUygunMu(j) ? '' : ' uygunsuz'}" id="jkb-${j}" ${jk.kullanilan.has(j)||!jokerUygunMu(j)?'disabled':''} style="--jr:${J.renk}" onclick="jokerKullan('${j}')" aria-label="${J.ad} jokeri"><span class="jk-daire"><img src="parkur-okul-assets/joker-${j}-v1.svg" alt=""></span>${J.ad}<b class="jk-rights">${jk.kullanilan.has(j)?0:1}</b></button>`;
           }).join('') + `</div><div class="jk-alt"><span>🃏 Kalan joker: ${3 - jk.kullanilan.size}/3</span>${rozetler}</div>` + mesajHtml;
         }
 
@@ -17062,9 +17045,9 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     if (yo.komboGun !== b) { yo.komboGun = b; yo.komboSay = 0; }
     let odullu = yo.komboSay < 5;
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      let p = document.createElement('div'); p.className = 'kb-papagan'; p.innerText = '🦜'; document.body.appendChild(p); setTimeout(() => p.remove(), 2300);
+      let p = document.createElement('div'); p.className = 'kb-papagan'; p.innerHTML = '<img src="parkur-okul-assets/papi-v1.webp" alt="Papi" width="72" height="72">'; document.body.appendChild(p); setTimeout(() => p.remove(), 2300);
     }
-    let y = document.createElement('div'); y.className = 'kb-yazi'; y.innerText = `🔥 ${kombo} KOMBO!` + (odullu ? ' +3 🪙' : ''); document.body.appendChild(y); setTimeout(() => y.remove(), 2100);
+    let y = document.createElement('div'); y.className = 'kb-yazi'; y.innerHTML = (window.dmFeatherSeries?.(kombo)||String(kombo)) + (odullu ? ' +3 🪙' : ''); document.body.appendChild(y); setTimeout(() => y.remove(), 2100);
         if (odullu) { yo.komboSay++; yoXpEkle(0, 5); }
   }
   new MutationObserver(ms => {
@@ -26855,10 +26838,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function oyunUst() {
     let s = O.sorular[O.i], [, ik, ad] = TIPLER.find(t => t[0] === s.tip) || ['sesliFinal','🎙️','Papi ile Konuş'];
     let enerji = typeof window.genelEnerjiKalan === 'number' ? window.genelEnerjiKalan : '–';
-    return `<div class="bz-oyun-ust"><button class="kapat" id="bzCik" ${window.dmPapiFirstPractice?.locked('school')?'disabled title="İlk çalışmanı tamamla"':''} aria-label="Oyundan çık" style="width:38px;height:38px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:900;cursor:pointer;flex:none">✕</button>
+    return `<div class="bz-oyun-ust"><button class="kapat" id="bzCik" ${window.dmPapiFirstPractice?.locked('school')?'disabled title="İlk çalışmanı tamamla"':''} aria-label="Oyundan çık" >✕</button>
       <button class="bz-geri-soru" id="bzGeriSoru" aria-label="Önceki soruları gör" ${O.gecmis.some(Boolean) ? '' : 'disabled'}>←</button>
       <div class="bz-noktalar" aria-label="İlerleme">${O.sorular.map((_, j) => `<i class="${j < O.i ? (O.sonuclar[j] ? 'd' : 'y') : j === O.i ? 'a' : ''}"></i>`).join('')}</div>
-      <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="sp-combo" aria-label="Kombo">🔥 ${O.kombo||0}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span><span class="sp-gold" aria-label="Altın">🪙 ${yoVar()?yo.altin||0:0}</span></div>
+      <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="sp-combo" aria-label="Tüy Serisi">${window.dmFeatherSeries?.(O.kombo||0)||O.kombo||0}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span><span class="sp-gold" aria-label="Altın">🪙 ${yoVar()?yo.altin||0:0}</span></div>
       <div class="bz-govde" id="bzGovde"><span class="bz-tip">${ik} ${ad}${s.tekrarMi ? ' · 🔁 Önceki üniteden' : ''}</span>`;
   }
   /* ---------- Jokerler: her durakta her jokerin 1 bedava hakkı + çantadakiler (Oyunlar'le ortak çanta) ---------- */
@@ -26877,7 +26860,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     bar.innerHTML = JK.map(([t, ik, ad]) => {
       let n = jkSay(t), uygun = !O._cevaplandi && O.sorular[O.i]?.tip!=='sesliFinal' && (t === 'pas' || (t !== 'ikinci' && typeof O.jk[t] === 'function'));
       let bilgi = t === 'ikinci' ? 'Yanlış yapınca sorar' : '';
-      return `<button class="bz-jk" data-jk="${t}" ${n > 0 && uygun ? '' : 'disabled'} aria-label="${ad}, ${n} hak${bilgi ? ', ' + bilgi : ''}"><span>${ik}</span>${ad}${n ? `<b>${n}</b>` : ''}</button>`;
+      return `<button class="bz-jk" data-jk="${t}" ${n > 0 && uygun ? '' : 'disabled'} aria-label="${ad}, ${n} hak${bilgi ? ', ' + bilgi : ''}"><span><img src="parkur-okul-assets/joker-${t}-v1.svg" alt=""></span>${ad}${n ? `<b>${n}</b>` : ''}</button>`;
     }).join('') + `<button class="bz-jk al" id="bzJkAl" aria-label="Joker ve enerji satın al"><span>🛒</span>Al</button>`;
     bar.querySelectorAll('[data-jk]').forEach(b => b.onclick = () => jokerKullan(b.dataset.jk));
     $('bzJkAl').onclick = dukkanAc;
@@ -26915,7 +26898,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     ciz(); document.body.appendChild(p);
     p.addEventListener('click', e => { if (e.target === p) p.remove(); });
   }
-  function ustTazele() { let e = document.querySelector('.bz-enerji-pill'); if (e && typeof window.genelEnerjiKalan === 'number') e.textContent = '⚡ ' + window.genelEnerjiKalan; const c=document.querySelector('.sp-combo'),g=document.querySelector('.sp-gold');if(c)c.textContent='🔥 '+(O.kombo||0);if(g)g.textContent='🪙 '+(yoVar()?yo.altin||0:0); }
+  function ustTazele() { let e = document.querySelector('.bz-enerji-pill'); if (e && typeof window.genelEnerjiKalan === 'number') e.textContent = '⚡ ' + window.genelEnerjiKalan; const c=document.querySelector('.sp-combo'),g=document.querySelector('.sp-gold');if(c)c.innerHTML=window.dmFeatherSeries?.(O.kombo||0)||String(O.kombo||0);if(g)g.textContent='🪙 '+(yoVar()?yo.altin||0:0); }
   /* ---------- ← Önceki soruları gör ---------- */
   function incelemeAc(k) {
     let son = O._cevaplandi ? O.i : O.i - 1; if (son < 0) return;
@@ -28908,27 +28891,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 #bzAlan .dm-final-write-panel #bzMicCheck{min-height:48px!important;font-size:16px!important;margin-top:7px!important}
 #bzAlan:has(#bzMicCards) #bzMicStatus{font-size:clamp(12px,3vw,15px);padding:4px 10px;margin:0!important}
 @media(max-height:740px){#bzAlan #bzMicStart{min-height:62px!important}#bzAlan #bzMicCards .dm-final-card{min-height:70px!important}}
-/* Adventure question viewport layout, separate from adventure map and dialogs. */
-#bzPerde:has(> .bz-oyun.dm-question-panel){height:100dvh!important;max-height:100dvh!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:calc(env(safe-area-inset-top,0px) + 4px) 0 calc(env(safe-area-inset-bottom,0px) + 5px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel)>.bz-oyun{flex:0 0 auto!important;padding:0!important;margin:0 auto!important;width:min(100%,640px)!important;min-height:0}
-#bzPerde:has(> .bz-oyun.dm-question-panel)>.bz-oyun .bz-oyun-ust{margin:0!important;padding:3px 8px!important;min-height:38px!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;box-sizing:border-box!important;margin:4px auto!important;width:min(calc(100% - 16px),610px)!important;max-width:610px!important;padding:clamp(8px,1.5vh,15px)!important;border-radius:19px!important;scrollbar-width:thin}
-#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler{flex:0 0 auto!important;box-sizing:border-box!important;display:flex!important;flex-wrap:nowrap!important;gap:clamp(2px,1vw,7px)!important;width:min(calc(100% - 16px),610px)!important;max-width:610px!important;margin:3px auto!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{flex:1 1 0!important;min-width:0!important;padding:5px 1px!important;font-size:clamp(9px,2vw,12px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk span{font-size:clamp(15px,3vw,22px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-soru{font-size:clamp(17px,3.1vh,25px)!important;line-height:1.3!important;margin:5px 0 9px!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{padding:6px 10px!important;margin:3px 0 8px!important;font-size:clamp(11px,1.65vh,14px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-secenekler{gap:clamp(5px,1vh,10px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-sec{padding:clamp(8px,1.35vh,14px)!important;min-height:40px!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-slotlar{margin:5px 0 9px!important;gap:clamp(2px,0.8vw,6px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-slot{width:clamp(25px,5.3vw,40px)!important;height:clamp(31px,6vh,47px)!important;font-size:clamp(15px,2.8vh,21px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-harfler{gap:clamp(3px,.8vw,7px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-cip2{min-width:34px!important;height:39px!important;padding:0 7px!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan #bzMicStart{min-height:clamp(58px,9vh,84px)!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .dm-final-write-panel{margin-top:8px!important}
-#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzInceleme{max-height:80dvh}
-@media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
-@media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
+@media(min-width:750px){}
+@media(max-height:680px){}
 </style>
 <link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261012-dual-path"></script><script defer src="kisisel-bilgiler.js?v=3"></script><script defer src="student-management.js?v=2"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
@@ -28953,6 +28917,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="study-ui.js?v=20261011-3"></script>
 <link rel="stylesheet" href="storefront.css?v=20261011-4">
 <script defer src="storefront.js?v=20261011-4"></script>
-<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261011-simple-resume"></script>
+<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="question-calm-v1.js?v=20261012-paper-sky-v1"></script><script defer src="selected-play.js?v=20261011-simple-resume"></script>
 </body>      
         </html>
