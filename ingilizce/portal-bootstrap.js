@@ -32,13 +32,13 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false}={})
    await window.dmPrepareMemberState?.();
    if(turn!==epoch||name()!==owner)return false;
    // The chosen learning route is always the student's home screen.
-   if(owner.toLowerCase()==='teacher')await window.meduAkisAc?.();else await window.dunyaAc?.();
+   if(owner.toLowerCase()==='teacher')await window.meduAkisAc?.();else await window.aktivitelerAc?.();
    if(turn!==epoch||name()!==owner)return false;
    safe(window.anaPanelDuyuruBildirimleriYukle);safe(window.gunlukEnerjiBonusuKontrolEt);
    document.dispatchEvent(new Event('dm:login'));
    return true;
   }catch(e){
-   if(turn===epoch&&name()===owner){$('panel-alani').style.display='block';$('oturumYuklemeOverlay').style.display='none';safe(window.yoToast,'Bir bölüm yüklenemedi. Parkurdan tekrar deneyebilirsin.');}
+   if(turn===epoch&&name()===owner){$('panel-alani').style.display='block';$('oturumYuklemeOverlay').style.display='none';safe(window.yoToast,'Bir bölüm yüklenemedi. Oyunlar sekmesinden tekrar deneyebilirsin.');}
    console.warn('Portal açılışı tamamlanamadı',e);return false;
   }
  })();pending={owner,task};task.finally(()=>{if(pending?.task===task)pending=null;});return task;
