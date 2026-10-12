@@ -25,7 +25,7 @@ function home(){
  host.querySelectorAll('[data-level]').forEach(b=>b.onclick=()=>start(b.dataset.level));
 }
 function shuffle(x){return [...x].sort(()=>Math.random()-.5)}
-function generate(s){return s.words.flatMap(w=>[{w,type:'en-tr'},{w,type:'tr-en'},{w,type:'write'}]);}
+function generate(s){const words=Array.from({length:3},(_,i)=>s.words[i%s.words.length]);return words.flatMap(w=>[{w,type:'en-tr'},{w,type:'tr-en'},{w,type:'write'}]);}
 function choices(right,others){return shuffle([right,...shuffle([...new Set(others.filter(x=>x!==right))]).slice(0,3)]);}
 function start(id){const {steps,done,index}=state(),idx=steps.findIndex(x=>x.id===id);if(idx<0||idx>index)return;selected=steps[idx];question=0;score=0;answered=false;entries=generate(selected);drawQuestion();}
 function drawQuestion(){const host=$('#dmNewParkur');if(!host||!selected)return;const q=entries[question];if(!q){finish();return;}answered=false;
