@@ -16,3 +16,24 @@ body.ww-active{overflow:hidden!important}
 #wordWheel .ww-sound{border:1px solid #b8ac88;background:#fff9e8;color:#335a36;border-radius:12px;padding:8px 14px;min-height:40px;margin-top:8px}
 
 #wordWheel .ww-review{padding:14px 0;outline:none}#wordWheel .ww-review-icon{font-size:44px;margin:8px 0}#wordWheel .ww-review p{font-size:14px;line-height:1.5;color:#574a35}#wordWheel .ww-meaning{display:grid;gap:12px;background:#eaf1d9;border:2px solid #97af67;border-radius:18px;padding:20px 14px;margin:18px 0;overflow-wrap:anywhere}#wordWheel .ww-meaning span{font-size:12px;font-weight:900;color:#4f6536}#wordWheel .ww-meaning strong{font:600 26px/1.3 Fredoka,Nunito,sans-serif;color:#173f32}#wordWheel .ww-meaning b{font:800 22px/1.4 Nunito,sans-serif;color:#285b36}
+
+/* Two independent wheels: large touch targets for smartboards, compact mobile lanes. */
+#wordWheel.ww-duel .ww-shell{max-width:1800px;width:100%;padding:12px 20px;min-height:100dvh}
+#wordWheel.ww-duel h1{font-size:clamp(22px,3vw,40px)}
+#wordWheel .ww-duel-arenas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:12px}
+#wordWheel .ww-duel-arena{min-width:0;border:3px solid #8bb99a;border-radius:24px;background:#eef6e4;padding:15px}
+#wordWheel .ww-duel-arena:nth-child(2){background:#fff0da;border-color:#dfb36f}
+#wordWheel .ww-duel-arena .ww-player{margin:0 0 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#wordWheel .ww-duel-arena .ww-player span{font-size:clamp(16px,2vw,28px)}
+#wordWheel .ww-duel-arena .ww-player b{font-size:clamp(22px,2.8vw,38px)}
+#wordWheel .ww-duel-play{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:14px;min-height:380px}
+#wordWheel .ww-duel-arena .ww-wheel-box{width:100%;max-width:400px}
+#wordWheel .ww-duel-arena .ww-question h2,#wordWheel .ww-duel-arena .ww-review h2{font-size:clamp(20px,2vw,32px);color:#173f32!important;-webkit-text-fill-color:#173f32!important}
+#wordWheel .ww-duel-arena .ww-answers{grid-template-columns:1fr}
+#wordWheel .ww-duel-arena .ww-answers button{min-height:60px;font-size:clamp(17px,1.7vw,25px)}
+#wordWheel .ww-duel-arena .ww-main{min-height:60px;font-size:clamp(18px,1.8vw,27px)}
+#wordWheel .ww-duel-wait{padding:20px;font-size:22px}
+#wordWheel .ww-duel-arena .ww-review{padding:0}
+#wordWheel .ww-duel-arena .ww-meaning{margin:8px 0;padding:14px}
+@media(max-width:1000px){#wordWheel .ww-duel-play{grid-template-columns:1fr;min-height:0;gap:10px}#wordWheel .ww-duel-arena .ww-wheel-box{width:min(100%,30vh);max-width:280px}#wordWheel .ww-duel-arena .ww-answers{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){#wordWheel.ww-duel .ww-shell{padding:7px 6px;border-width:2px}#wordWheel .ww-duel-arenas{gap:6px;margin-top:7px}#wordWheel .ww-duel-arena{padding:7px 5px;border-width:2px;border-radius:16px}#wordWheel .ww-duel-arena .ww-player{padding:7px;margin-bottom:10px;gap:3px;display:block}#wordWheel .ww-duel-arena .ww-player span{font-size:15px}#wordWheel .ww-duel-arena .ww-player b{font-size:22px}#wordWheel .ww-duel-arena .ww-wheel-box{width:100%}#wordWheel .ww-duel-arena .ww-question{padding:8px 5px}#wordWheel .ww-duel-arena .ww-question h2,#wordWheel .ww-duel-arena .ww-review h2{font-size:17px}#wordWheel .ww-duel-arena .ww-answers{grid-template-columns:1fr;gap:5px}#wordWheel .ww-duel-arena .ww-answers button{font-size:15px;min-height:44px}#wordWheel .ww-duel-arena .ww-main{font-size:16px;min-height:48px}#wordWheel .ww-duel-arena .ww-rule{font-size:10px}#wordWheel .ww-duel-arena .ww-value{font-size:12px;padding:5px 8px}#wordWheel .ww-duel-arena .ww-feedback{font-size:13px}#wordWheel .ww-duel-wait{padding:10px 4px;font-size:16px}#wordWheel .ww-duel-arena .ww-meaning{padding:10px 5px;gap:6px}#wordWheel .ww-duel-arena .ww-meaning strong{font-size:19px}#wordWheel .ww-duel-arena .ww-meaning b{font-size:17px}}
