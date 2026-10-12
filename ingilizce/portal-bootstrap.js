@@ -32,7 +32,7 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false}={})
    await window.dmPrepareMemberState?.();
    if(turn!==epoch||name()!==owner)return false;
    // The chosen learning route is always the student's home screen.
-   if(owner.toLowerCase()==='teacher')await window.meduAkisAc?.();else window.dmOpenGamesHome?.();
+   if(owner.toLowerCase()==='teacher')await window.meduAkisAc?.();else await window.dmOpenGamesHome?.();
    if(turn!==epoch||name()!==owner)return false;
    safe(window.anaPanelDuyuruBildirimleriYukle);safe(window.gunlukEnerjiBonusuKontrolEt);
    document.dispatchEvent(new Event('dm:login'));
