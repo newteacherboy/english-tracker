@@ -928,7 +928,7 @@ function finish(){if(done)return;done=true;clearInterval(timer);clearTimeout(dea
 function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
-if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'))finish();
+if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&!!aktifOgrenciAdi))finish();
 }
 window.addEventListener('load',()=>{loaded=true;check();},{once:true});
 document.addEventListener('dm:login',check);timer=setInterval(check,150);
@@ -4267,34 +4267,11 @@ async function dijiKelimeHavuzunuYukle() {
                     rubricGridDegerleriGuncelle();
                 }
 
-                        window.onload = async function() {
-                    let girisBtn = document.getElementById('girisBtn');
-                    let girisSubtitle = document.getElementById('girisSubtitle');
-
-                    girisBtn.disabled = false;
-                    girisBtn.innerText = "Giriş Yap";
-                    girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
-
-                           dijiKelimeHavuzunuYukle();
-
-                                const oturumAcik = localStorage.getItem("ing_oturumAcik");
-        const kayitliOgrenci = localStorage.getItem("ing_aktifOgrenci");
-        const kayitliSure = localStorage.getItem("ing_toplamSaniye");
-                    const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
-
-                    if (otomatikGirisYapilacak) {
-                        document.getElementById('login-container').style.display = 'none';
-                        document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
-                    }
-
-                   await dijiGlobalVeriYukle();
-
-                    if (otomatikGirisYapilacak) {
+                function dmPortalOturumuAc(kayitliOgrenci, kayitliSure) {
+                    if (!kayitliOgrenci || localStorage.getItem('ing_oturumAcik') !== 'true') return;
+                    if (aktifOgrenciAdi === kayitliOgrenci && document.getElementById('panel-alani').style.display === 'block') return;
                         aktifOgrenciAdi = kayitliOgrenci;
-                           setTimeout(function () {
-
-}, 1000);
-                        toplamSaniye = parseInt(kayitliSure);
+                        toplamSaniye = Number(kayitliSure) || 0;
 
                         let user = globalDataCache.find(u => String(u.ogrenci).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase());
 
@@ -4319,7 +4296,33 @@ async function dijiKelimeHavuzunuYukle() {
 
                             (window.dmOtomatikAkisAc || meduAkisAc)();
                               gunlukEnerjiBonusuKontrolEt();
-                        }
+
+                    document.dispatchEvent(new Event('dm:login'));
+                }
+
+                        window.onload = async function() {
+                    let girisBtn = document.getElementById('girisBtn');
+                    let girisSubtitle = document.getElementById('girisSubtitle');
+
+                    girisBtn.disabled = false;
+                    girisBtn.innerText = "Giriş Yap";
+                    girisSubtitle.innerText = "Lütfen sistemde kayıtlı kullanıcı adınızı ve şifrenizi giriniz.";
+
+                           dijiKelimeHavuzunuYukle();
+
+                                const oturumAcik = localStorage.getItem("ing_oturumAcik");
+        const kayitliOgrenci = localStorage.getItem("ing_aktifOgrenci");
+        const kayitliSure = localStorage.getItem("ing_toplamSaniye");
+                    const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
+
+                    if (otomatikGirisYapilacak) {
+                        document.getElementById('login-container').style.display = 'none';
+                        document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
+                    }
+
+                   await dijiGlobalVeriYukle();
+
+                    if (otomatikGirisYapilacak) dmPortalOturumuAc(kayitliOgrenci, kayitliSure);
 
 
                                ogretmenSelectDoldur();
@@ -20713,7 +20716,18 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     fetch(`${apiURL}?islem=sonGirisGuncelle&ogrenci=${encodeURIComponent(d.ogrenci || ogr)}`, { keepalive: true }).catch(() => {});
     $('login-container').style.display = 'none';
     $('oturumYuklemeOverlay').style.display = 'flex';
-    setTimeout(() => location.reload(), 120);
+    try {
+      await dijiGlobalVeriYukle();
+      dmPortalOturumuAc(d.ogrenci || ogr, localStorage.getItem('ing_toplamSaniye'));
+    } catch (error) {
+      console.error('Öğrenci paneli açılamadı:', error);
+      $('oturumYuklemeOverlay').style.display = 'none';
+      $('login-container').style.display = 'block';
+      m.className = 'error';
+      m.innerText = 'Panel yüklenemedi. Tekrar giriş yapmayı deneyebilirsin.';
+    } finally {
+      btn.disabled = false; btn.innerText = 'Giriş Yap'; $('sifre').value = '';
+    }
   };
   /* Otomatik girişte puan bildirimleri de çalışsın */
   let pbKuruldu = false;
