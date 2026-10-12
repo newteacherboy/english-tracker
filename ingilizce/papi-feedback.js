@@ -22,13 +22,19 @@ function mount(kind,title,detail){
 function correct({detail='',anchor=null,duration=1000}={}){
  if(window.dmPapiTour?.active?.())return;
  const at=Date.now();if(at-lastCorrectAt<450)return;lastCorrectAt=at;
- successSound();
+ window.dmAnswerFeedback?.(true);
  anchor?.classList.add('dm-papi-correct-pulse');if(anchor)setTimeout(()=>anchor.classList.remove('dm-papi-correct-pulse'),650);
  mount('correct','Harika!',detail||'Doğru cevap!');
  timer=setTimeout(remove,Math.max(650,Math.min(duration,1800)));
 }
-function wrong({detail='Tekrar dene!',duration=1100}={}){if(window.dmPapiTour?.active?.())return;mount('wrong','Bir daha deneyelim!',detail);timer=setTimeout(remove,Math.max(700,Math.min(duration,1800)));}
-function energy(){if(window.dmPapiNotices?.defer('papi-energy',energy,1))return;mount('energy','Papi ile enerji molası!','Enerjin yenilenince aynı sorudan devam edebileceksin. İlerlemen güvende!');}
-function notice(message){const text=String(message||'').slice(0,300);if(window.dmPapiNotices?.defer('papi-notice:'+text,()=>notice(text)))return;mount('energy','Papi sana sesleniyor!',text);}
+function wrong({detail='Tekrar dene!',duration=1100}={}){window.dmAnswerFeedback?.(false);if(window.dmPapiTour?.active?.())return;mount('wrong','Bir daha deneyelim!',detail);timer=setTimeout(remove,Math.max(700,Math.min(duration,1800)));}
+function energy(){
+ const card=mount('energy','Papi ile enerji molası!','İlerlemen güvende. Altınlarınla enerji alabilir veya ders çalışabilirsin.');if(!card)return;
+ const options=document.createElement('div');options.className='dm-energy-options';
+ for(const [amount,price] of [[5,100],[10,130],[15,180]]){const b=document.createElement('button');b.type='button';b.textContent='⚡ '+amount+' enerji · '+price+' altın';b.onclick=async()=>{options.querySelectorAll('button').forEach(x=>x.disabled=true);try{const bought=await window.enerjiPaketiAl?.(amount);if(bought)remove();}finally{if(options.isConnected)options.querySelectorAll('button').forEach(x=>x.disabled=false);}};options.append(b);}
+ const study=document.createElement('button');study.type='button';study.className='dm-energy-study';study.textContent='📚 Ders Çalış’a git';study.onclick=()=>{remove();window.dmStoryPath?.close(true);for(const name of ['kelimeYarismasiKapat','jpOyunKapat','boslukOyunKapat','hafizaOyunKapat','yagmurOyunKapat','asmacaOyunKapat','kelimebulOyunKapat','esOyunKapat','trenOyunKapat'])window[name]?.();document.querySelector('#bzCik')?.click();window.dersCalisTamEkranAc?.();};
+ card.append(options,study);card.querySelector('button')?.focus();
+}
+function notice(message){const text=String(message||'').slice(0,500);if(/bugünün keşif görevleri|günlük hedefini tamamladın|yeni karakter|karakter açtın|bu haftanın hedefi/i.test(text))return;if(/enerji.*(bitti|yetersiz|gerekli|yok)|yeterli.*enerji/i.test(text)){energy();return;}document.getElementById('dmInlineNotice')?.remove();const el=document.createElement('div');el.id='dmInlineNotice';el.className='dm-inline-notice';el.setAttribute('role','status');el.textContent=text;document.body.append(el);setTimeout(()=>el.remove(),3500);}
 window.DijiMeduPapiFeedback={correct,wrong,energy,notice,close:remove};
 })();

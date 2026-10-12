@@ -79,7 +79,7 @@
  function languages(){return {en:'en-US',tr:'tr-TR'};}
  function speak(text,lang='en'){
    if(typeof window==='undefined'||!window.speechSynthesis||!window.SpeechSynthesisUtterance)return false;
-   try{const s=window.speechSynthesis,u=new window.SpeechSynthesisUtterance(String(text??''));u.lang=languages()[lang]||'en-US';u.rate=lang==='en'?.84:.93;s.cancel();s.speak(u);return true;}catch{return false;}
+   try{if(lang==='en'&&typeof window.dmListen==='function'){window.dmListen(String(text??''),false);return true;}const s=window.speechSynthesis,u=new window.SpeechSynthesisUtterance(String(text??''));u.lang=languages()[lang]||'en-US';u.rate=lang==='en'?.84:.93;s.cancel();s.speak(u);return true;}catch{return false;}
  }
  function recognition(lang='en'){
    if(typeof window==='undefined')return null;

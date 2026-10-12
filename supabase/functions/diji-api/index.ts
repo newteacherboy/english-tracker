@@ -1238,6 +1238,14 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
+  if(op==='activeTime'){
+    if(req.method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
+    if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+    const {data,error}=await supabase.rpc('dm_active_time_tick',{actor:a.student_id,run_key:String(body.runId||''),seq:Number(body.seq),active_seconds:Number(body.seconds||0),claim_index:Number(body.claimIndex||0)});
+    if(error)return json({ok:false,mesaj:'Süre veya sandık kaydedilemedi.'},400);
+    return json(data);
+  }
+
   const memberResponse=await memberToolsAPI({db:supabase,json,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
