@@ -43,11 +43,7 @@ if('serviceWorker' in navigator){
  window.addEventListener('pageshow',check);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
  setTimeout(check,2500);
- let refreshed=false;
- navigator.serviceWorker.addEventListener('controllerchange',()=>{
-  if(refreshed||document.hidden)return;
-  const busy=!!document.querySelector('.dm-solo-fullstage.active,#bzParkur.active,.game-modal-content:not([hidden])');
-  if(busy)return;refreshed=true;location.reload();
- });
+ // The active worker serves future requests; don't restart the full app automatically.
+ // Users can apply the new page version with their next normal refresh.
 }
 })();
