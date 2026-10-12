@@ -11,3 +11,18 @@
 #bottomNavMobile#bottomNavMobile [data-ekran="tab-dunya"]{display:flex!important}
 @media(max-width:390px){.dmp-stop>button{width:57px;height:57px;font-size:24px}.dmp-stop-label{min-width:130px}.dmp-head img{width:47px;height:47px}}
 @media(prefers-reduced-motion:reduce){.dmp-stop.is-active>button{animation:none}}
+/* Parkur quiz visibility: override legacy global game-button typography/colors. */
+#dmNewParkur .dmp-quiz{height:100%;min-height:0;overflow-y:auto;padding-bottom:8px}
+#dmNewParkur .dmp-quiz-wallet .dmp-wallet{display:flex;justify-content:center;gap:7px}
+#dmNewParkur .dmp-wallet button{background:#fffdf0!important;color:#315340!important;border:1px solid #d4e3c6!important;border-radius:14px!important;padding:8px 10px!important;min-height:38px!important;font-size:clamp(12px,3vw,16px)!important;font-weight:900!important;box-shadow:0 2px 5px #44634420!important;opacity:1!important}
+#dmNewParkur .dmp-question h2{color:#214633!important;text-shadow:none!important;opacity:1!important}
+#dmNewParkur .dmp-question small{color:#506c56!important}
+#dmNewParkur .dmp-answers button,#dmNewParkur .dmp-answers input{display:block!important;width:100%;background:#fff!important;color:#254a34!important;-webkit-text-fill-color:#254a34!important;border:2px solid #94c39b!important;opacity:1!important;visibility:visible!important;text-shadow:none!important;box-shadow:0 3px 0 #b1d4b0!important;cursor:pointer!important;pointer-events:auto!important}
+#dmNewParkur .dmp-answers button.right,#dmNewParkur .dmp-answers button.right:disabled{background:#c4f6cf!important;color:#145a28!important;-webkit-text-fill-color:#145a28!important;border-color:#26ad51!important}
+#dmNewParkur .dmp-answers button.wrong,#dmNewParkur .dmp-answers button.wrong:disabled{background:#ffe0dd!important;color:#9b2525!important;-webkit-text-fill-color:#9b2525!important;border-color:#ea5c55!important}
+#dmNewParkur .dmp-answers button:disabled{pointer-events:none!important;opacity:1!important}
+#dmNewParkur .dmp-answers .dmp-check{background:#27ab4a!important;color:white!important;-webkit-text-fill-color:white!important}
+#dmNewParkur .dmp-feedback{color:#214d2d!important;background:#f4ffe9;border-radius:12px;font-size:16px;min-height:34px;padding:6px}
+#dmNewParkur .dmp-next:not([hidden]){display:block!important;visibility:visible!important;width:100%!important;min-height:53px!important;background:#208f40!important;color:white!important;-webkit-text-fill-color:white!important;border:0!important;opacity:1!important;position:relative!important;z-index:10!important}
+#dmNewParkur .dmp-next[hidden]{display:none!important}
+#dmNewParkur .dmp-quiz-top button{color:#246d43!important;background:#fff!important}
