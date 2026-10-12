@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v111-parkur-units-20261012';
+const SURUM = 'diji-v112-answer-refresh-20261012';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 /* Ana sayfanın çevrimdışı kopyasını ASLA değiştirmemesi gereken sayfalar:
@@ -30,13 +30,13 @@ self.addEventListener('fetch', e => {
 
   /* Sayfanın kendisi: önce internet (her zaman güncel), yoksa cihazdaki kopya */
   if (r.mode === 'navigate') {
-    e.respondWith(fetch(r).then(y => { if (y && y.ok) { const k = y.clone(); caches.open(SAYFA).then(c => c.put('./', k)); } return y; })
+    e.respondWith(fetch(r,{cache:'no-store'}).then(y => { if (y && y.ok) { const k = y.clone(); caches.open(SAYFA).then(c => c.put('./', k)); } return y; })
       .catch(() => caches.match('./').then(y => y || caches.match(r))));
     return;
   }
   /* Betikler, stiller ve JSON içerik: her zaman güncel olanı dene, çevrimdışıysa cihazdaki kopya */
   if (url.origin === self.location.origin && /\.(?:js|css|json)$/.test(url.pathname)) {
-    e.respondWith(fetch(r).then(y => {
+    e.respondWith(fetch(r,{cache:'no-store'}).then(y => {
       if (y && y.ok) { const k = y.clone(); caches.open(KAYNAK).then(c => c.put(r, k)); }
       return y;
     }).catch(() => caches.match(r)));
