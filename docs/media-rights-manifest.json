@@ -1038,6 +1038,20 @@
       "bytes": 453,
       "status": "repository-restored",
       "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
+    },
+    {
+      "path": "ingilizce/route-assets/odul-rotasi.webp",
+      "sha256": "e7945cd48fc563826b0b12c8b0783753cb7989446e79643ffa0181333dd63eb8",
+      "bytes": 45916,
+      "status": "ai-generated",
+      "source": "Built-in ImageGen, 2026-10-13; user-approved map concepts, original daytime scene; no UI/text. Lossy WebP encoding for mobile delivery."
+    },
+    {
+      "path": "ingilizce/route-assets/ada-yolculugu.webp",
+      "sha256": "fae512c087d85c4b0fd275dcfdc28026be804c7e2b776d6275051e41fbf8783f",
+      "bytes": 45306,
+      "status": "ai-generated",
+      "source": "Built-in ImageGen, 2026-10-13; user-approved map concepts, original daytime scene; no UI/text. Lossy WebP encoding for mobile delivery."
     }
   ]
 }

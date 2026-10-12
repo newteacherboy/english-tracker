@@ -1,0 +1,20 @@
+const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+(async()=>{
+const base=path.resolve(__dirname,'../ingilizce'),browser=await chromium.launch({headless:true}),page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.route('**/*',r=>{const u=new URL(r.request().url()),file=path.join(base,u.pathname.slice(1));return fs.existsSync(file)&&fs.statSync(file).isFile()?r.fulfill({path:file}):r.fulfill({body:''});});await page.goto('https://route.test/');
+await page.setContent('<meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/oyna-v2.css"><style>*{box-sizing:border-box}body{margin:0}#tab-dunya{position:fixed;inset:0 0 72px;background:#fff}#bottomNavMobile{position:fixed;bottom:0;height:72px;width:100%;background:#edf7f4}</style><div id="tab-dunya"></div><nav id="bottomNavMobile">Menü</nav>');
+await page.evaluate(()=>{window.yo={dmLearningPurpose:'school',altin:91,lig:{xp:0}};window.aktifOgrenciAdi='Fixture';window.dmGorevHavuz=[{id:'a',ad:'3 oyun oyna',hedef:3,olay:'oyun'},{id:'b',ad:'1 Ders Çalış konusu bitir',hedef:1,olay:'ders'},{id:'c',ad:'Bir yazım oyununda yıldız al',hedef:1,olay:'yildiz3'}];window.dmGunGorevleri=()=>({liste:[{id:'a',ilerleme:1},{id:'b',ilerleme:0},{id:'c',ilerleme:0}]});window.launches=[];window.dmStoryPath={overview:async()=>({cefr:'A1',title:'İlk Kelimelerim',chapters:[{id:0,title:'Merhaba',cefr:'A1',done:true,available:true},{id:1,title:'İlk Kelimelerim',cefr:'A1',current:true,available:true},{id:2,title:'Ailem',cefr:'A1',available:false}]}),open:id=>launches.push(id),continueRoute:async()=>launches.push('continue')};});
+await page.addScriptTag({content:fs.readFileSync(base+'/oyna-v2.js','utf8')});
+for(const size of [{width:320,height:568},{width:390,height:844},{width:768,height:1024},{width:844,height:390}]){
+await page.setViewportSize(size);
+for(const route of ['school','independent']){
+await page.evaluate(route=>{yo.dmLearningPurpose=route;const steps=[{b:0,d:0,label:'3. sınıf 4. ünite · 1/3',done:true,available:true},{b:0,d:1,label:'3. sınıf 4. ünite · 2/3',available:true},{b:0,d:2,label:'3. sınıf 4. ünite · 3/3',available:false}];document.getElementById('tab-dunya').innerHTML='<div class="bz-ic">'+dmParkurBaslik({energy:19,gold:91})+'<div id="dmParkurScroll">'+dmParkurSahne({steps,current:1})+'</div></div>';dmParkurMapMount(document.getElementById('dmParkurScroll'));},route);
+await page.waitForSelector(route==='school'?'.rt-reward-route':'.rt-islands');await page.waitForFunction(()=>[...document.querySelectorAll('.rt-path')].every(e=>getComputedStyle(e).backgroundImage.includes('.webp')));
+assert.equal(await page.locator('.rt-node').count(),3);assert.equal(await page.locator('.rt-node.locked:disabled').count(),1);assert.equal(await page.locator('.rt-week').count(),1);assert.equal(await page.locator('.rt-task-list button').count(),3);
+const metrics=await page.locator('.rt-path').evaluate(e=>({width:e.getBoundingClientRect().width,scroll:document.documentElement.scrollWidth,viewport:innerWidth,image:getComputedStyle(e).backgroundImage}));assert(metrics.scroll<=metrics.viewport+1);assert(metrics.width<=size.width);assert(metrics.image.includes(route==='school'?'odul-rotasi.webp':'ada-yolculugu.webp'));
+await page.locator('.rt-start').scrollIntoViewIfNeeded();const rect=await page.locator('.rt-start').boundingBox();assert(rect.y>=0&&rect.y+rect.height<=size.height-72+1,'continue accessible above navigation');
+if(route==='independent'){await page.locator('.rt-node.current').click();assert.equal(await page.evaluate(()=>launches.at(-1)),1);}else assert.equal(await page.locator('.rt-node.current').getAttribute('data-d'),'1');
+if(size.width===390){fs.mkdirSync('/tmp/route-designs',{recursive:true});await page.screenshot({path:'/tmp/route-designs/'+route+'.png'});}
+}
+}assert.deepEqual(errors,[]);await browser.close();console.log('PASS approved route backgrounds, native progress/launches, locks and reachable continuation at four screen sizes');
+})().catch(e=>{console.error(e);process.exit(1)});
