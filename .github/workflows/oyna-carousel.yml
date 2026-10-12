@@ -1,9 +1,9 @@
 name: Oyna carousel
 on:
   push:
-    paths: ['ingilizce/oyna-v2.*', 'ingilizce/oyna-assets/**', 'tests/oyna-carousel*', '.github/workflows/oyna-carousel.yml']
+    paths: ['ingilizce/oyna-v2.*', 'ingilizce/oyna-assets/**', 'tests/oyna-carousel*', 'tests/dual-route.test.cjs', 'tests/paper-sky-ui.cjs', '.github/workflows/oyna-carousel.yml']
   pull_request:
-    paths: ['ingilizce/oyna-v2.*', 'ingilizce/oyna-assets/**', 'tests/oyna-carousel*', '.github/workflows/oyna-carousel.yml']
+    paths: ['ingilizce/oyna-v2.*', 'ingilizce/oyna-assets/**', 'tests/oyna-carousel*', 'tests/dual-route.test.cjs', 'tests/paper-sky-ui.cjs', '.github/workflows/oyna-carousel.yml']
 jobs:
   carousel:
     runs-on: ubuntu-latest
@@ -15,6 +15,6 @@ jobs:
       - run: node tests/oyna-carousel.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
-      - run: node tests/oyna-carousel-ui.cjs
+      - run: node tests/paper-sky-ui.cjs
         env:
           CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ github.workspace }}/node_modules

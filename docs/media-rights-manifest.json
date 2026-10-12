@@ -11,11 +11,382 @@
       "source": "docs/media-generation-record.json"
     },
     {
+      "path": "ingilizce/app-icons/papi-192.png",
+      "sha256": "a231e93ea8d468afee9c15545377681991272002f53ac76ad3c5dd541fd9b1cd",
+      "bytes": 43101,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-app-icon-v3.png"
+    },
+    {
+      "path": "ingilizce/app-icons/papi-512.png",
+      "sha256": "7c47944e4c5ad304d9ed111e23aed432460b6cda1a1ae8bd32a6d7b07bd7e46e",
+      "bytes": 232171,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-app-icon-v3.png"
+    },
+    {
+      "path": "ingilizce/app-icons/papi-maskable-512.png",
+      "sha256": "2e3503fb0824036285411be41d6519a2bde34d88fe0e82eb38ef2e6b7025e848",
+      "bytes": 98833,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-app-icon-v3.png"
+    },
+    {
+      "path": "ingilizce/assets/forest-answer-frame-v1.svg",
+      "sha256": "1f3ec522b8ff38cfe0a2a0f8a0b44e9b0ce3dcbeef98692098e317c6ae61c06b",
+      "bytes": 393022,
+      "status": "ai-generated",
+      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+    },
+    {
+      "path": "ingilizce/assets/forest-back-disc-v1.svg",
+      "sha256": "3188c26635161c4ea908d1534b5e2f94145f567d0c669371d0e4f47fa583e23d",
+      "bytes": 393022,
+      "status": "ai-generated",
+      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+    },
+    {
+      "path": "ingilizce/assets/forest-helper-button-v1.svg",
+      "sha256": "b51bb773ee28fc6dec29781173d9102b0ab1ebf349377e29f5206d1542448188",
+      "bytes": 393021,
+      "status": "ai-generated",
+      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+    },
+    {
+      "path": "ingilizce/assets/forest-icons-v1.svg",
+      "sha256": "35360570c56c57487d4899120d39f98c1a88ffe41546ec1bf4e1f66db5e00cac",
+      "bytes": 857019,
+      "status": "ai-generated",
+      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+    },
+    {
+      "path": "ingilizce/assets/forest-question-plaque-v1.svg",
+      "sha256": "7b426aeac099e49f1c992707caba7e38289741292088e8894a4098c09fad08c8",
+      "bytes": 393021,
+      "status": "ai-generated",
+      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+    },
+    {
+      "path": "ingilizce/assets/forest-reference-v1.svg",
+      "sha256": "d650eeea164b6a756576bebc5d19ff7ea547a4830cf4c5ade8bf0ae70d3ca6d9",
+      "bytes": 667704,
+      "status": "ai-generated",
+      "source": "OpenAI image generation 2026-10-08, user-approved concept 1; SVG viewport of original comparison image."
+    },
+    {
+      "path": "ingilizce/assets/forest-scene-v1.svg",
+      "sha256": "84ec6d0952e9da8c781ff3fe5bad5ffcfc8ec8d2802ff6c2a1e7be7935579924",
+      "bytes": 732363,
+      "status": "ai-generated",
+      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/papi-selam.png",
+      "sha256": "9c61746c17f96b0d8b1392b6b2963fc9dded2fe600fd2734aec7635f7b8b8ca5",
+      "bytes": 113365,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-welcome-v2.png"
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-altin-kumbara.webp",
+      "sha256": "ec33362630327cf7d23e66343dc61b016671e141d590fa6abd8197dd957faf9f",
+      "bytes": 21596,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-23-altin-kumbara.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-ders-kurdu.webp",
+      "sha256": "38c8aa3d55e6839426ddc7d04b1f561bb3e289cf5bb7e4191454a9931a6b07da",
+      "bytes": 21242,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-10-ders-kurdu.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-dinleme-ustasi.webp",
+      "sha256": "6b7e5c26e301fda3c9d11def020c3c20de1d3ab652f810faf9ee93e965474363",
+      "bytes": 20428,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-24-dinleme-ustasi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-gorev-avcisi.webp",
+      "sha256": "be9d86221ad1cbb9404f1f5cde491e560025d92b3428f230813861b43d1d31cb",
+      "bytes": 20246,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-16-gorev-avcisi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-ilk-adim.webp",
+      "sha256": "28cedba4f025329e0c4ddf9f7fb49be0e740a5f5e88d83128f557ed0cbf488e8",
+      "bytes": 18142,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-01-ilk-adim.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-ilk-zafer.webp",
+      "sha256": "c3e00260f644374ee863f9fec3dca5eac3ff879ac20fc98d9b93c8b4c982d4d5",
+      "bytes": 19268,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-02-ilk-zafer.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-kasif.webp",
+      "sha256": "a3867ec8f0945f49a3848b797a15418743b69d0c33970b1a200bf7d2b14dea6b",
+      "bytes": 20900,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-14-kasif.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-kelime-avcisi.webp",
+      "sha256": "50f2ab89d561cd1d5c9e56c60abf6942c2a12eb79232041bfedd0bd06d9ddaa1",
+      "bytes": 22618,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-06-kelime-avcisi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-kelime-ustasi.webp",
+      "sha256": "7382293da7897520b74a6b8132416dc75d54fd984bbb84dcbbdf67e75362274e",
+      "bytes": 19176,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-07-kelime-ustasi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-keskin-goz.webp",
+      "sha256": "6002b2a41ba130bd6ba3a8c58a1c3e094c9a3d21edcd753437693d22c4b7fc69",
+      "bytes": 20272,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-09-keskin-goz.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-koleksiyoncu.webp",
+      "sha256": "b60c003d602e368ce3233e8cf96175ab8b3e2d9d7dcd69579fe4bdcd8c32fc3d",
+      "bytes": 22156,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-20-koleksiyoncu.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-konu-ustasi.webp",
+      "sha256": "c2f6649bc61e14b71dc908f9691ab6371fe17b5f88cda6760464a3b0816bd569",
+      "bytes": 19628,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-11-konu-ustasi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-parkurcu.webp",
+      "sha256": "fde6e66176c661e1c7d5b84c39e8e4254394afd9cd9c90e1775f5519955922cf",
+      "bytes": 21472,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-13-parkurcu.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-puan-avcisi.webp",
+      "sha256": "12c42ba4a32962460a4567e2f8f91834a73936735a05c8f57789afe844ed9e43",
+      "bytes": 23294,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-21-puan-avcisi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-puan-efsanesi.webp",
+      "sha256": "57f093516a8b4e4fb8741c99c051505bd15b0ad8ca1d13a801d5eadb66801a5f",
+      "bytes": 18518,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-22-puan-efsanesi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-sampiyon.webp",
+      "sha256": "df2a0261a0207c1dd434e14efc8a05aa53937ffd3426b2d40b30874e4415011b",
+      "bytes": 20098,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-15-sampiyon.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seri-3.webp",
+      "sha256": "2f5e206a106ca13772b5a5a694c8f57a4d4ce177b97dd24d7b2356e5664049ff",
+      "bytes": 17904,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-03-3-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seri-30.webp",
+      "sha256": "fb6e0476257ed79ecc28f89af6d4f1c8ad7ffbcc154f04b09dd7a5e2ce9bf95a",
+      "bytes": 19324,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-05-30-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seri-7.webp",
+      "sha256": "9f5126a51b95a5c65363a354a5043c95506648f62ad0d13fd744511903c77eb3",
+      "bytes": 18802,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-04-7-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seviye-10.webp",
+      "sha256": "47d2947b3a2984b4401feb9676da883a2232e6856e798b6bdfd8c86020dd43f6",
+      "bytes": 21000,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-18-seviye-10.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seviye-20.webp",
+      "sha256": "f9387dd432239c44215342f0eb6169180bb9f7c9b702a9b5dbeb0dde28e3a240",
+      "bytes": 22570,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-19-seviye-20.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-seviye-5.webp",
+      "sha256": "a8f9c7acede2be02b448e8effeddaad2e967d3a330dc10e73acd3a326f7347a4",
+      "bytes": 20210,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-17-seviye-5.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-tam-isabet.webp",
+      "sha256": "a2a9b630dcf4deac024adefaa1f5def4c7b9665c03b17fa3f5f651b4e6de3c4c",
+      "bytes": 20852,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-08-tam-isabet.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/rozet-yildiz-toplayici.webp",
+      "sha256": "8c50df506c3e98bbe6e1d8b509223210e4eaa829e075bbb5922f21ef0df945a8",
+      "bytes": 18178,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-12-yildiz-toplayici.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/sahne-istatistik.webp",
+      "sha256": "2af1f68594522e7a7851d6b181d82abf1d43843c036af51b4fc83b0c603393a2",
+      "bytes": 144170,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-istatistik.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/sahne-rozetler.webp",
+      "sha256": "c610879f729b0f20569eed911bae4ad107f25363fe31e2cb2c81ad49a3adfa2d",
+      "bytes": 137410,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-rozetler.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/benim-dunyam/sahne-sana-ozel.webp",
+      "sha256": "75402db2305ced9c039ed4b264b027f20f0f127647672133d39a080618ae19ad",
+      "bytes": 174212,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-sana-ozel.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/bottom-nav-forest-v1.webp",
+      "sha256": "2310442e4994b076777894df98002412b15c74420670bb408914c6f097d046ca",
+      "bytes": 235324,
+      "status": "ai-generated",
+      "source": "docs/forest-navigation-generation.json"
+    },
+    {
       "path": "ingilizce/bottom-nav-icons-v2.png",
       "sha256": "040f679c73d9b081592bea7cd88a63d05e08a15218ea074127df42e162f1d812",
       "bytes": 1201119,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/bottom-nav-icons-v3.webp",
+      "sha256": "20c9e725f64c37c11f190fea103601b837178f2a2c5b4bcac3b8a61158887f7d",
+      "bytes": 173930,
+      "status": "ai-generated",
+      "source": "docs/raised-navigation-generation.json"
+    },
+    {
+      "path": "ingilizce/bottom-nav-open-forest-v1.webp",
+      "sha256": "6e3a2e15feced9fb97c70978d65151b918d565a37f33805ec9fe55bb2fbf04a3",
+      "bytes": 144948,
+      "status": "ai-generated",
+      "source": "docs/open-forest-navigation-generation.json"
+    },
+    {
+      "path": "ingilizce/bottom-nav-stickers-v1.png",
+      "sha256": "6bf912592bec232837c0938e1ed771efcdbad70398d654b0fb4cf15421ccda13",
+      "bytes": 1930268,
+      "status": "ai-generated",
+      "source": "docs/sticker-navigation-design.md"
+    },
+    {
+      "path": "ingilizce/ders-vadi/notebook-doodles.png",
+      "sha256": "f53bbe688f7afe017d833c9682a62f457f2f74144e86e61fe647f38bb158adb5",
+      "bytes": 1483429,
+      "status": "ai-generated",
+      "source": "docs/notebook-design-assets.md"
+    },
+    {
+      "path": "ingilizce/ders-vadi/papi-buyutec.png",
+      "sha256": "9efaffd3d776d93f3cd7a47212c0585f4496d7d9d0496d7629f3edfb5c70d53c",
+      "bytes": 106599,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-help-v2.png"
+    },
+    {
+      "path": "ingilizce/ders-vadi/papi-kitap.png",
+      "sha256": "adaddb043f9893297737c263bfe2ecfe82cf1ecab9c49fc79d15a93d0f27d935",
+      "bytes": 67086,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-growth.webp"
+    },
+    {
+      "path": "ingilizce/ders-vadi/papi-yildiz.png",
+      "sha256": "901730ec1e9fd62bb0284c8a81eaee582a67f4712dcad0def5bf6bf9b3758fa4",
+      "bytes": 110307,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/papi-reward-v2.png"
+    },
+    {
+      "path": "ingilizce/friends-assets/icons.svg",
+      "sha256": "8d57136b6d2c54dd30c9117911df6245c8b1faacc9d2af2760976205f71a61aa",
+      "bytes": 1375,
+      "status": "code-native",
+      "source": "Repository-authored Friends interface SVG; source retained in Git"
+    },
+    {
+      "path": "ingilizce/friends-assets/meadow.svg",
+      "sha256": "f5e525d13b49197984a5775e1599edf3e4fd53c7051d63dcbb0f96d2432c2fdb",
+      "bytes": 729,
+      "status": "code-native",
+      "source": "Repository-authored Friends interface SVG; source retained in Git"
+    },
+    {
+      "path": "ingilizce/friends-assets/papi-friends.png",
+      "sha256": "cd7488a8b3f8c2fd35636e8991ac8743cc76e0b62834bc9e9e699043ee590190",
+      "bytes": 29575,
+      "status": "ai-generated",
+      "source": "OpenAI imagegen, 2026-10-11; original Papi parrot generated for the approved Friends UI; resized transparent PNG export"
+    },
+    {
+      "path": "ingilizce/friends-assets/papi-league.png",
+      "sha256": "3c0fadb74c3ce49c642d365a1e24b137c441bca5ca60268a2eebc621fe38c471",
+      "bytes": 36482,
+      "status": "ai-generated",
+      "source": "OpenAI imagegen, 2026-10-11; original Papi parrot generated for the approved Friends UI; resized transparent PNG export"
+    },
+    {
+      "path": "ingilizce/games-assets/game-atlas-v1.png",
+      "sha256": "5c05e627b50165f1ae42d5d2871325286368b9f623cf5d1a32b83481902ad7da",
+      "bytes": 2491892,
+      "status": "ai-generated",
+      "source": "Built-in image generation, 2026-10-11; original sixteen game illustrations in a 4x4 sprite atlas"
+    },
+    {
+      "path": "ingilizce/games-assets/ui-icons.svg",
+      "sha256": "22f9c5d3dc183c7faae8806f7e2dde42548550816f2bc827c190270c1b43689e",
+      "bytes": 958,
+      "status": "code-native",
+      "source": "Original repository-authored SVG controls, 2026-10-11"
     },
     {
       "path": "ingilizce/garden-icon.svg",
@@ -30,6 +401,125 @@
       "bytes": 6007,
       "status": "approved-brand-asset",
       "source": "https://developers.google.com/static/identity/images/signin-assets.zip (Android + Web PNG @2x Light Square)"
+    },
+    {
+      "path": "ingilizce/meteor-sky.png",
+      "sha256": "151f2d61767705e1034aeb9fd306676cd906f8b3b8cbc5b1b5a03288c4dc37fc",
+      "bytes": 2080152,
+      "status": "ai-generated",
+      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
+    },
+    {
+      "path": "ingilizce/meteor-sprite.png",
+      "sha256": "fa19426cad2a02c88a7cbb4f61a3548765d04146c5d56eb0051db8e6f946799e",
+      "bytes": 1417185,
+      "status": "ai-generated",
+      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
+    },
+    {
+      "path": "ingilizce/meteor-target.png",
+      "sha256": "8c8148a26c6adbb39f23dbc1956c5a1cf1191e7886510ab52d2d65af652eb2cb",
+      "bytes": 2046422,
+      "status": "ai-generated",
+      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
+    },
+    {
+      "path": "ingilizce/meteor-title.png",
+      "sha256": "23858d6b3ff1f93bc84981740d27cf14006e8301431cb4e5c0ea27944cc15f48",
+      "bytes": 1000088,
+      "status": "ai-generated",
+      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-hero.webp",
+      "sha256": "1d3b782595122a1bdf102f9ab91087382300738bb7c5e71b1ba0b9fe6419ab36",
+      "bytes": 195466,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-ico-dinle.png",
+      "sha256": "4014c0c6483363fc532cc15b0f6d37189c274f5fa152cbc646c63b42c4930352",
+      "bytes": 90581,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-ico-kelime.png",
+      "sha256": "178b930e9f59c2a973b90e2b21f5186cd2faa02e3dc192912e2466bdf1323b5b",
+      "bytes": 138522,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-ico-konus.png",
+      "sha256": "7e4d30af619a354526cf1160d83f0ae1fd78a0351d853ffba6e833afd4469ef0",
+      "bytes": 81709,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-ico-oyun.png",
+      "sha256": "0f906f6eb89d4755df6325053ff7d1dd9181151b90fe25ac0d8bfffda34c7d94",
+      "bytes": 96065,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-learning-hero.png",
+      "sha256": "42b5b929d89f7f2052b3fe3d41a471f0c84483b72af30e37a73f5e7771eba3b3",
+      "bytes": 196259,
+      "status": "ai-generated",
+      "source": "Built-in image generation, 2026-10-11; original forest learning garden / magical academy scenes; optimized PNG"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-learning-skills.svg",
+      "sha256": "567121e3f4dc9e23d2e786ce2e01502cd10d7aee87c4a5f17532a326bf93115f",
+      "bytes": 1257,
+      "status": "code-native",
+      "source": "Original authored SVG learning skill icons, 2026-10-11"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-papi-cta.png",
+      "sha256": "0bb58ef17f3f95013f36e1247c7f47dcb79baa1033d252c252c58782ca8620ae",
+      "bytes": 183876,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-papi-fly.png",
+      "sha256": "ef6a50d70d421e1d1a035c33dfebbaf42bf27e6f7ae12ff00cc859c5f539eda1",
+      "bytes": 188480,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-papi-peek.png",
+      "sha256": "7d010598d599ff341bbdfab3b3e16dcf57982a6b7e999672d0e5c95c865f22f2",
+      "bytes": 135373,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-pro-hero.png",
+      "sha256": "a70945fa8c1dff6504c7cbbad6dd4969c933b39880b1009a8be5fe1820682390",
+      "bytes": 167648,
+      "status": "ai-generated",
+      "source": "Built-in image generation, 2026-10-11; original forest learning garden / magical academy scenes; optimized PNG"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-sandik.png",
+      "sha256": "5883d1c8b0ffd04e9f21d1ef7334c6c66eab4cd1709722dff6653d7f97af79a5",
+      "bytes": 172104,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
+    },
+    {
+      "path": "ingilizce/oyna-assets/oyna-weekly-bg.webp",
+      "sha256": "40fc8f35dd23d4d6458e5b1b4cafe3ecd9eb5e4c20bfa76fe998c31347da22a2",
+      "bytes": 137184,
+      "status": "existing-upload-provenance-unverified",
+      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
     },
     {
       "path": "ingilizce/ozgun/calisma-masasi.svg",
@@ -207,18 +697,151 @@
       "source": "docs/media-generation-record.json"
     },
     {
+      "path": "ingilizce/parkur-map-landscape-v1.svg",
+      "sha256": "0308c9c7daba716f07e1d242cdb443a54724accec2fc07f985be9be2c0df3f10",
+      "bytes": 664951,
+      "status": "ai-generated",
+      "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
+    },
+    {
+      "path": "ingilizce/parkur-map-papi-v1.svg",
+      "sha256": "b5f63c3af056febcc8069b279d7ac5b62279828babd113e28dd17452352b925a",
+      "bytes": 305443,
+      "status": "ai-generated",
+      "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/bolge1-bahar-v1.svg",
+      "sha256": "89bd3b2bec0ddce33f568194313ce4b3ae570825957228cb194f96ba30c14606",
+      "bytes": 2855,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/bolge2-yaz-v1.svg",
+      "sha256": "37001bb6a671a9c6c95fba5edac07ff8dc59bd5b62b30c9829cce1ca2c278753",
+      "bytes": 2855,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/bolge3-sonbahar-v1.svg",
+      "sha256": "1b6aee9a276efd56278f8c681bc75522728679d8038738bcf21dd66a21d71d70",
+      "bytes": 2855,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/bolge4-kis-v1.svg",
+      "sha256": "820371cac7a588c9ae5007997f532d5ac2bcd3ad96cf22bf1b7a7545977f21ba",
+      "bytes": 3768,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/chest-v1.svg",
+      "sha256": "ed8d5f93534a063184389efb4daa4dac3dac338d7efaca36e8fa3426ddd4c769",
+      "bytes": 303,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/gate-v1.svg",
+      "sha256": "d69785aa301381389c280f42fb0a8257b48cb3a7c2b7355b037ce55edc825a96",
+      "bytes": 254,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-bakis-v1.svg",
+      "sha256": "5767bda2ff4ad3cc85eb2399234dbaa17d6edd570fa64f14b53d33a61083fedf",
+      "bytes": 239,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-can-v1.svg",
+      "sha256": "65c873e34644b94404e90473c1dbc5ff86eaf7ac9e38c1e1e9e81174868385c9",
+      "bytes": 219,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-cift-v1.svg",
+      "sha256": "cb1c9f8bf2f9fcab4dd12e6baeefa3e4f8024bb96c10503a3dc3a20efa48308d",
+      "bytes": 248,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-dondur-v1.svg",
+      "sha256": "baadc22f4ba9a074b4e3fed5ff11cfc4ad47ed512134a9e65f5dad370dcf8852",
+      "bytes": 235,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-harf-v1.svg",
+      "sha256": "25c3cbf131a403f4911b4cf4af55c8f971a0e1bece7778158a66291e2ef1eada",
+      "bytes": 218,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-ikinci-v1.svg",
+      "sha256": "87d32624ee347b0c7143354d80023d5cb84b64cb3dba82dbb43577a1ebb31b6a",
+      "bytes": 261,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-kalkan-v1.svg",
+      "sha256": "8477d966293bc0d360faebd8b4bd7200ab7f317271ea45dbcfd0b1c98950a5e9",
+      "bytes": 212,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-papagan-v1.svg",
+      "sha256": "f3cadd4cb2e4966dbf1a1b45ef596510c3451e9d3944431fa2e64624566a9232",
+      "bytes": 232,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-pas-v1.svg",
+      "sha256": "581df9d0b4f26c23b79cda3152f423059ba371c08a1ffdc89e6b366d9ba5d285",
+      "bytes": 203,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/joker-yari-v1.svg",
+      "sha256": "a39306a77efed8bcf65ebc289f0723a2ea3dc3170b0837bab55e0a1b590e10b3",
+      "bytes": 261,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/papi-v1.webp",
+      "sha256": "b2ae951da208458653585e7a91c3b2b33ae50835cc03870a689a769b295c7082",
+      "bytes": 19702,
+      "status": "user-reference-derived",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/parkur-okul-assets/seal-v1.svg",
+      "sha256": "cfc1c50140c6f3d5f1ad2d021eb07bfe94e37c85b7cb556a46abbeda9a38cef5",
+      "bytes": 309,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
       "path": "ingilizce/parkur-palace-forest-v3.png",
       "sha256": "eba9cebe3575d618a1e1e2eb9739c56995b38296e53ad6102f0d80a95ac72b52",
       "bytes": 2964474,
       "status": "ai-generated",
       "source": "Generated with OpenAI imagegen on 2026-10-04 from the user-approved Diji-Medu concept; original woodland and palace scene, no third-party source image."
-    },
-    {
-      "path": "ingilizce/study-islands-v2.png",
-      "sha256": "49a0c8d3bd38c4e3629a00234ae9cd884303afc4d1a37ea0fc04a06a5a507de7",
-      "bytes": 2518923,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
     },
     {
       "path": "ingilizce/parkur-river-world-v1.svg",
@@ -235,361 +858,179 @@
       "source": "Original four chapter illustration atlas generated with OpenAI imagegen on 2026-10-07 using the user-approved storybook UI as a style reference; WebP embedded in SVG. No third-party source image."
     },
     {
-      "path": "ingilizce/app-icons/papi-192.png",
-      "sha256": "a231e93ea8d468afee9c15545377681991272002f53ac76ad3c5dd541fd9b1cd",
-      "bytes": 43101,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/papi-app-icon-v3.png"
+      "path": "ingilizce/play-assets/soft-stars.svg",
+      "sha256": "54644092cb106bb64b4d42bb364ef65d35e906e877b072701a5376ad1ee97088",
+      "bytes": 356,
+      "status": "code-native",
+      "source": "Original repository-authored subtle star SVG; docs/selected-play-design.md"
     },
     {
-      "path": "ingilizce/app-icons/papi-512.png",
-      "sha256": "7c47944e4c5ad304d9ed111e23aed432460b6cda1a1ae8bd32a6d7b07bd7e46e",
-      "bytes": 232171,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/papi-app-icon-v3.png"
+      "path": "ingilizce/route-assets/ai-coach.svg",
+      "sha256": "3c836de64005677f6583276a1424ed7da2bab9d63a8186e9799a36d710625193",
+      "bytes": 472,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/ai-coach.svg"
     },
     {
-      "path": "ingilizce/app-icons/papi-maskable-512.png",
-      "sha256": "2e3503fb0824036285411be41d6519a2bde34d88fe0e82eb38ef2e6b7025e848",
-      "bytes": 98833,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/papi-app-icon-v3.png"
+      "path": "ingilizce/route-assets/bag.svg",
+      "sha256": "b03aaad11a88f5825f7b32129d34ecba06a2c844c7b6949e177f30b0bbe309e6",
+      "bytes": 655,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/bag.svg"
     },
     {
-      "path": "ingilizce/parkur-map-landscape-v1.svg",
-      "sha256": "0308c9c7daba716f07e1d242cdb443a54724accec2fc07f985be9be2c0df3f10",
-      "bytes": 664951,
-      "status": "ai-generated",
-      "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
+      "path": "ingilizce/route-assets/book.svg",
+      "sha256": "24fd9c463d56e1da1a3f039a171a9082d05d3b182482a074e4312d56cf80edb0",
+      "bytes": 660,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/book.svg"
     },
     {
-      "path": "ingilizce/parkur-map-stops-v1.svg",
-      "sha256": "d1a86ef8c53f2df40010ec332d0d6b239addb31d50bee942234048f0305db2f3",
-      "bytes": 432286,
-      "status": "ai-generated",
-      "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
+      "path": "ingilizce/route-assets/chart.svg",
+      "sha256": "43d82fb750da8fc417c1c47d67aa861869cdaec494eaecd890bf6cccdd5cbb33",
+      "bytes": 665,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/chart.svg"
     },
     {
-      "path": "ingilizce/parkur-map-papi-v1.svg",
-      "sha256": "b5f63c3af056febcc8069b279d7ac5b62279828babd113e28dd17452352b925a",
-      "bytes": 305443,
-      "status": "ai-generated",
-      "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
+      "path": "ingilizce/route-assets/chest.svg",
+      "sha256": "7b684de409a227f15ff31d45d1b54c8fa51f1a3c0a9751237d847fe5ab93e607",
+      "bytes": 643,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/chest.svg"
     },
     {
-      "path": "ingilizce/assets/forest-answer-frame-v1.svg",
-      "sha256": "1f3ec522b8ff38cfe0a2a0f8a0b44e9b0ce3dcbeef98692098e317c6ae61c06b",
-      "bytes": 393022,
-      "status": "ai-generated",
-      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+      "path": "ingilizce/route-assets/exam.svg",
+      "sha256": "efefc986c2d52be2c7dcc4f0a5cb7f55cbe929fdcf7555a21b0132d897bbf83d",
+      "bytes": 482,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/exam.svg"
     },
     {
-      "path": "ingilizce/assets/forest-icons-v1.svg",
-      "sha256": "35360570c56c57487d4899120d39f98c1a88ffe41546ec1bf4e1f66db5e00cac",
-      "bytes": 857019,
-      "status": "ai-generated",
-      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+      "path": "ingilizce/route-assets/friends.svg",
+      "sha256": "86fefda75aaa46c64402f1fa46df9dbd0c161a7b3a4214bf632068b3106324e3",
+      "bytes": 543,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/friends.svg"
     },
     {
-      "path": "ingilizce/assets/forest-question-plaque-v1.svg",
-      "sha256": "7b426aeac099e49f1c992707caba7e38289741292088e8894a4098c09fad08c8",
-      "bytes": 393021,
-      "status": "ai-generated",
-      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+      "path": "ingilizce/route-assets/game.svg",
+      "sha256": "5dd94c47836ac5a86738bb8237717da4ee40762ae702810530763b4c6e63af80",
+      "bytes": 654,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/game.svg"
     },
     {
-      "path": "ingilizce/assets/forest-helper-button-v1.svg",
-      "sha256": "b51bb773ee28fc6dec29781173d9102b0ab1ebf349377e29f5206d1542448188",
-      "bytes": 393021,
-      "status": "ai-generated",
-      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+      "path": "ingilizce/route-assets/gear.svg",
+      "sha256": "42097be3d8b0e818e5b8fbc8b84cb79d893873a0bbd6b9d4b6800889ea2e3d9a",
+      "bytes": 581,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/gear.svg"
     },
     {
-      "path": "ingilizce/assets/forest-scene-v1.svg",
-      "sha256": "84ec6d0952e9da8c781ff3fe5bad5ffcfc8ec8d2802ff6c2a1e7be7935579924",
-      "bytes": 732363,
-      "status": "ai-generated",
-      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+      "path": "ingilizce/route-assets/goal.svg",
+      "sha256": "4cc180b32e9e331625852894e8eb5400a2afa3e2f96a7a12e267260e5c4ebfe0",
+      "bytes": 625,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/goal.svg"
     },
     {
-      "path": "ingilizce/assets/forest-back-disc-v1.svg",
-      "sha256": "3188c26635161c4ea908d1534b5e2f94145f567d0c669371d0e4f47fa583e23d",
-      "bytes": 393022,
-      "status": "ai-generated",
-      "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+      "path": "ingilizce/route-assets/help.svg",
+      "sha256": "4946c316b2f64033c1eb27863b6b71b50d13380769100ec0e7397ec82e43797f",
+      "bytes": 612,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/help.svg"
     },
     {
-      "path": "ingilizce/assets/forest-reference-v1.svg",
-      "sha256": "d650eeea164b6a756576bebc5d19ff7ea547a4830cf4c5ade8bf0ae70d3ca6d9",
-      "bytes": 667704,
-      "status": "ai-generated",
-      "source": "OpenAI image generation 2026-10-08, user-approved concept 1; SVG viewport of original comparison image."
+      "path": "ingilizce/route-assets/logout.svg",
+      "sha256": "f92c5e7b91f26d1d6de11072cc4e623c950867649ed66448e9836ede2c4aca40",
+      "bytes": 333,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/logout.svg"
     },
     {
-      "path": "ingilizce/ders-vadi/papi-kitap.png",
-      "sha256": "adaddb043f9893297737c263bfe2ecfe82cf1ecab9c49fc79d15a93d0f27d935",
-      "bytes": 67086,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/papi-growth.webp"
+      "path": "ingilizce/route-assets/medal.svg",
+      "sha256": "a53de5f56781a17db1c23b6fbc7599a3268bd8681c50631337fb26457cf68afa",
+      "bytes": 571,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/medal.svg"
     },
     {
-      "path": "ingilizce/ders-vadi/papi-buyutec.png",
-      "sha256": "9efaffd3d776d93f3cd7a47212c0585f4496d7d9d0496d7629f3edfb5c70d53c",
-      "bytes": 106599,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/papi-help-v2.png"
+      "path": "ingilizce/route-assets/papi-english.png",
+      "sha256": "f3bdd1cccd2f8553a3874386ea8799f9f9a567f42c71a35273c13e64c3bd781a",
+      "bytes": 1240458,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/papi-english.png"
     },
     {
-      "path": "ingilizce/ders-vadi/papi-yildiz.png",
-      "sha256": "901730ec1e9fd62bb0284c8a81eaee582a67f4712dcad0def5bf6bf9b3758fa4",
-      "bytes": 110307,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/papi-reward-v2.png"
+      "path": "ingilizce/route-assets/papi-profile.png",
+      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
+      "bytes": 41534,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/papi-profile.png"
     },
     {
-      "path": "ingilizce/benim-dunyam/papi-selam.png",
-      "sha256": "9c61746c17f96b0d8b1392b6b2963fc9dded2fe600fd2734aec7635f7b8b8ca5",
-      "bytes": 113365,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/papi-welcome-v2.png"
+      "path": "ingilizce/route-assets/papi-school.png",
+      "sha256": "eb866af4c56928f93076f62502819a179111ebb178d864dc934033f0ff52f881",
+      "bytes": 1105480,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/papi-school.png"
     },
     {
-      "path": "ingilizce/benim-dunyam/rozet-ilk-adim.webp",
-      "sha256": "28cedba4f025329e0c4ddf9f7fb49be0e740a5f5e88d83128f557ed0cbf488e8",
-      "bytes": 18142,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-01-ilk-adim.png and resized/converted to WebP."
+      "path": "ingilizce/route-assets/path.svg",
+      "sha256": "66515c1ec6b68269023e9c2c110aec58fdd98b183acea066cb001d15f51be31d",
+      "bytes": 689,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/path.svg"
     },
     {
-      "path": "ingilizce/benim-dunyam/rozet-ilk-zafer.webp",
-      "sha256": "c3e00260f644374ee863f9fec3dca5eac3ff879ac20fc98d9b93c8b4c982d4d5",
-      "bytes": 19268,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-02-ilk-zafer.png and resized/converted to WebP."
+      "path": "ingilizce/route-assets/profile.svg",
+      "sha256": "d37a0df585496db9dfa8c197e0117fc1b072d3b5e7a527be3ed29cc5e31544a1",
+      "bytes": 330,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/profile.svg"
     },
     {
-      "path": "ingilizce/benim-dunyam/rozet-seri-3.webp",
-      "sha256": "2f5e206a106ca13772b5a5a694c8f57a4d4ce177b97dd24d7b2356e5664049ff",
-      "bytes": 17904,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-03-3-gun-seri.png and resized/converted to WebP."
+      "path": "ingilizce/route-assets/repeat.svg",
+      "sha256": "aca4b1b170178f6e6aae3f6a158856a238aa6d104a44e38109ef3e5b7af787da",
+      "bytes": 435,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/repeat.svg"
     },
     {
-      "path": "ingilizce/benim-dunyam/rozet-seri-7.webp",
-      "sha256": "9f5126a51b95a5c65363a354a5043c95506648f62ad0d13fd744511903c77eb3",
-      "bytes": 18802,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-04-7-gun-seri.png and resized/converted to WebP."
+      "path": "ingilizce/route-assets/shop.svg",
+      "sha256": "8488d2b5736fa8d21a9513097f657da7727fc0837e539e7402ba416b4ff355eb",
+      "bytes": 632,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/shop.svg"
     },
     {
-      "path": "ingilizce/benim-dunyam/rozet-seri-30.webp",
-      "sha256": "fb6e0476257ed79ecc28f89af6d4f1c8ad7ffbcc154f04b09dd7a5e2ce9bf95a",
-      "bytes": 19324,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-05-30-gun-seri.png and resized/converted to WebP."
+      "path": "ingilizce/route-assets/teacher.svg",
+      "sha256": "38781fc3fb13a726ea13877db13e42c83bf3994fd3676d14d9a147ec8e0a9982",
+      "bytes": 453,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/teacher.svg"
     },
     {
-      "path": "ingilizce/benim-dunyam/rozet-kelime-avcisi.webp",
-      "sha256": "50f2ab89d561cd1d5c9e56c60abf6942c2a12eb79232041bfedd0bd06d9ddaa1",
-      "bytes": 22618,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-06-kelime-avcisi.png and resized/converted to WebP."
+      "path": "ingilizce/route-assets/user.svg",
+      "sha256": "44ac6534964045b5004536991052c44fdb2b49bf905d53bece1938ff9b1fe13f",
+      "bytes": 516,
+      "status": "pre-existing-unverified",
+      "source": "repository:0a3d4e9/ingilizce/route-assets/user.svg"
     },
     {
-      "path": "ingilizce/benim-dunyam/rozet-kelime-ustasi.webp",
-      "sha256": "7382293da7897520b74a6b8132416dc75d54fd984bbb84dcbbdf67e75362274e",
-      "bytes": 19176,
+      "path": "ingilizce/store-assets/dressing-room.png",
+      "sha256": "32a421d1ccfaf67d94c8c8419e96a2767030f057d86fc1f1a17ece0596453a25",
+      "bytes": 1799018,
       "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-07-kelime-ustasi.png and resized/converted to WebP."
+      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
     },
     {
-      "path": "ingilizce/benim-dunyam/rozet-tam-isabet.webp",
-      "sha256": "a2a9b630dcf4deac024adefaa1f5def4c7b9665c03b17fa3f5f651b4e6de3c4c",
-      "bytes": 20852,
+      "path": "ingilizce/store-assets/shop-icons.png",
+      "sha256": "72abe82a694bba5de9b52023b645cc8789f347f88d13c51b1c6e4b79e6af9d04",
+      "bytes": 1735600,
       "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-08-tam-isabet.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-keskin-goz.webp",
-      "sha256": "6002b2a41ba130bd6ba3a8c58a1c3e094c9a3d21edcd753437693d22c4b7fc69",
-      "bytes": 20272,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-09-keskin-goz.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-ders-kurdu.webp",
-      "sha256": "38c8aa3d55e6839426ddc7d04b1f561bb3e289cf5bb7e4191454a9931a6b07da",
-      "bytes": 21242,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-10-ders-kurdu.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-konu-ustasi.webp",
-      "sha256": "c2f6649bc61e14b71dc908f9691ab6371fe17b5f88cda6760464a3b0816bd569",
-      "bytes": 19628,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-11-konu-ustasi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-yildiz-toplayici.webp",
-      "sha256": "8c50df506c3e98bbe6e1d8b509223210e4eaa829e075bbb5922f21ef0df945a8",
-      "bytes": 18178,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-12-yildiz-toplayici.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-parkurcu.webp",
-      "sha256": "fde6e66176c661e1c7d5b84c39e8e4254394afd9cd9c90e1775f5519955922cf",
-      "bytes": 21472,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-13-parkurcu.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-kasif.webp",
-      "sha256": "a3867ec8f0945f49a3848b797a15418743b69d0c33970b1a200bf7d2b14dea6b",
-      "bytes": 20900,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-14-kasif.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-sampiyon.webp",
-      "sha256": "df2a0261a0207c1dd434e14efc8a05aa53937ffd3426b2d40b30874e4415011b",
-      "bytes": 20098,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-15-sampiyon.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-gorev-avcisi.webp",
-      "sha256": "be9d86221ad1cbb9404f1f5cde491e560025d92b3428f230813861b43d1d31cb",
-      "bytes": 20246,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-16-gorev-avcisi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-seviye-5.webp",
-      "sha256": "a8f9c7acede2be02b448e8effeddaad2e967d3a330dc10e73acd3a326f7347a4",
-      "bytes": 20210,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-17-seviye-5.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-seviye-10.webp",
-      "sha256": "47d2947b3a2984b4401feb9676da883a2232e6856e798b6bdfd8c86020dd43f6",
-      "bytes": 21000,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-18-seviye-10.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-seviye-20.webp",
-      "sha256": "f9387dd432239c44215342f0eb6169180bb9f7c9b702a9b5dbeb0dde28e3a240",
-      "bytes": 22570,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-19-seviye-20.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-koleksiyoncu.webp",
-      "sha256": "b60c003d602e368ce3233e8cf96175ab8b3e2d9d7dcd69579fe4bdcd8c32fc3d",
-      "bytes": 22156,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-20-koleksiyoncu.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-puan-avcisi.webp",
-      "sha256": "12c42ba4a32962460a4567e2f8f91834a73936735a05c8f57789afe844ed9e43",
-      "bytes": 23294,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-21-puan-avcisi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-puan-efsanesi.webp",
-      "sha256": "57f093516a8b4e4fb8741c99c051505bd15b0ad8ca1d13a801d5eadb66801a5f",
-      "bytes": 18518,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-22-puan-efsanesi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-altin-kumbara.webp",
-      "sha256": "ec33362630327cf7d23e66343dc61b016671e141d590fa6abd8197dd957faf9f",
-      "bytes": 21596,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-23-altin-kumbara.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/rozet-dinleme-ustasi.webp",
-      "sha256": "6b7e5c26e301fda3c9d11def020c3c20de1d3ab652f810faf9ee93e965474363",
-      "bytes": 20428,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-24-dinleme-ustasi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/sahne-sana-ozel.webp",
-      "sha256": "75402db2305ced9c039ed4b264b027f20f0f127647672133d39a080618ae19ad",
-      "bytes": 174212,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-sana-ozel.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/sahne-istatistik.webp",
-      "sha256": "2af1f68594522e7a7851d6b181d82abf1d43843c036af51b4fc83b0c603393a2",
-      "bytes": 144170,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-istatistik.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/benim-dunyam/sahne-rozetler.webp",
-      "sha256": "c610879f729b0f20569eed911bae4ad107f25363fe31e2cb2c81ad49a3adfa2d",
-      "bytes": 137410,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-rozetler.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/bottom-nav-icons-v3.webp",
-      "sha256": "20c9e725f64c37c11f190fea103601b837178f2a2c5b4bcac3b8a61158887f7d",
-      "bytes": 173930,
-      "status": "ai-generated",
-      "source": "docs/raised-navigation-generation.json"
-    },
-    {
-      "path": "ingilizce/meteor-sky.png",
-      "sha256": "151f2d61767705e1034aeb9fd306676cd906f8b3b8cbc5b1b5a03288c4dc37fc",
-      "bytes": 2080152,
-      "status": "ai-generated",
-      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
-    },
-    {
-      "path": "ingilizce/meteor-sprite.png",
-      "sha256": "fa19426cad2a02c88a7cbb4f61a3548765d04146c5d56eb0051db8e6f946799e",
-      "bytes": 1417185,
-      "status": "ai-generated",
-      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
-    },
-    {
-      "path": "ingilizce/meteor-target.png",
-      "sha256": "8c8148a26c6adbb39f23dbc1956c5a1cf1191e7886510ab52d2d65af652eb2cb",
-      "bytes": 2046422,
-      "status": "ai-generated",
-      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
-    },
-    {
-      "path": "ingilizce/meteor-title.png",
-      "sha256": "23858d6b3ff1f93bc84981740d27cf14006e8301431cb4e5c0ea27944cc15f48",
-      "bytes": 1000088,
-      "status": "ai-generated",
-      "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
-    },
-    {
-      "path": "ingilizce/bottom-nav-forest-v1.webp",
-      "sha256": "2310442e4994b076777894df98002412b15c74420670bb408914c6f097d046ca",
-      "bytes": 235324,
-      "status": "ai-generated",
-      "source": "docs/forest-navigation-generation.json"
+      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
     },
     {
       "path": "ingilizce/story-garden-map.webp",
@@ -613,205 +1054,9 @@
       "source": "docs/papi-learning-story.md"
     },
     {
-      "path": "ingilizce/bottom-nav-open-forest-v1.webp",
-      "sha256": "6e3a2e15feced9fb97c70978d65151b918d565a37f33805ec9fe55bb2fbf04a3",
-      "bytes": 144948,
-      "status": "ai-generated",
-      "source": "docs/open-forest-navigation-generation.json"
-    },
-    {
-      "path": "ingilizce/story-space-background.png",
-      "sha256": "8b144fb7b4d1a676855af0c48d12417e56ed44200586af72394818573587ba44",
-      "bytes": 1937229,
-      "status": "ai-generated",
-      "source": "docs/space-learning-design.md"
-    },
-    {
-      "path": "ingilizce/story-space-sprites.png",
-      "sha256": "d3539c992164628d4281155b2e05b9c454c69a988dad1ad864c91d98936d144d",
-      "bytes": 1672426,
-      "status": "ai-generated",
-      "source": "docs/space-learning-design.md"
-    },
-    {
-      "path": "ingilizce/ders-vadi/notebook-doodles.png",
-      "sha256": "f53bbe688f7afe017d833c9682a62f457f2f74144e86e61fe647f38bb158adb5",
-      "bytes": 1483429,
-      "status": "ai-generated",
-      "source": "docs/notebook-design-assets.md"
-    },
-    {
-      "path": "ingilizce/bottom-nav-stickers-v1.png",
-      "sha256": "6bf912592bec232837c0938e1ed771efcdbad70398d654b0fb4cf15421ccda13",
-      "bytes": 1930268,
-      "status": "ai-generated",
-      "source": "docs/sticker-navigation-design.md"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-hero.webp",
-      "sha256": "1d3b782595122a1bdf102f9ab91087382300738bb7c5e71b1ba0b9fe6419ab36",
-      "bytes": 195466,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-ico-dinle.png",
-      "sha256": "4014c0c6483363fc532cc15b0f6d37189c274f5fa152cbc646c63b42c4930352",
-      "bytes": 90581,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-ico-kelime.png",
-      "sha256": "178b930e9f59c2a973b90e2b21f5186cd2faa02e3dc192912e2466bdf1323b5b",
-      "bytes": 138522,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-ico-konus.png",
-      "sha256": "7e4d30af619a354526cf1160d83f0ae1fd78a0351d853ffba6e833afd4469ef0",
-      "bytes": 81709,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-ico-oyun.png",
-      "sha256": "0f906f6eb89d4755df6325053ff7d1dd9181151b90fe25ac0d8bfffda34c7d94",
-      "bytes": 96065,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-learning-hero.png",
-      "sha256": "42b5b929d89f7f2052b3fe3d41a471f0c84483b72af30e37a73f5e7771eba3b3",
-      "bytes": 196259,
-      "status": "ai-generated",
-      "source": "Built-in image generation, 2026-10-11; original forest learning garden / magical academy scenes; optimized PNG"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-learning-skills.svg",
-      "sha256": "567121e3f4dc9e23d2e786ce2e01502cd10d7aee87c4a5f17532a326bf93115f",
-      "bytes": 1257,
-      "status": "code-native",
-      "source": "Original authored SVG learning skill icons, 2026-10-11"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-papi-cta.png",
-      "sha256": "0bb58ef17f3f95013f36e1247c7f47dcb79baa1033d252c252c58782ca8620ae",
-      "bytes": 183876,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-papi-fly.png",
-      "sha256": "ef6a50d70d421e1d1a035c33dfebbaf42bf27e6f7ae12ff00cc859c5f539eda1",
-      "bytes": 188480,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-papi-peek.png",
-      "sha256": "7d010598d599ff341bbdfab3b3e16dcf57982a6b7e999672d0e5c95c865f22f2",
-      "bytes": 135373,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-pro-hero.png",
-      "sha256": "a70945fa8c1dff6504c7cbbad6dd4969c933b39880b1009a8be5fe1820682390",
-      "bytes": 167648,
-      "status": "ai-generated",
-      "source": "Built-in image generation, 2026-10-11; original forest learning garden / magical academy scenes; optimized PNG"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-sandik.png",
-      "sha256": "5883d1c8b0ffd04e9f21d1ef7334c6c66eab4cd1709722dff6653d7f97af79a5",
-      "bytes": 172104,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/oyna-assets/oyna-weekly-bg.webp",
-      "sha256": "40fc8f35dd23d4d6458e5b1b4cafe3ecd9eb5e4c20bfa76fe998c31347da22a2",
-      "bytes": 137184,
-      "status": "existing-upload-provenance-unverified",
-      "source": "Existing repository asset at commit 8be6c504be9b87b8eea50d9acb661478c73e73ae; uploaded before this change; underlying source not verified"
-    },
-    {
-      "path": "ingilizce/friends-assets/icons.svg",
-      "sha256": "8d57136b6d2c54dd30c9117911df6245c8b1faacc9d2af2760976205f71a61aa",
-      "bytes": 1375,
-      "status": "code-native",
-      "source": "Repository-authored Friends interface SVG; source retained in Git"
-    },
-    {
-      "path": "ingilizce/friends-assets/meadow.svg",
-      "sha256": "f5e525d13b49197984a5775e1599edf3e4fd53c7051d63dcbb0f96d2432c2fdb",
-      "bytes": 729,
-      "status": "code-native",
-      "source": "Repository-authored Friends interface SVG; source retained in Git"
-    },
-    {
-      "path": "ingilizce/friends-assets/papi-friends.png",
-      "sha256": "cd7488a8b3f8c2fd35636e8991ac8743cc76e0b62834bc9e9e699043ee590190",
-      "bytes": 29575,
-      "status": "ai-generated",
-      "source": "OpenAI imagegen, 2026-10-11; original Papi parrot generated for the approved Friends UI; resized transparent PNG export"
-    },
-    {
-      "path": "ingilizce/friends-assets/papi-league.png",
-      "sha256": "3c0fadb74c3ce49c642d365a1e24b137c441bca5ca60268a2eebc621fe38c471",
-      "bytes": 36482,
-      "status": "ai-generated",
-      "source": "OpenAI imagegen, 2026-10-11; original Papi parrot generated for the approved Friends UI; resized transparent PNG export"
-    },
-    {
-      "path": "ingilizce/games-assets/game-atlas-v1.png",
-      "sha256": "5c05e627b50165f1ae42d5d2871325286368b9f623cf5d1a32b83481902ad7da",
-      "bytes": 2491892,
-      "status": "ai-generated",
-      "source": "Built-in image generation, 2026-10-11; original sixteen game illustrations in a 4x4 sprite atlas"
-    },
-    {
-      "path": "ingilizce/games-assets/ui-icons.svg",
-      "sha256": "22f9c5d3dc183c7faae8806f7e2dde42548550816f2bc827c190270c1b43689e",
-      "bytes": 958,
-      "status": "code-native",
-      "source": "Original repository-authored SVG controls, 2026-10-11"
-    },
-    {
       "path": "ingilizce/study-assets/icons.svg",
       "sha256": "f8effa1bdd09e744178353bcfb434e7eeb3e868620c5ba475053f3870b393871",
       "bytes": 2210,
-      "status": "code-native",
-      "source": "Repository-authored study interface SVG; original source retained in Git"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-celebrate.png",
-      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
-      "bytes": 41534,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-explain.png",
-      "sha256": "746e4b63d970779f5f54c6adc9e06cd5f57c020d602f8352573da777121ea4ed",
-      "bytes": 32615,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-read.png",
-      "sha256": "b880af1f5f74996ff1280f87148ab0ac85da86c2ad08e99dbded00ea34627c46",
-      "bytes": 36011,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/topic-sun.svg",
-      "sha256": "5b792968fce75151b8e723443d785a86a0678f3a63c4096abccef9129ad8ba1f",
-      "bytes": 253,
       "status": "code-native",
       "source": "Repository-authored study interface SVG; original source retained in Git"
     },
@@ -844,18 +1089,39 @@
       "source": "docs/study-media-generation.json"
     },
     {
-      "path": "ingilizce/store-assets/shop-icons.png",
-      "sha256": "72abe82a694bba5de9b52023b645cc8789f347f88d13c51b1c6e4b79e6af9d04",
-      "bytes": 1735600,
+      "path": "ingilizce/study-assets/papi-celebrate.png",
+      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
+      "bytes": 41534,
       "status": "ai-generated",
-      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
+      "source": "docs/study-media-generation.json"
     },
     {
-      "path": "ingilizce/store-assets/dressing-room.png",
-      "sha256": "32a421d1ccfaf67d94c8c8419e96a2767030f057d86fc1f1a17ece0596453a25",
-      "bytes": 1799018,
+      "path": "ingilizce/study-assets/papi-explain.png",
+      "sha256": "746e4b63d970779f5f54c6adc9e06cd5f57c020d602f8352573da777121ea4ed",
+      "bytes": 32615,
       "status": "ai-generated",
-      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-read.png",
+      "sha256": "b880af1f5f74996ff1280f87148ab0ac85da86c2ad08e99dbded00ea34627c46",
+      "bytes": 36011,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/topic-sun.svg",
+      "sha256": "5b792968fce75151b8e723443d785a86a0678f3a63c4096abccef9129ad8ba1f",
+      "bytes": 253,
+      "status": "code-native",
+      "source": "Repository-authored study interface SVG; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/study-islands-v2.png",
+      "sha256": "49a0c8d3bd38c4e3629a00234ae9cd884303afc4d1a37ea0fc04a06a5a507de7",
+      "bytes": 2518923,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
     },
     {
       "path": "ingilizce/world-assets/compass.svg",
@@ -879,11 +1145,67 @@
       "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
     },
     {
-      "path": "ingilizce/play-assets/soft-stars.svg",
-      "sha256": "54644092cb106bb64b4d42bb364ef65d35e906e877b072701a5376ad1ee97088",
-      "bytes": 356,
-      "status": "code-native",
-      "source": "Original repository-authored subtle star SVG; docs/selected-play-design.md"
+      "path": "ingilizce/yol-assets/bolge1-gokyuzu-v1.svg",
+      "sha256": "9d164f2364d0c630feba911423a187ad0c0a134ca4dea3c3770d53509aebdc76",
+      "bytes": 3896,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/yol-assets/bolge2-gokyuzu-v1.svg",
+      "sha256": "b2efc75d2c7fa9a0a0005c5bb5e87e13d6e39fd27f305929ad474486d5308f58",
+      "bytes": 3896,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/yol-assets/bolge3-gokyuzu-v1.svg",
+      "sha256": "368fa0ed1382e259c78de852a76f67d8074867f708b5ad3e9a4589aae0d00496",
+      "bytes": 3896,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/yol-assets/bolge4-gokyuzu-v1.svg",
+      "sha256": "aa8b3363408d0392a3fce9946c2fa93948e7c8e589e94152bb27cfe7a72ca9dc",
+      "bytes": 3896,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/yol-assets/chest-v1.svg",
+      "sha256": "ed8d5f93534a063184389efb4daa4dac3dac338d7efaca36e8fa3426ddd4c769",
+      "bytes": 303,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/yol-assets/gate-v1.svg",
+      "sha256": "d69785aa301381389c280f42fb0a8257b48cb3a7c2b7355b037ce55edc825a96",
+      "bytes": 254,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/yol-assets/island-done-v1.svg",
+      "sha256": "82921b3d8b9001335cc13cf9a774e9255a404180f43e20b903357eede3607444",
+      "bytes": 236,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/yol-assets/island-v1.svg",
+      "sha256": "d2bf827e9b068b1100f47cd684ffa6fcb3f015c7c04d342ad6e2e3a7bee6dda4",
+      "bytes": 236,
+      "status": "original-code",
+      "source": "docs/paper-sky-assets.json"
+    },
+    {
+      "path": "ingilizce/yol-assets/papi-v1.webp",
+      "sha256": "b2ae951da208458653585e7a91c3b2b33ae50835cc03870a689a769b295c7082",
+      "bytes": 19702,
+      "status": "user-reference-derived",
+      "source": "docs/paper-sky-assets.json"
     }
   ]
 }
