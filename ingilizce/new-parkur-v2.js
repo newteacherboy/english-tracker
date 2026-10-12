@@ -61,7 +61,7 @@ function answer(value){
  const submit=host.querySelector('[data-submit]'),input=host.querySelector('[data-write]');
  if(submit)submit.disabled=true;if(input)input.disabled=true;
  const result=host.querySelector('.dmp-feedback');if(result){result.textContent=ok?'✅ Harika, doğru cevap!':'❌ Doğru cevap: '+correct;result.classList.toggle('is-wrong',!ok);}
- const next=host.querySelector('.dmp-next');if(next){next.hidden=false;next.disabled=false;next.style.setProperty('display','block','important');next.style.setProperty('visibility','visible','important');next.textContent=question===8?'Sonucu gör →':'Devam et →';}
+ const next=host.querySelector('.dmp-next');if(next){next.hidden=false;next.disabled=false;next.classList.add('dmp-visible');next.style.setProperty('display','block','important');next.style.setProperty('visibility','visible','important');next.textContent=question===8?'Sonucu gör →':'Devam et →';}
  mascotFeedback(ok,ok?'Doğru bildin! Devam et.':'Doğrusu: '+correct);
 }
 function finish(){const host=$('#dmNewParkur'),s=selected;if(!host||!s)return;const passed=score>=6;const history=load();if(passed){history.done={...(history.done||{}),[s.id]:true};save(history)}host.innerHTML='<div class="dmp-finish"><div class="dmp-medal">'+(passed?'🏆':'🦜')+'</div><h2>'+(passed?'Seviyeyi tamamladın!':'Bir kez daha deneyelim!')+'</h2><p>9 sorudan '+score+' doğru</p><small>'+(passed?'Sonraki seviye açıldı.':'Geçmek için en az 6 doğru cevap gerekiyor.')+'</small><button data-home>Parkura dön</button></div>';host.querySelector('[data-home]').onclick=()=>{selected=null;home()};}
@@ -71,4 +71,12 @@ function boot(){if($('#dmNewParkur'))return;const panel=document.getElementById(
 boot();document.addEventListener('dm:login',()=>{boot();if($('#dmNewParkur')?.classList.contains('active'))home()});
 document.addEventListener('dm:state',()=>{if($('#dmNewParkur')?.classList.contains('active')&&!selected)home()});
 document.addEventListener('click',e=>{const b=e.target.closest?.('#dmNewParkur [data-wallet]');if(!b)return;e.preventDefault();const type=b.dataset.wallet;if(type==='gold'&&typeof window.magazaAc==='function'){window.dmNewParkurClose();window.magazaAc();return;}if(type==='energy'&&typeof window.dijiEnerjiPaneliAc==='function'){window.dijiEnerjiPaneliAc();return;}const y=typeof yo!=='undefined'?yo:{};const message=type==='xp'?'Toplam XP: '+(y?.lig?.xp??y?.xp??0):type==='gold'?'Altın: '+(y?.altin??0):'Enerji: '+(typeof genelEnerjiKalan!=='undefined'?genelEnerjiKalan:'–');if(typeof window.yoToast==='function')window.yoToast(message);else window.alert(message);});
+// Capture quiz taps ahead of unrelated legacy game handlers.
+document.addEventListener('click',e=>{
+ const el=e.target.closest?.('#dmNewParkur .dmp-answers [data-answer],#dmNewParkur .dmp-next');
+ if(!el||!selected)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(el.hasAttribute('data-answer'))answer(el.dataset.answer);
+ else if(answered){question++;drawQuestion();}
+},true);
 window.dmNewParkur={chapters,open:window.dmNewParkurOpen,home};})();
