@@ -51,3 +51,18 @@
 #dmNewParkur .dmp-quiz{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))!important}
 #dmNewParkur .dmp-next.dmp-visible{display:flex!important;align-items:center!important;justify-content:center!important;position:fixed!important;left:16px!important;right:16px!important;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;width:calc(100% - 32px)!important;max-width:620px!important;margin-inline:auto!important;z-index:2147480000!important;background:#189647!important;color:#fff!important;-webkit-text-fill-color:#fff!important;pointer-events:auto!important;opacity:1!important;visibility:visible!important}
 #dmNewParkur .dmp-answers button[data-answer]{touch-action:manipulation!important;position:relative!important;z-index:5!important}
+
+/* Compact status strip; avoids nested circular badges on iOS WebView. */
+#dmNewParkur .dmp-quiz-wallet{width:100%;flex:0 0 auto}
+#dmNewParkur .dmp-wallet{width:100%;gap:6px!important;justify-content:space-between!important}
+#dmNewParkur .dmp-wallet button{box-sizing:border-box!important;flex:1 1 0!important;min-width:0!important;min-height:39px!important;height:42px!important;padding:5px 6px!important;background:#fff9e9!important;border:1px solid #dce9c8!important;border-radius:15px!important;box-shadow:0 2px 4px #36614718!important;font-size:15px!important}
+#dmNewParkur .dmp-wallet button>span{border:0!important;border-radius:0!important;padding:0!important;background:transparent!important;box-shadow:none!important;min-width:0!important;min-height:0!important;width:auto!important;height:auto!important;line-height:1.1!important}
+#dmNewParkur .dmp-wallet button>.dmp-xp-icon{background:#2d68c9!important;color:#fff!important;-webkit-text-fill-color:#fff!important;padding:4px 5px!important;border-radius:7px!important;font-size:12px!important}
+#dmNewParkur .dmp-coin-icon{font-size:21px!important}
+#dmNewParkur .dmp-answers input[data-write]::placeholder{color:#9cae9c!important;-webkit-text-fill-color:#9cae9c!important;opacity:1!important;font-weight:700}
+#dmNewParkur .dmp-answers input[data-write]{font-size:17px!important}
+#dmNewParkur .dmp-finish h2{color:#225638!important;font-size:clamp(24px,6vw,36px)!important;text-shadow:none!important}
+#dmNewParkur .dmp-reward-status{background:#fff9df;color:#6b572a;border-radius:13px;padding:13px 17px;font-weight:800;max-width:95%;line-height:1.4}
+#dmNewParkur .dmp-finish .dmp-medal{animation:dmp-trophy .65s ease-out both}
+@keyframes dmp-trophy{0%{transform:scale(.4) rotate(-12deg);opacity:.2}65%{transform:scale(1.15) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){#dmNewParkur .dmp-finish .dmp-medal{animation:none}}
