@@ -26,3 +26,23 @@
 #dmNewParkur .dmp-next:not([hidden]){display:block!important;visibility:visible!important;width:100%!important;min-height:53px!important;background:#208f40!important;color:white!important;-webkit-text-fill-color:white!important;border:0!important;opacity:1!important;position:relative!important;z-index:10!important}
 #dmNewParkur .dmp-next[hidden]{display:none!important}
 #dmNewParkur .dmp-quiz-top button{color:#246d43!important;background:#fff!important}
+
+/* Clear counters, accessible feedback and mascot confirmation. */
+#dmNewParkur .dmp-wallet{display:flex!important;gap:8px!important;align-items:center!important;justify-content:center!important}
+#dmNewParkur .dmp-wallet button{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-width:0!important;color:#214b37!important;-webkit-text-fill-color:#214b37!important;white-space:nowrap!important}
+#dmNewParkur .dmp-wallet-icon{display:inline-grid;place-items:center;flex-shrink:0;font-size:21px;line-height:1}
+#dmNewParkur .dmp-xp-icon{background:#326bc4!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-radius:7px;padding:3px 5px;font-size:13px;font-weight:1000}
+#dmNewParkur .dmp-coin-icon{font-size:23px;color:#c78900;text-shadow:0 1px #fff2a5}
+#dmNewParkur .dmp-feedback.is-wrong{background:#ffebe6!important;color:#a12a27!important}
+#dmNewParkur .dmp-quiz{min-height:0!important;max-height:100%;overflow-y:auto!important;gap:10px!important;padding-bottom:12px!important}
+#dmNewParkur .dmp-question{min-height:105px!important}
+#dmNewParkur .dmp-next:not([hidden]){display:block!important;flex:0 0 auto!important;position:sticky!important;bottom:4px!important;z-index:30!important;margin-top:2px!important;padding:13px 18px!important;box-shadow:0 4px 0 #117636!important}
+#dmpMascotFeedback{position:fixed;z-index:2147483000;top:calc(env(safe-area-inset-top,0px) + 85px);left:50%;width:max-content;max-width:92vw;transform:translate(-50%,-12px);opacity:0;pointer-events:none;transition:transform .22s,opacity .22s}
+#dmpMascotFeedback.show{transform:translate(-50%,0);opacity:1}
+#dmpMascotFeedback .dmp-mascot-card{display:flex;align-items:center;gap:11px;padding:11px 14px;background:#f0fff1;border:2px solid #75cc82;border-radius:18px;box-shadow:0 12px 26px #184c2740}
+#dmpMascotFeedback.bad .dmp-mascot-card{background:#fff3ef;border-color:#e2a18c}
+#dmpMascotFeedback img{width:52px;height:52px;object-fit:contain}
+#dmpMascotFeedback .dmp-mascot-text{display:flex;flex-direction:column;gap:2px;color:#204c32;font-weight:800}
+#dmpMascotFeedback .dmp-mascot-text strong{font-size:18px}
+#dmpMascotFeedback .dmp-mascot-text span{font-size:13px}
+@media(prefers-reduced-motion:reduce){#dmpMascotFeedback{transition:none}}
