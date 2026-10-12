@@ -18,3 +18,4 @@ jobs:
       - run: node tests/paper-sky-ui.cjs
         env:
           CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ github.workspace }}/node_modules
+          PARKUR_QA_DIR: ${{ runner.temp }}/parkur-qa
