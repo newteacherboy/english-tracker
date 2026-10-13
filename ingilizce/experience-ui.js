@@ -73,12 +73,13 @@
   function close(skip){if(!p.isConnected)return;clearInterval(timer);p.remove();shown=null;if(skip)closedCount++;if(closedCount>=2)count=3;prior?.focus?.();start();}
   p.querySelector('.dm-nudge-x').onclick=()=>close(true);p.querySelector('.dm-nudge-skip').onclick=()=>close(true);go.onclick=()=>{close(false);if(enabled(message.flag))destinations[message.target]?.();};p.addEventListener('keydown',e=>{if(e.key==='Escape')close(true);if(e.key==='Tab'){const bs=[...p.querySelectorAll('button')],i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus();}});p.querySelector('.dm-nudge-x').focus();
  }
- setInterval(()=>{const now=performance.now(),delta=Math.min(5000,now-lastPulse);lastPulse=now;if(!logged()){if(session){session='';activeMs=0;count=0;seen.clear();}return;}if(session!==who()){session=who();activeMs=0;count=0;closedCount=0;next=300000;seen.clear();}if(!document.hidden&&Date.now()-idleAt<90000)activeMs+=delta;if(!shown&&count<3&&activeMs>=next&&!document.hidden&&enabled('duyurular')&&!busy()){const m=choose();if(m){show(m);next=activeMs+300000;}}},3000);
+ setInterval(()=>{const now=performance.now(),delta=Math.min(5000,now-lastPulse);lastPulse=now;if(!logged()){if(session){session='';activeMs=0;count=0;seen.clear();}return;}if(session!==who()){session=who();activeMs=0;count=0;closedCount=0;next=300000;seen.clear();}if(!document.hidden&&Date.now()-idleAt<90000)activeMs+=delta;if(!shown&&count<3&&activeMs>=next&&!document.hidden&&enabled('duyurular')&&!busy()){const m=choose();if(m){show(m);if(shown)next=activeMs+300000;}}},3000);
  /* Paid offers stay dormant until a real, separately authorized payment entry point exists. */
  window.dmNudgeSystem={messageCount:messages.length,showPreview:message=>show(message,true),isBusy:busy};
  // Future commercial copy, intentionally not part of the active student rotation.
  window.dmFutureOfferCopy={energy:{title:'Ek enerji seçeneklerini incele',text:'Ücretsiz konu çalışması ve normal yenilenme devam eder. Ücretli seçenekler açıldığında fiyat ve veli onayı satın alma ekranında gösterilir.'},gold:{title:'Koleksiyonun için altın seçenekleri',text:'Altınla kıyafet ve aksesuar alabilirsin. Ücretli altın XP veya lig puanı kazandırmaz.'}};
  setInterval(()=>{if(!logged()){stop();musicButton.hidden=true;return;}study();musicPaint();if(master&&audio)master.gain.setTargetAtTime(window.speechSynthesis?.speaking ? .02 : .38,audio.currentTime,.1);if(!playing()||document.hidden||shown)stop();else start();},1000);
+ window.dmNoticesHealth=()=>({enabled:enabled('duyurular'),foreground:!document.hidden,logged:logged(),activeMs,next,count,blocked:!!busy(),inActivity:!!window.dmPapiNotices?.inActivity(),budget:window.dmAutoNotices?.status()});
  window.dmStudyDecorate=study;
  study();musicPaint();
 })();
