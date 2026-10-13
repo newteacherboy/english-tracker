@@ -1066,6 +1066,125 @@
       "bytes": 756118,
       "status": "ai-generated",
       "source": "ImageGen, 2026-10-13; regenerated from the user-approved compact strip concept 1. Papi head, lightning, coin, XP hexagon and active-time star; transparent five-cell atlas."
+    },
+    {
+      "path": "ingilizce/discovery-assets/canta.webp",
+      "sha256": "00f1d8649030a305d17daa6dd67adb82b82ea37139a294cb3464523193e1ef17",
+      "bytes": 18116,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/elma.webp",
+      "sha256": "66a53c76362e2f2778cb17598742894d6208bde4252992a64b8873aad47b4ecc",
+      "bytes": 11830,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/google-g.svg",
+      "sha256": "a7aac3856c0dc26c7703578180e2c094ad1836863551e307eada370c757b567d",
+      "bytes": 692,
+      "status": "approved-brand-asset",
+      "source": "Existing Google sign-in SVG from ingilizce/google-login.js"
+    },
+    {
+      "path": "ingilizce/discovery-assets/kalem.webp",
+      "sha256": "7e7faf13b0359550b4e3cb31b01faad1f76af97003cf88cfea0a632b882b6081",
+      "bytes": 8664,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/kedi.webp",
+      "sha256": "0398b5e44b7f6604c4c777010b30d7d8e8541c02b3ac2530c58620bc0652daa8",
+      "bytes": 16692,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/kesif-adalari.webp",
+      "sha256": "d8e0ebab328233de4c4b3ed66ce29d574089664a7b69d0ab187353aefc12f0d6",
+      "bytes": 56802,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/kitap.webp",
+      "sha256": "f0bf7bc4796f40a0bb96152381ad1b973a9d22bd0fe2003c66cedf38e915c859",
+      "bytes": 11500,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/kopek.webp",
+      "sha256": "641c647ac6f473961f642913f729ea47e530af9bd7a2427a58d06b91baf77423",
+      "bytes": 16610,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/ogrenci.webp",
+      "sha256": "071a8bc79122054853c1f2a57467430d80bc90bc70b71344fa3e5210a4256311",
+      "bytes": 15768,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/ogretmen.webp",
+      "sha256": "fce1d5d463e2f0e4dd2365280b2554556258e185aebbefc4c48406a3fec91e26",
+      "bytes": 16172,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/papi-kesif-karti.webp",
+      "sha256": "9862138901a69038a18ff0460ee6c77516dabd0c1d50ff678e43d401d8d8ff76",
+      "bytes": 29906,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/papi-kutlama.webp",
+      "sha256": "223ea0dd75f891c1909b0ad4567a41fb7b7bf82d2522aaeb3f76aa5cb4a3c361",
+      "bytes": 38594,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/papi-mektup.webp",
+      "sha256": "9621435631e7f88433ddac199a4739fe368385b13f04d650064fb466932078dd",
+      "bytes": 32696,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/papi-merhaba.webp",
+      "sha256": "c01750ae100b75dc1be494e73d4aafe502b410f255c70892533d3b556db04558",
+      "bytes": 31698,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/top.webp",
+      "sha256": "f6e64d447d665e733e988faed41742f018482ca59a157e2243949fe92a803f46",
+      "bytes": 11218,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/veli.webp",
+      "sha256": "28f9a7f4ca783805912b1a065209689bdc1cb535ee9bd70d7f34614f76823346",
+      "bytes": 17888,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/discovery-assets/yildiz.webp",
+      "sha256": "4bab549f6106dd2794921c21cf4151cd62ea01479ffab5adbb11abffbeb3edc6",
+      "bytes": 10904,
+      "status": "ai-generated",
+      "source": "docs/first-discovery-generation.json"
     }
   ]
 }

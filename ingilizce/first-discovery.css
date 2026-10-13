@@ -1,0 +1,99 @@
+/* Scoped to first discovery; member tabs keep their existing styles. */
+html.dm-first-entry #login-container,html.dm-first-entry .portal-back-btn{visibility:hidden!important}
+body.dm-discovery-open{overflow:hidden!important}
+#dmDiscovery{position:fixed;inset:0;z-index:2147483645;display:grid;place-items:center;background:#e3f2ed;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#102d52;isolation:isolate}
+#dmDiscovery *{box-sizing:border-box;font-family:inherit;letter-spacing:normal}
+#dmDiscovery[hidden]{display:none!important}
+#dmDiscovery .fd-screen{position:relative;width:min(100%,480px);height:100%;max-height:100dvh;display:flex;flex-direction:column;background:#fffdf3 url('discovery-assets/kesif-adalari.webp') center bottom/cover no-repeat;padding:max(16px,env(safe-area-inset-top)) 22px max(18px,env(safe-area-inset-bottom));overflow:hidden;box-shadow:0 0 60px #173e4720}
+#dmDiscovery .fd-top{display:flex;align-items:center;gap:14px;flex-shrink:0;min-height:30px;margin-bottom:14px}
+#dmDiscovery .fd-back{border:0;background:transparent;color:#49616c;font-size:24px;width:32px;height:36px;cursor:pointer}
+#dmDiscovery .fd-progress{flex:1;height:6px;background:#e5e6da;border-radius:10px;overflow:hidden}
+#dmDiscovery .fd-progress i{display:block;height:100%;background:#00b1b2;border-radius:10px;transition:width .25s}
+#dmDiscovery .fd-step{font-size:12px;color:#577086;white-space:nowrap}
+#dmDiscovery .fd-content{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:4px 0 8px;scrollbar-width:thin}
+#dmDiscovery h1,#dmDiscovery h2{font-size:clamp(23px,5.8vw,30px);font-weight:850;line-height:1.16;text-align:center;margin:10px 0 22px;color:#102c52!important}
+#dmDiscovery p{font-size:14px;line-height:1.5;color:#344f6e;text-align:center;margin:8px 0 14px}
+#dmDiscovery .fd-actions{flex-shrink:0;display:grid;gap:10px;padding-top:10px}
+#dmDiscovery button,#dmDiscovery a{touch-action:manipulation}
+#dmDiscovery .fd-primary,#dmDiscovery .fd-secondary{width:100%;min-height:54px;border-radius:22px;padding:12px 16px;font-size:16px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px}
+#dmDiscovery .fd-primary{background:linear-gradient(#12c9c7,#009ca8);color:#fff;border:2px solid #8ce0d8;box-shadow:inset 0 2px 0 #ffffff55,0 4px 0 #087f8a}
+#dmDiscovery .fd-secondary{background:#fffdf6;color:#163858;border:2px solid #118f9d;box-shadow:none}
+#dmDiscovery .fd-link{display:block;border:0;background:transparent;text-align:center;color:#143e62;text-decoration:underline;font-size:13px;font-weight:700;padding:10px;cursor:pointer;margin:auto}
+#dmDiscovery button:disabled{opacity:.55;cursor:default}
+#dmDiscovery :is(button,a,input,select):focus-visible{outline:3px solid #ffc766;outline-offset:3px}
+#dmDiscovery .fd-art{display:block;width:100%;height:clamp(160px,30dvh,280px);object-fit:contain;margin:0 auto}
+#dmDiscovery .fd-art-small{height:clamp(90px,18dvh,155px)}
+#dmDiscovery .fd-welcome .fd-content{display:flex;flex-direction:column;justify-content:center}
+#dmDiscovery .fd-welcome .fd-art{height:44dvh;max-height:390px;animation:fdFloat 3s ease-in-out infinite}
+#dmDiscovery .fd-wordmark{font-size:clamp(42px,11vw,64px);font-weight:900;text-align:center;color:#008b9c;line-height:1.1;transform:rotate(-7deg);margin:8px 0 30px}
+#dmDiscovery .fd-wordmark span{color:#143d83}
+#dmDiscovery .fd-choice{display:flex;align-items:center;gap:14px;width:100%;padding:15px 13px;margin:12px 0;background:#fffdf7;border:2px solid #e0e5dc;border-radius:18px;text-align:left;color:#12314e;cursor:pointer;min-height:86px}
+#dmDiscovery .fd-choice.selected{border-color:#00aeb8;box-shadow:0 3px 0 #b4e2d9;background:#f6fffa}
+#dmDiscovery .fd-choice strong{display:block;font-size:17px;font-weight:800}
+#dmDiscovery .fd-choice small{display:block;font-size:12px;line-height:1.4;margin-top:5px}
+#dmDiscovery .fd-choice img{width:65px;height:65px;object-fit:contain}
+#dmDiscovery .fd-check{margin-left:auto;color:#00a7ae;font-weight:900}
+#dmDiscovery label.fd-field{display:block;font-size:13px;font-weight:650;margin:0 0 15px;color:#143858}
+#dmDiscovery input:not([type=checkbox]),#dmDiscovery select{display:block;width:100%;min-height:49px;margin:6px 0 0;padding:11px 13px;border:1.5px solid #d5dcd7;border-radius:10px;background:#fffefa;color:#133b57;font-size:16px;box-shadow:none}
+#dmDiscovery input::placeholder{color:#8093a6}
+#dmDiscovery .fd-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#dmDiscovery .fd-optional{font-weight:400;font-size:11px;color:#567280}
+#dmDiscovery .fd-private{background:#eaf2f0;color:#344f6e;border-radius:12px;padding:12px;font-size:12px;text-align:center}
+#dmDiscovery .fd-card{margin:12px auto;padding:14px 18px;background:linear-gradient(140deg,#fffcdf,#e5f7f4);border:3px solid #ebc260;border-radius:20px;box-shadow:0 5px 0 #cfad5740;max-width:340px;text-align:center}
+#dmDiscovery .fd-card strong{display:block;font-size:19px;color:#143451;overflow-wrap:anywhere}
+#dmDiscovery .fd-card small{display:block;margin-top:5px;font-weight:650;color:#386075}
+#dmDiscovery .fd-note{font-size:12px;color:#4b6879;margin:8px 0}
+#dmDiscovery .fd-error{color:#b13635!important;background:#fff1ec;border-radius:12px;padding:10px;font-size:13px;line-height:1.4;display:none;margin:8px 0 0}
+#dmDiscovery .fd-error:not(:empty){display:block}
+#dmDiscovery .fd-password{position:relative}
+#dmDiscovery .fd-password input{padding-right:52px}
+#dmDiscovery .fd-eye{position:absolute;right:5px;top:5px;background:transparent;border:0;width:42px;height:38px;color:#357087;font-size:20px;cursor:pointer}
+#dmDiscovery .fd-google{display:flex;gap:12px;justify-content:center;align-items:center;width:100%;padding:14px;border-radius:22px;background:#fff;border:1px solid #dadce0;color:#202124;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px #12324413}
+#dmDiscovery .fd-google img{width:24px;height:24px;object-fit:contain}
+#dmDiscovery .fd-divider{text-align:center;color:#486078;font-size:12px;border-top:1px solid #d5ddd7;padding-top:10px;margin:22px 0}
+#dmDiscovery .fd-recap{background:#fffdf7;border:1px solid #dedfd1;border-radius:14px;padding:0 12px;margin:16px 0}
+#dmDiscovery .fd-recap button{display:flex;justify-content:space-between;width:100%;gap:10px;padding:12px 0;border:0;border-bottom:1px solid #eee9da;background:transparent;color:#214965;font-size:12px;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+#dmDiscovery .fd-consent{display:flex;gap:10px;font-size:12px;line-height:1.5;text-align:left;align-items:flex-start;margin:14px 0}
+#dmDiscovery .fd-consent input{width:20px;height:20px;flex-shrink:0;accent-color:#00a7ae}
+#dmDiscovery .fd-consent a{color:#08778b}
+#dmDiscovery .fd-question .fd-content{display:flex;flex-direction:column;overflow:hidden}
+#dmDiscovery .fd-question h1{font-size:clamp(22px,5vw,28px);margin:10px 0 16px}
+#dmDiscovery .fd-audio{display:flex;align-items:center;justify-content:center;gap:13px;border:1px solid #c9e4e4;background:#eefafa;border-radius:18px;padding:10px 20px;min-height:46px;color:#102f50;font-size:20px;font-weight:850;margin:0 auto 17px;cursor:pointer}
+#dmDiscovery .fd-answers{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;flex:1;min-height:0}
+#dmDiscovery .fd-answer{position:relative;background:#fffdf5;border:2px solid #e3e3d7;border-radius:18px;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#163852;font-size:16px;font-weight:800;cursor:pointer;min-height:0}
+#dmDiscovery .fd-answer img{width:100%;height:calc(100% - 28px);max-height:150px;min-height:0;object-fit:contain;margin-bottom:5px}
+#dmDiscovery .fd-answer.correct{border-color:#00a6a8;background:#f2ffef}
+#dmDiscovery .fd-answer.correct:after{content:'✓';position:absolute;right:9px;top:8px;border-radius:50%;background:#00aaa6;color:#fff;width:25px;height:25px;display:grid;place-items:center}
+#dmDiscovery .fd-answer.wrong{border-color:#dd6a61;background:#fff1ed}
+#dmDiscovery .fd-feedback{border-radius:16px;background:#ecf7d6;padding:12px;font-size:14px;font-weight:700;color:#25654b;text-align:center;min-height:42px}
+#dmDiscovery .fd-feedback.wrong{color:#9a4136;background:#ffe9de}
+#dmDiscovery .fd-home .fd-content{display:flex;flex-direction:column;gap:12px}
+#dmDiscovery .fd-home h1{margin:6px 0;font-size:26px}
+#dmDiscovery .fd-home-header{display:flex;align-items:center;gap:13px;font-size:12px;font-weight:700}
+#dmDiscovery .fd-home-header img{width:48px;height:50px;object-fit:contain}
+#dmDiscovery .fd-badge{padding:7px 12px;border-radius:20px;background:#eaf3ee;color:#316477}
+#dmDiscovery .fd-hero{border-radius:22px;overflow:hidden;background:#fffef8;border:1px solid #d2e7db;box-shadow:0 4px 0 #b1d6c840;flex:1;min-height:200px;display:flex;flex-direction:column}
+#dmDiscovery .fd-hero-scene{flex:1;min-height:110px;display:grid;place-items:center;background:url('discovery-assets/kesif-adalari.webp') center 85%/cover no-repeat}
+#dmDiscovery .fd-hero-scene img{height:100%;max-height:190px;width:70%;object-fit:contain}
+#dmDiscovery .fd-hero-footer{display:flex;gap:10px;align-items:center;padding:12px;font-size:12px}
+#dmDiscovery .fd-hero-footer strong{display:block;font-size:17px;margin-bottom:4px}
+#dmDiscovery .fd-hero-footer .fd-primary{width:auto;min-width:100px;min-height:44px}
+#dmDiscovery .fd-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#dmDiscovery .fd-tile{background:#fffef3;border:2px solid #efce72;border-radius:17px;padding:10px;color:#15344f;font-size:14px;font-weight:800;text-align:left;cursor:pointer}
+#dmDiscovery .fd-tile img{width:100%;height:75px;object-fit:contain;display:block}
+#dmDiscovery .fd-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;background:#fffdf7;border-top:1px solid #c8e1d7;padding-top:10px;margin-top:12px}
+#dmDiscovery .fd-nav button{border:0;background:transparent;color:#617587;font-size:11px;cursor:pointer;padding:8px 0}
+#dmDiscovery .fd-nav button:first-child{color:#00a5ad}
+#dmDiscovery .fd-nav svg{display:block;margin:0 auto 5px;width:23px;height:23px;fill:currentColor}
+html.dm-discovery-guest #dmGuestTip{display:none!important}
+html.dm-discovery-guest #dmGuestBar{background:#fffdf5;color:#14465b;min-height:38px}
+html.dm-discovery-guest #dmGuestBar label,html.dm-discovery-guest #dmGuestHelp{display:none!important}
+#dmDiscovery .fd-success h1{margin-bottom:10px}
+@keyframes fdFloat{50%{transform:translateY(-9px) rotate(2deg)}}
+@media(max-height:690px){#dmDiscovery .fd-screen{padding:10px 16px}#dmDiscovery .fd-top{margin-bottom:4px}#dmDiscovery h1{font-size:23px;margin:6px 0 13px}#dmDiscovery .fd-art-small{height:80px}#dmDiscovery .fd-field{margin-bottom:10px!important}#dmDiscovery .fd-card{padding:9px;margin:8px auto}#dmDiscovery .fd-answers{gap:8px}#dmDiscovery .fd-actions{gap:7px}#dmDiscovery .fd-primary,#dmDiscovery .fd-secondary{min-height:46px}#dmDiscovery .fd-tiles .fd-tile img{height:50px}}
+@media(prefers-reduced-motion:reduce){#dmDiscovery *,#dmDiscovery *:before,#dmDiscovery *:after{animation:none!important;transition:none!important}}
+
+html.dm-first-entry #dmBootSplash{z-index:2147483646!important}
+body.dm-discovery-login #login-container{background:#fffdf3 url(discovery-assets/kesif-adalari.webp) center bottom/cover!important;border:2px solid #b9dfd7!important;border-radius:28px!important;color:#102d52!important}
+body.dm-discovery-login #login-container .btn-giris{background:linear-gradient(#12c9c7,#009ca8)!important;border-radius:20px!important;box-shadow:0 3px 0 #087f8a!important}
+body.dm-discovery-login #login-container .dm-logo-row{background:transparent!important}

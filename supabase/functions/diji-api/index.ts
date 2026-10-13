@@ -1144,9 +1144,9 @@ async function handle(req: Request) {
       const tel = /^5\d{9}$/.test(telHam) ? "0" + telHam : /^05\d{9}$/.test(telHam) ? telHam : /^905\d{9}$/.test(telHam) ? "0" + telHam.slice(2) : "";
       const email = String(body.email || "").trim();
       const sinif = Number(body.sinif), sube = temizMetin(body.sube, 10).trim();
-      if (!tel) return json({ ok: false, mesaj: "Geçerli bir veli cep telefonu yaz (05XX XXX XX XX)." }, 400);
+      if (!tel) return json({ ok: false, mesaj: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." }, 400);
       if (email.length > 120 || !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email))
-        return json({ ok: false, mesaj: "Geçerli bir veli e-posta adresi yaz." }, 400);
+        return json({ ok: false, mesaj: "Geçerli bir e-posta adresi yaz." }, 400);
       if (!Number.isInteger(sinif) || sinif < 1 || sinif > 8 || !sube)
         return json({ ok: false, mesaj: "Öğrencinin sınıfını ve şubesini belirt." }, 400);
       if (body.kvkkOnay !== true) return json({ ok: false, mesaj: "Veli ve bilgilendirme beyanını işaretlemelisin." }, 400);
@@ -1169,7 +1169,7 @@ async function handle(req: Request) {
       if (createError || !createdId) return json({ ok: false, mesaj: createError?.code === "23505"
         ? "Bu kullanıcı adı zaten kayıtlı. Başka bir takma ad seç ya da mevcut hesabını bağla."
         : "Kayıt tamamlanamadı. Biraz sonra tekrar dene." }, createError?.code === "23505" ? 409 : 503);
-      const adYaz = await supabase.from("students").update({ full_name: adSoyad }).eq("id", createdId);
+      const adYaz = await supabase.from("students").update({ full_name: adSoyad, school: temizMetin(body.okul || "",120).replace(/\s+/g,' ').trim() || null }).eq("id", createdId);
       if (adYaz.error) console.error("googleKayit full_name", adYaz.error);
       await yeniOgrenciYoneticiBildirimi({id:createdId,username},"google");
       try { await onboarding.welcome({id:createdId,username,email}); }
@@ -1989,8 +1989,8 @@ async function handle(req: Request) {
     /* [v4.1] Yeni kayıtlarda geçerli veli telefonu ve e-postası zorunlu */
     const telHam = String(body.telefon || "").replace(/\D/g, "");
     const tel = telHam.length === 10 && telHam[0] === "5" ? "0" + telHam : telHam.length === 11 && telHam.startsWith("05") ? telHam : telHam.length === 12 && telHam.startsWith("905") ? "0" + telHam.slice(2) : "";
-    if (!tel) return json({ status: "error", message: "Geçerli bir veli cep telefonu yaz (05XX XXX XX XX)." });
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(String(body.email || "").trim())) return json({ status: "error", message: "Geçerli bir veli e-posta adresi yaz. Onay ve gelişim raporları bu adrese gelecek." });
+    if (!tel) return json({ status: "error", message: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." });
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(String(body.email || "").trim())) return json({ status: "error", message: "Geçerli bir e-posta adresi yaz. Onay ve gelişim raporları bu adrese gelecek." });
     if (await denemeSay("kayit", "genel", 60) >= 20) return json({ status: "error", message: "Çok fazla kayıt denemesi. Bir saat sonra tekrar dene." });
     await denemeYaz("kayit", "genel", { ad: username });
     const existing = await studentByName(username);
@@ -2006,7 +2006,7 @@ async function handle(req: Request) {
     }
     if (!body.kvkkOnayTarihi || !Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()) return json({status:"error",message:"Sınıf, şube ve veli bilgilendirme beyanı gerekli."},400);
     const payload = {
-      username, full_name: adSoyad, password_hash: await hashPassword(password), phone: tel || null,
+      username, full_name: adSoyad, school: temizMetin(body.okul || "",120).replace(/\s+/g,' ').trim() || null, password_hash: await hashPassword(password), phone: tel || null,
       class_no: num(body.sinif, 0) || null, branch: temizMetin(body.sube, 10) || null,
       email: String(body.email || "").trim().slice(0, 120), status: "approved", email_verification_required:true, email_verified_at:null,
       kvkk_approved_at: body.kvkkOnayTarihi || new Date().toISOString()

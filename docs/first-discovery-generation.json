@@ -1,0 +1,31 @@
+{
+  "tool": "built-in image_gen",
+  "date": "2026-10-13",
+  "reference": "Approved first-five-step and registration mockups in this conversation",
+  "exports": "Individual sprites cut from equal atlas cells and encoded as WebP for app use; no character edits",
+  "generated_sources": [
+    "exec-927da0a2-e0df-4c18-bb85-776adac944dc.png",
+    "exec-1c9b7b0d-752a-4628-b0f4-f8eca79537ef.png",
+    "exec-f469fb5f-a036-45ef-a5d8-ec23009925e6.png",
+    "exec-927e51b0-8924-450b-8c0a-6abdee4573e2.png"
+  ],
+  "assets": [
+    "ingilizce/discovery-assets/canta.webp",
+    "ingilizce/discovery-assets/elma.webp",
+    "ingilizce/discovery-assets/google-g.svg",
+    "ingilizce/discovery-assets/kalem.webp",
+    "ingilizce/discovery-assets/kedi.webp",
+    "ingilizce/discovery-assets/kesif-adalari.webp",
+    "ingilizce/discovery-assets/kitap.webp",
+    "ingilizce/discovery-assets/kopek.webp",
+    "ingilizce/discovery-assets/ogrenci.webp",
+    "ingilizce/discovery-assets/ogretmen.webp",
+    "ingilizce/discovery-assets/papi-kesif-karti.webp",
+    "ingilizce/discovery-assets/papi-kutlama.webp",
+    "ingilizce/discovery-assets/papi-mektup.webp",
+    "ingilizce/discovery-assets/papi-merhaba.webp",
+    "ingilizce/discovery-assets/top.webp",
+    "ingilizce/discovery-assets/veli.webp",
+    "ingilizce/discovery-assets/yildiz.webp"
+  ]
+}

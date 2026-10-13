@@ -6,7 +6,9 @@
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
 <script src="progression-catalog.js?v=20261013-shop-123"></script>
-<script src="guest-platform.js?v=2"></script>
+<link rel="stylesheet" href="first-discovery.css?v=20261013-draft-1">
+<script src="first-discovery-state.js?v=20261013-draft-1"></script>
+<script src="guest-platform.js?v=20261013-discovery-1"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
           <script>
@@ -17,7 +19,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_K9h4CnyaL8xb8B98o8aaFw_s9cMikuF";
 const supabaseClient = window.supabase?.createClient?.(
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
-  { auth: { storageKey: 'diji-ingilizce-google-auth' } }
+  { auth: { storageKey: 'diji-ingilizce-google-auth', storage: window.dmDiscoveryContext?.raw || window.localStorage } }
 ) || null;
 window.supabaseClient=supabaseClient;
 </script>
@@ -948,10 +950,11 @@ html, body { touch-action: pan-x pan-y; }
 <script>(function(){
 const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false,finishTimer=0;const splashStartedAt=Date.now(),minSplashMs=1650;
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
-function finish(){if(done)return;const remaining=minSplashMs-(Date.now()-splashStartedAt);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}done=true;clearInterval(timer);clearTimeout(deadline);splash.classList.add('dm-ready');setTimeout(()=>splash.remove(),250);}
+function finish(){if(done)return;const remaining=minSplashMs-(Date.now()-splashStartedAt);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}done=true;clearInterval(timer);clearTimeout(deadline);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
 function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
+if(window.dmDiscoveryContext?.welcome&&document.getElementById('dmDiscovery')){finish();return;}
 if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&!!aktifOgrenciAdi))finish();
 }
 window.addEventListener('load',()=>{loaded=true;check();},{once:true});
@@ -28017,7 +28020,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   kodAlaniEkle(); setInterval(kodAlaniEkle, 2000);
   /* Telefon ve e-posta artık zorunlu: etiketleri güncelle */
   function zorunluEtiketler() {
-    [['kayitOlTelefon', 'Veli cep telefonu (zorunlu):', '05XX XXX XX XX'], ['kayitOlEmail', 'Veli e-posta adresi (zorunlu):', 'ornek@mail.com']].forEach(([id, etiket, ph]) => {
+    [['kayitOlTelefon', 'Telefon numarası (zorunlu):', '05XX XXX XX XX'], ['kayitOlEmail', 'E-posta adresi (zorunlu):', 'ornek@mail.com']].forEach(([id, etiket, ph]) => {
       let i = $(id); if (!i || i.dataset.zorunlu) return; i.dataset.zorunlu = '1'; i.placeholder = ph; i.required = true;
       if (id === 'kayitOlTelefon') { i.type = 'tel'; i.inputMode = 'tel'; } else i.type = 'email';
       let l = i.closest('.rubric-field') && i.closest('.rubric-field').querySelector('label'); if (l) l.textContent = etiket;
@@ -28434,6 +28437,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
 <script defer src="game-experience.js?v=selected-play-20261011-1"></script>
 <script defer src="onboarding-ui.js?v=2"></script>
+<script defer src="first-discovery.js?v=20261013-draft-1"></script>
 <script defer src="rights-ui.js?v=1"></script>
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}
 /* Adventure questions: preserve spaces/punctuation and foreground keyboard fallback. */
