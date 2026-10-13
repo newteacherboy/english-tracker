@@ -1052,6 +1052,13 @@
       "bytes": 45306,
       "status": "ai-generated",
       "source": "Built-in ImageGen, 2026-10-13; user-approved map concepts, original daytime scene; no UI/text. Lossy WebP encoding for mobile delivery."
+    },
+    {
+      "path": "ingilizce/route-assets/coin.svg",
+      "sha256": "43c250256dea424be73b643648a8fe236b1f9d0615839619ad4028c827f5fc85",
+      "bytes": 679,
+      "status": "code-native",
+      "source": "Repository-authored generic gold coin SVG, 2026-10-13; original code retained in Git."
     }
   ]
 }
