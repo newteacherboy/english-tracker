@@ -31,5 +31,7 @@ await page.evaluate(()=>{const e=document.createElement('div');e.id='dmStoryLess
 await page.evaluate(()=>{yo.totalXp=1234567;DijiMeduPapiWallet.refresh();});assert((await page.locator('[data-pw=xp]').getAttribute('aria-label')).includes('1.234.567'));
 await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{document.documentElement.dataset.dmTheme='day';yo.totalXp=5106;for(const e of document.querySelectorAll('.fixture')){e.hidden=e.id!=='tab-dunya';e.classList.toggle('active',!e.hidden);}DijiMeduPapiWallet.refresh();});
 fs.mkdirSync('/tmp/compact-wallet',{recursive:true});await page.locator('#tab-dunya').screenshot({path:'/tmp/compact-wallet/wallet-390.png'});
+await page.evaluate(()=>{document.body.classList.add('dm-guest-mode');document.querySelector('#panel-alani').innerHTML='<section id="tab-dunya" class="dc-fullscreen-overlay active"><header class="rt-top"><h1>Okul Yolum</h1></header></section><button id="ybEnerji">Eski enerji</button>';DijiMeduPapiWallet.refresh();});
+assert.equal(await page.locator('#tab-dunya').evaluate(e=>e.getBoundingClientRect().top),44,'guest toolbar does not cover the status strip');assert(await page.locator('#ybEnerji').isHidden(),'one energy indicator');
 assert.deepEqual(errors,[]);await browser.close();console.log('PASS compact status strip, buttons, existing-time meaning, stable icon DOM and activity suppression');
 })().catch(e=>{console.error(e);process.exit(1)});
