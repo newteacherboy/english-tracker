@@ -45,3 +45,12 @@ body #tab-dunyam .bd-kart.dm-has-wallet :is(.bd-cipler,.bw-profile-chip){display
 body :is(#bzPerde,#dmStoryLesson,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay) :is(.dm-unified-wallet,.bz-enerji-pill,.sp-gold,[data-energy],[data-gold]){display:none!important}
 body #dmMusicToggle{top:auto!important;left:auto!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;right:10px!important;width:auto!important;max-width:140px!important;height:32px!important;min-height:32px!important;max-height:32px!important;padding:5px 9px!important;font:800 11px/1.2 system-ui!important;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box!important;transform:none!important}
 body #dmMusicToggle[hidden]{display:none!important}
+
+body .dm-letter-word{position:relative;align-content:center;gap:8px!important}
+body .dm-letter-word>strong{display:block;position:relative;text-align:center;font-size:16px!important;line-height:1.2;padding:0 24px;color:#214667!important}
+.dm-letter-number{position:absolute;left:0;top:0;font-size:11px;opacity:.65}
+body .dm-letter-slots>:is(span,button){font-size:clamp(17px,4.8vw,25px)!important;min-width:23px;max-width:34px;padding:5px 3px;line-height:1.1}
+body .rt-path-papi-btn{position:absolute;width:60px;height:74px;right:calc(50% - 66px);top:-54px;display:block;background:none;border:0;padding:0;cursor:pointer;pointer-events:auto}
+body .rt-path-papi-btn .rt-papi{inset:0!important;width:100%!important;height:100%!important;pointer-events:none}
+@media(max-height:740px){body .rt-path-papi-btn{width:48px;height:58px;top:-42px;right:calc(50% - 55px)}}
+@media(max-height:650px){body .dm-letter-word{gap:4px!important}body .dm-letter-word>strong{font-size:14px!important}body .dm-letter-slots>:is(span,button){font-size:17px!important;padding:3px 2px}}

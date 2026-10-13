@@ -94,14 +94,8 @@
   host.querySelector('.gg-matches').hidden=party==='solo';
   const nextKey=[party,skill,level(),grid.children.length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
  }
- // Give solo games a self-contained stage without modifying game logic or other tabs.
- const soloStageObserver=new MutationObserver(()=>{
-   if(!window.dmSoloStageRequested||Date.now()-window.dmSoloStageRequested>5000)return;
-   document.querySelectorAll('.dc-fullscreen-overlay.active').forEach(el=>{
-     if(!el.classList.contains('dm-solo-fullstage'))el.classList.add('dm-solo-fullstage');
-   });
- });
- soloStageObserver.observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class','style'],childList:true});
+ // Page tabs must never inherit the viewport lock used by a playing overlay.
+ document.querySelectorAll('.dc-fullscreen-overlay[id^="tab-"]').forEach(el=>el.classList.remove('dm-solo-fullstage'));
  install();setInterval(install,1500);
  window.dmGamesUI={refresh:()=>{key='';install(true);}};
  window.dmActivityPresence={refresh,isOnline};

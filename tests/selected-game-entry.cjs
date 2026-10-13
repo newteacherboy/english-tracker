@@ -11,12 +11,15 @@ const {chromium}=require('playwright');
  for(const width of [360,390,768]){
   await page.setViewportSize({width,height:844});
   for(const [fn,id,modal] of entries){
-   await page.evaluate(fn=>window[fn](),fn);await page.waitForSelector('#'+id+' .dm-entry-intro');assert(await page.locator('#'+id).isVisible(),id);
+   await page.evaluate(fn=>{window.dmSoloStageRequested=Date.now();window[fn]();},fn);await page.waitForSelector('#'+id+' .dm-entry-intro');assert(await page.locator('#'+id).isVisible(),id);
    const metrics=await page.locator('#'+id).evaluate(e=>{e=e.closest('.game-modal-content');return {background:getComputedStyle(e).backgroundColor,width:e.getBoundingClientRect().width,scroll:e.scrollWidth,client:e.clientWidth}});assert.equal(metrics.background,'rgb(252, 249, 255)',id);assert(metrics.width<=width,id);assert(metrics.scroll<=metrics.client+1,id);
    if(width===390&&fn==='kelimeYarismasiAc')await page.screenshot({path:'/tmp/game-entry-qa.png'});
-   await page.evaluate(modal=>document.getElementById(modal).style.display='none',modal);
+   await page.locator('#'+modal+' .game-close-btn').click();await page.waitForFunction(id=>getComputedStyle(document.getElementById(id)).display==='none',modal);assert.equal(await page.locator('.dc-fullscreen-overlay[id^="tab-"].dm-solo-fullstage').count(),0);
   }
-  for(const fn of ['dikteAc','cumleAc']){await page.evaluate(fn=>window[fn](),fn);await page.waitForSelector('#dmGameIntro');assert.equal(await page.locator('#dmGameIntro .sinif-btn').count(),8);assert(await page.locator('#dmGameIntro [data-start]').evaluate(e=>typeof e.onclick==='function'));await page.locator('#dmIntroClasses [data-class="3"]').click();assert(await page.locator('#dmIntroClasses [data-class="3"]').evaluate(e=>e.classList.contains('active')));await page.locator('#dmGameIntro [data-close]').click();}
+  for(const fn of ['dikteAc','cumleAc']){await page.evaluate(fn=>{window.dmSoloStageRequested=Date.now();window[fn]();},fn);await page.waitForSelector('#dmGameIntro');assert.equal(await page.locator('#dmGameIntro .sinif-btn').count(),8);assert(await page.locator('#dmGameIntro [data-start]').evaluate(e=>typeof e.onclick==='function'));await page.locator('#dmIntroClasses [data-class="3"]').click();assert(await page.locator('#dmIntroClasses [data-class="3"]').evaluate(e=>e.classList.contains('active')));await page.locator('#dmGameIntro [data-close]').click();}
  }
+ await page.evaluate(()=>{boslukAktifKelimeler=[{ingilizce:'speech',turkce:'konuşma'},{ingilizce:'support',turkce:'desteklemek'},{ingilizce:'care',turkce:'önemsemek'}];document.getElementById('boslukOyunOverlay').style.display='flex';document.getElementById('boslukGirisEkrani').style.display='none';document.getElementById('boslukOyunEkrani').style.display='block';boslukBulmacayiCiz();});
+ await page.waitForSelector('.dm-letter-word>strong[data-centered]');
+ const letters=await page.locator('.dm-letter-word').first().evaluate(e=>({align:getComputedStyle(e.querySelector('strong')).textAlign,meaning:e.querySelector('strong>span:last-child').textContent,font:parseFloat(getComputedStyle(e.querySelector('.dm-letter-slots>span')).fontSize)}));assert.equal(letters.align,'center');assert.equal(letters.meaning,'konuşma');assert(letters.font>=17);
  console.log({errors});assert.deepEqual(errors,[]);await browser.close();console.log('PASS: selected designs on nine real game entry panels, dictation/sentence intros, 360/390/768px and preserved selection/start handlers');
 })().catch(e=>{console.error(e);process.exit(1)});
