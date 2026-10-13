@@ -23103,7 +23103,8 @@ window.ocEnerjiHarca = async function (n) {
       (o.parca || [o]).forEach(p => giy(s, p));
       return dolapTamBoySVG(s, kk().cins, px);
     },
-    parts: id => { const o = ogeBul(id); return (o?.parca || (o ? [o] : [])).slice(0, 3).map(p => ({id:p.id, category:p.kat, color:p.renk || '#9b64ef', tip:p.tip || p.kat, emoji:p.emoji || '', preview:window.dmStoreWardrobe.preview(p.id,90), name:p.ad})); },
+    art: id => { const o=ogeBul(id); return window.dmBoutiqueArt?.(o)||window.dmStoreWardrobe.preview(id,170); },
+    parts: id => { const o = ogeBul(id); return (o?.parca || (o ? [o] : [])).slice(0, 3).map(p => ({id:p.id, category:p.kat, color:p.renk || '#9b64ef', tip:p.tip || p.kat, emoji:p.emoji || '', preview:window.dmBoutiqueArt?.(p)||window.dmStoreWardrobe.preview(p.id,90), name:p.ad})); },
     offers: () => {
       if (!kk()) return [];
       const allowed = o => !!window.dmProgression?.itemAllowed(o, true);
@@ -23176,7 +23177,8 @@ window.ocEnerjiHarca = async function (n) {
   const SEKMELER = [['vitrin', '⭐ Vitrin'], ['sac', '💇 Saç'], ['bas', '🧕 Başörtüsü'], ['ust', '👕 Üst'], ['alt', '👖 Alt'], ['tek', '👗 Tek parça'], ['dis', '🧥 Dış'], ['ayak', '👟 Ayak'],
     ['sapka', '🎩 Şapka · gözlük'], ['aks', '🎒 Aksesuar'], ['yuz', '🙂 Yüz'], ['dost', '🐾 Dost · arka plan'], ['kombin', '🧥 Kombinler'], ['cik', '🏷️ Çıkartma'], ['sandik', '🎁 Sandıklar']];
   function ikonHtml(o) {
-    if (o.parca) return window.dmStoreWardrobe.preview(o.id,88);
+    const art = window.dmBoutiqueArt?.(o); if(art) return art;
+    if (o.parca) return window.dmStoreWardrobe.preview(o.id,150);
     if (o.kat === 'cik') return `<span style="font-size:28px;line-height:1.2">${o.emoji}</span>`;
     if (o.atolye) { try { let V = window.KA_VARSAYILAN[kk().cins], s = Object.assign({}, V, D.deneme, { [o.kat]: o.itemId, bas: '' }); if (o.kat === 'kiyafet') { s.ust = ''; s.tek = ''; } return `<span class="mini">${window.avatarSVG(s, 'c', 56, kk().cins)}</span>`; } catch (e) { return '<span class="mini">🎨</span>'; } }
     return window.dmStoreWardrobe.preview(o.id,88);
@@ -23198,22 +23200,10 @@ window.ocEnerjiHarca = async function (n) {
     let G = $('dlIzgara'), html = '', S = D.sekme;
     const bolum = (baslik, liste) => (baslik ? `<div class="dl-alt-baslik">${baslik}</div>` : '') + liste.filter(uygun).sort((a,b)=>DijiProgressionCatalog.itemLevel(a)-DijiProgressionCatalog.itemLevel(b)).map(ogeKart).join('');
     if (S === 'vitrin') {
-      let v = vitrinOgesi();
-      const l=window.dmProgression?.level()||1;
-      html += '<div class="dm-store-slots">'+[15,20,25,30,35,40].map((n,i)=>`<div class="dm-store-slot ${l>=n?'open':''}">${l>=n?'✨ Vitrin '+(i+1):'🔒 Gizemli vitrin · Sv. '+n}</div>`).join('')+'</div>';
-      html += bolum('🎨 Başlangıç koleksiyonu', OGE.filter(o=>uygun(o)&&DijiProgressionCatalog.itemLevel(o)===1));
-      if (yo.profilKrk) html += `<div class="dl-kart"><span style="font-size:28px">🐉</span><span>Profilinde şu an koleksiyon karakterin görünüyor.<small>Giydirdiğin karakterin profilde görünsün mü?</small></span><button type="button" id="dlProfilBen">Kendi karakterim</button></div>`;
-      if (hosGeldinUygun()) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)"><span style="font-size:34px">🎁</span><span><b>Hoş Geldin Paketi</b><small>Okul kombini · ilk haftana özel</small></span><button type="button" id="dlHosGeldin">120 🪙</button></div>`;
-      if (v) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#f59e0b,#ec4899)"><span style="font-size:34px">🛍️</span><span><b>Günün Vitrini: ${kac(v.ad)}</b><small>Bugün %30 indirimli · yarın değişir</small></span><button type="button" data-id="${kac(v.id)}" class="dlVitrinBtn">Göz at</button></div>`;
-      html += `<div class="dl-kart"><span style="font-size:28px">🧊</span><span>Seri dondurucu · elinde ${yo.dondurucu || 0}/2<small>Bir gün giremezsen serin bozulmaz</small></span><button type="button" id="dlDondurucu">Al</button></div>`;
-      html += `<div class="dl-not">Sahip olduğun bir şeye dokun: hemen giyilir. Almadığın şeyleri bedava dene, beğenirsen al. İlk alışverişin %25 indirimli. İndirimler birleşmez!</div>`;
-      let h=0;for(const c of bugun()+(typeof aktifOgrenciAdi!=='undefined'?aktifOgrenciAdi:''))h=(h*31+c.charCodeAt(0))>>>0;
-      html += bolum('🧥 Günün kombini', [KOMBIN.filter(uygun)[h%KOMBIN.filter(uygun).length]]);
-      if(l>=20)html+=bolum('✨ İkinci vitrin · Temel giyim',OGE.filter(o=>['ust','dis'].includes(o.kat)&&o.sv==='temel').slice(0,4));
-      if(l>=25)html+=bolum('✨ Üçüncü vitrin · Orta koleksiyon',OGE.filter(o=>o.sv==='ozel'&&window.dmProgression.itemAllowed(o,true)).slice(0,4));
-      if(l>=30)html+=bolum('✨ Dördüncü vitrin · Pro koleksiyon',OGE.filter(o=>o.sv==='efsane'&&window.dmProgression.itemAllowed(o,true)).slice(0,4));
-      if(l>=35)html+=bolum('✨ Beşinci vitrin · Kombinler',KOMBIN.slice(0,4));
-      if(l>=40)html+=bolum('✨ Altıncı vitrin · Efsane görünüm',KOMBIN.filter(o=>o.sv==='efsane'));
+      const items=OGE.filter(uygun), level=window.dmProgression?.level()||1;
+      html += bolum('🌿 Başlangıç Ürünleri', items.filter(o=>DijiProgressionCatalog.itemLevel(o)===1));
+      html += bolum('✨ Sana Uygun Kombinler', KOMBIN.filter(uygun));
+      html += bolum('🔒 Yeni Açılacaklar', items.filter(o=>DijiProgressionCatalog.itemLevel(o)>level).sort((a,b)=>DijiProgressionCatalog.itemLevel(a)-DijiProgressionCatalog.itemLevel(b)).slice(0,6));
     } else if (ATOLYE[S]) {
       if (S === 'sapka' && D.deneme.bas) html += `<div class="dl-not">🧕 Başörtüsü takılıyken şapka görünmez.</div>`;
       atolyeOgeleri(S).forEach(g => { html += bolum(g.baslik, g.liste); });
@@ -28513,8 +28503,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="friends-ui.js?v=20261011-1"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261011-3">
 <script defer src="study-ui.js?v=20261011-3"></script>
-<link rel="stylesheet" href="storefront.css?v=20261011-4">
-<script defer src="storefront.js?v=20261013-shop-123"></script>
+<link rel="stylesheet" href="storefront.css?v=20261013-boutique-125">
+<script defer src="boutique-art.js?v=125"></script>
+<script defer src="storefront.js?v=20261013-boutique-125"></script>
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261013-activity-2">

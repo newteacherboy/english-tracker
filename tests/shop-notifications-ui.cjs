@@ -31,7 +31,7 @@ await page.locator('#dlSekmeler [data-s="kombin"]').click();assert((await page.l
 await page.locator('[data-id="k:Işık Kanadı-k"]').click();
 assert((await page.locator('#dlOnizleme').innerHTML()).includes('#8b5cf6'));
 await page.evaluate(()=>{window.dcTumTamEkranlariKapat=()=>{};});
-await page.addScriptTag({url:'/storefront.js'});await page.evaluate(()=>magazaAc());assert.equal(await page.locator('.ds-opportunity .ds-product-preview svg').count(),1);
+await page.addScriptTag({url:'/boutique-art.js'});await page.evaluate(()=>yoMagazaAc());await page.locator('#dlSekmeler [data-s=ust]').click();assert(await page.locator('#dlIzgara .dm-product-art').count()>20);await page.locator('#dlSekmeler [data-s=ayak]').click();assert(await page.locator('#dlIzgara .dm-product-art').count()>10);assert.equal(await page.locator('#dlIzgara .dm-product-art').first().getAttribute('aria-label'),await page.locator('#dlIzgara .dl-oge .ad').first().textContent());await page.addScriptTag({url:'/storefront.js'});await page.evaluate(()=>magazaAc());assert.equal(await page.locator('.ds-opportunity .ds-product-preview svg').count(),1);
 const notifications=scripts.find(s=>s.includes('/* ---- Arkadaşlar: 🔔 bildirim merkezi ---- */'));assert(notifications);await page.addScriptTag({content:notifications});
 await page.evaluate(()=>dmNotifications.open());assert.equal(await page.locator('#zlListe .zl-satir').count(),0,'placeholder message never appears');await page.locator('#zlKapat').click();
 announcement={id:'test',baslik:'Yarınki etkinlik',mesaj:'Kitabını yanında getir. <img src=x onerror=alert(1)>',tarih:'2026-10-13T07:00:00Z'};

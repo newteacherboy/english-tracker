@@ -33,7 +33,7 @@
   }
   function offerCard(o, i) {
     const parts = wardrobe()?.parts?.(o.id) || [];
-    const preview = wardrobe()?.preview(o.id, 170) || '';
+    const preview = wardrobe()?.art(o.id) || '';
     const thumbnails = !i && parts.length ? '<div class="ds-parts">'+parts.map(p=>'<span title="'+esc(p.name)+'">'+p.preview+'</span>').join('')+'</div>' : '';
     const label = !o.allowed ? `🔒 Sv. ${o.level}` : o.equipped ? 'Giyili' : o.owned ? 'Kuşan' : gold() < o.price ? 'Altın eksik' : 'Satın al';
     return `<article class="ds-offer ${i ? 'ds-opportunity' : 'ds-outfit'}"><button type="button" class="ds-offer-heading" data-ds="clothing"><h2>${esc(o.title)}</h2></button><p>${esc(o.name)}${o.count > 1 ? ' · '+o.count+' parça' : ''}</p><div class="ds-offer-note">${esc(o.note || (o.count > 1 ? 'Birbiriyle uyumlu parçalar' : 'Tarzına yeni bir renk kat!'))}</div>${thumbnails}<button type="button" class="ds-product-preview" data-ds="clothing" aria-label="${esc(o.name)} ürününü incele">${preview}</button><div class="ds-offer-footer"><div class="ds-price">${money(o.price)}</div>${button(label, `data-item="${esc(o.id)}"`, !o.allowed || o.equipped || (!o.owned && gold() < o.price) || pending)}</div></article>`;
