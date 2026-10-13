@@ -30,7 +30,7 @@ body #tab-meduakis:not(.fr-home-view) .akis-baslik.dm-has-wallet>.dm-unified-wal
 body #tab-aktiviteler .gg-brand.dm-has-wallet>b{display:none!important}
 body .gg-brand.dm-has-wallet>span,body .ds-header.dm-has-wallet>.ds-wallet,body #tab-dunya [data-dm-wallet],body #tab-dunya .dm-parkur-wallet{display:none!important}
 body:has(.dm-unified-wallet) #ybEnerji{display:none!important}
-body.dm-guest-mode .dc-fullscreen-overlay.active{top:44px!important;height:calc(100dvh - 44px)!important}
+body.dm-guest-mode :is(#tab-dunya,#tab-meduakis,#tab-aktiviteler,#tab-derscalis,#tab-magaza,#tab-dunyam).dc-fullscreen-overlay.active{top:44px!important;height:calc(100dvh - 44px)!important}
 html[data-dm-theme=night] body .dm-unified-wallet.dm-papi-wallet>button{background:linear-gradient(145deg,#263144,#202b3e)!important;border-color:#59627b!important;color:#f3f8ff!important;-webkit-text-fill-color:#f3f8ff!important;box-shadow:0 2px 0 #0c172580!important}
 html[data-dm-theme=night] body .dm-unified-wallet.dm-papi-wallet>[data-pw=xp]{background:linear-gradient(145deg,#39304e,#2e2844)!important;border-color:#7c659f!important}
 html[data-dm-theme=night] body .dm-unified-wallet.dm-papi-wallet>[data-pw=time]{background:linear-gradient(145deg,#213c4b,#203344)!important;border-color:#507c89!important}
