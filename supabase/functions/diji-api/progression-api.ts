@@ -37,8 +37,8 @@ export function progressionAPI(db:any,json:any){
   const item=(items as any[]).find(x=>x.id===String(body.item));if(!item)return json({ok:false,mesaj:'Ürün bulunamadı.'},400);
   // Daily display rotation is deterministic and computed independently of the client.
   const {data:st,error:se}=await db.from('students').select('username').eq('id',a.student_id).single();if(se)throw se;
-  const ctx=await context(a),owned=new Set(ctx.owned||[]),date=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul'}).format(new Date());
-  const candidates=(items as any[]).filter(x=>!x.atolye&&!x.parca&&x.sv!=='temel'&&!owned.has('d:'+x.id));let h=0;for(const ch of date+st.username)h=(h*31+ch.charCodeAt(0))>>>0;
+  const ctx=await context(a);if(!C.compatible(item,ctx.yo?.karakter?.cins))return deny('Bu ürün diğer karakter seçimine ait.');const owned=new Set(ctx.owned||[]),date=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul'}).format(new Date());
+  const candidates=(items as any[]).filter(x=>!x.atolye&&!x.parca&&C.compatible(x,ctx.yo?.karakter?.cins)&&x.sv!=='temel'&&!owned.has('d:'+x.id));let h=0;for(const ch of date+st.username)h=(h*31+ch.charCodeAt(0))>>>0;
   const showcase=candidates.length&&candidates[h%candidates.length].id===item.id;
   const {data,error}=await db.rpc('dm_progress_purchase',{actor:a.student_id,item_key:item.id,is_showcase:!!showcase});if(error)return deny(error.message);return json({ok:true,...data});
  }
@@ -62,7 +62,7 @@ export function progressionAPI(db:any,json:any){
   if(lesson){const ce=String(value(body,q,'seviye')).toUpperCase(),n=({A1:2,A2:9,B1:16,B2:23} as any)[ce];if(!n)return deny('Geçerli ders seviyesi gerekli.');if(l<n)return deny(n);if(!ctx.lessons[ce])return deny('Önce önceki ders seviyesini tamamen bitir.');const topic=String(value(body,q,op==='dersKonuDetayGetir'?'konu':'konuAdi'));const cat=String(value(body,q,'kategori'));const check=await db.from('lesson_topics').select('id').eq('active',true).eq('level',ce).eq('category',cat).eq('topic_name',topic).limit(1);if(check.error)throw check.error;if(!check.data?.length)return deny('Yayımlanmış ders konusu gerekli.');}
   if(save){let incoming=body.deger;try{if(typeof incoming==='string')incoming=JSON.parse(incoming);}catch{return deny('Geçersiz veri.');}
    const before=ctx.yo||{};
-   if(JSON.stringify(incoming?.karakter)!==JSON.stringify(before.karakter)&&incoming?.karakter?.cins&&l<15)return deny(15);
+   if(incoming?.karakter?.cins&&!['k','e'].includes(incoming.karakter.cins))return deny('Geçerli karakter seçimi gerekli.');
    if(incoming?.profilKrk&&incoming?.profilKrk!==before.profilKrk&&l<20)return deny(20);
    if(l<18&&Object.entries(incoming?.jokerEnv||{}).some(([k,n])=>Number(n)>Number(before.jokerEnv?.[k]||0)))return deny(18);
    const oldOwned=new Set(before.karakter?.sahip||[]),newOwned=incoming?.karakter?.sahip||[];
@@ -71,7 +71,21 @@ export function progressionAPI(db:any,json:any){
    if(Number(incoming?.dmExtraJoker||0)>Number(before.dmExtraJoker||0))return deny('Ek joker hakkını mağazadan satın al.');
    if(l<(C.gates.haftalik_hedef||1)&&incoming?.haftaHedef&&JSON.stringify(incoming?.haftaHedef)!==JSON.stringify(before.haftaHedef))return deny(C.gates.haftalik_hedef||1);
    if(l<(C.gates.gunluk_gorev||1)&&incoming?.gorev&&JSON.stringify(incoming?.gorev)!==JSON.stringify(before.gorev))return deny(C.gates.gunluk_gorev||1);
-   if(incoming?.karakter&&before.karakter){for(const [kat,n] of Object.entries(C.category)){if(l<Number(n)&&incoming.karakter.s?.[kat]!==before.karakter.s?.[kat])return deny(Number(n));}}
+   if(incoming?.karakter){
+    const c=incoming.karakter.cins,changedGender=c!==before.karakter?.cins;
+    const defaults:any={ten:'1',sac:c==='k'?'uzun':'kisa',sacRenk:c==='k'?'#6b4226':'#2b2331',goz:'normal',agiz:'gulumse',kiyafet:c==='k'?'tisort-mor':'tisort-mavi',sapka:'yok',gozluk:'yok',dost:'yok',detay:'yanak',arka:c==='k'?'mor':'mavi',cerceve:'yok'};
+    for(const kat of Object.keys(C.category)){
+      const selected=incoming.karakter.s?.[kat];
+      if(!selected||selected===before.karakter?.s?.[kat]&&!changedGender)continue;
+      if(changedGender&&selected===defaults[kat])continue;
+      const item=(items as any[]).find(x=>x.kat===kat&&(x.atolye?x.itemId===selected:x.id===selected));
+      if(!item)return deny('Geçerli bir görünüm ürünü seç.');
+      if(!C.compatible(item,c))return deny('Bu ürün diğer karakter seçimine ait.');
+      const key=item.atolye?kat+':'+item.itemId:'d:'+item.id,owned=oldOwned.has(key);
+      if(!owned&&C.itemLevel(item)>l)return deny(C.itemLevel(item));
+      if(!owned&&item.f>0)return deny('Önce bu ürünü mağazadan satın al.');
+    }
+   }
   }
   return null;
  }

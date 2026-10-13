@@ -16424,7 +16424,7 @@ function avatarSVG(s, stil, px, cins) {
   }
   function cinsSecimHtml(perdede) {
     return `<div class="ka-cins-baslik">🎨 Karakterini seç</div>
-      <div class="ka-cins-alt">Bu seçim bir kere yapılır ve karakterin sabit kalır.<br>Saçını, kıyafetini ve eşyalarını altınlarınla değiştirebilirsin.</div>
+      <div class="ka-cins-alt">Mağazadan istediğin zaman karakter seçimini değiştirebilirsin.<br>Saçını, kıyafetini ve eşyalarını altınlarınla değiştirebilirsin.</div>
       <div class="ka-cins-grid">
         <button class="ka-cins" data-c="k">${avatarSVG(VARSAYILAN.k, KA_STIL, 140, 'k')}<b>Kız karakter</b></button>
         <button class="ka-cins" data-c="e">${avatarSVG(VARSAYILAN.e, KA_STIL, 140, 'e')}<b>Erkek karakter</b></button>
@@ -16432,7 +16432,7 @@ function avatarSVG(s, stil, px, cins) {
   }
   function cinsBagla(kap, sonra) {
     kap.querySelectorAll('.ka-cins').forEach(b => b.onclick = () => {
-      if(!window.dmProgression?.require('karakter')) return;
+      if(!window.dmProgression?.require('magaza')) return;
       let c = b.dataset.c;
       let iade = 0; // Existing balances are preserved; selecting a gender is not a reward.
       yo.karakter = { cins: c, s: Object.assign({}, VARSAYILAN[c],yo.karakter?.s||{}), sahip: [...(yo.karakter?.sahip||[])] };
@@ -17117,6 +17117,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     if (s < 60) return 'az önce'; if (s < 3600) return Math.floor(s / 60) + ' dk önce';
     if (s < 86400) return Math.floor(s / 3600) + ' saat önce'; return Math.floor(s / 86400) + ' gün önce';
   }
+  window.dmNotifications={open:()=>zilAc()};
   async function zilAc() {
     let p = document.createElement('div');
     p.className = 'zl-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Bildirimler');
@@ -17135,8 +17136,14 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     let benim = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).filter(e => kucuk(e.ogr) === kucuk(aktifOgrenciAdi)).map(e => ({ tarih: e.t, tur: 'kazanc', ikon: e.ikon, metin: e.metin, yeni: false }));
     let sosyalS = sosyal.map(b => ({ tarih: b.tarih, tur: b.tur, gonderen: b.gonderen, ikon: turIkon(b), metin: turMetin(b) + ((b.metin||b.mesaj||b.message||b.icerik) && b.tur !== 'takip' && b.tur !== 'duello' ? ` · “${b.metin||b.mesaj||b.message||b.icerik}”` : ''), yeni: !b.okundu, sat: b.sat }));
     let duyuru = [];
-    let dm = $('duyuruMesaj');
-    if (dm && dm.innerText.trim()) duyuru.push({ tarih: Date.now(), tur: 'duyuru', ikon: '📢', metin: dm.innerText.trim(), yeni: false });
+    try {
+      const response=await fetch(apiURL+'?islem=duyurulariGetir&ogrenci='+enc(aktifOgrenciAdi));
+      const current=await response.json();
+      if(current?.id && String(current.mesaj||'').trim())duyuru.push({tarih:Date.parse(current.tarih)||Date.now(),tur:'duyuru',ikon:'📢',metin:String(current.baslik||'Duyuru')+' · '+String(current.mesaj),yeni:false});
+    } catch(e) {
+      const dm=$('duyuruMesaj'),title=$('duyuruBaslik');
+      if(dm&&title&&title.innerText.trim()!=='Başlık'&&dm.innerText.trim()!=='Mesaj'&&dm.innerText.trim())duyuru.push({tarih:Date.now(),tur:'duyuru',ikon:'📢',metin:title.innerText.trim()+' · '+dm.innerText.trim(),yeni:false});
+    }
     let hepsi = [...sosyalS, ...benim, ...duyuru].sort((a, b) => b.tarih - a.tarih);
     zilFiltre='hepsi';const FILTRELER = [['hepsi','Hepsi'],['duyuru','📢 Duyuru']];
     function ciz() {
@@ -22854,6 +22861,7 @@ window.ocEnerjiHarca = async function (n) {
   [['⭐', 'Yıldız', 'temel'], ['🌈', 'Gökkuşağı', 'temel'], ['🦜', 'Papi', 'temel'], ['📚', 'Kitap kurdu', 'temel'], ['🎧', 'Müzik', 'temel'],
    ['⚽', 'Futbol', 'temel'], ['🌸', 'Çiçek', 'temel'], ['🚀', 'Roket', 'ozel'], ['🧠', 'Beyin', 'ozel'], ['🏆', 'Kupa', 'ozel'], ['🦄', 'Unicorn', 'ozel'],
    ['🐉', 'Ejderha', 'efsane'], ['👑', 'Taç', 'efsane'], ['💎', 'Elmas', 'efsane'], ['🔥', 'Seri ateşi', 'efsane']].forEach(([e, ad, sv]) => OGE.push({ id: 'c:' + e, kat: 'cik', tip: 'cik', emoji: e, ad, sv }));
+  OGE.push(...[{"id":"u:kahraman:#14b8a6:kanat","kat":"ust","tip":"kahraman","renk":"#14b8a6","desen":"kanat","ad":"Işık Kanadı kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"u:kahraman:#8b5cf6:kanat","kat":"ust","tip":"kahraman","renk":"#8b5cf6","desen":"kanat","ad":"Işık Kanadı kahraman üstü","sv":"efsane","c":"k","f":5500},{"id":"u:kahraman:#8b5cf6:kristal","kat":"ust","tip":"kahraman","renk":"#8b5cf6","desen":"kristal","ad":"Kristal Gaga kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"u:kahraman:#22d3ee:kristal","kat":"ust","tip":"kahraman","renk":"#22d3ee","desen":"kristal","ad":"Kristal Gaga kahraman üstü","sv":"efsane","c":"k","f":5500},{"id":"u:kahraman:#2563eb:firtina","kat":"ust","tip":"kahraman","renk":"#2563eb","desen":"firtina","ad":"Fırtına Tüyü kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"u:kahraman:#f59e0b:firtina","kat":"ust","tip":"kahraman","renk":"#f59e0b","desen":"firtina","ad":"Fırtına Tüyü kahraman üstü","sv":"efsane","c":"k","f":5500}]);
   OGE.forEach(o => { o.f = DijiProgressionCatalog.price(o); });
   const OGE_ID = Object.fromEntries(OGE.map(o => [o.id, o]));
   const bul = (kat, tip, r, desen) => OGE.find(o => o.kat === kat && o.tip === tip && o.renk === R[r][0] && (!desen || o.desen === desen));
@@ -22876,6 +22884,9 @@ window.ocEnerjiHarca = async function (n) {
     let f = KOMBIN_FIYAT[sv];
     return { id: 'k:' + ad, ikon, ad, sv, parca, f };
   });
+
+  KOMBIN.push(...[{"id":"k:Okul kâşifi","ikon":"🦜","ad":"Okul kâşifi","sv":"ozel","parca":[{"id":"u:gomlek:#f8fafc:duz","kat":"ust","tip":"gomlek","renk":"#f8fafc","desen":"duz","ad":"Beyaz gömlek","sv":"temel","f":850},{"id":"a:pantolon:#1e3a8a:duz","kat":"alt","tip":"pantolon","renk":"#1e3a8a","desen":"duz","ad":"Lacivert pantolon","sv":"temel","f":850},{"id":"d:yelek:#1e3a8a:duz","kat":"dis","tip":"yelek","renk":"#1e3a8a","desen":"duz","ad":"Lacivert yelek","sv":"temel","f":850},{"id":"a:spor:#f8fafc:duz","kat":"ayak","tip":"spor","renk":"#f8fafc","desen":"duz","ad":"Beyaz spor ayakkabı","sv":"temel","f":850}],"c":"e","f":9000},{"id":"k:Bilim kâşifi","ikon":"🦜","ad":"Bilim kâşifi","sv":"ozel","parca":[{"id":"u:kazak:#f5e6c8:duz","kat":"ust","tip":"kazak","renk":"#f5e6c8","desen":"duz","ad":"Krem balıkçı kazak","sv":"temel","f":850},{"id":"a:pantolon:#92400e:duz","kat":"alt","tip":"pantolon","renk":"#92400e","desen":"duz","ad":"Kahve pantolon","sv":"temel","f":850},{"id":"d:onluk:#f8fafc:duz","kat":"dis","tip":"onluk","renk":"#f8fafc","desen":"duz","ad":"Beyaz doktor önlüğü","sv":"ozel","f":3000},{"id":"a:saat:#334155:duz","kat":"aks","tip":"saat","renk":"#334155","desen":"duz","ad":"Füme kol saati","sv":"ozel","f":3000}],"c":"e","f":9000},{"id":"k:Kış kâşifi","ikon":"🦜","ad":"Kış kâşifi","sv":"ozel","parca":[{"id":"u:kazak:#9f1239:duz","kat":"ust","tip":"kazak","renk":"#9f1239","desen":"duz","ad":"Bordo balıkçı kazak","sv":"temel","f":850},{"id":"a:pantolon:#334155:duz","kat":"alt","tip":"pantolon","renk":"#334155","desen":"duz","ad":"Füme pantolon","sv":"temel","f":850},{"id":"d:mont:#1e3a8a:duz","kat":"dis","tip":"mont","renk":"#1e3a8a","desen":"duz","ad":"Lacivert mont","sv":"ozel","f":3000},{"id":"a:bot:#92400e:duz","kat":"ayak","tip":"bot","renk":"#92400e","desen":"duz","ad":"Kahve bot","sv":"temel","f":850}],"c":"e","f":9000},{"id":"k:Işık Kanadı-e","ikon":"🦜","ad":"Işık Kanadı · erkek kombini","sv":"efsane","c":"e","parca":[{"id":"u:kahraman:#14b8a6:kanat","kat":"ust","tip":"kahraman","renk":"#14b8a6","desen":"kanat","ad":"Işık Kanadı kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"a:pantolon:#1e3a8a:duz","kat":"alt","tip":"pantolon","renk":"#1e3a8a","desen":"duz","ad":"Lacivert pantolon","sv":"temel","f":850},{"id":"a:spor:#f8fafc:duz","kat":"ayak","tip":"spor","renk":"#f8fafc","desen":"duz","ad":"Beyaz spor ayakkabı","sv":"temel","f":850}],"f":13500},{"id":"k:Işık Kanadı-k","ikon":"🦜","ad":"Işık Kanadı · kız kombini","sv":"efsane","c":"k","parca":[{"id":"u:kahraman:#8b5cf6:kanat","kat":"ust","tip":"kahraman","renk":"#8b5cf6","desen":"kanat","ad":"Işık Kanadı kahraman üstü","sv":"efsane","c":"k","f":5500},{"id":"a:pantolon:#1e3a8a:duz","kat":"alt","tip":"pantolon","renk":"#1e3a8a","desen":"duz","ad":"Lacivert pantolon","sv":"temel","f":850},{"id":"a:spor:#f8fafc:duz","kat":"ayak","tip":"spor","renk":"#f8fafc","desen":"duz","ad":"Beyaz spor ayakkabı","sv":"temel","f":850}],"f":13500},{"id":"k:Kristal Gaga-e","ikon":"🦜","ad":"Kristal Gaga · erkek kombini","sv":"efsane","c":"e","parca":[{"id":"u:kahraman:#8b5cf6:kristal","kat":"ust","tip":"kahraman","renk":"#8b5cf6","desen":"kristal","ad":"Kristal Gaga kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"a:pantolon:#1e3a8a:duz","kat":"alt","tip":"pantolon","renk":"#1e3a8a","desen":"duz","ad":"Lacivert pantolon","sv":"temel","f":850},{"id":"a:spor:#f8fafc:duz","kat":"ayak","tip":"spor","renk":"#f8fafc","desen":"duz","ad":"Beyaz spor ayakkabı","sv":"temel","f":850}],"f":13500},{"id":"k:Kristal Gaga-k","ikon":"🦜","ad":"Kristal Gaga · kız kombini","sv":"efsane","c":"k","parca":[{"id":"u:kahraman:#22d3ee:kristal","kat":"ust","tip":"kahraman","renk":"#22d3ee","desen":"kristal","ad":"Kristal Gaga kahraman üstü","sv":"efsane","c":"k","f":5500},{"id":"a:pantolon:#1e3a8a:duz","kat":"alt","tip":"pantolon","renk":"#1e3a8a","desen":"duz","ad":"Lacivert pantolon","sv":"temel","f":850},{"id":"a:spor:#f8fafc:duz","kat":"ayak","tip":"spor","renk":"#f8fafc","desen":"duz","ad":"Beyaz spor ayakkabı","sv":"temel","f":850}],"f":13500},{"id":"k:Fırtına Tüyü-e","ikon":"🦜","ad":"Fırtına Tüyü · erkek kombini","sv":"efsane","c":"e","parca":[{"id":"u:kahraman:#2563eb:firtina","kat":"ust","tip":"kahraman","renk":"#2563eb","desen":"firtina","ad":"Fırtına Tüyü kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"a:pantolon:#1e3a8a:duz","kat":"alt","tip":"pantolon","renk":"#1e3a8a","desen":"duz","ad":"Lacivert pantolon","sv":"temel","f":850},{"id":"a:spor:#f8fafc:duz","kat":"ayak","tip":"spor","renk":"#f8fafc","desen":"duz","ad":"Beyaz spor ayakkabı","sv":"temel","f":850}],"f":13500},{"id":"k:Fırtına Tüyü-k","ikon":"🦜","ad":"Fırtına Tüyü · kız kombini","sv":"efsane","c":"k","parca":[{"id":"u:kahraman:#f59e0b:firtina","kat":"ust","tip":"kahraman","renk":"#f59e0b","desen":"firtina","ad":"Fırtına Tüyü kahraman üstü","sv":"efsane","c":"k","f":5500},{"id":"a:pantolon:#1e3a8a:duz","kat":"alt","tip":"pantolon","renk":"#1e3a8a","desen":"duz","ad":"Lacivert pantolon","sv":"temel","f":850},{"id":"a:spor:#f8fafc:duz","kat":"ayak","tip":"spor","renk":"#f8fafc","desen":"duz","ad":"Beyaz spor ayakkabı","sv":"temel","f":850}],"f":13500}]);
+  const uygun = o => DijiProgressionCatalog.compatible(o,kk()?.cins||'e');
 
   /* ================= ÇİZİM =================
      Büst (200×200) avatarSVG'nin içinden çağrılır; tam boy (200×390) sadece Dolap'ta. */
@@ -22900,6 +22911,11 @@ window.ocEnerjiHarca = async function (n) {
     if (o.tip === 'sweat') { pel = h.P('M58 152 C54 120 146 120 142 152 Z', renkK(r, .12)); ay = `<path d="M88 150 L92 172 M112 150 L108 172" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><rect x="78" y="182" width="44" height="16" rx="6" fill="${renkK(r, .1)}"/>`; }
     if (o.tip === 'bluz') ay = [84, 90, 96, 102, 108, 114].map((x, i) => `<circle cx="${x + 2}" cy="${151 + (i === 0 || i === 5 ? 0 : 5)}" r="4.5" fill="${renkA(r, .6)}"/>`).join('');
     if (o.tip === 'tulum') ay = `<rect x="70" y="150" width="12" height="50" fill="${k}"/><rect x="118" y="150" width="12" height="50" fill="${k}"/><rect x="74" y="172" width="52" height="30" rx="5" fill="${renkK(r, .12)}"/><circle cx="76" cy="176" r="3" fill="#fde68a"/><circle cx="124" cy="176" r="3" fill="#fde68a"/>`;
+    if(o.tip==='kahraman'){
+      pel=h.P('M48 158 L30 200 L170 200 L152 158 Z',renkK(r,.35));
+      const emblem=o.desen==='kristal'?'<path d="M100 164 L112 178 L100 194 L88 178 Z" fill="#a5f3fc" stroke="#fff" stroke-width="2"/>':o.desen==='firtina'?'<path d="M105 164 L90 182 H100 L95 194 L112 174 H102 Z" fill="#fde047" stroke="#fff" stroke-width="1.5"/>':'<path d="M100 190 C72 182 78 166 97 174 L100 181 L103 174 C122 166 128 182 100 190 Z" fill="#fde68a" stroke="#fff" stroke-width="1.5"/>';
+      ay=emblem+'<path d="M76 156 L88 160 M112 160 L124 156" stroke="#fff" stroke-width="3"/>';
+    }
     if (o.tip === 'yoresel') ay = h.P('M34 200 C36 172 56 156 84 150 L90 200 Z', '#1e1b4b') + h.P('M166 200 C164 172 144 156 116 150 L110 200 Z', '#1e1b4b') + [[60, 176], [70, 190], [56, 192], [140, 176], [130, 190], [144, 192]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#fbbf24"/>`).join('') + `<path d="M88 149 Q100 160 112 149" fill="none" stroke="#fbbf24" stroke-width="2.5"/>`;
     return { renk: r, ayrinti: desenCiz(o.desen, r, 34, 150, 166, 200) + ay, pelerin: pel };
   };
@@ -22947,6 +22963,7 @@ window.ocEnerjiHarca = async function (n) {
     let govdeBas = (typeof window.avatarSVG === 'function' && window.avatarSVG(Object.assign({}, s, { _tamBoy: true }), 'c', 200, cins)) || { defs: '', ic: '' };
     let kolRenk = dis ? (dis.tip === 'onluk' ? '#ffffff' : dis.tip === 'yelek' ? ust : dis.renk) : ust;
     let out = '';
+    if(s.ust&&parcala(s.ust).tip==='kahraman'){const cape=renkK(ust,.35);out+='<path d="M56 156 L28 338 Q100 364 172 338 L144 156 Z" fill="'+cape+'"/><path d="M43 325 Q100 345 157 325" fill="none" stroke="#ffffff55" stroke-width="3"/>';}
     /* bacaklar (etek/elbise altında her zaman tayt) */
     let bacakRenk = alt && ['pantolon', 'kot', 'esofman'].includes(alt.tip) ? alt.renk : '#475569';
     out += `<rect x="70" y="290" width="26" height="72" rx="10" fill="${bacakRenk}"/><rect x="104" y="290" width="26" height="72" rx="10" fill="${bacakRenk}"/>`;
@@ -23026,7 +23043,7 @@ window.ocEnerjiHarca = async function (n) {
   function cikar(s, kat) { s[kat] = ''; }
   const bugun = () => (typeof yoBugun === 'function' ? yoBugun() : new Date().toISOString().slice(0, 10));
   function vitrinOgesi() {
-    let aday = OGE.filter(o => o.sv !== 'temel' && !sahip(o.id)); if (!aday.length) return null;
+    let aday = OGE.filter(o => uygun(o) && o.sv !== 'temel' && !sahip(o.id)); if (!aday.length) return null;
     let h = 0; for (const c of bugun() + (typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '')) h = (h * 31 + c.charCodeAt(0)) >>> 0;
     return aday[h % aday.length];
   }
@@ -23052,6 +23069,18 @@ window.ocEnerjiHarca = async function (n) {
   /* Storefront uses the same wardrobe catalog, discounts and server purchase. */
   window.dmStoreWardrobe = {
     ready: () => !!kk(),
+    gender: () => kk()?.cins||'',
+    changeGender: async c => {
+      if(!['k','e'].includes(c)||!kk()||kk().cins===c)return;
+      const previous=JSON.parse(JSON.stringify(kk())),profile=yo.profilKrk;
+      const next=Object.assign({},window.KA_VARSAYILAN[c],previous.s);
+      const hair=KATALOG_().sac?.liste.find(x=>x.id===next.sac);
+      if(hair?.c&&hair.c!==c)next.sac=window.KA_VARSAYILAN[c].sac;
+      for(const kat of ['bas','ust','alt','tek','dis','ayak','aks','cik']){const item=ogeBul(next[kat]);if(item&&!DijiProgressionCatalog.compatible(item,c))next[kat]='';}
+      yo.karakter={...previous,cins:c,s:next};yo.profilKrk='';
+      try{await window.dmProgression.sync();window.yoKaydet?.();window.yoAvatarUygula?.();D=null;if($('magazaAlan')?.querySelector('.dl-gomulu'))ac($('magazaAlan'));window.dmStoreFront?.refresh();toast('✓ Karakter seçimin kaydedildi. Aldığın ürünler dolabında korunuyor.');}
+      catch(e){yo.karakter=previous;yo.profilKrk=profile;throw e;}
+    },
     character: (px = 220) => {
       if (!kk()) return '';
       if (yo.profilKrk && typeof window.karakterSvg === 'function') return window.karakterSvg(aktifOgrenciAdi, px);
@@ -23060,19 +23089,21 @@ window.ocEnerjiHarca = async function (n) {
     preview: (id, px = 150) => {
       const o = ogeBul(id); if (!o || !kk()) return '';
       const s = Object.assign({}, window.KA_VARSAYILAN[kk().cins], kk().s);
+      if(!uygun(o))return '';
       (o.parca || [o]).forEach(p => giy(s, p));
       return dolapTamBoySVG(s, kk().cins, px);
     },
-    parts: id => { const o = ogeBul(id); return (o?.parca || (o ? [o] : [])).slice(0, 3).map(p => ({id:p.id, category:p.kat, color:p.renk || '#9b64ef', tip:p.tip || p.kat, emoji:p.emoji || ''})); },
+    parts: id => { const o = ogeBul(id); return (o?.parca || (o ? [o] : [])).slice(0, 3).map(p => ({id:p.id, category:p.kat, color:p.renk || '#9b64ef', tip:p.tip || p.kat, emoji:p.emoji || '', preview:window.dmStoreWardrobe.preview(p.id,90), name:p.ad})); },
     offers: () => {
       if (!kk()) return [];
       const allowed = o => !!window.dmProgression?.itemAllowed(o, true);
       let h = 0; for (const ch of bugun() + aktifOgrenciAdi) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-      const combos = KOMBIN.filter(o => allowed(o) && !o.parca.every(p => sahip(p.id)));
-      const combo = (combos.length ? combos : KOMBIN)[h % (combos.length || KOMBIN.length)];
+      const compatibleCombos=KOMBIN.filter(uygun);
+      const combos = compatibleCombos.filter(o => allowed(o) && !o.parca.every(p => sahip(p.id)));
+      const combo = (combos.length ? combos : compatibleCombos)[h % (combos.length || compatibleCombos.length)];
       let daily = vitrinOgesi();
-      const alternatives = OGE.filter(o => allowed(o) && !sahip(o.id));
-      if (!daily || !allowed(daily)) daily = alternatives[h % (alternatives.length || 1)] || OGE.find(allowed) || OGE[0];
+      const alternatives = OGE.filter(o => uygun(o) && allowed(o) && !sahip(o.id));
+      if (!daily || !allowed(daily)) daily = alternatives[h % (alternatives.length || 1)] || OGE.find(o=>uygun(o)&&allowed(o)) || OGE.find(uygun);
       return [combo, daily].filter(Boolean).map((o, i) => ({
         id: o.id, name: o.ad, title: i === 0 ? 'Sana özel kombin' : 'Günün fırsatı',
         price: fiyatHesapla(o, !!o.parca).f, note: fiyatHesapla(o, !!o.parca).not,
@@ -23083,7 +23114,7 @@ window.ocEnerjiHarca = async function (n) {
       }));
     },
     buy: async id => {
-      const o = ogeBul(id); if (!o || !kk()) throw Error('Önce karakterini oluşturmalısın.');
+      const o = ogeBul(id); if (!o || !kk()) throw Error('Önce karakterini oluşturmalısın.');if(!uygun(o))throw Error('Bu ürün diğer karakter seçimine ait.');
       if (!window.dmProgression?.itemAllowed(o)) return false;
       const has = o.parca ? o.parca.every(p => sahip(p.id)) : sahip(o.id);
       if (has) {
@@ -23109,8 +23140,10 @@ window.ocEnerjiHarca = async function (n) {
     if (!D || D.hedef !== hedef) D = { sekme: 'vitrin', deneme: Object.assign({}, kk().s), secili: null, hedef };
     hedef.innerHTML = `<div class="dl-gomulu">
       <div class="dl-ust"><h2>🎨 Karakter & Giyim</h2><span class="dl-altin" id="dlAltin"></span></div>
+      <div class="dl-gender" role="group" aria-label="Karakter seçimi"><button type="button" data-gender="k" aria-pressed="${kk().cins==='k'}">Kız karakter</button><button type="button" data-gender="e" aria-pressed="${kk().cins==='e'}">Erkek karakter</button><small>Aldığın ürünler korunur.</small></div>
       <div class="dl-ana"><div class="dl-sahne"><div class="dl-onizleme" id="dlOnizleme"></div><div class="dl-dugmeler"><button class="dl-sahne-btn geri" id="dlGeriAl">↺ Denemeyi bırak</button></div></div>
       <div class="dl-sag"><div class="dl-sekmeler" id="dlSekmeler" role="tablist"></div><div class="dl-izgara" id="dlIzgara"></div><div class="dl-eylem" id="dlEylem" style="display:none"></div></div></div></div>`;
+    hedef.querySelectorAll('[data-gender]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await window.dmStoreWardrobe.changeGender(b.dataset.gender);}catch(e){toast(e.message);b.disabled=false;}});
     $('dlGeriAl').onclick = () => { D.deneme = Object.assign({}, kk().s); D.secili = null; ciz(); };
     ciz();
   }
@@ -23133,14 +23166,14 @@ window.ocEnerjiHarca = async function (n) {
   const SEKMELER = [['vitrin', '⭐ Vitrin'], ['sac', '💇 Saç'], ['bas', '🧕 Başörtüsü'], ['ust', '👕 Üst'], ['alt', '👖 Alt'], ['tek', '👗 Tek parça'], ['dis', '🧥 Dış'], ['ayak', '👟 Ayak'],
     ['sapka', '🎩 Şapka · gözlük'], ['aks', '🎒 Aksesuar'], ['yuz', '🙂 Yüz'], ['dost', '🐾 Dost · arka plan'], ['kombin', '🧥 Kombinler'], ['cik', '🏷️ Çıkartma'], ['sandik', '🎁 Sandıklar']];
   function ikonHtml(o) {
-    if (o.parca) return `<span style="font-size:28px;line-height:1.2">${o.ikon}</span>`;
+    if (o.parca) return window.dmStoreWardrobe.preview(o.id,88);
     if (o.kat === 'cik') return `<span style="font-size:28px;line-height:1.2">${o.emoji}</span>`;
     if (o.atolye) { try { let V = window.KA_VARSAYILAN[kk().cins], s = Object.assign({}, V, D.deneme, { [o.kat]: o.itemId, bas: '' }); if (o.kat === 'kiyafet') { s.ust = ''; s.tek = ''; } return `<span class="mini">${window.avatarSVG(s, 'c', 56, kk().cins)}</span>`; } catch (e) { return '<span class="mini">🎨</span>'; } }
-    return `<span style="display:inline-block;width:34px;height:34px;border-radius:10px;background:${o.renk};border:2px solid ${renkK(o.renk, .2)}"></span>`;
+    return window.dmStoreWardrobe.preview(o.id,88);
   }
   function ogeKart(o) {
     let kombinMi = !!o.parca, has = kombinMi ? o.parca.every(p => sahip(p.id)) : sahip(o.id), fh = fiyatHesapla(o, kombinMi);
-    if(!window.dmProgression?.itemAllowed(o,true)) return `<button type="button" class="dl-oge dm-level-locked" data-id="${kac(o.id)}"><span style="font-size:28px">🔒</span><span class="ad">Gizemli ürün</span><span class="fiyat">Seviye ${DijiProgressionCatalog.itemLevel(o)}</span></button>`;
+    if(!window.dmProgression?.itemAllowed(o,true)) return `<button type="button" class="dl-oge dm-level-locked" data-id="${kac(o.id)}">${ikonHtml(o)}<span class="ad">${kac(o.ad)}</span><span class="fiyat">Seviye ${DijiProgressionCatalog.itemLevel(o)}</span></button>`;
     let giyili = !kombinMi && giyiliMi(o, D.deneme);
     let etiket = o.f === 0 ? 'Ücretsiz' : has ? '✓ Sende' : (fh.f < o.f ? `<s style="opacity:.6">${o.f}</s> ` : '') + fh.f + ' 🪙';
     return `<button type="button" class="dl-oge${D.secili && D.secili.id === o.id ? ' secili' : ''}${giyili ? ' giyili' : ''}" data-id="${kac(o.id)}" aria-label="${kac(o.ad)}${has || o.f === 0 ? ', sende var' : ', ' + fh.f + ' altın'}">
@@ -23150,22 +23183,22 @@ window.ocEnerjiHarca = async function (n) {
   function ciz() {
     if (!D || !D.hedef || !document.body.contains(D.hedef)) return;
     onizle();
-    $('dlSekmeler').innerHTML = SEKMELER.map(([k, ad]) => `<button type="button" role="tab" class="dl-sekme${D.sekme === k ? ' aktif' : ''}" aria-selected="${D.sekme === k}" data-s="${k}">${ad}</button>`).join('');
+    $('dlSekmeler').innerHTML = SEKMELER.filter(([k])=>k!=='bas'||kk().cins==='k').map(([k, ad]) => `<button type="button" role="tab" class="dl-sekme${D.sekme === k ? ' aktif' : ''}" aria-selected="${D.sekme === k}" data-s="${k}">${ad}</button>`).join('');
     $('dlSekmeler').querySelectorAll('.dl-sekme').forEach(b => b.onclick = () => { D.sekme = b.dataset.s; D.secili = null; ciz(); });
     let G = $('dlIzgara'), html = '', S = D.sekme;
-    const bolum = (baslik, liste) => (baslik ? `<div class="dl-alt-baslik">${baslik}</div>` : '') + liste.map(ogeKart).join('');
+    const bolum = (baslik, liste) => (baslik ? `<div class="dl-alt-baslik">${baslik}</div>` : '') + liste.filter(uygun).map(ogeKart).join('');
     if (S === 'vitrin') {
       let v = vitrinOgesi();
       const l=window.dmProgression?.level()||1;
       html += '<div class="dm-store-slots">'+[15,20,25,30,35,40].map((n,i)=>`<div class="dm-store-slot ${l>=n?'open':''}">${l>=n?'✨ Vitrin '+(i+1):'🔒 Gizemli vitrin · Sv. '+n}</div>`).join('')+'</div>';
-      html += bolum('🎨 Başlangıç koleksiyonu', OGE.filter(o=>DijiProgressionCatalog.itemLevel(o)===15));
+      html += bolum('🎨 Başlangıç koleksiyonu', OGE.filter(o=>uygun(o)&&DijiProgressionCatalog.itemLevel(o)===1));
       if (yo.profilKrk) html += `<div class="dl-kart"><span style="font-size:28px">🐉</span><span>Profilinde şu an koleksiyon karakterin görünüyor.<small>Giydirdiğin karakterin profilde görünsün mü?</small></span><button type="button" id="dlProfilBen">Kendi karakterim</button></div>`;
       if (hosGeldinUygun()) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)"><span style="font-size:34px">🎁</span><span><b>Hoş Geldin Paketi</b><small>Okul kombini · ilk haftana özel</small></span><button type="button" id="dlHosGeldin">120 🪙</button></div>`;
       if (v) html += `<div class="dl-vitrin" style="background:linear-gradient(135deg,#f59e0b,#ec4899)"><span style="font-size:34px">🛍️</span><span><b>Günün Vitrini: ${kac(v.ad)}</b><small>Bugün %30 indirimli · yarın değişir</small></span><button type="button" data-id="${kac(v.id)}" class="dlVitrinBtn">Göz at</button></div>`;
       html += `<div class="dl-kart"><span style="font-size:28px">🧊</span><span>Seri dondurucu · elinde ${yo.dondurucu || 0}/2<small>Bir gün giremezsen serin bozulmaz</small></span><button type="button" id="dlDondurucu">Al</button></div>`;
       html += `<div class="dl-not">Sahip olduğun bir şeye dokun: hemen giyilir. Almadığın şeyleri bedava dene, beğenirsen al. İlk alışverişin %25 indirimli. İndirimler birleşmez!</div>`;
       let h=0;for(const c of bugun()+(typeof aktifOgrenciAdi!=='undefined'?aktifOgrenciAdi:''))h=(h*31+c.charCodeAt(0))>>>0;
-      html += bolum('🧥 Günün kombini', [KOMBIN[h%KOMBIN.length]]);
+      html += bolum('🧥 Günün kombini', [KOMBIN.filter(uygun)[h%KOMBIN.filter(uygun).length]]);
       if(l>=20)html+=bolum('✨ İkinci vitrin · Temel giyim',OGE.filter(o=>['ust','dis'].includes(o.kat)&&o.sv==='temel').slice(0,4));
       if(l>=25)html+=bolum('✨ Üçüncü vitrin · Orta koleksiyon',OGE.filter(o=>o.sv==='ozel'&&window.dmProgression.itemAllowed(o,true)).slice(0,4));
       if(l>=30)html+=bolum('✨ Dördüncü vitrin · Pro koleksiyon',OGE.filter(o=>o.sv==='efsane'&&window.dmProgression.itemAllowed(o,true)).slice(0,4));
@@ -23174,14 +23207,14 @@ window.ocEnerjiHarca = async function (n) {
     } else if (ATOLYE[S]) {
       if (S === 'sapka' && D.deneme.bas) html += `<div class="dl-not">🧕 Başörtüsü takılıyken şapka görünmez.</div>`;
       atolyeOgeleri(S).forEach(g => { html += bolum(g.baslik, g.liste); });
-    } else if (S === 'kombin') html += `<div class="dl-not">Kombin, parçaları tek tek almaktan %25 ucuz. Baş (saç ya da başörtüsü) senin seçimin, kombine dahil değil.</div>` + KOMBIN.map(ogeKart).join('');
+    } else if (S === 'kombin') html += `<div class="dl-not">Kombin, parçaları tek tek almaktan %25 ucuz. Baş (saç ya da başörtüsü) senin seçimin, kombine dahil değil.</div>` + KOMBIN.filter(uygun).map(ogeKart).join('');
     else if (S === 'sandik') html += '<div class="dl-not">Sandıklar parkur ilerlemenle kazanılır. Altın harcanmaz.</div><button class="dl-oge" data-sandik="0">🧰 Sandıklarımı gör</button>';
     else {
       if (S === 'bas') html += `<button type="button" class="dl-oge${!D.deneme.bas ? ' giyili' : ''}" data-cikar="bas"><span style="font-size:28px">💇</span><span class="ad">Başörtüsü yok · saçım görünsün</span><span class="fiyat sahip">Bedava</span></button><div class="dl-not">Saç modelini "💇 Saç" sekmesinden seçebilirsin. Başörtüsü takınca saç görünmez.</div>`;
       else if (['dis', 'aks', 'cik', 'tek'].includes(S)) html += `<button type="button" class="dl-oge" data-cikar="${S}"><span style="font-size:28px">🚫</span><span class="ad">Çıkar</span><span class="fiyat sahip">Bedava</span></button>`;
       if (S === 'ust') html += `<div class="dl-not">👕 Karakterin hiçbir zaman kıyafetsiz kalmaz: üst çıkarılınca klasik kıyafete döner.</div>`;
       if (S === 'alt') html += `<div class="dl-not">👖 Alt çıkarılınca okul pantolonuna döner.</div><button type="button" class="dl-oge" data-cikar="alt"><span style="font-size:28px">🏫</span><span class="ad">Okul pantolonu</span><span class="fiyat sahip">Bedava</span></button>`;
-      html += OGE.filter(o => o.kat === S).map(ogeKart).join('');
+      html += OGE.filter(o => o.kat === S&&uygun(o)).map(ogeKart).join('');
       if (S === 'ust') atolyeOgeleri('klasik').forEach(g => { html += bolum('👕 Klasik üstler', g.liste); });
     }
     G.innerHTML = html;
@@ -23194,7 +23227,7 @@ window.ocEnerjiHarca = async function (n) {
     eylemCiz();
   }
   function sec(id) {
-    let o = ogeBul(id); if (!o) return;
+    let o = ogeBul(id); if (!o||!uygun(o)) return;
     if(!window.dmProgression?.itemAllowed(o)) return;
     let kombinMi = !!o.parca, has = kombinMi ? o.parca.every(p => sahip(p.id)) : sahip(o.id);
     if (has) {                                       /* sahip olunan: hemen giy ve kaydet */

@@ -1,0 +1,40 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
+(async()=>{
+const browser=await chromium.launch({headless:true}),page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],root=path.resolve('ingilizce');
+page.on('pageerror',e=>errors.push(e.message));let announcement=null;
+await page.route('https://catalog.test/**',r=>{const u=new URL(r.request().url());if(u.pathname==='/api')return r.fulfill({contentType:'application/json',body:JSON.stringify(u.searchParams.get('islem')==='duyurulariGetir'?announcement:{liste:[]})});const p=path.join(root,u.pathname.slice(1));return fs.existsSync(p)&&fs.statSync(p).isFile()?r.fulfill({path:p,contentType:p.endsWith('.js')?'text/javascript; charset=utf-8':p.endsWith('.css')?'text/css; charset=utf-8':undefined}):r.fulfill({body:'',contentType:'text/html; charset=utf-8'});});
+await page.goto('https://catalog.test/');
+const html=fs.readFileSync(root+'/index.html','utf8'),scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]),styles=[...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(x=>x[1]).join('\n');
+await page.setContent('<meta charset="utf-8"><style>'+styles+'</style><link rel="stylesheet" href="/storefront.css"><link rel="stylesheet" href="/member-polish.css"><div id="panel-alani" style="display:block"><div id="tab-magaza" class="active"><div class="mg-kap"><div id="magazaAlan"></div></div></div><div id="tab-meduakis"><div class="akis-baslik"><h2>Arkadaşlar</h2></div></div></div><div id="duyuruBaslik">Başlık</div><div id="duyuruMesaj">Mesaj</div>');
+await page.evaluate(()=>{
+window.aktifOgrenciAdi='Fixture';window.apiURL='https://catalog.test/api';window.yo={altin:20000,karakter:{cins:'e',s:{ten:'1',sac:'kisa',sacRenk:'#2b2331',goz:'normal',agiz:'gulumse',kiyafet:'tisort-mavi',sapka:'yok',gozluk:'yok',dost:'yok',detay:'yanak',arka:'mavi',cerceve:'yok'},sahip:['d:u:gomlek:#f8fafc:duz']}};
+window.yoHazirMi=()=>true;window.yoKaydet=()=>{};window.yoAvatarUygula=()=>{};window.yoToast=()=>{};window.maAkisYukle=async()=>{};window.maAkisVeri=[];window.maTakip=new Set();window.guvenliMetin=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+window.yoGomuluHedef='magazaAlan';window.yoMagazaAc=()=>{};window.yoBugun=()=> '2026-10-13';window.setInterval=()=>0;window.genelEnerjiKalan=20;window.genelEnerjiMax=30;
+});
+await page.addScriptTag({url:'/progression-catalog.js'});await page.addScriptTag({url:'/progress-rules.js'});
+await page.evaluate(()=>{window.dmProgression={level:()=>1,require:()=>true,itemAllowed:o=>DijiProgressionCatalog.itemLevel(o)<=1,sync:async()=>{},refresh:()=>{}};});
+for(const marker of ['window.KA_KATALOG = KATALOG','window.dmStoreWardrobe =']){const script=scripts.find(s=>s.includes(marker));assert(script,marker);await page.addScriptTag({content:script});}
+await page.evaluate(()=>yoMagazaAc());
+assert.equal(await page.locator('[data-gender]').count(),2);
+assert.equal(await page.locator('#dlSekmeler [data-s="bas"]').count(),0,'male catalog excludes female-only headwear');
+await page.locator('#dlSekmeler [data-s="alt"]').click();
+assert.equal(await page.locator('#dlIzgara .dl-oge:not(.dm-level-locked)[data-id]').count(),3);
+assert(!(await page.locator('#dlIzgara').textContent()).includes('etek'));
+await page.locator('[data-gender="k"]').click();
+await page.waitForFunction(()=>yo.karakter.cins==='k');
+assert.equal(await page.locator('#dlSekmeler [data-s="bas"]').count(),1);
+assert((await page.evaluate(()=>yo.karakter.sahip)).includes('d:u:gomlek:#f8fafc:duz'),'gender change preserves purchases');
+await page.locator('#dlSekmeler [data-s="bas"]').click();assert.equal(await page.locator('#dlIzgara .dl-oge:not(.dm-level-locked)[data-id]').count(),3);
+assert.equal(await page.locator('#dlIzgara .dl-oge[data-id]').first().locator('svg').count(),1,'actual headwear preview');
+await page.evaluate(()=>{window.dmProgression.itemAllowed=()=>true;window.dmProgression.level=()=>40;yoMagazaAc();});
+await page.locator('#dlSekmeler [data-s="kombin"]').click();assert((await page.locator('#dlIzgara').textContent()).includes('Işık Kanadı'));
+await page.locator('[data-id="k:Işık Kanadı-k"]').click();
+assert((await page.locator('#dlOnizleme').innerHTML()).includes('#8b5cf6'));
+await page.evaluate(()=>{window.dcTumTamEkranlariKapat=()=>{};});
+await page.addScriptTag({url:'/storefront.js'});await page.evaluate(()=>magazaAc());assert.equal(await page.locator('.ds-opportunity .ds-product-preview svg').count(),1);
+const notifications=scripts.find(s=>s.includes('/* ---- Arkadaşlar: 🔔 bildirim merkezi ---- */'));assert(notifications);await page.addScriptTag({content:notifications});
+await page.evaluate(()=>dmNotifications.open());assert.equal(await page.locator('#zlListe .zl-satir').count(),0,'placeholder message never appears');await page.locator('#zlKapat').click();
+announcement={id:'test',baslik:'Yarınki etkinlik',mesaj:'Kitabını yanında getir. <img src=x onerror=alert(1)>',tarih:'2026-10-13T07:00:00Z'};
+await page.evaluate(()=>dmNotifications.open());const text=await page.locator('#zlListe').textContent();assert(text.includes('Yarınki etkinlik'));assert(text.includes('Kitabını yanında getir.'));assert.equal(await page.locator('#zlListe img').count(),0,'notice body is escaped');
+assert.deepEqual(errors,[]);await browser.close();console.log('PASS real wardrobe gender change, retained inventory, three starters, original heroes, correct previews, notification body and no placeholder');
+})().catch(e=>{console.error(e);process.exit(1)});

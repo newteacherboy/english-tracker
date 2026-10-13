@@ -21,6 +21,8 @@ jobs:
       - run: node tests/member-activity-ui.cjs
       - run: node tests/route-design-ui.cjs
       - run: node tests/notice-sharing-ui.cjs
+      - run: node tests/shop-notifications-ui.cjs
+      - run: node --test tests/progression-api.test.cjs
       - uses: actions/upload-artifact@v4
         with:
           name: approved-route-designs

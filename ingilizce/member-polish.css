@@ -94,3 +94,15 @@ body .dm-papi-feedback.is-energy{z-index:2147483647!important}
 
 #rtProfileBackdrop .rt-profile{position:relative!important;inset:auto!important;transform:none!important;margin:0!important;height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important}
 #rtProfileBackdrop .rt-profile-grid>button{position:relative!important;inset:auto!important;transform:none!important;margin:0!important;width:100%!important;box-sizing:border-box!important}
+
+/* Product controls and real garment previews. */
+.dl-gender{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}
+.dl-gender button{border:2px solid #ddd2f5;border-radius:14px;padding:9px 13px;background:#fff;color:#43246b;font:800 13px/1.2 inherit;min-height:44px}
+.dl-gender button[aria-pressed="true"]{background:#7542df;color:#fff;border-color:#7542df}
+.dl-gender small{color:#52716c;font-weight:700}
+.dl-oge>svg{width:70px!important;height:100px!important;object-fit:contain}
+.ds-parts span{display:block;width:36px;height:64px;overflow:hidden}.ds-parts span svg{width:100%;height:100%}
+body .ds-home h2,#dsEnergyTitle{color:#38245a!important;-webkit-text-fill-color:#38245a!important}
+#tab-magaza .dl-sekmeler{flex-wrap:wrap!important;overflow:visible!important}
+#tab-magaza .dm-level-locked .ad{color:#49366a!important}
+.zl-metin{white-space:normal;overflow-wrap:anywhere}

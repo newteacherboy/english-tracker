@@ -1,6 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),{stripTypeScriptTypes}=require('node:module');
 const C=require('../ingilizce/progression-catalog.js');
-function fixture(level=7){let ctx={level,feed:false,lessons:{A1:true,A2:false,B1:false,B2:false},units:[[210101,210201],[230101],[250101],[270101]],complete:[false,false,false,false],done:[],yo:{karakter:{cins:'k',s:{},sahip:[]}},owned:[]};const db={rpc:async(op,args)=>{if(op==='dm_game_reward_claim'){ctx.claim=args;return {data:{ok:true,xp:50,gold:10}};}return {data:ctx};},from:()=>({upsert:async(row)=>{ctx.weeklyTarget=structuredClone(row);return {error:null};},select(){return this},eq(){return this},limit:async()=>({data:[{id:'lesson'}]})})};const scope={DijiProgressionCatalog:C,globalThis:null,items:[],Intl,Date,Set,JSON};scope.globalThis=scope;vm.createContext(scope);let src=stripTypeScriptTypes(fs.readFileSync('supabase/functions/diji-api/progression-api.ts','utf8').replace(/^import .*$/gm,''),{mode:'transform'}).replace('export function','function');vm.runInContext(src+';this.factory=progressionAPI',scope);return {api:scope.factory(db,(body,status=200)=>({body,status})),ctx};}
+function fixture(level=7){let ctx={level,feed:false,lessons:{A1:true,A2:false,B1:false,B2:false},units:[[210101,210201],[230101],[250101],[270101]],complete:[false,false,false,false],done:[],yo:{karakter:{cins:'k',s:{},sahip:[]}},owned:[]};const db={rpc:async(op,args)=>{if(op==='dm_game_reward_claim'){ctx.claim=args;return {data:{ok:true,xp:50,gold:10}};}return {data:ctx};},from:()=>({upsert:async(row)=>{ctx.weeklyTarget=structuredClone(row);return {error:null};},select(){return this},eq(){return this},limit:async()=>({data:[{id:'lesson'}]})})};const scope={DijiProgressionCatalog:C,globalThis:null,items:JSON.parse(fs.readFileSync('supabase/functions/diji-api/progression-shop.json','utf8')),Intl,Date,Set,JSON};scope.globalThis=scope;vm.createContext(scope);let src=stripTypeScriptTypes(fs.readFileSync('supabase/functions/diji-api/progression-api.ts','utf8').replace(/^import .*$/gm,''),{mode:'transform'}).replace('export function','function');vm.runInContext(src+';this.factory=progressionAPI',scope);return {api:scope.factory(db,(body,status=200)=>({body,status})),ctx};}
 const student={role:'student',student_id:'trusted'};
 test('level 7 server denies later games, store, social actions and forged state',async()=>{const {api,ctx}=fixture();for(const op of ['asmacaLiderlikKaydet','dikteLiderlikKaydet','enerjiGonder','hazirMesajGonder','duelloGonder','oyunEslesmeOlustur'])assert.equal((await api.guard(op,{},new URLSearchParams(),student)).status,403,op);assert.equal(await api.guard('hafizaLiderlikKaydet',{},new URLSearchParams(),student),null);assert.equal((await api.guard('akisTumu',{},new URLSearchParams(),student)).status,403);ctx.feed=true;assert.equal(await api.guard('akisTumu',{},new URLSearchParams(),student),null);assert.equal((await api.guard('ekVeriKaydet',{anahtar:'yo',deger:{karakter:{cins:'k',s:{ust:'fake'},sahip:['d:fake']}}},new URLSearchParams(),student)).status,403);});
 test('lesson minimum level and previous CEFR completion are both required',async()=>{const {api,ctx}=fixture(9),body={seviye:'A2',kategori:'Grammar',konu:'Topic'};assert.equal((await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student)).status,403);ctx.lessons.A2=true;assert.equal(await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student),null);ctx.level=8;assert.equal((await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student)).status,403);});
@@ -19,3 +19,24 @@ test('weekly target saves only its dedicated row and validates the session and c
 
 
 test('12-question claims reach the reward RPC, parkur sections have independent identities',async()=>{const {api,ctx}=fixture(40),q=new URLSearchParams();const base={game:'ky',runId:'twelve-question-test',classNo:1,units:[1],correct:12,wrong:0,seconds:30};assert.equal((await api.handle('seviyeOyunOdulu',base,q,student)).body.ok,true);assert.equal(ctx.claim.correct,12);ctx.units[0]=[210101,210102];ctx.done=[210101];assert.equal((await api.handle('seviyeOyunOdulu',{...base,game:'ba',stopNo:210102,firstClear:true},q,student)).body.ok,true);assert.equal(ctx.claim.unit_ids[0],210102);assert.equal((await api.handle('seviyeOyunOdulu',{...base,game:'ba',stopNo:220102},q,student)).status,403);ctx.done=[];assert.equal((await api.handle('seviyeOyunOdulu',{...base,game:'ba',stopNo:210102},q,student)).status,403);assert.equal((await api.handle('seviyeOyunOdulu',{...base,game:'ba'},q,student)).body.ok,true);assert.equal(ctx.claim.unit_ids[0],210101);});
+
+test('every gender and category starts with at least three real affordable catalog choices',()=>{
+ const items=JSON.parse(fs.readFileSync('supabase/functions/diji-api/progression-shop.json','utf8'));
+ for(const c of ['e','k']){const groups={};for(const o of items.filter(o=>C.compatible(o,c)))(groups[o.parca?'kombin':o.kat]||=[]).push(o);for(const [cat,list] of Object.entries(groups)){assert(list.filter(o=>C.itemLevel(o)===1).length>=Math.min(3,list.length),c+' '+cat);if(list.length>3)assert(list.some(o=>C.itemLevel(o)>1));}}
+ assert.equal(items.filter(o=>o.tip==='kahraman').length,6);
+ assert.equal(C.compatible(items.find(o=>o.id==='k:Işık Kanadı-k'),'e'),false);
+ assert.equal(C.gates.karakter,1);assert.equal(C.gates.magaza,1);
+});
+test('level one saves starter looks and gender changes, but cannot equip unpaid or later items',async()=>{
+ const {api,ctx}=fixture(1),q=new URLSearchParams();
+ let next={karakter:{cins:'k',s:{sac:'uzun',kiyafet:'tisort-mor'},sahip:[]}};
+ assert.equal(await api.guard('ekVeriKaydet',{anahtar:'yo',deger:next},q,student),null);
+ next={karakter:{cins:'e',s:{sac:'kisa',kiyafet:'tisort-mavi'},sahip:[]}};
+ assert.equal(await api.guard('ekVeriKaydet',{anahtar:'yo',deger:next},q,student),null);
+ next.karakter.s.ust='u:tisort:#a78bfa:duz';
+ assert.equal((await api.guard('ekVeriKaydet',{anahtar:'yo',deger:next},q,student)).status,403);
+ ctx.yo.karakter.sahip=['d:u:tisort:#a78bfa:duz'];next.karakter.sahip=ctx.yo.karakter.sahip;
+ assert.equal(await api.guard('ekVeriKaydet',{anahtar:'yo',deger:next},q,student),null);
+ next.karakter.s.bas='b:klasik:#a78bfa:duz';
+ assert.equal((await api.guard('ekVeriKaydet',{anahtar:'yo',deger:next},q,student)).status,403);
+});
