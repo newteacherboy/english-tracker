@@ -12,12 +12,14 @@
   })();
   window.dmAndroidUygulama = androidUygulama;
   let busy = false;
+  let googleConfigured = null;
   const legacyLogin = window.girisYap;
   const legacyLogout = window.cikisYap;
   const subtitle = $('girisSubtitle');
   const originalSubtitle = subtitle.textContent;
   const area = document.createElement('div');
-  area.hidden = true;
+  area.hidden = androidUygulama || !window.supabaseClient?.auth;
+  area.id = "dmGoogleLoginArea";
   area.style.marginTop = '14px';
   const button = document.createElement('button');
   button.type = 'button';
@@ -165,6 +167,7 @@
   }
   button.onclick = async function () {
     if (busy) return;
+    if (googleConfigured === false) { message('Google ile giriş şu anda kullanılamıyor. Kullanıcı adı ve şifrenle giriş yapabilirsin.'); return; }
     button.disabled = true;
     try {
       sessionStorage.setItem('diji_google_pending', '1');
@@ -291,8 +294,9 @@
         fetch(SUPABASE_URL + '/auth/v1/settings', { headers: { apikey: SUPABASE_ANON_KEY } }).then(r => r.json()),
         fetch(apiURL + '?islem=googleDurum').then(r => r.json())
       ]);
-      area.hidden = !(settings.external && settings.external.google && readiness.hazir);
-    } catch (_) { area.hidden = true; }
+      googleConfigured = !!(settings.external?.google && readiness.hazir);
+      area.hidden = false;
+    } catch (_) { googleConfigured = null; area.hidden = false; }
   })().catch(() => { reset(); message('Google ile giriş tamamlanamadı. Mevcut girişini kullanabilirsin.'); });
 })();
 

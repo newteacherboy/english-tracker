@@ -36,5 +36,30 @@ function open(item,use){if(opened)opened.close();const prior=document.activeElem
  if(use){const button=overlay.querySelector('[data-use]');button.hidden=false;button.onclick=()=>{close();use();};}document.body.append(overlay);overlay.querySelector('.dm-share-close').focus();paint(theme);}
 document.addEventListener('click',event=>{const badge=event.target.closest('[data-share-badge]:not(.kilitli)'),character=event.target.closest('.bc-krk:not(.kilitli)');const target=badge||character;if(!target)return;if(skip===target){skip=null;return;}if(badge){const item=window.dmRozetKatalogu?.find(x=>x.id===badge.dataset.shareBadge);if(!item)return;event.preventDefault();event.stopImmediatePropagation();open({kind:'badge',id:item.id,name:item.ad,src:item.resim,emoji:item.ikon});}else{const item=window._krkListe?.().find(x=>x.ad===character.dataset.ad&&x.acik);if(!item)return;event.preventDefault();event.stopImmediatePropagation();const svg=window.dmCharacterArt?.(item.ad,512)||character.querySelector('svg')?.outerHTML;open({kind:'character',id:item.ad,name:item.ad,svg},()=>{skip=character;character.click();});}},true);
 document.addEventListener('keydown',event=>{const b=event.target.closest?.('[data-share-badge]:not(.kilitli)');if(b&&['Enter',' '].includes(event.key)){event.preventDefault();b.click();}});
-window.dmSharing={open,render,filename,defaultTheme};
+function attachAchievementActions(card,item){
+ if(!card||card.querySelector('.dm-achievement-actions'))return;
+ const actions=document.createElement('div');actions.className='dm-achievement-actions';
+ const share=document.createElement('button'),download=document.createElement('button'),status=document.createElement('p');
+ share.type=download.type='button';share.textContent='Arkadaşlarınla paylaş';download.textContent='Fotoğrafı indir';share.disabled=download.disabled=true;
+ status.className='dm-achievement-status';status.setAttribute('role','status');status.textContent='Paylaşım görselin hazırlanıyor…';
+ actions.append(share,download);const next=card.querySelector('.bd-kutlama-devam');if(next)next.before(actions,status);else card.append(actions,status);
+ let file=null,url=null;const theme=defaultTheme(item);
+ const cleanup=new MutationObserver(()=>{if(!card.isConnected){if(url)URL.revokeObjectURL(url);url=null;cleanup.disconnect();}});cleanup.observe(document.body,{childList:true,subtree:true});
+ function save(){if(!file||!url)return;const a=document.createElement('a');a.href=url;a.download=file.name;a.rel='noopener';document.body.append(a);a.click();a.remove();status.textContent='PNG görselini kaydedebilirsin. iPhone’da açılırsa görsele uzun basıp Fotoğraflar’a kaydet.';}
+ function nativeShare(saving=false){if(!file)return;try{if(navigator.canShare?.({files:[file]})){navigator.share({files:[file],...(saving?{}:{title:item.name+' · DijiMedu'})}).then(()=>{if(card.isConnected)status.textContent=saving?'Kaydetme ekranı kapandı.':'Paylaşım ekranı kapandı.';}).catch(e=>{if(e.name!=='AbortError'&&card.isConnected){status.textContent='Paylaşım ekranı açılamadı. Fotoğrafı indir düğmesini deneyebilirsin.';}});}else{save();if(!saving)status.textContent='Tarayıcın doğrudan paylaşmayı desteklemiyor. İndirilen görseli arkadaşlarına gönderebilirsin.';}}catch{save();}}
+ share.onclick=()=>nativeShare();download.onclick=()=>{const apple=/iPhone|iPad|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;if(apple&&navigator.canShare?.({files:[file]})){status.textContent='Açılan ekrandan “Görüntüyü Kaydet” seçeneğini kullan.';nativeShare(true);}else save();};
+ render(item,theme).then(r=>{if(!card.isConnected)return;file=new File([r.blob],filename(item,theme),{type:'image/png'});url=URL.createObjectURL(r.blob);share.disabled=download.disabled=false;status.textContent='DijiMedu logolu paylaşım görselin hazır.';}).catch(()=>{if(!card.isConnected)return;status.textContent='Görsel hazırlanamadı. Tekrar denemek için paylaşım tasarımını aç.';share.disabled=false;share.onclick=()=>open(item);});
+}
+function celebrateCharacter(item){
+ if(!owner()||window.dmGuestMode||document.hidden||window.dmPapiNotices?.blocked()||document.querySelector('.bd-kutlama'))return false;
+ const overlay=document.createElement('div');overlay.className='bd-kutlama';overlay.id='dmCharacterCelebration';
+ overlay.innerHTML='<section class="bd-kutlama-kart" role="dialog" aria-modal="true" aria-labelledby="dmCharacterCelebrationTitle"><button type="button" class="bd-kutlama-kapat" aria-label="Kutlamayı kapat">×</button><div class="bd-kutlama-isilti" aria-hidden="true">✦ ✧ ✦ ✧</div><p class="bd-kutlama-etiket">YENİ KARAKTER KAZANDIN</p><h2 id="dmCharacterCelebrationTitle">Tebrikler!</h2><div class="bd-kutlama-rozet"></div><h3></h3><p>Yeni arkadaşın koleksiyonuna katıldı.</p><div class="bd-kutlama-papi"><img src="papi-reward-v2.png" alt=""><p>Harikasın! Öğrenme yolculuğuna yeni karakterinle devam et!</p></div><small>Benim Dünyam → Karakter bölümünde seni bekliyor.</small><button type="button" class="bd-kutlama-devam">Harika! Devam et ✨</button></section>';
+ overlay.querySelector('h3').textContent=item.name;const prior=document.activeElement,card=overlay.querySelector('section');
+ // This SVG is generated by the existing, earned-only character renderer.
+ if(item.svg)overlay.querySelector('.bd-kutlama-rozet').innerHTML=item.svg;
+ const close=()=>{overlay.remove();prior?.isConnected&&prior.focus?.({preventScroll:true});};overlay.querySelector('.bd-kutlama-kapat').onclick=overlay.querySelector('.bd-kutlama-devam').onclick=close;
+ overlay.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const buttons=[...overlay.querySelectorAll('button:not(:disabled)')],i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length]?.focus();}};
+ document.body.append(overlay);attachAchievementActions(card,item);overlay.querySelector('.bd-kutlama-devam').focus();return true;
+}
+window.dmSharing={open,render,filename,defaultTheme,attachAchievementActions,celebrateCharacter};
 })();

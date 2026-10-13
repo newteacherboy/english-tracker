@@ -155,6 +155,7 @@
       <button type="button" class="bd-kutlama-devam">Harika! Devam et ✨</button>
     </section>`;
     document.body.append(el); kutlama = el;
+    window.dmSharing?.attachAchievementActions(el.querySelector('section'), {kind:'badge',id:r.id,name:r.ad,src:r.resim,emoji:r.ikon});
     const resim = el.querySelector('.bd-kutlama-rozet img'); resim.onerror = () => { resim.hidden = true; resim.nextElementSibling.hidden = false; };
     const kapat = () => {
       if (kutlama !== el) return;

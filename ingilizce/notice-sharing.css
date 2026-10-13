@@ -8,3 +8,13 @@
 .dm-notice-theme-1 .dm-notice-card :is(h2,h3,strong,p,small,.duy3-msg,.dm-nudge-text,.dm-member-body){color:#204e55!important;-webkit-text-fill-color:#204e55!important;text-shadow:none!important}.dm-notice-theme-3 .dm-notice-card :is(.duy3-msg,.dm-nudge-text,.dm-member-body){color:#244659!important;-webkit-text-fill-color:#244659!important}.dm-notice-theme-2 .dm-notice-card :is(.duy3-msg,.dm-member-body){color:#fff2cb!important;-webkit-text-fill-color:#fff2cb!important}.dm-notice-theme-2 .dm-report-stats span{background:#ffffff16!important}
 .dm-inline-notice{display:flex;align-items:center;gap:10px}.dm-inline-notice>img{width:38px;height:45px;object-fit:contain}.dm-inline-notice.dm-notice-theme-2{background:#202447!important;color:#fff2cb!important;border-color:#efcf70!important}.dm-inline-notice.dm-notice-theme-3{background:linear-gradient(120deg,#f1fffc,#f0edff)!important;border-color:#9ecde4!important}.dm-inline-notice.dm-notice-theme-1{padding-bottom:13px!important;align-items:center!important}
 .dm-personal-share{padding:11px 16px;margin:7px 0 12px;border:1px solid #9cdac7;border-radius:14px;background:#e9fff5;color:#226855;font-weight:850;cursor:pointer}
+
+/* Award dialogs use the same celebration card and direct export actions. */
+.bd-kutlama-kart h2{color:#234e45!important;-webkit-text-fill-color:#234e45!important;text-shadow:none!important}
+.bd-kutlama-rozet svg{width:100%;height:100%;object-fit:contain}
+.dm-achievement-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.dm-achievement-actions button{min-height:44px;padding:10px 8px;border:1.5px solid #3b8b73;border-radius:14px;background:#eaf3e5;color:#245c4c;font:800 12px Nunito,system-ui,sans-serif;cursor:pointer}
+.dm-achievement-actions button:first-child{background:#3b8b73;color:white}
+.dm-achievement-actions button:disabled{opacity:.5;cursor:wait}
+.dm-achievement-status{font-size:11px!important;line-height:1.4!important;margin:8px 0 0!important;color:#61766c!important}
+@media(max-height:740px){.bd-kutlama-kart{padding:16px!important}.bd-kutlama-rozet{width:110px!important;height:110px!important}.bd-kutlama-kart h2{font-size:20px!important}.bd-kutlama-papi{margin:9px 0!important}.bd-kutlama-papi img{height:55px!important}.bd-kutlama-devam{margin-top:10px!important}}
