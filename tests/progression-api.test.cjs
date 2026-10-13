@@ -22,7 +22,7 @@ test('12-question claims reach the reward RPC, parkur sections have independent 
 
 test('every gender and category starts with at least three real affordable catalog choices',()=>{
  const items=JSON.parse(fs.readFileSync('supabase/functions/diji-api/progression-shop.json','utf8'));
- for(const c of ['e','k']){const groups={};for(const o of items.filter(o=>C.compatible(o,c)))(groups[o.parca?'kombin':o.kat]||=[]).push(o);for(const [cat,list] of Object.entries(groups)){assert(list.filter(o=>C.itemLevel(o)===1).length>=Math.min(3,list.length),c+' '+cat);if(list.length>3)assert(list.some(o=>C.itemLevel(o)>1));}}
+ for(const c of ['e','k']){const groups={};for(const o of items.filter(o=>C.compatible(o,c)))(groups[o.parca?'kombin':o.kat]||=[]).push(o);for(const [cat,list] of Object.entries(groups)){assert(list.filter(o=>C.itemLevel(o)===1).length>=Math.min(3,list.length),c+' '+cat);assert(list.filter(o=>C.itemLevel(o)===1).length<=3,c+' '+cat+' starter cap');if(list.length>3)assert(list.some(o=>C.itemLevel(o)>1),c+' '+cat+' has leveled products');}}
  assert.equal(items.filter(o=>o.tip==='kahraman').length,6);
  assert.equal(C.compatible(items.find(o=>o.id==='k:Işık Kanadı-k'),'e'),false);
  assert.equal(C.gates.karakter,1);assert.equal(C.gates.magaza,1);
