@@ -521,6 +521,9 @@
     if (sekme === 'karakter') karakterCiz();
   }
   function benimDunyamAc(k) {
+    // Re-selecting the visible section must not rebuild/move the entire layout.
+    const requested = k || 'sanaozel';
+    if ($('tab-dunyam')?.classList.contains('active') && sekme === requested) return;
     iskelet();
     if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat();
     const ov = $('tab-dunyam'); ov.classList.add('active'); ov.scrollTop = 0;
@@ -564,7 +567,7 @@
   setInterval(() => {
     menu();
     const ov = $('tab-dunyam');
-    if (ov && ov.classList.contains('active')) {
+    if (!document.hidden && ov && ov.classList.contains('active')) {
       if (sekme === 'karakter' && izin('magaza') && window.yoGomuluHedef !== 'bdKarakterAlan' && !($('yoModal') && $('yoModal').classList.contains('acik'))) window.yoGomuluHedef = 'bdKarakterAlan';
       if (sekme === 'sanaozel') { homeCiz(); fitWorld(); }
       kartCiz();
