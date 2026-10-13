@@ -31,7 +31,18 @@ await page.locator('#dlSekmeler [data-s="kombin"]').click();assert((await page.l
 await page.locator('[data-id="k:Işık Kanadı-k"]').click();
 assert((await page.locator('#dlOnizleme').innerHTML()).includes('#8b5cf6'));
 await page.evaluate(()=>{window.dcTumTamEkranlariKapat=()=>{};});
-await page.addScriptTag({url:'/boutique-art.js'});await page.evaluate(()=>yoMagazaAc());await page.locator('#dlSekmeler [data-s=ust]').click();assert(await page.locator('#dlIzgara .dm-product-art').count()>20);await page.locator('#dlSekmeler [data-s=ayak]').click();assert(await page.locator('#dlIzgara .dm-product-art').count()>10);assert.equal(await page.locator('#dlIzgara .dm-product-art').first().getAttribute('aria-label'),await page.locator('#dlIzgara .dl-oge .ad').first().textContent());await page.addScriptTag({url:'/storefront.js'});await page.evaluate(()=>magazaAc());assert.equal(await page.locator('.ds-opportunity .ds-product-preview svg').count(),1);
+await page.addScriptTag({url:'/boutique-art.js'});await page.evaluate(()=>yoMagazaAc());await page.locator('#dlSekmeler [data-s=ust]').click();assert(await page.locator('#dlIzgara .dm-product-art').count()>20);await page.locator('#dlSekmeler [data-s=ayak]').click();assert(await page.locator('#dlIzgara .dm-product-art').count()>10);assert.equal(await page.locator('#dlIzgara .dm-product-art').first().getAttribute('aria-label'),await page.locator('#dlIzgara .dl-oge .ad').first().textContent());await page.locator('#dlSekmeler [data-s=sac]').click();
+for(const width of [320,390,768]){
+ await page.setViewportSize({width,height:844});
+ const geometry=await page.evaluate(()=>{const box=e=>e.getBoundingClientRect(),avatar=box(document.querySelector('#dlOnizleme>svg')),stage=box(document.querySelector('.dl-sahne')),tabs=[...document.querySelectorAll('#dlSekmeler button')].map(box),mini=box(document.querySelector('#dlIzgara .mini')),head=box(document.querySelector('#dlIzgara .mini svg'));return {avatar:{w:avatar.width,h:avatar.height,x:avatar.x,right:avatar.right},stage:{x:stage.x,right:stage.right},tabs:tabs.map(b=>({w:b.width,h:b.height,right:b.right})),mini:{w:mini.width,h:mini.height},head:{w:head.width,h:head.height}}});
+ assert(geometry.avatar.w>=100&&geometry.avatar.h>=195,'full-size avatar at '+width);
+ assert(geometry.avatar.x>=geometry.stage.x&&geometry.avatar.right<=geometry.stage.right,'avatar stays inside dressing room');
+ assert(geometry.tabs.every(b=>b.h<=64&&b.right<=width),'compact categories without overflow');
+ assert(geometry.head.w<=geometry.mini.w+1&&geometry.head.h<=geometry.mini.h+1,'hair preview never cropped');
+}
+await page.setViewportSize({width:390,height:844});
+console.log('BOUTIQUE_SCREENSHOT_BASE64:'+ (await page.screenshot({type:'jpeg',quality:48})).toString('base64'));
+await page.addScriptTag({url:'/storefront.js'});await page.evaluate(()=>magazaAc());assert.equal(await page.locator('.ds-opportunity .ds-product-preview svg').count(),1);
 const notifications=scripts.find(s=>s.includes('/* ---- Arkadaşlar: 🔔 bildirim merkezi ---- */'));assert(notifications);await page.addScriptTag({content:notifications});
 await page.evaluate(()=>dmNotifications.open());assert.equal(await page.locator('#zlListe .zl-satir').count(),0,'placeholder message never appears');await page.locator('#zlKapat').click();
 announcement={id:'test',baslik:'Yarınki etkinlik',mesaj:'Kitabını yanında getir. <img src=x onerror=alert(1)>',tarih:'2026-10-13T07:00:00Z'};

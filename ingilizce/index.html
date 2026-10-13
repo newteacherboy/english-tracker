@@ -23180,7 +23180,7 @@ window.ocEnerjiHarca = async function (n) {
     const art = window.dmBoutiqueArt?.(o); if(art) return art;
     if (o.parca) return window.dmStoreWardrobe.preview(o.id,150);
     if (o.kat === 'cik') return `<span style="font-size:28px;line-height:1.2">${o.emoji}</span>`;
-    if (o.atolye) { try { let V = window.KA_VARSAYILAN[kk().cins], s = Object.assign({}, V, D.deneme, { [o.kat]: o.itemId, bas: '' }); if (o.kat === 'kiyafet') { s.ust = ''; s.tek = ''; } return `<span class="mini">${window.avatarSVG(s, 'c', 56, kk().cins)}</span>`; } catch (e) { return '<span class="mini">🎨</span>'; } }
+    if (o.atolye) { try { let V = window.KA_VARSAYILAN[kk().cins], s = Object.assign({}, V, D.deneme, { [o.kat]: o.itemId, bas: '' }); if (o.kat === 'kiyafet') { s.ust = ''; s.tek = ''; } return `<span class="mini">${window.avatarSVG(s, 'c', 100, kk().cins)}</span>`; } catch (e) { return '<span class="mini">🎨</span>'; } }
     return window.dmStoreWardrobe.preview(o.id,88);
   }
   function ogeKart(o) {
@@ -23195,7 +23195,7 @@ window.ocEnerjiHarca = async function (n) {
   function ciz() {
     if (!D || !D.hedef || !document.body.contains(D.hedef)) return;
     onizle();
-    $('dlSekmeler').innerHTML = SEKMELER.filter(([k])=>k!=='bas'||kk().cins==='k').map(([k, ad]) => `<button type="button" role="tab" class="dl-sekme${D.sekme === k ? ' aktif' : ''}" aria-selected="${D.sekme === k}" data-s="${k}">${ad}</button>`).join('');
+    $('dlSekmeler').innerHTML = SEKMELER.filter(([k])=>k!=='bas'||kk().cins==='k').map(([k, ad]) => `<button type="button" role="tab" class="dl-sekme${D.sekme === k ? ' aktif' : ''}" aria-selected="${D.sekme === k}" data-s="${k}">${`<span class="dl-category-icon" aria-hidden="true">${ad.split(' ')[0]}</span><span class="dl-category-label">${kac(ad.slice(ad.indexOf(' ')+1).replace('Şapka · gözlük','Şapka/Gözlük').replace('Dost · arka plan','Dost/Arka plan').replace('Kombinler','Kombin').replace('Sandıklar','Sandık'))}</span>`}</button>`).join('');
     $('dlSekmeler').querySelectorAll('.dl-sekme').forEach(b => b.onclick = () => { D.sekme = b.dataset.s; D.secili = null; ciz(); });
     let G = $('dlIzgara'), html = '', S = D.sekme;
     const bolum = (baslik, liste) => (baslik ? `<div class="dl-alt-baslik">${baslik}</div>` : '') + liste.filter(uygun).sort((a,b)=>DijiProgressionCatalog.itemLevel(a)-DijiProgressionCatalog.itemLevel(b)).map(ogeKart).join('');
@@ -28503,9 +28503,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="friends-ui.js?v=20261011-1"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261011-3">
 <script defer src="study-ui.js?v=20261011-3"></script>
-<link rel="stylesheet" href="storefront.css?v=20261013-boutique-125">
+<link rel="stylesheet" href="storefront.css?v=20261013-boutique-fit-126">
 <script defer src="boutique-art.js?v=125"></script>
-<script defer src="storefront.js?v=20261013-boutique-125"></script>
+<script defer src="storefront.js?v=20261013-boutique-fit-126"></script>
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261013-activity-2">
