@@ -1059,6 +1059,13 @@
       "bytes": 679,
       "status": "code-native",
       "source": "Repository-authored generic gold coin SVG, 2026-10-13; original code retained in Git."
+    },
+    {
+      "path": "ingilizce/route-assets/compact-wallet-atlas-v1.png",
+      "sha256": "a61aba19f7152d5f73e4cfdd756d8dafd8a18493262d9cdf3eef1d27f4a79a23",
+      "bytes": 756118,
+      "status": "ai-generated",
+      "source": "ImageGen, 2026-10-13; regenerated from the user-approved compact strip concept 1. Papi head, lightning, coin, XP hexagon and active-time star; transparent five-cell atlas."
     }
   ]
 }
