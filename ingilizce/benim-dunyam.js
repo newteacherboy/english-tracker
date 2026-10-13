@@ -472,7 +472,7 @@
   function rozetHtml(r, kazanildi) {
     const resim = r.resim ? `<img src="${kac(r.resim)}" alt="" loading="lazy">` : `<span class="bd-rozet-emoji" aria-hidden="true">${r.ikon}</span>`;
     const kilit = '<span class="bd-kilit-ikon" aria-hidden="true">🔒</span>';
-    return `<li class="bd-rozet${kazanildi ? '' : ' kilitli'}${r.resim ? ' resimli' : ''}" title="${kac(r.kosul)}"><span class="bd-rozet-sekil">${kazanildi ? resim : (r.resim ? resim + kilit : kilit)}</span><b>${kac(r.ad)}</b><small>${kac(r.kosul)}</small></li>`;
+    return `<li class="bd-rozet${kazanildi ? '' : ' kilitli'}${r.resim ? ' resimli' : ''}" title="${kac(r.kosul)}" data-share-badge="${kac(r.id)}" ${kazanildi?'role="button" tabindex="0" aria-label="'+kac(r.ad)+' rozetini büyüt ve paylaş"':''}><span class="bd-rozet-sekil">${kazanildi ? resim : (r.resim ? resim + kilit : kilit)}</span><b>${kac(r.ad)}</b><small>${kac(r.kosul)}</small></li>`;
   }
   function rozetCiz() {
     rozetleriKontrolEt();

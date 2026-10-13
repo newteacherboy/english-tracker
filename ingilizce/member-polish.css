@@ -23,3 +23,20 @@ body .dm-route-result{border:2px solid #e5ca67;border-radius:22px;background:rad
 
 body #dmMusicToggle{z-index:2147482500!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;right:12px!important}body .game-modal-overlay [id$="MuzikBtn"]{display:none!important}
 body :is(.mt-top,.pc-header,.ww-shell>header).dm-has-wallet{flex-wrap:wrap!important}body :is(.mt-top,.pc-header,.ww-shell>header) .dm-unified-wallet{flex-basis:100%!important}
+
+/* Wallet belongs to the visible title row, never a separate row above the page. */
+body .dm-has-wallet{display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:nowrap!important;min-width:0;box-sizing:border-box}
+body .dm-has-wallet>.dm-unified-wallet.dm-papi-wallet{order:0!important;grid-column:auto!important;flex:0 0 clamp(145px,43vw,240px)!important;max-width:62%!important;width:auto!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;margin:0 0 0 auto!important;padding:0!important;gap:3px!important;align-self:center}
+body .dm-has-wallet>:is(h1,h2){font-size:clamp(15px,4.2vw,24px)!important;line-height:1.15!important;min-width:0;margin:0!important;flex:1!important;color:#204d4b!important;-webkit-text-fill-color:#204d4b!important;background:none!important;text-shadow:none!important}
+body .dm-unified-wallet small{font-size:8px;font-weight:800}.dm-gold-icon{width:17px!important;height:17px!important}
+body .dm-has-wallet .dm-unified-wallet>:is(span,button){font-size:11px!important;padding:5px 2px!important;border-radius:10px!important;min-height:25px;overflow:visible!important}
+body :is(.ds-lesson-header,.mt-top,.pc-header,.ww-shell>header).dm-has-wallet{flex-wrap:wrap!important}body :is(.ds-lesson-header,.mt-top,.pc-header,.ww-shell>header).dm-has-wallet>.dm-unified-wallet{flex-basis:clamp(145px,43vw,240px)!important;width:auto!important}
+body .gg-brand.dm-has-wallet>span,body .ds-header.dm-has-wallet>.ds-wallet,body #tab-dunya [data-dm-wallet],body #tab-dunya .dm-parkur-wallet{display:none!important}
+body #tab-dunya .rt-top{padding:5px 2px 9px!important;min-height:58px!important}body #tab-meduakis .akis-baslik.dm-has-wallet{padding:10px 12px!important}.dm-has-wallet .ds-heading{min-width:0}.dm-has-wallet .ds-heading p{display:none}.dm-has-wallet .ds-heading h1{font-size:20px}.dm-has-wallet .ds-heading>img{width:28px}
+body #tab-dunya :is(.rt-week,.rt-tasks) h2{color:#173e46!important;-webkit-text-fill-color:#173e46!important;background:none!important;background-image:none!important;text-shadow:none!important;opacity:1!important;visibility:visible!important}
+body #tab-dunya :is(.rt-week,.rt-tasks) small{color:#536777!important;-webkit-text-fill-color:#536777!important}
+body #tab-dunya .rt-node.current>span{font-size:26px!important}body #tab-dunya .rt-node.locked>span{font-size:22px!important}.rt-all button[data-status="locked"]{color:#637586!important}
+@media(max-width:360px){body .dm-has-wallet>.dm-unified-wallet.dm-papi-wallet{flex-basis:142px!important;max-width:58%!important}.dm-has-wallet .gg-tabs{font-size:10px}.dm-has-wallet .gg-brand>b{font-size:20px!important}}
+
+body #tab-dunyam .bd-kart.dm-has-wallet :is(.bd-cipler,.bw-profile-chip){display:none!important}body #tab-meduakis .akis-baslik.dm-has-wallet h2{font-size:clamp(15px,4vw,22px)!important;gap:4px!important}.dm-share-sheet [data-use]{touch-action:manipulation}
+.rt-completion-count{margin:0!important;color:#37586b!important;-webkit-text-fill-color:#37586b!important;font-size:11px;font-weight:800;text-align:center}

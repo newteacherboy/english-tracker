@@ -20,9 +20,12 @@ jobs:
       - run: node tests/selected-game-entry.cjs
       - run: node tests/member-activity-ui.cjs
       - run: node tests/route-design-ui.cjs
+      - run: node tests/notice-sharing-ui.cjs
       - uses: actions/upload-artifact@v4
         with:
           name: approved-route-designs
-          path: /tmp/route-designs/*.png
+          path: |
+            /tmp/route-designs/*.png
+            /tmp/sharing-designs/*.png
       - run: node --test tests/portal-integrity.test.cjs
       - run: python scripts/check-media-rights.py

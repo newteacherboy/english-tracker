@@ -17800,6 +17800,7 @@ function odulUret(k, o) {
   }
            window.bcMgCiz = mgCiz;
   window.bcSandikAc = sandikTorenAc;
+  window.dmCharacterArt = (name,px=256) => {const k=KRK.find(x=>x.ad===name);return k&&krkAcik(k)?krkSVG(k,px):null;};
   window._krkListe = () => KRK.map(k => Object.assign({}, k, { acik: krkAcik(k) }));
   window.bcKoleksiyonCiz = function (el) {
     let ciz = () => {
@@ -26433,7 +26434,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function aktar() {
     duraklariKur();
     tamam=new Set();
-    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||hamTamam.has(1000+d.sinif*100+d.unite))tamam.add(d.no);});
+    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||(d.parca===1&&hamTamam.has(1000+d.sinif*100+d.unite)))tamam.add(d.no);});
     aktarimYildiz = {};
     let eski = [...hamTamam].filter(n => n > 0 && n < 1000), tum = havuzTum();
     if (!eski.length || !tum.length) return;
@@ -26443,7 +26444,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       let y = (yoVar() && yo.baYildiz && yo.baYildiz[n]) || 1;
       tum.slice((n - 1) * 8, n * 8).forEach(k => { let a = Number(k.sinif) * 100 + Number(k.unite); kapsanan[a] = (kapsanan[a] || 0) + 1; yil[a] = Math.max(yil[a] || 0, y); });
     });
-    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
+    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>d.parca===1&&1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
   }
   function aktarGerekirse() { let n = havuzTum().length; if (n !== aktarImza) { aktarImza = n; aktar(); } }
 
@@ -26559,7 +26560,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const start=Math.max(0,focus-8),steps=all.slice(start,Math.min(all.length,start+24));
     const current=Math.max(0,focus-start);
     gorunum={ad:'harita',b};
-    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,current,chapter:b,page})+'</div></div>';
+    p.innerHTML='<div class="bz-ic">'+window.dmParkurBaslik({energy:window.genelEnerjiKalan??'–',max:window.genelEnerjiMax||30,gold:yoVar()?yo.altin||0:0})+'<div class="dm-parkur-scroll" id="dmParkurScroll">'+window.dmParkurSahne({steps,allSteps:all,current,chapter:b,page})+'</div></div>';
     p.querySelectorAll('.dm-adventure-node,.dm-map-continue').forEach(t=>t.onclick=()=>durakKarti(+t.dataset.b,+t.dataset.d));
     requestAnimationFrame(()=>{window.dmParkurMapMount?.($('dmParkurScroll'));window.dmStoryPath?.mount($('dmParkurScroll'));});
   }
@@ -28490,6 +28491,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="teacher-workspace.js?v=20261013-activity-2"></script>
 <link rel="stylesheet" href="member-polish.css?v=20261013-1">
 <script src="active-time.js?v=20261013-1"></script>
-<script src="member-polish.js?v=20261013-1"></script>
+<script src="member-polish.js?v=20261013-2"></script>
+<link rel="stylesheet" href="notice-sharing.css?v=20261013-1">
+<script src="notice-sharing.js?v=20261013-1"></script>
 </body>      
         </html>

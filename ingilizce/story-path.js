@@ -132,7 +132,7 @@ function openAll(){
  paint();
 }
 window.dmStoryPath={mount,open,close,gender,
- overview:async()=>{await loadSummary();const all=curriculum(),i=Math.max(0,nextChapter());return {title:all[i]?.title||'Öğrenme Yolu',cefr:all[i]?.cefr||'A1',chapters:all.map((c,n)=>{const done=summary.some(s=>s.chapter===c.id&&s.completed);return {id:c.id,title:c.title,cefr:c.cefr,current:n===i,done,available:done||n===i}})}},
+ overview:async()=>{await loadSummary();const all=curriculum(),i=Math.max(0,nextChapter());return {completedCount:all.filter(c=>summary.some(s=>s.chapter===c.id&&s.completed===true)).length,total:all.length,title:all[i]?.title||'Öğrenme Yolu',cefr:all[i]?.cefr||'A1',chapters:all.map((c,n)=>{const done=summary.some(s=>s.chapter===c.id&&s.completed);return {id:c.id,title:c.title,cefr:c.cefr,current:n===i,done,available:done||n===i}})}},
  openAll:openAll,
  continueRoute:async()=>{await loadSummary();const all=curriculum(),i=Math.max(0,nextChapter());if(all[i])return entry(all[i].id)}
 };
