@@ -23186,7 +23186,7 @@ window.ocEnerjiHarca = async function (n) {
     $('dlSekmeler').innerHTML = SEKMELER.filter(([k])=>k!=='bas'||kk().cins==='k').map(([k, ad]) => `<button type="button" role="tab" class="dl-sekme${D.sekme === k ? ' aktif' : ''}" aria-selected="${D.sekme === k}" data-s="${k}">${ad}</button>`).join('');
     $('dlSekmeler').querySelectorAll('.dl-sekme').forEach(b => b.onclick = () => { D.sekme = b.dataset.s; D.secili = null; ciz(); });
     let G = $('dlIzgara'), html = '', S = D.sekme;
-    const bolum = (baslik, liste) => (baslik ? `<div class="dl-alt-baslik">${baslik}</div>` : '') + liste.filter(uygun).map(ogeKart).join('');
+    const bolum = (baslik, liste) => (baslik ? `<div class="dl-alt-baslik">${baslik}</div>` : '') + liste.filter(uygun).sort((a,b)=>DijiProgressionCatalog.itemLevel(a)-DijiProgressionCatalog.itemLevel(b)).map(ogeKart).join('');
     if (S === 'vitrin') {
       let v = vitrinOgesi();
       const l=window.dmProgression?.level()||1;
@@ -23207,14 +23207,14 @@ window.ocEnerjiHarca = async function (n) {
     } else if (ATOLYE[S]) {
       if (S === 'sapka' && D.deneme.bas) html += `<div class="dl-not">🧕 Başörtüsü takılıyken şapka görünmez.</div>`;
       atolyeOgeleri(S).forEach(g => { html += bolum(g.baslik, g.liste); });
-    } else if (S === 'kombin') html += `<div class="dl-not">Kombin, parçaları tek tek almaktan %25 ucuz. Baş (saç ya da başörtüsü) senin seçimin, kombine dahil değil.</div>` + KOMBIN.filter(uygun).map(ogeKart).join('');
+    } else if (S === 'kombin') html += `<div class="dl-not">Kombin, parçaları tek tek almaktan %25 ucuz. Baş (saç ya da başörtüsü) senin seçimin, kombine dahil değil.</div>` + KOMBIN.filter(uygun).sort((a,b)=>DijiProgressionCatalog.itemLevel(a)-DijiProgressionCatalog.itemLevel(b)).map(ogeKart).join('');
     else if (S === 'sandik') html += '<div class="dl-not">Sandıklar parkur ilerlemenle kazanılır. Altın harcanmaz.</div><button class="dl-oge" data-sandik="0">🧰 Sandıklarımı gör</button>';
     else {
       if (S === 'bas') html += `<button type="button" class="dl-oge${!D.deneme.bas ? ' giyili' : ''}" data-cikar="bas"><span style="font-size:28px">💇</span><span class="ad">Başörtüsü yok · saçım görünsün</span><span class="fiyat sahip">Bedava</span></button><div class="dl-not">Saç modelini "💇 Saç" sekmesinden seçebilirsin. Başörtüsü takınca saç görünmez.</div>`;
       else if (['dis', 'aks', 'cik', 'tek'].includes(S)) html += `<button type="button" class="dl-oge" data-cikar="${S}"><span style="font-size:28px">🚫</span><span class="ad">Çıkar</span><span class="fiyat sahip">Bedava</span></button>`;
       if (S === 'ust') html += `<div class="dl-not">👕 Karakterin hiçbir zaman kıyafetsiz kalmaz: üst çıkarılınca klasik kıyafete döner.</div>`;
       if (S === 'alt') html += `<div class="dl-not">👖 Alt çıkarılınca okul pantolonuna döner.</div><button type="button" class="dl-oge" data-cikar="alt"><span style="font-size:28px">🏫</span><span class="ad">Okul pantolonu</span><span class="fiyat sahip">Bedava</span></button>`;
-      html += OGE.filter(o => o.kat === S&&uygun(o)).map(ogeKart).join('');
+      html += OGE.filter(o => o.kat === S&&uygun(o)).sort((a,b)=>DijiProgressionCatalog.itemLevel(a)-DijiProgressionCatalog.itemLevel(b)).map(ogeKart).join('');
       if (S === 'ust') atolyeOgeleri('klasik').forEach(g => { html += bolum('👕 Klasik üstler', g.liste); });
     }
     G.innerHTML = html;
