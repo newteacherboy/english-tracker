@@ -5,7 +5,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
-<script src="progression-catalog.js?v=20261013-review"></script>
+<script src="progression-catalog.js?v=20261013-shop-123"></script>
 <script src="guest-platform.js?v=2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -17067,7 +17067,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     enerji: ['⚡', b => `${b.gonderen} sana 2 enerji gönderdi`],
     duello: ['⚔️', b => `${b.gonderen} seni düelloya çağırdı`]
   };
-  const turMetin = b => (TUR[b.tur] || ['🔔', x => `${x.gonderen}: ${x.metin}`])[1](b);
+  const turMetin = b => (TUR[b.tur] || ['🔔', x => `${x.gonderen||'DijiMedu'}: ${x.metin||x.mesaj||x.message||x.icerik||'Yeni bildirimin var.'}`])[1](b);
   const turIkon = b => (TUR[b.tur] || ['🔔'])[0];
 
   /* ---- Girişte bildirimleri karşılama paneline ver ---- */
@@ -17134,7 +17134,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     } catch (e) {}
     if (typeof maAkisYukle === 'function') await maAkisYukle();
     let benim = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).filter(e => kucuk(e.ogr) === kucuk(aktifOgrenciAdi)).map(e => ({ tarih: e.t, tur: 'kazanc', ikon: e.ikon, metin: e.metin, yeni: false }));
-    let sosyalS = sosyal.map(b => ({ tarih: b.tarih, tur: b.tur, gonderen: b.gonderen, ikon: turIkon(b), metin: turMetin(b) + ((b.metin||b.mesaj||b.message||b.icerik) && b.tur !== 'takip' && b.tur !== 'duello' ? ` · “${b.metin||b.mesaj||b.message||b.icerik}”` : ''), yeni: !b.okundu, sat: b.sat }));
+    let sosyalS = sosyal.map(b => ({ tarih: b.tarih, tur: b.tur, gonderen: b.gonderen, ikon: turIkon(b), metin: turMetin(b) + ((b.metin||b.mesaj||b.message||b.icerik) && TUR[b.tur] && b.tur !== 'takip' && b.tur !== 'duello' ? ` · “${b.metin||b.mesaj||b.message||b.icerik}”` : ''), yeni: !b.okundu, sat: b.sat }));
     let duyuru = [];
     try {
       const response=await fetch(apiURL+'?islem=duyurulariGetir&ogrenci='+enc(aktifOgrenciAdi));
@@ -28485,7 +28485,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261013-member-1"></script><script defer src="kisisel-bilgiler.js?v=3"></script><script defer src="student-management.js?v=20261012-panel"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
-<link rel="stylesheet" href="progression-ui.css?v=3"><script defer src="progression-ui.js?v=20261012-cleanup"></script>
+<link rel="stylesheet" href="progression-ui.css?v=3"><script defer src="progression-ui.js?v=20261013-shop-123"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261012-cleanup"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script defer src="profile-forest.js?v=1"></script>
@@ -28504,14 +28504,14 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="study-ui.css?v=20261011-3">
 <script defer src="study-ui.js?v=20261011-3"></script>
 <link rel="stylesheet" href="storefront.css?v=20261011-4">
-<script defer src="storefront.js?v=20261011-4"></script>
+<script defer src="storefront.js?v=20261013-shop-123"></script>
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261013-activity-2">
 <script src="placement-bank.js?v=20261013-1"></script>
 <script src="member-experience.js?v=20261013-activity-2"></script>
 <script src="teacher-workspace.js?v=20261013-activity-2"></script>
-<link rel="stylesheet" href="member-polish.css?v=20261013-member-122">
+<link rel="stylesheet" href="member-polish.css?v=20261013-shop-123">
 <script src="active-time.js?v=20261013-1"></script>
 <script src="member-polish.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="notice-sharing.css?v=20261013-1">
