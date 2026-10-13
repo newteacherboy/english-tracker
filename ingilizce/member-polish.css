@@ -40,3 +40,8 @@ body #tab-dunya .rt-node.current>span{font-size:26px!important}body #tab-dunya .
 
 body #tab-dunyam .bd-kart.dm-has-wallet :is(.bd-cipler,.bw-profile-chip){display:none!important}body #tab-meduakis .akis-baslik.dm-has-wallet h2{font-size:clamp(15px,4vw,22px)!important;gap:4px!important}.dm-share-sheet [data-use]{touch-action:manipulation}
 .rt-completion-count{margin:0!important;color:#37586b!important;-webkit-text-fill-color:#37586b!important;font-size:11px;font-weight:800;text-align:center}
+
+/* Question screens keep only their question progress and gameplay controls. */
+body :is(#bzPerde,#dmStoryLesson,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay) :is(.dm-unified-wallet,.bz-enerji-pill,.sp-gold,[data-energy],[data-gold]){display:none!important}
+body #dmMusicToggle{top:auto!important;left:auto!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;right:10px!important;width:auto!important;max-width:140px!important;height:32px!important;min-height:32px!important;max-height:32px!important;padding:5px 9px!important;font:800 11px/1.2 system-ui!important;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box!important;transform:none!important}
+body #dmMusicToggle[hidden]{display:none!important}

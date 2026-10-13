@@ -7,9 +7,11 @@ hud.querySelector('button').onclick=()=>window.dmActiveTime?.panel();
 const coin='<img class="dm-gold-icon" src="route-assets/coin.svg" alt="Altın">';
 function run(){
  if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi){hud.remove();return;}
- const selectors=['#dmStoryLesson .ds-lesson-header','#bzPerde .bz-oyun-ust','.game-modal-overlay .game-modal-content','#meteorGame .mt-top','#wordWheel .ww-shell>header','#papiCards .pc-header','#harfBahcesiOverlay .hb-card','#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduakis .akis-baslik','#tab-derscalis .su-levels-heading','#tab-magaza .ds-header','#tab-dunyam .bd-kart','.dc-fullscreen-overlay.active header'];
+ const activity='#dmStoryLesson,#bzPerde #bzAlan,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay,#baOyunEkrani,#kpKelimeOyunEkrani,#kmPanel .km-sec,#seviyeDisLinkOverlay';
+ if([...document.querySelectorAll(activity)].some(visible)){hud.parentElement?.classList.remove('dm-has-wallet');hud.remove();return;}
+ const selectors=['#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduakis .akis-baslik','#tab-derscalis .su-levels-heading','#tab-magaza .ds-header','#tab-dunyam .bd-kart','.dc-fullscreen-overlay.active header'];
  const host=selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);if(!host){hud.remove();return;}
- if(hud.parentElement!==host){host.append(hud);host.classList.add('dm-has-wallet');}
+ if(hud.parentElement!==host){hud.parentElement?.classList.remove('dm-has-wallet');host.append(hud);host.classList.add('dm-has-wallet');}
  const y=typeof yo==='undefined'?{}:yo||{},time=window.dmActiveTime?.summary()||{stars:0},level=window.dmProgression?.level?.()||1;
  const values={energy:'⚡ '+(window.genelEnerjiKalan??'—'),gold:coin+' '+Number(y.altin||0).toLocaleString('tr-TR'),xp:'✨ '+Number(y.totalXp||0).toLocaleString('tr-TR'),time:'⭐ '+time.stars+' <small>'+Math.floor((time.seconds||0)/60)+' dk</small>'};
  for(const [key,value] of Object.entries(values)){const e=hud.querySelector('[data-pw="'+key+'"]');if(e.dataset.value!==value){e.innerHTML=value;e.dataset.value=value;}}
