@@ -1,9 +1,9 @@
 name: Selected play panels
 on:
   push:
-    paths: ['ingilizce/email-verification.js', 'ingilizce/hesap-dogrula.html', 'tests/onboarding-email-ui.cjs', 'ingilizce/index.html', 'ingilizce/storefront.*', 'ingilizce/boutique-art.js', 'ingilizce/progression-*', 'ingilizce/member-polish.*', 'tests/shop-notifications-ui.cjs', 'tests/progression-api.test.cjs', 'supabase/functions/diji-api/progression-*', 'ingilizce/notice-sharing.*', 'tests/notice-sharing-ui.cjs', 'ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', 'tests/member-activity-ui.cjs', 'tests/route-design-ui.cjs', 'ingilizce/oyna-v2.*', 'ingilizce/route-assets/**', 'ingilizce/member-experience.*', 'ingilizce/teacher-workspace.js', 'ingilizce/papi-flow.js', 'ingilizce/experience-ui.*', '.github/workflows/selected-play.yml']
+    paths: ['ingilizce/bottom-nav.js', 'tests/profile-navigation-ui.cjs', 'ingilizce/email-verification.js', 'ingilizce/hesap-dogrula.html', 'tests/onboarding-email-ui.cjs', 'ingilizce/index.html', 'ingilizce/storefront.*', 'ingilizce/boutique-art.js', 'ingilizce/progression-*', 'ingilizce/member-polish.*', 'tests/shop-notifications-ui.cjs', 'tests/progression-api.test.cjs', 'supabase/functions/diji-api/progression-*', 'ingilizce/notice-sharing.*', 'tests/notice-sharing-ui.cjs', 'ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', 'tests/member-activity-ui.cjs', 'tests/route-design-ui.cjs', 'ingilizce/oyna-v2.*', 'ingilizce/route-assets/**', 'ingilizce/member-experience.*', 'ingilizce/teacher-workspace.js', 'ingilizce/papi-flow.js', 'ingilizce/experience-ui.*', '.github/workflows/selected-play.yml']
   pull_request:
-    paths: ['ingilizce/email-verification.js', 'ingilizce/hesap-dogrula.html', 'tests/onboarding-email-ui.cjs', 'ingilizce/index.html', 'ingilizce/storefront.*', 'ingilizce/boutique-art.js', 'ingilizce/progression-*', 'ingilizce/member-polish.*', 'tests/shop-notifications-ui.cjs', 'tests/progression-api.test.cjs', 'supabase/functions/diji-api/progression-*', 'ingilizce/notice-sharing.*', 'tests/notice-sharing-ui.cjs', 'ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', 'tests/member-activity-ui.cjs', 'tests/route-design-ui.cjs', 'ingilizce/oyna-v2.*', 'ingilizce/route-assets/**', 'ingilizce/member-experience.*', 'ingilizce/teacher-workspace.js', 'ingilizce/papi-flow.js', 'ingilizce/experience-ui.*', '.github/workflows/selected-play.yml']
+    paths: ['ingilizce/bottom-nav.js', 'tests/profile-navigation-ui.cjs', 'ingilizce/email-verification.js', 'ingilizce/hesap-dogrula.html', 'tests/onboarding-email-ui.cjs', 'ingilizce/index.html', 'ingilizce/storefront.*', 'ingilizce/boutique-art.js', 'ingilizce/progression-*', 'ingilizce/member-polish.*', 'tests/shop-notifications-ui.cjs', 'tests/progression-api.test.cjs', 'supabase/functions/diji-api/progression-*', 'ingilizce/notice-sharing.*', 'tests/notice-sharing-ui.cjs', 'ingilizce/selected-play.*', 'ingilizce/play-assets/**', 'ingilizce/story-path.js', 'ingilizce/story-v2-ui.js', 'tests/selected-play-ui.cjs', 'tests/member-activity-ui.cjs', 'tests/route-design-ui.cjs', 'ingilizce/oyna-v2.*', 'ingilizce/route-assets/**', 'ingilizce/member-experience.*', 'ingilizce/teacher-workspace.js', 'ingilizce/papi-flow.js', 'ingilizce/experience-ui.*', '.github/workflows/selected-play.yml']
 permissions:
   contents: read
 jobs:
@@ -16,6 +16,7 @@ jobs:
           node-version: '22'
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
+      - run: node tests/profile-navigation-ui.cjs
       - run: node tests/onboarding-email-ui.cjs
       - run: node tests/selected-play-ui.cjs
       - run: node tests/selected-game-entry.cjs
