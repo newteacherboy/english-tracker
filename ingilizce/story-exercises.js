@@ -91,5 +91,25 @@
    const r=recognition(lang);if(!r)return Promise.resolve({status:'unavailable'});
    return new Promise(resolve=>{let finished=false;const done=x=>{if(finished)return;finished=true;try{r.stop()}catch{}resolve(x)};r.onresult=e=>done({status:'heard',text:e.results?.[0]?.[0]?.transcript||''});r.onerror=e=>done({status:'error',error:String(e.error||'microphone')});r.onnomatch=()=>done({status:'no-match'});r.onend=()=>done({status:'ended'});try{r.start()}catch(e){done({status:'error',error:String(e.message||'microphone')})}});
  }
- return {build,buildV3,evaluate,checkPairs,cardsOf,norm,speak,listen,recognition,languages};
+ function buildV4(chapter){
+ const cards=cardsOf(chapter).slice(0,4);if(!cards.length)return [];
+ const ordered=rotate(cards,Math.abs(Number(chapter.id)||0)%cards.length),a=ordered[0],b=ordered[1]||a,c=ordered[2]||b;
+ const opts=ordered.map(x=>x.en),sent=ordered.find(x=>tokens(x.en).length>1)||a,parts=tokens(sent.en),at=Math.max(0,parts.length-2),word=parts[at];
+ const cloze=chapter.curatedCloze,dialogue=chapter.curatedDialogue;
+ const candidates=[
+ {kind:'match',label:'Eşleştir ve öğren',pairs:cards.map(x=>({...x}))},
+ {kind:'repeat',label:'Dinle ve seç',...a,options:opts},
+ {kind:'choose',label:'Anlamından bul',...b,options:rotate(opts,1),answer:b.en},
+ cloze?{kind:'complete',label:'Cümleyi tamamla',en:cloze.fullSentence,tr:cloze.translation,stem:cloze.prompt,answer:cloze.correctText,options:rotate([cloze.correctText,...cloze.distractors],1)}:{kind:'complete',label:'Eksik kelimeyi bul',...sent,stem:parts.map((x,i)=>i===at?'___':x).join(' '),answer:word,options:rotate([...new Set([word,...ordered.flatMap(x=>tokens(x.en)).filter(x=>norm(x)!==norm(word)).slice(0,3)])],1)},
+ {kind:'order',label:parts.length>1?'Cümleyi kur':'Harflerle kelimeyi kur',...sent,tokens:parts.length>1?parts:[...sent.en],join:parts.length>1?' ':'',answer:sent.en},
+ dialogue?{kind:'choose',mode:'dialogue',label:'Papi’ye cevap ver',en:dialogue.reply,tr:dialogue.translation,prompt:dialogue.prompt,options:rotate([dialogue.reply,...dialogue.distractors],1),answer:dialogue.reply}:{kind:'choose',mode:'dialogue',label:'Duruma uygun söyle',...c,prompt:chapter.story||chapter.title,options:rotate(opts,1),answer:c.en},
+ {kind:'repeat',label:'Dinleyerek hatırla',...b,options:rotate(opts,1)},
+ {kind:'choose',mode:'meaning',label:'Anlamını hatırla',...c,options:rotate(ordered.map(x=>x.tr),1),answer:c.tr}
+ ];
+ const practice=candidates.slice(0,10-cards.length),final=ordered.map(x=>({kind:'final',label:'Son kontrol',...x,maxAttempts:2})),result=[];
+ let f=0;for(let i=0;i<practice.length;i++){result.push(practice[i]);if(f<final.length&&i>=Math.floor((f+1)*practice.length/final.length)-1)result.push(final[f++]);}
+ return result;
+}
+
+ return {build,buildV3,buildV4,evaluate,checkPairs,cardsOf,norm,speak,listen,recognition,languages};
 });

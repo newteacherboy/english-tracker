@@ -26,3 +26,5 @@ jobs:
           node tests/story-v2-parity.cjs
           node tests/story-v3-parity.cjs
           node tests/story-v2-release-guard.cjs
+          node tests/story-v4-parity.cjs
+          node --test tests/story-api.test.cjs tests/story-v4-api.test.cjs
