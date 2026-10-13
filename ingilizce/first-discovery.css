@@ -10,7 +10,7 @@ body.dm-discovery-open{overflow:hidden!important}
 #dmDiscovery .fd-progress{flex:1;height:6px;background:#e5e6da;border-radius:10px;overflow:hidden}
 #dmDiscovery .fd-progress i{display:block;height:100%;background:#00b1b2;border-radius:10px;transition:width .25s}
 #dmDiscovery .fd-step{font-size:12px;color:#577086;white-space:nowrap}
-#dmDiscovery .fd-content{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:4px 0 8px;scrollbar-width:thin}
+#dmDiscovery .fd-content{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:4px 0 8px;scrollbar-width:thin}
 #dmDiscovery h1,#dmDiscovery h2{font-size:clamp(23px,5.8vw,30px);font-weight:850;line-height:1.16;text-align:center;margin:10px 0 22px;color:#102c52!important}
 #dmDiscovery p{font-size:14px;line-height:1.5;color:#344f6e;text-align:center;margin:8px 0 14px}
 #dmDiscovery .fd-actions{flex-shrink:0;display:grid;gap:10px;padding-top:10px}

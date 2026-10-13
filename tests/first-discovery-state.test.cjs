@@ -15,7 +15,7 @@ test('first visitor waits at welcome; member sessions bypass it without changing
 test('guest and OAuth callbacks bypass welcome and preserve teacher invite code',()=>{
  const f=fixture('?misafir=1&kesif=1&kod=ABC123');assert.equal(f.ctx.guest,true);assert.equal(f.ctx.welcome,false);assert(f.classes.has('dm-discovery-guest'));
  const o=fixture('?kesifKayit=google');assert.equal(o.ctx.oauth,true);assert.equal(o.ctx.welcome,false);
- for(const q of ['?giris=1','?kayit=1','?google_return=1'])assert.equal(fixture(q).ctx.welcome,false);
+ for(const q of ['?giris=1','?kayit=1','?google_return=1','?misafir=1'])assert.equal(fixture(q).ctx.welcome,false);
  assert.equal(fixture('',{},{diji_google_pending:'1'}).ctx.welcome,false);
 });
 test('registration bridge never forwards guest tokens or real-member storage automatically',async()=>{
