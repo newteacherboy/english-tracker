@@ -75,3 +75,19 @@ body #ogretmenMenuModal .ogretmen-menu-btn{position:relative!important;transform
 @media(max-width:650px){body #ogretmenMenuModal .rubric-content{grid-template-columns:1fr!important;padding:20px 16px!important}}
 
 body .dm-papi-feedback.is-energy{z-index:2147483647!important}
+
+/* Fit every profile action in the visible viewport, including short phones. */
+#rtProfileBackdrop{position:fixed!important;inset:0!important;z-index:2147483646!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:calc(8px + env(safe-area-inset-top,0px)) 8px calc(8px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important;overflow:hidden!important}
+#rtProfileBackdrop .rt-profile{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;width:min(100%,640px)!important;height:100%!important;max-height:900px!important;min-height:0!important;max-width:640px!important;overflow:hidden!important;padding:14px!important;gap:12px!important;border-radius:24px!important;background:#fff!important}
+#rtProfileBackdrop .rt-profile header{display:flex!important;align-items:center!important;flex:0 0 auto!important;gap:12px!important;padding:0!important;margin:0!important}
+#rtProfileBackdrop .rt-profile header>div{flex:1!important;min-width:0!important}
+#rtProfileBackdrop .rt-profile header strong{display:block!important;font-size:clamp(18px,5vw,26px)!important;line-height:1.15!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+#rtProfileBackdrop .dm-menu-avatar,#rtProfileBackdrop header>img{width:56px!important;height:56px!important;flex:none!important}
+#rtProfileBackdrop .rt-close{width:44px!important;height:44px!important;min-height:44px!important;flex:none!important;padding:0!important;font-size:26px!important}
+#rtProfileBackdrop .rt-profile-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(6,minmax(0,1fr))!important;flex:1 1 0!important;min-height:0!important;gap:8px!important;overflow:hidden!important}
+#rtProfileBackdrop .rt-profile-grid>button{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;min-width:0!important;min-height:0!important;height:auto!important;padding:6px!important;gap:4px!important;border-radius:16px!important;overflow:hidden!important}
+#rtProfileBackdrop .rt-profile-grid>button img{width:clamp(24px,5vh,42px)!important;height:clamp(24px,5vh,42px)!important;object-fit:contain!important;flex:none!important}
+#rtProfileBackdrop .rt-profile-grid>button b{font-size:clamp(12px,3.3vw,16px)!important;line-height:1.12!important;white-space:normal!important}
+#rtProfileBackdrop .rt-profile-grid>button small{display:none!important}
+@media(max-height:620px){#rtProfileBackdrop .rt-profile{padding:10px!important;gap:8px!important}#rtProfileBackdrop .dm-menu-avatar{width:44px!important;height:44px!important}#rtProfileBackdrop header .dm-menu-level{font-size:13px!important;padding:4px 9px!important;margin-top:3px!important}#rtProfileBackdrop .rt-profile-grid>button img{width:24px!important;height:24px!important}}
+@media(orientation:landscape) and (max-height:600px){#rtProfileBackdrop .rt-profile{max-width:900px!important;width:100%!important}#rtProfileBackdrop .rt-profile-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(0,1fr))!important}}
