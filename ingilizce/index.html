@@ -6,9 +6,9 @@
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
 <script src="progression-catalog.js?v=20261013-shop-123"></script>
-<link rel="stylesheet" href="first-discovery.css?v=20261013-draft-1">
-<script src="first-discovery-state.js?v=20261013-draft-1"></script>
-<script src="guest-platform.js?v=20261013-discovery-1"></script>
+<link rel="stylesheet" href="first-discovery.css?v=20261013-discovery-fix-2">
+<script src="first-discovery-state.js?v=20261013-discovery-fix-2"></script>
+<script src="guest-platform.js?v=20261013-discovery-fix-2"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
           <script>
@@ -4307,7 +4307,7 @@ async function dijiKelimeHavuzunuYukle() {
                                 const oturumAcik = localStorage.getItem("ing_oturumAcik");
         const kayitliOgrenci = localStorage.getItem("ing_aktifOgrenci");
         const kayitliSure = localStorage.getItem("ing_toplamSaniye");
-                    const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && kayitliSure !== null);
+                    const otomatikGirisYapilacak = (oturumAcik === "true" && kayitliOgrenci && !!localStorage.getItem("ing_token"));
 
                     if (otomatikGirisYapilacak) {
                         document.getElementById('login-container').style.display = 'none';
@@ -4317,7 +4317,7 @@ async function dijiKelimeHavuzunuYukle() {
                    await dijiGlobalVeriYukle();
 
                     if (otomatikGirisYapilacak) {
-                        await window.dmOpenPortalSession({student:kayitliOgrenci,seconds:kayitliSure});
+                        await window.dmOpenPortalSession({student:kayitliOgrenci,seconds:kayitliSure || "0"});
                     }
 
                                ogretmenSelectDoldur();
@@ -28437,7 +28437,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
 <script defer src="game-experience.js?v=selected-play-20261011-1"></script>
 <script defer src="onboarding-ui.js?v=2"></script>
-<script defer src="first-discovery.js?v=20261013-draft-1"></script>
+<script defer src="first-discovery.js?v=20261013-discovery-fix-2"></script>
 <script defer src="rights-ui.js?v=1"></script>
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}
 /* Adventure questions: preserve spaces/punctuation and foreground keyboard fallback. */

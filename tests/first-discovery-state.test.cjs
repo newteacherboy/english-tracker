@@ -35,3 +35,15 @@ test('empty new-account state is accepted, account errors are surfaced without c
 test('all scripts including OAuth and guest wrappers parse',()=>{
  for(const name of ['first-discovery.js','first-discovery-state.js','guest-platform.js','google-login.js','onboarding-ui.js'])new vm.Script(fs.readFileSync('ingilizce/'+name,'utf8'));
 });
+test('saved member takes priority over an old discovery URL',()=>{
+ const f=fixture('?misafir=1&kesif=1',{ing_oturumAcik:'true',ing_token:'member',ing_aktifOgrenci:'Ada'});
+ assert.equal(f.ctx.member,true);assert.equal(f.ctx.guest,false);assert.equal(f.ctx.welcome,false);
+});
+test('discovery never creates a guest application session or replaces storage',()=>{
+ const source=fs.readFileSync('ingilizce/guest-platform.js','utf8');
+ for(const member of [false,true]){
+  const raw=storage({ing_token:member?'member':''}),window={localStorage:raw,dmDiscoveryContext:{member,guest:!member}};
+  vm.runInNewContext(source,{window,location:{search:'?misafir=1&kesif=1',replace:()=>assert.fail('unexpected redirect')},URLSearchParams});
+  assert.equal(window.localStorage,raw);assert.equal(window.dmGuestMode,undefined);assert.equal(raw.getItem('ing_oturumAcik'),null);
+ }
+});

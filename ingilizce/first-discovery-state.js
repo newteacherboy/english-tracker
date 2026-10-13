@@ -3,7 +3,7 @@
  const raw=window.localStorage,session=window.sessionStorage,params=new URLSearchParams(location.search);
  const member=raw.getItem('ing_oturumAcik')==='true'&&!!raw.getItem('ing_token')&&!!raw.getItem('ing_aktifOgrenci');
  const oauth=params.get('kesifKayit')==='google';
- const guest=params.get('misafir')==='1'&&params.get('kesif')==='1';
+ const guest=!member&&params.get('misafir')==='1'&&params.get('kesif')==='1';
  const welcome=!member&&params.get('misafir')!=='1'&&!guest&&!oauth&&params.get('giris')!=='1'&&params.get('kayit')!=='1'&&!params.has('google_return')&&!session.getItem('diji_google_pending')&&!location.hash.includes('access_token');
  const nativeFetch=window.fetch.bind(window),api='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api';
  const allowed=new Set(['kayitOl','ogretmenKayitOl','googleGiris','googleKayit','googleDurum','emailDogrulamaTekrar','memberStatus','memberEmailResend','ekVeriGetir','ekVeriKaydet']);
@@ -19,6 +19,8 @@
    }finally{clearTimeout(timeout);}
   }
  };
+ document.addEventListener?.('keydown',e=>{if(e.key==='Tab')document.documentElement.classList.add('dm-keyboard-input');});
+ document.addEventListener?.('pointerdown',()=>document.documentElement.classList.remove('dm-keyboard-input'));
  if(welcome)document.documentElement.classList.add('dm-first-entry');
  if(guest)document.documentElement.classList.add('dm-discovery-guest');
 })();

@@ -1,5 +1,9 @@
 (function(){'use strict';
  if(new URLSearchParams(location.search).get('misafir')!=='1')return;
+ // Discovery is a standalone game; never create a guest application session.
+ if(window.dmDiscoveryContext?.member)return;
+ if(window.dmDiscoveryContext?.guest)return;
+ location.replace('./?misafir=1&kesif=1');return;
  window.dmGuestMode=true;
  const discovery=new URLSearchParams(location.search).get('kesif')==='1';
  const rawStorage=window.localStorage,nativeFetch=window.fetch.bind(window),API='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api';
