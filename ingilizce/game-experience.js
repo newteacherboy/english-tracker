@@ -11,6 +11,8 @@
     ['esGirisEkrani','esOyunOverlay','Eş Bul','İngilizce ve Türkçe kelimelerin eşlerini bul.'],
     ['trenGirisEkrani','trenOyunOverlay','Kelime Treni','Vagonları sırala, doğru İngilizce cümleyi kur.']
   ];
+  // Independent game dialogs must not live inside another game's closeable overlay.
+  for(const [,id] of entries){const root=document.getElementById(id);if(root?.parentElement?.closest('.game-modal-overlay'))document.body.append(root);}
   const ruleText = 'Doğru +100 · Seri bonusları · Hız bonusu · Yanlış −40 puan / turdan −3 XP';
   function decorate() {
     for (const [id,modal,title,description] of entries) {
