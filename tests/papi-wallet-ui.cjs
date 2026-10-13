@@ -19,6 +19,7 @@ assert.equal(await page.locator('.dm-unified-wallet').count(),1,id);
 assert.equal(await page.locator('#'+id+' .dm-unified-wallet').count(),1,id);
 assert.deepEqual(await page.locator('[data-pw-value]').allTextContents(),['31','422','5.106','45']);
 assert.equal(await page.locator('[data-pw-minutes]').textContent(),'454 dk');
+fs.mkdirSync('/tmp/compact-wallet',{recursive:true});await page.locator('#'+id).screenshot({path:'/tmp/compact-wallet/'+id+'-'+width+'-'+theme+'.png'});
 const sizes=await page.locator('.dm-unified-wallet').evaluate(e=>({width:e.clientWidth,scroll:e.scrollWidth,pills:[...e.querySelectorAll('button')].map(x=>{const r=x.getBoundingClientRect();return {top:r.top,right:r.right,height:r.height,width:r.width,client:x.clientWidth,scroll:x.scrollWidth};})}));
 assert(sizes.scroll<=sizes.width+1,'strip fits '+id+' '+width);assert(sizes.pills.every(x=>x.right<=width+1&&x.height>=44&&x.width>=40&&x.scroll<=x.client+1),'pills fit '+id+' '+width+' '+JSON.stringify(sizes));assert(Math.max(...sizes.pills.map(x=>x.top))-Math.min(...sizes.pills.map(x=>x.top))<1,'one row');
 for(const key of ['energy','gold','xp','time']){await page.locator('[data-pw='+key+']').click();assert.equal(await page.evaluate(()=>opened),key);}
