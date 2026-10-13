@@ -27,7 +27,9 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false}={})
    if($('ogrenciAdiText'))$('ogrenciAdiText').innerText=owner;
    if($('userAvatarLetter'))$('userAvatarLetter').innerText=window.ogrenciMaskotSec?.(owner)||'🦜';
    if(user)safe(window.veriArayuzeIsle,user);
-   $('panel-alani').style.display='block';$('oturumYuklemeOverlay').style.display='none';
+   // Keep the branded loading layer until the selected route has finished rendering.
+   // Otherwise an uninitialized/default panel flashes between login and the home route.
+   $('panel-alani').style.display='block';
    safe(window.girisSerisiGuncelleVeGetir);safe(window.baslatSayac);safe(window.arkaPlanVeriYenilemeBaslat);
    await window.dmPrepareMemberState?.();
    if(turn!==epoch||name()!==owner)return false;
@@ -35,6 +37,7 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false}={})
    if(owner.toLowerCase()==='teacher')await window.meduAkisAc?.();else await window.dunyaAc?.();
    if(turn!==epoch||name()!==owner)return false;
    safe(window.anaPanelDuyuruBildirimleriYukle);safe(window.gunlukEnerjiBonusuKontrolEt);
+   $('oturumYuklemeOverlay').style.display='none';
    document.dispatchEvent(new Event('dm:login'));
    return true;
   }catch(e){
