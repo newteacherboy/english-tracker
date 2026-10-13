@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id),Y=()=>typeof yo!=='undefined'?yo:null;
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ready=()=>!!who()&&who().toLowerCase()!=='teacher'&&!window.dmGuestMode&&!!Y()&&(!window.yoHazirMi||window.yoHazirMi())&&$('panel-alani')?.style.display==='block';
-let actor='',status=null,busy=false,lastRead=0,started=Date.now(),examAt=Date.now()+120000+Math.random()*480000,dismissedRoute=false;
+let actor='',status=null,busy=false,lastRead=0,started=Date.now(),examAt=Date.now()+120000+Math.random()*480000,dismissedRoute=false,refreshPending=false;
 async function api(islem,data={}){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem,t:localStorage.getItem('ing_token')||'',...data}),signal:controller.signal});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı.');return d;}finally{clearTimeout(timeout);}}
 function sheet(title,content,id='dmMemberDialog'){
  $(id)?.remove();const before=document.activeElement,el=document.createElement('div');el.id=id;el.className='dm-member-overlay';
@@ -22,26 +22,26 @@ function chooseRoute(change=false){
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ekran="tab-dunya"],[data-nav="parkur"],.rt-start');if(b&&ready()&&!chosen()) {e.preventDefault();e.stopImmediatePropagation();chooseRoute();}},true);
 function banner(){
- if(!status||status.emailVerified||!ready()){$('dmEmailVerifyBanner')?.remove();return;}
+ if(!status||status.emailVerified||!ready()){$('dmEmailVerifyBanner')?.remove();if(status?.emailVerified)$('dmEmailVerification')?.querySelector('.dm-member-close')?.click();return;}
  let el=$('dmEmailVerifyBanner');if(!el){el=document.createElement('button');el.id='dmEmailVerifyBanner';el.type='button';el.className='dm-email-banner';el.onclick=()=>emailPrompt();$('panel-alani').prepend(el);}
  el.textContent='📩 E-posta adresini doğrula · Bağlantıyı yeniden gönder';
 }
 function emailPrompt(){
  if(!ready()||status?.emailVerified)return;const owner=who(),view=sheet('E-posta adresini doğrula','<p>Hesabını kullanmaya devam edebilirsin. Doğrulama bağlantısı kayıtlı veli e-posta adresine gönderilir.</p><p><b>'+esc(status?.email||'Kişisel bilgilerindeki e-posta adresi')+'</b></p><button type="button" class="dm-member-primary" data-resend>Doğrulama e-postasını gönder</button><button type="button" data-checked>E-postadan doğruladım, kontrol et</button><p class="dm-member-status" role="status"></p>','dmEmailVerification');
  view.el.querySelector('[data-resend]').onclick=async e=>{e.target.disabled=true;try{const d=await api('memberEmailResend');if(owner!==who())return view.close();view.body.querySelector('[role=status]').textContent=d.mesaj;if(d.verified){status.emailVerified=true;banner();view.close();}}catch(err){view.body.querySelector('[role=status]').textContent=err.message;}finally{e.target.disabled=false;}};
- view.el.querySelector('[data-checked]').onclick=async()=>{try{const d=await api('memberStatus');if(owner!==who())return view.close();status=d;banner();if(d.emailVerified)view.close();else view.body.querySelector('[role=status]').textContent='Henüz doğrulanmadı. E-postadaki bağlantıya dokunup tekrar kontrol et.';}catch(e){view.body.querySelector('[role=status]').textContent=e.message;}};
+ view.el.querySelector('[data-checked]').onclick=async()=>{try{const d=await api('memberStatus');if(owner!==who())return view.close();status=d;lastRead=Date.now();banner();if(d.emailVerified)view.close();else view.body.querySelector('[role=status]').textContent='Henüz doğrulanmadı. E-postadaki bağlantıya dokunup tekrar kontrol et.';}catch(e){view.body.querySelector('[role=status]').textContent=e.message;}};
 }
-async function check(){
- if(!ready()||document.hidden||navigator.onLine===false||busy)return;
+async function check(force=false,quiet=false){
+ if(!ready()||document.hidden||navigator.onLine===false)return;if(busy){if(force)refreshPending=true;return;}
  if(actor!==who()){actor=who();status=null;lastRead=0;started=Date.now();examAt=started+120000+Math.random()*480000;dismissedRoute=false;}
  const owner=actor;busy=true;
  try{
-  if(!status||Date.now()-lastRead>120000){const d=await api('memberStatus');if(owner!==who())return;status=d;lastRead=Date.now();banner();}
+  if(force||!status||Date.now()-lastRead>120000){const d=await api('memberStatus');if(owner!==who())return;status=d;lastRead=Date.now();banner();}if(quiet)return;
   if(!chosen()&&!dismissedRoute){chooseRoute();return;}
   if(window.dmPapiNotices?.blocked()||document.querySelector('#dmRouteChoice,#dmPlacementExam,#dmEmailVerification,#dmPlacementInvite'))return;
   if(!status.emailVerified&&Date.now()-started>45000){const d=await api('memberReminderClaim',{kind:'email'});if(owner!==who())return;if(d.show){emailPrompt();return;}}
   if(!status.hasPlacement&&Date.now()>=examAt&&window.dmAutoNotices?.can()){const d=await api('memberReminderClaim',{kind:'placement'});if(owner!==who())return;examAt=Date.now()+600000+Math.random()*600000;if(d.show&&window.dmAutoNotices?.take()){const v=sheet('İngilizce seviyeni keşfet','<div class="dm-exam-invite-art"><img src="papi-welcome-v2.png" alt="Papi"><span>SEVİYENİ KEŞFET</span></div><p>Okuma, dinleme ve dil kullanımı sorularıyla sana uygun başlangıcı belirleyelim. Bu sınav enerji harcamaz.</p><button type="button" class="dm-member-primary" data-exam>Seviye sınavını aç</button><button type="button" data-later>Sonra</button>','dmPlacementInvite');v.el.querySelector('[data-exam]').onclick=()=>{v.close();placement();};v.el.querySelector('[data-later]').onclick=v.close;}}
- }catch(e){console.warn('[Üye araçları]',e.message);}finally{busy=false;}
+ }catch(e){console.warn('[Üye araçları]',e.message);}finally{busy=false;if(refreshPending){refreshPending=false;check(true,true);}}
 }
 let pendingOwner='',pending=new Map(),flushTimer=null,flushing=false;
 function queueKey(owner){return 'dm_wrong_word_pending:'+owner.toLowerCase();}
@@ -82,7 +82,10 @@ window.aiModalAc=()=>window.dmTeacherChatOpen?.();
 const transport=window.fetch;window.fetch=function(url,opt){let b;try{b=typeof opt?.body==='string'?JSON.parse(opt.body):null;}catch{}const requestOwner=who();const task=transport.apply(this,arguments);if(b&&['meteorCevap','kelimeCarkiCevap'].includes(b.islem))task.then(r=>r.clone().json()).then(d=>{if(requestOwner!==who()||!d.last||d.last.correct||d.mode!==1)return;const hit=(window.masterKelimeHavuzu||[]).find(w=>[w.en,w.ingilizce,w.tr,w.turkce].some(x=>String(x||'').toLowerCase()===String(d.last.word).toLowerCase()));if(hit)add(hit);else if(b.islem==='kelimeCarkiCevap')add({en:d.last.word,tr:d.last.answer});}).catch(()=>{});return task;};
 function installScoreHook(){const score=window.OC;if(!score||score.yanlis?.dmReviewHook)return;const original=score.yanlis;const wrapper=function(){try{const key=score.aktif?.oyun;const word=key==='ky'&&typeof kySorularListesi!=='undefined'?kySorularListesi[kySoruIndex]:key==='jp'&&typeof jpAktifSoru!=='undefined'?jpAktifSoru:key==='yagmur'&&typeof yagmurAktifKelime!=='undefined'?yagmurAktifKelime:key==='asmaca'&&typeof asmacaKelimeler!=='undefined'?asmacaKelimeler[asmacaAktifIndex]:null;if(word)add(word);}catch{}return original.apply(this,arguments);};wrapper.dmReviewHook=true;score.yanlis=wrapper;}
 setInterval(()=>{if(!ready())return;installScoreHook();if(!document.hidden){check();flush();}},30000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){check();flush();}});window.addEventListener('online',()=>{check();flush();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){check(true,true);flush();}});window.addEventListener('online',()=>{check(true,true);flush();});
+window.addEventListener('focus',()=>{if(!status?.emailVerified)check(true,true);});
+window.addEventListener('pageshow',()=>check(true,true));
+window.addEventListener('storage',e=>{if(e.key==='dm_email_verified'){try{const mark=JSON.parse(e.newValue||'null');if(mark?.student===who())check(true,true);}catch{}}});
 document.addEventListener('dm:login',()=>{actor='';status=null;dismissedRoute=false;setTimeout(check,500);});
 const oldLogout=window.cikisYap;window.cikisYap=function(){persist();clearTimeout(flushTimer);for(const id of ['dmRouteChoice','dmPapiTour','dmPapiFirstStart','dmWordReview','dmEmailVerification','dmEmailVerifyBanner','dmPlacementInvite','dmPlacementExam'])$(id)?.remove();document.body.classList.remove('dm-papi-preview','dm-papi-notices-paused');const result=oldLogout?.apply(this,arguments);Promise.resolve(result).then(()=>{if(!localStorage.getItem('ing_token')){$('panel-alani').style.display='none';$('login-container').style.display='block';document.querySelectorAll('.dc-fullscreen-overlay.active').forEach(x=>x.classList.remove('active'));}});return result;};
 setTimeout(()=>{installScoreHook();check();},700);

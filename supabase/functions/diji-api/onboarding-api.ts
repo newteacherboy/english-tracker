@@ -1,6 +1,6 @@
 import {guestContent} from './guest-content.ts';
 export function onboardingAPI(d:any){
- const {db,json,hash,studentByName,verifyPassword,attempts,audit,sendQueued,mailShell,escape}=d;
+ const {db,json,hash,studentByName,verifyPassword,attempts,audit,sendQueued,mailShell,escape,issueSession}=d;
  const portal='https://app.dijimedu.com/ingilizce/';
  async function welcome(s:any){
   const token=crypto.randomUUID()+crypto.randomUUID(),link=portal+'hesap-dogrula.html#token='+encodeURIComponent(token);
@@ -15,7 +15,13 @@ export function onboardingAPI(d:any){
   if(req.method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
   if(op==='emailDogrula'){
    if(!/^[a-f0-9-]{72}$/i.test(String(b.token||'')))return json({ok:false,mesaj:'Doğrulama bağlantısı geçersiz.'},400);
-   const {data,error}=await db.rpc('dm_email_verify',{digest:await hash(b.token)});if(error)throw error;return json(data,data?.ok?200:400);
+   const {data,error}=await db.rpc('dm_email_verify',{digest:await hash(b.token)});if(error)throw error;
+   if(!data?.ok)return json(data,400);
+   // Only the identity returned by the one-use verification RPC can open a session.
+   const verified=await studentByName(String(data.ogrenci||''));
+   if(!verified?.email_verified_at||verified.status!=='approved')return json({ok:false,mesaj:'E-posta doğrulandı. Uygulamaya giriş ekranından devam et.'},409);
+   const token=await issueSession('student',verified.id);
+   return json({...data,token,ogrenci:verified.username,emailVerified:true});
   }
   if(op==='emailDogrulamaTekrar'){
    const name=String(b.ogrenci||'').trim();

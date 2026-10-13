@@ -6,7 +6,7 @@ const student=()=>!!who()&&who().toLowerCase()!=='teacher'&&!window.dmGuestMode;
 const ready=()=>student()&&typeof yo!=='undefined'&&!!yo&&typeof yoHazirMi==='function'&&yoHazirMi();
 const level=()=>ready()?R.progress(R.migrate(yo)).level:1;
 const toast=m=>window.yoToast?.(m);
-function allowed(code){if(code==='magaza')return true;if(window.dmPapiTour?.preview())return true;if(!student())return true;if(!ready())return false;if(code==='akis')return !!status?.feed;return level()>=(C.gates[code]||1);}
+function allowed(code){if(code==='magaza'||code==='karakter'&&C.gates.karakter===1)return true;if(window.dmPapiTour?.preview())return true;if(!student())return true;if(!ready())return false;if(code==='akis')return !!status?.feed;return level()>=(C.gates[code]||1);}
 function need(code){return code==='akis'?'Ana parkurda 3. durağa ulaşınca açılır.':(C.gates[code]||1)+'. seviyede açılır.';}
 const odevAcilisi=()=>Date.now()<(window.__odevAcilisBitis||0);
 function requireFeature(code){if(allowed(code)||odevAcilisi())return true;toast('🔒 '+need(code));return false;}
@@ -28,7 +28,7 @@ function paint(){if(!student())return;document.querySelectorAll('.dm-avatar-leve
  document.querySelectorAll('[data-social]').forEach(e=>{const code={message:'hazir_mesaj',duel:'duello',gift:'enerji_hediye'}[e.dataset.social];if(code)mark(e,code);});
  document.querySelectorAll('[data-k="koleksiyon"],[data-k="karakterler"],#bcKoleksiyon').forEach(e=>mark(e,'koleksiyon'));
  document.querySelectorAll('.ka-cins,#kaKaristir').forEach(e=>mark(e,'karakter'));
- document.querySelectorAll('#dlSekmeler [data-s]').forEach(e=>{const cat={vitrin:15,sac:17,ust:20,dis:20,alt:23,tek:23,ayak:26,aks:29,sapka:32,bas:32,kombin:35,dost:29,cik:38,yuz:15,sandik:5}[e.dataset.s];if(cat){const locked=level()<cat;e.classList.toggle('dm-level-locked',locked);if(locked){e.dataset.dmCategoryLevel=cat;e.setAttribute('aria-disabled','true');}else{delete e.dataset.dmCategoryLevel;e.removeAttribute('aria-disabled');}}});
+ document.querySelectorAll('#dlSekmeler [data-s]').forEach(e=>{e.classList.remove('dm-level-locked');delete e.dataset.dmCategoryLevel;e.removeAttribute('aria-disabled');});
  const store=document.getElementById('dlSekmeler');if(store&&level()>=30&&!document.getElementById('dmExtraJokerBuy')){const b=document.createElement('button');b.id='dmExtraJokerBuy';b.textContent='🃏 4. joker hakkı · 1200 altın';b.onclick=extraJoker;store.append(b);}
  document.querySelectorAll('.so-hedef button').forEach(e=>mark(e,'haftalik_hedef'));
  document.querySelectorAll('#soPanel [id*="Gorev"],#yoGorevler').forEach(e=>mark(e,'gunluk_gorev'));

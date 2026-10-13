@@ -16431,15 +16431,25 @@ function avatarSVG(s, stil, px, cins) {
       </div>${perdede ? '<button class="ka-sonra" id="kaSonra">Sonra seçerim</button>' : ''}`;
   }
   function cinsBagla(kap, sonra) {
-    kap.querySelectorAll('.ka-cins').forEach(b => b.onclick = () => {
-      if(!window.dmProgression?.require('magaza')) return;
-      let c = b.dataset.c;
-      let iade = 0; // Existing balances are preserved; selecting a gender is not a reward.
-      yo.karakter = { cins: c, s: Object.assign({}, VARSAYILAN[c],yo.karakter?.s||{}), sahip: [...(yo.karakter?.sahip||[])] };
-      yoKaydet();
-      window.yoAvatarUygula();
-      if (typeof yoToast === 'function') yoToast(iade > 0 ? `🎉 Karakterin hazır! Hoş geldin hediyesi: +${iade} altın 🪙` : '🎉 Karakterin hazır! Altınlarınla süsleyebilirsin.');
-      if (sonra) sonra();
+    let saving=false;
+    kap.querySelectorAll('.ka-cins').forEach(b => b.onclick = async () => {
+      if(saving)return;saving=true;kap.querySelectorAll('.ka-cins').forEach(x=>x.disabled=true);
+      const owner=aktifOgrenciAdi;let previous,changed=false;
+      try{
+        if(typeof yoHazirMi==='function'&&!yoHazirMi()){
+          await window.dmPrepareMemberState?.();
+          if(owner!==aktifOgrenciAdi)return;
+          if(!yoHazirMi())throw Error('Hesabın yükleniyor. Birazdan tekrar seçebilirsin.');
+        }
+        previous=yo.karakter;const c=b.dataset.c;
+        yo.karakter={cins:c,s:Object.assign({},VARSAYILAN[c],previous?.s||{}),sahip:[...(previous?.sahip||[])]};changed=true;
+        await window.dmProgression.sync();
+        if(owner!==aktifOgrenciAdi)return;
+        yoKaydet();window.yoAvatarUygula();
+        window.yoToast?.('✓ Karakter seçimin kaydedildi. Mağazadan istediğin zaman değiştirebilirsin.');
+        if(sonra)sonra();
+      }catch(e){if(owner===aktifOgrenciAdi){if(changed)yo.karakter=previous;window.yoToast?.(e.message||'Seçimin kaydedilemedi. Yeniden dene.');}}
+      finally{saving=false;kap.querySelectorAll('.ka-cins').forEach(x=>x.disabled=false);}
     });
   }
   function atolyeCiz() {
@@ -28485,7 +28495,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261013-member-1"></script><script defer src="kisisel-bilgiler.js?v=3"></script><script defer src="student-management.js?v=20261012-panel"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
-<link rel="stylesheet" href="progression-ui.css?v=3"><script defer src="progression-ui.js?v=20261013-shop-123"></script>
+<link rel="stylesheet" href="progression-ui.css?v=3"><script defer src="progression-ui.js?v=20261013-onboarding-124"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261012-cleanup"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script defer src="profile-forest.js?v=1"></script>
@@ -28509,9 +28519,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261013-activity-2">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261013-activity-2"></script>
+<script src="member-experience.js?v=20261013-onboarding-124"></script>
 <script src="teacher-workspace.js?v=20261013-activity-2"></script>
-<link rel="stylesheet" href="member-polish.css?v=20261013-shop-123">
+<link rel="stylesheet" href="member-polish.css?v=20261013-onboarding-124">
 <script src="active-time.js?v=20261013-1"></script>
 <script src="member-polish.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="notice-sharing.css?v=20261013-1">

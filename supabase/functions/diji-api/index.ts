@@ -199,10 +199,11 @@ async function issueSession(role: "student" | "teacher", studentId?: string, tea
   const token = crypto.randomUUID() + "-" + crypto.randomUUID();
   const th = await sha256(token);
   const ms = role === "teacher" ? OGRETMEN_OTURUM_SAAT * 3600000 : OGRENCI_OTURUM_GUN * 86400000;
-  await supabase.from("portal_sessions").insert({
+  const {error} = await supabase.from("portal_sessions").insert({
     token_hash: th, role, student_id: studentId || null, teacher_id: teacherId || null,
     expires_at: new Date(Date.now() + ms).toISOString()
   });
+  if(error)throw error;
   if(role==="student" && studentId){contacts.invalidate(studentId);await contacts.state(studentId);}
   return token;
 }
@@ -1093,7 +1094,7 @@ async function iceAktar(body: any) {
   return json({ ok: true, ...r });
 }
 
-const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,verifyPassword,attempts:denemeSay,audit:denemeYaz,sendQueued:kuyrukSatiriGonder,mailShell:mailKabugu,escape:hk});
+const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,verifyPassword,attempts:denemeSay,audit:denemeYaz,sendQueued:kuyrukSatiriGonder,mailShell:mailKabugu,escape:hk,issueSession});
 
 async function handle(req: Request) {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
