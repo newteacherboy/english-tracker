@@ -91,3 +91,6 @@ body .dm-papi-feedback.is-energy{z-index:2147483647!important}
 #rtProfileBackdrop .rt-profile-grid>button small{display:none!important}
 @media(max-height:620px){#rtProfileBackdrop .rt-profile{padding:10px!important;gap:8px!important}#rtProfileBackdrop .dm-menu-avatar{width:44px!important;height:44px!important}#rtProfileBackdrop header .dm-menu-level{font-size:13px!important;padding:4px 9px!important;margin-top:3px!important}#rtProfileBackdrop .rt-profile-grid>button img{width:24px!important;height:24px!important}}
 @media(orientation:landscape) and (max-height:600px){#rtProfileBackdrop .rt-profile{max-width:900px!important;width:100%!important}#rtProfileBackdrop .rt-profile-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(0,1fr))!important}}
+
+#rtProfileBackdrop .rt-profile{position:relative!important;inset:auto!important;transform:none!important;margin:0!important;height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important}
+#rtProfileBackdrop .rt-profile-grid>button{position:relative!important;inset:auto!important;transform:none!important;margin:0!important;width:100%!important;box-sizing:border-box!important}
