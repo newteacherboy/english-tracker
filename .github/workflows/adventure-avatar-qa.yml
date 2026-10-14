@@ -4,10 +4,12 @@ on:
     paths:
       - 'ingilizce/adventure-avatars.js'
       - 'ingilizce/avatar-assets/adventure-*.webp'
+      - 'ingilizce/avatar-assets/head-*.webp'
       - 'ingilizce/index.html'
       - 'ingilizce/storefront.js'
       - 'ingilizce/storefront.css'
       - 'tests/adventure-avatars-ui.cjs'
+      - 'tests/avatar-layer-rig-ui.cjs'
       - '.github/workflows/adventure-avatar-qa.yml'
   workflow_dispatch:
 permissions:
@@ -25,6 +27,7 @@ jobs:
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
       - run: node tests/adventure-avatars-ui.cjs
+      - run: node tests/avatar-layer-rig-ui.cjs
       - name: Save K2 E2 and outfit screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -33,4 +36,6 @@ jobs:
           path: |
             /tmp/approved-adventure-avatars.png
             /tmp/approved-adventure-outfit.png
+            /tmp/modular-avatar-defaults.png
+            /tmp/modular-avatar-customizations.png
           if-no-files-found: ignore

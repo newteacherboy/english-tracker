@@ -5,7 +5,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
-<script src="adventure-avatars.js?v=20261014-k2-e2-all-accounts-2"></script>
+<script src="adventure-avatars.js?v=20261014-modular-rig-3"></script>
 <script src="progression-catalog.js?v=20261014-legend-1"></script>
 <link rel="stylesheet" href="first-discovery.css?v=20261013-discovery-fix-2">
 <script src="first-discovery-state.js?v=20261013-discovery-fix-2"></script>
@@ -16213,6 +16213,7 @@ window.avatarSVG = avatarSVG; window.KA_KATALOG = KATALOG; window.KA_TEN = TEN; 
 /* ===================== ÇİZİM ===================== */
 let uidSayac = 0;
 function avatarSVG(s, stil, px, cins) {
+  if(window.dmAdventureAvatar?.render&&!s._tamBoy)return window.dmAdventureAvatar.render(s,{cins,px,stil,full:false});
   let uid = 'a' + (++uidSayac), defs = [], g = 0;
   const D = c => {
     if (c === 'gokkusagi') return `url(#rb${uid})`;
@@ -22982,6 +22983,7 @@ window.ocEnerjiHarca = async function (n) {
   /* Tam boy: alt vücut, kollar, alt giyim, ayakkabı + büst */
   let fullModelUid=0;
   window.dolapTamBoySVG = function (s, cins, px) {
+    if(window.dmAdventureAvatar?.render)return window.dmAdventureAvatar.render(s,{cins,px,full:true});
     s = Object.assign({}, s);
     const selectedBase=window.dmAdventureAvatar?.full(s,cins,px);if(selectedBase)return selectedBase;
     let ten = '#f1c7a5'; try { ten = window.KA_TEN[Number(s.ten) || 0][0]; } catch (e) {}

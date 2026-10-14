@@ -1199,6 +1199,20 @@
       "source": "OpenAI image generation, approved K2/E2 concept adapted for Diji-Medu",
       "status": "ai-generated",
       "bytes": 165494
+    },
+    {
+      "path": "ingilizce/avatar-assets/head-girl-v3.webp",
+      "sha256": "679dfa80c62fd7b538177313c7ea722edcfdf84eb1b05291e878c2d397eea496",
+      "bytes": 347710,
+      "status": "ai-generated",
+      "source": "OpenAI image_gen; isolated head layer from the approved Diji-Medu K2/E2 character; 2026-10-14"
+    },
+    {
+      "path": "ingilizce/avatar-assets/head-boy-v3.webp",
+      "sha256": "a1bb168d0ce59b11aced76b8ed33b45f45739d8faf579664522b108cd677e61b",
+      "bytes": 270574,
+      "status": "ai-generated",
+      "source": "OpenAI image_gen; isolated head layer from the approved Diji-Medu K2/E2 character; 2026-10-14"
     }
   ]
 }

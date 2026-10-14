@@ -13,7 +13,7 @@ await page.evaluate(()=>{const defaultStyle=c=>Object.assign({},KA_VARSAYILAN[c]
 assert.equal(await page.locator('[data-adventure-identity="k"]').count(),2);assert.equal(await page.locator('[data-adventure-identity="e"]').count(),2);
 await page.screenshot({path:'/tmp/approved-adventure-avatars.png'});
 await page.evaluate(()=>{const s=defaults('k');s.ust='u:kahraman:#ef4444:anka';s.alt='a:pantolon:#ef4444:yildiz';s.ayak='a:bot:#fbbf24:yildiz';document.getElementById('sample-k').innerHTML=dolapTamBoySVG(s,'k',300);});
-assert.equal(await page.locator('#sample-k [data-adventure-identity="k"]').count(),1);assert((await page.locator('#sample-k').innerHTML()).includes('#ef4444'));assert((await page.locator('#sample-k').innerHTML()).includes('scale(.72 1)'));
+assert.equal(await page.locator('#sample-k [data-adventure-identity="k"]').count(),1);assert((await page.locator('#sample-k').innerHTML()).includes('#ef4444'));assert((await page.locator('#sample-k').innerHTML()).includes('data-avatar-rig="3"'));
 await page.screenshot({path:'/tmp/approved-adventure-outfit.png'});
 await page.evaluate(()=>{const s=defaults('e');s.sapka='kep';s.gozluk='yuvarlak';document.getElementById('sample-e').innerHTML=dolapTamBoySVG(s,'e',300);});assert.equal(await page.locator('#sample-e [data-adventure-identity="e"]').count(),1);
 const custom=await page.evaluate(()=>{const s=defaults('k');s.sac='bob';s.sacRenk='#8b5cf6';const before=JSON.stringify(s);const svg=dolapTamBoySVG(s,'k',300);return {unchanged:before===JSON.stringify(s),hair:svg.includes(kaAcik('#8b5cf6',.3)),slim:svg.includes('scale(.72 1)'),newIdentity:svg.includes('data-adventure-identity')};});assert(custom.unchanged&&custom.newIdentity);
