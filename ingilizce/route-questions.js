@@ -8,6 +8,25 @@ const TYPES=['teach','hatirla','soyle','dinleSec','eslestir','eksik','lab','word
 const titles={teach:'Dinle ve öğren',hatirla:'İngilizcesini seç',soyle:'Dinle ve söyle',dinleSec:'Dinle ve seç',eslestir:'Anlamları eşleştir',eksik:'Eksik harfi tamamla',lab:'Türkçesini seç',wordOrder:'Kelimeleri sıraya koy',patternOrder:'İfadeyi sıraya koy',patternComplete:'Eksik kelimeyi tamamla',patternListen:'İfadeyi dinle ve seç',patternTranslate:'Anlamından bul',sesliFinal:'Kelime kartları'};
 let recognition=null,recognitionTimer=null;
 function cancelSpeech(){clearTimeout(recognitionTimer);try{recognition?.abort()}catch{}recognition=null;}
+// Rotate supporting matching words across all stops for this learner.
+// The shuffled tie-break keeps a fresh pool random; least-recently-used words get priority.
+const matchingHistory=new Map();
+function matchingWords(target,pool,en,tr,shuffle,owner,count=4){
+ const key='dm-route-matching-words-v1:'+encodeURIComponent(String(owner||'guest'));
+ let history=matchingHistory.get(key);
+ if(!history){try{history=JSON.parse(root.localStorage?.getItem(key)||'null')}catch{}if(!history||!Array.isArray(history.used))history={serial:0,used:[]};}
+ const used=new Map(history.used),seenEn=new Set([norm(en(target))]),seenTr=new Set([norm(tr(target))]);
+ const candidates=shuffle(pool.filter(w=>en(w)&&tr(w))).sort((a,b)=>(Number(used.get(norm(en(a))))||0)-(Number(used.get(norm(en(b))))||0));
+ const result=[target];let serial=Number(history.serial)||0;
+ for(const word of candidates){
+  const e=norm(en(word)),t=norm(tr(word));if(seenEn.has(e)||seenTr.has(t))continue;
+  if(result.length>=count)break;
+  result.push(word);seenEn.add(e);seenTr.add(t);used.set(e,++serial);
+ }
+ history={serial,used:Array.from(used).sort((a,b)=>b[1]-a[1]).slice(0,2000)};matchingHistory.set(key,history);
+ try{root.localStorage?.setItem(key,JSON.stringify(history))}catch{}
+ return result;
+}
 function choices(word,pool,read,shuffle,count=3){return shuffle([read(word),...shuffle(pool.filter(x=>norm(read(x))!==norm(read(word)))).map(read).filter((x,i,a)=>a.indexOf(x)===i).slice(0,count-1)]);}
 function sentence(word,pool,read){const target=norm(read(word));return pool.find(x=>norm(read(x)).split(' ').length>1&&(' '+norm(read(x))+' ').includes(' '+target+' '))||word;}
 function renderTask(s,area,c){
@@ -69,5 +88,5 @@ function celebrate(root,gain){
  el.append(feathers);root.append(el);setTimeout(()=>el.remove(),3200);
 }
 function storyHud(modal,combo,close){modal.classList.add('rq-approved');watchLayout(modal);const header=modal.querySelector('.ds-lesson-header');if(!header)return;let hud=header.querySelector('.rq-hud');if(!hud){hud=document.createElement('div');hud.className='rq-hud';header.prepend(hud)}hud.innerHTML=hudHTML(combo,window.genelEnerjiKalan??'–',typeof yo!=='undefined'?yo.altin||0:0,window.genelEnerjiMax||30);let x=header.querySelector('.rq-close');if(!x){x=document.createElement('button');x.type='button';x.className='rq-close';x.setAttribute('aria-label','Kapat');x.textContent='✕';x.onclick=close;header.append(x)}x.disabled=!!window.dmPapiFirstPractice?.locked('independent');}
-root.DMRouteQuestions={TYPES,titles,renderTask,mountSchool,updateSchool,celebrate,cancelSpeech};root.dmSelectedStoryHud=storyHud;
+root.DMRouteQuestions={TYPES,titles,matchingWords,renderTask,mountSchool,updateSchool,celebrate,cancelSpeech};root.dmSelectedStoryHud=storyHud;
 })(typeof window!=='undefined'?window:globalThis);

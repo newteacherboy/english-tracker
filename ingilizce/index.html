@@ -26902,8 +26902,15 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
 
   function eslestir(s,alan) {
-    const target=s.k, items=[target,...O.tum.filter(k=>k!==target&&EN(k)&&TR(k))].filter((k,i,a)=>a.findIndex(x=>EN(x)===EN(k))===i).slice(0,4);
-    const shuffled=karistir(items.slice()),chosen=[];
+    const target=s.k;
+    if(!s.matchItems){
+      // Keep the indexed pairs of an already-started checkpoint from the old renderer.
+      s.matchItems=O.matchState?[target,...O.tum.filter(k=>k!==target&&EN(k)&&TR(k))].filter((k,i,a)=>a.findIndex(x=>EN(x)===EN(k))===i).slice(0,4):window.DMRouteQuestions.matchingWords(target,O.tum,EN,TR,karistir,O.owner||isim());
+      s.matchOrder=karistir(s.matchItems.map((_,i)=>i));checkpointSave();
+    }
+    const items=s.matchItems;
+    if(!s.matchOrder){s.matchOrder=karistir(items.map((_,i)=>i));checkpointSave();}
+    const shuffled=s.matchOrder.map(i=>items[i]);
     alan.innerHTML='<div class="bz-etiket">🔗 Anlamları eşleştir</div><div class="bz-ipucu">Soldaki İngilizce kelimeyi sağdaki Türkçe anlamıyla eşleştir.</div><div class="dm-match-grid"><div id="bzMatchEn"></div><div id="bzMatchTr"></div></div><p id="bzMatchStatus" role="status"></p>';
     const L=alan.querySelector('#bzMatchEn'),R=alan.querySelector('#bzMatchTr'),status=alan.querySelector('#bzMatchStatus');
     const matchedKeys=O.matchState?.matchedKeys||[];let selected=O.matchState?.selected??null,matched=matchedKeys.length,mistakes=O.matchState?.mistakes||0;const saveMatch=()=>{O.matchState={selected,matchedKeys,mistakes};checkpointSave();};
@@ -28523,6 +28530,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="notice-sharing.js?v=20261013-achievement-3"></script>
 <link rel="stylesheet" href="papi-wallet.css?v=20261013-compact-127">
 <link rel="stylesheet" href="route-questions.css?v=20261014-approved-1">
-<script defer src="route-questions.js?v=20261014-english-voice-1"></script>
+<script defer src="route-questions.js?v=20261014-matching-variety-1"></script>
 </body>      
         </html>
