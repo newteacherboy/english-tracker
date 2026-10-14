@@ -32,5 +32,7 @@ jobs:
         if: always()
         with:
           name: papi-harf-adasi-mobile-qa
-          path: /tmp/harf-adasi-390.png
+          path: |
+            /tmp/harf-adasi-390.png
+            /tmp/harf-adasi-initial.png
           if-no-files-found: ignore
