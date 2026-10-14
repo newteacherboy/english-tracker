@@ -59,7 +59,7 @@
   }
   function drawScene(){
     return '<section class="ia-scene" aria-label="Papi adada sandığa doğru ilerliyor">'+
-      '<img class="ia-parrot" alt="Papi, maceracı papağan" src="oyna-assets/oyna-papi-cta.png" style="--ia-papi-left:4%">'+
+      '<img class="ia-parrot" alt="Papi, maceracı papağan" src="harf-adasi-papi.svg" style="--ia-papi-left:4%">'+
       '<div class="ia-flag">Başla</div><div class="ia-tip-path">Papi her doğru harfte ilerler!</div>'+
       '<span class="ia-feedback" aria-live="polite"></span></section>';
   }
