@@ -10,7 +10,7 @@ const parse=(id,fallback)=>{const [prefix,type,paint,pattern]=String(id||fallbac
 const present=x=>!!x&&x!=='yok';
 function render(input,{cins='e',px=200,full=false,stil='c'}={}){
  const s={...(input||{})},female=cins==='k',uid='dmRig'+(++serial),skin=SKIN[Number(s.ten)]||SKIN[1],hair=color(s.sacRenk,female?'#6b4226':'#2b2331');
- const hairStyle=s.sac||(female?'uzun':'kisa'),nativeHead=hairStyle===(female?'uzun':'kisa')&&(!s.sacRenk||s.sacRenk===(female?'#6b4226':'#2b2331'))&&String(s.ten??'1')==='1'&&!present(s.bas);
+ const hairStyle=s.sac||(female?'uzun':'kisa'),fittedHat=['kep','bere'].includes(s.sapka)&&!present(s.bas),nativeHead=hairStyle===(female?'uzun':'kisa')&&(!s.sacRenk||s.sacRenk===(female?'#6b4226':'#2b2331'))&&String(s.ten??'1')==='1'&&!present(s.bas)&&!fittedHat;
  const hairPaint=s.sacRenk==='gokkusagi'?'gokkusagi':female&&hair==='#6b4226'?'#b9522c':hair;
  let defs='',gradientCount=0;
  const gradients=new Map();
@@ -19,7 +19,7 @@ function render(input,{cins='e',px=200,full=false,stil='c'}={}){
  const line=(d,stroke='#ffffff66',width=2)=>'<path d="'+d+'" fill="none" stroke="'+stroke+'" stroke-width="'+width+'" stroke-linecap="round" stroke-linejoin="round"/>';
  const patch=(x,y,rx,ry)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="'+fabric(skin)+'"/>';
  const asset='avatar-assets/head-'+(female?'girl':'boy')+'-v3.webp';
- const faceImage=extra=>'<image data-adventure-identity="'+cins+'" href="'+asset+'" x="54" y="'+(female?20:8)+'" width="132" height="132" '+(extra||'')+'/>';
+ const faceImage=(extra,detail=false)=>'<image '+(detail?'data-face-detail="eyes"':'data-adventure-identity="'+cins+'"')+' href="'+asset+'" x="54" y="'+(female?20:8)+'" width="132" height="132" '+(extra||'')+'/>';
  const covered=present(s.bas),hat=covered?'yok':s.sapka||'yok';
  const upper=parse(s.ust),one=parse(s.tek),outer=parse(s.dis),lower=parse(s.alt,'a:pantolon:#887859:duz'),shoe=parse(s.ayak,'a:spor:'+(female?'#26a6b7':'#253e71')+':duz'),accessory=parse(s.aks);
  const starter=!present(s.ust)&&!present(s.tek)&&!present(s.dis)&&(!s.kiyafet||s.kiyafet===(female?'tisort-mor':'tisort-mavi'));
@@ -114,14 +114,15 @@ function render(input,{cins='e',px=200,full=false,stil='c'}={}){
  if(accessory.type==='atki')front+=path('M99 143 Q120 157 141 143 L144 157 Q127 171 98 157Z',accessory.paint)+path('M132 159 L141 203 L124 205 L122 162Z',accessory.paint);
  if(accessory.type==='rozet')front+='<circle cx="141" cy="193" r="9" fill="'+fabric(accessory.paint)+'" stroke="#ffe0a0" stroke-width="2"/><text x="141" y="197" text-anchor="middle" font-size="12" fill="#fff6d0">★</text>';
  // The face texture contains no clothing: only this fixed head crop is displayed.
- const faceClip=uid+'Face';defs+='<clipPath id="'+faceClip+'">'+(nativeHead?'<rect x="42" y="0" width="158" height="170"/>':'<ellipse cx="120" cy="'+(female?101:107)+'" rx="36" ry="34"/>')+'</clipPath>';
- if(!nativeHead)head+='<ellipse cx="88" cy="106" rx="8" ry="13" fill="'+fabric(skin)+'"/><ellipse cx="155" cy="105" rx="8" ry="13" fill="'+fabric(skin)+'"/>';
+ const faceContour=female?'M91 88 Q91 74 118 70 Q144 75 148 91 L148 103 Q144 117 133 122 L119 128 Q99 122 93 111 Z':'M84 90 Q89 70 120 72 Q152 69 156 89 L154 110 Q145 129 122 133 Q100 131 89 115 Z';
+ const faceClip=uid+'Face';defs+='<clipPath id="'+faceClip+'">'+(nativeHead?'<rect x="42" y="0" width="158" height="170"/>':'<path d="'+faceContour+'"/>')+'</clipPath>';
+ if(!nativeHead)head+='<ellipse cx="88" cy="106" rx="8" ry="13" fill="'+fabric(skin)+'"/><ellipse cx="155" cy="105" rx="8" ry="13" fill="'+fabric(skin)+'"/>'+path(female?'M84 88 C82 63 96 48 120 48 C145 48 160 64 158 88 L153 107 C149 120 134 130 119 131 C104 128 89 119 85 107 Z':'M84 88 C82 63 96 48 120 48 C145 48 160 64 158 88 L156 110 C153 128 139 135 122 135 C103 133 88 127 85 110 Z',skin,'data-rig-anchor="face-shell"');
  let toneFilter='';
  if(!nativeHead){const base=[246,201,163],rgb=[0,2,4].map(i=>parseInt(skin.slice(i+1,i+3),16));const fid=uid+'Tone';defs+='<filter id="'+fid+'" color-interpolation-filters="sRGB"><feComponentTransfer>'+['R','G','B'].map((ch,i)=>'<feFunc'+ch+' type="linear" slope="'+(rgb[i]/base[i])+'"/>').join('')+'</feComponentTransfer></filter>';toneFilter='filter="url(#'+fid+')"';}
  head+='<g clip-path="url(#'+faceClip+')">'+faceImage(toneFilter)+'</g>';
  const eyes=female?[[105,89],[135,93]]:[[107,92],[138,87]],mouth=female?[119,114]:[127,115];
  // Restore natural eye whites for skin recoloring; expressions replace both source eyes.
- if(!nativeHead&&(!s.goz||s.goz==='normal')){const key=uid+'Eyes';defs+='<clipPath id="'+key+'">'+eyes.map(([x,y])=>'<ellipse cx="'+x+'" cy="'+y+'" rx="9" ry="10"/>').join('')+'</clipPath>';head+='<g clip-path="url(#'+key+')">'+faceImage()+'</g>';}
+ if(!nativeHead&&(!s.goz||s.goz==='normal')){const key=uid+'Eyes';defs+='<clipPath id="'+key+'">'+eyes.map(([x,y])=>'<ellipse cx="'+x+'" cy="'+y+'" rx="9" ry="10"/>').join('')+'</clipPath>';head+='<g clip-path="url(#'+key+')">'+faceImage('',true)+'</g>';}
  if(s.goz&&s.goz!=='normal')for(let i=0;i<eyes.length;i++){
   const [x,y]=eyes[i],kind=s.goz;head+=patch(x,y,15,14);
   if(kind==='mutlu'||kind==='kirp'&&i===1)head+=line('M'+(x-7)+' '+y+' Q'+x+' '+(kind==='mutlu'?y-8:y+7)+' '+(x+7)+' '+y,'#39251e',2.8);
@@ -138,7 +139,7 @@ function render(input,{cins='e',px=200,full=false,stil='c'}={}){
  if(s.detay==='yanak'||s.detay==='ikisi')head+='<ellipse cx="91" cy="107" rx="6" ry="3.5" fill="#f58fa2" opacity=".3"/><ellipse cx="150" cy="107" rx="6" ry="3.5" fill="#f58fa2" opacity=".3"/>';
  if(s.detay==='cil'||s.detay==='ikisi')head+=[[91,100],[96,104],[87,105],[148,101],[153,104],[144,105]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r=".9" fill="'+mix(skin,0,.3)+'"/>').join('');
  // Hair uses the same scalp and temple anchors for every editable style/color.
- if(!covered&&!nativeHead){
+ if(!covered&&!nativeHead&&!fittedHat){
   let scalp='M73 83 Q62 54 84 36 Q101 22 127 29 Q167 25 174 76 L162 86 Q153 63 133 55 Q122 76 98 73 Q84 75 73 83Z';
   if(hairStyle==='kirpi')scalp='M72 86 L77 53 L86 62 L96 26 L107 46 L123 18 L133 44 L151 27 L157 54 L169 44 L175 86 Q157 65 135 65 Q109 83 92 71Z';
   if(hairStyle==='bob')scalp='M72 89 Q62 37 107 28 Q163 15 174 87 L165 88 L156 62 Q126 77 93 64 L78 91Z';
@@ -147,6 +148,8 @@ function render(input,{cins='e',px=200,full=false,stil='c'}={}){
   if(['uzun','orgu','bob','atkuyrugu'].includes(hairStyle))head+=path('M73 74 Q68 108 82 137 L92 139 Q78 108 91 76Z',hairPaint)+path('M165 73 Q177 110 160 137 L152 135 Q165 103 150 75Z',hairPaint);
   if(hairStyle==='kivircik')head+=[[80,58,15],[93,38,16],[116,30,17],[142,35,17],[162,54,17],[74,79,13],[170,77,13]].map(([x,y,r])=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+fabric(hairPaint)+'"/>').join('');
  }
+ // A fitted hat covers the crown; only rounded, attached temple hair remains visible.
+ if(fittedHat)head+=path('M84 67 Q89 61 96 66 L95 82 Q89 91 88 103 Q82 91 84 67Z',hairPaint)+path('M147 66 Q154 61 159 68 L158 96 L153 103 Q152 86 147 81Z',hairPaint);
  if(!covered&&!nativeHead&&(hairStyle==='orgu'||female&&hairStyle==='uzun')){
   const sides=hairStyle==='orgu'?[80,162]:[83];
   for(const x of sides){for(let y=121;y<169;y+=11)head+='<ellipse cx="'+(x+(y%22?-2:2))+'" cy="'+y+'" rx="8" ry="7" fill="'+fabric(hairPaint)+'"/>';head+='<path d="M'+(x-5)+' 173 Q'+x+' 190 '+(x+5)+' 173Z" fill="'+fabric(hairPaint)+'"/><rect x="'+(x-6)+'" y="166" width="12" height="5" rx="2" fill="#cf86ae"/>';}
@@ -154,19 +157,21 @@ function render(input,{cins='e',px=200,full=false,stil='c'}={}){
  if(covered){const cloth=parse(s.bas);back+=path('M70 81 Q61 23 119 17 Q178 16 177 84 L184 163 Q153 183 133 160 L120 140 L102 161 Q69 184 57 164Z',cloth.paint);head+=path('M74 82 Q71 41 113 31 Q160 24 169 77 L161 88 Q153 52 125 47 Q92 47 81 90Z',cloth.paint)+path('M73 102 Q70 135 99 148 L108 161 L76 167 L64 130Z',cloth.paint)+path('M166 99 Q174 131 140 148 L129 160 L166 169 L178 132Z',cloth.paint)+line('M76 134 Q121 172 166 134',mix(cloth.paint,255,.3),2)+pattern(cloth.pattern,cloth.paint,72,137,100,25);if(cloth.type==='bone')head+=line('M82 73 Q117 31 160 73',mix(cloth.paint,255,.5),7);}
  // Hats are anchored to the crown (not the old 200×200 avatar).
  let hatLayer='';
- if(hat==='kep')hatLayer=path('M68 61 Q67 20 115 18 Q164 15 172 57Z','#de525b')+path('M107 56 Q146 42 188 62 Q149 72 109 65Z','#b43142')+line('M96 25 Q101 35 99 53','#ffffff77',2);
- if(hat==='bere')hatLayer=path('M68 64 Q66 14 115 12 Q164 10 172 62Z','#39a76e')+path('M65 55 Q122 67 175 53 V71 Q121 85 66 71Z','#f1c675')+'<circle cx="119" cy="12" r="9" fill="'+fabric('#f1c675')+'"/>';
+ if(hat==='kep')hatLayer=path('M80 72 Q78 30 119 28 Q160 27 163 70 Q122 65 80 72Z','#de525b')+path('M113 67 Q145 59 176 75 Q146 82 114 76Z','#b43142')+line('M104 34 Q110 47 108 65','#ffffff77',2);
+ if(hat==='bere')hatLayer=path('M80 72 Q77 26 119 25 Q160 24 163 70Z','#39a76e')+path('M79 64 Q121 73 164 63 V79 Q121 88 80 79Z','#f1c675')+'<circle cx="119" cy="25" r="9" fill="'+fabric('#f1c675')+'"/>';
  if(hat==='tac')hatLayer=path('M80 58 L83 30 L103 45 L120 17 L137 45 L157 30 L160 58Z','#eab944')+'<circle cx="120" cy="47" r="4" fill="#d8617d"/>';
  if(hat==='buyucu')hatLayer=path('M80 63 L130 5 L158 63Z','#7347b6')+'<ellipse cx="120" cy="64" rx="61" ry="10" fill="'+fabric('#513182')+'"/><text x="121" y="42" font-size="18" fill="#ffe2a5">✦</text>';
  if(hat==='parti')hatLayer=path('M92 50 L122 4 L149 50Z','#ef79a7')+line('M102 31 H138','#f6cf61',6)+'<circle cx="122" cy="7" r="7" fill="#f6cf61"/>';
  if(hat==='kulaklik')hatLayer=line('M73 93 Q67 18 120 19 Q174 18 171 92','#373356',7)+path('M67 78 H79 V106 H65Z','#ef7d9d')+path('M164 77 H176 V104 H164Z','#ef7d9d');
  if(hat==='cicek')hatLayer=[[76,64],[88,48],[109,41],[132,41],[154,51],[168,67]].map(([x,y],i)=>'<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+['#f4aac7','#edce77','#aa8fdb'][i%3]+'"/><circle cx="'+x+'" cy="'+y+'" r="2.5" fill="#fff6df"/>').join('');
  head+=hatLayer;
- // Glasses follow the face's individual eye centers, including its gentle tilt.
+ // One rigid, level frame: lenses, bridge and temples cannot drift independently.
  if(present(s.gozluk)){
-  const glasses=s.gozluk,[[lx,ly],[rx,ry]]=eyes;
-  if(glasses==='yuvarlak'||glasses==='gunes'){const dark=glasses==='gunes';head+='<ellipse cx="'+lx+'" cy="'+ly+'" rx="14" ry="13" fill="'+(dark?'#222c43':'#ffffff22')+'" stroke="#3a354b" stroke-width="2.5"/><ellipse cx="'+rx+'" cy="'+ry+'" rx="14" ry="13" fill="'+(dark?'#222c43':'#ffffff22')+'" stroke="#3a354b" stroke-width="2.5"/>'+line('M'+(lx+12)+' '+ly+' Q120 '+(Math.min(ly,ry)-5)+' '+(rx-12)+' '+ry,'#3a354b',2);}
-  else head+=eyes.map(([x,y])=>'<path d="M'+x+' '+(y-15)+' l4 10 11 1-9 7 3 11-9-6-9 6 3-11-9-7 11-1Z" fill="#f7b4d055" stroke="#d85c8f" stroke-width="2"/>').join('');
+  const glasses=s.gozluk,cx=(eyes[0][0]+eyes[1][0])/2,y=(eyes[0][1]+eyes[1][1])/2,lx=cx-17,rx=cx+17,stroke=glasses==='yildiz'?'#d85c8f':'#3a354b';
+  head+='<g data-rig-layer="eyewear">'+line('M'+(lx-13)+' '+(y-2)+' L86 '+(y-5)+' M'+(rx+13)+' '+(y-2)+' L157 '+(y-5),stroke,2.5);
+  if(glasses==='yuvarlak'||glasses==='gunes'){const dark=glasses==='gunes';head+=[lx,rx].map(x=>'<ellipse data-eyewear-lens="true" cx="'+x+'" cy="'+y+'" rx="14" ry="13" fill="'+(dark?'#222c43':'#ffffff22')+'" stroke="'+stroke+'" stroke-width="2.5"/>').join('');}
+  else head+=[lx,rx].map(x=>'<path data-eyewear-lens="true" d="M'+x+' '+(y-15)+' l4 10 11 1-9 7 3 11-9-6-9 6 3-11-9-7 11-1Z" fill="#f7b4d055" stroke="'+stroke+'" stroke-width="2"/>').join('');
+  head+=line('M'+(lx+13)+' '+(y-2)+' Q'+cx+' '+(y-6)+' '+(rx-13)+' '+(y-2),stroke,2.5)+'</g>';
  }
  if(present(s.cik))details+='<circle cx="187" cy="51" r="17" fill="#fff8ee" stroke="#e4c5ed" stroke-width="2"/><text x="187" y="57" text-anchor="middle" font-size="19">'+esc(String(s.cik).replace(/^c:/,''))+'</text>';
  if(s.dost==='papagan')details+='<g transform="translate(167 185)"><ellipse cx="0" cy="10" rx="11" ry="15" fill="'+fabric('#43bb92')+'"/><circle cy="-4" r="9" fill="'+fabric('#45c8ac')+'"/><path d="M7-7 18-3 7 1Z" fill="#f3b15a"/><circle cx="3" cy="-6" r="2" fill="#233247"/></g>';
