@@ -71,10 +71,10 @@ begin
    return jsonb_build_object('ok',true,'duplicate',true,'newlyAwarded',false,'awardedGold',0,'haftaHedef',goal,'altin',greatest(coalesce(st.gold,0),coalesce((v->>'altin')::numeric,0)),'yo',v);
  end if;
  -- Match existing weekly UI: positive log XP this Istanbul week, or the league's current XP.
- select coalesce(sum(case when data.value~'^[0-9]+(\\.[0-9]+)?$' then greatest(0,data.value::numeric) else 0 end),0)
+ select coalesce(sum(case when data.value~'^[0-9]+([.][0-9]+)?$' then greatest(0,data.value::numeric) else 0 end),0)
  into logged from jsonb_each_text(case when jsonb_typeof(v->'log')='object' then v->'log' else '{}'::jsonb end) data
  where data.key>=week_code and data.key<to_char(week_date+7,'YYYY-MM-DD');
- if coalesce(v#>>'{lig,xp}','')~'^[0-9]+(\\.[0-9]+)?$' then
+ if coalesce(v#>>'{lig,xp}','')~'^[0-9]+([.][0-9]+)?$' then
    weekly:=(v#>>'{lig,xp}')::numeric;
  end if;
  select coalesce(xp,0) into wkxp from public.dm_weekly_xp where student_id=actor and week_start=week_date;
