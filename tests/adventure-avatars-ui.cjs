@@ -16,6 +16,12 @@ await page.evaluate(()=>{const s=defaults('k');s.ust='u:kahraman:#ef4444:anka';s
 assert.equal(await page.locator('#sample-k [data-adventure-identity="k"]').count(),1);assert((await page.locator('#sample-k').innerHTML()).includes('#ef4444'));assert((await page.locator('#sample-k').innerHTML()).includes('scale(.72 1)'));
 await page.screenshot({path:'/tmp/approved-adventure-outfit.png'});
 await page.evaluate(()=>{const s=defaults('e');s.sapka='kep';s.gozluk='yuvarlak';document.getElementById('sample-e').innerHTML=dolapTamBoySVG(s,'e',300);});assert.equal(await page.locator('#sample-e [data-adventure-identity="e"]').count(),1);
-const custom=await page.evaluate(()=>{const s=defaults('k');s.sac='bob';s.sacRenk='#8b5cf6';const before=JSON.stringify(s);const svg=dolapTamBoySVG(s,'k',300);return {unchanged:before===JSON.stringify(s),hair:svg.includes(kaAcik('#8b5cf6',.3)),slim:svg.includes('scale(.72 1)'),notStatic:!svg.includes('data-adventure-identity')};});assert(custom.unchanged&&custom.hair&&custom.slim&&custom.notStatic);
-assert.deepEqual(errors,[]);await browser.close();console.log('PASS K2/E2 full and portrait assets, purchased outfit and accessories with selected faces, editable hair/skin retained, state not mutated');
+const custom=await page.evaluate(()=>{const s=defaults('k');s.sac='bob';s.sacRenk='#8b5cf6';const before=JSON.stringify(s);const svg=dolapTamBoySVG(s,'k',300);return {unchanged:before===JSON.stringify(s),hair:svg.includes(kaAcik('#8b5cf6',.3)),slim:svg.includes('scale(.72 1)'),newIdentity:svg.includes('data-adventure-identity')};});assert(custom.unchanged&&custom.newIdentity);
+const legacyStates=await page.evaluate(()=>{
+ const variants=[{ten:'0',sacRenk:'#e8b64c'},{ten:'4',goz:'mutlu',agiz:'saskin'},{sac:'kivircik',sacRenk:'#ff7eb6'},{bas:'b:sal:#f5e6c8:duz'}];
+ return ['k','e'].flatMap(c=>variants.map(v=>{const state={...defaults(c),...v},before=JSON.stringify(state),full=dolapTamBoySVG(state,c,300),portrait=avatarSVG(state,'c',100,c);return {c,full:full.includes('data-adventure-identity="'+c+'"'),portrait:portrait.includes('data-adventure-identity="'+c+'"'),preserved:JSON.stringify(state)===before};}));
+});assert(legacyStates.every(x=>x.full&&x.portrait&&x.preserved),JSON.stringify(legacyStates));
+await page.evaluate(()=>{for(const c of ['k','e']){const oldState={...defaults(c),ten:'0',sacRenk:'#e8b64c'};document.getElementById('sample-'+c).innerHTML=avatarSVG(oldState,'c',100,c)+dolapTamBoySVG(oldState,c,300);}});
+await page.screenshot({path:'/tmp/legacy-account-new-identity.png'});
+assert.deepEqual(errors,[]);await browser.close();console.log('PASS K2/E2 full and portrait assets, purchased outfit and accessories with selected faces, legacy accounts use new identities, saved customizations not mutated');
 })().catch(e=>{console.error(e);process.exit(1)});

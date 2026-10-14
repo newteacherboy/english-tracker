@@ -5,7 +5,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
-<script src="adventure-avatars.js?v=20261014-k2-e2-1"></script>
+<script src="adventure-avatars.js?v=20261014-k2-e2-all-accounts-2"></script>
 <script src="progression-catalog.js?v=20261014-legend-1"></script>
 <link rel="stylesheet" href="first-discovery.css?v=20261013-discovery-fix-2">
 <script src="first-discovery-state.js?v=20261013-discovery-fix-2"></script>
@@ -16348,7 +16348,9 @@ function avatarSVG(s, stil, px, cins) {
 
   const newHead=window.dmAdventureAvatar?.head(s,cins);
   const slimBody='<g transform="translate(100 0) scale(.72 1) translate(-100 0)">'+govde+'</g>';
-  const headLayers=newHead?newHead+sapka+gozluk:arkaSac+basArka+kafa+yuz+basOn+onSac+sapka+gozluk;
+  const coveredHead=!!s.bas&&s.bas!=='yok';
+  const selectedHead=newHead?(coveredHead?basArka+newHead+basOn:newHead):arkaSac+basArka+kafa+yuz+basOn+onSac;
+  const headLayers=selectedHead+sapka+gozluk;
   if (s._tamBoy) return { defs: defs.join(''), ic: slimBody+headLayers };
   const portrait=window.dmAdventureAvatar?.portrait(s,cins);
   const character=portrait||slimBody+headLayers;
