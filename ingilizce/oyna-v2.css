@@ -46,3 +46,10 @@
 .rt-islands .rt-stop-label{color:#173c70;background:#effaffbf}.rt-path .rt-continue{position:absolute;left:0;right:0;bottom:12px;margin:0;gap:5px;z-index:3}.rt-path .rt-continue>b{display:none;max-width:58%;font-size:12px;background:#ffffffce;border-radius:9px;padding:3px 8px;color:#17344a}.rt-path .rt-start{background:#0ab8ad;border:2px solid #fff;color:#fff;min-height:38px;box-shadow:0 3px 0 #087c7b50,0 3px 8px #13434d25;padding:7px 22px}
 .rt-reward-route .rt-chest{display:none}.rt-islands .rt-chest{right:5%;bottom:9px;width:34px;height:34px;z-index:2;filter:drop-shadow(0 3px 2px #1e576b33)}
 @media(max-height:740px){.rt-path.rt-reward-route,.rt-path.rt-islands{min-height:180px;flex-basis:180px}.rt-path .rt-node{width:46px;height:46px}.rt-path .rt-node.current{width:54px;height:54px}.rt-path .rt-stop .rt-papi{width:48px;height:58px;top:-42px;right:calc(50% - 55px)}.rt-path .rt-stop-label{font-size:10px;top:calc(100% + 4px)}.rt-path .rt-continue{bottom:8px}.rt-path .rt-continue>b{display:none}.rt-path .rt-start{min-height:33px;font-size:12px;padding:6px 18px}}
+
+/* The active reward/island renderer owns its route picker shortcut. */
+.rt-path > .rt-map-switch{position:absolute;left:10px;top:10px;z-index:5;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:7px 11px;border:1.5px solid #fff;border-radius:18px;background:linear-gradient(145deg,#fffef5,#fff0cd);box-shadow:0 3px 0 #b6863540,0 4px 10px #72562824;color:#15555c;font:900 12px Nunito,system-ui;line-height:1.2;white-space:nowrap;touch-action:manipulation}
+.rt-path > .rt-map-switch svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.rt-path.rt-islands > .rt-map-switch{background:linear-gradient(145deg,#fff,#e9f0ff);color:#493378;box-shadow:0 3px 0 #55519b30,0 4px 10px #30427424}
+.rt-path > .rt-map-switch:hover{filter:brightness(1.03)}
+.rt-path > .rt-map-switch:active{transform:translateY(2px);box-shadow:0 1px 0 #b6863540}
