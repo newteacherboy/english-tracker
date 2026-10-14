@@ -23,6 +23,7 @@ const {chromium}=require('playwright');
  assert.equal(await page.locator('.ia-booster').count(),3);
  assert.equal(await page.locator('[data-ia-boost-count]').textContent(),'🃏 Kalan joker: 3/3');
  assert(await page.locator('[data-ia-skip]').isDisabled());
+ if(width===390)await page.screenshot({path:'/tmp/harf-adasi-initial.png',fullPage:false});
  const dims=await page.evaluate(()=>({h:document.querySelector('.ia-screen').scrollHeight,ch:document.querySelector('.ia-screen').clientHeight,width:document.querySelector('.ia-screen').scrollWidth,cw:document.querySelector('.ia-screen').clientWidth}));
  assert(dims.h<=dims.ch+3,JSON.stringify(dims));assert(dims.width<=dims.cw+2,JSON.stringify(dims));
  const fake=await page.evaluate(()=>[...document.querySelectorAll('[data-ia-letter]')].find(x=>!('CAT'.includes(x.textContent)))?.dataset.iaLetter);
