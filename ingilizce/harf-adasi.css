@@ -153,3 +153,14 @@
   #asmacaOyunOverlay .ia-scene .ia-art-papi{height:min(62%,220px)!important;}
   #asmacaOyunOverlay .ia-scene .ia-art-chest{height:min(65%,220px)!important;}
 }
+
+/* Sprite crop refinements after 390px mobile screenshots. */
+#asmacaOyunOverlay .ia-scene .ia-art-chest {height:min(48%,172px)!important;bottom:20%!important;right:-1%!important;}
+#asmacaOyunOverlay .ia-scene .ia-art-papi {height:min(58%,218px)!important;bottom:6%!important;}
+#asmacaOyunOverlay .ia-booster[data-ia-boost] span {border-radius:50%!important;clip-path:circle(47% at 50% 50%);}
+#asmacaOyunOverlay .ia-keys button {font-size:clamp(19px,5.3vw,28px)!important;}
+#asmacaOyunOverlay .ia-scene{background-size:100% 100%;}
+@media (max-height:720px){
+  #asmacaOyunOverlay .ia-scene .ia-art-chest{height:min(47%,152px)!important;}
+  #asmacaOyunOverlay .ia-scene .ia-art-papi{height:min(55%,178px)!important;}
+}
