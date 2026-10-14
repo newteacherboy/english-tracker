@@ -431,8 +431,8 @@
       "title": "Koleksiyon ve vitrinler",
       "context": "tab-magaza",
       "selector": null,
-      "text": "Karakter koleksiyonu 20. seviyede açılır. Dolapta sahip olduklarını ve kilitli ürünleri filtrele. Vitrinler 15, 20, 25, 30, 35 ve 40. seviyelerde genişler; profilinde kullanmak istediğin görseli seç.",
-      "html": "<p>Karakter koleksiyonu 20. seviyede açılır. Dolapta sahip olduklarını ve kilitli ürünleri filtrele. Vitrinler 15, 20, 25, 30, 35 ve 40. seviyelerde genişler; profilinde kullanmak istediğin görseli seç.</p>"
+      "text": "Karakter koleksiyonunu 1. seviyeden itibaren görüntüleyebilirsin. Dolapta sahip olduklarını ve kilitli ürünleri filtrele. Vitrinler 15, 20, 25, 30, 35 ve 40. seviyelerde genişler; profilinde kullanmak istediğin görseli seç.",
+      "html": "<p>Karakter koleksiyonunu 1. seviyeden itibaren görüntüleyebilirsin. Dolapta sahip olduklarını ve kilitli ürünleri filtrele. Vitrinler 15, 20, 25, 30, 35 ve 40. seviyelerde genişler; profilinde kullanmak istediğin görseli seç.</p>"
     },
     {
       "id": "chests",
@@ -817,7 +817,7 @@
       [
         null,
         "Koleksiyon ve vitrinler",
-        "Karakter koleksiyonu 20. seviyede açılır. Dolapta sahip olduklarını ve kilitli ürünleri filtrele. Vitrinler 15, 20, 25, 30, 35 ve 40. seviyelerde genişler; profilinde kullanmak istediğin görseli seç. "
+        "Karakter koleksiyonunu 1. seviyeden itibaren görüntüleyebilirsin. Dolapta sahip olduklarını ve kilitli ürünleri filtrele. Vitrinler 15, 20, 25, 30, 35 ve 40. seviyelerde genişler; profilinde kullanmak istediğin görseli seç. "
       ],
       [
         null,
@@ -997,7 +997,7 @@
       [
         null,
         "20. seviye · Meydan Okuyan Papi",
-        "Üçüncü parkur. Düello. Karakter koleksiyonu. İkinci vitrin. Üst giyim. Oyun başına 2 joker. Papağanla Sohbet. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
+        "Üçüncü parkur. Düello. İkinci vitrin. Üst giyim. Oyun başına 2 joker. Papağanla Sohbet. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
       ],
       [
         null,
