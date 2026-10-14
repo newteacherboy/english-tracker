@@ -1,0 +1,24 @@
+name: Service worker performance cache
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/sw.js'
+      - 'tests/sw-versioned-cache.test.cjs'
+      - '.github/workflows/sw-performance-cache.yml'
+  push:
+    paths:
+      - 'ingilizce/sw.js'
+      - 'tests/sw-versioned-cache.test.cjs'
+      - '.github/workflows/sw-performance-cache.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/sw.js
+      - run: node --test tests/sw-versioned-cache.test.cjs tests/account-deletion-sw.test.cjs
