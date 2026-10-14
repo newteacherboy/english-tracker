@@ -1,0 +1,51 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {chromium}=require('playwright');
+(async()=>{
+ const exe=process.env.FRIENDS_BROWSER_PATH,browser=await chromium.launch({headless:true,executablePath:exe||undefined,args:['--no-sandbox','--disable-dev-shm-usage'],env:{...process.env,LD_LIBRARY_PATH:exe?path.dirname(exe):process.env.LD_LIBRARY_PATH||''}});
+ const root=path.resolve('ingilizce'),errors=[];
+ for(const [width,height] of [[360,720],[390,844],[430,932]]){
+ const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1});
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.route('https://island.test/ingilizce/**',route=>{
+   const url=new URL(route.request().url()),file=path.join(root,url.pathname.replace('/ingilizce/',''));
+   if(fs.existsSync(file)&&fs.statSync(file).isFile())return route.fulfill({path:file});
+   return route.fulfill({body:'',status:404});
+ });
+ await page.goto('https://island.test/ingilizce/missing.html').catch(()=>{});
+ await page.setContent('<base href="https://island.test/ingilizce/"><div id="asmacaOyunOverlay" class="game-modal-overlay" style="display:flex"><div class="game-modal-content" style="max-width:480px"><div class="game-title">Harf Avı</div><div id="asmacaOyunEkrani" style="display:block"></div><div id="asmacaBitisEkrani" style="display:none"></div></div></div>');
+ await page.addStyleTag({path:path.join(root,'harf-adasi.css')});
+ await page.addScriptTag({content:"let asmacaKelimeler=[{ingilizce:'cat',turkce:'kedi'},{ingilizce:'banana',turkce:'muz'}];let asmacaAktifIndex=0,asmacaAktifKelime='',asmacaTahminEdilenHarfler=[],asmacaYanlisSayisi=0,asmacaPuan=0,asmacaCan=5,asmacaKelimeBaslangicZamani=0,asmacaKombo=0,asmacaDogruSayi=0,asmacaYanlisSayi=0;window.level=30;window.finished=0;window.credits=0;window.wrongs=0;window.scores=0;window.OC={dogru:(mult)=>window.scores+=Math.round(100*mult),yanlis:()=>window.wrongs++,puan:()=>window.scores-window.wrongs*10};function asmacaSonrakiKelime(){};function asmacaOyunuBitir(){window.finished++};function asmacaOyunKapat(){document.getElementById('asmacaOyunOverlay').style.display='none';};function asmacaOyunAc(){let el=document.getElementById('asmacaOyunOverlay');el.style.display='flex';document.getElementById('asmacaOyunEkrani').style.display='block';asmacaAktifIndex=0;asmacaSonrakiKelime();}function genelSesEfektiCal(){};"});
+ await page.addScriptTag({path:path.join(root,'harf-adasi.js')});
+ await page.evaluate(()=>window.asmacaOyunAc());
+ await page.locator('.ia-screen').waitFor();
+ assert.equal(await page.locator('.ia-slot').count(),3);
+ assert.equal(await page.locator('[data-ia-letter]').count(),12);
+ assert.equal(await page.locator('.ia-booster').count(),3);
+ assert.equal(await page.locator('[data-ia-boost-count]').textContent(),'🃏 Kalan joker: 3/3');
+ assert(await page.locator('[data-ia-skip]').isDisabled());
+ if(width===390)await page.screenshot({path:'/tmp/harf-adasi-initial.png',fullPage:false});
+ const dims=await page.evaluate(()=>({h:document.querySelector('.ia-screen').scrollHeight,ch:document.querySelector('.ia-screen').clientHeight,width:document.querySelector('.ia-screen').scrollWidth,cw:document.querySelector('.ia-screen').clientWidth}));
+ assert(dims.h<=dims.ch+3,JSON.stringify(dims));assert(dims.width<=dims.cw+2,JSON.stringify(dims));
+ const fake=await page.evaluate(()=>[...document.querySelectorAll('[data-ia-letter]')].find(x=>!('CAT'.includes(x.textContent)))?.dataset.iaLetter);
+ await page.locator('[data-ia-letter="'+fake+'"]').click();
+ assert.equal(await page.locator('.ia-hearts .lost').count(),1);
+ assert(await page.locator('[data-ia-skip]').isDisabled());
+ const fake2=await page.evaluate(()=>[...document.querySelectorAll('[data-ia-letter]')].find(x=>!('CAT'.includes(x.textContent))&&!x.disabled)?.dataset.iaLetter);
+ await page.locator('[data-ia-letter="'+fake2+'"]').click();
+ assert(!(await page.locator('[data-ia-skip]').isDisabled()));
+ await page.locator('[data-ia-boost="reveal"]').click();
+ assert.equal(await page.locator('[data-ia-boost-count]').textContent(),'🃏 Kalan joker: 2/3');
+ await page.screenshot({path:'/tmp/harf-adasi-390.png',fullPage:false});
+ await page.locator('[data-ia-skip]').click();
+ await page.waitForFunction(()=>document.querySelector('[data-ia-clue]')?.textContent==='muz',{timeout:6000});
+ assert.equal(await page.locator('.ia-slot').count(),6);
+ for(const ch of ['B','A','N'])await page.locator('[data-ia-letter="'+ch+'"]').click();
+ await page.waitForFunction(()=>window.finished===1,{timeout:6000});
+ assert.equal(await page.evaluate(()=>window.wrongs),1);
+ assert.equal(await page.evaluate(()=>window.scores),100);
+ assert.equal(await page.locator('#asmacaOyunOverlay.ia-playing').count(),0);
+ await page.close();
+ }
+ assert.deepEqual(errors,[]);await browser.close();
+ console.log('PASS Papi Harf Adasi 360/390/430 px, no scroll, correct/wrong, boost, skip, score and finish');
+})().catch(err=>{console.error(err);process.exit(1);});

@@ -1,0 +1,38 @@
+name: Papi Harf Adasi QA
+on:
+  push:
+    paths:
+      - 'ingilizce/harf-adasi*'
+      - 'ingilizce/index.html'
+      - 'tests/harf-adasi*'
+      - '.github/workflows/harf-adasi-qa.yml'
+  pull_request:
+    paths:
+      - 'ingilizce/harf-adasi*'
+      - 'ingilizce/index.html'
+      - 'tests/harf-adasi*'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  island:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/harf-adasi.js
+      - run: node --test tests/harf-adasi.test.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/harf-adasi-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: papi-harf-adasi-mobile-qa
+          path: |
+            /tmp/harf-adasi-390.png
+            /tmp/harf-adasi-initial.png
+          if-no-files-found: ignore
