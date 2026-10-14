@@ -66,7 +66,7 @@ const audio='<div class="ds-audio">'+button('🎧 Dinle','listen')+button('Türk
 if(task.kind==='scene')area.innerHTML='<p class="ds-story-text">'+esc(task.text)+'</p>'+audio;
 if(task.kind==='teach'){area.innerHTML='<p>'+esc(task.text)+'</p><div class="ds-cards">'+task.cards.map((x,i)=>'<button type="button" data-card="'+i+'"><b lang="en">'+esc(x.en)+'</b><span hidden>'+esc(x.tr)+'</span><small>Dinle ve keşfet</small></button>').join('')+'</div>';}
 if(['choice','listen'].includes(task.kind))area.innerHTML='<p>'+esc(task.instruction)+'</p>'+(task.kind==='listen'?audio:'<h3>'+esc(task.prompt)+'</h3>'+audio)+'<div class="ds-options">'+task.options.map((x,i)=>'<button type="button" data-answer="'+i+'">'+esc(x)+'</button>').join('')+'</div>';
-if(task.kind==='order')area.innerHTML='<p>“'+esc(task.tr)+'” demek için taşları sırala.</p><div class="ds-sentence" aria-live="polite">Cümlen burada oluşacak…</div><div class="ds-tokens">'+task.tokens.map((x,i)=>({x,i})).sort(()=>Math.random()-.5).map(({x,i})=>'<button type="button" data-token="'+i+'">'+esc(x)+'</button>').join('')+'</div>'+audio;
+if(task.kind==='order')area.innerHTML='<p>“'+esc(task.tr)+'” demek için taşları sırala.</p><div class="ds-sentence" aria-live="polite">Cümlen burada oluşacak…</div><div class="ds-tokens">'+task.tokens.map((x,i)=>({x,i})).sort(()=>Math.random()-.5).map(({x,i})=>'<button type="button" data-token="'+i+'">'+esc(x)+'</button>').join('')+'</div>';
 actions.innerHTML=task.kind==='order'?button('Yeniden sırala','clear')+button('Kontrol et','submit','ds-primary'):['choice','listen'].includes(task.kind)?'':button('Devam et ›','submit','ds-primary');
 modal.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action));modal.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>advance(Number(b.dataset.answer),b));modal.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.card);selectedCards.add(i);b.querySelector('span').hidden=false;b.classList.add('discovered');speak(task.cards[i].en)});modal.querySelectorAll('[data-token]').forEach(b=>b.onclick=()=>{if(busy||accepted||b.disabled)return;b.disabled=true;built.push(Number(b.dataset.token));modal.querySelector('.ds-sentence').textContent=built.map(i=>task.tokens[i]).join(' ')});
 }
@@ -109,6 +109,7 @@ function renderNewExercises(){
  if(displayCursor>=steps.length){finish();return}
  shell();accepted=false;
  const task=steps[displayCursor],area=modal.querySelector('.ds-task'),actions=modal.querySelector('.ds-actions');
+ if(task.mode==='dialogue')task.promptLanguage=chapter.curatedDialogue?.prompt===task.prompt?'en':'tr';
  modal.querySelector('.ds-step-label').textContent=(displayCursor+1)+'/'+steps.length+' · '+task.label;
  const progress=modal.querySelector('.ds-progress');
  progress.setAttribute('aria-valuemax',String(steps.length));progress.setAttribute('aria-valuenow',String(displayCursor));progress.querySelector('i').style.width=displayCursor/steps.length*100+'%';
