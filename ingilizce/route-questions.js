@@ -57,12 +57,12 @@ function mountSchool(root,step,total,combo){root.classList.add('rq-approved');ro
 function updateSchool(root,combo){if(!root)return;const previous=Number(root.dataset.rqLastCombo||0);root.dataset.rqLastCombo=String(combo||0);if(root.id==='bzPerde'&&combo>previous&&combo%3===0)celebrate(root,0);const el=root.querySelector('[data-rq-combo]');if(el)el.textContent=combo>0?(combo-1)%3+1:0;const e=root.querySelector('[data-rq-energy]');if(e)e.textContent=window.genelEnerjiKalan??'–';}
 function celebrate(root,gain){
  if(!root||gain<0)return;
- if(root.id!=='bzPerde'&&gain<1)return;
+ if(gain<1)return;
  const existing=root.querySelector('.rq-combo-burst');
- if(existing&&root.id==='bzPerde'){if(gain>0)existing.querySelector('b').textContent='+'+Number(gain)+' enerji';return;}
+ if(existing){if(gain>0)existing.querySelector('b').textContent='+'+Number(gain)+' enerji';return;}
  const el=document.createElement('div');el.className='rq-combo-burst';el.setAttribute('role','status');
  el.innerHTML='<strong>3 doğru üst üste!</strong><b>'+(gain>0?'+'+Number(gain)+' enerji':'Harika seri!')+'</b>';
- if(root.id==='bzPerde'){
+ {
   const feathers=document.createElement('div');feathers.className='rq-feather-flight';feathers.setAttribute('aria-hidden','true');
   for(let i=0;i<8;i++){const f=document.createElement('span');f.className='rq-flying-feather';f.style.setProperty('--i',i);f.style.setProperty('--spin',(i%2?-1:1)*24+'deg');feathers.append(f);}
   el.append(feathers);root.classList.add('rq-combo-active');
