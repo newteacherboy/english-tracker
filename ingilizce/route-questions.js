@@ -33,7 +33,7 @@ function renderTask(s,area,c){
    r.onerror=()=>{received=true;fail('Ses alınamadı.')};r.onend=()=>{if(!received)fail('Ses algılanmadı.')};try{r.start();recognitionTimer=setTimeout(()=>fail('Dinleme süresi doldu.'),8000)}catch{fail('Mikrofon açılamadı.')}
   },'rq-microphone');mic.setAttribute('aria-label','Mikrofona konuş');area.append(mic,status,fallback);speak(text);return true;
  }
- const phrase=sentence(s.k,pool,en),full=en(phrase),translation=tr(phrase);if(s.tip.startsWith('pattern')||s.tip==='wordOrder'){area.dataset.rqEn=full;area.dataset.rqTr=translation;}
+ const phrase=sentence(s.k,c.targetPool||pool,en),full=en(phrase),translation=tr(phrase);if(s.tip.startsWith('pattern')||s.tip==='wordOrder'){area.dataset.rqEn=full;area.dataset.rqTr=translation;}
  if(s.tip==='wordOrder'||s.tip==='patternOrder'){
   const multi=full.trim().split(/\s+/).filter(Boolean),letters=multi.length<2,tokens=letters?Array.from(full):multi,join=letters?'':' ';let picked=[];
   put('<div class="bz-soru">'+esc(translation)+'</div><div class="rq-built" aria-live="polite"></div><div class="rq-token-pool"></div>');
