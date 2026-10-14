@@ -1,7 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync('ingilizce/index.html','utf8');
-const anchor=html.indexOf('HAFTALIK HEDEF',html.indexOf('GÖREVLER'));
-const start=html.lastIndexOf('  function haftaKodu()',html.indexOf('  function hedefKontrol() {',anchor));
+const start=html.indexOf('  function haftaKodu()');
 const end=html.indexOf('  /* =========================================================\n     BECERİ RADARI SVG',start);
 assert(start>0&&end>start,'weekly goal block exists');
 const source=html.slice(start,end);
