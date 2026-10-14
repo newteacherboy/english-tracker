@@ -16,7 +16,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  await page.evaluate(()=>{window.DMStoryExercises={norm:s=>s.toLowerCase(),speak(){},listen:async()=>({status:'heard',text:'cat'})};window.answers=[];});
  await page.addScriptTag({content:fs.readFileSync('ingilizce/story-v2-ui.js','utf8')});
  await page.evaluate(()=>DMStoryV2UI.render({area:document.getElementById('area'),actions:document.getElementById('actions'),task:{kind:'final',en:'cat',tr:'kedi'},cards:[{en:'cat',tr:'kedi'},{en:'dog',tr:'köpek'}],onSubmit:async a=>{answers.push(a);return {correct:a==='cat'}},onNote(){}}));
- assert.equal(await page.locator('.ds-options button').count(),2);assert.equal(await page.locator('.papi-microphone').count(),0);await page.getByRole('button',{name:'cat',exact:true}).click();assert.deepEqual(await page.evaluate(()=>answers),['cat']);
+ assert.equal(await page.locator('.ds-options button').count(),2);assert.equal(await page.locator('.papi-microphone').count(),0);await page.getByRole('button',{name:'kedi',exact:true}).click();assert.deepEqual(await page.evaluate(()=>answers),['cat']);
  // School-route card renderer keeps a missed card until its correct option is chosen.
  await page.setContent('<div id="school"></div>');
  const html=fs.readFileSync('ingilizce/index.html','utf8'),a=html.indexOf('  function sesliFinal(s, alan)'),b=html.indexOf('  /* 🎈 Risk',a);
