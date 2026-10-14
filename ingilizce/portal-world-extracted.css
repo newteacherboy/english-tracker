@@ -1,0 +1,875 @@
+/* Dünya parkuru: kaydırma çubuğu yok, parmak/fare ile sürükle */
+.bc-kaydir { cursor:grab; touch-action:pan-y; overscroll-behavior:contain; }
+.bc-kaydir.suruk { cursor:grabbing; scroll-behavior:auto; }
+.bc-kaydir.suruk * { pointer-events:none; }
+.bc-akis-btn { border:none; border-radius:12px; padding:8px 10px; background:rgba(255,255,255,.16); color:#fff; font:900 12px 'Nunito',sans-serif; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+/* Büyü Akademisi soru ekranı dünyanın temasında */
+#tab-buyuakademisi.bc-tema.dc-fullscreen-overlay { background:var(--bcz) !important; }
+#tab-buyuakademisi.bc-tema .ba-shell { background:transparent !important; position:relative; z-index:1; }
+.bc-amb-kat { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.bc-amb-kat span { position:absolute; font-size:var(--s); opacity:var(--o); animation:var(--a) var(--d) ease-in-out infinite; animation-delay:var(--g); }
+.bc-dunya-rozet { position:fixed; left:50%; top:calc(8px + env(safe-area-inset-top,0px)); transform:translateX(-50%); z-index:2; padding:5px 12px; border-radius:12px; background:rgba(0,0,0,.35); color:#fff; font:800 12px 'Nunito',sans-serif; pointer-events:none; }
+/* Canlı bildirim kartı */
+.cb-kart { position:fixed; right:12px; top:calc(70px + env(safe-area-inset-top,0px)); z-index:100000017; display:flex; align-items:center; gap:10px; width:min(92vw,360px); padding:12px; border-radius:18px; background:#fff; color:#3b2c66; box-shadow:0 14px 34px rgba(59,44,102,.3); font:800 13px 'Nunito',sans-serif; transform:translateX(120%); transition:transform .5s cubic-bezier(.2,.9,.3,1.2); }
+.cb-kart.gor { transform:translateX(0); }
+.cb-ikon { width:44px; height:44px; flex-shrink:0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; background:linear-gradient(145deg,#fff7d1,#ffe0ef); animation:cbZipla 1s ease-in-out 3; overflow:hidden; }
+.cb-ikon svg { width:100%; height:100%; }
+.cb-kart span.m { flex:1; line-height:1.4; }
+.cb-kart small { display:block; font-size:11px; color:#8a78b8; font-weight:700; }
+.cb-kart button { border:none; background:#f1e9ff; color:#7c3aed; border-radius:10px; padding:6px 9px; font:900 12px 'Nunito',sans-serif; cursor:pointer; }
+/* Düello daveti */
+.dv-perde { position:fixed; inset:0; z-index:100000018; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(20,12,45,.6); backdrop-filter:blur(5px); font-family:system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif; }
+.dv-kart { width:min(92vw,370px); border-radius:28px; padding:24px 18px 18px; text-align:center; color:#fff; background:radial-gradient(circle at 50% 0%,rgba(255,107,107,.45),transparent 60%), linear-gradient(160deg,#2a1a5e,#1a1038); box-shadow:0 24px 60px rgba(0,0,0,.45); animation:dvGel .55s cubic-bezier(.2,.9,.3,1.4) both; }
+.dv-kilic { font-size:62px; animation:dvKilic 1.2s ease-in-out infinite; }
+.dv-kart h3 { font:700 22px 'Fredoka',sans-serif; margin-top:6px; }
+.dv-kart p { font-size:13.5px; font-weight:700; color:#d8cbff; margin:8px 0 16px; line-height:1.5; }
+.dv-kart button { width:100%; border:none; border-radius:16px; padding:13px; font:900 15px 'Nunito',sans-serif; cursor:pointer; margin-top:8px; }
+.dv-kabul { background:linear-gradient(120deg,#6bcb77,#2f9e5a); color:#fff; }
+.dv-vaz { background:rgba(255,255,255,.14); color:#fff; }
+/* Keşfet: düellolarım aç/kapa */
+.dl-kart.dl-katla h4 { cursor:pointer; display:flex; align-items:center; gap:8px; margin-bottom:0 !important; }
+.dl-kart.dl-katla h4::after { content:'▾'; margin-left:auto; transition:transform .2s; }
+.dl-kart.dl-katla.kapali h4::after { transform:rotate(-90deg); }
+.dl-kart.dl-katla.kapali .dl-alan { display:none; }
+.dl-kart.dl-katla:not(.kapali) .dl-alan { margin-top:6px; }
+.dl-rozet { font:900 11px 'Nunito',sans-serif; color:#fff; background:#ff4d6d; border-radius:10px; padding:2px 8px; animation:cbZipla 1s ease-in-out infinite; }
+@keyframes cbZipla { 50% { transform:translateY(-3px) scale(1.06); } }
+@keyframes dvGel { from { opacity:0; transform:scale(.7) rotate(-4deg); } }
+@keyframes dvKilic { 0%,100% { transform:rotate(-10deg); } 50% { transform:rotate(10deg) scale(1.1); } }
+@keyframes bcSuzul { 50% { transform:translateY(-12px); } }
+@keyframes bcYatay { 0%,100% { transform:translateX(-30px); } 50% { transform:translateX(30px); } }
+@keyframes bcPirilti { 0%,100% { opacity:.15; transform:scale(.7); } 50% { opacity:1; transform:scale(1.15); } }
+@keyframes bcYuksel { 0% { transform:translateY(40px); opacity:0; } 20% { opacity:.8; } 100% { transform:translateY(-160px); opacity:0; } }
+@media (prefers-reduced-motion: reduce) { .cb-kart, .cb-ikon, .dv-kart, .dv-kilic, .dl-rozet, .bc-amb-kat span { animation:none !important; transition:none !important; } }
+/* =========================================================
+   ☁️ GÖKYÜZÜ KULESİ — YENİ PARKUR TASARIMI
+   Mevcut parkur mantığı korunur, sadece görünüm yenilenir.
+   ========================================================= */
+#tab-dunya.dc-fullscreen-overlay {
+    background:
+        linear-gradient(
+            180deg,
+            #8190f5 0%,
+            #aab8fb 48%,
+            #dce5ff 100%
+        ) !important;
+    padding: 0 !important;
+}
+/* Ana alan */
+#tab-dunya.dc-fullscreen-overlay.active {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99990 !important;
+    overflow: hidden !important;
+}
+#dunyaAlan {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+    margin: 0 auto;
+}
+/* =========================================================
+   ÜST BİLGİ PANELİ
+   ========================================================= */
+.bc-hud {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding:
+        calc(10px + env(safe-area-inset-top, 0px))
+        14px
+        11px;
+    background: rgba(34, 29, 76, .94);
+    color: #fff;
+    border-bottom: 3px solid rgba(255,255,255,.18);
+    box-shadow:
+        0 8px 25px rgba(43, 39, 100, .28);
+    z-index: 30;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+}
+.bc-kapat {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    border: 2px solid rgba(255,255,255,.2) !important;
+    background: rgba(255,255,255,.14) !important;
+    color: #fff !important;
+    font-size: 17px !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,.2);
+    cursor: pointer;
+}
+.bc-rutbe {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background:
+        linear-gradient(
+            145deg,
+            #f8d99b,
+            #c77b35
+        );
+    border: 3px solid rgba(255,255,255,.75);
+    box-shadow:
+        0 5px 0 rgba(92,49,23,.28),
+        0 0 0 4px rgba(255,255,255,.08);
+    font-size: 23px !important;
+    animation: gokyuzuRutbe 2s ease-in-out infinite;
+}
+@keyframes gokyuzuRutbe {
+    50% {
+        transform: translateY(-4px);
+    }
+}
+.bc-bar {
+    flex: 1;
+    min-width: 0;
+}
+.bc-bar b {
+    display: block;
+    color: #fff;
+    font:
+        900 15px 'Fredoka',
+        sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.bc-bar small {
+    display: block;
+    margin-top: 2px;
+    color: rgba(255,255,255,.88);
+    font:
+        800 11px 'Nunito',
+        sans-serif;
+}
+.bc-bar .cubuk {
+    height: 9px !important;
+    margin-top: 6px !important;
+    border-radius: 10px !important;
+    background: rgba(255,255,255,.20) !important;
+    overflow: hidden;
+    box-shadow:
+        inset 0 1px 2px rgba(0,0,0,.15);
+}
+.bc-bar .cubuk i {
+    height: 100% !important;
+    border-radius: 10px !important;
+    background:
+        linear-gradient(
+            90deg,
+            #ffd166,
+            #ff9f68,
+            #ff6b9d
+        ) !important;
+    box-shadow:
+        0 0 8px rgba(255,209,102,.45);
+    animation: bcDolum 1.2s ease both;
+}
+/* =========================================================
+   HARİTA
+   ========================================================= */
+.bc-kaydir {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 100px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    background:
+        linear-gradient(
+            180deg,
+            #8997f3 0%,
+            #abbafa 50%,
+            #dce5ff 100%
+        );
+}
+.bc-kaydir::-webkit-scrollbar {
+    display: none;
+}
+.bc-harita {
+    position: relative;
+    min-height: 100%;
+}
+/* Dünya bantlarının üstüne yumuşak atmosfer */
+.bc-bant {
+    position: absolute;
+    left: 0;
+    right: 0;
+    opacity: .72;
+    background-image:
+        radial-gradient(
+            circle at 20% 25%,
+            rgba(255,255,255,.18) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 75% 70%,
+            rgba(255,255,255,.14) 0 3px,
+            transparent 4px
+        );
+}
+/* Dünya etiketi */
+.bc-dunya-ad {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%);
+    top: 16px !important;
+    padding: 7px 15px !important;
+    border-radius: 18px !important;
+    background:
+        rgba(44,39,99,.58) !important;
+    border:
+        2px solid rgba(255,255,255,.28);
+    box-shadow:
+        0 5px 14px rgba(35,39,100,.16);
+    color: #fff !important;
+    font:
+        900 12px 'Nunito',
+        sans-serif !important;
+    backdrop-filter: blur(8px);
+    white-space: nowrap;
+}
+/* =========================================================
+   YOL
+   ========================================================= */
+.bc-yol {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    opacity: .9;
+    filter:
+        drop-shadow(
+            0 2px 2px rgba(69,76,150,.15)
+        );
+}
+/* =========================================================
+   SEVİYE ADASI
+   ========================================================= */
+.bc-d {
+    position: absolute;
+    width: 82px !important;
+    height: 70px !important;
+    border: none !important;
+    border-radius:
+        28px
+        28px
+        22px
+        22px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding-top: 2px;
+    color: #4b3c88 !important;
+    font:
+        900 21px 'Fredoka',
+        sans-serif !important;
+    cursor: pointer;
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #eef2ff 68%,
+            #d9e0ff 100%
+        ) !important;
+    border:
+        4px solid rgba(255,255,255,.92) !important;
+    box-shadow:
+        0 9px 0 #8795d9,
+        0 15px 22px rgba(65,74,150,.22),
+        0 0 0 5px rgba(255,255,255,.18);
+    transition:
+        transform .18s ease,
+        filter .18s ease,
+        box-shadow .18s ease;
+    z-index: 8;
+}
+/* Adanın altındaki küçük gölge/zemin */
+.bc-d::before {
+    bottom: -11px;
+    width: 62px;
+    height: 17px;
+    border-radius: 50%;
+    background:
+        rgba(112,126,205,.48);
+    filter: blur(2px);
+    z-index: -1;
+}
+/* Ada üstündeki küçük parıltı */
+.bc-d::after {
+    content: "✦";
+    color: rgba(255,255,255,.9);
+    font-size: 10px;
+}
+/* Tamamlanmış */
+.bc-d.bitti {
+    background:
+        linear-gradient(
+            180deg,
+            #ecfff4 0%,
+            #c8f7dc 70%,
+            #a9eac8 100%
+        ) !important;
+    color: #16824d !important;
+    box-shadow:
+        0 9px 0 #61b98c,
+        0 15px 22px rgba(45,145,96,.20),
+        0 0 0 5px rgba(255,255,255,.2);
+}
+/* Tamamlanmış tik */
+.bc-d.bitti {
+    font-size: 28px !important;
+}
+/* Sıradaki seviye */
+.bc-d.simdi {
+    width: 94px !important;
+    height: 78px !important;
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f7fbff 58%,
+            #dce8ff 100%
+        ) !important;
+    color: #493487 !important;
+    box-shadow:
+        0 10px 0 #8795dc,
+        0 18px 28px rgba(67,75,157,.26),
+        0 0 0 7px rgba(255,255,255,.32);
+    z-index: 20;
+    animation:
+        gokyuzuAda 1.8s ease-in-out infinite;
+}
+@keyframes gokyuzuAda {
+    0%,100% {
+        transform: translate(-50%,-50%) translateY(0);
+    }
+    50% {
+        transform: translate(-50%,-50%) translateY(-6px);
+    }
+}
+/* Aktif adanın ışık halkası */
+.bc-d.simdi::before {
+    width: 78px;
+    height: 21px;
+    background:
+        rgba(92,111,215,.38);
+}
+/* Kilitli */
+.bc-d.kilit {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(238,242,255,.72),
+            rgba(198,207,239,.65)
+        ) !important;
+    color: #7c86a8 !important;
+    border-color:
+        rgba(255,255,255,.55) !important;
+    box-shadow:
+        0 8px 0 rgba(112,124,182,.48),
+        0 12px 18px rgba(65,74,150,.12);
+}
+.bc-d.kilit::after {
+    content: "🔒";
+    top: 7px;
+    right: 8px;
+    font-size: 11px;
+}
+/* =========================================================
+   KARAKTER
+   ========================================================= */
+.bc-d .oyuncu {
+    position: absolute;
+    bottom: 61px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    filter:
+        drop-shadow(
+            0 7px 6px rgba(48,53,110,.28)
+        );
+    pointer-events: none;
+    animation:
+        gokyuzuKarakter 1.7s ease-in-out infinite;
+}
+@keyframes gokyuzuKarakter {
+    0%,100% {
+        transform:
+            translateX(-50%)
+            translateY(0);
+    }
+    50% {
+        transform:
+            translateX(-50%)
+            translateY(-8px);
+    }
+}
+.bc-d .oyuncu svg {
+    border-radius: 50%;
+}
+/* =========================================================
+   OYNA BUTONU
+   ========================================================= */
+.bc-d .baslat {
+    position: absolute;
+    top: 83px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 7px 15px !important;
+    border-radius: 14px !important;
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f2f4ff
+        ) !important;
+    color: #493487 !important;
+    border:
+        2px solid rgba(255,255,255,.95);
+    box-shadow:
+        0 5px 12px rgba(51,57,126,.22),
+        0 2px 0 #d3d8f5;
+    font:
+        900 12px 'Nunito',
+        sans-serif !important;
+    z-index: 30;
+}
+/* =========================================================
+   SANDIK
+   ========================================================= */
+.bc-sandikr {
+    position: absolute;
+    transform: translate(-50%,-50%);
+    font-size: 31px;
+    z-index: 12;
+    filter:
+        drop-shadow(
+            0 5px 4px rgba(55,60,130,.22)
+        );
+    animation:
+        gokyuzuSandik 2.2s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes gokyuzuSandik {
+    0%,100% {
+        transform:
+            translate(-50%,-50%)
+            translateY(0)
+            rotate(0);
+    }
+    50% {
+        transform:
+            translate(-50%,-50%)
+            translateY(-7px)
+            rotate(5deg);
+    }
+}
+.bc-sandikr.acildi {
+    opacity: .35;
+    filter:
+        grayscale(1)
+        drop-shadow(
+            0 2px 2px rgba(0,0,0,.1)
+        );
+    animation: none;
+}
+/* =========================================================
+   KARAKTER ÖDÜLÜ
+   ========================================================= */
+.bc-kr {
+    width: 40px !important;
+    height: 40px !important;
+    border:
+        3px solid rgba(255,255,255,.9) !important;
+    border-radius: 50% !important;
+    background:
+        rgba(255,255,255,.92) !important;
+    box-shadow:
+        0 5px 12px rgba(53,60,130,.22) !important;
+    z-index: 13;
+}
+.bc-kr:not(.acik) svg {
+    filter:
+        grayscale(1)
+        brightness(.75)
+        opacity(.35);
+}
+/* =========================================================
+   BOSS
+   ========================================================= */
+.bc-d.boss {
+    width: 98px !important;
+    height: 98px !important;
+    border-radius: 32px !important;
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            #fff6c9 0%,
+            var(--boss) 48%,
+            #59429a 100%
+        ) !important;
+    border:
+        5px solid rgba(255,255,255,.88) !important;
+    box-shadow:
+        0 11px 0 rgba(73,57,130,.48),
+        0 18px 30px rgba(61,51,125,.30),
+        0 0 0 7px rgba(255,255,255,.16) !important;
+    font-size: 45px !important;
+    z-index: 15;
+}
+.bc-d.boss small {
+    bottom: -23px !important;
+    padding: 5px 10px !important;
+    border-radius: 12px !important;
+    background:
+        rgba(49,43,96,.78) !important;
+    backdrop-filter: blur(5px);
+    font:
+        900 10px 'Nunito',
+        sans-serif !important;
+    color: #fff !important;
+}
+/* =========================================================
+   BULUT / ATMOSFER
+   ========================================================= */
+.bc-harita .amb {
+    z-index: 2;
+    filter:
+        drop-shadow(
+            0 4px 5px rgba(91,102,174,.12)
+        );
+}
+/* =========================================================
+   MOBİL
+   ========================================================= */
+@media (max-width: 600px) {
+    #dunyaAlan {
+        width: 100%;
+    }
+    .bc-hud {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .bc-bar b {
+        font-size: 13px;
+    }
+    .bc-bar small {
+        font-size: 10px;
+    }
+    .bc-d {
+        width: 76px !important;
+        height: 66px !important;
+    }
+    .bc-d.simdi {
+        width: 88px !important;
+        height: 74px !important;
+    }
+    .bc-d.boss {
+        width: 90px !important;
+        height: 90px !important;
+    }
+}
+/* =========================================================
+   🌈 GERÇEK UÇAN RENKLİ ADALAR
+   ========================================================= */
+.bc-d {
+    overflow: visible !important;
+    position: absolute !important;
+    isolation: isolate;
+    width: 76px !important;
+    height: 58px !important;
+    transform: translate(-50%, -50%);
+        background:
+    radial-gradient(
+        circle at 35% 25%,
+        #ffffff 0%,
+        var(--ada-acik) 25%,
+        var(--ada-koyu) 100%
+    ) !important;
+    border: 5px solid rgba(255,255,255,.95) !important;
+    border-radius: 50% 50% 46% 46% / 58% 58% 42% 42% !important;
+    box-shadow:
+        0 9px 0 rgba(70,70,130,.28),
+        0 15px 22px rgba(60,70,140,.20) !important;
+    z-index: 10;
+    transition:
+        transform .25s ease,
+        filter .25s ease;
+}
+/* ---------------------------------------------------------
+   🪨 ADANIN ALTINDAKİ KAYA
+   --------------------------------------------------------- */
+.bc-d::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -32px;
+    width: 72px;
+    height: 42px;
+    transform: translateX(-50%);
+    background:
+        linear-gradient(
+            180deg,
+            #aeb9e8 0%,
+            #8c99d0 45%,
+            #6978b5 100%
+        );
+    clip-path: polygon(
+        5% 0,
+        95% 0,
+        82% 30%,
+        68% 42%,
+        58% 100%,
+        42% 100%,
+        32% 42%,
+        18% 30%
+    );
+    filter:
+        drop-shadow(
+            0 8px 5px rgba(55,65,125,.28)
+        );
+    z-index: -2;
+}
+/* ---------------------------------------------------------
+   ☁️ ADANIN ÜSTÜNDE PARLAKLIK
+   --------------------------------------------------------- */
+.bc-d::after {
+    content: "";
+    position: absolute;
+    left: 9px;
+    right: 9px;
+    top: 5px;
+    height: 18px;
+    border-radius: 50%;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.9),
+            rgba(255,255,255,0)
+        );
+    pointer-events: none;
+    z-index: 3;
+}
+/* =========================================================
+   🎨 TAMAMLANMIŞ ADALAR
+   ========================================================= */
+.bc-d.bitti {
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #ffffff 0%,
+            #dcffe9 18%,
+            #72d99d 55%,
+            #39b879 100%
+        ) !important;
+    border-color: #ffffff !important;
+    box-shadow:
+        0 9px 0 #31945f,
+        0 15px 24px rgba(40,150,90,.28),
+        0 0 0 5px rgba(255,255,255,.25) !important;
+}
+/* =========================================================
+   🔵 SIRADAKİ ADA
+   ========================================================= */
+.bc-d.simdi {
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #ffffff 0%,
+            #e5f2ff 18%,
+            #75baff 55%,
+            #4c82e8 100%
+        ) !important;
+    border-color: #ffffff !important;
+    box-shadow:
+        0 10px 0 #4167ba,
+        0 18px 32px rgba(55,90,190,.35),
+        0 0 0 7px rgba(255,255,255,.30) !important;
+    animation: adaUcuyor 2s ease-in-out infinite;
+}
+/* =========================================================
+   🔒 KİLİTLİ ADALAR
+   ========================================================= */
+.bc-d.kilit {
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #ffffff 0%,
+            #f1f3ff 20%,
+            #c7cde9 55%,
+            #9ba6d0 100%
+        ) !important;
+    border-color: rgba(255,255,255,.9) !important;
+    opacity: .92;
+    box-shadow:
+        0 9px 0 #717da8,
+        0 13px 20px rgba(65,70,120,.18) !important;
+}
+/* =========================================================
+   ⭐ 3 YILDIZ
+   ========================================================= */
+.ada-yildizlar {
+    position: absolute;
+    left: 50%;
+    top: -28px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    width: 72px;
+    z-index: 30;
+    filter:
+        drop-shadow(
+            0 2px 3px rgba(70,60,130,.25)
+        );
+}
+.ada-yildizlar span {
+    color: #ffd83d;
+    font-size: 15px;
+    line-height: 1;
+    text-shadow:
+        0 1px 0 #fff,
+        0 2px 3px rgba(90,70,120,.25);
+    animation:
+        yildizUc 2.2s ease-in-out infinite;
+}
+.ada-yildizlar span:nth-child(1) {
+    transform:
+        translateY(4px)
+        rotate(-12deg);
+}
+.ada-yildizlar span:nth-child(2) {
+    font-size: 19px;
+}
+.ada-yildizlar span:nth-child(3) {
+    transform:
+        translateY(4px)
+        rotate(12deg);
+}
+/* =========================================================
+   ✓ TAMAMLANAN SEVİYE TİKİ
+   ========================================================= */
+.ada-tik {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background:
+        linear-gradient(
+            180deg,
+            #4de18d,
+            #19ad65
+        );
+    color: white;
+    font:
+        900 27px 'Nunito',
+        sans-serif;
+    box-shadow:
+        0 4px 0 #13864f,
+        0 5px 10px rgba(20,130,75,.25);
+    text-shadow:
+        0 1px 1px rgba(0,0,0,.12);
+    position: relative;
+    z-index: 8;
+}
+/* =========================================================
+   🔢 SEVİYE NUMARASI
+   ========================================================= */
+.ada-numara {
+    font:
+        900 23px 'Fredoka',
+        sans-serif;
+    color: #4b4387;
+    text-shadow:
+        0 2px 0 white;
+    position: relative;
+    z-index: 8;
+}
+/* =========================================================
+   🔒 KİLİT
+   ========================================================= */
+.ada-kilit {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 21px;
+    height: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background:
+        rgba(255,255,255,.85);
+    font-size: 11px;
+    z-index: 20;
+    box-shadow:
+        0 2px 5px rgba(60,65,120,.15);
+}
+/* =========================================================
+   🪄 AKTİF ADA UÇUŞ ANİMASYONU
+   ========================================================= */
+@keyframes adaUcuyor {
+    0%,100% {
+        transform:
+            translate(-50%, -50%)
+            translateY(0);
+    }
+    50% {
+        transform:
+            translate(-50%, -50%)
+            translateY(-8px);
+    }
+}
+/* =========================================================
+   ⭐ YILDIZ ANİMASYONU
+   ========================================================= */
+@keyframes yildizUc {
+    0%,100% {
+        margin-top: 0;
+    }
+    50% {
+        margin-top: -4px;
+    }
+}
+/* =========================================================
+   🎁 SANDIKLAR
+   ========================================================= */
+.bc-sandikr {
+    z-index: 35 !important;
+    font-size: 32px !important;
+    filter:
+        drop-shadow(
+            0 5px 4px rgba(60,65,130,.25)
+        );
+}
+/* =========================================================
+   ☁️ BULUTLAR
+   ========================================================= */
+.bc-harita .amb {
+    z-index: 2 !important;
+    filter:
+        drop-shadow(
+            0 5px 5px rgba(80,90,150,.12)
+        );
+}
+.ada-yildizlar.kilitli-yildiz span {
+    color: rgba(255,255,255,.55);
+    text-shadow:
+        0 1px 2px rgba(50,60,120,.18);
+    opacity: .65;
+}
+.ada-yildizlar.kazandi span {
+    color: #ffd54a;
+}
