@@ -15,16 +15,41 @@ function rounded(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
 function textLines(ctx,text,x,y,width,size,lineHeight,max=3){ctx.font='900 '+size+'px system-ui';let line='',lines=[];for(const word of String(text).split(/\s+/)){if(ctx.measureText(line+' '+word).width>width&&line){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);lines.slice(0,max).forEach((t,i)=>ctx.fillText(t,x,y+i*lineHeight));return Math.min(lines.length,max)*lineHeight;}
 function loadImage(src){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('Görsel yüklenemedi.'));img.src=src;});}
 async function artwork(item){if(item.svg){const svg=item.svg.includes('xmlns=')?item.svg:item.svg.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ');return loadImage('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg));}if(item.src)return loadImage(new URL(item.src,location.href).href);return null;}
-async function render(item,theme){const palette=palettes[theme-1],canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1080;const c=canvas.getContext('2d');if(!c)throw Error('Görsel oluşturma desteklenmiyor.');const gradient=c.createLinearGradient(0,0,1080,1080);gradient.addColorStop(0,palette.bg[0]);gradient.addColorStop(1,palette.bg[1]);c.fillStyle=gradient;c.fillRect(0,0,1080,1080);
- let seed=hash(item.id+item.name);for(let i=0;i<34;i++){seed=(seed*1664525+1013904223)>>>0;const x=seed%1080;seed=(seed*1664525+1013904223)>>>0;const y=seed%900;c.fillStyle=theme===2?'#ffdb7966':'#ffffff77';c.beginPath();c.arc(x,y,3+seed%7,0,Math.PI*2);c.fill();}
- c.fillStyle=theme===2?'#ffffff0d':'#ffffffbd';rounded(c,72,65,936,950,48);c.fill();c.strokeStyle=theme===2?'#e6c66c':'#ffffff';c.lineWidth=4;c.stroke();c.textAlign='center';c.fillStyle=palette.ink;c.font='900 38px system-ui';c.fillText(item.kind==='badge'?'YENİ BİR ROZET KAZANDIM!':'KOLEKSİYONUMUN YENİ YILDIZI',540,148);
- const art=await artwork(item);c.shadowColor=theme===2?'#0006':'#1f4d552f';c.shadowBlur=30;c.shadowOffsetY=14;if(art){const ratio=Math.min(490/art.width,470/art.height);c.drawImage(art,540-art.width*ratio/2,375-art.height*ratio/2,art.width*ratio,art.height*ratio);}else{c.font='180px system-ui';c.fillText(item.emoji||'🦜',540,435);}c.shadowBlur=0;c.shadowOffsetY=0;c.fillStyle=palette.ink;textLines(c,item.name,540,665,820,64,72,2);c.font='600 27px system-ui';c.fillText(item.kind==='badge'?'Öğrendim, başardım, rozetimi kazandım.':'İngilizce yolculuğumda yeni bir arkadaş.',540,822);
- c.fillStyle=theme===2?'#f4d778':'#19afba';c.font='950 62px system-ui';c.fillText('DijiMedu',540,918);c.fillStyle=palette.ink;c.font='750 27px system-ui';c.fillText('Sen de keşfet · app.dijimedu.com',540,968);
- const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Görsel kaydedilemedi.')),'image/png'));return {canvas,blob};}
+async function render(item,theme){
+ const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1080;
+ const c=canvas.getContext('2d');if(!c)throw Error('Görsel oluşturma desteklenmiyor.');
+ const badge=item.kind==='badge',night=theme===2;
+ const sky=c.createLinearGradient(0,0,1080,1080);
+ (night?[['#07163e',0],['#202b78',.52],['#47358f',1]]:theme===1?[['#137ed2',0],['#62dce8',.52],['#1666b2',1]]:[['#4821b0',0],['#17a9d5',.52],['#173c9e',1]]).forEach(([color,p])=>sky.addColorStop(p,color));
+ c.fillStyle=sky;c.fillRect(0,0,1080,1080);
+ const seed0=hash(item.id+item.name),gold='#ffd66d',ivory='#fff8dc';
+ let seed=seed0;for(let i=0;i<85;i++){seed=(seed*1664525+1013904223)>>>0;const x=seed%1080;seed=(seed*1664525+1013904223)>>>0;const y=seed%980;const radius=2+seed%8;c.globalAlpha=.2+(seed%50)/100;c.fillStyle=i%4===0?'#fff1a6':'#ffffff';c.beginPath();c.arc(x,y,radius,0,Math.PI*2);c.fill();}c.globalAlpha=1;
+ const halo=c.createRadialGradient(545,467,40,545,467,450);halo.addColorStop(0,'#fff9cbaa');halo.addColorStop(.46,'#f8d96744');halo.addColorStop(1,'#ffe78800');c.fillStyle=halo;c.fillRect(0,0,1080,980);
+ c.strokeStyle='#f9d789';c.lineWidth=9;rounded(c,38,35,1004,1010,66);c.stroke();c.strokeStyle='#ffffff75';c.lineWidth=3;rounded(c,52,49,976,982,56);c.stroke();
+ // Golden headline ribbon
+ const banner=c.createLinearGradient(0,92,0,255);banner.addColorStop(0,'#fff5bd');banner.addColorStop(.46,'#ffd665');banner.addColorStop(1,'#eca83c');
+ c.fillStyle=banner;rounded(c,104,104,872,140,53);c.fill();c.lineWidth=6;c.strokeStyle='#ffedab';c.stroke();
+ c.textAlign='center';c.textBaseline='middle';c.fillStyle='#112f69';c.font='900 51px system-ui';
+ c.fillText(badge?'YENİ ROZET KAZANDIN!':'YENİ KARAKTER AÇILDI!',540,174,800);
+ // Ornamental central frame with the earned badge or character (no substituted reward artwork).
+ c.save();c.shadowColor='#041a68a0';c.shadowBlur=35;c.shadowOffsetY=18;
+ const panel=c.createLinearGradient(0,268,0,758);panel.addColorStop(0,'#f7ffffe0');panel.addColorStop(1,'#cbe6ffb8');c.fillStyle=panel;rounded(c,143,280,794,475,62);c.fill();c.shadowBlur=0;c.strokeStyle='#fff2aa';c.lineWidth=11;c.stroke();c.restore();
+ let art=null;try{art=await artwork(item);}catch(e){console.warn('Ödül görseli yüklenemedi',e)}
+ if(art){const ratio=Math.min(530/art.width,395/art.height);const w=art.width*ratio,h=art.height*ratio;c.drawImage(art,540-w/2,312+(412-h)/2,w,h);}
+ else{c.fillStyle='#ffffff';c.font='bold 175px system-ui';c.fillText(item.emoji||'⭐',540,514);}
+ // Papi accompanies every collectible card.
+ try{const papi=await loadImage(new URL('papi-reward-v2.png',location.href).href);const ratio=Math.min(260/papi.width,260/papi.height);c.save();c.shadowColor='#123d7a88';c.shadowBlur=16;c.drawImage(papi,80,542,papi.width*ratio,papi.height*ratio);c.restore();}catch(e){console.warn('Papi görseli yüklenemedi',e)}
+ c.save();c.shadowColor='#12245e99';c.shadowBlur=16;c.shadowOffsetY=8;c.fillStyle='#14275b';rounded(c,168,728,744,108,34);c.fill();c.restore();
+ c.fillStyle=ivory;textLines(c,item.name,540,771,682,Math.max(34,Math.min(62,640/(Math.max(item.name.length,7)*.55))),54,2);
+ c.fillStyle='#ffffff';c.font='750 24px system-ui';c.fillText(badge?'İngilizce yolculuğunda harika ilerliyorsun!':'İngilizce yolculuğunda yeni bir arkadaş.',540,870,920);
+ c.fillStyle=gold;c.font='950 69px system-ui';c.fillText('DijiMedu',540,945);
+ c.fillStyle='#ffffff';c.font='700 26px system-ui';c.fillText('Sen de keşfet • app.dijimedu.com',540,999);
+ const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Görsel kaydedilemedi.')),'image/png'));return {canvas,blob};
+}
 function defaultTheme(item){const name=String(item.name||'').toLocaleLowerCase('tr');return /uzay|yıldız|meteor|gece|efsane|galaksi|şampiyon/.test(name)?2:/orman|yaprak|kaşif|ilk|adım|doğa|kelime|kitap|ders/.test(name)?1:hash(item.id+name)%3+1;}
 function filename(item,theme){return 'dijimedu-'+String(item.name).toLocaleLowerCase('tr').replace(/[ıİ]/g,'i').replace(/[^a-z0-9çğıöşü]+/g,'-').replace(/^-|-$/g,'')+'-'+theme+'.png';}
 let opened=null,skip=null;
-function open(item,use){if(opened)opened.close();const prior=document.activeElement,overlay=document.createElement('div');overlay.className='dm-share-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label',item.name+' · görselini kaydet veya paylaş');overlay.innerHTML='<section class="dm-share-sheet"><button class="dm-share-close" type="button" aria-label="Kapat">×</button><h2></h2><div class="dm-share-choices" role="group" aria-label="Paylaşım tasarımı"><button type="button" data-style="1">1 · Doğa</button><button type="button" data-style="2">2 · Gece</button><button type="button" data-style="3">3 · Renkli</button></div><div class="dm-share-preview"><img alt="DijiMedu markalı paylaşım görseli"></div><p class="dm-share-status" role="status"></p><div class="dm-share-actions"><button type="button" data-save disabled>Görseli kaydet</button><button type="button" data-share disabled>Paylaş</button></div><button type="button" data-use hidden>Profilimde kullan</button></section>';
+function open(item,use){if(opened)opened.close();const prior=document.activeElement,overlay=document.createElement('div');overlay.className='dm-share-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label',item.name+' · görselini kaydet veya paylaş');overlay.innerHTML='<section class="dm-share-sheet"><button class="dm-share-close" type="button" aria-label="Kapat">×</button><h2></h2><div class="dm-share-choices" role="group" aria-label="Paylaşım tasarımı"><button type="button" data-style="1">1 · Gökyüzü</button><button type="button" data-style="2">2 · Yıldızlar</button><button type="button" data-style="3">3 · Büyülü</button></div><div class="dm-share-preview"><img alt="DijiMedu markalı paylaşım görseli"></div><p class="dm-share-status" role="status"></p><div class="dm-share-actions"><button type="button" data-save disabled>Görseli kaydet</button><button type="button" data-share disabled>Paylaş</button></div><button type="button" data-use hidden>Profilimde kullan</button></section>';
  overlay.querySelector('h2').textContent=item.name;let url=null,file=null,theme=defaultTheme(item),version=0;
  const close=()=>{version++;overlay.remove();if(url)URL.revokeObjectURL(url);if(opened?.overlay===overlay)opened=null;prior?.isConnected&&prior.focus?.({preventScroll:true});};opened={overlay,close};
  const status=overlay.querySelector('[role=status]'),saveButton=overlay.querySelector('[data-save]'),shareButton=overlay.querySelector('[data-share]');
