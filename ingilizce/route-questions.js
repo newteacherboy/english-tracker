@@ -84,7 +84,7 @@ function offerEnergyAfterAnswer(route,area){
  }
  if(!area.querySelector('.bz-geri-bildirim'))return;
  if(!next.dataset.rqOriginal)next.dataset.rqOriginal=next.textContent;
- next.textContent='⚡ Enerji al ve devam et';
+ if(next.textContent!=='⚡ Enerji al ve devam et')next.textContent='⚡ Enerji al ve devam et';
  const step=area.querySelector('.rq-progress span')?.textContent.trim()||'';
  const question=area.querySelector('.bz-soru')?.textContent.trim()||'';
  const key=step+'|'+question;
