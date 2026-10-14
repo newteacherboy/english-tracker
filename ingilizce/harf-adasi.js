@@ -25,7 +25,7 @@
   }
   function stop(){
     run++;clearTimeout(timeout);clearInterval(ticker);timeout=null;ticker=null;current=null;
-    document.getElementById(id)?.classList.remove('ia-playing');
+    document.getElementById(id)?.classList.remove('ia-playing','ia-intro');
   }
   function status(message){let el=get('.ia-message');if(el)el.textContent=message;}
   function sound(type){
@@ -181,7 +181,7 @@
     current={word:asmacaAktifKelime,clue:String(k.turkce||k.tr||''),begin:Date.now(),lives:5,locked:false,
       keys:makeKeys(asmacaAktifKelime),guessed:new Set(),wrong:new Set(),removed:new Set(),usedTypes:new Set(),assisted:false};
     const bar=document.getElementById('jkBar');if(bar)overlay.querySelector('.game-modal-content')?.appendChild(bar);
-    overlay.classList.add('ia-playing');
+    overlay.classList.remove('ia-intro');overlay.classList.add('ia-playing');
     body.innerHTML='<main class="ia-screen" aria-label="Papi’nin Harf Adası oyunu">'+drawHeader()+drawScene()+drawAnswers()+drawKeys()+drawTools()+'</main>';
     body.querySelectorAll('[data-ia-close]').forEach(b=>b.addEventListener('click',()=>window.asmacaOyunKapat()));
     body.querySelectorAll('[data-ia-letter]').forEach(b=>b.addEventListener('click',()=>pick(b.dataset.iaLetter)));
@@ -194,5 +194,5 @@
   window.asmacaSonrakiKelime=next;
   window.asmacaOyunuBitir=function(){stop();return originalFinish.apply(this,arguments);};
   window.asmacaOyunKapat=function(){const r=originalClose.apply(this,arguments);if(document.getElementById(id)?.style.display==='none')stop();return r;};
-  window.asmacaOyunAc=function(){stop();const r=originalOpen.apply(this,arguments);const title=get('.game-title');if(title)title.textContent='🏝️ Papi’nin Harf Adası';return r;};
+  window.asmacaOyunAc=function(){stop();const r=originalOpen.apply(this,arguments);const title=get('.game-title');if(title)title.textContent='🏝️ Papi’nin Harf Adası';document.getElementById(id)?.classList.add('ia-intro');return r;};
 })();
