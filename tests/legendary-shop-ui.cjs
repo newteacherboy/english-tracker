@@ -1,12 +1,21 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{
 const exe=process.env.FRIENDS_BROWSER_PATH,browser=await chromium.launch({executablePath:exe||undefined,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader'],env:{...process.env,LD_LIBRARY_PATH:exe?path.dirname(exe):process.env.LD_LIBRARY_PATH||''}}),page=await browser.newPage(),errors=[],root=path.resolve('ingilizce');page.on('pageerror',e=>errors.push(e.message));
-await page.route('https://shop.test/**',r=>{const u=new URL(r.request().url()),p=path.join(root,u.pathname.slice(1));return fs.existsSync(p)&&fs.statSync(p).isFile()?r.fulfill({path:p}):r.fulfill({body:''});});await page.goto('https://shop.test/');
+await page.route('https://shop.test/**',r=>{const u=new URL(r.request().url()),p=path.join(root,u.pathname.slice(1));return fs.existsSync(p)&&fs.statSync(p).isFile()?r.fulfill({path:p}):r.fulfill({body:'<meta charset="utf-8">',headers:{'content-type':'text/html; charset=utf-8'}});});await page.goto('https://shop.test/');
 const html=fs.readFileSync(root+'/index.html','utf8'),scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]),styles=[...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(x=>x[1]).join('\n');
 await page.setContent('<meta name="viewport" content="width=device-width,initial-scale=1"><style>'+styles+'</style><link rel="stylesheet" href="/storefront.css"><div id="panel-alani" style="display:block"><div id="tab-magaza" class="active"><div class="mg-kap"><div id="magazaAlan"></div></div></div></div>');
 await page.evaluate(()=>{window.aktifOgrenciAdi='Fixture';window.apiURL='/api';window.level=39;window.yo={altin:100000,dolapIlkIndirimKullanildi:true,karakter:{cins:'e',s:{ten:'1',sac:'kisa',sacRenk:'#2b2331',goz:'normal',agiz:'gulumse',kiyafet:'tisort-mavi',sapka:'yok',gozluk:'yok',dost:'yok',detay:'yanak',arka:'mavi',cerceve:'yok'},sahip:[]}};window.yoHazirMi=()=>true;window.yoKaydet=()=>{};window.yoAvatarUygula=()=>{};window.yoToast=()=>{};window.yoGomuluHedef='magazaAlan';window.yoMagazaAc=()=>{};window.yoBugun=()=> '2026-10-14';window.setInterval=()=>0;window.genelEnerjiKalan=20;window.genelEnerjiMax=30;window._krkListe=()=>[{ad:'A',acik:true},{ad:'B',acik:false}];window.bcKoleksiyonCiz=el=>{window.collectionTarget=el.id;el.innerHTML='<h3>Karakter Koleksiyonu</h3><button>Profilinde kullan</button>';};});
 for(const name of ['progression-catalog.js','progress-rules.js'])await page.addScriptTag({url:'/'+name});await page.evaluate(()=>window.dmProgression={level:()=>level,require:code=>level>=DijiProgressionCatalog.gates[code],itemAllowed:o=>DijiProgressionCatalog.itemLevel(o)<=level,sync:async()=>{},refresh:()=>{}});
 for(const marker of ['window.KA_KATALOG = KATALOG','window.dmStoreWardrobe ='])await page.addScriptTag({content:scripts.find(s=>s.includes(marker))});await page.addScriptTag({url:'/boutique-art.js'});await page.addScriptTag({url:'/storefront.js'});
+// Shopping action stays beside the designer and opens the real wardrobe catalog.
+for(const size of [{width:320,height:720},{width:390,height:844},{width:1067,height:700}]){
+ await page.setViewportSize(size);await page.evaluate(()=>magazaAc());
+ const design=page.locator('.ds-character-actions [data-ds="builder"]'),shop=page.locator('.ds-shop-cta');
+ assert(await design.isVisible());assert(await shop.isVisible());assert((await shop.innerText()).includes('Alışveriş Yap'));assert(await design.evaluate(e=>e.scrollWidth<=e.clientWidth+1),'Designer label overflows');
+ const a=await design.boundingBox(),b=await shop.boundingBox();assert(b.x>=a.x+a.width-1);assert(Math.abs(a.y-b.y)<2);assert(b.x+b.width<=size.width);assert(a.x>=0);
+ if(size.width===320)await page.screenshot({path:"/tmp/shopping-button-mobile.png"});
+ await shop.click();assert(await page.locator('#dlSekmeler [data-s="ust"]').isVisible());assert(await page.locator('#dlSekmeler [data-s="alt"]').isVisible());await page.locator('#dsCategoryBack').click();
+}
 // Any learner can browse the collection; higher-level products remain locked.
 await page.evaluate(()=>{level=1;magazaAc()});
 const firstLevelCollection=page.locator('[data-ds="collection"]');

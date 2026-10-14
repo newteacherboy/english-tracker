@@ -87,3 +87,11 @@
 .dl-legend-hero h3{font-size:20px;line-height:1.2;margin:6px 0}
 .dl-legend-hero p{font-size:12px;line-height:1.5;margin:0;color:#eee0ff}
 @media(max-width:560px){.ds-discover-grid{grid-template-columns:1fr}.ds-discover-grid .ds-chests{min-height:58px}.dl-legend-hero{padding:13px;gap:10px}.dl-legend-hero h3{font-size:18px}.dl-legend-crown{font-size:34px}}
+
+/* Paired character actions stay side by side, including narrow phones. */
+.ds-character-actions{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;align-items:stretch;justify-content:center;gap:8px;width:max-content;max-width:calc(100% - 12px)}
+.ds-character-actions .ds-character-label{position:static;transform:none;min-width:0;justify-content:center;min-height:38px;margin:0}
+.ds-shop-cta{display:flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:7px 13px;border:1px solid #ffe399;border-radius:24px;background:linear-gradient(180deg,#fff0a6,#ffc43c);color:#62300a;font:inherit;font-size:12px;font-weight:900;white-space:nowrap;box-shadow:0 3px 0 #bd761e,0 4px 15px #af6a2540;cursor:pointer}
+.ds-shop-cta>span:first-child{font-size:18px}.ds-shop-cta>span:last-child{font-size:21px;line-height:1}.ds-shop-cta:hover{filter:brightness(1.05)}.ds-shop-cta:active{transform:translateY(2px);box-shadow:0 1px 0 #bd761e}.ds-character-actions button:focus-visible{outline:3px solid #0b9f9b;outline-offset:3px}
+@media(max-width:360px){.ds-character-actions{gap:5px}.ds-character-actions .ds-character-label{padding:5px 7px;gap:5px;font-size:10px}.ds-character-actions .ds-character-label span{padding-left:5px;font-size:9px}.ds-shop-cta{font-size:11px;padding:6px 8px;gap:5px}}
+@media(max-width:560px){.ds-character-actions .ds-character-label{flex-direction:column;gap:1px;padding:4px 10px}.ds-character-actions .ds-character-label span{border-left:0;padding-left:0}}
