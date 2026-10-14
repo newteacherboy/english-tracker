@@ -51,7 +51,7 @@ window.DMStoryV2UI={
   }
   if(task.kind==='final'){header.querySelector('.ds-audio button:first-child')?.remove();const hint=document.createElement('div');hint.className='papi-final-progress';hint.textContent='Son görev · Öğrendiklerini hatırla';area.prepend(hint);}area.prepend(header);if(task.kind!=='final')actions.append(check);
   if(['order','repeat'].includes(task.kind))E.speak(task.en);
-  if(!asksTurkishMeaning&&['choose','translate'].includes(task.kind))E.speak(task.tr,'tr');
+  // Never read the Turkish answer automatically when the question opens.
  }
 };
 })();
