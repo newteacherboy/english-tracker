@@ -1,0 +1,24 @@
+name: Optional games parallel load QA
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/lazy-games.js'
+      - 'tests/lazy-games-parallel.test.cjs'
+      - '.github/workflows/lazy-games-parallel.yml'
+  push:
+    paths:
+      - 'ingilizce/lazy-games.js'
+      - 'tests/lazy-games-parallel.test.cjs'
+      - '.github/workflows/lazy-games-parallel.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/lazy-games.js
+      - run: node --test tests/lazy-games-parallel.test.cjs tests/runtime-cleanup.test.cjs
