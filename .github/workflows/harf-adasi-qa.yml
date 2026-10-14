@@ -24,7 +24,8 @@ jobs:
         with:
           node-version: '22'
       - run: node --check ingilizce/harf-adasi.js
-      - run: node --test tests/harf-adasi.test.cjs
+      - run: node --check ingilizce/game-feedback.js
+      - run: node --test tests/harf-adasi.test.cjs tests/harf-adasi-reward-sync.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
       - run: node tests/harf-adasi-ui.cjs
