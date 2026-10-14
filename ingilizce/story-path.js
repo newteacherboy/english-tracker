@@ -66,6 +66,20 @@ if(!document.getElementById('dm-map-switch-style')){
  style.textContent='.dm-parchment-map,.dm-story-map{position:relative!important}.dm-map-switch-route{position:absolute!important;top:clamp(8px,2vw,16px)!important;left:clamp(8px,2vw,16px)!important;z-index:30!important;display:inline-flex!important;align-items:center!important;gap:5px!important;border:1.5px solid #ffffff!important;border-radius:20px!important;background:linear-gradient(145deg,#ffffffed,#dcf8f6f0)!important;box-shadow:0 3px 10px #145c6950!important;color:#07536b!important;font-family:inherit!important;font-size:11px!important;line-height:1.1!important;font-weight:850!important;padding:7px 9px!important;cursor:pointer!important;max-width:130px!important;min-height:32px!important;touch-action:manipulation}.dm-map-switch-route>span:first-child{font-size:18px;font-weight:900}.dm-map-switch-route:hover{background:#fff!important;transform:translateY(-1px)}.dm-map-switch-route:focus-visible{outline:3px solid #ffbf38;outline-offset:3px}@media(max-width:360px){.dm-map-switch-route{padding:6px!important;max-width:38px!important;width:38px!important;justify-content:center!important}.dm-map-switch-route>span:last-child{display:none!important}}';
  document.head.append(style);
 }
+// Host-level button stays visible above both map layers and their painted backgrounds.
+if(!host.querySelector(':scope > .dm-map-switch-host')){
+ const switchButton=document.createElement('button');
+ switchButton.type='button';switchButton.className='dm-map-switch-route dm-map-switch-host';
+ switchButton.setAttribute('aria-label','Parkur değiştir');switchButton.title='Parkur değiştir';
+ switchButton.innerHTML='<span aria-hidden="true">⇄</span><span>Parkur değiştir</span>';
+ switchButton.onclick=e=>{e.preventDefault();e.stopPropagation();window.dmMemberExperience?.chooseRoute(true)};
+ m.insertAdjacentElement('afterend',switchButton);
+}
+if(!document.getElementById('dm-switch-host-style')){
+ const css=document.createElement('style');css.id='dm-switch-host-style';
+ css.textContent='.ds-host>.dm-map-switch-host{position:sticky!important;top:8px!important;left:10px!important;display:inline-flex!important;width:max-content!important;max-width:130px!important;z-index:2147483000!important;margin:5px 0 -44px 8px!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}.dm-parchment-map>.dm-map-switch-route,.dm-story-map>.dm-map-switch-route{display:none!important}';
+ document.head.append(css);
+}
 installRouteSwitch(game);installRouteSwitch(map);
 hosts.set(host,{game,map,m});async function select(mode){if(mode==='learn'&&modal)close();storage.set('dm_story_path_'+account(),mode);m.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.path===mode)));game.hidden=mode==='learn';map.hidden=mode!=='learn';host.classList.toggle('ds-learning',mode==='learn');host.closest('.bz-ic')?.classList.toggle('ds-space-shell',mode==='learn');if(mode==='game'){return}map.querySelector('.ds-map-status').textContent='Papi öğrenme yolunu hazırlıyor…';map.querySelector('.ds-map-continue').hidden=true;try{await loadSummary();if(map.isConnected)renderMap(map)}catch(e){map.querySelector('.ds-map-status').textContent=e.message;map.querySelector('.ds-map-continue').hidden=false;map.querySelector('.ds-map-continue').style.top='130px';map.querySelector('.ds-map-continue').textContent='Yeniden yükle';map.querySelector('.ds-map-continue').onclick=()=>select('learn')}}m.querySelectorAll('button').forEach(b=>b.onclick=()=>select(b.dataset.path));select(storage.get('dm_story_path_'+account())||'game')}
 function speak(text){if(!voiceOn)return;try{if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.82;const voices=speechSynthesis.getVoices(),v=voices.find(x=>x.lang==='en-US')||voices.find(x=>x.lang.startsWith('en'));if(v)u.voice=v;u.onerror=()=>{if(modal)note('Ses açılamadı. Yazılı örnek ve Türkçesiyle devam edebilirsin.')};speechSynthesis.speak(u)}catch{}}
