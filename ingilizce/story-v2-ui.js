@@ -10,9 +10,10 @@ window.DMStoryV2UI={
   const put=(html)=>{area.innerHTML=html;area.classList.add('papi-v2');};
   const button=(label,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=fn;return b;};
   const listen=button('🔊 Yeniden dinle',()=>E.speak(task.en,'en'));
+  const asksTurkishMeaning=task.kind==='final'||(task.kind==='choose'&&task.mode==='meaning');
   const listenTr=button('🇹🇷 Türkçesini dinle',()=>E.speak(task.tr,'tr'));
-  const header=document.createElement('div');header.className='ds-audio';header.append(listen,listenTr);
-  actions.innerHTML='';if(task.kind==='match')header.hidden=true;
+  const header=document.createElement('div');header.className='ds-audio';header.append(listen);if(!asksTurkishMeaning)header.append(listenTr);
+  actions.innerHTML='';if(task.kind==='match'||task.kind==='final')header.hidden=true;
   const submit=async answer=>{if(locked)return;locked=true;try{const result=await onSubmit(answer);area.classList.remove('papi-win','papi-error');void area.offsetWidth;if(result?.blocked){locked=false;return;}if((result?.accepted||result?.correct)&&!result?.revealed){area.querySelectorAll('.selected').forEach(b=>b.classList.add('correct'));area.classList.add('papi-win');const tick=document.createElement('div');tick.className='papi-speech-tick';tick.setAttribute('role','status');tick.textContent='✅ Doğru cevap!';area.append(tick);E.speak(task.en,'en');}else{area.classList.add('papi-error');area.querySelectorAll('.selected').forEach(b=>b.classList.add('wrong'));locked=false;}}catch(e){locked=false;onNote(e.message||'Yeniden dene.');}};
   const check=button('✓ Kontrol Et',()=>{if(task.kind==='match')return submit(pairs);if(task.kind==='order')return submit(selected.map(i=>task.tokens[i]).join(task.join??' '));if(['choose','complete'].includes(task.kind))return submit(picked);return submit(area.querySelector('input')?.value||'');});
   if(task.kind==='match'){
@@ -50,7 +51,7 @@ window.DMStoryV2UI={
   }
   if(task.kind==='final'){header.querySelector('.ds-audio button:first-child')?.remove();const hint=document.createElement('div');hint.className='papi-final-progress';hint.textContent='Son görev · Öğrendiklerini hatırla';area.prepend(hint);}area.prepend(header);if(task.kind!=='final')actions.append(check);
   if(['order','repeat'].includes(task.kind))E.speak(task.en);
-  if(['choose','final','translate'].includes(task.kind))E.speak(task.tr,'tr');
+  if(!asksTurkishMeaning&&['choose','translate'].includes(task.kind))E.speak(task.tr,'tr');
  }
 };
 })();
