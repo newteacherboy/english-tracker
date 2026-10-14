@@ -25,6 +25,7 @@ jobs:
       - run: node tests/onboarding-email-ui.cjs
       - run: node tests/approved-route-panels.cjs
       - run: node tests/route-energy-refill-ui.cjs
+      - run: node --test tests/weekly-goal-once.test.cjs
       - run: node tests/legendary-shop-ui.cjs
       - run: node tests/selected-play-ui.cjs
       - run: node --test tests/first-discovery-state.test.cjs
