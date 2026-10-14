@@ -1,0 +1,30 @@
+name: Three-step portal performance QA
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/index.html'
+      - 'ingilizce/lazy-games.js'
+      - 'ingilizce/portal-secondary-extracted.css'
+      - 'ingilizce/portal-world-extracted.css'
+      - 'tests/three-step-performance.test.cjs'
+      - '.github/workflows/three-step-performance.yml'
+  push:
+    paths:
+      - 'ingilizce/index.html'
+      - 'ingilizce/lazy-games.js'
+      - 'ingilizce/portal-secondary-extracted.css'
+      - 'ingilizce/portal-world-extracted.css'
+      - 'tests/three-step-performance.test.cjs'
+      - '.github/workflows/three-step-performance.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/lazy-games.js
+      - run: node --test tests/three-step-performance.test.cjs tests/lazy-games-parallel.test.cjs tests/portal-extracted-css.test.cjs
