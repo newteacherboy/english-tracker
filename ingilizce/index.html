@@ -1,11 +1,13 @@
 <!DOCTYPE html>
         <html lang="tr">
         <head>
+<meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
-<script src="adventure-avatars.js?v=20261014-face-eyewear-4"></script>
+<link rel="stylesheet" href="character-builder.css?v=20261014-1">
+<script defer src="character-builder.js?v=20261014-1"></script>
 <script src="progression-catalog.js?v=20261014-legend-1"></script>
 <link rel="stylesheet" href="first-discovery.css?v=20261013-discovery-fix-2">
 <script src="first-discovery-state.js?v=20261013-discovery-fix-2"></script>
@@ -98,7 +100,7 @@ if(BAKIM_MODU){
 
 </script>
 <script src="request-budget.js?v=2"></script>
-                <meta charset="UTF-8">
+
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
             <title>İngilizce Portal Giriş - Diji-Medu</title>
                 <meta name="description" content="Diji-Medu İngilizce Portalı — öğrenci gelişim raporları, seviyeye göre ders çalışma sistemi, kelime yarışmaları ve öğretmen takip paneli.">
@@ -16214,7 +16216,6 @@ window.avatarSVG = avatarSVG; window.KA_KATALOG = KATALOG; window.KA_TEN = TEN; 
 /* ===================== ÇİZİM ===================== */
 let uidSayac = 0;
 function avatarSVG(s, stil, px, cins) {
-  if(window.dmAdventureAvatar?.render&&!s._tamBoy)return window.dmAdventureAvatar.render(s,{cins,px,stil,full:false});
   let uid = 'a' + (++uidSayac), defs = [], g = 0;
   const D = c => {
     if (c === 'gokkusagi') return `url(#rb${uid})`;
@@ -16276,7 +16277,7 @@ function avatarSVG(s, stil, px, cins) {
   /* yüz */
   let yuz = '';
   let kas = `<path d="M74 82 Q82 77 90 81 M110 81 Q118 77 126 82" fill="none" stroke="${sacK}" stroke-width="3.2" stroke-linecap="round"/>`;
-  const gozNormal = (x, r = 1) => `<ellipse cx="${x}" cy="97" rx="${5 * r}" ry="${6.5 * r}" fill="#2b2331"/><circle cx="${x + 1.8 * r}" cy="${94.6 - (r - 1) * 2}" r="${1.9 * r}" fill="#fff"/>`;
+  const gozNormal = (x, r = 1) => {r*=Math.max(.8,Math.min(1.3,Number(s.gozBoy)||1));return `<ellipse cx="${x}" cy="97" rx="${5 * r}" ry="${6.5 * r}" fill="${/^#[0-9a-f]{6}$/i.test(s.gozRenk||'')?s.gozRenk:'#2b2331'}"/><circle cx="${x + 1.8 * r}" cy="${94.6 - (r - 1) * 2}" r="${1.9 * r}" fill="#fff"/>`};
   const kavis = x => `<path d="M${x - 6} 98 Q${x} 90 ${x + 6} 98" fill="none" stroke="#2b2331" stroke-width="3.2" stroke-linecap="round"/>`;
   const yildizYol = (x, y, r) => { let d = ''; for (let i = 0; i < 10; i++) { let a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r; d += (i ? 'L' : 'M') + (x + rr * Math.cos(a)).toFixed(1) + ' ' + (y + rr * Math.sin(a)).toFixed(1) + ' '; } return d + 'Z'; };
   const kalpYol = (x, y, r) => `M${x} ${y + r * .9} C${x - r * 1.6} ${y - r * .1} ${x - r * .8} ${y - r * 1.3} ${x} ${y - r * .4} C${x + r * .8} ${y - r * 1.3} ${x + r * 1.6} ${y - r * .1} ${x} ${y + r * .9} Z`;
@@ -16348,15 +16349,10 @@ function avatarSVG(s, stil, px, cins) {
   if (s.cerceve === 'gokkusagi') cerceve = `<circle cx="100" cy="100" r="95" fill="none" stroke="url(#rb${uid})" stroke-width="9"/>`;
   let dis = stil === 'b' ? `<circle cx="100" cy="100" r="97" fill="none" stroke="#fff" stroke-width="5"/><circle cx="100" cy="100" r="99" fill="none" stroke="#3b2c66" stroke-width="2.5"/>` : '';
 
-  const newHead=window.dmAdventureAvatar?.head(s,cins);
-  const slimBody='<g transform="translate(100 0) scale(.72 1) translate(-100 0)">'+govde+'</g>';
-  const coveredHead=!!s.bas&&s.bas!=='yok';
-  const selectedHead=newHead?(coveredHead?basArka+newHead+basOn:newHead):arkaSac+basArka+kafa+yuz+basOn+onSac;
-  const headLayers=selectedHead+sapka+gozluk;
-  if (s._tamBoy) return { defs: defs.join(''), ic: slimBody+headLayers };
-  const portrait=window.dmAdventureAvatar?.portrait(s,cins);
-  const character=portrait||slimBody+headLayers;
-  return `<svg viewBox="0 0 200 200" width="${px}" height="${px}" role="img" aria-label="Karakter"><defs>${defs.join('')}</defs><g clip-path="url(#cl${uid})">${arka}${character}${dost}${cikB}</g>${cerceve}${dis}</svg>`;
+  const bodyScale={ince:.85,normal:1,genis:1.05}[s.govdeTip]||1;
+  const adjustedBody=`<g transform="translate(100 0) scale(${bodyScale} 1) translate(-100 0)">${govde}</g>`;
+  if (s._tamBoy) return { defs: defs.join(''), ic: arkaSac + adjustedBody + basArka + kafa + yuz + basOn + onSac + sapka + gozluk };
+  return `<svg viewBox="0 0 200 200" width="${px}" height="${px}" role="img" aria-label="Karakter"><defs>${defs.join('')}</defs><g clip-path="url(#cl${uid})">${arka}${window.dmCharacterBuilder?.poseOpen(s,200)||''}${arkaSac}${adjustedBody}${basArka}${kafa}${yuz}${basOn}${onSac}${sapka}${gozluk}${dost}${cikB}${window.dmCharacterBuilder?'</g>':''}</g>${cerceve}${dis}</svg>`;
 }
 
   const KA_STIL = 'c';
@@ -16460,7 +16456,7 @@ function avatarSVG(s, stil, px, cins) {
         if(owner!==aktifOgrenciAdi)return;
         yoKaydet();window.yoAvatarUygula();
         window.yoToast?.('✓ Karakter seçimin kaydedildi. Mağazadan istediğin zaman değiştirebilirsin.');
-        if(sonra)sonra();
+        if(sonra)sonra();window.dmCharacterBuilder?.open();
       }catch(e){if(owner===aktifOgrenciAdi){if(changed)yo.karakter=previous;window.yoToast?.(e.message||'Seçimin kaydedilemedi. Yeniden dene.');}}
       finally{saving=false;kap.querySelectorAll('.ka-cins').forEach(x=>x.disabled=false);}
     });
@@ -22982,11 +22978,8 @@ window.ocEnerjiHarca = async function (n) {
     return ESKI_RENK[s.kiyafet] || '#a06bff';
   }
   /* Tam boy: alt vücut, kollar, alt giyim, ayakkabı + büst */
-  let fullModelUid=0;
   window.dolapTamBoySVG = function (s, cins, px) {
-    if(window.dmAdventureAvatar?.render)return window.dmAdventureAvatar.render(s,{cins,px,full:true});
     s = Object.assign({}, s);
-    const selectedBase=window.dmAdventureAvatar?.full(s,cins,px);if(selectedBase)return selectedBase;
     let ten = '#f1c7a5'; try { ten = window.KA_TEN[Number(s.ten) || 0][0]; } catch (e) {}
     let ust = ustRenk(s), tek = s.tek ? parcala(s.tek) : null;
     let alt = tek ? null : parcala(s.alt || 'a:pantolon:#1e3a8a:duz');           /* çıplak kalmaz: varsayılan lacivert pantolon */
@@ -23039,19 +23032,12 @@ window.ocEnerjiHarca = async function (n) {
     /* açık renkli kıyafetler (beyaz önlük gibi) zeminde kaybolmasın: ince kontur */
     out = out.replace(/<(path|rect|ellipse) (?![^>]*stroke=)/g, '<$1 stroke="rgba(30,27,75,.2)" stroke-width="1.4" ');
     /* büst (baş, yüz, omuz) */
-    // Give editable garments shaded volume while keeping their catalog colors.
-    let garmentGradients='',gradientIndex=0;const garmentIds=new Map();
-    out=out.replace(/fill="(#[0-9a-f]{6})"/gi,(match,color)=>{
-      if(!garmentIds.has(color)){const id='dmFabric'+(++fullModelUid)+'_'+gradientIndex++;garmentIds.set(color,id);garmentGradients+='<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2=".25"><stop stop-color="'+renkK(color,.22)+'"/><stop offset=".35" stop-color="'+renkA(color,.12)+'"/><stop offset=".7" stop-color="'+color+'"/><stop offset="1" stop-color="'+renkK(color,.18)+'"/></linearGradient>';}
-      return 'fill="url(#'+garmentIds.get(color)+')"';
-    });
-    govdeBas.defs+=garmentGradients;
-    out = '<g transform="translate(100 0) scale(.72 1) translate(-100 0)">'+out+'</g>'+govdeBas.ic;
+    out = `<g transform="translate(100 0) scale(${{ince:.85,normal:1,genis:1.05}[s.govdeTip]||1} 1) translate(-100 0)">${out}</g>` + govdeBas.ic;
     if (aks && aks.tip === 'atki') out += `<path d="M70 146 C80 158 120 158 130 146 L134 158 C120 170 80 170 66 158 Z" fill="${aks.renk}"/><rect x="110" y="160" width="14" height="40" rx="4" fill="${aks.renk}"/>`;
     if (aks && aks.tip === 'rozet') out += `<circle cx="128" cy="210" r="10" fill="${aks.renk}" stroke="#fff" stroke-width="2"/><text x="121" y="215" font-size="12">${aks.renk === '#f472b6' ? '💗' : '⭐'}</text>`;
     let cik = s.cik ? String(s.cik).replace(/^c:/, '') : '';
     if (cik) out += `<circle cx="170" cy="36" r="22" fill="#fff" stroke="#e4dafc" stroke-width="3"/><text x="170" y="45" font-size="24" text-anchor="middle">${cik}</text>`;
-    return `<svg viewBox="0 0 200 390" width="${Math.round(px * 200 / 390)}" height="${px}" role="img" aria-label="Karakterin tam boy"><defs>${govdeBas.defs}</defs>${out}</svg>`;
+    return `<svg viewBox="0 0 200 390" width="${Math.round(px * 200 / 390)}" height="${px}" role="img" aria-label="Karakterin tam boy"><defs>${govdeBas.defs}</defs>${window.dmCharacterBuilder?.poseOpen(s,390)||''}${out}${window.dmCharacterBuilder?'</g>':''}</svg>`;
   };
 
   /* ================= DURUM ================= */
@@ -23179,6 +23165,7 @@ window.ocEnerjiHarca = async function (n) {
     if (!D || D.hedef !== hedef) D = { sekme: 'vitrin', deneme: Object.assign({}, kk().s), secili: null, hedef };
     hedef.innerHTML = `<div class="dl-gomulu">
       <div class="dl-ust"><h2>🎨 Karakter & Giyim</h2><span class="dl-altin" id="dlAltin"></span></div>
+      <button type="button" class="dl-sahne-btn" onclick="window.dmCharacterBuilder.open()">🎨 Karakterimi tasarla</button>
       <div class="dl-gender" role="group" aria-label="Karakter seçimi"><button type="button" data-gender="k" aria-pressed="${kk().cins==='k'}">Kız karakter</button><button type="button" data-gender="e" aria-pressed="${kk().cins==='e'}">Erkek karakter</button><small>Aldığın ürünler korunur.</small></div>
       <div class="dl-ana"><div class="dl-sahne"><div class="dl-onizleme" id="dlOnizleme"></div><div class="dl-dugmeler"><button class="dl-sahne-btn geri" id="dlGeriAl">↺ Denemeyi bırak</button></div></div>
       <div class="dl-sag"><div class="dl-sekmeler" id="dlSekmeler" role="tablist"></div><div class="dl-izgara" id="dlIzgara"></div><div class="dl-eylem" id="dlEylem" style="display:none"></div></div></div></div>`;
@@ -28546,7 +28533,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="study-ui.js?v=20261011-3"></script>
 <link rel="stylesheet" href="storefront.css?v=20261014-legend-1">
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
-<script defer src="storefront.js?v=20261014-legend-1"></script>
+<script defer src="storefront.js?v=20261014-character-builder-1"></script>
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261013-activity-2">

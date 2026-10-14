@@ -1,0 +1,37 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
+(async()=>{
+const exe=process.env.FRIENDS_BROWSER_PATH,browser=await chromium.launch({executablePath:exe||undefined,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader'],env:{...process.env,LD_LIBRARY_PATH:exe?path.dirname(exe):process.env.LD_LIBRARY_PATH||''}}),page=await browser.newPage(),errors=[],root=path.resolve('ingilizce');page.on('pageerror',e=>errors.push(e.message));
+await page.route('https://shop.test/**',r=>{const u=new URL(r.request().url()),p=path.join(root,u.pathname.slice(1));return fs.existsSync(p)&&fs.statSync(p).isFile()?r.fulfill({path:p,headers:{'content-type':p.endsWith('.js')?'application/javascript; charset=utf-8':p.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8'}}):r.fulfill({body:'<meta charset="utf-8">',headers:{'content-type':'text/html; charset=utf-8'}});});await page.goto('https://shop.test/');
+const html=fs.readFileSync(root+'/index.html','utf8'),scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]),styles=[...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(x=>x[1]).join('\n');
+await page.setContent('<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+styles+'</style><link rel="stylesheet" href="/storefront.css"><div id="panel-alani" style="display:block"><div id="tab-magaza" class="active"><div class="mg-kap"><div id="magazaAlan"></div></div></div></div>');
+await page.evaluate(()=>{window.aktifOgrenciAdi='Fixture';window.apiURL='/api';window.level=39;window.yo={altin:100000,dolapIlkIndirimKullanildi:true,karakter:{cins:'e',s:{ten:'1',sac:'kisa',sacRenk:'#2b2331',goz:'normal',agiz:'gulumse',kiyafet:'tisort-mavi',sapka:'yok',gozluk:'yok',dost:'yok',detay:'yanak',arka:'mavi',cerceve:'yok'},sahip:[]}};window.yoHazirMi=()=>true;window.yoKaydet=()=>{};window.yoAvatarUygula=()=>{};window.yoToast=()=>{};window.yoGomuluHedef='magazaAlan';window.yoMagazaAc=()=>{};window.yoBugun=()=> '2026-10-14';window.setInterval=()=>0;window.genelEnerjiKalan=20;window.genelEnerjiMax=30;window._krkListe=()=>[{ad:'A',acik:true},{ad:'B',acik:false}];window.bcKoleksiyonCiz=el=>{window.collectionTarget=el.id;el.innerHTML='<h3>Karakter Koleksiyonu</h3><button>Profilinde kullan</button>';};});
+for(const name of ['progression-catalog.js','progress-rules.js'])await page.addScriptTag({url:'/'+name});await page.evaluate(()=>window.dmProgression={level:()=>level,require:()=>true,itemAllowed:o=>DijiProgressionCatalog.itemLevel(o)<=level,sync:async()=>{},refresh:()=>{}});
+for(const marker of ['window.KA_KATALOG = KATALOG','window.dmStoreWardrobe ='])await page.addScriptTag({content:scripts.find(s=>s.includes(marker))});await page.addScriptTag({url:'/boutique-art.js'});await page.addScriptTag({url:'/storefront.js'});
+
+await page.addStyleTag({url:'/character-builder.css'});await page.addScriptTag({url:'/character-builder.js'});
+const before=await page.evaluate(()=>JSON.stringify(yo));
+await page.evaluate(()=>dmCharacterBuilder.open());
+assert.equal(await page.locator('#dmCharacterBuilder').count(),1);assert.equal(await page.locator('#dmBuilderTitle').textContent(),'🎨 Bu benim karakterim!');
+assert.equal(await page.locator('#dmBuilderPreview image').count(),0,'Raster heads must be removed');
+await page.locator('[data-builder-key="ten"][data-builder-value="4"]').click();
+await page.locator('[data-builder-key="gozBoy"][data-builder-value="1.3"]').click();
+await page.locator('[data-builder-key="gozRenk"][data-builder-value="#267aa0"]').click();
+await page.locator('[data-builder-key="durus"][data-builder-value="sol"]').click();
+await page.locator('[data-builder-key="govdeTip"][data-builder-value="ince"]').click();
+await page.locator('[data-builder-key="agiz"][data-builder-value="kocaman"]').click();
+assert.equal(await page.evaluate(()=>JSON.stringify(yo)),before,'Preview must not mutate saved profile');
+assert(await page.locator('[data-builder-key="sac"][data-builder-value="kirpi"]').isDisabled(),'Paid choices must preserve ownership checks');
+await page.setViewportSize({width:950,height:780});await page.locator('.dm-builder-controls').evaluate(e=>e.scrollTop=0);await page.screenshot({path:'/tmp/student-character-builder.png'});
+await page.locator('#dmBuilderSave').click();await page.waitForSelector('#dmCharacterBuilder',{state:'detached'});
+const saved=await page.evaluate(()=>({s:yo.karakter.s,gold:yo.altin,owned:yo.karakter.sahip}));
+assert.equal(saved.s.ten,'4');assert.equal(saved.s.gozBoy,'1.3');assert.equal(saved.s.gozRenk,'#267aa0');assert.equal(saved.s.durus,'sol');assert.equal(saved.s.govdeTip,'ince');assert.equal(saved.s.agiz,'kocaman');assert.equal(saved.gold,100000);assert.deepEqual(saved.owned,[]);
+await page.evaluate(()=>{window.savedAppearance=JSON.stringify(yo.karakter.s);dmCharacterBuilder.open();});await page.locator('[data-builder-key="ten"][data-builder-value="0"]').click();await page.locator('[data-builder-close]').first().click();assert.equal(await page.evaluate(()=>JSON.stringify(yo.karakter.s)),await page.evaluate(()=>savedAppearance));
+await page.evaluate(()=>{yo.karakter.s.ust='u:kahraman:#ef4444:anka';yo.karakter.s.alt='a:pantolon:#ef4444:yildiz';yo.karakter.s.ayak='a:bot:#fbbf24:yildiz';yo.karakter.sahip=['d:u:kahraman:#ef4444:anka'];document.body.innerHTML='<div id="samples"></div>';for(const c of ['k','e']){const s={...KA_VARSAYILAN[c],...yo.karakter.s},html=avatarSVG(s,'c',120,c)+dolapTamBoySVG(s,c,390);document.getElementById('samples').innerHTML+='<div>'+html+'</div>';}});
+assert.equal(await page.locator('#samples image').count(),0);assert.equal(await page.locator('#samples [data-character-pose="sol"]').count(),4);
+assert((await page.locator('#samples').innerHTML()).includes('#267aa0'));assert((await page.locator('#samples').innerHTML()).includes('#ef4444'));
+await page.screenshot({path:'/tmp/student-character-outfit.png'});
+await page.evaluate(()=>dmCharacterBuilder.open());await page.locator('[data-builder-gender="k"]').click();await page.locator('#dmBuilderSave').click();await page.waitForSelector('#dmCharacterBuilder',{state:'detached'});assert.equal(await page.evaluate(()=>yo.karakter.cins),'k');assert.deepEqual(await page.evaluate(()=>yo.karakter.sahip),['d:u:kahraman:#ef4444:anka']);assert.equal(await page.evaluate(()=>yo.karakter.s.gozBoy),'1.3');
+// Mobile: preview and controls remain in the modal; the save button is reachable.
+await page.setViewportSize({width:390,height:844});await page.evaluate(()=>dmCharacterBuilder.open());assert.equal(await page.locator('#dmBuilderSave').isVisible(),true);const overflow=await page.locator('.dm-builder-card').evaluate(e=>e.scrollWidth>e.clientWidth);assert.equal(overflow,false);await page.keyboard.press('Escape');assert.equal(await page.locator('#dmCharacterBuilder').count(),0);
+assert.deepEqual(errors,[]);await browser.close();console.log('PASS vector-only student builder, preview/cancel/save, free appearance and locked paid options, shared portrait/full pose and outfit, gender change keeps inventory, mobile layout');
+})().catch(e=>{console.error(e);process.exit(1)});

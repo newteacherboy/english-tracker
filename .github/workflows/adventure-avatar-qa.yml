@@ -1,4 +1,4 @@
-name: Approved K2 E2 avatar verification
+name: Student character and wardrobe verification
 on:
   push:
     paths:
@@ -8,6 +8,9 @@ on:
       - 'ingilizce/index.html'
       - 'ingilizce/storefront.js'
       - 'ingilizce/storefront.css'
+      - 'ingilizce/character-builder.js'
+      - 'ingilizce/character-builder.css'
+      - 'tests/character-builder-ui.cjs'
       - 'tests/adventure-avatars-ui.cjs'
       - 'tests/avatar-layer-rig-ui.cjs'
       - '.github/workflows/adventure-avatar-qa.yml'
@@ -23,19 +26,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --check ingilizce/adventure-avatars.js
+      - run: node --check ingilizce/character-builder.js
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
-      - run: node tests/adventure-avatars-ui.cjs
-      - run: node tests/avatar-layer-rig-ui.cjs
-      - name: Save K2 E2 and outfit screenshots
+      - run: node tests/character-builder-ui.cjs
+      - run: node tests/legendary-shop-ui.cjs
+      - name: Save student character and outfit screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: approved-k2-e2-qa
+          name: student-character-qa
           path: |
-            /tmp/approved-adventure-avatars.png
-            /tmp/approved-adventure-outfit.png
-            /tmp/modular-avatar-defaults.png
-            /tmp/modular-avatar-customizations.png
+            /tmp/student-character-builder.png
+            /tmp/student-character-outfit.png
           if-no-files-found: ignore
