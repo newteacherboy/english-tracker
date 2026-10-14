@@ -10,7 +10,8 @@
     document.head.append(el);
   });}
   function ready(){if(pending)return pending;pending=(async()=>{
-    for(const file of files)await script(file);
+    // Start all independent downloads together; async=false retains execution order.
+    await Promise.all(files.map(script));
     window.dmGamesUI?.refresh();window.dmProgression?.paint();
     document.dispatchEvent(new Event('dm:state'));
   })().catch(e=>{pending=null;throw e;});return pending;}
