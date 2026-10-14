@@ -59,3 +59,13 @@ body #bzPerde#bzPerde.rq-approved #bzAlan[style*="display:none"],body #bzPerde#b
 #dmStoryLesson.rq-approved .rq-flying-feather,#bzPerde.rq-approved .rq-flying-feather{position:absolute;left:50%;top:50%;width:37px;height:62px;background:url('route-assets/feather-combo.svg') center/contain no-repeat;opacity:0;animation:rq-feather-fly 2.15s ease-out forwards;animation-delay:calc(var(--i) * 65ms)}
 @keyframes rq-feather-fly{0%{opacity:0;transform:translate(-50%,-50%) rotate(0) scale(.35)}18%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + (var(--i) - 3.5)*33px),calc(-50% - 95px)) rotate(var(--spin)) scale(.95)}}
 @media(prefers-reduced-motion:reduce){#dmStoryLesson.rq-approved .rq-flying-feather,#bzPerde.rq-approved .rq-flying-feather{animation:none!important;opacity:.4!important}}
+
+/* Four pre-question listening cards share the approved blue Learning Path frame. */
+#dmStoryLesson.rq-approved .rq-intro-label{text-align:center;color:#2476a3;font-weight:800;font-size:15px}
+#dmStoryLesson.rq-approved .rq-intro-word{text-align:center;color:#092d69;font-weight:950;font-size:clamp(30px,7vw,47px);overflow-wrap:anywhere;line-height:1.18}
+#dmStoryLesson.rq-approved .rq-intro-meaning{text-align:center;color:#24527d;font-size:clamp(19px,4vw,26px);font-weight:750}
+#dmStoryLesson.rq-approved .rq-intro-audio{align-self:center;display:flex;align-items:center;justify-content:center;gap:9px;width:min(100%,230px);min-height:65px;border-radius:30px;border:3px solid #a6f5ff;background:linear-gradient(160deg,#21d6ee,#0086c4);box-shadow:0 5px 0 #076487;color:white;font-size:24px;font-weight:850;cursor:pointer}
+#dmStoryLesson.rq-approved .rq-intro-audio span{font-size:16px}
+#dmStoryLesson.rq-approved .rq-intro-note{text-align:center;font-size:14px;color:#446d92;line-height:1.35;margin:3px 0}
+#dmStoryLesson.rq-approved .rq-intro-next{width:100%!important}
+@media(max-height:610px){#dmStoryLesson.rq-approved .rq-intro-word{font-size:27px}#dmStoryLesson.rq-approved .rq-intro-audio{min-height:44px}#dmStoryLesson.rq-approved .rq-intro-note{display:none}}
