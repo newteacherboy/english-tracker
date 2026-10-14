@@ -70,7 +70,52 @@ function renderTask(s,area,c){
  put('<div class="bz-soru">'+esc(translation)+'</div>');select(choices(phrase,pool,en,shuffle),full);return true;
 }
 let watchedRoot=null,layoutObserver=null,layoutFrame=0;
-function fitRoute(){layoutFrame=0;const r=watchedRoot;if(!r?.isConnected)return;const area=r.querySelector('.ds-task')||r.querySelector('#bzAlan');if(!area)return;if(r.id==='bzPerde')area.querySelectorAll('.bz-btn').forEach(b=>{if(b.textContent.startsWith('Devam →'))b.textContent=b.textContent.replace('Devam →','Devam et →')});const feedback=r.querySelector('.bz-geri-bildirim')||r.querySelector('.ds-feedback.correct');const card=area.querySelector('.dm-final-current strong')?.textContent.trim();if(card&&area.dataset.rqSpokenCard!==card){area.dataset.rqSpokenCard=card;area._rqSpeakEnglish?.(card);}if(feedback&&area.dataset.rqEn&&area.dataset.rqKind!=='teach'&&!feedback.dataset.rqSpoken){feedback.dataset.rqSpoken='1';area._rqSpeakEnglish?.(area.dataset.rqEn);}if(feedback&&area.dataset.rqEn&&area.dataset.rqTr&&area.dataset.rqKind!=='teach'){const text=(feedback.classList.contains('kotu')?'✕ Doğru cevap: ':'✓ Doğru! ')+area.dataset.rqEn+' = '+area.dataset.rqTr;if(feedback.textContent!==text)feedback.textContent=text;}r.classList.remove('rq-compact','rq-tight');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-compact');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-tight');}
+function fitRoute(){layoutFrame=0;const r=watchedRoot;if(!r?.isConnected)return;const area=r.querySelector('.ds-task')||r.querySelector('#bzAlan');if(!area)return;if(r.id==='bzPerde')area.querySelectorAll('.bz-btn').forEach(b=>{if(b.textContent.startsWith('Devam →'))b.textContent=b.textContent.replace('Devam →','Devam et →')});const feedback=r.querySelector('.bz-geri-bildirim')||r.querySelector('.ds-feedback.correct');const card=area.querySelector('.dm-final-current strong')?.textContent.trim();if(card&&area.dataset.rqSpokenCard!==card){area.dataset.rqSpokenCard=card;area._rqSpeakEnglish?.(card);}if(feedback&&area.dataset.rqEn&&area.dataset.rqKind!=='teach'&&!feedback.dataset.rqSpoken){feedback.dataset.rqSpoken='1';area._rqSpeakEnglish?.(area.dataset.rqEn);}if(feedback&&area.dataset.rqEn&&area.dataset.rqTr&&area.dataset.rqKind!=='teach'){const text=(feedback.classList.contains('kotu')?'✕ Doğru cevap: ':'✓ Doğru! ')+area.dataset.rqEn+' = '+area.dataset.rqTr;if(feedback.textContent!==text)feedback.textContent=text;}offerEnergyAfterAnswer(r,area);r.classList.remove('rq-compact','rq-tight');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-compact');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-tight');}
+
+/* Route-only energy refill: keep the answered question in place until the
+   server confirms a purchase. The existing economy API remains authoritative. */
+function offerEnergyAfterAnswer(route,area){
+ if(route.id!=='bzPerde'||!route.querySelector('.bz-oyun'))return;
+ const next=area.querySelector('.bz-btn.mor');
+ if(!next||!(/⚡\s*[−-]1/.test(next.dataset.rqOriginal||next.textContent)))return;
+ if(Number(root.genelEnerjiKalan)>0){
+  if(next.dataset.rqOriginal){next.textContent=next.dataset.rqOriginal;delete next.dataset.rqOriginal;}
+  return;
+ }
+ if(!area.querySelector('.bz-geri-bildirim'))return;
+ if(!next.dataset.rqOriginal)next.dataset.rqOriginal=next.textContent;
+ if(next.textContent!=='⚡ Enerji al ve devam et')next.textContent='⚡ Enerji al ve devam et';
+ const step=area.querySelector('.rq-progress span')?.textContent.trim()||'';
+ const question=area.querySelector('.bz-soru')?.textContent.trim()||'';
+ const key=step+'|'+question;
+ if(route.dataset.rqEnergyOffered===key)return;
+ route.dataset.rqEnergyOffered=key;
+ setTimeout(()=>{
+  if(route.isConnected&&next.isConnected&&Number(root.genelEnerjiKalan)===0
+      &&!document.querySelector('.sa-perde[aria-label="Enerji paketleri"]')){
+   root.genelEnerjiBittiGoster?.();
+  }
+ },300);
+}
+if(typeof document!=='undefined')document.addEventListener('click',async event=>{
+ const buy=event.target?.closest?.('.sa-perde[aria-label="Enerji paketleri"] .dm-energy-buy');
+ if(!buy||!document.querySelector('#bzPerde .bz-oyun'))return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(buy.disabled)return;
+ const original=buy.textContent;
+ buy.disabled=true;buy.textContent='⏳ Satın alınıyor…';
+ let paid=false;
+ try{paid=await root.enerjiPaketiAl?.(Number(buy.dataset.amount))===true;}
+ catch{root.yoToast?.('Enerji alınamadı. Lütfen tekrar dene.');}
+ if(!paid){buy.disabled=false;buy.textContent=original;return;}
+ buy.closest('.sa-perde')?.remove();
+ const next=document.querySelector('#bzPerde #bzAlan .bz-btn.mor');
+ if(next&&Number(root.genelEnerjiKalan)>0){
+  if(next.dataset.rqOriginal){next.textContent=next.dataset.rqOriginal;delete next.dataset.rqOriginal;}
+  next.click(); // same saved question, then the normal server-verified energy step
+ }
+},true);
+
 function scheduleFit(){if(!layoutFrame)layoutFrame=requestAnimationFrame(fitRoute);}
 function watchLayout(r){if(watchedRoot!==r){layoutObserver?.disconnect();watchedRoot=r;if(typeof MutationObserver==='function'){layoutObserver=new MutationObserver(scheduleFit);layoutObserver.observe(r,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['hidden']});}}scheduleFit();}
 if(typeof root.addEventListener==='function'){root.addEventListener('resize',scheduleFit);root.visualViewport?.addEventListener('resize',scheduleFit);}
