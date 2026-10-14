@@ -85,7 +85,12 @@ export function storyV4Steps(chapter:any){
  {kind:'repeat',label:'Dinleyerek hatırla',...b,options:rotate(opts,1)},
  {kind:'choose',mode:'meaning',label:'Anlamını hatırla',...c,options:rotate(ordered.map(x=>x.tr),1),answer:c.tr}
  ];
- const practice=candidates.slice(0,10-cards.length),final=ordered.map(x=>({kind:'final',label:'Son kontrol',...x,maxAttempts:2})),result=[];
- let f=0;for(let i=0;i<practice.length;i++){result.push(practice[i]);if(f<final.length&&i>=Math.floor((f+1)*practice.length/final.length)-1)result.push(final[f++]);}
+ const extra=[
+ {kind:'choose',label:'İngilizcesini seç',...a,options:rotate(opts,2),answer:a.en},
+ {kind:'choose',mode:'meaning',label:'Türkçesini seç',...b,options:rotate(ordered.map(x=>x.tr),2),answer:b.tr}
+ ];
+ const practice=[...candidates,...extra].slice(0,10);
+ const final=cards.map(x=>({kind:'final',label:'Kelime kartları · son tekrar',...x,maxAttempts:2}));
+ const result=[...practice,...final];
  return result;
 }
