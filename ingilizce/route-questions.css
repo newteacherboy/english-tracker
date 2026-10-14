@@ -69,3 +69,6 @@ body #bzPerde#bzPerde.rq-approved #bzAlan[style*="display:none"],body #bzPerde#b
 #dmStoryLesson.rq-approved .rq-intro-note{text-align:center;font-size:14px;color:#446d92;line-height:1.35;margin:3px 0}
 #dmStoryLesson.rq-approved .rq-intro-next{width:100%!important}
 @media(max-height:610px){#dmStoryLesson.rq-approved .rq-intro-word{font-size:27px}#dmStoryLesson.rq-approved .rq-intro-audio{min-height:44px}#dmStoryLesson.rq-approved .rq-intro-note{display:none}}
+
+/* Keep the server-backed energy refill window above the full-screen route. */
+.sa-perde[aria-label="Enerji paketleri"]{z-index:100000060!important}
