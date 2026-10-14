@@ -51,7 +51,7 @@ export function storyAPI(db:any,json:any){
   else if(['choice','listen'].includes(task.kind)){if(!Number.isInteger(b.answer)||b.answer<0||b.answer>=task.options.length)return json({ok:false,mesaj:'Bir seçenek seç.'},400);correct=b.answer===task.answer;}
   else if(task.kind==='order')correct=normStory(b.answer)===normStory(task.answer);
   else if(!['scene','teach'].includes(task.kind))return json({ok:false,mesaj:'İçerik güncellendi. Sayfayı yenile.'},400);
-  const {data:r,error:err}=await db.rpc('dm_story_apply',{owner_key:owner,chapter_no:chapter,expected_cursor:existing.cursor,expected_version:existing.version,answer_correct:correct,is_question:question,step_count:steps.length,question_count:existing.deck_version>=2?steps.length:steps.filter((t:any)=>['choice','listen','order'].includes(t.kind)).length});
+  const {data:r,error:err}=await db.rpc('dm_story_apply',{owner_key:owner,chapter_no:chapter,expected_cursor:existing.cursor,expected_version:existing.version,answer_correct:correct,is_question:question&&!revealed,step_count:steps.length,question_count:existing.deck_version>=2?steps.length:steps.filter((t:any)=>['choice','listen','order'].includes(t.kind)).length});
   if(err)return json({ok:false,mesaj:'İlerlemen kaydedilemedi. Yeniden dene.'},503);
   if(!r.ok)return json(r,r.energyEmpty?409:503);
   if(existing.deck_version>=2&&task.kind==='final'){

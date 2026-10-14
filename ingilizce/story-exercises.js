@@ -89,7 +89,7 @@
  }
  function listen(lang='en'){
    const r=recognition(lang);if(!r)return Promise.resolve({status:'unavailable'});
-   return new Promise(resolve=>{let finished=false;const done=x=>{if(finished)return;finished=true;try{r.stop()}catch{}resolve(x)};r.onresult=e=>done({status:'heard',text:e.results?.[0]?.[0]?.transcript||''});r.onerror=e=>done({status:'error',error:String(e.error||'microphone')});r.onnomatch=()=>done({status:'no-match'});r.onend=()=>done({status:'ended'});try{r.start()}catch(e){done({status:'error',error:String(e.message||'microphone')})}});
+   return new Promise(resolve=>{let finished=false;const timeout=setTimeout(()=>done({status:'ended'}),8000);const done=x=>{if(finished)return;finished=true;clearTimeout(timeout);try{r.stop()}catch{}resolve(x)};r.onresult=e=>done({status:'heard',text:e.results?.[0]?.[0]?.transcript||''});r.onerror=e=>done({status:'error',error:String(e.error||'microphone')});r.onnomatch=()=>done({status:'no-match'});r.onend=()=>done({status:'ended'});try{r.start()}catch(e){done({status:'error',error:String(e.message||'microphone')})}});
  }
  function buildV4(chapter){
  const cards=cardsOf(chapter).slice(0,4);if(!cards.length)return [];

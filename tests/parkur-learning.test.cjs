@@ -22,7 +22,7 @@ test('current twelve-mechanism deck uses only the stop words and ends with their
 });
 test('card finale offers two choices without microphone controls', () => {
   const script=html.slice(start,end),a=script.indexOf('  function sesliFinal('),b=script.indexOf('  /* 🎈 Risk',a),final=script.slice(a,b);
-  assert.match(final,/karistir\(\[word.en,wrong\]\)/);
+  assert.match(final,/karistir\(\[word.tr,wrong\]\)/);
   assert.doesNotMatch(final,/SpeechRecognition|bzMicText|bzMicStart/);
   assert.match(final,/cevap\(true,'Tüm kelime kartları tamamlandı'\)/);
 });
