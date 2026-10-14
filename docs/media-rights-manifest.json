@@ -1185,6 +1185,20 @@
       "bytes": 10904,
       "status": "ai-generated",
       "source": "docs/first-discovery-generation.json"
+    },
+    {
+      "path": "ingilizce/avatar-assets/adventure-girl-v2.webp",
+      "sha256": "72407a41e5c4973ad47b3d33f73be9de821835b685f907476250ae2edf5fc35a",
+      "source": "OpenAI image generation, approved K2/E2 concept adapted for Diji-Medu",
+      "status": "ai-generated",
+      "bytes": 166138
+    },
+    {
+      "path": "ingilizce/avatar-assets/adventure-boy-v2.webp",
+      "sha256": "2651549c889c2ca3034c1797dfb9ebcea882a9392937583896e09185df3c4533",
+      "source": "OpenAI image generation, approved K2/E2 concept adapted for Diji-Medu",
+      "status": "ai-generated",
+      "bytes": 165494
     }
   ]
 }

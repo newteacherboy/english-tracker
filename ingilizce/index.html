@@ -5,6 +5,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
+<script src="adventure-avatars.js?v=20261014-k2-e2-1"></script>
 <script src="progression-catalog.js?v=20261014-legend-1"></script>
 <link rel="stylesheet" href="first-discovery.css?v=20261013-discovery-fix-2">
 <script src="first-discovery-state.js?v=20261013-discovery-fix-2"></script>
@@ -16345,8 +16346,13 @@ function avatarSVG(s, stil, px, cins) {
   if (s.cerceve === 'gokkusagi') cerceve = `<circle cx="100" cy="100" r="95" fill="none" stroke="url(#rb${uid})" stroke-width="9"/>`;
   let dis = stil === 'b' ? `<circle cx="100" cy="100" r="97" fill="none" stroke="#fff" stroke-width="5"/><circle cx="100" cy="100" r="99" fill="none" stroke="#3b2c66" stroke-width="2.5"/>` : '';
 
-  if (s._tamBoy) return { defs: defs.join(''), ic: arkaSac + govde + basArka + kafa + yuz + basOn + onSac + sapka + gozluk };
-  return `<svg viewBox="0 0 200 200" width="${px}" height="${px}" role="img" aria-label="Karakter"><defs>${defs.join('')}</defs><g clip-path="url(#cl${uid})">${arka}${arkaSac}${govde}${basArka}${kafa}${yuz}${basOn}${onSac}${sapka}${gozluk}${dost}${cikB}</g>${cerceve}${dis}</svg>`;
+  const newHead=window.dmAdventureAvatar?.head(s,cins);
+  const slimBody='<g transform="translate(100 0) scale(.72 1) translate(-100 0)">'+govde+'</g>';
+  const headLayers=newHead?newHead+sapka+gozluk:arkaSac+basArka+kafa+yuz+basOn+onSac+sapka+gozluk;
+  if (s._tamBoy) return { defs: defs.join(''), ic: slimBody+headLayers };
+  const portrait=window.dmAdventureAvatar?.portrait(s,cins);
+  const character=portrait||slimBody+headLayers;
+  return `<svg viewBox="0 0 200 200" width="${px}" height="${px}" role="img" aria-label="Karakter"><defs>${defs.join('')}</defs><g clip-path="url(#cl${uid})">${arka}${character}${dost}${cikB}</g>${cerceve}${dis}</svg>`;
 }
 
   const KA_STIL = 'c';
@@ -22972,8 +22978,10 @@ window.ocEnerjiHarca = async function (n) {
     return ESKI_RENK[s.kiyafet] || '#a06bff';
   }
   /* Tam boy: alt vücut, kollar, alt giyim, ayakkabı + büst */
+  let fullModelUid=0;
   window.dolapTamBoySVG = function (s, cins, px) {
     s = Object.assign({}, s);
+    const selectedBase=window.dmAdventureAvatar?.full(s,cins,px);if(selectedBase)return selectedBase;
     let ten = '#f1c7a5'; try { ten = window.KA_TEN[Number(s.ten) || 0][0]; } catch (e) {}
     let ust = ustRenk(s), tek = s.tek ? parcala(s.tek) : null;
     let alt = tek ? null : parcala(s.alt || 'a:pantolon:#1e3a8a:duz');           /* çıplak kalmaz: varsayılan lacivert pantolon */
@@ -23026,7 +23034,14 @@ window.ocEnerjiHarca = async function (n) {
     /* açık renkli kıyafetler (beyaz önlük gibi) zeminde kaybolmasın: ince kontur */
     out = out.replace(/<(path|rect|ellipse) (?![^>]*stroke=)/g, '<$1 stroke="rgba(30,27,75,.2)" stroke-width="1.4" ');
     /* büst (baş, yüz, omuz) */
-    out += govdeBas.ic;
+    // Give editable garments shaded volume while keeping their catalog colors.
+    let garmentGradients='',gradientIndex=0;const garmentIds=new Map();
+    out=out.replace(/fill="(#[0-9a-f]{6})"/gi,(match,color)=>{
+      if(!garmentIds.has(color)){const id='dmFabric'+(++fullModelUid)+'_'+gradientIndex++;garmentIds.set(color,id);garmentGradients+='<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2=".25"><stop stop-color="'+renkK(color,.22)+'"/><stop offset=".35" stop-color="'+renkA(color,.12)+'"/><stop offset=".7" stop-color="'+color+'"/><stop offset="1" stop-color="'+renkK(color,.18)+'"/></linearGradient>';}
+      return 'fill="url(#'+garmentIds.get(color)+')"';
+    });
+    govdeBas.defs+=garmentGradients;
+    out = '<g transform="translate(100 0) scale(.72 1) translate(-100 0)">'+out+'</g>'+govdeBas.ic;
     if (aks && aks.tip === 'atki') out += `<path d="M70 146 C80 158 120 158 130 146 L134 158 C120 170 80 170 66 158 Z" fill="${aks.renk}"/><rect x="110" y="160" width="14" height="40" rx="4" fill="${aks.renk}"/>`;
     if (aks && aks.tip === 'rozet') out += `<circle cx="128" cy="210" r="10" fill="${aks.renk}" stroke="#fff" stroke-width="2"/><text x="121" y="215" font-size="12">${aks.renk === '#f472b6' ? '💗' : '⭐'}</text>`;
     let cik = s.cik ? String(s.cik).replace(/^c:/, '') : '';
