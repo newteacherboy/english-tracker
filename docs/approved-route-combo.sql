@@ -106,10 +106,10 @@ begin
  combo:=case when p.cursor=0 then 0 else p.route_combo end;
  if is_question then
   if not answer_correct then combo:=0;
-  elsif p.charged_cursor<>p.cursor then combo:=combo+1;
+  else combo:=combo+1;
   end if;
  end if;
- if s.id is not null and answer_correct and is_question and p.charged_cursor<>p.cursor and combo>0 and combo%3=0 then
+ if s.id is not null and answer_correct and is_question and combo>0 and combo%3=0 then
   combo_gain:=least(1,greatest(0,cap-(e-costs)));
   if combo_gain>0 then
    update public.students set energy=e-costs+combo_gain where id=s.id;
