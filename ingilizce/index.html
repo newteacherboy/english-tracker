@@ -3837,10 +3837,6 @@ async function dijiGlobalVeriYukle() {
 
         globalDataCache = cache.veri;
 
-        console.log(
-            "📦 Global veri cihaz cache'inden açıldı:",
-            globalDataCache.length
-        );
 
         /* -----------------------------------------
            2) CACHE ESKİYSE ARKA PLANDA YENİLE
@@ -3868,10 +3864,6 @@ async function dijiGlobalVeriYukle() {
 
                         dijiGlobalCacheYaz(data);
 
-                        console.log(
-                            "🔄 Global veri arka planda yenilendi:",
-                            data.length
-                        );
 
                         /* Güncel kullanıcı bilgisi varsa ekrana uygula */
                         if (typeof aktifOgrenciAdi !== "undefined" &&
@@ -3921,10 +3913,6 @@ async function dijiGlobalVeriYukle() {
 
             dijiGlobalCacheYaz(data);
 
-            console.log(
-                "☁️ Global veri sunucudan alındı ve cache'lendi:",
-                data.length
-            );
 
             return data;
         }
@@ -3943,10 +3931,6 @@ async function dijiGlobalVeriYukle() {
 
             globalDataCache = cache.veri;
 
-            console.log(
-                "📴 Offline: eski global cache kullanılıyor:",
-                globalDataCache.length
-            );
 
             return globalDataCache;
         }
@@ -4124,10 +4108,6 @@ async function dijiKelimeHavuzunuYukle() {
     if (Array.isArray(eski) && eski.length) {
         window.masterKelimeHavuzu = eski;
 
-        console.log(
-            "📦 Kelime havuzu cihaz cache'inden açıldı:",
-            eski.length
-        );
 
         /* Cache varken kullanıcı beklemesin.
            İnternet varsa arka planda güncelle. */
@@ -4142,10 +4122,6 @@ async function dijiKelimeHavuzunuYukle() {
                         window.masterKelimeHavuzu = data;
                         dijiCacheYaz("kelime_havuzu", data);
 
-                        console.log(
-                            "🔄 Kelime havuzu arka planda yenilendi:",
-                            data.length
-                        );
                     }
                 })
                 .catch(() => {});
@@ -4168,10 +4144,6 @@ async function dijiKelimeHavuzunuYukle() {
             window.masterKelimeHavuzu = data;
             dijiCacheYaz("kelime_havuzu", data);
 
-            console.log(
-                "☁️ Kelime havuzu Supabase'den alındı ve cache'lendi:",
-                data.length
-            );
 
             return data;
         }
@@ -4186,10 +4158,6 @@ async function dijiKelimeHavuzunuYukle() {
 
         if (Array.isArray(eskiHerhangi) && eskiHerhangi.length) {
             window.masterKelimeHavuzu = eskiHerhangi;
-            console.log(
-                "📴 Offline: eski kelime havuzu kullanılıyor:",
-                eskiHerhangi.length
-            );
             return eskiHerhangi;
         }
     }
@@ -6602,10 +6570,6 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     dcTumKonularCache =
                         kayit.veri;
 
-                    console.log(
-                        "📦 Ders konuları cihaz cache'inden açıldı:",
-                        dcTumKonularCache.length
-                    );
 
 
                     /* Cache eskiyse arka planda yenile */
@@ -6644,10 +6608,6 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                                     })
                                 );
 
-                                console.log(
-                                    "🔄 Ders konuları arka planda yenilendi:",
-                                    dcTumKonularCache.length
-                                );
                             })
                             .catch(() => {})
                             .finally(() => {
@@ -6726,10 +6686,6 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 }
 
 
-                console.log(
-                    "☁️ Ders konuları Supabase'den alındı ve cache'lendi:",
-                    dcTumKonularCache.length
-                );
             })
             .catch(e => {
 
@@ -10950,7 +10906,6 @@ function ozellikSecDoldur() {
         document.addEventListener('fullscreenchange', function() {
             if (!document.fullscreenElement) {
                 // Tam ekrandan çıkıldı, overlay'ler zaten DOM'da olduğu için otomatik tekrar görünür/tıklanabilir olur
-                console.log("Tam ekrandan çıkıldı, kontrol butonları tekrar erişilebilir.");
             }
         });
 
@@ -14987,7 +14942,6 @@ async function maTumGetir() {
 
     const aktifHafta = yoHaftaKodu();
 
-    console.log("🏆 Lig verisi:", aktifHafta);
 
 
     /* =====================================================
@@ -15004,10 +14958,6 @@ async function maTumGetir() {
 
         maTumListe = cache.veri;
 
-        console.log(
-            "📦 Lig cihaz cache'inden açıldı:",
-            maTumListe.length
-        );
 
 
         /* Cache 5 dakikadan eskiyse
@@ -15044,10 +14994,6 @@ async function dijiLigSunucudanGuncelle(aktifHafta) {
 
     try {
 
-        console.log(
-            "☁️ Lig Supabase'den alınıyor:",
-            aktifHafta
-        );
 
 
         const { data, error } = await supabaseClient
@@ -15148,10 +15094,6 @@ async function dijiLigSunucudanGuncelle(aktifHafta) {
         );
 
 
-        console.log(
-            "☁️ Lig güncellendi ve cache'lendi:",
-            maTumListe.length
-        );
 
 
         return maTumListe;
@@ -15346,9 +15288,6 @@ async function dijiAkisSunucudanGuncelle() {
 
     try {
 
-        console.log(
-            "☁️ Arkadaşlar Supabase'den alınıyor..."
-        );
 
         const r =
             await fetch(
@@ -15376,10 +15315,6 @@ async function dijiAkisSunucudanGuncelle() {
                 maAkisVeri
             );
 
-            console.log(
-                "☁️ Akış güncellendi ve cache'lendi:",
-                maAkisVeri.length
-            );
 
             return maAkisVeri;
         }
@@ -15423,10 +15358,6 @@ async function maAkisYukle() {
                 maAkisVeri =
                     cache.veri;
 
-                console.log(
-                    "📦 Arkadaşlar cihaz cache'inden açıldı:",
-                    maAkisVeri.length
-                );
 
 
                 const cacheYasi =
