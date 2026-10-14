@@ -551,8 +551,8 @@
     },
     {
       "path": "ingilizce/harf-adasi-approved-sheet.png",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "bytes": 0,
+      "sha256": "0afa66884994039da0243c7e2e65742d432b303e2192c02e05ab0417ba532586",
+      "bytes": 1513066,
       "status": "ai-generated",
       "source": "OpenAI image generation: approved Papi Harf Adasi artwork and UI sprite sheet, 2026-10-14"
     },
