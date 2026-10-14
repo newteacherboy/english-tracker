@@ -1,0 +1,29 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
+(async()=>{
+ const base=path.resolve(__dirname,'../ingilizce'),browser=await chromium.launch({executablePath:process.env.FRIENDS_BROWSER_PATH||undefined,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader'],env:{...process.env,LD_LIBRARY_PATH:process.env.FRIENDS_BROWSER_PATH?path.dirname(process.env.FRIENDS_BROWSER_PATH):process.env.LD_LIBRARY_PATH||''}}),page=await browser.newPage(),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/*',r=>{const u=new URL(r.request().url()),file=path.join(base,u.pathname.slice(1));return fs.existsSync(file)&&fs.statSync(file).isFile()?r.fulfill({path:file}):r.fulfill({body:''});});
+ await page.goto('https://route.test/');
+ await page.setContent('<meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="member-experience.css"><link rel="stylesheet" href="route-questions.css"><style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif}</style><div id="panel-alani" style="display:block"></div><nav id="bottomNavMobile"><button data-ekran="tab-dunyam">Profil</button></nav>');
+ await page.evaluate(()=>{window.aktifOgrenciAdi='Fixture';window.yo={dmLearningPurpose:'school',altin:24,totalXp:80};window.yoHazirMi=()=>true;window.apiURL='/api';window.genelEnerjiKalan=19;window.calls=[];window.failSave=false;window.homeCalls=0;window.dunyaAc=()=>window.homeCalls++;window.fetch=async()=>({ok:true,json:async()=>({ok:true,emailVerified:true,hasPlacement:true})});window.dmLearningRoute={purpose:()=>yo.dmLearningPurpose,set:async p=>{if(failSave)throw Error('Kaydetme hatası');calls.push(p);yo.dmLearningPurpose=p;return true}};window.yoHemenKaydet=async()=>{};window.fixtureReloads=0;});
+ for(const name of ['route-questions.js','member-experience.js','bottom-nav.js']){let s=fs.readFileSync(path.join(base,name),'utf8');if(name==='member-experience.js')s=s.replace('location.reload();','window.fixtureReloads++;');await page.addScriptTag({content:s});}
+ await page.waitForFunction(()=>[...document.styleSheets].some(s=>s.href?.includes('route-feedback-profile.css')));
+ for(const size of [{width:320,height:568},{width:390,height:844},{width:768,height:1024},{width:844,height:390}]){
+  await page.setViewportSize(size);
+  for(const purpose of ['school','independent']){
+   await page.evaluate(p=>{yo.dmLearningPurpose=p;dmMemberExperience.chooseRoute(true)},purpose);
+   const current=page.locator('[data-route="'+purpose+'"]');assert.equal(await current.getAttribute('aria-pressed'),'true');assert((await page.locator('.dm-route-current').innerText()).includes(purpose==='school'?'Macera Haritası':'Öğrenme Yolu'));
+   assert.equal(await page.locator('.dm-route-card.is-current').count(),1);assert.equal(await page.locator('.dm-route-card').count(),2);
+   const m=await page.locator('.dm-member-sheet').evaluate(e=>({w:e.getBoundingClientRect().width,doc:document.documentElement.scrollWidth,viewport:innerWidth}));assert(m.w<=size.width&&m.doc<=size.width+1);
+   const before=await page.evaluate(()=>calls.length);await current.click();assert.equal(await page.locator('#dmRouteChoice').count(),0);assert.equal(await page.evaluate(()=>calls.length),before);
+  }
+  await page.evaluate(()=>{const root=document.createElement('div');root.id='bzPerde';root.className='rq-approved';root.innerHTML='<div id="bzAlan">Question</div>';document.body.append(root);DMRouteQuestions.celebrate(root,0)});assert.equal(await page.locator('.rq-combo-burst').count(),0);
+  await page.evaluate(()=>DMRouteQuestions.celebrate(document.getElementById('bzPerde'),1));await page.waitForTimeout(650);
+  assert.equal(await page.locator('[data-rq-bonus-gain]').innerText(),'+1');assert.equal(await page.locator('.rq-bonus-papi').count(),1);assert.equal(await page.locator('.rq-flying-feather').count(),12);assert.equal(await page.evaluate(()=>genelEnerjiKalan),19);
+  const r=await page.locator('.rq-bonus-card').boundingBox();assert(Math.abs(r.x+r.width/2-size.width/2)<2);assert(Math.abs(r.y+r.height/2-size.height/2)<2);assert(r.y>=0&&r.y+r.height<=size.height+1);
+  if(size.width===390){await page.screenshot({path:'/tmp/centered-energy-bonus.png'});await page.evaluate(()=>{document.getElementById('bzPerde').remove();dmMemberExperience.chooseRoute(true)});await page.screenshot({path:'/tmp/informative-route-picker.png'});await page.locator('.dm-member-close').click();}else await page.evaluate(()=>document.getElementById('bzPerde').remove());
+ }
+ await page.evaluate(()=>{yo.dmLearningPurpose='school';dmMemberExperience.chooseRoute(true);window.failSave=true});await page.locator('[data-route="independent"]').click();assert((await page.locator('.dm-member-status').innerText()).includes('Kaydetme hatası'));assert.equal(await page.locator('.dm-route-card:disabled').count(),0);assert.equal(await page.evaluate(()=>yo.dmLearningPurpose),'school');
+ await page.evaluate(()=>window.failSave=false);await page.locator('[data-route="independent"]').click();assert.equal(await page.evaluate(()=>yo.dmLearningPurpose),'independent');assert.equal(await page.evaluate(()=>fixtureReloads),1);assert.equal(await page.evaluate(()=>yo.altin),24);assert.equal(await page.evaluate(()=>yo.totalXp),80);await page.locator('.dm-member-close').click();
+ await page.evaluate(()=>dmProfileMenuAc());assert((await page.locator('[data-profile="route"] .dm-profile-current-route').innerText()).includes('Öğrenme Yolu'));assert.deepEqual(errors,[]);await browser.close();console.log('PASS centered verified energy, four viewports, current-route labels, save failure/retry, no redundant current-route save, wallet preservation and profile indicator');
+})().catch(e=>{console.error(e);process.exit(1)});

@@ -1,6 +1,7 @@
 /* Approved text/audio route panels. Vocabulary comes from the current route only. */
 (function(root){'use strict';
 if(typeof document!=='undefined'&&!document.getElementById('rq-forest-reference-style')){const link=document.createElement('link');link.id='rq-forest-reference-style';link.rel='stylesheet';link.href='route-forest-reference.css?v=20261014-1';document.head.append(link);}
+if(typeof document!=='undefined'&&!document.getElementById('dm-route-feedback-profile-style')){const link=document.createElement('link');link.id='dm-route-feedback-profile-style';link.rel='stylesheet';link.href='route-feedback-profile.css?v=20261014-1';document.head.append(link);}
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=x=>String(x??'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const TYPES=['teach','hatirla','soyle','dinleSec','eslestir','eksik','lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
@@ -56,18 +57,14 @@ function hudHTML(combo,energy,gold,max=30){return '<img class="rq-papi" src="rou
 function mountSchool(root,step,total,combo){root.classList.add('rq-approved');root.dataset.rqLastCombo=String(combo||0);watchLayout(root);const old=root.querySelector('.bz-oyun-ust');if(old){const close=old.querySelector('#bzCik'),review=old.querySelector('#bzGeriSoru');let hud=root.querySelector('.rq-hud');if(!hud){hud=document.createElement('header');hud.className='rq-hud';root.prepend(hud)}hud.innerHTML=hudHTML(combo,window.genelEnerjiKalan??'–',typeof yo!=='undefined'?yo.altin||0:0,window.genelEnerjiMax||30);const area=root.querySelector('#bzAlan');const bar=document.createElement('div');bar.className='rq-progress';bar.innerHTML='<span>'+step+' / '+total+'</span><div><i style="width:'+step/total*100+'%"></i></div>';if(review){review.className='rq-review';review.textContent=String(step).padStart(2,'0');review.setAttribute('aria-label','Önceki soruları gözden geçir');bar.prepend(review)}if(close){close.className='rq-close';bar.append(close)}area.prepend(bar)}const title=root.querySelector('.bz-etiket');if(title&&!title.dataset.rqTitle){const type=root.querySelector('[data-question-type]')?.dataset.questionType;title.textContent=titles[type]||title.textContent;}}
 function updateSchool(root,combo){if(!root)return;const previous=Number(root.dataset.rqLastCombo||0);root.dataset.rqLastCombo=String(combo||0);if(root.id==='bzPerde'&&combo>previous&&combo%3===0)celebrate(root,0);const el=root.querySelector('[data-rq-combo]');if(el)el.textContent=combo>0?(combo-1)%3+1:0;const e=root.querySelector('[data-rq-energy]');if(e)e.textContent=window.genelEnerjiKalan??'–';}
 function celebrate(root,gain){
- if(!root||gain<0)return;
- if(gain<1)return;
+ const amount=Number(gain);if(!root||!Number.isFinite(amount)||amount<1)return;
  const existing=root.querySelector('.rq-combo-burst');
- if(existing){if(gain>0)existing.querySelector('b').textContent='+'+Number(gain)+' enerji';return;}
- const el=document.createElement('div');el.className='rq-combo-burst';el.setAttribute('role','status');
- el.innerHTML='<strong>3 doğru üst üste!</strong><b>'+(gain>0?'+'+Number(gain)+' enerji':'Harika seri!')+'</b>';
- {
-  const feathers=document.createElement('div');feathers.className='rq-feather-flight';feathers.setAttribute('aria-hidden','true');
-  for(let i=0;i<8;i++){const f=document.createElement('span');f.className='rq-flying-feather';f.style.setProperty('--i',i);f.style.setProperty('--spin',(i%2?-1:1)*24+'deg');feathers.append(f);}
-  el.append(feathers);root.classList.add('rq-combo-active');
- }
- root.append(el);setTimeout(()=>{el.remove();root.classList.remove('rq-combo-active');},2800);
+ if(existing){existing.querySelector('[data-rq-bonus-gain]').textContent='+'+amount;existing.setAttribute('aria-label',amount+' enerji kazandın! Üç doğru üst üste.');return;}
+ const el=document.createElement('div');el.className='rq-combo-burst';el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.setAttribute('aria-label',amount+' enerji kazandın! Üç doğru üst üste.');
+ el.innerHTML='<div class="rq-bonus-card"><div class="rq-bonus-halo" aria-hidden="true"></div><img class="rq-bonus-papi" src="study-assets/papi-celebrate.png" alt="Sevinen Papi"><span class="rq-bonus-streak">3 doğru üst üste!</span><div class="rq-bonus-prize"><span class="rq-bonus-bolt" aria-hidden="true"></span><b data-rq-bonus-gain>+'+amount+'</b></div><strong class="rq-bonus-label">ENERJİ KAZANDIN!</strong><span class="rq-bonus-message">Papi ile harika bir seri!</span></div>';
+ const feathers=document.createElement('div');feathers.className='rq-feather-flight';feathers.setAttribute('aria-hidden','true');
+ for(let i=0;i<12;i++){const f=document.createElement('span');f.className='rq-flying-feather';f.style.setProperty('--i',i);f.style.setProperty('--spin',(i%2?-1:1)*24+'deg');feathers.append(f);}
+ el.append(feathers);root.append(el);setTimeout(()=>el.remove(),3200);
 }
 function storyHud(modal,combo,close){modal.classList.add('rq-approved');watchLayout(modal);const header=modal.querySelector('.ds-lesson-header');if(!header)return;let hud=header.querySelector('.rq-hud');if(!hud){hud=document.createElement('div');hud.className='rq-hud';header.prepend(hud)}hud.innerHTML=hudHTML(combo,window.genelEnerjiKalan??'–',typeof yo!=='undefined'?yo.altin||0:0,window.genelEnerjiMax||30);let x=header.querySelector('.rq-close');if(!x){x=document.createElement('button');x.type='button';x.className='rq-close';x.setAttribute('aria-label','Kapat');x.textContent='✕';x.onclick=close;header.append(x)}x.disabled=!!window.dmPapiFirstPractice?.locked('independent');}
 root.DMRouteQuestions={TYPES,titles,renderTask,mountSchool,updateSchool,celebrate,cancelSpeech};root.dmSelectedStoryHud=storyHud;
