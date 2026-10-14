@@ -14,8 +14,8 @@ window.DMStoryV2UI={
   const listenTr=button('🇹🇷 Türkçesini dinle',()=>E.speak(task.tr,'tr'));
   const header=document.createElement('div');header.className='ds-audio';header.append(listen);if(!asksTurkishMeaning)header.append(listenTr);
   actions.innerHTML='';if(task.kind==='match'||task.kind==='final')header.hidden=true;
-  const submit=async answer=>{if(locked)return;locked=true;try{const result=await onSubmit(answer);area.classList.remove('papi-win','papi-error');void area.offsetWidth;if(result?.blocked){locked=false;return;}if((result?.accepted||result?.correct)&&!result?.revealed){area.querySelectorAll('.selected').forEach(b=>b.classList.add('correct'));area.classList.add('papi-win');const tick=document.createElement('div');tick.className='papi-speech-tick';tick.setAttribute('role','status');tick.textContent='✅ Doğru cevap!';area.append(tick);E.speak(task.en,'en');}else{area.classList.add('papi-error');area.querySelectorAll('.selected').forEach(b=>b.classList.add('wrong'));locked=false;}}catch(e){locked=false;onNote(e.message||'Yeniden dene.');}};
-  const check=button('✓ Kontrol Et',()=>{if(task.kind==='match')return submit(pairs);if(task.kind==='order')return submit(selected.map(i=>task.tokens[i]).join(task.join??' '));if(['choose','complete'].includes(task.kind))return submit(picked);return submit(area.querySelector('input')?.value||'');});
+  const submit=async answer=>{if(locked)return;locked=true;try{const result=await onSubmit(answer);area.classList.remove('papi-win','papi-error');void area.offsetWidth;if(result?.blocked){locked=false;return;}if((result?.accepted||result?.correct)&&!result?.revealed){area.querySelectorAll('.selected').forEach(b=>b.classList.add('correct'));area.classList.add('papi-win');const tick=document.createElement('div');tick.className='papi-speech-tick';tick.setAttribute('role','status');tick.textContent='✅ Doğru cevap!';area.append(tick);E.speak(task.en,'en');}else{area.classList.add('papi-error');area.querySelectorAll('.selected').forEach(b=>b.classList.add('wrong'));if(task.kind==='order'){selected=[];area.querySelectorAll('.ds-tokens button').forEach(b=>b.disabled=false);area.querySelector('.ds-sentence').textContent='Cümleyi yeniden oluştur…';onNote('Sıralama yanlış. Tekrar dene.');}locked=false;}}catch(e){locked=false;onNote(e.message||'Yeniden dene.');}};
+  const check=button('✓ Kontrol Et',()=>{if(task.kind==='order'&&selected.length!==task.tokens.length){onNote('Önce bütün kelimeleri sıraya koy.');return;}if(task.kind==='match')return submit(pairs);if(task.kind==='order')return submit(selected.map(i=>task.tokens[i]).join(task.join??' '));if(['choose','complete'].includes(task.kind))return submit(picked);return submit(area.querySelector('input')?.value||'');});
   if(task.kind==='match'){
    put('<p class="papi-question">🧩 Doğru eşleştir!</p><p class="papi-subtitle">İngilizce ifadeyi Türkçe anlamıyla birleştir.</p>');
    const english=document.createElement('div'),turkish=document.createElement('div');english.className=turkish.className='ds-options';
@@ -27,7 +27,7 @@ window.DMStoryV2UI={
   }else if(task.kind==='order'){
    put('<p class="papi-question">🧠 Cümleyi doğru sıraya koy</p><p class="papi-subtitle">Kelime taşlarına dokunarak cümleyi oluştur.</p><div class="ds-sentence">Cümlen burada oluşacak…</div>');
    const tray=document.createElement('div');tray.className='ds-tokens';
-   task.tokens.map((t,i)=>({t,i})).reverse().forEach(({t,i})=>{const b=button(t,()=>{if(norm(t)!==norm(task.tokens[selected.length])){b.classList.add('wrong');window.dmAnswerFeedback?.(false);setTimeout(()=>b.classList.remove('wrong'),500);return;}selected.push(i);b.disabled=true;const line=area.querySelector('.ds-sentence');if(selected.length===1)line.textContent='';const tile=document.createElement('span');tile.className='rq-token-correct';tile.textContent=t;line.append(tile,document.createTextNode(task.join??' '));window.dmAnswerFeedback?.(true)});tray.append(b)});area.append(tray);
+   task.tokens.map((t,i)=>({t,i})).reverse().forEach(({t,i})=>{const b=button(t,()=>{selected.push(i);b.disabled=true;const line=area.querySelector('.ds-sentence');if(selected.length===1)line.textContent='';const tile=document.createElement('span');tile.className='rq-token-correct';tile.textContent=t;line.append(tile,document.createTextNode(task.join??' '));window.dmAnswerFeedback?.(true)});tray.append(b)});area.append(tray);
    actions.append(button('Temizle',()=>{selected=[];tray.querySelectorAll('button').forEach(b=>b.disabled=false);area.querySelector('.ds-sentence').textContent='Cümlen burada oluşacak…'}));
   }else if(['choose','complete'].includes(task.kind)){
    put('<p class="papi-subtitle">'+(task.kind==='complete'?'Eksik kısmı seç':task.mode==='dialogue'?'Papi’ye uygun cevabı seç':task.mode==='meaning'?'Türkçe anlamını seç':'Doğru İngilizce ifadeyi seç')+'</p><p class="papi-question">'+esc(task.kind==='complete'?task.stem:task.mode==='dialogue'?(task.prompt+' · '+task.tr):task.mode==='meaning'?task.en:task.tr)+'</p><div class="ds-options"></div>');
@@ -50,7 +50,7 @@ window.DMStoryV2UI={
 
   }
   if(task.kind==='final'){header.querySelector('.ds-audio button:first-child')?.remove();const hint=document.createElement('div');hint.className='papi-final-progress';hint.textContent='Son görev · Öğrendiklerini hatırla';area.prepend(hint);}area.prepend(header);if(task.kind!=='final')actions.append(check);
-  if(['order','repeat'].includes(task.kind))E.speak(task.en);
+  if(task.kind==='repeat')E.speak(task.en);
   // Never read the Turkish answer automatically when the question opens.
  }
 };
