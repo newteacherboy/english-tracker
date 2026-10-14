@@ -23,8 +23,8 @@ jobs:
           name: compact-wallet-design
           path: /tmp/compact-wallet/*.png
       - run: node tests/onboarding-email-ui.cjs
-      - run: node tests/selected-play-ui.cjs
       - run: node tests/approved-route-panels.cjs
+      - run: node tests/selected-play-ui.cjs
       - run: node --test tests/first-discovery-state.test.cjs
       - run: node tests/selected-game-entry.cjs
       - run: node tests/member-activity-ui.cjs
