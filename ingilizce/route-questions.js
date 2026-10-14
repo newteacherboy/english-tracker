@@ -77,7 +77,7 @@ function fitRoute(){layoutFrame=0;const r=watchedRoot;if(!r?.isConnected)return;
 function offerEnergyAfterAnswer(route,area){
  if(route.id!=='bzPerde'||!route.querySelector('.bz-oyun'))return;
  const next=area.querySelector('.bz-btn.mor');
- if(!next||!(/⚡\\s*[−-]1/.test(next.dataset.rqOriginal||next.textContent)))return;
+ if(!next||!(/⚡\s*[−-]1/.test(next.dataset.rqOriginal||next.textContent)))return;
  if(Number(root.genelEnerjiKalan)>0){
   if(next.dataset.rqOriginal){next.textContent=next.dataset.rqOriginal;delete next.dataset.rqOriginal;}
   return;
