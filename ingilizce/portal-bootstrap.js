@@ -36,9 +36,19 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false}={})
    // The chosen learning route is always the student's home screen.
    if(owner.toLowerCase()==='teacher')await window.meduAkisAc?.();else await window.dunyaAc?.();
    if(turn!==epoch||name()!==owner)return false;
-   safe(window.anaPanelDuyuruBildirimleriYukle);safe(window.gunlukEnerjiBonusuKontrolEt);
    $('oturumYuklemeOverlay').style.display='none';
    document.dispatchEvent(new Event('dm:login'));
+   // Announcements and daily bonus checks are not required for first paint.
+   // Queue after a frame so home navigation remains interactive immediately.
+   const afterPaint=()=>{
+    setTimeout(()=>{
+     if(turn!==epoch||name()!==owner)return;
+     safe(window.anaPanelDuyuruBildirimleriYukle);
+     safe(window.gunlukEnerjiBonusuKontrolEt);
+    },0);
+   };
+   if(typeof requestAnimationFrame==='function')requestAnimationFrame(afterPaint);
+   else afterPaint();
    return true;
   }catch(e){
    if(turn===epoch&&name()===owner){$('panel-alani').style.display='block';$('oturumYuklemeOverlay').style.display='none';safe(window.yoToast,'Bir bölüm yüklenemedi. Oyunlar sekmesinden tekrar deneyebilirsin.');}
