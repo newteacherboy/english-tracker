@@ -112,3 +112,14 @@ from public.extra_data
 where key_name='yo' and value#>>'{haftaHedef,odul}'='1'
   and (value#>>'{haftaHedef,h}')~'^20[0-9]{2}-[0-9]{2}-[0-9]{2}$'
 on conflict do nothing;
+
+-- Keep pre-existing clients from overwriting a completed legacy goal with
+-- the separate (previously stale) weekly_target record on the next refresh.
+update public.extra_data wt
+set value=jsonb_set(wt.value,'{odul}','1'::jsonb,true),updated_at=now()
+from public.extra_data legacy
+where legacy.student_id=wt.student_id and legacy.key_name='yo'
+  and wt.key_name='weekly_target'
+  and legacy.value#>>'{haftaHedef,odul}'='1'
+  and legacy.value#>>'{haftaHedef,h}'=wt.value->>'h'
+  and coalesce(wt.value->>'odul','0')<>'1';
