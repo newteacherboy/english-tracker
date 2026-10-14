@@ -61,6 +61,6 @@ export function storyAPI(db:any,json:any){
    if(attemptError)return json({ok:false,mesaj:'Kart denemesi kaydedilemedi. Bölümü yeniden aç.'},503);
    Object.assign(r.progress,patch);
   }
-  return json({...view(r.progress),...r,progress:undefined,hint:correct?'':task.hint||task.en||'',revealed,correct:revealed?false:r.correct,accepted:revealed||r.correct});
+  return json({...view(r.progress),...r,progress:undefined,hint:correct?'':task.kind==='order'?'':task.hint||task.en||'',revealed,correct:revealed?false:r.correct,accepted:revealed||r.correct});
  }};
 }
