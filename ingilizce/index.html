@@ -26642,9 +26642,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     // İlk 12 görev mevcut 12 ayrı mekaniği kullanır; final yalnızca hedef kelimeleri sorar.
     const active=D.kelimeler.slice();
     if(!active.length){toast('Bu ünitenin word_bank kelimeleri bulunamadı.');return;}
-    const types=['dinleAnlam','lab','hata','cumleTamamla','miniDiyalog','kelimeKur',
-      'hatirla','eslestir','duydugunuBul','risk','eksik','dikte'];
-    const sorular=types.map((tip,i)=>({tip,k:active[i%active.length]}));
+    const types=['teach','hatirla','soyle','dinleSec','eslestir','eksik',
+      'lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
+    const sorular=types.map((tip,i)=>({tip,k:active[i%active.length],l:active.slice()}));
     sorular.push({tip:'sesliFinal',l:active.slice()});
     O = { owner:ownerAtStart, b, d, D, sorular, speechAlternatives:{}, kombo:0, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0, runId:crypto.randomUUID(), pendingAnswer:null };
     const saved=checkpointRead(D.no);
@@ -26746,15 +26746,15 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let alan = $('bzAlan');
     try {
       const renderers={ lab, risk, eksik, hafiza, hiz, harf, sifre, es, tren, cumle, dikte, sesliFinal, dinleAnlam, hata, hatirla, miniDiyalog, cumleTamamla, kelimeKur, duydugunuBul, eslestir };
-      if(typeof renderers[s.tip]!=='function')throw new Error('Bilinmeyen soru: '+s.tip);
+      if(typeof renderers[s.tip]!=='function'&&!window.DMRouteQuestions?.TYPES.includes(s.tip))throw new Error('Bilinmeyen soru: '+s.tip);
       if(O._cevaplandi&&O.gecmis[O.i]){
         alan.innerHTML=O.gecmis[O.i].html;alan.querySelectorAll('button,input').forEach(x=>x.disabled=true);
         const next=document.createElement('button');next.className='bz-btn mor';next.textContent=O.i+1<O.sorular.length?'Devam →':'Sonucu gör';next.onclick=devamEt;alan.append(next);
-      }else{renderers[s.tip](s,alan);if(O.inputDraft?.question===O.i){const input=alan.querySelector('#'+O.inputDraft.id);if(input)input.value=O.inputDraft.value;}}
+      }else{const state=O,index=O.i;const handled=window.DMRouteQuestions?.renderTask(s,alan,{en:EN,tr:TR,pool:O.tum,shuffle:karistir,speak:oku,answer:cevap,feedback:good=>window.dmAnswerFeedback?.(good),current:()=>O===state&&O.i===index&&!O._cevaplandi&&alan.isConnected});if(!handled)renderers[s.tip](s,alan);if(O.inputDraft?.question===O.i){const input=alan.querySelector('#'+O.inputDraft.id);if(input)input.value=O.inputDraft.value;}}
       if(!alan.textContent.trim())throw new Error('Soru içeriği boş');
       try { window.dmCalmQuestion?.(p); } catch(layoutError) { console.warn('[Parkur] görünüm',layoutError); }
       if(!alan.textContent.trim())throw new Error('Soru görünümü boşaltıldı');
-      jokerBarCiz();
+      jokerBarCiz();window.DMRouteQuestions?.mountSchool(p,O.i+1,O.sorular.length,O.kombo||0);
     } catch(err) {
       console.error('[DijiMedu parkur] Soru çizimi başarısız:',s.tip,err);
       alan.innerHTML='<div class="bz-etiket">🦜 Papi yardım ediyor</div><div class="bz-soru">Bu soruyu gösteremedik.</div><p class="bz-ipucu">İlerlemen korunuyor. Soruyu yeniden yükleyebilir veya haritaya dönebilirsin.</p><button type="button" class="bz-btn" id="bzRetryQuestion">↻ Soruyu yeniden dene</button><button type="button" class="bz-btn" id="bzReturnMap">🏰 Haritaya dön</button>';
@@ -26797,12 +26797,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     } else { O.yanlis++; O.kombo=0; if (window.OC) OC.yanlis(false); }
     if(!sinifModu() && O.i<12){
       const state=O;state.answerRecorded=false;O.pendingAnswer=parkurEnerjiAdim(O.runId,O.i+1,!!iyi).then(d=>{state.answerRecorded=true;if(O===state)checkpointSave();
-        if(d.eklenen>0)toast('⚡ 5 doğru kombo! +1 enerji');
+        if(d.eklenen>0)window.DMRouteQuestions?.celebrate(perde,d.eklenen);window.DMRouteQuestions?.updateSchool(perde,state.kombo||0);
         return d;
       }).catch(e=>{state.answerRecorded=false;state.answerError=e.message;if(O===state)checkpointSave();return null;});
     }
     ustTazele();
-    ses(iyi ? 'dogru' : 'yanlis');
+    ses(iyi ? 'dogru' : 'yanlis');window.dmAnswerFeedback?.(iyi);window.DMRouteQuestions?.updateSchool(perde,O.kombo||0);
     let g = document.createElement('div'); g.className = 'bz-geri-bildirim ' + (iyi ? 'iyi' : 'kotu'); g.setAttribute('role', 'status');
     const target=O.sorular[O.i], word=target.k||(target.l&&target.l[0]);
     const translated=word&&typeof TR==='function'?TR(word):'';
@@ -26910,8 +26910,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     items.forEach((k,i)=>{const btn=document.createElement('button');btn.className='dm-match-option';btn.textContent=EN(k);btn.dataset.key=String(i);btn.onclick=()=>{if(btn.disabled)return;L.querySelectorAll('button').forEach(b=>{b.classList.remove('selected');b.setAttribute('aria-pressed','false');});selected=i;btn.classList.add('selected');btn.setAttribute('aria-pressed','true');status.textContent='Türkçe anlamını seç.';saveMatch();};if(matchedKeys.includes(i)){btn.disabled=true;btn.classList.add('dm-right');}else if(selected===i)btn.classList.add('selected');L.append(btn);});
     shuffled.forEach(k=>{const index=items.indexOf(k),btn=document.createElement('button');btn.className='dm-match-option';btn.textContent=TR(k);btn.onclick=()=>{
       if(selected===null||btn.disabled)return;
-      if(selected===index){const left=L.querySelector('[data-key="'+index+'"]');left.disabled=true;left.classList.remove('selected');left.classList.add('dm-right');btn.disabled=true;btn.classList.add('dm-right');matchedKeys.push(index);selected=null;matched++;saveMatch();status.textContent='🟢 Doğru eşleştirme!';if(matched===items.length)cevap(mistakes===0,mistakes?'':EN(target));}
-      else{mistakes++;saveMatch();const left=L.querySelector('[data-key="'+selected+'"]');left?.classList.add('dm-wrong');btn.classList.add('dm-wrong');status.textContent='🔴 Eşleşmedi, tekrar dene.';setTimeout(()=>{btn.classList.remove('dm-wrong');left?.classList.remove('dm-wrong');},800);}
+      if(selected===index){const left=L.querySelector('[data-key="'+index+'"]');left.disabled=true;left.classList.remove('selected');left.classList.add('dm-right');btn.disabled=true;btn.classList.add('dm-right');matchedKeys.push(index);selected=null;matched++;saveMatch();window.dmAnswerFeedback?.(true);status.textContent='🟢 Doğru eşleştirme!';if(matched===items.length)cevap(mistakes===0,mistakes?'':EN(target));}
+      else{window.dmAnswerFeedback?.(false);mistakes++;saveMatch();const left=L.querySelector('[data-key="'+selected+'"]');left?.classList.add('dm-wrong');btn.classList.add('dm-wrong');status.textContent='🔴 Eşleşmedi, tekrar dene.';setTimeout(()=>{btn.classList.remove('dm-wrong');left?.classList.remove('dm-wrong');},800);}
     };if(matchedKeys.includes(index)){btn.disabled=true;btn.classList.add('dm-right');}R.append(btn);});
   }
   function duydugunuBul(s,alan) {
@@ -26927,15 +26927,15 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     function render(){
       if(!alan.isConnected)return;
       if(!remaining.length){cevap(true,'Tüm kelime kartları tamamlandı');return;}
-      const word=list[remaining[0]],wrong=list.find(w=>norm(w.en)!==norm(word.en)&&norm(w.tr)!==norm(word.tr))?.en||celdirici(s.l[remaining[0]],EN,1)[0]||'I do not know';
-      const options=karistir([word.en,wrong]);locked=false;
-      alan.innerHTML='<div class="bz-etiket">🃏 13. Görev · Kelime kartları</div><div class="dm-final-card dm-final-current"><span class="dm-final-card-label">'+(list.length-remaining.length+1)+' / '+list.length+'</span><strong>'+kac(word.tr)+'</strong><small>İngilizce karşılığını seç</small></div><div class="bz-secenekler">'+options.map((v,i)=>'<button class="bz-sec" type="button" data-final="'+i+'">'+kac(v)+'</button>').join('')+'</div><p id="bzCardStatus" role="status"></p>';
+      const word=list[remaining[0]],wrong=list.find(w=>norm(w.en)!==norm(word.en)&&norm(w.tr)!==norm(word.tr))?.tr||celdirici(s.l[remaining[0]],TR,1)[0]||'Bilmiyorum';
+      const options=karistir([word.tr,wrong]);locked=false;
+      alan.innerHTML='<div class="bz-etiket">🃏 13. Görev · Kelime kartları</div><div class="dm-final-card dm-final-current"><span class="dm-final-card-label">'+(list.length-remaining.length+1)+' / '+list.length+'</span><strong>'+kac(word.en)+'</strong><small>Türkçe anlamını seç</small></div><div class="bz-secenekler">'+options.map((v,i)=>'<button class="bz-sec" type="button" data-final="'+i+'">'+kac(v)+'</button>').join('')+'</div><p id="bzCardStatus" role="status"></p>';
       alan.querySelectorAll('[data-final]').forEach(btn=>btn.onclick=()=>{
-        if(locked)return;locked=true;const good=norm(options[+btn.dataset.final])===norm(word.en);
-        alan.querySelectorAll('[data-final]').forEach(x=>{x.disabled=true;if(norm(options[+x.dataset.final])===norm(word.en))x.classList.add('dogru');});
+        if(locked)return;locked=true;const good=norm(options[+btn.dataset.final])===norm(word.tr);
+        alan.querySelectorAll('[data-final]').forEach(x=>{x.disabled=true;if(norm(options[+x.dataset.final])===norm(word.tr))x.classList.add('dogru');});
         if(!good){btn.classList.add('yanlis');window.dmWrongWords?.add({...word,source:'parkur-final'});}
         alan.querySelector('#bzCardStatus').textContent=good?'✅ Doğru!':'Doğrusu: '+word.en+' · Bu kelime tekrar listene eklendi.';
-        ses(good?'dogru':'yanlis');oku(word.en);if(good){remaining.shift();O.voiceRemaining=remaining.slice();checkpointSave();}
+        ses(good?'dogru':'yanlis');window.dmAnswerFeedback?.(good);oku(word.en);if(good){remaining.shift();O.voiceRemaining=remaining.slice();checkpointSave();}
         const next=document.createElement('button');next.className='bz-btn';next.textContent=!good?'Tekrar dene':remaining.length?'Sonraki kart →':'Kartları tamamla ✓';next.onclick=render;alan.append(next);
       });
     }render();
@@ -28420,7 +28420,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261013-compact-127"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><script defer src="story-path.js?v=20261013-member-122"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><script defer src="story-path.js?v=20261014-approved-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261011-profix"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261011-hubfix2">
@@ -28522,5 +28522,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="notice-sharing.css?v=20261013-achievement-3">
 <script src="notice-sharing.js?v=20261013-achievement-3"></script>
 <link rel="stylesheet" href="papi-wallet.css?v=20261013-compact-127">
+<link rel="stylesheet" href="route-questions.css?v=20261014-approved-1">
+<script src="route-questions.js?v=20261014-approved-1"></script>
 </body>      
         </html>
