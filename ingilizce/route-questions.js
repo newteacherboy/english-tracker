@@ -9,6 +9,7 @@ function cancelSpeech(){clearTimeout(recognitionTimer);try{recognition?.abort()}
 function choices(word,pool,read,shuffle,count=3){return shuffle([read(word),...shuffle(pool.filter(x=>norm(read(x))!==norm(read(word)))).map(read).filter((x,i,a)=>a.indexOf(x)===i).slice(0,count-1)]);}
 function sentence(word,pool,read){const target=norm(read(word));return pool.find(x=>norm(read(x)).split(' ').length>1&&(' '+norm(read(x))+' ').includes(' '+target+' '))||word;}
 function renderTask(s,area,c){
+ area.dataset.rqKind=s.tip;if(s.k){area.dataset.rqEn=c.en(s.k);area.dataset.rqTr=c.tr(s.k);}
  if(s.tip==='eksik'&&c.en(s.k).length>20)return renderTask({...s,tip:'patternComplete'},area,c);
  if(!['teach','soyle','dinleSec','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'].includes(s.tip))return false;
  cancelSpeech();const {en,tr,pool,shuffle,speak,answer,current}=c;const text=en(s.k),meaning=tr(s.k);
@@ -31,7 +32,7 @@ function renderTask(s,area,c){
    r.onerror=()=>{received=true;fail('Ses alınamadı.')};r.onend=()=>{if(!received)fail('Ses algılanmadı.')};try{r.start();recognitionTimer=setTimeout(()=>fail('Dinleme süresi doldu.'),8000)}catch{fail('Mikrofon açılamadı.')}
   },'rq-microphone');mic.setAttribute('aria-label','Mikrofona konuş');area.append(mic,status,fallback);speak(text);return true;
  }
- const phrase=sentence(s.k,pool,en),full=en(phrase),translation=tr(phrase);
+ const phrase=sentence(s.k,pool,en),full=en(phrase),translation=tr(phrase);if(s.tip.startsWith('pattern')||s.tip==='wordOrder'){area.dataset.rqEn=full;area.dataset.rqTr=translation;}
  if(s.tip==='wordOrder'||s.tip==='patternOrder'){
   const multi=full.trim().split(/\s+/).filter(Boolean),letters=multi.length<2,tokens=letters?Array.from(full):multi,join=letters?'':' ';let picked=[];
   put('<div class="bz-soru">'+esc(translation)+'</div><div class="rq-built" aria-live="polite"></div><div class="rq-token-pool"></div>');
@@ -46,7 +47,7 @@ function renderTask(s,area,c){
  put('<div class="bz-soru">'+esc(translation)+'</div>');select(choices(phrase,pool,en,shuffle),full);return true;
 }
 let watchedRoot=null,layoutObserver=null,layoutFrame=0;
-function fitRoute(){layoutFrame=0;const r=watchedRoot;if(!r?.isConnected)return;const area=r.querySelector('.ds-task')||r.querySelector('#bzAlan');if(!area)return;r.classList.remove('rq-compact','rq-tight');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-compact');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-tight');}
+function fitRoute(){layoutFrame=0;const r=watchedRoot;if(!r?.isConnected)return;const area=r.querySelector('.ds-task')||r.querySelector('#bzAlan');if(!area)return;const feedback=r.querySelector('.bz-geri-bildirim')||r.querySelector('.ds-feedback.correct');if(feedback&&area.dataset.rqEn&&area.dataset.rqTr&&area.dataset.rqKind!=='teach'){const text=(feedback.classList.contains('kotu')?'✕ Doğru cevap: ':'✓ Doğru! ')+area.dataset.rqEn+' = '+area.dataset.rqTr;if(feedback.textContent!==text)feedback.textContent=text;}r.classList.remove('rq-compact','rq-tight');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-compact');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-tight');}
 function scheduleFit(){if(!layoutFrame)layoutFrame=requestAnimationFrame(fitRoute);}
 function watchLayout(r){if(watchedRoot!==r){layoutObserver?.disconnect();watchedRoot=r;if(typeof MutationObserver==='function'){layoutObserver=new MutationObserver(scheduleFit);layoutObserver.observe(r,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['hidden']});}}scheduleFit();}
 if(typeof root.addEventListener==='function'){root.addEventListener('resize',scheduleFit);root.visualViewport?.addEventListener('resize',scheduleFit);}
