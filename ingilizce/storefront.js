@@ -43,12 +43,16 @@
     const unlocked = allowed('joker_magaza'), n = typeof yo !== 'undefined' ? Number(yo?.jokerEnv?.[j.tur] || 0) : 0;
     return `<article class="ds-joker"><div class="ds-joker-picture">${art(j.tur === 'm_xp' ? 'xp' : 'x2')}</div><div class="ds-joker-info"><b>${esc(j.tur === 'cift' ? 'Çift Puan' : j.ad)}</b><small>${esc(j.ac)}</small>${n ? `<span class="ds-stock">Çantanda: ${n}</span>` : ''}<div class="ds-joker-bottom"><div class="ds-price">${money(jokerPrice(j))}</div>${button(!unlocked ? '🔒 Sv. 18' : gold() < j.f ? 'Altın eksik' : 'Al', `data-joker="${esc(j.id)}"`, !unlocked || gold() < j.f || pending)}</div></div></article>`;
   }
+  function collectionCard() {
+    const list=window._krkListe?.()||[],count=list.filter(k=>k.acik).length;
+    return `<button type="button" class="ds-chests ds-collection" data-ds="collection"><span class="ds-collection-symbol" aria-hidden="true">🎭</span><span><b>Karakter koleksiyonum</b><small>${list.length?count+' / '+list.length+' karakter açıldı':'Yeni karakterleri keşfet'} · Seviye 20</small></span>${arrow}</button>`;
+  }
   function home() {
     const offers = wardrobe()?.offers() || [];
     const character = wardrobe()?.character(240) || '<img src="benim-dunyam/papi-selam.png" alt="Papi">';
     const ready = wardrobe()?.ready();
     const featureJokers = [jokers().find(j => j.tur === 'cift'), jokers().find(j => j.id === 'xp-tilsimi')];
-    return `<main class="ds-home">${header()}<section class="ds-room" aria-label="Karakterinin giyinme odası"><div class="ds-wardrobe-shortcuts"><button type="button" data-category="sapka" aria-label="Şapka ve gözlükleri incele">🧢</button><button type="button" data-category="ust" aria-label="Üst giyimi incele">🧥</button><button type="button" data-category="aks" aria-label="Aksesuarları incele">🎒</button></div><div class="ds-character">${character}</div><button type="button" class="ds-character-label" data-ds="clothing"><b>${ready ? 'Karakterin' : 'Papi seni bekliyor'}</b><span>✎ ${ready ? 'Giyimini değiştir' : 'Karakterini oluştur'}</span></button></section>${energy()}<section class="ds-offers" aria-label="Sana önerilen ürünler">${offers.length ? offers.map(offerCard).join('') : `<article class="ds-offer ds-outfit"><h2>Sana özel kombin</h2><p>Önce karakterini oluştur.</p>${button('Giyime git','data-ds="clothing"')}</article><article class="ds-offer ds-opportunity"><h2>Günün fırsatı</h2><p>Giyim koleksiyonunu keşfet!</p>${button('Ürünleri incele','data-ds="clothing"')}</article>`}</section><section class="ds-jokers"><div class="ds-joker-intro"><button type="button" data-ds="jokers"><h2>Jokerler ${arrow}</h2></button><p>Oyunlarında sana<br>özel güçler!</p></div>${featureJokers.map(jokerCard).join('')}</section><button type="button" class="ds-chests" data-ds="chests">${art('chest')}<span><b>Sandıklar</b><small>Sürpriz ödüllerini keşfet!</small></span>${arrow}</button></main>`;
+    return `<main class="ds-home">${header()}<section class="ds-room" aria-label="Karakterinin giyinme odası"><div class="ds-wardrobe-shortcuts"><button type="button" data-category="sapka" aria-label="Şapka ve gözlükleri incele">🧢</button><button type="button" data-category="ust" aria-label="Üst giyimi incele">🧥</button><button type="button" data-category="aks" aria-label="Aksesuarları incele">🎒</button></div><div class="ds-character">${character}</div><button type="button" class="ds-character-label" data-ds="clothing"><b>${ready ? 'Karakterin' : 'Papi seni bekliyor'}</b><span>✎ ${ready ? 'Giyimini değiştir' : 'Karakterini oluştur'}</span></button></section>${energy()}<section class="ds-offers" aria-label="Sana önerilen ürünler">${offers.length ? offers.map(offerCard).join('') : `<article class="ds-offer ds-outfit"><h2>Sana özel kombin</h2><p>Önce karakterini oluştur.</p>${button('Giyime git','data-ds="clothing"')}</article><article class="ds-offer ds-opportunity"><h2>Günün fırsatı</h2><p>Giyim koleksiyonunu keşfet!</p>${button('Ürünleri incele','data-ds="clothing"')}</article>`}</section><section class="ds-jokers"><div class="ds-joker-intro"><button type="button" data-ds="jokers"><h2>Jokerler ${arrow}</h2></button><p>Oyunlarında sana<br>özel güçler!</p></div>${featureJokers.map(jokerCard).join('')}</section><section class="ds-discover-grid" aria-label="Sandıklar ve karakter koleksiyonu"><button type="button" class="ds-chests" data-ds="chests">${art('chest')}<span><b>Sandıklar</b><small>Sürpriz ödüllerini keşfet!</small></span>${arrow}</button>${collectionCard()}</section></main>`;
   }
   function root() {
     const overlay = $('tab-magaza'), cap = overlay?.querySelector('.mg-kap');
@@ -67,6 +71,7 @@
   }
   function showDetail(kind, category) {
     if (kind === 'jokers' && !window.dmProgression?.require('joker_magaza')) return;
+    if (kind === 'collection' && !window.dmProgression?.require('koleksiyon')) return;
     page = kind; const overlay = $('tab-magaza'); overlay.classList.remove('ds-home-mode'); overlay.classList.add('ds-detail-mode');
     let back = $('dsCategoryBack'); if (!back) { back = document.createElement('button'); back.type = 'button'; back.id = 'dsCategoryBack'; back.className = 'ds-back'; overlay.querySelector('.mg-kap').prepend(back); }
     back.textContent = '‹ Mağazaya dön'; back.onclick = showHome;
@@ -75,6 +80,10 @@
       legacyWardrobe?.();
       if (category) target.querySelector(`#dlSekmeler [data-s="${category}"]`)?.click();
       root().innerHTML = '';
+    } else if (kind === 'collection') {
+      $('magazaAlan').style.display = 'none';
+      root().innerHTML = `<main class="ds-home ds-collection-page">${header()}<section id="dsCollection" aria-label="Karakter koleksiyonum"></section></main>`;
+      window.bcKoleksiyonCiz?.($('dsCollection'));bind(root());
     } else {
       $('magazaAlan').style.display = 'none';
       root().innerHTML = `<main class="ds-home ds-all-jokers">${header()}<h2>Tüm jokerler</h2><div class="ds-joker-grid">${jokers().map(j => `<article class="ds-joker ds-catalog-joker"><div class="ds-catalog-emoji" aria-hidden="true">${esc(j.e)}</div><div class="ds-joker-info"><b>${esc(j.ad)}</b><small>${esc(j.ac)}</small><div class="ds-joker-bottom"><div class="ds-price">${money(j.f)}</div>${button(gold() < j.f ? 'Altın eksik' : 'Al',`data-joker="${esc(j.id)}"`,gold() < j.f || pending)}</div></div></article>`).join('')}</div></main>`;

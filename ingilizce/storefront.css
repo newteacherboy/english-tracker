@@ -68,3 +68,22 @@
 #tab-magaza .ds-product-preview .dm-product-art{height:180px;width:180px}#tab-magaza .ds-parts svg{height:40px;width:40px}
 @media(min-width:650px){#tab-magaza .dl-ana{grid-template-columns:minmax(210px,.7fr) minmax(0,1.3fr)}#tab-magaza .dl-sahne{grid-column:1;grid-row:1;height:276px;grid-template-columns:1fr;gap:0;padding:10px}#tab-magaza .dl-sahne .dl-dugmeler:before{display:none}#tab-magaza .dl-sahne .dl-dugmeler{max-width:175px}#tab-magaza #dlSekmeler{grid-column:2;grid-row:1;grid-template-columns:repeat(4,minmax(0,1fr))}#tab-magaza #dlSekmeler .dl-sekme{height:63px}#tab-magaza #dlIzgara,#tab-magaza #dlEylem{grid-column:1/-1}#tab-magaza #dlIzgara{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:360px){#tab-magaza.ds-detail-mode .dl-gomulu{padding:9px}#tab-magaza #dlIzgara{padding:9px 5px;gap:6px}#tab-magaza #dlIzgara .dl-oge{min-height:180px}#tab-magaza #dlIzgara .dl-oge>svg{height:100px!important}#tab-magaza .dl-sahne{height:218px;grid-template-columns:minmax(114px,1fr) minmax(95px,1fr);gap:8px}#tab-magaza .dl-sahne .dl-onizleme{height:198px}#tab-magaza .dl-sahne .dl-onizleme>svg{height:198px!important;width:102px!important}}
+
+/* Collection shortcut sits beside chests in the marked bottom shop row. */
+.ds-discover-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ds-discover-grid .ds-chests{width:100%;min-width:0;min-height:68px;margin:0;padding:12px;box-sizing:border-box}
+.ds-discover-grid .ds-chests>span:not(.ds-art){min-width:0;flex:1}
+.ds-discover-grid .ds-chests b{font-size:16px;line-height:1.2}
+.ds-discover-grid .ds-chests small{font-size:11px;line-height:1.35}
+.ds-collection{background:linear-gradient(130deg,#fff1cb,#ffe3ee)!important;border:1px solid #f0cb87!important;color:#672962!important}
+.ds-collection-symbol{flex:0 0 40px!important;font-size:31px}
+.ds-discover-grid .ds-chests>svg{width:20px;flex-shrink:0}
+.ds-collection-page .bc-kutu{background:#fff;border:1px solid #ecdef8;border-radius:20px;padding:15px;margin-top:12px}
+#tab-magaza #dlSekmeler .dl-sekme.dl-legend-tab{background:linear-gradient(135deg,#fff0b3,#ffd7e9);border-color:#edbc56;color:#753823;box-shadow:0 2px 0 #edbc5638}
+#tab-magaza #dlSekmeler .dl-sekme.dl-legend-tab.aktif{background:linear-gradient(135deg,#6535b6,#251341);color:#ffe4a0;border-color:#ffc968}
+.dl-legend-hero{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:18px;border:2px solid #f4c25d;border-radius:20px;color:#fff4d0;background:radial-gradient(ellipse at top right,#945baa,transparent 60%),linear-gradient(135deg,#352150,#171b38);box-shadow:0 5px 15px #25134125}
+.dl-legend-crown{font-size:45px;flex-shrink:0;filter:drop-shadow(0 3px 5px #ffbd4960)}
+.dl-legend-hero small{font-size:10px;letter-spacing:1.4px;font-weight:900;color:#ffd478}
+.dl-legend-hero h3{font-size:20px;line-height:1.2;margin:6px 0}
+.dl-legend-hero p{font-size:12px;line-height:1.5;margin:0;color:#eee0ff}
+@media(max-width:560px){.ds-discover-grid{grid-template-columns:1fr}.ds-discover-grid .ds-chests{min-height:58px}.dl-legend-hero{padding:13px;gap:10px}.dl-legend-hero h3{font-size:18px}.dl-legend-crown{font-size:34px}}
