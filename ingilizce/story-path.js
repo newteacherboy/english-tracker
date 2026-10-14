@@ -125,7 +125,7 @@ function renderNewExercises(){
     window.dmWrongWords?.add({en:task.en,tr:task.tr,source:'ogrenme-yolu'});
     combo=0;window.dmSelectedStoryHud?.(modal,combo,()=>close());
     note(task.kind==='final'?'Bir ipucu: '+(r.hint||task.en?.slice(0,1)+'…'):'Tekrar deneyelim: '+(r.hint||task.en||''));
-    if(task.kind==='order'){note('Doğru cümle: '+task.en+' — '+task.tr);window.DMStoryExercises.speak(task.en)}
+    if(task.kind==='order')note('Sıralama doğru değil. Yeniden deneyebilirsin.')
     return r;
    }
    accepted=true;combo=r.revealed?0:Number.isInteger(r.combo)?r.combo:combo+1;window.dmSelectedStoryHud?.(modal,combo,()=>close());
