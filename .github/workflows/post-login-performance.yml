@@ -1,0 +1,24 @@
+name: Post-login performance QA
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/portal-bootstrap.js'
+      - 'tests/post-login-defer.test.cjs'
+      - '.github/workflows/post-login-performance.yml'
+  push:
+    paths:
+      - 'ingilizce/portal-bootstrap.js'
+      - 'tests/post-login-defer.test.cjs'
+      - '.github/workflows/post-login-performance.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/portal-bootstrap.js
+      - run: node --test tests/post-login-defer.test.cjs
