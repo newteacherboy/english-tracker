@@ -1,0 +1,25 @@
+name: Portal CSS extraction QA
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/index.html'
+      - 'ingilizce/portal-base-extracted.css'
+      - 'tests/portal-extracted-css.test.cjs'
+      - '.github/workflows/portal-css-extraction.yml'
+  push:
+    paths:
+      - 'ingilizce/index.html'
+      - 'ingilizce/portal-base-extracted.css'
+      - 'tests/portal-extracted-css.test.cjs'
+      - '.github/workflows/portal-css-extraction.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/portal-extracted-css.test.cjs tests/dead-code-cleanup.test.cjs tests/portal-log-cleanup.test.cjs
