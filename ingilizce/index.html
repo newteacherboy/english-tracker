@@ -24369,66 +24369,51 @@ if (
     catch (e) { return 0; }
   }
 
-  function hedefKontrol() {
-
-    if (!window.dmProgression?.allowed("haftalik_hedef")) return;
-    if (
-      !yoVar() ||
-      !yo.haftaHedef ||
-      yo.haftaHedef.h !== haftaKodu() ||
-      yo.haftaHedef.odul
-    ) return;
-
-
-    if (
-      haftaXp() >=
-      yo.haftaHedef.xp
-    ) {
-
-      yo.haftaHedef.odul = 1;
-
-
-      const al =
-        Math.round(
-          yo.haftaHedef.xp / 20
-        );
-
-
-      yo.rozetler =
-        yo.rozetler || [];
-
-
-      yo.rozetler.push({
-        ad:
-          'Haftalık hedef ' +
-          yo.haftaHedef.xp +
-          ' XP',
-        t: bugun()
+  // Only the API may credit a weekly goal; the UI cannot award coins.
+  let hedefOdulIslemi = false, hedefOdulSonKontrol = 0;
+  async function hedefKontrol() {
+    if (!window.dmProgression?.allowed("haftalik_hedef") || !yoVar()) return;
+    const hedef = yo.haftaHedef;
+    if (!hedef || hedef.h !== haftaKodu() || hedef.odul || hedefOdulIslemi
+      || ![1000,1500,2500].includes(Number(hedef.xp))
+      || haftaXp() < Number(hedef.xp) || Date.now() < hedefOdulSonKontrol) return;
+    hedefOdulIslemi = true;
+    hedefOdulSonKontrol = Date.now() + 60000;
+    const owner = typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi);
+    const state = yo;
+    try {
+      const response = await fetch(apiURL, {
+        method:'POST',
+        body:JSON.stringify({islem:'haftalikHedefOdulAl',ogrenci:owner})
       });
-
-
-      if (typeof yoXpEkle === 'function') {
-        yoXpEkle(0, al);
+      const d = await response.json();
+      if (!response.ok || !d?.ok) throw new Error(d?.mesaj || d?.message || 'Ödül onaylanamadı.');
+      if (yo !== state || owner !== String(aktifOgrenciAdi || '')) return;
+      if (d.haftaHedef?.h === haftaKodu()) {
+        yo.haftaHedef = d.haftaHedef;
       }
-
-
-      if (typeof odulGoster === 'function') {
-
-        odulGoster({
-          ikon: '🏅',
-          baslik:
-            'Haftalık hedefine ulaştın!',
-          alt:
-            `${yo.haftaHedef.xp} XP · rozet kazandın`,
-          altin: al
+      // Apply the authoritative balance, never add the displayed prize a second time.
+      if (Number.isFinite(Number(d.altin))) yo.altin = Number(d.altin);
+      if (d.yo?.dmRewardVersion) yo.dmRewardVersion = d.yo.dmRewardVersion;
+      if (d.yo?.guncelleme) yo.guncelleme = Math.max(Number(yo.guncelleme)||0, Number(d.yo.guncelleme));
+      if (d.newlyAwarded) {
+        const rozet = 'Haftalık hedef ' + d.haftaHedef.xp + ' XP';
+        yo.rozetler = yo.rozetler || [];
+        if (!yo.rozetler.some(item => item.ad === rozet && item.h === d.haftaHedef.h)) {
+          yo.rozetler.push({ad:rozet,t:bugun(),h:d.haftaHedef.h});
+        }
+        if (typeof odulGoster === 'function') odulGoster({
+          ikon:'🏅',
+          baslik:'Haftalık hedefine ulaştın!',
+          alt:`${d.haftaHedef.xp} XP · rozet kazandın`,
+          altin:Number(d.awardedGold)||0
         });
-
       }
-
-
-      if (typeof yoKaydet === 'function') {
-        yoKaydet();
-      }
+      if (typeof yoKaydet === 'function') yoKaydet();
+    } catch (e) {
+      console.warn('[DijiMedu] Haftalık hedef ödülü:',e);
+    } finally {
+      hedefOdulIslemi = false;
     }
   }
 
@@ -25262,14 +25247,29 @@ if (
       )
       .forEach(b => {
 
-        b.onclick = () => {
-
-          if(!window.dmProgression?.require('haftalik_hedef')) return;
-          yo.haftaHedef = {
-            h: haftaKodu(),
-            xp: +b.dataset.h,
-            odul: 0
-          };
+        b.onclick = async () => {
+          if(!window.dmProgression?.require('haftalik_hedef') || b.disabled) return;
+          b.disabled = true;
+          const owner = typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi);
+          const state = yo;
+          try {
+            const response = await fetch(apiURL,{
+              method:'POST',
+              body:JSON.stringify({islem:'haftalikHedefSec',ogrenci:owner,xp:Number(b.dataset.h)})
+            });
+            const d = await response.json();
+            if(!response.ok || !d?.ok || !d.haftaHedef) throw new Error(d?.mesaj || 'Haftalık hedef kaydedilemedi.');
+            if(yo !== state || owner !== String(aktifOgrenciAdi || '')) return;
+            yo.haftaHedef = d.haftaHedef;
+            if(typeof yoKaydet === 'function') yoKaydet();
+            ciz();
+          } catch(e) {
+            if(typeof yoToast === 'function') yoToast('Hedef kaydedilemedi. Tekrar dene.');
+            console.warn('[DijiMedu] Haftalık hedef seçimi:',e);
+          } finally {
+            if(b.isConnected) b.disabled = false;
+          }
+        };
 
 
           if (
