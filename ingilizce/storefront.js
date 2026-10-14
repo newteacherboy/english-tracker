@@ -45,7 +45,7 @@
   }
   function collectionCard() {
     const list=window._krkListe?.()||[],count=list.filter(k=>k.acik).length;
-    return `<button type="button" class="ds-chests ds-collection" data-ds="collection"><span class="ds-collection-symbol" aria-hidden="true">🎭</span><span><b>Karakter koleksiyonum</b><small>${list.length?count+' / '+list.length+' karakter açıldı':'Yeni karakterleri keşfet'} · Seviye 20</small></span>${arrow}</button>`;
+    return `<button type="button" class="ds-chests ds-collection" data-ds="collection"><span class="ds-collection-symbol" aria-hidden="true">🎭</span><span><b>Karakter koleksiyonum</b><small>${list.length?count+' / '+list.length+' karakter açıldı':'Yeni karakterleri keşfet'} · Tüm seviyelere açık</small></span>${arrow}</button>`;
   }
   function home() {
     const offers = wardrobe()?.offers() || [];
