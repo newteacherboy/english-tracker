@@ -1,0 +1,29 @@
+name: Friends and daily tasks QA
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/index.html'
+      - 'ingilizce/benim-dunyam.js'
+      - 'ingilizce/friends-overflow-fix.css'
+      - 'ingilizce/papi-guide-content.js'
+      - 'tests/friends-daily-teacher-help.test.cjs'
+  push:
+    paths:
+      - 'ingilizce/index.html'
+      - 'ingilizce/benim-dunyam.js'
+      - 'ingilizce/friends-overflow-fix.css'
+      - 'ingilizce/papi-guide-content.js'
+      - 'tests/friends-daily-teacher-help.test.cjs'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/benim-dunyam.js
+      - run: node --check ingilizce/papi-guide-content.js
+      - run: node --test tests/friends-daily-teacher-help.test.cjs

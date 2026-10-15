@@ -341,7 +341,7 @@
     const alan = $('bdGorevler');
     if (!izin('gunluk_gorev')) { alan.innerHTML = kilitKart('Günün 3 Görevi', 'gunluk_gorev'); return; }
     const g = window.dmGunGorevleri ? window.dmGunGorevleri() : null, havuz = window.dmGorevHavuz || [];
-    if (!g || !Array.isArray(g.liste)) { alan.innerHTML = ''; return; }
+    if (!g || !Array.isArray(g.liste)) { alan.innerHTML = '<div class="bd-not" role="status">Günlük görevler hazırlanıyor. Hesap verileri geldiğinde yeniden görüntülenecek.</div>'; return; }
     gorevGunleriniKaydet();
     const satir = g.liste.map(x => {
       const t = havuz.find(y => y.id === x.id); if (!t) return '';
@@ -565,6 +565,10 @@
     }
   }
   iskelet(); menu();
+  // Refresh the visible daily tasks as soon as member/progression data arrives.
+  for (const eventName of ['dm:state','dm:login']) document.addEventListener(eventName, () => {
+    if ($('tab-dunyam')?.classList.contains('active') && sekme === 'sanaozel') homeCiz();
+  });
   setInterval(() => {
     menu();
     const ov = $('tab-dunyam');
