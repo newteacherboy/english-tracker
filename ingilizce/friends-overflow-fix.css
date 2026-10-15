@@ -1,0 +1,12 @@
+/* Arkadaşlar: prevent cards from widening the entire viewport. */
+#tab-meduakis, #tab-meduakis .ma-wrap, #tab-meduakis .ma-ekran,
+#tab-meduakis #maEkran { width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
+#tab-meduakis .ma-wrap,#tab-meduakis .ma-ekran,#tab-meduakis #maEkran { overflow-x:hidden; }
+#tab-meduakis .ma-ekran > *, #tab-meduakis #maEkran > * { min-width:0;max-width:100%; }
+/* Wide friend rows scroll inside their own area, without moving the whole page. */
+#tab-meduakis :is(.ma-arkadaslar,.ma-arkadas-listesi,.ma-friends,.ma-takipciler,.ma-avatarlar,.fr-friends,.fr-friend-list) {
+ max-width:100%; min-width:0; overflow-x:auto; overscroll-behavior-x:contain;
+ -webkit-overflow-scrolling:touch; scrollbar-width:thin;
+}
+#tab-meduakis :is(.ma-arkadaslar,.ma-arkadas-listesi,.ma-friends,.ma-takipciler,.ma-avatarlar,.fr-friends,.fr-friend-list) > * { flex-shrink:0; }
+#tab-meduakis img { max-width:100%; }
