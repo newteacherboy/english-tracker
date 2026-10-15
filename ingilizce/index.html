@@ -2909,7 +2909,7 @@ const DIJI_CACHE_SURUM = "v1";
 
         const kurallar = [
             { prefix: 'diji_lig_cache_v1_', maxAge: 14 * 24 * 60 * 60 * 1000 },
-            { prefix: 'diji_ma_akis_v1', maxAge: 7 * 24 * 60 * 60 * 1000 },
+            { prefix: 'diji_ma_akis_v2', maxAge: 7 * 24 * 60 * 60 * 1000 },
             { prefix: 'diji_ders_konulari_v1_', maxAge: 30 * 24 * 60 * 60 * 1000 },
             { prefix: 'diji_rubric_etkinlik_v1', maxAge: 30 * 24 * 60 * 60 * 1000 },
             { prefix: 'diji_ozellikler_v2', maxAge: 30 * 24 * 60 * 60 * 1000 }
@@ -14119,9 +14119,9 @@ let maAkisVeri = [];
 let maAkisYuklendi = false;
 let maAkisSoz = null;
 
-const DIJI_AKIS_CACHE_SURESI = 5 * 60 * 1000;
+const DIJI_AKIS_CACHE_SURESI = 30 * 1000;
 
-const DIJI_AKIS_CACHE_KEY = "diji_ma_akis_v1";
+const DIJI_AKIS_CACHE_KEY = "diji_ma_akis_v2";
 
 
 function dijiAkisCacheOku() {
@@ -14197,7 +14197,7 @@ async function dijiAkisSunucudanGuncelle() {
 
         const r =
             await fetch(
-                `${apiURL}?islem=akisTumu`
+                `${apiURL}?islem=akisTumu`, {cache:"no-store"}
             );
 
         if (!r.ok) {
@@ -14283,8 +14283,7 @@ async function maAkisYukle() {
                     navigator.onLine
                 ) {
 
-                    dijiAkisSunucudanGuncelle()
-                        .catch(() => {});
+                    await dijiAkisSunucudanGuncelle();
 
                 }
 
@@ -14305,11 +14304,11 @@ async function maAkisYukle() {
 
             maAkisYuklendi = true;
 
-            maAkisSoz = null;
+
 
             return maAkisVeri;
 
-        })();
+        })().finally(() => { maAkisSoz = null; });
 
 
     return maAkisSoz;
@@ -14330,7 +14329,7 @@ function maAkisHtml() {
     return ust + `<div id="maAkisListe">${maAkisListeHtml()}</div>`;
 }
 function maAkisListeHtml() {
-       if (!maAkisVeri.length) return maAkisYuklendi ? '<div class="ma-bos">Henüz bir hareket yok.<br>Biri oyun oynadığında, puan ya da enerji kazandığında burada anında görünecek.</div>' : '<div class="ma-bos">Akış yükleniyor...</div>';
+       if (!maAkisVeri.length) return maAkisYuklendi ? '<div class="ma-bos">Henüz bir hareket yok.<br>Kazanılan rozetler, karakterler, ödüller, lig ve sıralama yükselişleri, tamamlanan dersler ve parkur bölümleri burada paylaşılır.</div>' : '<div class="ma-bos">Akış yükleniyor...</div>';
     let liste = maAkisVeri.filter(e => maFiltre === 'herkes' || maTakip.has(e.ogr));
     if (!liste.length) return '<div class="ma-bos">Takip ettiklerinden henüz bir hareket yok.</div>';
     return liste.map((e, i) => {
@@ -14338,7 +14337,7 @@ function maAkisListeHtml() {
                 let o = { ad: e.ogr, maskot: typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(e.ogr) : '🦜', av: '#fde68a' };
         let renk = e.tur === 'eksi' ? '#cbd5e1' : MA_SERIT[i % 5];
         let aksiyon = e.tur === 'eksi' ? '' : `<div class="aksiyon"><button class="${b ? 'basili' : ''}" onclick="maBegen('${id}', this)">${b ? '❤️' : '🤍'} Beğen</button><button class="${t ? 'basili' : ''}" onclick="maTebrikEt('${id}', this)">🎉 Tebrik et</button></div>`;
-        return `<div class="akis-kart" style="--serit:${renk}"><span class="akis-ikon">${e.ikon}</span>
+        return `<div class="akis-kart" style="--serit:${renk}"><span class="akis-ikon">${guvenliMetin(String(e.ikon || "✨"))}</span>
       <div class="akis-ust" data-o="${guvenliMetin(String(e.ogr))}" onclick="maAkisKisiAc(this.dataset.o)">${maAvatar(o)}<span><b>${guvenliMetin(String(e.ad))}</b><small>${maZamanOnce(e)}</small></span></div>
       <div class="akis-metin">${guvenliMetin(String(e.metin))}</div>${aksiyon}</div>`;
     }).join('');
@@ -14584,7 +14583,7 @@ function dcAnaEkranaDon() {
   };
 })();
 
-/* ---- Arkadaşlar: cache + 5 dakikalık canlı kontrol ---- */
+/* ---- Arkadaşlar: görünür akışta 30 saniyelik canlı kontrol ---- */
 setInterval(async () => {
     let el = document.getElementById('tab-meduakis');
 
@@ -14609,7 +14608,7 @@ setInterval(async () => {
     ) {
         l.innerHTML = maAkisListeHtml();
     }
-}, 300000);
+}, 30000);
 </script>
 <style>
 /* ---- Yeni alt menü ---- */
@@ -26463,8 +26462,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="placement-bank.js?v=20261013-1"></script>
 <script src="member-experience.js?v=20261015-evening-1"></script>
 <script src="teacher-workspace.js?v=20261015-evening-1"></script>
-<link rel="stylesheet" href="member-polish.css?v=20261015-evening-1">
-<script src="active-time.js?v=20261013-1"></script>
+<link rel="stylesheet" href="member-polish.css?v=20261015-live-clock-1">
+<script src="active-time.js?v=20261015-live-clock-1"></script>
 <script src="member-polish.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="notice-sharing.css?v=20261013-achievement-3">
 <script src="notice-sharing.js?v=20261015-evening-1"></script>

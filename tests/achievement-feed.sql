@@ -1,0 +1,46 @@
+-- Run against a migrated test database. Every fixture and generated feed row rolls back.
+begin;
+set local role service_role;
+do $$
+declare sid uuid:=gen_random_uuid(); peer uuid:=gen_random_uuid(); n int; before_rank jsonb; after_rank jsonb;
+begin
+ insert into public.students(id,username,password_hash,status,role) values(sid,'qa_feed_'||replace(sid::text,'-',''),'disabled-test-only','approved','student'),(peer,'qa_peer_'||replace(peer::text,'-',''),'disabled-test-only','approved','student');
+ insert into public.extra_data(student_id,key_name,value) values(sid,'yo','{"totalXp":10000,"altin":100,"dmWorldBadges":{"version":2,"ids":[]},"krkGoruldu":[],"krkSatin":[],"karakter":{"sahip":[]}}'),(peer,'yo','{"totalXp":10000}');
+ update public.extra_data set value=value||'{"dmWorldBadges":{"version":2,"ids":["ilk-adim"]},"krkSatin":["Pofuduk Çırak"],"krkGoruldu":["Pofuduk Çırak"]}'::jsonb where student_id=sid and key_name='yo';
+ update public.extra_data set value=value where student_id=sid and key_name='yo';
+ select count(*) into n from public.feed_events where student_id=sid and event_type='badge_earned';if n<>1 then raise exception 'badge repeat: %',n;end if;
+ select count(*) into n from public.feed_events where student_id=sid and event_type='character_earned';if n<>1 then raise exception 'character repeat: %',n;end if;
+ insert into public.lesson_progress(student_id,level,category,topic_name,test_success) values(sid,'A1','QA','Test Topic',false);
+ update public.lesson_progress set test_success=true where student_id=sid;
+ insert into public.lesson_progress(student_id,level,category,topic_name,test_success) values(sid,'A1','QA','Test Topic',true);
+ select count(*) into n from public.feed_events where student_id=sid and event_type='lesson_complete';if n<>1 then raise exception 'lesson dedup: %',n;end if;
+ insert into public.level_completions(student_id,mode,class_no,unit_no,level_no) values(sid,'buyu',6,1,260101);
+ select count(*) into n from public.feed_events where student_id=sid and event_type='route_complete';if n<>1 then raise exception 'route: %',n;end if;
+ insert into public.papi_story_progress(actor_key,student_id,chapter,completed) values('s:'||sid,sid,0,false);
+ update public.papi_story_progress set completed=true where student_id=sid;
+ update public.papi_story_progress set cursor=1 where student_id=sid;
+ select count(*) into n from public.feed_events where student_id=sid and event_type='story_complete';if n<>1 then raise exception 'story: %',n;end if;
+ insert into public.dm_progress_rewards(student_id,kind,reward_key,gold) values(sid,'weekly_target','qa-week',75);
+ insert into public.dm_active_time(student_id,seconds,base_chest) values(sid,6000,0);
+ update public.dm_active_time set claimed=array[1]::bigint[] where student_id=sid;
+ update public.dm_active_time set last_tick=now() where student_id=sid;
+ select count(*) into n from public.feed_events where student_id=sid and event_type='reward_earned';if n<>2 then raise exception 'chest/weekly reward claims: %',n;end if;
+ insert into public.game_scores(student_id,student_name,game_key,score,correct_count,wrong_count,extra) values(peer,'QA peer','kelime',600,60,0,'{"v":3,"speed":0}');
+ before_rank:=public.dm_feed_rank(sid);
+ insert into public.game_scores(student_id,student_name,game_key,score,correct_count,wrong_count,extra) values(sid,'QA','kelime',600,60,0,'{"v":3,"speed":0}');
+ after_rank:=public.dm_feed_rank(sid);
+ if (before_rank->>'rank')::int<=(after_rank->>'rank')::int then raise exception 'rank did not improve: % to %',before_rank,after_rank;end if;
+ select count(*) into n from public.feed_events where student_id=sid and event_type='rank_up';if n<1 then raise exception 'missing rank up';end if;
+ insert into public.game_scores(student_id,student_name,game_key,score,correct_count,wrong_count,extra) values(sid,'QA','kelime',15000,3000,0,'{"v":3,"speed":0}');
+ after_rank:=public.dm_feed_rank(sid);
+ if after_rank->>'league'<>'sampiyon' then raise exception 'promotion rank: %',after_rank;end if;
+ select count(*) into n from public.feed_events where student_id=sid and event_type='league_promotion' and payload->>'league'='sampiyon';if n<>1 then raise exception 'promotion feed: %',n;end if;
+ insert into public.dm_game_reward_runs(student_id,run_id,game_key,class_no,units,xp,gold) values(sid,'qa-reward-run','ky',6,array[1],50,20);
+ insert into public.dm_weekly_results(student_id,week_start,rank_no,league,xp,active_days,gold,energy,summary) values(sid,current_date,1,'sampiyon',2500,5,500,10,'{}');
+ select count(*) into n from public.feed_events where student_id=sid and event_type='weekly_result';if n<>1 then raise exception 'weekly result: %',n;end if;
+ select count(*) into n from public.feed_events where student_id=sid and payload->>'game'='ky';if n<>1 then raise exception 'game reward: %',n;end if;
+ perform public.dm_feed_publish('dcde2026-1015-4000-8000-000000000001','qa-demo','badge_earned','should not be visible','🏅');
+ if exists(select 1 from public.dm_feed_awards where event_key='qa-demo') then raise exception 'demo leak';end if;
+end $$;
+select 'PASS: badges, characters, lessons, routes, rewards, rank, promotion, weekly result, demo exclusion' as result;
+rollback;
