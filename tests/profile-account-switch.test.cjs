@@ -14,3 +14,10 @@ test('active mobile profile menu exposes and opens account switching',()=>{
  menu.onclick({target:{closest:selector=>selector==='[data-profile]'?{dataset:{profile:'switchAccount'}}:null}});
  assert.equal(opened,1);
 });
+test('profile menu supports extra actions on portrait and short landscape screens',()=>{
+ const css=fs.readFileSync('ingilizce/member-polish.css','utf8');
+ assert.match(css,/grid-template-rows:repeat\(7,minmax\(60px,1fr\)\)/);
+ assert.match(css,/grid-template-rows:repeat\(4,minmax\(60px,1fr\)\)/);
+ assert.match(css,/grid-auto-rows:minmax\(60px,1fr\)/);
+ assert.match(css,/overflow-y:auto!important;overscroll-behavior:contain/);
+});
