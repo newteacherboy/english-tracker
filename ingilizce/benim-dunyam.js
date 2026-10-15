@@ -248,6 +248,18 @@
       if (!window.confirm('Çıkış yapmak istediğine emin misin?')) return;
       if (typeof window.cikisYap === 'function') window.cikisYap();
     };
+    const switchButton = document.createElement('button');
+    switchButton.type = 'button';
+    switchButton.id = 'bdHesapDegistir';
+    switchButton.className = 'bd-yuvarlak';
+    switchButton.textContent = '⇄';
+    switchButton.setAttribute('aria-label', 'Google hesabını değiştir');
+    switchButton.title = 'Google hesabını değiştir';
+    switchButton.onclick = () => {
+      if (typeof window.dmGoogleHesapDegistir === 'function') window.dmGoogleHesapDegistir();
+      else window.alert('Hesap değiştirme şu anda yalnızca Google girişinde kullanılabilir.');
+    };
+    $('bdCikis').after(switchButton);
     $('bdAyar').onclick = () => { if (typeof window.dmHesapAyarlariAc === 'function') window.dmHesapAyarlariAc(); };
     return ov;
   }
