@@ -1240,6 +1240,15 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
+
+  if(op==='oturumBilgisi'){
+    if(!a)return json({ok:false,mesaj:'Bu hesabın oturumu sona ermiş. Şifrenle yeniden giriş yap.'},401);
+    if(a.role==='teacher')return json({ok:true,rol:'ogretmen',ogrenci:a.ogretmenKullanici,expiresAt:a.expires_at});
+    const {data:s,error}=await supabase.from('students').select('username,status').eq('id',a.student_id).maybeSingle();
+    if(error)return json({ok:false,mesaj:'Oturum kontrol edilemedi.'},503);
+    if(!s||s.status!=='approved')return json({ok:false,mesaj:'Bu hesap artık aktif değil.'},403);
+    return json({ok:true,rol:'ogrenci',ogrenci:s.username,expiresAt:a.expires_at});
+  }
   if(isDemo(a)&&DEMO_BLOCKED.has(op))return json({ok:false,hata:'demo_readonly',mesaj:'Demo hesabında bu işlem kapalı.'},403);
   if(isDemo(a)&&op==='iletisimDurumu')return json({ok:true,eksik:false,donuk:false,uyari:false});
   if(isDemo(a)&&op==='memberStatus')return json({ok:true,emailVerified:true,email:'',hasPlacement:true,teacherLinked:false,demo:true});

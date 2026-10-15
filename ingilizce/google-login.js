@@ -135,6 +135,8 @@
   function enter(result) {
     if (!result.ok || !result.token || result.rol !== 'ogrenci') throw new Error('Öğrenci oturumu oluşturulamadı.');
     // Use the exact existing portal session path; learning data stays on the server.
+    window.dmSavedSessions?.remember();
+    window.dmSavedSessions?.remember({name:result.ogrenci,token:result.token,role:result.rol,google:true});
     localStorage.setItem('ing_token', result.token);
     localStorage.setItem('ing_oturumAcik', 'true');
     localStorage.setItem('ing_aktifOgrenci', result.ogrenci);

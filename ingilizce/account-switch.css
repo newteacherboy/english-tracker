@@ -18,3 +18,10 @@ body.dm-switch-active #mesaj{font-size:13px!important;line-height:1.5!important;
 @media(max-height:740px){#dmSwitchCancel{top:auto;bottom:9px}}
 @media(max-width:480px){body.dm-switch-active #login-container{border-radius:19px!important;padding:18px 17px 78px!important}#dmSwitchTitle strong{font-size:18px}}
 @media(prefers-reduced-motion:reduce){body.dm-switch-active #login-container{animation:none!important}#dmAccountSwitchButton{transition:none!important}}
+
+#dmSwitchSaved h3{font:750 15px system-ui;color:#173257;margin:8px 0 12px}
+.dm-saved-row{display:flex;gap:8px;align-items:center;margin:8px 0}
+.dm-saved-account{flex:1;min-width:0;text-align:left;border:1px solid #dce6f6;background:#f4f8ff;border-radius:13px;padding:12px;color:#173257;cursor:pointer}
+.dm-saved-account strong,.dm-saved-account small{display:block;overflow-wrap:anywhere}.dm-saved-account small{margin-top:4px;color:#61799a}.dm-saved-account:disabled{opacity:.65;cursor:default}
+.dm-saved-remove{border:0;border-radius:9px;padding:10px;background:#fff0ec;color:#a34d35;cursor:pointer}
+.dm-saved-status{font:13px system-ui;color:#92461f}.dm-saved-add{border-top:1px solid #e1e8f4;padding-top:14px;font:750 14px system-ui;color:#3a5476}

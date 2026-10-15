@@ -31,9 +31,42 @@
    if(previousAriaLabel===null)login.removeAttribute('aria-label');else login.setAttribute('aria-label',previousAriaLabel);
   }
   const msg=get('mesaj');if(msg)msg.textContent='';
-  get('dmSwitchCancel')?.remove();get('dmSwitchBackdrop')?.remove();get('dmSwitchTitle')?.remove();get('dmSwitchClose')?.remove();
+  get('dmSwitchSaved')?.remove();get('dmSwitchCancel')?.remove();get('dmSwitchBackdrop')?.remove();get('dmSwitchTitle')?.remove();get('dmSwitchClose')?.remove();
   if(previousFocus?.isConnected)previousFocus.focus();
   previousFocus=null;
+ }
+ function savedList(form){
+  get('dmSwitchSaved')?.remove();
+  const store=window.dmSavedSessions;if(!store)return;
+  store.remember();
+  const section=document.createElement('section');section.id='dmSwitchSaved';
+  const title=document.createElement('h3');title.textContent='Bu cihazdaki hesaplar';section.appendChild(title);
+  const status=document.createElement('p');status.setAttribute('role','status');status.className='dm-saved-status';
+  const active=store.current();
+  for(const entry of store.list()){
+   const row=document.createElement('div');row.className='dm-saved-row';
+   const button=document.createElement('button');button.type='button';button.className='dm-saved-account';
+   const name=document.createElement('strong');name.textContent=entry.name;
+   const info=document.createElement('small');info.textContent=entry.token===active.token?'Şu an açık':(entry.role==='ogretmen'?'Öğretmen · Dokun ve geç':'Öğrenci · Dokun ve geç');
+   button.append(name,info);button.disabled=entry.token===active.token;
+   button.onclick=async()=>{
+    section.querySelectorAll('button').forEach(b=>b.disabled=true);status.textContent='Oturum kontrol ediliyor…';
+    try{await store.activate(entry);}catch(error){
+     savedList(form);const message=get('dmSwitchSaved')?.querySelector('[role="status"]');if(message)message.textContent=error.message;
+     if(get('ogrenci'))get('ogrenci').value=entry.name;
+    }
+   };
+   row.appendChild(button);
+   if(entry.token!==active.token){
+    const remove=document.createElement('button');remove.type='button';remove.className='dm-saved-remove';remove.textContent='Kaldır';remove.setAttribute('aria-label',entry.name+' hesabından bu cihazda çıkış yap');
+    remove.onclick=async()=>{remove.disabled=true;try{await store.remove(entry);savedList(form);}catch(error){status.textContent=error.message;remove.disabled=false;}};
+    row.appendChild(remove);
+   }
+   section.appendChild(row);
+  }
+  section.appendChild(status);
+  const label=document.createElement('p');label.className='dm-saved-add';label.textContent='Başka bir hesap ekle';section.appendChild(label);
+  form.before(section);
  }
  function open(){
   if(switching)return;
@@ -57,6 +90,7 @@
   heading.innerHTML='<span class="dm-switch-symbol" aria-hidden="true">⇄</span><span><strong>Hesap Değiştir</strong><small>Yeni hesaba güvenle geç</small></span>';
   const x=document.createElement('button');x.type='button';x.id='dmSwitchClose';x.textContent='×';x.setAttribute('aria-label','Pencereyi kapat');x.addEventListener('click',close);
   heading.appendChild(x);form.before(heading);
+  savedList(form);
   const btn=document.createElement('button');btn.type='button';btn.id='dmSwitchCancel';
   btn.textContent='İptal · Mevcut hesabıma dön';btn.addEventListener('click',close);
   form.after(btn);

@@ -18204,6 +18204,9 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     try { let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'giris', ogrenci: ogr, sifre }) }); d = await r.json(); } catch (e) {}
     btn.disabled = false; btn.innerText = 'Giriş Yap';
     if (!d || !d.ok) { m.className = 'error'; m.innerText = (d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol edip tekrar dene.'; return; }
+    window.dmSavedSessions?.remember();
+    window.dmSavedSessions?.remember({name:d.ogrenci||ogr,token:d.token,role:d.rol,google:false});
+    localStorage.removeItem('ing_google_auth');
     localStorage.setItem('ing_token', d.token);
     sessionStorage.removeItem('ing_oturum_bitti');
     if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token); else sessionStorage.removeItem('ing_ogr_token');
@@ -18249,6 +18252,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   window.cikisYap = function () {
     try { googleSheetseKaydet(); } catch (e) {}
     let t = TOKEN();
+    if(t)window.dmSavedSessions?.forget(t);
     if (t) fetch(apiURL, { method: 'POST', keepalive: true, body: JSON.stringify({ islem: 'cikis', t }) }).catch(() => {});
     try { clearInterval(timerInterval); } catch (e) {}
     let ad = typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '';
@@ -18460,6 +18464,9 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     let d = null;
     try { let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'giris', ogrenci: ogr, sifre }) }); d = await r.json(); } catch (e) {}
     if (!d || !d.ok) { btn.disabled = false; btn.innerText = 'Giriş Yap'; m.className = 'error'; m.innerText = (d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol edip tekrar dene.'; return; }
+    window.dmSavedSessions?.remember();
+    window.dmSavedSessions?.remember({name:d.ogrenci||ogr,token:d.token,role:d.rol,google:false});
+    localStorage.removeItem('ing_google_auth');
     localStorage.setItem('ing_token', d.token);
     sessionStorage.removeItem('ing_oturum_bitti');
     if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token); else sessionStorage.removeItem('ing_ogr_token');
@@ -26339,7 +26346,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 })();
 </script>
 <script defer src="portal-bootstrap.js?v=20261012-stability-1"></script>
-<script defer src="google-login.js?v=20261013-achievement-3"></script>
+<script defer src="google-login.js?v=20261015-saved-1"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261013-compact-127"></script>
@@ -26448,8 +26455,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="route-questions.css?v=20261014-approved-1">
 <script defer src="route-questions.js?v=20261014-matching-variety-1"></script>
 <script defer src="harf-adasi.js?v=20261014-full-2"></script>
-<link rel="stylesheet" href="account-switch.css?v=20261015-1">
-<script defer src="account-switch.js?v=20261015-1"></script>
+<link rel="stylesheet" href="account-switch.css?v=20261015-saved-2">
+<script defer src="saved-sessions.js?v=20261015-1"></script>
+<script defer src="account-switch.js?v=20261015-saved-2"></script>
 <script defer src="demo-account.js?v=20261015-1"></script>
 </body>      
         </html>
