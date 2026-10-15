@@ -1,0 +1,26 @@
+name: Papi AI chat limits and mobile UI
+on:
+  push:
+    paths: ['ingilizce/papi-chat.*', 'ingilizce/index.html', 'supabase/functions/papi-chat/**', 'supabase/migrations/*papi*chat*', 'tests/papi-chat*', '.github/workflows/papi-ai-chat.yml']
+  pull_request:
+    paths: ['ingilizce/papi-chat.*', 'ingilizce/index.html', 'supabase/functions/papi-chat/**', 'tests/papi-chat*']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0 playwright@1.58.2
+      - run: node --test tests/papi-chat.test.cjs tests/papi-chat-ui.test.cjs tests/portal-integrity.test.cjs
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/papi-chat-mobile.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: papi-chat-mobile-layouts
+          path: /tmp/papi-chat-mobile/*.png
