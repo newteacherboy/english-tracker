@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<script src="session-handoff.js?v=20261015-1"></script>
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
 <link rel="stylesheet" href="character-builder.css?v=20261014-1">
@@ -18200,9 +18201,20 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     if (!ogr || !sifre) { m.className = 'error'; m.innerText = 'Tüm alanları doldurun.'; return; }
     btn.disabled = true; btn.innerText = 'Kontrol ediliyor...';
     let d = null;
-    try { let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'giris', ogrenci: ogr, sifre }) }); d = await r.json(); } catch (e) {}
+    const switchingRequest=!!window.dmAccountSwitchPending,switchSignal=window.dmSwitchLoginSignal;
+    try {
+      if(switchingRequest&&window.dmSavedSessions){const checked=await window.dmSavedSessions.verifyLogin({ogrenci:ogr,sifre},switchSignal);d=checked.data;}
+      else {const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'giris',ogrenci:ogr,sifre})});d=await r.json();}
+    } catch(error){if(switchingRequest)d={ok:false,mesaj:error.message};}
+    if(switchingRequest&&(switchSignal?.aborted||!window.dmAccountSwitchPending)){btn.disabled=false;btn.innerText='Giriş Yap';return;}
+
     btn.disabled = false; btn.innerText = 'Giriş Yap';
     if (!d || !d.ok) { m.className = 'error'; m.innerText = (d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol edip tekrar dene.'; return; }
+    if(window.dmAccountSwitchPending&&window.dmSavedSessions){
+      try{window.dmSavedSessions.queue({name:d.ogrenci||ogr,token:d.token,role:d.rol,google:false});}
+      catch(error){btn.disabled=false;btn.innerText='Giriş Yap';m.className='error';m.innerText=error.message;}
+      return;
+    }
     window.dmSavedSessions?.remember();
     window.dmSavedSessions?.remember({name:d.ogrenci||ogr,token:d.token,role:d.rol,google:false});
     localStorage.removeItem('ing_google_auth');
@@ -18461,8 +18473,19 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     if (!ogr || !sifre) { m.className = 'error'; m.innerText = 'Tüm alanları doldurun.'; return; }
     btn.disabled = true; btn.innerText = 'Kontrol ediliyor...'; m.innerText = '';
     let d = null;
-    try { let r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'giris', ogrenci: ogr, sifre }) }); d = await r.json(); } catch (e) {}
+    const switchingRequest=!!window.dmAccountSwitchPending,switchSignal=window.dmSwitchLoginSignal;
+    try {
+      if(switchingRequest&&window.dmSavedSessions){const checked=await window.dmSavedSessions.verifyLogin({ogrenci:ogr,sifre},switchSignal);d=checked.data;}
+      else {const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'giris',ogrenci:ogr,sifre})});d=await r.json();}
+    } catch(error){if(switchingRequest)d={ok:false,mesaj:error.message};}
+    if(switchingRequest&&(switchSignal?.aborted||!window.dmAccountSwitchPending)){btn.disabled=false;btn.innerText='Giriş Yap';return;}
+
     if (!d || !d.ok) { btn.disabled = false; btn.innerText = 'Giriş Yap'; m.className = 'error'; m.innerText = (d && d.mesaj) || 'Sunucuya ulaşılamadı, internetini kontrol edip tekrar dene.'; return; }
+    if(window.dmAccountSwitchPending&&window.dmSavedSessions){
+      try{window.dmSavedSessions.queue({name:d.ogrenci||ogr,token:d.token,role:d.rol,google:false});}
+      catch(error){btn.disabled=false;btn.innerText='Giriş Yap';m.className='error';m.innerText=error.message;}
+      return;
+    }
     window.dmSavedSessions?.remember();
     window.dmSavedSessions?.remember({name:d.ogrenci||ogr,token:d.token,role:d.rol,google:false});
     localStorage.removeItem('ing_google_auth');
@@ -26454,9 +26477,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="route-questions.css?v=20261014-approved-1">
 <script defer src="route-questions.js?v=20261014-matching-variety-1"></script>
 <script defer src="harf-adasi.js?v=20261014-full-2"></script>
-<link rel="stylesheet" href="account-switch.css?v=20261015-saved-2">
-<script defer src="saved-sessions.js?v=20261015-1"></script>
-<script defer src="account-switch.js?v=20261015-saved-2"></script>
+<link rel="stylesheet" href="account-switch.css?v=20261015-simple-3">
+<script defer src="saved-sessions.js?v=20261015-reliable-2"></script>
+<script defer src="account-switch.js?v=20261015-simple-3"></script>
 <script defer src="demo-account.js?v=20261015-1"></script>
 </body>      
         </html>

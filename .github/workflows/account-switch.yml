@@ -5,6 +5,8 @@ on:
       - 'ingilizce/index.html'
       - 'ingilizce/account-switch.js'
       - 'ingilizce/saved-sessions.js'
+      - 'ingilizce/session-handoff.js'
+      - 'tests/session-handoff.test.cjs'
       - 'tests/saved-sessions.test.cjs'
       - 'ingilizce/account-switch.css'
       - 'tests/account-switch.test.cjs'
@@ -15,6 +17,8 @@ on:
       - 'ingilizce/index.html'
       - 'ingilizce/account-switch.js'
       - 'ingilizce/saved-sessions.js'
+      - 'ingilizce/session-handoff.js'
+      - 'tests/session-handoff.test.cjs'
       - 'tests/saved-sessions.test.cjs'
       - 'ingilizce/account-switch.css'
       - 'tests/account-switch.test.cjs'
@@ -31,4 +35,5 @@ jobs:
           node-version: '22'
       - run: node --check ingilizce/account-switch.js
       - run: node --check ingilizce/saved-sessions.js
-      - run: node --test tests/saved-sessions.test.cjs tests/account-switch.test.cjs tests/account-switch-dialog.test.cjs tests/daily-goals-cache-version.test.cjs tests/daily-goals-first-load.test.cjs
+      - run: node --check ingilizce/session-handoff.js
+      - run: node --test tests/session-handoff.test.cjs tests/saved-sessions.test.cjs tests/account-switch.test.cjs tests/account-switch-dialog.test.cjs tests/daily-goals-cache-version.test.cjs tests/daily-goals-first-load.test.cjs

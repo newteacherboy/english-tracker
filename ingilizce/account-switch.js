@@ -1,115 +1,85 @@
-/* Switch account without discarding the current session before verification. */
-(function(){
- 'use strict';
- const get=id=>document.getElementById(id);
- let switching=false,previousFocus=null,previousDisplay='',previousRole=null,previousAriaModal=null,previousAriaLabel=null;
+/* A single account picker. The existing password form is moved only while adding an account. */
+(()=>{'use strict';
+ const $=id=>document.getElementById(id);
+ let dialog=null,previousFocus=null,marker=null,form=null,attempt=null,formControl=null,managing=false;
  function keydown(event){
-  if(!switching)return;
+  if(!dialog)return;
   if(event.key==='Escape'){event.preventDefault();close();return;}
   if(event.key!=='Tab')return;
-  const login=get('login-container'),cancel=get('dmSwitchCancel');
-  const nodes=[...(login?.querySelectorAll('input:not([disabled]),button:not([disabled]),select:not([disabled]),a[href]')||[])];
-  const closeButton=get('dmSwitchClose');if(closeButton)nodes.unshift(closeButton);
-  if(cancel)nodes.push(cancel);
-  const visible=nodes.filter(el=>el.getClientRects().length>0);
-  if(!visible.length)return;
-  const first=visible[0],last=visible[visible.length-1];
+  const nodes=[...dialog.querySelectorAll('button:not([disabled]),input:not([disabled]),a[href]')].filter(el=>el.getClientRects().length);
+  if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);
   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
  }
- function close(){
-  if(!switching)return;
-  switching=false;window.dmAccountSwitchPending=false;
-  document.removeEventListener('keydown',keydown);
-  document.body.classList.remove('dm-switch-active');
-  const pass=get('sifre');if(pass)pass.value='';
-  const login=get('login-container');
-  if(login){
-   login.style.display=previousDisplay;
-   if(previousRole===null)login.removeAttribute('role');else login.setAttribute('role',previousRole);
-   if(previousAriaModal===null)login.removeAttribute('aria-modal');else login.setAttribute('aria-modal',previousAriaModal);
-   if(previousAriaLabel===null)login.removeAttribute('aria-label');else login.setAttribute('aria-label',previousAriaLabel);
-  }
-  const msg=get('mesaj');if(msg)msg.textContent='';
-  get('dmSwitchSaved')?.remove();get('dmSwitchCancel')?.remove();get('dmSwitchBackdrop')?.remove();get('dmSwitchTitle')?.remove();get('dmSwitchClose')?.remove();
-  if(previousFocus?.isConnected)previousFocus.focus();
-  previousFocus=null;
+ function restoreForm(){
+  if(marker&&form){marker.replaceWith(form);marker=null;}
+  if($('sifre'))$('sifre').value='';
+  if($('mesaj'))$('mesaj').textContent='';
  }
- function savedList(form){
-  get('dmSwitchSaved')?.remove();
-  const store=window.dmSavedSessions;if(!store)return;
-  store.remember();
-  const section=document.createElement('section');section.id='dmSwitchSaved';
-  const title=document.createElement('h3');title.textContent='Bu cihazdaki hesaplar';section.appendChild(title);
-  const status=document.createElement('p');status.setAttribute('role','status');status.className='dm-saved-status';
-  const active=store.current();
-  for(const entry of store.list()){
-   const row=document.createElement('div');row.className='dm-saved-row';
-   const button=document.createElement('button');button.type='button';button.className='dm-saved-account';
+ function close(){
+  attempt?.abort();attempt=null;formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
+  formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
+  restoreForm();window.dmAccountSwitchPending=false;
+  document.removeEventListener('keydown',keydown);
+  dialog?.parentElement.remove();dialog=null;
+  document.body.classList.remove('dm-switch-active');
+  if(previousFocus?.isConnected)previousFocus.focus();previousFocus=null;
+ }
+ function message(text){const node=$('dmSwitchStatus');if(node)node.textContent=text;}
+ function addAccount(name=''){
+  if(!dialog)return;
+  attempt?.abort();attempt=null;
+  $('dmSwitchAccounts').hidden=true;$('dmSwitchAdd').hidden=true;$('dmSwitchManage').hidden=true;
+  $('dmSwitchBack').hidden=false;
+  const target=$('dmSwitchForm');target.hidden=false;
+  if(!marker){marker=document.createComment('account-switch-form');form.before(marker);target.append(form);}
+  formControl?.abort();formControl=new AbortController();window.dmSwitchLoginSignal=formControl.signal;
+  window.dmAccountSwitchPending=true;
+  if($('ogrenci'))$('ogrenci').value=name;
+  if($('sifre'))$('sifre').value='';
+  if($('girisBtn')){$('girisBtn').disabled=false;$('girisBtn').textContent='Giriş yap ve geç';}
+  message(name?'Oturum sona ermiş. Şifrenle yeniden giriş yap.':'Mevcut hesabın açık kalacak.');
+  (name?$('sifre'):$('ogrenci'))?.focus();
+ }
+ function accounts(){
+  if(!dialog)return;
+  formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
+  restoreForm();window.dmAccountSwitchPending=false;
+  $('dmSwitchForm').hidden=true;$('dmSwitchAccounts').hidden=false;$('dmSwitchAdd').hidden=false;$('dmSwitchManage').hidden=false;$('dmSwitchBack').hidden=true;
+  const store=window.dmSavedSessions,area=$('dmSwitchAccounts');area.replaceChildren();store?.remember();const active=store?.current();
+  $('dmSwitchManage').textContent=managing?'Bitti':'Düzenle';
+  for(const entry of store?.list()||[]){
+   const current=entry.token===active?.token,row=document.createElement('div');row.className='dm-account-row'+(current?' is-current':'');
+   const button=document.createElement('button');button.type='button';button.className='dm-account-choice';button.disabled=current;
+   const avatar=document.createElement('span');avatar.className='dm-account-initial';avatar.setAttribute('aria-hidden','true');avatar.textContent=entry.name.trim().slice(0,1).toLocaleUpperCase('tr');
+   const label=document.createElement('span');label.className='dm-account-label';
    const name=document.createElement('strong');name.textContent=entry.name;
-   const info=document.createElement('small');info.textContent=entry.token===active.token?'Şu an açık':(entry.role==='ogretmen'?'Öğretmen · Dokun ve geç':'Öğrenci · Dokun ve geç');
-   button.append(name,info);button.disabled=entry.token===active.token;
+   const info=document.createElement('small');info.textContent=current?'Şu an bu hesaptasın':entry.role==='ogretmen'?'Öğretmen hesabı':'Öğrenci hesabı';label.append(name,info);
+   const end=document.createElement('span');end.className='dm-account-end';end.textContent=current?'✓':'›';end.setAttribute('aria-hidden','true');button.append(avatar,label,end);
    button.onclick=async()=>{
-    section.querySelectorAll('button').forEach(b=>b.disabled=true);status.textContent='Oturum kontrol ediliyor…';
-    try{await store.activate(entry);}catch(error){
-     savedList(form);const message=get('dmSwitchSaved')?.querySelector('[role="status"]');if(message)message.textContent=error.message;
-     if(get('ogrenci'))get('ogrenci').value=entry.name;
-    }
+    if(attempt)return;attempt=new AbortController();const run=attempt;
+    area.querySelectorAll('button').forEach(b=>b.disabled=true);button.classList.add('is-loading');end.textContent='…';message(entry.name+' hesabı açılıyor…');
+    try{await store.activate(entry,{signal:run.signal});}
+    catch(error){if(dialog&&attempt===run){attempt=null;if(error.expired)addAccount(entry.name);else{accounts();message(error.message);}}}
    };
-   row.appendChild(button);
-   if(entry.token!==active.token){
-    const remove=document.createElement('button');remove.type='button';remove.className='dm-saved-remove';remove.textContent='Kaldır';remove.setAttribute('aria-label',entry.name+' hesabından bu cihazda çıkış yap');
-    remove.onclick=async()=>{remove.disabled=true;try{await store.remove(entry);savedList(form);}catch(error){status.textContent=error.message;remove.disabled=false;}};
-    row.appendChild(remove);
-   }
-   section.appendChild(row);
+   row.append(button);
+   if(managing&&!current){const remove=document.createElement('button');remove.type='button';remove.className='dm-account-remove';remove.textContent='Kaldır';remove.setAttribute('aria-label',entry.name+' hesabından bu cihazda çıkış yap');remove.onclick=async()=>{remove.disabled=true;try{await store.remove(entry);if(dialog)accounts();}catch(error){if(dialog){remove.disabled=false;message(error.message);}}};row.append(remove);}
+   area.append(row);
   }
-  section.appendChild(status);
-  const label=document.createElement('p');label.className='dm-saved-add';label.textContent='Başka bir hesap ekle';section.appendChild(label);
-  form.before(section);
+  if(!area.children.length){const empty=document.createElement('p');empty.className='dm-account-empty';empty.textContent='Henüz kayıtlı hesap yok. Bir hesap ekleyebilirsin.';area.append(empty);}
  }
  function open(){
-  if(switching)return;
-  const panel=get('panel-alani'),login=get('login-container'),form=get('loginForm');
-  if(!panel||!login||!form)return;
-  previousFocus=document.activeElement;
-  previousDisplay=login.style.display;
-  previousRole=login.getAttribute('role');
-  previousAriaModal=login.getAttribute('aria-modal');
-  previousAriaLabel=login.getAttribute('aria-label');
-  switching=true;window.dmAccountSwitchPending=true;
+  if(dialog)return;form=$('loginForm');if(!form||!window.dmSavedSessions)return;
+  previousFocus=document.activeElement;managing=false;
   const shade=document.createElement('div');shade.id='dmSwitchBackdrop';
-  shade.setAttribute('role','presentation');shade.addEventListener('click',close);
-  document.body.appendChild(shade);
-  document.body.classList.add('dm-switch-active');
-  login.setAttribute('role','dialog');
-  login.setAttribute('aria-modal','true');
-  login.setAttribute('aria-label','Hesap değiştir');
-  login.style.display='block';
-  const heading=document.createElement('div');heading.id='dmSwitchTitle';
-  heading.innerHTML='<span class="dm-switch-symbol" aria-hidden="true">⇄</span><span><strong>Hesap Değiştir</strong><small>Yeni hesaba güvenle geç</small></span>';
-  const x=document.createElement('button');x.type='button';x.id='dmSwitchClose';x.textContent='×';x.setAttribute('aria-label','Pencereyi kapat');x.addEventListener('click',close);
-  heading.appendChild(x);form.before(heading);
-  savedList(form);
-  const btn=document.createElement('button');btn.type='button';btn.id='dmSwitchCancel';
-  btn.textContent='İptal · Mevcut hesabıma dön';btn.addEventListener('click',close);
-  form.after(btn);
-  const msg=get('mesaj');if(msg)msg.textContent='Geçmek istediğin hesabın kullanıcı adı ve şifresini gir. Başarılı girişe kadar mevcut oturumun korunur.';
-  const pass=get('sifre');if(pass)pass.value='';
-  document.addEventListener('keydown',keydown);
-  (get('ogrenci')||btn).focus();
+  shade.innerHTML='<section id="dmSwitchDialog" role="dialog" aria-modal="true" aria-labelledby="dmSwitchTitle"><header class="dm-switch-header"><span class="dm-switch-emblem" aria-hidden="true">⇄</span><button type="button" id="dmSwitchClose" aria-label="Pencereyi kapat">×</button><h2 id="dmSwitchTitle">Hesap değiştir</h2><p>Devam etmek istediğin hesabı seç.</p></header><div class="dm-switch-content"><div class="dm-switch-listbar"><button type="button" id="dmSwitchBack" hidden>‹ Hesaplara dön</button><button type="button" id="dmSwitchManage">Düzenle</button></div><div id="dmSwitchAccounts"></div><div id="dmSwitchForm" hidden></div><p id="dmSwitchStatus" role="status" aria-live="polite"></p><button type="button" id="dmSwitchAdd"><span aria-hidden="true">＋</span> Başka hesap ekle</button></div><footer><button type="button" id="dmSwitchCancel">Vazgeç</button><small>Yalnızca bu cihazdaki açık hesaplar</small></footer></section>';
+  document.body.append(shade);dialog=$('dmSwitchDialog');document.body.classList.add('dm-switch-active');
+  $('dmSwitchClose').onclick=close;$('dmSwitchCancel').onclick=close;$('dmSwitchBack').onclick=()=>{attempt?.abort();attempt=null;accounts();message('');};
+  $('dmSwitchAdd').onclick=()=>addAccount();$('dmSwitchManage').onclick=()=>{if(attempt)return;managing=!managing;accounts();};
+  shade.onclick=e=>{if(e.target===shade)close();};
+  document.addEventListener('keydown',keydown);accounts();$('dmSwitchClose').focus();
  }
- function install(){
-  if(get('dmAccountSwitchButton'))return;
-  const exit=document.querySelector('.header-btn.btn-cikis');
-  if(!exit)return;
-  const button=document.createElement('button');button.type='button';
-  button.id='dmAccountSwitchButton';button.className=exit.className;
-  button.innerHTML='<span aria-hidden="true">⇄</span> Hesap Değiştir';
-  button.addEventListener('click',open);
-  exit.parentElement.insertBefore(button,exit);
- }
+ function install(){if($('dmAccountSwitchButton'))return;const exit=document.querySelector('.header-btn.btn-cikis');if(!exit)return;const button=document.createElement('button');button.id='dmAccountSwitchButton';button.type='button';button.className=exit.className;button.textContent='⇄ Hesap Değiştir';button.onclick=open;exit.before(button);}
  window.dmHesapDegistirAc=open;
- document.addEventListener('DOMContentLoaded',install);
- if(document.readyState!=='loading')install();
+ document.addEventListener('DOMContentLoaded',install);if(document.readyState!=='loading')install();
 })();
