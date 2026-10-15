@@ -21831,7 +21831,7 @@ window.ocEnerjiHarca = async function (n) {
     if (cesit.length) {
       secim.push(
         cesit[
-          (h >> 3) % cesit.length
+          (h >>> 3) % cesit.length
         ]
       );
     }
@@ -21905,57 +21905,20 @@ window.ocEnerjiHarca = async function (n) {
     }
   }
 
-  /*
-    Daha önce hatalı oluşturulmuş görev kaydı
-    varsa onu da güvenli şekilde temizle.
-  */
-  if (
-    yo.gorev &&
-    Array.isArray(yo.gorev.liste)
-  ) {
-
-    yo.gorev.liste =
-      yo.gorev.liste.filter(
-        x =>
-          x &&
-          typeof x.id === 'string'
-      );
-  }
-
-         /* Eksik üçüncü görevi güvenli şekilde tamamla */
-if (
-  yo.gorev &&
-  Array.isArray(yo.gorev.liste) &&
-  yo.gorev.liste.length === 2
-) {
-
-  const mevcutIdler = new Set(
-    yo.gorev.liste.map(x => x && x.id)
-  );
-
-  /* Öncelikle eksik bir beceri görevi seç */
-  const yeniGorev = GOREV_HAVUZ.find(g =>
-    g &&
-    g.id &&
-    !mevcutIdler.has(g.id) &&
-    (
-      String(g.olay || '').startsWith('beceri') ||
-      g.id === 'zk'
-    )
-  );
-
-  if (yeniGorev) {
-
-    yo.gorev.liste.push({
-      id: yeniGorev.id,
-      ilerleme: 0
-    });
-
-    if (typeof yoKaydet === 'function') {
-      yoKaydet();
+  // Repair today's incomplete/obsolete records without resetting valid progress or reward claims.
+  const mevcut = new Map();
+  for (const x of Array.isArray(yo.gorev.liste) ? yo.gorev.liste : []) {
+    if (x && GOREV_HAVUZ.some(g => g.id === x.id) && !mevcut.has(x.id)) {
+      mevcut.set(x.id, {id:x.id, ilerleme:Math.max(0, Number(x.ilerleme) || 0)});
     }
   }
-}
+  const onceki = JSON.stringify(yo.gorev.liste);
+  for (const g of GOREV_HAVUZ) {
+    if (mevcut.size >= 3) break;
+    if (!mevcut.has(g.id)) mevcut.set(g.id, {id:g.id, ilerleme:0});
+  }
+  yo.gorev.liste = [...mevcut.values()].slice(0,3);
+  if (onceki !== JSON.stringify(yo.gorev.liste) && typeof yoKaydet === 'function') yoKaydet();
   return yo.gorev;
 }
 
@@ -26475,7 +26438,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="meteor.css?v=20261012-independent">
 <link rel="stylesheet" href="word-wheel.css?v=20261012-dual-wheel">
 <link rel="stylesheet" href="oyna-v2.css?v=20261014-map-picker-1">
-<script defer src="oyna-v2.js?v=20261014-map-picker-1"></script>
+<script defer src="oyna-v2.js?v=20261015-daily-refresh-1"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261011-1">
 <script defer src="friends-ui.js?v=20261011-1"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261011-3">
