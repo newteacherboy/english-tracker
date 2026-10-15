@@ -6,6 +6,7 @@ on:
       - 'ingilizce/account-switch.js'
       - 'ingilizce/account-switch.css'
       - 'tests/account-switch.test.cjs'
+      - 'tests/account-switch-dialog.test.cjs'
       - '.github/workflows/account-switch.yml'
   push:
     paths:
@@ -13,6 +14,7 @@ on:
       - 'ingilizce/account-switch.js'
       - 'ingilizce/account-switch.css'
       - 'tests/account-switch.test.cjs'
+      - 'tests/account-switch-dialog.test.cjs'
 permissions:
   contents: read
 jobs:
@@ -24,4 +26,4 @@ jobs:
         with:
           node-version: '22'
       - run: node --check ingilizce/account-switch.js
-      - run: node --test tests/account-switch.test.cjs tests/daily-goals-cache-version.test.cjs tests/daily-goals-first-load.test.cjs
+      - run: node --test tests/account-switch.test.cjs tests/account-switch-dialog.test.cjs tests/daily-goals-cache-version.test.cjs tests/daily-goals-first-load.test.cjs
