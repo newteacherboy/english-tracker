@@ -1,0 +1,27 @@
+name: Account switching QA
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/index.html'
+      - 'ingilizce/account-switch.js'
+      - 'ingilizce/account-switch.css'
+      - 'tests/account-switch.test.cjs'
+      - '.github/workflows/account-switch.yml'
+  push:
+    paths:
+      - 'ingilizce/index.html'
+      - 'ingilizce/account-switch.js'
+      - 'ingilizce/account-switch.css'
+      - 'tests/account-switch.test.cjs'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/account-switch.js
+      - run: node --test tests/account-switch.test.cjs tests/daily-goals-cache-version.test.cjs tests/daily-goals-first-load.test.cjs
