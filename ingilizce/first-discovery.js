@@ -35,7 +35,7 @@
  const button=(text,action='next',kind='primary')=>`<button type="button" class="fd-${kind}" data-action="${action}">${text}</button>`;
  function error(message){const node=root.querySelector('.fd-error');if(node){node.textContent=message;node.scrollIntoView?.({block:'nearest'});}}
  function lock(value){busy=value;root.querySelectorAll('button').forEach(b=>b.disabled=value);}
- function welcome(){screen='welcome';show(image('papi-merhaba')+'<div class="fd-wordmark"><span>Diji-</span>Medu</div>',button('▶ Başla','begin'),0,'fd-welcome',false);}
+ function welcome(){screen='welcome';show(image('papi-merhaba')+'<div class="fd-wordmark"><span>Diji-</span>Medu</div>',button('Üye Ol','begin')+button('Hesabım Var','login','secondary'),0,'fd-welcome',false);}
  const navigate=url=>ctx.navigate?ctx.navigate(url):location.assign(url);
  function login(){hide();document.documentElement.classList.remove('dm-first-entry');if(ctx.guest){navigate('./?giris=1');return;}$('login-container').style.display='block';document.body.classList.add('dm-discovery-login');let back=$('dmDiscoveryLoginBack');if(!back){back=document.createElement('button');back.id='dmDiscoveryLoginBack';back.type='button';back.className='fd-login-back';back.textContent='← Geri';back.onclick=()=>{document.body.classList.remove('dm-discovery-login');$('login-container').style.display='none';welcome();};$('login-container').prepend(back);}}
  const navIcons=['M3 11 12 3l9 8v10h-6v-7H9v7H3z','M7 7h10c6 0 7 13 3 13l-4-4H8l-4 4C0 20 1 7 7 7m0 4v6m-3-3h6m7-2h1m1 3h1','M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20m-9 10h18M12 2c5 6 5 14 0 20C7 16 7 8 12 2','M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10M3 22v-3c0-7 18-7 18 0v3z'];
