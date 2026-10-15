@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+test('daily tasks do not disappear silently',()=>{const s=fs.readFileSync('ingilizce/benim-dunyam.js','utf8');assert.match(s,/Günlük görevler hazırlanıyor/);});
+test('friends width containment and stylesheet connection',()=>{const s=fs.readFileSync('ingilizce/index.html','utf8');const css=fs.readFileSync('ingilizce/friends-overflow-fix.css','utf8');assert.match(s,/friends-overflow-fix\.css/);assert.match(css,/overflow-x:hidden/);assert.match(css,/overflow-x:auto/);});
+test('teacher optional game entrypoints and updated help exist',()=>{const s=fs.readFileSync('ingilizce/index.html','utf8');for(const key of ['harfbahcesi','papicards','meteor','wheel'])assert.ok(s.includes("siniftaOyunuBaslat('"+key+"')"));const guide=fs.readFileSync('ingilizce/papi-guide-content.js','utf8');assert.match(guide,/whats-new-2026/);assert.match(guide,/Günün 3 Görevi/);});
