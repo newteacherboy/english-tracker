@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v143-versioned-static-cache-20261015';
+const SURUM = 'diji-v144-network-first-static-20261015';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 /* Ana sayfanın çevrimdışı kopyasını ASLA değiştirmemesi gereken sayfalar:
@@ -34,27 +34,12 @@ self.addEventListener('fetch', e => {
       .catch(() => caches.match('./').then(y => y || caches.match(r))));
     return;
   }
-  /* Sürüm damgalı JS/CSS cihazdan açılır; yeni ?v= adresi yeni dosya indirir.
-     Sürüm damgası olmayan betikler, CSS ve JSON için güncel ağ yanıtı zorunludur. */
+  /* JS/CSS/JSON: ağ öncelikli. Önceki cache-first kuralı aynı ?v= URL'sindeki güncellemeleri süresiz gizleyebiliyordu. */
   if (url.origin === self.location.origin && /\.(?:js|css|json)$/.test(url.pathname)) {
-    const versioned = /\.(?:js|css)$/.test(url.pathname) && url.searchParams.has('v');
-    if (versioned) {
-      e.respondWith(caches.open(KAYNAK).then(async cache => {
-        const cached = await cache.match(r);
-        if (cached) return cached;
-        const response = await fetch(r);
-        if (response && response.ok) {
-          const copy = response.clone();
-          e.waitUntil(cache.put(r, copy).catch(() => {}));
-        }
-        return response;
-      }));
-    } else {
-      e.respondWith(fetch(r,{cache:'no-store'}).then(y => {
-        if (y && y.ok) { const k = y.clone(); e.waitUntil(caches.open(KAYNAK).then(c => c.put(r, k)).catch(() => {})); }
-        return y;
-      }).catch(() => caches.match(r)));
-    }
+    e.respondWith(fetch(r,{cache:'no-store'}).then(y => {
+      if (y && y.ok) { const copy=y.clone(); e.waitUntil(caches.open(KAYNAK).then(c=>c.put(r,copy)).catch(()=>{})); }
+      return y;
+    }).catch(()=>caches.match(r)));
     return;
   }
   /* Yazı tipleri, kütüphaneler ve aynı klasördeki görseller: önce cihaz */
