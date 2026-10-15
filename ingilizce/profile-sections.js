@@ -31,6 +31,14 @@
   window.dmDolabimAc=()=>openPanel('karakter');
   /* ------------------------------------------------------------------ rozet kataloğu */
   const ROZETLER = [
+    ['hos-geldin','Hoş Geldin','🦜','İlk girişinden 2 dakika sonra Diji-Medu ailesine katıl',c=>c.welcome],
+    ['aktif-5','Meraklı Papi','🌱','5 dakika aktif çalış',c=>c.sure>=300],
+    ['aktif-15','Odak Ustası','⏱️','15 dakika aktif çalış',c=>c.sure>=900],
+    ['aktif-60','Bir Saatlik Kaşif','🧭','1 saat aktif çalış',c=>c.sure>=3600],
+    ['oyun-25','Oyun Gezgini','🎮','25 oyun tamamla',c=>c.oyun>=25],
+    ['dogru-50','Parlayan Zihin','💡','50 doğru cevap ver',c=>c.dogru>=50],
+    ['parkur-50','Rota Efsanesi','🗺️','Parkurda 50 durak geç',c=>c.parkur>=50],
+    ['seri-14','İki Haftalık Azim','💪','14 gün üst üste gir',c=>c.seri>=14],
     ['ilk-adim', 'İlk Adım', '👣', 'İlk oyununu tamamla', c => c.oyun >= 1],
     ['ilk-zafer', 'İlk Zafer', '👑', 'İlk Ders Çalış konunu bitir', c => c.ders >= 1],
     ['seri-3', '3 Gün Seri', '🔥', '3 gün üst üste gir', c => c.seri >= 3],
@@ -55,7 +63,7 @@
     ['puan-efsanesi', 'Puan Efsanesi', '✨', '10.000 XP topla', c => c.xp >= 10000],
     ['altin-kumbara', 'Altın Kumbara', '🐷', '1.000 altın biriktir', c => c.altin >= 1000],
     ['dinleme-ustasi', 'Dinleme Ustası', '🎧', 'Dinleme oyunlarında 5 kez %80 üstü yap', c => c.dinleme >= 5]
-  ].map(([id, ad, ikon, kosul, kontrol]) => ({ id, ad, ikon, kosul, kontrol, resim: `profile-assets/rozet-${id}.webp` }));
+  ].map(([id, ad, ikon, kosul, kontrol]) => ({ id, ad, ikon, kosul, kontrol, resim: `profile-assets/rozet-${id}.${['hos-geldin','aktif-5','aktif-15','aktif-60','oyun-25','dogru-50','parkur-50','seri-14'].includes(id)?'svg':'webp'}` }));
   window.dmRozetKatalogu = ROZETLER;
 
   function seviyeBilgi() {
@@ -79,6 +87,7 @@
     const l = Array.isArray(yo.dmGorevGunleri) ? yo.dmGorevGunleri : [];
     if (!l.includes(yo.gorev.t)) { l.push(yo.gorev.t); yo.dmGorevGunleri = l.slice(-60); if (typeof yoKaydet === 'function') yoKaydet(); }
   }
+  const badgeStatus=()=>window.dmMemberBadgeStatus?.owner===String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)?window.dmMemberBadgeStatus:null;
   function rozetBaglami() {
     const sv = seviyeBilgi(), tum = toplamlar(istat && istat.gunler);
     let karakter = 0;
@@ -87,11 +96,12 @@
     const beceri = yoVar() && yo.beceri && Array.isArray(yo.beceri.dinleme) ? yo.beceri.dinleme : [];
     const cevap = tum.dogru + tum.yanlis;
     return {
+      dogru:tum.dogru,sure:Number(window.dmActiveTime?.summary?.().seconds)||0,welcome:!!badgeStatus()?.welcomeEarned,
       oyun: tum.oyun, mukemmel: tum.mukemmel, cevap, dogruluk: cevap ? Math.round(tum.dogru * 100 / cevap) : 0,
       ders: yoVar() && Array.isArray(yo.dcOdul) ? yo.dcOdul.length : 0,
       yildiz: yoVar() && yo.dcYildiz ? Object.values(yo.dcYildiz).reduce((a, b) => a + (Number(b) || 0), 0) : 0,
       parkur: Math.max(tum.parkur, yoVar() && yo.baYildiz ? Object.keys(yo.baYildiz).length : 0),
-      seri: parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0', 10) || 0,
+      seri:Number(badgeStatus()?.maxLoginStreak)||0,
       hafta: yoVar() && Array.isArray(yo.rozetler) ? yo.rozetler.filter(r => /Haftalık hedef/i.test(r && r.ad || '')).length : 0,
       gorev: yoVar() && Array.isArray(yo.dmGorevGunleri) ? yo.dmGorevGunleri.length : 0,
       seviye: sv.level, xp: sv.xp, altin: yoVar() ? Number(yo.altin) || 0 : 0, karakter,
@@ -115,7 +125,7 @@
   }
   function kazanilanRozetler(c) {
     const kayit = yoVar() && yo.dmWorldBadges;
-    return new Set([...(kayit?.ids || []).filter(id => ROZETLER.some(r => r.id === id)), ...ROZETLER.filter(r => r.kontrol(c)).map(r => r.id)]);
+    return new Set([...(kayit?.ids || []).filter(id => ROZETLER.some(r => r.id === id) && (kayit?.version>=2 || !id.startsWith('seri-') || Number(id.slice(5))<=c.seri)), ...ROZETLER.filter(r => r.kontrol(c)).map(r => r.id)]);
   }
   function kuyrukKaydet() {
     if (!rozetKisi) return;
@@ -125,12 +135,13 @@
     if (!rozetOturumu()) return;
     gorevGunleriniKaydet();
     // Wait for historical game statistics before establishing the first baseline.
-    if (!istat) return;
+    if (!istat || !badgeStatus()) return;
     const eski = yo.dmWorldBadges, sahip = kazanilanRozetler(rozetBaglami());
     const yeni = [...sahip].filter(id => !(eski?.ids || []).includes(id));
-    if (!eski || yeni.length) {
-      yo.dmWorldBadges = { version: 1, ids: [...sahip] };
-      if (eski?.version === 1) {
+    rozetSirasi=rozetSirasi.filter(id=>sahip.has(id));
+    if (!eski || eski.version!==2 || yeni.length) {
+      yo.dmWorldBadges = { version: 2, ids: [...sahip] };
+      if (eski || yeni.includes('hos-geldin')) {
         yeni.forEach(id => { if (!rozetSirasi.includes(id)) rozetSirasi.push(id); });
         kuyrukKaydet();
       }
@@ -148,7 +159,7 @@
     return [...document.querySelectorAll('[role="dialog"],.rubric-modal,.game-modal-overlay,.gso-overlay,.yo-modal,.hb-overlay,.bz-perde,.dv-perde,#genelSonucOverlay,#dmLevelUp,#dmGoalAnnouncement,.cog-perde,.pc-overlay,.ww-overlay')].some(gorunur);
   }
   function rozetKutla() {
-    if (!rozetKisi || kutlama || !rozetSirasi.length || kutlamaMesgul()) return;
+    if (!rozetKisi || !istat || !badgeStatus() || kutlama || !rozetSirasi.length || kutlamaMesgul()) return;
     const r = ROZETLER.find(r => r.id === rozetSirasi[0]); if (!r) { rozetSirasi.shift(); kuyrukKaydet(); return; }
     const kisi = rozetKisi, once = document.activeElement, el = document.createElement('div');
     el.className = 'bd-kutlama'; el.id = 'bdRozetKutlama';
@@ -329,6 +340,6 @@
 
   const closeScreens=window.dcTumTamEkranlariKapat;
   if(typeof closeScreens==='function')window.dcTumTamEkranlariKapat=function(){geriKoy();return closeScreens.apply(this,arguments);};
-  for(const name of ['dm:login','dm:state'])document.addEventListener(name,()=>{rozetleriKontrolEt();});
+  for(const name of ['dm:login','dm:state','dm:member-status'])document.addEventListener(name,()=>{rozetleriKontrolEt();});
   setInterval(()=>{if(document.hidden||!rozetOturumu())return;if(!istat)istatGetir();rozetleriKontrolEt();rozetKutla();},1000);
 })();

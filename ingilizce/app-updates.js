@@ -12,7 +12,8 @@
   const button=document.createElement('button');button.type='button';button.textContent='Yenile';
   button.style.cssText='border:0;border-radius:10px;padding:10px 14px;background:#166534;color:#fff;font:700 14px system-ui;cursor:pointer';
   button.addEventListener('click',()=>{if(window.confirm('Sayfa yenilenecek. Devam eden etkinliğini tamamladıysan yenileyebilirsin.'))location.reload();});
-  box.append(label,button);document.body.append(box);
+  const dismiss=document.createElement('button');dismiss.type='button';dismiss.textContent='×';dismiss.setAttribute('aria-label','Güncelleme bildirimini kapat');dismiss.style.cssText='flex-shrink:0;border:0;background:transparent;color:#14532d;font:26px system-ui;min-width:36px;min-height:40px;cursor:pointer';dismiss.addEventListener('click',()=>box.remove());
+  box.append(label,button,dismiss);document.body.append(box);
  }
  navigator.serviceWorker.addEventListener('controllerchange',offerUpdate);
  async function check(){

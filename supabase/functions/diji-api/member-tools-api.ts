@@ -25,12 +25,27 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    return json({ok:true,total:registration+unread,registrations:registration,messages:unread});
   }
   if(a.role!=='student'||!a.student_id)return fail('Öğrenci hesabı gerekli.',403);
-  const {data:s,error}=await db.from('students').select('id,username,status,email,email_verified_at,email_verification_required,teacher_id').eq('id',a.student_id).maybeSingle();
+  const {data:s,error}=await db.from('students').select('id,username,status,email,email_verified_at,email_verification_required,teacher_id,created_at').eq('id',a.student_id).maybeSingle();
   if(error)throw error;if(!s||s.status!=='approved')return fail('Hesap aktif değil.',403);
   const sid=s.id;
   if(op==='memberStatus'){
    const [exam,yo]=await Promise.all([get(sid,'placement_cefr_v2'),get(sid,'yo')]);
-   return json({ok:true,emailVerified:!!s.email_verified_at,email:s.email||'',hasPlacement:!!exam?.value||!!parse(yo?.value).seviye,placement:exam?.value||null,teacherLinked:!!s.teacher_id});
+   // Per-account, server-dated login evidence; never trust another browser account's streak.
+   const today=day(),now=new Date().toISOString();
+   const login=await db.from('extra_data').upsert({student_id:sid,key_name:'member_login:'+today,value:{day:today},updated_at:now},{onConflict:'student_id,key_name',ignoreDuplicates:true});if(login.error)throw login.error;
+   let first=await get(sid,'member_first_seen_v1');
+   if(!first){const firstWrite=await db.from('extra_data').upsert({student_id:sid,key_name:'member_first_seen_v1',value:{at:now,welcomeEligible:Date.now()-Date.parse(s.created_at||'')<86400000},updated_at:now},{onConflict:'student_id,key_name',ignoreDuplicates:true});if(firstWrite.error)throw firstWrite.error;first=await get(sid,'member_first_seen_v1');}
+   const [visits,claims,legacy]=await Promise.all([
+    db.from('extra_data').select('key_name').eq('student_id',sid).like('key_name','member_login:%').order('key_name',{ascending:false}).limit(370),
+    db.from('extra_data').select('key_name').eq('student_id',sid).like('key_name','energy_daily:%').order('key_name',{ascending:false}).limit(370),
+    db.from('energy_transactions').select('created_at').eq('student_id',sid).eq('reason','gunluk').order('created_at',{ascending:false}).limit(370)
+   ]);for(const r of [visits,claims,legacy])if(r.error)throw r.error;
+   const days=new Set<string>([...(visits.data||[]),...(claims.data||[])].map((x:any)=>String(x.key_name).split(':')[1]));
+   for(const x of legacy.data||[])days.add(new Date(Date.parse(x.created_at)+10800000).toISOString().slice(0,10));
+   let loginStreak=0;for(let i=0;i<370;i++){const stamp=new Date(Date.now()+10800000-i*86400000).toISOString().slice(0,10);if(!days.has(stamp))break;loginStreak++;}
+   let maxLoginStreak=0,run=0,previous='';for(const stamp of [...days].sort()){run=previous&&Date.parse(stamp)-Date.parse(previous)===86400000?run+1:1;maxLoginStreak=Math.max(maxLoginStreak,run);previous=stamp;}
+   const firstValue=parse(first?.value);
+   return json({ok:true,emailVerified:!!s.email_verified_at,email:s.email||'',hasPlacement:!!exam?.value||!!parse(yo?.value).seviye,placement:exam?.value||null,teacherLinked:!!s.teacher_id,serverNow:now,maxLoginStreak,loginStreak,loginDays:days.size,memberFirstSeenAt:firstValue.at,welcomeEligible:!!firstValue.welcomeEligible,welcomeEarned:!!firstValue.welcomeEligible&&Date.now()-Date.parse(firstValue.at)>=120000});
   }
   if(op==='memberEmailResend'){
    if(s.email_verified_at)return json({ok:true,verified:true,mesaj:'E-posta adresin zaten doğrulanmış.'});

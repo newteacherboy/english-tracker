@@ -12,12 +12,21 @@ const progression=progressionAPI(supabase,json);
 const contacts=contactPolicyAPI(supabase,json);
 const num=(v:any)=>Number.isFinite(Number(v))?Number(v):0;
 const val=(body:any,q:URLSearchParams,key:string)=>body[key]??q.get(key)??"";
-async function studentByNameGenel(name:string){const n=String(name).trim().replace(/[\\%_]/g,m=>"\\"+m);const {data,error}=await supabase.from("students").select("id,username").eq("status","approved").ilike("username",n).limit(2);if(error)throw error;return data?.length===1?data[0]:null;}
+async function studentByNameGenel(name:string){const n=String(name).trim().replace(/[\\%_]/g,m=>"\\"+m);const {data,error}=await supabase.from("students").select("id,username,teacher_id,class_no").eq("status","approved").ilike("username",n).limit(2);if(error)throw error;return data?.length===1?data[0]:null;}
 async function session(req:Request,body:any,q:URLSearchParams){
  const token=String(body.t||q.get("t")||req.headers.get("x-diji-token")||"");if(!token)return null;
  const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,"0")).join("");
- const {data,error}=await supabase.from("portal_sessions").select("id,role,student_id,expires_at,last_seen_at").eq("token_hash",hash).maybeSingle();if(error)throw error;
- if(!data||data.role!=="student"||!data.student_id||Date.parse(data.expires_at)<=Date.now())return null;
+ const {data,error}=await supabase.from("portal_sessions").select("id,role,student_id,teacher_id,expires_at,last_seen_at").eq("token_hash",hash).maybeSingle();if(error)throw error;
+ if(!data||Date.parse(data.expires_at)<=Date.now())return null;
+ if(data.role==='teacher'){
+  const allowed=new Set(['takipDavetListesi','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim']);
+  if(!allowed.has(String(val(body,q,'islem')))||!data.teacher_id||!body.classroomStudent)return null;
+  const {data:teacher}=await supabase.from('teachers').select('id,active').eq('id',data.teacher_id).maybeSingle();
+  const pupil=await studentByNameGenel(String(body.classroomStudent));
+  if(!teacher||teacher.active===false||!pupil||pupil.teacher_id!==teacher.id)return null;
+  return {...data,role:'student',student_id:pupil.id,classroomTeacher:teacher.id,classroomGrade:pupil.class_no};
+ }
+ if(data.role!=="student"||!data.student_id)return null;
  const {data:s}=await supabase.from("students").select("id,status").eq("id",data.student_id).maybeSingle();if(s?.status!=="approved")return null;return data;
 }
 const DM_GAMES: Record<string,string> = {Kelime_Liderlik:'kelime',Jeopardy_Liderlik:'jeopardy',Bosluk_Tablosu:'bosluk',Hafiza_Liderlik:'hafiza',Yagmur_Liderlik:'yagmur',Asmaca_Liderlik:'asmaca',KelimeBul_Liderlik:'kelimebul',Konusma_Liderlik:'konusma',Eslesme_Liderlik:'eslestirme',Tren_Liderlik:'tren',Dikte_Liderlik:'dikte',Cumle_Liderlik:'cumle',HarfBahcesi_Liderlik:'harfbahcesi'};
@@ -30,7 +39,8 @@ async function dmPresence(op:string,body:any,a:any){
  const {data:blocks,error:be}=await supabase.from('student_blocks').select('blocker_id,blocked_id').or('blocker_id.eq.'+actor+',blocked_id.eq.'+actor);if(be)throw be;
  const blocked=new Set((blocks||[]).map((b:any)=>b.blocker_id===actor?b.blocked_id:b.blocker_id));
  let students:any[]=[];
- if(op==='takipDavetListesi'){
+ if(op==='takipDavetListesi'&&a.classroomTeacher){const {data,error}=await supabase.from('students').select('id,username,class_no').eq('teacher_id',a.classroomTeacher).eq('status','approved').eq('class_no',a.classroomGrade);if(error)throw error;students=(data||[]).filter((s:any)=>s.id!==actor&&!blocked.has(s.id));}
+ else if(op==='takipDavetListesi'){
   const {data:follows,error}=await supabase.from('feed_events').select('target_student_id').eq('student_id',actor).eq('event_type','takip').limit(1000);if(error)throw error;
   const ids=[...new Set((follows||[]).map((f:any)=>f.target_student_id).filter((id:any)=>id&&id!==actor&&!blocked.has(id)))];
   if(ids.length){const {data,error}=await supabase.from('students').select('id,username,class_no').in('id',ids).eq('status','approved');if(error)throw error;students=data||[];}
@@ -74,6 +84,7 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
  let target:any=null;
  if(['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur'].includes(op)){
   target=await studentByNameGenel(String(val(body,q,'alici')));if(!target)return json({ok:false,mesaj:'Öğrenci bulunamadı.'},404);
+  if(a.classroomTeacher&&target.teacher_id!==a.classroomTeacher)return json({ok:false,mesaj:'Sınıf oyununda yalnızca kendi öğrencilerini seçebilirsin.'},403);
  }
  let r:any;
  if(op.startsWith('oyunEslesme')){
@@ -94,7 +105,7 @@ Deno.serve(async(req:Request)=>{
  const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  const op=String(val(body,q,"islem"));
  const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
- const levelDeny=await progression.guard(op,body,q,a);if(levelDeny)return levelDeny;
+ const levelDeny=a.classroomTeacher?null:await progression.guard(op,body,q,a);if(levelDeny)return levelDeny;
  const denied=await release.guard(op,body,q,a);if(denied)return denied;
  if(['aktifDurum','takipDavetListesi'].includes(op))return await dmPresence(op,body,a);
  if(["duelloGonder","duelloYanit","duellolarim"].includes(op)){

@@ -18,7 +18,9 @@
  }
  function close(){
   attempt?.abort();attempt=null;formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
+  $('dmSwitchGoogle')?.remove();
   formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
+  $('dmSwitchGoogle')?.remove();
   restoreForm();window.dmAccountSwitchPending=false;
   document.removeEventListener('keydown',keydown);
   dialog?.parentElement.remove();dialog=null;
@@ -38,12 +40,21 @@
   if($('ogrenci'))$('ogrenci').value=name;
   if($('sifre'))$('sifre').value='';
   if($('girisBtn')){$('girisBtn').disabled=false;$('girisBtn').textContent='Giriş yap ve geç';}
+  $('dmSwitchGoogle')?.remove();
+  if(!window.dmAndroidUygulama){
+   const google=document.createElement('button');google.id='dmSwitchGoogle';google.type='button';google.className='dm-switch-google';
+   google.innerHTML='<img src="discovery-assets/google-g.svg" alt="" width="22" height="22"><span>Google ile Giriş Yap</span>';
+   google.onclick=async()=>{if(typeof window.dmGoogleHesapDegistir!=='function'){message('Google bağlantısı yüklenemedi. Sayfayı yenileyip tekrar dene.');return;}google.disabled=true;try{const opened=await window.dmGoogleHesapDegistir();if(!opened)message('Google girişi başlatılmadı. Mevcut hesabın açık.');}finally{if(google.isConnected)google.disabled=false;}};
+   target.append(google);
+  }
   message(name?'Oturum sona ermiş. Şifrenle yeniden giriş yap.':'Mevcut hesabın açık kalacak.');
   (name?$('sifre'):$('ogrenci'))?.focus();
  }
  function accounts(){
   if(!dialog)return;
+  $('dmSwitchGoogle')?.remove();
   formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
+  $('dmSwitchGoogle')?.remove();
   restoreForm();window.dmAccountSwitchPending=false;
   $('dmSwitchForm').hidden=true;$('dmSwitchAccounts').hidden=false;$('dmSwitchAdd').hidden=false;$('dmSwitchManage').hidden=false;$('dmSwitchBack').hidden=true;
   const store=window.dmSavedSessions,area=$('dmSwitchAccounts');area.replaceChildren();store?.remember();const active=store?.current();

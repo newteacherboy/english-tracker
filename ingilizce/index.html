@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<script defer src="app-updates.js?v=20261015-1"></script>
+<script defer src="app-updates.js?v=20261015-member-fixes-2"></script>
 <script src="session-handoff.js?v=20261015-1"></script>
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
 <link rel="stylesheet" href="character-builder.css?v=20261014-1">
 <script defer src="character-builder.js?v=20261014-1"></script>
-<script src="progression-catalog.js?v=20261014-legend-1"></script>
+<script src="progression-catalog.js?v=20261015-member-fixes-2"></script>
 <link rel="stylesheet" href="first-discovery.css?v=20261013-discovery-fix-2">
 <script src="first-discovery-state.js?v=20261015-members-only-1"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
@@ -855,6 +855,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
             </button>
                 <div class="dc-focus-card">
                 <div class="az-grid2x2">
+<button type="button" class="az-gcard" id="dmPomodoroActivity" onclick="pomodoroAc()"><div class="az-gcard-icon">🍅</div><div class="az-gcard-title">Pomodoro Çalışma Sayacı</div></button>
                 <button class="az-gcard" style="background:linear-gradient(160deg,#38bdf8,#0284c7);" onclick="yolculuguAc()">
                     <div class="az-gcard-icon">🗺️</div><div class="az-gcard-title">Kelime Kartları Yolculuğu</div>
                 </button>
@@ -1474,15 +1475,6 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                         <button class="az-gcard" id="kartGununKonusu" style="background:linear-gradient(160deg,#fb7185,#e11d48);" onclick="gununKonusunaGit()">
                             <div class="az-gcard-badge">GÜNLÜK</div>
                             <div class="az-gcard-icon">🎯</div><div class="az-gcard-title">Günün Konusu</div>
-                        </button>
-                                        <button class="az-gcard" id="kartRaporlarim" style="background:linear-gradient(160deg,#22c55e,#15803d);" onclick="raporlarimAc()">
-    <div class="az-gcard-icon">📝</div><div class="az-gcard-title">Raporlarım</div>
-</button>
-                        <button class="az-gcard" id="kartOkumaStudyosu" style="background:linear-gradient(160deg,#34d399,#059669);" onclick="okumaStudyosunuAc()">
-                            <div class="az-gcard-icon">📖</div><div class="az-gcard-title">Okuma Stüdyosu</div>
-                        </button>
-                        <button class="az-gcard span2" id="kartPomodoro" style="background:linear-gradient(160deg,#fb923c,#ea580c);" onclick="pomodoroAc()">
-                            <div class="az-gcard-icon">🍅</div><div class="az-gcard-title">Pomodoro Çalışma Sayacı</div>
                         </button>
                     </div>
                     <div class="sana-ozel-odevler-baslik" style="color:#553c9a; border-bottom-color:#e7dcff;">📚 Ödevlerim</div>
@@ -3986,6 +3978,7 @@ mesajlar.forEach(m => {
                 }
 
                 function siniftaOyunuBaslat(oyunTuru) {
+                    window.dmClassroomOnlineOwner=null;
                     let ogr = document.getElementById('siniftaOyunOgrenciSelect').value;
                     if (!ogr) { alert("Lütfen önce bir öğrenci seçin."); return; }
                     siniftaOynananOgrenci = ogr;
@@ -4000,6 +3993,13 @@ mesajlar.forEach(m => {
                     else if (oyunTuru === 'yagmur') yagmurOyunAc();
                     else if (oyunTuru === 'asmaca') asmacaOyunAc();
                     else if (oyunTuru === 'kelimebul') kelimebulOyunAc();
+                    else if (oyunTuru === 'eslestirme') esOyunAc();
+                    else if (oyunTuru === 'tren') trenOyunAc();
+                    else if (oyunTuru === 'dikte') dikteAc();
+                    else if (oyunTuru === 'cumle') cumleAc();
+                    else if (oyunTuru === 'okuma') okumaStudyosunuAc();
+                    else if (oyunTuru === 'pomodoro') pomodoroAc();
+                    else if (oyunTuru === 'ucus' || oyunTuru === 'rota') { window.dmClassroomOnlineOwner=ogr; window.dmInviteAc?.(oyunTuru); }
                     else if (oyunTuru === 'harfbahcesi') window.harfBahcesiAc?.();
                     else if (oyunTuru === 'papicards') window.dmPapiCards?.open?.();
                     else if (oyunTuru === 'meteor') window.dmMeteor?.open?.();
@@ -4018,6 +4018,7 @@ mesajlar.forEach(m => {
                 }
 
                 function siniftaOyunModunuKapat() {
+                    window.dmClassroomOnlineOwner=null;
                     siniftaOynananOgrenci = null;
                     siniftaOyunRozetiGoster();
                 }
@@ -4975,17 +4976,20 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
             function girisSerisiGuncelleVeGetir() {
             let bugun = new Date();
             let bugunStr = bugun.getFullYear() + '-' + String(bugun.getMonth()+1).padStart(2,'0') + '-' + String(bugun.getDate()).padStart(2,'0');
-            let sonGirisTarihi = localStorage.getItem('ing_girisSerisiSonTarih');
-            let mevcutSeri = parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0');
+            const owner=String(aktifOgrenciAdi||'').trim().toLowerCase();
+            if(!owner||owner==='teacher')return;
+            const dateKey='dm_login_day:'+owner,countKey='dm_login_streak:'+owner;
+            let sonGirisTarihi=localStorage.getItem(dateKey);
+            let mevcutSeri=parseInt(localStorage.getItem(countKey)||'0')||0;
 
             if (sonGirisTarihi !== bugunStr) {
                 let dun = new Date(bugun);
                 dun.setDate(dun.getDate() - 1);
                 let dunStr = dun.getFullYear() + '-' + String(dun.getMonth()+1).padStart(2,'0') + '-' + String(dun.getDate()).padStart(2,'0');
                 mevcutSeri = (sonGirisTarihi === dunStr) ? mevcutSeri + 1 : 1;
-                localStorage.setItem('ing_girisSerisiSonTarih', bugunStr);
-                localStorage.setItem('ing_girisSerisiSayisi', mevcutSeri);
+                localStorage.setItem(dateKey,bugunStr);localStorage.setItem(countKey,mevcutSeri);
             }
+            localStorage.setItem('ing_girisSerisiSonTarih',bugunStr);localStorage.setItem('ing_girisSerisiSayisi',mevcutSeri);
             let el = document.getElementById('headerStreakNum');
             if (el) el.innerText = `🔥 ${mevcutSeri}`;
         }
@@ -18625,7 +18629,9 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   const SO = [
     ['PARKURLAR', [['ba', '🧙', 'Büyü Akademisi', '#a78bfa,#6d28d9'], ['kp', '🔤', 'Kelime Modu', '#fdba74,#ec4899'], ['yolculuk', '🃏', 'Kelime Kartları', '#7dd3fc,#1d4ed8']]],
     ['MİNİ OYUNLAR', [['ky', '🔬', 'Kelime Laboratuvarı', '#e879f9,#a21caf'], ['jp', '🎈', 'Risk Balonları', '#fb7185,#be123c'], ['bosluk', '✏️', 'Eksik Harf', '#4ade80,#15803d'],
-      ['hafiza', '🃏', 'Hafıza Sandığı', '#22d3ee,#0e7490'], ['yagmur', '🌪️', 'Hız Fırtınası', '#60a5fa,#1d4ed8'], ['asmaca', '🔤', 'Harf Avı', '#f87171,#b91c1c'], ['kelimebul', '🔐', 'Şifre Kırıcı', '#a3e635,#4d7c0f']]]
+      ['hafiza', '🃏', 'Hafıza Sandığı', '#22d3ee,#0e7490'], ['yagmur', '🌪️', 'Hız Fırtınası', '#60a5fa,#1d4ed8'], ['asmaca', '🔤', 'Harf Avı', '#f87171,#b91c1c'], ['kelimebul', '🔐', 'Şifre Kırıcı', '#a3e635,#4d7c0f'], ['eslestirme','🔗','Eş Bul','#14b8a6,#0f766e'], ['tren','🚂','Kelime Treni','#60a5fa,#1d4ed8'], ['dikte','🎧','Kulak Dedektifi','#818cf8,#4338ca'], ['cumle','🧱','Cümle Ustası','#fb923c,#c2410c'], ['harfbahcesi','🌼','Harf Bahçesi','#22c55e,#15803d'], ['okuma','📖','Okuma Stüdyosu','#2dd4bf,#0f766e'], ['pomodoro','🍅','Pomodoro','#fb923c,#c2410c']]],
+    ['KAPIŞMA OYUNLARI', [['papicards','🃏','Papi Kartları','#a78bfa,#6d28d9'],['meteor','☄️','Meteor Düellosu','#f472b6,#be185d'],['wheel','🎡',"Papi’nin Kelime Çarkı",'#fbbf24,#b45309']]],
+    ['ÇEVRİMİÇİ İKİ KİŞİLİK', [['ucus','🪽','Kelime Uçuşu','#38bdf8,#0369a1'],['rota','🧭','Cümle Rotası','#34d399,#047857']]]
   ];
   function soKur() {
     let ilk = document.querySelector('#siniftaOyunModal .siniftaOyunBtn');
@@ -18634,7 +18640,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     kap.style.cssText = '';
     kap.innerHTML = `<button type="button" class="so-zar" id="soZar">🎲 Rastgele öğrenci seç</button>` +
       SO.map(([b, l]) => `<div class="so-bolum">${b}</div><div class="so-izgara">${l.map(([k, i, a, r]) => `<button type="button" class="siniftaOyunBtn so-kart" data-so="${k}" style="--r:${r}" disabled><i>${i}</i>${a}</button>`).join('')}</div>`).join('') +
-      `<div class="so-bolum" style="text-align:center;letter-spacing:0;font-size:11.5px">Sınıf modunda enerji harcanmaz. Puanlar seçilen öğrenciye yazılır.</div>`;
+      `<div class="so-bolum" style="text-align:center;letter-spacing:0;font-size:11.5px">Tek cihazdaki sınıf oyunlarında enerji harcanmaz. Çevrimiçi oyunlar öğrencilerin kendi cihazları ve standart enerji kurallarıyla oynanır.</div>`;
     kap.querySelectorAll('.so-kart').forEach(b => b.onclick = () => soBaslat(b.dataset.so));
     $('soZar').onclick = rastgele;
     if (typeof siniftaOyunButonlariGuncelle === 'function') siniftaOyunButonlariGuncelle();
@@ -23005,14 +23011,6 @@ window.ocEnerjiHarca = async function (n) {
             ${ipucu}
           </div>
 
-          <button
-            class="so-btn"
-            id="soBeceriBtn">
-
-            ▶ ${BECERI_OYUN[hedefBeceri][1]} oyna
-
-          </button>
-
         </div>
 
 
@@ -26371,10 +26369,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261013-compact-127"></script>
 <link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><script defer src="story-path.js?v=20261014-english-voice-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
-<script defer src="medupro.js?v=20261011-profix"></script>
+<script defer src="medupro.js?v=20261015-member-fixes-2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261011-hubfix2">
-<script defer src="activity-ui.js?v=20261012-stability-1"></script>
-<script defer src="bottom-nav.js?v=20261015-profile-account-switch-1"></script>
+<script defer src="activity-ui.js?v=20261015-member-fixes-2"></script>
+<script defer src="bottom-nav.js?v=20261015-member-fixes-2"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261013-catalog"></script>
 <script defer src="weekly-ui.js?v=20261012-stability-1"></script>
@@ -26386,7 +26384,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
 <script defer src="game-experience.js?v=selected-play-20261011-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
-<script defer src="first-discovery.js?v=20261015-login-buttons-google-1"></script>
+<script defer src="first-discovery.js?v=20261015-member-fixes-2"></script>
 <script defer src="rights-ui.js?v=1"></script>
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}
 /* Adventure questions: preserve spaces/punctuation and foreground keyboard fallback. */
@@ -26447,7 +26445,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="ders-vadi.css?v=6"><script defer src="ders-vadi.js?v=4"></script>
 <link rel="stylesheet" href="ders-test.css?v=2"><script defer src="ders-test.js?v=3"></script>
 <link rel="stylesheet" href="papi-cards.css?v=2">
-<link rel="stylesheet" href="profile-sections.css?v=20261015-1"><script defer src="profile-sections.js?v=20261015-1"></script>
+<link rel="stylesheet" href="profile-sections.css?v=20261015-1"><script defer src="profile-sections.js?v=20261015-member-fixes-2"></script>
 <link rel="stylesheet" href="meteor.css?v=20261012-independent">
 <link rel="stylesheet" href="word-wheel.css?v=20261012-dual-wheel">
 <link rel="stylesheet" href="oyna-v2.css?v=20261014-map-picker-1">
@@ -26463,8 +26461,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261013-activity-2">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261013-onboarding-124"></script>
-<script src="teacher-workspace.js?v=20261013-activity-2"></script>
+<script src="member-experience.js?v=20261015-member-fixes-2"></script>
+<script src="teacher-workspace.js?v=20261015-member-fixes-2"></script>
 <link rel="stylesheet" href="member-polish.css?v=20261015-profile-scroll-1">
 <script src="active-time.js?v=20261013-1"></script>
 <script src="member-polish.js?v=20261013-member-122"></script>
@@ -26474,9 +26472,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="route-questions.css?v=20261014-approved-1">
 <script defer src="route-questions.js?v=20261014-matching-variety-1"></script>
 <script defer src="harf-adasi.js?v=20261014-full-2"></script>
-<link rel="stylesheet" href="account-switch.css?v=20261015-simple-3">
+<link rel="stylesheet" href="account-switch.css?v=20261015-member-fixes-2">
 <script defer src="saved-sessions.js?v=20261015-reliable-2"></script>
-<script defer src="account-switch.js?v=20261015-simple-3"></script>
+<script defer src="account-switch.js?v=20261015-member-fixes-2"></script>
 <script defer src="demo-account.js?v=20261015-1"></script>
 </body>      
         </html>

@@ -6,7 +6,7 @@ async function api(op){const r=await fetch(apiURL,{method:'POST',headers:{'Conte
 function paintBadge(){for(const b of document.querySelectorAll('[data-profile="teacher"]')){let badge=b.querySelector('.dm-teacher-count');if(!badge){badge=document.createElement('span');badge.className='dm-teacher-count';b.append(badge);}badge.textContent=String(total);badge.hidden=total===0;b.setAttribute('aria-label','Öğretmen Paneli'+(total?' · '+total+' bildirim':''));}}
 async function refresh(force=false){if(!token()||reading||document.hidden||!force&&Date.now()-lastRead<60000)return;reading=true;try{const d=await api('teacherNotificationSummary');total=d.total||0;lastRead=Date.now();paintBadge();}catch(e){console.warn('[Öğretmen bildirimleri]',e.message);}finally{reading=false;}}
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
-function children(){return [...document.querySelectorAll('.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,#omSifreModal,#odModal')].filter(x=>x.id!=='ogretmenMenuModal'&&x.id!=='sifreModal'&&visible(x));}
+function children(){return [...document.querySelectorAll('.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal')].filter(x=>x.id!=='ogretmenMenuModal'&&x.id!=='sifreModal'&&visible(x));}
 const original=window.ogretmenPaneliAc;window.ogretmenPaneliAc=function(){active=true;const r=original?.apply(this,arguments);refresh(true);return r;};
 document.addEventListener('click',e=>{
  const menu=$('ogretmenMenuModal');if(!menu)return;
@@ -15,7 +15,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('button')){active=true;setTimeout(maintain,0);}
  }else if(active&&e.target.closest('.dm-teacher-child'))setTimeout(()=>{maintain();refresh(true);},0);
 },true);
-document.addEventListener('keydown',e=>{if(!active||e.key!=='Escape')return;const list=children();if(list.length){e.preventDefault();e.stopImmediatePropagation();const top=list.at(-1);const close=top.querySelector('.game-close-btn,.cog-x,.dm-account-close,.dm-member-close,[aria-label="Kapat"],[data-close]');if(close)close.click();else top.style.display='none';setTimeout(maintain,0);}else{active=false;menuSeen=false;$('ogretmenMenuModal').style.display='none';}},true);
+document.addEventListener('keydown',e=>{if(!active||e.key!=='Escape')return;const list=children();if(list.length){e.preventDefault();e.stopImmediatePropagation();const top=list.at(-1);const close=top.querySelector('.game-close-btn,.yo-kapat,.cog-x,.dm-x,.dm-account-close,.dm-member-close,[aria-label="Kapat"],[data-close]');if(close)close.click();else top.style.display='none';setTimeout(maintain,0);}else{active=false;menuSeen=false;$('ogretmenMenuModal').style.display='none';}},true);
 async function teacherPlacements(){const v=window.dmMemberUI.sheet('Seviye sınavı sonuçları','<p>Yükleniyor…</p>','dmTeacherPlacements');v.el.classList.add('dm-teacher-child');try{const d=await api('teacherPlacementResults');v.body.replaceChildren();for(const item of d.results){const box=document.createElement('article'),h=document.createElement('h3'),p=document.createElement('p');h.textContent=item.student+' · '+item.result.level;p.textContent='Yazma: '+(item.result.writing||'Örnek bırakılmadı')+'\n\nKonuşma dökümü: '+(item.result.speaking||'Örnek bırakılmadı');p.style.whiteSpace='pre-wrap';box.append(h,p);v.body.append(box);}if(!d.results.length)v.body.textContent='Henüz tamamlanmış sınav yok.';}catch(e){v.body.textContent=e.message;}}
 function maintain(){
  const menu=$('ogretmenMenuModal');if(!menu)return;if(!token()){active=false;menuSeen=false;return;}
@@ -23,7 +23,7 @@ function maintain(){
  // Move child dialogs out of hidden legacy containers and above every workspace layer.
  if(!active)return;
  menu.classList.add('dm-teacher-open');if(menu.style.display!=='flex')menu.style.display='flex';if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
- for(const el of children()){if(el.parentElement!==document.body)document.body.append(el);el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
+ for(const el of children()){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
  if(!menuSeen){menuSeen=true;api('teacherNotificationRead').then(()=>refresh(true)).catch(()=>{});}
  paintBadge();
 }
@@ -41,7 +41,9 @@ function installCatalog(){
  const help=$('yardimIcerikAlani');if(visible($('yardimModal'))&&help){const sig=items.map(x=>x.code+'|'+x.name+'|'+x.description).join(';');let box=$('dmFeatureHelp');if(!box){box=document.createElement('section');box.id='dmFeatureHelp';box.className='dm-catalog-help';help.prepend(box);helpSignature='';}if(sig!==helpSignature){helpSignature=sig;box.replaceChildren();for(const f of items){const a=document.createElement('article'),h=document.createElement('strong'),p=document.createElement('p');h.textContent=f.name;p.textContent=f.description||f.howTo||guide[f.code]||(f.group==='Oyunlar'?'Oyunlar sekmesinden '+f.name+' oyununu aç; varsa sınıf ve ünite seçip başlat.':f.group+' bölümündeki '+f.name+' özelliğini kullan.');a.append(h,p);box.append(a);}}const q=String($('yardimAramaInput')?.value||'').toLocaleLowerCase('tr');for(const a of box.children)a.hidden=!!q&&!a.textContent.toLocaleLowerCase('tr').includes(q);}
 }
 window.dmTeacherWorkspace={paintBadge,refresh};
-const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of document.querySelectorAll('.rubric-modal,.sm-overlay,#odModal,#omSifreModal'))watcher.observe(el,{attributes:true,attributeFilter:['style']});
+const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of document.querySelectorAll('.rubric-modal,.sm-overlay,.yo-modal,.yo-perde,#yoModalPerde,#odModal,#omSifreModal'))watcher.observe(el,{attributes:true,attributeFilter:['style']});
+new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes].some(n=>n.nodeType===1&&n.matches?.('.dm-perde,.yo-perde,.yo-modal,#yoModalPerde'))))maintain();}).observe(document.body,{childList:true});
+const report=$('yoModal');if(report)watcher.observe(report,{attributes:true,attributeFilter:['class','style']});
 setInterval(()=>{if(document.hidden)return;maintain();refresh();installCatalog();},1200);
 document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;refresh(true);});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(true);});

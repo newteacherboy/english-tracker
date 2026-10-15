@@ -20,3 +20,12 @@ test('complete placement is graded on the server; incomplete or invalid response
 test('an existing completed placement stops weekly prompts',async()=>{const f=fixture();f.tables.extra_data.push({student_id:'a',key_name:'yo',value:{seviye:{sonuc:'A2'}}});assert.equal((await f.call('memberReminderClaim',{kind:'placement'})).data.show,false)});
 test('teacher notifications and placement samples are scoped to their pupils',async()=>{const f=fixture();const first=await f.call('teacherNotificationSummary',{}, {role:'teacher',teacher_id:'t1',yonetici:false});assert.equal(first.data.messages,1);assert.equal(first.data.registrations,1);const owner=await f.call('teacherNotificationSummary',{}, {role:'teacher',teacher_id:'t1',yonetici:true});assert.equal(owner.data.messages,1);assert.equal(owner.data.registrations,2);assert.equal((await f.call('teacherNotificationSummary')).status,403)});
 test('placement items cover four levels and three tested skills with unambiguous options',()=>{const f=fixture();for(const level of ['A1','A2','B1','B2'])assert.equal(f.bank.bank.filter(q=>q.level===level).length,10);for(const q of f.bank.bank){assert.equal(new Set(q.options).size,4);assert.ok(q.options[q.answer]);if(q.skill!=='language')assert.ok(q.text.length>20)}const none=f.bank.evaluate(f.bank.bank.map(()=>1));assert.equal(none.level,'A1 altı / başlangıç')});
+test('login streak and welcome timing are per-account and use server evidence',async()=>{
+ const f=fixture(),first=(await f.call('memberStatus')).data;
+ assert.equal(first.loginStreak,1);assert.equal(first.maxLoginStreak,1);assert.equal(first.welcomeEarned,false);assert.equal(first.welcomeEligible,true);
+ const today=new Date(Date.now()+10800000);for(const n of [1,2]){const stamp=new Date(today-n*86400000).toISOString().slice(0,10);f.tables.extra_data.push({student_id:'a',key_name:'energy_daily:'+stamp,value:{day:stamp}});}
+ const seen=f.tables.extra_data.find(x=>x.student_id==='a'&&x.key_name==='member_first_seen_v1');seen.value.at=new Date(Date.now()-121000).toISOString();
+ const next=(await f.call('memberStatus')).data;assert.equal(next.loginStreak,3);assert.equal(next.maxLoginStreak,3);assert.equal(next.welcomeEarned,true);
+ const other=(await f.call('memberStatus',{}, {role:'student',student_id:'b'})).data;assert.equal(other.loginStreak,1);assert.equal(other.welcomeEarned,false);
+ assert.equal(f.tables.extra_data.filter(x=>x.student_id==='a'&&x.key_name.startsWith('member_login:')).length,1);
+});
