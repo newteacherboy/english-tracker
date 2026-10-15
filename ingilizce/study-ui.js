@@ -35,14 +35,25 @@
   const signature=JSON.stringify([activeScreen(),dcAktifSeviye,category,filter,query,rows.map(k=>[key(k),k.durum,k.bilmiyordum]),resume]);
   if(signature===lastSignature&&$('suTopics'))return;lastSignature=signature;
   let hub=$('suTopics');if(!hub){hub=document.createElement('div');hub.id='suTopics';}
-  $(activeScreen()).append(hub);
-  const focus=hub.contains(document.activeElement)?document.activeElement.dataset.suFocus:'';
-  const pos=focus?document.activeElement.selectionStart:null;
-  hub.innerHTML=`<button class="su-back" data-su="levels">‹ Ders Çalış</button><button class="su-level" data-su="levels">${esc(dcAktifSeviye)} · ${esc(levels[dcAktifSeviye]||'')} <span>⌄</span></button><div class="su-progress"><b>${done} / ${rows.length} konu tamamlandı</b><div class="su-bar"><i style="width:${rows.length?done/rows.length*100:0}%"></i></div></div><label class="su-search">${ico('search')}<input data-su-focus="search" aria-label="Bu seviyede konu ara" placeholder="Konu ara" value="${esc(query)}"></label>${next?`<section class="su-resume">${art('read')}<div><small>${current?'Kaldığın yerden devam et':done===rows.length?'Öğrendiklerini tekrar et':'Birlikte öğrenmeye başlayalım'}</small><b>${esc(next.konuAdi)}</b><button class="su-primary" data-su="open" data-topic="${esc(key(next))}">${current?'Devam et':'Çalışmaya başla'} →</button></div></section>`:''}<div class="su-filters" aria-label="Konu durumları">${[['all','Tümü'],['progress','Devam eden'],['done','Tamamlanan']].map(([id,label])=>`<button data-su="filter" data-value="${id}" aria-pressed="${filter===id}">${label}</button>`).join('')}</div><div class="su-categories" aria-label="Konu alanları">${[['all','Tüm alanlar'],...Object.entries(cats).map(([k,v])=>[k,v[0]])].map(([id,label])=>`<button data-su="category" data-value="${id}" aria-pressed="${category===id}">${label}</button>`).join('')}</div><div class="su-topic-list">${subset.map(k=>{
+  if(hub.parentElement!==$(activeScreen())) $(activeScreen()).append(hub);
+  const markup=`<button class="su-back" data-su="levels">‹ Ders Çalış</button><button class="su-level" data-su="levels">${esc(dcAktifSeviye)} · ${esc(levels[dcAktifSeviye]||'')} <span>⌄</span></button><div class="su-progress"><b>${done} / ${rows.length} konu tamamlandı</b><div class="su-bar"><i style="width:${rows.length?done/rows.length*100:0}%"></i></div></div><label class="su-search">${ico('search')}<input data-su-focus="search" aria-label="Bu seviyede konu ara" placeholder="Konu ara" value="${esc(query)}"></label>${next?`<section class="su-resume">${art('read')}<div><small>${current?'Kaldığın yerden devam et':done===rows.length?'Öğrendiklerini tekrar et':'Birlikte öğrenmeye başlayalım'}</small><b>${esc(next.konuAdi)}</b><button class="su-primary" data-su="open" data-topic="${esc(key(next))}">${current?'Devam et':'Çalışmaya başla'} →</button></div></section>`:''}<div class="su-filters" aria-label="Konu durumları">${[['all','Tümü'],['progress','Devam eden'],['done','Tamamlanan']].map(([id,label])=>`<button data-su="filter" data-value="${id}" aria-pressed="${filter===id}">${label}</button>`).join('')}</div><div class="su-categories" aria-label="Konu alanları">${[['all','Tüm alanlar'],...Object.entries(cats).map(([k,v])=>[k,v[0]])].map(([id,label])=>`<button data-su="category" data-value="${id}" aria-pressed="${category===id}">${label}</button>`).join('')}</div><div class="su-topic-list">${subset.map(k=>{
    const complete=k.durum==='tamamlandi',partial=k===current||k.durum==='basarisiz',stage=k===current?Math.max(1,Math.min(3,Number(resume.stage)||1)):1;
    return `<button class="su-topic ${complete?'su-complete':partial?'su-started':''}" data-su="open" data-topic="${esc(key(k))}"><span class="su-number">${rows.indexOf(k)+1}</span><span class="su-topic-icon">${ico(cats[k.kategori]?.[1]||'book')}</span><span class="su-topic-text"><b>${esc(k.konuAdi)}</b><small>${esc(cats[k.kategori]?.[0]||k.kategori)}${k.bilmiyordum?' · İşaretledin':''}</small>${partial?`<span class="su-mini-progress"><i style="width:${stage/3*100}%"></i></span><small>${stage} / 3 aşama${k.durum==='basarisiz'?' · Tekrar dene':''}</small>`:''}</span><span class="su-topic-status">${complete?ico('check'):partial?'Çalış':'›'}</span></button>`;
   }).join('')||`<p class="su-empty" role="status">${rows.length?'Bu filtreye uygun konu yok.':dcYuklemePromise?'Konular yükleniyor…':'Bu seviye için konu bulunamadı.'}</p>`}</div>`;
-  if(focus){const input=hub.querySelector('[data-su-focus="'+focus+'"]');input?.focus({preventScroll:true});if(typeof pos==='number')input?.setSelectionRange(pos,pos);}
+  const search=hub.querySelector('[data-su-focus="search"]');
+  if(!search){hub.innerHTML=markup;}
+  else {
+   // Keep the connected input node: replacing/refocusing it dismisses the iOS keyboard.
+   const next=document.createElement('div');next.innerHTML=markup;
+   const oldChildren=[...hub.children];
+   const nextChildren=[...next.children];
+   nextChildren.forEach((child,index)=>{
+    if(child.classList.contains('su-search'))return;
+    if(oldChildren[index])oldChildren[index].replaceWith(child);else hub.append(child);
+   });
+   while(hub.children.length>nextChildren.length)hub.lastElementChild.remove();
+   if(search.value!==query)search.value=query;
+  }
  }
  function openTopic(id){
   const topic=topicRows().find(k=>key(k)===id);if(!topic)return;
