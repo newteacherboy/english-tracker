@@ -1,5 +1,20 @@
-#dmAccountSwitchButton{background:linear-gradient(135deg,#6d5ad3,#328fa7)!important;color:#fff!important;border-color:transparent!important;cursor:pointer}
-#dmSwitchBackdrop{position:fixed;inset:0;background:rgba(8,21,39,.82);z-index:100000080}
-body.dm-switch-active #login-container{position:fixed!important;z-index:100000081!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;display:block!important;width:min(92vw,380px)!important;max-height:88dvh!important;overflow-y:auto!important;box-shadow:0 20px 65px #0008!important}
-#dmSwitchCancel{position:fixed;z-index:100000082;top:calc(50% + min(44dvh,330px));left:50%;transform:translateX(-50%);max-width:90vw;border:0;border-radius:14px;background:#fff;color:#394d70;font:800 13px system-ui,sans-serif;padding:12px 18px;cursor:pointer}
-@media(max-height:650px){#dmSwitchCancel{top:auto;bottom:8px}}
+/* Branded account-switch overlay; scoped so the rest of Diji-Medu stays untouched. */
+#dmAccountSwitchButton{background:linear-gradient(135deg,#2879f5,#5654d7)!important;color:#fff!important;border:1px solid #ffffff40!important;border-radius:13px!important;cursor:pointer!important;box-shadow:0 5px 14px #2747a333!important;font-weight:750!important;display:inline-flex!important;align-items:center!important;gap:7px!important;transition:transform .15s ease,filter .15s ease!important}
+#dmAccountSwitchButton:hover{transform:translateY(-2px);filter:brightness(1.08)}
+#dmAccountSwitchButton:focus-visible,#dmSwitchCancel:focus-visible,#dmSwitchClose:focus-visible{outline:3px solid #f4bf51!important;outline-offset:3px!important}
+#dmSwitchBackdrop{position:fixed;inset:0;background:rgba(7,19,42,.77);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:100000080}
+body.dm-switch-active #login-container{position:fixed!important;z-index:100000081!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;display:block!important;box-sizing:border-box!important;width:min(92vw,440px)!important;max-height:min(88dvh,760px)!important;overflow-y:auto!important;background:#fff!important;color:#173257!important;border:1px solid #e2eaf8!important;border-radius:24px!important;padding:25px 25px 82px!important;box-shadow:0 28px 90px #0007!important;animation:dmSwitchIn .2s ease-out!important}
+@keyframes dmSwitchIn{from{opacity:.5;transform:translate(-50%,-47%) scale(.97)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+body.dm-switch-active #login-container input{box-sizing:border-box!important;max-width:100%!important;border-radius:12px!important}
+body.dm-switch-active #login-container input:focus{outline:2px solid #408df5!important;outline-offset:1px!important}
+body.dm-switch-active #login-container button[type=submit]{background:linear-gradient(120deg,#267bf5,#2460dd)!important;color:white!important;border-radius:12px!important}
+body.dm-switch-active #mesaj{font-size:13px!important;line-height:1.5!important;overflow-wrap:anywhere!important}
+#dmSwitchTitle{display:flex;gap:13px;align-items:center;text-align:left;padding:0 0 15px;margin:0 0 16px;border-bottom:1px solid #edf2fa;font:600 16px system-ui,sans-serif;color:#173257}
+#dmSwitchTitle strong{display:block;font-size:20px;line-height:1.2}
+#dmSwitchTitle small{display:block;color:#667c9a;font-size:12px;font-weight:500;margin-top:4px}
+.dm-switch-symbol{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:14px;color:#fff;background:linear-gradient(135deg,#2184f7,#6f56e3);font-size:28px}
+#dmSwitchClose{margin-left:auto;border:0;background:#eff3fa;color:#536980;border-radius:10px;width:36px;height:36px;font:27px system-ui;cursor:pointer;flex:none}
+#dmSwitchCancel{position:fixed;z-index:100000082;top:calc(50% + min(44dvh,355px));left:50%;transform:translateX(-50%);width:min(80vw,390px);max-width:90vw;border:1px solid #d7e0f0;border-radius:13px;background:#fff;color:#344c70;font:750 13px system-ui,sans-serif;padding:12px 18px;cursor:pointer;box-shadow:0 3px 12px #0002}
+@media(max-height:740px){#dmSwitchCancel{top:auto;bottom:9px}}
+@media(max-width:480px){body.dm-switch-active #login-container{border-radius:19px!important;padding:18px 17px 78px!important}#dmSwitchTitle strong{font-size:18px}}
+@media(prefers-reduced-motion:reduce){body.dm-switch-active #login-container{animation:none!important}#dmAccountSwitchButton{transition:none!important}}

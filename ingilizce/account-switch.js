@@ -9,6 +9,7 @@
   if(event.key!=='Tab')return;
   const login=get('login-container'),cancel=get('dmSwitchCancel');
   const nodes=[...(login?.querySelectorAll('input:not([disabled]),button:not([disabled]),select:not([disabled]),a[href]')||[])];
+  const closeButton=get('dmSwitchClose');if(closeButton)nodes.unshift(closeButton);
   if(cancel)nodes.push(cancel);
   const visible=nodes.filter(el=>el.getClientRects().length>0);
   if(!visible.length)return;
@@ -30,7 +31,7 @@
    if(previousAriaLabel===null)login.removeAttribute('aria-label');else login.setAttribute('aria-label',previousAriaLabel);
   }
   const msg=get('mesaj');if(msg)msg.textContent='';
-  get('dmSwitchCancel')?.remove();get('dmSwitchBackdrop')?.remove();
+  get('dmSwitchCancel')?.remove();get('dmSwitchBackdrop')?.remove();get('dmSwitchTitle')?.remove();get('dmSwitchClose')?.remove();
   if(previousFocus?.isConnected)previousFocus.focus();
   previousFocus=null;
  }
@@ -52,10 +53,14 @@
   login.setAttribute('aria-modal','true');
   login.setAttribute('aria-label','Hesap değiştir');
   login.style.display='block';
+  const heading=document.createElement('div');heading.id='dmSwitchTitle';
+  heading.innerHTML='<span class="dm-switch-symbol" aria-hidden="true">⇄</span><span><strong>Hesap Değiştir</strong><small>Yeni hesaba güvenle geç</small></span>';
+  const x=document.createElement('button');x.type='button';x.id='dmSwitchClose';x.textContent='×';x.setAttribute('aria-label','Pencereyi kapat');x.addEventListener('click',close);
+  heading.appendChild(x);form.before(heading);
   const btn=document.createElement('button');btn.type='button';btn.id='dmSwitchCancel';
-  btn.textContent='← Mevcut hesabıma dön';btn.addEventListener('click',close);
+  btn.textContent='İptal · Mevcut hesabıma dön';btn.addEventListener('click',close);
   form.after(btn);
-  const msg=get('mesaj');if(msg)msg.textContent='Geçmek istediğin hesabın kullanıcı adı ve şifresini gir.';
+  const msg=get('mesaj');if(msg)msg.textContent='Geçmek istediğin hesabın kullanıcı adı ve şifresini gir. Başarılı girişe kadar mevcut oturumun korunur.';
   const pass=get('sifre');if(pass)pass.value='';
   document.addEventListener('keydown',keydown);
   (get('ogrenci')||btn).focus();
@@ -66,7 +71,7 @@
   if(!exit)return;
   const button=document.createElement('button');button.type='button';
   button.id='dmAccountSwitchButton';button.className=exit.className;
-  button.textContent='⇄ Hesap Değiştir';
+  button.innerHTML='<span aria-hidden="true">⇄</span> Hesap Değiştir';
   button.addEventListener('click',open);
   exit.parentElement.insertBefore(button,exit);
  }
