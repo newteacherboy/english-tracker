@@ -337,11 +337,26 @@
   }
 
   /* ------------------------------------------------------------------ Sana Özel */
+  let gorevYenilemeBekliyor = false;
   function gorevlerCiz() {
     const alan = $('bdGorevler');
     if (!izin('gunluk_gorev')) { alan.innerHTML = kilitKart('Günün 3 Görevi', 'gunluk_gorev'); return; }
-    const g = window.dmGunGorevleri ? window.dmGunGorevleri() : null, havuz = window.dmGorevHavuz || [];
-    if (!g || !Array.isArray(g.liste)) { alan.innerHTML = '<div class="bd-not" role="status">Günlük görevler hazırlanıyor. Hesap verileri geldiğinde yeniden görüntülenecek.</div>'; return; }
+    let g = null;
+    try { g = typeof window.dmGunGorevleri === 'function' ? window.dmGunGorevleri() : null; }
+    catch (error) { console.warn('Günlük görevler okunamadı:', error); }
+    const havuz = Array.isArray(window.dmGorevHavuz) ? window.dmGorevHavuz : [];
+    const hazir = Array.isArray(g?.liste) && g.liste.length > 0 && g.liste.every(x => havuz.some(t => t.id === x.id));
+    if (!hazir) {
+      alan.innerHTML = '<div class="bd-not" role="status">Günlük görevler yükleniyor…</div>';
+      if (!gorevYenilemeBekliyor) {
+        gorevYenilemeBekliyor = true;
+        setTimeout(() => {
+          gorevYenilemeBekliyor = false;
+          if ($('tab-dunyam')?.classList.contains('active') && sekme === 'sanaozel') gorevlerCiz();
+        }, 1500);
+      }
+      return;
+    }
     gorevGunleriniKaydet();
     const satir = g.liste.map(x => {
       const t = havuz.find(y => y.id === x.id); if (!t) return '';
