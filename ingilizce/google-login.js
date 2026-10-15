@@ -63,6 +63,10 @@
     </div><div class="dm-register-navigation"><button type="button" id="googleYeniGeri" class="dm-link-button">← Geri</button><button type="button" id="googleYeniIleri" class="btn-giris">İleri →</button><button id="googleYeniGonder" type="submit" class="btn-giris" hidden>Kaydı tamamla ve giriş yap</button></div>
     <p id="googleYeniMesaj" role="status" style="font-size:12px"></p>
     <button id="googleMevcutHesap" type="button" class="dm-link-button dm-existing-account">Hesabım Var · Giriş Yap</button>`;
+  // The new-account helper stays detached; Google return opens the form directly.
+  area.append(button, registration, cancel);
+
+  $('loginForm').after(area);
   // One form, three accessible stages. Values persist when navigating back.
   const registrationSteps = [...registration.querySelectorAll('[data-register-step]')];
   let registrationStep = 0;
@@ -86,10 +90,7 @@
     registrationSteps[registrationStep].querySelector('input:not([type="checkbox"]),select')?.focus();
   };
   displayRegistrationStep(0);
-  // The new-account helper stays detached; Google return opens the form directly.
-  area.append(button, registration, cancel);
 
-  $('loginForm').after(area);
   // Keep existing registration/password handlers and place their controls directly after Google.
   const loginCard = $('login-container');
   const heading = loginCard.querySelector('h2');
