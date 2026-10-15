@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const src=fs.readFileSync('ingilizce/progression-ui.js','utf8');
+test('daily and weekly goals are not locked during initial profile hydration',()=>{const match=src.match(/function allowed\(code\)\{[^}]+\}/);assert.ok(match);assert.match(match[0],/if\(!ready\(\)\)return code==='gunluk_gorev'\|\|code==='haftalik_hedef'/);assert.match(src,/C\.gates\[code\]/);});
+test('daily goals use progress storage after account is ready',()=>{const html=fs.readFileSync('ingilizce/index.html','utf8');assert.match(html,/window\.dmGunGorevleri\s*=\s*\(\)\s*=>\s*gunGorevleri/);assert.match(html,/yo\.gorev\s*=\s*\{/);const ui=fs.readFileSync('ingilizce/benim-dunyam.js','utf8');assert.match(ui,/dm:state/);assert.match(ui,/dm:login/);});
