@@ -62,6 +62,7 @@ export async function handleRequest(req, db) {
     }
     if (body.operation === 'prepare') {
       const username = typeof body.username === 'string' ? body.username.trim() : '';
+      if(username.toLocaleLowerCase('tr')==='dijimedu_demo')return respond({ok:false,message:'Demo hesabı silinemez.'},403);
       const password = typeof body.password === 'string' ? body.password : '';
       const role = body.role;
       if (!['student', 'teacher'].includes(role) || !username || username.length > 100 || !password || password.length > 256)

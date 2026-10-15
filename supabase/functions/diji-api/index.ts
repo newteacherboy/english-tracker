@@ -1,3 +1,4 @@
+import {DEMO_ID,DEMO_USER,isDemo,DEMO_BLOCKED,prepareDemo} from './demo-account.ts';
 import { FEATURES } from './feature-catalog.ts';
 import { memberToolsAPI } from './member-tools-api.ts';
 import { storyAPI } from './story-api.ts';
@@ -1239,6 +1240,9 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
+  if(isDemo(a)&&DEMO_BLOCKED.has(op))return json({ok:false,hata:'demo_readonly',mesaj:'Demo hesabında bu işlem kapalı.'},403);
+  if(isDemo(a)&&op==='iletisimDurumu')return json({ok:true,eksik:false,donuk:false,uyari:false});
+  if(isDemo(a)&&op==='memberStatus')return json({ok:true,emailVerified:true,email:'',hasPlacement:true,teacherLinked:false,demo:true});
   if(op==='activeTime'){
     if(req.method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
     if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
@@ -1250,7 +1254,7 @@ async function handle(req: Request) {
   const memberResponse=await memberToolsAPI({db:supabase,json,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
-  const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
+  const contactDeny=isDemo(a)?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
   const myWorldResult=await myWorld.handle(op,body,q,a);if(myWorldResult)return myWorldResult;
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
@@ -1850,6 +1854,7 @@ async function handle(req: Request) {
     if (ipBilinir && await denemeSay("giris_hata_ip", ip, 15) >= 200) return json({ ok: false, mesaj: "Bu bağlantıdan çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar dene." });
     const hataYaz = async () => { await denemeYaz("giris_hata", hedef); if (ipBilinir) await denemeYaz("giris_hata_ip", ip); };
     /* [v4.0] Kullanıcı adı bir öğretmene aitse öğretmen oturumu (yönetici "teacher" dahil) */
+    if(username.toLowerCase()===DEMO_USER && await verifyPassword(password,"pbkdf2$210000$Y2cTEcWM8EDilE8lMmpokw==$kl0JBrviXspEhMcJHLSQhGiO6eKjnJVuSoCg39ox+RQ=")) await prepareDemo(supabase,"pbkdf2$210000$Y2cTEcWM8EDilE8lMmpokw==$kl0JBrviXspEhMcJHLSQhGiO6eKjnJVuSoCg39ox+RQ=");
     const { data: ogrt } = await supabase.from("teachers").select("*").ilike("username", likeKacir(username)).limit(2);
     if (ogrt && ogrt.length === 1) {
       const t = ogrt[0];
