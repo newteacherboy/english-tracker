@@ -253,6 +253,10 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                         <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('yagmur')" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; opacity:.45;">🌪️ Hız Fırtınası</button>
                         <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('asmaca')" style="background:linear-gradient(135deg,#ef4444,#b91c1c); color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; opacity:.45;">🔤 Harf Avı</button>
                         <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('kelimebul')" style="background:linear-gradient(135deg,#22c55e,#15803d); color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; opacity:.45;">🔐 Şifre Kırıcı</button>
+                        <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('harfbahcesi')" style="background:#196f83;color:white;border:0;padding:12px;border-radius:10px;font-weight:800;opacity:.45;">🌼 Harf Bahçesi</button>
+                        <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('papicards')" style="background:#7255b9;color:white;border:0;padding:12px;border-radius:10px;font-weight:800;opacity:.45;">🃏 Papi Kartları</button>
+                        <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('meteor')" style="background:#a14e64;color:white;border:0;padding:12px;border-radius:10px;font-weight:800;opacity:.45;">☄️ Meteor Düellosu</button>
+                        <button class="siniftaOyunBtn" disabled onclick="siniftaOyunuBaslat('wheel')" style="background:#88611e;color:white;border:0;padding:12px;border-radius:10px;font-weight:800;opacity:.45;">🎡 Papi'nin Kelime Çarkı</button>
                     </div>
                 </div>
             </div>
@@ -3995,6 +3999,10 @@ mesajlar.forEach(m => {
                     else if (oyunTuru === 'yagmur') yagmurOyunAc();
                     else if (oyunTuru === 'asmaca') asmacaOyunAc();
                     else if (oyunTuru === 'kelimebul') kelimebulOyunAc();
+                    else if (oyunTuru === 'harfbahcesi') window.harfBahcesiAc?.();
+                    else if (oyunTuru === 'papicards') window.dmPapiCards?.open?.();
+                    else if (oyunTuru === 'meteor') window.dmMeteor?.open?.();
+                    else if (oyunTuru === 'wheel') window.dmWordWheel?.open?.();
                 }
 
                 function siniftaOyunRozetiGoster() {
