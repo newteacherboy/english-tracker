@@ -8,8 +8,8 @@
       "title": "Yeni özellikler ve destek",
       "context": "ana",
       "selector": null,
-      "text": "Günün 3 Görevi ve haftalık hedef için Benim Dünyam > Sana Özel bölümüne bak. Oyunlar alanında Harf Adası, Harf Bahçesi, Papi Kartları, Meteor Düellosu ve Kelime Çarkı bulunur. Karakterini tasarlayıp mağazadan kıyafet alabilirsin. XP ve altın oyun sonuç ekranında görünür. Bir bölüm boşsa oturumunu ve internet bağlantını kontrol et; devam ederse öğretmenine bildir.",
-      "html": "<p><b>Günün 3 Görevi:</b> Benim Dünyam &gt; Sana Özel bölümünde.</p><p><b>Yeni oyunlar:</b> Harf Adası, Harf Bahçesi, Papi Kartları, Meteor Düellosu ve Kelime Çarkı.</p><p><b>Karakter:</b> Tipimi Tasarla ve Alışveriş Yap ile görünümünü kişiselleştirebilirsin.</p><p><b>Sorun mu var?</b> Boş ekran ve eksik ödül durumunda öğretmenine oyun adı, bölüm ve zamanı bildir.</p>"
+      "text": "Günün 3 Görevi ve haftalık hedef için Benim Dünyam > Sana Özel bölümüne bak. Oyunlar alanında Harf Adası, Harf Bahçesi, Papi Kartları, Meteor Düellosu ve Kelime Çarkı bulunur. Karakterini tasarlayıp mağazadan kıyafet alabilirsin. XP ve altın oyun sonuç ekranında görünür. Bir bölüm boşsa internet bağlantını kontrol et; Günün 3 Görevi hesap verisi geldikten sonra otomatik yenilenir. Profilindeki ⇄ düğmesiyle Google hesabını değiştirebilirsin; mevcut hesap yeni hesap doğrulanana kadar korunur. Şifreyle giriş yapılan hesaplar için standart güvenli giriş yöntemi geçerlidir. Sorun sürerse öğretmenine bildir.",
+      "html": "<p><b>Günün 3 Görevi:</b> Benim Dünyam &gt; Sana Özel bölümünde.</p><p><b>Yeni oyunlar:</b> Harf Adası, Harf Bahçesi, Papi Kartları, Meteor Düellosu ve Kelime Çarkı.</p><p><b>Karakter:</b> Tipimi Tasarla ve Alışveriş Yap ile görünümünü kişiselleştirebilirsin.</p><p><b>Hesap değiştir:</b> Profilindeki ⇄ düğmesini kullanarak başka bir Google hesabı seçebilirsin. Yeni giriş doğrulanana kadar önceki öğrenci kaydın korunur.</p><p><b>Sorun mu var?</b> Günlük görevler otomatik yenilenir. Hâlâ boş ekran veya eksik ödül varsa öğretmenine oyun adını, bölümü ve zamanı bildir.</p>"
     },
     {
       "id": "welcome",
