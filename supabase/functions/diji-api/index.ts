@@ -1,4 +1,4 @@
-import {DEMO_ID,DEMO_USER,isDemo,DEMO_BLOCKED,prepareDemo} from './demo-account.ts';
+import {DEMO_ID,DEMO_USER,isDemo,DEMO_BLOCKED,prepareDemo,publicParticipant} from './demo-account.ts';
 import { FEATURES } from './feature-catalog.ts';
 import { memberToolsAPI } from './member-tools-api.ts';
 import { storyAPI } from './story-api.ts';
@@ -236,7 +236,7 @@ async function hedefOgrenci(a: any, name: string) {
     return data;
   }
   const s = await studentByName(name);
-  return kapsamda(a, s) ? s : null;
+  return publicParticipant(s) && kapsamda(a, s) ? s : null;
 }
 const studentByNameGenel = studentByName;
 // [v3.1] Supabase tek istekte en fazla 1000 satır verir; hepsini sayfa sayfa al
@@ -458,7 +458,7 @@ async function leaderboardGet(op: string, body: any, q: URLSearchParams) {
   const cn = legacyClassNo(cls);
   if (cn !== null && !/^Büyü/i.test(cls)) query = query.eq("class_no", cn);
   const { data } = await query;
-  let rows = data || [];
+  let rows = (data || []).filter(publicParticipant);
   if (/^Büyü/i.test(cls)) rows = rows.filter((r: any) => String(r.extra?.legacy_class || r.unit_name || "").toLowerCase() === cls.toLowerCase());
   if (adil) {
     const gorulen = new Set<string>();
@@ -471,7 +471,7 @@ async function rootData(a: any) {
   if (!a) return json([]);
   const o = await ortakVeri();
   if (a.role === "teacher") {
-    let sorgu = supabase.from("students").select("*").order("username");
+    let sorgu = supabase.from("students").select("*").neq("id",DEMO_ID).order("username");
     if (!a.yonetici) sorgu = sorgu.eq("teacher_id", a.teacher_id);
     const { data } = await sorgu;
     const b = await baglamYukle(null);
@@ -1249,9 +1249,11 @@ async function handle(req: Request) {
     if(!s||s.status!=='approved')return json({ok:false,mesaj:'Bu hesap artık aktif değil.'},403);
     return json({ok:true,rol:'ogrenci',ogrenci:s.username,expiresAt:a.expires_at});
   }
+
   if(isDemo(a)&&DEMO_BLOCKED.has(op))return json({ok:false,hata:'demo_readonly',mesaj:'Demo hesabında bu işlem kapalı.'},403);
   if(isDemo(a)&&op==='iletisimDurumu')return json({ok:true,eksik:false,donuk:false,uyari:false});
   if(isDemo(a)&&op==='memberStatus')return json({ok:true,emailVerified:true,email:'',hasPlacement:true,teacherLinked:false,demo:true});
+
   if(op==='activeTime'){
     if(req.method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
     if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
@@ -1275,7 +1277,7 @@ async function handle(req: Request) {
   const releaseResult=await release.handle(op,body,q,a);if(releaseResult)return releaseResult;
   const releaseDeny=await release.guard(op,body,q,a);if(releaseDeny)return releaseDeny;
   /* [v4.0] Bu istekte öğrenci aramaları öğretmenin kapsamıyla sınırlı (yönetici herkesi görür) */
-  const studentByName = async (n: string) => { const s = await studentByNameGenel(n); return kapsamda(a, s) ? s : null; };
+  const studentByName = async (n: string) => { const s = await studentByNameGenel(n); const demoOwner=s?.id===DEMO_ID&&(op==='giris'||a?.student_id===DEMO_ID);return (publicParticipant(s)||demoOwner)&&kapsamda(a,s)?s:null; };
   const ogrFiltre = (sorgu: any) => yoneticiOlmayan(a) ? sorgu.eq("teacher_id", a.teacher_id) : sorgu;
   if (!op) return rootData(a);
 
@@ -1512,7 +1514,7 @@ async function handle(req: Request) {
   if (op === "sosyalOgrencilerGetir") {
     const deny = await requireStudent(a, ""); if (deny) return deny;
     const [{ data: st }, { data: yo }] = await Promise.all([
-      supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile,teacher_id").eq("status", "approved").order("username"),
+      supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile,teacher_id").eq("status", "approved").neq("id",DEMO_ID).order("username"),
       supabase.from("extra_data").select("student_id,totalXp:value->totalXp,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo")
     ]);
     /* [v4.6] Öğretmen değerlendirmeleri ve ders puanı sadece öğrencinin kendisine ve kendi öğretmenine gider */
@@ -1523,7 +1525,7 @@ async function handle(req: Request) {
       : { data: [] as any[] };
     const ym = new Map((yo || []).map((x: any) => [x.student_id, x]));
     const rm = new Map<string, any[]>(); for (const r of sc || []) { if (!rm.has(r.student_id)) rm.set(r.student_id, []); rm.get(r.student_id)!.push(raporSatiri(r)); }
-    return json((st || []).filter((s: any) => encName(s.username) !== "teacher").map((s: any) => {
+    return json((st || []).filter(publicParticipant).filter((s: any) => encName(s.username) !== "teacher").map((s: any) => {
       const p = (s.profile && typeof s.profile === "object") ? s.profile : {}, y: any = ym.get(s.id) || {}, r = rm.get(s.id) || [];
       const ozel = gorebilir(s), dersPuani = ozel ? (Number(s.points || 0) > 0 ? Number(s.points) : ortala(r, "genel")) : 0;
       return {
@@ -1714,7 +1716,7 @@ async function handle(req: Request) {
     const deny = await requireStudent(a, ""); if (deny) return deny;
     const { data } = await supabase.from("feed_events").select("id,student_id,event_type,payload,created_at,students!feed_events_student_id_fkey(username)").order("created_at", { ascending: false }).limit(400);
     const b = new Map<string, number>(), tb = new Map<string, number>(), liste: any[] = [];
-    for (const e of data || []) {
+    for (const e of (data || []).filter(publicParticipant)) {
       const p = e.payload || {};
       if (SOSYAL.has(e.event_type)) { if (p.event_id) { const m = e.event_type === "tebrik" ? tb : b; m.set(p.event_id, (m.get(p.event_id) || 0) + 1); } continue; }
       const ad = (e as any).students?.username || p.student_name || ""; if (!ad || liste.length >= 150) continue;
@@ -1744,10 +1746,10 @@ async function handle(req: Request) {
     let hedefId: string | null = null, payload: any, varSorgu: any = supabase.from("feed_events").select("id").eq("student_id", s.id).eq("event_type", tur);
     if (UUID.test(hedef)) {
       const { data: ev } = await supabase.from("feed_events").select("id,student_id").eq("id", hedef).maybeSingle();
-      if (!ev) return json({ status: "error", aktif: false });
+      if (!ev || !publicParticipant(ev)) return json({ status: "error", aktif: false });
       hedefId = ev.student_id; payload = { event_id: ev.id, target_name: "akis-" + ev.id }; varSorgu = varSorgu.contains("payload", { event_id: ev.id });
     } else {
-      const t = await studentByName(hedef); if (!t || t.id === s.id) return json({ status: "error", aktif: false });
+      const t = await studentByName(hedef); if (!t || !publicParticipant(t) || t.id === s.id) return json({ status: "error", aktif: false });
       hedefId = t.id; payload = { target_name: t.username }; varSorgu = varSorgu.eq("target_student_id", t.id).contains("payload", { target_name: t.username });
     }
     const { data: v } = await varSorgu.limit(1);
@@ -1758,7 +1760,7 @@ async function handle(req: Request) {
   if (op === "enerjiGonder") {
     const g = String(val(body, q, "gonderen")), al = String(val(body, q, "alici")); const deny = await requireStudent(a, g); if (deny) return deny;
     const gs = await hedefOgrenci(a, g), as = await studentByName(al);
-    if (!gs || !as) return json({ ok: false, mesaj: "Öğrenci bulunamadı." });
+    if (!gs || !as || !publicParticipant(as)) return json({ ok: false, mesaj: "Öğrenci bulunamadı." });
     if (gs.id === as.id) return json({ ok: false, mesaj: "Kendine enerji gönderemezsin. 😄" });
     const { count } = await supabase.from("feed_events").select("id", { count: "exact", head: true }).eq("student_id", gs.id).eq("event_type", "energy_send").gte("created_at", bugunBasi());
     if ((count || 0) >= (bool(val(body, q, "ekstra")) ? 3 : 1)) return json({ ok: false, mesaj: "Bugünkü enerji hediyeni zaten gönderdin." });
@@ -1771,7 +1773,7 @@ async function handle(req: Request) {
   }
   if (op === "duelloGonder") {
     const g = String(val(body, q, "gonderen")), al = String(val(body, q, "alici")); const deny = await requireStudent(a, g); if (deny) return deny;
-    const gs = await hedefOgrenci(a, g), as = await studentByName(al); if (!gs || !as) return json({ ok: false, mesaj: "Öğrenci bulunamadı." });
+    const gs = await hedefOgrenci(a, g), as = await studentByName(al); if (!gs || !as || !publicParticipant(as)) return json({ ok: false, mesaj: "Öğrenci bulunamadı." });
     if (gs.id === as.id) return json({ ok: false, mesaj: "Kendinle düello yapamazsın. 😄" });
     const { count } = await supabase.from("duels").select("id", { count: "exact", head: true }).eq("sender_student_id", gs.id).gte("created_at", bugunBasi());
     if ((count || 0) >= 3) return json({ ok: false, mesaj: "Bugün 3 düello gönderdin. Yarın yine gel! ⚔️" });
@@ -1862,8 +1864,8 @@ async function handle(req: Request) {
     if (await denemeSay("giris_hata", hedef, 15) >= 5) return json({ ok: false, mesaj: "Çok fazla hatalı deneme. 15 dakika sonra tekrar dene." });
     if (ipBilinir && await denemeSay("giris_hata_ip", ip, 15) >= 200) return json({ ok: false, mesaj: "Bu bağlantıdan çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar dene." });
     const hataYaz = async () => { await denemeYaz("giris_hata", hedef); if (ipBilinir) await denemeYaz("giris_hata_ip", ip); };
-    /* [v4.0] Kullanıcı adı bir öğretmene aitse öğretmen oturumu (yönetici "teacher" dahil) */
     if(username.toLowerCase()===DEMO_USER && await verifyPassword(password,"pbkdf2$210000$Y2cTEcWM8EDilE8lMmpokw==$kl0JBrviXspEhMcJHLSQhGiO6eKjnJVuSoCg39ox+RQ=")) await prepareDemo(supabase,"pbkdf2$210000$Y2cTEcWM8EDilE8lMmpokw==$kl0JBrviXspEhMcJHLSQhGiO6eKjnJVuSoCg39ox+RQ=");
+    /* [v4.0] Kullanıcı adı bir öğretmene aitse öğretmen oturumu (yönetici "teacher" dahil) */
     const { data: ogrt } = await supabase.from("teachers").select("*").ilike("username", likeKacir(username)).limit(2);
     if (ogrt && ogrt.length === 1) {
       const t = ogrt[0];
@@ -2494,7 +2496,7 @@ async function handle(req: Request) {
     if (q.get("tumu") !== "1" && body.tumu !== "1") query = query.is("read_at", null);
     const { data } = await query;
     // [YAMA 19] gönderen alanında kimlik numarası yerine isim
-    return json({ liste: (data || []).map((x: any) => ({ sat: x.id, tarih: x.created_at, gonderen: x.sender?.username || "", tur: x.type, metin: x.message, okundu: !!x.read_at, duyuruId: x.payload?.duyuruId || null })) });
+    return json({ liste: (data || []).filter(publicParticipant).map((x: any) => ({ sat: x.id, tarih: x.created_at, gonderen: x.sender?.username || "", tur: x.type, metin: x.message, okundu: !!x.read_at, duyuruId: x.payload?.duyuruId || null })) });
   }
   if (op === "bildirimOkundu") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
@@ -2509,7 +2511,7 @@ async function handle(req: Request) {
     const alici = String(val(body, q, "alici")), gonderen = String(val(body, q, "gonderen"));
     const deny = await requireStudent(a, gonderen); if (deny) return deny;
     const sender = await hedefOgrenci(a, gonderen), receiver = await studentByName(alici);
-    if (!receiver) return json({ status: "error" });
+    if (!receiver || !publicParticipant(receiver)) return json({ status: "error" });
     const tur = temizMetin(val(body, q, "tur"), 30);
     if (!["tebrik", "begeni", "takip", "duello", "duelloYanit", "duelloSonuc", "duelloOyun", "enerji", "hediye"].includes(tur)) return json({ status: "error", message: "Geçersiz bildirim türü." }, 400);
     if (sender) {
@@ -2679,7 +2681,7 @@ async function handle(req: Request) {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return json({ liste: [] });
     const { data } = await supabase.from("duels").select("*,sender:students!duels_sender_student_id_fkey(username),receiver:students!duels_receiver_student_id_fkey(username)").or("sender_student_id.eq." + s.id + ",receiver_student_id.eq." + s.id).order("created_at", { ascending: false }).limit(50);
-    return json({ liste: (data || []).map((x: any) => ({ id: x.id, gonderen: x.sender?.username || "", alici: x.receiver?.username || "", durum: x.status === "accepted" ? "kabul" : x.status === "rejected" ? "red" : "bekliyor", oyun: x.sender_payload?.oyun || "", kazanan: x.receiver_payload?.kazanan || x.sender_payload?.kazanan || "", benPuan: x.sender_payload?.benPuan ?? null, rakipPuan: x.sender_payload?.rakipPuan ?? null, kalanDk: Math.max(0, 1440 - Math.round((Date.now() - new Date(x.created_at).getTime()) / 60000)) })) });
+    return json({ liste: (data || []).filter(publicParticipant).map((x: any) => ({ id: x.id, gonderen: x.sender?.username || "", alici: x.receiver?.username || "", durum: x.status === "accepted" ? "kabul" : x.status === "rejected" ? "red" : "bekliyor", oyun: x.sender_payload?.oyun || "", kazanan: x.receiver_payload?.kazanan || x.sender_payload?.kazanan || "", benPuan: x.sender_payload?.benPuan ?? null, rakipPuan: x.sender_payload?.rakipPuan ?? null, kalanDk: Math.max(0, 1440 - Math.round((Date.now() - new Date(x.created_at).getTime()) / 60000)) })) });
   }
   if (op === "duelloYanit") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;

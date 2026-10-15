@@ -1,7 +1,7 @@
 export const DEMO_ID='dcde2026-1015-4000-8000-000000000001';
 export const DEMO_USER='dijimedu_demo';
 export const isDemo=(a:any)=>a?.role==='student'&&a.student_id===DEMO_ID;
-export const DEMO_BLOCKED=new Set(['kisiselBilgiGuncelle','sohbetMesajGonder','sohbetGetir','sifreDegistir','sifremiDegistir','memberEmailResend','iletisimGuncelle']);
+export const DEMO_BLOCKED=new Set(['kisiselBilgiGuncelle','sohbetMesajGonder','sohbetGetir','sifreDegistir','sifremiDegistir','memberEmailResend','iletisimGuncelle','akisOlayToggle','bildirimGonder','enerjiGonder','duelloGonder','duelloYanit']);
 export async function prepareDemo(db:any,passwordHash:string){
  const check=await db.from('students').select('id,username').eq('id',DEMO_ID).maybeSingle();if(check.error)throw check.error;
  if(check.data&&check.data.username!==DEMO_USER)throw Error('Demo identity conflict');
@@ -15,4 +15,11 @@ export async function prepareDemo(db:any,passwordHash:string){
  if(topics.data?.length){const existing=await db.from('lesson_progress').select('level,category,topic_name').eq('student_id',DEMO_ID);if(existing.error)throw existing.error;const keys=new Set((existing.data||[]).map((t:any)=>[t.level,t.category,t.topic_name].join('|')));const fresh=topics.data.filter((t:any)=>!keys.has([t.level,t.category,t.topic_name].join('|'))).map((t:any)=>({...t,student_id:DEMO_ID,test_success:true,knew_it:true}));if(fresh.length){const r=await db.from('lesson_progress').insert(fresh);if(r.error)throw r.error;}}
  const chapters=Array.from({length:80},(_,chapter)=>({actor_key:'s:'+DEMO_ID,student_id:DEMO_ID,chapter,cursor:0,completed:true,reward_claimed:true,replay:true,version:0,deck_version:4}));const story=await db.from('papi_story_progress').upsert(chapters,{onConflict:'actor_key,chapter',ignoreDuplicates:true});if(story.error)throw story.error;
  const done=await db.from('extra_data').upsert({student_id:DEMO_ID,key_name:'demo_initialized_v1',value:{ready:true}},{onConflict:'student_id,key_name'});if(done.error)throw done.error;
+}
+
+/* The fixed review identity is usable by its owner but never a public participant. */
+export function publicParticipant(row:any){
+ const r=row||{},ids=[r.id,r.student_id,r.sender_student_id,r.receiver_student_id,r.target_student_id,r.player_a,r.player_b];
+ const names=[r.username,r.student_name,r.ogrenci,r.isim,r.name,r.sender?.username,r.receiver?.username,r.students?.username,r.a?.username,r.b?.username,r.payload?.target_name,r.payload?.student_name];
+ return !ids.includes(DEMO_ID)&&r.actor_key!=='s:'+DEMO_ID&&!names.some(x=>String(x||'').trim().toLowerCase()===DEMO_USER);
 }

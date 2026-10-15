@@ -184,3 +184,5 @@ body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
   padding-bottom:calc(112px + env(safe-area-inset-bottom,0px));
   scroll-margin-bottom:calc(112px + env(safe-area-inset-bottom,0px));
 }
+
+.gg-tabs{display:grid!important;grid-template-columns:1fr 1.45fr 1fr!important;gap:6px!important;width:100%!important}.gg-tabs [role=tab]{min-width:0!important;white-space:normal!important;line-height:1.25!important;min-height:54px!important;padding:10px 8px!important;font-size:clamp(11px,2.8vw,14px)!important}.gg-tabs [role=tab][aria-selected=true]{background:#0b8b87!important;color:#fff!important;border-color:#0b8b87!important}

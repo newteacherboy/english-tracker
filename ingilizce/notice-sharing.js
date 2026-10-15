@@ -19,7 +19,7 @@ async function artwork(item){if(item.svg){const svg=item.svg.includes('xmlns=')?
 async function render(item,theme){
  const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1080;
  const c=canvas.getContext('2d');if(!c)throw Error('Görsel oluşturma desteklenmiyor.');
- const badge=item.kind==='badge',night=theme===2;
+ const badge=item.kind==='badge',placement=item.kind==='placement',night=theme===2;
  const sky=c.createLinearGradient(0,0,1080,1080);
  (night?[['#07163e',0],['#202b78',.52],['#47358f',1]]:theme===1?[['#137ed2',0],['#62dce8',.52],['#1666b2',1]]:[['#4821b0',0],['#17a9d5',.52],['#173c9e',1]]).forEach(([color,p])=>sky.addColorStop(p,color));
  c.fillStyle=sky;c.fillRect(0,0,1080,1080);
@@ -31,7 +31,7 @@ async function render(item,theme){
  const banner=c.createLinearGradient(0,92,0,255);banner.addColorStop(0,'#fff5bd');banner.addColorStop(.46,'#ffd665');banner.addColorStop(1,'#eca83c');
  c.fillStyle=banner;rounded(c,104,104,872,140,53);c.fill();c.lineWidth=6;c.strokeStyle='#ffedab';c.stroke();
  c.textAlign='center';c.textBaseline='middle';c.fillStyle='#112f69';c.font='900 51px system-ui';
- c.fillText(badge?'YENİ ROZET KAZANDIN!':'YENİ KARAKTER AÇILDI!',540,174,800);
+ c.fillText(placement?'DİL SEVİYEMİ KEŞFETTİM!':badge?'YENİ ROZET KAZANDIN!':'YENİ KARAKTER AÇILDI!',540,174,800);
  // Ornamental central frame with the earned badge or character (no substituted reward artwork).
  c.save();c.shadowColor='#041a68a0';c.shadowBlur=35;c.shadowOffsetY=18;
  const panel=c.createLinearGradient(0,268,0,758);panel.addColorStop(0,'#f7ffffe0');panel.addColorStop(1,'#cbe6ffb8');c.fillStyle=panel;rounded(c,143,280,794,475,62);c.fill();c.shadowBlur=0;c.strokeStyle='#fff2aa';c.lineWidth=11;c.stroke();c.restore();
@@ -42,7 +42,7 @@ async function render(item,theme){
  try{const papi=await loadImage(new URL('papi-reward-v2.png',location.href).href);const ratio=Math.min(260/papi.width,260/papi.height);c.save();c.shadowColor='#123d7a88';c.shadowBlur=16;c.drawImage(papi,80,542,papi.width*ratio,papi.height*ratio);c.restore();}catch(e){console.warn('Papi görseli yüklenemedi',e)}
  c.save();c.shadowColor='#12245e99';c.shadowBlur=16;c.shadowOffsetY=8;c.fillStyle='#14275b';rounded(c,168,728,744,108,34);c.fill();c.restore();
  c.fillStyle=ivory;textLines(c,item.name,540,771,682,Math.max(34,Math.min(62,640/(Math.max(item.name.length,7)*.55))),54,2);
- c.fillStyle='#ffffff';c.font='750 24px system-ui';c.fillText(badge?'İngilizce yolculuğunda harika ilerliyorsun!':'İngilizce yolculuğunda yeni bir arkadaş.',540,870,920);
+ c.fillStyle='#ffffff';c.font='750 24px system-ui';c.fillText(placement?'Yaklaşık CEFR ön değerlendirmesi · Resmî belge değildir.':badge?'İngilizce yolculuğunda harika ilerliyorsun!':'İngilizce yolculuğunda yeni bir arkadaş.',540,870,920);
  c.fillStyle=gold;c.font='950 69px system-ui';c.fillText('DijiMedu',540,945);
  c.fillStyle='#ffffff';c.font='700 26px system-ui';c.fillText('Sen de keşfet • app.dijimedu.com',540,999);
  const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Görsel kaydedilemedi.')),'image/png'));return {canvas,blob};

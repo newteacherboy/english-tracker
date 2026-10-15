@@ -1,0 +1,26 @@
+name: Evening member flows and mobile layouts
+on:
+  push:
+    paths: ['ingilizce/**', 'supabase/functions/**', 'tests/evening-*', 'tests/demo-privacy.test.cjs', '.github/workflows/evening-member-flows.yml']
+  pull_request:
+    paths: ['ingilizce/**', 'supabase/functions/**', 'tests/evening-*', 'tests/demo-privacy.test.cjs']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0 playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node --test tests/evening-ui.test.cjs tests/demo-privacy.test.cjs tests/member-fixes-ui.cjs tests/member-tools.test.cjs tests/demo-account.test.cjs tests/classroom-authorization.test.cjs tests/weekly-goal-once.test.cjs tests/portal-integrity.test.cjs
+      - run: node tests/evening-mobile-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evening-mobile-layouts
+          path: /tmp/evening-mobile/*.png

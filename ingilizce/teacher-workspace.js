@@ -1,10 +1,10 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
-let active=false,total=0,reading=false,lastRead=0,menuSeen=false;
+let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token()})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
 function paintBadge(){for(const b of document.querySelectorAll('[data-profile="teacher"]')){let badge=b.querySelector('.dm-teacher-count');if(!badge){badge=document.createElement('span');badge.className='dm-teacher-count';b.append(badge);}badge.textContent=String(total);badge.hidden=total===0;b.setAttribute('aria-label','Öğretmen Paneli'+(total?' · '+total+' bildirim':''));}}
-async function refresh(force=false){if(!token()||reading||document.hidden||!force&&Date.now()-lastRead<60000)return;reading=true;try{const d=await api('teacherNotificationSummary');total=d.total||0;lastRead=Date.now();paintBadge();}catch(e){console.warn('[Öğretmen bildirimleri]',e.message);}finally{reading=false;}}
+async function refresh(force=false){if(!token()||reading||document.hidden||!force&&Date.now()-lastRead<60000)return;reading=true;try{const d=await api('teacherNotificationSummary');total=d.total||0;registrations=d.registrations||0;messages=d.messages||0;lastRead=Date.now();paintBadge();}catch(e){console.warn('[Öğretmen bildirimleri]',e.message);}finally{reading=false;}}
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
 function children(){return [...document.querySelectorAll('.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal')].filter(x=>x.id!=='ogretmenMenuModal'&&x.id!=='sifreModal'&&visible(x));}
 const original=window.ogretmenPaneliAc;window.ogretmenPaneliAc=function(){active=true;const r=original?.apply(this,arguments);refresh(true);return r;};
@@ -17,6 +17,15 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('keydown',e=>{if(!active||e.key!=='Escape')return;const list=children();if(list.length){e.preventDefault();e.stopImmediatePropagation();const top=list.at(-1);const close=top.querySelector('.game-close-btn,.yo-kapat,.cog-x,.dm-x,.dm-account-close,.dm-member-close,[aria-label="Kapat"],[data-close]');if(close)close.click();else top.style.display='none';setTimeout(maintain,0);}else{active=false;menuSeen=false;$('ogretmenMenuModal').style.display='none';}},true);
 async function teacherPlacements(){const v=window.dmMemberUI.sheet('Seviye sınavı sonuçları','<p>Yükleniyor…</p>','dmTeacherPlacements');v.el.classList.add('dm-teacher-child');try{const d=await api('teacherPlacementResults');v.body.replaceChildren();for(const item of d.results){const box=document.createElement('article'),h=document.createElement('h3'),p=document.createElement('p');h.textContent=item.student+' · '+item.result.level;p.textContent='Yazma: '+(item.result.writing||'Örnek bırakılmadı')+'\n\nKonuşma dökümü: '+(item.result.speaking||'Örnek bırakılmadı');p.style.whiteSpace='pre-wrap';box.append(h,p);v.body.append(box);}if(!d.results.length)v.body.textContent='Henüz tamamlanmış sınav yok.';}catch(e){v.body.textContent=e.message;}}
+function decorateWorkspace(menu){
+ const content=menu.querySelector('.rubric-content');if(!content)return;
+ let hero=$('dmTeacherHero');if(!hero){hero=document.createElement('section');hero.id='dmTeacherHero';hero.className='dm-teacher-hero';hero.innerHTML='<div class="dm-teacher-hero-top"><img src="papi-help-v2.png" alt="Papi"><div><small>SINIFININ ÖĞRENME MERKEZİ</small><h2>Öğretmen Paneli</h2><p>Planla, öğrencilerini destekle, gelişimi takip et.</p></div></div><div class="dm-teacher-stats"><span>🆕 <b data-teacher-registrations>0</b> kayıt</span><span>💬 <b data-teacher-messages>0</b> mesaj</span></div><label class="dm-teacher-search">🔎 <input type="search" placeholder="Ödev, rapor, oyun…" aria-label="Öğretmen panelinde araç ara"></label><p class="dm-teacher-no-results" hidden>Bu aramaya uygun araç bulunamadı.</p>';content.prepend(hero);hero.querySelector('input').addEventListener('input',()=>decorateWorkspace(menu));}
+ hero.querySelector('[data-teacher-registrations]').textContent=registrations;hero.querySelector('[data-teacher-messages]').textContent=messages;
+ const query=hero.querySelector('input').value.toLocaleLowerCase('tr').trim();let count=0;
+ const description=t=>/veli/i.test(t)?'Gelişimi ailelerle paylaş':/sınıf oyun/i.test(t)?'Oyunları sınıfa taşı, öğrenci seç':/ödev/i.test(t)?'Konu ve oyun ödevlerini düzenle':/rubrik|performans/i.test(t)?'Becerileri değerlendir, ilerlemeyi izle':/mesaj|sohbet/i.test(t)?'Öğrenci mesajlarını yanıtla':/kayıt/i.test(t)?'Yeni katılan öğrencileri kontrol et':/duyuru/i.test(t)?'Sınıfına ulaş, öğrencilerini haberdar et':/seviye/i.test(t)?'Dil seviyelerini ve örnekleri incele':/öğrenci/i.test(t)?'Sınıfını ve öğrenci bilgilerini yönet':'Sınıfın için aç ve düzenle';
+ for(const b of content.querySelectorAll('.ogretmen-menu-btn')){if(!b.dataset.dmTeacherCard){const note=document.createElement('small');note.textContent=description(b.textContent);b.append(note);b.dataset.dmTeacherCard='1';}const show=!query||b.textContent.toLocaleLowerCase('tr').includes(query);b.hidden=!show;if(show)count++;}
+ hero.querySelector('.dm-teacher-no-results').hidden=count>0;
+}
 function maintain(){
  const menu=$('ogretmenMenuModal');if(!menu)return;if(!token()){active=false;menuSeen=false;return;}
  if(visible(menu))active=true;
@@ -25,7 +34,7 @@ function maintain(){
  menu.classList.add('dm-teacher-open');if(menu.style.display!=='flex')menu.style.display='flex';if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
  for(const el of children()){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
  if(!menuSeen){menuSeen=true;api('teacherNotificationRead').then(()=>refresh(true)).catch(()=>{});}
- paintBadge();
+ decorateWorkspace(menu);paintBadge();
 }
 window.dmOpenMeteor=()=>window.dmMeteor?.open();window.dmOpenWordWheel=()=>window.dmWordWheel?.open();window.dmOpenPapiCards=()=>window.dmPapiCards?.open();
 // One catalog drives help, study practice links and teacher assignments.

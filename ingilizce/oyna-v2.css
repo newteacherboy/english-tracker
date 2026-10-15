@@ -53,3 +53,5 @@
 .rt-path.rt-islands > .rt-map-switch{background:linear-gradient(145deg,#fff,#e9f0ff);color:#493378;box-shadow:0 3px 0 #55519b30,0 4px 10px #30427424}
 .rt-path > .rt-map-switch:hover{filter:brightness(1.03)}
 .rt-path > .rt-map-switch:active{transform:translateY(2px);box-shadow:0 1px 0 #b6863540}
+
+.rt-week-complete{background:linear-gradient(120deg,#edfff4,#fff9d9)!important;border-color:#88cfa3!important}.rt-week-message{font-size:12px;line-height:1.5;margin:7px 0 0;color:#24594b}.rt-week-complete h2{color:#126648}.rt-week [data-rt=claim-goal]{background:#127957!important;color:#fff!important;min-width:96px}.rt-week-claimed{display:inline-flex;align-items:center;justify-content:center;padding:10px;border-radius:12px;color:#126648;background:#d5f6e1;font-size:12px;font-weight:800}.rt-week [role=status]{color:#9f1239}.rt-week>div{min-width:0}@media(max-width:380px){.rt-week-complete{flex-wrap:wrap}.rt-week-complete>div{flex:1;min-width:170px}.rt-week-complete [data-rt=claim-goal],.rt-week-claimed{margin-left:auto}}

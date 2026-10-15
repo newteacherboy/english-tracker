@@ -12,14 +12,14 @@ test('signup runs all six illustrated questions before role selection; login sta
  w.dmDiscoveryContext={raw:w.localStorage,session:w.sessionStorage,welcome:true,member:false,guest:false,request:async()=>({hazir:false})};
  w.eval(source('first-discovery.js'));await flush();
  assert.equal(w.document.querySelectorAll('.fd-welcome').length,1);assert(!w.document.querySelector('.fd-welcome .fd-back'));
- w.document.querySelector('[data-action=begin]').click();
+ w.document.querySelector('[data-action=begin]').click();assert.equal(w.dmFirstDiscovery.screen(),'intro');assert.match(w.document.querySelector('h1').textContent,/minik bir test/);w.document.querySelector('[data-action=demo]').click();
  const words=['apple','book','ball','cat','pencil','dog'];
  for(let i=0;i<6;i++){
   assert.equal(w.dmFirstDiscovery.screen(),'question');assert.match(w.document.querySelector('.fd-step').textContent,new RegExp((i+1)+' / 6'));
-  assert.equal(w.document.querySelectorAll('.fd-answer img').length,4);assert(!w.document.querySelector('[data-role]'));
+  assert.equal(w.document.querySelectorAll('.fd-answer img').length,4);assert(w.document.querySelector('[data-action=register]'));assert(!w.document.querySelector('.fd-word-prompt'));assert(!w.document.querySelector('[data-role]'));
   w.document.querySelector('[data-word="'+words[i]+'"]').click();w.document.querySelector('[data-action=question-next]').click();
  }
- assert.equal(w.dmFirstDiscovery.screen(),'register');assert.equal(w.document.querySelectorAll('[data-role]').length,3);assert(JSON.parse(w.localStorage.getItem('dm_discovery_summary_v1')).completed);
+ assert.equal(w.dmFirstDiscovery.screen(),'mini-result');assert.match(w.document.querySelector('.fd-mini-score').textContent,/6.*6 doğru/);w.document.querySelector('[data-action=register]').click();assert.equal(w.dmFirstDiscovery.screen(),'register');assert.equal(w.document.querySelectorAll('[data-role]').length,3);assert(JSON.parse(w.localStorage.getItem('dm_discovery_summary_v1')).completed);
  w.document.querySelector('[data-action=login]').click();assert(w.document.getElementById('dmDiscovery').hidden);assert(w.document.getElementById('dmDiscoveryGoogleFallback'));
  w.close();
 });

@@ -10,9 +10,11 @@ const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,
 const release=releaseAPI(supabase,json);
 const progression=progressionAPI(supabase,json);
 const contacts=contactPolicyAPI(supabase,json);
+const DEMO_ID='dcde2026-1015-4000-8000-000000000001';
+const publicParticipant=(s:any)=>![s?.id,s?.student_id,s?.player_a,s?.player_b,s?.winner].includes(DEMO_ID)&&![s?.username,s?.gonderen,s?.alici,s?.winner,s?.sender?.username,s?.a?.username,s?.b?.username].some(x=>String(x||'').trim().toLowerCase()==='dijimedu_demo');
 const num=(v:any)=>Number.isFinite(Number(v))?Number(v):0;
 const val=(body:any,q:URLSearchParams,key:string)=>body[key]??q.get(key)??"";
-async function studentByNameGenel(name:string){const n=String(name).trim().replace(/[\\%_]/g,m=>"\\"+m);const {data,error}=await supabase.from("students").select("id,username,teacher_id,class_no").eq("status","approved").ilike("username",n).limit(2);if(error)throw error;return data?.length===1?data[0]:null;}
+async function studentByNameGenel(name:string){const n=String(name).trim().replace(/[\\%_]/g,m=>"\\"+m);const {data,error}=await supabase.from("students").select("id,username,teacher_id,class_no").eq("status","approved").ilike("username",n).limit(2);if(error)throw error;return data?.length===1&&publicParticipant(data[0])?data[0]:null;}
 async function session(req:Request,body:any,q:URLSearchParams){
  const token=String(body.t||q.get("t")||req.headers.get("x-diji-token")||"");if(!token)return null;
  const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,"0")).join("");
@@ -51,7 +53,7 @@ async function dmPresence(op:string,body:any,a:any){
  const showOnline=await release.on('cevrimici');
  const online=new Map<string,string>();
  if(students.length&&showOnline){const {data,error}=await supabase.from('portal_sessions').select('student_id,last_seen_at').eq('role','student').in('student_id',students.map(s=>s.id)).gt('expires_at',now.toISOString()).gte('last_seen_at',new Date(now.getTime()-300000).toISOString());if(error)throw error;for(const s of data||[]){const t=online.get(s.student_id);if(!t||s.last_seen_at>t)online.set(s.student_id,s.last_seen_at);}}
- return json({ok:true,serverNow:now.toISOString(),liste:students.map(s=>({ad:s.username,sinif:s.class_no,online:showOnline&&online.has(s.id),seenAt:showOnline?(online.get(s.id)||null):null})).sort((a,b)=>Number(b.online)-Number(a.online)||a.ad.localeCompare(b.ad,'tr'))});
+ return json({ok:true,serverNow:now.toISOString(),liste:students.filter(publicParticipant).map(s=>({ad:s.username,sinif:s.class_no,online:showOnline&&online.has(s.id),seenAt:showOnline?(online.get(s.id)||null):null})).sort((a,b)=>Number(b.online)-Number(a.online)||a.ad.localeCompare(b.ad,'tr'))});
 }
 async function dmGiftMerge(id:string,value:any){
  let v=value||{};if(typeof v==='string'){try{v=JSON.parse(v);}catch{return value;}}
@@ -70,16 +72,16 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
  if(!social.has(op))return null;
  if(!a||a.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
  const actor=a.student_id;
- if(op==='aksesuarKatalog'){const {data,error}=await supabase.from('dm_accessory_catalog').select('*').order('price');if(error)throw error;return json({ok:true,liste:data});}
+ if(op==='aksesuarKatalog'){const {data,error}=await supabase.from('dm_accessory_catalog').select('*').order('price');if(error)throw error;return json({ok:true,liste:Array.isArray(data)?data.filter(publicParticipant):data});}
  if(op==='oyunEslesmelerim'){
   const {data,error}=await supabase.from('dm_matches').select('id,game,mode,status,player_a,player_b,created_at,expires_at,result_a,result_b,a:students!dm_matches_player_a_fkey(username),b:students!dm_matches_player_b_fkey(username)').or('player_a.eq.'+actor+',player_b.eq.'+actor).order('created_at',{ascending:false}).limit(30);if(error)throw error;
-  return json({ok:true,liste:(data||[]).map((m:any)=>({id:m.id,game:m.game,mode:m.mode,status:m.expires_at<new Date().toISOString()&&m.status!=='finished'?'expired':m.status,opponent:m.player_a===actor?m.b?.username:m.a?.username,myResult:m.player_a===actor?m.result_a:m.result_b,opponentResult:m.player_a===actor?m.result_b:m.result_a}))});
+  return json({ok:true,liste:(data||[]).filter(publicParticipant).map((m:any)=>({id:m.id,game:m.game,mode:m.mode,status:m.expires_at<new Date().toISOString()&&m.status!=='finished'?'expired':m.status,opponent:m.player_a===actor?m.b?.username:m.a?.username,myResult:m.player_a===actor?m.result_a:m.result_b,opponentResult:m.player_a===actor?m.result_b:m.result_a}))});
  }
  if(op==='duelloSonucKaydet'){
   const game=String(val(body,q,'oyun'));if(!DM_GAMES[game])return json({ok:false,mesaj:'Geçersiz oyun.'},400);
   const scored=Number(body.puanSurum)===3?scoreV3(body,body.sure):null;
   if(Number(body.puanSurum)===3&&!scored)return json({ok:false,mesaj:'Geçersiz süre veya puan verisi.'},400);
-  const {data,error}=await supabase.rpc(scored?'dm_classic_result_v3':'dm_classic_result',{actor,game,score:scored?scored.puan:Math.min(1000,Math.max(0,num(body.puan))),seconds:Math.max(0,num(body.sure))});if(error)return json({ok:false,mesaj:error.message},400);return json({ok:true,liste:data});
+  const {data,error}=await supabase.rpc(scored?'dm_classic_result_v3':'dm_classic_result',{actor,game,score:scored?scored.puan:Math.min(1000,Math.max(0,num(body.puan))),seconds:Math.max(0,num(body.sure))});if(error)return json({ok:false,mesaj:error.message},400);return json({ok:true,liste:Array.isArray(data)?data.filter(publicParticipant):data});
  }
  let target:any=null;
  if(['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur'].includes(op)){
@@ -104,6 +106,7 @@ Deno.serve(async(req:Request)=>{
  const q=new URL(req.url).searchParams;let body:any={};if(req.method!=="GET"){try{body=await req.json()}catch{return json({ok:false,mesaj:"Geçersiz istek."},400)}}
  const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  const op=String(val(body,q,"islem"));
+ if(a.student_id===DEMO_ID&&['duelloGonder','duelloYanit','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur','ogrenciEngelle','ogrenciEngelKaldir'].includes(op))return json({ok:false,mesaj:'Tanıtım hesabında diğer öğrencilere istek gönderilmez.'},403);
  const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
  const levelDeny=a.classroomTeacher?null:await progression.guard(op,body,q,a);if(levelDeny)return levelDeny;
  const denied=await release.guard(op,body,q,a);if(denied)return denied;
@@ -112,11 +115,11 @@ Deno.serve(async(req:Request)=>{
   let arg:any={},action="list";
   if(op==="duelloGonder"){const target=await studentByNameGenel(String(val(body,q,"alici"))),game=String(val(body,q,"oyun"));if(!target||!DM_GAMES[game])return json({ok:false,mesaj:"Geçersiz rakip veya oyun."},400);action="create";arg={target:target.id,game};}
   if(op==="duelloYanit"){action="reply";arg={id:val(body,q,"id"),accept:[true,1,"1","true"].includes(val(body,q,"kabul"))};}
-  const {data,error}=await supabase.rpc("dm_duel_action",{actor:a.student_id,action,arg});if(error)return json({ok:false,mesaj:error.message},400);return json(data);
+  const {data,error}=await supabase.rpc("dm_duel_action",{actor:a.student_id,action,arg});if(error)return json({ok:false,mesaj:error.message},400);if(Array.isArray(data?.liste))data.liste=data.liste.filter(publicParticipant);return json(data);
  }
  if(op==="bildirimlerim"){
   const {data,error}=await supabase.from("notifications").select("id,created_at,type,message,payload,read_at,sender:students!notifications_sender_student_id_fkey(username)").eq("recipient_student_id",a.student_id).is("read_at",null).order("created_at",{ascending:false}).limit(100);if(error)throw error;
-  return json({ok:true,liste:(data||[]).map((x:any)=>({sat:x.id,tarih:x.created_at,tur:x.type,metin:x.message,gonderen:x.sender?.username||"",matchId:x.payload?.matchId||null,okundu:false}))});
+  return json({ok:true,liste:(data||[]).filter(publicParticipant).map((x:any)=>({sat:x.id,tarih:x.created_at,tur:x.type,metin:x.message,gonderen:x.sender?.username||"",matchId:x.payload?.matchId||null,okundu:false}))});
  }
  return await dmExtension(op,body,q,a)||json({ok:false,mesaj:"Bilinmeyen işlem."},404);
  }catch(e){console.error(e);return json({ok:false,mesaj:"İşlem tamamlanamadı. Tekrar dene."},500)}

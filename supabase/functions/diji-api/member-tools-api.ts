@@ -14,7 +14,7 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
   if(op.startsWith('teacherNotification')||op==='teacherPlacementResults'){
    if(a.role!=='teacher')return fail('Öğretmen oturumu gerekli.',403);
    const {data:all,error}=await db.from('students').select('id,username,teacher_id,status,created_at');if(error)throw error;
-   const pupils=(all||[]).filter((s:any)=>s.teacher_id===a.teacher_id||(a.yonetici&&!s.teacher_id));
+   const pupils=(all||[]).filter((s:any)=>s.id!=='dcde2026-1015-4000-8000-000000000001').filter((s:any)=>s.teacher_id===a.teacher_id||(a.yonetici&&!s.teacher_id));
    const ids=pupils.map((s:any)=>s.id);
    if(op==='teacherPlacementResults'){if(!ids.length)return json({ok:true,results:[]});const r=await db.from('extra_data').select('student_id,value').in('student_id',ids).eq('key_name','placement_cefr_v2');if(r.error)throw r.error;return json({ok:true,results:(r.data||[]).map((x:any)=>({student:pupils.find((s:any)=>s.id===x.student_id)?.username||x.student_id,result:x.value}))});}
    const {data:marks}=await db.from('audit_logs').select('created_at').eq('operation','teacherNotificationRead').eq('target',a.teacher_id).order('created_at',{ascending:false}).limit(1);

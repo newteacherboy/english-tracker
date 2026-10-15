@@ -25,7 +25,7 @@ export function adminStudentsAPI(db: any, json: any, hashPassword: any) {
     if (op === 'yoneticiOgrenciler') {
       const search = String(body.arama ?? q.get('arama') ?? '').trim().slice(0,80);
       const page = Math.max(0, Math.min(10000, Math.floor(Number(body.sayfa ?? q.get('sayfa')) || 0)));
-      let query = db.from('students').select(fields,{count:'exact'}).eq('role','student');
+      let query = db.from('students').select(fields,{count:'exact'}).eq('role','student').neq('id','dcde2026-1015-4000-8000-000000000001');
       if (search) query = query.ilike('username','%' + escapeLike(search) + '%');
       const r = await query.order('username').order('id').range(page*50,page*50+49);
       if (r.error) return json({ok:false,mesaj:'Öğrenci listesi alınamadı.'},503);
