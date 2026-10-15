@@ -4,7 +4,7 @@
  const started=Date.now(),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  try{if(parent===window)throw Error();words=parent.masterKelimeHavuzu.filter(w=>Number(w.sinif)===cl&&Number(w.unite)===unit&&w.ingilizce&&w.turkce).map(w=>({en:String(w.ingilizce),tr:String(w.turkce)}));}catch(e){$('card').textContent='Bu etkinliği Diji-Medu içindeki kelime kartlarından açabilirsin.';return;}
  words=words.filter((w,i,a)=>a.findIndex(v=>v.en===w.en)===i);if(!words.length){$('card').textContent='Bu sınıf ve ünite için henüz kelime eklenmemiş.';return;}
- const allowed=()=>!parent.dmGuestPlatform||parent.dmGuestPlatform.alive();
+ const allowed=()=>true;
  function speak(){if(!allowed())return;if(!('speechSynthesis'in window)){$('status').textContent='Bu cihazda sesli okuma desteklenmiyor. Kartın yazılı hâlini inceleyebilirsin.';return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(words[index].en);u.lang='en-GB';u.rate=.85;speechSynthesis.speak(u);}
  function next(){if(!allowed())return;index=(index+1)%words.length;revealed=false;answered=false;$('status').textContent='';draw();}
  function answer(ok){if(answered||!allowed())return;answered=true;ok?correct++:wrong++;$('status').textContent=ok?'Harika! Doğru anlamı buldun.':'Bir daha incele: '+words[index].en+' = '+words[index].tr;draw();}
@@ -18,6 +18,6 @@
   $('card').querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>answer(b.dataset.answer===w.tr));const check=()=>{const typed=$('answer').value.trim();if(!typed){$('status').textContent='Önce cevabını yaz.';return;}answer(typed.toLowerCase()===w.en.toLowerCase());};$('card').querySelector('[data-check]')?.addEventListener('click',check);$('answer')?.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
  }
  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;revealed=false;answered=false;$('status').textContent='';draw();});
- const timer=setInterval(()=>{if(!allowed()){clearInterval(timer);window.speechSynthesis?.cancel();$('card').textContent='10 dakikalık denemen tamamlandı. Diji-Medu üyeliğiyle devam edebilirsin.';document.querySelectorAll('button').forEach(b=>b.disabled=true);return;}$('meta').textContent=cl+'. sınıf · '+unit+'. ünite · '+Math.floor((Date.now()-started)/1000)+' saniye · '+correct+' doğru / '+wrong+' yanlış';},1000);
+ const timer=setInterval(()=>{$('meta').textContent=cl+'. sınıf · '+unit+'. ünite · '+Math.floor((Date.now()-started)/1000)+' saniye · '+correct+' doğru / '+wrong+' yanlış';},1000);
  addEventListener('pagehide',()=>{clearInterval(timer);window.speechSynthesis?.cancel();});draw();
 })();

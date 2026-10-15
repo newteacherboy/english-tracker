@@ -480,15 +480,6 @@
       "html": "<p>Hesap ayarları › Hesabımı sil bağlantısını aç. Ayrı sayfada doğrulama ve son onay istenir. Kalıcı silme koşullarını ve hangi verilerin silindiğini o sayfada oku; bu işlem uygulamadan çıkış yapmakla aynı değildir.</p>"
     },
     {
-      "id": "guest",
-      "icon": "👀",
-      "title": "Misafir denemesi",
-      "context": "ana",
-      "selector": null,
-      "text": "Misafir modu 10 dakikalık keşif sağlar; oyun ve işlemler sınırlıdır. Gerçek kişilere mesaj, hediye veya düello gönderilemez. Deneme verileri üye hesabının kalıcı puanı değildir; süre sonunda üye olup devam edebilirsin.",
-      "html": "<p>Misafir modu 10 dakikalık keşif sağlar; oyun ve işlemler sınırlıdır. Gerçek kişilere mesaj, hediye veya düello gönderilemez. Deneme verileri üye hesabının kalıcı puanı değildir; süre sonunda üye olup devam edebilirsin.</p>"
-    },
-    {
       "id": "audiohelp",
       "icon": "🔊",
       "title": "Ses, Android ve mikrofon sorunları",
@@ -555,8 +546,7 @@
       ],
       [
         null,
-        "Misafir denemesi",
-        "Misafir modu 10 dakikalık keşif sağlar; oyun ve işlemler sınırlıdır. Gerçek kişilere mesaj, hediye veya düello gönderilemez. Deneme verileri üye hesabının kalıcı puanı değildir; süre sonunda üye olup devam edebilirsin. "
+        "Ücretsiz kayıt"
       ],
       [
         null,

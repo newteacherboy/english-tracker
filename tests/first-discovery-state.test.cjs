@@ -4,7 +4,7 @@ function storage(initial={}){const m=new Map(Object.entries(initial));return {ge
 function fixture(search='',stored={},session={},answer={}){
  const classes=new Set(),calls=[],raw=storage(stored),tab=storage(session);
  const window={localStorage:raw,sessionStorage:tab,fetch:async(u,o)=>{calls.push({u,o});return {ok:true,json:async()=>answer};}};
- vm.runInNewContext(source,{window,document:{documentElement:{classList:{add:c=>classes.add(c)}}},location:{search,hash:''},URLSearchParams,AbortController,setTimeout,clearTimeout,Error,Set});
+ vm.runInNewContext(source,{window,document:{documentElement:{classList:{add:c=>classes.add(c)}}},location:{search,hash:'',pathname:'/ingilizce/'},history:{replaceState(){}},URLSearchParams,AbortController,setTimeout,clearTimeout,Error,Set});
  return {ctx:window.dmDiscoveryContext,classes,calls,raw,tab};
 }
 test('first visitor waits at welcome; member sessions bypass it without changing tokens',()=>{
@@ -13,9 +13,9 @@ test('first visitor waits at welcome; member sessions bypass it without changing
  assert.equal(f.ctx.member,true);assert.equal(f.ctx.welcome,false);assert.equal(f.raw.getItem('ing_token'),'member-secret');assert.equal(f.classes.size,0);
 });
 test('guest and OAuth callbacks bypass welcome and preserve teacher invite code',()=>{
- const f=fixture('?misafir=1&kesif=1&kod=ABC123');assert.equal(f.ctx.guest,true);assert.equal(f.ctx.welcome,false);assert(f.classes.has('dm-discovery-guest'));
+ const f=fixture('?misafir=1&kesif=1&kod=ABC123');assert.equal(f.ctx.guest,false);assert.equal(f.ctx.welcome,true);assert(!f.classes.has('dm-discovery-guest'));
  const o=fixture('?kesifKayit=google');assert.equal(o.ctx.oauth,true);assert.equal(o.ctx.welcome,false);
- for(const q of ['?giris=1','?kayit=1','?google_return=1','?misafir=1'])assert.equal(fixture(q).ctx.welcome,false);
+ for(const q of ['?giris=1','?kayit=1','?google_return=1'])assert.equal(fixture(q).ctx.welcome,false);
  assert.equal(fixture('',{},{diji_google_pending:'1'}).ctx.welcome,false);
 });
 test('registration bridge never forwards guest tokens or real-member storage automatically',async()=>{
@@ -43,7 +43,7 @@ test('discovery never creates a guest application session or replaces storage',(
  const source=fs.readFileSync('ingilizce/guest-platform.js','utf8');
  for(const member of [false,true]){
   const raw=storage({ing_token:member?'member':''}),window={localStorage:raw,dmDiscoveryContext:{member,guest:!member}};
-  vm.runInNewContext(source,{window,location:{search:'?misafir=1&kesif=1',replace:()=>assert.fail('unexpected redirect')},URLSearchParams});
+  vm.runInNewContext(source,{window,location:{search:'?misafir=1&kesif=1',replace:()=>{if(member)assert.fail('member redirect');}},URLSearchParams});
   assert.equal(window.localStorage,raw);assert.equal(window.dmGuestMode,undefined);assert.equal(raw.getItem('ing_oturumAcik'),null);
  }
 });
