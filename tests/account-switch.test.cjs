@@ -3,9 +3,9 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 test('daily task client gets fresh version and account switch UI is loaded',()=>{
  const html=fs.readFileSync('ingilizce/index.html','utf8');
  assert.match(html,/progression-ui\.js\?v=20261015-daily-goals-ready-1/);
- assert.match(html,/profile-sections\.js\?v=20261015-1/);
- assert.match(html,/account-switch\.js\?v=20261015-simple-3/);
- assert.match(html,/account-switch\.css\?v=20261015-simple-3/);
+ assert.match(html,/profile-sections\.js\?v=20261015-member-fixes-2/);
+ assert.match(html,/account-switch\.js\?v=20261015-member-fixes-2/);
+ assert.match(html,/account-switch\.css\?v=20261015-member-fixes-2/);
 });
 test('server-backed login changes account only after success and reloads to isolate session',()=>{
  const html=fs.readFileSync('ingilizce/index.html','utf8');
