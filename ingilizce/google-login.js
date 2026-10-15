@@ -270,6 +270,27 @@
     } catch (error) { message(error.message || 'Bağlantı hatası. Tekrar dene.'); }
     finally { busy = false; $('sifre').value = ''; $('girisBtn').disabled = false; cancel.disabled = false; }
   };
+  // Starting a Google account change preserves the existing portal token until
+  // the newly authenticated account has been verified by the existing server flow.
+  window.dmGoogleHesapDegistir = async function () {
+    if (busy || !supabaseClient?.auth || androidUygulama) return false;
+    const accepted = window.confirm('Başka bir Google hesabıyla giriş yapılsın mı? Yeni hesap doğrulanana kadar mevcut öğrenci kaydın korunur.');
+    if (!accepted) return false;
+    try {
+      const callback = new URL(location.pathname, location.origin);
+      sessionStorage.setItem('diji_google_pending', '1');
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider:'google',
+        options:{redirectTo:callback.href, queryParams:{prompt:'select_account'}}
+      });
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      sessionStorage.removeItem('diji_google_pending');
+      message('Hesap değiştirme başlatılamadı. Mevcut hesabın açık kaldı.');
+      return false;
+    }
+  };
   window.cikisYap = async function () {
     if (localStorage.getItem('ing_google_auth') === 'true') {
       // Clear only this app's Google Auth storage, including when offline.
