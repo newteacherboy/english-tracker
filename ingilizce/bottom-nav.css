@@ -24,7 +24,7 @@
 #bottomNavMobile#bottomNavMobile .bn-item:focus-visible{outline:3px solid #18a9ac!important;outline-offset:0}
 #bottomNavMobile#bottomNavMobile .bn-item[data-ekran="tab-sanaozel"],#bottomNavMobile#bottomNavMobile .bn-item[data-ekran="tab-profil"]{display:none!important}
 #bottomNavMobile#bottomNavMobile .bn-item.dm-level-locked::after{position:absolute;top:2px;right:3px;font-size:9px;line-height:11px}
-.dc-fullscreen-overlay,body #tab-dunyam.bd-kok.dc-fullscreen-overlay.active,body.kk-acik .seviye-harita-overlay{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+.dc-fullscreen-overlay,body.kk-acik .seviye-harita-overlay{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
 @media(max-width:360px){#bottomNavMobile#bottomNavMobile .bn-label{font-size:9px!important}#bottomNavMobile#bottomNavMobile .bn-icon{width:34px!important;height:32px!important}}
 @media(min-width:400px){#bottomNavMobile#bottomNavMobile .bn-label{font-size:11px!important}#bottomNavMobile#bottomNavMobile .bn-icon{width:40px!important;height:36px!important}}
 @media(min-width:769px){#bottomNavMobile#bottomNavMobile.bottom-nav-mobile{left:50%!important;right:auto!important;transform:translateX(-50%)!important;max-width:640px!important}}
@@ -47,9 +47,9 @@ body:has(#rtProfileBackdrop) #bottomNavMobile#bottomNavMobile{z-index:2147483550
 #tab-dunya #dmParkurScroll:has(.rt-root){padding-bottom:0!important}
 
 /* Always draw the actual profile SVG above the old sticker atlas. */
-#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon{display:grid!important;place-items:center!important}
-#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon .dm-nav-art{display:none!important}
-#bottomNavMobile .bn-item[data-ekran="tab-dunyam"] .bn-icon img{display:block!important;position:relative!important;width:38px!important;height:38px!important;object-fit:contain!important;opacity:1!important;visibility:visible!important}
+#bottomNavMobile .bn-item[data-ekran="tab-profile-menu"] .bn-icon{display:grid!important;place-items:center!important}
+#bottomNavMobile .bn-item[data-ekran="tab-profile-menu"] .bn-icon .dm-nav-art{display:none!important}
+#bottomNavMobile .bn-item[data-ekran="tab-profile-menu"] .bn-icon img{display:block!important;position:relative!important;width:38px!important;height:38px!important;object-fit:contain!important;opacity:1!important;visibility:visible!important}
 
 .dm-teacher-chat-overlay{position:fixed;inset:0;z-index:2147483601;background:#192542aa;display:grid;place-items:center;padding:12px}
 .dm-teacher-chat{display:flex;flex-direction:column;width:min(100%,520px);height:min(76dvh,650px);border-radius:24px;background:#fff;overflow:hidden;box-shadow:0 20px 70px #15213955;font-family:Nunito,system-ui,sans-serif}

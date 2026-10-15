@@ -47,7 +47,7 @@
  }
  /* Contextual announcements: only active foreground time, never during questions/forms. */
  window.dmNudgeSystemActive=true;
- const destinations={ders:()=>window.dersCalisTamEkranAc?.(),aktiviteler:()=>window.aktivitelerTamEkranAc?.(),magaza:()=>window.magazaAc?.(),dolap:()=>window.benimDunyamAc?.('karakter'),ilerleme:()=>window.benimDunyamAc?.('istatistik'),basari:()=>window.benimDunyamAc?.('rozetler'),akis:()=>window.meduAkisAc?.(),sana:()=>window.sanaOzelTamEkranAc?.(),parkur:()=>window.dunyaAc?.()};
+ const destinations={ders:()=>window.dersCalisTamEkranAc?.(),aktiviteler:()=>window.aktivitelerTamEkranAc?.(),magaza:()=>window.magazaAc?.(),dolap:()=>window.dmDolabimAc?.(),ilerleme:()=>window.dmIlerlememAc?.(),basari:()=>window.dmBasarilarimAc?.(),akis:()=>window.meduAkisAc?.(),sana:()=>window.sanaOzelTamEkranAc?.(),parkur:()=>window.dunyaAc?.()};
  const MESSAGE_GROUPS={
   ders:[['Bir küçük tekrar, büyük bir adım!','Kaldığın konuyu tamamlayarak öğrenmeni pekiştir.'],['Bugün hangi adayı keşfedelim?','Dil bilgisi, kelime, iletişim ve telaffuz seni bekliyor.'],['Dinle, söyle, hatırla!','Örnek cümleleri dinleyip sesli tekrar etmeyi dene.'],['Yanlışlar yol gösterir','Zorlandığın konuya geri dönmek de ilerlemektir.'],['Bir konuyu yeniden keşfet','İlk öğrenme ve uygun günlük tekrar ödülleri farklıdır.']],
   aktiviteler:[['Oyunla tekrar zamanı!','Öğrendiğin kelimeleri farklı bir oyunda kullan.'],['Hafızanı çalıştıralım mı?','Bir kısa oyunla bildiklerini pekiştir.'],['Dinleme kasını güçlendir','Kulak Dedektifi ve cümle oyunlarını incele.'],['Bugün farklı bir oyun dene','Her oyunda başka bir becerini geliştirebilirsin.'],['Bir arkadaşınla öğren','İki kişilik oyunlarda davet gönderebilirsin.']],

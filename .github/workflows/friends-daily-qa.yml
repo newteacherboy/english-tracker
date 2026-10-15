@@ -3,17 +3,21 @@ on:
   pull_request:
     paths:
       - 'ingilizce/index.html'
-      - 'ingilizce/benim-dunyam.js'
+      - 'ingilizce/profile-sections.js'
       - 'ingilizce/friends-overflow-fix.css'
       - 'ingilizce/papi-guide-content.js'
       - 'tests/friends-daily-teacher-help.test.cjs'
+      - 'tests/world-retirement.test.cjs'
+      - 'ingilizce/profile-sections.css'
   push:
     paths:
       - 'ingilizce/index.html'
-      - 'ingilizce/benim-dunyam.js'
+      - 'ingilizce/profile-sections.js'
       - 'ingilizce/friends-overflow-fix.css'
       - 'ingilizce/papi-guide-content.js'
       - 'tests/friends-daily-teacher-help.test.cjs'
+      - 'tests/world-retirement.test.cjs'
+      - 'ingilizce/profile-sections.css'
 permissions:
   contents: read
 jobs:
@@ -24,6 +28,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --check ingilizce/benim-dunyam.js
+      - run: node --check ingilizce/profile-sections.js
       - run: node --check ingilizce/papi-guide-content.js
-      - run: node --test tests/friends-daily-teacher-help.test.cjs
+      - run: node --test tests/friends-daily-teacher-help.test.cjs tests/world-retirement.test.cjs tests/daily-goals-first-load.test.cjs

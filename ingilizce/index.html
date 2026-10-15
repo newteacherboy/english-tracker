@@ -740,7 +740,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
 <button type="button" class="bn-item" data-ekran="tab-aktiviteler" onclick="aktivitelerTamEkranAc()" aria-label="Oyunlar"><span class="bn-icon"><span class="dm-nav-art" aria-hidden="true" style="background-position:100% 0%"></span></span><span class="bn-label">Oyunlar</span></button>
 <button type="button" class="bn-item" data-ekran="tab-derscalis" onclick="dersCalisTamEkranAc()" aria-label="Ders Çalış"><span class="bn-icon"><span class="dm-nav-art" aria-hidden="true" style="background-position:0% 100%"></span></span><span class="bn-label">Ders Çalış</span></button>
 <button type="button" class="bn-item" data-ekran="tab-magaza" onclick="magazaAc()" aria-label="Mağaza"><span class="bn-icon"><span class="dm-nav-art" aria-hidden="true" style="background-position:50% 100%"></span></span><span class="bn-label">Mağaza</span></button>
-<button type="button" class="bn-item" data-ekran="tab-dunyam" onclick="benimDunyamAc()" aria-label="Benim Dünyam"><span class="bn-icon"><span class="dm-nav-art" aria-hidden="true" style="background-position:100% 100%"></span></span><span class="bn-label">Benim Dünyam</span></button>
+<button type="button" class="bn-item" data-ekran="tab-profile-menu" onclick="dmProfileMenuAc()" aria-label="Profil"><span class="bn-icon"><span class="dm-nav-art" aria-hidden="true" style="background-position:100% 100%"></span></span><span class="bn-label">Profil</span></button>
 </div>
                 <div id="tab-ozet" class="tab-content">
                     <div class="rapor-teacher-banner" id="raporTeacherBanner" style="display:none;">
@@ -21784,7 +21784,7 @@ window.ocEnerjiHarca = async function (n) {
       olay: 'zk'
     }
   ];
-  window.dmGorevHavuz = GOREV_HAVUZ; /* Benim Dünyam görev listesini buradan okur */
+  window.dmGorevHavuz = GOREV_HAVUZ; /* Günlük görevlerin ortak verisi */
 
 
   function tohum(str) {
@@ -21798,7 +21798,7 @@ window.ocEnerjiHarca = async function (n) {
   }
 
 
- window.dmGunGorevleri = () => gunGorevleri(); /* Benim Dünyam için */
+ window.dmGunGorevleri = () => gunGorevleri(); /* Günlük görev ekranı için */
  function gunGorevleri() {
 
   if (!yoVar() || !window.dmProgression?.allowed('gunluk_gorev')) return null;
@@ -25717,7 +25717,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   }
   async function kartCiz() {
     const kisi = ogrenciAdi();
-    const p = $('bdOdevler') || $('soPanel'); if (!p) return;
+    const p = $('soPanel'); if (!p) return;
     let k = $('odoKart');
     if (!k) { k = document.createElement('div'); k.id = 'odoKart'; k.className = 'odo-kart'; k.hidden = true; p.prepend(k); }
     else if (k.parentElement !== p) p.prepend(k);
@@ -25742,8 +25742,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   window.dmOdevKartCiz = kartCiz;
   let sonGor = false;
   setInterval(() => {
-    const yeni = $('tab-dunyam')?.classList.contains('active') && document.querySelector('#tab-dunyam [data-panel="sanaozel"]')?.hidden === false;
-    const eski = $('tab-sanaozel'), gor = !!(yeni || (eski && eski.getClientRects().length && getComputedStyle(eski).display !== 'none'));
+    const eski = $('tab-sanaozel'), gor = !!(eski && eski.classList.contains('active') && eski.getClientRects().length && getComputedStyle(eski).display !== 'none');
     if (gor) {
       if (!sonGor || !$('odoKart') || Date.now() - odevZaman >= 30000) kartCiz();
       odevSayaclariniGuncelle();
@@ -25774,7 +25773,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     /* Ödevden açılan konu ve oyun seviye kilidine takılmaz (öğretmen bilerek verdi) */
     window.__odevAcilisBitis = Date.now() + 8000;
     if (typeof sanaOzelTamEkranKapat === 'function') try { sanaOzelTamEkranKapat(); } catch (e) {}
-    $('tab-dunyam')?.classList.remove('active');
     if (o.tur === 'ders') {
       let v = o.veri || {};
       if (typeof dersCalisTamEkranAc === 'function') dersCalisTamEkranAc();
@@ -26450,7 +26448,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="ders-vadi.css?v=6"><script defer src="ders-vadi.js?v=4"></script>
 <link rel="stylesheet" href="ders-test.css?v=2"><script defer src="ders-test.js?v=3"></script>
 <link rel="stylesheet" href="papi-cards.css?v=2">
-<link rel="stylesheet" href="benim-dunyam.css?v=20261011-design1-final"><script defer src="benim-dunyam.js?v=20261015-daily-state-2"></script>
+<link rel="stylesheet" href="profile-sections.css?v=20261015-1"><script defer src="profile-sections.js?v=20261015-1"></script>
 <link rel="stylesheet" href="meteor.css?v=20261012-independent">
 <link rel="stylesheet" href="word-wheel.css?v=20261012-dual-wheel">
 <link rel="stylesheet" href="oyna-v2.css?v=20261014-map-picker-1">

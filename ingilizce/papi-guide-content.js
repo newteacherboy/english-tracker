@@ -8,8 +8,8 @@
       "title": "Yeni özellikler ve destek",
       "context": "ana",
       "selector": null,
-      "text": "Günün 3 Görevi ve haftalık hedef için Benim Dünyam > Sana Özel bölümüne bak. Oyunlar alanında Harf Adası, Harf Bahçesi, Papi Kartları, Meteor Düellosu ve Kelime Çarkı bulunur. Karakterini tasarlayıp mağazadan kıyafet alabilirsin. XP ve altın oyun sonuç ekranında görünür. Bir bölüm boşsa internet bağlantını kontrol et; Günün 3 Görevi hesap verisi geldikten sonra otomatik yenilenir. Profilindeki ⇄ düğmesiyle Google hesabını değiştirebilirsin; mevcut hesap yeni hesap doğrulanana kadar korunur. Şifreyle giriş yapılan hesaplar için standart güvenli giriş yöntemi geçerlidir. Sorun sürerse öğretmenine bildir.",
-      "html": "<p><b>Günün 3 Görevi:</b> Benim Dünyam &gt; Sana Özel bölümünde.</p><p><b>Yeni oyunlar:</b> Harf Adası, Harf Bahçesi, Papi Kartları, Meteor Düellosu ve Kelime Çarkı.</p><p><b>Karakter:</b> Tipimi Tasarla ve Alışveriş Yap ile görünümünü kişiselleştirebilirsin.</p><p><b>Hesap değiştir:</b> Profilindeki ⇄ düğmesini kullanarak başka bir Google hesabı seçebilirsin. Yeni giriş doğrulanana kadar önceki öğrenci kaydın korunur.</p><p><b>Sorun mu var?</b> Günlük görevler otomatik yenilenir. Hâlâ boş ekran veya eksik ödül varsa öğretmenine oyun adını, bölümü ve zamanı bildir.</p>"
+      "text": "Günün 3 Görevi ve haftalık hedef için Profil > Günlük Görevler bölümüne bak. Oyunlar alanında Harf Adası, Harf Bahçesi, Papi Kartları, Meteor Düellosu ve Kelime Çarkı bulunur. Karakterini tasarlayıp mağazadan kıyafet alabilirsin. XP ve altın oyun sonuç ekranında görünür. Bir bölüm boşsa internet bağlantını kontrol et; Günün 3 Görevi hesap verisi geldikten sonra otomatik yenilenir. Profilindeki ⇄ düğmesiyle Google hesabını değiştirebilirsin; mevcut hesap yeni hesap doğrulanana kadar korunur. Şifreyle giriş yapılan hesaplar için standart güvenli giriş yöntemi geçerlidir. Sorun sürerse öğretmenine bildir.",
+      "html": "<p><b>Günün 3 Görevi:</b> Profil &gt; Günlük Görevler bölümünde.</p><p><b>Yeni oyunlar:</b> Harf Adası, Harf Bahçesi, Papi Kartları, Meteor Düellosu ve Kelime Çarkı.</p><p><b>Karakter:</b> Tipimi Tasarla ve Alışveriş Yap ile görünümünü kişiselleştirebilirsin.</p><p><b>Hesap değiştir:</b> Profilindeki ⇄ düğmesini kullanarak başka bir Google hesabı seçebilirsin. Yeni giriş doğrulanana kadar önceki öğrenci kaydın korunur.</p><p><b>Sorun mu var?</b> Günlük görevler otomatik yenilenir. Hâlâ boş ekran veya eksik ödül varsa öğretmenine oyun adını, bölümü ve zamanı bildir.</p>"
     },
     {
       "id": "welcome",
@@ -17,8 +17,8 @@
       "title": "Papi ile başlangıç",
       "context": "ana",
       "selector": null,
-      "text": "Ben Papi! Alt menüde soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Benim Dünyam bulunur. En soldaki Oyna düğmesi parkuru açar. İleri ve Geri ile gezebilir, Geç ile çıkabilir, Yardım’dan istediğin turu yeniden açabilirsin.",
-      "html": "<p>Ben Papi! Alt menüde soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Benim Dünyam bulunur. En soldaki Oyna düğmesi parkuru açar. İleri ve Geri ile gezebilir, Geç ile çıkabilir, Yardım’dan istediğin turu yeniden açabilirsin.</p>"
+      "text": "Ben Papi! Alt menüde soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Profil bulunur. En soldaki Oyna düğmesi parkuru açar. İleri ve Geri ile gezebilir, Geç ile çıkabilir, Yardım’dan istediğin turu yeniden açabilirsin.",
+      "html": "<p>Ben Papi! Alt menüde soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Profil bulunur. En soldaki Oyna düğmesi parkuru açar. İleri ve Geri ile gezebilir, Geç ile çıkabilir, Yardım’dan istediğin turu yeniden açabilirsin.</p>"
     },
     {
       "id": "navigation",
@@ -26,8 +26,8 @@
       "title": "Bölümler ve alt menü",
       "context": "ana",
       "selector": "#dcBottomNav, #bottomNavMobile",
-      "text": "Alt menüdeki altı düğme soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Benim Dünyam’dır. En soldaki Oyna düğmesi parkuru açar. Mağaza’nın kendi alt menü düğmesi vardır. Parkur & MeduPro üst seçicisinden diğer öğrenme yollarına geçebilirsin. Kilit işareti gereken seviyeyi gösterir.",
-      "html": "<p>Alt menüdeki altı düğme soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Benim Dünyam’dır. En soldaki Oyna düğmesi parkuru açar. Mağaza’nın kendi alt menü düğmesi vardır. Parkur & MeduPro üst seçicisinden diğer öğrenme yollarına geçebilirsin. Kilit işareti gereken seviyeyi gösterir.</p>"
+      "text": "Alt menüdeki altı düğme soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Profil’dır. En soldaki Oyna düğmesi parkuru açar. Mağaza’nın kendi alt menü düğmesi vardır. Parkur & MeduPro üst seçicisinden diğer öğrenme yollarına geçebilirsin. Kilit işareti gereken seviyeyi gösterir.",
+      "html": "<p>Alt menüdeki altı düğme soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Profil’dır. En soldaki Oyna düğmesi parkuru açar. Mağaza’nın kendi alt menü düğmesi vardır. Parkur & MeduPro üst seçicisinden diğer öğrenme yollarına geçebilirsin. Kilit işareti gereken seviyeyi gösterir.</p>"
     },
     {
       "id": "mainpath",
@@ -512,12 +512,12 @@
       [
         null,
         "Papi ile başlangıç",
-        "Ben Papi! Alt menüde soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Benim Dünyam bulunur. En soldaki Oyna düğmesi parkuru açar. İleri ve Geri ile gezebilir, Geç ile çıkabilir, Yardım’dan istediğin turu yeniden açabilirsin."
+        "Ben Papi! Alt menüde soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Profil bulunur. En soldaki Oyna düğmesi parkuru açar. İleri ve Geri ile gezebilir, Geç ile çıkabilir, Yardım’dan istediğin turu yeniden açabilirsin."
       ],
       [
         "#dcBottomNav, #bottomNavMobile",
         "Bölümler ve alt menü",
-        "Alt menüdeki altı düğme soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Benim Dünyam’dır. En soldaki Oyna düğmesi parkuru açar. Mağaza’nın kendi alt menü düğmesi vardır. Parkur & MeduPro üst seçicisinden diğer öğrenme yollarına geçebilirsin. Kilit işareti gereken seviyeyi gösterir."
+        "Alt menüdeki altı düğme soldan sağa Oyna, Arkadaşlar, Oyunlar, Ders Çalış, Mağaza ve Profil’dır. En soldaki Oyna düğmesi parkuru açar. Mağaza’nın kendi alt menü düğmesi vardır. Parkur & MeduPro üst seçicisinden diğer öğrenme yollarına geçebilirsin. Kilit işareti gereken seviyeyi gösterir."
       ],
       [
         ".bc-d.simdi",

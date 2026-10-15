@@ -23,14 +23,12 @@ body .dm-unified-wallet button:active{transform:translateY(1px)}
 }
 body .dm-has-wallet>:is(h1,h2){flex:1 1 100%!important;font-size:clamp(21px,5.5vw,30px)!important;line-height:1.2!important;margin:0!important;min-width:0}
 body #tab-dunya .rt-top{padding:4px 2px 10px!important}
-body #tab-dunyam .bd-kart.dm-has-wallet{flex-basis:auto!important;min-height:0!important;margin-inline:0!important;padding-inline:2px!important}
-body #tab-dunyam .bd-kart.dm-has-wallet .bw-profile-main{flex:1;min-width:0}
 body #tab-meduakis:not(.fr-home-view) .akis-baslik.dm-has-wallet{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
 body #tab-meduakis:not(.fr-home-view) .akis-baslik.dm-has-wallet>.dm-unified-wallet{grid-column:1/-1!important;grid-row:auto!important}
 body #tab-aktiviteler .gg-brand.dm-has-wallet>b{display:none!important}
 body .gg-brand.dm-has-wallet>span,body .ds-header.dm-has-wallet>.ds-wallet,body #tab-dunya [data-dm-wallet],body #tab-dunya .dm-parkur-wallet{display:none!important}
 body:has(.dm-unified-wallet) #ybEnerji{display:none!important}
-body.dm-guest-mode :is(#tab-dunya,#tab-meduakis,#tab-aktiviteler,#tab-derscalis,#tab-magaza,#tab-dunyam).dc-fullscreen-overlay.active{top:44px!important;height:calc(100dvh - 44px)!important}
+body.dm-guest-mode :is(#tab-dunya,#tab-meduakis,#tab-aktiviteler,#tab-derscalis,#tab-magaza,#tab-ilerlemem,#tab-basarilarim,#tab-dolabim).dc-fullscreen-overlay.active{top:44px!important;height:calc(100dvh - 44px)!important}
 html[data-dm-theme=night] body .dm-unified-wallet.dm-papi-wallet>button{background:linear-gradient(145deg,#263144,#202b3e)!important;border-color:#59627b!important;color:#f3f8ff!important;-webkit-text-fill-color:#f3f8ff!important;box-shadow:0 2px 0 #0c172580!important}
 html[data-dm-theme=night] body .dm-unified-wallet.dm-papi-wallet>[data-pw=xp]{background:linear-gradient(145deg,#39304e,#2e2844)!important;border-color:#7c659f!important}
 html[data-dm-theme=night] body .dm-unified-wallet.dm-papi-wallet>[data-pw=time]{background:linear-gradient(145deg,#213c4b,#203344)!important;border-color:#507c89!important}
