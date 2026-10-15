@@ -110,3 +110,9 @@ body.dm-profile-open #tab-profil{bottom:calc(84px + env(safe-area-inset-bottom))
 body.dm-profile-open #tab-profil .header-tool-btn{flex-shrink:0!important}
 body.dm-profile-open #tab-profil .header-tools-row{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:6px!important}
 body.dm-profile-open #tab-profil #dmForestActions .header-btn{font-size:clamp(10px,3vw,12px)!important;padding:10px 4px!important;overflow-wrap:anywhere;min-height:44px}
+
+/* Always-visible navigation for every discovery and registration screen. */
+#dmDiscovery .fd-top .fd-header-login{margin-left:auto;flex-shrink:0;border:1px solid #13a6aa;background:#fffefaee;border-radius:16px;padding:8px 12px;min-height:40px;color:#095968;font-size:13px;font-weight:850;cursor:pointer;box-shadow:0 2px 5px #143e6210}
+#dmDiscovery .fd-top .fd-back{width:42px;min-width:42px;min-height:42px;border-radius:14px;background:#fffefaee;font-weight:900;color:#103c56}
+#dmDiscovery .fd-top .fd-progress{min-width:16px}
+@media(max-width:360px){#dmDiscovery .fd-top{gap:7px}#dmDiscovery .fd-top .fd-header-login{font-size:12px;padding:7px 9px}}
