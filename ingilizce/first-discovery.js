@@ -28,7 +28,7 @@
  let focusBefore=null;const inerted=new Map();
  function show(content,actions,progress=0,cls='',back=true){mount();if(root.hidden)focusBefore=document.activeElement;
   for(const node of document.body.children)if(node!==root&&!['SCRIPT','LINK','STYLE'].includes(node.tagName)&&!inerted.has(node)){inerted.set(node,node.inert);node.inert=true;}
-  root.hidden=false;document.body.classList.add('dm-discovery-open');root.innerHTML=`<section class="fd-screen ${cls}"><header class="fd-top"><button type="button" class="fd-back" data-action="back" aria-label="Geri">←</button>${progress?`<div class="fd-progress"><i style="width:${progress}%"></i></div>`:''}${screen==='question'?`<span class="fd-step">${question+1} / 6</span>`:''}<button type="button" class="fd-header-login" data-action="login">Hesabım Var</button></header><form class="fd-content" novalidate>${content}<div class="fd-error" role="status" aria-live="polite"></div></form><footer class="fd-actions">${actions}</footer></section>`;
+  root.hidden=false;document.body.classList.add('dm-discovery-open');root.innerHTML=`<section class="fd-screen ${cls}"><header class="fd-top">${screen==='welcome'?'':"<button type=\"button\" class=\"fd-back\" data-action=\"back\" aria-label=\"Geri\">←</button>"}${progress?`<div class="fd-progress"><i style="width:${progress}%"></i></div>`:''}${screen==='question'?`<span class="fd-step">${question+1} / 6</span>`:''}${screen==='welcome'?'':"<button type=\"button\" class=\"fd-header-login\" data-action=\"login\">Hesabım Var</button>"}</header><form class="fd-content" novalidate>${content}<div class="fd-error" role="status" aria-live="polite"></div></form><footer class="fd-actions">${actions}</footer></section>`;
   root.querySelector('h1')?.setAttribute('tabindex','-1');if(!root.querySelector('h1')){const section=root.querySelector('section');section.tabIndex=-1;section.focus({preventScroll:true});}else root.querySelector('h1').focus({preventScroll:true});
  }
  function hide(){if(!root)return;root.hidden=true;document.body.classList.remove('dm-discovery-open');for(const [node,value]of inerted){if(node.isConnected)node.inert=value;}inerted.clear();focusBefore?.isConnected&&focusBefore.focus?.({preventScroll:true});}
@@ -37,7 +37,37 @@
  function lock(value){busy=value;root.querySelectorAll('button').forEach(b=>b.disabled=value);}
  function welcome(){screen='welcome';show(image('papi-merhaba')+'<div class="fd-wordmark"><span>Diji-</span>Medu</div>',button('Üye Ol','begin')+button('Hesabım Var','login','secondary'),0,'fd-welcome',false);}
  const navigate=url=>ctx.navigate?ctx.navigate(url):location.assign(url);
- function login(){hide();document.documentElement.classList.remove('dm-first-entry');if(ctx.guest){navigate('./?giris=1');return;}$('login-container').style.display='block';document.body.classList.add('dm-discovery-login');let back=$('dmDiscoveryLoginBack');if(!back){back=document.createElement('button');back.id='dmDiscoveryLoginBack';back.type='button';back.className='fd-login-back';back.textContent='← Geri';back.onclick=()=>{document.body.classList.remove('dm-discovery-login');$('login-container').style.display='none';welcome();};$('login-container').prepend(back);}}
+ function login(){hide();document.documentElement.classList.remove('dm-first-entry');if(ctx.guest){navigate('./?giris=1');return;}$('login-container').style.display='block';document.body.classList.add('dm-discovery-login');let back=$('dmDiscoveryLoginBack');if(!back){back=document.createElement('button');back.id='dmDiscoveryLoginBack';back.type='button';back.className='fd-login-back';back.textContent='← Geri';back.onclick=()=>{document.body.classList.remove('dm-discovery-login');$('login-container').style.display='none';welcome();};$('login-container').prepend(back);}ensureGoogleLogin();}
+ function ensureGoogleLogin(){
+  const panel=$('login-container'),form=$('loginForm');if(!panel||!form)return;
+  let fallback=$('dmDiscoveryGoogleFallback');
+  const original=panel.querySelector('#dmGoogleLoginArea .dm-google-login');
+  if(original&&original.getClientRects().length&&!original.closest('[hidden]')){fallback?.remove();return;}
+  if(fallback)return;
+  fallback=document.createElement('button');
+  fallback.id='dmDiscoveryGoogleFallback';fallback.type='button';
+  fallback.className='fd-google fd-google-login-fallback';
+  fallback.innerHTML='<img src="discovery-assets/google-g.svg" alt="" width="22" height="22"> Google ile Giriş Yap';
+  fallback.style.cssText='display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;margin-top:16px;border:1px solid #dadce0;border-radius:12px;background:#fff;color:#202124;font-weight:700;font-size:15px;cursor:pointer';
+  fallback.onclick=async()=>{
+    const configured=window.supabaseClient?.auth;
+    if(!configured){fallback.textContent='Google bağlantısı şu an yüklenemedi. Sayfayı yenileyin.';return;}
+    if(window.dmAndroidUygulama){fallback.textContent='Bu sürümde Google girişi kullanılamıyor.';return;}
+    fallback.disabled=true;
+    try{
+      const callback=new URL(location.pathname,location.origin);
+      callback.searchParams.set('kesifKayit','google');
+      ctx.session.setItem('dm_discovery_google','1');
+      const {error:oauthError}=await window.supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:callback.href,queryParams:{prompt:'select_account'}}});
+      if(oauthError)throw oauthError;
+    }catch(e){
+      ctx.session.removeItem('dm_discovery_google');
+      fallback.disabled=false;
+      fallback.textContent='Google girişi açılamadı. Tekrar dene.';
+    }
+  };
+  form.after(fallback);
+ }
  const navIcons=['M3 11 12 3l9 8v10h-6v-7H9v7H3z','M7 7h10c6 0 7 13 3 13l-4-4H8l-4 4C0 20 1 7 7 7m0 4v6m-3-3h6m7-2h1m1 3h1','M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20m-9 10h18M12 2c5 6 5 14 0 20C7 16 7 8 12 2','M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10M3 22v-3c0-7 18-7 18 0v3z'];
  function nav(){return '<nav class="fd-nav" aria-label="Uygulama sekmeleri">'+['Oyna','Oyunlar','Dünyam','Profil'].map((n,i)=>`<button type="button" data-action="tab" data-tab="${i}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${navIcons[i]}"/></svg>${n}</button>`).join('')+'</nav>';}
  function showHome(){step=0;renderRegistration();}
