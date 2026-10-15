@@ -28,14 +28,14 @@
  let focusBefore=null;const inerted=new Map();
  function show(content,actions,progress=0,cls='',back=true){mount();if(root.hidden)focusBefore=document.activeElement;
   for(const node of document.body.children)if(node!==root&&!['SCRIPT','LINK','STYLE'].includes(node.tagName)&&!inerted.has(node)){inerted.set(node,node.inert);node.inert=true;}
-  root.hidden=false;document.body.classList.add('dm-discovery-open');root.innerHTML=`<section class="fd-screen ${cls}"><header class="fd-top">${back?'<button type="button" class="fd-back" data-action="back" aria-label="Geri">←</button>':''}${progress?`<div class="fd-progress"><i style="width:${progress}%"></i></div>`:''}${screen==='question'?`<span class="fd-step">${question+1} / 6</span>`:''}</header><form class="fd-content" novalidate>${content}<div class="fd-error" role="status" aria-live="polite"></div></form><footer class="fd-actions">${actions}</footer></section>`;
+  root.hidden=false;document.body.classList.add('dm-discovery-open');root.innerHTML=`<section class="fd-screen ${cls}"><header class="fd-top"><button type="button" class="fd-back" data-action="back" aria-label="Geri">←</button>${progress?`<div class="fd-progress"><i style="width:${progress}%"></i></div>`:''}${screen==='question'?`<span class="fd-step">${question+1} / 6</span>`:''}<button type="button" class="fd-header-login" data-action="login">Hesabım Var</button></header><form class="fd-content" novalidate>${content}<div class="fd-error" role="status" aria-live="polite"></div></form><footer class="fd-actions">${actions}</footer></section>`;
   root.querySelector('h1')?.setAttribute('tabindex','-1');if(!root.querySelector('h1')){const section=root.querySelector('section');section.tabIndex=-1;section.focus({preventScroll:true});}else root.querySelector('h1').focus({preventScroll:true});
  }
  function hide(){if(!root)return;root.hidden=true;document.body.classList.remove('dm-discovery-open');for(const [node,value]of inerted){if(node.isConnected)node.inert=value;}inerted.clear();focusBefore?.isConnected&&focusBefore.focus?.({preventScroll:true});}
  const button=(text,action='next',kind='primary')=>`<button type="button" class="fd-${kind}" data-action="${action}">${text}</button>`;
  function error(message){const node=root.querySelector('.fd-error');if(node){node.textContent=message;node.scrollIntoView?.({block:'nearest'});}}
  function lock(value){busy=value;root.querySelectorAll('button').forEach(b=>b.disabled=value);}
- function welcome(){screen='welcome';show(image('papi-merhaba')+'<div class="fd-wordmark"><span>Diji-</span>Medu</div>',button('▶ Başla','begin')+button('Hesabım var','login','account'),0,'fd-welcome',false);}
+ function welcome(){screen='welcome';show(image('papi-merhaba')+'<div class="fd-wordmark"><span>Diji-</span>Medu</div>',button('▶ Başla','begin'),0,'fd-welcome',false);}
  const navigate=url=>ctx.navigate?ctx.navigate(url):location.assign(url);
  function login(){hide();document.documentElement.classList.remove('dm-first-entry');if(ctx.guest){navigate('./?giris=1');return;}$('login-container').style.display='block';document.body.classList.add('dm-discovery-login');let back=$('dmDiscoveryLoginBack');if(!back){back=document.createElement('button');back.id='dmDiscoveryLoginBack';back.type='button';back.className='fd-login-back';back.textContent='← Geri';back.onclick=()=>{document.body.classList.remove('dm-discovery-login');$('login-container').style.display='none';welcome();};$('login-container').prepend(back);}}
  const navIcons=['M3 11 12 3l9 8v10h-6v-7H9v7H3z','M7 7h10c6 0 7 13 3 13l-4-4H8l-4 4C0 20 1 7 7 7m0 4v6m-3-3h6m7-2h1m1 3h1','M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20m-9 10h18M12 2c5 6 5 14 0 20C7 16 7 8 12 2','M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10M3 22v-3c0-7 18-7 18 0v3z'];
@@ -99,7 +99,7 @@
   else if(a==='google')google();else if(a==='verify')checkVerification();else if(a==='resend')resend();else if(a==='success'){password='';success();}else if(a==='enter')enter();
   else if(a==='teacher-done'){ctx.session.removeItem(DRAFT);login();}
   else if(a==='tab')openTab(Number(el.dataset.tab));else if(a==='explore')invite();
-  else if(a==='back'){if(screen==='register'){collect();if(step>0){if(step===4&&!googleSession)password=$('fdPassword')?.value||password;step--;renderRegistration();}else invite();}else if(screen==='question')showHome();}
+  else if(a==='back'){if(screen==='register'){collect();if(step>0){if(step===4&&!googleSession)password=$('fdPassword')?.value||password;step--;renderRegistration();}else invite();}else if(screen==='question')showHome();else if(screen==='invite')welcome();else if(screen==='welcome')login();else if(screen==='verification')renderRegistration();else if(screen==='success')login();else welcome();}
  }
  function activityOpen(){if(screen==='question'||screen==='register'||screen==='verification'||screen==='success')return true;if(typeof OC!=='undefined'&&OC?.aktif)return true;
   return !![...document.querySelectorAll('#genelSonucOverlay.acik,#dmResultOverlay,.bz-oyun,.kp-oyun,.bs-perde,.hb-overlay,.gs-perde')].find(el=>el.getClientRects().length&&getComputedStyle(el).display!=='none');}
