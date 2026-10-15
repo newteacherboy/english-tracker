@@ -10,3 +10,7 @@
 }
 #tab-meduakis :is(.ma-arkadaslar,.ma-arkadas-listesi,.ma-friends,.ma-takipciler,.ma-avatarlar,.fr-friends,.fr-friend-list) > * { flex-shrink:0; }
 #tab-meduakis img { max-width:100%; }
+
+/* Real Friends home strip: fixed card widths instead of 1fr per added friend. */
+#tab-meduakis .fr-people{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(68px,18vw,86px);justify-content:start;overflow-x:auto;overflow-y:hidden;max-width:100%;touch-action:pan-x;}
+#tab-meduakis .fr-home,#tab-meduakis .fr-card{min-width:0;max-width:100%;}
