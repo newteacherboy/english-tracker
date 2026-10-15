@@ -47,21 +47,44 @@
   registration.innerHTML = `
     <div class="dm-verified">✓ Google hesabın doğrulandı.</div>
     <p class="dm-form-intro">Öğrenci ve veli bilgilerini tamamla.</p>
-    <h3 class="dm-section">ÖĞRENCİ BİLGİLERİ</h3>
+    <div class="dm-register-step" data-register-step="0"><h3 class="dm-section">1 / 3 · ÖĞRENCİ BİLGİLERİ</h3>
     <div class="form-group"><label for="googleYeniKullanici">Kullanıcı adı (takma ad)</label><input id="googleYeniKullanici" required minlength="3" maxlength="20" pattern="[A-Za-z0-9çğıöşüÇĞİÖŞÜ._\\-]{3,20}" autocapitalize="off" spellcheck="false" placeholder="ör. yildiz42" title="3-20 karakter, boşluksuz; harf, rakam, nokta, alt çizgi ya da tire"><small style="display:block;font-size:11px;color:#64748b;margin-top:3px">Liglerde herkes bunu görür. Gerçek adını yazma.</small></div><div class="form-group"><label for="googleYeniAd">Öğrencinin adı soyadı</label><input id="googleYeniAd" required minlength="3" maxlength="60" autocomplete="name" placeholder="Ad ve soyad"><small style="display:block;font-size:11px;color:#64748b;margin-top:3px">Sadece öğretmen görür.</small></div>
     <div class="dm-field-row">
       <div class="form-group"><label for="googleYeniSinif">Sınıf</label><select id="googleYeniSinif" required><option value="">Seçin</option>${Array.from({length:8}, (_, i) => `<option value="${i+1}">${i+1}. sınıf</option>`).join('')}</select></div>
       <div class="form-group"><label for="googleYeniSube">Şube</label><input id="googleYeniSube" required maxlength="10" placeholder="Örn: A"></div>
     </div>
-    <h3 class="dm-section">VELİ BİLGİLERİ</h3>
+    </div><div class="dm-register-step" data-register-step="1" hidden><h3 class="dm-section">2 / 3 · VELİ BİLGİLERİ</h3>
     <div class="form-group"><label for="googleYeniTelefon">Veli cep telefonu</label><input id="googleYeniTelefon" type="tel" required placeholder="05XX XXX XX XX" autocomplete="tel"></div>
     <div class="form-group"><label for="googleYeniEmail">Veli e-posta adresi</label><input id="googleYeniEmail" type="email" required maxlength="120" autocomplete="email" placeholder="ornek@email.com"></div>
     <div class="form-group"><label for="googleYeniKod">Öğretmen kodu <span class="dm-optional">İsteğe bağlı</span></label><input id="googleYeniKod" maxlength="10" placeholder="Varsa öğretmeninin kodu"></div>
-    <label class="dm-consent"><input id="googleYeniOnay" type="checkbox" required><span><a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası ve KVKK Aydınlatma Metni’ni</a> okudum ve bilgi edindim. <a href="kullanim-kosullari.html" target="_blank" rel="noopener">Kullanım koşullarını</a> kabul ediyorum. Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum.<small>Bu beyan genel açık rıza veya yurt dışı aktarım izni değildir.</small></span></label>
+    </div><div class="dm-register-step" data-register-step="2" hidden><h3 class="dm-section">3 / 3 · ONAY VE TAMAMLAMA</h3><label class="dm-consent"><input id="googleYeniOnay" type="checkbox" required><span><a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası ve KVKK Aydınlatma Metni’ni</a> okudum ve bilgi edindim. <a href="kullanim-kosullari.html" target="_blank" rel="noopener">Kullanım koşullarını</a> kabul ediyorum. Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum.<small>Bu beyan genel açık rıza veya yurt dışı aktarım izni değildir.</small></span></label>
     <label class="dm-consent"><input id="googleYeniPapiMail" type="checkbox"><span>🦜 Papi'den İngilizce ilerleme özetleri, haftalık lig haberleri ve öğrenme hatırlatmaları almak istiyorum.<small>İsteğe bağlıdır. Öğrenci ve veli e-posta adresleri ayrıca doğrulanır; istediğimiz zaman abonelikten çıkabiliriz.</small></span></label>
-    <button id="googleYeniGonder" type="submit" class="btn-giris">Kaydı tamamla ve giriş yap</button>
+    </div><div class="dm-register-navigation"><button type="button" id="googleYeniGeri" class="dm-link-button">← Geri</button><button type="button" id="googleYeniIleri" class="btn-giris">İleri →</button><button id="googleYeniGonder" type="submit" class="btn-giris" hidden>Kaydı tamamla ve giriş yap</button></div>
     <p id="googleYeniMesaj" role="status" style="font-size:12px"></p>
-    <button id="googleMevcutHesap" type="button" class="dm-link-button dm-existing-account">Zaten hesabım var, Google ile bağla</button>`;
+    <button id="googleMevcutHesap" type="button" class="dm-link-button dm-existing-account">Hesabım Var · Giriş Yap</button>`;
+  // One form, three accessible stages. Values persist when navigating back.
+  const registrationSteps = [...registration.querySelectorAll('[data-register-step]')];
+  let registrationStep = 0;
+  function displayRegistrationStep(index) {
+    registrationStep = Math.max(0, Math.min(index, registrationSteps.length - 1));
+    registrationSteps.forEach((step, i) => {
+      step.hidden = i !== registrationStep;
+      step.querySelectorAll('input,select,textarea').forEach(input => { input.disabled = i !== registrationStep; });
+    });
+    $('googleYeniGeri').hidden = registrationStep === 0;
+    $('googleYeniIleri').hidden = registrationStep === registrationSteps.length - 1;
+    $('googleYeniGonder').hidden = registrationStep !== registrationSteps.length - 1;
+    $('googleYeniMesaj').textContent = '';
+  }
+  $('googleYeniGeri').onclick = () => { if (!busy) displayRegistrationStep(registrationStep - 1); };
+  $('googleYeniIleri').onclick = () => {
+    if (busy) return;
+    const fields = [...registrationSteps[registrationStep].querySelectorAll('input,select,textarea')];
+    if (fields.some(field => !field.reportValidity())) return;
+    displayRegistrationStep(registrationStep + 1);
+    registrationSteps[registrationStep].querySelector('input:not([type="checkbox"]),select')?.focus();
+  };
+  displayRegistrationStep(0);
   // The new-account helper stays detached; Google return opens the form directly.
   area.append(button, registration, cancel);
 
@@ -195,6 +218,7 @@
     actions.hidden = true;
     heading.textContent = 'Kaydını tamamla';
     registration.reset();
+    displayRegistrationStep(0);
     subtitle.textContent = 'Google ile yeni öğrenci kaydı';
     $('mesaj').textContent = '';
     const { data } = await supabaseClient.auth.getSession();
@@ -207,6 +231,7 @@
   $('googleMevcutHesap').onclick = function () {
     linking = true;
     registration.hidden = true;
+    displayRegistrationStep(0);
     $('loginForm').hidden = false;
     heading.textContent = 'Hesabını bağla';
     subtitle.textContent = 'Mevcut öğrenci kullanıcı adını ve şifreni bir kez yaz.';
