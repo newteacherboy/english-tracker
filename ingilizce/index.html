@@ -20287,8 +20287,8 @@ window.OC = (function () {
         if(owner!==ogrenci())return;
         const d=await enerjiKazan(5,'gunluk');
         if(!d?.ok||owner!==ogrenci())return;
-        localStorage.setItem(key,bugun);
-        if(d.eklenen>0&&typeof odulGoster==='function')odulGoster({ikon:d.eklenen>=10?'🎁':'🌞',baslik:d.eklenen>=10?'7. gün hediyesi!':'Günaydın! Günlük hediyen',alt:`+${d.eklenen} ⚡ enerji`,enerji:d.eklenen});
+        localStorage.setItem(key,d.day||bugun);
+        if(d.claimed===true&&d.eklenen>0&&typeof odulGoster==='function')odulGoster({ikon:d.eklenen>=10?'🎁':'🌞',baslik:d.eklenen>=10?'7. gün hediyesi!':'Günaydın! Günlük hediyen',alt:`+${d.eklenen} ⚡ enerji`,enerji:d.eklenen});
       }finally{dailyBonusPending.delete(owner);}
     },1500);
   };

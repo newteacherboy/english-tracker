@@ -2244,6 +2244,11 @@ async function handle(req: Request) {
   if (op === "enerjiDegistir") {
     const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
     let s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
+    if(String(body.sebep||'').toLowerCase()==='gunluk' && num(body.fark)>0){
+      const reward=await supabase.rpc('dm_daily_energy_bonus',{actor:s.id});
+      if(reward.error){console.error('daily energy claim',reward.error);return json({ok:false,mesaj:'Günlük hediye şu an alınamadı. Tekrar dene.'},503);}
+      return json(reward.data);
+    }
     s = await enerjiYenile(s);
     const hb = body.oyun === "harfbahcesi";
     let hbReason = "";
@@ -2406,7 +2411,7 @@ async function handle(req: Request) {
   if (op === "ekVeriKaydet") {
     const name = String(body.ogrenci || ""), key = temizMetin(body.anahtar, 60); const deny = await requireStudent(a, name); if (deny) return deny;
     /* [v4.6] Sunucunun kendi tuttuğu anahtarlara öğrenci yazamaz */
-    if (a?.role === "student" && ["yo_gunluk", "puan_gorulen"].includes(key)) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
+    if (a?.role === "student" && (["yo_gunluk", "puan_gorulen"].includes(key)||key.startsWith('energy_daily:'))) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
     if (a?.role === "teacher" && encName(name) === "teacher" && key === "yo") {
       let tv: any = null; try { tv = typeof body.deger === "string" ? JSON.parse(body.deger) : body.deger; } catch (_) { tv = null; }
       if (!tv || typeof tv !== "object") return json({ status: "error", message: "Geçersiz veri." }, 400);
