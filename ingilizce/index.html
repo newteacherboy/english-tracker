@@ -18466,6 +18466,13 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     setTimeout(()=>document.dispatchEvent(new Event('dm:login')),0);
     localStorage.setItem('ing_oturumAcik', 'true');
     localStorage.setItem('ing_aktifOgrenci', d.ogrenci || ogr);
+    if(window.dmAccountSwitchPending){
+      window.dmAccountSwitchPending=false;
+      localStorage.setItem('ing_toplamSaniye','0');
+      // A full page reload isolates per-account in-memory progression and panels.
+      window.location.reload();
+      return;
+    }
           setTimeout(function () {
 
 }, 1000);
@@ -26464,7 +26471,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="ders-vadi.css?v=6"><script defer src="ders-vadi.js?v=4"></script>
 <link rel="stylesheet" href="ders-test.css?v=2"><script defer src="ders-test.js?v=3"></script>
 <link rel="stylesheet" href="papi-cards.css?v=2">
-<link rel="stylesheet" href="benim-dunyam.css?v=20261011-design1-final"><script defer src="benim-dunyam.js?v=20261013-achievement-3"></script>
+<link rel="stylesheet" href="benim-dunyam.css?v=20261011-design1-final"><script defer src="benim-dunyam.js?v=20261015-daily-state-2"></script>
 <link rel="stylesheet" href="meteor.css?v=20261012-independent">
 <link rel="stylesheet" href="word-wheel.css?v=20261012-dual-wheel">
 <link rel="stylesheet" href="oyna-v2.css?v=20261014-map-picker-1">
@@ -26491,5 +26498,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="route-questions.css?v=20261014-approved-1">
 <script defer src="route-questions.js?v=20261014-matching-variety-1"></script>
 <script defer src="harf-adasi.js?v=20261014-full-2"></script>
+<link rel="stylesheet" href="account-switch.css?v=20261015-1">
+<script defer src="account-switch.js?v=20261015-1"></script>
 </body>      
         </html>
