@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v145-retire-world-20261015';
+const SURUM = 'diji-v146-safe-updates-20261015';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 /* Ana sayfanın çevrimdışı kopyasını ASLA değiştirmemesi gereken sayfalar:
@@ -30,8 +30,8 @@ self.addEventListener('fetch', e => {
 
   /* Sayfanın kendisi: önce internet (her zaman güncel), yoksa cihazdaki kopya */
   if (r.mode === 'navigate') {
-    e.respondWith(fetch(r,{cache:'no-store'}).then(y => { if (y && y.ok) { const k = y.clone(); caches.open(SAYFA).then(c => c.put('./', k)); } return y; })
-      .catch(() => caches.match('./').then(y => y || caches.match(r))));
+    e.respondWith(fetch(r,{cache:'no-store'}).then(y => { if (y && y.ok) { const k = y.clone(); e.waitUntil(caches.open(SAYFA).then(c => c.put('./', k)).catch(()=>{})); } return y; })
+      .catch(() => caches.open(SAYFA).then(c => c.match('./')).then(y => y || Response.error())));
     return;
   }
   /* JS/CSS/JSON: ağ öncelikli. Önceki cache-first kuralı aynı ?v= URL'sindeki güncellemeleri süresiz gizleyebiliyordu. */
@@ -39,14 +39,19 @@ self.addEventListener('fetch', e => {
     e.respondWith(fetch(r,{cache:'no-store'}).then(y => {
       if (y && y.ok) { const copy=y.clone(); e.waitUntil(caches.open(KAYNAK).then(c=>c.put(r,copy)).catch(()=>{})); }
       return y;
-    }).catch(()=>caches.match(r)));
+    }).catch(()=>caches.open(KAYNAK).then(c=>c.match(r)).then(y=>y||Response.error())));
     return;
   }
-  /* Yazı tipleri, kütüphaneler ve aynı klasördeki görseller: önce cihaz */
-  if (DIS_KAYNAK.test(r.url) || url.origin === self.location.origin) {
-    e.respondWith(caches.match(r).then(v => v || fetch(r).then(y => {
-      if (y && (y.ok || y.type === 'opaque')) { const k = y.clone(); caches.open(KAYNAK).then(c => c.put(r, k)); }
+  /* Görseller hızlı açılır; aynı URL'deki yeni tasarım arka planda yenilenir.
+     Yalnız statik dosyalar: oturum/API yanıtları önbelleğe alınmaz. */
+  if (DIS_KAYNAK.test(r.url) || (url.origin === self.location.origin && /\.(?:png|jpe?g|webp|svg|gif|ico|woff2?|ttf|otf)$/.test(url.pathname))) {
+    const fresh = fetch(r,{cache:'no-cache'}).then(async y => {
+      if (y && (y.ok || y.type === 'opaque')) {
+        const copy=y.clone(); await caches.open(KAYNAK).then(c=>c.put(r,copy)).catch(()=>{});
+      }
       return y;
-    })));
+    });
+    e.waitUntil(fresh.then(()=>{},()=>{}));
+    e.respondWith(caches.open(KAYNAK).then(c=>c.match(r)).then(v=>v||fresh));
   }
 });

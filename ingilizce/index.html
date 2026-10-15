@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<script defer src="app-updates.js?v=20261015-1"></script>
 <script src="session-handoff.js?v=20261015-1"></script>
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
@@ -23973,9 +23974,7 @@ window.ocEnerjiHarca = async function (n) {
   try { localStorage.removeItem('diji_global_cache_v1'); } catch (e) {}   /* eski, kişiye bağlı olmayan önbellek */
 
   /* ---------- 5) Service Worker: sayfa internetsiz de açılsın ---------- */
-  if ('serviceWorker' in navigator && location.protocol === 'https:') {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
-  }
+  /* Registration and safe update notification live in app-updates.js. */
 })();
 </script>
 <style>

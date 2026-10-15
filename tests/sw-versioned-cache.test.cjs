@@ -22,14 +22,12 @@ function setup(){
  }
  return {visit,get requests(){return requests;}};
 }
-test('same-version JS and CSS reuse cached bytes, changed v fetches fresh bytes',async()=>{
+test('JS and CSS refresh even when their v URL was not changed',async()=>{
  const s=setup();
- assert.equal((await s.visit('https://app.test/ingilizce/game-feedback.js?v=10')).source,1);
- assert.equal((await s.visit('https://app.test/ingilizce/game-feedback.js?v=10')).source,1);
- assert.equal((await s.visit('https://app.test/ingilizce/game-feedback.js?v=11')).source,2);
- assert.equal((await s.visit('https://app.test/ingilizce/main.css?v=2')).source,3);
- assert.equal((await s.visit('https://app.test/ingilizce/main.css?v=2')).source,3);
- assert.equal(s.requests,3);
+ for(const [i,file] of ['game-feedback.js?v=10','game-feedback.js?v=10','game-feedback.js?v=11','main.css?v=2','main.css?v=2'].entries()){
+  assert.equal((await s.visit('https://app.test/ingilizce/'+file)).source,i+1);
+ }
+ assert.equal(s.requests,5);
 });
 test('unversioned code, JSON and page navigation stay network first',async()=>{
  const s=setup();
