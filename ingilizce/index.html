@@ -18463,7 +18463,6 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
     localStorage.setItem('ing_token', d.token);
     sessionStorage.removeItem('ing_oturum_bitti');
     if (d.rol === 'ogretmen') sessionStorage.setItem('ing_ogr_token', d.token); else sessionStorage.removeItem('ing_ogr_token');
-    setTimeout(()=>document.dispatchEvent(new Event('dm:login')),0);
     localStorage.setItem('ing_oturumAcik', 'true');
     localStorage.setItem('ing_aktifOgrenci', d.ogrenci || ogr);
     if(window.dmAccountSwitchPending){
@@ -18473,6 +18472,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
       window.location.reload();
       return;
     }
+    setTimeout(()=>document.dispatchEvent(new Event('dm:login')),0);
           setTimeout(function () {
 
 }, 1000);
