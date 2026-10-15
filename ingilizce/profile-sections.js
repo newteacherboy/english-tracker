@@ -16,7 +16,7 @@
     const config=panels[key];let el=$(config.id);if(el)return el;
     el=document.createElement('section');el.id=config.id;el.className='dc-fullscreen-overlay dm-profile-section';el.setAttribute('aria-label',config.title);
     el.innerHTML='<div class="dm-profile-content"><header class="dm-profile-heading"><button type="button" class="dm-profile-back" aria-label="Profile dön">‹ Profil</button><h1>'+config.title+'</h1></header>'+config.content+'</div>';
-    el.querySelector('button').onclick=()=>{window.dcTumTamEkranlariKapat?.();window.dmProfileMenuAc?.();};
+    el.querySelector('button').onclick=()=>{if(window.dmProfileMenuGeriDon)window.dmProfileMenuGeriDon();else{window.dcTumTamEkranlariKapat?.();window.dmProfileMenuAc?.();}};
     document.body.appendChild(el);return el;
   }
   function openPanel(key){
