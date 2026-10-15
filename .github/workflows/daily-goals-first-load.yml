@@ -1,0 +1,22 @@
+name: Daily goals first load QA
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/progression-ui.js'
+      - 'tests/daily-goals-first-load.test.cjs'
+  push:
+    paths:
+      - 'ingilizce/progression-ui.js'
+      - 'tests/daily-goals-first-load.test.cjs'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/progression-ui.js
+      - run: node --test tests/daily-goals-first-load.test.cjs
