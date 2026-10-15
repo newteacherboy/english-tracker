@@ -1,5 +1,6 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
+const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261016-layout-1';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token()})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
@@ -31,7 +32,7 @@ function maintain(){
  if(visible(menu))active=true;
  // Move child dialogs out of hidden legacy containers and above every workspace layer.
  if(!active)return;
- menu.classList.add('dm-teacher-open');if(menu.style.display!=='flex')menu.style.display='flex';if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
+ if(menu.parentElement!==document.body)document.body.append(menu);menu.classList.add('dm-teacher-open');if(menu.style.display!=='flex')menu.style.display='flex';if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
  for(const el of children()){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
  if(!menuSeen){menuSeen=true;api('teacherNotificationRead').then(()=>refresh(true)).catch(()=>{});}
  decorateWorkspace(menu);paintBadge();

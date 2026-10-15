@@ -65,7 +65,7 @@
   const routeCard=b=>/yolculuguAc|baModuAc|baFabTikla|buyuAkademisiYeniAc/.test(b.getAttribute('onclick')||'');
   grid.querySelectorAll('.az-gcard').forEach(b=>{if(routeCard(b)){b.hidden=true;b.style.setProperty('display','none','important');}});
   const all=[...grid.querySelectorAll('.az-gcard')].filter(b=>!routeCard(b));all.forEach(prepare);
-  host.dataset.dmParty=party;host.dataset.ggParty=party;const active=party;
+  delete host.dataset.dmParty;host.dataset.ggParty=party;const active=party;
   host.querySelectorAll('[data-gg-party]').forEach(b=>{const on=b.dataset.ggParty===active;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;});
   host.querySelectorAll('.gg-filters [data-gg-skill]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ggSkill===skill)));
   host.querySelector('.gg-banner h2').textContent=party==='solo'?'Oynayarak öğren!':'Birlikte kapışalım!';host.querySelector('.gg-banner p').textContent=party==='solo'?'Sana açık oyunlarla becerilerini geliştir.':party==='free'?'Kartlarla öğren, aynı cihazda kapış.':'Arkadaşına çevrimiçi oyun daveti gönder.';
