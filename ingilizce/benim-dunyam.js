@@ -565,6 +565,10 @@
     }
   }
   iskelet(); menu();
+  // Refresh the visible daily tasks as soon as member/progression data arrives.
+  for (const eventName of ['dm:state','dm:login']) document.addEventListener(eventName, () => {
+    if ($('tab-dunyam')?.classList.contains('active') && sekme === 'sanaozel') homeCiz();
+  });
   setInterval(() => {
     menu();
     const ov = $('tab-dunyam');
