@@ -7,7 +7,8 @@
   const androidUygulama = (() => {
     try {
       if (document.referrer.startsWith('android-app://') || new URLSearchParams(location.search).get('kaynak') === 'android') sessionStorage.setItem('dm_android_uygulama', '1');
-      return sessionStorage.getItem('dm_android_uygulama') === '1';
+      // A previous TWA visit must never hide Google login in a normal browser tab.
+      return document.referrer.startsWith('android-app://') || new URLSearchParams(location.search).get('kaynak') === 'android';
     } catch (_) { return false; }
   })();
   window.dmAndroidUygulama = androidUygulama;
@@ -18,7 +19,7 @@
   const subtitle = $('girisSubtitle');
   const originalSubtitle = subtitle.textContent;
   const area = document.createElement('div');
-  area.hidden = androidUygulama || !window.supabaseClient?.auth;
+  area.hidden = androidUygulama;
   area.id = "dmGoogleLoginArea";
   area.style.marginTop = '14px';
   const button = document.createElement('button');
@@ -192,7 +193,8 @@
   }
   button.onclick = async function () {
     if (busy) return;
-    if (googleConfigured === false) { message('Google ile giriş şu anda kullanılamıyor. Kullanıcı adı ve şifrenle giriş yapabilirsin.'); return; }
+    if (!window.supabaseClient?.auth) { message('Google bağlantısı yüklenemedi. Sayfayı yenileyip tekrar deneyin.'); return; }
+    if (googleConfigured === false) { message('Google ile giriş yapılandırması şu anda kullanılamıyor. Kullanıcı adı ve şifrenle giriş yapabilirsin.'); return; }
     button.disabled = true;
     try {
       sessionStorage.setItem('diji_google_pending', '1');
@@ -327,7 +329,7 @@
     return legacyLogout.apply(this, arguments);
   };
   (async function initialize() {
-    if(!supabaseClient?.auth){area.hidden=true;return;}
+    if(!window.supabaseClient?.auth){area.hidden=false;googleConfigured=false;return;}
     const parameters = new URLSearchParams(location.search);
     if (parameters.get('kesifKayit') === 'google') return;
     if (parameters.get('google_return') === '1' || sessionStorage.getItem('diji_google_pending') === '1') {
