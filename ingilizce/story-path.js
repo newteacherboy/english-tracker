@@ -1,5 +1,7 @@
 /* Papi's story route: independent account-owned learning progression. */
 (()=>{'use strict';
+if(window.dmThematicLearning){window.dmStoryPath=window.dmThematicLearning;return;}
+
 const curriculum=()=>{const list=window.DMStoryCurriculum||[];if(list.length<=40)return list;const ids=[...Array.from({length:10},(_,i)=>i),...Array.from({length:10},(_,i)=>40+i),...Array.from({length:10},(_,i)=>10+i),...Array.from({length:10},(_,i)=>50+i),...Array.from({length:10},(_,i)=>20+i),...Array.from({length:10},(_,i)=>60+i),...Array.from({length:10},(_,i)=>30+i),...Array.from({length:10},(_,i)=>70+i)];const byId=new Map(list.map(c=>[c.id,c]));return ids.map(id=>byId.get(id)).filter(Boolean)},esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storage={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
 const account=()=>{let token='';try{token=sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||''}catch{}let hash=0;for(const c of token)hash=(hash*31+c.charCodeAt(0))>>>0;return (typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi):'teacher')+':'+hash};

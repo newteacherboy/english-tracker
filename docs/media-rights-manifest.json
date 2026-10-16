@@ -1381,6 +1381,20 @@
       "bytes": 1443020,
       "status": "ai-generated",
       "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
+    },
+    {
+      "path": "ingilizce/learning-assets/objects-01.png",
+      "source": "Original AI-generated Diji-Medu educational vocabulary sprite atlas, OpenAI image generation, 2026-10-16",
+      "status": "original-generated",
+      "sha256": "28c26d38a3e0ef06410b59d90a30688892f57d4a1f45fcf5be29db7332080342",
+      "bytes": 1938089
+    },
+    {
+      "path": "ingilizce/learning-assets/objects-02.png",
+      "source": "Original AI-generated Diji-Medu educational vocabulary sprite atlas, OpenAI image generation, 2026-10-16",
+      "status": "original-generated",
+      "sha256": "48acb109db46348abd21482568c68e2cabd02034e030198116a0ced3f40e532c",
+      "bytes": 1866845
     }
   ]
 }
