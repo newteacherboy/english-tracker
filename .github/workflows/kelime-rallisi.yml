@@ -1,0 +1,30 @@
+name: Kelime Rallisi gameplay and mobile UI
+on:
+  push:
+    paths: ['ingilizce/kelime-rallisi.*', 'ingilizce/rally-assets/**', 'supabase/functions/kelime-rallisi/**', 'supabase/migrations/*kelime_rallisi*', 'tests/rally-*', '.github/workflows/kelime-rallisi.yml']
+  pull_request:
+    paths: ['ingilizce/kelime-rallisi.*', 'ingilizce/rally-assets/**', 'supabase/functions/kelime-rallisi/**', 'tests/rally-*']
+permissions:
+  contents: read
+jobs:
+  rally:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check ingilizce/kelime-rallisi.js
+      - run: node --test tests/rally-api.test.cjs tests/lazy-games-parallel.test.cjs tests/portal-integrity.test.cjs
+      - run: python scripts/check-media-rights.py
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/rally-ui.cjs
+        env:
+          RALLY_REALTIME: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kelime-rallisi-mobile-design
+          path: /tmp/rally-qa/*.png

@@ -1,6 +1,6 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const files=['harf-bahcesi.js?v=20261013-review','papi-cards.js?v=20261013-review','meteor.js?v=20261013-review','word-wheel.js?v=20261013-review'];
+  const files=['harf-bahcesi.js?v=20261013-review','papi-cards.js?v=20261013-review','meteor.js?v=20261013-review','word-wheel.js?v=20261013-review','kelime-rallisi.js?v=20261016-rally-1'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){return new Promise((resolve,reject)=>{
     if(loaded.has(src)){resolve();return;}
@@ -23,6 +23,7 @@
     }catch(e){window.yoToast?.(e.message);}
   };return proxy;}
   window.harfBahcesiAc=opener(()=>window.harfBahcesiAc);
+  window.ralliOyunAc=opener(()=>window.ralliOyunAc);
   for(const name of ['dmPapiCards','dmMeteor','dmWordWheel'])window[name]={open:opener(()=>window[name].open),close(){}};
   const tab=document.getElementById('tab-aktiviteler');
   const check=()=>{if(!readyDone&&tab?.classList.contains('active'))ready().catch(e=>window.yoToast?.(e.message));};

@@ -998,6 +998,20 @@
       "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-sana-ozel.png and resized/converted to WebP."
     },
     {
+      "path": "ingilizce/rally-assets/car.webp",
+      "sha256": "5283eab89a9fab9104d10305e5517070e07ec646cb1ff7e37c14548763e14e33",
+      "bytes": 50436,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-16; extracted/recreated from the user-approved Kelime Rallisi mobile game concept; optimized as WebP."
+    },
+    {
+      "path": "ingilizce/rally-assets/coast.webp",
+      "sha256": "61aa26409f4b1ce641579fcfd8aaf9aa0eef75ddb71d7373b5eb04681306c4bb",
+      "bytes": 276328,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-16; extracted/recreated from the user-approved Kelime Rallisi mobile game concept; optimized as WebP."
+    },
+    {
       "path": "ingilizce/route-assets/ada-yolculugu.webp",
       "sha256": "fae512c087d85c4b0fd275dcfdc28026be804c7e2b776d6275051e41fbf8783f",
       "bytes": 45306,
