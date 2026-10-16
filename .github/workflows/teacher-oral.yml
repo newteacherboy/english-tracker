@@ -1,0 +1,26 @@
+name: Teacher oral exam and rally access
+on:
+  push:
+    paths: ['ingilizce/teacher-oral.*', 'ingilizce/teacher-workspace.js', 'supabase/functions/teacher-oral/**', 'tests/teacher-*', '.github/workflows/teacher-oral.yml']
+  pull_request:
+    paths: ['ingilizce/teacher-oral.*', 'ingilizce/teacher-workspace.js', 'supabase/functions/teacher-oral/**', 'tests/teacher-*']
+permissions:
+  contents: read
+jobs:
+  teacher-tools:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/teacher-oral-api.test.cjs tests/rally-api.test.cjs tests/portal-integrity.test.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/teacher-tools-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: teacher-oral-mobile
+          path: /tmp/teacher-tools/*.png
