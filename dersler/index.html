@@ -51,7 +51,10 @@ let token = localStorage.getItem('dersToken') || '';
 let D = {ogr: [], ders: [], ode: []}, view = 'bugun', sel = null, fOgr = '', fDur = '';
 const $ = id => document.getElementById(id);
 const today = () => new Date().toLocaleDateString('sv-SE');
-const money = n => Number(n || 0).toLocaleString('tr-TR') + ' ₺';
+const money = n => Number(n || 0).toLocaleString('tr-TR', {maximumFractionDigits: 2}) + ' ₺';
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sameId = (a, b) => String(a) === String(b);
+let savingPayment = false;
 const fd = t => new Date(t + 'T12:00').toLocaleDateString('tr-TR', {day: 'numeric', month: 'short', weekday: 'short'});
 const og = id => D.ogr.find(o => o.ID === String(id)) || {Ad: '?', Ders: ''};
 const toast = m => { const e = $('msg'); e.textContent = m; e.style.display = 'block'; setTimeout(() => e.style.display = 'none', 2200); };
@@ -82,19 +85,43 @@ const yap = id => act('durum', {id, durum: 'Yapıldı'}, 'Ders işlendi');
 function yapma(id) { const l = D.ders.find(x => x.ID === id); const al = confirm('Ders yapılmadı. Yine de ücret alınacak mı?'); act('durum', {id, durum: 'Yapılmadı', ucret: al ? l.Ucret : 0}, 'Yapılmadı olarak işlendi'); }
 
 function dialog(title, fields, onOk) {
-  $('f').innerHTML = `<b>${title}</b>${fields.map(f => `<label>${f.l}</label><input id="d_${f.k}" type="${f.t}" value="${f.v || ''}">`).join('')}<div class="acts"><button class="btn p" value="ok">Kaydet</button><button class="btn" value="x">Vazgeç</button></div>`;
+  $('f').innerHTML = `<b>${title}</b>${fields.map(f => `<label>${f.l}</label><input id="d_${f.k}" type="${f.t}" value="${esc(f.v ?? '')}" ${f.t === 'number' ? 'min="0.01" step="0.01" inputmode="decimal" required' : ''}>`).join('')}<div class="acts"><button class="btn p" value="ok">Kaydet</button><button class="btn" value="x" formnovalidate>Vazgeç</button></div>`;
   $('dlg').onclose = () => { if ($('dlg').returnValue === 'ok') onOk(Object.fromEntries(fields.map(f => [f.k, $('d_' + f.k).value]))); };
   $('dlg').showModal();
 }
 function ertele(id) { const l = D.ders.find(x => x.ID === id); dialog('Dersi ertele', [{k: 'tarih', l: 'Yeni tarih', t: 'date', v: l.Tarih}, {k: 'saat', l: 'Yeni saat', t: 'time', v: l.Saat}], v => v.tarih && v.saat && act('ertele', {id, ...v}, 'Ertelendi')); }
 function ekstra(oid) { dialog('Ekstra / telafi dersi', [{k: 'tarih', l: 'Tarih', t: 'date', v: today()}, {k: 'saat', l: 'Saat', t: 'time', v: '16:00'}], v => v.tarih && v.saat && act('ekle', {ogrenciId: oid, ...v}, 'Ders eklendi')); }
-function odeme(oid) { dialog('Ödeme ekle', [{k: 'tutar', l: 'Tutar (₺)', t: 'number'}, {k: 'not', l: 'Not', t: 'text'}], v => v.tutar && act('odeme', {ogrenciId: oid, tutar: v.tutar, not: v.not}, 'Ödeme kaydedildi')); }
+function odeme(oid) {
+  if (savingPayment) return;
+  dialog('Ödeme Aldım · ' + esc(og(oid).Ad), [{k: 'tutar', l: 'Aldığım tutar (₺)', t: 'number'}, {k: 'not', l: 'Not (isteğe bağlı)', t: 'text'}], async v => {
+    const tutar = Number(v.tutar);
+    if (!Number.isFinite(tutar) || tutar <= 0 || tutar > Number.MAX_SAFE_INTEGER / 100) { toast('Sıfırdan büyük, geçerli bir tutar gir.'); return; }
+    if (savingPayment) return;
+    savingPayment = true;
+    render();
+    try {
+      await api('odeme', {ogrenciId: oid, tutar: Math.round(tutar * 100) / 100, not: v.not.trim()});
+      toast('Ödeme kaydedildi');
+      await load();
+    } catch (e) { toast(e.message); }
+    finally { savingPayment = false; render(); }
+  });
+}
+function balance(s) { return s.kalan < 0 ? 'Avans: ' + money(-s.kalan) : 'Kalan borç: ' + money(s.kalan); }
+function paymentHistory(id) {
+  const rows = D.ode.filter(o => sameId(o.OgrenciID, id)).slice().reverse();
+  return '<h2>Ödeme geçmişi</h2>' + (rows.length ? rows.map(o => {
+    const date = o.Tarih ? new Date(o.Tarih) : null;
+    const label = date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString('tr-TR') : 'Tarih belirtilmemiş';
+    return '<div class="l"><div class="top"><b>' + money(o.Tutar) + '</b><span class="meta">' + label + '</span></div><div class="meta">Ödeme alındı' + (o.Not ? ' · ' + esc(o.Not) : '') + '</div></div>';
+  }).join('') : '<p class="empty">Henüz ödeme kaydı yok.</p>');
+}
 function openOgr(id) { sel = id; view = 'detay'; render(); scrollTo(0, 0); }
 
 function stats(id) {
-  const L = D.ders.filter(l => l.OgrenciID === id), done = L.filter(l => l.Durum === 'Yapıldı');
+  const L = D.ders.filter(l => sameId(l.OgrenciID, id)), done = L.filter(l => l.Durum === 'Yapıldı');
   const kazanc = L.filter(l => l.Durum === 'Yapıldı' || (l.Durum === 'Yapılmadı' && Number(l.Ucret) > 0)).reduce((a, l) => a + Number(l.Ucret), 0);
-  const odenen = D.ode.filter(o => o.OgrenciID === id).reduce((a, o) => a + Number(o.Tutar), 0);
+  const odenen = D.ode.filter(o => sameId(o.OgrenciID, id)).reduce((a, o) => a + Number(o.Tutar), 0);
   return {n: done.length, saat: done.reduce((a, l) => a + Number(l.SureDk), 0) / 60, kazanc, odenen, kalan: kazanc - odenen};
 }
 
@@ -112,12 +139,12 @@ function render() {
     <select onchange="fDur=this.value;render()">${['', 'Planlı', 'Yapıldı', 'Yapılmadı', 'Ertelendi'].map(d => `<option value="${d}" ${fDur === d ? 'selected' : ''}>${d || 'Tüm durumlar'}</option>`).join('')}</select></div>` +
       (L.length ? L.map(l => lesson(l)).join('') : '<p class="empty">Bu filtrede ders yok.</p>');
   } else if (view === 'ogr') {
-    h = D.ogr.map(o => { const s = stats(o.ID); return `<div class="l"><div class="top"><button class="nm" onclick="openOgr('${o.ID}')">${o.Ad}</button><span class="meta">${o.Ders}</span></div><div class="meta">${o.SureDk} dk · ders başı ${money(o.DersBasiUcret)} · Kalan: <b>${money(s.kalan)}</b></div></div>`; }).join('') || '<p class="empty">Ogrenciler sayfasına öğrenci ekle.</p>';
+    h = D.ogr.map(o => { const s = stats(o.ID); return `<div class="l"><div class="top"><button class="nm" onclick="openOgr('${o.ID}')">${o.Ad}</button><span class="meta">${o.Ders}</span></div><div class="meta">${o.SureDk} dk · ders başı ${money(o.DersBasiUcret)} </div><div class="sum"><div><b>${money(s.kazanc)}</b><span>Toplam ücret</span></div><div><b>${money(s.odenen)}</b><span>Alınan ödeme</span></div></div><div><b>${balance(s)}</b></div><div class="acts"><button class="btn p" onclick="odeme('${o.ID}')" ${savingPayment ? 'disabled' : ''}>${savingPayment ? 'Kaydediliyor…' : 'Ödeme Aldım'}</button><button onclick="openOgr('${o.ID}')">Detay ve ödeme geçmişi</button></div></div>`; }).join('') || '<p class="empty">Ogrenciler sayfasına öğrenci ekle.</p>';
   } else {
     const o = og(sel), s = stats(sel);
     h = `<button class="btn" onclick="view='ogr';render()">← Öğrenciler</button><h2 style="font-size:1.3rem">${o.Ad} <span class="meta">${o.Ders}</span></h2>
-    <div class="sum"><div><b>${s.n}</b><span>yapılan ders (${s.saat.toLocaleString('tr-TR')} saat)</span></div><div><b>${money(s.kazanc)}</b><span>toplam ücret</span></div><div><b>${money(s.odenen)}</b><span>ödenen</span></div><div><b>${money(s.kalan)}</b><span>kalan</span></div></div>
-    <div class="acts"><button class="btn p" onclick="odeme('${sel}')">Ödeme ekle</button><button class="btn" onclick="ekstra('${sel}')">Ekstra ders ekle</button></div><h2>Tüm ders tarihleri</h2>` +
+    <div class="sum"><div><b>${s.n}</b><span>yapılan ders (${s.saat.toLocaleString('tr-TR')} saat)</span></div><div><b>${money(s.kazanc)}</b><span>toplam ücret</span></div><div><b>${money(s.odenen)}</b><span>alınan ödeme</span></div><div><b>${money(Math.abs(s.kalan))}</b><span>${s.kalan < 0 ? 'avans' : 'kalan borç'}</span></div></div>
+    <div class="acts"><button class="btn p" onclick="odeme('${sel}')" ${savingPayment ? 'disabled' : ''}>${savingPayment ? 'Kaydediliyor…' : 'Ödeme Aldım'}</button><button class="btn" onclick="ekstra('${sel}')">Ekstra ders ekle</button></div>${paymentHistory(sel)}<h2>Tüm ders tarihleri</h2>` +
       sorted(D.ders.filter(l => l.OgrenciID === sel)).map(l => lesson(l, false)).join('');
   }
   $('app').innerHTML = h;
