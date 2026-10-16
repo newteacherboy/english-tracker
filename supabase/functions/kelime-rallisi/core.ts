@@ -26,16 +26,35 @@ export function raceHandler(db:DB){
    const raw=await req.text();if(raw.length>8192)return json({ok:false,mesaj:'İstek çok büyük.'},413);let b:any;try{b=JSON.parse(raw);}catch{return json({ok:false,mesaj:'Geçersiz istek.'},400);}
    const token=String(b.t||req.headers.get('x-diji-token')||'');if(!token||token.length>512)return json({ok:false,mesaj:'Öğrenci hesabına giriş yap.'},401);
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,'0')).join('');
-   const sessions=await db.select('portal_sessions',{select:'student_id,role,expires_at',token_hash:'eq.'+hash,limit:'1'}),a=sessions[0];
-   if(!a||a.role!=='student'||!a.student_id||Date.parse(a.expires_at)<=Date.now())return json({ok:false,mesaj:'Geçerli öğrenci oturumu gerekli.'},401);
-   const students=await db.select('students',{select:'id,username,status,role,class_no,selected_class',id:'eq.'+a.student_id,limit:'1'}),student=students[0];if(!student||student.status!=='approved'||student.role!=='student')return json({ok:false,mesaj:'Aktif öğrenci hesabı gerekli.'},403);
+   const sessions=await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at',token_hash:'eq.'+hash,limit:'1'}),a=sessions[0];
+   if(!a||!['student','teacher'].includes(a.role)||!Number.isFinite(Date.parse(a.expires_at))||Date.parse(a.expires_at)<=Date.now())return json({ok:false,mesaj:'Geçerli oturum gerekli.'},401);
+   const teacher=a.role==='teacher';let student:any;
+   if(teacher){
+    const rows=a.teacher_id?await db.select('teachers',{select:'id,active',id:'eq.'+a.teacher_id,limit:'1'}):[];
+    if(!rows[0]||rows[0].active===false)return json({ok:false,mesaj:'Aktif öğretmen hesabı gerekli.'},403);
+    if(!['setup','practice'].includes(String(b.action||'')))return json({ok:false,mesaj:'Öğretmen hesabı deneme modunu kullanabilir.'},403);
+    student={class_no:1};
+   }else{
+    if(!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+    const rows=await db.select('students',{select:'id,username,status,role,class_no,selected_class',id:'eq.'+a.student_id,limit:'1'});student=rows[0];
+    if(!student||student.status!=='approved'||student.role!=='student')return json({ok:false,mesaj:'Aktif öğrenci hesabı gerekli.'},403);
+    const balances=await db.select('extra_data',{select:'value',student_id:'eq.'+student.id,key_name:'eq.yo',limit:'1'});
+    const level=await db.rpc('dm_student_level',{x:Number(balances[0]?.value?.totalXp||0)});
+    if(Number(level)<15)return json({ok:false,mesaj:'Kelime Rallisi 15. seviyede açılır.'},403);
+    if(b.action==='practice')return json({ok:false,mesaj:'Öğretmen hesabı gerekli.'},403);
+   }
    const op=String(b.action||''),cls=Number(b.classNo||student.selected_class||student.class_no||1),units=Array.isArray(b.units)?[...new Set(b.units.map(Number))].sort((x:any,y:any)=>x-y):[];
-   if(['setup','start','ranking'].includes(op)&&(!Number.isInteger(cls)||cls<1||cls>8))return json({ok:false,mesaj:'1–8 arasında sınıf seç.'},400);
-   if(['start','ranking'].includes(op)&&(units.length<1||units.length>10||units.some((x:any)=>!Number.isInteger(x)||x<1||x>100)))return json({ok:false,mesaj:'En az bir ünite seç.'},400);
+   if(['setup','start','practice','ranking'].includes(op)&&(!Number.isInteger(cls)||cls<1||cls>8))return json({ok:false,mesaj:'1–8 arasında sınıf seç.'},400);
+   if(['start','practice','ranking'].includes(op)&&(units.length<1||units.length>10||units.some((x:any)=>!Number.isInteger(x)||x<1||x>100)))return json({ok:false,mesaj:'En az bir ünite seç.'},400);
    if(op==='setup'){
     const rows=await db.select('word_bank',{select:'unit_no,english,turkish',active:'eq.true',class_no:'eq.'+cls,limit:'6000'}),counts=new Map<number,Set<string>>();
     for(const w of rows){if(!w.english||!w.turkish)continue;const n=Number(w.unit_no);if(!counts.has(n))counts.set(n,new Set());counts.get(n)!.add(String(w.english).toLowerCase());}
     return json({ok:true,classNo:cls,units:[...counts].sort(([a],[b])=>a-b).map(([id,set])=>({id,count:set.size}))});
+   }
+   if(op==='practice'){
+    const flags=await db.select('dm_release_flags',{select:'code,enabled',code:'in.(aktiviteler,tek_kisilik,oyun_ralli)'});if(flags.some(f=>f.enabled===false))return json({ok:false,mesaj:'Kelime Rallisi şu anda kapalı.'},403);
+    const rows=await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
+    return json({ok:true,practice:true,deck:buildRaceDeck(rows),classNo:cls,units,difficulty:['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal'});
    }
    if(op==='ranking'){
     const rows=await db.select('dm_rally_runs',{select:'student_id,state,finished_at',status:'eq.finished',student_id:'neq.dcde2026-1015-4000-8000-000000000001',class_no:'eq.'+cls,units:'eq.{'+units.join(',')+'}',order:'finished_at.desc',limit:'1000'});

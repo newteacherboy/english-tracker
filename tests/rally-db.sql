@@ -2,11 +2,15 @@
 begin;
 set local role service_role;
 do $$
-declare sid uuid:=gen_random_uuid();rid uuid:=gen_random_uuid();rid2 uuid:=gen_random_uuid();deck jsonb;v jsonb;again jsonb;n int;balance int;g numeric;early boolean:=false;
+declare sid uuid:=gen_random_uuid();rid uuid:=gen_random_uuid();rid2 uuid:=gen_random_uuid();deck jsonb;v jsonb;again jsonb;n int;balance int;g numeric;early boolean:=false;blocked boolean:=false;
 begin
  insert into public.students(id,username,password_hash,status,role,energy,energy_max) values(sid,'qa_rally_'||replace(sid::text,'-',''),'disabled-test-only','approved','student',20,20);
  insert into public.extra_data(student_id,key_name,value) values(sid,'yo','{"totalXp":10000,"altin":100,"guncelleme":1}');
  select jsonb_agg(jsonb_build_object('en','word '||i,'tr','anlam '||i,'word','word '||i,'direction','en-tr','options',jsonb_build_array('yanlış','anlam '||i,'başka'),'answer',1)) into deck from generate_series(1,15) i;
+ update public.extra_data set value=jsonb_set(value,'{totalXp}','5949') where student_id=sid and key_name='yo';
+ begin perform public.dm_rally_start(sid,rid,5,array[1],deck,'normal');exception when others then if sqlerrm not like '%15. seviyede%' then raise;end if;blocked:=true;end;
+ if not blocked or (select energy from public.students where id=sid)<>20 then raise exception 'level 14 access or energy charge';end if;
+ update public.extra_data set value=jsonb_set(value,'{totalXp}','5950') where student_id=sid and key_name='yo';
  v:=public.dm_rally_start(sid,rid,5,array[1],deck,'normal');again:=public.dm_rally_start(sid,rid,5,array[1],deck,'normal');
  if (v->>'energy')::int<>17 or v->'question' ? 'answer' or v ? 'deck' then raise exception 'start, energy or answer leak';end if;
  select energy into balance from public.students where id=sid;if balance<>17 then raise exception 'duplicate energy charge';end if;
