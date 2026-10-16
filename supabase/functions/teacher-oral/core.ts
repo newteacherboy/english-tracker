@@ -23,11 +23,11 @@ export function oralHandler(db:DB){
    }
    if(b.action==='draw'){
     if(!uuid(b.studentId)||!uuid(b.requestId)||!Number.isInteger(b.unit)||b.unit<1||b.unit>100)return json({ok:false,mesaj:'Öğrenci ve ünite seçin.'},400);
-    return json(await db.rpc('dm_oral_draw',{actor:t.id,pupil:b.studentId,grade:b.classNo,unit_id:b.unit,request_id:b.requestId}));
+    const d=await db.rpc('dm_oral_draw',{actor:t.id,pupil:b.studentId,grade:b.classNo,unit_id:b.unit,request_id:b.requestId});return json({...d,serverNow:new Date().toISOString()});
    }
    if(b.action==='grade'){
     if(!uuid(b.questionId)||typeof b.known!=='boolean')return json({ok:false,mesaj:'Geçerli soru ve cevap seçin.'},400);
-    return json(await db.rpc('dm_oral_grade',{actor:t.id,question_id:b.questionId,known:b.known}));
+    const d=await db.rpc('dm_oral_grade',{actor:t.id,question_id:b.questionId,known:b.known});return json({...d,serverNow:new Date().toISOString()});
    }
    return json({ok:false,mesaj:'Geçersiz işlem.'},400);
   }catch(e){const m=String((e as any)?.message||'');return json({ok:false,mesaj:/öğretmen|öğrenci|yetki|sınıf|ünite|hesap|soru|isteği/i.test(m)?m:'Sözlü işlemi tamamlanamadı. Tekrar deneyin.'},400);}
