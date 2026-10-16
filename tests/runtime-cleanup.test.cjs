@@ -51,5 +51,5 @@ test('optional games load once on demand and a failed file can be retried withou
    el.onload();
  })}},dispatchEvent(){}},MutationObserver:class{constructor(fn){observer.push(fn)}observe(){}},Event,Set,Promise};let fail=true;vm.createContext(c);vm.runInContext(fs.readFileSync('ingilizce/lazy-games.js','utf8'),c);
  assert.equal(files.length,0);await assert.rejects(c.window.dmLazyGames.ready());await c.window.dmLazyGames.ready();await c.window.dmLazyGames.ready();
- assert.equal(files.filter(x=>x.startsWith('harf')).length,1);assert.equal(files.filter(x=>x.startsWith('meteor')).length,2);assert.equal(files.length,5);assert.equal(c.window.harfBahcesiAc(),42);
+ assert.equal(files.filter(x=>x.startsWith('harf')).length,1);assert.equal(files.filter(x=>x.startsWith('meteor')).length,2);assert.equal(files.length,6);assert.equal(c.window.harfBahcesiAc(),42);
 });
