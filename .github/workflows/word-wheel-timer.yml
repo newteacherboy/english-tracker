@@ -1,0 +1,26 @@
+name: Word Wheel ten-second questions
+on:
+  push:
+    paths: ['ingilizce/index.html', 'ingilizce/lazy-games.js', 'ingilizce/sw.js', 'ingilizce/word-wheel.*', 'supabase/functions/diji-api/word-wheel-api.ts', 'tests/word-wheel*', 'tests/helpers/word-wheel-fixture.cjs', '.github/workflows/word-wheel-timer.yml']
+  pull_request:
+    paths: ['ingilizce/index.html', 'ingilizce/lazy-games.js', 'ingilizce/sw.js', 'ingilizce/word-wheel.*', 'supabase/functions/diji-api/word-wheel-api.ts', 'tests/word-wheel*', 'tests/helpers/word-wheel-fixture.cjs', '.github/workflows/word-wheel-timer.yml']
+permissions:
+  contents: read
+jobs:
+  timer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0 playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node --test tests/word-wheel-api.test.cjs tests/word-wheel-timer.test.cjs tests/word-wheel-dom.test.cjs tests/word-bank-rotation.test.cjs
+      - run: node tests/word-wheel-timer-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: word-wheel-question-timer
+          path: /tmp/word-wheel-timer/*.png
