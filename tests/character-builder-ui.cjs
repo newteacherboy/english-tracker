@@ -1,5 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{
+fs.mkdirSync('/tmp/evening-mobile',{recursive:true});
 const exe=process.env.FRIENDS_BROWSER_PATH,browser=await chromium.launch({executablePath:exe||undefined,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader'],env:{...process.env,LD_LIBRARY_PATH:exe?path.dirname(exe):process.env.LD_LIBRARY_PATH||''}}),page=await browser.newPage(),errors=[],root=path.resolve('ingilizce');page.on('pageerror',e=>errors.push(e.message));
 await page.route('https://shop.test/**',r=>{const u=new URL(r.request().url()),p=path.join(root,u.pathname.slice(1));return fs.existsSync(p)&&fs.statSync(p).isFile()?r.fulfill({path:p,headers:{'content-type':p.endsWith('.js')?'application/javascript; charset=utf-8':p.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8'}}):r.fulfill({body:'<meta charset="utf-8">',headers:{'content-type':'text/html; charset=utf-8'}});});await page.goto('https://shop.test/');
 const html=fs.readFileSync(root+'/index.html','utf8'),scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]),styles=[...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(x=>x[1]).join('\n');
@@ -8,7 +9,7 @@ await page.evaluate(()=>{window.aktifOgrenciAdi='Fixture';window.apiURL='/api';w
 for(const name of ['progression-catalog.js','progress-rules.js'])await page.addScriptTag({url:'/'+name});await page.evaluate(()=>window.dmProgression={level:()=>level,require:()=>true,itemAllowed:o=>DijiProgressionCatalog.itemLevel(o)<=level,sync:async()=>{},refresh:()=>{}});
 for(const marker of ['window.KA_KATALOG = KATALOG','window.dmStoreWardrobe ='])await page.addScriptTag({content:scripts.find(s=>s.includes(marker))});await page.addScriptTag({url:'/boutique-art.js'});await page.addScriptTag({url:'/storefront.js'});
 
-await page.addStyleTag({url:'/character-builder.css'});await page.addScriptTag({url:'/character-builder.js'});
+await page.addScriptTag({url:'/character-poses.js'});await page.addStyleTag({url:'/character-builder.css'});await page.addScriptTag({url:'/character-builder.js'});
 const before=await page.evaluate(()=>JSON.stringify(yo));
 await page.evaluate(()=>dmCharacterBuilder.open());
 assert.equal(await page.locator('#dmCharacterBuilder').count(),1);assert.equal(await page.locator('#dmBuilderTitle').textContent(),'🎨 Bu benim karakterim!');
@@ -33,5 +34,8 @@ await page.screenshot({path:'/tmp/student-character-outfit.png'});
 await page.evaluate(()=>dmCharacterBuilder.open());await page.locator('[data-builder-gender="k"]').click();await page.locator('#dmBuilderSave').click();await page.waitForSelector('#dmCharacterBuilder',{state:'detached'});assert.equal(await page.evaluate(()=>yo.karakter.cins),'k');assert.deepEqual(await page.evaluate(()=>yo.karakter.sahip),['d:u:kahraman:#ef4444:anka']);assert.equal(await page.evaluate(()=>yo.karakter.s.gozBoy),'1.3');
 // Mobile: preview and controls remain in the modal; the save button is reachable.
 await page.setViewportSize({width:390,height:844});await page.evaluate(()=>dmCharacterBuilder.open());assert.equal(await page.locator('#dmBuilderSave').isVisible(),true);const overflow=await page.locator('.dm-builder-card').evaluate(e=>e.scrollWidth>e.clientWidth);assert.equal(overflow,false);await page.keyboard.press('Escape');assert.equal(await page.locator('#dmCharacterBuilder').count(),0);
+await page.evaluate(()=>{level=1;dmCharacterBuilder.open();});
+assert.equal(await page.locator('.dm-pose-grid button').count(),10);await page.locator('[data-builder-value="kutlama"]').click();assert(await page.locator('#dmBuilderSave').isDisabled());assert(await page.locator('[data-pose-buy]').isDisabled());assert.equal(await page.locator('#dmBuilderPreview [data-pose-arm]').count(),2);await page.locator('[data-builder-value="selam"]').click();assert(await page.locator('#dmBuilderSave').isEnabled());assert.equal(await page.locator('.dm-builder-card').evaluate(e=>e.scrollWidth>e.clientWidth),false);await page.screenshot({path:'/tmp/evening-mobile/character-poses-mobile.png'});await page.keyboard.press('Escape');
+await page.setViewportSize({width:1500,height:1080});await page.goto('https://shop.test/');await page.setContent(fs.readFileSync('docs/character-poses-preview.svg','utf8'));await page.screenshot({path:'/tmp/evening-mobile/character-poses-preview.png'});
 assert.deepEqual(errors,[]);await browser.close();console.log('PASS vector-only student builder, preview/cancel/save, free appearance and locked paid options, shared portrait/full pose and outfit, gender change keeps inventory, mobile layout');
 })().catch(e=>{console.error(e);process.exit(1)});

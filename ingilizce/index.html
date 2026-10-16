@@ -8,9 +8,10 @@
 <script src="session-handoff.js?v=20261015-1"></script>
 <script src="day-night-theme.js?v=20261012-1"></script>
 <script src="progress-rules.js?v=2"></script>
-<link rel="stylesheet" href="character-builder.css?v=20261014-1">
-<script defer src="character-builder.js?v=20261014-1"></script>
-<script src="progression-catalog.js?v=20261015-member-fixes-2"></script>
+<link rel="stylesheet" href="character-builder.css?v=20261016-2">
+<script defer src="character-poses.js?v=20261016-1"></script>
+<script defer src="character-builder.js?v=20261016-2"></script>
+<script src="progression-catalog.js?v=20261016-poses"></script>
 <link rel="stylesheet" href="first-discovery.css?v=20261015-evening-1">
 <script src="first-discovery-state.js?v=20261015-members-only-1"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
@@ -21007,21 +21008,23 @@ window.ocEnerjiHarca = async function (n) {
       out += `<path d="M38 196 L90 196 L90 ${boy} L36 ${boy} Z" fill="${r}"/><path d="M162 196 L110 196 L110 ${boy} L164 ${boy} Z" fill="${r}"/>`;
       if (dis.tip === 'itfaiye') out += `<rect x="36" y="272" width="54" height="7" fill="#fde047"/><rect x="110" y="272" width="54" height="7" fill="#fde047"/>`; }
     if (dis && dis.tip === 'yelek') out += `<path d="M42 196 L90 196 L90 280 L44 280 Z" fill="${dis.renk}"/><path d="M158 196 L110 196 L110 280 L156 280 Z" fill="${dis.renk}"/>`;
+    const posed=window.dmCharacterPoses?.has(s.durus);
     /* kollar */
-    out += `<path d="M36 186 C22 200 20 250 26 288 L44 288 C44 250 46 214 54 196 Z" fill="${kolRenk}"/><path d="M164 186 C178 200 180 250 174 288 L156 288 C156 250 154 214 146 196 Z" fill="${kolRenk}"/>`;
-    out += `<circle cx="35" cy="296" r="10" fill="${ten}"/><circle cx="165" cy="296" r="10" fill="${ten}"/>`;
+    if(!posed)out += `<path d="M36 186 C22 200 20 250 26 288 L44 288 C44 250 46 214 54 196 Z" fill="${kolRenk}"/><path d="M164 186 C178 200 180 250 174 288 L156 288 C156 250 154 214 146 196 Z" fill="${kolRenk}"/>`;
+    if(!posed)out += `<circle cx="35" cy="296" r="10" fill="${ten}"/><circle cx="165" cy="296" r="10" fill="${ten}"/>`;
     /* aksesuar */
     if (aks && aks.tip === 'canta') out += `<path d="M58 196 L150 290" stroke="${renkK(aks.renk, .25)}" stroke-width="6"/><rect x="138" y="270" width="34" height="38" rx="9" fill="${aks.renk}"/><rect x="144" y="284" width="22" height="12" rx="4" fill="${renkK(aks.renk, .15)}"/>`;
-    if (aks && aks.tip === 'saat') out += `<rect x="25" y="280" width="20" height="8" rx="3" fill="${aks.renk}"/><circle cx="35" cy="284" r="5" fill="#fff" stroke="${aks.renk}" stroke-width="2"/>`;
+    if (!posed && aks && aks.tip === 'saat') out += `<rect x="25" y="280" width="20" height="8" rx="3" fill="${aks.renk}"/><circle cx="35" cy="284" r="5" fill="#fff" stroke="${aks.renk}" stroke-width="2"/>`;
     /* açık renkli kıyafetler (beyaz önlük gibi) zeminde kaybolmasın: ince kontur */
     out = out.replace(/<(path|rect|ellipse) (?![^>]*stroke=)/g, '<$1 stroke="rgba(30,27,75,.2)" stroke-width="1.4" ');
     /* büst (baş, yüz, omuz) */
     out = `<g transform="translate(100 0) scale(${{ince:.85,normal:1,genis:1.05}[s.govdeTip]||1} 1) translate(-100 0)">${out}</g>` + govdeBas.ic;
+    if(posed)out += `<g transform="translate(100 0) scale(${{ince:.85,normal:1,genis:1.05}[s.govdeTip]||1} 1) translate(-100 0)">${window.dmCharacterPoses.arms(s,kolRenk,ten,aks?.tip==='saat'?aks.renk:null)}</g>`;
     if (aks && aks.tip === 'atki') out += `<path d="M70 146 C80 158 120 158 130 146 L134 158 C120 170 80 170 66 158 Z" fill="${aks.renk}"/><rect x="110" y="160" width="14" height="40" rx="4" fill="${aks.renk}"/>`;
     if (aks && aks.tip === 'rozet') out += `<circle cx="128" cy="210" r="10" fill="${aks.renk}" stroke="#fff" stroke-width="2"/><text x="121" y="215" font-size="12">${aks.renk === '#f472b6' ? '💗' : '⭐'}</text>`;
     let cik = s.cik ? String(s.cik).replace(/^c:/, '') : '';
     if (cik) out += `<circle cx="170" cy="36" r="22" fill="#fff" stroke="#e4dafc" stroke-width="3"/><text x="170" y="45" font-size="24" text-anchor="middle">${cik}</text>`;
-    return `<svg viewBox="0 0 200 390" width="${Math.round(px * 200 / 390)}" height="${px}" role="img" aria-label="Karakterin tam boy"><defs>${govdeBas.defs}</defs>${window.dmCharacterBuilder?.poseOpen(s,390)||''}${out}${window.dmCharacterBuilder?'</g>':''}</svg>`;
+    return `<svg viewBox="${posed?'-25 0 250 390':'0 0 200 390'}" width="${Math.round(px * (posed?250:200) / 390)}" height="${px}" role="img" aria-label="Karakterin tam boy"><defs>${govdeBas.defs}</defs>${window.dmCharacterBuilder?.poseOpen(s,390)||''}${out}${window.dmCharacterBuilder?'</g>':''}</svg>`;
   };
 
   /* ================= DURUM ================= */
@@ -26371,7 +26374,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="medupro.js?v=20261015-member-fixes-2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261015-evening-1">
 <script defer src="activity-ui.js?v=20261016-layout-1"></script>
-<script defer src="bottom-nav.js?v=20261015-member-fixes-2"></script>
+<script defer src="bottom-nav.js?v=20261016-profile-underlay"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261013-catalog"></script>
 <script defer src="weekly-ui.js?v=20261012-stability-1"></script>
