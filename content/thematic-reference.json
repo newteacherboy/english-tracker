@@ -1,0 +1,10 @@
+{
+ "Selamlaşma":[["Hello!","Merhaba!"],["Hi!","Selam!"],["Good morning!","Günaydın!"],["Good afternoon!","İyi günler!"],["Good evening!","İyi akşamlar!"],["Good night!","İyi geceler!"]],
+ "Temel Renkler":[["red","kırmızı"],["blue","mavi"],["yellow","sarı"],["green","yeşil"],["orange","turuncu"],["purple","mor"]],
+ "Renklerle Tarif":[["black","siyah"],["white","beyaz"],["pink","pembe"],["brown","kahverengi"],["grey","gri"],["green","yeşil"]],
+ "Sıfırdan Ona":[["zero","sıfır"],["one","bir"],["two","iki"],["three","üç"],["four","dört"],["five","beş"],["six","altı"],["seven","yedi"],["eight","sekiz"],["nine","dokuz"],["ten","on"]],
+ "On Birden Yüze":[["eleven","on bir"],["twelve","on iki"],["thirteen","on üç"],["fourteen","on dört"],["fifteen","on beş"],["sixteen","on altı"],["seventeen","on yedi"],["eighteen","on sekiz"],["nineteen","on dokuz"],["twenty","yirmi"],["thirty","otuz"],["forty","kırk"],["fifty","elli"],["sixty","altmış"],["seventy","yetmiş"],["eighty","seksen"],["ninety","doksan"],["one hundred","yüz"]],
+ "Günler":[["Monday","pazartesi"],["Tuesday","salı"],["Wednesday","çarşamba"],["Thursday","perşembe"],["Friday","cuma"],["Saturday","cumartesi"],["Sunday","pazar"]],
+ "Aylar":[["January","ocak"],["February","şubat"],["March","mart"],["April","nisan"],["May","mayıs"],["June","haziran"],["July","temmuz"],["August","ağustos"],["September","eylül"],["October","ekim"],["November","kasım"],["December","aralık"]],
+ "Mevsimler":[["spring","ilkbahar"],["summer","yaz"],["autumn","sonbahar"],["winter","kış"]]
+}

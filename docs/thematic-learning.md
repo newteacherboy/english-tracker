@@ -2,7 +2,7 @@
 
 20 tema × 6 konu × 2 bölüm = 240 bölüm. Her bölümde bir öğretim adımı ve dokuz doğrulanan soru bulunur (toplam 2.160 soru). Birinci bölüm temel ifadeleri tanıtır; ikinci bölüm aynı konuyu günlük cümlelerle kullandırır. Bu yolun tamamlanması B2 yeterlilik belgesi anlamına gelmez.
 
-İçeriğin düzenlenebilir kaynağı `content/thematic-topics.txt`; derleyici `scripts/build-thematic-learning.py`. Her satırda tema, konu, üç kelime/ifade ve üç günlük kullanım örneği yer alır. Derleyici aynı veriyi tarayıcı ve Edge Function için üretir. `learning-core.js` deterministiktir ve her iki ortamda aynı soru akışını oluşturur.
+İçeriğin düzenlenebilir kaynakları `content/thematic-topics.txt` ve sayılar, günler, aylar gibi konuların ek sözlükleri için `content/thematic-reference.json`; derleyici `scripts/build-thematic-learning.py`. Her satırda tema, konu, üç kelime/ifade ve üç günlük kullanım örneği yer alır. Derleyici aynı veriyi tarayıcı ve Edge Function için üretir. `learning-core.js` deterministiktir ve her iki ortamda aynı soru akışını oluşturur.
 
 İki özgün görsel atlası 72 nesne içerir. Renkler, şekiller ve sayılar kesin CSS biçimleriyle çizilir. Bir kavram için güvenilir görsel yoksa görsel varmış gibi sunulmaz; kelime/dinleme sorusu kullanılır. Bazı bölümlerde birden fazla görselli soru ve görselle eşleştirme vardır. Görsellerin kaynak ve dosya hash kayıtları medya manifestindedir.
 
