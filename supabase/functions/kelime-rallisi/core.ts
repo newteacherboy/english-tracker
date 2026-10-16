@@ -3,10 +3,10 @@ type DB={select:(table:string,params:Record<string,string>)=>Promise<any[]>,rpc:
 const normalize=(v:string)=>v.trim().toLocaleLowerCase('tr').replace(/\s+/g,' ');
 export function buildRaceDeck(rows:any[],previous:any[]=[]){
  const seen=new Set<string>(),words=rows.map(r=>({en:String(r.english||'').trim(),tr:String(r.turkish||'').trim()})).filter(w=>{const k=w.en.toLocaleLowerCase('en');if(!w.en||!w.tr||w.en.length>48||w.tr.length>90||seen.has(k))return false;seen.add(k);return true;});
- if(words.length<12)throw Error('Seçtiğin ünitelerde en az 12 farklı kelime gerekli. Bir ünite daha seç.');
+ if(words.length<15)throw Error('Seçtiğin ünitelerde en az 15 farklı kelime gerekli. Bir ünite daha seç.');
  const shuffle=<T>(items:T[])=>{const a=items.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
  const counts=new Map<string,number>();for(const run of previous)for(const w of run.deck||[])counts.set(w.en,(counts.get(w.en)||0)+1);
- const selected=shuffle(words).sort((a,b)=>(counts.get(a.en)||0)-(counts.get(b.en)||0)).slice(0,12);
+ const selected=shuffle(words).sort((a,b)=>(counts.get(a.en)||0)-(counts.get(b.en)||0)).slice(0,15);
  return selected.map((w,i)=>{
   const direction=i%2?'tr-en':'en-tr',field=direction==='en-tr'?'tr':'en',answer=w[field];
   const parts=(s:string)=>normalize(s).split(/[,;/]/).map(x=>x.trim());
@@ -15,7 +15,7 @@ export function buildRaceDeck(rows:any[],previous:any[]=[]){
   const options=shuffle([answer,...wrong]);return {...w,word:direction==='en-tr'?w.en:w.tr,direction,options,answer:options.indexOf(answer)};
  });
 }
-export function publicRace(row:any){const {deck,...safe}=row;const index=Number(row.state?.index||0);return {ok:true,runId:row.id,classNo:row.class_no,units:row.units,difficulty:row.difficulty,finished:row.status==='finished',state:row.state,reward:row.reward,question:row.status==='playing'&&deck[index]?{word:deck[index].word,direction:deck[index].direction,options:deck[index].options}:null};}
+export function publicRace(row:any){const {deck,...safe}=row;const index=Number(row.state?.index||0);return {ok:true,runId:row.id,totalQuestions:deck.length,classNo:row.class_no,units:row.units,difficulty:row.difficulty,finished:row.status==='finished',state:row.state,reward:row.reward,question:row.status==='playing'&&deck[index]?{word:deck[index].word,direction:deck[index].direction,options:deck[index].options}:null};}
 export function raceHandler(db:DB){
  const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,x-diji-token,authorization,apikey','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store','Content-Type':'application/json'};
  const json=(d:any,status=200)=>new Response(JSON.stringify(d),{status,headers});
@@ -55,7 +55,7 @@ export function raceHandler(db:DB){
    }
    if(op==='state'){const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});return rows[0]?json(publicRace(rows[0])):json({ok:false,mesaj:'Yarış bulunamadı.'},404);}
    if(op==='answer'){
-    if(!Number.isInteger(b.round)||b.round<0||b.round>11||!Number.isInteger(b.lane)||b.lane<0||b.lane>2)return json({ok:false,mesaj:'Geçerli kelime kapısını seç.'},400);
+    if(!Number.isInteger(b.round)||b.round<0||b.round>14||!Number.isInteger(b.lane)||b.lane<0||b.lane>2)return json({ok:false,mesaj:'Geçerli kelime kapısını seç.'},400);
     return json(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane:b.lane}));
    }
    if(op==='finish')return json(await db.rpc('dm_rally_finish',{actor:student.id,run_key:b.runId}));
