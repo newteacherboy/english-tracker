@@ -124,3 +124,9 @@ document.addEventListener('dm:login',()=>{clearTimeout(welcomeTimer);welcomeOwne
 const oldLogout=window.cikisYap;window.cikisYap=function(){persist();clearTimeout(flushTimer);for(const id of ['dmRouteChoice','dmPapiTour','dmPapiFirstStart','dmWordReview','dmEmailVerification','dmEmailVerifyBanner','dmPlacementInvite','dmPlacementExam'])$(id)?.remove();document.body.classList.remove('dm-papi-preview','dm-papi-notices-paused');const result=oldLogout?.apply(this,arguments);Promise.resolve(result).then(()=>{if(!localStorage.getItem('ing_token')){$('panel-alani').style.display='none';$('login-container').style.display='block';document.querySelectorAll('.dc-fullscreen-overlay.active').forEach(x=>x.classList.remove('active'));}});return result;};
 setTimeout(()=>{installScoreHook();check();},700);
 })();
+
+// Dismiss an old text field when a non-writing control is used; retain all real text inputs.
+(()=>{const textField=e=>e instanceof HTMLElement&&(e.isContentEditable||e.matches('textarea:not([readonly]):not(:disabled),input:not([readonly]):not(:disabled):not([type=button]):not([type=submit]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=hidden]):not([type=date]):not([type=time]):not([type=number])'));
+ document.addEventListener('pointerdown',e=>{const target=e.target instanceof Element?e.target:null;if(!target)return;const label=target.closest('label');if(textField(target)||textField(label?.control))return;const active=document.activeElement;if(textField(active))active.blur();},true);
+ document.addEventListener('focusin',e=>{const t=e.target;if(t instanceof HTMLElement&&t.matches('input[readonly],textarea[readonly]')){t.setAttribute('inputmode','none');t.blur();}});
+})();

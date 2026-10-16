@@ -16,6 +16,10 @@ export function buildRaceDeck(rows:any[],previous:any[]=[]){
  });
 }
 export function publicRace(row:any){const {deck,...safe}=row;const index=Number(row.state?.index||0);return {ok:true,runId:row.id,totalQuestions:deck.length,classNo:row.class_no,units:row.units,difficulty:row.difficulty,finished:row.status==='finished',state:row.state,reward:row.reward,question:row.status==='playing'&&deck[index]?{word:deck[index].word,direction:deck[index].direction,options:deck[index].options}:null};}
+// Keep stored decks compatible with existing races; expose exactly two safe choices to v2 clients.
+export function twoChoiceLanes(q:any){const wrong=[0,1,2].filter(i=>i!==q.answer);const omit=wrong[(q.word.length+q.en.length)%wrong.length];return [0,1,2].filter(i=>i!==omit);}
+export function twoChoiceQuestion(q:any){if(!q)return null;return {word:q.word,direction:q.direction,options:twoChoiceLanes(q).map(i=>q.options[i])};}
+export function twoChoiceRace(row:any,data:any){const i=Number(data.state?.index||0);return {...data,question:data.finished?null:twoChoiceQuestion(row.deck[i]),nextQuestion:data.finished?null:twoChoiceQuestion(row.deck[i+1])};}
 export function raceHandler(db:DB){
  const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,x-diji-token,authorization,apikey','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store','Content-Type':'application/json'};
  const json=(d:any,status=200)=>new Response(JSON.stringify(d),{status,headers});
@@ -54,7 +58,7 @@ export function raceHandler(db:DB){
    if(op==='practice'){
     const flags=await db.select('dm_release_flags',{select:'code,enabled',code:'in.(aktiviteler,tek_kisilik,oyun_ralli)'});if(flags.some(f=>f.enabled===false))return json({ok:false,mesaj:'Kelime Rallisi şu anda kapalı.'},403);
     const rows=await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
-    return json({ok:true,practice:true,deck:buildRaceDeck(rows),classNo:cls,units,difficulty:['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal'});
+    const deck=buildRaceDeck(rows).map(q=>{if(!b.twoChoices)return q;const lanes=twoChoiceLanes(q);return {...q,options:lanes.map(i=>q.options[i]),answer:lanes.indexOf(q.answer)};});return json({ok:true,practice:true,deck,classNo:cls,units,difficulty:['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal'});
    }
    if(op==='ranking'){
     const rows=await db.select('dm_rally_runs',{select:'student_id,state,finished_at',status:'eq.finished',student_id:'neq.dcde2026-1015-4000-8000-000000000001',class_no:'eq.'+cls,units:'eq.{'+units.join(',')+'}',order:'finished_at.desc',limit:'1000'});
@@ -64,18 +68,20 @@ export function raceHandler(db:DB){
     return json({ok:true,liste:selected.filter(x=>names.some(n=>n.id===x.student_id)).map((r,i)=>({rank:i+1,name:names.find(n=>n.id===r.student_id)?.username,score:r.state.score,correct:r.state.correct,wrong:r.state.wrong,mine:r.student_id===student.id}))});
    }
    if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(b.runId||'')))return json({ok:false,mesaj:'Geçersiz yarış kimliği.'},400);
+   const view=async(data:any)=>{if(!b.twoChoices)return data;const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});if(!rows[0])throw Error('Yarış bulunamadı.');return twoChoiceRace(rows[0],data);};
    if(op==='start'){
     const flags=await db.select('dm_release_flags',{select:'code,enabled',code:'in.(aktiviteler,tek_kisilik,oyun_ralli)'});if(flags.some(f=>f.enabled===false))return json({ok:false,mesaj:'Kelime Rallisi şu anda kapalı.'},403);
-    const existing=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});if(existing[0])return json(publicRace(existing[0]));
+    const existing=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});if(existing[0])return json(b.twoChoices?twoChoiceRace(existing[0],publicRace(existing[0])):publicRace(existing[0]));
     const difficulty=['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal';
     const rows=await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
     const previous=await db.select('dm_rally_runs',{select:'deck',student_id:'eq.'+student.id,class_no:'eq.'+cls,order:'created_at.desc',limit:'50'});
-    return json(await db.rpc('dm_rally_start',{actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous),pace:difficulty}));
+    return json(await view(await db.rpc('dm_rally_start',{actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous),pace:difficulty})));
    }
-   if(op==='state'){const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});return rows[0]?json(publicRace(rows[0])):json({ok:false,mesaj:'Yarış bulunamadı.'},404);}
+   if(op==='state'){const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});return rows[0]?json(b.twoChoices?twoChoiceRace(rows[0],publicRace(rows[0])):publicRace(rows[0])):json({ok:false,mesaj:'Yarış bulunamadı.'},404);}
    if(op==='answer'){
     if(!Number.isInteger(b.round)||b.round<0||b.round>14||!Number.isInteger(b.lane)||b.lane<0||b.lane>2)return json({ok:false,mesaj:'Geçerli kelime kapısını seç.'},400);
-    return json(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane:b.lane}));
+    let lane=b.lane;if(b.twoChoices){if(lane>1)return json({ok:false,mesaj:'İki kapıdan birini seç.'},400);const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});if(!rows[0]?.deck[b.round])return json({ok:false,mesaj:'Yarış bulunamadı.'},404);lane=twoChoiceLanes(rows[0].deck[b.round])[lane];}
+    return json(await view(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane})));
    }
    if(op==='finish')return json(await db.rpc('dm_rally_finish',{actor:student.id,run_key:b.runId}));
    return json({ok:false,mesaj:'Geçersiz yarış işlemi.'},400);

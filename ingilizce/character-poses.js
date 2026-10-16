@@ -1,10 +1,9 @@
 /* Native vector photo poses: shared by wardrobe, character editor and gallery. */
 (()=>{'use strict';
-const list=Object.freeze([{"id": "rahat", "ad": "Rahat poz", "level": 1, "f": 0}, {"id": "selam", "ad": "Merhaba!", "level": 1, "f": 0}, {"id": "zafer", "ad": "Zafer işareti", "level": 5, "f": 100}, {"id": "belde", "ad": "Eller belde", "level": 10, "f": 200}, {"id": "capraz", "ad": "Kollar kavuşuk", "level": 15, "f": 350}, {"id": "basparmak", "ad": "Harikasın!", "level": 20, "f": 550}, {"id": "dusunur", "ad": "Düşünür", "level": 25, "f": 800}, {"id": "kalp", "ad": "Kalpten sevgi", "level": 30, "f": 1100}, {"id": "kahraman", "ad": "Süper kahraman", "level": 35, "f": 1450}, {"id": "kutlama", "ad": "Büyük kutlama", "level": 40, "f": 1850}].map(p=>Object.freeze(p)));
+const list=Object.freeze([{"id": "rahat", "ad": "Rahat poz", "level": 1, "f": 0}, {"id": "selam", "ad": "Merhaba!", "level": 1, "f": 0}, {"id": "belde", "ad": "Eller belde", "level": 10, "f": 200}, {"id": "capraz", "ad": "Kollar kavuşuk", "level": 15, "f": 350}, {"id": "basparmak", "ad": "Harikasın!", "level": 20, "f": 550}, {"id": "dusunur", "ad": "Düşünür", "level": 25, "f": 800}, {"id": "kalp", "ad": "Kalpten sevgi", "level": 30, "f": 1100}, {"id": "kahraman", "ad": "Süper kahraman", "level": 35, "f": 1450}, {"id": "kutlama", "ad": "Büyük kutlama", "level": 40, "f": 1850}].map(p=>Object.freeze(p)));
 const shapes={
  rahat:[[24,231,32,286,'relax',-14],[178,226,148,259,'relax',30]],
  selam:[[24,230,33,286,'relax',0],[188,179,179,123,'open',12]],
- zafer:[[24,231,32,286,'relax',0],[187,178,171,122,'peace',15]],
  belde:[[12,224,63,249,'fist',-55],[188,224,137,249,'fist',55]],
  capraz:[[21,239,126,226,'relax',-80],[179,251,73,242,'relax',80]],
  basparmak:[[24,231,32,286,'relax',0],[184,239,154,193,'thumb',-5]],

@@ -13,7 +13,7 @@ test('clock ticks live, rolls over minutes and reveals a newly earned chest with
  const f=await fixture(),w=f.w,get=k=>w.document.querySelector('[data-time="'+k+'"]').textContent;
  assert.equal(get('minutes'),'39');assert.equal(get('seconds'),'58');f.step();assert.equal(get('seconds'),'59');f.step();assert.equal(get('minutes'),'40');assert.equal(get('seconds'),'00');
  assert.equal(get('stars'),'10');assert.equal(w.document.querySelectorAll('.dm-time-chests button').length,1);assert.equal(w.document.querySelector('.dm-clock-second').getAttribute('transform'),'rotate(0 60 60)');
- w.document.querySelector('.dm-time-chests button').click();await new Promise(r=>setImmediate(r));assert.equal(w.document.querySelectorAll('.dm-time-chests button').length,0);w.close();
+ w.document.querySelector('.dm-time-chests button').click();assert(w.document.querySelector('[data-open-time-chest]'));w.document.querySelector('[data-open-time-chest]').click();await new Promise(r=>setImmediate(r));assert.equal(w.document.querySelectorAll('.dm-time-chests button').length,0);assert.match(w.document.querySelector('[data-chest-result]').textContent,/20/);w.close();
 });
 test('clock pauses when hidden or idle and closes on account change',async()=>{
  const f=await fixture(10),w=f.w,get=()=>w.document.querySelector('[data-time="seconds"]').textContent;
