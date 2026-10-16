@@ -12,7 +12,7 @@
   const blanks=[...new Set([word,...u.map(x=>x.en.split(/\s+/).at(-1).replace(/[.!?]$/,''))])];
   const review=chapter.themeFinal?{cards:[...(previous?.cards||[a,b,c]).slice(0,2),a]}:previous||chapter;
   const r=review.cards[chapter.number%review.cards.length];
-  return [
+  const tasks=[
    {kind:'teach',label:'Önce öğren',cards,objective:chapter.objective},
    choose('Anlamı keşfet',a.en,a.tr,cards.map(x=>x.tr),{audio:a.en,language:'en',explanation:a.en+' = '+a.tr}),
    choose(visual?'Dinle ve görseli seç':'Dinle ve bul','Dinle, duyduğun ifadeyi seç.',hear.en,(visual?imageCards:cards).map(x=>x.en),{audio:hear.en,images:visual?imageCards:null,explanation:hear.en+' = '+hear.tr}),
@@ -24,6 +24,14 @@
    choose(chapter.themeFinal?'Tema tekrarı':'Bir önceki dersten hatırla',r.en,r.tr,review.cards.map(x=>x.tr),{audio:r.en,language:'en',explanation:r.en+' = '+r.tr}),
    choose('Son kontrol','Hangi eşleştirme doğru?',b.en+' → '+b.tr,[b.en+' → '+b.tr,b.en+' → '+a.tr,c.en+' → '+b.tr],{explanation:b.en+' = '+b.tr})
   ];
+  if(chapter.themeFinal&&chapter.themeReview?.length===6){
+   const r=chapter.themeReview,opts=(i,field)=>[r[i][field],...r.filter((_,j)=>j!==i).slice(0,2).map(c=>c[field])];
+   tasks[4]={kind:'match',label:'Temadan üç ifadeyi eşleştir',prompt:'Farklı konularda öğrendiklerini eşleştir.',pairs:[r[0],r[2],r[4]],explanation:'Temanın farklı konularını hatırladın.'};
+   tasks[5]=choose('Temadan hatırla',r[1].en,r[1].tr,opts(1,'tr'),{audio:r[1].en,language:'en',explanation:r[1].en+' = '+r[1].tr});
+   tasks[6]=choose('Temada İngilizcesini bul',r[3].tr,r[3].en,opts(3,'en'),{promptAudio:r[3].tr,explanation:r[3].en+' = '+r[3].tr});
+   tasks[8]=choose('Tema finali · Son konuyu hatırla',r[5].en,r[5].tr,opts(5,'tr'),{audio:r[5].en,language:'en',explanation:r[5].en+' = '+r[5].tr});
+  }
+  return tasks;
  }
  function grade(task,answer){
   if(task.kind==='teach')return {valid:answer===true,correct:answer===true};

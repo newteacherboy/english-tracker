@@ -32,6 +32,7 @@ for line in (ROOT/'content/thematic-topics.txt').read_text().splitlines():
   n=len(chapters);chapters.append({'id':1000+n,'number':n+1,'themeId':T['id'],'theme':theme,'topic':topic,'topicTitle':title,'part':part,'title':title+(' · Tanı ve anla' if part==1 else ' · Kullan ve pekiştir'),'objective':f'{title}: '+('üç temel kelime veya ifadeyi tanır ve anlamını ayırt eder.' if part==1 else 'öğrendiği ifadeleri kısa cümlelerde anlar ve kullanır.'),'stage':'Temel günlük iletişim','cards':cards if part==1 else examples,'examples':examples,'themeFinal':topic==6 and part==2})
 assert len(themes)==20 and all(len(t['topics'])==6 for t in themes) and len(chapters)==240
 for chapter in chapters:
+ if chapter['themeFinal']:chapter['themeReview']=[dict(x['cards'][0],topic=x['topicTitle']) for x in chapters if x['themeId']==chapter['themeId'] and x['part']==1]
  if chapter['topicTitle'] in reference:chapter['reference']=[{'en':en,'tr':tr} for en,tr in reference[chapter['topicTitle']]]
 out={'version':5,'questionCount':9,'themes':themes,'chapters':chapters,'assets':{'1':'learning-assets/objects-01.png','2':'learning-assets/objects-02.png'}}
 for path in ['ingilizce/thematic-curriculum.json','supabase/functions/thematic-learning/curriculum.json']:
