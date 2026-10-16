@@ -15,6 +15,7 @@ begin
  for i in 1..2 loop
   qid:=gen_random_uuid();v:=public.dm_oral_draw(tid,sid,8,99,qid);
   if v->>'exhausted'='true' then raise exception 'unexpected exhaustion';end if;
+  if extract(epoch from ((v#>>'{question,expires_at}')::timestamptz-clock_timestamp())) not between 14 and 15.1 then raise exception 'question must start with fifteen seconds';end if;
   if v#>>'{question,word_key}'=any(seen) then raise exception 'repeated word';end if;
   seen:=array_append(seen,v#>>'{question,word_key}');
   a:=public.dm_oral_draw(tid,sid,8,99,gen_random_uuid());if a#>>'{question,id}'<>v#>>'{question,id}' then raise exception 'duplicate pending draw';end if;
@@ -27,8 +28,10 @@ begin
  v:=public.dm_oral_draw(tid,sid,8,99,gen_random_uuid());if v->>'exhausted'<>'true' then raise exception 'word repeated after exhaustion';end if;
  qid:=gen_random_uuid();
  insert into public.dm_oral_questions(id,teacher_id,student_id,class_no,unit_no,word_key,english,turkish,expires_at) values(qid,tid,sid,8,99,prefix||' timeout',prefix||' timeout','süre',clock_timestamp()-interval '1 second');
- v:=public.dm_oral_grade(tid,qid,true);a:=public.dm_oral_grade(tid,qid,true);
- if (v->>'xp')::int<>-100 or v#>>'{question,status}'<>'wrong' or v#>>'{question,timed_out}'<>'true' or (select (value->>'totalXp')::numeric from public.extra_data where student_id=sid and key_name='yo')<>900 then raise exception 'late answer or duplicate timeout penalty';end if;
+ v:=public.dm_oral_draw(tid,sid,8,99,qid);
+ if v#>>'{question,status}'<>'pending' or (select (value->>'totalXp')::numeric from public.extra_data where student_id=sid and key_name='yo')<>1000 then raise exception 'timeout changed XP without teacher decision';end if;
+ v:=public.dm_oral_grade(tid,qid,true);a:=public.dm_oral_grade(tid,qid,false);
+ if (v->>'xp')::int<>100 or v#>>'{question,status}'<>'correct' or v#>>'{question,timed_out}'<>'true' or (select (value->>'totalXp')::numeric from public.extra_data where student_id=sid and key_name='yo')<>1100 then raise exception 'teacher correct after expiry or duplicate decision';end if;
  update public.extra_data set value=jsonb_set(value,'{totalXp}','35') where student_id=sid and key_name='yo';
  qid:=gen_random_uuid();insert into public.dm_oral_questions(id,teacher_id,student_id,class_no,unit_no,word_key,english,turkish) values(qid,tid,sid,8,99,prefix||' low',prefix||' low','az');
  v:=public.dm_oral_grade(tid,qid,false);a:=public.dm_oral_grade(tid,qid,false);
@@ -37,5 +40,5 @@ begin
  if (select count(*) from public.dm_oral_questions where student_id=sid and teacher_id is null and word_key like prefix||'%')<>4 then raise exception 'teacher deletion erased word history';end if;
  if has_function_privilege('anon','public.dm_oral_grade(uuid,uuid,boolean)','EXECUTE') or has_table_privilege('authenticated','public.dm_oral_questions','SELECT') then raise exception 'public oral access';end if;
 end $$;
-select 'PASS: teacher scope, persistent deduplication, pending/replayed requests, exactly 100 XP once, wrong/timeout minus 100, late correct rejected, zero XP floor, unchanged gold and exhausted pool' as result;
+select 'PASS: teacher scope, persistent deduplication, pending/replayed requests, exactly 100 XP once, wrong minus 100, expiry reveals without grading, late teacher correct accepted, zero XP floor, unchanged gold and exhausted pool' as result;
 rollback;
