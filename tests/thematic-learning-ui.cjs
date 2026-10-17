@@ -21,7 +21,7 @@ await p.goto('https://thematic.test/');await p.evaluate(async()=>{await dmLearni
 const tasks=CORE.deck(DATA.chapters[60],DATA.chapters[59]);for(let i=1;i<=11;i++){const task=tasks[i];await p.waitForFunction(i=>document.querySelector('.ml-progress span').textContent===i+' / 11 soru',i);
 assert.equal(await p.locator('#dmStoryLesson').evaluate(el=>el.scrollTop),0,'Question '+i+' at '+width+'px must open at the top');
 if(i===6&&task.label==='Cümleyi tamamla'){
-assert.equal(await p.locator('.ml-task h2').evaluate(el=>getComputedStyle(el).color),'rgb(12, 21, 53)');
+assert.equal(await p.locator('.ml-task h2').evaluate(el=>getComputedStyle(el).color),'rgb(24, 59, 67)','Question heading must match the approved high-contrast daytime skin');
 await p.evaluate(()=>{window.spoken=[];window.SpeechSynthesisUtterance=function(text){this.text=text;};window.speechSynthesis.cancel=()=>{};window.speechSynthesis.speak=u=>window.spoken.push({text:u.text,lang:u.lang});});
 await p.getByRole('button',{name:'🔊 Cümleyi dinle',exact:true}).click();
 await p.getByRole('button',{name:'🔊 Türkçe anlamını dinle',exact:true}).click();
