@@ -122,11 +122,11 @@
  function showRecoveryPrompt(info){
   $('suStudyRecovery')?.remove();
   const indices=Array.isArray(info.recoveryIndices)?info.recoveryIndices:[];
-  if(indices.length!==3){window.dcToastGoster?.('Pekiştirme soruları bulunamadı. Konuyu tekrar açabilirsin.');return;}
+  const fullRetry=indices.length!==3;
   studyRecoveryIndices=indices;
   const dialog=document.createElement('div');dialog.className='su-result-overlay';dialog.id='suStudyRecovery';
-  dialog.innerHTML='<section class="su-result-card su-recovery-card" role="dialog" aria-modal="true" aria-labelledby="suRecoveryTitle">'+art('explain')+'<h2 id="suRecoveryTitle">Papi ile güçlen!</h2><p>İlk denemede '+Number(info.firstCorrect)+' / '+Number(info.total)+' soruyu doğru bildin.</p><p>Bütün testi yeniden yapmana gerek yok. Üç soruluk kısa bir pekiştirme yapalım.</p><small>Başarılı olursan sınırlı bir tamamlama ödülü kazanırsın. Tam ödül için daha sonra yeniden deneyebilirsin.</small><button type="button" class="su-result-done">3 soruyu çöz →</button></section>';
-  dialog.querySelector('button').onclick=()=>{dialog.remove();studyRecovery=true;window.dcTestCiz(indices.map(i=>studyOriginalQuestions[i]),dcAktifTestAccent);root.querySelector('#dcTab-test')?.scrollIntoView({block:'start'});};
+  dialog.innerHTML='<section class="su-result-card su-recovery-card" role="dialog" aria-modal="true" aria-labelledby="suRecoveryTitle">'+art('explain')+'<h2 id="suRecoveryTitle">Papi ile güçlen!</h2><p>İlk denemede '+Number(info.firstCorrect)+' / '+Number(info.total)+' soruyu doğru bildin.</p><p>'+(fullRetry?'Bu kısa testi yeniden deneyerek konuyu pekiştirebilirsin.':'Bütün testi yeniden yapmana gerek yok. Üç soruluk kısa bir pekiştirme yapalım.')+'</p><small>Başarılı olursan konuyu tamamlayabilir ve başarı düzeyine uygun ödül kazanabilirsin.</small><button type="button" class="su-result-done">'+(fullRetry?'Testi yeniden dene →':'3 soruyu çöz →')+'</button></section>';
+  dialog.querySelector('button').onclick=()=>{dialog.remove();studyRecovery=!fullRetry;window.dcTestCiz(fullRetry?studyOriginalQuestions:indices.map(i=>studyOriginalQuestions[i]),dcAktifTestAccent);root.querySelector('#dcTab-test')?.scrollIntoView({block:'start'});};
   document.body.append(dialog);dialog.querySelector('button').focus();
  }
  async function finishLesson(total){
