@@ -62,6 +62,7 @@
     if (typeof dcQuizCevaplari !== 'undefined' && dcQuizCevaplari[qi] !== -1) return;
     if (h.tip === 'bosluk') { const b = document.getElementById('dtBosluk' + qi); if (b) { b.textContent = h.secenekler[si]; b.classList.add(si === h.dogru ? 'dogru' : 'yanlis'); } }
     acikla(qi, si === h.dogru, h);
+    if(Array.isArray(window.dmStudyAnswers))window.dmStudyAnswers[qi]=String(h.secenekler[si]);
     window.dcQuizCevapVer(qi, si, h.dogru);
   }
 
@@ -81,6 +82,7 @@
       secilen.push({ p: b.textContent, i: Number(b.dataset.i) }); b.hidden = true; ciz();
       if (secilen.length === h.parca.length) {
         const dogruMu = norm(secilen.map(x => x.p).join(' ')) === norm(h.parca.join(' '));
+        if(Array.isArray(window.dmStudyAnswers))window.dmStudyAnswers[qi]=secilen.map(x=>x.p).join(' ');
         acikla(qi, dogruMu, h);
         window.dcQuizCevapVer(qi, dogruMu ? 0 : 1, 0);
         if (!dogruMu) { kutu.classList.remove('dogru'); kutu.classList.add('yanlis'); }
@@ -95,6 +97,7 @@
     const alan = document.getElementById('dcTestIcerik');
     dcQuizCevaplari = new Array(sorular.length).fill(-1);
     dcQuizDogruSayisi = 0;
+    window.dmStudyAnswers = new Array(sorular.length).fill(null);
     if (!alan) return;
     if (!sorular.length) { alan.innerHTML = '<div class="dc-content-card"><h3>Test</h3><p>Test soruları yakında eklenecek.</p></div>'; return; }
     const hazir = sorular.map(hazirla);
