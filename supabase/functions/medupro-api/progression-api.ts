@@ -6,7 +6,7 @@ export function progressionAPI(db:any,json:any){
  async function context(a:any){const {data,error}=await db.rpc('dm_progress_context',{actor:a.student_id});if(error)throw error;return data;}
  const deny=(n:any)=>json({ok:false,status:'kilitli',mesaj:typeof n==='number'?`Bu özellik ${n}. seviyede açılır.`:n},403);
  async function handle(op:string,body:any,q:URLSearchParams,a:any){
-  if(!['haftalikHedefSec','haftalikHedefOdulAl','seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi','seviyeOyunOdulu'].includes(op))return null;
+  if(!['haftalikHedefSec','haftalikHedefOdulAl','seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi','seviyeOyunOdulu','seviyeParkurPekistirme'].includes(op))return null;
   if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='haftalikHedefSec'){
     const xp=Number(body.xp);
@@ -20,6 +20,19 @@ export function progressionAPI(db:any,json:any){
     if(error)return json({ok:false,mesaj:error.message},400);
     return json(data);
    }
+  if(op==='seviyeParkurPekistirme'){
+    const ctx=await context(a),run=String(body.runId||''),stop=Number(body.stopNo),classNo=Number(body.classNo);
+    const door=ctx.units.findIndex((row:any[])=>row.includes(stop));
+    if(!Number.isInteger(stop)||!Number.isInteger(classNo)||door<0
+       ||Math.floor((stop-200000)/10000)!==classNo
+       ||ctx.level<[1,10,20,30][door]||door>0&&!ctx.complete[door-1])
+      return deny('Geçerli ve açık parkur durağı gerekli.');
+    const {data,error}=await db.rpc('dm_parkur_fair_recover',{
+       actor:a.student_id,run_key:run,stop_no:stop,
+       expected_step:Number(body.step),selected:String(body.answer||'')});
+    if(error)return json({ok:false,mesaj:error.message},400);
+    return json(data);
+  }
   if(op==='seviyeOyunOdulu'){
    const ctx=await context(a),game=String(body.game||''),code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur',harfbahcesi:'oyun_harfbahcesi',eslestirme:'oyun_eslestirme'} as any)[game]||'oyun_'+game;
    if(!Object.hasOwn(C.gates,code)||ctx.level<C.gates[code])return deny(C.gates[code]||40);
@@ -32,8 +45,22 @@ export function progressionAPI(db:any,json:any){
     if(!ctx.done.includes(stop)&&position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');
     units=[stop];
    }
-   const {data,error}=await db.rpc('dm_game_reward_claim',{actor:a.student_id,run_key:String(body.runId||''),game,class_id:Number(body.classNo),unit_ids:units,correct:Number(body.correct),wrong:Number(body.wrong),seconds:Number(body.seconds),first_clear:!!body.firstClear,stars:Number(body.stars||1),boost:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
-   if(error)return json({ok:false,mesaj:error.message},400);return json(data);
+   const fair=game==='ba'; // Always enforce recorded outcomes; old clients cannot bypass the fairness gate.
+   const {data,error}=fair
+      ?await db.rpc('dm_parkur_fair_claim',{actor:a.student_id,run_key:String(body.runId||''),
+         class_id:Number(body.classNo),stop_no:units[0],seconds:Number(body.seconds)})
+      :await db.rpc('dm_solo_fair_claim',{actor:a.student_id,run_key:String(body.runId||''),game_code:game,class_id:Number(body.classNo),unit_ids:units,right_count:Number(body.correct),wrong_count:Number(body.wrong),duration_seconds:Number(body.seconds),boost_factor:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
+   if(error)return json({ok:false,mesaj:error.message},400);
+   if(fair&&data?.ok&&['awarded','duplicate'].includes(String(data.reason||''))){
+     // Idempotent existing three-stop gift; retrying a completed claim may
+     // finish this independent gift if an earlier response was interrupted.
+     const stopGift=await db.rpc('dm_progress_award_stop',{actor:a.student_id,stop:units[0]});
+     if(stopGift.error)return json({ok:false,mesaj:'Durak ödülü kaydedilemedi. Yeniden dene.'},503);
+     const gift=Number(stopGift.data?.gold||0);
+     return json({...data,gold:Number(data.gold||0)+gift,yo:stopGift.data?.yo||data.yo,
+       stopGiftGold:gift});
+   }
+   return json(data);
   }
   if(op==='seviyeDurumu')return json({ok:true,...await context(a)});
   if(op==='seviyeLigListesi'){const {data,error}=await db.rpc('dm_progress_league');if(error)throw error;return json({ok:true,liste:data});}
@@ -63,7 +90,11 @@ export function progressionAPI(db:any,json:any){
   const ctx=await context(a),l=ctx.level;
   if(code==='akis'&&!ctx.feed)return deny('Akış, ana parkurda 3. durağa ulaşınca açılır.');
   if(code&&l<(C.gates[code]||1))return deny(C.gates[code]);
-  if(op==='buyuSeviyeTamamla'){const supplied=Number(body.seviyeNo),no=supplied>=1000&&supplied<2000?200000+Math.floor((supplied-1000)/100)*10000+((supplied-1000)%100)*100+1:supplied,door=ctx.units.findIndex((d:any[])=>d.includes(no));if(door<0)return deny('Geçerli parkur durağı gerekli.');const n=[1,10,20,30][door];if(l<n)return deny(n);if(door>0&&!ctx.complete[door-1])return deny('Önce önceki parkuru tamamla.');const position=ctx.units[door].indexOf(no);if(position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');}
+  if(op==='buyuSeviyeTamamla'){const supplied=Number(body.seviyeNo),no=supplied>=1000&&supplied<2000?200000+Math.floor((supplied-1000)/100)*10000+((supplied-1000)%100)*100+1:supplied,door=ctx.units.findIndex((d:any[])=>d.includes(no));if(door<0)return deny('Geçerli parkur durağı gerekli.');const n=[1,10,20,30][door];if(l<n)return deny(n);if(door>0&&!ctx.complete[door-1])return deny('Önce önceki parkuru tamamla.');const position=ctx.units[door].indexOf(no);if(position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');
+    // The authenticated server reward transaction now writes level_completions.
+    // A direct client completion must never create a pass before the verified claim.
+    if(!ctx.done.includes(no))return deny('Önce parkur sorularını başarıyla tamamla.');
+   }
   if(lesson){const ce=String(value(body,q,'seviye')).toUpperCase(),n=({A1:2,A2:9,B1:16,B2:23} as any)[ce];if(!n)return deny('Geçerli ders seviyesi gerekli.');if(l<n)return deny(n);if(!ctx.lessons[ce])return deny('Önce önceki ders seviyesini tamamen bitir.');const topic=String(value(body,q,op==='dersKonuDetayGetir'?'konu':'konuAdi'));const cat=String(value(body,q,'kategori'));const check=await db.from('lesson_topics').select('id').eq('active',true).eq('level',ce).eq('category',cat).eq('topic_name',topic).limit(1);if(check.error)throw check.error;if(!check.data?.length)return deny('Yayımlanmış ders konusu gerekli.');}
   if(save){let incoming=body.deger;try{if(typeof incoming==='string')incoming=JSON.parse(incoming);}catch{return deny('Geçersiz veri.');}
    const before=ctx.yo||{};
