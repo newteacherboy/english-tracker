@@ -103,3 +103,28 @@ test('school homepage preserves the existing three-stop map and displays goal/ta
  assert.match(css,/\.rt-root\.rt-school \.rt-reward-route\{/);
  assert.match(css,/\.rt-root\.rt-school\[data-school-appearance="night"\] \.rt-reward-route\{/);
 });
+
+test('both routes expose accessible previous/next review; only completed answers are reviewable',()=>{
+ const learning=fs.readFileSync('ingilizce/thematic-learning.js','utf8');
+ const school=fs.readFileSync('ingilizce/school-journey.js','utf8');
+ const css=fs.readFileSync('ingilizce/parkur-question-parity.css','utf8');
+ const route=fs.readFileSync('ingilizce/route-questions.js','utf8');
+ assert.match(learning,/reviewSnapshots=new Map\(\)/);
+ assert.match(learning,/saveAnsweredSnapshot\(answeredCursor\)/);
+ assert.match(learning,/if\(!modal\|\|modal\.classList\.contains\('ml-entry'\)\|\|!reviewSnapshots\.has\(index\)\)return/);
+ assert.match(learning,/\[data-review-prev\]/);
+ assert.match(learning,/\[data-review-next\]/);
+ assert.match(learning,/control disabled|el\.disabled=true/);
+ assert.match(learning,/api\('advance'/);
+ assert.match(school,/dm-school-question-nav/);
+ assert.match(school,/\#bzGeriSoru:not\(:disabled\)/);
+ assert.match(school,/\#bzIncSonra:not\(:disabled\)/);
+ assert.match(school,/dmSchoolStopOpen/);
+ assert.match(route,/dm-school-words/);
+ assert.match(route,/if\(!root\.dmSchoolJourney\?\.theme/);
+ assert.match(css,/dm-school-lesson-head/);
+ assert.match(css,/\[data-school-appearance="night"\]/);
+ assert.match(css,/\[style\*="none"\]\{display:none!important\}/);
+ assert.match(css,/ml-history-navigation/);
+ assert.doesNotMatch(learning.slice(learning.indexOf('function showAnsweredSnapshot'),learning.indexOf('if(!document.getElementById(\'dm-parkur-history-ui-css\')')),/api\(|submit\(/,'Read-only navigation must not hit the scoring endpoint');
+});
