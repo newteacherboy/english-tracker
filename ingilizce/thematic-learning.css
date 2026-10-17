@@ -6,3 +6,5 @@
 
 /* Keep lesson headings readable under the portal day/night heading rules. */
 #dmStoryLesson.ml-overlay .ml-task h2,#dmStoryLesson.ml-overlay .ml-header h1{color:#153846;-webkit-text-fill-color:#153846;}
+
+.ml-final-review{text-align:center}.ml-review-count{font-weight:900;color:#167c73!important}.ml-review-card{border:2px solid #d7b859;border-radius:22px;padding:26px 18px;background:linear-gradient(145deg,#fffdf5,#eaf7ee);box-shadow:0 7px 0 #dce8dc}.ml-review-card small{color:#63806d;font-weight:900;letter-spacing:2px}.ml-review-card h2{margin:20px 0!important}.ml-review-card .ml-speaker{margin:0}.ml-review-note{min-height:3em;font-weight:850}.ml-final-review button.is-wrong{background:#fff0e8;border-color:#d87862;color:#863c29}.ml-final-review .ml-choices button:disabled{opacity:1}

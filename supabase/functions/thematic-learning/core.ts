@@ -3,7 +3,7 @@ import './learning-core.js';
 const CORE=(globalThis as any).DMLearningCore;
 type DB={select:(table:string,params:any)=>Promise<any[]>,insert:(table:string,payload:any,ignore?:boolean)=>Promise<any[]>,update:(table:string,params:any,payload:any)=>Promise<any[]>,rpc:(name:string,payload:any)=>Promise<any>};
 const chapters=DATA.chapters;
-const safe=(r:any)=>({ok:true,chapter:r.chapter,cursor:r.cursor,completed:r.completed,finished:r.cursor>=10,version:r.version,replay:!!r.replay,mistakes:r.mistakes||0,reward:r.last_reward||{},deckVersion:5});
+const safe=(r:any)=>({ok:true,chapter:r.chapter,cursor:r.cursor,completed:r.completed,finished:r.cursor>=(r.deck_version===6?11:10),version:r.version,replay:!!r.replay,mistakes:r.mistakes||0,reward:r.last_reward||{},deckVersion:r.deck_version||5});
 export function thematicHandler(db:DB){
  const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,authorization,apikey,x-diji-token','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json','Cache-Control':'no-store'};
  const json=(d:any,status=200)=>new Response(JSON.stringify(d),{status,headers});
@@ -31,21 +31,25 @@ export function thematicHandler(db:DB){
     return json({ok:true,version:5,progress:[...map.values()],inherited,total:240});
    }
    const n=Number(b.chapter),C=chapters[n-1000];if(!Number.isInteger(n)||!C||C.id!==n)return json({ok:false,mesaj:'Geçersiz bölüm.'},400);
+   const requestedVersion=b.deckVersion===6?6:5;
    const filters={actor_key:'eq.'+owner,chapter:'eq.'+n};
    const read=async()=>(await db.select('papi_story_progress',{select:'*',...filters,limit:'1'}))[0];
    let record=await read();
    if(n>1000&&n-1000>inherited){const prev=(await db.select('papi_story_progress',{select:'completed',actor_key:'eq.'+owner,chapter:'eq.'+(n-1),limit:'1'}))[0];if(!prev?.completed)return json({ok:false,mesaj:'Önce bir önceki bölümü tamamla.'},403);}
    if(b.action==='open'){
-    if(!record){await db.insert('papi_story_progress',{actor_key:owner,student_id:student?id:null,teacher_id:student?null:id,chapter:n,cursor:0,completed:false,reward_claimed:n-1000<inherited,replay:n-1000<inherited,version:0,deck_version:5},true);record=await read();}
-    else if(record.cursor>=10){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{cursor:0,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},route_combo:0,version:record.version+1,updated_at:new Date().toISOString()});record=await read();}
+    if(!record){await db.insert('papi_story_progress',{actor_key:owner,student_id:student?id:null,teacher_id:student?null:id,chapter:n,cursor:0,completed:false,reward_claimed:n-1000<inherited,replay:n-1000<inherited,version:0,deck_version:requestedVersion},true);record=await read();}
+    else if(record.cursor>=(record.deck_version===6?11:10)){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{cursor:0,deck_version:requestedVersion,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},route_combo:0,version:record.version+1,updated_at:new Date().toISOString()});record=await read();}
+    if(record&&requestedVersion===6&&record.deck_version!==6){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{deck_version:6,version:record.version+1});record=await read();}
     return record?json(safe(record)):json({ok:false,mesaj:'Bölüm açılamadı. Yeniden dene.'},503);
    }
    if(!record)return json({ok:false,mesaj:'Önce bölümü aç.'},409);
-   if(record.cursor>=10)return json({...safe(record),alreadyCompleted:true,accepted:true,correct:true});
+   if((record.deck_version===6?6:5)!==requestedVersion)return json({ok:false,mesaj:'Öğrenme yolunu güncellemek için uygulamayı yenile.'},409);
+   const steps=requestedVersion===6?11:10;
+   if(record.cursor>=steps)return json({...safe(record),alreadyCompleted:true,accepted:true,correct:true});
    if(!Number.isInteger(b.cursor)||!Number.isInteger(b.version)||b.cursor!==record.cursor||b.version!==record.version)return json({...safe(record),stale:true});
    const tasks=CORE.deck(C,chapters[n-1001]),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);
    if(!grade.valid)return json({ok:false,mesaj:'Bu etkinlik için bir cevap seç.'},400);
-   const r=await db.rpc('dm_story_apply',{owner_key:owner,chapter_no:n,expected_cursor:record.cursor,expected_version:record.version,answer_correct:grade.correct,is_question:task.kind!=='teach',step_count:10,question_count:9});
+   const r=await db.rpc('dm_story_apply',{owner_key:owner,chapter_no:n,expected_cursor:record.cursor,expected_version:record.version,answer_correct:grade.correct,is_question:task.kind!=='teach',step_count:steps,question_count:steps-1});
    if(!r.ok)return json(r,r.energyEmpty?409:503);
    return json({...safe(r.progress),...r,progress:undefined,accepted:r.correct===true,explanation:grade.correct?task.explanation||'Öğrenmeye devam!':'Bir daha deneyelim. Kartları tekrar dinleyebilirsin.'});
   }catch(e){console.error('[thematic-learning]',String((e as any)?.message||e));return json({ok:false,mesaj:'Öğrenme yolu şu anda kaydedilemedi. Aynı adımdan yeniden deneyebilirsin.'},503);}

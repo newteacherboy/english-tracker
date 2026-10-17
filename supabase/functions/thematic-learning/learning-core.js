@@ -31,10 +31,19 @@
    tasks[6]=choose('Temada İngilizcesini bul',r[3].tr,r[3].en,opts(3,'en'),{promptAudio:r[3].tr,explanation:r[3].en+' = '+r[3].tr});
    tasks[8]=choose('Tema finali · Son konuyu hatırla',r[5].en,r[5].tr,opts(5,'tr'),{audio:r[5].en,language:'en',explanation:r[5].en+' = '+r[5].tr});
   }
+  const reviewCards=cards.filter((x,i)=>cards.findIndex(y=>norm(y.en)===norm(x.en))===i);
+  tasks.push({kind:'review',label:'Son tekrar',prompt:'Bu bölümde öğrendiklerin',cards:reviewCards.map((x,i)=>{
+   const other=cards.find(y=>norm(y.tr)!==norm(x.tr));
+   return {en:x.en,tr:x.tr,options:rotate([x.tr,other.tr],(chapter.number+i)%2)};
+  }),explanation:'Bölümün tüm kelimelerini tekrar ettin.'});
   return tasks;
  }
  function grade(task,answer){
   if(task.kind==='teach')return {valid:answer===true,correct:answer===true};
+  if(task.kind==='review'){
+   const valid=Array.isArray(answer)&&answer.length===task.cards.length&&task.cards.every((c,i)=>typeof answer[i]==='string'&&c.options.includes(answer[i]));
+   return {valid,correct:valid}; // Review advances after either choice; no per-card rewards.
+  }
   if(task.kind==='match'){
    if(!Array.isArray(answer)||answer.length!==task.pairs.length)return {valid:false,correct:false};
    const valid=answer.every(x=>x&&typeof x.en==='string'&&typeof x.tr==='string');
