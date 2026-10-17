@@ -32,15 +32,23 @@ function refreshCards(){document.querySelectorAll('.rt-week').forEach(el=>el.out
 let routeSaveInProgress=false;
 async function setPurpose(p,{save=true,reopen=true}={}){
  if(!['school','independent'].includes(p)||routeSaveInProgress)return false;
- const state=Y(),owner=who();
- if(!state||!owner){tell('Hesap bilgilerin hazırlanıyor, kısa süre sonra tekrar dene.');return false;}
- const previous=state.dmLearningPurpose;
- preview=null;
- if(previous===p){if(reopen)await window.dunyaAc?.();return true;}
+ const owner=who();
+ if(!Y()||!owner){tell('Hesap bilgilerin hazırlanıyor, kısa süre sonra tekrar dene.');return false;}
  routeSaveInProgress=true;
- state.dmLearningPurpose=p;
- window.yoKaydet?.();
+ let state=null,previous=null,changed=false;
  try{
+  // Readiness includes the initial server version, not merely the local yo
+  // object. Do not change any route selection before this resolves.
+  if(save&&typeof window.dmMemberSaveReady==='function')await window.dmMemberSaveReady(owner);
+  else if(save&&typeof window.dmPrepareMemberState==='function')await window.dmPrepareMemberState();
+  if(owner!==who())return false;
+  state=Y();
+  if(!state)return false;
+  previous=state.dmLearningPurpose;
+  preview=null;
+  if(previous===p){if(reopen)await window.dunyaAc?.();return true;}
+  state.dmLearningPurpose=p;changed=true;
+  window.yoKaydet?.();
   if(save){
    if(typeof window.yoHemenKaydet!=='function')throw Error('Kaydetme bağlantısı henüz hazır değil.');
    let saved=false,lastError=null;
@@ -58,11 +66,11 @@ async function setPurpose(p,{save=true,reopen=true}={}){
   if(reopen)await window.dunyaAc?.();
   return true;
  }catch(e){
-  if(owner===who()&&Y()===state){
+  if(changed&&owner===who()&&Y()===state){
    state.dmLearningPurpose=previous;
    window.yoKaydet?.();
   }
-  tell('Parkur seçimin kaydedilemedi. Bağlantını kontrol edip tekrar deneyebilirsin.');
+  tell(e?.message||'Parkur seçimin kaydedilemedi. Bağlantını kontrol edip tekrar deneyebilirsin.');
   return false;
  }finally{routeSaveInProgress=false;}
 }
