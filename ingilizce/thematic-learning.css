@@ -128,3 +128,196 @@
 #dmStoryLesson .ml-letter-bank button:disabled{opacity:.3}
 #dmStoryLesson [data-letter-check]:disabled{opacity:.45}
 @media(max-width:380px){#dmStoryLesson .ml-wallet{gap:6px}#dmStoryLesson .ml-wallet-chip{padding:11px 5px;gap:4px;border-radius:18px}#dmStoryLesson .ml-wallet-chip svg{width:23px;height:29px}#dmStoryLesson .ml-wallet-chip b{font-size:17px}#dmStoryLesson .ml-letter-fixed{min-width:19px;font-size:21px}#dmStoryLesson .ml-letter-gap{width:25px;min-width:25px;font-size:21px}#dmStoryLesson .ml-letter-word{gap:2px}}
+
+
+/* One-viewport lesson layout. Optional study content opens in its own sheet. */
+#dmStoryLesson.ml-lesson{height:var(--ml-view-height,100dvh);max-height:var(--ml-view-height,100dvh);overflow:hidden}
+#dmStoryLesson .ml-shell{height:100%;min-height:0;max-height:100%;width:min(100%,920px);padding:8px 10px;display:grid;grid-template-rows:auto auto auto minmax(0,1fr);gap:7px}
+#dmStoryLesson .ml-header{gap:9px;min-height:36px}
+#dmStoryLesson .ml-header>button{width:36px;height:36px;min-height:36px;font-size:22px;border-width:1px}
+#dmStoryLesson .ml-header small{font-size:10px;line-height:1.2}
+#dmStoryLesson .ml-header h1{font-size:18px;line-height:1.15;margin:2px 0 0}
+#dmStoryLesson .ml-wallet{gap:7px}
+#dmStoryLesson .ml-wallet-chip{padding:5px 7px;min-height:35px;gap:5px;border-width:1px;border-radius:13px;box-shadow:0 2px 0 #e4ce91}
+#dmStoryLesson .ml-wallet-chip svg{width:19px;height:23px}
+#dmStoryLesson .ml-wallet-chip b{font-size:17px}
+#dmStoryLesson .ml-wallet-chip small{font-size:11px}
+#dmStoryLesson .ml-arena-title,#dmStoryLesson .ml-shell>footer{display:none}
+#dmStoryLesson .ml-progress{gap:9px;min-height:14px;padding:0}
+#dmStoryLesson .ml-progress progress{height:7px}
+#dmStoryLesson .ml-progress>span{font-size:11px}
+#dmStoryLesson .ml-combo-toast{position:fixed;top:35%;left:50%;transform:translateX(-50%);z-index:110;width:min(85%,300px);padding:18px;border:2px solid #ffdf85;border-radius:20px;background:#103c3e;box-shadow:0 10px 40px #0008;font-size:18px}
+#dmStoryLesson .ml-board{min-height:0;padding:11px 12px;border-radius:20px;display:flex;flex-direction:column;justify-content:center;overflow:visible}
+#dmStoryLesson .ml-stage{width:100%;min-width:0;flex:0 0 auto;transform-origin:top center}
+#dmStoryLesson .ml-eyebrow{font-size:11px!important;padding:4px 10px;margin:0 auto 7px!important;letter-spacing:.7px;border-radius:9px 3px}
+#dmStoryLesson .ml-arena-hero{grid-template-columns:minmax(55px,21%) minmax(0,1fr);gap:5px;margin:4px 0 9px}
+#dmStoryLesson .ml-arena-papi{max-height:105px;width:100%;height:auto}
+#dmStoryLesson .ml-speech{padding:10px 12px;border-radius:20px}
+#dmStoryLesson .ml-speech h2{font-size:20px;line-height:1.18;margin:0 0 6px}
+#dmStoryLesson .ml-speech p{font-size:12px;line-height:1.3;margin:4px 0}
+#dmStoryLesson .ml-speaker{min-height:34px;padding:6px 10px;margin:3px 2px;font-size:12px;border-radius:11px;box-shadow:0 2px 0 #b6c9ed}
+#dmStoryLesson .ml-speech>.ml-art{width:60px;margin:5px auto}
+#dmStoryLesson .ml-task p{line-height:1.35}
+#dmStoryLesson .ml-teach,#dmStoryLesson .ml-teach:not(:has(.ml-art)){grid-template-columns:1fr;gap:6px;margin:9px 0}
+#dmStoryLesson .ml-teach button{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;gap:2px 8px;min-height:54px;padding:7px 11px;border-radius:13px;text-align:left;box-shadow:0 2px 0 #080f2a}
+#dmStoryLesson .ml-teach b{grid-column:1;grid-row:1;font-size:17px;line-height:1.2;text-align:left}
+#dmStoryLesson .ml-teach span:not(.ml-art){grid-column:1;grid-row:2;font-size:12px;line-height:1.25}
+#dmStoryLesson .ml-teach small{grid-column:2;grid-row:1/3;font-size:12px;margin:0;white-space:nowrap}
+#dmStoryLesson .ml-teach button:has(.ml-art){grid-template-columns:43px minmax(0,1fr) auto}
+#dmStoryLesson .ml-teach .ml-art{grid-column:1;grid-row:1/3;width:42px;height:42px;margin:0}
+#dmStoryLesson .ml-teach button:has(.ml-art) b,#dmStoryLesson .ml-teach button:has(.ml-art) span:not(.ml-art){grid-column:2}
+#dmStoryLesson .ml-teach button:has(.ml-art) small{grid-column:3}
+#dmStoryLesson .ml-teach .ml-art-number{font-size:24px}
+#dmStoryLesson .ml-teach .ml-shape-triangle{border-left-width:14px;border-right-width:14px;border-bottom-width:27px}
+#dmStoryLesson .ml-hint{font-size:11px;line-height:1.25;margin:5px 0}
+#dmStoryLesson .ml-choices{gap:7px;margin:8px 0}
+#dmStoryLesson .ml-choices button{min-height:46px;padding:8px 11px;font-size:17px;line-height:1.25;border-radius:14px;box-shadow:inset 0 1px 3px #a5b3ff24,0 3px 0 #070e2e}
+#dmStoryLesson .ml-image-choices button{padding:6px}
+#dmStoryLesson .ml-image-choices .ml-art{width:min(100%,66px);margin:0 auto}
+#dmStoryLesson .ml-image-choices .ml-art-number{font-size:30px}
+#dmStoryLesson .ml-image-choices .ml-shape-triangle{border-left-width:20px;border-right-width:20px;border-bottom-width:38px}
+#dmStoryLesson .ml-matches{gap:8px;margin:8px 0}
+#dmStoryLesson .ml-matches>div{gap:7px}
+#dmStoryLesson .ml-matches button{min-height:47px;padding:7px 8px;font-size:15px;line-height:1.25;border-radius:13px}
+#dmStoryLesson .ml-matches .ml-art{width:40px}
+#dmStoryLesson .ml-sentence{min-height:49px;padding:10px 12px;font-size:18px;line-height:1.3;border-radius:14px}
+#dmStoryLesson .ml-tokens{gap:6px;margin:9px 0}
+#dmStoryLesson .ml-tokens button{min-height:39px;padding:7px 11px;font-size:16px;border-radius:10px}
+#dmStoryLesson .ml-actions{gap:8px;margin-top:9px}
+#dmStoryLesson .ml-actions button{min-height:44px;min-width:110px;padding:9px 12px;font-size:16px;border-radius:13px;line-height:1.25}
+#dmStoryLesson .ml-feedback:not(:empty){padding:8px 10px 8px 32px;margin-top:8px;border-radius:12px;font-size:13px;line-height:1.3}
+#dmStoryLesson .ml-feedback:not(:empty):before{left:10px;top:7px;font-size:19px}
+#dmStoryLesson .ml-reference-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:6px}
+#dmStoryLesson .ml-reference-toggle{min-height:31px;padding:5px 8px;border:1px solid #718bb7;border-radius:9px;background:#152e53;color:#d9e9ff;font-size:11px;font-weight:800;line-height:1.2}
+#dmStoryLesson .ml-reference-sheet{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:16px;background:#050d25c9;backdrop-filter:blur(5px)}
+#dmStoryLesson .ml-reference-panel{width:min(100%,650px);max-height:calc(var(--ml-view-height,100dvh) - 32px);overflow:auto;border:1px solid #e4c885;border-radius:22px;background:#111e44;color:#fff;padding:16px}
+#dmStoryLesson .ml-reference-panel header{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:14px}
+#dmStoryLesson .ml-reference-panel h2{font-size:18px;color:#ffe4a5!important;-webkit-text-fill-color:#ffe4a5!important;margin:0}
+#dmStoryLesson .ml-reference-panel [data-reference-close]{width:42px;min-height:42px;flex-shrink:0;border:1px solid #9ba8d0;border-radius:50%;background:#253b6b;color:#fff;font-size:26px}
+#dmStoryLesson .ml-reference-list{display:grid;gap:9px}
+#dmStoryLesson .ml-reference-list button{display:grid;gap:5px;min-height:60px;padding:12px;text-align:left;border:1px solid #6385be;border-radius:12px;background:#152e53;color:#fff}
+#dmStoryLesson .ml-reference-list span{color:#c4d5ef;font-size:14px}
+#dmStoryLesson .ml-reference-list small{color:#8ce3eb;font-size:12px}
+#dmStoryLesson .ml-review-count{display:inline-block;font-size:12px;margin:0 10px 5px 0}
+#dmStoryLesson .ml-review-track{display:inline-flex;gap:7px;margin:0 0 5px;vertical-align:middle}
+#dmStoryLesson .ml-review-track span{width:21px;height:26px;font-size:16px}
+#dmStoryLesson .ml-question-instruction{font-size:16px;margin:7px 0}
+#dmStoryLesson .ml-review-note{min-height:0;padding:8px;margin:7px 0 0;font-size:13px;line-height:1.3}
+#dmStoryLesson .ml-review-note:empty{display:none}
+#dmStoryLesson .ml-letter-line{gap:6px 3px;padding:10px 7px;margin:9px 0}
+#dmStoryLesson .ml-letter-word{gap:2px}
+#dmStoryLesson .ml-letter-fixed{min-width:20px;min-height:37px;font-size:21px}
+#dmStoryLesson .ml-letter-gap{width:25px;min-width:25px;min-height:38px;font-size:21px}
+#dmStoryLesson .ml-letter-bank{gap:7px;margin:10px 0}
+#dmStoryLesson .ml-letter-bank button{width:38px;min-height:40px;font-size:22px;border-radius:10px}
+#dmStoryLesson[data-fit="1"] .ml-speech h2{font-size:18px}
+#dmStoryLesson[data-fit="1"] .ml-arena-papi{max-height:83px}
+#dmStoryLesson[data-fit="1"] .ml-speech{padding:8px 10px}
+#dmStoryLesson[data-fit="1"] .ml-teach button{min-height:48px;padding:5px 9px}
+#dmStoryLesson[data-fit="1"] .ml-teach .ml-art{width:36px;height:36px}
+#dmStoryLesson[data-fit="1"] .ml-teach button:has(.ml-art){grid-template-columns:37px minmax(0,1fr) auto}
+#dmStoryLesson[data-fit="1"] .ml-task>.ml-hint{display:none}
+#dmStoryLesson[data-fit="1"] .ml-matches button{font-size:14px;min-height:44px}
+#dmStoryLesson[data-fit="1"] .ml-choices button{font-size:16px;padding:7px 9px}
+#dmStoryLesson[data-fit="2"] .ml-speech h2{font-size:16px}
+#dmStoryLesson[data-fit="2"] .ml-speech{padding:6px 9px;border-radius:15px}
+#dmStoryLesson[data-fit="2"] .ml-speech p{font-size:11px;line-height:1.2}
+#dmStoryLesson[data-fit="2"] .ml-arena-hero{margin:3px 0 6px;grid-template-columns:48px minmax(0,1fr)}
+#dmStoryLesson[data-fit="2"] .ml-arena-papi{max-height:70px}
+#dmStoryLesson[data-fit="2"] .ml-teach{gap:4px;margin:6px 0}
+#dmStoryLesson[data-fit="2"] .ml-teach button{min-height:45px;padding:4px 8px}
+#dmStoryLesson[data-fit="2"] .ml-teach b{font-size:15px}
+#dmStoryLesson[data-fit="2"] .ml-teach span:not(.ml-art){font-size:11px}
+#dmStoryLesson[data-fit="2"] .ml-task>.ml-hint{display:none}
+#dmStoryLesson[data-fit="2"] .ml-choices button,#dmStoryLesson[data-fit="2"] .ml-matches button{font-size:14px;min-height:42px;padding:6px 8px}
+#dmStoryLesson[data-fit="2"] .ml-feedback:not(:empty){font-size:12px;padding-top:6px;padding-bottom:6px;margin-top:6px}
+#dmStoryLesson[data-fit="2"] .ml-tokens{gap:5px;margin:6px 0}
+#dmStoryLesson[data-fit="2"] .ml-tokens button{font-size:14px;min-height:34px;padding:5px 8px}
+#dmStoryLesson[data-fit="2"] .ml-sentence{font-size:16px;min-height:40px;padding:8px}
+#dmStoryLesson[data-fit="2"] .ml-letter-bank button{width:34px;min-height:36px;font-size:19px}
+#dmStoryLesson[data-fit="2"] .ml-letter-line{padding:6px;margin:6px 0}
+#dmStoryLesson[data-fit="2"] .ml-actions{margin-top:6px}
+#dmStoryLesson[data-fit="2"] .ml-actions button{min-height:40px;font-size:14px;padding:7px 10px}
+#dmStoryLesson.ml-scroll-fallback{overflow:auto}
+#dmStoryLesson.ml-scroll-fallback .ml-shell{height:auto;max-height:none;min-height:100%;grid-template-rows:auto auto auto auto}
+#dmStoryLesson.ml-scroll-fallback .ml-board{min-height:auto}
+/* The result uses actual saved rewards; decoration never awards currency. */
+#dmStoryLesson .ml-complete{position:relative;isolation:isolate;text-align:center;padding:3px 0}
+#dmStoryLesson .ml-result-mascot{position:relative;width:120px;margin:0 auto 8px}
+#dmStoryLesson .ml-result-mascot:before{content:'';position:absolute;inset:2px -12px;border-radius:50%;background:radial-gradient(#56f4cb80,#f5d88b22 45%,transparent 70%);z-index:-1}
+#dmStoryLesson .ml-result-mascot img{display:block;width:115px;height:115px;object-fit:contain;margin:auto;filter:drop-shadow(0 0 15px #60edb84d)}
+#dmStoryLesson .ml-complete h2{font-size:25px;line-height:1.2;margin:7px 0;color:#ffe8a8!important;-webkit-text-fill-color:#ffe8a8!important}
+#dmStoryLesson .ml-result-stars{display:flex;justify-content:center;gap:9px;margin:7px 0}
+#dmStoryLesson .ml-result-stars span{font-size:29px;color:#68718b}
+#dmStoryLesson .ml-result-stars .is-earned{color:#ffde6c;text-shadow:0 2px 0 #af7b2b,0 0 18px #ffd96d44}
+#dmStoryLesson .ml-result-message{font-size:14px;margin:7px 0}
+#dmStoryLesson .ml-result-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;margin:9px 0;font-size:12px;color:#c8f0e4}
+#dmStoryLesson .ml-result-rewards{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;margin:12px auto;max-width:450px}
+#dmStoryLesson .ml-result-rewards>div{display:grid;grid-template-columns:auto auto;align-items:center;justify-content:center;gap:2px 8px;padding:12px;border:1px solid #e4c87e;border-radius:16px;background:linear-gradient(145deg,#274960,#1a3254);box-shadow:0 4px 0 #060f28,0 0 22px #dac86610}
+#dmStoryLesson .ml-result-rewards span{font-size:25px}
+#dmStoryLesson .ml-result-rewards b{font-size:28px;color:#ffe79b}
+#dmStoryLesson .ml-result-rewards small{grid-column:1/-1;font-size:11px;color:#d9e7fb}
+#dmStoryLesson .ml-result-words{font-size:12px;line-height:1.3;margin:8px 0;color:#adc7e9!important;overflow-wrap:anywhere}
+#dmStoryLesson .ml-result-replay{font-size:13px;margin:10px 0;color:#c1d9ee!important}
+#dmStoryLesson .ml-result-sparks{position:absolute;inset:-8px;overflow:hidden;pointer-events:none;z-index:-1}
+#dmStoryLesson .ml-result-sparks i{position:absolute;top:calc(15% + var(--i)*4%);left:calc(var(--i)*7%);width:6px;height:12px;border-radius:2px;background:#ffe28c;transform:rotate(calc(var(--i)*33deg))}
+#dmStoryLesson .ml-result-sparks i:nth-child(3n){background:#65f7d1}
+#dmStoryLesson .ml-result-sparks i:nth-child(3n+1){background:#a8a0ff}
+#dmStoryLesson[data-fit="1"] .ml-result-mascot img{width:92px;height:92px}
+#dmStoryLesson[data-fit="2"] .ml-result-mascot img{width:68px;height:68px}
+#dmStoryLesson[data-fit="2"] .ml-complete h2{font-size:21px;margin:5px 0}
+#dmStoryLesson[data-fit="2"] .ml-result-rewards>div{padding:8px}
+#dmStoryLesson[data-fit="2"] .ml-result-rewards b{font-size:23px}
+#dmStoryLesson[data-fit="2"] .ml-result-message{font-size:12px}
+@media(min-width:600px) and (max-height:520px){
+ #dmStoryLesson .ml-shell{grid-template-columns:minmax(0,1fr) minmax(250px,.8fr);grid-template-rows:auto auto minmax(0,1fr);gap:5px 12px;padding:6px 10px}
+ #dmStoryLesson .ml-header{grid-column:1;grid-row:1}
+ #dmStoryLesson .ml-wallet{grid-column:2;grid-row:1}
+ #dmStoryLesson .ml-progress{grid-column:1/-1;grid-row:2}
+ #dmStoryLesson .ml-board{grid-column:1/-1;grid-row:3;padding:8px 10px}
+ #dmStoryLesson .ml-task{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:4px 12px;align-items:center}
+ #dmStoryLesson .ml-task>.ml-eyebrow{grid-column:1;grid-row:1;margin-bottom:3px!important}
+ #dmStoryLesson .ml-task>.ml-arena-hero{grid-column:1;grid-row:2/5;margin:0}
+ #dmStoryLesson .ml-task>.ml-choices,#dmStoryLesson .ml-task>.ml-matches,#dmStoryLesson .ml-task>.ml-teach,#dmStoryLesson .ml-letter-puzzle{grid-column:2;grid-row:1/5;margin:0}
+ #dmStoryLesson .ml-task>.ml-hint{display:none}
+ #dmStoryLesson .ml-reference-controls{grid-column:1/-1;grid-row:6;margin-top:2px}
+ #dmStoryLesson .ml-reference-toggle{min-height:26px;font-size:10px;padding:4px 7px}
+ #dmStoryLesson .ml-teach button{min-height:44px;padding:4px 8px}
+ #dmStoryLesson .ml-teach .ml-art{width:34px;height:34px}
+ #dmStoryLesson .ml-teach button:has(.ml-art){grid-template-columns:35px minmax(0,1fr) auto}
+ #dmStoryLesson .ml-sentence{grid-column:2;grid-row:1/3}
+ #dmStoryLesson .ml-tokens{grid-column:2;grid-row:3/5;margin:0}
+ #dmStoryLesson .ml-final-review{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;align-items:center}
+ #dmStoryLesson .ml-final-review .ml-review-count{grid-column:1;grid-row:1;margin:0}
+ #dmStoryLesson .ml-final-review .ml-review-track{display:none}
+ #dmStoryLesson .ml-final-review .ml-arena-hero{grid-column:1;grid-row:2/4;margin:0}
+ #dmStoryLesson .ml-final-review .ml-question-instruction{grid-column:2;grid-row:1;margin:0;font-size:14px}
+ #dmStoryLesson .ml-final-review .ml-choices{grid-column:2;grid-row:2;margin:0}
+ #dmStoryLesson .ml-final-review .ml-review-note{grid-column:2;grid-row:3;margin:0}
+ #dmStoryLesson[data-task-kind="complete"] .ml-task{display:block}
+ #dmStoryLesson .ml-complete{display:grid;grid-template-columns:130px minmax(0,1fr);gap:4px 10px;align-items:center}
+ #dmStoryLesson .ml-complete>:not(.ml-result-mascot):not(.ml-result-sparks){grid-column:2;margin:3px 0}
+ #dmStoryLesson .ml-result-mascot{grid-column:1;grid-row:1/8;width:120px}
+ #dmStoryLesson .ml-result-message,#dmStoryLesson .ml-result-words{display:none}
+ #dmStoryLesson .ml-result-rewards{width:100%;max-width:none}
+ #dmStoryLesson .ml-result-rewards>div{padding:7px 10px}
+ #dmStoryLesson .ml-result-rewards b{font-size:24px}
+ #dmStoryLesson .ml-actions{margin-top:6px}
+ #dmStoryLesson .ml-actions button{min-height:39px;padding:7px 10px;font-size:14px}
+ #dmStoryLesson.ml-scroll-fallback .ml-shell{grid-template-rows:auto auto auto}
+}
+@media(prefers-reduced-motion:no-preference){
+ #dmStoryLesson .ml-result-mascot{animation:ml-result-pop .65s cubic-bezier(.2,1.3,.4,1) both}
+ #dmStoryLesson .ml-result-rewards>div{animation:ml-result-pop .5s ease-out .2s both}
+ #dmStoryLesson .ml-result-stars .is-earned{animation:ml-result-pop .45s ease-out both;animation-delay:calc(var(--i)*120ms)}
+ #dmStoryLesson .ml-result-sparks i{animation:ml-result-confetti 2.8s ease-out both;animation-delay:calc(var(--i)*35ms)}
+ @keyframes ml-result-pop{from{opacity:0;transform:translateY(14px) scale(.75)}to{opacity:1;transform:none}}
+ @keyframes ml-result-confetti{0%{opacity:0;translate:0 65px}20%{opacity:1}100%{opacity:0;translate:0 -65px;rotate:150deg}}
+}
+
+#dmStoryLesson.ml-entry{overflow:auto}
+#dmStoryLesson.ml-entry .ml-entry-card{margin:20px auto 8px;padding:46px 20px 19px}
+#dmStoryLesson.ml-entry .ml-entry-papi{width:96px;height:96px;top:-48px}
+#dmStoryLesson.ml-entry .ml-entry-prize{margin:14px 0;padding:12px;gap:7px}
+#dmStoryLesson.ml-entry .ml-entry-card h2{margin:9px 0!important;font-size:25px!important}
+#dmStoryLesson.ml-entry .ml-entry-start{padding:12px 10px;min-height:44px;margin-top:9px}

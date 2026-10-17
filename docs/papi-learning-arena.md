@@ -19,3 +19,15 @@ The cream HUD above the question panel reads gold, effective energy/capacity and
 The shared database implementation has a ninth `combo_correct` parameter separating review completion from correctness; the old eight-argument function delegates to it. Both are SECURITY INVOKER and executable only by service_role. Live rollback fixtures in `tests/thematic-economy-v7-db.sql` verify new/legacy economy, paid retries, stale duplicates, one-time rewards, wrong-review combos and zero-energy blocking.
 
 Accepted progress is cached before any final-review return. A completion event and closing a lesson refresh only the learning map from server state, updating its completed count and current node without rebuilding the rest of the screen. The UI test asserts the completed node, next current node, one map instance, live balances and the letter-bank clear/undo flow at four viewport sizes.
+
+## Compact viewport and celebration update
+
+The lesson shell uses the visual viewport height, small HUD chips, compact horizontal teaching rows, a measured three-level density adjustment and at most a small final scale adjustment. Its title/footer duplicates no longer consume vertical space. Wide, short screens place the prompt and task side by side. Controls are not clipped: unusually large accessibility text or content that still cannot fit retains a readable scrolling fallback.
+
+Reference cards open in a separate focus-contained study sheet, with the question shell inert until the sheet closes. This keeps optional content from expanding the active question. The observer reacts to task changes, feedback, image loads, fonts and viewport resize and disconnects on close.
+
+Only a server-confirmed positive comboGain invokes the existing DMRouteQuestions.celebrate feather/Papi animation. The lesson instance is relabelled to five correct answers; other routes keep their own original streak labels. The animation is deduplicated by account/chapter/version and never grants energy itself. A microtask preserves the celebration if the same response switches to the result screen.
+
+The result has a mascot entrance, finite confetti, earned-star animation and XP/gold cards populated strictly from the saved reward. Replay screens show no new reward. Reduced-motion settings remain respected.
+
+Verification for this update: JavaScript and inline-script syntax checks, CSS structural checks, four viewport-fit decision cases, and earned-versus-replay result rendering checks passed. The Playwright scenario now asserts no main-panel vertical overflow, visible action buttons, study-sheet focus handling and the five-answer feather animation, including 320×568 and 390×664 viewports. These updated browser scenarios have NOT been run in this session because the execution/browser environment is unavailable.
