@@ -9,7 +9,7 @@ const themeKey='dm-school-route-theme-v1';
 function theme(){try{return localStorage.getItem(themeKey)==='night'?'night':'day'}catch{return 'day';}}
 function themeSet(t){
  const choice=t==='night'?'night':'day';try{localStorage.setItem(themeKey,choice)}catch{}
- document.querySelectorAll('.rt-root.rt-school,.rt-school-modal').forEach(x=>x.dataset.schoolAppearance=choice);
+ document.querySelectorAll('.rt-root.rt-school,.rt-school-modal,#bzPerde.dm-school-game,.sp-adventure-entry.dm-school-start').forEach(x=>{if(x.dataset.schoolAppearance!==choice)x.dataset.schoolAppearance=choice;});
  document.querySelectorAll('[data-school-theme]').forEach(b=>{b.textContent=choice==='night'?'☀️ Gündüz':'🌙 Gece';b.setAttribute('aria-label',choice==='night'?'Gündüz görünümüne geç':'Gece görünümüne geç');});
 }
 const mascot=(n=0)=>characters[((Math.abs(n)+visit)%characters.length)];
@@ -39,20 +39,17 @@ function preview(state){
  if(!currentRoute())return '';
  const rows=state.allSteps||state.steps||[];steps=rows;
  const summary=getCurrent(state.steps||rows,state.current||0);
- const grade=summary.info.grade||1,unit=summary.info.unit||1,grades=group(rows);
+ const grades=group(rows), grade=summary.info.grade||1;
+ const done=grades.reduce((n,g)=>n+g.completed,0),total=grades.reduce((n,g)=>n+g.total,0),pct=Math.round(done/Math.max(1,total)*100);
  visit++;
- return '<section class="rt-school-journey" aria-label="Okul Yolum macera ekranı">'+
-   '<div class="rt-school-journey-cover"><span class="rt-school-eyebrow">DİJİMEDU · OKUL YOLUM</span>'+
-   '<div class="rt-school-cover-title"><div><h2>Macera Parkurum</h2><p>Sınıfları, üniteleri ve ödül duraklarını keşfet.</p></div>'+art(grade*7+unit,'rt-school-main-mascot')+'</div>'+
-   '<div class="rt-school-cover-actions"><button type="button" data-school-open>🗺️ Tüm sınıfları gör <span aria-hidden="true">↗</span></button>'+
-   '<button type="button" data-school-theme aria-label="Görünümü değiştir">'+(theme()==='night'?'☀️ Gündüz':'🌙 Gece')+'</button></div></div>'+
-   '<div class="rt-school-current-unit">'+art(grade*5+unit+1,'rt-school-unit-mascot')+
-   '<div><small>ŞU ANKİ MACERAN</small><h3>'+grade+'. Sınıf · '+unit+'. Ünite</h3><p>Başarıların korunuyor. Yeni duraklara kendi hızında ilerle.</p></div>'+
-   '<span class="rt-school-unit-status">'+summary.done+' <small>✓</small></span></div>'+
-   '<div class="rt-school-mini-grades">'+Array.from({length:8},(_,i)=>{const n=i+1;
-    const g=grades[i],done=g.total>0&&g.total===g.completed;
-    return '<button type="button" data-school-open data-school-grade="'+n+'" '+(n===grade?'aria-current="true"':'')+'><span>'+art(n*3,'rt-school-small-mascot')+'</span><b>'+n+'. Sınıf</b><small>'+(done?'✓ Tamam':g.total?g.completed+'/'+g.total:'Keşfet')+'</small></button>';
-   }).join('')+'</div></section>';
+ return '<section class="rt-school-main" aria-label="Okul Yolum sınıflar, üniteler ve duraklar">'+
+ '<header class="rt-school-main-header"><div><small>DİJİMEDU · MACERA PARKURU</small><h2>Okul Yolum</h2><p>Her sınıfta yeni kelimeler ve keşfedilecek duraklar seni bekliyor.</p></div>'+
+ art(grade*11,'rt-school-main-hero')+'</header>'+
+ '<div class="ml-summary-card rt-school-overall"><div class="ml-summary-ring" role="progressbar" aria-label="Okul Yolum ilerlemesi" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+done+'" style="--ml-done:'+pct+'%"><div><b>'+done+'</b><small>/ '+total+'</small></div></div>'+
+ '<div class="ml-summary-info"><strong>8 sınıf · Macera yolculuğun</strong><p>Üniteleri sırayla keşfet, tamamlanan durakları tekrar çalış.</p><div class="ml-summary-track"><span style="width:'+pct+'%"></span></div><small>%'+pct+' tamamlandı</small></div></div>'+
+ '<div class="rt-school-overview-actions"><button type="button" data-school-theme aria-label="Gece görünümüne geç">'+(theme()==='night'?'☀️ Gündüz':'🌙 Gece')+'</button><span>Okul Yolum için özel görünüm</span></div>'+
+ '<h3 class="ml-theme-list-heading">Sınıflarım <small>8 sınıf</small></h3>'+
+ '<div class="rt-school-grades">'+grades.map(g=>renderGrade(g,grade)).join('')+'</div></section>';
 }
 function progressHtml(n,total,caption){
  const p=Math.round(n/Math.max(1,total)*100);
@@ -102,18 +99,81 @@ function open(rows,gradeHint){
  el.querySelectorAll('[data-school-close]').forEach(b=>b.onclick=close);
  el.onclick=e=>{if(e.target===el)close();};
  el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const options=[...el.querySelectorAll('button:not(:disabled),summary')].filter(x=>x.getClientRects().length),idx=options.indexOf(document.activeElement);if(options.length){e.preventDefault();options[(idx+(e.shiftKey?-1:1)+options.length)%options.length]?.focus();}}};
- el.querySelectorAll('[data-school-b]').forEach(btn=>btn.onclick=()=>{
-  const step=steps.find(s=>String(s.b)===btn.dataset.schoolB&&String(s.d)===btn.dataset.schoolD);
-  if(!step||!step.available)return;
-  close();
-  const host=document.getElementById('dmParkurScroll');
-  const target=host?.querySelector('.dm-adventure-node[data-b="'+step.b+'"][data-d="'+step.d+'"]');
-  if(target)target.click();
-  else window.dmSchoolStopOpen?.(+step.b,+step.d);
- });
+ el.querySelectorAll('[data-school-b]').forEach(btn=>btn.onclick=()=>{const step=steps.find(s=>String(s.b)===btn.dataset.schoolB&&String(s.d)===btn.dataset.schoolD);if(!step||!step.available)return;close();launchStep(step);});
  el.querySelector('[data-school-close]')?.focus({preventScroll:true});
  if(gradeHint)el.querySelector('.rt-school-grade:nth-of-type('+active+')')?.scrollIntoView?.({block:'nearest'});
 }
+// Original school stop buttons retain ownership of question creation and rewards.
+function launchStep(step){
+ if(!step?.available||!currentRoute())return;
+ const host=document.getElementById('dmParkurScroll');
+ if(!host)return;
+ const selector='.dm-adventure-node[data-b="'+step.b+'"][data-d="'+step.d+'"]';
+ const target=host.querySelector(selector);
+ if(target){target.click();return;}
+ const temporary=document.createElement('button');
+ temporary.type='button';temporary.className='dm-adventure-node rt-node current';
+ temporary.dataset.b=String(step.b);temporary.dataset.d=String(step.d);
+ host.append(temporary);temporary.click();temporary.remove();
+}
+let lastIntroMascot='',introSerial=0;
+function nextIntroMascot(){
+ let last=lastIntroMascot;try{last=sessionStorage.getItem('dm-school-last-intro-character')||last;}catch{}
+ const choices=characters.filter(v=>v!==last);
+ const selected=choices[Math.floor(Math.random()*choices.length)]||characters[0];
+ lastIntroMascot=selected;
+ try{sessionStorage.setItem('dm-school-last-intro-character',selected);}catch{}
+ return selected;
+}
+function decorateEntrance(){
+ if(!currentRoute())return;
+ const entry=document.querySelector('.sp-adventure-entry');
+ if(!entry||entry.dataset.dmSchoolIntro)return;
+ const card=entry.querySelector('.bz-alt-kart,.sp-start-card,.bz-panel-kart');
+ const start=entry.querySelector('#bzOyna');
+ if(!card||!start)return;
+ const name=nextIntroMascot();
+ entry.classList.add('dm-school-start');
+ entry.dataset.dmSchoolIntro=String(++introSerial);
+ entry.dataset.schoolAppearance=theme();
+ card.insertAdjacentHTML('afterbegin','<div class="dm-school-intro-head" aria-hidden="true"><img src="learning-assets/characters/'+name+'.webp" alt="" decoding="async"><small>✦ OKUL YOLUM · MACERA PARKURU ✦</small></div>');
+ if(!start.disabled&&!/tekrar/i.test(start.textContent))start.textContent='🚩 Macera Parkuruna Başla →';
+}
+function decorateQuestion(){
+ if(!currentRoute())return;
+ const modal=document.getElementById('bzPerde');
+ if(!modal?.classList.contains('rq-approved')||!modal.querySelector('.bz-oyun'))return;
+ modal.classList.add('dm-school-game');
+ if(modal.dataset.schoolAppearance!==theme())modal.dataset.schoolAppearance=theme();
+ const hud=modal.querySelector('.rq-hud');
+ if(hud&&!hud.querySelector('[data-school-theme]')){
+  const button=document.createElement('button');button.type='button';button.className='dm-school-question-theme';button.dataset.schoolTheme='1';
+  button.textContent=theme()==='night'?'☀️ Gündüz':'🌙 Gece';button.setAttribute('aria-label','Okul Yolum görünümünü değiştir');hud.append(button);
+ }
+ const area=modal.querySelector('#bzAlan'),board=area?.querySelector('.sp-question-board');
+ if(!area)return;
+ const progress=area.querySelector('.rq-progress span')?.textContent||'';
+ const title=area.querySelector('.bz-etiket')?.textContent||'';
+ const signature=progress+'|'+title;
+ if(area.dataset.dmSchoolQuestion!==signature){
+  area.dataset.dmSchoolQuestion=signature;
+  const match=/\d+/.exec(progress);
+  const index=match?Number(match[0])-1:0;
+  const image=characters[(Math.max(0,index)+introSerial)%characters.length];
+  modal.style.setProperty('--dm-school-question-art','url("learning-assets/characters/'+image+'.webp")');
+ }
+ if(board)board.classList.add('dm-school-question-board');
+}
+let designQueued=false;
+function refreshDesign(){
+ if(designQueued)return;designQueued=true;
+ requestAnimationFrame(()=>{designQueued=false;decorateEntrance();decorateQuestion();});
+}
+if(typeof MutationObserver==='function'){
+ const observer=new MutationObserver(items=>{if(items.some(i=>i.type==='childList'))refreshDesign();});
+ observer.observe(document.body,{childList:true,subtree:true});
+}
+document.addEventListener('dm:login',()=>{lastIntroMascot='';introSerial=0;});
 const scene=window.dmParkurSahne;
 if(typeof scene==='function'){
  window.dmParkurSahne=function(data={}){
@@ -127,6 +187,10 @@ if(typeof scene==='function'){
  };
 }
 document.addEventListener('click',e=>{
+ const stop=e.target.closest('[data-school-b][data-school-d]');
+ if(stop&&!stop.disabled&&currentRoute()&&!stop.closest('#mlThemeList')){
+  e.preventDefault();e.stopPropagation();const step=steps.find(x=>String(x.b)===stop.dataset.schoolB&&String(x.d)===stop.dataset.schoolD);launchStep(step);return;
+ }
  const toggle=e.target.closest('[data-school-theme]');
  if(toggle){e.preventDefault();e.stopPropagation();themeSet(theme()==='night'?'day':'night');return;}
  const openButton=e.target.closest('[data-school-open]');
@@ -135,5 +199,8 @@ document.addEventListener('click',e=>{
 if(!document.getElementById('dm-school-journey-css')){
  const link=document.createElement('link');link.id='dm-school-journey-css';link.rel='stylesheet';link.href='school-journey.css?v=20261017-1';document.head.append(link);
 }
-window.dmSchoolJourney={open,preview,theme,themeSet,group,parse};
+if(!document.getElementById('dm-school-adventure-v2-css')){
+ const link=document.createElement('link');link.id='dm-school-adventure-v2-css';link.rel='stylesheet';link.href='school-adventure-v2.css?v=20261017-2';document.head.append(link);
+}
+window.dmSchoolJourney={open,preview,theme,themeSet,group,parse,launchStep};
 })();
