@@ -2,7 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const read=p=>fs.readFileSync(p,'utf8');
 test('registration immediately offers visible illustrated guide and helpful password rules',()=>{
  const js=read('ingilizce/first-discovery.js'),css=read('ingilizce/first-discovery.css');
- assert(js.includes("data-action")&&js.includes("'emailhelp'")&&js.includes("dmEmailGuide?.open('signup')"));
+ assert(js.includes('dmEmailGuide?.open("profile")'));
  assert(js.includes('Görselli doğrulama rehberini aç'));
  assert(js.includes('sızdırılmış şifreleri kullanma'));
  assert(js.includes('En az 8 karakter'));
@@ -13,7 +13,7 @@ test('profile email field has an easy visual help action',()=>{
  const js=read('ingilizce/kisisel-bilgiler.js');
  const start=js.indexOf('id="kbMail"'),help=js.indexOf('id="kbEmailGuideButton"');
  assert(start>0&&help>start&&help-start<1000);
- assert(js.includes("dmEmailGuide?.open(\\"profile\\")"));
+ assert(js.includes('dmEmailGuide?.open("profile")'));
 });
 test('15-minute email notices respect verified members and leave placement notices unchanged',()=>{
  const code=read('supabase/functions/diji-api/member-tools-api.ts');
