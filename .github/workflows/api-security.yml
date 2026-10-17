@@ -4,6 +4,8 @@ on:
     paths:
       - 'supabase/functions/diji-api/index.ts'
       - 'supabase/functions/diji-api/security-guards.mjs'
+      - 'supabase/functions/medupro-api/index.ts'
+      - 'supabase/functions/medupro-api/security-guards.mjs'
       - 'supabase/migrations/*security*'
       - 'supabase/migrations/*legacy_public_access*'
       - 'tests/api-security-guards.test.cjs'
@@ -12,6 +14,8 @@ on:
     paths:
       - 'supabase/functions/diji-api/index.ts'
       - 'supabase/functions/diji-api/security-guards.mjs'
+      - 'supabase/functions/medupro-api/index.ts'
+      - 'supabase/functions/medupro-api/security-guards.mjs'
       - 'supabase/migrations/*security*'
       - 'supabase/migrations/*legacy_public_access*'
       - 'tests/api-security-guards.test.cjs'

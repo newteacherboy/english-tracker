@@ -25,3 +25,12 @@ Diji API Edge Function önceki sürüme döndürülebilir; güvenli veritabanı 
 
 ## İzleme
 Giriş ve ekonomi işlemlerinde 429, 503 yanıtları, Supabase Edge Function hata günlükleri, Supabase Security Advisor ve şüpheli ödül claim hacmi izlenmeli. Gizli anahtarlar asla GitHub commit'lerine ya da statik dosyalara eklenmemeli.
+
+## Devam paketi — istemci cüzdanı ve yan API
+- `ekonomi/altinKazan` artık istemcinin `miktar` değerini ödemez. Oyun, parkur ve ders ödülleri kendi sunucu işlemlerinden gelir. Eski istemcinin yalnızca yerelde hesapladığı ek altın ödülleri bu yoldan aktarılamaz.
+- Günlük hedefin mevcut +5 altını, sunucuda kayıtlı günlük XP hedefe ulaştığında, hedefOdul günüyle bir kez verilir. Eski ödenmiş işaretler korunur. CAS tekrarında callback güncel kaydı tekrar okur; timestamp aynı milisaniyede bile ilerler.
+- `ekVeriKaydet/yo` istemci protokol işaretini atar; totalXp, günlük XP, XP logu, ödül sürümü, haftalık hedef ve günlük ödeme işaretleri son sunucu kaydından korunur. İlk cihaz kaydı da XP oluşturamaz. Lig, mevcut haftanın sunucu günlüğünden hesaplanır; geçmiş haftalık XP kaydı değiştirilmez.
+- `weekly_target`, doğrudan kullanıcı anahtar kaydıyla yazılamaz. Resmî hedef seçim/ödül API'leri çalışmaya devam eder.
+- MeduPro API de aynı 256 KiB gövde sınırını, sunucuya bağlı işlem bütçesini ve no-store başlıklarını kullanır. Bütçe anahtarları Diji API ile aynı olduğundan iki API arasında dönüşümlü çağrı limitleri aşmaz.
+- Mevcut sınırlama devam eder: klasik oyun ve Ana Parkur cevapları tam server-grade değildir. Bu paket sahte cüzdan kaydını ve miktar bazlı altın musluğunu kapatır; soru oturumlarının göçünü tamamlamaz. Yerel hesaplanan eski etkinlik/kombo ödülleri için ayrı doğrulanmış sunucu olayları gereklidir.
+- Doğrulama: güvenlik/haftalık ödül regresyonları; kod ayrıştırma; üretim veritabanı izin ve rate-limit rollback kontrolü. Genel progression testlerinde mevcut katalog eşitliği ve eski haftalık hedef kaynak beklentisi bu değişiklikten önce de başarısızdır.
