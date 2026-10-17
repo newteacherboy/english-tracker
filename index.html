@@ -622,22 +622,51 @@ body {
         @keyframes splashDot { 0%,70%,100% { transform: translateY(0); opacity: .45; } 35% { transform: translateY(-5px); opacity: 1; } }
         @media(max-height:620px) { .splash-logo-wrap { height: clamp(145px,35vh,205px); } }
         @media(prefers-reduced-motion:reduce) { .splash-ekrani { transition:none; } .splash-word .sw-diji,.splash-word .sw-medu { width:9ch; border-right:0; animation:none; } .splash-logo-wrap img,.splash-dots i { animation:none; } }</style>
-</head>
+<style>
+.splash-progress{order:3;width:min(240px,70vw);display:flex;align-items:center;gap:12px;margin-top:10px;color:#71f5d0;font:800 15px system-ui,sans-serif}
+.splash-progress-track{height:10px;flex:1;border-radius:99px;background:rgba(113,245,208,.19);overflow:hidden;border:1px solid rgba(113,245,208,.38)}
+.splash-progress-fill{height:100%;width:10%;background:linear-gradient(90deg,#17bea8,#80ffe2);border-radius:inherit;transition:width .18s ease-out}
+.splash-progress strong{min-width:43px;text-align:right;font-variant-numeric:tabular-nums}
+@media(prefers-reduced-motion:reduce){.splash-progress-fill{transition:none}}
+</style></head>
 <body>
 
                        <div class="splash-ekrani" id="splashEkrani" role="status" aria-label="Diji-Medu açılıyor">
         <svg class="splash-wave" aria-hidden="true"></svg>
         <div class="splash-logo-wrap"><img src="ingilizce/papi-welcome-v2.png" alt="Diji-Medu maskotu Papi"></div>
         <div class="splash-word" aria-label="Diji-Medu"><span class="sw-diji" aria-hidden="true">Diji-Medu</span></div>
-        <div class="splash-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="splash-progress" role="progressbar" aria-label="Uygulama yükleniyor" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10"><div class="splash-progress-track"><div class="splash-progress-fill" id="splashProgressFill"></div></div><strong id="splashProgressValue">10%</strong></div>
     </div>    <script>
-        setTimeout(function() {
-            var splash = document.getElementById('splashEkrani');
-            if (splash) {
-                splash.classList.add('splash-gizle');
-                setTimeout(function() { splash.style.display = 'none'; }, 500);
-            }
-        }, 1700);
+      (function(){
+        var splash=document.getElementById('splashEkrani');
+        var bar=document.getElementById('splashProgressFill');
+        var number=document.getElementById('splashProgressValue');
+        var progress=splash&&splash.querySelector('[role="progressbar"]');
+        if(!splash||!bar||!number)return;
+        var value=10,done=false;
+        function setProgress(n){
+          value=Math.max(value,Math.min(100,n));
+          bar.style.width=value+'%';
+          number.textContent=value+'%';
+          progress.setAttribute('aria-valuenow',String(value));
+        }
+        function finish(){
+          if(done)return;done=true;
+          setProgress(100);
+          requestAnimationFrame(function(){
+            requestAnimationFrame(function(){
+              splash.classList.add('splash-gizle');
+              setTimeout(function(){splash.style.display='none';},300);
+            });
+          });
+        }
+        setProgress(document.readyState==='loading'?10:75);
+        document.addEventListener('DOMContentLoaded',function(){setProgress(85);},{once:true});
+        if(document.readyState==='complete')finish();
+        else window.addEventListener('load',finish,{once:true});
+        // Slow or blocked third-party assets should not trap a usable document.
+        setTimeout(function(){if(document.readyState!=='loading')finish();},2500);
+      })();
     </script>
 
     
