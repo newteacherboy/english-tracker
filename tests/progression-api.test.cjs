@@ -4,7 +4,7 @@ function fixture(level=7){let ctx={level,feed:false,lessons:{A1:true,A2:false,B1
 const student={role:'student',student_id:'trusted'};
 test('level 7 server denies later games, store, social actions and forged state',async()=>{const {api,ctx}=fixture();for(const op of ['asmacaLiderlikKaydet','dikteLiderlikKaydet','enerjiGonder','hazirMesajGonder','duelloGonder','oyunEslesmeOlustur'])assert.equal((await api.guard(op,{},new URLSearchParams(),student)).status,403,op);assert.equal(await api.guard('hafizaLiderlikKaydet',{},new URLSearchParams(),student),null);assert.equal((await api.guard('akisTumu',{},new URLSearchParams(),student)).status,403);ctx.feed=true;assert.equal(await api.guard('akisTumu',{},new URLSearchParams(),student),null);assert.equal((await api.guard('ekVeriKaydet',{anahtar:'yo',deger:{karakter:{cins:'k',s:{ust:'fake'},sahip:['d:fake']}}},new URLSearchParams(),student)).status,403);});
 test('lesson minimum level and previous CEFR completion are both required',async()=>{const {api,ctx}=fixture(9),body={seviye:'A2',kategori:'Grammar',konu:'Topic'};assert.equal((await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student)).status,403);ctx.lessons.A2=true;assert.equal(await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student),null);ctx.level=8;assert.equal((await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student)).status,403);});
-test('parkur doors require level, previous door and previous stop',async()=>{const {api,ctx}=fixture(10);assert.equal((await api.guard('buyuSeviyeTamamla',{seviyeNo:1301},new URLSearchParams(),student)).status,403);ctx.complete[0]=true;assert.equal(await api.guard('buyuSeviyeTamamla',{seviyeNo:1301},new URLSearchParams(),student),null);assert.equal((await api.guard('buyuSeviyeTamamla',{seviyeNo:1102},new URLSearchParams(),student)).status,403);ctx.done=[210101];assert.equal(await api.guard('buyuSeviyeTamamla',{seviyeNo:1102},new URLSearchParams(),student),null);});
+test('parkur doors require level, previous door and previous stop',async()=>{const {api,ctx}=fixture(10);assert.equal((await api.guard('buyuSeviyeTamamla',{seviyeNo:1301},new URLSearchParams(),student)).status,403);ctx.complete[0]=true;assert.equal((await api.guard('buyuSeviyeTamamla',{seviyeNo:1301},new URLSearchParams(),student)).status,403,'A level gate alone never grants parkur completion');ctx.done=[230101];assert.equal(await api.guard('buyuSeviyeTamamla',{seviyeNo:1301},new URLSearchParams(),student),null);assert.equal((await api.guard('buyuSeviyeTamamla',{seviyeNo:1102},new URLSearchParams(),student)).status,403);ctx.done=[210101];assert.equal((await api.guard('buyuSeviyeTamamla',{seviyeNo:1102},new URLSearchParams(),student)).status,403);ctx.done=[210101,210201];assert.equal(await api.guard('buyuSeviyeTamamla',{seviyeNo:1102},new URLSearchParams(),student),null);});
 test('40 level names, next features, joker quotas and shop boundaries',()=>{assert.equal(C.levels.length,40);assert(C.levels.every(x=>x.name&&x.benefits.length));assert.deepEqual([14,15,19,20,29,30,40].map(C.quota),[0,1,1,2,2,3,3]);assert.equal(C.itemLevel({kat:'ust',tip:'tisort',sv:'temel'}),15);assert.equal(C.itemLevel({kat:'ust',tip:'sweat',sv:'ozel'}),25);assert.equal(C.itemLevel({kat:'bas',sv:'temel'}),32);assert.equal(C.itemLevel({parca:[]}),35);assert.equal(C.gates.oyun_yagmur,28);assert.equal(C.gold(40),100);});
 test('existing inventory is accepted intact, new ownership uses atomic purchase only',async()=>{const {api,ctx}=fixture(15);ctx.yo.karakter.sahip=['d:owned'];const body={anahtar:'yo',deger:JSON.stringify(ctx.yo)};assert.equal(await api.guard('ekVeriKaydet',body,new URLSearchParams(),student),null);body.deger=JSON.stringify({...ctx.yo,karakter:{...ctx.yo.karakter,sahip:['d:owned','d:forged']}});assert.equal((await api.guard('ekVeriKaydet',body,new URLSearchParams(),student)).status,403);});
 test('frontend and both API catalogs remain identical',()=>{const a=fs.readFileSync('ingilizce/progression-catalog.js');for(const dir of ['diji-api','medupro-api'])assert.deepEqual(a,fs.readFileSync('supabase/functions/'+dir+'/progression-catalog.js'));});
@@ -52,7 +52,7 @@ test('main Parkur fair protocol uses recorded-answer claim and authenticated rec
  const {api,ctx}=fixture(1),body={game:'ba',fairProtocol:2,classNo:1,units:[1],stopNo:210101,runId:'parkurfairfixture0001',correct:12,wrong:0,seconds:123};
  const result=await api.handle('seviyeOyunOdulu',body,new URLSearchParams(),student);
  assert.equal(result.body.ok,true);
- assert.equal(ctx.rewardRpc,'dm_parkur_fair_claim');
+ assert.equal(ctx.rewardRpc,'dm_parkur_fair_claim');assert.equal(result.body.stopGiftGold,0);
  assert.equal(ctx.claim.stop_no,210101);
  assert(!Object.hasOwn(ctx.claim,'correct'),'Browser-reported correctness must not reach fair reward RPC');
  const recover=await api.handle('seviyeParkurPekistirme',{
@@ -70,4 +70,14 @@ test('old solo game rewards keep original transaction',async()=>{
  const r=await api.handle('seviyeOyunOdulu',body,new URLSearchParams(),student);
  assert.equal(r.body.ok,true);
  assert.equal(ctx.rewardRpc,'dm_game_reward_claim');
+});
+
+test('obsolete parkur clients cannot bypass first-answer accounting',async()=>{
+ const {api,ctx}=fixture(1);
+ const r=await api.handle('seviyeOyunOdulu',{
+   game:'ba',classNo:1,units:[1],stopNo:210101,runId:'legacy-parkur-claim-123456',correct:12,wrong:0,seconds:90
+ },new URLSearchParams(),student);
+ assert.equal(r.body.ok,true);
+ assert.equal(ctx.rewardRpc,'dm_parkur_fair_claim');
+ assert(!Object.hasOwn(ctx.claim,'correct'));
 });
