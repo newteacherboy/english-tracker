@@ -49,7 +49,7 @@ export function progressionAPI(db:any,json:any){
    const {data,error}=fair
       ?await db.rpc('dm_parkur_fair_claim',{actor:a.student_id,run_key:String(body.runId||''),
          class_id:Number(body.classNo),stop_no:units[0],seconds:Number(body.seconds)})
-      :await db.rpc('dm_game_reward_claim',{actor:a.student_id,run_key:String(body.runId||''),game,class_id:Number(body.classNo),unit_ids:units,correct:Number(body.correct),wrong:Number(body.wrong),seconds:Number(body.seconds),first_clear:!!body.firstClear,stars:Number(body.stars||1),boost:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
+      :await db.rpc('dm_solo_fair_claim',{actor:a.student_id,run_key:String(body.runId||''),game_code:game,class_id:Number(body.classNo),unit_ids:units,right_count:Number(body.correct),wrong_count:Number(body.wrong),duration_seconds:Number(body.seconds),boost_factor:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
    if(error)return json({ok:false,mesaj:error.message},400);
    if(fair&&data?.ok&&['awarded','duplicate'].includes(String(data.reason||''))){
      // Idempotent existing three-stop gift; retrying a completed claim may
