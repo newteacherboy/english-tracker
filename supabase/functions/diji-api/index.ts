@@ -2424,7 +2424,7 @@ async function handle(req: Request) {
       if(existing){
         firstCorrect=Number(existing.first_correct);
         firstWrong=Array.isArray(existing.wrong_indices)?existing.wrong_indices:[];
-        tier=existing.passed?studyTier(firstCorrect,questions.length):0;
+        tier=existing.passed?(existing.recovered?30:studyTier(firstCorrect,questions.length)):0;
         passed=!!existing.passed;
         if(!passed)reviewIndices=recoveryQuestions(firstWrong);
       }else{
@@ -2438,14 +2438,20 @@ async function handle(req: Request) {
         });if(recordError)throw recordError;
       }
     }else{
-      if(!existing||existing.passed||!Array.isArray(existing.wrong_indices))return json({ok:false,mesaj:"Önce normal testi tamamla."},409);
+      if(!existing||!Array.isArray(existing.wrong_indices))return json({ok:false,mesaj:"Önce normal testi tamamla."},409);
       firstCorrect=Number(existing.first_correct);firstWrong=existing.wrong_indices;
       reviewIndices=recoveryQuestions(firstWrong);
-      if(reviewIndices.length!==3)return json({ok:false,mesaj:"Pekiştirme soruları bulunamadı."},409);
-      const graded=gradeStudyQuiz(questions,submitted,reviewIndices);
-      if(!graded)return json({ok:false,mesaj:"Pekiştirme cevapları eksik."},400);
-      passed=graded.correct===3;tier=passed?30:0;
-      if(passed){const {error:updateError}=await supabase.from("dm_lesson_fair_runs").update({passed:true,recovered:true}).eq("student_id",s.id).eq("run_id",runId).eq("passed",false);if(updateError)throw updateError;}
+      if(!existing.passed){
+        if(reviewIndices.length!==3)return json({ok:false,mesaj:"Pekiştirme soruları bulunamadı."},409);
+        const graded=gradeStudyQuiz(questions,submitted,reviewIndices);
+        if(!graded)return json({ok:false,mesaj:"Pekiştirme cevapları eksik."},400);
+        passed=graded.correct===3;tier=passed?30:0;
+        if(passed){const {error:updateError}=await supabase.from("dm_lesson_fair_runs").update({passed:true,recovered:true}).eq("student_id",s.id).eq("run_id",runId).eq("passed",false);if(updateError)throw updateError;}
+      }else{
+        // A lost network response must not force the student to repeat a saved recovery.
+        if(!existing.recovered)return json({ok:false,mesaj:"Bu test zaten tamamlandı."},409);
+        passed=true;tier=30;
+      }
     }
     if(!passed){
       if(phase==="first"&&!existing){
