@@ -192,8 +192,11 @@ if(typeof scene==='function'){
   steps=Array.isArray(data.allSteps)&&data.allSteps.length?data.allSteps:(data.steps||[]);
   const grade=parse((data.steps||[])[data.current||0]).grade||1;
   const displayMascot=characters[(grade*3+(visit++))%characters.length];
-  return html.replace(prefix,prefix+' data-school-appearance="'+theme()+'"')
+  const themed=html.replace(prefix,prefix+' data-school-appearance="'+theme()+'"')
     .replaceAll('src="route-assets/papi-school.png"','src="learning-assets/characters/'+displayMascot+'.webp"');
+  // Small theme control stays inside the banner, rather than taking an extra row.
+  const toggle='<button type="button" class="rt-school-home-theme" data-school-theme aria-label="Okul Yolum görünümünü değiştir">'+(theme()==='night'?'☀️':'🌙')+'</button>';
+  return themed.replace('<button type="button" class="rt-all-link"',toggle+'<button type="button" class="rt-all-link"');
  };
 }
 document.addEventListener('click',e=>{
