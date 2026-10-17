@@ -18,7 +18,7 @@
  function assess(mode,correct,total,options={}){
   const p=policy(mode);
   if(!p)throw new RangeError('Unknown assessment mode');
-  if(!Number.isInteger(total)||total<1||!Number.isInteger(correct)||correct<0||correct>total)throw new RangeError('Invalid first-attempt score');
+  if(!Number.isInteger(total)||total!==p.total||!Number.isInteger(correct)||correct<0||correct>total)throw new RangeError('Invalid first-attempt score');
   const pass=Math.min(total,p.pass), high=Math.min(total,p.high);
   const recovered=options.recovered===true && options.recoveryVerified===true && correct<pass;
   const tier=correct===total?'perfect':correct>=high?'high':correct>=pass?'pass':recovered?'recovery':'notPassed';
