@@ -1,0 +1,234 @@
+/* Shared answer-history navigation. Read-only reviews never invoke the scoring engine. */
+#dmStoryLesson .ml-question-history{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ margin:-5px 0 0;padding:2px 0;color:var(--arena-muted,#647891);font:850 13px Nunito,system-ui,sans-serif;
+}
+#dmStoryLesson .ml-question-history button{
+ border:1px solid #a2bde5;border-radius:13px;background:#edf6fa;color:#17445a;
+ padding:7px 10px;min-height:36px;font:900 12px Nunito,system-ui,sans-serif;cursor:pointer;
+}
+#dmStoryLesson .ml-question-history button:disabled{opacity:.48;cursor:default}
+#dmStoryLesson[data-appearance="night"] .ml-question-history{color:#d7e6f9}
+#dmStoryLesson[data-appearance="night"] .ml-question-history button{background:#243b68;border-color:#667fad;color:#fff4de}
+#dmStoryLesson .ml-history-overlay{
+ position:fixed;inset:0;z-index:2147483602;display:grid;place-items:center;
+ padding:calc(14px + env(safe-area-inset-top,0px)) 12px calc(14px + env(safe-area-inset-bottom,0px));
+ background:#081b39c9;backdrop-filter:blur(8px);box-sizing:border-box;
+}
+#dmStoryLesson .ml-history-card{
+ box-sizing:border-box;display:flex;flex-direction:column;gap:10px;
+ width:min(100%,650px);max-height:100%;overflow:hidden;padding:16px;
+ background:#fffcf7;color:#234058;border:2px solid #d3e0db;border-radius:27px;
+ box-shadow:0 12px 30px #020e244d;font-family:Nunito,system-ui,sans-serif;
+}
+#dmStoryLesson .ml-history-card>header{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:20px}
+#dmStoryLesson .ml-history-card>header button{border:0;background:#e3f1eb;color:#18566a;border-radius:50%;width:40px;height:40px;font-size:25px;cursor:pointer}
+#dmStoryLesson .ml-history-note{font-size:12px;line-height:1.4;margin:0;color:#547080!important}
+#dmStoryLesson .ml-history-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:7px 3px}
+#dmStoryLesson .ml-history-body .ml-task{background:transparent!important;border:0!important;padding:0!important;min-height:0!important}
+#dmStoryLesson .ml-history-body .ml-choices button,#dmStoryLesson .ml-history-body .ml-teach button,
+#dmStoryLesson .ml-history-body .ml-matches button,#dmStoryLesson .ml-history-body .ml-tokens button{
+ color:#254465!important;background:#eef4ff!important;border:1px solid #bcc9ea!important;
+ min-height:40px!important;padding:10px!important;box-shadow:none!important;
+}
+#dmStoryLesson .ml-history-body button:disabled{opacity:1!important;cursor:default!important}
+#dmStoryLesson .ml-history-body .ml-arena-hero{margin:3px 0 9px!important}
+#dmStoryLesson .ml-history-body .ml-speech{padding:10px!important;box-shadow:none!important}
+#dmStoryLesson .ml-history-body .ml-speech :is(h2,p){color:#17455a!important}
+#dmStoryLesson .ml-history-feedback{font-size:13px;margin:0;color:#1b695b!important}
+#dmStoryLesson .ml-history-navigation{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#dmStoryLesson .ml-history-navigation button,#dmStoryLesson .ml-history-return{
+ border:1px solid #acd1c9;border-radius:15px;padding:11px 12px;background:#e5f4f1;color:#18566a;
+ font:900 14px Nunito,system-ui,sans-serif;min-height:43px;cursor:pointer
+}
+#dmStoryLesson .ml-history-navigation button:disabled{opacity:.4;cursor:default}
+#dmStoryLesson .ml-history-return{width:100%;background:linear-gradient(#f9d986,#f0c161);color:#4c3857;border-color:#e8bf69}
+#dmStoryLesson[data-appearance="night"] .ml-history-card{background:#192f55;color:#fff1dc;border-color:#6d81a5}
+#dmStoryLesson[data-appearance="night"] .ml-history-note,#dmStoryLesson[data-appearance="night"] .ml-history-feedback{color:#d9e9f9!important}
+#dmStoryLesson[data-appearance="night"] .ml-history-navigation button{background:#304874;border-color:#6d85b8;color:#fff1dc}
+
+/* Macera Parkuru: same column ordering and character/balloon proportions as
+   Learning Path, but its own coral/mint daytime and gold/indigo night palette. */
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game{
+ --school-game-ink:#26475a;--school-game-card:#fffefd;--school-game-border:#a9d0c3;
+ --school-game-answer:#f4fbf9;--school-game-progress:#2cb8aa;--school-lesson-ink:#2f4558;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ gap:clamp(6px,1vh,13px)!important;overflow:hidden!important;overscroll-behavior:contain;
+ padding:max(8px,env(safe-area-inset-top,0px)) 10px max(8px,env(safe-area-inset-bottom,0px))!important;
+ background:radial-gradient(circle at 92% 6%,#fff1d9,transparent 40%),linear-gradient(180deg,#e3fff4,#fffaf4)!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game[data-school-appearance="night"]{
+ --school-game-ink:#fff2d8;--school-game-card:#12244e;--school-game-border:#607cac;
+ --school-game-answer:#21365f;--school-game-progress:#71d8c8;--school-lesson-ink:#fff2df;
+ background:radial-gradient(circle at 75% 0%,#304f82,transparent 52%),linear-gradient(#0b1938,#12254c)!important;
+}
+#bzPerde.dm-school-game .dm-school-lesson-head{
+ flex:0 0 auto;display:flex;align-items:center;gap:9px;
+ width:min(100%,760px);min-height:58px;color:var(--school-game-ink);
+}
+#bzPerde.dm-school-game .dm-school-lesson-head .dm-school-back,
+#bzPerde.dm-school-game .dm-school-lesson-head .dm-school-head-theme{
+ flex:0 0 auto;display:grid;place-items:center;border:2px solid var(--school-game-border);border-radius:50%;
+ min-width:43px;height:43px;background:var(--school-game-card);color:var(--school-game-ink);
+ font:950 21px Nunito,system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 0 #1c405325;
+}
+#bzPerde.dm-school-game .dm-school-lesson-title{flex:1;min-width:0}
+#bzPerde.dm-school-game .dm-school-lesson-title small{
+ display:block;font-size:clamp(11px,3vw,14px);line-height:1.25;
+ color:var(--school-game-ink);opacity:.85;font-weight:850;
+}
+#bzPerde.dm-school-game .dm-school-lesson-title strong{
+ display:block;font-size:clamp(18px,5vw,27px);font-weight:950;line-height:1.22;letter-spacing:-.4px;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.rq-hud{
+ flex:0 0 auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ width:min(100%,760px)!important;max-width:760px!important;min-height:54px!important;gap:8px!important;margin:0!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.rq-hud .rq-wallet{
+ display:flex!important;justify-content:center;align-items:center;
+ min-width:0!important;gap:4px!important;border-radius:17px!important;
+ padding:9px 4px!important;box-shadow:0 2px 0 #6884a124!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.rq-hud .rq-wallet b{
+ font-size:clamp(15px,4vw,23px)!important;white-space:nowrap
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.rq-hud .rq-wallet small{font-size:11px!important}
+#bzPerde.dm-school-game .dm-school-question-nav{
+ width:min(100%,760px);flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;
+ color:var(--school-game-ink);font-size:12px;font-weight:800;
+}
+#bzPerde.dm-school-game .dm-school-question-nav button{
+ flex:0 0 auto;border:1px solid var(--school-game-border);border-radius:12px;
+ background:var(--school-game-card);color:var(--school-game-ink);
+ padding:7px 10px;font:900 12px Nunito,system-ui,sans-serif;min-height:34px;cursor:pointer;
+}
+#bzPerde.dm-school-game .dm-school-question-nav button:disabled{opacity:.45;cursor:default}
+#bzPerde.dm-school-game .dm-school-question-nav span{text-align:center;opacity:.75}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan{
+ flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+ width:min(100%,760px)!important;max-width:760px!important;
+ overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+ padding:clamp(11px,2vw,22px)!important;gap:clamp(8px,1.3vh,16px)!important;
+ justify-content:flex-start!important;align-items:stretch!important;
+ background:var(--school-game-card)!important;border:2px solid var(--school-game-border)!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-progress{
+ flex:0 0 auto!important;order:0;display:flex!important;min-height:23px!important;
+ color:var(--school-game-ink)!important
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-progress>div{
+ flex:1;background:var(--school-game-border)!important;border-radius:30px
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-progress i{
+ background:var(--school-game-progress)!important
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board{
+ display:grid!important;grid-template-columns:minmax(90px,35%) minmax(0,1fr)!important;
+ align-items:center!important;justify-content:start!important;gap:6px!important;
+ flex:0 0 auto!important;min-height:170px!important;margin:0!important;
+ padding:10px 12px!important;border:0!important;box-shadow:none!important;
+ background:transparent!important;border-radius:22px!important;isolation:isolate;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board::before{
+ grid-row:1 / span 6!important;grid-column:1!important;
+ width:100%!important;height:min(26vh,195px)!important;max-height:none!important;
+ background-image:var(--dm-school-question-art)!important;filter:drop-shadow(0 6px 8px #204a4e25);
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board>*{
+ grid-column:2!important;position:relative;z-index:1;
+ border:0;color:var(--school-lesson-ink)!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board .bz-etiket{
+ display:inline-block!important;width:fit-content;justify-self:center;
+ border:1px solid var(--school-game-border)!important;background:var(--school-game-answer)!important;
+ border-radius:12px!important;padding:7px 11px!important;font-size:clamp(11px,3vw,17px)!important;
+ font-weight:950!important;text-align:center!important;line-height:1.25!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board :is(.bz-soru,.bz-tr-anlam){
+ border:2px solid var(--school-game-border)!important;background:var(--school-game-answer)!important;
+ border-radius:20px!important;padding:12px 10px!important;margin:0!important;
+ color:var(--school-lesson-ink)!important;line-height:1.3!important;font-weight:900!important;text-align:center!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board .dm-school-teach-message{
+ border:2px solid var(--school-game-border)!important;border-radius:24px!important;
+ background:var(--school-game-answer)!important;padding:12px!important;text-align:center!important;
+ box-shadow:0 2px 0 #1a4c5325!important;
+}
+#bzPerde.dm-school-game .dm-school-teach-message h2{
+ color:var(--school-lesson-ink)!important;font-size:clamp(17px,4.5vw,27px)!important;margin:0 0 5px;font-weight:950
+}
+#bzPerde.dm-school-game .dm-school-teach-message p{
+ color:var(--school-lesson-ink)!important;font-size:clamp(12px,3.1vw,16px)!important;opacity:.8;margin:0;line-height:1.4
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-teach-progress{
+ flex:0 0 auto;text-align:right;margin:0!important;color:var(--school-game-ink)!important;
+ font-weight:900;font-size:12px
+}
+#bzPerde.dm-school-game #bzAlan .dm-school-words{flex:0 0 auto;display:grid;gap:8px!important;width:100%}
+#bzPerde.dm-school-game #bzAlan .dm-school-word{
+ display:flex;align-items:center;justify-content:space-between;gap:9px;
+ width:100%;text-align:left;padding:12px 14px;min-height:66px;
+ border:2px solid var(--school-game-border);border-radius:17px;
+ background:var(--school-game-answer);color:var(--school-game-ink);font:850 14px Nunito,system-ui,sans-serif;
+ cursor:pointer;box-shadow:0 3px 0 #21405023;
+}
+#bzPerde.dm-school-game #bzAlan .dm-school-word.is-current{
+ border-color:var(--school-game-progress);box-shadow:0 0 0 2px #4bc7aa35;
+}
+#bzPerde.dm-school-game #bzAlan .dm-school-word>span:first-child{
+ min-width:0;display:grid;gap:3px
+}
+#bzPerde.dm-school-game #bzAlan .dm-school-word strong{font-size:clamp(17px,4.5vw,24px);line-height:1.2}
+#bzPerde.dm-school-game #bzAlan .dm-school-word small{font-size:13px;color:var(--school-game-ink);opacity:.78}
+#bzPerde.dm-school-game #bzAlan .dm-school-word-listen{font-size:14px;white-space:nowrap;font-weight:900}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen{
+ flex:0 0 auto!important;min-height:0!important;padding:4px!important;margin:0 auto!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen>.rq-speaker-disc{
+ width:clamp(47px,11vw,67px)!important;height:clamp(47px,11vw,67px)!important
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-btn{
+ flex:0 0 auto!important;min-height:49px!important;
+ font-size:clamp(15px,4.1vw,21px)!important;font-weight:950!important;
+ background:linear-gradient(120deg,#ffd17f,#f1a966)!important;
+ color:#4c3445!important;box-shadow:0 4px 0 #ae8250!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game[data-school-appearance="night"] #bzAlan .bz-btn{
+ background:linear-gradient(#ffdd90,#edbc6d)!important;color:#443450!important
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec,
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-match-option{
+ border-color:var(--school-game-border)!important;background:var(--school-game-answer)!important;
+ color:var(--school-game-ink)!important;min-height:50px!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec.dogru{background:#d8ffdd!important;color:#21623e!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec.yanlis{background:#ffdddd!important;color:#8f3030!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzInceleme:not([style*="display: none"]){
+ flex:1 1 auto!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;
+ min-height:0!important;width:min(100%,760px)!important;max-width:760px!important;
+ background:var(--school-game-card)!important;border:2px solid var(--school-game-border)!important;
+ border-radius:22px!important;padding:12px!important;color:var(--school-game-ink)!important;
+}
+#bzPerde.dm-school-game #bzInceleme .bz-inceleme-bas{display:flex;align-items:center;gap:7px;flex-wrap:wrap!important;
+ background:var(--school-game-answer)!important;color:var(--school-game-ink)!important}
+#bzPerde.dm-school-game #bzInceleme .bz-inceleme-govde{flex:1;overflow:auto!important;color:var(--school-game-ink)!important;background:var(--school-game-card)!important}
+#bzPerde.dm-school-game #bzInceleme .bz-inceleme-govde button{pointer-events:none!important;cursor:default!important}
+@media(max-width:375px){
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game{gap:5px!important;padding:6px!important}
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board{
+  grid-template-columns:80px minmax(0,1fr)!important;min-height:112px!important;padding:5px!important
+ }
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board::before{height:112px!important}
+ #bzPerde.dm-school-game .dm-school-question-nav span{font-size:10px}
+}
+@media(max-height:700px){
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .rq-hud{min-height:44px!important}
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board{min-height:115px!important}
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board::before{height:112px!important}
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-word{min-height:48px;padding:8px 11px}
+ #dmStoryLesson .ml-question-history{font-size:11px}
+ #dmStoryLesson .ml-question-history button{min-height:29px;padding:5px 7px}
+}
+@media(prefers-reduced-motion:reduce){
+ #bzPerde.dm-school-game *,#dmStoryLesson .ml-history-overlay *{animation:none!important;transition:none!important}
+}
