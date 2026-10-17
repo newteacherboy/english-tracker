@@ -137,8 +137,4 @@ setTimeout(()=>{installScoreHook();check();},700);
  document.addEventListener('focusin',e=>{const t=e.target;if(t instanceof HTMLElement&&t.matches('input[readonly],textarea[readonly]')){t.setAttribute('inputmode','none');t.blur();}});
 })();
 
-/* Visual email guide shared by signup, reminder, profile and Help. */
-(()=>{if(typeof document==='undefined'||document.getElementById('dm-email-guide-loader'))return;
- const script=document.createElement('script');script.id='dm-email-guide-loader';script.src='email-guide.js?v=20261017-1';script.async=true;
- (document.body||document.documentElement).appendChild(script);
-})();
+/* The shared visual email guide is loaded once, defer, by index.html. */
