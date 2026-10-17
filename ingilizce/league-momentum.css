@@ -1,0 +1,34 @@
+/* DijiMedu league movement - independent of reward accounting. */
+.dm-league-momentum{position:fixed;inset:0;z-index:2147483642;display:grid;place-items:center;padding:20px;background:linear-gradient(150deg,#192c4acc,#28154bde);backdrop-filter:blur(9px);font-family:Nunito,system-ui,sans-serif}
+.dm-momentum-panel{width:min(100%,450px);position:relative;overflow:hidden;isolation:isolate;box-sizing:border-box;text-align:center;border:3px solid #fff;border-radius:34px;padding:32px 20px 25px;background:radial-gradient(circle at 50% 0%,#e4fff4 0,#f7fffc 38%,#fff 85%);color:#1a3850;box-shadow:0 17px 0 #0b183d4d,0 35px 75px #090c2659;animation:dm-momentum-rise .55s cubic-bezier(.22,1,.36,1) both}
+.dm-momentum-down .dm-momentum-panel{background:radial-gradient(circle at 50% 0%,#fff0d7,#fffdf7 55%,#fff)}
+.dm-momentum-close{position:absolute;z-index:6;right:13px;top:13px;width:38px;height:38px;display:grid;place-items:center;border:0;border-radius:50%;background:#e3edf2;color:#23445c;font-size:27px;cursor:pointer}
+.dm-momentum-rings{position:absolute;left:50%;top:32px;transform:translateX(-50%);width:220px;height:220px;z-index:-1;pointer-events:none}
+.dm-momentum-rings span{position:absolute;inset:0;border:2px dashed #53cda883;border-radius:50%;animation:dm-momentum-orbit 21s linear infinite}
+.dm-momentum-rings span:nth-child(2){inset:25px;border-color:#ffd274aa;animation-direction:reverse;animation-duration:15s}
+.dm-momentum-rings span:nth-child(3){inset:55px;border-color:#8ec9ffaa;animation-duration:10s}
+.dm-momentum-medal{font-size:65px;line-height:1;display:grid;place-items:center;margin:9px auto 23px;min-height:100px;filter:drop-shadow(0 9px 10px #28456333);animation:dm-momentum-float 3s ease-in-out infinite}
+.dm-momentum-eyebrow{display:inline-block;color:#16846a;letter-spacing:2px;font-weight:1000;font-size:11px}
+.dm-momentum-down .dm-momentum-eyebrow{color:#af7414}
+.dm-momentum-panel h2{font:900 clamp(24px,6vw,32px)/1.12 Fredoka,Nunito,system-ui,sans-serif;color:#163d4d;margin:10px 0 9px}
+.dm-momentum-panel p{margin:7px 0;color:#4b6073;font-size:14px;line-height:1.5;font-weight:800}
+.dm-momentum-ranks{display:grid;grid-template-columns:1fr 46px 1fr;align-items:center;gap:5px;margin:20px 0 14px}
+.dm-momentum-ranks span{display:flex;flex-direction:column;align-items:center;gap:4px;background:#e8f7f0;border:1px solid #b9e9d9;border-radius:20px;padding:13px 8px}
+.dm-momentum-down .dm-momentum-ranks span{background:#fff4e2;border-color:#ffdda4}
+.dm-momentum-ranks small{font-size:11px;color:#496a73;font-weight:800}
+.dm-momentum-ranks strong{font:900 32px Fredoka,Nunito,system-ui,sans-serif;color:#0a7a67}
+.dm-momentum-down .dm-momentum-ranks strong{color:#ad7414}
+.dm-momentum-ranks> b{font-size:36px;color:#0da477;animation:dm-momentum-bounce 1.3s ease-in-out infinite}
+.dm-momentum-down .dm-momentum-ranks>b{color:#c18a2b}
+.dm-momentum-panel .dm-momentum-cheer{color:#334c5e;font-size:13px;margin:8px 0 16px}
+.dm-momentum-action,.dm-momentum-later{display:block;width:100%;min-height:48px;border-radius:16px;cursor:pointer;font:900 15px Nunito,system-ui,sans-serif}
+.dm-momentum-action{color:#fff;border:0;background:linear-gradient(110deg,#0a9c83,#15b99a);box-shadow:0 4px 0 #08745f}
+.dm-momentum-down .dm-momentum-action{background:linear-gradient(110deg,#c3891e,#e0aa4e);box-shadow:0 4px 0 #a56a18}
+.dm-momentum-later{margin-top:9px;background:transparent;border:0;color:#647787;font-size:13px}
+.dm-league-momentum :is(button):focus-visible{outline:3px solid #8754e9;outline-offset:3px}
+@keyframes dm-momentum-rise{from{opacity:0;transform:translateY(40px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes dm-momentum-orbit{to{transform:rotate(360deg)}}
+@keyframes dm-momentum-float{50%{transform:translateY(-8px) rotate(4deg)}}
+@keyframes dm-momentum-bounce{50%{transform:translateY(-6px)}}
+@media(prefers-reduced-motion:reduce){.dm-momentum-panel,.dm-momentum-rings span,.dm-momentum-medal,.dm-momentum-ranks>b{animation:none!important}}
+@media(max-width:360px){.dm-momentum-panel{padding:22px 12px 15px}.dm-momentum-medal{min-height:75px;font-size:50px;margin-bottom:13px}.dm-momentum-ranks{margin:14px 0}}
