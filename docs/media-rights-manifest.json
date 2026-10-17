@@ -1556,6 +1556,62 @@
       "bytes": 1443020,
       "status": "ai-generated",
       "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-boy-v1.webp",
+      "sha256": "36d718f73ae24ca4d169d8e71b2d27709f117287b0ed2c2f0e9a26bc7c2936f7",
+      "bytes": 51040,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-cat-v1.webp",
+      "sha256": "9d1d0b932477fe2fefb0f8fbd83b2383c49a5482e82759d788a0d18a89cca9ea",
+      "bytes": 49560,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-garden-v1.webp",
+      "sha256": "0fa95ed2db875d25803945685a01037659d7c1ad8daef6db6f16221f13098121",
+      "bytes": 34002,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-owl-v1.webp",
+      "sha256": "4cd67aa04fc621e6cfae480665eff228b131ff1863106dd1ef58c2e59e3b68ee",
+      "bytes": 57072,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-panel-v1.webp",
+      "sha256": "bd3ee9965c8eedbc47f921663859c35062a77f904f4c3ae0c2e8d6be612e1f64",
+      "bytes": 19174,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-sign-v1.webp",
+      "sha256": "6f8eae8ec1104f3f0eae8bb0b71dc14d00a9bd51c0940407784f3418dfd5fb8d",
+      "bytes": 21096,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-target-v1.svg",
+      "sha256": "9de1b95f1a1e2353989023b1fa16fb0338215a11184ef11ac8e4e7567858457a",
+      "bytes": 387,
+      "status": "original-vector",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-ui-v1.svg",
+      "sha256": "3e32fb39269693cb62dbf0c5c660db7888fd9d86a8285ad878012dca0e47c796",
+      "bytes": 1925,
+      "status": "original-vector",
+      "source": "docs/approved-game-boards.md"
     }
   ]
 }
