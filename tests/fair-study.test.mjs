@@ -35,4 +35,7 @@ test('reward tiers are per activity, not a universal hard failure',()=>{
  assert.equal(studyTier(10,11),80);
  assert.equal(studyTier(11,11),100);
  assert.equal(studyTier(7,11),0);
+ assert.equal(studyTier(1,2),0,'Half of a short test must not get 80 percent');
+ assert.equal(studyTier(2,3),60,'Two out of three is passing, not exceptional');
+ assert.equal(studyTier(3,4),60,'Three out of four is passing, not exceptional');
 });

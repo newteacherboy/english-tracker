@@ -26,7 +26,7 @@ export function studyTier(correct,total,recovered=false){
  if(recovered)return correct===3&&total===3?30:0;
  if(!Number.isInteger(correct)||!Number.isInteger(total)||total<2||correct<0||correct>total)return 0;
  if(correct===total)return 100;
- if(correct>=total-1)return 80;
+ if(correct>=Math.max(Math.ceil(total*.8),total-1))return 80;
  if(correct>=Math.ceil(total*2/3))return 60;
  return 0;
 }
