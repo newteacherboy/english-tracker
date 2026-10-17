@@ -1,0 +1,27 @@
+name: Thematic first attempt accounting
+on:
+  push:
+    paths:
+      - 'supabase/functions/thematic-learning/core.ts'
+      - 'tests/thematic-learning.test.cjs'
+      - 'supabase/migrations/*thematic_first_answers.sql'
+      - 'tests/thematic-first-answers-db.sql'
+      - '.github/workflows/thematic-first-answer.yml'
+  pull_request:
+    paths:
+      - 'supabase/functions/thematic-learning/core.ts'
+      - 'tests/thematic-learning.test.cjs'
+      - 'supabase/migrations/*thematic_first_answers.sql'
+      - 'tests/thematic-first-answers-db.sql'
+      - '.github/workflows/thematic-first-answer.yml'
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/thematic-learning.test.cjs
+      - run: node --check ingilizce/thematic-learning.js
