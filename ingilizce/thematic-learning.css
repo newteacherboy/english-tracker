@@ -3,3 +3,6 @@
 #dmStoryLesson.ml-lesson{z-index:2147483600;background:#f8fbf7;color:#153846;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);display:block}.ml-image-choices .ml-art-color{width:65%;margin:5px auto}.ml-image-choices .ml-art-shape{width:90%}
 
 .ml-reference{margin:20px 0 6px;border-top:1px solid #e2e9df;padding-top:12px}.ml-reference summary{color:#387967;font-size:14px;font-weight:850;cursor:pointer;padding:8px 0}.ml-reference>div{display:grid;gap:9px;margin-top:10px}.ml-reference button{display:grid;gap:5px;text-align:left;border:1px solid #dce8dd;background:#f5faf3;border-radius:12px;padding:12px;color:#234b3c}.ml-reference b{font-size:16px}.ml-reference span{font-size:14px;color:#527466}.ml-reference small{color:#1b8b7b;font-size:12px}
+
+/* Keep lesson headings readable under the portal day/night heading rules. */
+#dmStoryLesson.ml-overlay .ml-task h2,#dmStoryLesson.ml-overlay .ml-header h1{color:#153846;-webkit-text-fill-color:#153846;}
