@@ -96,6 +96,7 @@ begin
    on conflict(student_id,run_id) do nothing;
    select * into rec from public.dm_parkur_recovery_runs
    where student_id=actor and run_id=run_key for update;
+  end if;
  end if;
  if correct_count<8 and not rec.completed then
   return jsonb_build_object('ok',true,'reason','needs_recovery','xp',0,'gold',0,
