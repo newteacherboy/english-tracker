@@ -35,7 +35,7 @@
  let screen=null,provider='',step=0,previous=null,owner='',resending=false,checking=false,lastStatus=null,signupPending='';
  const providerIcon=p=>'<span aria-hidden="true" class="deg-brand deg-'+p+'">'+providers[p].badge+'</span>';
  function status(msg,type=''){const el=screen?.querySelector('[data-eg-status]');if(el){el.textContent=msg;el.dataset.kind=type;}}
- function api(islem,payload={}){return fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{
+ function api(islem,payload={}){const endpoint=typeof apiURL==='string'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api';return fetch(endpoint,{
   method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
   body:JSON.stringify({islem,t:session(),...payload})
  }).then(async r=>{const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı.');return d;});}
