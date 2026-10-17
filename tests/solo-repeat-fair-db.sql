@@ -5,7 +5,7 @@ declare sid uuid:=gen_random_uuid(); result jsonb; first_xp int; second_xp int; 
  third_run text:='solo-upgrade-run-333333333';
 begin
  insert into public.students(id,username,password_hash,status,energy,energy_max,energy_updated_at)
- values(sid,'fair-upgrade-'+sid,'not-a-login','approved',30,30,now());
+ values(sid,'fair-upgrade-'||sid,'not-a-login','approved',30,30,now());
  insert into public.extra_data(student_id,key_name,value)
  values(sid,'yo','{"totalXp":5000,"altin":100,"guncelleme":1,"log":{}}');
  select (value->>'totalXp')::numeric into prior from public.extra_data where student_id=sid and key_name='yo';
