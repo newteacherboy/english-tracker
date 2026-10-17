@@ -81,5 +81,5 @@ function refreshLearning(){if(purpose()!=='independent')return;document.querySel
 document.addEventListener('dm:learning-progress',e=>{if(e.detail?.owner===who())refreshLearning();});document.addEventListener('dm:story-close',refreshLearning);
 document.addEventListener('dm:state',()=>{preview=null;refreshCards();});document.addEventListener('dm:login',()=>{weeklyClaimOwner='';weeklyError='';preview=null;latest=null;epoch++;});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
 // School route uses its own theme and expanded grade/unit navigator.
-if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261017-1';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
+if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261017-2';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
 })();
