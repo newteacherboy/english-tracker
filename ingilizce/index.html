@@ -24909,7 +24909,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       if(!remaining.length){cevap(true,'Tüm kelime kartları tamamlandı');return;}
       const word=list[remaining[0]],wrong=list.find(w=>norm(w.en)!==norm(word.en)&&norm(w.tr)!==norm(word.tr))?.tr||celdirici(s.l[remaining[0]],TR,1)[0]||'Bilmiyorum';
       const options=karistir([word.tr,wrong]);locked=false;
+      const progress=alan.querySelector('.rq-progress');
       alan.innerHTML='<div class="bz-etiket">🃏 13. Görev · Kelime kartları</div><div class="dm-final-card dm-final-current"><span class="dm-final-card-label">'+(list.length-remaining.length+1)+' / '+list.length+'</span><strong>'+kac(word.en)+'</strong><small>Türkçe anlamını seç</small></div><div class="bz-secenekler">'+options.map((v,i)=>'<button class="bz-sec" type="button" data-final="'+i+'">'+kac(v)+'</button>').join('')+'</div><p id="bzCardStatus" role="status"></p>';
+      if(progress)alan.prepend(progress);
       alan.querySelectorAll('[data-final]').forEach(btn=>btn.onclick=()=>{
         if(locked)return;locked=true;const good=norm(options[+btn.dataset.final])===norm(word.tr);
         alan.querySelectorAll('[data-final]').forEach(x=>{x.disabled=true;if(norm(options[+x.dataset.final])===norm(word.tr))x.classList.add('dogru');});
@@ -24943,10 +24945,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     O.jk.yari = () => { let f = harfler.filter(x => !x.k && !gizli.some(i => w[i] === x.h)); if (!f.length) return false; f.forEach(x => x.k = true); ciz(); };
     O.jk.harf = () => { let bos = gizli.find(i => !dolu[i] || dolu[i].h !== w[i]); if (bos === undefined) return false; if (dolu[bos]) { dolu[bos].k = false; delete dolu[bos]; } let x = harfler.find(y => !y.k && y.h === w[bos]); if (!x) return false; dolu[bos] = x; x.k = true; ciz(); };
     const ciz = () => {
+      const progress=alan.querySelector('.rq-progress');
       alan.innerHTML = `<div class="bz-etiket">🇹🇷 Türkçesi</div><div class="bz-soru" style="font-size:20px">${kac(TR(s.k))}</div><div class="bz-ipucu">👉 Aşağıdaki harflere dokunarak İngilizce kelimedeki boşlukları doldur</div>
         <div class="bz-slotlar" lang="en">${[...w].map((h, i) => gizli.includes(i) ? `<button class="bz-slot${dolu[i] ? ' dolu dm-right' : ''}" data-s="${i}" aria-label="boşluk">${dolu[i] ? dolu[i].h : ''}</button>` : `<span class="bz-slot sabit">${h}</span>`).join('')}</div>
         <div class="bz-harfler" lang="en">${harfler.map((x, j) => `<button class="bz-cip2${x.k ? ' bos' : ''}" data-h="${j}">${x.h}</button>`).join('')}</div>
         <button class="bz-btn mor" id="bzKontrol" style="margin-top:14px" ${gizli.every(i => dolu[i]) ? '' : 'disabled'}>Kontrol et</button>`;
+      if(progress)alan.prepend(progress);
       alan.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { let x = harfler[+b.dataset.h]; if (x.k) return; let bos = gizli.find(i => !dolu[i]); if (bos === undefined) return; if(x.h!==w[bos]){window.dmVerifiedGames?.record(O.i,[...w].map((ch,i)=>i===bos?x.h:dolu[i]?.h||ch).join(''),O.runId);b.classList.remove('dm-wrong');void b.offsetWidth;b.classList.add('dm-wrong');ses('yanlis');window.dmAnswerFeedback?.(false);try{navigator.vibrate?.(120);}catch{}setTimeout(()=>b.classList.remove('dm-wrong'),650);return;} dolu[bos] = x; x.k = true; ciz();if(window.dmLetterFeedback)window.dmLetterFeedback('letter');else ses('dogru'); });
       alan.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { let i = +b.dataset.s; if (dolu[i]) { dolu[i].k = false; delete dolu[i]; ciz(); } });
       $('bzKontrol').onclick = () => { let iyi = gizli.every(i => dolu[i].h === w[i]); alan.querySelectorAll('button').forEach(x => x.disabled = true); cevap(iyi, iyi ? '' : w,[...w].map((ch,i)=>dolu[i]?.h||ch).join('')); };
