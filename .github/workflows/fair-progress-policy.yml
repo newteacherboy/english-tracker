@@ -1,0 +1,22 @@
+name: Fair progress policy
+on:
+  push:
+    paths:
+      - 'ingilizce/fair-progress-policy.js'
+      - 'tests/fair-progress-policy.test.cjs'
+      - '.github/workflows/fair-progress-policy.yml'
+  pull_request:
+    paths:
+      - 'ingilizce/fair-progress-policy.js'
+      - 'tests/fair-progress-policy.test.cjs'
+      - '.github/workflows/fair-progress-policy.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/fair-progress-policy.js
+      - run: node --test tests/fair-progress-policy.test.cjs
