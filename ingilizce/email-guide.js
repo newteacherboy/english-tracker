@@ -81,7 +81,11 @@
  function bindCommon(wrap){
   wrap.querySelector('[data-eg-app-open]')?.addEventListener('click',()=>{
    const link=providers[provider]?.link;
-   if(!link){status('Telefonundaki Mail uygulamasını ana ekrandan aç. E-posta kutunu kontrol et.','info');return;}
+   if(!link){
+    status('Gmail veya Outlook kullanıyorsan yukarıdan seç; diğer uygulamalarda telefonunun ana ekranındaki Mail simgesini aç.','info');
+    wrap.querySelector('[data-eg-provider]')?.focus({preventScroll:true});
+    return;
+   }
    // A user gesture opens the actual mailbox in browser or an installed app if
    // the device associates the link with it; do not open an empty compose form.
    window.open(link,'_blank','noopener,noreferrer');
@@ -197,7 +201,7 @@
   let pending=signupPending;
   try{pending=pending||sessionStorage.getItem('dm_email_signup_pending')||'';}catch{}
   if(!pending||!signedIn()||locale(account())!==pending)return;
-  const visible=$('panel-alani')?.style.display==='block';
+  const panel=$('panel-alani'),visible=panel&&getComputedStyle(panel).display!=='none';
   if(!visible){setTimeout(showPending,1100);return;}
   signupPending='';
   try{sessionStorage.removeItem('dm_email_signup_pending');}catch{}

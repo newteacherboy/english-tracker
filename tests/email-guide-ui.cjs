@@ -1,5 +1,10 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {chromium}=require('playwright');
+// The production entry must load a single guide after member experience.
+const entry=fs.readFileSync(path.resolve('ingilizce/index.html'),'utf8');
+assert.match(entry,/member-experience\.js[^\n]*[\s\S]*email-guide\.js/);
+assert.equal((entry.match(/<script[^>]+src="email-guide\.js/g)||[]).length,1);
+assert(!fs.readFileSync(path.resolve('ingilizce/member-experience.js'),'utf8').includes('dm-email-guide-loader'));
 (async()=>{
  const browser=await chromium.launch({headless:true});
  const root=path.resolve('ingilizce'),errors=[];
