@@ -1,0 +1,34 @@
+name: Visual email verification guide
+on:
+  push:
+    paths:
+      - 'ingilizce/email-guide.*'
+      - 'ingilizce/member-experience.js'
+      - 'ingilizce/google-login.js'
+      - 'tests/email-guide-ui.cjs'
+      - 'tests/onboarding-email-ui.cjs'
+      - '.github/workflows/email-guide.yml'
+  pull_request:
+    paths:
+      - 'ingilizce/email-guide.*'
+      - 'ingilizce/member-experience.js'
+      - 'ingilizce/google-login.js'
+      - 'tests/email-guide-ui.cjs'
+      - 'tests/onboarding-email-ui.cjs'
+      - '.github/workflows/email-guide.yml'
+jobs:
+  guide:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/email-guide.js
+      - run: node --check ingilizce/member-experience.js
+      - run: node --check ingilizce/google-login.js
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/email-guide-ui.cjs
+      - run: node tests/onboarding-email-ui.cjs
