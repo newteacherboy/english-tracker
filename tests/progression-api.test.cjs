@@ -1,6 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),{stripTypeScriptTypes}=require('node:module');
 const C=require('../ingilizce/progression-catalog.js');
-function fixture(level=7){let ctx={level,feed:false,lessons:{A1:true,A2:false,B1:false,B2:false},units:[[210101,210201],[230101],[250101],[270101]],complete:[false,false,false,false],done:[],yo:{karakter:{cins:'k',s:{},sahip:[]}},owned:[]};const db={rpc:async(op,args)=>{if(op==='dm_game_reward_claim'){ctx.claim=args;return {data:{ok:true,xp:50,gold:10}};}return {data:ctx};},from:()=>({upsert:async(row)=>{ctx.weeklyTarget=structuredClone(row);return {error:null};},select(){return this},eq(){return this},limit:async()=>({data:[{id:'lesson'}]})})};const scope={DijiProgressionCatalog:C,globalThis:null,items:JSON.parse(fs.readFileSync('supabase/functions/diji-api/progression-shop.json','utf8')),Intl,Date,Set,JSON};scope.globalThis=scope;vm.createContext(scope);let src=stripTypeScriptTypes(fs.readFileSync('supabase/functions/diji-api/progression-api.ts','utf8').replace(/^import .*$/gm,''),{mode:'transform'}).replace('export function','function');vm.runInContext(src+';this.factory=progressionAPI',scope);return {api:scope.factory(db,(body,status=200)=>({body,status})),ctx};}
+function fixture(level=7){let ctx={level,feed:false,lessons:{A1:true,A2:false,B1:false,B2:false},units:[[210101,210201],[230101],[250101],[270101]],complete:[false,false,false,false],done:[],yo:{karakter:{cins:'k',s:{},sahip:[]}},owned:[]};const db={rpc:async(op,args)=>{if(['dm_game_reward_claim','dm_parkur_fair_claim','dm_parkur_fair_recover'].includes(op)){ctx.claim=args;ctx.rewardRpc=op;return {data:{ok:true,xp:50,gold:10}};}return {data:ctx};},from:()=>({upsert:async(row)=>{ctx.weeklyTarget=structuredClone(row);return {error:null};},select(){return this},eq(){return this},limit:async()=>({data:[{id:'lesson'}]})})};const scope={DijiProgressionCatalog:C,globalThis:null,items:JSON.parse(fs.readFileSync('supabase/functions/diji-api/progression-shop.json','utf8')),Intl,Date,Set,JSON};scope.globalThis=scope;vm.createContext(scope);let src=stripTypeScriptTypes(fs.readFileSync('supabase/functions/diji-api/progression-api.ts','utf8').replace(/^import .*$/gm,''),{mode:'transform'}).replace('export function','function');vm.runInContext(src+';this.factory=progressionAPI',scope);return {api:scope.factory(db,(body,status=200)=>({body,status})),ctx};}
 const student={role:'student',student_id:'trusted'};
 test('level 7 server denies later games, store, social actions and forged state',async()=>{const {api,ctx}=fixture();for(const op of ['asmacaLiderlikKaydet','dikteLiderlikKaydet','enerjiGonder','hazirMesajGonder','duelloGonder','oyunEslesmeOlustur'])assert.equal((await api.guard(op,{},new URLSearchParams(),student)).status,403,op);assert.equal(await api.guard('hafizaLiderlikKaydet',{},new URLSearchParams(),student),null);assert.equal((await api.guard('akisTumu',{},new URLSearchParams(),student)).status,403);ctx.feed=true;assert.equal(await api.guard('akisTumu',{},new URLSearchParams(),student),null);assert.equal((await api.guard('ekVeriKaydet',{anahtar:'yo',deger:{karakter:{cins:'k',s:{ust:'fake'},sahip:['d:fake']}}},new URLSearchParams(),student)).status,403);});
 test('lesson minimum level and previous CEFR completion are both required',async()=>{const {api,ctx}=fixture(9),body={seviye:'A2',kategori:'Grammar',konu:'Topic'};assert.equal((await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student)).status,403);ctx.lessons.A2=true;assert.equal(await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student),null);ctx.level=8;assert.equal((await api.guard('dersKonuDetayGetir',body,new URLSearchParams(),student)).status,403);});
@@ -46,4 +46,28 @@ test('pose saves allow free gestures, reject unearned levels, unpaid gestures an
  for(const id of ['dik','sol','sag','rahat','selam'])assert.equal(await save(id),null);
  assert.equal((await save('zafer')).status,403);ctx.level=40;assert.equal((await save('zafer')).status,403);assert.equal((await save('zafer',['durus:zafer'])).status,403);
  ctx.yo.karakter.sahip=['durus:zafer'];assert.equal(await save('zafer',['durus:zafer']),null);assert.equal((await save('made-up',['durus:zafer'])).status,403);
+});
+
+test('main Parkur fair protocol uses recorded-answer claim and authenticated recovery endpoint',async()=>{
+ const {api,ctx}=fixture(1),body={game:'ba',fairProtocol:2,classNo:1,units:[1],stopNo:210101,runId:'parkurfairfixture0001',correct:12,wrong:0,seconds:123};
+ const result=await api.handle('seviyeOyunOdulu',body,new URLSearchParams(),student);
+ assert.equal(result.body.ok,true);
+ assert.equal(ctx.rewardRpc,'dm_parkur_fair_claim');
+ assert.equal(ctx.claim.stop_no,210101);
+ assert(!Object.hasOwn(ctx.claim,'correct'),'Browser-reported correctness must not reach fair reward RPC');
+ const recover=await api.handle('seviyeParkurPekistirme',{
+   runId:body.runId,stopNo:210101,classNo:1,step:0,answer:'hello'
+ },new URLSearchParams(),student);
+ assert.equal(recover.body.ok,true);
+ assert.equal(ctx.rewardRpc,'dm_parkur_fair_recover');
+ assert.equal(ctx.claim.actor,'trusted');
+ assert.equal(ctx.claim.selected,'hello');
+ assert.equal((await api.handle('seviyeParkurPekistirme',{stopNo:210201,classNo:2},new URLSearchParams(),student)).status,403);
+ assert.equal((await api.handle('seviyeParkurPekistirme',{stopNo:210101,classNo:1},new URLSearchParams(),null)).status,401);
+});
+test('old solo game rewards keep original transaction',async()=>{
+ const {api,ctx}=fixture(7),body={game:'ky',classNo:1,units:[1],runId:'oldgamefixture12345',correct:3,wrong:2,seconds:60};
+ const r=await api.handle('seviyeOyunOdulu',body,new URLSearchParams(),student);
+ assert.equal(r.body.ok,true);
+ assert.equal(ctx.rewardRpc,'dm_game_reward_claim');
 });
