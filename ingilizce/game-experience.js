@@ -13,6 +13,28 @@
   ];
   // Independent game dialogs must not live inside another game's closeable overlay.
   for(const [,id] of entries){const root=document.getElementById(id);if(root?.parentElement?.closest('.game-modal-overlay'))document.body.append(root);}
+
+  // Approved compact game skins: Memory Chest concept 2, Missing Letter concept 1.
+  const gameSkin=document.createElement('style');gameSkin.id='dm-approved-compact-games';
+  gameSkin.textContent=`
+  #hafizaOyunOverlay,#boslukOyunOverlay{--dm-play-height:100dvh;box-sizing:border-box;overscroll-behavior:contain}
+  #hafizaOyunOverlay .game-modal-content,#boslukOyunOverlay .game-modal-content{box-sizing:border-box;max-height:100dvh!important;height:100dvh!important;overflow:hidden!important;display:flex;flex-direction:column;padding:clamp(5px,1.1dvh,12px)!important;border-radius:0!important}
+  #hafizaOyunEkrani,#boslukOyunEkrani{box-sizing:border-box;height:100%;max-height:100%;min-height:0;overflow:hidden!important;display:flex;flex-direction:column;gap:clamp(2px,.5dvh,7px);padding:clamp(3px,.7dvh,9px)!important}
+  #hafizaOyunEkrani{background:linear-gradient(180deg,#f3f0ff 0%,#e7f7ff 48%,#fff5dd 100%);border-radius:18px}
+  #hafizaKartGrid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:repeat(6,minmax(0,1fr))!important;gap:clamp(2px,.45dvh,7px)!important;flex:1 1 0;min-height:0;overflow:hidden!important}
+  #hafizaKartGrid>*{min-width:0;min-height:0;max-height:100%;height:100%!important;box-sizing:border-box;border-radius:clamp(7px,1.5vw,15px)!important;border:1.5px solid #a9dbee!important;background:linear-gradient(155deg,#e2f8ff,#d9efff)!important;color:#193a63!important;box-shadow:0 2px 0 #aacbe4!important;padding:clamp(2px,.5vw,8px)!important;font-size:clamp(9px,2.5vw,14px)!important;line-height:1.12!important;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center;text-align:center}
+  #hafizaKartGrid>*:nth-child(n+13){background:linear-gradient(160deg,#fff9e9,#ffedc5)!important;border-color:#f3c979!important;color:#654114!important;box-shadow:0 2px 0 #d9ae64!important}
+  #hafizaOyunEkrani :is(h1,h2,h3),#boslukOyunEkrani :is(h1,h2,h3){margin:0!important;line-height:1.13!important}
+  #hafizaOyunEkrani :is(p,small),#boslukOyunEkrani :is(p,small){margin-block:1px!important}
+  #boslukOyunEkrani{background:linear-gradient(180deg,#bceaff,#f4f6d7 26%,#e6f7d8 100%);border-radius:18px}
+  #boslukSatirlarContainer{display:flex!important;flex-direction:column!important;flex:1 1 0!important;min-height:0!important;overflow:hidden!important;gap:clamp(3px,.65dvh,9px)!important}
+  #boslukSatirlarContainer>*{flex:1 1 0!important;min-height:0!important;max-height:33.333%;box-sizing:border-box;margin:0!important;padding:clamp(3px,.75dvh,9px)!important;border:2px solid #d0a15a!important;border-radius:16px!important;background:linear-gradient(145deg,#fff7d9,#ffedc6)!important;box-shadow:0 3px 0 #bb8747!important;overflow:hidden!important;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly}
+  #boslukSatirlarContainer button{min-width:0!important;max-height:clamp(22px,4.7dvh,37px)!important;border-radius:9px!important}
+  #boslukOyunEkrani :is(.jokerler,.joker-panel,[id*="Joker"],[class*="joker-box"]){flex-shrink:0;max-height:18dvh!important;overflow:hidden}
+  @media(max-width:500px){#hafizaOyunOverlay .game-modal-content,#boslukOyunOverlay .game-modal-content{padding-bottom:max(5px,env(safe-area-inset-bottom))!important}#hafizaOyunEkrani,#boslukOyunEkrani{font-size:clamp(10px,2.8vw,14px)}}
+  @media(max-height:680px){#hafizaOyunEkrani,#boslukOyunEkrani{gap:2px!important}#hafizaKartGrid{gap:2px!important}#boslukSatirlarContainer{gap:2px!important}#hafizaOyunEkrani :is(p,small),#boslukOyunEkrani :is(p,small){font-size:10px!important}}
+  `;
+  document.head.append(gameSkin);
   const ruleText = 'Doğru +100 · Seri bonusları · Hız bonusu · Yanlış −40 puan / turdan −3 XP';
   function decorate() {
     for (const [id,modal,title,description] of entries) {
