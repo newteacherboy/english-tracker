@@ -4,7 +4,7 @@ if(window.dmSchoolJourney)return;
 const characters=['bumbi','fora','kori','lumo','mimo','nori','pofin','tiko','vela','ziri'];
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const currentRoute=()=>window.dmLearningRoute?.purpose?.()==='school';
-let visit=0,steps=[],entrySource=null;
+let visit=0,steps=[],entrySource=null,lastContext={grade:1,unit:1,part:1};
 const themeKey='dm-school-route-theme-v1';
 function theme(){try{return localStorage.getItem(themeKey)==='night'?'night':'day'}catch{return 'day';}}
 function themeSet(t){
@@ -147,6 +147,26 @@ function decorateQuestion(){
   const button=document.createElement('button');button.type='button';button.className='dm-school-question-theme';button.dataset.schoolTheme='1';
   button.textContent=theme()==='night'?'☀️ Gündüz':'🌙 Gece';button.setAttribute('aria-label','Okul Yolum görünümünü değiştir');hud.append(button);
  }
+ const closer=modal.querySelector('#bzCik');
+ let header=modal.querySelector('.dm-school-lesson-head');
+ if(!header){
+  header=document.createElement('header');header.className='dm-school-lesson-head';
+  header.innerHTML='<button type="button" class="dm-school-back" data-school-exit aria-label="Macera haritasına dön">‹</button>'+
+   '<div class="dm-school-lesson-title"><small>'+esc(lastContext.grade)+'. Sınıf · '+esc(lastContext.unit)+'. Ünite · '+esc(lastContext.part)+'. Durak</small><strong>Macera Parkuru</strong></div>'+
+   '<button type="button" data-school-theme class="dm-school-head-theme" aria-label="Görünümü değiştir">'+(theme()==='night'?'☀️':'🌙')+'</button>';
+  modal.prepend(header);
+  header.querySelector('[data-school-exit]').onclick=()=>closer?.click();
+ }
+ const hudTheme=modal.querySelector('.rq-hud .dm-school-question-theme');
+ if(hudTheme){hudTheme.remove();}
+ let movement=modal.querySelector('.dm-school-question-nav');
+ if(!movement){
+  movement=document.createElement('nav');movement.className='dm-school-question-nav';movement.setAttribute('aria-label','Cevaplanmış sorular arasında gezin');
+  movement.innerHTML='<button type="button" data-school-previous>← Önceki</button><span>Yanıtlananları incele</span><button type="button" data-school-next disabled>Sonraki →</button>';
+  header.after(movement);
+  movement.querySelector('[data-school-previous]').onclick=()=>modal.querySelector('#bzGeriSoru:not(:disabled)')?.click();
+ }
+ movement.querySelector('[data-school-previous]').disabled=!modal.querySelector('#bzGeriSoru:not(:disabled)');
  const area=modal.querySelector('#bzAlan'),board=area?.querySelector('.sp-question-board');
  if(!area)return;
  const progress=area.querySelector('.rq-progress span')?.textContent||'';
@@ -159,7 +179,15 @@ function decorateQuestion(){
   const image=characters[(Math.max(0,index)+introSerial)%characters.length];
   modal.style.setProperty('--dm-school-question-art','url("learning-assets/characters/'+image+'.webp")');
  }
- if(board)board.classList.add('dm-school-question-board');
+ if(board){
+  board.classList.add('dm-school-question-board');
+  const isTeach=area.dataset.rqKind==='teach';
+  board.dataset.schoolTask=isTeach?'teach':'question';
+  if(isTeach&&!board.querySelector('.dm-school-teach-message')){
+   board.insertAdjacentHTML('beforeend','<div class="dm-school-teach-message"><h2>Yeni kelimelerle tanış</h2><p>Bu duraktaki kelimeleri dinle ve anlamlarını öğren.</p></div>');
+  }
+ }
+
 }
 let designQueued=false;
 function refreshDesign(){
@@ -190,7 +218,8 @@ if(typeof scene==='function'){
   // Keep the same compact banner / weekly goal / 3-stop map as Learning Path.
   // The full school grades belong exclusively to the separate explorer dialog.
   steps=Array.isArray(data.allSteps)&&data.allSteps.length?data.allSteps:(data.steps||[]);
-  const grade=parse((data.steps||[])[data.current||0]).grade||1;
+  const info=parse((data.steps||[])[data.current||0]);lastContext={grade:info.grade||1,unit:info.unit||1,part:info.part||1};
+ const grade=parse((data.steps||[])[data.current||0]).grade||1;
   const displayMascot=characters[(grade*3+(visit++))%characters.length];
   const themed=html.replace(prefix,prefix+' data-school-appearance="'+theme()+'"')
     .replaceAll('src="route-assets/papi-school.png"','src="learning-assets/characters/'+displayMascot+'.webp"');
@@ -214,6 +243,9 @@ if(!document.getElementById('dm-school-journey-css')){
 }
 if(!document.getElementById('dm-school-adventure-v2-css')){
  const link=document.createElement('link');link.id='dm-school-adventure-v2-css';link.rel='stylesheet';link.href='school-adventure-v2.css?v=20261017-home-restore-3';document.head.append(link);
+}
+if(!document.getElementById('dm-parkur-history-ui-css')){
+ const link=document.createElement('link');link.id='dm-parkur-history-ui-css';link.rel='stylesheet';link.href='parkur-question-parity.css?v=20261017-lesson-2';document.head.append(link);
 }
 window.dmSchoolJourney={open,preview,theme,themeSet,group,parse,launchStep};
 })();
