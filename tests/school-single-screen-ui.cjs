@@ -2,7 +2,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 (async()=>{
  const base=path.resolve(__dirname,'../ingilizce');
  const original=fs.readFileSync(path.join(base,'index.html'),'utf8');
- const inline=[...original.matchAll(/<style\\b[^>]*>([\\s\\S]*?)<\\/style>/g)].map(x=>x[1]).join('\\n');
+ const inline=[...original.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(x=>x[1]).join('\n');
  const browser=await chromium.launch({executablePath:process.env.DIJI_CHROMIUM,headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
  const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',r=>{
