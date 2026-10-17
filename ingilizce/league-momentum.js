@@ -2,6 +2,7 @@
 (()=>{'use strict';
 if(window.dmLeagueMomentumActive)return;
 window.dmLeagueMomentumActive=true;
+if(!document.getElementById('dm-league-momentum-css')){const style=document.createElement('link');style.id='dm-league-momentum-css';style.rel='stylesheet';style.href='league-momentum.css?v=20261017-1';document.head.append(style);}
 const KEY='dm.league.momentum.v1:';
 let busy=false,epoch=0,lastCheck=0,queued=null;
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'').trim();
