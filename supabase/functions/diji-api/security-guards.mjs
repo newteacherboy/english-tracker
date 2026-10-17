@@ -41,7 +41,7 @@ const authenticatedLimits=Object.freeze({
 export function anonymousBudgets(op,ip,identity){
  const rule=anonymousLimits[op];if(!rule)return [];
  const normalized=String(identity||'').trim().toLocaleLowerCase('tr').slice(0,160);
- const plans=[{scope:'ip:'+op,value:String(ip||'unknown'),max:rule[0],seconds:rule[1]}];
+ const plans=ip&&ip!=='bilinmiyor'?[{scope:'ip:'+op,value:String(ip),max:rule[0],seconds:rule[1]}]:[];
  if(normalized&&rule[2]>0)plans.push({scope:'account:'+op,value:normalized,max:rule[2],seconds:rule[3]});
  return plans;
 }
