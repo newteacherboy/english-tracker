@@ -9,3 +9,33 @@ test('late learning overview is discarded after account changes',async()=>{const
 test('learning route reads canonical chapters and marks the current lesson',async()=>{const c=fixture();c.yo.dmLearningPurpose='independent';c.dmStoryPath={overview:async()=>({title:'Selamlaşma',cefr:'A1',chapters:[{id:0,title:'Merhaba',cefr:'A1',done:true,available:true},{id:1,title:'Selamlaşma',cefr:'A1',current:true,available:true},{id:2,title:'Aile',cefr:'A1',available:false}]})};const area={outerHTML:''},root={isConnected:true,html:'',querySelectorAll:()=>[],querySelector:()=>area,insertAdjacentHTML(_,h){this.html+=h;}};c.dmParkurMapMount({dataset:{rtBound:'1'},querySelector:()=>root});await new Promise(r=>setImmediate(r));assert.match(area.outerHTML,/Selamlaşma/);assert.match(root.html,/data-chapter="1"[^]*aria-current="step"/);assert.match(root.html,/data-rt="continue"/);});
 test('failed route save restores selection and does not open another route',async()=>{const c=fixture();c.yoHemenKaydet=async()=>{throw Error('offline');};assert.equal(await c.dmLearningRoute.set('independent'),false);assert.equal(c.yo.dmLearningPurpose,'school');assert.equal(c.opened,0);});
 test('route picker opens saved route without reloading and legacy chest polling grants nothing',()=>{const html=fs.readFileSync('ingilizce/index.html','utf8'),picker=fs.readFileSync('ingilizce/member-experience.js','utf8');assert(!picker.includes('location.reload()'));const poll=html.split('function kontrolEt() {')[1].split('setInterval(kontrolEt')[0];assert(!poll.includes('sandikTorenAc('));assert(poll.includes('yoHazirMi'));const save=html.split('async function hemenKaydet(bekle) {')[1].split('window.yoHemenKaydet')[0];assert(save.includes("d.status !== 'success'"));assert(!save.includes('Promise.race'));});
+
+test('first route selection waits for server profile readiness before changing local state',async()=>{
+ const c=fixture();let finish;let checks=0;
+ c.dmMemberSaveReady=()=>{checks++;return new Promise(resolve=>{finish=resolve;});};
+ const first=c.dmLearningRoute.set('independent');
+ await Promise.resolve();
+ assert.equal(c.yo.dmLearningPurpose,'school','first tap must not change a profile before its server version loads');
+ assert.equal(c.saved,0,'do not schedule a save during initial loading');
+ assert.equal(checks,1);
+ finish(true);
+ assert.equal(await first,true);
+ assert.equal(c.yo.dmLearningPurpose,'independent');
+ assert.equal(c.saved,1);
+ assert.equal(c.opened,1);
+});
+test('failed initial server load does not change parkur or show a false success',async()=>{
+ const c=fixture();c.dmMemberSaveReady=async()=>{throw Error('Server is offline');};
+ assert.equal(await c.dmLearningRoute.set('independent'),false);
+ assert.equal(c.yo.dmLearningPurpose,'school');
+ assert.equal(c.saved,0);
+ assert.equal(c.opened,0);
+});
+test('changing accounts while the initial load is pending cannot switch the new account route',async()=>{
+ const c=fixture();let finish;c.dmMemberSaveReady=()=>new Promise(r=>finish=r);
+ const operation=c.dmLearningRoute.set('independent');
+ await Promise.resolve();c.aktifOgrenciAdi='bob';finish(true);
+ assert.equal(await operation,false);
+ assert.equal(c.yo.dmLearningPurpose,'school');
+ assert.equal(c.saved,0);
+});
