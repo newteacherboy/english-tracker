@@ -23,7 +23,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   else if(task.kind==='eksik'){await page.evaluate(en=>{for(const slot of document.querySelectorAll('#bzAlan [data-s]')){const letter=en[Number(slot.dataset.s)];const b=[...document.querySelectorAll('#bzAlan [data-h]:not(.bos)')].find(b=>b.textContent===letter);b.click();}document.getElementById('bzKontrol').click();},task.en);}
   else if(['wordOrder','patternOrder'].includes(task.kind)){const tokens=task.expected.includes(' ')?task.expected.split(/\s+/):[...task.expected];for(const token of tokens)await page.locator('.rq-token-pool button:enabled').filter({hasText:new RegExp('^'+token.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$')}).first().click();}
   else {if(task.kind==='soyle')await page.locator('.rq-microphone').click();await page.locator('#bzAlan .bz-sec').filter({hasText:new RegExp('^'+task.expected.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$')}).first().click();}
-  await page.evaluate(()=>dmVerifiedGames.flush(vfixture.state().runId));const actual=evidence.filter(e=>e.slot===i).at(-1);assert(actual?.valid&&actual.correct,'authoritative input for '+task.kind+': '+JSON.stringify(actual));console.log('PASS Parkur',i+1,task.kind);
+  for(let tries=0;tries<100&&!evidence.some(e=>e.slot===i);tries++)await new Promise(ok=>setTimeout(ok,40));const actual=evidence.filter(e=>e.slot===i).at(-1);assert(actual?.valid&&actual.correct,'authoritative input for '+task.kind+': '+JSON.stringify(actual));console.log('PASS Parkur',i+1,task.kind);
  }
  assert.deepEqual(errors,[]);await browser.close();console.log('PASS all 12 real Parkur controls against authoritative grader');
 })().catch(e=>{console.error(e);process.exit(1)});
