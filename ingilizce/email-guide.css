@@ -1,0 +1,51 @@
+/* Email verification tutorial – bright Papi daytime design. Scoped to avoid route/game CSS. */
+#dmEmailGuide,#dmEmailGuide *{box-sizing:border-box}
+.deg-overlay{position:fixed;inset:0;z-index:2147483640;display:flex;align-items:center;justify-content:center;padding:clamp(8px,2vw,22px);background:rgba(4,37,49,.76);font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#153747}
+.deg-dialog{width:min(100%,525px);max-height:min(94dvh,920px);display:flex;flex-direction:column;overflow:hidden;background:#fff;border:2px solid #c5e6d7;border-radius:28px;box-shadow:0 22px 80px rgba(0,28,40,.32)}
+.deg-hero{position:relative;display:flex;gap:12px;align-items:center;min-height:118px;padding:12px 48px 12px 15px;background:linear-gradient(150deg,#bdeeff 0%,#e1f9f5 67%,#fff4ce 100%);flex-shrink:0}
+.deg-hero img{max-height:104px;width:92px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 5px 6px #39744a3b)}
+.deg-hero>div{min-width:0}.deg-hero b{font-size:22px;letter-spacing:-.5px;color:#008e81;font-weight:1000;text-shadow:0 1px 0 #fff}.deg-hero h1{font-size:clamp(18px,5vw,24px);line-height:1.14;color:#10475a;margin:4px 0;font-weight:950}.deg-hero span{font-weight:750;font-size:12px;color:#377a68}
+.deg-close{position:absolute;right:10px;top:12px;border:0;background:#fff;color:#194d5b;border-radius:50%;width:39px;height:39px;font-size:28px;line-height:1;cursor:pointer;box-shadow:0 2px 9px #2d5a7336}
+.deg-scroll{overflow-y:auto;overscroll-behavior:contain;padding:17px clamp(13px,4vw,23px) max(14px,env(safe-area-inset-bottom));background:linear-gradient(180deg,#fff,#fffdf3 94%)}
+.deg-hello{text-align:center;padding:5px 5px 14px}.deg-hello h2{font-size:clamp(22px,5.5vw,29px);margin:0 0 7px;color:#103b42;font-weight:1000}.deg-hello p{color:#536879;line-height:1.5;font-size:14px;margin:0}
+.deg-provider-box{border:2px solid #ffe69c;background:#fff9e8;border-radius:22px;padding:16px 13px;display:grid;gap:10px;box-shadow:0 2px 11px #a8831520}
+.deg-provider-box>strong{font-size:17px;font-weight:950;color:#1b474b}.deg-provider-box>small{font-size:12px;color:#6b7380;font-weight:700;line-height:1.5;margin-top:-6px}
+.deg-provider{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:1px solid #e7e7ee;border-radius:14px;min-height:65px;padding:9px 12px;cursor:pointer;color:#193e4e;box-shadow:0 3px 12px #7e762414;font-size:15px;font-weight:900}
+.deg-provider span:nth-child(2){flex:1}.deg-provider b{font-size:28px;font-weight:500;color:#788a98}
+.deg-brand{width:41px;height:41px;flex-shrink:0;display:grid;place-items:center;border-radius:12px;font-size:22px;font-weight:1000;background:#fff;box-shadow:0 2px 7px #29466b18}
+.deg-gmail{color:#ea4335;background:linear-gradient(135deg,#fff 12%,#fff 70%,#e2fff0);border:2px solid #e9edf4;text-shadow:-2px 0 #4285f4,2px 0 #34a853}.deg-outlook{color:white;background:linear-gradient(140deg,#008be0,#0f55aa);box-shadow:5px 4px 0 #c5e8fe}.deg-other{background:#59687f;color:white}
+.deg-main,.deg-secondary,.deg-text-action,.deg-step-nav button,.deg-later{font-family:inherit;cursor:pointer;font-size:14px;font-weight:850}
+.deg-main{display:block;width:100%;min-height:49px;margin-top:13px;padding:12px 14px;background:linear-gradient(140deg,#1cba8e,#047f8e);color:white;border:0;border-radius:15px;box-shadow:0 4px 0 #057d72}
+.deg-secondary{display:block;width:100%;min-height:46px;padding:9px 13px;background:white;color:#135567;border:1px solid #cbdce0;border-radius:15px;margin-top:12px}
+.deg-text-action{display:block;width:100%;min-height:42px;border:0;background:transparent;color:#048a79;margin:7px auto}
+.deg-later{display:block;border:0;background:transparent;color:#617185;padding:14px;margin:auto}
+.deg-live{min-height:0;margin:8px auto 0;text-align:center;color:#54727d;font-size:13px;font-weight:800;line-height:1.45}
+.deg-live:empty{display:none}.deg-live[data-kind=success]{color:#19724a}.deg-live[data-kind=error]{color:#a62836}
+.deg-track{display:flex;align-items:center;gap:8px;justify-content:space-between}.deg-track h2{font-size:clamp(17px,5vw,22px);text-align:center;margin:5px 0;color:#173e49}.deg-track>span{font-size:13px;font-weight:900;color:#62849a}.deg-back{border:0;background:#e7f5f0;border-radius:50%;width:35px;height:35px;cursor:pointer;font-size:26px;color:#1b6363}
+.deg-progress{display:flex;gap:8px;justify-content:center;align-items:center;margin:10px 0 13px}.deg-progress button{border:0;width:13px;height:13px;border-radius:50%;background:#c8e7e8;cursor:pointer;padding:0}.deg-progress button.active{background:#ffc637;transform:scale(1.2)}
+.deg-step-card{border:2px solid #f6df93;border-radius:20px;padding:14px;background:linear-gradient(150deg,#fffced,#fff);box-shadow:0 4px 14px #a99a3824}
+.deg-step-heading{display:flex;gap:12px;align-items:flex-start}.deg-count{width:39px;height:39px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;color:#594008;font-size:22px;font-weight:1000;background:#ffc73b;box-shadow:0 3px 0 #e5a524}.deg-step-heading strong{display:block;font-size:18px;font-weight:950;color:#143b43;line-height:1.24}.deg-step-heading p{margin:6px 0 0;font-size:14px;line-height:1.5;color:#4c6876}
+.deg-simulator{display:grid;place-items:center;margin:13px auto;min-height:185px;border-radius:18px;background:radial-gradient(circle at 20% 15%,#bbf4fc 0 20%,transparent 41%),linear-gradient(160deg,#d6f1f8,#e5f8e6);border:1px solid #c6e4e2;padding:12px}
+.deg-phone{width:min(100%,265px);min-height:166px;background:#fff;border:6px solid #263c54;border-radius:23px;box-shadow:0 7px 19px #3268833d;overflow:hidden;font-size:12px}.deg-phone-top{background:#f2f8ff;padding:10px 12px;font-weight:850;color:#245e87;border-bottom:1px solid #ddeaf1}
+.deg-mail-row{display:flex;gap:6px;align-items:center;padding:9px 10px;border-bottom:1px solid #eff1f4;color:#364b60;font-weight:700}.deg-mail-row b{font-weight:850}.deg-mail-row em{margin-left:auto;font-style:normal}.deg-mail-row.muted{color:#97a2ac}.deg-mail-row.is-selected{background:#dff1ff;color:#17639a}
+.deg-mail-subject{padding:12px;font-weight:850;color:#173f58}.deg-fake-action{border:0;margin:8px 15px 12px;text-align:center;background:#d4e8ff;color:#20558a;padding:9px;border-radius:11px;font-weight:900}.deg-fake-action.green{background:#0caa83;color:white}.deg-fake-lines{width:76%;margin:4px 10%;height:10px;border-radius:15px;background:linear-gradient(90deg,#c3ceda 75%,transparent 75%);box-shadow:0 16px 0 #e3e9f0}
+.deg-phone-home .deg-apps{display:flex;gap:13px;padding:16px 14px;justify-content:center;align-items:center}.deg-phone-home .deg-apps>span{font-size:24px}.deg-phone-home .deg-hint{font-size:12px;text-align:center;color:#416b80;font-weight:850;padding:3px}.deg-phone-home .deg-brand{width:45px;height:45px}
+.deg-papi-note{border-radius:12px;display:flex;align-items:center;gap:9px;background:#e9fff1;padding:10px;color:#246654;font-size:12px;font-weight:850;line-height:1.35}
+.deg-step-nav{display:flex;gap:10px;align-items:center;margin-top:13px}.deg-step-nav button{flex:1;border:1px solid #cfe1dc;background:white;border-radius:13px;min-height:48px;color:#155c60}.deg-step-nav .deg-main{margin:0;color:white;background:#078c7a}.deg-step-nav button:disabled{opacity:.35;cursor:default}
+.deg-overlay button:focus-visible,.deg-security-card button:focus-visible,.deg-email-banner button:focus-visible{outline:3px solid #0b77c7;outline-offset:3px}
+.deg-overlay button:disabled{opacity:.6;cursor:default}
+.deg-security-card{margin:12px auto;padding:14px;border:2px solid #ffe29c;border-radius:20px;background:#fff9dc;color:#234650;display:grid;gap:9px;max-width:700px}
+.deg-security-card>strong{font-size:18px}.deg-security-card p{font-size:14px;margin:0;font-weight:800;color:#76570e}
+.deg-security-card button{border:1px solid #b8dcd2;border-radius:12px;background:white;color:#165c59;min-height:43px;padding:9px;font-size:13px;font-weight:850;text-align:left}
+.deg-security-card button:first-of-type{background:#079882;color:white}
+.deg-help-entry{border:1px solid #a6dccc;border-radius:12px;background:#eafff4;color:#145a57;padding:11px 14px;font-size:14px;font-weight:850;cursor:pointer;margin:8px}
+#dmEmailVerifyBanner.dm-email-banner{box-sizing:border-box;position:relative;inset:auto;left:auto;bottom:auto;transform:none;display:grid;grid-template-columns:56px minmax(0,1fr);gap:9px;align-items:center;background:linear-gradient(120deg,#fff7c7,#fffbee);color:#234a49;border:2px solid #ffdc73;border-radius:18px;padding:11px 13px;max-width:650px;margin:8px auto 13px;z-index:1;box-shadow:0 3px 12px #73702418}
+#dmEmailVerifyBanner.dm-email-banner img{width:54px;height:56px;object-fit:contain;grid-row:span 2}
+#dmEmailVerifyBanner .deg-banner-text{display:grid;gap:3px;text-align:left;min-width:0}
+#dmEmailVerifyBanner .deg-banner-text strong{font-size:15px;line-height:1.25;font-weight:950}
+#dmEmailVerifyBanner .deg-banner-text small{font-size:11px;color:#5a6971;font-weight:750;line-height:1.35}
+#dmEmailVerifyBanner .deg-banner-actions{display:flex;gap:7px;grid-column:2;flex-wrap:wrap}
+#dmEmailVerifyBanner .deg-banner-actions button{border:1px solid #b9dcd2;border-radius:10px;background:white;color:#1a6463;font-size:12px;font-weight:900;min-height:39px;padding:8px 10px;cursor:pointer;flex:1}
+#dmEmailVerifyBanner .deg-banner-actions [data-eg-quick-resend]{background:#088d76;color:white}
+@media(max-width:420px){.deg-overlay{padding:6px}.deg-dialog{max-height:97dvh;border-radius:20px}.deg-hero{min-height:94px}.deg-hero img{height:78px;width:67px}.deg-scroll{padding:12px}.deg-provider{min-height:60px}.deg-simulator{min-height:168px}#dmEmailVerifyBanner.dm-email-banner{margin:6px 8px;padding:9px}#dmEmailVerifyBanner .deg-banner-actions{gap:6px}#dmEmailVerifyBanner .deg-banner-actions button{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.deg-progress button{transform:none}}
