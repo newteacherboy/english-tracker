@@ -17,9 +17,9 @@ alter table public.dm_parkur_recovery_runs enable row level security;
 revoke all on public.dm_parkur_recovery_runs from public,anon,authenticated;
 grant select,insert,update on public.dm_parkur_recovery_runs to service_role;
 
-create or replace function public.dm_parkur_recovery_view(deck jsonb, position integer)
+create or replace function public.dm_parkur_recovery_view(deck jsonb, step_index integer)
 returns jsonb language sql immutable set search_path='' as $view$
- select jsonb_build_object('step',position,'total',3,'prompt',deck->position->>'prompt','options',deck->position->'options');
+ select jsonb_build_object('step',step_index,'total',3,'prompt',deck->step_index->>'prompt','options',deck->step_index->'options');
 $view$;
 
 create or replace function public.dm_parkur_fair_claim(
