@@ -1,0 +1,29 @@
+name: API Security Regression
+on:
+  push:
+    paths:
+      - 'supabase/functions/diji-api/index.ts'
+      - 'supabase/functions/diji-api/security-guards.mjs'
+      - 'supabase/migrations/*security*'
+      - 'supabase/migrations/*legacy_public_access*'
+      - 'tests/api-security-guards.test.cjs'
+      - '.github/workflows/api-security.yml'
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/index.ts'
+      - 'supabase/functions/diji-api/security-guards.mjs'
+      - 'supabase/migrations/*security*'
+      - 'supabase/migrations/*legacy_public_access*'
+      - 'tests/api-security-guards.test.cjs'
+      - '.github/workflows/api-security.yml'
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check supabase/functions/diji-api/security-guards.mjs
+      - run: node --test tests/api-security-guards.test.cjs

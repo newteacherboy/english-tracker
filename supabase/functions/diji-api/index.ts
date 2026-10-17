@@ -7,6 +7,7 @@ import { meteorAPI } from './meteor-api.ts';
 import { wordWheelAPI } from './word-wheel-api.ts';
 import './score-rules.js';
 import { readBatch, contentCache } from './request-budget.ts';
+import {readJsonBounded,anonymousBudgets,authenticatedBudgets} from './security-guards.mjs';
 import { progressionAPI } from './progression-api.ts';
 import { onboardingAPI } from './onboarding-api.ts';
 import { adminStudentsAPI } from './admin-students-api.ts';
@@ -57,7 +58,7 @@ const OGRENCI_SIFRE_MIN = 6;
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json; charset=utf-8" }
+    headers: { ...corsHeaders, "Content-Type": "application/json; charset=utf-8", "Cache-Control":"no-store", "X-Content-Type-Options":"nosniff", "Referrer-Policy":"no-referrer", "X-Frame-Options":"DENY" }
   });
 }
 
@@ -168,6 +169,16 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
   // [YAMA 3] her istekte yazmak yerine 5 dakikada bir güncelle
   if (!data.last_seen_at || Date.now() - new Date(data.last_seen_at).getTime() > 5 * 60000) {
     await supabase.from("portal_sessions").update({ last_seen_at: new Date().toISOString() }).eq("id", data.id);
+  }
+  // A suspended or rejected learner cannot keep using an old 30-day session.
+  if (data.role === "student") {
+    if (!data.student_id) return null;
+    const {data:student,error:studentError}=await supabase.from("students")
+      .select("id,status,role").eq("id",data.student_id).maybeSingle();
+    if(studentError||!student||student.status!=="approved"||student.role!=="student"){
+      if(!studentError)await supabase.from("portal_sessions").delete().eq("id",data.id);
+      return null;
+    }
   }
   if (data.role === "teacher" && data.teacher_id) {
     const { data: t } = await supabase.from("teachers").select("username,full_name,email,is_admin,active").eq("id", data.teacher_id).maybeSingle();
@@ -1100,14 +1111,37 @@ const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,ver
 
 async function handle(req: Request) {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if(!["GET","POST"].includes(req.method))return json({ok:false,mesaj:"İstek yöntemi desteklenmiyor."},405);
   const url = new URL(req.url);
   let body: any = {};
   if (req.method === "POST") {
-    try { body = await req.json(); } catch (_) { body = {}; }
+    // Signature-gated bulk imports retain a bounded larger allowance.
+    const importSigned=String(req.headers.get("x-diji-import")||"")!==""
+       &&String(req.headers.get("x-diji-import"))===String(Deno.env.get("IMPORT_TOKEN")||"")
+       &&String(Deno.env.get("IMPORT_TOKEN")||"").length>=20;
+    const input=await readJsonBounded(req,importSigned?4194304:262144);
+    if(!input.ok)return json({ok:false,mesaj:input.status===413?"İstek çok büyük.":"Geçersiz JSON isteği."},input.status);
+    body=input.data;
   }
   const q = url.searchParams;
   const op = String(body.islem || q.get("islem") || "").trim();
-
+  const rate=async(scope:string,value:string,max:number,seconds:number)=>{
+    const key="shield:"+await sha256(scope+"|"+value);
+    const {data,error}=await supabase.rpc("dm_security_rate_check",
+      {bucket_key:key,max_hits:max,window_seconds:seconds});
+    if(error||!data||typeof data.allowed!=="boolean") return json({ok:false,mesaj:"Güvenlik kontrolü şu anda tamamlanamadı."},503);
+    if(data?.allowed===false){
+      const response=json({ok:false,mesaj:"Çok fazla istek gönderildi. Kısa bir süre sonra tekrar dene."},429);
+      response.headers.set("Retry-After",String(Math.max(1,Math.min(86400,Number(data.retryAfter)||60))));
+      return response;
+    }
+    return null;
+  };
+  const guestIdentity=String(body.ogrenci||body.ogrenciAdi||body.kullanici||body.kullaniciAdi||"");
+  for(const p of anonymousBudgets(op,istemciIp(req),guestIdentity)){
+    const denied=await rate(p.scope,p.value,p.max,p.seconds);
+    if(denied)return denied;
+  }
   if(op === "okumaGrubu") return readBatch(req,body,handle,json);
 
   const onboardingResponse = await onboarding.handle(req,op,body);
@@ -1241,7 +1275,12 @@ async function handle(req: Request) {
     return iceAktar(body);
   }
   const a = await auth(req, body, q);
-
+  if(a?.student_id){
+    for(const p of authenticatedBudgets(op,a.student_id,body)){
+      const denied=await rate(p.scope,p.value,p.max,p.seconds);
+      if(denied)return denied;
+    }
+  }
   if(op==='oturumBilgisi'){
     if(!a)return json({ok:false,mesaj:'Bu hesabın oturumu sona ermiş. Şifrenle yeniden giriş yap.'},401);
     if(a.role==='teacher')return json({ok:true,rol:'ogretmen',ogrenci:a.ogretmenKullanici,expiresAt:a.expires_at});
