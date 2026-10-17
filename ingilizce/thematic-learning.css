@@ -602,3 +602,53 @@
 #dmStoryLesson .ml-sentence-token:focus-visible,
 #dmStoryLesson .ml-letter-gap:focus-visible{outline:3px solid #2a8fcd;outline-offset:2px}
 @media(max-width:380px){#dmStoryLesson .ml-sentence{gap:4px}#dmStoryLesson .ml-sentence-token{padding:4px 7px;min-height:30px}}
+
+/* Larger DijiMedu discovery mascots. Scoped to the 10 new lesson characters only.
+   Preserve the measured lesson fit levels, readable prompts and touch targets. */
+#dmStoryLesson .ml-arena-hero{
+  grid-template-columns:minmax(105px,35%) minmax(0,1fr);
+  gap:12px;
+}
+#dmStoryLesson .ml-arena-papi[data-ml-character]{
+  width:100%;
+  height:auto;
+  max-height:205px;
+  object-fit:contain;
+  transform:scale(1.16);
+  transform-origin:center center;
+}
+#dmStoryLesson[data-fit="1"] .ml-arena-hero{
+  grid-template-columns:minmax(92px,32%) minmax(0,1fr);
+  gap:9px;
+}
+#dmStoryLesson[data-fit="1"] .ml-arena-papi[data-ml-character]{
+  max-height:155px;
+  transform:scale(1.12);
+}
+#dmStoryLesson[data-fit="2"] .ml-arena-hero{
+  grid-template-columns:minmax(78px,28%) minmax(0,1fr);
+  gap:8px;
+}
+#dmStoryLesson[data-fit="2"] .ml-arena-papi[data-ml-character]{
+  max-height:122px;
+  transform:scale(1.08);
+}
+@media(max-width:360px){
+  #dmStoryLesson .ml-arena-hero{
+    grid-template-columns:minmax(90px,33%) minmax(0,1fr);
+    gap:7px;
+  }
+  #dmStoryLesson[data-fit="1"] .ml-arena-hero{
+    grid-template-columns:minmax(84px,31%) minmax(0,1fr);
+    gap:6px;
+  }
+  #dmStoryLesson[data-fit="2"] .ml-arena-hero{
+    grid-template-columns:minmax(72px,27%) minmax(0,1fr);
+    gap:6px;
+  }
+}
+@media(min-width:600px) and (max-height:520px){
+  #dmStoryLesson .ml-arena-papi[data-ml-character]{max-height:145px;}
+  #dmStoryLesson[data-fit="1"] .ml-arena-papi[data-ml-character]{max-height:112px;}
+  #dmStoryLesson[data-fit="2"] .ml-arena-papi[data-ml-character]{max-height:95px;}
+}
