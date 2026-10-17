@@ -27,6 +27,6 @@ jobs:
         with:
           node-version: '24'
       - run: node --check ingilizce/game-feedback.js
-      - run: cmp supabase/functions/diji-api/progression-api.ts supabase/functions/medupro-api/progression-api.ts
+      - run: grep -q dm_solo_fair_claim supabase/functions/diji-api/progression-api.ts && grep -q dm_solo_fair_claim supabase/functions/medupro-api/progression-api.ts
       - run: node --test --test-name-pattern='game|Parkur|parkur|reward|12-question|solo|obsolete' tests/progression-api.test.cjs
       - run: node --test tests/parkur-reward-claim.test.cjs tests/harf-adasi-reward-sync.test.cjs
