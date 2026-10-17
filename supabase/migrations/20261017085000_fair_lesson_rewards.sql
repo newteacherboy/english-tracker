@@ -17,6 +17,12 @@ create table if not exists public.dm_lesson_fair_runs (
  created_at timestamptz not null default now(),
  primary key(student_id,run_id)
 );
+-- Protect awards earned before this rollout (no retroactive resets or second first-clear grants).
+insert into public.dm_lesson_fair_best(student_id,level,category,topic_name,best_tier)
+select distinct p.student_id,upper(p.level),p.category,p.topic_name,100
+from public.lesson_progress p where p.test_success=true and p.student_id is not null
+and p.level is not null and p.category is not null and p.topic_name is not null
+on conflict do nothing;
 create index if not exists dm_lesson_fair_runs_topic on public.dm_lesson_fair_runs(student_id,level,category,topic_name);
 alter table public.dm_lesson_fair_best enable row level security;
 alter table public.dm_lesson_fair_runs enable row level security;
