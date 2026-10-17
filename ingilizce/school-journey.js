@@ -187,9 +187,13 @@ if(typeof scene==='function'){
   if(!currentRoute())return html;
   const prefix='class="rt-root rt-school"';
   if(!html.includes(prefix))return html;
-  const card=preview(data);
+  // Keep the same compact banner / weekly goal / 3-stop map as Learning Path.
+  // The full school grades belong exclusively to the separate explorer dialog.
+  steps=Array.isArray(data.allSteps)&&data.allSteps.length?data.allSteps:(data.steps||[]);
+  const grade=parse((data.steps||[])[data.current||0]).grade||1;
+  const displayMascot=characters[(grade*3+(visit++))%characters.length];
   return html.replace(prefix,prefix+' data-school-appearance="'+theme()+'"')
-    .replace('<section class="rt-week',card+'<section class="rt-week');
+    .replaceAll('src="route-assets/papi-school.png"','src="learning-assets/characters/'+displayMascot+'.webp"');
  };
 }
 document.addEventListener('click',e=>{
@@ -206,7 +210,7 @@ if(!document.getElementById('dm-school-journey-css')){
  const link=document.createElement('link');link.id='dm-school-journey-css';link.rel='stylesheet';link.href='school-journey.css?v=20261017-1';document.head.append(link);
 }
 if(!document.getElementById('dm-school-adventure-v2-css')){
- const link=document.createElement('link');link.id='dm-school-adventure-v2-css';link.rel='stylesheet';link.href='school-adventure-v2.css?v=20261017-2';document.head.append(link);
+ const link=document.createElement('link');link.id='dm-school-adventure-v2-css';link.rel='stylesheet';link.href='school-adventure-v2.css?v=20261017-home-restore-3';document.head.append(link);
 }
 window.dmSchoolJourney={open,preview,theme,themeSet,group,parse,launchStep};
 })();
