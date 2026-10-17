@@ -8,6 +8,7 @@
  const cats={grammar:['Dil bilgisi','book'],vocab:['Kelimeler','sun'],comm:['İletişim','chat'],pron:['Telaffuz','sound']};
  const levels={A1:'Başlangıç',A2:'Temel',B1:'Orta',B2:'Orta-Üstü'};
  let filter='all',category='all',query='',question=0,lastSignature='',owner='',details=[],detailReady=false,resumeState={},contentSignature='',wrongUntil=[],reviewed=new Set(),waitTimer=0,finishing=false,completedRun=false,quizRun=0,levelSignature='';
+ let studyRunId='',studyRecovery=false,studyRecoveryIndices=[],studyOriginalQuestions=[],studyTopic='';
  const actor=()=>String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'').trim().toLocaleLowerCase('tr');
  const key=k=>[k.seviye,k.kategori,k.konuAdi].join('|');
  const storage=()=> 'dm-study-resume-v1:'+actor();
@@ -94,6 +95,8 @@
   decorateExamples();refreshView();
  }
  function setupQuiz(){
+  if(studyTopic!==dcAktifKonu){studyTopic=dcAktifKonu;studyRecovery=false;studyRecoveryIndices=[];studyOriginalQuestions=[];}
+  if(!studyRecovery){studyOriginalQuestions=Array.isArray(dcAktifTestSorulari)?dcAktifTestSorulari.slice():[];studyRunId=crypto.randomUUID();}
   question=0;quizRun++;finishing=false;completedRun=false;wrongUntil=[];reviewed=new Set();clearInterval(waitTimer);waitTimer=0;const panel=$('dcTestIcerik');if(!panel||!panel.querySelector('.dc-quiz-q'))return;
   const head=document.createElement('div');head.id='suQuizProgress';head.className='su-progress';panel.prepend(head);
   const footer=document.createElement('div');footer.className='su-quiz-footer';footer.innerHTML='<button class="su-primary" id="suQuizNext" data-su="next" disabled>Sonraki soru →</button>';panel.append(footer);
@@ -116,36 +119,49 @@
   else{answer?.classList.add('dogru');wrongUntil[qi]=Date.now()+5000;clearInterval(waitTimer);waitTimer=setInterval(()=>{paintQuiz();if(Date.now()>=wrongUntil[qi]){clearInterval(waitTimer);waitTimer=0;}},100);}
   paintQuiz();
  }
+ function showRecoveryPrompt(info){
+  $('suStudyRecovery')?.remove();
+  const indices=Array.isArray(info.recoveryIndices)?info.recoveryIndices:[];
+  const fullRetry=indices.length!==3;
+  studyRecoveryIndices=indices;
+  const dialog=document.createElement('div');dialog.className='su-result-overlay';dialog.id='suStudyRecovery';
+  dialog.innerHTML='<section class="su-result-card su-recovery-card" role="dialog" aria-modal="true" aria-labelledby="suRecoveryTitle">'+art('explain')+'<h2 id="suRecoveryTitle">Papi ile güçlen!</h2><p>İlk denemede '+Number(info.firstCorrect)+' / '+Number(info.total)+' soruyu doğru bildin.</p><p>'+(fullRetry?'Bu kısa testi yeniden deneyerek konuyu pekiştirebilirsin.':'Bütün testi yeniden yapmana gerek yok. Üç soruluk kısa bir pekiştirme yapalım.')+'</p><small>Başarılı olursan konuyu tamamlayabilir ve başarı düzeyine uygun ödül kazanabilirsin.</small><button type="button" class="su-result-done">'+(fullRetry?'Testi yeniden dene →':'3 soruyu çöz →')+'</button></section>';
+  dialog.querySelector('button').onclick=()=>{dialog.remove();studyRecovery=!fullRetry;window.dcTestCiz(fullRetry?studyOriginalQuestions:indices.map(i=>studyOriginalQuestions[i]),dcAktifTestAccent);root.querySelector('#dcTab-test')?.scrollIntoView({block:'start'});};
+  document.body.append(dialog);dialog.querySelector('button').focus();
+ }
  async function finishLesson(total){
   if(finishing||completedRun||!total||dcQuizCevaplari.length!==total||dcQuizCevaplari.some(x=>x===-1))return;
   if(wrongUntil.some((t,i)=>t&&(!reviewed.has(i)||Date.now()<t)))return;
-  const name=actor(),topic=dcAktifKonu,level=dcAktifSeviye,cat=dcAktifKategori,wasComplete=dcAktifKonuTamamlanmisMi,run=quizRun,correct=dcQuizDogruSayisi;
-  finishing=true;const button=$('suQuizNext');if(button){button.disabled=true;button.textContent='Sonucun kaydediliyor…';}
+  const name=actor(),topic=dcAktifKonu,level=dcAktifSeviye,cat=dcAktifKategori,wasComplete=dcAktifKonuTamamlanmisMi,run=quizRun;
+  const answers=Array.isArray(window.dmStudyAnswers)?window.dmStudyAnswers.slice():[];
+  if(answers.length!==total||answers.some(a=>typeof a!=='string'||!a.trim())){window.dcToastGoster?.('Cevaplar tamamlanamadı. Testi yeniden aç.');return;}
+  finishing=true;const button=$('suQuizNext');if(button){button.disabled=true;button.textContent='Sonucun doğrulanıyor…';}
   try{
-   const response=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'dersTestSonucKaydet',ogrenci:aktifOgrenciAdi,seviye:level,kategori:cat,konuAdi:topic,basariliMi:true})}),data=await response.json();
-   if(!response.ok||(data.status!=='success'&&data.ok!==true)||data.ok===false||data.queued||['bekliyor','siraya_alindi','queued'].includes(data.status))throw Error(data.message||data.mesaj||'Sonuç kaydedilemedi. İnternet bağlantını kontrol edip tekrar dene.');
-   if(name!==actor())return;
-   const rewardKey=[level,cat,topic].join('|');
-   // Preserve existing topic-name ledgers while moving to unambiguous lesson keys.
-   if(typeof yo!=='undefined'&&yo){
-    yo.dcOdul=yo.dcOdul||[];yo.dcTekrar=yo.dcTekrar||{};
-    if((wasComplete||yo.dcOdul.includes(topic))&&!yo.dcOdul.includes(rewardKey))yo.dcOdul.push(rewardKey);
-    if(yo.dcTekrar[topic]&&!yo.dcTekrar[rewardKey])yo.dcTekrar[rewardKey]=yo.dcTekrar[topic];
-    if((yo.dcBilmiyor||[]).includes(topic)&&!yo.dcBilmiyor.includes(rewardKey))yo.dcBilmiyor.push(rewardKey);
-   }
-   const reward=window.dcOdulVer?.(rewardKey);
-   const amount=Math.max(0,Number(data.eklenenEnerji)||0);if(Number.isFinite(Number(data.enerjiKalan))){window.genelEnerjiKalan=Number(data.enerjiKalan);window.headerEnerjiGoster?.(data.enerjiKalan,data.enerjiMax);}
+   const response=await fetch(apiURL,{method:'POST',body:JSON.stringify({
+    islem:'dersTestSonucKaydet',ogrenci:aktifOgrenciAdi,seviye:level,kategori:cat,konuAdi:topic,
+    runId:studyRunId,phase:studyRecovery?'recovery':'first',answers
+   })}),data=await response.json();
+   if(!response.ok||data.ok===false)throw Error(data.message||data.mesaj||'Sonucun kaydedilemedi. Tekrar deneyebilirsin.');
+   if(name!==actor()||run!==quizRun||topic!==dcAktifKonu)return;
+   if(data.status==='needs_recovery'){showRecoveryPrompt(data);return;}
+   if(data.status!=='success')throw Error('Başarı sonucu alınamadı. Yeniden dene.');
+   if(data.yo)window.dmApplyRewardState?.(data.yo,name);
+   const amount=Math.max(0,Number(data.eklenenEnerji)||0);
+   if(Number.isFinite(Number(data.enerjiKalan))){window.genelEnerjiKalan=Number(data.enerjiKalan);window.headerEnerjiGoster?.(data.enerjiKalan,data.enerjiMax);}
    const row=dcTumKonularCache.find(x=>x.seviye===level&&x.kategori===cat&&x.konuAdi===topic);if(row)row.durum='tamamlandi';
    try{localStorage.setItem('diji_ders_konulari_v1_'+name,JSON.stringify({zaman:Date.now(),veri:dcTumKonularCache}));}catch{}
-   if(run!==quizRun||topic!==dcAktifKonu||level!==dcAktifSeviye||cat!==dcAktifKategori){window.dcToastGoster?.(topic+' tamamlandı; ödülün hesabına eklendi.');return;}
    completedRun=true;dcAktifKonuTamamlanmisMi=true;
-   const result={topic,correct,wrong:total-correct,xp:reward&&!reward.tekrarBugun?reward.xp:0,gold:reward&&!reward.tekrarBugun?reward.al:0,energy:amount,repeat:wasComplete};
+   const result={topic,correct:Number(data.firstCorrect)||0,wrong:(Number(data.total)||total)-(Number(data.firstCorrect)||0),
+    xp:Number(data.xp)||0,gold:Number(data.gold)||0,energy:amount,repeat:wasComplete,
+    tier:Number(data.tier)||0,recovered:!!data.recovered};
    window.dmStudyUI.lastResult=result;showLessonResult(result);paintStages();void window.dmProgression?.refresh?.(true);
   }catch(e){if(name===actor())window.dcToastGoster?.(e.message);}
   finally{if(run===quizRun){finishing=false;if(name===actor())paintQuiz();}}
  }
  function showLessonResult(r){
-  $('suStudyResult')?.remove();const overlay=document.createElement('div');overlay.id='suStudyResult';overlay.className='su-result-overlay';overlay.innerHTML=`<section role="dialog" aria-modal="true" aria-labelledby="suResultTitle" class="su-result-card">${art('celebrate')}<h2 id="suResultTitle">Konuyu tamamladın!</h2><p>${esc(r.topic)}</p><div class="su-result-score"><span><b>${r.correct}</b> Doğru</span><span><b>${r.wrong}</b> Birlikte öğrendik</span></div><div class="su-result-rewards"><span><b>+${r.xp}</b> XP</span><span><b>+${r.gold}</b> Altın</span><span><b>+${r.energy}</b> Enerji</span></div><small>${r.xp||r.gold||r.energy?'Ödülün hesabına eklendi.':'Bu tamamlamada yeni ödül yok; tekrarın öğrenmeni pekiştirdi.'}</small><button class="su-result-done" type="button">Konulara dön →</button></section>`;
+  $('suStudyResult')?.remove();const overlay=document.createElement('div');overlay.id='suStudyResult';overlay.className='su-result-overlay';
+  const heading=r.recovered?'Pekiştirerek tamamladın!':r.tier===100?'Kusursuz başarı!':'Konuyu tamamladın!';
+  overlay.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="suResultTitle" class="su-result-card">'+art('celebrate')+'<h2 id="suResultTitle">'+heading+'</h2><p>'+esc(r.topic)+'</p><p class="su-fair-tier">İlk deneme: '+r.correct+' / '+(r.correct+r.wrong)+' doğru · Ödül oranı %'+r.tier+'</p><div class="su-result-score"><span><b>'+r.correct+'</b> Doğru</span><span><b>'+r.wrong+'</b> Pekiştirilecek</span></div><div class="su-result-rewards"><span><b>+'+r.xp+'</b> XP</span><span><b>+'+r.gold+'</b> Altın</span><span><b>+'+r.energy+'</b> Enerji</span></div><small>'+(r.xp||r.gold||r.energy?'Başarına uygun ödülün hesabına eklendi.':'Bu çalışmada ek ödül yok; tekrar ederek öğrendiklerini güçlendirdin.')+'</small><button class="su-result-done" type="button">Konulara dön →</button></section>';
   const back=()=>{overlay.remove();window.dcTestSonrasiKonuListesineDon();};overlay.querySelector('button').onclick=back;overlay.addEventListener('keydown',e=>{if(e.key==='Escape')back();if(e.key==='Tab'){e.preventDefault();overlay.querySelector('button').focus();}});document.body.append(overlay);overlay.querySelector('button').focus();
  }
  function renderLevels(){

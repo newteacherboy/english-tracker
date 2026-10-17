@@ -20,7 +20,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     if(op){let d={ok:true};
       if(op==='dersKonulariGetir')d=topics;
       else if(op==='dersKonuDetayGetir')d=detail;
-      else if(op==='dersTestSonucKaydet'){writes.push(body);if(failNextSave){failNextSave=false;return r.fulfill({status:503,json:{status:'error',message:'Fixture offline'}});}d={status:'success',eklenenEnerji:body.konuAdi==='Saatler'?0:2,enerjiKalan:32,enerjiMax:30};}
+      else if(op==='dersTestSonucKaydet'){writes.push(body);if(failNextSave){failNextSave=false;return r.fulfill({status:503,json:{status:'error',message:'Fixture offline'}});}const answers=body.answers||[],firstCorrect=Number(answers[0]==='goes')+Number(answers[1]==='I wake up');d=firstCorrect===2?{ok:true,status:'success',firstCorrect,total:2,tier:100,xp:80,gold:25,eklenenEnerji:body.konuAdi==='Saatler'?0:2,enerjiKalan:32,enerjiMax:30}:{ok:true,status:'needs_recovery',firstCorrect,total:2,tier:0,recoveryIndices:[0]};}
       else if(op==='seviyeDurumu')d={ok:true,level:30,feed:true,lessons:{},chests:{}};
       else if(op==='seviyeLigListesi')d={ok:true,liste:league};
       else if(op==='sosyalOgrencilerGetir')d=people;
@@ -132,8 +132,9 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   await page.evaluate(()=>{yo.dcOdul.push('Saatler');yo.dcTekrar['Saatler']=typeof yoBugun==='function'?yoBugun():new Date().toISOString().slice(0,10);});
   const xpBefore=await page.evaluate(()=>yo.totalXp);failNextSave=true;
   await page.locator('#suQuizNext').click();await page.waitForTimeout(250);assert.equal(await page.locator('#suStudyResult').count(),0,'failed save does not show success');assert.equal(await page.evaluate(()=>yo.totalXp),xpBefore,'failed save does not award');assert(await page.locator('#suQuizNext').isEnabled(),'failed save can retry');assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),false);
-  await page.locator('#suQuizNext').click();await page.waitForSelector('#suStudyResult');assert(await page.evaluate(()=>dmStudyUI.lastResult.correct===1&&dmStudyUI.lastResult.wrong===1));assert(await page.evaluate(()=>dmStudyUI.lastResult.xp===0&&dmStudyUI.lastResult.gold===0&&dmStudyUI.lastResult.energy===0),'existing daily award is preserved without duplicate first-clear reward');
-  await page.locator('.su-result-done').click();await page.locator('[data-topic="A1|grammar|Saatler"]').last().click();await page.waitForTimeout(250);
+  await page.locator('#suQuizNext').click();await page.waitForSelector('#suStudyRecovery');assert.equal(await page.locator('#suStudyResult').count(),0,'below-threshold lesson is not falsely completed');assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),false);assert.equal(await page.evaluate(()=>yo.totalXp),xpBefore,'unsuccessful practice cannot generate XP');
+  await page.locator('#suStudyRecovery .su-result-done').click();assert.equal(await page.locator('.dc-quiz-q').count(),2,'short quiz is restarted when three recovery questions are unavailable');
+  await page.evaluate(()=>dcGeriGit());await page.locator('[data-topic="A1|grammar|Saatler"]').last().click();await page.waitForTimeout(250);
   await page.evaluate(()=>{dcAnlatimOnaylandiMi=true;dcOrnekDinlenenSet=new Set([0,1,2,3]);dcSekmeSec('test',document.querySelector('[data-tab="test"]'));});
   for(const q of [{tip:'bosluk',soru:'I ___ every day.',secenekler:['walk','walks'],dogru:0,wrong:'walks',answer:'walk'},{tip:'dogruyanlis',soru:'She go to school.',dogru:false,wrong:'Doğru',answer:'Yanlış'},{tip:'siralama',soru:'Cümleyi kur',parcalar:['I','wake','up'],cevap:'I wake up',answer:'I wake up'}]){
     await page.evaluate(q=>dcTestCiz([q]),q);
@@ -142,6 +143,6 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     assert((await page.locator('.dc-quiz-q:visible .dt-aciklama').innerText()).includes('Doğrusu: '+q.answer),'correct answer shown for '+q.tip);assert(await page.locator('#suQuizNext').isDisabled());await page.waitForTimeout(5100);assert(await page.locator('#suQuizNext').isEnabled());assert.equal(await page.evaluate(()=>dcQuizDogruSayisi),0);console.log('PASS wrong answer review '+q.tip);
   }
   assert.deepEqual(errors.filter(x=>!x.includes('Chart')&&!x.includes('pdf')),[]);
-  console.log('PASS study filters/search, real topic loading, reading/listening gates, slow voice, dictionary, single-question test, ordering, completion, five-second wrong-answer review, actual rewards and duplicate prevention and preserved dock');
+  console.log('PASS study filters/search, real topic loading, reading/listening gates, slow voice, dictionary, server-graded study, below-threshold retry, five-second wrong-answer review and preserved dock');
   await browser.close();
 })().catch(e=>{console.error(e);process.exit(1);});

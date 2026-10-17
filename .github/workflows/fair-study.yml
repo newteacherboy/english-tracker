@@ -1,0 +1,30 @@
+name: Fair study grading and rewards
+on:
+  push:
+    paths:
+      - 'supabase/functions/diji-api/fair-study.mjs'
+      - 'supabase/functions/diji-api/index.ts'
+      - 'ingilizce/study-ui.js'
+      - 'ingilizce/ders-test.js'
+      - 'tests/fair-study.test.mjs'
+      - 'tests/study-ui.cjs'
+      - '.github/workflows/fair-study.yml'
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/fair-study.mjs'
+      - 'supabase/functions/diji-api/index.ts'
+      - 'ingilizce/study-ui.js'
+      - 'ingilizce/ders-test.js'
+      - 'tests/fair-study.test.mjs'
+      - 'tests/study-ui.cjs'
+      - '.github/workflows/fair-study.yml'
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --check ingilizce/study-ui.js && node --check ingilizce/ders-test.js && node --check supabase/functions/diji-api/fair-study.mjs
+      - run: node --test tests/fair-study.test.mjs
