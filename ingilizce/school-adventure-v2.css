@@ -14,7 +14,7 @@
  --school-finish:#66d3c7;
 }
 .rt-root.rt-school{background:var(--school-page);color:var(--school-ink);transition:background .2s ease}
-.rt-root.rt-school .rt-banner,.rt-root.rt-school .rt-badge,.rt-root.rt-school .rt-path{display:none!important}
+/* The school header and route map are intentionally visible, matching Learning Path's home structure. */
 .rt-root.rt-school .rt-school-journey{display:none!important}
 .rt-school-main{display:grid;gap:14px;width:min(100%,850px);margin:0 auto 12px;padding:8px 8px 20px;box-sizing:border-box;font-family:Nunito,system-ui,sans-serif;color:var(--school-ink)}
 .rt-school-main *{box-sizing:border-box}
@@ -181,4 +181,95 @@ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game :is(button,summary):foc
 }
 @media(prefers-reduced-motion:reduce){
  .rt-school-main-hero,.sp-adventure-entry.dm-school-start .dm-school-intro-head img{animation:none!important}
+}
+
+/* School compact homepage restored (2026-10-17): same hierarchy as English Path,
+   warm expedition art / colors distinct from English Path's cool islands. */
+.rt-root.rt-school{
+ --route:#ef9661;--soft:#ffebd8;--selected:#f17b68;
+ background:transparent!important;color:#25394e!important;gap:9px!important;
+}
+.rt-root.rt-school .rt-school-main,.rt-root.rt-school .rt-school-journey{display:none!important}
+.rt-root.rt-school .rt-badge{display:none!important}
+.rt-root.rt-school .rt-banner{
+ display:flex!important;min-height:98px!important;border:1px solid #f1cfb6!important;
+ background:linear-gradient(115deg,#fff2de,#ffe4d6 61%,#f9e6f6)!important;
+ color:#533d58!important;gap:10px!important;padding:12px 13px!important;
+}
+.rt-root.rt-school .rt-banner b{color:#5e355c!important}
+.rt-root.rt-school .rt-banner small{color:#805c74!important;font-weight:800}
+.rt-root.rt-school .rt-banner .rt-banner-papi{width:82px;height:89px;object-fit:contain}
+.rt-root.rt-school .rt-school-home-theme{
+ z-index:3;display:grid;place-items:center;flex-shrink:0;width:37px;height:37px;
+ border:1px solid #e7bdd3;border-radius:50%;background:#fff7f2;color:#6b4775;
+ font-size:19px;box-shadow:0 2px 0 #d8b0b644;padding:0;
+}
+.rt-root.rt-school .rt-week{border-color:#dddbd5}
+.rt-root.rt-school .rt-tasks{border:1px solid #f0e5dc}
+.rt-root.rt-school .rt-tasks h2{color:#205166}
+.rt-root.rt-school .rt-task-list>button{background:#fffaf7}
+.rt-root.rt-school .rt-task-progress{background:conic-gradient(#f29b67 calc(var(--ratio)*360deg),#e9e8e4 0)}
+.rt-root.rt-school .rt-reward-route{
+ display:flex!important;background-color:#fae3ce!important;
+ background-image:url('route-assets/odul-rotasi.webp')!important;
+ box-shadow:0 2px 0 #e9c7a7, inset 0 0 0 2px #fffcf977;
+}
+.rt-root.rt-school .rt-reward-route .rt-map-switch{
+ background:linear-gradient(145deg,#fffcf6,#ffe1c4)!important;
+ color:#69435c!important;border-color:#fff7e9!important;
+}
+.rt-root.rt-school .rt-reward-route .rt-node.current{
+ background:linear-gradient(#ffad65,#ed6a66)!important;box-shadow:0 0 0 4px #fff1d4,0 5px 0 #c16a513b!important;
+}
+.rt-root.rt-school .rt-reward-route .rt-start{
+ background:linear-gradient(120deg,#f99c5d,#ee6b71)!important;
+ box-shadow:0 4px 0 #af535d!important;border:2px solid #fff8e8!important;
+ font-size:clamp(13px,3.5vw,17px)!important;font-weight:950!important;
+}
+.rt-root.rt-school[data-school-appearance="night"]{
+ --route:#e9bc72;--soft:#283d65;--selected:#f6c779;
+ background:linear-gradient(#111d3d,#172b4d)!important;color:#fff5df!important;
+ border-radius:19px!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-banner{
+ background:linear-gradient(115deg,#1f3157,#352e60)!important;
+ border-color:#58719b!important;color:#fff4d7!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-banner :is(b,small){color:#fff1d5!important}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-home-theme{
+ background:#33466b!important;color:#ffdc93!important;border-color:#667da0!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-banner .rt-all-link{color:#f9dea8!important}
+.rt-root.rt-school[data-school-appearance="night"] .rt-week:not(.rt-week-complete),
+.rt-root.rt-school[data-school-appearance="night"] .rt-tasks{
+ background:#21385c!important;border-color:#52749d!important;color:#fff1dc!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-tasks h2,
+.rt-root.rt-school[data-school-appearance="night"] .rt-task-list>button{
+ color:#fff4df!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-tasks>small{color:#cdd9f1!important}
+.rt-root.rt-school[data-school-appearance="night"] .rt-task-list>button{
+ background:#2f4970!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-reward-route{
+ background-color:#13294e!important;
+ background-image:linear-gradient(#091838ad,#142550ab),url('route-assets/odul-rotasi.webp')!important;
+ border:1px solid #6f668d!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-reward-route .rt-stop-label{
+ color:#fff7df!important;background:#1a315ebf!important;text-shadow:none!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-reward-route .rt-map-switch{
+ background:linear-gradient(#304c78,#23375e)!important;color:#ffe6ad!important;border-color:#e2be7c!important;
+}
+.rt-root.rt-school[data-school-appearance="night"] .rt-reward-route .rt-start{
+ background:linear-gradient(#ffda86,#f0a957)!important;color:#55395a!important;
+ box-shadow:0 4px 0 #956948!important;
+}
+@media(max-width:390px){
+ .rt-root.rt-school .rt-banner .rt-banner-papi{width:65px;height:74px}
+ .rt-root.rt-school .rt-school-home-theme{width:33px;height:33px;font-size:17px}
+ .rt-root.rt-school .rt-banner{padding:9px!important;gap:6px!important}
+ .rt-root.rt-school .rt-banner b{font-size:18px!important}
 }
