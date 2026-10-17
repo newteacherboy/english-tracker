@@ -271,6 +271,9 @@
           }
         } catch (err) { console.warn('Papi abonelik isteği sonraki girişte yeniden denenebilir.',err); }
       }
+      // Google signup redirects to the app: keep the new-account guide intent
+      // across this one navigation, never for ordinary returning sign-ins.
+      if(result.ogrenci)sessionStorage.setItem('dm_email_signup_pending',String(result.ogrenci).trim().toLocaleLowerCase('tr'));
       enter(result);
     } catch (error) { resultText.textContent = error.message || 'Bağlantı hatası. Tekrar dene.'; }
     finally { busy = false; submit.disabled = false; cancel.disabled = false; }
