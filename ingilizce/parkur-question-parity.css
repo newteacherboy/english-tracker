@@ -203,6 +203,7 @@ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-match-optio
 }
 body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec.dogru{background:#d8ffdd!important;color:#21623e!important}
 body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec.yanlis{background:#ffdddd!important;color:#8f3030!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzInceleme[style*="none"]{display:none!important}
 body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzInceleme:not([style*="display: none"]){
  flex:1 1 auto!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;
  min-height:0!important;width:min(100%,760px)!important;max-width:760px!important;
