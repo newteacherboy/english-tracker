@@ -58,7 +58,10 @@ export function thematicHandler(db:DB){
    if(!Number.isInteger(b.cursor)||!Number.isInteger(b.version)||b.cursor!==record.cursor||b.version!==record.version)return json({...safe(record),stale:true,wallet:await balance(record)});
    const tasks=CORE.deck(C,chapters[n-1001],requestedVersion),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);
    if(!grade.valid)return json({ok:false,mesaj:'Bu etkinlik için bir cevap seç.'},400);
-   const r=await db.rpc('dm_story_apply',{owner_key:owner,chapter_no:n,expected_cursor:record.cursor,expected_version:record.version,answer_correct:grade.correct,is_question:task.kind!=='teach',step_count:steps,question_count:steps-1,combo_correct:task.kind==='review'?grade.allCorrect:grade.correct});
+   // Roll out only after the matching database migration has been verified.
+   // Before activation, existing energy, progress and reward accounting is identical.
+   const firstTryEnabled=typeof Deno!=='undefined'&&Deno.env.get('DM_THEMATIC_FIRST_ATTEMPT_LEDGER')==='true';
+   const r=await db.rpc(firstTryEnabled?'dm_thematic_fair_step':'dm_story_apply',{owner_key:owner,chapter_no:n,expected_cursor:record.cursor,expected_version:record.version,answer_correct:grade.correct,is_question:task.kind!=='teach',step_count:steps,question_count:steps-1,combo_correct:task.kind==='review'?grade.allCorrect:grade.correct});
    if(!r.ok)return json(r,r.energyEmpty?409:503);
    return json({...safe(r.progress),...r,progress:undefined,wallet:await balance(r.progress),accepted:r.correct===true,explanation:grade.correct?task.explanation||'Öğrenmeye devam!':'Bir daha deneyelim. Kartları tekrar dinleyebilirsin.'});
   }catch(e){console.error('[thematic-learning]',String((e as any)?.message||e));return json({ok:false,mesaj:'Öğrenme yolu şu anda kaydedilemedi. Aynı adımdan yeniden deneyebilirsin.'},503);}
