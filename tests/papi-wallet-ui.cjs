@@ -1,7 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES?process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright':'playwright');
 (async()=>{
-const browser=await chromium.launch({args:['--no-sandbox']}),page=await browser.newPage(),root=path.resolve('ingilizce'),errors=[];
+const browser=await chromium.launch({executablePath:process.env.DIJI_CHROMIUM,args:['--no-sandbox']}),page=await browser.newPage(),root=path.resolve('ingilizce'),errors=[];
 page.on('pageerror',e=>errors.push(e.message));
 await page.route('https://wallet.test/**',r=>{const f=path.join(root,new URL(r.request().url()).pathname.slice(1));return fs.existsSync(f)&&fs.statSync(f).isFile()?r.fulfill({path:f}):r.fulfill({body:''});});
 await page.goto('https://wallet.test/');
@@ -25,6 +25,15 @@ assert(sizes.scroll<=sizes.width+1,'strip fits '+id+' '+width);assert(sizes.pill
 for(const key of ['energy','gold','xp','time']){await page.locator('[data-pw='+key+']').click();assert.equal(await page.evaluate(()=>opened),key);}
 }
 console.log('PASS six destinations, '+width+'px, '+theme);
+}
+// Large balances must stay inside every mobile status pill, not merely be clipped.
+for(const width of [320,360,390,430]){
+ await page.setViewportSize({width,height:844});
+ for(const [id] of screens.slice(0,2))for(const balance of [9999,12345,99999,1234567,999999999]){
+  await page.evaluate(({id,balance})=>{for(const e of document.querySelectorAll('.fixture')){e.hidden=e.id!==id;e.classList.toggle('active',!e.hidden);}yo.altin=balance;yo.totalXp=balance;DijiMeduPapiWallet.refresh();},{id,balance});
+  const contained=await page.locator('[data-pw=gold]').evaluate(e=>{const p=e.getBoundingClientRect(),v=e.querySelector('[data-pw-value]').getBoundingClientRect();return v.left>=p.left&&v.right<=p.right&&v.top>=p.top&&v.bottom<=p.bottom;});
+  assert(contained,'gold value fits '+id+' '+width+' '+balance);
+ }
 }
 await page.evaluate(()=>{window.savedIcon=document.querySelector('.dm-pw-xp');yo.totalXp=98765;DijiMeduPapiWallet.refresh();});assert(await page.evaluate(()=>savedIcon===document.querySelector('.dm-pw-xp')),'updates retain icons');
 await page.evaluate(()=>{const e=document.createElement('div');e.id='dmStoryLesson';e.textContent='Question';document.body.append(e);});await page.waitForFunction(()=>!document.querySelector('.dm-unified-wallet'));await page.evaluate(()=>document.getElementById('dmStoryLesson').remove());await page.waitForFunction(()=>document.querySelector('.dm-unified-wallet'));

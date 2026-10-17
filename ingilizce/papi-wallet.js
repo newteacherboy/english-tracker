@@ -9,7 +9,7 @@ const activity='#dmStoryLesson,#bzPerde #bzAlan,.game-modal-overlay,#meteorGame,
 const selectors=['#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduakis .akis-baslik','#tab-derscalis .su-levels-heading','#tab-magaza .ds-header','.dc-fullscreen-overlay.active header'];
 const finite=n=>Number.isFinite(Number(n))?Math.max(0,Math.floor(Number(n))):0;
 const format=n=>finite(n).toLocaleString('tr-TR');
-const compact=n=>finite(n)>=100000?new Intl.NumberFormat('tr-TR',{notation:'compact',maximumFractionDigits:1}).format(finite(n)):format(n);
+const compact=n=>finite(n)>=10000?new Intl.NumberFormat('tr-TR',{notation:'compact',maximumFractionDigits:1}).format(finite(n)):format(n);
 function detach(){hud.parentElement?.classList.remove('dm-has-wallet');hud.remove();}
 function run(){
  if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi){detach();return;}
@@ -20,7 +20,7 @@ function run(){
  const energy=window.genelEnerjiKalan,values={energy:energy==null?'—':format(energy),gold:compact(y.altin),xp:compact(y.totalXp),time:compact(time.stars)};
  const labels={energy:'Enerji paketleri · '+values.energy,gold:'Altınlarım ve mağaza · '+format(y.altin)+' altın',xp:'XP ve ilerlemem · '+format(y.totalXp)+' XP · Seviye '+level,time:'Aktif kullanım yıldızları · '+format(time.stars)+' yıldız · '+format(finite(time.seconds)/60)+' dakika'};
  for(const [key,value] of Object.entries(values)){const e=buttons[key],text=e.querySelector('[data-pw-value]');if(text.textContent!==value)text.textContent=value;if(e.getAttribute('aria-label')!==labels[key]){e.setAttribute('aria-label',labels[key]);e.title=labels[key];}}
- const minutes=format(finite(time.seconds)/60)+' dk',small=buttons.time.querySelector('[data-pw-minutes]');if(small.textContent!==minutes)small.textContent=minutes;
+ const minutes=compact(finite(time.seconds)/60)+' dk',small=buttons.time.querySelector('[data-pw-minutes]');if(small.textContent!==minutes)small.textContent=minutes;
 }
 let queued=false;function schedule(){if(queued||document.hidden)return;queued=true;requestAnimationFrame(()=>{queued=false;run();});}
 // Destination changes update in the next frame; value-only changes retain the icon DOM.
