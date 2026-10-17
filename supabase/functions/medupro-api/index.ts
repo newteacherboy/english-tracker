@@ -1,3 +1,4 @@
+import {readJsonBounded,authenticatedBudgets} from './security-guards.mjs';
 import './score-rules.js';
 import { progressionAPI } from './progression-api.ts';
 import { releaseAPI } from './release-api.ts';
@@ -6,7 +7,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const keys=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")||"{}");
 const supabase=createClient(Deno.env.get("SUPABASE_URL")!,keys.default);
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization,apikey,content-type,x-diji-token","Access-Control-Allow-Methods":"GET,POST,OPTIONS","Access-Control-Max-Age":"86400"};
-const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{...cors,"Content-Type":"application/json"}});
+const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{...cors,"Content-Type":"application/json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer","X-Frame-Options":"DENY"}});
 const release=releaseAPI(supabase,json);
 const progression=progressionAPI(supabase,json);
 const contacts=contactPolicyAPI(supabase,json);
@@ -103,9 +104,18 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
 Deno.serve(async(req:Request)=>{
  if(req.method==="OPTIONS")return new Response("ok",{headers:cors});
  try{
- const q=new URL(req.url).searchParams;let body:any={};if(req.method!=="GET"){try{body=await req.json()}catch{return json({ok:false,mesaj:"Geçersiz istek."},400)}}
+ if(!['GET','POST'].includes(req.method))return json({ok:false,mesaj:'Yöntem desteklenmiyor.'},405);
+ const q=new URL(req.url).searchParams;let body:any={};
+ if(req.method!=='GET'){const parsed=await readJsonBounded(req);if(!parsed.ok)return json({ok:false,mesaj:'Geçersiz istek.'},parsed.status);body=parsed.data;}
  const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  const op=String(val(body,q,"islem"));
+ for(const plan of authenticatedBudgets(op,a.student_id,body)){
+  const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(plan.scope+'|'+plan.value));
+  const key='shield:'+Array.from(new Uint8Array(digest)).map(x=>x.toString(16).padStart(2,'0')).join('');
+  const {data,error}=await supabase.rpc('dm_security_rate_check',{bucket_key:key,max_hits:plan.max,window_seconds:plan.seconds});
+  if(error||typeof data?.allowed!=='boolean')return json({ok:false,mesaj:'Güvenlik kontrolü tamamlanamadı.'},503);
+  if(!data.allowed){const r=json({ok:false,mesaj:'Çok fazla istek. Biraz sonra tekrar dene.'},429);r.headers.set('Retry-After',String(Math.max(1,Number(data.retryAfter)||60)));return r;}
+ }
  if(a.student_id===DEMO_ID&&['duelloGonder','duelloYanit','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur','ogrenciEngelle','ogrenciEngelKaldir'].includes(op))return json({ok:false,mesaj:'Tanıtım hesabında diğer öğrencilere istek gönderilmez.'},403);
  const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
  const levelDeny=a.classroomTeacher?null:await progression.guard(op,body,q,a);if(levelDeny)return levelDeny;

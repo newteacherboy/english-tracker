@@ -7,7 +7,7 @@ import { meteorAPI } from './meteor-api.ts';
 import { wordWheelAPI } from './word-wheel-api.ts';
 import './score-rules.js';
 import { readBatch, contentCache } from './request-budget.ts';
-import {readJsonBounded,anonymousBudgets,authenticatedBudgets} from './security-guards.mjs';
+import {readJsonBounded,anonymousBudgets,authenticatedBudgets,protectStudentState,reservedStudentKey,dailyGoalCredit} from './security-guards.mjs';
 import { progressionAPI } from './progression-api.ts';
 import { onboardingAPI } from './onboarding-api.ts';
 import { adminStudentsAPI } from './admin-students-api.ts';
@@ -831,7 +831,7 @@ async function ekonomiGuncelle(sid: string, fn: (y: any) => any, surumArttir = t
     const sonuc = await fn(y);
     if (sonuc && sonuc.hata) return { ...sonuc, y: okunan || {} };
     if (surumArttir) y.ekoSurum = Math.max(0, Math.floor(num(y.ekoSurum))) + 1;
-    const simdi = new Date().toISOString();
+    const simdi = new Date(Math.max(Date.now(),(Date.parse(satir?.updated_at||'')||0)+1)).toISOString();
     const q = satir
       ? supabase.from("extra_data").update({ value: y, updated_at: simdi }).eq("student_id", sid).eq("key_name", "yo").eq("updated_at", satir.updated_at).select("student_id")
       : supabase.from("extra_data").insert({ student_id: sid, key_name: "yo", value: y, updated_at: simdi }).select("student_id");
@@ -1422,20 +1422,19 @@ async function handle(req: Request) {
     }
     if (is === "durum") return json({ ok: true, ekonomi: ekonomiCevap((await yoOku(sid)).y) });
     if (is === "altinKazan") {
-      const istenen = Math.floor(num(body.miktar));
-      if (istenen <= 0) return json({ ok: true, eklenen: 0, ekonomi: ekonomiCevap((await yoOku(sid)).y) });
-      const bugun = trBugun();
-      const r = await ekonomiGuncelle(sid, (y: any) => {
-        const g = y.dmAltinGun && y.dmAltinGun.tarih === bugun ? y.dmAltinGun : { tarih: bugun, altin: 0 };
-        const izin = Math.max(0, Math.min(istenen, TEK_SEFERDE_ALTIN, GUNLUK_ALTIN_TAVAN - num(g.altin)));
-        y.altin = Math.max(0, Math.floor(num(y.altin))) + izin;
-        y.dmAltinGun = { tarih: bugun, altin: num(g.altin) + izin };
-        return { eklenen: izin, sinir: izin < istenen };
-      }, false);
-      if (r.hata) return hataVer(r.hata, 503);
-      if (r.sinir) await audit(a, "gunluk_sinir", "altin", { istenen, eklenen: r.eklenen });
-      return json({ ok: true, eklenen: r.eklenen, sinir: !!r.sinir, ekonomi: ekonomiCevap(r.y) });
+      // Compatibility endpoint: caller-supplied amounts no longer credit gold.
+      // Game/lesson rewards already have their own server transactions. Only
+      // the existing daily +5 may be claimed here against stored daily XP.
+      const day=trBugun();
+      const r=await ekonomiGuncelle(sid,(y:any)=>{
+        const gain=dailyGoalCredit(y,day);
+        if(gain){y.altin=Math.max(0,Math.floor(num(y.altin)))+gain;y.hedefOdul=day;}
+        return {eklenen:gain};
+      });
+      if(r.hata)return hataVer(r.hata,503);
+      return json({ok:true,eklenen:r.eklenen,ekonomi:ekonomiCevap(r.y)});
     }
+
     if (await denemeSay("ekonomi_alim", String(sid), 1) >= 20) return hataVer("Çok hızlı işlem yapıyorsun, biraz bekle.", 429);
     await denemeYaz("ekonomi_alim", String(sid));
     let r: any;
@@ -2521,7 +2520,7 @@ async function handle(req: Request) {
   if (op === "ekVeriKaydet") {
     const name = String(body.ogrenci || ""), key = temizMetin(body.anahtar, 60); const deny = await requireStudent(a, name); if (deny) return deny;
     /* [v4.6] Sunucunun kendi tuttuğu anahtarlara öğrenci yazamaz */
-    if (a?.role === "student" && (["yo_gunluk", "puan_gorulen"].includes(key)||key.startsWith('energy_daily:'))) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
+    if (a?.role === "student" && reservedStudentKey(key)) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
     if (a?.role === "teacher" && encName(name) === "teacher" && key === "yo") {
       let tv: any = null; try { tv = typeof body.deger === "string" ? JSON.parse(body.deger) : body.deger; } catch (_) { tv = null; }
       if (!tv || typeof tv !== "object") return json({ status: "error", message: "Geçersiz veri." }, 400);
@@ -2535,6 +2534,10 @@ async function handle(req: Request) {
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
     let value: any = {}; try { value = typeof body.deger === "string" ? JSON.parse(body.deger) : body.deger; } catch (_) { value = body.deger; }
     if (JSON.stringify(value ?? null).length > 200000) return json({ status: "error", message: "Veri çok büyük." }, 413);
+    if(key==='yo'&&a.role==='student'){
+      if(!value||typeof value!=='object'||Array.isArray(value))return json({ok:false,mesaj:'Geçersiz ilerleme kaydı.'},400);
+      delete value.dmProgressProtocol;
+    }
     // [v4.4] Veri koruma: eski ya da boş bir cihaz, sunucudaki daha yeni veriyi ezemez
     if (key === "yo" && value && typeof value === "object") {
       const { data: eski } = await supabase.from("extra_data").select("value").eq("student_id", s.id).eq("key_name", "yo").maybeSingle();
@@ -2571,8 +2574,9 @@ async function handle(req: Request) {
       let yazildi = false;
       for (let i = 0; i < 4 && !yazildi; i++) {
         const { y: e2, satir } = await yoOku(s.id);
+        value=protectStudentState(value,e2);
         ekonomiKoru(value, e2);
-        const simdi = new Date().toISOString();
+        const simdi = new Date(Math.max(Date.now(),(Date.parse(satir?.updated_at||'')||0)+1)).toISOString();
         const w = satir
           ? await supabase.from("extra_data").update({ value, updated_at: simdi }).eq("student_id", s.id).eq("key_name", "yo").eq("updated_at", satir.updated_at).select("student_id")
           : await supabase.from("extra_data").insert({ student_id: s.id, key_name: "yo", value, updated_at: simdi }).select("student_id");
