@@ -1,3 +1,4 @@
+import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
 import {DEMO_ID,DEMO_USER,isDemo,DEMO_BLOCKED,prepareDemo,publicParticipant} from './demo-account.ts';
 import { FEATURES } from './feature-catalog.ts';
 import { memberToolsAPI } from './member-tools-api.ts';
@@ -2402,11 +2403,73 @@ async function handle(req: Request) {
 
   // ============================================================ DERS ÇALIŞ
   if (op === "dersTestSonucKaydet") {
-    const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
-    const ins=await supabase.from("lesson_progress").insert({ student_id: s.id, level: body.seviye, category: body.kategori, topic_name: body.konuAdi, test_success: !!body.basariliMi });if(ins.error)throw ins.error;
-    let reward:any={};if(body.basariliMi&&a.role==='student'){const r=await supabase.rpc('dm_progress_lesson_energy',{actor:s.id,cefr:String(body.seviye),category_name:String(body.kategori),topic:String(body.konuAdi)});if(r.error)throw r.error;reward=r.data;}
-    return json({status:'success',...reward});
+    const name=String(body.ogrenci||""),deny=await requireStudent(a,name);if(deny)return deny;
+    const s=await hedefOgrenci(a,name);if(!s)return bulunamadi();
+    // Scores from the browser are never trusted, including basariliMi/dogruSayisi.
+    const level=String(body.seviye||"").toUpperCase(),category=String(body.kategori||""),topic=String(body.konuAdi||"");
+    const runId=String(body.runId||""),phase=String(body.phase||"first");
+    if(!/^[a-zA-Z0-9-]{8,100}$/.test(runId)||!["first","recovery"].includes(phase))return json({ok:false,mesaj:"Dersin yeni başarı sistemini kullanmak için uygulamayı yenile."},409);
+    const {data:topicRow,error:topicError}=await supabase.from("lesson_topics").select("content").eq("active",true).eq("level",level).eq("category",category).eq("topic_name",topic).maybeSingle();
+    if(topicError)throw topicError;
+    if(!topicRow)return json({ok:false,mesaj:"Yayımlanmış ders bulunamadı."},404);
+    const source=(topicRow.content||{}).testJSON??(topicRow.content||{}).test;
+    let questions:any[];try{questions=Array.isArray(source)?source:JSON.parse(String(source||"[]"));}catch{questions=[];}
+    if(questions.length<2||questions.length>40)return json({ok:false,mesaj:"Bu dersin soruları güncellenmeli."},409);
+    const submitted=body.answers;
+    const {data:existing,error:readError}=await supabase.from("dm_lesson_fair_runs").select("*").eq("student_id",s.id).eq("run_id",runId).maybeSingle();
+    if(readError)throw readError;
+    if(existing&&(existing.level!==level||existing.category!==category||existing.topic_name!==topic))return json({ok:false,mesaj:"Etkinlik anahtarı başka derse ait."},409);
+    let firstCorrect=0,firstWrong:number[]=[],tier=0,passed=false,reviewIndices:number[]=[];
+    if(phase==="first"){
+      if(existing){
+        firstCorrect=Number(existing.first_correct);
+        firstWrong=Array.isArray(existing.wrong_indices)?existing.wrong_indices:[];
+        tier=existing.passed?studyTier(firstCorrect,questions.length):0;
+        passed=!!existing.passed;
+        if(!passed)reviewIndices=recoveryQuestions(firstWrong);
+      }else{
+        const graded=gradeStudyQuiz(questions,submitted);
+        if(!graded)return json({ok:false,mesaj:"Tüm soruların geçerli cevabını gönder."},400);
+        firstCorrect=graded.correct;firstWrong=graded.wrongIndices;tier=studyTier(firstCorrect,questions.length);passed=tier>0;
+        reviewIndices=passed?[]:recoveryQuestions(firstWrong);
+        const {error:recordError}=await supabase.from("dm_lesson_fair_runs").insert({
+          student_id:s.id,run_id:runId,level,category,topic_name:topic,first_correct:firstCorrect,
+          question_count:questions.length,wrong_indices:firstWrong,passed,recovered:false
+        });if(recordError)throw recordError;
+      }
+    }else{
+      if(!existing||existing.passed||!Array.isArray(existing.wrong_indices))return json({ok:false,mesaj:"Önce normal testi tamamla."},409);
+      firstCorrect=Number(existing.first_correct);firstWrong=existing.wrong_indices;
+      reviewIndices=recoveryQuestions(firstWrong);
+      if(reviewIndices.length!==3)return json({ok:false,mesaj:"Pekiştirme soruları bulunamadı."},409);
+      const graded=gradeStudyQuiz(questions,submitted,reviewIndices);
+      if(!graded)return json({ok:false,mesaj:"Pekiştirme cevapları eksik."},400);
+      passed=graded.correct===3;tier=passed?30:0;
+      if(passed){const {error:updateError}=await supabase.from("dm_lesson_fair_runs").update({passed:true,recovered:true}).eq("student_id",s.id).eq("run_id",runId).eq("passed",false);if(updateError)throw updateError;}
+    }
+    if(!passed){
+      if(phase==="first"&&!existing){
+        const {error:progressError}=await supabase.from("lesson_progress").insert({
+          student_id:s.id,level,category,topic_name:topic,test_success:false,
+          extra:{fair:true,firstCorrect,total:questions.length,runId}
+        });if(progressError)throw progressError;
+      }
+      return json({ok:true,status:"needs_recovery",firstCorrect,total:questions.length,
+        recoveryIndices:reviewIndices,tier:0,mesaj:"Üç soruluk kısa pekiştirme turuyla bu bölümü tamamlayabilirsin."});
+    }
+    const {error:progressError}=await supabase.from("lesson_progress").insert({
+      student_id:s.id,level,category,topic_name:topic,test_success:true,
+      extra:{fair:true,firstCorrect,total:questions.length,recovered:phase==="recovery",tier,runId}
+    });if(progressError)throw progressError;
+    let energy:any={};if(a.role==="student"){
+      const {data:er,error:energyError}=await supabase.rpc("dm_progress_lesson_energy",{actor:s.id,cefr:level,category_name:category,topic});
+      if(energyError)throw energyError;energy=er||{};
+    }
+    const {data:award,error:awardError}=await supabase.rpc("dm_lesson_fair_award",{
+      actor:s.id,cefr:level,category_name:category,topic,requested_tier:tier,historical:false
+    });if(awardError)throw awardError;
+    return json({ok:true,status:"success",firstCorrect,total:questions.length,tier,recovered:phase==="recovery",
+      xp:Number(award?.xp||0),gold:Number(award?.gold||0),yo:award?.yo||null,...energy});
   }
 
   // ============================================================ EK VERİ (oyun ilerlemesi)
