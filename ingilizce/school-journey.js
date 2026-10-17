@@ -10,7 +10,7 @@ function theme(){try{return localStorage.getItem(themeKey)==='night'?'night':'da
 function themeSet(t){
  const choice=t==='night'?'night':'day';try{localStorage.setItem(themeKey,choice)}catch{}
  document.querySelectorAll('.rt-root.rt-school,.rt-school-modal,#bzPerde.dm-school-game,.sp-adventure-entry.dm-school-start').forEach(x=>{if(x.dataset.schoolAppearance!==choice)x.dataset.schoolAppearance=choice;});
- document.querySelectorAll('[data-school-theme]').forEach(b=>{b.textContent=choice==='night'?'☀️ Gündüz':'🌙 Gece';b.setAttribute('aria-label',choice==='night'?'Gündüz görünümüne geç':'Gece görünümüne geç');});
+ document.querySelectorAll('[data-school-theme]').forEach(b=>{b.textContent=b.classList.contains('dm-school-head-theme')?(choice==='night'?'☀️':'🌙'):(choice==='night'?'☀️ Gündüz':'🌙 Gece');b.setAttribute('aria-label',choice==='night'?'Gündüz görünümüne geç':'Gece görünümüne geç');});
 }
 const mascot=(n=0)=>characters[((Math.abs(n)+visit)%characters.length)];
 const art=(n,cls='')=>'<img class="'+cls+'" src="learning-assets/characters/'+mascot(n)+'.webp" alt="" loading="lazy" width="100" height="100" decoding="async">';
@@ -142,11 +142,6 @@ function decorateQuestion(){
  if(!modal?.classList.contains('rq-approved')||!modal.querySelector('.bz-oyun'))return;
  modal.classList.add('dm-school-game');
  if(modal.dataset.schoolAppearance!==theme())modal.dataset.schoolAppearance=theme();
- const hud=modal.querySelector('.rq-hud');
- if(hud&&!hud.querySelector('[data-school-theme]')){
-  const button=document.createElement('button');button.type='button';button.className='dm-school-question-theme';button.dataset.schoolTheme='1';
-  button.textContent=theme()==='night'?'☀️ Gündüz':'🌙 Gece';button.setAttribute('aria-label','Okul Yolum görünümünü değiştir');hud.append(button);
- }
  const closer=modal.querySelector('#bzCik');
  let header=modal.querySelector('.dm-school-lesson-head');
  if(!header){
@@ -157,16 +152,17 @@ function decorateQuestion(){
   modal.prepend(header);
   header.querySelector('[data-school-exit]').onclick=()=>closer?.click();
  }
- const hudTheme=modal.querySelector('.rq-hud .dm-school-question-theme');
- if(hudTheme){hudTheme.remove();}
  let movement=modal.querySelector('.dm-school-question-nav');
  if(!movement){
   movement=document.createElement('nav');movement.className='dm-school-question-nav';movement.setAttribute('aria-label','Cevaplanmış sorular arasında gezin');
   movement.innerHTML='<button type="button" data-school-previous>← Önceki</button><span>Yanıtlananları incele</span><button type="button" data-school-next disabled>Sonraki →</button>';
-  header.after(movement);
-  movement.querySelector('[data-school-previous]').onclick=()=>modal.querySelector('#bzGeriSoru:not(:disabled)')?.click();
+  (modal.querySelector('.rq-hud')||header).after(movement);
+  movement.querySelector('[data-school-previous]').onclick=()=>{const review=modal.querySelector('#bzInceleme');if(review&&review.style.display!=='none')review.querySelector('#bzIncOnce:not(:disabled)')?.click();else modal.querySelector('#bzGeriSoru:not(:disabled)')?.click();};
+  movement.querySelector('[data-school-next]').onclick=()=>modal.querySelector('#bzInceleme:not([style*="display: none"]) #bzIncSonra:not(:disabled)')?.click();
  }
- movement.querySelector('[data-school-previous]').disabled=!modal.querySelector('#bzGeriSoru:not(:disabled)');
+ const review=modal.querySelector('#bzInceleme'),reviewVisible=!!(review&&review.style.display!=='none');
+ movement.querySelector('[data-school-previous]').disabled=reviewVisible?!review.querySelector('#bzIncOnce:not(:disabled)'):!modal.querySelector('#bzGeriSoru:not(:disabled)');
+ movement.querySelector('[data-school-next]').disabled=!reviewVisible||!review.querySelector('#bzIncSonra:not(:disabled)');
  const area=modal.querySelector('#bzAlan'),board=area?.querySelector('.sp-question-board');
  if(!area)return;
  const progress=area.querySelector('.rq-progress span')?.textContent||'';
