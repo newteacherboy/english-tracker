@@ -358,29 +358,227 @@
 #dmStoryLesson[data-appearance="day"] .ml-feedback.is-correct{background:#e3f6e7;color:#1c603e;border-color:#86bc95}
 #dmStoryLesson[data-appearance="day"] .ml-feedback.is-correct:before{color:#1c603e}
 
-/* Approved sunny academy skin: environment artwork beneath live HTML controls. */
-#dmStoryLesson[data-appearance="day"]{background-image:linear-gradient(#c9f4ff0d,#fff7d514),url('learning-assets/papi-arena-courtyard-day.webp');background-position:center;background-size:cover}
-#dmStoryLesson[data-appearance="day"] .ml-header small{color:#fff;text-shadow:0 1px 3px #12455d,0 0 8px #12455d}
-#dmStoryLesson[data-appearance="day"] .ml-header h1{color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 2px 3px #12455dcc,0 0 10px #12455d88}
-#dmStoryLesson[data-appearance="day"] .ml-header>button{background:linear-gradient(135deg,#37a7af,#086175);color:#fff;border-color:#f4d287;box-shadow:inset 0 1px 3px #c5ffff80,0 3px 0 #9b762b66}
-#dmStoryLesson[data-appearance="day"] .ml-wallet-chip{border-color:#e7bc65;background:linear-gradient(135deg,#fffef5,#fff4cd);box-shadow:inset 0 2px #fff,0 3px 0 #b88e3e66}
-#dmStoryLesson[data-appearance="day"] .ml-progress{padding:4px 7px;border:1px solid #ffffffc9;border-radius:12px;background:#fffdf1cb;min-height:22px}
-#dmStoryLesson[data-appearance="day"] .ml-board{border-color:#ffffff78;background:linear-gradient(#fffdf10d,#fffdf126);box-shadow:inset 0 1px #fff8,0 8px 28px #17554b14}
-#dmStoryLesson[data-appearance="day"] .ml-eyebrow{background:linear-gradient(#258e91,#096a72);color:#fff1af!important;border-color:#efca77;box-shadow:inset 0 1px #fff6,0 3px 0 #9b762b55}
-#dmStoryLesson[data-appearance="day"] .ml-speech{background:linear-gradient(135deg,#fffef8,#fff7df);border-color:#ebc76d;box-shadow:inset 0 0 0 3px #fff,0 4px 0 #c6984c80,0 8px 18px #225c4933}
-#dmStoryLesson[data-appearance="day"] .ml-speech:before{background:#fffdf4;border-color:#ebc76d}
-#dmStoryLesson[data-appearance="day"] .ml-speaker{background:linear-gradient(#eff6ff,#dceaff);border-color:#a0bfef;color:#174975;box-shadow:0 3px 0 #a8c2e8}
-#dmStoryLesson[data-appearance="day"] .ml-choices button:not(.is-correct):not(.is-wrong):not(.is-selected),#dmStoryLesson[data-appearance="day"] .ml-matches button:not(.is-correct):not(.is-wrong):not(.is-selected),#dmStoryLesson[data-appearance="day"] .ml-teach button{background:linear-gradient(130deg,#fffef7,#fff8e1);border-color:#56af9e;box-shadow:inset 0 0 0 2px #fff,0 3px 0 #d1ac5e,0 6px 12px #315b3a2b;color:#164957}
-#dmStoryLesson[data-appearance="day"] .ml-choices button:hover:not(:disabled):not(.is-correct):not(.is-wrong),#dmStoryLesson[data-appearance="day"] .ml-matches button:hover:not(:disabled):not(.is-correct):not(.is-wrong){background:#e3f7e8;border-color:#228879}
-#dmStoryLesson[data-appearance="day"] .ml-reference-toggle{background:linear-gradient(#2b9997,#08757b);color:#fff;border-color:#edd18b;box-shadow:0 3px 0 #9b762b66}
-#dmStoryLesson[data-appearance="day"] .ml-task>.ml-hint,#dmStoryLesson[data-appearance="day"] .ml-question-instruction,#dmStoryLesson[data-appearance="day"] .ml-review-count{width:fit-content;max-width:100%;align-self:center;background:#fffdf1ed;border-radius:8px;padding:4px 8px;color:#315761}
-#dmStoryLesson[data-appearance="day"] .ml-letter-gap:not(.is-filled){background:#e0f1ed;color:#19545a;border-color:#b08832}
-#dmStoryLesson[data-appearance="day"] .ml-reference-sheet{background:#15484b99}
-#dmStoryLesson[data-appearance="day"] .ml-reference-panel{background:#fffdf2;color:#194c50;border-color:#d5b05e}
-#dmStoryLesson[data-appearance="day"] .ml-reference-panel h2{color:#194c50!important;-webkit-text-fill-color:#194c50!important}
-#dmStoryLesson[data-appearance="day"] .ml-reference-list button,#dmStoryLesson[data-appearance="day"] [data-reference-close]{background:#e9f6ee;color:#194c50;border-color:#8dbfb0}
-#dmStoryLesson[data-appearance="day"] .ml-reference-list span,#dmStoryLesson[data-appearance="day"] .ml-reference-list small{color:#39636b}
-#dmStoryLesson[data-appearance="day"] .ml-complete{background:#fffdf0ed;border:1px solid #e2c479;border-radius:20px;padding:12px}
-#dmStoryLesson[data-appearance="day"] .ml-result-rewards>div{background:linear-gradient(#fff7d2,#f0f7de);border-color:#cfac55;box-shadow:0 3px 0 #bb9a4a55}
-#dmStoryLesson[data-appearance="day"] .ml-result-rewards b{color:#70531b}
-#dmStoryLesson[data-appearance="day"] .ml-result-rewards small{color:#4c6758}
+/* Calm daylight lesson: plain background and consistently legible ink.
+   Daylight only; night artwork, game rules and completion behaviour are untouched. */
+#dmStoryLesson[data-appearance="day"]{
+  --arena-ink:#183b43;
+  --arena-light:#183b43;
+  --arena-muted:#3c5d65;
+  background:#edf5f2;
+  background-image:none;
+  color:#183b43;
+  color-scheme:light;
+}
+#dmStoryLesson[data-appearance="day"] .ml-header small{
+  color:#385e67;
+  text-shadow:none;
+}
+#dmStoryLesson[data-appearance="day"] .ml-header h1{
+  color:#183b43!important;
+  -webkit-text-fill-color:#183b43!important;
+  text-shadow:none;
+}
+#dmStoryLesson[data-appearance="day"] .ml-header>button{
+  background:#e0f0ec;
+  border-color:#8bbeb6;
+  color:#174d54;
+  box-shadow:none;
+}
+#dmStoryLesson[data-appearance="day"] button:focus-visible,
+#dmStoryLesson[data-appearance="day"] summary:focus-visible{
+  outline:3px solid #076c80;
+  outline-offset:3px;
+}
+#dmStoryLesson[data-appearance="day"] .ml-wallet-chip{
+  background:#ffffff;
+  border-color:#c2dcd5;
+  box-shadow:0 2px 7px #1a605017;
+}
+#dmStoryLesson[data-appearance="day"] .ml-wallet-chip b{color:#183b43}
+#dmStoryLesson[data-appearance="day"] .ml-wallet-chip small{color:#365d66}
+#dmStoryLesson[data-appearance="day"] .ml-progress{
+  padding:5px 9px;
+  border:1px solid #c9dfd9;
+  border-radius:12px;
+  background:#fff;
+  min-height:22px;
+}
+#dmStoryLesson[data-appearance="day"] .ml-progress>span{color:#20545b}
+#dmStoryLesson[data-appearance="day"] .ml-progress progress,
+#dmStoryLesson[data-appearance="day"] progress::-webkit-progress-bar{background:#d8e9e4;box-shadow:none}
+#dmStoryLesson[data-appearance="day"] progress::-webkit-progress-value{background:#168878}
+#dmStoryLesson[data-appearance="day"] progress::-moz-progress-bar{background:#168878}
+#dmStoryLesson[data-appearance="day"] .ml-board{
+  background:#fff;
+  border:1px solid #c6ddd6;
+  box-shadow:0 6px 20px #23574916;
+}
+#dmStoryLesson[data-appearance="day"] .ml-eyebrow{
+  background:#e4f2ee;
+  border-color:#aad0c6;
+  color:#20565c!important;
+  box-shadow:none;
+}
+#dmStoryLesson[data-appearance="day"] .ml-speech{
+  background:#f5faf8;
+  border-color:#aecfc5;
+  color:#183b43;
+  box-shadow:0 3px 9px #1a605011;
+}
+#dmStoryLesson[data-appearance="day"] .ml-speech:before{background:#f5faf8;border-color:#aecfc5}
+#dmStoryLesson[data-appearance="day"] .ml-speech h2{
+  color:#183b43!important;
+  -webkit-text-fill-color:#183b43!important;
+}
+#dmStoryLesson[data-appearance="day"] .ml-speech p{color:#3b5963!important}
+#dmStoryLesson[data-appearance="day"] .ml-speech small{color:#45646b}
+#dmStoryLesson[data-appearance="day"] .ml-speaker{
+  background:#e8f2fc;
+  border-color:#aacbdf;
+  color:#154e70;
+  box-shadow:none;
+}
+#dmStoryLesson[data-appearance="day"] .ml-task p,
+#dmStoryLesson[data-appearance="day"] .ml-task .ml-hint{color:#385d66!important}
+#dmStoryLesson[data-appearance="day"] .ml-task>.ml-hint,
+#dmStoryLesson[data-appearance="day"] .ml-question-instruction,
+#dmStoryLesson[data-appearance="day"] .ml-review-count{
+  width:fit-content;
+  max-width:100%;
+  align-self:center;
+  padding:4px 8px;
+  border-radius:8px;
+  background:#eff7f4;
+  color:#245159!important;
+}
+#dmStoryLesson[data-appearance="day"] .ml-choices button:not(.is-correct):not(.is-wrong):not(.is-selected),
+#dmStoryLesson[data-appearance="day"] .ml-matches button:not(.is-correct):not(.is-wrong):not(.is-selected),
+#dmStoryLesson[data-appearance="day"] .ml-teach button{
+  background:#f8fcfa;
+  border-color:#a9cbc1;
+  box-shadow:0 2px 0 #cfdfd9;
+  color:#173e46;
+}
+#dmStoryLesson[data-appearance="day"] .ml-choices button:hover:not(:disabled):not(.is-correct):not(.is-wrong):not(.is-selected),
+#dmStoryLesson[data-appearance="day"] .ml-matches button:hover:not(:disabled):not(.is-correct):not(.is-wrong):not(.is-selected){
+  background:#e3f2ec;
+  border-color:#328c7b;
+}
+#dmStoryLesson[data-appearance="day"] .ml-teach b{color:#173e46}
+#dmStoryLesson[data-appearance="day"] .ml-teach span:not(.ml-art),
+#dmStoryLesson[data-appearance="day"] .ml-teach small{color:#38636a}
+#dmStoryLesson[data-appearance="day"] .ml-reference-toggle,
+#dmStoryLesson[data-appearance="day"] .ml-actions button:not(.ml-primary),
+#dmStoryLesson[data-appearance="day"] .ml-tokens button,
+#dmStoryLesson[data-appearance="day"] .ml-letter-bank button{
+  background:#e7f2ef;
+  border-color:#a3c8bc;
+  color:#174c52;
+  box-shadow:0 2px 0 #d2e0da;
+}
+#dmStoryLesson[data-appearance="day"] .ml-sentence,
+#dmStoryLesson[data-appearance="day"] .ml-letter-line{
+  background:#f4faf7;
+  color:#183b43;
+  border-color:#afd2c7;
+}
+#dmStoryLesson[data-appearance="day"] .ml-letter-fixed{color:#183b43}
+#dmStoryLesson[data-appearance="day"] .ml-letter-gap:not(.is-filled){
+  background:#e3f1eb;
+  border-color:#3b8e82;
+  color:#174d55;
+}
+#dmStoryLesson[data-appearance="day"] .ml-reference{border-top-color:#ccdfd8}
+#dmStoryLesson[data-appearance="day"] .ml-reference summary{color:#255861}
+#dmStoryLesson[data-appearance="day"] .ml-reference button{
+  background:#f6fbf8;
+  border-color:#b2d1c6;
+  color:#173f45;
+}
+#dmStoryLesson[data-appearance="day"] .ml-reference b{color:#173f45}
+#dmStoryLesson[data-appearance="day"] .ml-reference span,
+#dmStoryLesson[data-appearance="day"] .ml-reference small{color:#375f65}
+#dmStoryLesson[data-appearance="day"] .ml-review-track span{
+  background:#e6efed;
+  border-color:#a8c9c1;
+  color:#48656c;
+}
+#dmStoryLesson[data-appearance="day"] .ml-review-track .is-current{
+  background:#d1e9e0;
+  border-color:#3e9a8b;
+  color:#18554d;
+}
+#dmStoryLesson[data-appearance="day"] .ml-review-track .is-done{
+  background:#1c7956;
+  border-color:#1c7956;
+  color:#fff;
+}
+#dmStoryLesson[data-appearance="day"] .ml-review-note{
+  background:#e7f5eb;
+  color:#20593f!important;
+}
+#dmStoryLesson[data-appearance="day"] .ml-feedback:not(:empty){
+  background:#fff1e8;
+  border-color:#d5a78d;
+  color:#663b31;
+  box-shadow:none;
+}
+#dmStoryLesson[data-appearance="day"] .ml-feedback:not(:empty):before{color:#925b39}
+#dmStoryLesson[data-appearance="day"] .ml-feedback.is-correct{
+  background:#e5f6eb;
+  border-color:#8fcb9f;
+  color:#225e3e;
+}
+#dmStoryLesson[data-appearance="day"] .ml-feedback.is-correct:before{color:#225e3e}
+#dmStoryLesson[data-appearance="day"] .ml-reference-sheet{background:#163e44aa}
+#dmStoryLesson[data-appearance="day"] .ml-reference-panel,
+#dmStoryLesson[data-appearance="day"] .ml-reference-card{
+  background:#fff;
+  border-color:#b6d5cb;
+  color:#183b43;
+}
+#dmStoryLesson[data-appearance="day"] .ml-reference-panel h2,
+#dmStoryLesson[data-appearance="day"] .ml-reference-card h2{
+  color:#183b43!important;
+  -webkit-text-fill-color:#183b43!important;
+}
+#dmStoryLesson[data-appearance="day"] .ml-reference-list button,
+#dmStoryLesson[data-appearance="day"] [data-reference-close]{
+  background:#eff8f3;
+  color:#183b43;
+  border-color:#b2d1c6;
+}
+#dmStoryLesson[data-appearance="day"] .ml-reference-list span,
+#dmStoryLesson[data-appearance="day"] .ml-reference-list small{color:#385e67}
+#dmStoryLesson[data-appearance="day"] .ml-complete{
+  background:#f9fcf9;
+  border:1px solid #c1ddd1;
+  border-radius:20px;
+  padding:12px;
+}
+#dmStoryLesson[data-appearance="day"] .ml-complete h2{
+  color:#1c5556!important;
+  -webkit-text-fill-color:#1c5556!important;
+}
+#dmStoryLesson[data-appearance="day"] .ml-result-message,
+#dmStoryLesson[data-appearance="day"] .ml-result-stats,
+#dmStoryLesson[data-appearance="day"] .ml-result-words,
+#dmStoryLesson[data-appearance="day"] .ml-result-replay{color:#3b5f65!important}
+#dmStoryLesson[data-appearance="day"] .ml-earned{color:#1f6c4b}
+#dmStoryLesson[data-appearance="day"] .ml-result-rewards>div{
+  background:#eef8f0;
+  border-color:#acd1b9;
+  box-shadow:0 2px 0 #d0dfd4;
+}
+#dmStoryLesson[data-appearance="day"] .ml-result-rewards b{color:#205c43}
+#dmStoryLesson[data-appearance="day"] .ml-result-rewards small{color:#386356}
+#dmStoryLesson[data-appearance="day"] .ml-loading{
+  background:#fff;
+  color:#183b43;
+  border-color:#bfd8d0;
+}
+#dmStoryLesson[data-appearance="day"] .ml-loading button{
+  background:#e7f2ef;
+  color:#174c52;
+  border-color:#a3c8bc;
+}
