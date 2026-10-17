@@ -1,0 +1,32 @@
+name: All game fairness
+on:
+  push:
+    paths:
+      - 'supabase/migrations/*solo_game_fair*'
+      - 'supabase/migrations/*rally_fair_rewards*'
+      - 'supabase/functions/diji-api/progression-api.ts'
+      - 'supabase/functions/medupro-api/progression-api.ts'
+      - 'ingilizce/game-feedback.js'
+      - 'tests/*fair*'
+      - '.github/workflows/all-games-fairness.yml'
+  pull_request:
+    paths:
+      - 'supabase/migrations/*solo_game_fair*'
+      - 'supabase/migrations/*rally_fair_rewards*'
+      - 'supabase/functions/diji-api/progression-api.ts'
+      - 'supabase/functions/medupro-api/progression-api.ts'
+      - 'ingilizce/game-feedback.js'
+      - 'tests/*fair*'
+      - '.github/workflows/all-games-fairness.yml'
+jobs:
+  game-fairness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check ingilizce/game-feedback.js
+      - run: cmp supabase/functions/diji-api/progression-api.ts supabase/functions/medupro-api/progression-api.ts
+      - run: node --test --test-name-pattern='game|Parkur|parkur|reward|12-question|solo|obsolete' tests/progression-api.test.cjs
+      - run: node --test tests/parkur-reward-claim.test.cjs tests/harf-adasi-reward-sync.test.cjs
