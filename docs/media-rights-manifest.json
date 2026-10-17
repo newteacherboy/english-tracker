@@ -570,6 +570,27 @@
       "bytes": 1866845
     },
     {
+      "path": "ingilizce/learning-assets/papi-arena-courtyard-day.webp",
+      "bytes": 315022,
+      "sha256": "468a65a6770fccbdfe1d044c17269447d365350b6679d5c79499cabdebe67ebf",
+      "status": "ai-generated",
+      "source": "docs/papi-learning-arena.md (approved Papi arena 2026-10-17; original generated scene, daytime scene and transparent character guide)"
+    },
+    {
+      "path": "ingilizce/learning-assets/papi-arena-courtyard.webp",
+      "bytes": 178832,
+      "sha256": "66e2f6a20adda77cd6da9165338d9d46186ddc2b9fbd4f2137776e1d1838bf44",
+      "status": "ai-generated",
+      "source": "docs/papi-learning-arena.md (approved Papi arena 2026-10-17; original generated scene, daytime scene and transparent character guide)"
+    },
+    {
+      "path": "ingilizce/learning-assets/papi-arena-guide.webp",
+      "bytes": 70422,
+      "sha256": "ad95785410ebde521079d24ad29f35b0d521c0c355d05ce97e3469f354716391",
+      "status": "ai-generated",
+      "source": "docs/papi-learning-arena.md (approved Papi arena 2026-10-17; original generated scene, daytime scene and transparent character guide)"
+    },
+    {
       "path": "ingilizce/meteor-sky.png",
       "sha256": "151f2d61767705e1034aeb9fd306676cd906f8b3b8cbc5b1b5a03288c4dc37fc",
       "bytes": 2080152,
