@@ -1,0 +1,29 @@
+name: Main Parkur fairness
+on:
+  push:
+    paths:
+      - 'supabase/migrations/*parkur_fair_claim*'
+      - 'supabase/functions/diji-api/progression-api.ts'
+      - 'ingilizce/game-feedback.*'
+      - 'tests/parkur-fair-ledger-db.sql'
+      - 'tests/progression-api.test.cjs'
+      - 'tests/parkur-reward-claim.test.cjs'
+      - '.github/workflows/parkur-fairness.yml'
+  pull_request:
+    paths:
+      - 'supabase/migrations/*parkur_fair_claim*'
+      - 'supabase/functions/diji-api/progression-api.ts'
+      - 'ingilizce/game-feedback.*'
+      - 'tests/parkur-fair-ledger-db.sql'
+      - 'tests/progression-api.test.cjs'
+      - 'tests/parkur-reward-claim.test.cjs'
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check ingilizce/game-feedback.js
+      - run: node --test tests/progression-api.test.cjs tests/parkur-reward-claim.test.cjs
