@@ -29,11 +29,17 @@ function chooseRoute(change=false){
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ekran="tab-dunya"],[data-nav="parkur"],.rt-start');if(b&&ready()&&!chosen()) {e.preventDefault();e.stopImmediatePropagation();chooseRoute();}},true);
 function banner(){
  if(!status||status.emailVerified||!ready()){$('dmEmailVerifyBanner')?.remove();if(status?.emailVerified)$('dmEmailVerification')?.querySelector('.dm-member-close')?.click();return;}
- let el=$('dmEmailVerifyBanner');if(!el){el=document.createElement('button');el.id='dmEmailVerifyBanner';el.type='button';el.className='dm-email-banner';el.onclick=()=>emailPrompt();$('panel-alani').prepend(el);}
- el.textContent='📩 E-posta adresini doğrula · Bağlantıyı yeniden gönder';
+ let el=$('dmEmailVerifyBanner');if(!el){
+  el=document.createElement('aside');el.id='dmEmailVerifyBanner';el.className='dm-email-banner';
+  el.setAttribute('aria-label','E-posta doğrulama yardımı');$('panel-alani').prepend(el);
+  el.innerHTML='<img src="papi-welcome-v2.png" alt=""><div class="deg-banner-text"><strong>📨 E-postanı henüz doğrulamadın</strong><small>Gmail veya Outlook’ta mesajını bulmak için Papi sana gösterecek.</small></div><div class="deg-banner-actions"><button type="button" data-eg-quick-help>📖 Nasıl yapılır?</button><button type="button" data-eg-quick-resend>↻ Tekrar gönder</button></div>';
+  el.querySelector('[data-eg-quick-help]').onclick=()=>emailPrompt();
+  el.querySelector('[data-eg-quick-resend]').onclick=()=>{if(window.dmEmailGuide){window.dmEmailGuide.open('reminder');window.dmEmailGuide.resend();}else emailPrompt();};
+ }
 }
 function emailPrompt(){
- if(!ready()||status?.emailVerified)return;const owner=who(),view=sheet('E-posta adresini doğrula','<p>Hesabını kullanmaya devam edebilirsin. Doğrulama bağlantısı kayıtlı veli e-posta adresine gönderilir.</p><p><b>'+esc(status?.email||'Kişisel bilgilerindeki e-posta adresi')+'</b></p><button type="button" class="dm-member-primary" data-resend>Doğrulama e-postasını gönder</button><button type="button" data-checked>E-postadan doğruladım, kontrol et</button><p class="dm-member-status" role="status"></p>','dmEmailVerification');
+ if(!ready()||status?.emailVerified)return;
+ if(window.dmEmailGuide){window.dmEmailGuide.open('reminder');return;}const owner=who(),view=sheet('E-posta adresini doğrula','<p>Hesabını kullanmaya devam edebilirsin. Doğrulama bağlantısı kayıtlı veli e-posta adresine gönderilir.</p><p><b>'+esc(status?.email||'Kişisel bilgilerindeki e-posta adresi')+'</b></p><button type="button" class="dm-member-primary" data-resend>Doğrulama e-postasını gönder</button><button type="button" data-checked>E-postadan doğruladım, kontrol et</button><p class="dm-member-status" role="status"></p>','dmEmailVerification');
  view.el.querySelector('[data-resend]').onclick=async e=>{e.target.disabled=true;try{const d=await api('memberEmailResend');if(owner!==who())return view.close();view.body.querySelector('[role=status]').textContent=d.mesaj;if(d.verified){status.emailVerified=true;banner();view.close();}}catch(err){view.body.querySelector('[role=status]').textContent=err.message;}finally{e.target.disabled=false;}};
  view.el.querySelector('[data-checked]').onclick=async()=>{try{const d=await api('memberStatus');if(owner!==who())return view.close();status=d;if(Number.isInteger(d.loginStreak)){localStorage.setItem('ing_girisSerisiSayisi',String(d.loginStreak));localStorage.setItem('dm_login_streak:'+owner.toLowerCase(),String(d.loginStreak));const streak=$('headerStreakNum');if(streak)streak.textContent='🔥 '+d.loginStreak;}window.dmMemberBadgeStatus={...d,owner};if(d.welcomeEligible&&!d.welcomeEarned&&welcomeOwner!==owner){clearTimeout(welcomeTimer);welcomeOwner=owner;const delay=Math.max(1000,120000-(Date.parse(d.serverNow)-Date.parse(d.memberFirstSeenAt)));welcomeTimer=setTimeout(()=>{if(who()===owner)check(true,true);},delay);}document.dispatchEvent(new Event('dm:member-status'));lastRead=Date.now();banner();if(d.emailVerified)view.close();else view.body.querySelector('[role=status]').textContent='Henüz doğrulanmadı. E-postadaki bağlantıya dokunup tekrar kontrol et.';}catch(e){view.body.querySelector('[role=status]').textContent=e.message;}};
 }
@@ -129,4 +135,10 @@ setTimeout(()=>{installScoreHook();check();},700);
 (()=>{const textField=e=>e instanceof HTMLElement&&(e.isContentEditable||e.matches('textarea:not([readonly]):not(:disabled),input:not([readonly]):not(:disabled):not([type=button]):not([type=submit]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=hidden]):not([type=date]):not([type=time]):not([type=number])'));
  document.addEventListener('pointerdown',e=>{const target=e.target instanceof Element?e.target:null;if(!target)return;const label=target.closest('label');if(textField(target)||textField(label?.control))return;const active=document.activeElement;if(textField(active))active.blur();},true);
  document.addEventListener('focusin',e=>{const t=e.target;if(t instanceof HTMLElement&&t.matches('input[readonly],textarea[readonly]')){t.setAttribute('inputmode','none');t.blur();}});
+})();
+
+/* Visual email guide shared by signup, reminder, profile and Help. */
+(()=>{if(typeof document==='undefined'||document.getElementById('dm-email-guide-loader'))return;
+ const script=document.createElement('script');script.id='dm-email-guide-loader';script.src='email-guide.js?v=20261017-1';script.async=true;
+ (document.body||document.documentElement).appendChild(script);
 })();
