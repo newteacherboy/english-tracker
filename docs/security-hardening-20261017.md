@@ -1,5 +1,7 @@
 # DijiMedu güvenlik sertleştirmesi — 17 Ekim 2026
 
+> Tarihçe: İlk bölümler önceki güvenlik paketinin durumunu anlatır. Güncel cevap doğrulaması ve kalan altyapı sınırları aşağıdaki “doğrulanan oyun oturumları” bölümündedir.
+
 ## Tamamlanan doğrulamalar
 - Servis rolüne özel çalışan oyun ekonomisi RPC'leri ve RLS erişim kontrolleri denetlendi.
 - Anonim çağrılabildiği görülen SECURITY DEFINER veri-temizlik fonksiyonu artık sadece servis rolü tarafından çağrılabilir. Trigger helper'ların kamusal EXECUTE izni kaldırıldı.
@@ -43,6 +45,6 @@ Giriş ve ekonomi işlemlerinde 429, 503 yanıtları, Supabase Edge Function hat
 - Yeni şifreler: 8–64 karakter ve Pwned Passwords k-anonim aralık kontrolü; parola/tam hash dışarı gönderilmez. Kontrol hizmeti kullanılamıyorsa şifre yazımı yapılmaz. Mevcut parolalarla giriş etkilenmez. Parola sıfırlama bağlantısı güvenlik kontrolü tamamlanmadan tüketilmez. Supabase Auth'un Pro planındaki ayrı Advisor bayrağı bununla aynı şey değildir.
 - Tarayıcı Supabase 2.118.0, Chart 4.4.1 ve jsPDF 2.5.1 uygulamaya alındı. CSP script kaynakları self ile sınırlandı; yeni dış script kaynağı yok. Uygulama çerçeve içinde gizlenir; referrer kapalıdır. Legacy inline event handler'lar nedeniyle unsafe-inline halen gereklidir; bu paket tam XSS veya bot önleme garantisi vermez.
 - HTTP başlıkları: GitHub Pages özel başlık kabul etmiyor. DNS/CDN yönetim bağlantısı bulunmadığından sunucu başlıkları etkinleştirilemedi. deployment/security-headers.conf sonraki yönetim erişiminde uygulanacak somut yapılandırmadır; aktif olduğu iddia edilmez. HttpOnly cookie oturumu ve CDN/WAF katmanı ayrıca hosting mimarisi gerektirir.
-- Testler: 13 gerçek klasik oyun kontrolü, 12 gerçek Parkur mekaniği, 48 Node regresyonu ve rollback SQL fixture. Üretim API smoke testleri ve yayın dosyası doğrulaması geçişte ayrıca yapılır.
+- Testler: 13 gerçek klasik oyun kontrolü, 12 gerçek Parkur mekaniği, 52 kritik Node regresyonu ve rollback SQL fixture. Üretim API smoke testleri ve yayın dosyası doğrulaması geçişte ayrıca yapılır.
 
 Geçiş notu: Eski zafer pozu zaten uygulamadan kaldırılmıştı. Poz regresyon beklentisi mevcut 9 pozla eşitlendi; yeni bir görünüm değişikliği yapılmadı. Eksik klasik turdaki sorulmayan kelimeler sunucuda başarısız kapsam olarak hesaba katılır; eksik deste tam tur ödülüne çevrilemez.
