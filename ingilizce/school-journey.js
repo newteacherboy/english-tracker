@@ -39,7 +39,7 @@ function preview(state){
  if(!currentRoute())return '';
  const rows=state.allSteps||state.steps||[];steps=rows;
  const summary=getCurrent(state.steps||rows,state.current||0);
- const grade=summary.info.grade||1,unit=summary.info.unit||1;
+ const grade=summary.info.grade||1,unit=summary.info.unit||1,grades=group(rows);
  visit++;
  return '<section class="rt-school-journey" aria-label="Okul Yolum macera ekranı">'+
    '<div class="rt-school-journey-cover"><span class="rt-school-eyebrow">DİJİMEDU · OKUL YOLUM</span>'+
@@ -50,7 +50,7 @@ function preview(state){
    '<div><small>ŞU ANKİ MACERAN</small><h3>'+grade+'. Sınıf · '+unit+'. Ünite</h3><p>Başarıların korunuyor. Yeni duraklara kendi hızında ilerle.</p></div>'+
    '<span class="rt-school-unit-status">'+summary.done+' <small>✓</small></span></div>'+
    '<div class="rt-school-mini-grades">'+Array.from({length:8},(_,i)=>{const n=i+1;
-    const g=group(rows)[i],done=g.total>0&&g.total===g.completed;
+    const g=grades[i],done=g.total>0&&g.total===g.completed;
     return '<button type="button" data-school-open data-school-grade="'+n+'" '+(n===grade?'aria-current="true"':'')+'><span>'+art(n*3,'rt-school-small-mascot')+'</span><b>'+n+'. Sınıf</b><small>'+(done?'✓ Tamam':g.total?g.completed+'/'+g.total:'Keşfet')+'</small></button>';
    }).join('')+'</div></section>';
 }
