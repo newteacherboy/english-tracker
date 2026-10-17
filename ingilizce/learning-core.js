@@ -3,7 +3,7 @@
  'use strict';
  const norm=s=>String(s??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[’‘]/g,"'").replace(/[.!?,;:]/g,'').replace(/\s+/g,' ').trim();
  const rotate=(a,n)=>a.map((_,i)=>a[(i+n)%a.length]);
- function deck(chapter,previous){
+ function deck(chapter,previous,deckVersion=7){
   const cards=chapter.cards,a=cards[0],b=cards[1],c=cards[2],u=chapter.examples;
   const choose=(label,prompt,answer,options,extra={})=>({kind:'choice',label,prompt,answer,options:rotate([...new Set(options)],chapter.number%options.length),...extra});
   const imageCards=cards.filter(x=>x.image),visual=imageCards.length>=2;
@@ -31,8 +31,17 @@
    tasks[6]=choose('Temada İngilizcesini bul',r[3].tr,r[3].en,opts(3,'en'),{promptAudio:r[3].tr,explanation:r[3].en+' = '+r[3].tr});
    tasks[8]=choose('Tema finali · Son konuyu hatırla',r[5].en,r[5].tr,opts(5,'tr'),{audio:r[5].en,language:'en',explanation:r[5].en+' = '+r[5].tr});
   }
+  if(deckVersion>=7){
+   const eligible=[...cards,...u].filter(x=>(x.en.match(/[a-z]/gi)||[]).length>=6);
+   const target=eligible[chapter.number%eligible.length];
+   if(!target)throw Error('Harf sorusu için yeterince uzun ifade bulunamadı.');
+   const letterPositions=[...target.en].map((ch,i)=>/[a-z]/i.test(ch)?i:-1).filter(i=>i>=0),missingCount=letterPositions.length>=13?4:3;
+   const missing=Array.from({length:missingCount},(_,i)=>letterPositions[Math.floor((i+1)*letterPositions.length/(missingCount+1))]);
+   const letters=missing.map(i=>target.en[i]),distractors=[...'aeiostrn'].filter(ch=>!letters.some(l=>l.toLowerCase()===ch)).slice(0,2);
+   tasks.push({kind:'letters',label:'Harfleri tamamla',prompt:'Eksik harfleri tamamla.',support:target.tr,en:target.en,tr:target.tr,missing,tokens:rotate([...letters,...distractors],chapter.number%(letters.length+distractors.length)),answer:target.en,explanation:target.en+' — '+target.tr});
+  }
   const reviewCards=cards.filter((x,i)=>cards.findIndex(y=>norm(y.en)===norm(x.en))===i);
-  tasks.push({kind:'review',label:'Son tekrar',prompt:'Bu bölümde öğrendiklerin',cards:reviewCards.map((x,i)=>{
+  if(deckVersion>=6)tasks.push({kind:'review',label:'Son tekrar',prompt:'Bu bölümde öğrendiklerin',cards:reviewCards.map((x,i)=>{
    const other=cards.find(y=>norm(y.tr)!==norm(x.tr));
    return {en:x.en,tr:x.tr,options:rotate([x.tr,other.tr],(chapter.number+i)%2)};
   }),explanation:'Bölümün tüm kelimelerini tekrar ettin.'});
@@ -42,7 +51,7 @@
   if(task.kind==='teach')return {valid:answer===true,correct:answer===true};
   if(task.kind==='review'){
    const valid=Array.isArray(answer)&&answer.length===task.cards.length&&task.cards.every((c,i)=>typeof answer[i]==='string'&&c.options.includes(answer[i]));
-   return {valid,correct:valid}; // Review advances after either choice; no per-card rewards.
+   return {valid,correct:valid,allCorrect:valid&&task.cards.every((c,i)=>answer[i]===c.tr)}; // Review advances after either choice; no per-card rewards.
   }
   if(task.kind==='match'){
    if(!Array.isArray(answer)||answer.length!==task.pairs.length)return {valid:false,correct:false};

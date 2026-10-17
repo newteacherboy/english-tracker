@@ -108,3 +108,23 @@
 .ml-entry-card{position:relative;box-sizing:border-box;width:min(100%,430px);margin:36px auto 16px;padding:62px 25px 26px;border:3px solid #fff;border-radius:30px;background:linear-gradient(#f2e6ff,#fff 60%);box-shadow:0 10px 0 #cfbde4,0 22px 70px #21134240;text-align:center;color:#40246b;font-family:inherit}
 .ml-entry-papi{position:absolute;top:-65px;left:50%;transform:translateX(-50%);width:130px;height:130px;object-fit:contain;pointer-events:none}.ml-entry-close{position:absolute;right:12px;top:13px;width:38px;height:38px;border:0;border-radius:50%;background:#fff;color:#78519e;font-size:28px;cursor:pointer}
 .ml-entry-card>small{display:block;font-size:11px;font-weight:850;letter-spacing:.08em;color:#9278b0}.ml-entry-card h2{font-size:clamp(23px,6vw,31px)!important;margin:14px 0!important;color:#40246b!important;-webkit-text-fill-color:#40246b!important}.ml-entry-card p{color:#856d9e;font-size:15px;line-height:1.5;margin:10px 0}.ml-entry-prize{display:grid;gap:10px;margin:22px 0;padding:18px 12px;border:2px solid #e5d9f5;border-radius:22px;background:#faf7ff}.ml-entry-prize>b{font-size:16px;color:#302048}.ml-entry-prize strong{font-size:clamp(20px,5vw,27px);color:#7550ba}.ml-entry-prize span{font-size:12px;line-height:1.5;color:#806c95}.ml-entry-detail{font-size:13px!important}.ml-entry-start{width:100%;margin-top:14px;border:0;border-radius:18px;padding:17px 10px;background:linear-gradient(#b475ed,#8b51d5);box-shadow:0 5px 0 #673aa3;color:#fff;font-family:inherit;font-size:17px;font-weight:850;cursor:pointer}.ml-entry-start:focus-visible,.ml-entry-close:focus-visible{outline:3px solid #40246b;outline-offset:4px}
+/* Account-owned live balance strip; sits above the question panel without overlays. */
+#dmStoryLesson .ml-wallet{display:grid;grid-template-columns:1.08fr 1fr 1fr;gap:8px;min-width:0}
+#dmStoryLesson .ml-wallet-chip{display:flex;align-items:center;justify-content:center;gap:7px;min-width:0;padding:12px 8px;border:2px solid #fff3c6;border-radius:21px;background:linear-gradient(#fffef0,#fff6cf);box-shadow:0 4px 0 #e4ce91,0 5px 16px #0003;color:#123d52}
+#dmStoryLesson .ml-wallet-chip svg{width:28px;height:34px;flex-shrink:0}
+#dmStoryLesson .ml-wallet-chip b{font-size:clamp(17px,4.4vw,25px);font-weight:950;line-height:1.1;white-space:nowrap;font-variant-numeric:tabular-nums;color:#123d52}
+#dmStoryLesson .ml-wallet-chip small{font-size:.64em;color:#275468;font-weight:900}
+#dmStoryLesson .ml-combo-toast{font-size:14px;text-align:center;font-weight:900;color:#bafed3;line-height:1.4}
+#dmStoryLesson .ml-combo-toast:empty{display:none}
+#dmStoryLesson .ml-letter-line{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px 4px;padding:19px 8px;border:1px solid #a0c9e4;border-radius:18px;background:#0b2247;margin:18px 0}
+#dmStoryLesson .ml-letter-word{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:3px;max-width:100%}
+#dmStoryLesson .ml-letter-space{width:7px}
+#dmStoryLesson .ml-letter-fixed,#dmStoryLesson .ml-letter-gap{display:inline-grid;place-items:center;min-width:24px;min-height:46px;font-size:23px;line-height:1;font-weight:900;font-family:inherit}
+#dmStoryLesson .ml-letter-fixed{color:#f3f5ff}
+#dmStoryLesson .ml-letter-gap{width:28px;border:0;border-bottom:3px solid #ffd879;border-radius:7px;background:#344e7c;color:#ffe494;padding:0}
+#dmStoryLesson .ml-letter-gap.is-filled{background:#186b61;color:#f0ffda;border-color:#a2f8c1}
+#dmStoryLesson .ml-letter-bank{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:20px 0}
+#dmStoryLesson .ml-letter-bank button{width:46px;min-height:48px;border:1px solid #d4b5f3;border-radius:12px;background:linear-gradient(#48468c,#2b2c61);color:#fff;font-size:24px;font-weight:900;box-shadow:0 4px 0 #080f29}
+#dmStoryLesson .ml-letter-bank button:disabled{opacity:.3}
+#dmStoryLesson [data-letter-check]:disabled{opacity:.45}
+@media(max-width:380px){#dmStoryLesson .ml-wallet{gap:6px}#dmStoryLesson .ml-wallet-chip{padding:11px 5px;gap:4px;border-radius:18px}#dmStoryLesson .ml-wallet-chip svg{width:23px;height:29px}#dmStoryLesson .ml-wallet-chip b{font-size:17px}#dmStoryLesson .ml-letter-fixed{min-width:19px;font-size:21px}#dmStoryLesson .ml-letter-gap{width:25px;min-width:25px;font-size:21px}#dmStoryLesson .ml-letter-word{gap:2px}}
