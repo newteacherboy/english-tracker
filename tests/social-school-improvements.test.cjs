@@ -86,5 +86,5 @@ test('school launch and quiz styles use separate day/night palettes and changing
  assert.match(schoolSource,/sessionStorage\.setItem\('dm-school-last-intro-character'/);
  assert.match(schoolSource,/function decorateQuestion/);
  assert.match(schoolSource,/function launchStep/);
- assert.doesNotMatch(schoolSource,/window\.dmSchoolStopOpen\?\./);
+ assert.match(schoolSource,/window\.dmSchoolStopOpen\(Number\(step\.b\),Number\(step\.d\)\)/);
 });
