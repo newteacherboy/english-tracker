@@ -56,12 +56,12 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    const kind=b.kind==='email'?'email':b.kind==='placement'?'placement':'';if(!kind)return fail('Geçersiz uyarı.');
    if(kind==='email'&&s.email_verified_at)return json({ok:true,show:false});
    if(kind==='placement'){const [exam,yo]=await Promise.all([get(sid,'placement_cefr_v2'),get(sid,'yo')]);if(exam?.value||parse(yo?.value).seviye)return json({ok:true,show:false});}
-   const prefix='member_notice:'+kind+':'+(kind==='email'?day():week())+':';
+   const prefix='member_notice:'+kind+':'+(kind==='email'?'rolling':week())+':';
    const r=await db.from('extra_data').select('key_name,updated_at').eq('student_id',sid).like('key_name',prefix+'%');if(r.error)throw r.error;
-   const records=r.data||[];if(records.length>=2)return json({ok:true,show:false});
+   const records=r.data||[];if(kind==='placement'&&records.length>=2)return json({ok:true,show:false});
    const recent=Math.max(0,...records.map((x:any)=>Date.parse(x.updated_at)||0));
-   if(recent&&Date.now()-recent<(kind==='email'?4*3600000:30*60000))return json({ok:true,show:false});
-   const key=prefix+(records.length+1);
+   if(recent&&Date.now()-recent<(kind==='email'?15*60000:30*60000))return json({ok:true,show:false});
+   const key=kind==='email'?prefix+String(Math.floor(Date.now()/900000)):prefix+(records.length+1);
    const ins=await db.from('extra_data').upsert({student_id:sid,key_name:key,value:{shown:true},updated_at:new Date().toISOString()},{onConflict:'student_id,key_name',ignoreDuplicates:true}).select('id');if(ins.error)throw ins.error;
    return json({ok:true,show:!!ins.data?.length,kind});
   }
