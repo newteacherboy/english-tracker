@@ -30,7 +30,8 @@ test('teacher-only reads, https-only external links and owned leaderboard rows',
   assert(/requireTeacher\(a\)/.test(extract('if (op === "ozellikListesiGetir")','const { data }')));
   const link=extract('if (op === "disLinkEtkinlikAta") {','// [YAMA 23]');
   assert(/u\.protocol !== "https:"/.test(link)&&/!a\.yonetici/.test(link));
-  assert(/if \(!s\?\.id\) return bulunamadi\(\);\n  const v3/.test(src));
+  assert(src.includes('if (!s?.id) return bulunamadi();'));
+  assert(src.includes("supabase.rpc('dm_verified_result'"));
 });
 test('student notification text loses links and phone-like numbers but keeps normal words',()=>{
   const line=src.split('\n').find(l=>l.includes('if (a?.role === "student") metin = metin'));

@@ -2,8 +2,10 @@
         <html lang="tr">
         <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
-<meta name="referrer" content="strict-origin-when-cross-origin">
+<script defer src="verified-games.js?v=20261017-1"></script>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; worker-src 'self' blob:; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="no-referrer">
+<script src="frame-guard.js?v=20261017-1"></script>
 <script defer src="app-updates.js?v=20261015-evening-1"></script>
 <script src="session-handoff.js?v=20261015-1"></script>
 <script src="day-night-theme.js?v=20261012-1"></script>
@@ -15,7 +17,7 @@
 <link rel="stylesheet" href="first-discovery.css?v=20261015-evening-1">
 <script src="first-discovery-state.js?v=20261015-members-only-1"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="vendor/supabase-2.118.0.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
           <script>
 const SUPABASE_URL = "https://nxfqlutulxqzqgwewssd.supabase.co";
 
@@ -106,7 +108,7 @@ window.supabaseClient=supabaseClient;
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             
-            <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+            <script defer src="vendor/chart-4.4.1.min.js"></script>
             <link rel="stylesheet" href="portal-base-extracted.css?v=20261015-perf1">
 <link rel="stylesheet" href="friends-overflow-fix.css?v=20261015-fix1">
         <link rel="stylesheet" href="auth-dialogs.css?v=1">
@@ -2425,6 +2427,7 @@ function raporlarimKapat() {
 
         function kyCevapVer(secilenIndex) {
             let soru = kySorularListesi[kySoruIndex];
+            window.dmVerifiedGames?.record(soru,soru._secenekler[secilenIndex]);
             let dogruIdx = soru._dogruIndex;
             let gecenSaniyeSoru = Math.floor((Date.now() - kySoruBaslangicZamani) / 1000);
 
@@ -4235,6 +4238,7 @@ mesajlar.forEach(m => {
                     hafizaKilitli=true;
                     kart.acik=true;
                     const secilen=hafizaKartlar[hafizaSeciliAcik];
+                    window.dmVerifiedGames?.record(secilen.metin,kart.metin);
                     hafizaHamle++;
                     document.getElementById('hafizaHamleInfo').innerText='Hamle: '+hafizaHamle;
                     hafizaKartlariCiz();
@@ -4464,6 +4468,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                             clearInterval(yagmurInterval);
                             document.querySelectorAll('.yg-secenek-btn').forEach(b => b.disabled = true);
                             let ocKor = jokerKalkanTuket(); if (!ocKor) yagmurKombo = 0; OC.yanlis(ocKor); yagmurPuan = OC.puan();
+                            window.dmVerifiedGames?.record(yagmurHavuz[yagmurAktifIndex],null);
                             yagmurCan = Math.max(0, yagmurCan - 1);
                             document.getElementById('yagmurPuanInfo').innerText = `Puan: ${yagmurPuan}`;
                             yagmurAktifIndex++;
@@ -4473,6 +4478,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 }
 
                 function yagmurSecenekSec(secilenIndex, dogruIndex, btnEl) {
+                    window.dmVerifiedGames?.record(yagmurHavuz[yagmurAktifIndex],btnEl.textContent);
                     if (yagmurInterval) clearInterval(yagmurInterval);
                     document.querySelectorAll('.yg-secenek-btn').forEach(b => b.disabled = true);
                     let gecenSaniyeKelime = Math.floor((Date.now() - yagmurKelimeBaslangicZamani) / 1000);
@@ -4635,6 +4641,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     });
                 }
                 function asmacaHarfSec(harf, btn) {
+                    window.dmVerifiedGames?.record(asmacaKelimeler[asmacaAktifIndex],{letter:harf});
                     btn.classList.add('kullanildi');
                     if (asmacaAktifKelime.includes(harf)) {
                         asmacaTahminEdilenHarfler.push(harf);
@@ -4643,6 +4650,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                         let tamamMi = sadeceHarfler.every(ch => asmacaTahminEdilenHarfler.includes(ch));
                                if (tamamMi) {
                     let gecenSaniye = Math.floor((Date.now() - asmacaKelimeBaslangicZamani) / 1000);
+                                window.dmVerifiedGames?.record(asmacaKelimeler[asmacaAktifIndex],asmacaAktifKelime);
                                 OC.dogru(asmacaYanlisSayisi <= 2 ? 1 : 0.5); asmacaPuan = OC.puan();
                     if (asmacaYanlisSayisi === 0) asmacaKombo++; else asmacaKombo = 0;
                     asmacaDogruSayi++;
@@ -4658,6 +4666,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 if (asmacaYanlisSayisi >= 6) {
                     asmacaKombo = 0;
                     document.getElementById('asmacaIpucu').innerText = "Doğrusu: " + asmacaAktifKelime;
+                    window.dmVerifiedGames?.record(asmacaKelimeler[asmacaAktifIndex],null);
                     asmacaCan = Math.max(0, asmacaCan - 1); asmacaYanlisSayi++; OC.yanlis(false);
                             asmacaCanGoster();
                             asmacaPuan = OC.puan();
@@ -4767,6 +4776,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 function kelimebulTahminGonder() {
                     let tahmin = document.getElementById('kbTahminInput').value.trim().toUpperCase();
                     if (tahmin.length !== kelimebulHedef.length) { alert(`Lütfen ${kelimebulHedef.length} harfli bir kelime gir.`); return; }
+                    window.dmVerifiedGames?.record(kelimebulKelimeler[kelimebulAktifIndex],tahmin);
                     kelimebulDenemeSayisi++;
 
                     let satir = document.createElement('div');
@@ -8473,6 +8483,7 @@ setTimeout(() => {
 
         function jpCevapVer(secilenIndex) {
             if (!jpAktifSoru || !Number.isInteger(secilenIndex) || secilenIndex < 0 || secilenIndex > 3 || document.getElementById('jpSik' + secilenIndex).disabled) return;
+            window.dmVerifiedGames?.record(jpAktifSoru,document.getElementById('jpSik'+secilenIndex).textContent);
             let dogruIdx = jpAktifSoru._dogruIndex;
                     if (secilenIndex !== dogruIdx && jokerIkinciTuket()) {
                 let b = document.getElementById('jpSik' + secilenIndex);
@@ -8781,14 +8792,15 @@ setTimeout(() => {
                 const options=document.createElement('div');options.className='dm-letter-options';const note=document.createElement('small');note.setAttribute('role','status');let chosen=null;row.append(options,note);
                 function pick(slot){chosen=slot;word.querySelectorAll('button').forEach(b=>b.classList.toggle('selected',b===slot));options.replaceChildren();const correct=slot.dataset.answer;const letters=new Set([correct]);while(letters.size<5)letters.add('ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)]);for(const c of [...letters].sort(()=>Math.random()-.5)){const b=document.createElement('button');b.type='button';b.textContent=c;b.onclick=()=>{
                     if(!chosen||chosen.disabled)return;
+                    window.dmVerifiedGames?.record(w.en,{letter:c,index:Number(chosen.dataset.position)});
                     if(c!==chosen.dataset.answer){hadWrong=true;state.wrong++;OC.yanlis(false);chosen.textContent=c;chosen.classList.add('wrong');note.textContent='Yanlış harf. Geri alıp yeniden seçebilirsin.';window.dmAnswerFeedback?.(false);return;}
                     chosen.textContent=c;chosen.disabled=true;chosen.classList.remove('wrong','selected');chosen.classList.add('correct');remaining--;window.dmAnswerFeedback?.(true);note.textContent='✓ Doğru harf';
-                    const next=[...word.querySelectorAll('button')].find(x=>!x.disabled);if(next)pick(next);else{options.replaceChildren();completed++;state.results.push({kelime:w.en,turkce:w.tr,dogruMu:!hadWrong});OC.dogru(hadWrong?.5:1);state.combo++;row.classList.add('complete');
+                    const next=[...word.querySelectorAll('button')].find(x=>!x.disabled);if(next)pick(next);else{options.replaceChildren();completed++;state.results.push({kelime:w.en,turkce:w.tr,dogruMu:!hadWrong});window.dmVerifiedGames?.record(w.en,[...word.children].map(x=>x.textContent).join(''));OC.dogru(hadWrong?.5:1);state.combo++;row.classList.add('complete');
                        if(completed===batch.length&&!state.advancing){state.advancing=true;const turn=state.turn;setTimeout(()=>{if(boslukRound?.turn!==turn||document.getElementById('boslukOyunEkrani').style.display==='none')return;state.index+=batch.length;state.advancing=false;if(state.index<state.words.length)boslukTurCiz();else{window.boslukSonucDetaylari=state.results;window.boslukSonKombo=state.combo;boslukOyunuBitir(state.results.filter(x=>x.dogruMu).length,state.results.filter(x=>!x.dogruMu).length);}},650);}
                     }
                 };options.append(b);}const undo=document.createElement('button');undo.type='button';undo.textContent='↶ Geri al';undo.onclick=()=>{if(chosen&&!chosen.disabled){chosen.textContent='_';chosen.classList.remove('wrong');note.textContent='Bir harf seç.';}};options.append(undo);}
-                [...w.en].forEach((c,i)=>{const el=document.createElement(gaps.has(i)?'button':'span');el.textContent=gaps.has(i)?'_':c;if(gaps.has(i)){el.type='button';el.dataset.answer=c;el.setAttribute('aria-label',(i+1)+'. harfi seç');el.onclick=()=>pick(el);}word.append(el);});
-                if(!remaining){completed++;state.results.push({kelime:w.en,turkce:w.tr,dogruMu:true});OC.dogru(1);}else pick(word.querySelector('button'));
+                [...w.en].forEach((c,i)=>{const el=document.createElement(gaps.has(i)?'button':'span');el.textContent=gaps.has(i)?'_':c;if(gaps.has(i)){el.type='button';el.dataset.answer=c;el.dataset.position=i;el.setAttribute('aria-label',(i+1)+'. harfi seç');el.onclick=()=>pick(el);}word.append(el);});
+                if(!remaining){completed++;state.results.push({kelime:w.en,turkce:w.tr,dogruMu:true});window.dmVerifiedGames?.record(w.en,w.en);OC.dogru(1);}else pick(word.querySelector('button'));
                 box.append(row);
             }
             document.getElementById('boslukSayacInfo').textContent=state.index+' / '+state.words.length+' · Üç kelimelik tur';
@@ -11172,7 +11184,7 @@ function ozellikSecDoldur() {
 
             kpAktifSeviyeNo = seviyeNo;
             kpArkaArkayaDogru = 0;
-            kpSoruListesi = [...seviye.kelimeler];
+            kpSoruListesi = [...seviye.kelimeler];window.dmVerifiedGames?.deck('kp',kpSoruListesi);
 
             kpSoruIndex = 0; kpDogruSayisi = 0; kpYanlisSayisi = 0; kpToplamPuan = 0; kpKombo = 0;
             kpBaslangicZamani = Date.now(); kpGecenSaniye = 0; OC.basla('kp');
@@ -11253,6 +11265,7 @@ function ozellikSecDoldur() {
             document.getElementById('kpYazRow').classList.toggle('acik');
         }
         function kpSonrakineGec() {
+            window.dmVerifiedGames?.record(kpSoruListesi[kpSoruIndex],null);
             kpDinlemeyiDurdur();
             OC.yanlis(false); kpToplamPuan = OC.puan(); kpYanlisSayisi++;
             kpKombo = 0;
@@ -11324,6 +11337,7 @@ function ozellikSecDoldur() {
         }
 
         function kpCevapKontrolEt(soylenenMetin) {
+            window.dmVerifiedGames?.record(kpSoruListesi[kpSoruIndex],soylenenMetin);
             let adaylar = soylenenMetin.split('|').map(function(s){ return kpNormallestir(s); });
             let dogruCevap = kpNormallestir(kpAktifSoru.beklenenCevap);
             let altlar = kpEsAnlamMap[dogruCevap] || [];
@@ -12871,6 +12885,7 @@ const YO_SOHBET = [
           let v = inp.value.trim().toLowerCase();
           if (!v) { gb.style.color = '#e0434b'; gb.innerText = 'Önce duyduğun kelimeyi yaz.'; return; }
           let w = dkt.liste[dkt.i], dogru = String(w.ingilizce || w.en).trim().toLowerCase(), tamam = v === dogru;
+          window.dmVerifiedGames?.record(w,v);
           inp.disabled = true;
           if (tamam) {
             dkt.d++; OC.dogru(1); inp.style.borderColor = '#2f9e5a'; inp.style.background = '#dff6e7';
@@ -12927,6 +12942,7 @@ const YO_SOHBET = [
           let gb = document.getElementById('yoGB'), c = cml.liste[cml.i];
           if (cml.havuz.length) { gb.style.color = '#e0434b'; gb.innerText = 'Önce tüm kelimeleri yerleştir.'; return; }
           cml.kilit = true;
+          window.dmVerifiedGames?.record(c[0],cml.cevap.map(x=>x.w).join(' '));
           let dogru = cml.cevap.map(x => x.w).join(' ') === c[0];
           yoSoyle(c[0], 0.85);
           if (dogru) { cml.d++; OC.dogru(1); gb.style.color = '#2f9e5a'; gb.innerText = '✅ Mükemmel cümle!'; yoSes('dogru'); }
@@ -18283,7 +18299,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     if (window.jspdf) return Promise.resolve();
     return new Promise((ok, hata) => {
       let s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.src = 'vendor/jspdf-2.5.1.min.js';
       s.onload = ok; s.onerror = hata; document.head.appendChild(s);
     });
   }
@@ -19655,6 +19671,7 @@ function esSec(b, dil) {
   a.classList.remove('secili'); t.classList.remove('secili');
   let k = esKelime(a.dataset.id);
 
+  window.dmVerifiedGames?.record(k.en,t.textContent);
   if (a.dataset.id === t.dataset.id) {
     a.classList.add('tamam'); t.classList.add('tamam');
     esDogru++; esKalan--; esKombo++;
@@ -19962,6 +19979,7 @@ function trenIpucu() {
 function trenKontrol() {
   if (trenKilit || !trenCevap.length) return;
   let s = trenSoruD, verilen = trNorm(trenCevap.map(v => v.k).join(' '));
+  window.dmVerifiedGames?.record(s.en,trenCevap.map(v=>v.k).join(' '));
   let dogruMu = [s.en, ...(s.alt || [])].some(k => trNorm(k) === verilen);
 
   if (!dogruMu && typeof jk !== 'undefined' && jk && jk.ikinci) {          /* 🎯 İkinci Şans */
@@ -24554,13 +24572,14 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ================= 4) OYUN: 11 mini oyundan birer soru ================= */
   let O = null, zamanlayici = null;
   const checkpointKey=(no=O?.D?.no)=> 'dm_parkur_resume_v1:'+isim().toLowerCase()+':'+no;
-  function checkpointRead(no){try{const c=JSON.parse(localStorage.getItem(checkpointKey(no))||'null');return c?.version===1&&c.state?.D?.no===no&&c.state.owner===isim()?c:null;}catch{return null;}}
+  function checkpointRead(no){try{const c=JSON.parse(localStorage.getItem(checkpointKey(no))||'null');return c?.version===1&&c.state?.verifiedVersion===1&&c.state?.D?.no===no&&c.state.owner===isim()?c:null;}catch{return null;}}
   function checkpointSave(){if(!O||O.owner!==isim()||O.finished||sinifModu())return;try{const state=JSON.parse(JSON.stringify(O,(key,value)=>['jk','pendingAnswer'].includes(key)?undefined:value));state.elapsed=O.paused?O.pauseElapsed:Math.max(0,Date.now()-O.bas);const score=window.OC?.aktif;localStorage.setItem(checkpointKey(),JSON.stringify({version:1,state,score:score?.oyun==='ba'?score:null}));}catch(e){console.warn('[Parkur] ilerleme kaydı',e);}}
   function checkpointClear(){try{localStorage.removeItem(checkpointKey());}catch{}}
   window.addEventListener('pagehide',checkpointSave);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)checkpointSave();});
   document.addEventListener('input',e=>{if(!perde?.contains(e.target)||!O)return;O.inputDraft={question:O.i,id:e.target.id,value:e.target.value};checkpointSave();});
   async function parkurEnerjiAdim(runId, soru, dogru) {
+    if(dogru!==null)return window.dmVerifiedGames.flush(runId);
     const response=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'ekonomi',is:'parkurAdim',ogrenci:isim(),runId,soru,dogru})});
     const data=await response.json();
     if(!response.ok || !data.ok)throw new Error(data.mesaj||'Enerji işlemi onaylanmadı.');
@@ -24593,6 +24612,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const saved=checkpointRead(D.no);
     if(saved){O={...saved.state,tum,owner:ownerAtStart,pendingAnswer:null,jk:{},paused:false,bas:Date.now()-(saved.state.elapsed||0)};}
     if (window.OC){OC.basla('ba');if(saved?.score)Object.assign(OC.aktif,saved.score,{bas:O.bas,bitti:false});Object.assign(OC.aktif,{runId:O.runId,rewardScope:{classNo:D.sinif,units:[D.unite],stopNo:D.no}});}
+    if(!sinifModu()){
+      try{const verified=await window.dmVerifiedGames.start('ba',O.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no},active);O.verifiedVersion=1;const canonical=verified.words.map(w=>({en:w.en,tr:w.tr,sinif:D.sinif,unite:D.unite}));O.D.kelimeler=canonical;O.sorular.slice(0,12).forEach((task,i)=>{task.k=canonical[i%canonical.length];task.l=canonical.slice();});O.sorular[12].l=canonical.slice();O.sorular[4].matchItems=verified.slots[4].pairs;O.sorular[4].matchOrder=null;}catch(e){toast(e.message);O=null;return;}
+    }
     if(!saved&&!sinifModu()){
       try{await parkurEnerjiAdim(O.runId,1,null);O.harcanan++;}
       catch(e){toast('⚡ '+e.message);window.dmEnerjiPaketPaneli?.();O=null;return;}
@@ -24693,7 +24715,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       if(O._cevaplandi&&O.gecmis[O.i]){
         alan.innerHTML=O.gecmis[O.i].html;alan.querySelectorAll('button,input').forEach(x=>x.disabled=true);
         const next=document.createElement('button');next.className='bz-btn mor';next.textContent=O.i+1<O.sorular.length?'Devam →':'Sonucu gör';next.onclick=devamEt;alan.append(next);
-      }else{const state=O,index=O.i;const handled=window.DMRouteQuestions?.renderTask(s,alan,{en:EN,tr:TR,pool:O.tum,targetPool:O.D.kelimeler,shuffle:karistir,speak:oku,answer:cevap,feedback:good=>window.dmAnswerFeedback?.(good),current:()=>O===state&&O.i===index&&!O._cevaplandi&&alan.isConnected});if(!handled)renderers[s.tip](s,alan);if(O.inputDraft?.question===O.i){const input=alan.querySelector('#'+O.inputDraft.id);if(input)input.value=O.inputDraft.value;}}
+      }else{const state=O,index=O.i;const handled=window.DMRouteQuestions?.renderTask(s,alan,{en:EN,tr:TR,pool:O.tum,targetPool:O.D.kelimeler,shuffle:karistir,speak:oku,answer:cevap,record:actual=>window.dmVerifiedGames?.record(O.i,actual,O.runId),feedback:good=>window.dmAnswerFeedback?.(good),current:()=>O===state&&O.i===index&&!O._cevaplandi&&alan.isConnected});if(!handled)renderers[s.tip](s,alan);if(O.inputDraft?.question===O.i){const input=alan.querySelector('#'+O.inputDraft.id);if(input)input.value=O.inputDraft.value;}}
       if(!alan.textContent.trim())throw new Error('Soru içeriği boş');
       try { window.dmCalmQuestion?.(p); } catch(layoutError) { console.warn('[Parkur] görünüm',layoutError); }
       if(!alan.textContent.trim())throw new Error('Soru görünümü boşaltıldı');
@@ -24728,7 +24750,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     document.getElementById('bzEnerjiDurdu')?.remove();
     if(typeof window.genelEnerjiBittiGoster==='function')window.genelEnerjiBittiGoster();else window.dmEnerjiPaketPaneli?.();
   }
-  function cevap(iyi, dogruMetin) {
+  function cevap(iyi, dogruMetin,actual) {
+    if(O.i<12)window.dmVerifiedGames?.record(O.i,actual===undefined?O.verifiedAnswer:actual,O.runId);
     if (O._cevaplandi) return;
     if(iyi)window.DijiMeduPapiFeedback?.correct({detail:dogruMetin||'Doğru cevap!',duration:850}); O._cevaplandi = true;
     if (zamanlayici) { clearInterval(zamanlayici); zamanlayici = null; }
@@ -24779,7 +24802,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       let iyi = liste[+b.dataset.i] === dogru;
       alan.querySelectorAll('.bz-sec').forEach(x => { x.disabled = true; if (liste[+x.dataset.i] === dogru) x.classList.add('dogru'); });
       if (!iyi) b.classList.add('yanlis');
-      cevap(iyi, iyi ? '' : gosterilecek || dogru);
+      cevap(iyi, iyi ? '' : gosterilecek || dogru,liste[+b.dataset.i]);
     });
   }
   /* 🔬 Kelime Laboratuvarı: İngilizceyi dinle, 2 şıktan anlamı */
@@ -24860,8 +24883,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     items.forEach((k,i)=>{const btn=document.createElement('button');btn.className='dm-match-option';btn.textContent=EN(k);btn.dataset.key=String(i);btn.onclick=()=>{if(btn.disabled)return;L.querySelectorAll('button').forEach(b=>{b.classList.remove('selected');b.setAttribute('aria-pressed','false');});selected=i;btn.classList.add('selected');btn.setAttribute('aria-pressed','true');status.textContent='Türkçe anlamını seç.';saveMatch();};if(matchedKeys.includes(i)){btn.disabled=true;btn.classList.add('dm-right');}else if(selected===i)btn.classList.add('selected');L.append(btn);});
     shuffled.forEach(k=>{const index=items.indexOf(k),btn=document.createElement('button');btn.className='dm-match-option';btn.textContent=TR(k);btn.onclick=()=>{
       if(selected===null||btn.disabled)return;
-      if(selected===index){const left=L.querySelector('[data-key="'+index+'"]');left.disabled=true;left.classList.remove('selected');left.classList.add('dm-right');btn.disabled=true;btn.classList.add('dm-right');matchedKeys.push(index);selected=null;matched++;saveMatch();window.dmAnswerFeedback?.(true);status.textContent='🟢 Doğru eşleştirme!';if(matched===items.length)cevap(mistakes===0,mistakes?'':EN(target));}
-      else{window.dmAnswerFeedback?.(false);mistakes++;saveMatch();const left=L.querySelector('[data-key="'+selected+'"]');left?.classList.add('dm-wrong');btn.classList.add('dm-wrong');status.textContent='🔴 Eşleşmedi, tekrar dene.';setTimeout(()=>{btn.classList.remove('dm-wrong');left?.classList.remove('dm-wrong');},800);}
+      if(selected===index){const left=L.querySelector('[data-key="'+index+'"]');left.disabled=true;left.classList.remove('selected');left.classList.add('dm-right');btn.disabled=true;btn.classList.add('dm-right');matchedKeys.push(index);selected=null;matched++;saveMatch();window.dmAnswerFeedback?.(true);status.textContent='🟢 Doğru eşleştirme!';if(matched===items.length)cevap(mistakes===0,mistakes?'':EN(target),items.map(k=>({en:EN(k),tr:TR(k)})));}
+      else{window.dmVerifiedGames?.record(O.i,items.map((w,j)=>({en:EN(w),tr:j===selected?TR(k):TR(w)})),O.runId);window.dmAnswerFeedback?.(false);mistakes++;saveMatch();const left=L.querySelector('[data-key="'+selected+'"]');left?.classList.add('dm-wrong');btn.classList.add('dm-wrong');status.textContent='🔴 Eşleşmedi, tekrar dene.';setTimeout(()=>{btn.classList.remove('dm-wrong');left?.classList.remove('dm-wrong');},800);}
     };if(matchedKeys.includes(index)){btn.disabled=true;btn.classList.add('dm-right');}R.append(btn);});
   }
   function duydugunuBul(s,alan) {
@@ -24919,7 +24942,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         <button class="bz-btn mor" id="bzKontrol" style="margin-top:14px" ${gizli.every(i => dolu[i]) ? '' : 'disabled'}>Kontrol et</button>`;
       alan.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { let x = harfler[+b.dataset.h]; if (x.k) return; let bos = gizli.find(i => !dolu[i]); if (bos === undefined) return; dolu[bos] = x; x.k = true; ciz(); });
       alan.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { let i = +b.dataset.s; if (dolu[i]) { dolu[i].k = false; delete dolu[i]; ciz(); } });
-      $('bzKontrol').onclick = () => { let iyi = gizli.every(i => dolu[i].h === w[i]); alan.querySelectorAll('button').forEach(x => x.disabled = true); oku(w); cevap(iyi, iyi ? '' : w); };
+      $('bzKontrol').onclick = () => { let iyi = gizli.every(i => dolu[i].h === w[i]); alan.querySelectorAll('button').forEach(x => x.disabled = true); oku(w); cevap(iyi, iyi ? '' : w,[...w].map((ch,i)=>dolu[i]?.h||ch).join('')); };
     };
     ciz();
   }

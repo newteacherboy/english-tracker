@@ -1,5 +1,7 @@
 # DijiMedu güvenlik sertleştirmesi — 17 Ekim 2026
 
+> Tarihçe: İlk bölümler önceki güvenlik paketinin durumunu anlatır. Güncel cevap doğrulaması ve kalan altyapı sınırları aşağıdaki “doğrulanan oyun oturumları” bölümündedir.
+
 ## Tamamlanan doğrulamalar
 - Servis rolüne özel çalışan oyun ekonomisi RPC'leri ve RLS erişim kontrolleri denetlendi.
 - Anonim çağrılabildiği görülen SECURITY DEFINER veri-temizlik fonksiyonu artık sadece servis rolü tarafından çağrılabilir. Trigger helper'ların kamusal EXECUTE izni kaldırıldı.
@@ -34,3 +36,15 @@ Giriş ve ekonomi işlemlerinde 429, 503 yanıtları, Supabase Edge Function hat
 - MeduPro API de aynı 256 KiB gövde sınırını, sunucuya bağlı işlem bütçesini ve no-store başlıklarını kullanır. Bütçe anahtarları Diji API ile aynı olduğundan iki API arasında dönüşümlü çağrı limitleri aşmaz.
 - Mevcut sınırlama devam eder: klasik oyun ve Ana Parkur cevapları tam server-grade değildir. Bu paket sahte cüzdan kaydını ve miktar bazlı altın musluğunu kapatır; soru oturumlarının göçünü tamamlamaz. Yerel hesaplanan eski etkinlik/kombo ödülleri için ayrı doğrulanmış sunucu olayları gereklidir.
 - Doğrulama: güvenlik/haftalık ödül regresyonları; kod ayrıştırma; üretim veritabanı izin ve rate-limit rollback kontrolü. Genel progression testlerinde mevcut katalog eşitliği ve eski haftalık hedef kaynak beklentisi bu değişiklikten önce de başarısızdır.
+
+## 17 Ekim — doğrulanan oyun oturumları
+- Ana Parkur: word_bank durağından sunucunun derlediği sabit 12 mekanik. Kelime/kalıp ve eşleştirme çiftleri sunucudan gelir. İlk hatalar değiştirilemez; 12 doğrulanmış kayıt olmadan geçiş/ödül yok. Eski boolean parkurAdim çağrısı zorunlu geçişten sonra reddedilir.
+- 13 klasik oyun: etkin sınıf/ünite kelime havuzundan doğrulanan oturum destesi; gerçek seçilen cevap, yazılan metin, söylenen alternatifler, harf konumu veya eşleştirme kaydedilir. Gönderilen doğru/yanlış/süre/puan sayaçları ödül ve sıralamada kullanılmaz. Mevcut oyunların seçtiği kelime listesi sunucunun etkin kelime havuzuyla doğrulanır; klasik oyunların kelime seçimi algoritması tarayıcıda kalır.
+- Cevaplar öğrenci + run kimliğine bağlı; değiştirilmiş oyun/sınıf/ünite/durak, bitmiş soru, tekrar event ID ve süresi dolmuş oturum kontrol edilir. Ham cevap metni SQL defterinde saklanmaz; yalnız sonuçlar tutulur.
+- Diji ve MeduPro aynı ödül kapısını kullanır. Geçiş bayrağı yalnız servis rolüne açıktır; Pages doğrulandıktan sonra verified_games_required=true yapılır. Yerel ödül kuyruğu eski oturum için uygulama yenilemesini isteyebilir. Önceden tamamlanan duraklar, ödül makbuzları ve bakiyeler değiştirilmez.
+- Yeni şifreler: 8–64 karakter ve Pwned Passwords k-anonim aralık kontrolü; parola/tam hash dışarı gönderilmez. Kontrol hizmeti kullanılamıyorsa şifre yazımı yapılmaz. Mevcut parolalarla giriş etkilenmez. Parola sıfırlama bağlantısı güvenlik kontrolü tamamlanmadan tüketilmez. Supabase Auth'un Pro planındaki ayrı Advisor bayrağı bununla aynı şey değildir.
+- Tarayıcı Supabase 2.118.0, Chart 4.4.1 ve jsPDF 2.5.1 uygulamaya alındı. CSP script kaynakları self ile sınırlandı; yeni dış script kaynağı yok. Uygulama çerçeve içinde gizlenir; referrer kapalıdır. Legacy inline event handler'lar nedeniyle unsafe-inline halen gereklidir; bu paket tam XSS veya bot önleme garantisi vermez.
+- HTTP başlıkları: GitHub Pages özel başlık kabul etmiyor. DNS/CDN yönetim bağlantısı bulunmadığından sunucu başlıkları etkinleştirilemedi. deployment/security-headers.conf sonraki yönetim erişiminde uygulanacak somut yapılandırmadır; aktif olduğu iddia edilmez. HttpOnly cookie oturumu ve CDN/WAF katmanı ayrıca hosting mimarisi gerektirir.
+- Testler: 13 gerçek klasik oyun kontrolü, 12 gerçek Parkur mekaniği, 52 kritik Node regresyonu ve rollback SQL fixture. Üretim API smoke testleri ve yayın dosyası doğrulaması geçişte ayrıca yapılır.
+
+Geçiş notu: Eski zafer pozu zaten uygulamadan kaldırılmıştı. Poz regresyon beklentisi mevcut 9 pozla eşitlendi; yeni bir görünüm değişikliği yapılmadı. Eksik klasik turdaki sorulmayan kelimeler sunucuda başarısız kapsam olarak hesaba katılır; eksik deste tam tur ödülüne çevrilemez.

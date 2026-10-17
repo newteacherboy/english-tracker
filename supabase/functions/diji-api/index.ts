@@ -1,3 +1,5 @@
+import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
+import {verifiedGamesAPI} from './verified-games.mjs';
 import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
 import {DEMO_ID,DEMO_USER,isDemo,DEMO_BLOCKED,prepareDemo,publicParticipant} from './demo-account.ts';
 import { FEATURES } from './feature-catalog.ts';
@@ -23,7 +25,7 @@ import { contactPolicyAPI } from './contact-policy-api.ts';
 //       tarihi eklendi, kişisel bilgiler eklendi, çalışmayan kopya kodlar silindi.
 // =====================================================================
 import { releaseAPI } from './release-api.ts';
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.118.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,6 +37,7 @@ const corsHeaders = {
 const secretKeys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
 const adminKey = secretKeys.default;
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, adminKey);
+const verifiedGames=verifiedGamesAPI(supabase,json);
 const story = storyAPI(supabase,json);
 const meteor = meteorAPI(supabase,json);
 const wordWheel = wordWheelAPI(supabase,json);
@@ -53,7 +56,7 @@ const OGRETMEN_OTURUM_SAAT = 8;           // [YAMA 1] öğretmen oturumu 30 gün
 const GUNLUK_ALTIN_TAVAN = Number(Deno.env.get("GUNLUK_ALTIN_TAVAN") || 2000);       // öğrencinin bir günde kazanabileceği en fazla altın
 const GUNLUK_XP_TAVAN = Number(Deno.env.get("GUNLUK_XP_TAVAN") || 10000);            // bir günde kazanılabilecek en fazla lig XP'si
 const LIDERLIK_BONUS_GUNLUK = Number(Deno.env.get("LIDERLIK_BONUS_GUNLUK") || 3);    // liderlik bonusuyla günde en fazla kaç ders puanı
-const OGRENCI_SIFRE_MIN = 6;
+const OGRENCI_SIFRE_MIN = 8;
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -80,6 +83,7 @@ async function sha256(value: string) {
   return hex(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))));
 }
 async function hashPassword(password: string) {
+  await requireSafePassword(password);
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: 210000, hash: "SHA-256" }, key, 256);
@@ -428,6 +432,16 @@ async function leaderboardSave(op: string, body: any, a: any) {
   }
   /* [v5.0] Sadece gerçek bir öğrenci adına skor yazılır (öğretmen hesabı istediği adla tabloya satır ekleyemesin) */
   if (!s?.id) return bulunamadi();
+  if(a?.role==='student'){
+    const codes:any={kelime:'ky',jeopardy:'jp',konusma:'kp'};
+    const run=await supabase.from('dm_verified_runs').select('game,class_no,units,stop_no').eq('student_id',s.id).eq('run_id',String(body.runId||'')).maybeSingle();
+    if(run.error||!run.data||run.data.game!==(codes[key]||key)){if(await verifiedGames.required())return json({ok:false,message:'Doğrulanmış oyun oturumu gerekli.'},409);}
+    else{
+    const verified=await supabase.rpc('dm_verified_result',{actor:s.id,run_key:String(body.runId),game_code:run.data.game,cls:run.data.class_no,unit_ids:run.data.units,stop_id:run.data.stop_no});
+    if(verified.error)return json({ok:false,message:'Oyun sonucu doğrulanamadı.'},409);
+    body={...body,dogru:verified.data.correct,yanlis:verified.data.wrong,suresaniye:verified.data.seconds,puanTemel:verified.data.correct*100,puanSurum:3,sinif:String(run.data.class_no),unite:run.data.units.join(',')};
+    }
+  }
   const v3 = Number(body.puanSurum)===3;
   const scored=v3?scoreV3(body,body.suresaniye):null;
   if(v3&&!scored)return json({status:"error",message:"Geçersiz süre veya puan verisi."},400);
@@ -1308,6 +1322,7 @@ async function handle(req: Request) {
   const contactDeny=isDemo(a)?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
   const myWorldResult=await myWorld.handle(op,body,q,a);if(myWorldResult)return myWorldResult;
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
+  const verifiedResponse=await verifiedGames.handle(op,body,a,req.method);if(verifiedResponse)return verifiedResponse;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
   const progressionResult=await progression.handle(op,body,q,a);if(progressionResult)return progressionResult;
   const storyResult=await story.handle(op,body,a,req.method);if(storyResult)return storyResult;
@@ -1414,7 +1429,11 @@ async function handle(req: Request) {
     const hataVer = async (mesaj: string, kod = 400) => json({ ok: false, mesaj, ekonomi: ekonomiCevap((await yoOku(sid)).y) }, kod);
     if (is === "parkurAdim") {
       const run = String(body.runId || ""), step = Number(body.soru);
-      const correct = body.dogru === null || body.dogru === undefined ? null : body.dogru === true;
+      const needsVerified=await verifiedGames.required();
+      if(needsVerified&&body.dogru!==null&&body.dogru!==undefined)return hataVer('Cevaplar doğrulanan soru oturumundan kaydedilir.',409);
+      const verified=await supabase.from('dm_verified_runs').select('game').eq('student_id',sid).eq('run_id',run).maybeSingle();
+      if(needsVerified&&(verified.error||verified.data?.game!=='ba'))return hataVer('Doğrulanmış parkur oturumu gerekli.',409);
+      const correct=body.dogru===null||body.dogru===undefined?null:body.dogru===true;
       if (!/^[a-zA-Z0-9_-]{16,100}$/.test(run) || !Number.isInteger(step) || step<1 || step>12) return hataVer("Geçersiz soru isteği.");
       const {data,error} = await supabase.rpc("dm_parkur_question_step",{actor:sid,run_key:run,step_no:step,passed:correct});
       if(error)return hataVer(error.message,409);
@@ -2109,11 +2128,12 @@ async function handle(req: Request) {
     const gecersiz = () => json({ ok: false, mesaj: "Bağlantının süresi dolmuş ya da daha önce kullanılmış. Giriş ekranından yeni bağlantı iste." }, 400);
     const { data: r } = await supabase.from("dm_password_resets").select("id,student_id,expires_at,used_at").eq("token_hash", await sha256(token)).maybeSingle();
     if (!r || r.used_at || Date.parse(r.expires_at) <= Date.now()) { await denemeYaz("sifre_token", "genel"); return gecersiz(); }
+    const passwordHash=await hashPassword(yeni);
     const kullan = await supabase.from("dm_password_resets").update({ used_at: new Date().toISOString() }).eq("id", r.id).is("used_at", null).select("id");
     if (kullan.error || !kullan.data?.length) return gecersiz();
     const { data: s } = await supabase.from("students").select("id,username,email,status").eq("id", r.student_id).maybeSingle();
     if (!s || s.status !== "approved") return json({ ok: false, mesaj: "Hesap aktif değil. Öğretmeninle görüş." }, 403);
-    await supabase.from("students").update({ password_hash: await hashPassword(yeni), updated_at: new Date().toISOString() }).eq("id", s.id);
+    await supabase.from("students").update({ password_hash: passwordHash, updated_at: new Date().toISOString() }).eq("id", s.id);
     await supabase.from("portal_sessions").delete().eq("student_id", s.id);
     await audit(null, "sifreSifirla", s.username, {});
     if (epostaGecerli(s.email)) await kuyrugaEkle({ student_id: s.id, to_email: String(s.email).trim(), kind: "kayit", subject: `Şifre değiştirildi – ${s.username}`,
@@ -2819,7 +2839,7 @@ async function handle(req: Request) {
 
 Deno.serve(async (req) => {
   try { return await handle(req); }
-  catch (e) { console.error(e); return json({ status: "error", ok: false, mesaj: "Sunucu hatası, tekrar dene.", message: "Sunucu hatası" }, 500); }
+  catch (e) { if(e instanceof PasswordPolicyError)return json({ok:false,status:"error",mesaj:e.message,message:e.message},e.status);console.error(e); return json({ status: "error", ok: false, mesaj: "Sunucu hatası, tekrar dene.", message: "Sunucu hatası" }, 500); }
 });
 
 // ---- papi-cards-api.ts (tek dosya deploy için içe alındı)
