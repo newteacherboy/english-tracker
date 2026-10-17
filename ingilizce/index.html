@@ -144,6 +144,7 @@ html, body { touch-action: pan-x pan-y; }
 .dm-brand-type{display:inline-block;width:0;overflow:hidden;white-space:nowrap;border-right:3px solid #71f5d0;animation:dmBrandType 1.05s steps(9,end) .35s forwards,dmBrandCaret .7s step-end infinite}
 #dmBootText:empty{display:none!important}
 .dm-papi-loading p{font:500 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.13em;text-transform:uppercase;color:#a9c7c5;margin:8px 0 0;line-height:1.5}
+.dm-papi-loading .dm-loading-message{letter-spacing:normal;text-transform:none;font:700 15px/1.5 system-ui,sans-serif;color:#b5ffeb;text-align:center;margin:8px 0 0}
 .dm-papi-dots{display:flex;gap:7px;height:16px;align-items:center;margin-top:5px}.dm-papi-dots i{width:6px;height:6px;background:#71f5d0;border-radius:50%;animation:dmPapiDot 1.2s ease-in-out infinite}.dm-papi-dots i:nth-child(2){animation-delay:.15s}.dm-papi-dots i:nth-child(3){animation-delay:.3s}
 #dmBootRetry{border:1px solid #71f5d0;border-radius:12px;padding:12px 20px;font:700 14px system-ui;background:#0d4450;color:#f1fffb;margin-top:16px}
 @keyframes dmBrandType{to{width:9ch}}@keyframes dmBrandCaret{50%{border-color:transparent}}
@@ -199,7 +200,7 @@ html, body { touch-action: pan-x pan-y; }
 </style><link rel="stylesheet" href="harf-adasi.css?v=20261014-full-2">
 </head>
         <body>
-<div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="220" height="240" alt="Diji-Medu papağanı Papi"></div><div class="dm-brand-line" aria-label="Diji-Medu"><span class="dm-brand-prompt" aria-hidden="true">&gt;</span><span class="dm-brand-type" aria-hidden="true">Diji-Medu</span></div><p id="dmBootText"></p><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
+<div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="220" height="240" alt="Diji-Medu papağanı Papi"></div><div class="dm-brand-line" aria-label="Diji-Medu"><span class="dm-brand-prompt" aria-hidden="true">&gt;</span><span class="dm-brand-type" aria-hidden="true">Diji-Medu</span></div><p id="dmBootText"></p><p class="dm-loading-message">Yükleniyor, lütfen bekleyin</p></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
 <script>(function(){
 const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false,finishTimer=0;const splashStartedAt=Date.now(),minSplashMs=1650;
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
@@ -215,7 +216,7 @@ document.addEventListener('dm:login',check);timer=setInterval(check,150);
 const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
 document.getElementById('dmBootRetry').onclick=()=>location.reload();
 })();</script>
-                        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="220" height="240" alt="Diji-Medu papağanı Papi"></div><div class="dm-brand-line" aria-label="Diji-Medu"><span class="dm-brand-prompt" aria-hidden="true">&gt;</span><span class="dm-brand-type" aria-hidden="true">Diji-Medu</span></div><div class="dm-papi-dots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
+                        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img src="papi-welcome-v2.png" width="220" height="240" alt="Diji-Medu papağanı Papi"></div><div class="dm-brand-line" aria-label="Diji-Medu"><span class="dm-brand-prompt" aria-hidden="true">&gt;</span><span class="dm-brand-type" aria-hidden="true">Diji-Medu</span></div><p class="dm-loading-message">Yükleniyor, lütfen bekleyin</p></div></div>
             <a href="https://app.dijimedu.com" class="portal-back-btn">← Ana Portala Dön</a>
             <div class="pb-toast-overlay" id="pbToastOverlay">
                 <div class="pb-toast-card" id="pbToastCard">
@@ -24597,10 +24598,6 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const ownerAtStart=isim();
     if (!bolumAcik(b)) return toast(`🔒 Parkur ${[1,10,20,30][b]}. seviyede açılır.`);
     if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
-    if (!sinifModu()) {
-      let k = window.genelEnerjiKalan;
-      if (typeof k === 'number' && k < 1 && !checkpointRead(durakNo(b,d))) { if (typeof genelEnerjiBittiGoster === 'function') genelEnerjiBittiGoster(); return; }
-    }
     let { havuz, tekrar, tum, D } = durakHavuzu(b, d);
     if (!D.kelimeler.length) { toast('Bu durakta word_bank kelimeleri henüz bulunamadı.'); return; }
     // Telaffuz ve yazma doğrulaması yalnızca word_bank İngilizce alanına dayanır.
@@ -24620,7 +24617,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       try{const verified=await window.dmVerifiedGames.start('ba',O.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no},active);O.verifiedVersion=1;const canonical=verified.words.map(w=>({en:w.en,tr:w.tr,sinif:D.sinif,unite:D.unite}));O.D.kelimeler=canonical;O.sorular.slice(0,12).forEach((task,i)=>{task.k=canonical[i%canonical.length];task.l=canonical.slice();});O.sorular[12].l=canonical.slice();O.sorular[4].matchItems=verified.slots[4].pairs;O.sorular[4].matchOrder=null;}catch(e){toast(e.message);O=null;return;}
     }
     if(!saved&&!sinifModu()){
-      try{await parkurEnerjiAdim(O.runId,1,null);O.harcanan++;}
+      try{await parkurEnerjiAdim(O.runId,1,null);}
       catch(e){toast('⚡ '+e.message);window.dmEnerjiPaketPaneli?.();O=null;return;}
     }
     try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
@@ -24732,7 +24729,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     }
     p.scrollTop = 0;
   }
-  /* ---------- Macera Haritası: her normal soru 1 ⚡; final ücretsiz ---------- */
+  /* ---------- Öğretim ve ilk soru ücretsiz; sonraki sorular 1 ⚡ ---------- */
   async function devamEt() {
     const ilerle = () => { O.i++; O._cevaplandi = false; O._ikinci = false; O._pas = false;O.inputDraft=null;O.matchState=null;O.letterState=null; checkpointSave();soruCiz(); };
     if(O.pendingAnswer){
@@ -24742,11 +24739,11 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if(O._cevaplandi&&!O.answerRecorded&&!sinifModu()&&O.i<12){try{await parkurEnerjiAdim(O.runId,O.i+1,!!O.sonuclar[O.i]);O.answerRecorded=true;checkpointSave();}catch(e){toast('Cevap kaydedilemedi: '+e.message);return;}}
     const next=O.i+1;
     if(next>=O.sorular.length || sinifModu() || O.sorular[next].tip==='sesliFinal') return ilerle();
-    if(typeof window.genelEnerjiKalan==='number' && window.genelEnerjiKalan<1)
+    if(next!==1 && typeof window.genelEnerjiKalan==='number' && window.genelEnerjiKalan<1)
       return enerjiBitti(ilerle);
     try{await parkurEnerjiAdim(O.runId,next+1,null);}
     catch(e){toast('⚡ '+e.message);window.dmEnerjiPaketPaneli?.();return;}
-    O.harcanan++;
+    if(next!==1)O.harcanan++;
     ilerle();
   }
   function enerjiBitti() {
@@ -24781,7 +24778,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     g.innerHTML = (O._pas ? '🔄 Pas geçtin (doğru sayıldı)' : iyi ? ['✨ Büyü tuttu!', '✨ Harika!', '✨ Mükemmel!'][Math.floor(Math.random() * 3)] : '💨 Olmadı!') + (!iyi ? `<div style="font-size:13.5px;margin-top:4px">Doğru kelime: <b>${kac(english||dogruMetin||'')}</b><br>Türkçesi: <b>${kac(translated||'')}</b></div>` : dogruMetin ? `<div style="font-size:13.5px;margin-top:4px">${kac(dogruMetin)}</div>` : '');
     let alan = $('bzAlan'); alan.appendChild(g);
     O.gecmis[O.i] = { tip: O.sorular[O.i].tip, html: alan.innerHTML };
-    let kalanSoru = O.i + 1 < O.sorular.length, enerjiNotu = kalanSoru && !sinifModu() && O.sorular[O.i+1].tip!=='sesliFinal' ? ' · ⚡ −1' : '';
+    let kalanSoru = O.i + 1 < O.sorular.length, enerjiNotu = kalanSoru && O.i!==0 && !sinifModu() && O.sorular[O.i+1].tip!=='sesliFinal' ? ' · ⚡ −1' : '';
     if (!iyi && jkSay('ikinci') > 0 && !O._ikinci) {
       let ik = document.createElement('button'); ik.className = 'bz-btn'; ik.style.marginTop = '10px';
       ik.textContent = `🎯 İkinci şans kullan (${jkSay('ikinci')})`;
@@ -24791,6 +24788,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let dev = document.createElement('button'); dev.className = 'bz-btn mor'; dev.style.marginTop = '10px'; dev.textContent = kalanSoru ? 'Devam →' + enerjiNotu : '🏁 Sonucu gör';
     dev.onclick = devamEt;
     alan.appendChild(dev);
+    if(target.tip==='teach'&&iyi){
+      dev.textContent='🎉 Tebrikler! Sorulara geç →';
+      const state=O,index=O.i;let advancing=false;
+      dev.onclick=()=>{if(advancing||O!==state||O.i!==index||!dev.isConnected)return;advancing=true;dev.disabled=true;devamEt().finally(()=>{advancing=false;if(dev.isConnected)dev.disabled=false;});};
+      setTimeout(()=>{if(O===state&&O.i===index&&dev.isConnected)dev.click();},1000);
+    }
     checkpointSave();jokerBarCiz(); let gs = $('bzGeriSoru'); if (gs) gs.disabled = false;
     setTimeout(() => { dev.focus({preventScroll:true}); window.dmSelectedPlayFit?.(); }, 60);
   }
@@ -24912,7 +24915,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         alan.querySelectorAll('[data-final]').forEach(x=>{x.disabled=true;if(norm(options[+x.dataset.final])===norm(word.tr))x.classList.add('dogru');});
         if(!good){btn.classList.add('yanlis');window.dmWrongWords?.add({...word,source:'parkur-final'});}
         alan.querySelector('#bzCardStatus').textContent=good?'✅ Doğru!':'Doğrusu: '+word.en+' · Bu kelime tekrar listene eklendi.';
-        ses(good?'dogru':'yanlis');window.dmAnswerFeedback?.(good);oku(word.en);if(good){remaining.shift();O.voiceRemaining=remaining.slice();checkpointSave();}
+        ses(good?'dogru':'yanlis');window.dmAnswerFeedback?.(good);if(good){remaining.shift();O.voiceRemaining=remaining.slice();checkpointSave();}
         const next=document.createElement('button');next.className='bz-btn';next.textContent=!good?'Tekrar dene':remaining.length?'Sonraki kart →':'Kartları tamamla ✓';next.onclick=render;alan.append(next);
       });
     }render();
@@ -24941,12 +24944,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     O.jk.harf = () => { let bos = gizli.find(i => !dolu[i] || dolu[i].h !== w[i]); if (bos === undefined) return false; if (dolu[bos]) { dolu[bos].k = false; delete dolu[bos]; } let x = harfler.find(y => !y.k && y.h === w[bos]); if (!x) return false; dolu[bos] = x; x.k = true; ciz(); };
     const ciz = () => {
       alan.innerHTML = `<div class="bz-etiket">🇹🇷 Türkçesi</div><div class="bz-soru" style="font-size:20px">${kac(TR(s.k))}</div><div class="bz-ipucu">👉 Aşağıdaki harflere dokunarak İngilizce kelimedeki boşlukları doldur</div>
-        <div class="bz-slotlar" lang="en">${[...w].map((h, i) => gizli.includes(i) ? `<button class="bz-slot${dolu[i] ? ' dolu' : ''}" data-s="${i}" aria-label="boşluk">${dolu[i] ? dolu[i].h : ''}</button>` : `<span class="bz-slot sabit">${h}</span>`).join('')}</div>
+        <div class="bz-slotlar" lang="en">${[...w].map((h, i) => gizli.includes(i) ? `<button class="bz-slot${dolu[i] ? ' dolu dm-right' : ''}" data-s="${i}" aria-label="boşluk">${dolu[i] ? dolu[i].h : ''}</button>` : `<span class="bz-slot sabit">${h}</span>`).join('')}</div>
         <div class="bz-harfler" lang="en">${harfler.map((x, j) => `<button class="bz-cip2${x.k ? ' bos' : ''}" data-h="${j}">${x.h}</button>`).join('')}</div>
         <button class="bz-btn mor" id="bzKontrol" style="margin-top:14px" ${gizli.every(i => dolu[i]) ? '' : 'disabled'}>Kontrol et</button>`;
-      alan.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { let x = harfler[+b.dataset.h]; if (x.k) return; let bos = gizli.find(i => !dolu[i]); if (bos === undefined) return; dolu[bos] = x; x.k = true; ciz(); });
+      alan.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { let x = harfler[+b.dataset.h]; if (x.k) return; let bos = gizli.find(i => !dolu[i]); if (bos === undefined) return; if(x.h!==w[bos]){window.dmVerifiedGames?.record(O.i,[...w].map((ch,i)=>i===bos?x.h:dolu[i]?.h||ch).join(''),O.runId);b.classList.remove('dm-wrong');void b.offsetWidth;b.classList.add('dm-wrong');ses('yanlis');window.dmAnswerFeedback?.(false);try{navigator.vibrate?.(120);}catch{}setTimeout(()=>b.classList.remove('dm-wrong'),650);return;} dolu[bos] = x; x.k = true; ciz();if(window.dmLetterFeedback)window.dmLetterFeedback('letter');else ses('dogru'); });
       alan.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { let i = +b.dataset.s; if (dolu[i]) { dolu[i].k = false; delete dolu[i]; ciz(); } });
-      $('bzKontrol').onclick = () => { let iyi = gizli.every(i => dolu[i].h === w[i]); alan.querySelectorAll('button').forEach(x => x.disabled = true); oku(w); cevap(iyi, iyi ? '' : w,[...w].map((ch,i)=>dolu[i]?.h||ch).join('')); };
+      $('bzKontrol').onclick = () => { let iyi = gizli.every(i => dolu[i].h === w[i]); alan.querySelectorAll('button').forEach(x => x.disabled = true); cevap(iyi, iyi ? '' : w,[...w].map((ch,i)=>dolu[i]?.h||ch).join('')); };
     };
     ciz();
   }
@@ -26530,8 +26533,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="notice-sharing.css?v=20261013-achievement-3">
 <script src="notice-sharing.js?v=20261015-evening-1"></script>
 <link rel="stylesheet" href="papi-wallet.css?v=20261013-compact-127">
-<link rel="stylesheet" href="route-questions.css?v=20261014-approved-1">
-<script defer src="route-questions.js?v=20261014-matching-variety-1"></script>
+<link rel="stylesheet" href="route-questions.css?v=20261018-feedback-2">
+<script defer src="route-questions.js?v=20261018-feedback-2"></script>
 <script defer src="harf-adasi.js?v=20261014-full-2"></script>
 <link rel="stylesheet" href="account-switch.css?v=20261015-member-fixes-2">
 <script defer src="saved-sessions.js?v=20261015-reliable-2"></script>

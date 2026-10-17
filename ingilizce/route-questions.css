@@ -72,3 +72,11 @@ body #bzPerde#bzPerde.rq-approved #bzAlan[style*="display:none"],body #bzPerde#b
 
 /* Keep the server-backed energy refill window above the full-screen route. */
 .sa-perde[aria-label="Enerji paketleri"]{z-index:100000060!important}
+/* Keep interaction states above the inherited game and forest skins. */
+@layer route-interactions {
+ body #bzPerde.rq-approved #bzAlan .dm-match-option.selected{background:#d9f4ff!important;border:3px solid #087fbd!important;color:#06466f!important;box-shadow:0 0 0 3px #8bdfff!important;opacity:1!important}
+ body #bzPerde.rq-approved #bzAlan :is(.dm-match-option.dm-right,.bz-slot.dm-right,.dm-parkur-letter.dm-right){background:#d9ffd2!important;border:2px solid #25a93c!important;color:#096b24!important;box-shadow:none!important;opacity:1!important}
+ body #bzPerde.rq-approved #bzAlan :is(.dm-match-option.dm-wrong,.bz-cip2.dm-wrong,.dm-parkur-letter.dm-wrong){background:#ffe1de!important;border:2px solid #d94036!important;color:#a62d28!important;opacity:1!important;animation:rq-letter-shake .35s ease-in-out!important}
+ @media(prefers-reduced-motion:reduce){body #bzPerde.rq-approved #bzAlan .dm-wrong{animation:none!important}}
+}
+@keyframes rq-letter-shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-5px)}50%{transform:translateX(5px)}}

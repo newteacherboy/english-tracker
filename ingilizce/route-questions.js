@@ -31,7 +31,7 @@ function choices(word,pool,read,shuffle,count=3){return shuffle([read(word),...s
 function sentence(word,pool,read){const target=norm(read(word));return pool.find(x=>norm(read(x)).split(' ').length>1&&(' '+norm(read(x))+' ').includes(' '+target+' '))||word;}
 function renderTask(s,area,c){
  area._rqSpeakEnglish=c.speak;
- if(['hatirla','miniDiyalog','cumleTamamla','eslestir'].includes(s.tip))area.addEventListener('click',event=>{const b=event.target.closest?.('.bz-sec,.dm-match-option');if(!b||!c.current())return;const value=b.textContent.trim();if(c.pool.some(w=>norm(c.en(w))===norm(value)))c.speak(value);},true);
+ if(s.tip==='eslestir')area.addEventListener('click',event=>{const b=event.target.closest?.('#bzMatchEn .dm-match-option');if(b&&!b.disabled&&c.current())c.speak(b.textContent.trim());},true);
  area.dataset.rqKind=s.tip;if(s.k){area.dataset.rqEn=c.en(s.k);area.dataset.rqTr=c.tr(s.k);}
  if(s.tip==='eksik'&&c.en(s.k).length>20)return renderTask({...s,tip:'patternComplete'},area,c);
  if(!['teach','soyle','dinleSec','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'].includes(s.tip))return false;
@@ -39,7 +39,7 @@ function renderTask(s,area,c){
  const put=html=>{const progress=area.querySelector('.rq-progress');area.innerHTML='<div class="bz-etiket" data-rq-title="1">'+titles[s.tip]+'</div>'+html;if(progress)area.prepend(progress)};
  const button=(label,fn,cls='bz-btn')=>{const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.onclick=()=>{if(current())fn(b)};return b;};
  const audio=value=>{const b=button('Tekrar dinle',()=>speak(value),'bz-ses rq-listen');b.innerHTML='<span aria-hidden="true" class="rq-speaker-disc"></span><small>Tekrar dinle</small>';b.setAttribute('aria-label','Tekrar dinle');return b;};
- const select=(values,expected)=>{const box=document.createElement('div');box.className='bz-secenekler';for(const value of values){const b=button(value,()=>{const good=norm(value)===norm(expected);box.querySelectorAll('button').forEach(x=>{x.disabled=true;if(norm(x.textContent)===norm(expected))x.classList.add('dogru')});if(!good)b.classList.add('yanlis');speak(s.tip==='patternComplete'?area.querySelector('.bz-soru').textContent.replace(/_{2,}/g,value):value);answer(good,expected,value)},'bz-sec');box.append(b)}area.append(box)};
+ const select=(values,expected)=>{const box=document.createElement('div');box.className='bz-secenekler';for(const value of values){const b=button(value,()=>{const good=norm(value)===norm(expected);box.querySelectorAll('button').forEach(x=>{x.disabled=true;if(norm(x.textContent)===norm(expected))x.classList.add('dogru')});if(!good)b.classList.add('yanlis');if(s.tip==='patternComplete')speak(area.querySelector('.bz-soru').textContent.replace(/_{2,}/g,value));answer(good,expected,value)},'bz-sec');box.append(b)}area.append(box)};
  if(s.tip==='teach'){
   const words=s.l||[s.k];let i=0;
   // Preserve legacy renderer in older game fixtures; new cards are school-route only.
@@ -52,7 +52,7 @@ function renderTask(s,area,c){
    '<button type="button" class="dm-school-word" data-rq-word="'+n+'" aria-label="'+esc(en(word))+' - '+esc(tr(word))+', dinle"><span><strong lang="en">'+esc(en(word))+'</strong><small>'+esc(tr(word))+'</small></span><span class="dm-school-word-listen">🔊 Dinle</span></button>').join('')+'</div>');
   area.querySelectorAll('[data-rq-word]').forEach(b=>b.onclick=()=>{if(current())speak(en(words[Number(b.dataset.rqWord)]));});
   let submitted=false;
-  const go=button('Sorulara geç →',()=>{if(submitted)return;submitted=true;go.disabled=true;answer(true,'Kelimeleri öğrendin',true);},'bz-btn mor dm-school-start-questions');
+  const go=button('Sorulara geç →',()=>{if(submitted)return;submitted=true;go.remove();area.querySelector('.dm-school-words')?.remove();answer(true,'Kelimeleri öğrendin',true);},'bz-btn mor dm-school-start-questions');
   area.append(go);
   return true
  }
@@ -82,7 +82,7 @@ function renderTask(s,area,c){
  put('<div class="bz-soru">'+esc(translation)+'</div>');select(choices(phrase,pool,en,shuffle),full);return true;
 }
 let watchedRoot=null,layoutObserver=null,layoutFrame=0;
-function fitRoute(){layoutFrame=0;const r=watchedRoot;if(!r?.isConnected)return;const area=r.querySelector('.ds-task')||r.querySelector('#bzAlan');if(!area)return;if(r.id==='bzPerde')area.querySelectorAll('.bz-btn').forEach(b=>{if(b.textContent.startsWith('Devam →'))b.textContent=b.textContent.replace('Devam →','Devam et →')});const feedback=r.querySelector('.bz-geri-bildirim')||r.querySelector('.ds-feedback.correct');const card=area.querySelector('.dm-final-current strong')?.textContent.trim();if(card&&area.dataset.rqSpokenCard!==card){area.dataset.rqSpokenCard=card;area._rqSpeakEnglish?.(card);}if(feedback&&area.dataset.rqEn&&area.dataset.rqKind!=='teach'&&!feedback.dataset.rqSpoken){feedback.dataset.rqSpoken='1';area._rqSpeakEnglish?.(area.dataset.rqEn);}if(feedback&&area.dataset.rqEn&&area.dataset.rqTr&&area.dataset.rqKind!=='teach'){const text=(feedback.classList.contains('kotu')?'✕ Doğru cevap: ':'✓ Doğru! ')+area.dataset.rqEn+' = '+area.dataset.rqTr;if(feedback.textContent!==text)feedback.textContent=text;}offerEnergyAfterAnswer(r,area);r.classList.remove('rq-compact','rq-tight');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-compact');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-tight');}
+function fitRoute(){layoutFrame=0;const r=watchedRoot;if(!r?.isConnected)return;const area=r.querySelector('.ds-task')||r.querySelector('#bzAlan');if(!area)return;if(r.id==='bzPerde')area.querySelectorAll('.bz-btn').forEach(b=>{if(b.textContent.startsWith('Devam →'))b.textContent=b.textContent.replace('Devam →','Devam et →')});const feedback=r.querySelector('.bz-geri-bildirim')||r.querySelector('.ds-feedback.correct');const card=area.querySelector('.dm-final-current strong')?.textContent.trim();if(card&&area.dataset.rqSpokenCard!==card){area.dataset.rqSpokenCard=card;area._rqSpeakEnglish?.(card);}if(feedback&&area.dataset.rqEn&&area.dataset.rqTr&&area.dataset.rqKind!=='teach'){const text=(feedback.classList.contains('kotu')?'✕ Doğru cevap: ':'✓ Doğru! ')+area.dataset.rqEn+' = '+area.dataset.rqTr;if(feedback.textContent!==text)feedback.textContent=text;}offerEnergyAfterAnswer(r,area);r.classList.remove('rq-compact','rq-tight');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-compact');if(area.scrollHeight>area.clientHeight+2)r.classList.add('rq-tight');}
 
 /* Route-only energy refill: keep the answered question in place until the
    server confirms a purchase. The existing economy API remains authoritative. */
