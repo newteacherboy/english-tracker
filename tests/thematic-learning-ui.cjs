@@ -1,5 +1,6 @@
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 const DATA=require('../ingilizce/thematic-curriculum.json'),CORE=require('../ingilizce/learning-core.js');
+const ROSTER=['lumo','tiko','mimo','pofin','ziri','kori','fora','bumbi','nori','vela'];
 
 async function assertFits(page,label){
  await page.waitForFunction(()=>{const root=document.querySelector('#dmStoryLesson'),stage=root?.querySelector('.ml-stage'),board=root?.querySelector('.ml-board');if(!stage||!board)return false;const a=stage.getBoundingClientRect(),b=board.getBoundingClientRect();return a.bottom<=b.bottom+2;});
@@ -26,7 +27,7 @@ await p.getByRole('button',{name:'🔊 Cümleyi dinle',exact:true}).click();
 await p.getByRole('button',{name:'🔊 Türkçe anlamını dinle',exact:true}).click();
 assert.deepEqual(await p.evaluate(()=>window.spoken),[{text:task.prompt.replace('____',task.answer),lang:'en-US'},{text:task.promptAudio,lang:'tr-TR'}]);
 }
-if(i===1&&height>520){const b=await p.locator('.ml-board').boundingBox(),h=await p.locator('.ml-arena-hero').boundingBox();assert(h.y-b.y<80,'Prompt must start near top');assert(h.height>=85,'Mascot must have room');}assert.equal(await p.locator('.ml-arena-papi').count(),1);assert(await p.locator('.ml-arena-papi').evaluate(img=>img.complete&&img.naturalWidth>0));
+if(i===1&&height>520){const b=await p.locator('.ml-board').boundingBox(),h=await p.locator('.ml-arena-hero').boundingBox();assert(h.y-b.y<80,'Prompt must start near top');assert(h.height>=85,'Mascot must have room');}assert.equal(await p.locator('.ml-arena-papi').count(),1);assert(await p.locator('.ml-arena-papi').evaluate(img=>img.complete&&img.naturalWidth>0));assert.equal(await p.locator('.ml-arena-papi').getAttribute('data-ml-character'),ROSTER[(i-1)%10],'Question '+i+' mascot must follow the approved order');assert.ok((await p.locator('.ml-arena-papi').getAttribute('src')).endsWith('/'+ROSTER[(i-1)%10]+'.webp'),'Question mascot image must load without Papi fallback');
 if([2,4,6,7,10,11].includes(i))await p.screenshot({animations:'disabled',path:path.join(out,'question-'+i+'-'+width+'.png')});
 assert.equal(await p.locator('.ml-wallet-chip').count(),3);await assertFits(p,'question '+i+' at '+width);
 if(task.kind==='letters'){
