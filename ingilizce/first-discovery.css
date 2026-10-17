@@ -118,3 +118,11 @@ body.dm-profile-open #tab-profil #dmForestActions .header-btn{font-size:clamp(10
 @media(max-width:360px){#dmDiscovery .fd-top{gap:7px}#dmDiscovery .fd-top .fd-header-login{font-size:12px;padding:7px 9px}}
 
 .fd-mini-intro .fd-content,.fd-mini-result .fd-content{text-align:center;align-content:center}.fd-mini-label{display:block;color:#087f86;letter-spacing:1.5px;font-size:11px;font-weight:900;margin:12px 0}.fd-mini-papi{width:min(44vw,210px)!important;max-height:28dvh!important;object-fit:contain}.fd-mini-score{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:14px auto;padding:12px 28px;background:#e3f7ee;color:#076857;border:2px solid #88dabc;border-radius:24px;width:max-content}.fd-mini-score strong{font-size:48px;line-height:1}.fd-mini-score span{font-size:18px;font-weight:800}.fd-mini-celebrate{animation:fdMiniPapi 1.6s ease-in-out infinite}.fd-skip-signup{border:0;border-radius:12px;background:#07838c;color:white;padding:9px 12px;min-height:42px;font:800 13px system-ui;white-space:nowrap;cursor:pointer}.fd-question .fd-progress{min-width:22px;flex:1}.fd-question .fd-top{gap:6px}.fd-question .fd-header-login{font-size:11px;padding:6px}.fd-question .fd-step{white-space:nowrap}@keyframes fdMiniPapi{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-9px) rotate(3deg)}}@media(prefers-reduced-motion:reduce){.fd-mini-celebrate{animation:none}}
+
+/* Readable registration help across small phones and large screens */
+#dmDiscovery label.fd-field{font-size:clamp(15px,3.7vw,17px);font-weight:750}
+#dmDiscovery .fd-note,#dmDiscovery .fd-private,#dmDiscovery .fd-optional{font-size:clamp(14px,3.3vw,16px);line-height:1.5}
+#dmDiscovery .fd-choice small,#dmDiscovery .fd-card small{font-size:clamp(14px,3.2vw,16px);line-height:1.45}
+#dmDiscovery .fd-step,#dmDiscovery .fd-link{font-size:14px}
+#dmDiscovery .fd-password-rules{font-size:clamp(14px,3.4vw,16px);line-height:1.55;text-align:left;background:#f0f9ff;color:#173c57;border:1px solid #b7d9eb;border-radius:13px;padding:11px 13px;margin:5px 0 12px}
+#dmDiscovery .fd-password-rules b{color:#116378}

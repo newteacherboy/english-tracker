@@ -88,6 +88,11 @@
       <div class="kb-grup"><h4>Veli iletişim</h4>
         <div class="kb-alan"><label for="kbTel">Veli telefonu</label><input id="kbTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05XX XXX XX XX"></div>
         <div class="kb-alan"><label for="kbMail">Veli e-postası</label><input id="kbMail" type="email" inputmode="email" autocomplete="email"></div>
+        <div class="kb-email-help" style="margin:8px 0 14px;padding:12px;border:2px solid #bce6d1;border-radius:14px;background:#ecfff5">
+          <strong style="color:#135d4f;font-size:15px">✉ E-posta doğrulama yardımı</strong>
+          <p style="margin:6px 0 10px;font-size:14px;color:#245568;line-height:1.5">Gmail, Outlook ve diğer e-posta uygulamalarında doğrulama mesajını bulmayı görsellerle öğren.</p>
+          <button id="kbEmailGuideButton" type="button" style="width:100%;min-height:45px;border:0;border-radius:12px;background:#0d957f;color:white;font-size:15px;font-weight:800">📖 Görselli rehberi aç</button>
+        </div>
         <div class="kb-ipucu">Telefon ve e-posta silinemez, sadece değiştirilebilir. Raporlar ve şifre yenileme bunlarla yapılır.</div>
       </div>
       <div class="kb-grup kb-sifre" id="kbSifreGrup">
@@ -128,6 +133,7 @@
     }
     $("kbTel").addEventListener("input", sifreGoster);
     $("kbMail").addEventListener("input", sifreGoster);
+    $("kbEmailGuideButton")?.addEventListener("click",()=>window.dmEmailGuide?.open("profile"));
     doldur(d);
 
     const mesaj = (t, tur) => { const m = $("kbMesaj"); m.textContent = t || ""; m.className = "kb-mesaj" + (tur ? " " + tur : ""); };
