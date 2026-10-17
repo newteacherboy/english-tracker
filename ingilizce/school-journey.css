@@ -1,0 +1,94 @@
+/* School adventure: Learning Path's layout grammar, different warm day and indigo-night palettes. */
+.rt-root.rt-school,
+.rt-school-modal{--school-ink:#353257;--school-muted:#665f83;--school-rose:#f56682;--school-orange:#f7a24d;--school-violet:#7662c7;--school-paper:#fffefa;--school-soft:#fff0e6;--school-line:#f3d0cf;color:var(--school-ink)}
+.rt-root.rt-school[data-school-appearance="night"],
+.rt-school-modal[data-school-appearance="night"]{--school-ink:#f4edff;--school-muted:#d1c5e8;--school-rose:#ff9cac;--school-orange:#ffd38e;--school-violet:#b5a4ff;--school-paper:#26243e;--school-soft:#3c3054;--school-line:#685676}
+.rt-school-journey{box-sizing:border-box;margin:10px auto 15px;max-width:880px;display:grid;gap:11px;font-family:Nunito,system-ui,sans-serif}
+.rt-school-journey-cover{position:relative;overflow:hidden;background:radial-gradient(circle at 90% 8%,#ffeac6 0%,transparent 40%),linear-gradient(130deg,#fff0e7,#fce8f0 75%,#efebff);border:2px solid #fbc8c8;border-radius:26px;padding:17px 17px 13px;box-shadow:0 6px 0 #e8ceda66;color:#452e5a}
+.rt-school-eyebrow{font-size:10px;letter-spacing:2.3px;font-weight:1000;color:#ac476e}
+.rt-school-cover-title{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:94px}
+.rt-school-cover-title>div{min-width:0}
+.rt-school-cover-title h2{font:900 clamp(22px,5.5vw,31px)/1.1 Fredoka,Nunito,sans-serif;margin:4px 0 7px;color:#552f72}
+.rt-school-cover-title p{font-size:12px;font-weight:750;line-height:1.4;margin:0;color:#76617c}
+.rt-school-main-mascot{height:115px;width:min(35%,140px);object-fit:contain;filter:drop-shadow(0 7px 7px #d6717240);animation:rt-school-bob 4.2s ease-in-out infinite;flex-shrink:0}
+.rt-school-cover-actions{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.rt-school-cover-actions button,.rt-school-overview-actions button{border:0;border-radius:15px;padding:10px 12px;cursor:pointer;font:950 12px Nunito,system-ui,sans-serif;min-height:41px}
+.rt-school-cover-actions [data-school-open]{flex:1;background:linear-gradient(110deg,#ff795f,#f05291);color:white;box-shadow:0 3px 0 #cf4363;display:flex;justify-content:space-between;align-items:center}
+.rt-school-cover-actions [data-school-theme],.rt-school-overview-actions button{background:#fff8f6;color:#805391;border:1px solid #efd0e7}
+.rt-school-current-unit{min-width:0;border:1px solid #f1cbbf;border-radius:21px;padding:12px;display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:8px;align-items:center;background:linear-gradient(110deg,#fff7eb,#fffdfb);color:#513358}
+.rt-school-unit-mascot{height:75px;width:73px;object-fit:contain}
+.rt-school-current-unit small{font:950 10px Nunito,sans-serif;color:#ac5780;letter-spacing:1px}
+.rt-school-current-unit h3{font:900 clamp(17px,4vw,21px) Fredoka,Nunito,sans-serif;margin:4px 0;color:#4d3765}
+.rt-school-current-unit p{font-size:11px;line-height:1.4;font-weight:800;margin:0;color:#796c81}
+.rt-school-unit-status{border-radius:12px;background:#ffe8c4;color:#926017;padding:9px;white-space:nowrap;font-weight:1000}
+.rt-school-mini-grades{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.rt-school-mini-grades button{display:grid;justify-items:center;gap:2px;min-width:0;padding:8px 3px 7px;border-radius:16px;border:1px solid #edd8d4;background:#fff9f4;color:#57426a;font:900 10px Nunito,system-ui,sans-serif;cursor:pointer}
+.rt-school-mini-grades button[aria-current="true"]{border-color:#ec869a;background:#fff1f3;box-shadow:0 0 0 2px #f7a9b080}
+.rt-school-mini-grades button>span{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:linear-gradient(130deg,#ffebcd,#f8d4e6)}
+.rt-school-mini-grades .rt-school-small-mascot{width:41px;height:41px;object-fit:contain}
+.rt-school-mini-grades small{color:#986586;font-size:9px;font-weight:850}
+.rt-school-modal{background:#291b4da8;backdrop-filter:blur(8px);font-family:Nunito,system-ui,sans-serif}
+#mlThemeList.rt-school-modal .ml-theme-panel{background:var(--school-paper);color:var(--school-ink);border:2px solid var(--school-line);max-width:880px}
+#mlThemeList.rt-school-modal .ml-theme-cover{min-height:148px;background:radial-gradient(circle at 80% 30%,#ffe4ca80,transparent 42%),linear-gradient(120deg,#fff0e7,#fbe7f1);border-radius:24px;padding:14px 54px 14px 15px}
+#mlThemeList.rt-school-modal .ml-theme-cover-copy{flex:1;min-width:0}
+#mlThemeList.rt-school-modal .ml-theme-cover-copy>small{color:#a75f87}
+#mlThemeList.rt-school-modal .ml-theme-cover h2{color:#513269!important;-webkit-text-fill-color:#513269!important}
+#mlThemeList.rt-school-modal .ml-theme-cover p{color:#765c76}
+#mlThemeList.rt-school-modal .rt-school-cover-mascot{width:110px;height:118px;object-fit:contain;filter:drop-shadow(0 5px 10px #71406b3b)}
+#mlThemeList.rt-school-modal [data-school-close]{position:absolute;top:7px;right:8px;z-index:5;width:43px;height:43px;border-radius:50%;border:none;background:#fff8f5;color:#674877;font-size:27px}
+#mlThemeList.rt-school-modal .ml-summary-card{background:var(--school-soft);color:var(--school-ink)}
+#mlThemeList.rt-school-modal .ml-summary-ring{background:conic-gradient(var(--school-rose) var(--ml-done),#eed3d7 0)}
+#mlThemeList.rt-school-modal .ml-summary-ring>div{background:var(--school-paper);color:var(--school-ink)}
+#mlThemeList.rt-school-modal .ml-summary-info>strong,
+#mlThemeList.rt-school-modal .ml-theme-list-heading{color:var(--school-ink)}
+#mlThemeList.rt-school-modal .ml-summary-info p,
+#mlThemeList.rt-school-modal .ml-summary-info>small{color:var(--school-muted)}
+#mlThemeList.rt-school-modal .ml-summary-track>span,
+#mlThemeList.rt-school-modal .ml-theme-track>span{background:linear-gradient(90deg,var(--school-orange),var(--school-rose))}
+#mlThemeList.rt-school-modal .rt-school-overview-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 2px}
+#mlThemeList.rt-school-modal .rt-school-overview-actions span{font-size:11px;color:var(--school-muted);font-weight:800}
+#mlThemeList.rt-school-modal .ml-theme{border-color:var(--school-line);background:var(--school-paper);color:var(--school-ink)}
+#mlThemeList.rt-school-modal .ml-theme-current{border-color:var(--school-rose);box-shadow:0 5px 20px #ed809425}
+#mlThemeList.rt-school-modal .ml-theme-info>strong{color:var(--school-ink)}
+#mlThemeList.rt-school-modal .ml-theme-info>small,
+#mlThemeList.rt-school-modal .ml-topic-heading small{color:var(--school-muted)}
+#mlThemeList.rt-school-modal .rt-school-grade-icon{display:grid;place-items:center;flex:0 0 58px;width:58px;height:58px;border-radius:16px;background:linear-gradient(140deg,#ffeacb,#fce1f3)}
+#mlThemeList.rt-school-modal .rt-school-grade-icon img{object-fit:contain;width:56px;height:56px}
+#mlThemeList.rt-school-modal .ml-theme-state{background:var(--school-soft);color:var(--school-rose)}
+#mlThemeList.rt-school-modal .ml-theme-chevron{color:var(--school-rose)}
+#mlThemeList.rt-school-modal .ml-theme-body{background:var(--school-paper);color:var(--school-ink)}
+#mlThemeList.rt-school-modal .ml-topic-heading strong{color:var(--school-ink)}
+#mlThemeList.rt-school-modal .ml-topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#mlThemeList.rt-school-modal .ml-topic-card{background:var(--school-soft);color:var(--school-ink);border:1px solid var(--school-line)}
+#mlThemeList.rt-school-modal .ml-topic-copy h3{color:var(--school-ink)}
+#mlThemeList.rt-school-modal .ml-topic-copy p{color:var(--school-muted)}
+#mlThemeList.rt-school-modal .rt-school-unit-icon{display:grid;place-items:center;flex:0 0 58px;width:58px;height:58px;border-radius:17px;background:linear-gradient(135deg,#fff5d9,#ffdee8)}
+#mlThemeList.rt-school-modal .rt-school-unit-icon img{width:56px;height:56px;object-fit:contain}
+#mlThemeList.rt-school-modal .ml-topic-status{color:var(--school-violet);background:var(--school-paper)}
+#mlThemeList.rt-school-modal .ml-topic-step{background:var(--school-paper);color:var(--school-ink);border-color:var(--school-line)}
+#mlThemeList.rt-school-modal .ml-topic-step.is-done{background:#d8f5e6;color:#27574a;border-color:#92d3bb}
+#mlThemeList.rt-school-modal .ml-topic-step.locked{opacity:.67}
+#mlThemeList.rt-school-modal .rt-school-unavailable{font-size:12px;font-weight:800;color:var(--school-muted);padding:13px}
+#mlThemeList.rt-school-modal :is(button,summary):focus-visible,
+.rt-school-journey :is(button):focus-visible{outline:3px solid #7752ff;outline-offset:3px}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-journey-cover{background:radial-gradient(circle at 90% 0%,#68517e,transparent 45%),linear-gradient(135deg,#3a2b5c,#262942);border-color:#685477;color:var(--school-ink)}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-journey h2{color:var(--school-ink)}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-journey p,
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-current-unit small,
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-mini-grades small{color:var(--school-muted)}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-current-unit,
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-mini-grades button{background:var(--school-paper);color:var(--school-ink);border-color:var(--school-line)}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-current-unit h3{color:var(--school-ink)}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-cover-actions [data-school-theme]{background:#4d3c63;color:#faf0ff;border-color:#7b638b}
+#mlThemeList.rt-school-modal[data-school-appearance="night"] .ml-theme-cover{background:linear-gradient(120deg,#443354,#262942)}
+#mlThemeList.rt-school-modal[data-school-appearance="night"] .ml-theme-cover h2{color:#faf0ff!important;-webkit-text-fill-color:#faf0ff!important}
+#mlThemeList.rt-school-modal[data-school-appearance="night"] .ml-theme-cover p,
+#mlThemeList.rt-school-modal[data-school-appearance="night"] .ml-theme-cover-copy>small{color:#e8cae7}
+#mlThemeList.rt-school-modal[data-school-appearance="night"] .ml-topic-step.is-done{background:#21574d;color:#e3fff3;border-color:#468878}
+#mlThemeList.rt-school-modal[data-school-appearance="night"] .rt-school-grade-icon,
+#mlThemeList.rt-school-modal[data-school-appearance="night"] .rt-school-unit-icon{background:#58435f}
+#mlThemeList.rt-school-modal[data-school-appearance="night"] [data-school-close]{background:#443353;color:white}
+@keyframes rt-school-bob{50%{transform:translateY(-7px) rotate(2deg)}}
+@media(max-width:650px){#mlThemeList.rt-school-modal .ml-topic-grid{grid-template-columns:1fr}#mlThemeList.rt-school-modal .rt-school-cover-mascot{height:95px;width:85px}.rt-school-main-mascot{height:95px}}
+@media(max-width:360px){.rt-school-mini-grades{grid-template-columns:repeat(4,minmax(0,1fr))}.rt-school-current-unit{grid-template-columns:56px minmax(0,1fr)}.rt-school-unit-mascot{height:55px;width:55px}.rt-school-unit-status{display:none}.rt-school-cover-actions button{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.rt-school-main-mascot{animation:none}}

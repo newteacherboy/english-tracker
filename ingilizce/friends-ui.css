@@ -203,3 +203,16 @@ body:has(#tab-meduakis.active) .yb-fw{display:none!important}
 #tab-meduakis .fr-summaries>.fr-summary{padding:9px}
 }
 @media(max-width:359px){#tab-meduakis .fr-filters button{font-size:9px!important;padding:5px 6px!important}}
+
+
+/* Achievement spotlight: colors are paired with stronger weight, not color alone. */
+#tab-meduakis .akis-metin{font-weight:750;line-height:1.52;overflow-wrap:anywhere}
+#tab-meduakis .fr-feed-key{font-weight:950;border-radius:7px;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+#tab-meduakis .fr-feed-key-1{color:#7842c9;background:#f3e8ff}
+#tab-meduakis .fr-feed-key-2{color:#0b836e;background:#dbfaf0}
+#tab-meduakis .fr-feed-key-3{color:#a45411;background:#fff0cc}
+#tab-meduakis .fr-feed-key-4{color:#c53665;background:#ffe5ee}
+html[data-dm-theme="night"] #tab-meduakis .fr-feed-key-1{color:#d7b9ff;background:#493074}
+html[data-dm-theme="night"] #tab-meduakis .fr-feed-key-2{color:#adffdf;background:#174f4b}
+html[data-dm-theme="night"] #tab-meduakis .fr-feed-key-3{color:#ffe39c;background:#594423}
+html[data-dm-theme="night"] #tab-meduakis .fr-feed-key-4{color:#ffb7d1;background:#62314a}

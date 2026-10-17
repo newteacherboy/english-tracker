@@ -6,6 +6,25 @@
   const $ = id => document.getElementById(id);
   const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const who = () => typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || '');
+  // Highlight meaningful facts without trusting feed text as HTML.
+  function feedHighlights(raw) {
+    const content = String(raw ?? '');
+    const important = /(?:\d+(?:[.,]\d+)?\.\s*(?:sınıf|ünite|durak|durağı|bölüm|sıra|sıradan|sıraya)|\d+(?:[.,]\d+)?\s*(?:XP|altın|enerji|puan)|Macera Haritası|Öğrenme Yolu|Şampiyonlar Ligi|Süper Lig|Yerel Lig|yeni bir (?:kıyafet|karakter|aksesuar|çanta|tişört|pantolon|rozet)|satın aldı|tamamladı|yükseldi|kazandı|koleksiyonuna kattı|tebrik etti|seni geçti)/giu;
+    const hits = [...content.matchAll(important)].filter(m => m[0]);
+    if (!hits.length) {
+      const prefix = /^.{1,32}?(?=\s|$)/u.exec(content)?.[0] || '';
+      return prefix ? '<strong class="fr-feed-key fr-feed-key-1">' + esc(prefix) + '</strong>' + esc(content.slice(prefix.length)) : esc(content);
+    }
+    let out = '', cursor = 0;
+    hits.forEach((m, i) => {
+      if (m.index < cursor) return;
+      out += esc(content.slice(cursor, m.index));
+      out += '<strong class="fr-feed-key fr-feed-key-' + (i % 4 + 1) + '">' + esc(m[0]) + '</strong>';
+      cursor = m.index + m[0].length;
+    });
+    return out + esc(content.slice(cursor));
+  }
+
   const norm = x => String(x || '').trim().toLocaleLowerCase('tr');
   const icon = (name, cls = '') => `<svg class="fr-icon ${cls}" aria-hidden="true"><use href="friends-assets/icons.svg#${name}"></use></svg>`;
   const art = (name, cls = '') => `<img class="${cls}" src="friends-assets/${name}.png" alt="" decoding="async">`;
@@ -127,6 +146,8 @@
       const row=card.querySelector('.akis-ust'),id=row?.dataset.o;if(!id)return;
       card.dataset.person=id;
       card.querySelector('.akis-ikon')?.remove();
+      const sentence = card.querySelector('.akis-metin');
+      if (sentence) sentence.innerHTML = feedHighlights(sentence.textContent);
       const person=typeof maTumListe!=='undefined'?maTumListe.find(x=>norm(x.id)===norm(id)):null;
       const n=row.querySelector('b');
       const ownLevel=norm(id)===norm(who())?level():person?.playerLevel;
@@ -223,4 +244,9 @@
   window.addEventListener('resize',dockSpace,{passive:true});
   const dock=document.getElementById('bottomNavMobile');if(dock&&window.ResizeObserver)new ResizeObserver(dockSpace).observe(dock);
   dockSpace();viewHeader();
+  // League movement is account-bound and deduplicated across reloads.
+  if (!document.querySelector('script[data-dm-league-momentum]')) {
+    const boost = document.createElement('script'); boost.src = 'league-momentum.js?v=20261017-1'; boost.defer = true;
+    boost.dataset.dmLeagueMomentum = '1'; document.head.append(boost);
+  }
 })();
