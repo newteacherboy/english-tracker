@@ -776,3 +776,11 @@
  #dmStoryLesson.ml-entry .ml-entry-stats b{font-size:10px}
 }
 @media(prefers-reduced-motion:reduce){#mlThemeList .ml-theme-chevron,#dmStoryLesson.ml-entry .ml-entry-start{transition:none;animation:none}}
+
+/* Papi's short mastery-recovery stage; appropriate contrast in both themes. */
+#dmStoryLesson .ml-recovery-status{padding:9px 13px;margin:8px 0;border:1px solid #85b5c3;border-radius:13px;background:#123b50;color:#f2f9fb;font-size:13px;font-weight:800;line-height:1.4}
+#dmStoryLesson[data-appearance="day"] .ml-recovery-status{background:#e7f4f1;border-color:#8abdb4;color:#183b43;-webkit-text-fill-color:#183b43}
+#dmStoryLesson .ml-recovery-choices{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px}
+#dmStoryLesson .ml-recovery-choices button{min-height:46px;font-weight:900}
+#dmStoryLesson .ml-result-fair{display:block;margin:9px auto;padding:8px 12px;width:fit-content;border:1px solid #72c5bc;border-radius:12px;background:#163e4c;color:#eafff6;font-size:13px;font-weight:900;text-align:center}
+#dmStoryLesson[data-appearance="day"] .ml-result-fair{background:#e5f6ed;color:#174e40;-webkit-text-fill-color:#174e40}
