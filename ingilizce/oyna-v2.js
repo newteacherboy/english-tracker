@@ -29,10 +29,46 @@ function scene(o={}){latest=o;const steps=o.steps||[],current=Math.max(0,Math.mi
 async function paintLearning(root,force=false){const owner=who(),turn=++epoch;try{const info=await window.dmStoryPath.overview({force});if(!root.isConnected||owner!==who()||turn!==epoch||purpose()!=='independent')return;const cur=Math.max(0,info.chapters.findIndex(c=>c.current));const area=root.querySelector('.rt-route-area');root.querySelectorAll('.rt-badge,.rt-banner,.rt-completion-count,.rt-path').forEach(el=>el.remove());const summary=banner(info,true)+'<p class="rt-completion-count">'+(info.completedCount??info.chapters.filter(c=>c.done).length)+' / '+(info.total||info.chapters.length)+' bölüm tamamlandı · '+(info.thematic?'20 tema · 120 konu':'A1–B2')+'</p>';if(area)area.outerHTML=summary;else root.insertAdjacentHTML('afterbegin',summary);root.insertAdjacentHTML('beforeend',pathMarkup(info.chapters,cur,true));}catch(e){const area=root.querySelector('.rt-route-area');if(area){area.innerHTML='<p>İngilizce yolun yüklenemedi.</p><button type="button" data-rt="retry">Tekrar dene</button>';}}}
 let cardStamp='';if(typeof window.setInterval==='function')window.setInterval(()=>{if(document.hidden)return;const stamp=JSON.stringify([Y()?.log,Y()?.haftaHedef,Y()?.lig?.xp,tasks()]);if(stamp!==cardStamp){cardStamp=stamp;refreshCards();}},1500);
 function refreshCards(){document.querySelectorAll('.rt-week').forEach(el=>el.outerHTML=weekly());document.querySelectorAll('.rt-tasks').forEach(el=>el.outerHTML=tasks());}
-async function setPurpose(p,{save=true,reopen=true}={}){if(!['school','independent'].includes(p))return false;const state=Y(),owner=who();if(!state||!owner){tell('Öğrenme yolunu değiştirmek için hesabının açılmasını bekle.');return false;}const previous=state.dmLearningPurpose;preview=null;if(previous===p){if(reopen)await window.dunyaAc?.();return true;}state.dmLearningPurpose=p;window.yoKaydet?.();try{if(save){if(typeof window.yoHemenKaydet!=='function')throw Error('Kaydetme bağlantısı hazır değil.');await window.yoHemenKaydet(true);if(owner!==who()||Y()!==state)return false;}if(reopen)await window.dunyaAc?.();return true;}catch(e){if(owner===who()&&Y()===state){state.dmLearningPurpose=previous;window.yoKaydet?.();}tell('Öğrenme yolu kaydedilemedi. Lütfen tekrar dene.');return false;}}
+let routeSaveInProgress=false;
+async function setPurpose(p,{save=true,reopen=true}={}){
+ if(!['school','independent'].includes(p)||routeSaveInProgress)return false;
+ const state=Y(),owner=who();
+ if(!state||!owner){tell('Hesap bilgilerin hazırlanıyor, kısa süre sonra tekrar dene.');return false;}
+ const previous=state.dmLearningPurpose;
+ preview=null;
+ if(previous===p){if(reopen)await window.dunyaAc?.();return true;}
+ routeSaveInProgress=true;
+ state.dmLearningPurpose=p;
+ window.yoKaydet?.();
+ try{
+  if(save){
+   if(typeof window.yoHemenKaydet!=='function')throw Error('Kaydetme bağlantısı henüz hazır değil.');
+   let saved=false,lastError=null;
+   for(let attempt=0;attempt<3;attempt++){
+    if(owner!==who()||Y()!==state)return false;
+    if(attempt)await new Promise(resolve=>setTimeout(resolve,300*attempt));
+    try{
+     await window.yoHemenKaydet(true);
+     saved=true;break;
+    }catch(e){lastError=e;}
+   }
+   if(!saved)throw lastError||Error('Kaydetme işlemi tamamlanamadı.');
+   if(owner!==who()||Y()!==state)return false;
+  }
+  if(reopen)await window.dunyaAc?.();
+  return true;
+ }catch(e){
+  if(owner===who()&&Y()===state){
+   state.dmLearningPurpose=previous;
+   window.yoKaydet?.();
+  }
+  tell('Parkur seçimin kaydedilemedi. Bağlantını kontrol edip tekrar deneyebilirsin.');
+  return false;
+ }finally{routeSaveInProgress=false;}
+}
 function dialog(title,html){document.getElementById('rtDialog')?.remove();const prior=document.activeElement,el=document.createElement('div');el.id='rtDialog';el.className='rt-overlay';el.innerHTML='<section class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="rtDialogTitle"><button type="button" class="rt-close" aria-label="Kapat">×</button><h2 id="rtDialogTitle">'+esc(title)+'</h2>'+html+'</section>';const close=()=>{el.remove();prior?.focus?.({preventScroll:true});};el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close'))close();};el.onkeydown=e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const f=[...el.querySelectorAll('button,a,input')].filter(b=>!b.disabled),i=f.indexOf(document.activeElement);e.preventDefault();f[(i+(e.shiftKey?-1:1)+f.length)%f.length]?.focus();}};document.body.append(el);el.querySelector('button').focus();return {el,close};}
 function goal(){const {el,close}=dialog('Haftalık hedefini seç','<img class="dm-goal-papi" src="papi-welcome-v2.png" alt="Papi"><p>Kendine uygun bir hedef seç. Her küçük adım sayılır!</p><div class="rt-choices">'+[1000,1500,2500].map((n,i)=>'<button type="button" data-goal="'+n+'"><span>'+['🌱','🚀','🏆'][i]+'</span><strong>'+n+' XP</strong><small>'+['Rahat başlangıç','Dengeli ilerleme','Büyük hedef'][i]+'</small></button>').join('')+'</div><p class="rt-status" role="status"></p>');el.querySelectorAll('[data-goal]').forEach(b=>b.onclick=async()=>{const owner=who();el.querySelectorAll('[data-goal]').forEach(x=>x.disabled=true);try{if(!Y()||!owner)throw Error('Hesap bilgilerin hazırlanıyor.');const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'haftalikHedefSec',ogrenci:owner,xp:Number(b.dataset.goal),t:localStorage.getItem('ing_token')||''})}),d=await r.json();if(!r.ok||!d.ok||!d.haftaHedef)throw Error(d.mesaj||'Hedef kaydedilemedi.');if(owner!==who()){close();return;}Y().haftaHedef=d.haftaHedef;window.yoKaydet?.();refreshCards();close();}catch(e){el.querySelector('.rt-status').textContent=e.message;el.querySelectorAll('[data-goal]').forEach(x=>x.disabled=false);}});}
-function allSchool(){const {el,close}=dialog('Okul Yolum','<div class="rt-all">'+(latest?.allSteps||latest?.steps||[]).map(s=>'<button type="button" data-b="'+s.b+'" data-d="'+s.d+'" '+(!s.available?'disabled':'')+'>'+esc(s.label)+' '+(s.done?'✓':s.available?'▶':'🔒')+'</button>').join('')+'</div><small>1–8. sınıf · tüm üniteler ve bölümler</small>');el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const original=document.querySelector('.rt-root .dm-adventure-node[data-b="'+b.dataset.b+'"][data-d="'+b.dataset.d+'"]');if(original){close();original.click();}else{const host=$('dmParkurScroll');const trigger=document.createElement('button');trigger.className='dm-adventure-node';trigger.dataset.b=b.dataset.b;trigger.dataset.d=b.dataset.d;host.append(trigger);window.dmSchoolStopOpen?.(+b.dataset.b,+b.dataset.d);trigger.remove();close();}});}
+function allSchool(){if(window.dmSchoolJourney?.open){window.dmSchoolJourney.open(latest?.allSteps||latest?.steps||[]);return;}const {el,close}=dialog('Okul Yolum','<div class="rt-all">'+(latest?.allSteps||latest?.steps||[]).map(s=>'<button type="button" data-b="'+s.b+'" data-d="'+s.d+'" '+(!s.available?'disabled':'')+'>'+esc(s.label)+' '+(s.done?'✓':s.available?'▶':'🔒')+'</button>').join('')+'</div><small>1–8. sınıf · tüm üniteler ve bölümler</small>');el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const original=document.querySelector('.rt-root .dm-adventure-node[data-b="'+b.dataset.b+'"][data-d="'+b.dataset.d+'"]');if(original){close();original.click();}else{const host=$('dmParkurScroll');const trigger=document.createElement('button');trigger.className='dm-adventure-node';trigger.dataset.b=b.dataset.b;trigger.dataset.d=b.dataset.d;host.append(trigger);window.dmSchoolStopOpen?.(+b.dataset.b,+b.dataset.d);trigger.remove();close();}});}
 function mount(host){const root=host?.querySelector('.rt-root');if(!root)return;if(!host.dataset.rtBound){host.dataset.rtBound='1';host.addEventListener('click',e=>{const b=e.target.closest('[data-rt]');if(!b||b.disabled)return;const action=b.dataset.rt;if(action==='all'){e.preventDefault();e.stopPropagation();if(purpose()==='independent'){if(typeof window.dmStoryPath?.openAll==='function')window.dmStoryPath.openAll();else tell('Bölüm listesi yüklenemedi.');}else allSchool();return;}if(action==='switch-route'){e.preventDefault();e.stopPropagation();window.dmMemberExperience?.chooseRoute(true);}else if(action==='goal')goal();else if(action==='claim-goal')claimWeekly();else if(action==='retry')window.dunyaAc?.();else if(action==='continue')window.dmStoryPath.continueRoute().catch(e=>tell(e.message));else if(action==='chapter')window.dmStoryPath.open(Number(b.dataset.chapter));else if(action==='all')purpose()==='independent'?window.dmStoryPath.openAll():allSchool();else if(action==='task'){const ev=b.dataset.event;if(ev==='ders')window.dersCalisTamEkranAc?.();else if(ev==='oyun'||ev==='yildiz3')window.aktivitelerTamEkranAc?.();else window.dmLearningRoute.continue();}});}if(purpose()==='independent')paintLearning(root);fit();}
 function fit(){const host=$('dmParkurScroll');if(!host?.querySelector('.rt-root'))return;const nav=$('bottomNavMobile'),vp=window.visualViewport;host.style.setProperty('--rt-space',Math.max(280,(nav?.getBoundingClientRect().top||(vp?.height||innerHeight))-host.getBoundingClientRect().top-10)+'px');}
 /* Remove superseded header tabs even if legacy scripts regenerate them after login. */
@@ -44,4 +80,6 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-rt-wallet]
 function refreshLearning(){if(purpose()!=='independent')return;document.querySelectorAll('.rt-root').forEach(root=>paintLearning(root,true));}
 document.addEventListener('dm:learning-progress',e=>{if(e.detail?.owner===who())refreshLearning();});document.addEventListener('dm:story-close',refreshLearning);
 document.addEventListener('dm:state',()=>{preview=null;refreshCards();});document.addEventListener('dm:login',()=>{weeklyClaimOwner='';weeklyError='';preview=null;latest=null;epoch++;});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
+// School route uses its own theme and expanded grade/unit navigator.
+if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261017-1';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
 })();

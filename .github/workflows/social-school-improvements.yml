@@ -1,0 +1,38 @@
+name: Social feed and school route checks
+on:
+  push:
+    paths:
+      - 'ingilizce/oyna-v2.js'
+      - 'ingilizce/school-journey.*'
+      - 'ingilizce/friends-ui.*'
+      - 'ingilizce/league-momentum.*'
+      - 'supabase/migrations/20261017162000_feed_school_and_purchases.sql'
+      - 'tests/social-school-improvements.test.cjs'
+      - '.github/workflows/social-school-improvements.yml'
+  pull_request:
+    paths:
+      - 'ingilizce/oyna-v2.js'
+      - 'ingilizce/school-journey.*'
+      - 'ingilizce/friends-ui.*'
+      - 'ingilizce/league-momentum.*'
+      - 'supabase/migrations/20261017162000_feed_school_and_purchases.sql'
+      - 'tests/social-school-improvements.test.cjs'
+      - '.github/workflows/social-school-improvements.yml'
+  workflow_dispatch:
+jobs:
+  regressions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check scripts
+        run: |
+          node --check ingilizce/oyna-v2.js
+          node --check ingilizce/school-journey.js
+          node --check ingilizce/friends-ui.js
+          node --check ingilizce/league-momentum.js
+      - name: Test route and social regressions
+        run: |
+          node --test tests/social-school-improvements.test.cjs tests/dual-route.test.cjs tests/achievement-feed-cache.test.cjs
