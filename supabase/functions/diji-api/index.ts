@@ -1129,7 +1129,7 @@ async function handle(req: Request) {
     const key="shield:"+await sha256(scope+"|"+value);
     const {data,error}=await supabase.rpc("dm_security_rate_check",
       {bucket_key:key,max_hits:max,window_seconds:seconds});
-    if(error) return json({ok:false,mesaj:"Güvenlik kontrolü şu anda tamamlanamadı."},503);
+    if(error||!data||typeof data.allowed!=="boolean") return json({ok:false,mesaj:"Güvenlik kontrolü şu anda tamamlanamadı."},503);
     if(data?.allowed===false){
       const response=json({ok:false,mesaj:"Çok fazla istek gönderildi. Kısa bir süre sonra tekrar dene."},429);
       response.headers.set("Retry-After",String(Math.max(1,Math.min(86400,Number(data.retryAfter)||60))));
