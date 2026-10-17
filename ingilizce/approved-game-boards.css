@@ -1,0 +1,81 @@
+@layer approvedBoards {
+/* Deliberately scoped to the two approved LIVE boards. Entry/results retain scrolling. */
+html body .dm-approved-board.ab-playing{padding:0!important;align-items:center!important;justify-content:center!important;background:#c2ebff!important;overflow:hidden!important}
+html body .dm-approved-board.ab-playing>.game-modal-content{box-sizing:border-box!important;position:relative!important;display:flex!important;flex-direction:column!important;width:min(100vw,530px)!important;max-width:530px!important;height:100dvh!important;max-height:100dvh!important;min-height:0!important;margin:0!important;padding:calc(env(safe-area-inset-top,0px) + 6px) 10px calc(env(safe-area-inset-bottom,0px) + 8px)!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:#b9ed88 url('games-assets/approved-garden-v1.webp') center/100% 100% no-repeat!important;box-shadow:0 0 80px #427b6a60!important;color:#152b70!important}
+.ab-hero{display:none}
+html body .dm-approved-board.ab-playing .ab-hero{position:relative;display:flex;flex-direction:column;justify-content:center;flex:0 0 clamp(100px,17dvh,150px);box-sizing:border-box;padding:8px 98px 8px 42px;text-align:center;isolation:isolate}
+html body .dm-approved-board.ab-playing .ab-hero h2{position:relative;z-index:1;margin:0!important;color:#241475!important;font:900 clamp(21px,5.9vw,30px)/1.08 'Nunito',system-ui!important;text-shadow:0 2px #fff9}
+html body .dm-approved-board.ab-playing .ab-hero p{position:relative;z-index:1;margin:7px 0 0!important;font:850 clamp(11px,3vw,15px)/1.2 'Nunito',system-ui!important;color:#102958!important}
+.ab-mascot{position:absolute;right:-8px;bottom:0;width:110px;height:100%;object-fit:contain;z-index:0;pointer-events:none}
+html body .dm-approved-board.ab-playing .ab-bosluk h2{color:#5b2b0c!important;padding:15px 6px;background:url('games-assets/approved-sign-v1.webp') center/100% 100% no-repeat;font-size:clamp(23px,6.4vw,33px)!important}
+html body .dm-approved-board.ab-playing .game-close-btn{position:absolute!important;top:calc(env(safe-area-inset-top,0px) + 14px)!important;left:8px!important;right:auto!important;width:40px!important;height:40px!important;min-width:0!important;min-height:0!important;padding:0!important;border:2px solid #d4f3ff!important;border-radius:50%!important;background:#fff!important;color:#321087!important;font:900 38px/30px system-ui!important;z-index:5!important;box-shadow:0 3px 2px #5a8dbb42!important}
+html body .dm-approved-board.ab-playing :is(.game-title,.game-subtitle,.dm-game-clock){display:none!important}
+html body .dm-approved-board.ab-playing :is(#hafizaOyunEkrani,#boslukOyunEkrani){display:flex!important;flex-direction:column!important;flex:1!important;min-height:0!important;gap:8px!important;overflow:hidden!important}
+html body .dm-approved-board.ab-playing #hafizaOyunEkrani>div:not([id]):not(.ab-hud),html body .dm-approved-board.ab-playing #boslukOyunEkrani>div:not([id]):not(.ab-hud){display:none!important}
+html body .dm-approved-board .ab-hud{display:flex!important;flex:0 0 43px;gap:6px;min-height:0;margin:0!important;padding:0!important;background:none!important}
+.ab-hud>span{display:flex;align-items:center;justify-content:center;gap:4px;flex:1;min-width:0;border:1px solid #fff;border-radius:20px;background:linear-gradient(#fff,#e8faff);box-shadow:0 3px 0 #72bfb254;color:#142265;font:900 clamp(10px,2.8vw,14px)/1.1 'Nunito',system-ui;text-align:center}
+.ab-hud>span:nth-child(2){background:linear-gradient(#fffce6,#fff4ae)}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:28px repeat(var(--ab-rows,3),minmax(0,1fr)) 28px repeat(var(--ab-rows,3),minmax(0,1fr))!important;gap:6px!important;flex:1!important;min-height:0!important;padding:8px!important;margin:0!important;border:2px solid #fff!important;border-radius:25px!important;background:linear-gradient(#eff0ff 0%,#dff7ff 49.5%,#fff4d8 50%,#fff2cb 100%)!important;overflow:hidden!important}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-grid-divider{grid-column:1/-1!important;display:grid!important;place-items:center!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:none!important;color:#182572!important;font:900 clamp(14px,4vw,19px)/1.1 'Nunito',system-ui!important}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-kart{box-sizing:border-box!important;aspect-ratio:auto!important;width:100%!important;height:100%!important;min-height:0!important;min-width:0!important;padding:3px!important;border:1.5px solid #8dd9f5!important;border-radius:11px!important;background:linear-gradient(#edfcff,#caf3fc)!important;color:#102865!important;box-shadow:inset 0 0 0 2px #ffffff85,0 2px 1px #94d6ef66!important;line-height:1.16!important;font-size:clamp(10px,2.9vw,15px)!important;font-weight:900!important;overflow-wrap:anywhere!important;transition:transform .12s}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-tr{background:linear-gradient(#fff8e1,#ffedbd)!important;border-color:#ffc96d!important;color:#723017!important}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-selected{outline:3px solid #8b44ee!important;outline-offset:-3px!important;transform:scale(.96)!important}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .eslesti{background:#c8f7d6!important;border-color:#35ab67!important;color:#165e34!important;opacity:.6!important}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-wrong{background:#ffd5d5!important;border-color:#d94848!important}
+.ab-guide{display:flex;align-items:center;justify-content:center;gap:6px;flex:0 0 clamp(50px,9dvh,86px)}
+.ab-guide img{width:80px;height:100%;object-fit:contain;align-self:flex-end}.ab-guide p{border-radius:28px;background:#fffef2;padding:11px 15px;margin:0;color:#21186d;font:900 clamp(11px,3vw,15px)/1.25 'Nunito',system-ui}
+html body #hafizaOyunOverlay.ab-playing #jkBar{display:none!important}
+html body #boslukOyunOverlay.ab-playing #boslukSatirlarContainer{box-sizing:border-box!important;display:grid!important;grid-template-rows:repeat(3,minmax(0,1fr))!important;gap:10px!important;flex:1!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;overflow:visible!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-word{box-sizing:border-box!important;position:relative!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;padding:10px 10px 7px!important;min-height:0!important;min-width:0!important;border:4px solid #dc9a45!important;border-bottom:6px solid #b8742b!important;border-radius:26px!important;background:linear-gradient(110deg,#ffedba,#fff7d8 55%,#ffdfa0)!important;box-shadow:inset 0 0 0 2px #fff7de,0 3px 0 #87532055!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-word>strong{font:900 clamp(14px,3.8vw,20px)/1.1 'Nunito',system-ui!important;color:#19237b!important;padding:0 19px!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-number{position:absolute!important;top:-6px!important;left:0!important;display:grid!important;place-items:center!important;width:34px;height:34px;border-radius:50%;background:linear-gradient(#c58aff,#8a35e7);color:white;font:900 22px/1 system-ui;opacity:1!important;box-shadow:0 3px 0 #7529bc}
+html body #boslukOyunOverlay.ab-playing .dm-letter-slots{display:flex!important;flex-wrap:wrap!important;gap:3px!important;width:100%;justify-content:center!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-slots>:is(span,button){box-sizing:border-box!important;display:grid!important;place-items:center!important;flex:0 1 33px!important;min-width:16px!important;max-width:35px!important;height:clamp(25px,4.9dvh,40px)!important;min-height:0!important;padding:2px!important;border:1px solid #b6c5e8!important;border-radius:9px!important;background:linear-gradient(#fff,#f1f5ff)!important;color:#16376c!important;box-shadow:0 2px 0 #c7c4c2!important;font:900 clamp(16px,4.5vw,25px)/1 system-ui!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-slots>button:not(:disabled){border:2px dashed #59b8eb!important;background:#def6ff!important;color:#176298!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-slots>.wrong{background:#ffd3d3!important;border-color:#e14141!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-slots>.correct{background:#d2f7ce!important;border-color:#3b9b4a!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-options{display:flex!important;flex-wrap:nowrap!important;justify-content:center!important;gap:6px!important;width:100%}
+html body #boslukOyunOverlay.ab-playing .dm-letter-options button{box-sizing:border-box!important;min-width:0!important;flex:0 1 35px!important;height:clamp(26px,4.8dvh,36px)!important;padding:2px!important;border:1px solid #bfcae8!important;border-radius:11px!important;background:linear-gradient(#fff,#f0f4ff)!important;color:#164790!important;font:900 clamp(16px,4.3vw,22px)/1 system-ui!important;box-shadow:0 2px 1px #c8b6a1!important}
+html body #boslukOyunOverlay.ab-playing .dm-letter-options button:last-child{border-radius:50%!important;background:linear-gradient(#4bcaff,#0088ee)!important;border-color:#76d5ff!important;color:white!important;margin-left:4px}
+html body #boslukOyunOverlay.ab-playing .dm-letter-word>small{height:12px;min-height:12px;font:800 10px/12px system-ui!important;color:#5d4e29!important;white-space:nowrap}
+html body #boslukOyunOverlay.ab-playing .dm-letter-word.complete{border-color:#57b253!important;background:#dcf7c8!important}
+html body #boslukOyunOverlay.ab-playing #jkBar{flex:0 0 auto!important;margin:0!important;padding:7px 10px!important;border:3px solid #cf8c38!important;border-radius:24px!important;background:linear-gradient(#ffe4ac,#ffc77c)!important;box-shadow:0 3px 0 #9a662b!important}
+html body #boslukOyunOverlay.ab-playing .jk-baslik{font-size:17px!important;justify-content:center!important;color:#6b370c!important;margin:0 0 3px!important}
+html body #boslukOyunOverlay.ab-playing .jk-butonlar{display:flex!important;justify-content:center;gap:9px!important}
+html body #boslukOyunOverlay.ab-playing .jk-btn{flex:1!important;min-height:0!important;padding:5px!important;border:2px solid #ffeec5!important;border-radius:25px!important;background:#fffdf2!important;color:#172271!important;font:900 11px/1.15 'Nunito',system-ui!important}
+html body #boslukOyunOverlay.ab-playing .jk-daire{font-size:28px!important;width:40px!important;height:38px!important;margin:0 auto 2px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html body #boslukOyunOverlay.ab-playing .jk-alt{font-size:10px!important;margin:3px 0 0!important}
+html body #boslukOyunOverlay.ab-playing .jk-mesaj:empty{display:none!important}
+@media(max-height:670px){html body .dm-approved-board.ab-playing .ab-hero{flex-basis:82px;padding-right:80px}.ab-mascot{width:85px}.ab-guide{flex-basis:44px}.ab-guide img{width:50px}html body .dm-approved-board .ab-hud{flex-basis:34px}html body #boslukOyunOverlay.ab-playing .dm-letter-word{gap:3px!important;padding:6px 6px 3px!important}html body #boslukOyunOverlay.ab-playing .dm-letter-word>small{height:10px;min-height:10px;font-size:9px!important;line-height:10px!important}html body #boslukOyunOverlay.ab-playing .jk-daire{height:26px!important;font-size:24px!important}html body #boslukOyunOverlay.ab-playing .jk-baslik{font-size:14px!important}}
+.ab-mascot,.ab-guide img{mix-blend-mode:normal}
+html body .dm-approved-board.ab-playing .ab-bosluk h2{mix-blend-mode:normal}
+html body #boslukOyunOverlay.ab-playing .dm-letter-word{background:#fff0c4 url('games-assets/approved-panel-v1.webp') center/100% 100% no-repeat!important;border:0!important;border-radius:20px!important;padding:12px 12px 9px!important;box-shadow:0 3px 0 #87532055!important}
+.ab-jokers{position:relative;flex:none;text-align:center;font:900 11px system-ui;color:#243774}.ab-jokers summary{cursor:pointer;background:#fff5d2;border-radius:14px;padding:5px;list-style:none}
+html body #hafizaOyunOverlay.ab-playing .ab-jokers[open] #jkBar{display:block!important;position:absolute;bottom:26px;left:0;right:0;z-index:10;margin:0;background:#fff9e8!important;border:2px solid #d7b267;border-radius:18px;padding:10px;box-shadow:0 4px 20px #2347}
+html body .dm-approved-board button:focus-visible{outline:3px solid #7928e2!important;outline-offset:2px}
+
+html body .dm-approved-board.ab-playing,html body .dm-approved-board.ab-playing *{letter-spacing:normal!important;font-family:Nunito,system-ui,sans-serif!important}
+}
+@layer approvedBoards {
+html body .dm-approved-board.ab-playing .ab-hero{display:grid!important;grid-template-columns:minmax(0,1fr) 85px!important;grid-template-rows:auto auto!important;align-content:center!important;align-items:center!important;gap:3px!important;padding:8px 0 8px 36px!important}
+html body .dm-approved-board.ab-playing .ab-hero h2{grid-column:1!important;grid-row:1!important;display:block!important;position:static!important;inset:auto!important;width:auto!important;max-width:100%!important;height:auto!important;min-height:0!important;padding:0!important;line-height:1.1!important}
+html body .dm-approved-board.ab-playing .ab-hero p{grid-column:1!important;grid-row:2!important;position:static!important;inset:auto!important;width:auto!important;max-width:100%!important;margin:4px 0 0!important;white-space:normal!important;font-size:12px!important;line-height:1.2!important}
+html body .dm-approved-board.ab-playing .ab-mascot{position:static!important;grid-column:2!important;grid-row:1/3!important;width:100%!important;max-width:100%!important;height:105px!important;object-fit:contain!important}
+html body .dm-approved-board.ab-playing .ab-bosluk h2{box-sizing:border-box!important;display:grid!important;place-items:center!important;height:62px!important;padding:8px!important;background-size:100% 100%!important}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-grid-divider{border-bottom:0!important}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-grid-divider::after,html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-grid-divider::before{display:none!important}
+html body .dm-approved-board.ab-playing .ab-guide p{background:#fffef2!important;border:0!important;border-radius:28px!important;padding:10px 14px!important;width:auto!important;flex:0 1 auto!important;margin:0!important;white-space:normal!important}
+@media(max-height:670px){html body .dm-approved-board.ab-playing .ab-mascot{height:72px!important}html body .dm-approved-board.ab-playing .ab-bosluk h2{height:45px!important}html body .dm-approved-board.ab-playing .ab-hero p{font-size:10px!important}}
+}
+@layer approvedBoards {
+.ab-hud svg{width:25px;height:25px;flex:none}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-grid-divider{display:flex!important;justify-content:center!important;align-items:center!important;gap:8px!important}
+.ab-flag{width:27px;height:22px;flex:none}
+html body #boslukOyunOverlay.ab-playing #jkBar::before{content:'Jokerlerim';display:block;text-align:center;margin:0 0 4px;color:#693512;font:900 17px/1 Nunito,system-ui}
+html body #boslukOyunOverlay.ab-playing .jk-bar{display:flex!important;gap:8px!important}
+html body #boslukOyunOverlay.ab-playing .jk-daire{font-size:0!important;height:42px!important;width:48px!important;background-position:center!important;background-size:contain!important;background-repeat:no-repeat!important}
+html body #boslukOyunOverlay.ab-playing #jkb-harf .jk-daire{background-image:url('harf-adasi-joker-light.svg')!important}
+html body #boslukOyunOverlay.ab-playing #jkb-papagan .jk-daire{background-image:url('papi-welcome-v2.png')!important}
+html body #boslukOyunOverlay.ab-playing #jkb-ikinci .jk-daire{background-image:url('games-assets/approved-target-v1.svg')!important}
+@media(max-height:670px){html body #boslukOyunOverlay.ab-playing .jk-daire{height:28px!important}html body #boslukOyunOverlay.ab-playing #jkBar::before{font-size:13px}}
+}
