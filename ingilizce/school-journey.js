@@ -158,11 +158,11 @@ function decorateQuestion(){
   movement.innerHTML='<button type="button" data-school-previous>← Önceki</button><span>Yanıtlananları incele</span><button type="button" data-school-next disabled>Sonraki →</button>';
   (modal.querySelector('.rq-hud')||header).after(movement);
   movement.querySelector('[data-school-previous]').onclick=()=>{const review=modal.querySelector('#bzInceleme');if(review&&review.style.display!=='none')review.querySelector('#bzIncOnce:not(:disabled)')?.click();else modal.querySelector('#bzGeriSoru:not(:disabled)')?.click();};
-  movement.querySelector('[data-school-next]').onclick=()=>modal.querySelector('#bzInceleme:not([style*="display: none"]) #bzIncSonra:not(:disabled)')?.click();
+  movement.querySelector('[data-school-next]').onclick=()=>{const review=modal.querySelector('#bzInceleme');if(review&&review.style.display!=='none')review.querySelector('#bzIncSonra:not(:disabled)')?.click();else modal.querySelector('#bzAlan .bz-btn.mor:not(:disabled)')?.click();};
  }
  const review=modal.querySelector('#bzInceleme'),reviewVisible=!!(review&&review.style.display!=='none');
  movement.querySelector('[data-school-previous]').disabled=reviewVisible?!review.querySelector('#bzIncOnce:not(:disabled)'):!modal.querySelector('#bzGeriSoru:not(:disabled)');
- movement.querySelector('[data-school-next]').disabled=!reviewVisible||!review.querySelector('#bzIncSonra:not(:disabled)');
+ movement.querySelector('[data-school-next]').disabled=reviewVisible?!review.querySelector('#bzIncSonra:not(:disabled)'):!modal.querySelector('#bzAlan .bz-geri-bildirim ~ .bz-btn.mor:not(:disabled),#bzAlan .bz-btn.mor:not(:disabled)');
  const area=modal.querySelector('#bzAlan'),board=area?.querySelector('.sp-question-board');
  if(!area)return;
  const progress=area.querySelector('.rq-progress span')?.textContent||'';
