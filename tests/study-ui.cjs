@@ -45,7 +45,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     }
     return r.fulfill({contentType:'application/json',body:'[]'});
   });
-  await page.addInitScript(()=>{new MutationObserver(()=>{document.querySelector('.kur-perde .kur-x')?.click();const d=document.getElementById('dmDiscovery');if(d){d.remove();document.body.classList.remove('dm-discovery-open');}}).observe(document,{childList:true,subtree:true});});
+  await page.addInitScript(()=>{new MutationObserver(()=>{document.querySelector('.kur-perde .kur-x')?.click();const d=document.getElementById('dmDiscovery');if(d){d.remove();document.body.classList.remove('dm-discovery-open');}const route=document.getElementById('dmRouteChoice');if(route)route.remove();}).observe(document,{childList:true,subtree:true});});
   await page.goto('https://friends.test/ingilizce/',{waitUntil:'load'});
   await page.evaluate(()=>{
     aktifOgrenciAdi='Fixture';globalDataCache=[{ogrenci:'Fixture',Sinif:'6',Durum:'approved'}];
