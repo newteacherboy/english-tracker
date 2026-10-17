@@ -84,12 +84,12 @@
    if(!link){status('Telefonundaki Mail uygulamasını ana ekrandan aç. E-posta kutunu kontrol et.','info');return;}
    // A user gesture opens the actual mailbox in browser or an installed app if
    // the device associates the link with it; do not open an empty compose form.
-   const win=window.open(link,'_blank','noopener,noreferrer');
-   if(!win)status('Tarayıcın yeni sekmeyi engellediyse Gmail veya Outlook uygulamanı doğrudan aç.','info');
+   window.open(link,'_blank','noopener,noreferrer');
+   status('Yeni sekmede e-postanı aç. Uygulaman otomatik açılmazsa telefonunun ana ekranından simgesine dokun.','info');
   });
   wrap.querySelector('[data-eg-resend]')?.addEventListener('click',resend);
   wrap.querySelector('[data-eg-change]')?.addEventListener('click',()=>{
-   close();if(typeof window.kisiselBilgilerAc==='function')window.kisiselBilgilerAc();
+   if(typeof window.kisiselBilgilerAc==='function'){close();window.kisiselBilgilerAc();}
    else status('Profil > Kişisel Bilgiler bölümünden kayıtlı e-postanı değiştirebilirsin.','info');
   });
  }
