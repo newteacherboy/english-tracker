@@ -582,3 +582,23 @@
   color:#174c52;
   border-color:#a3c8bc;
 }
+
+/* On-placement correctness: order tokens and missing-letter boxes only.
+   Empty letters stay neutral; deleting or reordering recalculates state. */
+#dmStoryLesson .ml-sentence{display:flex;align-items:center;align-content:center;justify-content:flex-start;flex-wrap:wrap;gap:6px}
+#dmStoryLesson .ml-sentence-token{min-height:32px;max-width:100%;padding:5px 9px;border:2px solid transparent;border-radius:10px;font:900 .92em/1.15 Nunito,system-ui,sans-serif;overflow-wrap:anywhere}
+#dmStoryLesson .ml-sentence-token.ml-live-correct,
+#dmStoryLesson .ml-letter-gap.is-filled.ml-live-correct,
+#dmStoryLesson[data-appearance="day"] .ml-sentence-token.ml-live-correct,
+#dmStoryLesson[data-appearance="day"] .ml-letter-gap.is-filled.ml-live-correct{
+ background:#146e4d!important;border-color:#0d593e!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 3px 0 #0d5138!important;
+}
+#dmStoryLesson .ml-sentence-token.ml-live-wrong,
+#dmStoryLesson .ml-letter-gap.is-filled.ml-live-wrong,
+#dmStoryLesson[data-appearance="day"] .ml-sentence-token.ml-live-wrong,
+#dmStoryLesson[data-appearance="day"] .ml-letter-gap.is-filled.ml-live-wrong{
+ background:#af3543!important;border-color:#892431!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:0 3px 0 #7a2530!important;
+}
+#dmStoryLesson .ml-sentence-token:focus-visible,
+#dmStoryLesson .ml-letter-gap:focus-visible{outline:3px solid #2a8fcd;outline-offset:2px}
+@media(max-width:380px){#dmStoryLesson .ml-sentence{gap:4px}#dmStoryLesson .ml-sentence-token{padding:4px 7px;min-height:30px}}
