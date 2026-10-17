@@ -31,7 +31,7 @@ const anonymousLimits=Object.freeze({
  sifreSifirlamaIste:[50,3600,10,3600],sifreSifirla:[80,900,0,0]
 });
 const authenticatedLimits=Object.freeze({
- seviyeOyunOdulu:[80,300],
+ verifiedGameStatus:[120,300],verifiedGameStart:[60,300],verifiedGameAnswer:[1200,300],seviyeOyunOdulu:[80,300],
  seviyeParkurPekistirme:[90,300],
  dersTestSonucKaydet:[60,300],
  sifremiDegistir:[15,900],

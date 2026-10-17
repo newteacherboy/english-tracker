@@ -113,6 +113,7 @@
     setTimeout(()=>{if(scene.isConnected){scene.classList.remove('ia-wrong','ia-correct');feedback.textContent='';}},620);
   }
   function finishWord(success){
+    if(current&&!current.locked)window.dmVerifiedGames?.record(asmacaKelimeler[asmacaAktifIndex],success?current.word:null);
     if(!current||current.locked)return;
     current.locked=true;
     const word=current.word,hadMistakes=current.wrong.size>0,token=run;
@@ -134,6 +135,7 @@
     timeout=setTimeout(()=>{if(token!==run)return;asmacaAktifIndex++;window.asmacaSonrakiKelime();},success?1100:1700);
   }
   function pick(ch){
+    if(current&&!current.locked)window.dmVerifiedGames?.record(asmacaKelimeler[asmacaAktifIndex],{letter:ch});
     if(!current||current.locked||current.guessed.has(ch)||current.wrong.has(ch)||current.removed.has(ch)||!current.keys.includes(ch))return;
     if(current.word.includes(ch)){
       current.guessed.add(ch);asmacaTahminEdilenHarfler=[...current.guessed];sound('dogru');flash('✓',true);

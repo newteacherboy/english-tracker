@@ -13,9 +13,9 @@ test('profile → progress → profile → X/Escape/backdrop preserves the main 
   assert(!d.getElementById('rtProfileBackdrop'));assert(d.getElementById(primary).classList.contains('active'),primary+' '+exit);assert.equal(d.querySelectorAll('.dc-fullscreen-overlay.active').length,1);dom.window.close();
  }
 });
-test('10 unique native arm gestures; 2 free, 8 five-level locks and increasing prices',()=>{
- const dom=new JSDOM('',{runScripts:'outside-only'}),w=dom.window;w.eval(read('character-poses.js'));const poses=w.dmCharacterPoses.list;assert.equal(poses.length,10);assert.equal(poses.filter(p=>!p.f).length,2);assert.deepEqual(Array.from(poses.filter(p=>p.f),p=>p.level),[5,10,15,20,25,30,35,40]);
- const arms=new Set();for(const p of poses){const svg=w.dmCharacterPoses.arms({durus:p.id},'#123456','#f1c7a5','#654321');assert.equal((svg.match(/data-pose-arm=/g)||[]).length,2);assert(svg.includes('#123456'));assert(svg.includes('#654321'));arms.add(svg.replaceAll(p.id,''));}assert.equal(arms.size,10);assert(!w.dmCharacterPoses.arms({durus:'dik'},'a','b'));
+test('9 approved native arm gestures after victory pose removal; 2 free and increasing level locks',()=>{
+ const dom=new JSDOM('',{runScripts:'outside-only'}),w=dom.window;w.eval(read('character-poses.js'));const poses=w.dmCharacterPoses.list;assert.equal(poses.length,9);assert(!poses.some(p=>p.id==='zafer'));assert.equal(poses.filter(p=>!p.f).length,2);assert.deepEqual(Array.from(poses.filter(p=>p.f),p=>p.level),[10,15,20,25,30,35,40]);
+ const arms=new Set();for(const p of poses){const svg=w.dmCharacterPoses.arms({durus:p.id},'#123456','#f1c7a5','#654321');assert.equal((svg.match(/data-pose-arm=/g)||[]).length,2);assert(svg.includes('#123456'));assert(svg.includes('#654321'));arms.add(svg.replaceAll(p.id,''));}assert.equal(arms.size,9);assert(!w.dmCharacterPoses.arms({durus:'dik'},'a','b'));
  const catalog=require('../ingilizce/progression-catalog.js'),items=JSON.parse(fs.readFileSync('supabase/functions/diji-api/progression-shop.json'));let last=0;
  for(const p of poses){const item=items.find(x=>x.id==='a|durus|'+p.id);assert(item);assert.equal(catalog.itemLevel(item),p.level);assert.equal(catalog.price(item),p.f);if(p.f){assert(p.f>last);last=p.f;}}
  dom.window.close();

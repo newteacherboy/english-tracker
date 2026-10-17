@@ -58,7 +58,7 @@
       }
       if(state!==current||overlay!==currentOverlay||who()!==owner)return;
       Object.assign(state,{words:OC.kelimeSec(KEY,available,12),index:0,done:0,solved:new Set(),selected:[],misses:new Set(),started:Date.now(),student});
-      OC.basla(KEY);newBoard();
+      OC.basla(KEY);state.runId=OC.aktif.runId;newBoard();
       timer=setInterval(()=>{if(who()!==owner||!overlay){close();return;}const t=overlay.querySelector('[data-time]');if(t)t.textContent=OC.sure()+' sn';},1000);
     } catch(e) { if(state===current&&overlay===currentOverlay){message(e.message);button.disabled=false;} }
     finally {starting=false;}
@@ -70,7 +70,7 @@
     body.innerHTML=`<div class="hb-meta"><b>${s.done}/12 kelime</b><span>${OC.puan()} puan</span><span data-time>${OC.sure()} sn</span></div><progress max="12" value="${s.done}" aria-label="Bulunan kelimeler"></progress><div class="hb-hints">${s.pair.map((k,i)=>`<div class="${s.solved.has(i)?'hb-solved':''}"><span>${esc(tr(k))}</span><b lang="en">${s.solved.has(i)?esc(en(k).toUpperCase()):'•'.repeat(en(k).length)}</b></div>`).join('')}</div><div class="hb-grid" aria-label="Harf bahçesi">${s.grid.letters.map((h,i)=>`<button type="button" data-cell="${i}" lang="en" aria-label="${h.toUpperCase()}, ${Math.floor(i/COLS)+1}. satır ${i%COLS+1}. sütun">${h.toUpperCase()}</button>`).join('')}</div><div class="hb-selection" lang="en" aria-live="polite">Harfleri birleştir</div><div class="hb-actions"><button type="button" data-clear>Temizle</button><button type="button" class="hb-primary" data-check>Kelimeyi bul ✓</button><button type="button" data-skip>Pas geç</button></div><p class="hb-status" role="status">Yatay, dikey veya çapraz komşu harfleri birleştir. Bir harfi aynı kelimede iki kez kullanamazsın.</p><button type="button" class="hb-next" data-next hidden>${s.index+2>=12?'Sonucumu gör 🌟':'Sonraki bahçe →'}</button>`;
     body.querySelectorAll('[data-cell]').forEach(b=>b.onclick=()=>select(Number(b.dataset.cell)));
     body.querySelector('[data-clear]').onclick=()=>{s.selected=[];selection();};body.querySelector('[data-check]').onclick=check;
-    body.querySelector('[data-skip]').onclick=()=>{const i=s.pair.findIndex((_,j)=>!s.solved.has(j));if(i<0)return;OC.yanlis();if(!classroom())window.dmWrongWords?.add(s.pair[i]);s.solved.add(i);s.done++;s.selected=[];paint();message('Tekrar çalış: '+tr(s.pair[i])+' → '+en(s.pair[i]));};
+    body.querySelector('[data-skip]').onclick=()=>{const i=s.pair.findIndex((_,j)=>!s.solved.has(j));if(i<0)return;window.dmVerifiedGames?.record(s.pair[i],null);OC.yanlis();if(!classroom())window.dmWrongWords?.add(s.pair[i]);s.solved.add(i);s.done++;s.selected=[];paint();message('Tekrar çalış: '+tr(s.pair[i])+' → '+en(s.pair[i]));};
     body.querySelector('[data-next]').onclick=()=>{if(s.solved.size!==s.pair.length)return;s.index+=2;if(s.index>=s.words.length)finish();else newBoard();};
     let dragging=false,moved=false,startIndex=-1;
     const grid=body.querySelector('.hb-grid');
@@ -96,8 +96,8 @@
   function check() {
     if(!state||state.ended||!state.selected.length||state.solved.size===state.pair.length)return;
     const word=text(),i=state.pair.findIndex((k,j)=>!state.solved.has(j)&&en(k)===word);
-    if(i<0){OC.yanlis();state.pair.forEach((_,j)=>{if(!state.solved.has(j))state.misses.add(state.index+j);if(!classroom())window.dmWrongWords?.add(state.pair[j]);});state.selected=[];selection();message('Bu kelime ipuçlarına uymadı. Yeniden dene!');return;}
-    const clean=!state.misses.has(state.index+i);OC.dogru(clean?1:.5,clean);state.solved.add(i);state.done++;state.selected=[];paint();window.dmCorrectAnswer?.();message('🌸 '+en(state.pair[i]).toUpperCase()+' = '+tr(state.pair[i]));
+    if(i<0){for(const [j,k] of state.pair.entries())if(!state.solved.has(j))window.dmVerifiedGames?.record(k,word);OC.yanlis();state.pair.forEach((_,j)=>{if(!state.solved.has(j))state.misses.add(state.index+j);if(!classroom())window.dmWrongWords?.add(state.pair[j]);});state.selected=[];selection();message('Bu kelime ipuçlarına uymadı. Yeniden dene!');return;}
+    window.dmVerifiedGames?.record(state.pair[i],word);const clean=!state.misses.has(state.index+i);OC.dogru(clean?1:.5,clean);state.solved.add(i);state.done++;state.selected=[];paint();window.dmCorrectAnswer?.();message('🌸 '+en(state.pair[i]).toUpperCase()+' = '+tr(state.pair[i]));
   }
   async function finish() {
     if(!state||state.ended)return;state.ended=true;clearInterval(timer);timer=null;

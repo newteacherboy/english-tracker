@@ -3,7 +3,7 @@ import './score-rules.js';
 import { progressionAPI } from './progression-api.ts';
 import { releaseAPI } from './release-api.ts';
 import { contactPolicyAPI } from "./contact-policy-api.ts";
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.118.0";
 const keys=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")||"{}");
 const supabase=createClient(Deno.env.get("SUPABASE_URL")!,keys.default);
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization,apikey,content-type,x-diji-token","Access-Control-Allow-Methods":"GET,POST,OPTIONS","Access-Control-Max-Age":"86400"};
