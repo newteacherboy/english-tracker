@@ -44,11 +44,13 @@ test('school route uses 8 learning-style accordion grades and different mascots'
  const grades=c.dmSchoolJourney.group(rows);
  assert.equal(grades.length,8);assert.equal(grades[1].total,2);assert.equal(grades[1].completed,1);assert.equal(grades[2].total,1);
  const html=c.dmParkurSahne({steps:rows,current:1,allSteps:rows});
- assert.match(html,/rt-school-journey/);assert.match(html,/data-school-appearance="day"/);
+ assert.match(html,/rt-school-main/);assert.match(html,/data-school-appearance="day"/);assert.match(html,/ml-summary-ring/);assert.doesNotMatch(html,/rt-school-mini-grades/);
  assert.match(html,/2\. Sınıf/);assert.match(html,/3\. Sınıf/);assert.match(html,/data-school-open/);
  const mascots=[...html.matchAll(/learning-assets\/characters\/([^/]+)\.webp/g)].map(m=>m[1]);
  assert(new Set(mascots).size>=4,'different characters must appear across grade controls');
  assert(appended.some(e=>e.href==='school-journey.css?v=20261017-1'));
+ assert(appended.some(e=>e.href==='school-adventure-v2.css?v=20261017-2'));
+ assert.match(html,/data-school-b="0" data-school-d="1"/);
 });
 test('feed phrases gain escaped color accents, untrusted HTML remains text',()=>{
  const body=friendsSource.slice(friendsSource.indexOf('  function feedHighlights('),friendsSource.indexOf('  const norm ='));
@@ -72,4 +74,17 @@ test('league transitions use daily dedupe and account-specific snapshots',()=>{
  assert.match(code,/current\.rank<before\.rank/);
  assert.match(code,/snapshot\.pending=null/);
  assert.match(fs.readFileSync('ingilizce/league-momentum.css','utf8'),/prefers-reduced-motion/);
+});
+
+test('school launch and quiz styles use separate day/night palettes and changing mascot art',()=>{
+ const css=fs.readFileSync('ingilizce/school-adventure-v2.css','utf8');
+ assert.match(css,/\.sp-adventure-entry\.dm-school-start/);
+ assert.match(css,/#bzPerde#bzPerde#bzPerde\.rq-approved\.dm-school-game/);
+ assert.match(css,/data-school-appearance="night"/);
+ assert.match(css,/--dm-school-question-art/);
+ assert.match(css,/\.sp-question-board::before/);
+ assert.match(schoolSource,/sessionStorage\.setItem\('dm-school-last-intro-character'/);
+ assert.match(schoolSource,/function decorateQuestion/);
+ assert.match(schoolSource,/function launchStep/);
+ assert.match(schoolSource,/window\.dmSchoolStopOpen\(Number\(step\.b\),Number\(step\.d\)\)/);
 });

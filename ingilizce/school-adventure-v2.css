@@ -1,0 +1,184 @@
+
+/* School route V2: the learning-path layout grammar with its own warm adventure identity.
+   All styles are scoped to School Journey; independent learning pages remain unchanged. */
+.rt-root.rt-school[data-school-appearance="day"],
+.rt-root.rt-school:not([data-school-appearance]),
+.rt-school-modal[data-school-appearance="day"]{
+ --school-page:#fffaf5;--school-card:#ffffff;--school-ink:#3f3155;--school-muted:#826b82;
+ --school-accent:#ef6d72;--school-accent-2:#f9a44c;--school-line:#f1d5ce;--school-tint:#fff0e3;
+ --school-finish:#28b9aa;
+}
+.rt-root.rt-school[data-school-appearance="night"],.rt-school-modal[data-school-appearance="night"]{
+ --school-page:#111e3a;--school-card:#1e3255;--school-ink:#fff5e3;--school-muted:#c9cee3;
+ --school-accent:#ff987c;--school-accent-2:#f6ca74;--school-line:#476184;--school-tint:#293e65;
+ --school-finish:#66d3c7;
+}
+.rt-root.rt-school{background:var(--school-page);color:var(--school-ink);transition:background .2s ease}
+.rt-root.rt-school .rt-banner,.rt-root.rt-school .rt-badge,.rt-root.rt-school .rt-path{display:none!important}
+.rt-root.rt-school .rt-school-journey{display:none!important}
+.rt-school-main{display:grid;gap:14px;width:min(100%,850px);margin:0 auto 12px;padding:8px 8px 20px;box-sizing:border-box;font-family:Nunito,system-ui,sans-serif;color:var(--school-ink)}
+.rt-school-main *{box-sizing:border-box}
+.rt-school-main-header{display:flex;align-items:center;gap:16px;justify-content:space-between;padding:14px 17px;background:linear-gradient(115deg,#fff1dc,#ffe4ea);border:1px solid var(--school-line);border-radius:26px;min-height:145px}
+.rt-school-main-header>div{min-width:0}
+.rt-school-main-header small{font-size:11px;font-weight:950;letter-spacing:2px;color:#ab4a65}
+.rt-school-main-header h2{margin:8px 0 6px;font:950 clamp(27px,6vw,37px)/1.1 Fredoka,Nunito,sans-serif;color:#61385b}
+.rt-school-main-header p{font-size:13px;line-height:1.48;color:#765f73;font-weight:750;margin:0}
+.rt-school-main-hero{width:min(30%,125px);height:132px;object-fit:contain;flex-shrink:0;animation:dm-school-hover 4s ease-in-out infinite}
+.rt-school-main .ml-summary-card{display:flex;align-items:center;gap:15px;padding:18px;border:1px solid var(--school-line);border-radius:26px;background:var(--school-tint);min-width:0}
+.rt-school-main .ml-summary-ring{--ml-ring-bg:var(--school-line);width:106px;height:106px;min-width:106px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(var(--school-finish) var(--ml-done),var(--school-line) 0)}
+.rt-school-main .ml-summary-ring>div{display:grid;place-items:center;align-content:center;gap:0;background:var(--school-card);border-radius:50%;width:76px;height:76px;color:var(--school-ink)}
+.rt-school-main .ml-summary-ring b{font-size:28px;line-height:1.1}
+.rt-school-main .ml-summary-ring small{font-size:12px;color:var(--school-muted)}
+.rt-school-main .ml-summary-info{flex:1;min-width:0;display:grid;gap:8px}
+.rt-school-main .ml-summary-info>strong{font-size:clamp(16px,4vw,22px);color:var(--school-ink);font-weight:950}
+.rt-school-main .ml-summary-info p{margin:0;color:var(--school-muted);font-size:13px;line-height:1.5}
+.rt-school-main .ml-summary-info>small{text-align:right;color:var(--school-muted);font-weight:850}
+.rt-school-main .ml-summary-track,.rt-school-main .ml-theme-track{height:9px;background:var(--school-line);border-radius:20px;overflow:hidden}
+.rt-school-main .ml-summary-track>span,.rt-school-main .ml-theme-track>span{display:block;height:100%;border-radius:20px;background:linear-gradient(95deg,var(--school-finish),var(--school-accent-2))}
+.rt-school-main .rt-school-overview-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 3px}
+.rt-school-main .rt-school-overview-actions button{border:1px solid var(--school-line);background:var(--school-card);color:var(--school-ink);border-radius:14px;padding:9px 14px;font-weight:950;min-height:40px;cursor:pointer}
+.rt-school-main .rt-school-overview-actions span{font-weight:750;font-size:12px;color:var(--school-muted)}
+.rt-school-main .ml-theme-list-heading{margin:6px 3px 0;color:var(--school-ink);font-size:clamp(21px,5vw,27px);font-weight:950}
+.rt-school-main .ml-theme-list-heading small{float:right;font-size:13px;color:var(--school-muted);font-weight:800}
+.rt-school-grades{display:grid;gap:11px}
+.rt-school-main .ml-theme{border:2px solid var(--school-line);border-radius:23px;overflow:hidden;background:var(--school-card)}
+.rt-school-main .ml-theme.ml-theme-current{border-color:var(--school-accent)}
+.rt-school-main .ml-theme>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px;padding:14px 13px;min-height:91px}
+.rt-school-main .ml-theme>summary::-webkit-details-marker{display:none}
+.rt-school-main .rt-school-grade-icon{width:62px;height:62px;flex:0 0 62px;background:var(--school-tint);border-radius:17px;display:grid;place-items:center}
+.rt-school-main .rt-school-grade-icon img{width:58px;height:58px;object-fit:contain}
+.rt-school-main .ml-theme-info{flex:1;min-width:0;display:grid;gap:5px}
+.rt-school-main .ml-theme-info strong{font-size:17px;font-weight:950;color:var(--school-ink)}
+.rt-school-main .ml-theme-info small{font-size:12px;color:var(--school-muted);font-weight:800}
+.rt-school-main .ml-theme-state{background:var(--school-tint);border-radius:50%;width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;font-weight:950;color:var(--school-accent)}
+.rt-school-main .ml-theme-chevron{font-size:27px;transition:transform .2s;color:var(--school-accent)}
+.rt-school-main .ml-theme[open] .ml-theme-chevron{transform:rotate(180deg)}
+.rt-school-main .ml-theme-body{padding:14px;border-top:1px solid var(--school-line);display:grid;gap:12px}
+.rt-school-main .ml-topic-heading{display:flex;justify-content:space-between;align-items:center;color:var(--school-ink);font-weight:950}
+.rt-school-main .ml-topic-heading small{color:var(--school-muted);font-weight:800}
+.rt-school-main .ml-topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.rt-school-main .ml-topic-card{padding:13px;border:1px solid var(--school-line);border-radius:19px;background:var(--school-tint);min-width:0}
+.rt-school-main .ml-topic-card.is-current{border-color:var(--school-accent)}
+.rt-school-main .ml-topic-head{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.rt-school-main .rt-school-unit-icon{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;background:var(--school-card);border-radius:13px}
+.rt-school-main .rt-school-unit-icon img{width:50px;height:50px;object-fit:contain}
+.rt-school-main .ml-topic-copy{flex:1;min-width:0}
+.rt-school-main .ml-topic-copy h3{font-weight:950;font-size:14px;margin:0 0 3px;color:var(--school-ink)}
+.rt-school-main .ml-topic-copy p{font-size:11px;line-height:1.4;margin:0;color:var(--school-muted)}
+.rt-school-main .ml-topic-status{background:var(--school-card);color:var(--school-accent);border-radius:12px;display:grid;place-items:center;padding:8px 7px;font-weight:950;white-space:nowrap;font-size:12px}
+.rt-school-main .ml-topic-status small{font-size:9px}
+.rt-school-main .ml-topic-steps{margin-top:12px;display:grid;gap:7px}
+.rt-school-main .ml-topic-step{display:flex;justify-content:space-between;align-items:center;gap:6px;width:100%;min-height:42px;border:1px solid var(--school-line);border-radius:12px;color:var(--school-ink);background:var(--school-card);font-size:12px;font-weight:900;padding:8px 10px;text-align:left;cursor:pointer}
+.rt-school-main .ml-topic-step small{font-size:10px;white-space:nowrap}
+.rt-school-main .ml-topic-step.is-done{border-color:#78d2b4;background:#e6fff3;color:#20644e}
+.rt-school-main .ml-topic-step.locked{opacity:.65;cursor:not-allowed}
+.rt-school-main .rt-school-unavailable{font-size:13px;color:var(--school-muted)}
+.rt-school-main button:focus-visible,.rt-school-main summary:focus-visible{outline:3px solid #458ce8;outline-offset:2px}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-main-header{background:radial-gradient(circle at 85% 10%,#47648a,transparent 50%),linear-gradient(135deg,#22355b,#142344)}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-main-header :is(h2,small,p){color:var(--school-ink)}
+.rt-root.rt-school[data-school-appearance="night"] .rt-school-main .ml-topic-step.is-done{background:#244c4c;color:#d4ffea;border-color:#4aa695}
+
+/* The original school start confirmation keeps its existing buttons/permissions;
+   we improve hierarchy, artwork and warmth without touching its click handlers. */
+.sp-adventure-entry.dm-school-start{--school-dialog-ink:#4b2f58}
+.sp-adventure-entry.dm-school-start .bz-alt-kart,
+.sp-adventure-entry.dm-school-start .sp-start-card{
+ border-radius:34px!important;background:linear-gradient(155deg,#fff2df,#fffaf7 54%,#ffedf5)!important;
+ border:3px solid #fff!important;box-shadow:0 9px 0 #dfb1a9,0 25px 50px #48253355!important;
+ color:var(--school-dialog-ink)!important;max-height:calc(100dvh - 72px);overflow-y:auto!important;
+ padding-top:22px!important;width:min(94vw,440px)!important;
+}
+.sp-adventure-entry.dm-school-start .sp-entry-papi{display:none!important}
+.sp-adventure-entry.dm-school-start .dm-school-intro-head{display:grid;justify-items:center;text-align:center;gap:5px;margin:0 0 12px}
+.sp-adventure-entry.dm-school-start .dm-school-intro-head img{width:clamp(120px,30vw,190px);height:clamp(105px,26vw,180px);object-fit:contain;filter:drop-shadow(0 8px 9px #7f4a6250);animation:dm-school-hover 3.5s ease-in-out infinite}
+.sp-adventure-entry.dm-school-start .dm-school-intro-head small{padding:7px 12px;border-radius:999px;background:#ffdbd5;color:#97465e;font-size:11px;letter-spacing:1.5px;font-weight:950}
+.sp-adventure-entry.dm-school-start .bz-alt-kart h2,.sp-adventure-entry.dm-school-start .bz-alt-kart h3{color:#5a3059!important;font-weight:950!important}
+.sp-adventure-entry.dm-school-start #bzOyna{min-height:56px!important;border-radius:20px!important;background:linear-gradient(120deg,#ff9060,#ed5a82)!important;color:white!important;border:0!important;box-shadow:0 6px 0 #be4664!important;font-weight:950!important;font-size:clamp(15px,4vw,19px)!important}
+.sp-adventure-entry.dm-school-start[data-school-appearance="night"] .bz-alt-kart,
+.sp-adventure-entry.dm-school-start[data-school-appearance="night"] .sp-start-card{
+ --school-dialog-ink:#fff4df;background:linear-gradient(160deg,#20395f,#142443 66%,#273456)!important;
+ border-color:#e9c88a!important;box-shadow:0 8px 0 #0a1533,0 25px 50px #060d2877!important;color:#fff5e4!important}
+.sp-adventure-entry.dm-school-start[data-school-appearance="night"] .dm-school-intro-head small{background:#345476;color:#ffe1a7}
+.sp-adventure-entry.dm-school-start[data-school-appearance="night"] .bz-alt-kart :is(h2,h3,p,b){color:#fff4df!important}
+.sp-adventure-entry.dm-school-start[data-school-appearance="night"] #bzOyna{background:linear-gradient(120deg,#f9d179,#ef9763)!important;color:#413149!important;box-shadow:0 6px 0 #9c6d45!important}
+
+/* Real Parkur question UI: retained question engine, original option handlers and rewards. */
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game{
+ --school-game-ink:#253e50;--school-game-card:#fffdf8;--school-game-border:#e8c7bb;--school-game-answer:#fff8f1;
+ --school-game-progress:#36b7ac;--school-game-button:#f8b45d;
+ background:radial-gradient(circle at 10% 2%,#e3fff2,transparent 38%),linear-gradient(175deg,#f3fff9,#fff3e8)!important;
+ color:var(--school-game-ink)!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game[data-school-appearance="night"]{
+ --school-game-ink:#fff6e4;--school-game-card:#1d3156;--school-game-border:#5d7596;--school-game-answer:#273c68;
+ --school-game-progress:#65d4c6;--school-game-button:#f2c878;
+ background:linear-gradient(#0b1a3ed9,#152a55ed),url('learning-assets/papi-arena-courtyard.webp') center/cover!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .rq-hud{display:flex!important;flex-wrap:nowrap!important;gap:6px!important;max-width:700px!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .rq-papi{display:none!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .rq-wallet{border:1px solid var(--school-game-border)!important;border-radius:15px!important;background:var(--school-game-card)!important;color:var(--school-game-ink)!important;padding:8px 9px!important;flex:1;min-width:0}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .rq-wallet b{color:var(--school-game-ink)!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-question-theme{flex:0 0 auto;border:1px solid var(--school-game-border);border-radius:16px;background:var(--school-game-card);color:var(--school-game-ink);font-size:11px;font-weight:900;min-height:42px;padding:6px;cursor:pointer}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan{
+ background:var(--school-game-card)!important;border:2px solid var(--school-game-border)!important;border-radius:27px!important;
+ color:var(--school-game-ink)!important;box-shadow:0 6px 0 #765e5c25,0 14px 26px #1b406523!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-progress>div{background:var(--school-game-border)!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-progress i{background:var(--school-game-progress)!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-progress span{color:var(--school-game-ink)!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board{
+ position:relative;display:grid!important;grid-template-columns:minmax(65px,30%) minmax(0,1fr)!important;align-items:center!important;
+ gap:6px!important;min-height:110px!important;padding:8px 11px!important;margin:0 0 8px!important;
+ background:var(--school-game-answer)!important;border:2px solid var(--school-game-border)!important;
+ border-radius:24px!important;box-shadow:none!important;text-align:center!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board::before{
+ content:'';grid-column:1;grid-row:1 / span 4;display:block;width:100%;height:118px;max-height:18dvh;
+ background-image:var(--dm-school-question-art);background-position:center;background-size:contain;background-repeat:no-repeat;
+ filter:drop-shadow(0 4px 5px #183b482a);pointer-events:none;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board>*{
+ grid-column:2;min-width:0;color:var(--school-game-ink)!important;margin:2px 0!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board .bz-etiket{font-size:clamp(13px,3.2vw,20px)!important;font-weight:950!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board .bz-soru{font-size:clamp(17px,4.8vw,29px)!important;line-height:1.25!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board :is(.bz-tr-anlam,.bz-ipucu){font-size:12px!important;color:var(--school-game-ink)!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec,
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-match-option{
+ background:var(--school-game-answer)!important;border:2px solid var(--school-game-border)!important;color:var(--school-game-ink)!important;
+ border-radius:17px!important;box-shadow:0 3px 0 #8c7a7c28!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec.dogru{background:#d9ffdd!important;color:#1d653e!important;border-color:#3baa74!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec.yanlis{background:#ffe0dd!important;color:#963b3b!important;border-color:#eb8d83!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-btn{
+ background:linear-gradient(110deg,#ffce79,#f5a35f)!important;color:#58313b!important;
+ border:2px solid #e1a153!important;box-shadow:0 4px 0 #ad7b44!important;border-radius:17px!important;
+}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game[data-school-appearance="night"] #bzAlan .bz-btn{background:linear-gradient(#fce49a,#f1be68)!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .rq-review,body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .rq-close{border-radius:50%!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game :is(button,summary):focus-visible{outline:3px solid #2ac6be!important;outline-offset:2px}
+@keyframes dm-school-hover{50%{transform:translateY(-6px)}}
+@media(max-width:600px){
+ .rt-school-main .ml-topic-grid{grid-template-columns:1fr}
+ .rt-school-main{padding-inline:6px}
+ .rt-school-main .ml-summary-card{gap:11px;padding:14px}
+ .rt-school-main .ml-summary-ring{width:87px;height:87px;min-width:87px}
+ .rt-school-main .ml-summary-ring>div{height:64px;width:64px}
+ .rt-school-main .ml-summary-ring b{font-size:23px}
+ .rt-school-main .ml-theme>summary{gap:9px;padding:11px 8px}
+ .rt-school-main .ml-theme-state{width:39px;height:39px;flex-basis:39px}
+ .rt-school-main .rt-school-grade-icon{width:48px;height:48px;flex-basis:48px}
+ .rt-school-main .rt-school-grade-icon img{width:46px;height:46px}
+}
+@media(max-height:710px){
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board{min-height:65px!important;padding:4px 8px!important;margin:0!important}
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board::before{height:67px!important}
+ .sp-adventure-entry.dm-school-start .dm-school-intro-head img{height:92px;width:100px}
+}
+@media(max-width:345px){
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-question-theme{font-size:0;min-width:35px}
+ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-question-theme::before{content:'☀︎';font-size:18px}
+}
+@media(prefers-reduced-motion:reduce){
+ .rt-school-main-hero,.sp-adventure-entry.dm-school-start .dm-school-intro-head img{animation:none!important}
+}
