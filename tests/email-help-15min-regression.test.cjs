@@ -13,7 +13,7 @@ test('profile email field has an easy visual help action',()=>{
  const js=read('ingilizce/kisisel-bilgiler.js');
  const start=js.indexOf('id="kbMail"'),help=js.indexOf('id="kbEmailGuideButton"');
  assert(start>0&&help>start&&help-start<1000);
- assert(js.includes("dmEmailGuide?.open('signup')"));
+ assert(js.includes('dmEmailGuide?.open("profile")'));
 });
 test('15-minute email notices respect verified members and leave placement notices unchanged',()=>{
  const code=read('supabase/functions/diji-api/member-tools-api.ts');
