@@ -35,7 +35,7 @@ Doğruluk yüzdesi = doğru / (doğru + ağırlıklı yanlış). Başarısız e�
 - Solo ödüller mevcut günlük çarpan, hız bonusu ve ödül sınırları üzerinden sunucuda işlenir.
 - Öğrenme Yolu, Ders Çalış, Ana Parkur ve Rally kendi sunucu kayıtlarını korur.
 - **Sınırlama:** Eski istemci tabanlı solo oyunlar ilk cevapları sunucuda doğrulamıyor. Doğru/yanlış istemciden geliyor. Tam sahteciliğe direnç için soru ve cevaplar sunucuya taşınmalı; bu güncelleme tam koruma iddiasında değildir.
-- MeduPro ve ana API aynı ödül kanalını kullanır; diğer uç noktadan eski kuralların aşılması engellenir.
+- MeduPro ve ana API'nin **solo** oyunları aynı adil ödül kanalını kullanır. MeduPro'nun eski Ana Parkur kimlikleri farklı olduğundan legacy `ba` yolu henüz yeni parkur kapısına dönüştürülmemiştir; bu yolun kapatılması veya göçü ayrıca doğrulanmalıdır.
 - Öğretmen paneli, sınıf oyunları ve düelloların kendi puanlaması etkilenmez; bunlara yeni otomatik XP/altın eklenmez.
 
 ### Kontroller
