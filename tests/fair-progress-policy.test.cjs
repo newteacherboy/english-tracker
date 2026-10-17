@@ -23,5 +23,7 @@ test('best prior reward is deducted, no negative gold or XP',()=>{
 test('reject inconsistent or fabricated first-try records',()=>{
  for(const v of [-1,1.5,13,NaN])assert.throws(()=>fair.assess('parkur',v,12));
  assert.throws(()=>fair.assess('study',4,0));
+ assert.throws(()=>fair.assess('study',1,1));
+ assert.throws(()=>fair.assess('learning',3,6));
  assert.throws(()=>fair.assess('unknown',1,1));
 });
