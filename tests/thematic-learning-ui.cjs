@@ -1,5 +1,6 @@
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 const DATA=require('../ingilizce/thematic-curriculum.json'),CORE=require('../ingilizce/learning-core.js');
+const ROSTER=['lumo','tiko','mimo','pofin','ziri','kori','fora','bumbi','nori','vela'];
 
 async function assertFits(page,label){
  await page.waitForFunction(()=>{const root=document.querySelector('#dmStoryLesson'),stage=root?.querySelector('.ml-stage'),board=root?.querySelector('.ml-board');if(!stage||!board)return false;const a=stage.getBoundingClientRect(),b=board.getBoundingClientRect();return a.bottom<=b.bottom+2;});
@@ -20,13 +21,13 @@ await p.goto('https://thematic.test/');await p.evaluate(async()=>{await dmLearni
 const tasks=CORE.deck(DATA.chapters[60],DATA.chapters[59]);for(let i=1;i<=11;i++){const task=tasks[i];await p.waitForFunction(i=>document.querySelector('.ml-progress span').textContent===i+' / 11 soru',i);
 assert.equal(await p.locator('#dmStoryLesson').evaluate(el=>el.scrollTop),0,'Question '+i+' at '+width+'px must open at the top');
 if(i===6&&task.label==='Cümleyi tamamla'){
-assert.equal(await p.locator('.ml-task h2').evaluate(el=>getComputedStyle(el).color),'rgb(12, 21, 53)');
+assert.equal(await p.locator('.ml-task h2').evaluate(el=>getComputedStyle(el).color),'rgb(24, 59, 67)','Question heading must match the approved high-contrast daytime skin');
 await p.evaluate(()=>{window.spoken=[];window.SpeechSynthesisUtterance=function(text){this.text=text;};window.speechSynthesis.cancel=()=>{};window.speechSynthesis.speak=u=>window.spoken.push({text:u.text,lang:u.lang});});
 await p.getByRole('button',{name:'🔊 Cümleyi dinle',exact:true}).click();
 await p.getByRole('button',{name:'🔊 Türkçe anlamını dinle',exact:true}).click();
 assert.deepEqual(await p.evaluate(()=>window.spoken),[{text:task.prompt.replace('____',task.answer),lang:'en-US'},{text:task.promptAudio,lang:'tr-TR'}]);
 }
-if(i===1&&height>520){const b=await p.locator('.ml-board').boundingBox(),h=await p.locator('.ml-arena-hero').boundingBox();assert(h.y-b.y<80,'Prompt must start near top');assert(h.height>=85,'Mascot must have room');}assert.equal(await p.locator('.ml-arena-papi').count(),1);assert(await p.locator('.ml-arena-papi').evaluate(img=>img.complete&&img.naturalWidth>0));
+if(i===1&&height>520){const b=await p.locator('.ml-board').boundingBox(),h=await p.locator('.ml-arena-hero').boundingBox();assert(h.y-b.y<80,'Prompt must start near top');assert(h.height>=85,'Mascot must have room');}assert.equal(await p.locator('.ml-arena-papi').count(),1);await p.waitForFunction(()=>{const img=document.querySelector('#dmStoryLesson .ml-arena-papi');return img?.complete&&img.naturalWidth>0;},null,{timeout:10000});assert.equal(await p.locator('.ml-arena-papi').getAttribute('data-ml-character'),ROSTER[(i-1)%10],'Question '+i+' mascot must follow the approved order');assert.ok((await p.locator('.ml-arena-papi').getAttribute('src')).endsWith('/'+ROSTER[(i-1)%10]+'.webp'),'Question mascot image must load without Papi fallback');
 if([2,4,6,7,10,11].includes(i))await p.screenshot({animations:'disabled',path:path.join(out,'question-'+i+'-'+width+'.png')});
 assert.equal(await p.locator('.ml-wallet-chip').count(),3);await assertFits(p,'question '+i+' at '+width);
 if(task.kind==='letters'){

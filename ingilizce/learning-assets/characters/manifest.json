@@ -1,0 +1,39 @@
+{
+  "version": "2026-10-17",
+  "description": "DijiMedu original ten mascot characters. PNG originals for reuse, optimized WebP for lesson UI.",
+  "questionOrder": [
+    "lumo",
+    "tiko",
+    "mimo",
+    "pofin",
+    "ziri",
+    "kori",
+    "fora",
+    "bumbi",
+    "nori",
+    "vela"
+  ],
+  "questionIndex": "Math.max(1,cursor)-1 modulo 10",
+  "assets": [
+    "bumbi.webp",
+    "fora.webp",
+    "kori.webp",
+    "lumo.webp",
+    "mimo.webp",
+    "nori.webp",
+    "pofin.webp",
+    "tiko.webp",
+    "vela.webp",
+    "ziri.webp",
+    "bumbi.png",
+    "fora.png",
+    "kori.png",
+    "lumo.png",
+    "mimo.png",
+    "nori.png",
+    "pofin.png",
+    "tiko.png",
+    "vela.png",
+    "ziri.png"
+  ]
+}
