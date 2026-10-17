@@ -54,3 +54,40 @@ test('larger custom mascots stay prominent through responsive fit levels', () =>
   assert.match(rules,/@media\(max-width:360px\)/,'Small phones retain dedicated widths');
   assert.match(rules,/@media\(min-width:600px\) and \(max-height:520px\)/,'Short landscape screens have dedicated image limits');
 });
+
+test('lesson entry uses a fresh nonrepeating mascot on every opening', () => {
+ const begin=source.indexOf("let lastEntryMascot=''");
+ const end=source.indexOf('function mascotAt(cursor)',begin);
+ assert.ok(begin>=0&&end>begin,'Entry mascot selector should exist');
+ const stored=new Map();
+ const context={sessionStorage:{getItem:k=>stored.get(k)||null,setItem:(k,v)=>stored.set(k,v)}};
+ const select=vm.runInNewContext(scriptRoster+'\n'+source.slice(begin,end)+'\npickEntryMascot',context);
+ let previous='';
+ for(let i=0;i<30;i++){
+  const next=select();
+  assert.ok(names.includes(next),'Only approved maskots appear');
+  assert.notEqual(next,previous,'Consecutive lesson opens must have different mascots');
+  previous=next;
+ }
+ assert.match(source,/class="ml-entry-start"/);
+ assert.match(source,/Öğrenme Yolunda Devam Et/);
+ assert.match(source,/bindMascotFallback\(modal\)/);
+});
+test('theme overview keeps 20 themes, six topics each and gated lesson buttons', () => {
+ const begin=source.indexOf('async function openAll()'),end=source.indexOf('function close(',begin),ui=source.slice(begin,end);
+ assert.ok(begin>=0&&end>begin);
+ for(const keyword of ['ml-summary-ring','ml-summary-track','ml-theme-info','ml-theme-track','ml-topic-grid','ml-topic-card','ml-topic-steps','data-chapter','aria-disabled','ml-theme-current'])assert.ok(ui.includes(keyword),keyword);
+ assert.match(ui,/t\.topics\.map/,'All topic cards stay dynamic');
+ assert.match(ui,/pair\.map/,'Both chapters per topic remain rendered');
+ assert.match(ui,/Önce sıradaki bölümü tamamla/,'Locked lessons still block navigation');
+ assert.match(ui,/esc\(topic\.objective\)/,'Learning objectives remain escaped');
+});
+test('responsive approved layout keeps full-size entry mascot and one-column topics', () => {
+ const css=fs.readFileSync(path.join(root,'thematic-learning.css'),'utf8');
+ const newCss=css.slice(css.lastIndexOf('/* Learning-path premium redesign'));
+ assert.match(newCss,/#mlThemeList \.ml-topic-grid\{display:grid;grid-template-columns:1fr/);
+ assert.match(newCss,/#dmStoryLesson\.ml-entry \.ml-entry-papi/);
+ assert.match(newCss,/#dmStoryLesson\.ml-entry \.ml-entry-prize/);
+ assert.match(newCss,/#dmStoryLesson\.ml-entry \.ml-entry-start/);
+ assert.match(newCss,/@media\(max-width:360px\)/);
+});
