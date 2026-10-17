@@ -130,7 +130,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   }
   await page.locator('#suQuizNext').click();assert((await page.locator('#suQuizProgress').innerText()).includes('2 / 2'));
   for(const word of ['I','wake','up'])await page.locator('.dc-quiz-q:visible .dt-kelime').filter({hasText:new RegExp('^'+word+'$')}).click();
-  await page.evaluate(()=>{yo.dcOdul.push('Saatler');yo.dcTekrar['Saatler']=typeof yoBugun==='function'?yoBugun():new Date().toISOString().slice(0,10);});
+  // The new server-side reward ledger supersedes the former local dcOdul array.
   const xpBefore=await page.evaluate(()=>yo.totalXp);failNextSave=true;
   await page.locator('#suQuizNext').click();await page.waitForTimeout(250);assert.equal(await page.locator('#suStudyResult').count(),0,'failed save does not show success');assert.equal(await page.evaluate(()=>yo.totalXp),xpBefore,'failed save does not award');assert(await page.locator('#suQuizNext').isEnabled(),'failed save can retry');assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),false);
   await page.locator('#suQuizNext').click();await page.waitForSelector('#suStudyRecovery');assert.equal(await page.locator('#suStudyResult').count(),0,'below-threshold lesson is not falsely completed');assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),false);assert.equal(await page.evaluate(()=>yo.totalXp),xpBefore,'unsuccessful practice cannot generate XP');
