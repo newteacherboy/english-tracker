@@ -1,0 +1,8 @@
+@layer playNavigation {
+html body.dm-play-session :is(#bottomNavMobile,.bottom-nav-mobile,.bottom-nav-desktop){display:none!important;visibility:hidden!important;pointer-events:none!important}
+html body .dm-session-surface .dm-session-back{position:absolute!important;top:calc(10px + env(safe-area-inset-top,0px))!important;left:10px!important;right:auto!important;bottom:auto!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;max-width:42px!important;padding:0!important;border:2px solid #bce9f2!important;border-radius:50%!important;background:#fff!important;color:#352078!important;box-shadow:0 3px 0 #709da947!important;font:900 36px/32px system-ui!important;text-align:center!important;display:grid!important;place-items:center!important;z-index:2147483000!important;cursor:pointer;touch-action:manipulation}
+html body .dm-session-surface .dm-session-back:focus-visible{outline:3px solid #8f3fdb!important;outline-offset:3px!important}
+html body .dm-session-surface .dm-session-back:disabled{opacity:.5!important;cursor:wait}
+html body :is(.mt-top,.pc-header,.ww-shell>header,.rr-hud,.hb-card>header,.ml-header,.kp-topbar):has(.dm-session-back){padding-left:58px!important}
+html body #rallyGame .rr-logo{margin-left:45px!important}
+}

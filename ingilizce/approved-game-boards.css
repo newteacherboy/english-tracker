@@ -79,3 +79,9 @@ html body #boslukOyunOverlay.ab-playing #jkb-papagan .jk-daire{background-image:
 html body #boslukOyunOverlay.ab-playing #jkb-ikinci .jk-daire{background-image:url('games-assets/approved-target-v1.svg')!important}
 @media(max-height:670px){html body #boslukOyunOverlay.ab-playing .jk-daire{height:28px!important}html body #boslukOyunOverlay.ab-playing #jkBar::before{font-size:13px}}
 }
+@layer approvedBoards {
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:25px repeat(2,minmax(0,1fr)) 25px repeat(2,minmax(0,1fr))!important;gap:8px!important}
+html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-kart{font-size:clamp(16px,4.6vw,23px)!important;line-height:1.18!important;padding:7px!important;overflow-wrap:break-word!important}
+html body .ab-memory-turn{flex:none!important;margin:0!important;text-align:center!important;font:900 14px/1.2 Nunito,system-ui!important;color:#241475!important;background:#ffffffd9!important;border-radius:14px!important;padding:5px!important}
+@media(max-height:670px){html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid{gap:5px!important}html body #hafizaOyunOverlay.ab-playing #hafizaKartGrid .hz-kart{font-size:clamp(14px,4vw,19px)!important;padding:4px!important}.ab-memory-turn{font-size:12px!important;padding:3px!important}}
+}

@@ -4211,20 +4211,21 @@ mesajlar.forEach(m => {
                     const grid=document.getElementById('hafizaKartGrid');
                     grid.innerHTML='';
                     grid.classList.add('hz-half-open-grid');
-                    const half=hafizaKartlar.length/2;grid.style.setProperty('--ab-rows',Math.ceil(half/4));
+                    const half=hafizaKartlar.length/2;const turn=Math.min(Math.floor(hafizaEslesenSayi/4),Math.ceil(half/4)-1);grid.style.setProperty('--ab-rows',2);grid.dataset.turn=turn;const label=document.getElementById('abMemoryTurn');if(label)label.textContent=(turn+1)+' / '+Math.ceil(half/4)+' tur · '+Math.min(4,half-turn*4)+' çift';
                     hafizaKartlar.forEach((k,idx)=>{
+                        if(Math.floor(k.pairId/4)!==turn)return;
                         const btn=document.createElement('button');
-                        btn.type='button';
+                        btn.type='button';btn.dataset.cardIndex=idx;
                         btn.className='hz-kart hz-'+k.tip+(k.eslesti?' eslesti':(k.acik?' acik':''))+(k.sabit?' hz-open-fixed':' hz-hidden-match')+(idx===hafizaSeciliAcik?' hz-selected':'');
                         btn.textContent=(k.acik||k.eslesti)?k.metin:'❓';
                         btn.disabled=k.eslesti||hafizaKilitli;
                         btn.setAttribute('aria-label',k.sabit?'Açık kelime: '+k.metin:(k.acik?'Açılan anlam: '+k.metin:'Gizli eş kartı'));
                         btn.onclick=()=>hafizaKartTikla(idx);
-                        if(idx===0||idx===half){const sep=document.createElement('div');sep.className='hz-grid-divider';sep.innerHTML='<svg class="ab-flag" aria-hidden="true"><use href="games-assets/approved-ui-v1.svg#'+(idx===0?'uk':'tr')+'"></use></svg>'+(idx===0?'İngilizce Kartlar':'Türkçe Kartlar');grid.append(sep);}
+                        if(!grid.querySelector('.hz-'+k.tip)){const sep=document.createElement('div');sep.className='hz-grid-divider';sep.innerHTML='<svg class="ab-flag" aria-hidden="true"><use href="games-assets/approved-ui-v1.svg#'+(k.tip==='en'?'uk':'tr')+'"></use></svg>'+(k.tip==='en'?'İngilizce Kartlar':'Türkçe Kartlar');grid.append(sep);}
                         grid.append(btn);
                     });
                 }
-                function gridWrongFeedback(a,b){const cards=document.querySelectorAll('#hafizaKartGrid .hz-kart');[a,b].forEach(i=>cards[i]?.classList.add('hz-wrong'));}
+                function gridWrongFeedback(a,b){[a,b].forEach(i=>document.querySelector('#hafizaKartGrid [data-card-index="'+i+'"]')?.classList.add('hz-wrong'));}
                 function hafizaKartTikla(idx) {
                     if(jk.bakis||hafizaKilitli)return;
                     const kart=hafizaKartlar[idx];
@@ -8793,9 +8794,9 @@ setTimeout(() => {
                 function pick(slot){chosen=slot;word.querySelectorAll('button').forEach(b=>b.classList.toggle('selected',b===slot));options.replaceChildren();const correct=slot.dataset.answer;const letters=new Set([correct]);while(letters.size<5)letters.add('ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)]);for(const c of [...letters].sort(()=>Math.random()-.5)){const b=document.createElement('button');b.type='button';b.textContent=c;b.onclick=()=>{
                     if(!chosen||chosen.disabled)return;
                     window.dmVerifiedGames?.record(w.en,{letter:c,index:Number(chosen.dataset.position)});
-                    if(c!==chosen.dataset.answer){hadWrong=true;state.wrong++;OC.yanlis(false);chosen.textContent=c;chosen.classList.add('wrong');note.textContent='Yanlış harf. Geri alıp yeniden seçebilirsin.';window.dmAnswerFeedback?.(false);return;}
-                    chosen.textContent=c;chosen.disabled=true;chosen.classList.remove('wrong','selected');chosen.classList.add('correct');remaining--;window.dmAnswerFeedback?.(true);note.textContent='✓ Doğru harf';
-                    const next=[...word.querySelectorAll('button')].find(x=>!x.disabled);if(next)pick(next);else{options.replaceChildren();completed++;state.results.push({kelime:w.en,turkce:w.tr,dogruMu:!hadWrong});window.dmVerifiedGames?.record(w.en,[...word.children].map(x=>x.textContent).join(''));OC.dogru(hadWrong?.5:1);document.getElementById('boslukSayacInfo').textContent=(state.index+completed)+' / '+state.words.length+' · Üç kelimelik tur';state.combo++;row.classList.add('complete');
+                    if(c!==chosen.dataset.answer){hadWrong=true;state.wrong++;OC.yanlis(false);chosen.textContent=c;chosen.classList.add('wrong');note.textContent='Yanlış harf. Geri alıp yeniden seçebilirsin.';window.dmLetterFeedback?.('wrong');return;}
+                    chosen.textContent=c;chosen.disabled=true;chosen.classList.remove('wrong','selected');chosen.classList.add('correct');remaining--;window.dmLetterFeedback?.('letter');note.textContent='✓ Doğru harf';
+                    const next=[...word.querySelectorAll('button')].find(x=>!x.disabled);if(next)pick(next);else{options.replaceChildren();completed++;setTimeout(()=>{if(row.isConnected&&document.getElementById('boslukOyunEkrani').style.display!=='none')window.dmLetterFeedback?.('word');},150);state.results.push({kelime:w.en,turkce:w.tr,dogruMu:!hadWrong});window.dmVerifiedGames?.record(w.en,[...word.children].map(x=>x.textContent).join(''));OC.dogru(hadWrong?.5:1);document.getElementById('boslukSayacInfo').textContent=(state.index+completed)+' / '+state.words.length+' · Üç kelimelik tur';state.combo++;row.classList.add('complete');
                        if(completed===batch.length&&!state.advancing){state.advancing=true;const turn=state.turn;setTimeout(()=>{if(boslukRound?.turn!==turn||document.getElementById('boslukOyunEkrani').style.display==='none')return;state.index+=batch.length;state.advancing=false;if(state.index<state.words.length)boslukTurCiz();else{window.boslukSonucDetaylari=state.results;window.boslukSonKombo=state.combo;boslukOyunuBitir(state.results.filter(x=>x.dogruMu).length,state.results.filter(x=>!x.dogruMu).length);}},650);}
                     }
                 };options.append(b);}const undo=document.createElement('button');undo.type='button';undo.textContent='⤨';undo.setAttribute('aria-label','Seçilen harfi geri al');undo.onclick=()=>{if(chosen&&!chosen.disabled){chosen.textContent='_';chosen.classList.remove('wrong');note.textContent='Bir harf seç.';}};options.append(undo);}
@@ -26525,7 +26526,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script src="teacher-workspace.js?v=20261016-oral-1"></script>
 <link rel="stylesheet" href="member-polish.css?v=20261015-live-clock-1">
 <script src="active-time.js?v=20261016-flow-2"></script>
-<script src="member-polish.js?v=20261013-member-122"></script>
+<script src="member-polish.js?v=20261018-letter-sounds-1"></script>
 <link rel="stylesheet" href="notice-sharing.css?v=20261013-achievement-3">
 <script src="notice-sharing.js?v=20261015-evening-1"></script>
 <link rel="stylesheet" href="papi-wallet.css?v=20261013-compact-127">
@@ -26538,7 +26539,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="demo-account.js?v=20261015-1"></script>
 <link rel="stylesheet" href="papi-chat.css?v=20261016-2">
 <script defer src="papi-chat.js?v=20261016-1"></script>
-<link rel="stylesheet" href="approved-game-boards.css?v=20261017-1">
-<script defer src="approved-game-boards.js?v=20261017-1"></script>
+<link rel="stylesheet" href="approved-game-boards.css?v=20261018-four-pairs-2">
+<script defer src="approved-game-boards.js?v=20261018-four-pairs-2"></script>
+<link rel="stylesheet" href="play-navigation.css?v=20261018-1">
+<script defer src="play-navigation.js?v=20261018-1"></script>
 </body>      
         </html>
