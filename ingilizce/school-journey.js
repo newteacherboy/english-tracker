@@ -167,7 +167,16 @@ function refreshDesign(){
  requestAnimationFrame(()=>{designQueued=false;decorateEntrance();decorateQuestion();});
 }
 if(typeof MutationObserver==='function'){
- const observer=new MutationObserver(items=>{if(items.some(i=>i.type==='childList'))refreshDesign();});
+ const relevantSelectors='#bzPerde,.sp-adventure-entry';
+ const observer=new MutationObserver(items=>{
+  if(!currentRoute())return;
+  const relevant=items.some(m=>{
+   if(m.target?.closest?.(relevantSelectors))return true;
+   return Array.from(m.addedNodes||[]).some(n=>n.nodeType===1&&
+     (n.matches?.(relevantSelectors)||n.querySelector?.(relevantSelectors)));
+  });
+  if(relevant)refreshDesign();
+ });
  observer.observe(document.body,{childList:true,subtree:true});
 }
 document.addEventListener('dm:login',()=>{lastIntroMascot='';introSerial=0;});
