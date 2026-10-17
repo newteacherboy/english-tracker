@@ -122,7 +122,7 @@ if(typeof scene==='function'){
   const prefix='class="rt-root rt-school"';
   if(!html.includes(prefix))return html;
   const card=preview(data);
-  return html.replace(prefix,prefix.slice(0,-1)+' data-school-appearance="'+theme()+'"')
+  return html.replace(prefix,prefix+' data-school-appearance="'+theme()+'"')
     .replace('<section class="rt-week',card+'<section class="rt-week');
  };
 }
