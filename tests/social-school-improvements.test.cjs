@@ -48,7 +48,7 @@ test('school route uses 8 learning-style accordion grades and different mascots'
  assert.match(html,/2\. Sınıf/);assert.match(html,/3\. Sınıf/);assert.match(html,/data-school-open/);
  const mascots=[...html.matchAll(/learning-assets\/characters\/([^/]+)\.webp/g)].map(m=>m[1]);
  assert(new Set(mascots).size>=4,'different characters must appear across grade controls');
- assert(appended.some(e=>e.href==='school-journey.css?v=20261017-1'));
+ assert(appended.some(e=>e.href==='school-journey.css?v=20261017-2'));
 });
 test('feed phrases gain escaped color accents, untrusted HTML remains text',()=>{
  const body=friendsSource.slice(friendsSource.indexOf('  function feedHighlights('),friendsSource.indexOf('  const norm ='));

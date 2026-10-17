@@ -16112,7 +16112,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
   /* "X seni geçti": en fazla 30 dakikada bir */
   let oncekiUstler = null, sonGectiUyari = 0;
   setInterval(async () => {
-    if (!girisli() || oyunda() || document.hidden || typeof maLigSiralama !== 'function') return;
+    if (window.dmLeagueMomentumActive || !girisli() || oyunda() || document.hidden || typeof maLigSiralama !== 'function') return;
     try {
       if (typeof maTumGetir === 'function') await maTumGetir();
       maLigOnbellek = null;
@@ -26457,7 +26457,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="meteor.css?v=20261012-independent">
 <link rel="stylesheet" href="word-wheel.css?v=20261016-ten-seconds">
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">
-<script defer src="oyna-v2.js?v=20261017-school-retry-v2"></script>
+<script defer src="oyna-v2.js?v=20261017-school-retry-v3"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
 <script defer src="friends-ui.js?v=20261017-social-highlights-v2"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261011-3">
