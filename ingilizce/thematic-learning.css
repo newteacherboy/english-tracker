@@ -321,3 +321,39 @@
 #dmStoryLesson.ml-entry .ml-entry-prize{margin:14px 0;padding:12px;gap:7px}
 #dmStoryLesson.ml-entry .ml-entry-card h2{margin:9px 0!important;font-size:25px!important}
 #dmStoryLesson.ml-entry .ml-entry-start{padding:12px 10px;min-height:44px;margin-top:9px}
+
+/* Top-aligned prompt, with the answer area kept in the lower reading band. */
+#dmStoryLesson .ml-board{justify-content:flex-start}
+#dmStoryLesson .ml-stage{display:flex;flex-direction:column}
+#dmStoryLesson .ml-task{display:flex;flex-direction:column;flex:1;min-height:0}
+#dmStoryLesson .ml-task>.ml-choices,#dmStoryLesson .ml-task>.ml-matches,#dmStoryLesson .ml-task>.ml-teach,#dmStoryLesson .ml-task>.ml-sentence,#dmStoryLesson .ml-task>.ml-letter-puzzle{margin-top:auto}
+#dmStoryLesson .ml-arena-hero{grid-template-columns:minmax(76px,27%) minmax(0,1fr);align-items:center}
+#dmStoryLesson .ml-arena-papi{max-height:150px}
+#dmStoryLesson[data-fit="1"] .ml-arena-papi{max-height:115px}
+#dmStoryLesson[data-fit="2"] .ml-arena-papi{max-height:85px}
+#dmStoryLesson .ml-header>[data-lesson-theme]{width:30px;height:30px;min-height:30px;font-size:16px;border-width:1px}
+#dmStoryLesson[data-appearance="day"]{--arena-ink:#0c1535;--arena-light:#163f4b;--arena-muted:#526c76;background-color:#e5f7ed;background-image:radial-gradient(ellipse at 85% 0%,#fff6ba 0,transparent 45%),linear-gradient(160deg,#bdebf5,#e5f7ed 55%,#fff3ce);color:#163f4b;color-scheme:light}
+#dmStoryLesson[data-appearance="day"] .ml-header small{color:#476877}
+#dmStoryLesson[data-appearance="day"] .ml-header h1{color:#153f4b!important;-webkit-text-fill-color:#153f4b!important}
+#dmStoryLesson[data-appearance="day"] .ml-header>button{background:linear-gradient(#fffef4,#e1f3eb);color:#146c71;border-color:#98cfc7;box-shadow:0 3px 0 #8abeb54d}
+#dmStoryLesson[data-appearance="day"] .ml-board{background:linear-gradient(145deg,#ffffffd9,#f9ffedc9);border-color:#9ecfc5;box-shadow:0 10px 30px #2b77741a,inset 0 1px #fff}
+#dmStoryLesson[data-appearance="day"] .ml-eyebrow{background:#fff5d4;color:#705116!important;border-color:#d2ac51}
+#dmStoryLesson[data-appearance="day"] .ml-progress>span{color:#126770}
+#dmStoryLesson[data-appearance="day"] .ml-progress progress,#dmStoryLesson[data-appearance="day"] progress::-webkit-progress-bar{background:#c1ddd9;box-shadow:none}
+#dmStoryLesson[data-appearance="day"] progress::-webkit-progress-value{background:linear-gradient(90deg,#15a697,#43c8ad)}
+#dmStoryLesson[data-appearance="day"] .ml-task p{color:#3e626b}
+#dmStoryLesson[data-appearance="day"] .ml-choices button:not(.is-correct):not(.is-wrong):not(.is-selected),#dmStoryLesson[data-appearance="day"] .ml-matches button:not(.is-correct):not(.is-wrong):not(.is-selected),#dmStoryLesson[data-appearance="day"] .ml-teach button{background:linear-gradient(#fffef6,#edf9ed);color:#194c50;border-color:#8dc7bb;box-shadow:inset 0 2px #fff,0 4px 0 #b4d5c7}
+#dmStoryLesson[data-appearance="day"] .ml-teach b{color:#194c50}
+#dmStoryLesson[data-appearance="day"] .ml-teach span:not(.ml-art),#dmStoryLesson[data-appearance="day"] .ml-teach small{color:#35666b}
+#dmStoryLesson[data-appearance="day"] .ml-reference-toggle,#dmStoryLesson[data-appearance="day"] .ml-actions button:not(.ml-primary),#dmStoryLesson[data-appearance="day"] .ml-tokens button,#dmStoryLesson[data-appearance="day"] .ml-letter-bank button{background:#e2f3ed;border-color:#8bc2b7;color:#1a5557;box-shadow:0 3px 0 #aacfc3}
+#dmStoryLesson[data-appearance="day"] .ml-sentence,#dmStoryLesson[data-appearance="day"] .ml-letter-line{background:#f4fcf5;color:#194c50;border-color:#83bcb3}
+#dmStoryLesson[data-appearance="day"] .ml-letter-fixed{color:#194c50}
+#dmStoryLesson[data-appearance="day"] .ml-complete h2{color:#31545b!important;-webkit-text-fill-color:#31545b!important}
+#dmStoryLesson[data-appearance="day"] .ml-result-stats,#dmStoryLesson[data-appearance="day"] .ml-result-words,#dmStoryLesson[data-appearance="day"] .ml-result-replay{color:#3e626b!important}
+@media(min-width:600px) and (max-height:520px){#dmStoryLesson .ml-task{display:grid}#dmStoryLesson .ml-task>.ml-choices,#dmStoryLesson .ml-task>.ml-matches,#dmStoryLesson .ml-task>.ml-teach,#dmStoryLesson .ml-task>.ml-sentence,#dmStoryLesson .ml-task>.ml-letter-puzzle{margin-top:0}#dmStoryLesson .ml-arena-papi{max-height:120px}}
+
+#dmStoryLesson[data-appearance="day"] .ml-reference-card{background:#fffdf2;color:#194c50;border-color:#a8cfc4}
+#dmStoryLesson[data-appearance="day"] .ml-reference-card h2{color:#194c50!important;-webkit-text-fill-color:#194c50!important}
+#dmStoryLesson[data-appearance="day"] .ml-feedback:not(:empty){background:#fff0e8;color:#783346;border-color:#d49c8e}
+#dmStoryLesson[data-appearance="day"] .ml-feedback.is-correct{background:#e3f6e7;color:#1c603e;border-color:#86bc95}
+#dmStoryLesson[data-appearance="day"] .ml-feedback.is-correct:before{color:#1c603e}
