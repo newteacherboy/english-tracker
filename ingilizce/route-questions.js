@@ -42,6 +42,10 @@ function renderTask(s,area,c){
  const select=(values,expected)=>{const box=document.createElement('div');box.className='bz-secenekler';for(const value of values){const b=button(value,()=>{const good=norm(value)===norm(expected);box.querySelectorAll('button').forEach(x=>{x.disabled=true;if(norm(x.textContent)===norm(expected))x.classList.add('dogru')});if(!good)b.classList.add('yanlis');speak(s.tip==='patternComplete'?area.querySelector('.bz-soru').textContent.replace(/_{2,}/g,value):value);answer(good,expected,value)},'bz-sec');box.append(b)}area.append(box)};
  if(s.tip==='teach'){
   const words=s.l||[s.k];let i=0;
+  // Preserve legacy renderer in older game fixtures; new cards are school-route only.
+  if(!root.dmSchoolJourney?.theme||root.dmLearningRoute?.purpose?.()!=='school'){
+   const draw=()=>{if(!current())return;const w=words[i];put('<div class="rq-teach-progress">'+(i+1)+' / '+words.length+'</div><div class="bz-soru" lang="en">'+esc(en(w))+'</div><div class="bz-tr-anlam">'+esc(tr(w))+'</div>');area.append(audio(en(w)),button(i+1<words.length?'Sonraki kelime →':'Öğrendim, devam et →',()=>{if(++i<words.length)draw();else answer(true,'Kelimeleri öğrendin',true)}));speak(en(w))};draw();return true;
+  }
   const draw=()=>{if(!current())return;const w=words[i];
     put('<div class="rq-teach-progress" aria-label="Öğrenme kartı '+(i+1)+' / '+words.length+'">'+(i+1)+' / '+words.length+'</div>'+
      '<div class="dm-school-words" aria-label="Bu duraktaki kelimeler">'+words.map((word,n)=>
