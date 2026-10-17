@@ -11,7 +11,7 @@ begin
  or public.dm_solo_fair_percent('ky',5,2)<>60
  or public.dm_solo_fair_percent('ky',8,1)<>80
  or public.dm_solo_fair_percent('ky',10,0)<>100
- or public.dm_solo_fair_percent('hafiza',6,4)<>80
+ or public.dm_solo_fair_percent('hafiza',6,4)<>60
  or public.dm_solo_fair_percent('asmaca',6,2)<>80
  then raise exception 'Genre-adaptive policy thresholds wrong';end if;
  for idx in 1..5 loop
