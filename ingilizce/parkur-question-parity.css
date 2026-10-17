@@ -233,3 +233,19 @@ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzInceleme:not([style*
 @media(prefers-reduced-motion:reduce){
  #bzPerde.dm-school-game *,#dmStoryLesson .ml-history-overlay *{animation:none!important;transition:none!important}
 }
+
+/* Keep navigation inside the original progress row: no extra vertical height on iPhone. */
+#dmStoryLesson .ml-progress .ml-question-history{
+ flex:0 0 auto!important;display:flex!important;gap:4px!important;
+ margin:0!important;padding:0!important;width:auto!important;
+ min-height:0!important;justify-content:flex-end!important;
+}
+#dmStoryLesson .ml-progress .ml-question-history button{
+ min-width:30px!important;min-height:30px!important;width:30px!important;height:30px!important;
+ padding:3px!important;font-size:18px!important;border-radius:11px!important;
+ line-height:1!important;
+}
+@media(max-width:375px){
+ #dmStoryLesson .ml-progress .ml-question-history{gap:3px!important}
+ #dmStoryLesson .ml-progress .ml-question-history button{width:28px!important;min-width:28px!important}
+}
