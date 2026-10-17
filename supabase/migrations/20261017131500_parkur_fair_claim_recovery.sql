@@ -135,7 +135,7 @@ begin
  return jsonb_build_object('ok',true,'xp',raw_x-adj_x,'gold',raw_g-adj_g,
    'reason','awarded','yo',v,'firstCorrect',correct_count,'total',12,'fairPercent',percentage,
    'fairTier',case percentage when 100 then 'perfect' when 80 then 'high' when 60 then 'pass' else 'recovery' end);
-end $fair$;
+end; $fair$;
 
 create or replace function public.dm_parkur_fair_recover(
  actor uuid,run_key text,stop_no integer,expected_step integer,selected text
@@ -162,7 +162,7 @@ begin
  end if;
  return jsonb_build_object('ok',true,'correct',good,'completed',rec.completed,
    'recovery',case when rec.completed then null else public.dm_parkur_recovery_view(rec.deck,rec.step) end);
-end $recover$;
+end; $recover$;
 revoke all on function public.dm_parkur_recovery_view(jsonb,integer) from public,anon,authenticated;
 revoke all on function public.dm_parkur_fair_claim(uuid,text,integer,integer,numeric) from public,anon,authenticated;
 revoke all on function public.dm_parkur_fair_recover(uuid,text,integer,integer,text) from public,anon,authenticated;
