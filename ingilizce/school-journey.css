@@ -92,3 +92,28 @@
 @media(max-width:650px){#mlThemeList.rt-school-modal .ml-topic-grid{grid-template-columns:1fr}#mlThemeList.rt-school-modal .rt-school-cover-mascot{height:95px;width:85px}.rt-school-main-mascot{height:95px}}
 @media(max-width:360px){.rt-school-mini-grades{grid-template-columns:repeat(4,minmax(0,1fr))}.rt-school-current-unit{grid-template-columns:56px minmax(0,1fr)}.rt-school-unit-mascot{height:55px;width:55px}.rt-school-unit-status{display:none}.rt-school-cover-actions button{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.rt-school-main-mascot{animation:none}}
+
+
+/* Night mode includes the actual school adventure map, banners and mission cards. */
+.rt-root.rt-school{--route:#e87772;--soft:#ffe7e0;--selected:#cf4e89}
+#tab-dunya .bz-ic:has(.rt-root.rt-school[data-school-appearance="night"]){background:linear-gradient(160deg,#191d3c,#27213e)!important}
+.rt-root.rt-school[data-school-appearance="day"] .rt-path.rt-reward-route{box-shadow:inset 0 0 0 2px #f5bf8e8a,0 5px 15px #b9795424}
+.rt-root.rt-school[data-school-appearance="night"]{--route:#f9a07d;--soft:#494060;--selected:#f17cb0;color:#efe6ff}
+.rt-root.rt-school[data-school-appearance="night"] .rt-path.rt-reward-route{background-color:#1e2248;background-image:linear-gradient(155deg,#20274bbb,#372859b3 55%,#111b3cb8),url('route-assets/odul-rotasi.webp');--map-trail:#e1b9ff;box-shadow:inset 0 0 0 2px #766494,0 8px 19px #080a244f}
+.rt-root.rt-school[data-school-appearance="night"] .rt-badge{background:#504065;color:#fff0e5}
+.rt-root.rt-school[data-school-appearance="night"] .rt-banner{background:linear-gradient(120deg,#4b3760,#282b52);color:#fff3e7;border:1px solid #725a84}
+.rt-root.rt-school[data-school-appearance="night"] .rt-banner .rt-all-link{color:#ffc4dc}
+.rt-root.rt-school[data-school-appearance="night"] .rt-card:not(.rt-week-complete){background:linear-gradient(120deg,#343454,#282b49);border-color:#645476;color:#f5e9ff;box-shadow:0 4px 10px #0c0b203b}
+.rt-root.rt-school[data-school-appearance="night"] .rt-week-complete{background:linear-gradient(110deg,#27574e,#403e53)!important;border-color:#4ca18d!important;color:#f7fff6}
+.rt-root.rt-school[data-school-appearance="night"] .rt-week .rt-week-message,
+.rt-root.rt-school[data-school-appearance="night"] .rt-card small{color:#e2d5eb}
+.rt-root.rt-school[data-school-appearance="night"] .rt-task-list>button{background:#413b5b;color:#f7f0ff;border:1px solid #625675}
+.rt-root.rt-school[data-school-appearance="night"] .rt-task-progress{color:#efe9ff;background:conic-gradient(#f6b1c4 calc(var(--ratio)*360deg),#615775 0)}
+.rt-root.rt-school[data-school-appearance="night"] .rt-task-progress:before{background:#332d4c}
+.rt-root.rt-school[data-school-appearance="night"] .rt-path .rt-node.current{background:linear-gradient(140deg,#ffb06c,#ef5f9a);border-color:#fff0d6;box-shadow:0 0 0 4px #ffdbea65,0 6px 0 #a33b714d}
+.rt-root.rt-school[data-school-appearance="night"] .rt-path .rt-node.done{background:linear-gradient(#58baab,#26796c);border-color:#cefff0}
+.rt-root.rt-school[data-school-appearance="night"] .rt-path .rt-node.locked{background:linear-gradient(#6b6684,#45435e);border-color:#aaa4ba;color:#efe8ff}
+.rt-root.rt-school[data-school-appearance="night"] .rt-path .rt-stop-label{background:#30294bdc;color:#fff0dc;border:1px solid #8c77a9}
+.rt-root.rt-school[data-school-appearance="night"] .rt-path > .rt-map-switch{background:linear-gradient(120deg,#42355c,#292b4e);border-color:#a58ab7;color:#fff0ee;box-shadow:0 3px 0 #130e2f9c}
+.rt-root.rt-school[data-school-appearance="night"] .rt-path .rt-continue>b{background:#2c2b52e8;color:#fff0e5}
+.rt-root.rt-school[data-school-appearance="night"] .rt-path .rt-start{background:linear-gradient(130deg,#ff8a7c,#e957a4);color:#fff;box-shadow:0 4px 0 #8e315b}
