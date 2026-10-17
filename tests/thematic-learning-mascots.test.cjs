@@ -40,3 +40,17 @@ test('20 genuine transparent PNG/WebP files exist with readable headers', () => 
     assert.equal(webp.toString('ascii',8,12),'WEBP',name+' WebP format');
   }
 });
+
+test('larger custom mascots stay prominent through responsive fit levels', () => {
+  const css=fs.readFileSync(path.join(root,'thematic-learning.css'),'utf8');
+  const marker='/* Larger DijiMedu discovery mascots.';
+  const i=css.lastIndexOf(marker);
+  assert.ok(i>0,'Large mascot rules should exist after the compact layout');
+  const rules=css.slice(i);
+  assert.match(rules,/\.ml-arena-papi\[data-ml-character\]/,'Only new mascot images use enlargement');
+  assert.match(rules,/grid-template-columns:minmax\(105px,35%\)/,'Normal layout reserves a larger column');
+  assert.match(rules,/grid-template-columns:minmax\(92px,32%\)/,'Compact layout remains sizeable');
+  assert.match(rules,/grid-template-columns:minmax\(78px,28%\)/,'Extra-compact layout should not shrink to the former 48px column');
+  assert.match(rules,/@media\(max-width:360px\)/,'Small phones retain dedicated widths');
+  assert.match(rules,/@media\(min-width:600px\) and \(max-height:520px\)/,'Short landscape screens have dedicated image limits');
+});
