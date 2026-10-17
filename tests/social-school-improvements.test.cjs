@@ -32,7 +32,7 @@ function schoolFixture(){
  };
  const c={window:null,document,localStorage:{getItem:()=>null,setItem:()=>{}},console};
  c.window=c;c.dmLearningRoute={purpose:()=> 'school'};
- c.dmParkurSahne=()=>'<div class="rt-root rt-school"><section class="rt-week"></section></div>';
+ c.dmParkurSahne=()=>'<div class="rt-root rt-school"><div class="rt-banner"><img src="route-assets/papi-school.png"><button type="button" class="rt-all-link">›</button></div><section class="rt-week"></section><section class="rt-tasks"></section><section class="rt-path rt-reward-route"><div class="rt-stones"><button class="dm-adventure-node"></button></div></section></div>';
  vm.createContext(c);vm.runInContext(schoolSource,c);return {c,appended};
 }
 test('school route uses 8 learning-style accordion grades and different mascots',()=>{
@@ -44,13 +44,16 @@ test('school route uses 8 learning-style accordion grades and different mascots'
  const grades=c.dmSchoolJourney.group(rows);
  assert.equal(grades.length,8);assert.equal(grades[1].total,2);assert.equal(grades[1].completed,1);assert.equal(grades[2].total,1);
  const html=c.dmParkurSahne({steps:rows,current:1,allSteps:rows});
- assert.match(html,/rt-school-main/);assert.match(html,/data-school-appearance="day"/);assert.match(html,/ml-summary-ring/);assert.doesNotMatch(html,/rt-school-mini-grades/);
- assert.match(html,/2\. Sınıf/);assert.match(html,/3\. Sınıf/);assert.match(html,/data-school-open/);
- const mascots=[...html.matchAll(/learning-assets\/characters\/([^/]+)\.webp/g)].map(m=>m[1]);
- assert(new Set(mascots).size>=4,'different characters must appear across grade controls');
+ assert.match(html,/data-school-appearance="day"/);
+ assert.match(html,/rt-banner/);assert.match(html,/rt-week/);assert.match(html,/rt-tasks/);
+ assert.match(html,/rt-path rt-reward-route/);assert.match(html,/rt-school-home-theme/);
+ assert.doesNotMatch(html,/rt-school-main|rt-school-mini-grades|ml-summary-ring/);
  assert(appended.some(e=>e.href==='school-journey.css?v=20261017-1'));
- assert(appended.some(e=>e.href==='school-adventure-v2.css?v=20261017-2'));
- assert.match(html,/data-school-b="0" data-school-d="1"/);
+ assert(appended.some(e=>e.href==='school-adventure-v2.css?v=20261017-home-restore-3'));
+ const again=c.dmParkurSahne({steps:rows,current:1,allSteps:rows});
+ const image=h=>h.match(/learning-assets\/characters\/([^/]+)\.webp/)?.[1];
+ assert(image(html)&&image(again)&&image(html)!==image(again),'changing map character each revisit');
+ assert(schoolSource.includes('Sınıflarım')&&schoolSource.includes('renderGrade(g,active)'),'grade accordion remains in secondary explorer');
 });
 test('feed phrases gain escaped color accents, untrusted HTML remains text',()=>{
  const body=friendsSource.slice(friendsSource.indexOf('  function feedHighlights('),friendsSource.indexOf('  const norm ='));
@@ -87,4 +90,16 @@ test('school launch and quiz styles use separate day/night palettes and changing
  assert.match(schoolSource,/function decorateQuestion/);
  assert.match(schoolSource,/function launchStep/);
  assert.match(schoolSource,/window\.dmSchoolStopOpen\(Number\(step\.b\),Number\(step\.d\)\)/);
+});
+
+test('school homepage preserves the existing three-stop map and displays goal/tasks',()=>{
+ const html=routeSource;
+ assert.match(html,/function pathMarkup\(steps,current,learn\)/);
+ assert.match(html,/rt-reward-route/);
+ assert.match(html,/function weekly\(/);
+ assert.match(html,/function tasks\(/);
+ const css=fs.readFileSync('ingilizce/school-adventure-v2.css','utf8');
+ assert.doesNotMatch(css,/\.rt-root\.rt-school \.rt-banner,\.rt-root\.rt-school \.rt-badge,\.rt-root\.rt-school \.rt-path\{display:none!important\}/);
+ assert.match(css,/\.rt-root\.rt-school \.rt-reward-route\{/);
+ assert.match(css,/\.rt-root\.rt-school\[data-school-appearance="night"\] \.rt-reward-route\{/);
 });
