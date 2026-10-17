@@ -193,8 +193,8 @@
     },
     {
       "path": "ingilizce/discovery-assets/google-g.svg",
-      "sha256": "a7aac3856c0dc26c7703578180e2c094ad1836863551e307eada370c757b567d",
-      "bytes": 692,
+      "sha256": "b3cd0113433718243da74f71e12ba872f3b5de14d9b7a9099b2bcc04fb2ff760",
+      "bytes": 727,
       "status": "approved-brand-asset",
       "source": "Existing Google sign-in SVG from ingilizce/google-login.js"
     },

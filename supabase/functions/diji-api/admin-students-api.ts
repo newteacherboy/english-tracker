@@ -1,4 +1,4 @@
-export function adminStudentsAPI(db: any, json: any, hashPassword: any) {
+export function adminStudentsAPI(db: any, json: any, hashPassword: any, security: any = {}) {
   const allowed = (a: any) => !!a && a.role === 'teacher' && a.yonetici === true && a.ogretmenKullanici === 'teacher';
   const fields = 'id,username,full_name,school,class_no,branch,status,updated_at';
   const escapeLike = (v: string) => v.replace(/[\\%_]/g, '\\$&');
@@ -20,8 +20,38 @@ export function adminStudentsAPI(db: any, json: any, hashPassword: any) {
       if (r.error) return json({ok:false,mesaj:r.error.code==='23505'?'Bir kullanıcı adı zaten kayıtlı. Bu gruptaki öğrenciler eklenmedi; adları kontrol et.':'Öğrenciler eklenemedi.'},r.error.code==='23505'?409:500);
       return json({ok:true,ogrenciler:r.data,mesaj:'Öğrenciler doğrudan sana bağlı olarak kaydedildi.'});
     }
-    if (!['yoneticiOgrenciler','yoneticiOgrenciKaydet'].includes(op)) return null;
+    if (!['yoneticiOgrenciler','yoneticiOgrenciKaydet','yoneticiOgrenciSil'].includes(op)) return null;
     if (!allowed(a)) return json({ok:false,mesaj:'Bu bölüm yalnızca uygulama yöneticisine açık.'},403);
+    if (op === 'yoneticiOgrenciSil') {
+      if (method !== 'POST') return json({ok:false,mesaj:'POST gerekli.'},405);
+      const id=String(body.id||'').toLowerCase(), password=String(body.mevcutSifre||'');
+      if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)||id==='dcde2026-1015-4000-8000-000000000001')return json({ok:false,mesaj:'Geçerli bir öğrenci seç.'},400);
+      if(!password||password.length>256)return json({ok:false,mesaj:'Silmek için kendi yönetici şifreni gir.'},400);
+      if(!security.verifyPassword||!security.hash||!security.attempts||!security.audit)return json({ok:false,mesaj:'Şifre doğrulama şu anda kullanılamıyor.'},503);
+      const rateKey='admin:'+a.teacher_id;
+      if(await security.attempts('ogrenci_sil_hata',rateKey,15)>=5)return json({ok:false,mesaj:'Çok fazla hatalı şifre. 15 dakika sonra tekrar dene.'},429);
+      const actor=await db.from('teachers').select('id,password_hash').eq('id',a.teacher_id).eq('active',true).eq('is_admin',true).maybeSingle();
+      if(actor.error||!actor.data)return json({ok:false,mesaj:'Yönetici oturumu doğrulanamadı.'},403);
+      if(!await security.verifyPassword(password,actor.data.password_hash)){
+        await security.audit('ogrenci_sil_hata',rateKey);
+        return json({ok:false,mesaj:'Yönetici şifren yanlış. Öğrenci silinmedi.'},403);
+      }
+      const target=await db.from('students').select('id,username,password_hash,updated_at').eq('id',id).eq('role','student').maybeSingle();
+      if(target.error)return json({ok:false,mesaj:'Öğrenci bilgileri alınamadı.'},503);
+      if(!target.data)return json({ok:false,mesaj:'Öğrenci bulunamadı. Listeyi yenile.'},404);
+      if(body.onayKullanici!==target.data.username||!body.sonGuncelleme||Date.parse(body.sonGuncelleme)!==Date.parse(target.data.updated_at))return json({ok:false,mesaj:'Öğrenci bilgisi değişti. Listeyi yenileyip yeniden seç.'},409);
+      // Reuse the existing transactional deletion: revoke sessions, remove progress,
+      // redact shared references and enqueue Google identity cleanup together.
+      const ticketHash=await security.hash(crypto.randomUUID()+'-'+crypto.randomUUID());
+      const ticket=await db.from('diji_deletion_tickets').insert({token_hash:ticketHash,account_id:id,account_role:'student',password_hash_snapshot:target.data.password_hash});
+      if(ticket.error)return json({ok:false,mesaj:'Silme işlemi hazırlanamadı.'},503);
+      const deleted=await db.rpc('diji_delete_account',{p_ticket_hash:ticketHash,p_confirmation:'HESABIMI SİL'});
+      if(deleted.error||!deleted.data?.ok){
+        await db.from('diji_deletion_tickets').delete().eq('token_hash',ticketHash);
+        return json({ok:false,mesaj:'Hesap silinemedi. Listeyi yenileyip tekrar kontrol et.'},409);
+      }
+      return json({ok:true,silinen:id,mesaj:'Öğrenci hesabı ve bağlı ilerlemesi silindi.'});
+    }
     if (op === 'yoneticiOgrenciler') {
       const search = String(body.arama ?? q.get('arama') ?? '').trim().slice(0,80);
       const page = Math.max(0, Math.min(10000, Math.floor(Number(body.sayfa ?? q.get('sayfa')) || 0)));

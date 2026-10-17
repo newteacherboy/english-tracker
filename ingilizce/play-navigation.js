@@ -14,6 +14,7 @@
  }
  function decorate(root){
   if(!root.classList.contains('dm-session-surface'))root.classList.add('dm-session-surface');
+  if(root.id==='asmacaOyunOverlay'&&root.classList.contains('ia-playing')){root.querySelectorAll('.dm-session-back').forEach(b=>b.classList.remove('dm-session-back'));return;}
   let back=root.querySelector(nativeBack);
   // The rally pause/results controls are recreated during play; use its public close API.
   if(root.id==='rallyGame')back=root.querySelector(':scope>.dm-session-back');

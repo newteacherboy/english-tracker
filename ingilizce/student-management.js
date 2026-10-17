@@ -11,15 +11,15 @@
   function modal(title,content){
     const teacherMenu=document.getElementById('ogretmenMenuModal');
     if(teacherMenu)teacherMenu.style.display='none';
-    document.querySelectorAll('.sm-overlay').forEach(x=>x.remove());
+    document.querySelectorAll('.sm-overlay').forEach(x=>{if(x.dmClose)x.dmClose();else x.remove();});
     if(!document.getElementById('smStyle')){
       const s=document.createElement('style');s.id='smStyle';s.textContent=`.sm-overlay{position:fixed;inset:0;z-index:100000120;background:#123e36aa;display:flex;align-items:center;justify-content:center;padding:12px}.sm-dialog{width:100%;max-width:720px;max-height:90dvh;overflow:auto;padding:20px;background:#fffdf4;border-radius:24px;color:#173f34;box-shadow:0 16px 60px #113c3655}.sm-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}.sm-dialog h3{font-size:21px;margin:0 0 12px}.sm-dialog p{line-height:1.5;margin:8px 0}.sm-dialog button{padding:10px 14px;border:0;border-radius:12px;background:#137d66;color:white;font:800 14px inherit;cursor:pointer}.sm-dialog button:disabled{opacity:.5}.sm-dialog button:focus-visible{outline:3px solid #efb643;outline-offset:3px}.sm-dialog input,.sm-dialog select,.sm-dialog textarea{width:100%;box-sizing:border-box;padding:11px;border:2px solid #cde3db;border-radius:12px;background:white;color:#173f34;font:inherit;margin:4px 0 10px}.sm-dialog label{display:block;font-weight:800;font-size:13px}.sm-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sm-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #e0e9dd}.sm-row small{display:block;color:#587266;margin-top:4px}.sm-status{color:#9c3417;white-space:pre-line;margin:10px 0;min-height:22px}.sm-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.sm-dialog textarea{min-height:160px}.sm-dialog [hidden]{display:none!important}@media(max-width:480px){.sm-pair{grid-template-columns:1fr}.sm-dialog{padding:16px}}`;document.head.appendChild(s);
     }
     const p=document.createElement('div');p.className='sm-overlay';p.setAttribute('role','dialog');p.setAttribute('aria-modal','true');p.setAttribute('aria-label',title);
     p.innerHTML=`<div class="sm-dialog"><div class="sm-heading"><h3>${esc(title)}</h3><button type="button" class="sm-close" aria-label="Kapat">✕</button></div>${content}<div class="sm-status" role="status" aria-live="polite"></div></div>`;
     const close=()=>{p.remove();document.removeEventListener('keydown',key);};const key=e=>{if(e.key==='Escape')close();};
-    p.querySelector('.sm-close').onclick=close;p.onclick=e=>{if(e.target===p)close();};document.addEventListener('keydown',key);document.body.appendChild(p);
-    return {p,$:s=>p.querySelector(s),message:s=>p.querySelector('.sm-status').textContent=s||''};
+    p.dmClose=close;p.querySelector('.sm-close').onclick=close;p.onclick=e=>{if(e.target===p)close();};document.addEventListener('keydown',key);document.body.appendChild(p);
+    return {p,close,$:s=>p.querySelector(s),message:s=>p.querySelector('.sm-status').textContent=s||''};
   }
   function classSelect(id){return `<select id="${id}">${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}">${n}. sınıf</option>`).join('')}</select>`;}
   function openCreate(){
@@ -52,9 +52,23 @@
       const r=await request({islem:'yoneticiOgrenciler',sayfa:page,arama:search});busy=false;
       if(!m.p.isConnected)return;
       if(!r.ok){m.$('#smList').textContent='';m.message(r.mesaj);return;}
-      m.message('');m.$('#smList').innerHTML=r.liste.map((s,i)=>`<div class="sm-row"><span><b>${esc(s.username)}</b><small>${esc(s.school||'Okul belirtilmedi')} · ${esc(s.class_no||'—')}/${esc(s.branch||'—')} · ${esc(s.status)}</small></span><button type="button" data-edit="${i}">Düzenle</button></div>`).join('')||'<p>Öğrenci bulunamadı.</p>';
+      m.message('');m.$('#smList').innerHTML=r.liste.map((s,i)=>`<div class="sm-row"><span><b>${esc(s.username)}</b><small>${esc(s.school||'Okul belirtilmedi')} · ${esc(s.class_no||'—')}/${esc(s.branch||'—')} · ${esc(s.status)}</small></span><div class="sm-actions"><button type="button" data-edit="${i}">Düzenle</button><button type="button" class="sm-delete" data-delete="${i}">Öğrenciyi sil</button></div></div>`).join('')||'<p>Öğrenci bulunamadı.</p>';
       m.$('#smPrev').disabled=page===0;m.$('#smNext').disabled=(page+1)*50>=r.toplam;m.$('#smCount').textContent=`${r.toplam} öğrenci · sayfa ${page+1}`;
       m.p.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>edit(r.liste[Number(b.dataset.edit)]));
+      m.p.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>confirmDelete(r.liste[Number(b.dataset.delete)]));
+    }
+    function confirmDelete(s){
+      const d=modal('Öğrenci hesabını sil',`<p><b>${esc(s.username)}</b> hesabı ve bağlı ilerlemesi kalıcı olarak silinecek. Diğer öğrenciler etkilenmez.</p><form id="smDeleteForm" class="sm-delete-form"><label for="smDeletePassword">Kendi yönetici şifren<input id="smDeletePassword" type="password" required maxlength="256" autocomplete="current-password"></label><div class="sm-actions"><button type="button" id="smDeleteCancel">Vazgeç</button><button type="submit" id="smDeleteConfirm" class="sm-delete">Öğrenciyi kalıcı olarak sil</button></div></form>`);
+      d.$('#smDeleteCancel').onclick=()=>{d.close();openAdmin();};
+      d.$('#smDeleteForm').onsubmit=async event=>{
+        event.preventDefault();const input=d.$('#smDeletePassword'),password=input.value;if(!password)return d.message('Kendi yönetici şifreni gir.');
+        d.$('#smDeleteConfirm').disabled=true;d.message('Şifren doğrulanıyor…');input.value='';
+        const r=await request({islem:'yoneticiOgrenciSil',id:s.id,sonGuncelleme:s.updated_at,onayKullanici:s.username,mevcutSifre:password});
+        if(!d.p.isConnected)return;
+        if(!r.ok){d.message(r.mesaj||'Öğrenci silinemedi.');d.$('#smDeleteConfirm').disabled=false;input.focus();return;}
+        d.close();await openAdmin();
+      };
+      d.$('#smDeletePassword').focus();
     }
     function edit(s){
       const e=modal('Öğrenci bilgilerini düzenle',`<form id="smEdit"><label>Kullanıcı adı<input id="smUsername" maxlength="50" required autocomplete="off" value="${esc(s.username)}"></label><label>Yeni şifre (boş bırakılırsa korunur)<input id="smPassword" type="password" minlength="6" maxlength="64" autocomplete="new-password"></label><label>Okul<input id="smEditSchool" maxlength="120" value="${esc(s.school||'')}"></label><div class="sm-pair"><label>Sınıf${classSelect('smEditClass')}</label><label>Şube<input id="smEditBranch" maxlength="10" required value="${esc(s.branch||'')}"></label></div><button type="submit" id="smSave">Değişiklikleri kaydet</button></form>`);

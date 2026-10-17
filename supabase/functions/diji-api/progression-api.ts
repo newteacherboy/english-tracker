@@ -79,7 +79,7 @@ export function progressionAPI(db:any,json:any){
  }
  async function guard(op:string,body:any,q:URLSearchParams,a:any){
   if(a?.role!=='student'||!a.student_id)return null;
-  if(op==='dersKonulariGetir')return null;
+  if(['dersKonulariGetir','akisTumu'].includes(op))return null;
   let code=C.features.find((f:any)=>f.ops.includes(op))?.code;
   if(['akisOlayToggle','bildirimGonder'].includes(op)){const t=String(value(body,q,'tur'));code=t==='takip'?'takip':['begeni','tebrik','like','congrats'].includes(t)?'tebrik':undefined;}
   if(['duelloKabul','duelloRed','duelloSonuc','duelloYanit','duelloSonucKaydet','duelloGonder'].includes(op))code='duello';

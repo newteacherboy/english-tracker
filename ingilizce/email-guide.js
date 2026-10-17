@@ -2,7 +2,7 @@
    All account changes are performed by the existing authenticated API. */
 (()=>{'use strict';
  if(window.dmEmailGuide)return;
- const VERSION='20261017-v1',PREFIX='dm-eg';
+ const VERSION='20261018-compact-2',PREFIX='dm-eg';
  const css=document.createElement('link');css.rel='stylesheet';css.href='email-guide.css?v='+VERSION;document.head.append(css);
  const $=id=>document.getElementById(id);
  const locale=s=>String(s||'').trim().toLocaleLowerCase('tr');
@@ -210,7 +210,6 @@
  }
  window.dmEmailGuide={open,openProvider:(p)=>{open('help');renderSteps(p,0);},close,resend,check,profileCard};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});else setup();
-}
  // Registration readability and splash progress enhancement (2026-10-17).
  function enhanceRegistration(){
   const labels=[...document.querySelectorAll('button,a')];

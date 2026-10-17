@@ -43,7 +43,7 @@
   $('dmSwitchGoogle')?.remove();
   if(!window.dmAndroidUygulama){
    const google=document.createElement('button');google.id='dmSwitchGoogle';google.type='button';google.className='dm-switch-google';
-   google.innerHTML='<img src="discovery-assets/google-g.svg" alt="" width="22" height="22"><span>Google ile Giriş Yap</span>';
+   google.innerHTML='<img src="discovery-assets/google-g.svg?v=20261018-namespace" alt="" width="22" height="22"><span>Google ile Giriş Yap</span>';
    google.onclick=async()=>{if(typeof window.dmGoogleHesapDegistir!=='function'){message('Google bağlantısı yüklenemedi. Sayfayı yenileyip tekrar dene.');return;}google.disabled=true;try{const opened=await window.dmGoogleHesapDegistir();if(!opened)message('Google girişi başlatılmadı. Mevcut hesabın açık.');}finally{if(google.isConnected)google.disabled=false;}};
    target.append(google);
   }

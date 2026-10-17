@@ -45,7 +45,7 @@ const papiCards = papiCardsAPI(supabase,json);
 const release = releaseAPI(supabase,json);
 const progression = progressionAPI(supabase,json);
 const cachedContent = contentCache(json);
-const studentManagement = adminStudentsAPI(supabase,json,hashPassword);
+const studentManagement = adminStudentsAPI(supabase,json,hashPassword,{verifyPassword,hash:sha256,attempts:denemeSay,audit:denemeYaz});
 const contacts = contactPolicyAPI(supabase,json);
 const myWorld = myWorldAPI(supabase,json);
 

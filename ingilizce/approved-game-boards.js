@@ -20,7 +20,7 @@
       const turn=document.createElement('p');turn.id='abMemoryTurn';turn.className='ab-memory-turn';turn.setAttribute('role','status');game.querySelector('#hafizaKartGrid').before(turn);
       const footer=document.createElement('footer');footer.className='ab-guide';
       footer.innerHTML='<img src="games-assets/approved-boy-v1.webp" alt=""><p>Eşleşen kartları bul,<br>tüm çiftleri tamamla!</p>';
-      game.append(footer);const drawer=document.createElement('details');drawer.className='ab-jokers';drawer.innerHTML='<summary>🃏 Jokerlerim</summary>';game.append(drawer);
+      game.append(footer);const drawer=document.createElement('section');drawer.className='ab-jokers';drawer.setAttribute('aria-label','Jokerlerim');drawer.innerHTML='<strong>Jokerlerim</strong>';game.append(drawer);
     }
     const close=content.querySelector('.game-close-btn');close.textContent='‹';close.setAttribute('aria-label','Oyundan çık');
     const update=()=>{

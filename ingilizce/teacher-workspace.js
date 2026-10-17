@@ -1,13 +1,14 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
-const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261016-layout-1';document.head.append(style);
+const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261018-children-2';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token()})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
 function paintBadge(){for(const b of document.querySelectorAll('[data-profile="teacher"]')){let badge=b.querySelector('.dm-teacher-count');if(!badge){badge=document.createElement('span');badge.className='dm-teacher-count';b.append(badge);}badge.textContent=String(total);badge.hidden=total===0;b.setAttribute('aria-label','Öğretmen Paneli'+(total?' · '+total+' bildirim':''));}}
 async function refresh(force=false){if(!token()||reading||document.hidden||!force&&Date.now()-lastRead<60000)return;reading=true;try{const d=await api('teacherNotificationSummary');total=d.total||0;registrations=d.registrations||0;messages=d.messages||0;lastRead=Date.now();paintBadge();}catch(e){console.warn('[Öğretmen bildirimleri]',e.message);}finally{reading=false;}}
-function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
-function children(){return [...document.querySelectorAll('.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal')].filter(x=>x.id!=='ogretmenMenuModal'&&x.id!=='sifreModal'&&visible(x));}
+function visible(el){return !!el&&el.getClientRects().length>0&&(el.checkVisibility?el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}):getComputedStyle(el).visibility!=='hidden');}
+const childSelector='.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.seviye-harita-overlay,#rallyGame,#meteorGame,#wordWheel,#papiCards,#dmTeacherOral,#mlThemeList,#dmStoryLesson,.gso-overlay';
+function children(){return [...document.querySelectorAll(childSelector)].filter(x=>x.id!=='ogretmenMenuModal'&&x.id!=='sifreModal'&&(visible(x)||x.closest('#ogretmenMenuModal')&&['flex','block','grid'].includes(x.style.display)));}
 const original=window.ogretmenPaneliAc;window.ogretmenPaneliAc=function(){active=true;const r=original?.apply(this,arguments);refresh(true);return r;};
 document.addEventListener('click',e=>{
  const menu=$('ogretmenMenuModal');if(!menu)return;
@@ -32,8 +33,8 @@ function maintain(){
  if(visible(menu))active=true;
  // Move child dialogs out of hidden legacy containers and above every workspace layer.
  if(!active)return;
- if(menu.parentElement!==document.body)document.body.append(menu);menu.classList.add('dm-teacher-open');if(menu.style.display!=='flex')menu.style.display='flex';if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
- for(const el of children()){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
+ if(menu.parentElement!==document.body)document.body.append(menu);menu.classList.add('dm-teacher-open');const dialogs=children();menu.classList.toggle('dm-teacher-obscured',dialogs.length>0);const display=dialogs.length?'none':'flex';if(menu.style.display!==display)menu.style.display=display;if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
+ for(const el of dialogs){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
  if(!$('dmTeacherRallyButton')){const b=document.createElement('button');b.id='dmTeacherRallyButton';b.className='ogretmen-menu-btn';b.textContent='🏎️ Kelime Rallisi · Öğretmen Denemesi';b.onclick=async()=>{try{await window.dmLazyGames?.ready();window.ralliOyunAc?.();}catch(e){window.yoToast?.(e.message);}};menu.querySelector('.rubric-content').append(b);}
  if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, 100 XP kazandır';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
  if(!menuSeen){menuSeen=true;api('teacherNotificationRead').then(()=>refresh(true)).catch(()=>{});}
@@ -48,13 +49,12 @@ const guide={parkur:'Profilim → Parkur Değiştir ile 1–8. sınıf veya A1�
 let studySignature='',helpSignature='';
 function installCatalog(){
  const items=catalog();if(!items.length)return;
- const study=$('tab-derscalis');
- if(visible(study)){const games=window.dmAssignmentGames(),sig=games.map(x=>x[0]).join('|');let box=$('dmStudyPracticeCatalog');if(!box){box=document.createElement('section');box.id='dmStudyPracticeCatalog';box.className='dm-auto-games';(study.querySelector('.dc-focus-card')||study).append(box);studySignature='';}if(sig!==studySignature){studySignature=sig;box.replaceChildren();const heading=document.createElement('h3');heading.textContent='Oyunlarla pekiştir';box.append(heading);for(const [key,icon,name,fn] of games){const b=document.createElement('button');b.type='button';b.textContent=icon+' '+name;b.onclick=()=>window[fn]?.();box.append(b);}}}
+ $('dmStudyPracticeCatalog')?.remove();
  const help=$('yardimIcerikAlani');if(visible($('yardimModal'))&&help){const sig=items.map(x=>x.code+'|'+x.name+'|'+x.description).join(';');let box=$('dmFeatureHelp');if(!box){box=document.createElement('section');box.id='dmFeatureHelp';box.className='dm-catalog-help';help.prepend(box);helpSignature='';}if(sig!==helpSignature){helpSignature=sig;box.replaceChildren();for(const f of items){const a=document.createElement('article'),h=document.createElement('strong'),p=document.createElement('p');h.textContent=f.name;p.textContent=f.description||f.howTo||guide[f.code]||(f.group==='Oyunlar'?'Oyunlar sekmesinden '+f.name+' oyununu aç; varsa sınıf ve ünite seçip başlat.':f.group+' bölümündeki '+f.name+' özelliğini kullan.');a.append(h,p);box.append(a);}}const q=String($('yardimAramaInput')?.value||'').toLocaleLowerCase('tr');for(const a of box.children)a.hidden=!!q&&!a.textContent.toLocaleLowerCase('tr').includes(q);}
 }
 window.dmTeacherWorkspace={paintBadge,refresh};
 const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of document.querySelectorAll('.rubric-modal,.sm-overlay,.yo-modal,.yo-perde,#yoModalPerde,#odModal,#omSifreModal'))watcher.observe(el,{attributes:true,attributeFilter:['style']});
-new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes].some(n=>n.nodeType===1&&n.matches?.('.dm-perde,.yo-perde,.yo-modal,#yoModalPerde'))))maintain();}).observe(document.body,{childList:true});
+new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&(n.matches?.(childSelector)||n.querySelector?.(childSelector)))))maintain();}).observe(document.body,{childList:true});
 const report=$('yoModal');if(report)watcher.observe(report,{attributes:true,attributeFilter:['class','style']});
 setInterval(()=>{if(document.hidden)return;maintain();refresh();installCatalog();},1200);
 document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;refresh(true);});

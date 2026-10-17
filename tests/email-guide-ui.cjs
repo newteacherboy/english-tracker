@@ -6,7 +6,7 @@ assert.match(entry,/member-experience\.js[^\n]*[\s\S]*email-guide\.js/);
 assert.equal((entry.match(/<script[^>]+src="email-guide\.js/g)||[]).length,1);
 assert(!fs.readFileSync(path.resolve('ingilizce/member-experience.js'),'utf8').includes('dm-email-guide-loader'));
 (async()=>{
- const browser=await chromium.launch({headless:true});
+ const browser=await chromium.launch({headless:true,executablePath:process.env.DIJI_CHROMIUM,args:['--no-sandbox','--disable-dev-shm-usage']});
  const root=path.resolve('ingilizce'),errors=[];
  const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,deviceScaleFactor:1});
  const page=await context.newPage(),requests=[];
