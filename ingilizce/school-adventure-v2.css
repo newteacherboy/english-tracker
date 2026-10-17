@@ -88,6 +88,7 @@
  color:var(--school-dialog-ink)!important;max-height:calc(100dvh - 72px);overflow-y:auto!important;
  padding-top:22px!important;width:min(94vw,440px)!important;
 }
+.sp-adventure-entry.dm-school-start .sp-entry-papi{display:none!important}
 .sp-adventure-entry.dm-school-start .dm-school-intro-head{display:grid;justify-items:center;text-align:center;gap:5px;margin:0 0 12px}
 .sp-adventure-entry.dm-school-start .dm-school-intro-head img{width:clamp(120px,30vw,190px);height:clamp(105px,26vw,180px);object-fit:contain;filter:drop-shadow(0 8px 9px #7f4a6250);animation:dm-school-hover 3.5s ease-in-out infinite}
 .sp-adventure-entry.dm-school-start .dm-school-intro-head small{padding:7px 12px;border-radius:999px;background:#ffdbd5;color:#97465e;font-size:11px;letter-spacing:1.5px;font-weight:950}
