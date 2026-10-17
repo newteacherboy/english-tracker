@@ -210,4 +210,46 @@
  }
  window.dmEmailGuide={open,openProvider:(p)=>{open('help');renderSteps(p,0);},close,resend,check,profileCard};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});else setup();
+}
+ // Registration readability and splash progress enhancement (2026-10-17).
+ function enhanceRegistration(){
+  const labels=[...document.querySelectorAll('button,a')];
+  for(const el of labels){
+   if(/Görselli doğrulama rehberini aç/i.test(el.textContent||'')){
+    el.textContent='📖 Hesabımı Nasıl Doğrulayacağım?';
+   }
+  }
+  const nodes=[...document.querySelectorAll('p,small,span,div')];
+  for(const el of nodes){
+   if(el.children.length>1||el.closest('#dmEmailGuide')||el.dataset.dmReadable)return;
+   const value=(el.textContent||'').trim();
+   if(value.length>180||value.length<8)continue;
+   if(/Gönderdiğimiz bağlantıya dokun|Hesabın oluşturuldu|Mevcut sistemde uygulamaya|E.posta adresini doğrula/i.test(value)){
+    el.dataset.dmReadable='1';
+    el.style.setProperty('color','#102f48','important');
+    el.style.setProperty('font-size','max(15px, 1rem)','important');
+    el.style.setProperty('font-weight','750','important');
+    el.style.setProperty('line-height','1.5','important');
+    el.style.setProperty('text-shadow','0 1px 2px rgba(255,255,255,.9)','important');
+    if(/Hesabın oluşturuldu|Mevcut sistemde uygulamaya/i.test(value)){
+     el.style.setProperty('background','rgba(255,255,255,.93)','important');
+     el.style.setProperty('padding','8px 12px','important');
+     el.style.setProperty('border-radius','12px','important');
+    }
+   }
+  }
+ }
+ let enhancementQueued=false;
+ function scheduleRegistrationEnhancement(){
+  if(enhancementQueued)return;enhancementQueued=true;
+  requestAnimationFrame(()=>{enhancementQueued=false;enhanceRegistration();});
+ }
+ function setupRegistrationEnhancement(){
+  enhanceRegistration();
+  const observer=new MutationObserver(scheduleRegistrationEnhancement);
+  observer.observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('click',scheduleRegistrationEnhancement,true);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupRegistrationEnhancement,{once:true});
+ else setupRegistrationEnhancement();
 })();
