@@ -28,7 +28,7 @@ function chooseRoute(change=false){
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ekran="tab-dunya"],[data-nav="parkur"],.rt-start');if(b&&ready()&&!chosen()) {e.preventDefault();e.stopImmediatePropagation();chooseRoute();}},true);
 function banner(){
- if(!status||status.emailVerified||!ready()){$('dmEmailVerifyBanner')?.remove();if(status?.emailVerified)$('dmEmailVerification')?.querySelector('.dm-member-close')?.click();return;}
+ if(!status||status.emailVerified||!ready()){$('dmEmailVerifyBanner')?.remove();if(status?.emailVerified){$('dmEmailVerification')?.querySelector('.dm-member-close')?.click();window.dmEmailGuide?.close();}return;}
  let el=$('dmEmailVerifyBanner');if(!el){
   el=document.createElement('aside');el.id='dmEmailVerifyBanner';el.className='dm-email-banner';
   el.setAttribute('aria-label','E-posta doğrulama yardımı');$('panel-alani').prepend(el);
