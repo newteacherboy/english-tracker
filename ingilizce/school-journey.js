@@ -106,15 +106,12 @@ function open(rows,gradeHint){
 // Original school stop buttons retain ownership of question creation and rewards.
 function launchStep(step){
  if(!step?.available||!currentRoute())return;
+ if(typeof window.dmSchoolStopOpen==='function'){
+  window.dmSchoolStopOpen(Number(step.b),Number(step.d));return;
+ }
  const host=document.getElementById('dmParkurScroll');
- if(!host)return;
- const selector='.dm-adventure-node[data-b="'+step.b+'"][data-d="'+step.d+'"]';
- const target=host.querySelector(selector);
- if(target){target.click();return;}
- const temporary=document.createElement('button');
- temporary.type='button';temporary.className='dm-adventure-node rt-node current';
- temporary.dataset.b=String(step.b);temporary.dataset.d=String(step.d);
- host.append(temporary);temporary.click();temporary.remove();
+ const target=host?.querySelector('.dm-adventure-node[data-b="'+step.b+'"][data-d="'+step.d+'"]');
+ target?.click();
 }
 let lastIntroMascot='',introSerial=0;
 function nextIntroMascot(){
