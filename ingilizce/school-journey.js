@@ -47,7 +47,7 @@ function preview(state){
  art(grade*11,'rt-school-main-hero')+'</header>'+
  '<div class="ml-summary-card rt-school-overall"><div class="ml-summary-ring" role="progressbar" aria-label="Okul Yolum ilerlemesi" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+done+'" style="--ml-done:'+pct+'%"><div><b>'+done+'</b><small>/ '+total+'</small></div></div>'+
  '<div class="ml-summary-info"><strong>8 sınıf · Macera yolculuğun</strong><p>Üniteleri sırayla keşfet, tamamlanan durakları tekrar çalış.</p><div class="ml-summary-track"><span style="width:'+pct+'%"></span></div><small>%'+pct+' tamamlandı</small></div></div>'+
- '<div class="rt-school-overview-actions"><button type="button" data-school-theme aria-label="Gece görünümüne geç">'+(theme()==='night'?'☀️ Gündüz':'🌙 Gece')+'</button><span>Okul Yolum için özel görünüm</span></div>'+
+ '<div class="rt-school-overview-actions"><button type="button" data-school-theme aria-label="Görünümü değiştir">'+(theme()==='night'?'☀️ Gündüz':'🌙 Gece')+'</button><button type="button" data-school-open>⤢ Tam ekran</button></div>'+
  '<h3 class="ml-theme-list-heading">Sınıflarım <small>8 sınıf</small></h3>'+
  '<div class="rt-school-grades">'+grades.map(g=>renderGrade(g,grade)).join('')+'</div></section>';
 }
