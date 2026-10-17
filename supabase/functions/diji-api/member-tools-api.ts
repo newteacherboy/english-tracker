@@ -57,7 +57,7 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    if(kind==='email'&&s.email_verified_at)return json({ok:true,show:false});
    if(kind==='placement'){const [exam,yo]=await Promise.all([get(sid,'placement_cefr_v2'),get(sid,'yo')]);if(exam?.value||parse(yo?.value).seviye)return json({ok:true,show:false});}
    const prefix='member_notice:'+kind+':'+(kind==='email'?'rolling':week())+':';
-   const r=await db.from('extra_data').select('key_name,updated_at').eq('student_id',sid).like('key_name',prefix+'%');if(r.error)throw r.error;
+   const r=await db.from('extra_data').select('key_name,updated_at').eq('student_id',sid).like('key_name',prefix+'%').gte('updated_at',new Date(Date.now()-(kind==='email'?86400000:7*86400000)).toISOString());if(r.error)throw r.error;
    const records=r.data||[];if(kind==='placement'&&records.length>=2)return json({ok:true,show:false});
    const recent=Math.max(0,...records.map((x:any)=>Date.parse(x.updated_at)||0));
    if(recent&&Date.now()-recent<(kind==='email'?15*60000:30*60000))return json({ok:true,show:false});
