@@ -15284,11 +15284,12 @@ function avatarSVG(s, stil, px, cins) {
       if(saving)return;saving=true;kap.querySelectorAll('.ka-cins').forEach(x=>x.disabled=true);
       const owner=aktifOgrenciAdi;let previous,changed=false;
       try{
-        if(typeof yoHazirMi==='function'&&!yoHazirMi()){
-          await window.dmPrepareMemberState?.();
-          if(owner!==aktifOgrenciAdi)return;
-          if(!yoHazirMi())throw Error('Hesabın yükleniyor. Birazdan tekrar seçebilirsin.');
-        }
+        // Wait for the server's initial version before changing the first
+        // character, so the first save is not rejected as "bekliyor".
+        if(typeof window.dmMemberSaveReady==='function') await window.dmMemberSaveReady(owner);
+        else if(typeof window.dmPrepareMemberState==='function') await window.dmPrepareMemberState();
+        if(owner!==aktifOgrenciAdi)return;
+        if(typeof yoHazirMi==='function'&&!yoHazirMi())throw Error('Hesabın yüklenemedi. Bağlantını kontrol et.');
         previous=yo.karakter;const c=b.dataset.c;
         yo.karakter={cins:c,s:Object.assign({},VARSAYILAN[c],previous?.s||{}),sahip:[...(previous?.sahip||[])]};changed=true;
         await window.dmProgression.sync();
@@ -26303,6 +26304,29 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       return true;
     })().finally(() => loadPending.delete(ad));
     loadPending.set(ad, task);
+    return task;
+  };
+  /* Wait for the authoritative first server load before a first-click save.
+     A local yo object is not proof that the account's save baseline is ready. */
+  const saveReadyTasks = new Map();
+  window.dmMemberSaveReady = function (requestedOwner) {
+    const owner = String(requestedOwner || isimAl() || '');
+    const ad = kucuk(owner);
+    if (!ad || ad !== kucuk(isimAl())) return Promise.reject(new Error('Hesap değişti. Lütfen yeniden giriş yap.'));
+    if (benimsendi.has(ad)) return Promise.resolve(true);
+    if (saveReadyTasks.has(ad)) return saveReadyTasks.get(ad);
+    const task = (async () => {
+      if (typeof window.dmPrepareMemberState === 'function') await window.dmPrepareMemberState();
+      if (ad !== kucuk(isimAl())) throw new Error('Hesap değişti. Lütfen yeniden giriş yap.');
+      for (let attempt = 0; attempt < 4 && !benimsendi.has(ad); attempt++) {
+        if (ad !== kucuk(isimAl())) throw new Error('Hesap değişti. Lütfen yeniden giriş yap.');
+        if (attempt) await new Promise(resolve => setTimeout(resolve, 200 * attempt));
+        if (typeof window.yoSunucudanAl === 'function') await window.yoSunucudanAl();
+      }
+      if (!benimsendi.has(ad)) throw new Error('Hesap verilerin sunucudan alınamadı. Bağlantını kontrol edip tekrar dene.');
+      return true;
+    })().finally(() => { if (saveReadyTasks.get(ad) === task) saveReadyTasks.delete(ad); });
+    saveReadyTasks.set(ad, task);
     return task;
   };
   window.addEventListener('online', () => { loadRetries.clear(); window.yoSunucudanAl?.(); });

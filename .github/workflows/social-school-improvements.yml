@@ -8,6 +8,7 @@ on:
       - 'ingilizce/league-momentum.*'
       - 'supabase/migrations/20261017162000_feed_school_and_purchases.sql'
       - 'tests/social-school-improvements.test.cjs'
+      - 'tests/first-tap-persistence.test.cjs'
       - '.github/workflows/social-school-improvements.yml'
   pull_request:
     paths:
@@ -17,6 +18,7 @@ on:
       - 'ingilizce/league-momentum.*'
       - 'supabase/migrations/20261017162000_feed_school_and_purchases.sql'
       - 'tests/social-school-improvements.test.cjs'
+      - 'tests/first-tap-persistence.test.cjs'
       - '.github/workflows/social-school-improvements.yml'
   workflow_dispatch:
 jobs:
@@ -35,4 +37,4 @@ jobs:
           node --check ingilizce/league-momentum.js
       - name: Test route and social regressions
         run: |
-          node --test tests/social-school-improvements.test.cjs tests/dual-route.test.cjs tests/achievement-feed-cache.test.cjs
+          node --test tests/social-school-improvements.test.cjs tests/dual-route.test.cjs tests/achievement-feed-cache.test.cjs tests/first-tap-persistence.test.cjs
