@@ -21,7 +21,7 @@ test('10-minute email notices respect verified members and leave placement notic
  assert(code.includes("10*60000"));
  assert(code.includes("kind==='placement'&&records.length>=2"));
  assert(code.includes("kind==='email'?'rolling':week()"));
- assert(read('ingilizce/member-experience.js').includes('if(!status.emailVerified'));
+ assert(read('ingilizce/member-experience.js').includes('if(status?.emailVerified)return;'));
 });
 test('locked lessons remain in the UI but cannot be launched below required progress',()=>{
  const code=read('ingilizce/school-journey.js');
