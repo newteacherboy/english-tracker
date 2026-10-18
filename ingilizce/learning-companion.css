@@ -63,3 +63,12 @@
 .lc-dialog .lc-options>button{min-height:48px;border-radius:14px;font-weight:850;transition:background .16s,border-color .16s}
 .lc-dialog .lc-options>button.lc-correct{background:#e1f7ea!important;color:#14643f!important;border-color:#50bd87!important}
 .lc-dialog .lc-options>button.lc-wrong{background:#fff0f0!important;color:#9a2834!important;border-color:#e77a87!important}
+
+
+/* Both carousel pages reserve the same vertical space so switching never moves the map. */
+.dm-goal-pages{display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch}
+.dm-goal-pages>.rt-week,.dm-goal-pages>.rt-tasks{grid-area:1/1;min-height:200px;height:100%;align-self:stretch}
+.dm-goal-pages>.rt-tasks:not([hidden]){justify-content:center}
+.dm-goal-pages>.rt-week[hidden],.dm-goal-pages>.rt-tasks[hidden]{display:none!important}
+.rt-root>.dm-parkur-shortcut{display:none!important}
+@media(max-width:360px){.dm-goal-pages>.rt-week,.dm-goal-pages>.rt-tasks{min-height:216px}}
