@@ -1,9 +1,9 @@
 name: Learning companion QA
 on:
   push:
-    paths: ['ingilizce/learning-companion*', 'ingilizce/learning-dialogues.js', 'ingilizce/member-experience.js', 'supabase/functions/diji-api/learning-*', 'supabase/functions/diji-api/review-schedule.mjs', 'supabase/functions/diji-api/member-tools-api.ts', 'tests/learning-companion*', 'tests/member-tools.test.cjs', '.github/workflows/learning-companion.yml']
+    paths: ['ingilizce/learning-companion*', 'ingilizce/learning-dialogues.js', 'ingilizce/member-experience.js', 'supabase/functions/diji-api/learning-*', 'supabase/functions/diji-api/review-schedule.mjs', 'supabase/functions/diji-api/member-tools-api.ts', 'tests/learning-companion*', 'tests/original-reading-library.test.cjs', 'tests/member-tools.test.cjs', '.github/workflows/learning-companion.yml']
   pull_request:
-    paths: ['ingilizce/learning-companion*', 'ingilizce/learning-dialogues.js', 'ingilizce/member-experience.js', 'supabase/functions/diji-api/learning-*', 'supabase/functions/diji-api/review-schedule.mjs', 'supabase/functions/diji-api/member-tools-api.ts', 'tests/learning-companion*', 'tests/member-tools.test.cjs', '.github/workflows/learning-companion.yml']
+    paths: ['ingilizce/learning-companion*', 'ingilizce/learning-dialogues.js', 'ingilizce/member-experience.js', 'supabase/functions/diji-api/learning-*', 'supabase/functions/diji-api/review-schedule.mjs', 'supabase/functions/diji-api/member-tools-api.ts', 'tests/learning-companion*', 'tests/original-reading-library.test.cjs', 'tests/member-tools.test.cjs', '.github/workflows/learning-companion.yml']
 permissions:
   contents: read
 jobs:
@@ -14,6 +14,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - run: node --test tests/original-reading-library.test.cjs
       - run: node --test tests/learning-companion.test.mjs tests/member-tools.test.cjs tests/api-security-guards.test.cjs tests/post-login-defer.test.cjs tests/sw-versioned-cache.test.cjs tests/account-deletion-sw.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.62.1
       - run: npx playwright install --with-deps chromium
