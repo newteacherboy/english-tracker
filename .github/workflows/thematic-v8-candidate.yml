@@ -1,0 +1,25 @@
+name: Thematic v8 candidate 240 lessons
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/thematic-v8-candidate.js'
+      - 'ingilizce/learning-core.js'
+      - 'ingilizce/thematic-curriculum.json'
+      - 'tests/thematic-v8-candidate.test.cjs'
+      - '.github/workflows/thematic-v8-candidate.yml'
+  push:
+    paths:
+      - 'ingilizce/thematic-v8-candidate.js'
+      - 'ingilizce/learning-core.js'
+      - 'ingilizce/thematic-curriculum.json'
+      - 'tests/thematic-v8-candidate.test.cjs'
+      - '.github/workflows/thematic-v8-candidate.yml'
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/thematic-v8-candidate.test.cjs
