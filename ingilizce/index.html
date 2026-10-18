@@ -224,7 +224,7 @@ if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring
 }
 function domReady(){loaded=true;check();}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',domReady,{once:true});else domReady();
 let visualProgress=0;const visualTimer=setInterval(()=>{if(done){clearInterval(visualTimer);return;}visualProgress=Math.min(92,visualProgress+6);document.querySelectorAll('#dmBootSplash,#oturumYuklemeOverlay').forEach(el=>el.style.setProperty('--dm-papi-progress',visualProgress+'%'));},110);
-document.addEventListener('dm:login',check);timer=setInterval(check,150);
+document.addEventListener('dm:login',check);document.addEventListener('dm:state',check);timer=setInterval(check,500);
 const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
 document.getElementById('dmBootRetry').onclick=()=>location.reload();
 })();</script>
