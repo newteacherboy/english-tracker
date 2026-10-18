@@ -98,7 +98,7 @@ export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}
      return json({ok:true});
     }
     if(op==='safetyAdminAppeals'){
-     const r=await db.from('dm_teacher_student_notices').select('id,kind,message,appeal_message,appealed_at,acknowledged_at,student:students!dm_teacher_student_notices_student_id_fkey(username)').eq('teacher_id',a.teacher_id).not('appealed_at','is',null).order('appealed_at',{ascending:false}).limit(80);
+     const r=await db.from('dm_teacher_student_notices').select('id,kind,message,appeal_message,appealed_at,appeal_reviewed_at,acknowledged_at,student:students!dm_teacher_student_notices_student_id_fkey(username)').eq('teacher_id',a.teacher_id).not('appealed_at','is',null).order('appealed_at',{ascending:false}).limit(80);
      if(r.error)throw Error('İtirazlar alınamadı.');return json({ok:true,appeals:r.data||[]});
     }
     if(op==='safetyAdminAppealResolve'){
