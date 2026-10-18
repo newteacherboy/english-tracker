@@ -24,7 +24,7 @@ test('review schedule lengthens only after spaced successes and resets without l
 });
 test('public content and deployed server bank are identical, complete and internally answerable',()=>{
  assert.equal(fs.readFileSync('ingilizce/learning-dialogues.js','utf8'),fs.readFileSync('supabase/functions/diji-api/learning-dialogues.js','utf8'));
- assert.equal(BANK.length,5);assert.equal(new Set(BANK.map(s=>s.id)).size,5);
+ assert.equal(BANK.length,45);assert.equal(new Set(BANK.map(s=>s.id)).size,5);
  for(const s of BANK){assert.equal(s.questions.length,3);assert.equal(s.lines.length,5);for(const q of s.questions){assert(q.explanation);assert(q.options?q.options.includes(q.answer):q.answers.includes(q.answer));}}
 });
 test('anonymous users, wrong methods, students requesting teacher data and foreign teacher scope are rejected',async()=>{
