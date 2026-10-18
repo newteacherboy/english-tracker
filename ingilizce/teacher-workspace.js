@@ -25,9 +25,9 @@ function decorateWorkspace(menu){
  hero.querySelector('[data-teacher-registrations]').textContent=registrations;hero.querySelector('[data-teacher-messages]').textContent=messages;
  const query=hero.querySelector('input').value.toLocaleLowerCase('tr').trim();let count=0;
  const tools=[
-  [/ödev ver|ödev/i,'📚','Ödev ve etkinlikleri düzenle'],
+  [/ödev ver|ödev/i,'📝','Ödev ve etkinlikleri düzenle'],
   [/rubrik/i,'📊','Öğrencilerin becerilerini değerlendir'],
-  [/ders içi performans/i,'⚡','Ders içindeki gelişimi takip et'],
+  [/ders içi performans/i,'📈','Ders içindeki gelişimi takip et'],
   [/sınıf oyun/i,'🎮','Oyunları sınıfınla birlikte oyna'],
   [/duyuru/i,'📣','Sınıfına duyuru gönder'],
   [/bekleyen kayıt/i,'📥','Yeni öğrenci başvurularını incele'],
@@ -37,7 +37,7 @@ function decorateWorkspace(menu){
   [/zayıf nokta/i,'🎯','Sınıfının gelişime açık konularını gör'],
   [/veli özet/i,'👨‍👩‍👧','Öğrenci gelişimini velilerle paylaş'],
   [/öğrenci şifresi/i,'🔑','Öğrenci erişim sorunlarını çöz'],
-  [/seviye sınav/i,'🧭','Dil seviyelerini ve sonuçları incele'],
+  [/seviye sınav/i,'📑','Dil seviyelerini ve sonuçları incele'],
   [/sözlü yap/i,'🎤','Kelime bilgisi için sözlü uygula']
  ];
  const fallbackIcons=['🧑‍🏫','📘','🏫','🗓️','📝','📈','🗂️','🏅','🧠','🧮','📌','🎨','📎','🔔'];
@@ -55,6 +55,8 @@ function decorateWorkspace(menu){
    const description=entry?.[2]||'';
    // Do not repeat the title as a subtitle or add generic filler under every card.
    if(description&&description.toLocaleLowerCase('tr')!==title.toLocaleLowerCase('tr')){const note=document.createElement('small');note.textContent=description;b.append(note);}
+   // Older cards may contain the title a second time as their own text node.
+   [...b.childNodes].filter(n=>n.nodeType===3&&n.textContent.trim()===title).forEach(n=>n.remove());
    b.dataset.dmTeacherTitle=title;b.dataset.dmTeacherCard='1';
   }
   cardIndex++;
