@@ -119,7 +119,7 @@ function openNoticeMailCenter(){
  }
  const pages={
  'Merkezi Ayarlar':editRemoteRules,
- 'Genel Bakış':()=>{content.innerHTML='<h3>Genel Bakış</h3><p>5 öncelik sınıfı · 4 bilinen otomatik mail görevi</p><p>Bu ekranda canlı gönderim ve gösterim sayaçları henüz bağlı değil; burada gösterilen kurallar tanımlı hedefleri ifade eder.</p>';},
+ 'Genel Bakış':async()=>{content.innerHTML='<h3>Genel Bakış</h3><p>5 duyuru kuralı · 4 mail kuralı</p><p role="status">Mail kuyruğu ve günlük kullanım yükleniyor…</p>';const el=content.querySelector('[role="status"]');try{const d=await api('communicationStats');if(!el.isConnected)return;const s=d.summary;el.textContent='Bugün gönderilen: '+s.sentToday+' · Gönderim denemesi: '+s.attemptsToday+' · Kuyrukta: '+s.queued+' · Hata kaydı bulunan bekleyen: '+s.failedPending;}catch(e){el.textContent='Canlı sayılar henüz okunamıyor: '+e.message;}},
  'Duyurular':()=>{content.innerHTML='<h3>Uygulama içi duyurular</h3>';content.append(table(['Duyuru','Öncelik','Hedef','Gösterim kuralı'],rules));},
  'Mailler':()=>{content.innerHTML='<h3>Otomatik e-postalar</h3><p>Mail teslim raporları ve kota kullanımının sunucudan okunması henüz gerekli.</p>';content.append(table(['Görev','Planlanan zaman','Kontrol'],mails));},
  'Ekran Kuralları':()=>{content.innerHTML='<h3>Gösterim kuralları</h3><p><b>Kesinti yasak:</b> Oyun, test, Ders Çalış konusu veya sorusu, parkur soru alanı, sonuç ve ödül aşamaları.</p><p><b>Uygun yüzeyler:</b> Parkur, Oyunlar, Arkadaşlar, Ders Çalış, Mağaza ve Profil ana ekranları.</p><p><b>Öncelik:</b> Öğretmen uyarısı → hesap doğrulama → başlangıç / seviye → lig → normal hatırlatmalar.</p><p><b>Özel:</b> Enerji bitişi kendi zorunlu akışını korur.</p>';},
