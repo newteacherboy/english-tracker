@@ -6,6 +6,7 @@ const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||''
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ready=()=>!!who()&&who().toLowerCase()!=='teacher'&&!window.dmGuestMode&&!!Y()&&(!window.yoHazirMi||window.yoHazirMi())&&$('panel-alani')?.style.display==='block';
 let welcomeTimer=null,welcomeOwner='';
+let gamesEmailShown=false,emailNextAt=0,emailGamesVisited=false,emailPromptBusy=false;
 let actor='',status=null,busy=false,lastRead=0,started=Date.now(),examAt=Date.now()+120000+Math.random()*480000,dismissedRoute=false,refreshPending=false;
 async function api(islem,data={}){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem,t:localStorage.getItem('ing_token')||'',...data}),signal:controller.signal});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı.');return d;}finally{clearTimeout(timeout);}}
 function sheet(title,content,id='dmMemberDialog'){
@@ -39,6 +40,8 @@ function banner(){
 }
 function emailPrompt(){
  if(!ready()||status?.emailVerified)return;
+ emailNextAt=Date.now()+600000;
+ gamesEmailShown=true;
  if(window.dmEmailGuide){window.dmEmailGuide.open('reminder');return;}const owner=who(),view=sheet('E-posta adresini doğrula','<p>Hesabını kullanmaya devam edebilirsin. Doğrulama bağlantısı kayıtlı veli e-posta adresine gönderilir.</p><p><b>'+esc(status?.email||'Kişisel bilgilerindeki e-posta adresi')+'</b></p><button type="button" class="dm-member-primary" data-resend>Doğrulama e-postasını gönder</button><button type="button" data-checked>E-postadan doğruladım, kontrol et</button><p class="dm-member-status" role="status"></p>','dmEmailVerification');
  view.el.querySelector('[data-resend]').onclick=async e=>{e.target.disabled=true;try{const d=await api('memberEmailResend');if(owner!==who())return view.close();view.body.querySelector('[role=status]').textContent=d.mesaj;if(d.verified){status.emailVerified=true;banner();view.close();}}catch(err){view.body.querySelector('[role=status]').textContent=err.message;}finally{e.target.disabled=false;}};
  view.el.querySelector('[data-checked]').onclick=async()=>{try{const d=await api('memberStatus');if(owner!==who())return view.close();status=d;if(Number.isInteger(d.loginStreak)){localStorage.setItem('ing_girisSerisiSayisi',String(d.loginStreak));localStorage.setItem('dm_login_streak:'+owner.toLowerCase(),String(d.loginStreak));const streak=$('headerStreakNum');if(streak)streak.textContent='🔥 '+d.loginStreak;}window.dmMemberBadgeStatus={...d,owner};if(d.welcomeEligible&&!d.welcomeEarned&&welcomeOwner!==owner){clearTimeout(welcomeTimer);welcomeOwner=owner;const delay=Math.max(1000,120000-(Date.parse(d.serverNow)-Date.parse(d.memberFirstSeenAt)));welcomeTimer=setTimeout(()=>{if(who()===owner)check(true,true);},delay);}document.dispatchEvent(new Event('dm:member-status'));lastRead=Date.now();banner();if(d.emailVerified)view.close();else view.body.querySelector('[role=status]').textContent='Henüz doğrulanmadı. E-postadaki bağlantıya dokunup tekrar kontrol et.';}catch(e){view.body.querySelector('[role=status]').textContent=e.message;}};
@@ -51,7 +54,7 @@ async function check(force=false,quiet=false){
   if(force||!status||Date.now()-lastRead>120000){const d=await api('memberStatus');if(owner!==who())return;status=d;if(Number.isInteger(d.loginStreak)){localStorage.setItem('ing_girisSerisiSayisi',String(d.loginStreak));localStorage.setItem('dm_login_streak:'+owner.toLowerCase(),String(d.loginStreak));const streak=$('headerStreakNum');if(streak)streak.textContent='🔥 '+d.loginStreak;}window.dmMemberBadgeStatus={...d,owner};if(d.welcomeEligible&&!d.welcomeEarned&&welcomeOwner!==owner){clearTimeout(welcomeTimer);welcomeOwner=owner;const delay=Math.max(1000,120000-(Date.parse(d.serverNow)-Date.parse(d.memberFirstSeenAt)));welcomeTimer=setTimeout(()=>{if(who()===owner)check(true,true);},delay);}document.dispatchEvent(new Event('dm:member-status'));lastRead=Date.now();banner();}if(quiet)return;
   if(!chosen()&&!dismissedRoute){chooseRoute();return;}
   if(window.dmPapiNotices?.blocked()||document.querySelector('#dmRouteChoice,#dmPlacementExam,#dmStartPlacement,#dmStartingChoice,#dmEmailVerification,#dmPlacementInvite'))return;
-  if(!status.emailVerified&&Date.now()-started>45000){const d=await api('memberReminderClaim',{kind:'email'});if(owner!==who())return;if(d.show){emailPrompt();return;}}
+  // Email verification is triggered by the Games tab; repeats only on safe screens after 10 minutes.
   if(!status.hasPlacement&&Date.now()>=examAt&&window.dmAutoNotices?.can()){const d=await api('memberReminderClaim',{kind:'placement'});if(owner!==who())return;examAt=Date.now()+600000+Math.random()*600000;if(d.show&&window.dmAutoNotices?.take()){const v=sheet('İngilizce seviyeni keşfet','<div class="dm-exam-invite-art"><img src="papi-welcome-v2.png" alt="Papi"><span>SEVİYENİ KEŞFET</span></div><p>Okuma, dinleme ve dil kullanımı sorularıyla sana uygun başlangıcı belirleyelim. Bu sınav enerji harcamaz.</p><button type="button" class="dm-member-primary" data-exam>Seviye sınavını aç</button><button type="button" data-later>Sonra</button>','dmPlacementInvite');v.el.querySelector('[data-exam]').onclick=()=>{v.close();placement();};v.el.querySelector('[data-later]').onclick=v.close;}}
  }catch(e){console.warn('[Üye araçları]',e.message);}finally{busy=false;if(refreshPending){refreshPending=false;check(true,true);}}
 }
@@ -141,7 +144,21 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){check(tru
 window.addEventListener('focus',()=>{if(!status?.emailVerified)check(true,true);});
 window.addEventListener('pageshow',()=>check(true,true));
 window.addEventListener('storage',e=>{if(e.key==='dm_email_verified'){try{const mark=JSON.parse(e.newValue||'null');if(mark?.student===who())check(true,true);}catch{}}});
-document.addEventListener('dm:login',()=>{clearTimeout(welcomeTimer);welcomeOwner='';actor='';status=null;window.dmMemberBadgeStatus=null;dismissedRoute=false;setTimeout(check,500);});
+function emailSafe(){return !document.hidden&&!window.dmPapiNotices?.blocked()&&!document.querySelector('#dmRouteChoice,#dmPlacementExam,#dmStartPlacement,#dmStartingChoice,#dmEmailVerification,#dmPlacementInvite,#dmEmailGuide,.game-modal-overlay:not([style*="display: none"]),.dc-fullscreen-overlay.active,.yo-modal.acik,#bzPerde[style*="display: flex"],#mlThemeList[role="dialog"],#genelSonucOverlay[style*="display: flex"]');}
+async function tryEmail(fromGames=false){
+ if(fromGames)emailGamesVisited=true;
+ if(!emailGamesVisited||!ready()||emailPromptBusy||Date.now()<emailNextAt)return;
+ if(status?.emailVerified)return;
+ if(!emailSafe())return;
+ emailPromptBusy=true;const owner=who();
+ try{if(!status||Date.now()-lastRead>120000)await check(true,true);if(owner!==who()||!status||status.emailVerified||!emailSafe())return;
+   if(gamesEmailShown){const claim=await api('memberReminderClaim',{kind:'email'});if(owner!==who()||!claim.show)return;}
+   emailPrompt();
+ }catch(e){console.warn('[E-posta hatırlatması]',e.message);}finally{emailPromptBusy=false;}
+}
+document.addEventListener('click',e=>{if(e.target.closest('[data-ekran="tab-aktiviteler"]'))setTimeout(()=>void tryEmail(true),350);},true);
+setInterval(()=>{if(emailGamesVisited&&gamesEmailShown&&Date.now()>=emailNextAt)void tryEmail();},20000);
+document.addEventListener('dm:login',()=>{gamesEmailShown=false;emailGamesVisited=false;emailNextAt=0;clearTimeout(welcomeTimer);welcomeOwner='';actor='';status=null;window.dmMemberBadgeStatus=null;dismissedRoute=false;setTimeout(check,500);});
 const oldLogout=window.cikisYap;window.cikisYap=function(){persist();clearTimeout(flushTimer);for(const id of ['dmRouteChoice','dmPapiTour','dmPapiFirstStart','dmWordReview','dmEmailVerification','dmEmailVerifyBanner','dmPlacementInvite','dmPlacementExam','dmStartPlacement','dmStartingChoice'])$(id)?.remove();document.body.classList.remove('dm-papi-preview','dm-papi-notices-paused');const result=oldLogout?.apply(this,arguments);Promise.resolve(result).then(()=>{if(!localStorage.getItem('ing_token')){$('panel-alani').style.display='none';$('login-container').style.display='block';document.querySelectorAll('.dc-fullscreen-overlay.active').forEach(x=>x.classList.remove('active'));}});return result;};
 setTimeout(()=>{installScoreHook();check();},700);
 })();
