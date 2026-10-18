@@ -2,7 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const code=fs.readFileSync('ingilizce/thematic-learning.js','utf8');
 test('new route UI parses and loads v8 only when explicitly enabled',()=>{
  new vm.Script(code,{filename:'thematic-learning.js'});
- assert.match(code,/window\.DM_THEMATIC_V8_ENABLED===true/);
+ assert.match(code,/window\.DM_THEMATIC_V8_ENABLED!==false/);
  assert.match(code,/preloadV8\(\)/);
  assert.match(code,/DMThematicV8Candidate\?\.build/);
  assert.match(code,/deckVersion:\(session\?\.deckVersion===8/);
