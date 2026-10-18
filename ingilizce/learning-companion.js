@@ -46,9 +46,8 @@ function mount(){
  const study=$('suLevels');if(study&&visible(study)&&!$('lcDialogueEntry')){
   const entry=document.createElement('section');entry.id='lcDialogueEntry';entry.className='lc-entry';entry.innerHTML=papi+'<div><h3>Hikâye ve Diyalog</h3><p>Oku, dinle ve günlük hayatta kullan.</p></div>'+action('Keşfet →','dialogues');study.append(entry);
  }
- const menu=$('rtProfileBackdrop')?.querySelector('.rt-profile-grid');if(menu&&!menu.querySelector('[data-lc="report"]')){
-  const b=document.createElement('button');b.type='button';b.dataset.lc='report';b.innerHTML='<img src="route-assets/repeat.svg" alt=""><b>Öğrenme Karnem</b><small>XP’den ayrı çalışma özeti</small>';menu.querySelector('[data-profile="progress"]')?.after(b);
- }
+ // Karnem is now accessed from İlerlemem, not as a separate profile tile.
+ document.querySelector('#rtProfileBackdrop [data-lc="report"]')?.remove();
  const teacher=$('ogretmenMenuModal')?.querySelector('.rubric-content');if(teacher&&visible(teacher)&&!$('lcTeacherEntry')){
   const b=document.createElement('button');b.type='button';b.id='lcTeacherEntry';b.className='ogretmen-menu-btn';b.dataset.lc='teacher';b.innerHTML='<span>🧭 Sınıfımın Öğrenme Özeti</span>';teacher.append(b);
  }
@@ -59,11 +58,12 @@ async function route(){routePending=true;const p=window.dmLearningRoute?.purpose
 async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();return dialogues();}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
 function skillBar(label,correct,total,icon){return '<article class="lc-skill"><span aria-hidden="true">'+icon+'</span><div><b>'+label+'</b><small>'+(total?correct+' / '+total+' doğru':'Henüz yeterli çalışma yok')+'</small></div><progress aria-label="'+label+' alıştırma doğruluğu" max="'+(total||1)+'" value="'+correct+'"></progress></article>';}
 async function report(){
- if(!student())return;$('rtProfileBackdrop')?.remove();const v=sheet('Öğrenme Karnem','<p role="status">Çalışmaların yükleniyor…</p>','lcReport');if(!v)return;
+ if(!student())return;$('rtProfileBackdrop')?.remove();const v=sheet('Karnem','<p role="status">Çalışmaların yükleniyor…</p>','lcReport');if(!v)return;
  try{const d=await load(true);if(!v.alive()||!d)return;
   v.body.innerHTML='<p class="lc-muted">XP’den ayrı · Kaydedilen alıştırmaların özeti</p><div class="lc-skill-list">'+skillBar('Kelime',d.review.correct,d.review.attempts,'📖')+[['listening','Dinleme','🎧'],['reading','Okuma','📚'],['writing','Yazma','✎']].map(([id,label,icon])=>skillBar(label,d.skills[id].correct,d.skills[id].total,icon)).join('')+'</div><div class="lc-achievement">'+papi+'<div><b>'+d.review.strengthening+' kelimeyi farklı günlerde pekiştirdin.</b><p>'+d.review.reviewed+' kelimeyi tekrar ettin; '+d.review.due+' kelimenin tekrar zamanı geldi.</p></div></div><p class="lc-muted">Kelime sonuçları kişisel tekrardan; diğer sonuçlar hikâye ve diyalog alıştırmalarından gelir. Son 100 diyalog çalışması gösterilir. Bu bir CEFR seviyesi veya resmî yeterlilik ölçümü değildir.</p>'+action(d.review.due?'Kelimelerimi tekrar et':'Bir diyalog çalış',d.review.due?'report-repeat':'report-story');
  }catch(e){if(v.alive())v.body.textContent=e.message;}
 }
+window.dmKarneDetayAc=report;
 function dialogues(){
  if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p><div class="lc-story-grid">'+['A1','A2','B1','B2'].map(level=>'<h3 class="lc-level-heading">'+level+' · Hikâyeler ve Diyaloglar</h3>'+bank.filter(s=>s.level===level).map(s=>'<button type="button" data-story="'+s.id+'"><span class="lc-story-icon" aria-hidden="true">'+s.icon+'</span><span><small>'+s.level+' · '+(s.type==='story'?'Hikâye':'Diyalog')+' · Oku / Dinle</small><b>'+esc(s.title)+'</b><small>'+esc(s.scene)+'</small></span><span>›</span></button>').join('')).join('')+'</div>','lcDialogues');if(!v)return;
  v.body.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>{v.close();openStory(b.dataset.story);});
