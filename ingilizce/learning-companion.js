@@ -75,7 +75,7 @@ async function openStory(id){
  const story=bank.find(s=>s.id===id);if(!story||!student())return;
  const v=sheet(story.title,'<p role="status">Metin yükleniyor…</p>','lcStory');if(!v)return;
  let state=null,played=false,audioBusy=false,slow=false,answering=false;
- const transcript=()=>'<details class="lc-transcript-panel" open><summary>Konuşma metni</summary><div class="lc-transcript">'+story.lines.map(([person,text])=>'<p><small>'+esc(person)+'</small><span>'+esc(text)+'</span></p>').join('')+'</div></details>';
+ const transcript=()=>'<details class="lc-transcript-panel" open><summary>'+(story.type==='story'?'Hikâye metni':'Konuşma metni')+'</summary><div class="lc-transcript">'+story.lines.map(([person,text])=>'<p><small>'+esc(person)+'</small><span>'+esc(text)+'</span></p>').join('')+'</div></details>';
  function audio(){return '<div class="lc-audio">'+action('▶ Dinle','audio')+action('Yavaş dinle','slow')+'</div><p class="lc-audio-note" role="status"></p>';}
  function bindAudio(){
   const play=()=>{if(audioBusy)return;audioBusy=true;const b=v.body.querySelector('[data-lc="audio"]');if(b)b.disabled=true;const note=v.body.querySelector('.lc-audio-note');note.textContent='Dinliyorsun…';const done=()=>{audioBusy=false;if(!v.alive())return;played=true;note.textContent='Dinledin. Şimdi soruyu yanıtlayabilirsin.';if(b)b.disabled=false;v.body.querySelectorAll('[data-option]').forEach(x=>x.disabled=false);};
