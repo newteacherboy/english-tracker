@@ -6,7 +6,7 @@ const token=()=>who().toLowerCase()==='teacher'?(sessionStorage.getItem('ing_ogr
 const identity=()=>who()+'|'+token();
 let data=null,loading=null,progress=[],inherited=0,owner='',statusPromise=null,loadedAt=0,modal=null,session=null,chapter=null,epoch=0,busy=false,accepted=false,voice=true,origin=null;
 const core=window.DMLearningCore;
-const v8Enabled=()=>window.DM_THEMATIC_V8_ENABLED===true;
+const v8Enabled=()=>window.DM_THEMATIC_V8_ENABLED!==false;
 const questionsFor=()=>session?.deckVersion===8?10:stepsFor()-1;
 const stepsFor=()=>session?.deckVersion===8?14:session?.deckVersion===6?11:session?.deckVersion===5?10:12;
 const taskDeck=(c,previous,version)=>version===8?window.DMThematicV8Candidate?.build(c,previous):core.deck(c,previous,version);

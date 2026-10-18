@@ -54,4 +54,4 @@ test('opening a partially answered older deck never changes its question version
  assert.equal(incompatible.status,409);
 });
 
-test('version 8 is blocked until server reward migration is explicitly enabled',async()=>{const f=fixture();const result=await f.req({action:'open',chapter:1000,deckVersion:8});assert.equal(result.status,409);assert.equal(f.tables.papi_story_progress.length,0);assert.equal(f.rewards,0);assert.equal(f.cost,0);});
+test('version 8 opens as fourteen stage course after server migration',async()=>{const f=fixture();const result=await f.req({action:'open',chapter:1000,deckVersion:8});assert.equal(result.status,200);assert.equal(result.d.deckVersion,8);assert.equal(result.d.cursor,0);assert.equal(f.rewards,0);assert.equal(f.cost,0);});

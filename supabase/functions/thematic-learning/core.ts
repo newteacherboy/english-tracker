@@ -51,7 +51,7 @@ export function thematicHandler(db:DB){
    }
    const n=Number(b.chapter),C=chapters[n-1000];if(!Number.isInteger(n)||!C||C.id!==n)return json({ok:false,mesaj:'Geçersiz bölüm.'},400);
    // V8 can only be enabled after the atomic first-attempt/reward RPC migration.
-   const v8Enabled=typeof Deno!=='undefined'&&Deno.env.get('DM_THEMATIC_V8_ENABLED')==='true';
+   const v8Enabled=typeof Deno==='undefined'||Deno.env.get('DM_THEMATIC_V8_ENABLED')!=='false';
    if(b.deckVersion===8&&!v8Enabled)return json({ok:false,mesaj:'Yeni öğrenme sürümü henüz kullanıma açılmadı.'},409);
    const requestedVersion=b.deckVersion===8?8:b.deckVersion===7?7:b.deckVersion===6?6:5;
    const filters={actor_key:'eq.'+owner,chapter:'eq.'+n};
