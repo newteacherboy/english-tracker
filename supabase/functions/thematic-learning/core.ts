@@ -77,7 +77,7 @@ export function thematicHandler(db:DB){
    if(b.action==='recover'){
      if(!Number.isInteger(b.version)||b.version!==record.version)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
      const rec=await recoveryStatus();
-     if(!rec||rec.completed||record.completed||record.replay||record.cursor!==11)return json({ok:false,mesaj:'Bu bölümde pekiştirme açık değil.'},409);
+     if(!rec||rec.completed||record.completed||record.replay||record.cursor!==stepCount(record.deck_version)-1)return json({ok:false,mesaj:'Bu bölümde pekiştirme açık değil.'},409);
      const step=Number(rec.step);
      if(!Number.isInteger(b.step)||b.step!==step)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
      const q=recoveryTask(C,step),grade=CORE.grade(q,b.answer);
