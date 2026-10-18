@@ -10,7 +10,7 @@
 .lc-plan-head>.lc-button{background:transparent;color:#187c77;padding:5px 10px;font-size:20px}
 .lc-plan-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}.lc-plan-foot>span{font-size:12px;max-width:57%;color:#4c6e70;line-height:1.4}.lc-plan-foot>.lc-button{white-space:nowrap;font-size:12px;min-height:37px;padding:8px 11px}
 .lc-plan-steps:not([hidden]){display:grid;gap:6px;padding:10px 0 3px}.lc-plan-steps>.lc-button{background:#f1f8f6;color:#164f55;text-align:left;border:1px solid #d5e9e3;min-height:38px}
-.rt-root:has(>.lc-plan) .rt-tasks{display:none}
+/* Tasks remain available inside the rotating goal carousel. */
 .lc-entry{display:flex;align-items:center;gap:10px;background:#f0fffa;border:1px solid #cbeae2;padding:14px;border-radius:18px;margin:14px 0 8px;text-align:left}.lc-entry h3{margin:0;font-size:17px;color:#173d47}.lc-entry p{margin:4px 0;font-size:12px;color:#57747a}.lc-entry>div{flex:1}.lc-entry .lc-papi{width:62px;height:65px}
 .lc-papi{width:82px;height:88px;object-fit:contain;flex:none}
 .lc-dialog .dm-member-sheet{background:#fcfffe!important;border:1px solid #d3ece4;max-width:660px!important;max-height:calc(100dvh - 24px)!important;padding:24px!important;border-radius:24px!important;overflow-y:auto!important;box-sizing:border-box}
@@ -37,3 +37,16 @@
 .lc-dialog .dm-member-body{gap:10px}.lc-dialog .lc-button{background:#138d89;color:#fff;border-color:#138d89}.lc-dialog .lc-audio>.lc-button:nth-child(2){background:#e9f4f1;color:#265c61;border-color:#d4e7de}
 .lc-transcript-panel{background:#fff;border-radius:12px}.lc-transcript-panel>summary{font-size:12px;font-weight:800;color:#4d7376;cursor:pointer;padding:5px 0}.lc-dialog .lc-transcript{padding:4px 0;gap:5px}.lc-dialog .lc-transcript>p{padding:7px 10px;font-size:14px;line-height:1.35;gap:3px}.lc-dialog .lc-question{margin:6px 0}.lc-dialog .lc-audio-note:empty{display:none}
 .lc-dialog progress{appearance:none;-webkit-appearance:none;border:0;background:#e9f1ee;border-radius:10px;overflow:hidden}.lc-dialog progress::-webkit-progress-bar{background:#e9f1ee;border-radius:10px}.lc-dialog progress::-webkit-progress-value{background:#29b391;border-radius:10px}.lc-dialog progress::-moz-progress-bar{background:#29b391;border-radius:10px}
+
+
+/* Weekly goal / daily tasks: same position, manual swipe or 3.8s rotation. */
+.dm-goal-carousel{min-width:0;position:relative;border-radius:18px;margin:8px 0 5px}
+.rt-root:has(>.lc-plan) .dm-goal-carousel .rt-tasks{display:block}
+.dm-goal-pages{min-width:0}.dm-goal-pages>[hidden]{display:none!important}
+.dm-goal-pages>.rt-week,.dm-goal-pages>.rt-tasks{width:100%;margin:0;min-width:0;box-sizing:border-box}
+.dm-goal-switch{display:flex;align-items:center;justify-content:center;gap:12px;padding:4px}
+.dm-goal-switch button{border:0;background:#eaf5f5;color:#137f83;border-radius:50%;min-width:30px;min-height:30px;font-size:23px;cursor:pointer}
+.dm-goal-dots{display:flex;gap:7px}.dm-goal-dots button{min-width:9px;min-height:9px;width:9px;height:9px;padding:0;background:#cdd9e7}
+.dm-goal-dots button[aria-current="true"]{background:#8258e9;width:22px;border-radius:9px}
+.dm-goal-switch>button:focus-visible,.dm-goal-dots button:focus-visible{outline:3px solid #2866bc;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.dm-goal-pages *{animation:none!important}}
