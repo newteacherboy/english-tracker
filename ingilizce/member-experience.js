@@ -157,7 +157,7 @@ async function tryEmail(fromGames=false){
  }catch(e){console.warn('[E-posta hatırlatması]',e.message);}finally{emailPromptBusy=false;}
 }
 document.addEventListener('click',e=>{if(e.target.closest('[data-ekran="tab-aktiviteler"]'))setTimeout(()=>void tryEmail(true),350);},true);
-setInterval(()=>{if(emailGamesVisited&&gamesEmailShown&&Date.now()>=emailNextAt)void tryEmail();},20000);
+setInterval(()=>{if(emailGamesVisited&&Date.now()>=emailNextAt)void tryEmail();},20000);
 document.addEventListener('dm:login',()=>{gamesEmailShown=false;emailGamesVisited=false;emailNextAt=0;clearTimeout(welcomeTimer);welcomeOwner='';actor='';status=null;window.dmMemberBadgeStatus=null;dismissedRoute=false;setTimeout(check,500);});
 const oldLogout=window.cikisYap;window.cikisYap=function(){persist();clearTimeout(flushTimer);for(const id of ['dmRouteChoice','dmPapiTour','dmPapiFirstStart','dmWordReview','dmEmailVerification','dmEmailVerifyBanner','dmPlacementInvite','dmPlacementExam','dmStartPlacement','dmStartingChoice'])$(id)?.remove();document.body.classList.remove('dm-papi-preview','dm-papi-notices-paused');const result=oldLogout?.apply(this,arguments);Promise.resolve(result).then(()=>{if(!localStorage.getItem('ing_token')){$('panel-alani').style.display='none';$('login-container').style.display='block';document.querySelectorAll('.dc-fullscreen-overlay.active').forEach(x=>x.classList.remove('active'));}});return result;};
 setTimeout(()=>{installScoreHook();check();},700);
