@@ -66,16 +66,8 @@ function mount(){
   let plan=$('lcPlan');if(!plan){plan=document.createElement('section');plan.id='lcPlan';plan.className='lc-plan';plan.setAttribute('aria-label','Bugünkü çalışma planın');root.prepend(plan);paintPlan();}
   else if(plan.parentElement!==root)root.prepend(plan);
   goalCarousel(root);
-  let switchRow=root.querySelector(':scope > .dm-parkur-shortcut');
-  if(!switchRow){
-   switchRow=document.createElement('div');switchRow.className='dm-parkur-shortcut';
-   switchRow.innerHTML='<span class="dm-parkur-current" aria-label="Bulunduğun bölüm">🧭 <b>Öğrenme Yolum</b></span><button type="button" aria-label="Parkur Değiştir">⇄ Parkur Değiştir</button>';
-   const mapPath=root.querySelector('.rt-path,.rt-reward-route');(mapPath||root.lastElementChild)?.before(switchRow);
-   switchRow.querySelector('button').addEventListener('click',()=>{
-    const existing=root.querySelector('.rt-map-switch');
-    if(existing)existing.click();else document.querySelector('#rtProfileBackdrop [data-profile="route"]')?.click();
-   });
-  }
+  // The map already has its own route-switch control; do not duplicate it.
+  root.querySelector(':scope > .dm-parkur-shortcut')?.remove();
   load().catch(e=>{const note=$('lcPlan')?.querySelector('.lc-plan-foot>span');if(note)note.textContent='Plan alınamadı. Başla ile tekrar dene.';});
  }
  const study=$('suLevels');if(study&&visible(study)&&!$('lcDialogueEntry')){
@@ -138,14 +130,7 @@ async function report(){
 }
 window.dmKarneDetayAc=report;
 function dialogues(){
- if(!student())return;
- const groups=['A1','A2','B1','B2'].map(level=>{
-  const items=bank.filter(x=>x.level===level);
-  if(!items.length)return '';
-  return '<details class="lc-level-group"><summary><b>'+level+' · Hikâyeler ve Diyaloglar</b><small>'+items.length+' içerik <span aria-hidden="true">⌄</span></small></summary><div class="lc-story-grid">'+items.map(x=>'<button type="button" data-story="'+esc(x.id)+'"><span class="lc-story-icon" aria-hidden="true">'+esc(x.icon)+'</span><span><small>'+esc(x.level)+' · '+(x.type==='story'?'Hikâye':'Diyalog')+' · Oku / Dinle</small><b>'+esc(x.title)+'</b><small>'+esc(x.scene)+'</small></span><span>›</span></button>').join('')+'</div></details>';
- }).join('');
- const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Bir seviyeye dokunarak hikâyeleri ve diyalogları gör.</p><div class="lc-story-levels">'+groups+'</div>','lcDialogues');
- if(!v)return;
+ if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p><div class="lc-story-grid">'+['A1','A2','B1','B2'].map(level=>'<h3 class="lc-level-heading">'+level+' · Hikâyeler ve Diyaloglar</h3>'+bank.filter(s=>s.level===level).map(s=>'<button type="button" data-story="'+s.id+'"><span class="lc-story-icon" aria-hidden="true">'+s.icon+'</span><span><small>'+s.level+' · '+(s.type==='story'?'Hikâye':'Diyalog')+' · Oku / Dinle</small><b>'+esc(s.title)+'</b><small>'+esc(s.scene)+'</small></span><span>›</span></button>').join('')).join('')+'</div>','lcDialogues');if(!v)return;
  v.body.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>{v.close();openStory(b.dataset.story);});
 }
 function say(text,rate,finished,failed){
@@ -175,8 +160,8 @@ async function openStory(id){
     state={...state,cursor:r.cursor,version:r.version,answers:{...state.answers,[i]:r}};button?.classList.add(r.correct?'lc-correct':'lc-wrong');
     v.body.querySelectorAll('[data-option]').forEach(x=>{if(x.dataset.option===r.answer)x.classList.add('lc-correct');});
     companionAnswerSound(r.correct);v.body.querySelectorAll('.lc-transcript-panel').forEach(x=>x.open=false);note.className='lc-answer-note '+(r.correct?'lc-correct-note':'lc-explain');note.innerHTML='<b>'+(r.correct?'✓ Doğru!':'Birlikte düzeltelim')+'</b><p>'+esc(r.explanation)+'</p>'+(!r.correct?'<p>Doğru cevap: <strong>'+esc(r.answer)+'</strong></p>':'');
-    const next=document.createElement('button');next.type='button';next.className='lc-button';next.textContent=i===story.questions.length-1?'Çalışmayı tamamla':'Sonraki adım →';next.onclick=async()=>{next.disabled=true;try{const fresh=await api('companionDialogueOpen',{story:id});if(!v.alive())return;state=fresh;render();}catch(e){if(v.alive()){next.disabled=false;note.textContent=e.message||'Sonraki soru yüklenemedi.';}}};v.body.append(next);next.focus();
-   }catch(e){if(v.alive()){const conflict=/başka ekranda değişti|conflict|version/i.test(String(e.message||''));if(conflict){try{state=await api('companionDialogueOpen',{story:id});if(v.alive())render();}catch(err){note.textContent=err.message||'Yeniden yüklenemedi.';}}else{note.textContent=e.message;v.body.querySelectorAll('[data-option],.lc-writing button').forEach(x=>x.disabled=false);}}}finally{answering=false;}
+    const next=document.createElement('button');next.type='button';next.className='lc-button';next.textContent=i===story.questions.length-1?'Çalışmayı tamamla':'Sonraki adım →';next.onclick=render;v.body.append(next);next.focus();
+   }catch(e){if(v.alive()){note.textContent=e.message;v.body.querySelectorAll('[data-option],.lc-writing button').forEach(x=>x.disabled=false);}}finally{answering=false;}
   }
   v.body.querySelectorAll('[data-option]').forEach(b=>b.onclick=()=>answer(b.dataset.option,b));v.body.querySelector('form')?.addEventListener('submit',e=>{e.preventDefault();answer(new FormData(e.target).get('answer'),e.target.querySelector('button'));});
  }
