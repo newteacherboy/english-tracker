@@ -65,8 +65,23 @@
   refresh();
  }
  async function guardianPage(){const link=decodeURIComponent(location.hash.slice(1));history.replaceState(null,'',location.pathname);const v=sheet('Diji-Medu · Veli Kontrolü');if(!link){body(v).innerHTML='<p>Bu alanı açmak için uygulamadaki <b>Profil → Veli Kontrolü</b> bölümünden e-posta bağlantısı isteyin.</p>';return;}
-  body(v).innerHTML='<p>Bu bağlantı yalnız öğrencinin velisi içindir. Veli PIN’ini öğrenciyle paylaşmayın.</p><label for="guardianNewPin">Yeni veli PIN’i · 6 rakam</label><input id="guardianNewPin" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"><label for="guardianRepeatPin">PIN’i tekrar yazın</label><input id="guardianRepeatPin" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"><label class="dm-safety-check"><input type="checkbox" id="guardianAdult"><span>Yetişkinim ve bu öğrencinin velisi/yasal temsilcisiyim. Sosyal izinleri yönetmek istiyorum.</span></label><p class="dm-safety-note">Kolay tahmin edilen veya tekrar eden rakamları kullanmayın. Doğrulama mevcut izinleri değiştirmez; sonraki ekranda seçimlerinizi kaydedebilirsiniz.</p><button class="dm-safety-primary" data-claim data-action-button>Doğrula ve veli alanını aç</button>';
-  v.el.querySelector('[data-claim]').onclick=async()=>{const pin=$('guardianNewPin').value,repeat=$('guardianRepeatPin').value,adult=$('guardianAdult').checked;if(pin!==repeat){message(v,'PIN’ler aynı olmalı.',true);return;}busy(v,true);try{const d=await api('safetyParentClaim',{link,pin,adult});if(!alive(v))return;unlocked(v,d);}catch(e){message(v,e.message,true);}finally{busy(v,false);$('guardianNewPin')&&($('guardianNewPin').value='');$('guardianRepeatPin')&&($('guardianRepeatPin').value='');}};
+  body(v).innerHTML='<p>Bu bağlantı yalnız öğrencinin velisi içindir. Doğruladığınızda sistem size özel, güçlü bir 6 haneli PIN oluşturacak. PIN yalnızca bir kez gösterilir; unutursanız uygulamadan yeni e-posta bağlantısı isteyebilirsiniz.</p><label class="dm-safety-check"><input type="checkbox" id="guardianAdult"><span>Yetişkinim ve bu öğrencinin velisi/yasal temsilcisiyim. Sosyal izinleri yönetmek istiyorum.</span></label><button class="dm-safety-primary" data-claim data-action-button>Doğrula ve PIN oluştur</button>';
+  v.el.querySelector('[data-claim]').onclick=async()=>{
+   if(!$('guardianAdult').checked){message(v,'Veli/yasal temsilci beyanını onaylayın.',true);return;}
+   // Uniform cryptographic rejection sampling; never use Math.random for a credential.
+   const digit=()=>{const a=new Uint8Array(1);do{crypto.getRandomValues(a);}while(a[0]>=250);return String(a[0]%10);};
+   let pin;do{pin=Array.from({length:6},digit).join('');}while(/^(\\d)\\1{5}$|^123456$|^654321$/.test(pin));
+   busy(v,true);
+   try{
+    const d=await api('safetyParentClaim',{link,pin,adult:true});
+    if(!alive(v))return;
+    unlocked(v,d);
+    // Display the generated PIN only after the emailed single-use token was accepted.
+    // Do not persist it, append it to a URL, or place it in application logs.
+    body(v).innerHTML='<h3>Size özel veli PIN’i</h3><p class="dm-safety-note">Bu PIN yalnızca bu ekranda gösterilir. Güvenli bir yere kaydedin ve öğrenciyle paylaşmayın.</p><p class="dm-safety-generated-pin" aria-label="Yeni veli PIN’i"><strong>'+pin+'</strong></p><p>PIN’i unuttuğunuzda Profil → Veli Kontrolü → PIN’i unuttum üzerinden yeni e-posta bağlantısı isteyebilirsiniz.</p><button type="button" class="dm-safety-primary" data-pin-confirm>PIN’i kaydettim · Ayarlara geç</button>';
+    v.el.querySelector('[data-pin-confirm]').onclick=()=>{if(alive(v)&&v.parentToken)settingForm(v,d);};
+   }catch(e){message(v,e.message,true);}finally{pin='';busy(v,false);}
+  };
  }
  window.dmSocialSafety={parent,help,report,admin,refresh,close};
  if(page)guardianPage();else install();
