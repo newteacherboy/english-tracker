@@ -65,6 +65,42 @@ function decorateWorkspace(menu){
  }
  hero.querySelector('.dm-teacher-no-results').hidden=count>0;
 }
+
+function openNoticeMailCenter(){
+ if(!token()){window.yoToast?.('Bu alan için öğretmen oturumu gerekiyor.');return;}
+ const existing=document.getElementById('dmNoticeMailCenter');if(existing){existing.remove();return;}
+ const shade=document.createElement('div');shade.id='dmNoticeMailCenter';shade.className='dm-teacher-child';shade.setAttribute('role','dialog');shade.setAttribute('aria-modal','true');shade.setAttribute('aria-label','Duyuru ve Mail Yönetim Merkezi');
+ shade.style.cssText='position:fixed;inset:0;z-index:2147483620;background:#133044b8;display:flex;align-items:center;justify-content:center;padding:12px';
+ const panel=document.createElement('section');panel.style.cssText='background:#f8fcfd;color:#153e53;border-radius:22px;width:min(900px,100%);max-height:94vh;overflow:auto;padding:20px;font:inherit;box-shadow:0 18px 70px #09293555';
+ const rules=[
+ ['Öğretmen uyarısı / cezası','1 · Kritik','İlgili öğrenci; okunma veya itiraz kaydı tutulur','Öncelikli; güvenli ilk ekran'],
+ ['E-posta doğrulama','2 · Hesap','Doğrulanmamış öğrenci','Oyunlar sekmesinde ilk giriş; kapanırsa 10 dakika sonra uygun ekran'],
+ ['Başlangıç ve seviye tespiti','3 · Tanıtım','Yeni veya uygun öğrenci','Uygun giriş / ilk yönlendirme'],
+ ['Lig değişikliği','4 · Sosyal','Sırası değişen öğrenci','Arkadaşlar sekmesine girişte; yalnızca yeni değişiklik'],
+ ['Haftalık sınav ve diğer hatırlatmalar','5 · Normal','Koşullara uyan öğrenci','İlk 5 aktif dakika sonrası; arada 5 dakika; oturumda en çok 3']
+ ];
+ const mails=[
+ ['Pazar lig özeti','Pazar 19.00','Planlanan saat; sunucu görevinin aktifliği ayrıca doğrulanmalı'],
+ ['Haftalık lig hatırlatması','Pazartesi öğlen','Sunucu çalışması ayrıca doğrulanmalı'],
+ ['Üç günde bir otomatik ileti','3 günde bir','Sunucu çalışması ayrıca doğrulanmalı'],
+ ['Öğrenci hatırlatma grupları','Günlük, tekrarsız hedefleme','Günlük kota 240; sunucu çalışması ayrıca doğrulanmalı']
+ ];
+ const h=document.createElement('header');h.style.cssText='display:flex;align-items:flex-start;justify-content:space-between;gap:12px';h.innerHTML='<div><small>ÖĞRETMEN ARAÇLARI</small><h2 style="margin:4px 0">📣 Duyuru ve Mail Yönetim Merkezi</h2><p style="margin:4px 0;color:#537385">Kural envanteri ve kontrol ekranı</p></div>';
+ const close=document.createElement('button');close.type='button';close.textContent='✕ Kapat';close.style.cssText='border:0;border-radius:12px;padding:12px;background:#e4f1f3;color:#13465b;font-weight:700';close.onclick=()=>shade.remove();h.append(close);panel.append(h);
+ const nav=document.createElement('nav');nav.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin:15px 0';panel.append(nav);
+ const content=document.createElement('div');panel.append(content);
+ function table(headers,rows){const t=document.createElement('table');t.style.cssText='width:100%;border-collapse:collapse;font-size:13px';const tr=document.createElement('tr');for(const x of headers){const th=document.createElement('th');th.textContent=x;th.style.cssText='text-align:left;border-bottom:2px solid #c7e0e7;padding:10px 6px';tr.append(th)}t.append(tr);for(const row of rows){const r=document.createElement('tr');for(const x of row){const td=document.createElement('td');td.textContent=x;td.style.cssText='border-bottom:1px solid #dde9ed;padding:10px 6px;vertical-align:top';r.append(td)}t.append(r)}return t;}
+ const pages={
+ 'Genel Bakış':()=>{content.innerHTML='<h3>Genel Bakış</h3><p>5 öncelik sınıfı · 4 bilinen otomatik mail görevi</p><p>Bu ekranda canlı gönderim ve gösterim sayaçları henüz bağlı değil; burada gösterilen kurallar tanımlı hedefleri ifade eder.</p>';},
+ 'Duyurular':()=>{content.innerHTML='<h3>Uygulama içi duyurular</h3>';content.append(table(['Duyuru','Öncelik','Hedef','Gösterim kuralı'],rules));},
+ 'Mailler':()=>{content.innerHTML='<h3>Otomatik e-postalar</h3><p>Mail teslim raporları ve kota kullanımının sunucudan okunması henüz gerekli.</p>';content.append(table(['Görev','Planlanan zaman','Kontrol'],mails));},
+ 'Ekran Kuralları':()=>{content.innerHTML='<h3>Gösterim kuralları</h3><p><b>Kesinti yasak:</b> Oyun, test, Ders Çalış konusu veya sorusu, parkur soru alanı, sonuç ve ödül aşamaları.</p><p><b>Uygun yüzeyler:</b> Parkur, Oyunlar, Arkadaşlar, Ders Çalış, Mağaza ve Profil ana ekranları.</p><p><b>Öncelik:</b> Öğretmen uyarısı → hesap doğrulama → başlangıç / seviye → lig → normal hatırlatmalar.</p><p><b>Özel:</b> Enerji bitişi kendi zorunlu akışını korur.</p>';},
+ 'Kayıtlar ve Taslaklar':()=>{content.innerHTML='<h3>Kayıtlar ve taslaklar</h3><p>Öğrenci bazlı gösterim geçmişi, mail teslim raporu, taslak düzenleyici ve güvenli önizleme için sunucu uç noktaları henüz bağlanmadı. Bu bölüm hazır olmayan işlemleri yapılmış gibi göstermez.</p>';}
+ };
+ for(const [name,render] of Object.entries(pages)){const b=document.createElement('button');b.type='button';b.textContent=name;b.style.cssText='border:1px solid #bad9de;border-radius:12px;background:white;color:#175363;padding:9px 12px;font-weight:700';b.onclick=()=>{for(const x of nav.children)x.style.background='white';b.style.background='#c6f3e6';render()};nav.append(b)}
+ nav.firstElementChild.click();shade.append(panel);document.body.append(shade);shade.addEventListener('click',e=>{if(e.target===shade)shade.remove()});
+}
+
 function maintain(){
  const menu=$('ogretmenMenuModal');if(!menu)return;if(!token()){active=false;menuSeen=false;return;}
  if(visible(menu))active=true;
@@ -73,6 +109,7 @@ function maintain(){
  if(menu.parentElement!==document.body)document.body.append(menu);menu.classList.add('dm-teacher-open');const dialogs=children();menu.classList.toggle('dm-teacher-obscured',dialogs.length>0);const display=dialogs.length?'none':'flex';if(menu.style.display!==display)menu.style.display=display;if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
  for(const el of dialogs){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
  if(!$('dmTeacherRallyButton')){const b=document.createElement('button');b.id='dmTeacherRallyButton';b.className='ogretmen-menu-btn';b.textContent='🏎️ Kelime Rallisi · Öğretmen Denemesi';b.onclick=async()=>{try{await window.dmLazyGames?.ready();window.ralliOyunAc?.();}catch(e){window.yoToast?.(e.message);}};menu.querySelector('.rubric-content').append(b);}
+ if(!$('dmNoticeMailCenterButton')){const b=document.createElement('button');b.id='dmNoticeMailCenterButton';b.className='ogretmen-menu-btn';b.textContent='📣 Duyuru ve Mail Yönetim Merkezi';b.onclick=openNoticeMailCenter;menu.querySelector('.rubric-content').append(b);}
  if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, 100 XP kazandır';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
  if(!menuSeen){menuSeen=true;api('teacherNotificationRead').then(()=>refresh(true)).catch(()=>{});}
  decorateWorkspace(menu);paintBadge();
