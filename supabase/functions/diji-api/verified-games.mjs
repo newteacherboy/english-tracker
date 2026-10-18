@@ -17,7 +17,7 @@ export function grade(task,answer,game){
  if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&typeof answer.letter==='string'&&answer.letter.length===1){
   const text=String(task.en).toLowerCase(),letter=answer.letter.toLowerCase();
   const correct=game==='asmaca'?text.includes(letter):Number.isInteger(answer.index)&&text[answer.index]===letter;
-  return {valid:true,correct,complete:false};
+  return {valid:true,correct,complete:game==='ba'};
  }
  if(task.kind==='eslestir'){
   const valid=Array.isArray(answer)&&answer.length===task.pairs.length&&answer.every(x=>x&&typeof x.en==='string'&&typeof x.tr==='string');
