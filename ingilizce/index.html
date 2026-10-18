@@ -13742,7 +13742,7 @@ function meduAkisKapat() {
 
 let maSekme = 'akis', maProfilId = null, maFiltre = 'herkes', maArama = '', maSinifListeSon = [], maSinifCache = null;
 let maTakip = new Set(), maBegeni = new Set(), maTebrik = new Set();
-let maVitrinSecim = JSON.parse(localStorage.getItem('ing_ma_vitrinsecim:'+String(localStorage.getItem('ing_aktifOgrenci')||'')) || '[]');
+let maVitrinSecim = JSON.parse(localStorage.getItem('ing_ma_vitrinsecim:'+String(aktifOgrenciAdi||'')) || '[]');
 async function maOlaylariYukle() {
     try {
         let r = await fetch(`${apiURL}?islem=akisOlaylariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`);
