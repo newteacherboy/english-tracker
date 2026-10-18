@@ -24583,14 +24583,20 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ================= 4) OYUN: 11 mini oyundan birer soru ================= */
   let O = null, zamanlayici = null;
   const checkpointKey=(no=O?.D?.no)=> 'dm_parkur_resume_v1:'+isim().toLowerCase()+':'+no;
-  function checkpointRead(no){try{const c=JSON.parse(localStorage.getItem(checkpointKey(no))||'null');return c?.version===1&&c.state?.verifiedVersion===1&&c.state?.D?.no===no&&c.state.owner===isim()?c:null;}catch{return null;}}
-  function checkpointSave(){if(!O||O.owner!==isim()||O.finished||sinifModu())return;try{const state=JSON.parse(JSON.stringify(O,(key,value)=>['jk','pendingAnswer'].includes(key)?undefined:value));state.elapsed=O.paused?O.pauseElapsed:Math.max(0,Date.now()-O.bas);const score=window.OC?.aktif;localStorage.setItem(checkpointKey(),JSON.stringify({version:1,state,score:score?.oyun==='ba'?score:null}));}catch(e){console.warn('[Parkur] ilerleme kaydı',e);}}
+  function checkpointRead(no){try{const c=JSON.parse(localStorage.getItem(checkpointKey(no))||'null');return c?.version===1&&c.state?.D?.no===no&&c.state.owner===isim()&&typeof c.state.runId==='string'&&Array.isArray(c.state.sorular)&&(!c.savedAt||Date.now()-c.savedAt<86400000)?c:null;}catch{return null;}}
+  function checkpointSave(){if(!O||O.owner!==isim()||O.finished||sinifModu())return;try{const state=JSON.parse(JSON.stringify(O,(key,value)=>['jk','pendingAnswer'].includes(key)?undefined:value));state.elapsed=O.paused?O.pauseElapsed:Math.max(0,Date.now()-O.bas);const score=window.OC?.aktif;localStorage.setItem(checkpointKey(),JSON.stringify({version:1,savedAt:Date.now(),state,score:score?.oyun==='ba'?score:null}));}catch(e){console.warn('[Parkur] ilerleme kaydı',e);}}
   function checkpointClear(){try{localStorage.removeItem(checkpointKey());}catch{}}
   window.addEventListener('pagehide',checkpointSave);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)checkpointSave();});
   document.addEventListener('input',e=>{if(!perde?.contains(e.target)||!O)return;O.inputDraft={question:O.i,id:e.target.id,value:e.target.value};checkpointSave();});
   async function parkurEnerjiAdim(runId, soru, dogru) {
-    if(dogru!==null)return window.dmVerifiedGames.flush(runId);
+    if(dogru!==null){
+      let error;
+      for(let attempt=0;attempt<3;attempt++){
+        try{return await window.dmVerifiedGames.flush(runId);}catch(e){error=e;if(attempt<2)await new Promise(resolve=>setTimeout(resolve,300*(attempt+1)));}
+      }
+      throw error||Error('Cevap sunucuya kaydedilemedi.');
+    }
     const response=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'ekonomi',is:'parkurAdim',ogrenci:isim(),runId,soru,dogru})});
     const data=await response.json();
     if(!response.ok || !data.ok)throw new Error(data.mesaj||'Enerji işlemi onaylanmadı.');
@@ -24617,14 +24623,15 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     sorular.push({tip:'sesliFinal',l:active.slice()});
     O = { owner:ownerAtStart, b, d, D, sorular, speechAlternatives:{}, kombo:0, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0, runId:crypto.randomUUID(), pendingAnswer:null };
     const saved=checkpointRead(D.no);
-    if(saved){O={...saved.state,tum,owner:ownerAtStart,pendingAnswer:null,jk:{},paused:false,bas:Date.now()-(saved.state.elapsed||0)};}
+    if(saved){O={...saved.state,tum,owner:ownerAtStart,pendingAnswer:null,advancing:false,jk:{},paused:false,bas:Date.now()-(saved.state.elapsed||0)};}
+    checkpointSave(); // Even a failed first server handshake must not discard this run.
     if (window.OC){OC.basla('ba');if(saved?.score)Object.assign(OC.aktif,saved.score,{bas:O.bas,bitti:false});Object.assign(OC.aktif,{runId:O.runId,rewardScope:{classNo:D.sinif,units:[D.unite],stopNo:D.no}});}
     if(!sinifModu()){
-      try{const verified=await window.dmVerifiedGames.start('ba',O.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no},active);O.verifiedVersion=1;const canonical=verified.words.map(w=>({en:w.en,tr:w.tr,sinif:D.sinif,unite:D.unite}));O.D.kelimeler=canonical;O.sorular.slice(0,12).forEach((task,i)=>{task.k=canonical[i%canonical.length];task.l=canonical.slice();});O.sorular[12].l=canonical.slice();O.sorular[4].matchItems=verified.slots[4].pairs;O.sorular[4].matchOrder=null;}catch(e){toast(e.message);O=null;return;}
+      try{const verified=await window.dmVerifiedGames.start('ba',O.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no},active);O.verifiedVersion=1;const canonical=verified.words.map(w=>({en:w.en,tr:w.tr,sinif:D.sinif,unite:D.unite}));O.D.kelimeler=canonical;O.sorular.slice(0,12).forEach((task,i)=>{task.k=canonical[i%canonical.length];task.l=canonical.slice();});O.sorular[12].l=canonical.slice();O.sorular[4].matchItems=verified.slots[4].pairs;O.sorular[4].matchOrder=null;}catch(e){checkpointSave();toast('Bağlantı kurulamadı. Aynı duraktan devam etmek için yeniden dene: '+e.message);O=null;return;}
     }
     if(!saved&&!sinifModu()){
       try{await parkurEnerjiAdim(O.runId,1,null);}
-      catch(e){toast('⚡ '+e.message);window.dmEnerjiPaketPaneli?.();O=null;return;}
+      catch(e){checkpointSave();toast('Enerji bağlantısı kurulamadı; bölümün korundu. Tekrar dene.');O=null;return;}
     }
     try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
     checkpointSave();soruCiz();
@@ -24737,6 +24744,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   /* ---------- Öğretim ve ilk soru ücretsiz; sonraki sorular 1 ⚡ ---------- */
   async function devamEt() {
+    if(!O||O.advancing)return;
+    const state=O;state.advancing=true;
+    try{
     const ilerle = () => { O.i++; O.answerRecorded=false; O._cevaplandi = false; O._ikinci = false; O._pas = false;O.inputDraft=null;O.matchState=null;O.letterState=null; checkpointSave();soruCiz(); };
     if(O.pendingAnswer){
       try{const r=await O.pendingAnswer;if(!r&&O.i<12)await parkurEnerjiAdim(O.runId,O.i+1,!!O.sonuclar[O.i]);O.answerRecorded=true;}catch(e){toast('Cevap kaydedilemedi: '+e.message);return;}
@@ -24748,9 +24758,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if(next!==1 && typeof window.genelEnerjiKalan==='number' && window.genelEnerjiKalan<1)
       return enerjiBitti(ilerle);
     try{await parkurEnerjiAdim(O.runId,next+1,null);}
-    catch(e){toast('⚡ '+e.message);window.dmEnerjiPaketPaneli?.();return;}
+    catch(e){checkpointSave();const energy=/enerji|energy|yetersiz|bitti/i.test(String(e.message||''));toast(energy?'⚡ '+e.message:'Bağlantı kesildi. Aynı sorudan devam edebilirsin; yeniden dene.');if(energy)window.dmEnerjiPaketPaneli?.();return;}
     if(next!==1)O.harcanan++;
     ilerle();
+    }finally{state.advancing=false;checkpointSave();}
   }
   function enerjiBitti() {
     checkpointSave();document.activeElement?.blur();window.dmPapiFirstPractice?.recover('school');
@@ -24758,8 +24769,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if(typeof window.genelEnerjiBittiGoster==='function')window.genelEnerjiBittiGoster();else window.dmEnerjiPaketPaneli?.();
   }
   function cevap(iyi, dogruMetin,actual) {
-    if(O.i<12)window.dmVerifiedGames?.record(O.i,actual===undefined?O.verifiedAnswer:actual,O.runId);
     if (O._cevaplandi) return;
+    if(O.i<12)window.dmVerifiedGames?.record(O.i,actual===undefined?O.verifiedAnswer:actual,O.runId);
     if(iyi)window.DijiMeduPapiFeedback?.correct({detail:dogruMetin||'Doğru cevap!',duration:850}); O._cevaplandi = true;
     if (zamanlayici) { clearInterval(zamanlayici); zamanlayici = null; }
     O.sonuclar[O.i] = iyi;
