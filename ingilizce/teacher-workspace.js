@@ -24,8 +24,38 @@ function decorateWorkspace(menu){
  let hero=$('dmTeacherHero');if(!hero){hero=document.createElement('section');hero.id='dmTeacherHero';hero.className='dm-teacher-hero';hero.innerHTML='<div class="dm-teacher-hero-top"><img src="papi-help-v2.png" alt="Papi"><div><small>SINIFININ ÖĞRENME MERKEZİ</small><h2>Öğretmen Paneli</h2><p>Planla, öğrencilerini destekle, gelişimi takip et.</p></div></div><div class="dm-teacher-stats"><span>🆕 <b data-teacher-registrations>0</b> kayıt</span><span>💬 <b data-teacher-messages>0</b> mesaj</span></div><label class="dm-teacher-search">🔎 <input type="search" placeholder="Ödev, rapor, oyun…" aria-label="Öğretmen panelinde araç ara"></label><p class="dm-teacher-no-results" hidden>Bu aramaya uygun araç bulunamadı.</p>';content.prepend(hero);hero.querySelector('input').addEventListener('input',()=>decorateWorkspace(menu));}
  hero.querySelector('[data-teacher-registrations]').textContent=registrations;hero.querySelector('[data-teacher-messages]').textContent=messages;
  const query=hero.querySelector('input').value.toLocaleLowerCase('tr').trim();let count=0;
- const description=t=>/veli/i.test(t)?'Gelişimi ailelerle paylaş':/sınıf oyun/i.test(t)?'Oyunları sınıfa taşı, öğrenci seç':/ödev/i.test(t)?'Konu ve oyun ödevlerini düzenle':/rubrik|performans/i.test(t)?'Becerileri değerlendir, ilerlemeyi izle':/mesaj|sohbet/i.test(t)?'Öğrenci mesajlarını yanıtla':/kayıt/i.test(t)?'Yeni katılan öğrencileri kontrol et':/duyuru/i.test(t)?'Sınıfına ulaş, öğrencilerini haberdar et':/seviye/i.test(t)?'Dil seviyelerini ve örnekleri incele':/öğrenci/i.test(t)?'Sınıfını ve öğrenci bilgilerini yönet':'Sınıfın için aç ve düzenle';
- for(const b of content.querySelectorAll('.ogretmen-menu-btn')){if(!b.dataset.dmTeacherCard){const note=document.createElement('small');note.textContent=description(b.textContent);b.append(note);b.dataset.dmTeacherCard='1';}const show=!query||b.textContent.toLocaleLowerCase('tr').includes(query);b.hidden=!show;if(show)count++;}
+ const tools=[
+  [/ödev ver|ödev/i,'📚','Ödev ve etkinlikleri düzenle'],
+  [/rubrik/i,'📊','Öğrencilerin becerilerini değerlendir'],
+  [/ders içi performans/i,'⚡','Ders içindeki gelişimi takip et'],
+  [/sınıf oyun/i,'🎮','Oyunları sınıfınla birlikte oyna'],
+  [/duyuru/i,'📣','Sınıfına duyuru gönder'],
+  [/bekleyen kayıt/i,'📥','Yeni öğrenci başvurularını incele'],
+  [/öğrenci sohbet/i,'💬','Öğrenci mesajlarını yanıtla'],
+  [/öğretmen hesabımı sil/i,'🛡️','Hesap ayarlarını yönet'],
+  [/gizlilik|kvkk/i,'🔒','Gizlilik ve veri ayarlarını incele'],
+  [/zayıf nokta/i,'🎯','Sınıfının gelişime açık konularını gör'],
+  [/veli özet/i,'👨‍👩‍👧','Öğrenci gelişimini velilerle paylaş'],
+  [/öğrenci şifresi/i,'🔑','Öğrenci erişim sorunlarını çöz'],
+  [/seviye sınav/i,'🧭','Dil seviyelerini ve sonuçları incele'],
+  [/sözlü yap/i,'🎤','Kelime bilgisi için sözlü uygula']
+ ];
+ for(const b of [...content.querySelectorAll('.ogretmen-menu-btn')]){
+  const raw=(b.dataset.dmTeacherTitle||b.textContent||'').trim();
+  if(/kelime rallisi.*öğretmen denemesi/i.test(raw)){b.remove();continue;}
+  if(!b.dataset.dmTeacherCard){
+   const entry=tools.find(([re])=>re.test(raw));
+   const title=raw.replace(/^[^\p{L}\p{N}]+/u,'').trim();
+   const old=b.querySelector('span:not(.ogretmen-menu-rozet)');
+   if(old){old.textContent=title;old.classList.add('dm-teacher-card-title');}
+   else{const label=document.createElement('span');label.className='dm-teacher-card-title';label.textContent=title;b.prepend(label);}
+   const mark=document.createElement('span');mark.className='dm-teacher-card-icon';mark.setAttribute('aria-hidden','true');mark.textContent=entry?.[1]||'🧩';b.prepend(mark);
+   const note=document.createElement('small');note.textContent=entry?.[2]||'Sınıfın için aç ve düzenle';b.append(note);
+   b.dataset.dmTeacherTitle=title;b.dataset.dmTeacherCard='1';
+  }
+  const show=!query||b.dataset.dmTeacherTitle.toLocaleLowerCase('tr').includes(query);
+  b.hidden=!show;if(show)count++;
+ }
  hero.querySelector('.dm-teacher-no-results').hidden=count>0;
 }
 function maintain(){
