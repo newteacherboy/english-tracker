@@ -144,7 +144,15 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){check(tru
 window.addEventListener('focus',()=>{if(!status?.emailVerified)check(true,true);});
 window.addEventListener('pageshow',()=>check(true,true));
 window.addEventListener('storage',e=>{if(e.key==='dm_email_verified'){try{const mark=JSON.parse(e.newValue||'null');if(mark?.student===who())check(true,true);}catch{}}});
-function emailSafe(){return !document.hidden&&!window.dmPapiNotices?.blocked()&&!document.querySelector('#dmRouteChoice,#dmPlacementExam,#dmStartPlacement,#dmStartingChoice,#dmEmailVerification,#dmPlacementInvite,#dmEmailGuide,.game-modal-overlay:not([style*="display: none"]),.dc-fullscreen-overlay.active,.yo-modal.acik,#bzPerde[style*="display: flex"],#mlThemeList[role="dialog"],#genelSonucOverlay[style*="display: flex"]');}
+function emailSafe(){
+ if(document.hidden||window.dmPapiNotices?.blocked())return false;
+ const blockers='#dmRouteChoice,#dmPlacementExam,#dmStartPlacement,#dmStartingChoice,#dmEmailVerification,#dmPlacementInvite,#dmEmailGuide,.game-modal-overlay,.dc-fullscreen-overlay.active,.yo-modal.acik,#bzPerde,#mlThemeList,#genelSonucOverlay,#dmLeagueMomentum,.dm-teacher-child';
+ return ![...document.querySelectorAll(blockers)].some(el=>{
+   if(!el.isConnected||!el.getClientRects().length)return false;
+   const style=getComputedStyle(el);
+   return style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)!==0;
+ });
+}
 async function tryEmail(fromGames=false){
  if(fromGames)emailGamesVisited=true;
  if(!emailGamesVisited||!ready()||emailPromptBusy||Date.now()<emailNextAt)return;
