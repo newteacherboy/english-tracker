@@ -1,0 +1,1 @@
+select cron.alter_job(job_id:=jobid,schedule:='* * * * *') from cron.job where jobname='dm-papi-progress-dispatch';
