@@ -91,6 +91,22 @@ function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(mou
 async function repeat(){if(!student())return;await window.dmWrongWords?.review({limit:3,onComplete:()=>load(true).catch(()=>{})});}
 async function route(){routePending=true;const p=window.dmLearningRoute?.purpose?.();if(p==='independent')return window.dmThematicLearning?.continueRoute();const current=document.querySelector('#tab-dunya .rt-start');if(current)return current.click();await window.dunyaAc?.();return document.querySelector('#tab-dunya .rt-start')?.click();}
 async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();return dialogues();}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
+// Fallback only when the app-wide correct/wrong audio handler is unavailable.
+function companionAnswerSound(correct){
+ if(typeof window.dmAnswerFeedback==='function'){window.dmAnswerFeedback(correct);return;}
+ if(window.dmSoundEnabled===false||window.dmSfxEnabled===false)return;
+ try{
+  const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+  const ctx=new Ctx(),osc=ctx.createOscillator(),gain=ctx.createGain(),t=ctx.currentTime;
+  osc.type='sine';osc.frequency.setValueAtTime(correct?620:300,t);
+  if(correct)osc.frequency.exponentialRampToValueAtTime(850,t+0.12);
+  else osc.frequency.exponentialRampToValueAtTime(220,t+0.17);
+  gain.gain.setValueAtTime(0.0001,t);gain.gain.exponentialRampToValueAtTime(0.09,t+0.018);
+  gain.gain.exponentialRampToValueAtTime(0.0001,t+0.21);
+  osc.connect(gain);gain.connect(ctx.destination);osc.start(t);osc.stop(t+0.23);
+  osc.onended=()=>ctx.close().catch(()=>{});
+ }catch(_){}
+}
 function skillBar(label,correct,total,icon){return '<article class="lc-skill"><span aria-hidden="true">'+icon+'</span><div><b>'+label+'</b><small>'+(total?correct+' / '+total+' doğru':'Henüz yeterli çalışma yok')+'</small></div><progress aria-label="'+label+' alıştırma doğruluğu" max="'+(total||1)+'" value="'+correct+'"></progress></article>';}
 async function report(){
  if(!student())return;$('rtProfileBackdrop')?.remove();const v=sheet('Karnem','<p role="status">Çalışmaların yükleniyor…</p>','lcReport');if(!v)return;
@@ -129,7 +145,7 @@ async function openStory(id){
    try{const r=await api('companionDialogueAnswer',{story:id,index:i,version:state.version,answer:text,audioPlayed:played});if(!v.alive())return;
     state={...state,cursor:r.cursor,version:r.version,answers:{...state.answers,[i]:r}};button?.classList.add(r.correct?'lc-correct':'lc-wrong');
     v.body.querySelectorAll('[data-option]').forEach(x=>{if(x.dataset.option===r.answer)x.classList.add('lc-correct');});
-    window.dmAnswerFeedback?.(r.correct);v.body.querySelectorAll('.lc-transcript-panel').forEach(x=>x.open=false);note.className='lc-answer-note '+(r.correct?'lc-correct-note':'lc-explain');note.innerHTML='<b>'+(r.correct?'✓ Doğru!':'Birlikte düzeltelim')+'</b><p>'+esc(r.explanation)+'</p>'+(!r.correct?'<p>Doğru cevap: <strong>'+esc(r.answer)+'</strong></p>':'');
+    companionAnswerSound(r.correct);v.body.querySelectorAll('.lc-transcript-panel').forEach(x=>x.open=false);note.className='lc-answer-note '+(r.correct?'lc-correct-note':'lc-explain');note.innerHTML='<b>'+(r.correct?'✓ Doğru!':'Birlikte düzeltelim')+'</b><p>'+esc(r.explanation)+'</p>'+(!r.correct?'<p>Doğru cevap: <strong>'+esc(r.answer)+'</strong></p>':'');
     const next=document.createElement('button');next.type='button';next.className='lc-button';next.textContent=i===story.questions.length-1?'Çalışmayı tamamla':'Sonraki adım →';next.onclick=render;v.body.append(next);next.focus();
    }catch(e){if(v.alive()){note.textContent=e.message;v.body.querySelectorAll('[data-option],.lc-writing button').forEach(x=>x.disabled=false);}}finally{answering=false;}
   }
