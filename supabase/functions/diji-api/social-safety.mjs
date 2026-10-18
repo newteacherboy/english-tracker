@@ -85,7 +85,26 @@ export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}
     }
     if(op==='safetyAdminReview'){
      if(!idPattern.test(b.id||'')||!['review','dismiss','warn','hide','suspend','restore'].includes(b.action)||String(b.note||'').length>500)return json({ok:false,mesaj:'Geçersiz işlem.'},400);
-     const r=await db.rpc('dm_safety_review',{p_admin:a.teacher_id,p_report:b.id,p_action:b.action,p_note:String(b.note||''),p_days:Number(b.days)||1});if(r.error)throw Error('İşlem kaydedilemedi. Bildirimi ve seçimi kontrol et.');return json({ok:true});
+     const report=await db.from('dm_safety_reports').select('id,target_id,reason').eq('id',b.id).maybeSingle();
+     if(report.error||!report.data)return json({ok:false,mesaj:'Şikâyet bulunamadı.'},404);
+     const r=await db.rpc('dm_safety_review',{p_admin:a.teacher_id,p_report:b.id,p_action:b.action,p_note:String(b.note||''),p_days:Number(b.days)||1});if(r.error)throw Error('İşlem kaydedilemedi. Bildirimi ve seçimi kontrol et.');
+     if(['warn','suspend','restore'].includes(b.action)&&report.data.target_id){
+      const defaultMessage=b.action==='warn'?'Hesabın için bir uyarı oluşturuldu. Lütfen topluluk kurallarına dikkat et.':b.action==='restore'?'Sosyal özelliklerine uygulanan kısıtlama kaldırıldı.':'Sosyal özelliklerine '+(Number(b.days)===7?'7':'1')+' gün süreyle kısıtlama uygulandı.';
+      const detail=String(b.studentMessage||'').trim().slice(0,450);
+      const msg=detail.length>=5?detail:defaultMessage;
+      const notice=await db.from('dm_teacher_student_notices').insert({student_id:report.data.target_id,teacher_id:a.teacher_id,report_id:b.id,kind:b.action==='warn'?'warning':'discipline',message:msg,appeal_allowed:b.appealAllowed!==false});
+      if(notice.error)throw Error('İşlem kaydedildi ancak öğrenciye bildirim iletilemedi. Yönetici panelinden kontrol et.');
+     }
+     return json({ok:true});
+    }
+    if(op==='safetyAdminAppeals'){
+     const r=await db.from('dm_teacher_student_notices').select('id,kind,message,appeal_message,appealed_at,acknowledged_at,student:students!dm_teacher_student_notices_student_id_fkey(username)').eq('teacher_id',a.teacher_id).not('appealed_at','is',null).order('appealed_at',{ascending:false}).limit(80);
+     if(r.error)throw Error('İtirazlar alınamadı.');return json({ok:true,appeals:r.data||[]});
+    }
+    if(op==='safetyAdminAppealResolve'){
+     if(!idPattern.test(b.id||''))return json({ok:false,mesaj:'Geçersiz itiraz.'},400);
+     const r=await db.from('dm_teacher_student_notices').update({appeal_reviewed_at:new Date().toISOString()}).eq('id',b.id).eq('teacher_id',a.teacher_id).not('appealed_at','is',null).select('id');
+     if(r.error||!r.data?.length)return json({ok:false,mesaj:'İtiraz bulunamadı.'},404);return json({ok:true});
     }
     if(op==='safetyAdminList'){
      let req=db.from('dm_safety_reports').select('id,kind,item_id,reason,note,snapshot,status,action,review_note,created_at,updated_at,reporter:students!dm_safety_reports_reporter_id_fkey(username),target:students!dm_safety_reports_target_id_fkey(username)').order('created_at',{ascending:false}).limit(100);
@@ -98,13 +117,19 @@ export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}
    const actor=a.student_id;
    if(actor==='dcde2026-1015-4000-8000-000000000001'&&op!=='safetyStatus')return json({ok:false,mesaj:'Tanıtım hesabında güvenlik ayarları değiştirilemez.'},403);
    if(op==='safetyStudentNotices'){
-    const r=await db.from('dm_teacher_student_notices').select('id,kind,message,created_at').eq('student_id',actor).is('acknowledged_at',null).order('created_at',{ascending:true}).limit(1);
+    const r=await db.from('dm_teacher_student_notices').select('id,kind,message,created_at,appeal_allowed,appealed_at').eq('student_id',actor).is('acknowledged_at',null).order('created_at',{ascending:true}).limit(1);
     if(r.error)throw Error('Önemli duyuru alınamadı.');return json({ok:true,notices:r.data||[]});
    }
    if(op==='safetyStudentNoticeAck'){
     if(!idPattern.test(b.id||''))return json({ok:false,mesaj:'Geçersiz duyuru.'},400);
     const r=await db.from('dm_teacher_student_notices').update({acknowledged_at:new Date().toISOString()}).eq('student_id',actor).eq('id',b.id).is('acknowledged_at',null).select('id');
     if(r.error)throw Error('Duyuru onaylanamadı.');return json({ok:true,acknowledged:(r.data||[]).length>0});
+   }
+   if(op==='safetyStudentNoticeAppeal'){
+    if(!idPattern.test(b.id||'')||String(b.message||'').trim().length<10||String(b.message||'').length>500)return json({ok:false,mesaj:'İtiraz açıklaması 10-500 karakter olmalı.'},400);
+    const r=await db.from('dm_teacher_student_notices').update({appealed_at:new Date().toISOString(),appeal_message:String(b.message).trim(),acknowledged_at:new Date().toISOString()}).eq('id',b.id).eq('student_id',actor).eq('appeal_allowed',true).is('appealed_at',null).select('id');
+    if(r.error||!r.data?.length)return json({ok:false,mesaj:'Bu bildirim için itiraz hakkı kullanılmış veya kullanılamıyor.'},409);
+    return json({ok:true});
    }
    if(op==='safetyMyReports'){const r=await db.from('dm_safety_reports').select('id,reason,status,created_at').eq('reporter_id',actor).order('created_at',{ascending:false}).limit(30);if(r.error)throw Error('Bildirimler alınamadı.');return json({ok:true,reports:r.data||[]});}
    if(op==='safetyStatus')return json(await state(actor));
