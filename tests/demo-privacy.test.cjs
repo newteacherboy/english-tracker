@@ -20,7 +20,7 @@ test('public leaderboards filter demo scores while retaining legacy players with
  const code=stripTypeScriptTypes(src.slice(src.indexOf('async function leaderboardGet('),src.indexOf('\nasync function rootData(',src.indexOf('async function leaderboardGet('))),{mode:'transform'});
  const rows=[{student_id:DEMO_ID,student_name:'dijimedu_demo',score:9999},{student_id:'real',student_name:'Ada',score:30},{student_id:null,student_name:'Legacy',score:20}];
  const db={from(){const q={select(){return this;},eq(){return this;},order(){return this;},limit:async()=>({data:rows})};return q;}};
- const run=new Function('supabase','publicParticipant','leaderboardGetKey','ADIL_OYUNLAR','val','legacyClassNo','json','scoreRow',code+';return leaderboardGet;')(db,publicParticipant,{scores:'game'},new Set(),()=>'',()=>null,d=>d,x=>x);
+ const run=new Function('supabase','publicParticipant','leaderboardGetKey','ADIL_OYUNLAR','val','legacyClassNo','json','scoreRow','socialSafety',code+';return leaderboardGet;')(db,publicParticipant,{scores:'game'},new Set(),()=>'',()=>null,d=>d,x=>x,{filterStudents:async rows=>rows});
  const list=await run('scores',{},new URLSearchParams());assert.deepEqual(list.map(x=>x.student_name),['Ada','Legacy']);
 });
 test('league exclusion is applied before rank calculation and settlement still reads this league',()=>{
