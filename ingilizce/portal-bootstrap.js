@@ -27,7 +27,7 @@ function dmEndProgress(){
 window.dmPortalProgress={start:dmStartProgress,set:dmSetProgress,finish:dmEndProgress};
 
 const safe=(fn,...args)=>{if(typeof fn!=='function')return;try{return fn(...args);}catch(e){console.warn('Panel bileşeni açılamadı',e);}};
-window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false}={}){
+window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false,profileReady=null}={}){
  const owner=String(student||'').trim();if(!owner)return Promise.resolve(false);
  if(pending?.owner===owner)return pending.task;
  const turn=++epoch;
@@ -35,6 +35,10 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false}={})
   aktifOgrenciAdi=owner;toplamSaniye=Number(seconds)||0;
   $('login-container').style.display='none';$('oturumYuklemeOverlay').style.display='flex';dmStartProgress();
   try{
+   // Start the authoritative member read while the independent profile is loading.
+   const memberReady=Promise.resolve(window.dmPrepareMemberState?.());
+   const memberResult=memberReady.then(value=>({value}),error=>({error}));
+   if(profileReady)await profileReady;
    if(refreshProfile){
     const controller=new AbortController(),deadline=setTimeout(()=>controller.abort(),12000);
     try{const r=await fetch(apiURL,{cache:'no-store',signal:controller.signal}),rows=await r.json();if(r.ok&&Array.isArray(rows)&&turn===epoch&&name()===owner){globalDataCache=rows;safe(window.dijiGlobalCacheYaz,rows);}}catch(e){console.warn('Giriş profil bilgileri yenilenemedi',e);}finally{clearTimeout(deadline);}
@@ -52,7 +56,7 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false}={})
    $('panel-alani').style.display='block';
    safe(window.girisSerisiGuncelleVeGetir);safe(window.baslatSayac);safe(window.arkaPlanVeriYenilemeBaslat);
    dmSetProgress(70);
-   await window.dmPrepareMemberState?.();
+   const member=await memberResult;if(member.error)throw member.error;
    dmSetProgress(82);
    if(turn!==epoch||name()!==owner)return false;
    // The chosen learning route is always the student's home screen.

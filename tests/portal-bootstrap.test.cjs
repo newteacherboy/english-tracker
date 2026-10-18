@@ -24,3 +24,14 @@ test('each session starts a new Papi fill and releases its animation timer on su
  f.c.dunyaAc=async()=>{throw Error('offline')};
  assert.equal(await f.c.dmOpenPortalSession({student:'Student'}),false);assert.equal(f.intervals.size,0);
 });
+
+test('profile and member state start together and neither can reveal an unfinished route',async()=>{
+ const f=fixture();let profileDone,memberDone;
+ const profileReady=new Promise(resolve=>profileDone=resolve);
+ f.c.dmPrepareMemberState=()=>{f.calls.push('prepare');return new Promise(resolve=>memberDone=resolve)};
+ const task=f.c.dmOpenPortalSession({student:'Student',profileReady});
+ assert.equal(typeof memberDone,'function');assert(!f.calls.includes('route'));
+ profileDone();for(let i=0;i<10;i++)await Promise.resolve();
+ assert(!f.calls.includes('route'));assert.equal(f.nodes.get('oturumYuklemeOverlay').style.display,'flex');
+ memberDone(true);assert.equal(await task,true);assert.equal(f.calls.filter(x=>x==='route').length,1);
+});

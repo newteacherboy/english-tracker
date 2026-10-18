@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v176-all-ages-registration-20261018';
+const SURUM = 'diji-v177-bounded-startup-20261018';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 /* Ana sayfanın çevrimdışı kopyasını ASLA değiştirmemesi gereken sayfalar:
@@ -28,18 +28,14 @@ self.addEventListener('fetch', e => {
   if (AYRI_SAYFA.test(url.pathname)) return;                        /* Ayrı sayfalar ana sayfa önbelleğine karışmasın */
   if (url.searchParams.get('misafir') === '1') return;              /* Deneme oturumu ana sayfanın çevrimdışı kopyası değildir. */
 
-  /* Sayfanın kendisi: önce internet (her zaman güncel), yoksa cihazdaki kopya */
+  /* Prefer fresh responses, but an existing installation must not wait for a
+     slow network. Refresh the cached copy in the background; never reload a tab. */
   if (r.mode === 'navigate') {
-    e.respondWith(fetch(r,{cache:'no-store'}).then(y => { if (y && y.ok) { const k = y.clone(); e.waitUntil(caches.open(SAYFA).then(c => c.put('./', k)).catch(()=>{})); } return y; })
-      .catch(() => caches.open(SAYFA).then(c => c.match('./')).then(y => y || Response.error())));
+    e.respondWith(boundedNetwork(e, r, SAYFA, './', 1200));
     return;
   }
-  /* JS/CSS/JSON: ağ öncelikli. Önceki cache-first kuralı aynı ?v= URL'sindeki güncellemeleri süresiz gizleyebiliyordu. */
   if (url.origin === self.location.origin && /\.(?:js|css|json)$/.test(url.pathname)) {
-    e.respondWith(fetch(r,{cache:'no-store'}).then(y => {
-      if (y && y.ok) { const copy=y.clone(); e.waitUntil(caches.open(KAYNAK).then(c=>c.put(r,copy)).catch(()=>{})); }
-      return y;
-    }).catch(()=>caches.open(KAYNAK).then(c=>c.match(r)).then(y=>y||Response.error())));
+    e.respondWith(boundedNetwork(e, r, KAYNAK, r, 600));
     return;
   }
   /* Görseller hızlı açılır; aynı URL'deki yeni tasarım arka planda yenilenir.
@@ -55,3 +51,24 @@ self.addEventListener('fetch', e => {
     e.respondWith(caches.open(KAYNAK).then(c=>c.match(r)).then(v=>v||fresh));
   }
 });
+
+async function boundedNetwork(event, request, bucket, key, budget) {
+  // Register lifetime work synchronously, before opening IndexedDB-backed caches.
+  const network = fetch(request, {cache:'no-cache'});
+  const update = network.then(async response => {
+    if (response && response.ok) {
+      const copy=response.clone();
+      await caches.open(bucket).then(cache=>cache.put(key,copy)).catch(()=>{});
+    }
+  });
+  event.waitUntil(update.catch(()=>{}));
+  const cached=await caches.open(bucket).then(cache=>cache.match(key));
+  if (!cached) return network.catch(()=>Response.error());
+  let timer;
+  try {
+    return await Promise.race([
+      network.then(response=>response && response.ok ? response : cached,()=>cached),
+      new Promise(resolve=>{timer=setTimeout(()=>resolve(cached),budget);})
+    ]);
+  } finally {clearTimeout(timer);}
+}

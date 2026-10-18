@@ -3151,10 +3151,12 @@ async function dijiKelimeHavuzunuYukle() {
                         document.getElementById('oturumYuklemeOverlay').style.display = 'flex';
                     }
 
-                   await dijiGlobalVeriYukle();
-
+                   // Profile and member-state reads are independent; do not serialize them.
+                   const profileReady = dijiGlobalVeriYukle();
                     if (otomatikGirisYapilacak) {
-                        await window.dmOpenPortalSession({student:kayitliOgrenci,seconds:kayitliSure || "0"});
+                        await window.dmOpenPortalSession({student:kayitliOgrenci,seconds:kayitliSure || "0",profileReady});
+                    } else {
+                        await profileReady;
                     }
 
                                ogretmenSelectDoldur();
@@ -24431,6 +24433,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function aktarGerekirse() { let n = havuzTum().length; if (n !== aktarImza) { aktarImza = n; aktar(); } }
 
   async function ilerlemeYukle() {
+    const statusReady=Promise.resolve().then(()=>window.dmProgression?.refresh(true));
+    // Handle rejection immediately while the independent request is in flight.
+    const statusResult=statusReady.then(value=>({value}),error=>({error}));
     const controller=new AbortController(), deadline=setTimeout(()=>controller.abort(),12000);
     try {
       let r=await fetch(`${apiURL}?islem=buyuSeviyeIlerlemeGetir&ogrenci=${encodeURIComponent(isim())}`,{signal:controller.signal});
@@ -24440,7 +24445,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       hamTamam=new Set(l.map(Number));
     } finally { clearTimeout(deadline); }
     try { (JSON.parse(localStorage.getItem('bz_bekleyen_' + isim().toLowerCase()) || '[]')).forEach(n => hamTamam.add(Number(n))); } catch (e) {}
-    const status=await window.dmProgression?.refresh(true);const canonical=window.dmProgression?.status?.();if(Array.isArray(canonical?.done))canonical.done.forEach(n=>hamTamam.add(Number(n)));
+    const status=await statusResult;if(status.error)throw status.error;const canonical=window.dmProgression?.status?.();if(Array.isArray(canonical?.done))canonical.done.forEach(n=>hamTamam.add(Number(n)));
     aktar(); aktarImza = havuzTum().length;
     yuklendi = true;
   }
@@ -26417,7 +26422,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   };
 })();
 </script>
-<script defer src="portal-bootstrap.js?v=20261018-startup-2"></script>
+<script defer src="portal-bootstrap.js?v=20261018-parallel-startup-3"></script>
 <script defer src="google-login.js?v=20261018-universal-20261015-init-fixed-3"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
