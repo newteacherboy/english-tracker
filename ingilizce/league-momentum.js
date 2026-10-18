@@ -11,8 +11,8 @@ const store={read(key){try{return JSON.parse(localStorage.getItem(key)||'null')}
 write(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}};
 function week(){if(typeof yoHaftaKodu==='function')return String(yoHaftaKodu());const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
 function day(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
-function allowed(){return !!who()&&normalize(who())!=='teacher'&&!window.dmGuestMode&&document.getElementById('panel-alani')?.style.display==='block'&&window.dmProgression?.allowed?.('lig')!==false;}
-function blocked(){return document.hidden||!!document.querySelector('#dmRouteChoice,#dmPlacementExam,#dmEmailVerification,#dmStoryLesson,#mlThemeList,.dm-member-overlay,.dc-fullscreen-overlay.active,#dmLeagueMomentum');}
+function allowed(){if(window.dmCommunicationNoticeRules?.league_momentum?.enabled===false)return false;return !!who()&&normalize(who())!=='teacher'&&!window.dmGuestMode&&document.getElementById('panel-alani')?.style.display==='block'&&window.dmProgression?.allowed?.('lig')!==false;}
+function blocked(){return document.hidden||!!document.querySelector('#dmRouteChoice,#dmPlacementExam,#dmEmailVerification,#dmStoryLesson,#mlThemeList,.dm-member-overlay,#dmLeagueMomentum')||[...document.querySelectorAll('.dc-fullscreen-overlay.active')].some(el=>el.id!=='tab-meduakis');}
 function close(){document.getElementById('dmLeagueMomentum')?.remove();}
 function show(payload,owner){
  if(blocked()||!allowed()||normalize(who())!==owner)return false;
@@ -86,8 +86,8 @@ function displayPending(){
    store.write(key,snapshot);queued=null;
  }
 }
-document.addEventListener('dm:login',()=>{epoch++;lastCheck=0;close();setTimeout(()=>check(true),3000);});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){setTimeout(()=>{displayPending();void check(true);},1600);}});
-setTimeout(()=>check(true),3500);
-setInterval(()=>{displayPending();void check(false);},90000);
+document.addEventListener('dm:login',()=>{epoch++;lastCheck=0;close();queued=null;});
+document.addEventListener('dm:friends-open',()=>{lastCheck=0;void check(true);displayPending();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)displayPending();});
+// Do not poll or announce outside the Friends entry. Pending notices wait for it.
 })();

@@ -2,7 +2,7 @@ import {placementStudyAccess} from './study-placement-access.mjs';
 import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
 export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
- const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults']);
+ const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave','communicationStats','communicationNoticePolicy']);
  const fail=(message:string,status=400)=>json({ok:false,mesaj:message},status);
  const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
  function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
@@ -12,6 +12,53 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
   if(!ops.has(op))return null;
   if(method!=='POST')return fail('POST gerekli.',405);
   if(!a)return json({ok:false,hata:'oturum',mesaj:'Önce giriş yap.'},401);
+  if(op==='communicationNoticePolicy'){
+   if(a.role!=='student'||!a.student_id)return fail('Öğrenci oturumu gerekli.',403);
+   const {data,error}=await db.from('dm_communication_rules').select('key,enabled,settings').eq('category','notice');
+   if(error)throw error;
+   return json({ok:true,rules:(data||[]).map((x:any)=>({key:x.key,enabled:x.enabled,settings:x.settings}))});
+  }
+  if(['communicationRulesList','communicationRulesSave','communicationStats'].includes(op)){
+   if(a.role!=='teacher'||!a.yonetici)return fail('Yalnızca yönetici bu kuralları yönetebilir.',403);
+   if(op==='communicationStats'){
+     const today=new Date(Date.now()+10800000).toISOString().slice(0,10);
+     const [queued,sent,failed,budget]=await Promise.all([
+       db.from('mail_queue').select('id',{count:'exact',head:true}).is('sent_at',null),
+       db.from('mail_queue').select('id',{count:'exact',head:true}).gte('sent_at',today+'T00:00:00+03:00'),
+       db.from('mail_queue').select('id',{count:'exact',head:true}).is('sent_at',null).not('error','is',null),
+       db.from('dm_mail_budget').select('attempts').eq('day',today).maybeSingle()
+     ]);
+     for(const result of [queued,sent,failed,budget])if(result.error)throw result.error;
+     return json({ok:true,summary:{queued:queued.count||0,sentToday:sent.count||0,failedPending:failed.count||0,attemptsToday:budget.data?.attempts||0}});
+   }
+   if(op==='communicationRulesList'){
+     const {data,error}=await db.from('dm_communication_rules').select('key,category,title,enabled,settings,updated_at').order('category').order('key');
+     if(error)throw error;
+     return json({ok:true,rules:data||[]});
+   }
+   const key=String(b.key||'');
+   const allowed=new Set(['teacher_warning','email_verification','learner_intro','league_momentum','regular_reminders','weekly_league_mail','monday_league_mail','three_day_mail','daily_reengagement']);
+   if(!allowed.has(key)||typeof b.enabled!=='boolean')return fail('Geçersiz kural ayarı.');
+   const patch:any={enabled:b.enabled,updated_at:new Date().toISOString()};
+   if(b.settings!==undefined){
+     if(!b.settings||typeof b.settings!=='object'||Array.isArray(b.settings))return fail('Ayar nesnesi gerekli.');
+     const text=JSON.stringify(b.settings);if(text.length>2500)return fail('Ayar boyutu çok büyük.');
+     // Only known, bounded settings are editable. Legacy scheduled jobs must opt in separately.
+     const numeric=['repeat_minutes','priority','first_active_minutes','gap_active_minutes','session_max','hour','interval_days','daily_max','batch_size'];
+     const safe:any={};
+     for(const [k,v] of Object.entries(b.settings)){
+       if(numeric.includes(k)){if(!Number.isInteger(v)||Number(v)<0||Number(v)>10080)return fail('Sayısal ayar geçersiz.');safe[k]=v;}
+       else if(['trigger','weekday','period','timezone'].includes(k)&&typeof v==='string'&&v.length<=45)safe[k]=v;
+       else if(['safe_screen','on_change','no_consecutive_days'].includes(k)&&typeof v==='boolean')safe[k]=v;
+       else return fail('Tanınmayan ayar alanı.');
+     }
+     patch.settings=safe;
+   }
+   const {data,error}=await db.from('dm_communication_rules').update(patch).eq('key',key).select('key,category,title,enabled,settings,updated_at').maybeSingle();
+   if(error)throw error;if(!data)return fail('Kural bulunamadı.',404);
+   await db.from('audit_logs').insert({actor_role:'teacher',actor_id:a.teacher_id,operation:'communicationRulesSave',target:key,payload:{enabled:patch.enabled,settings:patch.settings||null}});
+   return json({ok:true,rule:data,notice:'Ayar kaydedildi. Canlı uygulamada uygulanması için ilgili duyuru veya mail işinin bu kurala bağlanmış olması gerekir.'});
+  }
   if(op.startsWith('teacherNotification')||op==='teacherPlacementResults'){
    if(a.role!=='teacher')return fail('Öğretmen oturumu gerekli.',403);
    const {data:all,error}=await db.from('students').select('id,username,teacher_id,status,created_at');if(error)throw error;
@@ -66,8 +113,8 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    const r=await db.from('extra_data').select('key_name,updated_at').eq('student_id',sid).like('key_name',prefix+'%').gte('updated_at',new Date(Date.now()-(kind==='email'?86400000:7*86400000)).toISOString());if(r.error)throw r.error;
    const records=r.data||[];if(kind==='placement'&&records.length>=2)return json({ok:true,show:false});
    const recent=Math.max(0,...records.map((x:any)=>Date.parse(x.updated_at)||0));
-   if(recent&&Date.now()-recent<(kind==='email'?15*60000:30*60000))return json({ok:true,show:false});
-   const key=kind==='email'?prefix+String(Math.floor(Date.now()/900000)):prefix+(records.length+1);
+   if(recent&&Date.now()-recent<(kind==='email'?10*60000:30*60000))return json({ok:true,show:false});
+   const key=kind==='email'?prefix+String(Math.floor(Date.now()/600000)):prefix+(records.length+1);
    const ins=await db.from('extra_data').upsert({student_id:sid,key_name:key,value:{shown:true},updated_at:new Date().toISOString()},{onConflict:'student_id,key_name',ignoreDuplicates:true}).select('id');if(ins.error)throw ins.error;
    return json({ok:true,show:!!ins.data?.length,kind});
   }

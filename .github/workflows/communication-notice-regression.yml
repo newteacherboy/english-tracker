@@ -1,0 +1,25 @@
+name: Communication notice regression
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/member-experience.js'
+      - 'ingilizce/league-momentum.js'
+      - 'ingilizce/friends-ui.js'
+      - 'ingilizce/teacher-workspace.js'
+      - 'supabase/functions/diji-api/member-tools-api.ts'
+      - 'tests/notice-mail-center-regression.test.cjs'
+      - '.github/workflows/communication-notice-regression.yml'
+  workflow_dispatch:
+jobs:
+  notice-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/member-experience.js
+      - run: node --check ingilizce/league-momentum.js
+      - run: node --check ingilizce/friends-ui.js
+      - run: node --check ingilizce/teacher-workspace.js
+      - run: node --test tests/notice-mail-center-regression.test.cjs
