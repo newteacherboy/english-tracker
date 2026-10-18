@@ -86,8 +86,8 @@ function displayPending(){
    store.write(key,snapshot);queued=null;
  }
 }
-document.addEventListener('dm:login',()=>{epoch++;lastCheck=0;close();setTimeout(()=>check(true),3000);});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){setTimeout(()=>{displayPending();void check(true);},1600);}});
-setTimeout(()=>check(true),3500);
-setInterval(()=>{displayPending();void check(false);},90000);
+document.addEventListener('dm:login',()=>{epoch++;lastCheck=0;close();queued=null;});
+document.addEventListener('dm:friends-open',()=>{lastCheck=0;void check(true);displayPending();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)displayPending();});
+// Do not poll or announce outside the Friends entry. Pending notices wait for it.
 })();
