@@ -30,7 +30,7 @@ test('teacher hub exposes inventory without claiming live writable settings',()=
  const code=read('ingilizce/teacher-workspace.js');
  assert(code.includes('dmNoticeMailCenterButton'));
  assert(code.includes('Duyuru ve Mail Yönetim Merkezi'));
- assert(code.includes('henüz bağlı değil'));
+ assert(code.includes("api('communicationRulesList')"));
 });
 
 test('central notice policy is fetched for students and checked before league or email popup',()=>{
