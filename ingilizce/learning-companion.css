@@ -63,3 +63,14 @@
 .lc-dialog .lc-options>button{min-height:48px;border-radius:14px;font-weight:850;transition:background .16s,border-color .16s}
 .lc-dialog .lc-options>button.lc-correct{background:#e1f7ea!important;color:#14643f!important;border-color:#50bd87!important}
 .lc-dialog .lc-options>button.lc-wrong{background:#fff0f0!important;color:#9a2834!important;border-color:#e77a87!important}
+
+
+/* Collapse only the level groups inside the dialogue picker; keep the study entry unchanged. */
+.lc-dialog .lc-story-levels{display:grid;gap:10px;margin-top:12px}
+.lc-dialog .lc-level-group{background:#fff;border:1px solid #d6e7e2;border-radius:17px;overflow:hidden}
+.lc-dialog .lc-level-group>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px;color:#173f52;font:800 15px Nunito,system-ui,sans-serif;background:#f4faf8}
+.lc-dialog .lc-level-group>summary::-webkit-details-marker{display:none}
+.lc-dialog .lc-level-group>summary small{font:700 12px Nunito,system-ui,sans-serif;color:#55747c;white-space:nowrap}
+.lc-dialog .lc-level-group[open]>summary small span{display:inline-block;transform:rotate(180deg)}
+.lc-dialog .lc-level-group>.lc-story-grid{display:grid;gap:9px;padding:11px;background:#fff}
+.lc-dialog .lc-level-group>summary:focus-visible{outline:3px solid #268d8a;outline-offset:-3px}
