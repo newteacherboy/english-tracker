@@ -95,11 +95,12 @@ async function review(){
 
 
 // Short feedback tones, generated locally; no external audio files or permissions.
+window.dmAnswerFeedback=playPlacementFeedback;
 function playPlacementFeedback(correct){
  try{
   if(window.dmSoundEnabled===false||window.dmSesAcik===false||localStorage.getItem('dm_sound_muted')==='1')return;
   const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
-  const ctx=new Audio();const now=ctx.currentTime;
+  const ctx=new Audio();ctx.resume?.().catch(()=>{});const now=ctx.currentTime;
   const notes=correct?[660,880]:[330,220];
   notes.forEach((hz,i)=>{const oscillator=ctx.createOscillator(),gain=ctx.createGain(),at=now+i*.115;oscillator.type=correct?'sine':'triangle';oscillator.frequency.setValueAtTime(hz,at);gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(.075,at+.015);gain.gain.exponentialRampToValueAtTime(.0001,at+.105);oscillator.connect(gain);gain.connect(ctx.destination);oscillator.start(at);oscillator.stop(at+.11);});
   setTimeout(()=>ctx.close().catch(()=>{}),500);

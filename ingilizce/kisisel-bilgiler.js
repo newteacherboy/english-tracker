@@ -95,10 +95,10 @@
       </div>
       <div class="kb-grup"><h4>Öğretmen bağlantım</h4><p id="kbTeacherStatus" class="kb-ipucu"></p><div class="kb-alan"><label for="kbTeacherCode">Öğretmen kodu (isteğe bağlı)</label><input id="kbTeacherCode" maxlength="10" autocapitalize="characters" placeholder="Bir öğretmene bağlanmak istersen"></div></div>
       <div class="kb-grup" id="kbEducation"><h4>Eğitim bilgilerim</h4>
-        <div class="kb-alan"><label for="kbStage">Eğitim kademem</label><select id="kbStage"><option value="primary">İlkokul</option><option value="middle">Ortaokul</option><option value="high">Lise</option><option value="university">Üniversite</option></select></div>
+        <div class="kb-alan"><label for="kbStage">Eğitim kademem (isteğe bağlı)</label><select id="kbStage"><option value="">Belirtmek istemiyorum</option><option value="primary">İlkokul</option><option value="middle">Ortaokul</option><option value="high">Lise</option><option value="university">Üniversite</option></select></div>
         <div class="kb-alan"><label for="kbOkul">Okul adı <span style="font-weight:600;color:#8a7cb8">(isteğe bağlı)</span></label><input id="kbOkul" maxlength="120"></div>
         <div class="kb-iki">
-          <div class="kb-alan"><label for="kbSinif">Sınıf</label><select id="kbSinif">${Array.from({length:12},(_,i)=>i+1).map(n => `<option value="${n}">${n}. sınıf</option>`).join("")}</select></div>
+          <div class="kb-alan"><label for="kbSinif">Sınıf (isteğe bağlı)</label><select id="kbSinif"><option value="">Belirtmek istemiyorum</option>${Array.from({length:12},(_,i)=>i+1).map(n => `<option value="${n}">${n}. sınıf</option>`).join("")}</select></div>
           <div class="kb-alan"><label for="kbSube">Şube</label><input id="kbSube" maxlength="10" autocapitalize="characters"></div>
         </div>
         <div class="kb-ipucu" id="kbSinifIpucu"></div>
@@ -142,8 +142,8 @@
       $("kbAd").value = x.adSoyad || "";
       $("kbOkul").value = x.okul || "";
       const pref=x.learnerProfile||{purpose:x.sinif?'school':'independent',educationStage:Number(x.sinif)<=4?'primary':Number(x.sinif)<=8?'middle':'high',ageBand:'',goal:'daily'};
-      $("kbPurpose").value=pref.purpose;$("kbAge").value=pref.ageBand||'';$("kbGoal").value=pref.goal||'daily';$("kbStage").value=pref.educationStage||'primary';
-      $("kbSinif").value=String(x.sinif||1); education(false);
+      $("kbPurpose").value=pref.purpose;$("kbAge").value=pref.ageBand||'';$("kbGoal").value=pref.goal||'daily';$("kbStage").value=pref.educationStage||'';
+      $("kbSinif").value=String(x.sinif||''); education(false);
       $("kbSube").value = x.sube || "";$("kbTeacherCode").value="";$("kbTeacherStatus").textContent=x.ogretmenBagli?"Bir öğretmene bağlısın. Öğrenme amacını değiştirmek bu bağlantıyı kaldırmaz.":"Bağımsız öğreniyorsun; öğretmen kodu zorunlu değil.";
       $("kbTel").value = telGoster(x.telefon);
       $("kbMail").value = x.email || "";
@@ -152,7 +152,7 @@
       if (x.googleBagli) $("kbSifreIpucu").textContent = "Google ile kayıt olduysan şifren yoktur; öğretmeninden şifre belirlemesini iste.";
       sifreGoster();
     }
-    function education(reset=false){const school=$("kbPurpose").value==='school',stage=$("kbStage").value,bounds={primary:[1,4],middle:[5,8],high:[9,12],university:[0,0]}[stage];$("kbEducation").hidden=!school;for(const o of $("kbSinif").options)o.hidden=Number(o.value)<bounds[0]||Number(o.value)>bounds[1];$("kbSinif").closest('.kb-iki').hidden=stage==='university';if(reset||$("kbSinif").selectedOptions[0]?.hidden)$("kbSinif").value=String(bounds[0]||1);$("kbContactTitle").textContent=$("kbAge").value==='adult'?'İletişim bilgilerim':'Veli iletişim bilgileri';}
+    function education(reset=false){const school=$("kbPurpose").value==='school',stage=$("kbStage").value,bounds={primary:[1,4],middle:[5,8],high:[9,12],university:[0,0]}[stage]||[0,0];$("kbEducation").hidden=!school;for(const o of $("kbSinif").options)o.hidden=!!o.value&&(Number(o.value)<bounds[0]||Number(o.value)>bounds[1]);$("kbSinif").closest('.kb-iki').hidden=!stage||stage==='university';if(reset||$("kbSinif").selectedOptions[0]?.hidden)$("kbSinif").value='';$("kbContactTitle").textContent=$("kbAge").value==='adult'?'İletişim bilgilerim':'Veli iletişim bilgileri';}
     for(const id of ['kbPurpose','kbStage','kbAge'])$(id).addEventListener('change',()=>education(id==='kbStage'));
     kutu.querySelector('.kb-placement').onclick=()=>{kapat();window.seviyeTestAc?.();};
     const iletisimDegisti = () => (Boolean(telSade(mevcut.telefon)) && telSade($("kbTel").value) !== telSade(mevcut.telefon)) || (Boolean(String(mevcut.email||'').trim()) && $("kbMail").value.trim().toLowerCase() !== String(mevcut.email || "").trim().toLowerCase());
@@ -177,7 +177,7 @@
       const govde = {
         islem: "kisiselBilgiGuncelle",
         adSoyad: $("kbAd").value.trim(), okul: $("kbOkul").value.trim(),
-        ...($("kbPurpose").value==='school'?{sinif:$("kbStage").value==='university'?null:Number($("kbSinif").value),sube:$("kbSube").value.trim()}:{}),
+        ...($("kbPurpose").value==='school'?{sinif:!$("kbStage").value||$("kbStage").value==='university'||!$("kbSinif").value?null:Number($("kbSinif").value),sube:$("kbSube").value.trim()}:{}),
         learnerProfile:{version:1,purpose:$("kbPurpose").value,ageBand:$("kbAge").value,educationStage:$("kbPurpose").value==='school'?$("kbStage").value:'',goal:$("kbGoal").value,startChoice:mevcut.learnerProfile?.startChoice||'new',knownLevel:mevcut.learnerProfile?.knownLevel||'A1'},
         ogretmenKodu: $("kbTeacherCode").value.trim(),telefon: $("kbTel").value.trim(), email: $("kbMail").value.trim()
       };
@@ -195,7 +195,7 @@
       if (!r.ok) { if (r.sifreGerekli) { $("kbSifre").value = ""; sifreIste(); } return mesaj(r.mesaj || "Kaydedilemedi.", "hata"); }
       const oldPurpose=mevcut.learnerProfile?.purpose,oldStage=mevcut.learnerProfile?.educationStage;
       mevcut = r; sifreZorunlu = false; doldur(r);
-      if((oldPurpose!==r.learnerProfile?.purpose||oldStage!==r.learnerProfile?.educationStage)&&window.dmLearningRoute?.set){const route=r.learnerProfile?.purpose==='school'&&['primary','middle'].includes(r.learnerProfile?.educationStage)?'school':'independent';await window.dmLearningRoute.set(route,{reopen:false});}
+      if((oldPurpose!==r.learnerProfile?.purpose||oldStage!==r.learnerProfile?.educationStage)&&window.dmLearningRoute?.set){const route=r.learnerProfile?.purpose==='school'&&r.sinif&&['primary','middle'].includes(r.learnerProfile?.educationStage)?'school':'independent';await window.dmLearningRoute.set(route,{reopen:false});}
       window.dmLearnerProfile=r.learnerProfile;
       mesaj(r.mesaj || "Bilgilerin kaydedildi.", "tamam");
       try { document.dispatchEvent(new CustomEvent("dm:kisisel-bilgiler", { detail: r })); } catch (e) {}

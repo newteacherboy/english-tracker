@@ -4,11 +4,11 @@ export function normalizeLearnerProfile(value, legacyClass=null, legacyPurpose='
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('Öğrenme bilgilerini kontrol et.');
  const valid=(key,values,fallback)=>{const v=value[key]??fallback;if(!values.includes(v))throw Error('Öğrenme bilgilerini kontrol et: '+key);return v;};
  const purpose=valid('purpose',['school','independent'],'independent');
- return {version:1,purpose,ageBand:valid('ageBand',['under13','teen','adult'],''),educationStage:purpose==='school'?valid('educationStage',['primary','middle','high','university'],''):'',goal:valid('goal',['daily','travel','school','exam'],'daily'),startChoice:valid('startChoice',['new','some','known','test'],'new'),knownLevel:valid('knownLevel',['A1','A2','B1','B2'],'A1')};
+ return {version:1,purpose,ageBand:valid('ageBand',['under13','teen','adult'],''),educationStage:purpose==='school'?valid('educationStage',['','primary','middle','high','university'],''):'',goal:valid('goal',['daily','travel','school','exam'],'daily'),startChoice:valid('startChoice',['new','some','known','test'],'new'),knownLevel:valid('knownLevel',['A1','A2','B1','B2'],'A1')};
 }
 export function learnerClass(profile, value){
  if(profile.version===0){if(profile.purpose==='independent')return null;const n=Number(value);if(!Number.isInteger(n)||n<1||n>8)throw Error('Sınıf 1 ile 8 arasında olmalı.');return n;}
- if(profile.purpose!=='school'||profile.educationStage==='university')return null;
+ if(profile.purpose!=='school'||!profile.educationStage||profile.educationStage==='university'||value===null||value===undefined||value==='')return null;
  const n=Number(value),bounds={primary:[1,4],middle:[5,8],high:[9,12]}[profile.educationStage];
  if(!bounds||!Number.isInteger(n)||n<bounds[0]||n>bounds[1])throw Error('Eğitim kademene uygun sınıfı seç.');return n;
 }

@@ -1669,6 +1669,174 @@
       "bytes": 590,
       "status": "original-code",
       "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-10.mp3",
+      "sha256": "357133b948598ded1e71f162cca2f7e1e544f7a4e7a2ed48cff2884695e6e8cc",
+      "bytes": 35757,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-8.mp3",
+      "sha256": "f57c079f02e08a8457d5798956c7eb2c8055cb41452d024063877c5d2afd2f40",
+      "bytes": 33069,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-9.mp3",
+      "sha256": "bc17167b9ed14918b20e4b71e4dc525c5a3b7111b208b62d46f39c3831ab6609",
+      "bytes": 36333,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-extra-10.mp3",
+      "sha256": "d4ab0d5388cda1ea636a2c076d03e04c640b8a6a64fa6b65093be6885d354684",
+      "bytes": 31149,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-extra-8.mp3",
+      "sha256": "5785268dff30673d5fbc8365ccd9ecb99370ceeb748414b0300e6baecfc3b4dc",
+      "bytes": 23853,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-extra-9.mp3",
+      "sha256": "b11c4d39e6da9bfb370a02286bd7b2e15907ec845044cb7296d5a93e0ec6ded4",
+      "bytes": 36141,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-10.mp3",
+      "sha256": "0a7094722f0f2b83c75a2353dbdf8dd72f19e7993cf561b74f6d699da7359638",
+      "bytes": 64365,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-8.mp3",
+      "sha256": "83f4e6eb3e7fa6f97d6861a193b60f2d2cdaf71a7440962c9e77df01bc11770b",
+      "bytes": 66861,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-9.mp3",
+      "sha256": "782ed865aab893fc18a882263ce14869565b46755ef95845529550a8000ff496",
+      "bytes": 53037,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-extra-18.mp3",
+      "sha256": "26de36713d363a30f728748173b5b0a208440847c24ec45bad0982a01f386dac",
+      "bytes": 48429,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-extra-19.mp3",
+      "sha256": "f644660c2f269c8aef63274f21ec822c161da0a360daba67136e3df795363524",
+      "bytes": 47469,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-extra-20.mp3",
+      "sha256": "ae91fdd981e54648d69c15b6aa196e43ef0f67f4765f11e25e6ec7aef90999e2",
+      "bytes": 50541,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-10.mp3",
+      "sha256": "a3e4d2540ca0af92d08d7e1400a8f5a91be29b9395720f451e0cd76c4b461ad8",
+      "bytes": 87405,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-8.mp3",
+      "sha256": "fa7c7d39abb68c14f7571b1509f3dc6569fcc91281559f52833b65f3f9736ea5",
+      "bytes": 103725,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-9.mp3",
+      "sha256": "acfe8973a7bf258a01b9d6679e69820b0d0f7efd2195bd819b0549c908031ba1",
+      "bytes": 67629,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-extra-28.mp3",
+      "sha256": "b028a353eb6fc93987bb5079c9074e55817fadf1a3d55a5427a25af85fcdb3c5",
+      "bytes": 77997,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-extra-29.mp3",
+      "sha256": "da4cb66a8d0f27394adfbcfd2530d882d3f556c04dff8b7dc1b82b7032d0daa8",
+      "bytes": 82029,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-extra-30.mp3",
+      "sha256": "a93bfefd0123c716c99a3735e2412c188559b1e2e31160fb5c0ad069e4370b30",
+      "bytes": 75117,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-10.mp3",
+      "sha256": "7fe1bedd3422eb2a909a7ec3b2a33a5721eefa72f7f1da1618535963147d1bbe",
+      "bytes": 111405,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-8.mp3",
+      "sha256": "a06fa6ea926cea450c81557db2e2f61f853ccd92b8d100d665e41ffac7a87482",
+      "bytes": 131181,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-9.mp3",
+      "sha256": "ffbd1f76d555bd6d53f65bfa96ab6445a560c7041bf489f0f7980c83e06f799e",
+      "bytes": 124269,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-extra-38.mp3",
+      "sha256": "4cae403f3610aa5a9bf009900ce7a874475d3905d0ef748ace101b720f597824",
+      "bytes": 108717,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-extra-39.mp3",
+      "sha256": "7b4b1b1afad4c38456c893d7f9c5be195ad9fab6640d285df9f1a709d8671519",
+      "bytes": 85485,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-extra-40.mp3",
+      "sha256": "978a5da9f66c295e64f696d08b34daf04d01d22665bb3ebcdfa8500509741168",
+      "bytes": 97197,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
     }
   ]
 }

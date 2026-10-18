@@ -7,12 +7,12 @@ function fixture(html=''){
  w.HTMLElement.prototype.getClientRects=function(){for(let p=this;p&&p.nodeType===1;p=p.parentElement)if(p.hidden||w.getComputedStyle(p).display==='none')return [];return [{width:300,height:30}];};w.HTMLElement.prototype.scrollIntoView=()=>{};
  return {dom,w};
 }
-test('signup runs all six illustrated questions before role selection; login stays directly accessible',async()=>{
+test('legacy demo stays available through its API while welcome offers direct signup and login',async()=>{
  const {w}=fixture('<div id="login-container"><form id="loginForm"></form></div>');
  w.dmDiscoveryContext={raw:w.localStorage,session:w.sessionStorage,welcome:true,member:false,guest:false,request:async()=>({hazir:false})};
  w.eval(source('first-discovery.js'));await flush();
  assert.equal(w.document.querySelectorAll('.fd-welcome').length,1);assert(!w.document.querySelector('.fd-welcome .fd-back'));
- w.document.querySelector('[data-action=demo-intro]').click();assert.equal(w.dmFirstDiscovery.screen(),'intro');assert.match(w.document.querySelector('h1').textContent,/minik bir test/);w.document.querySelector('[data-action=demo]').click();
+ assert(!w.document.querySelector('[data-action=demo-intro]'));w.dmFirstDiscovery.openDemo();assert.equal(w.dmFirstDiscovery.screen(),'intro');assert.match(w.document.querySelector('h1').textContent,/minik bir test/);w.document.querySelector('[data-action=demo]').click();
  const words=['apple','book','ball','cat','pencil','dog'];
  for(let i=0;i<6;i++){
   assert.equal(w.dmFirstDiscovery.screen(),'question');assert.match(w.document.querySelector('.fd-step').textContent,new RegExp((i+1)+' / 6'));

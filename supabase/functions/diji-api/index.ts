@@ -1385,7 +1385,7 @@ async function handle(req: Request) {
     if (var_("sinif") || var_("sube")) {
       const sinif = var_("sinif") ? Number(body.sinif) : Number(s.class_no);
       const sube = var_("sube") ? temizMetin(body.sube, 10).toLocaleUpperCase("tr") : String(s.branch || "");
-      let selectedClass;try{selectedClass=learnerClass(learnerProfile,body.sinif??s.class_no);}catch(e){return hata(e.message);}
+      let selectedClass;try{selectedClass=learnerClass(learnerProfile,body.sinif!==undefined?body.sinif:s.class_no);}catch(e){return hata(e.message);}
       if (!learnerProfile.version&&!sube) return hata("Şube boş bırakılamaz.");
       if (selectedClass !== s.class_no) { patch.class_no = selectedClass; degisen.push("sınıf"); }
       if (encName(sube) !== encName(s.branch)) { patch.branch = sube; degisen.push("şube"); }
