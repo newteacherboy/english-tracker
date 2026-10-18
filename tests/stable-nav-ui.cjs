@@ -15,15 +15,15 @@ assert.deepEqual(state.map(x=>x.id),['tab-dunya','tab-meduakis','tab-aktiviteler
 assert(Math.max(...state.map(x=>x.center))-Math.min(...state.map(x=>x.center))<1,'all buttons in same row');
 assert(Math.max(...state.map(x=>x.w))-Math.min(...state.map(x=>x.w))<1,'equal widths');assert(state.every(x=>x.w>=44&&x.h>=44));
 await p.addScriptTag({url:'https://flat.test/bottom-nav.js'});assert.equal(await p.locator('.dm-nav-play').count(),0);
-assert.deepEqual(await p.locator('#bottomNavMobile .bn-label:visible').allTextContents(),['Parkur','Arkadaşlar','Oyunlar','Ders Çalış','Mağaza','Profil']);
+assert.equal(await p.locator('#bottomNavMobile .bn-label:visible').count(),0,'approved dock is icon-only');assert.deepEqual(await p.locator('#bottomNavMobile .bn-item').evaluateAll(bs=>bs.map(b=>b.getAttribute('aria-label'))),['Parkur','Arkadaşlar','Oyunlar','Ders Çalış','Mağaza','Profil']);assert.equal(await p.locator('#bottomNavMobile .dm-nav-art').count(),6);await p.waitForFunction(()=>[...document.images].every(i=>i.complete));
 const compact=await p.locator('#bottomNavMobile').evaluate(e=>({height:e.getBoundingClientRect().height,overflow:e.scrollWidth>e.clientWidth}));assert(compact.height<=84);assert(!compact.overflow);
 await p.evaluate(()=>{document.querySelectorAll('#bottomNavMobile .bn-item').forEach(e=>e.classList.toggle('active',e.dataset.ekran==='tab-dunya'));});
-assert.equal(await p.locator('[data-ekran="tab-dunya"] .bn-icon').evaluate(e=>getComputedStyle(e,'::after').backgroundColor),'rgb(0, 165, 171)');
+assert((await p.locator('[data-ekran="tab-dunya"]').evaluate(e=>getComputedStyle(e).backgroundImage)).includes('213, 251, 229'),'active route uses approved mint background');assert((await p.locator('[data-ekran="tab-dunya"] .dm-nav-art').evaluate(e=>getComputedStyle(e).backgroundImage)).includes('bottom-nav-adventure-approved-v1.png'));
 await p.locator('#bottomNavMobile').screenshot({path:'/tmp/sticker-nav-'+w+'.png'});
 
 for(const [id,v] of [['tab-dunya','play'],['tab-magaza','store']]){await p.locator('[data-ekran="'+id+'"]').click();assert.equal(await p.evaluate(()=>called),v);}
 await p.locator('[data-ekran="tab-profile-menu"]').click();assert(await p.locator('#rtProfileBackdrop').isVisible());await p.locator('.rt-close').click();
-await p.evaluate(()=>{const n=document.getElementById('bottomNavMobile');n.append(n.firstElementChild);});await p.waitForTimeout(50);assert.equal(await p.locator('#bottomNavMobile').evaluate(n=>n.firstElementChild.dataset.ekran),'tab-dunya');
+await p.evaluate(()=>document.querySelector('#bottomNavMobile .bn-icon').replaceChildren());await p.waitForTimeout(50);assert.equal(await p.locator('#bottomNavMobile .dm-nav-art').count(),6,'dynamic updates retain approved artwork');await p.evaluate(()=>document.body.classList.add('dm-play-session'));await p.addStyleTag({path:path.join(root,'play-navigation.css')});assert(await p.locator('#bottomNavMobile').isHidden(),'dock stays hidden during gameplay');
 console.log('PASS '+w+'px: six equal destinations, original handlers and independent profile menu');
 }
 for(const m of index.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){if(/src=|application\/ld\+json/.test(m[1]))continue;new vm.Script(m[2]);}

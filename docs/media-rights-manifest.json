@@ -1612,6 +1612,13 @@
       "bytes": 1925,
       "status": "original-vector",
       "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/bottom-nav-adventure-approved-v1.png",
+      "sha256": "0bb4171ef0df49ed1ccfcee176072a64b431343d8aee103b7bbb1df627e4665e",
+      "bytes": 1605971,
+      "status": "ai-generated",
+      "source": "OpenAI built-in ImageGen, 2026-10-18; generated from the user-approved text-free Renkli Macera navigation concept. Six original Diji-Medu icons in a transparent three-column, two-row atlas; no third-party artwork."
     }
   ]
 }
