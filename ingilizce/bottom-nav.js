@@ -65,6 +65,7 @@ window.dmOpenGamesHome=function(){
  const btn=document.querySelector('#bottomNavMobile [data-ekran="tab-aktiviteler"]');if(btn){btn.click();return true;}return false;
 };
 
+document.addEventListener('click',e=>{const b=e.target.closest('#bottomNavMobile [data-ekran]');if(!b||b.disabled||b.classList.contains('active')||b.getAttribute('aria-disabled')==='true')return;try{navigator.vibrate?.(20);}catch{}},true);
 decorate();const nav=document.getElementById('bottomNavMobile');if(nav){new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-profile-menu'){window.dmProfileReturnPending=false;close();}});}
 document.addEventListener('dm:login',()=>{window.dmProfileReturnPending=false;primaryId='tab-dunya';close(false);});
 document.addEventListener('click',e=>{

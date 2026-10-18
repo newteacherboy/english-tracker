@@ -43,7 +43,7 @@ async function panel(){
  timeView={view,owner:at,chestKey:null};paintTime();
  view.el.addEventListener('dm:sheet-close',()=>{if(timeView?.view===view)timeView=null;},{once:true});
 }
-setInterval(()=>{const now=performance.now(),delta=Math.min(2000,now-last);last=now;if(owner!==who()){chestView?.close();chestView=null;earnedChest=0;owner=who();state=null;pending=0;request=null;initialized=false;seq=0;touch();if(ready())flush();}if(active()&&initialized)pending+=delta;if(ready()&&navigator.onLine!==false&&(!initialized||pending>=30000)&&!document.hidden)flush();paintTime();if(earnedChest&&ready()&&!document.hidden&&!chestView&&!window.dmPapiNotices?.blocked()){const i=earnedChest;earnedChest=0;if(!state?.claimed?.includes(i))chestCeremony(i);}},1000);
+setInterval(()=>{const now=performance.now(),delta=Math.min(2000,now-last);last=now;if(owner!==who()){chestView?.close();chestView=null;earnedChest=0;owner=who();state=null;pending=0;request=null;initialized=false;seq=0;touch();if(ready())flush();}if(active()&&initialized)pending+=delta;if(ready()&&navigator.onLine!==false&&(!initialized||pending>=30000)&&!document.hidden)flush();paintTime();},1000);
 document.addEventListener('dm:login',()=>{chestView?.close();chestView=null;earnedChest=0;initialized=false;state=null;pending=0;request=null;touch();flush()});
 window.dmActiveTime={summary,panel,active,flush};
 })();
