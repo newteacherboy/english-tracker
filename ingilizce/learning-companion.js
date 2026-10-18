@@ -32,7 +32,7 @@ const action=(label,id,extra='')=>'<button type="button" class="lc-button" data-
 function planMarkup(){
  const d=summary,reviewDone=d?.reviewDone||d?.review?.total>0&&d.review.due===0;
  const state=[reviewDone,!!d?.routeDone,!!d?.dialogueDone],steps=[['repeat',d?.review?.due?Math.min(3,d.review.due)+' kelimeyi hatırla':d?'Bugünkü tekrarın tamam':'Kelimelerini tekrar et'],['route','Bölümüne devam et'],['dialogues','Kısa bir diyalog çalış']];
- return '<div class="lc-plan-head"><span class="lc-plan-mark" aria-hidden="true">✦</span><div><h2>Bugünkü Planım</h2><small>Senin hızında · '+state.filter(Boolean).length+' / 3 adım</small></div>'+action('⌄','toggle','aria-label="Plan adımlarını göster" aria-expanded="false"')+'</div><div class="lc-plan-steps" hidden>'+steps.map(([id,label],i)=>action((state[i]?'✓ ':'')+label,id)).join('')+'<small>Haritadan doğrudan da devam edebilirsin.</small></div><div class="lc-plan-foot"><span>'+(d?d.review.due?'Bugün '+d.review.due+' kelimenin tekrar zamanı.':'Küçük bir adımla öğrenmeye devam et.':'Planın hazırlanıyor…')+'</span>'+action(state.every(Boolean)?'Yeniden çalış':'Planıma Başla','start')+'</div>';
+ return '<div class="lc-plan-head"><span class="lc-plan-mark" aria-hidden="true">✦</span><div><h2>Bugünkü Planım</h2><small>Senin hızında · '+state.filter(Boolean).length+' / 3 adım</small></div>'+action('⌄','toggle','aria-label="Plan adımlarını göster" aria-expanded="false"')+'</div><div class="lc-plan-steps" hidden>'+steps.map(([id,label],i)=>action((state[i]?'✓ ':'')+label,id)).join('')+'<small>Haritadan doğrudan da devam edebilirsin.</small></div><div class="lc-plan-foot"><span>'+(d?d?.review?.due?'Bugün '+d.review.due+' kelimenin tekrar zamanı.':'Küçük bir adımla öğrenmeye devam et.':'Planın hazırlanıyor…')+'</span>'+action(state.every(Boolean)?'Yeniden çalış':'Planıma Başla','start')+'</div>';
 }
 function paintPlan(){const el=$('lcPlan');if(!el)return;const sig=JSON.stringify([owner,summary?.day,summary?.review,summary?.reviewDone,summary?.routeDone,summary?.dialogueDone]);if(el.dataset.signature===sig)return;const expanded=el.querySelector('[data-lc="toggle"]')?.getAttribute('aria-expanded')==='true';el.innerHTML=planMarkup();el.dataset.signature=sig;if(expanded){el.querySelector('.lc-plan-steps').hidden=false;el.querySelector('[data-lc="toggle"]').setAttribute('aria-expanded','true');}}
 function mount(){
@@ -56,7 +56,7 @@ function mount(){
 function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(mount);}
 async function repeat(){if(!student())return;await window.dmWrongWords?.review({limit:3,onComplete:()=>load(true).catch(()=>{})});}
 async function route(){routePending=true;const p=window.dmLearningRoute?.purpose?.();if(p==='independent')return window.dmThematicLearning?.continueRoute();const current=document.querySelector('#tab-dunya .rt-start');if(current)return current.click();await window.dunyaAc?.();return document.querySelector('#tab-dunya .rt-start')?.click();}
-async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();return dialogues();}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
+async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();return dialogues();}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
 function skillBar(label,correct,total,icon){return '<article class="lc-skill"><span aria-hidden="true">'+icon+'</span><div><b>'+label+'</b><small>'+(total?correct+' / '+total+' doğru':'Henüz yeterli çalışma yok')+'</small></div><progress aria-label="'+label+' alıştırma doğruluğu" max="'+(total||1)+'" value="'+correct+'"></progress></article>';}
 async function report(){
  if(!student())return;$('rtProfileBackdrop')?.remove();const v=sheet('Öğrenme Karnem','<p role="status">Çalışmaların yükleniyor…</p>','lcReport');if(!v)return;
@@ -118,7 +118,18 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-lc]');if(!
  const actions={start,repeat,route,dialogues,report,teacher:teacherSummary,'report-repeat':()=>{$('lcReport')?.querySelector('.dm-member-close')?.click();repeat();},'report-story':()=>{$('lcReport')?.querySelector('.dm-member-close')?.click();dialogues();}};
  if(actions[id]){e.preventDefault();actions[id]();}
 });
-async function lessonDone(){if(!student())return;routePending=false;try{await api('companionPlanStep',{step:'route'});await load(true);}catch{}}
+let completionInFlight='';
+async function lessonDone(){
+ if(!student())return;
+ const account=identity(),day=today(),key=account+'|'+day;
+ if(completionInFlight===key)return;
+ completionInFlight=key;
+ routePending=false;
+ try{
+  await api('companionPlanStep',{step:'route'});
+  if(identity()===account&&today()===day)await load(true);
+ }catch{}finally{if(completionInFlight===key)completionInFlight='';}
+}
 document.addEventListener('dm:learning-progress',e=>{if(e.detail?.completed&&e.detail.owner===who())lessonDone();});
 document.addEventListener('dm:lesson-completed',lessonDone);
 document.addEventListener('dm:school-lesson-completed',lessonDone);
