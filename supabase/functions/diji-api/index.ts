@@ -1569,11 +1569,27 @@ async function handle(req: Request) {
     const ad = new Map((st || []).map((x: any) => [x.id, x.username]));
     return json((ev || []).filter((x: any) => ad.has(x.student_id)).map((x: any) => ({ ogrenci: ad.get(x.student_id), anahtar: key, deger: metinVer(x.value) })));
   }
+  if (op === "vitrinRozetSec") {
+    if(!a||a.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+    const incoming=body.secim;
+    if(!Array.isArray(incoming)||incoming.length>3||incoming.some((x:any)=>!Number.isInteger(x)||x<0||x>300)||new Set(incoming).size!==incoming.length)return json({ok:false,mesaj:'Geçersiz rozet seçimi.'},400);
+    const {data:own}=await supabase.from('students').select('username,points,profile').eq('id',a.student_id).single();
+    if(!own)return json({ok:false,mesaj:'Öğrenci bulunamadı.'},404);
+    const {data:badges,error:be}=await supabase.from('badges').select('name,required_points,emoji,student_name').order('id');
+    if(be)return json({ok:false,mesaj:'Rozet listesi yüklenemedi.'},503);
+    const earned=(badges||[]).filter((r:any)=>(!String(r.student_name||'').trim()||['herkes',String(own.username).toLocaleLowerCase('tr')].includes(String(r.student_name||'').toLocaleLowerCase('tr')))&&Number(own.points||0)>=Number(r.required_points||0));
+    if(incoming.some((n:number)=>n>=earned.length))return json({ok:false,mesaj:'Kazanılmamış rozet seçilemez.'},400);
+    const profile=(own.profile&&typeof own.profile==='object'&&!Array.isArray(own.profile))?own.profile:{};
+    const {error:saveError}=await supabase.from('students').update({profile:{...profile,vitrinSecim:incoming}}).eq('id',a.student_id);
+    return saveError?json({ok:false,mesaj:'Rozet seçimi kaydedilemedi.'},503):json({ok:true,secim:incoming});
+  }
   if (op === "sosyalOgrencilerGetir") {
     const deny = await requireStudent(a, ""); if (deny) return deny;
-    const [{ data: st }, { data: yo }] = await Promise.all([
+    const [{ data: st }, { data: yo }, { data: bd }, { data: days }] = await Promise.all([
       supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile,teacher_id").eq("status", "approved").neq("id",DEMO_ID).order("username"),
-      supabase.from("extra_data").select("student_id,totalXp:value->totalXp,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo")
+      supabase.from("extra_data").select("student_id,totalXp:value->totalXp,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo"),
+      supabase.from("badges").select("name,required_points,emoji,student_name").order("id"),
+      supabase.rpc("dm_public_login_day_totals")
     ]);
     /* [v4.6] Öğretmen değerlendirmeleri ve ders puanı sadece öğrencinin kendisine ve kendi öğretmenine gider */
     const gorebilir = (s: any) => (a.role === "student" && s.id === a.student_id) || (a.role === "teacher" && kapsamda(a, s));
@@ -1582,6 +1598,7 @@ async function handle(req: Request) {
       ? await supabase.from("teacher_reports").select("student_id,report_date,reading_score,writing_score,vocabulary_score,speaking_score,grammar_score,genel_score,exam_score").in("student_id", ozelIds).order("report_date")
       : { data: [] as any[] };
     const ym = new Map((yo || []).map((x: any) => [x.student_id, x]));
+    const dayMap=new Map((days||[]).map((x:any)=>[x.student_id,Number(x.login_days)||0]));
     const rm = new Map<string, any[]>(); for (const r of sc || []) { if (!rm.has(r.student_id)) rm.set(r.student_id, []); rm.get(r.student_id)!.push(raporSatiri(r)); }
     return json((st || []).filter(publicParticipant).filter((s: any) => encName(s.username) !== "teacher").map((s: any) => {
       const p = (s.profile && typeof s.profile === "object") ? s.profile : {}, y: any = ym.get(s.id) || {}, r = rm.get(s.id) || [];
@@ -1589,8 +1606,9 @@ async function handle(req: Request) {
       return {
         id: s.id, ogrenci: s.username, sinif: s.class_no || "", Sinif: s.class_no || "", durum: "approved",
         genelPuan: dersPuani, genelOrtalama: dersPuani, puan: ozel ? Number(s.points || 0) : 0, xp: Number(s.xp || 0), altin: Number(s.gold || 0), streak: Number(s.streak || 0),
+        loginDays: dayMap.get(s.id)??0, vitrinSecim:Array.isArray(p.vitrinSecim)?p.vitrinSecim:[],
         totalXp: Number(y.totalXp || 0), lig: y.lig || p.lig || { hafta: "", xp: 0 }, karakter: y.karakter || null, takili: y.takili || null, seviye: y.seviye || null, profilKrk: y.profilKrk || "",
-        rozetListesi: [], gelisimSerisi: r.map((x: any) => ({ tarih: x.tarih, genel: x.genel })), denemeSerisi: r.filter((x: any) => x.deneme > 0).map((x: any) => ({ tarih: x.tarih, deneme: x.deneme })),
+        rozetListesi: (bd||[]).filter((b:any)=>(!String(b.student_name||"").trim()||["herkes",String(s.username).toLocaleLowerCase("tr")].includes(String(b.student_name||"").toLocaleLowerCase("tr")))&&Number(s.points||0)>=Number(b.required_points||0)).map((b:any)=>({rozetAdi:b.name,gerekliPuan:Number(b.required_points||0),emoji:b.emoji||"🏅"})), gelisimSerisi: r.map((x: any) => ({ tarih: x.tarih, genel: x.genel })), denemeSerisi: r.filter((x: any) => x.deneme > 0).map((x: any) => ({ tarih: x.tarih, deneme: x.deneme })),
         okumaOrt: ortala(r, "okuma"), yazmaOrt: ortala(r, "yazma"), vocabOrt: ortala(r, "vocabulary"), konusmaOrt: ortala(r, "konusma"), grammarOrt: ortala(r, "grammar")
       };
     }));
