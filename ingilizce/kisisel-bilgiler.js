@@ -14,7 +14,12 @@
   @media(min-width:640px){.kb-kutu{border-radius:22px}}
   .kb-icerik{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:12px}
   .kb-altbar{flex:0 0 auto;position:relative;z-index:5;background:#fff;padding:10px 0 max(8px,env(safe-area-inset-bottom,0px));box-shadow:0 -10px 16px #fff}
-  .kb-bas{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .kb-bas{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;flex:0 0 auto}
+  .kb-ustbar{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding:8px 0;background:#fff;position:relative;z-index:8;border-bottom:1px solid #ece6ff}
+  .kb-ustbar .kb-mesaj{margin:0;min-height:0}
+  .kb-ustbar .kb-mesaj:empty{display:none}
+  .kb-ustbar .kb-kaydet{margin:0!important;min-height:48px;box-shadow:none!important}
+  @media(max-height:530px){.kb-kutu{height:100dvh;max-height:100dvh}.kb-ustbar{padding:4px 0}}
   .kb-bas h3{margin:0;font-size:19px;font-weight:900}
   .kb-x{border:0;background:#f3efff;color:#5b3fb5;width:36px;height:36px;border-radius:50%;font-size:17px;cursor:pointer}
   .kb-alt{margin:0 0 14px;font-size:12.5px;color:#7a6ca8}
@@ -104,12 +109,19 @@
       </div>
       <div class="kb-mesaj" id="kbMesaj" role="status" aria-live="polite"></div>
       <button class="kb-kaydet" id="kbKaydet">Kaydet</button>`;
-    // The save action stays outside the scrollable form so it remains visible and clickable.
+    // The action and feedback stay ABOVE the scrollable fields on every viewport.
     const saveButton = kutu.querySelector('#kbKaydet');
-    const footer = document.createElement('div'); footer.className='kb-altbar';
+    const feedback = kutu.querySelector('#kbMesaj');
+    const header = kutu.querySelector('.kb-bas');
+    const topbar = document.createElement('div'); topbar.className='kb-ustbar';
     const body = document.createElement('div'); body.className='kb-icerik';
     while(kutu.firstChild)body.appendChild(kutu.firstChild);
-    kutu.appendChild(body); footer.appendChild(saveButton); kutu.appendChild(footer);
+    header.remove();
+    kutu.appendChild(header);
+    topbar.appendChild(saveButton);
+    topbar.appendChild(feedback);
+    kutu.appendChild(topbar);
+    kutu.appendChild(body);
     kutu.querySelector(".kb-x").onclick = kapat;
     if(secenek.zorunlu)kutu.querySelector('.kb-x').hidden=true;
 
