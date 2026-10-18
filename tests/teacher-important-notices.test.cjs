@@ -23,5 +23,7 @@ test('notice UI safely uses textContent, acknowledges server record, and resets 
  assert.match(source,/safetyStudentNoticeAck/);
  assert.match(source,/account!==studentToken\(\)\|\|owner!==who\(\)/);
  assert.match(source,/noticeShown='';noticeAccount='';setTimeout\(studentImportantNotice/);
- assert.match(source,/data-student-message/);\n assert.match(source,/safetyStudentNoticeAppeal/);\n assert.doesNotMatch(source,/data-send-notice/);
+ assert.match(source,/data-student-message/);
+ assert.match(source,/safetyStudentNoticeAppeal/);
+ assert.doesNotMatch(source,/data-send-notice/);
 });

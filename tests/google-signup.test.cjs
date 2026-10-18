@@ -1,14 +1,15 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 const source=fs.readFileSync(require('node:path').join(__dirname,'../supabase/functions/diji-api/index.ts'),'utf8');
 const block=source.slice(source.indexOf('  // Google Auth is an additional'),source.indexOf('  // [YAMA 7]'));
-const stripped=block;
+const helpers=fs.readFileSync('supabase/functions/diji-api/learner-profile.mjs','utf8').replace(/export /g,'');
+const stripped=helpers+block;
 const run=new (Object.getPrototypeOf(async function(){}).constructor)('req','body','q','supabase','json','studentByNameGenel','verifyPassword','issueSession','denemeSay','denemeYaz','encName','temizMetin','likeKacir','hashPassword','crypto','sorumluEpostalar','kuyrugaEkle','mailKabugu','hk','onboarding','yeniOgrenciYoneticiBildirimi','const op=body.islem;const TAKMA_AD=/^[A-Za-z0-9çğıöşüÇĞİÖŞÜ._-]{3,20}$/,AD_SOYAD=/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .\'-]{3,60}$/,sadeHarf=v=>String(v||"").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g,c=>({"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u","â":"a","î":"i","û":"u"})[c]).replace(/[^a-z]/g,"");\n'+stripped);
 const valid={islem:'googleKayit',ogrenciAdi:'yildiz_42',adSoyad:'Yeni Öğrenci',telefon:'05551234567',email:'parent@example.test',sinif:'5',sube:'A',kvkkOnay:true};
 function fixture(opts={}) {
  let inserts=0,sessions=0,notifications=[],payload;
  const student={id:'new-student',username:'Yeni Öğrenci',status:opts.status||'approved'};
  const db={auth:{getUser:async t=>({data:{user:t==='valid'?{id:'verified-google',identities:[{provider:opts.provider||'google'}]}:null}})},
- from(table){const b={select(){return this},eq(){return this},ilike(){return this},limit(){return this},update(){return this},
+ from(table){const b={select(){return this},eq(){return this},ilike(){return this},limit(){return this},update(){return this},upsert:async()=>({error:null}),
  async maybeSingle(){return {data:table==='student_google_accounts'?(opts.mapping?{student_id:'old-student'}:null):student}},
  then(resolve){resolve({data:table==='teachers'?(opts.teacher?[{id:'teacher',active:true}]:[]):null,error:null})}};return b},
  async rpc(name,args){inserts++;payload=args.p_payload;return {data:opts.rpcError?null:'new-student',error:opts.rpcError?{code:'23505'}:null}}};
@@ -21,3 +22,5 @@ test('missing guardian declaration and invalid registration fields rejected',asy
 test('rate limit and inactive teacher cannot create accounts',async()=>{let f=fixture({rateLimit:true});assert.equal((await f.call()).status,429);assert.deepEqual(f.counts(),{inserts:0,sessions:0});f=fixture();assert.equal((await f.call({...valid,ogretmenKodu:'UNKNOWN'})).status,400);assert.deepEqual(f.counts(),{inserts:0,sessions:0})});
 test('transaction conflict and nonactive status never issue session',async()=>{for(const opts of [{rpcError:true},{status:'rejected'}]){const f=fixture(opts);assert.equal((await f.call()).data.ok,false);assert.equal(f.counts().sessions,0)}});
 test('GET registration is forbidden',async()=>{const f=fixture();assert.equal((await f.call(valid,'valid','GET')).status,405);assert.deepEqual(f.counts(),{inserts:0,sessions:0})});
+
+test('Google signup supports all-age profiles with optional school stage, class and phone',async()=>{for(const profile of [{purpose:'independent',ageBand:'adult'},{purpose:'school',ageBand:'teen'},{purpose:'school',educationStage:'university',ageBand:'adult'}]){const f=fixture(),r=await f.call({...valid,telefon:'',sinif:'',sube:'',learnerProfile:{version:1,...profile}});assert.equal(r.data.kayitOlustu,true,JSON.stringify(r));assert.equal(f.payload().class_no,null);assert.equal(f.payload().phone,'');}});
