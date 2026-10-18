@@ -86,3 +86,12 @@
 #suLevels .su-level-card:nth-child(4)::after{content:"🌍"}
 #suLevels .su-level-card img{max-width:68px;max-height:75px;object-fit:contain;position:relative;z-index:1}
 @media(max-width:390px){#suLevels .su-level-card{min-height:85px;padding-right:43px}#suLevels .su-level-card::after{font-size:30px;right:6px}}
+
+
+/* Question headings need opaque dark ink on the daytime white surface. */
+.lc-dialog .lc-question,.lc-dialog .dm-member-sheet h2,.lc-dialog .dm-member-sheet h3,
+.lc-dialog .lc-question-header{color:#193c50!important;-webkit-text-fill-color:#193c50!important;text-shadow:none!important;opacity:1!important}
+.lc-dialog .lc-question{font-weight:900!important;line-height:1.4;background:#edf8ff;border:1px solid #d4e9f4;border-radius:14px;padding:12px 14px;margin:10px 0}
+.lc-dialog .lc-options>button{min-height:48px;border-radius:14px;font-weight:850;transition:background .16s,border-color .16s}
+.lc-dialog .lc-options>button.lc-correct{background:#e1f7ea!important;color:#14643f!important;border-color:#50bd87!important}
+.lc-dialog .lc-options>button.lc-wrong{background:#fff0f0!important;color:#9a2834!important;border-color:#e77a87!important}
