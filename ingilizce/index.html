@@ -24758,7 +24758,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if(next!==1 && typeof window.genelEnerjiKalan==='number' && window.genelEnerjiKalan<1)
       return enerjiBitti(ilerle);
     try{await parkurEnerjiAdim(O.runId,next+1,null);}
-    catch(e){toast('⚡ '+e.message);window.dmEnerjiPaketPaneli?.();return;}
+    catch(e){checkpointSave();const energy=/enerji|energy|yetersiz|bitti/i.test(String(e.message||''));toast(energy?'⚡ '+e.message:'Bağlantı kesildi. Aynı sorudan devam edebilirsin; yeniden dene.');if(energy)window.dmEnerjiPaketPaneli?.();return;}
     if(next!==1)O.harcanan++;
     ilerle();
     }finally{state.advancing=false;checkpointSave();}
