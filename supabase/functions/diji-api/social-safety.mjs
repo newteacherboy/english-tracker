@@ -13,6 +13,14 @@ export function socialFeature(op){
  if(['akisTumu','sosyalOgrencilerGetir','akisOlaylariGetir','akisOlayToggle','aktifDurum','takipDavetListesi','bildirimGonder','duelloDavetGonder','seviyeLigListesi'].includes(op))return 'social';
  return null;
 }
+async function hashGuardianPin(pin){
+ if(typeof pin!=='string'||!/^\d{6}$/.test(pin))throw Error('Veli PIN’i 6 rakam olmalı.');
+ const salt=crypto.getRandomValues(new Uint8Array(16));
+ const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveBits']);
+ const bits=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:210000,hash:'SHA-256'},key,256));
+ const base64=a=>btoa(String.fromCharCode(...a));
+ return 'pbkdf2$210000$'+base64(salt)+'$'+base64(bits);
+}
 export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}){
  async function one(table,columns,key,value){const r=await db.from(table).select(columns).eq(key,value).maybeSingle();if(r.error)throw Error('Güvenlik bilgileri alınamadı.');return r.data;}
  async function control(id){return one('dm_social_controls','*','student_id',id);}
@@ -48,7 +56,7 @@ export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}
   try{
    if(op==='safetyParentClaim'){
     if(b.adult!==true||!/^\d{6}$/.test(b.pin||'')||/^(\d)\1{5}$|^123456$|^654321$/.test(b.pin)||typeof b.link!=='string'||b.link.length<60||b.link.length>150)return json({ok:false,mesaj:'Yetişkin beyanını onayla ve kolay tahmin edilmeyen 6 haneli PIN seç.'},400);
-    await rate('claim',await hash(b.link),6,900);const parentToken=crypto.randomUUID()+'-'+crypto.randomUUID();const r=await db.rpc('dm_guardian_claim',{p_hash:await hash(b.link),p_pin:await hashPassword(b.pin),p_session:await hash(parentToken)});if(r.error)throw Error('Bağlantı geçersiz, kullanılmış veya süresi dolmuş. Yeni bağlantı iste.');
+    await rate('claim',await hash(b.link),6,900);const parentToken=crypto.randomUUID()+'-'+crypto.randomUUID();const r=await db.rpc('dm_guardian_claim',{p_hash:await hash(b.link),p_pin:await hashGuardianPin(b.pin),p_session:await hash(parentToken)});if(r.error)throw Error('Bağlantı geçersiz, kullanılmış veya süresi dolmuş. Yeni bağlantı iste.');
     return json({...await state(r.data),parentToken,expiresIn:600});
    }
    if(op==='safetyParentLock'){await parentSession(b.parentToken);const r=await db.from('dm_guardian_sessions').delete().eq('token_hash',await hash(b.parentToken));if(r.error)throw Error('Veli alanı kilitlenemedi.');return json({ok:true});}
