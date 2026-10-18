@@ -76,3 +76,13 @@
 .lc-story-expand{border-top:1px solid #dbeae8;padding:9px 13px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .lc-story-expand p{font-size:12px;margin:0;color:#56707c}.lc-story-expand .lc-button{width:auto!important;margin-left:auto}
 .lc-story-accordion>summary:focus-visible{outline:3px solid #337fba;outline-offset:2px;border-radius:16px}
+
+
+/* Illustrated CEFR level tiles remain compact on the study landing page. */
+#suLevels .su-level-card{position:relative;isolation:isolate;overflow:hidden;border-radius:17px;min-height:96px;padding-right:54px;box-sizing:border-box}
+#suLevels .su-level-card::after{content:"📗";position:absolute;right:9px;bottom:10px;font-size:38px;line-height:1;filter:drop-shadow(0 3px 2px #00000012);pointer-events:none;opacity:.94}
+#suLevels .su-level-card:nth-child(2)::after{content:"🎒"}
+#suLevels .su-level-card:nth-child(3)::after{content:"🎓"}
+#suLevels .su-level-card:nth-child(4)::after{content:"🌍"}
+#suLevels .su-level-card img{max-width:68px;max-height:75px;object-fit:contain;position:relative;z-index:1}
+@media(max-width:390px){#suLevels .su-level-card{min-height:85px;padding-right:43px}#suLevels .su-level-card::after{font-size:30px;right:6px}}
