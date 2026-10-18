@@ -2102,10 +2102,17 @@ async function handle(req: Request) {
       ogretmen = (await supabase.from("teachers").select("id,email,full_name,username,active").ilike("invite_code", kod).limit(1)).data?.[0] || null;
       if (!ogretmen || ogretmen.active === false) return json({ status: "error", message: "Öğretmen kodu bulunamadı. Kodu kontrol et ya da boş bırakıp bağımsız kayıt ol." });
     }
-    if (!body.kvkkOnayTarihi || !Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()) return json({status:"error",message:"Sınıf, şube ve veli bilgilendirme beyanı gerekli."},400);
+    // School-linked accounts keep the existing 1-8 classroom contract.
+    // Independent learners must not be assigned a fabricated class/branch.
+    const independentLearner = body.ogrenimTuru === "independent";
+    if (!body.kvkkOnayTarihi) return json({status:"error",message:"Bilgilendirme ve onay beyanı gerekli."},400);
+    if (!independentLearner && (!Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()))
+      return json({status:"error",message:"Okul hesabı için 1-8 sınıf ve şube gerekli."},400);
+    if (independentLearner && kod)
+      return json({status:"error",message:"Öğretmen kodu ile sınıfa bağlanmak için okul hesabı seç."},400);
     const payload = {
       username, full_name: adSoyad, school: temizMetin(body.okul || "",120).replace(/\s+/g,' ').trim() || null, password_hash: await hashPassword(password), phone: tel || null,
-      class_no: num(body.sinif, 0) || null, branch: temizMetin(body.sube, 10) || null,
+      class_no: independentLearner ? null : num(body.sinif, 0) || null, branch: independentLearner ? null : temizMetin(body.sube, 10) || null,
       email: String(body.email || "").trim().slice(0, 120), status: "approved", email_verification_required:true, email_verified_at:null,
       kvkk_approved_at: body.kvkkOnayTarihi || new Date().toISOString()
     };
