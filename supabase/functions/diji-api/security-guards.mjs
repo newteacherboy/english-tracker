@@ -37,6 +37,8 @@ const authenticatedLimits=Object.freeze({
  sifremiDegistir:[15,900],
  ogrenciSifreSifirla:[25,900],
  activeTime:[180,300],
+ companionSummary:[120,300],companionDialogueOpen:[60,300],companionDialogueAnswer:[180,300],companionPlanStep:[60,300],teacherLearningSummary:[60,300],
+ wordReviewAdd:[60,300],wordReviewList:[120,300],wordReviewAnswer:[180,300],
  ekVeriKaydet:[120,300]
 });
 export function anonymousBudgets(op,ip,identity){
@@ -81,7 +83,7 @@ export function protectStudentState(incoming,stored,now=Date.now()){
  return result;
 }
 export function reservedStudentKey(key){
- return ['yo_gunluk','puan_gorulen','weekly_target','learner_profile_v1','placement_start_v1'].includes(key)||String(key).startsWith('energy_daily:');
+ return ['yo_gunluk','puan_gorulen','weekly_target','learner_profile_v1','placement_start_v1'].includes(key)||['energy_daily:','review_word:','practice_dialogue:','practice_plan:'].some(prefix=>String(key).startsWith(prefix));
 }
 export function dailyGoalCredit(state,day){
  const goal=[30,50,100,150].includes(Number(state.hedef))?Number(state.hedef):50;

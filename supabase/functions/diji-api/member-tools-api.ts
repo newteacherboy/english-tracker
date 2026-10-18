@@ -1,3 +1,5 @@
+import {learningCompanionAPI} from './learning-companion.mjs';
+import {due,nextReview} from './review-schedule.mjs';
 import {placementStudyAccess} from './study-placement-access.mjs';
 import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
@@ -9,6 +11,7 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
  const parse=(v:any)=>{if(typeof v==='string'){try{return JSON.parse(v);}catch{return {};}}return v||{};};
  async function get(student:string,key:string){const r=await db.from('extra_data').select('value,updated_at').eq('student_id',student).eq('key_name',key).maybeSingle();if(r.error)throw r.error;return r.data;}
  async function handle(op:string,b:any,_q:any,a:any,method:string){
+  const companion=await learningCompanionAPI({db,json,teacherScope}).handle(op,b,a,method);if(companion)return companion;
   if(!ops.has(op))return null;
   if(method!=='POST')return fail('POST gerekli.',405);
   if(!a)return json({ok:false,hata:'oturum',mesaj:'Önce giriş yap.'},401);
@@ -121,21 +124,33 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
   if(op==='wordReviewAdd'){
    if(b.legacy&&(await get(sid,'review_migrated_v1')))return json({ok:true,saved:0});
    const words=Array.isArray(b.words)?b.words.slice(0,b.legacy?1000:100):[];
-   const rows=new Map();for(const w of words){const en=String(w.en||w.ingilizce||'').trim().slice(0,140),tr=String(w.tr||w.turkce||'').trim().slice(0,240);if(!en||!tr||/[<>]/.test(en+tr))continue;const key='review_word:'+await hash(en.toLocaleLowerCase('en'));rows.set(key,{student_id:sid,key_name:key,value:{en,tr,source:String(w.source||'').slice(0,60)},updated_at:new Date().toISOString()});}
-   if(rows.size){const r=await db.from('extra_data').upsert([...rows.values()],{onConflict:'student_id,key_name'});if(r.error)throw r.error;}
+   const rows=new Map();for(const w of words){const en=String(w.en||w.ingilizce||'').trim().slice(0,140),tr=String(w.tr||w.turkce||'').trim().slice(0,240);if(!en||!tr||/[<>]/.test(en+tr))continue;const key='review_word:'+await hash(en.toLocaleLowerCase('en'));rows.set(key,{en,tr,source:String(w.source||'').slice(0,60)});}
+   for(const [key,word] of rows){
+     let saved=false;
+     for(let attempt=0;attempt<3&&!saved;attempt++){
+       const previous=await get(sid,key),now=new Date(Math.max(Date.now(),Date.parse(previous?.updated_at||'')+1||0)).toISOString();
+       const value={...parse(previous?.value),...word,streak:0,dueAt:now};
+       const r=previous?await db.from('extra_data').update({value,updated_at:now}).eq('student_id',sid).eq('key_name',key).eq('updated_at',previous.updated_at).select('key_name'):await db.from('extra_data').upsert({student_id:sid,key_name:key,value,updated_at:now},{onConflict:'student_id,key_name',ignoreDuplicates:true}).select('key_name');if(r.error)throw r.error;saved=!!r.data?.length;
+     }
+     if(!saved)throw Error('Kelime kaydı başka ekranda değişti; yeniden denenecek.');
+   }
    if(b.legacy){const m=await db.from('extra_data').upsert({student_id:sid,key_name:'review_migrated_v1',value:{done:true},updated_at:new Date().toISOString()},{onConflict:'student_id,key_name'});if(m.error)throw m.error;}
    return json({ok:true,saved:rows.size});
   }
   if(op==='wordReviewList'){
    const r=await db.from('extra_data').select('key_name,value,updated_at').eq('student_id',sid).like('key_name','review_word:%').order('updated_at',{ascending:false}).limit(1000);if(r.error)throw r.error;
-   return json({ok:true,words:(r.data||[]).map((x:any)=>({id:x.key_name,...parse(x.value),version:x.updated_at}))});
+   const words=(r.data||[]).map((x:any)=>({id:x.key_name,...parse(x.value),version:x.updated_at}));
+   return json({ok:true,words:words.filter((w:any)=>due(w)).sort((x:any,y:any)=>(Date.parse(x.dueAt)||0)-(Date.parse(y.dueAt)||0)),scheduled:words.filter((w:any)=>!due(w)).length});
   }
   if(op==='wordReviewAnswer'){
    const key=String(b.id||'');if(!/^review_word:[a-f0-9]{64}$/.test(key))return fail('Geçersiz kelime.');
    const record=await get(sid,key);if(!record)return json({ok:true,known:true});
-   const word=parse(record.value),correct=String(b.answer||'').trim().toLocaleLowerCase('en')===String(word.en).trim().toLocaleLowerCase('en');
-   if(correct){const r=await db.from('extra_data').delete().eq('student_id',sid).eq('key_name',key).eq('updated_at',record.updated_at);if(r.error)throw r.error;}
-   return json({ok:true,correct,answer:word.en});
+   const word=parse(record.value);
+   if((b.version&&b.version!==record.updated_at)||!due(word))return json({ok:true,correct:word.lastCorrect===true,answer:word.en,stale:true,dueAt:word.dueAt});
+   const correct=String(b.answer||'').trim().toLocaleLowerCase('en')===String(word.en).trim().toLocaleLowerCase('en');
+   const value=nextReview(word,correct),updated=new Date(Math.max(Date.now(),Date.parse(record.updated_at)+1)).toISOString();
+   const r=await db.from('extra_data').update({value,updated_at:updated}).eq('student_id',sid).eq('key_name',key).eq('updated_at',record.updated_at).select('key_name');if(r.error)throw r.error;
+   return json({ok:true,correct,answer:word.en,stale:!r.data?.length,dueAt:value.dueAt,streak:value.streak});
   }
   if(op==='startPlacementSave'){
    const exam=(globalThis as any).DMStartPlacementBank;

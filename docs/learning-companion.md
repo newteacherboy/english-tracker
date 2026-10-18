@@ -1,0 +1,16 @@
+# Learning companion — 19 October 2026
+
+The six existing destinations, both school and independent route maps, route selection, route progress, chest rewards and economy remain intact.
+
+- **Parkur:** a compact daily plan sits above the existing route. Expand it for the three actions, or continue directly from the map. The old daily-reward card is hidden only within this map; its underlying tasks remain in Ödevlerim.
+- **Personal review:** uses the existing account-owned `review_word:*` records. Answers retain history and schedule the next review at 1, 3, 7, 14 and 30 days after successive successes. A wrong answer resets the interval to one day. Due words only; three per daily-plan session, up to twenty from the existing profile entry. No energy or economic reward. Conditional timestamp writes prevent duplicate counting across tabs; pending wrong words are not discarded after conflicting writes.
+- **Profil → Öğrenme Karnem:** actual correct/attempt counts from review and the latest 100 dialogue sessions. Unmeasured skills are shown as lacking data. Practice accuracy is not a CEFR assessment. Earlier deleted review history cannot be reconstructed.
+- **Ders Çalış → Hikâye ve Diyalog:** five original starter dialogues (A1–B2), with reading, optional speech synthesis, and short word-writing exercises. An unavailable or declined audio exercise is recorded as reading. Responses are graded on the server, daily sessions resume across devices, and retries do not award additional results or rewards.
+- **Feedback:** wrong thematic-route responses show the task's authored explanation and add identifiable vocabulary to the existing review queue. School vocabulary feedback and study explanation panels already existed and are retained. Dialogue corrections explain the response and reveal the answer; transcripts remain expandable.
+- **Teacher panel:** class/branch summary of due review records and active homework submissions. Teachers see only their own students; administrators use their existing scope. The repeat-homework action opens the existing assignment composer, prefills class/branch and adds suggested vocabulary to its note. The teacher chooses the activity, deadline and recipients before sending.
+
+All new persistent practice data uses existing per-student `extra_data` storage, with no schema changes. Student generic writes cannot modify review, dialogue or planner keys. The API's existing portal session validation applies. No personal content is publicly exposed by these endpoints. Existing account deletion removes the new records with the rest of each student's `extra_data`.
+
+The planner's route flag is a convenience checklist, not a reward or official learning record. The first release supplies five starter dialogues; adding more involves maintaining the shared content bank and matching server copy. Browser speech synthesis varies by device and is not a prerecorded human voice.
+
+Validation: server tests for scheduling, ownership, grade validation, fallback, lost-response retries and competing tabs; existing member/security/cache checks; mobile 390px and desktop 1100px browser flows for both map controls, six tabs, review, report, dialogue, correction, homework preparation and account switching.
