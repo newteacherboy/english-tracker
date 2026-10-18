@@ -1201,8 +1201,9 @@ async function handle(req: Request) {
       if (!tel) return json({ ok: false, mesaj: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." }, 400);
       if (email.length > 120 || !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email))
         return json({ ok: false, mesaj: "Geçerli bir e-posta adresi yaz." }, 400);
-      if (!Number.isInteger(sinif) || sinif < 1 || sinif > 8 || !sube)
-        return json({ ok: false, mesaj: "Öğrencinin sınıfını ve şubesini belirt." }, 400);
+      const independentLearner = body.ogrenimTuru === "independent";
+      if (!independentLearner && (!Number.isInteger(sinif) || sinif < 1 || sinif > 8 || !sube))
+        return json({ ok: false, mesaj: "Okul hesabı için sınıfını ve şubeni belirt." }, 400);
       if (body.kvkkOnay !== true) return json({ ok: false, mesaj: "Veli ve bilgilendirme beyanını işaretlemelisin." }, 400);
       if (await denemeSay("google_kayit", user.id, 60) >= 5 || await denemeSay("kayit", "genel", 60) >= 20)
         return json({ ok: false, mesaj: "Çok fazla kayıt denemesi. Bir saat sonra tekrar dene." }, 429);
@@ -1214,10 +1215,11 @@ async function handle(req: Request) {
       if (ayniOgrt?.length) return json({ ok: false, mesaj: "Bu kullanıcı adı zaten kayıtlı." }, 409);
       const kod = String(body.ogretmenKodu || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
       const ogretmen = kod ? (await supabase.from("teachers").select("id,email,full_name,username,active").ilike("invite_code", kod).limit(1)).data?.[0] || null : null;
+      if (independentLearner && kod) return json({ok:false,mesaj:"Öğretmen kodunu kullanmak için okul hesabı seç."},400);
       if (kod && (!ogretmen || ogretmen.active === false))
         return json({ ok: false, mesaj: "Öğretmen kodu bulunamadı. Kodu kontrol et veya boş bırak." }, 400);
       const payload = { username, password_hash: await hashPassword((crypto.randomUUID() + crypto.randomUUID()).replace(/-/g, "")),
-        phone: tel, class_no: sinif, branch: sube, email, teacher_id: ogretmen?.id || null };
+        phone: tel, class_no: independentLearner ? null : sinif, branch: independentLearner ? null : sube, email, teacher_id: ogretmen?.id || null };
       // One transaction: failure to bind the Google identity rolls back the new student.
       const { data: createdId, error: createError } = await supabase.rpc("register_google_student", { p_auth_user_id: user.id, p_payload: payload });
       if (createError || !createdId) return json({ ok: false, mesaj: createError?.code === "23505"
