@@ -284,6 +284,16 @@
       <div class="bd-aralik" role="group" aria-label="Zaman aralığı">${[['hafta', 'Bu Hafta'], ['ay', 'Bu Ay'], ['tum', 'Tüm Zamanlar']].map(([k, ad]) => `<button type="button" data-aralik="${k}" aria-pressed="${k === aralik}">${ad}</button>`).join('')}</div>
       ${istat ? '' : `<p class="bd-not">${istatYukleniyor ? 'İstatistikler yükleniyor…' : 'İstatistikler şu an alınamadı. Biraz sonra tekrar dene.'}</p>`}
       <div class="bd-istat-izgara">${kartlar.map(([i, s, a]) => `<div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">${i}</span><span><b>${s}</b><small>${a}</small></span></div>`).join('')}</div>
+      <section class="bd-kutu dm-karne-kart" aria-label="Karnem" style="margin-top:14px;padding:16px;border-radius:20px;background:linear-gradient(135deg,#eefbf5,#f4efff);border:1px solid #d7eae5">
+        <h3 style="margin:0 0 6px;color:#173b37">📘 Karnem</h3>
+        <p style="margin:0 0 12px;color:#536b69;font-size:13px">Seçili dönemdeki öğrenme sonuçların</p>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+          <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">📖</span><span><b>${sayi(t.ders)}</b><small>Tamamlanan ders</small></span></div>
+          <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">🧭</span><span><b>${sayi(t.parkur)}</b><small>Parkur etkinliği</small></span></div>
+          <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">✅</span><span><b>${sayi(t.dogru)}</b><small>Doğru cevap</small></span></div>
+          <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">🎯</span><span><b>${cevap ? '%' + Math.round(t.dogru * 100 / cevap) : '—'}</b><small>Doğruluk</small></span></div>
+        </div>
+      </section>
       <div class="bd-kutu bd-grafik">
         <div class="bd-grafik-bas"><h3>${aralik === 'tum' ? 'Aylık Performans' : 'Günlük Performans'}</h3>
           <div class="bd-lejant"><span class="o">Oyun</span><span class="l">Ders</span><span class="p">Parkur</span></div></div>
