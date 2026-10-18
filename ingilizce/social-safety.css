@@ -6,3 +6,22 @@
 .dm-safety-more{position:relative;flex-shrink:0;border:1px solid #c9ded3;border-radius:11px;background:#f5fbf7;color:#244c43;min-width:44px;min-height:40px;font:800 22px system-ui;cursor:pointer}.akis-kart{position:relative}.akis-kart>.dm-safety-more{position:absolute;right:8px;top:8px}.akis-kart>.akis-ust{padding-right:44px}.dm-notification>.dm-safety-more{font-size:13px;line-height:1.2;padding:8px;margin-top:8px}.dm-safety-report-card{border:1px solid #d5e4da;border-radius:15px;background:#fff;padding:14px;margin:14px 0}.dm-safety-report-card pre{white-space:pre-wrap;overflow-wrap:anywhere;font:500 13px/1.5 system-ui;background:#f2f6f1;padding:12px;border-radius:10px}.dm-safety-report-card small{color:#4c6569}.dm-safety-filter{display:flex;gap:8px;align-items:center}.dm-safety-parent-page{margin:0;background:#edf6ef;min-height:100dvh;display:grid;place-items:center;padding:18px;box-sizing:border-box}.dm-safety-parent-page>.dm-safety-card{max-height:none}
 #tab-meduakis.dm-social-closed>*{display:none!important}#tab-meduakis.dm-social-closed>.dm-safety-closed{display:block!important}.dm-safety-closed{display:none;background:#fffdf7;color:#193b47;max-width:480px;margin:12vh auto 20px;padding:24px;border-radius:22px;font:500 15px/1.6 system-ui}.dm-safety-closed h2{font-size:22px}.dm-safety-card :focus-visible,.dm-safety-more:focus-visible{outline:3px solid #e9ac35;outline-offset:3px}
 @media(max-width:380px){.dm-safety-card{padding:16px}.dm-safety-overlay{padding:10px}.dm-safety-card h2{font-size:20px}}
+
+/* Unified teacher moderation and private student response */
+.dm-safety-card{background:#fffdf8;border-radius:28px;padding:clamp(18px,4vw,28px);width:min(100%,540px);color:#153d48}
+.dm-safety-card header{border-bottom:1px solid #e7eee9;padding-bottom:13px}
+.dm-safety-card header h2{font-size:clamp(20px,4.8vw,26px);letter-spacing:-.02em;color:#113947}
+.dm-safety-card .dm-safety-report-card{border:1px solid #d4e7df;background:linear-gradient(180deg,#ffffff,#f7fbf8);border-radius:20px;padding:16px;box-shadow:0 6px 20px #194f3a0a}
+.dm-safety-card .dm-safety-report-card h3{color:#163f48;font-weight:850;margin:0 0 3px}
+.dm-safety-card .dm-safety-report-card pre{background:#eef4ef;border-radius:13px;max-height:140px;overflow:auto}
+.dm-safety-card .dm-safety-report-card .dm-safety-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.dm-safety-card .dm-safety-report-card .dm-safety-actions button{padding:12px 8px;font-size:13px;white-space:normal;overflow-wrap:anywhere}
+.dm-safety-card .dm-safety-report-card .dm-safety-actions [data-review=warn]{background:#087f72;color:white;border-color:#087f72}
+.dm-safety-card .dm-safety-report-card textarea{min-height:84px}
+.dm-safety-card .dm-safety-report-card label{font-size:14px}
+.dm-safety-card .dm-safety-primary{background:#087f72;border-color:#087f72;color:white}
+.dm-safety-card [data-safety-body]>h3{font-size:21px;text-align:center}
+.dm-safety-card [data-safety-body]>p{line-height:1.65}
+.dm-safety-card [data-safety-body]>button{width:100%;margin-top:10px}
+.dm-safety-card .dm-safety-check{background:#edf7f2;padding:12px;border-radius:13px}
+@media(max-width:380px){.dm-safety-card .dm-safety-report-card .dm-safety-actions{grid-template-columns:1fr 1fr}.dm-safety-card .dm-safety-report-card .dm-safety-actions button{font-size:12px}}
