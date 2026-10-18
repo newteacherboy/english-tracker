@@ -1,3 +1,4 @@
+import {moderationIssue} from './content-moderation.mjs';
 import {socialSafetyAPI} from './social-safety.mjs';
 import {normalizeLearnerProfile,learnerClass,saveLearnerProfile} from './learner-profile.mjs';
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
@@ -181,15 +182,15 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
   if (data.role === "student") {
     if (!data.student_id) return null;
     const {data:student,error:studentError}=await supabase.from("students")
-      .select("id,status,role").eq("id",data.student_id).maybeSingle();
-    if(studentError||!student||student.status!=="approved"||student.role!=="student"){
+      .select("id,status,role,frozen_at").eq("id",data.student_id).maybeSingle();
+    if(studentError||!student||student.frozen_at||student.status!=="approved"||student.role!=="student"){
       if(!studentError)await supabase.from("portal_sessions").delete().eq("id",data.id);
       return null;
     }
   }
   if (data.role === "teacher" && data.teacher_id) {
-    const { data: t } = await supabase.from("teachers").select("username,full_name,email,is_admin,active").eq("id", data.teacher_id).maybeSingle();
-    if (!t || t.active === false) return null;
+    const { data: t } = await supabase.from("teachers").select("username,full_name,email,is_admin,active,frozen_at").eq("id", data.teacher_id).maybeSingle();
+    if (!t || t.frozen_at || t.active === false) return null;
     return { ...data, token, yonetici: !!t.is_admin, ogretmenAdi: t.full_name || t.username, ogretmenKullanici: t.username };
   }
   return { ...data, token };
@@ -1166,25 +1167,28 @@ async function handle(req: Request) {
   const onboardingResponse = await onboarding.handle(req,op,body);
   if(onboardingResponse)return onboardingResponse;
 
-  // Google Auth is an additional student login method; legacy login stays intact.
+  const contentProblem=moderationIssue(op,body,q);
+  if(contentProblem)return json({ok:false,status:'error',hata:'content_filter',message:'Bu içerik paylaşılamıyor. Saygılı bir dil kullan; açık paylaşımlara iletişim bilgisi ekleme.',mesaj:'Bu içerik paylaşılamıyor. Saygılı bir dil kullan; açık paylaşımlara iletişim bilgisi ekleme.'},400);
+  // Google Auth is an additional student login method; Apple shares verified provider identity handling.
   if (op === "googleDurum") {
     const { error } = await supabase.from("student_google_accounts").select("auth_user_id").limit(0);
     return json({ hazir: !error });
   }
-  if (op === "googleGiris" || op === "googleBagla" || op === "googleKayit") {
+  if (["googleGiris","googleBagla","googleKayit","appleGiris","appleKayit"].includes(op)) {
+    const provider=op.startsWith("apple")?"apple":"google";
     if (req.method !== "POST") return json({ ok: false, mesaj: "POST gerekli." }, 405);
     const bearer = req.headers.get("authorization")?.match(/^Bearer (.+)$/i)?.[1];
     if (!bearer) return json({ ok: false, mesaj: "Google oturumu gerekli." }, 401);
     const { data: identity, error: identityError } = await supabase.auth.getUser(bearer);
     const user = identity?.user;
     // Never trust a client-supplied email, name or user_metadata for ownership.
-    if (identityError || !user || !user.identities?.some(i => i.provider === "google"))
+    if (identityError || !user || !user.identities?.some(i => i.provider === provider))
       return json({ ok: false, mesaj: "Geçerli bir Google oturumu gerekli." }, 401);
     const { data: mapping, error: mappingError } = await supabase.from("student_google_accounts")
       .select("student_id").eq("auth_user_id", user.id).maybeSingle();
     if (mappingError) return json({ ok: false, mesaj: "Google girişi henüz hazır değil." }, 503);
     let studentId = mapping?.student_id;
-    if (op === "googleKayit") {
+    if (op === "googleKayit" || op === "appleKayit") {
       if (studentId) return json({ ok: false, mesaj: "Bu Google hesabı zaten kayıtlı. Google ile giriş düğmesini kullan; onay bekliyorsa öğretmenin onayını bekle." }, 409);
       /* [v5.0] Kullanıcı adı takma ad; gerçek ad ayrı alanda, sadece öğretmen görür */
       const username = String(body.ogrenciAdi || "").trim();
@@ -1267,8 +1271,8 @@ async function handle(req: Request) {
     }
     if (!studentId) return json({ ok: false, baglantiGerekli: true, mesaj: "Mevcut öğrenci hesabını bir kez doğrula. Puanların ve geçmişin korunacak." });
     const { data: student, error: studentError } = await supabase.from("students")
-      .select("id,username,status").eq("id", studentId).maybeSingle();
-    if (studentError || !student || student.status !== "approved")
+      .select("id,username,status,frozen_at").eq("id", studentId).maybeSingle();
+    if (studentError || !student || student.frozen_at || student.status !== "approved")
       return json({ ok: false, mesaj: "Öğrenci hesabın aktif değil veya onay bekliyor." }, 403);
     const token = await issueSession("student", student.id);
     await supabase.from("students").update({ last_login_at: new Date().toISOString() }).eq("id", student.id);
@@ -1325,6 +1329,13 @@ async function handle(req: Request) {
     return json(data);
   }
 
+  if(op==='purchaseStatus'){
+    if(!a)return json({ok:false,mesaj:'Giriş yapmalısın.'},401);
+    const owner=a.student_id||a.teacher_id,role=a.role;
+    const {data,error}=await supabase.from('dm_entitlements').select('product_key,valid_until,provider').eq('account_id',owner).eq('account_role',role).eq('state','active').or('valid_until.is.null,valid_until.gt.'+new Date().toISOString());
+    if(error)return json({ok:false,mesaj:'Satın alma hakları alınamadı.'},503);
+    return json({ok:true,entitlements:data||[],checkoutEnabled:false});
+  }
   const safetyResponse=await socialSafety.handle(op,body,a,req.method);if(safetyResponse)return safetyResponse;
   const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
   const memberResponse=await memberToolsAPI({db:supabase,json,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
@@ -1969,6 +1980,7 @@ async function handle(req: Request) {
     if (ogrt && ogrt.length === 1) {
       const t = ogrt[0];
       const dogru = await verifyPassword(password, t.password_hash);
+      if(dogru && t.frozen_at)return json({ok:false,hesapDonuk:true,mesaj:"Hesabın dondurulmuş. Giriş ekranındaki Hesabımı yeniden aç bağlantısını kullan."},403);
       if (dogru && t.active === false) return json({ ok: false, mesaj: "Öğretmen hesabın henüz aktif değil. Yönetici onayından sonra giriş yapabilirsin." });
       if (dogru) {
         const token = await issueSession("teacher", undefined, t.id);
@@ -1983,6 +1995,7 @@ async function handle(req: Request) {
       await hataYaz();
       return json({ ok: false, mesaj: "Hatalı kullanıcı adı veya şifre." });
     }
+    if(s.frozen_at)return json({ok:false,hesapDonuk:true,mesaj:"Hesabın dondurulmuş. Giriş ekranındaki Hesabımı yeniden aç bağlantısını kullan."},403);
     if (s.status === "pending") return json({ ok: false, emailDogrulamaGerekli:!!s.email_verification_required, mesaj:s.email_verification_required ? "E-posta adresine gönderdiğimiz bağlantıyla hesabını doğrula. Spam klasörünü de kontrol et." : "Hesabın henüz öğretmen onayı bekliyor. Onaylandığında giriş yapabilirsin." });
     if (s.status !== "approved") return json({ ok: false, mesaj: "Hesabın aktif değil. Öğretmeninle görüş." });
     const token = await issueSession("student", s.id);
@@ -2009,6 +2022,7 @@ async function handle(req: Request) {
     let gecti = !!t && await verifyPassword(password, t.password_hash);
     if (!gecti && !kul) { const y = (await supabase.from("teachers").select("*").eq("username", "teacher").eq("active", true).maybeSingle()).data; if (y && y.id !== t?.id && await verifyPassword(password, y.password_hash)) { t = y; gecti = true; } }
     if (!gecti) { if (ogrtIpHam !== "bilinmiyor") await denemeYaz("ogretmen_hata", ogrtIp); await denemeYaz("ogretmen_hata", ogrtHedef); return json({ ok: false, mesaj: "Öğretmen şifresi hatalı." }); }
+    if(t.frozen_at)return json({ok:false,mesaj:"Hesabın dondurulmuş. Önce hesabını yeniden aç."},403);
     const token = await issueSession("teacher", undefined, t.id);
     await supabase.from("teachers").update({ last_login_at: new Date().toISOString() }).eq("id", t.id);
     return json({ ok: true, token, rol: "ogretmen", ogretmen: t.full_name || t.username, yonetici: !!t.is_admin });

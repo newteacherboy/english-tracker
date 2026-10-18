@@ -6,6 +6,16 @@
 <script defer src="verified-games.js?v=20261017-1"></script>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; worker-src 'self' blob:; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="no-referrer">
+<script id="dm-account-oauth-return">
+(()=>{try{
+ const action=sessionStorage.getItem('dm_account_action_pending'),started=Number(sessionStorage.getItem('dm_account_action_started')),pages={delete:'hesap-sil.html',freeze:'hesap-dondur.html',restore:'hesap-ac.html'},q=new URLSearchParams(location.search);
+ if(!pages[action]||!started||Date.now()-started>600000||started>Date.now()+5000)return;
+ if(!location.hash.includes('access_token=')&&!location.hash.includes('error=')&&!q.has('code')&&!q.has('error'))return;
+ const provider=sessionStorage.getItem('dm_account_action_provider')==='apple'?'apple':'google';
+ const params=new URLSearchParams({oauth:provider});if(q.has('code'))params.set('code',q.get('code'));if(q.has('error'))params.set('error',q.get('error'));
+ location.replace(pages[action]+'?'+params+location.hash);
+}catch{}})();
+</script>
 <script src="frame-guard.js?v=20261017-1"></script>
 <script defer src="app-updates.js?v=20261015-evening-1"></script>
 <script src="session-handoff.js?v=20261015-1"></script>
@@ -16,7 +26,7 @@
 <script defer src="character-builder.js?v=20261016-2"></script>
 <script src="progression-catalog.js?v=20261016-rally-teacher15"></script>
 <link rel="stylesheet" href="first-discovery.css?v=20261018-readable-study-1">
-<script src="first-discovery-state.js?v=20261018-signup-test-2"></script>
+<script src="first-discovery-state.js?v=20261019-apple-1"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 <script src="vendor/supabase-2.118.0.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
           <script>
@@ -26423,7 +26433,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 })();
 </script>
 <script defer src="portal-bootstrap.js?v=20261018-parallel-startup-3"></script>
-<script defer src="google-login.js?v=20261018-universal-20261015-init-fixed-3"></script>
+<script defer src="google-login.js?v=20261019-apple-1"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261018-mobile-fit-1"></script>
@@ -26445,7 +26455,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
 <script defer src="game-experience.js?v=selected-play-20261011-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
-<script defer src="first-discovery.js?v=20261018-signup-test-2"></script>
+<script defer src="first-discovery.js?v=20261019-apple-1"></script>
 <script defer src="rights-ui.js?v=1"></script>
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}
 /* Adventure questions: preserve spaces/punctuation and foreground keyboard fallback. */
@@ -26553,5 +26563,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="panel-fixes.css?v=20261018-1">
 <link rel="stylesheet" href="social-safety.css?v=20261018-readable-study-1">
 <script defer src="social-safety.js?v=20261018-readable-study-1"></script>
+<script defer src="apple-login.js?v=20261019-1"></script>
 </body>      
         </html>

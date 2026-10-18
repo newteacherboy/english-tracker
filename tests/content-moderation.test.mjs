@@ -1,0 +1,6 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {contentIssue,moderationIssue} from '../supabase/functions/diji-api/content-moderation.mjs';
+test('Turkish, English, zero-width, punctuation and repeated-letter profanity is filtered',()=>{for(const text of ['SİKTİR','o\u200bros pu','f.u.c.k','fuuuck','p0rno','amk','bitch'])assert(contentIssue(text),text);});
+test('normal Turkish/English names, educational questions and words with innocent substrings pass',()=>{for(const text of ['Merhaba Mert','Class assistant','Scunthorpe','Book and pencil','Bugün çok iyisin!','Picasso'])assert.equal(contentIssue(text),null,text);});
+test('public content excludes phone, email and external links',()=>{for(const text of ['https://example.com','person@example.com','0555 123 45 67'])assert.equal(contentIssue(text,{publicText:true}),'personal_info');});
+test('only published fields are filtered; passwords, private contact fields and quiz answers remain intact',()=>{assert.equal(moderationIssue('kayitOl',{ogrenciAdi:'Papi42',email:'someone@example.com',sifre:'fuck-strong-password'},new URLSearchParams()),null);assert.equal(moderationIssue('storyAnswer',{answer:'fuck'},new URLSearchParams()),null);assert(moderationIssue('sohbetMesajGonder',{mesaj:'siktir'},new URLSearchParams()));});

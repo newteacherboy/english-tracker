@@ -38,7 +38,7 @@ export async function handleRequest(req, db) {
   const headers = {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store', 'Vary': 'Origin',
-    'Access-Control-Allow-Headers': 'content-type, apikey',
+    'Access-Control-Allow-Headers': 'content-type, apikey, authorization',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
   if (origin && allowedOrigins.has(origin)) headers['Access-Control-Allow-Origin'] = origin;
@@ -60,32 +60,61 @@ export async function handleRequest(req, db) {
         return respond({ ok: false }, 403);
       return respond({ ok: true, completed: await cleanupAuth(db) });
     }
-    if (body.operation === 'prepare') {
+    if (body.operation === 'prepare' || body.operation === 'prepare_oauth') {
       const username = typeof body.username === 'string' ? body.username.trim() : '';
       if(username.toLocaleLowerCase('tr')==='dijimedu_demo')return respond({ok:false,message:'Demo hesabı silinemez.'},403);
       const password = typeof body.password === 'string' ? body.password : '';
       const role = body.role;
-      if (!['student', 'teacher'].includes(role) || !username || username.length > 100 || !password || password.length > 256)
+      if(body.action!==undefined&&!['delete','freeze','restore'].includes(body.action))return respond({ok:false,message:'Geçersiz hesap işlemi.'},400);
+      const action=['freeze','restore'].includes(body.action)?body.action:'delete';
+      const oauth=body.operation==='prepare_oauth';
+      if (!['student', 'teacher'].includes(role) || (!oauth && !username) || username.length > 100 || (!oauth && !password) || password.length > 256)
         return respond({ ok: false, message: 'Hesap türünü, kullanıcı adını ve şifreni kontrol et.' }, 400);
       const { data: settings, error: settingsError } = await db.from('diji_deletion_worker_settings').select('worker_key').eq('id', true).single();
       if (settingsError || !settings) throw new Error('settings_unavailable');
-      const target = await sha256(settings.worker_key + '|' + role + '|' + username.toLocaleLowerCase('tr'));
+      let oauthAccount=null;
+      if(oauth){
+        const bearer=req.headers.get('authorization')?.match(/^Bearer (.+)$/i)?.[1];
+        if(!bearer || role!=='student')return respond({ok:false,message:'Google veya Apple ile yeniden doğrula.'},401);
+        const {data:identity,error:identityError}=await db.auth.getUser(bearer);
+        const user=identity?.user;
+        if(identityError||!user||!user.identities?.some(i=>['google','apple'].includes(i.provider)))return respond({ok:false,message:'Geçerli bir Google veya Apple oturumu gerekli.'},401);
+        // Decode only AFTER server validation; refreshed tokens alone are not fresh reauthentication.
+        let claims;try{claims=JSON.parse(atob(bearer.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}catch{return respond({ok:false},401);}
+        const recent=claims.amr?.some(a=>a.method==='oauth'&&Number(a.timestamp)>Date.now()/1000-300&&Number(a.timestamp)<=Date.now()/1000+30);
+        if(!recent)return respond({ok:false,message:'Doğrulama süresi doldu. Google veya Apple ile tekrar giriş yap.'},401);
+        const mapping=await db.from('student_google_accounts').select('student_id').eq('auth_user_id',user.id).maybeSingle();
+        if(mapping.error)throw Error('identity_unavailable');
+        if(!mapping.data)return respond({ok:false,message:'Bu kimliğe bağlı Diji-Medu hesabı bulunamadı.'},401);
+        oauthAccount=mapping.data.student_id;
+      }
+      const target = await sha256(settings.worker_key + '|' + role + '|' + (oauthAccount||username.toLocaleLowerCase('tr')));
       const { data: allowed, error: rateError } = await db.rpc('diji_deletion_rate_allow', { p_target_hash: target });
       if (rateError) throw new Error('rate_unavailable');
       if (!allowed) return respond({ ok: false, message: 'Çok fazla deneme. 15 dakika sonra tekrar dene.' }, 429);
-      const { data: accounts, error: accountError } = await db.from(role === 'teacher' ? 'teachers' : 'students')
-        .select('id,username,password_hash').ilike('username', escapeLike(username)).limit(2);
+      const accountQuery=db.from(role === 'teacher' ? 'teachers' : 'students').select('id,username,password_hash');
+      const { data: accounts, error: accountError } = await (oauth?accountQuery.eq('id',oauthAccount):accountQuery.ilike('username',escapeLike(username))).limit(2);
       if (accountError) throw new Error('account_unavailable');
       const account = accounts?.length === 1 ? accounts[0] : null;
-      if (!account || !await verifyPassword(password, account.password_hash))
+      if (!account || (oauth ? account.id!==oauthAccount : !await verifyPassword(password, account.password_hash)))
         return respond({ ok: false, message: 'Hesap türü, kullanıcı adı veya şifre hatalı.' }, 401);
+      if(account.username?.toLocaleLowerCase('tr')==='dijimedu_demo')return respond({ok:false,message:'Demo hesabında bu işlem kapalı.'},403);
       const ticket = crypto.randomUUID() + '-' + crypto.randomUUID();
-      const { error } = await db.from('diji_deletion_tickets').insert({
+      const { error } = await db.from(action==='delete'?'diji_deletion_tickets':'dm_account_action_tickets').insert({
+        ...(action==='delete'?{}:{action}),
         token_hash: await sha256(ticket), account_id: account.id, account_role: role,
         password_hash_snapshot: account.password_hash
       });
       if (error) throw new Error('ticket_unavailable');
-      return respond({ ok: true, ticket, username: account.username, role, expiresIn: 300 });
+      return respond({ ok: true, ticket, username: account.username, role, action, expiresIn: 300 });
+    }
+    if (body.operation === 'confirm_action') {
+      if(!['freeze','restore'].includes(body.action)||typeof body.ticket!=='string'||body.ticket.length<60||body.ticket.length>100)return respond({ok:false},400);
+      const confirmation=body.action==='freeze'?'HESABIMI DONDUR':'HESABIMI AÇ';
+      if(body.confirmation!==confirmation)return respond({ok:false,message:'Son onayı tamamla.'},400);
+      const {data,error}=await db.rpc('dm_account_action',{p_ticket_hash:await sha256(body.ticket),p_action:body.action});
+      if(error||!data?.ok)return respond({ok:false,message:error?.message?.includes('last_admin')?'Son aktif yönetici hesabı dondurulamaz.':'Onay süresi dolmuş veya hesap bilgileri değişmiş olabilir. Yeniden doğrula.'},400);
+      return respond({ok:true,message:body.action==='freeze'?'Hesabın donduruldu. İlerlemen ve satın alma hakların korunuyor.':'Hesabın yeniden açıldı. Şimdi giriş yapabilirsin.'});
     }
     if (body.operation === 'confirm') {
       if (body.confirmation !== CONFIRMATION || typeof body.ticket !== 'string' || body.ticket.length < 60 || body.ticket.length > 100)

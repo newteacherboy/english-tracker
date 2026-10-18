@@ -1,0 +1,14 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {handleRequest,CONFIRMATION} from '../supabase/functions/account-delete/core.mjs';
+const jwt=age=>'x.'+Buffer.from(JSON.stringify({amr:[{method:'oauth',timestamp:Date.now()/1000-age}]})).toString('base64url')+'.signature';
+function fixture({invalid=false,age=0,provider='google',mapping='own-id'}={}){
+ let inserted=[],confirmed=0;const token=jwt(age);
+ const db={auth:{getUser:async t=>({data:{user:!invalid&&t===token?{id:'verified-auth',identities:[{provider}]}:null},error:invalid?{}:null})},
+ from(table){let target;const b={select(){return this},eq(k,v){target=v;return this},ilike(){return this},limit(){return this},single:async()=>({data:{worker_key:'worker-secret'}}),maybeSingle:async()=>({data:{student_id:mapping}}),insert:async r=>{inserted.push({table,...r});return {}},then(resolve){resolve({data:target==='own-id'?[{id:'own-id',username:'GoogleStudent',password_hash:'unknown-random-password'}]:[]})}};return b;},
+ rpc:async name=>name==='diji_deletion_rate_allow'?{data:true}:name==='diji_delete_account'?(confirmed++,{data:{ok:true}}):name==='dm_account_action'?{data:{ok:true}}:{error:{}}};
+ async function request(body,bearer=token){const res=await handleRequest(new Request('https://test/account-delete',{method:'POST',headers:{origin:'https://app.dijimedu.com',authorization:'Bearer '+bearer,'Content-Type':'application/json'},body:JSON.stringify(body)}),db);return {status:res.status,data:await res.json()};}
+ return {request,inserted,get confirmed(){return confirmed}};
+}
+test('Google-only account can verify without an application password, then confirm a one-use deletion ticket',async()=>{const f=fixture();const r=await f.request({operation:'prepare_oauth',role:'student',username:'',account_id:'victim'});assert.equal(r.status,200);assert.equal(r.data.username,'GoogleStudent');assert.equal(f.inserted[0].account_id,'own-id');assert.equal(f.confirmed,0);assert.equal((await f.request({operation:'confirm',ticket:r.data.ticket,confirmation:CONFIRMATION})).status,200);assert.equal(f.confirmed,1);});
+test('invalid, stale, email-only and unmapped OAuth identities cannot obtain deletion tickets',async()=>{for(const options of [{invalid:true},{age:301},{provider:'email'},{mapping:null}]){const f=fixture(options);assert.equal((await f.request({operation:'prepare_oauth',role:'student'})).status,401);assert.equal(f.inserted.length,0);}});
+test('freeze tickets are stored separately and never sent to permanent deletion',async()=>{const f=fixture();const r=await f.request({operation:'prepare_oauth',role:'student',action:'freeze'});assert.equal(r.status,200);assert.equal(f.inserted[0].table,'dm_account_action_tickets');assert.equal(f.inserted[0].action,'freeze');assert.equal((await f.request({operation:'confirm_action',action:'freeze',ticket:r.data.ticket,confirmation:'HESABIMI DONDUR'})).status,200);assert.equal(f.confirmed,0);});

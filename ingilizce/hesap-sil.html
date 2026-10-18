@@ -8,7 +8,8 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://nxfqlutulxqzqgwewssd.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
   <title>Hesabımı sil · Diji-Medu İngilizce</title>
   <link rel="stylesheet" href="hesap-sil.css?v=2">
-  <script src="hesap-sil.js?v=1" defer></script>
+  <script src="vendor/supabase-2.118.0.js" defer></script>
+  <script src="hesap-sil.js?v=20261019-oauth-freeze-1" defer></script>
 </head>
 <body>
   <main>
@@ -35,6 +36,7 @@
         <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Güncel şifreni gir" maxlength="256" required>
         <button id="verifyButton" type="submit">Hesabımı doğrula</button>
       </form>
+      <div id="oauthActions"><p>Google ile kayıt olduysan uygulama şifresi gerekmez. Kimliğini yeniden doğrula:</p><button id="googleVerify" type="button" class="secondary">Google ile doğrula</button><button id="appleVerify" type="button" class="secondary" hidden>Apple ile doğrula</button></div>
       <aside class="deletion-note"><span aria-hidden="true">ⓘ</span><p>Doğrulamanın ardından silinecek verileri görebilir ve son onayını verebilirsin. Kalıcı silme işlemi geri alınamaz.</p></aside>
       <form id="confirmForm" hidden>
         <h2 id="accountLabel"></h2>

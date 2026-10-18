@@ -26,13 +26,13 @@ async function session(req:Request,body:any,q:URLSearchParams){
  if(data.role==='teacher'){
   const allowed=new Set(['takipDavetListesi','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim']);
   if(!allowed.has(String(val(body,q,'islem')))||!data.teacher_id||!body.classroomStudent)return null;
-  const {data:teacher}=await supabase.from('teachers').select('id,active').eq('id',data.teacher_id).maybeSingle();
+  const {data:teacher}=await supabase.from('teachers').select('id,active,frozen_at').eq('id',data.teacher_id).maybeSingle();
   const pupil=await studentByNameGenel(String(body.classroomStudent));
-  if(!teacher||teacher.active===false||!pupil||pupil.teacher_id!==teacher.id)return null;
+  if(!teacher||teacher.active===false||teacher.frozen_at||!pupil||pupil.teacher_id!==teacher.id)return null;
   return {...data,role:'student',student_id:pupil.id,classroomTeacher:teacher.id,classroomGrade:pupil.class_no};
  }
  if(data.role!=="student"||!data.student_id)return null;
- const {data:s}=await supabase.from("students").select("id,status").eq("id",data.student_id).maybeSingle();if(s?.status!=="approved")return null;return data;
+ const {data:s}=await supabase.from("students").select("id,status,frozen_at").eq("id",data.student_id).maybeSingle();if(s?.status!=="approved"||s.frozen_at)return null;return data;
 }
 const DM_GAMES: Record<string,string> = {Kelime_Liderlik:'kelime',Jeopardy_Liderlik:'jeopardy',Bosluk_Tablosu:'bosluk',Hafiza_Liderlik:'hafiza',Yagmur_Liderlik:'yagmur',Asmaca_Liderlik:'asmaca',KelimeBul_Liderlik:'kelimebul',Konusma_Liderlik:'konusma',Eslesme_Liderlik:'eslestirme',Tren_Liderlik:'tren',Dikte_Liderlik:'dikte',Cumle_Liderlik:'cumle',HarfBahcesi_Liderlik:'harfbahcesi'};
 async function dmBlocked(a:string,b:string){const {data,error}=await supabase.rpc('dm_blocked',{a,b});if(error)throw error;return !!data;}

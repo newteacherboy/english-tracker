@@ -346,7 +346,7 @@
   (async function initialize() {
     if(!window.supabaseClient?.auth){area.hidden=false;googleConfigured=false;return;}
     const parameters = new URLSearchParams(location.search);
-    if (parameters.get('kesifKayit') === 'google') return;
+    if (['google','apple'].includes(parameters.get('kesifKayit'))) return;
     if (parameters.get('google_return') === '1' || sessionStorage.getItem('diji_google_pending') === '1') {
       // Let supabase-js parse the OAuth callback before removing URL parameters.
       await supabaseClient.auth.getSession();

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://nxfqlutulxqzqgwewssd.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+  <title>Hesabımı yeniden aç · Diji-Medu İngilizce</title>
+  <link rel="stylesheet" href="hesap-sil.css?v=2">
+  <script src="vendor/supabase-2.118.0.js" defer></script>
+  <script src="hesap-sil.js?v=20261019-oauth-freeze-1" defer></script>
+</head>
+<body>
+  <main>
+    <a class="brand" href="./"><img src="papi-welcome-v2.png" alt="">Diji-Medu <span>İngilizce</span></a>
+    <section class="card">
+      <div class="farewell">
+        <div class="mascot-scene">
+          <span class="heart heart-one" aria-hidden="true">♥</span>
+          <img class="farewell-parrot" src="papi-farewell-v2.png" width="1145" height="1374" alt="El sallayarak veda eden şirin papağan">
+          <span class="heart heart-two" aria-hidden="true">♥</span>
+        </div>
+        <h2>Birlikte öğrenmeye devam</h2>
+        <p>İlerlemen hesabında güvende.</p>
+      </div>
+      <p class="eyebrow">HESAP AYARLARI</p>
+      <h1>Hesabımı yeniden aç</h1>
+      <p>Hesabını yeniden açmak için önce kimliğini doğrula. Bu işlem yalnızca İngilizce hesabını kapsar; koçluk hesabın etkilenmez.</p>
+      <form id="verifyForm">
+        <label for="role">Hesap türün</label>
+        <select id="role" name="role"><option value="student">Öğrenci</option><option value="teacher">Öğretmen</option></select>
+        <label for="username">Kullanıcı adın</label>
+        <input id="username" name="username" autocomplete="username" placeholder="Kullanıcı adını gir" maxlength="100" required>
+        <label for="password">Güncel şifren</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Güncel şifreni gir" maxlength="256" required>
+        <button id="verifyButton" type="submit">Hesabımı doğrula</button>
+      </form>
+      <div id="oauthActions"><p>Google ile kayıt olduysan uygulama şifresi gerekmez. Kimliğini yeniden doğrula:</p><button id="googleVerify" type="button" class="secondary">Google ile doğrula</button><button id="appleVerify" type="button" class="secondary" hidden>Apple ile doğrula</button></div>
+      <aside class="deletion-note"><span aria-hidden="true">ⓘ</span><p>İlerlemen ve satın alma hakların korunur. Dondurmak aboneliğini iptal etmez. Aboneliğini satın aldığın mağazadan ayrıca yönetebilirsin.</p></aside>
+      <form id="confirmForm" hidden>
+        <h2 id="accountLabel"></h2>
+        <div class="warning">
+          <p id="deleteDetails"></p>
+          <p>Bu işlem verilerini silmez. Hesabını yeniden açma ekranından kimliğini doğrulayarak geri dönebilirsin.</p>
+        </div>
+        <label class="check"><input type="checkbox" id="consent" required><span>Bilgilendirmeyi okudum; hesabım için bu işlemi onaylıyorum.</span></label>
+        <label for="confirmation">Son onay için <strong>HESABIMI AÇ</strong> yaz</label>
+        <input id="confirmation" autocomplete="off" spellcheck="false" required>
+        <button class="danger" id="deleteButton" type="submit">Hesabımı yeniden aç</button>
+        <button class="secondary" id="cancelButton" type="button">Vazgeç</button>
+        <p class="small">Bu onay 5 dakika geçerlidir.</p>
+      </form>
+      <div id="result" role="status" aria-live="polite"></div>
+      <p class="small"><a href="gizlilik.html">Gizlilik politikası ve saklama süreleri</a><br>Giriş yapamıyorsan veya veli olarak başvuruyorsan: <a href="mailto:official.dijimedu@gmail.com?subject=Diji-Medu%20Silme%20Talebi">official.dijimedu@gmail.com</a>. Parolanı e-postayla gönderme.</p>
+      <a id="backLink" class="back" href="./">Vazgeç, öğrenmeye devam et</a>
+    </section>
+  </main>
+</body>
+</html>

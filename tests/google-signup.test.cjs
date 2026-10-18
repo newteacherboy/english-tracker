@@ -24,3 +24,5 @@ test('transaction conflict and nonactive status never issue session',async()=>{f
 test('GET registration is forbidden',async()=>{const f=fixture();assert.equal((await f.call(valid,'valid','GET')).status,405);assert.deepEqual(f.counts(),{inserts:0,sessions:0})});
 
 test('Google signup supports all-age profiles with optional school stage, class and phone',async()=>{for(const profile of [{purpose:'independent',ageBand:'adult'},{purpose:'school',ageBand:'teen'},{purpose:'school',educationStage:'university',ageBand:'adult'}]){const f=fixture(),r=await f.call({...valid,telefon:'',sinif:'',sube:'',learnerProfile:{version:1,...profile}});assert.equal(r.data.kayitOlustu,true,JSON.stringify(r));assert.equal(f.payload().class_no,null);assert.equal(f.payload().phone,'');}});
+
+test('Apple registration requires Apple identity, while Google cannot authorize the Apple route',async()=>{const apple={...valid,islem:'appleKayit'};const f=fixture({provider:'apple'});assert.equal((await f.call(apple)).data.token,'portal-token');assert.equal((await fixture().call(apple)).status,401);assert.equal((await fixture({provider:'apple'}).call(valid)).status,401);});

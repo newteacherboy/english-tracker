@@ -2,12 +2,12 @@
 (()=>{'use strict';
  const raw=window.localStorage,session=window.sessionStorage,params=new URLSearchParams(location.search);
  const member=raw.getItem('ing_oturumAcik')==='true'&&!!raw.getItem('ing_token')&&!!raw.getItem('ing_aktifOgrenci');
- const oauth=params.get('kesifKayit')==='google';
+ const oauth=['google','apple'].includes(params.get('kesifKayit'));
  const guest=false;
  if(params.has('misafir')||params.has('kesif')){params.delete('misafir');params.delete('kesif');history.replaceState(null,'',location.pathname+(params.size?'?'+params:'')+location.hash);}
  const welcome=!member&&!guest&&!oauth&&params.get('giris')!=='1'&&params.get('kayit')!=='1'&&!params.has('google_return')&&!session.getItem('diji_google_pending')&&!location.hash.includes('access_token');
  const nativeFetch=window.fetch.bind(window),api='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api';
- const allowed=new Set(['kayitOl','ogretmenKayitOl','googleGiris','googleKayit','googleDurum','emailDogrulamaTekrar','memberStatus','memberEmailResend','ekVeriGetir','ekVeriKaydet','startPlacementSave']);
+ const allowed=new Set(['kayitOl','ogretmenKayitOl','googleGiris','googleKayit','appleGiris','appleKayit','googleDurum','emailDogrulamaTekrar','memberStatus','memberEmailResend','ekVeriGetir','ekVeriKaydet','startPlacementSave']);
  window.dmDiscoveryContext={raw,session,member,guest,oauth,welcome,
   async googleAvailable(key){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),8000);try{const r=await nativeFetch('https://nxfqlutulxqzqgwewssd.supabase.co/auth/v1/settings',{headers:{apikey:key},signal:controller.signal});const settings=await r.json();return !!settings.external?.google;}finally{clearTimeout(timeout);}},
   async request(body,accessToken){
