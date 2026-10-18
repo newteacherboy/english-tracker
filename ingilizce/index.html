@@ -2,6 +2,7 @@
         <html lang="tr">
         <head>
 <meta charset="UTF-8">
+<link rel="preload" as="image" href="papi-loading.webp" fetchpriority="high">
 <script defer src="verified-games.js?v=20261017-1"></script>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co; frame-src https:; object-src 'none'; worker-src 'self' blob:; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="no-referrer">
@@ -131,39 +132,8 @@ html, body { touch-action: pan-x pan-y; }
   document.addEventListener('touchmove', preventPinch, {passive:false});
 })();
 </script>
-<style id="dm-papi-transitions">
-#bzParkur .dm-parkur-loading{background:#f0faf8!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:65vh;padding:32px 20px!important;text-align:center} .dm-parkur-retry{border:0;border-radius:14px;padding:12px 20px;background:#198e76;color:#fff;font:700 14px system-ui;margin-top:12px}
-#dmBootSplash,#oturumYuklemeOverlay{position:fixed!important;inset:0!important;background:#082b3a!important;z-index:2147483000!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;padding:24px!important;text-align:center!important}
-#dmBootSplash{display:flex;transition:opacity .3s ease}#dmBootSplash.dm-ready{opacity:0;pointer-events:none}
-.dm-papi-loading{font-family:system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif;color:#f1fffb;display:flex;align-items:center;flex-direction:column;gap:10px;width:100%;max-width:420px}
-.dm-papi-halo{position:relative;width:clamp(205px,58vw,260px);height:clamp(220px,62vw,275px);display:grid;place-items:center}
-.dm-papi-halo:before{content:none}
-.dm-papi-halo img{position:relative;width:clamp(190px,54vw,245px);height:clamp(210px,59vw,265px);object-fit:contain;animation:dmPapiFloat 2.8s ease-in-out infinite;filter:drop-shadow(0 12px 20px #0006)}
-.dm-brand-line{display:flex;align-items:center;justify-content:center;min-height:1.45em;color:#71f5d0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;font-size:clamp(27px,7.5vw,42px);letter-spacing:.01em;text-shadow:0 0 22px #42e9bd55}
-.dm-brand-prompt{color:#36cda7;margin-right:.18em}
-.dm-brand-type{display:inline-block;width:0;overflow:hidden;white-space:nowrap;border-right:3px solid #71f5d0;animation:dmBrandType 1.05s steps(9,end) .35s forwards,dmBrandCaret .7s step-end infinite}
-#dmBootText:empty{display:none!important}
-.dm-papi-loading p{font:500 12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.13em;text-transform:uppercase;color:#a9c7c5;margin:8px 0 0;line-height:1.5}
-.dm-papi-loading .dm-loading-message{letter-spacing:normal;text-transform:none;font:700 15px/1.5 system-ui,sans-serif;color:#b5ffeb;text-align:center;margin:8px 0 0}
-.dm-papi-dots{display:flex;gap:7px;height:16px;align-items:center;margin-top:5px}.dm-papi-dots i{width:6px;height:6px;background:#71f5d0;border-radius:50%;animation:dmPapiDot 1.2s ease-in-out infinite}.dm-papi-dots i:nth-child(2){animation-delay:.15s}.dm-papi-dots i:nth-child(3){animation-delay:.3s}
-#dmBootRetry{border:1px solid #71f5d0;border-radius:12px;padding:12px 20px;font:700 14px system-ui;background:#0d4450;color:#f1fffb;margin-top:16px}
-@keyframes dmBrandType{to{width:9ch}}@keyframes dmBrandCaret{50%{border-color:transparent}}
-@keyframes dmPapiFloat{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-8px) rotate(1.5deg)}}
-@keyframes dmPapiDot{0%,70%,100%{transform:translateY(0);opacity:.45}35%{transform:translateY(-5px);opacity:1}}
-@media(max-height:620px){.dm-papi-halo{height:clamp(145px,35vh,205px)}.dm-papi-halo img{height:clamp(140px,34vh,195px)}.dm-papi-loading{gap:4px}}
-@media(prefers-reduced-motion:reduce){.dm-papi-halo img,.dm-papi-dots i{animation:none!important}.dm-brand-type{width:9ch;border-right:0;animation:none!important}#dmBootSplash{transition:none}}
-/* Lightweight unified Papi splash: one image is clipped upward while real UI becomes ready. */
-#dmBootSplash,#oturumYuklemeOverlay{background:#fff8ed!important}
-.dm-papi-loading{gap:14px!important;color:#253b59!important}
-.dm-papi-halo{width:clamp(190px,52vw,260px)!important;height:clamp(210px,57vw,282px)!important}
-.dm-papi-halo .dm-papi-base,.dm-papi-halo .dm-papi-fill img{position:absolute;inset:0;width:100%!important;height:100%!important;max-height:none!important;object-fit:contain;animation:none!important;filter:none!important}
-.dm-papi-halo .dm-papi-base{filter:grayscale(1) opacity(.22)!important}
-.dm-papi-fill{position:absolute;inset:0;clip-path:inset(calc(100% - var(--dm-papi-progress,0%)) 0 0 0);will-change:clip-path;transition:clip-path .22s ease-out}
-.dm-brand-line{font:900 clamp(32px,9vw,52px)/1.12 system-ui,sans-serif!important;letter-spacing:-.055em!important;color:#1585cc!important;text-shadow:none!important;min-height:0!important}
-.dm-brand-line span{color:#f3a419}
-#dmBootText{max-width:300px;color:#7a6a55!important;letter-spacing:normal!important;text-transform:none!important}
-@media(prefers-reduced-motion:reduce){.dm-papi-fill{transition:none!important}}
-</style>
+<link rel="stylesheet" href="papi-loading.css?v=20261018-unified-2">
+
 <link rel="stylesheet" href="bottom-nav.css?v=20261018-approved-final-1">
 <style id="dm-parkur-final-layout">
 #bzMicCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:10px;width:100%;max-width:560px;margin:18px auto;align-items:stretch}
@@ -211,11 +181,11 @@ html, body { touch-action: pan-x pan-y; }
 </style><link rel="stylesheet" href="harf-adasi.css?v=20261014-full-2">
 </head>
         <body>
-<div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img class="dm-papi-base" src="papi-welcome-v2.png" width="220" height="240" alt="DijiMedu papağanı Papi"><div class="dm-papi-fill" aria-hidden="true"><img src="papi-welcome-v2.png" width="220" height="240" alt=""></div></div><div class="dm-brand-line" aria-label="DijiMedu">Diji<span>Medu</span></div><p id="dmBootText"></p></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
+<div id="dmBootSplash"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img class="dm-papi-base" src="papi-loading.webp" width="220" height="240" fetchpriority="high" alt="DijiMedu papağanı Papi"><div class="dm-papi-fill" aria-hidden="true"><img src="papi-loading.webp" width="220" height="240" alt=""></div></div><div class="dm-brand-line" aria-label="DijiMedu">Diji<span>Medu</span></div><p id="dmBootText"></p></div><button id="dmBootRetry" type="button" hidden>Tekrar dene</button></div>
 <script>(function(){
 const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false,finishTimer=0;const splashStartedAt=Date.now(),minSplashMs=0;
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
-function finish(){if(done)return;splash.style.setProperty("--dm-papi-progress","100%");const remaining=minSplashMs-(Date.now()-splashStartedAt);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}done=true;clearInterval(timer);clearTimeout(deadline);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
+function finish(){if(done)return;splash.style.setProperty("--dm-papi-progress","100%");const remaining=minSplashMs-(Date.now()-splashStartedAt);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}done=true;clearInterval(timer);clearTimeout(deadline);document.removeEventListener('dm:login',check);document.removeEventListener('dm:state',check);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
 function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
@@ -223,17 +193,16 @@ if(window.dmDiscoveryContext?.welcome&&document.getElementById('dmDiscovery')){f
 if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring&&visible(login))||(visible(panel)&&typeof aktifOgrenciAdi!=='undefined'&&!!aktifOgrenciAdi))finish();
 }
 function domReady(){loaded=true;check();}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',domReady,{once:true});else domReady();
-let visualProgress=0;const visualTimer=setInterval(()=>{if(done){clearInterval(visualTimer);return;}visualProgress=Math.min(92,visualProgress+6);document.querySelectorAll('#dmBootSplash,#oturumYuklemeOverlay').forEach(el=>el.style.setProperty('--dm-papi-progress',visualProgress+'%'));},110);
 document.addEventListener('dm:login',check);document.addEventListener('dm:state',check);timer=setInterval(check,500);
 const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
 document.getElementById('dmBootRetry').onclick=()=>location.reload();
 })();</script>
-                        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img class="dm-papi-base" src="papi-welcome-v2.png" width="220" height="240" alt="DijiMedu papağanı Papi"><div class="dm-papi-fill" aria-hidden="true"><img src="papi-welcome-v2.png" width="220" height="240" alt=""></div></div><div class="dm-brand-line" aria-label="DijiMedu">Diji<span>Medu</span></div></div></div>
+                        <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img class="dm-papi-base" src="papi-loading.webp" width="220" height="240" fetchpriority="high" alt="DijiMedu papağanı Papi"><div class="dm-papi-fill" aria-hidden="true"><img src="papi-loading.webp" width="220" height="240" alt=""></div></div><div class="dm-brand-line" aria-label="DijiMedu">Diji<span>Medu</span></div></div></div>
             <a href="https://app.dijimedu.com" class="portal-back-btn">← Ana Portala Dön</a>
             <div class="pb-toast-overlay" id="pbToastOverlay">
                 <div class="pb-toast-card" id="pbToastCard">
                     <button class="pb-toast-close" onclick="pbToastKapat()">✕</button>
-                    <div class="dm-points-mascot"><img class="dm-reward-state" src="papi-reward-v2.png" width="1145" height="1374" alt="Başarını kutlayan papağan"><img class="dm-help-state" src="papi-help-v2.png" width="1145" height="1374" alt="Sana destek olan papağan"></div><span class="pb-toast-ok" id="pbToastOk">▲</span>
+                    <div class="dm-points-mascot"><img class="dm-reward-state" src="papi-reward-v2.png" width="1145" height="1374" alt="Başarını kutlayan papağan" loading="lazy" decoding="async"><img class="dm-help-state" src="papi-help-v2.png" width="1145" height="1374" alt="Sana destek olan papağan" loading="lazy" decoding="async"></div><span class="pb-toast-ok" id="pbToastOk">▲</span>
                     <div class="pb-toast-baslik" id="pbToastBaslik">Harika iş çıkardın!</div>
                     <div class="pb-toast-sebep" id="pbToastSebep">Sebep</div>
                     <div class="pb-toast-puan" id="pbToastPuan">+0.3 puan</div>
@@ -656,7 +625,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
             </div>
                 <div class="login-card" id="login-container">
                         <div class="dm-logo-row">
-                            <div class="dm-logo-icon"><img src="papi-welcome-v2.png" alt="Papağan Papi"></div>
+                            <div class="dm-logo-icon"><img src="papi-loading.webp" alt="Papağan Papi" loading="lazy" decoding="async"></div>
                     <div class="dm-logo-text">
                         <div class="dm-logo-word"><span class="dm-diji">Diji</span>-<span class="dm-medu">Medu</span></div>
                         <div class="dm-logo-tag">İngilizce Portalı</div>
@@ -1002,7 +971,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                <div id="kpKelimeGirisEkrani" class="dm-word-home">
               <section class="dm-word-intro" aria-label="Kelime Modu tanıtımı">
                 <div class="dm-word-intro-top"><span>PAPİ İLE OYUN ZAMANI</span><h2>Kelime Modu</h2></div>
-                <div class="dm-word-hero"><img src="papi-welcome-v2.png" alt="Papi maskotu" loading="eager"><p>Kelimeyi İngilizce söyle veya yazarak cevapla.</p></div>
+                <div class="dm-word-hero"><img src="papi-loading.webp" alt="Papi maskotu" loading="eager"><p>Kelimeyi İngilizce söyle veya yazarak cevapla.</p></div>
                 <div class="dm-word-rules" aria-label="Oyun puanlama bilgileri"><span>⭐ <b>Doğru</b><small>+100 puan</small></span><span>🔥 <b>Seri</b><small>Bonusları</small></span><span>⚡ <b>Hız</b><small>Bonusları</small></span><span>❌ <b>Yanlış</b><small>−40 puan · −3 XP</small></span></div>
               </section>
               <div class="dm-word-home-body">
@@ -1445,7 +1414,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                             Bilmiyordum
                         </button>
                     </div>
-                    <img id="dcTopicImg" class="dc-topic-img" src="" style="display:none;">
+                    <img id="dcTopicImg" class="dc-topic-img" src="" style="display:none;" loading="lazy" decoding="async">
                     <div class="dc-tabbar">
                         <button class="dc-tab-btn active" data-tab="anlatim" onclick="dcSekmeSec('anlatim',this)">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
@@ -1479,7 +1448,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
         </div>
         <div id="dcHoverBalon" class="dc-hover-balon"></div>
         <div class="dc-toast" id="dcToast">
-            <span class="dc-toast-icon"><img src="papi-help-v2.png" width="1145" height="1374" alt="" aria-hidden="true"></span>
+            <span class="dc-toast-icon"><img src="papi-help-v2.png" width="1145" height="1374" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
             <span id="dcToastText">+0.2 puan kazandın!</span>
         </div>
                 <div id="tab-sanaozel" class="dc-fullscreen-overlay dc-fullscreen-below">
@@ -1545,7 +1514,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
             </div>
         <div class="rubric-modal" id="sifreIslemModal">
             <div class="rubric-content" style="max-width: 360px;">
-<div class="dm-auth-mascot"><img src="papi-help-v2.png" width="1145" height="1374" alt="Şifre yardımında yanında olan Diji-Medu papağanı"></div>
+<div class="dm-auth-mascot"><img src="papi-help-v2.png" width="1145" height="1374" alt="Şifre yardımında yanında olan Diji-Medu papağanı" loading="lazy" decoding="async"></div>
                 <button class="game-close-btn" onclick="sifreIslemKapat()">✕</button>
                 <h3 id="sifreIslemBaslik" style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">Şifremi unuttum</h3>
                 <p style="font-size:10.5px; color:#64748b; text-align:center; margin-bottom:14px;">Kimliğini doğrulamak için aşağıdaki bilgileri eksiksiz doldur.</p>
@@ -1580,7 +1549,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
         </div>
         <div class="rubric-modal" id="kayitOlModal">
             <div class="rubric-content" style="max-width: 380px;">
-<div class="dm-auth-mascot"><img src="papi-welcome-v2.png" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div>
+<div class="dm-auth-mascot"><img src="papi-loading.webp" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı" loading="lazy" decoding="async"></div>
                 <button class="game-close-btn" onclick="kayitOlKapat()">✕</button>
                 <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px; text-align:center;">Öğrenci kaydı</h3>
                 <p style="font-size:10.5px; color:#64748b; text-align:center; margin-bottom:14px;">Kayıt talebin öğretmenine iletilecek. Onaylandıktan sonra giriş yapabilirsin.</p>
@@ -1662,10 +1631,10 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                 <div class="duy3-card">
                     <div class="duy3-glow" id="duyuruGlow"></div>
                     <button class="duy3-close" onclick="duyuruKapat()">✕</button>
-                    <div class="duy3-medal" id="duyuruMedal"><img src="papi-welcome-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
+                    <div class="duy3-medal" id="duyuruMedal"><img src="papi-loading.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor" loading="lazy" decoding="async"></div>
                     <span class="duy3-tag" id="duyuruTag">DUYURU</span>
                     <h3 class="duy3-title" id="duyuruBaslik">Başlık</h3>
-                    <img id="duyuruGorsel" class="duy3-img" src="">
+                    <img id="duyuruGorsel" class="duy3-img" src="" loading="lazy" decoding="async">
                     <div class="duy3-msg" id="duyuruMesaj">Mesaj</div>
                     <button class="duy3-btn" id="duyuruBtn" onclick="duyuruKapat()">Anladım, Kapat</button>
                 </div>
@@ -1846,7 +1815,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                     <button class="btn-giris" onclick="jeopardyOyunuBaslat()" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); font-size: 13px; font-weight: 800; padding: 10px;">🚀 Balonları Göster</button>
                 </div>
                 <div id="jpBalonEkrani" style="display:none; text-align: center;">
-                    <header class="dm-risk-hero"><div><small>PAPİ İLE BALON MACERASI</small><h3>Bir balon seç!</h3><p>İçindeki kelimeyi çöz, maceraya devam et.</p></div><img src="papi-welcome-v2.png" alt="" width="72" height="72"></header><div class="dm-risk-hud"><span>⏱️ <b data-jp-clock>0 sn</b></span><span>🎈 <b id="jpBalonKalan">8</b> balon</span><span>⭐ <b id="jpAnlikPuan">0</b> puan</span></div>
+                    <header class="dm-risk-hero"><div><small>PAPİ İLE BALON MACERASI</small><h3>Bir balon seç!</h3><p>İçindeki kelimeyi çöz, maceraya devam et.</p></div><img src="papi-loading.webp" alt="" width="72" height="72" loading="lazy" decoding="async"></header><div class="dm-risk-hud"><span>⏱️ <b data-jp-clock>0 sn</b></span><span>🎈 <b id="jpBalonKalan">8</b> balon</span><span>⭐ <b id="jpAnlikPuan">0</b> puan</span></div>
                     <div id="jpBalonlarGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;"></div>
                     <p class="dm-risk-rule">Hız bonusu · Doğru +100 · Yanlış −40 puan / turdan −3 XP</p>
                 </div>
@@ -3159,7 +3128,7 @@ async function dijiKelimeHavuzunuYukle() {
                     rubricGridDegerleriGuncelle();
                 }
 
-                        window.onload = async function() {
+                        document.addEventListener('DOMContentLoaded', async function() {
                     let girisBtn = document.getElementById('girisBtn');
                     let girisSubtitle = document.getElementById('girisSubtitle');
 
@@ -3194,7 +3163,7 @@ setInterval(() => {
     if (document.hidden) return;
     ogretmenMenuOkunmamisGuncelle();
 }, 300000);
-                };
+                }, {once:true});
 
                 // --- YEREL AKILLI ASİSTAN & İLETİŞİM KONTROLÜ MİMARİSİ ---
                         function aiModalAc() { 
@@ -10008,7 +9977,7 @@ function ozellikSecDoldur() {
                     document.getElementById('duyuruBaslik').innerText = duyuru.baslik;
                     document.getElementById('duyuruMesaj').innerText = duyuru.mesaj;
                     document.getElementById('duyuruMedal').style.background = t.medal;
-                    document.getElementById('duyuruMedal').innerHTML = '<img src="papi-welcome-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor">';
+                    document.getElementById('duyuruMedal').innerHTML = '<img src="papi-loading.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor">';
                     document.getElementById('duyuruTag').style.background = t.tagBg;
                     document.getElementById('duyuruTag').style.border = '1px solid ' + t.tagBorder;
                     document.getElementById('duyuruTag').style.color = t.tagColor;
@@ -11557,7 +11526,7 @@ function ozellikSecDoldur() {
                         <div id="dyTranscriptMetni" style="display:none; margin-top:12px; text-align:center; font-size:13px; color:#334155; font-style:italic; border-top:1px dashed #e2e8f0; padding-top:10px;"></div>
                     </div>
                     <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; justify-content:center; width:100%;">
-                        <img id="dyGorselAlani" src="" style="width:220px; height:280px; object-fit:contain; background:#fff; border-radius:12px; border:1px solid #e2e8f0;">
+                        <img id="dyGorselAlani" src="" style="width:220px; height:280px; object-fit:contain; background:#fff; border-radius:12px; border:1px solid #e2e8f0;" loading="lazy" decoding="async">
                         <div style="display:flex; gap:14px;">
                             <button id="dyDogruBtn" onclick="dyCevapVer('dogru')" style="width:130px; height:130px; background:#fff; border:3px solid #cbd5e1; border-radius:12px; font-size:52px; color:#2563eb; cursor:pointer; font-weight:900;">✓</button>
                             <button id="dyYanlisBtn" onclick="dyCevapVer('yanlis')" style="width:130px; height:130px; background:#fff; border:3px solid #cbd5e1; border-radius:12px; font-size:52px; color:#2563eb; cursor:pointer; font-weight:900;">✗</button>
@@ -19165,7 +19134,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     let p = document.createElement('div');
     p.className = 'od-perde kr-perde';
     p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Hoş geldin');
-    p.innerHTML = `<div class="kr-kart"><div class="dm-welcome-hero"><img src="papi-welcome-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
+    p.innerHTML = `<div class="kr-kart"><div class="dm-welcome-hero"><img src="papi-loading.webp" class="dm-panel-mascot" width="1145" height="1374" alt="Diji-Medu papağanı seni karşılıyor"></div>
       <div class="kr-ust"><div class="kr-av">${av}</div><div><h3>Hoş geldin, ${guvenliMetin(String(isim).split(' ')[0])}! 👋</h3><small>${seri() > 1 ? `🔥 ${seri()} günlük serin var!` : 'Bugün harika bir gün olacak!'}</small></div></div>
       <div class="kr-cipler">
         <div class="kr-cip" style="--g:.2s">⚡ ${window.genelEnerjiKalan ?? '–'}<small>Enerji</small></div>
@@ -26036,7 +26005,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     return p;
   }
   window.kayitOlAc = function () {
-    let p = perde(`<div class="dm-auth-mascot"><img src="papi-welcome-v2.png" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div><h3>Aramıza hoş geldin</h3><p class="alt">Portala kim olarak katılıyorsun?</p>
+    let p = perde(`<div class="dm-auth-mascot"><img src="papi-loading.webp" width="1145" height="1374" alt="Seni karşılayan Diji-Medu papağanı"></div><h3>Aramıza hoş geldin</h3><p class="alt">Portala kim olarak katılıyorsun?</p>
       <div class="cog-rol"><button type="button" data-r="ogr"><span class="ik">🎒</span><span><b>Öğrenciyim</b><small>Oyunlarla İngilizce öğren, herkesle yarış</small></span></button>
       <button type="button" data-r="ogrt"><span class="ik">👩‍🏫</span><span><b>Öğretmenim</b><small>Kendi öğrencilerini takip et, değerlendir, ödev ver</small></span></button></div>`);
     p.querySelector('[data-r="ogr"]').onclick = () => { p.remove(); kodAlaniEkle(); if (typeof orgKayitAc === 'function') orgKayitAc.apply(this, arguments); setTimeout(kodAlaniEkle, 100); };
@@ -26047,7 +26016,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   if (new URLSearchParams(location.search).get('kod')) setTimeout(() => { if (typeof girisli === 'function' ? !girisli() : !localStorage.getItem('ing_token')) { kodAlaniEkle(); if (typeof orgKayitAc === 'function') orgKayitAc(); } }, 1500);
 
   function ogretmenKayit() {
-    let p = perde(`<div class="dm-auth-mascot"><img src="papi-welcome-v2.png" width="1145" height="1374" alt="Öğretmenleri karşılayan Diji-Medu papağanı"></div><h3>Öğretmen kaydı</h3><p class="alt">Hesabın hemen açılır ve sana özel bir öğretmen kodu verilir. Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır.</p>
+    let p = perde(`<div class="dm-auth-mascot"><img src="papi-loading.webp" width="1145" height="1374" alt="Öğretmenleri karşılayan Diji-Medu papağanı"></div><h3>Öğretmen kaydı</h3><p class="alt">Hesabın hemen açılır ve sana özel bir öğretmen kodu verilir. Öğrencilerin kayıt olurken bu kodu yazınca sana bağlanır.</p>
       <div class="cog-alan"><label for="cogAd">Ad Soyad</label><input id="cogAd" autocomplete="name" placeholder="Örn: Ayşe Yılmaz"></div>
       <div class="cog-alan"><label for="cogKul">Kullanıcı adı (girişte kullanacaksın)</label><input id="cogKul" autocomplete="username" autocapitalize="off" placeholder="Örn: ayseogretmen"></div>
       <div class="cog-alan"><label for="cogEposta">E-posta (öğrenci bildirimleri buraya gelir)</label><input id="cogEposta" type="email" autocomplete="email" placeholder="ornek@okul.k12.tr"></div>
@@ -26442,7 +26411,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   };
 })();
 </script>
-<script defer src="portal-bootstrap.js?v=20261018-papi-fill-1"></script>
+<script defer src="portal-bootstrap.js?v=20261018-startup-2"></script>
 <script defer src="google-login.js?v=20261015-init-fixed-3"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
