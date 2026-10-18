@@ -6,6 +6,8 @@ on:
       - 'ingilizce/learning-core.js'
       - 'ingilizce/thematic-curriculum.json'
       - 'tests/thematic-v8-candidate.test.cjs'
+      - 'tests/thematic-v8-sql-preflight.test.cjs'
+      - 'supabase/staged-thematic-v8-compatibility.sql'
       - '.github/workflows/thematic-v8-candidate.yml'
   push:
     paths:
@@ -22,4 +24,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: node --test tests/thematic-v8-candidate.test.cjs
+      - run: node --test tests/thematic-v8-candidate.test.cjs tests/thematic-v8-sql-preflight.test.cjs
