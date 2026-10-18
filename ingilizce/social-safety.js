@@ -70,7 +70,7 @@
    if(!$('guardianAdult').checked){message(v,'Veli/yasal temsilci beyanını onaylayın.',true);return;}
    // Uniform cryptographic rejection sampling; never use Math.random for a credential.
    const digit=()=>{const a=new Uint8Array(1);do{crypto.getRandomValues(a);}while(a[0]>=250);return String(a[0]%10);};
-   let pin;do{pin=Array.from({length:6},digit).join('');}while(/^(\\d)\\1{5}$|^123456$|^654321$/.test(pin));
+   let pin;do{pin=Array.from({length:6},digit).join('');}while(pin.split('').every(n=>n===pin[0])||pin==='123456'||pin==='654321');
    busy(v,true);
    try{
     const d=await api('safetyParentClaim',{link,pin,adult:true});
