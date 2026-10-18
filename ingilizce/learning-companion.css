@@ -50,3 +50,17 @@
 .dm-goal-dots button[aria-current="true"]{background:#8258e9;width:22px;border-radius:9px}
 .dm-goal-switch>button:focus-visible,.dm-goal-dots button:focus-visible{outline:3px solid #2866bc;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.dm-goal-pages *{animation:none!important}}
+
+
+/* Approved compact lesson landing, retaining level illustrations and story card. */
+#suLevels{min-width:0;gap:8px!important}
+#suLevels .lc-entry{min-height:78px;margin:7px 0 4px;padding:10px 12px;border-radius:18px;background:linear-gradient(115deg,#eefcff,#f1eaff)}
+#suLevels .lc-entry img{max-width:72px;max-height:68px;object-fit:contain;flex-shrink:0}
+#suLevels .lc-entry h3{margin:0 0 3px;font-size:16px;font-weight:900;color:#173d43}
+#suLevels .lc-entry p{margin:0;font-size:12px;color:#476a75}
+#suLevels .lc-entry .lc-button{width:auto;min-width:80px;white-space:nowrap;margin-left:auto}
+#suLevels .su-level-card img,#suLevels .su-level-card svg{visibility:visible;opacity:1}
+.dm-parkur-shortcut{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:1px solid #dce7eb;border-radius:16px;padding:7px 10px;margin:6px 0}
+.dm-parkur-current{font-weight:800;color:#243e55;font-size:13px;min-width:0}
+.dm-parkur-shortcut button{font:800 12px Nunito,system-ui;background:#f2edff;border:1px solid #e1d5ff;border-radius:12px;padding:9px;color:#6746c2;min-height:38px;white-space:nowrap}
+@media(max-width:390px){#suLevels .lc-entry{padding:8px;gap:6px}#suLevels .lc-entry img{max-width:51px}#suLevels .lc-entry .lc-button{min-width:70px;padding:7px}}
