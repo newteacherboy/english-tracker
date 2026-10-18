@@ -857,6 +857,14 @@
       "source": "docs/media-generation-record.json"
     },
     {
+      "path": "ingilizce/papi-loading.webp",
+      "sha256": "246af3dbaf2734b9fd0c9fee0ef9618ff7fe8218cfb31749c952801671573cd7",
+      "bytes": 60914,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json; resized to 560px and encoded as WebP for startup delivery on 2026-10-18.",
+      "derived_from": "ingilizce/papi-welcome-v2.png"
+    },
+    {
       "path": "ingilizce/papi-reward-v2.png",
       "sha256": "d4f910018cf1bd01d366708a8e16c722e1e6d05bc35b83a497eb4475fbb344e4",
       "bytes": 1404866,
