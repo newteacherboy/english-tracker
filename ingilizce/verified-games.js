@@ -13,7 +13,11 @@ const originalFetch=window.fetch;
 async function api(op,body,owner){if(who()!==owner)throw Error('Hesap değişti. Oyunu yeniden başlat.');const r=await originalFetch(apiURL,{method:'POST',body:JSON.stringify({islem:op,ogrenci:owner,...body})});const d=await r.json();if(!r.ok||d.ok===false||d.status==='error')throw Error(d.mesaj||d.message||'Cevap kaydedilemedi. Bağlantını kontrol et.');return d;}
 function deck(game,words){decks.set(game,words);}
 async function start(game,runId,scope,words){
- if(practice())return null;if(runs.has(runId))return runs.get(runId).ready;
+ if(practice())return null;
+ if(runs.has(runId)){
+  try{return await runs.get(runId).ready;}
+  catch{runs.delete(runId);}
+ }
  words=words||decks.get(game)||[];
  const bank=window.masterKelimeHavuzu||[];
  const resolved=words.map(w=>bank.find(x=>key(en(x))===key(en(w))&&norm(tr(x))===norm(tr(w))&&(!scope?.classNo||Number(x.sinif)===Number(scope.classNo)))||w);
