@@ -11,3 +11,18 @@ const queue=stripTypeScriptTypes(src.slice(src.indexOf('async function kuyrukSat
 function sender(slot){const updates=[],calls=[];const db={rpc:async()=>({data:slot}),from(t){return {update(p){updates.push({t,p});return this},eq(){return this},is(){return this}}}};const fn=new Async('supabase','epostaGonder',queue+'return await kuyrukSatiriGonder(1,{student_id:"new",kind:"dogrulama",to_email:"parent@example.test"});');return {updates,calls,run:()=>fn(db,async()=>{calls.push(1);return {ok:true}})};}
 test('daily quota defers without sending or exhausting retries',async()=>{const s=sender(false);assert.equal((await s.run()).ok,false);assert.equal(s.calls.length,0);assert(s.updates[0].p.send_after);assert.equal(s.updates[0].p.attempts,undefined)});
 test('successful delayed welcome grants 24 hours from send time',async()=>{const s=sender(true);assert.equal((await s.run()).ok,true);assert.equal(s.calls.length,1);assert.equal(s.updates[0].t,'dm_email_verifications');assert(Date.parse(s.updates[0].p.expires_at)>Date.now()+86390000);assert(s.updates[1].p.sent_at)});
+
+test('independent adult learner registers without fabricated classroom data',async()=>{
+ const f=fixture();
+ const r=await f.call({...valid,ogrenimTuru:'independent',sinif:undefined,sube:undefined,okul:''});
+ assert.equal(r.data.status,'success');
+ assert.equal(f.writes[0].class_no,null);
+ assert.equal(f.writes[0].branch,null);
+ assert.equal(f.writes[0].school,null);
+});
+test('school accounts still require grade and section and independent accounts reject teacher linking',async()=>{
+ const school=fixture(),bad=await school.call({...valid,sinif:undefined,sube:undefined});
+ assert.equal(bad.data.status,'error');assert.equal(school.writes.length,0);
+ const independent=fixture(),linked=await independent.call({...valid,ogrenimTuru:'independent',ogretmenKodu:'INVALID'});
+ assert.equal(linked.data.status,'error');assert.equal(independent.writes.length,0);
+});
