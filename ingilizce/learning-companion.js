@@ -35,12 +35,37 @@ function planMarkup(){
  return '<div class="lc-plan-head"><span class="lc-plan-mark" aria-hidden="true">✦</span><div><h2>Bugünkü Planım</h2><small>Senin hızında · '+state.filter(Boolean).length+' / 3 adım</small></div>'+action('⌄','toggle','aria-label="Plan adımlarını göster" aria-expanded="false"')+'</div><div class="lc-plan-steps" hidden>'+steps.map(([id,label],i)=>action((state[i]?'✓ ':'')+label,id)).join('')+'<small>Haritadan doğrudan da devam edebilirsin.</small></div><div class="lc-plan-foot"><span>'+(d?d?.review?.due?'Bugün '+d.review.due+' kelimenin tekrar zamanı.':'Küçük bir adımla öğrenmeye devam et.':'Planın hazırlanıyor…')+'</span>'+action(state.every(Boolean)?'Yeniden çalış':'Planıma Başla','start')+'</div>';
 }
 function paintPlan(){const el=$('lcPlan');if(!el)return;const sig=JSON.stringify([owner,summary?.day,summary?.review,summary?.reviewDone,summary?.routeDone,summary?.dialogueDone]);if(el.dataset.signature===sig)return;const expanded=el.querySelector('[data-lc="toggle"]')?.getAttribute('aria-expanded')==='true';el.innerHTML=planMarkup();el.dataset.signature=sig;if(expanded){el.querySelector('.lc-plan-steps').hidden=false;el.querySelector('[data-lc="toggle"]').setAttribute('aria-expanded','true');}}
+
+// The goal and daily tasks occupy one place; only their presentation is changed.
+let goalTimer=null,goalPauseUntil=0,goalSlide=0;
+function goalCarousel(root){
+ const weekly=root.querySelector(':scope > .rt-week'),daily=root.querySelector(':scope > .rt-tasks');
+ let holder=root.querySelector(':scope > .dm-goal-carousel');
+ if(!holder&&(!weekly||!daily))return;
+ if(!holder){
+  holder=document.createElement('section');holder.className='dm-goal-carousel';holder.setAttribute('aria-label','Haftalık hedef ve günlük üç görev');
+  holder.innerHTML='<div class="dm-goal-pages" aria-live="off"></div><div class="dm-goal-switch"><button type="button" data-goal="previous" aria-label="Önceki hedef">‹</button><span class="dm-goal-dots" aria-label="İki sayfa"><button type="button" data-goal="0" aria-label="Haftalık hedef"></button><button type="button" data-goal="1" aria-label="Günlük üç görev"></button></span><button type="button" data-goal="next" aria-label="Sonraki hedef">›</button></div>';
+  weekly.before(holder);holder.querySelector('.dm-goal-pages').append(weekly,daily);
+  holder.addEventListener('click',e=>{const b=e.target.closest('[data-goal]');if(!b)return;goalPauseUntil=Date.now()+6500;goalSlide=b.dataset.goal==='previous'?(goalSlide+1)%2:b.dataset.goal==='next'?(goalSlide+1)%2:Number(b.dataset.goal);showGoal(holder);});
+  let touchX=null;holder.addEventListener('touchstart',e=>{touchX=e.changedTouches[0]?.clientX??null},{passive:true});
+  holder.addEventListener('touchend',e=>{if(touchX===null)return;const delta=(e.changedTouches[0]?.clientX??touchX)-touchX;touchX=null;if(Math.abs(delta)>35){goalPauseUntil=Date.now()+6500;goalSlide=(goalSlide+1)%2;showGoal(holder);}},{passive:true});
+  holder.addEventListener('focusin',()=>{goalPauseUntil=Date.now()+10000;});
+ }
+ showGoal(holder);
+ if(goalTimer===null)goalTimer=setInterval(()=>{const h=document.querySelector('#tab-dunya .dm-goal-carousel');if(!h||!visible($('tab-dunya')))return;if(document.hidden||Date.now()<goalPauseUntil||h.matches(':hover')||h.contains(document.activeElement))return;goalSlide=(goalSlide+1)%2;showGoal(h);},3800);
+}
+function showGoal(holder){
+ const children=holder.querySelector('.dm-goal-pages')?.children;if(!children||children.length!==2)return;
+ [...children].forEach((x,i)=>{x.hidden=i!==goalSlide;x.style.display=i===goalSlide?'':'none';});
+ holder.querySelectorAll('.dm-goal-dots button').forEach((b,i)=>{b.setAttribute('aria-current',String(i===goalSlide));});
+}
 function mount(){
  scheduled=false;reset();if(!student())return;
  const map=$('tab-dunya'),root=map?.querySelector('.rt-root');
  if(root&&visible(map)){
   let plan=$('lcPlan');if(!plan){plan=document.createElement('section');plan.id='lcPlan';plan.className='lc-plan';plan.setAttribute('aria-label','Bugünkü çalışma planın');root.prepend(plan);paintPlan();}
   else if(plan.parentElement!==root)root.prepend(plan);
+  goalCarousel(root);
   load().catch(e=>{const note=$('lcPlan')?.querySelector('.lc-plan-foot>span');if(note)note.textContent='Plan alınamadı. Başla ile tekrar dene.';});
  }
  const study=$('suLevels');if(study&&visible(study)&&!$('lcDialogueEntry')){
