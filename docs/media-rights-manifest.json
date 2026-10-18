@@ -1627,6 +1627,48 @@
       "bytes": 1605971,
       "status": "ai-generated",
       "source": "OpenAI built-in ImageGen, 2026-10-18; generated from the user-approved text-free Renkli Macera navigation concept. Six original Diji-Medu icons in a transparent three-column, two-row atlas; no third-party artwork."
+    },
+    {
+      "path": "ingilizce/discovery-assets/her-yasta-ogren.webp",
+      "sha256": "5d5ebfa43f9572ab1bd91f023e73f36790c3fac098dc81a931127e8bd42c100c",
+      "bytes": 165024,
+      "status": "ai-generated",
+      "source": "docs/universal-onboarding-art.json"
+    },
+    {
+      "path": "ingilizce/route-assets/family-icon.svg",
+      "sha256": "98ba14cce082a3cf1115f6b2bda04c694703449a215e76ea7e9e5c56343735d9",
+      "bytes": 314,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/homework-icon.svg",
+      "sha256": "788fe678fd925d72156ece151d57a7a34eab516114c5ad24dbe8c1d41bbc62fb",
+      "bytes": 441,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/placement-icon.svg",
+      "sha256": "ec7909d94ac2992b3de41a3d9bdeff7134fc847b170b07a919195232ab3531d1",
+      "bytes": 480,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/safety-icon.svg",
+      "sha256": "e9e5c6092c9911e961444ac67486c77bc9bef013270f8423cd2ee6fcf9a3ac42",
+      "bytes": 414,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/support-icon.svg",
+      "sha256": "e0cfa49fdcc91686c3c01f2950b06d811ebf0c265b5eeff0b6dcf218fc28cd48",
+      "bytes": 590,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
     }
   ]
 }

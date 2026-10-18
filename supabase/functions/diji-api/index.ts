@@ -1,4 +1,5 @@
 import {socialSafetyAPI} from './social-safety.mjs';
+import {normalizeLearnerProfile,learnerClass,saveLearnerProfile} from './learner-profile.mjs';
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
 import {verifiedGamesAPI} from './verified-games.mjs';
 import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
@@ -1197,13 +1198,14 @@ async function handle(req: Request) {
       const telHam = String(body.telefon || "").replace(/\D/g, "");
       const tel = /^5\d{9}$/.test(telHam) ? "0" + telHam : /^05\d{9}$/.test(telHam) ? telHam : /^905\d{9}$/.test(telHam) ? "0" + telHam.slice(2) : "";
       const email = String(body.email || "").trim();
-      const sinif = Number(body.sinif), sube = temizMetin(body.sube, 10).trim();
-      if (!tel) return json({ ok: false, mesaj: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." }, 400);
+      let learnerProfile, sinif;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school");sinif=learnerClass(learnerProfile,body.sinif);}catch(e){return json({ok:false,mesaj:e.message},400);}
+      const sube = temizMetin(body.sube, 10).trim();
+      if ((telHam||!learnerProfile.version)&&!tel) return json({ ok: false, mesaj: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." }, 400);
       if (email.length > 120 || !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email))
         return json({ ok: false, mesaj: "Geçerli bir e-posta adresi yaz." }, 400);
-      const independentLearner = body.ogrenimTuru === "independent";
-      if (!independentLearner && (!Number.isInteger(sinif) || sinif < 1 || sinif > 8 || !sube))
-        return json({ ok: false, mesaj: "Okul hesabı için sınıfını ve şubeni belirt." }, 400);
+      const independentLearner=learnerProfile.purpose==="independent";
+      if (!learnerProfile.version && !independentLearner && (!Number.isInteger(sinif) || sinif < 1 || sinif > 8 || !sube))
+        return json({ ok: false, mesaj: "Öğrencinin sınıfını ve şubesini belirt." }, 400);
       if (body.kvkkOnay !== true) return json({ ok: false, mesaj: "Veli ve bilgilendirme beyanını işaretlemelisin." }, 400);
       if (await denemeSay("google_kayit", user.id, 60) >= 5 || await denemeSay("kayit", "genel", 60) >= 20)
         return json({ ok: false, mesaj: "Çok fazla kayıt denemesi. Bir saat sonra tekrar dene." }, 429);
@@ -1215,7 +1217,7 @@ async function handle(req: Request) {
       if (ayniOgrt?.length) return json({ ok: false, mesaj: "Bu kullanıcı adı zaten kayıtlı." }, 409);
       const kod = String(body.ogretmenKodu || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
       const ogretmen = kod ? (await supabase.from("teachers").select("id,email,full_name,username,active").ilike("invite_code", kod).limit(1)).data?.[0] || null : null;
-      if (independentLearner && kod) return json({ok:false,mesaj:"Öğretmen kodunu kullanmak için okul hesabı seç."},400);
+      if (!learnerProfile.version && independentLearner && kod) return json({ok:false,mesaj:"Öğretmen kodunu kullanmak için okul hesabı seç."},400);
       if (kod && (!ogretmen || ogretmen.active === false))
         return json({ ok: false, mesaj: "Öğretmen kodu bulunamadı. Kodu kontrol et veya boş bırak." }, 400);
       const payload = { username, password_hash: await hashPassword((crypto.randomUUID() + crypto.randomUUID()).replace(/-/g, "")),
@@ -1227,6 +1229,7 @@ async function handle(req: Request) {
         : "Kayıt tamamlanamadı. Biraz sonra tekrar dene." }, createError?.code === "23505" ? 409 : 503);
       const adYaz = await supabase.from("students").update({ full_name: adSoyad, school: temizMetin(body.okul || "",120).replace(/\s+/g,' ').trim() || null }).eq("id", createdId);
       if (adYaz.error) console.error("googleKayit full_name", adYaz.error);
+      await saveLearnerProfile(supabase,createdId,learnerProfile);
       await yeniOgrenciYoneticiBildirimi({id:createdId,username},"google");
       try { await onboarding.welcome({id:createdId,username,email}); }
       catch (_) { console.error("Google welcome verification could not be queued"); }
@@ -1353,9 +1356,12 @@ async function handle(req: Request) {
     if (!s) return bulunamadi();
     const { data: gb } = await supabase.from("student_google_accounts").select("student_id").eq("student_id", s.id).limit(1);
     const googleBagli = !!(gb && gb.length);
+    const profileRecord=await supabase.from("extra_data").select("value").eq("student_id",s.id).eq("key_name","learner_profile_v1").maybeSingle();
+    if(profileRecord.error)throw profileRecord.error;
+    let learnerProfile=profileRecord.data?.value||normalizeLearnerProfile(undefined,s.class_no);
     const bilgi = (x: any) => ({
       ok: true, kullaniciAdi: x.username, adSoyad: x.full_name || "", telefon: x.phone || "", email: x.email || "",
-      sinif: x.class_no || "", sube: x.branch || "", okul: x.school || "", ogretmenBagli: !!x.teacher_id, googleBagli
+      sinif: x.class_no || "", sube: x.branch || "", okul: x.school || "", ogretmenBagli: !!x.teacher_id, googleBagli, learnerProfile
     });
     if (op === "kisiselBilgilerim") return json(bilgi(s));
 
@@ -1364,6 +1370,7 @@ async function handle(req: Request) {
     const var_ = (k: string) => body[k] !== undefined && body[k] !== null;
     const hata = (mesaj: string) => json({ ok: false, mesaj }, 400);
     const patch: any = {}, degisen: string[] = [];
+    if(var_("learnerProfile")){try{const next=normalizeLearnerProfile(body.learnerProfile,s.class_no);if(JSON.stringify(next)!==JSON.stringify(learnerProfile)){learnerProfile=next;degisen.push("öğrenme tercihleri");}}catch(e){return hata(e.message);}}
 
     if (var_("adSoyad")) {
       const v = String(body.adSoyad).trim().replace(/\s+/g, " ");
@@ -1378,16 +1385,23 @@ async function handle(req: Request) {
     if (var_("sinif") || var_("sube")) {
       const sinif = var_("sinif") ? Number(body.sinif) : Number(s.class_no);
       const sube = var_("sube") ? temizMetin(body.sube, 10).toLocaleUpperCase("tr") : String(s.branch || "");
-      if (!Number.isInteger(sinif) || sinif < 1 || sinif > 8) return hata("Sınıf 1 ile 8 arasında olmalı.");
-      if (!sube) return hata("Şube boş bırakılamaz.");
-      if (sinif !== Number(s.class_no)) { patch.class_no = sinif; degisen.push("sınıf"); }
+      let selectedClass;try{selectedClass=learnerClass(learnerProfile,body.sinif??s.class_no);}catch(e){return hata(e.message);}
+      if (!learnerProfile.version&&!sube) return hata("Şube boş bırakılamaz.");
+      if (selectedClass !== s.class_no) { patch.class_no = selectedClass; degisen.push("sınıf"); }
       if (encName(sube) !== encName(s.branch)) { patch.branch = sube; degisen.push("şube"); }
+    }
+    if(String(body.ogretmenKodu||'').trim()){
+      const code=String(body.ogretmenKodu).trim().toUpperCase();if(!/^[A-Z0-9]{1,10}$/.test(code))return hata("Öğretmen kodunu kontrol et.");
+      const teacher=await supabase.from("teachers").select("id,active").ilike("invite_code",code).limit(1);if(teacher.error)throw teacher.error;
+      const found=teacher.data?.[0];if(!found||found.active===false)return hata("Öğretmen kodu bulunamadı.");
+      if(s.teacher_id&&s.teacher_id!==found.id)return hata("Mevcut öğretmen bağlantını değiştirmek için destek al.");
+      if(!s.teacher_id){patch.teacher_id=found.id;degisen.push("öğretmen bağlantısı");}
     }
     let telDegisti = false, mailDegisti = false;
     if (var_("telefon")) {
       const ham = String(body.telefon).replace(/\D/g, "");
       const tel = /^5\d{9}$/.test(ham) ? "0" + ham : /^05\d{9}$/.test(ham) ? ham : /^905\d{9}$/.test(ham) ? "0" + ham.slice(2) : "";
-      if (!tel) return hata("Telefon numarası silinemez. Geçerli bir cep telefonu yaz (05XX XXX XX XX).");
+      if (!tel && (ham||s.phone||!learnerProfile.version)) return hata("Geçerli bir cep telefonu yaz (05XX XXX XX XX). Kayıtlı telefonunu değiştirebilirsin.");
       if (tel !== String(s.phone || "").replace(/\D/g, "")) { patch.phone = tel; telDegisti = true; degisen.push("telefon"); }
     }
     if (var_("email")) {
@@ -1413,6 +1427,7 @@ async function handle(req: Request) {
     patch.updated_at = new Date().toISOString();
     const up = await supabase.from("students").update(patch).eq("id", s.id).select(ALANLAR).single();
     if (up.error || !up.data) { console.error("kisiselBilgiGuncelle", up.error); return json({ ok: false, mesaj: "Kaydedilemedi. Biraz sonra tekrar dene." }, 500); }
+    await saveLearnerProfile(supabase,s.id,learnerProfile);
     contacts.invalidate(s.id);
     await audit(a, "kisiselBilgiGuncelle", s.username, { alanlar: degisen });
 
@@ -2086,10 +2101,11 @@ async function handle(req: Request) {
     if (!/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,60}$/.test(adSoyad)) return json({ status: "error", message: "Öğrencinin adını ve soyadını yaz (sadece harf, 3-60 karakter)." });
     if (sadeHarf(username) === sadeHarf(adSoyad)) return json({ status: "error", message: "Kullanıcı adın gerçek adınla aynı olmasın. Herkesin göreceği bir takma ad seç." });
     if (password.length < OGRENCI_SIFRE_MIN || password.length > 64) return json({ status: "error", message: `Şifre ${OGRENCI_SIFRE_MIN}-64 karakter olmalı.` });
+    let learnerProfile, selectedClass;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school");selectedClass=learnerClass(learnerProfile,body.sinif);}catch(e){return json({status:"error",message:e.message},400);}
     /* [v4.1] Yeni kayıtlarda geçerli veli telefonu ve e-postası zorunlu */
     const telHam = String(body.telefon || "").replace(/\D/g, "");
     const tel = telHam.length === 10 && telHam[0] === "5" ? "0" + telHam : telHam.length === 11 && telHam.startsWith("05") ? telHam : telHam.length === 12 && telHam.startsWith("905") ? "0" + telHam.slice(2) : "";
-    if (!tel) return json({ status: "error", message: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." });
+    if ((telHam||!learnerProfile.version)&&!tel) return json({ status: "error", message: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." });
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(String(body.email || "").trim())) return json({ status: "error", message: "Geçerli bir e-posta adresi yaz. Onay ve gelişim raporları bu adrese gelecek." });
     if (await denemeSay("kayit", "genel", 60) >= 20) return json({ status: "error", message: "Çok fazla kayıt denemesi. Bir saat sonra tekrar dene." });
     await denemeYaz("kayit", "genel", { ad: username });
@@ -2104,23 +2120,17 @@ async function handle(req: Request) {
       ogretmen = (await supabase.from("teachers").select("id,email,full_name,username,active").ilike("invite_code", kod).limit(1)).data?.[0] || null;
       if (!ogretmen || ogretmen.active === false) return json({ status: "error", message: "Öğretmen kodu bulunamadı. Kodu kontrol et ya da boş bırakıp bağımsız kayıt ol." });
     }
-    // School-linked accounts keep the existing 1-8 classroom contract.
-    // Independent learners must not be assigned a fabricated class/branch.
-    const independentLearner = body.ogrenimTuru === "independent";
-    if (!body.kvkkOnayTarihi) return json({status:"error",message:"Bilgilendirme ve onay beyanı gerekli."},400);
-    if (!independentLearner && (!Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()))
-      return json({status:"error",message:"Okul hesabı için 1-8 sınıf ve şube gerekli."},400);
-    if (independentLearner && kod)
-      return json({status:"error",message:"Öğretmen kodu ile sınıfa bağlanmak için okul hesabı seç."},400);
+    if (body.kvkkOnay!==true || !body.kvkkOnayTarihi || (!learnerProfile.version&&learnerProfile.purpose!=="independent"&&(!Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()))) return json({status:"error",message:"Sınıf, şube ve veli bilgilendirme beyanı gerekli."},400);
     const payload = {
       username, full_name: adSoyad, school: temizMetin(body.okul || "",120).replace(/\s+/g,' ').trim() || null, password_hash: await hashPassword(password), phone: tel || null,
-      class_no: independentLearner ? null : num(body.sinif, 0) || null, branch: independentLearner ? null : temizMetin(body.sube, 10) || null,
+      class_no: selectedClass, branch: temizMetin(body.sube, 10) || null,
       email: String(body.email || "").trim().slice(0, 120), status: "approved", email_verification_required:true, email_verified_at:null,
       kvkk_approved_at: body.kvkkOnayTarihi || new Date().toISOString()
     };
     (payload as any).teacher_id = ogretmen ? ogretmen.id : null;
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
+    await saveLearnerProfile(supabase,saved.data.id,learnerProfile);
     await yeniOgrenciYoneticiBildirimi(saved.data,"normal");
     let mailQueued=true;try { await onboarding.welcome(saved.data); }catch(_){mailQueued=false;}
     const token=await issueSession("student",saved.data.id);

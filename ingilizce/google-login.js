@@ -215,6 +215,7 @@
   };
   create.onclick = async function () {
     if (busy) return;
+    if(window.dmFirstDiscovery?.openGoogleRegistration){window.dmFirstDiscovery.openGoogleRegistration();return;}
     linking = false;
     $('loginForm').hidden = true;
     create.hidden = true;

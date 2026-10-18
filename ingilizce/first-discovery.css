@@ -126,3 +126,7 @@ body.dm-profile-open #tab-profil #dmForestActions .header-btn{font-size:clamp(10
 #dmDiscovery .fd-step,#dmDiscovery .fd-link{font-size:14px}
 #dmDiscovery .fd-password-rules{font-size:clamp(14px,3.4vw,16px);line-height:1.55;text-align:left;background:#f0f9ff;color:#173c57;border:1px solid #b7d9eb;border-radius:13px;padding:11px 13px;margin:5px 0 12px}
 #dmDiscovery .fd-password-rules b{color:#116378}
+
+/* Universal learner registration. */
+#dmDiscovery .fd-everyone-art{display:block;width:100%;height:auto;max-height:135px;object-fit:cover;border-radius:18px;margin:0 auto 12px}
+#dmDiscovery .fd-field{color:#193b53;font-size:15px}#dmDiscovery .fd-note{font-size:14px;color:#385568}#dmDiscovery .fd-choice small{font-size:14px!important;color:#385568!important}

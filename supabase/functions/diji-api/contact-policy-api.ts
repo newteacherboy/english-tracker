@@ -6,6 +6,8 @@ export function contactPolicyAPI(db:any,json:any) {
     if (!claim && c && !c.state.donuk && c.until>Date.now()) return {...c.state,uyari:false};
     if (!claim && pending.has(id)) return pending.get(id);
     const work=(async()=>{
+      const pref=await db.from('extra_data').select('value').eq('student_id',id).eq('key_name','learner_profile_v1').maybeSingle();if(pref.error)throw pref.error;
+      if(pref.data?.value?.version===1){const student=await db.from('students').select('email').eq('id',id).maybeSingle();if(student.error)throw student.error;if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(student.data?.email||'')){const state={eksik:false,donuk:false,uyari:false};cache.set(id,{until:Date.now()+30000,state});return state;}}
       const r=await db.rpc('student_contact_state',{p_student:id,p_claim:claim});
       if (r.error || !r.data) throw new Error('Contact policy unavailable');
       if(cache.size>20000)cache.clear();

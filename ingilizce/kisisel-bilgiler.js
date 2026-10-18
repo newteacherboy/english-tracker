@@ -32,7 +32,7 @@
   .kb-alan input:focus,.kb-alan select:focus{outline:none;border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.18)}
   .kb-alan input[readonly]{background:#f6f4fb;color:#7a6ca8}
   .kb-ipucu{font-size:11.5px;color:#8a7cb8;margin-top:4px}
-  .kb-ogrenci-disinda[hidden]{display:none!important}\n  .kb-iki{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .kb-iki{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .kb-sifre{display:none;background:#fff8e6;border-color:#f6dc9b}
   .kb-sifre.acik{display:block}
   .kb-mesaj{min-height:18px;font-size:13px;font-weight:700;margin:4px 0 10px}
@@ -41,6 +41,7 @@
   .kb-kaydet#kbKaydet{position:relative;z-index:6;box-shadow:0 -8px 14px rgba(255,255,255,.95);margin-top:8px;min-height:52px;touch-action:manipulation}
   .kb-kaydet:disabled{opacity:.55;cursor:default}
   .kb-kaydet:focus-visible,.kb-x:focus-visible{outline:3px solid #f0abfc;outline-offset:2px}
+  .kb-everyone-art{width:100%;border-radius:16px;margin:0 0 14px}.kb-kutu{background:#fffdf3;color:#102d52}.kb-kaydet{background:#00a4a7}.kb-grup{border-color:#cce4de}.kb-grup h4{color:#0b666b;font-size:16px}.kb-alan label{font-size:14px;color:#193b53}.kb-ipucu,.kb-alt{color:#41606b;font-size:13px}.kb-placement{border:1px solid #00a4a7;color:#07656b;background:#e6faf6;border-radius:12px;padding:12px;font-weight:800;width:100%}.kb-grup[hidden]{display:none}.kb-iki[hidden]{display:none}
   .kb-yukleniyor{padding:30px 0;text-align:center;color:#7a6ca8}`;
 
   function stilEkle() {
@@ -85,29 +86,32 @@
         <div class="kb-alan"><label for="kbKul">Kullanıcı adı</label><input id="kbKul" readonly></div>
         <div class="kb-alan"><label for="kbAd">Ad soyad <span style="font-weight:600;color:#8a7cb8">(isteğe bağlı)</span></label><input id="kbAd" maxlength="60" autocomplete="name"></div>
       </div>
-      <div class="kb-grup"><h4>Öğrenim durumum</h4>
-        <div class="kb-alan"><label for="kbOgrenimTuru">Diji-Medu'yu nasıl kullanıyorum?</label>
-          <select id="kbOgrenimTuru"><option value="school">Okul derslerim için</option><option value="independent">Kendim için İngilizce öğreniyorum</option></select>
-        </div>
-        <div class="kb-ipucu">Okula gitmiyorsan okul ve sınıf bilgisi girmen gerekmez. Mevcut okul kaydın silinmez.</div>
+      <img class="kb-everyone-art" src="discovery-assets/her-yasta-ogren.webp" alt="Her yaşta öğrenenler ve Papi">
+      <div class="kb-grup"><h4>Öğrenme tercihlerim</h4>
+        <div class="kb-alan"><label for="kbPurpose">Öğrenme amacım</label><select id="kbPurpose"><option value="school">Okul derslerim için</option><option value="independent">Kendim için</option></select></div>
+        <div class="kb-alan"><label for="kbAge">Yaş aralığım (profilimde paylaşılmaz)</label><select id="kbAge"><option value="">Seç</option><option value="under13">13 yaş altı</option><option value="teen">13–17 yaş</option><option value="adult">18 yaş ve üzeri</option></select></div>
+        <div class="kb-alan"><label for="kbGoal">Öğrenme hedefim</label><select id="kbGoal"><option value="daily">Günlük yaşam</option><option value="travel">Seyahat</option><option value="school">Derslerime destek</option><option value="exam">Sınava hazırlık</option></select></div>
+        <button type="button" class="kb-placement">Başlangıç seviyemi bul</button><p class="kb-ipucu">Test isteğe bağlıdır; Şimdilik geç ile doğrudan başlayabilirsin.</p>
       </div>
-      <div class="kb-grup kb-ogrenci-disinda" id="kbOkulGrup"><h4>Okul</h4>
+      <div class="kb-grup"><h4>Öğretmen bağlantım</h4><p id="kbTeacherStatus" class="kb-ipucu"></p><div class="kb-alan"><label for="kbTeacherCode">Öğretmen kodu (isteğe bağlı)</label><input id="kbTeacherCode" maxlength="10" autocapitalize="characters" placeholder="Bir öğretmene bağlanmak istersen"></div></div>
+      <div class="kb-grup" id="kbEducation"><h4>Eğitim bilgilerim</h4>
+        <div class="kb-alan"><label for="kbStage">Eğitim kademem</label><select id="kbStage"><option value="primary">İlkokul</option><option value="middle">Ortaokul</option><option value="high">Lise</option><option value="university">Üniversite</option></select></div>
         <div class="kb-alan"><label for="kbOkul">Okul adı <span style="font-weight:600;color:#8a7cb8">(isteğe bağlı)</span></label><input id="kbOkul" maxlength="120"></div>
         <div class="kb-iki">
-          <div class="kb-alan"><label for="kbSinif">Sınıf</label><select id="kbSinif">${[1,2,3,4,5,6,7,8].map(n => `<option value="${n}">${n}. sınıf</option>`).join("")}</select></div>
+          <div class="kb-alan"><label for="kbSinif">Sınıf</label><select id="kbSinif">${Array.from({length:12},(_,i)=>i+1).map(n => `<option value="${n}">${n}. sınıf</option>`).join("")}</select></div>
           <div class="kb-alan"><label for="kbSube">Şube</label><input id="kbSube" maxlength="10" autocapitalize="characters"></div>
         </div>
         <div class="kb-ipucu" id="kbSinifIpucu"></div>
       </div>
-      <div class="kb-grup"><h4>Veli iletişim</h4>
-        <div class="kb-alan"><label for="kbTel">Veli telefonu</label><input id="kbTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05XX XXX XX XX"></div>
-        <div class="kb-alan"><label for="kbMail">Veli e-postası</label><input id="kbMail" type="email" inputmode="email" autocomplete="email"></div>
+      <div class="kb-grup"><h4 id="kbContactTitle">İletişim bilgilerim</h4>
+        <div class="kb-alan"><label for="kbTel">Telefon (isteğe bağlı)</label><input id="kbTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05XX XXX XX XX"></div>
+        <div class="kb-alan"><label for="kbMail">E-posta adresi</label><input id="kbMail" type="email" inputmode="email" autocomplete="email"></div>
         <div class="kb-email-help" style="margin:8px 0 14px;padding:12px;border:2px solid #bce6d1;border-radius:14px;background:#ecfff5">
           <strong style="color:#135d4f;font-size:15px">✉ E-posta doğrulama yardımı</strong>
           <p style="margin:6px 0 10px;font-size:14px;color:#245568;line-height:1.5">Gmail, Outlook ve diğer e-posta uygulamalarında doğrulama mesajını bulmayı görsellerle öğren.</p>
           <button id="kbEmailGuideButton" type="button" style="width:100%;min-height:45px;border:0;border-radius:12px;background:#0d957f;color:white;font-size:15px;font-weight:800">📖 Görselli rehberi aç</button>
         </div>
-        <div class="kb-ipucu">Telefon ve e-posta silinemez, sadece değiştirilebilir. Raporlar ve şifre yenileme bunlarla yapılır.</div>
+        <div class="kb-ipucu">E-posta adresin hesap güvenliği için kullanılır. Mevcut iletişim bilgilerini değiştirirken şifren istenir.</div>
       </div>
       <div class="kb-grup kb-sifre" id="kbSifreGrup">
         <div class="kb-alan"><label for="kbSifre">Mevcut şifren</label><input id="kbSifre" type="password" autocomplete="current-password"></div>
@@ -133,18 +137,14 @@
 
     const $ = id => kutu.querySelector("#" + id);
     let mevcut = d, sifreZorunlu = false;
-    function okulGoster() {
-      $("kbOkulGrup").hidden = $("kbOgrenimTuru").value !== 'school';
-    }
-    $("kbOgrenimTuru").addEventListener("change", okulGoster);
     function doldur(x) {
       $("kbKul").value = x.kullaniciAdi || "";
       $("kbAd").value = x.adSoyad || "";
       $("kbOkul").value = x.okul || "";
-      $("kbOgrenimTuru").value = (x.okul || x.ogretmenBagli) ? 'school' : 'independent';
-      okulGoster();
-      $("kbSinif").value = String(x.sinif || 5);
-      $("kbSube").value = x.sube || "";
+      const pref=x.learnerProfile||{purpose:x.sinif?'school':'independent',educationStage:Number(x.sinif)<=4?'primary':Number(x.sinif)<=8?'middle':'high',ageBand:'',goal:'daily'};
+      $("kbPurpose").value=pref.purpose;$("kbAge").value=pref.ageBand||'';$("kbGoal").value=pref.goal||'daily';$("kbStage").value=pref.educationStage||'primary';
+      $("kbSinif").value=String(x.sinif||1); education(false);
+      $("kbSube").value = x.sube || "";$("kbTeacherCode").value="";$("kbTeacherStatus").textContent=x.ogretmenBagli?"Bir öğretmene bağlısın. Öğrenme amacını değiştirmek bu bağlantıyı kaldırmaz.":"Bağımsız öğreniyorsun; öğretmen kodu zorunlu değil.";
       $("kbTel").value = telGoster(x.telefon);
       $("kbMail").value = x.email || "";
       $("kbSifre").value = "";
@@ -152,6 +152,9 @@
       if (x.googleBagli) $("kbSifreIpucu").textContent = "Google ile kayıt olduysan şifren yoktur; öğretmeninden şifre belirlemesini iste.";
       sifreGoster();
     }
+    function education(reset=false){const school=$("kbPurpose").value==='school',stage=$("kbStage").value,bounds={primary:[1,4],middle:[5,8],high:[9,12],university:[0,0]}[stage];$("kbEducation").hidden=!school;for(const o of $("kbSinif").options)o.hidden=Number(o.value)<bounds[0]||Number(o.value)>bounds[1];$("kbSinif").closest('.kb-iki').hidden=stage==='university';if(reset||$("kbSinif").selectedOptions[0]?.hidden)$("kbSinif").value=String(bounds[0]||1);$("kbContactTitle").textContent=$("kbAge").value==='adult'?'İletişim bilgilerim':'Veli iletişim bilgileri';}
+    for(const id of ['kbPurpose','kbStage','kbAge'])$(id).addEventListener('change',()=>education(id==='kbStage'));
+    kutu.querySelector('.kb-placement').onclick=()=>{kapat();window.seviyeTestAc?.();};
     const iletisimDegisti = () => (Boolean(telSade(mevcut.telefon)) && telSade($("kbTel").value) !== telSade(mevcut.telefon)) || (Boolean(String(mevcut.email||'').trim()) && $("kbMail").value.trim().toLowerCase() !== String(mevcut.email || "").trim().toLowerCase());
     function sifreGoster() {
       const gerekli = sifreZorunlu || iletisimDegisti(), grup = $("kbSifreGrup");
@@ -174,16 +177,11 @@
       const govde = {
         islem: "kisiselBilgiGuncelle",
         adSoyad: $("kbAd").value.trim(), okul: $("kbOkul").value.trim(),
-        sinif: Number($("kbSinif").value), sube: $("kbSube").value.trim(),
-        telefon: $("kbTel").value.trim(), email: $("kbMail").value.trim()
+        ...($("kbPurpose").value==='school'?{sinif:$("kbStage").value==='university'?null:Number($("kbSinif").value),sube:$("kbSube").value.trim()}:{}),
+        learnerProfile:{version:1,purpose:$("kbPurpose").value,ageBand:$("kbAge").value,educationStage:$("kbPurpose").value==='school'?$("kbStage").value:'',goal:$("kbGoal").value,startChoice:mevcut.learnerProfile?.startChoice||'new',knownLevel:mevcut.learnerProfile?.knownLevel||'A1'},
+        ogretmenKodu: $("kbTeacherCode").value.trim(),telefon: $("kbTel").value.trim(), email: $("kbMail").value.trim()
       };
-      if ($("kbOgrenimTuru").value === "school") {
-        govde.okul = $("kbOkul").value.trim();
-        govde.sinif = Number($("kbSinif").value);
-        govde.sube = $("kbSube").value.trim();
-        if (!govde.sube) return mesaj("Okul dersleri için şube boş bırakılamaz.", "hata");
-      }
-      if (!telSade(govde.telefon)) return mesaj("Telefon numarası boş bırakılamaz.", "hata");
+      if (!govde.learnerProfile.ageBand) return mesaj("Yaş aralığını seç.", "hata");
       if (!govde.email) return mesaj("E-posta adresi boş bırakılamaz.", "hata");
 
       sifreGoster();
@@ -195,7 +193,10 @@
       const r = await istek(govde);
       b.disabled = false; b.textContent = "Kaydet";
       if (!r.ok) { if (r.sifreGerekli) { $("kbSifre").value = ""; sifreIste(); } return mesaj(r.mesaj || "Kaydedilemedi.", "hata"); }
+      const oldPurpose=mevcut.learnerProfile?.purpose,oldStage=mevcut.learnerProfile?.educationStage;
       mevcut = r; sifreZorunlu = false; doldur(r);
+      if((oldPurpose!==r.learnerProfile?.purpose||oldStage!==r.learnerProfile?.educationStage)&&window.dmLearningRoute?.set){const route=r.learnerProfile?.purpose==='school'&&['primary','middle'].includes(r.learnerProfile?.educationStage)?'school':'independent';await window.dmLearningRoute.set(route,{reopen:false});}
+      window.dmLearnerProfile=r.learnerProfile;
       mesaj(r.mesaj || "Bilgilerin kaydedildi.", "tamam");
       try { document.dispatchEvent(new CustomEvent("dm:kisisel-bilgiler", { detail: r })); } catch (e) {}
       if(secenek.zorunlu) { window.dmContactFrozen=false; kapat(); }

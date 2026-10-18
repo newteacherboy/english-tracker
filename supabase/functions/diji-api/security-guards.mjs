@@ -81,7 +81,7 @@ export function protectStudentState(incoming,stored,now=Date.now()){
  return result;
 }
 export function reservedStudentKey(key){
- return ['yo_gunluk','puan_gorulen','weekly_target'].includes(key)||String(key).startsWith('energy_daily:');
+ return ['yo_gunluk','puan_gorulen','weekly_target','learner_profile_v1','placement_start_v1'].includes(key)||String(key).startsWith('energy_daily:');
 }
 export function dailyGoalCredit(state,day){
  const goal=[30,50,100,150].includes(Number(state.hedef))?Number(state.hedef):50;

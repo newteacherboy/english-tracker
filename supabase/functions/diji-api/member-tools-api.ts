@@ -1,7 +1,7 @@
-import './placement-bank.js';
+import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
 export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
- const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults']);
+ const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults']);
  const fail=(message:string,status=400)=>json({ok:false,mesaj:message},status);
  const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
  function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
@@ -16,7 +16,7 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    const {data:all,error}=await db.from('students').select('id,username,teacher_id,status,created_at');if(error)throw error;
    const pupils=(all||[]).filter((s:any)=>s.id!=='dcde2026-1015-4000-8000-000000000001').filter((s:any)=>s.teacher_id===a.teacher_id||(a.yonetici&&!s.teacher_id));
    const ids=pupils.map((s:any)=>s.id);
-   if(op==='teacherPlacementResults'){if(!ids.length)return json({ok:true,results:[]});const r=await db.from('extra_data').select('student_id,value').in('student_id',ids).eq('key_name','placement_cefr_v2');if(r.error)throw r.error;return json({ok:true,results:(r.data||[]).map((x:any)=>({student:pupils.find((s:any)=>s.id===x.student_id)?.username||x.student_id,result:x.value}))});}
+   if(op==='teacherPlacementResults'){if(!ids.length)return json({ok:true,results:[]});const r=await db.from('extra_data').select('student_id,value').in('student_id',ids).in('key_name',['placement_cefr_v2','placement_start_v1']);if(r.error)throw r.error;return json({ok:true,results:(r.data||[]).map((x:any)=>({student:pupils.find((s:any)=>s.id===x.student_id)?.username||x.student_id,result:x.value}))});}
    const {data:marks}=await db.from('audit_logs').select('created_at').eq('operation','teacherNotificationRead').eq('target',a.teacher_id).order('created_at',{ascending:false}).limit(1);
    if(op==='teacherNotificationRead'){const ins=await db.from('audit_logs').insert({actor_role:'teacher',actor_id:a.teacher_id,operation:op,target:a.teacher_id,payload:{}});if(ins.error)throw ins.error;return json({ok:true});}
    const last=Date.parse(marks?.[0]?.created_at||'')||Date.now()-7*86400000;
@@ -29,7 +29,7 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
   if(error)throw error;if(!s||s.status!=='approved')return fail('Hesap aktif değil.',403);
   const sid=s.id;
   if(op==='memberStatus'){
-   const [exam,yo]=await Promise.all([get(sid,'placement_cefr_v2'),get(sid,'yo')]);
+   const [exam,yo,startExam,profile]=await Promise.all([get(sid,'placement_cefr_v2'),get(sid,'yo'),get(sid,'placement_start_v1'),get(sid,'learner_profile_v1')]);
    // Per-account, server-dated login evidence; never trust another browser account's streak.
    const today=day(),now=new Date().toISOString();
    const login=await db.from('extra_data').upsert({student_id:sid,key_name:'member_login:'+today,value:{day:today},updated_at:now},{onConflict:'student_id,key_name',ignoreDuplicates:true});if(login.error)throw login.error;
@@ -45,7 +45,7 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    let loginStreak=0;for(let i=0;i<370;i++){const stamp=new Date(Date.now()+10800000-i*86400000).toISOString().slice(0,10);if(!days.has(stamp))break;loginStreak++;}
    let maxLoginStreak=0,run=0,previous='';for(const stamp of [...days].sort()){run=previous&&Date.parse(stamp)-Date.parse(previous)===86400000?run+1:1;maxLoginStreak=Math.max(maxLoginStreak,run);previous=stamp;}
    const firstValue=parse(first?.value);
-   return json({ok:true,emailVerified:!!s.email_verified_at,email:s.email||'',hasPlacement:!!exam?.value||!!parse(yo?.value).seviye,placement:exam?.value||null,teacherLinked:!!s.teacher_id,serverNow:now,maxLoginStreak,loginStreak,loginDays:days.size,memberFirstSeenAt:firstValue.at,welcomeEligible:!!firstValue.welcomeEligible,welcomeEarned:!!firstValue.welcomeEligible&&Date.now()-Date.parse(firstValue.at)>=120000});
+   return json({ok:true,emailVerified:!!s.email_verified_at,email:s.email||'',hasPlacement:!!exam?.value||!!startExam?.value||!!parse(yo?.value).seviye,placement:exam?.value||null,startingPoint:startExam?.value||null,learnerProfile:profile?.value||null,teacherLinked:!!s.teacher_id,serverNow:now,maxLoginStreak,loginStreak,loginDays:days.size,memberFirstSeenAt:firstValue.at,welcomeEligible:!!firstValue.welcomeEligible,welcomeEarned:!!firstValue.welcomeEligible&&Date.now()-Date.parse(firstValue.at)>=120000});
   }
   if(op==='memberEmailResend'){
    if(s.email_verified_at)return json({ok:true,verified:true,mesaj:'E-posta adresin zaten doğrulanmış.'});
@@ -55,7 +55,7 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
   if(op==='memberReminderClaim'){
    const kind=b.kind==='email'?'email':b.kind==='placement'?'placement':'';if(!kind)return fail('Geçersiz uyarı.');
    if(kind==='email'&&s.email_verified_at)return json({ok:true,show:false});
-   if(kind==='placement'){const [exam,yo]=await Promise.all([get(sid,'placement_cefr_v2'),get(sid,'yo')]);if(exam?.value||parse(yo?.value).seviye)return json({ok:true,show:false});}
+   if(kind==='placement'){const [exam,yo,startExam]=await Promise.all([get(sid,'placement_cefr_v2'),get(sid,'yo'),get(sid,'placement_start_v1')]);if(exam?.value||startExam?.value||parse(yo?.value).seviye)return json({ok:true,show:false});}
    const prefix='member_notice:'+kind+':'+(kind==='email'?'rolling':week())+':';
    const r=await db.from('extra_data').select('key_name,updated_at').eq('student_id',sid).like('key_name',prefix+'%').gte('updated_at',new Date(Date.now()-(kind==='email'?86400000:7*86400000)).toISOString());if(r.error)throw r.error;
    const records=r.data||[];if(kind==='placement'&&records.length>=2)return json({ok:true,show:false});
@@ -83,6 +83,21 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    const word=parse(record.value),correct=String(b.answer||'').trim().toLocaleLowerCase('en')===String(word.en).trim().toLocaleLowerCase('en');
    if(correct){const r=await db.from('extra_data').delete().eq('student_id',sid).eq('key_name',key).eq('updated_at',record.updated_at);if(r.error)throw r.error;}
    return json({ok:true,correct,answer:word.en});
+  }
+  if(op==='startPlacementSave'){
+   const exam=(globalThis as any).DMStartPlacementBank;
+   if(b.version!==exam.version)return fail('Test sürümü değişti; yeniden başlat.');
+   let result;try{result=exam.evaluate(b.records);}catch(e){return fail((e as Error).message);}
+   const saved={...result,completedAt:new Date().toISOString(),writing:String(b.writing||'').trim().slice(0,3000),speaking:String(b.speaking||'').trim().slice(0,3000)};
+   const r=await db.from('extra_data').upsert({student_id:sid,key_name:'placement_start_v1',value:saved,updated_at:saved.completedAt},{onConflict:'student_id,key_name'});if(r.error)throw r.error;
+   return json({ok:true,result:saved});
+  }
+  if(op==='startPlacementFollowup'){
+   const exam=parse((await get(sid,'placement_start_v1'))?.value);if(!exam.completedAt)return json({ok:true,pending:false});
+   const rows=await db.from('papi_story_progress').select('chapter,mistakes,updated_at').eq('student_id',sid).eq('completed',true).eq('replay',false).gte('chapter',1000).gte('updated_at',exam.completedAt).order('updated_at',{ascending:true}).limit(5);if(rows.error)throw rows.error;
+   const count=(rows.data||[]).length;if(count<3)return json({ok:true,pending:true,completed:count});
+   const mistakes=(rows.data||[]).reduce((n:any,r:any)=>n+Number(r.mistakes||0),0),recommendation=mistakes>=count*3?'reinforce':mistakes===0?'challenge':'continue';
+   return json({ok:true,pending:false,completed:count,recommendation,level:exam.level});
   }
   if(op==='placementSave'){
    const exam=(globalThis as any).DMPlacementExam;
