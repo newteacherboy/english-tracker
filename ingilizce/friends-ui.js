@@ -62,7 +62,10 @@
     return people.length ? people.slice(0,6).map(id=>`<button class="fr-person" data-friend-action="profile" data-person="${esc(id)}" aria-label="${esc(id)} vitrinini aç">${avatar(known.find(x=>norm(x.id)===norm(id))?.ad || id,52)}${badge(id)}<b>${esc(id)}</b></button>`).join('') : `<div class="fr-empty">${loaded?'Takip ettiğin arkadaşların burada görünür.':'Arkadaşların yükleniyor…'}<button data-friend-action="find">${loaded?'Arkadaş ekle':'Arkadaş ara'}</button></div>`;
   }
   function showcaseSummary(o) {
-    const earned = (typeof maVitrinSecim !== 'undefined' ? maVitrinSecim : []).map(i=>(o.rozetler||[])[i]).filter(Boolean).slice(0,3);
+    const allBadges = Array.isArray(o.rozetler) ? o.rozetler : [];
+    const selections = typeof maVitrinSecim !== 'undefined' && Array.isArray(maVitrinSecim) ? maVitrinSecim : [];
+    const chosen = [...new Set(selections)].filter(i=>Number.isInteger(i)&&i>=0&&i<allBadges.length).map(i=>allBadges[i]).filter(Boolean).slice(0,3);
+    const earned = chosen.length ? chosen : allBadges.filter(Boolean).slice(-3).reverse();
     const badges = Array.from({length:3},(_,i)=>earned[i]?`<span class="fr-earned" title="${esc(earned[i][1])}">${earned[i][0]||icon('medal')}</span>`:'<span class="fr-badge-slot" aria-label="Henüz seçilmemiş rozet">+</span>').join('');
     return `<section class="fr-summary fr-showcase"><div class="fr-section-head"><h3>${icon('people')} Vitrinim</h3><span class="fr-level">Sv. ${level()}</span></div><div class="fr-showcase-body">${avatar(who(),86)}${art('papi-friends','fr-showcase-papi')}<div class="fr-showcase-info"><span class="fr-streak">🔥 ${Math.max(0,Number(o.seri)||0)} gün</span><div class="fr-badges">${badges}</div></div></div><button class="fr-open" data-friend-action="vitrin" data-friends-gate="vitrin">${permitted('vitrin')?'Vitrinimi aç':'🔒 Vitrinim · 15. seviye'} ${icon('chevron')}</button></section>`;
   }
