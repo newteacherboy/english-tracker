@@ -2,7 +2,7 @@ import {placementStudyAccess} from './study-placement-access.mjs';
 import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
 export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
- const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave']);
+ const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave','communicationStats']);
  const fail=(message:string,status=400)=>json({ok:false,mesaj:message},status);
  const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
  function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
@@ -12,8 +12,19 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
   if(!ops.has(op))return null;
   if(method!=='POST')return fail('POST gerekli.',405);
   if(!a)return json({ok:false,hata:'oturum',mesaj:'Önce giriş yap.'},401);
-  if(op==='communicationRulesList'||op==='communicationRulesSave'){
+  if(['communicationRulesList','communicationRulesSave','communicationStats'].includes(op)){
    if(a.role!=='teacher'||!a.yonetici)return fail('Yalnızca yönetici bu kuralları yönetebilir.',403);
+   if(op==='communicationStats'){
+     const today=new Date(Date.now()+10800000).toISOString().slice(0,10);
+     const [queued,sent,failed,budget]=await Promise.all([
+       db.from('mail_queue').select('id',{count:'exact',head:true}).is('sent_at',null),
+       db.from('mail_queue').select('id',{count:'exact',head:true}).gte('sent_at',today+'T00:00:00+03:00'),
+       db.from('mail_queue').select('id',{count:'exact',head:true}).is('sent_at',null).not('error','is',null),
+       db.from('dm_mail_budget').select('attempts').eq('day',today).maybeSingle()
+     ]);
+     for(const result of [queued,sent,failed,budget])if(result.error)throw result.error;
+     return json({ok:true,summary:{queued:queued.count||0,sentToday:sent.count||0,failedPending:failed.count||0,attemptsToday:budget.data?.attempts||0}});
+   }
    if(op==='communicationRulesList'){
      const {data,error}=await db.from('dm_communication_rules').select('key,category,title,enabled,settings,updated_at').order('category').order('key');
      if(error)throw error;
