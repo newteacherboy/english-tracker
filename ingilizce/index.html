@@ -13812,7 +13812,7 @@ function maKisiKur(u, b) {
         av: (b.takili && b.takili.renk) || '#e5e7eb', aks: (b.takili && b.takili.aks) || '',
         lig: L.ad, ligKisa: L.kisa, ligIkon: L.ikon, ligRenk: L.renk, sira: L.sira, puan: L.puan,
         playerLevel: DijiProgressRules.progress(Number(b.totalXp||0)).level, xp, hafta: xp, seviye: (b.seviye && b.seviye.sonuc) || '—', seri: 0,
-        rozetler: (u.rozetListesi ? u.rozetListesi.filter(r => (u.genelOrtalama || 0) >= r.gerekliPuan) : []).map(r => [r.emoji, r.rozetAdi])
+        rozetler: (Array.isArray(u.rozetListesi) ? u.rozetListesi : []).map(r => [r.emoji, r.rozetAdi])
     };
 }
 function maBen(){const u=maSosyalListe.find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||(globalDataCache||[]).find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||{ogrenci:aktifOgrenciAdi||"Sen"};const yerel=(typeof yo!=="undefined"&&yo)?yo:{},o=maKisiKur({ogrenci:u.ogrenci,Sinif:u.sinif??u.Sinif??"",genelOrtalama:u.genelOrtalama??u.genelPuan??0,rozetListesi:u.rozetListesi||[]},Object.keys(yerel).length?yerel:u);o.id="ben";o.av=(yerel.takili&&yerel.takili.renk)||"#bdeef6";o.seri=Number(u.loginDays??u.streak??0);o.puan=Number(u.genelPuan??u.genelOrtalama??0);o.genelPuan=o.puan;o.dilSeviyesi=String(yerel.seviye?.sonuc||u.seviye?.sonuc||'A1');o.vitrinSecim=maVitrinSecim;return o;}
