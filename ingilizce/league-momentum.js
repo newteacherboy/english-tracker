@@ -11,7 +11,7 @@ const store={read(key){try{return JSON.parse(localStorage.getItem(key)||'null')}
 write(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}};
 function week(){if(typeof yoHaftaKodu==='function')return String(yoHaftaKodu());const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
 function day(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
-function allowed(){return !!who()&&normalize(who())!=='teacher'&&!window.dmGuestMode&&document.getElementById('panel-alani')?.style.display==='block'&&window.dmProgression?.allowed?.('lig')!==false;}
+function allowed(){if(window.dmCommunicationNoticeRules?.league_momentum?.enabled===false)return false;return !!who()&&normalize(who())!=='teacher'&&!window.dmGuestMode&&document.getElementById('panel-alani')?.style.display==='block'&&window.dmProgression?.allowed?.('lig')!==false;}
 function blocked(){return document.hidden||!!document.querySelector('#dmRouteChoice,#dmPlacementExam,#dmEmailVerification,#dmStoryLesson,#mlThemeList,.dm-member-overlay,.dc-fullscreen-overlay.active,#dmLeagueMomentum');}
 function close(){document.getElementById('dmLeagueMomentum')?.remove();}
 function show(payload,owner){
