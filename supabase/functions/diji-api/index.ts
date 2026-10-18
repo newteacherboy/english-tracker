@@ -1,3 +1,4 @@
+import {socialSafetyAPI} from './social-safety.mjs';
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
 import {verifiedGamesAPI} from './verified-games.mjs';
 import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
@@ -48,6 +49,7 @@ const cachedContent = contentCache(json);
 const studentManagement = adminStudentsAPI(supabase,json,hashPassword,{verifyPassword,hash:sha256,attempts:denemeSay,audit:denemeYaz});
 const contacts = contactPolicyAPI(supabase,json);
 const myWorld = myWorldAPI(supabase,json);
+const socialSafety=socialSafetyAPI({db:supabase,json,hash:sha256,hashPassword,verifyPassword,queue:kuyrugaEkle});
 
 const OGRENCI_OTURUM_GUN = 30;
 const OGRETMEN_OTURUM_SAAT = 8;           // [YAMA 1] öğretmen oturumu 30 gün değil 8 saat
@@ -485,6 +487,8 @@ async function leaderboardGet(op: string, body: any, q: URLSearchParams) {
   if (cn !== null && !/^Büyü/i.test(cls)) query = query.eq("class_no", cn);
   const { data } = await query;
   let rows = (data || []).filter(publicParticipant);
+  const visibleScores=new Set((await socialSafety.filterStudents(rows.map((r:any)=>({id:r.student_id})),null)).map((r:any)=>r.id));
+  rows=rows.filter((r:any)=>visibleScores.has(r.student_id));
   if (/^Büyü/i.test(cls)) rows = rows.filter((r: any) => String(r.extra?.legacy_class || r.unit_name || "").toLowerCase() === cls.toLowerCase());
   if (adil) {
     const gorulen = new Set<string>();
@@ -1316,6 +1320,8 @@ async function handle(req: Request) {
     return json(data);
   }
 
+  const safetyResponse=await socialSafety.handle(op,body,a,req.method);if(safetyResponse)return safetyResponse;
+  const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
   const memberResponse=await memberToolsAPI({db:supabase,json,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
@@ -1600,7 +1606,7 @@ async function handle(req: Request) {
     const ym = new Map((yo || []).map((x: any) => [x.student_id, x]));
     const dayMap=new Map((days||[]).map((x:any)=>[x.student_id,Number(x.login_days)||0]));
     const rm = new Map<string, any[]>(); for (const r of sc || []) { if (!rm.has(r.student_id)) rm.set(r.student_id, []); rm.get(r.student_id)!.push(raporSatiri(r)); }
-    return json((st || []).filter(publicParticipant).filter((s: any) => encName(s.username) !== "teacher").map((s: any) => {
+    return json((await socialSafety.filterStudents(st||[],a.student_id)).filter(publicParticipant).filter((s: any) => encName(s.username) !== "teacher").map((s: any) => {
       const p = (s.profile && typeof s.profile === "object") ? s.profile : {}, y: any = ym.get(s.id) || {}, r = rm.get(s.id) || [];
       const ozel = gorebilir(s), dersPuani = ozel ? (Number(s.points || 0) > 0 ? Number(s.points) : ortala(r, "genel")) : 0;
       return {
@@ -1790,9 +1796,9 @@ async function handle(req: Request) {
   }
   if (op === "akisTumu") {
     const deny = await requireStudent(a, ""); if (deny) return deny;
-    const { data } = await supabase.from("feed_events").select("id,student_id,event_type,payload,created_at,students!feed_events_student_id_fkey(username)").order("created_at", { ascending: false }).limit(400);
+    const { data } = await supabase.from("feed_events").select("id,student_id,target_student_id,safety_hidden,event_type,payload,created_at,students!feed_events_student_id_fkey(username)").order("created_at", { ascending: false }).limit(400);
     const b = new Map<string, number>(), tb = new Map<string, number>(), liste: any[] = [];
-    for (const e of (data || []).filter(publicParticipant)) {
+    for (const e of (await socialSafety.filterEvents(data||[],a.student_id)).filter(publicParticipant)) {
       const p = e.payload || {};
       if (SOSYAL.has(e.event_type)) { if (p.event_id) { const m = e.event_type === "tebrik" ? tb : b; m.set(p.event_id, (m.get(p.event_id) || 0) + 1); } continue; }
       const ad = (e as any).students?.username || p.student_name || ""; if (!ad || liste.length >= 150) continue;
@@ -2646,7 +2652,7 @@ async function handle(req: Request) {
     if (q.get("tumu") !== "1" && body.tumu !== "1") query = query.is("read_at", null);
     const { data } = await query;
     // [YAMA 19] gönderen alanında kimlik numarası yerine isim
-    return json({ liste: (data || []).filter(publicParticipant).map((x: any) => ({ sat: x.id, tarih: x.created_at, gonderen: x.sender?.username || "", tur: x.type, metin: x.message, okundu: !!x.read_at, duyuruId: x.payload?.duyuruId || null })) });
+    return json({ liste: (await socialSafety.filterNotifications(data||[],s.id)).filter(publicParticipant).map((x: any) => ({ sat: x.id, tarih: x.created_at, gonderen: x.sender?.username || "", tur: x.type, metin: x.message, okundu: !!x.read_at, duyuruId: x.payload?.duyuruId || null })) });
   }
   if (op === "bildirimOkundu") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;

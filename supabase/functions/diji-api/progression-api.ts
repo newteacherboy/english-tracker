@@ -1,3 +1,4 @@
+import {socialSafetyAPI} from './social-safety.mjs';
 import './progression-catalog.js';
 import items from './progression-shop.json' with {type:'json'};
 const C=(globalThis as any).DijiProgressionCatalog;
@@ -66,7 +67,7 @@ export function progressionAPI(db:any,json:any){
    return json(data);
   }
   if(op==='seviyeDurumu')return json({ok:true,...await context(a)});
-  if(op==='seviyeLigListesi'){const {data,error}=await db.rpc('dm_progress_league');if(error)throw error;return json({ok:true,liste:data});}
+  if(op==='seviyeLigListesi'){const {data,error}=await db.rpc('dm_progress_league');if(error)throw error;return json({ok:true,liste:await socialSafetyAPI({db,json}).filterStudents(data||[],a.student_id)});}
   if(op==='seviyeSandikAc'){const {data,error}=await db.rpc('dm_progress_chest',{actor:a.student_id,chest:String(body.sandik||'')});if(error)return deny(error.message);return json({ok:true,...data});}
   if(op==='seviyeEkJokerAl'){const {data,error}=await db.rpc('dm_progress_purchase',{actor:a.student_id,item_key:'extra-joker',is_showcase:false});if(error)return deny(error.message);return json({ok:true,...data});}
   const item=(items as any[]).find(x=>x.id===String(body.item));if(!item)return json({ok:false,mesaj:'Ürün bulunamadı.'},400);

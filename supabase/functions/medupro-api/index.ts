@@ -1,3 +1,4 @@
+import {socialSafetyAPI} from './social-safety.mjs';
 import {readJsonBounded,authenticatedBudgets} from './security-guards.mjs';
 import './score-rules.js';
 import { progressionAPI } from './progression-api.ts';
@@ -11,6 +12,7 @@ const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,
 const release=releaseAPI(supabase,json);
 const progression=progressionAPI(supabase,json);
 const contacts=contactPolicyAPI(supabase,json);
+const socialSafety=socialSafetyAPI({db:supabase,json});
 const DEMO_ID='dcde2026-1015-4000-8000-000000000001';
 const publicParticipant=(s:any)=>![s?.id,s?.student_id,s?.player_a,s?.player_b,s?.winner].includes(DEMO_ID)&&![s?.username,s?.gonderen,s?.alici,s?.winner,s?.sender?.username,s?.a?.username,s?.b?.username].some(x=>String(x||'').trim().toLowerCase()==='dijimedu_demo');
 const num=(v:any)=>Number.isFinite(Number(v))?Number(v):0;
@@ -54,7 +56,7 @@ async function dmPresence(op:string,body:any,a:any){
  const showOnline=await release.on('cevrimici');
  const online=new Map<string,string>();
  if(students.length&&showOnline){const {data,error}=await supabase.from('portal_sessions').select('student_id,last_seen_at').eq('role','student').in('student_id',students.map(s=>s.id)).gt('expires_at',now.toISOString()).gte('last_seen_at',new Date(now.getTime()-300000).toISOString());if(error)throw error;for(const s of data||[]){const t=online.get(s.student_id);if(!t||s.last_seen_at>t)online.set(s.student_id,s.last_seen_at);}}
- return json({ok:true,serverNow:now.toISOString(),liste:students.filter(publicParticipant).map(s=>({ad:s.username,sinif:s.class_no,online:showOnline&&online.has(s.id),seenAt:showOnline?(online.get(s.id)||null):null})).sort((a,b)=>Number(b.online)-Number(a.online)||a.ad.localeCompare(b.ad,'tr'))});
+ return json({ok:true,serverNow:now.toISOString(),liste:(await socialSafety.filterStudents(students,a.student_id)).filter(publicParticipant).map(s=>({ad:s.username,sinif:s.class_no,online:showOnline&&online.has(s.id),seenAt:showOnline?(online.get(s.id)||null):null})).sort((a,b)=>Number(b.online)-Number(a.online)||a.ad.localeCompare(b.ad,'tr'))});
 }
 async function dmGiftMerge(id:string,value:any){
  let v=value||{};if(typeof v==='string'){try{v=JSON.parse(v);}catch{return value;}}
@@ -117,9 +119,11 @@ Deno.serve(async(req:Request)=>{
   if(!data.allowed){const r=json({ok:false,mesaj:'Çok fazla istek. Biraz sonra tekrar dene.'},429);r.headers.set('Retry-After',String(Math.max(1,Number(data.retryAfter)||60)));return r;}
  }
  if(a.student_id===DEMO_ID&&['duelloGonder','duelloYanit','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur','ogrenciEngelle','ogrenciEngelKaldir'].includes(op))return json({ok:false,mesaj:'Tanıtım hesabında diğer öğrencilere istek gönderilmez.'},403);
- const contactDeny=await contacts.guard(op,a);if(contactDeny)return contactDeny;
- const levelDeny=a.classroomTeacher?null:await progression.guard(op,body,q,a);if(levelDeny)return levelDeny;
- const denied=await release.guard(op,body,q,a);if(denied)return denied;
+ const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
+ const protective=['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir'].includes(op);
+ const contactDeny=protective?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
+ const levelDeny=protective||a.classroomTeacher?null:await progression.guard(op,body,q,a);if(levelDeny)return levelDeny;
+ const denied=protective?null:await release.guard(op,body,q,a);if(denied)return denied;
  if(['aktifDurum','takipDavetListesi'].includes(op))return await dmPresence(op,body,a);
  if(["duelloGonder","duelloYanit","duellolarim"].includes(op)){
   let arg:any={},action="list";
@@ -128,8 +132,8 @@ Deno.serve(async(req:Request)=>{
   const {data,error}=await supabase.rpc("dm_duel_action",{actor:a.student_id,action,arg});if(error)return json({ok:false,mesaj:error.message},400);if(Array.isArray(data?.liste))data.liste=data.liste.filter(publicParticipant);return json(data);
  }
  if(op==="bildirimlerim"){
-  const {data,error}=await supabase.from("notifications").select("id,created_at,type,message,payload,read_at,sender:students!notifications_sender_student_id_fkey(username)").eq("recipient_student_id",a.student_id).is("read_at",null).order("created_at",{ascending:false}).limit(100);if(error)throw error;
-  return json({ok:true,liste:(data||[]).filter(publicParticipant).map((x:any)=>({sat:x.id,tarih:x.created_at,tur:x.type,metin:x.message,gonderen:x.sender?.username||"",matchId:x.payload?.matchId||null,okundu:false}))});
+  const {data,error}=await supabase.from("notifications").select("id,sender_student_id,created_at,type,message,payload,read_at,sender:students!notifications_sender_student_id_fkey(username)").eq("recipient_student_id",a.student_id).is("read_at",null).order("created_at",{ascending:false}).limit(100);if(error)throw error;
+  return json({ok:true,liste:(await socialSafety.filterNotifications(data||[],a.student_id)).filter(publicParticipant).map((x:any)=>({sat:x.id,tarih:x.created_at,tur:x.type,metin:x.message,gonderen:x.sender?.username||"",matchId:x.payload?.matchId||null,okundu:false}))});
  }
  return await dmExtension(op,body,q,a)||json({ok:false,mesaj:"Bilinmeyen işlem."},404);
  }catch(e){console.error(e);return json({ok:false,mesaj:"İşlem tamamlanamadı. Tekrar dene."},500)}

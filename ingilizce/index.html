@@ -14339,7 +14339,7 @@ function maAkisListeHtml() {
                 let o = { ad: e.ogr, maskot: typeof ogrenciMaskotSec === 'function' ? ogrenciMaskotSec(e.ogr) : '🦜', av: '#fde68a' };
         let renk = e.tur === 'eksi' ? '#cbd5e1' : MA_SERIT[i % 5];
         let aksiyon = e.tur === 'eksi' ? '' : `<div class="aksiyon"><button class="${b ? 'basili' : ''}" onclick="maBegen('${id}', this)">${b ? '❤️' : '🤍'} Beğen</button><button class="${t ? 'basili' : ''}" onclick="maTebrikEt('${id}', this)">🎉 Tebrik et</button></div>`;
-        return `<div class="akis-kart" style="--serit:${renk}"><span class="akis-ikon">${guvenliMetin(String(e.ikon || "✨"))}</span>
+        return `<div class="akis-kart" data-safety-event="${guvenliMetin(String(e.k))}" style="--serit:${renk}"><span class="akis-ikon">${guvenliMetin(String(e.ikon || "✨"))}</span>
       <div class="akis-ust" data-o="${guvenliMetin(String(e.ogr))}" onclick="maAkisKisiAc(this.dataset.o)">${maAvatar(o)}<span><b>${guvenliMetin(String(e.ad))}</b><small>${maZamanOnce(e)}</small></span></div>
       <div class="akis-metin">${guvenliMetin(String(e.metin))}</div>${aksiyon}</div>`;
     }).join('');
@@ -26418,10 +26418,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261018-mobile-fit-1"></script>
 <link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261017-ten-mascots-1"></script><script defer src="story-path.js?v=20261016-thematic-240"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
-<script defer src="medupro.js?v=20261015-member-fixes-2"></script>
+<script defer src="medupro.js?v=20261018-safety-2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261016-rally-1">
 <script defer src="activity-ui.js?v=20261016-flow-2"></script>
-<script defer src="bottom-nav.js?v=20261018-approved-final-1"></script>
+<script defer src="bottom-nav.js?v=20261018-safety-2"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261013-catalog"></script>
 <script defer src="weekly-ui.js?v=20261012-stability-1"></script>
@@ -26537,5 +26537,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="play-navigation.js?v=20261018-harf-2"></script>
 <link rel="stylesheet" href="email-guide.css?v=20261018-compact-2">
 <link rel="stylesheet" href="panel-fixes.css?v=20261018-1">
+<link rel="stylesheet" href="social-safety.css?v=20261018-1">
+<script defer src="social-safety.js?v=20261018-1"></script>
 </body>      
         </html>
