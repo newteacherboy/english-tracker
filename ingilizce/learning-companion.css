@@ -64,3 +64,15 @@
 .dm-parkur-current{font-weight:800;color:#243e55;font-size:13px;min-width:0}
 .dm-parkur-shortcut button{font:800 12px Nunito,system-ui;background:#f2edff;border:1px solid #e1d5ff;border-radius:12px;padding:9px;color:#6746c2;min-height:38px;white-space:nowrap}
 @media(max-width:390px){#suLevels .lc-entry{padding:8px;gap:6px}#suLevels .lc-entry img{max-width:51px}#suLevels .lc-entry .lc-button{min-width:70px;padding:7px}}
+
+
+/* Closed by default: story/dialogue stays one compact row. */
+#suLevels .lc-entry:has(.lc-story-accordion){display:block;padding:0!important;min-height:0;margin:7px 0 4px}
+.lc-story-accordion{width:100%}.lc-story-accordion>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 14px;min-height:66px}
+.lc-story-accordion>summary::-webkit-details-marker{display:none}
+.lc-story-icon{width:42px;height:42px;display:grid;place-items:center;background:#e7f6ed;border-radius:13px;font-size:23px;flex:none}
+.lc-story-name{flex:1;display:grid;gap:2px;min-width:0}.lc-story-name strong{font-size:15px;color:#214657}.lc-story-name small{font-size:12px;color:#617580}
+.lc-story-arrow{font-size:24px;color:#278b73;transition:transform .2s}.lc-story-accordion[open] .lc-story-arrow{transform:rotate(180deg)}
+.lc-story-expand{border-top:1px solid #dbeae8;padding:9px 13px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.lc-story-expand p{font-size:12px;margin:0;color:#56707c}.lc-story-expand .lc-button{width:auto!important;margin-left:auto}
+.lc-story-accordion>summary:focus-visible{outline:3px solid #337fba;outline-offset:2px;border-radius:16px}
