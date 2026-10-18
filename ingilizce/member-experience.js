@@ -7,7 +7,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const ready=()=>!!who()&&who().toLowerCase()!=='teacher'&&!window.dmGuestMode&&!!Y()&&(!window.yoHazirMi||window.yoHazirMi())&&$('panel-alani')?.style.display==='block';
 let welcomeTimer=null,welcomeOwner='';
 let gamesEmailShown=false,emailNextAt=0,emailGamesVisited=false,emailPromptBusy=false;
-async function loadNoticePolicies(){try{const d=await api('communicationNoticePolicy');window.dmCommunicationNoticeRules=Object.fromEntries((d.rules||[]).map(r=>[r.key,r]));document.dispatchEvent(new Event('dm:notice-policies'));}catch(e){console.warn('[Duyuru kuralları]',e.message);}}
+async function loadNoticePolicies(){if(!ready())return;const owner=who();try{const d=await api('communicationNoticePolicy');if(owner!==who())return;window.dmCommunicationNoticeRules=Object.fromEntries((d.rules||[]).map(r=>[r.key,r]));document.dispatchEvent(new Event('dm:notice-policies'));}catch(e){console.warn('[Duyuru kuralları]',e.message);}}
 let actor='',status=null,busy=false,lastRead=0,started=Date.now(),examAt=Date.now()+120000+Math.random()*480000,dismissedRoute=false,refreshPending=false;
 async function api(islem,data={}){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem,t:localStorage.getItem('ing_token')||'',...data}),signal:controller.signal});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı.');return d;}finally{clearTimeout(timeout);}}
 function sheet(title,content,id='dmMemberDialog'){
@@ -143,7 +143,7 @@ function installScoreHook(){const score=window.OC;if(!score||score.yanlis?.dmRev
 setInterval(()=>{if(!ready())return;installScoreHook();if(!document.hidden){check();flush();}},30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){check(true,true);flush();}});window.addEventListener('online',()=>{check(true,true);flush();});
 window.addEventListener('focus',()=>{if(!status?.emailVerified)check(true,true);});
-window.addEventListener('pageshow',()=>check(true,true));
+window.addEventListener('pageshow',()=>{check(true,true);void loadNoticePolicies();});
 window.addEventListener('storage',e=>{if(e.key==='dm_email_verified'){try{const mark=JSON.parse(e.newValue||'null');if(mark?.student===who())check(true,true);}catch{}}});
 function emailSafe(){
  if(document.hidden||window.dmPapiNotices?.blocked())return false;
