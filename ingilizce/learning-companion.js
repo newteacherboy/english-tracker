@@ -66,6 +66,16 @@ function mount(){
   let plan=$('lcPlan');if(!plan){plan=document.createElement('section');plan.id='lcPlan';plan.className='lc-plan';plan.setAttribute('aria-label','Bugünkü çalışma planın');root.prepend(plan);paintPlan();}
   else if(plan.parentElement!==root)root.prepend(plan);
   goalCarousel(root);
+  let switchRow=root.querySelector(':scope > .dm-parkur-shortcut');
+  if(!switchRow){
+   switchRow=document.createElement('div');switchRow.className='dm-parkur-shortcut';
+   switchRow.innerHTML='<span class="dm-parkur-current" aria-label="Bulunduğun bölüm">🧭 <b>Öğrenme Yolum</b></span><button type="button" aria-label="Parkur Değiştir">⇄ Parkur Değiştir</button>';
+   const mapPath=root.querySelector('.rt-path,.rt-reward-route');(mapPath||root.lastElementChild)?.before(switchRow);
+   switchRow.querySelector('button').addEventListener('click',()=>{
+    const existing=root.querySelector('.rt-map-switch');
+    if(existing)existing.click();else document.querySelector('#rtProfileBackdrop [data-profile="route"]')?.click();
+   });
+  }
   load().catch(e=>{const note=$('lcPlan')?.querySelector('.lc-plan-foot>span');if(note)note.textContent='Plan alınamadı. Başla ile tekrar dene.';});
  }
  const study=$('suLevels');if(study&&visible(study)&&!$('lcDialogueEntry')){
