@@ -7,6 +7,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const ready=()=>!!who()&&who().toLowerCase()!=='teacher'&&!window.dmGuestMode&&!!Y()&&(!window.yoHazirMi||window.yoHazirMi())&&$('panel-alani')?.style.display==='block';
 let welcomeTimer=null,welcomeOwner='';
 let gamesEmailShown=false,emailNextAt=0,emailGamesVisited=false,emailPromptBusy=false;
+async function loadNoticePolicies(){try{const d=await api('communicationNoticePolicy');window.dmCommunicationNoticeRules=Object.fromEntries((d.rules||[]).map(r=>[r.key,r]));document.dispatchEvent(new Event('dm:notice-policies'));}catch(e){console.warn('[Duyuru kuralları]',e.message);}}
 let actor='',status=null,busy=false,lastRead=0,started=Date.now(),examAt=Date.now()+120000+Math.random()*480000,dismissedRoute=false,refreshPending=false;
 async function api(islem,data={}){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem,t:localStorage.getItem('ing_token')||'',...data}),signal:controller.signal});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı.');return d;}finally{clearTimeout(timeout);}}
 function sheet(title,content,id='dmMemberDialog'){
@@ -156,6 +157,7 @@ function emailSafe(){
 async function tryEmail(fromGames=false){
  if(fromGames)emailGamesVisited=true;
  if(!emailGamesVisited||!ready()||emailPromptBusy||Date.now()<emailNextAt)return;
+ if(window.dmCommunicationNoticeRules?.email_verification?.enabled===false)return;
  if(status?.emailVerified)return;
  if(!emailSafe())return;
  emailPromptBusy=true;const owner=who();
@@ -166,7 +168,7 @@ async function tryEmail(fromGames=false){
 }
 document.addEventListener('click',e=>{if(e.target.closest('[data-ekran="tab-aktiviteler"]'))setTimeout(()=>void tryEmail(true),350);},true);
 setInterval(()=>{if(emailGamesVisited&&Date.now()>=emailNextAt)void tryEmail();},20000);
-document.addEventListener('dm:login',()=>{gamesEmailShown=false;emailGamesVisited=false;emailNextAt=0;clearTimeout(welcomeTimer);welcomeOwner='';actor='';status=null;window.dmMemberBadgeStatus=null;dismissedRoute=false;setTimeout(check,500);});
+document.addEventListener('dm:login',()=>{window.dmCommunicationNoticeRules=null;void loadNoticePolicies();gamesEmailShown=false;emailGamesVisited=false;emailNextAt=0;clearTimeout(welcomeTimer);welcomeOwner='';actor='';status=null;window.dmMemberBadgeStatus=null;dismissedRoute=false;setTimeout(check,500);});
 const oldLogout=window.cikisYap;window.cikisYap=function(){persist();clearTimeout(flushTimer);for(const id of ['dmRouteChoice','dmPapiTour','dmPapiFirstStart','dmWordReview','dmEmailVerification','dmEmailVerifyBanner','dmPlacementInvite','dmPlacementExam','dmStartPlacement','dmStartingChoice'])$(id)?.remove();document.body.classList.remove('dm-papi-preview','dm-papi-notices-paused');const result=oldLogout?.apply(this,arguments);Promise.resolve(result).then(()=>{if(!localStorage.getItem('ing_token')){$('panel-alani').style.display='none';$('login-container').style.display='block';document.querySelectorAll('.dc-fullscreen-overlay.active').forEach(x=>x.classList.remove('active'));}});return result;};
 setTimeout(()=>{installScoreHook();check();},700);
 })();
