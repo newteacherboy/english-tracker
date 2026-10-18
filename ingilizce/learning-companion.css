@@ -41,7 +41,7 @@
 
 /* Weekly goal / daily tasks: same position, manual swipe or 3.8s rotation. */
 .dm-goal-carousel{min-width:0;position:relative;border-radius:18px;margin:8px 0 5px}
-.rt-root:has(>.lc-plan) .dm-goal-carousel .rt-tasks{display:block}
+.rt-root:has(>.lc-plan) .dm-goal-carousel .rt-tasks:not([hidden]){display:block}
 .dm-goal-pages{min-width:0}.dm-goal-pages>[hidden]{display:none!important}
 .dm-goal-pages>.rt-week,.dm-goal-pages>.rt-tasks{width:100%;margin:0;min-width:0;box-sizing:border-box}
 .dm-goal-switch{display:flex;align-items:center;justify-content:center;gap:12px;padding:4px}
