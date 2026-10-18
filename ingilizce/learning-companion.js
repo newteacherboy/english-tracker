@@ -90,7 +90,7 @@ function mount(){
 function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(mount);}
 async function repeat(){if(!student())return;await window.dmWrongWords?.review({limit:3,onComplete:()=>load(true).catch(()=>{})});}
 async function route(){routePending=true;const p=window.dmLearningRoute?.purpose?.();if(p==='independent')return window.dmThematicLearning?.continueRoute();const current=document.querySelector('#tab-dunya .rt-start');if(current)return current.click();await window.dunyaAc?.();return document.querySelector('#tab-dunya .rt-start')?.click();}
-async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();return dialogues();}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
+async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();if(!d.dialogueDone)return dialogues();window.yoToast?.('Bugünkü planın tamamlandı! Yeni görevler için yarın tekrar gel.');return;}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
 // Fallback only when the app-wide correct/wrong audio handler is unavailable.
 function companionAnswerSound(correct){
  if(typeof window.dmAnswerFeedback==='function'){window.dmAnswerFeedback(correct);return;}
