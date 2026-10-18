@@ -32,7 +32,7 @@
   .kb-alan input:focus,.kb-alan select:focus{outline:none;border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.18)}
   .kb-alan input[readonly]{background:#f6f4fb;color:#7a6ca8}
   .kb-ipucu{font-size:11.5px;color:#8a7cb8;margin-top:4px}
-  .kb-iki{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .kb-ogrenci-disinda[hidden]{display:none!important}\n  .kb-iki{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .kb-sifre{display:none;background:#fff8e6;border-color:#f6dc9b}
   .kb-sifre.acik{display:block}
   .kb-mesaj{min-height:18px;font-size:13px;font-weight:700;margin:4px 0 10px}
@@ -85,7 +85,13 @@
         <div class="kb-alan"><label for="kbKul">Kullanıcı adı</label><input id="kbKul" readonly></div>
         <div class="kb-alan"><label for="kbAd">Ad soyad <span style="font-weight:600;color:#8a7cb8">(isteğe bağlı)</span></label><input id="kbAd" maxlength="60" autocomplete="name"></div>
       </div>
-      <div class="kb-grup"><h4>Okul</h4>
+      <div class="kb-grup"><h4>Öğrenim durumum</h4>
+        <div class="kb-alan"><label for="kbOgrenimTuru">Diji-Medu'yu nasıl kullanıyorum?</label>
+          <select id="kbOgrenimTuru"><option value="school">Okul derslerim için</option><option value="independent">Kendim için İngilizce öğreniyorum</option></select>
+        </div>
+        <div class="kb-ipucu">Okula gitmiyorsan okul ve sınıf bilgisi girmen gerekmez. Mevcut okul kaydın silinmez.</div>
+      </div>
+      <div class="kb-grup kb-ogrenci-disinda" id="kbOkulGrup"><h4>Okul</h4>
         <div class="kb-alan"><label for="kbOkul">Okul adı <span style="font-weight:600;color:#8a7cb8">(isteğe bağlı)</span></label><input id="kbOkul" maxlength="120"></div>
         <div class="kb-iki">
           <div class="kb-alan"><label for="kbSinif">Sınıf</label><select id="kbSinif">${[1,2,3,4,5,6,7,8].map(n => `<option value="${n}">${n}. sınıf</option>`).join("")}</select></div>
@@ -127,10 +133,16 @@
 
     const $ = id => kutu.querySelector("#" + id);
     let mevcut = d, sifreZorunlu = false;
+    function okulGoster() {
+      $("kbOkulGrup").hidden = $("kbOgrenimTuru").value !== 'school';
+    }
+    $("kbOgrenimTuru").addEventListener("change", okulGoster);
     function doldur(x) {
       $("kbKul").value = x.kullaniciAdi || "";
       $("kbAd").value = x.adSoyad || "";
       $("kbOkul").value = x.okul || "";
+      $("kbOgrenimTuru").value = (x.okul || x.ogretmenBagli) ? 'school' : 'independent';
+      okulGoster();
       $("kbSinif").value = String(x.sinif || 5);
       $("kbSube").value = x.sube || "";
       $("kbTel").value = telGoster(x.telefon);
@@ -165,9 +177,15 @@
         sinif: Number($("kbSinif").value), sube: $("kbSube").value.trim(),
         telefon: $("kbTel").value.trim(), email: $("kbMail").value.trim()
       };
+      if ($("kbOgrenimTuru").value === "school") {
+        govde.okul = $("kbOkul").value.trim();
+        govde.sinif = Number($("kbSinif").value);
+        govde.sube = $("kbSube").value.trim();
+        if (!govde.sube) return mesaj("Okul dersleri için şube boş bırakılamaz.", "hata");
+      }
       if (!telSade(govde.telefon)) return mesaj("Telefon numarası boş bırakılamaz.", "hata");
       if (!govde.email) return mesaj("E-posta adresi boş bırakılamaz.", "hata");
-      if (!govde.sube) return mesaj("Şube boş bırakılamaz.", "hata");
+
       sifreGoster();
       if (sifreZorunlu || iletisimDegisti() || $("kbSifre").value) {
         govde.mevcutSifre = $("kbSifre").value;
