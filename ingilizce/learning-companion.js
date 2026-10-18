@@ -88,7 +88,29 @@ function mount(){
  }
 }
 function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(mount);}
-async function repeat(){if(!student())return;await window.dmWrongWords?.review({limit:3,onComplete:()=>load(true).catch(()=>{})});}
+async function repeat(){
+ if(!student())return;
+ let observer=null,lastResult='',previous='';
+ const refresh=()=>{
+  const headings=[...document.querySelectorAll('.dm-member-sheet h1,.dm-member-sheet h2,.dm-member-sheet h3,[role="dialog"] h1,[role="dialog"] h2')];
+  const h=headings.find(el=>el.textContent.trim()==='Hatırlama Zamanı');
+  if(!h)return;
+  h.style.setProperty('color','#153d51','important');
+  h.style.setProperty('-webkit-text-fill-color','#153d51','important');
+  h.style.setProperty('text-shadow','none','important');
+  const panel=h.closest('.dm-member-sheet,[role="dialog"]');
+  if(!panel)return;
+  // Feedback is only sounded after an answer result is displayed, never on the initial prompt.
+  const status=[...panel.querySelectorAll('[role="status"],[aria-live],.review-feedback,.wr-feedback')].map(x=>x.textContent.trim()).filter(Boolean).join(' ');
+  const outcome=/^(?:✓\s*)?Doğru[!.:]|(?:^|\s)Doğru!/.test(status)?true:/^(?:✗\s*)?Yanlış[!.:]|(?:^|\s)Yanlış!/.test(status)?false:null;
+  if(outcome!==null&&status!==lastResult&&status!==previous){lastResult=status;companionAnswerSound(outcome);}
+  previous=status;
+ };
+ observer=new MutationObserver(refresh);
+ observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+ try{refresh();await window.dmWrongWords?.review({limit:3,onComplete:()=>load(true).catch(()=>{})});}
+ finally{observer.disconnect();}
+}
 async function route(){routePending=true;const p=window.dmLearningRoute?.purpose?.();if(p==='independent')return window.dmThematicLearning?.continueRoute();const current=document.querySelector('#tab-dunya .rt-start');if(current)return current.click();await window.dunyaAc?.();return document.querySelector('#tab-dunya .rt-start')?.click();}
 async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();if(!d.dialogueDone)return dialogues();window.yoToast?.('Bugünkü planın tamamlandı! Yeni görevler için yarın tekrar gel.');return;}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
 // Fallback only when the app-wide correct/wrong audio handler is unavailable.
