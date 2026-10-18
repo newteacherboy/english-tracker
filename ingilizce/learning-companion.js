@@ -79,7 +79,7 @@ function mount(){
   load().catch(e=>{const note=$('lcPlan')?.querySelector('.lc-plan-foot>span');if(note)note.textContent='Plan alınamadı. Başla ile tekrar dene.';});
  }
  const study=$('suLevels');if(study&&visible(study)&&!$('lcDialogueEntry')){
-  const entry=document.createElement('section');entry.id='lcDialogueEntry';entry.className='lc-entry';entry.innerHTML=papi+'<div><h3>Hikâye ve Diyalog</h3><p>Oku, dinle ve günlük hayatta kullan.</p></div>'+action('Keşfet →','dialogues');study.append(entry);
+  const entry=document.createElement('section');entry.id='lcDialogueEntry';entry.className='lc-entry';entry.innerHTML='<details class="lc-story-accordion"><summary><span class="lc-story-icon" aria-hidden="true">📖</span><span class="lc-story-name"><strong>Hikâye ve Diyalog</strong><small>Oku, dinle ve günlük hayatta kullan.</small></span><span class="lc-story-arrow" aria-hidden="true">⌄</span></summary><div class="lc-story-expand"><p>Seviyene uygun hikâye ve diyalogları keşfet.</p>'+action('Hikâye ve Diyalogları Aç →','dialogues')+'</div></details>';study.append(entry);
  }
  // Karnem is now accessed from İlerlemem, not as a separate profile tile.
  document.querySelector('#rtProfileBackdrop [data-lc="report"]')?.remove();
