@@ -32,3 +32,14 @@ test('teacher hub exposes inventory without claiming live writable settings',()=
  assert(code.includes('Duyuru ve Mail Yönetim Merkezi'));
  assert(code.includes('henüz bağlı değil'));
 });
+
+test('central notice policy is fetched for students and checked before league or email popup',()=>{
+ const backend=read('supabase/functions/diji-api/member-tools-api.ts');
+ const league=read('ingilizce/league-momentum.js');
+ const member=read('ingilizce/member-experience.js');
+ assert(backend.includes("op==='communicationNoticePolicy'"));
+ assert(backend.includes("a.role!=='student'"));
+ assert(league.includes('dmCommunicationNoticeRules?.league_momentum?.enabled===false'));
+ assert(member.includes("api('communicationNoticePolicy')"));
+ assert(member.includes('dmCommunicationNoticeRules?.email_verification?.enabled===false'));
+});
