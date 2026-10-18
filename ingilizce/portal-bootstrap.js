@@ -11,29 +11,10 @@ const $=id=>document.getElementById(id),name=()=>typeof aktifOgrenciAdi==='undef
 // Shared visual progress for the existing portal loading layer.
 // Milestones represent finished startup stages, not downloaded bytes.
 let dmProgressObserver=null,dmProgressTimer=null,dmProgressValue=0;
-function dmProgressOverlay(){
- const overlay=$('oturumYuklemeOverlay');if(!overlay)return null;
- let widget=overlay.querySelector('#dmPortalProgress');
- if(!widget){
-  widget=document.createElement('div');widget.id='dmPortalProgress';
-  widget.setAttribute('role','progressbar');widget.setAttribute('aria-label','İngilizce portalı yükleniyor');
-  widget.setAttribute('aria-valuemin','0');widget.setAttribute('aria-valuemax','100');
-  widget.innerHTML='<div class="dm-portal-track"><div class="dm-portal-fill"></div></div><strong class="dm-portal-percent">0%</strong>';
-  overlay.append(widget);
- }
- if(!document.getElementById('dmPortalProgressStyle')){
-  const css=document.createElement('style');css.id='dmPortalProgressStyle';
-  css.textContent='#dmPortalProgress{box-sizing:border-box;display:flex;gap:12px;align-items:center;width:min(270px,82vw);margin:16px auto 0;color:#70f6d4;font:800 16px system-ui,sans-serif;position:relative;z-index:5}#dmPortalProgress .dm-portal-track{flex:1;height:11px;border-radius:99px;background:#a2ffdc33;overflow:hidden;border:1px solid #8dfcdd66}#dmPortalProgress .dm-portal-fill{width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#00ac9c,#7ef7cc);transition:width .2s ease}#dmPortalProgress strong{width:48px;text-align:right;font-variant-numeric:tabular-nums}@media(prefers-reduced-motion:reduce){#dmPortalProgress .dm-portal-fill{transition:none}}';
-  document.head.append(css);
- }
- return widget;
-}
 function dmSetProgress(n){
- const widget=dmProgressOverlay();if(!widget)return;
  dmProgressValue=Math.max(dmProgressValue,Math.min(100,Math.floor(n)));
- widget.querySelector('.dm-portal-fill').style.width=dmProgressValue+'%';
- widget.querySelector('.dm-portal-percent').textContent=dmProgressValue+'%';
- widget.setAttribute('aria-valuenow',String(dmProgressValue));
+ const overlay=$('oturumYuklemeOverlay');
+ if(overlay){overlay.style.setProperty('--dm-papi-progress',dmProgressValue+'%');overlay.setAttribute('aria-label','İngilizce portalı hazırlanıyor');}
 }
 function dmStartProgress(){
  clearInterval(dmProgressTimer);dmProgressValue=0;dmSetProgress(8);
