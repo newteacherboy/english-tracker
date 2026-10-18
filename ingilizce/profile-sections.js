@@ -285,7 +285,7 @@
       ${istat ? '' : `<p class="bd-not">${istatYukleniyor ? 'İstatistikler yükleniyor…' : 'İstatistikler şu an alınamadı. Biraz sonra tekrar dene.'}</p>`}
       <div class="bd-istat-izgara">${kartlar.map(([i, s, a]) => `<div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">${i}</span><span><b>${s}</b><small>${a}</small></span></div>`).join('')}</div>
       <section class="bd-kutu dm-karne-kart" aria-label="Karnem" style="margin-top:14px;padding:16px;border-radius:20px;background:linear-gradient(135deg,#eefbf5,#f4efff);border:1px solid #d7eae5">
-        <h3 style="margin:0 0 6px;color:#173b37">📘 Karnem</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><h3 style="margin:0;color:#173b37">📘 Karnem</h3><button type="button" class="dm-karne-detay" style="border:1px solid #c9bdfa;border-radius:15px;background:#f6f0ff;color:#6946bd;padding:9px 12px;font-weight:800;cursor:pointer">Detaylı Gör →</button></div>
         <p style="margin:0 0 12px;color:#536b69;font-size:13px">Seçili dönemdeki öğrenme sonuçların</p>
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
           <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">📖</span><span><b>${sayi(t.ders)}</b><small>Tamamlanan ders</small></span></div>
@@ -302,6 +302,7 @@
           return `<div class="bd-cubuk" title="${top} etkinlik"><div class="bd-yigin"><span class="p" style="height:${y(x.p)}%"></span><span class="l" style="height:${y(x.l)}%"></span><span class="o" style="height:${y(x.o)}%"></span></div><small>${kac(x.ad)}</small></div>`;
         }).join('')}</div>
       </div>`;
+    alan.querySelector('.dm-karne-detay')?.addEventListener('click',()=>window.dmKarneDetayAc?.());
     alan.querySelectorAll('[data-aralik]').forEach(b => b.onclick = () => { aralik = b.dataset.aralik; istatCiz(); });
     /* Öğretmenin gördüğü gelişim grafikleri (deneme, gelişim, kriter) eski profilden buraya taşınır */
     const oz = $('tab-ozet');
