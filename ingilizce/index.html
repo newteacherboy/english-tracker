@@ -13742,7 +13742,7 @@ function meduAkisKapat() {
 
 let maSekme = 'akis', maProfilId = null, maFiltre = 'herkes', maArama = '', maSinifListeSon = [], maSinifCache = null;
 let maTakip = new Set(), maBegeni = new Set(), maTebrik = new Set();
-let maVitrinSecim = JSON.parse(localStorage.getItem('ing_ma_vitrinsecim') || '[0,1,2]');
+let maVitrinSecim = JSON.parse(localStorage.getItem('ing_ma_vitrinsecim:'+String(localStorage.getItem('ing_aktifOgrenci')||'')) || '[]');
 async function maOlaylariYukle() {
     try {
         let r = await fetch(`${apiURL}?islem=akisOlaylariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`);
@@ -13763,7 +13763,7 @@ async function maOlayGonder(hedef, tur) {
 const MA_SERIT = ['#ff6b6b','#ffc93c','#34b36a','#4d96ff','#a06bff'];
 
 function maVitrinKaydet() {
-    localStorage.setItem('ing_ma_vitrinsecim', JSON.stringify(maVitrinSecim));
+    localStorage.setItem('ing_ma_vitrinsecim:'+String(aktifOgrenciAdi||''), JSON.stringify(maVitrinSecim));
 }
 function maToast(m) {
     let t = document.getElementById('maToast'); if (!t) return;
@@ -13815,7 +13815,7 @@ function maKisiKur(u, b) {
         rozetler: (u.rozetListesi ? u.rozetListesi.filter(r => (u.genelOrtalama || 0) >= r.gerekliPuan) : []).map(r => [r.emoji, r.rozetAdi])
     };
 }
-function maBen(){const u=maSosyalListe.find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||(globalDataCache||[]).find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||{ogrenci:aktifOgrenciAdi||"Sen"};const yerel=(typeof yo!=="undefined"&&yo)?yo:{},o=maKisiKur({ogrenci:u.ogrenci,Sinif:u.sinif??u.Sinif??"",genelOrtalama:u.genelOrtalama??u.genelPuan??0,rozetListesi:u.rozetListesi||[]},Object.keys(yerel).length?yerel:u);o.id="ben";o.av=(yerel.takili&&yerel.takili.renk)||"#bdeef6";o.seri=parseInt(localStorage.getItem("ing_girisSerisiSayisi")||"0");return o;}
+function maBen(){const u=maSosyalListe.find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||(globalDataCache||[]).find(x=>String(x.ogrenci).trim().toLowerCase()===String(aktifOgrenciAdi||"").toLowerCase())||{ogrenci:aktifOgrenciAdi||"Sen"};const yerel=(typeof yo!=="undefined"&&yo)?yo:{},o=maKisiKur({ogrenci:u.ogrenci,Sinif:u.sinif??u.Sinif??"",genelOrtalama:u.genelOrtalama??u.genelPuan??0,rozetListesi:u.rozetListesi||[]},Object.keys(yerel).length?yerel:u);o.id="ben";o.av=(yerel.takili&&yerel.takili.renk)||"#bdeef6";o.seri=Number(u.loginDays??u.streak??0);o.puan=Number(u.genelPuan??u.genelOrtalama??0);o.genelPuan=o.puan;o.dilSeviyesi=String(yerel.seviye?.sonuc||u.seviye?.sonuc||'A1');o.vitrinSecim=maVitrinSecim;return o;}
 let maTumListe = [], maTumZaman = 0, maTumSoz = null, maSosyalListe = [];
 async function maTumVeriHaritasi(){try{const r=await fetch(apiURL+"?islem=sosyalOgrencilerGetir&ogrenci="+encodeURIComponent(aktifOgrenciAdi||""));const d=await r.json();if(Array.isArray(d)){maSosyalListe=d;const h={__students:d};d.forEach(x=>h[String(x.ogrenci).trim().toLowerCase()]=x);return h;}}catch(e){}maSosyalListe=[];try{return await yoTumVeri();}catch(e){return {};}}
 const DIJI_LIG_CACHE_SURESI = 5 * 60 * 1000;
@@ -14053,7 +14053,7 @@ async function dijiLigSunucudanGuncelle(aktifHafta) {
     }
 }
 async function maSinifGetir() { await maTumGetir(); return maSinifListeSon; }
-function maBul(id) { return id === 'ben' ? maBen() : (maTumListe.find(o => o.id === id) || maSinifListeSon.find(o => o.id === id)); }
+function maBul(id) { if(id === 'ben') return maBen(); const u=maSosyalListe.find(x=>String(x.ogrenci).toLowerCase()===String(id).toLowerCase()); if(u){const x=maKisiKur(u,u);return {...x,seri:Number(u.loginDays||u.streak||0),puan:Number(u.genelPuan||0),seviye:x.playerLevel,dilSeviyesi:String(u.seviye?.sonuc||'A1'),vitrinSecim:Array.isArray(u.vitrinSecim)?u.vitrinSecim:[]};} return maTumListe.find(o=>o.id===id)||maSinifListeSon.find(o=>o.id===id); }
 
 let maCizNo = 0;
 function maOzetGeriKoy() {
@@ -14127,7 +14127,7 @@ async function maCiz() {
     }
 
     ekran.innerHTML = '<div class="ma-bos">Yükleniyor...</div>';
-    await maTumGetir();
+    await Promise.all([maTumGetir(),maTumVeriHaritasi()]);
     if (no !== maCizNo) return;
     let html = maProfilId ? maVitrinHtml(maProfilId, false) : maSekme === 'kesfet' ? maKesfetHtml() : maVitrinHtml('ben', true);
     ekran.innerHTML = `<div class="ma-gir">${html}</div>`;
@@ -14437,7 +14437,9 @@ function maVitrinHtml(id, benimMi) {
     if (!o) return '<div class="ma-bos">Bulunamadı.</div>';
     let geri = benimMi ? '' : `<button class="geri" onclick="maSekmeSec(maSekme)">✕</button>`;
     let rozetKaynagi = o.rozetler || [];
-    let rozetler = benimMi ? maVitrinSecim.map(i => rozetKaynagi[i]).filter(Boolean) : rozetKaynagi.slice(0, 4);
+    let secim = benimMi ? maVitrinSecim : (Array.isArray(o.vitrinSecim)?o.vitrinSecim:[]);
+    let rozetler=secim.map(i=>rozetKaynagi[i]).filter(Boolean).slice(0,3);
+    if(!rozetler.length)rozetler=rozetKaynagi.slice(-3).reverse();
     while (rozetler.length < 3) rozetler.push(null);
     let bayraklar = rozetler.map((r, i) => r
         ? `<button class="bayrak" style="--c:${MA_SERIT[i % 5]};--d:${i * .4}s" onclick="maToast('${guvenliMetin(r[1])}')"><div class="ucgen">${r[0] || '🏅'}</div><small>${guvenliMetin(r[1])}</small></button>`
@@ -14457,10 +14459,10 @@ function maVitrinHtml(id, benimMi) {
   <div class="bolum">
     <div class="bolum-baslik">Karnaval biletleri</div>
     <div class="biletler">
-      <div class="bilet" style="--c:#ff6b6b"><small>Seri</small><b>${o.seri || 0} gün</b><span class="ik">🔥</span></div>
+      <div class="bilet" style="--c:#ff6b6b"><small>Seri</small><b>${Number(o.loginDays??o.seri??0)} gün</b><span class="ik">🔥</span></div>
             <div class="bilet" style="--c:${o.ligRenk}"><small>Lig</small><b>${o.ligKisa}</b><span class="ik">${o.ligIkon}</span></div>
-            <div class="bilet" style="--c:#8b5cf6"><small>Genel puan</small><b>${o.puan}</b><span class="ik">⭐</span></div>
-      <div class="bilet" style="--c:#34b36a"><small>Seviye</small><b>${o.seviye}</b><span class="ik">📋</span></div>
+            <div class="bilet" style="--c:#8b5cf6"><small>Genel puan</small><b>${Number(o.genelPuan??o.puan??0).toLocaleString('tr-TR')}</b><span class="ik">⭐</span></div>
+      <div class="bilet" style="--c:#34b36a"><small>Seviye</small><b>${Number(o.playerLevel||o.seviye||1)} (${guvenliMetin(o.dilSeviyesi||'A1')})</b><span class="ik">📋</span></div>
     </div>
     <div class="bolum-baslik">${benimMi ? 'Bu haftaki balonun' : 'Bu haftanın balon yarışı'}</div>
     <div class="yaris">${kolon(o, '#ff5d8f', benimMi ? 'Sen' : o.ad.split(' ')[0])}${rakip ? kolon(rakip, '#4d96ff', 'Sen') : ''}</div>
@@ -14473,14 +14475,16 @@ function maVitrinHtml(id, benimMi) {
 function maVitrinDuzenHtml(o) {
     let rozetKaynagi = o.rozetler || [];
     return `<div class="duzen-kart"><h4>🏅 Vitrindeki rozetlerin</h4><p>En fazla 3 rozet seç.</p>
-      <div class="secim">${rozetKaynagi.length ? rozetKaynagi.map((r, i) => `<button class="${maVitrinSecim.includes(i) ? 'secili' : ''}" onclick="maRozetSec(${i})">${r[0] || '🏅'} ${guvenliMetin(r[1])}</button>`).join('') : '<span style="font-size:12px;color:var(--soluk)">Henüz rozet kazanmadın.</span>'}</div></div>
+      <div class="secim" style="display:flex;overflow-x:auto;gap:9px;max-width:100%;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch">${rozetKaynagi.length ? rozetKaynagi.map((r, i) => `<button class="${maVitrinSecim.includes(i) ? 'secili' : ''}" onclick="maRozetSec(${i})">${r[0] || '🏅'} ${guvenliMetin(r[1])}</button>`).join('') : '<span style="font-size:12px;color:var(--soluk)">Henüz rozet kazanmadın.</span>'}</div></div>
     <div class="duzen-kart"><h4>🦜 Maskot ve aksesuar</h4><p>Papağan mağazasından aldıkların burada görünür.</p><button class="duzen-btn" onclick="maSekmeSec('magaza')">Mağazaya git</button></div>`;
 }
 function maRozetSec(i) {
+    if(!Number.isInteger(i)||i<0||i>=(maBen().rozetler||[]).length)return;
     let k = maVitrinSecim.indexOf(i);
     if (k > -1) maVitrinSecim.splice(k, 1);
     else { if (maVitrinSecim.length >= 3) { maToast('En fazla 3 rozet seçebilirsin'); return; } maVitrinSecim.push(i); }
     maVitrinKaydet();
+    fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'vitrinRozetSec',ogrenci:aktifOgrenciAdi,secim:maVitrinSecim})}).catch(()=>maToast('Rozet seçimi sunucuya kaydedilemedi'));
     let y = document.getElementById('maEkran').scrollTop;
     maCiz().then(() => { document.getElementById('maEkran').scrollTop = y; });
 }
@@ -24731,9 +24735,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   /* ---------- Öğretim ve ilk soru ücretsiz; sonraki sorular 1 ⚡ ---------- */
   async function devamEt() {
-    const ilerle = () => { O.i++; O._cevaplandi = false; O._ikinci = false; O._pas = false;O.inputDraft=null;O.matchState=null;O.letterState=null; checkpointSave();soruCiz(); };
+    const ilerle = () => { O.i++; O.answerRecorded=false; O._cevaplandi = false; O._ikinci = false; O._pas = false;O.inputDraft=null;O.matchState=null;O.letterState=null; checkpointSave();soruCiz(); };
     if(O.pendingAnswer){
-      try{await O.pendingAnswer;}catch(e){try{await parkurEnerjiAdim(O.runId,O.i+1,!!O.sonuclar[O.i]);}catch(err){toast('Cevap kaydedilemedi: '+err.message);return;}}
+      try{const r=await O.pendingAnswer;if(!r&&O.i<12)await parkurEnerjiAdim(O.runId,O.i+1,!!O.sonuclar[O.i]);O.answerRecorded=true;}catch(e){toast('Cevap kaydedilemedi: '+e.message);return;}
       O.pendingAnswer=null;
     }
     if(O._cevaplandi&&!O.answerRecorded&&!sinifModu()&&O.i<12){try{await parkurEnerjiAdim(O.runId,O.i+1,!!O.sonuclar[O.i]);O.answerRecorded=true;checkpointSave();}catch(e){toast('Cevap kaydedilemedi: '+e.message);return;}}
