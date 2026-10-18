@@ -7,6 +7,7 @@ on:
       - 'supabase/migrations/*verified*'
       - 'tests/*verified*'
       - 'tests/school-single-screen-ui.cjs'
+      - 'tests/parkur-network-recovery.test.cjs'
       - 'tests/password-security.test.cjs'
       - '.github/workflows/verified-games.yml'
   pull_request:
@@ -26,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: node --test tests/verified-games.test.cjs tests/password-security.test.cjs tests/progression-api.test.cjs tests/api-security-guards.test.cjs tests/security-hardening.test.cjs tests/weekly-goal-once.test.cjs tests/portal-integrity.test.cjs
+      - run: node --test tests/parkur-network-recovery.test.cjs tests/verified-games.test.cjs tests/password-security.test.cjs tests/progression-api.test.cjs tests/api-security-guards.test.cjs tests/security-hardening.test.cjs tests/weekly-goal-once.test.cjs tests/portal-integrity.test.cjs
       - run: npm install --prefix /tmp/verified-ui playwright@1.62.1
       - run: /tmp/verified-ui/node_modules/.bin/playwright install --with-deps chromium
       - run: node tests/school-single-screen-ui.cjs && node tests/verified-games-ui.cjs && node tests/verified-parkur-ui.cjs
