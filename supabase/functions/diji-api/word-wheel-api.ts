@@ -50,7 +50,7 @@ export function wordWheelAPI(db:any,json:any){
    const seen=new Set(),words=[...(data||[])].map((r:any)=>({en:String(r.english||'').trim(),tr:String(r.turkish||'').trim()})).filter((w:any)=>{const k=w.en.toLocaleLowerCase('en');if(!w.en||!w.tr||seen.has(k))return false;seen.add(k);return true;});if(!words.length)return json({ok:false,mesaj:'Seçilen ünitede kelime yok.'},404);if(b.independent===true&&mode===2&&words.length<2)return json({ok:false,mesaj:'İki kişilik oyun için en az iki kelime gerekiyor.'},400);if(words.length>2000)return json({ok:false,mesaj:'Bu ünite çok büyük.'},400);
    const meanings=[...new Set(words.map((w:any)=>w.tr))];let deck;try{deck=await selectWordBankRound(db,owner,cls,unit,words,b.independent===true&&mode===2?Math.min(12,Math.floor(words.length/mode))*mode:12);}catch{return json({ok:false,mesaj:'Kelime geçmişi yüklenemedi.'},503);}if(deck.length>1&&deck[0].en===String(b.previousFirst||'')){[deck[0],deck[1]]=[deck[1],deck[0]];}deck=deck.map((w:any)=>({...w,options:shuffle([w.tr,...shuffle(meanings.filter(t=>normalize(t)!==normalize(w.tr))).slice(0,3)])}));
    const state:any={wheelPoints:WHEEL_POINTS,index:0,pending:null,last:null,players:Array.from({length:mode},(_,i)=>({name:clean(b.names?.[i])||'Oyuncu '+(i+1),score:0,correct:0,wrong:0}))};
-   if(b.independent===true&&mode===2){state.independent=true;state.players.forEach((p:any,i:number)=>{p.index=0;p.pending=null;p.last=null;p.order=deck.map((_:any,n:number)=>n).filter((n:number)=>n%mode===i);});}
+   if(b.independent===true&&mode===2){state.sharedSlots=Array.from({length:deck.length/2},()=>crypto.getRandomValues(new Uint32Array(1))[0]%WHEEL_POINTS.length);state.independent=true;state.players.forEach((p:any,i:number)=>{p.index=0;p.pending=null;p.last=null;p.order=deck.map((_:any,n:number)=>n).filter((n:number)=>n%mode===i);});}
    const {data:row,error:err}=await db.from('papi_wheel_sessions').insert({actor_key:owner,student_id:a.role==='student'?a.student_id:null,teacher_id:a.role==='teacher'?a.teacher_id:null,class_no:cls,unit_no:unit,mode,deck,state}).select('*').single();if(err||!row)return json({ok:false,mesaj:'Oyun başlatılamadı.'},503);return json(view(row));
   }
   if(!/^[0-9a-f-]{36}$/i.test(String(b.runId||'')))return json({ok:false,mesaj:'Geçersiz oyun.'},400);
@@ -62,7 +62,7 @@ export function wordWheelAPI(db:any,json:any){
    const s=JSON.parse(JSON.stringify(r.state)),player=Number(b.player),round=Number(b.round);
    if(!Number.isInteger(player)||player<0||player>=r.mode||!Number.isInteger(round)||round<0)return json({ok:false,mesaj:'Geçersiz oyuncu veya soru.'},400);
    const p=s.players[player];if(round<p.index||p.index>=p.order.length)return json(view(r));if(round!==p.index)return json({ok:false,mesaj:'Soru değişmiş. Tekrar dene.'},409);
-   if(op==='kelimeCarkiCevir'){if(p.pending)return json(view(r));p.pending={slot:crypto.getRandomValues(new Uint32Array(1))[0]%pointsFor(r).length,deadline:deadline(b)};return send(await update(r,s));}
+   if(op==='kelimeCarkiCevir'){if(p.pending)return json(view(r));p.pending={slot:Array.isArray(s.sharedSlots)&&Number.isInteger(s.sharedSlots[p.index])?s.sharedSlots[p.index]:crypto.getRandomValues(new Uint32Array(1))[0]%pointsFor(r).length,deadline:deadline(b)};return send(await update(r,s));}
    if(op==='kelimeCarkiCevap'){
     if(!p.pending)return json({ok:false,mesaj:'Önce kendi çarkını çevir.'},409);
     if(b.timedOut===true)return json({ok:false,mesaj:'Süre henüz dolmadı.'},409);
