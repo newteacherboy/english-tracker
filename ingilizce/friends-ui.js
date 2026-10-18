@@ -177,7 +177,9 @@
   window.meduAkisAc=function(){
     if(maSekme==='magaza')return originalOpen.apply(this,arguments);
     maSekme='hub';maProfilId=null;
-    return originalOpen.apply(this,arguments);
+    const result=originalOpen.apply(this,arguments);
+    document.dispatchEvent(new Event('dm:friends-open'));
+    return result;
   };
   async function findFriends(inviteOnly=false) {
     if(!requireFeature(inviteOnly?'duello':'takip'))return;
