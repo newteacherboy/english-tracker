@@ -405,3 +405,7 @@ body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game[data-school-appearance=
  }
  body #bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board::before{height:55px!important}
 }
+
+/* Only one mascot: the question board artwork is the canonical image. */
+body #bzPerde.dm-school-game #bzAlan .sp-question-board > img[src*="learning-assets/characters/"],
+body #bzPerde.dm-school-game #bzAlan .sp-question-board > .dm-school-mascot-duplicate { display:none!important; }
