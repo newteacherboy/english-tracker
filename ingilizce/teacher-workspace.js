@@ -44,7 +44,7 @@ function decorateWorkspace(menu){
  let cardIndex=0;
  for(const b of [...content.querySelectorAll('.ogretmen-menu-btn')]){
   const raw=(b.dataset.dmTeacherTitle||b.textContent||'').trim();
-  if(/kelime rallisi.*öğretmen denemesi/i.test(raw)){b.remove();continue;}
+  // The teacher practice entry is a real tool and must remain visible.
   if(!b.dataset.dmTeacherCard){
    const entry=tools.find(([re])=>re.test(raw));
    const title=raw.replace(/^[^\p{L}\p{N}]+/u,'').trim();
