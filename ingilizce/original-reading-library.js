@@ -1,0 +1,2603 @@
+/* Diji-Medu original graded reading-and-listening library; all entries are freshly authored. */
+(function(root,factory){const bank=factory();if(typeof module==='object'&&module.exports)module.exports=bank;root.DMOriginalReadingLibrary=bank;})(globalThis,function(){'use strict';return [
+  {
+    "id": "original-dialogue-a1-01",
+    "level": "A1",
+    "type": "dialogue",
+    "title": "At the Library",
+    "icon": "📚",
+    "scene": "Kütüphaneden kitap ödünç alma",
+    "lines": [
+      [
+        "Mia",
+        "Hello! Can I borrow this book?"
+      ],
+      [
+        "Librarian",
+        "Yes. Do you have a library card?"
+      ],
+      [
+        "Mia",
+        "Yes, here it is."
+      ],
+      [
+        "Librarian",
+        "Great. Please bring the book back on Friday."
+      ]
+    ],
+    "words": [
+      {
+        "en": "borrow",
+        "tr": "ödünç almak"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What does Mia want to borrow?",
+        "options": [
+          "a book",
+          "a bicycle",
+          "a tablet"
+        ],
+        "answer": "a book",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: a book."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "a book",
+          "a bicycle",
+          "a tablet"
+        ],
+        "answer": "a book",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“ödünç almak” kelimesini İngilizce yaz.",
+        "answers": [
+          "borrow"
+        ],
+        "answer": "borrow",
+        "explanation": "“borrow” sözcüğü “ödünç almak” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a1-02",
+    "level": "A1",
+    "type": "dialogue",
+    "title": "A New Classmate",
+    "icon": "👋",
+    "scene": "Yeni bir arkadaşla tanışma",
+    "lines": [
+      [
+        "Ece",
+        "Hi! My name is Ece. What is your name?"
+      ],
+      [
+        "Leo",
+        "I am Leo. I am new here."
+      ],
+      [
+        "Ece",
+        "Welcome! Do you like music?"
+      ],
+      [
+        "Leo",
+        "Yes, I love music and football."
+      ]
+    ],
+    "words": [
+      {
+        "en": "welcome",
+        "tr": "hoş geldin"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What does Leo like?",
+        "options": [
+          "music and football",
+          "swimming only",
+          "painting only"
+        ],
+        "answer": "music and football",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: music and football."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "music and football",
+          "swimming only",
+          "painting only"
+        ],
+        "answer": "music and football",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“hoş geldin” kelimesini İngilizce yaz.",
+        "answers": [
+          "welcome"
+        ],
+        "answer": "welcome",
+        "explanation": "“welcome” sözcüğü “hoş geldin” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a1-03",
+    "level": "A1",
+    "type": "dialogue",
+    "title": "At the Fruit Shop",
+    "icon": "🍎",
+    "scene": "Manavdan meyve alma",
+    "lines": [
+      [
+        "Buyer",
+        "Good morning. How much are the apples?"
+      ],
+      [
+        "Seller",
+        "They are two pounds for a bag."
+      ],
+      [
+        "Buyer",
+        "Can I have one bag, please?"
+      ],
+      [
+        "Seller",
+        "Of course. Here you are."
+      ]
+    ],
+    "words": [
+      {
+        "en": "bag",
+        "tr": "poşet"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What does the buyer purchase?",
+        "options": [
+          "apples",
+          "bananas",
+          "oranges"
+        ],
+        "answer": "apples",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: apples."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "apples",
+          "bananas",
+          "oranges"
+        ],
+        "answer": "apples",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“poşet” kelimesini İngilizce yaz.",
+        "answers": [
+          "bag"
+        ],
+        "answer": "bag",
+        "explanation": "“bag” sözcüğü “poşet” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a1-04",
+    "level": "A1",
+    "type": "dialogue",
+    "title": "Our Daily Routine",
+    "icon": "⏰",
+    "scene": "Günlük düzeni konuşma",
+    "lines": [
+      [
+        "Ali",
+        "What time do you get up?"
+      ],
+      [
+        "Nora",
+        "I get up at seven."
+      ],
+      [
+        "Ali",
+        "Do you walk to school?"
+      ],
+      [
+        "Nora",
+        "No, I take the bus at eight."
+      ]
+    ],
+    "words": [
+      {
+        "en": "bus",
+        "tr": "otobüs"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "How does Nora go to school?",
+        "options": [
+          "by bus",
+          "on foot",
+          "by bike"
+        ],
+        "answer": "by bus",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: by bus."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "by bus",
+          "on foot",
+          "by bike"
+        ],
+        "answer": "by bus",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“otobüs” kelimesini İngilizce yaz.",
+        "answers": [
+          "bus"
+        ],
+        "answer": "bus",
+        "explanation": "“bus” sözcüğü “otobüs” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a1-05",
+    "level": "A1",
+    "type": "dialogue",
+    "title": "A Picnic Plan",
+    "icon": "🧺",
+    "scene": "Basit bir piknik planı",
+    "lines": [
+      [
+        "Oya",
+        "It is warm today. Shall we have a picnic?"
+      ],
+      [
+        "Noah",
+        "Yes! I can bring sandwiches."
+      ],
+      [
+        "Oya",
+        "I have apples and water."
+      ],
+      [
+        "Noah",
+        "Great! See you in the park."
+      ]
+    ],
+    "words": [
+      {
+        "en": "picnic",
+        "tr": "piknik"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "Where will they meet?",
+        "options": [
+          "in the park",
+          "at school",
+          "at the station"
+        ],
+        "answer": "in the park",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: in the park."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "in the park",
+          "at school",
+          "at the station"
+        ],
+        "answer": "in the park",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“piknik” kelimesini İngilizce yaz.",
+        "answers": [
+          "picnic"
+        ],
+        "answer": "picnic",
+        "explanation": "“picnic” sözcüğü “piknik” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a2-06",
+    "level": "A2",
+    "type": "dialogue",
+    "title": "A Missed Bus",
+    "icon": "🚌",
+    "scene": "Geç kalan otobüsü konuşma",
+    "lines": [
+      [
+        "Sena",
+        "The bus should be here by nine."
+      ],
+      [
+        "Tom",
+        "It is already nine fifteen."
+      ],
+      [
+        "Sena",
+        "Shall we take the tram instead?"
+      ],
+      [
+        "Tom",
+        "Good idea. It stops near the museum."
+      ]
+    ],
+    "words": [
+      {
+        "en": "instead",
+        "tr": "onun yerine"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What will they take instead?",
+        "options": [
+          "the tram",
+          "a taxi",
+          "a boat"
+        ],
+        "answer": "the tram",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: the tram."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "the tram",
+          "a taxi",
+          "a boat"
+        ],
+        "answer": "the tram",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“onun yerine” kelimesini İngilizce yaz.",
+        "answers": [
+          "instead"
+        ],
+        "answer": "instead",
+        "explanation": "“instead” sözcüğü “onun yerine” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a2-07",
+    "level": "A2",
+    "type": "dialogue",
+    "title": "The School Club",
+    "icon": "🎨",
+    "scene": "Kulüp seçimi üzerine konuşma",
+    "lines": [
+      [
+        "Duru",
+        "I joined the photography club yesterday."
+      ],
+      [
+        "Ben",
+        "Why did you choose it?"
+      ],
+      [
+        "Duru",
+        "I enjoy taking pictures of nature."
+      ],
+      [
+        "Ben",
+        "That sounds fun. Can beginners join?"
+      ]
+    ],
+    "words": [
+      {
+        "en": "beginner",
+        "tr": "başlangıç seviyesinde olan"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "Which club did Duru join?",
+        "options": [
+          "photography",
+          "drama",
+          "chess"
+        ],
+        "answer": "photography",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: photography."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "photography",
+          "drama",
+          "chess"
+        ],
+        "answer": "photography",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“başlangıç seviyesinde olan” kelimesini İngilizce yaz.",
+        "answers": [
+          "beginner"
+        ],
+        "answer": "beginner",
+        "explanation": "“beginner” sözcüğü “başlangıç seviyesinde olan” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a2-08",
+    "level": "A2",
+    "type": "dialogue",
+    "title": "A Birthday Surprise",
+    "icon": "🎁",
+    "scene": "Doğum günü sürprizi hazırlama",
+    "lines": [
+      [
+        "Mert",
+        "Did you buy the balloons?"
+      ],
+      [
+        "Zoe",
+        "Yes, and I ordered a small cake."
+      ],
+      [
+        "Mert",
+        "Let's meet at five before Aylin arrives."
+      ],
+      [
+        "Zoe",
+        "Perfect. I will bring the candles."
+      ]
+    ],
+    "words": [
+      {
+        "en": "candle",
+        "tr": "mum"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What will Zoe bring?",
+        "options": [
+          "candles",
+          "flowers",
+          "tickets"
+        ],
+        "answer": "candles",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: candles."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "candles",
+          "flowers",
+          "tickets"
+        ],
+        "answer": "candles",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“mum” kelimesini İngilizce yaz.",
+        "answers": [
+          "candle"
+        ],
+        "answer": "candle",
+        "explanation": "“candle” sözcüğü “mum” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a2-09",
+    "level": "A2",
+    "type": "dialogue",
+    "title": "Finding a Lost Key",
+    "icon": "🔑",
+    "scene": "Kaybolan anahtarı bulma",
+    "lines": [
+      [
+        "Ezgi",
+        "I cannot find my house key."
+      ],
+      [
+        "Oscar",
+        "Did you check your backpack?"
+      ],
+      [
+        "Ezgi",
+        "Yes. It wasn't there."
+      ],
+      [
+        "Oscar",
+        "Look! It is under the kitchen chair."
+      ]
+    ],
+    "words": [
+      {
+        "en": "under",
+        "tr": "altında"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "Where is the key?",
+        "options": [
+          "under a chair",
+          "inside a book",
+          "next to a window"
+        ],
+        "answer": "under a chair",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: under a chair."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "under a chair",
+          "inside a book",
+          "next to a window"
+        ],
+        "answer": "under a chair",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“altında” kelimesini İngilizce yaz.",
+        "answers": [
+          "under"
+        ],
+        "answer": "under",
+        "explanation": "“under” sözcüğü “altında” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-a2-10",
+    "level": "A2",
+    "type": "dialogue",
+    "title": "Choosing a Gift",
+    "icon": "🛍️",
+    "scene": "Bir arkadaşa hediye seçme",
+    "lines": [
+      [
+        "Leyla",
+        "Which notebook should we choose for Rina?"
+      ],
+      [
+        "Jack",
+        "The blue one looks nice, but it is expensive."
+      ],
+      [
+        "Leyla",
+        "The green one is cheaper and has more pages."
+      ],
+      [
+        "Jack",
+        "Let's get the green one."
+      ]
+    ],
+    "words": [
+      {
+        "en": "cheaper",
+        "tr": "daha ucuz"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "Which notebook do they choose?",
+        "options": [
+          "the green one",
+          "the blue one",
+          "the red one"
+        ],
+        "answer": "the green one",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: the green one."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "the green one",
+          "the blue one",
+          "the red one"
+        ],
+        "answer": "the green one",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“daha ucuz” kelimesini İngilizce yaz.",
+        "answers": [
+          "cheaper"
+        ],
+        "answer": "cheaper",
+        "explanation": "“cheaper” sözcüğü “daha ucuz” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b1-11",
+    "level": "B1",
+    "type": "dialogue",
+    "title": "The Group Presentation",
+    "icon": "🎤",
+    "scene": "Ekip sunumunu planlama",
+    "lines": [
+      [
+        "Selin",
+        "We need to finish our presentation by Thursday."
+      ],
+      [
+        "Arda",
+        "I can prepare the graphs if you write the introduction."
+      ],
+      [
+        "Selin",
+        "That works, but we should rehearse together."
+      ],
+      [
+        "Arda",
+        "Let's meet after school and check our timing."
+      ]
+    ],
+    "words": [
+      {
+        "en": "rehearse",
+        "tr": "prova yapmak"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "Why will they meet after school?",
+        "options": [
+          "to rehearse together",
+          "to buy lunch",
+          "to cancel the project"
+        ],
+        "answer": "to rehearse together",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: to rehearse together."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "to rehearse together",
+          "to buy lunch",
+          "to cancel the project"
+        ],
+        "answer": "to rehearse together",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“prova yapmak” kelimesini İngilizce yaz.",
+        "answers": [
+          "rehearse"
+        ],
+        "answer": "rehearse",
+        "explanation": "“rehearse” sözcüğü “prova yapmak” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b1-12",
+    "level": "B1",
+    "type": "dialogue",
+    "title": "An Unexpected Delay",
+    "icon": "🚆",
+    "scene": "Yolculuk gecikmesini çözme",
+    "lines": [
+      [
+        "Clara",
+        "Our train has been delayed by forty minutes."
+      ],
+      [
+        "Efe",
+        "That means we may miss the museum tour."
+      ],
+      [
+        "Clara",
+        "I'll call the guide and explain the situation."
+      ],
+      [
+        "Efe",
+        "Meanwhile, I'll check if there is a later tour."
+      ]
+    ],
+    "words": [
+      {
+        "en": "delay",
+        "tr": "gecikme"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What will Clara do?",
+        "options": [
+          "call the guide",
+          "buy another train",
+          "visit a café"
+        ],
+        "answer": "call the guide",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: call the guide."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "call the guide",
+          "buy another train",
+          "visit a café"
+        ],
+        "answer": "call the guide",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“gecikme” kelimesini İngilizce yaz.",
+        "answers": [
+          "delay"
+        ],
+        "answer": "delay",
+        "explanation": "“delay” sözcüğü “gecikme” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b1-13",
+    "level": "B1",
+    "type": "dialogue",
+    "title": "A Community Garden",
+    "icon": "🌿",
+    "scene": "Mahalle bahçesi girişimi",
+    "lines": [
+      [
+        "Deniz",
+        "Our neighbourhood is turning the empty lot into a garden."
+      ],
+      [
+        "Maya",
+        "That's wonderful. How can residents help?"
+      ],
+      [
+        "Deniz",
+        "They can bring tools or volunteer on Saturdays."
+      ],
+      [
+        "Maya",
+        "I can help organise a watering schedule."
+      ]
+    ],
+    "words": [
+      {
+        "en": "volunteer",
+        "tr": "gönüllü olmak"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "When can residents volunteer?",
+        "options": [
+          "on Saturdays",
+          "on Mondays",
+          "on Fridays"
+        ],
+        "answer": "on Saturdays",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: on Saturdays."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "on Saturdays",
+          "on Mondays",
+          "on Fridays"
+        ],
+        "answer": "on Saturdays",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“gönüllü olmak” kelimesini İngilizce yaz.",
+        "answers": [
+          "volunteer"
+        ],
+        "answer": "volunteer",
+        "explanation": "“volunteer” sözcüğü “gönüllü olmak” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b1-14",
+    "level": "B1",
+    "type": "dialogue",
+    "title": "Reviewing a Film",
+    "icon": "🎬",
+    "scene": "Film üzerine gerekçeli görüş paylaşma",
+    "lines": [
+      [
+        "Nina",
+        "I loved the acting, although the ending felt rushed."
+      ],
+      [
+        "Kerem",
+        "I agree about the ending, but the music was excellent."
+      ],
+      [
+        "Nina",
+        "Which scene did you find most memorable?"
+      ],
+      [
+        "Kerem",
+        "The quiet conversation on the bridge."
+      ]
+    ],
+    "words": [
+      {
+        "en": "memorable",
+        "tr": "akılda kalıcı"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did Kerem especially praise?",
+        "options": [
+          "the music",
+          "the ending",
+          "the costumes"
+        ],
+        "answer": "the music",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: the music."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "the music",
+          "the ending",
+          "the costumes"
+        ],
+        "answer": "the music",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“akılda kalıcı” kelimesini İngilizce yaz.",
+        "answers": [
+          "memorable"
+        ],
+        "answer": "memorable",
+        "explanation": "“memorable” sözcüğü “akılda kalıcı” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b1-15",
+    "level": "B1",
+    "type": "dialogue",
+    "title": "A Healthy Study Plan",
+    "icon": "🗓️",
+    "scene": "Dengeli ders çalışma düzeni",
+    "lines": [
+      [
+        "Eda",
+        "I keep putting off revision until the last evening."
+      ],
+      [
+        "Lucas",
+        "Have you tried shorter sessions during the week?"
+      ],
+      [
+        "Eda",
+        "Not yet. I could review one topic each afternoon."
+      ],
+      [
+        "Lucas",
+        "And remember to take breaks between sessions."
+      ]
+    ],
+    "words": [
+      {
+        "en": "revision",
+        "tr": "tekrar"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What does Lucas recommend?",
+        "options": [
+          "shorter regular sessions",
+          "studying all night",
+          "skipping breaks"
+        ],
+        "answer": "shorter regular sessions",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: shorter regular sessions."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "shorter regular sessions",
+          "studying all night",
+          "skipping breaks"
+        ],
+        "answer": "shorter regular sessions",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“tekrar” kelimesini İngilizce yaz.",
+        "answers": [
+          "revision"
+        ],
+        "answer": "revision",
+        "explanation": "“revision” sözcüğü “tekrar” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b2-16",
+    "level": "B2",
+    "type": "dialogue",
+    "title": "A Difficult Decision",
+    "icon": "⚖️",
+    "scene": "Karar verirken öncelikleri tartışma",
+    "lines": [
+      [
+        "Ayla",
+        "The exchange programme sounds exciting, but it would interrupt my current project."
+      ],
+      [
+        "Daniel",
+        "Could you delegate some tasks rather than abandoning it?"
+      ],
+      [
+        "Ayla",
+        "Possibly. I need to consider both the learning opportunity and my responsibilities."
+      ],
+      [
+        "Daniel",
+        "Make a list of priorities before deciding."
+      ]
+    ],
+    "words": [
+      {
+        "en": "delegate",
+        "tr": "görev devretmek"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What does Daniel suggest before deciding?",
+        "options": [
+          "listing priorities",
+          "ignoring responsibilities",
+          "cancelling both options"
+        ],
+        "answer": "listing priorities",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: listing priorities."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "listing priorities",
+          "ignoring responsibilities",
+          "cancelling both options"
+        ],
+        "answer": "listing priorities",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“görev devretmek” kelimesini İngilizce yaz.",
+        "answers": [
+          "delegate"
+        ],
+        "answer": "delegate",
+        "explanation": "“delegate” sözcüğü “görev devretmek” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b2-17",
+    "level": "B2",
+    "type": "dialogue",
+    "title": "Designing an Accessible Event",
+    "icon": "♿",
+    "scene": "Kapsayıcı etkinlik düzenleme",
+    "lines": [
+      [
+        "Elif",
+        "We should make sure everyone can participate in the science exhibition."
+      ],
+      [
+        "Ryan",
+        "Agreed. The entrance has a ramp, but some labels are too small."
+      ],
+      [
+        "Elif",
+        "Let's provide larger text and audio descriptions."
+      ],
+      [
+        "Ryan",
+        "We could also invite visitors to test the layout beforehand."
+      ]
+    ],
+    "words": [
+      {
+        "en": "accessible",
+        "tr": "erişilebilir"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What will they improve?",
+        "options": [
+          "labels and audio descriptions",
+          "only the event date",
+          "the ticket price"
+        ],
+        "answer": "labels and audio descriptions",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: labels and audio descriptions."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "labels and audio descriptions",
+          "only the event date",
+          "the ticket price"
+        ],
+        "answer": "labels and audio descriptions",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“erişilebilir” kelimesini İngilizce yaz.",
+        "answers": [
+          "accessible"
+        ],
+        "answer": "accessible",
+        "explanation": "“accessible” sözcüğü “erişilebilir” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b2-18",
+    "level": "B2",
+    "type": "dialogue",
+    "title": "A Reliable Source",
+    "icon": "🔎",
+    "scene": "Bilginin güvenilirliğini değerlendirme",
+    "lines": [
+      [
+        "Sude",
+        "This article makes a surprising claim about city transport."
+      ],
+      [
+        "Owen",
+        "Does it provide evidence or cite any research?"
+      ],
+      [
+        "Sude",
+        "Only an anonymous comment. I haven't found the original study."
+      ],
+      [
+        "Owen",
+        "Then we should verify the claim before sharing it."
+      ]
+    ],
+    "words": [
+      {
+        "en": "evidence",
+        "tr": "kanıt"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What is missing from the article?",
+        "options": [
+          "reliable evidence",
+          "photographs of buses",
+          "a title"
+        ],
+        "answer": "reliable evidence",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: reliable evidence."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "reliable evidence",
+          "photographs of buses",
+          "a title"
+        ],
+        "answer": "reliable evidence",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“kanıt” kelimesini İngilizce yaz.",
+        "answers": [
+          "evidence"
+        ],
+        "answer": "evidence",
+        "explanation": "“evidence” sözcüğü “kanıt” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b2-19",
+    "level": "B2",
+    "type": "dialogue",
+    "title": "Negotiating a Deadline",
+    "icon": "📅",
+    "scene": "Teslim tarihini gerçekçi belirleme",
+    "lines": [
+      [
+        "Iris",
+        "The team wants the report by Tuesday, but the survey results arrive on Monday evening."
+      ],
+      [
+        "Emre",
+        "That leaves almost no time for proper analysis."
+      ],
+      [
+        "Iris",
+        "Could we propose Thursday and provide a brief update on Tuesday?"
+      ],
+      [
+        "Emre",
+        "That would protect quality without losing transparency."
+      ]
+    ],
+    "words": [
+      {
+        "en": "deadline",
+        "tr": "son teslim tarihi"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What alternative does Iris propose?",
+        "options": [
+          "Thursday with an update Tuesday",
+          "no report at all",
+          "finishing before results arrive"
+        ],
+        "answer": "Thursday with an update Tuesday",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: Thursday with an update Tuesday."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "Thursday with an update Tuesday",
+          "no report at all",
+          "finishing before results arrive"
+        ],
+        "answer": "Thursday with an update Tuesday",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“son teslim tarihi” kelimesini İngilizce yaz.",
+        "answers": [
+          "deadline"
+        ],
+        "answer": "deadline",
+        "explanation": "“deadline” sözcüğü “son teslim tarihi” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-dialogue-b2-20",
+    "level": "B2",
+    "type": "dialogue",
+    "title": "The Town Hall Debate",
+    "icon": "🏛️",
+    "scene": "Kamusal kararın sonuçlarını tartışma",
+    "lines": [
+      [
+        "Mina",
+        "The council proposes turning the old car park into a green space."
+      ],
+      [
+        "Theo",
+        "It could improve air quality, although commuters might struggle."
+      ],
+      [
+        "Mina",
+        "Perhaps a park-and-ride service would address that concern."
+      ],
+      [
+        "Theo",
+        "We need residents' feedback before recommending a plan."
+      ]
+    ],
+    "words": [
+      {
+        "en": "feedback",
+        "tr": "geri bildirim"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What does Theo consider necessary?",
+        "options": [
+          "residents' feedback",
+          "an immediate vote without discussion",
+          "closing the town hall"
+        ],
+        "answer": "residents' feedback",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: residents' feedback."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "residents' feedback",
+          "an immediate vote without discussion",
+          "closing the town hall"
+        ],
+        "answer": "residents' feedback",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“geri bildirim” kelimesini İngilizce yaz.",
+        "answers": [
+          "feedback"
+        ],
+        "answer": "feedback",
+        "explanation": "“feedback” sözcüğü “geri bildirim” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a1-21",
+    "level": "A1",
+    "type": "story",
+    "title": "The Red Scarf",
+    "icon": "🧣",
+    "scene": "Paylaşmak üzerine kısa öykü",
+    "lines": [
+      [
+        "Narrator",
+        "Lina has a red scarf."
+      ],
+      [
+        "Narrator",
+        "It is cold at the bus stop."
+      ],
+      [
+        "Narrator",
+        "Her friend Ella has no scarf."
+      ],
+      [
+        "Narrator",
+        "Lina shares her scarf. They both smile."
+      ]
+    ],
+    "words": [
+      {
+        "en": "share",
+        "tr": "paylaşmak"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What does Lina share?",
+        "options": [
+          "her scarf",
+          "her bag",
+          "her lunch"
+        ],
+        "answer": "her scarf",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: her scarf."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "her scarf",
+          "her bag",
+          "her lunch"
+        ],
+        "answer": "her scarf",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“paylaşmak” kelimesini İngilizce yaz.",
+        "answers": [
+          "share"
+        ],
+        "answer": "share",
+        "explanation": "“share” sözcüğü “paylaşmak” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a1-22",
+    "level": "A1",
+    "type": "story",
+    "title": "A Seed in a Pot",
+    "icon": "🌱",
+    "scene": "Bir bitkinin büyümesi",
+    "lines": [
+      [
+        "Narrator",
+        "Omar puts a small seed in a pot."
+      ],
+      [
+        "Narrator",
+        "He adds water every morning."
+      ],
+      [
+        "Narrator",
+        "The pot sits near a sunny window."
+      ],
+      [
+        "Narrator",
+        "One day, a green leaf appears."
+      ]
+    ],
+    "words": [
+      {
+        "en": "seed",
+        "tr": "tohum"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What appears one day?",
+        "options": [
+          "a green leaf",
+          "a red bird",
+          "a yellow flower"
+        ],
+        "answer": "a green leaf",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: a green leaf."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "a green leaf",
+          "a red bird",
+          "a yellow flower"
+        ],
+        "answer": "a green leaf",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“tohum” kelimesini İngilizce yaz.",
+        "answers": [
+          "seed"
+        ],
+        "answer": "seed",
+        "explanation": "“seed” sözcüğü “tohum” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a1-23",
+    "level": "A1",
+    "type": "story",
+    "title": "The Missing Pencil",
+    "icon": "✏️",
+    "scene": "Kaybolan kalemi bulma",
+    "lines": [
+      [
+        "Narrator",
+        "Arin cannot find her pencil."
+      ],
+      [
+        "Narrator",
+        "She looks on the desk and under the chair."
+      ],
+      [
+        "Narrator",
+        "Her friend points to the floor."
+      ],
+      [
+        "Narrator",
+        "The pencil is next to Arin's shoe."
+      ]
+    ],
+    "words": [
+      {
+        "en": "pencil",
+        "tr": "kurşun kalem"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "Where is the pencil?",
+        "options": [
+          "next to her shoe",
+          "inside her bag",
+          "on the bookshelf"
+        ],
+        "answer": "next to her shoe",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: next to her shoe."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "next to her shoe",
+          "inside her bag",
+          "on the bookshelf"
+        ],
+        "answer": "next to her shoe",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“kurşun kalem” kelimesini İngilizce yaz.",
+        "answers": [
+          "pencil"
+        ],
+        "answer": "pencil",
+        "explanation": "“pencil” sözcüğü “kurşun kalem” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a1-24",
+    "level": "A1",
+    "type": "story",
+    "title": "A Day at the Beach",
+    "icon": "🏖️",
+    "scene": "Sahil gezisi",
+    "lines": [
+      [
+        "Narrator",
+        "Ben goes to the beach with his family."
+      ],
+      [
+        "Narrator",
+        "His sister builds a sandcastle."
+      ],
+      [
+        "Narrator",
+        "Ben finds a small shell."
+      ],
+      [
+        "Narrator",
+        "They eat lunch and go home before sunset."
+      ]
+    ],
+    "words": [
+      {
+        "en": "shell",
+        "tr": "deniz kabuğu"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What does Ben find?",
+        "options": [
+          "a small shell",
+          "a glass bottle",
+          "a ball"
+        ],
+        "answer": "a small shell",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: a small shell."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "a small shell",
+          "a glass bottle",
+          "a ball"
+        ],
+        "answer": "a small shell",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“deniz kabuğu” kelimesini İngilizce yaz.",
+        "answers": [
+          "shell"
+        ],
+        "answer": "shell",
+        "explanation": "“shell” sözcüğü “deniz kabuğu” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a1-25",
+    "level": "A1",
+    "type": "story",
+    "title": "The Helpful Dog",
+    "icon": "🐕",
+    "scene": "Yardımsever bir köpek",
+    "lines": [
+      [
+        "Narrator",
+        "A little dog sees a ball under a bench."
+      ],
+      [
+        "Narrator",
+        "A child cannot reach it."
+      ],
+      [
+        "Narrator",
+        "The dog runs to the bench and pushes the ball out."
+      ],
+      [
+        "Narrator",
+        "The child says thank you."
+      ]
+    ],
+    "words": [
+      {
+        "en": "bench",
+        "tr": "bank"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What is under the bench?",
+        "options": [
+          "a ball",
+          "a hat",
+          "a book"
+        ],
+        "answer": "a ball",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: a ball."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "a ball",
+          "a hat",
+          "a book"
+        ],
+        "answer": "a ball",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“bank” kelimesini İngilizce yaz.",
+        "answers": [
+          "bench"
+        ],
+        "answer": "bench",
+        "explanation": "“bench” sözcüğü “bank” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a2-26",
+    "level": "A2",
+    "type": "story",
+    "title": "The Rainy Adventure",
+    "icon": "🌧️",
+    "scene": "Beklenmedik yağmurda çözüm üretme",
+    "lines": [
+      [
+        "Narrator",
+        "Elena planned to ride her bicycle to the lake."
+      ],
+      [
+        "Narrator",
+        "Dark clouds appeared just as she left home."
+      ],
+      [
+        "Narrator",
+        "She returned for her raincoat and took the bus instead."
+      ],
+      [
+        "Narrator",
+        "At the lake, she watched ducks swimming in the rain."
+      ]
+    ],
+    "words": [
+      {
+        "en": "raincoat",
+        "tr": "yağmurluk"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "How did Elena reach the lake?",
+        "options": [
+          "by bus",
+          "by bicycle",
+          "on foot"
+        ],
+        "answer": "by bus",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: by bus."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "by bus",
+          "by bicycle",
+          "on foot"
+        ],
+        "answer": "by bus",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“yağmurluk” kelimesini İngilizce yaz.",
+        "answers": [
+          "raincoat"
+        ],
+        "answer": "raincoat",
+        "explanation": "“raincoat” sözcüğü “yağmurluk” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a2-27",
+    "level": "A2",
+    "type": "story",
+    "title": "The Second-Hand Book",
+    "icon": "📖",
+    "scene": "Eski bir kitabın içindeki not",
+    "lines": [
+      [
+        "Narrator",
+        "Can found an old book at a market."
+      ],
+      [
+        "Narrator",
+        "Inside, there was a note from a previous reader."
+      ],
+      [
+        "Narrator",
+        "The note recommended a different ending to the story."
+      ],
+      [
+        "Narrator",
+        "Can read the book and wrote his own ending."
+      ]
+    ],
+    "words": [
+      {
+        "en": "previous",
+        "tr": "önceki"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did Can write?",
+        "options": [
+          "his own ending",
+          "a shopping list",
+          "a newspaper article"
+        ],
+        "answer": "his own ending",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: his own ending."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "his own ending",
+          "a shopping list",
+          "a newspaper article"
+        ],
+        "answer": "his own ending",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“önceki” kelimesini İngilizce yaz.",
+        "answers": [
+          "previous"
+        ],
+        "answer": "previous",
+        "explanation": "“previous” sözcüğü “önceki” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a2-28",
+    "level": "A2",
+    "type": "story",
+    "title": "A Recipe for Friendship",
+    "icon": "🥣",
+    "scene": "Yeni tarifi birlikte deneme",
+    "lines": [
+      [
+        "Narrator",
+        "Two neighbours decided to make soup together."
+      ],
+      [
+        "Narrator",
+        "One brought tomatoes while the other brought carrots."
+      ],
+      [
+        "Narrator",
+        "They tasted the soup and added a little salt."
+      ],
+      [
+        "Narrator",
+        "They shared it with their families that evening."
+      ]
+    ],
+    "words": [
+      {
+        "en": "recipe",
+        "tr": "tarif"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did the neighbours cook?",
+        "options": [
+          "soup",
+          "bread",
+          "cake"
+        ],
+        "answer": "soup",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: soup."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "soup",
+          "bread",
+          "cake"
+        ],
+        "answer": "soup",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“tarif” kelimesini İngilizce yaz.",
+        "answers": [
+          "recipe"
+        ],
+        "answer": "recipe",
+        "explanation": "“recipe” sözcüğü “tarif” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a2-29",
+    "level": "A2",
+    "type": "story",
+    "title": "The Early Train",
+    "icon": "🚉",
+    "scene": "Erken kalkmanın yararı",
+    "lines": [
+      [
+        "Narrator",
+        "Mira woke up earlier than usual."
+      ],
+      [
+        "Narrator",
+        "She wanted to visit her grandmother in another town."
+      ],
+      [
+        "Narrator",
+        "Because she arrived at the station early, she had time to buy flowers."
+      ],
+      [
+        "Narrator",
+        "Her grandmother was delighted to see her."
+      ]
+    ],
+    "words": [
+      {
+        "en": "station",
+        "tr": "istasyon"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did Mira buy?",
+        "options": [
+          "flowers",
+          "a magazine",
+          "a scarf"
+        ],
+        "answer": "flowers",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: flowers."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "flowers",
+          "a magazine",
+          "a scarf"
+        ],
+        "answer": "flowers",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“istasyon” kelimesini İngilizce yaz.",
+        "answers": [
+          "station"
+        ],
+        "answer": "station",
+        "explanation": "“station” sözcüğü “istasyon” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-a2-30",
+    "level": "A2",
+    "type": "story",
+    "title": "The Weekend Market",
+    "icon": "🧺",
+    "scene": "Mahalle pazarında seçim yapma",
+    "lines": [
+      [
+        "Narrator",
+        "Ada went to the market with a small shopping list."
+      ],
+      [
+        "Narrator",
+        "She compared the prices of fresh vegetables."
+      ],
+      [
+        "Narrator",
+        "She bought tomatoes, cucumbers and some bread."
+      ],
+      [
+        "Narrator",
+        "At home, she made a colourful salad for lunch."
+      ]
+    ],
+    "words": [
+      {
+        "en": "compare",
+        "tr": "karşılaştırmak"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did Ada make at home?",
+        "options": [
+          "a salad",
+          "a pie",
+          "a sandwich"
+        ],
+        "answer": "a salad",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: a salad."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "a salad",
+          "a pie",
+          "a sandwich"
+        ],
+        "answer": "a salad",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“karşılaştırmak” kelimesini İngilizce yaz.",
+        "answers": [
+          "compare"
+        ],
+        "answer": "compare",
+        "explanation": "“compare” sözcüğü “karşılaştırmak” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b1-31",
+    "level": "B1",
+    "type": "story",
+    "title": "The Map in the Attic",
+    "icon": "🗺️",
+    "scene": "Eski haritadan yeni keşif",
+    "lines": [
+      [
+        "Narrator",
+        "While cleaning the attic, Lara discovered a faded map of her town."
+      ],
+      [
+        "Narrator",
+        "The map showed a footpath that no longer appeared on modern maps."
+      ],
+      [
+        "Narrator",
+        "She asked the local history teacher about it and learned that the path once connected two villages."
+      ],
+      [
+        "Narrator",
+        "Together, they documented the route for a school exhibition."
+      ]
+    ],
+    "words": [
+      {
+        "en": "document",
+        "tr": "belgelemek"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "How did Lara use the discovery?",
+        "options": [
+          "in a school exhibition",
+          "to sell the map",
+          "to build a new road"
+        ],
+        "answer": "in a school exhibition",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: in a school exhibition."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "in a school exhibition",
+          "to sell the map",
+          "to build a new road"
+        ],
+        "answer": "in a school exhibition",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“belgelemek” kelimesini İngilizce yaz.",
+        "answers": [
+          "document"
+        ],
+        "answer": "document",
+        "explanation": "“document” sözcüğü “belgelemek” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b1-32",
+    "level": "B1",
+    "type": "story",
+    "title": "A Second Chance for the Bike",
+    "icon": "🚲",
+    "scene": "Onarım ve yeniden kullanım",
+    "lines": [
+      [
+        "Narrator",
+        "When his bicycle broke, Emir considered buying a new one."
+      ],
+      [
+        "Narrator",
+        "A neighbour offered to show him how to repair the chain."
+      ],
+      [
+        "Narrator",
+        "After an afternoon of work, the bicycle was running smoothly again."
+      ],
+      [
+        "Narrator",
+        "Emir realised that fixing an object can be more rewarding than replacing it."
+      ]
+    ],
+    "words": [
+      {
+        "en": "repair",
+        "tr": "tamir etmek"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did Emir repair?",
+        "options": [
+          "his bicycle",
+          "a computer",
+          "a door"
+        ],
+        "answer": "his bicycle",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: his bicycle."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "his bicycle",
+          "a computer",
+          "a door"
+        ],
+        "answer": "his bicycle",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“tamir etmek” kelimesini İngilizce yaz.",
+        "answers": [
+          "repair"
+        ],
+        "answer": "repair",
+        "explanation": "“repair” sözcüğü “tamir etmek” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b1-33",
+    "level": "B1",
+    "type": "story",
+    "title": "The Unexpected Mentor",
+    "icon": "🎼",
+    "scene": "Yeni bir beceri öğrenmek",
+    "lines": [
+      [
+        "Narrator",
+        "Nora loved music but felt nervous about performing."
+      ],
+      [
+        "Narrator",
+        "An older student noticed her practising alone and offered advice."
+      ],
+      [
+        "Narrator",
+        "They met every Wednesday to practise short pieces together."
+      ],
+      [
+        "Narrator",
+        "At the school concert, Nora played confidently for the first time."
+      ]
+    ],
+    "words": [
+      {
+        "en": "confidently",
+        "tr": "özgüvenle"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "Who helped Nora?",
+        "options": [
+          "an older student",
+          "a radio presenter",
+          "a neighbour's dog"
+        ],
+        "answer": "an older student",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: an older student."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "an older student",
+          "a radio presenter",
+          "a neighbour's dog"
+        ],
+        "answer": "an older student",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“özgüvenle” kelimesini İngilizce yaz.",
+        "answers": [
+          "confidently"
+        ],
+        "answer": "confidently",
+        "explanation": "“confidently” sözcüğü “özgüvenle” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b1-34",
+    "level": "B1",
+    "type": "story",
+    "title": "A Letter to the Future",
+    "icon": "✉️",
+    "scene": "Gelecekteki kendine mektup yazma",
+    "lines": [
+      [
+        "Narrator",
+        "During a classroom activity, Yusuf wrote a letter to his future self."
+      ],
+      [
+        "Narrator",
+        "He described the skills he wanted to learn and the people who inspired him."
+      ],
+      [
+        "Narrator",
+        "The teacher promised to return the letters at graduation."
+      ],
+      [
+        "Narrator",
+        "Yusuf sealed his envelope, curious about how his ambitions might change."
+      ]
+    ],
+    "words": [
+      {
+        "en": "ambition",
+        "tr": "hedef, tutku"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "When will Yusuf receive the letter?",
+        "options": [
+          "at graduation",
+          "the next morning",
+          "before lunch"
+        ],
+        "answer": "at graduation",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: at graduation."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "at graduation",
+          "the next morning",
+          "before lunch"
+        ],
+        "answer": "at graduation",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“hedef, tutku” kelimesini İngilizce yaz.",
+        "answers": [
+          "ambition"
+        ],
+        "answer": "ambition",
+        "explanation": "“ambition” sözcüğü “hedef, tutku” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b1-35",
+    "level": "B1",
+    "type": "story",
+    "title": "The Quiet River",
+    "icon": "🏞️",
+    "scene": "Çevreyi korumak için birlikte çalışma",
+    "lines": [
+      [
+        "Narrator",
+        "Visitors had started leaving litter beside the river."
+      ],
+      [
+        "Narrator",
+        "Instead of simply complaining, a group of students organised a clean-up day."
+      ],
+      [
+        "Narrator",
+        "They also designed signs asking visitors to protect the area."
+      ],
+      [
+        "Narrator",
+        "Within a month, the riverbank looked cleaner and more welcoming."
+      ]
+    ],
+    "words": [
+      {
+        "en": "litter",
+        "tr": "çöp"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did students organise?",
+        "options": [
+          "a clean-up day",
+          "a concert",
+          "a race"
+        ],
+        "answer": "a clean-up day",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: a clean-up day."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "a clean-up day",
+          "a concert",
+          "a race"
+        ],
+        "answer": "a clean-up day",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“çöp” kelimesini İngilizce yaz.",
+        "answers": [
+          "litter"
+        ],
+        "answer": "litter",
+        "explanation": "“litter” sözcüğü “çöp” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b2-36",
+    "level": "B2",
+    "type": "story",
+    "title": "The Value of a Pause",
+    "icon": "🧠",
+    "scene": "Aceleden uzaklaşıp kanıt değerlendirme",
+    "lines": [
+      [
+        "Narrator",
+        "During a debate, Selin was eager to defend her first interpretation of the data."
+      ],
+      [
+        "Narrator",
+        "A teammate pointed out a detail that contradicted their original assumption."
+      ],
+      [
+        "Narrator",
+        "Rather than dismissing the criticism, Selin suggested reviewing the evidence together."
+      ],
+      [
+        "Narrator",
+        "The team eventually revised its conclusion and delivered a more credible presentation."
+      ]
+    ],
+    "words": [
+      {
+        "en": "credible",
+        "tr": "inandırıcı, güvenilir"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "Why did the team revise its conclusion?",
+        "options": [
+          "new evidence challenged their assumption",
+          "the audience demanded a shorter talk",
+          "the projector stopped working"
+        ],
+        "answer": "new evidence challenged their assumption",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: new evidence challenged their assumption."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "new evidence challenged their assumption",
+          "the audience demanded a shorter talk",
+          "the projector stopped working"
+        ],
+        "answer": "new evidence challenged their assumption",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“inandırıcı, güvenilir” kelimesini İngilizce yaz.",
+        "answers": [
+          "credible"
+        ],
+        "answer": "credible",
+        "explanation": "“credible” sözcüğü “inandırıcı, güvenilir” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b2-37",
+    "level": "B2",
+    "type": "story",
+    "title": "The Last Repair Shop",
+    "icon": "🛠️",
+    "scene": "Zanaatkârlık ve toplumsal hafıza",
+    "lines": [
+      [
+        "Narrator",
+        "For decades, an elderly craftsperson had repaired clocks in a small neighbourhood shop."
+      ],
+      [
+        "Narrator",
+        "When the building was scheduled for redevelopment, residents worried that a piece of local history would disappear."
+      ],
+      [
+        "Narrator",
+        "A group of students interviewed the craftsperson and recorded the repair techniques."
+      ],
+      [
+        "Narrator",
+        "Their digital archive preserved knowledge that might otherwise have been lost."
+      ]
+    ],
+    "words": [
+      {
+        "en": "preserve",
+        "tr": "korumak"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did the students create?",
+        "options": [
+          "a digital archive",
+          "a new shopping mall",
+          "a clock factory"
+        ],
+        "answer": "a digital archive",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: a digital archive."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "a digital archive",
+          "a new shopping mall",
+          "a clock factory"
+        ],
+        "answer": "a digital archive",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“korumak” kelimesini İngilizce yaz.",
+        "answers": [
+          "preserve"
+        ],
+        "answer": "preserve",
+        "explanation": "“preserve” sözcüğü “korumak” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b2-38",
+    "level": "B2",
+    "type": "story",
+    "title": "The Library Without Walls",
+    "icon": "📲",
+    "scene": "Dijital erişimi kapsayıcı tasarlama",
+    "lines": [
+      [
+        "Narrator",
+        "A town library introduced a digital borrowing service to reach people who lived far away."
+      ],
+      [
+        "Narrator",
+        "Although many residents welcomed it, others struggled with the unfamiliar interface."
+      ],
+      [
+        "Narrator",
+        "The library responded by offering workshops and simpler instructions."
+      ],
+      [
+        "Narrator",
+        "Participation increased once the service became easier for everyone to use."
+      ]
+    ],
+    "words": [
+      {
+        "en": "participation",
+        "tr": "katılım"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What increased participation?",
+        "options": [
+          "workshops and clearer instructions",
+          "higher membership fees",
+          "shorter opening hours"
+        ],
+        "answer": "workshops and clearer instructions",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: workshops and clearer instructions."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "workshops and clearer instructions",
+          "higher membership fees",
+          "shorter opening hours"
+        ],
+        "answer": "workshops and clearer instructions",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“katılım” kelimesini İngilizce yaz.",
+        "answers": [
+          "participation"
+        ],
+        "answer": "participation",
+        "explanation": "“participation” sözcüğü “katılım” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b2-39",
+    "level": "B2",
+    "type": "story",
+    "title": "A Different Measure of Success",
+    "icon": "🏅",
+    "scene": "Başarı anlayışını sorgulama",
+    "lines": [
+      [
+        "Narrator",
+        "When a student robotics team finished second, its members initially felt disappointed."
+      ],
+      [
+        "Narrator",
+        "However, their prototype had helped visitors understand an important environmental problem."
+      ],
+      [
+        "Narrator",
+        "Their teacher encouraged them to evaluate what they had learned rather than focusing solely on the ranking."
+      ],
+      [
+        "Narrator",
+        "By the next competition, the team defined success through both impact and improvement."
+      ]
+    ],
+    "words": [
+      {
+        "en": "prototype",
+        "tr": "prototip"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What did the teacher encourage?",
+        "options": [
+          "reflection on learning",
+          "ignoring visitors",
+          "quitting competitions"
+        ],
+        "answer": "reflection on learning",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: reflection on learning."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "reflection on learning",
+          "ignoring visitors",
+          "quitting competitions"
+        ],
+        "answer": "reflection on learning",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“prototip” kelimesini İngilizce yaz.",
+        "answers": [
+          "prototype"
+        ],
+        "answer": "prototype",
+        "explanation": "“prototype” sözcüğü “prototip” anlamına gelir."
+      }
+    ]
+  },
+  {
+    "id": "original-story-b2-40",
+    "level": "B2",
+    "type": "story",
+    "title": "The Bridge Between Neighbours",
+    "icon": "🌉",
+    "scene": "Farklı görüşleri uzlaştırma",
+    "lines": [
+      [
+        "Narrator",
+        "Two neighbourhood groups disagreed about plans for a new pedestrian bridge."
+      ],
+      [
+        "Narrator",
+        "One valued quicker access to the park, while the other feared losing green space."
+      ],
+      [
+        "Narrator",
+        "After several meetings, a designer proposed a narrower bridge with planting along its edges."
+      ],
+      [
+        "Narrator",
+        "The compromise did not satisfy every preference, but it addressed the main concerns of both groups."
+      ]
+    ],
+    "words": [
+      {
+        "en": "compromise",
+        "tr": "uzlaşma"
+      }
+    ],
+    "questions": [
+      {
+        "skill": "reading",
+        "prompt": "What solution was proposed?",
+        "options": [
+          "a narrower bridge with planting",
+          "closing the park permanently",
+          "building a car park"
+        ],
+        "answer": "a narrower bridge with planting",
+        "explanation": "Metindeki ilgili bölüm bu yanıtı destekler: a narrower bridge with planting."
+      },
+      {
+        "skill": "listening",
+        "prompt": "Dinleme metnine göre hangisi doğrudur?",
+        "options": [
+          "a narrower bridge with planting",
+          "closing the park permanently",
+          "building a car park"
+        ],
+        "answer": "a narrower bridge with planting",
+        "explanation": "Konuşma veya anlatıda geçen doğru bilgiyi dinleyerek belirleyebilirsin."
+      },
+      {
+        "skill": "writing",
+        "prompt": "“uzlaşma” kelimesini İngilizce yaz.",
+        "answers": [
+          "compromise"
+        ],
+        "answer": "compromise",
+        "explanation": "“compromise” sözcüğü “uzlaşma” anlamına gelir."
+      }
+    ]
+  }
+];});
