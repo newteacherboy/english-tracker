@@ -22,3 +22,15 @@ test('all 240 proposed lessons have four distinct teaching stages and ten graded
  }
  assert.equal(graded,2400);
 });
+
+test('client and server v8 candidate compilers are identical',()=>{
+ const fs=require('node:fs');
+ const client=fs.readFileSync('ingilizce/thematic-v8-candidate.js','utf8');
+ const server=fs.readFileSync('supabase/functions/thematic-learning/thematic-v8-candidate.js','utf8');
+ assert.equal(client,server);
+});
+test('v8 content is isolated from the legacy progression and economy code',()=>{
+ const fs=require('node:fs');
+ const candidate=fs.readFileSync('ingilizce/thematic-v8-candidate.js','utf8');
+ assert.doesNotMatch(candidate,/dm_story_apply|dm_thematic_fair_step|papi_story_progress|localStorage|fetch\(/);
+});
