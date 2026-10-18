@@ -66,8 +66,8 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    const r=await db.from('extra_data').select('key_name,updated_at').eq('student_id',sid).like('key_name',prefix+'%').gte('updated_at',new Date(Date.now()-(kind==='email'?86400000:7*86400000)).toISOString());if(r.error)throw r.error;
    const records=r.data||[];if(kind==='placement'&&records.length>=2)return json({ok:true,show:false});
    const recent=Math.max(0,...records.map((x:any)=>Date.parse(x.updated_at)||0));
-   if(recent&&Date.now()-recent<(kind==='email'?15*60000:30*60000))return json({ok:true,show:false});
-   const key=kind==='email'?prefix+String(Math.floor(Date.now()/900000)):prefix+(records.length+1);
+   if(recent&&Date.now()-recent<(kind==='email'?10*60000:30*60000))return json({ok:true,show:false});
+   const key=kind==='email'?prefix+String(Math.floor(Date.now()/600000)):prefix+(records.length+1);
    const ins=await db.from('extra_data').upsert({student_id:sid,key_name:key,value:{shown:true},updated_at:new Date().toISOString()},{onConflict:'student_id,key_name',ignoreDuplicates:true}).select('id');if(ins.error)throw ins.error;
    return json({ok:true,show:!!ins.data?.length,kind});
   }
