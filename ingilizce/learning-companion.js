@@ -65,7 +65,7 @@ async function report(){
  }catch(e){if(v.alive())v.body.textContent=e.message;}
 }
 function dialogues(){
- if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p><div class="lc-story-grid">'+bank.map(s=>'<button type="button" data-story="'+s.id+'"><span class="lc-story-icon" aria-hidden="true">'+s.icon+'</span><span><small>'+s.level+' · Oku / Dinle</small><b>'+esc(s.title)+'</b><small>'+esc(s.scene)+'</small></span><span>›</span></button>').join('')+'</div>','lcDialogues');if(!v)return;
+ if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p><div class="lc-story-grid">'+['A1','A2','B1','B2'].map(level=>'<h3 class="lc-level-heading">'+level+' · Hikâyeler ve Diyaloglar</h3>'+bank.filter(s=>s.level===level).map(s=>'<button type="button" data-story="'+s.id+'"><span class="lc-story-icon" aria-hidden="true">'+s.icon+'</span><span><small>'+s.level+' · '+(s.type==='story'?'Hikâye':'Diyalog')+' · Oku / Dinle</small><b>'+esc(s.title)+'</b><small>'+esc(s.scene)+'</small></span><span>›</span></button>').join('')).join('')+'</div>','lcDialogues');if(!v)return;
  v.body.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>{v.close();openStory(b.dataset.story);});
 }
 function say(text,rate,finished,failed){
@@ -73,7 +73,7 @@ function say(text,rate,finished,failed){
 }
 async function openStory(id){
  const story=bank.find(s=>s.id===id);if(!story||!student())return;
- const v=sheet(story.title,'<p role="status">Diyalog yükleniyor…</p>','lcStory');if(!v)return;
+ const v=sheet(story.title,'<p role="status">Metin yükleniyor…</p>','lcStory');if(!v)return;
  let state=null,played=false,audioBusy=false,slow=false,answering=false;
  const transcript=()=>'<details class="lc-transcript-panel" open><summary>Konuşma metni</summary><div class="lc-transcript">'+story.lines.map(([person,text])=>'<p><small>'+esc(person)+'</small><span>'+esc(text)+'</span></p>').join('')+'</div></details>';
  function audio(){return '<div class="lc-audio">'+action('▶ Dinle','audio')+action('Yavaş dinle','slow')+'</div><p class="lc-audio-note" role="status"></p>';}
@@ -84,7 +84,7 @@ async function openStory(id){
  }
  function render(){
   if(!v.alive())return;played=false;audioBusy=false;
-  if(state.cursor>=story.questions.length){const results=Object.values(state.answers||{}),count=results.filter(r=>r.correct).length;v.body.innerHTML='<div class="lc-complete">'+papi+'<h3>Bir konuşma daha öğrendin!</h3><p>'+count+' / '+story.questions.length+' doğru · Bugünkü çalışman kayıtlı.</p></div>'+transcript()+'<div class="lc-word-chips">'+story.words.map(w=>'<span>'+esc(w.en)+' · '+esc(w.tr)+'</span>').join('')+'</div>'+action('Başka bir diyalog seç','another')+action('Parkuruma dön','back-route');v.body.querySelector('[data-lc="another"]').onclick=()=>{v.close();dialogues();};v.body.querySelector('[data-lc="back-route"]').onclick=()=>{v.close();window.dunyaAc?.();};load(true).catch(()=>{});return;}
+  if(state.cursor>=story.questions.length){const results=Object.values(state.answers||{}),count=results.filter(r=>r.correct).length;v.body.innerHTML='<div class="lc-complete">'+papi+'<h3>Bir metni daha tamamladın!</h3><p>'+count+' / '+story.questions.length+' doğru · Bugünkü çalışman kayıtlı.</p></div>'+transcript()+'<div class="lc-word-chips">'+story.words.map(w=>'<span>'+esc(w.en)+' · '+esc(w.tr)+'</span>').join('')+'</div>'+action('Başka bir diyalog seç','another')+action('Parkuruma dön','back-route');v.body.querySelector('[data-lc="another"]').onclick=()=>{v.close();dialogues();};v.body.querySelector('[data-lc="back-route"]').onclick=()=>{v.close();window.dunyaAc?.();};load(true).catch(()=>{});return;}
   const i=state.cursor,q=story.questions[i],listening=q.skill==='listening';
   v.body.innerHTML='<div class="lc-story-kicker"><span>'+story.icon+' '+story.level+' · '+({reading:'Okuma',listening:'Dinleme',writing:'Kısa yazma'}[q.skill])+'</span><b>'+(i+1)+' / '+story.questions.length+'</b></div><progress class="lc-story-progress" max="'+story.questions.length+'" value="'+i+'"></progress>'+audio()+(listening?'<div data-transcript hidden>'+transcript()+'</div>':transcript())+'<h3 class="lc-question">'+esc(q.prompt)+'</h3>'+(q.options?'<div class="lc-options">'+q.options.map(text=>'<button type="button" data-option="'+esc(text)+'" '+(listening?'disabled':'')+'>'+esc(text)+'</button>').join('')+'</div>':'<form class="lc-writing"><label>İngilizce cevabın<input name="answer" maxlength="140" autocomplete="off" autocapitalize="none" spellcheck="false" required></label><button class="lc-button" type="submit">Kontrol et</button></form>')+'<div class="lc-answer-note" role="status" aria-live="polite"></div>'+(listening?action('Ses olmadan metinle çalış','read-instead'):'');
   bindAudio();
