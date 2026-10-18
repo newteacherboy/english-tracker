@@ -1,6 +1,6 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
-const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261018-children-2';document.head.append(style);
+const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261018-cards-3';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token()})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
