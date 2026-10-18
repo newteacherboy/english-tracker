@@ -118,7 +118,18 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-lc]');if(!
  const actions={start,repeat,route,dialogues,report,teacher:teacherSummary,'report-repeat':()=>{$('lcReport')?.querySelector('.dm-member-close')?.click();repeat();},'report-story':()=>{$('lcReport')?.querySelector('.dm-member-close')?.click();dialogues();}};
  if(actions[id]){e.preventDefault();actions[id]();}
 });
-async function lessonDone(){if(!student())return;routePending=false;try{await api('companionPlanStep',{step:'route'});await load(true);}catch{}}
+let completionInFlight='';
+async function lessonDone(){
+ if(!student())return;
+ const account=identity(),day=today(),key=account+'|'+day;
+ if(completionInFlight===key)return;
+ completionInFlight=key;
+ routePending=false;
+ try{
+  await api('companionPlanStep',{step:'route'});
+  if(identity()===account&&today()===day)await load(true);
+ }catch{}finally{if(completionInFlight===key)completionInFlight='';}
+}
 document.addEventListener('dm:learning-progress',e=>{if(e.detail?.completed&&e.detail.owner===who())lessonDone();});
 document.addEventListener('dm:lesson-completed',lessonDone);
 document.addEventListener('dm:school-lesson-completed',lessonDone);
