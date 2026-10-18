@@ -61,7 +61,8 @@ export function thematicHandler(db:DB){
    if(b.action==='open'){
     if(!record){await db.insert('papi_story_progress',{actor_key:owner,student_id:student?id:null,teacher_id:student?null:id,chapter:n,cursor:0,completed:false,reward_claimed:n-1000<inherited,replay:n-1000<inherited,version:0,deck_version:requestedVersion},true);record=await read();}
     else if(record.cursor>=stepCount(record.deck_version)){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{cursor:0,deck_version:requestedVersion,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},route_combo:0,version:record.version+1,updated_at:new Date().toISOString()});record=await read();}
-    if(record&&requestedVersion>=6&&requestedVersion>(record.deck_version||5)){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{deck_version:requestedVersion,version:record.version+1});record=await read();}
+    // Preserve the meaning of a partially answered deck. Upgrade only before its first step.
+    if(record&&record.cursor===0&&requestedVersion>=6&&requestedVersion>(record.deck_version||5)){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{deck_version:requestedVersion,version:record.version+1});record=await read();}
     return record?json({...await withRecovery(record),wallet:await balance(record)}):json({ok:false,mesaj:'Bölüm açılamadı. Yeniden dene.'},503);
    }
    if(!record)return json({ok:false,mesaj:'Önce bölümü aç.'},409);
