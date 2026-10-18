@@ -70,3 +70,6 @@
 .dm-goal-pages>.rt-week,.dm-goal-pages>.rt-tasks{min-height:200px;box-sizing:border-box}
 .rt-root>.dm-parkur-shortcut{display:none!important}
 @media(max-width:360px){.dm-goal-pages>.rt-week,.dm-goal-pages>.rt-tasks{min-height:216px}}
+
+/* Do not show an orphaned daily-task panel when the carousel cannot form; the combined carousel manages visibility. */
+.rt-root:has(>.lc-plan) > .rt-tasks{display:none!important}
