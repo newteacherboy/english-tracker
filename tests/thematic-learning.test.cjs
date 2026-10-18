@@ -41,3 +41,15 @@ test('emergency rollback flag retains the legacy transactional RPC',async()=>{
  assert.equal(r.cursor,1);
  assert.equal(f.calls.length,1);
 });
+
+test('opening a partially answered older deck never changes its question version',async()=>{
+ const f=fixture(),owner='s:00000000-0000-4000-8000-000000000001';
+ f.tables.papi_story_progress.push({actor_key:owner,chapter:1000,cursor:2,completed:false,version:4,deck_version:6,questions_seen:1,charged_cursor:1,mistakes:0,route_combo:0,replay:false,last_reward:{}});
+ const result=await f.req({action:'open',chapter:1000});
+ assert.equal(result.status,200);
+ assert.equal(result.d.deckVersion,6);
+ assert.equal(result.d.cursor,2);
+ assert.equal(f.tables.papi_story_progress[0].version,4);
+ const incompatible=await f.req({action:'advance',chapter:1000,cursor:2,version:4,answer:'anything'});
+ assert.equal(incompatible.status,409);
+});
