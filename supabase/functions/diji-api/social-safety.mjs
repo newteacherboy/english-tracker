@@ -19,7 +19,7 @@ async function hashGuardianPin(pin){
  const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveBits']);
  const bits=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:210000,hash:'SHA-256'},key,256));
  const base64=a=>btoa(String.fromCharCode(...a));
- return 'pbkdf2$210000
+ return 'pbkdf2$210000{db,json,hash,hashPassword,verifyPassword,queue}){
  async function one(table,columns,key,value){const r=await db.from(table).select(columns).eq(key,value).maybeSingle();if(r.error)throw Error('Güvenlik bilgileri alınamadı.');return r.data;}
  async function control(id){return one('dm_social_controls','*','student_id',id);}
  async function rate(scope,value,max,seconds){const r=await db.rpc('dm_security_rate_check',{bucket_key:'safety:'+await hash(scope+'|'+value),max_hits:max,window_seconds:seconds});if(r.error||!r.data?.allowed)throw Error('Çok fazla deneme. Biraz sonra tekrar dene.');}
@@ -133,7 +133,7 @@ async function hashGuardianPin(pin){
  }
  };
 }
-+base64(salt)+'
++base64(salt)+'{db,json,hash,hashPassword,verifyPassword,queue}){
  async function one(table,columns,key,value){const r=await db.from(table).select(columns).eq(key,value).maybeSingle();if(r.error)throw Error('Güvenlik bilgileri alınamadı.');return r.data;}
  async function control(id){return one('dm_social_controls','*','student_id',id);}
  async function rate(scope,value,max,seconds){const r=await db.rpc('dm_security_rate_check',{bucket_key:'safety:'+await hash(scope+'|'+value),max_hits:max,window_seconds:seconds});if(r.error||!r.data?.allowed)throw Error('Çok fazla deneme. Biraz sonra tekrar dene.');}
