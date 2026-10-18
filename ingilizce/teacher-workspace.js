@@ -40,6 +40,8 @@ function decorateWorkspace(menu){
   [/seviye sınav/i,'🧭','Dil seviyelerini ve sonuçları incele'],
   [/sözlü yap/i,'🎤','Kelime bilgisi için sözlü uygula']
  ];
+ const fallbackIcons=['🧑‍🏫','📘','🏫','🗓️','📝','📈','🗂️','🏅','🧠','🧮','📌','🎨','📎','🔔'];
+ let cardIndex=0;
  for(const b of [...content.querySelectorAll('.ogretmen-menu-btn')]){
   const raw=(b.dataset.dmTeacherTitle||b.textContent||'').trim();
   if(/kelime rallisi.*öğretmen denemesi/i.test(raw)){b.remove();continue;}
@@ -49,10 +51,13 @@ function decorateWorkspace(menu){
    const old=b.querySelector('span:not(.ogretmen-menu-rozet)');
    if(old){old.textContent=title;old.classList.add('dm-teacher-card-title');}
    else{const label=document.createElement('span');label.className='dm-teacher-card-title';label.textContent=title;b.prepend(label);}
-   const mark=document.createElement('span');mark.className='dm-teacher-card-icon';mark.setAttribute('aria-hidden','true');mark.textContent=entry?.[1]||'🧩';b.prepend(mark);
-   const note=document.createElement('small');note.textContent=entry?.[2]||'Sınıfın için aç ve düzenle';b.append(note);
+   const mark=document.createElement('span');mark.className='dm-teacher-card-icon';mark.setAttribute('aria-hidden','true');mark.textContent=entry?.[1]||fallbackIcons[cardIndex%fallbackIcons.length];b.prepend(mark);
+   const description=entry?.[2]||'';
+   // Do not repeat the title as a subtitle or add generic filler under every card.
+   if(description&&description.toLocaleLowerCase('tr')!==title.toLocaleLowerCase('tr')){const note=document.createElement('small');note.textContent=description;b.append(note);}
    b.dataset.dmTeacherTitle=title;b.dataset.dmTeacherCard='1';
   }
+  cardIndex++;
   const show=!query||b.dataset.dmTeacherTitle.toLocaleLowerCase('tr').includes(query);
   b.hidden=!show;if(show)count++;
  }
