@@ -2,7 +2,7 @@ import {placementStudyAccess} from './study-placement-access.mjs';
 import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
 export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
- const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave','communicationStats']);
+ const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave','communicationStats','communicationNoticePolicy']);
  const fail=(message:string,status=400)=>json({ok:false,mesaj:message},status);
  const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
  function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
@@ -12,6 +12,12 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
   if(!ops.has(op))return null;
   if(method!=='POST')return fail('POST gerekli.',405);
   if(!a)return json({ok:false,hata:'oturum',mesaj:'Önce giriş yap.'},401);
+  if(op==='communicationNoticePolicy'){
+   if(a.role!=='student'||!a.student_id)return fail('Öğrenci oturumu gerekli.',403);
+   const {data,error}=await db.from('dm_communication_rules').select('key,enabled,settings').eq('category','notice');
+   if(error)throw error;
+   return json({ok:true,rules:(data||[]).map((x:any)=>({key:x.key,enabled:x.enabled,settings:x.settings}))});
+  }
   if(['communicationRulesList','communicationRulesSave','communicationStats'].includes(op)){
    if(a.role!=='teacher'||!a.yonetici)return fail('Yalnızca yönetici bu kuralları yönetebilir.',403);
    if(op==='communicationStats'){
