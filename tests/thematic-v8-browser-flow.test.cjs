@@ -8,7 +8,7 @@ test('new route UI parses and loads v8 only when explicitly enabled',()=>{
  assert.match(code,/deckVersion:\(session\?\.deckVersion===8/);
 });
 test('v8 displays four teaching stages, ten graded tasks and fourteen-step progress',()=>{
- assert.match(code,/version===8\?14/);
+ assert.match(code,/deckVersion===8\?14/);
  assert.match(code,/deckVersion===8\?10/);
  assert.match(code,/Dinle ve Öğren/);
  assert.match(code,/stepsFor\(\)/);
