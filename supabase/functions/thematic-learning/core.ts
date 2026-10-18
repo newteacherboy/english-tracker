@@ -1,9 +1,11 @@
 import DATA from './curriculum.json' with {type:'json'};
 import './learning-core.js';
+import './thematic-v8-candidate.js';
 const CORE=(globalThis as any).DMLearningCore;
+const V8=(globalThis as any).DMThematicV8Candidate;
 type DB={select:(table:string,params:any)=>Promise<any[]>,insert:(table:string,payload:any,ignore?:boolean)=>Promise<any[]>,update:(table:string,params:any,payload:any)=>Promise<any[]>,rpc:(name:string,payload:any)=>Promise<any>};
 const chapters=DATA.chapters;
-const stepCount=(v:number)=>v>=7?12:v===6?11:10;
+const stepCount=(v:number)=>v===8?14:v>=7?12:v===6?11:10;
 // Three new translation prompts from the same chapter; not repeats of the 11 lesson tasks.
 const recoveryTask=(chapter:any,step:number)=>{
  const card=chapter.cards[step],options=[...new Set(chapter.cards.map((c:any)=>c.en))];
@@ -48,7 +50,10 @@ export function thematicHandler(db:DB){
     return json({ok:true,version:5,progress:[...map.values()],inherited,total:240,wallet:await balance()});
    }
    const n=Number(b.chapter),C=chapters[n-1000];if(!Number.isInteger(n)||!C||C.id!==n)return json({ok:false,mesaj:'Geçersiz bölüm.'},400);
-   const requestedVersion=b.deckVersion===7?7:b.deckVersion===6?6:5;
+   // V8 can only be enabled after the atomic first-attempt/reward RPC migration.
+   const v8Enabled=typeof Deno!=='undefined'&&Deno.env.get('DM_THEMATIC_V8_ENABLED')==='true';
+   if(b.deckVersion===8&&!v8Enabled)return json({ok:false,mesaj:'Yeni öğrenme sürümü henüz kullanıma açılmadı.'},409);
+   const requestedVersion=b.deckVersion===8?8:b.deckVersion===7?7:b.deckVersion===6?6:5;
    const filters={actor_key:'eq.'+owner,chapter:'eq.'+n};
    const read=async()=>(await db.select('papi_story_progress',{select:'*',...filters,limit:'1'}))[0];
    const recoveryStatus=async()=> (await db.select('dm_thematic_recovery',{select:'step,completed',actor_key:'eq.'+owner,chapter:'eq.'+n,limit:'1'}))[0];
@@ -87,13 +92,13 @@ export function thematicHandler(db:DB){
    if(!Number.isInteger(b.cursor)||!Number.isInteger(b.version)||b.cursor!==record.cursor||b.version!==record.version)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
    const recovery=await recoveryStatus();
    if(recovery&&!recovery.completed&&!record.completed&&!record.replay)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
-   const tasks=CORE.deck(C,chapters[n-1001],requestedVersion),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);
+   const tasks=requestedVersion===8?V8.build(C,chapters[n-1001]):CORE.deck(C,chapters[n-1001],requestedVersion),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);
    if(!grade.valid)return json({ok:false,mesaj:'Bu etkinlik için bir cevap seç.'},400);
    // The first-answer migration is installed and verified. This records only
    // the original graded attempt; old reward and progress transactions are unchanged.
    // Emergency opt-out: DM_THEMATIC_FIRST_ATTEMPT_LEDGER=false.
    const firstTryEnabled=typeof Deno==='undefined'||Deno.env.get('DM_THEMATIC_FIRST_ATTEMPT_LEDGER')!=='false';
-   const r=await db.rpc(firstTryEnabled?'dm_thematic_fair_step':'dm_story_apply',{owner_key:owner,chapter_no:n,expected_cursor:record.cursor,expected_version:record.version,answer_correct:grade.correct,is_question:task.kind!=='teach',step_count:steps,question_count:steps-1,combo_correct:task.kind==='review'?grade.allCorrect:grade.correct});
+   const r=await db.rpc(firstTryEnabled?'dm_thematic_fair_step':'dm_story_apply',{owner_key:owner,chapter_no:n,expected_cursor:record.cursor,expected_version:record.version,answer_correct:grade.correct,is_question:task.kind!=='teach',step_count:steps,question_count:requestedVersion===8?10:steps-1,combo_correct:task.kind==='review'?grade.allCorrect:grade.correct});
    if(!r.ok)return json(r,r.energyEmpty?409:503);
    return json({...safe(r.progress),...r,progress:undefined,wallet:await balance(r.progress),
     ...(r.needsRecovery?{recovery:recoveryView(C,Number(r.recovery?.step||0))}:{}),
