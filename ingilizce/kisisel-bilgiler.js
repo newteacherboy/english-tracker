@@ -10,8 +10,10 @@
   const css = `
   .kb-perde{position:fixed;inset:0;z-index:100000;background:rgba(30,20,60,.55);display:flex;align-items:flex-end;justify-content:center;padding:0;font-family:inherit}
   @media(min-width:640px){.kb-perde{align-items:center;padding:20px}}
-  .kb-kutu{background:#fff;width:100%;max-width:460px;max-height:92dvh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));color:#2d2350;box-shadow:0 -8px 30px rgba(60,30,120,.25)}
+  .kb-kutu{background:#fff;width:100%;max-width:460px;height:min(92dvh,920px);max-height:92dvh;display:flex;flex-direction:column;min-height:0;overflow:hidden;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));color:#2d2350;box-shadow:0 -8px 30px rgba(60,30,120,.25)}
   @media(min-width:640px){.kb-kutu{border-radius:22px}}
+  .kb-icerik{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:12px}
+  .kb-altbar{flex:0 0 auto;position:relative;z-index:5;background:#fff;padding:10px 0 max(8px,env(safe-area-inset-bottom,0px));box-shadow:0 -10px 16px #fff}
   .kb-bas{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
   .kb-bas h3{margin:0;font-size:19px;font-weight:900}
   .kb-x{border:0;background:#f3efff;color:#5b3fb5;width:36px;height:36px;border-radius:50%;font-size:17px;cursor:pointer}
@@ -31,7 +33,8 @@
   .kb-mesaj{min-height:18px;font-size:13px;font-weight:700;margin:4px 0 10px}
   .kb-mesaj.hata{color:#dc2626}.kb-mesaj.tamam{color:#15803d}
   .kb-kaydet{width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:900;color:#fff;background:#7c3aed;cursor:pointer;font-family:inherit}
-  .kb-kaydet#kbKaydet{position:sticky;bottom:0;z-index:3;box-shadow:0 -8px 14px rgba(255,255,255,.95);margin-top:8px;min-height:52px;touch-action:manipulation}\n  .kb-kaydet:disabled{opacity:.55;cursor:default}
+  .kb-kaydet#kbKaydet{position:relative;z-index:6;box-shadow:0 -8px 14px rgba(255,255,255,.95);margin-top:8px;min-height:52px;touch-action:manipulation}
+  .kb-kaydet:disabled{opacity:.55;cursor:default}
   .kb-kaydet:focus-visible,.kb-x:focus-visible{outline:3px solid #f0abfc;outline-offset:2px}
   .kb-yukleniyor{padding:30px 0;text-align:center;color:#7a6ca8}`;
 
@@ -101,6 +104,12 @@
       </div>
       <div class="kb-mesaj" id="kbMesaj" role="status" aria-live="polite"></div>
       <button class="kb-kaydet" id="kbKaydet">Kaydet</button>`;
+    // The save action stays outside the scrollable form so it remains visible and clickable.
+    const saveButton = kutu.querySelector('#kbKaydet');
+    const footer = document.createElement('div'); footer.className='kb-altbar';
+    const body = document.createElement('div'); body.className='kb-icerik';
+    while(kutu.firstChild)body.appendChild(kutu.firstChild);
+    kutu.appendChild(body); footer.appendChild(saveButton); kutu.appendChild(footer);
     kutu.querySelector(".kb-x").onclick = kapat;
     if(secenek.zorunlu)kutu.querySelector('.kb-x').hidden=true;
 
