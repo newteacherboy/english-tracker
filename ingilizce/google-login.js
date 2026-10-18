@@ -50,9 +50,12 @@
     <p class="dm-form-intro">Öğrenci ve veli bilgilerini tamamla.</p>
     <div class="dm-register-step" data-register-step="0"><h3 class="dm-section">1 / 3 · ÖĞRENCİ BİLGİLERİ</h3>
     <div class="form-group"><label for="googleYeniKullanici">Kullanıcı adı (takma ad)</label><input id="googleYeniKullanici" required minlength="3" maxlength="20" pattern="[A-Za-z0-9çğıöşüÇĞİÖŞÜ._\\-]{3,20}" autocapitalize="off" spellcheck="false" placeholder="ör. yildiz42" title="3-20 karakter, boşluksuz; harf, rakam, nokta, alt çizgi ya da tire"><small style="display:block;font-size:11px;color:#64748b;margin-top:3px">Liglerde herkes bunu görür. Gerçek adını yazma.</small></div><div class="form-group"><label for="googleYeniAd">Öğrencinin adı soyadı</label><input id="googleYeniAd" required minlength="3" maxlength="60" autocomplete="name" placeholder="Ad ve soyad"><small style="display:block;font-size:11px;color:#64748b;margin-top:3px">Sadece öğretmen görür.</small></div>
+    <div class="form-group"><label for="googleYeniOgrenim">Öğrenme amacın</label><select id="googleYeniOgrenim"><option value="school">Okul derslerim için (1–8. sınıf)</option><option value="independent">Kendim için İngilizce öğreniyorum</option></select></div>
+    <div id="googleYeniOkulAlanlari">
     <div class="dm-field-row">
       <div class="form-group"><label for="googleYeniSinif">Sınıf</label><select id="googleYeniSinif" required><option value="">Seçin</option>${Array.from({length:8}, (_, i) => `<option value="${i+1}">${i+1}. sınıf</option>`).join('')}</select></div>
       <div class="form-group"><label for="googleYeniSube">Şube</label><input id="googleYeniSube" required maxlength="10" placeholder="Örn: A"></div>
+    </div>
     </div>
     </div><div class="dm-register-step" data-register-step="1" hidden><h3 class="dm-section">2 / 3 · VELİ BİLGİLERİ</h3>
     <div class="form-group"><label for="googleYeniTelefon">Veli cep telefonu</label><input id="googleYeniTelefon" type="tel" required placeholder="05XX XXX XX XX" autocomplete="tel"></div>
@@ -252,8 +255,8 @@
     resultText.textContent = 'Kaydın oluşturuluyor…';
     try {
       const result = await googleRequest('googleKayit', {
-        ogrenciAdi: $('googleYeniKullanici').value.trim(), adSoyad: $('googleYeniAd').value.trim(), sinif: $('googleYeniSinif').value,
-        sube: $('googleYeniSube').value.trim(), telefon: $('googleYeniTelefon').value.trim(),
+        ogrenciAdi: $('googleYeniKullanici').value.trim(), adSoyad: $('googleYeniAd').value.trim(), ogrenimTuru: $('googleYeniOgrenim').value, sinif: $('googleYeniOgrenim').value === 'independent' ? null : $('googleYeniSinif').value,
+        sube: $('googleYeniOgrenim').value === 'independent' ? null : $('googleYeniSube').value.trim(), telefon: $('googleYeniTelefon').value.trim(),
         email: $('googleYeniEmail').value.trim(), ogretmenKodu: $('googleYeniKod').value.trim(),
         kvkkOnay: $('googleYeniOnay').checked
       });
@@ -278,6 +281,13 @@
     } catch (error) { resultText.textContent = error.message || 'Bağlantı hatası. Tekrar dene.'; }
     finally { busy = false; submit.disabled = false; cancel.disabled = false; }
   };
+  $('googleYeniOgrenim').addEventListener('change',()=>{
+    const independent=$('googleYeniOgrenim').value==='independent';
+    $('googleYeniOkulAlanlari').hidden=independent;
+    $('googleYeniSinif').required=!independent;
+    $('googleYeniSube').required=!independent;
+    if(independent)$('googleYeniKod').value='';
+  });
   cancel.onclick = async function () {
     if (busy) return;
     reset();
