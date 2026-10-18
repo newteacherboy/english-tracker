@@ -52,41 +52,9 @@
 @media(prefers-reduced-motion:reduce){.dm-goal-pages *{animation:none!important}}
 
 
-/* Approved compact lesson landing, retaining level illustrations and story card. */
-#suLevels{min-width:0;gap:8px!important}
-#suLevels .lc-entry{min-height:78px;margin:7px 0 4px;padding:10px 12px;border-radius:18px;background:linear-gradient(115deg,#eefcff,#f1eaff)}
-#suLevels .lc-entry img{max-width:72px;max-height:68px;object-fit:contain;flex-shrink:0}
-#suLevels .lc-entry h3{margin:0 0 3px;font-size:16px;font-weight:900;color:#173d43}
-#suLevels .lc-entry p{margin:0;font-size:12px;color:#476a75}
-#suLevels .lc-entry .lc-button{width:auto;min-width:80px;white-space:nowrap;margin-left:auto}
-#suLevels .su-level-card img,#suLevels .su-level-card svg{visibility:visible;opacity:1}
 .dm-parkur-shortcut{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:1px solid #dce7eb;border-radius:16px;padding:7px 10px;margin:6px 0}
 .dm-parkur-current{font-weight:800;color:#243e55;font-size:13px;min-width:0}
 .dm-parkur-shortcut button{font:800 12px Nunito,system-ui;background:#f2edff;border:1px solid #e1d5ff;border-radius:12px;padding:9px;color:#6746c2;min-height:38px;white-space:nowrap}
-@media(max-width:390px){#suLevels .lc-entry{padding:8px;gap:6px}#suLevels .lc-entry img{max-width:51px}#suLevels .lc-entry .lc-button{min-width:70px;padding:7px}}
-
-
-/* Closed by default: story/dialogue stays one compact row. */
-#suLevels .lc-entry:has(.lc-story-accordion){display:block;padding:0!important;min-height:0;margin:7px 0 4px}
-.lc-story-accordion{width:100%}.lc-story-accordion>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 14px;min-height:66px}
-.lc-story-accordion>summary::-webkit-details-marker{display:none}
-.lc-story-icon{width:42px;height:42px;display:grid;place-items:center;background:#e7f6ed;border-radius:13px;font-size:23px;flex:none}
-.lc-story-name{flex:1;display:grid;gap:2px;min-width:0}.lc-story-name strong{font-size:15px;color:#214657}.lc-story-name small{font-size:12px;color:#617580}
-.lc-story-arrow{font-size:24px;color:#278b73;transition:transform .2s}.lc-story-accordion[open] .lc-story-arrow{transform:rotate(180deg)}
-.lc-story-expand{border-top:1px solid #dbeae8;padding:9px 13px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.lc-story-expand p{font-size:12px;margin:0;color:#56707c}.lc-story-expand .lc-button{width:auto!important;margin-left:auto}
-.lc-story-accordion>summary:focus-visible{outline:3px solid #337fba;outline-offset:2px;border-radius:16px}
-
-
-/* Illustrated CEFR level tiles remain compact on the study landing page. */
-#suLevels .su-level-card{position:relative;isolation:isolate;overflow:hidden;border-radius:17px;min-height:96px;padding-right:54px;box-sizing:border-box}
-#suLevels .su-level-card::after{content:"📗";position:absolute;right:9px;bottom:10px;font-size:38px;line-height:1;filter:drop-shadow(0 3px 2px #00000012);pointer-events:none;opacity:.94}
-#suLevels .su-level-card:nth-child(2)::after{content:"🎒"}
-#suLevels .su-level-card:nth-child(3)::after{content:"🎓"}
-#suLevels .su-level-card:nth-child(4)::after{content:"🌍"}
-#suLevels .su-level-card img{max-width:68px;max-height:75px;object-fit:contain;position:relative;z-index:1}
-@media(max-width:390px){#suLevels .su-level-card{min-height:85px;padding-right:43px}#suLevels .su-level-card::after{font-size:30px;right:6px}}
-
 
 /* Question headings need opaque dark ink on the daytime white surface. */
 .lc-dialog .lc-question,.lc-dialog .dm-member-sheet h2,.lc-dialog .dm-member-sheet h3,
