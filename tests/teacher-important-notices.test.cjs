@@ -14,7 +14,7 @@ test('teacher notices use a private per-student database record',()=>{
 });
 test('sending notices requires verified teacher administrator access',()=>{
  assert.match(api,/if\(a\?\.role!=='teacher'\|\|!a.teacher_id\|\|!a.yonetici\)/);
- assert.match(api,/if\(op==='safetyTeacherNotice'\)/);
+ assert.match(api,/if\(op==='safetyAdminReview'\)/);
  assert.match(api,/rate\('teacher-notice',a.teacher_id,20,3600\)/);
  assert.equal(api,mirror);
 });
@@ -23,5 +23,5 @@ test('notice UI safely uses textContent, acknowledges server record, and resets 
  assert.match(source,/safetyStudentNoticeAck/);
  assert.match(source,/account!==studentToken\(\)\|\|owner!==who\(\)/);
  assert.match(source,/noticeShown='';noticeAccount='';setTimeout\(studentImportantNotice/);
- assert.match(source,/data-send-notice/);
+ assert.match(source,/data-student-message/);\n assert.match(source,/safetyStudentNoticeAppeal/);\n assert.doesNotMatch(source,/data-send-notice/);
 });
