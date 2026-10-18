@@ -488,7 +488,7 @@ async function leaderboardGet(op: string, body: any, q: URLSearchParams) {
   const { data } = await query;
   let rows = (data || []).filter(publicParticipant);
   const visibleScores=new Set((await socialSafety.filterStudents(rows.map((r:any)=>({id:r.student_id})),null)).map((r:any)=>r.id));
-  rows=rows.filter((r:any)=>visibleScores.has(r.student_id));
+  rows=rows.filter((r:any)=>r.student_id == null || visibleScores.has(r.student_id));
   if (/^Büyü/i.test(cls)) rows = rows.filter((r: any) => String(r.extra?.legacy_class || r.unit_name || "").toLowerCase() === cls.toLowerCase());
   if (adil) {
     const gorulen = new Set<string>();
