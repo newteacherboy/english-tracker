@@ -12,7 +12,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   let launch={args:['--no-sandbox']};
   if(process.env.FRIENDS_BROWSER_PATH)launch={executablePath:process.env.FRIENDS_BROWSER_PATH,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'],env:{...process.env,LD_LIBRARY_PATH:path.dirname(process.env.FRIENDS_BROWSER_PATH)}};
   if(process.env.FRIENDS_CHROMIUM){const pkg=require(process.env.FRIENDS_CHROMIUM),c=pkg.default||pkg;launch={executablePath:await c.executablePath(),args:c.args,headless:true};}
-  const browser=await chromium.launch(launch),page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],writes=[];let failNextSave=false;
+  const browser=await chromium.launch(launch),page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],writes=[];let failNextSave=false,placementB2=false;
   page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.dismiss());
   await page.route('**/*',async r=>{
     const u=new URL(r.request().url());let body={};try{body=r.request().postDataJSON()||{};}catch{}
@@ -21,7 +21,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
       if(op==='dersKonulariGetir')d=topics;
       else if(op==='dersKonuDetayGetir')d=detail;
       else if(op==='dersTestSonucKaydet'){writes.push(body);if(failNextSave){failNextSave=false;return r.fulfill({status:503,json:{status:'error',message:'Fixture offline'}});}const answers=body.answers||[],firstCorrect=Number(answers[0]==='goes')+Number(answers[1]==='I wake up');d=firstCorrect===2?{ok:true,status:'success',firstCorrect,total:2,tier:100,xp:80,gold:25,eklenenEnerji:body.konuAdi==='Saatler'?0:2,enerjiKalan:32,enerjiMax:30}:{ok:true,status:'needs_recovery',firstCorrect,total:2,tier:0,recoveryIndices:[0]};}
-      else if(op==='seviyeDurumu')d={ok:true,level:30,feed:true,lessons:{},chests:{}};
+      else if(op==='seviyeDurumu')d={ok:true,level:placementB2?1:30,feed:true,lessons:{},chests:{},...(placementB2?{studyAccess:{A1:true,A2:true,B1:true,B2:true},studyPlacementLevel:'B2'}:{})};
       else if(op==='seviyeLigListesi')d={ok:true,liste:league};
       else if(op==='sosyalOgrencilerGetir')d=people;
       else if(op==='akisTumu')d={liste:feed};
@@ -74,6 +74,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     assert(await page.locator('.su-island').first().evaluate((e,h)=>e.getAttribute('src')&& (h<650||e.getBoundingClientRect().height>15),h),'island artwork should be available on non-compact layouts');console.log('PASS levels fit '+w+'x'+h);
   }
   await page.setViewportSize({width:390,height:844});await page.evaluate(()=>document.getElementById('tab-derscalis').scrollTop=0);await page.screenshot({path:path.join(artifacts,'study-levels-mobile.png')});
+  placementB2=true;await page.evaluate(()=>{yo.totalXp=0;document.dispatchEvent(new CustomEvent('dm:starting-placement-complete',{detail:{owner:'Fixture',level:'B2'}}));});await page.waitForFunction(()=>window.dmProgression.status()?.studyPlacementLevel==='B2');await page.waitForFunction(()=>document.querySelectorAll('.su-level-locked').length===0);assert.equal(await page.locator('.su-level-card[aria-disabled="false"]').count(),4);await page.screenshot({path:path.join(artifacts,'study-placement-b2-unlocked.png')});await page.locator('[data-su="level"][data-level="B2"]').click();assert.equal(await page.evaluate(()=>dcAktifSeviye),'B2','A level-one learner can enter B2 after the starting test');await page.evaluate(()=>dcAnaEkranaDon());console.log('PASS B2 placement opens all study levels without increasing player XP');
   await page.evaluate(()=>dcSeviyeSec('A1','Başlangıç'));
   await page.waitForSelector('.su-topic');
   assert.equal(await page.locator('.su-topic').count(),5);

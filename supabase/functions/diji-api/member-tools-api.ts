@@ -1,7 +1,8 @@
+import {placementStudyAccess} from './study-placement-access.mjs';
 import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
 export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
- const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults']);
+ const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults']);
  const fail=(message:string,status=400)=>json({ok:false,mesaj:message},status);
  const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
  function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
@@ -47,6 +48,11 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    const firstValue=parse(first?.value);
    return json({ok:true,emailVerified:!!s.email_verified_at,email:s.email||'',hasPlacement:!!exam?.value||!!startExam?.value||!!parse(yo?.value).seviye,placement:exam?.value||null,startingPoint:startExam?.value||null,learnerProfile:profile?.value||null,teacherLinked:!!s.teacher_id,serverNow:now,maxLoginStreak,loginStreak,loginDays:days.size,memberFirstSeenAt:firstValue.at,welcomeEligible:!!firstValue.welcomeEligible,welcomeEarned:!!firstValue.welcomeEligible&&Date.now()-Date.parse(firstValue.at)>=120000});
   }
+  if(op==='studyPlacementInvite'){
+   const exam=await get(sid,'placement_start_v1');if(parse(exam?.value).completedAt)return json({ok:true,show:false,completed:true});
+   const claim=await db.from('extra_data').upsert({student_id:sid,key_name:'study_placement_invite_v1',value:{shown:true},updated_at:new Date().toISOString()},{onConflict:'student_id,key_name',ignoreDuplicates:true}).select('id');if(claim.error)throw claim.error;
+   return json({ok:true,show:!!claim.data?.length});
+  }
   if(op==='memberEmailResend'){
    if(s.email_verified_at)return json({ok:true,verified:true,mesaj:'E-posta adresin zaten doğrulanmış.'});
    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s.email||''))return fail('Önce kişisel bilgilerden veli e-posta adresini tamamla.');
@@ -88,7 +94,8 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    const exam=(globalThis as any).DMStartPlacementBank;
    if(b.version!==exam.version)return fail('Test sürümü değişti; yeniden başlat.');
    let result;try{result=exam.evaluate(b.records);}catch(e){return fail((e as Error).message);}
-   const saved={...result,completedAt:new Date().toISOString(),writing:String(b.writing||'').trim().slice(0,3000),speaking:String(b.speaking||'').trim().slice(0,3000)};
+   const previous=placementStudyAccess((await get(sid,'placement_start_v1'))?.value),bands=['A1','A2','B1','B2'],current=result.level==='Başlangıç'?'A1':result.level,studyUnlockedLevel=bands[Math.max(bands.indexOf(previous.level),bands.indexOf(current),0)];
+   const saved={...result,studyUnlockedLevel,completedAt:new Date().toISOString(),writing:String(b.writing||'').trim().slice(0,3000),speaking:String(b.speaking||'').trim().slice(0,3000)};
    const r=await db.from('extra_data').upsert({student_id:sid,key_name:'placement_start_v1',value:saved,updated_at:saved.completedAt},{onConflict:'student_id,key_name'});if(r.error)throw r.error;
    return json({ok:true,result:saved});
   }

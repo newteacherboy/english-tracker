@@ -130,3 +130,9 @@ body.dm-profile-open #tab-profil #dmForestActions .header-btn{font-size:clamp(10
 /* Universal learner registration. */
 #dmDiscovery .fd-everyone-art{display:block;width:100%;height:auto;max-height:135px;object-fit:cover;border-radius:18px;margin:0 auto 12px}
 #dmDiscovery .fd-field{color:#193b53;font-size:15px}#dmDiscovery .fd-note{font-size:14px;color:#385568}#dmDiscovery .fd-choice small{font-size:14px!important;color:#385568!important}
+
+/* Quiet reading surfaces keep registration copy clear over the island artwork. */
+#dmDiscovery .fd-content>p,#dmDiscovery .fd-content>.fd-consent{background:#fffdf8;border:1px solid #dce8df;border-radius:15px;padding:12px 14px;color:#23465b;box-shadow:0 3px 12px #204d4510;text-align:left;font-size:14px;line-height:1.6}
+#dmDiscovery label.fd-field{background:#fffdf8;border:1px solid #dce8df;border-radius:15px;padding:11px 13px;box-shadow:0 3px 12px #204d450b}
+#dmDiscovery .fd-content>.fd-consent{font-size:14px;align-items:flex-start}#dmDiscovery .fd-consent input{margin:2px 0 0}
+#dmDiscovery .fd-content>.fd-note{color:#2b4d5d;font-weight:550}#dmDiscovery .fd-divider{background:#fffdf8;border-radius:10px;padding:9px}#dmDiscovery .fd-content>.fd-password-rules{background:#edf7fc}

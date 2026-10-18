@@ -1,7 +1,7 @@
 name: Universal learner registration and starting point
 on:
   push:
-    paths: ['ingilizce/first-discovery.*', 'ingilizce/kisisel-bilgiler.js', 'ingilizce/start-placement*', 'supabase/functions/diji-api/learner-profile.mjs', 'supabase/functions/diji-api/start-placement-bank.js', 'tests/universal-*', '.github/workflows/universal-learning.yml']
+    paths: ['ingilizce/first-discovery.*', 'ingilizce/kisisel-bilgiler.js', 'ingilizce/start-placement*', 'supabase/functions/diji-api/study-placement-access.mjs', 'supabase/functions/diji-api/progression-api.ts', 'supabase/functions/diji-api/member-tools-api.ts', 'supabase/functions/diji-api/learner-profile.mjs', 'supabase/functions/diji-api/start-placement-bank.js', 'tests/universal-*', '.github/workflows/universal-learning.yml']
   pull_request:
     paths: ['ingilizce/first-discovery.*', 'ingilizce/kisisel-bilgiler.js', 'ingilizce/start-placement*', 'tests/universal-*']
 permissions:
@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '24'
       - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0 playwright@1.58.2
-      - run: node --test --test-timeout=20000 tests/universal-learning.test.cjs tests/universal-onboarding-ui.test.cjs tests/onboarding-registration.test.cjs tests/member-tools.test.cjs tests/portal-integrity.test.cjs
+      - run: node --test --test-timeout=20000 tests/universal-learning.test.cjs tests/universal-onboarding-ui.test.cjs tests/onboarding-registration.test.cjs tests/member-tools.test.cjs tests/progression-api.test.cjs tests/social-safety-ui.test.cjs tests/portal-integrity.test.cjs
       - run: npx playwright install --with-deps chromium
       - run: node tests/universal-learning-browser.cjs
       - uses: actions/upload-artifact@v4
