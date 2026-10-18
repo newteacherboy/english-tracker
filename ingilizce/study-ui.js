@@ -13,6 +13,17 @@
  const key=k=>[k.seviye,k.kategori,k.konuAdi].join('|');
  const storage=()=> 'dm-study-resume-v1:'+actor();
  function read(){try{return JSON.parse(localStorage.getItem(storage())||'{}');}catch{return {};}}
+ function studyLevelOpen(code){
+  const order=Object.keys(levels),index=order.indexOf(code);if(index<0)return false;
+  if(window.dmGuestMode||!actor()||actor()==='teacher')return true;
+  const status=window.dmProgression?.status?.();if(status?.studyAccess)return status.studyAccess[code]===true;
+  return (window.dmProgression?.level?.()||1)>=[1,9,16,23][index]&&(index===0||!!status?.lessons?.[code]);
+ }
+ function studyStartTarget(rows,resume){
+  const order=Object.keys(levels),categories=Object.keys(cats),open=rows.filter(k=>studyLevelOpen(k.seviye)).slice().sort((a,b)=>order.indexOf(a.seviye)-order.indexOf(b.seviye)||categories.indexOf(a.kategori)-categories.indexOf(b.kategori)||(Number(a.siraNo)||0)-(Number(b.siraNo)||0));
+  const saved=[resume?.level,resume?.category,resume?.topic].join('|');
+  return open.find(k=>key(k)===saved&&k.durum!=='tamamlandi')||open.find(k=>k.durum!=='tamamlandi')||open[0];
+ }
  function save(stage){if(!dcAktifKonu)return;try{localStorage.setItem(storage(),JSON.stringify({level:dcAktifSeviye,category:dcAktifKategori,topic:dcAktifKonu,stage,signature:contentSignature,read:!!dcAnlatimOnaylandiMi,listened:[...dcOrnekDinlenenSet],time:Date.now()}));}catch{}}
  function signature(d){let h=2166136261;const s=JSON.stringify([d.anlatimHTML,d.ornekler,d.testJSON,d.kelimeSozlugu]);for(let i=0;i<s.length;i++)h=Math.imul(h^s.charCodeAt(i),16777619);return String(h>>>0);}
  function topicRows(){return (dcTumKonularCache||[]).filter(k=>k.seviye===dcAktifSeviye).slice().sort((a,b)=>Object.keys(cats).indexOf(a.kategori)-Object.keys(cats).indexOf(b.kategori)||(Number(a.siraNo)||0)-(Number(b.siraNo)||0));}
@@ -168,11 +179,11 @@
   const rows=dcTumKonularCache||[],resume=read(),player=window.dmProgression?.level?.()||1,status=window.dmProgression?.status?.();
   const signature=JSON.stringify([actor(),rows.map(k=>[key(k),k.durum]),resume,player,status?.lessons,status?.studyAccess,status?.studyPlacementLevel]);if(signature===levelSignature&&$('suLevels'))return;levelSignature=signature;
   let panel=$('suLevels');if(!panel){panel=document.createElement('div');panel.id='suLevels';$('dcScreenLevels').append(panel);}
-  const count=rows.filter(k=>k.durum==='tamamlandi').length,target=rows.find(k=>key(k)===[resume.level,resume.category,resume.topic].join('|')&&k.durum!=='tamamlandi');
+  const count=rows.filter(k=>k.durum==='tamamlandi').length,target=studyStartTarget(rows,resume),resuming=target&&key(target)===[resume?.level,resume?.category,resume?.topic].join('|')&&target.durum!=='tamamlandi';
   panel.innerHTML=`<div class="su-levels-heading"><h1>${ico('book')} Ders Çalış</h1></div><section class="su-levels-welcome"><div><h2>Bugün ne öğrenelim?</h2><p>Küçük adımlar, büyük keşifler.</p>${status?.studyPlacementLevel?`<p>Seviye testiyle <b>${esc(status.studyPlacementLevel)}</b> ve altındaki tüm konuların açık.</p>`:''}</div>${art('read')}</section><div class="su-levels-progress"><b>Öğrenme yolculuğun</b><span>${count} / ${rows.length} konu</span><div class="su-bar"><i style="width:${rows.length?count/rows.length*100:0}%"></i></div></div><div class="su-level-cards">${Object.entries(levels).map(([code,label],i)=>{
-   const lessons=rows.filter(k=>k.seviye===code),done=lessons.filter(k=>k.durum==='tamamlandi').length,guest=window.dmGuestMode||!actor()||actor()==='teacher',need=[1,9,16,23][i],locked=!guest&&(status?.studyAccess?status.studyAccess[code]!==true:player<need||i>0&&!status?.lessons?.[code]);
+   const lessons=rows.filter(k=>k.seviye===code),done=lessons.filter(k=>k.durum==='tamamlandi').length,need=[1,9,16,23][i],locked=!studyLevelOpen(code);
    return `<button class="su-level-card ${locked?'su-level-locked':''}" data-su="level" data-level="${code}" aria-disabled="${!!locked}" style="--su-level-color:${['#dcfff1','#eee3ff','#fff0d8','#e1f2ff'][i]}"><img class="su-island" src="study-assets/island-${code.toLowerCase()}.png" alt="" decoding="async"><b>${code}</b><strong>${label}</strong><span class="su-level-count">${done} / ${lessons.length} konu</span><span class="su-level-bar"><i style="width:${lessons.length?done/lessons.length*100:0}%"></i></span><span class="su-level-action">${locked?ico('lock'):''}${locked?player<need?need+'. seviyede açılır':'Önce '+Object.keys(levels)[i-1]+'’i tamamla':'Konuları aç →'}</span></button>`;
-  }).join('')}</div><p class="su-levels-steps">${ico('book')} Anlatım <span>→</span> ${ico('sound')} Örnekler <span>→</span> ${ico('check')} Test</p><button class="su-levels-resume" data-su="resume" ${rows.length?'':'disabled'}>${target?'Kaldığın yerden devam et':'Öğrenmeye başla'} →</button>`;
+  }).join('')}</div><p class="su-levels-steps">${ico('book')} Anlatım <span>→</span> ${ico('sound')} Örnekler <span>→</span> ${ico('check')} Test</p><button class="su-levels-resume" data-su="resume" ${target?'':'disabled'}>${resuming?'Kaldığın yerden devam et':'Öğrenmeye başla'} →</button>`;
  }
  function wordMeaning(w){const popup=$('dcHoverBalon');if(!popup)return;popup.innerHTML='<b>'+esc(w.textContent)+'</b> · '+esc(w.dataset.tr||'')+(w.dataset.alt?'<small>'+esc(w.dataset.alt)+'</small>':'');popup.style.display='block';const r=w.getBoundingClientRect(),width=Math.min(280,window.innerWidth-24);popup.style.width=width+'px';popup.style.left=Math.max(12,Math.min(r.left,window.innerWidth-width-12))+'px';popup.style.top=Math.max(12,Math.min(r.bottom+8,window.innerHeight-100))+'px';}
  function dockSpace(){
@@ -215,7 +226,7 @@
    const b=e.target.closest('[data-su]');if(!b||b.disabled)return;
    if(b.dataset.su==='levels'){window.dcAnaEkranaDon();return;}
    if(b.dataset.su==='level'){window.dcSeviyeSec(b.dataset.level,levels[b.dataset.level]);return;}
-   if(b.dataset.su==='resume'){const state=read(),rows=dcTumKonularCache||[],target=rows.find(k=>key(k)===[state.level,state.category,state.topic].join('|')&&k.durum!=='tamamlandi')||rows.find(k=>k.durum!=='tamamlandi')||rows[0];if(!target)return;window.dcSeviyeSec(target.seviye,levels[target.seviye]);if(dcAktifSeviye===target.seviye&&activeScreen()==='dcScreenCats')openTopic(key(target));return;}
+   if(b.dataset.su==='resume'){const target=studyStartTarget(dcTumKonularCache||[],read());if(!target)return;window.dcSeviyeSec(target.seviye,levels[target.seviye]);if(dcAktifSeviye===target.seviye&&activeScreen()==='dcScreenCats')openTopic(key(target));return;}
    if(b.dataset.su==='open'){openTopic(b.dataset.topic);return;}
    if(b.dataset.su==='filter'){filter=b.dataset.value;renderTopics();return;}
    if(b.dataset.su==='category'){category=b.dataset.value;renderTopics();return;}

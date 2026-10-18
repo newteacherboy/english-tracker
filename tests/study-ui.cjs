@@ -63,6 +63,8 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   await page.waitForTimeout(500);
   const navBefore=await page.locator('#bottomNavMobile').innerHTML();
   await page.waitForSelector('#suLevels');assert.equal(await page.locator('.su-level-card').count(),4);
+  // Reproduce an unordered API list and a stale B2 bookmark for a level-one learner.
+  await page.evaluate(()=>{yo.totalXp=0;dcTumKonularCache.unshift({seviye:'B2',kategori:'grammar',konuAdi:'Locked B2 bookmark',siraNo:1,durum:'yeni'});localStorage.setItem('dm-study-resume-v1:fixture',JSON.stringify({level:'B2',category:'grammar',topic:'Locked B2 bookmark'}));dmStudyUI.refresh();});await page.locator('[data-su="resume"]').click();await page.locator('#suLessonHero').waitFor();assert.equal(await page.evaluate(()=>dcAktifSeviye),'A1');assert(!await page.evaluate(()=>reportedToasts.some(t=>t.includes('23.'))));await page.evaluate(()=>{dcTumKonularCache=dcTumKonularCache.filter(k=>k.konuAdi!=='Locked B2 bookmark');localStorage.removeItem('dm-study-resume-v1:fixture');dcAnaEkranaDon();});console.log('PASS Learn start ignores locked B2 bookmarks and unordered topics');
   assert.equal(await page.getByText('Klasik görünüm',{exact:true}).filter({visible:true}).count(),0);
   await page.addStyleTag({content:'body.su-safe-fixture #tab-derscalis{padding-top:54px!important}body.su-safe-fixture #bottomNavMobile{padding-bottom:34px!important}'});
   for(const [w,h] of [[320,568],[320,667],[390,844],[393,700],[768,1024],[1180,820],[844,390]]){
