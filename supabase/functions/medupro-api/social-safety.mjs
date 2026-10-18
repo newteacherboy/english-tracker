@@ -64,6 +64,17 @@ export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}
     if(a?.role!=='teacher'||!a.teacher_id||!a.yonetici)return json({ok:false,mesaj:'Yalnız yöneticiler bu alanı kullanabilir.'},403);
     const admin=await one('teachers','active,is_admin','id',a.teacher_id);if(!admin?.active||!admin.is_admin)return json({ok:false,mesaj:'Yönetici yetkisi gerekli.'},403);
     if(op==='safetyAdminAccess')return json({ok:true,admin:true});
+    if(op==='safetyTeacherNotice'){
+     const username=String(b.username||'').trim(),kind=b.kind;
+     const message=String(b.message||'').trim();
+     if(!['warning','discipline'].includes(kind)||username.length<2||username.length>80||message.length<5||message.length>450)return json({ok:false,mesaj:'Öğrenci, tür ve 5-450 karakter açıklama gerekli.'},400);
+     const student=await one('students','id,username','username',username);
+     if(!student||student.username==='dijimedu_demo')return json({ok:false,mesaj:'Öğrenci bulunamadı veya işlem yapılamıyor.'},404);
+     await rate('teacher-notice',a.teacher_id,20,3600);
+     const r=await db.from('dm_teacher_student_notices').insert({student_id:student.id,teacher_id:a.teacher_id,kind,message});
+     if(r.error)throw Error('Önemli duyuru kaydedilemedi.');
+     return json({ok:true,mesaj:'Önemli duyuru ilgili öğrenciye gönderildi.'});
+    }
     if(op==='safetyAdminReview'){
      if(!idPattern.test(b.id||'')||!['review','dismiss','warn','hide','suspend','restore'].includes(b.action)||String(b.note||'').length>500)return json({ok:false,mesaj:'Geçersiz işlem.'},400);
      const r=await db.rpc('dm_safety_review',{p_admin:a.teacher_id,p_report:b.id,p_action:b.action,p_note:String(b.note||''),p_days:Number(b.days)||1});if(r.error)throw Error('İşlem kaydedilemedi. Bildirimi ve seçimi kontrol et.');return json({ok:true});
@@ -78,6 +89,15 @@ export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}
    if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
    const actor=a.student_id;
    if(actor==='dcde2026-1015-4000-8000-000000000001'&&op!=='safetyStatus')return json({ok:false,mesaj:'Tanıtım hesabında güvenlik ayarları değiştirilemez.'},403);
+   if(op==='safetyStudentNotices'){
+    const r=await db.from('dm_teacher_student_notices').select('id,kind,message,created_at').eq('student_id',actor).is('acknowledged_at',null).order('created_at',{ascending:true}).limit(1);
+    if(r.error)throw Error('Önemli duyuru alınamadı.');return json({ok:true,notices:r.data||[]});
+   }
+   if(op==='safetyStudentNoticeAck'){
+    if(!idPattern.test(b.id||''))return json({ok:false,mesaj:'Geçersiz duyuru.'},400);
+    const r=await db.from('dm_teacher_student_notices').update({acknowledged_at:new Date().toISOString()}).eq('student_id',actor).eq('id',b.id).is('acknowledged_at',null).select('id');
+    if(r.error)throw Error('Duyuru onaylanamadı.');return json({ok:true,acknowledged:(r.data||[]).length>0});
+   }
    if(op==='safetyMyReports'){const r=await db.from('dm_safety_reports').select('id,reason,status,created_at').eq('reporter_id',actor).order('created_at',{ascending:false}).limit(30);if(r.error)throw Error('Bildirimler alınamadı.');return json({ok:true,reports:r.data||[]});}
    if(op==='safetyStatus')return json(await state(actor));
    if(op==='safetyNoticeAck'){const r=await db.from('dm_social_controls').upsert({student_id:actor,notice_seen_at:new Date().toISOString()},{onConflict:'student_id'});if(r.error)throw Error('Bilgilendirme kaydedilemedi.');return json({ok:true});}

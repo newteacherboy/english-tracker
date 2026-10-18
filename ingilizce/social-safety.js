@@ -47,6 +47,30 @@
   }catch(e){message(v,e.message,true);}}
   filter.onchange=load;await load();
  }
+ let noticeBusy=false,noticeShown='',noticeAccount='';
+ async function studentImportantNotice(){
+  const account=studentToken(),owner=who();
+  if(page||!account||!owner||document.hidden||noticeBusy||view)return;
+  noticeBusy=true;
+  try{
+   const d=await api('safetyStudentNotices');
+   if(account!==studentToken()||owner!==who()||view)return;
+   const n=d.notices?.[0];if(!n||n.id===noticeShown&&noticeAccount===account)return;
+   noticeShown=n.id;noticeAccount=account;
+   const v=sheet('Önemli Duyuru');
+   const heading=document.createElement('h3');heading.textContent=n.kind==='discipline'?'Öğretmen bilgilendirmesi':'Öğretmen uyarısı';
+   const para=document.createElement('p');para.textContent=n.message;
+   const note=document.createElement('p');note.className='dm-safety-note';note.textContent='Bu mesaj yalnızca hesabına gönderildi. Soruların varsa öğretmeninle görüşebilirsin.';
+   const btn=document.createElement('button');btn.className='dm-safety-primary';btn.textContent='Okudum';btn.dataset.actionButton='';
+   body(v).replaceChildren(heading,para,note,btn);
+   btn.onclick=async()=>{busy(v,true);try{await api('safetyStudentNoticeAck',{id:n.id});if(alive(v)){close();noticeShown='';setTimeout(studentImportantNotice,1200);}}catch(e){message(v,e.message,true);}finally{busy(v,false);}};
+  }catch(e){/* Retry on the next visibility or login event. */}finally{noticeBusy=false;}
+ }
+ async function teacherImportantNotice(){
+  const v=sheet('Öğrenciye Önemli Duyuru');
+  body(v).innerHTML='<p>Uyarı veya disiplin bilgilendirmesini yalnız ilgili öğrenci görür.</p><label for="dmNoticeStudent">Öğrenci kullanıcı adı</label><input id="dmNoticeStudent" maxlength="80" autocomplete="off"><label for="dmNoticeKind">Bildirim türü</label><select id="dmNoticeKind"><option value="warning">Uyarı</option><option value="discipline">Disiplin bilgilendirmesi</option></select><label for="dmNoticeMessage">Açıklama</label><textarea id="dmNoticeMessage" maxlength="450" placeholder="Öğrenciye iletilecek açıklama"></textarea><button class="dm-safety-primary" data-send-notice data-action-button>Önemli duyuruyu gönder</button>';
+  v.el.querySelector('[data-send-notice]').onclick=async()=>{busy(v,true);try{const d=await api('safetyTeacherNotice',{username:$('dmNoticeStudent').value.trim(),kind:$('dmNoticeKind').value,message:$('dmNoticeMessage').value.trim()},true);if(alive(v)){body(v).textContent=d.mesaj;message(v,'Duyuru kaydedildi.');}}catch(e){message(v,e.message,true);}finally{busy(v,false);}};
+ }
  function applyState(d){if(!d||!$('tab-meduakis'))return;const tab=$('tab-meduakis');if(tab.classList.contains('dm-social-closed')!==(d.socialAllowed===false))tab.classList.toggle('dm-social-closed',d.socialAllowed===false);let closed=tab.querySelector('.dm-safety-closed');if(!closed){closed=document.createElement('section');closed.className='dm-safety-closed';closed.innerHTML='<h2>Sosyal özellikler kapalı</h2><p>Veli veya yönetici ayarlarında sosyal etkileşimler kapatılmış. Derslerine, bireysel oyunlarına ve parkurlarına devam edebilirsin.</p><button data-parent>Veli Kontrolü</button> <button data-help>Güvenlik ve bildirimler</button>';closed.querySelector('[data-parent]').onclick=parent;closed.querySelector('[data-help]').onclick=help;tab.append(closed);}}
  async function refresh(force=false){if(page||!who()||!studentToken()||document.hidden||!force&&Date.now()-lastStatus<60000)return current;if(statusPending)return statusPending;const actor=who(),token=studentToken();statusPending=api('safetyStatus').then(d=>{if(actor!==who()||token!==studentToken())return null;current=d;lastStatus=Date.now();applyState(d);return d;}).catch(()=>null).finally(()=>statusPending=null);return statusPending;}
  async function socialNotice(){const d=await refresh(true);if(!d||d.noticeSeen||d.socialAllowed===false||view)return;const v=sheet('Arkadaşlarınla güvenle öğren');body(v).innerHTML='<p>Gerçek adını, telefonunu, okulunu, adresini veya parolanı paylaşma.</p><p>Rahatsız olduğunda <b>⋯ → Bildir veya Engelle</b> seçeneklerini kullan. Yardım için güvendiğin bir yetişkine haber ver.</p><button class="dm-safety-primary" data-ack data-action-button>Anladım</button>';v.el.querySelector('[data-ack]').onclick=async()=>{busy(v,true);try{await api('safetyNoticeAck');if(!alive(v))return;if(current)current.noticeSeen=true;close();}catch(e){message(v,e.message,true);}finally{busy(v,false);}};}
@@ -59,14 +83,29 @@
   new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(n.nodeType!==1)continue;const list=n.matches?.('.dm-notification[data-safety-message]')?[n]:[...n.querySelectorAll?.('.dm-notification[data-safety-message]')||[]];for(const el of list){const target=el.dataset.safetySender;if(target&&!el.querySelector('.dm-safety-more'))el.append(moreButton('message',target,el.dataset.safetyMessage));}}}).observe(document.body,{childList:true});
   const friends=$('tab-meduakis');if(friends)new MutationObserver(()=>{if(friends.classList.contains('active'))socialNotice();}).observe(friends,{attributes:true,attributeFilter:['class']});
   const oldTeacher=window.ogretmenPaneliAc;window.ogretmenPaneliAc=function(){const result=oldTeacher?.apply(this,arguments);installAdmin();return result;};
-  async function installAdmin(){const t=teacherToken();if(!t)return;if(t!==adminToken){adminToken=t;adminAllowed=false;try{const r=await api('safetyAdminAccess',{},true);if(teacherToken()!==t)return;adminAllowed=!!r.admin;}catch{return;}}const host=$('ogretmenMenuModal')?.querySelector('.rubric-content');if(adminAllowed&&host&&!$('dmSafetyAdminButton')){const b=document.createElement('button');b.id='dmSafetyAdminButton';b.className='ogretmen-menu-btn';b.textContent='🛡️ Güvenlik Bildirimleri';b.onclick=admin;host.append(b);}}
-  document.addEventListener('dm:login',()=>{if(view)close();current=null;lastStatus=0;statusPending=null;adminToken='';adminAllowed=false;$('dmSafetyAdminButton')?.remove();refresh(true);});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(true);});window.addEventListener('pagehide',close);
-  refresh();
+  async function installAdmin(){const t=teacherToken();if(!t)return;if(t!==adminToken){adminToken=t;adminAllowed=false;try{const r=await api('safetyAdminAccess',{},true);if(teacherToken()!==t)return;adminAllowed=!!r.admin;}catch{return;}}const host=$('ogretmenMenuModal')?.querySelector('.rubric-content');if(adminAllowed&&host&&!$('dmSafetyAdminButton')){const b=document.createElement('button');b.id='dmSafetyAdminButton';b.className='ogretmen-menu-btn';b.textContent='🛡️ Güvenlik Bildirimleri';b.onclick=admin;host.append(b);}if(adminAllowed&&host&&!$('dmTeacherNoticeButton')){const b=document.createElement('button');b.id='dmTeacherNoticeButton';b.className='ogretmen-menu-btn';b.textContent='📩 Öğrenciye Önemli Duyuru';b.onclick=teacherImportantNotice;host.append(b);}}
+  document.addEventListener('dm:login',()=>{if(view)close();current=null;lastStatus=0;statusPending=null;adminToken='';adminAllowed=false;$('dmSafetyAdminButton')?.remove();refresh(true);noticeShown='';noticeAccount='';setTimeout(studentImportantNotice,1500);});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh(true);studentImportantNotice();}});window.addEventListener('pagehide',close);
+  refresh();setTimeout(studentImportantNotice,1600);
  }
  async function guardianPage(){const link=decodeURIComponent(location.hash.slice(1));history.replaceState(null,'',location.pathname);const v=sheet('Diji-Medu · Veli Kontrolü');if(!link){body(v).innerHTML='<p>Bu alanı açmak için uygulamadaki <b>Profil → Veli Kontrolü</b> bölümünden e-posta bağlantısı isteyin.</p>';return;}
-  body(v).innerHTML='<p>Bu bağlantı yalnız öğrencinin velisi içindir. Veli PIN’ini öğrenciyle paylaşmayın.</p><label for="guardianNewPin">Yeni veli PIN’i · 6 rakam</label><input id="guardianNewPin" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"><label for="guardianRepeatPin">PIN’i tekrar yazın</label><input id="guardianRepeatPin" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"><label class="dm-safety-check"><input type="checkbox" id="guardianAdult"><span>Yetişkinim ve bu öğrencinin velisi/yasal temsilcisiyim. Sosyal izinleri yönetmek istiyorum.</span></label><p class="dm-safety-note">Kolay tahmin edilen veya tekrar eden rakamları kullanmayın. Doğrulama mevcut izinleri değiştirmez; sonraki ekranda seçimlerinizi kaydedebilirsiniz.</p><button class="dm-safety-primary" data-claim data-action-button>Doğrula ve veli alanını aç</button>';
-  v.el.querySelector('[data-claim]').onclick=async()=>{const pin=$('guardianNewPin').value,repeat=$('guardianRepeatPin').value,adult=$('guardianAdult').checked;if(pin!==repeat){message(v,'PIN’ler aynı olmalı.',true);return;}busy(v,true);try{const d=await api('safetyParentClaim',{link,pin,adult});if(!alive(v))return;unlocked(v,d);}catch(e){message(v,e.message,true);}finally{busy(v,false);$('guardianNewPin')&&($('guardianNewPin').value='');$('guardianRepeatPin')&&($('guardianRepeatPin').value='');}};
+  body(v).innerHTML='<p>Bu bağlantı yalnız öğrencinin velisi içindir. Doğruladığınızda sistem size özel, güçlü bir 6 haneli PIN oluşturacak. PIN yalnızca bir kez gösterilir; unutursanız uygulamadan yeni e-posta bağlantısı isteyebilirsiniz.</p><label class="dm-safety-check"><input type="checkbox" id="guardianAdult"><span>Yetişkinim ve bu öğrencinin velisi/yasal temsilcisiyim. Sosyal izinleri yönetmek istiyorum.</span></label><button class="dm-safety-primary" data-claim data-action-button>Doğrula ve PIN oluştur</button>';
+  v.el.querySelector('[data-claim]').onclick=async()=>{
+   if(!$('guardianAdult').checked){message(v,'Veli/yasal temsilci beyanını onaylayın.',true);return;}
+   // Uniform cryptographic rejection sampling; never use Math.random for a credential.
+   const digit=()=>{const a=new Uint8Array(1);do{crypto.getRandomValues(a);}while(a[0]>=250);return String(a[0]%10);};
+   let pin;do{pin=Array.from({length:6},digit).join('');}while(pin.split('').every(n=>n===pin[0])||pin==='123456'||pin==='654321');
+   busy(v,true);
+   try{
+    const d=await api('safetyParentClaim',{link,pin,adult:true});
+    if(!alive(v))return;
+    unlocked(v,d);
+    // Display the generated PIN only after the emailed single-use token was accepted.
+    // Do not persist it, append it to a URL, or place it in application logs.
+    body(v).innerHTML='<h3>Size özel veli PIN’i</h3><p class="dm-safety-note">Bu PIN yalnızca bu ekranda gösterilir. Güvenli bir yere kaydedin ve öğrenciyle paylaşmayın.</p><p class="dm-safety-generated-pin" aria-label="Yeni veli PIN’i"><strong>'+pin+'</strong></p><p>PIN’i unuttuğunuzda Profil → Veli Kontrolü → PIN’i unuttum üzerinden yeni e-posta bağlantısı isteyebilirsiniz.</p><button type="button" class="dm-safety-primary" data-pin-confirm>PIN’i kaydettim · Ayarlara geç</button>';
+    v.el.querySelector('[data-pin-confirm]').onclick=()=>{if(alive(v)&&v.parentToken)settingForm(v,d);};
+   }catch(e){message(v,e.message,true);}finally{pin='';busy(v,false);}
+  };
  }
  window.dmSocialSafety={parent,help,report,admin,refresh,close};
  if(page)guardianPage();else install();

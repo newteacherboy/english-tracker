@@ -1,9 +1,9 @@
 name: Social safety and guardian controls
 on:
   push:
-    paths: ['ingilizce/social-safety.*', 'ingilizce/veli-kontrolu.html', 'ingilizce/bottom-nav.js', 'ingilizce/medupro.js', 'supabase/functions/**/social-safety.mjs', 'supabase/functions/diji-api/index.ts', 'supabase/functions/medupro-api/index.ts', 'supabase/migrations/*social_safety*', 'tests/social-safety*', '.github/workflows/social-safety.yml']
+    paths: ['ingilizce/social-safety.*', 'ingilizce/veli-kontrolu.html', 'ingilizce/bottom-nav.js', 'ingilizce/medupro.js', 'supabase/functions/**/social-safety.mjs', 'supabase/functions/diji-api/index.ts', 'supabase/functions/medupro-api/index.ts', 'supabase/migrations/*social_safety*', 'tests/social-safety*', 'tests/teacher-important-notices.test.cjs', 'supabase/migrations/*teacher_student_important_notices*', '.github/workflows/social-safety.yml']
   pull_request:
-    paths: ['ingilizce/social-safety.*', 'ingilizce/veli-kontrolu.html', 'supabase/functions/**/social-safety.mjs', 'tests/social-safety*']
+    paths: ['ingilizce/social-safety.*', 'ingilizce/veli-kontrolu.html', 'supabase/functions/**/social-safety.mjs', 'tests/social-safety*', 'tests/teacher-important-notices.test.cjs', 'supabase/migrations/*teacher_student_important_notices*']
 concurrency:
   group: social-safety-${{ github.ref }}
   cancel-in-progress: true
@@ -19,4 +19,4 @@ jobs:
         with:
           node-version: '24'
       - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0
-      - run: node --test tests/social-safety.test.mjs tests/social-safety-ui.test.cjs tests/medupro-edge.test.cjs tests/medupro-presence.test.cjs tests/progression-api.test.cjs tests/portal-integrity.test.cjs tests/account-deletion-sw.test.cjs
+      - run: node --test tests/teacher-important-notices.test.cjs tests/social-safety.test.mjs tests/social-safety-ui.test.cjs tests/medupro-edge.test.cjs tests/medupro-presence.test.cjs tests/progression-api.test.cjs tests/portal-integrity.test.cjs tests/account-deletion-sw.test.cjs
