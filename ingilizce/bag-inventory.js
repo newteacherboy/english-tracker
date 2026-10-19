@@ -1,7 +1,8 @@
 /* Çantam is a separate view over existing owned items; store purchases remain unchanged. */
 (()=>{'use strict';if(window.dmBagInventory)return;
 const $=id=>document.getElementById(id);
-const asset=name=>new URL(name, document.currentScript?.src || location.href).href;
+const assetBase=new URL('.',document.currentScript?.src||location.href).href;
+const asset=name=>new URL(name,assetBase).href;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const types=[['all','Tümü','▦'],['characters','Karakterler','👧'],['clothing','Kıyafetler','👕'],['badges','Rozetler','⭐'],['items','Eşyalar','📦'],['energy','Enerji','⚡']];
 const arr=x=>Array.isArray(x)?x:[];
