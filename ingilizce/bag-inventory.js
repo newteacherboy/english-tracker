@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const assetBase=new URL('.',document.currentScript?.src||location.href).href;
 const asset=name=>new URL(name,assetBase).href;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const types=[['all','Tümü','▦'],['characters','Karakterler','👧'],['clothing','Kıyafetler','👕'],['badges','Rozetler','⭐'],['items','Eşyalar','📦'],['energy','Enerji','⚡']];
+const types=[['all','Tümü','▦'],['characters','Karakterler','🎭'],['clothing','Kıyafetler','👕'],['badges','Rozetler','🏅'],['jokers','Jokerler','🃏'],['chests','Sandıklar','🎁'],['items','Eşyalar','🎒'],['energy','Enerji','⚡']];
 const arr=x=>Array.isArray(x)?x:[];
 const st=()=>typeof yo==='undefined'?{}:yo||{};
 const norm=x=>typeof x==='string'?{id:x}:x&&typeof x==='object'?x:null;
@@ -20,45 +20,92 @@ function lookup(id){
  return {};
 }
 function entries(){
- const y=st(),items=[],keys=new Set(),closet=y.karakter||{};
- function add(kind,id,name,n=0){
-  id=String(id||'');if(!id||keys.has(kind+id))return;keys.add(kind+id);
-  items.push({kind,id,name:String(name||readable(id)||'Ürün'),n:Math.max(0,Number(n)||0)});
- }
+ const y=st(),closet=y.karakter||{},items=[],seen=new Set(),shop=window.dmStoreWardrobe;
+ const add=(kind,id,name,more={})=>{
+  id=String(id||'');const key=kind+':'+id;if(!id||seen.has(key))return;
+  seen.add(key);items.push({kind,id,name:String(name||readable(id)||'Ürün'),...more});
+ };
+ // Purchases use ownership keys such as "d:<product id>" and "category:part".
+ // Resolve to the SAME catalog ID accepted by storefront's dmStoreWardrobe.art().
  for(const raw of arr(closet.sahip)){
-  const o=norm(raw);if(!o)continue;const id=String(o.id||o.kod||o.key||'');if(!id)continue;
-  const m=lookup(id),k=String(o.kategori||o.category||m.kategori||m.category||'').toLowerCase();
-  const kind=/aksesuar|aks|eşya|esya|arka|çerçeve|cerceve|dost/.test(k)?'items':'clothing';
-  add(kind,id,o.ad||o.name||m.ad||m.name||readable(id));
+  const o=norm(raw);if(!o)continue;
+  const ownedId=String(o.id||o.kod||o.key||'');if(!ownedId)continue;
+  const productId=ownedId.startsWith('d:')?ownedId.slice(2):
+   ownedId.startsWith('a|')?ownedId:
+   ownedId.includes(':')?'a|'+ownedId.replace(':','|'):ownedId;
+  const bits=productId.split('|'),atelier=bits[0]==='a',cat=atelier?bits[1]:'';
+  const catalog=atelier?window.KA_KATALOG?.[cat]?.liste?.find(x=>String(x.id)===bits.slice(2).join('|')):null;
+  const accessory=['aks','cik','arka','cerceve','dost','sapka','gozluk','sac','sacRenk','ten','goz','agiz','detay','durus'].includes(cat);
+  const name=o.ad||o.name||catalog?.ad||readable(productId);
+  add(accessory?'items':'clothing',ownedId,name,{productId,origin:'wardrobe'});
  }
+ // Previously purchased characters and characters unlocked by progress are both owned.
  const roster=typeof window._krkListe==='function'?arr(window._krkListe()):[];
+ for(const character of roster){
+  if(character?.acik&&character.ad)add('characters',character.ad,character.ad,{origin:'character'});
+ }
  for(const raw of arr(y.krkSatin)){
-  const o=norm(raw);if(!o)continue;const id=String(o.id||o.kod||o.key||o.ad||'');if(!id)continue;
-  const m=roster.find(x=>String(x.id||x.kod||x.ad)===id);
-  add('characters',id,o.ad||o.name||m?.ad||m?.name||readable(id));
+  const name=typeof raw==='string'?raw:raw?.ad||raw?.name||raw?.id;
+  if(name)add('characters',name,name,{origin:'character'});
  }
+ // Profile badge module stores stable earned badge IDs here (not only in yo.rozetler).
+ const badges=arr(window.dmRozetKatalogu);
+ const badgeIds=new Set(arr(y.dmWorldBadges?.ids).map(String));
  for(const raw of arr(y.rozetler)){
-  const o=norm(raw);if(!o)continue;const id=String(o.id||o.kod||o.name||o.ad||'');
-  if(id)add('badges',id,o.ad||o.name||readable(id));
+  const obj=norm(raw);
+  const id=String(obj?.id||obj?.kod||obj?.ad||obj?.name||'');
+  if(!id)continue;
+  const found=badges.find(b=>b.id===id||b.ad===id);
+  if(found)badgeIds.add(found.id);
+  else add('badges',id,obj?.ad||obj?.name||readable(id),{emoji:obj?.emoji||obj?.ikon||'🏅'});
  }
- for(const [id,num] of Object.entries(y.jokerEnv&&typeof y.jokerEnv==='object'?y.jokerEnv:{})){
-  const n=Math.max(0,Number(num)||0);if(!n)continue;
-  const info=arr(window.JOKER_MAGAZA).find(j=>j.tur===id||j.id===id);
-  add('items',id,info?.ad||readable(id),n);
+ for(const id of badgeIds){
+  const badge=badges.find(b=>b.id===id);if(!badge)continue;
+  add('badges',id,badge.ad,{pictureUrl:badge.resim,emoji:badge.ikon||'🏅'});
  }
- if(Number(y.dondurucu)>0)add('items','dondurucu','Seri Dondurucu',y.dondurucu);
- if(Number(y.dmExtraJoker)>0)add('items','extra-joker','Ek Joker',y.dmExtraJoker);
- const energy=Number(window.genelEnerjiKalan);
- if(Number.isFinite(energy)&&energy>0)add('energy','energy','Mevcut Enerji',energy);
+ // Real remaining quantities, named and illustrated with the existing joker shop catalog.
+ const jokerCatalog=arr(window.JOKER_MAGAZA);
+ for(const [id,val] of Object.entries(y.jokerEnv&&typeof y.jokerEnv==='object'?y.jokerEnv:{})){
+  const n=Math.floor(Math.max(0,Number(val)||0));if(!n)continue;
+  const j=jokerCatalog.find(x=>x.tur===id||x.id===id);
+  add('jokers',id,j?.ad||readable(id),{count:n,emoji:j?.e||'🃏',origin:'joker'});
+ }
+ for(const [id,name,count] of [['dondurucu','Seri Dondurucu',y.dondurucu],['extra-joker','Ek Joker',y.dmExtraJoker],['joker-stok','Yedek Joker',y.jokerStok]]){
+  if(Number(count)>0)add('jokers',id,name,{count:Math.floor(Number(count)),emoji:id==='dondurucu'?'❄️':'🃏'});
+ }
+ // Server-authoritative parkur chests: only READY and CLAIMED ones belong in the bag.
+ const status=window.dmProgression?.status?.();
+ const chestCatalog=arr(window.DijiProgressionCatalog?.chests);
+ for(const chest of chestCatalog){
+  const flag=status?.chests?.[chest.id];if(flag!=='claimed'&&flag!=='ready')continue;
+  add('chests',chest.id,chest.name+' Sandık',{chestState:flag,pictureUrl:'route-assets/chest.svg',tier:chest.id});
+ }
+ // Legacy adventure chests are opened rewards, not reusable unopened inventory.
+ const classic=y.sandik&&typeof y.sandik==='object'?y.sandik:{};
+ for(const [id,name] of [['ba','Büyü Akademisi'],['kp','Kelime Oyunu'],['sh','Sohbet'],['kk','Koleksiyon']]){
+  const n=Math.floor(Math.max(0,Number(classic[id])||0));
+  if(n)add('chests','legacy-'+id,name+' Sandıkları',{count:n,chestState:'opened',pictureUrl:'route-assets/chest.svg',tier:'legacy'});
+ }
+ const current=Number(window.genelEnerjiKalan);
+ if(Number.isFinite(current)&&current>0)add('energy','energy','Mevcut Enerji',{count:current,emoji:'⚡'});
  return items;
 }
 function pict(item){
- if(item.kind==='clothing'){
-  const html=window.dmStoreWardrobe?.art?.(item.id);
-  if(typeof html==='string'&&html.length<12000&&/<(?:svg|img)\b/i.test(html))return html;
+ // Product artwork and styles come from the same store preview renderer as Mağaza.
+ if(item.origin==='wardrobe'){
+  let html='';
+  try{html=window.dmStoreWardrobe?.art?.(item.productId)||window.dmStoreWardrobe?.preview?.(item.productId,160)||'';}catch{}
+  if(typeof html==='string'&&html.length<40000&&/<(?:svg|img)\b/i.test(html))return html;
  }
- const symbols={characters:'🦜',clothing:'👕',badges:'🏅',items:'🎁',energy:'⚡'};
- return '<span class="dm-bag-symbol" aria-hidden="true">'+(symbols[item.kind]||'📦')+'</span>';
+ if(item.kind==='characters'){
+  let html='';
+  try{html=window.dmCharacterArt?.(item.id,160)||'';}catch{}
+  if(typeof html==='string'&&html.length<40000&&/<svg\b/i.test(html))return html;
+ }
+ if(item.pictureUrl&&/^(?:profile-assets|route-assets)\/[a-z0-9._-]+\.(?:png|webp|svg)$/i.test(item.pictureUrl)){
+  return '<img src="'+esc(asset(item.pictureUrl))+'" alt="" loading="lazy">';
+ }
+ return '<span class="dm-bag-symbol" aria-hidden="true">'+esc(item.emoji||{characters:'🎭',clothing:'👕',badges:'🏅',jokers:'🃏',chests:'🎁',items:'🎒',energy:'⚡'}[item.kind]||'📦')+'</span>';
 }
 function nav(){return document.querySelector('#bottomNavMobile [data-ekran="tab-magaza"]');}
 function hidePopup(){popupEl?.remove();popupEl=null;}
