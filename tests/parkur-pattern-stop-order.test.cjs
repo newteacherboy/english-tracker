@@ -10,6 +10,8 @@ function istemci(bank){
   siniftaOynananOgrenci:'',speechSynthesis:undefined,
   toast(){},oku(){},isim:()=>'Ece',yoVar:()=>false};
  ctx.window=ctx;ctx.window.masterKelimeHavuzu=bank;
+ // Sunucu göçü yapılmış sayılır: durak listesinde 300000 bandı görünüyor.
+ ctx.window.dmProgression={status:()=>({units:[[300151],[],[],[]]})};
  vm.createContext(ctx);vm.runInContext(blok+'\n;this.__kur=duraklariKur;this.__DURAK=()=>DURAK;',ctx);
  ctx.__kur();
  // vm içindeki diziler farklı prototipte; deepEqual için ana bağlama kopyala.
@@ -80,6 +82,22 @@ test('kalıplar kelime durağına sızmaz',()=>{
  for(const durak of d.filter(x=>!x.kalip))
   for(const k of durak.kelimeler)
    assert.notEqual(k.type,'pattern','kelime durağında kalıp kartı var: '+k.ingilizce);
+});
+
+test('sunucu kalıp duraklarını tanımıyorsa istemci de kurmaz ve kalıpları eskisi gibi sayar',()=>{
+ const bank=[...doluKapi(),...kelime(1,1,32),...kalip(1,1,6)];
+ const html=fs.readFileSync(__dirname+'/../ingilizce/index.html','utf8');
+ const blok=html.slice(html.indexOf("  const EN = k => String((k && (k.ingilizce || k.en)) || '').trim();"),
+                       html.indexOf("  const durakSayisi = b =>"));
+ const ctx={console,JSON,Math,Map,Set,Array,Number,String,Object,RegExp,Date,
+  siniftaOynananOgrenci:'',toast(){},oku(){},isim:()=>'Ece',yoVar:()=>false};
+ ctx.window=ctx;ctx.window.masterKelimeHavuzu=bank;
+ ctx.window.dmProgression={status:()=>({units:[[210151],[],[],[]]})};   // göç yapılmamış
+ vm.createContext(ctx);vm.runInContext(blok+'\n;this.__kur=duraklariKur;this.__DURAK=()=>DURAK;',ctx);
+ ctx.__kur();
+ const d=JSON.parse(JSON.stringify(ctx.__DURAK()))[0].filter(x=>x.sinif===1&&x.unite===1);
+ assert.equal(d.filter(x=>x.kalip).length,0,'kalıp durağı kurulmaz');
+ assert.equal(d.length,Math.ceil((32+6)/4),'kalıplar eski davranıştaki gibi kelime sayımına girer');
 });
 
 test('istemci ve sunucu aynı sabitleri kullanır',()=>{
