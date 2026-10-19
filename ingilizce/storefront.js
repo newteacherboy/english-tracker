@@ -141,4 +141,11 @@
     }
   }, 1500);
   observe();
+  // Independent Çantam is loaded after the unchanged storefront initialization.
+  if (!window.dmBagInventory && !document.querySelector('script[data-dm-bag-module]')) {
+    const module = document.createElement('script');
+    module.dataset.dmBagModule = '1';
+    module.src = new URL('bag-inventory.js?v=20261019-1', document.currentScript?.src || location.href).href;
+    document.head.appendChild(module);
+  }
 })();
