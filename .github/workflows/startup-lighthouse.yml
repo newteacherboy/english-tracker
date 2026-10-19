@@ -39,8 +39,12 @@ jobs:
           for(const r of runs) console.log("RUN",JSON.stringify(m(r)));
           const r=runs[Math.floor(runs.length/2)];
           console.log("MEDIAN",JSON.stringify(m(r)));
-          const items=(r.audits["network-requests"].details.items||[]).sort((a,b)=>b.transferSize-a.transferSize).slice(0,25);
+          const items=(r.audits["network-requests"].details.items||[]).sort((a,b)=>b.transferSize-a.transferSize).slice(0,12);
           for(const it of items) console.log("REQ",Math.round(it.transferSize/1024)+"KB",it.resourceType,Math.round(it.endTime)+"ms",it.url.replace("http://localhost:5050",""));
+          for(const id of ["largest-contentful-paint-element","lcp-breakdown-insight","lcp-discovery-insight","layout-shifts","network-dependency-tree-insight"]){
+            const a=r.audits[id]; if(!a) continue;
+            console.log("KEY",id,a.displayValue||"",JSON.stringify(a.details||{}).slice(0,1400));
+          }
           for(const id of ["render-blocking-resources","uses-responsive-images","modern-image-formats","uses-optimized-images","unused-javascript","largest-contentful-paint-element","layout-shifts","bootup-time","mainthread-work-breakdown"]){
             const a=r.audits[id]; if(!a) continue;
             console.log("AUDIT",id,a.displayValue||"",a.score);
