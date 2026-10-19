@@ -43,6 +43,7 @@ jobs:
           for(const it of items) console.log("REQ",Math.round(it.transferSize/1024)+"KB",it.resourceType,Math.round(it.endTime)+"ms",it.url.replace("http://localhost:5050",""));
           for(const id of ["largest-contentful-paint-element","lcp-breakdown-insight","lcp-discovery-insight","layout-shifts","network-dependency-tree-insight"]){
             const a=r.audits[id]; if(!a) continue;
+            if(id==="layout-shifts"){for(const it of (a.details&&a.details.items)||[]){console.log("SHIFT",it.score&&it.score.toFixed?it.score.toFixed(4):it.score,(it.node&&it.node.selector)||"",(it.node&&it.node.snippet||"").slice(0,120),JSON.stringify((it.subItems&&it.subItems.items)||[]).slice(0,300));}continue;}
             console.log("KEY",id,a.displayValue||"",JSON.stringify(a.details||{}).slice(0,1400));
           }
           for(const id of ["render-blocking-resources","uses-responsive-images","modern-image-formats","uses-optimized-images","unused-javascript","largest-contentful-paint-element","layout-shifts","bootup-time","mainthread-work-breakdown"]){
