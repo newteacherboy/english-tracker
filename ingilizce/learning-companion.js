@@ -141,7 +141,7 @@ function bindStories(root,close){
  root.querySelectorAll('.lc-story-level').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)root.querySelectorAll('.lc-story-level').forEach(other=>{if(other!==d)other.open=false;});}));
 }
 function dialogues(){
- if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body);
+ if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body,window.dmViewHistory?undefined:()=>v.close());
 }
 function say(text,rate,finished,failed){
  try{if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)throw Error('Ses desteklenmiyor.');speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-GB';utterance.rate=rate;utterance.onend=finished;utterance.onerror=failed;speechSynthesis.speak(utterance);}catch(e){failed(e);}

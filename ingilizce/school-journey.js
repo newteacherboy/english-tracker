@@ -99,7 +99,7 @@ function open(rows,gradeHint){
  el.querySelectorAll('[data-school-close]').forEach(b=>b.onclick=close);
  el.onclick=e=>{if(e.target===el)close();};
  el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const options=[...el.querySelectorAll('button:not(:disabled),summary')].filter(x=>x.getClientRects().length),idx=options.indexOf(document.activeElement);if(options.length){e.preventDefault();options[(idx+(e.shiftKey?-1:1)+options.length)%options.length]?.focus();}}};
- el.querySelectorAll('[data-school-b]').forEach(btn=>btn.onclick=()=>{const step=steps.find(s=>String(s.b)===btn.dataset.schoolB&&String(s.d)===btn.dataset.schoolD);if(!step||!step.available)return;launchStep(step);});
+ el.querySelectorAll('[data-school-b]').forEach(btn=>btn.onclick=()=>{const step=steps.find(s=>String(s.b)===btn.dataset.schoolB&&String(s.d)===btn.dataset.schoolD);if(!step||!step.available)return;if(!window.dmViewHistory)close();launchStep(step);});
  el.querySelector('[data-school-close]')?.focus({preventScroll:true});
  if(gradeHint)el.querySelector('.rt-school-grade:nth-of-type('+active+')')?.scrollIntoView?.({block:'nearest'});
 }
