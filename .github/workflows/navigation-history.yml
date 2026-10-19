@@ -1,0 +1,21 @@
+name: One-step navigation QA
+on:
+  push:
+    paths: ['ingilizce/navigation-history.js', 'ingilizce/bottom-nav.js', 'ingilizce/member-experience.js', 'ingilizce/game-experience.js', 'ingilizce/learning-companion.js', 'tests/navigation-history-ui.cjs', '.github/workflows/navigation-history.yml']
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/navigation-history-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: navigation-history-screens
+          path: /tmp/navigation-history-*.png

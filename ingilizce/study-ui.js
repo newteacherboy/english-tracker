@@ -9,6 +9,7 @@
  const levels={A1:'Başlangıç',A2:'Temel',B1:'Orta',B2:'Orta-Üstü'};
  let filter='all',category='all',query='',question=0,lastSignature='',owner='',details=[],detailReady=false,resumeState={},contentSignature='',wrongUntil=[],reviewed=new Set(),waitTimer=0,finishing=false,completedRun=false,quizRun=0,levelSignature='';
  let studyRunId='',studyRecovery=false,studyRecoveryIndices=[],studyOriginalQuestions=[],studyTopic='';
+ root.addEventListener('click',e=>{const exit=e.target.closest('.dc-exit-btn');if(!exit)return;const screen=root.querySelector('.dc-screen.active');if(screen&&screen.id!=='dcScreenLevels'){e.preventDefault();e.stopImmediatePropagation();if(typeof dcGecmis!=='undefined'&&dcGecmis.length>1)window.dcGeriGit?.();else window.dcAnaEkranaDon?.();}},true);
  const actor=()=>String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'').trim().toLocaleLowerCase('tr');
  const key=k=>[k.seviye,k.kategori,k.konuAdi].join('|');
  const storage=()=> 'dm-study-resume-v1:'+actor();

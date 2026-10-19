@@ -141,7 +141,7 @@ function bindStories(root,close){
  root.querySelectorAll('.lc-story-level').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)root.querySelectorAll('.lc-story-level').forEach(other=>{if(other!==d)other.open=false;});}));
 }
 function dialogues(){
- if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body,()=>v.close());
+ if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body);
 }
 function say(text,rate,finished,failed){
  try{if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)throw Error('Ses desteklenmiyor.');speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-GB';utterance.rate=rate;utterance.onend=finished;utterance.onerror=failed;speechSynthesis.speak(utterance);}catch(e){failed(e);}
@@ -159,7 +159,7 @@ async function openStory(id){
  }
  function render(){
   if(!v.alive())return;played=false;audioBusy=false;
-  if(state.cursor>=story.questions.length){const results=Object.values(state.answers||{}),count=results.filter(r=>r.correct).length;v.body.innerHTML='<div class="lc-complete">'+papi+'<h3>Bir metni daha tamamladın!</h3><p>'+count+' / '+story.questions.length+' doğru · Bugünkü çalışman kayıtlı.</p></div>'+transcript()+'<div class="lc-word-chips">'+story.words.map(w=>'<span>'+esc(w.en)+' · '+esc(w.tr)+'</span>').join('')+'</div>'+action('Başka bir diyalog seç','another')+action('Parkuruma dön','back-route');v.body.querySelector('[data-lc="another"]').onclick=()=>{v.close();dialogues();};v.body.querySelector('[data-lc="back-route"]').onclick=()=>{v.close();window.dunyaAc?.();};load(true).catch(()=>{});return;}
+  if(state.cursor>=story.questions.length){const results=Object.values(state.answers||{}),count=results.filter(r=>r.correct).length;v.body.innerHTML='<div class="lc-complete">'+papi+'<h3>Bir metni daha tamamladın!</h3><p>'+count+' / '+story.questions.length+' doğru · Bugünkü çalışman kayıtlı.</p></div>'+transcript()+'<div class="lc-word-chips">'+story.words.map(w=>'<span>'+esc(w.en)+' · '+esc(w.tr)+'</span>').join('')+'</div>'+action('Başka bir diyalog seç','another')+action('Parkuruma dön','back-route');v.body.querySelector('[data-lc="another"]').onclick=()=>{v.close();if(!$('lcDialogues'))dialogues();};v.body.querySelector('[data-lc="back-route"]').onclick=()=>{window.dmViewHistory?.clear();v.close();window.dunyaAc?.();};load(true).catch(()=>{});return;}
   const i=state.cursor,q=story.questions[i],listening=q.skill==='listening';
   v.body.innerHTML='<div class="lc-story-kicker"><span>'+story.icon+' '+story.level+' · '+({reading:'Okuma',listening:'Dinleme',writing:'Kısa yazma'}[q.skill])+'</span><b>'+(i+1)+' / '+story.questions.length+'</b></div><progress class="lc-story-progress" max="'+story.questions.length+'" value="'+i+'"></progress>'+audio()+(listening?'<div data-transcript hidden>'+transcript()+'</div>':transcript())+'<h3 class="lc-question">'+esc(q.prompt)+'</h3>'+(q.options?'<div class="lc-options">'+q.options.map(text=>'<button type="button" data-option="'+esc(text)+'" '+(listening?'disabled':'')+'>'+esc(text)+'</button>').join('')+'</div>':'<form class="lc-writing"><label>İngilizce cevabın<input name="answer" maxlength="140" autocomplete="off" autocapitalize="none" spellcheck="false" required></label><button class="lc-button" type="submit">Kontrol et</button></form>')+'<div class="lc-answer-note" role="status" aria-live="polite"></div>'+(listening?action('Ses olmadan metinle çalış','read-instead'):'');
   bindAudio();
@@ -190,7 +190,7 @@ async function teacherSummary(){
  }catch(e){if(v.alive())v.body.textContent=e.message;}
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-lc]');if(!b||b.disabled)return;const id=b.dataset.lc;if(id==='toggle'){const steps=$('lcPlan')?.querySelector('.lc-plan-steps');if(steps){steps.hidden=!steps.hidden;b.setAttribute('aria-expanded',String(!steps.hidden));}return;}
- const actions={start,repeat,route,dialogues,report,teacher:teacherSummary,'report-repeat':()=>{$('lcReport')?.querySelector('.dm-member-close')?.click();repeat();},'report-story':()=>{$('lcReport')?.querySelector('.dm-member-close')?.click();dialogues();}};
+ const actions={start,repeat,route,dialogues,report,teacher:teacherSummary,'report-repeat':()=>repeat(),'report-story':()=>dialogues()};
  if(actions[id]){e.preventDefault();actions[id]();}
 });
 let completionInFlight='';

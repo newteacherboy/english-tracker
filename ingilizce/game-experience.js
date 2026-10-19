@@ -36,6 +36,10 @@
   }
   decorate();
   for(const [id] of entries){const e=document.getElementById(id);if(e)new MutationObserver(decorate).observe(e,{attributes:true,attributeFilter:['style']});}
+
+  const nativeExits={kelimeYarismaOverlay:'kelimeYarismasiKapat',jpOyunOverlay:'jpOyunKapat',boslukOyunOverlay:'boslukOyunKapat',hafizaOyunOverlay:'hafizaOyunKapat',yagmurOyunOverlay:'yagmurOyunKapat',asmacaOyunOverlay:'asmacaOyunKapat',kelimebulOyunOverlay:'kelimebulOyunKapat',esOyunOverlay:'esOyunKapat',trenOyunOverlay:'trenOyunKapat'};
+  for(const [entryId,rootId] of entries){const name=nativeExits[rootId],exit=window[name];if(typeof exit!=='function')continue;const wrapped=function(...args){const root=document.getElementById(rootId),entry=document.getElementById(entryId),returnForm=!!root&&!!entry&&root.getClientRects().length>0&&getComputedStyle(entry).display==='none'&&!window.dmViewHistory?.isDirect();const result=exit.apply(this,args);if(returnForm&&getComputedStyle(root).display==='none'){for(const section of entry.parentElement.children){if(section!==entry&&section.id&&/Ekrani$/.test(section.id))section.style.display='none';}entry.style.display='block';root.style.display='flex';root.classList.add('dm-entry-open');entry.querySelector('button,input,select')?.focus?.({preventScroll:true});}return result;};Object.assign(wrapped,exit);window[name]=wrapped;}
+
   // Games that previously started immediately now have a reviewable entry screen.
   for(const [key,fn,title,description] of [
     ['dikte','dikteAc','Kulak Dedektifi','Kelimeyi dinle, duyduğunu İngilizce yaz.'],
@@ -47,16 +51,16 @@
       const overlay=document.createElement('div');overlay.id='dmGameIntro';overlay.className='hb-overlay';
       overlay.innerHTML='<section class="hb-card" role="dialog" aria-modal="true" aria-labelledby="dmIntroTitle"><header><div><small>PAPİ İLE OYUN ZAMANI</small><h2 id="dmIntroTitle"></h2></div><button data-close aria-label="Kapat">×</button></header><div class="hb-body"><div class="hb-intro"><img src="papi-welcome-v2.png" alt="Papi"><p></p></div><p class="dm-entry-rules"></p><h3>Sınıfını seç</h3><div id="dmIntroClasses" class="hb-classes"></div><div data-units><h3>Ünitelerini seç</h3><div id="dmIntroUnits" class="hb-units unite-secim-box"></div></div><p class="hb-status" role="status"></p><button data-start class="hb-primary">Oyuna başla 🌱</button></div></section>';
       overlay.querySelector('h2').textContent=title;overlay.querySelector('.hb-intro p').textContent=description;overlay.querySelector('.dm-entry-rules').textContent=ruleText;
-      const state={key,classNo:1,units:[1]},previous=document.activeElement;
-      function close(){overlay.remove();previous?.focus?.();}
+      const parent=window.dmViewHistory?.capture(),state={key,classNo:1,units:[1]},previous=document.activeElement;
+      function close(){overlay.remove();window.dmViewHistory?.leave(overlay);previous?.focus?.();}
       function choose(n){state.classNo=n;overlay.querySelectorAll('[data-class]').forEach(b=>b.classList.toggle('active',Number(b.dataset.class)===n));genericSinifGuncelle(n,'dmIntroUnits',u=>state.units=u);}
       for(let n=1;n<=8;n++){const b=document.createElement('button');b.className='sinif-btn';b.dataset.class=n;b.textContent=n+'. Sınıf';b.onclick=()=>choose(n);overlay.querySelector('.hb-classes').append(b);}
       // Sentence bank is level-based, so only show the class selection it actually supports.
       if(key==='cumle'){overlay.querySelector('[data-units]').hidden=true;overlay.querySelector('.hb-intro p').textContent+=' Cümleler seçtiğin sınıfın seviyesine göre gelir.';}
-      document.body.append(overlay);sinifGridKisitlamaUygula('dmIntroClasses',n=>state.classNo=n,choose);
+      document.body.append(overlay);window.dmViewHistory?.track(overlay,{parent,close});sinifGridKisitlamaUygula('dmIntroClasses',n=>state.classNo=n,choose);
       overlay.querySelector('[data-close]').onclick=close;
       overlay.onkeydown=e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const f=[...overlay.querySelectorAll('button:not(:disabled)')].filter(x=>x.getClientRects().length);if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===f.at(-1)){e.preventDefault();f[0].focus();}}};
-      overlay.querySelector('[data-start]').onclick=()=>{if(key==='dikte'&&oyunHavuzGetir(state.classNo,state.units).filter(k=>/^[a-zA-Z]{3,10}$/.test(k.ingilizce||k.en||'')).length<8){overlay.querySelector('.hb-status').textContent='En az 8 kelime için başka bir ünite daha seç.';return;}window.dmSelectedIntro=state;close();try{original();}finally{window.dmSelectedIntro=null;}};
+      overlay.querySelector('[data-start]').onclick=()=>{if(key==='dikte'&&oyunHavuzGetir(state.classNo,state.units).filter(k=>/^[a-zA-Z]{3,10}$/.test(k.ingilizce||k.en||'')).length<8){overlay.querySelector('.hb-status').textContent='En az 8 kelime için başka bir ünite daha seç.';return;}window.dmSelectedIntro=state;try{original();const child=document.getElementById('yoModal');if(child?.classList.contains('acik'))window.dmViewHistory?.track(child,{parent:window.dmViewHistory.capture(),close:()=>window.yoModalKapat?.()});}finally{window.dmSelectedIntro=null;}};
       overlay.querySelector('[data-close]').focus();
     };
   }

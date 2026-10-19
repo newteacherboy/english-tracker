@@ -60,7 +60,7 @@
   };
 
   window.kisiselBilgilerAc = async function (secenek = {}) {
-    stilEkle();
+    const returnView=window.dmViewHistory?.capture();stilEkle();
     document.querySelectorAll(".kb-perde").forEach(x => x.remove());
     const perde = document.createElement("div");
     perde.className = "kb-perde";
@@ -68,9 +68,9 @@
     perde.setAttribute("role", "dialog"); perde.setAttribute("aria-modal", "true"); perde.setAttribute("aria-labelledby", "kbBaslik");
     perde.innerHTML = `<div class="kb-kutu"><div class="kb-bas"><h3 id="kbBaslik">👤 Kişisel bilgiler</h3><button class="kb-x" aria-label="Kapat">✕</button></div><div class="kb-yukleniyor">Bilgilerin yükleniyor…</div></div>`;
     document.body.appendChild(perde);
-    const kapat = () => { if(secenek.zorunlu && window.dmContactFrozen)return; perde.remove(); document.removeEventListener("keydown", esc); };
+    const kapat = () => { if(secenek.zorunlu && window.dmContactFrozen)return; perde.remove();window.dmViewHistory?.leave(perde); document.removeEventListener("keydown", esc); };
     const esc = e => { if (e.key === "Escape") kapat(); if(e.key==='Tab' && secenek.zorunlu && window.dmContactFrozen){const list=[...perde.querySelectorAll('button:not([hidden]):not([disabled]),input:not([readonly]),select')];const first=list[0],last=list[list.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}} };
-    document.addEventListener("keydown", esc);
+    window.dmViewHistory?.track(perde,{parent:returnView,close:kapat});document.addEventListener("keydown", esc);
     perde.addEventListener("click", e => { if (e.target === perde) kapat(); });
     perde.querySelector(".kb-x").onclick = kapat;
     if(secenek.zorunlu)perde.querySelector('.kb-x').hidden=true;

@@ -24507,7 +24507,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   /* ================= EKRAN İSKELETİ ================= */
   let perde = null;
   function perdeAc() {
-    if (!perde) { perde = document.createElement('div'); perde.className = 'bz-perde'; perde.id = 'bzPerde'; perde.setAttribute('role', 'dialog'); perde.setAttribute('aria-modal', 'true'); perde.setAttribute('aria-label', 'Büyü Akademisi'); document.body.appendChild(perde); }
+    if (!perde) { perde = document.createElement('div'); perde.className = 'bz-perde'; perde.id = 'bzPerde'; perde.setAttribute('role', 'dialog'); perde.setAttribute('aria-modal', 'true'); perde.setAttribute('aria-label', 'Büyü Akademisi'); const returnView=window.dmViewHistory?.capture();document.body.appendChild(perde);window.dmViewHistory?.track(perde,{parent:returnView,close:kapat}); }
     return perde;
   }
   const eskiGorunum = () => String(isim()).toLowerCase()==='teacher' && localStorage.getItem('bz_eski_parkur') === '1';
@@ -24526,7 +24526,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (ad === 'koridor') koridor(); else harita(gorunum.b === null ? aktifBolum() : gorunum.b);
   }
   function aktifBolum() { aktarGerekirse(); for (let b = 0; b < 4; b++) if (bolumAcik(b) && bolumTamam(b) < durakSayisi(b)) return b; for (let b = 3; b >= 0; b--) if (bolumAcik(b)) return b; return 0; }
-  function kapat() { if(O&&!O.finished){checkpointSave();O.pauseElapsed=Math.max(0,Date.now()-O.bas);O.paused=true;}try { speechSynthesis.cancel(); } catch (e) {} if (zamanlayici) clearInterval(zamanlayici); if (perde) perde.remove(); perde = null; document.querySelectorAll('.bz-alt').forEach(x => x.remove()); }
+  function kapat() { if(O&&!O.finished){checkpointSave();O.pauseElapsed=Math.max(0,Date.now()-O.bas);O.paused=true;}try { speechSynthesis.cancel(); } catch (e) {} if (zamanlayici) clearInterval(zamanlayici); if (perde) {const closed=perde;perde.remove();window.dmViewHistory?.leave(closed);} perde = null; document.querySelectorAll('.bz-alt').forEach(x => x.remove()); }
   function avatar(px) { try { let s = typeof karakterSvg === 'function' ? karakterSvg(isim(), px) : ''; if (s) return s; } catch (e) {} return `<span style="display:grid;place-items:center;width:100%;height:100%;font-size:${Math.round(px * .7)}px;line-height:1">🧙</span>`; }
   function ust(geriHtml) {
     let enerji = window.genelEnerjiKalan !== undefined ? window.genelEnerjiKalan : '–', altin = yoVar() ? (yo.altin || 0) : 0;
@@ -24569,12 +24569,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (!bolumAcik(b)) return toast(`🔒 Parkur ${[1,10,20,30][b]}. seviyede açılır.`);
     let B = BOLUM[b], D = durakBilgi(b, d), no = D.no, N = durakSayisi(b), bitti = tamam.has(no), y = yildiz(no), n = bolumTamam(b);
     let ileride = d > siradakiDurak(b) && !bitti;
-    let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
+    const returnView=window.dmViewHistory?.capture();let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
     k.classList.add('sp-entry','sp-adventure-entry');
     const saved=checkpointRead(no);const possibleXp=bitti?0:192;
     k.innerHTML = `<div class="bz-alt-kart sp-start-card"><button id="bzVazgec" class="sp-close" aria-label="Kapat">✕</button><img class="sp-entry-papi" src="study-assets/papi-celebrate.png" alt="Papi"><small>MACERA HARİTASI · ${d+1}. DURAK</small><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3><p>${kac(durakAdi(b,d))}</p><div class="sp-prize"><span>Olası ödül</span><strong>⭐ ${bitti?'0': 'En çok '+possibleXp} XP</strong><small>🪙 ${bitti?'İlk geçiş ödülü alındı':'En çok 40 altın · Başarı ve süreye göre'}</small></div><p class="sp-entry-note">${ileride?'🔒 Önce sıradaki durağı tamamla':bitti?'⭐'.repeat(y)+' · En iyi sonucun':D.kelimeler.length+' kelime · Seviye '+D.parca+'/'+D.parcaToplam+' · 12 soru + kelime kartları'}</p><button class="bz-btn mor" id="bzOyna" ${ileride?'disabled':''}>${saved?'Kaldığın yerden devam et':bitti?'Tekrar başlat':'Başlat'} →</button></div>`;
     document.body.appendChild(k);
-    const kap = () => k.remove();
+    const kap = () => {k.remove();window.dmViewHistory?.leave(k);};window.dmViewHistory?.track(k,{parent:returnView,close:kap});
     k.onclick = e => { if (e.target === k) kap(); };
     $('bzVazgec').onclick = kap;
     $('bzOyna').onclick = () => { kap(); oyunBaslat(b, d); };
@@ -24720,7 +24720,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let p = perdeAc(), s = O.sorular[O.i];
     O.jk = {};
     p.innerHTML = `<div class="bz-oyun dm-question-panel" data-question-type="${s.tip}">${oyunUst()}</div></div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div><div class="bz-jokerler" id="bzJokerler"></div>`;
-    $('bzCik').onclick = () => { checkpointSave();window.dmPapiFirstPractice?.recover('school');let b=O.b;kapat();goster('harita',b); };
+    $('bzCik').onclick = () => { checkpointSave();window.dmPapiFirstPractice?.recover('school');let b=O.b,d=O.d;kapat();durakKarti(b,d); };
     $('bzGeriSoru').onclick = () => incelemeAc();
     const nav=p.querySelector('.bz-oyun-ust');if(nav){const next=document.createElement('button');next.type='button';next.className='bz-geri-soru';next.textContent='→';next.title='Cevaplanan soruları ileri/geri incele';next.setAttribute('aria-label','Sonraki cevaplanmış soruyu incele');next.disabled=!O.gecmis.some(Boolean);next.onclick=()=>incelemeAc(0);nav.insertBefore(next,nav.querySelector('.bz-noktalar'));}
     let alan = $('bzAlan');
@@ -24739,7 +24739,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       console.error('[DijiMedu parkur] Soru çizimi başarısız:',s.tip,err);
       alan.innerHTML='<div class="bz-etiket">🦜 Papi yardım ediyor</div><div class="bz-soru">Bu soruyu gösteremedik.</div><p class="bz-ipucu">İlerlemen korunuyor. Soruyu yeniden yükleyebilir veya haritaya dönebilirsin.</p><button type="button" class="bz-btn" id="bzRetryQuestion">↻ Soruyu yeniden dene</button><button type="button" class="bz-btn" id="bzReturnMap">🏰 Haritaya dön</button>';
       alan.querySelector('#bzRetryQuestion').onclick=()=>soruCiz();
-      alan.querySelector('#bzReturnMap').onclick=()=>{let b=O.b;kapat();goster('harita',b);};
+      alan.querySelector('#bzReturnMap').onclick=()=>{let b=O.b,d=O.d;kapat();durakKarti(b,d);};
     }
     p.scrollTop = 0;
   }
@@ -26450,12 +26450,13 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261018-mobile-fit-1"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261019-learning-20261017-ten-mascots-1"></script><script defer src="story-path.js?v=20261016-thematic-240"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261019-step-back-1"></script><script defer src="story-path.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261018-safety-2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261016-rally-1">
 <script defer src="activity-ui.js?v=20261016-flow-2"></script>
-<script defer src="bottom-nav.js?v=20261018-chest-haptic-1"></script>
+<script defer src="navigation-history.js?v=20261019-step-back-1"></script>
+<script defer src="bottom-nav.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261013-catalog"></script>
 <script defer src="weekly-ui.js?v=20261019-purple-1"></script>
@@ -26466,7 +26467,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="kelime-rallisi.css?v=20261016-flow-2">
 <script defer src="lazy-games.js?v=20261016-flow-2"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
-<script defer src="game-experience.js?v=selected-play-20261011-1"></script>
+<script defer src="game-experience.js?v=20261019-step-back-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
 <script defer src="first-discovery.js?v=20261019-apple-1"></script>
 <script defer src="rights-ui.js?v=1"></script>
@@ -26517,7 +26518,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 @media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
 @media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
-<link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261013-member-1"></script><script defer src="kisisel-bilgiler.js?v=20261018-signup-test-2"></script><script defer src="student-management.js?v=20261018-delete-2"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261019-step-back-1"></script><script defer src="kisisel-bilgiler.js?v=20261019-step-back-1"></script><script defer src="student-management.js?v=20261018-delete-2"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261018-readable-study-1"></script>
@@ -26534,19 +26535,19 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="word-wheel.css?v=20261016-ten-seconds">
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">
 <script defer src="route-missions.js?v=20261019-purple-1"></script>
-<script defer src="oyna-v2.js?v=20261019-purple-1"></script>
+<script defer src="oyna-v2.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
 <script defer src="friends-ui.js?v=20261017-social-highlights-v2"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261018-readable-study-1">
-<script defer src="study-ui.js?v=20261018-open-study-start-1"></script>
+<script defer src="study-ui.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="storefront.css?v=20261015-shopping-1">
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
 <script defer src="storefront.js?v=20261015-shopping-1"></script>
-<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261013-member-122"></script>
+<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261015-evening-1">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261019-learning-20261018-signup-test-2"></script>
+<script src="member-experience.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="start-placement.css?v=20261018-readable-study-1">
 <script src="start-placement-bank.js?v=20261018-1"></script>
 <script src="start-placement.js?v=20261018-readable-study-1"></script>
@@ -26580,7 +26581,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="apple-login.js?v=20261019-1"></script>
 <link rel="stylesheet" href="learning-companion.css?v=20261019-1">
 <script defer src="learning-dialogues.js?v=20261019-1"></script>
-<script defer src="learning-companion.js?v=20261019-purple-1"></script>
+<script defer src="learning-companion.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="parkur-purple.css?v=20261019-purple-1">
 </body>      
         </html>

@@ -93,13 +93,13 @@ function open(rows,gradeHint){
  '<div class="rt-school-overview-actions"><button type="button" data-school-theme>'+(theme()==='night'?'☀️ Gündüz':'🌙 Gece')+'</button><span>Görünüm yalnızca Okul Yolum için değişir.</span></div>'+
  '<h3 class="ml-theme-list-heading">Sınıflarım <small>8 sınıf</small></h3>'+
  groups.map(g=>renderGrade(g,active)).join('')+'</section>';
- const before=document.activeElement;
- const close=()=>{el.remove();before?.focus?.({preventScroll:true});};
- document.body.append(el);
+ const parent=window.dmViewHistory?.capture(),before=document.activeElement;
+ const close=()=>{el.remove();window.dmViewHistory?.leave(el);before?.focus?.({preventScroll:true});};
+ document.body.append(el);window.dmViewHistory?.track(el,{parent,close});
  el.querySelectorAll('[data-school-close]').forEach(b=>b.onclick=close);
  el.onclick=e=>{if(e.target===el)close();};
  el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const options=[...el.querySelectorAll('button:not(:disabled),summary')].filter(x=>x.getClientRects().length),idx=options.indexOf(document.activeElement);if(options.length){e.preventDefault();options[(idx+(e.shiftKey?-1:1)+options.length)%options.length]?.focus();}}};
- el.querySelectorAll('[data-school-b]').forEach(btn=>btn.onclick=()=>{const step=steps.find(s=>String(s.b)===btn.dataset.schoolB&&String(s.d)===btn.dataset.schoolD);if(!step||!step.available)return;close();launchStep(step);});
+ el.querySelectorAll('[data-school-b]').forEach(btn=>btn.onclick=()=>{const step=steps.find(s=>String(s.b)===btn.dataset.schoolB&&String(s.d)===btn.dataset.schoolD);if(!step||!step.available)return;launchStep(step);});
  el.querySelector('[data-school-close]')?.focus({preventScroll:true});
  if(gradeHint)el.querySelector('.rt-school-grade:nth-of-type('+active+')')?.scrollIntoView?.({block:'nearest'});
 }

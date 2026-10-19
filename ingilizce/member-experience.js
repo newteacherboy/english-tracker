@@ -12,11 +12,11 @@ async function loadNoticePolicies(){if(!ready()||noticePolicyBusy||Date.now()-no
 let actor='',status=null,busy=false,lastRead=0,started=Date.now(),examAt=Date.now()+120000+Math.random()*480000,dismissedRoute=false,refreshPending=false;
 async function api(islem,data={}){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem,t:localStorage.getItem('ing_token')||'',...data}),signal:controller.signal});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı.');return d;}finally{clearTimeout(timeout);}}
 function sheet(title,content,id='dmMemberDialog'){
- $(id)?.remove();const before=document.activeElement,el=document.createElement('div');el.id=id;el.className='dm-member-overlay';
+ const parent=window.dmViewHistory?.capture();$(id)?.remove();const before=document.activeElement,el=document.createElement('div');el.id=id;el.className='dm-member-overlay';
  el.innerHTML='<section class="dm-member-sheet" role="dialog" aria-modal="true" aria-labelledby="'+id+'Title"><button type="button" class="dm-member-close" aria-label="Kapat">×</button><h2 id="'+id+'Title">'+esc(title)+'</h2><div class="dm-member-body">'+content+'</div></section>';
- const close=()=>{if(!el.isConnected)return;el.dispatchEvent(new Event('dm:sheet-close'));if(id==='dmPlacementExam')window.speechSynthesis?.cancel();el.remove();before?.focus?.({preventScroll:true});};const dismiss=()=>{close();window.dmProfileDismiss?.();};el.onclick=e=>{if(e.target===el||e.target.closest('.dm-member-close'))dismiss();};
+ const close=()=>{if(!el.isConnected)return;el.dispatchEvent(new Event('dm:sheet-close'));if(id==='dmPlacementExam')window.speechSynthesis?.cancel();el.remove();const returned=window.dmViewHistory?.leave(el);if(!returned)before?.focus?.({preventScroll:true});};const dismiss=()=>{close();window.dmProfileDismiss?.();};el.onclick=e=>{if(e.target===el||e.target.closest('.dm-member-close'))dismiss();};
  el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();dismiss();}if(e.key==='Tab'){const list=[...el.querySelectorAll('button,input,textarea,a')].filter(x=>!x.disabled&&!x.hidden),i=list.indexOf(document.activeElement);e.preventDefault();list[(i+(e.shiftKey?-1:1)+list.length)%list.length]?.focus();}};
- document.body.append(el);el.querySelector('.dm-member-close').focus();return {el,body:el.querySelector('.dm-member-body'),close};
+ document.body.append(el);window.dmViewHistory?.track(el,{parent,close:()=>el.querySelector('.dm-member-close')?.click()});el.querySelector('.dm-member-close').focus();return {el,body:el.querySelector('.dm-member-body'),close};
 }
 const chosen=()=>['school','independent'].includes(Y()?.dmLearningPurpose);
 function chooseRoute(change=false){
