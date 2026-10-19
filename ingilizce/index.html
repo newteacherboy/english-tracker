@@ -21987,6 +21987,7 @@ window.ocEnerjiHarca = async function (n) {
 
 
   function olay(tur) {
+    if(tur==='oyun')document.dispatchEvent(new Event('dm:mission-refresh'));
 
     const g = gunGorevleri();
 
@@ -26457,7 +26458,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="bottom-nav.js?v=20261018-chest-haptic-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261013-catalog"></script>
-<script defer src="weekly-ui.js?v=20261012-stability-1"></script>
+<script defer src="weekly-ui.js?v=20261019-purple-1"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=20261013-activity-2">
 <script defer src="experience-ui.js?v=20261013-member-122"></script>
@@ -26532,7 +26533,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="meteor.css?v=20261012-independent">
 <link rel="stylesheet" href="word-wheel.css?v=20261016-ten-seconds">
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">
-<script defer src="oyna-v2.js?v=20261017-school-retry-v2"></script>
+<script defer src="route-missions.js?v=20261019-purple-1"></script>
+<script defer src="oyna-v2.js?v=20261019-purple-1"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
 <script defer src="friends-ui.js?v=20261017-social-highlights-v2"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261018-readable-study-1">
@@ -26578,6 +26580,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="apple-login.js?v=20261019-1"></script>
 <link rel="stylesheet" href="learning-companion.css?v=20261019-1">
 <script defer src="learning-dialogues.js?v=20261019-1"></script>
-<script defer src="learning-companion.js?v=20261019-1"></script>
+<script defer src="learning-companion.js?v=20261019-purple-1"></script>
+<link rel="stylesheet" href="parkur-purple.css?v=20261019-purple-1">
 </body>      
         </html>

@@ -30,7 +30,10 @@ export function releaseAPI(db:any,json:any){
     const {error}=await db.rpc('dm_weekly_ack',{actor:a.student_id,week:w});if(error)throw error;return json({ok:true});
    }
    const settled=await db.rpc('dm_settle_weeks');if(settled.error)throw settled.error;
-   const {data,error}=await db.rpc('dm_weekly_claim',{actor:a.student_id});if(error)throw error;return json({ok:true,rapor:data});
+   const {data,error}=await db.rpc('dm_weekly_claim',{actor:a.student_id});if(error)throw error;
+   let winners:any[]=[];
+   if(data?.week_start){const result=await db.from('dm_weekly_results').select('rank_no,league,gold,energy,students(username)').eq('week_start',data.week_start).eq('league',data.league).order('rank_no').limit(3);if(!result.error)winners=(result.data||[]).map((r:any)=>({rank:r.rank_no,name:r.students?.username||'Oyuncu',gold:r.gold,energy:r.energy}));}
+   return json({ok:true,rapor:data?{...data,winners}:data});
   }
   return null;
  }

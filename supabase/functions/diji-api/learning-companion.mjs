@@ -31,13 +31,13 @@ export function learningCompanionAPI({db,json,teacherScope,now=Date.now}){
     if(a.role!=='student'||!a.student_id)return fail('Öğrenci oturumu gerekli.',403);
     const sid=a.student_id,stamp=now(),today=day(stamp),iso=new Date(stamp).toISOString();
     if(op==='companionSummary'){
-      const [r,stories,plan]=await Promise.all([
-        reviews([sid]),db.from('extra_data').select('key_name,value,updated_at').eq('student_id',sid).like('key_name','practice_dialogue:%').order('updated_at',{ascending:false}).limit(100),get(sid,'practice_plan:'+today)
-      ]);if(stories.error)throw stories.error;
+      const [r,stories,plan,missions]=await Promise.all([
+        reviews([sid]),db.from('extra_data').select('key_name,value,updated_at').eq('student_id',sid).like('key_name','practice_dialogue:%').order('updated_at',{ascending:false}).limit(100),get(sid,'practice_plan:'+today),db.rpc('dm_mission_summary',{actor:sid})
+      ]);if(stories.error)throw stories.error;if(missions.error)throw missions.error;
       const words=r.rows.map(x=>({id:x.key_name,...parse(x.value),version:x.updated_at}));
       const skills={reading:{correct:0,total:0},listening:{correct:0,total:0},writing:{correct:0,total:0}};
       for(const row of stories.data||[])for(const answer of Object.values(parse(row.value).answers||{})){if(skills[answer.skill]){skills[answer.skill].total++;skills[answer.skill].correct+=Number(answer.correct);}}
-      return json({ok:true,day:today,limited:r.limited,review:reviewStats(r.rows,stamp),skills,
+      return json({ok:true,day:today,missions:missions.data,limited:r.limited,review:reviewStats(r.rows,stamp),skills,
         reviewDone:!words.some(w=>due(w,stamp))||words.filter(w=>w.lastReviewedAt&&day(Date.parse(w.lastReviewedAt))===today).length>=3,
         dialogueDone:(stories.data||[]).some(x=>x.key_name.endsWith(':'+today)&&parse(x.value).cursor>=3),
         routeDone:!!parse(plan?.value).route,

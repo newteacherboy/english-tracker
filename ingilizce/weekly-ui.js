@@ -64,7 +64,7 @@ window.dmVeliRaporYukle=async function(cl,area){area.innerHTML='<div class="yo-b
 const gold=[500,350,250,180,140,110,90,75,60,50],energy=[0,0,0,0,0,0,0,0,0,0];
 const oldLeague=window.maLigHtml;if(typeof oldLeague==='function')window.maLigHtml=function(){return oldLeague.apply(this,arguments)+`<section class="dm-league-prizes"><details><summary>🎁 Şampiyonlar Ligi haftalık ödülleri</summary><p>Yalnızca haftayı ilk 10’da tamamlayan ve 15. seviyeye ulaşmış ve o hafta en az 1800 yarışma XP’si kazanan öğrenciler hediye alır. Süper Lig’in ilk 2 sırasına 30 ve 20 altın verilir. Yerel Lig’de katılım rozeti kazanılır. Her pazartesi yeni hafta başlar; sonuçlar 00.05’te kesinleşir. Kazandığın hediye ilk girişinde hesabına bir kez eklenir.</p><table><thead><tr><th>Sıra</th><th>Altın</th><th>Enerji</th></tr></thead><tbody>${gold.map((g,i)=>`<tr><td>${i+1}.</td><td>${g} 🪙</td><td>${energy[i]} ⚡</td></tr>`).join('')}</tbody></table></details></section>`;};
 async function weekly(){
- if((typeof window.dmPapiNotices?.blocked === 'function' && window.dmPapiNotices.blocked())||!token()||!who()||who().toLowerCase()==='teacher'||document.hidden||weeklyBusy||$('dmWeeklyPanel')||Date.now()-lastWeekly<21600000)return;
+ if((typeof window.dmPapiNotices?.blocked === 'function' && window.dmPapiNotices.blocked())||!token()||!who()||who().toLowerCase()==='teacher'||document.hidden||weeklyBusy||$('dmWeeklyPanel')||Date.now()-lastWeekly<300000)return;
  const blocking=[...document.querySelectorAll('.rubric-modal,.game-overlay,.dm-perde,#dmLevelUp')].some(e=>getComputedStyle(e).display!=='none');if(blocking)return;
  weeklyBusy=true;lastWeekly=Date.now();const owner=who();
  try{const d=await api('haftalikPerformans');if(owner!==who()||!d.rapor)return;const r=d.rapor;
@@ -73,7 +73,18 @@ async function weekly(){
  if(!enabled('haftalik_ozet'))return;
  const m=r.summary||{},league={sampiyon:'Şampiyonlar Ligi',super:'Süper Lig',yerel:'Yerel Lig'}[r.league],panel=document.createElement('div');panel.id='dmWeeklyPanel';panel.className='dm-weekly-panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-labelledby','dmWeeklyTitle');
  const motivation=r.xp>=500?'Harika bir hafta! Bu enerjiyi yeni haftaya taşı, Papi seninle!':r.xp>0?'Her küçük adım seni ileri taşıyor. Bu hafta kendi rekorunu kırmaya var mısın?':'Yeni hafta, yeni fırsat! Bugün kısa bir oyunla başlayalım; Papi seni bekliyor.';
- panel.innerHTML=`<div class="dm-weekly-card"><img src="${r.gold?'papi-reward-v2.png':'papi-welcome-v2.png'}" alt="Papağan maskot"><h2 id="dmWeeklyTitle">Haftan nasıl geçti?</h2><p>${date(r.week_start)} haftası · ${esc(league)}<br><b>${r.rank_no}. sıra</b></p><div class="dm-report-stats"><span><b>${r.active_days}</b>aktif gün</span><span><b>${r.xp}</b>XP</span><span><b>${m.games||0}</b>oyun</span></div><p>${m.correct||0} doğru · ${m.topics||0} konu testi · ${m.levels||0} seviye<br>${m.activities||0} etkinlik · ${m.homework||0} ödev · ${m.videos||0} video</p>${r.gold||r.energy?`<div class="dm-weekly-prize">🎁 +${r.gold} altın · +${r.energy} enerji<br><small>Hediyen hesabına eklendi!</small></div>`:'<p>Bu hafta lig hediyesi kazanmadın. Yeni haftada şansını yeniden dene! 🌱</p>'}<p>${motivation}</p><button>Yeni haftaya hazırım! 🦜</button></div>`;const present=()=>{document.body.append(panel);panel.querySelector('button').focus();};const queued=window.dmPapiNotices?.defer('weekly:'+r.week_start,present);if(!queued)present();const button=panel.querySelector('button'),prev=document.activeElement;button.onclick=()=>{panel.remove();prev?.focus?.();api('haftalikPerformansGoruldu',{hafta:r.week_start}).catch(()=>{});};panel.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();button.focus();}if(e.key==='Escape')button.click();});
+ const seenKey='dm.league.final:'+owner+':'+r.week_start;
+ if(localStorage.getItem(seenKey)){api('haftalikPerformansGoruldu',{hafta:r.week_start}).catch(()=>{});return;}
+ const winners=Array.isArray(r.winners)?r.winners.slice(0,3):[];
+ const rewards=[n(r.gold)>0?'<span>🪙<b>+'+n(r.gold)+'</b> Altın</span>':'',n(r.energy)>0?'<span>⚡<b>+'+n(r.energy)+'</b> Enerji</span>':''].join('');
+ panel.innerHTML=`<div class="dm-weekly-card dm-league-celebration"><button type="button" class="dm-final-close" aria-label="Duyuruyu kapat">×</button><div class="dm-final-confetti" aria-hidden="true">${Array.from({length:18},(_,i)=>'<i style="--i:'+i+'"></i>').join('')}</div><div class="dm-final-hero"><img src="papi-reward-v2.png" alt="Papi"><span aria-hidden="true">🏆</span></div><h2 id="dmWeeklyTitle">Haftanın yıldızları!</h2><p>${date(r.week_start)} haftası · ${esc(league||'Lig')}<br><b>Ligi ${n(r.rank_no)}. sırada bitirdin!</b></p>${winners.length?'<div class="dm-final-podium">'+winners.map(w=>'<div><strong>'+n(w.rank)+'.</strong><span>'+esc(w.name)+'</span></div>').join('')+'</div>':''}<h3>Kazandığın ödüller</h3>${rewards?'<div class="dm-final-rewards">'+rewards+'</div><small>Ödüllerin hesabına eklendi.</small>':'<p>Bu hafta lig ödülü kazanmadın. Yeni hafta, yeni bir fırsat!</p>'}<p class="dm-final-motivation">${esc(motivation)}</p><button type="button" class="dm-final-ready">Yeni haftaya hazırım! ✨</button></div>`;
+ const prev=document.activeElement;
+ const dismiss=()=>{localStorage.setItem(seenKey,'1');panel.remove();prev?.focus?.();api('haftalikPerformansGoruldu',{hafta:r.week_start}).catch(()=>{});};
+ panel.querySelectorAll('button').forEach(b=>b.onclick=dismiss);
+ const present=()=>{if(owner!==who()||localStorage.getItem(seenKey))return;document.body.append(panel);panel.querySelector('.dm-final-ready').focus();};
+ const queued=window.dmPapiNotices?.defer('weekly:'+owner+':'+r.week_start,present);if(!queued)present();
+ panel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();dismiss();}if(e.key==='Tab'){const b=[...panel.querySelectorAll('button')],i=b.indexOf(document.activeElement);e.preventDefault();b[(i+(e.shiftKey?-1:1)+b.length)%b.length].focus();}});
+
  }catch(e){}finally{weeklyBusy=false;}
 }
 // Block direct tab/function entry as well as hiding buttons; existing user records remain intact.
@@ -84,6 +95,7 @@ let queue;new MutationObserver(records=>{
  if(!queue)queue=setTimeout(()=>{queue=null;apply();},150);
 }).observe(document.body,{childList:true,subtree:true});
 document.addEventListener('dm:state',apply);
+document.addEventListener('dm:login',()=>{$('dmWeeklyPanel')?.remove();lastWeekly=0;});
 setInterval(()=>{if(weeklyAccount!==who()){weeklyAccount=who();lastWeekly=0;admin=false;refresh();}apply();weekly();},15000);
 setInterval(refresh,600000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh();weekly();}});refresh();setTimeout(weekly,10000);
 })();

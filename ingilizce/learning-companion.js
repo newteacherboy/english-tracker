@@ -20,7 +20,7 @@ async function load(force=false){
  reset();if(!student())return null;const at=owner;
  if(summary?.day===today()&&!force&&Date.now()-loaded<60000)return summary;
  if(inflight)return inflight;
- const promise=api('companionSummary').then(d=>{if(at!==identity())return null;summary=d;loaded=Date.now();paintPlan();return d;}).finally(()=>{if(inflight===promise)inflight=null;});inflight=promise;return promise;
+ const promise=api('companionSummary').then(d=>{if(at!==identity())return null;summary=d;loaded=Date.now();window.dmRouteMissions?.set(d.missions,who());paintPlan();return d;}).finally(()=>{if(inflight===promise)inflight=null;});inflight=promise;return promise;
 }
 function sheet(title,html,id){
  const view=window.dmMemberUI?.sheet(title,html,id);if(!view)return null;
@@ -37,14 +37,14 @@ function planMarkup(){
 function paintPlan(){const el=$('lcPlan');if(!el)return;const sig=JSON.stringify([owner,summary?.day,summary?.review,summary?.reviewDone,summary?.routeDone,summary?.dialogueDone]);if(el.dataset.signature===sig)return;const expanded=el.querySelector('[data-lc="toggle"]')?.getAttribute('aria-expanded')==='true';el.innerHTML=planMarkup();el.dataset.signature=sig;if(expanded){el.querySelector('.lc-plan-steps').hidden=false;el.querySelector('[data-lc="toggle"]').setAttribute('aria-expanded','true');}}
 
 // The goal and daily tasks occupy one place; only their presentation is changed.
-let goalTimer=null,goalPauseUntil=0,goalSlide=0;
+let goalTimer=null,goalPauseUntil=0,goalSlide=1;
 function goalCarousel(root){
  const weekly=root.querySelector(':scope > .rt-week'),daily=root.querySelector(':scope > .rt-tasks');
  let holder=root.querySelector(':scope > .dm-goal-carousel');
  if(!holder&&(!weekly||!daily))return;
  if(!holder){
   holder=document.createElement('section');holder.className='dm-goal-carousel';holder.setAttribute('aria-label','Haftalık hedef ve günlük üç görev');
-  holder.innerHTML='<div class="dm-goal-pages" aria-live="off"></div><div class="dm-goal-switch"><button type="button" data-goal="previous" aria-label="Önceki hedef">‹</button><span class="dm-goal-dots" aria-label="İki sayfa"><button type="button" data-goal="0" aria-label="Haftalık hedef"></button><button type="button" data-goal="1" aria-label="Günlük üç görev"></button></span><button type="button" data-goal="next" aria-label="Sonraki hedef">›</button></div>';
+  holder.innerHTML='<div class="dm-goal-tabs" role="tablist" aria-label="Görev dönemi"><button type="button" role="tab" data-goal="1">📋 Günün 3 Görevi</button><button type="button" role="tab" data-goal="0">🎯 Haftanın 3 Görevi</button></div><div class="dm-goal-pages" aria-live="off"></div>';
   weekly.before(holder);holder.querySelector('.dm-goal-pages').append(weekly,daily);
   holder.addEventListener('click',e=>{const b=e.target.closest('[data-goal]');if(!b)return;goalPauseUntil=Date.now()+6500;goalSlide=b.dataset.goal==='previous'?(goalSlide+1)%2:b.dataset.goal==='next'?(goalSlide+1)%2:Number(b.dataset.goal);showGoal(holder);});
   let touchX=null;holder.addEventListener('touchstart',e=>{touchX=e.changedTouches[0]?.clientX??null},{passive:true});
@@ -52,12 +52,12 @@ function goalCarousel(root){
   holder.addEventListener('focusin',()=>{goalPauseUntil=Date.now()+10000;});
  }
  showGoal(holder);
- if(goalTimer===null)goalTimer=setInterval(()=>{const h=document.querySelector('#tab-dunya .dm-goal-carousel');if(!h||!visible($('tab-dunya')))return;if(document.hidden||Date.now()<goalPauseUntil||h.matches(':hover')||h.contains(document.activeElement))return;goalSlide=(goalSlide+1)%2;showGoal(h);},3800);
+
 }
 function showGoal(holder){
  const children=holder.querySelector('.dm-goal-pages')?.children;if(!children||children.length!==2)return;
  [...children].forEach((x,i)=>{x.hidden=i!==goalSlide;x.style.display=i===goalSlide?'':'none';});
- holder.querySelectorAll('.dm-goal-dots button').forEach((b,i)=>{b.setAttribute('aria-current',String(i===goalSlide));});
+ holder.querySelectorAll('.dm-goal-tabs button').forEach(b=>{const active=Number(b.dataset.goal)===goalSlide;b.setAttribute('aria-selected',String(active));b.tabIndex=0;});
 }
 function mount(){
  scheduled=false;reset();if(!student())return;
@@ -208,6 +208,7 @@ async function lessonDone(){
 document.addEventListener('dm:learning-progress',e=>{if(e.detail?.completed&&e.detail.owner===who())lessonDone();});
 document.addEventListener('dm:lesson-completed',lessonDone);
 document.addEventListener('dm:school-lesson-completed',lessonDone);
+document.addEventListener('dm:mission-refresh',()=>{setTimeout(()=>load(true).catch(()=>{}),1500);});
 document.addEventListener('dm:review-completed',()=>{load(true).catch(()=>{});});
 document.addEventListener('dm:login',()=>{reset();schedule();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
