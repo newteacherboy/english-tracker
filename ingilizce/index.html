@@ -12382,7 +12382,7 @@ function ozellikSecDoldur() {
         const YO_ZK_GUN = { 1:1, 2:3, 3:7, 4:14 };
         const YO_ZK_MAX = 250;
 
-        const YO_DONDURUCU_FIYAT = 10;
+        const YO_DONDURUCU_FIYAT = 150;
 
         const YO_CUMLE = [
           ['I have a red bicycle','Kırmızı bir bisikletim var.','A1'],
@@ -12728,18 +12728,8 @@ const YO_SOHBET = [
         function yoHedefSec(n) { yo.hedef = n; yoKaydet(); yoHedefHalkaCiz(); yoHedefAc(); }
 
         /* ========== 2) SERİ DONDURUCU ========== */
-        function yoSeriDondurucuKontrol() {
-          if (typeof aktifOgrenciAdi === 'undefined' || !aktifOgrenciAdi || !yoHazirla(aktifOgrenciAdi)) return;
-          let son = localStorage.getItem('ing_girisSerisiSonTarih');
-          let seri = parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0');
-          if (!son || seri < 1 || yo.dondurucu < 1) return;
-          if (son === yoBugun(-2)) {
-            yo.dondurucu--;
-            localStorage.setItem('ing_girisSerisiSonTarih', yoBugun(-1));
-            yoKaydet();
-            setTimeout(() => yoToast(`🧊 Seri dondurucu ${seri} günlük serini kurtardı!`), 3000);
-          }
-        }
+        /* Kalkanlar artık sunucuda (memberStatus) harcanır; cihazda harcamak çift düşüşe yol açardı. */
+        function yoSeriDondurucuKontrol() {}
 
         /* ========== 3) PAPAĞAN MAĞAZASI ========== */
 
@@ -15341,7 +15331,7 @@ function avatarSVG(s, stil, px, cins) {
       <div class="ka-kat">${Object.keys(KATALOG).map(kk => `<button class="${kk === kaKat ? 'aktif' : ''}" data-k="${kk}">${KATALOG[kk].ikon} ${KATALOG[kk].ad}</button>`).join('')}</div>
       <div class="ka-urunler">${urunler}</div>
       <div class="ka-bolum">Seri koruma</div>
-      <div class="ka-dondurucu"><span>🧊 Seri dondurucu<small>Bir gün giremezsen serin bozulmaz. Elinde: ${yo.dondurucu || 0}/2</small></span><button id="kaDondurucu">🪙 ${typeof YO_DONDURUCU_FIYAT !== 'undefined' ? YO_DONDURUCU_FIYAT : 30}</button></div>
+      <div class="ka-dondurucu"><span>🧊 Seri dondurucu<small>Haftada 1 gün kaçırırsan serin ücretsiz korunur. Fazlası için kalkan: ${yo.dondurucu || 0}/2</small></span><button id="kaDondurucu">🪙 ${typeof YO_DONDURUCU_FIYAT !== 'undefined' ? YO_DONDURUCU_FIYAT : 30}</button></div>
       <div class="ka-not" style="text-align:center">Altınları oyunlarda her doğru cevapla kazanırsın.</div></div>`;
     el.querySelectorAll('.ka-kat button').forEach(b => b.onclick = () => { kaKat = b.dataset.k; atolyeCiz(); });
     el.querySelectorAll('.ka-urun').forEach(b => b.onclick = () => urunTikla(b.dataset.id));
@@ -17644,7 +17634,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     ['buyuk-xp', '📚', 'Bilgelik Kitabı', 'm_xp3', 3, 30, 'Sıradaki 3 oyunda XP ×2.'],
     ['altin-miknatis', '🧲', 'Altın Mıknatısı', 'm_altin', 2, 20, 'Sıradaki oyunda altın ×2.'],
     ['bedava-bilet', '🎟️', 'Bedava Bilet', 'm_bilet', 3, 30, 'Sıradaki oyun girişi enerji harcamaz.'],
-    ['seri-kalkani', '🧊', 'Seri Kalkanı', 'm_seri', 1, 10, 'Bir gün giremezsen serin bozulmaz.'],
+    ['seri-kalkani', '🧊', 'Seri Kalkanı', 'm_seri', 1, 150, 'Haftada 1 kalkan ücretsiz; fazlası için bu kalkan serini korur.'],
     ['sans-yoncasi', '🍀', 'Şans Yoncası', 'm_kombo', 2, 16, "Sıradaki oyunda 4'lü kombo altını ×2."]
   ].map(x => ({ id: x[0], e: x[1], ad: x[2], tur: x[3], kad: x[4], f: x[5], ac: x[6], adet: x[3].startsWith('m_') ? 1 : x[4] }));
   window.JOKER_MAGAZA = J;
@@ -26557,7 +26547,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261015-evening-1">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261019-step-back-1"></script>
+<script src="member-experience.js?v=20261019-streak-shield-1"></script>
 <link rel="stylesheet" href="start-placement.css?v=20261018-readable-study-1">
 <script src="start-placement-bank.js?v=20261018-1"></script>
 <script src="start-placement.js?v=20261018-readable-study-1"></script>

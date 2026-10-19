@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),{stripTypeScriptTypes}=require('node:module'),{createHash}=require('node:crypto');
-function fixture(){
+function fixture(opts={}){
  const tables={students:[{id:'a',username:'Alice',status:'approved',email:'a@example.test',email_verified_at:null,teacher_id:'t1',created_at:new Date().toISOString()},{id:'b',username:'Bob',status:'approved',email:'b@example.test',teacher_id:'t2',created_at:new Date().toISOString()},{id:'c',username:'Independent',status:'approved',teacher_id:null,created_at:new Date().toISOString()}],extra_data:[],chat_messages:[{id:'m1',student_id:'a',sender_role:'student',read_at:null},{id:'m2',student_id:'b',sender_role:'student',read_at:null}],audit_logs:[]};
  let sent=0;
  const db={from(name){let filters=[],action='',payload,options={},single=false,limit=Infinity;const builder={select(_s,opt){if(opt?.count)options.count=true;return this},eq(k,v){filters.push(r=>r[k]===v);return this},in(k,v){filters.push(r=>v.includes(r[k]));return this},is(k,v){filters.push(r=>(r[k]??null)===v);return this},like(k,v){const prefix=v.replace(/%$/,'');filters.push(r=>String(r[k]||'').startsWith(prefix));return this},gte(k,v){filters.push(r=>String(r[k]||'')>=String(v));return this},order(){return this},limit(n){limit=n;return this},maybeSingle(){single=true;return run()},upsert(p,o){action='upsert';payload=Array.isArray(p)?p:[p];options={...options,...o};return this},insert(p){action='insert';payload=Array.isArray(p)?p:[p];return this},update(p){action='update';payload=p;return this},delete(){action='delete';return this},then(a,b){return run().then(a,b)}};
@@ -10,7 +10,7 @@ function fixture(){
  return {data:structuredClone(single?matched[0]||null:matched),error:null,count:matched.length};}
  return builder;}};
  const context={Date,Number,String,Array,Object,Map,Set,JSON,learningCompanionAPI:()=>({handle:async()=>null}),globalThis:null};context.globalThis=context;vm.createContext(context);vm.runInContext(fs.readFileSync('supabase/functions/diji-api/placement-bank.js','utf8'),context);vm.runInContext(fs.readFileSync('supabase/functions/diji-api/start-placement-bank.js','utf8'),context);const src=stripTypeScriptTypes(fs.readFileSync('supabase/functions/diji-api/member-tools-api.ts','utf8'),{mode:'transform'}).replace(/^import[^\n]*\n/gm,'').replace('export function','function');vm.runInContext(fs.readFileSync('supabase/functions/diji-api/review-schedule.mjs','utf8').replace(/export /g,'')+'\n'+fs.readFileSync('supabase/functions/diji-api/study-placement-access.mjs','utf8').replace(/export /g,'')+src+'\nglobalThis.make=memberToolsAPI;',context);
- const api=context.make({db,json:(data,status=200)=>({data,status}),welcome:async()=>sent++,hash:async s=>createHash('sha256').update(s).digest('hex')});
+ const api=context.make({db,json:(data,status=200)=>({data,status}),welcome:async()=>sent++,hash:async s=>createHash('sha256').update(s).digest('hex'),useStreakShield:opts.useStreakShield});
  return {tables,startBank:context.DMStartPlacementBank,bank:context.DMPlacementExam,call:(op,b={},a={role:'student',student_id:'a'},method='POST')=>api.handle(op,b,{},a,method),sent:()=>sent};
 }
 test('member tools reject anonymous and inappropriate roles and ignore a requested foreign student',async()=>{const f=fixture();assert.equal((await f.call('wordReviewAdd',{},null)).status,401);assert.equal((await f.call('memberStatus',{}, {role:'teacher',teacher_id:'t1'})).status,403);assert.equal((await f.call('memberStatus',{ogrenci:'Bob'})).data.email,'a@example.test');assert.equal((await f.call('memberStatus',{},undefined,'GET')).status,405)});
@@ -36,3 +36,32 @@ test('adaptive starting check rejects incomplete, forged or duplicate items and 
 test('study invitation is claimed once per student across simultaneous requests; completed testers are excluded',async()=>{const f=fixture();const pair=await Promise.all([f.call('studyPlacementInvite'),f.call('studyPlacementInvite')]);assert.equal(pair.filter(r=>r.data.show).length,1);assert.equal((await f.call('studyPlacementInvite')).data.show,false);assert.equal((await f.call('studyPlacementInvite',{}, {role:'student',student_id:'b'})).data.show,true);assert.equal((await f.call('studyPlacementInvite',{},null)).status,401);assert.equal((await f.call('studyPlacementInvite',{}, {role:'teacher',teacher_id:'t1'})).status,403);const g=fixture();g.tables.extra_data.push({student_id:'a',key_name:'placement_start_v1',value:{completedAt:new Date().toISOString(),level:'B2'}});assert.equal((await g.call('studyPlacementInvite')).data.show,false);assert(!g.tables.extra_data.some(x=>x.key_name==='study_placement_invite_v1'));});
 
 test('a lower retest does not close study levels already opened by a server-graded B2 result',async()=>{const f=fixture(),e=f.startBank;const rows=answer=>{const r=[];while(r.length<24)r.push({id:e.next(r).id,answer});return r;};const first=(await f.call('startPlacementSave',{version:e.version,records:rows(0)})).data.result;assert.equal(first.studyUnlockedLevel,'B2');const later=(await f.call('startPlacementSave',{version:e.version,records:rows(-1),studyUnlockedLevel:'forged'})).data.result;assert.equal(later.level,'Başlangıç');assert.equal(later.studyUnlockedLevel,'B2');assert.equal(f.tables.extra_data.filter(x=>x.key_name==='placement_start_v1').length,1);});
+
+const stampAt=i=>new Date(Date.now()+10800000-i*86400000).toISOString().slice(0,10);
+const weekOf=s=>{const d=new Date(s+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);};
+function shieldFixture({days=[],owned=0,freeUsedWeek=null}={}){
+ const spent=[];let f;f=fixture({useStreakShield:async sid=>{const row=f.tables.extra_data.find(r=>r.student_id===sid&&r.key_name==='yo');const d=Number(row?.value?.dondurucu)||0;if(d<1)return {hata:'yok'};row.value={...row.value,dondurucu:d-1};spent.push(sid);return {ok:true};}});
+ for(const i of days)f.tables.extra_data.push({student_id:'a',key_name:'member_login:'+stampAt(i),value:{day:stampAt(i)}});
+ f.tables.extra_data.push({student_id:'a',key_name:'yo',value:{dondurucu:owned}});
+ if(freeUsedWeek)f.tables.extra_data.push({student_id:'a',key_name:'streak_shield:2000-01-01',value:{source:'free',week:freeUsedWeek}});
+ return {f,spent,owned:()=>f.tables.extra_data.find(r=>r.key_name==='yo').value.dondurucu};
+}
+test('one missed day is covered by the free weekly shield without spending a bought one',async()=>{
+ const {f,spent,owned}=shieldFixture({days:[2,3,4],owned:1});const d=(await f.call('memberStatus')).data;
+ assert.equal(d.loginStreak,5);assert.equal(d.streakSaved.map(x=>x.source).join(),'free');assert.equal(spent.length,0);assert.equal(owned(),1);assert.equal(d.loginDays,4);
+ const again=(await f.call('memberStatus')).data;assert.equal(again.loginStreak,5);assert.equal(again.streakSaved.length,0);assert.equal(spent.length,0);
+});
+test('a bought shield is spent once when the weekly free shield is already used',async()=>{
+ const {f,spent,owned}=shieldFixture({days:[2,3],owned:2,freeUsedWeek:weekOf(stampAt(1))});const d=(await f.call('memberStatus')).data;
+ assert.equal(d.loginStreak,4);assert.equal(d.streakSaved.map(x=>x.source).join(),'paid');assert.equal(spent.length,1);assert.equal(owned(),1);
+ await f.call('memberStatus');assert.equal(spent.length,1);assert.equal(owned(),1);
+});
+test('without an available shield the streak restarts and nothing is recorded',async()=>{
+ const {f,spent}=shieldFixture({days:[2,3,4],owned:0,freeUsedWeek:weekOf(stampAt(1))});const d=(await f.call('memberStatus')).data;
+ assert.equal(d.loginStreak,1);assert.equal(d.maxLoginStreak,3);assert.equal(d.streakSaved.length,0);assert.equal(spent.length,0);
+ assert.equal(f.tables.extra_data.some(r=>r.key_name==='streak_shield:'+stampAt(1)),false);
+});
+test('shields are not used for a one-day streak or a gap longer than two days',async()=>{
+ const short=shieldFixture({days:[2],owned:2});assert.equal((await short.f.call('memberStatus')).data.streakSaved.length,0);assert.equal(short.spent.length,0);
+ const long=shieldFixture({days:[4,5,6],owned:2});const d=(await long.f.call('memberStatus')).data;assert.equal(d.streakSaved.length,0);assert.equal(d.loginStreak,1);assert.equal(long.spent.length,0);
+});

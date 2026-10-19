@@ -80,8 +80,8 @@
       "title": "Günlük görevler ve haftalık hedef",
       "context": "tab-sanaozel",
       "selector": "#yoGorevler, #gunlukGorevAlani",
-      "text": "Günün 3 görevini ve haftalık hedefini ayrı ayrı kontrol et. Günlük görevler 12., haftalık hedef 16. seviyede açılır. Giriş sonrası duyurulardan seçim yapabilir, Sana Özel’den ilerlemeni izleyebilirsin.",
-      "html": "<p>Günün 3 görevini ve haftalık hedefini ayrı ayrı kontrol et. Günlük görevler 12., haftalık hedef 16. seviyede açılır. Giriş sonrası duyurulardan seçim yapabilir, Sana Özel’den ilerlemeni izleyebilirsin.</p>"
+      "text": "Günün 3 görevini ve haftalık hedefini ayrı ayrı kontrol et. Günlük görevler ve haftalık hedef ilk günden açıktır. Giriş sonrası duyurulardan seçim yapabilir, Sana Özel’den ilerlemeni izleyebilirsin.",
+      "html": "<p>Günün 3 görevini ve haftalık hedefini ayrı ayrı kontrol et. Günlük görevler ve haftalık hedef ilk günden açıktır. Giriş sonrası duyurulardan seçim yapabilir, Sana Özel’den ilerlemeni izleyebilirsin.</p>"
     },
     {
       "id": "homework",
@@ -563,7 +563,7 @@
       [
         "#yoGorevler, #gunlukGorevAlani",
         "Günlük görevler ve haftalık hedef",
-        "Günün 3 görevini ve haftalık hedefini ayrı ayrı kontrol et. Günlük görevler 12., haftalık hedef 16. seviyede açılır. Giriş sonrası duyurulardan seçim yapabilir, Sana Özel’den ilerlemeni izleyebilirsin. "
+        "Günün 3 görevini ve haftalık hedefini ayrı ayrı kontrol et. Günlük görevler ve haftalık hedef ilk günden açıktır. Giriş sonrası duyurulardan seçim yapabilir, Sana Özel’den ilerlemeni izleyebilirsin. "
       ],
       [
         null,

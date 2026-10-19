@@ -3,7 +3,7 @@ import {due,nextReview} from './review-schedule.mjs';
 import {placementStudyAccess} from './study-placement-access.mjs';
 import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
-export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
+export function memberToolsAPI({db,json,welcome,hash,teacherScope,useStreakShield}:any){
  const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave','communicationStats','communicationNoticePolicy']);
  const fail=(message:string,status=400)=>json({ok:false,mesaj:message},status);
  const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
@@ -93,10 +93,38 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope}:any){
    ]);for(const r of [visits,claims,legacy])if(r.error)throw r.error;
    const days=new Set<string>([...(visits.data||[]),...(claims.data||[])].map((x:any)=>String(x.key_name).split(':')[1]));
    for(const x of legacy.data||[])days.add(new Date(Date.parse(x.created_at)+10800000).toISOString().slice(0,10));
-   let loginStreak=0;for(let i=0;i<370;i++){const stamp=new Date(Date.now()+10800000-i*86400000).toISOString().slice(0,10);if(!days.has(stamp))break;loginStreak++;}
-   let maxLoginStreak=0,run=0,previous='';for(const stamp of [...days].sort()){run=previous&&Date.parse(stamp)-Date.parse(previous)===86400000?run+1:1;maxLoginStreak=Math.max(maxLoginStreak,run);previous=stamp;}
+   // Streak shields: a missed day (at most 2 in a row) is covered server-side, free once per week, then by a bought shield.
+   const streakDays=new Set<string>(days),streakSaved:any[]=[];
+   try{
+    const shields=await db.from('extra_data').select('key_name,value').eq('student_id',sid).like('key_name','streak_shield:%').order('key_name',{ascending:false}).limit(370);if(shields.error)throw shields.error;
+    const freeWeeks=new Set<string>();for(const r of shields.data||[]){const v=parse(r.value);streakDays.add(String(r.key_name).split(':')[1]);if(v.source==='free')freeWeeks.add(String(v.week||''));}
+    const stampAt=(i:number)=>new Date(Date.now()+10800000-i*86400000).toISOString().slice(0,10);
+    const weekOf=(stamp:string)=>{const d=new Date(stamp+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);};
+    const missing:string[]=[];let i=1;while(i<=2&&!streakDays.has(stampAt(i))){missing.push(stampAt(i));i++;}
+    let before=0;for(let j=i;j<370&&streakDays.has(stampAt(j));j++)before++;
+    if(missing.length&&before>=2){
+     const plan:any[]=[];const usedFree=new Set(freeWeeks);let paid=0;
+     for(const stamp of missing.slice().reverse()){const w=weekOf(stamp);if(!usedFree.has(w)){usedFree.add(w);plan.push({stamp,source:'free',week:w});}else{paid++;plan.push({stamp,source:'paid',week:w});}}
+     const owned=Math.max(0,Math.floor(Number(parse((await get(sid,'yo'))?.value).dondurucu)||0));
+     if(paid<=owned&&(paid===0||typeof useStreakShield==='function')){
+      for(const x of plan){
+       // Claim the day first so concurrent requests can never spend twice for it.
+       const key='streak_shield:'+x.stamp;
+       const claim=await db.from('extra_data').upsert({student_id:sid,key_name:key,value:{source:x.source,week:x.week,at:now},updated_at:now},{onConflict:'student_id,key_name',ignoreDuplicates:true}).select('student_id');if(claim.error)throw claim.error;
+       if(!claim.data?.length){streakDays.add(x.stamp);continue;}
+       let ok=false;
+       if(x.source==='free'){const c=await db.from('extra_data').upsert({student_id:sid,key_name:'streak_free_shield:'+x.week,value:{day:x.stamp},updated_at:now},{onConflict:'student_id,key_name',ignoreDuplicates:true}).select('student_id');if(c.error)throw c.error;ok=!!c.data?.length;}
+       else{const r=await useStreakShield(sid);ok=!!r?.ok;}
+       if(!ok){await db.from('extra_data').delete().eq('student_id',sid).eq('key_name',key);break;}
+       streakDays.add(x.stamp);streakSaved.push({day:x.stamp,source:x.source});
+      }
+     }
+    }
+   }catch(e){console.warn('streak shield',e);}
+   let loginStreak=0;for(let i=0;i<370;i++){const stamp=new Date(Date.now()+10800000-i*86400000).toISOString().slice(0,10);if(!streakDays.has(stamp))break;loginStreak++;}
+   let maxLoginStreak=0,run=0,previous='';for(const stamp of [...streakDays].sort()){run=previous&&Date.parse(stamp)-Date.parse(previous)===86400000?run+1:1;maxLoginStreak=Math.max(maxLoginStreak,run);previous=stamp;}
    const firstValue=parse(first?.value);
-   return json({ok:true,emailVerified:!!s.email_verified_at,email:s.email||'',hasPlacement:!!exam?.value||!!startExam?.value||!!parse(yo?.value).seviye,placement:exam?.value||null,startingPoint:startExam?.value||null,learnerProfile:profile?.value||null,teacherLinked:!!s.teacher_id,serverNow:now,maxLoginStreak,loginStreak,loginDays:days.size,memberFirstSeenAt:firstValue.at,welcomeEligible:!!firstValue.welcomeEligible,welcomeEarned:!!firstValue.welcomeEligible&&Date.now()-Date.parse(firstValue.at)>=120000});
+   return json({ok:true,emailVerified:!!s.email_verified_at,email:s.email||'',hasPlacement:!!exam?.value||!!startExam?.value||!!parse(yo?.value).seviye,placement:exam?.value||null,startingPoint:startExam?.value||null,learnerProfile:profile?.value||null,teacherLinked:!!s.teacher_id,serverNow:now,maxLoginStreak,loginStreak,loginDays:days.size,streakSaved,memberFirstSeenAt:firstValue.at,welcomeEligible:!!firstValue.welcomeEligible,welcomeEarned:!!firstValue.welcomeEligible&&Date.now()-Date.parse(firstValue.at)>=120000});
   }
   if(op==='studyPlacementInvite'){
    const exam=await get(sid,'placement_start_v1');if(parse(exam?.value).completedAt)return json({ok:true,show:false,completed:true});
