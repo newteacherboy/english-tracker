@@ -26,7 +26,7 @@ jobs:
           node-version: '22'
       - name: Pre-deploy checks
         run: |
-          node --test tests/member-tools.test.cjs tests/api-security-guards.test.cjs
+          node --test tests/member-tools.test.cjs tests/api-security-guards.test.cjs tests/daily-mission-claim.test.cjs tests/onboarding-registration.test.cjs
       - uses: supabase/setup-cli@v1
         with:
           version: latest
