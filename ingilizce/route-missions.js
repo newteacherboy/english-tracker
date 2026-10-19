@@ -110,6 +110,18 @@ function dmCycleExistingMissionTabs(){
 }
 if(typeof window!=='undefined'&&typeof window.setInterval==='function')window.setInterval(dmCycleExistingMissionTabs,1000);
 
+/* Remove only the redundant short offline toast; retain Medu's detailed notice. */
+function dmHideDuplicateOfflineToast(){
+ if(navigator.onLine!==false)return;
+ document.querySelectorAll('[role="alert"],[role="status"],.toast,.toast-message,.yo-toast').forEach(el=>{
+  const msg=(el.textContent||'').replace(/\s+/g,' ').trim();
+  if(msg.length>150||!/(internet yok|internet bağlantısı yok)/i.test(msg)||/Medu|Çevrimdışı mod/i.test(msg))return;
+  if(el.querySelector('button,[role="button"],img'))return;
+  el.style.setProperty('display','none','important');
+ });
+}
+if(typeof window!=='undefined'&&typeof window.setInterval==='function')window.setInterval(dmHideDuplicateOfflineToast,1200);
+
 /* Announcement shown after a successful claim, with the rewards that were just credited. */
 function style(){
  if(document.getElementById('dm-mission-reward-style'))return;const s=document.createElement('style');s.id='dm-mission-reward-style';
