@@ -131,15 +131,15 @@ function style(){
  '#dmMissionReward h2{margin:0 0 6px;font:900 20px/1.25 system-ui,sans-serif;color:#0e6251}#dmMissionReward.weekly h2{color:#553088}#dmMissionReward p{margin:0 0 12px}'+
  '#dmMissionReward .mr-rewards{display:flex;justify-content:center;gap:10px;margin:2px 0 14px}#dmMissionReward .mr-rewards span{display:flex;flex-direction:column;align-items:center;min-width:92px;padding:9px 12px;border-radius:16px;font-size:12px;font-weight:800;animation:mrPop .5s cubic-bezier(.2,1.6,.4,1) both}'+
  '#dmMissionReward .mr-rewards b{font-size:24px;line-height:1.1}#dmMissionReward .mr-gold{background:#fff0bc;color:#8a6212;animation-delay:.15s!important}#dmMissionReward .mr-xp{background:#e9e0ff;color:#553088;animation-delay:.3s!important}'+
- '#dmMissionReward .mr-next{display:grid;gap:6px;text-align:left;background:#eef9f3;border-radius:16px;padding:12px 14px;margin-bottom:14px}#dmMissionReward.weekly .mr-next{background:#f4efff}#dmMissionReward .mr-next b{font-weight:900;color:#0e6251}#dmMissionReward.weekly .mr-next b{color:#553088}'+
+ '#dmMissionReward .mr-offline{margin:0 0 10px;padding:8px 10px;border-radius:12px;background:#fff6dc;color:#7a5a12;font-size:12px;font-weight:800;line-height:1.35}#dmMissionReward .mr-next{display:grid;gap:6px;text-align:left;background:#eef9f3;border-radius:16px;padding:12px 14px;margin-bottom:14px}#dmMissionReward.weekly .mr-next{background:#f4efff}#dmMissionReward .mr-next b{font-weight:900;color:#0e6251}#dmMissionReward.weekly .mr-next b{color:#553088}'+
  '#dmMissionReward button{border:0;border-radius:14px;padding:12px 16px;width:100%;background:#1d9e75;color:#fff;font:900 15px system-ui,sans-serif;cursor:pointer;min-height:44px}#dmMissionReward.weekly button{background:#7c3aed}'+
  '@keyframes mrIn{from{opacity:0}to{opacity:1}}@keyframes mrPop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){#dmMissionReward,#dmMissionReward .mr-rewards span{animation:none}}';
  document.head.append(s);
 }
-function announce(period,gold,xp){
+function announce(period,gold,xp,queued){
  const p=PERIOD[period];document.getElementById('dmMissionReward')?.remove();style();
  const box=document.createElement('div');box.id='dmMissionReward';box.className=period;box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-labelledby','dmMissionRewardTitle');
- box.innerHTML='<div class="mr-card"><img src="papi-reward-v2.png" width="120" height="120" alt=""><h2 id="dmMissionRewardTitle">'+p.title+'</h2><p>'+p.text+'</p><div class="mr-rewards" aria-label="Kazandığın ödüller"><span class="mr-gold"><b>+'+gold+'</b>🪙 Altın</span><span class="mr-xp"><b>+'+xp+'</b>⭐ XP</span></div><div class="mr-next"><b>'+p.nextTitle+'</b>'+p.next.map(x=>'<span>'+x+'</span>').join('')+'</div><button type="button">'+p.close+'</button></div>';
+ box.innerHTML='<div class="mr-card"><img src="papi-reward-v2.png" width="120" height="120" alt=""><h2 id="dmMissionRewardTitle">'+p.title+'</h2><p>'+p.text+'</p><div class="mr-rewards" aria-label="Kazandığın ödüller"><span class="mr-gold"><b>+'+gold+'</b>🪙 Altın</span><span class="mr-xp"><b>+'+xp+'</b>⭐ XP</span></div>'+(queued?'<p class="mr-offline" role="status">📶 Şu an internet yok — ödülün cihazına kaydedildi, bağlantı gelince hesabına eklenecek.</p>':'')+'<div class="mr-next"><b>'+p.nextTitle+'</b>'+p.next.map(x=>'<span>'+x+'</span>').join('')+'</div><button type="button">'+p.close+'</button></div>';
  const close=()=>{box.remove();document.removeEventListener('keydown',esc);};const esc=e=>{if(e.key==='Escape')close();};
  box.querySelector('button').onclick=close;box.addEventListener('click',e=>{if(e.target===box)close();});document.addEventListener('keydown',esc);
  document.body.append(box);box.querySelector('button').focus({preventScroll:true});
@@ -152,12 +152,14 @@ async function claim(button){
  if(claiming||!member())return;claiming=true;
  const label=button.innerHTML;button.disabled=true;button.textContent='Ödül kaydediliyor…';
  try{
-  const d=await window.dmEkonomi?.islem?.(p.op);
+  // Offline: the reward is stored on the device and sent when the connection returns.
+  const d=await (window.dmEkonomi?.odulIslem?.(p.op) ?? window.dmEkonomi?.islem?.(p.op));
   if(!d)throw Error('Ödül şu anda alınamadı, yeniden dene.');
   if(!d.ok)throw Error(d.mesaj||'Ödül şu anda alınamadı, yeniden dene.');
   store.set(claimKey(period),stamp(period));
   if(d.yo)window.dmApplyRewardState?.(d.yo,who());
-  if(Number(d.eklenen)>0)announce(period,Number(d.eklenen)||p.gold,Number(d.xp)||p.xp);
+  if(d.kuyrukta)announce(period,p.gold,p.xp,true);
+  else if(Number(d.eklenen)>0)announce(period,Number(d.eklenen)||p.gold,Number(d.xp)||p.xp);
   else window.yoToast?.(p.again);
   window.dmRefreshRouteCards?.();
  }catch(e){window.yoToast?.(e.message);if(button.isConnected){button.disabled=false;button.innerHTML=label;}}
