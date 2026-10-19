@@ -9,7 +9,7 @@ const arr=x=>Array.isArray(x)?x:[];
 const st=()=>typeof yo==='undefined'?{}:yo||{};
 const norm=x=>typeof x==='string'?{id:x}:x&&typeof x==='object'?x:null;
 const readable=x=>String(x||'').replace(/^d:/,'').replace(/[|:_-]+/g,' ').replace(/#[a-f0-9]{6}/gi,'').trim();
-let active=false,category='all',popupEl=null,priorFocus=null,priorNavZ='';
+let active=false,category='all',popupEl=null,priorFocus=null,priorNavZ='',popupRequested=false,popupFrame=0;
 function lookup(id){
  const c=window.KA_KATALOG;if(!c||typeof c!=='object')return {};
  if(c[id]&&typeof c[id]==='object')return c[id];
@@ -112,7 +112,14 @@ function pict(item){
  return '<span class="dm-bag-symbol" aria-hidden="true">'+esc(item.emoji||{characters:'🎭',clothing:'👕',badges:'🏅',jokers:'🃏',chests:'🎁',items:'🎒',energy:'⚡'}[item.kind]||'📦')+'</span>';
 }
 function nav(){return document.querySelector('#bottomNavMobile [data-ekran="tab-magaza"]');}
-function hidePopup(){popupEl?.remove();popupEl=null;}
+function hidePopup(){popupRequested=false;if(popupFrame)cancelAnimationFrame(popupFrame);popupFrame=0;popupEl?.remove();popupEl=null;}
+function requestPopup(){
+ popupRequested=true;if(popupFrame)return;
+ popupFrame=requestAnimationFrame(()=>{popupFrame=0;if(popupRequested)showPopup();});
+}
+// A tab may finish opening after the click handler; retain that single tap intent.
+const storePanel=$('tab-magaza');
+if(storePanel)new MutationObserver(()=>{if(popupRequested&&storePanel.classList.contains('active'))requestPopup();else if(!storePanel.classList.contains('active')){if(popupEl)hidePopup();}}).observe(storePanel,{attributes:true,attributeFilter:['class']});
 function showPopup(){
  if(active||!nav()||!$('tab-magaza')?.classList.contains('active'))return;
  hidePopup();
@@ -163,17 +170,18 @@ function loadStyle(){if($('dmBagStyle'))return;const link=document.createElement
 loadStyle();
 document.addEventListener('click',e=>{
  const store=e.target?.closest?.('#bottomNavMobile [data-ekran="tab-magaza"]');
- if(store){if(active)closeBag(false);setTimeout(showPopup,0);return;}
+ if(store){if(active)closeBag(false);requestPopup();return;}
  if(e.target?.closest?.('#dmBagPopup,#dmBagPage'))return;
  if(e.target?.closest?.('#bottomNavMobile [data-ekran]')){hidePopup();if(active)closeBag(false);return;}
  hidePopup();
 },true);
 // Browsing dismisses the shortcut until the user taps the shop tab again.
-for(const event of ['scroll','touchmove','wheel'])document.addEventListener(event,e=>{
- if(popupEl&&!e.target?.closest?.('#dmBagPopup'))hidePopup();
+// Opening the store scrolls it to the top: that is not a user dismissal.
+for(const event of ['pointerdown','touchmove','wheel'])document.addEventListener(event,e=>{
+ if((popupEl||popupRequested)&&!e.target?.closest?.('#dmBagPopup,#bottomNavMobile [data-ekran="tab-magaza"]'))hidePopup();
 },{capture:true,passive:true});
-window.addEventListener('resize',hidePopup);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(active){e.preventDefault();closeBag();}else hidePopup();}});
+window.addEventListener('resize',()=>{if(popupEl||popupRequested)requestPopup();},{passive:true});
+document.addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(e.key)&&!e.target?.closest?.('#dmBagPopup'))hidePopup();if(e.key==='Escape'){if(active){e.preventDefault();closeBag();}else hidePopup();}});
 document.addEventListener('dm:login',()=>closeBag(false));
 window.dmBagInventory={open:openBag,close:closeBag,refresh:()=>{if(active)render();}};
 })();
