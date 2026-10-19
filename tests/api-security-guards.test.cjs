@@ -63,7 +63,7 @@ test('device saves cannot forge or erase reward authority, XP or paid daily goal
 });
 test('weekly reward metadata is reserved; learner-owned settings remain writable',async()=>{
  const s=await security();
- for(const key of ['weekly_target','yo_gunluk','puan_gorulen','energy_daily:2026-10-17','member_login:2026-10-19','streak_shield:2026-10-18','streak_free_shield:2026-10-13'])assert(s.reservedStudentKey(key));
+ for(const key of ['weekly_target','yo_gunluk','puan_gorulen','energy_daily:2026-10-17','member_login:2026-10-19','streak_shield:2026-10-18','streak_free_shield:2026-10-13','progress_mail_consent_v1'])assert(s.reservedStudentKey(key));
  for(const key of ['yo','bildirim_tercihi','notlar'])assert(!s.reservedStudentKey(key));
 });
 test('compatibility gold route ignores requested amount and pays daily goal once',async()=>{
