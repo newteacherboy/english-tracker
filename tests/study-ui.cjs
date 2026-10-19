@@ -121,6 +121,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   assert(writes.some(x=>x.islem==='dersTestSonucKaydet'&&x.konuAdi==='Günlük Rutinler'));
   const saveCount=writes.filter(x=>x.islem==='dersTestSonucKaydet').length;await page.evaluate(()=>dcTestiBitir(2));assert.equal(writes.filter(x=>x.islem==='dersTestSonucKaydet').length,saveCount,'single run cannot award twice');
   await page.screenshot({path:path.join(artifacts,'study-result-mobile.png')});
+  {const canPlay=await page.evaluate(()=>typeof window.aktivitelerTamEkranAc==='function');assert.equal(await page.locator('#suStudyResult .su-result-play').count(),canPlay?1:0,'learn-then-play button follows the games screen');}
   await page.locator('.su-result-done').click();assert(await page.locator('#suTopics').isVisible());
   assert.equal(await page.locator('#bottomNavMobile').innerHTML(),navBefore,'bottom nav unchanged');
   // Wrong answers reveal the answer, wait five seconds and preserve test progress.

@@ -193,6 +193,7 @@ body.dm-study-design #suStudyResult .su-result-rewards b{display:block;font-size
 body.dm-study-design #suStudyResult small{display:block;font-size:12px;color:#826998;line-height:1.4}
 body.dm-study-design #suStudyResult button{display:block;width:100%;border:0;background:#8ddfbc;color:#175b42;border-radius:14px;padding:14px;margin-top:19px;font-family:inherit;font-size:15px;font-weight:900;box-shadow:0 3px 0 #59ac89;cursor:pointer}
 body.dm-study-design #suStudyResult button:focus-visible{outline:3px solid #9462ce;outline-offset:3px}
+body.dm-study-design #suStudyResult .su-result-play+.su-result-done{margin-top:10px;background:#fff;color:#5b3b84;box-shadow:0 0 0 2px #dcccf8 inset}
 @media(min-width:650px){body.dm-study-design #suLevels .su-island{height:145px}body.dm-study-design #suLevels .su-levels-welcome{padding:16px 30px;gap:20px}body.dm-study-design #suLevels .su-levels-welcome .su-papi{width:140px;height:130px}body.dm-study-design #suLevels h2{font-size:28px!important}}
 @media(max-width:359px){body.dm-study-design #suLevels .su-island{height:86px}body.dm-study-design #suLevels .su-level-cards{gap:9px}body.dm-study-design #suLevels .su-level-card{padding:8px!important}body.dm-study-design #suLevels .su-levels-welcome .su-papi{width:88px;height:96px}body.dm-study-design #suLevels h2{font-size:18px!important}body.dm-study-design #suLevels .su-level-action{font-size:10px}body.dm-study-design #suLevels .su-levels-steps{gap:4px;font-size:10px!important}}
 
