@@ -13,7 +13,7 @@
  border:0!important;border-radius:17px!important;background:transparent!important;box-shadow:none!important;transform:none!important;transition:background .15s ease!important;color:#123d3d!important;overflow:visible!important;
 }
 #bottomNavMobile#bottomNavMobile .bn-icon{display:block!important;position:relative;width:37px!important;height:34px!important;font-size:0!important;line-height:1!important;animation:none!important;transform:none!important;flex-shrink:0}
-#bottomNavMobile#bottomNavMobile .dm-nav-art{display:block;width:100%;height:100%;background-image:url('bottom-nav-stickers-v1.png');background-size:300% 200%;background-repeat:no-repeat;filter:drop-shadow(0 1px 1px #31405718)}
+#bottomNavMobile#bottomNavMobile .dm-nav-art{display:block;width:100%;height:100%;background-image:url('bottom-nav-stickers-v1.webp');background-size:300% 200%;background-repeat:no-repeat;filter:drop-shadow(0 1px 1px #31405718)}
 #bottomNavMobile#bottomNavMobile .bn-label{display:flex!important;align-items:center;justify-content:center;width:100%;max-width:100%;height:22px!important;min-height:22px!important;color:#123d3d!important;font:900 10px/1.05 Nunito,system-ui,sans-serif!important;text-align:center;white-space:normal!important;word-break:normal!important;overflow:visible!important;text-overflow:clip!important}
 #bottomNavMobile#bottomNavMobile .bn-item:not([data-ekran="tab-dunya"])::before{content:none!important}
 #bottomNavMobile#bottomNavMobile .bn-item.active{background:#fff0e4!important;border:0!important;box-shadow:none!important;transform:none!important}
@@ -137,7 +137,7 @@ body:has(#rtProfileBackdrop) #bottomNavMobile#bottomNavMobile{z-index:2147483550
  #bottomNavMobile#bottomNavMobile .bn-item{height:54px!important;min-height:54px!important;padding:0!important;border:1px solid transparent!important;border-radius:20px!important;background:transparent!important;transform:none!important;box-shadow:none!important;gap:0!important;transition:background .15s ease,border-color .15s ease!important}
  #bottomNavMobile#bottomNavMobile .bn-label{display:none!important}
  #bottomNavMobile#bottomNavMobile .bn-icon{display:block!important;width:clamp(42px,12vw,54px)!important;height:clamp(42px,12vw,54px)!important;animation:none!important;transform:none!important;pointer-events:none!important}
- #bottomNavMobile#bottomNavMobile .bn-icon .dm-nav-art{display:block!important;width:100%!important;height:100%!important;background-image:url('bottom-nav-adventure-approved-v1.png')!important;background-size:300% 200%!important;background-repeat:no-repeat!important;filter:none!important}
+ #bottomNavMobile#bottomNavMobile .bn-icon .dm-nav-art{display:block!important;width:100%!important;height:100%!important;background-image:url('bottom-nav-adventure-approved-v1.webp')!important;background-size:300% 200%!important;background-repeat:no-repeat!important;filter:none!important}
  #bottomNavMobile#bottomNavMobile .bn-icon>img{display:none!important}
  #bottomNavMobile#bottomNavMobile .bn-item::after,#bottomNavMobile#bottomNavMobile .bn-icon::after{content:none!important;display:none!important}
  #bottomNavMobile#bottomNavMobile .bn-item.active{background:linear-gradient(145deg,#eafff3,#d5fbe5)!important;border-color:#bef3d5!important;box-shadow:inset 0 1px 2px #fff!important}

@@ -13,7 +13,7 @@
   "states": {
     "welcome": "papi-welcome-v2.png",
     "help": "papi-help-v2.png",
-    "farewell": "papi-farewell-v2.png",
+    "farewell": "papi-farewell-v2.webp",
     "reward": "papi-reward-v2.png"
   },
   "usage": {
