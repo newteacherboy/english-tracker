@@ -22070,13 +22070,11 @@ window.ocEnerjiHarca = async function (n) {
 
 
     if (typeof yoXpEkle === 'function') {
-      yoXpEkle(40, 30);
+      yoXpEkle(10, 5);
     }
 
 
-    if (typeof enerjiKazan === 'function') {
-      enerjiKazan(5, 'hediye');
-    }
+    // Günlük görevlerin küçük ödülü XP ve altındır; ekstra enerji verilmez.
 
 
     if (typeof odulGoster === 'function') {
@@ -22087,9 +22085,8 @@ window.ocEnerjiHarca = async function (n) {
         alt: haftaIlk
           ? 'Bu haftanın ilk tamamlaması: bedava Bronz Sandık da senin!'
           : 'Yarın yeni görevler seni bekliyor',
-        xp: 40,
-        altin: 30,
-        enerji: 5
+        xp: 10,
+        altin: 5
       });
 
     }
@@ -22349,7 +22346,7 @@ window.ocEnerjiHarca = async function (n) {
       || ![1000,1500,2500].includes(Number(hedef.xp))
       || haftaXp() < Number(hedef.xp) || Date.now() < hedefOdulSonKontrol) return;
     hedefOdulIslemi = true;
-    hedefOdulSonKontrol = Date.now() + 60000;
+    hedefOdulSonKontrol = Date.now() + 1500;
     const owner = typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi);
     const state = yo;
     try {
@@ -22381,7 +22378,9 @@ window.ocEnerjiHarca = async function (n) {
         });
       }
       if (typeof yoKaydet === 'function') yoKaydet();
+      ciz();
     } catch (e) {
+      if(typeof yoToast === 'function') yoToast('Ödül alınamadı, yeniden dene.');
       console.warn('[DijiMedu] Haftalık hedef ödülü:',e);
     } finally {
       hedefOdulIslemi = false;
@@ -22767,7 +22766,7 @@ window.ocEnerjiHarca = async function (n) {
           <button
             class="so-btn"
             disabled>
-            🎁 Bugünün ödülü alındı · yarın yenileri gelir
+            ✅ Ödül alındı · yarın yeni görevler gelir
           </button>
         `
 
@@ -22777,10 +22776,9 @@ window.ocEnerjiHarca = async function (n) {
             id="soGorevOdul"
             ${tamam === 3 ? '' : 'disabled'}>
 
-            🎁 Sandığı aç:
-            +30 🪙 +5 ⚡ +40 XP
+            🎁 Ödülü Al: +5 🪙 +10 XP
             ${haftaIlk
-              ? ' + bedava Bronz Sandık'
+              ? ''
               : ''
             }
 
@@ -22946,8 +22944,10 @@ window.ocEnerjiHarca = async function (n) {
 
             ${
               hh.odul
-                ? '🏅 Hedefine ulaştın! Rozet ve ödülün hesabında.'
-                : `Hedefe ${
+                ? '✅ Ödül alındı! Rozet ve altının hesabında.'
+                : xp >= Number(hh.xp)
+                  ? '🏆 Haftalık hedef tamamlandı! Ödülünü aşağıdan al.'
+                  : `Hedefe ${
                     Math.max(
                       0,
                       hh.xp - xp
@@ -22961,6 +22961,7 @@ window.ocEnerjiHarca = async function (n) {
             }
 
           </div>
+          ${xp >= Number(hh.xp) && !hh.odul ? '<button id="soHaftaOdul" class="so-btn sari" type="button">🎁 Ödülü Al</button>' : ''}
         `
 
         : `
@@ -23236,7 +23237,13 @@ window.ocEnerjiHarca = async function (n) {
       });
 
 
-    hedefKontrol();
+    const haftalikOdulButonu = $('soHaftaOdul');
+    if (haftalikOdulButonu) haftalikOdulButonu.onclick = async () => {
+      haftalikOdulButonu.disabled = true;
+      haftalikOdulButonu.textContent = 'Ödül kaydediliyor…';
+      await hedefKontrol();
+      if (haftalikOdulButonu.isConnected) { haftalikOdulButonu.disabled = false; haftalikOdulButonu.textContent = '🎁 Ödülü Al'; }
+    };
 
 
     /* =========================================================
@@ -23491,9 +23498,7 @@ window.ocEnerjiHarca = async function (n) {
       sonGorunur = gor;
 
 
-      if (yoVar()) {
-        hedefKontrol();
-      }
+      // Haftalık ödül otomatik alınmaz; yalnızca öğrencinin tıklamasıyla.
 
     } catch (e) {
 
