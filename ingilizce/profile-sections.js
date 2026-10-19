@@ -8,7 +8,8 @@
   const ogrenci = () => typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && String(aktifOgrenciAdi).toLowerCase() !== 'teacher';
   const izin = kod => !window.dmProgression || window.dmProgression.allowed(kod);
 
-  const panels={istatistik:{id:'tab-ilerlemem',title:'İlerlemem',content:'<div id="bdIstat"></div><div id="bdGelisim"></div>'},rozetler:{id:'tab-basarilarim',title:'Başarılarım',content:'<div id="bdRozet"></div>'},karakter:{id:'tab-dolabim',title:'Dolabım',content:'<div id="bdKarakterUst"></div><div id="bdKarakterAlan"></div><div id="bdKoleksiyon"></div>'}};
+  const panels={istatistik:{id:'tab-ilerlemem',title:'İlerlemem',content:'<div id="bdIstat"></div><details class="bd-teacher"><summary>👥 Öğretmen değerlendirmeleri <span>⌄</span></summary><p>Genel puan ve deneme sonuçların · Dönem filtresinden bağımsız</p><div id="bdGelisim"></div></details>'},rozetler:{id:'tab-basarilarim',title:'Başarılarım',content:'<div id="bdRozet"></div>'},karakter:{id:'tab-dolabim',title:'Dolabım',content:'<div id="bdKarakterUst"></div><div id="bdKarakterAlan"></div><div id="bdKoleksiyon"></div>'}};
+  let beceriler=null, beceriKisi='', beceriYukleniyor=false, beceriHata=false, beceriZaman=0;
   let sekme='', aralik='hafta', istat=null, istatZaman=0, istatYukleniyor=false;
   let rozetKisi='', istatDeneme=0, yenileT=null, rozetSirasi=[], kutlama=null;
   const activePanel=()=>document.getElementById(panels[sekme]?.id);
@@ -23,7 +24,7 @@
     if(!ogrenci()||!panels[key])return;
     window.dcTumTamEkranlariKapat?.();sekme=key;const el=ensurePanel(key);el.classList.add('active');el.scrollTop=0;
     window.dcBottomNavSenkronize?.();
-    if(key==='istatistik')istatCiz();else if(key==='rozetler')rozetCiz();else karakterCiz();
+    if(key==='istatistik'){rozetOturumu();istatCiz();beceriGetir();}else if(key==='rozetler')rozetCiz();else karakterCiz();
     istatGetir();
   }
   window.dmIlerlememAc=()=>openPanel('istatistik');
@@ -117,7 +118,7 @@
       (typeof yoIsim === 'undefined' || !yoIsim || String(yoIsim).trim().toLowerCase() === String(aktifOgrenciAdi).trim().toLowerCase())
       ? String(aktifOgrenciAdi).trim().toLowerCase() : '';
     if (kisi !== rozetKisi) {
-      rozetKisi = kisi; istat = null; istatZaman = 0; istatDeneme = 0; istatYukleniyor = false;
+      rozetKisi = kisi; beceriler=null;beceriKisi='';beceriYukleniyor=false;beceriHata=false;beceriZaman=0; istat = null; istatZaman = 0; istatDeneme = 0; istatYukleniyor = false;
       clearTimeout(yenileT); yenileT = null; rozetSirasi = []; kutlama?.remove(); kutlama = null;
       if (kisi) { try { rozetSirasi = JSON.parse(localStorage.getItem('bd_rozet_bekleyen:' + kisi) || '[]').filter(id => ROZETLER.some(r => r.id === id)); } catch (e) {} }
     }
@@ -250,7 +251,7 @@
     const bugun = new Date();
     if (aralik === 'hafta') { const d = new Date(bugun); const g = (d.getDay() + 6) % 7; d.setDate(d.getDate() - g); return gunStr(d); }
     if (aralik === 'ay') { const d = new Date(bugun); d.setDate(d.getDate() - 29); return gunStr(d); }
-    return '';
+    const d=new Date(bugun);d.setDate(d.getDate()-365);return gunStr(d);
   }
   function cubuklar() {
     const gunler = (istat && istat.gunler) || {}, bugun = new Date(), out = [];
@@ -270,40 +271,49 @@
     }
     return out;
   }
+  async function beceriGetir(){
+    if(!ogrenci()||typeof apiURL==='undefined')return;
+    const kisi=String(aktifOgrenciAdi).trim().toLowerCase();
+    if(beceriYukleniyor||(beceriKisi===kisi&&beceriler&&Date.now()-beceriZaman<60000))return;
+    beceriKisi=kisi;beceriYukleniyor=true;beceriHata=false;
+    try{
+      const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:'companionSummary',t:localStorage.getItem('ing_token')||''})});
+      const d=await r.json();if(kisi!==String(aktifOgrenciAdi).trim().toLowerCase()||beceriKisi!==kisi)return;
+      if(!r.ok||!d.ok||!d.skills||!d.review)throw Error('Beceri verileri alınamadı');
+      beceriler=d;beceriZaman=Date.now();
+    }catch(e){if(beceriKisi===kisi)beceriHata=true;}
+    finally{if(beceriKisi===kisi){beceriYukleniyor=false;if(sekme==='istatistik'&&activePanel()?.classList.contains('active'))istatCiz();}}
+  }
+  function beceriSatir(label,icon,correct,total){
+    const n=Math.max(0,Number(total)||0),d=Math.max(0,Math.min(n,Number(correct)||0));
+    return `<div class="bd-skill"><span aria-hidden="true">${icon}</span><b>${label}</b><span class="bd-skill-result">${n?sayi(d)+' / '+sayi(n)+' doğru':'Henüz ölçüm yok'}</span>${n?`<progress max="${n}" value="${d}" aria-label="${label} alıştırma doğruluğu"></progress>`:''}</div>`;
+  }
+  function sureCiz(){
+    const state=window.dmActiveTime?.summary?.(),seconds=state?Math.max(0,Math.floor(Number(state.seconds)||0)):null;
+    const text=seconds===null?'Yükleniyor…':Math.floor(seconds/3600)+' sa '+Math.floor(seconds%3600/60)+' dk';
+    const node=$('bdActiveTime');if(node)node.textContent=text;
+    const stars=$('bdTimeStars');if(stars)stars.textContent=seconds===null?'—':sayi(Math.floor(seconds/600))+' yıldız';
+  }
   function istatCiz() {
-    const alan = $('bdIstat');
-    const t = toplamlar(istat && istat.gunler, aralikBas()), cevap = t.dogru + t.yanlis;
-    const kartlar = [
-      ['🎮', sayi(t.oyun), 'Tamamlanan oyun'],
-      ['🎯', cevap ? '%' + Math.round(t.dogru * 100 / cevap) : '—', 'Doğruluk oranı'],
-      ['📅', sayi(t.aktif), 'Aktif gün'],
-      ['⭐', sayi(t.dogru), 'Doğru cevap']
-    ];
-    const c = cubuklar(), en = Math.max(1, ...c.map(x => x.o + x.l + x.p));
-    alan.innerHTML = `
-      <div class="bd-aralik" role="group" aria-label="Zaman aralığı">${[['hafta', 'Bu Hafta'], ['ay', 'Bu Ay'], ['tum', 'Tüm Zamanlar']].map(([k, ad]) => `<button type="button" data-aralik="${k}" aria-pressed="${k === aralik}">${ad}</button>`).join('')}</div>
-      ${istat ? '' : `<p class="bd-not">${istatYukleniyor ? 'İstatistikler yükleniyor…' : 'İstatistikler şu an alınamadı. Biraz sonra tekrar dene.'}</p>`}
-      <div class="bd-istat-izgara">${kartlar.map(([i, s, a]) => `<div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">${i}</span><span><b>${s}</b><small>${a}</small></span></div>`).join('')}</div>
-      <section class="bd-kutu dm-karne-kart" aria-label="Karnem" style="margin-top:14px;padding:16px;border-radius:20px;background:linear-gradient(135deg,#eefbf5,#f4efff);border:1px solid #d7eae5">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px"><h3 style="margin:0;color:#173b37">📘 Karnem</h3><button type="button" class="dm-karne-detay" style="border:1px solid #c9bdfa;border-radius:15px;background:#f6f0ff;color:#6946bd;padding:9px 12px;font-weight:800;cursor:pointer">Detaylı Gör →</button></div>
-        <p style="margin:0 0 12px;color:#536b69;font-size:13px">Seçili dönemdeki öğrenme sonuçların</p>
-        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
-          <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">📖</span><span><b>${sayi(t.ders)}</b><small>Tamamlanan ders</small></span></div>
-          <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">🧭</span><span><b>${sayi(t.parkur)}</b><small>Parkur etkinliği</small></span></div>
-          <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">✅</span><span><b>${sayi(t.dogru)}</b><small>Doğru cevap</small></span></div>
-          <div class="bd-istat"><span class="bd-istat-ikon" aria-hidden="true">🎯</span><span><b>${cevap ? '%' + Math.round(t.dogru * 100 / cevap) : '—'}</b><small>Doğruluk</small></span></div>
-        </div>
-      </section>
-      <div class="bd-kutu bd-grafik">
-        <div class="bd-grafik-bas"><h3>${aralik === 'tum' ? 'Aylık Performans' : 'Günlük Performans'}</h3>
-          <div class="bd-lejant"><span class="o">Oyun</span><span class="l">Ders</span><span class="p">Parkur</span></div></div>
-        <div class="bd-cubuklar${aralik === 'ay' ? ' ince' : ''}">${c.map(x => {
-          const top = x.o + x.l + x.p, y = v => Math.round(v * 100 / en);
-          return `<div class="bd-cubuk" title="${top} etkinlik"><div class="bd-yigin"><span class="p" style="height:${y(x.p)}%"></span><span class="l" style="height:${y(x.l)}%"></span><span class="o" style="height:${y(x.o)}%"></span></div><small>${kac(x.ad)}</small></div>`;
-        }).join('')}</div>
-      </div>`;
-    alan.querySelector('.dm-karne-detay')?.addEventListener('click',()=>window.dmKarneDetayAc?.());
-    alan.querySelectorAll('[data-aralik]').forEach(b => b.onclick = () => { aralik = b.dataset.aralik; istatCiz(); });
+    const alan = $('bdIstat');if(!alan)return;
+    const t=toplamlar(istat&&istat.gunler,aralikBas()),cevap=t.dogru+t.yanlis,c=cubuklar(),en=Math.max(1,...c.map(x=>x.o+x.l+x.p));
+    const labels={hafta:'Bu haftaki',ay:'Son 30 gündeki',tum:'Son 1 yıldaki'};
+    alan.innerHTML=`<div class="bd-aralik" role="group" aria-label="Etkinlik dönemi">${[['hafta','Bu Hafta'],['ay','Son 30 Gün'],['tum','Son 1 Yıl']].map(([k,ad])=>`<button type="button" data-aralik="${k}" aria-pressed="${k===aralik}">${ad}</button>`).join('')}</div>
+      ${istat?'':`<p class="bd-not" role="status">${istatYukleniyor?'Etkinlikler yükleniyor…':'Etkinlik verileri alınamadı.'}</p>`}
+      <section class="bd-progress-hero"><span aria-hidden="true">🎯</span><div><b>${istat?sayi(t.parkur)+' parkur · '+sayi(t.aktif)+' aktif gün':'Çalışmaların yükleniyor'}</b><small>${labels[aralik]} etkinliklerin</small></div><img src="study-assets/papi-read.png" alt="" onerror="this.hidden=true"></section>
+      <section class="bd-skills"><div class="bd-skill-heading"><h2>Öğrenme becerilerim</h2><button type="button" data-progress-help aria-label="Veriler nasıl hesaplanıyor?">?</button></div><p>Hikâye ve tekrar sorularıyla gelişir.</p>
+      <div class="bd-skill-list">${beceriler?beceriSatir('Okuma','📖',beceriler.skills.reading?.correct,beceriler.skills.reading?.total)+beceriSatir('Dinleme','🎧',beceriler.skills.listening?.correct,beceriler.skills.listening?.total)+beceriSatir('Yazma','✍️',beceriler.skills.writing?.correct,beceriler.skills.writing?.total)+beceriSatir('Kelime tekrarı','Aa',beceriler.review.correct,beceriler.review.attempts):`<p class="bd-not" role="status">${beceriHata?'Beceri verileri alınamadı.':'Becerilerin yükleniyor…'}</p>${beceriHata?'<button type="button" class="bd-skill-retry">Tekrar dene</button>':''}`}</div>
+      <small class="bd-skill-scope">Hikâyeler: son 100 çalışma · Kelime: tüm tekrarlar. Dönem filtresi etkinliklere uygulanır.</small>
+      <button type="button" class="bd-story-start">Bir hikâye ile başla →</button></section>
+      <section class="bd-activity-summary"><b>${labels[aralik]} etkinlikler</b><div>${[['🎮','Oyun',t.oyun],['📖','Ders',t.ders],['🧭','Parkur',t.parkur]].map(([icon,label,n])=>`<span><i aria-hidden="true">${icon}</i><small>${label}</small><strong>${istat?sayi(n):'—'}</strong></span>`).join('')}</div><small>Oyun doğruluğu: ${istat&&cevap?'%'+Math.round(t.dogru*100/cevap)+' · '+sayi(t.dogru)+' / '+sayi(cevap)+' doğru':istat?'Henüz cevap kaydı yok':'Veri bekleniyor'}</small></section>
+      <section class="bd-kutu bd-grafik"><div class="bd-grafik-bas"><h3>${aralik==='tum'?'Aylık':'Günlük'} etkinlik sayısı</h3><div class="bd-lejant"><span class="o">Oyun</span><span class="l">Ders</span><span class="p">Parkur</span></div></div><div class="bd-cubuklar${aralik==='ay'?' ince':''}">${c.map(x=>{const top=x.o+x.l+x.p;return `<div class="bd-cubuk" aria-label="${kac(x.ad)}: ${top} etkinlik" title="${top} etkinlik"><b>${top||''}</b><div class="bd-yigin">${['p','l','o'].map(k=>`<span class="${k}" style="height:${x[k]*100/en}%"></span>`).join('')}</div><small>${kac(x.ad)}</small></div>`;}).join('')}</div></section>
+      <div class="bd-time-row"><button type="button" data-time-detail><span>⏱ Toplam aktif süre</span><b id="bdActiveTime"></b><small>Tüm dönemler</small></button><button type="button" data-time-detail><b id="bdTimeStars"></b><small>Tüm dönemler · 10 dk = 1 yıldız</small></button></div>`;
+    sureCiz();
+    alan.querySelectorAll('[data-aralik]').forEach(b=>b.onclick=()=>{aralik=b.dataset.aralik;istatCiz();});
+    alan.querySelector('.bd-skill-retry')?.addEventListener('click',()=>{beceriZaman=0;beceriGetir();});
+    alan.querySelector('.bd-story-start').onclick=()=>window.dmLearningCompanion?.dialogues?.();
+    alan.querySelectorAll('[data-time-detail]').forEach(b=>b.onclick=()=>window.dmActiveTime?.panel?.());
+    alan.querySelector('[data-progress-help]').onclick=()=>window.dmMemberUI?.sheet('İlerlemem nasıl hesaplanır?','<p>Okuma, dinleme ve yazma sonuçları son 100 hikâye/diyalog çalışmasından; kelime sonuçları kişisel tekrarlarından gelir. Bunlar alıştırma sonuçlarıdır, resmî dil seviyesi ölçümü değildir.</p><p>Dönem filtresi oyun, başarılı ders, parkur tamamlama ve aktif gün sayılarına uygulanır. Aktif gün, bu etkinliklerden en az birinin kaydedildiği gündür. Oyun doğruluğu yalnızca oyun cevaplarından hesaplanır.</p><p>Toplam aktif süre ve yıldızlar tüm dönemleri kapsar. Öğretmen değerlendirmeleri ayrı bir bölümde gösterilir.</p>','bdProgressHelp');
     /* Öğretmenin gördüğü gelişim grafikleri (deneme, gelişim, kriter) eski profilden buraya taşınır */
     const oz = $('tab-ozet');
     if (oz) {
@@ -315,6 +325,8 @@
     if (tc) tasi(tc, $('bdGelisim'));
   }
 
+  document.addEventListener('dm:time',sureCiz);
+  document.addEventListener('dm:login',()=>{if(sekme==='istatistik'&&activePanel()?.classList.contains('active')){rozetOturumu();istatCiz();istatGetir();beceriGetir();}});
   /* ------------------------------------------------------------------ Rozetler */
   function rozetHtml(r, kazanildi) {
     const resim = r.resim ? `<img src="${kac(r.resim)}" alt="" loading="lazy">` : `<span class="bd-rozet-emoji" aria-hidden="true">${r.ikon}</span>`;

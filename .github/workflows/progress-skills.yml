@@ -1,0 +1,21 @@
+name: Progress skills interface
+on:
+  push:
+    paths: ['ingilizce/profile-sections.*', 'tests/progress-skills-ui.cjs', '.github/workflows/progress-skills.yml']
+  pull_request:
+    paths: ['ingilizce/profile-sections.*', 'tests/progress-skills-ui.cjs', '.github/workflows/progress-skills.yml']
+permissions:
+  contents: read
+jobs:
+  progress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false playwright@1.62.1 jsdom@26.1.0
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/progress-skills-ui.cjs
+      - run: node tests/world-badges-ui.cjs
+      - run: node --test tests/profile-return-poses.test.cjs
