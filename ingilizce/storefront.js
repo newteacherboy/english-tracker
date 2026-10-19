@@ -145,7 +145,7 @@
   if (!window.dmBagInventory && !document.querySelector('script[data-dm-bag-module]')) {
     const module = document.createElement('script');
     module.dataset.dmBagModule = '1';
-    module.src = new URL('bag-inventory.js?v=20261019-2', document.currentScript?.src || location.href).href;
+    module.src = new URL('bag-inventory.js?v=20261019-compact-3', document.currentScript?.src || location.href).href;
     document.head.appendChild(module);
   }
 })();

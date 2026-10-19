@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const assetBase=new URL('.',document.currentScript?.src||location.href).href;
 const asset=name=>new URL(name,assetBase).href;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const types=[['all','Tümü','▦'],['characters','Karakterler','🎭'],['clothing','Kıyafetler','👕'],['badges','Rozetler','🏅'],['jokers','Jokerler','🃏'],['chests','Sandıklar','🎁'],['items','Eşyalar','🎒'],['energy','Enerji','⚡']];
+const types=[['all','Tümü','▦'],['chests','Sandıklar','🎁'],['jokers','Jokerler','🃏'],['badges','Rozetler','🏅'],['characters','Karakterler','🦜'],['clothing','Kıyafetler','👕'],['items','Eşyalar','🎒'],['energy','Enerji','⚡']];
 const arr=x=>Array.isArray(x)?x:[];
 const st=()=>typeof yo==='undefined'?{}:yo||{};
 const norm=x=>typeof x==='string'?{id:x}:x&&typeof x==='object'?x:null;
@@ -114,13 +114,14 @@ function pict(item){
 function nav(){return document.querySelector('#bottomNavMobile [data-ekran="tab-magaza"]');}
 function hidePopup(){popupEl?.remove();popupEl=null;}
 function showPopup(){
- if(active||!nav())return;hidePopup();
+ if(active||!nav()||!$('tab-magaza')?.classList.contains('active'))return;
+ hidePopup();
  const r=nav().getBoundingClientRect(),el=document.createElement('div');el.id='dmBagPopup';
  el.style.left=Math.max(4,Math.min(window.innerWidth-97,r.left+r.width/2-46))+'px';
  el.style.bottom=(window.innerHeight-r.top+10)+'px';
  el.innerHTML='<button type="button" aria-label="Çantam sayfasını aç"><img src="'+asset('bag-purple.svg')+'" alt=""><strong>Çantam</strong></button>';
  el.querySelector('button').onclick=e=>{e.preventDefault();e.stopPropagation();openBag();};
- document.body.append(el);popupEl=el;
+ document.body.appendChild(el);popupEl=el;
 }
 function closeBag(restore=true){
  hidePopup();if(!active)return;active=false;$('dmBagPage')?.remove();
@@ -130,11 +131,12 @@ function closeBag(restore=true){
 function render(){
  const el=$('dmBagPage');if(!el)return;
  const data=entries(),groups=types.slice(1).map(([key,label])=>({key,label,items:data.filter(v=>v.kind===key)}));
- const sections=(category==='all'?groups:groups.filter(g=>g.key===category)).filter(g=>g.items.length);
- el.innerHTML='<main class="dm-bag-inner"><header class="dm-bag-header"><button type="button" class="dm-bag-back" data-bag-back aria-label="Mağazaya dön">‹</button><h1><img src="'+asset('bag-orange.svg')+'" alt="">Çantam</h1></header>'+
- '<nav class="dm-bag-tabs" role="tablist" aria-label="Çantam kategorileri">'+types.map(([key,label,icon])=>'<button type="button" role="tab" data-bag-tab="'+key+'" aria-selected="'+(category===key)+'"><span class="dm-bag-tab-icon" aria-hidden="true">'+icon+'</span><span>'+label+'</span></button>').join('')+'</nav>'+
- (sections.map(g=>'<section class="dm-bag-section"><header><h2>'+esc(g.label)+'</h2><button type="button" class="dm-bag-showall" data-bag-tab="'+g.key+'">Tümünü Gör ›</button></header><div class="dm-bag-grid">'+g.items.map(i=>'<article class="dm-bag-card"><div class="dm-bag-picture">'+pict(i)+'<span class="dm-bag-owned" aria-label="Sahip olunan">✓</span></div><span class="dm-bag-name">'+esc(i.name)+(i.count?' · '+i.count+' adet':'')+'</span><button type="button" class="dm-bag-action" data-bag-manage="'+i.kind+'" data-bag-id="'+esc(i.id)+'">'+(i.kind==='chests'?(i.chestState==='ready'?'Sandığı aç':i.chestState==='opened'?'Açılmış':'Alındı'):(i.kind==='characters'||i.kind==='clothing'?'Kuşan':'İncele'))+'</button></article>').join('')+'</div></section>').join('')||'<p class="dm-bag-empty">'+(category==='all'?'Çantanda henüz kayıtlı ürün yok. Mağazadan aldıkların burada görünecek.':'Bu kategoride henüz sahip olduğun bir ürün yok.')+'</p>')+'</main>';
- el.querySelector('[data-bag-back]').onclick=()=>closeBag();
+ const sections=(category==='all'?groups:groups.filter(g=>g.key===category));
+ el.innerHTML='<main class="dm-bag-inner '+(category==='all'?'dm-bag-overview':'dm-bag-detail')+'"><header class="dm-bag-header"><button type="button" class="dm-bag-back" data-bag-back aria-label="Mağazaya dön">‹</button><h1><img src="'+asset('bag-orange.svg')+'" alt=""><span>Çantam<small>Koleksiyonun burada</small></span></h1></header>'+
+ '<nav class="dm-bag-tabs"  aria-label="Çantam kategorileri">'+types.map(([key,label,icon])=>'<button type="button"  data-bag-tab="'+key+'" aria-pressed="'+(category===key)+'"><span class="dm-bag-tab-icon" aria-hidden="true">'+icon+'</span><span>'+label+'</span></button>').join('')+'</nav>'+
+ (sections.map(g=>category==='all'?'<section class="dm-bag-shelf"><div class="dm-bag-shelf-label"><h2>'+esc(g.label)+'</h2><small>'+ (g.key==='chests'?g.items.filter(i=>i.chestState==='ready').length+' açılmaya hazır':g.items.reduce((n,i)=>n+(i.count||1),0)+' adet')+'</small></div><div class="dm-bag-previews">'+g.items.slice(0,2).map(i=>'<button type="button" class="dm-bag-mini" data-bag-view="'+g.key+'" aria-label="'+esc(i.name)+(i.count?' · '+i.count+' adet':'')+'">'+pict(i)+(i.count?'<b>×'+i.count+'</b>':'')+'</button>').join('')+(!g.items.length?'<small class="dm-bag-none">Henüz yok</small>':'')+'</div>'+(g.key==='chests'&&g.items.some(i=>i.chestState==='ready')?'<button type="button" class="dm-bag-quick-open" data-bag-manage="chests">Aç</button>':'<button type="button" class="dm-bag-showall" data-bag-tab="'+g.key+'">Tümü ›</button>')+'</section>':'<section class="dm-bag-section"><header><h2>'+esc(g.label)+'</h2><button type="button" class="dm-bag-showall" data-bag-tab="'+g.key+'">Tümünü Gör ›</button></header><div class="dm-bag-grid">'+(!g.items.length?'<p class="dm-bag-empty">Bu kategoride henüz ürün yok.</p>':'')+g.items.map(i=>'<article class="dm-bag-card"><div class="dm-bag-picture">'+pict(i)+'<span class="dm-bag-owned" aria-label="Sahip olunan">✓</span></div><span class="dm-bag-name">'+esc(i.name)+(i.count?' · '+i.count+' adet':'')+'</span><button type="button" class="dm-bag-action" data-bag-manage="'+i.kind+'" data-bag-id="'+esc(i.id)+'">'+(i.kind==='chests'?(i.chestState==='ready'?'Sandığı aç':i.chestState==='opened'?'Açılmış':'Alındı'):(i.kind==='characters'||i.kind==='clothing'?'Kuşan':'İncele'))+'</button></article>').join('')+'</div></section>').join('')||'<p class="dm-bag-empty">'+(category==='all'?'Çantanda henüz kayıtlı ürün yok. Mağazadan aldıkların burada görünecek.':'Bu kategoride henüz sahip olduğun bir ürün yok.')+'</p>')+'</main>';
+ el.querySelector('[data-bag-back]').onclick=()=>{if(category!=='all'){category='all';render();el.scrollTop=0;}else closeBag();};
+ el.querySelectorAll('[data-bag-view]').forEach(b=>b.onclick=()=>{category=b.dataset.bagView;render();el.scrollTop=0;});
  el.querySelectorAll('[data-bag-tab]').forEach(b=>b.onclick=()=>{category=b.dataset.bagTab;render();el.scrollTop=0;});
  el.querySelectorAll('[data-bag-manage]').forEach(b=>b.onclick=()=>{
   const kind=b.dataset.bagManage;closeBag(false);
@@ -157,15 +159,20 @@ function openBag(){
  const owner=typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
  Promise.resolve().then(()=>window.dmProgression?.refresh?.(true)).then(()=>{if(active&&String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'')===owner)render();}).catch(()=>{});
 }
-function loadStyle(){if($('dmBagStyle'))return;const link=document.createElement('link');link.id='dmBagStyle';link.rel='stylesheet';link.href=asset('bag-inventory.css?v=20261019-2');document.head.appendChild(link);}
+function loadStyle(){if($('dmBagStyle'))return;const link=document.createElement('link');link.id='dmBagStyle';link.rel='stylesheet';link.href=asset('bag-inventory.css?v=20261019-compact-3');document.head.appendChild(link);}
 loadStyle();
 document.addEventListener('click',e=>{
  const store=e.target?.closest?.('#bottomNavMobile [data-ekran="tab-magaza"]');
- if(store){if(!active)setTimeout(()=>{if($('tab-magaza')?.classList.contains('active'))showPopup();},0);return;}
+ if(store){if(active)closeBag(false);setTimeout(showPopup,0);return;}
  if(e.target?.closest?.('#dmBagPopup,#dmBagPage'))return;
  if(e.target?.closest?.('#bottomNavMobile [data-ekran]')){hidePopup();if(active)closeBag(false);return;}
  hidePopup();
 },true);
+// Browsing dismisses the shortcut until the user taps the shop tab again.
+for(const event of ['scroll','touchmove','wheel'])document.addEventListener(event,e=>{
+ if(popupEl&&!e.target?.closest?.('#dmBagPopup'))hidePopup();
+},{capture:true,passive:true});
+window.addEventListener('resize',hidePopup);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(active){e.preventDefault();closeBag();}else hidePopup();}});
 document.addEventListener('dm:login',()=>closeBag(false));
 window.dmBagInventory={open:openBag,close:closeBag,refresh:()=>{if(active)render();}};
