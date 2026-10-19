@@ -34,7 +34,7 @@ assert len(themes)==20 and all(len(t['topics'])==6 for t in themes) and len(chap
 for chapter in chapters:
  if chapter['themeFinal']:chapter['themeReview']=[dict(x['cards'][0],topic=x['topicTitle']) for x in chapters if x['themeId']==chapter['themeId'] and x['part']==1]
  if chapter['topicTitle'] in reference:chapter['reference']=[{'en':en,'tr':tr} for en,tr in reference[chapter['topicTitle']]]
-out={'version':5,'questionCount':11,'themes':themes,'chapters':chapters,'assets':{'1':'learning-assets/objects-01.png','2':'learning-assets/objects-02.png'}}
+out={'version':5,'questionCount':11,'themes':themes,'chapters':chapters,'assets':{'1':'learning-assets/objects-01.webp','2':'learning-assets/objects-02.webp'}}
 for path in ['ingilizce/thematic-curriculum.json','supabase/functions/thematic-learning/curriculum.json']:
  (ROOT/path).write_text(json.dumps(out,ensure_ascii=False,separators=(',',':'))+'\n')
 print(f'{len(themes)} themes / {len(chapters)} chapters / {len(chapters)*9} questions; {sum(bool(c.get("image")) for x in chapters for c in x["cards"])} illustrated cards')
