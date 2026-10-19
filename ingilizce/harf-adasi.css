@@ -92,7 +92,7 @@
 /* Exact illustration sprites from the user-approved Harf Adasi art sheet.
    Crop coordinates are kept relative so visuals scale without fixed viewport pixels. */
 #asmacaOyunOverlay .ia-title {
-  background-image:url('harf-adasi-approved-sheet.png')!important;
+  background-image:url('harf-adasi-approved-sheet.webp')!important;
   background-size:151.62% 572.24%!important;
   background-position:78.53% 0%!important;
   background-repeat:no-repeat!important;
@@ -109,7 +109,7 @@
   width:auto!important;height:min(65%,260px)!important;max-width:none!important;
   min-width:0!important;aspect-ratio:330/395;
   left:var(--ia-papi-left,4%);bottom:6%;
-  background-image:url('harf-adasi-approved-sheet.png');
+  background-image:url('harf-adasi-approved-sheet.webp');
   background-size:340% 354.94%;
   background-position:0 0;background-repeat:no-repeat;
   filter:drop-shadow(0 5px 4px #095e7c88);
@@ -118,13 +118,13 @@
 #asmacaOyunOverlay .ia-scene .ia-art-chest {
   display:block;position:absolute;z-index:2;right:0;bottom:12%;
   height:min(67%,255px);width:auto;aspect-ratio:350/283;
-  background-image:url('harf-adasi-approved-sheet.png');
+  background-image:url('harf-adasi-approved-sheet.webp');
   background-size:320.57% 495.41%;background-position:33.68% 38.43%;
   background-repeat:no-repeat;
   filter:drop-shadow(0 4px 8px #137a8f88);
 }
 #asmacaOyunOverlay .ia-booster[data-ia-boost] span {
-  background-image:url('harf-adasi-approved-sheet.png')!important;
+  background-image:url('harf-adasi-approved-sheet.webp')!important;
   background-repeat:no-repeat!important;
   width:clamp(40px,13vw,61px)!important;
   height:auto!important;aspect-ratio:1!important;
@@ -142,7 +142,7 @@
   background-size:831.11% 994.33%!important;background-position:96.76% 72.24%!important;
 }
 #asmacaOyunOverlay.ia-intro .game-title{
-  background-image:url('harf-adasi-approved-sheet.png')!important;
+  background-image:url('harf-adasi-approved-sheet.webp')!important;
   background-size:151.62% 572.24%!important;background-position:78.53% 0%!important;
   background-repeat:no-repeat!important;
   color:transparent!important;text-shadow:none!important;font-size:0!important;

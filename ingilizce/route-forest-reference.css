@@ -1,5 +1,5 @@
 /* Forest reference skin for Macera Haritasi. Learning route keeps its own skin. */
-body #bzPerde#bzPerde#bzPerde.rq-approved{--rq-ink:#082751;--rq-border:#d3cdb9;background:#4e9b43 url('route-assets/reference-forest.png') center/cover!important;padding:max(12px,env(safe-area-inset-top)) 8px max(12px,env(safe-area-inset-bottom))!important;gap:12px!important;font-family:Nunito,system-ui,sans-serif!important}
+body #bzPerde#bzPerde#bzPerde.rq-approved{--rq-ink:#082751;--rq-border:#d3cdb9;background:#4e9b43 url('route-assets/reference-forest.webp') center/cover!important;padding:max(12px,env(safe-area-inset-top)) 8px max(12px,env(safe-area-inset-bottom))!important;gap:12px!important;font-family:Nunito,system-ui,sans-serif!important}
 #bzPerde.rq-approved>.rq-hud{height:76px!important;min-height:76px!important;gap:7px!important;position:relative;z-index:2}
 #bzPerde.rq-approved .rq-papi{height:78px!important;width:68px!important;filter:drop-shadow(0 3px 2px #17612855)}
 #bzPerde.rq-approved .rq-wallet{border:2px solid #fffeed!important;background:linear-gradient(#fffef1,#fff9d9)!important;color:#17465e!important;box-shadow:inset 0 2px 2px white,0 3px 4px #48753150!important;border-radius:18px!important;padding:11px 8px!important;font-size:27px!important;gap:3px!important}
