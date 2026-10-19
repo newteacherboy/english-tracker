@@ -153,4 +153,4 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   assert.deepEqual(errors.filter(x=>!x.includes('Chart')&&!x.includes('pdf')),[]);
   console.log('PASS study filters/search, real topic loading, reading/listening gates, slow voice, dictionary, server-graded study, below-threshold retry, five-second wrong-answer review and preserved dock');
   await browser.close();
-})().catch(e=>{console.error(e);process.exit(1);});
+})().catch(e=>{console.error(e);console.log('::error title=study-ui::'+String(e&&e.stack||e).slice(0,900).replace(/%/g,'%25').replace(/\n/g,'%0A'));process.exit(1);});
