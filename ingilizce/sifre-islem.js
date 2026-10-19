@@ -6,13 +6,14 @@
    ===================================================================== */
 (function () {
   const API = "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api";
-  const MIN = 6;
+  const MIN = 8;
+  const MAX = 64;
   const css = `
-  .si-perde{position:fixed;inset:0;z-index:100001;background:rgba(30,20,60,.55);display:flex;align-items:flex-end;justify-content:center;font-family:inherit}
+  .si-perde{position:fixed;inset:0;z-index:2147483647!important;isolation:isolate;box-sizing:border-box;background:rgba(30,20,60,.55);display:flex;align-items:flex-end;justify-content:center;font-family:inherit}
   @media(min-width:640px){.si-perde{align-items:center;padding:20px}}
-  .si-kutu{background:#fff;width:100%;max-width:420px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));color:#2d2350;box-shadow:0 -8px 30px rgba(60,30,120,.25)}
+  .si-kutu{background:#fff;width:100%;max-width:420px;max-height:calc(100dvh - 12px);overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;display:flex;flex-direction:column;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));color:#2d2350;box-shadow:0 -8px 30px rgba(60,30,120,.25)}
   @media(min-width:640px){.si-kutu{border-radius:22px}}
-  .si-bas{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .si-icerik{overflow-y:auto;min-height:0;flex:1;scrollbar-gutter:stable}\n  .si-eylemler{position:sticky;bottom:0;z-index:2;background:#fff;padding:12px 0 max(4px,env(safe-area-inset-bottom,0px));box-shadow:0 -8px 14px -12px #34236488}\n  .si-kural{color:#514272;background:#f5f1ff;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.5;margin:0 0 12px}\n  .si-bas{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
   .si-bas h3{margin:0;font-size:19px;font-weight:900}
   .si-x{border:0;background:#f3efff;color:#5b3fb5;width:36px;height:36px;border-radius:50%;font-size:17px;cursor:pointer}
   .si-alt{margin:0 0 14px;font-size:13px;color:#6b5ca0;line-height:1.5}
@@ -38,8 +39,8 @@
     ["sifreIslemModal"].forEach(id => { const m = document.getElementById(id); if (m) m.style.display = "none"; });
     const p = document.createElement("div");
     p.className = "si-perde"; p.setAttribute("role", "dialog"); p.setAttribute("aria-modal", "true"); p.setAttribute("aria-labelledby", "siBaslik");
-    p.innerHTML = `<div class="si-kutu"><div class="si-bas"><h3 id="siBaslik">${baslik}</h3><button class="si-x" aria-label="Kapat">✕</button></div>${icerik}</div>`;
-    document.body.appendChild(p);
+    p.innerHTML = `<div class="si-kutu"><div class="si-bas"><h3 id="siBaslik">${baslik}</h3><button class="si-x" aria-label="Kapat">✕</button></div><div class="si-icerik">${icerik}</div></div>`;
+    document.body.appendChild(p);\n    // Üstteki uygulama katmanlarından etkilenmeyen en yüksek modal katmanı.\n    p.style.zIndex = "2147483647";
     const kapat = () => { p.remove(); document.removeEventListener("keydown", esc); };
     const esc = e => { if (e.key === "Escape") kapat(); };
     document.addEventListener("keydown", esc);
@@ -78,7 +79,7 @@
     if (!kullanici) return window.sifremiUnuttumAc();
     const w = pencere("🔑 Şifremi değiştir", `
       <div class="si-alan"><label for="siEski">Mevcut şifren</label><input id="siEski" type="password" autocomplete="current-password"></div>
-      <div class="si-alan"><label for="siYeni1">Yeni şifre (en az ${MIN} karakter)</label><input id="siYeni1" type="password" autocomplete="new-password"></div>
+      <div class="si-alan"><label for="siYeni1">Yeni şifre</label><input id="siYeni1" type="password" minlength="${MIN}" maxlength="${MAX}" autocomplete="new-password" aria-describedby="siKurallar"></div>\n      <p class="si-kural" id="siKurallar"><strong>Yeni şifre kuralları:</strong> ${MIN}–${MAX} karakter kullan. Tahmin edilmesi zor ve başka hesaplarında kullanmadığın bir şifre seç. Yeni şifreyi ikinci kutuya aynı şekilde yaz.</p>
       <div class="si-alan"><label for="siYeni2">Yeni şifre (tekrar)</label><input id="siYeni2" type="password" autocomplete="new-password"></div>
       <div class="si-mesaj" id="siMesaj" role="status" aria-live="polite"></div>
       <button class="si-btn" id="siGonder">Şifremi değiştir</button>
@@ -87,11 +88,11 @@
     w.$("siGonder").onclick = async () => {
       const mevcutSifre = w.$("siEski").value, y1 = w.$("siYeni1").value, y2 = w.$("siYeni2").value;
       if (!mevcutSifre) return w.mesaj("Mevcut şifreni yaz.", "hata");
-      if (y1.length < MIN) return w.mesaj(`Yeni şifre en az ${MIN} karakter olmalı.`, "hata");
+      if (y1.length < MIN || y1.length > MAX) return w.mesaj(`Yeni şifre ${MIN}–${MAX} karakter olmalı.`, "hata");
       if (y1 !== y2) return w.mesaj("Yeni şifreler birbiriyle aynı değil.", "hata");
       const b = w.$("siGonder"); b.disabled = true; b.textContent = "Kaydediliyor…"; w.mesaj("");
       const r = await istek({ islem: "sifremiDegistir", mevcutSifre, yeniSifre: y1 });
-      b.disabled = false; b.textContent = "Şifremi değiştir";
+      b.disabled = false; b.textContent = "Şifreyi kaydet";
       if (!r.ok) return w.mesaj(r.mesaj || "Şifre değiştirilemedi.", "hata");
       w.mesaj(r.mesaj || "Şifren değiştirildi.", "tamam");
       ["siEski", "siYeni1", "siYeni2"].forEach(id => w.$(id).value = "");
