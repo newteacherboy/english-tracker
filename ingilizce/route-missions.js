@@ -47,7 +47,22 @@ function missionVisualStyle(){
 .dm-mission-v2 .dm-claim-title{font-size:13px;font-weight:900}.dm-mission-v2 .dm-claim-sub{font-size:11px;font-weight:600;color:#eafff3}
 .dm-mission-v2 .rt-claim{box-sizing:border-box!important;min-height:43px!important;margin:0!important;border-radius:13px!important;background:linear-gradient(110deg,#159e91,#0d9e70)!important;color:#fff!important;font-weight:900!important;box-shadow:0 3px 7px #159e9130!important}
 .dm-mission-v2 .rt-claim small{color:#eafff3!important}
-@media(max-width:380px){.rt-missions.rt-done.dm-mission-v2{gap:6px!important;padding:8px!important}.dm-mission-v2 .dm-task-medallion{width:40px;height:40px;font-size:20px}.dm-mission-v2 .rt-done-summary:before{top:19px}.dm-mission-v2 .dm-task-caption{font-size:10px;padding:3px 5px}}
+/* Reference 2: connected oversized round medallions, floating labels, emerald chest reward. */
+.rt-missions.rt-done.dm-mission-v2{min-height:0!important;height:100%!important;gap:8px!important;padding:10px 12px 12px!important;background:linear-gradient(180deg,#fff 5%,#faf9ff 100%)!important;border:1px solid #eee5ff!important;box-shadow:0 5px 16px #45308512!important}
+.dm-mission-v2 .rt-done-summary{flex:1 1 auto!important;align-content:center!important;gap:5px!important}
+.dm-mission-v2 .rt-done-summary:before{left:15%!important;right:15%!important;top:31px!important;height:6px!important;background:#e6e0fa!important}
+.dm-mission-v2 .rt-done-summary>span{gap:4px!important}
+.dm-mission-v2 .rt-done-summary .dm-task-medallion{box-sizing:border-box!important;width:62px!important;height:62px!important;font-size:28px!important;border:4px solid #fff!important;box-shadow:0 4px 10px #38256d30,inset 0 3px 5px #ffffff7d!important;text-shadow:0 2px 5px #0002!important;line-height:1!important}
+.dm-mission-v2 .rt-done-summary .dm-task-medallion:after{width:21px!important;height:21px!important;top:-5px!important;right:-5px!important;font-size:13px!important}
+.dm-mission-v2 .rt-done-summary .dm-task-caption{box-sizing:border-box!important;padding:4px 7px!important;min-width:0!important;background:linear-gradient(180deg,#f3efff,#ebe6fc)!important;border-radius:25px!important;box-shadow:0 2px 4px #6d4ca01c!important;color:#2b216c!important;font:800 11px/1.1 system-ui,sans-serif!important}
+.dm-mission-v2 .rt-claim-done,.dm-mission-v2 .rt-claim{position:relative!important;flex:0 0 auto!important;align-items:flex-start!important;text-align:left!important;justify-content:center!important;width:100%!important;min-height:49px!important;padding:7px 49px 7px 13px!important;margin:0!important;border-radius:15px!important;background:linear-gradient(105deg,#1daba3 0%,#13a37e 62%,#1dc68c 100%)!important;border:0!important;box-shadow:inset 0 1px 1px #ffffff55,0 4px 9px #147c7830!important;overflow:hidden!important;color:#fff!important}
+.dm-mission-v2 .rt-claim-done:after{content:"🏆";position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:33px;filter:drop-shadow(0 2px 3px #30523355)}
+.dm-mission-v2 .rt-claim:not(:disabled):after{content:"🎁";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:27px}
+.dm-mission-v2 .dm-claim-title{font:900 14px/1.25 system-ui,sans-serif!important}
+.dm-mission-v2 .dm-claim-sub{font:600 10px/1.2 system-ui,sans-serif!important;color:#eafff4!important}
+@media(max-width:480px){.rt-missions.rt-done.dm-mission-v2{padding:8px 9px!important;gap:6px!important}.dm-mission-v2 .rt-done-summary .dm-task-medallion{width:46px!important;height:46px!important;font-size:22px!important}.dm-mission-v2 .rt-done-summary:before{top:23px!important}.dm-mission-v2 .rt-done-summary .dm-task-caption{font-size:10px!important;padding:3px 4px!important}.dm-mission-v2 .rt-claim-done,.dm-mission-v2 .rt-claim{min-height:42px!important;padding:5px 41px 5px 11px!important}.dm-mission-v2 .rt-claim-done:after{font-size:27px}.dm-mission-v2 .dm-claim-title{font-size:12px!important}.dm-mission-v2 .dm-claim-sub{font-size:9px!important}}
+@media(max-width:350px){.dm-mission-v2 .rt-done-summary .dm-task-medallion{width:40px!important;height:40px!important;font-size:20px!important}.dm-mission-v2 .rt-done-summary:before{top:20px!important}.dm-mission-v2 .rt-done-summary .dm-task-caption{font-size:9px!important}}
+@media(prefers-reduced-motion:reduce){.dm-mission-v2 *{transition:none!important;animation:none!important}}
 `;
  document.head.append(s);
 }
