@@ -24397,7 +24397,9 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   let DURAK = [[], [], [], []], durakImza = '';
   /* extra.type sunucudan geldiği gibi yayılır (kelimelerGetir). Kalıplar kelime kartı olarak
      sorulmaz ve durak sayımına girmez; dm_progress_context sunucuda aynı ayrımı yapar. */
+  /* Boşluğu olmayan kayıt kalıp durağı kurmaz; sunucudaki sayım da aynı koşulu uygular. */
   const kalipMi = k => String((k && k.type) || '') === 'pattern';
+  const kalipKullanilir = k => kalipMi(k) && EN(k).includes('...');
   const havuzTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k) && !kalipMi(k));
   const kalipTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k) && kalipMi(k));
   const havuzHepsi = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k));
@@ -24421,7 +24423,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         u.forEach(un => {
           const words=[...new Map(tum.filter(k=>Number(k.sinif)===sn&&Number(k.unite)===un).map(k=>[EN(k).trim().toLocaleLowerCase('en'),k])).values()].sort((a,b)=>EN(a).localeCompare(EN(b),'en'));
           const groups=Math.max(1,Math.ceil(words.length/PARKUR_KELIME_ADEDI));
-          const uniteKaliplari=yeniDuzen?kalipTum().filter(k=>Number(k.sinif)===sn&&Number(k.unite)===un):[];
+          const uniteKaliplari=yeniDuzen?kalipTum().filter(k=>kalipKullanilir(k)&&Number(k.sinif)===sn&&Number(k.unite)===un):[];
           const kalipGrubu=uniteKaliplari.length?Math.ceil(groups/KALIP_GRUP_DURAK):0;
           for(let part=0;part<groups;part++){
             l.push({sinif:sn,unite:un,parca:part+1,parcaToplam:groups,kelimeler:words.slice(part*PARKUR_KELIME_ADEDI,(part+1)*PARKUR_KELIME_ADEDI),legacyNo:200000+sn*10000+un*100+Math.floor(part/3)+1,no:200000+sn*10000+un*100+50+part+1});

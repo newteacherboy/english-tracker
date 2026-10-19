@@ -56,7 +56,7 @@ begin
     select class_no,unit_no,
            count(distinct lower(btrim(english)))
              filter (where coalesce(extra->>'type','word')<>'pattern') word_count,
-           count(*) filter (where extra->>'type'='pattern') pattern_count
+           count(*) filter (where extra->>'type'='pattern' and position('...' in english)>0) pattern_count
     from public.word_bank
     where active and class_no between b*2+1 and b*2+2 and unit_no>0
       and btrim(coalesce(english,''))<>'' and btrim(coalesce(turkish,''))<>''
@@ -70,7 +70,7 @@ begin
     select class_no,unit_no,
            count(distinct lower(btrim(english)))
              filter (where coalesce(extra->>'type','word')<>'pattern') word_count,
-           count(*) filter (where extra->>'type'='pattern') pattern_count
+           count(*) filter (where extra->>'type'='pattern' and position('...' in english)>0) pattern_count
     from public.word_bank
     where active and class_no between b*2+1 and b*2+2 and unit_no>0
       and btrim(coalesce(english,''))<>'' and btrim(coalesce(turkish,''))<>''

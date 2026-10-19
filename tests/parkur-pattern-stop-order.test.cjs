@@ -77,6 +77,19 @@ test('eksik son grup da kalıp durağını alır',()=>{
  assert.equal(d.at(-1).kelimeler.length,8,'son grup kalan kelimelerle çalışır');
 });
 
+test('boşluğu olmayan kayıt kalıp durağı kurmaz',()=>{
+ const sozde=[{sinif:1,unite:1,ingilizce:'have got',turkce:'sahip olmak',type:'pattern'},
+              {sinif:1,unite:1,ingilizce:'There is',turkce:'vardır',type:'pattern'}];
+ const d=istemci([...doluKapi(),...kelime(1,1,32),...sozde])[0].filter(x=>x.sinif===1&&x.unite===1);
+ assert.equal(d.filter(x=>x.kalip).length,0,'boşluksuz kayıtlar kalıp sayılmaz');
+ assert.equal(d.length,8,'kelime durağı sayısı da etkilenmez');
+ // Boşluğu olan tek bir kalıp yeterlidir.
+ const gercek=[{sinif:1,unite:1,ingilizce:'Is it a ...?',turkce:'Bu bir ... mi?',type:'pattern'}];
+ const d2=istemci([...doluKapi(),...kelime(1,1,32),...sozde,...gercek])[0].filter(x=>x.sinif===1&&x.unite===1);
+ assert.equal(d2.filter(x=>x.kalip).length,2);
+ assert.equal(d2.find(x=>x.kalip).kaliplar.length,1,'yalnızca boşluklu kalıp taşınır');
+});
+
 test('kalıplar kelime durağına sızmaz',()=>{
  const d=istemci([...doluKapi(),...kelime(1,1,8),...kalip(1,1,3)])[0];
  for(const durak of d.filter(x=>!x.kalip))
