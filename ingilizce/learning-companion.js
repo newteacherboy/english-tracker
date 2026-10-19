@@ -20,7 +20,7 @@ async function load(force=false){
  reset();if(!student())return null;const at=owner;
  if(summary?.day===today()&&!force&&Date.now()-loaded<60000)return summary;
  if(inflight)return inflight;
- const promise=api('companionSummary').then(d=>{if(at!==identity())return null;summary=d;loaded=Date.now();window.dmRouteMissions?.set(d.missions,who());paintPlan();return d;}).finally(()=>{if(inflight===promise)inflight=null;});inflight=promise;return promise;
+ const promise=api('companionSummary').then(d=>{if(at!==identity())return null;summary=d;loaded=Date.now();window.dmRouteMissions?.set(d.missions,who());paintPlan();try{document.dispatchEvent(new CustomEvent('dm:companion-summary',{detail:{owner:who(),review:d.review||null,nextWords:d.nextWords||[]}}));}catch{}return d;}).finally(()=>{if(inflight===promise)inflight=null;});inflight=promise;return promise;
 }
 function sheet(title,html,id){
  const view=window.dmMemberUI?.sheet(title,html,id);if(!view)return null;

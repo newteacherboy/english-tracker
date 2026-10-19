@@ -1,9 +1,9 @@
 name: Daily habit UI
 on:
   push:
-    paths: ['ingilizce/route-missions.js', 'ingilizce/member-experience.js', 'tests/daily-done-ui.cjs', 'tests/member-tools.test.cjs', 'supabase/functions/diji-api/member-tools-api.ts', '.github/workflows/daily-habit-ui.yml']
+    paths: ['ingilizce/route-missions.js', 'ingilizce/member-experience.js', 'tests/daily-done-ui.cjs', 'ingilizce/papi-habit.js', 'ingilizce/learning-companion.js', 'tests/papi-habit-ui.cjs', 'tests/member-tools.test.cjs', 'supabase/functions/diji-api/member-tools-api.ts', '.github/workflows/daily-habit-ui.yml']
   pull_request:
-    paths: ['ingilizce/route-missions.js', 'ingilizce/member-experience.js', 'tests/daily-done-ui.cjs', 'tests/member-tools.test.cjs', 'supabase/functions/diji-api/member-tools-api.ts', '.github/workflows/daily-habit-ui.yml']
+    paths: ['ingilizce/route-missions.js', 'ingilizce/member-experience.js', 'tests/daily-done-ui.cjs', 'ingilizce/papi-habit.js', 'ingilizce/learning-companion.js', 'tests/papi-habit-ui.cjs', 'tests/member-tools.test.cjs', 'supabase/functions/diji-api/member-tools-api.ts', '.github/workflows/daily-habit-ui.yml']
 permissions:
   contents: read
 jobs:
@@ -19,8 +19,11 @@ jobs:
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
       - run: node tests/daily-done-ui.cjs
+      - run: node tests/papi-habit-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: daily-done-screens
-          path: /tmp/daily-done-*.png
+          path: |
+            /tmp/daily-done-*.png
+            /tmp/papi-habit-*.png
