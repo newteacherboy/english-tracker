@@ -1490,19 +1490,32 @@ async function handle(req: Request) {
       return json({ok:true,eklenen:r.eklenen,ekonomi:ekonomiCevap(r.y)});
     }
 
-    if (is === "gunlukGorevOdul") {
-      // Günün 3 görevi (1 bölüm, 1 oyun, 3 kelime tekrarı): sunucu kayıtlarından doğrulanır, günde bir kez +5 altın.
+    if (is === "gunlukGorevOdul" || is === "haftalikGorevOdul") {
+      // Günün / haftanın 3 görevi: sunucu kayıtlarından doğrulanır, dönem başına bir kez altın + XP verilir.
+      const haftalik=is==="haftalikGorevOdul";
+      const odul=haftalik?{altin:100,xp:120}:{altin:30,xp:70};
       const {data:m,error:me}=await supabase.rpc("dm_mission_summary",{actor:sid});
       if(me)return hataVer("Görevler şu anda okunamadı, tekrar dene.",503);
-      const g=m?.daily||{};
-      if(!(num(g.route)>=1&&num(g.game)>=1&&num(g.review)>=3))return hataVer("Önce günün 3 görevini tamamla.",409);
-      const gun=trBugun(),anahtar="mission_daily_claim:"+gun,simdi=new Date().toISOString();
-      const claim=await supabase.from("extra_data").upsert({student_id:sid,key_name:anahtar,value:{at:simdi,altin:5},updated_at:simdi},{onConflict:"student_id,key_name",ignoreDuplicates:true}).select("student_id");
+      const g=(haftalik?m?.weekly:m?.daily)||{};
+      const tamam=haftalik?(num(g.route)>=10&&num(g.game)>=20&&num(g.days)>=5):(num(g.route)>=1&&num(g.game)>=1&&num(g.review)>=3);
+      if(!tamam)return hataVer(haftalik?"Önce haftanın 3 görevini tamamla.":"Önce günün 3 görevini tamamla.",409);
+      const gun=trBugun();
+      const pazartesi=(()=>{const d=new Date(gun+"T00:00:00Z");d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);})();
+      const anahtar=(haftalik?"mission_weekly_claim:"+pazartesi:"mission_daily_claim:"+gun),simdi=new Date().toISOString();
+      const claim=await supabase.from("extra_data").upsert({student_id:sid,key_name:anahtar,value:{at:simdi,...odul},updated_at:simdi},{onConflict:"student_id,key_name",ignoreDuplicates:true}).select("student_id");
       if(claim.error)return hataVer("Ödül şu anda kaydedilemedi, tekrar dene.",503);
-      if(!claim.data?.length)return json({ok:true,eklenen:0,alindi:true,ekonomi:ekonomiCevap((await yoOku(sid)).y)});
-      const r=await ekonomiGuncelle(sid,(y:any)=>{y.altin=Math.max(0,Math.floor(num(y.altin)))+5;return {eklenen:5};});
+      if(!claim.data?.length){const y=(await yoOku(sid)).y||{};return json({ok:true,eklenen:0,xp:0,alindi:true,ekonomi:ekonomiCevap(y)});}
+      const r=await ekonomiGuncelle(sid,(y:any)=>{
+        // XP is server-owned state (totalXp, xpGun); write it here like dm_lesson_fair_award does.
+        const ver=Math.max(Date.now(),Math.floor(num(y.guncelleme))+1);
+        y.altin=Math.max(0,Math.floor(num(y.altin)))+odul.altin;
+        y.totalXp=Math.max(0,num(y.totalXp))+odul.xp;
+        y.xpGun=y.xpGun&&y.xpGun.tarih===gun?{...y.xpGun,xp:Math.max(0,num(y.xpGun.xp))+odul.xp}:{tarih:gun,xp:odul.xp};
+        y.guncelleme=ver;y.dmRewardVersion=ver;y.dmProgressProtocol=1;
+        return {eklenen:odul.altin,xp:odul.xp};
+      });
       if(r.hata){await supabase.from("extra_data").delete().eq("student_id",sid).eq("key_name",anahtar);return hataVer(r.hata,503);}
-      return json({ok:true,eklenen:5,alindi:true,ekonomi:ekonomiCevap(r.y)});
+      return json({ok:true,eklenen:odul.altin,xp:odul.xp,alindi:true,yo:r.y,ekonomi:ekonomiCevap(r.y)});
     }
 
     if (await denemeSay("ekonomi_alim", String(sid), 1) >= 20) return hataVer("Çok hızlı işlem yapıyorsun, biraz bekle.", 429);
