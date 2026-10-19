@@ -1,0 +1,32 @@
+#dmBagPopup{position:fixed;z-index:100000021;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 5px 8px #a748172f)}
+#dmBagPopup button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:93px;min-height:91px;padding:5px;border:1.5px solid #ff8b2d;border-radius:23px;background:#fffefa;box-shadow:0 3px 0 #ff7d2699;color:#161466;font:900 14px/1.1 system-ui;cursor:pointer}
+#dmBagPopup img{width:48px;height:50px;object-fit:contain}
+#dmBagPopup::after{content:"";width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:12px solid #ff7925}
+#dmBagPage{position:fixed;z-index:100000019;inset:0 0 var(--dm-bag-bottom,80px);overflow:auto;overscroll-behavior:contain;background:linear-gradient(180deg,#fffdf9,#fffefc 42%,#fff9f2);font-family:system-ui,-apple-system,sans-serif;color:#131657;-webkit-overflow-scrolling:touch}
+#dmBagPage *{box-sizing:border-box}
+#dmBagPage .dm-bag-inner{max-width:950px;margin:0 auto;padding:16px 12px 36px}
+#dmBagPage .dm-bag-header{display:flex;align-items:center;justify-content:center;position:relative;min-height:62px;margin-bottom:13px}
+#dmBagPage .dm-bag-back{position:absolute;left:0;top:8px;width:44px;height:44px;border:0;background:transparent;color:#10145c;font-size:34px;cursor:pointer}
+#dmBagPage h1{display:flex;align-items:center;gap:8px;margin:0;color:#13165b;font-size:clamp(21px,5.5vw,27px);font-weight:900}
+#dmBagPage h1 img{height:52px;width:44px;object-fit:contain}
+#dmBagPage .dm-bag-tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin-bottom:19px}
+#dmBagPage .dm-bag-tabs button{min-width:0;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:#fff;border:1px solid #f1edf1;border-radius:17px;color:#202064;font:600 clamp(9px,2.15vw,12px)/1.2 system-ui;box-shadow:0 2px 9px #6e5a3b0d;cursor:pointer}
+#dmBagPage .dm-bag-tabs .dm-bag-tab-icon{font-size:26px;line-height:1.2}
+#dmBagPage .dm-bag-tabs button[aria-selected="true"]{background:linear-gradient(#ff9c27,#ff620c);border-color:#ff7925;color:#fff;font-weight:900;box-shadow:0 3px 7px #fd7c2144}
+#dmBagPage .dm-bag-section{margin-bottom:23px}
+#dmBagPage .dm-bag-section>header{display:flex;align-items:center;justify-content:space-between;margin:0 3px 9px}
+#dmBagPage h2{font-size:18px;line-height:1.4;margin:0;color:#121758;font-weight:900}
+#dmBagPage .dm-bag-showall{border:0;background:none;color:#1d3088;font-size:12px;cursor:pointer;padding:8px}
+#dmBagPage .dm-bag-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#dmBagPage .dm-bag-card{min-width:0;display:flex;flex-direction:column;gap:4px;padding:6px 6px 9px;text-align:center;border-radius:18px;background:#fff;border:1px solid #f5eff0;box-shadow:0 3px 9px #40323a11}
+#dmBagPage .dm-bag-picture{height:clamp(86px,25vw,145px);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:linear-gradient(155deg,#f1fbf7,#fdfcff);border-radius:14px}
+#dmBagPage .dm-bag-picture svg,#dmBagPage .dm-bag-picture img{max-width:95%;max-height:95%;width:auto;height:auto;object-fit:contain}
+#dmBagPage .dm-bag-symbol{font-size:clamp(35px,9vw,60px)}
+#dmBagPage .dm-bag-owned{position:absolute;right:3px;top:3px;background:#03b25e;color:#fff;border:2px solid white;border-radius:50%;width:24px;height:24px;font:bold 17px system-ui;display:grid;place-items:center}
+#dmBagPage .dm-bag-name{display:block;min-height:30px;overflow-wrap:anywhere;font:bold clamp(11px,3vw,14px)/1.16 system-ui;color:#10134f}
+#dmBagPage .dm-bag-action{width:100%;margin-top:auto;border:0;border-radius:18px;min-height:34px;color:white;background:linear-gradient(#ff9831,#ff650e);font:800 13px system-ui;cursor:pointer}
+#dmBagPage .dm-bag-action:focus-visible,#dmBagPopup button:focus-visible{outline:3px solid #6332b9;outline-offset:3px}
+#dmBagPage .dm-bag-empty{margin:24px 2px;text-align:center;padding:32px 17px;background:white;border:1px dashed #eaded3;border-radius:20px;color:#48425e;font-weight:600}
+@media(min-width:700px){#dmBagPage .dm-bag-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#dmBagPage .dm-bag-picture{height:150px}}
+@media(max-width:350px){#dmBagPage .dm-bag-tabs{gap:3px}#dmBagPage .dm-bag-tabs button{min-height:65px;border-radius:11px}#dmBagPage .dm-bag-tabs .dm-bag-tab-icon{font-size:20px}#dmBagPage .dm-bag-inner{padding:10px 7px 28px}}
+@media(prefers-reduced-motion:reduce){#dmBagPage *,#dmBagPopup *{animation:none!important;transition:none!important}}
