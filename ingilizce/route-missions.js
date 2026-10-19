@@ -74,6 +74,7 @@ function claimRow(period){
 }
 
 window.dmRouteMissions={
+ finished(period){return (period==='daily'||period==='weekly')&&done(period)&&claimed(period);},
  data(period){return owner&&owner===who()?(value?.[period]||null):null;},
  set(data,name){if(name!==who())return;owner=name;value=data||null;window.dmRefreshRouteCards?.();},
  markup(period){
