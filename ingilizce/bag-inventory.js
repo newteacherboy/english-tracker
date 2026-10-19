@@ -35,8 +35,12 @@ function entries(){
    ownedId.includes(':')?'a|'+ownedId.replace(':','|'):ownedId;
   const bits=productId.split('|'),atelier=bits[0]==='a',cat=atelier?bits[1]:'';
   const catalog=atelier?window.KA_KATALOG?.[cat]?.liste?.find(x=>String(x.id)===bits.slice(2).join('|')):null;
-  const accessory=['aks','cik','arka','cerceve','dost','sapka','gozluk','sac','sacRenk','ten','goz','agiz','detay','durus'].includes(cat);
-  const name=o.ad||o.name||catalog?.ad||readable(productId);
+  let parts=[];try{parts=arr(shop?.parts?.(productId));}catch{}
+  const detectedCategory=cat||parts[0]?.category||'';
+  const accessory=['aks','cik','arka','cerceve','dost','sapka','gozluk','sac','sacRenk','ten','goz','agiz','detay','durus'].includes(detectedCategory);
+  const names=parts.map(p=>p?.name).filter(Boolean);
+  const storeName=names.length>1?names.slice(0,2).join(' + '):names[0];
+  const name=o.ad||o.name||catalog?.ad||storeName||readable(productId);
   add(accessory?'items':'clothing',ownedId,name,{productId,origin:'wardrobe'});
  }
  // Previously purchased characters and characters unlocked by progress are both owned.
