@@ -64,7 +64,8 @@ export function verifiedGamesAPI(db,json){
    /* Kalıplar kelime kartı olarak sorulmaz; durak sayımı da onları saymaz (dm_progress_context). */
    const available=rows.filter(w=>!kalipMi(w)).map(w=>({en:w.english.trim(),tr:w.turkish.trim()}));
    /* Boşluğu olmayan kayıt kalıp değildir: doldurulacak yer yoksa patternComplete'in cevabı da olmaz. */
-   const bankPatterns=rows.filter(w=>kalipMi(w)&&w.english.includes('...')).map(w=>({en:w.english.trim(),tr:w.turkish.trim(),note:String(w.extra?.usage_note||'')}));
+   const kullanilirKalip=w=>kalipMi(w)&&w.english.includes('...')&&w.extra?.pattern_usable!==false;
+   const bankPatterns=rows.filter(kullanilirKalip).map(w=>({en:w.english.trim(),tr:w.turkish.trim(),note:String(w.extra?.usage_note||'')}));
    let words=[],stopPatterns=[],stop=Number(body.stopNo)||0;
    if(game==='ba'){
     const door=ctx.data.units.findIndex(row=>row.includes(stop)),unit=durakUnite(stop),part=durakParca(stop);

@@ -90,6 +90,16 @@ test('boşluğu olmayan kayıt kalıp durağı kurmaz',()=>{
  assert.equal(d2.find(x=>x.kalip).kaliplar.length,1,'yalnızca boşluklu kalıp taşınır');
 });
 
+test('öğretmenin çıkardığı kalıp (pattern_usable=false) durak kurmaz',()=>{
+ const cikarilan=[{sinif:1,unite:1,ingilizce:'I have got ...',turkce:'Benim ... var.',type:'pattern',pattern_usable:false}];
+ const d=istemci([...doluKapi(),...kelime(1,1,32),...cikarilan])[0].filter(x=>x.sinif===1&&x.unite===1);
+ assert.equal(d.filter(x=>x.kalip).length,0,'çıkarılan kalıp durak doğurmaz');
+ const karisik=[...cikarilan,{sinif:1,unite:1,ingilizce:'Is it a ...?',turkce:'Bu bir ... mi?',type:'pattern'}];
+ const d2=istemci([...doluKapi(),...kelime(1,1,32),...karisik])[0].filter(x=>x.sinif===1&&x.unite===1);
+ assert.equal(d2.filter(x=>x.kalip).length,2,'kalan sağlam kalıp durağı kurar');
+ assert.deepEqual(d2.find(x=>x.kalip).kaliplar.map(k=>k.ingilizce),['Is it a ...?'],'çıkarılan kalıp soruya girmez');
+});
+
 test('kalıplar kelime durağına sızmaz',()=>{
  const d=istemci([...doluKapi(),...kelime(1,1,8),...kalip(1,1,3)])[0];
  for(const durak of d.filter(x=>!x.kalip))

@@ -24399,7 +24399,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
      sorulmaz ve durak sayımına girmez; dm_progress_context sunucuda aynı ayrımı yapar. */
   /* Boşluğu olmayan kayıt kalıp durağı kurmaz; sunucudaki sayım da aynı koşulu uygular. */
   const kalipMi = k => String((k && k.type) || '') === 'pattern';
-  const kalipKullanilir = k => kalipMi(k) && EN(k).includes('...');
+  /* pattern_usable=false, öğretmenin kalıp durağından çıkardığı kayıtları işaretler. */
+  const kalipKullanilir = k => kalipMi(k) && EN(k).includes('...') && k.pattern_usable !== false;
   const havuzTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k) && !kalipMi(k));
   const kalipTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k) && kalipMi(k));
   const havuzHepsi = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k));
