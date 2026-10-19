@@ -4,13 +4,14 @@ import fs from 'node:fs';
 import {learningCompanionAPI} from '../supabase/functions/diji-api/learning-companion.mjs';
 import {due,nextReview,reviewStats} from '../supabase/functions/diji-api/review-schedule.mjs';
 const BANK=globalThis.DMLearningDialogues,at=Date.parse('2026-10-18T22:00:00Z');
-function fixture(){
+function fixture({postgresTimestamps=false}={}){
  const tables={students:[{id:'a',username:'Ada',class_no:6,branch:'A',teacher_id:'t1',status:'approved',role:'student'},{id:'b',username:'Bora',class_no:6,branch:'A',teacher_id:'t2',status:'approved',role:'student'}],extra_data:[]};
  const db={from(table){let filters=[],action='',payload,opts={},single=false,start=0,end=Infinity;
   const q={select(){return this;},eq(k,v){filters.push(r=>r[k]===v);return this;},in(k,v){filters.push(r=>v.includes(r[k]));return this;},like(k,v){filters.push(r=>r[k].startsWith(v.replace(/%$/,'')));return this;},order(){return this;},limit(n){end=n;return this;},range(a,b){start=a;end=b+1;return this;},maybeSingle(){single=true;return this;},upsert(p,o){action='upsert';payload=p;opts=o;return this;},update(p){action='update';payload=p;return this;},then(resolve,reject){return run().then(resolve,reject);}};
   async function run(){let rows=tables[table]||[],selected=rows.filter(r=>filters.every(f=>f(r))).slice(start,end);
    if(action==='upsert'){const old=rows.find(r=>r.student_id===payload.student_id&&r.key_name===payload.key_name);if(!old){rows.push(structuredClone(payload));}else if(!opts.ignoreDuplicates)Object.assign(old,structuredClone(payload));}
    if(action==='update')for(const r of selected)Object.assign(r,structuredClone(payload));
+   if(postgresTimestamps)for(const r of rows)if(r.updated_at)r.updated_at=r.updated_at.replace(/Z$/, '+00:00');
    return {data:structuredClone(single?selected[0]||null:selected),error:null};
   }return q;
  }};
@@ -54,4 +55,14 @@ test('concurrent tabs can record each dialogue question only once',async()=>{
 });
 test('planner checkbox is account-bound and never changes game progress or rewards',async()=>{
  const f=fixture();assert.equal((await f.call('companionPlanStep',{step:'gold'})).status,400);await f.call('companionPlanStep',{step:'route',student_id:'b'});assert.equal((await f.call('companionSummary')).data.routeDone,true);assert.equal((await f.call('companionSummary',{}, {role:'student',student_id:'b'})).data.routeDone,false);assert.equal(f.tables.extra_data.length,1);
+});
+
+test('Postgres timestamp representation allows all three consecutive answers without reopening',async()=>{
+ const f=fixture({postgresTimestamps:true});let state=(await f.call('companionDialogueOpen',{story:'weather'})).data;
+ for(const [index,answer] of ['Bulutlu ve yağmurlu','Kapının yanında','umbrella'].entries()){
+  const response=await f.call('companionDialogueAnswer',{story:'weather',index,version:state.version,answer,audioPlayed:true});
+  assert.equal(response.status,200,'Question '+(index+1)+' saves');state=response.data;
+  assert.equal(state.cursor,index+1);assert.equal(state.version,f.tables.extra_data[0].updated_at,'Version is the stored database token');
+ }
+ assert.equal((await f.call('companionSummary')).data.dialogueDone,true);
 });

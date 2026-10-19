@@ -66,8 +66,8 @@ export function learningCompanionAPI({db,json,teacherScope,now=Date.now}){
     const result={correct,skill,answer:q.answer,explanation:q.explanation};
     const value={...state,cursor:index+1,answers:{...state.answers,[index]:result}};
     const updated=new Date(Math.max(stamp,Date.parse(record.updated_at)+1)).toISOString();
-    const r=await db.from('extra_data').update({value,updated_at:updated}).eq('student_id',sid).eq('key_name',key).eq('updated_at',record.updated_at).select('key_name');if(r.error)throw r.error;
+    const r=await db.from('extra_data').update({value,updated_at:updated}).eq('student_id',sid).eq('key_name',key).eq('updated_at',record.updated_at).select('key_name,updated_at');if(r.error)throw r.error;
     if(!r.data?.length)return fail('İlerlemen başka ekranda değişti; diyaloğu yeniden aç.',409);
-    return json({ok:true,...result,cursor:index+1,version:updated});
+    return json({ok:true,...result,cursor:index+1,version:r.data[0].updated_at});
   }};
 }
