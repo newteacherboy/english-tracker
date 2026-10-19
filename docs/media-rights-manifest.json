@@ -4,9 +4,9 @@
   "notice": "Source records do not establish exclusivity or eliminate infringement risk.",
   "assets": [
     {
-      "path": "ingilizce/activity-icons-v2.png",
-      "sha256": "fead140569b903c92afb8020bab50072d2b24fc1d206eaef3bc52f38b9738c5f",
-      "bytes": 1521155,
+      "path": "ingilizce/activity-icons-v2.webp",
+      "sha256": "7a5a0161444d95ba09c754e6edd1f0a9b45e3be42c53fd72f8914831d2592b81",
+      "bytes": 324236,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
     },
@@ -112,6 +112,27 @@
       "source": "OpenAI image_gen; isolated head layer from the approved Diji-Medu K2/E2 character; 2026-10-14"
     },
     {
+      "path": "ingilizce/bag-orange.svg",
+      "sha256": "0b0b8d1c0b75a294b8b3896ac60f4e9dd7334ff6640c46b799e83804adc15b0b",
+      "bytes": 926,
+      "status": "code-native",
+      "source": "Repository-authored generic shopping-bag SVG icon; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/bag-purple.svg",
+      "sha256": "ee1f780ff82ee2f886b7e085f91bf88ab1a3f7fb7d81989ccb866e688ba8650d",
+      "bytes": 926,
+      "status": "code-native",
+      "source": "Repository-authored generic shopping-bag SVG icon; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/bottom-nav-adventure-approved-v1.webp",
+      "sha256": "a328b670c97d35d9c96898e0b4198cb8140f561f0ee7e787029f01109fdfe0e3",
+      "bytes": 134808,
+      "status": "ai-generated",
+      "source": "OpenAI built-in ImageGen, 2026-10-18; generated from the user-approved text-free Renkli Macera navigation concept. Six original Diji-Medu icons in a transparent three-column, two-row atlas; no third-party artwork."
+    },
+    {
       "path": "ingilizce/bottom-nav-forest-v1.webp",
       "sha256": "2310442e4994b076777894df98002412b15c74420670bb408914c6f097d046ca",
       "bytes": 235324,
@@ -119,9 +140,9 @@
       "source": "docs/forest-navigation-generation.json"
     },
     {
-      "path": "ingilizce/bottom-nav-icons-v2.png",
-      "sha256": "040f679c73d9b081592bea7cd88a63d05e08a15218ea074127df42e162f1d812",
-      "bytes": 1201119,
+      "path": "ingilizce/bottom-nav-icons-v2.webp",
+      "sha256": "610d63bc29a8b630204615c543ad89322f867e010adebd865ef836da048e93d4",
+      "bytes": 214308,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
     },
@@ -140,16 +161,16 @@
       "source": "docs/open-forest-navigation-generation.json"
     },
     {
-      "path": "ingilizce/bottom-nav-stickers-v1.png",
-      "sha256": "6bf912592bec232837c0938e1ed771efcdbad70398d654b0fb4cf15421ccda13",
-      "bytes": 1930268,
+      "path": "ingilizce/bottom-nav-stickers-v1.webp",
+      "sha256": "7946c0e5ddc32da8b1f6185dedcd66ad5cd03bdaa4c40114bcfa9bfaec19f749",
+      "bytes": 232860,
       "status": "ai-generated",
       "source": "docs/sticker-navigation-design.md"
     },
     {
-      "path": "ingilizce/ders-vadi/notebook-doodles.png",
-      "sha256": "f53bbe688f7afe017d833c9682a62f457f2f74144e86e61fe647f38bb158adb5",
-      "bytes": 1483429,
+      "path": "ingilizce/ders-vadi/notebook-doodles.webp",
+      "sha256": "751d6ceb0b1683fd180567bb7e0baff448b0fbc07f4deea823bae45d6559e6da",
+      "bytes": 340730,
       "status": "ai-generated",
       "source": "docs/notebook-design-assets.md"
     },
@@ -197,6 +218,13 @@
       "bytes": 727,
       "status": "approved-brand-asset",
       "source": "Existing Google sign-in SVG from ingilizce/google-login.js"
+    },
+    {
+      "path": "ingilizce/discovery-assets/her-yasta-ogren.webp",
+      "sha256": "5d5ebfa43f9572ab1bd91f023e73f36790c3fac098dc81a931127e8bd42c100c",
+      "bytes": 165024,
+      "status": "ai-generated",
+      "source": "docs/universal-onboarding-art.json"
     },
     {
       "path": "ingilizce/discovery-assets/kalem.webp",
@@ -325,9 +353,65 @@
       "source": "OpenAI imagegen, 2026-10-11; original Papi parrot generated for the approved Friends UI; resized transparent PNG export"
     },
     {
-      "path": "ingilizce/games-assets/game-atlas-v1.png",
-      "sha256": "5c05e627b50165f1ae42d5d2871325286368b9f623cf5d1a32b83481902ad7da",
-      "bytes": 2491892,
+      "path": "ingilizce/games-assets/approved-boy-v1.webp",
+      "sha256": "36d718f73ae24ca4d169d8e71b2d27709f117287b0ed2c2f0e9a26bc7c2936f7",
+      "bytes": 51040,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-cat-v1.webp",
+      "sha256": "9d1d0b932477fe2fefb0f8fbd83b2383c49a5482e82759d788a0d18a89cca9ea",
+      "bytes": 49560,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-garden-v1.webp",
+      "sha256": "0fa95ed2db875d25803945685a01037659d7c1ad8daef6db6f16221f13098121",
+      "bytes": 34002,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-owl-v1.webp",
+      "sha256": "4cd67aa04fc621e6cfae480665eff228b131ff1863106dd1ef58c2e59e3b68ee",
+      "bytes": 57072,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-panel-v1.webp",
+      "sha256": "bd3ee9965c8eedbc47f921663859c35062a77f904f4c3ae0c2e8d6be612e1f64",
+      "bytes": 19174,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-sign-v1.webp",
+      "sha256": "6f8eae8ec1104f3f0eae8bb0b71dc14d00a9bd51c0940407784f3418dfd5fb8d",
+      "bytes": 21096,
+      "status": "ai-generated",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-target-v1.svg",
+      "sha256": "9de1b95f1a1e2353989023b1fa16fb0338215a11184ef11ac8e4e7567858457a",
+      "bytes": 387,
+      "status": "original-vector",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/approved-ui-v1.svg",
+      "sha256": "3e32fb39269693cb62dbf0c5c660db7888fd9d86a8285ad878012dca0e47c796",
+      "bytes": 1925,
+      "status": "original-vector",
+      "source": "docs/approved-game-boards.md"
+    },
+    {
+      "path": "ingilizce/games-assets/game-atlas-v1.webp",
+      "sha256": "a16f52a8cbf3df9d093fb924a05b4b8615d0707463c310956aa7bc90e962b272",
+      "bytes": 276396,
       "status": "ai-generated",
       "source": "Built-in image generation, 2026-10-11; original sixteen game illustrations in a 4x4 sprite atlas"
     },
@@ -353,9 +437,9 @@
       "source": "https://developers.google.com/static/identity/images/signin-assets.zip (Android + Web PNG @2x Light Square)"
     },
     {
-      "path": "ingilizce/harf-adasi-approved-sheet.png",
-      "sha256": "0afa66884994039da0243c7e2e65742d432b303e2192c02e05ab0417ba532586",
-      "bytes": 1513066,
+      "path": "ingilizce/harf-adasi-approved-sheet.webp",
+      "sha256": "de201b701cea80647d4636fc7294f37eb511dc261e524875d6e6648eda617389",
+      "bytes": 355984,
       "status": "ai-generated",
       "source": "OpenAI image generation: approved Papi Harf Adasi artwork and UI sprite sheet, 2026-10-14"
     },
@@ -556,18 +640,18 @@
       "source": "Original DijiMedu ten-mascot character portraits created using OpenAI ImageGen from the user-approved character sheet on 2026-10-17; transparent 512px PNG and optimized transparent WebP exports"
     },
     {
-      "path": "ingilizce/learning-assets/objects-01.png",
+      "path": "ingilizce/learning-assets/objects-01.webp",
       "source": "Original AI-generated Diji-Medu educational vocabulary sprite atlas, OpenAI image generation, 2026-10-16",
       "status": "original-generated",
-      "sha256": "28c26d38a3e0ef06410b59d90a30688892f57d4a1f45fcf5be29db7332080342",
-      "bytes": 1938089
+      "sha256": "6aa3b4b04900e2c83c553f532175d96ee35ebd13d7ec59bbee66a71610d36fa1",
+      "bytes": 149870
     },
     {
-      "path": "ingilizce/learning-assets/objects-02.png",
+      "path": "ingilizce/learning-assets/objects-02.webp",
       "source": "Original AI-generated Diji-Medu educational vocabulary sprite atlas, OpenAI image generation, 2026-10-16",
       "status": "original-generated",
-      "sha256": "48acb109db46348abd21482568c68e2cabd02034e030198116a0ced3f40e532c",
-      "bytes": 1866845
+      "sha256": "576aca47ec22a32d4548904db9d64cb67046f2c9a6a3b2b27cc46574ad889b42",
+      "bytes": 135414
     },
     {
       "path": "ingilizce/learning-assets/papi-arena-courtyard-day.webp",
@@ -591,30 +675,30 @@
       "source": "docs/papi-learning-arena.md (approved Papi arena 2026-10-17; original generated scene, daytime scene and transparent character guide)"
     },
     {
-      "path": "ingilizce/meteor-sky.png",
-      "sha256": "151f2d61767705e1034aeb9fd306676cd906f8b3b8cbc5b1b5a03288c4dc37fc",
-      "bytes": 2080152,
+      "path": "ingilizce/meteor-sky.webp",
+      "sha256": "625dbd5600238735c036c05f2786dd218f322d1ff598b83e33903b5ecf249c75",
+      "bytes": 167202,
       "status": "ai-generated",
       "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
     },
     {
-      "path": "ingilizce/meteor-sprite.png",
-      "sha256": "fa19426cad2a02c88a7cbb4f61a3548765d04146c5d56eb0051db8e6f946799e",
-      "bytes": 1417185,
+      "path": "ingilizce/meteor-sprite.webp",
+      "sha256": "8685cf122af8d4bebc37b78dd83f5040be98e7cd23aa6eb6155bbb237d4c8508",
+      "bytes": 216270,
       "status": "ai-generated",
       "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
     },
     {
-      "path": "ingilizce/meteor-target.png",
-      "sha256": "8c8148a26c6adbb39f23dbc1956c5a1cf1191e7886510ab52d2d65af652eb2cb",
-      "bytes": 2046422,
+      "path": "ingilizce/meteor-target.webp",
+      "sha256": "16884cb2e6abaf46ad62aebfc00a39bd60459f7641019bbd1f8b58d0be902687",
+      "bytes": 187912,
       "status": "ai-generated",
       "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
     },
     {
-      "path": "ingilizce/meteor-title.png",
-      "sha256": "23858d6b3ff1f93bc84981740d27cf14006e8301431cb4e5c0ea27944cc15f48",
-      "bytes": 1000088,
+      "path": "ingilizce/meteor-title.webp",
+      "sha256": "7843c9d6ea50e50eb774113a0f47db5572656551d69429547cfe026d61433720",
+      "bytes": 133802,
       "status": "ai-generated",
       "source": "Original imagegen assets generated 2026-10-09 from user-selected Diji-Medu Meteor Duel concept 2."
     },
@@ -836,9 +920,9 @@
       "source": "docs/media-generation-record.json"
     },
     {
-      "path": "ingilizce/papi-farewell-v2.png",
-      "sha256": "94b50763417a6fb94197d20cb1caa46256ae3aabc0ff8735a0892d15a37fdfa6",
-      "bytes": 1337172,
+      "path": "ingilizce/papi-farewell-v2.webp",
+      "sha256": "426c73e13995b9e64deaf73266ea4b9db491f2ec4bf84886b1f09e3f8428f937",
+      "bytes": 165306,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
     },
@@ -886,9 +970,9 @@
       "source": "Generated with ChatGPT (OpenAI) by the owner for the unified Diji-Medu parkur world; original scene, no third-party source image. Stored as an SVG wrapper around an embedded WebP."
     },
     {
-      "path": "ingilizce/parkur-landscape-v2.png",
-      "sha256": "09405c1e1ee93b84f4d2a9ca8a5e68736119cae8fcfb25a94882698d4bd9d1ba",
-      "bytes": 1977692,
+      "path": "ingilizce/parkur-landscape-v2.webp",
+      "sha256": "38870b2b1ad7aa5a5e32228555517d78e8d86a1bf4b8d15a60c260420187a471",
+      "bytes": 118940,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
     },
@@ -914,9 +998,9 @@
       "source": "Original assets generated with OpenAI imagegen on 2026-10-08 from the user-approved Diji-Medu concept 1; WebP encoded in SVG. Landscape, medallions and Papi are separate assets; no third-party artwork."
     },
     {
-      "path": "ingilizce/parkur-palace-forest-v3.png",
-      "sha256": "eba9cebe3575d618a1e1e2eb9739c56995b38296e53ad6102f0d80a95ac72b52",
-      "bytes": 2964474,
+      "path": "ingilizce/parkur-palace-forest-v3.webp",
+      "sha256": "35ea13ca65aa73abbe613efb5413746ee57f84ed1b21ee067bdbb66efcfc52d9",
+      "bytes": 321230,
       "status": "ai-generated",
       "source": "Generated with OpenAI imagegen on 2026-10-04 from the user-approved Diji-Medu concept; original woodland and palace scene, no third-party source image."
     },
@@ -1244,9 +1328,9 @@
       "source": "Repository-authored generic gold coin SVG, 2026-10-13; original code retained in Git."
     },
     {
-      "path": "ingilizce/route-assets/compact-wallet-atlas-v1.png",
-      "sha256": "a61aba19f7152d5f73e4cfdd756d8dafd8a18493262d9cdf3eef1d27f4a79a23",
-      "bytes": 756118,
+      "path": "ingilizce/route-assets/compact-wallet-atlas-v1.webp",
+      "sha256": "444eb9f91b5d45200a93e143f4e478e8944b1764caa811bc93d9f8b523efafe5",
+      "bytes": 105636,
       "status": "ai-generated",
       "source": "ImageGen, 2026-10-13; regenerated from the user-approved compact strip concept 1. Papi head, lightning, coin, XP hexagon and active-time star; transparent five-cell atlas."
     },
@@ -1256,6 +1340,13 @@
       "bytes": 482,
       "status": "repository-restored",
       "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
+    },
+    {
+      "path": "ingilizce/route-assets/family-icon.svg",
+      "sha256": "98ba14cce082a3cf1115f6b2bda04c694703449a215e76ea7e9e5c56343735d9",
+      "bytes": 314,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
     },
     {
       "path": "ingilizce/route-assets/feather-combo.svg",
@@ -1300,6 +1391,13 @@
       "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
     },
     {
+      "path": "ingilizce/route-assets/homework-icon.svg",
+      "sha256": "788fe678fd925d72156ece151d57a7a34eab516114c5ad24dbe8c1d41bbc62fb",
+      "bytes": 441,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
       "path": "ingilizce/route-assets/logout.svg",
       "sha256": "f92c5e7b91f26d1d6de11072cc4e623c950867649ed66448e9836ede2c4aca40",
       "bytes": 333,
@@ -1321,9 +1419,9 @@
       "source": "Built-in ImageGen, 2026-10-13; user-approved map concepts, original daytime scene; no UI/text. Lossy WebP encoding for mobile delivery."
     },
     {
-      "path": "ingilizce/route-assets/papi-english.png",
-      "sha256": "f3bdd1cccd2f8553a3874386ea8799f9f9a567f42c71a35273c13e64c3bd781a",
-      "bytes": 1240458,
+      "path": "ingilizce/route-assets/papi-english.webp",
+      "sha256": "e69244d853a3685a3e096ccdbdd6582c57ca85cb257f5b90900c066cd5085584",
+      "bytes": 184022,
       "status": "repository-restored",
       "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
     },
@@ -1335,9 +1433,9 @@
       "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
     },
     {
-      "path": "ingilizce/route-assets/papi-school.png",
-      "sha256": "eb866af4c56928f93076f62502819a179111ebb178d864dc934033f0ff52f881",
-      "bytes": 1105480,
+      "path": "ingilizce/route-assets/papi-school.webp",
+      "sha256": "4ce889ab20173922f4ffd03a041b181937431190813f3f2e32934925c57e9b06",
+      "bytes": 137802,
       "status": "repository-restored",
       "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
     },
@@ -1347,6 +1445,13 @@
       "bytes": 689,
       "status": "repository-restored",
       "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/placement-icon.svg",
+      "sha256": "ec7909d94ac2992b3de41a3d9bdeff7134fc847b170b07a919195232ab3531d1",
+      "bytes": 480,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
     },
     {
       "path": "ingilizce/route-assets/profile.svg",
@@ -1377,9 +1482,9 @@
       "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
     },
     {
-      "path": "ingilizce/route-assets/reference-forest.png",
-      "sha256": "c7107bc28b7cd3d7e51cea2c3c4dd6c114ca9084b1005373586443ae97940345",
-      "bytes": 2017092,
+      "path": "ingilizce/route-assets/reference-forest.webp",
+      "sha256": "86fbb5b7db1ca3685edfd8826e0cc7c3c8ba41f167762de7db8bfc982a6d9f0e",
+      "bytes": 124452,
       "status": "repository-existing-unverified",
       "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
     },
@@ -1405,11 +1510,25 @@
       "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
     },
     {
+      "path": "ingilizce/route-assets/safety-icon.svg",
+      "sha256": "e9e5c6092c9911e961444ac67486c77bc9bef013270f8423cd2ee6fcf9a3ac42",
+      "bytes": 414,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
       "path": "ingilizce/route-assets/shop.svg",
       "sha256": "8488d2b5736fa8d21a9513097f657da7727fc0837e539e7402ba416b4ff355eb",
       "bytes": 632,
       "status": "repository-restored",
       "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/support-icon.svg",
+      "sha256": "e0cfa49fdcc91686c3c01f2950b06d811ebf0c265b5eeff0b6dcf218fc28cd48",
+      "bytes": 590,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
     },
     {
       "path": "ingilizce/route-assets/teacher.svg",
@@ -1424,251 +1543,6 @@
       "bytes": 516,
       "status": "repository-restored",
       "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/store-assets/dressing-room.png",
-      "sha256": "32a421d1ccfaf67d94c8c8419e96a2767030f057d86fc1f1a17ece0596453a25",
-      "bytes": 1799018,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
-    },
-    {
-      "path": "ingilizce/store-assets/shop-icons.png",
-      "sha256": "72abe82a694bba5de9b52023b645cc8789f347f88d13c51b1c6e4b79e6af9d04",
-      "bytes": 1735600,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
-    },
-    {
-      "path": "ingilizce/story-garden-map.webp",
-      "sha256": "24b2f224f6f3efd3055a685b23a799d159cccd53f1cb8fc7907c8333424fbba1",
-      "bytes": 543354,
-      "status": "ai-generated",
-      "source": "docs/papi-learning-story.md"
-    },
-    {
-      "path": "ingilizce/story-scene-boy.webp",
-      "sha256": "16e1c98f4709037340ba1383a9c4c7a545528c00e8e388de5696e68ffd9ce39a",
-      "bytes": 436932,
-      "status": "ai-generated",
-      "source": "docs/papi-learning-story.md"
-    },
-    {
-      "path": "ingilizce/story-scene-girl.webp",
-      "sha256": "49089fad5bbd79cda59a923b268a12a2be261b3d37ba37504fc22e89e9e28ed4",
-      "bytes": 422706,
-      "status": "ai-generated",
-      "source": "docs/papi-learning-story.md"
-    },
-    {
-      "path": "ingilizce/story-space-background.png",
-      "sha256": "8b144fb7b4d1a676855af0c48d12417e56ed44200586af72394818573587ba44",
-      "bytes": 1937229,
-      "status": "ai-generated",
-      "source": "docs/space-learning-design.md"
-    },
-    {
-      "path": "ingilizce/story-space-sprites.png",
-      "sha256": "d3539c992164628d4281155b2e05b9c454c69a988dad1ad864c91d98936d144d",
-      "bytes": 1672426,
-      "status": "ai-generated",
-      "source": "docs/space-learning-design.md"
-    },
-    {
-      "path": "ingilizce/study-assets/icons.svg",
-      "sha256": "f8effa1bdd09e744178353bcfb434e7eeb3e868620c5ba475053f3870b393871",
-      "bytes": 2210,
-      "status": "code-native",
-      "source": "Repository-authored study interface SVG; original source retained in Git"
-    },
-    {
-      "path": "ingilizce/study-assets/island-a1.png",
-      "sha256": "5b844e607cd9c6d4356cc2cbbcc0b869cb4c7c92ad2e0988f14b6dc02932073f",
-      "bytes": 46516,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/island-a2.png",
-      "sha256": "41c3e3a6c46895b7f1c3efd1ff9273bdb0a35156222e07615ee31e8f9d98d7ca",
-      "bytes": 42876,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/island-b1.png",
-      "sha256": "b603cede93e49c19071012ba393066bdea4ec8ce3ceb504a161aace6d5a6e465",
-      "bytes": 45596,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/island-b2.png",
-      "sha256": "75fa55915514473e71cdf57ed17558e78f0b0882649820986e86ed2f309eadf2",
-      "bytes": 45526,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-celebrate.png",
-      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
-      "bytes": 41534,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-explain.png",
-      "sha256": "746e4b63d970779f5f54c6adc9e06cd5f57c020d602f8352573da777121ea4ed",
-      "bytes": 32615,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-read.png",
-      "sha256": "b880af1f5f74996ff1280f87148ab0ac85da86c2ad08e99dbded00ea34627c46",
-      "bytes": 36011,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/topic-sun.svg",
-      "sha256": "5b792968fce75151b8e723443d785a86a0678f3a63c4096abccef9129ad8ba1f",
-      "bytes": 253,
-      "status": "code-native",
-      "source": "Repository-authored study interface SVG; original source retained in Git"
-    },
-    {
-      "path": "ingilizce/study-islands-v2.png",
-      "sha256": "49a0c8d3bd38c4e3629a00234ae9cd884303afc4d1a37ea0fc04a06a5a507de7",
-      "bytes": 2518923,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/world-assets/compass.svg",
-      "sha256": "773e41d95f85d78fc1770d061716c7a9d4f88041440c4a3efc9396dad935dc14",
-      "bytes": 925,
-      "status": "original-code",
-      "source": "Original SVG authored for approved world design 1"
-    },
-    {
-      "path": "ingilizce/world-assets/dressing-room.png",
-      "sha256": "75cb47f8076569506f32ab83816ba18c961a1d4f56e1b1fa3293d5615ad396e5",
-      "bytes": 1749492,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
-    },
-    {
-      "path": "ingilizce/world-assets/papi-atlas.png",
-      "sha256": "12c676659342db3c0c15d1133cdf9a88434732ceea2f1766bec7f12ef938ac71",
-      "bytes": 1443020,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
-    },
-    {
-      "path": "ingilizce/games-assets/approved-boy-v1.webp",
-      "sha256": "36d718f73ae24ca4d169d8e71b2d27709f117287b0ed2c2f0e9a26bc7c2936f7",
-      "bytes": 51040,
-      "status": "ai-generated",
-      "source": "docs/approved-game-boards.md"
-    },
-    {
-      "path": "ingilizce/games-assets/approved-cat-v1.webp",
-      "sha256": "9d1d0b932477fe2fefb0f8fbd83b2383c49a5482e82759d788a0d18a89cca9ea",
-      "bytes": 49560,
-      "status": "ai-generated",
-      "source": "docs/approved-game-boards.md"
-    },
-    {
-      "path": "ingilizce/games-assets/approved-garden-v1.webp",
-      "sha256": "0fa95ed2db875d25803945685a01037659d7c1ad8daef6db6f16221f13098121",
-      "bytes": 34002,
-      "status": "ai-generated",
-      "source": "docs/approved-game-boards.md"
-    },
-    {
-      "path": "ingilizce/games-assets/approved-owl-v1.webp",
-      "sha256": "4cd67aa04fc621e6cfae480665eff228b131ff1863106dd1ef58c2e59e3b68ee",
-      "bytes": 57072,
-      "status": "ai-generated",
-      "source": "docs/approved-game-boards.md"
-    },
-    {
-      "path": "ingilizce/games-assets/approved-panel-v1.webp",
-      "sha256": "bd3ee9965c8eedbc47f921663859c35062a77f904f4c3ae0c2e8d6be612e1f64",
-      "bytes": 19174,
-      "status": "ai-generated",
-      "source": "docs/approved-game-boards.md"
-    },
-    {
-      "path": "ingilizce/games-assets/approved-sign-v1.webp",
-      "sha256": "6f8eae8ec1104f3f0eae8bb0b71dc14d00a9bd51c0940407784f3418dfd5fb8d",
-      "bytes": 21096,
-      "status": "ai-generated",
-      "source": "docs/approved-game-boards.md"
-    },
-    {
-      "path": "ingilizce/games-assets/approved-target-v1.svg",
-      "sha256": "9de1b95f1a1e2353989023b1fa16fb0338215a11184ef11ac8e4e7567858457a",
-      "bytes": 387,
-      "status": "original-vector",
-      "source": "docs/approved-game-boards.md"
-    },
-    {
-      "path": "ingilizce/games-assets/approved-ui-v1.svg",
-      "sha256": "3e32fb39269693cb62dbf0c5c660db7888fd9d86a8285ad878012dca0e47c796",
-      "bytes": 1925,
-      "status": "original-vector",
-      "source": "docs/approved-game-boards.md"
-    },
-    {
-      "path": "ingilizce/bottom-nav-adventure-approved-v1.png",
-      "sha256": "0bb4171ef0df49ed1ccfcee176072a64b431343d8aee103b7bbb1df627e4665e",
-      "bytes": 1605971,
-      "status": "ai-generated",
-      "source": "OpenAI built-in ImageGen, 2026-10-18; generated from the user-approved text-free Renkli Macera navigation concept. Six original Diji-Medu icons in a transparent three-column, two-row atlas; no third-party artwork."
-    },
-    {
-      "path": "ingilizce/discovery-assets/her-yasta-ogren.webp",
-      "sha256": "5d5ebfa43f9572ab1bd91f023e73f36790c3fac098dc81a931127e8bd42c100c",
-      "bytes": 165024,
-      "status": "ai-generated",
-      "source": "docs/universal-onboarding-art.json"
-    },
-    {
-      "path": "ingilizce/route-assets/family-icon.svg",
-      "sha256": "98ba14cce082a3cf1115f6b2bda04c694703449a215e76ea7e9e5c56343735d9",
-      "bytes": 314,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/homework-icon.svg",
-      "sha256": "788fe678fd925d72156ece151d57a7a34eab516114c5ad24dbe8c1d41bbc62fb",
-      "bytes": 441,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/placement-icon.svg",
-      "sha256": "ec7909d94ac2992b3de41a3d9bdeff7134fc847b170b07a919195232ab3531d1",
-      "bytes": 480,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/safety-icon.svg",
-      "sha256": "e9e5c6092c9911e961444ac67486c77bc9bef013270f8423cd2ee6fcf9a3ac42",
-      "bytes": 414,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/support-icon.svg",
-      "sha256": "e0cfa49fdcc91686c3c01f2950b06d811ebf0c265b5eeff0b6dcf218fc28cd48",
-      "bytes": 590,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
     },
     {
       "path": "ingilizce/start-placement-audio/A1-10.mp3",
@@ -1837,6 +1711,146 @@
       "bytes": 97197,
       "status": "original-synthesized-audio",
       "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/store-assets/dressing-room.webp",
+      "sha256": "d8a1e46ff7c480e3c4f353a8e49b5160c764a478b812bf8eaa4461376a9312c1",
+      "bytes": 91956,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
+    },
+    {
+      "path": "ingilizce/store-assets/shop-icons.webp",
+      "sha256": "2d268b6c5cda148cbd08bf933440ed5c77affff06baec7d3f8e5da93b44bf596",
+      "bytes": 138478,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
+    },
+    {
+      "path": "ingilizce/story-garden-map.webp",
+      "sha256": "24b2f224f6f3efd3055a685b23a799d159cccd53f1cb8fc7907c8333424fbba1",
+      "bytes": 543354,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/story-scene-boy.webp",
+      "sha256": "16e1c98f4709037340ba1383a9c4c7a545528c00e8e388de5696e68ffd9ce39a",
+      "bytes": 436932,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/story-scene-girl.webp",
+      "sha256": "49089fad5bbd79cda59a923b268a12a2be261b3d37ba37504fc22e89e9e28ed4",
+      "bytes": 422706,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/story-space-background.webp",
+      "sha256": "6546fd6565e9500faa68b818b97ffc59f0c8966fcff1c747889574d4b15ad9ad",
+      "bytes": 78968,
+      "status": "ai-generated",
+      "source": "docs/space-learning-design.md"
+    },
+    {
+      "path": "ingilizce/story-space-sprites.webp",
+      "sha256": "b0bcd9c82ce53b66172afea3d41550ed0d46a03a25655a06572b4fc0b8bb2163",
+      "bytes": 322572,
+      "status": "ai-generated",
+      "source": "docs/space-learning-design.md"
+    },
+    {
+      "path": "ingilizce/study-assets/icons.svg",
+      "sha256": "f8effa1bdd09e744178353bcfb434e7eeb3e868620c5ba475053f3870b393871",
+      "bytes": 2210,
+      "status": "code-native",
+      "source": "Repository-authored study interface SVG; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/study-assets/island-a1.png",
+      "sha256": "5b844e607cd9c6d4356cc2cbbcc0b869cb4c7c92ad2e0988f14b6dc02932073f",
+      "bytes": 46516,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-a2.png",
+      "sha256": "41c3e3a6c46895b7f1c3efd1ff9273bdb0a35156222e07615ee31e8f9d98d7ca",
+      "bytes": 42876,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-b1.png",
+      "sha256": "b603cede93e49c19071012ba393066bdea4ec8ce3ceb504a161aace6d5a6e465",
+      "bytes": 45596,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-b2.png",
+      "sha256": "75fa55915514473e71cdf57ed17558e78f0b0882649820986e86ed2f309eadf2",
+      "bytes": 45526,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-celebrate.png",
+      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
+      "bytes": 41534,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-explain.png",
+      "sha256": "746e4b63d970779f5f54c6adc9e06cd5f57c020d602f8352573da777121ea4ed",
+      "bytes": 32615,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-read.png",
+      "sha256": "b880af1f5f74996ff1280f87148ab0ac85da86c2ad08e99dbded00ea34627c46",
+      "bytes": 36011,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/topic-sun.svg",
+      "sha256": "5b792968fce75151b8e723443d785a86a0678f3a63c4096abccef9129ad8ba1f",
+      "bytes": 253,
+      "status": "code-native",
+      "source": "Repository-authored study interface SVG; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/study-islands-v2.webp",
+      "sha256": "4887cc543f05d761673cde3e06d7fd5bee6d70d297dc926651283d7572daecdd",
+      "bytes": 516278,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/world-assets/compass.svg",
+      "sha256": "773e41d95f85d78fc1770d061716c7a9d4f88041440c4a3efc9396dad935dc14",
+      "bytes": 925,
+      "status": "original-code",
+      "source": "Original SVG authored for approved world design 1"
+    },
+    {
+      "path": "ingilizce/world-assets/dressing-room.webp",
+      "sha256": "8c32c2a095837ea76bc9bffa1b6409f3cef31ad8b02346eeb50232503d2e9a41",
+      "bytes": 73598,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
+    },
+    {
+      "path": "ingilizce/world-assets/papi-atlas.webp",
+      "sha256": "b5ba1f41de38db183b4182a336ae65052e76652453ee55c53656d85d488dd97d",
+      "bytes": 188692,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
     }
   ]
 }

@@ -6,7 +6,7 @@ body .dm-unified-wallet.dm-papi-wallet>button{display:flex!important;align-items
 body .dm-unified-wallet.dm-papi-wallet>[data-pw=gold]{background:linear-gradient(145deg,#fffdf8,#fff8e8)!important;border-color:#ffe3b9!important}
 body .dm-unified-wallet.dm-papi-wallet>[data-pw=xp]{background:linear-gradient(145deg,#fbf8ff,#f2ebff)!important;border-color:#ded0ff!important}
 body .dm-unified-wallet.dm-papi-wallet>[data-pw=time]{background:linear-gradient(145deg,#f5ffff,#eafaff)!important;border-color:#b9eaf1!important}
-body .dm-unified-wallet .dm-pw-art{display:block!important;flex:none;width:clamp(20px,5.8vw,32px);height:clamp(20px,5.8vw,32px);padding:0!important;margin:0!important;border:0!important;background-image:url('route-assets/compact-wallet-atlas-v1.png');background-repeat:no-repeat;background-size:500% auto;background-position:0% 50%;box-shadow:none!important}
+body .dm-unified-wallet .dm-pw-art{display:block!important;flex:none;width:clamp(20px,5.8vw,32px);height:clamp(20px,5.8vw,32px);padding:0!important;margin:0!important;border:0!important;background-image:url('route-assets/compact-wallet-atlas-v1.webp');background-repeat:no-repeat;background-size:500% auto;background-position:0% 50%;box-shadow:none!important}
 body .dm-unified-wallet .dm-pw-papi{width:100%;height:auto;aspect-ratio:1;align-self:center;border-radius:50%;background-position:0% 50%;background-size:500% auto}
 body .dm-unified-wallet .dm-pw-energy{background-position:25% 50%}
 body .dm-unified-wallet .dm-pw-gold{background-position:50% 50%}

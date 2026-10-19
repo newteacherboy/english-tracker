@@ -32,7 +32,7 @@ function schoolFixture(){
  };
  const c={window:null,document,localStorage:{getItem:()=>null,setItem:()=>{}},console};
  c.window=c;c.dmLearningRoute={purpose:()=> 'school'};
- c.dmParkurSahne=()=>'<div class="rt-root rt-school"><div class="rt-banner"><img src="route-assets/papi-school.png"><button type="button" class="rt-all-link">›</button></div><section class="rt-week"></section><section class="rt-tasks"></section><section class="rt-path rt-reward-route"><div class="rt-stones"><button class="dm-adventure-node"></button></div></section></div>';
+ c.dmParkurSahne=()=>'<div class="rt-root rt-school"><div class="rt-banner"><img src="route-assets/papi-school.webp"><button type="button" class="rt-all-link">›</button></div><section class="rt-week"></section><section class="rt-tasks"></section><section class="rt-path rt-reward-route"><div class="rt-stones"><button class="dm-adventure-node"></button></div></section></div>';
  vm.createContext(c);vm.runInContext(schoolSource,c);return {c,appended};
 }
 test('school route uses 8 learning-style accordion grades and different mascots',()=>{

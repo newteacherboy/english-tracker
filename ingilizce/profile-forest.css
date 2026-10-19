@@ -2,7 +2,7 @@
 #tab-profil.dc-fullscreen-overlay.active{background:#f4f7ed!important;padding:12px 12px calc(120px + env(safe-area-inset-bottom))!important;color:#315b4b;font-family:'Nunito',sans-serif}
 #tab-profil .pr-kap{max-width:640px}
 #tab-profil #profilAlan{display:flex;flex-direction:column;gap:14px}
-#tab-profil .user-header-bar{position:relative!important;background:linear-gradient(0deg,#f7f3e5 0%,#f7f3e5 27%,transparent 52%),url('parkur-palace-forest-v3.png') center top/100% auto no-repeat!important;border:2px solid #d6e1b9;border-radius:28px!important;padding:22px 16px 14px!important;box-shadow:0 5px 0 #dce6ce!important;overflow:hidden!important;gap:10px!important;color:#35563b;isolation:isolate}
+#tab-profil .user-header-bar{position:relative!important;background:linear-gradient(0deg,#f7f3e5 0%,#f7f3e5 27%,transparent 52%),url('parkur-palace-forest-v3.webp') center top/100% auto no-repeat!important;border:2px solid #d6e1b9;border-radius:28px!important;padding:22px 16px 14px!important;box-shadow:0 5px 0 #dce6ce!important;overflow:hidden!important;gap:10px!important;color:#35563b;isolation:isolate}
 #tab-profil .user-header-owl{display:none!important}
 #tab-profil .dm-forest-caption{font-size:11px;font-weight:900;letter-spacing:2px;color:#426c37;text-shadow:0 1px 3px #fff;background:#fff7dcde;align-self:flex-start;padding:5px 9px;border-radius:10px;position:relative;z-index:1}
 #tab-profil .dm-forest-papi{position:absolute;right:0;top:100px;width:140px;height:140px;object-fit:contain;pointer-events:none;z-index:0;filter:drop-shadow(0 5px 4px #456c3e40)}
