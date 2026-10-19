@@ -1,3 +1,5 @@
+import {allTimeLeague} from './league-alltime.mjs';
+import {publicParticipant} from './demo-account.ts';
 import {placementStudyAccess} from './study-placement-access.mjs';
 import {socialSafetyAPI} from './social-safety.mjs';
 import './progression-catalog.js';
@@ -74,7 +76,18 @@ export function progressionAPI(db:any,json:any){
    return json(data);
   }
   if(op==='seviyeDurumu')return json({ok:true,...await context(a,true)});
-  if(op==='seviyeLigListesi'){const {data,error}=await db.rpc('dm_progress_league');if(error)throw error;return json({ok:true,liste:await socialSafetyAPI({db,json}).filterStudents(data||[],a.student_id)});}
+  if(op==='seviyeLigListesi'){
+   const scope=String(body.kapsam||q.get('kapsam')||'weekly');
+   if(!['weekly','alltime'].includes(scope))return json({ok:false,mesaj:'Geçerli lig kapsamı gerekli.'},400);
+   if(scope==='alltime'){
+    const ctx=await context(a);if(ctx.level<15)return deny(15);
+    const safety=socialSafetyAPI({db,json});
+    const liste=await allTimeLeague(db,(rows:any[],viewer:string)=>safety.filterStudents(rows,viewer),a.student_id,(xp:number)=>C.level(xp),publicParticipant);
+    return json({ok:true,kapsam:'alltime',liste});
+   }
+   const {data,error}=await db.rpc('dm_progress_league');if(error)throw error;
+   return json({ok:true,liste:await socialSafetyAPI({db,json}).filterStudents(data||[],a.student_id)});
+  }
   if(op==='seviyeSandikAc'){const {data,error}=await db.rpc('dm_progress_chest',{actor:a.student_id,chest:String(body.sandik||'')});if(error)return deny(error.message);return json({ok:true,...data});}
   if(op==='seviyeEkJokerAl'){const {data,error}=await db.rpc('dm_progress_purchase',{actor:a.student_id,item_key:'extra-joker',is_showcase:false});if(error)return deny(error.message);return json({ok:true,...data});}
   const item=(items as any[]).find(x=>x.id===String(body.item));if(!item)return json({ok:false,mesaj:'Ürün bulunamadı.'},400);

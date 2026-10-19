@@ -1,0 +1,75 @@
+/* Approved league concepts, scoped to the shared Friends view. */
+#tab-meduakis[data-friends-view="lig"]{background:#fdfcfb!important}
+#tab-meduakis[data-friends-view="lig"] .akis-baslik{display:none}
+#tab-meduakis[data-friends-view="lig"] .ma-wrap{background:#fdfcfb}
+#tab-meduakis .dm-lig{max-width:720px;margin:auto;padding:10px 13px 12px;color:#11224e;font-family:'Nunito',system-ui,sans-serif}
+#tab-meduakis .dm-lig *{box-sizing:border-box}
+#tab-meduakis .dm-lig button{font-family:inherit;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
+#tab-meduakis .dm-lig-header{display:flex;align-items:center;gap:8px;min-height:49px}
+#tab-meduakis .dm-lig-header h2{flex:1;margin:0;font-size:20px;font-weight:950;color:#101e50}
+#tab-meduakis .dm-lig-header>button{border:0;background:none;font-size:32px;width:30px;min-height:44px;padding:0}
+#tab-meduakis .dm-lig-header>img{width:54px;height:49px;object-fit:contain}
+#tab-meduakis .dm-lig-caption{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:11px;margin:4px 0 13px;color:#39527c}
+#tab-meduakis .dm-lig-caption small{border:1px solid #e1e3f2;border-radius:14px;padding:5px 7px;background:#fafbff;white-space:nowrap;font-size:9px;font-weight:800}
+#tab-meduakis .dm-lig-period{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border-radius:13px;background:#f0f0f5;margin-bottom:12px}
+#tab-meduakis .dm-lig-period button{border:0;background:transparent;min-height:35px;border-radius:11px;font-size:13px;font-weight:850;color:#62718b}
+#tab-meduakis .dm-lig-period button[aria-pressed="true"]{background:#593bdd;color:white;box-shadow:0 3px 5px #593bdd20}
+#tab-meduakis .dm-lig-period small{font-size:9px;margin-left:5px}
+#tab-meduakis .dm-lig [aria-disabled="true"]{opacity:.53}
+#tab-meduakis .dm-lig-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:10px}
+#tab-meduakis .dm-lig-choices button{border:1px solid #e4e5ed;background:#fff;padding:6px 2px;min-height:35px;border-radius:11px;font-size:11px;font-weight:850}
+#tab-meduakis .dm-lig-choices button[aria-pressed="true"]{background:#eee8ff;border-color:#b4a0f0;color:#5634b1}
+#tab-meduakis .dm-lig-choices small{display:block;font-size:9px}
+#tab-meduakis .dm-lig-journey{position:relative;isolation:isolate;overflow:hidden;min-height:183px;border-radius:18px;padding:18px 15px;background:#e6dcff url('league-assets/summit.webp') center/cover no-repeat;margin-bottom:15px}
+#tab-meduakis .dm-lig-journey h3{position:relative;z-index:2;font-size:21px;letter-spacing:-.5px;margin:0 0 4px;font-weight:950;color:#132451}
+#tab-meduakis .dm-lig-journey>p{position:relative;z-index:2;font-size:12px;margin:0;color:#273e70}
+#tab-meduakis .dm-lig-gap{position:relative;z-index:2;display:inline-flex;align-items:center;gap:8px;background:#fffffff0;border:1px solid #ffffff;border-radius:14px;padding:9px 11px;margin-top:20px;max-width:70%;box-shadow:0 5px 12px #6c54a315}
+#tab-meduakis .dm-lig-gap>span:first-child{font-size:18px;font-weight:900;color:#a184e9}
+#tab-meduakis .dm-lig-gap small{display:block;font-size:10px;color:#354774}
+#tab-meduakis .dm-lig-gap b{display:block;font-size:21px;color:#132451;font-weight:950}
+#tab-meduakis .dm-lig-journey>.dm-lig-avatar{position:absolute;right:21px;bottom:-16px;--size:105px!important;background:transparent;border:0;z-index:1;border-radius:0}
+#tab-meduakis .dm-lig-avatar{width:var(--size);height:var(--size);flex:0 0 var(--size);display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#f1ebff;overflow:hidden;font-size:calc(var(--size)*.7)}
+#tab-meduakis .dm-lig-avatar svg,#tab-meduakis .dm-lig-avatar img{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain;display:block}
+#tab-meduakis .dm-lig-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#tab-meduakis .dm-lig-podium-cards{margin:13px 0 12px}
+#tab-meduakis .dm-lig-place{position:relative;min-width:0;border:1px solid #ece7f0;border-radius:15px;background:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;padding:12px 5px 9px;box-shadow:0 3px 5px #29355406}
+#tab-meduakis .dm-lig-place-1{border-color:#f7d995;background:#fffcf6}
+#tab-meduakis .dm-lig-medal{position:absolute;top:-14px;font-size:24px;line-height:28px}
+#tab-meduakis .dm-lig-winner{display:block;min-width:0;width:100%;padding-top:4px;line-height:1.45;color:#102250}
+#tab-meduakis .dm-lig-winner b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:950}
+#tab-meduakis .dm-lig-winner strong{display:block;white-space:nowrap;font-size:11px;font-weight:950}
+#tab-meduakis .dm-lig-list{display:grid;gap:7px;margin-top:8px}
+#tab-meduakis .dm-lig-row{display:flex;align-items:center;gap:9px;text-align:left;background:white;border:1px solid #f1edf1;border-radius:14px;min-height:49px;width:100%;padding:6px 10px;box-shadow:0 3px 6px #25314a03}
+#tab-meduakis .dm-lig-rank{display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:50%;background:#eceef4;font-size:16px;font-weight:900;color:#3b4668}
+#tab-meduakis .dm-lig-person{flex:1;min-width:0;line-height:1.3}
+#tab-meduakis .dm-lig-person>b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:900}
+#tab-meduakis .dm-lig-person>small{display:block;color:#657296;font-size:10px;margin-top:3px}
+#tab-meduakis .dm-lig-row>strong{white-space:nowrap;font-size:13px;font-weight:950}
+#tab-meduakis .dm-lig-my-place{position:sticky;bottom:0;z-index:2;margin-top:13px;padding:5px 0;background:linear-gradient(transparent,#fdfcfb 22%)}
+#tab-meduakis .dm-lig-self{min-height:58px;background:#eee9ff;border-color:#ddd1ff;box-shadow:none;color:#4a2fbd}
+#tab-meduakis .dm-lig-self .dm-lig-rank{background:transparent;font-size:14px;width:auto;min-width:28px}
+#tab-meduakis .dm-lig-self .dm-lig-avatar{background:#dcd4f5}
+#tab-meduakis .dm-lig-podium-large{position:relative;isolation:isolate;align-items:end;gap:0;min-height:302px;padding:20px 0 0;margin:8px 0 12px;background:radial-gradient(ellipse at 50% 65%,#ffe5a0bb,transparent 70%);border-radius:18px}
+#tab-meduakis .dm-lig-podium-large:before{content:'✦　✧　　✦　✧';position:absolute;z-index:-1;inset:15px 0 auto;text-align:center;font-size:24px;letter-spacing:12px;color:#edbd53}
+#tab-meduakis .dm-lig-podium-large .dm-lig-place{padding:0;border:0;box-shadow:none;background:transparent;border-radius:0}
+#tab-meduakis .dm-lig-podium-large .dm-lig-avatar{width:100%;--size:122px!important;border-radius:0;background:none;overflow:visible;position:relative;z-index:1;margin-bottom:-10px}
+#tab-meduakis .dm-lig-podium-large .dm-lig-place-1 .dm-lig-avatar{--size:156px!important}
+#tab-meduakis .dm-lig-step{display:grid;place-items:center;width:100%;height:62px;background:linear-gradient(90deg,#dedfe8,#fff,#b5b8c5);border:2px solid #ffffff99;border-radius:12px 12px 0 0;box-shadow:inset 0 5px 12px #ffffff80}
+#tab-meduakis .dm-lig-step b{display:grid;place-items:center;width:44px;height:44px;border:3px solid #ffffff80;box-shadow:0 2px 7px #523c3325,inset 0 2px 4px #fff8;border-radius:50%;font-size:30px;font-weight:950;color:#707486;text-shadow:0 2px #fff8}
+#tab-meduakis .dm-lig-place-1 .dm-lig-step{height:86px;background:linear-gradient(90deg,#e5a42b,#ffe79a,#efb238)}
+#tab-meduakis .dm-lig-place-1 .dm-lig-step b{color:#b87712;border-color:#f6c552;background:#ffe091}
+#tab-meduakis .dm-lig-place-3 .dm-lig-step{height:52px;background:linear-gradient(90deg,#c28255,#f5cb9a,#ba7748)}
+#tab-meduakis .dm-lig-place-3 .dm-lig-step b{color:#965328;border-color:#edb176;background:#efbd8a}
+#tab-meduakis .dm-lig-podium-large .dm-lig-winner{background:#fffef8;border:1px solid #f4e4c0;border-radius:10px;padding:8px 4px;min-height:53px;box-shadow:0 5px 11px #e4bd5314}
+#tab-meduakis .dm-lig-rules{font-size:11px;margin:12px 2px;color:#69748d;line-height:1.6}
+#tab-meduakis .dm-lig-rules summary{min-height:36px;cursor:pointer;font-weight:800}
+#tab-meduakis .dm-lig-footnote{font-size:10px;color:#6e7d94;text-align:center;margin:10px 0}
+#tab-meduakis .dm-lig-more,#tab-meduakis .dm-lig-message button{background:#f0eaff;border:1px solid #dfd4fa;border-radius:12px;padding:10px 15px;color:#5130ac;font-weight:800}
+#tab-meduakis .dm-lig-more{display:block;margin:12px auto}
+#tab-meduakis .dm-lig-message{text-align:center;min-height:100px;padding:24px 10px;color:#60708d;font-size:13px}
+@media(min-width:600px){#tab-meduakis .dm-lig{padding:18px 26px}#tab-meduakis .dm-lig-podium-large{max-width:510px;margin-left:auto;margin-right:auto}#tab-meduakis .dm-lig-journey{min-height:210px}#tab-meduakis .dm-lig-row{min-height:58px}}
+@media(max-width:359px){#tab-meduakis .dm-lig{padding:8px}#tab-meduakis .dm-lig-header h2{font-size:18px}#tab-meduakis .dm-lig-caption{font-size:10px}#tab-meduakis .dm-lig-caption small{font-size:8px}#tab-meduakis .dm-lig-journey h3{font-size:19px}#tab-meduakis .dm-lig-row{gap:6px;padding:6px}#tab-meduakis .dm-lig-row>strong{font-size:11px}#tab-meduakis .dm-lig-winner strong{font-size:10px}#tab-meduakis .dm-lig-podium-large{min-height:284px}}
+/* Keep the current student's position visible even in long leaderboards. */
+#tab-meduakis[data-friends-view="lig"] .ma-gir{animation:none;transform:none}
+#tab-meduakis .dm-lig:has(.dm-lig-my-place){padding-bottom:88px}
+#tab-meduakis .dm-lig-my-place{position:fixed;bottom:calc(var(--fr-nav-space,100px) - 12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:min(694px,calc(100% - 26px));z-index:5;margin:0;padding:5px 0;background:linear-gradient(transparent,#fdfcfb 20%)}

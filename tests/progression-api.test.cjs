@@ -101,3 +101,13 @@ test('level one can browse the friends feed while social actions remain gated',a
 
 test('server placement opens only study content through the tested level, including low-XP B2 learners',async()=>{for(const band of ['A1','A2','B1','B2']){const {api,ctx}=fixture(1);ctx.placement={version:'starting-point-20261018-v1',total:24,level:band,completedAt:new Date().toISOString()};const before=JSON.stringify(ctx.yo),state=(await api.handle('seviyeDurumu',{},new URLSearchParams(),student)).body;for(const code of ['A1','A2','B1','B2']){const expected=['A1','A2','B1','B2'].indexOf(code)<=['A1','A2','B1','B2'].indexOf(band);assert.equal(state.studyAccess[code],expected);const r=await api.guard('dersKonuDetayGetir',{seviye:code,kategori:'Grammar',konu:'Topic'},new URLSearchParams(),student);assert.equal(r===null,expected,band+' grants '+code);}assert.equal((await api.guard('asmacaLiderlikKaydet',{},new URLSearchParams(),student)).status,403,'Study placement must not unlock games');assert.equal(JSON.stringify(ctx.yo),before,'No XP, gold or completion grants');ctx.noTopic=true;assert.equal((await api.guard('dersKonuDetayGetir',{seviye:band,kategori:'Grammar',konu:'Missing'},new URLSearchParams(),student)).status,403);}});
 test('forged body and legacy self-reported levels never grant study access',async()=>{const {api,ctx}=fixture(1);ctx.yo.seviye={sonuc:'B2'};assert.equal((await api.guard('dersKonuDetayGetir',{seviye:'B2',level:'B2',placement:{level:'B2'},kategori:'Grammar',konu:'Topic'},new URLSearchParams(),student)).status,403);for(const record of [{level:'B2'},{version:'old',total:24,level:'B2',completedAt:new Date().toISOString()},{version:'starting-point-20261018-v1',total:12,level:'B2',completedAt:new Date().toISOString()}]){ctx.placement=record;assert.equal((await api.handle('seviyeDurumu',{},new URLSearchParams(),student)).body.studyAccess.B2,false);}});
+
+test('Efsaneler endpoint denies level 14 and forged level fields before reading ranking',async()=>{
+ const {api}=fixture(14);
+ for(const body of [{kapsam:'alltime'},{kapsam:'alltime',level:40,totalXp:999999}]){
+  const result=await api.handle('seviyeLigListesi',body,new URLSearchParams(),student);
+  assert.equal(result.status,403);assert.match(result.body.mesaj,/15/);
+ }
+ assert.equal((await api.handle('seviyeLigListesi',{kapsam:'alltime'},new URLSearchParams(),{})).status,401);
+ assert.equal((await api.handle('seviyeLigListesi',{kapsam:'unknown'},new URLSearchParams(),student)).status,400);
+});
