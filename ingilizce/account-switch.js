@@ -4,7 +4,7 @@
  let dialog=null,previousFocus=null,marker=null,form=null,attempt=null,formControl=null,managing=false;
  function keydown(event){
   if(!dialog)return;
-  if(event.key==='Escape'){event.preventDefault();close();return;}
+  if(event.key==='Escape'){event.preventDefault();back();return;}
   if(event.key!=='Tab')return;
   const nodes=[...dialog.querySelectorAll('button:not([disabled]),input:not([disabled]),a[href]')].filter(el=>el.getClientRects().length);
   if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);
@@ -16,6 +16,7 @@
   if($('sifre'))$('sifre').value='';
   if($('mesaj'))$('mesaj').textContent='';
  }
+ function back(){if($('dmSwitchBack')&&!$('dmSwitchBack').hidden){attempt?.abort();attempt=null;accounts();message('');return;}close();}
  function close(){
   attempt?.abort();attempt=null;formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
   $('dmSwitchGoogle')?.remove();
@@ -23,7 +24,7 @@
   $('dmSwitchGoogle')?.remove();
   restoreForm();window.dmAccountSwitchPending=false;
   document.removeEventListener('keydown',keydown);
-  dialog?.parentElement.remove();dialog=null;
+  const closed=dialog?.parentElement;closed?.remove();dialog=null;window.dmViewHistory?.leave(closed);
   document.body.classList.remove('dm-switch-active');
   if(previousFocus?.isConnected)previousFocus.focus();previousFocus=null;
  }
@@ -81,13 +82,13 @@
  }
  function open(){
   if(dialog)return;form=$('loginForm');if(!form||!window.dmSavedSessions)return;
-  previousFocus=document.activeElement;managing=false;
+  const returnView=window.dmViewHistory?.capture();previousFocus=document.activeElement;managing=false;
   const shade=document.createElement('div');shade.id='dmSwitchBackdrop';
   shade.innerHTML='<section id="dmSwitchDialog" role="dialog" aria-modal="true" aria-labelledby="dmSwitchTitle"><header class="dm-switch-header"><span class="dm-switch-emblem" aria-hidden="true">⇄</span><button type="button" id="dmSwitchClose" aria-label="Pencereyi kapat">×</button><h2 id="dmSwitchTitle">Hesap değiştir</h2><p>Devam etmek istediğin hesabı seç.</p></header><div class="dm-switch-content"><div class="dm-switch-listbar"><button type="button" id="dmSwitchBack" hidden>‹ Hesaplara dön</button><button type="button" id="dmSwitchManage">Düzenle</button></div><div id="dmSwitchAccounts"></div><div id="dmSwitchForm" hidden></div><p id="dmSwitchStatus" role="status" aria-live="polite"></p><button type="button" id="dmSwitchAdd"><span aria-hidden="true">＋</span> Başka hesap ekle</button></div><footer><button type="button" id="dmSwitchCancel">Vazgeç</button><small>Yalnızca bu cihazdaki açık hesaplar</small></footer></section>';
   document.body.append(shade);dialog=$('dmSwitchDialog');document.body.classList.add('dm-switch-active');
-  $('dmSwitchClose').onclick=close;$('dmSwitchCancel').onclick=close;$('dmSwitchBack').onclick=()=>{attempt?.abort();attempt=null;accounts();message('');};
+  window.dmViewHistory?.track(shade,{parent:returnView,close,back});$('dmSwitchClose').onclick=back;$('dmSwitchCancel').onclick=back;$('dmSwitchBack').onclick=()=>{attempt?.abort();attempt=null;accounts();message('');};
   $('dmSwitchAdd').onclick=()=>addAccount();$('dmSwitchManage').onclick=()=>{if(attempt)return;managing=!managing;accounts();};
-  shade.onclick=e=>{if(e.target===shade)close();};
+  shade.onclick=e=>{if(e.target===shade)back();};
   document.addEventListener('keydown',keydown);accounts();$('dmSwitchClose').focus();
  }
  function install(){if($('dmAccountSwitchButton'))return;const exit=document.querySelector('.header-btn.btn-cikis');if(!exit)return;const button=document.createElement('button');button.id='dmAccountSwitchButton';button.type='button';button.className=exit.className;button.textContent='⇄ Hesap Değiştir';button.onclick=open;exit.before(button);}
