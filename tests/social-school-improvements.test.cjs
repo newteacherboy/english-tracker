@@ -94,7 +94,7 @@ test('school launch and quiz styles use separate day/night palettes and changing
 
 test('school homepage preserves the existing three-stop map and displays goal/tasks',()=>{
  const html=routeSource;
- assert.match(html,/function pathMarkup\(steps,current,learn\)/);
+ assert.match(html,/function pathMarkup\(steps,current,learn,info\)/);
  assert.match(html,/rt-reward-route/);
  assert.match(html,/function weekly\(/);
  assert.match(html,/function tasks\(/);
