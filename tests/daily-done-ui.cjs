@@ -5,7 +5,7 @@ const inside=(inner,outer)=>inner&&outer&&inner.y>=outer.y-0.5&&inner.y+inner.he
 (async()=>{
  const browser=await chromium.launch({args:['--no-sandbox']});
  for(const size of [{width:375,height:667},{width:390,height:844},{width:1024,height:768}]){
-  const page=await browser.newPage({viewport:size});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const page=await browser.newPage({viewport:size,reducedMotion:'reduce'});const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',route=>{const u=new URL(route.request().url());const file=path.join(process.cwd(),'ingilizce',u.pathname.slice(1));if(fs.existsSync(file)&&fs.statSync(file).isFile())return route.fulfill({path:file});
    return route.fulfill({contentType:'text/html',body:'<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="/learning-companion.css"><link rel="stylesheet" href="/parkur-purple.css"><body><div id="tab-dunya"><section class="dm-goal-carousel"><div class="dm-goal-pages" id="pages"></div></section></div></body>'});});
   await page.goto('https://papi.test/');
