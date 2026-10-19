@@ -28,10 +28,33 @@ function askForData(){
  setTimeout(()=>{if(!(owner===who()&&value))window.dmLearningCompanion?.refresh?.()?.catch?.(()=>{});},0);
 }
 
+/* Visual-only refresh: mission state, events and reward handling are unchanged. */
+function missionVisualStyle(){
+ if(document.getElementById('dm-mission-visual-v2'))return;
+ const s=document.createElement('style');s.id='dm-mission-visual-v2';
+ s.textContent=`
+.rt-missions.rt-done.dm-mission-v2{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;gap:9px!important;padding:10px 14px!important;overflow:hidden!important;background:linear-gradient(155deg,#fff 0%,#fbfaff 100%)!important;border-radius:17px!important}
+.dm-mission-v2 .rt-done-summary{width:100%!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin:0!important;padding:0!important;position:relative!important;isolation:isolate!important}
+.dm-mission-v2 .rt-done-summary:before{content:"";position:absolute;z-index:-1;left:15%;right:15%;top:23px;height:5px;background:#e4ddfb;border-radius:9px}
+.dm-mission-v2 .rt-done-summary span{min-width:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:3px!important;padding:0!important;background:transparent!important;border:0!important;color:#31206c!important;font:800 11px/1.2 system-ui,sans-serif!important;text-align:center!important;box-shadow:none!important}
+.dm-mission-v2 .dm-task-medallion{display:grid;place-items:center;position:relative;width:48px;height:48px;border-radius:50%;font-size:24px;box-shadow:0 3px 8px #352a6430,inset 0 2px 4px #ffffff70;border:3px solid #fff;color:#fff}
+.dm-mission-v2 .dm-task-medallion:after{content:"✓";position:absolute;right:-5px;top:-5px;width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:#22c66d;color:#fff;font:bold 12px system-ui;box-shadow:0 1px 4px #195d3a50;border:2px solid white}
+.dm-mission-v2 .dm-medal-0{background:linear-gradient(145deg,#ffdc68,#f8a81c)}
+.dm-mission-v2 .dm-medal-1{background:linear-gradient(145deg,#9b6afa,#6929db)}
+.dm-mission-v2 .dm-medal-2{background:linear-gradient(145deg,#55d8f9,#158edb)}
+.dm-mission-v2 .dm-task-caption{display:block!important;max-width:100%;padding:3px 8px;border-radius:15px;background:#f0ebff;color:#30206a;white-space:nowrap}
+.dm-mission-v2 .rt-claim-done{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:2px!important;min-height:40px!important;margin:0!important;padding:5px 8px!important;border:0!important;border-radius:13px!important;background:linear-gradient(110deg,#159e91,#0e9a70)!important;color:white!important;text-align:center!important;font:800 13px/1.2 system-ui,sans-serif!important;box-shadow:none!important}
+.dm-mission-v2 .dm-claim-title{font-size:13px;font-weight:900}.dm-mission-v2 .dm-claim-sub{font-size:11px;font-weight:600;color:#eafff3}
+.dm-mission-v2 .rt-claim{box-sizing:border-box!important;min-height:43px!important;margin:0!important;border-radius:13px!important;background:linear-gradient(110deg,#159e91,#0d9e70)!important;color:#fff!important;font-weight:900!important;box-shadow:0 3px 7px #159e9130!important}
+.dm-mission-v2 .rt-claim small{color:#eafff3!important}
+@media(max-width:380px){.rt-missions.rt-done.dm-mission-v2{gap:6px!important;padding:8px!important}.dm-mission-v2 .dm-task-medallion{width:40px;height:40px;font-size:20px}.dm-mission-v2 .rt-done-summary:before{top:19px}.dm-mission-v2 .dm-task-caption{font-size:10px;padding:3px 5px}}
+`;
+ document.head.append(s);
+}
 function claimRow(period){
  const p=PERIOD[period];
  return claimed(period)
-  ?'<p class="rt-claim-done" role="status">'+p.done+'</p>'
+  ?'<p class="rt-claim-done" role="status"><span class="dm-claim-title">✓ '+(period==='daily'?'Ödül alındı':'Haftalık ödül alındı')+'</span><span class="dm-claim-sub">'+(period==='daily'?'Yarın yeni görevler seni bekliyor':'Pazartesi yeni görevler seni bekliyor')+'</span></p>'
   :'<button type="button" class="rt-claim" data-rt="claim-mission" data-period="'+period+'">🎁 Ödülünü Al <small>+'+p.gold+' 🪙 +'+p.xp+' XP</small></button>';
 }
 
@@ -41,7 +64,7 @@ window.dmRouteMissions={
  markup(period){
   const data=owner===who()?value?.[period]:null;if(!data)askForData();const p=PERIOD[period];
   // All three done: a compact card (fits the fixed-height carousel) with the reward button or the claimed note.
-  if(p&&done(period))return '<section class="'+p.cls+' rt-card rt-missions rt-done" aria-label="'+p.label+' tamamlandı"><div class="rt-done-summary">'+p.chips.map(x=>'<span>✅ '+x+'</span>').join('')+'</div>'+claimRow(period)+'</section>';
+  if(p&&done(period)){missionVisualStyle();return '<section class="'+p.cls+' rt-card rt-missions rt-done dm-mission-v2" aria-label="'+p.label+' tamamlandı"><div class="rt-done-summary">'+p.chips.map((x,i)=>'<span><span class="dm-task-medallion dm-medal-'+i+'" aria-hidden="true">'+(i===0?'📖':i===1?'🎮':'🔁')+'</span><span class="dm-task-caption">'+x+'</span></span>').join('')+'</div>'+claimRow(period)+'</section>';}
   return '<section class="'+(period==='daily'?'rt-tasks':'rt-week')+' rt-card rt-missions" aria-label="'+(period==='daily'?'Günün 3 Görevi':'Haftanın 3 Görevi')+'"><div class="rt-task-list">'+goals[period].map(([event,label,target,icon])=>{const count=data?Math.min(target,Math.max(0,Number(data[event])||0)):null;return '<button type="button" data-rt="task" data-event="'+event+'" aria-label="'+label+' · '+(count===null?'yükleniyor':count+'/'+target)+'"><img src="route-assets/'+icon+'.svg" alt=""><span class="rt-mission-copy"><b>'+label+'</b><progress max="'+target+'" value="'+(count||0)+'" aria-label="'+label+' ilerlemesi"></progress></span><span class="rt-mission-count">'+(count===null?'…':count+'/'+target)+'</span><span aria-hidden="true">›</span></button>';}).join('')+'</div></section>';
  }
 };
