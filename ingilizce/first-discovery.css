@@ -136,3 +136,4 @@ body.dm-profile-open #tab-profil #dmForestActions .header-btn{font-size:clamp(10
 #dmDiscovery label.fd-field{background:#fffdf8;border:1px solid #dce8df;border-radius:15px;padding:11px 13px;box-shadow:0 3px 12px #204d450b}
 #dmDiscovery .fd-content>.fd-consent{font-size:14px;align-items:flex-start}#dmDiscovery .fd-consent input{margin:2px 0 0}
 #dmDiscovery .fd-content>.fd-note{color:#2b4d5d;font-weight:550}#dmDiscovery .fd-divider{background:#fffdf8;border-radius:10px;padding:9px}#dmDiscovery .fd-content>.fd-password-rules{background:#edf7fc}
+#dmDiscovery .fd-consent-optional small{display:block;color:#5b7083;margin-top:2px}

@@ -1234,6 +1234,8 @@ async function handle(req: Request) {
       const adYaz = await supabase.from("students").update({ full_name: adSoyad, school: temizMetin(body.okul || "",120).replace(/\s+/g,' ').trim() || null }).eq("id", createdId);
       if (adYaz.error) console.error("googleKayit full_name", adYaz.error);
       await saveLearnerProfile(supabase,createdId,learnerProfile);
+      /* Optional, unticked registration checkbox (never a condition of registration): weekly progress / Papi news e-mail. */
+      if(body.ilerlemeMailOnay===true){try{const e=String(email||"").trim().toLowerCase();if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){const at=new Date().toISOString();const r=await supabase.from("extra_data").upsert({student_id:createdId,key_name:"progress_mail_consent_v1",value:{at,source:op === "appleKayit" ? "registration_checkbox_apple" : "registration_checkbox_google",email:e},updated_at:at},{onConflict:"student_id,key_name"});if(r?.error)console.error("progress mail consent",r.error.message);}}catch(err){console.error("progress mail consent",err);}}
       await yeniOgrenciYoneticiBildirimi({id:createdId,username},"google");
       try { await onboarding.welcome({id:createdId,username,email}); }
       catch (_) { console.error("Google welcome verification could not be queued"); }
@@ -2145,6 +2147,8 @@ async function handle(req: Request) {
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
     await saveLearnerProfile(supabase,saved.data.id,learnerProfile);
+    /* Optional, unticked registration checkbox (never a condition of registration): weekly progress / Papi news e-mail. */
+    if(body.ilerlemeMailOnay===true){try{const e=String(saved.data.email||"").trim().toLowerCase();if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){const at=new Date().toISOString();const r=await supabase.from("extra_data").upsert({student_id:saved.data.id,key_name:"progress_mail_consent_v1",value:{at,source:"registration_checkbox",email:e},updated_at:at},{onConflict:"student_id,key_name"});if(r?.error)console.error("progress mail consent",r.error.message);}}catch(err){console.error("progress mail consent",err);}}
     await yeniOgrenciYoneticiBildirimi(saved.data,"normal");
     let mailQueued=true;try { await onboarding.welcome(saved.data); }catch(_){mailQueued=false;}
     const token=await issueSession("student",saved.data.id);
