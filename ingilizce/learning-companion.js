@@ -133,7 +133,7 @@ function storyGroups(){
  const labels=['Başlangıç','Temel','Orta','Orta-Üstü'];
  return '<div class="lc-story-groups">'+['A1','A2','B1','B2'].map((level,i)=>{
   const stories=bank.filter(s=>s.level===level);
-  return '<details class="lc-story-level" data-level="'+level+'"><summary><b>'+level+'</b><strong>'+labels[i]+'</strong><small>'+stories.length+' içerik</small><span class="lc-chevron" aria-hidden="true">⌄</span></summary><div class="lc-story-grid">'+stories.map(s=>'<button type="button" data-story="'+s.id+'"><span class="lc-story-icon" aria-hidden="true">'+s.icon+'</span><span><b>'+esc(s.title)+'</b><small>'+esc(s.scene)+'</small></span><span aria-hidden="true">›</span></button>').join('')+'</div></details>';
+  return '<details class="lc-story-level" data-level="'+level+'"><summary><b>'+level+'</b><strong>'+labels[i]+'</strong><small>'+stories.length+' içerik</small><span class="lc-chevron" aria-hidden="true">⌄</span></summary><div class="lc-story-grid">'+stories.map(s=>'<button type="button" data-story="'+s.id+'" aria-label="'+esc(s.title)+' · '+(s.type==='story'?'Hikâye':'Diyalog')+'"><span class="lc-story-icon" aria-hidden="true">'+s.icon+'</span><span><b>'+esc(s.title)+'</b><small>'+esc(s.scene)+'</small></span><span aria-hidden="true">›</span></button>').join('')+'</div></details>';
  }).join('')+'</div>';
 }
 function bindStories(root,close){
