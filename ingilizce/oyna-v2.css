@@ -87,3 +87,10 @@
 .rt-path>.rt-stones{margin-top:0}
 @media(max-width:400px){.rt-path>.rt-banner{width:calc(100% - 130px)}.rt-path>.rt-map-switch{max-width:130px;font-size:11px}.rt-path>.rt-banner .rt-banner-papi{width:35px}.rt-path>.rt-banner .rt-all-link{font-size:20px}}
 @media(max-width:340px){.rt-path>.rt-banner{width:calc(100% - 110px)}.rt-path>.rt-map-switch{max-width:110px}.rt-path>.rt-banner>img:first-child{width:28px}}
+
+
+/* Keep map nodes outside the overlay navigation hit areas at small viewport sizes. */
+.rt-path{min-height:390px!important;padding-top:154px!important;justify-content:flex-start}
+.rt-path>.rt-stones{position:relative;z-index:2;margin-top:28px;min-height:105px}
+.rt-path>.rt-continue{position:relative;z-index:2;margin-top:15px}
+.rt-path>.rt-trail{top:140px;height:calc(100% - 140px)}
