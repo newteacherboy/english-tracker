@@ -1,5 +1,7 @@
 /* Scoped to first discovery; member tabs keep their existing styles. */
 html.dm-first-entry #login-container,html.dm-first-entry .portal-back-btn{visibility:hidden!important}
+/* The footer sits under the opaque first-entry overlay; hiding it there avoids invisible layout shifts (CLS). */
+body.dm-discovery-open #panel-alani>.site-footer{visibility:hidden}
 body.dm-discovery-open{overflow:hidden!important}
 #dmDiscovery{position:fixed;inset:0;z-index:2147483645;display:grid;place-items:center;background:#e3f2ed;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#102d52;isolation:isolate}
 #dmDiscovery *{box-sizing:border-box;font-family:inherit;letter-spacing:normal}
