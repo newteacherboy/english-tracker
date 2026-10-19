@@ -53,3 +53,6 @@ body #tab-dunya .dm-unified-wallet .dm-pw-art:not(.dm-pw-papi){width:24px;height
 .rt-done-summary{display:flex;flex-wrap:wrap;gap:4px 8px;justify-content:center;font-size:12px;font-weight:800;color:#3f2a66}
 .rt-done-summary span{background:#f1ebff;border-radius:999px;padding:4px 9px}
 .rt-missions.rt-done .rt-claim,.rt-missions.rt-done .rt-claim-done{margin:0}
+/* Görevler tamamlanınca kart içeriği kadar uzasın; sabit yükseklik ödül düğmesini taşırıyordu. */
+#tab-dunya .dm-goal-pages:has(>.rt-missions.rt-done),.dm-goal-pages:has(>.rt-missions.rt-done){height:auto!important;min-height:119px}
+#tab-dunya .dm-goal-pages>.rt-missions.rt-done,.dm-goal-pages>.rt-missions.rt-done{height:auto!important;min-height:119px}

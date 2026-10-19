@@ -101,6 +101,74 @@
   setInterval(() => { if (!document.hidden) durum(); }, 600000);   /* 10 dakikada bir */
   document.addEventListener('visibilitychange', () => { if (document.hidden && bekleyen > 0) gonder(); });
 
+  /* ---------- Çevrimdışı ödül kuyruğu ----------
+     Net yokken kazanılan ödüller cihazda saklanır, bağlantı gelince sırayla sunucuya gönderilir.
+     Güvenli, çünkü sunucu bu işlemleri anahtara göre tekilleştirir ve günlük tavanla sınırlar. */
+  const KUYRUK_ANAHTAR = 'dm_odul_kuyrugu';
+  const KUYRUK_MAX = 200, KUYRUK_OMUR = 7 * 86400000;
+  let bosaltiliyor = false, bosaltTimer = null;
+
+  function kuyrukOku() {
+    try {
+      const h = JSON.parse(localStorage.getItem(KUYRUK_ANAHTAR) || '[]');
+      if (!Array.isArray(h)) return [];
+      const simdi = Date.now();
+      return h.filter(k => k && k.is && typeof k.at === 'number' && simdi - k.at < KUYRUK_OMUR).slice(-KUYRUK_MAX);
+    } catch (e) { return []; }
+  }
+  function kuyrukYaz(h) {
+    try { localStorage.setItem(KUYRUK_ANAHTAR, JSON.stringify(h.slice(-KUYRUK_MAX))); } catch (e) {}
+  }
+  function kuyrukSayisi(sahip) {
+    const ad = String(sahip || ogrenci()).toLowerCase();
+    return kuyrukOku().filter(k => k.sahip === ad).length;
+  }
+  function kuyrugaEkle(is, veri) {
+    const ad = ogrenci().toLowerCase();
+    if (!ad) return null;
+    const h = kuyrukOku();
+    /* Anahtarlı ödül zaten kuyruktaysa ikinci kez eklenmez. */
+    const anahtar = veri && veri.anahtar ? String(veri.anahtar) : '';
+    if (anahtar && h.some(k => k.sahip === ad && k.is === is && k.veri && k.veri.anahtar === anahtar && k.veri.neden === (veri.neden || ''))) return null;
+    const kayit = { id: 'k' + Date.now() + Math.random().toString(36).slice(2, 7), sahip: ad, is, veri: veri || {}, at: Date.now() };
+    h.push(kayit); kuyrukYaz(h);
+    try { document.dispatchEvent(new CustomEvent('dm:odul-kuyruk', { detail: { bekleyen: kuyrukSayisi(ad) } })); } catch (e) {}
+    return kayit;
+  }
+  function kuyruktanSil(id) { kuyrukYaz(kuyrukOku().filter(k => k.id !== id)); }
+
+  async function kuyrukBosalt() {
+    if (bosaltiliyor || !hazir()) return 0;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return 0;
+    const ad = ogrenci().toLowerCase();
+    let gonderilen = 0;
+    bosaltiliyor = true;
+    try {
+      for (const kayit of kuyrukOku().filter(k => k.sahip === ad)) {
+        if (ogrenci().toLowerCase() !== ad) break;              /* hesap değiştiyse dur */
+        const d = await istek(kayit.is, kayit.veri);
+        if (d && d.ag) break;                                   /* hâlâ net yok: sırayı koru, sonra dene */
+        kuyruktanSil(kayit.id);                                 /* sunucu kabul ya da reddetti: iki durumda da tekrar denenmez */
+        gonderilen++;
+        if (d && d.ok && d.yo && ogrenci().toLowerCase() === ad) window.dmApplyRewardState?.(d.yo, ogrenci());
+        else if (d && d.ekonomi) uygula(d.ekonomi);
+      }
+    } finally { bosaltiliyor = false; }
+    if (gonderilen) {
+      try { document.dispatchEvent(new CustomEvent('dm:odul-kuyruk', { detail: { bekleyen: kuyrukSayisi(ad), gonderilen } })); } catch (e) {}
+    }
+    return gonderilen;
+  }
+  function bosaltPlanla(gecikme) {
+    if (bosaltTimer) return;
+    bosaltTimer = setTimeout(() => { bosaltTimer = null; kuyrukBosalt(); }, gecikme || 1500);
+  }
+  if (typeof window !== 'undefined' && window.addEventListener) {
+    window.addEventListener('online', () => bosaltPlanla(800));
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) bosaltPlanla(1200); });
+    setInterval(() => { if (!document.hidden && kuyrukSayisi()) bosaltPlanla(0); }, 60000);
+  }
+
   /* Uygulama içi küçük ödüller (görev, etkinlik, video, düello…) sunucuya yazılır; tutarlar ve günlük sınırlar sunucuda.
      Sunucunun döndürdüğü cüzdan (altın, XP) cihazdaki anlık değeri düzeltir. */
   let odulZinciri = Promise.resolve();
@@ -108,14 +176,22 @@
     if (!hazir()) return Promise.resolve(null);
     const sahip = ogrenci();
     odulZinciri = odulZinciri.then(async () => {
+      const veri = { neden: neden || 'genel', anahtar: anahtar || '', xp: Number(xp) || 0, altin: Number(altin) || 0 };
       try {
-        const d = await islem('odulTalep', { neden: neden || 'genel', anahtar: anahtar || '', xp: Number(xp) || 0, altin: Number(altin) || 0 });
+        const d = await islem('odulTalep', veri);
+        if (d && d.ag) { kuyrugaEkle('odulTalep', veri); return { ok: true, kuyrukta: true }; }
         if (d && d.ok && d.yo && sahip === ogrenci()) window.dmApplyRewardState?.(d.yo, sahip);
         return d;
-      } catch (e) { return null; }
+      } catch (e) { kuyrugaEkle('odulTalep', veri); return { ok: true, kuyrukta: true }; }
     });
     return odulZinciri;
   }
   window.dmOdulYaz = odulYaz;
-  window.dmEkonomi = { kazan, islem, uygula, durum, odulYaz };
+  /* Ödül işlemini çevrimdışıysa kuyruğa alır (görev ödülleri bunu kullanır). */
+  async function odulIslem(is, veri) {
+    const d = await islem(is, veri);
+    if (d && d.ag) { kuyrugaEkle(is, veri || {}); return { ok: true, kuyrukta: true }; }
+    return d;
+  }
+  window.dmEkonomi = { kazan, islem, uygula, durum, odulYaz, odulIslem, kuyrukBosalt, kuyrukSayisi };
 })();
