@@ -12681,7 +12681,7 @@ const YO_SOHBET = [
         }
 
         /* ========== 1) XP, GÜNLÜK HEDEF, ALTIN ========== */
-        function yoXpEkle(xp, altin) {
+        function yoXpEkle(xp, altin, neden, anahtar) {
           if (!yoHazirMi()) return;
           DijiProgressRules.migrate(yo);
           xp = DijiProgressRules.positive(xp); altin = DijiProgressRules.positive(altin);
@@ -12691,7 +12691,8 @@ const YO_SOHBET = [
           yo.xpGun.xp += xp; yo.lig.xp += xp;
           yo.log[b] = (yo.log[b] || 0) + xp;
           yo.altin += altin;
-          if (altin > 0) window.dmEkonomi?.kazan(altin);   /* [v4.8] altın sunucuda */
+          /* Ödül sunucuya da yazılır; ekrandaki anlık değer sunucunun yanıtıyla düzeltilir. */
+          if (xp > 0 || altin > 0) window.dmOdulYaz?.(xp, altin, neden, anahtar);
           if (yo.xpGun.xp >= yo.hedef && yo.hedefOdul !== b) {
             yo.hedefOdul = b; yo.altin += 5; window.dmEkonomi?.kazan(5);
             /* Daily target completion toast retired; reward is unchanged. */
@@ -13255,7 +13256,7 @@ function sohbetBitir() {
   let eski = ysYildiz(o.s.id), ilkKezGecti = gecti && eski < 1;
   if (yo) { yo.sohbet = yo.sohbet || {}; if (yildiz > eski) yo.sohbet[o.s.id] = yildiz; yoKaydet(); }
   let xp = o.d * 10;
-  if (o.d > 0) yoXpEkle(xp, o.d);
+  if (o.d > 0) yoXpEkle(xp, o.d, 'sohbet', o.s.id);
   let acilis = null;
   if (ilkKezGecti && o.idx + 1 < YO_SOHBET.length) {
     let sonraki = YO_SOHBET[o.idx + 1];
@@ -13409,7 +13410,7 @@ function sohbetMikDur() {
             if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return;
             if (a[0] && a[0].yildiz && typeof ocOdulVer === 'function') { ocOdulVer(a[0]); return; }
             let d = Number(a[0] && a[0].dogru) || 0;
-            if (d > 0) yoXpEkle(d * 10, d);
+            if (d > 0) yoXpEkle(d * 10, d, 'oyun_sonu');
           });
           // Yanlış yapılan kelimeleri "Zor Kelimelerim"e ekle
           yoSar('kyCevapVer', i => { let s = kySorularListesi[kySoruIndex]; if (!s || document.getElementById('kySik0').disabled) return null; return { s, y: i !== s._dogruIndex }; }, c => { if (c && c.y) zkEkle(c.s); });
@@ -15592,7 +15593,7 @@ function avatarSVG(s, stil, px, cins) {
       }
       yoKaydet();
       if (!enerji && !xp) return;
-      if (xp || altin) yoXpEkle(xp, altin);
+      if (xp || altin) yoXpEkle(xp, altin, 'lig', hafta + ':' + ben.sira + ':' + LIG_DEGER[ben.kod]);
       enerjiHediye(enerji);
       let L = MA_LIGLER[ben.kod];
       odulGoster(ligAtladi
@@ -15639,7 +15640,7 @@ function avatarSVG(s, stil, px, cins) {
     let e = (typeof tumEtkinliklerCache !== 'undefined' ? tumEtkinliklerCache : []).find(x => x.satirIndex === satir);
     let ilk = !e || !e.yapildiMi;
     let r = orgEt.apply(this, arguments);
-    if (ilk && satir && yoVar()) { yoXpEkle(10, 2); ODUL({ ikon: '📝', baslik: 'Etkinlik tamamlandı!', alt: 'Emeğinin karşılığı hesabında.', xp: 10, altin: 2 }); }
+    if (ilk && satir && yoVar()) { yoXpEkle(10, 2, 'etkinlik', String(satir)); ODUL({ ikon: '📝', baslik: 'Etkinlik tamamlandı!', alt: 'Emeğinin karşılığı hesabında.', xp: 10, altin: 2 }); }
     return r;
   };
   /* Video: en az 60 sn izlenirse +10 XP +2 altın (her video bir kez) */
@@ -15652,7 +15653,7 @@ function avatarSVG(s, stil, px, cins) {
       yo.videoOdul = yo.videoOdul || [];
       if (!yo.videoOdul.includes(videoAcilis.k)) {
         yo.videoOdul.push(videoAcilis.k); if (yo.videoOdul.length > 300) yo.videoOdul.shift();
-        yoXpEkle(10, 2); ODUL({ ikon: '🎬', baslik: 'Video tamamlandı!', xp: 10, altin: 2 });
+        yoXpEkle(10, 2, 'video', String(videoAcilis.k)); ODUL({ ikon: '🎬', baslik: 'Video tamamlandı!', xp: 10, altin: 2 });
       }
     }
     videoAcilis = null;
@@ -15667,7 +15668,7 @@ function avatarSVG(s, stil, px, cins) {
       yo.svtBonus = yoBugun();
       let o = Math.max(0, Math.min(1, dogru / toplam));
       let en = Math.round(3 * o), xp = Math.round(50 * o), al = Math.round(5 * o);
-      if (xp || al) yoXpEkle(xp, al);
+      if (xp || al) yoXpEkle(xp, al, 'seviye_bonus', yoBugun());
       if (en && typeof enerjiHediye === 'function') enerjiHediye(en);
       if (en || xp) ODUL({ ikon: '📋', baslik: 'Seviye tespit bonusu!', alt: `${toplam} sorudan ${dogru} doğru yaptın.`, enerji: en, xp, altin: al });
     }
@@ -15770,7 +15771,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
       let p = document.createElement('div'); p.className = 'kb-papagan'; p.innerText = '🦜'; document.body.appendChild(p); setTimeout(() => p.remove(), 2300);
     }
     let y = document.createElement('div'); y.className = 'kb-yazi'; y.innerText = `🔥 ${kombo} KOMBO!` + (odullu ? ' +3 🪙' : ''); document.body.appendChild(y); setTimeout(() => y.remove(), 2100);
-        if (odullu) { yo.komboSay++; yoXpEkle(0, 5); }
+        if (odullu) { yo.komboSay++; yoXpEkle(0, 5, 'kombo'); }
   }
   new MutationObserver(ms => {
     for (let m of ms) {
@@ -18933,14 +18934,14 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
       yo.duelloOdul.push(d.id);
       let rakip = kucuk(d.gonderen) === kucuk(aktifOgrenciAdi) ? d.alici : d.gonderen;
       if (kucuk(d.kazanan) === kucuk(aktifOgrenciAdi)) {
-        if (typeof yoXpEkle === 'function') yoXpEkle(20, 0);
+        if (typeof yoXpEkle === 'function') yoXpEkle(20, 0, 'duello', String(d.id));
         if (typeof enerjiHediye === 'function') enerjiHediye(2);
         if (typeof odulGoster === 'function') odulGoster({ ikon: '⚔️', baslik: 'Düelloyu kazandın!', alt: `${rakip} ile ${DL_OYUNLAR[d.oyun] || d.oyun} düellosu: ${d.benPuan} – ${d.rakipPuan}`, enerji: 2, xp: 30 });
       } else if (d.kazanan === 'berabere') {
-        if (typeof yoXpEkle === 'function') yoXpEkle(10, 0);
+        if (typeof yoXpEkle === 'function') yoXpEkle(10, 0, 'duello', String(d.id));
         if (typeof odulGoster === 'function') odulGoster({ ikon: '🤝', baslik: 'Düello berabere!', alt: `${rakip} ile eşit puan aldınız.`, xp: 10 });
       } else {
-        if (typeof yoXpEkle === 'function') yoXpEkle(5, 0);
+        if (typeof yoXpEkle === 'function') yoXpEkle(5, 0, 'duello', String(d.id));
         if (typeof odulGoster === 'function') odulGoster({ ikon: '🛡️', baslik: 'Düello bitti', alt: `${rakip} bu sefer kazandı (${d.rakipPuan} – ${d.benPuan}). Katıldığın için +5 XP, rövanş iste!`, xp: 5 });
       }
     });
@@ -20509,7 +20510,7 @@ window.ocEnerjiHarca = async function (n) {
     let xp = ilk ? (bilmiyordu ? 100 : 80) : 30, al = ilk ? (bilmiyordu ? 30 : 25) : 8, en = 0;
     if (ilk) { yo.dcOdul.push(konu); /* First-clear ledger is permanent. */ }
     else { Object.keys(yo.dcTekrar).forEach(x => { if (yo.dcTekrar[x] !== bugunK) delete yo.dcTekrar[x]; }); yo.dcTekrar[konu] = bugunK; }
-    yoXpEkle(xp, al);
+    yoXpEkle(xp, al, 'ders_tekrar', String(konu));
     /* Energy is awarded by the validated lesson result on the server. */
     return { ilk, bilmiyordu, xp, al, en };
   };
@@ -22060,7 +22061,7 @@ window.ocEnerjiHarca = async function (n) {
 
 
     if (typeof yoXpEkle === 'function') {
-      yoXpEkle(10, 5);
+      yoXpEkle(10, 5, 'sana_ozel_gunluk', yoBugun());
     }
 
 
@@ -25500,7 +25501,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       if (kural) {
         bekleyen.forEach(k => { k.iptal = true; clearTimeout(k.zaman); }); bekleyen = [];
         let ekAltin = Number(o.enerji) * kural[1];
-        if (typeof yoXpEkle === 'function' && ekAltin > 0) yoXpEkle(0, ekAltin);
+        if (typeof yoXpEkle === 'function' && ekAltin > 0) yoXpEkle(0, ekAltin, 'enerji_altin');
         o = Object.assign({}, o, { altin: (Number(o.altin) || 0) + ekAltin }); delete o.enerji;
       }
     } catch (e) {}
@@ -26518,7 +26519,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 @media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
 @media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
-<link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261019-step-back-1"></script><script defer src="kisisel-bilgiler.js?v=20261019-step-back-1"></script><script defer src="student-management.js?v=20261018-delete-2"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=2"></script>
+<link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261019-step-back-1"></script><script defer src="kisisel-bilgiler.js?v=20261019-step-back-1"></script><script defer src="student-management.js?v=20261018-delete-2"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=20261019-server-rewards-1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261018-readable-study-1"></script>

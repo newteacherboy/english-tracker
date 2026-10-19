@@ -1490,6 +1490,36 @@ async function handle(req: Request) {
       return json({ok:true,eklenen:r.eklenen,ekonomi:ekonomiCevap(r.y)});
     }
 
+    if (is === "odulTalep") {
+      // Small in-app rewards that used to be credited only on the device (and silently reverted on the next sync).
+      // Amounts are bounded per reason, per call and per day; a repeated key never pays twice. Counters live in server-owned yo.odulGunluk.
+      const KURAL:Record<string,[number,number,number]>={ // [xp per call, gold per call, max calls per day]
+        sana_ozel_gunluk:[10,5,1], etkinlik:[10,2,10], video:[10,2,5], seviye_bonus:[50,5,1], kombo:[0,5,5],
+        sohbet:[150,15,6], oyun_sonu:[150,15,20], duello:[20,0,10], lig:[50,25,4], enerji_altin:[0,25,4], ders_tekrar:[100,30,10], genel:[20,5,5]
+      };
+      const neden=Object.hasOwn(KURAL,String(body.neden||""))?String(body.neden):"genel";
+      const [xpTavan,altinTavan,gunTavan]=KURAL[neden];
+      const istenenXp=Math.max(0,Math.min(xpTavan,Math.floor(num(body.xp)))),istenenAltin=Math.max(0,Math.min(altinTavan,Math.floor(num(body.altin))));
+      const anahtar=temizMetin(String(body.anahtar||""),80);
+      if(!istenenXp&&!istenenAltin)return json({ok:true,eklenen:0,xp:0,ekonomi:ekonomiCevap((await yoOku(sid)).y)});
+      const gun=trBugun();
+      const r=await ekonomiGuncelle(sid,(y:any)=>{
+        const kayit=y.odulGunluk&&y.odulGunluk.tarih===gun?y.odulGunluk:{tarih:gun,sayac:{},anahtarlar:[]};
+        const tekil=anahtar?neden+":"+anahtar:"";
+        if(tekil&&kayit.anahtarlar.includes(tekil))return {eklenen:0,xp:0,tekrar:true};
+        const n=Math.max(0,Math.floor(num(kayit.sayac[neden])));
+        if(n>=gunTavan)return {eklenen:0,xp:0,sinir:true};
+        const ver=Math.max(Date.now(),Math.floor(num(y.guncelleme))+1);
+        y.altin=Math.max(0,Math.floor(num(y.altin)))+istenenAltin;
+        y.totalXp=Math.max(0,num(y.totalXp))+istenenXp;
+        y.xpGun=y.xpGun&&y.xpGun.tarih===gun?{...y.xpGun,xp:Math.max(0,num(y.xpGun.xp))+istenenXp}:{tarih:gun,xp:istenenXp};
+        kayit.sayac={...kayit.sayac,[neden]:n+1};if(tekil)kayit.anahtarlar=[...kayit.anahtarlar.slice(-199),tekil];
+        y.odulGunluk=kayit;y.guncelleme=ver;y.dmRewardVersion=ver;y.dmProgressProtocol=1;
+        return {eklenen:istenenAltin,xp:istenenXp};
+      });
+      if(r.hata)return hataVer(r.hata,503);
+      return json({ok:true,eklenen:r.eklenen||0,xp:r.xp||0,tekrar:!!r.tekrar,sinir:!!r.sinir,yo:r.y,ekonomi:ekonomiCevap(r.y)});
+    }
     if (is === "gunlukGorevOdul" || is === "haftalikGorevOdul") {
       // Günün / haftanın 3 görevi: sunucu kayıtlarından doğrulanır, dönem başına bir kez altın + XP verilir.
       const haftalik=is==="haftalikGorevOdul";

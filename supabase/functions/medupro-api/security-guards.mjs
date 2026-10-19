@@ -59,7 +59,7 @@ export function authenticatedBudgets(op,subject,body){
 
 // Device saves may customize presentation, never mint rewards or authorize SQL.
 const serverStateKeys=Object.freeze(['totalXp','xpGun','log','haftaHedef','hedefOdul',
- 'dmRewardVersion','dmParkurMigration','dmAltinGun']);
+ 'dmRewardVersion','dmParkurMigration','dmAltinGun','odulGunluk']);
 export function protectStudentState(incoming,stored,now=Date.now()){
  const result={...incoming};
  delete result.dmProgressProtocol;

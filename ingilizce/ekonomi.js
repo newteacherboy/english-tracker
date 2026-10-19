@@ -101,5 +101,21 @@
   setInterval(() => { if (!document.hidden) durum(); }, 600000);   /* 10 dakikada bir */
   document.addEventListener('visibilitychange', () => { if (document.hidden && bekleyen > 0) gonder(); });
 
-  window.dmEkonomi = { kazan, islem, uygula, durum };
+  /* Uygulama içi küçük ödüller (görev, etkinlik, video, düello…) sunucuya yazılır; tutarlar ve günlük sınırlar sunucuda.
+     Sunucunun döndürdüğü cüzdan (altın, XP) cihazdaki anlık değeri düzeltir. */
+  let odulZinciri = Promise.resolve();
+  function odulYaz(xp, altin, neden, anahtar) {
+    if (!hazir()) return Promise.resolve(null);
+    const sahip = ogrenci();
+    odulZinciri = odulZinciri.then(async () => {
+      try {
+        const d = await islem('odulTalep', { neden: neden || 'genel', anahtar: anahtar || '', xp: Number(xp) || 0, altin: Number(altin) || 0 });
+        if (d && d.ok && d.yo && sahip === ogrenci()) window.dmApplyRewardState?.(d.yo, sahip);
+        return d;
+      } catch (e) { return null; }
+    });
+    return odulZinciri;
+  }
+  window.dmOdulYaz = odulYaz;
+  window.dmEkonomi = { kazan, islem, uygula, durum, odulYaz };
 })();
