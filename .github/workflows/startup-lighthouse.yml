@@ -30,6 +30,8 @@ jobs:
       - name: Summarize
         run: |
           node -e '
+          const lines=[];const _log=console.log;console.log=(...a)=>{const s=a.join(" ");lines.push(s);_log(s);};
+          process.on("exit",()=>{for(let i=0;i<lines.length;i+=30){_log("::notice title=LH part "+(i/30+1)+"::"+lines.slice(i,i+30).join("\n").replace(/%/g,"%25").replace(/\r/g,"").replace(/\n/g,"%0A"));}});
           const fs=require("fs");
           const runs=[1,2,3].map(i=>{try{return JSON.parse(fs.readFileSync(`lh/run${i}.report.json`))}catch{return null}}).filter(Boolean);
           const m=r=>({score:Math.round(r.categories.performance.score*100),fcp:r.audits["first-contentful-paint"].numericValue,lcp:r.audits["largest-contentful-paint"].numericValue,tbt:r.audits["total-blocking-time"].numericValue,cls:r.audits["cumulative-layout-shift"].numericValue,si:r.audits["speed-index"].numericValue,bytes:r.audits["total-byte-weight"].numericValue});
