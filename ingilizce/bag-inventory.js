@@ -157,7 +157,7 @@ function openBag(){
  const owner=typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
  Promise.resolve().then(()=>window.dmProgression?.refresh?.(true)).then(()=>{if(active&&String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'')===owner)render();}).catch(()=>{});
 }
-function loadStyle(){if($('dmBagStyle'))return;const link=document.createElement('link');link.id='dmBagStyle';link.rel='stylesheet';link.href=asset('bag-inventory.css');document.head.appendChild(link);}
+function loadStyle(){if($('dmBagStyle'))return;const link=document.createElement('link');link.id='dmBagStyle';link.rel='stylesheet';link.href=asset('bag-inventory.css?v=20261019-2');document.head.appendChild(link);}
 loadStyle();
 document.addEventListener('click',e=>{
  const store=e.target?.closest?.('#bottomNavMobile [data-ekran="tab-magaza"]');
