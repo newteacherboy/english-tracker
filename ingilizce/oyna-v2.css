@@ -68,33 +68,3 @@
 @keyframes rtChestGlow{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
 @keyframes rtChestShine{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @media(prefers-reduced-motion:reduce){.rt-map-chest.is-ready::before,.rt-map-chest.is-ready::after,.rt-map-chest.is-ready .rt-chest-art{animation:none}}
-
-
-/* Chapter navigation lives on the map, not in a separate vertical card. */
-.rt-path{padding-top:118px!important;min-height:310px}
-.rt-path>.rt-badge{display:none}
-.rt-path>.rt-banner{position:absolute;top:12px;left:10px;z-index:6;width:calc(100% - 140px);max-width:440px;min-height:88px;padding:9px;gap:5px;border:1px solid #efd7d9;border-radius:18px;background:linear-gradient(115deg,#fff1dc,#fbe8f4);box-shadow:0 5px 14px #40345416;color:#533b58}
-.rt-path>.rt-banner>img:first-child{width:35px;height:38px;flex:none}
-.rt-path>.rt-banner .rt-banner-title{flex:1;min-width:0;text-align:left;border:0;background:transparent;color:inherit;padding:4px 1px}
-.rt-path>.rt-banner .rt-banner-title b{font-size:clamp(12px,2.8vw,18px);line-height:1.12;white-space:normal;overflow-wrap:anywhere}
-.rt-path>.rt-banner .rt-banner-title small{font-size:11px}
-.rt-path>.rt-banner .rt-banner-papi{width:45px;height:56px;object-fit:contain}
-.rt-path>.rt-banner .rt-parrot-btn{min-width:35px}
-.rt-path>.rt-banner .rt-all-link{min-width:21px;font-size:23px}
-.rt-path>.rt-map-switch{left:auto;right:10px;top:13px;max-width:150px;white-space:normal;text-align:center;padding:9px 8px;font-size:12px}
-.rt-path>.rt-map-switch span{white-space:normal}
-.rt-path .rt-trail{top:90px;height:calc(100% - 90px)}
-.rt-path>.rt-stones{margin-top:0}
-@media(max-width:400px){.rt-path>.rt-banner{width:calc(100% - 130px)}.rt-path>.rt-map-switch{max-width:130px;font-size:11px}.rt-path>.rt-banner .rt-banner-papi{width:35px}.rt-path>.rt-banner .rt-all-link{font-size:20px}}
-@media(max-width:340px){.rt-path>.rt-banner{width:calc(100% - 110px)}.rt-path>.rt-map-switch{max-width:110px}.rt-path>.rt-banner>img:first-child{width:28px}}
-
-
-/* Keep map nodes outside the overlay navigation hit areas at small viewport sizes. */
-.rt-path{min-height:390px!important;padding-top:154px!important;justify-content:flex-start}
-.rt-path>.rt-stones{position:relative;z-index:2;margin-top:28px;min-height:105px}
-.rt-path>.rt-continue{position:relative;z-index:2;margin-top:15px}
-.rt-path>.rt-trail{top:140px;height:calc(100% - 140px)}
-
-/* Active map stops always remain tappable above the continuation footer. */
-.rt-path>.rt-stones{z-index:12!important}
-.rt-path>.rt-continue{z-index:3!important}
