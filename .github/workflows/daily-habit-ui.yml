@@ -1,9 +1,9 @@
 name: Daily habit UI
 on:
   push:
-    paths: ['ingilizce/route-missions.js', 'ingilizce/notice-sharing.js', 'ingilizce/profile-sections.css', 'ingilizce/notice-sharing.css', 'tests/reward-screen-fit-ui.cjs', 'ingilizce/parkur-purple.css', 'tests/daily-mission-claim.test.cjs', 'supabase/functions/diji-api/index.ts', 'ingilizce/member-experience.js', 'tests/daily-done-ui.cjs', 'ingilizce/papi-habit.js', 'ingilizce/learning-companion.js', 'tests/papi-habit-ui.cjs', 'tests/member-tools.test.cjs', 'supabase/functions/diji-api/member-tools-api.ts', '.github/workflows/daily-habit-ui.yml']
+    paths: ['ingilizce/route-missions.js', 'ingilizce/notice-sharing.js', 'ingilizce/profile-sections.css', 'ingilizce/notice-sharing.css', 'tests/reward-screen-fit-ui.cjs', 'ingilizce/bottom-nav.js', 'ingilizce/member-experience.css', 'tests/teacher-chat-compact-ui.cjs', 'ingilizce/parkur-purple.css', 'tests/daily-mission-claim.test.cjs', 'supabase/functions/diji-api/index.ts', 'ingilizce/member-experience.js', 'tests/daily-done-ui.cjs', 'ingilizce/papi-habit.js', 'ingilizce/learning-companion.js', 'tests/papi-habit-ui.cjs', 'tests/member-tools.test.cjs', 'supabase/functions/diji-api/member-tools-api.ts', '.github/workflows/daily-habit-ui.yml']
   pull_request:
-    paths: ['ingilizce/route-missions.js', 'ingilizce/notice-sharing.js', 'ingilizce/profile-sections.css', 'ingilizce/notice-sharing.css', 'tests/reward-screen-fit-ui.cjs', 'ingilizce/parkur-purple.css', 'tests/daily-mission-claim.test.cjs', 'supabase/functions/diji-api/index.ts', 'ingilizce/member-experience.js', 'tests/daily-done-ui.cjs', 'ingilizce/papi-habit.js', 'ingilizce/learning-companion.js', 'tests/papi-habit-ui.cjs', 'tests/member-tools.test.cjs', 'supabase/functions/diji-api/member-tools-api.ts', '.github/workflows/daily-habit-ui.yml']
+    paths: ['ingilizce/route-missions.js', 'ingilizce/notice-sharing.js', 'ingilizce/profile-sections.css', 'ingilizce/notice-sharing.css', 'tests/reward-screen-fit-ui.cjs', 'ingilizce/bottom-nav.js', 'ingilizce/member-experience.css', 'tests/teacher-chat-compact-ui.cjs', 'ingilizce/parkur-purple.css', 'tests/daily-mission-claim.test.cjs', 'supabase/functions/diji-api/index.ts', 'ingilizce/member-experience.js', 'tests/daily-done-ui.cjs', 'ingilizce/papi-habit.js', 'ingilizce/learning-companion.js', 'tests/papi-habit-ui.cjs', 'tests/member-tools.test.cjs', 'supabase/functions/diji-api/member-tools-api.ts', '.github/workflows/daily-habit-ui.yml']
 permissions:
   contents: read
 jobs:
@@ -21,6 +21,7 @@ jobs:
       - run: node tests/daily-done-ui.cjs
       - run: node tests/papi-habit-ui.cjs
       - run: node tests/reward-screen-fit-ui.cjs
+      - run: node tests/teacher-chat-compact-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -31,3 +32,4 @@ jobs:
             /tmp/papi-habit-*.png
             /tmp/reward-fit-*.png
             /tmp/mission-reward-*.png
+            /tmp/teacher-chat-*.png

@@ -33,7 +33,7 @@ window.dmTeacherChatOpen=function(){
   const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
   if(!owner){window.yoToast?.('Sohbet için öğrenci hesabına giriş yap.');return;}
   const e=document.createElement('div');e.id='dmTeacherChat';e.className='dm-teacher-chat-overlay';
-  e.innerHTML='<section class="dm-teacher-chat" role="dialog" aria-modal="true" aria-labelledby="dmChatTitle"><header><strong id="dmChatTitle">💬 Öğretmene Mesaj Gönder</strong><button type="button" data-chat-close aria-label="Kapat">×</button></header><div class="dm-chat-log" role="log" aria-live="polite"></div><form class="dm-chat-form"><textarea maxlength="1000" rows="2" placeholder="Öğretmenine mesaj yaz..." aria-label="Mesajın" required></textarea><button type="submit">Gönder</button></form><p class="dm-chat-status" role="status"></p></section>';
+  e.innerHTML='<section class="dm-teacher-chat" role="dialog" aria-modal="false" aria-labelledby="dmChatTitle"><header><strong id="dmChatTitle">💬 Öğretmene Mesaj Gönder</strong><button type="button" data-chat-close aria-label="Kapat">×</button></header><div class="dm-chat-log" role="log" aria-live="polite"></div><form class="dm-chat-form"><textarea maxlength="1000" rows="1" placeholder="Öğretmenine mesaj yaz..." aria-label="Mesajın" required></textarea><button type="submit">Gönder</button></form><p class="dm-chat-status" role="status"></p></section>';
   const log=e.querySelector('.dm-chat-log'),form=e.querySelector('form'),send=form.querySelector('button'),input=form.querySelector('textarea'),status=e.querySelector('.dm-chat-status');
   const previous=document.activeElement;let alive=true;
   const close=()=>{alive=false;e.remove();window.dmProfileDismiss?.();previous?.focus?.();};
