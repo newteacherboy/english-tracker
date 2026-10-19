@@ -24394,7 +24394,12 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const VARSAYILAN_UNITE = { 1: 8, 2: 8, 3: 10, 4: 10, 5: 8, 6: 8, 7: 8, 8: 8 };
   const PARKUR_KELIME_ADEDI=4;
   let DURAK = [[], [], [], []], durakImza = -1;
-  const havuzTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k));
+  /* extra.type sunucudan geldiği gibi yayılır (kelimelerGetir). Kalıplar kelime kartı olarak
+     sorulmaz ve durak sayımına girmez; dm_progress_context sunucuda aynı ayrımı yapar. */
+  const kalipMi = k => String((k && k.type) || '') === 'pattern';
+  const havuzTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k) && !kalipMi(k));
+  const kalipTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k) && kalipMi(k));
+  const KALIP_DURAK_TABAN = 300000, KALIP_GRUP_DURAK = 4;
   function duraklariKur() {
     let tum = havuzTum();
     if (DURAK[0].length && tum.length === durakImza) return;
@@ -24407,7 +24412,24 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         u.forEach(un => {
           const words=[...new Map(tum.filter(k=>Number(k.sinif)===sn&&Number(k.unite)===un).map(k=>[EN(k).trim().toLocaleLowerCase('en'),k])).values()].sort((a,b)=>EN(a).localeCompare(EN(b),'en'));
           const groups=Math.max(1,Math.ceil(words.length/PARKUR_KELIME_ADEDI));
-          for(let part=0;part<groups;part++)l.push({sinif:sn,unite:un,parca:part+1,parcaToplam:groups,kelimeler:words.slice(part*PARKUR_KELIME_ADEDI,(part+1)*PARKUR_KELIME_ADEDI),legacyNo:200000+sn*10000+un*100+Math.floor(part/3)+1,no:200000+sn*10000+un*100+50+part+1});
+          const uniteKaliplari=kalipTum().filter(k=>Number(k.sinif)===sn&&Number(k.unite)===un);
+          const kalipGrubu=uniteKaliplari.length?Math.ceil(groups/KALIP_GRUP_DURAK):0;
+          for(let part=0;part<groups;part++){
+            l.push({sinif:sn,unite:un,parca:part+1,parcaToplam:groups,kelimeler:words.slice(part*PARKUR_KELIME_ADEDI,(part+1)*PARKUR_KELIME_ADEDI),legacyNo:200000+sn*10000+un*100+Math.floor(part/3)+1,no:200000+sn*10000+un*100+50+part+1});
+            /* Dört kelime durağı tamamlanınca o grubun kalıp durağı gelir; sunucudaki sıra ile birebir. */
+            const grup=Math.floor(part/KALIP_GRUP_DURAK);
+            if(kalipGrubu&&(part+1)%KALIP_GRUP_DURAK===0&&grup<kalipGrubu)
+              l.push({sinif:sn,unite:un,kalip:true,grup:grup+1,grupToplam:kalipGrubu,parca:0,parcaToplam:0,legacyNo:0,
+                kelimeler:words.slice(grup*KALIP_GRUP_DURAK*PARKUR_KELIME_ADEDI,(grup+1)*KALIP_GRUP_DURAK*PARKUR_KELIME_ADEDI),
+                kaliplar:uniteKaliplari,no:KALIP_DURAK_TABAN+sn*10000+un*100+50+grup+1});
+          }
+          /* Son grup dörde tamamlanmasa da kalıp durağını alır. */
+          if(kalipGrubu&&groups%KALIP_GRUP_DURAK!==0){
+            const grup=kalipGrubu-1;
+            l.push({sinif:sn,unite:un,kalip:true,grup:grup+1,grupToplam:kalipGrubu,parca:0,parcaToplam:0,legacyNo:0,
+              kelimeler:words.slice(grup*KALIP_GRUP_DURAK*PARKUR_KELIME_ADEDI),
+              kaliplar:uniteKaliplari,no:KALIP_DURAK_TABAN+sn*10000+un*100+50+grup+1});
+          }
         });
       });
       return l;
@@ -24420,7 +24442,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const toplamDurak = () => { duraklariKur(); return DURAK.reduce((t, l) => t + l.length, 0); };
   let tamam = new Set(), hamTamam = new Set(), aktarimYildiz = {}, yuklendi = false, aktarImza = -1;
   const bolumTamam = b => { let n = 0; for (let d = 0; d < durakSayisi(b); d++) if (tamam.has(durakNo(b, d))) n++; return n; };
-  const bolumAcik = b => (!window.dmProgression || window.dmProgression.parkur(b)) && (b === 0 || bolumTamam(b - 1) >= durakSayisi(b - 1));
+  /* Kalıp durakları kapıyı kilitlemez: oynanmamış olsa bile sonraki parkur açılır. */
+  const kelimeDuraklari = b => { duraklariKur(); return DURAK[b].filter(d => !d.kalip); };
+  const bolumTamamKelime = b => kelimeDuraklari(b).filter(d => tamam.has(d.no)).length;
+  const bolumAcik = b => (!window.dmProgression || window.dmProgression.parkur(b)) && (b === 0 || bolumTamamKelime(b - 1) >= kelimeDuraklari(b - 1).length);
   const yildiz = no => (yoVar() && yo.baYildiz && (yo.baYildiz[no] || (tamam.has(no)&&yo.baYildiz[Math.floor(no/100)*100+Math.floor((no%100-51)/3)+1]))) || aktarimYildiz[no] || (tamam.has(no) ? 1 : 0);
   const bolumYildiz = b => { let t = 0; for (let d = 0; d < durakSayisi(b); d++) t += yildiz(durakNo(b, d)); return t; };
   const siradakiDurak = b => { for (let d = 0; d < durakSayisi(b); d++) if (!tamam.has(durakNo(b, d))) return d; return durakSayisi(b) - 1; };
@@ -24430,7 +24455,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function aktar() {
     duraklariKur();
     tamam=new Set();
-    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||hamTamam.has(d.legacyNo)||(d.parca<=3&&hamTamam.has(1000+d.sinif*100+d.unite)))tamam.add(d.no);});
+    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||(!d.kalip&&(hamTamam.has(d.legacyNo)||(d.parca<=3&&hamTamam.has(1000+d.sinif*100+d.unite)))))tamam.add(d.no);});
     aktarimYildiz = {};
     let eski = [...hamTamam].filter(n => n > 0 && n < 1000), tum = havuzTum();
     if (!eski.length || !tum.length) return;
@@ -24440,7 +24465,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       let y = (yoVar() && yo.baYildiz && yo.baYildiz[n]) || 1;
       tum.slice((n - 1) * 8, n * 8).forEach(k => { let a = Number(k.sinif) * 100 + Number(k.unite); kapsanan[a] = (kapsanan[a] || 0) + 1; yil[a] = Math.max(yil[a] || 0, y); });
     });
-    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>d.parca<=3&&1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
+    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>!d.kalip&&d.parca<=3&&1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
   }
   function aktarGerekirse() { let n = havuzTum().length; if (n !== aktarImza) { aktarImza = n; aktar(); } }
 
