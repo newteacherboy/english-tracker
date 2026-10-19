@@ -1,7 +1,6 @@
 import {allTimeLeague} from './league-alltime.mjs';
 import {publicParticipant} from './demo-account.ts';
 import {placementStudyAccess} from './study-placement-access.mjs';
-import {durakSinif,durakUnite} from './parkur-stops.mjs';
 import {socialSafetyAPI} from './social-safety.mjs';
 import './progression-catalog.js';
 import items from './progression-shop.json' with {type:'json'};
@@ -35,7 +34,7 @@ export function progressionAPI(db:any,json:any){
     const ctx=await context(a),run=String(body.runId||''),stop=Number(body.stopNo),classNo=Number(body.classNo);
     const door=ctx.units.findIndex((row:any[])=>row.includes(stop));
     if(!Number.isInteger(stop)||!Number.isInteger(classNo)||door<0
-       ||durakSinif(stop)!==classNo
+       ||Math.floor((stop-200000)/10000)!==classNo
        ||ctx.level<[1,10,20,30][door]||door>0&&!ctx.complete[door-1])
       return deny('Geçerli ve açık parkur durağı gerekli.');
     const {data,error}=await db.rpc('dm_parkur_fair_recover',{
@@ -51,12 +50,12 @@ export function progressionAPI(db:any,json:any){
    if(game==='ba'){
     const stop=Number(body.stopNo||200000+Number(body.classNo)*10000+Number(units[0])*100+1);
     const door=ctx.units.findIndex((u:any[])=>u.includes(stop));
-    if(!Number.isInteger(stop)||door<0||durakSinif(stop)!==Number(body.classNo)||durakUnite(stop)!==Number(units[0])||ctx.level<[1,10,20,30][door]||door>0&&!ctx.complete[door-1])return deny('Geçerli ve açık parkur durağı gerekli.');
+    if(!Number.isInteger(stop)||door<0||Math.floor((stop-200000)/10000)!==Number(body.classNo)||Math.floor((stop-200000)%10000/100)!==Number(units[0])||ctx.level<[1,10,20,30][door]||door>0&&!ctx.complete[door-1])return deny('Geçerli ve açık parkur durağı gerekli.');
     const position=ctx.units[door].indexOf(stop);
     if(!ctx.done.includes(stop)&&position>0&&!ctx.done.includes(ctx.units[door][position-1]))return deny('Önce önceki durağı tamamla.');
     units=[stop];
    }
-   const checked=await db.rpc('dm_verified_result',{actor:a.student_id,run_key:String(body.runId||''),game_code:game,cls:Number(body.classNo),unit_ids:game==='ba'?[durakUnite(units[0])]:[...new Set(units)].sort((a,b)=>a-b),stop_id:game==='ba'?units[0]:0});
+   const checked=await db.rpc('dm_verified_result',{actor:a.student_id,run_key:String(body.runId||''),game_code:game,cls:Number(body.classNo),unit_ids:game==='ba'?[Math.floor((units[0]-200000)%10000/100)]:[...new Set(units)].sort((a,b)=>a-b),stop_id:game==='ba'?units[0]:0});
    if(checked.error){const required=await db.rpc('dm_verified_required');if(required.error||required.data!==false)return json({ok:false,mesaj:'Doğrulanmış cevaplar gerekli. Uygulamayı yenileyip oyunu yeniden başlat.'},409);}
    else body={...body,correct:checked.data.correct,wrong:checked.data.wrong,seconds:checked.data.seconds,boost:1};
    const fair=game==='ba'; // Always enforce recorded outcomes; old clients cannot bypass the fairness gate.

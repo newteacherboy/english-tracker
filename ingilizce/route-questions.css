@@ -80,28 +80,3 @@ body #bzPerde#bzPerde.rq-approved #bzAlan[style*="display:none"],body #bzPerde#b
  @media(prefers-reduced-motion:reduce){body #bzPerde.rq-approved #bzAlan .dm-wrong{animation:none!important}}
 }
 @keyframes rq-letter-shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
-
-/* Kalıp durağı: kalıbı tanıtma kartı ve Papi'nin hatası ekranı. */
-.rq-pattern-card{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;
- background:linear-gradient(160deg,#fffdf5,#f1f6ff);border:2px solid #e3ecff;border-radius:18px;
- padding:clamp(12px,3vw,18px);box-shadow:0 4px 14px #1b3c6f1a}
-.rq-pattern-shape{font-size:clamp(19px,5.2vw,26px);font-weight:900;color:#123a6b;line-height:1.25;letter-spacing:.2px}
-.rq-pattern-shape b{display:inline-block;min-width:2.2em;color:#b4530b;background:#ffeccd;
- border-bottom:3px solid #f0a23c;border-radius:5px;padding:0 .18em}
-.rq-pattern-shape-tr{font-size:clamp(13px,3.6vw,16px);font-weight:700;color:#4b5f7a}
-.rq-pattern-shape-tr b{color:#b4530b}
-.rq-pattern-note{margin:0;font-size:clamp(12.5px,3.4vw,15px);font-weight:650;color:#2a4a6e;line-height:1.45}
-.rq-pattern-example{display:flex;flex-direction:column;gap:2px;width:100%;
- background:#ffffffcc;border:1.5px dashed #bcd3f5;border-radius:13px;padding:9px 11px}
-.rq-pattern-example-label{font-size:11px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;color:#7d8ba3}
-.rq-pattern-example strong{font-size:clamp(15px,4.2vw,19px);color:#0f3f2e}
-.rq-pattern-example small{font-size:clamp(12px,3.2vw,14px);color:#5a6b82}
-@media (prefers-color-scheme:dark){
- :root:not([data-theme="light"]) .rq-pattern-card{background:linear-gradient(160deg,#17233a,#131c2e);border-color:#2b3b58}
- :root:not([data-theme="light"]) .rq-pattern-shape{color:#dce9ff}
- :root:not([data-theme="light"]) .rq-pattern-shape-tr{color:#9fb3cf}
- :root:not([data-theme="light"]) .rq-pattern-note{color:#b9cae4}
- :root:not([data-theme="light"]) .rq-pattern-example{background:#0f1726cc;border-color:#2f4365}
- :root:not([data-theme="light"]) .rq-pattern-example strong{color:#8ff0c8}
- :root:not([data-theme="light"]) .rq-pattern-example small{color:#93a6c0}
-}
