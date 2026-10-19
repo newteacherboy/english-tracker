@@ -30,3 +30,51 @@
 @media(min-width:700px){#dmBagPage .dm-bag-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#dmBagPage .dm-bag-picture{height:150px}}
 @media(max-width:350px){#dmBagPage .dm-bag-tabs{gap:3px}#dmBagPage .dm-bag-tabs button{min-height:65px;border-radius:11px}#dmBagPage .dm-bag-tabs .dm-bag-tab-icon{font-size:20px}#dmBagPage .dm-bag-inner{padding:10px 7px 28px}}
 @media(prefers-reduced-motion:reduce){#dmBagPage *,#dmBagPopup *{animation:none!important;transition:none!important}}
+
+/* Çantam v2 — calmer neutral canvas, artwork-first cards and 8 accessible categories. */
+#dmBagPage{background:#f5f7fa!important;color:#18263c!important}
+#dmBagPage .dm-bag-inner{max-width:880px;padding:12px 12px 34px}
+#dmBagPage .dm-bag-header{min-height:65px;margin-bottom:10px}
+#dmBagPage h1,#dmBagPage h2{color:#1c3150}
+#dmBagPage .dm-bag-tabs{
+ display:flex!important;grid-template-columns:none!important;gap:8px!important;
+ overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;
+ scrollbar-width:thin;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;
+ padding:3px 3px 12px;margin-bottom:12px!important;
+}
+#dmBagPage .dm-bag-tabs button{
+ flex:0 0 86px;min-width:86px;min-height:72px;border:1px solid #e1e7ef;
+ background:#fff;border-radius:14px;box-shadow:0 1px 3px #27374b0b;
+ color:#4b5a6c;font-size:11px;scroll-snap-align:start;
+}
+#dmBagPage .dm-bag-tabs button[aria-selected="true"]{
+ background:#fff3e7!important;border:1.5px solid #ef8c43!important;color:#a7450e!important;
+ box-shadow:0 1px 5px #df874324!important;
+}
+#dmBagPage .dm-bag-section{margin-bottom:20px}
+#dmBagPage .dm-bag-section>header{margin:0 2px 9px}
+#dmBagPage .dm-bag-card{
+ background:#fff;border:1px solid #e8edf3;box-shadow:0 2px 7px #202e410d;
+ border-radius:15px;gap:5px;padding:7px 7px 10px;
+}
+#dmBagPage .dm-bag-picture{
+ background:#f8fafc!important;border:1px solid #f0f3f7;
+ border-radius:12px;min-height:87px;
+}
+#dmBagPage .dm-bag-picture svg,#dmBagPage .dm-bag-picture img{
+ display:block;width:auto;max-width:97%;height:auto;max-height:93%;
+ object-fit:contain;
+}
+#dmBagPage .dm-bag-picture img{mix-blend-mode:normal}
+#dmBagPage .dm-bag-owned{height:21px;width:21px;font-size:13px;background:#1da879}
+#dmBagPage .dm-bag-name{color:#26354e;font-size:clamp(11px,2.8vw,13px);min-height:28px}
+#dmBagPage .dm-bag-action{
+ min-height:33px;border-radius:11px;background:#fff4e8;color:#ad501a;
+ border:1px solid #f5ceae;font-weight:800;
+}
+#dmBagPage .dm-bag-action:active{background:#ffe3c8}
+#dmBagPage .dm-bag-empty{background:#fff;border:1px dashed #d7e0e9;color:#637187}
+#dmBagPage .dm-bag-showall{color:#3761a3;font-weight:700}
+#dmBagPage .dm-bag-picture:has(img[src*="chest"]){background:#f5f8fd!important}
+#dmBagPage .dm-bag-card:has([data-bag-manage="chests"]) .dm-bag-picture{background:#f5f8fd!important}
+@media(max-width:350px){#dmBagPage .dm-bag-tabs button{min-width:77px;flex-basis:77px;min-height:66px}#dmBagPage .dm-bag-grid{gap:5px}#dmBagPage .dm-bag-card{padding:5px}}
