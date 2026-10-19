@@ -73,14 +73,3 @@
 
 /* Do not show an orphaned daily-task panel when the carousel cannot form; the combined carousel manages visibility. */
 .rt-root:has(>.lc-plan) > .rt-tasks{display:none!important}
-
-/* Weekly target remains as tall as the 3 tasks but deliberately fills the space. */
-.dm-goal-pages>.rt-week{padding:20px 17px;gap:14px;align-items:center}
-.dm-goal-pages>.rt-week>img{width:53px;height:53px;object-fit:contain}
-.dm-goal-pages>.rt-week>div{display:grid;align-content:center;gap:8px}
-.dm-goal-pages>.rt-week h2{font-size:clamp(18px,4vw,23px);margin:0}
-.dm-goal-pages>.rt-week progress{height:12px;margin:1px 0;border-radius:9px}
-.dm-goal-pages>.rt-week small{font-size:14px;font-weight:800}
-.dm-goal-pages>.rt-week .rt-week-message{font-size:12px;line-height:1.35;margin:0;color:#587078}
-.dm-goal-pages>.rt-week button{min-width:96px;min-height:49px;padding:10px 12px;font-size:14px}
-@media(max-width:370px){.dm-goal-pages>.rt-week{padding:15px 9px;gap:8px}.dm-goal-pages>.rt-week>img{width:39px;height:42px}.dm-goal-pages>.rt-week button{min-width:80px;font-size:12px}}
