@@ -26289,7 +26289,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     let r = await orgFetch.apply(this, arguments);
     /* Yükleme (sayfanın kendi yükleyicisi; "_=" içermeyen): ilk yüklemede sunucudaki veri mutlaka kabul edilsin */
     try {
-      if(opt && typeof opt.body==='string' && /"(seviyeUrunAl|seviyeSandikAc|seviyeEkJokerAl|seviyeOyunOdulu|buyuSeviyeTamamla|storyAdvance)"/.test(opt.body) && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json();if(reward.yo?.guncelleme)taban[kucuk(request.ogrenci||aktifOgrenciAdi)]=reward.yo.guncelleme; }
+      /* Server-side rewards advance the stored version; remember it so the next save is not rejected as stale. */
+      if(opt && typeof opt.body==='string' && /"(seviyeUrunAl|seviyeSandikAc|seviyeEkJokerAl|seviyeOyunOdulu|buyuSeviyeTamamla|storyAdvance|ekonomi|dersTestSonucKaydet)"/.test(opt.body) && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json().catch(()=>null);const ver=Number(reward?.yo?.guncelleme)||0;const who=kucuk(request.ogrenci||aktifOgrenciAdi);if(ver&&who)taban[who]=Math.max(Number(taban[who])||0,ver); }
       if (/[?&]islem=ekVeriGetir/.test(u) && /[?&]anahtar=yo(&|$)/.test(u) && !/[?&]_=/.test(u) && r.ok && !r.headers.get('X-Diji-Cevrimdisi')) {
         let ad = kucuk(decodeURIComponent((u.match(/[?&]ogrenci=([^&]*)/) || [])[1] || ''));
         let d = await r.clone().json().catch(() => undefined);
