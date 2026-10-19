@@ -71,7 +71,7 @@ function mount(){
   load().catch(e=>{const note=$('lcPlan')?.querySelector('.lc-plan-foot>span');if(note)note.textContent='Plan alınamadı. Başla ile tekrar dene.';});
  }
  const study=$('suLevels');if(study&&visible(study)&&!$('lcDialogueEntry')){
-  const entry=document.createElement('section');entry.id='lcDialogueEntry';entry.className='lc-entry';entry.innerHTML=papi+'<div><h3>Hikâye ve Diyalog</h3><p>Oku, dinle ve günlük hayatta kullan.</p></div>'+action('Keşfet →','dialogues');study.append(entry);
+  const entry=document.createElement('section');entry.id='lcDialogueEntry';entry.className='lc-entry';entry.innerHTML='<div class="lc-library-heading"><span aria-hidden="true">📖</span><div><h3>Hikâye ve Diyalog</h3><p>Oku, dinle, keşfet ve günlük hayata katıl.</p></div></div>'+storyGroups();study.append(entry);bindStories(entry);
  }
  // Karnem is now accessed from İlerlemem, not as a separate profile tile.
  document.querySelector('#rtProfileBackdrop [data-lc="report"]')?.remove();
@@ -129,9 +129,19 @@ async function report(){
  }catch(e){if(v.alive())v.body.textContent=e.message;}
 }
 window.dmKarneDetayAc=report;
+function storyGroups(){
+ const labels=['Başlangıç','Temel','Orta','Orta-Üstü'];
+ return '<div class="lc-story-groups">'+['A1','A2','B1','B2'].map((level,i)=>{
+  const stories=bank.filter(s=>s.level===level);
+  return '<details class="lc-story-level" data-level="'+level+'"><summary><b>'+level+'</b><strong>'+labels[i]+'</strong><small>'+stories.length+' içerik</small><span class="lc-chevron" aria-hidden="true">⌄</span></summary><div class="lc-story-grid">'+stories.map(s=>'<button type="button" data-story="'+s.id+'"><span class="lc-story-icon" aria-hidden="true">'+s.icon+'</span><span><b>'+esc(s.title)+'</b><small>'+esc(s.scene)+'</small></span><span aria-hidden="true">›</span></button>').join('')+'</div></details>';
+ }).join('')+'</div>';
+}
+function bindStories(root,close){
+ root.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>{close?.();openStory(b.dataset.story);});
+ root.querySelectorAll('.lc-story-level').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)root.querySelectorAll('.lc-story-level').forEach(other=>{if(other!==d)other.open=false;});}));
+}
 function dialogues(){
- if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p><div class="lc-story-grid">'+['A1','A2','B1','B2'].map(level=>'<h3 class="lc-level-heading">'+level+' · Hikâyeler ve Diyaloglar</h3>'+bank.filter(s=>s.level===level).map(s=>'<button type="button" data-story="'+s.id+'"><span class="lc-story-icon" aria-hidden="true">'+s.icon+'</span><span><small>'+s.level+' · '+(s.type==='story'?'Hikâye':'Diyalog')+' · Oku / Dinle</small><b>'+esc(s.title)+'</b><small>'+esc(s.scene)+'</small></span><span>›</span></button>').join('')).join('')+'</div>','lcDialogues');if(!v)return;
- v.body.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>{v.close();openStory(b.dataset.story);});
+ if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body,()=>v.close());
 }
 function say(text,rate,finished,failed){
  try{if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)throw Error('Ses desteklenmiyor.');speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-GB';utterance.rate=rate;utterance.onend=finished;utterance.onerror=failed;speechSynthesis.speak(utterance);}catch(e){failed(e);}

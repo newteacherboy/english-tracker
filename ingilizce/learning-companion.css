@@ -73,3 +73,16 @@
 
 /* Do not show an orphaned daily-task panel when the carousel cannot form; the combined carousel manages visibility. */
 .rt-root:has(>.lc-plan) > .rt-tasks{display:none!important}
+
+/* Compact CEFR accordions shared by the study hub and story library. */
+#lcDialogueEntry.lc-entry{display:block;margin:6px 0 0;padding:12px;background:#fff;border-color:#d4eae1;border-radius:18px}
+.lc-library-heading{display:flex;align-items:center;gap:10px;margin-bottom:10px}.lc-library-heading>span{font-size:27px}.lc-library-heading h3{font-size:19px!important}
+.lc-story-groups{display:grid;gap:8px;width:100%;min-width:0}
+.lc-story-level{border:1px solid #bfe8dc;border-radius:13px;background:#e3faf2;overflow:hidden;color:#193e4c}
+.lc-story-level[data-level="A2"]{background:#eee7fc;border-color:#dfd1fa}.lc-story-level[data-level="B1"]{background:#fff1db;border-color:#f3dfba}.lc-story-level[data-level="B2"]{background:#e3f3ff;border-color:#c7e4f7}
+.lc-story-level>summary{display:flex;align-items:center;gap:10px;padding:9px 11px;min-height:44px;box-sizing:border-box;cursor:pointer;list-style:none;font:800 14px Nunito,system-ui}
+.lc-story-level>summary::-webkit-details-marker{display:none}.lc-story-level>summary>b{background:#ffffffb3;border-radius:9px;padding:4px 7px;font-size:16px}.lc-story-level>summary>strong{flex:1}.lc-story-level>summary>small{font-size:11px;font-weight:600;color:#476573}.lc-chevron{font-size:20px}.lc-story-level[open]>summary .lc-chevron{transform:rotate(180deg)}
+.lc-story-level>summary:focus-visible{outline:3px solid #376acd;outline-offset:-3px}
+.lc-story-level .lc-story-grid{gap:0;padding:0 10px;background:#ffffffed;border-radius:12px}
+.lc-story-level .lc-story-grid>button{width:100%;border:0;border-radius:0;padding:10px 0;gap:9px;min-width:0;min-height:56px;font:inherit;cursor:pointer}
+.lc-story-level .lc-story-grid>button+button{border-top:1px solid #e1eee8}.lc-story-level .lc-story-grid>button>span:nth-child(2){min-width:0;gap:3px}.lc-story-level .lc-story-grid b{font-size:14px;overflow-wrap:anywhere}.lc-story-level .lc-story-grid small{font-size:11px;line-height:1.35}.lc-story-level .lc-story-icon{width:38px;height:40px;flex:none;font-size:23px;border-radius:10px}
