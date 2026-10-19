@@ -24387,18 +24387,35 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const TIPLER = [
     ['lab', '🔬', 'Kelime Laboratuvarı'], ['risk', '🎈', 'Risk Balonları'], ['eksik', '✏️', 'Eksik Harf'], ['hafiza', '🃏', 'Hafıza Sandığı'],
     ['hiz', '🌪️', 'Hız Fırtınası'], ['harf', '🔤', 'Harf Avı'], ['sifre', '🔐', 'Şifre Kırıcı'], ['es', '🔗', 'Eş Bul'],
-    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['cumleTamamla','📝','Cümleyi Tamamla'], ['kelimeKur','🔤','Kelimeyi Kur'], ['eslestir','🔗','Eşleştirme'], ['duydugunuBul','👂','Duyduğunu Bul'], ['sesliFinal', '🃏', 'Kelime Kartları'], ['dinleAnlam','🎧','Dinle ve Anlamı Yakala'], ['hata','🦜',"Papi'nin Hatası"], ['hatirla','🧠','Aklında Kaldı mı?'], ['miniDiyalog','💬','Papi ile Diyalog']
+    ['tren', '🚂', 'Kelime Treni'], ['cumle', '🧱', 'Cümle Ustası'], ['dikte', '🎧', 'Kulak Dedektifi'], ['cumleTamamla','📝','Cümleyi Tamamla'], ['kelimeKur','🔤','Kelimeyi Kur'], ['eslestir','🔗','Eşleştirme'], ['duydugunuBul','👂','Duyduğunu Bul'], ['sesliFinal', '🃏', 'Kelime Kartları'], ['dinleAnlam','🎧','Dinle ve Anlamı Yakala'], ['hata','🦜',"Papi'nin Hatası"], ['hatirla','🧠','Aklında Kaldı mı?'], ['miniDiyalog','💬','Papi ile Diyalog'],
+    ['patternTeach','🧩','Kalıbı Tanı'], ['patternComplete','📝','Eksik Kelime'], ['patternOrder','🧱','İfadeyi Sırala'], ['patternListen','🎧','İfadeyi Dinle'], ['patternTranslate','🔎','Anlamından Bul'], ['teach','🦜','Kelimeleri Öğren'], ['soyle','🎤','Dinle ve Söyle'], ['dinleSec','🎧','Dinle ve Seç'], ['wordOrder','🔤','Kelimeyi Kur']
   ];
   /* 4 kapı × 2 sınıf; her ünite bir durak. Durak numarası = 1000 + sınıf×100 + ünite (ör. 1203 = 2. sınıf 3. ünite) */
   const KAPI_SINIF = [[1, 2], [3, 4], [5, 6], [7, 8]];
   const VARSAYILAN_UNITE = { 1: 8, 2: 8, 3: 10, 4: 10, 5: 8, 6: 8, 7: 8, 8: 8 };
   const PARKUR_KELIME_ADEDI=4;
-  let DURAK = [[], [], [], []], durakImza = -1;
-  const havuzTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k));
+  let DURAK = [[], [], [], []], durakImza = '';
+  /* extra.type sunucudan geldiği gibi yayılır (kelimelerGetir). Kalıplar kelime kartı olarak
+     sorulmaz ve durak sayımına girmez; dm_progress_context sunucuda aynı ayrımı yapar. */
+  /* Boşluğu olmayan kayıt kalıp durağı kurmaz; sunucudaki sayım da aynı koşulu uygular. */
+  const kalipMi = k => String((k && k.type) || '') === 'pattern';
+  /* pattern_usable=false, öğretmenin kalıp durağından çıkardığı kayıtları işaretler. */
+  const kalipKullanilir = k => kalipMi(k) && EN(k).includes('...') && k.pattern_usable !== false;
+  const havuzTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k) && !kalipMi(k));
+  const kalipTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k) && kalipMi(k));
+  const havuzHepsi = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k));
+  const KALIP_DURAK_TABAN = 300000, KALIP_GRUP_DURAK = 4;
+  /* Kalıp durakları sunucunun durak listesinde görünene kadar kurulmaz. Sunucu göçü yapılmamışken
+     kalıplar eskisi gibi kelime sayımına dahil edilir; böylece istemci ve sunucu, hangisi önce
+     dağıtılırsa dağıtılsın, aynı durak listesinde kalır ve hiçbir durak reddedilmez. */
+  const kalipDestegi = () => { try { const u = window.dmProgression?.status?.()?.units;
+    return Array.isArray(u) && u.flat().some(n => Number(n) >= KALIP_DURAK_TABAN); } catch (e) { return false; } };
   function duraklariKur() {
-    let tum = havuzTum();
-    if (DURAK[0].length && tum.length === durakImza) return;
-    durakImza = tum.length;
+    const yeniDuzen = kalipDestegi();
+    let tum = yeniDuzen ? havuzTum() : havuzHepsi();
+    const imza = tum.length + (yeniDuzen ? ':kalip' : ':eski');
+    if (DURAK[0].length && imza === durakImza) return;
+    durakImza = imza;
     DURAK = KAPI_SINIF.map(siniflar => {
       let l = [];
       siniflar.forEach(sn => {
@@ -24407,7 +24424,24 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
         u.forEach(un => {
           const words=[...new Map(tum.filter(k=>Number(k.sinif)===sn&&Number(k.unite)===un).map(k=>[EN(k).trim().toLocaleLowerCase('en'),k])).values()].sort((a,b)=>EN(a).localeCompare(EN(b),'en'));
           const groups=Math.max(1,Math.ceil(words.length/PARKUR_KELIME_ADEDI));
-          for(let part=0;part<groups;part++)l.push({sinif:sn,unite:un,parca:part+1,parcaToplam:groups,kelimeler:words.slice(part*PARKUR_KELIME_ADEDI,(part+1)*PARKUR_KELIME_ADEDI),legacyNo:200000+sn*10000+un*100+Math.floor(part/3)+1,no:200000+sn*10000+un*100+50+part+1});
+          const uniteKaliplari=yeniDuzen?kalipTum().filter(k=>kalipKullanilir(k)&&Number(k.sinif)===sn&&Number(k.unite)===un):[];
+          const kalipGrubu=uniteKaliplari.length?Math.ceil(groups/KALIP_GRUP_DURAK):0;
+          for(let part=0;part<groups;part++){
+            l.push({sinif:sn,unite:un,parca:part+1,parcaToplam:groups,kelimeler:words.slice(part*PARKUR_KELIME_ADEDI,(part+1)*PARKUR_KELIME_ADEDI),legacyNo:200000+sn*10000+un*100+Math.floor(part/3)+1,no:200000+sn*10000+un*100+50+part+1});
+            /* Dört kelime durağı tamamlanınca o grubun kalıp durağı gelir; sunucudaki sıra ile birebir. */
+            const grup=Math.floor(part/KALIP_GRUP_DURAK);
+            if(kalipGrubu&&(part+1)%KALIP_GRUP_DURAK===0&&grup<kalipGrubu)
+              l.push({sinif:sn,unite:un,kalip:true,grup:grup+1,grupToplam:kalipGrubu,parca:0,parcaToplam:0,legacyNo:0,
+                kelimeler:words.slice(grup*KALIP_GRUP_DURAK*PARKUR_KELIME_ADEDI,(grup+1)*KALIP_GRUP_DURAK*PARKUR_KELIME_ADEDI),
+                kaliplar:uniteKaliplari,no:KALIP_DURAK_TABAN+sn*10000+un*100+50+grup+1});
+          }
+          /* Son grup dörde tamamlanmasa da kalıp durağını alır. */
+          if(kalipGrubu&&groups%KALIP_GRUP_DURAK!==0){
+            const grup=kalipGrubu-1;
+            l.push({sinif:sn,unite:un,kalip:true,grup:grup+1,grupToplam:kalipGrubu,parca:0,parcaToplam:0,legacyNo:0,
+              kelimeler:words.slice(grup*KALIP_GRUP_DURAK*PARKUR_KELIME_ADEDI),
+              kaliplar:uniteKaliplari,no:KALIP_DURAK_TABAN+sn*10000+un*100+50+grup+1});
+          }
         });
       });
       return l;
@@ -24420,7 +24454,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const toplamDurak = () => { duraklariKur(); return DURAK.reduce((t, l) => t + l.length, 0); };
   let tamam = new Set(), hamTamam = new Set(), aktarimYildiz = {}, yuklendi = false, aktarImza = -1;
   const bolumTamam = b => { let n = 0; for (let d = 0; d < durakSayisi(b); d++) if (tamam.has(durakNo(b, d))) n++; return n; };
-  const bolumAcik = b => (!window.dmProgression || window.dmProgression.parkur(b)) && (b === 0 || bolumTamam(b - 1) >= durakSayisi(b - 1));
+  /* Kalıp durakları kapıyı kilitlemez: oynanmamış olsa bile sonraki parkur açılır. */
+  const kelimeDuraklari = b => { duraklariKur(); return DURAK[b].filter(d => !d.kalip); };
+  const bolumTamamKelime = b => kelimeDuraklari(b).filter(d => tamam.has(d.no)).length;
+  const bolumAcik = b => (!window.dmProgression || window.dmProgression.parkur(b)) && (b === 0 || bolumTamamKelime(b - 1) >= kelimeDuraklari(b - 1).length);
   const yildiz = no => (yoVar() && yo.baYildiz && (yo.baYildiz[no] || (tamam.has(no)&&yo.baYildiz[Math.floor(no/100)*100+Math.floor((no%100-51)/3)+1]))) || aktarimYildiz[no] || (tamam.has(no) ? 1 : 0);
   const bolumYildiz = b => { let t = 0; for (let d = 0; d < durakSayisi(b); d++) t += yildiz(durakNo(b, d)); return t; };
   const siradakiDurak = b => { for (let d = 0; d < durakSayisi(b); d++) if (!tamam.has(durakNo(b, d))) return d; return durakSayisi(b) - 1; };
@@ -24430,7 +24467,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function aktar() {
     duraklariKur();
     tamam=new Set();
-    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||hamTamam.has(d.legacyNo)||(d.parca<=3&&hamTamam.has(1000+d.sinif*100+d.unite)))tamam.add(d.no);});
+    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||(!d.kalip&&(hamTamam.has(d.legacyNo)||(d.parca<=3&&hamTamam.has(1000+d.sinif*100+d.unite)))))tamam.add(d.no);});
     aktarimYildiz = {};
     let eski = [...hamTamam].filter(n => n > 0 && n < 1000), tum = havuzTum();
     if (!eski.length || !tum.length) return;
@@ -24440,7 +24477,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       let y = (yoVar() && yo.baYildiz && yo.baYildiz[n]) || 1;
       tum.slice((n - 1) * 8, n * 8).forEach(k => { let a = Number(k.sinif) * 100 + Number(k.unite); kapsanan[a] = (kapsanan[a] || 0) + 1; yil[a] = Math.max(yil[a] || 0, y); });
     });
-    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>d.parca<=3&&1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
+    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>!d.kalip&&d.parca<=3&&1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
   }
   function aktarGerekirse() { let n = havuzTum().length; if (n !== aktarImza) { aktarImza = n; aktar(); } }
 
@@ -24554,7 +24591,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     // Yalnızca etkin durağın yakın çevresi oluşturulur; ilerleme/ödül kayıtları değişmez.
     const progress=DURAK.map((list,section)=>({open:bolumAcik(section),next:siradakiDurak(section)}));
     const all=[];
-    DURAK.forEach((list,section)=>list.forEach((D,d)=>all.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+D.unite+'. ünite · '+D.parca+'/'+D.parcaToplam+' · '+D.kelimeler.length+' kelime',short:D.sinif+'. sınıf',done:tamam.has(D.no),available:progress[section].open&&d<=progress[section].next})));
+    DURAK.forEach((list,section)=>list.forEach((D,d)=>all.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+D.unite+'. ünite · '+(D.kalip?'🔤 Kalıp '+D.grup+'/'+D.grupToplam:D.parca+'/'+D.parcaToplam)+' · '+D.kelimeler.length+' kelime',short:D.sinif+'. sınıf',done:tamam.has(D.no),available:progress[section].open&&d<=progress[section].next})));
     const focus=Math.max(0,all.findIndex(st=>st.b===b&&st.d===progress[b].next));
     const start=Math.max(0,focus-8),steps=all.slice(start,Math.min(all.length,start+24));
     const current=Math.max(0,focus-start);
@@ -24573,7 +24610,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const returnView=window.dmViewHistory?.capture();let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
     k.classList.add('sp-entry','sp-adventure-entry');
     const saved=checkpointRead(no);const possibleXp=bitti?0:192;
-    k.innerHTML = `<div class="bz-alt-kart sp-start-card"><button id="bzVazgec" class="sp-close" aria-label="Kapat">✕</button><img class="sp-entry-papi" src="study-assets/papi-celebrate.png" alt="Papi"><small>MACERA HARİTASI · ${d+1}. DURAK</small><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3><p>${kac(durakAdi(b,d))}</p><div class="sp-prize"><span>Olası ödül</span><strong>⭐ ${bitti?'0': 'En çok '+possibleXp} XP</strong><small>🪙 ${bitti?'İlk geçiş ödülü alındı':'En çok 40 altın · Başarı ve süreye göre'}</small></div><p class="sp-entry-note">${ileride?'🔒 Önce sıradaki durağı tamamla':bitti?'⭐'.repeat(y)+' · En iyi sonucun':D.kelimeler.length+' kelime · Seviye '+D.parca+'/'+D.parcaToplam+' · 12 soru + kelime kartları'}</p><button class="bz-btn mor" id="bzOyna" ${ileride?'disabled':''}>${saved?'Kaldığın yerden devam et':bitti?'Tekrar başlat':'Başlat'} →</button></div>`;
+    k.innerHTML = `<div class="bz-alt-kart sp-start-card"><button id="bzVazgec" class="sp-close" aria-label="Kapat">✕</button><img class="sp-entry-papi" src="study-assets/papi-celebrate.png" alt="Papi"><small>MACERA HARİTASI · ${d+1}. DURAK</small><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3><p>${kac(D.kalip?'Kalıp Durağı · '+D.sinif+'. sınıf '+D.unite+'. ünite':durakAdi(b,d))}</p><div class="sp-prize"><span>Olası ödül</span><strong>⭐ ${bitti?'0': 'En çok '+possibleXp} XP</strong><small>🪙 ${bitti?'İlk geçiş ödülü alındı':'En çok 40 altın · Başarı ve süreye göre'}</small></div><p class="sp-entry-note">${ileride?'🔒 Önce sıradaki durağı tamamla':bitti?'⭐'.repeat(y)+' · En iyi sonucun':D.kalip?'🔤 Kalıp durağı · '+(D.kaliplar||[]).length+' kalıp · '+D.kelimeler.length+' kelime · 12 soru':D.kelimeler.length+' kelime · Seviye '+D.parca+'/'+D.parcaToplam+' · 12 soru + kelime kartları'}</p><button class="bz-btn mor" id="bzOyna" ${ileride?'disabled':''}>${saved?'Kaldığın yerden devam et':bitti?'Tekrar başlat':'Başlat'} →</button></div>`;
     document.body.appendChild(k);
     const kap = () => {k.remove();window.dmViewHistory?.leave(k);};window.dmViewHistory?.track(k,{parent:returnView,close:kap});
     k.onclick = e => { if (e.target === k) kap(); };
@@ -24619,8 +24656,13 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     // İlk 12 görev mevcut 12 ayrı mekaniği kullanır; final yalnızca hedef kelimeleri sorar.
     const active=D.kelimeler.slice();
     if(!active.length){toast('Bu ünitenin word_bank kelimeleri bulunamadı.');return;}
-    const types=['teach','hatirla','soyle','dinleSec','eslestir','eksik',
-      'lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
+    const kalipDuragi=!!D.kalip;
+    if(kalipDuragi&&!(D.kaliplar||[]).length){toast('Bu ünitenin kalıpları henüz yüklenmedi.');return;}
+    const types=kalipDuragi
+      ? ['patternTeach','patternComplete','patternOrder','patternListen','patternTranslate','hata',
+         'patternTeach','patternComplete','patternOrder','patternListen','patternTranslate','hata']
+      : ['teach','hatirla','soyle','dinleSec','eslestir','eksik',
+         'lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
     const sorular=types.map((tip,i)=>({tip,k:active[i%active.length],l:active.slice()}));
     sorular.push({tip:'sesliFinal',l:active.slice()});
     O = { owner:ownerAtStart, b, d, D, sorular, speechAlternatives:{}, kombo:0, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0, runId:crypto.randomUUID(), pendingAnswer:null };
@@ -24629,7 +24671,13 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     checkpointSave(); // Even a failed first server handshake must not discard this run.
     if (window.OC){OC.basla('ba');if(saved?.score)Object.assign(OC.aktif,saved.score,{bas:O.bas,bitti:false});Object.assign(OC.aktif,{runId:O.runId,rewardScope:{classNo:D.sinif,units:[D.unite],stopNo:D.no}});}
     if(!sinifModu()){
-      try{const verified=await window.dmVerifiedGames.start('ba',O.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no},active);O.verifiedVersion=1;const canonical=verified.words.map(w=>({en:w.en,tr:w.tr,sinif:D.sinif,unite:D.unite}));O.D.kelimeler=canonical;O.sorular.slice(0,12).forEach((task,i)=>{task.k=canonical[i%canonical.length];task.l=canonical.slice();});O.sorular[12].l=canonical.slice();O.sorular[4].matchItems=verified.slots[4].pairs;O.sorular[4].matchOrder=null;}catch(e){checkpointSave();toast('Bağlantı kurulamadı. Aynı duraktan devam etmek için yeniden dene: '+e.message);O=null;return;}
+      try{const verified=await window.dmVerifiedGames.start('ba',O.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no},active);O.verifiedVersion=1;const canonical=verified.words.map(w=>({en:w.en,tr:w.tr,sinif:D.sinif,unite:D.unite}));O.D.kelimeler=canonical;O.sorular.slice(0,12).forEach((task,i)=>{task.k=canonical[i%canonical.length];task.l=canonical.slice();});O.sorular[12].l=canonical.slice();
+      if(kalipDuragi){
+        /* Kalıbı ve doldurulmuş cümleyi sunucu belirler; istemci yalnızca gösterir. */
+        O.sorular.slice(0,12).forEach((task,i)=>{const slot=verified.slots[i]||{};
+          task.kalip={sablon:slot.pattern||'',sablonTr:slot.patternTr||'',cumle:slot.en||'',cumleTr:slot.tr||'',not:slot.note||'',kelime:slot.word||'',kelimeTr:slot.wordTr||''};
+          if(slot.word)task.k={en:slot.word,tr:slot.wordTr||'',sinif:D.sinif,unite:D.unite};});
+      }else{O.sorular[4].matchItems=verified.slots[4].pairs;O.sorular[4].matchOrder=null;}}catch(e){checkpointSave();toast('Bağlantı kurulamadı. Aynı duraktan devam etmek için yeniden dene: '+e.message);O=null;return;}
     }
     if(!saved&&!sinifModu()){
       try{await parkurEnerjiAdim(O.runId,1,null);}

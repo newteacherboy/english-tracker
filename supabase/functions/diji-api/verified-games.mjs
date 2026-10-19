@@ -1,10 +1,21 @@
+import {durakSinif,durakUnite,durakParca,kalipDuragiMi} from './parkur-stops.mjs';
 // Authoritative grading: only bank-backed tasks are persisted, no client correctness flags.
 export const games=new Set(['ky','jp','bosluk','hafiza','yagmur','asmaca','kelimebul','eslestirme','tren','harfbahcesi','kp','dikte','cumle','ba']);
 export const norm=v=>String(v??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[’‘`]/g,"'").replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const key=v=>String(v??'').trim().toLocaleLowerCase('en');
 export const types=['teach','hatirla','soyle','dinleSec','eslestir','eksik','lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
-export function compile(game,words){
+// Kalıp durağı: altı görev iki tur döner, her turda farklı kalıp ve farklı kelime -> 12 doğrulanmış cevap.
+export const kalipTypes=['patternTeach','patternComplete','patternOrder','patternListen','patternTranslate','hata'];
+export const kalipDoldur=(sablon,kelime)=>String(sablon??'').replace('...',String(kelime??'')).replace(/\s+/g,' ').trim();
+export function compile(game,words,patterns=[]){
  if(game!=='ba')return words.map(w=>({...w,kind:['ky','jp','kp'].includes(game)?'either':['hafiza','eslestirme','yagmur'].includes(game)?'tr':'en'}));
+ if(patterns.length)return Array.from({length:types.length},(_,i)=>{
+  const kind=kalipTypes[i%kalipTypes.length],p=patterns[i%patterns.length],w=words[i%words.length];
+  const cumle=kalipDoldur(p.en,w.en);
+  return {en:cumle,tr:kalipDoldur(p.tr,w.tr),kind,
+   expected:kind==='patternTeach'?true:kind==='patternComplete'?w.en:cumle,
+   pattern:p.en,patternTr:p.tr,note:p.note,word:w.en,wordTr:w.tr};
+ });
  return types.map((kind,i)=>{
   const w=words[i%words.length],phrase=words.find(x=>norm(x.en).split(' ').length>1&&(' '+norm(x.en)+' ').includes(' '+norm(w.en)+' '))||w;
   const expected=kind==='lab'?w.tr:kind==='patternComplete'?phrase.en.trim().split(/\s+/).at(-1):['wordOrder','patternOrder','patternListen','patternTranslate'].includes(kind)?phrase.en:w.en;
@@ -13,7 +24,7 @@ export function compile(game,words){
 }
 export function grade(task,answer,game){
  if(answer===null)return {valid:true,correct:false,complete:true}; // explicit skip
- if(task.kind==='teach')return {valid:answer===true,correct:answer===true,complete:true};
+ if(task.kind==='teach'||task.kind==='patternTeach')return {valid:answer===true,correct:answer===true,complete:true};
  if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&typeof answer.letter==='string'&&answer.letter.length===1){
   const text=String(task.en).toLowerCase(),letter=answer.letter.toLowerCase();
   const correct=game==='asmaca'?text.includes(letter):Number.isInteger(answer.index)&&text[answer.index]===letter;
@@ -44,17 +55,29 @@ export function verifiedGamesAPI(db,json){
    const code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur'})[game]||'oyun_'+game;
    const ctx=await db.rpc('dm_progress_context',{actor:a.student_id});if(ctx.error)return fail('Seviye doğrulanamadı.',503);
    const C=globalThis.DijiProgressionCatalog;if(!C?.gates[code]||ctx.data.level<C.gates[code])return fail('Bu oyun henüz açılmadı.',403);
-   let bankQuery=db.from('word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
+   let bankQuery=db.from('word_bank').select('english,turkish,class_no,unit_no,extra').eq('active',true);
    bankQuery=game==='kp'?bankQuery.in('class_no',[1,2,3,4,5,6,7,8]):bankQuery.eq('class_no',classNo);
    const bank=await bankQuery.in('unit_no',units).limit(5000);
    if(bank.error)return fail('Kelime havuzu yüklenemedi.',503);
-   const available=(bank.data||[]).filter(w=>w.english?.trim()&&w.turkish?.trim()).map(w=>({en:w.english.trim(),tr:w.turkish.trim()}));
-   let words=[],stop=Number(body.stopNo)||0;
+   const rows=(bank.data||[]).filter(w=>w.english?.trim()&&w.turkish?.trim());
+   const kalipMi=w=>String(w?.extra?.type||'')==='pattern';
+   /* Kalıplar kelime kartı olarak sorulmaz; durak sayımı da onları saymaz (dm_progress_context). */
+   const available=rows.filter(w=>!kalipMi(w)).map(w=>({en:w.english.trim(),tr:w.turkish.trim()}));
+   /* Boşluğu olmayan kayıt kalıp değildir: doldurulacak yer yoksa patternComplete'in cevabı da olmaz. */
+   const kullanilirKalip=w=>kalipMi(w)&&w.english.includes('...')&&w.extra?.pattern_usable!==false;
+   const bankPatterns=rows.filter(kullanilirKalip).map(w=>({en:w.english.trim(),tr:w.turkish.trim(),note:String(w.extra?.usage_note||'')}));
+   let words=[],stopPatterns=[],stop=Number(body.stopNo)||0;
    if(game==='ba'){
-    const door=ctx.data.units.findIndex(row=>row.includes(stop)),unit=Math.floor((stop-200000)%10000/100),part=stop%100-51;
-    if(door<0||classNo!==Math.floor((stop-200000)/10000)||units.length!==1||units[0]!==unit||part<0||part>48||ctx.data.level<[1,10,20,30][door]||door>0&&!ctx.data.complete[door-1])return fail('Geçersiz parkur durağı.',403);
+    const door=ctx.data.units.findIndex(row=>row.includes(stop)),unit=durakUnite(stop),part=durakParca(stop);
+    if(door<0||classNo!==durakSinif(stop)||units.length!==1||units[0]!==unit||part<0||part>48||ctx.data.level<[1,10,20,30][door]||door>0&&!ctx.data.complete[door-1])return fail('Geçersiz parkur durağı.',403);
     const pos=ctx.data.units[door].indexOf(stop);if(!ctx.data.done.includes(stop)&&pos>0&&!ctx.data.done.includes(ctx.data.units[door][pos-1]))return fail('Önce önceki durağı tamamla.',403);
-    words=[...new Map(available.map(w=>[key(w.en),w])).values()].sort((a,b)=>a.en.localeCompare(b.en,'en')).slice(part*4,part*4+4);
+    const sirali=[...new Map(available.map(w=>[key(w.en),w])).values()].sort((a,b)=>a.en.localeCompare(b.en,'en'));
+    if(kalipDuragiMi(stop)){
+     /* Kalıp durağı, kendisinden önceki dört kelime durağının 16 kelimesini ünitenin kalıplarıyla çalıştırır. */
+     words=sirali.slice(part*16,part*16+16);
+     stopPatterns=bankPatterns;
+     if(!stopPatterns.length)return fail('Bu ünitede kalıp bulunamadı.',400);
+    }else words=sirali.slice(part*4,part*4+4);
    }else{
     if(!Array.isArray(body.words)||body.words.length<1||body.words.length>32)return fail('Geçersiz soru listesi.',400);
     let eligible=available;
@@ -69,10 +92,10 @@ export function verifiedGamesAPI(db,json){
     const seen=new Set();for(const requested of body.words){const w=eligible.find(w=>key(w.en)===key(requested.en)&&norm(w.tr)===norm(requested.tr));if(!w||seen.has(key(w.en)))return fail('Sorular etkin kelime havuzuyla uyuşmuyor.',400);seen.add(key(w.en));words.push(w);}
    }
    if(!words.length)return fail('Bu bölümde soru bulunamadı.',400);
-   const deck=compile(game,words);
+   const deck=compile(game,words,stopPatterns);
    const r=await db.rpc('dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
    if(r.error)return fail('Oyun oturumu kaydedilemedi.',409);
-   return json({ok:true,total:deck.length,words,slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs})),...r.data});
+   return json({ok:true,total:deck.length,words,slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs,...(w.pattern?{tr:w.tr,pattern:w.pattern,patternTr:w.patternTr,note:w.note,word:w.word,wordTr:w.wordTr}:{})})),...r.data});
   }
   const r=await db.from('dm_verified_runs').select('game,class_no,units,stop_no,deck,answers,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();
   if(r.error)return fail('Cevap doğrulanamadı.',503);if(!r.data||Date.parse(r.data.expires_at)<Date.now())return fail('Oyun oturumu sona erdi. Yeniden başlat.');
