@@ -11,7 +11,7 @@ const isSunday=()=>new Date(Date.now()+10800000).getUTCDay()===0;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)||'';}catch{return '';}},set(k,v){try{localStorage.setItem(k,v);}catch{}}};
 const key=(name)=>'dm_habit_'+name+':'+who().toLowerCase();
-const busy=()=>!!(window.dmFirstDiscovery?.activityOpen?.()||document.hidden||document.querySelector('#dmDailyDone,#dmWeekDone,#suStudyResult,.dc-fullscreen-overlay.active'));
+const busy=()=>!!(window.dmFirstDiscovery?.activityOpen?.()||document.hidden||document.querySelector('#dmDailyDone,#dmMissionReward,#dmWeekDone,#suStudyResult,.dc-fullscreen-overlay.active'));
 const later=(fn,ms)=>typeof setTimeout==='function'?setTimeout(fn,ms):0;
 
 function style(){

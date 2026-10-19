@@ -1,13 +1,24 @@
-/* Mission views. Progress comes from the server; the daily reward is verified and credited by the server once per day. */
+/* Mission views. Progress comes from the server; daily and weekly rewards are verified and credited by the server once per period. */
 (()=>{'use strict';
 let owner='',value=null;
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 const goals={daily:[['route','1 bölüm tamamla',1,'path'],['game','1 oyun oyna',1,'game'],['review','3 kelime tekrar et',3,'book']],weekly:[['route','10 bölüm tamamla',10,'path'],['game','20 oyun oyna',20,'game'],['days','5 gün çalış',5,'goal']]};
+/* Rewards shown on the button and in the announcement; the server decides and credits the same amounts. */
+const PERIOD={
+ daily:{op:'gunlukGorevOdul',gold:30,xp:70,chips:['1 bölüm','1 oyun','3 tekrar'],cls:'rt-tasks',label:'Günün 3 Görevi',
+  title:'Bugünün 3 görevi tamam! 🎉',text:'Bir bölüm, bir oyun ve kelime tekrarı… Papi seninle gurur duyuyor.',nextTitle:'Yarın seni bekleyenler',
+  next:['🗺️ Parkurda yeni bir bölüm','🎮 Yeni bir oyun turu','🔁 Unutmadan önce kelime tekrarı'],done:'✅ Ödül alındı · yarın yeni görevler seni bekliyor',again:'Bugünün ödülünü zaten aldın. Yarın yeni görevler gelecek!',close:'Harika, yarın görüşürüz!'},
+ weekly:{op:'haftalikGorevOdul',gold:100,xp:120,chips:['10 bölüm','20 oyun','5 gün'],cls:'rt-week',label:'Haftanın 3 Görevi',
+  title:'Haftanın 3 görevi tamam! 🏆',text:'10 bölüm, 20 oyun ve 5 gün çalışma… Bu hafta harikaydın!',nextTitle:'Yeni hafta seni bekliyor',
+  next:['🗺️ Yeni bölümler ve hikâyeler','🎮 Yeni oyun turları','🏅 Yeni haftalık ödül'],done:'✅ Haftalık ödül alındı · pazartesi yeni görevler',again:'Bu haftanın ödülünü zaten aldın. Pazartesi yeni görevler gelecek!',close:'Süper, yeni haftada görüşürüz!'}
+};
 const today=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
+const monday=()=>{const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);};
+const stamp=period=>period==='weekly'?monday():today();
 const store={get(k){try{return localStorage.getItem(k)||'';}catch{return '';}},set(k,v){try{localStorage.setItem(k,v);}catch{}}};
-const claimKey=()=>'dm_daily_claim:'+who().toLowerCase();
-const claimed=()=>store.get(claimKey())===today();
-function dailyDone(){const d=owner===who()?value?.daily:null;return !!d&&goals.daily.every(([event,,target])=>(Number(d[event])||0)>=target);}
+const claimKey=period=>'dm_'+(period==='weekly'?'weekly':'daily')+'_claim:'+who().toLowerCase();
+const claimed=period=>store.get(claimKey(period))===stamp(period);
+function done(period){const d=owner===who()?value?.[period]:null;return !!d&&goals[period].every(([event,,target])=>(Number(d[event])||0)>=target);}
 const member=()=>{const n=who();return !!n&&n.toLowerCase()!=='teacher'&&!(typeof window!=='undefined'&&window.dmGuestMode);};
 
 /* Cards render before the summary arrives on first load: ask for it once instead of showing "…" until a tap. */
@@ -17,45 +28,68 @@ function askForData(){
  setTimeout(()=>{if(!(owner===who()&&value))window.dmLearningCompanion?.refresh?.()?.catch?.(()=>{});},0);
 }
 
-function claimRow(){
- if(!dailyDone())return '';
- return claimed()
-  ?'<p class="rt-claim-done" role="status">✅ Ödül alındı · yarın yeni görevler seni bekliyor</p>'
-  :'<button type="button" class="rt-claim" data-rt="claim-daily">🎁 Ödülünü Al <small>+5 🪙 +10 XP</small></button>';
+function claimRow(period){
+ const p=PERIOD[period];
+ return claimed(period)
+  ?'<p class="rt-claim-done" role="status">'+p.done+'</p>'
+  :'<button type="button" class="rt-claim" data-rt="claim-mission" data-period="'+period+'">🎁 Ödülünü Al <small>+'+p.gold+' 🪙 +'+p.xp+' XP</small></button>';
 }
 
 window.dmRouteMissions={
  data(period){return owner&&owner===who()?(value?.[period]||null):null;},
  set(data,name){if(name!==who())return;owner=name;value=data||null;window.dmRefreshRouteCards?.();},
  markup(period){
-  const data=owner===who()?value?.[period]:null;if(!data)askForData();
+  const data=owner===who()?value?.[period]:null;if(!data)askForData();const p=PERIOD[period];
   // All three done: a compact card (fits the fixed-height carousel) with the reward button or the claimed note.
-  if(period==='daily'&&dailyDone())return '<section class="rt-tasks rt-card rt-missions rt-done" aria-label="Günün 3 Görevi tamamlandı"><div class="rt-done-summary">'+['1 bölüm','1 oyun','3 tekrar'].map(x=>'<span>✅ '+x+'</span>').join('')+'</div>'+claimRow()+'</section>';
+  if(p&&done(period))return '<section class="'+p.cls+' rt-card rt-missions rt-done" aria-label="'+p.label+' tamamlandı"><div class="rt-done-summary">'+p.chips.map(x=>'<span>✅ '+x+'</span>').join('')+'</div>'+claimRow(period)+'</section>';
   return '<section class="'+(period==='daily'?'rt-tasks':'rt-week')+' rt-card rt-missions" aria-label="'+(period==='daily'?'Günün 3 Görevi':'Haftanın 3 Görevi')+'"><div class="rt-task-list">'+goals[period].map(([event,label,target,icon])=>{const count=data?Math.min(target,Math.max(0,Number(data[event])||0)):null;return '<button type="button" data-rt="task" data-event="'+event+'" aria-label="'+label+' · '+(count===null?'yükleniyor':count+'/'+target)+'"><img src="route-assets/'+icon+'.svg" alt=""><span class="rt-mission-copy"><b>'+label+'</b><progress max="'+target+'" value="'+(count||0)+'" aria-label="'+label+' ilerlemesi"></progress></span><span class="rt-mission-count">'+(count===null?'…':count+'/'+target)+'</span><span aria-hidden="true">›</span></button>';}).join('')+'</div></section>';
  }
 };
 
-/* Claim: the server re-checks the three missions and credits +5 gold once per day; XP follows the existing client XP path. */
+/* Announcement shown after a successful claim, with the rewards that were just credited. */
+function style(){
+ if(document.getElementById('dm-mission-reward-style'))return;const s=document.createElement('style');s.id='dm-mission-reward-style';
+ s.textContent='#dmMissionReward{position:fixed;inset:0;z-index:2147483640;display:grid;place-items:center;padding:16px;background:#0f2a3a66;animation:mrIn .25s ease-out}'+
+ '#dmMissionReward .mr-card{box-sizing:border-box;width:min(360px,100%);max-height:calc(100dvh - 32px);overflow-y:auto;background:#fffdf5;border:2px solid #f6d77a;border-radius:24px;padding:20px 18px;text-align:center;color:#17324d;font:600 14px/1.45 system-ui,-apple-system,sans-serif;box-shadow:0 18px 50px #0f2a3a40}'+
+ '#dmMissionReward.weekly .mr-card{border-color:#c9b8f5}#dmMissionReward img{width:120px;height:120px;object-fit:contain;margin:-6px auto 4px;display:block}'+
+ '#dmMissionReward h2{margin:0 0 6px;font:900 20px/1.25 system-ui,sans-serif;color:#0e6251}#dmMissionReward.weekly h2{color:#553088}#dmMissionReward p{margin:0 0 12px}'+
+ '#dmMissionReward .mr-rewards{display:flex;justify-content:center;gap:10px;margin:2px 0 14px}#dmMissionReward .mr-rewards span{display:flex;flex-direction:column;align-items:center;min-width:92px;padding:9px 12px;border-radius:16px;font-size:12px;font-weight:800;animation:mrPop .5s cubic-bezier(.2,1.6,.4,1) both}'+
+ '#dmMissionReward .mr-rewards b{font-size:24px;line-height:1.1}#dmMissionReward .mr-gold{background:#fff0bc;color:#8a6212;animation-delay:.15s!important}#dmMissionReward .mr-xp{background:#e9e0ff;color:#553088;animation-delay:.3s!important}'+
+ '#dmMissionReward .mr-next{display:grid;gap:6px;text-align:left;background:#eef9f3;border-radius:16px;padding:12px 14px;margin-bottom:14px}#dmMissionReward.weekly .mr-next{background:#f4efff}#dmMissionReward .mr-next b{font-weight:900;color:#0e6251}#dmMissionReward.weekly .mr-next b{color:#553088}'+
+ '#dmMissionReward button{border:0;border-radius:14px;padding:12px 16px;width:100%;background:#1d9e75;color:#fff;font:900 15px system-ui,sans-serif;cursor:pointer;min-height:44px}#dmMissionReward.weekly button{background:#7c3aed}'+
+ '@keyframes mrIn{from{opacity:0}to{opacity:1}}@keyframes mrPop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){#dmMissionReward,#dmMissionReward .mr-rewards span{animation:none}}';
+ document.head.append(s);
+}
+function announce(period,gold,xp){
+ const p=PERIOD[period];document.getElementById('dmMissionReward')?.remove();style();
+ const box=document.createElement('div');box.id='dmMissionReward';box.className=period;box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-labelledby','dmMissionRewardTitle');
+ box.innerHTML='<div class="mr-card"><img src="papi-reward-v2.png" width="120" height="120" alt=""><h2 id="dmMissionRewardTitle">'+p.title+'</h2><p>'+p.text+'</p><div class="mr-rewards" aria-label="Kazandığın ödüller"><span class="mr-gold"><b>+'+gold+'</b>🪙 Altın</span><span class="mr-xp"><b>+'+xp+'</b>⭐ XP</span></div><div class="mr-next"><b>'+p.nextTitle+'</b>'+p.next.map(x=>'<span>'+x+'</span>').join('')+'</div><button type="button">'+p.close+'</button></div>';
+ const close=()=>{box.remove();document.removeEventListener('keydown',esc);};const esc=e=>{if(e.key==='Escape')close();};
+ box.querySelector('button').onclick=close;box.addEventListener('click',e=>{if(e.target===box)close();});document.addEventListener('keydown',esc);
+ document.body.append(box);box.querySelector('button').focus({preventScroll:true});
+}
+
+/* Claim: the server re-checks the missions and credits gold and XP once per period, then returns the wallet. */
 let claiming=false;
 async function claim(button){
+ const period=button.dataset.period==='weekly'?'weekly':'daily',p=PERIOD[period];
  if(claiming||!member())return;claiming=true;
  const label=button.innerHTML;button.disabled=true;button.textContent='Ödül kaydediliyor…';
  try{
-  const d=await window.dmEkonomi?.islem?.('gunlukGorevOdul');
+  const d=await window.dmEkonomi?.islem?.(p.op);
   if(!d)throw Error('Ödül şu anda alınamadı, yeniden dene.');
   if(!d.ok)throw Error(d.mesaj||'Ödül şu anda alınamadı, yeniden dene.');
-  store.set(claimKey(),today());
-  if(Number(d.eklenen)>0){
-   window.dmBaseXpAdd?.(10,0);
-   window.odulGoster?.({ikon:'📋',baslik:'Günün 3 görevi tamam! 🎉',alt:'Yarın: parkurda yeni bir bölüm, yeni bir oyun turu ve kelime tekrarı seni bekliyor.',xp:10,altin:5});
-  }else window.yoToast?.('Bugünün ödülünü zaten aldın. Yarın yeni görevler gelecek!');
+  store.set(claimKey(period),stamp(period));
+  if(d.yo)window.dmApplyRewardState?.(d.yo,who());
+  if(Number(d.eklenen)>0)announce(period,Number(d.eklenen)||p.gold,Number(d.xp)||p.xp);
+  else window.yoToast?.(p.again);
   window.dmRefreshRouteCards?.();
  }catch(e){window.yoToast?.(e.message);if(button.isConnected){button.disabled=false;button.innerHTML=label;}}
  finally{claiming=false;}
 }
 if(typeof document!=='undefined'&&document.addEventListener){
- document.addEventListener('click',e=>{const b=e.target?.closest?.('[data-rt="claim-daily"]');if(!b)return;e.preventDefault();e.stopPropagation();claim(b);},true);
+ document.addEventListener('click',e=>{const b=e.target?.closest?.('[data-rt="claim-mission"]');if(!b)return;e.preventDefault();e.stopPropagation();claim(b);},true);
  /* Only a real account change clears missions; a repeated login event for the same student keeps them. */
- document.addEventListener('dm:login',()=>{if(owner&&owner===who())return;owner='';value=null;lastAsk=0;});
+ document.addEventListener('dm:login',()=>{if(owner&&owner===who())return;owner='';value=null;lastAsk=0;document.getElementById('dmMissionReward')?.remove();});
 }
 })();
