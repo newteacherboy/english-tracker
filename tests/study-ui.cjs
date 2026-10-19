@@ -121,6 +121,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   assert(writes.some(x=>x.islem==='dersTestSonucKaydet'&&x.konuAdi==='Günlük Rutinler'));
   const saveCount=writes.filter(x=>x.islem==='dersTestSonucKaydet').length;await page.evaluate(()=>dcTestiBitir(2));assert.equal(writes.filter(x=>x.islem==='dersTestSonucKaydet').length,saveCount,'single run cannot award twice');
   await page.screenshot({path:path.join(artifacts,'study-result-mobile.png')});
+  {const canPlay=await page.evaluate(()=>typeof window.aktivitelerTamEkranAc==='function');assert.equal(await page.locator('#suStudyResult .su-result-play').count(),canPlay?1:0,'learn-then-play button follows the games screen');}
   await page.locator('.su-result-done').click();assert(await page.locator('#suTopics').isVisible());
   assert.equal(await page.locator('#bottomNavMobile').innerHTML(),navBefore,'bottom nav unchanged');
   // Wrong answers reveal the answer, wait five seconds and preserve test progress.
@@ -152,4 +153,4 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   assert.deepEqual(errors.filter(x=>!x.includes('Chart')&&!x.includes('pdf')),[]);
   console.log('PASS study filters/search, real topic loading, reading/listening gates, slow voice, dictionary, server-graded study, below-threshold retry, five-second wrong-answer review and preserved dock');
   await browser.close();
-})().catch(e=>{console.error(e);process.exit(1);});
+})().catch(e=>{console.error(e);console.log('::error title=study-ui::'+String(e&&e.stack||e).slice(0,900).replace(/%/g,'%25').replace(/\n/g,'%0A'));process.exit(1);});
