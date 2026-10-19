@@ -85,6 +85,31 @@ window.dmRouteMissions={
  }
 };
 
+/* Rotate the existing two mission tabs, without adding duplicate controls. */
+let dmMissionTabChange=0,dmMissionLastPeriod='';
+function dmCycleExistingMissionTabs(){
+ if(document.hidden||!member())return;
+ const candidates=Array.from(document.querySelectorAll('button,[role="tab"]')).filter(el=>!el.closest('[hidden],[aria-hidden="true"]')&&/^(?:📋\s*)?Günün 3 Görevi$|^(?:🎯\s*)?Haftanın 3 Görevi$/.test((el.textContent||'').trim()));
+ const daily=candidates.find(el=>(el.textContent||'').includes('Günün 3 Görevi'));
+ const weekly=candidates.find(el=>(el.textContent||'').includes('Haftanın 3 Görevi'));
+ if(!daily||!weekly)return;
+ const target=claimed('daily')&&done('daily')&&!(claimed('weekly')&&done('weekly'))?'weekly'
+  :claimed('weekly')&&done('weekly')&&!(claimed('daily')&&done('daily'))?'daily':null;
+ const active=el=>el.getAttribute('aria-selected')==='true'||el.classList.contains('active')||el.classList.contains('aktif')||el.classList.contains('selected');
+ const current=active(daily)?'daily':active(weekly)?'weekly':dmMissionLastPeriod||'daily';
+ const now=Date.now();
+ if(target){
+  if(target!==current){(target==='daily'?daily:weekly).click();dmMissionLastPeriod=target;}
+  dmMissionTabChange=now;
+  return;
+ }
+ if(now-dmMissionTabChange<5000)return;
+ const next=current==='daily'?'weekly':'daily';
+ (next==='daily'?daily:weekly).click();
+ dmMissionLastPeriod=next;dmMissionTabChange=now;
+}
+if(typeof window!=='undefined'&&typeof window.setInterval==='function')window.setInterval(dmCycleExistingMissionTabs,1000);
+
 /* Announcement shown after a successful claim, with the rewards that were just credited. */
 function style(){
  if(document.getElementById('dm-mission-reward-style'))return;const s=document.createElement('style');s.id='dm-mission-reward-style';
