@@ -32,4 +32,4 @@ const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),ass
   assert.deepEqual(errors,[]);await page.close();
  }
  await browser.close();console.log('PASS daily-done-ui');
-})().catch(e=>{console.error(e);process.exit(1);});
+})().catch(e=>{console.error(e);console.log('::error title=daily-done-ui::'+String(e&&e.stack||e).slice(0,900).replace(/%/g,'%25').replace(/\n/g,'%0A'));process.exit(1);});
