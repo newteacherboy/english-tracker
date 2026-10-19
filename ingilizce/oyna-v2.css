@@ -94,3 +94,7 @@
 .rt-path>.rt-stones{position:relative;z-index:2;margin-top:28px;min-height:105px}
 .rt-path>.rt-continue{position:relative;z-index:2;margin-top:15px}
 .rt-path>.rt-trail{top:140px;height:calc(100% - 140px)}
+
+/* Active map stops always remain tappable above the continuation footer. */
+.rt-path>.rt-stones{z-index:12!important}
+.rt-path>.rt-continue{z-index:3!important}
