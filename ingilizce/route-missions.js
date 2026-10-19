@@ -1,27 +1,61 @@
-/* Read-only mission views; progress and league rewards come from the server. */
+/* Mission views. Progress comes from the server; the daily reward is verified and credited by the server once per day. */
 (()=>{'use strict';
 let owner='',value=null;
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 const goals={daily:[['route','1 bölüm tamamla',1,'path'],['game','1 oyun oyna',1,'game'],['review','3 kelime tekrar et',3,'book']],weekly:[['route','10 bölüm tamamla',10,'path'],['game','20 oyun oyna',20,'game'],['days','5 gün çalış',5,'goal']]};
-window.dmRouteMissions={data(period){return owner&&owner===who()?(value?.[period]||null):null;},set(data,name){if(name!==who())return;owner=name;value=data||null;window.dmRefreshRouteCards?.();celebrate();},markup(period){const data=owner===who()?value?.[period]:null;return '<section class="'+(period==='daily'?'rt-tasks':'rt-week')+' rt-card rt-missions" aria-label="'+(period==='daily'?'Günün 3 Görevi':'Haftanın 3 Görevi')+'"><div class="rt-task-list">'+goals[period].map(([event,label,target,icon])=>{const count=data?Math.min(target,Math.max(0,Number(data[event])||0)):null;return '<button type="button" data-rt="task" data-event="'+event+'" aria-label="'+label+' · '+(count===null?'yükleniyor':count+'/'+target)+'"><img src="route-assets/'+icon+'.svg" alt=""><span class="rt-mission-copy"><b>'+label+'</b><progress max="'+target+'" value="'+(count||0)+'" aria-label="'+label+' ilerlemesi"></progress></span><span class="rt-mission-count">'+(count===null?'…':count+'/'+target)+'</span><span aria-hidden="true">›</span></button>';}).join('')+'</div></section>';}};
-
-/* All three daily missions done: celebrate once per student per day and preview tomorrow. Waits while an activity is open. */
 const today=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
-function dailyDone(){const d=value?.daily;return !!d&&goals.daily.every(([event,,target])=>(Number(d[event])||0)>=target);}
-function ddStyle(){if(document.getElementById('dm-daily-done-style'))return;const s=document.createElement('style');s.id='dm-daily-done-style';s.textContent='#dmDailyDone{position:fixed;inset:0;z-index:2147483640;display:grid;place-items:center;padding:16px;background:#0f2a3a66;animation:ddIn .25s ease-out}#dmDailyDone .dd-card{box-sizing:border-box;width:min(360px,100%);max-height:calc(100dvh - 32px);overflow-y:auto;background:#fffdf5;border:2px solid #f6d77a;border-radius:24px;padding:20px 18px;text-align:center;color:#17324d;font:600 14px/1.45 system-ui,-apple-system,sans-serif;box-shadow:0 18px 50px #0f2a3a40}#dmDailyDone img{width:120px;height:120px;object-fit:contain;margin:-6px auto 4px;display:block}#dmDailyDone h2{margin:0 0 6px;font:900 20px/1.25 system-ui,sans-serif;color:#0e6251}#dmDailyDone p{margin:0 0 12px}#dmDailyDone .dd-next{display:grid;gap:6px;text-align:left;background:#eef9f3;border-radius:16px;padding:12px 14px;margin-bottom:14px}#dmDailyDone .dd-next b{font-weight:900;color:#0e6251}#dmDailyDone button{border:0;border-radius:14px;padding:12px 16px;width:100%;background:#1d9e75;color:#fff;font:900 15px system-ui,sans-serif;cursor:pointer;min-height:44px}@keyframes ddIn{from{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){#dmDailyDone{animation:none}}';document.head.append(s);}
-let celebrateTimer=0;const stopTimer=()=>{if(celebrateTimer&&typeof clearTimeout==='function')clearTimeout(celebrateTimer);celebrateTimer=0;};
-function celebrate(tries=0){
- stopTimer();if(!owner||typeof document==='undefined'||!document.body||owner!==who()||!dailyDone())return;
- const key='dm_daily_done:'+owner.toLowerCase();let seen='';try{seen=localStorage.getItem(key)||'';}catch{}
- if(seen===today()||document.getElementById('dmDailyDone'))return;
- if((window.dmFirstDiscovery?.activityOpen?.()||document.hidden)&&tries<40&&typeof setTimeout==='function'){celebrateTimer=setTimeout(()=>celebrate(tries+1),3000);return;}
- try{localStorage.setItem(key,today());}catch{}
- ddStyle();
- const box=document.createElement('div');box.id='dmDailyDone';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-labelledby','dmDailyDoneTitle');
- box.innerHTML='<div class="dd-card"><img src="papi-reward-v2.png" width="120" height="120" alt=""><h2 id="dmDailyDoneTitle">Bugünün 3 görevi tamam! 🎉</h2><p>Bir bölüm, bir oyun ve kelime tekrarı… Papi seninle gurur duyuyor.</p><div class="dd-next"><b>Yarın seni bekleyenler</b><span>🗺️ Parkurda yeni bir bölüm</span><span>🎮 Yeni bir oyun turu</span><span>🔁 Unutmadan önce kelime tekrarı</span></div><button type="button">Harika, yarın görüşürüz!</button></div>';
- const close=()=>{box.remove();document.removeEventListener('keydown',esc);};const esc=e=>{if(e.key==='Escape')close();};
- box.querySelector('button').onclick=close;box.addEventListener('click',e=>{if(e.target===box)close();});document.addEventListener('keydown',esc);
- document.body.append(box);box.querySelector('button').focus({preventScroll:true});
+const store={get(k){try{return localStorage.getItem(k)||'';}catch{return '';}},set(k,v){try{localStorage.setItem(k,v);}catch{}}};
+const claimKey=()=>'dm_daily_claim:'+who().toLowerCase();
+const claimed=()=>store.get(claimKey())===today();
+function dailyDone(){const d=owner===who()?value?.daily:null;return !!d&&goals.daily.every(([event,,target])=>(Number(d[event])||0)>=target);}
+const member=()=>{const n=who();return !!n&&n.toLowerCase()!=='teacher'&&!(typeof window!=='undefined'&&window.dmGuestMode);};
+
+/* Cards render before the summary arrives on first load: ask for it once instead of showing "…" until a tap. */
+let lastAsk=0;
+function askForData(){
+ if(!member()||typeof setTimeout!=='function'||Date.now()-lastAsk<10000)return;lastAsk=Date.now();
+ setTimeout(()=>{if(!(owner===who()&&value))window.dmLearningCompanion?.refresh?.()?.catch?.(()=>{});},0);
 }
-document.addEventListener('dm:login',()=>{owner='';value=null;stopTimer();});
+
+function claimRow(){
+ if(!dailyDone())return '';
+ return claimed()
+  ?'<p class="rt-claim-done" role="status">✅ Ödül alındı · yarın yeni görevler seni bekliyor</p>'
+  :'<button type="button" class="rt-claim" data-rt="claim-daily">🎁 Ödülünü Al <small>+5 🪙 +10 XP</small></button>';
+}
+
+window.dmRouteMissions={
+ data(period){return owner&&owner===who()?(value?.[period]||null):null;},
+ set(data,name){if(name!==who())return;owner=name;value=data||null;window.dmRefreshRouteCards?.();},
+ markup(period){
+  const data=owner===who()?value?.[period]:null;if(!data)askForData();
+  // All three done: a compact card (fits the fixed-height carousel) with the reward button or the claimed note.
+  if(period==='daily'&&dailyDone())return '<section class="rt-tasks rt-card rt-missions rt-done" aria-label="Günün 3 Görevi tamamlandı"><div class="rt-done-summary">'+['1 bölüm','1 oyun','3 tekrar'].map(x=>'<span>✅ '+x+'</span>').join('')+'</div>'+claimRow()+'</section>';
+  return '<section class="'+(period==='daily'?'rt-tasks':'rt-week')+' rt-card rt-missions" aria-label="'+(period==='daily'?'Günün 3 Görevi':'Haftanın 3 Görevi')+'"><div class="rt-task-list">'+goals[period].map(([event,label,target,icon])=>{const count=data?Math.min(target,Math.max(0,Number(data[event])||0)):null;return '<button type="button" data-rt="task" data-event="'+event+'" aria-label="'+label+' · '+(count===null?'yükleniyor':count+'/'+target)+'"><img src="route-assets/'+icon+'.svg" alt=""><span class="rt-mission-copy"><b>'+label+'</b><progress max="'+target+'" value="'+(count||0)+'" aria-label="'+label+' ilerlemesi"></progress></span><span class="rt-mission-count">'+(count===null?'…':count+'/'+target)+'</span><span aria-hidden="true">›</span></button>';}).join('')+'</div></section>';
+ }
+};
+
+/* Claim: the server re-checks the three missions and credits +5 gold once per day; XP follows the existing client XP path. */
+let claiming=false;
+async function claim(button){
+ if(claiming||!member())return;claiming=true;
+ const label=button.innerHTML;button.disabled=true;button.textContent='Ödül kaydediliyor…';
+ try{
+  const d=await window.dmEkonomi?.islem?.('gunlukGorevOdul');
+  if(!d)throw Error('Ödül şu anda alınamadı, yeniden dene.');
+  if(!d.ok)throw Error(d.mesaj||'Ödül şu anda alınamadı, yeniden dene.');
+  store.set(claimKey(),today());
+  if(Number(d.eklenen)>0){
+   window.dmBaseXpAdd?.(10,0);
+   window.odulGoster?.({ikon:'📋',baslik:'Günün 3 görevi tamam! 🎉',alt:'Yarın: parkurda yeni bir bölüm, yeni bir oyun turu ve kelime tekrarı seni bekliyor.',xp:10,altin:5});
+  }else window.yoToast?.('Bugünün ödülünü zaten aldın. Yarın yeni görevler gelecek!');
+  window.dmRefreshRouteCards?.();
+ }catch(e){window.yoToast?.(e.message);if(button.isConnected){button.disabled=false;button.innerHTML=label;}}
+ finally{claiming=false;}
+}
+if(typeof document!=='undefined'&&document.addEventListener){
+ document.addEventListener('click',e=>{const b=e.target?.closest?.('[data-rt="claim-daily"]');if(!b)return;e.preventDefault();e.stopPropagation();claim(b);},true);
+ /* Only a real account change clears missions; a repeated login event for the same student keeps them. */
+ document.addEventListener('dm:login',()=>{if(owner&&owner===who())return;owner='';value=null;lastAsk=0;});
+}
 })();
