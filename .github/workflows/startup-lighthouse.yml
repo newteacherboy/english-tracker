@@ -1,0 +1,59 @@
+name: Startup Lighthouse (mobile)
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'perf/**'
+permissions:
+  contents: read
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Serve the site with gzip (like GitHub Pages)
+        run: |
+          npx --yes serve@14 -l 5050 . > /tmp/serve.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:5050/ingilizce/ >/dev/null && break; sleep 1; done
+          curl -sI -H 'Accept-Encoding: gzip' http://localhost:5050/ingilizce/ | head -20
+      - name: Run Lighthouse 3x (mobile, simulated slow 4G)
+        run: |
+          mkdir -p lh
+          for i in 1 2 3; do
+            npx --yes lighthouse@12 http://localhost:5050/ingilizce/ \
+              --only-categories=performance --output=json --output=html \
+              --output-path=lh/run$i --chrome-flags="--headless=new --no-sandbox" --quiet || true
+          done
+      - name: Summarize
+        run: |
+          node -e '
+          const lines=[];const _log=console.log;console.log=(...a)=>{const s=a.join(" ");lines.push(s);_log(s);};
+          process.on("exit",()=>{for(let i=0;i<lines.length;i+=30){_log("::notice title=LH part "+(i/30+1)+"::"+lines.slice(i,i+30).join("\n").replace(/%/g,"%25").replace(/\r/g,"").replace(/\n/g,"%0A"));}});
+          const fs=require("fs");
+          const runs=[1,2,3].map(i=>{try{return JSON.parse(fs.readFileSync(`lh/run${i}.report.json`))}catch{return null}}).filter(Boolean);
+          const m=r=>({score:Math.round(r.categories.performance.score*100),fcp:r.audits["first-contentful-paint"].numericValue,lcp:r.audits["largest-contentful-paint"].numericValue,tbt:r.audits["total-blocking-time"].numericValue,cls:r.audits["cumulative-layout-shift"].numericValue,si:r.audits["speed-index"].numericValue,bytes:r.audits["total-byte-weight"].numericValue});
+          runs.sort((a,b)=>a.categories.performance.score-b.categories.performance.score);
+          for(const r of runs) console.log("RUN",JSON.stringify(m(r)));
+          const r=runs[Math.floor(runs.length/2)];
+          console.log("MEDIAN",JSON.stringify(m(r)));
+          const items=(r.audits["network-requests"].details.items||[]).sort((a,b)=>b.transferSize-a.transferSize).slice(0,12);
+          for(const it of items) console.log("REQ",Math.round(it.transferSize/1024)+"KB",it.resourceType,Math.round(it.endTime)+"ms",it.url.replace("http://localhost:5050",""));
+          for(const id of ["largest-contentful-paint-element","lcp-breakdown-insight","lcp-discovery-insight","layout-shifts","network-dependency-tree-insight"]){
+            const a=r.audits[id]; if(!a) continue;
+            if(id==="layout-shifts"){for(const it of (a.details&&a.details.items)||[]){console.log("SHIFT",it.score&&it.score.toFixed?it.score.toFixed(4):it.score,(it.node&&it.node.selector)||"",(it.node&&it.node.snippet||"").slice(0,120),JSON.stringify((it.subItems&&it.subItems.items)||[]).slice(0,300));}continue;}
+            console.log("KEY",id,a.displayValue||"",JSON.stringify(a.details||{}).slice(0,1400));
+          }
+          for(const id of ["render-blocking-resources","uses-responsive-images","modern-image-formats","uses-optimized-images","unused-javascript","largest-contentful-paint-element","layout-shifts","bootup-time","mainthread-work-breakdown"]){
+            const a=r.audits[id]; if(!a) continue;
+            console.log("AUDIT",id,a.displayValue||"",a.score);
+            const d=a.details&&a.details.items||[];
+            for(const x of d.slice(0,8)) console.log("   ",JSON.stringify(x).slice(0,300));
+          }'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: lh/

@@ -115,11 +115,11 @@ window.supabaseClient=supabaseClient;
         <meta property="og:url" content="https://app.dijimedu.com/ingilizce/">
         <meta property="og:locale" content="tr_TR">
             <link rel="icon" type="image/png" href="papi-app-icon-v3.png">
-            <link rel="apple-touch-icon" sizes="1254x1254" href="papi-welcome-v2.png">
+            <link rel="apple-touch-icon" sizes="512x512" href="papi-welcome-v2.png">
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             
-            <script defer src="vendor/chart-4.4.1.min.js"></script>
+            <!-- Chart.js: grafikliCiz() yükler (açılışı yavaşlatmasın) -->
             <link rel="stylesheet" href="portal-base-extracted.css?v=20261015-perf1">
 <link rel="stylesheet" href="friends-overflow-fix.css?v=20261015-fix1">
         <link rel="stylesheet" href="auth-dialogs.css?v=1">
@@ -6270,7 +6270,14 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     document.getElementById('valKitapHedef').innerText = `Hedef: ${hedef} sayfa`;
                 }
                 function grafikliCiz(grafikGecmis, user, denemeGecmis) {
-                    if(typeof Chart!=='function'||!['gelisimGrafik','kriterGrafik','denemeGrafik'].every(id=>document.getElementById(id)?.getContext('2d')))return;
+                    // Chart.js is loaded only when charts are first drawn (keeps 200 KB off app startup).
+                    if(typeof Chart!=='function'){
+                        window.__dmChartArgs=[grafikGecmis,user,denemeGecmis];
+                        if(!window.__dmChartLoad)window.__dmChartLoad=new Promise((ok,fail)=>{const s=document.createElement('script');s.src='vendor/chart-4.4.1.min.js';s.onload=ok;s.onerror=()=>{window.__dmChartLoad=null;s.remove();fail();};document.head.appendChild(s);});
+                        window.__dmChartLoad.then(()=>{if(typeof Chart==='function'&&window.__dmChartArgs){const a=window.__dmChartArgs;window.__dmChartArgs=null;grafikliCiz(...a);}},()=>{});
+                        return;
+                    }
+                    if(!['gelisimGrafik','kriterGrafik','denemeGrafik'].every(id=>document.getElementById(id)?.getContext('2d')))return;
                     let labels = grafikGecmis.map(item => tarihiDuzelt(item.tarih));
                     let veriler = grafikGecmis.map(item => item.genel);
                     if (gelisimChartInstance) gelisimChartInstance.destroy();
