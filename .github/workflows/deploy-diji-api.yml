@@ -1,0 +1,41 @@
+name: Deploy diji-api Edge Function
+# Manual only. Deploys supabase/functions/diji-api from the selected ref to production.
+# Requires the repository secret SUPABASE_ACCESS_TOKEN (Supabase > Account > Access Tokens).
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DEPLOY to publish diji-api to production'
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: deploy-diji-api
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: ${{ github.event.inputs.confirm == 'DEPLOY' }}
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: nxfqlutulxqzqgwewssd
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Pre-deploy checks
+        run: |
+          node --test tests/member-tools.test.cjs tests/api-security-guards.test.cjs
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Deploy
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN" || { echo "::error::SUPABASE_ACCESS_TOKEN secret is missing"; exit 1; }
+          supabase functions deploy diji-api --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+      - name: Smoke check
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X OPTIONS "https://$PROJECT_REF.supabase.co/functions/v1/diji-api")
+          echo "OPTIONS status: $code"
+          case "$code" in 2*|4*) echo "::notice title=Deploy::diji-api responded ($code)";; *) echo "::error::diji-api did not respond normally ($code)"; exit 1;; esac
