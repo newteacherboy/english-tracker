@@ -40,4 +40,4 @@ test('changing accounts while the initial load is pending cannot switch the new 
  assert.equal(c.saved,0);
 });
 
-test('school map displays class-local stop numbers instead of encoded reward identities, including mixed units',()=>{const c=fixture();const rows=[{b:3,d:45,no:270451,label:'7. sınıf 4. ünite · 1/2',done:true,available:true},{b:3,d:46,no:270452,label:'7. sınıf Karışık üniteler · 1/2',available:true}];const html=c.dmParkurSahne({steps:rows,allSteps:rows,current:1});assert.match(html,/7\. Sınıf/);assert.match(html,/rt-v3-number">2<\/span>/);assert(!html.includes('270452'));assert.match(html,/Karışık/);});
+test('school map displays class-local stop numbers instead of encoded reward identities, including mixed units',()=>{const c=fixture();const rows=[{b:3,d:45,no:270451,label:'7. sınıf 4. ünite · 1/2',done:true,available:true},{b:3,d:46,no:270452,label:'7. sınıf Karışık üniteler · 1/2',available:true}];const html=c.dmParkurSahne({steps:rows,allSteps:rows,current:1});assert.match(html,/7\. Sınıf/);assert.match(html,/rt-tile-number">2<\/b>/);assert(!html.includes('270452'));assert.match(html,/Karışık/);});
