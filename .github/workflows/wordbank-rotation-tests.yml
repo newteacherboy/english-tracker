@@ -7,6 +7,10 @@ on:
       - 'supabase/functions/diji-api/meteor-api.ts'
       - 'tests/word-bank-rotation.test.cjs'
       - 'tests/harf-bahcesi-round-size.test.cjs'
+      - 'tests/selected-eight-game-boards.test.cjs'
+      - 'ingilizce/game-experience.js'
+      - 'ingilizce/game-experience.css'
+      - 'ingilizce/harf-bahcesi.css'
       - 'tests/dm-matches-12-rounds.test.cjs'
       - 'supabase/migrations/20261010160000_dm_matches_12_questions.sql'
       - 'ingilizce/medupro.js'
@@ -22,4 +26,4 @@ jobs:
         with:
           node-version: '22'
       - name: Validate shared rotation
-        run: node --test tests/word-bank-rotation.test.cjs tests/harf-bahcesi-round-size.test.cjs tests/dm-matches-12-rounds.test.cjs
+        run: node --test tests/word-bank-rotation.test.cjs tests/harf-bahcesi-round-size.test.cjs tests/dm-matches-12-rounds.test.cjs tests/selected-eight-game-boards.test.cjs
