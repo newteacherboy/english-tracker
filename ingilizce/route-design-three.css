@@ -184,3 +184,15 @@ body #tab-dunya .rt-root.rt-english .rt-v3-canvas{background:#f7f6fc}
 @media(prefers-reduced-data:reduce){
  body #tab-dunya .rt-flow-world{background-image:none!important}
 }
+
+/* Small illustrated route-title flourish from approved concept 3. */
+body #tab-dunya .bz-ic:has(.rt-school[data-route-design="3"]) .rt-top h1::after,
+body #tab-dunya .bz-ic:has(.rt-english[data-route-design="3"]) .rt-top h1::after{
+ content:"";display:block;height:3px;width:min(150px,45%);margin-top:4px;
+ border-radius:100% 100% 40% 40%;
+ background:linear-gradient(90deg,#7dce9e,#9de0b7 58%,transparent);
+ transform:rotate(-1deg);pointer-events:none;
+}
+body #tab-dunya .bz-ic:has(.rt-english[data-route-design="3"]) .rt-top h1::after{
+ background:linear-gradient(90deg,#9974ed,#c4acfa 58%,transparent);
+}
