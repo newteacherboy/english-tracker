@@ -3,7 +3,8 @@
    Rules (approved 20 Oct 2026):
    - Lower grades / CEFR levels are always open; higher ones are locked.
    - School learners start at their class; the class also sets the CEFR level
-     (1–4 → A1, 5–8 → A2).
+     (1–4 → A1, 5–8 → A2). High school and university learners get the whole
+     1–8 school route; their start follows their CEFR level.
    - "Seviyemi biliyorum" starts at the chosen CEFR level; the starting test
      recommends a level and the learner may start at or below it. Skipping the
      test means A1.
@@ -41,13 +42,13 @@ export function computeStartPath({profile,classNo,placement,choice,lessons,done,
   const start=test||'A1';
   return {legacy:true,mode:'open',startGrade:cls||1,maxGrade:8,startCefr:start,maxCefr:'B2',testLevel:test};
  }
- const school=p.purpose==='school'&&cls>0;
+ const school=p.purpose==='school'&&cls>0,wholeRoute=p.purpose==='school'&&['high','university'].includes(p.educationStage);
  const mode=p.startChoice==='test'?'test':p.startChoice==='known'?'level':school?'grade':'level';
  const base=mode==='test'?(test||'A1'):p.startChoice==='known'&&rank(p.knownLevel)>=0?p.knownLevel:school?gradeToCefr(cls):'A1';
  let top=Math.max(rank(base),rank(test),playedCefr,0);
  const levelDone=i=>!!lessons?.[CEFR[i+1]]||!!thematic?.complete?.[CEFR[i]];
  while(top<3&&levelDone(top))top++;
- let maxGrade=Math.max(school?cls:cefrToMaxGrade(CEFR[top]),playedGrade);
+ let maxGrade=Math.max(wholeRoute?8:school?cls:cefrToMaxGrade(CEFR[top]),playedGrade);
  const classStops=g=>(units||[]).flat().map(Number).filter(s=>stopClass(s)===g);
  const classDone=g=>{const list=classStops(g);return list.length>0&&list.every(s=>doneSet.has(s));};
  while(maxGrade<8&&classDone(maxGrade))maxGrade++;

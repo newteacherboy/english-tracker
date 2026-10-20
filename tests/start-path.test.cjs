@@ -38,3 +38,7 @@ test('nothing already played is locked again',()=>{
  const p=SP.computeStartPath({profile:{...independent(),purpose:'school'},classNo:2,done:[260155],thematic:thematicSummary([{chapter:DATA.chapters.find(c=>c.cefr==='B1').id,completed:false}])});
  assert.equal(p.maxGrade,6);assert.equal(p.maxCefr,'B1');
 });
+
+test('high school and university learners get the whole school route and start by CEFR level',()=>{
+ for(const stage of ['high','university']){const p=SP.computeStartPath({profile:{...independent({startChoice:'known',knownLevel:'A2'}),purpose:'school',educationStage:stage}});assert.deepEqual([p.maxGrade,p.startGrade,p.startCefr,p.maxCefr],[8,5,'A2','A2'],stage);}
+});

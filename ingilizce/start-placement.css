@@ -7,3 +7,4 @@
 .sp-start-levels{display:grid;gap:8px}
 .sp-start-levels button{width:100%;margin:0}
 .sp-start-status{min-height:1.2em;color:#b42318;font-size:.9rem}
+.sp-start-hint{font-size:.9rem;color:#4b6879;margin:8px 0 0}
