@@ -42,7 +42,8 @@
  const yo=document.getElementById('yoGovde'),modal=document.getElementById('yoModal');
  if(yo&&modal){
   const update=()=>{
-   if(!modal.classList.contains('acik'))return;
+   // The modal can be hosted inside a suspended navigation surface;
+   // render based on its active game kind, not visibility/overlay class.
    if(modal.dataset.dmSelectedGame==='dikte'){
     const speaker=yo.querySelector('.yo-dikte-dinle');
     if(speaker&&!yo.querySelector('.fg-listening-banner')){
