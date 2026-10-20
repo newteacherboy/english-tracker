@@ -138,3 +138,49 @@ body #tab-dunya .rt-school .rt-v3-stop.done .rt-node{color:#245a46!important}
 body #tab-dunya .rt-v3-summary button.rt-v3-level{cursor:pointer;text-align:left;min-width:0;width:100%}
 body #tab-dunya .rt-v3-summary button.rt-v3-level:hover{border-color:var(--v3-primary)}
 body #tab-dunya .rt-v3-summary button.rt-v3-level:focus-visible{outline:3px solid var(--v3-primary);outline-offset:2px}
+
+/* Approved concept 3: decorative scrolling scenery, never static UI screenshots. */
+/* SVGs repeat with the actual route while virtualization keeps only nearby stops in the DOM. */
+body #tab-dunya .rt-root.rt-school .rt-flow-world{
+ background-color:#fcfbf6!important;
+ background-image:url("route-assets/illustrated-school-trail-v3.svg")!important;
+ background-repeat:repeat-y!important;
+ background-position:center top!important;
+ background-size:100% 900px!important;
+}
+body #tab-dunya .rt-root.rt-english .rt-flow-world{
+ background-color:#f7f6fc!important;
+ background-image:url("route-assets/illustrated-learning-trail-v3.svg")!important;
+ background-repeat:repeat-y!important;
+ background-position:center top!important;
+ background-size:100% 900px!important;
+}
+/* Path, actual stops, labels and buttons always stay above scenery. */
+body #tab-dunya .rt-v3-map .rt-flow-trail{z-index:1}
+body #tab-dunya .rt-v3-map .rt-v3-stop{z-index:3}
+body #tab-dunya .rt-v3-map .rt-flow-theme{
+ z-index:2;max-width:32%;padding:5px 6px;border:1px solid #c6dfc48c;
+ border-radius:10px;background:#fffdf4db;
+ box-shadow:0 2px 7px #2d542510;
+}
+body #tab-dunya .rt-root.rt-english .rt-flow-theme{
+ background:#faf7ffed;border-color:#dcd2f69c;color:#6048a6;
+}
+body #tab-dunya .rt-v3-stop .rt-stop-label{
+ background:#fffdf4d9!important;border-radius:6px!important;padding:2px 3px!important;
+ text-shadow:0 1px 0 #fff!important;font-weight:650!important;
+}
+body #tab-dunya .rt-english .rt-v3-stop .rt-stop-label{
+ background:#f7f3ffdb!important;color:#393062!important;
+}
+body #tab-dunya .rt-v3-tools>button{
+ box-shadow:0 4px 12px #42566b10!important;
+ border-color:#e6e0e9!important;
+}
+body #tab-dunya .rt-root.rt-school .rt-v3-summary{background:#fcfbf6}
+body #tab-dunya .rt-root.rt-english .rt-v3-summary{background:#f7f6fc}
+body #tab-dunya .rt-root.rt-school .rt-v3-canvas{background:#fcfbf6}
+body #tab-dunya .rt-root.rt-english .rt-v3-canvas{background:#f7f6fc}
+@media(prefers-reduced-data:reduce){
+ body #tab-dunya .rt-flow-world{background-image:none!important}
+}
