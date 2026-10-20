@@ -59,9 +59,9 @@
   const close=nativeClose(root);
   if(close){
    close.classList.remove('dm-session-back');
-   close.textContent='×';
-   close.title='Oyunu kapat';
-   close.setAttribute('aria-label','Oyunu kapat');
+   if(close.textContent!=='×')close.textContent='×';
+   if(close.title!=='Oyunu kapat')close.title='Oyunu kapat';
+   if(close.getAttribute('aria-label')!=='Oyunu kapat')close.setAttribute('aria-label','Oyunu kapat');
   }
  }
  function resizeFit(){
