@@ -9,12 +9,12 @@ let preview=null,latest=null,epoch=0;
 /* 1–8. sınıf öğrencileri Öğrenme Yolu'na seviye testinden sonra geçer (sunucu: startPath.learningRoute). */
 const learningNeedsTest=()=>window.dmProgression?.status?.()?.startPath?.learningRoute==='needs-test';
 function purpose(){if(preview)return preview;return Y()?.dmLearningPurpose==='independent'&&!learningNeedsTest()?'independent':'school';}
-/* Öğrenme Yolu'nu önceden seçmiş ama testi olmayan sınıf öğrencilerine bir kez açıklama ve test daveti. */
-let learningNoticeOwner='';
-document.addEventListener('dm:progression-status',()=>{const owner=who();if(!owner||learningNoticeOwner===owner||Y()?.dmLearningPurpose!=='independent'||!learningNeedsTest())return;learningNoticeOwner=owner;
- const {el,close}=dialog('Öğrenme Yolu için seviye testi','<p>Öğrenme Yolu artık dil seviyene göre ilerliyor. Sınıfın kayıtlı olduğu için devam etmeden önce 24 soruluk seviye testini çözmen gerekiyor.</p><p>Öğrenme Yolu’ndaki ilerlemen korunur; testten sonra kaldığın yerden devam edersin. Şimdilik Okul Yolum’da sınıfından devam ediyorsun.</p><div class="rt-choices"><button data-learning-test>Seviye testine başla · 24 soru</button><button data-learning-later>Şimdilik Okul Yolum’da kal</button></div>');
- el.querySelector('[data-learning-later]').onclick=close;el.querySelector('[data-learning-test]').onclick=()=>{close();askLearningTest();};
- window.dunyaAc?.();
+/* Öğrenme Yolu'nu seçmiş ama (kural sonrası) testi olmayan sınıf öğrencileri: uygulamaya girince
+   seçim Okul Yolum olarak kaydedilir ve doğrudan Macera parkuru açılır. Öbür tarafa geçmek isteyen testi çözer. */
+let learningRedirectOwner='';
+document.addEventListener('dm:progression-status',async()=>{const owner=who();if(!owner||learningRedirectOwner===owner||Y()?.dmLearningPurpose!=='independent'||!learningNeedsTest())return;learningRedirectOwner=owner;
+ const ok=await setPurpose('school',{reopen:true});
+ if(ok&&owner===who())tell('Okul Yolum’dasın. Öğrenme Yolu’na geçmek için önce 24 soruluk seviye testini çözmelisin.');
 });
 function askLearningTest(){
  // Zorunlu: Öğrenme Yolu'na geçmek isteyen sınıf öğrencisine doğrudan seviye testi açılır.
