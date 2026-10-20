@@ -24395,8 +24395,13 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const PARKUR_KELIME_ADEDI=4;
   let DURAK = [[], [], [], []], durakImza = -1;
   const havuzTum = () => (window.masterKelimeHavuzu || []).filter(k => EN(k) && TR(k));
+  let durakHam = null, durakHamUzunluk = -1;
   function duraklariKur() {
+    // Hızlı yol: kelime havuzu değişmediyse tüm havuzu yeniden süzme (her durak sorgusunda çağrılır).
+    const ham = window.masterKelimeHavuzu || [];
+    if (DURAK[0].length && ham === durakHam && ham.length === durakHamUzunluk) return;
     let tum = havuzTum();
+    durakHam = ham; durakHamUzunluk = ham.length;
     if (DURAK[0].length && tum.length === durakImza) return;
     durakImza = tum.length;
     DURAK = KAPI_SINIF.map(siniflar => {
@@ -24436,8 +24441,19 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const baslangicYolu = () => window.dmProgression?.status?.()?.startPath || null;
   const sinifAcik = sn => { const y = baslangicYolu(); return !y || sn <= y.maxGrade; };
   const bolumAcik = b => b >= 0 && b < 4 && KAPI_SINIF[b].some(sinifAcik);
-  const sinifSiradaki = (b, sn) => { for (let d = 0; d < durakSayisi(b); d++) { const D = durakBilgi(b, d); if (D.sinif === sn && !tamam.has(D.no)) return d; } return -1; };
-  const durakAcik = (b, d) => { const D = durakBilgi(b, d); if (!D || !sinifAcik(D.sinif)) return false; return tamam.has(D.no) || sinifSiradaki(b, D.sinif) === d; };
+  /* Her sınıfın sıradaki durağı bir kez hesaplanır. durakBilgi her çağrıda tüm kelime havuzunu
+     taradığı için durak başına döngü haritayı ve açılışı dondurur (20 Eki 2026). */
+  let siraOnbellek = { anahtar: '', harita: [] };
+  function siraHaritasi() {
+    duraklariKur();
+    const anahtar = durakImza + '|' + tamam.size + '|' + DURAK.map(l => l.length).join(',');
+    if (siraOnbellek.anahtar !== anahtar || siraOnbellek.tamam !== tamam) {
+      siraOnbellek = { anahtar, tamam, harita: DURAK.map(list => { const m = {}; list.forEach((D, d) => { if (m[D.sinif] === undefined && !tamam.has(D.no)) m[D.sinif] = d; }); return m; }) };
+    }
+    return siraOnbellek.harita;
+  }
+  const sinifSiradaki = (b, sn) => { const d = (siraHaritasi()[b] || {})[sn]; return d === undefined ? -1 : d; };
+  const durakAcik = (b, d) => { const D = (siraHaritasi(), DURAK[b] && DURAK[b][d]); if (!D || !sinifAcik(D.sinif)) return false; return tamam.has(D.no) || sinifSiradaki(b, D.sinif) === d; };
   const sinifSirasi = () => { const y = baslangicYolu(), bas = y ? y.startGrade : 1; return [bas, ...[1, 2, 3, 4, 5, 6, 7, 8].filter(sn => sn > bas), ...[1, 2, 3, 4, 5, 6, 7, 8].filter(sn => sn < bas).reverse()].filter(sinifAcik); };
   const yildiz = no => (yoVar() && yo.baYildiz && (yo.baYildiz[no] || (tamam.has(no)&&yo.baYildiz[Math.floor(no/100)*100+Math.floor((no%100-51)/3)+1]))) || aktarimYildiz[no] || (tamam.has(no) ? 1 : 0);
   const bolumYildiz = b => { let t = 0; for (let d = 0; d < durakSayisi(b); d++) t += yildiz(durakNo(b, d)); return t; };
@@ -26471,7 +26487,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261018-mobile-fit-1"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261020-graduation-start-path-1"></script><script defer src="story-path.js?v=20261019-step-back-1"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261020-fast-locks-1"></script><script defer src="story-path.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261018-safety-2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261016-rally-1">

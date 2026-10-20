@@ -46,11 +46,15 @@ async function curriculum(){if(data)return data;if(loading)return loading;loadin
 async function api(action,payload={}){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);try{const r=await fetch(String(apiURL).replace(/\/diji-api(?:\?.*)?$/,'/thematic-learning'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,t:token(),deckVersion:(session?.deckVersion===8||session?.deckVersion===5||session?.deckVersion===6?session.deckVersion:v8Enabled()?8:7),...payload}),signal:controller.signal}),d=await r.json();if(!r.ok||!d.ok)throw Object.assign(Error(d.mesaj||'İşlem tamamlanamadı.'),{energyEmpty:d.energyEmpty,enerjiKalan:d.enerjiKalan,enerjiMax:d.enerjiMax});return d;}catch(e){if(e.name==='AbortError')throw Error('Bağlantı gecikti. İlerlemen kayıtlı; tekrar deneyebilirsin.');throw e;}finally{clearTimeout(timer);}}
 async function status(force=false){const at=identity();if(owner!==at){owner=at;progress=[];access=null;loadedAt=0;statusPromise=null;}if(!force&&loadedAt&&Date.now()-loadedAt<30000)return;if(statusPromise)return statusPromise;statusPromise=(async()=>{await curriculum();const revision=progressRevision,r=await api('status');if(identity()!==at||revision!==progressRevision)return;progress=r.progress;inherited=r.inherited;access=r.access||null;loadedAt=Date.now();})().finally(()=>{if(owner===at)statusPromise=null;});return statusPromise;}
 const LEVELS=['A1','A2','B1','B2'];
-const done=id=>progress.some(p=>p.chapter===id&&p.completed);
+let doneCache={ref:null,size:-1,set:new Set()};
+// Sets instead of scanning progress per chapter: the theme list checks all 412 chapters on every paint.
+const done=id=>{if(doneCache.ref!==progress||doneCache.size!==progress.length)doneCache={ref:progress,size:progress.length,set:new Set(progress.filter(p=>p.completed).map(p=>p.chapter))};return doneCache.set.has(id);};
 /* Server access: levels up to maxCefr are open; inside a level chapters stay in order. */
 const levelOpen=code=>!access||LEVELS.indexOf(code)<=LEVELS.indexOf(access.maxCefr);
 const levelNext=code=>data.chapters.find(c=>c.cefr===code&&!done(c.id));
-const unlockedChapter=c=>done(c.id)||levelOpen(c.cefr)&&levelNext(c.cefr)?.id===c.id;
+let nextCache={key:'',map:{}};
+const levelNextCached=code=>{const key=String(progress.length);if(nextCache.ref!==progress||nextCache.key!==key)nextCache={key,ref:progress,map:Object.fromEntries(LEVELS.map(c=>[c,levelNext(c)?.id]))};return nextCache.map[code];};
+const unlockedChapter=c=>done(c.id)||levelOpen(c.cefr)&&levelNextCached(c.cefr)===c.id;
 const levelOrder=()=>{const start=Math.max(0,LEVELS.indexOf(access?.startCefr));return [...LEVELS.slice(start),...LEVELS.slice(0,start).reverse()].filter(levelOpen);};
 const next=()=>{for(const code of levelOrder()){const c=levelNext(code);if(c)return c;}return data.chapters.at(-1);};
 function speech(text,lang='en-US'){if(!voice)return;try{if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=.83;speechSynthesis.speak(u);}catch{}}
