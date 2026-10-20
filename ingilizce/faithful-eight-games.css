@@ -163,3 +163,233 @@
  min-height:59px!important;border-radius:19px!important;border:2px solid #a46ded!important;
  background:linear-gradient(#aa6bff,#8b3cdb)!important;box-shadow:0 5px 0 #6f36b4!important;
  padding:9px 19px!important;font-size:16px!important}
+
+/* 5. EŞ BUL · selected B — meadow, blue and mint matching columns, smiling Papi. */
+#esOyunOverlay.dm-designed-playing>.game-modal-content{
+ background:linear-gradient(#c9fbf5b7,#f5fce2db),url('game-scenes/garden.svg') center/100% 100% no-repeat!important;
+ border-color:#b8edc3!important}
+#esOyunEkrani .fg-hero{--fg-title:#2374b9;--fg-subtitle:#387a6b;
+ background:linear-gradient(120deg,#f5fffd,#d7f7e2)!important;border-color:#d7fbdd!important;
+ box-shadow:0 6px 0 #9dd7bb!important}
+#esOyunOverlay.dm-designed-playing .es-ust{
+ display:flex!important;justify-content:space-between!important;gap:5px;
+ padding:12px 8px!important;background:#fff9e8f5!important;
+ border:3px solid #e6d09b!important;border-radius:17px!important;
+ color:#336482!important;font-size:clamp(12px,3vw,15px)!important;
+ box-shadow:0 4px 0 #d0c89a!important;margin:0 0 12px!important}
+#esOyunOverlay.dm-designed-playing .es-bar{height:12px!important;border-radius:100px!important;
+ background:#fffdf0!important;border:2px solid #c5deb9!important;margin-bottom:14px!important}
+#esOyunOverlay.dm-designed-playing .es-bar i{border-radius:100px!important;background:linear-gradient(90deg,#5abeee,#47c874)!important}
+#esOyunOverlay.dm-designed-playing .es-sutunlar{display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+#esOyunOverlay.dm-designed-playing .es-sutun{min-width:0!important;padding:8px!important;
+ border:3px solid #a1d8e6!important;border-radius:22px!important}
+#esOyunOverlay.dm-designed-playing #esSol{background:#d8effff0!important;border-color:#8bcbfa!important;
+ box-shadow:0 5px 0 #8db9d3!important}
+#esOyunOverlay.dm-designed-playing #esSag{background:#e0ffdef0!important;border-color:#98dcb2!important;
+ box-shadow:0 5px 0 #9ccbaa!important}
+#esOyunOverlay.dm-designed-playing .es-sutun-baslik{font:900 clamp(13px,3.4vw,16px) Nunito,system-ui!important;
+ color:#3a578e!important;padding:7px 3px 10px!important;text-align:center!important}
+#esOyunOverlay.dm-designed-playing .es-k{
+ display:grid!important;place-items:center!important;min-height:58px!important;width:100%!important;
+ border:2.5px solid #a9cde8!important;border-radius:16px!important;background:#fffaff!important;
+ box-shadow:0 4px 0 #c9c7e9!important;color:#474099!important;
+ font:900 clamp(12px,3.4vw,18px)/1.25 Nunito,system-ui!important;
+ padding:8px 5px!important;white-space:normal!important;overflow-wrap:anywhere!important;
+ margin:5px 0 9px!important}
+#esOyunOverlay.dm-designed-playing .es-k.tr{background:#fffdf2!important;color:#38764f!important;
+ border-color:#9bcc9f!important;box-shadow:0 4px 0 #aed29e!important}
+#esOyunOverlay.dm-designed-playing .es-k.secili{background:#fff0bb!important;color:#71478d!important;
+ border-color:#eeb342!important;box-shadow:0 0 0 4px #ffc76473!important;transform:translateY(2px)!important}
+#esOyunOverlay.dm-designed-playing .es-k.tamam{background:#c8f8d2!important;color:#155b30!important;
+ border-color:#2ba85a!important;box-shadow:0 4px 0 #6ebe82!important;
+ position:relative}
+#esOyunOverlay.dm-designed-playing .es-k.tamam::after{content:'✓';position:absolute;top:-7px;right:-3px;
+ display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+ background:#28af59;color:white;box-shadow:0 2px 0 #248647;font-size:16px}
+#esOyunOverlay.dm-designed-playing .es-k.hata{background:#ffe1e9!important;color:#9f2448!important;
+ border-color:#e3446a!important;box-shadow:0 3px 0 #dc8ca3!important}
+#esOyunOverlay.dm-designed-playing .es-k.hata::after{content:'✕';color:#e33b64;font-weight:900}
+/* 6. KELİME TRENİ · selected B — storybook station, visible sign and actual train wagons. */
+#trenOyunOverlay.dm-designed-playing>.game-modal-content{
+ background:linear-gradient(#eff5ffc0,#faf1ffe3 56%,#fff4d4d5),url('game-scenes/station.svg') center/100% 100% no-repeat!important;
+ border:5px solid #b9b1ed!important}
+#trenOyunEkrani .fg-hero{--fg-title:#6837b5;--fg-subtitle:#7b669c;
+ background:linear-gradient(112deg,#fffaf0ed,#f2dfffed)!important;border-color:#e1c9fa!important;
+ box-shadow:0 6px 0 #b7a5e2!important;min-height:122px}
+#trenOyunEkrani .fg-hero::before{content:'🚂';position:absolute;right:18px;bottom:4px;
+ font-size:56px;filter:drop-shadow(0 6px 2px #66639d55);pointer-events:none}
+#trenOyunOverlay.dm-designed-playing .tr-ust{
+ display:grid!important;grid-template-columns:1fr auto auto!important;align-items:center!important;gap:6px!important;
+ background:#fff9f2eb!important;border:3px solid #d4c3ec!important;padding:10px!important;border-radius:18px!important;
+ box-shadow:0 4px 0 #bdadce!important;color:#6e4d9f!important}
+#trenOyunOverlay.dm-designed-playing .tr-bar{border:2px solid #dbbfdd!important;border-radius:999px!important;min-width:0!important}
+#trenOyunOverlay.dm-designed-playing .tr-bar i{background:linear-gradient(90deg,#a46beb,#eea0cd)!important;border-radius:999px!important}
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani .tr-gorev{
+ padding:9px 4px!important;color:#4f328b!important;text-align:center!important;
+ font:900 clamp(14px,3.7vw,18px) Nunito,system-ui!important;margin:6px 0!important}
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani .tr-istasyon{
+ display:flex!important;align-items:center!important;gap:9px!important;
+ background:linear-gradient(#faf6ff,#fff9eb)!important;
+ border:4px solid #d2bcf3!important;border-radius:23px!important;
+ padding:12px 10px!important;box-shadow:0 6px 0 #ab8bd8!important}
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani #trenTabela.tr-tabela{
+ flex:1 1 0%!important;min-width:0!important;
+ background:linear-gradient(#fffefd,#faf4ff)!important;border:3px solid #b68edb!important;
+ color:#4b267e!important;font:900 clamp(17px,4.6vw,24px)/1.42 Nunito,system-ui!important;
+ text-align:center!important;white-space:normal!important;overflow-wrap:anywhere!important;
+ padding:12px!important;max-height:none!important;box-shadow:0 4px 0 #cab1e0!important}
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani #trenTabela.tr-tabela::before{
+ content:'TÜRKÇE CÜMLE';display:block;color:#a16cc3;font:900 10px Nunito,system-ui!important;margin-bottom:7px}
+#trenOyunOverlay.dm-designed-playing .tr-hat{
+ position:relative!important;min-height:118px!important;border:3px solid #7ea5d3!important;
+ border-radius:20px!important;box-shadow:0 6px 0 #bdadd9!important;
+ background:linear-gradient(#c1edffd2,#cde9ffe8 68%,#c2debd 69%,#c2debd 74%,#604f64 75%,#604f64 79%,#efd9c4 79%,#efd9c4 88%,#604f64 88%,#604f64 92%,#d7b7a0 92%)!important;
+ padding:13px 12px 30px!important;margin:13px 0!important}
+#trenOyunOverlay.dm-designed-playing .tr-lok{font-size:45px!important;filter:drop-shadow(0 4px 3px #4542674a)}
+#trenOyunOverlay.dm-designed-playing .tr-v{
+ display:inline-grid!important;place-items:center!important;min-height:45px!important;
+ padding:9px 12px!important;max-width:100%!important;white-space:normal!important;
+ background:linear-gradient(#ffebc8,#f5b95b)!important;color:#6a3b36!important;
+ border:3px solid #c48a52!important;border-radius:14px 14px 9px 9px!important;
+ box-shadow:0 5px 0 #9b653c!important;font:900 clamp(12px,3.4vw,16px) Nunito,system-ui!important}
+#trenOyunOverlay.dm-designed-playing .tr-v.bos{opacity:.44!important}
+#trenOyunOverlay.dm-designed-playing .tr-havuz{
+ display:flex!important;justify-content:center!important;flex-wrap:wrap!important;gap:9px!important;
+ margin:11px 0!important;padding:13px 7px!important;background:#fff5eacc!important;
+ border:2px dashed #d3bba1!important;border-radius:19px!important}
+#trenOyunOverlay.dm-designed-playing .tr-kontrol{
+ border-radius:20px!important;min-height:54px!important;width:100%!important;
+ color:#fff!important;background:linear-gradient(#c26ce9,#8c47d2)!important;
+ border:3px solid #a45bcf!important;box-shadow:0 5px 0 #693898!important;
+ font:900 18px Nunito,system-ui!important}
+#trenOyunOverlay.dm-designed-playing .tr-alt{
+ gap:8px!important;flex-wrap:wrap!important;background:#fffaf1ec!important;border-radius:17px!important;padding:9px!important}
+#trenOyunOverlay.dm-designed-playing .tr-ipucu{
+ background:linear-gradient(#fff1c8,#f9ce82)!important;border:2px solid #e7b456!important;
+ border-radius:14px!important;color:#735031!important;font-weight:900!important;min-height:40px!important}
+#trenOyunOverlay.dm-designed-playing .tr-panel.iyi{border:3px solid #61bb7a!important;background:#d9ffe2!important}
+#trenOyunOverlay.dm-designed-playing .tr-panel.kotu{border:3px solid #ec8296!important;background:#ffe1e7!important}
+/* 7. KULAK DEDEKTİFİ · selected B — magnifying glass and huge violet listen button. */
+#yoModal[data-dm-selected-game="dikte"]{
+ background:linear-gradient(#f4e4ffc8,#fff0f9e6),url('game-scenes/detective.svg') center/cover!important}
+#yoModal[data-dm-selected-game="dikte"] .yo-kart{
+ max-width:540px!important;width:min(96vw,540px)!important;
+ border:5px solid #e5c9fb!important;border-radius:32px!important;
+ background:linear-gradient(#fffdfef5,#f6e4ffec)!important;box-shadow:0 14px 0 #bd96db,0 22px 50px #583a8468!important;
+ padding:clamp(12px,3vw,20px)!important;overflow-y:auto!important}
+#yoModal[data-dm-selected-game="dikte"] .yo-baslik{
+ color:#7139bc!important;background:linear-gradient(#fff7ff,#f7e7fd)!important;
+ border:2px solid #ebd0f5!important;border-radius:19px!important;
+ padding:13px 48px!important;text-align:center!important;
+ font:900 clamp(23px,6vw,29px) Fredoka,Nunito,system-ui!important}
+#yoModal[data-dm-selected-game="dikte"] .fg-listening-banner{
+ display:flex;align-items:center;gap:9px;min-height:78px!important;
+ border:2px solid #e8c7f9;background:#fff6ffea;border-radius:21px;
+ padding:8px 13px;margin:10px 0;box-shadow:0 4px 0 #dfbbec}
+#yoModal[data-dm-selected-game="dikte"] .fg-listening-banner>div{flex:1;display:grid;gap:4px}
+#yoModal[data-dm-selected-game="dikte"] .fg-listening-banner small{font:900 10px Nunito,system-ui;color:#9464ac}
+#yoModal[data-dm-selected-game="dikte"] .fg-listening-banner strong{color:#573284;font:900 15px Nunito,system-ui}
+#yoModal[data-dm-selected-game="dikte"] .fg-listening-banner span{color:#816197;font-size:12px}
+#yoModal[data-dm-selected-game="dikte"] .fg-listening-banner img{width:88px;height:88px;object-fit:contain}
+#yoModal[data-dm-selected-game="dikte"] .yo-dikte-dinle{
+ position:relative;min-height:190px!important;border-radius:28px!important;
+ border:3px solid #e2cbff!important;background:radial-gradient(ellipse,#d9c4ff 0%,#f6e7ff 65%,#fff6f7 100%)!important;
+ padding:15px!important;margin:12px 0!important;box-shadow:inset 0 4px 23px #a387dd37}
+#yoModal[data-dm-selected-game="dikte"] .yo-dikte-dinle button:first-child{
+ display:grid;place-items:center;width:116px!important;height:116px!important;
+ border:8px solid #c5aeff!important;border-radius:50%!important;
+ background:radial-gradient(circle at 25% 20%,#93baff,#6553e3 73%,#7a42cb)!important;
+ box-shadow:0 6px 0 #7652bf,0 0 0 8px #d2b8ff66!important;
+ font-size:47px!important;color:white!important}
+#yoModal[data-dm-selected-game="dikte"] .yo-dikte-dinle button.kucuk{
+ width:56px!important;height:56px!important;border-radius:50%!important;background:#f5ebff!important;
+ border:3px solid #bdafe7!important;font-size:24px!important}
+#yoModal[data-dm-selected-game="dikte"] .yo-bos{color:#704e9e!important;font-size:14px!important;
+ font-weight:800!important;text-align:center!important;line-height:1.5!important}
+#yoModal[data-dm-selected-game="dikte"] #yoDikteInput{
+ background:#fff!important;border:3px solid #c99fe9!important;border-radius:19px!important;
+ color:#4a3181!important;min-height:58px!important;font-size:18px!important;
+ box-shadow:0 4px 0 #e7d2eb!important}
+#yoModal[data-dm-selected-game="dikte"] .yo-btn{
+ width:100%!important;min-height:55px!important;border-radius:19px!important;
+ border:2px solid #b45dd2!important;color:#fff!important;
+ background:linear-gradient(110deg,#9255f1,#df6bc0)!important;box-shadow:0 5px 0 #8f4ba8!important}
+/* 8. CÜMLE USTASI · selected B — warm wooden classroom, text-only question. */
+#yoModal[data-dm-selected-game="cumle"]{
+ background:linear-gradient(#f7fce4d0,#fff6d4da),url('game-scenes/garden.svg') center/cover!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-kart{
+ max-width:540px!important;width:min(96vw,540px)!important;
+ border:7px ridge #c38f50!important;border-radius:29px!important;
+ background:linear-gradient(#fff8e6e8,#f4e0baed)!important;box-shadow:0 13px 0 #937045,0 20px 43px #50361f62!important;
+ padding:clamp(10px,3vw,21px)!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-baslik{
+ background:linear-gradient(#ffe1a2,#f9c980)!important;border-radius:18px!important;
+ color:#623ca3!important;text-align:center!important;
+ border:2px solid #bb8e62!important;box-shadow:0 4px 0 #b99159!important;
+ padding:12px 47px!important;font:900 clamp(22px,5.8vw,28px) Fredoka,Nunito,system-ui!important}
+#yoModal[data-dm-selected-game="cumle"] .fg-sentence-banner{display:flex;align-items:center;justify-content:space-between;
+ font:900 20px Fredoka,Nunito,system-ui;color:#604094;text-align:center;
+ background:linear-gradient(#fffce6,#f8e7b6);border:3px solid #bf9c5b;
+ padding:10px 14px;border-radius:18px;box-shadow:0 4px 0 #ba9359;margin:13px 0}
+#yoModal[data-dm-selected-game="cumle"] .yo-soru{
+ display:grid!important;gap:12px!important;
+ background:linear-gradient(#fffdfa,#fff5dc)!important;
+ border:3px solid #bd9868!important;border-radius:20px!important;
+ color:#4f307c!important;box-shadow:0 5px 0 #d4b78a!important;
+ padding:16px 10px!important;text-align:center!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-soru small{
+ color:#926d4a!important;font:900 13px Nunito,system-ui!important;text-transform:uppercase}
+#yoModal[data-dm-selected-game="cumle"] .yo-soru b{
+ color:#562d8d!important;font:900 clamp(19px,5.1vw,26px)/1.3 Fredoka,Nunito,system-ui!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-soru :is(img,svg,canvas,picture){display:none!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-cevap-alan{
+ display:flex!important;align-items:center;justify-content:center!important;flex-wrap:wrap!important;
+ min-height:88px!important;gap:7px!important;
+ background:#fff8dce8!important;border:3px dashed #d1a96d!important;
+ border-radius:20px!important;padding:13px 8px!important;margin:14px 0!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-havuz{
+ display:flex!important;align-items:center;justify-content:center!important;flex-wrap:wrap!important;
+ gap:9px!important;padding:12px!important;border-radius:17px!important;
+ background:#fff9ecb8!important;border:2px solid #e0c6a3!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-chip{
+ color:#68427c!important;font:900 clamp(14px,3.8vw,18px) Nunito,system-ui!important;
+ background:linear-gradient(#fffdf6,#fbe9c5)!important;
+ border:2px solid #d4a666!important;border-radius:13px!important;
+ padding:11px 14px!important;min-height:46px!important;
+ box-shadow:0 4px 0 #b18a58!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-cevap-alan .yo-chip{background:#e5f7d7!important;border-color:#8ac48f!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-cevap-alan .yo-chip.dm-answer-right{
+ background:#c7f5d5!important;color:#146a36!important;border-color:#26b25b!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-cevap-alan .yo-chip.dm-answer-wrong{
+ background:#ffe0e7!important;color:#a42a4a!important;border-color:#e34566!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-btn{
+ background:linear-gradient(#ffd562,#fb912c)!important;border:3px solid #f2b34b!important;
+ border-radius:20px!important;box-shadow:0 5px 0 #c9772d!important;color:#fff!important;
+ font:900 18px Nunito,system-ui!important;min-height:57px!important}
+#yoModal[data-dm-selected-game="cumle"] .yo-geri-bildirim{
+ color:#4b316f!important;line-height:1.4!important;font-weight:900!important}
+/* All screens: accessible right/wrong states and small-phone fitting without hidden controls. */
+.dm-designed-playing .dm-answer-right, #yoModal .dm-answer-right{
+ background:#d6fadd!important;color:#146a37!important;border-color:#24b95c!important}
+.dm-designed-playing .dm-answer-wrong, #yoModal .dm-answer-wrong{
+ background:#ffe0e7!important;color:#9a2646!important;border-color:#e04469!important}
+@media(max-width:370px){
+ #esOyunOverlay.dm-designed-playing .es-sutun{padding:5px!important}
+ #esOyunOverlay.dm-designed-playing .es-k{min-height:53px!important;padding:7px 3px!important}
+ #trenOyunOverlay.dm-designed-playing .tr-istasyon{gap:5px!important;padding:9px!important}
+ #trenOyunOverlay.dm-designed-playing .tr-havuz{gap:6px!important}
+ #yoModal[data-dm-selected-game="dikte"] .yo-dikte-dinle button:first-child{width:96px!important;height:96px!important}
+ #yoModal[data-dm-selected-game="cumle"] .yo-chip{padding:9px 10px!important}
+}
+@media(max-height:710px){
+ #esOyunEkrani .fg-hero,#trenOyunEkrani .fg-hero{min-height:80px!important}
+ #esOyunOverlay.dm-designed-playing .es-k{min-height:49px!important}
+ #trenOyunOverlay.dm-designed-playing .tr-hat{min-height:82px!important}
+ #yoModal[data-dm-selected-game="dikte"] .yo-dikte-dinle{min-height:129px!important}
+ #yoModal[data-dm-selected-game="dikte"] .yo-dikte-dinle button:first-child{width:83px!important;height:83px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #harfBahcesiOverlay.hb-playing *, .dm-designed-playing *,#yoModal[data-dm-selected-game="cumle"] *,#yoModal[data-dm-selected-game="dikte"] *{
+ animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
