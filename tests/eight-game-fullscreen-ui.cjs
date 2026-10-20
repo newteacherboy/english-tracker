@@ -16,7 +16,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
   return route.fulfill({contentType:'application/json',body:'[]'});
  });
  await page.addInitScript(()=>new MutationObserver(()=>document.querySelector('.kur-perde .kur-x')?.click()).observe(document,{childList:true,subtree:true}));
- await page.goto('https://diji.test/ingilizce/',{waitUntil:'load',timeout:60000});
+ await page.goto('https://diji.test/ingilizce/?giris=1',{waitUntil:'load',timeout:60000});
  await page.waitForFunction(()=>!!window.dmEightGameFullscreen,{timeout:15000});
  const games=[
   ['jpOyunOverlay','jpBalonEkrani'],['jpOyunOverlay','jpSoruEkrani'],
@@ -103,6 +103,17 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
     }
    }
    if(v.width===390)await page.screenshot({path:'/tmp/eight-game-fullscreen/'+game.join('-')+'.png'});
+   if(game[0]==='trenOyunOverlay'){
+    const tokens=await page.locator('#trenHavuz .tr-v').evaluateAll(list=>list.map(b=>{const r=b.getBoundingClientRect(),p=b.parentElement.getBoundingClientRect();return b.textContent&&r.height>=30&&r.top>=p.top&&r.bottom<=p.bottom&&getComputedStyle(b).visibility==='visible';}));
+    assert(tokens.length===12&&tokens.every(Boolean),'All train word choices must be visible');
+   }
+   await page.locator('#'+game[0]+' .game-close-btn').click();
+   await page.waitForFunction(id=>getComputedStyle(document.getElementById(id)).display==='none',game[0],{timeout:3000});
+   assert(!await page.locator('#'+game[0]).isVisible(),'native X must close an active fullscreen game');
+   await page.evaluate(prep,game);
+   await page.locator('#'+game[0]+' > .fg-fs-back').click();
+   await page.waitForFunction(id=>{const r=document.getElementById(id);return getComputedStyle(r).display!=='none'&&!r.classList.contains('fg-fs-active');},game[0],{timeout:3000});
+
   }
  }
  // Dynamic Harf Bahçesi overlay: verify full-height board and separate back/X.

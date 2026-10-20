@@ -9,7 +9,7 @@
   {root:'esOyunOverlay',stages:['esOyunEkrani'],open:'esOyunAc'},
   {root:'trenOyunOverlay',stages:['trenOyunEkrani'],open:'trenOyunAc'}
  ];
- const shown=el=>!!el?.isConnected&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';
+ const shown=el=>!!el?.isConnected&&el.style.display!=='none'&&!el.hidden&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';
  const overlays=configs.map(c=>({ ...c,element:document.getElementById(c.root),nodes:c.stages.map(id=>document.getElementById(id))}));
  const hbId='harfBahcesiOverlay';
  const yo=document.getElementById('yoModal');

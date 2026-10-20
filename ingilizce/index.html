@@ -4029,10 +4029,13 @@ mesajlar.forEach(m => {
 
                             function genelSesEfektiCal(tip, komboSayisi) {
             try {
-                let ctx = new (window.AudioContext || window.webkitAudioContext)();
+                let ctx = window.dmGameEffectAudio;
+                if (!ctx || ctx.state === 'closed') ctx = window.dmGameEffectAudio = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume().catch(() => {});
                 let osc = ctx.createOscillator();
                 let gain = ctx.createGain();
                 osc.connect(gain); gain.connect(ctx.destination);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
                 if (tip === 'dogru') {
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(660, ctx.currentTime);
@@ -8158,6 +8161,10 @@ setTimeout(() => {
             setTimeout(() => el.remove(), 1000);
         }
         function headerEnerjiGoster(kalan, max) {
+            if (String(aktifOgrenciAdi||'').toLowerCase()==='teacher' && !siniftaOynananOgrenci) {
+                const label=document.getElementById('headerEnerjiNum');if(label)label.innerText='∞';
+                const bar=document.getElementById('headerEnerjiBar');if(bar)bar.style.width='100%';return;
+            }
             let pct = max > 0 ? Math.round((kalan / max) * 100) : 0;
             let bar = document.getElementById('headerEnerjiBar');
             let onceki = window.genelEnerjiKalan;
@@ -18568,6 +18575,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   }
   let sonGiris = { k: '', t: 0 }, soruSayac = 0;
   function girisUcreti() {
+    if (String(aktifOgrenciAdi||'').toLowerCase()==='teacher') return Promise.resolve();
     if (sinifModu()) return Promise.resolve();
     if (window.dmOdevEnerjiMuaf?.()) return Promise.resolve();   /* [v4.8] ödev oyunu */
     let k = baglam(); if (!k) return Promise.resolve();
@@ -18589,6 +18597,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
   let orgKpE = window.kpEnerjiDegistir;
   if (typeof orgKpE === 'function') window.kpEnerjiDegistir = function (f) { return Number(f) !== 0 ? Promise.resolve() : orgKpE.apply(this, arguments); };
   window.genelOyunGirisEngelliMi = function () {
+    if (String(aktifOgrenciAdi||'').toLowerCase()==='teacher') return false;
     if (sinifModu()) return false;
     if (window.dmOdevEnerjiMuaf?.()) return false;   /* [v4.8] ödev oyunu */
     let k = baglam(); if (!k) return false;
@@ -19682,7 +19691,6 @@ function esSec(b, dil) {
     a.classList.add('tamam'); t.classList.add('tamam');
     esDogru++; esKalan--; esKombo++;
     OC.dogru(esHatalilar.some(x => x.id === k.id) ? 0.5 : 1);
-    esSeslendir(k.en);
     if (typeof genelSesEfektiCal === 'function') genelSesEfektiCal('dogru');
     if (esKombo >= 3 && typeof genelKomboGoster === 'function') genelKomboGoster(esKombo, document.querySelector('#esOyunOverlay .game-modal-content'));
     if (navigator.vibrate) navigator.vibrate(60);
@@ -26525,7 +26533,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="activity-ui.css?v=20261016-rally-1">
 <script defer src="activity-ui.js?v=20261016-flow-2"></script>
 <script defer src="navigation-history.js?v=20261019-step-back-1"></script>
-<script defer src="bottom-nav.js?v=20261020-member-flows-1"></script>
+<script defer src="bottom-nav.js?v=20261021-game-teacher-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261013-catalog"></script>
 <script defer src="weekly-ui.js?v=20261019-purple-1"></script>
@@ -26534,9 +26542,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="experience-ui.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <link rel="stylesheet" href="kelime-rallisi.css?v=20261020-slow">
-<script defer src="lazy-games.js?v=20261016-flow-2"></script>
+<script defer src="lazy-games.js?v=20261021-game-teacher-1"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
-<script defer src="game-experience.js?v=20261019-step-back-1"></script>
+<script defer src="game-experience.js?v=20261021-fullscreen-exit-1"></script>
 <script defer src="game-access.js?v=20261020-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
 <script defer src="first-discovery.js?v=20261020-start-path-2"></script>
@@ -26606,7 +26614,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">
 <script defer src="route-missions.js?v=20261019-offline-1"></script>
 <script defer src="papi-habit.js?v=20261019-2"></script>
-<script defer src="oyna-v2.js?v=20261020-member-flows-1"></script>
+<script defer src="oyna-v2.js?v=20261021-teacher-1"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
 <script defer src="friends-ui.js?v=20261017-social-highlights-v2"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261019-1">
@@ -26655,7 +26663,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="apple-login.js?v=20261019-1"></script>
 <link rel="stylesheet" href="learning-companion.css?v=20261019-1">
 <script defer src="learning-dialogues.js?v=20261019-1"></script>
-<script defer src="learning-companion.js?v=20261020-design-three-1"></script>
+<script defer src="learning-companion.js?v=20261021-game-teacher-1"></script>
 <link rel="stylesheet" href="parkur-purple.css?v=20261019-offline-1">
 <link rel="stylesheet" href="route-graduation.css?v=20261020-member-flows-1"><script defer src="route-graduation.js?v=20261020-member-flows-1"></script>
 <link rel="stylesheet" href="route-design-three.css?v=20261020-fixed-art-2">
@@ -26663,7 +26671,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="faithful-eight-games.css?v=20261020-selected-art-1">
 <script defer src="faithful-eight-games.js?v=20261020-selected-art-1"></script>
 <!-- Eight selected mini-games: fullscreen responsive layout and separate back/X controls. -->
-<link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
-<script defer src="eight-game-fullscreen.js?v=20261020-fit-v1"></script>
+<link rel="stylesheet" href="eight-game-fullscreen.css?v=20261021-game-teacher-1">
+<script defer src="eight-game-fullscreen.js?v=20261021-game-teacher-1"></script>
 </body>      
         </html>
