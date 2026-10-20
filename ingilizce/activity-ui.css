@@ -185,6 +185,14 @@ body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
   scroll-margin-bottom:calc(112px + env(safe-area-inset-bottom,0px));
 }
 
-.gg-tabs{display:grid!important;grid-template-columns:1fr 1.45fr 1fr!important;gap:6px!important;width:100%!important}.gg-tabs [role=tab]{min-width:0!important;white-space:normal!important;line-height:1.25!important;min-height:54px!important;padding:10px 8px!important;font-size:clamp(11px,2.8vw,14px)!important}.gg-tabs [role=tab][aria-selected=true]{background:#0b8b87!important;color:#fff!important;border-color:#0b8b87!important}
+/* Four equal categories remain side by side, including on small phones. */
+#tab-aktiviteler .gg-title{display:block;margin-bottom:14px}
+#tab-aktiviteler .gg-title h1{margin:4px 0 14px;font-size:30px!important;line-height:1.1}
+#tab-aktiviteler .gg-tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;width:100%!important;padding:5px!important;border-radius:19px!important;background:#efe8dd!important;border:1px solid #e8dccb!important}
+#tab-aktiviteler .gg-tabs [role=tab]{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0!important;white-space:normal!important;line-height:1.16!important;min-height:76px!important;padding:8px 3px!important;font-size:clamp(10px,2.7vw,14px)!important;font-weight:900;border-radius:14px!important;color:#6b5b4c!important;background:transparent!important;box-shadow:none!important;overflow-wrap:normal!important}
+#tab-aktiviteler .gg-tabs [role=tab] .gg-icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#tab-aktiviteler .gg-tabs [role=tab][aria-selected=true]{background:#078d88!important;color:#fff!important;box-shadow:0 3px 0 #05746f!important}
+#tab-aktiviteler .gg-tabs [role=tab] span{display:block;font-size:inherit;line-height:inherit}
+@media(min-width:640px){#tab-aktiviteler .gg-tabs [role=tab]{flex-direction:row;gap:8px;min-height:58px!important}}
 
 .rr-hub-art.gg-art{background:linear-gradient(140deg,#78d9fa,#1b83bb);display:flex;align-items:center;justify-content:center}.rr-hub-art.gg-art img{display:block;width:95%;height:95%;object-fit:contain;filter:drop-shadow(0 5px 2px #16416766)}
