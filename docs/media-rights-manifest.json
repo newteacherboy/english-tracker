@@ -1910,17 +1910,17 @@
     },
     {
       "path": "ingilizce/route-assets/school-fixed-approved-v1.webp",
-      "sha256": "aff973dd25d4e866dd6310ed4e078f2da73d8d33df6f645c238a264c96cbcc4f",
-      "bytes": 19002,
+      "sha256": "8004e1f4f6d85b5c56878a6a058f5987a92083fbd32210e84c2ebb47fb2b9aef",
+      "bytes": 16820,
       "status": "original-derived",
-      "source": "Original illustrated Diji-Medu design approved 2026-10-20; user-approved art cropped to remove static UI/stop labels. Fixed scenery, only route elements scroll."
+      "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
     },
     {
       "path": "ingilizce/route-assets/learning-fixed-approved-v1.webp",
-      "sha256": "385c1347f9805cc010518567fa9a76c8981f76da7f56071162176c8e3a575d20",
-      "bytes": 16038,
+      "sha256": "cef88ee492a688e53d41d9e67cd96e3c4be66b54cf9a29f988d746e0ac0a84fe",
+      "bytes": 12184,
       "status": "original-derived",
-      "source": "Original illustrated Diji-Medu design approved 2026-10-20; user-approved art cropped to remove static UI/stop labels. Fixed scenery, only route elements scroll."
+      "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
     }
   ]
 }
