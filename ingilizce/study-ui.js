@@ -167,6 +167,7 @@
     xp:Number(data.xp)||0,gold:Number(data.gold)||0,energy:amount,repeat:wasComplete,
     tier:Number(data.tier)||0,recovered:!!data.recovered};
    window.dmStudyUI.lastResult=result;showLessonResult(result);paintStages();void window.dmProgression?.refresh?.(true);
+   if(Array.isArray(data.odevTamamlandi)&&data.odevTamamlandi.length){window.dcToastGoster?.('✅ Öğretmeninin verdiği ödev tamamlandı.');void window.dmOdevYenile?.();}
   }catch(e){if(name===actor())window.dcToastGoster?.(e.message);}
   finally{if(run===quizRun){finishing=false;if(name===actor())paintQuiz();}}
  }

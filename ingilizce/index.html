@@ -25839,6 +25839,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     });
   }
   window.dmOdevKartCiz = kartCiz;
+  window.dmOdevYenile = async () => { await odevleriYukle(true); return kartCiz(); };
   let sonGor = false;
   setInterval(() => {
     const eski = $('tab-sanaozel'), gor = !!(eski && eski.classList.contains('active') && eski.getClientRects().length && getComputedStyle(eski).display !== 'none');
@@ -26611,7 +26612,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="league-ui.css?v=20261019-1">
 <script defer src="league-ui.js?v=20261019-1"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
-<script defer src="study-ui.js?v=20261020-start-path-1"></script>
+<script defer src="study-ui.js?v=20261020-homework-1"></script>
 <link rel="stylesheet" href="storefront.css?v=20261015-shopping-1">
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
 <script defer src="bag-inventory.js?v=20261019-first-tap-4"></script>
