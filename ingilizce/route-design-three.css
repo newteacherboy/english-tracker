@@ -133,3 +133,8 @@ body #tab-dunya .rt-v3-map .rt-start>svg{width:19px;height:19px;fill:currentColo
 @media(max-height:650px){body #tab-dunya .rt-v3-stop .rt-node .rt-tile-number{font-size:14px!important}body #tab-dunya .rt-v3-stop .rt-node svg{height:20px!important;width:20px!important}}
 body #tab-dunya .rt-v3-stop.current .rt-node{color:var(--v3-primary)!important}
 body #tab-dunya .rt-school .rt-v3-stop.done .rt-node{color:#245a46!important}
+
+/* The entire progress card opens the existing all-stops navigator. */
+body #tab-dunya .rt-v3-summary button.rt-v3-level{cursor:pointer;text-align:left;min-width:0;width:100%}
+body #tab-dunya .rt-v3-summary button.rt-v3-level:hover{border-color:var(--v3-primary)}
+body #tab-dunya .rt-v3-summary button.rt-v3-level:focus-visible{outline:3px solid var(--v3-primary);outline-offset:2px}
