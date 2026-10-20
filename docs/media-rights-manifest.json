@@ -1907,6 +1907,20 @@
       "bytes": 830,
       "status": "original-vector",
       "source": "Original SVG authored for the approved Diji Medu concept-3 route interface; no external artwork."
+    },
+    {
+      "path": "ingilizce/route-assets/school-fixed-approved-v1.webp",
+      "sha256": "8004e1f4f6d85b5c56878a6a058f5987a92083fbd32210e84c2ebb47fb2b9aef",
+      "bytes": 16820,
+      "status": "original-derived",
+      "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
+    },
+    {
+      "path": "ingilizce/route-assets/learning-fixed-approved-v1.webp",
+      "sha256": "cef88ee492a688e53d41d9e67cd96e3c4be66b54cf9a29f988d746e0ac0a84fe",
+      "bytes": 12184,
+      "status": "original-derived",
+      "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
     }
   ]
 }
