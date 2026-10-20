@@ -27,6 +27,17 @@
     run++;clearTimeout(timeout);clearInterval(ticker);timeout=null;ticker=null;current=null;
     document.getElementById(id)?.classList.remove('ia-playing','ia-intro');
   }
+  /* Oyun sırasında ← / × doğrudan Oyunlar sekmesine döner. Eskiden ilk dokunuş oyunu
+     giriş formuna döndürmeye çalışıyor, ia-playing sınıfı kaldığı için oyun ekranı
+     açık kalıyor ve çıkış çalışmıyor gibi görünüyordu. */
+  function exitToGames(){
+    stop();
+    const overlay=document.getElementById(id),entry=document.getElementById('asmacaGirisEkrani'),play=document.getElementById('asmacaOyunEkrani'),finish=document.getElementById('asmacaBitisEkrani');
+    if(play)play.style.display='none';if(finish)finish.style.display='none';if(entry)entry.style.display='block';
+    try{window.asmacaOyunKapat?.();}catch(_){}
+    if(overlay&&overlay.style.display!=='none'){overlay.style.display='none';try{window.asmacaMuzikDurdur?.();}catch(_){}}
+    overlay?.classList.remove('dm-entry-open');
+  }
   function status(message){let el=get('.ia-message');if(el)el.textContent=message;}
   function sound(type){
     try{if(typeof genelSesEfektiCal==='function')genelSesEfektiCal(type);}
@@ -185,7 +196,7 @@
     const bar=document.getElementById('jkBar');if(bar)overlay.querySelector('.game-modal-content')?.appendChild(bar);
     overlay.classList.remove('ia-intro');overlay.classList.add('ia-playing');
     body.innerHTML='<main class="ia-screen" aria-label="Papi’nin Harf Adası oyunu">'+drawHeader()+drawScene()+drawAnswers()+drawKeys()+drawTools()+'</main>';
-    body.querySelectorAll('[data-ia-close]').forEach(b=>b.addEventListener('click',()=>window.asmacaOyunKapat()));
+    body.querySelectorAll('[data-ia-close]').forEach(b=>b.addEventListener('click',exitToGames));
     body.querySelectorAll('[data-ia-letter]').forEach(b=>b.addEventListener('click',()=>pick(b.dataset.iaLetter)));
     body.querySelectorAll('[data-ia-boost]').forEach(b=>b.addEventListener('click',()=>boost(b.dataset.iaBoost)));
     body.querySelector('[data-ia-skip]').addEventListener('click',()=>{if(current&&!current.locked&&current.wrong.size>=2)finishWord(false);});

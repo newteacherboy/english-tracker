@@ -16,3 +16,11 @@
 @media(prefers-reduced-motion:reduce){.rr-car::after,.rr-car.hit,.rr-finish-line{animation:none}.rr-progress i{transition:none}}
 
 .rr-upcoming{position:absolute;top:33%;left:12%;width:76%;z-index:3;padding:8px 12px;border:1px solid #fff8;border-radius:12px;background:#18344dcc;color:#fff;text-align:center;font-size:12px;pointer-events:none;opacity:.85}.rr-upcoming[hidden]{display:none}.rr-gate{transition:transform .08s linear}.rr-feedback{pointer-events:none}
+/* 20 Oct 2026: in-race slow-down toggle and class pace note */
+#rallyGame .rr-slow{pointer-events:auto;height:39px;padding:0 11px;border:2px solid #e2effb;border-radius:20px;background:linear-gradient(#4fae6f,#23704a);box-shadow:0 3px 0 #134a2e;color:#fff;font:900 14px/1 'Nunito',system-ui,sans-serif;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+#rallyGame .rr-slow.on{background:linear-gradient(#f2b740,#c9781a);box-shadow:0 3px 0 #7d4510}
+#rallyGame .rr-slow[hidden]{display:none}
+#rallyGame .rr-slow span{font-size:12px}
+#rallyGame .rr-pace-note{margin:4px 0 0;font-size:12px;font-weight:800;line-height:1.35;color:#2a4f6e;text-align:left}
+#rallyGame .rr-slow-note{font-size:12px;font-weight:800;color:#8a4b0c}
+#rallyGame .rr-fields:has(.rr-pace-note){grid-template-columns:1fr!important}#rallyGame .rr-fields .rr-pace-note{grid-column:1/-1}

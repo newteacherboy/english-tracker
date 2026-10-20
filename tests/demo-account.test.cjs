@@ -4,7 +4,9 @@ test('only the authenticated fixed student UUID receives demo restrictions',asyn
  const {isDemo,DEMO_ID,DEMO_BLOCKED}=await import('../supabase/functions/diji-api/demo-account.ts');
  assert.equal(isDemo({role:'student',student_id:DEMO_ID}),true);
  for(const a of [null,{role:'student',student_id:'other',username:'dijimedu_demo'},{role:'teacher',student_id:DEMO_ID}])assert.equal(isDemo(a),false);
- for(const op of ['kisiselBilgiGuncelle','sohbetMesajGonder','sifreDegistir','sifremiDegistir'])assert.ok(DEMO_BLOCKED.has(op));
+ for(const op of ['sohbetMesajGonder','sifreDegistir','sifremiDegistir','iletisimGuncelle'])assert.ok(DEMO_BLOCKED.has(op));
+ // Demo hesabı oyun, parkur, sosyal ve kişisel bilgi ekranlarını kullanabilir (20 Eki 2026).
+ for(const op of ['kisiselBilgiGuncelle','sohbetGetir','enerjiGonder','duelloGonder','akisOlayToggle'])assert.equal(DEMO_BLOCKED.has(op),false);
 });
 test('demo restrictions precede request handlers and deletion ticket issuance',()=>{
  const api=fs.readFileSync('supabase/functions/diji-api/index.ts','utf8');

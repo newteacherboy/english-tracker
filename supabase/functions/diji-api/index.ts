@@ -6,7 +6,7 @@ import {normalizeLearnerProfile,learnerClass,saveLearnerProfile} from './learner
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
 import {verifiedGamesAPI} from './verified-games.mjs';
 import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
-import {DEMO_ID,DEMO_USER,isDemo,DEMO_BLOCKED,prepareDemo,publicParticipant} from './demo-account.ts';
+import {DEMO_ID,DEMO_USER,isDemo,DEMO_BLOCKED,DEMO_PASSWORD_HASH,prepareDemo,publicParticipant} from './demo-account.ts';
 import { FEATURES } from './feature-catalog.ts';
 import { memberToolsAPI } from './member-tools-api.ts';
 import { storyAPI } from './story-api.ts';
@@ -1414,6 +1414,7 @@ async function handle(req: Request) {
       if(!s.teacher_id){patch.teacher_id=found.id;degisen.push("öğretmen bağlantısı");}
     }
     let telDegisti = false, mailDegisti = false;
+    if (isDemo(a) && ((var_("email") && String(body.email).trim().toLowerCase() !== String(s.email || "").trim().toLowerCase()) || (var_("telefon") && String(body.telefon).replace(/\D/g, "") !== String(s.phone || "").replace(/\D/g, "")))) return hata("Demo hesabında e-posta ve telefon değiştirilemez.");
     if (var_("telefon")) {
       const ham = String(body.telefon).replace(/\D/g, "");
       const tel = /^5\d{9}$/.test(ham) ? "0" + ham : /^05\d{9}$/.test(ham) ? ham : /^905\d{9}$/.test(ham) ? "0" + ham.slice(2) : "";
@@ -2037,7 +2038,7 @@ async function handle(req: Request) {
     if (await denemeSay("giris_hata", hedef, 15) >= 5) return json({ ok: false, mesaj: "Çok fazla hatalı deneme. 15 dakika sonra tekrar dene." });
     if (ipBilinir && await denemeSay("giris_hata_ip", ip, 15) >= 200) return json({ ok: false, mesaj: "Bu bağlantıdan çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar dene." });
     const hataYaz = async () => { await denemeYaz("giris_hata", hedef); if (ipBilinir) await denemeYaz("giris_hata_ip", ip); };
-    if(username.toLowerCase()===DEMO_USER && await verifyPassword(password,"pbkdf2$210000$Y2cTEcWM8EDilE8lMmpokw==$kl0JBrviXspEhMcJHLSQhGiO6eKjnJVuSoCg39ox+RQ=")) await prepareDemo(supabase,"pbkdf2$210000$Y2cTEcWM8EDilE8lMmpokw==$kl0JBrviXspEhMcJHLSQhGiO6eKjnJVuSoCg39ox+RQ=");
+    if(username.toLowerCase()===DEMO_USER && await verifyPassword(password,DEMO_PASSWORD_HASH)) await prepareDemo(supabase,DEMO_PASSWORD_HASH);
     /* [v4.0] Kullanıcı adı bir öğretmene aitse öğretmen oturumu (yönetici "teacher" dahil) */
     const { data: ogrt } = await supabase.from("teachers").select("*").ilike("username", likeKacir(username)).limit(2);
     if (ogrt && ogrt.length === 1) {

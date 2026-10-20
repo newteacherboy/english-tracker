@@ -1,11 +1,19 @@
 export const DEMO_ID='dcde2026-1015-4000-8000-000000000001';
 export const DEMO_USER='dijimedu_demo';
 export const isDemo=(a:any)=>a?.role==='student'&&a.student_id===DEMO_ID;
-export const DEMO_BLOCKED=new Set(['kisiselBilgiGuncelle','sohbetMesajGonder','sohbetGetir','sifreDegistir','sifremiDegistir','memberEmailResend','iletisimGuncelle','akisOlayToggle','bildirimGonder','enerjiGonder','duelloGonder','duelloYanit']);
+/* Demo hesabı her parkura, bölüme ve oyuna erişir (20 Eki 2026). Kapalı olanlar yalnızca:
+   öğretmene mesaj, şifre değiştirme ve şifreyi sıfırlamaya yol açabilecek e-posta değişikliği.
+   Hesap dondurma ve silme account-delete fonksiyonunda kapalıdır. */
+export const DEMO_BLOCKED=new Set(['sohbetMesajGonder','sifreDegistir','sifremiDegistir','sifreSifirlamaIste','memberEmailResend','iletisimGuncelle']);
+export const DEMO_PASSWORD_HASH='pbkdf2$210000$kz3nVx+iiNnFVmYTawObdA==$xPIK3djL2coH56WC9L3fBYOgAFtk4xjzorVZVuzYZOk='; // şifre: 31526931
+/* A valid starting-test record: the learning route never asks the demo account for the level test. */
+export const DEMO_PLACEMENT=()=>({version:'starting-point-20261018-v1',total:24,correct:24,level:'B2',studyUnlockedLevel:'B2',completedAt:new Date().toISOString(),demo:true});
 export async function prepareDemo(db:any,passwordHash:string){
  const check=await db.from('students').select('id,username').eq('id',DEMO_ID).maybeSingle();if(check.error)throw check.error;
  if(check.data&&check.data.username!==DEMO_USER)throw Error('Demo identity conflict');
  if(!check.data){const created=await db.from('students').insert({id:DEMO_ID,username:DEMO_USER,password_hash:passwordHash,status:'approved',role:'student',class_no:6,selected_class:6,gold:100000,energy:10000,energy_max:10000});if(created.error)throw created.error;}
+ const placement=await db.from('extra_data').select('value').eq('student_id',DEMO_ID).eq('key_name','placement_start_v1').maybeSingle();if(placement.error)throw placement.error;
+ if(!placement.data){const r=await db.from('extra_data').upsert({student_id:DEMO_ID,key_name:'placement_start_v1',value:DEMO_PLACEMENT(),updated_at:new Date().toISOString()},{onConflict:'student_id,key_name'});if(r.error)throw r.error;}
  const marker=await db.from('extra_data').select('value').eq('student_id',DEMO_ID).eq('key_name','demo_initialized_v1').maybeSingle();if(marker.error)throw marker.error;if(marker.data)return;
  const yo=await db.from('extra_data').upsert({student_id:DEMO_ID,key_name:'yo',value:{totalXp:100000,altin:100000,seviye:'B2',dmLearningPurpose:'school',dmParkurMigration:{version:1},karakter:{cins:'e',sahip:[]}},updated_at:new Date().toISOString()},{onConflict:'student_id,key_name'});if(yo.error)throw yo.error;
  const ctx=await db.rpc('dm_progress_context',{actor:DEMO_ID});if(ctx.error)throw ctx.error;

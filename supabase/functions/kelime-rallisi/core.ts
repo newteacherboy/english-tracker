@@ -81,7 +81,8 @@ export function raceHandler(db:DB){
    if(op==='answer'){
     if(!Number.isInteger(b.round)||b.round<0||b.round>14||!Number.isInteger(b.lane)||b.lane<0||b.lane>2)return json({ok:false,mesaj:'Geçerli kelime kapısını seç.'},400);
     let lane=b.lane;if(b.twoChoices){if(lane>1)return json({ok:false,mesaj:'İki kapıdan birini seç.'},400);const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});if(!rows[0]?.deck[b.round])return json({ok:false,mesaj:'Yarış bulunamadı.'},404);lane=twoChoiceLanes(rows[0].deck[b.round])[lane];}
-    return json(await view(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane})));
+    // slow: the learner slowed the road for this question; the database pays less for it.
+    return json(await view(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane,...(b.slow===true?{slowed:true}:{})})));
    }
    if(op==='finish')return json(await db.rpc('dm_rally_finish',{actor:student.id,run_key:b.runId}));
    return json({ok:false,mesaj:'Geçersiz yarış işlemi.'},400);

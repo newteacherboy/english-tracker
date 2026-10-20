@@ -22,8 +22,6 @@ export function routeGraduationsAPI(db,json,catalog){return {async handle(op,b,a
  const person=await db.from('students').select('id,username,full_name,status,role').eq('id',a.student_id).maybeSingle();
  if(person.error)return fail('Hesap kontrol edilemedi.',503);
  if(!person.data||person.data.status!=='approved'||person.data.role!=='student')return fail('Aktif öğrenci hesabı gerekli.',403);
- const isDemo=person.data.username==='dijimedu_demo'||person.data.id==='dcde2026-1015-4000-8000-000000000001';
- if(isDemo)return json({ok:true,awards:[]});
  if(b.action==='seen'){
   if(!/^[0-9a-f-]{36}$/i.test(String(b.id||'')))return fail('Geçerli belge gerekli.');
   const r=await db.from('dm_route_graduations').update({notified_at:new Date().toISOString()}).eq('student_id',a.student_id).eq('id',b.id).is('notified_at',null);
