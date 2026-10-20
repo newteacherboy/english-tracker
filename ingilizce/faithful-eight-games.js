@@ -64,5 +64,31 @@
   new MutationObserver(update).observe(modal,{attributes:true,attributeFilter:['class','data-dm-selected-game']});
   update();
  }
+
+ // Several legacy themes set background:none !important with higher specificity.
+ // Apply scene image to the active, real game content only. This preserves
+ // fast startup, entry screens and the earlier route's inline style state.
+ for(const [rootId,scene] of [
+  ['jpOyunOverlay','carnival'],['yagmurOyunOverlay','storm'],
+  ['kelimebulOyunOverlay','lock'],['esOyunOverlay','garden'],
+  ['trenOyunOverlay','station']
+ ]){
+  const root=document.getElementById(rootId),card=root?.querySelector('.game-modal-content');
+  if(!root||!card)continue;
+  const apply=()=>{
+   if(root.classList.contains('dm-designed-playing')){
+    card.style.setProperty('background-image',
+     'linear-gradient(180deg,#fffaf0a6,#fff6e7c2),url("game-scenes/'+scene+'.svg")','important');
+    card.style.setProperty('background-size','100% 100%,100% 100%','important');
+    card.style.setProperty('background-repeat','no-repeat','important');
+   }else{
+    card.style.removeProperty('background-image');
+    card.style.removeProperty('background-size');
+    card.style.removeProperty('background-repeat');
+   }
+  };
+  new MutationObserver(apply).observe(root,{attributes:true,attributeFilter:['class']});
+  apply();
+ }
  window.dmFaithfulEightGames={version:'20261020',scenes:scenes.map(s=>s.id)};
 })();
