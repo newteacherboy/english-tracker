@@ -46,7 +46,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
     const sign=root.querySelector('#trenTabela');
     return {background:getComputedStyle(el).backgroundImage,width:el.getBoundingClientRect().width,
       scroll:el.scrollWidth,client:el.clientWidth,
-      rootClass:root.className,rootDisplay:getComputedStyle(root).display,playDisplay:getComputedStyle(document.getElementById(root.id.replace('Overlay','')+'Ekrani')||board||root).display,cssLoaded:[...document.styleSheets].some(st=>st.href?.includes('faithful-eight-games.css')),heading:!!board?.querySelector('.fg-hero'),
+      rootClass:root.className,rootDisplay:getComputedStyle(root).display,playDisplay:getComputedStyle(document.getElementById(root.id.replace('Overlay','')+'Ekrani')||board||root).display,cssLoaded:[...document.styleSheets].some(st=>st.href?.includes('faithful-eight-games.css')),matches:el.matches('#jpOyunOverlay.dm-designed-playing .game-modal-content'),styleRules:[...document.styleSheets].filter(st=>st.href?.includes('faithful-eight-games.css')).flatMap(st=>[...st.cssRules]).filter(q=>q.selectorText?.includes('#jpOyunOverlay.dm-designed-playing')).slice(0,4).map(q=>({sel:q.selectorText,background:q.style?.background})),parentClass:el.parentElement?.className,heading:!!board?.querySelector('.fg-hero'),
       sign:sign?{height:sign.getBoundingClientRect().height,wrap:getComputedStyle(sign).whiteSpace,color:getComputedStyle(sign).color}:null};
    });
    assert(metrics.background.includes('game-scenes/'+scene+'.svg'),JSON.stringify({rootId,size,metrics}));
