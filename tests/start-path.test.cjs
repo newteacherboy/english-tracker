@@ -52,13 +52,13 @@ test('classes below the start class are fully open; from the start class up stop
  assert.match(SP.schoolStopProblem(path,ctx,240151),/4\. sınıf/);
 });
 
-test('class 1–8 learners need the starting test for the learning route unless they already played it',()=>{
+test('class 1–8 learners need the starting test for the learning route, even if they played it before',()=>{
  const school={...independent(),purpose:'school',educationStage:'middle'},firstA1=DATA.chapters[0];
  let p=SP.computeStartPath({profile:school,classNo:7,thematic:thematicSummary([])});
  assert.equal(p.learningRoute,'needs-test');assert.match(SP.thematicChapterProblem(p,DATA.chapters,firstA1.id,()=>false),/seviye testini/);
  assert.equal(SP.computeStartPath({classNo:7,thematic:thematicSummary([])}).learningRoute,'needs-test','legacy accounts with a class too');
- assert.equal(SP.computeStartPath({profile:school,classNo:7,thematic:thematicSummary([{chapter:1000,completed:false}])}).learningRoute,'open','already started');
- assert.equal(SP.computeStartPath({classNo:7,thematic:thematicSummary([{chapter:3,completed:true}])}).learningRoute,'open','old story route progress counts');
+ assert.equal(SP.computeStartPath({profile:school,classNo:7,thematic:thematicSummary([{chapter:1000,completed:false}])}).learningRoute,'needs-test','already started still needs the test');
+ assert.equal(SP.computeStartPath({classNo:7,thematic:thematicSummary([{chapter:3,completed:true}])}).learningRoute,'needs-test','old story progress too');
  assert.equal(SP.computeStartPath({profile:independent(),thematic:thematicSummary([])}).learningRoute,'open','independent learners');
  assert.equal(SP.computeStartPath({profile:{...school,educationStage:'high'},thematic:thematicSummary([])}).learningRoute,'open','high school has no 1–8 class');
  const placement={version:'starting-point-20261018-v1',total:24,level:'B1',completedAt:'2026-10-20T10:00:00Z'};
