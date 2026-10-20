@@ -5,6 +5,8 @@ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 const identity=()=>who()+'|'+(localStorage.getItem('ing_token')||'');
 const student=()=>!!who()&&who().toLowerCase()!=='teacher'&&!!localStorage.getItem('ing_token')&&!window.dmGuestMode;
+const teacher=()=>who().toLowerCase()==='teacher'&&!window.dmGuestMode;
+const reader=()=>student()||teacher();
 const visible=el=>!!el&&el.getClientRects().length>0;
 const today=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
 const papi='<img class="lc-papi" src="route-assets/papi-profile.png" alt="Papi" decoding="async">';
@@ -60,9 +62,9 @@ function showGoal(holder){
  holder.querySelectorAll('.dm-goal-tabs button').forEach(b=>{const active=Number(b.dataset.goal)===goalSlide;b.setAttribute('aria-selected',String(active));b.tabIndex=0;});
 }
 function mount(){
- scheduled=false;reset();if(!student())return;
+ scheduled=false;reset();if(!reader())return;
  const map=$('tab-dunya'),root=map?.querySelector('.rt-root');
- if(root&&visible(map)&&root.dataset.routeDesign!=='3'){
+ if(student()&&root&&visible(map)&&root.dataset.routeDesign!=='3'){
   let plan=$('lcPlan');if(!plan){plan=document.createElement('section');plan.id='lcPlan';plan.className='lc-plan';plan.setAttribute('aria-label','Bugünkü çalışma planın');root.prepend(plan);paintPlan();}
   else if(plan.parentElement!==root)root.prepend(plan);
   goalCarousel(root);
@@ -141,13 +143,17 @@ function bindStories(root,close){
  root.querySelectorAll('.lc-story-level').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)root.querySelectorAll('.lc-story-level').forEach(other=>{if(other!==d)other.open=false;});}));
 }
 function dialogues(){
- if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body,window.dmViewHistory?undefined:()=>v.close());
+ if(!reader())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body,window.dmViewHistory?undefined:()=>v.close());
 }
 function say(text,rate,finished,failed){
  try{if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)throw Error('Ses desteklenmiyor.');speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-GB';utterance.rate=rate;utterance.onend=finished;utterance.onerror=failed;speechSynthesis.speak(utterance);}catch(e){failed(e);}
 }
+function practiceAnswer(q,text,index,version){
+ const norm=s=>String(s??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[.,!?;:]/g,'').trim().replace(/\s+/g,' ');
+ return {cursor:index+1,version:version+1,correct:(q.answers||[q.answer]).some(a=>norm(a)===norm(text)),answer:q.answer,explanation:q.explanation};
+}
 async function openStory(id){
- const story=bank.find(s=>s.id===id);if(!story||!student())return;
+ const story=bank.find(s=>s.id===id);if(!story||!reader())return;
  const v=sheet(story.title,'<p role="status">Metin yükleniyor…</p>','lcStory');if(!v)return;
  let state=null,played=false,audioBusy=false,slow=false,answering=false;
  const transcript=()=>'<details class="lc-transcript-panel" open><summary>'+(story.type==='story'?'Hikâye metni':'Konuşma metni')+'</summary><div class="lc-transcript">'+story.lines.map(([person,text])=>'<p><small>'+esc(person)+'</small><span>'+esc(text)+'</span></p>').join('')+'</div></details>';
@@ -166,7 +172,7 @@ async function openStory(id){
   v.body.querySelector('[data-lc="read-instead"]')?.addEventListener('click',e=>{try{speechSynthesis.cancel();}catch{}audioBusy=false;played=false;v.body.querySelector('[data-transcript]').hidden=false;v.body.querySelectorAll('[data-option]').forEach(x=>x.disabled=false);const play=v.body.querySelector('[data-lc="audio"]');if(play)play.disabled=false;e.target.disabled=true;v.body.querySelector('.lc-audio-note').textContent='Metinle çalışıyorsun; bu soru okuma olarak kaydedilecek.';});
   async function answer(text,button){
    if(answering||!v.alive())return;answering=true;v.body.querySelectorAll('[data-option],.lc-writing button').forEach(x=>x.disabled=true);const note=v.body.querySelector('.lc-answer-note');note.textContent='Kontrol ediliyor…';
-   try{const r=await api('companionDialogueAnswer',{story:id,index:i,version:state.version,answer:text,audioPlayed:played});if(!v.alive())return;
+   try{const r=teacher()?practiceAnswer(q,text,i,state.version):await api('companionDialogueAnswer',{story:id,index:i,version:state.version,answer:text,audioPlayed:played});if(!v.alive())return;
     state={...state,cursor:r.cursor,version:r.version,answers:{...state.answers,[i]:r}};button?.classList.add(r.correct?'lc-correct':'lc-wrong');
     v.body.querySelectorAll('[data-option]').forEach(x=>{if(x.dataset.option===r.answer)x.classList.add('lc-correct');});
     companionAnswerSound(r.correct);v.body.querySelectorAll('.lc-transcript-panel').forEach(x=>x.open=false);note.className='lc-answer-note '+(r.correct?'lc-correct-note':'lc-explain');note.innerHTML='<b>'+(r.correct?'✓ Doğru!':'Birlikte düzeltelim')+'</b><p>'+esc(r.explanation)+'</p>'+(!r.correct?'<p>Doğru cevap: <strong>'+esc(r.answer)+'</strong></p>':'');
@@ -175,7 +181,7 @@ async function openStory(id){
   }
   v.body.querySelectorAll('[data-option]').forEach(b=>b.onclick=()=>answer(b.dataset.option,b));v.body.querySelector('form')?.addEventListener('submit',e=>{e.preventDefault();answer(new FormData(e.target).get('answer'),e.target.querySelector('button'));});
  }
- try{state=await api('companionDialogueOpen',{story:id});if(v.alive())render();}catch(e){if(v.alive())v.body.textContent=e.message;}
+ try{state=teacher()?{cursor:0,version:0,answers:{}}:await api('companionDialogueOpen',{story:id});if(v.alive())render();}catch(e){if(v.alive())v.body.textContent=e.message;}
 }
 async function teacherSummary(){
  const v=sheet('Sınıfımın Öğrenme Özeti','<p role="status">Sınıfların yükleniyor…</p>','lcTeacherSummary');if(!v)return;v.el.classList.add('dm-teacher-child');

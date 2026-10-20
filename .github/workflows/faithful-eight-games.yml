@@ -35,12 +35,12 @@ jobs:
         run: node --test tests/faithful-eight-games.test.cjs tests/selected-eight-game-boards.test.cjs tests/harf-bahcesi-round-size.test.cjs tests/eight-game-fullscreen.test.cjs
       - name: Install UI test browser
         run: |
-          npm install --prefix /tmp/faithful-ui --no-save playwright@1.62.1
+          npm install --prefix /tmp/faithful-ui --no-save playwright@1.62.1 jsdom@26.1.0
           /tmp/faithful-ui/node_modules/.bin/playwright install --with-deps chromium
       - name: Inspect eight real game screens on mobile and tablet
         env:
           NODE_PATH: /tmp/faithful-ui/node_modules
-        run: node tests/faithful-eight-games-ui.cjs && node tests/eight-game-fullscreen-ui.cjs
+        run: node --test tests/teacher-game-access.test.cjs tests/profile-account-switch.test.cjs && node tests/faithful-eight-games-ui.cjs && node tests/eight-game-fullscreen-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

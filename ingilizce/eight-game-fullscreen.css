@@ -300,3 +300,30 @@ html body #yoModal.fg-fs-active .fg-ultra-tight .yo-havuz .yo-chip{min-height:31
 @media(prefers-reduced-motion:reduce){
  html body .fg-fs-active *{scroll-behavior:auto!important;transition:none!important}
 }
+/* Honor native close even before the next observer frame. */
+html body :is(#jpOyunOverlay,#yagmurOyunOverlay,#kelimebulOyunOverlay,#esOyunOverlay,#trenOyunOverlay).fg-fs-active[style*="display: none"]{display:none!important}
+/* Compact decoration reserves the viewport for the live game. */
+html body #yagmurOyunOverlay.fg-fs-active #yagmurOyunEkrani .fg-hero{
+ height:38px!important;min-height:38px!important;flex:0 0 38px!important;padding:3px 12px!important}
+html body #yagmurOyunOverlay.fg-fs-active .fg-hero :is(p,.fg-hero-papi){display:none!important}
+html body #yagmurOyunOverlay.fg-fs-active #yagmurAlan{flex:1 1 0%!important;min-height:80px!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kelimebulOyunEkrani{justify-content:center!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kbIpucu{margin-top:auto!important;font-size:clamp(20px,4vw,32px)!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kbSatirlar{flex:0 1 auto!important;min-height:50px!important;max-height:32dvh!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kbSatirlar{margin-bottom:auto!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .fg-hero{height:44px!important;min-height:0!important;flex:0 0 44px!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .fg-hero p{display:none!important}
+html body #trenOyunOverlay.fg-fs-active #trenHat{
+ display:flex!important;align-content:center!important;align-items:center!important;justify-content:center!important;flex-wrap:wrap!important;
+ flex:1 1 0%!important;min-height:66px!important;padding:6px!important;gap:5px!important}
+html body #trenOyunOverlay.fg-fs-active #trenHavuz{
+ display:flex!important;align-content:center!important;align-items:center!important;flex-wrap:wrap!important;
+ flex:1 1 0%!important;min-height:92px!important;padding:6px!important;gap:6px!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-v{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 auto!important;height:auto!important;min-height:32px!important;max-height:42px!important;
+ color:#532c23!important;background:#ffe7b6!important;font:900 clamp(13px,2.8vw,18px)/1.2 Nunito,system-ui!important;
+ padding:5px 9px!important;text-indent:0!important;opacity:1!important;visibility:visible!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-v.bos{visibility:hidden!important}
+html body #trenOyunOverlay.fg-fs-active .tr-lok{font-size:28px!important}
+html body #trenOyunOverlay.fg-fs-active #trenRozet:empty{display:none!important}

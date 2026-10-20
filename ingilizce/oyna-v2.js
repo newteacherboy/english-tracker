@@ -25,7 +25,7 @@ function askLearningTest(){
  if(!v){done();tell('Öğrenme Yolu için önce seviye testini çözmen gerekiyor. Test şu an açılamadı; Profil › Seviye Testi’nden deneyebilirsin.');}
 }
 function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
-function heading(o={}){return '<header class="rt-top"><h1>'+ (purpose()==='school'?'Okul Yolum':'Öğrenme Yolum')+'</h1><div class="rt-wallet"><button type="button" data-rt-wallet="energy" aria-label="Enerji bilgileri">⚡ <b data-dm-energy>'+esc(o.energy??'–')+'</b></button><button type="button" data-rt-wallet="gold" aria-label="Mağaza ve altın">🪙 <b data-dm-gold>'+esc(o.gold??Y()?.altin??0)+'</b></button></div></header>';}
+function heading(o={}){if(who().toLowerCase()==='teacher')return '<header class="rt-top"><h1>Öğretmen Denemesi</h1><span>⚡ ∞ · Oyunları keşfet</span></header>';return '<header class="rt-top"><h1>'+ (purpose()==='school'?'Okul Yolum':'Öğrenme Yolum')+'</h1><div class="rt-wallet"><button type="button" data-rt-wallet="energy" aria-label="Enerji bilgileri">⚡ <b data-dm-energy>'+esc(o.energy??'–')+'</b></button><button type="button" data-rt-wallet="gold" aria-label="Mağaza ve altın">🪙 <b data-dm-gold>'+esc(o.gold??Y()?.altin??0)+'</b></button></div></header>';}
 let weeklyClaimOwner='',weeklyError='';
 function weekly(){return window.dmRouteMissions?.markup('weekly')||'<section class="rt-week rt-card"><p>Haftalık görevler hazırlanıyor…</p></section>';}
 
