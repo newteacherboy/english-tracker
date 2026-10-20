@@ -31,7 +31,7 @@
     if(window.dmFeatureEnabled?.('oyun_harfbahcesi')===false || genelOyunGirisEngelliMi())return;
     close();owner=who();previous=document.activeElement;
     overlay=document.createElement('div');overlay.className='hb-overlay game-modal-overlay';overlay.id='harfBahcesiOverlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','hbTitle');
-    overlay.innerHTML=`<section class="hb-card"><header><div><small>PAPİ'NİN KELİME BAHÇESİ</small><h2 id="hbTitle">🌿 Harf Bahçesi</h2></div><button type="button" data-close aria-label="Oyunu kapat">×</button></header><div class="hb-body"></div></section>`;
+    overlay.innerHTML=`<section class="hb-card"><header><div><small>PAPİ'NİN KELİME BAHÇESİ</small><h2 id="hbTitle">🌿 Harf Bahçesi</h2></div><button type="button" data-close aria-label="Oyundan çık">‹</button></header><div class="hb-body"></div></section>`;
     document.body.append(overlay);body=overlay.querySelector('.hb-body');overlay.querySelector('[data-close]').onclick=close;
     overlay.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const a=[...overlay.querySelectorAll('button:not(:disabled),input,select')].filter(x=>x.getClientRects().length);if(!a.length)return;const first=a[0],last=a.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
     state={classNo:1,units:[1],ended:false,runId:crypto.randomUUID()};
@@ -63,15 +63,15 @@
     } catch(e) { if(state===current&&overlay===currentOverlay){message(e.message);button.disabled=false;} }
     finally {starting=false;}
   }
-  function newBoard() {state.pair=state.words.slice(state.index,state.index+2);state.grid=board(state.pair);state.selected=[];state.solved=new Set();paint();}
+  function newBoard() {state.pair=state.words.slice(state.index,state.index+1);state.grid=board(state.pair);state.selected=[];state.solved=new Set();overlay?.classList.add("hb-playing");paint();}
   function text() {return state.selected.map(i=>state.grid.letters[i]).join('');}
   function paint() {
     const s=state;
-    body.innerHTML=`<div class="hb-meta"><b>${s.done}/12 kelime</b><span>${OC.puan()} puan</span><span data-time>${OC.sure()} sn</span></div><progress max="12" value="${s.done}" aria-label="Bulunan kelimeler"></progress><div class="hb-hints">${s.pair.map((k,i)=>`<div class="${s.solved.has(i)?'hb-solved':''}"><span>${esc(tr(k))}</span><b lang="en">${s.solved.has(i)?esc(en(k).toUpperCase()):'•'.repeat(en(k).length)}</b></div>`).join('')}</div><div class="hb-grid" aria-label="Harf bahçesi">${s.grid.letters.map((h,i)=>`<button type="button" data-cell="${i}" lang="en" aria-label="${h.toUpperCase()}, ${Math.floor(i/COLS)+1}. satır ${i%COLS+1}. sütun">${h.toUpperCase()}</button>`).join('')}</div><div class="hb-selection" lang="en" aria-live="polite">Harfleri birleştir</div><div class="hb-actions"><button type="button" data-clear>Temizle</button><button type="button" class="hb-primary" data-check>Kelimeyi bul ✓</button><button type="button" data-skip>Pas geç</button></div><p class="hb-status" role="status">Yatay, dikey veya çapraz komşu harfleri birleştir. Bir harfi aynı kelimede iki kez kullanamazsın.</p><button type="button" class="hb-next" data-next hidden>${s.index+2>=12?'Sonucumu gör 🌟':'Sonraki bahçe →'}</button>`;
+    body.innerHTML=`<div class="hb-meta"><b>${s.done}/12 kelime</b><span>${OC.puan()} puan</span><span data-time>${OC.sure()} sn</span></div><progress max="12" value="${s.done}" aria-label="Bulunan kelimeler"></progress><div class="hb-hints">${s.pair.map((k,i)=>`<div class="${s.solved.has(i)?'hb-solved':''}"><span>${esc(tr(k))}</span><b lang="en">${s.solved.has(i)?esc(en(k).toUpperCase()):'•'.repeat(en(k).length)}</b></div>`).join('')}</div><div class="hb-grid" aria-label="Harf bahçesi">${s.grid.letters.map((h,i)=>`<button type="button" data-cell="${i}" lang="en" aria-label="${h.toUpperCase()}, ${Math.floor(i/COLS)+1}. satır ${i%COLS+1}. sütun">${h.toUpperCase()}</button>`).join('')}</div><div class="hb-selection" lang="en" aria-live="polite">Harfleri birleştir</div><div class="hb-actions"><button type="button" data-clear>Temizle</button><button type="button" class="hb-primary" data-check>🔎 Kelimeyi bul</button><button type="button" data-skip>Pas geç</button></div><p class="hb-status" role="status">Yatay, dikey veya çapraz komşu harfleri birleştir. Bir harfi aynı kelimede iki kez kullanamazsın.</p><button type="button" class="hb-next" data-next hidden>${s.index+1>=12?'Sonucumu gör 🌟':'Sonraki bahçe →'}</button>`;
     body.querySelectorAll('[data-cell]').forEach(b=>b.onclick=()=>select(Number(b.dataset.cell)));
     body.querySelector('[data-clear]').onclick=()=>{s.selected=[];selection();};body.querySelector('[data-check]').onclick=check;
     body.querySelector('[data-skip]').onclick=()=>{const i=s.pair.findIndex((_,j)=>!s.solved.has(j));if(i<0)return;window.dmVerifiedGames?.record(s.pair[i],null);OC.yanlis();if(!classroom())window.dmWrongWords?.add(s.pair[i]);s.solved.add(i);s.done++;s.selected=[];paint();message('Tekrar çalış: '+tr(s.pair[i])+' → '+en(s.pair[i]));};
-    body.querySelector('[data-next]').onclick=()=>{if(s.solved.size!==s.pair.length)return;s.index+=2;if(s.index>=s.words.length)finish();else newBoard();};
+    body.querySelector('[data-next]').onclick=()=>{if(s.solved.size!==s.pair.length)return;s.index+=1;if(s.index>=s.words.length)finish();else newBoard();};
     let dragging=false,moved=false,startIndex=-1;
     const grid=body.querySelector('.hb-grid');
     grid.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;const b=e.target.closest('[data-cell]');if(!b)return;dragging=true;moved=false;startIndex=Number(b.dataset.cell);});
@@ -96,7 +96,7 @@
   function check() {
     if(!state||state.ended||!state.selected.length||state.solved.size===state.pair.length)return;
     const word=text(),i=state.pair.findIndex((k,j)=>!state.solved.has(j)&&en(k)===word);
-    if(i<0){for(const [j,k] of state.pair.entries())if(!state.solved.has(j))window.dmVerifiedGames?.record(k,word);OC.yanlis();state.pair.forEach((_,j)=>{if(!state.solved.has(j))state.misses.add(state.index+j);if(!classroom())window.dmWrongWords?.add(state.pair[j]);});state.selected=[];selection();message('Bu kelime ipuçlarına uymadı. Yeniden dene!');return;}
+    if(i<0){const hint=body?.querySelector(".hb-hints>div");hint?.classList.add("hb-error");setTimeout(()=>hint?.classList.remove("hb-error"),650);for(const [j,k] of state.pair.entries())if(!state.solved.has(j))window.dmVerifiedGames?.record(k,word);OC.yanlis();state.pair.forEach((_,j)=>{if(!state.solved.has(j))state.misses.add(state.index+j);if(!classroom())window.dmWrongWords?.add(state.pair[j]);});state.selected=[];selection();message('Bu kelime ipuçlarına uymadı. Yeniden dene!');return;}
     window.dmVerifiedGames?.record(state.pair[i],word);const clean=!state.misses.has(state.index+i);OC.dogru(clean?1:.5,clean);state.solved.add(i);state.done++;state.selected=[];paint();window.dmCorrectAnswer?.();message('🌸 '+en(state.pair[i]).toUpperCase()+' = '+tr(state.pair[i]));
   }
   async function finish() {
