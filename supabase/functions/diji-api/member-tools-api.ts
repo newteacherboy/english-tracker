@@ -4,7 +4,7 @@ import {placementStudyAccess} from './study-placement-access.mjs';
 import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
 export function memberToolsAPI({db,json,welcome,hash,teacherScope,useStreakShield}:any){
- const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave','communicationStats','communicationNoticePolicy']);
+ const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPointChoose','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave','communicationStats','communicationNoticePolicy']);
  const fail=(message:string,status=400)=>json({ok:false,mesaj:message},status);
  const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
  function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
@@ -188,6 +188,14 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope,useStreakShiel
    const saved={...result,studyUnlockedLevel,completedAt:new Date().toISOString(),writing:String(b.writing||'').trim().slice(0,3000),speaking:String(b.speaking||'').trim().slice(0,3000)};
    const r=await db.from('extra_data').upsert({student_id:sid,key_name:'placement_start_v1',value:saved,updated_at:saved.completedAt},{onConflict:'student_id,key_name'});if(r.error)throw r.error;
    return json({ok:true,result:saved});
+  }
+  if(op==='startPointChoose'){
+   // The learner may start at or below the trusted test result, never above it.
+   const tested=placementStudyAccess((await get(sid,'placement_start_v1'))?.value),level=String(b.level||'');
+   if(!tested.level)return fail('Önce başlangıç testini tamamla.',409);
+   if(!tested.levels.includes(level))return fail('Test sonucunun üstünde bir seviyeden başlanamaz.',403);
+   const at=new Date().toISOString(),r=await db.from('extra_data').upsert({student_id:sid,key_name:'start_point_v1',value:{level,at},updated_at:at},{onConflict:'student_id,key_name'});if(r.error)throw r.error;
+   return json({ok:true,level});
   }
   if(op==='startPlacementFollowup'){
    const exam=parse((await get(sid,'placement_start_v1'))?.value);if(!exam.completedAt)return json({ok:true,pending:false});

@@ -54,7 +54,7 @@
       "context": "ana",
       "selector": "#dmLevelBadge",
       "text": "Seviye rozetine dokunarak ilerlemeni, kalan XP’yi ve yeni açılan özellikleri incele. Toplam XP gelişim seviyen, haftalık XP lig yarışın içindir. 40 seviyenin tüm açılışları Yardım’daki tabloda yer alır.",
-      "html": "<p>Seviye rozetine dokunarak ilerlemeni, kalan XP’yi ve yeni açılan özellikleri incele. Toplam XP gelişim seviyen, haftalık XP lig yarışın içindir. 40 seviyenin tüm açılışları Yardım’daki tabloda yer alır.</p><div class=\"yd-level-scroll\"><table class=\"yd-level-table\"><caption>40 seviyenin adı ve açılan özellikleri</caption><thead><tr><th>Seviye</th><th>Unvan</th><th>Açılan özellikler</th></tr></thead><tbody><tr><th>1</th><td>Yumurtadan Çıkan Papi</td><td>Ana parkur · Ders Çalış · A1 · Karakter koleksiyonu</td></tr><tr><th>2</th><td>Meraklı Yavru</td><td>Meraklı Yavru rozeti</td></tr><tr><th>3</th><td>Oyuncu Yavru</td><td>Kelime Laboratuvarı</td></tr><tr><th>4</th><td>Parlayan Tüy</td><td>Parlayan Tüy rozeti</td></tr><tr><th>5</th><td>Minik Kanat</td><td>Yerel Lig · Parkur altın hediyeleri · Bronz sandık</td></tr><tr><th>6</th><td>Hatırlayan Gaga</td><td>Hafıza Sandığı</td></tr><tr><th>7</th><td>Cesur Yavru</td><td>Cesur Yavru rozeti</td></tr><tr><th>8</th><td>Hikâye Kuşu</td><td>Okuma Stüdyosu</td></tr><tr><th>9</th><td>Sözcük Çırağı</td><td>A2 dersleri · A1 tamamlanınca</td></tr><tr><th>10</th><td>Kâşif Papağan</td><td>İkinci parkur · Keşfet · Beğeni ve tebrik · Süper Lig · haftalık 750 XP · MeduPro · Kelime Modu</td></tr><tr><th>11</th><td>Dikkatli Gaga</td><td>Eksik Harf</td></tr><tr><th>12</th><td>Görev Kanadı</td><td>Günlük görevler</td></tr><tr><th>13</th><td>Sabırlı Papağan</td><td>Pomodoro</td></tr><tr><th>14</th><td>Gümüş Tüy</td><td>Harf Avı · Gümüş sandık</td></tr><tr><th>15</th><td>Renkli Kanat</td><td>Mağaza ve ilk vitrin · Avatar seçimi · Zor kelimeler · Takip · Oyun başına 1 joker · Şampiyonlar Ligi · haftalık 1800 XP</td></tr><tr><th>16</th><td>Hedef Kanadı</td><td>Haftalık hedef · B1 dersleri · A2 tamamlanınca</td></tr><tr><th>17</th><td>Süslü Tepe</td><td>Saç stilleri</td></tr><tr><th>18</th><td>Sihirli Gaga</td><td>Joker dükkânı</td></tr><tr><th>19</th><td>Uyumlu Kanat</td><td>Eşini Bul</td></tr><tr><th>20</th><td>Meydan Okuyan Papi</td><td>Üçüncü parkur · Düello · İkinci vitrin · Üst giyim · Oyun başına 2 joker · Papağanla Sohbet</td></tr><tr><th>21</th><td>Yıldız Tüy</td><td>Yıldız Tüy rozeti</td></tr><tr><th>22</th><td>Cesur Gaga</td><td>Risk Balonları</td></tr><tr><th>23</th><td>Bilge Papağan</td><td>B2 dersleri · B1 tamamlanınca · Alt giyim</td></tr><tr><th>24</th><td>Altın Kanat</td><td>Dikte · Altın sandık</td></tr><tr><th>25</th><td>Sohbetçi Papağan</td><td>Mesaj gönderme · Tüm orta seviye ürünler · Üçüncü vitrin</td></tr><tr><th>26</th><td>Çevik Pençe</td><td>Ayakkabılar</td></tr><tr><th>27</th><td>Sözcük Avcısı</td><td>Şifre Kırıcı</td></tr><tr><th>28</th><td>Işıltılı Tüy</td><td>Hız Fırtınası · Işıltılı Tüy rozeti</td></tr><tr><th>29</th><td>Zarif Kanat</td><td>Aksesuarlar</td></tr><tr><th>30</th><td>Dost Kanat</td><td>Dördüncü parkur · İki kişilik oyunlar · Enerji hediyesi · Pro ürünler · Dördüncü vitrin · Oyun başına 3 joker · Kelime Kartları</td></tr><tr><th>31</th><td>Gezgin Papağan</td><td>Kelime Treni</td></tr><tr><th>32</th><td>Taçlı Tepe</td><td>Baş aksesuarları</td></tr><tr><th>33</th><td>Usta Gaga</td><td>Usta Gaga rozeti</td></tr><tr><th>34</th><td>Kristal Kanat</td><td>Kristal sandık</td></tr><tr><th>35</th><td>Görkemli Papağan</td><td>Diğer hediyeler · Kombinler · Beşinci vitrin</td></tr><tr><th>36</th><td>Cümle Ustası Papi</td><td>Cümle Kurma</td></tr><tr><th>37</th><td>Efsane Tüy</td><td>Efsane Tüy rozeti</td></tr><tr><th>38</th><td>Işığın Kanadı</td><td>Görünüm efektleri</td></tr><tr><th>39</th><td>Ormanın Sesi</td><td>Harf Bahçesi</td></tr><tr><th>40</th><td>Efsane Papağan</td><td>Altıncı vitrin · Efsane Papağan rozeti · Efsane sandık · En değerli parkur altını</td></tr></tbody></table></div><p>Kilitli özelliklerde ayrıca parkur tamamlama, haftalık XP veya ilerleme koşulu gösterilebilir. Özelliğin kendi kilit açıklamasını da kontrol et.</p>"
+      "html": "<p>Seviye rozetine dokunarak ilerlemeni, kalan XP’yi ve yeni açılan özellikleri incele. Toplam XP gelişim seviyen, haftalık XP lig yarışın içindir. 40 seviyenin tüm açılışları Yardım’daki tabloda yer alır.</p><div class=\"yd-level-scroll\"><table class=\"yd-level-table\"><caption>40 seviyenin adı ve açılan özellikleri</caption><thead><tr><th>Seviye</th><th>Unvan</th><th>Açılan özellikler</th></tr></thead><tbody><tr><th>1</th><td>Yumurtadan Çıkan Papi</td><td>Ana parkur · Ders Çalış · A1 · Karakter koleksiyonu</td></tr><tr><th>2</th><td>Meraklı Yavru</td><td>Meraklı Yavru rozeti</td></tr><tr><th>3</th><td>Oyuncu Yavru</td><td>Kelime Laboratuvarı</td></tr><tr><th>4</th><td>Parlayan Tüy</td><td>Parlayan Tüy rozeti</td></tr><tr><th>5</th><td>Minik Kanat</td><td>Yerel Lig · Parkur altın hediyeleri · Bronz sandık</td></tr><tr><th>6</th><td>Hatırlayan Gaga</td><td>Hafıza Sandığı</td></tr><tr><th>7</th><td>Cesur Yavru</td><td>Cesur Yavru rozeti</td></tr><tr><th>8</th><td>Hikâye Kuşu</td><td>Okuma Stüdyosu</td></tr><tr><th>9</th><td>Sözcük Çırağı</td><td>Papi yeni adını kazanır</td></tr><tr><th>10</th><td>Kâşif Papağan</td><td>Keşfet · Beğeni ve tebrik · Süper Lig · haftalık 750 XP · MeduPro · Kelime Modu</td></tr><tr><th>11</th><td>Dikkatli Gaga</td><td>Eksik Harf</td></tr><tr><th>12</th><td>Görev Kanadı</td><td>Günlük görevler</td></tr><tr><th>13</th><td>Sabırlı Papağan</td><td>Pomodoro</td></tr><tr><th>14</th><td>Gümüş Tüy</td><td>Harf Avı · Gümüş sandık</td></tr><tr><th>15</th><td>Renkli Kanat</td><td>Mağaza ve ilk vitrin · Avatar seçimi · Zor kelimeler · Takip · Oyun başına 1 joker · Şampiyonlar Ligi · haftalık 1800 XP</td></tr><tr><th>16</th><td>Hedef Kanadı</td><td>Haftalık hedef</td></tr><tr><th>17</th><td>Süslü Tepe</td><td>Saç stilleri</td></tr><tr><th>18</th><td>Sihirli Gaga</td><td>Joker dükkânı</td></tr><tr><th>19</th><td>Uyumlu Kanat</td><td>Eşini Bul</td></tr><tr><th>20</th><td>Meydan Okuyan Papi</td><td>Düello · İkinci vitrin · Üst giyim · Oyun başına 2 joker · Papağanla Sohbet</td></tr><tr><th>21</th><td>Yıldız Tüy</td><td>Yıldız Tüy rozeti</td></tr><tr><th>22</th><td>Cesur Gaga</td><td>Risk Balonları</td></tr><tr><th>23</th><td>Bilge Papağan</td><td>Alt giyim</td></tr><tr><th>24</th><td>Altın Kanat</td><td>Dikte · Altın sandık</td></tr><tr><th>25</th><td>Sohbetçi Papağan</td><td>Mesaj gönderme · Tüm orta seviye ürünler · Üçüncü vitrin</td></tr><tr><th>26</th><td>Çevik Pençe</td><td>Ayakkabılar</td></tr><tr><th>27</th><td>Sözcük Avcısı</td><td>Şifre Kırıcı</td></tr><tr><th>28</th><td>Işıltılı Tüy</td><td>Hız Fırtınası · Işıltılı Tüy rozeti</td></tr><tr><th>29</th><td>Zarif Kanat</td><td>Aksesuarlar</td></tr><tr><th>30</th><td>Dost Kanat</td><td>İki kişilik oyunlar · Enerji hediyesi · Pro ürünler · Dördüncü vitrin · Oyun başına 3 joker · Kelime Kartları</td></tr><tr><th>31</th><td>Gezgin Papağan</td><td>Kelime Treni</td></tr><tr><th>32</th><td>Taçlı Tepe</td><td>Baş aksesuarları</td></tr><tr><th>33</th><td>Usta Gaga</td><td>Usta Gaga rozeti</td></tr><tr><th>34</th><td>Kristal Kanat</td><td>Kristal sandık</td></tr><tr><th>35</th><td>Görkemli Papağan</td><td>Diğer hediyeler · Kombinler · Beşinci vitrin</td></tr><tr><th>36</th><td>Cümle Ustası Papi</td><td>Cümle Kurma</td></tr><tr><th>37</th><td>Efsane Tüy</td><td>Efsane Tüy rozeti</td></tr><tr><th>38</th><td>Işığın Kanadı</td><td>Görünüm efektleri</td></tr><tr><th>39</th><td>Ormanın Sesi</td><td>Harf Bahçesi</td></tr><tr><th>40</th><td>Efsane Papağan</td><td>Altıncı vitrin · Efsane Papağan rozeti · Efsane sandık · En değerli parkur altını</td></tr></tbody></table></div><p>Kilitli özelliklerde ayrıca parkur tamamlama, haftalık XP veya ilerleme koşulu gösterilebilir. Özelliğin kendi kilit açıklamasını da kontrol et.</p>"
     },
     {
       "id": "energy",
@@ -941,12 +941,12 @@
       [
         null,
         "9. seviye · Sözcük Çırağı",
-        "A2 dersleri · A1 tamamlanınca. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
+        "Papi yeni adını kazanır. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
       ],
       [
         null,
         "10. seviye · Kâşif Papağan",
-        "İkinci parkur. Keşfet. Beğeni ve tebrik. Süper Lig · haftalık 750 XP. MeduPro. Kelime Modu. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
+        "Keşfet. Beğeni ve tebrik. Süper Lig · haftalık 750 XP. MeduPro. Kelime Modu. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
       ],
       [
         null,
@@ -976,7 +976,7 @@
       [
         null,
         "16. seviye · Hedef Kanadı",
-        "Haftalık hedef. B1 dersleri · A2 tamamlanınca. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
+        "Haftalık hedef. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
       ],
       [
         null,
@@ -996,7 +996,7 @@
       [
         null,
         "20. seviye · Meydan Okuyan Papi",
-        "Üçüncü parkur. Düello. İkinci vitrin. Üst giyim. Oyun başına 2 joker. Papağanla Sohbet. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
+        "Düello. İkinci vitrin. Üst giyim. Oyun başına 2 joker. Papağanla Sohbet. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
       ],
       [
         null,
@@ -1011,7 +1011,7 @@
       [
         null,
         "23. seviye · Bilge Papağan",
-        "B2 dersleri · B1 tamamlanınca. Alt giyim. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
+        "Alt giyim. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
       ],
       [
         null,
@@ -1046,7 +1046,7 @@
       [
         null,
         "30. seviye · Dost Kanat",
-        "Dördüncü parkur. İki kişilik oyunlar. Enerji hediyesi. Pro ürünler. Dördüncü vitrin. Oyun başına 3 joker. Kelime Kartları. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
+        "İki kişilik oyunlar. Enerji hediyesi. Pro ürünler. Dördüncü vitrin. Oyun başına 3 joker. Kelime Kartları. Özelliğin kilit kartında ek ilerleme koşulu varsa onu da tamamla."
       ],
       [
         null,

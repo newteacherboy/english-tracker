@@ -95,10 +95,10 @@
       </div>
       <div class="kb-grup"><h4>Öğretmen bağlantım</h4><p id="kbTeacherStatus" class="kb-ipucu"></p><div class="kb-alan"><label for="kbTeacherCode">Öğretmen kodu (isteğe bağlı)</label><input id="kbTeacherCode" maxlength="10" autocapitalize="characters" placeholder="Bir öğretmene bağlanmak istersen"></div></div>
       <div class="kb-grup" id="kbEducation"><h4>Eğitim bilgilerim</h4>
-        <div class="kb-alan"><label for="kbStage">Eğitim kademem (isteğe bağlı)</label><select id="kbStage"><option value="">Belirtmek istemiyorum</option><option value="primary">İlkokul</option><option value="middle">Ortaokul</option><option value="high">Lise</option><option value="university">Üniversite</option></select></div>
+        <div class="kb-alan"><label for="kbStage">Eğitim kademem</label><select id="kbStage"><option value="">Seç</option><option value="primary">İlkokul</option><option value="middle">Ortaokul</option><option value="high">Lise</option><option value="university">Üniversite</option></select></div>
         <div class="kb-alan"><label for="kbOkul">Okul adı <span style="font-weight:600;color:#8a7cb8">(isteğe bağlı)</span></label><input id="kbOkul" maxlength="120"></div>
         <div class="kb-iki">
-          <div class="kb-alan"><label for="kbSinif">Sınıf (isteğe bağlı)</label><select id="kbSinif"><option value="">Belirtmek istemiyorum</option>${Array.from({length:12},(_,i)=>i+1).map(n => `<option value="${n}">${n}. sınıf</option>`).join("")}</select></div>
+          <div class="kb-alan"><label for="kbSinif">Sınıf (ilkokul ve ortaokulda zorunlu)</label><select id="kbSinif"><option value="">Belirtmek istemiyorum</option>${Array.from({length:12},(_,i)=>i+1).map(n => `<option value="${n}">${n}. sınıf</option>`).join("")}</select></div>
           <div class="kb-alan"><label for="kbSube">Şube</label><input id="kbSube" maxlength="10" autocapitalize="characters"></div>
         </div>
         <div class="kb-ipucu" id="kbSinifIpucu"></div>
