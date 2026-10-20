@@ -85,7 +85,7 @@
 (()=>{
  'use strict';
  const configs=[
-  ['jpOyunOverlay','jpBalonEkrani','balloons'],
+  ['jpOyunOverlay',['jpBalonEkrani','jpSoruEkrani'],'balloons'],
   ['yagmurOyunOverlay','yagmurOyunEkrani','storm'],
   ['kelimebulOyunOverlay','kelimebulOyunEkrani','code'],
   ['esOyunOverlay','esOyunEkrani','match'],
@@ -94,10 +94,10 @@
  const displayed=el=>!!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden';
  function updateBoardState(){
   for(const [rootId,playId,theme] of configs){
-   const root=document.getElementById(rootId),play=document.getElementById(playId);
-   if(!root||!play)continue;
+   const root=document.getElementById(rootId),plays=(Array.isArray(playId)?playId:[playId]).map(id=>document.getElementById(id));
+   if(!root||!plays.some(Boolean))continue;
    root.dataset.dmDesign=theme;
-   root.classList.toggle('dm-designed-playing',displayed(root)&&displayed(play));
+   root.classList.toggle('dm-designed-playing',displayed(root)&&plays.some(displayed));
   }
   const yo=document.getElementById('yoModal');
   const active=window.OC?.aktif;
@@ -109,7 +109,7 @@
  }
  // Listen only to state of known game containers; avoid subtree observers on the large portal.
  for(const [rootId,playId] of configs){
-  for(const id of [rootId,playId]){
+  for(const id of [rootId,...(Array.isArray(playId)?playId:[playId])]){
    const node=document.getElementById(id);if(node)new MutationObserver(updateBoardState)
     .observe(node,{attributes:true,attributeFilter:['style','class']});
   }
@@ -164,7 +164,13 @@
  }
  function cue(correct){
   const root=currentRoot();if(!root)return;
-  effect(correct);
+  // Most games already play their native success/failure sounds; no duplicate tone.
+  if(root.id==='harfBahcesiOverlay'||(root.id!=='yoModal'&&typeof window.genelSesEfektiCal!=='function'))effect(correct);
+  if(root.id==='yoModal'&&root.dataset.dmSelectedGame==='cumle'){
+   root.querySelectorAll('.yo-cevap-alan .yo-chip').forEach(chip=>{
+    chip.classList.add(correct?'dm-answer-right':'dm-answer-wrong');
+   });
+  }
   const element=choice?.isConnected&&root.contains(choice)?choice:
    root.id==='kelimebulOyunOverlay'?root.querySelector('#kbTahminInput'):null;
   if(element){
