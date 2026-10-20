@@ -60,7 +60,7 @@
       document.body.append(overlay);window.dmViewHistory?.track(overlay,{parent,close});sinifGridKisitlamaUygula('dmIntroClasses',n=>state.classNo=n,choose);
       overlay.querySelector('[data-close]').onclick=close;
       overlay.onkeydown=e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const f=[...overlay.querySelectorAll('button:not(:disabled)')].filter(x=>x.getClientRects().length);if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===f.at(-1)){e.preventDefault();f[0].focus();}}};
-      overlay.querySelector('[data-start]').onclick=()=>{if(key==='dikte'&&oyunHavuzGetir(state.classNo,state.units).filter(k=>/^[a-zA-Z]{3,10}$/.test(k.ingilizce||k.en||'')).length<8){overlay.querySelector('.hb-status').textContent='En az 8 kelime için başka bir ünite daha seç.';return;}window.dmSelectedIntro=state;if(!window.dmViewHistory)close();try{original();const child=document.getElementById('yoModal');if(child?.classList.contains('acik'))window.dmViewHistory?.track(child,{parent:window.dmViewHistory.capture(),close:()=>window.yoModalKapat?.()});}finally{window.dmSelectedIntro=null;}};
+      overlay.querySelector('[data-start]').onclick=()=>{if(key==='dikte'&&oyunHavuzGetir(state.classNo,state.units).filter(k=>/^[a-zA-Z]{3,10}$/.test(k.ingilizce||k.en||'')).length<8){overlay.querySelector('.hb-status').textContent='En az 8 kelime için başka bir ünite daha seç.';return;}window.dmSelectedIntro=state;if(!window.dmViewHistory)close();try{original();const child=document.getElementById('yoModal');if(child?.classList.contains('acik'))child.dataset.dmSelectedGame=key;if(child?.classList.contains('acik'))window.dmViewHistory?.track(child,{parent:window.dmViewHistory.capture(),close:()=>window.yoModalKapat?.()});}finally{window.dmSelectedIntro=null;}};
       overlay.querySelector('[data-close]').focus();
     };
   }
@@ -79,4 +79,119 @@
   }
   setInterval(updateClock,200);
   window.dmGameExperience={decorate,updateClock};
+})();
+
+/* Approved eight game boards: retain native answer, timer, reward and verification handlers. */
+(()=>{
+ 'use strict';
+ const configs=[
+  ['jpOyunOverlay','jpBalonEkrani','balloons'],
+  ['yagmurOyunOverlay','yagmurOyunEkrani','storm'],
+  ['kelimebulOyunOverlay','kelimebulOyunEkrani','code'],
+  ['esOyunOverlay','esOyunEkrani','match'],
+  ['trenOyunOverlay','trenOyunEkrani','train']
+ ];
+ const displayed=el=>!!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden';
+ function updateBoardState(){
+  for(const [rootId,playId,theme] of configs){
+   const root=document.getElementById(rootId),play=document.getElementById(playId);
+   if(!root||!play)continue;
+   root.dataset.dmDesign=theme;
+   root.classList.toggle('dm-designed-playing',displayed(root)&&displayed(play));
+  }
+  const yo=document.getElementById('yoModal');
+  const active=window.OC?.aktif;
+  if(yo&&displayed(yo)){
+   const game=active?.oyun;
+   if(game==='cumle'||game==='dikte')yo.dataset.dmSelectedGame=game;
+   else if(yo.dataset.dmSelectedGame)delete yo.dataset.dmSelectedGame;
+  }
+ }
+ // Listen only to state of known game containers; avoid subtree observers on the large portal.
+ for(const [rootId,playId] of configs){
+  for(const id of [rootId,playId]){
+   const node=document.getElementById(id);if(node)new MutationObserver(updateBoardState)
+    .observe(node,{attributes:true,attributeFilter:['style','class']});
+  }
+ }
+ const yo=document.getElementById('yoModal');
+ if(yo)new MutationObserver(updateBoardState).observe(yo,{attributes:true,attributeFilter:['class','style']});
+ updateBoardState();
+
+ // Answer cues are generated from the same scoring decision used by the native games.
+ // This avoids guessing correctness from the label or from selected button position.
+ let audio=null,choice=null,cueTimer=0;
+ const gameRoots=['harfBahcesiOverlay','jpOyunOverlay','yagmurOyunOverlay',
+  'kelimebulOyunOverlay','esOyunOverlay','trenOyunOverlay'];
+ const currentRoot=()=>{
+  const active=window.OC?.aktif;
+  if(!active||active.bitti)return null;
+  const yo=document.getElementById('yoModal');
+  if((active.oyun==='cumle'||active.oyun==='dikte')&&displayed(yo))return yo;
+  return gameRoots.map(id=>document.getElementById(id)).find(displayed)||null;
+ };
+ function noteChoice(e){
+  const root=currentRoot();
+  if(!root||!root.contains(e.target))return;
+  const target=e.target.closest('button,.es-k,[data-cell],input');
+  if(!target||target.closest('.game-close-btn,[data-close],[data-skip],.jk-bar'))return;
+  const input=target.closest('#kbTahminInput,#yoDikteInput');
+  choice=input||target;
+  if(choice.matches('button,.es-k,[data-cell]')){
+   choice.classList.add('dm-touch-picked');
+   setTimeout(()=>choice?.classList.remove('dm-touch-picked'),440);
+  }
+ }
+ document.addEventListener('pointerdown',noteChoice,true);
+ document.addEventListener('click',noteChoice,true); // keyboard and assistive clicks
+ function effect(correct){
+  try{
+   const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+   if(!audio)audio=new C();
+   if(audio.state==='suspended')audio.resume().catch(()=>{});
+   const start=audio.currentTime;
+   const notes=correct?[[660,0,.095],[880,.105,.14]]:[[290,0,.12],[210,.14,.16]];
+   for(const [freq,delay,duration] of notes){
+    const osc=audio.createOscillator(),gain=audio.createGain();
+    osc.type=correct?'sine':'triangle';osc.frequency.value=freq;
+    gain.gain.setValueAtTime(.0001,start+delay);
+    gain.gain.exponentialRampToValueAtTime(.10,start+delay+.02);
+    gain.gain.exponentialRampToValueAtTime(.0001,start+delay+duration);
+    osc.connect(gain);gain.connect(audio.destination);
+    osc.start(start+delay);osc.stop(start+delay+duration+.01);
+   }
+  }catch{/* Never block scoring if audio is unavailable. */}
+ }
+ function cue(correct){
+  const root=currentRoot();if(!root)return;
+  effect(correct);
+  const element=choice?.isConnected&&root.contains(choice)?choice:
+   root.id==='kelimebulOyunOverlay'?root.querySelector('#kbTahminInput'):null;
+  if(element){
+   element.classList.remove('dm-answer-right','dm-answer-wrong');
+   element.classList.add(correct?'dm-answer-right':'dm-answer-wrong');
+   setTimeout(()=>element.classList.remove('dm-answer-right','dm-answer-wrong'),1000);
+  }
+  const toastId='dmSelectedAnswerCue';
+  let notice=document.getElementById(toastId);
+  if(!notice){notice=document.createElement('div');notice.id=toastId;notice.setAttribute('role','status');notice.setAttribute('aria-live','polite');document.body.append(notice);}
+  notice.className=correct?'dm-cue-correct':'dm-cue-wrong';
+  notice.textContent=correct?'✓ Doğru!':'✕ Tekrar dene';
+  notice.hidden=false;
+  clearTimeout(cueTimer);cueTimer=setTimeout(()=>{notice.hidden=true},850);
+  choice=null;
+ }
+ // Keep existing OC logic and score values fully intact.
+ function bindFeedback(){
+  const OC=window.OC;if(!OC)return false;
+  for(const [method,correct] of [['dogru',true],['yanlis',false]]){
+   const previous=OC[method];if(typeof previous!=='function'||previous.dmSelectedAudioWrapped)continue;
+   const wrapped=function(...args){const result=previous.apply(this,args);cue(correct);return result;};
+   wrapped.dmSelectedAudioWrapped=true;OC[method]=wrapped;
+  }
+  return true;
+ }
+ bindFeedback();
+ const clock=setInterval(()=>{updateBoardState();if(bindFeedback())clearInterval(clock)},300);
+ window.dmSelectedGameBoards={updateBoardState};
 })();
