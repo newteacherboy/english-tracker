@@ -3,9 +3,9 @@ const assert=require('node:assert/strict');
 const candidate=require('../ingilizce/thematic-v8-candidate.js');
 const curriculum=require('../ingilizce/thematic-curriculum.json');
 const core=require('../ingilizce/learning-core.js');
-test('all 384 proposed lessons have four distinct teaching stages and ten graded tasks',()=>{
- assert.equal(curriculum.chapters.length,384);
- assert.equal(new Set(curriculum.chapters.map(c=>c.id)).size,384);
+test('all 412 proposed lessons have four distinct teaching stages and ten graded tasks',()=>{
+ assert.equal(curriculum.chapters.length,412);
+ assert.equal(new Set(curriculum.chapters.map(c=>c.id)).size,412);
  let graded=0;
  for(const [i,chapter] of curriculum.chapters.entries()){
   assert.equal(chapter.routeNumber,i+1);
@@ -20,7 +20,7 @@ test('all 384 proposed lessons have four distinct teaching stages and ten graded
    graded++;
   }
  }
- assert.equal(graded,3840);
+ assert.equal(graded,4120);
 });
 
 test('client and server v8 candidate compilers are identical',()=>{

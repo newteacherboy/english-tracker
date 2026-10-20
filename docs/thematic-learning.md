@@ -1,6 +1,6 @@
 # Tematik öğrenme yolu
 
-20 Ekim 2026: 32 tema × 6 konu × 2 durak = 384 durak. A1: 156, A2: 156, B1: 36, B2: 36. Güncel içerik ve geçiş ayrıntıları `docs/route-expansion-20261020.md` dosyasındadır. Önceki 240 bölümün kimlikleri korunur. Her bölümde bir öğretim adımı ve dokuz doğrulanan soru bulunur (toplam 2.160 soru). Birinci bölüm temel ifadeleri tanıtır; ikinci bölüm aynı konuyu günlük cümlelerle kullandırır. Bu yolun tamamlanması B2 yeterlilik belgesi anlamına gelmez.
+20 Ekim 2026: 46 tema, 206 konu ve toplam 412 durak. A1: 156, A2: 156, B1: 50 (10 tema), B2: 50 (10 tema). Güncel içerik ve geçiş ayrıntıları `docs/route-expansion-20261020.md` dosyasındadır. Önceki 240 bölümün kimlikleri korunur. Her bölümde bir öğretim adımı ve dokuz doğrulanan soru bulunur (toplam 2.160 soru). Birinci bölüm temel ifadeleri tanıtır; ikinci bölüm aynı konuyu günlük cümlelerle kullandırır. Bu yolun tamamlanması B2 yeterlilik belgesi anlamına gelmez.
 
 İçeriğin düzenlenebilir kaynakları `content/thematic-topics.txt` ve sayılar, günler, aylar gibi konuların ek sözlükleri için `content/thematic-reference.json`; derleyici `scripts/build-thematic-learning.py`. Her satırda tema, konu, üç kelime/ifade ve üç günlük kullanım örneği yer alır. Derleyici aynı veriyi tarayıcı ve Edge Function için üretir. `learning-core.js` deterministiktir ve her iki ortamda aynı soru akışını oluşturur.
 
